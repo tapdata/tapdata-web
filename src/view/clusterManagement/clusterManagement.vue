@@ -50,24 +50,24 @@
   </div>
 </template>
 <script>
-import publicApi from "../../api/publicApi";
+import publicApi from '../../api/publicApi'
 export default {
   data () {
     return {
-      activeIndex: "1",
+      activeIndex: '1',
       sourch: '',
       isStop: false,
-      list:[]
+      list: []
     }
   },
-  created(){
+  created () {
     this.timer()
     this.getDataApi()
   },
   watch: {
-    sourch(data) {
-      let params;
-      if(data) {
+    sourch (data) {
+      let params
+      if (data) {
         params = {
           'filter[where][or][0][systemInfo.hostname]': data,
           'filter[where][or][1][systemInfo.ip]': data,
@@ -86,15 +86,15 @@ export default {
     },
     getDataApi(params) {
       let api = '/api/clusterStates'
-      if(this.sourch) {
+      if (this.sourch) {
         params = {
           'filter[where][or][0][systemInfo.hostname]': this.sourch,
           'filter[where][or][1][systemInfo.ip]': this.sourch,
         }
       }
       publicApi.get(api,params).then(res => {
-        if(res.statusText == "OK" || res.status == 200) {
-          if(res.data) {
+        if (res.statusText === 'OK' || res.status === 200) {
+          if (res.data) {
             this.list = res.data
           }
         }
