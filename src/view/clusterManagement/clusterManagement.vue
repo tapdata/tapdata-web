@@ -30,15 +30,15 @@
             <div class="boxBottom">
               <ul>
                 <li>
-                  <span class="txt"><i class='icon-houtai'></i>管理后台</span>
+                  <span class="txt"><i class='icon iconfont iconhoutai'></i>管理后台</span>
                   <span :class="item.engine.status == 'stop'?'red':'green'">{{item.engine.status}}</span>
                 </li>
                 <li>
-                  <span class="txt"><i class="icon-tongbu"></i>同步治理</span>
+                  <span class="txt"><i class="icon iconfont icontongbu"></i>同步治理</span>
                   <span :class="item.engine.status == 'stop'?'red':'green'">{{item.management.status}}</span>
                 </li>
                 <li>
-                  <span class="txt"><i class='icon-API'></i>API SEVER</span>
+                  <span class="txt"><i class="icon iconfont iconAPI"></i>API SEVER</span>
                   <span :class="item.engine.status == 'stop'?'red':'green'">{{item.apiServer.status}}</span>
                 </li>
               </ul>
@@ -50,14 +50,14 @@
   </div>
 </template>
 <script>
-import publicApi from '../../api/publicApi'
+import publicApi from "../../api/publicApi";
 export default {
   data () {
     return {
-      activeIndex: '1',
+      activeIndex: "1",
       sourch: '',
       isStop: false,
-      list: []
+      list:[]
     }
   },
   created () {
@@ -66,7 +66,7 @@ export default {
   },
   watch: {
     sourch (data) {
-      let params
+      let params ;
       if (data) {
         params = {
           'filter[where][or][0][systemInfo.hostname]': data,
@@ -78,13 +78,13 @@ export default {
   },
   methods: {
     // 这是一个定时器
-    timer() {
+    timer () {
       let that = this
-      return setInterval(()=>{
+      return setInterval(() => {
         that.getDataApi()
-      },5000)
+      }, 5000)
     },
-    getDataApi(params) {
+    getDataApi (params) {
       let api = '/api/clusterStates'
       if (this.sourch) {
         params = {
@@ -93,7 +93,7 @@ export default {
         }
       }
       publicApi.get(api,params).then(res => {
-        if (res.statusText === 'OK' || res.status === 200) {
+        if (res.statusText == "OK" || res.status == 200) {
           if (res.data) {
             this.list = res.data
           }
@@ -166,6 +166,9 @@ export default {
                 padding-left: 15px;
                 font-size: 12px;
                 color: #000;
+                i {
+                  padding-right: 5px;
+                }
               }
             }
           }
