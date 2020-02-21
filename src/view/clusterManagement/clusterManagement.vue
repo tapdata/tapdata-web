@@ -1,51 +1,68 @@
 <template>
   <div class="cluster">
-    <el-row class="fun_area">
-      <el-col :span="8">
-        <div class="demo-input-suffix">
-          名称搜索：
-          <el-input
-            placeholder="请输入内容"
-            clearable
-            v-model="sourch">
-          </el-input>
-        </div>
-      </el-col>
-      <!-- <el-col :span="8" class="status">
-        <span>服务器状态:</span>
-        <span class="statusTxt" style="padding-right: 20px;">运行中</span>
-        <span class="statusTxt">已停止</span>
-      </el-col> -->
-    </el-row>
-
-    <div class="content">
-      <el-row :gutter="20">
-        <el-col class="list" :span="12" v-for="(item,index) in list" :key="item.ip">
-          <div class="grid-content listBox">
-            <div class="boxTop">
-              <i class="circular" :class="item.status !== 'running'?'bgred':'bggreen'"></i>
-              <h2 class="name">{{item.systemInfo.hostname}}</h2>
-              <span>{{item.systemInfo.ip}}</span>
-            </div>
-            <div class="boxBottom">
-              <ul>
-                <li>
-                  <span class="txt"><i class='icon iconfont iconhoutai'></i>管理后台</span>
-                  <span :class="item.engine.status == 'stop'?'red':'green'">{{item.engine.status}}</span>
-                </li>
-                <li>
-                  <span class="txt"><i class="icon iconfont icontongbu"></i>同步治理</span>
-                  <span :class="item.engine.status == 'stop'?'red':'green'">{{item.management.status}}</span>
-                </li>
-                <li>
-                  <span class="txt"><i class="icon iconfont iconAPI"></i>API SEVER</span>
-                  <span :class="item.engine.status == 'stop'?'red':'green'">{{item.apiServer.status}}</span>
-                </li>
-              </ul>
-            </div>
+    <div class="cluster_box" v-if="list.length > 0">
+      <el-row class="fun_area">
+        <el-col :span="8">
+          <div class="demo-input-suffix">
+            名称搜索：
+            <el-input
+              placeholder="请输入内容"
+              clearable
+              v-model="sourch">
+            </el-input>
           </div>
         </el-col>
+        <!-- <el-col :span="8">
+          <el-button type="info">筛选</el-button>
+        </el-col> -->
+        <!-- <el-col :span="8" class="status">
+          <span>服务器状态:</span>
+          <span class="statusTxt" style="padding-right: 20px;">运行中</span>
+          <span class="statusTxt">已停止</span>
+        </el-col> -->
       </el-row>
+
+      <div class="content">
+        <el-row :gutter="20">
+          <el-col class="list" :span="12" v-for="(item,index) in list" :key="item.ip">
+            <div class="grid-content listBox">
+              <div class="boxTop">
+                <i class="circular" :class="item.status !== 'running'?'bgred':'bggreen'"></i>
+                <h2 class="name">{{item.systemInfo.hostname}}</h2>
+                <span>{{item.systemInfo.ip}}</span>
+              </div>
+              <div class="boxBottom">
+                <ul>
+                  <li>
+                    <span class="txt"><i class='icon iconfont iconhoutai'></i>管理后台</span>
+                    <span :class="item.engine.status == 'stop'?'red':'green'">{{item.engine.status}}</span>
+                    <!-- <el-button type="info">启动</el-button>
+                    <el-button type="info">关闭</el-button>
+                    <el-button type="text">重启</el-button> -->
+                  </li>
+                  <li>
+                    <span class="txt"><i class="icon iconfont icontongbu"></i>同步治理</span>
+                    <span :class="item.engine.status == 'stop'?'red':'green'">{{item.management.status}}</span>
+                    <!-- <el-button type="info">启动</el-button>
+                    <el-button type="info">关闭</el-button>
+                    <el-button type="text">重启</el-button> -->
+                  </li>
+                  <li>
+                    <span class="txt"><i class="icon iconfont iconAPI"></i>API SEVER</span>
+                    <span :class="item.engine.status == 'stop'?'red':'green'">{{item.apiServer.status}}</span>
+                    <!-- <el-button type="info">启动</el-button>
+                    <el-button type="info">关闭</el-button>
+                    <el-button type="text">重启</el-button> -->
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </div>
+    <div v-else class="noText">
+      <i class="iconfont icon iconkongyemian_zanwuwendang" style="font-size: 174px"></i>
     </div>
   </div>
 </template>
@@ -64,6 +81,7 @@ export default {
     this.timer()
     this.getDataApi()
   },
+
   watch: {
     sourch (data) {
       let params ;
@@ -76,6 +94,7 @@ export default {
       this.getDataApi(params)
     }
   },
+
   methods: {
     // 这是一个定时器
     timer () {
@@ -95,7 +114,7 @@ export default {
       publicApi.get(api,params).then(res => {
         if (res.statusText == "OK" || res.status == 200) {
           if (res.data) {
-            this.list = res.data
+            // this.list = res.data
           }
         }
       })
@@ -109,6 +128,9 @@ export default {
   height: 100%;
   font-size: 12px;
   background-color: #f8f6fa;
+  .cluster_box {
+    background-color: #fff;
+  }
   .fun_area {
     .status {
       .statusTxt {
@@ -118,7 +140,10 @@ export default {
     }
   }
   .content {
+    width: 100%;
+    height: calc(100% - 60px);
     padding: 10px;
+    box-sizing: border-box;
     .list {
       padding-bottom: 10px;
       overflow: hidden;
@@ -189,6 +214,8 @@ export default {
   width: 100%;
   .content {
     padding: 10px;
+    width: 100%;
+    height: 100%;
     .el-row {
       margin-bottom: 20px;
     }
@@ -207,5 +234,16 @@ export default {
 }
 .bggreen {
   background-color: #71c179!important;
+}
+.cluster {
+  .noText {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    color: #1976D2;
+    font-size: 16px;
+    background-color: #fff;
+  }
 }
 </style>

@@ -44,6 +44,8 @@ export default {
 </script>
 <style lang="less">
 .tapHeader {
+  width: 100%;
+  height: 100%;
   .el-menu-demo {
     height: 40px;
     border-bottom: 0;
@@ -61,8 +63,8 @@ export default {
     }
   }
   .main {
-    height: 500px;
-    // height: calc(100% - 60px);
+    // height: 500px;
+    height: calc(100% - 40px);
   }
 }
 </style>
