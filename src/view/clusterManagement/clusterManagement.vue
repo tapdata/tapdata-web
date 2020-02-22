@@ -1,5 +1,6 @@
 <template>
   <div class="cluster">
+    <!-- 服务集群管理 -->
     <div class="cluster_box" v-if="list.length > 0">
       <el-row class="fun_area">
         <el-col :span="8">
@@ -12,9 +13,9 @@
             </el-input>
           </div>
         </el-col>
-        <!-- <el-col :span="8">
+        <el-col :span="8">
           <el-button type="info">筛选</el-button>
-        </el-col> -->
+        </el-col>
         <!-- <el-col :span="8" class="status">
           <span>服务器状态:</span>
           <span class="statusTxt" style="padding-right: 20px;">运行中</span>
@@ -36,23 +37,23 @@
                   <li>
                     <span class="txt"><i class='icon iconfont iconhoutai'></i>管理后台</span>
                     <span :class="item.engine.status == 'stop'?'red':'green'">{{item.engine.status}}</span>
-                    <!-- <el-button type="info">启动</el-button>
+                    <el-button type="info">启动</el-button>
                     <el-button type="info">关闭</el-button>
-                    <el-button type="text">重启</el-button> -->
+                    <el-button type="text">重启</el-button>
                   </li>
                   <li>
                     <span class="txt"><i class="icon iconfont icontongbu"></i>同步治理</span>
                     <span :class="item.engine.status == 'stop'?'red':'green'">{{item.management.status}}</span>
-                    <!-- <el-button type="info">启动</el-button>
+                    <el-button type="info">启动</el-button>
                     <el-button type="info">关闭</el-button>
-                    <el-button type="text">重启</el-button> -->
+                    <el-button type="text">重启</el-button>
                   </li>
                   <li>
                     <span class="txt"><i class="icon iconfont iconAPI"></i>API SEVER</span>
                     <span :class="item.engine.status == 'stop'?'red':'green'">{{item.apiServer.status}}</span>
-                    <!-- <el-button type="info">启动</el-button>
+                    <el-button type="info">启动</el-button>
                     <el-button type="info">关闭</el-button>
-                    <el-button type="text">重启</el-button> -->
+                    <el-button type="text">重启</el-button>
                   </li>
                 </ul>
               </div>
@@ -74,7 +75,87 @@ export default {
       activeIndex: "1",
       sourch: '',
       isStop: false,
-      list:[]
+      list:[
+        {
+          "_id": "ObjectId('5e4282a309316bd5dc66ae70')",
+          "systemInfo": {
+            "hostname": "localhost.localdomain",
+            "uuid": "b50a9140-ab13-4cb5-8e70-50b3dcf196fd",
+            "ip": "192.168.1.104",
+            "time": 1581508796992
+          },
+          "reportInterval": "2000",
+          "engine": {
+            "processID": "",
+            "status": "stop"
+          },
+          "management": {
+            "processID": "",
+            "status": "stop"
+          },
+          "apiServer": {
+            "processID": "",
+            "status": "stop"
+          },
+          "uuid": "b50a9140-ab13-4cb5-8e70-50b3dcf196fd",
+          "status": "running",
+          "insertTime": "ISODate('2020-02-12T11:59:56.672Z')",
+          "ttl": "ISODate('2020-02-12T12:00:00.672Z')",
+          "last_updated": "ISODate('2020-02-12T11:59:56.679Z')"
+        },{
+          "_id": "ObjectId('5e4282a309316bd5dc66ae70')",
+          "systemInfo": {
+            "hostname": "localhost.localdomain",
+            "uuid": "b50a9140-ab13-4cb5-8e70-50b3dcf196fd",
+            "ip": "192.168.1.104",
+            "time": 1581508796992
+          },
+          "reportInterval": "2000",
+          "engine": {
+            "processID": "",
+            "status": "stop"
+          },
+          "management": {
+            "processID": "",
+            "status": "stop"
+          },
+          "apiServer": {
+            "processID": "",
+            "status": "stop"
+          },
+          "uuid": "b50a9140-ab13-4cb5-8e70-50b3dcf196fd",
+          "status": "running",
+          "insertTime": "ISODate('2020-02-12T11:59:56.672Z')",
+          "ttl": "ISODate('2020-02-12T12:00:00.672Z')",
+          "last_updated": "ISODate('2020-02-12T11:59:56.679Z')"
+        },{
+          "_id": "ObjectId('5e4282a309316bd5dc66ae70')",
+          "systemInfo": {
+            "hostname": "localhost.localdomain",
+            "uuid": "b50a9140-ab13-4cb5-8e70-50b3dcf196fd",
+            "ip": "192.168.1.104",
+            "time": 1581508796992
+          },
+          "reportInterval": "2000",
+          "engine": {
+            "processID": "",
+            "status": "stop"
+          },
+          "management": {
+            "processID": "",
+            "status": "stop"
+          },
+          "apiServer": {
+            "processID": "",
+            "status": "stop"
+          },
+          "uuid": "b50a9140-ab13-4cb5-8e70-50b3dcf196fd",
+          "status": "running",
+          "insertTime": "ISODate('2020-02-12T11:59:56.672Z')",
+          "ttl": "ISODate('2020-02-12T12:00:00.672Z')",
+          "last_updated": "ISODate('2020-02-12T11:59:56.679Z')"
+        }
+      ]
     }
   },
   created () {
@@ -103,6 +184,8 @@ export default {
         that.getDataApi()
       }, 5000)
     },
+
+    // 获取数据
     getDataApi (params) {
       let api = '/api/clusterStates'
       if (this.sourch) {
@@ -236,6 +319,9 @@ export default {
   background-color: #71c179!important;
 }
 .cluster {
+  .cluster_box {
+    height: 100%;
+  }
   .noText {
     display: flex;
     height: 100%;
