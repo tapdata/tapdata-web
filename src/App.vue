@@ -12,10 +12,10 @@ export default {
 }
 </script>
 <style>
-@import 'style/font/iconfont';
+@import 'assets/style/font/iconfont';
 </style>
 <style lang='less'>
-@import 'style/index.less';
+@import 'assets/style/index.less';
 
 #app {
   width: 100%;
