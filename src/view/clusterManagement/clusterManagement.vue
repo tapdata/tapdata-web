@@ -20,7 +20,7 @@
 
       <div class="content">
         <el-row :gutter="20">
-          <el-col class="list" :span="12" v-for="(item, index) in list" :key="item.ip">
+          <el-col class="list" :span="12" v-for="(item) in list" :key="item.ip">
             <div class="grid-content listBox">
               <div class="boxTop">
                 <i class="circular" :class="item.status !== 'running'?'bgred':'bggreen'"></i>
@@ -100,14 +100,13 @@ export default {
     }
   },
   created () {
-    this.timer()
-    this.getDataApi()
+    this.timer();
+    this.getDataApi();
   },
 
   methods: {
     //重启---关闭---启动
     async operationFn (item,status,server,opt) {
-      console.log(item,server,opt)
       let flag = false;
       if(status == "running" && (opt == "stop" || opt == "restart")) {
         flag = true
@@ -121,7 +120,7 @@ export default {
           server: server,
           operation: opt
         }
-        let api = 'http://52.82.13.216:3033/api/clusterStates/updataStatus'
+        let api = '/api/clusterStates/updataStatus'
         await publicApi.post(api,data).then(res=>{
           if(res.status == 200) {
             this.getDataApi()
@@ -148,30 +147,30 @@ export default {
     timer() {
       let that = this
       return setInterval(() => {
-        // that.getDataApi()
-      }, 5000)
+        that.getDataApi()
+      }, 5000);
     },
 
     // 获取数据
     getDataApi (params) {
-      let api = 'http://52.82.13.216:3033/api/clusterStates'
+      let api = '/api/clusterStates'
       // /api/clusterStates
       if (this.sourch) {
         params = {
           'filter[where][or][0][systemInfo.hostname]': this.sourch,
           'filter[where][or][1][systemInfo.ip]': this.sourch,
-        }
+        };
       }
       publicApi.get(api,params).then(res => {
-        if (res.statusText == "OK" || res.status == 200) {
+        if (res.statusText === "OK" || res.status === 200) {
           if (res.data) {
-            this.list = res.data
+            this.list = res.data;
           }
         }
-      })
+      });
     }
   }
-}
+};
 </script>
 <style lang="less" scoped>
 .cluster {

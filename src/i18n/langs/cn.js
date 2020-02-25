@@ -6,6 +6,6 @@ const en = {
     screen: 'screen',
     backstageManage:'Management backstage'
   }
-}
+};
 
-export default en
+export default en;

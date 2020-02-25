@@ -93,16 +93,16 @@ export default {
       pickerStartDate: {
         disabledDate: time => {
           if (this.form.closeDate) {
-            return time.getTime() > this.form.closeDate
+            return time.getTime() > this.form.closeDate;
           }
         }
       },
       pickerCloseDate: {
         disabledDate: time => {
-          return time.getTime() < this.form.startDate
+          return time.getTime() < this.form.startDate;
         }
       }
-    }
+    };
   },
 
   created () {
@@ -119,7 +119,7 @@ export default {
   methods: {
     //获取ip
     getIpFn() {
-      let api = 'http://52.82.13.216:3033/api/clusterStates'
+      let api = '/api/clusterStates'
       publicApi.get(api).then(res => {
         if (res.statusText == "OK" || res.status == 200) {
           if (res.data) {
@@ -129,7 +129,6 @@ export default {
           }
         }
       })
-      console.log(this.ipList)
     },
     //筛选
     screenFn() {
@@ -161,7 +160,7 @@ export default {
     },
     //获取数据
     async getDataApi (data) {
-      let api = 'http://52.82.13.216:3033/api/Logs'
+      let api = '/api/Logs'
 
       publicApi.get(api,data).then(res => {
         if (res.statusText == "OK" || res.status == 200) {
@@ -204,7 +203,7 @@ export default {
     }
 
   }
-}
+};
 </script>
 <style lang="less">
 .journal {

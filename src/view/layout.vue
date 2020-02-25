@@ -27,19 +27,19 @@ export default {
   data () {
     return {
       activeIndex: '1'
-    }
+    };
   },
 
   methods: {
     handleSelect (key, keyPath) {
       if (key === '1') {
-        this.$router.push({name: 'clusterManagement'})
+        this.$router.push({name: 'clusterManagement'});
       } else if (key === '2') {
-        this.$router.push({name: 'dailyRecord'})
+        this.$router.push({name: 'dailyRecord'});
       }
     }
   }
-}
+};
 </script>
 <style lang="less">
 .tapHeader {
