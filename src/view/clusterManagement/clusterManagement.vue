@@ -25,7 +25,7 @@
 
       <div class="content">
         <el-row :gutter="20">
-          <el-col class="list" :span="12" v-for="(item,index) in list" :key="item.ip">
+          <el-col class="list" :span="12" v-for="(item) in list" :key="item.ip">
             <div class="grid-content listBox">
               <div class="boxTop">
                 <i class="circular" :class="item.status !== 'running'?'bgred':'bggreen'"></i>
@@ -156,11 +156,11 @@ export default {
           "last_updated": "ISODate('2020-02-12T11:59:56.679Z')"
         }
       ]
-    }
+    };
   },
   created () {
-    this.timer()
-    this.getDataApi()
+    this.timer();
+    this.getDataApi();
   },
 
   watch: {
@@ -170,40 +170,40 @@ export default {
         params = {
           'filter[where][or][0][systemInfo.hostname]': data,
           'filter[where][or][1][systemInfo.ip]': data,
-        }
+        };
       }
-      this.getDataApi(params)
+      this.getDataApi(params);
     }
   },
 
   methods: {
     // 这是一个定时器
     timer () {
-      let that = this
+      let that = this;
       return setInterval(() => {
-        that.getDataApi()
-      }, 5000)
+        that.getDataApi();
+      }, 5000);
     },
 
     // 获取数据
     getDataApi (params) {
-      let api = '/api/clusterStates'
+      let api = '/api/clusterStates';
       if (this.sourch) {
         params = {
           'filter[where][or][0][systemInfo.hostname]': this.sourch,
           'filter[where][or][1][systemInfo.ip]': this.sourch,
-        }
+        };
       }
       publicApi.get(api,params).then(res => {
-        if (res.statusText == "OK" || res.status == 200) {
+        if (res.statusText === "OK" || res.status === 200) {
           if (res.data) {
             // this.list = res.data
           }
         }
-      })
+      });
     }
   }
-}
+};
 </script>
 <style lang="less" scoped>
 .cluster {

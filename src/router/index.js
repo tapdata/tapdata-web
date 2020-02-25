@@ -1,10 +1,10 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import layout from '@/view/layout'
+import Vue from 'vue';
+import Router from 'vue-router';
+import layout from '@/view/layout';
 
-import clusterManagement from '@/view/clusterManagement/clusterManagement'
-import dailyRecord from '@/view/clusterManagement/dailyRecord'
-Vue.use(Router)
+import clusterManagement from '@/view/clusterManagement/clusterManagement';
+import dailyRecord from '@/view/clusterManagement/dailyRecord';
+Vue.use(Router);
 
 export default new Router({
   routes: [
@@ -27,4 +27,4 @@ export default new Router({
       ]
     }
   ]
-})
+});

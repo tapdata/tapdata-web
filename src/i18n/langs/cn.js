@@ -3,6 +3,6 @@ const en = {
   message: {
 
   }
-}
+};
 
-export default en
+export default en;

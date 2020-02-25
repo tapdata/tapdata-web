@@ -108,16 +108,16 @@ export default {
       pickerStartDate: {
         disabledDate: time => {
           if (this.form.closeDate) {
-            return time.getTime() > this.form.closeDate
+            return time.getTime() > this.form.closeDate;
           }
         }
       },
       pickerCloseDate: {
         disabledDate: time => {
-          return time.getTime() < this.form.startDate
+          return time.getTime() < this.form.startDate;
         }
       }
-    }
+    };
   },
   methods: {
     handleCurrentChange(cpage) {
@@ -128,7 +128,7 @@ export default {
     },
 
   }
-}
+};
 </script>
 <style lang="less">
 .journal {
