@@ -1,6 +1,6 @@
 <template>
-<div class="journal">
-  <el-row class="fun_area">
+<div class="journal" ref="boxHeight">
+  <el-row class="fun-area" :gutter="20">
     <el-form ref="form" :model="form" label-width="80px">
       <el-col :span="8">
         <el-form-item label="选择时间">
@@ -15,47 +15,43 @@
       </el-col>
       <el-col :span="4">
         <el-form-item label="服务器">
-          <el-select v-model="form.region">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+          <el-select v-model="form.ip">
+            <el-option v-for="item in ipList" :label="item.value" :value="item.value" :key="item.value"></el-option>
           </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="4">
         <el-form-item label="服务类型">
-          <el-select v-model="form.region">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+          <el-select v-model="form.serverType">
+            <el-option v-for="item in serverTypeList" :label="item.lable" :value="item.value" :key="item.value"></el-option>
           </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="4">
         <el-form-item label="级别">
-          <el-select v-model="form.region" >
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+          <el-select v-model="form.level" >
+            <el-option v-for="item in levelList" :label="item.lable" :value="item.value" :key="item.value"></el-option>
           </el-select>
         </el-form-item>
       </el-col>
-      <el-col :span="4">
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit">筛选</el-button>
-        </el-form-item>
+      <el-col :span="4" class="center">
+          <el-button type="primary" @click="screenFn">筛选</el-button>
       </el-col>
     </el-form>
   </el-row>
-  <div class="content">
-    <el-table :data="tableData" class="tableName" height="250" style="width: 100%">
-      <el-table-column prop="date" label="时间" width="180"></el-table-column>
-      <el-table-column prop="name" label="主机名" width="180"></el-table-column>
-      <el-table-column prop="address" label="ip地址"></el-table-column>
-      <el-table-column prop="address" label="唯一编码"></el-table-column>
-      <el-table-column prop="address" label="服类类型"></el-table-column>
-      <el-table-column prop="address" label="级别"></el-table-column>
-      <el-table-column prop="address" label="日志信息"></el-table-column>
+  <div class="content" ref="contentHeight">
+    <el-table :data="tableData" class="tableName" border fit :tooltip-effect="dark" :height="tableHeight" style="width: 100%">
+      <el-table-column prop="data" label="时间" width="260"></el-table-column>
+      <el-table-column prop="hostname" label="主机名" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="ip" label="ip地址" width="150"></el-table-column>
+      <el-table-column prop="uuid" label="唯一编码" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="threadName" label="服类类型" width="100"></el-table-column>
+      <el-table-column prop="level" label="级别" width="100"></el-table-column>
+      <el-table-column prop="message" label="日志信息" :show-overflow-tooltip="true"></el-table-column>
     </el-table>
     <el-pagination background
-			layout="total, prev, pager, next"
+      class="pagination-bar"
+			layout="total, prev, pager, next,sizes"
 			:page-sizes="[10, 20, 30, 50,100]"
 			:page-size="pagesize"
 			:total="totalNum"
@@ -66,45 +62,34 @@
 </div>
 </template>
 <script>
+import publicApi from "../../api/publicApi";
 export default {
   data(){
     return {
-      pagesize: 10,
-      currpage: 1,
+      pagesize: 20,
+      currpage: 0,
       totalNum: 0,
+      tableHeight: 500,
       form: {
         startDate: null,
-        closeDate: null
+        closeDate: null,
+        level: '',
+        serverType: '',
+        ip: ''
       },
-      tableData: [{
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-08',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-06',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-07',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }],
+      tableData: [],
+      levelList: [
+        {lable: 'INFO', value: 'INFO'},
+        {lable: 'WARN', value: 'WARN'},
+        {lable: 'ERROR', value: 'ERROR'},
+      ],
+      serverTypeList:[
+        {lable: 'engine', value: 'engine'},
+        {lable: 'management', value: 'management'},
+        {lable: 'apiServer', value: 'apiServer'},
+        {lable: 'tapdataAgent', value: 'tapdataAgent'},
+      ],
+      ipList: [],
       pickerStartDate: {
         disabledDate: time => {
           if (this.form.closeDate) {
@@ -119,13 +104,104 @@ export default {
       }
     }
   },
+
+  created () {
+    let params = {
+      'filter[limit]': this.pagesize,
+      'filter[skip]': this.currpage,
+      'filter[where][loggerName]': 'tapdataAgent',
+    }
+    this.getDataApi(params)
+
+    this.getIpFn()
+  },
+
   methods: {
+    //获取ip
+    getIpFn() {
+      let api = 'http://52.82.13.216:3033/api/clusterStates'
+      publicApi.get(api).then(res => {
+        if (res.statusText == "OK" || res.status == 200) {
+          if (res.data) {
+            res.data.forEach(item => {
+              this.ipList.push({value:item.systemInfo.ip})
+            })
+          }
+        }
+      })
+      console.log(this.ipList)
+    },
+    //筛选
+    screenFn() {
+      let params = {
+        'filter[where][date][lt]': this.form.closeDate,
+        'filter[where][date][gt]': this.form.startDate,
+        'filter[where][level]': this.form.level,
+        'filter[where][threadName]': this.form.serverType,
+        'filter[where][ip]': this.form.ip,
+        'filter[where][loggerName]': 'tapdataAgent',
+        'filter[limit]': this.pagesize,
+        'filter[skip]': this.currpage
+      }
+      let obj={};
+      for(let i in params){
+        if(!!params[i]){
+          obj[i] = params[i]
+        }
+      }
+      this.getDataApi(obj)
+
+      this.form = {
+        closeDate: '',
+        startDate: '',
+        level: '',
+        serverType: '',
+        ip: ''
+      }
+    },
+    //获取数据
+    async getDataApi (data) {
+      let api = 'http://52.82.13.216:3033/api/Logs'
+
+      publicApi.get(api,data).then(res => {
+        if (res.statusText == "OK" || res.status == 200) {
+          if (res.data) {
+            this.tableData = res.data
+          }
+        }
+      })
+      let where = {
+        'where[loggerName]': 'tapdataAgent',
+      }
+      let result = await publicApi.count(api,where)
+      if (result.statusText === 'OK') {
+        this.totalNum = result.data.count
+      }
+
+      //获取表格高度
+    let contentHeight= this.$refs.contentHeight.offsetHeight; //100
+    this.tableHeight = (contentHeight - 60)
+    },
     handleCurrentChange(cpage) {
-      this.currpage = cpage;
+      let params = {
+        'filter[limit]': this.pagesize,
+        'filter[skip]': cpage,
+        'filter[where][loggerName]': 'tapdataAgent',
+      }
+      this.getDataApi(params)
     },
     handleSizeChange(psize) {
-      this.pagesize = psize;
+      let params = {
+        'filter[limit]': psize,
+        'filter[skip]': this.currpage,
+        'filter[where][loggerName]': 'tapdataAgent',
+      }
+      this.getDataApi(params)
     },
+
+    exportFn() {
+
+    }
 
   }
 }
@@ -179,12 +255,23 @@ export default {
     // position: absolute;
     // bottom: 0;
     width: 100%;
-    padding: 10px;
+    padding: 10px 50px;
     box-sizing: border-box;
     text-align: right;
+    overflow: hidden;
+
     .el-pagination__total {
       float: left;
     }
+  }
+}
+.el-tooltip__popper{
+  max-width:80%;
+  color: #000!important;
+  box-shadow: 0 0 6px #666;
+  background-color: #fff!important;
+  .popper__arrow:after {
+    border-top-color: rgba(0,0,0,0.2)!important;
   }
 }
 </style>
@@ -196,8 +283,10 @@ export default {
   font-size: 12px;
   background-color: #f8f6fa;
   .content {
+    height: calc(100% - 65px);
     margin-top: 5px;
-    padding: 0 50px;
+    padding: 10px 50px;
+    box-sizing: border-box;
     background-color: #fff;
   }
 }

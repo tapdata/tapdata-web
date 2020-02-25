@@ -1,11 +1,11 @@
 <template>
   <div class="cluster">
     <!-- 服务集群管理 -->
-    <div class="cluster_box" v-if="list.length > 0">
-      <el-row class="fun_area">
+    <div class="cluster-box" v-if="list.length > 0">
+      <el-row class="fun-area" :gutter="10">
         <el-col :span="12">
           <div class="demo-input-suffix">
-            名称搜索：
+            <span>名称搜索：</span>
             <el-input
               placeholder="请输入内容"
               clearable
@@ -13,14 +13,9 @@
             </el-input>
           </div>
         </el-col>
-        <el-col :span="12" class="text-rf screen">
+        <el-col class="text-rf screen" :span="2" :offset="9">
           <el-button type="primary" @click="screenFn">筛选</el-button>
         </el-col>
-        <!-- <el-col :span="8" class="status">
-          <span>服务器状态:</span>
-          <span class="statusTxt" style="padding-right: 20px;">运行中</span>
-          <span class="statusTxt">已停止</span>
-        </el-col> -->
       </el-row>
 
       <div class="content">
@@ -30,38 +25,55 @@
               <div class="boxTop">
                 <i class="circular" :class="item.status !== 'running'?'bgred':'bggreen'"></i>
                 <h2 class="name">{{item.systemInfo.hostname}}</h2>
+                <div class="uuid">{{item.systemInfo.uuid}}</div>
                 <span>{{item.systemInfo.ip}}</span>
               </div>
               <div class="boxBottom">
-                <ul>
-                  <li>
+                <el-row :gutter="20" class="data-list">
+                  <el-col :span="6">
                     <span class="txt"><i class='icon iconfont iconhoutai'></i>管理后台</span>
-                    <span :class="item.engine.status == 'stop'?'red':'green'">{{item.engine.status}}</span>
+                  </el-col>
+                  <el-col :span="4">
+                    <span :class="item.management.status == 'stopped'?'red':'green'">{{item.management.status}}</span>
+                  </el-col>
+                  <el-col :span="14">
                     <div class="btn fr">
-                      <el-button type="primary" @click="startUp(item,'management')">启动</el-button>
-                      <el-button type="info" @click="Close(item,'management')">关闭</el-button>
-                      <el-button type="text" @click="restart(item,'management')">重启</el-button>
+                      <el-button :type="item.management.status == 'stopped'?'primary':'info'" @click="operationFn(item,item.management.status,'management','start')">启动</el-button>
+                      <el-button :type="item.management.status == 'running'?'danger':'info'"  @click="operationFn(item,item.management.status,'management','stop')">关闭</el-button>
+                      <el-button type="text" @click="operationFn(item,item.management.status,'management','restart')">重启</el-button>
                     </div>
-                  </li>
-                  <li>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20" class="data-list">
+                  <el-col :span="6">
                     <span class="txt"><i class="icon iconfont icontongbu"></i>同步治理</span>
-                    <span :class="item.engine.status == 'stop'?'red':'green'">{{item.management.status}}</span>
+                  </el-col>
+                  <el-col :span="4">
+                    <span :class="item.engine.status == 'stopped'?'red':'green'">{{item.engine.status}}</span>
+                  </el-col>
+                  <el-col :span="14">
                     <div class="btn fr">
-                      <el-button type="primary" @click="startUp(item,'engine')">启动</el-button>
-                      <el-button type="info" @click="Close(item,'engine')">关闭</el-button>
-                      <el-button type="text" @click="restart(item,'engine')">重启</el-button>
+                      <el-button :type="item.engine.status == 'stopped'?'primary':'info'" @click="operationFn(item,item.engine.status,'engine','start')">启动</el-button>
+                      <el-button :type="item.engine.status == 'running'?'danger':'info'" @click="operationFn(item,item.engine.status,'engine','stop')">关闭</el-button>
+                      <el-button type="text" @click="operationFn(item,item.engine.status,'engine','restart')">重启</el-button>
                     </div>
-                  </li>
-                  <li>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20" class="data-list">
+                  <el-col :span="6">
                     <span class="txt"><i class="icon iconfont iconAPI"></i>API SEVER</span>
-                    <span :class="item.engine.status == 'stop'?'red':'green'">{{item.apiServer.status}}</span>
+                  </el-col>
+                  <el-col :span="4">
+                    <span :class="item.apiServer.status == 'stopped'?'red':'green'">{{item.apiServer.status}}</span>
+                  </el-col>
+                  <el-col :span="14">
                     <div class="btn fr">
-                      <el-button type="primary" @click="startUp(item,'apiServer')">启动</el-button>
-                      <el-button type="info" @click="Close(item,'apiServer')">关闭</el-button>
-                      <el-button type="text" @click="restart(item,'apiServer')">重启</el-button>
+                      <el-button :type="item.apiServer.status == 'stopped'?'primary':'info'" @click="operationFn(item,item.apiServer.status,'apiServer','start')">启动</el-button>
+                      <el-button :type="item.apiServer.status == 'running'?'danger':'info'" @click="operationFn(item,item.apiServer.status,'apiServer','stop')">关闭</el-button>
+                      <el-button type="text" @click="operationFn(item,item.apiServer.status,'apiServer','restart')">重启</el-button>
                     </div>
-                  </li>
-                </ul>
+                  </el-col>
+                </el-row>
               </div>
             </div>
           </el-col>
@@ -81,87 +93,10 @@ export default {
       activeIndex: "1",
       sourch: '',
       isStop: false,
-      list:[
-        // {
-        //   "_id": "ObjectId('5e4282a309316bd5dc66ae70')",
-        //   "systemInfo": {
-        //     "hostname": "localhost.localdomain",
-        //     "uuid": "b50a9140-ab13-4cb5-8e70-50b3dcf196fd",
-        //     "ip": "192.168.1.104",
-        //     "time": 1581508796992
-        //   },
-        //   "reportInterval": "2000",
-        //   "engine": {
-        //     "processID": "",
-        //     "status": "stop"
-        //   },
-        //   "management": {
-        //     "processID": "",
-        //     "status": "stop"
-        //   },
-        //   "apiServer": {
-        //     "processID": "",
-        //     "status": "stop"
-        //   },
-        //   "uuid": "b50a9140-ab13-4cb5-8e70-50b3dcf196fd",
-        //   "status": "running",
-        //   "insertTime": "ISODate('2020-02-12T11:59:56.672Z')",
-        //   "ttl": "ISODate('2020-02-12T12:00:00.672Z')",
-        //   "last_updated": "ISODate('2020-02-12T11:59:56.679Z')"
-        // },{
-        //   "_id": "ObjectId('5e4282a309316bd5dc66ae70')",
-        //   "systemInfo": {
-        //     "hostname": "localhost.localdomain",
-        //     "uuid": "b50a9140-ab13-4cb5-8e70-50b3dcf196fd",
-        //     "ip": "192.168.1.104",
-        //     "time": 1581508796992
-        //   },
-        //   "reportInterval": "2000",
-        //   "engine": {
-        //     "processID": "",
-        //     "status": "stop"
-        //   },
-        //   "management": {
-        //     "processID": "",
-        //     "status": "stop"
-        //   },
-        //   "apiServer": {
-        //     "processID": "",
-        //     "status": "stop"
-        //   },
-        //   "uuid": "b50a9140-ab13-4cb5-8e70-50b3dcf196fd",
-        //   "status": "running",
-        //   "insertTime": "ISODate('2020-02-12T11:59:56.672Z')",
-        //   "ttl": "ISODate('2020-02-12T12:00:00.672Z')",
-        //   "last_updated": "ISODate('2020-02-12T11:59:56.679Z')"
-        // },{
-        //   "_id": "ObjectId('5e4282a309316bd5dc66ae70')",
-        //   "systemInfo": {
-        //     "hostname": "localhost.localdomain",
-        //     "uuid": "b50a9140-ab13-4cb5-8e70-50b3dcf196fd",
-        //     "ip": "192.168.1.104",
-        //     "time": 1581508796992
-        //   },
-        //   "reportInterval": "2000",
-        //   "engine": {
-        //     "processID": "",
-        //     "status": "stop"
-        //   },
-        //   "management": {
-        //     "processID": "",
-        //     "status": "stop"
-        //   },
-        //   "apiServer": {
-        //     "processID": "",
-        //     "status": "stop"
-        //   },
-        //   "uuid": "b50a9140-ab13-4cb5-8e70-50b3dcf196fd",
-        //   "status": "running",
-        //   "insertTime": "ISODate('2020-02-12T11:59:56.672Z')",
-        //   "ttl": "ISODate('2020-02-12T12:00:00.672Z')",
-        //   "last_updated": "ISODate('2020-02-12T11:59:56.679Z')"
-        // }
-      ]
+      engineState: '',
+      managementState: '',
+      apiServerState: '',
+      list:[]
     }
   },
   created () {
@@ -170,40 +105,43 @@ export default {
   },
 
   methods: {
-    //启动
-    startUp(e,server) {
-      let  data = {
-        uuid: e.uuid,
-        server: server,
-        operation: 'start'
+    //重启---关闭---启动
+    async operationFn (item,status,server,opt) {
+      console.log(item,server,opt)
+      let flag = false;
+      if(status == "running" && (opt == "stop" || opt == "restart")) {
+        flag = true
+      } else if(status == "stopped" && opt == "start") {
+        flag = true
       }
-      console.log(e,data)
-      this.operationFn(data)
-    },
-    //关闭
-    Close() {
 
-    },
-    //重启
-    restart() {
-
-    },
-
-    //操作接口方法
-    async operationFn (data) {
-      let api = '/clusterStates/updataStatus'
-      await publicApi.post(api,data)
+      if(flag) {
+        let  data = {
+          uuid: item.uuid,
+          server: server,
+          operation: opt
+        }
+        let api = 'http://52.82.13.216:3033/api/clusterStates/updataStatus'
+        await publicApi.post(api,data).then(res=>{
+          if(res.status == 200) {
+            this.getDataApi()
+            // if(this.list.engineOperation) {
+            //   this.engineState = this.list.engineOperation.status
+            // } else if(this.list.managementOperation) {
+            //   this.managementState = this.list.managementOperation.status
+            // } else if (this.list.apiServerOperation) {
+            //   thsi.apiServerState = this.list.apiServerOperation.status
+            // }
+          }
+        })
+      }
     },
     //筛选
     screenFn() {
-      let params
       if (this.sourch) {
-        params = {
-          'filter[where][or][0][systemInfo.hostname]': this.sourch,
-          'filter[where][or][1][systemInfo.ip]': this.sourch,
-        }
+        this.getDataApi()
       }
-      this.getDataApi(params)
+      this.sourch = ''
     },
 
     // 这是一个定时器
@@ -216,7 +154,8 @@ export default {
 
     // 获取数据
     getDataApi (params) {
-      let api = '/api/clusterStates'
+      let api = 'http://52.82.13.216:3033/api/clusterStates'
+      // /api/clusterStates
       if (this.sourch) {
         params = {
           'filter[where][or][0][systemInfo.hostname]': this.sourch,
@@ -240,17 +179,18 @@ export default {
   height: 100%;
   font-size: 12px;
   background-color: #f8f6fa;
-  .cluster_box {
+  .cluster-box {
+    height: 100%;
     background-color: #fff;
   }
-  .fun_area {
-    .status {
-      .statusTxt {
-        padding: 0 20px 0 10px;
-        cursor: pointer;
-      }
-    }
-  }
+  // .fun-area {
+  //   .status {
+  //     .statusTxt {
+  //       padding: 0 20px 0 10px;
+  //       cursor: pointer;
+  //     }
+  //   }
+  // }
   .content {
     width: 100%;
     height: calc(100% - 60px);
@@ -281,6 +221,10 @@ export default {
             font-size: 18px;
             color: #48b6e2;
           }
+          .uuid {
+            padding: 5px;
+            font-size: 12px;
+          }
           span {
             font-size: 14px;
             color: #555;
@@ -288,31 +232,35 @@ export default {
         }
         .boxBottom {
           padding-top: 10px;
-          ul {
-            padding: 0;
-            li {
-              width: 100%;
-              height: 30px;
-              margin-bottom: 5px;
-              line-height: 30px;
-              background-color: #f0fafe;
-              list-style: none;
-              .txt {
-                display: inline-block;
-                width: 120px;
-                padding-left: 15px;
-                font-size: 12px;
-                color: #000;
-                i {
-                  padding-right: 5px;
-                }
-              }
-
-              .btn {
-                display: inline;
+          .data-list{
+            width: 100%;
+            height: 30px;
+            margin-bottom: 5px;
+            line-height: 30px;
+            background-color: #f0fafe;
+            list-style: none;
+            .txt {
+              display: inline-block;
+              width: 120px;
+              padding-left: 15px;
+              font-size: 12px;
+              color: #000;
+              i {
+                padding-right: 5px;
               }
             }
+
+            .btn {
+              display: inline;
+            }
+            .popover-tip {
+              display: inline-block;
+              color: #f00;
+              transform: rotate(180deg);
+              cursor: pointer;
+            }
           }
+
         }
       }
     }
@@ -340,6 +288,17 @@ export default {
     }
   }
 }
+
+.popover-box {
+  color: #333;
+  h5 {
+    margin: 0;
+    padding-bottom: 5px;
+  }
+  div {
+    font-size: 12px;
+  }
+}
 </style>
 <style lang="less" scoped>
 .red {
@@ -357,6 +316,7 @@ export default {
 .cluster {
   .cluster_box {
     height: 100%;
+
   }
   .noText {
     display: flex;

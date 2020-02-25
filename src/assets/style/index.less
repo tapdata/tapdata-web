@@ -14,16 +14,20 @@ body{
 .fr {
   float: right;
 }
-
+.center {
+  text-align: center;
+}
 .el-input {
   .el-input__inner {
     height: 30px;
     line-height: 30px;
   }
 }
-.fun_area {
+.fun-area {
+  width: 100%;
   height: 60px;
   line-height: 60px;
+  margin: 0!important;
   background-color: #fff;
   .demo-input-suffix {
     padding-left: 50px;
@@ -67,13 +71,30 @@ body{
   }
 }
 
-.el-table {
-  .el-table td, .el-table th {
-    padding: 6px 0;
-    font-size: 12px;
+
+.el-table td, .el-table th {
+  padding: 6px 0;
+  font-size: 12px;
+  white-space: nowrap;
+  .cell {
+    white-space: nowrap;
   }
-  .el-table th>.cell {
-    font-weight: normal;
+}
+.el-table th>.cell {
+  font-weight: normal;
+}
+
+//分页
+.pagination-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  box-shadow: 0 0 3px #f8f6fa;
+  background-color: #fff;
+  .el-pagination__sizes .el-input .el-input__inner {
+    border: 0;
+    border-bottom: 1px solid #EBEEF5
   }
 }
 
