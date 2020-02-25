@@ -2,11 +2,10 @@
   <div class="tapHeader">
     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
       <el-menu-item index="1">服务集群管理</el-menu-item>
-      <!-- <el-menu-item index="2">状态日志</el-menu-item> -->
+      <el-menu-item index="2">状态日志</el-menu-item>
     </el-menu>
     <div class="main">
       <router-view/>
-
       <!-- <el-row class="fun_area">
         <el-col :span="8">
           <div class="demo-input-suffix">
