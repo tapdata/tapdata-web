@@ -69,7 +69,7 @@ export default {
       pagesize: 20,
       currpage: 0,
       totalNum: 0,
-      tableHeight: 500,
+      tableHeight: 100,
       form: {
         startDate: null,
         closeDate: null,
