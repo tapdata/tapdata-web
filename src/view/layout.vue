@@ -1,8 +1,8 @@
 <template>
   <div class="tapHeader">
     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-      <el-menu-item index="1">服务集群管理</el-menu-item>
-      <el-menu-item index="2">状态日志</el-menu-item>
+      <el-menu-item index="1"><i class="icon iconfont iconjiqunzhuangtai"></i>服务集群管理</el-menu-item>
+      <el-menu-item index="2"><i class="icon iconfont iconrizhi"></i>状态日志</el-menu-item>
     </el-menu>
     <div class="main">
       <router-view/>
