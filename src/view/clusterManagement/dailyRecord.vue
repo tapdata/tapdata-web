@@ -7,7 +7,7 @@
           <el-col :span="11">
             <el-date-picker v-model="form.startDate" type="date" :picker-options="pickerStartDate" style="width: 100%;" placeholder="选择日期"></el-date-picker>
           </el-col>
-          <el-col class="line" :span="2"> -</el-col>
+          <el-col class="line" :span="2">-</el-col>
           <el-col :span="11">
             <el-date-picker v-model="form.closeDate" type="date" :picker-options="pickerCloseDate" style="width: 100%;" placeholder="选择日期"></el-date-picker>
           </el-col>
@@ -40,13 +40,19 @@
     </el-form>
   </el-row>
   <div class="content" ref="contentHeight">
-    <el-table :data="tableData" class="tableName" border fit :tooltip-effect="dark" :height="tableHeight" style="width: 100%">
+    <el-table :data="tableData" class="tableName" border :height="tableHeight" style="width: 100%">
       <el-table-column prop="data" label="时间" width="260"></el-table-column>
       <el-table-column prop="hostname" label="主机名" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="ip" label="ip地址" width="150"></el-table-column>
       <el-table-column prop="uuid" label="唯一编码" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="threadName" label="服类类型" width="100"></el-table-column>
-      <el-table-column prop="level" label="级别" width="100"></el-table-column>
+      <el-table-column prop="level" label="级别" width="100">
+        <template slot-scope="scope">
+          <span
+            :class="scope.row.level === 'INFO' ? 'red' : ''"
+            disable-transitions>{{scope.row.level}}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="message" label="日志信息" :show-overflow-tooltip="true"></el-table-column>
     </el-table>
     <el-pagination background
@@ -66,7 +72,7 @@ import publicApi from "../../api/publicApi";
 export default {
   data(){
     return {
-      pagesize: 20,
+      pagesize: 30,
       currpage: 0,
       totalNum: 0,
       tableHeight: 100,
@@ -106,20 +112,22 @@ export default {
   },
 
   created () {
+
+  },
+  mounted(){
     let params = {
       'filter[limit]': this.pagesize,
       'filter[skip]': this.currpage,
       'filter[where][loggerName]': 'tapdataAgent',
     }
-    this.getDataApi(params)
-
-    this.getIpFn()
+    setTimeout(this.getDataApi(params),1000)
+    this.getIpFn();
   },
-
   methods: {
     //获取ip
     getIpFn() {
-      let api = '/api/clusterStates'
+      // let api = 'http://52.82.13.216:3031/api/clusterStates'
+      let api = '/api/clusterStates';
       publicApi.get(api).then(res => {
         if (res.statusText == "OK" || res.status == 200) {
           if (res.data) {
@@ -159,10 +167,10 @@ export default {
       }
     },
     //获取数据
-    async getDataApi (data) {
-      let api = '/api/Logs'
-
-      publicApi.get(api,data).then(res => {
+    async getDataApi (params) {
+      // let api = 'http://52.82.13.216:3031/api/Logs'
+      let api = '/api/Logs';
+      publicApi.get(api,params).then(res => {
         if (res.statusText == "OK" || res.status == 200) {
           if (res.data) {
             this.tableData = res.data
@@ -287,6 +295,9 @@ export default {
     padding: 10px 50px;
     box-sizing: border-box;
     background-color: #fff;
+    .red {
+      color: #F56C6C;
+    }
   }
 }
 </style>

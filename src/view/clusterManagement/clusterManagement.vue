@@ -41,14 +41,14 @@
                       <el-button
                       :type="item.management.status == 'stopped'?'primary':'info'"
                       :disabled="item.management.status == 'stopped'?false:true"
-                      @click="operationFn(item,item.management.status,'management','start')">启动</el-button>
+                      @click="startFn(item,item.management.status,'management','start')">启动</el-button>
                       <el-button
                       :type="item.management.status == 'running'?'danger':'info'"
                       :disabled="item.management.status == 'running'?false:true"
-                      @click="operationFn(item,item.management.status,'management','stop')">关闭</el-button>
+                      @click="closeFn(item,item.management.status,'management','stop')">关闭</el-button>
                       <el-button type="text"
                       :disabled="item.management.status == 'running'?false:true"
-                      @click="operationFn(item,item.management.status,'management','restart')">重启</el-button>
+                      @click="restartFn(item,item.management.status,'management','restart')">重启</el-button>
                     </div>
                   </el-col>
                 </el-row>
@@ -64,14 +64,14 @@
                       <el-button
                       :type="item.engine.status == 'stopped'?'primary':'info'"
                       :disabled="item.engine.status == 'stopped'?false:true"
-                      @click="operationFn(item,item.engine.status,'engine','start')">启动</el-button>
+                      @click="startFn(item,item.engine.status,'engine')">启动</el-button>
                       <el-button
                       :type="item.engine.status == 'running'?'danger':'info'"
                       :disabled="item.engine.status == 'running'?false:true"
-                      @click="operationFn(item,item.engine.status,'engine','stop')">关闭</el-button>
+                      @click="closeFn(item,item.engine.status,'engine')">关闭</el-button>
                       <el-button type="text"
                       :disabled="item.engine.status == 'running'?false:true"
-                      @click="operationFn(item,item.engine.status,'engine','restart')">重启</el-button>
+                      @click="restartFn(item,item.engine.status,'engine')">重启</el-button>
                     </div>
                   </el-col>
                 </el-row>
@@ -87,14 +87,14 @@
                       <el-button
                       :type="item.apiServer.status == 'stopped'?'primary':'info'"
                       :disabled="item.apiServer.status == 'stopped'?false:true"
-                      @click="operationFn(item,item.apiServer.status,'apiServer','start')">启动</el-button>
+                      @click="startFn(item,item.apiServer.status,'apiServer')">启动</el-button>
                       <el-button
                       :type="item.apiServer.status == 'running'?'danger':'info'"
                       :disabled="item.apiServer.status == 'running'?false:true"
-                       @click="operationFn(item,item.apiServer.status,'apiServer','stop')">关闭</el-button>
+                       @click="closeFn(item,item.apiServer.status,'apiServer')">关闭</el-button>
                       <el-button type="text"
                       :disabled="item.apiServer.status == 'running'?false:true"
-                       @click="operationFn(item,item.apiServer.status,'apiServer','restart')">重启</el-button>
+                       @click="restartFn(item,item.apiServer.status,'apiServer')">重启</el-button>
                     </div>
                   </el-col>
                 </el-row>
@@ -123,11 +123,7 @@ export default {
       engineState: '',
       managementState: '',
       apiServerState: '',
-      list:[],
-      serveList:[
-        {label:"正常",value:'running'},
-        {label:"停止",value:'stop'},
-      ]
+      list:[]
     }
   },
   created () {
@@ -136,34 +132,79 @@ export default {
   },
 
   methods: {
-    //重启---关闭---启动
-    async operationFn (item,status,server,opt) {
-      let flag = false;
-      if(status == "running" && (opt == "stop" || opt == "restart")) {
-        flag = true;
-      } else if(status == "stopped" && opt == "start") {
-        flag = true;
-      }
-
-      if(flag) {
-        let  data = {
+    //启动
+    startFn(item,status,server) {
+      if (status == "stopped") {
+        let data = {
           uuid: item.uuid,
           server: server,
-          operation: opt
+          operation: 'start'
         };
-        let api = 'http://52.82.13.216:3031/api/clusterStates/updataStatus';
-        await publicApi.post(api,data).then(res=>{
-          if(res.status == 200) {
-            this.getDataApi();
-          }
-        })
+        this.operationFn(data);
       }
+    },
+    //关闭
+    closeFn(item,status,server){
+      let name;
+      if(server =="apiServer") {
+        name = 'API SEVER';
+      } else if(server =="engine") {
+        name = '同步治理';
+      } else {
+        name = '管理后台';
+      }
+      if (status == "running") {
+        let data = {
+          uuid: item.uuid,
+          server: server,
+          operation: 'stop'
+        };
+        this.$confirm('确认 "'+name+'" 关闭服务？', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        }).then(() => {
+          this.operationFn(data);
+        });
+      }
+    },
+    restartFn(item,status,server) {
+      let name;
+      if(server =="apiServer") {
+        name = 'API SEVER';
+      } else if(server =="engine") {
+        name = '同步治理';
+      } else {
+        name = '管理后台';
+      }
+      if (status == "running") {
+        let data = {
+          uuid: item.uuid,
+          server: server,
+          operation: 'restart'
+        };
+        this.$confirm('确认 "'+name+'" 重启服务？', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        }).then(() => {
+          this.operationFn(data);
+        });
+      }
+    },
+    //重启---关闭---启动
+    async operationFn(data) {
+      // let api = 'http://52.82.13.216:3031/api/clusterStates/updataStatus';
+      let api = '/api/clusterStates/updataStatus';
+      await publicApi.post(api,data).then(res=>{
+        if(res.status == 200) {
+          this.getDataApi();
+        }
+      })
     },
     //筛选
     screenFn() {
       let params = {
-        'filter[where][or][0][systemInfo.hostname]': this.sourch,
-        'filter[where][or][1][systemInfo.ip]': this.sourch,
+        'filter[where][or][0][systemInfo.hostname][like]': this.sourch,
+        'filter[where][or][1][systemInfo.ip][like]': this.sourch,
       };
       if (this.sourch) {
         this.getDataApi(params);
@@ -177,13 +218,14 @@ export default {
     timer() {
       let that = this;
       return setInterval(() => {
-        that.getDataApi();
+        // that.getDataApi();
       }, 5000);
     },
 
     // 获取数据
     getDataApi (params) {
-      let api = 'http://52.82.13.216:3031/api/clusterStates';
+      // let api = 'http://52.82.13.216:3031/api/clusterStates';
+      let api = '/api/clusterStates';
       publicApi.get(api,params).then(res => {
         if (res.statusText === "OK" || res.status === 200) {
           if (res.data) {
@@ -211,6 +253,7 @@ export default {
     height: calc(100% - 60px);
     padding: 10px;
     box-sizing: border-box;
+    overflow-y: auto;
     .list {
       padding: 5px 0 10px 0;
       overflow: hidden;
@@ -235,6 +278,9 @@ export default {
             margin: 0;
             font-size: 18px;
             color: #48b6e2;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
           }
           .uuid {
             padding: 5px 0;
