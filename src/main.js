@@ -3,16 +3,16 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
-import api from './api/index';
 import store from './vuex';   // 引入全局数据控制
+import axios from 'axios';
 import 'element-ui/lib/theme-chalk/index.css';
 import ElementUI from 'element-ui';
 import VueI18n from 'vue-i18n';
+import VueCookie from 'vue-cookie';
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 Vue.use(VueI18n);
-Vue.prototype.$api = api;
-/* eslint-disable no-new */
+Vue.use(VueCookie);
 
 const i18n = new VueI18n({
   locale: 'en', // 语言标识
@@ -24,11 +24,26 @@ const i18n = new VueI18n({
 });
 
 // Vue.prototype.i18n = window.jQuery.i18n
-new Vue({
+let vm = new Vue({
   el: '#app',
   router,
   store,
   i18n,
+	axios,
   components: { App },
   template: '<App/>'
+});
+
+axios.interceptors.request.use(function (config) {
+  let access_token = vm.$cookie.get('token');
+  if (~config.url.indexOf('?')) {
+    if (!~config.url.indexOf('access_token')) {
+      config.url = `${config.url}&access_token=${access_token}`;
+    }
+  } else {
+    config.url = `${config.url}?access_token=${access_token}`;
+  }
+  return config;
+}, function (error) {
+  return Promise.reject(error);
 });
