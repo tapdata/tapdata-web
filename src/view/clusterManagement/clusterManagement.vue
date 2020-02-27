@@ -112,7 +112,8 @@
   </div>
 </template>
 <script>
-import publicApi from "../../api/publicApi";
+import factory from '../../api/factory';
+const cluster = factory('cluster');
 export default {
   data () {
     return {
@@ -124,7 +125,7 @@ export default {
       managementState: '',
       apiServerState: '',
       list:[]
-    }
+    };
   },
   created () {
     this.timer();
@@ -134,7 +135,7 @@ export default {
   methods: {
     //启动
     startFn(item,status,server) {
-      if (status == "stopped") {
+      if (status === "stopped") {
         let data = {
           uuid: item.uuid,
           server: server,
@@ -146,14 +147,14 @@ export default {
     //关闭
     closeFn(item,status,server){
       let name;
-      if(server =="apiServer") {
+      if(server ==="apiServer") {
         name = 'API SEVER';
-      } else if(server =="engine") {
+      } else if(server ==="engine") {
         name = '同步治理';
       } else {
         name = '管理后台';
       }
-      if (status == "running") {
+      if (status === "running") {
         let data = {
           uuid: item.uuid,
           server: server,
@@ -169,14 +170,14 @@ export default {
     },
     restartFn(item,status,server) {
       let name;
-      if(server =="apiServer") {
+      if(server ==="apiServer") {
         name = 'API SEVER';
-      } else if(server =="engine") {
+      } else if(server ==="engine") {
         name = '同步治理';
       } else {
         name = '管理后台';
       }
-      if (status == "running") {
+      if (status === "running") {
         let data = {
           uuid: item.uuid,
           server: server,
@@ -192,13 +193,11 @@ export default {
     },
     //重启---关闭---启动
     async operationFn(data) {
-      // let api = 'http://52.82.13.216:3031/api/clusterStates/updataStatus';
-      let api = '/api/clusterStates/updataStatus';
-      await publicApi.post(api,data).then(res=>{
-        if(res.status == 200) {
+      await cluster.post(data).then(res=>{
+        if(res.status === 200) {
           this.getDataApi();
         }
-      })
+      });
     },
     //筛选
     screenFn() {
@@ -216,7 +215,6 @@ export default {
 
     // 这是一个定时器
     timer() {
-      let that = this;
       return setInterval(() => {
         // that.getDataApi();
       }, 5000);
@@ -224,9 +222,7 @@ export default {
 
     // 获取数据
     getDataApi (params) {
-      // let api = 'http://52.82.13.216:3031/api/clusterStates';
-      let api = '/api/clusterStates';
-      publicApi.get(api,params).then(res => {
+      cluster.get(params).then(res => {
         if (res.statusText === "OK" || res.status === 200) {
           if (res.data) {
             this.list = res.data;
