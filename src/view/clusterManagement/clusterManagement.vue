@@ -129,8 +129,7 @@ export default {
   },
   created () {
     this.timer();
-    setTimeout(() => this.getDataApi(),1000);
-    
+    this.getDataApi();
   },
 
   methods: {
@@ -216,8 +215,9 @@ export default {
 
     // 这是一个定时器
     timer() {
+      let that = this;
       return setInterval(() => {
-        // that.getDataApi();
+        that.getDataApi();
       }, 5000);
     },
 
