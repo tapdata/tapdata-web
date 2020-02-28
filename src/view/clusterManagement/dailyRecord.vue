@@ -49,7 +49,7 @@
       <el-table-column prop="level" label="级别" width="100">
         <template slot-scope="scope">
           <span
-            :class="scope.row.level === 'INFO' ? 'red' : ''"
+            :class="scope.row.level === 'ERROR' ? 'red' : ''"
             disable-transitions>{{scope.row.level}}</span>
         </template>
       </el-table-column>

@@ -129,7 +129,8 @@ export default {
   },
   created () {
     this.timer();
-    this.getDataApi();
+    setTimeout(() => this.getDataApi(),1000);
+    
   },
 
   methods: {
