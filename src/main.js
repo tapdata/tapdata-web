@@ -5,7 +5,6 @@ import App from './App';
 import router from './router';
 import store from './vuex';   // 引入全局数据控制
 import axios from 'axios';
-// import ElementUI from 'element-ui';
 import VueI18n from 'vue-i18n';
 import VueCookie from 'vue-cookie';
 
@@ -13,7 +12,6 @@ import './plugins/element.js'
 import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.config.productionTip = false;
-// Vue.use(ElementUI);
 Vue.use(VueI18n);
 Vue.use(VueCookie);
 
