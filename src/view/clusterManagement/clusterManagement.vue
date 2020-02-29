@@ -195,7 +195,7 @@ export default {
     //重启---关闭---启动
     async operationFn(data) {
       await cluster.updateStatus(data).then(res=>{
-        if(res.statusText === "OK") {
+        if(res.statusText === "OK" || res.status === 200) {
           this.getDataApi();
         }
       });
@@ -224,7 +224,7 @@ export default {
     // 获取数据
     getDataApi (params) {
       cluster.get(params).then(res => {
-        if (res.statusText === "OK") {
+        if (res.statusText === "OK" || res.status === 200) {
           if (res.data) {
             this.list = res.data;
           }
