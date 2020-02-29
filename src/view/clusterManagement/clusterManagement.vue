@@ -3,17 +3,18 @@
     <!-- 服务集群管理 -->
     <div class="cluster-box">
       <el-row class="fun-area" :gutter="10" >
-        <el-col :span="12">
+        <el-col :span="8">
           <div class="demo-input-suffix">
             <span>名称搜索：</span>
             <el-input
               placeholder="请输入服务器名称"
               clearable
+              @keyup.enter ="screenFn"
               v-model="sourch">
             </el-input>
           </div>
         </el-col>
-        <el-col class="text-rf screen" :span="2" :offset="9">
+        <el-col class="text-rf screen" :span="2">
           <el-button type="primary" @click="screenFn">筛选</el-button>
         </el-col>
       </el-row>
