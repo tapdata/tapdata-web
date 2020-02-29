@@ -130,7 +130,7 @@ export default {
     getIpFn() {
       // let api = 'http://52.82.13.216:3031/api/clusterStates'
 		cluster.get().then(res => {
-        if (res.statusText == "OK" || res.status == 200) {
+        if (res.statusText === "OK" || res.status === 200) {
           if (res.data) {
             res.data.forEach(item => {
               this.ipList.push({value:item.systemInfo.ip});
@@ -153,7 +153,7 @@ export default {
       };
       let obj={};
       for(let i in params){
-        if(!!params[i]){
+        if(params[i]){
           obj[i] = params[i];
         }
       }
@@ -170,7 +170,7 @@ export default {
     //获取数据
     async getDataApi (params) {
       logs.get(params).then(res => {
-        if (res.statusText == "OK" || res.status == 200) {
+        if (res.statusText === "OK" || res.status === 200) {
           if (res.data) {
             this.tableData = res.data;
           }

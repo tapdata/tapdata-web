@@ -8,7 +8,7 @@ import axios from 'axios';
 import VueI18n from 'vue-i18n';
 import VueCookie from 'vue-cookie';
 
-import './plugins/element.js'
+import './plugins/element.js';
 import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.config.productionTip = false;
