@@ -158,14 +158,6 @@ export default {
         }
       }
       this.getDataApi(obj);
-
-      this.form = {
-        closeDate: '',
-        startDate: '',
-        level: '',
-        serverType: '',
-        ip: ''
-      };
     },
     //获取数据
     async getDataApi (params) {

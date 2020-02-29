@@ -210,7 +210,6 @@ export default {
       } else {
         this.getDataApi();
       }
-      this.sourch = '';
     },
 
     // 这是一个定时器
