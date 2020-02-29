@@ -7,13 +7,12 @@ import axios from 'axios';
 import PublicAPI from "./publicApi";
 
 export default class ClusterAPI extends PublicAPI{
-
 	constructor(){
 		super('/api/clusterStates');
 	}
 
 	updateStatus(params){
-		return axios.post(this.url + '/api/clusterStates/updataStatus', params);
+		return axios.post(this.url + '/updataStatus', params);
 	}
 
 }
