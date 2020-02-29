@@ -12,7 +12,7 @@ export default {
 };
 </script>
 <style>
-@import 'assets/style/font/iconfont';
+@import 'assets/style/font/iconfont.css';
 </style>
 <style lang='less'>
 @import 'assets/style/index.less';
