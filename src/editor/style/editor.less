@@ -1,7 +1,9 @@
 @import "./iconfont/iconfont.css";
 @import "../lib/rappid/rappid.css";
+@import "../lib/rappid/themes/style.default.css";
 
-@borderColor: #ddd;
+@borderColor: #d3d3d3;
+@selectedColor: #d3d3d3;
 
 .editor-container {
 	height: 100%;
@@ -23,7 +25,8 @@
 		}
 
 		.e-header/*, .e-footer*/ {
-			height: 30px;
+			height: 40px;
+			overflow: hidden;
 		}
 
 		.e-header{
@@ -39,7 +42,9 @@
 			align-items: center;
 			position: relative;
 
-			.e-sidebar, .e-content {
+			.e-sidebar,
+			.e-sidebar .e-sidebar-content,
+			.e-content {
 				height: 100%;
 				position: relative;
 			}
@@ -48,13 +53,23 @@
 				flex: 1;
 				overflow: hidden;
 
+				.navigator-container {
+					position: absolute;
+					right: 20px;
+					bottom: 20px;
+					width: 150px;
+					height: 150px;
+					z-index: 100;
+					background: #fff;
+				}
+
 				.joint-paper-scroller {
 					overflow: auto;
 				}
 			}
 
 			.e-sidebar-left, .e-sidebar-right {
-				width: 300px;
+				width: 240px;
 			}
 
 			.e-sidebar-right.fixed, .e-sidebar-left.fixed {
@@ -85,13 +100,17 @@
 				justify-content: center;
 				align-items: center;
 				color: rgba(0,0,0,0.3);
+				z-index: 100000;
+
+				position: absolute;
+				top: 0;
 
 				&.e-slider-left{
-					float: right;
+					right: 0;
 					margin-right: -3px;
 				}
 				&.e-slider-right{
-					float: left;
+					left: 0;
 					margin-left: -3px;
 				}
 
@@ -100,6 +119,65 @@
 				}
 			}
 
+			.e-tab-panel {
+				display: flex;
+				justify-content: left;
+				flex-flow: column nowrap;
+				height: 100%;
+
+				//border: 1px solid @borderColor;
+
+				.e-tab-bar {
+
+					border-bottom: 1px solid @borderColor;
+
+					display: flex;
+					flex-flow: row wrap;
+					justify-content: flex-start;
+					align-items: center;
+
+					.e-tab-title{
+						line-height: 30px;
+						padding: 0 5px;
+						border-right: 1px solid @borderColor;
+						border-top: 1px solid @borderColor;
+						cursor: default;
+						background: #d3d3d3;
+
+						margin-bottom: -1px;
+
+						&:first-child {
+							border-left: 1px solid @borderColor;
+							margin-left: -1px;
+						}
+
+						&:hover{
+							background: #eeeeee;
+						}
+						&.active{
+							background: #ffffff;
+						}
+					}
+				}
+				.e-tab-content {
+					flex: 1;
+
+					.e-tab {
+						height: 100%;
+						overflow: auto;
+						display: none;
+
+						&.active {
+							display: block;
+						}
+					}
+				}
+			}
+
+			.e-panel {
+				position: relative;
+				height: 100%;
+			}
 		}
 
 	}

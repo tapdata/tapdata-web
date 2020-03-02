@@ -9,16 +9,13 @@ import {EditorEventType} from "./events";
 export default class Sidebar extends Component{
 
 	constructor(opts) {
-		super(opts);
+		super(Object.assign({
+			region: 'left',
+			split: true,
+			maxWidth: 400,
+			minWidth: 180
+		}, opts));
 
-		this.selector = opts.selector;
-
-		/**
-		 * left, right
-		 */
-		this.region = opts.region;
-
-		this.split = false;
 		this.splitEl = null;
 
 		this.minWidth = 180;
@@ -28,10 +25,14 @@ export default class Sidebar extends Component{
 	}
 
 	doInit(){
-		this.el = $(`<div class="e-sidebar e-sidebar-${this.region}"></div>`);
+		this.el = $(`<div class="e-sidebar e-sidebar-${this.region}"><div class="e-sidebar-content"></div></div>`);
 		this.splitEl = $(`<div class="e-slider e-slider-${this.region}"><!--||--></div>`);
 
-		this.enableSplit();
+		if( this.split )
+			this.enableSplit();
+		else
+			this.disableSplit();
+
 	}
 
 	enableSplit(){
@@ -83,5 +84,14 @@ export default class Sidebar extends Component{
 			window.addEventListener('mouseup', mouseUp);
 		});
 
+	}
+
+	disableSplit(){
+		this.split = false;
+		this.splitEl.remove();
+	}
+
+	getContentEl(){
+		return this.el.find('.e-sidebar-content');
 	}
 }

@@ -6,6 +6,8 @@
 import Backbone from 'backbone';
 import _ from 'lodash';
 import $ from 'jquery';
+import dagre from 'dagre';
+import graphlib from 'graphlib';
 const context = {
 	joint: {},
 	Backbone: Backbone,

@@ -1,0 +1,37 @@
+@font-face {
+	font-family: 'toolbar-icons-default';
+	src: url('./toolbar-icons-default.woff') format('woff');
+}
+
+.joint-widget.joint-theme-default[data-name="clear"]:after,
+.joint-widget.joint-theme-default[data-name="layout"]:after,
+.joint-widget.joint-theme-default[data-name="print"]:after {
+	font-family: "toolbar-icons-default", serif;
+	font-style: normal;
+	font-weight: normal;
+	display: inline-block;
+	margin: auto;
+	text-align: center;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1em;
+	font-size: 15px;
+}
+
+.joint-widget.joint-theme-default[data-name="clear"]:after {
+	content: '\e850';
+}
+.joint-widget.joint-theme-default[data-name="layout"]:after {
+	content: '\e853';
+}
+.joint-widget.joint-theme-default[data-name="print"]:after {
+	content: '\e851';
+}
+
+.joint-stencil .groups-toggle {
+	display: none;
+}
+.joint-toolbar.joint-theme-default,
+.joint-stencil.joint-theme-default {
+	border: none;
+}

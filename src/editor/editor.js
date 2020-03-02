@@ -22,7 +22,7 @@ export default class Editor extends BaseObject {
 		this.ui.render(this.container);
 
 		this.graph = new Graph({
-			parent: this.ui,
+			ui: this.ui,
 			container: this.ui.getContentEl()
 		});
 	}

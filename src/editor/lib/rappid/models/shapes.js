@@ -6,82 +6,10 @@
 import _ from 'lodash';
 export default (joint) => {
 
-	joint.shapes.standard.Ellipse.define('app.CircularModel', {
+	joint.shapes.standard.Rectangle.define('app.SourceDB', {
 		attrs: {
 			root: {
-				magnet: false
-			}
-		},
-		ports: {
-			groups: {
-				'in': {
-					markup: [{
-						tagName: 'circle',
-						selector: 'portBody',
-						attributes: {
-							'r': 10
-						}
-					}],
-					attrs: {
-						portBody: {
-							magnet: true,
-							fill: '#61549c',
-							strokeWidth: 0
-						},
-						portLabel: {
-							fontSize: 11,
-							fill: '#61549c',
-							fontWeight: 800
-						}
-					},
-					position: {
-						name: 'ellipse',
-						args: {
-							startAngle: 0,
-							step: 30
-						}
-					},
-					label: {
-						position: {
-							name: 'radial',
-							args: null
-						}
-					}
-				},
-				'out': {
-					markup: [{
-						tagName: 'circle',
-						selector: 'portBody',
-						attributes: {
-							'r': 10
-						}
-					}],
-					attrs: {
-						portBody: {
-							magnet: true,
-							fill: '#61549c',
-							strokeWidth: 0
-						},
-						portLabel: {
-							fontSize: 11,
-							fill: '#61549c',
-							fontWeight: 800
-						}
-					},
-					position: {
-						name: 'ellipse',
-						args: {
-							startAngle: 180,
-							step: 30
-						}
-					},
-					label: {
-						position: {
-							name: 'radial',
-							args: null
-						}
-					}
-				}
+				magnet: true
 			}
 		}
 	}, {
@@ -90,80 +18,13 @@ export default (joint) => {
 			selector: 'portLabel'
 		}]
 	});
+	joint.shapes.standard.Rectangle.define('app.TargetDB', {
 
-	joint.shapes.standard.Rectangle.define('app.RectangularModel', {
 		attrs: {
 			root: {
-				magnet: false
-			}
-		},
-		ports: {
-			groups: {
-				'in': {
-					markup: [{
-						tagName: 'circle',
-						selector: 'portBody',
-						attributes: {
-							'r': 10
-						}
-					}],
-					attrs: {
-						portBody: {
-							magnet: true,
-							fill: '#61549c',
-							strokeWidth: 0
-						},
-						portLabel: {
-							fontSize: 11,
-							fill: '#61549c',
-							fontWeight: 800
-						}
-					},
-					position: {
-						name: 'left'
-					},
-					label: {
-						position: {
-							name: 'left',
-							args: {
-								y: 0
-							}
-						}
-					}
-				},
-				'out': {
-					markup: [{
-						tagName: 'circle',
-						selector: 'portBody',
-						attributes: {
-							'r': 10
-						}
-					}],
-					position: {
-						name: 'right'
-					},
-					attrs: {
-						portBody: {
-							magnet: true,
-							fill: '#61549c',
-							strokeWidth: 0
-						},
-						portLabel: {
-							fontSize: 11,
-							fill: '#61549c',
-							fontWeight: 800
-						}
-					},
-					label: {
-						position: {
-							name: 'right',
-							args: {
-								y: 0
-							}
-						}
-					}
-				}
-			}
+				magnet: true
+			},
+
 		}
 	}, {
 		portLabelMarkup: [{
@@ -225,10 +86,10 @@ export default (joint) => {
 	}, {
 
 		connectionPoint: function(line, view, magnet, opt, type, linkView) {
-			var markerWidth = linkView.model.getMarkerWidth(type);
+			let markerWidth = linkView.model.getMarkerWidth(type);
 			opt = { offset: markerWidth, stroke: true };
 			// connection point for UML shapes lies on the root group containg all the shapes components
-			var modelType = view.model.get('type');
+			let modelType = view.model.get('type');
 			if (modelType.indexOf('uml') === 0) opt.selector = 'root';
 			// taking the border stroke-width into account
 			if (modelType === 'standard.InscribedImage') opt.selector = 'border';
