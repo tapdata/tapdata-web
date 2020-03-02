@@ -31,6 +31,60 @@
 
 		.e-header{
 			border-bottom: 1px solid @borderColor;
+
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			flex-direction: row;
+
+			.e-title {
+				box-sizing: border-box;
+				width: 240px;
+				padding: 0 12px;
+			}
+
+			.e-toolbar-container {
+
+				flex: 1;
+
+				display: flex;
+				justify-content: flex-start;
+				align-items: center;
+				flex-direction: row;
+
+				.action-toolbar {
+					flex: 1;
+
+					text-align: right;
+					padding: 0 12px;
+
+					button{
+						margin-left: 2px;
+						text-align: center;
+						flex-shrink: 1;
+
+						outline: 0;
+						cursor: pointer;
+						color: #fff;
+						padding: 5px;
+						background: #409eff;
+						border: 1px solid #409eff;
+						min-width: 30px;
+						min-height: 30px;
+						font-size: 12px;
+						border-radius: 4px;
+
+						&:hover {
+							background: #5daeff;
+						}
+
+						&[data-type=save]:after {
+							content: 'Save';
+						}
+					}
+
+				}
+			}
 		}
 
 		.e-body {

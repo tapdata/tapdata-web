@@ -20,7 +20,17 @@ export default class UI extends Component {
 
 	doInit() {
 		this.el = $(`<div class="editor">
-			<div class="e-header"><div class="toolbar-container"></div></div>
+			<div class="e-header">
+				<div class="e-title">
+					<h3 contenteditable="true">任务</h3>
+				</div>
+				<div class="e-toolbar-container">
+					<div class="graph-toolbar"></div>
+					<div class="action-toolbar">
+						<button data-type="save"></button>
+					</div>
+				</div>
+			</div>
 			<div class="e-body">
 				<div class="e-content"><div class="navigator-container"></div></div>
 			</div>
@@ -45,6 +55,13 @@ export default class UI extends Component {
 
 		let rightTabPanel = this.rightTabPanel = new Tab();
 		this.rightSidebar.add(rightTabPanel);
+
+		this.el.find('.action-toolbar button[data-type=save]').on('click', ()=>{
+			let data = {
+				name: this.el.find('.e-title h3').text()
+			};
+			this.emit('save', data);
+		});
 	}
 	getContentEl(){
 		return this.el.find('.e-content');
@@ -59,6 +76,9 @@ export default class UI extends Component {
 		return this.el.find('.navigator-container');
 	}
 	getToolbarEl(){
-		return this.el.find('.toolbar-container');
+		return this.el.find('.e-toolbar-container');
+	}
+	getGraphToolbarEl(){
+		return this.el.find('.e-toolbar-container .graph-toolbar');
 	}
 }

@@ -25,7 +25,7 @@ export const toolbarConfig = {
 				button: {
 					'data-tooltip': 'Undo',
 					'data-tooltip-position': 'top',
-					'data-tooltip-position-selector': '.toolbar-container'
+					'data-tooltip-position-selector': '.graph-toolbar'
 				}
 			}
 		},
@@ -37,7 +37,7 @@ export const toolbarConfig = {
 				button: {
 					'data-tooltip': 'Redo',
 					'data-tooltip-position': 'top',
-					'data-tooltip-position-selector': '.toolbar-container'
+					'data-tooltip-position-selector': '.graph-toolbar'
 				}
 			}
 		},
@@ -50,7 +50,7 @@ export const toolbarConfig = {
 					id: 'btn-clear',
 					'data-tooltip': 'Clear Paper',
 					'data-tooltip-position': 'top',
-					'data-tooltip-position-selector': '.toolbar-container'
+					'data-tooltip-position-selector': '.graph-toolbar'
 				}
 			}
 		},
@@ -64,11 +64,11 @@ export const toolbarConfig = {
 					id: 'btn-svg',
 					'data-tooltip': 'Open as SVG in a pop-up',
 					'data-tooltip-position': 'top',
-					'data-tooltip-position-selector': '.toolbar-container'
+					'data-tooltip-position-selector': '.graph-toolbar'
 				}
 			}
 		},
-		{
+		/*{
 			type: 'button',
 			name: 'png',
 			group: 'export',
@@ -78,11 +78,11 @@ export const toolbarConfig = {
 					id: 'btn-png',
 					'data-tooltip': 'Open as PNG in a pop-up',
 					'data-tooltip-position': 'top',
-					'data-tooltip-position-selector': '.toolbar-container'
+					'data-tooltip-position-selector': '.graph-toolbar'
 				}
 			}
-		},
-		{
+		},*/
+		/*{
 			type: 'button',
 			name: 'print',
 			group: 'print',
@@ -91,11 +91,11 @@ export const toolbarConfig = {
 					id: 'btn-print',
 					'data-tooltip': 'Open a Print Dialog',
 					'data-tooltip-position': 'top',
-					'data-tooltip-position-selector': '.toolbar-container'
+					'data-tooltip-position-selector': '.graph-toolbar'
 				}
 			}
-		},
-		{
+		},*/
+		/*{
 			type: 'button',
 			name: 'to-front',
 			group: 'order',
@@ -105,7 +105,7 @@ export const toolbarConfig = {
 					id: 'btn-to-front',
 					'data-tooltip': 'Bring Object to Front',
 					'data-tooltip-position': 'top',
-					'data-tooltip-position-selector': '.toolbar-container'
+					'data-tooltip-position-selector': '.graph-toolbar'
 				}
 			}
 		},
@@ -119,10 +119,10 @@ export const toolbarConfig = {
 					id: 'btn-to-back',
 					'data-tooltip': 'Send Object to Back',
 					'data-tooltip-position': 'top',
-					'data-tooltip-position-selector': '.toolbar-container'
+					'data-tooltip-position-selector': '.graph-toolbar'
 				}
 			}
-		},
+		},*/
 		{
 			type: 'button',
 			group: 'layout',
@@ -132,7 +132,7 @@ export const toolbarConfig = {
 					id: 'btn-layout',
 					'data-tooltip': 'Auto-layout Graph',
 					'data-tooltip-position': 'top',
-					'data-tooltip-position-selector': '.toolbar-container'
+					'data-tooltip-position-selector': '.graph-toolbar'
 				}
 			}
 		},
@@ -144,7 +144,7 @@ export const toolbarConfig = {
 				button: {
 					'data-tooltip': 'Zoom To Fit',
 					'data-tooltip-position': 'top',
-					'data-tooltip-position-selector': '.toolbar-container'
+					'data-tooltip-position-selector': '.graph-toolbar'
 				}
 			}
 		},
@@ -156,7 +156,7 @@ export const toolbarConfig = {
 				button: {
 					'data-tooltip': 'Zoom Out',
 					'data-tooltip-position': 'top',
-					'data-tooltip-position-selector': '.toolbar-container'
+					'data-tooltip-position-selector': '.graph-toolbar'
 				}
 			}
 		},
@@ -179,7 +179,7 @@ export const toolbarConfig = {
 				button: {
 					'data-tooltip': 'Zoom In',
 					'data-tooltip-position': 'top',
-					'data-tooltip-position-selector': '.toolbar-container'
+					'data-tooltip-position-selector': '.graph-toolbar'
 				}
 			}
 		},
@@ -196,7 +196,7 @@ export const toolbarConfig = {
 				label: {
 					'data-tooltip': 'Change Grid Size',
 					'data-tooltip-position': 'top',
-					'data-tooltip-position-selector': '.toolbar-container'
+					'data-tooltip-position-selector': '.graph-toolbar'
 				}
 			}
 		},
@@ -218,7 +218,7 @@ export const toolbarConfig = {
 				button: {
 					'data-tooltip': 'Toggle Fullscreen Mode',
 					'data-tooltip-position': 'top',
-					'data-tooltip-position-selector': '.toolbar-container'
+					'data-tooltip-position-selector': '.graph-toolbar'
 				}
 			}
 		}

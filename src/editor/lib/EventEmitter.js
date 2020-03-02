@@ -265,11 +265,11 @@ export default class EventEmitter {
 			args = new Array(len - 1);
 
 			while (len--) {
-				if (len === 1) {
+				if (len === 0) {
 					// We do not need first argument.
 					break;
 				}
-				args[len] = arguments[len];
+				args[len - 1] = arguments[len];
 			}
 		}
 
@@ -277,9 +277,9 @@ export default class EventEmitter {
 			current = custom[i];
 
 			if (arguments.length > 1) {
-				current.callback.call(current.context, args);
+				current.callback.apply(current.context, args);
 			} else {
-				current.callback.call(current.context);
+				current.callback.apply(current.context);
 			}
 		}
 

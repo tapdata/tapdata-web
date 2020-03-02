@@ -365,7 +365,7 @@ export default class Graph extends Component{
 			'grid-size:change': this.paper.setGridSize.bind(this.paper)
 		});
 
-		this.ui.getToolbarEl().append(toolbar.el);
+		this.ui.getGraphToolbarEl().append(toolbar.el);
 		toolbar.render();
 	}
 
@@ -527,5 +527,13 @@ export default class Graph extends Component{
 			this.snaplines.stopListening();
 			this.stencil.options.snaplines = null;
 		}
+	}
+
+	getData(){
+		return this.graph.toJSON();
+	}
+
+	loadData(jsonObject){
+		return this.graph.fromJSON(jsonObject);
 	}
 }
