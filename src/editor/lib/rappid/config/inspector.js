@@ -3,7 +3,7 @@
  * @date 2/29/20
  * @description
  */
-const options = {
+export const options = {
 
 	colorPalette: [
 		{content: 'transparent', icon: 'static/editor/transparent-icon.svg'},
@@ -183,7 +183,7 @@ const options = {
 
 export const inspectorConfig = {
 
-	'app.Link': {
+	/*'app.Link': {
 		inputs: {
 			attrs: {
 				line: {
@@ -561,7 +561,7 @@ export const inspectorConfig = {
 				index: 2
 			}
 		}
-	},
+	},*/
 	'standard.Rectangle': {
 		inputs: {
 			attrs: {

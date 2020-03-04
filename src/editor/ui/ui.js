@@ -3,7 +3,7 @@
  * @date 2/26/20
  * @description
  */
-import Component from "./lib/Component";
+import Component from "../lib/Component";
 import $ from 'jquery';
 import Sidebar from "./sidebar";
 import Tab from "./tab";
@@ -47,7 +47,8 @@ export default class UI extends Component {
 			region: 'right',
 			editor: this.editor,
 			hidden: true,
-			maxWidth: 600
+			maxWidth: 600,
+			width: 350
 		});
 
 		this.leftSidebar.render(this.el.find('.e-body'), true);

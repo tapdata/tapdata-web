@@ -4,24 +4,33 @@
  * @description
  */
 import Vue from 'vue';
-import SourceDB from '../view/job/SourceDB';
-import TargetDB from '../view/job/TargetDB';
-import Link from '../view/job/Link';
+// import SourceDB from '../view/job/SourceDB';
+// import TargetDB from '../view/job/TargetDB';
+// import Link from '../view/job/Link';
 
 export const formConfig = {
-	'app.SourceDB': SourceDB,
-	'app.TargetDB': TargetDB,
-	'app.Link': Link,
+	// 'app.SourceDB': SourceDB,
+	// 'app.TargetDB': TargetDB,
+	// 'app.Link': Link,
 };
 
+//const privateMap = new WeakMap();
+let vm = null;
 export const render = function(containerEl, name, data, callback){
 	if( formConfig[name] ){
 		let vueComponentConfig = formConfig[name];
-		let vm = new Vue({
-			el: containerEl,
+		if( vm ){
+			vm.$destroy();
+		}
+		vm = new Vue({
+			//el: containerEl,
 			components: { CustomComponent: vueComponentConfig },
 			template: '<CustomComponent ref="customComponent"/>'
 		});
+
+		let vueContainerDom = document.createElement('div');
+		containerEl.append(vueContainerDom);
+		vm.$mount(vueContainerDom);
 
 		if( data ) {
 			if( typeof vm.$refs.customComponent.setData === "function"){

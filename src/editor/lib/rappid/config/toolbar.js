@@ -149,6 +149,10 @@ export const toolbarConfig = {
 			}
 		},
 		{
+			type: 'separator',
+			group: 'zoom'
+		},
+		{
 			type: 'zoom-out',
 			name: 'zoom-out',
 			group: 'zoom',

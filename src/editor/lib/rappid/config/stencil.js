@@ -10,63 +10,66 @@ export const stencilConfig = {
 		standard: {index: 3, label: 'Standard shapes', closed: true},
 	},
 	shapes: {
-		data: [{
-			type: 'app.SourceDB',
-			size: {width: 5, height: 3},
-			attrs: {
-				root: {
-					dataTooltip: 'Rectangle',
-					dataTooltipPosition: 'left',
-					dataTooltipPositionSelector: '.joint-stencil'
-				},
-				body: {
-					rx: 2,
-					ry: 2,
-					width: 50,
-					height: 30,
-					fill: '#f6f6f6',
-					stroke: '#008cee',
-					strokeWidth: 2,
-					strokeDasharray: '0'
-				},
-				label: {
-					text: 'Source Database',
-					fill: '#555555',
-					fontFamily: 'Roboto Condensed',
-					fontWeight: 'Normal',
-					fontSize: 13,
-					strokeWidth: 0
+		data: [
+			/*{
+				type: 'app.SourceDB',
+				size: {width: 5, height: 3},
+				attrs: {
+					root: {
+						dataTooltip: 'Rectangle',
+						dataTooltipPosition: 'left',
+						dataTooltipPositionSelector: '.joint-stencil'
+					},
+					body: {
+						rx: 2,
+						ry: 2,
+						width: 50,
+						height: 30,
+						fill: '#f6f6f6',
+						stroke: '#008cee',
+						strokeWidth: 2,
+						strokeDasharray: '0'
+					},
+					label: {
+						text: 'Source Database',
+						fill: '#555555',
+						fontFamily: 'Roboto Condensed',
+						fontWeight: 'Normal',
+						fontSize: 13,
+						strokeWidth: 0
+					}
 				}
-			}
-		}, {
-			type: 'app.TargetDB',
-			size: {width: 5, height: 3},
-			attrs: {
-				root: {
-					dataTooltip: 'Rectangle',
-					dataTooltipPosition: 'left',
-					dataTooltipPositionSelector: '.joint-stencil'
-				},
-				body: {
-					rx: 2,
-					ry: 2,
-					width: 50,
-					height: 30,
-					fill: '#f6f6f6',
-					stroke: '#008cee',
-					strokeWidth: 2,
-					strokeDasharray: '0'
-				},
-				label: {
-					text: 'Target Database',
-					fill: '#555555',
-					fontFamily: 'Roboto Condensed',
-					fontWeight: 'Normal',
-					fontSize: 13,
-					strokeWidth: 0
+			},
+			{
+				type: 'app.TargetDB',
+				size: {width: 5, height: 3},
+				attrs: {
+					root: {
+						dataTooltip: 'Rectangle',
+						dataTooltipPosition: 'left',
+						dataTooltipPositionSelector: '.joint-stencil'
+					},
+					body: {
+						rx: 2,
+						ry: 2,
+						width: 50,
+						height: 30,
+						fill: '#f6f6f6',
+						stroke: '#008cee',
+						strokeWidth: 2,
+						strokeDasharray: '0'
+					},
+					label: {
+						text: 'Target Database',
+						fill: '#555555',
+						fontFamily: 'Roboto Condensed',
+						fontWeight: 'Normal',
+						fontSize: 13,
+						strokeWidth: 0
+					}
 				}
-			}
-		}],
+			}*/
+		],
 		processor: [],
 		standard: [
 			{

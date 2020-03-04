@@ -3,7 +3,7 @@
  * @date 3/1/20
  * @description
  */
-import Component from "./lib/Component";
+import Component from "../lib/Component";
 import $ from 'jquery';
 
 export default class Tab extends Component{
@@ -34,7 +34,7 @@ export default class Tab extends Component{
 
 		tab.id = self.generatorId();
 
-		let titleEl = $(`<div class="e-tab-title">${tab.title}</div>`);
+		let titleEl = $(`<div class="e-tab-title">${tab.title || tab.opts.title}</div>`);
 		let tabEl = $(`<div class="e-tab"></div>`);
 
 		titleEl.attr('data-target', `${tab.id}`);

@@ -4,14 +4,14 @@
  * @description
  */
 import BaseObject from './BaseObject';
-import {EditorEventType} from "../events";
+import {EditorEventType} from "./events";
 import $ from 'jquery';
 export default class Component extends BaseObject{
 
 	constructor(opts){
 		super();
 
-		Object.assign(this, {
+		this.opts =  Object.assign( {
 			hidden: false
 		}, opts || {});
 
@@ -24,7 +24,7 @@ export default class Component extends BaseObject{
 		this.doInit();
 		this.emit(EditorEventType.INIT, this);
 
-		if( this.hidden === true) {
+		if( this.opts.hidden === true) {
 			this.hide();
 		}
 	}
@@ -84,16 +84,21 @@ export default class Component extends BaseObject{
 	}
 
 	show(){
-		if( this.hidden){
-			this.el.show();
-			this.hidden = true;
-		}
+		this.el.show();
+		this.opts.hidden = false;
 	}
 
 	hide() {
-		if( !this.hidden ){
-			this.el.hide();
+		this.el.hide();
+		this.opts.hidden = true;
+	}
+
+	getChildByName(name){
+		for (let i = 0; i < this.childs.length; i++) {
+			if( this.childs[i].opts && this.childs[i].opts.name === name)
+				return this.childs[i];
 		}
+		return null;
 	}
 
 }

@@ -3,9 +3,9 @@
  * @date 2/26/20
  * @description
  */
-import Component from "./lib/Component";
+import Component from "../lib/Component";
 import $ from 'jquery';
-import {EditorEventType} from "./events";
+import {EditorEventType} from "../lib/events";
 export default class Sidebar extends Component{
 
 	constructor(opts) {
@@ -18,27 +18,28 @@ export default class Sidebar extends Component{
 
 		this.splitEl = null;
 
-		this.minWidth = 180;
-		this.maxWidth = 400;
-
 		this.init();
 	}
 
 	doInit(){
-		this.el = $(`<div class="e-sidebar e-sidebar-${this.region}"><div class="e-sidebar-content"></div></div>`);
-		this.splitEl = $(`<div class="e-slider e-slider-${this.region}"><!--||--></div>`);
+		this.el = $(`<div class="e-sidebar e-sidebar-${this.opts.region}"><div class="e-sidebar-content"></div></div>`);
+		this.splitEl = $(`<div class="e-slider e-slider-${this.opts.region}"><!--||--></div>`);
 
-		if( this.split )
+		if( this.opts.split )
 			this.enableSplit();
 		else
 			this.disableSplit();
+
+		if( this.opts.width ){
+			this.width(this.opts.width);
+		}
 
 	}
 
 	enableSplit(){
 		const self = this;
 
-		self.split = true;
+		self.opts.split = true;
 		self.el.append(self.splitEl);
 
 		let overlayEl = null;
@@ -56,16 +57,16 @@ export default class Sidebar extends Component{
 				self.splitEl.addClass('active');
 
 				let offsetX = e.clientX - startX;
-				let _width = self.region === 'left' ? startWidth + offsetX : startWidth - offsetX;
+				let _width = self.opts.region === 'left' ? startWidth + offsetX : startWidth - offsetX;
 
-				if( self.minWidth )
-					_width = _width < self.minWidth ? self.minWidth : _width;
-				if( self.maxWidth )
-					_width = _width > self.maxWidth ? self.maxWidth : _width;
+				if( self.opts.minWidth )
+					_width = _width < self.opts.minWidth ? self.opts.minWidth : _width;
+				if( self.opts.maxWidth )
+					_width = _width > self.opts.maxWidth ? self.opts.maxWidth : _width;
 
 				if( self.el.width() !== _width){
 
-					self.el.width(_width);
+					self.width(_width);
 					self.emit(EditorEventType.RESIZE, _width, startHeight, startWidth, startHeight, e);
 
 				}
@@ -86,8 +87,34 @@ export default class Sidebar extends Component{
 
 	}
 
+	width(w){
+		let self = this;
+		if( w ){
+			let _width = self.el.width();
+			let _height = self.el.height();
+
+			self.el.width(w);
+			self.emit(EditorEventType.RESIZE, _width, _height, w, _height);
+		} else {
+			return this.el.width();
+		}
+	}
+
+	height(h){
+		let self = this;
+		if( h ){
+			let _width = self.el.width();
+			let _height = self.el.height();
+
+			self.el.height(h);
+			self.emit(EditorEventType.RESIZE, _width, _height, _width, h);
+		} else {
+			return this.el.width();
+		}
+	}
+
 	disableSplit(){
-		this.split = false;
+		this.opts.split = false;
 		this.splitEl.remove();
 	}
 

@@ -3,17 +3,17 @@
  * @date 2/27/20
  * @description
  */
-import Component from "./lib/Component";
+import Component from "../lib/Component";
 
 import _ from 'lodash';
-import joint from './lib/rappid/rappid';
-import shapes from './lib/rappid/models/shapes';
-import navigatorElementView from './lib/rappid/view/navigator';
+import joint from '../lib/rappid/rappid';
+//import shapes from '../lib/rappid/models/shapes';
+import navigatorElementView from '../lib/rappid/view/navigator';
 import dagre from 'dagre';
 import Panel from "./panel";
-import {stencilConfig, selectionConfig, haloConfig, inspectorConfig, toolbarConfig} from "./lib/rappid/config";
+import {stencilConfig, selectionConfig, haloConfig, inspectorConfig, toolbarConfig} from "../lib/rappid/config";
 //import {renderForm} from "./inspector";
-import {render} from './formConfig';
+import {render} from '../formConfig';
 
 window.joint = joint;
 window.dagre = dagre;
@@ -42,7 +42,7 @@ export default class Graph extends Component{
 	initGraph(){
 		let self = this;
 
-		shapes(joint);
+		//shapes(joint);
 
 		const graph = this.graph = new joint.dia.Graph;
 
@@ -68,6 +68,9 @@ export default class Graph extends Component{
 
 		paper.on('blank:mousewheel',  _.partial(this.onMousewheel, null), this);
 		paper.on('cell:mousewheel', this.onMousewheel, this);
+		paper.on('blank:pointerclick', () => {
+			this.ui.rightSidebar.hide();
+		});
 
 		this.snaplines = new joint.ui.Snaplines({ paper: paper });
 
@@ -240,26 +243,36 @@ export default class Graph extends Component{
 	createInspector(cell) {
 
 		let self = this;
-		let settings = new Panel({
-			title: 'Settings'
-		});
-
-		let styles = new Panel({
-			title: 'Styles'
-		});
-
-		self.ui.rightTabPanel.removeAll();
-		self.ui.rightTabPanel.add(settings);
-		self.ui.rightTabPanel.add(styles);
 		self.ui.rightSidebar.show();
 
-		render(settings.el[0], cell.get('type'), cell.get('custom_data'),(data)=>{
+		let settings = self.ui.rightTabPanel.getChildByName('settings');
+		if(!settings) {
+			settings = new Panel({
+				name: 'settings',
+				title: 'Settings'
+			});
+			self.ui.rightTabPanel.add(settings);
+		}
+
+		let styles = self.ui.rightTabPanel.getChildByName('styles');
+		if( !styles) {
+			styles = new Panel({
+				name: 'styles',
+				title: 'Styles'
+			});
+			self.ui.rightTabPanel.add(styles);
+		}
+
+		settings.removeAll();
+		// styles.removeAll();
+		render(settings.getContentEl(), cell.get('type'), cell.get('custom_data'),(data)=>{
 			cell.set('custom_data', data);
 		});
 
 		joint.ui.Inspector.create(styles.getContentEl(), _.extend({
 			cell: cell
 		}, inspectorConfig[cell.get('type')]));
+
 	}
 
 	initToolsAndInspector() {

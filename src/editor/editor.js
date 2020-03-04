@@ -4,9 +4,10 @@
  * @description
  */
 import BaseObject from './lib/BaseObject';
-import UI from './ui';
-import Graph from "./graph";
+import UI from './ui/ui';
+import Graph from "./ui/graph";
 import DataFlows from "../api/DataFlows";
+import {loadPlugins} from './plugins';
 
 export default class Editor extends BaseObject {
 
@@ -20,6 +21,10 @@ export default class Editor extends BaseObject {
 
 	doInit(){
 		let self = this;
+
+		// login plugins
+		loadPlugins();
+
 		self.ui = new UI(self);
 		self.ui.render(self.container);
 
@@ -94,10 +99,12 @@ export default class Editor extends BaseObject {
 
 		postData.stages = Object.values(stages);
 		dataFlows.post(postData).then((result) => {
-			console.log(result);
+			//console.log(result);
 		}).catch(e => {
 			throw new Error(e);
 		});
 
 	}
+
+
 }

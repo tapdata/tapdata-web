@@ -3,7 +3,7 @@
  * @date 3/1/20
  * @description
  */
-import Component from "./lib/Component";
+import Component from "../lib/Component";
 import $ from 'jquery';
 
 export default class Panel extends Component {
