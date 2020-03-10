@@ -20,13 +20,19 @@
 
       <div class="content" v-if="list.length > 0">
         <el-row :gutter="20">
-          <el-col class="list" :span="12" v-for="(item) in list" :key="item.ip">
+          <el-col class="list" :md="12" :sm="24" v-for="(item) in list" :key="item.ip">
             <div class="grid-content listBox">
               <div class="boxTop">
-                <i class="circular" :class="item.status !== 'running'?'bgred':'bggreen'"></i>
-                <h2 class="name">{{item.systemInfo.hostname}}</h2>
-                <div class="uuid">{{item.systemInfo.uuid}}</div>
-                <span>{{item.systemInfo.ip}}</span>
+                <div class="fl" style="width: 60%;">
+                  <i class="circular" :class="item.status !== 'running'?'bgred':'bggreen'"></i>
+                  <h2 class="name">{{item.systemInfo.hostname}}</h2>
+                  <div class="uuid">{{item.systemInfo.uuid}}</div>
+                  <span>{{item.systemInfo.ip}}</span>
+                </div>
+                <div class="fr" style="width: 40%;">
+                  <el-button size="mini" class="fr addBtn" @click="addServeFn(item)">添加服务监控</el-button>
+                </div>
+                <!--  -->
               </div>
               <div class="boxBottom">
                 <el-row :gutter="20" class="data-list">
@@ -98,25 +104,49 @@
                     </div>
                   </el-col>
                 </el-row>
+                <el-row :gutter="20" v-for="(child, index) in item.customMonitorStatus" :key="child.id">
+                  <el-col :span="6">
+                    <span class="txt"><i class="icon iconfont"></i>{{child.name}}</span>
+                  </el-col>
+                  <el-col :span="4">
+                    <span :class="item.apiServer.status == 'stopped'?'red':'green'">{{child.status}}</span>
+                  </el-col>
+                  <el-col :span="14">
+                    <div class="btn fr">
+                      <el-button
+                      @click="delServe(item,item.apiServer.status)">删除</el-button>
+                    </div>
+                  </el-col>
+                </el-row>
               </div>
             </div>
           </el-col>
         </el-row>
       </div>
-
        <div v-else class="noText">
         <i class="iconfont icon iconkongyemian_zanwuwendang" style="font-size: 174px"></i>
       </div>
     </div>
-
+    <el-dialog title="添加服务监控" custom-class="serverDialog" :visible.sync="dialogForm" :append-to-body="true" :lock-scroll="false" width="600px">
+      <addServe :data="currentData" ref="ruleForm"></addServe>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small"  @click="dialogForm = false">取 消</el-button>
+        <el-button size="small"  type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
+import addServe from './component/addServe';
 import factory from '../../api/factory';
 const cluster = factory('cluster');
 export default {
+  name: "clusterManagement",
+  components: {addServe},
   data () {
     return {
+      currentData: null,
+      dialogForm: false,
       activeIndex: "1",
       sourch: '',
       serveStatus:'',
@@ -133,6 +163,28 @@ export default {
   },
 
   methods: {
+    //提交
+    async submitForm() {
+      let getFrom = this.$refs.ruleForm.ruleForm;
+      let data = {
+        uuid: this.currentData.uuid,
+        name: getFrom.name,
+        command: getFrom.command,
+        arguments: getFrom.arguments
+      };
+      await cluster.addMonitor(data).then(res => {
+        if(res.status === 200) {
+          this.getDataApi();
+          this.$message.success('保存成功');
+        } else{
+          this.$message.error(res.message);
+        }
+      });
+    },
+    addServeFn(item) {
+      this.currentData = item;
+      this.dialogForm = true;
+    },
     //启动
     startFn(item,status,server) {
       if (status === "stopped") {
@@ -229,7 +281,48 @@ export default {
           }
         }
       });
-    }
+    },
+    waterFull(items){//瀑布流  items为传入的dom
+
+      let columns = 2; // 1- 确定列数
+      let itemWidth= (this.sizeWidth().width - this.gap) /2; //2列每列的宽度 this.gap为间距我定义的10 this.sizeWidth()为获取宽度高度
+      var arr = []; //数据
+      for(var i= 0 ;i<items.length;i++){
+
+        if(i<columns){
+          // 2- 确定第一行
+          items[i].style.top = 0;
+          items[i].style.left = (itemWidth + this.gap) * i + 'px';
+          arr.push(items[i].offsetHeight);
+        }else{// 其他行
+          // 3- 找到数组中最小高度  和 它的索引
+          var minHeight = arr[0];
+          var index = 0;
+          for (var j = 0; j < arr.length; j++) {
+            if (minHeight > arr[j]) {
+              minHeight = arr[j];
+              index = j;
+            }
+          }
+          // 4- 设置下一行的第一个盒子位置
+          // top值就是最小列的高度 + gap
+          items[i].style.top = arr[index] + this.gap + 'px';
+          // left值就是最小列距离左边的距离
+          items[i].style.left = items[index].offsetLeft + 'px';
+
+          // 5- 修改最小列的高度
+          // 最小列的高度 = 当前自己的高度 + 拼接过来的高度 + 间隙的高度
+          arr[index] = arr[index] + items[i].offsetHeight + this.gap;
+        }
+      }
+    },
+
+    sizeWidth() {//宽，高
+      return {
+        width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
+        height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+      }
+    },
   }
 };
 </script>
@@ -260,6 +353,7 @@ export default {
         box-shadow: 0.707px 0.707px 3px rgba(0,0,0,0.13);
         .boxTop {
           padding-top: 15px;
+          overflow: hidden;
           .circular {
             display: inline-block;
             position: absolute;
@@ -286,6 +380,16 @@ export default {
             font-size: 14px;
             color: #555;
           }
+          .addBtn {
+            span {
+              font-size: 12px;
+            }
+          }
+        }
+        .boxTop {
+          // .el-button {
+          //   span { font-size: 12px;}
+          // }
         }
         .boxBottom {
           padding-top: 10px;
@@ -325,6 +429,27 @@ export default {
   .screen {
     padding-right: 15px;
   }
+  .red {
+    color: #ee5353;
+  }
+  .bgred {
+    background-color: #ee5353!important;
+  }
+  .green {
+    color: #48b6e2;
+  }
+  .bggreen {
+    background-color: #71c179!important;
+  }
+  .noText {
+    display: flex;
+    height: calc(100% - 60px);
+    align-items: center;
+    justify-content: center;
+    color: #1976D2;
+    font-size: 16px;
+    background-color: #fff;
+  }
 }
 </style>
 <style lang="less">
@@ -356,33 +481,14 @@ export default {
     font-size: 12px;
   }
 }
-</style>
-<style lang="less" scoped>
-.red {
-  color: #ee5353;
-}
-.bgred {
-  background-color: #ee5353!important;
-}
-.green {
-  color: #48b6e2;
-}
-.bggreen {
-  background-color: #71c179!important;
-}
-.cluster {
-  .cluster_box {
-    height: 100%;
 
+.serverDialog {
+  .el-dialog__body {
+    padding: 30px 50px 0 20px;
   }
-  .noText {
-    display: flex;
-    height: calc(100% - 60px);
-    align-items: center;
-    justify-content: center;
-    color: #1976D2;
-    font-size: 16px;
-    background-color: #fff;
+  .el-dialog__footer {
+     padding: 10px 50px 20px;
   }
 }
 </style>
+

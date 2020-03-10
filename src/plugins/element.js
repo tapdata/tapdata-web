@@ -3,6 +3,7 @@ import Vue from 'vue';
 
 
 import {
+  Dialog,
   Menu,
   MenuItem,
   Form,
@@ -19,6 +20,7 @@ import {
   DatePicker,
 } from 'element-ui';
 
+Vue.component(Dialog.name,Dialog);
 Vue.component(Menu.name, Menu);
 Vue.component(MenuItem.name, MenuItem);
 Vue.component(Form.name, Form);
