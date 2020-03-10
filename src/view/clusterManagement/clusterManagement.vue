@@ -27,7 +27,6 @@
                 <div class="fl" style="width: 60%;">
                   <i class="circular" :class="item.status !== 'running'?'bgred':'bggreen'"></i>
                   <h2 class="name">{{item.systemInfo.hostname}}</h2>
-                  <span>{{item.id}}</span>
                   <div class="uuid">{{item.systemInfo.uuid}}</div>
                   <span>{{item.systemInfo.ip}}</span>
                 </div>
