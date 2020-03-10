@@ -18,14 +18,15 @@
         </el-col>
       </el-row>
 
-      <div class="content" v-if="list.length > 0">
-        <el-row :gutter="20">
-          <el-col class="list" :md="12" :sm="24" v-for="(item) in list" :key="item.ip">
-            <div class="grid-content listBox">
+      <div class="content" v-if="waterfallData.length > 0">
+        <el-row :gutter="20" class="waterfall" >
+          <el-col class="list" :md="12" :sm="24" v-for="(element,i) in waterfallData" :key="i" >
+            <div class="grid-content listBox" v-for="(item) in element" :key="item.ip">
               <div class="boxTop">
                 <div class="fl" style="width: 60%;">
                   <i class="circular" :class="item.status !== 'running'?'bgred':'bggreen'"></i>
                   <h2 class="name">{{item.systemInfo.hostname}}</h2>
+                  <span>{{item.id}}</span>
                   <div class="uuid">{{item.systemInfo.uuid}}</div>
                   <span>{{item.systemInfo.ip}}</span>
                 </div>
@@ -36,13 +37,13 @@
               </div>
               <div class="boxBottom">
                 <el-row :gutter="20" class="data-list">
-                  <el-col :span="6">
+                  <el-col :span="8">
                     <span class="txt"><i class='icon iconfont iconhoutai'></i>管理后台</span>
                   </el-col>
                   <el-col :span="4">
                     <span :class="item.management.status == 'stopped'?'red':'green'">{{item.management.status}}</span>
                   </el-col>
-                  <el-col :span="14">
+                  <el-col :span="12">
                     <div class="btn fr">
                       <el-button
                       :type="item.management.status == 'stopped'?'primary':'info'"
@@ -59,13 +60,13 @@
                   </el-col>
                 </el-row>
                 <el-row :gutter="20" class="data-list">
-                  <el-col :span="6">
+                  <el-col :span="8">
                     <span class="txt"><i class="icon iconfont icontongbu"></i>同步治理</span>
                   </el-col>
                   <el-col :span="4">
                     <span :class="item.engine.status == 'stopped'?'red':'green'">{{item.engine.status}}</span>
                   </el-col>
-                  <el-col :span="14">
+                  <el-col :span="12">
                     <div class="btn fr">
                       <el-button
                       :type="item.engine.status == 'stopped'?'primary':'info'"
@@ -82,13 +83,13 @@
                   </el-col>
                 </el-row>
                 <el-row :gutter="20" class="data-list">
-                  <el-col :span="6">
+                  <el-col :span="8">
                     <span class="txt"><i class="icon iconfont iconAPI"></i>API SEVER</span>
                   </el-col>
                   <el-col :span="4">
                     <span :class="item.apiServer.status == 'stopped'?'red':'green'">{{item.apiServer.status}}</span>
                   </el-col>
-                  <el-col :span="14">
+                  <el-col :span="12">
                     <div class="btn fr">
                       <el-button
                       :type="item.apiServer.status == 'stopped'?'primary':'info'"
@@ -104,17 +105,17 @@
                     </div>
                   </el-col>
                 </el-row>
-                <el-row :gutter="20" v-for="(child, index) in item.customMonitorStatus" :key="child.id">
-                  <el-col :span="6">
-                    <span class="txt"><i class="icon iconfont"></i>{{child.name}}</span>
+                <el-row :gutter="20" class="data-list" v-for="(child) in item.customMonitorStatus" :key="child.id">
+                  <el-col :span="7" :offset="1" >
+                    <span class="txt">{{child.name}}</span>
                   </el-col>
                   <el-col :span="4">
                     <span :class="item.apiServer.status == 'stopped'?'red':'green'">{{child.status}}</span>
                   </el-col>
-                  <el-col :span="14">
+                  <el-col :span="7" :offset="5">
                     <div class="btn fr">
-                      <el-button
-                      @click="delServe(item,item.apiServer.status)">删除</el-button>
+                      <el-button type="text"
+                      @click="delServe(child)">删除</el-button>
                     </div>
                   </el-col>
                 </el-row>
@@ -137,14 +138,16 @@
   </div>
 </template>
 <script>
+import vueWaterfallEasy from 'vue-waterfall-easy';
 import addServe from './component/addServe';
 import factory from '../../api/factory';
 const cluster = factory('cluster');
 export default {
   name: "clusterManagement",
-  components: {addServe},
+  components: {addServe,vueWaterfallEasy},
   data () {
     return {
+      waterfallData: [],
       currentData: null,
       dialogForm: false,
       activeIndex: "1",
@@ -173,12 +176,34 @@ export default {
         arguments: getFrom.arguments
       };
       await cluster.addMonitor(data).then(res => {
-        if(res.status === 200) {
+        if(res.statusText === "OK" || res.status === 200) {
+          this.dialogForm = false;
           this.getDataApi();
           this.$message.success('保存成功');
         } else{
-          this.$message.error(res.message);
+          this.$message.error('保存失败');
         }
+        this.dialogForm = false;
+      });
+    },
+    //删除
+    delServe(data) {
+      let params = {
+        uuid: data.uuid,
+        id: data.id
+      };
+      this.$confirm('是否删除？', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        cluster.removeMonitor(params).then(res => {
+          if (res.statusText === "OK" || res.status === 200) {
+            this.getDataApi();
+            this.$message.success('删除成功');
+          } else {
+            this.$message.error('删除失败');
+          }
+        });
       });
     },
     addServeFn(item) {
@@ -267,8 +292,9 @@ export default {
 
     // 这是一个定时器
     timer() {
+      let that = this;
       return setInterval(() => {
-        // that.getDataApi();
+        that.getDataApi();
       }, 5000);
     },
 
@@ -278,51 +304,20 @@ export default {
         if (res.statusText === "OK" || res.status === 200) {
           if (res.data) {
             this.list = res.data;
+            let [...waterfallData]  = this.list;
+            let [...newWaterfallData]= [[],[]];
+            waterfallData.forEach((item,index)=>{
+              if(index%2) {
+                newWaterfallData[1].push(item);
+              } else {
+                newWaterfallData[0].push(item);
+              }
+            });
+            this.waterfallData = newWaterfallData;
           }
         }
       });
-    },
-    waterFull(items){//瀑布流  items为传入的dom
-
-      let columns = 2; // 1- 确定列数
-      let itemWidth= (this.sizeWidth().width - this.gap) /2; //2列每列的宽度 this.gap为间距我定义的10 this.sizeWidth()为获取宽度高度
-      var arr = []; //数据
-      for(var i= 0 ;i<items.length;i++){
-
-        if(i<columns){
-          // 2- 确定第一行
-          items[i].style.top = 0;
-          items[i].style.left = (itemWidth + this.gap) * i + 'px';
-          arr.push(items[i].offsetHeight);
-        }else{// 其他行
-          // 3- 找到数组中最小高度  和 它的索引
-          var minHeight = arr[0];
-          var index = 0;
-          for (var j = 0; j < arr.length; j++) {
-            if (minHeight > arr[j]) {
-              minHeight = arr[j];
-              index = j;
-            }
-          }
-          // 4- 设置下一行的第一个盒子位置
-          // top值就是最小列的高度 + gap
-          items[i].style.top = arr[index] + this.gap + 'px';
-          // left值就是最小列距离左边的距离
-          items[i].style.left = items[index].offsetLeft + 'px';
-
-          // 5- 修改最小列的高度
-          // 最小列的高度 = 当前自己的高度 + 拼接过来的高度 + 间隙的高度
-          arr[index] = arr[index] + items[i].offsetHeight + this.gap;
-        }
-      }
-    },
-
-    sizeWidth() {//宽，高
-      return {
-        width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
-        height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
-      }
-    },
+    }
   }
 };
 </script>
@@ -346,8 +341,10 @@ export default {
     .list {
       padding: 5px 0 10px 0;
       overflow: hidden;
+      box-sizing: border-box;
       .listBox {
         position: relative;
+        margin-bottom: 20px;
         padding: 0 25px 10px 50px;
         background-color: #fff;
         box-shadow: 0.707px 0.707px 3px rgba(0,0,0,0.13);
@@ -406,6 +403,8 @@ export default {
               padding-left: 15px;
               font-size: 12px;
               color: #000;
+              text-overflow: ellipsis;
+              white-space: nowrap;
               i {
                 padding-right: 5px;
               }
@@ -426,6 +425,7 @@ export default {
       }
     }
   }
+
   .screen {
     padding-right: 15px;
   }

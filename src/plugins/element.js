@@ -4,6 +4,8 @@ import Vue from 'vue';
 
 import {
   Dialog,
+  MessageBox,
+  Message,
   Menu,
   MenuItem,
   Form,
@@ -20,6 +22,7 @@ import {
   DatePicker,
 } from 'element-ui';
 
+
 Vue.component(Dialog.name,Dialog);
 Vue.component(Menu.name, Menu);
 Vue.component(MenuItem.name, MenuItem);
@@ -35,3 +38,6 @@ Vue.component(Row.name, Row);
 Vue.component(Col.name, Col);
 Vue.component(Pagination.name, Pagination);
 Vue.component(DatePicker.name, DatePicker);
+
+Vue.prototype.$confirm = MessageBox.confirm;
+Vue.prototype.$message = Message;

@@ -9,7 +9,7 @@ import PublicAPI from "./publicApi";
 export default class ClusterAPI extends PublicAPI{
 
 	constructor(){
-		super('http://localhost:8080/api/clusterStates');
+		super('/api/clusterStates');
 	}
 
 	updateStatus(params){
@@ -18,6 +18,10 @@ export default class ClusterAPI extends PublicAPI{
 
   addMonitor(params) {
     return axios.post(this.url + '/addMonitor', params);
+  }
+
+  removeMonitor(params) {
+    return axios.post(this.url + '/removeMonitor', params);
   }
 
 }
