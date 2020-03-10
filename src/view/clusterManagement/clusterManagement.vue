@@ -9,6 +9,7 @@
             <el-input
               placeholder="请输入服务器名称"
               clearable
+              @keyup.enter ="screenFn"
               v-model="sourch">
             </el-input>
           </div>
