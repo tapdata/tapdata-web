@@ -1,7 +1,7 @@
 <template>
   <el-form :model="ruleForm" status-icon :rules="rules" label-width="100px" class="addServe">
     <el-form-item label="name" prop="name">
-      <el-input v-model.number="ruleForm.name" placeholder="请输入监控的服务名称"></el-input>
+      <el-input v-model="ruleForm.name" placeholder="请输入监控的服务名称"></el-input>
     </el-form-item>
 
     <el-form-item label="command" prop="command">
