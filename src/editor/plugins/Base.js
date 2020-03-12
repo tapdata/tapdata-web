@@ -5,7 +5,7 @@
  */
 import _ from 'lodash';
 import {stencilConfig, inspectorConfig} from "../lib/rappid/config";
-import {formConfig} from '../formConfig';
+import {vueAdapter} from '../vue-adapter';
 import joint from '../lib/rappid/rappid';
 import * as plugins from './index';
 
@@ -61,17 +61,30 @@ export const loadPlugins = function(){
 			delete stencil.group;
 			delete stencil.groupLabel;
 			stencil.type = type;
-			stencilConfig.shapes[group].push(stencil);
+
+			let replace = false;
+			for( let i = 0; i < stencilConfig.shapes[group].length; i++ ) {
+				if( stencilConfig.shapes[group][i].type === type ){
+					stencilConfig.shapes[group][i] = stencil;
+					replace = true;
+					break;
+				}
+			}
+
+			if( !replace )
+				stencilConfig.shapes[group].push(stencil);
 		},
 
-		addSettingForm = (type, form) => {
-			formConfig[type] = form;
+		addSettingForm = (type, config) => {
+			if( vueAdapter && config.component){
+				vueAdapter[type] = config;
+			}
 		};
 
 
 	Object.keys(plugins).forEach(name => {
 		if( name !== 'loadPlugins' ) {
-			let plugin = plugins[name];
+			let plugin = _.cloneDeep(plugins[name]);
 
 			if( plugin.shape && !plugin.shape.extends ){
 				throw Error(`Plugin ${name}.shape mast be extends exists shape.`);

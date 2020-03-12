@@ -4,6 +4,8 @@
  * @description
  */
 import Editor from './editor';
+import 'alertifyjs/build/css/alertify.min.css';
+import 'alertifyjs/build/css/themes/default.min.css';
 export default function(container){
 	return new Editor(container);
 }

@@ -6,4 +6,7 @@
 export {loadPlugins} from './Base';
 export * from './SourceDB';
 export * from './TargetDB';
+export * from './Table';
+export * from './Collection';
+export * from './ScriptProcess';
 export * from './Link';

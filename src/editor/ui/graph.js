@@ -13,7 +13,7 @@ import dagre from 'dagre';
 import Panel from "./panel";
 import {stencilConfig, selectionConfig, haloConfig, inspectorConfig, toolbarConfig} from "../lib/rappid/config";
 //import {renderForm} from "./inspector";
-import {render} from '../formConfig';
+import {render} from '../vue-adapter';
 
 window.joint = joint;
 window.dagre = dagre;
@@ -216,7 +216,8 @@ export default class Graph extends Component{
 
 		new joint.ui.Halo({
 			cellView: elementView,
-			handles: haloConfig.handles
+			handles: haloConfig.handles,
+			boxContent: false
 		}).render();
 	}
 
@@ -245,16 +246,12 @@ export default class Graph extends Component{
 		let self = this;
 		self.ui.rightSidebar.show();
 
-		let settings = self.ui.rightTabPanel.getChildByName('settings');
-		if(!settings) {
-			settings = new Panel({
-				name: 'settings',
-				title: 'Settings'
-			});
-			self.ui.rightTabPanel.add(settings);
-		}
+		render(self.ui, /*settings.getContentEl(), */cell.get('type'), cell.get('custom_data'),(data)=>{
+			cell.set('custom_data', data);
+		});
 
 		let styles = self.ui.rightTabPanel.getChildByName('styles');
+		// styles.removeAll();
 		if( !styles) {
 			styles = new Panel({
 				name: 'styles',
@@ -262,12 +259,6 @@ export default class Graph extends Component{
 			});
 			self.ui.rightTabPanel.add(styles);
 		}
-
-		settings.removeAll();
-		// styles.removeAll();
-		render(settings.getContentEl(), cell.get('type'), cell.get('custom_data'),(data)=>{
-			cell.set('custom_data', data);
-		});
 
 		joint.ui.Inspector.create(styles.getContentEl(), _.extend({
 			cell: cell

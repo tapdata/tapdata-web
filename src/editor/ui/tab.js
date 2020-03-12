@@ -5,6 +5,7 @@
  */
 import Component from "../lib/Component";
 import $ from 'jquery';
+import {EditorEventType} from "../lib/events";
 
 export default class Tab extends Component{
 
@@ -60,7 +61,7 @@ export default class Tab extends Component{
 			this.el.find(`>.e-tab-bar>.e-tab-title[data-target=${id}]`).addClass('active');
 			this.el.find(`>.e-tab-content>.e-tab[data-value=${id}]`).addClass('active');
 		}
-
+		this.emit(EditorEventType.SELECTED, tab);
 	}
 
 	remove(child) {

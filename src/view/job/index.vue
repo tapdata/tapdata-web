@@ -7,7 +7,7 @@
 	import editor from '../../editor/index';
 
 	export default {
-		name: "index.vue",
+		name: "index",
 		data() {
 			return {};
 		},

@@ -47,8 +47,8 @@ export default class UI extends Component {
 			region: 'right',
 			editor: this.editor,
 			hidden: true,
-			maxWidth: 600,
-			width: 350
+			maxWidth: 1000,
+			width: 520
 		});
 
 		this.leftSidebar.render(this.el.find('.e-body'), true);

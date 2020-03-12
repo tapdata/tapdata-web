@@ -216,10 +216,11 @@
 				}
 				.e-tab-content {
 					flex: 1;
+					overflow: auto;
 
 					.e-tab {
 						height: 100%;
-						overflow: auto;
+						overflow: hidden;
 						display: none;
 
 						&.active {
@@ -232,6 +233,8 @@
 			.e-panel {
 				position: relative;
 				height: 100%;
+				padding: 5px;
+				box-sizing: border-box;
 			}
 		}
 

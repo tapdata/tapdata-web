@@ -17,6 +17,13 @@ import {
   Col,
   Pagination,
   DatePicker,
+	Container,
+	Main,
+	Header,
+	Tree,
+	Dropdown,
+	DropdownItem,
+	DropdownMenu,
 } from 'element-ui';
 
 Vue.component(Menu.name, Menu);
@@ -33,3 +40,10 @@ Vue.component(Row.name, Row);
 Vue.component(Col.name, Col);
 Vue.component(Pagination.name, Pagination);
 Vue.component(DatePicker.name, DatePicker);
+Vue.component(Container.name, Container);
+Vue.component(Main.name, Main);
+Vue.component(Header.name, Header);
+Vue.component(Tree.name, Tree);
+Vue.component(Dropdown.name, Dropdown);
+Vue.component(DropdownItem.name, DropdownItem);
+Vue.component(DropdownMenu.name, DropdownMenu);

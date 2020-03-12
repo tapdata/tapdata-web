@@ -1,7 +1,7 @@
 <template>
 	<el-form label-position="right" :model="model" ref="form">
-		<el-form-item label="Source Database" prop="connectionId" :rules="rules">
-			<el-select v-model="model.connectionId" placeholder="Please select source database">
+		<el-form-item label="Database" prop="connectionId" :rules="rules" required>
+			<el-select v-model="model.connectionId" :placeholder="`Please select ${this.connection_type} database`">
 				<el-option
 						v-for="(item, idx) in databases"
 						:label="`${item.name} (${item.status})`"
@@ -40,7 +40,7 @@
 				databases: [],
 				rules: {
 					connectionId: [
-						{required: true, trigger: 'blur', message: 'Please select source database'},
+						{required: true, trigger: 'blur', message: `Please select ${this.connection_type} database`},
 					]
 				},
 				model: {
@@ -69,16 +69,11 @@
 		methods: {
 			setData(data){
 				if( data ){
-					this.model.connectionId = data.connectionId;
+					Object.keys(data).forEach(key => this.model[key] = data[key]);
 				}
 			},
 			getData(){
 				return JSON.parse(JSON.stringify(this.model));
-			},
-			async validate(){
-				return new Promise((resolve) => {
-					this.$refs.form.validate(resolve);
-				});
 			}
 		}
 	};

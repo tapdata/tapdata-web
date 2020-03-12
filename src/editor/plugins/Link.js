@@ -249,6 +249,8 @@ export const link = {
 	 * 图形设置表单配置
 	 * @type {null}
 	 */
-	settingFormConfig: Link
+	settingFormConfig: {
+		component: Link
+	}
 
 };

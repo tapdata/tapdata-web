@@ -1,55 +1,16 @@
 /**
  * @author lg<lirufei0808@gmail.com>
- * @date 3/4/20
+ * @date 3/5/20
  * @description
  */
 import {options} from "../lib/rappid/config";
-import DataSource from "../../view/job/DataSource";
+import Collection from "../../view/job/Collection";
 
-export const targetDBConfig = {
+export const collectionConfig = {
 
-	/**
-	 * the name of the subtype class.
-	 *
-	 */
-	type: 'app.TargetDB',
-
-	/**
-	 * define shape
-	 * docs see https://github.com/clientIO/joint/blob/master/tutorials/custom-elements.html
-	 * @type {object}
-	 */
+	type: 'app.Collection',
 	shape: {
-		/**
-		 * extends exists shape
-		 */
 		extends: 'standard.Rectangle',
-
-		/**
-		 * object that contains properties to be assigned to every constructed instance of the subtype.
-		 *
-		 * @example <pre>
-		 *     {
-		 *        attrs: {
-		 *           body: {
-		 *              refWidth: '100%',
-		 *              refHeight: '100%',
-		 *              strokeWidth: 2,
-		 *              stroke: '#000000',
-		 *              fill: '#FFFFFF'
-		 *           },
-		 *           label: {
-		 *              textVerticalAnchor: 'middle',
-		 *              textAnchor: 'middle',
-		 *              refX: '50%',
-		 *              refY: '50%',
-		 *              fontSize: 14,
-		 *              fill: '#333333'
-		 *           }
-		 *        }
-		 *     }
-		 * </pre>
-		 */
 		defaultInstanceProperties: {
 			attrs: {
 				root: {
@@ -57,41 +18,15 @@ export const targetDBConfig = {
 				}
 			}
 		},
-		/**
-		 * object that contains properties to be assigned on the subtype prototype.
-		 * Intended for properties intrinsic to the subtype, not usually modified.
-		 *
-		 * @example <pre>
-		 *
-		 * {
-		 *     markup: [{
-		 *          tagName: 'rect',
-		 *          selector: 'body',
-		 *     }, {
-		 *          tagName: 'text',
-		 *          selector: 'label'
-		 *     }]
-		 * }
-		 *
-		 * </pre>
-		 */
 		prototypeProperties: {
 			portLabelMarkup: [{
 				tagName: 'text',
 				selector: 'portLabel'
 			}]
 		},
-		/**
-		 * object that contains properties to be assigned on the subtype constructor.
-		 */
 		//staticProperties: {}
 	},
 
-	/**
-	 * 图形(Element子类
-	 * )样式表单配置
-	 * @type {object}
-	 */
 	styleFormConfig: {
 		inputs: {
 			attrs: {
@@ -224,7 +159,7 @@ export const targetDBConfig = {
 				strokeDasharray: '0'
 			},
 			label: {
-				text: 'Target Database',
+				text: 'Collection',
 				fill: '#555555',
 				fontFamily: 'Roboto Condensed',
 				fontWeight: 'Normal',
@@ -239,10 +174,7 @@ export const targetDBConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: DataSource,
-		props: {
-			connection_type: 'target'
-		},
+		component: Collection,
 
 		/**
 		 * validate user-filled data
@@ -252,6 +184,8 @@ export const targetDBConfig = {
 		validate: (data) => {
 			if( !data.connectionId )
 				throw new Error('Database cannot be empty.');
+			if( !data.collectionId )
+				throw new Error('Collection cannot be empty.');
 			return true;
 		}
 	}

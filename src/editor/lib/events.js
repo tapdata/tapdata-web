@@ -10,4 +10,7 @@ export const EditorEventType = {
 	AFTER_RENDER: 'after_render',
 	LAYOUT: 'layout',
 	RESIZE: 'resize',
+	SHOW: 'show',
+	HIDE: 'hide',
+	SELECTED: 'selected',
 };

@@ -4,9 +4,9 @@
  * @description
  */
 import {options} from "../lib/rappid/config";
-import SourceDB from "../../view/job/SourceDB";
+import DataSource from "../../view/job/DataSource";
 
-export const sourceDB = {
+export const sourceDBConfig = {
 
 	/**
 	 * the name of the subtype class.
@@ -238,6 +238,22 @@ export const sourceDB = {
 	 * 图形设置表单配置
 	 * @type {null}
 	 */
-	settingFormConfig: SourceDB
+	settingFormConfig: {
+		component: DataSource,
+		props: {
+			connection_type: 'source'
+		},
+
+		/**
+		 * validate user-filled data
+		 * @param data
+		 *
+		 */
+		validate: (data) => {
+			if( !data.connectionId )
+				throw new Error('Database cannot be empty.');
+			return true;
+		}
+	}
 
 };

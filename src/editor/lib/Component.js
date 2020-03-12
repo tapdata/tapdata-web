@@ -86,11 +86,13 @@ export default class Component extends BaseObject{
 	show(){
 		this.el.show();
 		this.opts.hidden = false;
+		this.emit(EditorEventType.SHOW);
 	}
 
 	hide() {
 		this.el.hide();
 		this.opts.hidden = true;
+		this.emit(EditorEventType.HIDE);
 	}
 
 	getChildByName(name){
