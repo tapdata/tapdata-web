@@ -1,5 +1,5 @@
 <template>
-  <el-form :model="ruleForm" status-icon :rules="rules" label-width="100px" class="addServe">
+  <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="addServe">
     <el-form-item label="name" prop="name">
       <el-input v-model="ruleForm.name" placeholder="请输入监控的服务名称"></el-input>
     </el-form-item>
@@ -34,6 +34,20 @@ export default {
           { required: true, message: '不能为空', trigger: 'blur' },
         ]
       }
+    }
+  },
+  methods: {
+    //子组件校验，传递到父组件
+    validateForm () {
+      let flag = null;
+      this.$refs['ruleForm'].validate(valid => {
+        if (valid) {
+          flag = true;
+        } else {
+          flag = false;
+        }
+      });
+      return flag;
     }
   }
 }

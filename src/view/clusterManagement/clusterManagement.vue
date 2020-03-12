@@ -129,10 +129,10 @@
       </div>
     </div>
     <el-dialog title="添加服务监控" custom-class="serverDialog" :visible.sync="dialogForm" :append-to-body="true" :lock-scroll="false" width="600px">
-      <addServe :data="currentData" ref="ruleForm"></addServe>
+      <addServe :data="currentData" ref="childRules"></addServe>
       <div slot="footer" class="dialog-footer">
         <el-button size="small"  @click="dialogForm = false">取 消</el-button>
-        <el-button size="small"  type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button size="small"  type="primary" @click="submitForm()">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -168,23 +168,26 @@ export default {
   methods: {
     //提交
     async submitForm() {
-      let getFrom = this.$refs.ruleForm.ruleForm;
-      let data = {
-        uuid: this.currentData.uuid,
-        name: getFrom.name,
-        command: getFrom.command,
-        arguments: getFrom.arguments
-      };
-      await cluster.addMonitor(data).then(res => {
-        if(res.statusText === "OK" || res.status === 200) {
-          this.dialogForm = false;
-          this.getDataApi();
-          this.$message.success('保存成功');
-        } else{
-          this.$message.error('保存失败');
-        }
+      let getFrom = this.$refs.childRules.ruleForm;
+      let flag = this.$refs['childRules'].validateForm();
+      if(flag) {
+        let data = {
+          uuid: this.currentData.uuid,
+          name: getFrom.name,
+          command: getFrom.command,
+          arguments: getFrom.arguments
+        };
+        await cluster.addMonitor(data).then(res => {
+          if(res.statusText === "OK" || res.status === 200) {
+            this.dialogForm = false;
+            this.getDataApi();
+            this.$message.success('保存成功');
+          } else{
+            this.$message.error('保存失败');
+          }
+        });
         this.dialogForm = false;
-      });
+      }
     },
     //删除
     delServe(data) {
@@ -270,7 +273,7 @@ export default {
     },
     //重启---关闭---启动
     async operationFn(data) {
-      await cluster.post(data).then(res=>{
+      await cluster.updateStatus(data).then(res=>{
         if(res.status === 200) {
           this.getDataApi();
         }
