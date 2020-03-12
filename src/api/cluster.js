@@ -14,6 +14,14 @@ export default class ClusterAPI extends PublicAPI{
 
 	updateStatus(params){
 		return axios.post(this.url + '/updataStatus', params);
-	}
+  }
+
+  addMonitor(params) {
+    return axios.post(this.url + '/addMonitor', params);
+  }
+
+  removeMonitor(params) {
+    return axios.post(this.url + '/removeMonitor', params);
+  }
 
 }

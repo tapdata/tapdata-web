@@ -3,6 +3,9 @@ import Vue from 'vue';
 
 
 import {
+  Dialog,
+  MessageBox,
+  Message,
   Menu,
   MenuItem,
   Form,
@@ -26,6 +29,8 @@ import {
 	DropdownMenu,
 } from 'element-ui';
 
+
+Vue.component(Dialog.name,Dialog);
 Vue.component(Menu.name, Menu);
 Vue.component(MenuItem.name, MenuItem);
 Vue.component(Form.name, Form);
@@ -47,3 +52,7 @@ Vue.component(Tree.name, Tree);
 Vue.component(Dropdown.name, Dropdown);
 Vue.component(DropdownItem.name, DropdownItem);
 Vue.component(DropdownMenu.name, DropdownMenu);
+
+
+Vue.prototype.$confirm = MessageBox.confirm;
+Vue.prototype.$message = Message;

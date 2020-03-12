@@ -9,6 +9,7 @@
             <el-input
               placeholder="请输入服务器名称"
               clearable
+              @keyup.enter ="screenFn"
               v-model="sourch">
             </el-input>
           </div>
@@ -18,25 +19,31 @@
         </el-col>
       </el-row>
 
-      <div class="content" v-if="list.length > 0">
-        <el-row :gutter="20">
-          <el-col class="list" :span="12" v-for="(item) in list" :key="item.ip">
-            <div class="grid-content listBox">
+      <div class="content" v-if="waterfallData.length > 0">
+        <el-row :gutter="20" class="waterfall" >
+          <el-col class="list" :md="12" :sm="24" v-for="(element,i) in waterfallData" :key="i" >
+            <div class="grid-content listBox" v-for="(item) in element" :key="item.ip">
               <div class="boxTop">
-                <i class="circular" :class="item.status !== 'running'?'bgred':'bggreen'"></i>
-                <h2 class="name">{{item.systemInfo.hostname}}</h2>
-                <div class="uuid">{{item.systemInfo.uuid}}</div>
-                <span>{{item.systemInfo.ip}}</span>
+                <div class="fl" style="width: 60%;">
+                  <i class="circular" :class="item.status !== 'running'?'bgred':'bggreen'"></i>
+                  <h2 class="name">{{item.systemInfo.hostname}}</h2>
+                  <div class="uuid">{{item.systemInfo.uuid}}</div>
+                  <span>{{item.systemInfo.ip}}</span>
+                </div>
+                <div class="fr" style="width: 40%;">
+                  <el-button size="mini" class="fr addBtn" @click="addServeFn(item)">添加服务监控</el-button>
+                </div>
+                <!--  -->
               </div>
               <div class="boxBottom">
                 <el-row :gutter="20" class="data-list">
-                  <el-col :span="6">
+                  <el-col :span="8">
                     <span class="txt"><i class='icon iconfont iconhoutai'></i>管理后台</span>
                   </el-col>
                   <el-col :span="4">
                     <span :class="item.management.status == 'stopped'?'red':'green'">{{item.management.status}}</span>
                   </el-col>
-                  <el-col :span="14">
+                  <el-col :span="12">
                     <div class="btn fr">
                       <el-button
                       :type="item.management.status == 'stopped'?'primary':'info'"
@@ -53,13 +60,13 @@
                   </el-col>
                 </el-row>
                 <el-row :gutter="20" class="data-list">
-                  <el-col :span="6">
+                  <el-col :span="8">
                     <span class="txt"><i class="icon iconfont icontongbu"></i>同步治理</span>
                   </el-col>
                   <el-col :span="4">
                     <span :class="item.engine.status == 'stopped'?'red':'green'">{{item.engine.status}}</span>
                   </el-col>
-                  <el-col :span="14">
+                  <el-col :span="12">
                     <div class="btn fr">
                       <el-button
                       :type="item.engine.status == 'stopped'?'primary':'info'"
@@ -76,13 +83,13 @@
                   </el-col>
                 </el-row>
                 <el-row :gutter="20" class="data-list">
-                  <el-col :span="6">
+                  <el-col :span="8">
                     <span class="txt"><i class="icon iconfont iconAPI"></i>API SEVER</span>
                   </el-col>
                   <el-col :span="4">
                     <span :class="item.apiServer.status == 'stopped'?'red':'green'">{{item.apiServer.status}}</span>
                   </el-col>
-                  <el-col :span="14">
+                  <el-col :span="12">
                     <div class="btn fr">
                       <el-button
                       :type="item.apiServer.status == 'stopped'?'primary':'info'"
@@ -98,25 +105,51 @@
                     </div>
                   </el-col>
                 </el-row>
+                <el-row :gutter="20" class="data-list" v-for="(child) in item.customMonitorStatus" :key="child.id">
+                  <el-col :span="7" :offset="1" >
+                    <span class="txt">{{child.name}}</span>
+                  </el-col>
+                  <el-col :span="4">
+                    <span :class="item.apiServer.status == 'stopped'?'red':'green'">{{child.status}}</span>
+                  </el-col>
+                  <el-col :span="7" :offset="5">
+                    <div class="btn fr">
+                      <el-button type="text"
+                      @click="delServe(child)">删除</el-button>
+                    </div>
+                  </el-col>
+                </el-row>
               </div>
             </div>
           </el-col>
         </el-row>
       </div>
-
        <div v-else class="noText">
         <i class="iconfont icon iconkongyemian_zanwuwendang" style="font-size: 174px"></i>
       </div>
     </div>
-
+    <el-dialog title="添加服务监控" custom-class="serverDialog" :visible.sync="dialogForm" :append-to-body="true" :lock-scroll="false" width="600px">
+      <addServe :data="currentData" ref="ruleForm"></addServe>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small"  @click="dialogForm = false">取 消</el-button>
+        <el-button size="small"  type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
+import vueWaterfallEasy from 'vue-waterfall-easy';
+import addServe from './component/addServe';
 import factory from '../../api/factory';
 const cluster = factory('cluster');
 export default {
+  name: "clusterManagement",
+  components: {addServe,vueWaterfallEasy},
   data () {
     return {
+      waterfallData: [],
+      currentData: null,
+      dialogForm: false,
       activeIndex: "1",
       sourch: '',
       serveStatus:'',
@@ -133,6 +166,50 @@ export default {
   },
 
   methods: {
+    //提交
+    async submitForm() {
+      let getFrom = this.$refs.ruleForm.ruleForm;
+      let data = {
+        uuid: this.currentData.uuid,
+        name: getFrom.name,
+        command: getFrom.command,
+        arguments: getFrom.arguments
+      };
+      await cluster.addMonitor(data).then(res => {
+        if(res.statusText === "OK" || res.status === 200) {
+          this.dialogForm = false;
+          this.getDataApi();
+          this.$message.success('保存成功');
+        } else{
+          this.$message.error('保存失败');
+        }
+        this.dialogForm = false;
+      });
+    },
+    //删除
+    delServe(data) {
+      let params = {
+        uuid: data.uuid,
+        id: data.id
+      };
+      this.$confirm('是否删除？', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        cluster.removeMonitor(params).then(res => {
+          if (res.statusText === "OK" || res.status === 200) {
+            this.getDataApi();
+            this.$message.success('删除成功');
+          } else {
+            this.$message.error('删除失败');
+          }
+        });
+      });
+    },
+    addServeFn(item) {
+      this.currentData = item;
+      this.dialogForm = true;
+    },
     //启动
     startFn(item,status,server) {
       if (status === "stopped") {
@@ -215,8 +292,9 @@ export default {
 
     // 这是一个定时器
     timer() {
+      let that = this;
       return setInterval(() => {
-        // that.getDataApi();
+        that.getDataApi();
       }, 5000);
     },
 
@@ -226,6 +304,16 @@ export default {
         if (res.statusText === "OK" || res.status === 200) {
           if (res.data) {
             this.list = res.data;
+            let [...waterfallData]  = this.list;
+            let [...newWaterfallData]= [[],[]];
+            waterfallData.forEach((item,index)=>{
+              if(index%2) {
+                newWaterfallData[1].push(item);
+              } else {
+                newWaterfallData[0].push(item);
+              }
+            });
+            this.waterfallData = newWaterfallData;
           }
         }
       });
@@ -253,13 +341,16 @@ export default {
     .list {
       padding: 5px 0 10px 0;
       overflow: hidden;
+      box-sizing: border-box;
       .listBox {
         position: relative;
+        margin-bottom: 20px;
         padding: 0 25px 10px 50px;
         background-color: #fff;
         box-shadow: 0.707px 0.707px 3px rgba(0,0,0,0.13);
         .boxTop {
           padding-top: 15px;
+          overflow: hidden;
           .circular {
             display: inline-block;
             position: absolute;
@@ -286,6 +377,16 @@ export default {
             font-size: 14px;
             color: #555;
           }
+          .addBtn {
+            span {
+              font-size: 12px;
+            }
+          }
+        }
+        .boxTop {
+          // .el-button {
+          //   span { font-size: 12px;}
+          // }
         }
         .boxBottom {
           padding-top: 10px;
@@ -302,6 +403,8 @@ export default {
               padding-left: 15px;
               font-size: 12px;
               color: #000;
+              text-overflow: ellipsis;
+              white-space: nowrap;
               i {
                 padding-right: 5px;
               }
@@ -322,8 +425,30 @@ export default {
       }
     }
   }
+
   .screen {
     padding-right: 15px;
+  }
+  .red {
+    color: #ee5353;
+  }
+  .bgred {
+    background-color: #ee5353!important;
+  }
+  .green {
+    color: #48b6e2;
+  }
+  .bggreen {
+    background-color: #71c179!important;
+  }
+  .noText {
+    display: flex;
+    height: calc(100% - 60px);
+    align-items: center;
+    justify-content: center;
+    color: #1976D2;
+    font-size: 16px;
+    background-color: #fff;
   }
 }
 </style>
@@ -356,33 +481,14 @@ export default {
     font-size: 12px;
   }
 }
-</style>
-<style lang="less" scoped>
-.red {
-  color: #ee5353;
-}
-.bgred {
-  background-color: #ee5353!important;
-}
-.green {
-  color: #48b6e2;
-}
-.bggreen {
-  background-color: #71c179!important;
-}
-.cluster {
-  .cluster_box {
-    height: 100%;
 
+.serverDialog {
+  .el-dialog__body {
+    padding: 30px 50px 0 20px;
   }
-  .noText {
-    display: flex;
-    height: calc(100% - 60px);
-    align-items: center;
-    justify-content: center;
-    color: #1976D2;
-    font-size: 16px;
-    background-color: #fff;
+  .el-dialog__footer {
+     padding: 10px 50px 20px;
   }
 }
 </style>
+
