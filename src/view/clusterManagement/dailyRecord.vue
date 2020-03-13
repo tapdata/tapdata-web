@@ -3,57 +3,57 @@
   <el-row class="fun-area" :gutter="20">
     <el-form ref="form" :model="form" label-width="80px">
       <el-col :span="8">
-        <el-form-item label="选择时间">
+        <el-form-item :label="$t('message.selectTime')">
           <el-col :span="11">
-            <el-date-picker v-model="form.startDate" type="date" :picker-options="pickerStartDate" style="width: 100%;" placeholder="选择日期"></el-date-picker>
+            <el-date-picker v-model="form.startDate" type="date" :picker-options="pickerStartDate" style="width: 100%;" :placeholder="$t('message.selectDate')"></el-date-picker>
           </el-col>
           <el-col class="line" :span="2">-</el-col>
           <el-col :span="11">
-            <el-date-picker v-model="form.closeDate" type="date" :picker-options="pickerCloseDate" style="width: 100%;" placeholder="选择日期"></el-date-picker>
+            <el-date-picker v-model="form.closeDate" type="date" :picker-options="pickerCloseDate" style="width: 100%;" :placeholder="$t('message.selectDate')"></el-date-picker>
           </el-col>
         </el-form-item>
       </el-col>
       <el-col :span="4">
-        <el-form-item label="服务器">
-          <el-select v-model="form.ip">
-            <el-option v-for="item in ipList" :label="item.value" :value="item.value" :key="item.value"></el-option>
+        <el-form-item :label="$t('message.server')">
+          <el-select v-model="form.ip" :placeholder="$t('message.placeholderSelect')">
+            <el-option v-for="item in ipList" :label="item.value" :value="item.value" :key="item.value" ></el-option>
           </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="4">
-        <el-form-item label="服务类型">
-          <el-select v-model="form.serverType">
+        <el-form-item :label="$t('message.serviceType')">
+          <el-select v-model="form.serverType" :placeholder="$t('message.placeholderSelect')">  
             <el-option v-for="item in serverTypeList" :label="item.lable" :value="item.value" :key="item.value"></el-option>
           </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="4">
-        <el-form-item label="级别">
-          <el-select v-model="form.level" >
+        <el-form-item :label="$t('message.level')">
+          <el-select v-model="form.level" :placeholder="$t('message.placeholderSelect')">
             <el-option v-for="item in levelList" :label="item.lable" :value="item.value" :key="item.value"></el-option>
           </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="4" class="center">
-          <el-button type="primary" @click="screenFn">筛选</el-button>
+          <el-button type="primary" @click="screenFn">{{ $t('message.filter')}}</el-button>
       </el-col>
     </el-form>
   </el-row>
   <div class="content" ref="contentHeight">
     <el-table :data="tableData" class="tableName" border :height="tableHeight" style="width: 100%">
-      <el-table-column prop="data" label="时间" width="260"></el-table-column>
-      <el-table-column prop="hostname" label="主机名" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="ip" label="ip地址" width="150"></el-table-column>
-      <el-table-column prop="uuid" label="唯一编码" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="threadName" label="服类类型" width="100"></el-table-column>
-      <el-table-column prop="level" label="级别" width="100">
+      <el-table-column prop="data" :label="$t('message.time')" width="260"></el-table-column>
+      <el-table-column prop="hostname" :label="$t('message.hostName')" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="ip" :label="$t('message.ipAddress')" width="150"></el-table-column>
+      <el-table-column prop="uuid" :label="$t('message.uniqueEncode')" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="threadName" :label="$t('message.serviceType')" width="100"></el-table-column>
+      <el-table-column prop="level" :label="$t('message.level')" width="100">
         <template slot-scope="scope">
           <span
             :class="scope.row.level === 'ERROR' ? 'red' : ''"
             disable-transitions>{{scope.row.level}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="message" label="日志信息" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="message" :label="$t('message.logs')" :show-overflow-tooltip="true"></el-table-column>
     </el-table>
     <el-pagination background
       class="pagination-bar"
