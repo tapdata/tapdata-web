@@ -5,25 +5,16 @@ import App from './App';
 import router from './router';
 import store from './vuex';   // 引入全局数据控制
 import axios from 'axios';
-import VueI18n from 'vue-i18n';
 import VueCookie from 'vue-cookie';
+import i18n from './i18n/i18n'
+
 
 import './plugins/element.js';
-import 'element-ui/lib/theme-chalk/index.css';
+import './theme/index.css'
 
 Vue.config.productionTip = false;
-Vue.use(VueI18n);
 Vue.use(VueCookie);
-
-const i18n = new VueI18n({
-  locale: 'en', // 语言标识
-  messages: {
-    'cn': require('./i18n/langs/cn'), // 中文语言包
-    'en': require('./i18n/langs/en'), // 英文语言包
-    'tc': require('./i18n/langs/tc') // 繁体语言包
-  }
-});
-
+  
 // Vue.prototype.i18n = window.jQuery.i18n
 let vm = new Vue({
   el: '#app',

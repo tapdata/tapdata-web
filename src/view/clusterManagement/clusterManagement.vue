@@ -5,17 +5,18 @@
       <el-row class="fun-area" :gutter="10" >
         <el-col :span="12">
           <div class="demo-input-suffix">
-            <span>名称搜索：</span>
+            <span>{{ $t('message.sourchName') }}</span>
             <el-input
-              placeholder="请输入服务器名称"
+              :placeholder="$t('message.placeholderServer')"
               clearable
               @keyup.enter ="screenFn"
               v-model="sourch">
             </el-input>
+            <el-button type="primary" @click="screenFn">{{ $t('message.filter') }}</el-button>
           </div>
         </el-col>
         <el-col class="text-rf screen" :span="2" :offset="9">
-          <el-button type="primary" @click="screenFn">筛选</el-button>
+          
         </el-col>
       </el-row>
 
@@ -31,14 +32,14 @@
                   <span>{{item.systemInfo.ip}}</span>
                 </div>
                 <div class="fr" style="width: 40%;">
-                  <el-button size="mini" class="fr addBtn" @click="addServeFn(item)">添加服务监控</el-button>
+                  <el-button size="mini" class="fr addBtn" @click="addServeFn(item)">{{ $t ('message.addServerMon') }}</el-button>
                 </div>
                 <!--  -->
               </div>
               <div class="boxBottom">
                 <el-row :gutter="20" class="data-list">
                   <el-col :span="8">
-                    <span class="txt"><i class='icon iconfont iconhoutai'></i>管理后台</span>
+                    <span class="txt"><i class='icon iconfont iconhoutai'></i>{{ $t('message.manageSys') }}</span>
                   </el-col>
                   <el-col :span="4">
                     <span :class="item.management.status == 'stopped'?'red':'green'">{{item.management.status}}</span>
@@ -48,20 +49,20 @@
                       <el-button
                       :type="item.management.status == 'stopped'?'primary':'info'"
                       :disabled="item.management.status == 'stopped'?false:true"
-                      @click="startFn(item,item.management.status,'management','start')">启动</el-button>
+                      @click="startFn(item,item.management.status,'management','start')">{{ $t('message.startUp') }}</el-button>
                       <el-button
                       :type="item.management.status == 'running'?'danger':'info'"
                       :disabled="item.management.status == 'running'?false:true"
-                      @click="closeFn(item,item.management.status,'management','stop')">关闭</el-button>
+                      @click="closeFn(item,item.management.status,'management','stop')">{{ $t('message.close') }}</el-button>
                       <el-button type="text"
                       :disabled="item.management.status == 'running'?false:true"
-                      @click="restartFn(item,item.management.status,'management','restart')">重启</el-button>
+                      @click="restartFn(item,item.management.status,'management','restart')">{{ $t('message.restart') }}</el-button>
                     </div>
                   </el-col>
                 </el-row>
                 <el-row :gutter="20" class="data-list">
                   <el-col :span="8">
-                    <span class="txt"><i class="icon iconfont icontongbu"></i>同步治理</span>
+                    <span class="txt"><i class="icon iconfont icontongbu"></i>{{ $t('message.syncGover') }}</span>
                   </el-col>
                   <el-col :span="4">
                     <span :class="item.engine.status == 'stopped'?'red':'green'">{{item.engine.status}}</span>
@@ -71,14 +72,14 @@
                       <el-button
                       :type="item.engine.status == 'stopped'?'primary':'info'"
                       :disabled="item.engine.status == 'stopped'?false:true"
-                      @click="startFn(item,item.engine.status,'engine')">启动</el-button>
+                      @click="startFn(item,item.engine.status,'engine')">{{ $t('message.startUp') }}</el-button>
                       <el-button
                       :type="item.engine.status == 'running'?'danger':'info'"
                       :disabled="item.engine.status == 'running'?false:true"
-                      @click="closeFn(item,item.engine.status,'engine')">关闭</el-button>
+                      @click="closeFn(item,item.engine.status,'engine')">{{ $t('message.close') }}</el-button>
                       <el-button type="text"
                       :disabled="item.engine.status == 'running'?false:true"
-                      @click="restartFn(item,item.engine.status,'engine')">重启</el-button>
+                      @click="restartFn(item,item.engine.status,'engine')">{{ $t('message.restart') }}</el-button>
                     </div>
                   </el-col>
                 </el-row>
@@ -94,14 +95,14 @@
                       <el-button
                       :type="item.apiServer.status == 'stopped'?'primary':'info'"
                       :disabled="item.apiServer.status == 'stopped'?false:true"
-                      @click="startFn(item,item.apiServer.status,'apiServer')">启动</el-button>
+                      @click="startFn(item,item.apiServer.status,'apiServer')">{{ $t('message.startUp') }}</el-button>
                       <el-button
                       :type="item.apiServer.status == 'running'?'danger':'info'"
                       :disabled="item.apiServer.status == 'running'?false:true"
-                       @click="closeFn(item,item.apiServer.status,'apiServer')">关闭</el-button>
+                       @click="closeFn(item,item.apiServer.status,'apiServer')">{{ $t('message.close') }}</el-button>
                       <el-button type="text"
                       :disabled="item.apiServer.status == 'running'?false:true"
-                       @click="restartFn(item,item.apiServer.status,'apiServer')">重启</el-button>
+                       @click="restartFn(item,item.apiServer.status,'apiServer')">{{ $t('message.restart') }}</el-button>
                     </div>
                   </el-col>
                 </el-row>
@@ -115,7 +116,7 @@
                   <el-col :span="7" :offset="5">
                     <div class="btn fr">
                       <el-button type="text"
-                      @click="delServe(child)">删除</el-button>
+                      @click="delServe(child)">{{ $t('message.delete') }}</el-button>
                     </div>
                   </el-col>
                 </el-row>
@@ -128,11 +129,11 @@
         <i class="iconfont icon iconkongyemian_zanwuwendang" style="font-size: 174px"></i>
       </div>
     </div>
-    <el-dialog title="添加服务监控" custom-class="serverDialog" :visible.sync="dialogForm" :append-to-body="true" :lock-scroll="false" width="600px">
+    <el-dialog :title="$t('message.addServerMon')" custom-class="serverDialog" :visible.sync="dialogForm" :append-to-body="true" :lock-scroll="false" width="600px" @close='closeDialogForm()'>
       <addServe :data="currentData" ref="ruleForm"></addServe>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small"  @click="dialogForm = false">取 消</el-button>
-        <el-button size="small"  type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button size="small"  @click="closeDialogForm()">{{ $t('message.cancle') }}</el-button>
+        <el-button size="small"  type="primary" @click="submitForm('ruleForm')">{{ $t('message.confirm') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -161,7 +162,7 @@ export default {
     };
   },
   created () {
-    this.timer();
+    //this.timer();
     this.getDataApi();
   },
 
@@ -179,9 +180,9 @@ export default {
         if(res.statusText === "OK" || res.status === 200) {
           this.dialogForm = false;
           this.getDataApi();
-          this.$message.success('保存成功');
+          this.$message.success(this.$t('message.saveOK'));
         } else{
-          this.$message.error('保存失败');
+          this.$message.error(this.$t('message.saveFail'));
         }
         this.dialogForm = false;
       });
@@ -192,16 +193,16 @@ export default {
         uuid: data.uuid,
         id: data.id
       };
-      this.$confirm('是否删除？', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
+      this.$confirm(this.$t('message.deleteOrNot' + "?"), {
+        confirmButtonText: this.$t('message.confirm'),
+        cancelButtonText: this.$t('message.cancle')
       }).then(() => {
         cluster.removeMonitor(params).then(res => {
           if (res.statusText === "OK" || res.status === 200) {
             this.getDataApi();
-            this.$message.success('删除成功');
+            this.$message.success(this.$t('message.deleteOK'));
           } else {
-            this.$message.error('删除失败');
+            this.$message.error(this.$t('message.deleteFail'));
           }
         });
       });
@@ -227,9 +228,9 @@ export default {
       if(server ==="apiServer") {
         name = 'API SEVER';
       } else if(server ==="engine") {
-        name = '同步治理';
+        name = this.$t('message.syncGover');
       } else {
-        name = '管理后台';
+        name = this.$t('message.manageSys');
       }
       if (status === "running") {
         let data = {
@@ -237,9 +238,9 @@ export default {
           server: server,
           operation: 'stop'
         };
-        this.$confirm('确认 "'+name+'" 关闭服务？', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消'
+        this.$confirm(this.$t('message.confirm') +" " + name + " "+ this.$t('message.closeSever'), {
+          confirmButtonText: this.$t('message.confirm'),
+          cancelButtonText: this.$t('message.cancle')
         }).then(() => {
           this.operationFn(data);
         });
@@ -250,9 +251,9 @@ export default {
       if(server ==="apiServer") {
         name = 'API SEVER';
       } else if(server ==="engine") {
-        name = '同步治理';
+        name = this.$t('message.syncGover');
       } else {
-        name = '管理后台';
+        name = this.$t('message.manageSys');
       }
       if (status === "running") {
         let data = {
@@ -260,9 +261,9 @@ export default {
           server: server,
           operation: 'restart'
         };
-        this.$confirm('确认 "'+name+'" 重启服务？', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消'
+        this.$confirm(this.$t('message.confirm') +" " + name + " "+ this.$t('message.restartServer'), {
+          confirmButtonText: this.$t('message.confirm'),
+          cancelButtonText: this.$t('message.cancle')
         }).then(() => {
           this.operationFn(data);
         });
@@ -317,7 +318,16 @@ export default {
           }
         }
       });
+    },
+
+    //关闭弹窗并且清空验证
+    closeDialogForm(){
+      this.dialogForm = false
+      this.$refs.ruleForm.closeDialogForm();
     }
+  },
+  destroyed(){ //生命周期结束后，应该清除所有的定时器
+    clearTimeout(timer())
   }
 };
 </script>
