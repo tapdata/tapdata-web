@@ -1,7 +1,8 @@
 <template>
-  <el-form :model="ruleForm" status-icon ref="ruleForm" label-width="100px" class="addServe">
-    <el-form-item label="name" prop="name" :rules="{required: true, message: $t('message.nullContent'), trigger: 'blur'}">
-      <el-input v-model.number="ruleForm.name" :placeholder="$t('message.placeholderMonServer')"></el-input>
+
+  <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="addServe">
+    <el-form-item label="name" prop="name">
+      <el-input v-model="ruleForm.name" :placeholder="$t('message.placeholderMonServer')"></el-input>
     </el-form-item>
 
     <el-form-item label="command" prop="command"  :rules="{required: true, message: $t('message.nullContent'), trigger: 'blur'}">
@@ -28,10 +29,22 @@ export default {
       },
     }
   },
-  methods:{
+  methods: {
     closeDialogForm(){
       this.$refs.ruleForm.clearValidate(); //父组件关闭弹窗，子组件清除验证
+    },
+    //子组件校验，传递到父组件
+    validateForm () {
+      let flag = null;
+      this.$refs['ruleForm'].validate(valid => {
+        if (valid) {
+          flag = true;
+        } else {
+          flag = false;
+        }
+      });
+      return flag;
     }
-  },
+  }
 }
 </script>

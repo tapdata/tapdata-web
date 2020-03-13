@@ -116,7 +116,8 @@
                   <el-col :span="7" :offset="5">
                     <div class="btn fr">
                       <el-button type="text"
-                      @click="delServe(child)">{{ $t('message.delete') }}</el-button>
+                      @click="delServe(child,item.status)">{{ $t('message.delete') }}</el-button>
+
                     </div>
                   </el-col>
                 </el-row>
@@ -130,10 +131,11 @@
       </div>
     </div>
     <el-dialog :title="$t('message.addServerMon')" custom-class="serverDialog" :visible.sync="dialogForm" :append-to-body="true" :lock-scroll="false" width="600px" @close='closeDialogForm()'>
-      <addServe :data="currentData" ref="ruleForm"></addServe>
+      <addServe :data="currentData" ref="childRules"></addServe>
       <div slot="footer" class="dialog-footer">
         <el-button size="small"  @click="closeDialogForm()">{{ $t('message.cancle') }}</el-button>
         <el-button size="small"  type="primary" @click="submitForm('ruleForm')">{{ $t('message.confirm') }}</el-button>
+
       </div>
     </el-dialog>
   </div>
@@ -169,43 +171,53 @@ export default {
   methods: {
     //提交
     async submitForm() {
-      let getFrom = this.$refs.ruleForm.ruleForm;
-      let data = {
-        uuid: this.currentData.uuid,
-        name: getFrom.name,
-        command: getFrom.command,
-        arguments: getFrom.arguments
-      };
-      await cluster.addMonitor(data).then(res => {
-        if(res.statusText === "OK" || res.status === 200) {
+      let getFrom = this.$refs.childRules.ruleForm;
+      let status = this.$refs.childRules.data.status;
+      let flag = this.$refs['childRules'].validateForm();
+      if(flag && status === "running") {
+        let data = {
+          uuid: this.currentData.uuid,
+          name: getFrom.name,
+          command: getFrom.command,
+          arguments: getFrom.arguments
+        };
+        await cluster.addMonitor(data).then(res => {
+          if(res.statusText === "OK" || res.status === 200) {
+            this.dialogForm = false;
+            this.getDataApi();
+            this.$message.success(this.$t('message.saveOK'));
+          } else{
+            this.$message.error(this.$t('message.saveFail'));
+          }
           this.dialogForm = false;
-          this.getDataApi();
-          this.$message.success(this.$t('message.saveOK'));
-        } else{
-          this.$message.error(this.$t('message.saveFail'));
-        }
-        this.dialogForm = false;
-      });
+        });
+      }
     },
+
     //删除
-    delServe(data) {
+    delServe(data,status) {
       let params = {
         uuid: data.uuid,
         id: data.id
       };
-      this.$confirm(this.$t('message.deleteOrNot' + "?"), {
-        confirmButtonText: this.$t('message.confirm'),
-        cancelButtonText: this.$t('message.cancle')
-      }).then(() => {
-        cluster.removeMonitor(params).then(res => {
-          if (res.statusText === "OK" || res.status === 200) {
-            this.getDataApi();
-            this.$message.success(this.$t('message.deleteOK'));
-          } else {
-            this.$message.error(this.$t('message.deleteFail'));
-          }
+
+      if(status === "running") {
+        this.$confirm(this.$t('message.deleteOrNot' + "?"), {
+          confirmButtonText: this.$t('message.confirm'),
+          cancelButtonText: this.$t('message.cancle')
+        }).then(() => {
+          cluster.removeMonitor(params).then(res => {
+            if (res.statusText === "OK" || res.status === 200) {
+              this.getDataApi();
+              this.$message.success(this.$t('message.deleteOK'));
+            } else {
+              this.$message.error(this.$t('message.deleteFail'));
+            }
+          });
         });
-      });
+      } else {
+        this.$message.error('请启动后删除');
+      }
     },
     addServeFn(item) {
       this.currentData = item;
@@ -271,7 +283,7 @@ export default {
     },
     //重启---关闭---启动
     async operationFn(data) {
-      await cluster.post(data).then(res=>{
+      await cluster.updateStatus(data).then(res=>{
         if(res.status === 200) {
           this.getDataApi();
         }
