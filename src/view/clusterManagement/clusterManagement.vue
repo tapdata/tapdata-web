@@ -171,23 +171,27 @@ export default {
       let getFrom = this.$refs.childRules.ruleForm;
       let status = this.$refs.childRules.data.status;
       let flag = this.$refs['childRules'].validateForm();
-      if(flag && status === "running") {
-        let data = {
-          uuid: this.currentData.uuid,
-          name: getFrom.name,
-          command: getFrom.command,
-          arguments: getFrom.arguments
-        };
-        await cluster.addMonitor(data).then(res => {
-          if(res.statusText === "OK" || res.status === 200) {
-            this.dialogForm = false;
-            this.getDataApi();
-            this.$message.success('保存成功');
-          } else{
-            this.$message.error('保存失败');
-          }
-        });
-        this.dialogForm = false;
+      if (status === "running") {
+        if(flag) {
+          let data = {
+            uuid: this.currentData.uuid,
+            name: getFrom.name,
+            command: getFrom.command,
+            arguments: getFrom.arguments
+          };
+          await cluster.addMonitor(data).then(res => {
+            if(res.statusText === "OK" || res.status === 200) {
+              this.dialogForm = false;
+              this.getDataApi();
+              this.$message.success('保存成功');
+            } else{
+              this.$message.error('保存失败');
+            }
+          });
+          this.dialogForm = false;
+        }
+      } else {
+         this.$message.error('请启动后添加');
       }
     },
     //删除
