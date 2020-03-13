@@ -115,7 +115,7 @@
                   <el-col :span="7" :offset="5">
                     <div class="btn fr">
                       <el-button type="text"
-                      @click="delServe(child)">删除</el-button>
+                      @click="delServe(child,item.status)">删除</el-button>
                     </div>
                   </el-col>
                 </el-row>
@@ -190,24 +190,28 @@ export default {
       }
     },
     //删除
-    delServe(data) {
+    delServe(data,status) {
       let params = {
         uuid: data.uuid,
         id: data.id
       };
-      this.$confirm('是否删除？', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-      }).then(() => {
-        cluster.removeMonitor(params).then(res => {
-          if (res.statusText === "OK" || res.status === 200) {
-            this.getDataApi();
-            this.$message.success('删除成功');
-          } else {
-            this.$message.error('删除失败');
-          }
+      if(status === "running") {
+        this.$confirm('是否删除？', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        }).then(() => {
+          cluster.removeMonitor(params).then(res => {
+            if (res.statusText === "OK" || res.status === 200) {
+              this.getDataApi();
+              this.$message.success('删除成功');
+            } else {
+              this.$message.error('删除失败');
+            }
+          });
         });
-      });
+      } else {
+        this.$message.error('请启动后删除');
+      }
     },
     addServeFn(item) {
       this.currentData = item;
