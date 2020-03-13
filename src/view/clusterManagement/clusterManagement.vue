@@ -169,8 +169,9 @@ export default {
     //提交
     async submitForm() {
       let getFrom = this.$refs.childRules.ruleForm;
+      let status = this.$refs.childRules.data.status;
       let flag = this.$refs['childRules'].validateForm();
-      if(flag) {
+      if(flag && status === "running") {
         let data = {
           uuid: this.currentData.uuid,
           name: getFrom.name,
