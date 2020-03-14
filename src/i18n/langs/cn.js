@@ -1,4 +1,4 @@
-import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
+import zhLocale from 'element-ui/lib/locale/lang/zh-CN';
 const cn = {
   message: {
     serviceCluMange:'服务集群管理',

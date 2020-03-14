@@ -1,4 +1,4 @@
-import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
+import tcLocale from 'element-ui/lib/locale/lang/zh-TW';
 const tc = {
     message: {
       serviceCluMange:'服務集群管理',
@@ -41,6 +41,5 @@ const tc = {
     },
     ...tcLocale
   }
-  
+
   export default tc;
-  

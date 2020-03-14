@@ -16,7 +16,7 @@
           </div>
         </el-col>
         <el-col class="text-rf screen" :span="2" :offset="9">
-          
+
         </el-col>
       </el-row>
 
@@ -196,7 +196,7 @@ export default {
       } else {
         this.$message.error(this.$t('message.startupAfter_add'));
       }
-      
+
     },
 
     //删除
@@ -339,12 +339,12 @@ export default {
 
     //关闭弹窗并且清空验证
     closeDialogForm(){
-      this.dialogForm = false
-      this.$refs.ruleForm.closeDialogForm();
+      this.dialogForm = false;
+      this.$refs.childRules.closeDialogForm();
     }
   },
   destroyed(){ //生命周期结束后，应该清除所有的定时器
-    clearTimeout(timer())
+    clearTimeout( this.timer());
   }
 };
 </script>

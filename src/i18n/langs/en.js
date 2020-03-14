@@ -1,4 +1,4 @@
-import enLocale from 'element-ui/lib/locale/lang/en'
+import enLocale from 'element-ui/lib/locale/lang/en';
 const en = {
     message: {
       serviceCluMange:'Service cluster management',
@@ -41,6 +41,5 @@ const en = {
     },
     ...enLocale
   };
-  
+
   export default en;
-  

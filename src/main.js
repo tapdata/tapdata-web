@@ -16,7 +16,7 @@ Vue.config.productionTip = false;
 Vue.use(VueCookie);
 
 // Vue.prototype.i18n = window.jQuery.i18n
-let vm = new Vue({
+new Vue({
   el: '#app',
   router,
   store,

@@ -22,7 +22,7 @@
       </el-col>
       <el-col :span="4">
         <el-form-item :label="$t('message.serviceType')">
-          <el-select v-model="form.serverType" :placeholder="$t('message.placeholderSelect')">  
+          <el-select v-model="form.serverType" :placeholder="$t('message.placeholderSelect')">
             <el-option v-for="item in serverTypeList" :label="item.lable" :value="item.value" :key="item.value"></el-option>
           </el-select>
         </el-form-item>
@@ -40,8 +40,8 @@
     </el-form>
   </el-row>
   <div class="content" ref="contentHeight">
-    <el-table :data="tableData" class="tableName" border :height="tableHeight" style="width: 100%">
-      <el-table-column prop="data" sortable :label="$t('message.time')" width="260"></el-table-column>
+    <el-table :data="tableData" class="tableName" border :height="tableHeight" :default-sort = "{prop: 'data', order: 'descending'}" style="width: 100%">
+      <el-table-column prop="data" :label="$t('message.time')" :formatter="dateFormat" width="260"></el-table-column>
       <el-table-column prop="hostname" :label="$t('message.hostName')" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="ip" :label="$t('message.ipAddress')" width="150"></el-table-column>
       <el-table-column prop="uuid" :label="$t('message.uniqueEncode')" :show-overflow-tooltip="true"></el-table-column>
@@ -68,7 +68,7 @@
 </div>
 </template>
 <script>
-	import factory from '../../api/factory';
+  import factory from '../../api/factory';
 	const logs = factory('logs');
 	const cluster = factory('cluster');
 export default {
@@ -113,9 +113,6 @@ export default {
     };
   },
 
-  created () {
-
-  },
   mounted(){
     let params = {
       'filter[limit]': this.pagesize,
@@ -205,8 +202,19 @@ export default {
       this.getDataApi(params);
     },
 
-    exportFn() {
-
+    dateFormat(row, column, cellValue, index){
+      const daterc = row[column.property];
+      if(daterc!=null){
+        const dateMat= new Date(daterc);
+        const year = dateMat.getFullYear();
+        const month = dateMat.getMonth() + 1;
+        const day = dateMat.getDate();
+        const hh = dateMat.getHours();
+        const mm = dateMat.getMinutes();
+        const ss = dateMat.getSeconds();
+        const timeFormat= year + "-" + (month<10? '0'+ month : month) + "-" +(day<10? '0'+ day : day) + " " + (hh<10? '0'+ hh : hh) + ":" + (mm<10? '0'+ mm : mm) + ":" + (ss<10? '0'+ ss : ss);
+        return timeFormat;
+      }
     }
   }
 };
