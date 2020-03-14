@@ -164,7 +164,7 @@ export default {
     };
   },
   created () {
-    //this.timer();
+    this.timer();
     this.getDataApi();
   },
 

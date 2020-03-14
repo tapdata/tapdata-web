@@ -6,15 +6,15 @@ import router from './router';
 import store from './vuex';   // 引入全局数据控制
 import axios from 'axios';
 import VueCookie from 'vue-cookie';
-import i18n from './i18n/i18n'
+import i18n from './i18n/i18n';
 
 
 import './plugins/element.js';
-import './theme/index.css'
+import './theme/index.css';
 
 Vue.config.productionTip = false;
 Vue.use(VueCookie);
-  
+
 // Vue.prototype.i18n = window.jQuery.i18n
 let vm = new Vue({
   el: '#app',
@@ -24,18 +24,4 @@ let vm = new Vue({
 	axios,
   components: { App },
   template: '<App/>'
-});
-
-axios.interceptors.request.use(function (config) {
-  let access_token = vm.$cookie.get('token');
-  if (~config.url.indexOf('?')) {
-    if (!~config.url.indexOf('access_token')) {
-      config.url = `${config.url}&access_token=${access_token}`;
-    }
-  } else {
-    config.url = `${config.url}?access_token=${access_token}`;
-  }
-  return config;
-}, function (error) {
-  return Promise.reject(error);
 });

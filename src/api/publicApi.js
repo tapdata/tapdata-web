@@ -1,9 +1,24 @@
 import axios from 'axios';
+import Cookie from 'tiny-cookie';
+
+axios.interceptors.request.use(function (config) {
+  let access_token = Cookie.get('token');
+  if (~config.url.indexOf('?')) {
+    if (!~config.url.indexOf('access_token')) {
+      config.url = `${config.url}&access_token=${access_token}`;
+    }
+  } else {
+    config.url = `${config.url}?access_token=${access_token}`;
+  }
+  return config;
+}, function (error) {
+  return Promise.reject(error);
+});
 
 export default class PublicAPI {
 
 	constructor(url) {
-		this.url = url;
+    this.url = url;
 	}
 
 	count(params) {

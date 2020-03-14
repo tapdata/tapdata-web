@@ -41,7 +41,7 @@
   </el-row>
   <div class="content" ref="contentHeight">
     <el-table :data="tableData" class="tableName" border :height="tableHeight" style="width: 100%">
-      <el-table-column prop="data" :label="$t('message.time')" width="260"></el-table-column>
+      <el-table-column prop="data" sortable :label="$t('message.time')" width="260"></el-table-column>
       <el-table-column prop="hostname" :label="$t('message.hostName')" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="ip" :label="$t('message.ipAddress')" width="150"></el-table-column>
       <el-table-column prop="uuid" :label="$t('message.uniqueEncode')" :show-overflow-tooltip="true"></el-table-column>
