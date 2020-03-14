@@ -1,7 +1,7 @@
 <template>
 
   <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="addServe">
-    <el-form-item label="name" prop="name">
+    <el-form-item label="name" prop="name" :rules="{required: true, message: $t('message.nullContent'), trigger: 'blur'}">
       <el-input v-model="ruleForm.name" :placeholder="$t('message.placeholderMonServer')"></el-input>
     </el-form-item>
 
