@@ -4,11 +4,11 @@
       <el-menu-item index="1"><i class="icon iconfont iconjiqunzhuangtai"></i>{{ $t('message.serviceCluMange') }}</el-menu-item>
       <el-menu-item index="2"><i class="icon iconfont iconrizhi"></i>{{ $t('message.statusLog') }}</el-menu-item>
     </el-menu>
-    <el-select v-model="langType" class="changeLangType" size="mini" @change="changeLangType">
+    <!-- <el-select v-model="langType" class="changeLangType" size="mini" @change="changeLangType">
           <el-option value="en" label="English"></el-option>
           <el-option value="cn" label="中文简体"></el-option>
           <el-option value="tc" label="中文繁體"></el-option>
-    </el-select>
+    </el-select> -->
     <div class="main">
       <router-view/>
       <!-- <el-row class="fun_area">
@@ -35,7 +35,6 @@ export default {
       langType:'en'
     };
   },
-
   methods: {
     handleSelect (key, keyPath) {
       if (key === '1') {
@@ -44,11 +43,12 @@ export default {
         this.$router.push({name: 'dailyRecord'});
       }
     },
-    changeLangType(type){
-      localStorage.setItem('locale',type)
-      this.$i18n.locale = type
-    }
+    // changeLangType(type){
+    //   localStorage.setItem('locale',type);
+    //   this.$i18n.locale = type;
+    // }
   }
+
 };
 </script>
 <style lang="less">

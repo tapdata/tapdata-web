@@ -4,16 +4,16 @@ import VueI18n from 'vue-i18n';
 // import messages from './langs'
 
 import en from './langs/en';
-import cn from './langs/cn';
+import sc from './langs/cn';
 import tc from './langs/tc';
 
 Vue.use(VueI18n);
 
 const i18n = new VueI18n({
   //locale: localStorage.lang || 'en',
-  locale: localStorage.getItem('locale') || 'en',
+  locale: localStorage.getItem('localize_lang') || 'en',
   messages: {
-    cn, //中文
+    sc, //中文
     en, //英文
     tc  //繁体
   }

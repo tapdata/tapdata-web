@@ -342,9 +342,6 @@ export default {
       this.dialogForm = false;
       this.$refs.childRules.closeDialogForm();
     }
-  },
-  destroyed(){ //生命周期结束后，应该清除所有的定时器
-    clearTimeout( this.timer());
   }
 };
 </script>
