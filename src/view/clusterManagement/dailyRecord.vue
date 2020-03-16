@@ -41,7 +41,7 @@
   </el-row>
   <div class="content" ref="contentHeight">
     <el-table :data="tableData" class="tableName" border :height="tableHeight" :default-sort = "{prop: 'data', order: 'descending'}" style="width: 100%">
-      <el-table-column prop="data" :label="$t('message.time')" :formatter="dateFormat" width="260"></el-table-column>
+      <el-table-column prop="last_updated" :label="$t('message.time')" :formatter="dateFormat" width="260"></el-table-column>
       <el-table-column prop="hostname" :label="$t('message.hostName')" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="ip" :label="$t('message.ipAddress')" width="150"></el-table-column>
       <el-table-column prop="uuid" :label="$t('message.uniqueEncode')" :show-overflow-tooltip="true"></el-table-column>
@@ -75,7 +75,7 @@ export default {
   data(){
     return {
       pagesize: 30,
-      currpage: 0,
+      currpage: 1,
       totalNum: 0,
       tableHeight: 100,
       form: {
@@ -116,7 +116,8 @@ export default {
   mounted(){
     let params = {
       'filter[limit]': this.pagesize,
-      'filter[skip]': this.currpage,
+      'filter[skip]': (this.currpage-1)*this.pagesize,
+      'filter[order]': 'last_updated DESC',
       'filter[where][loggerName]': 'tapdataAgent',
     };
     setTimeout(() => this.getDataApi(params),1000);
@@ -146,7 +147,8 @@ export default {
         'filter[where][ip]': this.form.ip,
         'filter[where][loggerName]': 'tapdataAgent',
         'filter[limit]': this.pagesize,
-        'filter[skip]': this.currpage
+        'filter[skip]': this.currpage,
+        'filter[order]': 'last_updated DESC',
       };
       let obj={};
       for(let i in params){
@@ -186,17 +188,21 @@ export default {
     this.tableHeight = (contentHeight - 60);
     },
     handleCurrentChange(cpage) {
+      this.currpage = cpage;
       let params = {
+        'filter[order]': 'last_updated DESC',
         'filter[limit]': this.pagesize,
-        'filter[skip]': cpage,
+        'filter[skip]': (cpage-1)*this.pagesize,
         'filter[where][loggerName]': 'tapdataAgent',
       };
       this.getDataApi(params);
     },
     handleSizeChange(psize) {
+      this.pagesize = psize;
       let params = {
+        'filter[order]': 'last_updated DESC',
         'filter[limit]': psize,
-        'filter[skip]': this.currpage,
+        'filter[skip]': (this.currpage-1)*psize,
         'filter[where][loggerName]': 'tapdataAgent',
       };
       this.getDataApi(params);
