@@ -2,7 +2,7 @@
 	<div class="e-collection">
 		<el-form label-position="right" label-width="130px" :model="model" ref="form">
 			<el-form-item label="Database" prop="connectionId" :rules="rules" required>
-				<el-select v-model="model.connectionId" :placeholder="`Please select MongoDB database`" @change="handlerChange">
+				<el-select v-model="model.connectionId" :placeholder="`Please select MongoDB database`" @change="handlerConnectionChange">
 					<el-option
 							v-for="(item, idx) in databases"
 							:label="`${item.name} (${item.status})`"
@@ -11,9 +11,9 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item label="Collection" prop="dataModelId" :rules="rules" required>
+			<el-form-item label="Collection" prop="tableName" :rules="rules" required>
 				<el-select
-						v-model="model.dataModelId"
+						v-model="model.tableName"
 						filterable
 						allow-create
 						default-first-option
@@ -51,6 +51,7 @@
 	import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from "./components/Schema";
 	import Entity from './components/Entity';
 	import _ from 'lodash';
+	import log from '../../log';
 	import factory from '../../api/factory';
 	let connectionApi = factory('connections');
 
@@ -79,15 +80,17 @@
 					this.loadDataModels(this.model.connectionId);
 				}
 			},
-			'model.dataModelId': {
+			'model.tableName': {
 				immediate: true,
 				handler(){
 					if( this.schemas.length > 0 ){
-						if( this.model.dataModelId){
-							let schema = this.schemas.filter( s => s.table_name === this.model.dataModelId);
-							this.model.schema = schema && schema.length > 0 ? schema[0] : null;
+						if( this.model.tableName){
+							let schema = this.schemas.filter( s => s.table_name === this.model.tableName);
+							this.model.schema = schema && schema.length > 0 ? schema[0] : {};
+							let fields = this.model.schema.fields || [];
+							this.model.primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
 						} else {
-							this.model.schema = null;
+							this.model.schema = {};
 						}
 					}
 				}
@@ -114,9 +117,11 @@
 				model: {
 					connectionId: "",
 					databaseType: '',
-					dataModelId: "",
-					schema: null,
+					tableName: "",
+					schema: {},
 					dropTable: false,
+					type: 'collection',
+					primaryKeys: ''
 				},
 
 				mergedSchema: null
@@ -161,8 +166,8 @@
 
 			},
 
-			handlerChange(){
-				this.model.dataModelId = '';
+			handlerConnectionChange(){
+				this.model.tableName = '';
 				for (let i = 0; i < this.databases.length; i++) {
 					if( this.model.connectionId === this.databases[i].id){
 						this.model.databaseType = this.databases[i]['database_type'];
@@ -183,9 +188,10 @@
 			},
 
 			renderSchema() {
-				let mergedSchema = _.cloneDeep(this.model.schema);
+				let mergedSchema = _.cloneDeep(this.model.schema || {});
 				mergeJoinTablesToTargetSchema(mergedSchema, _.cloneDeep(this.joinTables));
 				this.mergedSchema = mergedSchema;
+				log.log('Collection.renderSchema:', mergedSchema);
 			}
 		}
 	};

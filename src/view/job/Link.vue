@@ -65,7 +65,9 @@
 		joinKeys: [{
 			source: '',
 			target: ''
-		}]
+		}],
+		primaryKeys: '',
+		fieldProcesses: []
 	};
 	export default {
 		name: "Link",
@@ -85,7 +87,7 @@
 					value: 'update'  // OneMany				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
 				}, {
 					label: 'Match then Embed as Array in target',
-					value: 'match_embed'  // ManyOne		{source: ''} + {target: ''}  =  {source: '', joinPath: [{target: ''}]}
+					value: 'merge_embed'  // ManyOne		{source: ''} + {target: ''}  =  {source: '', joinPath: [{target: ''}]}
 				}],
 
 				sourceSchema: [],
@@ -234,7 +236,11 @@
 					sourceNodeIds: preDataNodes.map(n => n.id),
 					tableName: sourceSchemas.map(t => t.table_name).join('_'),
 					joinPath: sourceSchemas.map(t => t.table_name).join('_'),
-					sourceSchemas: sourceSchemas
+					sourceSchemas: sourceSchemas,
+					primaryKeys: sourceSchemas.map(t => {
+						let fields = t.fields || [];
+						return fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
+					}).join(','),
 				});
 
 				let otherJoinTables = (vueAdapter.getJoinTablesForTargetCell(targetNode, allCell) || [])
@@ -258,7 +264,7 @@
 			initByType(type){
 				if( type === 'app.Table'){
 					for (let i = 0; i < this.writeModels.length; i++) {
-						if( this.writeModels[i].value === 'match_embed'){
+						if( this.writeModels[i].value === 'merge_embed'){
 							this.writeModels.splice(i, 1);
 							i--;
 						}

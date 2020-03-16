@@ -12,6 +12,7 @@
 	import factory from "../../api/factory";
 	import editor from '../../editor/index';
 	import log from '../../log';
+	import { FORM_DATA_KEY } from "../../editor/vue-adapter";
 
 	const dataFlowsApi = factory('DataFlows');
 	export default {
@@ -31,6 +32,16 @@
 				let editorData = this.editor.getData();
 				let graphData = editorData.graphData;
 				// let graphLib = editorData.graphLib;
+
+				let cells = graphData.cells ? graphData.cells : [];
+				let edgeCells = {};
+				let nodeCells = {};
+				cells.forEach(cell => {
+					if( cell.type === 'app.Link')
+						edgeCells[cell.id] = cell;
+					else
+						nodeCells[cell.id] = cell;
+				});
 
 				let postData = Object.assign({
 					name: editorData.name,
@@ -64,13 +75,14 @@
 				});
 
 				let stages = {};
-				graphData.cells.forEach(cell => {
+				Object.values(nodeCells).forEach(cell => {
 
 					let stage = stages[cell.id] = Object.assign({
 						id: cell.id,
 						inputLanes: [],
-						ouputLanes: []
-					}, cell['form_data'] || {});
+						outputLanes: [],
+						syncType: "initial_sync+cdc",
+					}, cell[FORM_DATA_KEY] || {});
 
 					if( ['app.SourceDB', 'app.TargetDB'].includes(cell.type) ){
 
@@ -78,11 +90,8 @@
 
 						Object.assign(stage, {
 							type: "database",
-							syncType: "initial_sync+cdc",
 							readCdcInterval: 500,
 							readBatchSize: 25000,
-							inputLanes: [],
-							ouputLanes: []
 						});
 
 					} else if( ['app.Table', 'app.Collection'].includes(cell.type)){
@@ -90,76 +99,26 @@
 						postData.mappingTemplate = 'custom';
 
 						Object.assign(stage, {
-							type:"collection",
-							"dropTable": true,
-							"inputLanes":[
-								"processor_js_processor_1",
-								"processor_js_processor_2"
-							],
-							"outputLanes":[
-								"data_node_collection_2"
-							],
-							"tableName":"CUSTOMER",
-							"syncType":"initial_sync+cdc",
-							"dataQualityTag":false,
-							"primaryKeys":"CUSTOMER_ID",
-							"connectionId":"5d6dd74736923953ff2d3a5c",
-							"joinTables":[
-								{
-									"tableName":"CUSTOMER",
-									"joinType":"upsert",
-									"joinPath":"",
-									"joinKeys":[
-										{
-											"source":"CUSTOMER_ID",
-											"target":"CUSTOMER_ID"
-										}
-									],
-									"primaryKeys":"CUSTOMER_ID",
-									"fieldProcesses":[
-										{
-											"op":"REMOVE",
-											"field":"payDate"
-										}
-									]
-								},
-								{
-									"tableName":"POLICY",
-									"joinType":"merge_embed",
-									"joinPath":"policy",
-									"joinKeys":[
-										{
-											"source":"CUSTOMER_ID",
-											"target":"CUSTOMER_ID"
-										}
-									],
-									"primaryKeys":"POLICY_ID",
-									"fieldProcesses":[
-										{
-											"op":"RENAME",
-											"operand":"policyStatus",
-											"field":"POLICY_STATUS"
-										}
-									]
-								}
-							]
+							dataQualityTag:false,
+							joinTables: Object.values(edgeCells)
+								.filter(edge => edge.target && edge.target.id === cell.id )
+								.map( edge => edge[FORM_DATA_KEY] && edge[FORM_DATA_KEY].joinTable)
 						});
-
 					}
 				});
 
-				graphData.cells.forEach(cell => {
+				Object.values(edgeCells).forEach(cell => {
 					if( 'app.Link' === cell.type){
 						let sourceId = cell.source.id;
 						let targetId = cell.target.id;
 
-						stages[sourceId].ouputLanes.push(targetId);
-						stages[targetId].ouputLanes.push(sourceId);
+						stages[sourceId].outputLanes.push(targetId);
+						stages[targetId].inputLanes.push(sourceId);
 					}
 				});
 
 				postData.stages = Object.values(stages);
-				log.log('saveData:', postData);
+				log.log('Job.saveData:', postData);
 				if( `1` !== '1') {
 					dataFlowsApi.post(postData).then((result) => {
 						//console.log(result);

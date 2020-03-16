@@ -7,13 +7,14 @@ import Vue from 'vue';
 import Panel from "./ui/panel";
 import {EditorEventType} from "./lib/events";
 import BaseObject from './lib/BaseObject';
+import log from '../log';
 
 export const vueAdapter = {};
 //const privateMap = new WeakMap();
+export const FORM_DATA_KEY = 'form_data';
 
 export class VueAdapter extends BaseObject {
 
-	formDataKey = 'form_data';
 	vm = null;
 
 	constructor(ui, graphUI){
@@ -28,6 +29,7 @@ export class VueAdapter extends BaseObject {
 	}
 
 	render(cell){
+		log.log('VueAdapter.render', cell);
 		let self = this;
 		let name = cell.type;
 		let formData = self.getFormDataForCell(cell);
@@ -125,10 +127,10 @@ export class VueAdapter extends BaseObject {
 
 	setFormData(cell, data) {
 		//console.log(data);
-		cell[this.formDataKey] = data;
+		cell[FORM_DATA_KEY] = data;
 	}
 	getFormDataForCell(cell){
-		return cell && cell[this.formDataKey];
+		return cell && cell[FORM_DATA_KEY];
 	}
 	getSchemaForCell(cell){
 		let formData = this.getFormDataForCell(cell);
@@ -139,6 +141,7 @@ export class VueAdapter extends BaseObject {
 		return formData && formData.joinTable;
 	}
 	getJoinTablesForTargetCell(targetCell, allCell){
+		log.log('VueAdapter.getJoinTablesForTargetCell', ...arguments);
 		let cells = allCell.cells ? allCell.cells : [];
 		let edgeCells = {};
 		let nodeCells = {};
@@ -150,7 +153,7 @@ export class VueAdapter extends BaseObject {
 		});
 		let joinTables = Object.values(edgeCells)
 			.filter(edge => edge.target && edge.target.id === targetCell.id )
-			.map( edge => edge[this.formDataKey] && edge[this.formDataKey].joinTable);
+			.map( edge => edge[FORM_DATA_KEY] && edge[FORM_DATA_KEY].joinTable);
 
 		// assign source schema to joinTable
 		joinTables.forEach( joinTable => {
@@ -160,8 +163,8 @@ export class VueAdapter extends BaseObject {
 					joinTable.sourceNodeIds.forEach(
 						nodeId => joinTable.sourceSchemas.push(
 							nodeCells[nodeId] &&
-							nodeCells[nodeId][this.formDataKey] &&
-							nodeCells[nodeId][this.formDataKey].schema));
+							nodeCells[nodeId][FORM_DATA_KEY] &&
+							nodeCells[nodeId][FORM_DATA_KEY].schema));
 				}
 			}
 		});

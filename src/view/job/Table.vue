@@ -2,7 +2,7 @@
 	<div>
 		<el-form label-position="right" label-width="130px" :model="model" ref="form">
 			<el-form-item label="Database" prop="connectionId" :rules="rules" required>
-				<el-select v-model="model.connectionId" :placeholder="`Please select RDBMS database`" @change="handlerChange">
+				<el-select v-model="model.connectionId" :placeholder="`Please select RDBMS database`" @change="handlerConnectionChange">
 					<el-option
 							v-for="(item, idx) in databases"
 							:label="`${item.name} (${item.status})`"
@@ -11,8 +11,8 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item label="Table" prop="dataModelId" :rules="rules" required>
-				<el-select v-model="model.dataModelId" :placeholder="`Please select a table`">
+			<el-form-item label="Table" prop="tableName" :rules="rules" required>
+				<el-select v-model="model.tableName" :placeholder="`Please select a table`">
 					<el-option
 							v-for="(item, idx) in schemas"
 							:label="`${item.table_name}`"
@@ -50,6 +50,7 @@
 	import Entity from './components/Entity';
 	import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from "./components/Schema";
 	import _ from 'lodash';
+	import log from '../../log';
 	import factory from '../../api/factory';
 	let connections = factory('connections');
 	export default {
@@ -77,13 +78,16 @@
 					this.loadDataModels(this.model.connectionId);
 				}
 			},
-			'model.dataModelId': {
+			'model.tableName': {
 				immediate: true,
 				handler(){
 					if( this.schemas.length > 0 ){
-						if( this.model.dataModelId){
-							let schema = this.schemas.filter( s => s.table_name === this.model.dataModelId);
-							this.model.schema = schema && schema.length > 0 ? schema[0] : null;
+						if( this.model.tableName){
+							let schema = this.schemas.filter( s => s.table_name === this.model.tableName);
+							this.model.schema = schema && schema.length > 0 ? schema[0] : {};
+							let fields = this.model.schema.fields || [];
+							this.model.primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
+
 						} else {
 							this.model.schema = null;
 						}
@@ -112,10 +116,11 @@
 				model: {
 					connectionId: "",
 					databaseType: '',
-					dataModelId: "",
+					tableName: "",
 					sql: '',
 					schema: null,
 					dropTable: false,
+					type: 'table',
 				},
 
 				mergedSchema: null
@@ -160,8 +165,8 @@
 
 			},
 
-			handlerChange(){
-				this.model.dataModelId = '';
+			handlerConnectionChange(){
+				this.model.tableName = '';
 				for (let i = 0; i < this.databases.length; i++) {
 					if( this.model.connectionId === this.databases[i].id){
 						this.model.databaseType = this.databases[i]['database_type'];
@@ -185,6 +190,7 @@
 				let mergedSchema = _.cloneDeep(this.model.schema);
 				mergeJoinTablesToTargetSchema(mergedSchema, _.cloneDeep(this.joinTables));
 				this.mergedSchema = mergedSchema;
+				log.log('Table.renderSchema:', mergedSchema);
 			}
 		}
 	};

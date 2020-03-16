@@ -76,7 +76,7 @@ export const
 	 * merge schema by joinType
 	 * @param targetSchema {{table_name: '', meta_type: 'collection|table', fields: [{field_name: '', data_type: '', javaType: '', ...}, ...]}}
 	 * @param sourceSchema {{}}
-	 * @param mergeOpts: { {jointType: 'append|upsert|update|match_embed', joinPath: '' }}
+	 * @param mergeOpts: { {jointType: 'append|upsert|update|merge_embed', joinPath: '' }}
 	 * @return
 	 */
 	mergeSchema = function(targetSchema, sourceSchema, mergeOpts){
@@ -100,8 +100,8 @@ export const
 			joinPath.split('.').forEach(fieldName => {
 				targetSchema.fields.push({
 					field_name: fieldName,
-					javaType: joinType === 'match_embed' ? 'Array' : 'Map',
-					data_type: joinType === 'match_embed' ? 'ARRAY' : 'DOCUMENT',
+					javaType: joinType === 'merge_embed' ? 'Array' : 'Map',
+					data_type: joinType === 'merge_embed' ? 'ARRAY' : 'DOCUMENT',
 					table_name: sourceSchema.table_name
 				});
 			});

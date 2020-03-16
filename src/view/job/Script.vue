@@ -38,7 +38,7 @@
 					]
 				},
 				model: {
-					type: "",
+					type: "js_processor",
 					script: "function process(record){\n\n\t// Enter you code at here\n\n}"
 				}
 			};
