@@ -205,7 +205,7 @@ export default {
       };
 
       if(status === "running") {
-        this.$confirm(this.$t('message.deleteOrNot' + "?"), {
+        this.$confirm(this.$t('message.deleteOrNot')+'?', {
           confirmButtonText: this.$t('message.confirm'),
           cancelButtonText: this.$t('message.cancle')
         }).then(() => {
