@@ -55,4 +55,5 @@ Vue.component(DropdownMenu.name, DropdownMenu);
 
 
 Vue.prototype.$confirm = MessageBox.confirm;
+Vue.prototype.$prompt = MessageBox.prompt;
 Vue.prototype.$message = Message;

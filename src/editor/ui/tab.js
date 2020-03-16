@@ -71,6 +71,9 @@ export default class Tab extends Component{
 			this.el.find(`>.e-tab-bar>.e-tab-title[data-target=${id}]`).remove();
 			this.el.find(`>.e-tab-content>.e-tab[data-value=${id}]`).remove();
 		}
+		if( this.childs.length > 0) {
+			this.select(this.childs[0]);
+		}
 	}
 
 	removeAll() {

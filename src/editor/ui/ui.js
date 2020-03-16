@@ -10,10 +10,11 @@ import Tab from "./tab";
 
 export default class UI extends Component {
 
-	constructor(editor) {
+	constructor(opts) {
 		super();
 
-		this.editor = editor;
+		this.editor = opts.editor;
+		this.opts = opts;
 
 		this.init();
 	}
@@ -26,9 +27,7 @@ export default class UI extends Component {
 				</div>
 				<div class="e-toolbar-container">
 					<div class="graph-toolbar"></div>
-					<div class="action-toolbar">
-						<button data-type="save"></button>
-					</div>
+					<div class="action-toolbar"></div>
 				</div>
 			</div>
 			<div class="e-body">
@@ -57,12 +56,12 @@ export default class UI extends Component {
 		let rightTabPanel = this.rightTabPanel = new Tab();
 		this.rightSidebar.add(rightTabPanel);
 
-		this.el.find('.action-toolbar button[data-type=save]').on('click', ()=>{
-			let data = {
-				name: this.el.find('.e-title h3').text()
-			};
-			this.emit('save', data);
-		});
+		if( this.opts.actionBarEl ){
+			this.getActionBarEl().append(this.opts.actionBarEl);
+		}
+	}
+	getName(){
+		return this.el.find('.e-title h3').text();
 	}
 	getContentEl(){
 		return this.el.find('.e-content');
@@ -81,5 +80,8 @@ export default class UI extends Component {
 	}
 	getGraphToolbarEl(){
 		return this.el.find('.e-toolbar-container .graph-toolbar');
+	}
+	getActionBarEl(){
+		return this.el.find('.action-toolbar');
 	}
 }

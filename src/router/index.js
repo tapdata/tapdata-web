@@ -1,8 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import layout from '../view/layout';
-import Job from '../view/job/index';
-import Test from '../view/job/test';
+import Job from '../view/job/Job';
 
 import clusterManagement from '../view/clusterManagement/clusterManagement';
 import dailyRecord from '../view/clusterManagement/dailyRecord';
@@ -32,10 +31,6 @@ export default new Router({
 			path: '/job',
 			name: 'job',
 			component: Job
-		}, {
-			path: '/test',
-			name: 'test',
-			component: Test
 		}
 	]
 });

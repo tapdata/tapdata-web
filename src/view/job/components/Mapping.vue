@@ -8,7 +8,6 @@
 		<div class="e-target" ref="targetContainer">
 			<Entity ref="targetEntity" :schema="targetSchema" editable></Entity>
 		</div>
-		<div class="e-space"></div>
 
 	</div>
 </template>
@@ -17,119 +16,22 @@
 	import Entity from './Entity';
 	import {LeaderLine} from '../../../../static/js/leader-line';
 	import _ from 'lodash';
+	import { convertSchemaToTreeData, mergeSourceSchema, mergeJoinTablesToTargetSchema } from './Schema';
+	import log from '../../../log';
+
 	export default {
 		name: "Mapping",
 		components: {Entity},
 
+		props: {
+
+		},
+
 		data() {
 			let data = {
-				sourceSchema: {
-					name: 'Order',
-					type: 'collection',
-					fields: [{
-						id: 1,
-						label: 'id',
-						type: 'int',
-						color: '#c325c8',
-					}, {
-						id: 2,
-						label: 'orderNo',
-						type: 'string',
-						color: '#c325c8',
-					}, {
-						id: 3,
-						label: 'total_amount',
-						type: 'double',
-						color: '#c325c8',
-					}, {
-						id: 4,
-						label: 'order_detail',
-						type: 'array',
-						color: '#8cc6e8',
-						children: [{
-							id: 5,
-							label: 'orderNo',
-							type: 'string',
-							color: '#8cc6e8',
-						}, {
-							id: 6,
-							label: 'product',
-							type: 'object',
-							color: '#8cc6e8',
-						}, {
-							id: 7,
-							label: 'count',
-							type: 'int',
-							color: '#8cc6e8',
-						}, {
-							id: 8,
-							label: 'price',
-							type: 'double',
-							color: '#8cc6e8',
-						}]
-					}]
-				},
-				targetSchema: {
-					name: 'Order',
-					type: 'collection',
-					fields: [{
-						id: 1,
-						label: 'id',
-						type: 'int',
-						color: '#c325c8',
-					}, {
-						id: 2,
-						label: 'orderNo',
-						type: 'string',
-						color: '#c325c8',
-					}, {
-						id: 3,
-						label: 'total_amount',
-						type: 'double',
-						color: '#c325c8',
-					}, {
-						id: 4,
-						label: 'order_detail',
-						type: 'array',
-						color: '#8cc6e8',
-						children: [{
-							id: 5,
-							label: 'orderNo',
-							type: 'string',
-							color: '#8cc6e8',
-						}, {
-							id: 6,
-							label: 'product',
-							type: 'object',
-							color: '#8cc6e8',
-						}, {
-							id: 7,
-							label: 'count',
-							type: 'int',
-							color: '#8cc6e8',
-						}, {
-							id: 8,
-							label: 'price',
-							type: 'double',
-							color: '#8cc6e8',
-						}]
-					}]
-				},
+				sourceSchema: {},
+				targetSchema: {},
 			};
-			/*for( let i = 9; i < 1000; i++) {
-				data.sourceSchema.fields[3].children.push({
-					id: i,
-					label: 'price' + i,
-					type: 'double',
-					color: '#8cc6e8'
-				});
-				data.targetSchema.fields[3].children.push({
-					id: i,
-					label: 'price' + i,
-					type: 'double',
-					color: '#8cc6e8'
-				});
-			}*/
 			return data;
 		},
 
@@ -153,7 +55,8 @@
 				this.lines.splice(0, this.lines.length);
 			}
 
-			this.createLine( this.sourceSchema.fields );
+			if( this.sourceSchema )
+				this.createLine( this.sourceSchema.fields );
 			let _position = _.throttle(this.position.bind(this), 150, {leading: true, trailing: false});
 			this.$refs.sourceContainer.addEventListener('scroll', _position);
 			this.$refs.targetContainer.addEventListener('scroll', _position);
@@ -189,7 +92,7 @@
 					if( self.lines && self.lines.length > 0 ){
 						for (let i = 0; i < self.lines.length; i++) {
 							let line = self.lines[i];
-							if( line.end.isConnected && line.start.isConnected)
+							if( self.isConnected(line.end) && self.isConnected(line.start))
 								line.position();
 							else{
 								line.remove();
@@ -202,6 +105,7 @@
 			},
 
 			createLine(fields){
+				if( !fields ) return;
 				let self = this;
 
 				for (let i = 0; i < fields.length; i++) {
@@ -209,7 +113,10 @@
 					let sourceEl = self.$refs.sourceEntity.getOutPortByField(field);
 					let targetEl = self.$refs.targetEntity.getInPortByField(field);
 
-					if( sourceEl && targetEl){
+					if(
+						sourceEl && targetEl
+						&& self.isConnected(sourceEl) && self.isConnected(targetEl)
+					){
 						let line = new LeaderLine({
 							start: sourceEl,
 							end: targetEl,
@@ -230,7 +137,44 @@
 						self.createLine(field.children);
 					}
 				}
-			}
+			},
+
+			isConnected(dom) {
+				return !(dom.compareDocumentPosition(document) & Node.DOCUMENT_POSITION_DISCONNECTED);
+			},
+
+			/**
+			 * render all source schema and target schema
+			 * @param targetSchema
+			 * @param joinTable
+			 * @param otherJoinTables
+			 */
+			setSchema(targetSchema, joinTable, otherJoinTables){
+
+				log.log(targetSchema, joinTable, otherJoinTables);
+
+				// 1. Merge target schema based on joinTables
+				// 2. Merge multiple source schema
+				// 3. Convert schema to tree data for render
+
+				let mergedSourceSchema = mergeSourceSchema(joinTable.sourceSchemas || []);
+				log.log('mergedSourceSchema:', mergedSourceSchema);
+
+				let mergedTargetSchema = mergeJoinTablesToTargetSchema(_.cloneDeep(targetSchema), [_.cloneDeep(joinTable)].concat(_.cloneDeep(otherJoinTables)));
+				log.log('mergedTargetSchema:', mergedTargetSchema);
+
+				let source = convertSchemaToTreeData(mergedSourceSchema);
+				let target = convertSchemaToTreeData(mergedTargetSchema);
+
+				log.log('target:',target, 'source:', source);
+
+				this.targetSchema = _.cloneDeep(target);
+				this.sourceSchema = _.cloneDeep(source);
+
+				this.$nextTick(() => {
+					this.createLine( this.sourceSchema.fields );
+				});
+			},
 		},
 
 		destroyed() {
@@ -258,10 +202,12 @@
 			height: 100%;
 
 			display: flex;
-			justify-content: center;
-			align-items: start;
+			flex-direction: column;
+			justify-content: start;
+			align-items: center;
 
 			overflow: auto;
+			padding: 2px;
 		}
 
 

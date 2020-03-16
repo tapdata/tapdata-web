@@ -34,7 +34,7 @@ export default {
           { required: true, message: '不能为空', trigger: 'blur' },
         ]
       }
-    }
+    };
   }
-}
+};
 </script>

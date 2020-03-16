@@ -2,11 +2,11 @@
 	<div class="e-entity" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom">
 		<el-container>
 			<el-header height="20">
-				{{schema.name}}
+				{{schema ? schema.name : ''}}
 			</el-header>
 			<el-main>
 				<el-tree
-						:data="schema.fields"
+						:data="schema ? schema.fields : []"
 						:node-key="nodeKey"
 						default-expand-all
 						:expand-on-click-node="false"
@@ -16,7 +16,7 @@
 						@node-drag-over="handleDragOver"
 						@node-drag-end="handleDragEnd"
 						@node-drop="handleDrop"
-						draggable
+						:draggable="editable"
 						:allow-drop="allowDrop"
 						:allow-drag="allowDrag"
 						icon-class="icon-none"
@@ -24,7 +24,7 @@
 						@node-collapse="handlerNodeCollapse"
 						ref="tree">
 					<span class="custom-tree-node" slot-scope="{ node, data }">
-						<span class="e-triangle" :style="`border-bottom-color: ${data.color || '#8cc6e8'};`"></span>
+						<span class="e-triangle" :style="`border-bottom-color: ${data.color || '#ffffff'};`"></span>
 						<span class="e-port e-port-in" :data-id="getId(data)"></span>
 						<span class="e-label">{{node.label}}</span>
 						<span class="e-data-type">{{ data.type}}</span>
@@ -48,7 +48,6 @@
 
 <script>
 	import $ from 'jquery';
-	import alertify from 'alertifyjs';
 	export default {
 		name: "Entity",
 		props: {
@@ -58,7 +57,7 @@
 			},
 			schema: {
 				required: true,
-				type: Object
+				type: Object | Array | null | undefined,
 			},
 			nodeKey: {
 				type: String,
@@ -115,17 +114,19 @@
 			},
 			handlerCommand(command, data, node){
 				if( command === 'rename') {
-					alertify.prompt( 'Rename', 'Input new name', data.label
-						, function(evt, value) {
-							data.label = value;
-						}
-						, function() { });
+					this.$prompt( 'Input new name', 'Rename', {
+						inputValue: data.label
+					}).then((res) => {
+						data.label = res.value;
+					});
 				} else if( command === 'delete') {
 					this.$refs.tree.remove(node);
 				} else if( command === 'change_type') {
-					alertify.warning('Modified data type is not implemented');
+					this.$message({
+						message: 'Modified data type is not implemented',
+						type: 'warning'
+					});
 				}
-				//alertify.success('Ok ' + command);
 			}
 		}
 	};
@@ -160,8 +161,6 @@
 			justify-content: start;
 			align-items: center;
 			flex-direction: row;
-
-			border-bottom: 1px solid @color;
 
 			line-height: 25px;
 
@@ -230,12 +229,20 @@
 	}
 
 </style>
-<style type="text/css">
+<style lang="less">
+
+	@color: #57d079;
+	.e-entity .el-main .el-tree .el-tree-node {
+		border-bottom: 1px solid @color;
+		&:last-child {
+			border-bottom: none;
+		}
+		&:first-child {
+			border-top: 1px solid @color;
+		}
+	}
 	.e-entity .el-main .el-tree .el-tree-node .icon-none {
 		display: none;
-	}
-	.e-entity .el-main .el-tree .el-tree-node:last-child .custom-tree-node{
-		border-bottom: none;
 	}
 
 </style>

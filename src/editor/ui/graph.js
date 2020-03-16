@@ -12,8 +12,7 @@ import navigatorElementView from '../lib/rappid/view/navigator';
 import dagre from 'dagre';
 import Panel from "./panel";
 import {stencilConfig, selectionConfig, haloConfig, inspectorConfig, toolbarConfig} from "../lib/rappid/config";
-//import {renderForm} from "./inspector";
-import {render} from '../vue-adapter';
+import {VueAdapter} from '../vue-adapter';
 
 window.joint = joint;
 window.dagre = dagre;
@@ -37,6 +36,7 @@ export default class Graph extends Component{
 		this.initializeToolbar();
 		this.initKeyboardShortcuts();
 		this.initTooltips();
+		this.initVueAdapter();
 	}
 
 	initGraph(){
@@ -246,9 +246,7 @@ export default class Graph extends Component{
 		let self = this;
 		self.ui.rightSidebar.show();
 
-		render(self.ui, /*settings.getContentEl(), */cell.get('type'), cell.get('custom_data'),(data)=>{
-			cell.set('custom_data', data);
-		});
+		this.vueAdapter.render(cell.attributes);
 
 		let styles = self.ui.rightTabPanel.getChildByName('styles');
 		// styles.removeAll();
@@ -455,6 +453,10 @@ export default class Graph extends Component{
 		});
 	}
 
+	initVueAdapter() {
+		this.vueAdapter = new VueAdapter(this.ui, this);
+	}
+
 	resize(width, height) {
 		// this.graph.resize(width, height);
 		// this.paper.setDimensions(width, height);
@@ -539,5 +541,9 @@ export default class Graph extends Component{
 
 	loadData(jsonObject){
 		return this.graph.fromJSON(jsonObject);
+	}
+
+	getGraphLib(){
+		return this.graph.toGraphLib();
 	}
 }
