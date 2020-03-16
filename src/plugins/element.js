@@ -3,23 +3,23 @@ import Vue from 'vue';
 
 
 import {
-  Dialog,
-  MessageBox,
-  Message,
-  Menu,
-  MenuItem,
-  Form,
-  FormItem,
-  Input,
-  Button,
-  Select,
-  Table,
-  TableColumn,
-  Option,
-  Row,
-  Col,
-  Pagination,
-  DatePicker,
+	Dialog,
+	MessageBox,
+	Message,
+	Menu,
+	MenuItem,
+	Form,
+	FormItem,
+	Input,
+	Button,
+	Select,
+	Table,
+	TableColumn,
+	Option,
+	Row,
+	Col,
+	Pagination,
+	DatePicker,
 	Container,
 	Main,
 	Header,
@@ -30,7 +30,7 @@ import {
 } from 'element-ui';
 
 
-Vue.component(Dialog.name,Dialog);
+Vue.component(Dialog.name, Dialog);
 Vue.component(Menu.name, Menu);
 Vue.component(MenuItem.name, MenuItem);
 Vue.component(Form.name, Form);

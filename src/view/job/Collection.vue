@@ -27,6 +27,19 @@
 				</el-select>
 			</el-form-item>
 
+			<el-form-item required label="Exists data">
+				<el-select
+						v-model="model.dropTable"
+						:placeholder="`Please select a collection`">
+					<el-option
+							label="Keep exists data"
+							:value="false"></el-option>
+					<el-option
+							label="Remove exists data at before sync"
+							:value="true"></el-option>
+				</el-select>
+			</el-form-item>
+
 		</el-form>
 		<div class="e-entity-wrap" style="padding-left: 130px;">
 			<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
@@ -102,7 +115,8 @@
 					connectionId: "",
 					databaseType: '',
 					dataModelId: "",
-					schema: null
+					schema: null,
+					dropTable: false,
 				},
 
 				mergedSchema: null

@@ -21,6 +21,19 @@
 				</el-select>
 			</el-form-item>
 
+			<el-form-item required label="Exists data">
+				<el-select
+						v-model="model.dropTable"
+						:placeholder="`Please select a collection`">
+					<el-option
+							label="Keep exists data"
+							:value="false"></el-option>
+					<el-option
+							label="Remove exists data at before sync"
+							:value="true"></el-option>
+				</el-select>
+			</el-form-item>
+
 			<el-form-item label="Custom SQL" prop="sql" :rules="rules" >
 				<el-input type="textarea" rows="10" v-model="model.sql" placeholder="Please input you custom sql"></el-input>
 			</el-form-item>
@@ -101,7 +114,8 @@
 					databaseType: '',
 					dataModelId: "",
 					sql: '',
-					schema: null
+					schema: null,
+					dropTable: false,
 				},
 
 				mergedSchema: null
