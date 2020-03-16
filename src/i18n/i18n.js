@@ -8,7 +8,6 @@ import sc from './langs/cn';
 import tc from './langs/tc';
 
 Vue.use(VueI18n);
-console.log(vm.$cookie)
 const i18n = new VueI18n({
   //locale: localStorage.lang || 'en',
   locale: localStorage.getItem('localize_lang') || 'en',
