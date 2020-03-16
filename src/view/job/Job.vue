@@ -119,13 +119,11 @@
 
 				postData.stages = Object.values(stages);
 				log.log('Job.saveData:', postData);
-				if( `1` !== '1') {
-					dataFlowsApi.post(postData).then((result) => {
-						//console.log(result);
-					}).catch(e => {
-						throw new Error(e);
-					});
-				}
+				dataFlowsApi.post(postData).then((result) => {
+					//console.log(result);
+				}).catch(e => {
+					throw new Error(e);
+				});
 			}
 		}
 	};
