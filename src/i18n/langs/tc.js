@@ -40,6 +40,6 @@ const tc = {
       startupAfter_add: '請啟動後添加'
     },
     ...tcLocale
-  }
+  };
 
   export default tc;

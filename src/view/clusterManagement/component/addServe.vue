@@ -28,7 +28,7 @@ export default {
         arguments: ''
       },
       rules: {}
-    }
+    };
   },
   methods: {
     closeDialogForm(){
@@ -48,5 +48,5 @@ export default {
       return flag;
     }
   }
-}
+};
 </script>

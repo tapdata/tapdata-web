@@ -135,7 +135,6 @@
       <div slot="footer" class="dialog-footer">
         <el-button size="small"  @click="closeDialogForm()">{{ $t('message.cancle') }}</el-button>
         <el-button size="small"  type="primary" @click="submitForm('ruleForm')">{{ $t('message.confirm') }}</el-button>
-
       </div>
     </el-dialog>
   </div>
@@ -196,7 +195,6 @@ export default {
       } else {
         this.$message.error(this.$t('message.startupAfter_add'));
       }
-
     },
 
     //删除
