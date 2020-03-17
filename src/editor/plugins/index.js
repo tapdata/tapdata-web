@@ -4,8 +4,7 @@
  * @description
  */
 export {loadPlugins} from './Base';
-export * from './SourceDB';
-export * from './TargetDB';
+export * from './Database';
 export * from './Table';
 export * from './Collection';
 export * from './ScriptProcess';

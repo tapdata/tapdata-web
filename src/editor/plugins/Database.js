@@ -4,15 +4,15 @@
  * @description
  */
 import {options} from "../lib/rappid/config";
-import DataSource from "../../view/job/DataSource";
+import Database from "../../view/job/Database";
 
-export const targetDBConfig = {
+export const databaseConfig = {
 
 	/**
 	 * the name of the subtype class.
 	 *
 	 */
-	type: 'app.TargetDB',
+	type: 'app.Database',
 
 	/**
 	 * define shape
@@ -209,7 +209,7 @@ export const targetDBConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: 'Rectangle',
+				dataTooltip: 'Database',
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -224,7 +224,7 @@ export const targetDBConfig = {
 				strokeDasharray: '0'
 			},
 			label: {
-				text: 'Target Database',
+				text: 'Database',
 				fill: '#555555',
 				fontFamily: 'Roboto Condensed',
 				fontWeight: 'Normal',
@@ -239,10 +239,10 @@ export const targetDBConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: DataSource,
-		props: {
-			connection_type: 'target'
-		},
+		component: Database,
+		/*props: {
+			connection_type: 'source'
+		},*/
 
 		/**
 		 * validate user-filled data

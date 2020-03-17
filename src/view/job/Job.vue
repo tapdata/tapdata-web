@@ -84,7 +84,7 @@
 						syncType: "initial_sync+cdc",
 					}, cell[FORM_DATA_KEY] || {});
 
-					if( ['app.SourceDB', 'app.TargetDB'].includes(cell.type) ){
+					if( ['app.Database'].includes(cell.type) ){
 
 						postData.mappingTemplate = 'cluster-clone';
 
