@@ -54,6 +54,12 @@ export const databaseConfig = {
 			attrs: {
 				root: {
 					magnet: true
+				},
+				image:{
+					xlinkHref: 'static/editor/database.svg',
+				},
+				label:{
+					text:'database'
 				}
 			}
 		},
@@ -209,27 +215,34 @@ export const databaseConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: 'Database',
+				dataTooltip: 'database',
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
 			body: {
 				rx: 2,
 				ry: 2,
-				width: 50,
-				height: 30,
-				fill: '#f6f6f6',
-				stroke: '#008cee',
-				strokeWidth: 2,
+				stroke: '#fff',
+				fill:'#fff',
+				strokeWidth: 0,
 				strokeDasharray: '0'
 			},
+			image: {
+				xlinkHref: 'static/editor/database.svg',
+				refWidth: '60%',
+				refHeight: '60%',
+				refX: '2%',
+				refY: '0%'
+			},
 			label: {
-				text: 'Database',
-				fill: '#555555',
+				text: 'database',
+				fill: '#666',
 				fontFamily: 'Roboto Condensed',
 				fontWeight: 'Normal',
-				fontSize: 13,
-				strokeWidth: 0
+				fontSize: 10,
+				strokeWidth: 0,
+				x:-35,
+				y:27
 			}
 		}
 	},

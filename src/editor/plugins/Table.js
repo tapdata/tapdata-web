@@ -10,11 +10,17 @@ export const tableConfig = {
 
 	type: 'app.Table',
 	shape: {
-		extends: 'standard.Rectangle',
+		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
 			attrs: {
 				root: {
 					magnet: true
+				},
+				image:{
+					xlinkHref: 'static/editor/table.svg',
+				},
+				label:{
+					text:'table'
 				}
 			}
 		},
@@ -144,27 +150,34 @@ export const tableConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: 'Rectangle',
+				dataTooltip: 'Database',
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
 			body: {
 				rx: 2,
 				ry: 2,
-				width: 50,
-				height: 30,
-				fill: '#f6f6f6',
-				stroke: '#008cee',
-				strokeWidth: 2,
+				stroke: '#fff',
+				fill:'#fff',
+				strokeWidth: 0,
 				strokeDasharray: '0'
 			},
+			image: {
+				xlinkHref: 'static/editor/table.svg',
+				refWidth: '60%',
+				refHeight: '60%',
+				refX: '2%',
+				refY: '0%'
+			},
 			label: {
-				text: 'Table',
-				fill: '#555555',
+				text: 'table',
+				fill: '#666',
 				fontFamily: 'Roboto Condensed',
 				fontWeight: 'Normal',
-				fontSize: 13,
-				strokeWidth: 0
+				fontSize: 10,
+				strokeWidth: 0,
+				x:-35,
+				y:27
 			}
 		}
 	},
