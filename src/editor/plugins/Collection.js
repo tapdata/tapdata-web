@@ -17,7 +17,7 @@ export const collectionConfig = {
 					magnet: true
 				},
 				image:{
-					xlinkHref: 'static/editor/collection.svg',
+					xlinkHref: 'static/editor/collection2.svg',
 				},
 				label:{
 					text:'collection'
@@ -163,7 +163,7 @@ export const collectionConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/collection.svg',
+				xlinkHref: 'static/editor/collection2.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',

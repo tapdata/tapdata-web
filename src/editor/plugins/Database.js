@@ -56,7 +56,7 @@ export const databaseConfig = {
 					magnet: true
 				},
 				image:{
-					xlinkHref: 'static/editor/database.svg',
+					xlinkHref: 'static/editor/database2.svg',
 				},
 				label:{
 					text:'database'
@@ -228,7 +228,7 @@ export const databaseConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/database.svg',
+				xlinkHref: 'static/editor/database2.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
