@@ -23,7 +23,7 @@ export const databaseConfig = {
 		/**
 		 * extends exists shape
 		 */
-		extends: 'standard.Rectangle',
+		extends: 'app.BaseElement',
 
 		/**
 		 * object that contains properties to be assigned to every constructed instance of the subtype.

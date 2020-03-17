@@ -39,7 +39,8 @@ export default class UI extends Component {
 		this.leftSidebar = new Sidebar({
 			region: 'left',
 			editor: this.editor,
-			split: false
+			split: false,
+			width: 260
 		});
 
 		this.rightSidebar = new Sidebar({

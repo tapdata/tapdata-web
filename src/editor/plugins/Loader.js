@@ -76,7 +76,7 @@ export const loadPlugins = function(){
 		},
 
 		addSettingForm = (type, config) => {
-			if( vueAdapter && config.component){
+			if( config && config.component){
 				vueAdapter[type] = config;
 			}
 		};

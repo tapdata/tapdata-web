@@ -106,15 +106,20 @@ export default class Graph extends Component{
 			groups: stencilConfig.groups,
 			dropAnimation: true,
 			groupsToggleButtons: true,
+			layout: {
+				columnWidth: 80,
+				columns: 3,
+				//rowHeight: 100,
+			},
 			/*search: {
 				'*': ['type', 'attrs/text/text', 'attrs/root/dataTooltip', 'attrs/label/text'],
 				'org.Member': ['attrs/.rank/text', 'attrs/root/dataTooltip', 'attrs/.name/text']
 			},*/
-			// Use default Grid Layout
-			layout: true,
 			// Remove tooltip definition from clone
 			dragStartClone: function(cell) {
-				return cell.clone().removeAttr('root/dataTooltip');
+				let Cell = _.get(joint.shapes, cell.get('type'));
+				// return cell.clone().removeAttr('root/dataTooltip');
+				return new Cell({}).removeAttr('root/dataTooltip');
 			}
 		});
 
@@ -248,7 +253,7 @@ export default class Graph extends Component{
 
 		this.vueAdapter.render(cell.attributes);
 
-		let styles = self.ui.rightTabPanel.getChildByName('styles');
+		/*let styles = self.ui.rightTabPanel.getChildByName('styles');
 		// styles.removeAll();
 		if( !styles) {
 			styles = new Panel({
@@ -260,7 +265,7 @@ export default class Graph extends Component{
 
 		joint.ui.Inspector.create(styles.getContentEl(), _.extend({
 			cell: cell
-		}, inspectorConfig[cell.get('type')]));
+		}, inspectorConfig[cell.get('type')]));*/
 
 	}
 
@@ -305,7 +310,7 @@ export default class Graph extends Component{
 
 			if (!cell.isLink() || !opt.inspector) return;
 
-			let ns = joint.linkTools;
+			/*let ns = joint.linkTools;
 			let toolsView = new joint.dia.ToolsView({
 				name: 'link-inspected',
 				tools: [
@@ -313,7 +318,7 @@ export default class Graph extends Component{
 				]
 			});
 
-			cell.findView(this.paper).addTools(toolsView);
+			cell.findView(this.paper).addTools(toolsView);*/
 
 		}, this);
 	}
