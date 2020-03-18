@@ -17,7 +17,7 @@ export const collectionConfig = {
 					magnet: true
 				},
 				image:{
-					xlinkHref: 'static/editor/collection2.svg',
+					xlinkHref: 'static/editor/o-collection.svg',
 				},
 				label:{
 					text:'collection'
@@ -171,11 +171,14 @@ export const collectionConfig = {
 			},
 			label: {
 				text: 'collection',
+				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
 				fontWeight: 'Normal',
 				fontSize: 10,
 				strokeWidth: 0,
+				refX: '75%',
+				refY: '40%',
 				x:-35,
 				y:27
 			}

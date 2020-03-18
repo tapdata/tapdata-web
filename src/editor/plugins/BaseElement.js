@@ -48,34 +48,48 @@ export const baseElementConfig = {
 		 * </pre>
 		 */
 		defaultInstanceProperties: {
-			size: { width: 130, height: 70 },
+			size: { width: 160, height: 36 },
+			// size: { width: 130, height: 70 },
 			attrs: {
 				root: {
 					magnet: true
 				},
 				image: {
 					//xlinkHref: 'static/editor/table.svg',
-					refWidth: '30%',
-					refHeight: '30%',
-					refX: '30%',
-					refY: '5%'
+					refWidth: '19%',
+					refHeight: '82%',
+					refX: '-4%',
+					refY: '-19%'
 				},
+				// image: {
+				// 	//xlinkHref: 'static/editor/table.svg',
+				// 	refWidth: '30%',
+				// 	refHeight: '30%',
+				// 	refX: '30%',
+				// 	refY: '5%'
+				// },
 				body: {
 					fill: '#fafafa',
-					stroke: '#ccc',
+					stroke: '#dedee4',
+					// fill: '#fafafa',
+					// stroke: '#ccc',
 					strokeWidth: 1,
-					rx:5,
-					ry:5
+					rx:20,
+					ry:20,
+					// rx:5,
+					// ry:5
 				},
 				label: {
 					textVerticalAnchor: 'middle',
-					textAnchor: 'middle',
-					refX: '75%',
-					refY: '40%',
+					textAnchor: 'left',
+					refX: '10%',
+					refY: '50%',
+					// refX: '75%',
+					// refY: '40%',
 					fontSize: 11,
 					fill: '#333333',
-					x:-50,
-					y:15
+					x:0,
+					y:0,
 				}
 			}
 		},

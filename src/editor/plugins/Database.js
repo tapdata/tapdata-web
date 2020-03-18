@@ -236,11 +236,14 @@ export const databaseConfig = {
 			},
 			label: {
 				text: 'database',
+				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
 				fontWeight: 'Normal',
 				fontSize: 10,
 				strokeWidth: 0,
+				refX: '75%',
+				refY: '40%',
 				x:-35,
 				y:27
 			}
