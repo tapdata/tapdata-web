@@ -100,14 +100,14 @@ export default class Graph extends Component{
 			paper: this.paperScroller,
 			snaplines: this.snaplines,
 			scaleClones: true,
-			width: 240,
+			width: 180,
 			groups: stencilConfig.groups,
 			dropAnimation: true,
 			groupsToggleButtons: true,
 			layout: {
 				columnWidth: 80,
-				columns: 3,
-				//rowHeight: 100,
+				columns: 2,
+				rowHeight: 47,
 			},
 			/*search: {
 				'*': ['type', 'attrs/text/text', 'attrs/root/dataTooltip', 'attrs/label/text'],

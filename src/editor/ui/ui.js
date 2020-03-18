@@ -40,7 +40,7 @@ export default class UI extends Component {
 			region: 'left',
 			editor: this.editor,
 			split: false,
-			width: 260
+			width: 180
 		});
 
 		this.rightSidebar = new Sidebar({
