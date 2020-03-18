@@ -83,7 +83,7 @@ export const loadPlugins = function(){
 
 
 	Object.keys(plugins).forEach(name => {
-		if( name !== 'loadPlugins' ) {
+		if( name !== 'loadPlugins' && typeof plugins[name] === 'object') {
 			let plugin = _.cloneDeep(plugins[name]);
 
 			if( plugin.shape && !plugin.shape.extends ){

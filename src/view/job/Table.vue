@@ -87,9 +87,8 @@
 							this.model.schema = schema && schema.length > 0 ? schema[0] : {};
 							let fields = this.model.schema.fields || [];
 							this.model.primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
-
 						} else {
-							this.model.schema = null;
+							this.model.schema = {};
 						}
 					}
 				}
@@ -118,7 +117,7 @@
 					databaseType: '',
 					tableName: "",
 					sql: '',
-					schema: null,
+					schema: {},
 					dropTable: false,
 					type: 'table',
 				},
@@ -159,7 +158,7 @@
 				let self = this;
 				connections.get([connectionId]).then(result => {
 					if( result && result.data ) {
-						self.schemas = result.data.schema && result.data.schema.tables;
+						self.schemas = result.data.schema && result.data.schema.tables || [];
 					}
 				});
 
@@ -190,6 +189,7 @@
 				let mergedSchema = _.cloneDeep(this.model.schema);
 				mergeJoinTablesToTargetSchema(mergedSchema, _.cloneDeep(this.joinTables));
 				this.mergedSchema = mergedSchema;
+				this.$emit('changeSchema', _.cloneDeep(mergedSchema));
 				log.log('Table.renderSchema:', mergedSchema);
 			}
 		}

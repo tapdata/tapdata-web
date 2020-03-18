@@ -9,13 +9,11 @@ import _ from 'lodash';
 import joint from '../lib/rappid/rappid';
 //import shapes from '../lib/rappid/models/shapes';
 import navigatorElementView from '../lib/rappid/view/navigator';
-import dagre from 'dagre';
-import Panel from "./panel";
-import {stencilConfig, selectionConfig, haloConfig, inspectorConfig, toolbarConfig} from "../lib/rappid/config";
+//import Panel from "./panel";
+import {stencilConfig, selectionConfig, haloConfig, toolbarConfig} from "../lib/rappid/config";
 import {VueAdapter} from '../vue-adapter';
 
 window.joint = joint;
-window.dagre = dagre;
 
 export default class Graph extends Component{
 
@@ -212,12 +210,14 @@ export default class Graph extends Component{
 
 		var element = elementView.model;
 
-		new joint.ui.FreeTransform({
-			cellView: elementView,
-			allowRotation: false,
-			preserveAspectRatio: !!element.get('preserveAspectRatio'),
-			allowOrthogonalResize: element.get('allowOrthogonalResize') !== false
-		}).render();
+		if( element.get('freeTransform') !== false) {
+			new joint.ui.FreeTransform({
+				cellView: elementView,
+				allowRotation: false,
+				preserveAspectRatio: !!element.get('preserveAspectRatio'),
+				allowOrthogonalResize: element.get('allowOrthogonalResize') !== false
+			}).render();
+		}
 
 		new joint.ui.Halo({
 			cellView: elementView,
@@ -251,7 +251,7 @@ export default class Graph extends Component{
 		let self = this;
 		self.ui.rightSidebar.show();
 
-		this.vueAdapter.render(cell.attributes);
+		this.vueAdapter.render(cell);
 
 		/*let styles = self.ui.rightTabPanel.getChildByName('styles');
 		// styles.removeAll();
@@ -521,7 +521,7 @@ export default class Graph extends Component{
 
 		joint.layout.DirectedGraph.layout(this.graph, {
 			setLinkVertices: true,
-			rankDir: 'TB',
+			rankDir: 'LR',
 			marginX: 100,
 			marginY: 100
 		});

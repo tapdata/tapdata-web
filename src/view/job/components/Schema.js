@@ -93,7 +93,7 @@ export const
 		targetSchema.table_name = targetSchema.table_name || sourceSchema.table_name || '';
 		targetSchema.fields = targetSchema.fields || [];
 
-		let sourceSchemaFields = sourceSchema.fields || [];
+		let sourceSchemaFields = _.cloneDeep(sourceSchema.fields) || [];
 		if( joinType === 'append' || targetSchema.meta_type === 'table') {
 			targetSchema.fields.push(...sourceSchemaFields);
 		} else {

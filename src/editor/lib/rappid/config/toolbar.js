@@ -7,13 +7,13 @@ export const toolbarConfig = {
 	groups: {
 		'undo-redo': { index: 1 },
 		'clear': { index: 2 },
-		'export': { index: 3 },
+		/*'export': { index: 3 },*/
 		'print': { index: 4 },
 		'fullscreen': { index: 5 },
 		'order': { index: 6 },
 		'layout': { index: 7 },
 		'zoom': { index: 8 },
-		'grid': { index: 9 },
+		/*'grid': { index: 9 },*/
 		'snapline': { index: 10 }
 	},
 	tools: [
@@ -54,7 +54,7 @@ export const toolbarConfig = {
 				}
 			}
 		},
-		{
+		/*{
 			type: 'button',
 			name: 'svg',
 			group: 'export',
@@ -67,7 +67,7 @@ export const toolbarConfig = {
 					'data-tooltip-position-selector': '.graph-toolbar'
 				}
 			}
-		},
+		},*/
 		/*{
 			type: 'button',
 			name: 'png',
@@ -129,7 +129,6 @@ export const toolbarConfig = {
 			name: 'layout',
 			attrs: {
 				button: {
-					id: 'btn-layout',
 					'data-tooltip': 'Auto-layout Graph',
 					'data-tooltip-position': 'top',
 					'data-tooltip-position-selector': '.graph-toolbar'
@@ -187,7 +186,7 @@ export const toolbarConfig = {
 				}
 			}
 		},
-		{
+		/*{
 			type: 'separator',
 			group: 'grid'
 		},
@@ -213,7 +212,7 @@ export const toolbarConfig = {
 			max: 50,
 			step: 1,
 			value: 4
-		},
+		},*/
 		{
 			type: 'fullscreen',
 			name: 'fullscreen',
