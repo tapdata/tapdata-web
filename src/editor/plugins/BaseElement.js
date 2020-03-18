@@ -48,8 +48,8 @@ export const baseElementConfig = {
 		 * </pre>
 		 */
 		defaultInstanceProperties: {
+			freeTransform: false,
 			size: { width: 160, height: 36 },
-			// size: { width: 130, height: 70 },
 			attrs: {
 				root: {
 					magnet: true
@@ -115,7 +115,10 @@ export const baseElementConfig = {
 			portLabelMarkup: [{
 				tagName: 'text',
 				selector: 'portLabel'
-			}]
+			}],
+			getFormData() {
+				return this.get('')
+			}
 		},
 		/**
 		 * object that contains properties to be assigned on the subtype constructor.

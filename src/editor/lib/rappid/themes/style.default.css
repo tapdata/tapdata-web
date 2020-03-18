@@ -23,6 +23,11 @@
 }
 .joint-widget.joint-theme-default[data-name="layout"]:after {
 	content: '\e853';
+	-webkit-transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+	-ms-transform: rotate(-90deg);
+	-o-transform: rotate(-90deg);
+	transform: rotate(-90deg);
 }
 .joint-widget.joint-theme-default[data-name="print"]:after {
 	content: '\e851';
