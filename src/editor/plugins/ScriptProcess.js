@@ -12,15 +12,24 @@ export const scriptProcessConfig = {
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
+			size:{width:120,height:28},
 			attrs: {
 				root: {
 					magnet: true
 				},
 				image:{
-					xlinkHref: 'static/editor/database.svg',
+					xlinkHref: 'static/editor/o-js.svg',
+					refWidth: '25%',
+					refHeight: '84%',
+					refX: '-8%',
+					refY: '-28%'
+				},
+				body: {
+					rx:14,
+					ry:14
 				},
 				label:{
-					text:'script'
+					text: 'JavaScript',
 				}
 			}
 		},
@@ -163,14 +172,14 @@ export const scriptProcessConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/database.svg',
+				xlinkHref: 'static/editor/js.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: 'script',
+				text: 'JavaScript',
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
