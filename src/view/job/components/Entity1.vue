@@ -2,14 +2,20 @@
 	<div class="e-entity" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom">
 		<el-container>
 			<el-header height="20">
-				{{schema ? schema.name : ''}}
+				<!-- {{schema ? schema.name : ''}} -->
+				
 			</el-header>
+			<el-row >
+				<el-col :span='12'>字段名</el-col>
+				<el-col :span='10'> 字段类型</el-col>
+				<el-col :span='2'>操作</el-col>
+			</el-row>
 			<el-main>
 				<el-tree
 						:data="schema ? schema.fields : []"
 						:node-key="nodeKey"
 						default-expand-all
-						:expand-on-click-node="false"
+					    :expand-on-click-node="false"
 						@node-drag-start="handleDragStart"
 						@node-drag-enter="handleDragEnter"
 						@node-drag-leave="handleDragLeave"
@@ -23,21 +29,20 @@
 						@node-expand="handlerNodeExpand"
 						@node-collapse="handlerNodeCollapse"
 						ref="tree">
-					<span class="custom-tree-node" slot-scope="{ node, data }">
+					    <span class="custom-tree-node" slot-scope="{ node, data }">
 						<span class="e-triangle" :style="`border-bottom-color: ${data.color || '#ffffff'};`"></span>
 						<span class="e-port e-port-in" :data-id="getId(data)"></span>
-						<span class="e-label">{{node.label}}</span>
-						<span class="e-data-type">{{ data.type}}</span>
-						<el-dropdown v-if="editable" size="mini" @command="(command) => {handlerCommand(command, data, node)}">
-							<span class="el-dropdown-link">
-								<i class="el-icon-more el-icon--right"></i>
-							</span>
-							<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item command="rename">Rename</el-dropdown-item>
-							<el-dropdown-item command="delete">Delete</el-dropdown-item>
-							<el-dropdown-item command="change_type" divided>Modified data type</el-dropdown-item>
-							</el-dropdown-menu>
-						</el-dropdown>
+						<span class="e-label">
+							<el-input v-model="data.label"></el-input>
+						</span>
+						<el-select v-model="data.type" class="e-select">
+							<el-option value="String" label="String"></el-option>
+							<el-option value="Map" label="Map"></el-option>
+							<el-option value="Integer" label="Integer"></el-option>
+							<el-option value="Double" label="Double"></el-option>
+							<el-option value="Array" label="Array"></el-option>
+						</el-select>
+						<span class="e-data-delete">删除</span>
 						<span class="e-port e-port-out" :data-id="getId(data)"></span>
 					</span>
 				</el-tree>
@@ -150,7 +155,7 @@
 		width: 100%;
 		border: 1px solid @color;
 		display: inline-block;
-		max-width: 300px;
+		max-width: 500px;
 
 		.el-header {
 			line-height: 23px;
@@ -249,6 +254,19 @@
 		}
 		&:first-child {
 			border-top: 1px solid @color;
+		}
+		.el-input__inner {
+			border: none;
+			background-color: transparent;
+		}
+		.e-select{
+			width:100px;
+			border-left: 1px solid #71c179;
+			border-right: 1px solid #71c179;
+		}
+		.e-data-delete{
+			text-align: center;
+			width:80px;
 		}
 	}
 	.e-entity .el-main .el-tree .el-tree-node .icon-none {
