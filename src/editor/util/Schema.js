@@ -4,6 +4,7 @@
  * @description
  */
 import _ from 'lodash';
+import log from "../../log";
 export const allColorList = [
 	'#00796B', '#536DFE',
 	'#303F9F', '#00BCD4',
@@ -35,7 +36,7 @@ export const
 				}}
 	 */
 	convertSchemaToTreeData = function(schema, color = '#dddddd') {
-
+		log('Schema.convertSchemaToTreeData', arguments);
 		if( schema ){
 			let entityData = {
 				name: schema.table_name || `Table${tableCounter++}`,
@@ -80,6 +81,7 @@ export const
 	 * @return
 	 */
 	mergeSchema = function(targetSchema, sourceSchema, mergeOpts){
+		log('Schema.mergeSchema', arguments);
 
 		if( !sourceSchema || !sourceSchema.table_name || !sourceSchema.fields || sourceSchema.fields.length === 0 )
 			return targetSchema;
@@ -125,6 +127,7 @@ export const
 	 * @return {*}
 	 */
 	mergeSourceSchema = function(sourceSchemas){
+		log('Schema.mergeSourceSchema', arguments);
 		let source = null;
 
 		sourceSchemas = Array.isArray(sourceSchemas) ? sourceSchemas : [sourceSchemas];
@@ -153,13 +156,15 @@ export const
 	 * @return {*}
 	 */
 	mergeJoinTablesToTargetSchema = function(targetSchema, joinTables){
+		log('Schema.mergeJoinTablesToTargetSchema', arguments);
 		let mergedTargetSchema = targetSchema || {};
 		const mergeTargetSchema = function(jt){
-			if( jt && jt.sourceSchemas ){
-				mergeSchema(mergedTargetSchema, mergeSourceSchema(jt.sourceSchemas), jt);
+			if( jt && (jt.sourceSchemas || jt.sourceSchema)){
+				mergeSchema(mergedTargetSchema, mergeSourceSchema(jt.sourceSchemas || jt.sourceSchema), jt);
 			}
 		};
-		joinTables.forEach( mergeTargetSchema );
-		return targetSchema;
+		if( joinTables )
+			joinTables.forEach( mergeTargetSchema );
+		return mergedTargetSchema;
 	}
 ;

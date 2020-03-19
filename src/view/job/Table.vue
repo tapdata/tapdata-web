@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="e-table">
 		<el-form label-position="right" label-width="130px" :model="model" ref="form">
 			<el-form-item label="Database" prop="connectionId" :rules="rules" required>
 				<el-select v-model="model.connectionId" :placeholder="`Please select RDBMS database`" @change="handlerConnectionChange">
@@ -39,20 +39,20 @@
 			</el-form-item>
 
 		</el-form>
-
-		<div style="padding-left: 130px;">
+		<div class="e-entity-wrap" style="padding-left: 130px;">
 			<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 		</div>
 	</div>
 </template>
 
 <script>
+	import { convertSchemaToTreeData } from "../../editor/util/Schema";
 	import Entity from './components/Entity';
-	import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from "./components/Schema";
 	import _ from 'lodash';
 	import log from '../../log';
 	import factory from '../../api/factory';
-	let connections = factory('connections');
+	let connectionApi = factory('connections');
+
 	export default {
 		name: "Table",
 		components: {Entity},
@@ -84,19 +84,12 @@
 					if( this.schemas.length > 0 ){
 						if( this.model.tableName){
 							let schema = this.schemas.filter( s => s.table_name === this.model.tableName);
-							this.model.schema = schema && schema.length > 0 ? schema[0] : {};
-							let fields = this.model.schema.fields || [];
+							schema = schema && schema.length > 0 ? schema[0] : {};
+							let fields = schema.fields || [];
 							this.model.primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
-						} else {
-							this.model.schema = {};
+							this.$emit('schemaChange', _.cloneDeep(schema));
 						}
 					}
-				}
-			},
-			'model.schema': {
-				deep: true,
-				handler(){
-					this.renderSchema();
 				}
 			}
 		},
@@ -117,9 +110,9 @@
 					databaseType: '',
 					tableName: "",
 					sql: '',
-					schema: {},
 					dropTable: false,
 					type: 'table',
+					primaryKeys: ''
 				},
 
 				mergedSchema: null
@@ -134,7 +127,7 @@
 			convertSchemaToTreeData,
 
 			async loadDataSource() {
-				let result = await connections.get({
+				let result = await connectionApi.get({
 					filter: JSON.stringify({
 						where: {
 							database_type: {in: this.database_types}
@@ -156,8 +149,8 @@
 					return;
 				}
 				let self = this;
-				connections.get([connectionId]).then(result => {
-					if( result && result.data ) {
+				connectionApi.get([connectionId]).then(result => {
+					if( result.data ){
 						self.schemas = result.data.schema && result.data.schema.tables || [];
 					}
 				});
@@ -173,29 +166,33 @@
 				}
 			},
 
-			setData(data, cell, allCell, graphLib, vueAdapter){
+			setData(data, cell, vueAdapter){
 				if( data ){
 					Object.keys(data).forEach(key => this.model[key] = data[key]);
 				}
 
-				this.joinTables = vueAdapter.getJoinTablesForTargetCell(cell, allCell);
-				this.renderSchema();
+				this.mergedSchema = cell.getOutputSchema();
+				cell.on('change:outputSchema', () => {
+					this.mergedSchema = cell.getOutputSchema();
+				});
 			},
 			getData(){
 				return JSON.parse(JSON.stringify(this.model));
 			},
-
-			renderSchema() {
-				let mergedSchema = _.cloneDeep(this.model.schema);
-				mergeJoinTablesToTargetSchema(mergedSchema, _.cloneDeep(this.joinTables));
-				this.mergedSchema = mergedSchema;
-				this.$emit('changeSchema', _.cloneDeep(mergedSchema));
-				log.log('Table.renderSchema:', mergedSchema);
-			}
 		}
 	};
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+	.e-table {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 
+		.e-entity-wrap {
+			flex: 1;
+			overflow: auto;
+		}
+	}
 </style>

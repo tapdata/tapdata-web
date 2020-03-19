@@ -118,7 +118,7 @@
 				});
 
 				postData.stages = Object.values(stages);
-				log.log('Job.saveData:', postData);
+				log('Job.saveData:', postData);
 				dataFlowsApi.post(postData).then((result) => {
 					//console.log(result);
 				}).catch(e => {

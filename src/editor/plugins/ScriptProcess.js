@@ -37,7 +37,23 @@ export const scriptProcessConfig = {
 			portLabelMarkup: [{
 				tagName: 'text',
 				selector: 'portLabel'
-			}]
+			}],
+			isProcess(){
+				return true;
+			},
+
+			/**
+			 * validate user-filled data
+			 * @param data
+			 *
+			 */
+			validate: (data) => {
+				if( !data.type )
+					throw new Error('Script type cannot be empty.');
+				if( !data.script )
+					throw new Error('Script cannot be empty.');
+				return true;
+			}
 		},
 		//staticProperties: {}
 	},
@@ -200,19 +216,6 @@ export const scriptProcessConfig = {
 	 */
 	settingFormConfig: {
 		component: Script,
-
-		/**
-		 * validate user-filled data
-		 * @param data
-		 *
-		 */
-		validate: (data) => {
-			if( !data.type )
-				throw new Error('Script type cannot be empty.');
-			if( !data.script )
-				throw new Error('Script cannot be empty.');
-			return true;
-		}
 	}
 
 };

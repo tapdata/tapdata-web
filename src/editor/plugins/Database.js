@@ -85,7 +85,21 @@ export const databaseConfig = {
 			portLabelMarkup: [{
 				tagName: 'text',
 				selector: 'portLabel'
-			}]
+			}],
+			isDataNode(){
+				return true;
+			},
+
+			/**
+			 * validate user-filled data
+			 * @param data
+			 *
+			 */
+			validate: (data) => {
+				if( !data.connectionId )
+					throw new Error('Database cannot be empty.');
+				return true;
+			}
 		},
 		/**
 		 * object that contains properties to be assigned on the subtype constructor.
@@ -259,17 +273,6 @@ export const databaseConfig = {
 		/*props: {
 			connection_type: 'source'
 		},*/
-
-		/**
-		 * validate user-filled data
-		 * @param data
-		 *
-		 */
-		validate: (data) => {
-			if( !data.connectionId )
-				throw new Error('Database cannot be empty.');
-			return true;
-		}
 	}
 
 };

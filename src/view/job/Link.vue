@@ -57,6 +57,8 @@
 	import _ from 'lodash';
 	import {EditorEventType} from "../../editor/lib/events";
 	import Mapping from './components/Mapping';
+	import {mergeJoinTablesToTargetSchema} from "../../editor/util/Schema";
+	import log from "../../log";
 	const JOIN_TABLE_TPL = {
 		sourceNodeIds: [],
 		tableName: '',
@@ -105,18 +107,6 @@
 				handler(){
 					this.$emit('dataChanged', this.getData());
 				}
-			},
-			'model.joinTable': {
-				deep: true,
-				handler(){
-					this.joinTable = this.joinTable || {};
-					Object.assign(this.joinTable, {
-						joinPath: this.model.joinTable.joinPath,
-						joinType: this.model.joinTable.joinType,
-						joinKeys: _.cloneDeep(this.model.joinTable.joinKeys),
-					});
-					this.renderSchema();
-				}
 			}
 		},
 
@@ -144,121 +134,50 @@
 				this.$emit(EditorEventType.RESIZE);
 			},
 
-			setData(data, cell, allCell, graphLib, vueAdapter){
+			setData(data, cell, vueAdapter){
 				if( data ){
 					Object.keys(data).forEach(key => this.model[key] = data[key]);
 				}
 				this.$emit(EditorEventType.RESIZE);
 
-				this.showMapping(cell, allCell, graphLib, vueAdapter);
+				this.showMapping(data, cell, vueAdapter);
 			},
 			getData(){
 				return JSON.parse(JSON.stringify(this.model));
 			},
 
-			canShow(cell, allCell){
-				if(cell && cell.type === 'app.Link' && allCell){
-					let targetId = cell.target.id;
-					if( !targetId) return false;
-					let cells = allCell.cells ? allCell.cells : [];
-					let targetCell = cells.filter((cel) => cel.id === targetId);
-					if( targetCell && targetCell.length > 0 && targetCell[0] )
-						return ['app.Table', 'app.Collection'].includes(targetCell[0].type);
-				}
+			/**
+			 * show current link source schema, target schema and config mapping
+			 * @param cell
+			 * @param vueAdapter
+			 */
+			showMapping(data, cell, vueAdapter) {
+				this.cell = cell;
+				this.targetCell = this.cell.getTargetCell();
 
-				return false;
-			},
+				this.unwatch = this.$watch('model.joinTable', () => {
+					log('Link.showMapping.watchJoinTable', arguments);
+					this.targetCell.updateOutputSchema();
+				}, {deep: true});
 
-			showMapping(cell, allCell, graphLib, vueAdapter) {
-				// 1 Show mapping when target is a table or collection.
-				// 2 Remove Match-Embed when target is table
-				// 3 Find the model in the data node forward and backward
-				// 4 join table
-				// 5 render schema and mapping
+				this.targetCell.on('change:outputSchema', this.renderSchema, this);
 
-				let canShow = this.canShow(cell, allCell);
-				if( !canShow ) return null;
-
-				let cells = allCell.cells ? allCell.cells : [];
-				let edgeCells = {};
-				let nodeCells = {};
-				cells.forEach(cell => {
-					if( cell.type === 'app.Link')
-						edgeCells[cell.id] = cell;
-					else
-						nodeCells[cell.id] = cell;
-				});
-
-				let targetNode = nodeCells[cell.target.id];
-				let sourceNode = nodeCells[cell.source.id];
-				if( !targetNode ) return null;
-
-				this.initByType(targetNode.type);
-
-				const dataNodeTypes = ['app.Table', 'app.Collection'];
-				const preDataNodes = [];
-				const recursive = function(currentNodeId, forward = true){
-
-					let nodeCell = nodeCells[currentNodeId];
-					if( nodeCell ){
-						if( dataNodeTypes.includes(nodeCell.type) ){
-							preDataNodes.push(nodeCell);
-						} else {
-							let nextNodes = forward ?
-								graphLib.successors(currentNodeId) :
-								graphLib.predecessors(currentNodeId);
-							if( nextNodes && nextNodes.length > 0 ){
-								nextNodes.forEach((nodeId) => recursive(nodeId, forward));
-							}
-						}
-					}
-				};
-				recursive(sourceNode.id, false);
-
-				// validate
-				let verified = 0;
-				preDataNodes.forEach(( nodeCell ) => {
-					if( vueAdapter.validate(nodeCell) ){
-						verified++;
-					} else {
-						this.$message( 'Validate fail for node ' + nodeCell.type);
-					}
-				});
-				if( verified !== preDataNodes.length){
-					return false;
-				}
-
-				let sourceSchemas = preDataNodes.map( n => vueAdapter.getSchemaForCell(n) || {}).filter( s => !!s);
-				let targetSchema = vueAdapter.getSchemaForCell(targetNode) || {};
-				let joinTable = vueAdapter.getJoinTableForCell(cell);
-
-				joinTable = Object.assign(_.cloneDeep(JOIN_TABLE_TPL), joinTable || {}, {
-					sourceNodeIds: preDataNodes.map(n => n.id),
-					tableName: sourceSchemas.map(t => t.table_name).join('_'),
-					joinPath: sourceSchemas.map(t => t.table_name).join('_'),
-					sourceSchemas: sourceSchemas,
-					primaryKeys: sourceSchemas.map(t => {
-						let fields = t.fields || [];
-						return fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
-					}).join(','),
-				});
-
-				let otherJoinTables = (vueAdapter.getJoinTablesForTargetCell(targetNode, allCell) || [])
-					.filter((jt) => _.difference(jt.sourceNodeIds, joinTable.sourceNodeIds).length !== 0);
-
-				this.targetSchema = targetSchema;
-				this.joinTable = joinTable;
-				this.otherJoinTables = otherJoinTables;
 				this.renderSchema();
-
-				// store joinTable to link
-				Object.keys(joinTable).filter( k => k !== 'sourceSchemas').forEach( k => {
-					this.model.joinTable[k] = _.cloneDeep(joinTable[k]);
-				});
 			},
 
-			renderSchema(){
-				this.$refs.mappingComp.setSchema(this.targetSchema, this.joinTable, this.otherJoinTables);
+			renderSchema() {
+				if( this.cell ){
+					let sourceCell = this.cell.getSourceCell(),
+						targetCell = this.cell.getTargetCell(),
+						sourceSchema = sourceCell.getOutputSchema(),
+						targetInputSchema = targetCell.getInputSchema(),
+						targetSchema = targetCell.getSchema()
+					;
+
+					let mergedTargetSchema = mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
+
+					this.$refs.mappingComp.setSchema(sourceSchema, mergedTargetSchema);
+				}
 			},
 
 			initByType(type){
@@ -274,6 +193,15 @@
 		},
 
 		destroyed() {
+			log('Link.destroyed');
+			if( this.unwatch )
+				this.unwatch();
+			if( this.targetCell ){
+				this.targetCell.off('change:outputSchema', this.renderSchema, this);
+			}
+			delete this.unwatch;
+			delete this.cell;
+			delete this.targetCell;
 		}
 	};
 </script>

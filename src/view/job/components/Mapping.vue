@@ -16,7 +16,7 @@
 	import Entity from './Entity';
 	import {LeaderLine} from '../../../../static/js/leader-line';
 	import _ from 'lodash';
-	import { convertSchemaToTreeData, mergeSourceSchema, mergeJoinTablesToTargetSchema } from './Schema';
+	import { convertSchemaToTreeData, mergeSourceSchema, mergeJoinTablesToTargetSchema } from '../../../editor/util/Schema';
 	import log from '../../../log';
 
 	export default {
@@ -145,35 +145,24 @@
 
 			/**
 			 * render all source schema and target schema
+			 * @param sourceSchema
 			 * @param targetSchema
-			 * @param joinTable
-			 * @param otherJoinTables
 			 */
-			setSchema(targetSchema, joinTable, otherJoinTables){
+			setSchema(sourceSchema, targetSchema){
 
-				log.log(targetSchema, joinTable, otherJoinTables);
+				log('Mapping.setSchema', sourceSchema, targetSchema);
 
-				// 1. Merge target schema based on joinTables
-				// 2. Merge multiple source schema
-				// 3. Convert schema to tree data for render
-
-				let mergedSourceSchema = mergeSourceSchema(joinTable.sourceSchemas || []);
-				log.log('mergedSourceSchema:', mergedSourceSchema);
-
-				let mergedTargetSchema = mergeJoinTablesToTargetSchema(_.cloneDeep(targetSchema), [_.cloneDeep(joinTable)].concat(_.cloneDeep(otherJoinTables)));
-				log.log('mergedTargetSchema:', mergedTargetSchema);
-
-				let source = convertSchemaToTreeData(mergedSourceSchema);
-				let target = convertSchemaToTreeData(mergedTargetSchema);
-
-				log.log('target:',target, 'source:', source);
+				let source = convertSchemaToTreeData(sourceSchema);
+				let target = convertSchemaToTreeData(targetSchema);
 
 				this.targetSchema = _.cloneDeep(target);
 				this.sourceSchema = _.cloneDeep(source);
 
-				this.$nextTick(() => {
-					this.createLine( this.sourceSchema.fields );
-				});
+				if( this.sourceSchema && this.sourceSchema.fields){
+					this.$nextTick(() => {
+						this.createLine( this.sourceSchema.fields );
+					});
+				}
 			},
 		},
 

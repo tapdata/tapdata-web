@@ -28,7 +28,22 @@ export const tableConfig = {
 			portLabelMarkup: [{
 				tagName: 'text',
 				selector: 'portLabel'
-			}]
+			}],
+			isDataNode(){
+				return true;
+			},
+			/**
+			 * validate user-filled data
+			 * @param data
+			 *
+			 */
+			validate: (data) => {
+				if( !data.connectionId )
+					throw new Error('Database cannot be empty.');
+				if( !data.tableId )
+					throw new Error('Table cannot be empty.');
+				return true;
+			}
 		},
 		//staticProperties: {}
 	},
@@ -191,19 +206,6 @@ export const tableConfig = {
 	 */
 	settingFormConfig: {
 		component: Table,
-
-		/**
-		 * validate user-filled data
-		 * @param data
-		 *
-		 */
-		validate: (data) => {
-			if( !data.connectionId )
-				throw new Error('Database cannot be empty.');
-			if( !data.tableId )
-				throw new Error('Table cannot be empty.');
-			return true;
-		}
 	}
 
 };

@@ -48,7 +48,7 @@
 </template>
 
 <script>
-	import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from "./components/Schema";
+	import { convertSchemaToTreeData } from "../../editor/util/Schema";
 	import Entity from './components/Entity';
 	import _ from 'lodash';
 	import log from '../../log';
@@ -86,19 +86,12 @@
 					if( this.schemas.length > 0 ){
 						if( this.model.tableName){
 							let schema = this.schemas.filter( s => s.table_name === this.model.tableName);
-							this.model.schema = schema && schema.length > 0 ? schema[0] : {};
-							let fields = this.model.schema.fields || [];
+							schema = schema && schema.length > 0 ? schema[0] : {};
+							let fields = schema.fields || [];
 							this.model.primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
-						} else {
-							this.model.schema = {};
+							this.$emit('schemaChange', _.cloneDeep(schema));
 						}
 					}
-				}
-			},
-			'model.schema': {
-				deep: true,
-				handler(){
-					this.renderSchema();
 				}
 			}
 		},
@@ -118,7 +111,6 @@
 					connectionId: "",
 					databaseType: '',
 					tableName: "",
-					schema: {},
 					dropTable: false,
 					type: 'collection',
 					primaryKeys: ''
@@ -175,25 +167,19 @@
 				}
 			},
 
-			setData(data, cell, allCell, graphLib, vueAdapter){
+			setData(data, cell, vueAdapter){
 				if( data ){
 					Object.keys(data).forEach(key => this.model[key] = data[key]);
 				}
 
-				this.joinTables = vueAdapter.getJoinTablesForTargetCell(cell, allCell);
-				this.renderSchema();
+				this.mergedSchema = cell.getOutputSchema();
+				cell.on('change:outputSchema', () => {
+					this.mergedSchema = cell.getOutputSchema();
+				});
 			},
 			getData(){
 				return JSON.parse(JSON.stringify(this.model));
 			},
-
-			renderSchema() {
-				let mergedSchema = _.cloneDeep(this.model.schema || {});
-				mergeJoinTablesToTargetSchema(mergedSchema, _.cloneDeep(this.joinTables));
-				this.mergedSchema = mergedSchema;
-				this.$emit('changeSchema', _.cloneDeep(mergedSchema));
-				log.log('Collection.renderSchema:', mergedSchema);
-			}
 		}
 	};
 </script>

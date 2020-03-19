@@ -52,9 +52,9 @@ export default class Graph extends Component{
 
 		const paper = this.paper = new joint.dia.Paper({
 			model: graph,
-			width: 500,
-			height: 500,
-			gridSize: 4,
+			width: 800,
+			height: 800,
+			gridSize: 15,
 			drawGrid: true,
 			defaultLink: new joint.shapes.app.Link,
 			defaultConnectionPoint: joint.shapes.app.Link.connectionPoint,
@@ -249,9 +249,13 @@ export default class Graph extends Component{
 	createInspector(cell) {
 
 		let self = this;
-		self.ui.rightSidebar.show();
+		let rendered = this.vueAdapter.render(cell);
+		if( rendered ){
+			self.ui.rightSidebar.show();
+		} else {
+			self.ui.rightSidebar.hide();
+		}
 
-		this.vueAdapter.render(cell);
 
 		/*let styles = self.ui.rightTabPanel.getChildByName('styles');
 		// styles.removeAll();
