@@ -9,4 +9,5 @@ export * from './Database';
 export * from './Table';
 export * from './Collection';
 export * from './ScriptProcess';
+export * from './FieldProcess';
 export * from './Link';

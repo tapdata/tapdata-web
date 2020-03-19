@@ -138,13 +138,13 @@
   </div>
 </template>
 <script>
-import vueWaterfallEasy from 'vue-waterfall-easy';
+// import vueWaterfallEasy from 'vue-waterfall-easy';
 import addServe from './component/addServe';
 import factory from '../../api/factory';
 const cluster = factory('cluster');
 export default {
   name: "clusterManagement",
-  components: {addServe,vueWaterfallEasy},
+  components: {addServe},
   data () {
     return {
       waterfallData: [],

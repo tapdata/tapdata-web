@@ -1,5 +1,5 @@
 <template>
-  <div class="echartBox">
+  <div class="shaftlessBox">
     <div class="echarts" :id="echartsId" :echartObj ="echartObj"   ref="echarts"></div>
   </div>
 </template>
@@ -55,9 +55,10 @@ export default {
     },
     echartOption(configures) {
       let MyOption = {
-          // title: {
-          //   text: '折线图堆叠'
-          // },
+       //图标的标题   本项目暂未使用
+          title: {
+            // text: configures.title.text
+          },
           //鼠标悬浮提示框
           tooltip: {
             trigger: configures.tooltip.trigger,
@@ -75,8 +76,8 @@ export default {
           legend: {
             //图例的数据数组
             data: configures.legend.data, //图例的数据数组   一般不设置，自动根据数据匹配
-            top: 10, //图例组件离容器上侧的距离
-            right: 20, //图例组件离容器右侧的距离
+            top: configures.legend.top, //图例组件离容器上侧的距离
+            right: configures.legend.right, //图例组件离容器右侧的距离
             // bottom: configures.legend.bottom, //图例组件离容器下侧的距离
             left: configures.legend.left, //图例组件离容器左侧的距离
             // textStyle: {
@@ -93,16 +94,13 @@ export default {
           grid: configures.grid,
           //x轴的数据以及配置
           xAxis: {
-            type: 'category', //坐标轴类型。具体参考官方文档
-            boundaryGap: false, //类目轴中 boundaryGap 可以配置为 true 和 false。默认为 true，这时候刻度只是作为分隔线，标签和数据点都会在两个刻度之间的带(band)中间。
+            type: configures.xAxis.type, //坐标轴类型。具体参考官方文档
+            boundaryGap: configures.xAxis.boundaryGap, //类目轴中 boundaryGap 可以配置为 true 和 false。默认为 true，这时候刻度只是作为分隔线，标签和数据点都会在两个刻度之间的带(band)中间。
             data: configures.xAxis.data, //x轴的数据
             show: configures.xAxis.show,
-            axisTick: {show:false},  //是否显示坐标轴刻度
-            splitLine: { show: true}, //是否显示分隔线
-            axisLine: {
-              show: true,
-              lineStyle: configures.xAxis.axisLine.lineStyle
-            }, //是否显示坐标轴轴线。
+            axisTick: {show:false},
+            splitLine: configures.xAxis.splitLine,
+            axisLine: configures.xAxis.axisLine,
             // axisLine: {
             //   lineStyle: {
             //     color: this.echartsXYcolor
@@ -118,10 +116,10 @@ export default {
           yAxis: {
             type: 'value',
             min: 0,
-            axisTick: {show: false},
-            axisLine: {show: true},
-            splitLine: {show: true},
-            splitArea: configures.yAxis.splitArea,
+            axisTick: {show:false},
+            axisLine: configures.yAxis.axisLine,
+            splitLine: configures.yAxis.splitLine,
+            // splitArea: configures.yAxis.splitArea,
             axisLabel : configures.yAxis.axisLabel,
 
           },
@@ -168,7 +166,7 @@ export default {
 };
 </script>
 <style scoped lang="less">
-.echartBox{
+.shaftlessBox{
   height: calc(100% - 30px);
   .echarts{
     width: 100%;

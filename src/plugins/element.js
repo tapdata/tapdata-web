@@ -3,6 +3,10 @@ import Vue from 'vue';
 
 
 import {
+  Popover,
+  Radio,
+  RadioGroup,
+  RadioButton,
 	Dialog,
 	MessageBox,
 	Message,
@@ -29,7 +33,10 @@ import {
 	DropdownMenu,
 } from 'element-ui';
 
-
+Vue.component(Popover.name, Popover);
+Vue.component(Radio.name, Radio);
+Vue.component(RadioGroup.name, RadioGroup);
+Vue.component(RadioButton.name, RadioButton);
 Vue.component(Dialog.name, Dialog);
 Vue.component(Menu.name, Menu);
 Vue.component(MenuItem.name, MenuItem);

@@ -2,14 +2,20 @@
 	<div class="e-entity" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom">
 		<el-container>
 			<el-header height="20">
-				{{schema ? schema.name : ''}}
+				<!-- {{schema ? schema.name : ''}} -->
+				
 			</el-header>
+			<el-row class="header-row">
+				<el-col :span='16'>字段名</el-col>
+				<el-col :span='4'>字段类型</el-col>
+				<el-col :span='4'>操作</el-col>
+			</el-row>
 			<el-main>
 				<el-tree
 						:data="schema ? schema.fields : []"
 						:node-key="nodeKey"
 						default-expand-all
-						:expand-on-click-node="false"
+					    :expand-on-click-node="false"						
 						@node-drag-start="handleDragStart"
 						@node-drag-enter="handleDragEnter"
 						@node-drag-leave="handleDragLeave"
@@ -23,21 +29,21 @@
 						@node-expand="handlerNodeExpand"
 						@node-collapse="handlerNodeCollapse"
 						ref="tree">
-					<span class="custom-tree-node" slot-scope="{ node, data }">
-						<span class="e-triangle" :style="`border-bottom-color: ${data.color || '#ffffff'};`"></span>
+					    <span class="custom-tree-node" slot-scope="{ node, data }">
+						<span class="e-triangle" :style="`border-bottom-color: ${data.color || '#ddd'};`"></span>
 						<span class="e-port e-port-in" :data-id="getId(data)"></span>
-						<span class="e-label">{{node.label}}</span>
-						<span class="e-data-type">{{ data.type}}</span>
-						<el-dropdown v-if="editable" size="mini" @command="(command) => {handlerCommand(command, data, node)}">
-							<span class="el-dropdown-link">
-								<i class="el-icon-more el-icon--right"></i>
-							</span>
-							<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item command="rename">Rename</el-dropdown-item>
-							<el-dropdown-item command="delete">Delete</el-dropdown-item>
-							<el-dropdown-item command="change_type" divided>Modified data type</el-dropdown-item>
-							</el-dropdown-menu>
-						</el-dropdown>
+						<span class="e-label" :class="{ activename: data.isActiveName }" >
+							<el-input v-model="data.label"  @blur="handleRename(node,data)" :disabled="data.isDisable" ></el-input>
+						</span>
+						<el-select v-model="data.type" class="e-select" :class="{ activedatatype: data.isActiveDataType }" :disabled="data.isDisable" @change="handleDataType(node,data)" >
+							<el-option value="String" label="String"></el-option>
+							<el-option value="Map" label="Map"></el-option>
+							<el-option value="Integer" label="Integer"></el-option>
+							<el-option value="Double" label="Double"></el-option>
+							<el-option value="Array" label="Array"></el-option>
+						</el-select>
+						<span v-show="!data.isDisable" class="e-data-delete iconfont icon-l-del" @click="handleDelete(node)"></span>
+						<span v-show="data.isDisable" class="e-data-delete iconfont icon-return" @click="handleReset(node)"></span>
 						<span class="e-port e-port-out" :data-id="getId(data)"></span>
 					</span>
 				</el-tree>
@@ -70,7 +76,19 @@
 				default: false
 			}
 		},
-
+		data(){
+			return{
+				cloneData: '',
+				currentnodekey:'',
+				activeName: false,
+				activeDataType:false
+			}
+		},
+		mounted(){
+			//cloneData 是深拷贝schema,用于数据比较
+			this.cloneData = JSON.parse(JSON.stringify(this.schema))
+			
+		},
 		watch: {
 			schema: {
 				handler() {
@@ -78,9 +96,7 @@
 				}
 			}
 		},
-
 		methods: {
-
 			getId(node){
 				return node[this.nodeKey];
 			},
@@ -121,23 +137,53 @@
 			},
 			allowDrag(draggingNode) {
 				return draggingNode.data.children && draggingNode.data.children.length > 0;
-			},
-			handlerCommand(command, data, node){
-				if( command === 'rename') {
-					this.$prompt( 'Input new name', 'Rename', {
-						inputValue: data.label
-					}).then((res) => {
-						data.label = res.value;
-					});
-				} else if( command === 'delete') {
-					this.$refs.tree.remove(node);
-				} else if( command === 'change_type') {
-					this.$message({
-						message: 'Modified data type is not implemented',
-						type: 'warning'
-					});
+			},			
+			getNativeData(data,id){
+				let nativeData ={
+					name:'',
+					type:''
 				}
+				if(!data){
+					return
+				}
+				data.map(item =>{
+					if(item.id === id){
+						 nativeData.name = item.label
+						 nativeData.type = item.type
+					}else{
+						 this.getNativeData(item.children,id)
+					}
+				})
+				return nativeData
+			},
+			handleDataType(node,data){
+				let nativeData = this.getNativeData(this.cloneData.fields,data.id)
+				if(data.type === nativeData.type){
+					node.data.isActiveDataType = false
+				}else{
+					node.data.isActiveDataType = true
+				}
+			},
+			handleRename(node,data){							
+				let nativeData = this.getNativeData(this.cloneData.fields,data.id)
+				if(data.label === nativeData.name){
+					node.data.isActiveName = false
+				}else{
+					node.data.isActiveName = true
+				}				
+			},
+			handleDelete(node){
+				node.data.isDisable = true	
+				node.data.isActiveName = false
+				node.data.isActiveDataType = false
+			},
+			handleReset(node){
+				let nativeData = this.getNativeData(this.cloneData.fields,node.data.id)
+				node.data.isDisable = false
+				node.data.label = nativeData.name
+				node.data.type = nativeData.type
 			}
+			
 		}
 	};
 </script>
@@ -150,7 +196,8 @@
 		width: 100%;
 		border: 1px solid @color;
 		display: inline-block;
-		max-width: 300px;
+		max-width: 600px;
+		max-width: 300;
 
 		.el-header {
 			line-height: 23px;
@@ -161,6 +208,7 @@
 
 		.el-main {
 			padding: 0;
+			overflow: hidden;
 		}
 
 		.custom-tree-node {
@@ -204,7 +252,6 @@
 					}
 				}
 			}
-
 			.e-triangle {
 				width: 0;
 				height: 0;
@@ -242,7 +289,17 @@
 <style lang="less">
 
 	@color: #71c179;
+	.e-entity{
+		font-size: 11px;
+	}
+	.header-row{
+		display: inline;
+		background-color: #71c179;
+		color: #fff;
+		line-height: 40px;
+	}
 	.e-entity .el-main .el-tree .el-tree-node {
+		
 		border-bottom: 1px solid @color;
 		&:last-child {
 			border-bottom: none;
@@ -250,6 +307,34 @@
 		&:first-child {
 			border-top: 1px solid @color;
 		}
+		.el-input__inner {
+			border: none;
+			background-color: transparent;
+			font-size: 11px;
+			
+		}
+		.activedatatype{
+			.el-input__inner{
+				color:@color;
+			}
+		}
+		.activename{
+			.el-input__inner{
+				color: tomato;
+			}
+		}
+		.e-select{
+			width:100px;
+			border-left: 1px solid #71c179;
+			border-right: 1px solid #71c179;
+			font-size: 11px;
+		}
+		.e-data-delete{
+			text-align: center;
+			width:40px;
+		}
+		
+		
 	}
 	.e-entity .el-main .el-tree .el-tree-node .icon-none {
 		display: none;
