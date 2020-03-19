@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import layout from '../view/layout';
 import Job from '../view/job/Job';
+import echartData from '../view/job/echartData';
 
 import clusterManagement from '../view/clusterManagement/clusterManagement';
 import dailyRecord from '../view/clusterManagement/dailyRecord';
@@ -31,6 +32,11 @@ export default new Router({
 			path: '/job',
 			name: 'job',
 			component: Job
+		},{
+			path: '/echartData',
+			name: 'echartData',
+			component: echartData
+
 		}
 	]
 });

@@ -13,6 +13,7 @@ export default {
 </script>
 <style>
 @import 'assets/style/font/iconfont.css';
+/* @import 'http://at.alicdn.com/t/font_1644289_lsszo6fhnga.css'; */
 </style>
 <style lang='less'>
 @import 'assets/style/index.less';
