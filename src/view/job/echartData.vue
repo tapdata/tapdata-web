@@ -54,6 +54,8 @@
 import echartHead from './components/echartHead';
 import echartsCompinent from '../../components/echartsCompinent';
 import shaftlessEchart from '../../components/shaftlessEchart';
+import factory from '../../api/factory';
+const DataFlowStats = factory('DataFlowStats');
 export default {
   name: 'echartData',
   components: {echartHead,echartsCompinent,shaftlessEchart},
@@ -70,6 +72,8 @@ export default {
     };
   },
   mounted() {
+    let params = {}
+    this.getApiData()
     this.domValue = this.domList[0].value;
     this.screeningObj = {
       title: "数据总览",
@@ -114,7 +118,7 @@ export default {
         show: false,
       },
       legend: {
-        data: ['总输出','总输入']
+        data: ['总输出','总输入'],
       },
       grid: {
           left: '30%',
@@ -133,9 +137,12 @@ export default {
           }
         },
         data : ['总输出','总输入'],
-          axisPointer: {
-              type: 'shadow'
-          }
+        axisPointer: {
+            type: 'shadow'
+        },
+        formatter: function() {
+
+        }
       },
       yAxis:{
         type: 'value',
@@ -192,14 +199,24 @@ export default {
           }
       },
       xAxis: {
+        show: true,
         axisLine: {
-          show: true,
+          lineStyle:{
+            color:'#48b6e2',
+            width: 2,//这里是为了突出显示加上的
+          }
         },
         data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
       },
       yAxis: {
+        axisLine:{
+          lineStyle:{
+              color:'#48b6e2',
+              width: 2,//这里是为了突出显示加上的
+          }
+        } ,
         axisLabel: {
-            formatter: '{value} °C'
+          formatter:  '{value}°C'
         }
       },
       series: [
@@ -265,14 +282,21 @@ export default {
   methods: {
     //获取返回的单位
     getTwoRadio(data) {
-      console.log(data)
+      console.log(data);
       // if() {
 
       // }
     },
     //获取返回的时间
     getTime(data) {
-      console.log(data            )
+      console.log(data);
+    },
+
+    //获取数据
+    async getApiData(params) {
+      await DataFlowStats.get(params).then(res=>{
+        console.log('===',res);
+      });
     }
   }
 };

@@ -42,13 +42,13 @@ export default {
       let _this =this;
       setTimeout(function(){
         _this.myChart = Echarts.init(document.getElementById(id));
-        _this.myChart.clear()   //清空再重绘
+        _this.myChart.clear();   //清空再重绘
         // _this.myChart.setOption(data)
       // let myChart = Echarts.init(this.refs.echarts);
-        let publicCharts = _this.echartOption(data)
+        let publicCharts = _this.echartOption(data);
         _this.myChart.setOption(publicCharts);
         window.addEventListener("resize",()=>{
-          _this.myChart.resize()
+          _this.myChart.resize();
         })
       }, 0);
 
@@ -98,11 +98,21 @@ export default {
             data: configures.xAxis.data, //x轴的数据
             show: configures.xAxis.show,
             axisTick: {show:false},  //是否显示坐标轴刻度
-            splitLine: { show: true}, //是否显示分隔线
+            splitLine: {show: true}, //是否显示分隔线
             axisLine: {
               show: true,
               lineStyle: configures.xAxis.axisLine.lineStyle
             }, //是否显示坐标轴轴线。
+            axisLabel : {
+              textStyle:{
+                color:'#fff',  //坐标的字体颜色
+              }
+            },
+            splitArea: {
+              areaStyle: {
+                color: '#f00'
+              }
+            },
             // axisLine: {
             //   lineStyle: {
             //     color: this.echartsXYcolor
@@ -119,11 +129,18 @@ export default {
             type: 'value',
             min: 0,
             axisTick: {show: false},
-            axisLine: {show: true},
-            splitLine: {show: true},
-            splitArea: configures.yAxis.splitArea,
-            axisLabel : configures.yAxis.axisLabel,
-
+            axisLine: configures.yAxis.axisLine,
+            splitArea: {
+              areaStyle: {
+                color: ['rgba(250,250,250,0.3)','rgba(200,200,200,0.3)']
+              }
+            },
+            axisLabel : {
+              textStyle:{
+                color:'#333',  //坐标的字体颜色
+              },
+              formatter: configures.yAxis.axisLabel.formatter
+            },
           },
             // type: 'value',
             // axisLabel: {
@@ -162,7 +179,7 @@ export default {
   },
   beforeDestroy() {
     if(this.myChart) {
-      this.myChart.clear()
+      this.myChart.clear();
     }
   }
 };
