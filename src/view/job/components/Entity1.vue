@@ -32,18 +32,17 @@
 						<span class="e-triangle" :style="`border-bottom-color: ${data.color || '#ddd'};`"></span>
 						<span class="e-port e-port-in" :data-id="getId(data)"></span>
 						<span class="e-label" :class="{ activename: isRename(data.id) }" >
-							{{isRename(data.id)}}
-							<el-input v-model="data.label"  @blur="handleRename(node,data)" :disabled="data.isDisable" ></el-input>
+							<el-input v-model="data.label"  @blur="handleRename(node,data)" :disabled="isRemove(data.id)" ></el-input>
 						</span>
-						<el-select v-model="data.type" class="e-select" :class="{ activedatatype: data.isActiveDataType }" :disabled="data.isDisable" @change="handleDataType(node,data)" >
+						<el-select v-model="data.type" class="e-select" :class="{ activedatatype: isConvertDataType(data.id) }" :disabled="isRemove(data.id)" @change="handleDataType(node,data)" >
 							<el-option value="String" label="String"></el-option>
 							<el-option value="Map" label="Map"></el-option>
 							<el-option value="Integer" label="Integer"></el-option>
 							<el-option value="Double" label="Double"></el-option>
 							<el-option value="Array" label="Array"></el-option>
 						</el-select>
-						<span v-show="!data.isDisable" class="e-data-delete iconfont icon-l-del" @click="handleDelete(node)"></span>
-						<span v-show="data.isDisable" class="e-data-delete iconfont icon-return" @click="handleReset(node)"></span>
+						<span v-show="!isRemove(data.id)" class="e-data-delete iconfont icon-l-del" @click="handleDelete(node,data)"></span>
+						<span v-show="isRemove(data.id)" class="e-data-delete iconfont icon-return" @click="handleReset(node,data)"></span>
 						<span class="e-port e-port-out" :data-id="getId(data)"></span>
 					</span>
 				</el-tree>
@@ -177,20 +176,54 @@
 			allowDrag(draggingNode) {
 				return draggingNode.data.children && draggingNode.data.children.length > 0;
 			},
-			getNativeData(id){
-				let fields = this.cloneData.fields.filter(item => item.id === id);
-				return fields && fields[0];
+			getNativeData(data,id){
+				let nativeData ={
+					label:'',
+					type:''
+				}
+				if(!data){
+					return
+				}
+				data.map(item =>{
+					if(item.id === id){
+						 nativeData.label = item.label
+						 nativeData.type = item.type
+					}else{
+						 this.getNativeData(item.children,id)
+					}
+				})
+				return nativeData;
 			},
 			handleDataType(node,data){
 				let nativeData = this.getNativeData(this.cloneData.fields,data.id);
 				if(data.type === nativeData.type){
-					node.data.isActiveDataType = false
+					for (let i = 0; i < this.operations.length; i++) {
+						let ops = this.operations[i];
+						if( nativeData.type === ops.field && ops.op === 'CONVERT'){
+							this.operations.splice(i, 1);
+							break;
+						}
+					}
 				}else{
-					node.data.isActiveDataType = true
+					let ops = this.operations.filter( v => v.field === nativeData.type && v.op === 'CONVERT');
+					let op ;
+					if( ops.length === 0 ){
+						op = Object.assign(_.cloneDeep(CONVERT_OPS_TPL), {
+							id: data.id,
+							field: nativeData.type,
+							operand: data.type,
+							originalDataType: data.type,
+						});
+						this.operations.push(op);
+					} else {
+						op = ops[0];
+					}
+					op.id = data.id;
+					op.operand = data.type;
 				}
 			},
 			handleRename(node,data){
-				let nativeData = this.getNativeData(data.id);
+				let nativeData = this.getNativeData(this.cloneData.fields,data.id);
 				if(data.label === nativeData.label){
 					for (let i = 0; i < this.operations.length; i++) {
 						let ops = this.operations[i];
@@ -216,16 +249,30 @@
 					op.operand = data.label;
 				}
 			},
-			handleDelete(node){
-				node.data.isDisable = true;
-				node.data.isActiveName = false;
-				node.data.isActiveDataType = false;
+			handleDelete(node,data){
+				let ops = this.operations.filter( v => v.op === 'REMOVE');
+				let op ;
+				if( ops.length === 0 ){
+					op = Object.assign(_.cloneDeep(REMOVE_OPS_TPL), {
+						id: data.id,
+						field: false,
+						operand: true
+					});
+					this.operations.push(op);
+				} else {
+					op = ops[0];
+				}
+				op.id = data.id;
+				op.operand = rue;
 			},
-			handleReset(node){
-				let nativeData = this.getNativeData(this.cloneData.fields,node.data.id);
-				node.data.isDisable = false;
-				node.data.label = nativeData.name;
-				node.data.type = nativeData.type;
+			handleReset(){
+				for (let i = 0; i < this.operations.length; i++) {
+					let ops = this.operations[i];
+					if( ops.op === 'REMOVE'){
+						this.operations.splice(i, 1);
+						break;
+					}
+				}
 			}
 
 		}
