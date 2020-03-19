@@ -204,7 +204,7 @@ export const baseElementConfig = {
 				}));
 			},
 			validate(){
-				return false;
+				return true;
 			}
 		},
 

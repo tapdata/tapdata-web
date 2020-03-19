@@ -55,6 +55,7 @@ export const
 						label: jsonPath[jsonPath.length - 1],
 						type: field.javaType,
 						color: color
+
 					};
 					_.set(root, 'children.' + jsonPath.join('.children.'), treeItem);
 				}

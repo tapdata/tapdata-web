@@ -74,7 +74,7 @@
 		watch: {
 			schema: {
 				handler() {
-					log.log('Entity.schema.change', this.schema);
+					log('Entity.schema.change', this.schema);
 				}
 			}
 		},
