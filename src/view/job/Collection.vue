@@ -160,7 +160,7 @@
 				let self = this;
 				connectionApi.get([connectionId]).then(result => {
 					if( result.data ){
-						self.schemas = result.data.schema && result.data.schema.tables;
+						self.schemas = result.data.schema && result.data.schema.tables || [];
 					}
 				});
 
@@ -191,6 +191,7 @@
 				let mergedSchema = _.cloneDeep(this.model.schema || {});
 				mergeJoinTablesToTargetSchema(mergedSchema, _.cloneDeep(this.joinTables));
 				this.mergedSchema = mergedSchema;
+				this.$emit('changeSchema', _.cloneDeep(mergedSchema));
 				log.log('Collection.renderSchema:', mergedSchema);
 			}
 		}

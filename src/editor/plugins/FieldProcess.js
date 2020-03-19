@@ -1,97 +1,47 @@
 /**
  * @author lg<lirufei0808@gmail.com>
- * @date 3/4/20
+ * @date 3/5/20
  * @description
  */
 import {options} from "../lib/rappid/config";
-import DataSource from "../../view/job/DataSource";
+import FieldProcess from "../../view/job/FieldProcess";
 
-export const targetDBConfig = {
+export const fieldProcessConfig = {
 
-	/**
-	 * the name of the subtype class.
-	 *
-	 */
-	type: 'app.TargetDB',
-
-	/**
-	 * define shape
-	 * docs see https://github.com/clientIO/joint/blob/master/tutorials/custom-elements.html
-	 * @type {object}
-	 */
+	type: 'app.FieldProcess',
 	shape: {
-		/**
-		 * extends exists shape
-		 */
-		extends: 'standard.Rectangle',
-
-		/**
-		 * object that contains properties to be assigned to every constructed instance of the subtype.
-		 *
-		 * @example <pre>
-		 *     {
-		 *        attrs: {
-		 *           body: {
-		 *              refWidth: '100%',
-		 *              refHeight: '100%',
-		 *              strokeWidth: 2,
-		 *              stroke: '#000000',
-		 *              fill: '#FFFFFF'
-		 *           },
-		 *           label: {
-		 *              textVerticalAnchor: 'middle',
-		 *              textAnchor: 'middle',
-		 *              refX: '50%',
-		 *              refY: '50%',
-		 *              fontSize: 14,
-		 *              fill: '#333333'
-		 *           }
-		 *        }
-		 *     }
-		 * </pre>
-		 */
+		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
+			size:{width:120,height:28},
 			attrs: {
 				root: {
 					magnet: true
+				},
+				image:{
+					xlinkHref: 'static/editor/o-js.svg',
+					refWidth: '25%',
+					refHeight: '84%',
+					refX: '-8%',
+					refY: '-28%'
+				},
+				body: {
+					rx:14,
+					ry:14
+				},
+				label:{
+					text: 'Field Processor',
 				}
 			}
 		},
-		/**
-		 * object that contains properties to be assigned on the subtype prototype.
-		 * Intended for properties intrinsic to the subtype, not usually modified.
-		 *
-		 * @example <pre>
-		 *
-		 * {
-		 *     markup: [{
-		 *          tagName: 'rect',
-		 *          selector: 'body',
-		 *     }, {
-		 *          tagName: 'text',
-		 *          selector: 'label'
-		 *     }]
-		 * }
-		 *
-		 * </pre>
-		 */
 		prototypeProperties: {
 			portLabelMarkup: [{
 				tagName: 'text',
 				selector: 'portLabel'
 			}]
 		},
-		/**
-		 * object that contains properties to be assigned on the subtype constructor.
-		 */
 		//staticProperties: {}
 	},
 
-	/**
-	 * 图形(Element子类
-	 * )样式表单配置
-	 * @type {object}
-	 */
 	styleFormConfig: {
 		inputs: {
 			attrs: {
@@ -198,9 +148,9 @@ export const targetDBConfig = {
 	 */
 	stencil: {
 		/**
-		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：process；标准图形：standard
+		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：processor；标准图形：standard
 		 */
-		group: 'data',
+		group: 'processor',
 		/**
 		 * 界面显示的分组名称
 		 */
@@ -209,27 +159,37 @@ export const targetDBConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: 'Rectangle',
+				dataTooltip: 'script',
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
 			body: {
 				rx: 2,
 				ry: 2,
-				width: 50,
-				height: 30,
-				fill: '#f6f6f6',
-				stroke: '#008cee',
-				strokeWidth: 2,
+				stroke: '#fff',
+				fill:'#fff',
+				strokeWidth: 0,
 				strokeDasharray: '0'
 			},
+			image: {
+				xlinkHref: 'static/editor/js.svg',
+				refWidth: '60%',
+				refHeight: '60%',
+				refX: '2%',
+				refY: '0%'
+			},
 			label: {
-				text: 'Target Database',
-				fill: '#555555',
+				text: 'Field',
+				textAnchor: 'middle',
+				fill: '#666',
 				fontFamily: 'Roboto Condensed',
 				fontWeight: 'Normal',
-				fontSize: 13,
-				strokeWidth: 0
+				fontSize: 10,
+				strokeWidth: 0,
+				refX: '75%',
+				refY: '40%',
+				x:-35,
+				y:27
 			}
 		}
 	},
@@ -239,10 +199,7 @@ export const targetDBConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: DataSource,
-		props: {
-			connection_type: 'target'
-		},
+		component: FieldProcess,
 
 		/**
 		 * validate user-filled data
@@ -250,8 +207,10 @@ export const targetDBConfig = {
 		 *
 		 */
 		validate: (data) => {
-			if( !data.connectionId )
-				throw new Error('Database cannot be empty.');
+			if( !data.type )
+				throw new Error('FieldProcess type cannot be empty.');
+			if( !data.FieldProcess )
+				throw new Error('FieldProcess cannot be empty.');
 			return true;
 		}
 	}

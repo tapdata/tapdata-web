@@ -7,7 +7,7 @@ export const stencilConfig = {
 	groups: {
 		data: {index: 1, label: 'Data Nodes'},
 		processor: {index: 2, label: 'Processor'},
-		standard: {index: 3, label: 'Standard shapes', closed: true},
+		// standard: {index: 3, label: 'Standard shapes', closed: true},
 	},
 	shapes: {
 		data: [
@@ -71,7 +71,7 @@ export const stencilConfig = {
 			}*/
 		],
 		processor: [],
-		standard: [
+		/*standard: [
 			{
 				type: 'standard.Rectangle',
 				size: {width: 5, height: 3},
@@ -291,6 +291,6 @@ export const stencilConfig = {
 				}
 			}
 		}
-		]
+		]*/
 	}
 };

@@ -1,48 +1,37 @@
 <template>
 	<div>
 		<el-form label-position="right" label-width="130px" :model="model" ref="form">
-			<el-form-item label="Database" prop="connectionId" :rules="rules" required>
-				<el-select v-model="model.connectionId" :placeholder="`Please select RDBMS database`" @change="handlerConnectionChange">
-					<el-option
-							v-for="(item, idx) in databases"
-							:label="`${item.name} (${item.status})`"
-							:value="item.id"
-							v-bind:key="idx"></el-option>
-				</el-select>
+			<el-form-item :required="true" label="node name">
+				<el-input  v-model="model.name" class="formitem-width" placeholder="please enter node name"></el-input>
 			</el-form-item>
-
-			<el-form-item label="Table" prop="tableName" :rules="rules" required>
-				<el-select v-model="model.tableName" :placeholder="`Please select a table`">
-					<el-option
-							v-for="(item, idx) in schemas"
-							:label="`${item.table_name}`"
-							:value="item.table_name"
-							v-bind:key="idx"></el-option>
-				</el-select>
+			<el-form-item  label="description">
+				<el-input type="textarea"  v-model="model.description" class="formitem-width" placeholder="please enter node description"></el-input>
 			</el-form-item>
-
-			<el-form-item required label="Exists data">
-				<el-select
-						v-model="model.dropTable"
-						:placeholder="`Please select a collection`">
-					<el-option
-							label="Keep exists data"
-							:value="false"></el-option>
-					<el-option
-							label="Remove exists data at before sync"
-							:value="true"></el-option>
-				</el-select>
-			</el-form-item>
-
-			<el-form-item label="Custom SQL" prop="sql" :rules="rules" >
-				<el-input type="textarea" rows="10" v-model="model.sql" placeholder="Please input you custom sql"></el-input>
-			</el-form-item>
-
 		</el-form>
-
-		<div style="padding-left: 130px;">
-			<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
+		<div class="contentbox">
+			<div class="contentbase contentbox-left">
+				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
+			</div>
+			<div class="contentbase contentbox-right">
+				<ul class="info-list">
+					<li>
+						<span class="text-color">name</span>
+						<span class="hight-color">改名为</span>
+						<span class="text-color">names</span>
+						<span class="iconfont icon-return"></span>
+						
+					</li>
+					<li>
+						<span class="text-color">name</span>
+						<span class="hight-color">改名为</span>
+						<span class="text-color">names</span>
+						<span class="iconfont icon-return"></span>
+						
+					</li>
+				</ul>
+			</div>
 		</div>
+		
 	</div>
 </template>
 
@@ -197,5 +186,31 @@
 </script>
 
 <style scoped>
-
+.formitem-width{
+	width: 300px;
+}
+.contentbase{
+	float: left;
+}
+.contentbox-left{
+	width: 49%;
+}
+.contentbox-right{
+	width: 49%;
+	margin-left: 10px;
+}
+.info-list li {
+	font-size: 11px;
+	border: 1px solid #dedee4;
+	background: #f6f6f6;
+	line-height: 30px;
+	padding-left: 10px;
+	margin-bottom: 5px;
+}
+.hight-color{
+	color: #c51916;
+}
+.text-color{
+	color: #0068b7;
+}
 </style>

@@ -1,7 +1,7 @@
 <template>
 	<el-form label-position="right" :model="model" ref="form">
 		<el-form-item label="Database" prop="connectionId" :rules="rules" required>
-			<el-select v-model="model.connectionId" :placeholder="`Please select ${this.connection_type} database`">
+			<el-select v-model="model.connectionId" :placeholder="`Please select database`">
 				<el-option
 						v-for="(item, idx) in databases"
 						:label="`${item.name} (${item.status})`"
@@ -17,7 +17,7 @@
 	let connections = factory('connections');
 
 	export default {
-		name: "SourceDB",
+		name: "Database",
 
 		props: {
 			connection_type: {
@@ -40,7 +40,7 @@
 				databases: [],
 				rules: {
 					connectionId: [
-						{required: true, trigger: 'blur', message: `Please select ${this.connection_type} database`},
+						{required: true, trigger: 'blur', message: `Please select database`},
 					]
 				},
 				model: {
@@ -52,9 +52,9 @@
 		async mounted() {
 			let result = await connections.get({
 				filter: JSON.stringify({
-					where: {
+					/*where: {
 						connection_type: {regex: this.connection_type}
-					},
+					},*/
 					fields: {
 						name: 1, id: 1, database_type: 1, connection_type: 1, status: 1
 					}

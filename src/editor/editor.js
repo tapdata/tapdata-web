@@ -7,8 +7,27 @@ import BaseObject from './lib/BaseObject';
 import UI from './ui/ui';
 import Graph from "./ui/graph";
 import {loadPlugins} from './plugins';
+import ModelEngine from "./ModelEngine";
 
 export default class Editor extends BaseObject {
+
+	/**
+	 * user interface
+	 * @type {UI}
+	 */
+	ui = null;
+
+	/**
+	 * graph ui
+	 * @type {Graph}
+	 */
+	graph = null;
+
+	/**
+	 * model engine
+	 * @type {ModelEngine}
+	 */
+	modelEngine = null;
 
 	constructor(opts){
 		super();
@@ -32,6 +51,8 @@ export default class Editor extends BaseObject {
 			ui: self.ui,
 			container: self.ui.getContentEl()
 		});
+
+		self.modelEngine = new ModelEngine(self.graph.graph);
 	}
 
 	getData(){

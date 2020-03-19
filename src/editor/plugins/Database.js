@@ -4,15 +4,15 @@
  * @description
  */
 import {options} from "../lib/rappid/config";
-import DataSource from "../../view/job/DataSource";
+import Database from "../../view/job/Database";
 
-export const sourceDBConfig = {
+export const databaseConfig = {
 
 	/**
 	 * the name of the subtype class.
 	 *
 	 */
-	type: 'app.SourceDB',
+	type: 'app.Database',
 
 	/**
 	 * define shape
@@ -23,7 +23,7 @@ export const sourceDBConfig = {
 		/**
 		 * extends exists shape
 		 */
-		extends: 'standard.Rectangle',
+		extends: 'app.BaseElement',
 
 		/**
 		 * object that contains properties to be assigned to every constructed instance of the subtype.
@@ -54,6 +54,12 @@ export const sourceDBConfig = {
 			attrs: {
 				root: {
 					magnet: true
+				},
+				image:{
+					xlinkHref: 'static/editor/database2.svg',
+				},
+				label:{
+					text:'database'
 				}
 			}
 		},
@@ -209,27 +215,37 @@ export const sourceDBConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: 'Rectangle',
+				dataTooltip: 'database',
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
 			body: {
 				rx: 2,
 				ry: 2,
-				width: 50,
-				height: 30,
-				fill: '#f6f6f6',
-				stroke: '#008cee',
-				strokeWidth: 2,
+				stroke: '#fff',
+				fill:'#fff',
+				strokeWidth: 0,
 				strokeDasharray: '0'
 			},
+			image: {
+				xlinkHref: 'static/editor/database2.svg',
+				refWidth: '60%',
+				refHeight: '60%',
+				refX: '2%',
+				refY: '0%'
+			},
 			label: {
-				text: 'Source Database',
-				fill: '#555555',
+				text: 'database',
+				textAnchor: 'middle',
+				fill: '#666',
 				fontFamily: 'Roboto Condensed',
 				fontWeight: 'Normal',
-				fontSize: 13,
-				strokeWidth: 0
+				fontSize: 10,
+				strokeWidth: 0,
+				refX: '75%',
+				refY: '40%',
+				x:-35,
+				y:27
 			}
 		}
 	},
@@ -239,10 +255,10 @@ export const sourceDBConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: DataSource,
-		props: {
+		component: Database,
+		/*props: {
 			connection_type: 'source'
-		},
+		},*/
 
 		/**
 		 * validate user-filled data

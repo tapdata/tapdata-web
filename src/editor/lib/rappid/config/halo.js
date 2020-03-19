@@ -71,7 +71,7 @@ export const haloConfig = {
 				}
 			}
 		},
-		{
+		/*{
 			name: 'rotate',
 			position: 'sw',
 			events: { pointerdown: 'startRotating', pointermove: 'doRotate', pointerup: 'stopBatch' },
@@ -83,6 +83,6 @@ export const haloConfig = {
 					'data-tooltip-padding': 15
 				}
 			}
-		}
+		}*/
 	]
 };

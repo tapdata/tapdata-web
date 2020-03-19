@@ -61,6 +61,11 @@ export const loadPlugins = function(){
 			delete stencil.group;
 			delete stencil.groupLabel;
 			stencil.type = type;
+			if( stencil && stencil.attrs && stencil.attrs.label && stencil.attrs.label.text ){
+				stencil.attrs.label.text = joint.util.breakText(
+					stencil.attrs.label.text,
+					{ width: 60, height: 40 }, { 'font-size': 12 }, { ellipsis: true });
+			}
 
 			let replace = false;
 			for( let i = 0; i < stencilConfig.shapes[group].length; i++ ) {
@@ -76,14 +81,14 @@ export const loadPlugins = function(){
 		},
 
 		addSettingForm = (type, config) => {
-			if( vueAdapter && config.component){
+			if( config && config.component){
 				vueAdapter[type] = config;
 			}
 		};
 
 
 	Object.keys(plugins).forEach(name => {
-		if( name !== 'loadPlugins' ) {
+		if( name !== 'loadPlugins' && typeof plugins[name] === 'object') {
 			let plugin = _.cloneDeep(plugins[name]);
 
 			if( plugin.shape && !plugin.shape.extends ){

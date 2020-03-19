@@ -126,7 +126,7 @@
 							//dash: {animation: true},
 							startPlug: 'square',
 							endPlug: 'arrow1',
-							size: 2,
+							size: 1,
 						});
 						self.lines.push(line);
 						line.position();

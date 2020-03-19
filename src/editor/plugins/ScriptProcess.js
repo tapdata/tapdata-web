@@ -10,11 +10,26 @@ export const scriptProcessConfig = {
 
 	type: 'app.Script',
 	shape: {
-		extends: 'standard.Rectangle',
+		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
+			size:{width:120,height:28},
 			attrs: {
 				root: {
 					magnet: true
+				},
+				image:{
+					xlinkHref: 'static/editor/o-js.svg',
+					refWidth: '25%',
+					refHeight: '84%',
+					refX: '-8%',
+					refY: '-28%'
+				},
+				body: {
+					rx:14,
+					ry:14
+				},
+				label:{
+					text: 'JavaScript',
 				}
 			}
 		},
@@ -144,27 +159,37 @@ export const scriptProcessConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: 'Rectangle',
+				dataTooltip: 'script',
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
 			body: {
 				rx: 2,
 				ry: 2,
-				width: 50,
-				height: 30,
-				fill: '#f6f6f6',
-				stroke: '#008cee',
-				strokeWidth: 2,
+				stroke: '#fff',
+				fill:'#fff',
+				strokeWidth: 0,
 				strokeDasharray: '0'
 			},
+			image: {
+				xlinkHref: 'static/editor/js.svg',
+				refWidth: '60%',
+				refHeight: '60%',
+				refX: '2%',
+				refY: '0%'
+			},
 			label: {
-				text: 'Script',
-				fill: '#555555',
+				text: 'JavaScript',
+				textAnchor: 'middle',
+				fill: '#666',
 				fontFamily: 'Roboto Condensed',
 				fontWeight: 'Normal',
-				fontSize: 13,
-				strokeWidth: 0
+				fontSize: 10,
+				strokeWidth: 0,
+				refX: '75%',
+				refY: '40%',
+				x:-35,
+				y:27
 			}
 		}
 	},
