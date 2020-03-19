@@ -11,9 +11,6 @@ export default {
   name: 'App'
 };
 </script>
-<style>
-@import 'assets/style/font/iconfont.css';
-</style>
 <style lang='less'>
 @import 'assets/style/index.less';
 

@@ -4,8 +4,6 @@
  * @description
  */
 let counter = 0;
-export default {
-	log: function () {
-		window['console'].error(++counter, ...arguments);
-	}
-};
+export default function () {
+	window['console'].error(++counter, ...arguments);
+}

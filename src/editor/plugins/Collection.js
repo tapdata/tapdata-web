@@ -28,8 +28,24 @@ export const collectionConfig = {
 			portLabelMarkup: [{
 				tagName: 'text',
 				selector: 'portLabel'
-			}]
-		},
+			}],
+			isDataNode(){
+				return true;
+			},
+
+			/**
+			 * validate user-filled data
+			 * @param data
+			 *
+			 */
+			validate: (data) => {
+				if( !data.connectionId )
+					throw new Error('Database cannot be empty.');
+				if( !data.tableName )
+					throw new Error('Collection cannot be empty.');
+				return true;
+			}
+		}
 		//staticProperties: {}
 	},
 
@@ -190,20 +206,7 @@ export const collectionConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: Collection,
-
-		/**
-		 * validate user-filled data
-		 * @param data
-		 *
-		 */
-		validate: (data) => {
-			if( !data.connectionId )
-				throw new Error('Database cannot be empty.');
-			if( !data.collectionId )
-				throw new Error('Collection cannot be empty.');
-			return true;
-		}
+		component: Collection
 	}
 
 };

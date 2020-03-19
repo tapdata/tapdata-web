@@ -25,8 +25,16 @@ export const loadPlugins = function(){
 				let args = [shapeType];
 				if( shape.defaultInstanceProperties )
 					args.push(shape.defaultInstanceProperties);
-				if( shape.prototypeProperties )
+				if( shape.prototypeProperties ) {
 					args.push(shape.prototypeProperties);
+					let initialize = shape.prototypeProperties.initialize;
+					if( typeof initialize === 'function') {
+						shape.prototypeProperties.initialize = function(){
+							parentObj.prototype.initialize.apply(this, arguments);
+							initialize.apply(this, arguments);
+						};
+					}
+				}
 				if( shape.staticProperties)
 					args.push(shape.staticProperties);
 

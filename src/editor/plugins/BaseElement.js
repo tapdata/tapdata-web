@@ -3,6 +3,11 @@
  * @date 3/4/20
  * @description
  */
+import log from "../../log";
+import {FORM_DATA_KEY, SCHEMA_DATA_KEY, OUTPUT_SCHEMA_DATA_KEY} from "../constants";
+import {mergeJoinTablesToTargetSchema} from "../util/Schema";
+import _ from 'lodash';
+
 export const baseElementConfig = {
 
 	/**
@@ -61,37 +66,27 @@ export const baseElementConfig = {
 					refX: '-4%',
 					refY: '-19%'
 				},
-				// image: {
-				// 	//xlinkHref: 'static/editor/table.svg',
-				// 	refWidth: '30%',
-				// 	refHeight: '30%',
-				// 	refX: '30%',
-				// 	refY: '5%'
-				// },
 				body: {
 					fill: '#fafafa',
 					stroke: '#dedee4',
-					// fill: '#fafafa',
-					// stroke: '#ccc',
 					strokeWidth: 1,
 					rx:20,
 					ry:20,
-					// rx:5,
-					// ry:5
 				},
 				label: {
 					textVerticalAnchor: 'middle',
 					textAnchor: 'left',
 					refX: '10%',
 					refY: '50%',
-					// refX: '75%',
-					// refY: '40%',
 					fontSize: 11,
 					fill: '#333333',
 					x:0,
 					y:0,
 				}
-			}
+			},
+
+			[SCHEMA_DATA_KEY]: null,
+			[OUTPUT_SCHEMA_DATA_KEY]: null
 		},
 		/**
 		 * object that contains properties to be assigned on the subtype prototype.
@@ -116,13 +111,103 @@ export const baseElementConfig = {
 				tagName: 'text',
 				selector: 'portLabel'
 			}],
+			initialize(){
+				let self = this;
+				self.on('change:' + FORM_DATA_KEY, () => {
+					let formData = self.getFormData();
+
+					log(`${this.get('type')} validate form data`, formData);
+					let verified = false;
+					try {
+						verified = self.validate(self.getFormData());
+					} catch (e) {
+						verified = false;
+					}
+
+					log(`${this.get('type')} validate form data`, formData, verified);
+
+					self.attr('body/stroke', verified ? '#2196F3' : '#ff0000');
+					if( formData.name )
+						self.attr('label/text', formData.name);
+				});
+
+			},
 			getFormData() {
-				return this.get('')
+				return this.get(FORM_DATA_KEY);
+			},
+			isDataNode(){
+				return false;
+			},
+			isProcess(){
+				return false;
+			},
+			showSettings() {
+				return true;
+			},
+			setSchema(schema){
+				this.set(SCHEMA_DATA_KEY, schema);
+				this.updateOutputSchema();
+			},
+			getSchema(){
+				return _.cloneDeep(this.get(SCHEMA_DATA_KEY));
+			},
+			getOutputSchema(){
+				return _.cloneDeep(this.get(OUTPUT_SCHEMA_DATA_KEY));
+			},
+			getInputSchema(){
+
+				let self = this;
+				let graph = self.graph;
+
+				let joinTables = graph.getConnectedLinks(self, {inbound: true})
+						.map( cell => {
+							let sourceCell = cell.getSourceCell();
+
+							if( sourceCell ) {
+								let joinTable = cell.get(FORM_DATA_KEY) && cell.get(FORM_DATA_KEY).joinTable;
+
+								joinTable = joinTable ? _.cloneDeep(joinTable) : {
+									joinType: 'append'
+								};
+								joinTable.sourceSchema = sourceCell.getOutputSchema();
+
+								return joinTable;
+							} else {
+								return null;
+							}
+						})
+						.filter( v => !!v);
+
+				return joinTables.filter( (v) => !!v);
+			},
+			mergeOutputSchema(){
+				let inputSchema = this.getInputSchema() || [];
+				let schema= _.cloneDeep(this.getSchema());
+				let outputSchema = mergeJoinTablesToTargetSchema(schema, inputSchema);
+				log(this.get('type') + '.mergeOutputSchema(this.schema,inputSchema,outputSchema)', schema, inputSchema, outputSchema);
+				return outputSchema;
+			},
+			updateOutputSchema(){
+				try {
+					this.validate();
+				} catch (e) {}
+				let mergedOutputSchema = this.mergeOutputSchema();
+				this.set(OUTPUT_SCHEMA_DATA_KEY, mergedOutputSchema);
+				log(`${this.get('type')}.updateOutputSchema`, mergedOutputSchema);
+
+				let graph = this.graph;
+				graph.getConnectedLinks(this, {outbound: true}).forEach(( link => {
+					let targetCell = link.getTargetCell();
+					if( targetCell && typeof targetCell.updateOutputSchema === 'function'){
+						setTimeout(()=>targetCell.updateOutputSchema(), 0);
+					}
+				}));
+			},
+			validate(){
+				return false;
 			}
 		},
-		/**
-		 * object that contains properties to be assigned on the subtype constructor.
-		 */
+
 		//staticProperties: {}
 	},
 

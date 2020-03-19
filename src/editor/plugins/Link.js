@@ -119,7 +119,14 @@ export const link = {
 
 			getDataWidth: _.memoize(function(d) {
 				return (new joint.g.Path(d)).bbox().width;
-			})
+			}),
+
+			showSettings(){
+				let targetId = this.target().id;
+				if( !targetId) return false;
+				let targetCell = this.getTargetCell();
+				return targetCell && targetCell.isDataNode && targetCell.isDataNode();
+			}
 
 		},
 		/**
