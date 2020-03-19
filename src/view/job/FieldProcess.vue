@@ -10,9 +10,9 @@
 		</el-form>
 		<div class="contentbox">
 			<div class="contentbase contentbox-left">
-				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
+				<entity ref="sourceEntity" :schema="schema" :editable="true"></entity>
 			</div>
-			<div class="contentbase contentbox-right">
+			<!-- <div class="contentbase contentbox-right">
 				<ul class="info-list">
 					<li>
 						<span class="text-color">name</span>
@@ -29,14 +29,14 @@
 						
 					</li>
 				</ul>
-			</div>
+			</div> -->
 		</div>
 		
 	</div>
 </template>
 
 <script>
-	import Entity from './components/Entity';
+	import Entity from './components/Entity1';
 	import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from "./components/Schema";
 	import _ from 'lodash';
 	import log from '../../log';
@@ -93,9 +93,8 @@
 		data(){
 			return {
 				databases: [],
-				schemas: [],
-
-				rules: {
+				schema:{"name":"字段名 字段类型 操作 ","type":"collection","fields":[{"id":"Logs__id","label":"_id","type":"String","isActiveName":false,"isActiveDataType":false,"isDisable":false,},{"id":"Logs_contextMap","label":"contextMap","type":"Map","isActiveName":false,"isActiveDataType":false,"isDisable":false,"children":[{"id":"Logs_contextMap_app","label":"app","type":"String","isActiveName":false,"isActiveDataType":false,"isDisable":false,},{"id":"Logs_contextMap_jobId","label":"jobId","type":"String","isActiveName":false,"isActiveDataType":false,"isDisable":false,},{"id":"Logs_contextMap_jobName","label":"jobName","type":"String","isActiveName":false,"isActiveDataType":false,"isDisable":false,},{"id":"Logs_contextMap_userId","label":"userId","type":"String","isActiveName":false,"isActiveDataType":false,"isDisable":false,}]},{"id":"Logs_contextStack","label":"contextStack","type":"Array","isActiveName":false,"isActiveDataType":false,"isDisable":false,},{"id":"Logs_date","label":"date","type":"Date","isActiveName":false,"isActiveDataType":false,"isDisable":false,},{"id":"Logs_ip","label":"ip","type":"String","isActiveName":false,"isActiveDataType":false,"isDisable":false,},{"id":"Logs_last_updated","label":"last_updated","type":"Date","isActiveName":false,"isActiveDataType":false,"isDisable":false,},{"id":"Logs_level","label":"level","type":"String","isActiveName":false,"isActiveDataType":false,"isDisable":false,},{"id":"Logs_loggerName","label":"loggerName","type":"String","isActiveName":false,"isActiveDataType":false,"isDisable":false,},{"id":"Logs_message","label":"message","type":"String","isActiveName":false,"isActiveDataType":false,"isDisable":false,},{"id":"Logs_millis","label":"millis","type":"Double","isActiveName":false,"isActiveDataType":false,"isDisable":false,},{"id":"Logs_threadId","label":"threadId","type":"Integer","isActiveName":false,"isActiveDataType":false,"isDisable":false,},{"id":"Logs_threadName","label":"threadName","type":"String","isActiveName":false,"isActiveDataType":false,"isDisable":false,},{"id":"Logs_threadPriority","label":"threadPriority","type":"Integer","isActiveName":false,"isActiveDataType":false,"isDisable":false,},{"id":"Logs_thrown","label":"thrown","type":"Null","isActiveName":false,"isActiveDataType":false,"isDisable":false,}]},			
+					rules: {				
 					connectionId: [
 						{required: true, trigger: 'blur', message: `Please select database`},
 					]
@@ -192,12 +191,15 @@
 .contentbase{
 	float: left;
 }
+.contentbox{
+	margin-left: 130px;
+	margin-right: 20px;
+}
 .contentbox-left{
-	width: 49%;
+	width: 100%;
 }
 .contentbox-right{
 	width: 49%;
-	margin-left: 10px;
 }
 .info-list li {
 	font-size: 11px;
