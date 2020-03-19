@@ -3,12 +3,11 @@
 		<el-container>
 			<el-header height="20">
 				<!-- {{schema ? schema.name : ''}} -->
-				
-			</el-header>
+			</el-header>	
 			<el-row class="header-row">
-				<el-col :span='16'>字段名</el-col>
-				<el-col :span='4'>字段类型</el-col>
-				<el-col :span='4'>操作</el-col>
+				<el-col :span="18">字段名</el-col>
+				<el-col :span="4">字符类型</el-col>
+				<el-col :span="2">操作</el-col>
 			</el-row>
 			<el-main>
 				<el-tree
@@ -197,7 +196,7 @@
 		border: 1px solid @color;
 		display: inline-block;
 		max-width: 600px;
-		max-width: 300;
+		min-width: 488px;
 
 		.el-header {
 			line-height: 23px;
@@ -298,8 +297,20 @@
 		color: #fff;
 		line-height: 40px;
 	}
+	.row-col-base{
+		display: inline-block;
+	}
+	.col-name{
+		min-width: 150px;
+		max-width: 430px;
+	}
+	.col-type{
+		min-width: 100px;
+	}
+	.col-op{
+		min-width: 50px;
+	}
 	.e-entity .el-main .el-tree .el-tree-node {
-		
 		border-bottom: 1px solid @color;
 		&:last-child {
 			border-bottom: none;
