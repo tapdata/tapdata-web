@@ -37,7 +37,7 @@
 
 <script>
 	import Entity from './components/Entity1';
-	import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from "./components/Schema";
+	import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from "../../editor/util/Schema";
 	import _ from 'lodash';
 	import log from '../../log';
 	import factory from '../../api/factory';
