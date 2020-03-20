@@ -40,6 +40,31 @@ const cn = {
     startupAfter_delete: '请启动后删除',
     startupAfter_add: '请启动后添加'
   },
+  dataFlow: {
+    taskName: '任务名称',
+    creatdor: '创建人',
+    creationTime: '创建时间',
+    state: '状态',
+    executionTime: '本次执行时间',
+    inputNumber: '本次输入条数',
+    outputNumber: '本次输出条数',
+    rowCount: '条数',
+    inputOutput: '输入输出统计',
+    transf: '传输耗时',
+    dataScreening: '数据总览',
+    second: "秒",
+    min: "分",
+    hour: "时",
+    day: "日",
+    input: '输入',
+    output: '输出',
+    totalInput:'总输入',
+    totalOutput:'总输出',
+    replicate: "数据同步差距",
+    throughputpop:'平均每秒源端数据采集的速度以及目标端写入的速度，数值越大越好',
+    transtime_pop: '传输耗时：除源节点外，事件处理完的时间减去事件的发生时间。 节点间统计：事件从进入节点到输出到所消耗的时间 任务流统计：所有节点耗时相加，数值越小越好',
+    replicate_pop: '源库和目标库数据最后更新时间的差距，数值越小越好'
+  },
   ...zhLocale
 };
 

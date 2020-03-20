@@ -39,6 +39,31 @@ const en = {
       startupAfter_delete: 'Please delete after startup',
       startupAfter_add: 'Please add after startup'
     },
+    dataFlow: {
+      taskName: 'Flow Name',
+      creatdor: 'Creater',
+      creationTime: 'Create Time',
+      state: 'State',
+      executionTime: 'Lapsed Time',
+      inputNumber: 'Input Total',
+      outputNumber: 'Output Total',
+      rowCount: 'Records',
+      inputOutput: 'Throughput',
+      transf: 'Transmission Time',
+      dataScreening: 'Data Screening',
+      second: "SEC",
+      min: "MIN",
+      hour: "HOUR",
+      day: "DAY",
+      input: 'Input',
+      output: 'Output',
+      totalInput:'Total input',
+      totalOutput:'Total Output',
+      replicate: "Replicate Lag",
+      throughputpop:'The read speed from source node and the write speed to the target node, larger number is better',
+      transtime_pop: 'The time lapsed from the data record is read from the source node until the data is written into target node',
+      replicate_pop: 'The time gap between source node last update time and target node last update time'
+    },
     ...enLocale
   };
 

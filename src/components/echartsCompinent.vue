@@ -21,26 +21,27 @@ export default {
       myChart: null
     };
   },
-  // watch: {
-  //   echartObj: {
-  //     handler(data) {
-  //       this.loadEchart(this.echartsId,data)
-  //     },
-  //     deep: true
-  //   }
-  // },
+  watch: {
+    echartObj: {
+      handler(data) {
+        this.loadEchart(this.echartsId,data)
+      },
+      deep: true
+    }
+  },
   mounted() {
     let that = this;
     // let publicCharts = that.echartOption(that.echartObj)
-    that.$nextTick (() => {
+    this.$nextTick (() => {
       that.loadEchart(that.echartsId,that.echartObj);
     });
   },
 
   methods: {
     loadEchart(id,data) {
+      console.log(id,data)
       let _this =this;
-      setTimeout(function(){
+      // setTimeout(function(){
         _this.myChart = Echarts.init(document.getElementById(id));
         _this.myChart.clear();   //清空再重绘
         // _this.myChart.setOption(data)
@@ -50,10 +51,11 @@ export default {
         window.addEventListener("resize",()=>{
           _this.myChart.resize();
         })
-      }, 0);
+      // }, 0);
 
     },
     echartOption(configures) {
+      console.log('configures',configures)
       let MyOption = {
           // title: {
           //   text: '折线图堆叠'
@@ -193,3 +195,4 @@ export default {
   }
 }
 </style>
+

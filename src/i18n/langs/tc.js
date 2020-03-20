@@ -39,6 +39,19 @@ const tc = {
       startupAfter_delete: '請啟動後刪除',
       startupAfter_add: '請啟動後添加'
     },
+    dataFlow: {
+      taskName: '任务名称',
+      creationTime: '创建时间',
+      state: '状态',
+      executionTime: '本次执行时间',
+      inputNumber: '本次输入条数',
+      outputNumber: '本次输出条数',
+      taskName: '任务名称',
+      taskName: '任务名称',
+      taskName: '任务名称',
+      taskName: '任务名称',
+      dataScreening: '数据总览',
+    },
     ...tcLocale
   };
 
