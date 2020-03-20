@@ -39,8 +39,7 @@ export const fieldProcessConfig = {
 				tagName: 'text',
 				selector: 'portLabel'
 			}],
-			mergeOutputSchema() {
-				let outputSchema = this.__proto__.mergeOutputSchema();
+			mergeOutputSchema(outputSchema) {
 				log('FieldProcess.mergeOutputSchema', outputSchema);
 				return outputSchema;
 			}

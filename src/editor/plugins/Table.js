@@ -38,6 +38,8 @@ export const tableConfig = {
 			 *
 			 */
 			validate: (data) => {
+				if( !data )
+					throw new Error('Settings cannot be none.');
 				if( !data.connectionId )
 					throw new Error('Database cannot be empty.');
 				if( !data.tableId )
