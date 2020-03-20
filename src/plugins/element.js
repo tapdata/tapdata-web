@@ -61,6 +61,35 @@ Vue.component(DropdownItem.name, DropdownItem);
 Vue.component(DropdownMenu.name, DropdownMenu);
 
 
+/***提示只显示一次**/
+// 因为使用了new DonMessage()的原因，所以导致this.$message(options)的方式无法使用
+// 推荐使用this.$message.success('成功提示')或者this.$message.success(options)的方式进行调用
+const showMessage = Symbol('showMessage');
+class DoneMessage {
+  [showMessage](type, options, single) {
+    if (single) {
+      if (document.getElementsByClassName('el-message').length === 0) {
+          Message[type](options);
+      }
+    } else {
+      Message[type](options);
+    }
+  }
+  info(options, single = true) {
+    this[showMessage]('info', options, single);
+  }
+  warning(options, single = true) {
+    this[showMessage]('warning', options, single);
+  }
+  error(options, single = true) {
+    this[showMessage]('error', options, single);
+  }
+  success(options, single = true) {
+    this[showMessage]('success', options, single);
+  }
+}
+export const message = new DoneMessage();
+
 Vue.prototype.$confirm = MessageBox.confirm;
 Vue.prototype.$prompt = MessageBox.prompt;
-Vue.prototype.$message = Message;
+Vue.prototype.$message = new DoneMessage();
