@@ -59,7 +59,7 @@
 			},
 			schema: {
 				required: true,
-				type: Object | Array | null | undefined,
+				value: [Object, Array, null, undefined],
 			},
 			nodeKey: {
 				type: String,
@@ -74,7 +74,7 @@
 		watch: {
 			schema: {
 				handler() {
-					log.log('Entity.schema.change', this.schema);
+					log('Entity.schema.change', this.schema);
 				}
 			}
 		},

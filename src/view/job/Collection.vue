@@ -51,7 +51,6 @@
 	import { convertSchemaToTreeData } from "../../editor/util/Schema";
 	import Entity from './components/Entity';
 	import _ from 'lodash';
-	import log from '../../log';
 	import factory from '../../api/factory';
 	let connectionApi = factory('connections');
 

@@ -5,6 +5,7 @@
  */
 import {options} from "../lib/rappid/config";
 import FieldProcess from "../../view/job/FieldProcess";
+import log from "../../log";
 
 export const fieldProcessConfig = {
 
@@ -37,7 +38,11 @@ export const fieldProcessConfig = {
 			portLabelMarkup: [{
 				tagName: 'text',
 				selector: 'portLabel'
-			}]
+			}],
+			mergeOutputSchema(outputSchema) {
+				log('FieldProcess.mergeOutputSchema', outputSchema);
+				return outputSchema;
+			}
 		},
 		//staticProperties: {}
 	},
@@ -200,19 +205,6 @@ export const fieldProcessConfig = {
 	 */
 	settingFormConfig: {
 		component: FieldProcess,
-
-		/**
-		 * validate user-filled data
-		 * @param data
-		 *
-		 */
-		validate: (data) => {
-			if( !data.type )
-				throw new Error('FieldProcess type cannot be empty.');
-			if( !data.FieldProcess )
-				throw new Error('FieldProcess cannot be empty.');
-			return true;
-		}
 	}
 
 };

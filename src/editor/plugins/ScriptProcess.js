@@ -48,6 +48,8 @@ export const scriptProcessConfig = {
 			 *
 			 */
 			validate: (data) => {
+				if( !data )
+					throw new Error('Settings cannot be none.');
 				if( !data.type )
 					throw new Error('Script type cannot be empty.');
 				if( !data.script )

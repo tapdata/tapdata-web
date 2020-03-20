@@ -96,6 +96,8 @@ export const databaseConfig = {
 			 *
 			 */
 			validate: (data) => {
+				if( !data )
+					throw new Error('Settings cannot be none.');
 				if( !data.connectionId )
 					throw new Error('Database cannot be empty.');
 				return true;

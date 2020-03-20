@@ -12,7 +12,7 @@
 	import factory from "../../api/factory";
 	import editor from '../../editor/index';
 	import log from '../../log';
-	import { FORM_DATA_KEY } from "../../editor/vue-adapter";
+	import {FORM_DATA_KEY} from "../../editor/constants";
 
 	const dataFlowsApi = factory('DataFlows');
 	export default {
@@ -52,24 +52,7 @@
 					stopOnError: false,
 					mappingTemplate: "cluster-clone",
 					emailWaring: {edited: true, started: false, error: true, paused: false},
-					stages: [/*{
-				id: "database-oracle",
-				type: "database",
-				syncType: "initial_sync+cdc",
-				readCdcInterval: 500,
-				readBatchSize: 25000,
-				connectionId: "5d78edca36923953ff2f68c9",
-				inputLanes: [],
-				ouputLanes: ["database-mongodb"]
-			}, {
-				id: "database-mongodb",
-				type: "database",
-				dataQualityTag: false,
-				dropTable: false,
-				connectionId: "5ddde24de601f925314bf7ed",
-				inputLanes: ["database-oracle"],
-				ouputLanes: []
-			}*/]
+					stages: []
 				}, {
 					editorData: JSON.stringify(graphData)
 				});

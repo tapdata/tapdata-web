@@ -180,18 +180,25 @@ export const baseElementConfig = {
 
 				return joinTables.filter( (v) => !!v);
 			},
-			mergeOutputSchema(){
+			__mergeOutputSchema(){
 				let inputSchema = this.getInputSchema() || [];
-				let schema= _.cloneDeep(this.getSchema());
+				let schema= this.getSchema();
 				let outputSchema = mergeJoinTablesToTargetSchema(schema, inputSchema);
-				log(this.get('type') + '.mergeOutputSchema(this.schema,inputSchema,outputSchema)', schema, inputSchema, outputSchema);
+				log(this.get('type') + '.__mergeOutputSchema(this.schema,inputSchema,outputSchema)', schema, inputSchema, outputSchema);
+				let _outputSchema = this.mergeOutputSchema(outputSchema);
+				return _outputSchema || outputSchema;
+			},
+			mergeOutputSchema(outputSchema){
+				// children rewrite schema merge logic
 				return outputSchema;
 			},
 			updateOutputSchema(){
 				try {
 					this.validate();
-				} catch (e) {}
-				let mergedOutputSchema = this.mergeOutputSchema();
+				} catch (e) {
+					log(`${this.get('type')}.updateOutputSchema.validate`, e);
+				}
+				let mergedOutputSchema = this.__mergeOutputSchema();
 				this.set(OUTPUT_SCHEMA_DATA_KEY, mergedOutputSchema);
 				log(`${this.get('type')}.updateOutputSchema`, mergedOutputSchema);
 
@@ -204,7 +211,7 @@ export const baseElementConfig = {
 				}));
 			},
 			validate(){
-				return false;
+				return true;
 			}
 		},
 

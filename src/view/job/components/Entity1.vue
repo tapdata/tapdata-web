@@ -3,7 +3,7 @@
 		<el-container>
 			<el-header height="20">
 				<!-- {{schema ? schema.name : ''}} -->
-			</el-header>	
+			</el-header>
 			<el-row class="header-row">
 				<el-col :span="18">字段名</el-col>
 				<el-col :span="4">字符类型</el-col>
@@ -14,7 +14,7 @@
 						:data="schema ? schema.fields : []"
 						:node-key="nodeKey"
 						default-expand-all
-					    :expand-on-click-node="false"						
+					    :expand-on-click-node="false"
 						@node-drag-start="handleDragStart"
 						@node-drag-enter="handleDragEnter"
 						@node-drag-leave="handleDragLeave"
@@ -31,18 +31,18 @@
 					    <span class="custom-tree-node" slot-scope="{ node, data }">
 						<span class="e-triangle" :style="`border-bottom-color: ${data.color || '#ddd'};`"></span>
 						<span class="e-port e-port-in" :data-id="getId(data)"></span>
-						<span class="e-label" :class="{ activename: data.isActiveName }" >
-							<el-input v-model="data.label"  @blur="handleRename(node,data)" :disabled="data.isDisable" ></el-input>
+						<span class="e-label" :class="{ activename: isRename(data.id) }" >
+							<el-input v-model="data.label"  @blur="handleRename(node,data)" :disabled="isRemove(data.id)" ></el-input>
 						</span>
-						<el-select v-model="data.type" class="e-select" :class="{ activedatatype: data.isActiveDataType }" :disabled="data.isDisable" @change="handleDataType(node,data)" >
+						<el-select v-model="data.type" class="e-select" :class="{ activedatatype: isConvertDataType(data.id) }" :disabled="isRemove(data.id)" @change="handleDataType(node,data)" >
 							<el-option value="String" label="String"></el-option>
 							<el-option value="Map" label="Map"></el-option>
 							<el-option value="Integer" label="Integer"></el-option>
 							<el-option value="Double" label="Double"></el-option>
 							<el-option value="Array" label="Array"></el-option>
 						</el-select>
-						<span v-show="!data.isDisable" class="e-data-delete iconfont icon-l-del" @click="handleDelete(node)"></span>
-						<span v-show="data.isDisable" class="e-data-delete iconfont icon-return" @click="handleReset(node)"></span>
+						<span v-show="!isRemove(data.id)" class="e-data-delete iconfont icon-l-del" @click="handleDelete(node,data)"></span>
+						<span v-show="isRemove(data.id)" class="e-data-delete iconfont icon-return" @click="handleReset(node,data)"></span>
 						<span class="e-port e-port-out" :data-id="getId(data)"></span>
 					</span>
 				</el-tree>
@@ -54,9 +54,29 @@
 <script>
 	import $ from 'jquery';
 	import log from '../../../log';
+	import _ from 'lodash';
+
+	const REMOVE_OPS_TPL = {
+		id: '',
+		op: 'REMOVE',
+		field: ''
+	};
+	const RENAME_OPS_TPL = {
+		id: '',
+		op: 'RENAME',
+		field: '',
+		operand: ''
+	};
+	const CONVERT_OPS_TPL = {
+		id: '',
+		op: 'CONVERT',
+		field: '',
+		operand: '',
+		originalDataType: '',
+	};
 
 	export default {
-		name: "Entity",
+		name: "Entity1",
 		props: {
 			width: {
 				type: Number,
@@ -64,7 +84,7 @@
 			},
 			schema: {
 				required: true,
-				type: Object | Array | null | undefined,
+				value: [Object, Array, null, undefined],
 			},
 			nodeKey: {
 				type: String,
@@ -78,24 +98,43 @@
 		data(){
 			return{
 				cloneData: '',
-				currentnodekey:'',
 				activeName: false,
-				activeDataType:false
+				activeDataType:false,
+
+				operations: []
 			}
 		},
 		mounted(){
-			//cloneData 是深拷贝schema,用于数据比较
-			this.cloneData = JSON.parse(JSON.stringify(this.schema))
-			
 		},
 		watch: {
 			schema: {
+				deep: true,
 				handler() {
-					log.log('Entity.schema.change', this.schema);
+					this.cloneData = _.cloneDeep(this.schema);
+					log('Entity1.schema.change', this.schema, this.cloneData );
+				}
+			},
+			operations: {
+				deep: true,
+				handler() {
+					this.$emit('dataChanged', this.operations);
 				}
 			}
 		},
 		methods: {
+			isRemove(id){
+				let ops = this.operations.filter( v => v.id === id && v.op === 'REMOVE');
+				return ops && ops.length > 0;
+			},
+			isRename(id){
+				let ops = this.operations.filter( v => v.id === id && v.op === 'RENAME');
+				return ops && ops.length > 0;
+			},
+			isConvertDataType(id){
+				let ops = this.operations.filter( v => v.id === id && v.op === 'CONVERT');
+				return ops && ops.length > 0;
+			},
+
 			getId(node){
 				return node[this.nodeKey];
 			},
@@ -136,10 +175,10 @@
 			},
 			allowDrag(draggingNode) {
 				return draggingNode.data.children && draggingNode.data.children.length > 0;
-			},			
+			},
 			getNativeData(data,id){
 				let nativeData ={
-					name:'',
+					label:'',
 					type:''
 				}
 				if(!data){
@@ -147,42 +186,95 @@
 				}
 				data.map(item =>{
 					if(item.id === id){
-						 nativeData.name = item.label
+						 nativeData.label = item.label
 						 nativeData.type = item.type
 					}else{
 						 this.getNativeData(item.children,id)
 					}
 				})
-				return nativeData
+				return nativeData;
 			},
 			handleDataType(node,data){
-				let nativeData = this.getNativeData(this.cloneData.fields,data.id)
+				let nativeData = this.getNativeData(this.cloneData.fields,data.id);
 				if(data.type === nativeData.type){
-					node.data.isActiveDataType = false
+					for (let i = 0; i < this.operations.length; i++) {
+						let ops = this.operations[i];
+						if( nativeData.type === ops.field && ops.op === 'CONVERT'){
+							this.operations.splice(i, 1);
+							break;
+						}
+					}
 				}else{
-					node.data.isActiveDataType = true
+					let ops = this.operations.filter( v => v.field === nativeData.type && v.op === 'CONVERT');
+					let op ;
+					if( ops.length === 0 ){
+						op = Object.assign(_.cloneDeep(CONVERT_OPS_TPL), {
+							id: data.id,
+							field: nativeData.type,
+							operand: data.type,
+							originalDataType: data.type,
+						});
+						this.operations.push(op);
+					} else {
+						op = ops[0];
+					}
+					op.id = data.id;
+					op.operand = data.type;
 				}
 			},
-			handleRename(node,data){							
-				let nativeData = this.getNativeData(this.cloneData.fields,data.id)
-				if(data.label === nativeData.name){
-					node.data.isActiveName = false
+			handleRename(node,data){
+				let nativeData = this.getNativeData(this.cloneData.fields,data.id);
+				if(data.label === nativeData.label){
+					for (let i = 0; i < this.operations.length; i++) {
+						let ops = this.operations[i];
+						if( nativeData.name === ops.field && ops.op === 'RENAME'){
+							this.operations.splice(i, 1);
+							break;
+						}
+					}
 				}else{
-					node.data.isActiveName = true
-				}				
+					let ops = this.operations.filter( v => v.field === nativeData.label && v.op === 'RENAME');
+					let op ;
+					if( ops.length === 0 ){
+						op = Object.assign(_.cloneDeep(RENAME_OPS_TPL), {
+							id: data.id,
+							field: nativeData.label,
+							operand: data.label
+						});
+						this.operations.push(op);
+					} else {
+						op = ops[0];
+					}
+					op.id = data.id;
+					op.operand = data.label;
+				}
 			},
-			handleDelete(node){
-				node.data.isDisable = true	
-				node.data.isActiveName = false
-				node.data.isActiveDataType = false
+			handleDelete(node,data){
+				let ops = this.operations.filter( v => v.op === 'REMOVE');
+				let op ;
+				if( ops.length === 0 ){
+					op = Object.assign(_.cloneDeep(REMOVE_OPS_TPL), {
+						id: data.id,
+						field: false,
+						operand: true
+					});
+					this.operations.push(op);
+				} else {
+					op = ops[0];
+				}
+				op.id = data.id;
+				op.operand = rue;
 			},
-			handleReset(node){
-				let nativeData = this.getNativeData(this.cloneData.fields,node.data.id)
-				node.data.isDisable = false
-				node.data.label = nativeData.name
-				node.data.type = nativeData.type
+			handleReset(){
+				for (let i = 0; i < this.operations.length; i++) {
+					let ops = this.operations[i];
+					if( ops.op === 'REMOVE'){
+						this.operations.splice(i, 1);
+						break;
+					}
+				}
 			}
-			
+
 		}
 	};
 </script>
@@ -322,7 +414,7 @@
 			border: none;
 			background-color: transparent;
 			font-size: 11px;
-			
+
 		}
 		.activedatatype{
 			.el-input__inner{
@@ -344,8 +436,7 @@
 			text-align: center;
 			width:40px;
 		}
-		
-		
+
 	}
 	.e-entity .el-main .el-tree .el-tree-node .icon-none {
 		display: none;
