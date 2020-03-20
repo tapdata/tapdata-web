@@ -182,7 +182,7 @@ export const baseElementConfig = {
 			},
 			mergeOutputSchema(){
 				let inputSchema = this.getInputSchema() || [];
-				let schema= _.cloneDeep(this.getSchema());
+				let schema= this.getSchema();
 				let outputSchema = mergeJoinTablesToTargetSchema(schema, inputSchema);
 				log(this.get('type') + '.mergeOutputSchema(this.schema,inputSchema,outputSchema)', schema, inputSchema, outputSchema);
 				return outputSchema;
@@ -190,7 +190,9 @@ export const baseElementConfig = {
 			updateOutputSchema(){
 				try {
 					this.validate();
-				} catch (e) {}
+				} catch (e) {
+					log(`${this.get('type')}.updateOutputSchema.validate`, e);
+				}
 				let mergedOutputSchema = this.mergeOutputSchema();
 				this.set(OUTPUT_SCHEMA_DATA_KEY, mergedOutputSchema);
 				log(`${this.get('type')}.updateOutputSchema`, mergedOutputSchema);

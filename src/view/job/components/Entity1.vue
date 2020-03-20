@@ -85,7 +85,7 @@
 			},
 			schema: {
 				required: true,
-				type: Object | Array | null | undefined,
+				value: [Object, Array, null, undefined],
 			},
 			nodeKey: {
 				type: String,

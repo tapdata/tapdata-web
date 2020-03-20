@@ -5,6 +5,7 @@
  */
 import {options} from "../lib/rappid/config";
 import FieldProcess from "../../view/job/FieldProcess";
+import log from "../../log";
 
 export const fieldProcessConfig = {
 
@@ -38,6 +39,11 @@ export const fieldProcessConfig = {
 				tagName: 'text',
 				selector: 'portLabel'
 			}],
+			mergeOutputSchema() {
+				let outputSchema = this.__proto__.mergeOutputSchema();
+				log('FieldProcess.mergeOutputSchema', outputSchema);
+				return outputSchema;
+			}
 		},
 		//staticProperties: {}
 	},

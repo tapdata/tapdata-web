@@ -57,7 +57,7 @@ export default {
       this.isScreeing = this.data.isScreeing;
       this.$emit("twoRadio",this.radio1);
       this.$emit("getTime",this.time);
-    })
+    });
   },
   methods: {
     changeRadio(val) {
