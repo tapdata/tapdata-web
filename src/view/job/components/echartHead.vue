@@ -9,16 +9,16 @@
       :content="tip">
       <span class="icon iconfont icontishi1" slot="reference"></span>
     </el-popover>
-    <!-- <div class="arrow fr">
-      <span class="el-icon-caret-top"></span>
-      <span class="el-icon-caret-bottom"></span>
-    </div> -->
     <div class="rightOpt fr">
-      <el-radio-group v-model="radio1" size="mini" @change="changeRadio">
-        <el-radio-button label="1">{{rowCount.lable}}</el-radio-button>
-        <el-radio-button label="2">{{kbs.lable}}</el-radio-button>
+      <el-radio-group v-model="num" size="mini" @change="changeRadio" v-if="isScreeing">
+        <el-radio-button label="bars">条数</el-radio-button>
+        <el-radio-button label="kb">KB</el-radio-button>
       </el-radio-group>
-      <el-radio-group v-model="time" size="mini" @change="changeTime" v-if="!data.isScreeing">
+      <el-radio-group v-model="speed" size="mini" @change="changeSpeed" v-if="!!isScreeing && !isScreeing && isIput">
+        <el-radio-button label="qps">QBS</el-radio-button>
+        <el-radio-button label="kbs">KB/S</el-radio-button>
+      </el-radio-group>
+      <el-radio-group v-model="time" size="mini" @change="changeTime" v-if="isIput">
         <el-radio-button label="ss">秒</el-radio-button>
         <el-radio-button label="mm">分</el-radio-button>
         <el-radio-button label="hh">时</el-radio-button>
@@ -37,34 +37,35 @@ export default {
     return {
       title: '',
       tip: '',
-      radio1: '1',
+      num: 'bars',
+      speed: 'qps',
       time: 'ss',
       rowCount: null,
       kbs: null,
-      isScreeing: false
+      isScreeing: false,
+      isIput: false
     };
-  },
-  watch: {
-
   },
   mounted() {
     this.$nextTick(()=>{
       this.title = this.data.title;
       this.tip = this.data.tip;
-      this.radio1 = "1";
-      this.rowCount = this.data.rowCount;
-      this.kbs = this.data.kbs;
       this.isScreeing = this.data.isScreeing;
-      this.$emit("twoRadio",this.radio1);
-      this.$emit("getTime",this.time);
+      this.isIput = this.data.isIput
+      this.$emit("twoRadio",this.num,this.data.type);
+      this.$emit("getSpeed",this.speed,this.data.type);
+      this.$emit("getTime",this.time,this.data.type);
     })
   },
   methods: {
     changeRadio(val) {
-      this.$emit("twoRadio",val);
+      this.$emit("twoRadio",val,this.data.type);
+    },
+    changeSpeed (val) {
+      this.$emit("getSpeed",val,this.data.type);
     },
     changeTime(val) {
-      this.$emit("getTime",val);
+      this.$emit("getTime",val,this.data.type);
     }
   }
 };
