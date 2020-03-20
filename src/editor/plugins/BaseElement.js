@@ -184,8 +184,14 @@ export const baseElementConfig = {
 				let inputSchema = this.getInputSchema() || [];
 				let schema= this.getSchema();
 				let outputSchema = mergeJoinTablesToTargetSchema(schema, inputSchema);
-				log(this.get('type') + '.__mergeOutputSchema(this.schema,inputSchema,outputSchema)', schema, inputSchema, outputSchema);
-				let _outputSchema = this.mergeOutputSchema(outputSchema);
+				log(this.get('type') + '.__mergeOutputSchema[this.schema,inputSchema,outputSchema]', [schema, inputSchema, outputSchema]);
+				let _outputSchema;
+				try {
+					_outputSchema = this.mergeOutputSchema(outputSchema);
+				} catch (e) {
+					_outputSchema = outputSchema;
+					log(this.get('type') + '.mergeOutputSchema.error', e);
+				}
 				return _outputSchema || outputSchema;
 			},
 			mergeOutputSchema(outputSchema){
