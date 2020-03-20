@@ -39,6 +39,23 @@ const en = {
       startupAfter_delete: 'Please delete after startup',
       startupAfter_add: 'Please add after startup'
     },
+    dataFlow: {
+      taskName: 'Task name',
+      Founder: 'Founder',
+      creationTime: 'Creation time',
+      state: 'State',
+      executionTime: 'Execution time',
+      inputNumber: 'Input number',
+      outputNumber: 'Output number',
+      rowCount: 'Number of bars',
+      inputOutput: 'I / O statistics',
+      transf: 'Transmission time consuming',
+      dataScreening: 'Data screening',
+      second: "second",
+      min: "min",
+      hour: "hour",
+      day: "day",
+    },
     ...enLocale
   };
 

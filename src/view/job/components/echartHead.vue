@@ -7,22 +7,22 @@
       popper-class ="echartsTitle_popover"
       trigger="hover"
       :content="tip">
-      <span class="icon iconfont icontishi1" slot="reference"></span>
+      <span class="icon iconfont icon-tishi1" slot="reference"></span>
     </el-popover>
     <div class="rightOpt fr">
       <el-radio-group v-model="num" size="mini" @change="changeRadio" v-if="isScreeing">
-        <el-radio-button label="bars">条数</el-radio-button>
+        <el-radio-button label="bars">{{$t("dataFlow.rowCount")}}</el-radio-button>
         <el-radio-button label="kb">KB</el-radio-button>
       </el-radio-group>
-      <el-radio-group v-model="speed" size="mini" @change="changeSpeed" v-if="!!isScreeing && !isScreeing && isIput">
+      <el-radio-group v-model="speed" size="mini" @change="changeSpeed" v-if="isSpeed">
         <el-radio-button label="qps">QBS</el-radio-button>
         <el-radio-button label="kbs">KB/S</el-radio-button>
       </el-radio-group>
       <el-radio-group v-model="time" size="mini" @change="changeTime" v-if="isIput">
-        <el-radio-button label="ss">秒</el-radio-button>
-        <el-radio-button label="mm">分</el-radio-button>
-        <el-radio-button label="hh">时</el-radio-button>
-        <el-radio-button label="dd">日</el-radio-button>
+        <el-radio-button label="ss">{{$t("dataFlow.second")}}</el-radio-button>
+        <el-radio-button label="mm">{{$t("dataFlow.min")}}</el-radio-button>
+        <el-radio-button label="hh">{{$t("dataFlow.hour")}}</el-radio-button>
+        <el-radio-button label="dd">{{$t("dataFlow.day")}}</el-radio-button>
       </el-radio-group>
     </div>
   </div>
@@ -43,7 +43,9 @@ export default {
       rowCount: null,
       kbs: null,
       isScreeing: false,
-      isIput: false
+      isIput: false,
+      isSpeed: false,
+      
     };
   },
   mounted() {
@@ -52,6 +54,7 @@ export default {
       this.tip = this.data.tip;
       this.isScreeing = this.data.isScreeing;
       this.isIput = this.data.isIput
+      this.isSpeed = this.data.isSpeed
       this.$emit("twoRadio",this.num,this.data.type);
       this.$emit("getSpeed",this.speed,this.data.type);
       this.$emit("getTime",this.time,this.data.type);

@@ -40,6 +40,23 @@ const cn = {
     startupAfter_delete: '请启动后删除',
     startupAfter_add: '请启动后添加'
   },
+  dataFlow: {
+    taskName: '任务名称',
+    Founder: '创建人',
+    creationTime: '创建时间',
+    state: '状态',
+    executionTime: '本次执行时间',
+    inputNumber: '本次输入条数',
+    outputNumber: '本次输出条数',
+    rowCount: '条数',
+    inputOutput: '输入输出统计',
+    transf: '传输耗时',
+    dataScreening: '数据总览',
+    second: "秒",
+    min: "分",
+    hour: "时",
+    day: "日",
+  },
   ...zhLocale
 };
 

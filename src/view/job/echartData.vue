@@ -13,31 +13,31 @@
         <echart-head :data="screeningObj" @twoRadio="getTwoRadio"></echart-head>
         <div class="info fl">
           <div class="info-list">
-            <span class="info-label">任务名称:</span>
+            <span class="info-label">{{ $t('dataFlow.taskName') }}:</span>
             <span class="info-text" style="color: #48b6e2;">客户信息数据库复制</span>
           </div>
           <div class="info-list">
-            <span class="info-label">创建人:</span>
+            <span class="info-label">{{ $t('dataFlow.Founder') }}:</span>
             <span class="info-text">shane</span>
           </div>
           <div class="info-list">
-            <span class="info-label">创建时间:</span>
+            <span class="info-label">{{ $t('dataFlow.creationTime') }}:</span>
             <span class="info-text">2019/06/07/22:33:44</span>
           </div>
           <div class="info-list">
-            <span class="info-label">状态:</span>
+            <span class="info-label">{{ $t('dataFlow.state') }}:</span>
             <span class="info-text" style="color: #62a569;">执行中</span>
           </div>
           <div class="info-list">
-            <span class="info-label">本次执行时间:</span>
+            <span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
             <span class="info-text">2466h:56:45</span>
           </div>
           <div class="info-list">
-            <span class="info-label">本次输入条数:</span>
+            <span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
             <span class="info-text"> 123,000</span>
           </div>
           <div class="info-list">
-            <span class="info-label">本次输出条数:</span>
+            <span class="info-label">{{ $t('dataFlow.outputNumber') }}:</span>
             <span class="info-text">110</span>
           </div>
         </div>
@@ -69,6 +69,7 @@ export default {
   components: {echartHead,echartsCompinent,shaftlessEchart},
   data() {
     return {
+      selectFlow: '',  //选中节点
       speed: '',
       time: '',
       domValue: '',
@@ -89,22 +90,23 @@ export default {
     this.getApiData()
     this.domValue = this.domList[0].value;
     this.screeningObj = {
-      title: "数据总览",
+      title: this.$t('dataFlow.dataScreening'),
       type: 'screening',
       isScreeing: true,
       tip:'传输耗时：除源节点外，事件处理完的时间减去事件的发生时间。 节点间统计：事件从进入节点到输出到所消耗的时间 任务流统计：所有节'
     };
 
     this.inputOutputObj = {
-      title: "输入输出统计",
+      title: this.$t('dataFlow.inputOutput'),
       isScreeing: false,
       isIput: true,
+      isSpeed: true,
       type: 'inputOutput',
       tip:'传输耗时：除源节点外，事件处理完的时间减去事件的发生时间。 节点间统计：事件从进入节点到输出到所消耗的时间 任务流统计：所有节'
     };
 
     this.transfObj = {
-      title: "传输耗时",
+      title: this.$t('dataFlow.transf'),
       type: 'transf',
       isIput: true,
       tip:'传输耗时：除源节点外，事件处理完的时间减去事件的发生时间。'
@@ -379,7 +381,16 @@ export default {
       ]
     }
   },
-
+  watch:{
+    domValue: {
+      handler(val) {
+        if(val === "all") {
+          this.selectFlow = flow_
+        }
+      },
+      deep: true
+    }
+  },
   methods: {
     //获取返回的单位
     getTwoRadio(data,type) {
