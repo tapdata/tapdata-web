@@ -51,7 +51,7 @@ export const
 				if( field && field.field_name){
 					let jsonPath = field.field_name.split('.');
 					let treeItem = {
-						id: `${field.table_name}${field.original_field_name ? ('_' + field.original_field_name) : ''}`.replace(/\./g, '_'),
+						id: field.id || `${field.table_name}${field.original_field_name ? ('_' + field.original_field_name) : ''}`.replace(/\./g, '_'),
 						label: jsonPath[jsonPath.length - 1],
 						type: field.javaType,
 						color: color
