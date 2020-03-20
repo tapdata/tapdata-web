@@ -178,7 +178,9 @@ export const baseElementConfig = {
 						})
 						.filter( v => !!v);
 
-				return joinTables.filter( (v) => !!v);
+				let result = joinTables.filter( (v) => !!v);
+				log(`${this.get('type')}.getInputSchema`, result);
+				return result;
 			},
 			__mergeOutputSchema(){
 				let inputSchema = this.getInputSchema() || [];

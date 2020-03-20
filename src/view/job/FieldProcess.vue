@@ -10,7 +10,7 @@
 		</el-form>
 		<div class="contentbox">
 			<div class="contentbase contentbox-left">
-				<entity ref="entity" :schema="convertSchemaToTreeData(originalSchema)" :editable="true"></entity>
+				<entity ref="entity" :originalSchema="convertSchemaToTreeData(originalSchema)" :schema="convertSchemaToTreeData(schema)" :editable="true"></entity>
 			</div>
 			<!-- <div class="contentbase contentbox-right">
 				<ul class="info-list">
@@ -37,15 +37,12 @@
 
 <script>
 	import Entity from './components/Entity1';
-	import { convertSchemaToTreeData } from "../../editor/util/Schema";
+	import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from "../../editor/util/Schema";
 	import log from "../../log";
 	import _ from 'lodash';
 	export default {
 		name: "FieldProcess",
 		components: {Entity},
-		props: {
-
-		},
 
 		watch: {
 			model: {
@@ -65,7 +62,8 @@
 					operations: []
 				},
 
-				originalSchema: null
+				originalSchema: null,
+        schema: null,
 			};
 		},
 
@@ -86,8 +84,34 @@
 					Object.keys(data).forEach(key => this.model[key] = data[key]);
 				}
 
-				this.originalSchema = cell.getOutputSchema();
+				this.originalSchema = mergeJoinTablesToTargetSchema(null, cell.getInputSchema());
+				let schema = _.cloneDeep(this.originalSchema);
 
+        // apply operations to schema
+        if( this.model.operations && schema && schema.fields ){
+
+          this.$refs.entity.setOperations(_.cloneDeep(this.model.operations));
+
+          let operations = {};
+          this.model.operations.forEach( p => operations[p.id] = p);
+
+          schema.fields.forEach((field => {
+            let operation = operations[field.id];
+            if( operation ){
+              if( operation.op === 'REMOVE'){
+
+              } else if( operation.op === 'RENAME'){
+                let fieldName = field.field_name.split('.');
+                fieldName[fieldName.length - 1] =  operation.operand;
+                field.field_name = fieldName.join('.');
+              } else if( operation.op === 'CONVERT'){
+                field.javaType = operation.operand;
+              }
+            }
+          }));
+          this.schema = schema;
+          log('FieldProcess.setData.applyOperations', schema, operations);
+        }
 			},
 			getData(){
 				return _.cloneDeep(this.model);

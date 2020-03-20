@@ -5,6 +5,7 @@
  */
 import {options} from "../lib/rappid/config";
 import FieldProcess from "../../view/job/FieldProcess";
+import {FORM_DATA_KEY} from "../constants";
 import log from "../../log";
 
 export const fieldProcessConfig = {
@@ -37,10 +38,43 @@ export const fieldProcessConfig = {
 		prototypeProperties: {
 			portLabelMarkup: [{
 				tagName: 'text',
-				selector: 'portLabel'
+				selector: 'portLabel',
 			}],
+      initialize(){
+        this.on('change:' + FORM_DATA_KEY, () => {
+          this.updateOutputSchema();
+        });
+      },
 			mergeOutputSchema(outputSchema) {
-				log('FieldProcess.mergeOutputSchema', outputSchema);
+				let data = this.getFormData();
+        log('FieldProcess.data', data);
+        log('FieldProcess.mergeOutputSchema', outputSchema);
+        if( !outputSchema || !data)
+          return;
+        data.operations.map((item,index) =>{
+          let targetIndex = outputSchema.fields.findIndex(function(n, index) {
+            return n.id=== item.id;
+          });
+          if(targetIndex === -1){
+            // data.operations.splice(index,1); //删除找不到id的数据
+            return;
+          }
+          if(item.op === "RENAME"){
+            let name = outputSchema.fields[targetIndex].field_name
+            let orientationIndex =  name.lastIndexOf('.');
+            if(orientationIndex === -1){
+              outputSchema.fields[targetIndex].field_name = item.operand;
+            }else {
+              outputSchema.fields[targetIndex].field_name =name.substr(0, orientationIndex+1) + item.operand;
+            }
+          }else if(item.op === "CONVERT"){
+            outputSchema.fields[targetIndex].javaType = item.operand;
+          }else if(item.op === "REMOVE"){
+            outputSchema.fields.splice(targetIndex,1);
+          }
+
+        });
+        log('FieldProcess.mergeOutputSchema', outputSchema);
 				return outputSchema;
 			}
 		},
