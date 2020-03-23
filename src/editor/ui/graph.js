@@ -12,6 +12,7 @@ import navigatorElementView from '../lib/rappid/view/navigator';
 //import Panel from "./panel";
 import {stencilConfig, selectionConfig, haloConfig, toolbarConfig} from "../lib/rappid/config";
 import {VueAdapter} from '../vue-adapter';
+import log from "../../log";
 
 window.joint = joint;
 
@@ -68,6 +69,20 @@ export default class Graph extends Component{
 		paper.on('cell:mousewheel', this.onMousewheel, this);
 		paper.on('blank:pointerclick', () => {
 			this.ui.rightSidebar.hide();
+		});
+		paper.on('link:connect', function(linkView, evt, elementViewConnected, magent, arrowhead){
+			log('Graph.link.connect', arguments);
+			let targetCell = linkView.model.getTargetCell();
+			if( targetCell && typeof targetCell.updateOutputSchema === 'function'){
+				targetCell.updateOutputSchema();
+			}
+		});
+		paper.on('link:disconnect', function(linkView, evt, elementViewDisconnected, magent, arrowhead){
+			log('Graph.link.disconnect', arguments);
+			let targetCell = elementViewDisconnected.model;
+			if( targetCell && typeof targetCell.updateOutputSchema === 'function'){
+				targetCell.updateOutputSchema();
+			}
 		});
 
 		this.snaplines = new joint.ui.Snaplines({ paper: paper });
