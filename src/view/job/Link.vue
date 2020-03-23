@@ -60,7 +60,6 @@
 	import {mergeJoinTablesToTargetSchema} from "../../editor/util/Schema";
 	import log from "../../log";
 	const JOIN_TABLE_TPL = {
-		sourceNodeIds: [],
 		tableName: '',
 		joinType: 'upsert',
 		joinPath: '',
@@ -169,7 +168,7 @@
 				if( this.cell ){
 					let sourceCell = this.cell.getSourceCell(),
 						targetCell = this.cell.getTargetCell(),
-						sourceSchema = sourceCell.getOutputSchema(),
+						sourceSchema = sourceCell.getSchema(),
 						targetInputSchema = targetCell.getInputSchema(),
 						targetSchema = targetCell.getSchema()
 					;
