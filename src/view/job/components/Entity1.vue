@@ -110,7 +110,6 @@
         operations: [],
       };
     },
-
     methods: {
       setOperations(operations) {
         this.operations = operations;
@@ -209,6 +208,7 @@
       },
       handleRename(node, data) {
         let nativeData = this.getNativeData(this.originalSchema.fields, data.id);
+        log("nativeData",nativeData)
         let ops = this.operations.filter(v => v.id === nativeData.id && v.op === 'RENAME');
         let op;
         if (data.label === nativeData.label) {
@@ -231,12 +231,23 @@
         this.$emit('dataChanged', this.operations);
       },
       handleDelete(node, data) {
-
         let originalField = this.getNativeData(this.originalSchema.fields, data.id);
         let self = this;
 
         let fn = function (field) {
-
+          for (let i = 0; i < self.operations.length; i++) {
+            if (self.operations[i].id === field.id) {
+              let ops = self.operations[i];
+              if (ops.op === 'RENAME') {
+                node.data.label = field.label;
+                self.operations.splice(i, 1);
+              }
+              if (ops.op === 'CONVERT') {
+                node.data.type = field.type;
+                self.operations.splice(i, 1);
+              }
+            }
+          }
           let ops = self.operations.filter(v => v.op === 'REMOVE' && v.id === field.id);
 
           let op;
@@ -262,7 +273,6 @@
         let fn = function (node, data) {
           let nativeData = self.getNativeData(self.originalSchema.fields, data.id);
           for (let i = 0; i < self.operations.length; i++) {
-            // eslint-disable-next-line no-mixed-spaces-and-tabs
             if (self.operations[i].id === data.id) {
               let ops = self.operations[i];
               if (ops.op === 'REMOVE') {
@@ -271,11 +281,13 @@
                   fn(childNode, childNode.data);
                 });
                 break;
-              } else if (ops.op === 'RENAME') {
+              }
+              if (ops.op === 'RENAME') {
                 node.data.label = nativeData.label;
                 self.operations.splice(i, 1);
                 break;
-              } else if (ops.op === 'CONVERT') {
+              }
+              if (ops.op === 'CONVERT') {
                 node.data.type = nativeData.type;
                 self.operations.splice(i, 1);
                 break;

@@ -48,11 +48,12 @@ export const
 			let fields = schema.fields || [];
 			for (let i = 0; i < fields.length; i++) {
 				let field = fields[i];
-				if( field && field.field_name){
-					let jsonPath = field.field_name.split('.');
+				if( field && field.field_name && field.original_field_name){
+					let jsonPath = field.original_field_name.split('.');
+					let jsonPathForFieldName = field.field_name.split('.');
 					let treeItem = {
 						id: field.id || `${field.table_name}${field.original_field_name ? ('_' + field.original_field_name) : ''}`.replace(/\./g, '_'),
-						label: jsonPath[jsonPath.length - 1],
+						label: jsonPathForFieldName[jsonPathForFieldName.length - 1],
 						type: field.javaType,
 						color: color
 
@@ -68,6 +69,7 @@ export const
 			};
 			re(root);
 			entityData.fields = root.children;
+      log('Schema.convertSchemaToTreeData.return', entityData);
 			return entityData;
 		} else {
 			return null;

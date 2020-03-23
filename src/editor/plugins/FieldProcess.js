@@ -47,8 +47,7 @@ export const fieldProcessConfig = {
       },
 			mergeOutputSchema(outputSchema) {
 				let data = this.getFormData();
-        log('FieldProcess.data', data);
-        log('FieldProcess.mergeOutputSchema', outputSchema);
+        log('FieldProcess.mergeOutputSchema', data, outputSchema);
         if( !outputSchema || !data)
           return;
         data.operations.map((item,index) =>{
@@ -60,13 +59,10 @@ export const fieldProcessConfig = {
             return;
           }
           if(item.op === "RENAME"){
-            let name = outputSchema.fields[targetIndex].field_name
-            let orientationIndex =  name.lastIndexOf('.');
-            if(orientationIndex === -1){
-              outputSchema.fields[targetIndex].field_name = item.operand;
-            }else {
-              outputSchema.fields[targetIndex].field_name =name.substr(0, orientationIndex+1) + item.operand;
-            }
+            let name = outputSchema.fields[targetIndex].field_name;
+            name = name.split('.');
+            name[name.length - 1] = item.operand;
+            outputSchema.fields[targetIndex].field_name = name.join('.');
           }else if(item.op === "CONVERT"){
             outputSchema.fields[targetIndex].javaType = item.operand;
           }else if(item.op === "REMOVE"){
