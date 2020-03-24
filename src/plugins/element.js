@@ -7,30 +7,30 @@ import {
   Radio,
   RadioGroup,
   RadioButton,
-	Dialog,
-	MessageBox,
-	Message,
-	Menu,
-	MenuItem,
-	Form,
-	FormItem,
-	Input,
-	Button,
-	Select,
-	Table,
-	TableColumn,
-	Option,
-	Row,
-	Col,
-	Pagination,
-	DatePicker,
-	Container,
-	Main,
-	Header,
-	Tree,
-	Dropdown,
-	DropdownItem,
-	DropdownMenu,
+  Dialog,
+  MessageBox,
+  Message,
+  Menu,
+  MenuItem,
+  Form,
+  FormItem,
+  Input,
+  Button,
+  Select,
+  Table,
+  TableColumn,
+  Option,
+  Row,
+  Col,
+  Pagination,
+  DatePicker,
+  Container,
+  Main,
+  Header,
+  Tree,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu, TimePicker, Switch,
 } from 'element-ui';
 
 Vue.component(Popover.name, Popover);
@@ -59,6 +59,8 @@ Vue.component(Tree.name, Tree);
 Vue.component(Dropdown.name, Dropdown);
 Vue.component(DropdownItem.name, DropdownItem);
 Vue.component(DropdownMenu.name, DropdownMenu);
+Vue.component(DatePicker.name, DatePicker);
+Vue.component(Switch.name, Switch);
 
 
 /***提示只显示一次**/
