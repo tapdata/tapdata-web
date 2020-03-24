@@ -95,11 +95,13 @@ export const databaseConfig = {
 			 * @param data
 			 *
 			 */
-			validate: (data) => {
+			validate: function(data){
+				data = data || this.getFormData();
+				let name = this.attr('label/text');
 				if( !data )
-					throw new Error('Settings cannot be none.');
+					throw new Error(name + ': Settings cannot be none.');
 				if( !data.connectionId )
-					throw new Error('Database cannot be empty.');
+					throw new Error(name + ': Database cannot be empty.');
 				return true;
 			}
 		},

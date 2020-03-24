@@ -3,8 +3,8 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
+import moment from 'moment';  //时间格式化
 import store from './vuex';   // 引入全局数据控制
-import axios from 'axios';
 import VueCookie from 'vue-cookie';
 import i18n from './i18n/i18n';
 
@@ -15,13 +15,14 @@ import './theme/index.css';
 Vue.config.productionTip = false;
 Vue.use(VueCookie);
 
+Vue.prototype.$moment = moment;
+
 // Vue.prototype.i18n = window.jQuery.i18n
 new Vue({
   el: '#app',
   router,
   store,
   i18n,
-	axios,
   components: { App },
   template: '<App/>'
 });

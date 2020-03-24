@@ -8,6 +8,6 @@ import PublicAPI from "./publicApi";
 export default class DataFlowStats extends PublicAPI{
 
 	constructor(){
-		super('/api/DataFlowStats');
+		super('http://localhost:8080/api/DataFlowStats');
 	}
 }

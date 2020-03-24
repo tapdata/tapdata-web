@@ -1,6 +1,7 @@
 import tcLocale from 'element-ui/lib/locale/lang/zh-TW';
 const tc = {
     message: {
+      search: '搜索',
       serviceCluMange:'服務集群管理',
       statusLog:'狀態日誌',
       sourchName: '名稱搜索',
@@ -40,17 +41,30 @@ const tc = {
       startupAfter_add: '請啟動後添加'
     },
     dataFlow: {
-      taskName: '任务名称',
-      creationTime: '创建时间',
-      state: '状态',
-      executionTime: '本次执行时间',
-      inputNumber: '本次输入条数',
-      outputNumber: '本次输出条数',
-      taskName: '任务名称',
-      taskName: '任务名称',
-      taskName: '任务名称',
-      taskName: '任务名称',
-      dataScreening: '数据总览',
+      allNode: '全部節點',
+      taskName: '任務名稱',
+      creatdor: '創建人',
+      creationTime: '創建時間',
+      state: '狀態',
+      executionTime: '本次執行時間',
+      inputNumber: '本次輸入條數',
+      outputNumber: '本次輸出條數',
+      rowCount: '條數',
+      inputOutput: '輸入輸出統計',
+      transf: '傳輸耗時',
+      dataScreening: '數據總覽',
+      second: "秒",
+      min: "分",
+      hour: "時",
+      day: "日",
+      input: '輸入',
+      output: '輸出',
+      totalInput:'總輸入',
+      totalOutput:'總輸出',
+      replicate: "數據同步差距",
+      throughputpop:'平均每秒源端數據采集的速度以及目標端寫入的速度，數值越大越好',
+      transtime_pop: '傳輸耗時：除源節點外，事件處理完的時間減去事件的發生時間。 節點間統計：事件從進入節點到輸出到所消耗的時間。 任務流統計：所有節點耗時相加，數值越小越好',
+      replicate_pop: '源庫和目標庫數據最後更新時間的差距，數值越小越好'
     },
     ...tcLocale
   };
