@@ -113,6 +113,8 @@ export const baseElementConfig = {
 			}],
 			initialize(){
 				let self = this;
+
+				// validate form data
 				self.on('change:' + FORM_DATA_KEY, () => {
 					let formData = self.getFormData();
 
@@ -130,7 +132,6 @@ export const baseElementConfig = {
 					if( formData.name )
 						self.attr('label/text', formData.name);
 				});
-
 			},
 			getFormData() {
 				return this.get(FORM_DATA_KEY);

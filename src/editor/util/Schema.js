@@ -5,15 +5,27 @@
  */
 import _ from 'lodash';
 import log from "../../log";
-export const allColorList = [
-	'#00796B', '#536DFE',
-	'#303F9F', '#00BCD4',
-	'#FFA000', '#795548',
-	'#D32F2F', '#B2DFDB',
-	'#607D8B', '#CDDC39',
+const allColorList = [
+	'#990066', '#FFCC00',
+	'#CC0033', '#006699',
+	'#009999', '#FF9933',
+	'#FFCCCC', '#FF6600',
+	'#303F9F', '#795548',
+	'#99CCFF', '#FFFFCC',
+	'#0099CC', '#009966',
+	'#CC9999', '#99CCFF',
+	'#333300', '#33CC33',
 ];
-
-let tableCounter = 0;
+const tableColors = {};
+const getColor = function(tableName){
+	let color = tableColors[tableName];
+	if( color )
+		return color;
+	else {
+		tableColors[tableName] = allColorList[Object.keys(tableColors).length%allColorList.length];
+		return tableColors[tableName];
+	}
+};
 
 export const
 
@@ -35,11 +47,11 @@ export const
 					}, {}... ]
 				}}
 	 */
-	convertSchemaToTreeData = function(schema, color = '#dddddd') {
+	convertSchemaToTreeData = function(schema) {
 		log('Schema.convertSchemaToTreeData', arguments);
 		if( schema ){
 			let entityData = {
-				name: schema.table_name || `Table${tableCounter++}`,
+				name: schema.table_name,
 				type: schema.meta_type || 'table',
 				fields: []
 			};
@@ -48,13 +60,14 @@ export const
 			let fields = schema.fields || [];
 			for (let i = 0; i < fields.length; i++) {
 				let field = fields[i];
-				if( field && field.field_name){
-					let jsonPath = field.field_name.split('.');
+				if( field && field.field_name && field.original_field_name){
+					let jsonPath = field.original_field_name.split('.');
+					let jsonPathForFieldName = field.field_name.split('.');
 					let treeItem = {
 						id: field.id || `${field.table_name}${field.original_field_name ? ('_' + field.original_field_name) : ''}`.replace(/\./g, '_'),
-						label: jsonPath[jsonPath.length - 1],
+						label: jsonPathForFieldName[jsonPathForFieldName.length - 1],
 						type: field.javaType,
-						color: color
+						color: getColor(field.table_name)
 
 					};
 					_.set(root, 'children.' + jsonPath.join('.children.'), treeItem);
@@ -68,6 +81,7 @@ export const
 			};
 			re(root);
 			entityData.fields = root.children;
+      log('Schema.convertSchemaToTreeData.return', entityData);
 			return entityData;
 		} else {
 			return null;
@@ -102,16 +116,19 @@ export const
 		} else {
 			joinPath.split('.').forEach(fieldName => {
 				targetSchema.fields.push({
+					//id: uuid(),
 					field_name: fieldName,
 					javaType: joinType === 'merge_embed' ? 'Array' : 'Map',
 					data_type: joinType === 'merge_embed' ? 'ARRAY' : 'DOCUMENT',
-					table_name: sourceSchema.table_name
+					table_name: sourceSchema.table_name,
+					original_field_name: fieldName,
 				});
 			});
 			sourceSchemaFields.forEach((field) => {
 				if( field ) {
 					targetSchema.fields.push(Object.assign(field, {
 						field_name: joinPath + '.' + field.field_name,
+						original_field_name: joinPath + '.' + field.original_field_name,
 						javaType: field.javaType,
 						data_type: field.data_type
 					}));
@@ -157,7 +174,6 @@ export const
 	 * @return {*}
 	 */
 	mergeJoinTablesToTargetSchema = function(targetSchema, joinTables){
-		log('Schema.mergeJoinTablesToTargetSchema', arguments);
 		let mergedTargetSchema = targetSchema || {};
 		const mergeTargetSchema = function(jt){
 			if( jt && (jt.sourceSchemas || jt.sourceSchema)){
@@ -166,6 +182,20 @@ export const
 		};
 		if( joinTables )
 			joinTables.forEach( mergeTargetSchema );
+
+		log('Schema.mergeJoinTablesToTargetSchema', ...arguments, mergedTargetSchema);
+
 		return mergedTargetSchema;
+	},
+
+	uuid = function() {
+
+		// credit: http://stackoverflow.com/posts/2117523/revisions
+
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+			var r = (Math.random() * 16) | 0;
+			var v = (c === 'x') ? r : (r & 0x3 | 0x8);
+			return v.toString(16);
+		});
 	}
 ;

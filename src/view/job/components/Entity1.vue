@@ -56,6 +56,7 @@
   import $ from 'jquery';
   import log from '../../../log';
   import _ from 'lodash';
+  import factory from "../../../api/factory";
 
   const REMOVE_OPS_TPL = {
     id: '',
@@ -110,7 +111,6 @@
         operations: [],
       };
     },
-
     methods: {
       setOperations(operations) {
         this.operations = operations;
@@ -208,7 +208,9 @@
         this.$emit('dataChanged', this.operations);
       },
       handleRename(node, data) {
+        console.log(this.schema.fields)
         let nativeData = this.getNativeData(this.originalSchema.fields, data.id);
+        log("nativeData",this.operations)
         let ops = this.operations.filter(v => v.id === nativeData.id && v.op === 'RENAME');
         let op;
         if (data.label === nativeData.label) {
@@ -231,11 +233,27 @@
         this.$emit('dataChanged', this.operations);
       },
       handleDelete(node, data) {
-
         let originalField = this.getNativeData(this.originalSchema.fields, data.id);
         let self = this;
 
         let fn = function (field) {
+
+          for (let i = 0; i < self.operations.length; i++) { //删除所有的重命名的操作
+            let ops = self.operations[i];
+            if (self.operations[i].id === field.id && ops.op === 'RENAME') {
+              let originalNode = self.getNativeData(self.schema.fields, field.id);
+              originalNode.label = field.label;
+              self.operations.splice(i, 1);
+            }
+          }
+          for (let i = 0; i < self.operations.length; i++) { //删除所有的类型改变的操作
+            let ops = self.operations[i];
+            if (self.operations[i].id === field.id && ops.op === 'CONVERT') {
+              let originalNode = self.getNativeData(self.schema.fields, field.id); //替换原始数据 主要是操作子节点
+              originalNode.type = field.type;
+              self.operations.splice(i, 1);
+            }
+          }
 
           let ops = self.operations.filter(v => v.op === 'REMOVE' && v.id === field.id);
 
@@ -258,11 +276,16 @@
         this.$emit('dataChanged', this.operations);
       },
       handleReset(node, data) {
+        //子节点查找父节点
+        let parentId = node.parent.data.id;
+        let indexId = this.operations.filter(v => v.op === 'REMOVE' && v.id === parentId);
+        if(parentId && indexId != 0){
+          return
+        }
         let self = this;
         let fn = function (node, data) {
           let nativeData = self.getNativeData(self.originalSchema.fields, data.id);
           for (let i = 0; i < self.operations.length; i++) {
-            // eslint-disable-next-line no-mixed-spaces-and-tabs
             if (self.operations[i].id === data.id) {
               let ops = self.operations[i];
               if (ops.op === 'REMOVE') {
@@ -271,11 +294,13 @@
                   fn(childNode, childNode.data);
                 });
                 break;
-              } else if (ops.op === 'RENAME') {
+              }
+              if (ops.op === 'RENAME') {
                 node.data.label = nativeData.label;
                 self.operations.splice(i, 1);
                 break;
-              } else if (ops.op === 'CONVERT') {
+              }
+              if (ops.op === 'CONVERT') {
                 node.data.type = nativeData.type;
                 self.operations.splice(i, 1);
                 break;
