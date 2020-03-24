@@ -90,7 +90,6 @@ export default {
     mounted () {
       this.selectNode = this.nodeList[0];
       this.timer()
-
     },
 
     watch: {
@@ -108,7 +107,6 @@ export default {
         async getDataTableApi(){
           let tableList = [];
           let headerList =[];
-
           await dataFlows.get([this.flowsId , 'debugData?stageId=' + this.stageId ]).then(res =>{
             if (res.statusText === "OK" || res.status === 200) {
               this.nodeList = Object.keys(res.data);   // 获取下拉项
@@ -160,22 +158,21 @@ export default {
           })
         },
 
-        async queryInterface(){
-          this.flowsId = '5e202f38bbf0c348a88ff90b';
-          let result = await dataFlows.get([this.flowsId]);
-          if (result.status == '200' || result.status == '304' ) {
-            if(result.data.status == 'stopped' || result.data.status == 'error') {
-              this.status = result.data.status;
-              clearInterval(this.timer);
-            }
-          }
-        },
+        // async queryInterface(){
+        //   this.flowsId = '5e202f38bbf0c348a88ff90b';
+        //   let result = await dataFlows.get([this.flowsId]);
+        //   if (result.status == '200' || result.status == '304' ) {
+        //     if(result.data.status == 'stopped' || result.data.status == 'error') {
+        //       this.status = result.data.status;
+        //       clearInterval(this.timer);
+        //     }
+        //   }
+        // },
 
         // 这是一个定时器
         timer() {
           let that = this;
           return setInterval(() => {
-            that.queryInterface()
             that.getDataTableApi();
             that.getLogsData();
           }, 5000);
