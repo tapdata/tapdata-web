@@ -24,6 +24,7 @@
     "jquery": "^3.4.1",
     "leader-line": "^1.0.5",
     "lodash": "^4.17.15",
+    "moment": "^2.24.0",
     "vue": "^2.5.2",
     "vue-cookie": "^1.1.4",
     "vue-cookies": "^1.7.0",
