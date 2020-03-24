@@ -5,8 +5,6 @@
  */
 import Component from "../lib/Component";
 import $ from 'jquery';
-import Sidebar from "./sidebar";
-import Tab from "./tab";
 
 export default class UI extends Component {
 
@@ -31,31 +29,12 @@ export default class UI extends Component {
 				</div>
 			</div>
 			<div class="e-body">
-				<div class="e-content"><div class="navigator-container"></div></div>
+				<div class="e-content">
+					<div class="graph-container"><div class="navigator-container"></div></div>
+				</div>
 			</div>
 			<div class="e-footer"></div>
 		</div>`);
-
-		this.leftSidebar = new Sidebar({
-			region: 'left',
-			editor: this.editor,
-			split: false,
-			width: 180
-		});
-
-		this.rightSidebar = new Sidebar({
-			region: 'right',
-			editor: this.editor,
-			hidden: true,
-			maxWidth: 1000,
-			width: 520
-		});
-
-		this.leftSidebar.render(this.el.find('.e-body'), true);
-		this.rightSidebar.render(this.el.find('.e-body'));
-
-		let rightTabPanel = this.rightTabPanel = new Tab();
-		this.rightSidebar.add(rightTabPanel);
 
 		if( this.opts.actionBarEl ){
 			this.getActionBarEl().append(this.opts.actionBarEl);
@@ -66,12 +45,6 @@ export default class UI extends Component {
 	}
 	getContentEl(){
 		return this.el.find('.e-content');
-	}
-	getLeftSidebarEl(){
-		return this.leftSidebar.getContentEl();
-	}
-	getRightSidebarEl(){
-		return this.rightSidebar.getContentEl();
 	}
 	getNavigatorEl(){
 		return this.el.find('.navigator-container');
@@ -84,5 +57,8 @@ export default class UI extends Component {
 	}
 	getActionBarEl(){
 		return this.el.find('.action-toolbar');
+	}
+	getGraphContainer() {
+		return this.el.find('.graph-container');
 	}
 }

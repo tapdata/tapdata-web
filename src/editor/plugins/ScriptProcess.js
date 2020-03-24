@@ -5,6 +5,7 @@
  */
 import {options} from "../lib/rappid/config";
 import Script from "../../view/job/Script";
+import {FORM_DATA_KEY} from "../constants";
 
 export const scriptProcessConfig = {
 
@@ -31,6 +32,11 @@ export const scriptProcessConfig = {
 				label:{
 					text: 'JavaScript',
 				}
+			},
+
+			[FORM_DATA_KEY]: {
+				type: "js_processor",
+				script: "function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}"
 			}
 		},
 		prototypeProperties: {
@@ -47,13 +53,15 @@ export const scriptProcessConfig = {
 			 * @param data
 			 *
 			 */
-			validate: (data) => {
+			validate: function(data){
+				data = data || this.getFormData();
+				let name = this.attr('label/text');
 				if( !data )
-					throw new Error('Settings cannot be none.');
+					throw new Error(name + ': Settings cannot be none.');
 				if( !data.type )
-					throw new Error('Script type cannot be empty.');
+					throw new Error(name + ': Script type cannot be empty.');
 				if( !data.script )
-					throw new Error('Script cannot be empty.');
+					throw new Error(name + ': Script cannot be empty.');
 				return true;
 			}
 		},

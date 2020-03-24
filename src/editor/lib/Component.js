@@ -56,7 +56,11 @@ export default class Component extends BaseObject{
 	 */
 	add(child){
 		this.childs.push(child);
-		child.render(this.getContentEl());
+		if( child.opts.container) {
+			child.render(child.opts.container, !!child.opts.prepend);
+		} else {
+			child.render(this.getContentEl(), !!child.opts.prepend);
+		}
 	}
 
 	/**
@@ -69,6 +73,9 @@ export default class Component extends BaseObject{
 			let current = this.childs.splice(index, 1);
 			if( child.el )
 				child.el.remove();
+			if( typeof child.destroy === 'function'){
+				child.destroy();
+			}
 			return current;
 		}
 	}
@@ -77,11 +84,18 @@ export default class Component extends BaseObject{
 	 * remove all child commend
 	 */
 	removeAll(){
+		this.childs.forEach(child => {
+			if( typeof child.destroy === 'function'){
+				child.destroy();
+			}
+		});
 		this.childs.splice(0, this.childs.length);
 		if( this.getContentEl() ){
 			this.getContentEl().find('>*').remove();
 		}
 	}
+
+	destroy(){}
 
 	show(){
 		this.el.show();

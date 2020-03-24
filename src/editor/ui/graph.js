@@ -18,10 +18,21 @@ window.joint = joint;
 
 export default class Graph extends Component{
 
+	/**
+	 *
+	 * @type {Editor}
+	 */
+	editor = null;
+
+	/**
+	 * @type {boolean}
+	 */
+	editable = true;
+
 	constructor(opts){
 		super(opts);
 
-		this.ui = opts.ui;
+		this.editor = opts.editor;
 
 		this.init();
 	}
@@ -62,14 +73,26 @@ export default class Graph extends Component{
 			interactive: { linkMove: false },
 			async: true,
 			sorting: joint.dia.Paper.sorting.APPROX,
-			snapLinks: 75
+			snapLinks: 75,
+			highlighting: {
+				default: {
+					name: 'stroke',
+					options: {
+						padding: 5,
+						rx: 20,
+						ry: 20,
+						attrs: {
+							'stroke-width': 2,
+							stroke: '#00bcd4'
+						}
+					}
+				}
+			}
 		});
 
 		paper.on('blank:mousewheel',  _.partial(this.onMousewheel, null), this);
 		paper.on('cell:mousewheel', this.onMousewheel, this);
-		paper.on('blank:pointerclick', () => {
-			this.ui.rightSidebar.hide();
-		});
+		paper.on('blank:pointerclick', this.onClickBlank.bind(this));
 		paper.on('link:connect', function(linkView, evt, elementViewConnected, magent, arrowhead){
 			log('Graph.link.connect', arguments);
 			let targetCell = linkView.model.getTargetCell();
@@ -106,8 +129,45 @@ export default class Graph extends Component{
 		});
 
 		this.el = paperScroller.el;
-		this.ui.add(this);
+		this.editor.getUI().add(this);
 		paperScroller.render().center();
+	}
+
+	onClickBlank(){
+		this.editor.getBottomSidebar().hide();
+		this.unselectedAllCells();
+	}
+
+	unselectedAllCells(){
+		let paper = this.paper;
+		let cells = this.graph.getCells();
+
+		cells.forEach(cell => {
+			let cellView = paper.findViewByModel(cell);
+			if( cellView ){
+				cellView.unhighlight();
+			}
+		});
+	}
+
+	selectCell(cell){
+		let self = this;
+		let first = self.selection.collection.findWhere({id: cell.id});
+		if( !first){
+			self.selection.collection.add(cell);
+		}
+		setTimeout(() => {
+			self.unselectedAllCells();
+			let cellView = self.paper.findViewByModel(cell);
+			let isDataNode = cell.isDataNode && cell.isDataNode();
+			cellView.highlight(null, {
+				name: 'stroke',
+				options: {
+					rx: isDataNode ? 20 : 14,
+					ry: isDataNode ? 20 : 14
+				}
+			});
+		}, 0);
 	}
 
 	initStencil() {
@@ -136,7 +196,7 @@ export default class Graph extends Component{
 			}
 		});
 
-		this.ui.getLeftSidebarEl().append(stencil.el);
+		this.editor.getLeftSidebarEl().append(stencil.el);
 		stencil.render().load(stencilConfig.shapes);
 	}
 
@@ -212,18 +272,30 @@ export default class Graph extends Component{
 	}
 
 	selectPrimaryCell(cellView) {
-		var cell = cellView.model;
-		if (cell.isElement()) {
-			this.selectPrimaryElement(cellView);
+		let cell = cellView.model;
+
+		if( this.editable ){
+			if (cell.isElement()) {
+				this.selectCell(cell);
+				this.selectPrimaryElement(cellView);
+			} else {
+				this.selectPrimaryLink(cellView);
+			}
+			this.createInspector(cell);
+
 		} else {
-			this.selectPrimaryLink(cellView);
+
+			if (cell.isElement()) {
+				this.selectCell(cell);
+				this.emit('stage:selected', cell.toJSON());
+			}
+
 		}
-		this.createInspector(cell);
 	}
 
 	selectPrimaryElement(elementView) {
 
-		var element = elementView.model;
+		let element = elementView.model;
 
 		if( element.get('freeTransform') !== false) {
 			new joint.ui.FreeTransform({
@@ -243,8 +315,8 @@ export default class Graph extends Component{
 
 	selectPrimaryLink(linkView) {
 
-		var ns = joint.linkTools;
-		var toolsView = new joint.dia.ToolsView({
+		let ns = joint.linkTools;
+		let toolsView = new joint.dia.ToolsView({
 			name: 'link-pointerdown',
 			tools: [
 				new ns.Vertices(),
@@ -266,9 +338,9 @@ export default class Graph extends Component{
 		let self = this;
 		let rendered = this.vueAdapter.render(cell);
 		if( rendered ){
-			self.ui.rightSidebar.show();
+			self.editor.getBottomSidebar().show();
 		} else {
-			self.ui.rightSidebar.hide();
+			self.editor.getBottomSidebar().hide();
 		}
 
 
@@ -363,7 +435,7 @@ export default class Graph extends Component{
 			}
 		});
 
-		this.ui.getNavigatorEl().append(navigator.el);
+		this.editor.getUI().getNavigatorEl().append(navigator.el);
 		navigator.render();
 	}
 
@@ -391,7 +463,7 @@ export default class Graph extends Component{
 			'grid-size:change': this.paper.setGridSize.bind(this.paper)
 		});
 
-		this.ui.getGraphToolbarEl().append(toolbar.el);
+		this.editor.getUI().getGraphToolbarEl().append(toolbar.el);
 		toolbar.render();
 	}
 
@@ -465,7 +537,6 @@ export default class Graph extends Component{
 		}, this);
 	}
 
-
 	initTooltips() {
 
 		new joint.ui.Tooltip({
@@ -478,7 +549,7 @@ export default class Graph extends Component{
 	}
 
 	initVueAdapter() {
-		this.vueAdapter = new VueAdapter(this.ui, this);
+		this.vueAdapter = new VueAdapter(this.editor, this);
 	}
 
 	resize(width, height) {
@@ -556,6 +627,42 @@ export default class Graph extends Component{
 		} else {
 			this.snaplines.stopListening();
 			this.stencil.options.snaplines = null;
+		}
+	}
+
+	validate(){
+		let self = this;
+		let cells = this.graph.getCells();
+		let errorMessage;
+		for (let i = 0; i < cells.length; i++) {
+			let cell = cells[i];
+				if( typeof cell.isElement() && typeof cell.validate === 'function'){
+					try {
+						cell.validate();
+					} catch (e) {
+						errorMessage = e.message;
+						self.selectCell(cell);
+						break;
+					}
+			}
+		}
+		return errorMessage || true;
+	}
+
+	setEditable(editable){
+		this.editable = editable;
+
+		if( editable ){
+			this.keyboard.enable();
+		} else {
+			// clear selected cells
+			let first = this.selection.collection.shift();
+			while( first ){
+				first = this.selection.collection.shift();
+			}
+
+			this.unselectedAllCells();
+			this.keyboard.disable();
 		}
 	}
 

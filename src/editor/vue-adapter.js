@@ -17,15 +17,15 @@ export class VueAdapter extends BaseObject {
 
 	vm = null;
 
-	constructor(ui, graphUI){
+	constructor(editor, graphUI){
 		super();
 
-		this.ui = ui;
+		this.editor = editor;
 		this.graphUI = graphUI;
 
-		ui.rightSidebar.on(EditorEventType.RESIZE, this.handlerResize.bind(this));
-		ui.rightSidebar.on(EditorEventType.HIDE, this.handlerHide.bind(this));
-		ui.rightTabPanel.on(EditorEventType.SELECTED, this.handlerTapChanged.bind(this));
+		editor.getBottomSidebar().on(EditorEventType.RESIZE, this.handlerResize.bind(this));
+		editor.getBottomSidebar().on(EditorEventType.HIDE, this.handlerHide.bind(this));
+		editor.getBottomTabPanel().on(EditorEventType.SELECTED, this.handlerTapChanged.bind(this));
 	}
 
 	render(cell){
@@ -47,7 +47,7 @@ export class VueAdapter extends BaseObject {
 		if( vueAdapter[name] && vueAdapter[name].component){
 			let vueComponentConfig = vueAdapter[name];
 			let Comp = Vue.extend(vueComponentConfig.component);
-			let settings = self.ui.rightTabPanel.getChildByName('settings');
+			let settings = self.editor.getBottomTabPanel().getChildByName('settings');
 
 			self.vm = new Comp({
 				propsData: Object.assign({}, vueComponentConfig.props || {})
@@ -58,8 +58,8 @@ export class VueAdapter extends BaseObject {
 					name: 'settings',
 					title: 'Settings'
 				});
-				self.ui.rightTabPanel.add(settings);
-				self.ui.rightTabPanel.select(settings);
+				self.editor.getBottomTabPanel().add(settings);
+				self.editor.getBottomTabPanel().select(settings);
 			}
 			settings.removeAll();
 			let vueContainerDom = document.createElement('div');
