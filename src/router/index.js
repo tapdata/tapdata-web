@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import layout from '../view/layout';
 import Job from '../view/job/Job';
+import Preview from '../view/job/preview';
 import echartData from '../view/job/echartData';
 
 import clusterManagement from '../view/clusterManagement/clusterManagement';
@@ -37,6 +38,11 @@ export default new Router({
 			name: 'echartData',
 			component: echartData
 
+    },
+    {
+			path: '/preview',
+			name: 'preview',
+			component: Preview
 		}
 	]
 });

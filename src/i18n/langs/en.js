@@ -1,6 +1,7 @@
 import enLocale from 'element-ui/lib/locale/lang/en';
 const en = {
     message: {
+      search: 'search',
       serviceCluMange:'Service cluster management',
       statusLog:'Status log',
       sourchName: 'Name search',
@@ -40,6 +41,7 @@ const en = {
       startupAfter_add: 'Please add after startup'
     },
     dataFlow: {
+      allNode: 'All Nodes',
       taskName: 'Flow Name',
       creatdor: 'Creater',
       creationTime: 'Create Time',

@@ -2,6 +2,11 @@
   <div class="echartData">
     <el-select v-model="domValue">
       <el-option
+        key="value"
+        :label="$t('dataFlow.allNode')"
+        value="all">
+      </el-option>
+      <el-option
         v-for="item in domList"
         :key="item.value"
         :label="item.label"
@@ -82,10 +87,8 @@ export default {
       selectFlow: '',  //选中节点
       speed: '',
       time: '',
-      domValue: '',
-      domList: [
-        {value: '选项1', label: '所有节点'}
-      ],
+      domValue: 'all',
+      domList: [],
       flow: {
         flowName: '客户信息数据库复制',
         creatdor: 'shane',
@@ -110,7 +113,6 @@ export default {
   mounted() {
     let params = {};
     // this.getApiData();
-    this.domValue = this.domList[0].value;
     this.screeningObj = {
       title: this.$t('dataFlow.dataScreening'),
       type: 'screening',
@@ -157,8 +159,14 @@ export default {
     getSpeed(data,time) {
       let params = {
         'filter[where][statsType]': "throughput",
-        // 'filter[where][dataFlowId]': "0590c9f1-6a59-11ea-a62e-b68977d7ac74",
-        'filter[where][granularity]': "flow_" + time
+        'filter[where][granularity]': this.selectFlow + time
+      }
+      //判断是否是全部节点
+      if(this.domValue === "all") {
+        params['filter[where][dataFlowId]']= this.domValu;
+      } else {
+        params['filter[where][dataFlowId]']= this.domValue;
+        params['filter[where][stageId]']= this.domValue;
       }
       this.getApiData(params,'throughput',data)
     },
@@ -166,8 +174,14 @@ export default {
     getTwoRadio(data,type) {
       let params = {
         'filter[where][statsType]': "data_overview",
-        // 'filter[where][dataFlowId]': "0590c9f1-6a59-11ea-a62e-b68977d7ac74",
         'filter[where][granularity]': data
+      }
+      //判断是否是全部节点
+      if(this.domValue === "all") {
+        params['filter[where][dataFlowId]']= this.domValue;
+      } else {
+        params['filter[where][dataFlowId]']= this.domValue;
+        params['filter[where][stageId]']= this.domValue;
       }
       this.getApiData(params,type,data)
     },
@@ -177,14 +191,26 @@ export default {
       if(type ==="transf") {
         params = {
           'filter[where][statsType]': "trans_time",
-          // 'filter[where][dataFlowId]': "0590c9f1-6a59-11ea-a62e-b68977d7ac74",
-          'filter[where][granularity]': "flow_" + data
+          'filter[where][granularity]': this.selectFlow + data
+        }
+        //判断是否是全部节点
+        if(this.domValue === "all") {
+          params['filter[where][dataFlowId]']=this.domValue;
+        } else {
+          params['filter[where][dataFlowId]']= this.domValue;
+          params['filter[where][stageId]']= this.domValue;
         }
       } else if( type === "replicate") {
         params = {
           'filter[where][statsType]': "repl_lag",
-          // 'filter[where][dataFlowId]': "0590c9f1-6a59-11ea-a62e-b68977d7ac74",
-          'filter[where][granularity]': "flow_" + data
+          'filter[where][granularity]': this.selectFlow + data
+        }
+        //判断是否是全部节点
+        if(this.domValue === "all") {
+          params['filter[where][dataFlowId]']= this.domValue;
+        } else {
+          params['filter[where][dataFlowId]']= this.domValue;
+          params['filter[where][stageId]']= this.domValue;
         }
       }
       this.getApiData(params,type,data);

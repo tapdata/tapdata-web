@@ -41,6 +41,7 @@ const cn = {
     startupAfter_add: '请启动后添加'
   },
   dataFlow: {
+    allNode: '全部节点',
     taskName: '任务名称',
     creatdor: '创建人',
     creationTime: '创建时间',

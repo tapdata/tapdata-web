@@ -3,11 +3,15 @@ import Vue from 'vue';
 
 
 import {
+
+  Tabs,
+  TabPane,
   Popover,
   Radio,
   RadioGroup,
   RadioButton,
-	Dialog,
+  Dialog,
+  Loading,
 	MessageBox,
 	Message,
 	Menu,
@@ -33,6 +37,9 @@ import {
 	DropdownMenu,
 } from 'element-ui';
 
+
+Vue.component(Tabs.name, Tabs);
+Vue.component(TabPane.name, TabPane);
 Vue.component(Popover.name, Popover);
 Vue.component(Radio.name, Radio);
 Vue.component(RadioGroup.name, RadioGroup);
@@ -60,7 +67,7 @@ Vue.component(Dropdown.name, Dropdown);
 Vue.component(DropdownItem.name, DropdownItem);
 Vue.component(DropdownMenu.name, DropdownMenu);
 
-
+Vue.use(Loading.directive);
 /***提示只显示一次**/
 // 因为使用了new DonMessage()的原因，所以导致this.$message(options)的方式无法使用
 // 推荐使用this.$message.success('成功提示')或者this.$message.success(options)的方式进行调用
@@ -90,6 +97,7 @@ class DoneMessage {
 }
 export const message = new DoneMessage();
 
+Vue.prototype.$loading = Loading.service;
 Vue.prototype.$confirm = MessageBox.confirm;
 Vue.prototype.$prompt = MessageBox.prompt;
 Vue.prototype.$message = new DoneMessage();
