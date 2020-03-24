@@ -139,6 +139,7 @@
 
 			switchModel(){
 				if( this.dataFlow ){
+					delete this.dataFlow.editorData;
 					this.editor.setEditable(!this.editor.editable, this.dataFlow);
 				} else {
 					this.$message.error('Please save the task before running');

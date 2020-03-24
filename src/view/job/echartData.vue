@@ -73,12 +73,8 @@ export default {
   name: 'echartData',
   components: {echartHead,echartsCompinent,shaftlessEchart},
 	props: {
-  		dataFlowId: {
-  			type: String,
-			required: true
-		},
-		stages: {
-  			type: Array,
+  		dataFlow: {
+  			type: Object,
 			required: true
 		}
 	},

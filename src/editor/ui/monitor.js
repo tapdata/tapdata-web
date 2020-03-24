@@ -27,14 +27,10 @@ export default class Monitor extends Component{
 
 		let Comp = Vue.extend(EchartData);
 
-		let dataFlowId = this.opts.dataFlow.id || '';
-		let stages = this.opts.dataFlow.stages || [];
-
 		let vm = self.vm = new Comp({
 			i18n,
 			propsData: {
-				stages: stages,
-				dataFlowId: dataFlowId
+				dataFlow: this.opts.dataFlow
 			}
 		});
 
