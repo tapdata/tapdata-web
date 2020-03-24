@@ -1,8 +1,11 @@
 <template>
 	<div class="editor-container">
 		<div class="action-buttons">
-			<el-button>Preview</el-button>
-			<el-button @click="doSave">Save</el-button>
+			<el-button v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)" size="mini" type="danger">Stop</el-button>
+			<el-button v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)" size="mini" type="success">Start</el-button>
+			<el-button size="mini" type="warning">Capture</el-button>
+			<el-button size="mini" type="primary" @click="doSave">Save</el-button>
+			<el-button size="mini" type="primary" @click="switchModel">Model</el-button>
 		</div>
 	</div>
 </template>
@@ -18,7 +21,13 @@
 	export default {
 		name: "Job",
 		data() {
-			return {};
+			return {
+				// run model: editable,readonly
+				model: 'editable',
+
+				dataFlowId: null,
+				status: 'draft'
+			};
 		},
 		mounted() {
 			this.editor = editor({
@@ -29,6 +38,15 @@
 
 		methods: {
 			doSave(){
+				let self = this;
+
+				// validate
+				let verified = this.editor.graph.validate();
+				if( verified !== true) {
+					self.$message.error(verified);
+					return;
+				}
+
 				let editorData = this.editor.getData();
 				let graphData = editorData.graphData;
 				// let graphLib = editorData.graphLib;
@@ -46,7 +64,7 @@
 				let postData = Object.assign({
 					name: editorData.name,
 					description: "",
-					status: "scheduled",
+					status: "draft",		// draft/scheduled/running/paused/stopping/error
 					executeMode: "normal",
 					category: "数据库克隆",
 					stopOnError: false,
@@ -102,11 +120,29 @@
 
 				postData.stages = Object.values(stages);
 				log('Job.saveData:', postData);
-				dataFlowsApi.post(postData).then((result) => {
-					//console.log(result);
+				let promise;
+				if( self.dataFlowId ){
+					postData.id = self.dataFlowId;
+					promise = dataFlowsApi.patch(postData);
+				} else {
+					promise = dataFlowsApi.post(postData);
+				}
+				promise.then((result) => {
+					if( result && result.data ){
+						self.dataFlowId = result.data.id;
+						self.dataFlow = result.data;
+					}
 				}).catch(e => {
 					throw new Error(e);
 				});
+			},
+
+			switchModel(){
+				if( this.dataFlow ){
+					this.editor.setEditable(!this.editor.editable, this.dataFlow);
+				} else {
+					this.$message.error('Please save the task before running');
+				}
 			}
 		}
 	};

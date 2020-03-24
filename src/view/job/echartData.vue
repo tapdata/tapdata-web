@@ -67,6 +67,16 @@ const DataFlowStats = factory('DataFlowStats');
 export default {
   name: 'echartData',
   components: {echartHead,echartsCompinent,shaftlessEchart},
+	props: {
+  		dataFlowId: {
+  			type: String,
+			required: true
+		},
+		stages: {
+  			type: Array,
+			required: true
+		}
+	},
   data() {
     return {
       selectFlow: '',  //选中节点
