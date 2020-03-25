@@ -1,6 +1,28 @@
 <template>
   <div class="preview">
       <el-tabs type="border-card" class="tabBox">
+        <el-tab-pane label="Logs">
+          <template>
+             <el-input
+              class="inputStyle"
+              :placeholder="$t('message.search')"
+              v-model="search">
+              <i slot="prefix" class="el-input__icon el-icon-search"></i>
+            </el-input>
+            <ul class="log" v-if="logList.length > 0">
+              <li v-for="(item, i) in logList" :key="i" style="padding-bottom:10px;">
+                <span>[<i style="font-weight: bold;" :class="{'redColor':item.level=='ERROR'}">{{item.level}}</i>]</span> &nbsp;
+                <span>{{item.date}}</span>&nbsp;
+                <span>[{{item.threadName}}]</span>&nbsp;
+                <span>{{item.loggerName}}</span>&nbsp;-&nbsp;
+                <span>{{item.message}}</span>
+              </li>
+            </ul>
+            <div v-else class="noText">
+              <i class="iconfont icon icon-zanwushuju1" style="font-size: 174px"></i>
+            </div>
+          </template>
+        </el-tab-pane>
         <el-tab-pane label="Test Results">
           <template>
              <el-select v-model="selectNode" :placeholder="$t('message.placeholderSelect')">
@@ -23,35 +45,13 @@
             </el-table>
           </template>
         </el-tab-pane>
-        <el-tab-pane label="Debug Log">
-          <template>
-             <el-input
-              class="inputStyle"
-              :placeholder="$t('message.search')"
-              v-model="search">
-              <i slot="prefix" class="el-input__icon el-icon-search"></i>
-            </el-input>
-            <ul class="log" v-if="logList.length > 0">
-              <li v-for="(item, i) in logList" :key="i" style="padding-bottom:10px;">
-                <span>[<i style="font-weight: bold;" :class="{'redColor':item.level=='ERROR'}">{{item.level}}</i>]</span> &nbsp;
-                <span>{{item.date}}</span>&nbsp;
-                <span>[{{item.threadName}}]</span>&nbsp;
-                <span>{{item.loggerName}}</span>&nbsp;-&nbsp;
-                <span>{{item.message}}</span>
-              </li>
-            </ul>
-            <div v-else class="noText">
-              <i class="iconfont icon icon-zanwushuju1" style="font-size: 174px"></i>
-            </div>
-          </template>
-        </el-tab-pane>
       </el-tabs>
   </div>
 </template>
 <script>
 import factory from '../../api/factory';
 const DataFlowsDebugs = factory('DataFlowsDebugs');
-const logsModel = factory('logs')
+const logsModel = factory('logs');
 export default {
     name:"Preview",
     props:{
@@ -87,7 +87,7 @@ export default {
     },
 
     mounted () {
-      this.nodeList = this.dataFlow.stages
+      this.nodeList = this.dataFlow.stages;
       if(this.nodeList.length > 0) {
         this.selectNode = this.nodeList[0].id;
       }
@@ -111,11 +111,11 @@ export default {
 
     methods: {
         async getDataTableApi(){
-          let tableList = [];
+          // let tableList = [];
           let headerList =[];
           let params = {
-            'filter[where][flowId]':this.dataFlow.id,
-            'filter[where][stageId]':this.selectNode
+            'filter[where][__tapd8.dataFlowId][regexp]':`^${this.dataFlow.id }$`,
+            'filter[where][__tapd8.stageId]':this.selectNode
           }
           await DataFlowsDebugs.get(params).then(res =>{
             if (res.statusText === "OK" || res.status === 200) {
@@ -144,8 +144,7 @@ export default {
         async getLogsData() {  //获取日志
           let paramas = {
             'filter[order]': 'date DESC',
-            'filter[where][flowsId]': this.dataFlow.id,
-            'filter[where][stageId]': this.selectNode
+            'filter[where][contextMap.dataFlowId][regexp]':`^${this.dataFlow.id }$`
           }
           if (this.search) {
             paramas['filter[where][$text][search]'] = this.search;
