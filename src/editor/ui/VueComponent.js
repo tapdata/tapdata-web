@@ -6,11 +6,10 @@
 import Component from '../lib/Component';
 import $ from 'jquery';
 import log from "../../log";
-import EchartData from '../../view/job/echartData';
 import i18n from '../../i18n/i18n';
 import Vue from 'vue';
 
-export default class Monitor extends Component{
+export default class VueComponent extends Component{
 
 	constructor(opts) {
 		super(opts);
@@ -20,12 +19,13 @@ export default class Monitor extends Component{
 	doInit() {
 		let self = this;
 		let editor = this.opts.editor;
+		let component = this.opts.component;
 
-		log('Monitor.doInit', this.opts.dataFlow);
+		log('VueComponent.doInit', this.opts.dataFlow);
 
-		self.el = $(`<div class="e-monitor-wrap"></div>`);
+		self.el = $(`<div class="e-vue-component-wrap"></div>`);
 
-		let Comp = Vue.extend(EchartData);
+		let Comp = Vue.extend(component);
 
 		let vm = self.vm = new Comp({
 			i18n,
@@ -38,20 +38,27 @@ export default class Monitor extends Component{
 		this.getContentEl().append(vueContainerDom);
 		vm.$mount(vueContainerDom);
 
-		editor.graph.on('stage:selected', (stageData) => {
-			log('Monitor.stage.selected', stageData);
-			if( vm ){
-				vm.$emit('selected:stage', stageData);
-			}
-		});
+		editor.graph.on('selected:stage', this.selectedStage, this);
 	}
 
 	getContentEl() {
 		return this.el;
 	}
 
+	selectedStage(stageData) {
+		log('VueComponent.selected.stage', stageData);
+		if( this.vm ){
+			this.vm.$emit('selected:stage', stageData);
+		}
+	}
+
 	destroy(){
-		log('Monitor.destroy');
+		log('VueComponent.destroy');
+		if( this.vm ){
+			this.vm.$destroy();
+		}
+		this.opts.editor.off('selected:stage', this.selectedStage);
+		this.el.remove();
 	}
 
 }

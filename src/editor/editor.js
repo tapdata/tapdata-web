@@ -9,7 +9,10 @@ import Graph from "./ui/graph";
 import {loadPlugins} from './plugins';
 import Sidebar from "./ui/sidebar";
 import Tab from "./ui/tab";
-import Monitor from "./ui/monitor";
+import VueComponent from "./ui/VueComponent";
+import EchartData from '../view/job/echartData';
+import Capture from '../view/job/preview';
+import log from "../log";
 
 export default class Editor extends BaseObject {
 
@@ -48,12 +51,6 @@ export default class Editor extends BaseObject {
 	 * @type {Graph}
 	 */
 	graph = null;
-
-	/**
-	 *
-	 * @type {Monitor}
-	 */
-	monitor = null;
 
 	/**
 	 *
@@ -118,18 +115,59 @@ export default class Editor extends BaseObject {
 		});
 	}
 
-	initRunningView(dataFlow) {
+	initRunningMode(dataFlow) {
+		log('editor.initRunningMode');
 		let self = this;
-		let monitor = self.monitor = new Monitor({editor: this, dataFlow: dataFlow});
-		self.rightSidebar.add(monitor);
-		self.rightSidebar.show();
-		self.bottomTabPanel.removeAll();
+
+		// hide stencil
+		this.getLeftSidebar().hide();
+
+		// remove stage config
+		let settings = self.getRightSidebar().getChildByName('settings');
+		if( settings ) self.getRightSidebar().remove(settings);
+
+		// add monitor
+		let monitor = self.getRightSidebar().getChildByName('monitor');
+		if( !monitor ){
+			monitor = new VueComponent({
+				name: 'monitor',
+				editor: this,
+				dataFlow: dataFlow,
+				component: EchartData
+			});
+			self.getRightSidebar().add(monitor);
+		}
+		self.getRightSidebar().show();
+
+		// add capture
+		let capture = self.getBottomTabPanel().getChildByName('capture');
+		if( !capture ){
+			capture = new VueComponent({
+				title: 'Capture',
+				name: 'capture',
+				editor: this,
+				dataFlow: dataFlow,
+				component: Capture
+			});
+			self.getBottomTabPanel().add(capture);
+		}
+		self.getBottomTabPanel().select(capture);
+		self.getBottomSidebar().show();
 	}
 
-	destroyRunningView(){
-		this.rightSidebar.hide();
-		this.rightSidebar.removeAll();
-		this.monitor = null;
+	initEditingMode(){
+		log('editor.initEditingMode');
+		this.getLeftSidebar().show();
+		this.getBottomSidebar().hide();
+		this.getRightSidebar().hide();
+
+		// this.rightSidebar.removeAll();
+		let monitor = this.getRightSidebar().getChildByName('monitor');
+		this.getRightSidebar().remove(monitor);
+
+		// remove capture
+		let capture = this.getBottomTabPanel().getChildByName('settings');
+		this.getBottomTabPanel().remove(capture);
 	}
 
 	getData(){
@@ -146,13 +184,9 @@ export default class Editor extends BaseObject {
 		this.editable = editable;
 		this.graph.setEditable(editable);
 		if( editable ){
-			this.leftSidebar.show();
-			this.destroyRunningView();
+			this.initEditingMode();
 		} else {
-			this.leftSidebar.hide();
-			this.bottomSidebar.hide();
-			this.bottomTabPanel.removeAll();
-			this.initRunningView(dataFlow);
+			this.initRunningMode(dataFlow);
 		}
 	}
 

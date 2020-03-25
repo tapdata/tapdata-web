@@ -134,7 +134,9 @@ export default class Graph extends Component{
 	}
 
 	onClickBlank(){
-		this.editor.getBottomSidebar().hide();
+		if( this.editable ){
+			this.editor.getRightSidebar().hide();
+		}
 		this.unselectedAllCells();
 	}
 
@@ -284,12 +286,12 @@ export default class Graph extends Component{
 			this.createInspector(cell);
 
 		} else {
-
 			if (cell.isElement()) {
 				this.selectCell(cell);
-				this.emit('stage:selected', cell.toJSON());
 			}
-
+		}
+		if( cell.isElement()) {
+			this.emit('selected:stage', cell.toJSON());
 		}
 	}
 
@@ -335,13 +337,7 @@ export default class Graph extends Component{
 
 	createInspector(cell) {
 
-		let self = this;
-		let rendered = this.vueAdapter.render(cell);
-		if( rendered ){
-			self.editor.getBottomSidebar().show();
-		} else {
-			self.editor.getBottomSidebar().hide();
-		}
+		this.vueAdapter.render(cell);
 
 
 		/*let styles = self.ui.rightTabPanel.getChildByName('styles');

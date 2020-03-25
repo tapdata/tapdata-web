@@ -23,9 +23,9 @@ export class VueAdapter extends BaseObject {
 		this.editor = editor;
 		this.graphUI = graphUI;
 
-		editor.getBottomSidebar().on(EditorEventType.RESIZE, this.handlerResize.bind(this));
-		editor.getBottomSidebar().on(EditorEventType.HIDE, this.handlerHide.bind(this));
-		editor.getBottomTabPanel().on(EditorEventType.SELECTED, this.handlerTapChanged.bind(this));
+		editor.getRightSidebar().on(EditorEventType.RESIZE, this.handlerResize.bind(this));
+		editor.getRightSidebar().on(EditorEventType.HIDE, this.handlerHide.bind(this));
+		// editor.getBottomTabPanel().on(EditorEventType.SELECTED, this.handlerTapChanged.bind(this));
 	}
 
 	render(cell){
@@ -47,7 +47,7 @@ export class VueAdapter extends BaseObject {
 		if( vueAdapter[name] && vueAdapter[name].component){
 			let vueComponentConfig = vueAdapter[name];
 			let Comp = Vue.extend(vueComponentConfig.component);
-			let settings = self.editor.getBottomTabPanel().getChildByName('settings');
+			let settings = self.editor.getRightSidebar().getChildByName('settings');
 
 			self.vm = new Comp({
 				propsData: Object.assign({}, vueComponentConfig.props || {})
@@ -58,8 +58,7 @@ export class VueAdapter extends BaseObject {
 					name: 'settings',
 					title: 'Settings'
 				});
-				self.editor.getBottomTabPanel().add(settings);
-				self.editor.getBottomTabPanel().select(settings);
+				self.editor.getRightSidebar().add(settings);
 			}
 			settings.removeAll();
 			let vueContainerDom = document.createElement('div');
@@ -81,6 +80,8 @@ export class VueAdapter extends BaseObject {
 				cell.setSchema(schema);
 			});
 
+			self.editor.getRightSidebar().show();
+
 			return self.vm;
 
 		}
@@ -95,6 +96,10 @@ export class VueAdapter extends BaseObject {
 	handlerHide(e){
 		if( this.vm ){
 			this.vm.$destroy();
+		}
+		let settings = this.editor.getRightSidebar().getChildByName('settings');
+		if( settings ) {
+			this.editor.getRightSidebar().remove(settings);
 		}
 	}
 
