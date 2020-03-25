@@ -3,7 +3,6 @@ import Vue from 'vue';
 
 
 import {
-
   Tabs,
   TabPane,
   Popover,
@@ -36,6 +35,7 @@ import {
 	Dropdown,
 	DropdownItem,
 	DropdownMenu,
+  Tooltip
 } from 'element-ui';
 
 
@@ -69,6 +69,7 @@ Vue.component(DropdownItem.name, DropdownItem);
 Vue.component(DropdownMenu.name, DropdownMenu);
 Vue.component(DatePicker.name, DatePicker);
 Vue.component(Switch.name, Switch);
+Vue.component(Tooltip.name, Tooltip);
 
 Vue.use(Loading.directive);
 /***提示只显示一次**/
