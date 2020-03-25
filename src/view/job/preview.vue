@@ -1,6 +1,28 @@
 <template>
   <div class="preview">
       <el-tabs type="border-card" class="tabBox">
+        <el-tab-pane label="Logs">
+          <template>
+             <el-input
+              class="inputStyle"
+              :placeholder="$t('message.search')"
+              v-model="search">
+              <i slot="prefix" class="el-input__icon el-icon-search"></i>
+            </el-input>
+            <ul class="log" v-if="logList.length > 0">
+              <li v-for="(item, i) in logList" :key="i" style="padding-bottom:10px;">
+                <span>[<i style="font-weight: bold;" :class="{'redColor':item.level=='ERROR'}">{{item.level}}</i>]</span> &nbsp;
+                <span>{{item.date}}</span>&nbsp;
+                <span>[{{item.threadName}}]</span>&nbsp;
+                <span>{{item.loggerName}}</span>&nbsp;-&nbsp;
+                <span>{{item.message}}</span>
+              </li>
+            </ul>
+            <div v-else class="noText">
+              <i class="iconfont icon icon-zanwushuju1" style="font-size: 174px"></i>
+            </div>
+          </template>
+        </el-tab-pane>
         <el-tab-pane label="Test Results">
           <template>
              <el-select v-model="selectNode" :placeholder="$t('message.placeholderSelect')">
@@ -21,28 +43,6 @@
                   </template>
               </el-table-column>
             </el-table>
-          </template>
-        </el-tab-pane>
-        <el-tab-pane label="Debug Log">
-          <template>
-             <el-input
-              class="inputStyle"
-              :placeholder="$t('message.search')"
-              v-model="search">
-              <i slot="prefix" class="el-input__icon el-icon-search"></i>
-            </el-input>
-            <ul class="log" v-if="logList.length > 0">
-              <li v-for="(item, i) in logList" :key="i" style="padding-bottom:10px;">
-                <span>[<i style="font-weight: bold;" :class="{'redColor':item.level=='ERROR'}">{{item.level}}</i>]</span> &nbsp;
-                <span>{{item.date}}</span>&nbsp;
-                <span>[{{item.threadName}}]</span>&nbsp;
-                <span>{{item.loggerName}}</span>&nbsp;-&nbsp;
-                <span>{{item.message}}</span>
-              </li>
-            </ul>
-            <div v-else class="noText">
-              <i class="iconfont icon icon-zanwushuju1" style="font-size: 174px"></i>
-            </div>
           </template>
         </el-tab-pane>
       </el-tabs>
