@@ -56,7 +56,7 @@
         </div>
       </div>
       <div class="clear"></div>
-      <el-table :data="tableData" style="width: 99%;border: 1px solid #dedee4;margin-top: 10px" row-key="id"  :tree-props="{children: 'children', hasChildren: 'hasChildren'}"  @selection-change="handleSelectionChange">
+      <el-table :data="tableData" style="width: 99%;border: 1px solid #dedee4;margin-top: 10px;"  :max-height="maxHeight" row-key="id"  :tree-props="{children: 'children', hasChildren: 'hasChildren'}"  @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" :selectable="hanldeSelectable">
         </el-table-column>
         <el-table-column prop="name" label="任务名称" >
@@ -66,15 +66,15 @@
           </template>
         </el-table-column>
         <el-table-column sortable label="创建人" width="180"></el-table-column>
-        <el-table-column prop="status" sortable label="任务状态" width="180">
-          <template slot-scope="scope">
-            <div size="mini" v-if="scope.row.status=== 'stopping'" style="color:#F19149">暂停中</div>
-            <div size="mini" v-if="scope.row.status=== 'running'" style="color:#67C23A">运行中</div>
-            <div size="mini" v-if="scope.row.status=== 'paused'" style="color:#F19149">已暂停</div>
-            <div size="mini" v-if="scope.row.status=== 'error'" style="color:#F56C6C">错误</div>
-            <div size="mini" v-if="scope.row.status=== 'draft'" style="color:#ccc">草稿</div>
-            <div size="mini" v-if="scope.row.status=== 'scheduled'" style="color:#F19149">等待中</div>
-          </template>
+        <el-table-column prop="status" sortable label="任务状态" width="180" :formatter="formatterStatus">
+<!--          <template slot-scope="scope">-->
+<!--            <div size="mini"  style="color:#F19149">暂停中</div>-->
+<!--&lt;!&ndash;            <div size="mini" v-if="scope.row.status=== 'running'" style="color:#67C23A">运行中</div>&ndash;&gt;-->
+<!--&lt;!&ndash;            <div size="mini" v-if="scope.row.status=== 'paused'" style="color:#F19149">已暂停</div>&ndash;&gt;-->
+<!--&lt;!&ndash;            <div size="mini" v-if="scope.row.status=== 'error'" style="color:#F56C6C">错误</div>&ndash;&gt;-->
+<!--&lt;!&ndash;            <div size="mini" v-if="scope.row.status=== 'draft'" style="color:#ccc">草稿</div>&ndash;&gt;-->
+<!--&lt;!&ndash;            <div size="mini" v-if="scope.row.status=== 'scheduled'" style="color:#F19149">等待中</div>&ndash;&gt;-->
+<!--          </template>-->
         </el-table-column>
         <el-table-column prop="input" sortable label="总输入（条）" width="180"></el-table-column>
         <el-table-column prop="output" sortable label="总输出（条）" width="180"></el-table-column>
@@ -82,7 +82,8 @@
         <el-table-column label="运行开关" width="100">
           <template slot-scope="scope">
             <div v-if="!scope.row.hasChildren">
-              <el-switch v-model="scope.row.stopOnError"  @change="handleStatus(scope.row.id,scope.row.status)"></el-switch>
+              <el-switch v-model="scope.row.status" v-if="scope.row.status === 'running'" active-value="running"  @change="handleStatus(scope.row.id,scope.row.status)"></el-switch>
+              <el-switch v-model="scope.row.status" v-if="scope.row.status !== 'running'" inactive-value="pasued"  @change="handleStatus(scope.row.id,scope.row.status)"></el-switch>
             </div>
           </template>
         </el-table-column>
@@ -153,6 +154,12 @@
     created() {
       this.screenFn();
     },
+    computed:{
+      maxHeight:function () {
+        let height = document.body.clientHeight-190+"px";
+        return height;
+      }
+    },
     methods: {
       hanldeSelectable(row){
         if(row.hasChildren){
@@ -162,11 +169,32 @@
         }
       },
       screenFn(){
-        this.getData(this.formData);
+        this.getData();
       },
       async getData(params) {
+        let where={};
+        if(this.formData&& this.formData.length !==0){
+          if(this.formData.status && this.formData.status !==''){
+            where.status =this.formData.status;
+          }
+          if(this.formData.search && this.formData.search!==''){
+            where.or = [{
+              name: {regex: this.formData.search}
+            }, {
+              'stages.name': {regex: this.formData.search}
+            }, {
+              'stages.tableName': {regex: this.formData.search}
+            }];
+          }
+          if(this.formData.timeData && this.formData.timeData.length !==0){
+            where.createTime = {
+              between: this.formData.timeData
+            };
+          }
+        }
         let _params = Object.assign({
           filter: JSON.stringify({
+            where: where,
             fields: {
               "id": true,
               "name": true,
@@ -306,6 +334,20 @@
           });
         });
       },
+      formatterStatus(row){
+        switch (row.status) {
+          case 'running':
+            return '运行中';
+          case 'paused':
+            return  '已暂停';
+          case 'draft':
+            return  '草稿';
+          case 'scheduled':
+            return  '等待中';
+          case 'stopping':
+            return  '暂停中';
+        }
+      },
       handleSelectionChange(val) {
         this.multipleSelection = val;
       },
@@ -317,7 +359,8 @@
   .task-list{
     font-size: 14px;
     margin-left: 20px;
-    overflow: scroll;
+    overflow: auto;
+    /*height: calc(100% - 48px);*/
   }
 .task-list-operating-area{
   border: 1px solid #ebebeb;
@@ -332,20 +375,13 @@
   }
   .el-form-item {
     margin-bottom: 6px;
-    .el-table{
-      margin-right: 20px;
-      .el-table__expand-icon {
-        display: block;
-        width: 25px;
-        line-height: 20px;
-        height: 20px;
-        text-align: center;
-        margin-left: -20px;
-        float: left;
-      }
-    }
   }
 }
+  .el-table .el-table__row .el-table__row--level .el-table__expand-icon{
+     width: 25px;
+     margin-left: -20px !important;
+     float: left !important;
+   }
 .task-list-menu-cion{
   font-size: 20px;
 }

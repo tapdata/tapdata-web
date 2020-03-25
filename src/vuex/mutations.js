@@ -1,9 +1,9 @@
 const mutations = {
-//     login (state, payload) {
-//       state.user = payload
-//     },
-//     logout (state) {
-//       state.user = undefined
-//     }
+    dataFlows (state, payload) {
+      state.dataFlows = payload
+    },
+    delDataFlows (state, payload) {
+      state.dataFlows = ''
+    }
 }
 export default mutations
