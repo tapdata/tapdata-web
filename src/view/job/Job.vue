@@ -16,7 +16,7 @@
 					v-if="!['scheduled', 'running'].includes(status)"
 					size="mini" type="primary"
 					@click="save">Save</el-button>
-			<!--<el-button size="mini" type="primary" @click="switchModel">Model</el-button>-->
+			<el-button size="mini" type="primary" @click="switchModel">Model</el-button>
 		</div>
 	</div>
 </template>
@@ -55,7 +55,7 @@
 				// validate
 				let verified = this.editor.graph.validate();
 				if( verified !== true) {
-					self.$message.error(verified);
+					this.$message.error(verified);
 					return;
 				}
 
@@ -137,12 +137,12 @@
 				return postData;
 			},
 
-			doSave(postData, cb){
+			doSave(data, cb){
 				let self = this;
 
-				let promise = postData.id ?
-					dataFlowsApi.patch(postData):
-					dataFlowsApi.post(postData);
+				let promise = data.id ?
+					dataFlowsApi.patch(data):
+					dataFlowsApi.post(data);
 
 				promise.then((result) => {
 					if( result && result.data ){
@@ -156,18 +156,15 @@
 						if( typeof cb === "function"){
 							cb(null, dataFlow);
 						}
-
 					} else {
 						if( typeof cb === "function"){
 							cb(result, null);
 						}
-						this.$message.error('Save Fail: ' + result.msg || '');
 					}
 				}).catch(e => {
 					if( typeof cb === "function"){
 						cb(e, null);
 					}
-					this.$message.error('Save Fail: ' + e.message);
 				});
 			},
 
@@ -176,7 +173,13 @@
 					data = this.getDataFlowData();
 
 				if( data ){
-					self.doSave(data, (err, entityData) => {});
+					self.doSave(data, (err, entityData) => {
+						if( err ){
+							this.$message.error('Save failed');
+						} else {
+							this.$message.success('Save success');
+						}
+					});
 				}
 			},
 
@@ -185,38 +188,69 @@
 					data = this.getDataFlowData();
 
 				if( data.id ) {
-
 					data = {
 						id: data.id,
 						status: 'scheduled'
 					};
-
-				} else {
-					self.doSave(data, (err, dataFlow) => {
-						if( dataFlow) {
-
-						}
-					});
 				}
+				data.status = 'scheduled';
+				self.doSave(data, (err, dataFlow) => {
+					if( err ){
+						this.$message.error('Start failed');
+					} else {
+						this.$message.success('Start success');
+						self.setEditable(false);
+					}
+				});
 			},
 
 			stop(){
+				let self = this,
+					data = {
+						id: this.dataFlowId,
+						status: 'stopping'
+					};
 
+				self.doSave(data, (err, dataFlow) => {
+					if( err ){
+						this.$message.error('Stop failed');
+					} else {
+						this.$message.success('Stop success');
+						self.setEditable(true);
+					}
+				});
 			},
 
 			capture() {
-				if( this.dataFlow ){
-					delete this.dataFlow.editorData;
-					//this.editor.setEditable(!this.editor.editable, this.dataFlow);
+				let self = this,
+					data = this.getDataFlowData();
+
+				if( data.id ) {
+					data = {
+						id: data.id,
+						status: ['scheduled', 'running'].includes(data.status) ? data.status : 'scheduled',
+						executeMode: 'running' === data.status ? 'running_debug' : 'editing_debug'
+					};
 				} else {
-					this.$message.error('Please save the task before running');
+					Object.assign(data, {
+						status: 'scheduled',
+						executeMode: 'editing_debug'
+					});
 				}
+				self.doSave(data, (err, dataFlow) => {
+					if( err ){
+						this.$message.error('Save failed');
+					} else {
+						this.$message.success('Save success');
+						self.setEditable(false);
+					}
+				});
 			},
 
-			switchModel(){
+			setEditable(editable){
 				if( this.dataFlow ){
 					delete this.dataFlow.editorData;
-					this.editor.setEditable(!this.editor.editable, this.dataFlow);
+					this.editor.setEditable(editable, this.dataFlow);
 				} else {
 					this.$message.error('Please save the task before running');
 				}

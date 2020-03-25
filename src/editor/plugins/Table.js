@@ -44,7 +44,7 @@ export const tableConfig = {
 					throw new Error(name + ': Settings cannot be none.');
 				if( !data.connectionId )
 					throw new Error(name + ': Database cannot be empty.');
-				if( !data.tableId )
+				if( !data.tableName )
 					throw new Error(name + ': Table cannot be empty.');
 				return true;
 			}

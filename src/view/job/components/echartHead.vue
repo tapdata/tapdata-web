@@ -61,13 +61,13 @@ export default {
       this.$emit("getSpeed",this.speed,this.time);
       this.$emit("getTime",this.time,this.data.type);
       if(this.data.type ==="screening") {
-        this.selectColor = 'screeningColor'
+        this.selectColor = 'screeningColor';
       } else if (this.data.type ==="inputOutput") {
-        this.selectColor = 'putColor'
+        this.selectColor = 'putColor';
       } else if (this.data.type ==="transf") {
-        this.selectColor = 'transfColor'
+        this.selectColor = 'transfColor';
       } else if (this.data.type ==="replicate") {
-        this.selectColor = 'replicateColor'
+        this.selectColor = 'replicateColor';
       }
     })
   },
