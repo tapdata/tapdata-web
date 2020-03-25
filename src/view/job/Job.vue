@@ -16,7 +16,7 @@
 					v-if="!['scheduled', 'running'].includes(status)"
 					size="mini" type="primary"
 					@click="save">Save</el-button>
-			<!--<el-button size="mini" type="primary" @click="switchModel">Model</el-button>-->
+			<!-- <el-button size="mini" type="primary" @click="switchModel">Model</el-button> -->
 		</div>
 	</div>
 </template>
