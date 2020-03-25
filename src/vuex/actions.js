@@ -1,9 +1,9 @@
 const actions = {
-  dataFlows (context, payload) {
-          context.commit('login', payload);
-        },
-  delDataFlows (context) {
-          context.commit('logout');
-        }
+  // dataFlows (context, payload) {
+  //     context.commit('dataFlows', payload);
+  //   },
+  // delDataFlows (context,payload) {
+  //   sessionStorage.removeItem('dataFlows')
+  //   }
 }
 export default actions
