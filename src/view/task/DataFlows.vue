@@ -72,10 +72,6 @@
 				<el-table-column type="selection" width="55" :selectable="hanldeSelectable">
 				</el-table-column>
 				<el-table-column prop="name" label="任务名称">
-					<template slot-scope="scope">
-						<div>{{scope.row.name}}</div>
-						<div>{{scope.row.last_updated}}</div>
-					</template>
 				</el-table-column>
 				<el-table-column sortable label="创建人" width="180"></el-table-column>
 				<el-table-column prop="status" sortable label="任务状态" width="180">
@@ -86,6 +82,7 @@
 				<el-table-column prop="input" sortable label="总输入（条）" width="180"></el-table-column>
 				<el-table-column prop="output" sortable label="总输出（条）" width="180"></el-table-column>
 				<el-table-column prop="transmissionTime" sortable label="输出速度" width="180"></el-table-column>
+        <el-table-column prop="last_updated" label="时间" width="180" :formatter="formatterTime"></el-table-column>
 				<el-table-column label="运行开关" width="100">
 					<template slot-scope="scope">
 						<div v-if="!scope.row.hasChildren">
@@ -93,7 +90,6 @@
 									v-model="scope.row.newStatus"
 									inactive-value="paused" active-value="running"
 									@change="handleStatus(scope.row.id, scope.row.newStatus)"></el-switch>
-							<!--<el-switch v-model="scope.row.status" v-if="scope.row.status !== 'running'" inactive-value="paused"  @change="handleStatus(scope.row.id,scope.row.status)"></el-switch>-->
 						</div>
 					</template>
 				</el-table-column>
@@ -127,7 +123,6 @@
 
 <script>
 	import factory from '../../api/factory';
-
 	const dataFlows = factory('DataFlows');
 
 	export default {
@@ -163,17 +158,19 @@
 					value: 'stopping'
 				}],
 				multipleSelection: [],
-				formData: [{
+				formData: {
 					search: '',
 					timeData: [],
 					status: '',
 					person: '',
 					classification: [],
-				}]
+				}
 			};
 		},
 		created() {
+      this.formData = JSON.parse(this.$store.state.dataFlows ? this.$store.state.dataFlows : '');
 			this.screenFn();
+			this.keyupEnter();
 		},
 		computed: {
 			maxHeight: function () {
@@ -190,11 +187,21 @@
 				}
 			},
 			screenFn() {
+        this.$store.commit('dataFlows', JSON.stringify(this.formData));
 				this.getData();
 			},
+      keyupEnter(){
+        document.onkeydown = e =>{
+          let body = document.getElementsByTagName('body')[0];
+          if (e.keyCode === 13) {
+            this.$store.commit('dataFlows', JSON.stringify(this.formData));
+            this.getData();
+          }
+        }
+      },
 			async getData(params) {
 				let where = {};
-				if (this.formData && this.formData.length !== 0) {
+				if (this.formData) {
 					if (this.formData.status && this.formData.status !== '') {
 						where.status = this.formData.status;
 					}
@@ -300,7 +307,6 @@
 				let data = {
 					status: status,
 				};
-
 				status = status === 'running' ? 'paused' : 'scheduled';
 				await dataFlows.updateById(id, data).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
@@ -355,20 +361,10 @@
 					});
 				});
 			},
-			formatterStatus(row) {
-				switch (row.status) {
-					case 'running':
-						return '运行中';
-					case 'paused':
-						return '已暂停';
-					case 'draft':
-						return '草稿';
-					case 'scheduled':
-						return '等待中';
-					case 'stopping':
-						return '暂停中';
-				}
-			},
+      formatterTime(row){
+          let time = row.last_updated ? this.$moment(row.last_updated).format('YYYY-MM_DD HH:mm:ss') : '';
+          return time;
+      },
 			handleSelectionChange(val) {
 				this.multipleSelection = val;
 			},

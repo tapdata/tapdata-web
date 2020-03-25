@@ -1,11 +1,11 @@
 const mutations = {
     dataFlows (state, payload) {
       state.dataFlows = payload;
-      sessionStorage.dataFlows = payload
+      sessionStorage.dataFlows = payload;
     },
     delDataFlows (state, payload) {
       state.dataFlows = payload;
-      sessionStorage.removeItem=''
+      sessionStorage.removeItem='';
     }
-}
-export default mutations
+};
+export default mutations;

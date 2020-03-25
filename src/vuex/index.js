@@ -8,7 +8,13 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   // 全局变量
   state: {
-    dataFlows: ''
+    dataFlows:{
+      search: '',
+      timeData: [],
+      status: '',
+      person: '',
+      classification: [],
+    }
   },
  actions,
  mutations,
