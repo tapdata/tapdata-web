@@ -1,16 +1,16 @@
 <template>
   <div class="echartData">
     <el-select v-model="domValue">
-      <el-option
-        key="value"
+      <!-- <el-option
+        key="all"
         :label="$t('dataFlow.allNode')"
         value="all">
-      </el-option>
+      </el-option> -->
       <el-option
-        v-for="item in domList"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value">
+        v-for="item in flow.stages"
+        :key="item.id"
+        :label="item.tableName"
+        :value="item.id">
       </el-option>
     </el-select>
     <div class="echartMain">
@@ -83,10 +83,10 @@ export default {
   name: 'echartData',
   components: {echartHead,echartsCompinent,shaftlessEchart},
 	props: {
-  		dataFlow: {
-  			type: Object,
-			required: true
-		}
+    dataFlow: {
+      type: Object,
+      required: true
+    }
 	},
   data() {
     return {
@@ -94,15 +94,16 @@ export default {
       speed: '',
       time: '',
       domValue: 'all',
-      domList: [],
       flow: {
-        flowName: '客户信息数据库复制',
+        name: '客户信息数据库复制',
         creatdor: 'shane',
-        createTime:'2019/06/07/22:33:44',
-        state: '执行中',
+        last_updated:'2019/06/07/22:33:44',
+        status: '执行中',
         executionTime: '2466h:56:45',
         inputNumber: '123,000',
-        outputNumber: ''
+        outputNumber: '',
+        stages: [],
+        id: '',
       },
       throughputData: null,
       dataScreening: null,    //数据总览的echart数据
@@ -122,6 +123,8 @@ export default {
   },
   mounted() {
     let params = {};
+    this.flow = this.dataFlow;
+    console.log(this.flow,this.domValue)
     // this.getApiData();
     this.screeningObj = {
       title: this.$t('dataFlow.dataScreening'),
@@ -151,10 +154,12 @@ export default {
       isIput: true,
       tip:this.$t("dataFlow.replicate_pop")
     }
+    console.log("dataFlow",this.dataFlow)
   },
   watch:{
     domValue: {
       handler(val) {
+        console.log(val)
         if(val === "all") {
           this.selectFlow = 'flow_'
         } else {
@@ -173,12 +178,12 @@ export default {
         'filter[where][granularity]': this.selectFlow + time
       }
       //判断是否是全部节点
-      // if(this.domValue === "all") {
-      //   params['filter[where][dataFlowId]']= this.domValu;
-      // } else {
-      //   params['filter[where][dataFlowId]']= this.domValue;
-      //   params['filter[where][stageId]']= this.domValue;
-      // }
+      if(this.domValue === "all") {
+        params['filter[where][dataFlowId]']= this.flow.id;
+      } else {
+        params['filter[where][dataFlowId]']= this.flow.id;
+        params['filter[where][stageId]']= this.domValue;
+      }
       this.getApiData(params,'throughput',data)
     },
 
@@ -189,12 +194,12 @@ export default {
         'filter[where][granularity]': data
       }
       //判断是否是全部节点
-      // if(this.domValue === "all") {
-      //   params['filter[where][dataFlowId]']= this.domValue;
-      // } else {
-      //   params['filter[where][dataFlowId]']= this.domValue;
-      //   params['filter[where][stageId]']= this.domValue;
-      // }
+      if(this.domValue === "all") {
+        params['filter[where][dataFlowId]']= this.flow.id;
+      } else {
+        params['filter[where][dataFlowId]']= this.flow.id;
+        params['filter[where][stageId]']= this.domValue;
+      }
       this.getApiData(params,type,data)
     },
 
@@ -207,24 +212,24 @@ export default {
           'filter[where][granularity]': this.selectFlow + data
         }
         //判断是否是全部节点
-        // if(this.domValue === "all") {
-        //   params['filter[where][dataFlowId]']=this.domValue;
-        // } else {
-        //   params['filter[where][dataFlowId]']= this.domValue;
-        //   params['filter[where][stageId]']= this.domValue;
-        // }
+        if(this.domValue === "all") {
+          params['filter[where][dataFlowId]']= this.flow.id;
+        } else {
+          params['filter[where][dataFlowId]']= this.flow.id;
+          params['filter[where][stageId]']= this.domValue;
+        }
       } else if( type === "replicate") {
         params = {
           'filter[where][statsType]': "repl_lag",
           'filter[where][granularity]': this.selectFlow + data
         }
         //判断是否是全部节点
-        // if(this.domValue === "all") {
-        //   params['filter[where][dataFlowId]']= this.domValue;
-        // } else {
-        //   params['filter[where][dataFlowId]']= this.domValue;
-        //   params['filter[where][stageId]']= this.domValue;
-        // }
+        if(this.domValue === "all") {
+          params['filter[where][dataFlowId]']= this.flow.id;
+        } else {
+          params['filter[where][dataFlowId]']= this.flow.id;
+          params['filter[where][stageId]']= this.domValue;
+        }
       }
       this.getApiData(params,type,data);
     },
@@ -264,7 +269,6 @@ export default {
         }
       } else if(type === "throughput") {
         data.forEach(item=>{
-          console.log(item)
           timeList.push(item.t);  //时间
           inputSizeList.push(item.inputSize);
           outputSizeList.push(item.outputSize);
@@ -295,7 +299,6 @@ export default {
           this.getReplicateTime(timeList,dataList)
         }
       }
-      console.log(inputSizeList,outputSizeList,inputCountList,outputCountList,this.inputAverage,this.outputAverage,this.currentTime,this.ransfTime)
     },
     getScreening(time,series1,series2) {
       this.dataScreening = {
@@ -581,10 +584,8 @@ export default {
 <style scoped lang="less">
 .echartData {
   width: 100%;
-  height: 100%;
-  padding: 10px 15px;
+  padding: 10px 15px 15px;
   box-sizing: border-box;
-  overflow-y: auto;
   .echartMain {
     height: 100%;
     .echartlist {
@@ -613,7 +614,9 @@ export default {
         }
       }
       .info {
+        width: 40%;
         padding: 30px 10px 0 30px;
+        box-sizing: border-box;
         .info-list {
           padding-bottom: 14px;
           .info-label {
