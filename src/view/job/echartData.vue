@@ -50,14 +50,24 @@
       </div>
       <div class="echartlist">
         <echart-head :data="inputOutputObj" @getSpeed="getSpeed"></echart-head>
+        <div class="floatLayer">
+          <span style="background-color:rgba(72,182,226,.3);color:#48b6e2;">平均：{{this.inputAverage}}</span>
+          <span style="background-color:rgba(98,165,105,.3);color:#62a569;">平均：{{this.outputAverage}}</span>
+        </div>
         <echarts-compinent :echartObj="throughputData" v-if="throughputData" :echartsId="'echartsId'" style="width: 100%"></echarts-compinent>
       </div>
       <div class="echartlist">
         <echart-head :data="transfObj" @getTime="getTime"></echart-head>
+        <div class="floatLayer">
+          <span style="background-color:rgba(251,142,0,.3);color:#fb8e00;">当前：{{this.currentTime}}</span>
+        </div>
         <echarts-compinent :echartObj="transfData" v-if="transfData" :echartsId="'transfId'" style="width: 100%"></echarts-compinent>
       </div>
       <div class="echartlist">
         <echart-head :data="replicateObj" @getTime="getTime"></echart-head>
+        <div class="floatLayer">
+          <span style="background-color:rgba(7245,108,108,.3);color:#f56c6c;">当前：{{this.ransfTime}}</span>
+        </div>
         <echarts-compinent :echartObj="replicateData" v-if="replicateData" :echartsId="'replicateId'" style="width: 100%"></echarts-compinent>
       </div>
     </div>
@@ -80,7 +90,7 @@ export default {
 	},
   data() {
     return {
-      selectFlow: '',  //选中节点
+      selectFlow: 'flow_',  //选中节点
       speed: '',
       time: '',
       domValue: 'all',
@@ -103,7 +113,11 @@ export default {
       storeData: null,
       replicateObj: null,
       replicateData: null,
-      throughput_time: []
+      throughput_time: [],
+      inputAverage: '',   //输入平均值
+      outputAverage: '',   //输出平均值
+      currentTime: '',   // 当前耗时
+      ransfTime: '',   // 传输耗时
     };
   },
   mounted() {
@@ -153,19 +167,21 @@ export default {
   methods: {
     // 输入输出获取数据
     getSpeed(data,time) {
+      console.log( this.selectFlow)
       let params = {
         'filter[where][statsType]': "throughput",
         'filter[where][granularity]': this.selectFlow + time
       }
       //判断是否是全部节点
-      if(this.domValue === "all") {
-        params['filter[where][dataFlowId]']= this.domValu;
-      } else {
-        params['filter[where][dataFlowId]']= this.domValue;
-        params['filter[where][stageId]']= this.domValue;
-      }
+      // if(this.domValue === "all") {
+      //   params['filter[where][dataFlowId]']= this.domValu;
+      // } else {
+      //   params['filter[where][dataFlowId]']= this.domValue;
+      //   params['filter[where][stageId]']= this.domValue;
+      // }
       this.getApiData(params,'throughput',data)
     },
+
     //获取返回的单位
     getTwoRadio(data,type) {
       let params = {
@@ -173,14 +189,15 @@ export default {
         'filter[where][granularity]': data
       }
       //判断是否是全部节点
-      if(this.domValue === "all") {
-        params['filter[where][dataFlowId]']= this.domValue;
-      } else {
-        params['filter[where][dataFlowId]']= this.domValue;
-        params['filter[where][stageId]']= this.domValue;
-      }
+      // if(this.domValue === "all") {
+      //   params['filter[where][dataFlowId]']= this.domValue;
+      // } else {
+      //   params['filter[where][dataFlowId]']= this.domValue;
+      //   params['filter[where][stageId]']= this.domValue;
+      // }
       this.getApiData(params,type,data)
     },
+
     //获取返回的时间
     getTime(data,type) {
       let params;
@@ -190,24 +207,24 @@ export default {
           'filter[where][granularity]': this.selectFlow + data
         }
         //判断是否是全部节点
-        if(this.domValue === "all") {
-          params['filter[where][dataFlowId]']=this.domValue;
-        } else {
-          params['filter[where][dataFlowId]']= this.domValue;
-          params['filter[where][stageId]']= this.domValue;
-        }
+        // if(this.domValue === "all") {
+        //   params['filter[where][dataFlowId]']=this.domValue;
+        // } else {
+        //   params['filter[where][dataFlowId]']= this.domValue;
+        //   params['filter[where][stageId]']= this.domValue;
+        // }
       } else if( type === "replicate") {
         params = {
           'filter[where][statsType]': "repl_lag",
           'filter[where][granularity]': this.selectFlow + data
         }
         //判断是否是全部节点
-        if(this.domValue === "all") {
-          params['filter[where][dataFlowId]']= this.domValue;
-        } else {
-          params['filter[where][dataFlowId]']= this.domValue;
-          params['filter[where][stageId]']= this.domValue;
-        }
+        // if(this.domValue === "all") {
+        //   params['filter[where][dataFlowId]']= this.domValue;
+        // } else {
+        //   params['filter[where][dataFlowId]']= this.domValue;
+        //   params['filter[where][stageId]']= this.domValue;
+        // }
       }
       this.getApiData(params,type,data);
     },
@@ -247,16 +264,23 @@ export default {
         }
       } else if(type === "throughput") {
         data.forEach(item=>{
+          console.log(item)
           timeList.push(item.t);  //时间
           inputSizeList.push(item.inputSize);
           outputSizeList.push(item.outputSize);
           inputCountList.push(item.inputCount);
           outputCountList.push(item.outputCount);
-        })
+        });
+
         if(ele === "qps") {
-          this.getThroughputEchart(timeList,inputSizeList,outputSizeList);
-        } else {
+          this.inputAverage = inputCountList[inputCountList.length-1];
+          this.outputAverage = outputCountList[outputCountList.length-1];
           this.getThroughputEchart(timeList,inputCountList,outputCountList);
+
+        } else {
+          this.inputAverage = inputSizeList[inputSizeList.length-1];
+          this.outputAverage = outputSizeList[outputSizeList.length-1];
+          this.getThroughputEchart(timeList,inputSizeList,outputSizeList);
         }
       } else {
         data.forEach(item => {
@@ -264,11 +288,14 @@ export default {
           dataList.push(item.d)
         })
         if (type === "transf") {
+          this.currentTime = dataList[dataList.length-1];
           this.getTransTime(timeList,dataList)
         } else if(type === "replicate") {
+          this.ransfTime = dataList[dataList.length-1];
           this.getReplicateTime(timeList,dataList)
         }
       }
+      console.log(inputSizeList,outputSizeList,inputCountList,outputCountList,this.inputAverage,this.outputAverage,this.currentTime,this.ransfTime)
     },
     getScreening(time,series1,series2) {
       this.dataScreening = {
@@ -352,7 +379,14 @@ export default {
     getThroughputEchart(time,series1,series2) {
       this.throughputData = {
         tooltip: {
-            trigger: 'axis',
+          trigger: 'axis',
+
+          // formatter: function(params) {
+            // console.log(params)
+          //   var d_value = params.value;
+          //   var res = params.name+'<br/>'+'采集终端: '+d_value;
+          //   return res;
+          // }
         },
         legend: {
             // data: [this.$t('dataFlow.input'),this.$t('dataFlow.output')],
@@ -381,8 +415,7 @@ export default {
         yAxis: {
           axisLine:{
             lineStyle:{
-                color:'#48b6e2',
-                width: 2,//这里是为了突出显示加上的
+                color:'#48b6e2'
             }
           } ,
           axisLabel: {
@@ -400,8 +433,10 @@ export default {
               lineStyle: {
                 color: '#2ba7c3'
               },
-              formatter: function(params){
-                return "CPU";
+              markLine : {
+                data : [{
+                  type : 'average', name: '平均值'
+                }]
               }
             },
             {
@@ -413,8 +448,13 @@ export default {
               },
               lineStyle: {
                 color:'#8cd5c2', //改变折线点的颜色
+              },
+              markLine : {
+                data : [{
+                  type : 'average', name: '平均值'
+                }]
               }
-            }
+            },
         ]
       };
     },
@@ -507,7 +547,6 @@ export default {
           axisLine: {
             lineStyle:{
               color:'#f56c6c',
-              width: 2,//这里是为了突出显示加上的
             }
           },
           data: time
@@ -515,8 +554,7 @@ export default {
         yAxis: {
           axisLine:{
             lineStyle:{
-                color:'#f56c6c',
-                width: 2,//这里是为了突出显示加上的
+                color:'#f56c6c'
             }
           } ,
           axisLabel: {
@@ -532,10 +570,6 @@ export default {
               },
               lineStyle: {
                 color: '#f56c6c'
-              },
-              formatter: function(params){
-                console.log(params + ','+typeof(params));
-                return "CPU";
               }
             }
         ]
@@ -554,6 +588,7 @@ export default {
   .echartMain {
     height: 100%;
     .echartlist {
+      position: relative;
       width: 100%;
       height: 330px;
       margin-top: 20px;
@@ -563,6 +598,19 @@ export default {
       .echartMain {
         width: 60%!important;
         height: calc(100% - 40px);
+      }
+      .floatLayer {
+        position: absolute;
+        right: 20px;
+        top: 90px;
+        span {
+          display: block;
+          width: 76px;
+          margin-bottom: 10px;
+          padding: 3px 6px;
+          font-size: 12px;
+          background: #f00;
+        }
       }
       .info {
         padding: 30px 10px 0 30px;

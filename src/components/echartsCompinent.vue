@@ -64,6 +64,13 @@ export default {
           tooltip: {
             trigger: configures.tooltip.trigger,
             confine: true, //是否将 tooltip 框限制在图表的区域内。  true为是
+            backgroundColor: "#fff",
+            borderColor:'#dedee4',
+            borderWidth: 1,
+            textStyle: {
+              color:'#333',
+              fontSize: 12
+            },
             axisPointer: {
               // 坐标轴指示器，坐标轴触发有效
               // type: configures.tooltip.axisPointer.type, // 默认为直线，可选为：'line' | 'shadow'
@@ -71,7 +78,7 @@ export default {
                 // backgroundColor: '#6a7985'
               }
             },
-            // formatter: configures.tooltip.formatter
+            formatter: configures.tooltip.formatter
           },
           //图例
           legend: {
@@ -103,7 +110,10 @@ export default {
             splitLine: {show: true}, //是否显示分隔线
             axisLine: {
               show: true,
-              lineStyle: configures.xAxis.axisLine.lineStyle
+              lineStyle: {
+                color: configures.xAxis.axisLine.lineStyle.color,
+                width: 1,//这里是为了突出显示加上的
+              }
             }, //是否显示坐标轴轴线。
             axisLabel : {
               textStyle:{
@@ -131,7 +141,12 @@ export default {
             type: 'value',
             min: 0,
             axisTick: {show: false},
-            axisLine: configures.yAxis.axisLine,
+            axisLine: {
+              lineStyle:{
+                color: configures.yAxis.axisLine.lineStyle.color,
+                 width: 1//这里是为了突出显示加上的
+              }
+            },
             splitArea: {
               areaStyle: {
                 color: ['rgba(250,250,250,0.3)','rgba(200,200,200,0.3)']

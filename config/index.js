@@ -12,7 +12,11 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
+<<<<<<< HEAD
+        target: 'http://192.168.124.19:3030',
+=======
         target: 'http://backend:3030',
+>>>>>>> e292273e68c7126e7e5ce82931b87946fb7b00f2
         changeOrigin: false
       },
       '/oauth': {target: 'http://backend:3030', changeOrigin: false},

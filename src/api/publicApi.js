@@ -25,8 +25,8 @@ export default class PublicAPI {
 		return axios.get(this.url + '/count', {params});
 	}
 
-	patch(params) {
-		return axios.patch(this.url, params);
+	patch(id,params) {
+		return axios.patch(this.url + '/' + id, params);
 	}
 
 	get(params) {

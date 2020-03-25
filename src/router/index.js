@@ -7,6 +7,7 @@ import echartData from '../view/job/echartData';
 
 import clusterManagement from '../view/clusterManagement/clusterManagement';
 import dailyRecord from '../view/clusterManagement/dailyRecord';
+import DataFlows from "../view/task/DataFlows";
 
 Vue.use(Router);
 
@@ -34,6 +35,10 @@ export default new Router({
 			name: 'job',
 			component: Job
 		},{
+      path: '/dataFlows',
+      name: 'DataFlows',
+      component: DataFlows
+    },{
 			path: '/echartData',
 			name: 'echartData',
 			component: echartData
