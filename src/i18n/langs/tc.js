@@ -67,7 +67,14 @@ const tc = {
       replicate: "數據同步差距",
       throughputpop:'平均每秒源端數據采集的速度以及目標端寫入的速度，數值越大越好',
       transtime_pop: '傳輸耗時：除源節點外，事件處理完的時間減去事件的發生時間。 節點間統計：事件從進入節點到輸出到所消耗的時間。 任務流統計：所有節點耗時相加，數值越小越好',
-      replicate_pop: '源庫和目標庫數據最後更新時間的差距，數值越小越好'
+      replicate_pop: '源庫和目標庫數據最後更新時間的差距，數值越小越好',
+		status: {
+			running: 'Running',
+			paused: 'Paused',
+			draft: 'Draft',
+			scheduled: 'Scheduled',
+			stopping: 'Stopping',
+		}
     },
     ...tcLocale
   };

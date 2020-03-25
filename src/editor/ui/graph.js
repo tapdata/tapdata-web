@@ -95,20 +95,25 @@ export default class Graph extends Component{
 		paper.on('blank:pointerclick', this.onClickBlank.bind(this));
 		paper.on('link:connect', function(linkView, evt, elementViewConnected, magent, arrowhead){
 			log('Graph.link.connect', arguments);
-			let targetCell = linkView.model.getTargetCell();
+			self.updateOutputSchema(linkView.model);
+			/*let targetCell = linkView.model.getTargetCell();
 			if( targetCell && typeof targetCell.updateOutputSchema === 'function'){
 				targetCell.updateOutputSchema();
-			}
+			}*/
 		});
 		paper.on('link:disconnect', function(linkView, evt, elementViewDisconnected, magent, arrowhead){
 			log('Graph.link.disconnect', arguments);
-			let targetCell = elementViewDisconnected.model;
+			self.updateOutputSchema(linkView.model);
+			/*let targetCell = elementViewDisconnected.model;
 			if( targetCell && typeof targetCell.updateOutputSchema === 'function'){
 				targetCell.updateOutputSchema();
-			}
+			}*/
 		});
 		graph.on('remove', (model, collection, options) => {
 			log('Graph.graph.remove');
+			if( model.isLink() ){
+				self.updateOutputSchema(model);
+			}
 		});
 
 		this.snaplines = new joint.ui.Snaplines({ paper: paper });
@@ -137,8 +142,16 @@ export default class Graph extends Component{
 	}
 
 	updateOutputSchema(cell){
-		if( cell.isLink() ){
-
+		log('Graph.updateOutputSchema');
+		let self = this;
+		if( cell && cell.isLink() ){
+			let targetCell = cell.getTargetCell();
+			if( !targetCell && cell.target() && cell.target().id){
+				targetCell = self.graph.getCell(cell.target().id);
+			}
+			if( targetCell && typeof targetCell.updateOutputSchema === 'function'){
+				targetCell.updateOutputSchema();
+			}
 		}
 	}
 

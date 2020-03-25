@@ -168,9 +168,9 @@
 				if( this.cell ){
 					let sourceCell = this.cell.getSourceCell(),
 						targetCell = this.cell.getTargetCell(),
-						sourceSchema = sourceCell.getSchema(),
-						targetInputSchema = targetCell.getInputSchema(),
-						targetSchema = targetCell.getSchema()
+						sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null,
+						targetInputSchema = targetCell ? targetCell.getInputSchema() : null,
+						targetSchema = targetCell ? targetCell.getSchema() : null
 					;
 
 					let mergedTargetSchema = mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
