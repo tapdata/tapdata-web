@@ -325,7 +325,7 @@
     border: 1px solid @color;
     display: inline-block;
     max-width: 600px;
-    min-width: 488px;
+    min-width: 400px;
 
     .el-header {
       line-height: 23px;
@@ -428,7 +428,7 @@
     display: inline;
     background-color: #71c179;
     color: #fff;
-    line-height: 40px;
+    line-height: 30px;
   }
 
   .row-col-base {

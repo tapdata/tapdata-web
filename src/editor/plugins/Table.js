@@ -169,7 +169,7 @@ export const tableConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: 'Database',
+				dataTooltip: 'RDBMS Table',
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},

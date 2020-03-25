@@ -20,7 +20,7 @@ export const collectionConfig = {
 					xlinkHref: 'static/editor/o-collection.svg',
 				},
 				label:{
-					text:'collection'
+					text:'Collection'
 				}
 			}
 		},
@@ -170,7 +170,7 @@ export const collectionConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: 'Database',
+				dataTooltip: 'MongoDB Collection',
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},

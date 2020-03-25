@@ -39,7 +39,10 @@ export default class Monitor extends Component{
 		vm.$mount(vueContainerDom);
 
 		editor.graph.on('stage:selected', (stageData) => {
-			log('Monitor.stage.selected');
+			log('Monitor.stage.selected', stageData);
+			if( vm ){
+				vm.$emit('selected:stage', stageData);
+			}
 		});
 	}
 

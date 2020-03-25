@@ -1,11 +1,22 @@
 <template>
 	<div class="editor-container">
 		<div class="action-buttons">
-			<el-button v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)" size="mini" type="danger">Stop</el-button>
-			<el-button v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)" size="mini" type="success">Start</el-button>
-			<el-button size="mini" type="warning">Capture</el-button>
-			<el-button size="mini" type="primary" @click="doSave">Save</el-button>
-			<el-button size="mini" type="primary" @click="switchModel">Model</el-button>
+			<el-button
+					v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
+					size="mini" type="danger"
+					@click="stop">Stop</el-button>
+			<el-button
+					v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
+					size="mini" type="success"
+					@click="start">Start</el-button>
+			<el-button
+					size="mini" type="warning"
+					@click="capture">Capture</el-button>
+			<el-button
+					v-if="!['scheduled', 'running'].includes(status)"
+					size="mini" type="primary"
+					@click="save">Save</el-button>
+			<!--<el-button size="mini" type="primary" @click="switchModel">Model</el-button>-->
 		</div>
 	</div>
 </template>
@@ -20,6 +31,8 @@
 	const dataFlowsApi = factory('DataFlows');
 	export default {
 		name: "Job",
+		dataFlow: null,
+
 		data() {
 			return {
 				// run model: editable,readonly
@@ -37,9 +50,8 @@
 		},
 
 		methods: {
-			doSave(){
-				let self = this;
 
+			getDataFlowData() {
 				// validate
 				let verified = this.editor.graph.validate();
 				if( verified !== true) {
@@ -49,7 +61,6 @@
 
 				let editorData = this.editor.getData();
 				let graphData = editorData.graphData;
-				// let graphLib = editorData.graphLib;
 
 				let cells = graphData.cells ? graphData.cells : [];
 				let edgeCells = {};
@@ -107,7 +118,6 @@
 						});
 					}
 				});
-
 				Object.values(edgeCells).forEach(cell => {
 					if( 'app.Link' === cell.type){
 						let sourceId = cell.source.id;
@@ -117,24 +127,90 @@
 						stages[targetId].inputLanes.push(sourceId);
 					}
 				});
-
 				postData.stages = Object.values(stages);
-				log('Job.saveData:', postData);
-				let promise;
-				if( self.dataFlowId ){
-					postData.id = self.dataFlowId;
-					promise = dataFlowsApi.patch(postData);
-				} else {
-					promise = dataFlowsApi.post(postData);
-				}
+
+				log('Job.getDataFlowData: ', postData);
+
+				if( this.dataFlowId )
+					postData.id = this.dataFlowId;
+
+				return postData;
+			},
+
+			doSave(postData, cb){
+				let self = this;
+
+				let promise = postData.id ?
+					dataFlowsApi.patch(postData):
+					dataFlowsApi.post(postData);
+
 				promise.then((result) => {
 					if( result && result.data ){
-						self.dataFlowId = result.data.id;
-						self.dataFlow = result.data;
+						let dataFlow = result.data;
+
+						self.dataFlowId = dataFlow.id;
+						self.status = dataFlow.status;
+
+						self.dataFlow = dataFlow;
+
+						if( typeof cb === "function"){
+							cb(null, dataFlow);
+						}
+
+					} else {
+						if( typeof cb === "function"){
+							cb(result, null);
+						}
+						this.$message.error('Save Fail: ' + result.msg || '');
 					}
 				}).catch(e => {
-					throw new Error(e);
+					if( typeof cb === "function"){
+						cb(e, null);
+					}
+					this.$message.error('Save Fail: ' + e.message);
 				});
+			},
+
+			save(){
+				let self = this,
+					data = this.getDataFlowData();
+
+				if( data ){
+					self.doSave(data, (err, entityData) => {});
+				}
+			},
+
+			start(){
+				let self = this,
+					data = this.getDataFlowData();
+
+				if( data.id ) {
+
+					data = {
+						id: data.id,
+						status: 'scheduled'
+					};
+
+				} else {
+					self.doSave(data, (err, dataFlow) => {
+						if( dataFlow) {
+
+						}
+					});
+				}
+			},
+
+			stop(){
+
+			},
+
+			capture() {
+				if( this.dataFlow ){
+					delete this.dataFlow.editorData;
+					//this.editor.setEditable(!this.editor.editable, this.dataFlow);
+				} else {
+					this.$message.error('Please save the task before running');
+				}
 			},
 
 			switchModel(){

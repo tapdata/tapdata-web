@@ -185,7 +185,7 @@ export const scriptProcessConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: 'script',
+				dataTooltip: 'JavaScript OR Java',
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},

@@ -11,6 +11,7 @@ import {
   RadioGroup,
   RadioButton,
   Dialog,
+  Switch,
   Loading,
 	MessageBox,
 	Message,
@@ -66,6 +67,8 @@ Vue.component(Tree.name, Tree);
 Vue.component(Dropdown.name, Dropdown);
 Vue.component(DropdownItem.name, DropdownItem);
 Vue.component(DropdownMenu.name, DropdownMenu);
+Vue.component(DatePicker.name, DatePicker);
+Vue.component(Switch.name, Switch);
 
 Vue.use(Loading.directive);
 /***提示只显示一次**/
