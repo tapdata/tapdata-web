@@ -128,7 +128,7 @@
       </div>
        <div v-else class="noText">
         <i class="iconfont icon iconkongyemian_zanwuwendang" style="font-size: 174px"></i>
-      </div>
+       </div>
     </div>
     <el-dialog :title="$t('message.addServerMon')" custom-class="serverDialog" :visible.sync="dialogForm" :append-to-body="true" :lock-scroll="false" width="600px" @close='closeDialogForm()'>
       <addServe :data="currentData" ref="childRules"></addServe>
