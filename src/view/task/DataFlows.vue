@@ -322,14 +322,15 @@
 				this.multipleSelection.map(item => {
 					multipleSelection.push(item.id);
 				});
-				multipleSelection = multipleSelection.join(',');
-				let id = {
-					id: multipleSelection,
+				let where = {
+					_id: {
+					  in: multipleSelection
+          },
 				};
 				let attributes = {
 					status: status,
 				};
-				dataFlows.update(id, attributes).then(res => {
+				dataFlows.update(where, attributes).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						this.getData();
 					}
