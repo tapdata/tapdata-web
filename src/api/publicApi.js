@@ -25,8 +25,25 @@ export default class PublicAPI {
 		return axios.get(this.url + '/count', {params});
 	}
 
-	patch(id,params) {
-		return axios.patch(this.url + '/' + id, params);
+	patch(params) {
+		return axios.patch(this.url, params);
+	}
+
+	updateById(id, attributes) {
+		return axios.patch(this.url + '/' + id, attributes);
+	}
+
+	/**
+	 *
+	 * @param where 	Criteria to match model instances
+	 * @param attributes	An object of model property name/value pairs
+	 * @return {Promise<AxiosResponse<T>>}
+	 */
+	update(where, attributes) {
+		if( typeof where === "object")
+			where = JSON.stringify(where);
+
+		return axios.post(this.url + '/update?where=' + where, attributes);
 	}
 
 	get(params) {
