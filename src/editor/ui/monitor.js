@@ -41,7 +41,7 @@ export default class Monitor extends Component{
 		editor.graph.on('stage:selected', (stageData) => {
 			log('Monitor.stage.selected', stageData);
 			if( vm ){
-				vm.$emit('change:stageId', stageData.id);
+				vm.$emit('selected:stage', stageData);
 			}
 		});
 	}
