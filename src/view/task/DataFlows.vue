@@ -1,5 +1,5 @@
 <template>
-  <div class="task-list">
+  <div class="task-list" style="overflow: auto;">
     <div class="task-list-operating-area box-card">
       <el-row :gutter="10">
         <el-form label-width="100px"  :data="formData">
@@ -19,25 +19,27 @@
                 <el-select v-model="formData.status" clearable placeholder="请选择">
                   <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
+                <el-button type="primary" size="mini" @click="screenFn">{{ $t('message.filter') }}</el-button>
               </el-form-item>
+
             </el-col>
           </el-row>
-          <el-row>
-            <el-col :span="8">
-              <el-form-item label="创建人:">
-                <el-select v-model="formData.person" clearable placeholder="请选择" multiple >
-                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="目录分类:">
-                <el-select v-model="formData.classification" clearable placeholder="请选择">
-                  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
+<!--          <el-row>-->
+<!--            <el-col :span="8">-->
+<!--              <el-form-item label="创建人:">-->
+<!--                <el-select v-model="formData.person" clearable placeholder="请选择" multiple >-->
+<!--                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>-->
+<!--              </el-select>-->
+<!--              </el-form-item>-->
+<!--            </el-col>-->
+<!--            <el-col :span="8">-->
+<!--              <el-form-item label="目录分类:">-->
+<!--                <el-select v-model="formData.classification" clearable placeholder="请选择">-->
+<!--                  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>-->
+<!--                </el-select>-->
+<!--              </el-form-item>-->
+<!--            </el-col>-->
+<!--          </el-row>-->
         </el-form>
       </el-row>
     </div>
@@ -48,42 +50,60 @@
           <i class="iconfont icon-liebiao"></i>
         </div>
         <div class="task-list-menu-right">
-          <i class="iconfont icon-play-circle" @click="handleAllStatus('pause')"></i>
-          <i class="iconfont icon-zanting" @click="handleAllStatus('running')"></i>
-          <i class="iconfont icon-icon_tianjia"></i>
+          <i class="iconfont task-list-menu-cion icon-play-circle" @click="handleAllStatus('paused')"></i>
+          <i class="iconfont task-list-menu-cion  icon-zanting" @click="handleAllStatus('running')"></i>
+          <i class="iconfont task-list-menu-cion  icon-icon_tianjia"></i>
         </div>
       </div>
       <div class="clear"></div>
-      <el-table :data="tableData" style="width: 98%" row-key="id"  :tree-props="{children: 'children', hasChildren: 'hasChildren'}"  @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" ></el-table-column>
-        <el-table-column prop="name" label="任务名称" width="180">
+      <el-table :data="tableData" style="width: 99%;border: 1px solid #dedee4;margin-top: 10px" row-key="id"  :tree-props="{children: 'children', hasChildren: 'hasChildren'}"  @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" :selectable="hanldeSelectable">
+        </el-table-column>
+        <el-table-column prop="name" label="任务名称" >
           <template slot-scope="scope">
             <div>{{scope.row.name}}</div>
             <div>{{scope.row.last_updated}}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="status" sortable label="任务状态">
+        <el-table-column sortable label="创建人" width="180"></el-table-column>
+        <el-table-column prop="status" sortable label="任务状态" width="180">
           <template slot-scope="scope">
-            <el-button size="mini" v-if="scope.row.status=== 'stopping'" style="background: #F19149;color:#fff">暂停中</el-button>
-            <el-button size="mini" v-if="scope.row.status=== 'running'" style="background: #67C23A;color:#fff">运行中</el-button>
-            <el-button size="mini" v-if="scope.row.status=== 'paused'" style="background: #F19149;color:#fff">已暂停</el-button>
-            <el-button size="mini" v-if="scope.row.status=== 'error'" style="background: #F56C6C;color:#fff">错误</el-button>
-            <el-button size="mini" v-if="scope.row.status=== 'draft'" style="background: #ccc;color:#fff">草稿</el-button>
-            <el-button size="mini" v-if="scope.row.status=== 'scheduled'" style="background: #F19149;color:#fff">等待中</el-button>
+            <div size="mini" v-if="scope.row.status=== 'stopping'" style="color:#F19149">暂停中</div>
+            <div size="mini" v-if="scope.row.status=== 'running'" style="color:#67C23A">运行中</div>
+            <div size="mini" v-if="scope.row.status=== 'paused'" style="color:#F19149">已暂停</div>
+            <div size="mini" v-if="scope.row.status=== 'error'" style="color:#F56C6C">错误</div>
+            <div size="mini" v-if="scope.row.status=== 'draft'" style="color:#ccc">草稿</div>
+            <div size="mini" v-if="scope.row.status=== 'scheduled'" style="color:#F19149">等待中</div>
           </template>
         </el-table-column>
-        <el-table-column prop="input" sortable label="总输入（条）" ></el-table-column>
-        <el-table-column prop="output" sortable label="总输出（条）" ></el-table-column>
-        <el-table-column prop="transmissionTime" sortable label="输出速度" ></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column prop="input" sortable label="总输入（条）" width="180"></el-table-column>
+        <el-table-column prop="output" sortable label="总输出（条）" width="180"></el-table-column>
+        <el-table-column prop="transmissionTime" sortable label="输出速度"width="180" ></el-table-column>
+        <el-table-column label="运行开关" width="100">
           <template slot-scope="scope">
             <div v-if="!scope.row.hasChildren">
-              <el-switch v-model="scope.row.stopOnError" @change="handleStatus(scope.row.id,scope.row.status)"></el-switch>
-              <i class="iconfont task-list-icon icon-yunyingzhongxin"></i>
-              <router-link to="/job"><i class="iconfont task-list-icon icon-ceshishenqing"></i></router-link>
-              <i class="iconfont task-list-icon icon-fuzhi1"></i>
-              <i class="iconfont task-list-icon icon-shanchu" @click="handleDelete(scope.row.id)"></i>
-              <i class="iconfont task-list-icon icon-shuaxin1"></i>
+              <el-switch v-model="scope.row.stopOnError"  @change="handleStatus(scope.row.id,scope.row.status)"></el-switch>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作"  width="220">
+          <template slot-scope="scope">
+            <div v-if="!scope.row.hasChildren">
+              <el-tooltip class="item" content="数据地图" placement="bottom">
+                <router-link :to='{path:"/job", query: { id: scope.row.id}}'><i class="iconfont task-list-icon icon-yunyingzhongxin"></i></router-link>
+              </el-tooltip>
+              <el-tooltip class="item" content="编辑" placement="bottom">
+                <router-link  :to='{path:"/job", query: { id: scope.row.id}}'><i class="iconfont task-list-icon icon-ceshishenqing"></i></router-link>
+              </el-tooltip>
+              <el-tooltip class="item" content="复制" placement="bottom">
+                <i class="iconfont task-list-icon icon-fuzhi1"></i>
+              </el-tooltip>
+              <el-tooltip class="item" content="删除" placement="bottom">
+                <i class="iconfont task-list-icon icon-shanchu" @click="handleDelete(scope.row.id)"></i>
+              </el-tooltip>
+              <el-tooltip class="item" content="重置" placement="bottom">
+                <i class="iconfont task-list-icon icon-shuaxin1" @click="handleReset(scope.row.id)"></i>
+              </el-tooltip>
             </div>
           </template>
         </el-table-column>
@@ -131,12 +151,19 @@
       };
     },
     created() {
-      let formData ={
-        formData:this.formData,
-      };
-      this.getData(formData);
+      this.screenFn();
     },
     methods: {
+      hanldeSelectable(row){
+        if(row.hasChildren){
+          return false;
+        }else {
+          return  true;
+        }
+      },
+      screenFn(){
+        this.getData(this.formData);
+      },
       async getData(params) {
         let _params = Object.assign({
           filter: JSON.stringify({
@@ -153,7 +180,7 @@
               "children": true,
               "stats":true,
               "stages":true
-            }
+            },
           })
         }, params);
        await dataFlows.get(_params).then(res => {
@@ -172,6 +199,7 @@
             item.input = item.stats.input.rows;
             item.output = item.stats.output.rows;
             item.transmissionTime = item.stats.transmissionTime;
+            item.hasChildren = false
             let children = item.stats.stagesMetrics;
             item.children =[];
             if(children){
@@ -225,7 +253,7 @@
         }else {
           data.status = 'paused';
         }
-        await dataFlows.patch(id,data).then(res => {
+        await dataFlows.updateById(id,data).then(res => {
           if (res.statusText === "OK" || res.status === 200) {
             this.getData();
           }
@@ -235,20 +263,47 @@
         if(this.multipleSelection.length === 0){
           return;
         }
-        let id = [];
+        let multipleSelection = [];
         this.multipleSelection.map(item =>{
-          id.push(item.id);
+          multipleSelection.push(item.id);
         });
-        id =id.join(',');
-        console.log(id);
-
-        let data = {
-          status:status,
+        multipleSelection = multipleSelection.join(',');
+        let id ={
+          id:multipleSelection,
         };
-        dataFlows.post(id,data).then(res =>{
+        let attributes = {
+          status: status,
+        };
+        dataFlows.update(id,attributes).then(res =>{
           if (res.statusText === "OK" || res.status === 200) {
             this.getData();
           }
+        });
+      },
+      handleReset(id){
+        this.$confirm('此操作将重置该任务状态, 是否重置?', '提示', {
+          confirmButtonText: '重置',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let attributes = {
+            status: 'draft',
+            stats:'',
+          };
+          dataFlows.updateById(id,attributes).then(res => {
+            if (res.statusText === "OK" || res.status === 200) {
+              this.getData();
+            }
+          });
+          this.$message({
+            type: 'success',
+            message: '重置成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消重置'
+          });
         });
       },
       handleSelectionChange(val) {
@@ -262,6 +317,7 @@
   .task-list{
     font-size: 14px;
     margin-left: 20px;
+    overflow: scroll;
   }
 .task-list-operating-area{
   border: 1px solid #ebebeb;
@@ -278,8 +334,20 @@
     margin-bottom: 6px;
     .el-table{
       margin-right: 20px;
+      .el-table__expand-icon {
+        display: block;
+        width: 25px;
+        line-height: 20px;
+        height: 20px;
+        text-align: center;
+        margin-left: -20px;
+        float: left;
+      }
     }
   }
+}
+.task-list-menu-cion{
+  font-size: 20px;
 }
 .task-list-menu{
   margin-bottom: 10px;
@@ -300,4 +368,9 @@
   .clear{
     clear: both;
   }
+  .item{
+    margin-left:10px ;
+    color: #606266;
+  }
+
 </style>
