@@ -166,7 +166,7 @@ export default class Editor extends BaseObject {
 		this.getRightSidebar().remove(monitor);
 
 		// remove capture
-		let capture = this.getBottomTabPanel().getChildByName('settings');
+		let capture = this.getBottomTabPanel().getChildByName('capture');
 		this.getBottomTabPanel().remove(capture);
 	}
 
