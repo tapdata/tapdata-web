@@ -5,5 +5,5 @@ const actions = {
   // delDataFlows (context,payload) {
   //   sessionStorage.removeItem('dataFlows')
   //   }
-}
-export default actions
+};
+export default actions;
