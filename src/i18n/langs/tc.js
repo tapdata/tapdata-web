@@ -38,9 +38,12 @@ const tc = {
       restartServer:'重啓服務',
       deleteOrNot:"是否刪除",
       startupAfter_delete: '請啟動後刪除',
-      startupAfter_add: '請啟動後添加'
+      startupAfter_add: '請啟動後添加',
+      noData:'暫無數據'
     },
     dataFlow: {
+      average: '平均',
+      current: '當前',
       allNode: '全部節點',
       taskName: '任務名稱',
       creatdor: '創建人',

@@ -38,9 +38,12 @@ const cn = {
     restartServer:'重启服务',
     deleteOrNot:"是否删除",
     startupAfter_delete: '请启动后删除',
-    startupAfter_add: '请启动后添加'
+    startupAfter_add: '请启动后添加',
+    noData: '暂无数据'
   },
   dataFlow: {
+    average: '平均',
+    current: '当前',
     allNode: '全部节点',
     taskName: '任务名称',
     creatdor: '创建人',

@@ -38,9 +38,12 @@ const en = {
       restartServer:'restart service',
       deleteOrNot:'delete or not',
       startupAfter_delete: 'Please delete after startup',
-      startupAfter_add: 'Please add after startup'
+      startupAfter_add: 'Please add after startup',
+      noData: 'NO DATA '
     },
     dataFlow: {
+      average: 'Average',
+      current: 'Current',
       allNode: 'All Nodes',
       taskName: 'Flow Name',
       creatdor: 'Creater',
