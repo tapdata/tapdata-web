@@ -679,9 +679,9 @@ export default class Graph extends Component{
 			this.toolbar.getWidgetByName('clear').enable();
 		} else {
 			// clear selected cells
-			let first = this.selection.collection.shift();
+			let first = this.selection.collection.first();
 			while( first ){
-				first = this.selection.collection.shift();
+				first = this.selection.collection.first();
 			}
 
 			this.unselectedAllCells();

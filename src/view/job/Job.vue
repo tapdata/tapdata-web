@@ -1,5 +1,5 @@
 <template>
-	<div class="editor-container">
+	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
 			<el-button
 					v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
@@ -39,7 +39,9 @@
 				model: 'editable',
 
 				dataFlowId: null,
-				status: 'draft'
+				status: 'draft',
+
+				loading: true
 			};
 		},
 		mounted() {
@@ -47,9 +49,26 @@
 				container: $('.editor-container'),
 				actionBarEl: $('.editor-container .action-buttons')
 			});
+
+			if( this.$route.query && this.$route.query.id){
+				this.loadDataFlow(this.$route.query.id);
+			} else {
+				this.loading = false;
+			}
 		},
 
 		methods: {
+
+			loadDataFlow(id){
+				let self = this;
+				dataFlowsApi.get([id]).then((err, result) => {
+					if( result && result.data ) {
+					} else {
+					}
+
+					self.loading = false;
+				});
+			},
 
 			getDataFlowData() {
 				// validate
@@ -122,9 +141,8 @@
 					if( 'app.Link' === cell.type){
 						let sourceId = cell.source.id;
 						let targetId = cell.target.id;
-
-						stages[sourceId].outputLanes.push(targetId);
-						stages[targetId].inputLanes.push(sourceId);
+						if( sourceId && stages[sourceId] ) stages[sourceId].outputLanes.push(targetId);
+						if( targetId && stages[targetId] ) stages[targetId].inputLanes.push(sourceId);
 					}
 				});
 				postData.stages = Object.values(stages);

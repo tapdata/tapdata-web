@@ -34,17 +34,16 @@ export default new Router({
 			path: '/job',
 			name: 'job',
 			component: Job
-		},{
-      path: '/dataFlows',
-      name: 'DataFlows',
-      component: DataFlows
-    },{
+		}, {
+			path: '/dataFlows',
+			name: 'DataFlows',
+			component: DataFlows
+		}, {
 			path: '/echartData',
 			name: 'echartData',
 			component: echartData
 
-    },
-    {
+		}, {
 			path: '/preview',
 			name: 'preview',
 			component: Preview

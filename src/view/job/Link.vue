@@ -59,17 +59,8 @@
 	import Mapping from './components/Mapping';
 	import {mergeJoinTablesToTargetSchema} from "../../editor/util/Schema";
 	import log from "../../log";
-	const JOIN_TABLE_TPL = {
-		tableName: '',
-		joinType: 'upsert',
-		joinPath: '',
-		joinKeys: [{
-			source: '',
-			target: ''
-		}],
-		primaryKeys: '',
-		fieldProcesses: []
-	};
+	import {JOIN_TABLE_TPL} from "../../editor/constants";
+
 	export default {
 		name: "Link",
 		components: {Mapping},
@@ -142,7 +133,12 @@
 				this.showMapping(data, cell, vueAdapter);
 			},
 			getData(){
-				return JSON.parse(JSON.stringify(this.model));
+				let data = JSON.parse(JSON.stringify(this.model));
+				if( data.joinTable.joinKeys.length > 0 ){
+					let joinKeys = data.joinTable.joinKeys.filter( key => key.source && key.target);
+					data.joinTable.joinKeys = joinKeys;
+				}
+				return data;
 			},
 
 			/**
