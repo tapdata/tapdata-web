@@ -229,12 +229,12 @@
 					data = {
 						id: data.id,
 						status: ['scheduled', 'running'].includes(data.status) ? data.status : 'scheduled',
-						executeMode: 'debug'
+						executeMode: 'running' === data.status ? 'running_debug' : 'editing_debug'
 					};
 				} else {
 					Object.assign(data, {
 						status: 'scheduled',
-						executeMode: 'debug'
+						executeMode: 'editing_debug'
 					});
 				}
 				self.doSave(data, (err, dataFlow) => {
