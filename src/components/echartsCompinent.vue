@@ -39,7 +39,6 @@ export default {
 
   methods: {
     loadEchart(id,data) {
-      console.log(id,data)
       let _this =this;
       // setTimeout(function(){
         _this.myChart = Echarts.init(document.getElementById(id));
@@ -55,7 +54,6 @@ export default {
 
     },
     echartOption(configures) {
-      console.log('configures',configures)
       let MyOption = {
           // title: {
           //   text: '折线图堆叠'

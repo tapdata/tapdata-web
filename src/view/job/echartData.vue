@@ -1,11 +1,11 @@
 <template>
   <div class="echartData">
     <el-select v-model="domValue">
-      <!-- <el-option
+      <el-option
         key="all"
         :label="$t('dataFlow.allNode')"
         value="all">
-      </el-option> -->
+      </el-option>
       <el-option
         v-for="item in flow.stages"
         :key="item.id"
@@ -19,11 +19,11 @@
         <div class="info fl">
           <div class="info-list">
             <span class="info-label">{{ $t('dataFlow.taskName') }}:</span>
-            <span class="info-text" style="color: #48b6e2;">{{flow.flowName}}</span>
+            <span class="info-text" style="color: #48b6e2;">{{flow.name}}</span>
           </div>
           <div class="info-list">
             <span class="info-label">{{ $t('dataFlow.creatdor') }}:</span>
-            <span class="info-text">{{flow.creatdor}}</span>
+            <span class="info-text">{{flow.username}}</span>
           </div>
           <div class="info-list">
             <span class="info-label">{{ $t('dataFlow.creationTime') }}:</span>
@@ -31,11 +31,11 @@
           </div>
           <div class="info-list">
             <span class="info-label">{{ $t('dataFlow.state') }}:</span>
-            <span class="info-text" style="color: #62a569;">{{flow.state}}</span>
+            <span class="info-text" style="color: #62a569;">{{flow.status}}</span>
           </div>
           <div class="info-list">
             <span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
-            <span class="info-text">{{flow.executionTime}}</span>
+            <span class="info-text">{{flow.updateTime}}</span>
           </div>
           <div class="info-list">
             <span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
@@ -51,22 +51,22 @@
       <div class="echartlist">
         <echart-head :data="inputOutputObj" @getSpeed="getSpeed"></echart-head>
         <div class="floatLayer">
-          <span style="background-color:rgba(72,182,226,.3);color:#48b6e2;">平均：{{this.inputAverage}}</span>
-          <span style="background-color:rgba(98,165,105,.3);color:#62a569;">平均：{{this.outputAverage}}</span>
+          <span style="background-color:rgba(72,182,226,.3);color:#48b6e2;">{{$t('dataFlow.average')}}:{{this.inputAverage}}</span>
+          <span style="background-color:rgba(98,165,105,.3);color:#62a569;">{{$t('dataFlow.average')}}:{{this.outputAverage}}</span>
         </div>
         <echarts-compinent :echartObj="throughputData" v-if="throughputData" :echartsId="'echartsId'" style="width: 100%"></echarts-compinent>
       </div>
       <div class="echartlist">
         <echart-head :data="transfObj" @getTime="getTime"></echart-head>
         <div class="floatLayer">
-          <span style="background-color:rgba(251,142,0,.3);color:#fb8e00;">当前：{{this.currentTime}}</span>
+          <span style="background-color:rgba(251,142,0,.3);color:#fb8e00;">{{$t('dataFlow.current')}}:{{this.currentTime}}</span>
         </div>
         <echarts-compinent :echartObj="transfData" v-if="transfData" :echartsId="'transfId'" style="width: 100%"></echarts-compinent>
       </div>
       <div class="echartlist">
         <echart-head :data="replicateObj" @getTime="getTime"></echart-head>
         <div class="floatLayer">
-          <span style="background-color:rgba(7245,108,108,.3);color:#f56c6c;">当前：{{this.ransfTime}}</span>
+          <span style="background-color:rgba(7245,108,108,.3);color:#f56c6c;">{{$t('dataFlow.current')}}:{{this.ransfTime}}</span>
         </div>
         <echarts-compinent :echartObj="replicateData" v-if="replicateData" :echartsId="'replicateId'" style="width: 100%"></echarts-compinent>
       </div>
@@ -95,12 +95,12 @@ export default {
       time: '',
       domValue: 'all',
       flow: {
-        name: '客户信息数据库复制',
-        creatdor: 'shane',
-        last_updated:'2019/06/07/22:33:44',
-        status: '执行中',
-        executionTime: '2466h:56:45',
-        inputNumber: '123,000',
+        name: '',
+        username: '',
+        createTime:'',
+        status: '',
+        updateTime: '',
+        inputNumber: '',
         outputNumber: '',
         stages: [],
         id: '',
@@ -119,12 +119,21 @@ export default {
       outputAverage: '',   //输出平均值
       currentTime: '',   // 当前耗时
       ransfTime: '',   // 传输耗时
+      throughputTime: '',
+      isThroughputAll: '',
+      dataOverviewAll:'',
+      transfTime: '',
+      replicateTime: '',
+      transfType: '',
+      replicateType: '',
+      dataOverviewType: '',
+      selectId: '',
+
     };
   },
   mounted() {
     let params = {};
     this.flow = this.dataFlow;
-    console.log(this.flow,this.domValue)
     // this.getApiData();
     this.screeningObj = {
       title: this.$t('dataFlow.dataScreening'),
@@ -154,17 +163,20 @@ export default {
       isIput: true,
       tip:this.$t("dataFlow.replicate_pop")
     }
-    console.log("dataFlow",this.dataFlow)
   },
   watch:{
     domValue: {
       handler(val) {
-        console.log(val)
+        this.selectId = val;
         if(val === "all") {
-          this.selectFlow = 'flow_'
+          this.selectFlow = 'flow_';
         } else {
-          this.selectFlow = 'stage_'
+          this.selectFlow = 'stage_';
         }
+        this.getSpeed(this.isThroughputAll,this.throughputTime);
+        this.getTwoRadio(this.dataOverviewAll,this.dataOverviewType);
+        this.getTime(this.transfTime,this.transfType);
+        this.getTime(this.replicateTime,this.replicateType);
       },
       deep: true
     }
@@ -172,33 +184,22 @@ export default {
   methods: {
     // 输入输出获取数据
     getSpeed(data,time) {
-      console.log( this.selectFlow)
+      this.isThroughputAll = data;
+      this.throughputTime = time;
       let params = {
         'filter[where][statsType]': "throughput",
         'filter[where][granularity]': this.selectFlow + time
-      }
-      //判断是否是全部节点
-      if(this.domValue === "all") {
-        params['filter[where][dataFlowId]']= this.flow.id;
-      } else {
-        params['filter[where][dataFlowId]']= this.flow.id;
-        params['filter[where][stageId]']= this.domValue;
       }
       this.getApiData(params,'throughput',data)
     },
 
     //获取返回的单位
     getTwoRadio(data,type) {
+      this.dataOverviewType = type;
+      this.dataOverviewAll = data;
       let params = {
         'filter[where][statsType]': "data_overview",
         'filter[where][granularity]': data
-      }
-      //判断是否是全部节点
-      if(this.domValue === "all") {
-        params['filter[where][dataFlowId]']= this.flow.id;
-      } else {
-        params['filter[where][dataFlowId]']= this.flow.id;
-        params['filter[where][stageId]']= this.domValue;
       }
       this.getApiData(params,type,data)
     },
@@ -207,28 +208,18 @@ export default {
     getTime(data,type) {
       let params;
       if(type ==="transf") {
+        this.transfType = type;
+        this.transfTime = data;
         params = {
           'filter[where][statsType]': "trans_time",
           'filter[where][granularity]': this.selectFlow + data
         }
-        //判断是否是全部节点
-        if(this.domValue === "all") {
-          params['filter[where][dataFlowId]']= this.flow.id;
-        } else {
-          params['filter[where][dataFlowId]']= this.flow.id;
-          params['filter[where][stageId]']= this.domValue;
-        }
       } else if( type === "replicate") {
+        this.replicateType = type;
+        this.replicateTime = data;
         params = {
           'filter[where][statsType]': "repl_lag",
           'filter[where][granularity]': this.selectFlow + data
-        }
-        //判断是否是全部节点
-        if(this.domValue === "all") {
-          params['filter[where][dataFlowId]']= this.flow.id;
-        } else {
-          params['filter[where][dataFlowId]']= this.flow.id;
-          params['filter[where][stageId]']= this.domValue;
         }
       }
       this.getApiData(params,type,data);
@@ -236,10 +227,20 @@ export default {
 
     //获取数据
     async getApiData(params,type,ele) {
+      if(this.domValue === "all") {
+        params['filter[where][dataFlowId]']= this.flow.id;
+      } else {
+        params['filter[where][dataFlowId]']= this.flow.id;
+        params['filter[where][stageId]']= this.domValue;
+      }
       await DataFlowStats.get(params).then(res=>{
         if (res.statusText === "OK" || res.status === 200) {
-          this.storeData = res.data[0].statsData;
-          this.dataProcessing(this.storeData,type,ele);
+          if(res.data && res.data.length > 0) {
+             this.storeData = res.data[0].statsData;
+            this.dataProcessing(this.storeData,type,ele);
+          } else {
+            this.$message.error(this.$t('message.noData'));
+          }
         }
       });
     },
@@ -383,13 +384,6 @@ export default {
       this.throughputData = {
         tooltip: {
           trigger: 'axis',
-
-          // formatter: function(params) {
-            // console.log(params)
-          //   var d_value = params.value;
-          //   var res = params.name+'<br/>'+'采集终端: '+d_value;
-          //   return res;
-          // }
         },
         legend: {
             // data: [this.$t('dataFlow.input'),this.$t('dataFlow.output')],
@@ -621,12 +615,12 @@ export default {
           padding-bottom: 14px;
           .info-label {
             display: inline-block;
-            width: 120px;
-            font-size: 14px;
+            width: 90px;
+            font-size: 12px;
             color: #999;
           }
           .info-text {
-            font-size: 14px;
+            font-size: 12px;
             color: #333;
           }
         }
