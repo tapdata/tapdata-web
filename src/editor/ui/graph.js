@@ -361,7 +361,7 @@ export default class Graph extends Component{
 	}
 
 	initToolsAndInspector() {
-
+		let self = this;
 		this.paper.on({
 
 			'cell:pointerup': function(cellView) {
@@ -374,6 +374,8 @@ export default class Graph extends Component{
 			'link:mouseenter': function(linkView) {
 
 				if (linkView.hasTools()) return;
+
+				if (!self.editable) return;
 
 				let ns = joint.linkTools;
 				let toolsView = new joint.dia.ToolsView({
@@ -654,6 +656,9 @@ export default class Graph extends Component{
 
 		if( editable ){
 			this.keyboard.enable();
+			this.toolbar.getWidgetByName('redo').enable();
+			this.toolbar.getWidgetByName('undo').enable();
+			this.toolbar.getWidgetByName('clear').enable();
 		} else {
 			// clear selected cells
 			let first = this.selection.collection.shift();
@@ -663,6 +668,9 @@ export default class Graph extends Component{
 
 			this.unselectedAllCells();
 			this.keyboard.disable();
+			this.toolbar.getWidgetByName('redo').disable();
+			this.toolbar.getWidgetByName('undo').disable();
+			this.toolbar.getWidgetByName('clear').disable();
 		}
 	}
 
