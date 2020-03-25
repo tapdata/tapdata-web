@@ -111,7 +111,7 @@ export const
 		targetSchema.fields = targetSchema.fields || [];
 
 		let sourceSchemaFields = _.cloneDeep(sourceSchema.fields) || [];
-		if( joinType === 'append' || targetSchema.meta_type === 'table') {
+		if( ['append', 'upsert'].includes(joinType) || targetSchema.meta_type === 'table') {
 			targetSchema.fields.push(...sourceSchemaFields);
 		} else {
 			joinPath.split('.').forEach(fieldName => {
@@ -159,7 +159,7 @@ export const
 			} else {
 				mergeSchema(source, schema, {
 					joinType: 'upsert',
-					joinPath: schema.table_name
+					joinPath: ''
 				});
 			}
 		});
