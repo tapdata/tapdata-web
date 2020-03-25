@@ -107,6 +107,9 @@ export default class Graph extends Component{
 				targetCell.updateOutputSchema();
 			}
 		});
+		graph.on('remove', (model, collection, options) => {
+			log('Graph.graph.remove');
+		});
 
 		this.snaplines = new joint.ui.Snaplines({ paper: paper });
 
@@ -131,6 +134,12 @@ export default class Graph extends Component{
 		this.el = paperScroller.el;
 		this.editor.getUI().add(this);
 		paperScroller.render().center();
+	}
+
+	updateOutputSchema(cell){
+		if( cell.isLink() ){
+
+		}
 	}
 
 	onClickBlank(){
