@@ -7,21 +7,24 @@
 						<el-col :span="8">
 							<el-form-item :label="$t('message.sourchName')">
 								<el-input
-										:placeholder="$t('dataFlows.searchPlaceholder')" prefix-icon="el-icon-search"
+										:placeholder="$t('dataFlow.searchPlaceholder')" prefix-icon="el-icon-search"
 										v-model="formData.search"></el-input>
 							</el-form-item>
 						</el-col>
 						<el-col :span="8">
 							<el-form-item :label="$t('dataFlow.dataRange')">
 								<el-date-picker type="daterange" v-model="formData.timeData" size="small "
-												class="task-list-time-picker" :range-separator="$t('dataFlow.separator')"
-                                :start-placeholder="$t('dataFlow.startTime')" :end-placeholder="$t('dataFlow.endTime')"
-                                :placeholder="$t('dataFlow.dataPlaceholder')"></el-date-picker>
+												class="task-list-time-picker"
+												:range-separator="$t('dataFlow.separator')"
+												:start-placeholder="$t('dataFlow.startTime')"
+												:end-placeholder="$t('dataFlow.endTime')"
+												:placeholder="$t('dataFlow.dataPlaceholder')"></el-date-picker>
 							</el-form-item>
 						</el-col>
 						<el-col :span="8">
 							<el-form-item :label=" $t('dataFlow.taskStatus') ">
-								<el-select v-model="formData.status" clearable :placeholder=" $t('dataFlow.taskStatusPlaceholder')">
+								<el-select v-model="formData.status" clearable
+										   :placeholder=" $t('dataFlow.taskStatusPlaceholder')">
 									<el-option
 											v-for="item in options" :key="item.value" :label="item.label"
 											:value="item.value"></el-option>
@@ -60,7 +63,8 @@
 				<div class="task-list-menu-right">
 					<i class="iconfont task-list-menu-cion icon-play-circle" @click="handleAllStatus('paused')"></i>
 					<i class="iconfont task-list-menu-cion  icon-zanting" @click="handleAllStatus('running')"></i>
-					<i class="iconfont task-list-menu-cion  icon-icon_tianjia" @click="$router.push({path: '/job'})"></i>
+					<i class="iconfont task-list-menu-cion  icon-icon_tianjia"
+					   @click="$router.push({path: '/job'})"></i>
 				</div>
 			</div>
 			<div class="clear"></div>
@@ -68,7 +72,7 @@
 					:data="tableData" style="width: 99%;border: 1px solid #dedee4;margin-top: 10px;"
 					:max-height="maxHeight" row-key="id"
 					:tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-          @sort-change="handleSortTable"
+					@sort-change="handleSortTable"
 					@selection-change="handleSelectionChange">
 				<el-table-column type="selection" width="55" :selectable="hanldeSelectable">
 				</el-table-column>
@@ -80,10 +84,14 @@
 						<span :style="`color: ${ colorMap[scope.row.status] };`"> {{ $t('dataFlow.status.' + scope.row.status) }} </span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="input" sortable='custom' :label="$t('dataFlow.totalInput')" width="120"></el-table-column>
-				<el-table-column prop="output" sortable='custom' :label="$t('dataFlow.totalOutput')" width="120"></el-table-column>
-				<el-table-column prop="transmissionTime" sortable='custom' :label="$t('dataFlow.runningSpeed')" width="120"></el-table-column>
-        <el-table-column prop="last_updated" :label="$t('dataFlow.updateTime')" width="140" :formatter="formatterTime"></el-table-column>
+				<el-table-column prop="input" sortable='custom' :label="$t('dataFlow.totalInput')"
+								 width="120"></el-table-column>
+				<el-table-column prop="output" sortable='custom' :label="$t('dataFlow.totalOutput')"
+								 width="120"></el-table-column>
+				<el-table-column prop="transmissionTime" sortable='custom' :label="$t('dataFlow.runningSpeed')"
+								 width="120"></el-table-column>
+				<el-table-column prop="last_updated" :label="$t('dataFlow.updateTime')" width="140"
+								 :formatter="formatterTime"></el-table-column>
 				<el-table-column :label="$t('dataFlow.updateTime')" width="70">
 					<template slot-scope="scope">
 						<div v-if="!scope.row.hasChildren">
@@ -124,6 +132,8 @@
 
 <script>
 	import factory from '../../api/factory';
+	import log from "../../log";
+
 	const dataFlows = factory('DataFlows');
 
 	export default {
@@ -169,7 +179,8 @@
 			};
 		},
 		created() {
-      this.formData = this.$store.state.dataFlows;
+			this.formData = this.$store.state.dataFlows;
+			log(this.formData);
 			this.screenFn();
 			this.keyupEnter();
 		},
@@ -188,19 +199,21 @@
 				}
 			},
 			screenFn() {
-        this.$store.commit('dataFlows', this.formData);
+				//this.$store.commit('dataFlows', this.formData);
 				this.getData();
 			},
-      keyupEnter(){
-        document.onkeydown = e =>{
-          let body = document.getElementsByTagName('body')[0];
-          if (e.keyCode === 13) {
-            this.$store.commit('dataFlows', JSON.stringify(this.formData));
-            this.getData();
-          }
-        }
-      },
+			keyupEnter() {
+				document.onkeydown = e => {
+					let body = document.getElementsByTagName('body')[0];
+					if (e.keyCode === 13) {
+						this.getData();
+					}
+				}
+			},
 			async getData(params) {
+
+				this.$store.commit('dataFlows', this.formData);
+
 				let where = {};
 				if (this.formData) {
 					if (this.formData.status && this.formData.status !== '') {
@@ -321,8 +334,8 @@
 				});
 				let where = {
 					_id: {
-					  in: multipleSelection
-          },
+						in: multipleSelection
+					},
 				};
 				let attributes = {
 					status: status,
@@ -359,13 +372,13 @@
 					});
 				});
 			},
-      formatterTime(row){
-          let time = row.last_updated ? this.$moment(row.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
-          return time;
-      },
-      handleSortTable(){
+			formatterTime(row) {
+				let time = row.last_updated ? this.$moment(row.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
+				return time;
+			},
+			handleSortTable() {
 
-      },
+			},
 			handleSelectionChange(val) {
 				this.multipleSelection = val;
 			},

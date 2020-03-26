@@ -45,16 +45,22 @@
 			};
 		},
 		mounted() {
-			this.editor = editor({
+			let self = this;
+
+			self.editor = editor({
 				container: $('.editor-container'),
 				actionBarEl: $('.editor-container .action-buttons')
 			});
 
-			if( this.$route.query && this.$route.query.id){
-				this.loadDataFlow(this.$route.query.id);
+			if( self.$route.query && self.$route.query.id){
+				self.loadDataFlow(self.$route.query.id);
 			} else {
-				this.loading = false;
+				self.loading = false;
 			}
+
+			self.editor.getUI().getBackButtonEl().on('click', () => {
+				self.$router.push({path: '/dataFlows'});
+			});
 		},
 
 		methods: {
