@@ -61,11 +61,25 @@
 
 			loadDataFlow(id){
 				let self = this;
-				dataFlowsApi.get([id]).then((err, result) => {
+				dataFlowsApi.get([id]).then((result) => {
 					if( result && result.data ) {
+						let dataFlow = result.data;
+
+						self.dataFlowId = dataFlow.id;
+						self.status = dataFlow.status;
+
+						self.dataFlow = dataFlow;
+
+						self.editor.graph.loadData(JSON.parse(dataFlow.editorData));
 					} else {
+						log(result);
+						self.$message.error('Load data failed');
 					}
 
+					self.loading = false;
+				}).catch((err) => {
+					log(err);
+					self.$message.error('Load data failed');
 					self.loading = false;
 				});
 			},
