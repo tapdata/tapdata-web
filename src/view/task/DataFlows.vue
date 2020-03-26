@@ -263,12 +263,8 @@
 						item.children = [];
 						if (children) {
 							children.map(k => {
-								let id = '';
-								item.stages.map(k => {
-									id = k.id;
-								});
 								let node = {
-									id: id,
+									id: k.stageId,
 									input: k.input.rows,
 									output: k.output.rows,
 									transmissionTime: k.transmissionTime,
