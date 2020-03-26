@@ -19,10 +19,6 @@ Vue.prototype.$moment = moment;
 
 // Vue.prototype.i18n = window.jQuery.i18n
 
-// 页面刷新时，重新赋值vuex store
-if (sessionStorage.getItem('dataFlows')) {
-  store.commit('dataFlows', sessionStorage.getItem('dataFlows'))
-}
 new Vue({
   el: '#app',
   router,

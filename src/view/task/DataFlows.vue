@@ -168,7 +168,7 @@
 			};
 		},
 		created() {
-      this.formData = JSON.parse(this.$store.state.dataFlows ? this.$store.state.dataFlows : '');
+      this.formData = this.$store.state.dataFlows;
 			this.screenFn();
 			this.keyupEnter();
 		},
@@ -187,7 +187,7 @@
 				}
 			},
 			screenFn() {
-        this.$store.commit('dataFlows', JSON.stringify(this.formData));
+        this.$store.commit('dataFlows', this.formData);
 				this.getData();
 			},
       keyupEnter(){
