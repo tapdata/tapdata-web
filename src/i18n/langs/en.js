@@ -40,7 +40,12 @@ const en = {
 		deleteOrNot: 'delete or not',
 		startupAfter_delete: 'Please delete after startup',
 		startupAfter_add: 'Please add after startup',
-		noData: 'NO DATA '
+		noData: 'NO DATA ' ,
+    prompt:'Prompt' ,
+    resetMessage: 'This operation will reset the task state, will it reset?',
+    deteleMessage: 'This operation will delete the task, will it delete it?',
+    cancleReset:'canle reset',
+    resetOk:'reset success' ,
 	},
 	dataFlow: {
 		average: 'Average',

@@ -39,7 +39,12 @@ const tc = {
       deleteOrNot:"是否刪除",
       startupAfter_delete: '請啟動後刪除',
       startupAfter_add: '請啟動後添加',
-      noData:'暫無數據'
+      noData:'暫無數據' ,
+      resetMessage:'此操作將重置該任務狀態, 是否重置?',
+      deteleMessage:'此操作將刪除該任務, 是否刪除?',
+      prompt:'提示',
+      cancleReset:'已取消重置',
+      resetOk:'重置成功' ,
     },
     dataFlow: {
       average: '平均',
