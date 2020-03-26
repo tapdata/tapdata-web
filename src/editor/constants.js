@@ -6,5 +6,16 @@
 export const
 	FORM_DATA_KEY = 'form_data',
 	SCHEMA_DATA_KEY= 'schema',
-	OUTPUT_SCHEMA_DATA_KEY = 'outputSchema'
+	OUTPUT_SCHEMA_DATA_KEY = 'outputSchema',
+	JOIN_TABLE_TPL = {
+		tableName: '',
+		joinType: 'upsert',
+		joinPath: '',
+		joinKeys: [{
+			source: '',
+			target: ''
+		}],
+		primaryKeys: '',
+		fieldProcesses: []
+	}
 ;

@@ -20,6 +20,7 @@ export default class UI extends Component {
 	doInit() {
 		this.el = $(`<div class="editor">
 			<div class="e-header">
+				<div class="e-action-bar"><a class="iconfont icon-xiangzuo" href="./#/dataFlows"></a></div>
 				<div class="e-title">
 					<h3 contenteditable="true">任务</h3>
 				</div>

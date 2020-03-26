@@ -4,7 +4,7 @@
  * @description
  */
 import log from "../../log";
-import {FORM_DATA_KEY, SCHEMA_DATA_KEY, OUTPUT_SCHEMA_DATA_KEY} from "../constants";
+import {FORM_DATA_KEY, SCHEMA_DATA_KEY, OUTPUT_SCHEMA_DATA_KEY, JOIN_TABLE_TPL} from "../constants";
 import {mergeJoinTablesToTargetSchema} from "../util/Schema";
 import _ from 'lodash';
 
@@ -165,13 +165,24 @@ export const baseElementConfig = {
 							let sourceCell = cell.getSourceCell();
 
 							if( sourceCell ) {
-								let joinTable = cell.get(FORM_DATA_KEY) && cell.get(FORM_DATA_KEY).joinTable;
+								let formData = cell.getFormData();
+								let joinTable = formData ? formData.joinTable : null;
+								let schema = sourceCell.getOutputSchema();
 
-								joinTable = joinTable ? _.cloneDeep(joinTable) : {
-									joinType: 'append'
-								};
+								joinTable = joinTable ? _.cloneDeep(joinTable) : _.cloneDeep(JOIN_TABLE_TPL);
+
+								if( schema ) {
+									let fields = schema.fields || [];
+									joinTable.primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
+									joinTable.tableName = schema && schema.table_name;
+									cell.set(FORM_DATA_KEY, {
+										joinTable: _.cloneDeep(joinTable)
+									});
+								}
+
 								joinTable.sourceSchema = sourceCell.getOutputSchema();
 
+								log('BaseElement.getInputSchema.joinTables', cell.getFormData(), joinTable);
 								return joinTable;
 							} else {
 								return null;

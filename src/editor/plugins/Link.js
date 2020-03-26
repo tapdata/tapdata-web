@@ -7,6 +7,7 @@ import _ from 'lodash';
 import joint from '../lib/rappid/rappid';
 import {options} from "../lib/rappid/config";
 import Link from "../../view/job/Link";
+import {FORM_DATA_KEY} from "../constants";
 
 export const link = {
 
@@ -110,6 +111,10 @@ export const link = {
 						refY: -5
 					}
 				}
+			},
+
+			getFormData() {
+				return this.get(FORM_DATA_KEY);
 			},
 
 			getMarkerWidth: function(type) {
