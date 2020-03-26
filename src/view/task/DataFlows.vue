@@ -7,7 +7,7 @@
 						<el-col :span="8">
 							<el-form-item :label="$t('message.sourchName')">
 								<el-input
-										:placeholder="$t('dataFlows.searchPlaceholder')" prefix-icon="el-icon-search"
+										:placeholder="$t('dataFlow.searchPlaceholder')" prefix-icon="el-icon-search"
 										v-model="formData.search"></el-input>
 							</el-form-item>
 						</el-col>
@@ -136,7 +136,7 @@
 					scheduled: '#cccccc',
 					stopping: '#F19149',
 				},
-
+        order:'',
 				tableData: [],
 				newData: [],
 				options: [{
@@ -202,6 +202,10 @@
       },
 			async getData(params) {
 				let where = {};
+				let order =''  ;
+				if(this.order){
+          order = this.order;
+        }
 				if (this.formData) {
 					if (this.formData.status && this.formData.status !== '') {
 						where.status = this.formData.status;
@@ -224,6 +228,7 @@
 				let _params = Object.assign({
 					filter: JSON.stringify({
 						where: where,
+            order:order,
 						fields: {
 							"id": true,
 							"name": true,
@@ -363,8 +368,17 @@
           let time = row.last_updated ? this.$moment(row.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
           return time;
       },
-      handleSortTable(){
-
+      handleSortTable(column){
+			  let currentOrder =  column.order ==="ascending"? "ASC" :'DESC';
+			  let mapping = {
+           status:'status',
+          last_updated:'last_updated',
+           input: 'stats.input.rows',
+           output: 'stats.output.rows',
+           transmissionTime:'stats.transmissionTime',
+        }
+        this.order =  mapping[column.prop] +" "+currentOrder;
+        this.getData();
       },
 			handleSelectionChange(val) {
 				this.multipleSelection = val;
