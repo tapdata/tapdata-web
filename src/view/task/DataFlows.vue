@@ -74,16 +74,16 @@
 				<el-table-column prop="name" label="任务名称">
 				</el-table-column>
 				<el-table-column sortable label="创建人" width="180"></el-table-column>
-				<el-table-column prop="status" sortable label="任务状态" width="180">
+				<el-table-column prop="status" sortable label="任务状态" width="100">
 					<template slot-scope="scope" v-if="!scope.row.hasChildren">
 						<span :style="`color: ${ colorMap[scope.row.status] };`"> {{ $t('dataFlow.status.' + scope.row.status) }} </span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="input" sortable label="总输入（条）" width="180"></el-table-column>
-				<el-table-column prop="output" sortable label="总输出（条）" width="180"></el-table-column>
-				<el-table-column prop="transmissionTime" sortable label="输出速度" width="180"></el-table-column>
-        <el-table-column prop="last_updated" label="时间" width="180" :formatter="formatterTime"></el-table-column>
-				<el-table-column label="运行开关" width="100">
+				<el-table-column prop="input" sortable label="总输入（条）" width="120"></el-table-column>
+				<el-table-column prop="output" sortable label="总输出（条）" width="120"></el-table-column>
+				<el-table-column prop="transmissionTime" sortable label="输出速度" width="120"></el-table-column>
+        <el-table-column prop="last_updated" label="时间" width="140" :formatter="formatterTime"></el-table-column>
+				<el-table-column label="运行开关" width="70">
 					<template slot-scope="scope">
 						<div v-if="!scope.row.hasChildren">
 							<el-switch
@@ -93,7 +93,7 @@
 						</div>
 					</template>
 				</el-table-column>
-				<el-table-column label="操作" width="220">
+				<el-table-column label="操作" width="180">
 					<template slot-scope="scope">
 						<div v-if="!scope.row.hasChildren">
 							<el-tooltip class="item" content="数据地图" placement="bottom">
@@ -363,7 +363,7 @@
 				});
 			},
       formatterTime(row){
-          let time = row.last_updated ? this.$moment(row.last_updated).format('YYYY-MM_DD HH:mm:ss') : '';
+          let time = row.last_updated ? this.$moment(row.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
           return time;
       },
 			handleSelectionChange(val) {
