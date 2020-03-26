@@ -116,7 +116,7 @@ export default class Editor extends BaseObject {
 	}
 
 	initRunningMode(dataFlow) {
-		log('editor.initRunningMode');
+		log('Editor.initRunningMode');
 		let self = this;
 
 		// hide stencil
@@ -181,6 +181,7 @@ export default class Editor extends BaseObject {
 	}
 
 	setEditable(editable, dataFlow) {
+		log('Editor.setEditable', editable, dataFlow);
 		this.editable = editable;
 		this.graph.setEditable(editable);
 		if( editable ){

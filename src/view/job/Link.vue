@@ -134,10 +134,10 @@
 			},
 			getData(){
 				let data = JSON.parse(JSON.stringify(this.model));
-				if( data.joinTable.joinKeys.length > 0 ){
+				/*if( data.joinTable.joinKeys.length > 0 ){
 					let joinKeys = data.joinTable.joinKeys.filter( key => key.source && key.target);
 					data.joinTable.joinKeys = joinKeys;
-				}
+				}*/
 				return data;
 			},
 
