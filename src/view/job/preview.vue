@@ -1,28 +1,6 @@
 <template>
   <div class="preview">
       <el-tabs type="border-card" class="tabBox">
-        <el-tab-pane label="Logs">
-          <template>
-             <el-input
-              class="inputStyle"
-              :placeholder="$t('message.search')"
-              v-model="search">
-              <i slot="prefix" class="el-input__icon el-icon-search"></i>
-            </el-input>
-            <ul class="log" v-if="logList.length > 0">
-              <li v-for="(item, i) in logList" :key="i" style="padding-bottom:10px;">
-                <span>[<i style="font-weight: bold;" :class="{'redColor':item.level=='ERROR'}">{{item.level}}</i>]</span> &nbsp;
-                <span>{{item.date}}</span>&nbsp;
-                <span>[{{item.threadName}}]</span>&nbsp;
-                <span>{{item.loggerName}}</span>&nbsp;-&nbsp;
-                <span>{{item.message}}</span>
-              </li>
-            </ul>
-            <div v-else class="noText">
-              <i class="iconfont icon icon-zanwushuju1" style="font-size: 174px"></i>
-            </div>
-          </template>
-        </el-tab-pane>
         <el-tab-pane label="Test Results">
           <template>
              <el-select v-model="selectNode" :placeholder="$t('message.placeholderSelect')">
@@ -45,6 +23,28 @@
             </el-table>
           </template>
         </el-tab-pane>
+        <el-tab-pane label="Logs">
+          <template>
+             <el-input
+              class="inputStyle"
+              :placeholder="$t('message.search')"
+              v-model="search">
+              <i slot="prefix" class="el-input__icon el-icon-search"></i>
+            </el-input>
+            <ul class="log" v-if="logList.length > 0">
+              <li v-for="(item, i) in logList" :key="i" style="padding-bottom:10px;">
+                <span>[<i style="font-weight: bold;" :class="{'redColor':item.level=='ERROR'}">{{item.level}}</i>]</span> &nbsp;
+                <span>{{item.date}}</span>&nbsp;
+                <span>[{{item.threadName}}]</span>&nbsp;
+                <span>{{item.loggerName}}</span>&nbsp;-&nbsp;
+                <span>{{item.message}}</span>
+              </li>
+            </ul>
+            <div v-else class="noText">
+              <i class="iconfont icon icon-zanwushuju1" style="font-size: 174px"></i>
+            </div>
+          </template>
+        </el-tab-pane>
       </el-tabs>
   </div>
 </template>
@@ -55,10 +55,10 @@ const logsModel = factory('logs');
 export default {
     name:"Preview",
     props:{
-      dataFlow:{
-        type: Object,
-        required: true
-      }
+      // dataFlow:{
+      //   type: Object,
+      //   required: true
+      // }
     },
     data(){
         return{
@@ -83,6 +83,9 @@ export default {
               msg: '',
               datatype: 1
           },
+          dataFlow:{
+            stages:[]
+          }
         };
     },
 
@@ -96,6 +99,9 @@ export default {
         this.getDataTableApi();
         this.getLogsData();
       }, 5000);
+      this.$on("selected:stage", ( selectStage) => {
+        this.selectNode = selectStage.id;
+      });
     },
 
     watch: {
@@ -115,7 +121,9 @@ export default {
           let headerList =[];
           let params = {
             'filter[where][__tapd8.dataFlowId][regexp]':`^${this.dataFlow.id }$`,
-            'filter[where][__tapd8.stageId]':this.selectNode
+            'filter[where][__tapd8.stageId]':this.selectNode,
+            'filter[fields][__tapd8]': false,
+            'filter[fields][_id]': false
           };
           await DataFlowsDebugs.get(params).then(res =>{
             if (res.statusText === "OK" || res.status === 200) {
@@ -126,7 +134,7 @@ export default {
                 //     tableList = res.data[i];
                 //   }
                 // }
-                 res.data.forEach(item =>{  // 获取表头
+                res.data.forEach(item =>{  // 获取表头
                   for(let key of Object.keys(item)) {
                     headerList.push(key);
                   }
@@ -221,8 +229,16 @@ export default {
 </style>
 <style lang="less">
     .preview {
-      .el-tabs__content,.el-tab-pane,.card {
+      .el-tab-pane,.card {
           height: 100%!important;
+      }
+      .el-tabs__content {
+        height: calc(100% - 40px)!important;
+        box-sizing: border-box;
+      }
+      .el-table {
+        max-height: calc(100% - 45px);
+        overflow: auto;
       }
       .slider-color {
           background-color: #449dff;
