@@ -71,6 +71,11 @@
 						self.dataFlow = dataFlow;
 
 						self.editor.graph.loadData(JSON.parse(dataFlow.editorData));
+
+						if( ['scheduled', 'running'].includes(self.status)){
+							self.setEditable(false);
+						}
+
 					} else {
 						log(result);
 						self.$message.error('Load data failed');
