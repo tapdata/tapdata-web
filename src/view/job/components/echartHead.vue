@@ -124,8 +124,11 @@ export default {
 </style>
 <style lang="less">
 .echartHead {
+  .el-radio-button--mini .el-radio-button__inner {
+    padding: 7px 10px;
+  }
   .el-radio-group {
-    padding-left: 20px;
+    padding-left: 10px;
   }
   .screeningColor,.putColor {
     .el-radio-button__orig-radio:checked+.el-radio-button__inner {

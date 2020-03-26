@@ -132,7 +132,7 @@ export default {
     };
   },
   mounted() {
-    let params = {};
+    // let params = {};
     this.flow = this.dataFlow;
     // this.getApiData();
     this.screeningObj = {
@@ -155,14 +155,14 @@ export default {
       type: 'transf',
       isIput: true,
       tip:this.$t("dataFlow.transtime_pop")
-    },
+    };
 
     this.replicateObj = {
       title: this.$t('dataFlow.replicate'),
       type: 'replicate',
       isIput: true,
       tip:this.$t("dataFlow.replicate_pop")
-    }
+    };
   },
   watch:{
     domValue: {
@@ -190,7 +190,7 @@ export default {
         'filter[where][statsType]': "throughput",
         'filter[where][granularity]': this.selectFlow + time
       }
-      this.getApiData(params,'throughput',data)
+      this.getApiData(params,'throughput',data);
     },
 
     //获取返回的单位
@@ -201,7 +201,7 @@ export default {
         'filter[where][statsType]': "data_overview",
         'filter[where][granularity]': data
       }
-      this.getApiData(params,type,data)
+      this.getApiData(params,type,data);
     },
 
     //获取返回的时间
@@ -260,13 +260,13 @@ export default {
         let inputCount = data.inputCount;
         let outputCount = data.outputCount;
         if(ele === "flow") {
-          this.flow.inputNumber = inputSize;
-          this.flow.outputNumber = outputSize
-          this.getScreening(time,inputSize,outputSize);
-        } else {
           this.flow.inputNumber = inputCount;
-          this.flow.outputNumber = outputCount
+          this.flow.outputNumber = outputCount;
           this.getScreening(time,inputCount,outputCount);
+        } else {
+          this.flow.inputNumber = inputSize;
+          this.flow.outputNumber = outputSize;
+          this.getScreening(time,inputSize,outputSize);
         }
       } else if(type === "throughput") {
         data.forEach(item=>{
@@ -290,14 +290,14 @@ export default {
       } else {
         data.forEach(item => {
           timeList.push(item.t);  //时间
-          dataList.push(item.d)
-        })
+          dataList.push(item.d);
+        });
         if (type === "transf") {
           this.currentTime = dataList[dataList.length-1];
-          this.getTransTime(timeList,dataList)
+          this.getTransTime(timeList,dataList);
         } else if(type === "replicate") {
           this.ransfTime = dataList[dataList.length-1];
-          this.getReplicateTime(timeList,dataList)
+          this.getReplicateTime(timeList,dataList);
         }
       }
     },
@@ -320,8 +320,8 @@ export default {
           // data: [this.$('dataFlow.totalOutput'),this.$('dataFlow.totalInput')],
         },
         grid: {
-            left: '30%',
-            right: '30%',
+            left: '20%',
+            right: '20%',
             bottom: '3%',
             containLabel: true
         },
@@ -359,7 +359,7 @@ export default {
         series: [{
           type: 'bar',
           data: [series1,series2],
-          barWidth: 120,
+          barWidth: 70,
           barGap: '-100%',
           itemStyle: {
             normal: {
@@ -430,11 +430,11 @@ export default {
               lineStyle: {
                 color: '#2ba7c3'
               },
-              markLine : {
-                data : [{
-                  type : 'average', name: '平均值'
-                }]
-              }
+              // markLine : {
+              //   data : [{
+              //     type : 'average', name: '平均值'
+              //   }]
+              // }
             },
             {
               name: this.$t('dataFlow.output'),
@@ -446,11 +446,11 @@ export default {
               lineStyle: {
                 color:'#8cd5c2', //改变折线点的颜色
               },
-              markLine : {
-                data : [{
-                  type : 'average', name: '平均值'
-                }]
-              }
+              // markLine : {
+              //   data : [{
+              //     type : 'average', name: '平均值'
+              //   }]
+              // }
             },
         ]
       };

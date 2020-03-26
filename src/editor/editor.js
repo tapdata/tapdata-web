@@ -91,7 +91,8 @@ export default class Editor extends BaseObject {
 			region: 'right',
 			editor: this,
 			hidden: true,
-			maxWidth: 1000,
+      maxWidth: 1000,
+      minWidth: 500,
 			width: 520
 		});
 		ui.add(self.rightSidebar);
