@@ -95,7 +95,7 @@ const en = {
     dataMap: 'Data Map',
     edit: 'Edit',
     copy: 'Copy',
-    reset: 'Reset'
+    reset: 'Reset',
 	},
 	...enLocale
 };

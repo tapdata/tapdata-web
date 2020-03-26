@@ -42,6 +42,7 @@
 </template>
 <script>
 import factory from '../../api/factory';
+import $ from 'jquery';
 const DataFlowsDebugs = factory('DataFlowsDebugs');
 const logsModel = factory('logs');
 export default {
@@ -163,23 +164,24 @@ export default {
           if (this.search) {
             paramas['filter[where][$text][search]'] = this.search;
           }
-          await logsModel.get(paramas).then(res=>{
+         
+          logsModel.get(paramas).then(res=>{
             if (res.statusText === "OK" || res.status === 200) {
               if(res.data && res.data.length > 0) {
-                this.lastTime = res.date[0].millis;
+                this.lastTime = res.data[0].millis;
                 let logCount = res.data.length;
                 this.logCount += logCount;
 
                 for(let i = logCount - 1; i >= 0; i--){
                   let item = res.data[i];
-                  this.$refs.logContainer.prepend(
-                    `<li style="padding-bottom:10px;">
+                  $(this.$refs.logContainer).prepend(
+                    $(`<li style="padding-bottom:10px;">
                         <span>[<i style="font-weight: bold;" class="${item.level=='ERROR' ? 'redColor' : ''}">${item.level}</i>]</span> &nbsp;
                         <span>${item.date}</span>&nbsp;
                         <span>[${item.threadName}]</span>&nbsp;
                         <span>${item.loggerName}</span>&nbsp;-&nbsp;
                         <span>${item.message}</span>
-                      </li>`
+                      </li>`)
                   );
                   item.date = item.date? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : '';
                   item.last_updated = item.last_updated? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
@@ -187,6 +189,8 @@ export default {
 
               }
             }
+          }).catch(err => {
+
           });
         },
     },

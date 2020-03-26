@@ -8,6 +8,6 @@ import PublicAPI from "./publicApi";
 export default class LogsAPI extends PublicAPI{
 
 	constructor(){
-		super('http://132.232.60.65:3030/api/Logs');
+		super('/api/Logs');
 	}
 }
