@@ -60,7 +60,7 @@
 				<div class="task-list-menu-right">
 					<i class="iconfont task-list-menu-cion icon-play-circle" @click="handleAllStatus('paused')"></i>
 					<i class="iconfont task-list-menu-cion  icon-zanting" @click="handleAllStatus('running')"></i>
-					<i class="iconfont task-list-menu-cion  icon-icon_tianjia"></i>
+					<i class="iconfont task-list-menu-cion  icon-icon_tianjia" @click="$router.push({path: '/job'})"></i>
 				</div>
 			</div>
 			<div class="clear"></div>

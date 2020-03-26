@@ -670,6 +670,7 @@ export default class Graph extends Component{
 	}
 
 	setEditable(editable){
+		log('Graph.setEditable', editable);
 		this.editable = editable;
 
 		if( editable ){
@@ -679,9 +680,9 @@ export default class Graph extends Component{
 			this.toolbar.getWidgetByName('clear').enable();
 		} else {
 			// clear selected cells
-			let first = this.selection.collection.first();
+			let first = this.selection.collection.shift();
 			while( first ){
-				first = this.selection.collection.first();
+				first = this.selection.collection.shift();
 			}
 
 			this.unselectedAllCells();
@@ -697,7 +698,8 @@ export default class Graph extends Component{
 	}
 
 	loadData(jsonObject){
-		return this.graph.fromJSON(jsonObject);
+		this.graph.fromJSON(jsonObject);
+		this.paperScroller.scrollToContent();
 	}
 
 	getGraphLib(){

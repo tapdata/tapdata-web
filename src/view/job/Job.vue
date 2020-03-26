@@ -285,6 +285,7 @@
 			},
 
 			setEditable(editable){
+				log('Job.setEditable', editable, this.dataFlow);
 				if( this.dataFlow ){
 					delete this.dataFlow.editorData;
 					this.editor.setEditable(editable, this.dataFlow);
