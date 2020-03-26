@@ -1,5 +1,5 @@
 <template>
-  <div class="preview">
+  <div class="preview" ref="boxHeight">
       <el-tabs type="border-card" class="tabBox">
         <el-tab-pane label="Test Results">
           <template>
@@ -11,7 +11,7 @@
                 :value="item.id">
               </el-option>
             </el-select>
-            <el-table border class="tableStyle" :data="itemList" v-loading="isloading">
+            <el-table border :height="tableHeight" class="tableStyle" :data="itemList" v-loading="isloading">
               <el-table-column
                 v-for="(head, key) in headers"
                 :key="key" :prop="head"
@@ -55,13 +55,14 @@ const logsModel = factory('logs');
 export default {
     name:"Preview",
     props:{
-      // dataFlow:{
-      //   type: Object,
-      //   required: true
-      // }
+      dataFlow:{
+        type: Object,
+        required: true
+      }
     },
     data(){
         return{
+          tableHeight: '',
           nodeList:[], //下拉
           selectNode:'',
           tableName: '',
@@ -83,13 +84,14 @@ export default {
               msg: '',
               datatype: 1
           },
-          dataFlow:{
-            stages:[]
-          }
         };
     },
 
     mounted () {
+      this.$nextTick(()=>{
+        this.tableHeight = this.$refs.boxHeight.clientHeight - 158;
+      });
+
       this.nodeList = this.dataFlow.stages;
       if(this.nodeList.length > 0) {
         this.selectNode = this.nodeList[0].id;
@@ -134,6 +136,10 @@ export default {
                 //     tableList = res.data[i];
                 //   }
                 // }
+                res.data.forEach(item =>{
+                  delete  item._id;
+                  delete item.__tapd8;
+                });
                 res.data.forEach(item =>{  // 获取表头
                   for(let key of Object.keys(item)) {
                     headerList.push(key);
@@ -237,7 +243,7 @@ export default {
         box-sizing: border-box;
       }
       .el-table {
-        max-height: calc(100% - 45px);
+        // max-height: calc(100% - 45px);
         overflow: auto;
       }
       .slider-color {

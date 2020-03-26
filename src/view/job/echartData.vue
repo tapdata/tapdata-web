@@ -133,6 +133,9 @@ export default {
   },
   mounted() {
     // let params = {};
+    this.$on("selected:stage", ( selectStage) => {
+      this.domValue = selectStage.id;
+    });
     this.flow = this.dataFlow;
     // this.getApiData();
     this.screeningObj = {
@@ -200,7 +203,7 @@ export default {
       let params = {
         'filter[where][statsType]': "data_overview",
         'filter[where][granularity]': data
-      }
+      };
       this.getApiData(params,type,data);
     },
 
@@ -213,14 +216,14 @@ export default {
         params = {
           'filter[where][statsType]': "trans_time",
           'filter[where][granularity]': this.selectFlow + data
-        }
+        };
       } else if( type === "replicate") {
         this.replicateType = type;
         this.replicateTime = data;
         params = {
           'filter[where][statsType]': "repl_lag",
           'filter[where][granularity]': this.selectFlow + data
-        }
+        };
       }
       this.getApiData(params,type,data);
     },
