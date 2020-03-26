@@ -31,16 +31,8 @@
               v-model="search">
               <i slot="prefix" class="el-input__icon el-icon-search"></i>
             </el-input>
-            <ul class="log" v-if="logList.length > 0">
-              <li v-for="(item, i) in logList" :key="i" style="padding-bottom:10px;">
-                <span>[<i style="font-weight: bold;" :class="{'redColor':item.level=='ERROR'}">{{item.level}}</i>]</span> &nbsp;
-                <span>{{item.date}}</span>&nbsp;
-                <span>[{{item.threadName}}]</span>&nbsp;
-                <span>{{item.loggerName}}</span>&nbsp;-&nbsp;
-                <span>{{item.message}}</span>
-              </li>
-            </ul>
-            <div v-else class="noText">
+            <ul class="log" v-show="logCount > 0" ref="logContainer"></ul>
+            <div v-show="logCount === 0" class="noText">
               <i class="iconfont icon icon-zanwushuju1" style="font-size: 174px"></i>
             </div>
           </template>
@@ -62,6 +54,7 @@ export default {
     },
     data(){
         return{
+          lastTime: '',
           tableHeight: '',
           nodeList:[], //下拉
           selectNode:'',
@@ -69,7 +62,7 @@ export default {
           tableName_list: [],
           search: '',
           item: 1,
-          logList:[],
+          logCount:[],
           tableList:[],
           itemList:[],
           headers:[],
@@ -127,6 +120,7 @@ export default {
             'filter[fields][__tapd8]': false,
             'filter[fields][_id]': false
           };
+
           await DataFlowsDebugs.get(params).then(res =>{
             if (res.statusText === "OK" || res.status === 200) {
               // this.nodeList = Object.keys(res.data);   // 获取下拉项
@@ -160,20 +154,40 @@ export default {
             'filter[order]': 'date DESC',
             'filter[where][contextMap.dataFlowId][regexp]':`^${this.dataFlow.id }$`
           };
+          // console.log(this.lastTime);
+          if(!this.lastTime) {
+            paramas['filter[limit]'] = 100;
+          } else {
+            paramas['filter[where][millis][gt]']= this.lastTime;
+          }
           if (this.search) {
             paramas['filter[where][$text][search]'] = this.search;
           }
           await logsModel.get(paramas).then(res=>{
             if (res.statusText === "OK" || res.status === 200) {
               if(res.data && res.data.length > 0) {
-                res.data.forEach((item,index) =>{
+                this.lastTime = res.date[0].millis;
+                let logCount = res.data.length;
+                this.logCount += logCount;
+
+                for(let i = logCount - 1; i >= 0; i--){
+                  let item = res.data[i];
+                  this.$refs.logContainer.prepend(
+                    `<li style="padding-bottom:10px;">
+                        <span>[<i style="font-weight: bold;" class="${item.level=='ERROR' ? 'redColor' : ''}">${item.level}</i>]</span> &nbsp;
+                        <span>${item.date}</span>&nbsp;
+                        <span>[${item.threadName}]</span>&nbsp;
+                        <span>${item.loggerName}</span>&nbsp;-&nbsp;
+                        <span>${item.message}</span>
+                      </li>`
+                  );
                   item.date = item.date? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : '';
                   item.last_updated = item.last_updated? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
-                });
-                this.logList = res.data;  //日志数据
+                }
+
               }
             }
-          })
+          });
         },
     },
     destroyed() {
