@@ -40,7 +40,12 @@ const cn = {
 		deleteOrNot: "是否删除",
 		startupAfter_delete: '请启动后删除',
 		startupAfter_add: '请启动后添加',
-		noData: '暂无数据'
+		noData: '暂无数据',
+    resetMessage:'此操作将重置该任务状态, 是否重置?',
+    deteleMessage:'此操作将删除该任务, 是否删除?',
+    prompt:'提示',
+    cancleReset:'已取消重置',
+    resetOk:'重置成功' ,
 	},
 	dataFlow: {
 		average: '平均',

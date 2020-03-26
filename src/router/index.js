@@ -4,6 +4,7 @@ import layout from '../view/layout';
 import Job from '../view/job/Job';
 import Preview from '../view/job/preview';
 import echartData from '../view/job/echartData';
+import Setting from '../view/job/Setting';
 
 import clusterManagement from '../view/clusterManagement/clusterManagement';
 import dailyRecord from '../view/clusterManagement/dailyRecord';
@@ -47,6 +48,11 @@ export default new Router({
 			path: '/preview',
 			name: 'preview',
 			component: Preview
-		}
+		},{
+      path: '/setting',
+      name: 'setting',
+      component: Setting
+
+    },
 	]
 });
