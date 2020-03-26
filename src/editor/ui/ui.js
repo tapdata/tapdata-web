@@ -20,7 +20,7 @@ export default class UI extends Component {
 	doInit() {
 		this.el = $(`<div class="editor">
 			<div class="e-header">
-				<div class="e-action-bar"><a class="iconfont icon-xiangzuo" href="./#/dataFlows"></a></div>
+				<div class="e-action-bar"><a class="e-action-back iconfont icon-xiangzuo"></a></div>
 				<div class="e-title">
 					<h3 contenteditable="true">任务</h3>
 				</div>
@@ -43,6 +43,9 @@ export default class UI extends Component {
 	}
 	getName(){
 		return this.el.find('.e-title h3').text();
+	}
+	getBackButtonEl(){
+		return this.el.find('.e-header .e-action-back');
 	}
 	getContentEl(){
 		return this.el.find('.e-content');
