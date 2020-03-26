@@ -298,25 +298,20 @@
 				});
 			},
 			handleDelete(id) {
-				this.$confirm('此操作将删除该任务, 是否删除?', '提示', {
-					confirmButtonText: '删除',
-					cancelButtonText: '取消',
+				this.$confirm(this.$t('message.deteleMessage'), this.$t('message.prompt'), {
+					confirmButtonText: this.$t('message.delete'),
+					cancelButtonText: this.$t('message.cancle'),
 					type: 'warning'
 				}).then(() => {
 					dataFlows.delete(id).then(res => {
 						if (res.statusText === "OK" || res.status === 200) {
 							this.getData();
 						}
+            this.$message.success(this.$('message.deleteOK'));
 					});
-					this.$message({
-						type: 'success',
-						message: '删除成功!'
-					});
+
 				}).catch(() => {
-					this.$message({
-						type: 'info',
-						message: '已取消删除'
-					});
+          this.$message.info(this.$t('message.deleteFail'));
 				});
 
 			},
@@ -354,9 +349,9 @@
 				});
 			},
 			handleReset(id) {
-				this.$confirm('此操作将重置该任务状态, 是否重置?', '提示', {
-					confirmButtonText: '重置',
-					cancelButtonText: '取消',
+				this.$confirm(this.$t('message.resetMessage'), this.$t('message.prompt'), {
+					confirmButtonText: this.$t('dataFlow.reset'),
+					cancelButtonText: this.$t('message.cancle'),
 					type: 'warning'
 				}).then(() => {
 					let attributes = {
@@ -368,15 +363,9 @@
 							this.getData();
 						}
 					});
-					this.$message({
-						type: 'success',
-						message: '重置成功!'
-					});
+          this.$message.success(this.$t('message.resetOk'));
 				}).catch(() => {
-					this.$message({
-						type: 'info',
-						message: '已取消重置'
-					});
+					this.$message.info(this.$t('message.cancleReset'));
 				});
 			},
 			formatterTime(row) {
@@ -458,7 +447,9 @@
 		float: right;
 		margin-right: 20px;
 	}
-
+  .el-table .sort-caret{
+    border: 3px solid transparent !important;
+  }
 	.clear {
 		clear: both;
 	}
