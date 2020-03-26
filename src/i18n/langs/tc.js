@@ -68,13 +68,28 @@ const tc = {
       throughputpop:'平均每秒源端數據采集的速度以及目標端寫入的速度，數值越大越好',
       transtime_pop: '傳輸耗時：除源節點外，事件處理完的時間減去事件的發生時間。 節點間統計：事件從進入節點到輸出到所消耗的時間。 任務流統計：所有節點耗時相加，數值越小越好',
       replicate_pop: '源庫和目標庫數據最後更新時間的差距，數值越小越好',
-		status: {
-			running: 'Running',
-			paused: 'Paused',
-			draft: 'Draft',
-			scheduled: 'Scheduled',
-			stopping: 'Stopping',
-		}
+      status: {
+        running: '運行中',
+        paused: '已暫停',
+        draft: '草稿',
+        scheduled: '調度中',
+        stopping: '停止中',
+      },
+      searchPlaceholder:'任務名稱/節點名/庫表名',
+      dataRange:'創建日期範圍' ,
+      startTime:'開始時間',
+      endTime:'結束時間',
+      separator: "至" ,
+      dataPlaceholder:"選擇時間範圍" ,
+      taskStatus:'運行狀態',
+      taskStatusPlaceholder:'請選擇任務狀態',
+      updateTime:'更新時間',
+      runningSpeed:'運行速度',
+      operate:'操作',
+      dataMap:'數據地圖',
+      edit:'編輯' ,
+      copy:'複製',
+      reset:'重置'
     },
     ...tcLocale
   };

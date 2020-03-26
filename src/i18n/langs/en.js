@@ -75,7 +75,22 @@ const en = {
 			draft: 'Draft',
 			scheduled: 'Scheduled',
 			stopping: 'Stopping',
-		}
+		},
+    searchPlaceholder: 'Task Name / Node Name / Library Table Name',
+    dataRange: 'date range',
+    startTime: 'Start time',
+    endTime: 'End time',
+    separator: "to",
+    dataPlaceholder: "Select time range",
+    taskStatus: 'Run status',
+    taskStatusPlaceholder: 'Please select a task status',
+    updateTime: 'Update time',
+    runningSpeed: 'Running speed',
+    operate: 'Operate',
+    dataMap: 'Data Map',
+    edit: 'Edit',
+    copy: 'Copy',
+    reset: 'Reset'
 	},
 	...enLocale
 };

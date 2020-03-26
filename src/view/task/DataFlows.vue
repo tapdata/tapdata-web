@@ -5,23 +5,23 @@
 				<el-form label-width="100px" :data="formData">
 					<el-row>
 						<el-col :span="8">
-							<el-form-item label="搜索:">
+							<el-form-item :label="$t('message.sourchName')">
 								<el-input
-										placeholder="任务名称/节点名/库表名" prefix-icon="el-icon-search"
+										:placeholder="$t('dataFlows.searchPlaceholder')" prefix-icon="el-icon-search"
 										v-model="formData.search"></el-input>
 							</el-form-item>
 						</el-col>
 						<el-col :span="8">
-							<el-form-item label="创建日期范围:">
+							<el-form-item :label="$t('dataFlow.dataRange')">
 								<el-date-picker type="daterange" v-model="formData.timeData" size="small "
-												class="task-list-time-picker" range-separator="至"
-												start-placeholder="开始时间" end-placeholder="结束时间"
-												placeholder="选择时间范围"></el-date-picker>
+												class="task-list-time-picker" :range-separator="$t('dataFlow.separator')"
+                                :start-placeholder="$t('dataFlow.startTime')" :end-placeholder="$t('dataFlow.endTime')"
+                                :placeholder="$t('dataFlow.dataPlaceholder')"></el-date-picker>
 							</el-form-item>
 						</el-col>
 						<el-col :span="8">
-							<el-form-item label="运行状态:">
-								<el-select v-model="formData.status" clearable placeholder="请选择">
+							<el-form-item :label=" $t('dataFlow.taskStatus') ">
+								<el-select v-model="formData.status" clearable :placeholder=" $t('dataFlow.taskStatusPlaceholder')">
 									<el-option
 											v-for="item in options" :key="item.value" :label="item.label"
 											:value="item.value"></el-option>
@@ -68,22 +68,23 @@
 					:data="tableData" style="width: 99%;border: 1px solid #dedee4;margin-top: 10px;"
 					:max-height="maxHeight" row-key="id"
 					:tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+          @sort-change="handleSortTable"
 					@selection-change="handleSelectionChange">
 				<el-table-column type="selection" width="55" :selectable="hanldeSelectable">
 				</el-table-column>
-				<el-table-column prop="name" label="任务名称">
+				<el-table-column prop="name" :label="$t('dataFlow.taskName')">
 				</el-table-column>
-				<el-table-column sortable label="创建人" width="180"></el-table-column>
-				<el-table-column prop="status" sortable label="任务状态" width="180">
+				<el-table-column sortable='custom' :label="$t('dataFlow.creatdor')" width="180"></el-table-column>
+				<el-table-column prop="status" sortable='custom' :label="$t('dataFlow.taskStatus')" width="100">
 					<template slot-scope="scope" v-if="!scope.row.hasChildren">
 						<span :style="`color: ${ colorMap[scope.row.status] };`"> {{ $t('dataFlow.status.' + scope.row.status) }} </span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="input" sortable label="总输入（条）" width="180"></el-table-column>
-				<el-table-column prop="output" sortable label="总输出（条）" width="180"></el-table-column>
-				<el-table-column prop="transmissionTime" sortable label="输出速度" width="180"></el-table-column>
-        <el-table-column prop="last_updated" label="时间" width="180" :formatter="formatterTime"></el-table-column>
-				<el-table-column label="运行开关" width="100">
+				<el-table-column prop="input" sortable='custom' :label="$t('dataFlow.totalInput')" width="120"></el-table-column>
+				<el-table-column prop="output" sortable='custom' :label="$t('dataFlow.totalOutput')" width="120"></el-table-column>
+				<el-table-column prop="transmissionTime" sortable='custom' :label="$t('dataFlow.runningSpeed')" width="120"></el-table-column>
+        <el-table-column prop="last_updated" :label="$t('dataFlow.updateTime')" width="140" :formatter="formatterTime"></el-table-column>
+				<el-table-column :label="$t('dataFlow.updateTime')" width="70">
 					<template slot-scope="scope">
 						<div v-if="!scope.row.hasChildren">
 							<el-switch
@@ -93,24 +94,24 @@
 						</div>
 					</template>
 				</el-table-column>
-				<el-table-column label="操作" width="220">
+				<el-table-column :label="$t('dataFlow.operate')" width="180">
 					<template slot-scope="scope">
 						<div v-if="!scope.row.hasChildren">
-							<el-tooltip class="item" content="数据地图" placement="bottom">
+							<el-tooltip class="item" :content="$t('dataFlow.dataMap')" placement="bottom">
 								<router-link :to='{path:"/job", query: { id: scope.row.id}}'><i
 										class="iconfont task-list-icon icon-yunyingzhongxin"></i></router-link>
 							</el-tooltip>
-							<el-tooltip class="item" content="编辑" placement="bottom">
+							<el-tooltip class="item" :content="$t('dataFlow.edit')" placement="bottom">
 								<router-link :to='{path:"/job", query: { id: scope.row.id}}'><i
 										class="iconfont task-list-icon icon-ceshishenqing"></i></router-link>
 							</el-tooltip>
-							<el-tooltip class="item" content="复制" placement="bottom">
+							<el-tooltip class="item" :content="$t('dataFlow.copy')" placement="bottom">
 								<i class="iconfont task-list-icon icon-fuzhi1"></i>
 							</el-tooltip>
-							<el-tooltip class="item" content="删除" placement="bottom">
+							<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
 								<i class="iconfont task-list-icon icon-shanchu" @click="handleDelete(scope.row.id)"></i>
 							</el-tooltip>
-							<el-tooltip class="item" content="重置" placement="bottom">
+							<el-tooltip class="item" :content="$t('dataFlow.reset')" placement="bottom">
 								<i class="iconfont task-list-icon icon-shuaxin1" @click="handleReset(scope.row.id)"></i>
 							</el-tooltip>
 						</div>
@@ -359,8 +360,11 @@
 				});
 			},
       formatterTime(row){
-          let time = row.last_updated ? this.$moment(row.last_updated).format('YYYY-MM_DD HH:mm:ss') : '';
+          let time = row.last_updated ? this.$moment(row.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
           return time;
+      },
+      handleSortTable(){
+
       },
 			handleSelectionChange(val) {
 				this.multipleSelection = val;
