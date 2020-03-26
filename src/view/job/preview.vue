@@ -1,5 +1,5 @@
 <template>
-  <div class="preview">
+  <div class="preview" ref="boxHeight">
       <el-tabs type="border-card" class="tabBox">
         <el-tab-pane label="Test Results">
           <template>
@@ -11,7 +11,7 @@
                 :value="item.id">
               </el-option>
             </el-select>
-            <el-table border class="tableStyle" :data="itemList" v-loading="isloading">
+            <el-table border :height="tableHeight" class="tableStyle" :data="itemList" v-loading="isloading">
               <el-table-column
                 v-for="(head, key) in headers"
                 :key="key" :prop="head"
@@ -31,16 +31,8 @@
               v-model="search">
               <i slot="prefix" class="el-input__icon el-icon-search"></i>
             </el-input>
-            <ul class="log" v-if="logList.length > 0">
-              <li v-for="(item, i) in logList" :key="i" style="padding-bottom:10px;">
-                <span>[<i style="font-weight: bold;" :class="{'redColor':item.level=='ERROR'}">{{item.level}}</i>]</span> &nbsp;
-                <span>{{item.date}}</span>&nbsp;
-                <span>[{{item.threadName}}]</span>&nbsp;
-                <span>{{item.loggerName}}</span>&nbsp;-&nbsp;
-                <span>{{item.message}}</span>
-              </li>
-            </ul>
-            <div v-else class="noText">
+            <ul class="log" v-show="logCount > 0" ref="logContainer"></ul>
+            <div v-show="logCount === 0" class="noText">
               <i class="iconfont icon icon-zanwushuju1" style="font-size: 174px"></i>
             </div>
           </template>
@@ -50,25 +42,28 @@
 </template>
 <script>
 import factory from '../../api/factory';
+import $ from 'jquery';
 const DataFlowsDebugs = factory('DataFlowsDebugs');
 const logsModel = factory('logs');
 export default {
     name:"Preview",
     props:{
-      // dataFlow:{
-      //   type: Object,
-      //   required: true
-      // }
+      dataFlow:{
+        type: Object,
+        required: true
+      }
     },
     data(){
         return{
+          lastTime: '',
+          tableHeight: '',
           nodeList:[], //下拉
           selectNode:'',
           tableName: '',
           tableName_list: [],
           search: '',
           item: 1,
-          logList:[],
+          logCount:[],
           tableList:[],
           itemList:[],
           headers:[],
@@ -83,13 +78,14 @@ export default {
               msg: '',
               datatype: 1
           },
-          dataFlow:{
-            stages:[]
-          }
         };
     },
 
     mounted () {
+      this.$nextTick(()=>{
+        this.tableHeight = this.$refs.boxHeight.clientHeight - 158;
+      });
+
       this.nodeList = this.dataFlow.stages;
       if(this.nodeList.length > 0) {
         this.selectNode = this.nodeList[0].id;
@@ -125,6 +121,7 @@ export default {
             'filter[fields][__tapd8]': false,
             'filter[fields][_id]': false
           };
+
           await DataFlowsDebugs.get(params).then(res =>{
             if (res.statusText === "OK" || res.status === 200) {
               // this.nodeList = Object.keys(res.data);   // 获取下拉项
@@ -134,6 +131,10 @@ export default {
                 //     tableList = res.data[i];
                 //   }
                 // }
+                res.data.forEach(item =>{
+                  delete  item._id;
+                  delete item.__tapd8;
+                });
                 res.data.forEach(item =>{  // 获取表头
                   for(let key of Object.keys(item)) {
                     headerList.push(key);
@@ -154,20 +155,43 @@ export default {
             'filter[order]': 'date DESC',
             'filter[where][contextMap.dataFlowId][regexp]':`^${this.dataFlow.id }$`
           };
+          // console.log(this.lastTime);
+          if(!this.lastTime) {
+            paramas['filter[limit]'] = 100;
+          } else {
+            paramas['filter[where][millis][gt]']= this.lastTime;
+          }
           if (this.search) {
             paramas['filter[where][$text][search]'] = this.search;
           }
-          await logsModel.get(paramas).then(res=>{
+         
+          logsModel.get(paramas).then(res=>{
             if (res.statusText === "OK" || res.status === 200) {
               if(res.data && res.data.length > 0) {
-                res.data.forEach((item,index) =>{
+                this.lastTime = res.data[0].millis;
+                let logCount = res.data.length;
+                this.logCount += logCount;
+
+                for(let i = logCount - 1; i >= 0; i--){
+                  let item = res.data[i];
+                  $(this.$refs.logContainer).prepend(
+                    $(`<li style="padding-bottom:10px;">
+                        <span>[<i style="font-weight: bold;" class="${item.level=='ERROR' ? 'redColor' : ''}">${item.level}</i>]</span> &nbsp;
+                        <span>${item.date}</span>&nbsp;
+                        <span>[${item.threadName}]</span>&nbsp;
+                        <span>${item.loggerName}</span>&nbsp;-&nbsp;
+                        <span>${item.message}</span>
+                      </li>`)
+                  );
                   item.date = item.date? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : '';
                   item.last_updated = item.last_updated? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
-                });
-                this.logList = res.data;  //日志数据
+                }
+
               }
             }
-          })
+          }).catch(err => {
+
+          });
         },
     },
     destroyed() {
@@ -237,7 +261,7 @@ export default {
         box-sizing: border-box;
       }
       .el-table {
-        max-height: calc(100% - 45px);
+        // max-height: calc(100% - 45px);
         overflow: auto;
       }
       .slider-color {
