@@ -69,13 +69,29 @@ const cn = {
 		throughputpop: '平均每秒源端数据采集的速度以及目标端写入的速度，数值越大越好',
 		transtime_pop: '传输耗时：除源节点外，事件处理完的时间减去事件的发生时间。 节点间统计：事件从进入节点到输出到所消耗的时间 任务流统计：所有节点耗时相加，数值越小越好',
 		replicate_pop: '源库和目标库数据最后更新时间的差距，数值越小越好',
-		status: {
-			running: '運行中',
-			paused: '已暫停',
-			draft: '草稿',
-			scheduled: '調度中',
-			stopping: '停止中',
-		}
+    status: {
+      running: '运行中',
+      paused: '已暂停',
+      draft: '草稿',
+      scheduled: '调度中',
+      stopping: '停止中',
+    },
+    searchPlaceholder:'任务名称/节点名/库表名',
+    dataRange:'创建日期范围' ,
+    startTime:'开始时间',
+    endTime:'结束时间',
+    separator: "至" ,
+    dataPlaceholder:"选择时间范围" ,
+    taskStatus:'运行状态',
+    taskStatusPlaceholder:'请选择任务状态',
+    updateTime:'更新时间',
+    runningSpeed:'运行速度',
+    operate:'操作',
+    dataMap:'数据地图',
+    edit:'编辑' ,
+    copy:'复制',
+    reset:'重置'
+
 	},
 	...zhLocale
 };

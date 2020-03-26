@@ -116,7 +116,7 @@ export default {
           let params = {
             'filter[where][__tapd8.dataFlowId][regexp]':`^${this.dataFlow.id }$`,
             'filter[where][__tapd8.stageId]':this.selectNode
-          }
+          };
           await DataFlowsDebugs.get(params).then(res =>{
             if (res.statusText === "OK" || res.status === 200) {
               // this.nodeList = Object.keys(res.data);   // 获取下拉项
@@ -145,7 +145,7 @@ export default {
           let paramas = {
             'filter[order]': 'date DESC',
             'filter[where][contextMap.dataFlowId][regexp]':`^${this.dataFlow.id }$`
-          }
+          };
           if (this.search) {
             paramas['filter[where][$text][search]'] = this.search;
           }
