@@ -3,15 +3,17 @@ import Vue from 'vue';
 
 
 import {
-  Tabs,
-  TabPane,
-  Popover,
-  Radio,
-  RadioGroup,
-  RadioButton,
-  Dialog,
-  Switch,
-  Loading,
+	Tabs,
+	TabPane,
+	Popover,
+	Radio,
+	RadioGroup,
+	RadioButton,
+	CheckboxGroup,
+	CheckboxButton,
+	Dialog,
+	Switch,
+	Loading,
 	MessageBox,
 	Message,
 	Menu,
@@ -35,7 +37,8 @@ import {
 	Dropdown,
 	DropdownItem,
 	DropdownMenu,
-  Tooltip
+	Tag,
+	Tooltip,
 } from 'element-ui';
 
 
@@ -45,6 +48,8 @@ Vue.component(Popover.name, Popover);
 Vue.component(Radio.name, Radio);
 Vue.component(RadioGroup.name, RadioGroup);
 Vue.component(RadioButton.name, RadioButton);
+Vue.component(CheckboxGroup.name, CheckboxGroup);
+Vue.component(CheckboxButton.name, CheckboxButton);
 Vue.component(Dialog.name, Dialog);
 Vue.component(Menu.name, Menu);
 Vue.component(MenuItem.name, MenuItem);
@@ -70,35 +75,42 @@ Vue.component(DropdownMenu.name, DropdownMenu);
 Vue.component(DatePicker.name, DatePicker);
 Vue.component(Switch.name, Switch);
 Vue.component(Tooltip.name, Tooltip);
+Vue.component(Tag.name, Tag);
 
 Vue.use(Loading.directive);
 /***提示只显示一次**/
 // 因为使用了new DonMessage()的原因，所以导致this.$message(options)的方式无法使用
 // 推荐使用this.$message.success('成功提示')或者this.$message.success(options)的方式进行调用
 const showMessage = Symbol('showMessage');
+
 class DoneMessage {
-  [showMessage](type, options, single) {
-    if (single) {
-      if (document.getElementsByClassName('el-message').length === 0) {
-          Message[type](options);
-      }
-    } else {
-      Message[type](options);
-    }
-  }
-  info(options, single = true) {
-    this[showMessage]('info', options, single);
-  }
-  warning(options, single = true) {
-    this[showMessage]('warning', options, single);
-  }
-  error(options, single = true) {
-    this[showMessage]('error', options, single);
-  }
-  success(options, single = true) {
-    this[showMessage]('success', options, single);
-  }
+	[showMessage](type, options, single) {
+		if (single) {
+			if (document.getElementsByClassName('el-message').length === 0) {
+				Message[type](options);
+			}
+		} else {
+			Message[type](options);
+		}
+	}
+
+	info(options, single = true) {
+		this[showMessage]('info', options, single);
+	}
+
+	warning(options, single = true) {
+		this[showMessage]('warning', options, single);
+	}
+
+	error(options, single = true) {
+		this[showMessage]('error', options, single);
+	}
+
+	success(options, single = true) {
+		this[showMessage]('success', options, single);
+	}
 }
+
 export const message = new DoneMessage();
 
 Vue.prototype.$loading = Loading.service;
