@@ -54,8 +54,8 @@ export default {
       this.title = this.data.title;
       this.tip = this.data.tip;
       this.isScreeing = this.data.isScreeing;
-      this.isIput = this.data.isIput
-      this.isSpeed = this.data.isSpeed
+      this.isIput = this.data.isIput;
+      this.isSpeed = this.data.isSpeed;
 
       this.$emit("twoRadio",this.num,this.data.type);
       this.$emit("getSpeed",this.speed,this.time);
