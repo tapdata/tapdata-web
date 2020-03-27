@@ -49,7 +49,7 @@ export default {
         _this.myChart.setOption(publicCharts);
         window.addEventListener("resize",()=>{
           _this.myChart.resize();
-        })
+        });
       // }, 0);
 
     },

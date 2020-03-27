@@ -31,7 +31,7 @@
           </div>
           <div class="info-list">
             <span class="info-label">{{ $t('dataFlow.state') }}:</span>
-            <span class="info-text" style="color: #62a569;">{{flow.status}}</span>
+            <span class="info-text" style="color: #62a569;">{{$t('dataFlow.status.' + flow.status)}}</span>
           </div>
           <div class="info-list">
             <span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
@@ -168,6 +168,12 @@ export default {
     };
   },
   watch:{
+    'dataFlow.status': {
+      handler(val) {
+        this.flow.status = val;
+      },
+      deep: true
+    },
     domValue: {
       handler(val) {
         this.selectId = val;
