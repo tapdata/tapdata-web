@@ -112,87 +112,87 @@ export default {
     },
 
     methods: {
-        async getDataTableApi(){
-          // let tableList = [];
-          let headerList =[];
-          let params = {
-            'filter[where][__tapd8.dataFlowId][regexp]':`^${this.dataFlow.id }$`,
-            'filter[where][__tapd8.stageId]':this.selectNode,
-            'filter[fields][__tapd8]': false,
-            'filter[fields][_id]': false
-          };
+      async getDataTableApi(){
+        // let tableList = [];
+        let headerList =[];
+        let params = {
+          'filter[where][__tapd8.dataFlowId][regexp]':`^${this.dataFlow.id }$`,
+          'filter[where][__tapd8.stageId]':this.selectNode,
+          'filter[fields][__tapd8]': false,
+          'filter[fields][_id]': false
+        };
 
-          await DataFlowsDebugs.get(params).then(res =>{
-            if (res.statusText === "OK" || res.status === 200) {
-              // this.nodeList = Object.keys(res.data);   // 获取下拉项
-              if(res.data && res.data.length > 0) {
-                // for(let i in res.data) {  // 获取选择后对应的表格数据
-                //   if(this.selectNode === i) {
-                //     tableList = res.data[i];
-                //   }
-                // }
-                res.data.forEach(item =>{
-                  delete  item._id;
-                  delete item.__tapd8;
-                });
-                res.data.forEach(item =>{  // 获取表头
-                  for(let key of Object.keys(item)) {
-                    headerList.push(key);
-                  }
-                });
-                headerList =  headerList.filter((element,index,self) => { //表头去重
-                  return self.indexOf(element) === index;
-                });
-                this.headers = headerList;
-                this.itemList = res.data;
-              }
-            }
-          });
-        },
-
-        async getLogsData() {  //获取日志
-          let paramas = {
-            'filter[order]': 'date DESC',
-            'filter[where][contextMap.dataFlowId][regexp]':`^${this.dataFlow.id }$`
-          };
-          // console.log(this.lastTime);
-          if(!this.lastTime) {
-            paramas['filter[limit]'] = 100;
-          } else {
-            paramas['filter[where][millis][gt]']= this.lastTime;
-          }
-          if (this.search) {
-            paramas['filter[where][$text][search]'] = this.search;
-          }
-         
-          logsModel.get(paramas).then(res=>{
-            if (res.statusText === "OK" || res.status === 200) {
-              if(res.data && res.data.length > 0) {
-                this.lastTime = res.data[0].millis;
-                let logCount = res.data.length;
-                this.logCount += logCount;
-
-                for(let i = logCount - 1; i >= 0; i--){
-                  let item = res.data[i];
-                  $(this.$refs.logContainer).prepend(
-                    $(`<li style="padding-bottom:10px;">
-                        <span>[<i style="font-weight: bold;" class="${item.level=='ERROR' ? 'redColor' : ''}">${item.level}</i>]</span> &nbsp;
-                        <span>${item.date}</span>&nbsp;
-                        <span>[${item.threadName}]</span>&nbsp;
-                        <span>${item.loggerName}</span>&nbsp;-&nbsp;
-                        <span>${item.message}</span>
-                      </li>`)
-                  );
-                  item.date = item.date? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : '';
-                  item.last_updated = item.last_updated? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
+        await DataFlowsDebugs.get(params).then(res =>{
+          if (res.statusText === "OK" || res.status === 200) {
+            // this.nodeList = Object.keys(res.data);   // 获取下拉项
+            if(res.data && res.data.length > 0) {
+              // for(let i in res.data) {  // 获取选择后对应的表格数据
+              //   if(this.selectNode === i) {
+              //     tableList = res.data[i];
+              //   }
+              // }
+              res.data.forEach(item =>{
+                delete  item._id;
+                delete item.__tapd8;
+              });
+              res.data.forEach(item =>{  // 获取表头
+                for(let key of Object.keys(item)) {
+                  headerList.push(key);
                 }
-
-              }
+              });
+              headerList =  headerList.filter((element,index,self) => { //表头去重
+                return self.indexOf(element) === index;
+              });
+              this.headers = headerList;
+              this.itemList = res.data;
             }
-          }).catch(err => {
+          }
+        });
+      },
 
-          });
-        },
+      async getLogsData() {  //获取日志
+        let paramas = {
+          'filter[order]': 'date DESC',
+          'filter[where][contextMap.dataFlowId][regexp]':`^${this.dataFlow.id }$`
+        };
+        // console.log(this.lastTime);
+        if(!this.lastTime) {
+          paramas['filter[limit]'] = 100;
+        } else {
+          paramas['filter[where][millis][gt]']= this.lastTime;
+        }
+        if (this.search) {
+          paramas['filter[where][$text][search]'] = this.search;
+        }
+
+        logsModel.get(paramas).then(res=>{
+          if (res.statusText === "OK" || res.status === 200) {
+            if(res.data && res.data.length > 0) {
+              this.lastTime = res.data[0].millis;
+              let logCount = res.data.length;
+              this.logCount += logCount;
+
+              for(let i = logCount - 1; i >= 0; i--){
+                let item = res.data[i];
+                $(this.$refs.logContainer).prepend(
+                  $(`<li style="padding-bottom:10px;">
+                      <span>[<i style="font-weight: bold;" class="${item.level=='ERROR' ? 'redColor' : ''}">${item.level}</i>]</span> &nbsp;
+                      <span>${item.date}</span>&nbsp;
+                      <span>[${item.threadName}]</span>&nbsp;
+                      <span>${item.loggerName}</span>&nbsp;-&nbsp;
+                      <span>${item.message}</span>
+                    </li>`)
+                );
+                item.date = item.date? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : '';
+                item.last_updated = item.last_updated? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
+              }
+
+            }
+          }
+        }).catch(err => {
+
+        });
+      },
     },
     destroyed() {
       //清除定时器

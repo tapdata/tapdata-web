@@ -21,7 +21,7 @@
       </el-radio-group>
       <el-radio-group v-model="time" size="mini" :class="selectColor" @change="changeTime" v-if="isIput">
         <el-radio-button label="second">{{$t("dataFlow.second")}}</el-radio-button>
-        <el-radio-button label="min">{{$t("dataFlow.min")}}</el-radio-button>
+        <el-radio-button label="minute">{{$t("dataFlow.min")}}</el-radio-button>
         <el-radio-button label="hour">{{$t("dataFlow.hour")}}</el-radio-button>
         <el-radio-button label="day">{{$t("dataFlow.day")}}</el-radio-button>
       </el-radio-group>
@@ -54,8 +54,8 @@ export default {
       this.title = this.data.title;
       this.tip = this.data.tip;
       this.isScreeing = this.data.isScreeing;
-      this.isIput = this.data.isIput
-      this.isSpeed = this.data.isSpeed
+      this.isIput = this.data.isIput;
+      this.isSpeed = this.data.isSpeed;
 
       this.$emit("twoRadio",this.num,this.data.type);
       this.$emit("getSpeed",this.speed,this.time);
