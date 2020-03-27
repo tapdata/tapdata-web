@@ -21,14 +21,14 @@
 				myChart: null
 			};
 		},
-		// watch: {
-		//   echartObj: {
-		//     handler(data) {
-		//       this.loadEchart(this.echartsId,data)
-		//     },
-		//     deep: true
-		//   }
-		// },
+		watch: {
+      echartObj: {
+        handler(data) {
+          this.loadEchart(this.echartsId,data);
+        },
+        deep: true
+      }
+		},
 		mounted() {
 			let that = this;
 			// let publicCharts = that.echartOption(that.echartObj)

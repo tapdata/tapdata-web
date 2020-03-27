@@ -31,7 +31,7 @@
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.state') }}:</span>
-						<span class="info-text" style="color: #62a569;">{{flow.status}}</span>
+						<span class="info-text" style="color: #62a569;">{{$t('dataFlow.status.' + flow.status)}}</span>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
@@ -265,11 +265,11 @@
 					let outputCount = data.outputCount;
 					if (ele === "flow") {
 						this.flow.inputNumber = inputCount;
-						this.flow.outputNumber = outputCount;
+            this.flow.outputNumber = outputCount;
 						this.getScreening(time, inputCount, outputCount);
-					} else {
+					} else if(ele === "stage") {
 						this.flow.inputNumber = inputSize;
-						this.flow.outputNumber = outputSize;
+            this.flow.outputNumber = outputSize;
 						this.getScreening(time, inputSize, outputSize);
 					}
 				} else if (type === "throughput") {
