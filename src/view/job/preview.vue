@@ -11,8 +11,8 @@
 								:value="item.id">
 						</el-option>
 					</el-select>
-					<el-table border :height="tableHeight" class="tableStyle" :data="itemList" v-loading="isloading">
-						<el-table-column
+					<el-table border fit :height="tableHeight" class="tableStyle" :data="itemList" v-loading="isloading">
+						<el-table-column minWidth="120"
 								v-for="(head, key) in headers"
 								:key="key" :prop="head"
 								:label="head">
@@ -131,8 +131,9 @@
 							//   }
 							// }
 							res.data.forEach(item => {
-								delete item._id;
-								delete item.__tapd8;
+								delete item.id;
+                delete item.__tapd8;
+                item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
 							});
 							res.data.forEach(item => {  // 获取表头
 								for (let key of Object.keys(item)) {
