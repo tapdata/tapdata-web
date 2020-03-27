@@ -118,9 +118,7 @@
 				let headerList = [];
 				let params = {
 					'filter[where][__tapd8.dataFlowId][regexp]': `^${this.dataFlow.id}$`,
-					'filter[where][__tapd8.stageId]': this.selectNode,
-					'filter[fields][__tapd8]': false,
-					'filter[fields][_id]': false
+					'filter[where][__tapd8.stageId]': this.selectNode
 				};
 
 				await DataFlowsDebugs.get(params).then(res => {
@@ -270,11 +268,6 @@
 		.el-tabs__content {
 			height: calc(100% - 40px) !important;
 			box-sizing: border-box;
-		}
-
-		.el-table {
-			// max-height: calc(100% - 45px);
-			overflow: auto;
 		}
 
 		.slider-color {
