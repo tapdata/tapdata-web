@@ -235,10 +235,11 @@
 				if( data.id ) {
 					data = {
 						id: data.id,
-						status: 'scheduled'
+						status: 'scheduled',
 					};
 				}
 				data.status = 'scheduled';
+				data.executeMode = "normal";
 				self.doSave(data, (err, dataFlow) => {
 					if( err ){
 						this.$message.error('Start failed');
