@@ -12,6 +12,7 @@ import Tab from "./ui/tab";
 import VueComponent from "./ui/VueComponent";
 import EchartData from '../view/job/echartData';
 import Capture from '../view/job/preview';
+import Setting from '../view/job/Setting';
 import log from "../log";
 
 export default class Editor extends BaseObject {
@@ -169,6 +170,33 @@ export default class Editor extends BaseObject {
 		// remove capture
 		let capture = this.getBottomTabPanel().getChildByName('capture');
 		this.getBottomTabPanel().remove(capture);
+	}
+
+	//setting
+	showSetting(dataFlow){
+		this.getBottomSidebar().hide();
+		let self = this;
+
+		let setting = self.getRightSidebar().getChildByName('setting');
+		if( !setting ){
+			setting = new VueComponent({
+				title: 'setting',
+				name: 'setting',
+				editor: this,
+				dataFlow: dataFlow,
+				component: Setting
+			});
+			self.getRightSidebar().add(setting);
+		}
+		self.getRightSidebar().show();
+	}
+
+	hideSetting(dataFlow){
+		this.getBottomSidebar().hide();
+		this.getRightSidebar().hide();
+
+		let setting = this.getRightSidebar().getChildByName('setting');
+		this.getRightSidebar().remove(setting);
 	}
 
 	getData(){

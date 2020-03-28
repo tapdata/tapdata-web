@@ -1,8 +1,7 @@
 <template>
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
-      <el-button
-        size="mini" type="default">setting</el-button>
+      <el-button size="mini" type="default" @click="setting">setting</el-button>
 			<el-button
 					v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
 					size="mini" type="danger"
@@ -43,7 +42,8 @@
 				dataFlowId: null,
 				status: 'draft',
 
-				loading: true
+				loading: true,
+				disabledSetting:false,
 			};
 		},
 		mounted() {
@@ -291,6 +291,15 @@
 						self.setEditable(false);
 					}
 				});
+			},
+			setting(){
+				log('Job.setEditable',  this.editor);
+				this.disabledSetting = !this.disabledSetting;
+				if(this.disabledSetting){
+					this.editor.showSetting( this.dataFlow);
+				}else {
+					this.editor.hideSetting( this.dataFlow);
+				}
 			},
 
 			setEditable(editable){
