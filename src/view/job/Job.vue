@@ -128,10 +128,11 @@
 					stopOnError: false,
 					mappingTemplate: "cluster-clone",
 					emailWaring: {edited: true, started: false, error: true, paused: false},
-					stages: []
+					stages: [],
+					setting:settingData,
 				}, {
 					editorData: JSON.stringify(graphData)
-				}, settingData);
+				});
 
 				let stages = {};
 				Object.values(nodeCells).forEach(cell => {
