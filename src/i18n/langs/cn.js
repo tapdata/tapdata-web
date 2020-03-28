@@ -80,6 +80,7 @@ const cn = {
 				draft: '草稿',
 				scheduled: '调度中',
 				stopping: '停止中',
+				error:'错误',
 			},
 			searchPlaceholder: '任务名称/节点名/库表名',
 			dataRange: '创建日期范围',

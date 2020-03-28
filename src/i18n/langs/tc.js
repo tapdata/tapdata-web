@@ -80,6 +80,7 @@ const tc = {
 			draft: '草稿',
 			scheduled: '調度中',
 			stopping: '停止中',
+			error: '錯誤',
 		},
 		searchPlaceholder: '任務名稱/節點名/庫表名',
 		dataRange: '創建日期範圍',
