@@ -1,7 +1,12 @@
 <template>
 	<el-form label-position="right" label-width="130px" :model="model" ref="form">
+
+		<el-form-item :required="true" label="Name">
+			<el-input v-model="model.name" class="form-item-width" placeholder="Please enter node name"></el-input>
+		</el-form-item>
+
 		<el-form-item :required="true" label="Script Type">
-			<el-select v-model="model.type" placeholder="Type of script">
+			<el-select v-model="model.type" placeholder="Type of script" value="js_processor">
 				<el-option
 						v-for="(item, idx) in scriptTypes"
 						:label="item.label"
@@ -38,6 +43,7 @@
 					]
 				},
 				model: {
+					name: 'JavaScript',
 					type: "js_processor",
 					script: "function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}"
 				}
@@ -67,5 +73,7 @@
 </script>
 
 <style scoped>
-
+	.form-item-width {
+		width: 300px;
+	}
 </style>

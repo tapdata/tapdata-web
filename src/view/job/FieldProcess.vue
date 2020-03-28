@@ -1,11 +1,13 @@
 <template>
 	<div>
 		<el-form label-position="right" label-width="130px" :model="model" ref="form">
-			<el-form-item :required="true" label="node name">
+			<el-form-item :required="true" label="Name">
 				<el-input v-model="model.name" class="formitem-width" placeholder="please enter node name"></el-input>
 			</el-form-item>
 			<el-form-item label="description">
-				<el-input type="textarea" v-model="model.description" class="formitem-width" placeholder="please enter node description"></el-input>
+				<el-input
+						type="textarea" v-model="model.description" class="formitem-width"
+						placeholder="please enter node description"></el-input>
 			</el-form-item>
 		</el-form>
 		<div class="contentbox">
@@ -61,7 +63,8 @@
 				databases: [],
 
 				model: {
-					operations: []
+					operations: [],
+					name: 'Field Process'
 				},
 
 				originalSchema: null,
@@ -100,8 +103,9 @@
 					schema.fields.forEach((field => {
 						let operation = operations[field.id];
 						if (operation) {
-							if (operation.op === 'REMOVE');
-							else if (operation.op === 'RENAME') {
+							if (operation.op === 'REMOVE') {
+
+							} else if (operation.op === 'RENAME') {
 								let fieldName = field.field_name.split('.');
 								fieldName[fieldName.length - 1] = operation.operand;
 								field.field_name = fieldName.join('.');

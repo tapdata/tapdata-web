@@ -177,7 +177,9 @@
 				});
 			},
 			getData(){
-				return JSON.parse(JSON.stringify(this.model));
+				let result = _.cloneDeep(this.model);
+				result.name = result.tableName || 'Collection';
+				return result;
 			},
 		}
 	};

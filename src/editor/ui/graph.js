@@ -68,6 +68,8 @@ export default class Graph extends Component{
 			height: 800,
 			gridSize: 15,
 			drawGrid: true,
+			linkPinning: false,
+			//markAvailable: true,
 			defaultLink: new joint.shapes.app.Link,
 			defaultConnectionPoint: joint.shapes.app.Link.connectionPoint,
 			interactive: { linkMove: false },
@@ -93,26 +95,26 @@ export default class Graph extends Component{
 		paper.on('blank:mousewheel',  _.partial(this.onMousewheel, null), this);
 		paper.on('cell:mousewheel', this.onMousewheel, this);
 		paper.on('blank:pointerclick', this.onClickBlank.bind(this));
-		paper.on('link:connect', function(linkView, evt, elementViewConnected, magent, arrowhead){
-			log('Graph.link.connect', arguments);
-			self.updateOutputSchema(linkView.model);
-			/*let targetCell = linkView.model.getTargetCell();
-			if( targetCell && typeof targetCell.updateOutputSchema === 'function'){
-				targetCell.updateOutputSchema();
-			}*/
+		paper.on({
+			'link:connect': (linkView, evt, elementViewConnected, magent, arrowhead) => {
+				log('Graph.link.connect', arguments);
+				self.updateOutputSchema(linkView.model);
+			},
+			'link:disconnect': (linkView, evt, elementViewDisconnected, magent, arrowhead) => {
+				log('Graph.link.disconnect', arguments);
+				// trigger on graph.remove
+				// self.updateOutputSchema(linkView.model);
+			},
 		});
-		paper.on('link:disconnect', function(linkView, evt, elementViewDisconnected, magent, arrowhead){
-			log('Graph.link.disconnect', arguments);
-			self.updateOutputSchema(linkView.model);
-			/*let targetCell = elementViewDisconnected.model;
-			if( targetCell && typeof targetCell.updateOutputSchema === 'function'){
-				targetCell.updateOutputSchema();
-			}*/
-		});
-		graph.on('remove', (model, collection, options) => {
-			log('Graph.graph.remove');
-			if( model.isLink() ){
+		graph.on({
+			remove: (model, collection, options) => {
+				log('Graph.graph.remove');
+				//if( model.isLink() ){
 				self.updateOutputSchema(model);
+				//}
+			},
+			add: (cell) => {
+				log('Graph.graph.add');
 			}
 		});
 
@@ -180,18 +182,20 @@ export default class Graph extends Component{
 		if( !first){
 			self.selection.collection.add(cell);
 		}
-		setTimeout(() => {
-			self.unselectedAllCells();
-			let cellView = self.paper.findViewByModel(cell);
-			let isDataNode = cell.isDataNode && cell.isDataNode();
-			cellView.highlight(null, {
-				name: 'stroke',
-				options: {
-					rx: isDataNode ? 20 : 14,
-					ry: isDataNode ? 20 : 14
-				}
-			});
-		}, 0);
+		if( cell.get('type').startsWith('app.')){
+			setTimeout(() => {
+				self.unselectedAllCells();
+				let cellView = self.paper.findViewByModel(cell);
+				let isDataNode = cell.isDataNode && cell.isDataNode();
+				cellView.highlight(null, {
+					name: 'stroke',
+					options: {
+						rx: isDataNode ? 20 : 14,
+						ry: isDataNode ? 20 : 14
+					}
+				});
+			}, 0);
+		}
 	}
 
 	initStencil() {
@@ -214,9 +218,12 @@ export default class Graph extends Component{
 			},*/
 			// Remove tooltip definition from clone
 			dragStartClone: function(cell) {
-				let Cell = _.get(joint.shapes, cell.get('type'));
-				// return cell.clone().removeAttr('root/dataTooltip');
-				return new Cell({}).removeAttr('root/dataTooltip');
+				if( cell.get('type').startsWith('app.')){
+					let Cell = _.get(joint.shapes, cell.get('type'));
+					return new Cell({}).removeAttr('root/dataTooltip');
+				} else {
+					return cell.clone().removeAttr('root/dataTooltip');
+				}
 			}
 		});
 
@@ -386,7 +393,11 @@ export default class Graph extends Component{
 				let cell = cellView.model;
 				let collection = this.selection.collection;
 				if (collection.includes(cell)) return;
-				collection.reset([cell]);
+				if( cell.isLink() && (!cell.getTargetCell() || !cell.getSourceCell()) ){
+					cell.remove();
+				} else {
+					collection.reset([cell]);
+				}
 			},
 
 			'link:mouseenter': function(linkView) {
@@ -699,7 +710,7 @@ export default class Graph extends Component{
 
 	loadData(jsonObject){
 		this.graph.fromJSON(jsonObject);
-		this.paperScroller.scrollToContent();
+		// this.paperScroller.scrollToContent();
 	}
 
 	getGraphLib(){
