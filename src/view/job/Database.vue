@@ -14,6 +14,7 @@
 
 <script>
 	import factory from '../../api/factory';
+	import _ from 'lodash';
 	let connections = factory('connections');
 
 	export default {
@@ -73,7 +74,14 @@
 				}
 			},
 			getData(){
-				return JSON.parse(JSON.stringify(this.model));
+				let result = _.cloneDeep(this.model);
+				if( result.connectionId){
+					let database = this.databases.filter( db => db.id === result.connectionId);
+					if( database && database.length > 0){
+						result.name = database[0].name;
+					}
+				}
+				return result;
 			}
 		}
 	};

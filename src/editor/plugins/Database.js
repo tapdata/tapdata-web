@@ -52,9 +52,6 @@ export const databaseConfig = {
 		 */
 		defaultInstanceProperties: {
 			attrs: {
-				root: {
-					magnet: true
-				},
 				image:{
 					xlinkHref: 'static/editor/database2.svg',
 				},

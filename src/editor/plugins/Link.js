@@ -55,7 +55,7 @@ export const link = {
 		 */
 		defaultInstanceProperties: {
 			router: {
-				name: 'normal'
+				name: 'manhattan'
 			},
 			connector: {
 				name: 'rounded'
@@ -118,7 +118,7 @@ export const link = {
 			},
 
 			getMarkerWidth: function(type) {
-				var d = (type === 'source') ? this.attr('line/sourceMarker/d') : this.attr('line/targetMarker/d');
+				let d = (type === 'source') ? this.attr('line/sourceMarker/d') : this.attr('line/targetMarker/d');
 				return this.getDataWidth(d);
 			},
 
@@ -130,7 +130,7 @@ export const link = {
 				let targetId = this.target().id;
 				if( !targetId) return false;
 				let targetCell = this.getTargetCell();
-				return targetCell && targetCell.isDataNode && targetCell.isDataNode();
+				return targetCell && targetCell.isDataNode && targetCell.isDataNode() && ['app.Table', 'app.Collection'].includes(targetCell.get('type'));
 			}
 
 		},

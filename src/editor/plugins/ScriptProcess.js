@@ -15,9 +15,6 @@ export const scriptProcessConfig = {
 		defaultInstanceProperties: {
 			size:{width:120,height:28},
 			attrs: {
-				root: {
-					magnet: true
-				},
 				image:{
 					xlinkHref: 'static/editor/o-js.svg',
 					refWidth: '25%',

@@ -13,9 +13,6 @@ export const collectionConfig = {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
 			attrs: {
-				root: {
-					magnet: true
-				},
 				image:{
 					xlinkHref: 'static/editor/o-collection.svg',
 				},

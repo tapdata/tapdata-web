@@ -56,9 +56,6 @@ export const baseElementConfig = {
 			freeTransform: false,
 			size: { width: 160, height: 36 },
 			attrs: {
-				root: {
-					magnet: true
-				},
 				image: {
 					//xlinkHref: 'static/editor/table.svg',
 					refWidth: '19%',
@@ -72,6 +69,8 @@ export const baseElementConfig = {
 					strokeWidth: 1,
 					rx:20,
 					ry:20,
+					refWidth: '100%',
+					refHeight: '100%',
 				},
 				label: {
 					textVerticalAnchor: 'middle',

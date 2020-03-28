@@ -13,9 +13,6 @@ export const tableConfig = {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
 			attrs: {
-				root: {
-					magnet: true
-				},
 				image:{
 					xlinkHref: 'static/editor/table.svg',
 				},
