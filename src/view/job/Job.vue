@@ -1,8 +1,7 @@
 <template>
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
-      <el-button
-        size="mini" type="default">setting</el-button>
+      <el-button size="mini" type="default" @click="showSetting">Setting</el-button>
 			<el-button
 					v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
 					size="mini" type="danger"
@@ -43,7 +42,7 @@
 				dataFlowId: null,
 				status: 'draft',
 
-				loading: true
+				loading: true,
 			};
 		},
 		mounted() {
@@ -107,6 +106,8 @@
 
 				let editorData = this.editor.getData();
 				let graphData = editorData.graphData;
+				let settingData = editorData.settingData;
+
 
 				let cells = graphData.cells ? graphData.cells : [];
 				let edgeCells = {};
@@ -130,7 +131,7 @@
 					stages: []
 				}, {
 					editorData: JSON.stringify(graphData)
-				});
+				}, settingData);
 
 				let stages = {};
 				Object.values(nodeCells).forEach(cell => {
@@ -174,7 +175,7 @@
 				});
 				postData.stages = Object.values(stages);
 
-				log('Job.getDataFlowData: ', postData);
+				log('Job.getDataFlowData', graphData, postData);
 
 				if( this.dataFlowId )
 					postData.id = this.dataFlowId;
@@ -291,6 +292,10 @@
 						self.setEditable(false);
 					}
 				});
+			},
+			showSetting(){
+				log('Job.showSetting');
+				this.editor.showSetting();
 			},
 
 			setEditable(editable){

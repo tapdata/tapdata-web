@@ -37,6 +37,9 @@ export default class VueComponent extends Component{
 		let vueContainerDom = document.createElement('div');
 		this.getContentEl().append(vueContainerDom);
 		vm.$mount(vueContainerDom);
+		vm.$on('dataChanged', (data) => {
+			self.emit('dataChanged', data);
+		});
 
 		editor.graph.on('selected:stage', this.selectedStage, this);
 	}
@@ -49,6 +52,12 @@ export default class VueComponent extends Component{
 		log('VueComponent.selected.stage', stageData);
 		if( this.vm ){
 			this.vm.$emit('selected:stage', stageData);
+		}
+	}
+
+	setData(data){
+		if( this.vm && typeof this.vm.setData === 'function'){
+			this.vm.setData(data);
 		}
 	}
 

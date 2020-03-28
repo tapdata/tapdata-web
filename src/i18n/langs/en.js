@@ -105,10 +105,10 @@ const en = {
 		initial_sync: 'Initialize',
 		cdc: 'Incremental synchronization',
 		send_email: 'Send Email',
-		stopped: 'When the task stops',
-		error: 'When the task went wrong',
-		edited: 'When the task is edited',
-		started: 'When the task is started',
+		stopped: 'task stopped',
+		error: 'task error',
+		edited: 'task edited',
+		started: 'task started',
 		drop_target_before_start: 'Whether the target table is deleted before starting the task',
 		run_custom_sql: 'Run custom SQL repeatedly',
 		stop_on_error: 'Stop synchronization when an error is encountered',
@@ -123,6 +123,8 @@ const en = {
 		read_cdc_interval: 'Incremental synchronization interval (ms)',
 		read_batch_size: 'How many reads each time',
 		mission: 'Description',
+		yes:'yes',
+		no:'no'
 	},
 	...enLocale
 };

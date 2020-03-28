@@ -29,7 +29,7 @@ export default class Tab extends Component{
 		return this.__id++;
 	}
 
-	add(tab){
+	add(tab, prepend = false){
 		let self = this;
 		self.childs.push(tab);
 
@@ -41,8 +41,13 @@ export default class Tab extends Component{
 		titleEl.attr('data-target', `${tab.id}`);
 		tabEl.attr('data-value', `${tab.id}`);
 
-		self.el.find('.e-tab-bar').append(titleEl);
-		self.el.find('.e-tab-content').append(tabEl);
+		if( prepend ){
+			self.el.find('.e-tab-bar').prepend(titleEl);
+			self.el.find('.e-tab-content').prepend(tabEl);
+		} else {
+			self.el.find('.e-tab-bar').append(titleEl);
+			self.el.find('.e-tab-content').append(tabEl);
+		}
 		tabEl.append(tab.el);
 
 		titleEl.on('click', () => {
