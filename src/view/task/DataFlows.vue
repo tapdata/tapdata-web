@@ -23,8 +23,7 @@
 						</el-col>
 						<el-col :span="8">
 							<el-form-item :label=" $t('dataFlow.taskStatus') ">
-								<el-select v-model="formData.status" clearable
-										   :placeholder=" $t('dataFlow.taskStatusPlaceholder')">
+								<el-select v-model="formData.status" clearable :placeholder=" $t('dataFlow.taskStatusPlaceholder')">
 									<el-option
 											v-for="item in options" :key="item.value" :label="item.label"
 											:value="item.value"></el-option>
@@ -149,6 +148,7 @@
 					draft: '#F56C6C',
 					scheduled: '#cccccc',
 					stopping: '#F19149',
+					error: '#f53724',
 				},
 				order: '',
 				tableData: [],
@@ -195,7 +195,7 @@
 		},
 		methods: {
 			handleSelectable(row) {
-				if(row.hasChildren) {
+				if (row.hasChildren) {
 					return false;
 				} else {
 					return true;
@@ -206,7 +206,7 @@
 			},
 			keyupEnter() {
 				document.onkeydown = e => {
-					let body = document.getElementsByTagName('body')[0];
+					//let body = document.getElementsByTagName('body')[0];
 					if (e.keyCode === 13) {
 						this.getData();
 					}
@@ -307,11 +307,11 @@
 						if (res.statusText === "OK" || res.status === 200) {
 							this.getData();
 						}
-            this.$message.success(this.$('message.deleteOK'));
+						this.$message.success(this.$('message.deleteOK'));
 					});
 
 				}).catch(() => {
-          this.$message.info(this.$t('message.deleteFail'));
+					this.$message.info(this.$t('message.deleteFail'));
 				});
 
 			},
@@ -354,16 +354,16 @@
 					cancelButtonText: this.$t('message.cancle'),
 					type: 'warning'
 				}).then(() => {
-					let attributes = {
-						status: 'draft',
-						stats: '',
-					};
-					dataFlows.updateById(id, attributes).then(res => {
+					// let attributes = {
+					// 	status: 'draft',
+					// 	stats: '',
+					// };
+					dataFlows.reset(id).then(res => {
 						if (res.statusText === "OK" || res.status === 200) {
 							this.getData();
 						}
 					});
-          this.$message.success(this.$t('message.resetOk'));
+					this.$message.success(this.$t('message.resetOk'));
 				}).catch(() => {
 					this.$message.info(this.$t('message.cancleReset'));
 				});
@@ -380,7 +380,7 @@
 					input: 'stats.input.rows',
 					output: 'stats.output.rows',
 					transmissionTime: 'stats.transmissionTime',
-				}
+				};
 				this.order = mapping[column.prop] + " " + currentOrder;
 				this.getData();
 			},
@@ -447,9 +447,11 @@
 		float: right;
 		margin-right: 20px;
 	}
-  .el-table .sort-caret{
-    border: 3px solid transparent !important;
-  }
+
+	.el-table .sort-caret {
+		border: 3px solid transparent !important;
+	}
+
 	.clear {
 		clear: both;
 	}
