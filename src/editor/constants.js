@@ -7,6 +7,7 @@ export const
 	FORM_DATA_KEY = 'form_data',
 	SCHEMA_DATA_KEY= 'schema',
 	OUTPUT_SCHEMA_DATA_KEY = 'outputSchema',
+	DATA_FLOW_SETTING_DATA_KEY = 'settingData',
 	JOIN_TABLE_TPL = {
 		tableName: '',
 		joinType: 'upsert',

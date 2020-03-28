@@ -92,8 +92,8 @@ export default class Editor extends BaseObject {
 			region: 'right',
 			editor: this,
 			hidden: true,
-      maxWidth: 1000,
-      minWidth: 500,
+			maxWidth: 1000,
+			minWidth: 500,
 			width: 520
 		});
 		ui.add(self.rightSidebar);
@@ -115,6 +115,32 @@ export default class Editor extends BaseObject {
 			editor: self,
 			container: self.ui.getGraphContainer()
 		});
+
+		this.initRightTabPanel();
+	}
+
+	initRightTabPanel(){
+		let self = this;
+		let rightTabPanel = this.getRightSidebar().getChildByName('rightTabPanel');
+		if( !rightTabPanel) {
+			rightTabPanel = new Tab({
+				name: 'rightTabPanel'
+			});
+			this.getRightSidebar().add(rightTabPanel);
+		}
+		this.rightSidebar.add(rightTabPanel);
+
+		let setting = new VueComponent({
+			title: 'Data Flow Settings',
+			name: 'setting',
+			editor: this,
+			component: Setting
+		});
+		this.getRightTabPanel().add(setting);
+
+		setting.on('dataChanged', (data) => {
+			self.graph.setSettingData(data);
+		});
 	}
 
 	initRunningMode(dataFlow) {
@@ -125,8 +151,16 @@ export default class Editor extends BaseObject {
 		this.getLeftSidebar().hide();
 
 		// remove stage config
-		let settings = self.getRightSidebar().getChildByName('settings');
-		if( settings ) self.getRightSidebar().remove(settings);
+		let nodeSettingPanel = self.getRightTabPanel().getChildByName('nodeSettingPanel');
+		if( nodeSettingPanel ) self.getRightTabPanel().remove(nodeSettingPanel);
+
+		// remove setting
+		let setting = self.getRightTabPanel().getChildByName('setting');
+		if( setting ) self.getRightTabPanel().remove(setting);
+
+		// remove right tab panel
+		let rightTabPanel = self.getRightSidebar().getChildByName('rightTabPanel');
+		if( rightTabPanel ) self.getRightSidebar().remove(rightTabPanel);
 
 		// add monitor
 		let monitor = self.getRightSidebar().getChildByName('monitor');
@@ -159,6 +193,7 @@ export default class Editor extends BaseObject {
 
 	initEditingMode(){
 		log('editor.initEditingMode');
+		this.initRightTabPanel();
 		this.getLeftSidebar().show();
 		this.getBottomSidebar().hide();
 		this.getRightSidebar().hide();
@@ -173,30 +208,18 @@ export default class Editor extends BaseObject {
 	}
 
 	//setting
-	showSetting(dataFlow){
-		this.getBottomSidebar().hide();
+	showSetting(){
 		let self = this;
-
-		let setting = self.getRightSidebar().getChildByName('setting');
-		if( !setting ){
-			setting = new VueComponent({
-				title: 'setting',
-				name: 'setting',
-				editor: this,
-				dataFlow: dataFlow,
-				component: Setting
-			});
-			self.getRightSidebar().add(setting);
+		let rightTabPanel = self.getRightTabPanel();
+		if( rightTabPanel ) {
+			let setting = rightTabPanel.getChildByName('setting');
+			if( setting ){
+				let settingData = self.graph.getSettingData();
+				setting.setData(settingData);
+			}
+			self.getRightSidebar().show();
+			self.getRightTabPanel().select(setting);
 		}
-		self.getRightSidebar().show();
-	}
-
-	hideSetting(dataFlow){
-		this.getBottomSidebar().hide();
-		this.getRightSidebar().hide();
-
-		let setting = this.getRightSidebar().getChildByName('setting');
-		this.getRightSidebar().remove(setting);
 	}
 
 	getData(){
@@ -204,7 +227,8 @@ export default class Editor extends BaseObject {
 		return {
 			name: this.ui.getName(),
 			graphData: this.graph.getData(),
-			graphLib: this.graph.getGraphLib()
+			graphLib: this.graph.getGraphLib(),
+			settingData: this.graph.getSettingData(),
 		};
 
 	}
@@ -228,6 +252,13 @@ export default class Editor extends BaseObject {
 	}
 	getRightSidebar(){
 		return this.rightSidebar;
+	}
+	getRightTabPanel(){
+		let rightSidebar = this.getRightSidebar();
+		if( rightSidebar ){
+			return rightSidebar.getChildByName('rightTabPanel');
+		}
+		return null;
 	}
 	getBottomSidebar(){
 		return this.bottomSidebar;
