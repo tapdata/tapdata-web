@@ -80,6 +80,7 @@ const en = {
 			draft: 'Draft',
 			scheduled: 'Scheduled',
 			stopping: 'Stopping',
+			error: 'Error',
 		},
 		searchPlaceholder: 'Task Name / Node Name / Library Table Name',
 		dataRange: 'date range',

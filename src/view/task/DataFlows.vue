@@ -148,6 +148,7 @@
 					draft: '#F56C6C',
 					scheduled: '#cccccc',
 					stopping: '#F19149',
+					error: '#f53724',
 				},
 				order: '',
 				tableData: [],
@@ -353,11 +354,11 @@
 					cancelButtonText: this.$t('message.cancle'),
 					type: 'warning'
 				}).then(() => {
-					let attributes = {
-						status: 'draft',
-						stats: '',
-					};
-					dataFlows.updateById(id, attributes).then(res => {
+					// let attributes = {
+					// 	status: 'draft',
+					// 	stats: '',
+					// };
+					dataFlows.reset(id).then(res => {
 						if (res.statusText === "OK" || res.status === 200) {
 							this.getData();
 						}
