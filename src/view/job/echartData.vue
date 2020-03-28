@@ -88,7 +88,8 @@
 				type: Object,
 				required: true
 			}
-		},
+    },
+    
 		data() {
 			return {
 				selectFlow: 'flow_',  //选中节点
@@ -129,9 +130,10 @@
 				replicateType: '',
 				dataOverviewType: '',
 				selectId: '',
-
+        timer: null, //定时器
 			};
-		},
+    },
+
 		mounted() {
 			// let params = {};
 			this.$on("selected:stage", (selectStage) => {
@@ -166,8 +168,16 @@
 				type: 'replicate',
 				isIput: true,
 				tip: this.$t("dataFlow.replicate_pop")
-			};
-		},
+      };
+
+      this.timer = setInterval(() => {
+        this.getSpeed(this.isThroughputAll, this.throughputTime);
+        this.getTwoRadio(this.dataOverviewAll, this.dataOverviewType);
+        this.getTime(this.transfTime, this.transfType);
+        this.getTime(this.replicateTime, this.replicateType);
+      },8000);
+    },
+
 		watch: {
 			domValue: {
 				handler(val) {
@@ -184,7 +194,8 @@
 				},
 				deep: true
 			}
-		},
+    },
+
 		methods: {
 			// 输入输出获取数据
 			getSpeed(data, time) {
@@ -304,7 +315,8 @@
 						this.getReplicateTime(timeList, dataList);
 					}
 				}
-			},
+      },
+
 			getScreening(time, series1, series2) {
 				this.dataScreening = {
 					tooltip: {
@@ -576,7 +588,14 @@
 					]
 				};
 			}
-		}
+    },
+
+    destroyed() {
+      //清除定时器
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+
 	};
 </script>
 <style scoped lang="less">
