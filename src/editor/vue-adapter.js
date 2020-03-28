@@ -47,7 +47,7 @@ export class VueAdapter extends BaseObject {
 		if( vueAdapter[name] && vueAdapter[name].component){
 			let vueComponentConfig = vueAdapter[name];
 			let Comp = Vue.extend(vueComponentConfig.component);
-			let settings = self.editor.getRightSidebar().getChildByName('settings');
+			let settings = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
 
 			self.vm = new Comp({
 				propsData: Object.assign({}, vueComponentConfig.props || {})
@@ -55,11 +55,12 @@ export class VueAdapter extends BaseObject {
 
 			if(!settings) {
 				settings = new Panel({
-					name: 'settings',
-					title: 'Settings'
+					name: 'nodeSettingPanel',
+					title: 'Node Setting'
 				});
-				self.editor.getRightSidebar().add(settings);
+				self.editor.getRightTabPanel().add(settings, true);
 			}
+			self.editor.getRightTabPanel().select(settings);
 			settings.removeAll();
 			let vueContainerDom = document.createElement('div');
 			settings.getContentEl().append(vueContainerDom);

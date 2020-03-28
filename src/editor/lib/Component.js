@@ -95,7 +95,9 @@ export default class Component extends BaseObject{
 		}
 	}
 
-	destroy(){}
+	destroy(){
+		this.removeAll();
+	}
 
 	show(){
 		this.el.show();

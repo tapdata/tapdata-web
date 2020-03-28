@@ -13,6 +13,7 @@ import navigatorElementView from '../lib/rappid/view/navigator';
 import {stencilConfig, selectionConfig, haloConfig, toolbarConfig} from "../lib/rappid/config";
 import {VueAdapter} from '../vue-adapter';
 import log from "../../log";
+import {DATA_FLOW_SETTING_DATA_KEY} from "../constants";
 
 window.joint = joint;
 
@@ -715,5 +716,12 @@ export default class Graph extends Component{
 
 	getGraphLib(){
 		return this.graph.toGraphLib();
+	}
+
+	setSettingData(data){
+		this.graph.set(DATA_FLOW_SETTING_DATA_KEY, _.cloneDeep(data));
+	}
+	getSettingData(){
+		return _.cloneDeep(this.graph.get(DATA_FLOW_SETTING_DATA_KEY));
 	}
 }
