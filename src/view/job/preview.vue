@@ -4,7 +4,7 @@
       <el-option
           v-for="item in nodeList"
           :key="item.id"
-          :label="item.tableName"
+          :label="item.name"
           :value="item.id">
       </el-option>
     </el-select>
@@ -101,7 +101,6 @@
 			// 这是一个定时器
 			this.timer = setInterval(() => {
 				this.getDataTableApi();
-				this.getLogsData();
       }, 5000);
 
 			this.$on("selected:stage", (selectStage) => {

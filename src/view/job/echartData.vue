@@ -9,7 +9,7 @@
 			<el-option
 					v-for="item in flow.stages"
 					:key="item.id"
-					:label="item.tableName"
+					:label="item.name"
 					:value="item.id">
 			</el-option>
 		</el-select>
@@ -89,7 +89,7 @@
 				required: true
 			}
     },
-    
+
 		data() {
 			return {
 				selectFlow: 'flow_',  //选中节点
