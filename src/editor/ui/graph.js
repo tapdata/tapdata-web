@@ -430,8 +430,7 @@ export default class Graph extends Component{
 		}, this);
 
 		this.graph.on('change', function(cell, opt) {
-
-			if (!cell.isLink() || !opt.inspector) return;
+			// if (!cell.isLink() || !opt.inspector) return;
 
 			/*let ns = joint.linkTools;
 			let toolsView = new joint.dia.ToolsView({

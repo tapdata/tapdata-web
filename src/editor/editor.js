@@ -14,7 +14,6 @@ import EchartData from '../view/job/echartData';
 import Capture from '../view/job/preview';
 import Setting from '../view/job/Setting';
 import log from "../log";
-import {DATA_FLOW_SETTING_DATA_KEY} from "./constants";
 
 export default class Editor extends BaseObject {
 

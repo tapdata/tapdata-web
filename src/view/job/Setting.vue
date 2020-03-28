@@ -114,12 +114,6 @@
 <script>
 	export default {
 		name: "Setting.vue",
-		props: {
-			dataFlow: {
-				type: Object,
-				required: true
-			}
-		},
 		data() {
 			return {
 				formData: {
@@ -141,22 +135,29 @@
 			};
 		},
 		mounted() {
-			this.formData = this.dataFlow;
+			//this.formData = this.dataFlow;
 		},
 		watch: {
-			dataFlow: {
+			formData: {
 				deep: true,
 				handler(){
-					this.$emit('dataChanged', this.dataFlow);
+					this.$emit('dataChanged', this.formData);
 				}
 			}
 		},
+		methods: {
+			setData(data){
+				if( data ){
+					Object.keys(data).forEach(key => this.formData[key] = data[key]);
+				}
+			},
+		}
 	};
 </script>
 
 <style lang="less" scoped>
-.data-flow-setting{
-	height: calc(100vh - 50px);
-	overflow: auto;
-}
+/*.data-flow-setting{*/
+/*	height: calc(100vh - 50px);*/
+/*	overflow: auto;*/
+/*}*/
 </style>
