@@ -73,7 +73,8 @@
 					:max-height="maxHeight" row-key="id"
 					:tree-props="{children: 'children', hasChildren: 'hasChildren'}"
 					@sort-change="handleSortTable"
-					@selection-change="handleSelectionChange">
+					@selection-change="handleSelectionChange"
+					:default-sort="{ prop: 'createTime', order: 'descending'}">
 				<el-table-column type="selection" width="55" :selectable="handleSelectable">
 				</el-table-column>
 				<el-table-column prop="name" :label="$t('dataFlow.taskName')">
@@ -217,7 +218,7 @@
 				this.$store.commit('dataFlows', this.formData);
 
 				let where = {};
-				let order = '';
+				let order = 'createTime DESC';
 				if (this.order) {
 					order = this.order;
 				}
