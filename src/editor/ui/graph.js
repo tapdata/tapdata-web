@@ -338,11 +338,17 @@ export default class Graph extends Component{
 			}).render();
 		}
 
-		new joint.ui.Halo({
+		let halo = new joint.ui.Halo({
 			cellView: elementView,
 			handles: haloConfig.handles,
 			boxContent: false
-		}).render();
+		});
+		halo.render();
+		/*halo.on('action:link:add', function(link) {
+			if (!link.get('source').id || !link.get('target').id) {
+				link.remove();
+			}
+		});*/
 	}
 
 	selectPrimaryLink(linkView) {
@@ -351,7 +357,7 @@ export default class Graph extends Component{
 		let toolsView = new joint.dia.ToolsView({
 			name: 'link-pointerdown',
 			tools: [
-				new ns.Vertices(),
+				new ns.Vertices({ vertexAdding: false }),
 				new ns.SourceAnchor(),
 				new ns.TargetAnchor(),
 				new ns.SourceArrowhead(),

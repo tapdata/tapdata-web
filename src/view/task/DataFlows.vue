@@ -12,7 +12,7 @@
 							</el-form-item>
 						</el-col>
 						<el-col :span="8">
-							<el-form-item :label="$t('dataFlow.dataRange')">
+							<el-form-item :label="$t('dataFlow.creationTime')">
 								<el-date-picker type="daterange" v-model="formData.timeData" size="small "
 												class="task-list-time-picker"
 												:range-separator="$t('dataFlow.separator')"
@@ -73,7 +73,8 @@
 					:max-height="maxHeight" row-key="id"
 					:tree-props="{children: 'children', hasChildren: 'hasChildren'}"
 					@sort-change="handleSortTable"
-					@selection-change="handleSelectionChange">
+					@selection-change="handleSelectionChange"
+					:default-sort="{ prop: 'createTime', order: 'descending'}">
 				<el-table-column type="selection" width="55" :selectable="handleSelectable">
 				</el-table-column>
 				<el-table-column prop="name" :label="$t('dataFlow.taskName')">
@@ -94,9 +95,9 @@
 						prop="transmissionTime" sortable='custom' :label="$t('dataFlow.runningSpeed')"
 						width="120"></el-table-column>
 				<el-table-column
-						prop="last_updated" :label="$t('dataFlow.updateTime')" width="140"
+						prop="createTime" :label="$t('dataFlow.creationTime')" width="140" sortable='custom'
 						:formatter="formatterTime"></el-table-column>
-				<el-table-column :label="$t('dataFlow.updateTime')" width="70">
+				<el-table-column :label="$t('dataFlow.creationTime')" width="70">
 					<template slot-scope="scope">
 						<div v-if="!scope.row.hasChildren">
 							<el-switch
@@ -154,22 +155,22 @@
 				tableData: [],
 				newData: [],
 				options: [{
-					label: '运行中',
+					label: this.$t('dataFlow.status.running'),
 					value: 'running'
 				}, {
-					label: '已停止',
+					label: this.$t('dataFlow.status.paused'),
 					value: 'paused'
 				}, {
-					label: '错误',
+					label: this.$t('dataFlow.status.error'),
 					value: 'error'
 				}, {
-					label: '草稿',
+					label: this.$t('dataFlow.status.draft'),
 					value: 'draft'
 				}, {
-					label: '等待中',
+					label: this.$t('dataFlow.status.scheduled'),
 					value: 'scheduled'
 				}, {
-					label: '暂停中',
+					label: this.$t('dataFlow.status.stopping'),
 					value: 'stopping'
 				}],
 				multipleSelection: [],
@@ -217,7 +218,7 @@
 				this.$store.commit('dataFlows', this.formData);
 
 				let where = {};
-				let order = '';
+				let order = 'createTime DESC';
 				if (this.order) {
 					order = this.order;
 				}
@@ -254,6 +255,7 @@
 							"stopOnError": true,
 							"mappingTemplate": true,
 							"last_updated": true,
+							"createTime": true,
 							"children": true,
 							"stats": true,
 							"stages": true
@@ -369,7 +371,7 @@
 				});
 			},
 			formatterTime(row) {
-				let time = row.last_updated ? this.$moment(row.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
+				let time = row.createTime ? this.$moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
 				return time;
 			},
 			handleSortTable(column) {
@@ -377,6 +379,7 @@
 				let mapping = {
 					status: 'status',
 					last_updated: 'last_updated',
+					createTime: 'createTime',
 					input: 'stats.input.rows',
 					output: 'stats.output.rows',
 					transmissionTime: 'stats.transmissionTime',

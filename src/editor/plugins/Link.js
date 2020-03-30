@@ -55,7 +55,8 @@ export const link = {
 		 */
 		defaultInstanceProperties: {
 			router: {
-				name: 'manhattan'
+				//name: 'manhattan',
+				name: 'normal',
 			},
 			connector: {
 				name: 'rounded'
