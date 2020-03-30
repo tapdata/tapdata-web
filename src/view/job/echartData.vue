@@ -336,8 +336,8 @@
 						// data: [this.$('dataFlow.totalOutput'),this.$('dataFlow.totalInput')],
 					},
 					grid: {
-						left: '20%',
-						right: '20%',
+						left: '25%',
+						right: '30%',
 						bottom: '3%',
 						containLabel: true
 					},
@@ -351,7 +351,7 @@
 								width: 0
 							}
 						},
-						data: [this.$t('dataFlow.totalOutput'), this.$t('dataFlow.totalInput')],
+						data: [this.$t('dataFlow.outputNumber'), this.$t('dataFlow.inputNumber' )],
 						axisPointer: {
 							type: 'shadow'
 						},
@@ -617,17 +617,17 @@
 				box-shadow: 1.414px 1.414px 5px rgba(0, 0, 0, 0.1);
 
 				.echartMain {
-					width: 60% !important;
+					width: 45% !important;
 					height: calc(100% - 40px);
 				}
 
 				.floatLayer {
 					position: absolute;
-					right: 20px;
-					top: 90px;
+					left: 20px;
+					top: 50px;
 
 					span {
-						display: block;
+						display: inline-block;
 						width: 76px;
 						margin-bottom: 10px;
 						padding: 3px 6px;
@@ -637,7 +637,7 @@
 				}
 
 				.info {
-					width: 40%;
+					width: 55%;
 					padding: 30px 10px 0 30px;
 					box-sizing: border-box;
 
@@ -646,7 +646,7 @@
 
 						.info-label {
 							display: inline-block;
-							width: 90px;
+							width: 86px;
 							font-size: 12px;
 							color: #999;
 						}
