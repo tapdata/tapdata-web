@@ -12,7 +12,7 @@
 							</el-form-item>
 						</el-col>
 						<el-col :span="8">
-							<el-form-item :label="$t('dataFlow.dataRange')">
+							<el-form-item :label="$t('dataFlow.creationTime')">
 								<el-date-picker type="daterange" v-model="formData.timeData" size="small "
 												class="task-list-time-picker"
 												:range-separator="$t('dataFlow.separator')"
@@ -94,9 +94,9 @@
 						prop="transmissionTime" sortable='custom' :label="$t('dataFlow.runningSpeed')"
 						width="120"></el-table-column>
 				<el-table-column
-						prop="last_updated" :label="$t('dataFlow.updateTime')" width="140"
+						prop="createTime" :label="$t('dataFlow.creationTime')" width="140" sortable='custom'
 						:formatter="formatterTime"></el-table-column>
-				<el-table-column :label="$t('dataFlow.updateTime')" width="70">
+				<el-table-column :label="$t('dataFlow.creationTime')" width="70">
 					<template slot-scope="scope">
 						<div v-if="!scope.row.hasChildren">
 							<el-switch
@@ -254,6 +254,7 @@
 							"stopOnError": true,
 							"mappingTemplate": true,
 							"last_updated": true,
+							"createTime": true,
 							"children": true,
 							"stats": true,
 							"stages": true
@@ -369,7 +370,7 @@
 				});
 			},
 			formatterTime(row) {
-				let time = row.last_updated ? this.$moment(row.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
+				let time = row.createTime ? this.$moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
 				return time;
 			},
 			handleSortTable(column) {
@@ -377,6 +378,7 @@
 				let mapping = {
 					status: 'status',
 					last_updated: 'last_updated',
+					createTime: 'createTime',
 					input: 'stats.input.rows',
 					output: 'stats.output.rows',
 					transmissionTime: 'stats.transmissionTime',

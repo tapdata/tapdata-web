@@ -1,7 +1,7 @@
 <template>
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
-      <el-button size="mini" type="default" @click="showSetting">Setting</el-button>
+		<el-button size="mini" type="default" @click="showSetting">Setting</el-button>
 			<el-button
 					v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
 					size="mini" type="danger"
