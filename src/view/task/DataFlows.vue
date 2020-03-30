@@ -154,22 +154,22 @@
 				tableData: [],
 				newData: [],
 				options: [{
-					label: '运行中',
+					label: this.$t('dataFlow.status.running'),
 					value: 'running'
 				}, {
-					label: '已停止',
+					label: this.$t('dataFlow.status.paused'),
 					value: 'paused'
 				}, {
-					label: '错误',
+					label: this.$t('dataFlow.status.error'),
 					value: 'error'
 				}, {
-					label: '草稿',
+					label: this.$t('dataFlow.status.draft'),
 					value: 'draft'
 				}, {
-					label: '等待中',
+					label: this.$t('dataFlow.status.scheduled'),
 					value: 'scheduled'
 				}, {
-					label: '暂停中',
+					label: this.$t('dataFlow.status.stopping'),
 					value: 'stopping'
 				}],
 				multipleSelection: [],
