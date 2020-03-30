@@ -7,12 +7,13 @@
 					size="mini" type="danger"
 					@click="stop">Stop</el-button>
 			<el-button
+					v-if="!['scheduled', 'stopping'].includes(status)"
+					size="mini" type="default"
+					@click="capture">Capture</el-button>
+			<el-button
 					v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
 					size="mini" type="success"
 					@click="start">Start</el-button>
-			<el-button
-					size="mini" type="default"
-					@click="capture">Capture</el-button>
 			<el-button
 					v-if="!['scheduled', 'running'].includes(status)"
 					size="mini" type="primary"
@@ -64,6 +65,12 @@
 			});
 		},
 
+		destroy(){
+			if( this.timeoutId ){
+				clearTimeout(this.timeoutId);
+			}
+		},
+
 		methods: {
 
 			loadDataFlow(id){
@@ -83,6 +90,8 @@
 							self.setEditable(false);
 						}
 
+						self.polling();
+
 					} else {
 						log(result);
 						self.$message.error('Load data failed');
@@ -94,6 +103,34 @@
 					self.$message.error('Load data failed');
 					self.loading = false;
 				});
+			},
+
+			polling(){
+				log('Job.polling', this.status, this.dataFlowId);
+				let self = this;
+				if( self.dataFlowId ){
+					if( !['scheduled', 'running', 'stopping'].includes(self.status))
+						return;
+
+					dataFlowsApi.get([self.dataFlowId], {
+						fields: ['id', 'status', 'last_updated', 'createTime', 'executeMode', 'stopOnError']
+					}).then((result) => {
+						if( result && result.data ){
+							let newStatus = result.data.status;
+							if( self.status !== newStatus){
+								self.status = newStatus;
+							}
+							if( ['scheduled', 'running', 'stopping'].includes(newStatus)) {
+								if( self.timeoutId )
+									clearTimeout(self.timeoutId);
+								self.timeoutId = setTimeout(self.polling.bind(self), 2000);
+							}
+						}
+					}).catch( err => {
+						log(err);
+						self.$message.error('Load data failed');
+					});
+				}
 			},
 
 			getDataFlowData() {
@@ -191,6 +228,8 @@
 					dataFlowsApi.patch(data):
 					dataFlowsApi.post(data);
 
+				self.loading = true;
+
 				promise.then((result) => {
 					if( result && result.data ){
 						let dataFlow = result.data;
@@ -203,15 +242,19 @@
 						if( typeof cb === "function"){
 							cb(null, dataFlow);
 						}
+
+						self.polling();
 					} else {
 						if( typeof cb === "function"){
 							cb(result, null);
 						}
 					}
+					self.loading = false;
 				}).catch(e => {
 					if( typeof cb === "function"){
 						cb(e, null);
 					}
+					self.loading = false;
 				});
 			},
 
@@ -220,6 +263,10 @@
 					data = this.getDataFlowData();
 
 				if( data ){
+
+					if( data.id )
+						delete data.status;
+
 					self.doSave(data, (err, entityData) => {
 						if( err ){
 							this.$message.error('Save failed');

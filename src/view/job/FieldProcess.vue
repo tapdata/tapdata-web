@@ -103,14 +103,13 @@
 					schema.fields.forEach((field => {
 						let operation = operations[field.id];
 						if (operation) {
-							if (operation.op === 'REMOVE') {
-
-							} else if (operation.op === 'RENAME') {
+							if (operation.op === 'RENAME') {
 								let fieldName = field.field_name.split('.');
 								fieldName[fieldName.length - 1] = operation.operand;
 								field.field_name = fieldName.join('.');
 							} else if (operation.op === 'CONVERT') {
 								field.javaType = operation.operand;
+							//} else if (operation.op === 'REMOVE'){
 							}
 						}
 					}));

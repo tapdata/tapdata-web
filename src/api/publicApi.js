@@ -46,9 +46,11 @@ export default class PublicAPI {
 		return axios.post(this.url + '/update?where=' + where, attributes);
 	}
 
-	get(params) {
+	get(params, filter) {
 		if (Array.isArray(params)) {
-			return axios.get(this.url + '/' + params.join('/'));
+			filter = typeof filter === 'object' ? JSON.stringify(filter) : filter;
+			let qs = filter ? ('?filter=' + filter) : '';
+			return axios.get(this.url + '/' + params.join('/') + qs);
 		}
 		params = params || {};
 		return axios.get(this.url, {params});
