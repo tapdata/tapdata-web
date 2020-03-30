@@ -33,6 +33,7 @@ export default class VueComponent extends Component{
 				dataFlow: this.opts.dataFlow
 			}
 		});
+		vm.editor = editor;
 
 		let vueContainerDom = document.createElement('div');
 		this.getContentEl().append(vueContainerDom);

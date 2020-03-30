@@ -200,6 +200,7 @@ export default class Graph extends Component{
 	}
 
 	initStencil() {
+		let self = this;
 		const stencil = this.stencil = new joint.ui.Stencil({
 			paper: this.paperScroller,
 			snaplines: this.snaplines,
@@ -220,16 +221,25 @@ export default class Graph extends Component{
 			// Remove tooltip definition from clone
 			dragStartClone: function(cell) {
 				if( cell.get('type').startsWith('app.')){
-					let Cell = _.get(joint.shapes, cell.get('type'));
-					return new Cell({}).removeAttr('root/dataTooltip');
+					return self.createCell(cell.get('type'));
 				} else {
 					return cell.clone().removeAttr('root/dataTooltip');
 				}
 			}
 		});
 
-		this.editor.getLeftSidebarEl().append(stencil.el);
+		let stencilPanel = this.editor.getLeftSidebar().getChildByName('stencil');
+		stencilPanel.getContentEl().append(stencil.el);
 		stencil.render().load(stencilConfig.shapes);
+	}
+
+	createCell(cellType) {
+		let Cell = _.get(joint.shapes, cellType);
+		return new Cell({}).removeAttr('root/dataTooltip');
+	}
+
+	addCell(cell,e){
+		this.graph.addCell(cell,e);
 	}
 
 	initSelection(){

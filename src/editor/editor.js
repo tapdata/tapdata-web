@@ -14,6 +14,8 @@ import EchartData from '../view/job/echartData';
 import Capture from '../view/job/preview';
 import Setting from '../view/job/Setting';
 import log from "../log";
+import Panel from "./ui/panel";
+import TableSelector from "../view/job/TableSelector";
 
 export default class Editor extends BaseObject {
 
@@ -83,9 +85,16 @@ export default class Editor extends BaseObject {
 			region: 'left',
 			editor: this,
 			split: false,
-			width: 180
+			width: 235,
+			bodyStyle: 'display: flex; flex-direction: column;'
 		});
 		ui.add(leftSidebar);
+
+		let stencilPanel = new Panel({
+			name: 'stencil',
+			bodyStyle: 'height: 285px;'
+		});
+		leftSidebar.add(stencilPanel);
 
 		self.rightSidebar = new Sidebar({
 			container: self.ui.el.find('.e-body'),
@@ -115,6 +124,19 @@ export default class Editor extends BaseObject {
 			editor: self,
 			container: self.ui.getGraphContainer()
 		});
+
+		let treePanel = new Panel({
+			name: 'treePanel',
+			bodyStyle: 'flex: 1; overflow: auto;'
+		});
+		leftSidebar.add(treePanel);
+
+		let treeVueComponent = new VueComponent({
+			name: 'treeVueComponent',
+			editor: this,
+			component: TableSelector
+		});
+		treePanel.add(treeVueComponent);
 
 		this.initRightTabPanel();
 	}
