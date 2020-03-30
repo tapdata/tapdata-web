@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import layout from '../view/layout';
 import Job from '../view/job/Job';
-import Preview from '../view/job/preview';
+import Preview from '../view/job/Preview';
 import echartData from '../view/job/echartData';
 
 import clusterManagement from '../view/clusterManagement/clusterManagement';

@@ -11,8 +11,9 @@ import Sidebar from "./ui/sidebar";
 import Tab from "./ui/tab";
 import VueComponent from "./ui/VueComponent";
 import EchartData from '../view/job/echartData';
-import Capture from '../view/job/preview';
+import Capture from '../view/job/Preview';
 import Setting from '../view/job/Setting';
+import DebugLogs from '../view/job/DebugLogs';
 import log from "../log";
 import Panel from "./ui/panel";
 import TableSelector from "../view/job/TableSelector";
@@ -209,6 +210,9 @@ export default class Editor extends BaseObject {
 			});
 			self.getBottomTabPanel().add(capture);
 		}
+
+		this.initLogPanel(dataFlow);
+
 		self.getBottomTabPanel().select(capture);
 		self.getBottomSidebar().show();
 	}
@@ -242,6 +246,32 @@ export default class Editor extends BaseObject {
 			self.getRightSidebar().show();
 			self.getRightTabPanel().select(setting);
 		}
+	}
+
+	initLogPanel(dataFlow){
+		let bottomTabPanel = this.getBottomTabPanel();
+		let logsPanel = bottomTabPanel.getChildByName('logsPanel');
+
+		if( !logsPanel ) {
+			logsPanel = new VueComponent({
+				title: 'Logs',
+				name: 'logsPanel',
+				editor: this,
+				dataFlow: dataFlow,
+				component: DebugLogs
+			});
+			this.getBottomTabPanel().add(logsPanel);
+		}
+	}
+
+	showLog(dataFlow) {
+
+		this.initLogPanel(dataFlow);
+		let bottomTabPanel = this.getBottomTabPanel();
+		let logsPanel = bottomTabPanel.getChildByName('logsPanel');
+
+		this.getBottomSidebar().show();
+		this.getBottomTabPanel().select(logsPanel);
 	}
 
 	getData(){

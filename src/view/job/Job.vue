@@ -1,7 +1,17 @@
 <template>
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
-		<el-button size="mini" type="default" @click="showSetting">Setting</el-button>
+			<el-tag
+					:type="
+						status === 'running' ? 'success' :
+						status === 'error' ? 'danger' :
+						status === 'paused' ? 'warning' : 'info'"
+					effect="plain"
+					size="small"
+					style="margin-right: 50px;"
+			>{{$t('dataFlow.state')}}: {{$t('dataFlow.status.' + status)}}</el-tag>
+			<el-button size="mini" type="default" @click="showSetting">Setting</el-button>
+			<el-button size="mini" type="default" v-if="dataFlowId" @click="showLogs">Logs</el-button>
 			<el-button
 					v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
 					size="mini" type="danger"
@@ -344,6 +354,9 @@
 			showSetting(){
 				log('Job.showSetting');
 				this.editor.showSetting();
+			},
+			showLogs(){
+				this.editor.showLog(this.dataFlow);
 			},
 
 			setEditable(editable){

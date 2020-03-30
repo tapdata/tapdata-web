@@ -1,23 +1,24 @@
 <template>
 	<div class="preview" ref="boxHeight">
-    <el-select v-model="selectNode" :placeholder="$t('message.placeholderSelect')">
-      <el-option
-          v-for="item in nodeList"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id">
-      </el-option>
-    </el-select>
-    <el-table border fit :height="tableHeight" class="tableStyle" :data="itemList" v-loading="isloading">
-      <el-table-column minWidth="120"
-        v-for="(head, key) in headers"
-        :key="key" :prop="head"
-        :label="head">
-        <template slot-scope="scope">
-          {{scope.row[head]}}
-        </template>
-      </el-table-column>
-    </el-table>
+		<el-select v-model="selectNode" :placeholder="$t('message.placeholderSelect')">
+			<el-option
+					v-for="item in nodeList"
+					:key="item.id"
+					:label="item.name"
+					:value="item.id">
+			</el-option>
+		</el-select>
+		<el-table border fit :height="tableHeight" class="tableStyle" :data="itemList" v-loading="isloading">
+			<el-table-column
+					minWidth="120"
+					v-for="(head, key) in headers"
+					:key="key" :prop="head"
+					:label="head">
+				<template slot-scope="scope">
+					{{scope.row[head]}}
+				</template>
+			</el-table-column>
+		</el-table>
 		<!-- <el-tabs type="border-card" class="tabBox">
 			<el-tab-pane label="Test Results">
 				<template>
@@ -60,6 +61,7 @@
 </template>
 <script>
 	import factory from '../../api/factory';
+
 	const DataFlowsDebugs = factory('DataFlowsDebugs');
 	export default {
 		name: "Preview",
@@ -101,7 +103,7 @@
 			// 这是一个定时器
 			this.timer = setInterval(() => {
 				this.getDataTableApi();
-      }, 5000);
+			}, 5000);
 
 			this.$on("selected:stage", (selectStage) => {
 				this.selectNode = selectStage.id;
@@ -135,8 +137,8 @@
 							// }
 							res.data.forEach(item => {
 								delete item.id;
-                delete item.__tapd8;
-                item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
+								delete item.__tapd8;
+								item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
 							});
 							res.data.forEach(item => {  // 获取表头
 								for (let key of Object.keys(item)) {
@@ -185,6 +187,7 @@
 		li {
 			list-style: none;
 		}
+
 		.mar0 {
 			height: 100%;
 			margin-bottom: 0 !important;
@@ -194,14 +197,18 @@
 </style>
 <style lang="less">
 	.preview {
-		.el-tab-pane, .card {	height: 100% !important;}
+		.el-tab-pane, .card {
+			height: 100% !important;
+		}
 
 		.el-tabs__content {
 			height: calc(100% - 40px) !important;
 			box-sizing: border-box;
 		}
 
-		.slider-color {background-color: #449dff;}
+		.slider-color {
+			background-color: #449dff;
+		}
 
 		.mar0 {
 			justify-content: flex-end;
@@ -211,7 +218,9 @@
 			}
 		}
 
-		.tabs__bar {	height: 60px;}
+		.tabs__bar {
+			height: 60px;
+		}
 
 		.table__overflow {
 			border: 1px solid #efefef;

@@ -663,7 +663,7 @@ export default class Graph extends Component{
 			marginY: 100
 		});
 
-		this.paperScroller.centerContent();
+		setTimeout(() => {this.paperScroller.centerContent();}, 100);
 	}
 
 	changeSnapLines(checked) {
@@ -717,6 +717,7 @@ export default class Graph extends Component{
 			this.toolbar.getWidgetByName('redo').disable();
 			this.toolbar.getWidgetByName('undo').disable();
 			this.toolbar.getWidgetByName('clear').disable();
+			setTimeout(() => this.paperScroller.centerContent(), 0);
 		}
 	}
 
@@ -726,7 +727,7 @@ export default class Graph extends Component{
 
 	loadData(jsonObject){
 		this.graph.fromJSON(jsonObject);
-		// this.paperScroller.scrollToContent();
+		setTimeout(() => {this.paperScroller.centerContent();}, 0);
 	}
 
 	getGraphLib(){

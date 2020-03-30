@@ -30,7 +30,7 @@ export default class VueComponent extends Component{
 		let vm = self.vm = new Comp({
 			i18n,
 			propsData: {
-				dataFlow: this.opts.dataFlow
+				dataFlow: this.opts.dataFlow || {}
 			}
 		});
 		vm.editor = editor;
