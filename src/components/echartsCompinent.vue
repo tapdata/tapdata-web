@@ -105,7 +105,12 @@
 						data: configures.xAxis.data, //x轴的数据
 						show: configures.xAxis.show,
 						axisTick: {show: false},  //是否显示坐标轴刻度
-						splitLine: {show: true}, //是否显示分隔线
+						splitLine: {
+              show: true,
+              lineStyle: {
+								color: "#dedee4"
+							}
+            }, //是否显示分隔线
 						axisLine: {
 							show: true,
 							lineStyle: {
@@ -144,7 +149,13 @@
 								color: configures.yAxis.axisLine.lineStyle.color,
 								width: 1//这里是为了突出显示加上的
 							}
-						},
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+								color: "#dedee4"
+							}
+            }, //是否显示分隔线
 						splitArea: {
 							areaStyle: {
 								color: ['rgba(250,250,250,0.3)', 'rgba(200,200,200,0.3)']

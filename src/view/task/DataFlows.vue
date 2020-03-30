@@ -137,7 +137,6 @@
 
 <script>
 	import factory from '../../api/factory';
-
 	const dataFlows = factory('DataFlows');
 
 	export default {

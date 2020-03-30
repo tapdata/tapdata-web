@@ -24,7 +24,7 @@ export default class Sidebar extends Component{
 	}
 
 	doInit(){
-		this.el = $(`<div class="e-sidebar e-sidebar-${this.opts.region}"><div class="e-sidebar-content"></div></div>`);
+		this.el = $(`<div class="e-sidebar e-sidebar-${this.opts.region}"><div class="e-sidebar-content" style="${this.opts.bodyStyle || ''}"></div></div>`);
 		this.splitEl = $(`<div class="e-slider e-slider-${this.opts.region}"><!--||--></div>`);
 
 		if( this.opts.split )
