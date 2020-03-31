@@ -64,7 +64,8 @@
 
 				model: {
 					operations: [],
-					name: 'Field Process'
+					name: 'Field Process',
+					type: 'field_processor',
 				},
 
 				originalSchema: null,
