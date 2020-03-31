@@ -181,9 +181,9 @@ export default class Graph extends Component{
 		let self = this;
 		let first = self.selection.collection.findWhere({id: cell.id});
 		if( !first){
-			self.selection.collection.add(cell);
+			self.selection.collection.reset([cell]);
 		}
-		if( cell.get('type').startsWith('app.')){
+		if( cell.isElement() && cell.get('type').startsWith('app.')){
 			setTimeout(() => {
 				self.unselectedAllCells();
 				let cellView = self.paper.findViewByModel(cell);
@@ -683,14 +683,14 @@ export default class Graph extends Component{
 		let errorMessage;
 		for (let i = 0; i < cells.length; i++) {
 			let cell = cells[i];
-				if( typeof cell.isElement() && typeof cell.validate === 'function'){
-					try {
-						cell.validate();
-					} catch (e) {
-						errorMessage = e.message;
-						self.selectCell(cell);
-						break;
-					}
+			try {
+				if( typeof cell.validate === 'function'){
+					cell.validate();
+				}
+			} catch (e) {
+				errorMessage = e.message;
+				self.selectCell(cell);
+				break;
 			}
 		}
 		return errorMessage || true;

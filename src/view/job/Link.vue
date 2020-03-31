@@ -3,14 +3,32 @@
 
 		<el-form label-position="right" label-width="150px" :model="model" ref="form">
 
+			<el-form-item label="Table name" required>
+				<el-input
+						v-model="model.joinTable.tableName"
+						placeholder="please enter table name"  class="formitem-width"></el-input>
+			</el-form-item>
+
+			<el-form-item label="Table primary key" required>
+				<el-input
+						v-model="model.joinTable.primaryKeys"
+						placeholder="please enter primary key"  class="formitem-width"></el-input>
+			</el-form-item>
+
 			<el-form-item label="Data write model:" required>
-				<el-select v-model="model.joinTable.joinType" :placeholder="`Please select Data Write model`">
+				<el-select v-model="model.joinTable.joinType" :placeholder="`Please select Data Write model`" @change="handlerJoinTypeChanged">
 					<el-option
 							v-for="(item, idx) in writeModels"
 							:label="`${item.label}`"
 							:value="item.value"
 							v-bind:key="idx"></el-option>
 				</el-select>
+			</el-form-item>
+
+			<el-form-item label="Join Path" required v-if="['update', 'merge_embed'].includes(model.joinTable.joinType)">
+				<el-input
+						v-model="model.joinTable.joinPath"
+						placeholder="please enter Join path"  class="formitem-width"></el-input>
 			</el-form-item>
 
 			<el-form-item label="Association condition:">
@@ -44,7 +62,6 @@
 					</tbody>
 				</table>
 			</el-form-item>
-
 		</el-form>
 
 		<div class="e-mapping-wrap">
@@ -184,6 +201,12 @@
 						}
 					}
 				}
+			},
+
+			handlerJoinTypeChanged(){
+				if(['merge_embed', 'update'].includes(this.model.joinTable.joinType)){
+					this.model.joinTable.joinPath = this.model.joinTable.tableName;
+				}
 			}
 		},
 
@@ -208,6 +231,10 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: start;
+
+		.formitem-width {
+			width: 225px;
+		}
 
 		.e-table {
 			display: inline-block;

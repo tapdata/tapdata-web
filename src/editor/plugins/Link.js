@@ -8,6 +8,7 @@ import joint from '../lib/rappid/rappid';
 import {options} from "../lib/rappid/config";
 import Link from "../../view/job/Link";
 import {FORM_DATA_KEY} from "../constants";
+import log from "../../log";
 
 export const link = {
 
@@ -132,6 +133,38 @@ export const link = {
 				if( !targetId) return false;
 				let targetCell = this.getTargetCell();
 				return targetCell && targetCell.isDataNode && targetCell.isDataNode() && ['app.Table', 'app.Collection'].includes(targetCell.get('type'));
+			},
+
+			/**
+			 * validate user-filled data
+			 * @param data
+			 *
+			 */
+			validate: function(data){
+				data = data || this.getFormData();
+				log(`Link.validate`, data);
+				if( data && this.showSettings() ){
+					let joinTable = data.joinTable;
+					if( !joinTable )
+						throw new Error('Settings cannot be none.');
+					if( !joinTable.tableName)
+						throw new Error('Table name cannot be empty.');
+					if( !joinTable.primaryKey)
+						throw new Error(`Table ${joinTable.tableName} primary key cannot be empty.`);
+					if( !joinTable.joinType )
+						throw new Error('JoinType cannot be empty.');
+					if( !joinTable.joinKeys || data.joinKeys.length === 0 )
+						throw new Error('JoinKeys cannot be empty.');
+					let errorJoinKeys = joinTable.joinKeys.filter(v => v.source && v.target);
+					if( errorJoinKeys && errorJoinKeys.length > 0) {
+						throw new Error('JoinKeys cannot be empty.');
+					}
+					if( ['merge_embed', 'update'].includes(joinTable.joinType) ) {
+						if( !joinTable.joinPath )
+							throw new Error('Join path cannot be empty.');
+					}
+				}
+				return true;
 			}
 
 		},

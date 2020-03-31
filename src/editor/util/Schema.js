@@ -67,8 +67,8 @@ export const
 						id: field.id || `${field.table_name}${field.original_field_name ? ('_' + field.original_field_name) : ''}`.replace(/\./g, '_'),
 						label: jsonPathForFieldName[jsonPathForFieldName.length - 1],
 						type: field.javaType,
-						color: getColor(field.table_name)
-
+						color: getColor(field.table_name),
+						primary_key_position: field.primary_key_position,
 					};
 					_.set(root, 'children.' + jsonPath.join('.children.'), treeItem);
 				}

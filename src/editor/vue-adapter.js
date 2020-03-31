@@ -25,7 +25,7 @@ export class VueAdapter extends BaseObject {
 
 		editor.getRightSidebar().on(EditorEventType.RESIZE, this.handlerResize.bind(this));
 		editor.getRightSidebar().on(EditorEventType.HIDE, this.handlerHide.bind(this));
-		// editor.getBottomTabPanel().on(EditorEventType.SELECTED, this.handlerTapChanged.bind(this));
+		editor.getRightTabPanel().on(EditorEventType.SELECTED, this.handlerTapChanged.bind(this));
 	}
 
 	render(cell){

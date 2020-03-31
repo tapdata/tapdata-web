@@ -108,6 +108,11 @@ export default class Editor extends BaseObject {
 		});
 		ui.add(self.rightSidebar);
 
+		let rightTabPanel = new Tab({
+			name: 'rightTabPanel'
+		});
+		self.rightSidebar.add(rightTabPanel);
+
 		self.bottomSidebar = new Sidebar({
 			container: self.ui.getContentEl(),
 			region: 'bottom',
@@ -144,14 +149,14 @@ export default class Editor extends BaseObject {
 
 	initRightTabPanel(){
 		let self = this;
-		let rightTabPanel = this.getRightSidebar().getChildByName('rightTabPanel');
+		/*let rightTabPanel = this.getRightTabPanel();
 		if( !rightTabPanel) {
 			rightTabPanel = new Tab({
 				name: 'rightTabPanel'
 			});
 			this.getRightSidebar().add(rightTabPanel);
 		}
-		this.rightSidebar.add(rightTabPanel);
+		this.rightSidebar.add(rightTabPanel);*/
 
 		let setting = new VueComponent({
 			title: 'Data Flow Settings',
