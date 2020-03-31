@@ -194,7 +194,7 @@
 				if (ops.length === 0) {
 					op = Object.assign(_.cloneDeep(CONVERT_OPS_TPL), {
 						id: data.id,
-						field: nativeData.type,
+						field: nativeData.label,
 						operand: data.type,
 						originalDataType: nativeData.type,
 					});
