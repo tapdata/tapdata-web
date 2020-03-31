@@ -174,6 +174,9 @@ export const baseElementConfig = {
 									let fields = schema.fields || [];
 									joinTable.primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
 									joinTable.tableName = schema && schema.table_name;
+									if( ['merge_embed', 'update'].includes(joinTable.joinType)){
+										joinTable.joinPath = joinTable.tableName;
+									}
 									cell.set(FORM_DATA_KEY, {
 										joinTable: _.cloneDeep(joinTable)
 									});

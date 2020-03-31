@@ -10,7 +10,7 @@
 					size="small"
 					style="margin-right: 50px;"
 			>{{$t('dataFlow.state')}}: {{$t('dataFlow.status.' + status)}}</el-tag>
-			<el-button size="mini" type="default" @click="showSetting">Setting</el-button>
+			<el-button size="mini" type="default" v-if="['draft', 'paused', 'error'].includes(status)" @click="showSetting">Setting</el-button>
 			<el-button size="mini" type="default" v-if="dataFlowId" @click="showLogs">Logs</el-button>
 			<el-button
 					v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
@@ -330,7 +330,7 @@
 				let self = this,
 					data = this.getDataFlowData();
 
-				if( data.id ) {
+				if( data && data.id ) {
 					data = {
 						id: data.id,
 						status: ['scheduled', 'running'].includes(data.status) ? data.status : 'scheduled',

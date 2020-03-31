@@ -26,6 +26,7 @@
 					<span class="custom-tree-node" slot-scope="{ node, data }">
 						<span class="e-triangle" :style="`border-bottom-color: ${data.color || '#ffffff'};`"></span>
 						<span class="e-port e-port-in" :data-id="getId(data)"></span>
+						<span class="e-pk">{{ data.primary_key_position > 0 ? 'PK' : '' }}</span>
 						<span class="e-label">{{node.label}}</span>
 						<span class="e-data-type">{{ data.type}}</span>
 						<el-dropdown v-if="editable" size="mini" @command="(command) => {handlerCommand(command, data, node)}">
@@ -233,6 +234,16 @@
 				-ms-transform: rotate(90deg);
 				-o-transform: rotate(90deg);
 				transform: rotate(90deg);
+			}
+
+			.e-pk{
+				font-size: 9px;
+				font-weight: bold;
+				color: #FFA000;
+				position: relative;
+				left: -14px;
+				display: inline-block;
+				width: 5px;
 			}
 
 		}
