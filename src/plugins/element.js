@@ -9,6 +9,7 @@ import {
 	Radio,
 	RadioGroup,
 	RadioButton,
+	Checkbox,
 	CheckboxGroup,
 	CheckboxButton,
 	Dialog,
@@ -48,6 +49,7 @@ Vue.component(Popover.name, Popover);
 Vue.component(Radio.name, Radio);
 Vue.component(RadioGroup.name, RadioGroup);
 Vue.component(RadioButton.name, RadioButton);
+Vue.component(Checkbox.name, Checkbox);
 Vue.component(CheckboxGroup.name, CheckboxGroup);
 Vue.component(CheckboxButton.name, CheckboxButton);
 Vue.component(Dialog.name, Dialog);

@@ -1,5 +1,8 @@
 <template>
 	<div class="filter-toolbar">
+		<div>
+			<el-input class="search"> <i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
+		</div>
 		<el-tree
 				:data="data"
 				node-key="id"
@@ -27,6 +30,7 @@
 		name: 'TableSelector',
 		data() {
 			return {
+				count:0,
 				data: [{
 					label: '一级 1',
 					children: [{
@@ -82,32 +86,6 @@
 									label: '二级 3-2',
 									children: [{
 										label: '三级 3-2-1'
-									}, {
-										label: '一级 3',
-										children: [{
-											label: '二级 3-1',
-											children: [{
-												label: '三级 3-1-1'
-											}]
-										}, {
-											label: '二级 3-2',
-											children: [{
-												label: '三级 3-2-1'
-											}]
-										}, {
-											label: '一级 3',
-											children: [{
-												label: '二级 3-1',
-												children: [{
-													label: '三级 3-1-1'
-												}]
-											}, {
-												label: '二级 3-2',
-												children: [{
-													label: '三级 3-2-1'
-												}]
-											}]
-										}]
 									}]
 								}]
 							}]
@@ -133,7 +111,7 @@
 				MetadataInstances.get(parm).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data) {
-							this.data = res.data;
+							//this.data = res.data;
 							log('data', res.data);
 						}
 					}
@@ -142,13 +120,15 @@
 			handleGraph(){
 				let cell = this.editor.graph.createCell('app.Collection');
 				cell.set(FORM_DATA_KEY, {});
-				this.editor.graph.addCell(cell,0,0);
+				this.count = this.count+50;
+				cell.position(0,this.count);
+				this.editor.graph.addCell(cell);
 			}
 		}
 	};
 </script>
 
-<style>
+<style >
 	.filter-toolbar{
 		width: 234px;
 	}
@@ -163,5 +143,11 @@
 	.editor-container .editor .e-body .e-vue-component-wrap{
 		overflow:hidden;
 		overflow-x: scroll !important;
+	}
+	.el-checkbox-button .el-checkbox-button__inner{
+		padding: 6px 12px;
+	}
+	.search{
+		width: 170px;
 	}
 </style>
