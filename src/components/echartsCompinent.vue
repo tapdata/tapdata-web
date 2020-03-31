@@ -95,7 +95,8 @@
 						feature: {
 							saveAsImage: {}
 						}
-					},
+          },
+          animation: false,
 					//直角坐标系内绘图网格
 					grid: configures.grid,
 					//x轴的数据以及配置

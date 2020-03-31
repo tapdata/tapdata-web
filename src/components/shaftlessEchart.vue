@@ -151,7 +151,8 @@
 						//     color: this.echartsXYcolor
 						//   }
 						// }
-					],
+          ],
+          animation: false,
 					//图表的数据
 					series: configures.series //由于数据的灵活度大，所以完全采用传入的方式
 				};
