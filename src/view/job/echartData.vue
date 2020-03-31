@@ -175,7 +175,7 @@
         this.getTwoRadio(this.dataOverviewAll, this.dataOverviewType);
         this.getTime(this.transfTime, this.transfType);
         this.getTime(this.replicateTime, this.replicateType);
-      },8000);
+      },10000);
     },
 
 		watch: {

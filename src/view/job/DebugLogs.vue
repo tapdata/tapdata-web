@@ -28,7 +28,7 @@
 		data() {
 			return {
 				search: '',
-				logCount: [],
+				logCount: 0,
 				lastTime: '',
 				timer: null, //定时器
 			};
@@ -68,7 +68,7 @@
 						if (res.data && res.data.length > 0) {
 							this.lastTime = res.data[0].millis;
 							let logCount = res.data.length;
-							this.logCount += logCount;
+              this.logCount += logCount;
 
 							for (let i = logCount - 1; i >= 0; i--) {
 								let item = res.data[i];
@@ -84,7 +84,6 @@
 								item.date = item.date ? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : '';
 								item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
 							}
-
 						}
 					}
 				}).catch(err => {
@@ -103,7 +102,9 @@
 <style scoped>
 	.debugLog {
 		width: 100%;
-		height: 100%;
+    height: 100%;
+    padding: 20px 0 0 20px;
+    box-sizing: border-box;
 		overflow: hidden;
 	}
 
@@ -114,7 +115,7 @@
 	.log {
 		width: 100%;
 		display: inline-block;
-		height: calc(100% - 103px);
+		height: calc(100% - 50px);
 		padding-top: 20px;
 		overflow: auto;
 	}
