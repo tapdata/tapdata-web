@@ -1,7 +1,7 @@
 <template>
 	<div class="e-link-wrap">
 
-		<el-form label-position="right" label-width="150px" :model="model" ref="form">
+		<el-form label-position="right" label-width="160px" :model="model" ref="form">
 
 			<el-form-item label="Table name" required>
 				<el-input
@@ -31,7 +31,7 @@
 						placeholder="please enter Join path"  class="formitem-width"></el-input>
 			</el-form-item>
 
-			<el-form-item label="Association condition:">
+			<el-form-item label="Association condition:" required>
 				<table class="e-table">
 					<thead>
 						<tr>
