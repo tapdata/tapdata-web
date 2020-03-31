@@ -27,15 +27,15 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item required label="Exists data">
+			<el-form-item required label="Existing data">
 				<el-select
 						v-model="model.dropTable"
 						:placeholder="`Please select a collection`">
 					<el-option
-							label="Keep exists data"
+							label="Keep existing data"
 							:value="false"></el-option>
 					<el-option
-							label="Remove exists data at before sync"
+							label="Remove existing data at before sync"
 							:value="true"></el-option>
 				</el-select>
 			</el-form-item>

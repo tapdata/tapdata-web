@@ -155,7 +155,7 @@ export const link = {
 						throw new Error('JoinType cannot be empty.');
 					if( !joinTable.joinKeys || joinTable.joinKeys.length === 0 )
 						throw new Error('JoinKeys cannot be empty.');
-					let errorJoinKeys = joinTable.joinKeys.filter(v => v.source && v.target);
+					let errorJoinKeys = joinTable.joinKeys.filter(v => !v.source || !v.target);
 					if( errorJoinKeys && errorJoinKeys.length > 0) {
 						throw new Error('JoinKeys cannot be empty.');
 					}
