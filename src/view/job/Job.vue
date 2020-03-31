@@ -94,7 +94,7 @@
 
 						self.dataFlow = dataFlow;
 
-						self.editor.graph.loadData(JSON.parse(dataFlow.editorData));
+						self.editor.setData(dataFlow);
 
 						if( ['scheduled', 'running'].includes(self.status)){
 							self.setEditable(false);

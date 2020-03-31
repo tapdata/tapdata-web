@@ -44,6 +44,9 @@ export default class UI extends Component {
 	getName(){
 		return this.el.find('.e-title h3').text();
 	}
+	setName(name){
+		return this.el.find('.e-title h3').text(name);
+	}
 	getBackButtonEl(){
 		return this.el.find('.e-header .e-action-back');
 	}
