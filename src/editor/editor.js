@@ -274,6 +274,11 @@ export default class Editor extends BaseObject {
 		this.getBottomTabPanel().select(logsPanel);
 	}
 
+	setData(dataFlow){
+		this.graph.loadData(JSON.parse(dataFlow.editorData));
+		this.ui.setName(dataFlow.name);
+	}
+
 	getData(){
 
 		return {
