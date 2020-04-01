@@ -99,6 +99,10 @@ export default class Component extends BaseObject{
 		this.removeAll();
 	}
 
+	isShow(){
+		return !this.opts.hidden;
+	}
+
 	show(){
 		this.el.show();
 		this.opts.hidden = false;

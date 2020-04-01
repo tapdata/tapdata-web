@@ -66,6 +66,7 @@ export default class Tab extends Component{
 			this.el.find(`>.e-tab-bar>.e-tab-title[data-target=${id}]`).addClass('active');
 			this.el.find(`>.e-tab-content>.e-tab[data-value=${id}]`).addClass('active');
 		}
+		this.childs.forEach( child => child.selected = child === tab);
 		this.emit(EditorEventType.SELECTED, tab);
 	}
 
