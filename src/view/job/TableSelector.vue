@@ -1,7 +1,7 @@
 <template>
-	<div class="filter-toolbar">
+	<div class="box">
 		<div>
-			<el-input class="search"> <i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
+			<el-input class="search"><i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
 		</div>
 		<el-tree
 				:data="data"
@@ -9,13 +9,13 @@
 				:expand-on-click-node="false"
 				lazy
 				:load="loadTables"
-				>
+		>
 			<span class="custom-tree-node" slot-scope="{ node, data}">
 				<span>
 					<span v-if="data.meta_type ==='database'" class="iconfont icon-shujuku filter-icon"></span>
 					<span v-if="data.meta_type ==='table'" class="iconfont icon-table2   filter-icon-table"></span>
 					{{ node.label }}
-					<span  @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>
+					<span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>
 				</span>
 
 			</span>
@@ -34,7 +34,7 @@
 		name: 'TableSelector',
 		data() {
 			return {
-				count:0,
+				count: 0,
 				data: [],
 				defaultProps: {
 					children: 'children',
@@ -51,7 +51,7 @@
 			},
 			loadDataBase() {
 				let self = this;
-				let params  = {
+				let params = {
 					filter: JSON.stringify({
 						where: {
 							meta_type: 'database'
@@ -77,12 +77,12 @@
 					this.$message.error('MetadataInstances error');
 				});
 			},
-			loadTables(node, resolve){
+			loadTables(node, resolve) {
 				if (node.level === 0) {
 					return resolve(this.data);
 				}
 
-				let params  = {
+				let params = {
 					filter: JSON.stringify({
 						where: {
 							meta_type: {
@@ -114,7 +114,7 @@
 					//TODO: alert error
 				});
 			},
-			handleGraph(data){
+			handleGraph(data) {
 				let mapping = {
 					collection: 'app.Collection',
 					table: 'app.Table',
@@ -122,16 +122,16 @@
 				};
 				let cell = this.editor.graph.createCell(mapping[data.meta_type]);
 				cell.set(FORM_DATA_KEY, {});
-				this.count = this.count+50;
-				cell.position(0,this.count);
+				this.count = this.count + 50;
+				cell.position(0, this.count);
 				this.editor.graph.addCell(cell);
 			}
 		}
 	};
 </script>
 
-<style >
-	.filter-toolbar{
+<style>
+	.box {
 		width: 234px;
 	}
 	.custom-tree-node {
@@ -142,27 +142,34 @@
 		font-size: 11px;
 		padding-right: 8px;
 	}
-	.editor-container .editor .e-body .e-vue-component-wrap{
+
+	.editor-container .editor .e-body .e-vue-component-wrap {
 		overflow: auto;
 	}
-	.el-checkbox-button .el-checkbox-button__inner{
+
+	.el-checkbox-button .el-checkbox-button__inner {
 		padding: 6px 12px;
 	}
-	.search{
+
+	.search {
 		width: 170px;
 	}
-	.filter-icon{
+
+	.filter-icon {
 		font-size: 12px;
 		color: #48b6e2;
 	}
-	.filter-icon-table{
+
+	.filter-icon-table {
 		font-size: 13px;
 		color: #4AAF47;
 	}
-	.filter-Graph{
+
+	.filter-Graph {
 		display: inline-block;
 	}
-	.filter-Graph :hover{
+
+	.filter-Graph :hover {
 		display: inline-block;
 		float: right;
 	}
