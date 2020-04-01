@@ -1,19 +1,23 @@
 <template>
-	<div class="filter-toolbar">
+	<div class="box">
 		<div>
-			<el-input class="search"> <i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
+			<el-input class="search"><i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
 		</div>
 		<el-tree
 				:data="data"
 				node-key="id"
-				default-expand-all
-				:expand-on-click-node="false">
-			<span class="custom-tree-node" slot-scope="{ node}">
+				:expand-on-click-node="false"
+				lazy
+				:load="loadTables"
+		>
+			<span class="custom-tree-node" slot-scope="{ node, data}">
 				<span>
-					<span class="iconfont icon-charulianjie"></span>
+					<span v-if="data.meta_type ==='database'" class="iconfont icon-shujuku filter-icon"></span>
+					<span v-if="data.meta_type ==='table'" class="iconfont icon-table2   filter-icon-table"></span>
 					{{ node.label }}
+					<span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>
 				</span>
-				<span @click="handleGraph()">链接</span>
+
 			</span>
 		</el-tree>
 	</div>
@@ -30,106 +34,104 @@
 		name: 'TableSelector',
 		data() {
 			return {
-				count:0,
-				data: [{
-					label: '一级 1',
-					children: [{
-						label: '二级 1-1',
-						children: [{
-							label: '三级 1-1-1'
-						}]
-					}]
-				}, {
-					label: '一级 2',
-					children: [{
-						label: '二级 2-1',
-						children: [{
-							label: '三级 2-1-1'
-						}]
-					}, {
-						label: '二级 2-2',
-						children: [{
-							label: '三级 2-2-1'
-						}]
-					}]
-				}, {
-					label: '一级 3',
-					children: [{
-						label: '二级 3-1',
-						children: [{
-							label: '三级 3-1-1'
-						}]
-					}, {
-						label: '二级 3-2',
-						children: [{
-							label: '三级 3-2-1'
-						}, {
-							label: '一级 3',
-							children: [{
-								label: '二级 3-1',
-								children: [{
-									label: '三级 3-1-1'
-								}]
-							}, {
-								label: '二级 3-2',
-								children: [{
-									label: '三级 3-2-1'
-								}]
-							}, {
-								label: '一级 3',
-								children: [{
-									label: '二级 3-1',
-									children: [{
-										label: '三级 3-1-1'
-									}]
-								}, {
-									label: '二级 3-2',
-									children: [{
-										label: '三级 3-2-1'
-									}]
-								}]
-							}]
-						}]
-					}]
-				}],
+				count: 0,
+				data: [],
 				defaultProps: {
 					children: 'children',
-					label: 'label'
+					label: 'label',
+					isLeaf: 'leaf'
 				}
 			};
 		},
-		created() {
-			this.getData();
+		mounted() {
+			this.loadDataBase();
 		},
 		methods: {
 			handleNodeClick(data) {
 			},
-			getData() {
-				let parm  = {
-					meta_type: 'database'
+			loadDataBase() {
+				let self = this;
+				let params = {
+					filter: JSON.stringify({
+						where: {
+							meta_type: 'database'
+						}
+					})
 				};
-				MetadataInstances.get(parm).then(res => {
+				MetadataInstances.get(params).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data) {
-							//this.data = res.data;
-							log('data', res.data);
+							self.data.splice(0, self.data.length);
+
+							res.data.forEach((record) => {
+								self.data.push({
+									id: record.id,
+									label: record.name || record.original_name,
+									meta_type: record.meta_type
+								});
+							});
+							log('data', self.data);
 						}
 					}
+				}).catch(e => {
+					this.$message.error('MetadataInstances error');
 				});
 			},
-			handleGraph(){
-				let cell = this.editor.graph.createCell('app.Collection');
+			loadTables(node, resolve) {
+				if (node.level === 0) {
+					return resolve(this.data);
+				}
+
+				let params = {
+					filter: JSON.stringify({
+						where: {
+							meta_type: {
+								in: ['collection', 'table', 'mongodb view', 'view']
+							},
+							databaseId: {
+								regexp: `^${node.key}$`
+							}
+						}
+					})
+				};
+				MetadataInstances.get(params).then(res => {
+					if (res.statusText === "OK" || res.status === 200) {
+						if (res.data) {
+							let childNodes = [];
+							res.data.forEach(record => {
+								childNodes.push({
+									id: record.id,
+									label: record.name || record.original_name,
+									leaf: true,
+									meta_type: record.meta_type
+								});
+							});
+							resolve(childNodes);
+							log('childNodes', childNodes);
+						}
+					}
+				}).catch(e => {
+					//TODO: alert error
+				});
+			},
+			handleGraph(data) {
+				let mapping = {
+					collection: 'app.Collection',
+					table: 'app.Table',
+					database: 'app.Database',
+				};
+				let cell = this.editor.graph.createCell(mapping[data.meta_type]);
 				cell.set(FORM_DATA_KEY, {});
-				this.count = this.count+50;
-				cell.position(0,this.count);
+				this.count = this.count + 50;
+				cell.position(0, this.count);
 				this.editor.graph.addCell(cell);
 			}
 		}
 	};
 </script>
 
-<style >
-	.filter-toolbar{
+<style>
+	.box {
 		width: 234px;
 	}
 	.custom-tree-node {
@@ -140,14 +142,35 @@
 		font-size: 11px;
 		padding-right: 8px;
 	}
-	.editor-container .editor .e-body .e-vue-component-wrap{
-		overflow:hidden;
-		overflow-x: scroll !important;
+
+	.editor-container .editor .e-body .e-vue-component-wrap {
+		overflow: auto;
 	}
-	.el-checkbox-button .el-checkbox-button__inner{
+
+	.el-checkbox-button .el-checkbox-button__inner {
 		padding: 6px 12px;
 	}
-	.search{
+
+	.search {
 		width: 170px;
+	}
+
+	.filter-icon {
+		font-size: 12px;
+		color: #48b6e2;
+	}
+
+	.filter-icon-table {
+		font-size: 13px;
+		color: #4AAF47;
+	}
+
+	.filter-Graph {
+		display: inline-block;
+	}
+
+	.filter-Graph :hover {
+		display: inline-block;
+		float: right;
 	}
 </style>

@@ -205,13 +205,13 @@ export default class Graph extends Component{
 			paper: this.paperScroller,
 			snaplines: this.snaplines,
 			scaleClones: true,
-			width: 180,
+			width: 200,
 			groups: stencilConfig.groups,
 			dropAnimation: true,
 			groupsToggleButtons: true,
 			layout: {
-				columnWidth: 80,
-				columns: 2,
+				columnWidth: 75,
+				columns: 3,
 				rowHeight: 47,
 			},
 			/*search: {
