@@ -1,7 +1,8 @@
 <template>
 	<div class="box">
 		<div>
-			<el-input class="search"><i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
+			<el-input class="search" v-model="filterText"><i slot="suffix" class="el-input__icon el-icon-search"></i></el-input>
+			<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
 		</div>
 		<el-tree
 				:data="data"
@@ -9,14 +10,18 @@
 				:expand-on-click-node="false"
 				lazy
 				:load="loadTables"
+				:filter-node-method="filterNode"
+				:expand-all="default_expanded"
+				ref="tree"
 		>
 			<span class="custom-tree-node" slot-scope="{ node, data}">
 				<span>
 					<span v-if="data.meta_type ==='database'" class="iconfont icon-shujuku filter-icon"></span>
-					<span v-if="data.meta_type ==='table'" class="iconfont icon-table2   filter-icon-table"></span>
-					{{ node.label }}
-					<span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>
+					<span v-if="data.meta_type ==='table'" class="iconfont icon-table2  filter-icon-table"></span>
+					<span v-if="data.meta_type ==='collection'" class="iconfont icon-collection filter-icon-table"></span>
+					<span class="table-label">{{ node.label }}</span>
 				</span>
+				<span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>
 
 			</span>
 		</el-tree>
@@ -35,16 +40,28 @@
 		data() {
 			return {
 				count: 0,
+				filterText:'',
 				data: [],
+				default_expanded:false,
 				defaultProps: {
 					children: 'children',
 					label: 'label',
 					isLeaf: 'leaf'
+				},
+				mapping:{
+					collection: 'app.Collection',
+					table: 'app.Table',
+					database: 'app.Database',
 				}
 			};
 		},
 		mounted() {
 			this.loadDataBase();
+		},
+		watch: {
+			filterText(val) {
+				this.$refs.tree.filter(val);
+			}
 		},
 		methods: {
 			handleNodeClick(data) {
@@ -67,7 +84,8 @@
 								self.data.push({
 									id: record.id,
 									label: record.name || record.original_name,
-									meta_type: record.meta_type
+									meta_type: record.meta_type,
+									source:record.source||''
 								});
 							});
 							log('data', self.data);
@@ -81,12 +99,15 @@
 				if (node.level === 0) {
 					return resolve(this.data);
 				}
+				if (node.level >1) {
+					return resolve([]);
+				}
 
 				let params = {
 					filter: JSON.stringify({
 						where: {
 							meta_type: {
-								in: ['collection', 'table', 'mongodb view', 'view']
+								in: ['collection', 'table', 'mongo_view', 'view']
 							},
 							databaseId: {
 								regexp: `^${node.key}$`
@@ -101,9 +122,13 @@
 							res.data.forEach(record => {
 								childNodes.push({
 									id: record.id,
+									_id:record.source._id,
 									label: record.name || record.original_name,
-									leaf: true,
-									meta_type: record.meta_type
+									expanded: true,
+									meta_type: record.meta_type,
+									database_type:record.source.database_type||'',
+									original_name:record.original_name ||'',
+									fields:record.fields,
 								});
 							});
 							resolve(childNodes);
@@ -114,18 +139,61 @@
 					//TODO: alert error
 				});
 			},
+			handleDefault_expanded(){
+				this.default_expanded = true;
+			},
+			filterNode(value, data) {
+				if (!value) return true;
+				return data.label.indexOf(value) !== -1;
+			},
 			handleGraph(data) {
+				log('data',data);
 				let mapping = {
 					collection: 'app.Collection',
 					table: 'app.Table',
 					database: 'app.Database',
 				};
-				let cell = this.editor.graph.createCell(mapping[data.meta_type]);
-				cell.set(FORM_DATA_KEY, {});
+
+				let formData = {};
+				let schema = {};
+				if(data.meta_type ==='database'){
+					formData ={
+						connectionId:data.source._id,
+						name: data.name || data.original_name,
+					};
+				}else if(data.meta_type ==='table' || data.meta_type ==='view'){
+					let primaryKeys ='';
+					if(data.fields){
+						primaryKeys = data.fields.filter(item => item.primary_key_position > 0)
+							.map(item => item.field_name).join(',');
+
+						// TODO: MetadataInstances 中的 field，没有 original_field_name ，找 Sam 确认
+						data.fields.forEach(item => item.original_field_name = item.original_field_name || item.field_name)
+					}
+					log('primaryKeys',primaryKeys);
+					formData ={
+						connectionId: data._id,
+						databaseType: data.database_type,
+						tableName: data.original_name ,
+						sql: "",
+						dropTable: false,
+						type: "table",
+						primaryKeys: primaryKeys,
+						name: data.name || data.original_name,
+					};
+					schema ={
+						table_name: data.name || data.original_name,
+						cdc_enabled: true,
+						meta_type: "table",
+						fields:data.fields,
+					};
+				}
+
 				this.count = this.count + 50;
+				let cell = this.editor.graph.createCell(mapping[data.meta_type], formData,schema);
 				cell.position(0, this.count);
 				this.editor.graph.addCell(cell);
-			}
+			},
 		}
 	};
 </script>
@@ -153,6 +221,7 @@
 
 	.search {
 		width: 170px;
+		margin-bottom: 10px;
 	}
 
 	.filter-icon {
@@ -167,10 +236,10 @@
 
 	.filter-Graph {
 		display: inline-block;
+		margin-right: 5px;
 	}
-
-	.filter-Graph :hover {
+	.table-label{
 		display: inline-block;
-		float: right;
+		width: 140px;
 	}
 </style>
