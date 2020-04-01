@@ -144,27 +144,30 @@ export default class Editor extends BaseObject {
 		});
 		treePanel.add(treeVueComponent);
 
-		this.initRightTabPanel();
+		this.initSettings();
 	}
 
-	initRightTabPanel(){
+	initSettings(){
 		let self = this;
-		/*let rightTabPanel = this.getRightTabPanel();
+		let rightTabPanel = this.getRightTabPanel();
 		if( !rightTabPanel) {
 			rightTabPanel = new Tab({
 				name: 'rightTabPanel'
 			});
 			this.getRightSidebar().add(rightTabPanel);
 		}
-		this.rightSidebar.add(rightTabPanel);*/
+		this.rightSidebar.add(rightTabPanel);
 
-		let setting = new VueComponent({
-			title: 'Data Flow Settings',
-			name: 'setting',
-			editor: this,
-			component: Setting
-		});
-		this.getRightTabPanel().add(setting);
+		let setting = rightTabPanel.getChildByName('setting');
+		if( !setting ){
+			setting = new VueComponent({
+				title: 'Data Flow Settings',
+				name: 'setting',
+				editor: this,
+				component: Setting
+			});
+			this.getRightTabPanel().add(setting);
+		}
 
 		setting.on('dataChanged', (data) => {
 			self.graph.setSettingData(data);
@@ -203,44 +206,26 @@ export default class Editor extends BaseObject {
 		}
 		self.getRightSidebar().show();
 
-		// add capture
-		let capture = self.getBottomTabPanel().getChildByName('capture');
-		if( !capture ){
-			capture = new VueComponent({
-				title: 'Capture',
-				name: 'capture',
-				editor: this,
-				dataFlow: dataFlow,
-				component: Capture
-			});
-			self.getBottomTabPanel().add(capture);
-		}
-
-		this.initLogPanel(dataFlow);
-
-		self.getBottomTabPanel().select(capture);
-		self.getBottomSidebar().show();
+		self.showLogs(dataFlow);
 	}
 
 	initEditingMode(){
 		log('editor.initEditingMode');
-		this.initRightTabPanel();
-		this.getLeftSidebar().show();
-		this.getBottomSidebar().hide();
+		this.getRightSidebar().removeAll();
 		this.getRightSidebar().hide();
 
-		// this.rightSidebar.removeAll();
-		let monitor = this.getRightSidebar().getChildByName('monitor');
-		this.getRightSidebar().remove(monitor);
+		this.initSettings();
 
-		// remove capture
-		let capture = this.getBottomTabPanel().getChildByName('capture');
-		this.getBottomTabPanel().remove(capture);
+		this.getLeftSidebar().show();
+
+		this.getBottomSidebar().hide();
+		this.getBottomTabPanel().removeAll();
 	}
 
 	//setting
 	showSetting(){
 		let self = this;
+		self.initSettings();
 		let rightTabPanel = self.getRightTabPanel();
 		if( rightTabPanel ) {
 			let setting = rightTabPanel.getChildByName('setting');
@@ -248,12 +233,12 @@ export default class Editor extends BaseObject {
 				let settingData = self.graph.getSettingData();
 				setting.setData(settingData);
 			}
+			rightTabPanel.select(setting);
 			self.getRightSidebar().show();
-			self.getRightTabPanel().select(setting);
 		}
 	}
 
-	initLogPanel(dataFlow){
+	showLogs(dataFlow){
 		let bottomTabPanel = this.getBottomTabPanel();
 		let logsPanel = bottomTabPanel.getChildByName('logsPanel');
 
@@ -267,16 +252,34 @@ export default class Editor extends BaseObject {
 			});
 			this.getBottomTabPanel().add(logsPanel);
 		}
+
+		if( this.getBottomSidebar().isShow() && logsPanel.selected ) {
+			this.getBottomSidebar().hide();
+		} else {
+			this.getBottomTabPanel().select(logsPanel);
+			this.getBottomSidebar().show();
+		}
 	}
 
-	showLog(dataFlow) {
-
-		this.initLogPanel(dataFlow);
-		let bottomTabPanel = this.getBottomTabPanel();
-		let logsPanel = bottomTabPanel.getChildByName('logsPanel');
-
-		this.getBottomSidebar().show();
-		this.getBottomTabPanel().select(logsPanel);
+	showCapture(dataFlow) {
+		// add capture
+		let capture = this.getBottomTabPanel().getChildByName('capture');
+		if( !capture ){
+			capture = new VueComponent({
+				title: 'Capture',
+				name: 'capture',
+				editor: this,
+				dataFlow: dataFlow,
+				component: Capture
+			});
+			this.getBottomTabPanel().add(capture);
+		}
+		if( this.getBottomSidebar().isShow() && capture.selected ) {
+			this.getBottomSidebar().hide();
+		} else {
+			this.getBottomTabPanel().select(capture);
+			this.getBottomSidebar().show();
+		}
 	}
 
 	setData(dataFlow){

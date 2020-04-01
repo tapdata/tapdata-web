@@ -13,17 +13,17 @@
 			<el-button size="mini" type="default" v-if="['draft', 'paused', 'error'].includes(status)" @click="showSetting">Setting</el-button>
 			<el-button size="mini" type="default" v-if="dataFlowId" @click="showLogs">Logs</el-button>
 			<el-button
-					v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
-					size="mini" type="danger"
-					@click="stop">Stop</el-button>
-			<el-button
-					v-if="!['scheduled', 'stopping'].includes(status)"
+					v-if="!['scheduled', 'stopping'].includes(status) && executeMode !== 'editing_debug'"
 					size="mini" type="default"
-					@click="capture">Capture</el-button>
+					@click="capture">{{ ['running_debug', 'editing_debug'].includes(executeMode) ? 'Stop capture' : 'Capture'}}</el-button>
 			<el-button
 					v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
 					size="mini" type="success"
 					@click="start">Start</el-button>
+			<el-button
+					v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
+					size="mini" type="danger"
+					@click="stop">Stop</el-button>
 			<el-button
 					v-if="!['scheduled', 'running'].includes(status)"
 					size="mini" type="primary"
@@ -52,9 +52,20 @@
 
 				dataFlowId: null,
 				status: 'draft',
+				executeMode: 'normal',
 
 				loading: true,
 			};
+		},
+
+		watch: {
+			executeMode: {
+				handler(){
+					if( this.executeMode !== 'normal') {
+						this.showCapture();
+					}
+				}
+			}
 		},
 		mounted() {
 			let self = this;
@@ -116,7 +127,6 @@
 			},
 
 			polling(){
-				log('Job.polling', this.status, this.dataFlowId);
 				let self = this;
 				if( self.dataFlowId ){
 					if( !['scheduled', 'running', 'stopping'].includes(self.status))
@@ -130,10 +140,15 @@
 							if( self.status !== newStatus){
 								self.status = newStatus;
 							}
+
+							self.executeMode = result.data.executeMode;
+
 							if( ['scheduled', 'running', 'stopping'].includes(newStatus)) {
 								if( self.timeoutId )
 									clearTimeout(self.timeoutId);
 								self.timeoutId = setTimeout(self.polling.bind(self), 2000);
+							} else {
+								self.executeMode = 'normal';
 							}
 						}
 					}).catch( err => {
@@ -169,8 +184,8 @@
 				let postData = Object.assign({
 					name: editorData.name,
 					description: "",
-					status: "draft",		// draft/scheduled/running/paused/stopping/error
-					executeMode: "normal",
+					status: this.status || "draft",		// draft/scheduled/running/paused/stopping/error
+					executeMode: this.executeMode || "normal",
 					category: "数据库克隆",
 					stopOnError: false,
 					mappingTemplate: "cluster-clone",
@@ -234,6 +249,8 @@
 			doSave(data, cb){
 				let self = this;
 
+				log('Job.doSave', data);
+
 				let promise = data.id ?
 					dataFlowsApi.patch(data):
 					dataFlowsApi.post(data);
@@ -246,6 +263,7 @@
 
 						self.dataFlowId = dataFlow.id;
 						self.status = dataFlow.status;
+						self.executeMode = dataFlow.executeMode;
 
 						self.dataFlow = dataFlow;
 
@@ -312,17 +330,23 @@
 			stop(){
 				let self = this,
 					data = {
-						id: this.dataFlowId,
+						id: self.dataFlowId,
 						status: 'stopping'
 					};
 
-				self.doSave(data, (err, dataFlow) => {
-					if( err ){
-						this.$message.error('Stop failed');
-					} else {
-						this.$message.success('Stop success');
-						self.setEditable(true);
-					}
+				self.$confirm('Stop jobs?', 'Tip', {
+					confirmButtonText: 'Stop it',
+					cancelButtonText: 'Cancel',
+					type: 'warning'
+				}).then(() => {
+					self.doSave(data, (err, dataFlow) => {
+						if( err ){
+							self.$message.error('Stop failed');
+						} else {
+							self.$message.success('Stop success');
+							self.setEditable(true);
+						}
+					});
 				});
 			},
 
@@ -333,8 +357,9 @@
 				if( data && data.id ) {
 					data = {
 						id: data.id,
-						status: ['scheduled', 'running'].includes(data.status) ? data.status : 'scheduled',
-						executeMode: 'running' === data.status ? 'running_debug' : 'editing_debug'
+						status: ['scheduled', 'running', 'stopping'].includes(data.status) ? data.status : 'scheduled',
+						executeMode: ['running_debug', 'editing_debug'].includes(this.executeMode) ? 'normal' :
+									['scheduled', 'running', 'stopping'].includes(data.status) ? 'running_debug' : 'editing_debug'
 					};
 				} else {
 					Object.assign(data, {
@@ -347,7 +372,7 @@
 						this.$message.error('Save failed');
 					} else {
 						this.$message.success('Save success');
-						self.setEditable(false);
+						this.showCapture();
 					}
 				});
 			},
@@ -356,7 +381,10 @@
 				this.editor.showSetting();
 			},
 			showLogs(){
-				this.editor.showLog(this.dataFlow);
+				this.editor.showLogs(this.dataFlow);
+			},
+			showCapture(){
+				this.editor.showCapture(this.dataFlow);
 			},
 
 			setEditable(editable){
