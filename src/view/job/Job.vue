@@ -123,7 +123,7 @@
 						return;
 
 					dataFlowsApi.get([self.dataFlowId], {
-						fields: ['id', 'status', 'last_updated', 'createTime', 'executeMode', 'stopOnError']
+						fields: ['id', 'status', 'last_updated', 'createTime', 'executeMode', 'stopOnError', 'user_id', 'user', 'startTime']
 					}).then((result) => {
 						if( result && result.data ){
 							let newStatus = result.data.status;

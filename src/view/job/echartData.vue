@@ -35,7 +35,7 @@
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
-						<span class="info-text">{{flow.updateTime}}</span>
+						<span class="info-text">{{updateTime}}</span>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
@@ -134,6 +134,13 @@
 			};
     },
 
+    computed: {
+      updateTime:function () {
+        let time = new Date(this.dataFlow.last_updated).getTime()- new Date(this.dataFlow.startTime).getTime();
+        return  time +'ms'
+      }
+    },
+
 		mounted() {
 			// let params = {};
 			this.$on("selected:stage", (selectStage) => {
@@ -169,6 +176,9 @@
 				isIput: true,
 				tip: this.$t("dataFlow.replicate_pop")
       };
+
+      this.flow.createTime = this.dataFlow.createTime ? this.$moment(this.dataFlow.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
+      this.username = this.dataFlow.user.email
 
       this.timer = setInterval(() => {
         this.getSpeed(this.isThroughputAll, this.throughputTime);
