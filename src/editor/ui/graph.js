@@ -13,7 +13,7 @@ import navigatorElementView from '../lib/rappid/view/navigator';
 import {stencilConfig, selectionConfig, haloConfig, toolbarConfig} from "../lib/rappid/config";
 import {VueAdapter} from '../vue-adapter';
 import log from "../../log";
-import {DATA_FLOW_SETTING_DATA_KEY} from "../constants";
+import {DATA_FLOW_SETTING_DATA_KEY, FORM_DATA_KEY,SCHEMA_DATA_KEY,OUTPUT_SCHEMA_DATA_KEY} from "../constants";
 
 window.joint = joint;
 
@@ -233,13 +233,22 @@ export default class Graph extends Component{
 		stencil.render().load(stencilConfig.shapes);
 	}
 
-	createCell(cellType) {
+	createCell(cellType, formData,schema) {
+		log('Graph.createCell', cellType, formData);
 		let Cell = _.get(joint.shapes, cellType);
-		return new Cell({}).removeAttr('root/dataTooltip');
+		let cell = new Cell({}).removeAttr('root/dataTooltip');
+		if(formData){
+			cell.set(FORM_DATA_KEY, formData);
+		}
+		if(schema) {
+			cell.set(SCHEMA_DATA_KEY, schema);
+			cell.set(OUTPUT_SCHEMA_DATA_KEY, schema);
+		}
+		return cell;
 	}
 
-	addCell(cell,e){
-		this.graph.addCell(cell,e);
+	addCell(cell){
+		this.graph.addCell(cell);
 	}
 
 	initSelection(){

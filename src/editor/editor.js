@@ -93,7 +93,7 @@ export default class Editor extends BaseObject {
 
 		let stencilPanel = new Panel({
 			name: 'stencil',
-			bodyStyle: 'height: 240px;'
+			bodyStyle: 'height:240px'
 		});
 		leftSidebar.add(stencilPanel);
 
@@ -133,7 +133,7 @@ export default class Editor extends BaseObject {
 
 		let treePanel = new Panel({
 			name: 'treePanel',
-			bodyStyle: 'flex: 1;height:680px'
+			bodyStyle: 'flex: 1;height:57%'
 		});
 		leftSidebar.add(treePanel);
 
