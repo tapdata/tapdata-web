@@ -71,7 +71,7 @@
         this.getSelectData();
       });
 
-      this.$bus.on("currentStageId",(id) => {  
+      this.$bus.on("currentStageId",(id) => {
         if (id !== "all") {
           this.stageId = id;
         }
