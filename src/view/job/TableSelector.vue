@@ -1,6 +1,6 @@
 <template>
 	<div class="box">
-		<div>
+		<div class="box-head">
 			<el-input class="search" v-model="filterText"><i slot="suffix" class="el-input__icon el-icon-search"></i></el-input>
 			<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
 		</div>
@@ -11,7 +11,6 @@
 				lazy
 				:load="loadTables"
 				:filter-node-method="filterNode"
-				:expand-all="default_expanded"
 				ref="tree"
 		>
 			<span class="custom-tree-node" slot-scope="{ node, data}">
@@ -64,8 +63,6 @@
 			}
 		},
 		methods: {
-			handleNodeClick(data) {
-			},
 			loadDataBase() {
 				let self = this;
 				let params = {
@@ -140,7 +137,11 @@
 				});
 			},
 			handleDefault_expanded(){
-				this.default_expanded = true;
+				let self = this;
+				let treeList = this.data;
+				for (let i = 0; i < treeList.length; i++) {
+					self.$refs.tree.store.nodesMap[treeList[i].id].expanded = false;
+				}
 			},
 			filterNode(value, data) {
 				if (!value) return true;
@@ -161,7 +162,7 @@
 						connectionId:data.source._id,
 						name: data.name || data.original_name,
 					};
-				}else if(data.meta_type ==='table' || data.meta_type ==='view'){
+				}else if(data.meta_type ==='table' || data.meta_type ==='view'|| data.meta_type ==='collection'|| data.meta_type ==='mongo_view'){
 					let primaryKeys ='';
 					if(data.fields){
 						primaryKeys = data.fields.filter(item => item.primary_key_position > 0)
@@ -177,7 +178,7 @@
 						tableName: data.original_name ,
 						sql: "",
 						dropTable: false,
-						type: "table",
+						type: data.meta_type,
 						primaryKeys: primaryKeys,
 						name: data.name || data.original_name,
 					};
@@ -220,7 +221,7 @@
 	}
 
 	.search {
-		width: 170px;
+		width: 190px;
 		margin-bottom: 10px;
 	}
 
@@ -236,10 +237,17 @@
 
 	.filter-Graph {
 		display: inline-block;
-		margin-right: 5px;
+		margin-right:12px;
 	}
 	.table-label{
 		display: inline-block;
 		width: 140px;
+	}
+	.box-head{
+		position: fixed;
+		z-index: 2;
+	}
+	.el-tree{
+		padding-top: 40px;
 	}
 </style>

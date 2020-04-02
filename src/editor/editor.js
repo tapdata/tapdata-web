@@ -133,7 +133,7 @@ export default class Editor extends BaseObject {
 
 		let treePanel = new Panel({
 			name: 'treePanel',
-			bodyStyle: 'flex: 1;height:57%'
+			bodyStyle: 'flex: 1;height:57%;position:relative'
 		});
 		leftSidebar.add(treePanel);
 
@@ -274,12 +274,12 @@ export default class Editor extends BaseObject {
 			});
 			this.getBottomTabPanel().add(capture);
 		}
-		/*if( this.getBottomSidebar().isShow() && capture.selected ) {
+		if( this.getBottomSidebar().isShow() && capture.selected ) {
 			this.getBottomSidebar().hide();
-		} else {*/
+		} else {
 			this.getBottomTabPanel().select(capture);
 			this.getBottomSidebar().show();
-		//}
+		}
 	}
 
 	setData(dataFlow){

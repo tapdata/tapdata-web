@@ -13,9 +13,13 @@
 			<el-button size="mini" type="default" v-if="['draft', 'paused', 'error'].includes(status)" @click="showSetting">Setting</el-button>
 			<el-button size="mini" type="default" v-if="dataFlowId" @click="showLogs">Logs</el-button>
 			<el-button
-					v-if="!['scheduled', 'stopping'].includes(status) && executeMode !== 'editing_debug'"
+					v-if="!['scheduled', 'stopping'].includes(status) && executeMode === 'normal'"
 					size="mini" type="default"
-					@click="capture">{{ ['running_debug', 'editing_debug'].includes(executeMode) ? 'Stop capture' : 'Capture'}}</el-button>
+					@click="capture">Capture</el-button>
+			<el-button
+					v-if="!['scheduled', 'stopping'].includes(status) && executeMode !== 'normal'"
+					size="mini" type="default"
+					@click="stopCapture">Stop capture</el-button>
 			<el-button
 					v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
 					size="mini" type="success"
@@ -59,14 +63,14 @@
 		},
 
 		watch: {
-			executeMode: {
+			/*executeMode: {
 				handler(){
 					if( this.executeMode !== 'normal') {
 						this.showCapture();
 					}
 				}
-			},
-			status: {
+			},*/
+			/*status: {
 				handler(){
 					if( ['draft', 'error', 'paused'].includes(this.status)) {
 						this.setEditable(true);
@@ -74,7 +78,7 @@
 						this.setEditable(false);
 					}
 				}
-			}
+			}*/
 		},
 		mounted() {
 			let self = this;
@@ -111,15 +115,18 @@
 
 						self.dataFlowId = dataFlow.id;
 						self.status = dataFlow.status;
+						self.executeMode = dataFlow.executeMode;
 
 						self.dataFlow = dataFlow;
 
 						self.editor.setData(dataFlow);
 
-						/*// move to watch status handler
-						if( ['scheduled', 'running'].includes(self.status)){
+						if( ['scheduled', 'running', 'stopping'].includes(self.status)){
 							self.setEditable(false);
-						}*/
+						}
+						if( self.executeMode !== 'normal' ){
+							self.showCapture();
+						}
 
 						self.polling();
 
@@ -151,7 +158,8 @@
 								self.status = newStatus;
 							}
 
-							self.executeMode = result.data.executeMode;
+							if( self.executeMode !== result.data.executeMode)
+								self.executeMode = result.data.executeMode;
 
 							if( ['scheduled', 'running', 'stopping'].includes(newStatus)) {
 								if( self.timeoutId )
@@ -332,8 +340,7 @@
 						this.$message.error('Start failed');
 					} else {
 						this.$message.success('Start success');
-						// move to watch status handler
-						/*self.setEditable(false);*/
+						self.setEditable(false);
 					}
 				});
 			},
@@ -355,8 +362,7 @@
 							self.$message.error('Stop failed');
 						} else {
 							self.$message.success('Stop success');
-							// move to watch status handler
-							/*self.setEditable(true);*/
+							self.setEditable(true);
 						}
 					});
 				});
@@ -385,7 +391,27 @@
 							this.$message.error('Save failed');
 						} else {
 							this.$message.success('Save success');
-							//this.showCapture();
+							this.showCapture();
+						}
+					});
+				}
+			},
+
+			stopCapture(){
+				let self = this,
+					data = this.getDataFlowData();
+
+				if( data && data.id ){
+
+					self.doSave({
+						id: data.id,
+						executeMode: 'normal',
+					}, (err, dataFlow) => {
+						if( err ){
+							this.$message.error('Save failed');
+						} else {
+							this.$message.success('Save success');
+							// this.showCapture();
 						}
 					});
 				}
