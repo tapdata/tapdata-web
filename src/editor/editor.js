@@ -274,12 +274,12 @@ export default class Editor extends BaseObject {
 			});
 			this.getBottomTabPanel().add(capture);
 		}
-		if( this.getBottomSidebar().isShow() && capture.selected ) {
+		/*if( this.getBottomSidebar().isShow() && capture.selected ) {
 			this.getBottomSidebar().hide();
-		} else {
+		} else {*/
 			this.getBottomTabPanel().select(capture);
 			this.getBottomSidebar().show();
-		}
+		//}
 	}
 
 	setData(dataFlow){

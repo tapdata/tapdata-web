@@ -65,6 +65,15 @@
 						this.showCapture();
 					}
 				}
+			},
+			status: {
+				handler(){
+					if( ['draft', 'error', 'paused'].includes(this.status)) {
+						this.setEditable(true);
+					} else {
+						this.setEditable(false);
+					}
+				}
 			}
 		},
 		mounted() {
@@ -107,9 +116,10 @@
 
 						self.editor.setData(dataFlow);
 
+						/*// move to watch status handler
 						if( ['scheduled', 'running'].includes(self.status)){
 							self.setEditable(false);
-						}
+						}*/
 
 						self.polling();
 
@@ -322,7 +332,8 @@
 						this.$message.error('Start failed');
 					} else {
 						this.$message.success('Start success');
-						self.setEditable(false);
+						// move to watch status handler
+						/*self.setEditable(false);*/
 					}
 				});
 			},
@@ -344,7 +355,8 @@
 							self.$message.error('Stop failed');
 						} else {
 							self.$message.success('Stop success');
-							self.setEditable(true);
+							// move to watch status handler
+							/*self.setEditable(true);*/
 						}
 					});
 				});
@@ -354,27 +366,29 @@
 				let self = this,
 					data = this.getDataFlowData();
 
-				if( data && data.id ) {
-					data = {
-						id: data.id,
-						status: ['scheduled', 'running', 'stopping'].includes(data.status) ? data.status : 'scheduled',
-						executeMode: ['running_debug', 'editing_debug'].includes(this.executeMode) ? 'normal' :
-									['scheduled', 'running', 'stopping'].includes(data.status) ? 'running_debug' : 'editing_debug'
-					};
-				} else {
-					Object.assign(data, {
-						status: 'scheduled',
-						executeMode: 'editing_debug'
+				if( data ){
+					if( data && data.id ) {
+						data = {
+							id: data.id,
+							status: ['scheduled', 'running', 'stopping'].includes(data.status) ? data.status : 'scheduled',
+							executeMode: ['running_debug', 'editing_debug'].includes(this.executeMode) ? 'normal' :
+								['scheduled', 'running', 'stopping'].includes(data.status) ? 'running_debug' : 'editing_debug'
+						};
+					} else {
+						Object.assign(data, {
+							status: 'scheduled',
+							executeMode: 'editing_debug'
+						});
+					}
+					self.doSave(data, (err, dataFlow) => {
+						if( err ){
+							this.$message.error('Save failed');
+						} else {
+							this.$message.success('Save success');
+							//this.showCapture();
+						}
 					});
 				}
-				self.doSave(data, (err, dataFlow) => {
-					if( err ){
-						this.$message.error('Save failed');
-					} else {
-						this.$message.success('Save success');
-						this.showCapture();
-					}
-				});
 			},
 			showSetting(){
 				log('Job.showSetting');
