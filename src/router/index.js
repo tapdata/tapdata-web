@@ -8,6 +8,7 @@ import echartData from '../view/job/echartData';
 import clusterManagement from '../view/clusterManagement/clusterManagement';
 import dailyRecord from '../view/clusterManagement/dailyRecord';
 import DataFlows from "../view/task/DataFlows";
+import metaData from "../view/metaData";
 
 Vue.use(Router);
 
@@ -46,6 +47,10 @@ export default new Router({
 			path: '/aggregate',
 			name: 'aggregate',
 			component: Aggregate
+		},{
+			path: '/metadata',
+			name: 'metadata',
+			component: metaData
 		},
 	]
 });
