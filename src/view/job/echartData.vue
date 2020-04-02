@@ -163,11 +163,6 @@
               lineStyle: {
                 color: '#2ba7c3'
               },
-              // markLine : {
-              //   data : [{
-              //     type : 'average', name: '平均值'
-              //   }]
-              // }
             },
             {
               name: this.$t('dataFlow.output'),
@@ -180,22 +175,119 @@
               lineStyle: {
                 color: '#8cd5c2', //改变折线点的颜色
               },
-              // markLine : {
-              //   data : [{
-              //     type : 'average', name: '平均值'
-              //   }]
-              // }
             },
+          ]
+        },
+        transfData: {
+          tooltip: {
+            trigger: 'axis',
+          },
+          grid: {
+            show: false,
+          },
+          legend: {
+            // data: [this.$t('dataFlow.input'),this.$t('dataFlow.output')],
+          },
+          toolbox: {
+            show: true,
+            // feature: {
+            //   dataZoom: {
+            //     yAxisIndex: 'none'
+            //   },
+            // }
+          },
+          xAxis: {
+            show: true,
+            axisLine: {
+              lineStyle: {
+                color: '#fb8e00',
+                width: 2,//这里是为了突出显示加上的
+              }
+            },
+            data: []
+          },
+          yAxis: {
+            axisLine: {
+              lineStyle: {
+                color: '#fb8e00',
+                width: 2,//这里是为了突出显示加上的
+              }
+            },
+            axisLabel: {
+              formatter: '{value}'
+            }
+          },
+          series: [
+            {
+              type: 'line',
+              smooth: 1,
+              data: [],
+              itemStyle: {
+                color: '#fb8e00'
+              },
+              lineStyle: {
+                color: '#fb8e00'
+              }
+            }
+          ]
+        },
+        replicateData:{
+          tooltip: {
+            trigger: 'axis',
+          },
+          legend: {
+            // data: ['最高气温', '最低气温'],
+          },
+          grid: {
+            show: false,
+          },
+          toolbox: {
+            show: true,
+            feature: {
+              dataZoom: {
+                yAxisIndex: 'none'
+              },
+            }
+          },
+          xAxis: {
+            show: true,
+            axisLine: {
+              lineStyle: {
+                color: '#f56c6c',
+              }
+            },
+            data: []
+          },
+          yAxis: {
+            axisLine: {
+              lineStyle: {
+                color: '#f56c6c'
+              }
+            },
+            axisLabel: {
+              formatter: '{value}'
+            }
+          },
+          series: [
+            {
+              type: 'line',
+              data: [],
+              smooth: 1,
+              itemStyle: {
+                color: '#f56c6c'
+              },
+              lineStyle: {
+                color: '#f56c6c'
+              }
+            }
           ]
         },
         dataScreening: null,    //数据总览的echart数据
         screeningObj: null,      //数据总览的头
         inputOutputObj: null,
         transfObj: null,
-        transfData: null,
         storeData: null,
         replicateObj: null,
-        replicateData: null,
         throughput_time: [],
         inputAverage: '',   //输入平均值
         outputAverage: '',   //输出平均值
@@ -217,12 +309,11 @@
     computed: {
       updateTime: function () {
         let time = new Date(this.dataFlow.last_updated).getTime() - new Date(this.dataFlow.startTime).getTime();
-        return time + 'ms'
+        return time + 'ms';
       }
     },
 
     mounted() {
-      // let params = {};
       this.$on("selected:stage", (selectStage) => {
         this.domValue = selectStage.id;
       });
@@ -257,7 +348,7 @@
         tip: this.$t("dataFlow.replicate_pop")
       };
       this.flow.createTime = this.dataFlow.createTime ? this.$moment(this.dataFlow.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
-      this.flow.username = this.dataFlow.user.email
+      this.flow.username = this.dataFlow.user.email;
 
       this.timer = setInterval(() => {
         this.getSpeed(this.isThroughputAll, this.throughputTime);
@@ -276,7 +367,7 @@
           } else {
             this.selectFlow = 'stage_';
           }
-          this.$bus.emit("currentStageId",val)
+          this.$bus.emit("currentStageId",val);
           this.getSpeed(this.isThroughputAll, this.throughputTime);
           this.getTwoRadio(this.dataOverviewAll, this.dataOverviewType);
           this.getTime(this.transfTime, this.transfType);
@@ -516,122 +607,51 @@
       },
 
       getTransTime(time, series) {
-        this.transfData = {
-          tooltip: {
-            trigger: 'axis',
-          },
-          legend: {
-            // data: ['最高气温', '最低气温'],
-          },
-          grid: {
-            show: false,
-          },
-          toolbox: {
-            show: true,
-            feature: {
-              dataZoom: {
-                yAxisIndex: 'none'
-              },
-            }
-          },
-          xAxis: {
-            show: true,
-            axisLine: {
-              lineStyle: {
-                color: '#fb8e00',
-                width: 2,//这里是为了突出显示加上的
-              }
-            },
-            data: time
-          },
-          yAxis: {
-            axisLine: {
-              lineStyle: {
-                color: '#fb8e00',
-                width: 2,//这里是为了突出显示加上的
-              }
-            },
-            axisLabel: {
-              formatter: '{value}'
-            }
-          },
-          series: [
-            {
-              type: 'line',
-              smooth: 1,
-              data: series,
-              // markPoint: {
-              //     data: [
-              //         {type: 'max', name: '最大值'},
-              //         {type: 'min', name: '最小值'}
-              //     ]
-              // },
-              itemStyle: {
-                color: '#fb8e00'
-              },
-              lineStyle: {
-                color: '#fb8e00'
-              },
-              formatter: function (params) {
-                return "CPU";
-              }
-            }
-          ]
-        };
+        let _this = this;
+        if (this.transfData.xAxis.data.length === 0) {
+          for (let i = 0; i < time.length; i++) {
+            this.transfData.xAxis.data.push(time[i]);
+            this.transfData.series[0].data.push(series[i]);
+          }
+        } else {
+          let interval = intervalTime / (time.length + 1);
+          let appendData = function () {
+            let t = time.shift();
+            let s = series.shift();
+            _this.transfData.xAxis.data.shift();
+            _this.transfData.xAxis.data.push(t);
+            _this.transfData.series[0].data.shift();
+            _this.transfData.series[0].data.push(s);
+
+            if (time.length > 0)
+              setTimeout(appendData, interval);
+          };
+          appendData();
+        }
       },
 
       getReplicateTime(time, series) {
-        this.replicateData = {
-          tooltip: {
-            trigger: 'axis',
-          },
-          legend: {
-            // data: ['最高气温', '最低气温'],
-          },
-          grid: {
-            show: false,
-          },
-          toolbox: {
-            show: true,
-            feature: {
-              dataZoom: {
-                yAxisIndex: 'none'
-              },
-            }
-          },
-          xAxis: {
-            show: true,
-            axisLine: {
-              lineStyle: {
-                color: '#f56c6c',
-              }
-            },
-            data: time
-          },
-          yAxis: {
-            axisLine: {
-              lineStyle: {
-                color: '#f56c6c'
-              }
-            },
-            axisLabel: {
-              formatter: '{value}'
-            }
-          },
-          series: [
-            {
-              type: 'line',
-              data: series,
-              smooth: 1,
-              itemStyle: {
-                color: '#f56c6c'
-              },
-              lineStyle: {
-                color: '#f56c6c'
-              }
-            }
-          ]
-        };
+        let _this = this;
+        if (this.replicateData.xAxis.data.length === 0) {
+          for (let i = 0; i < time.length; i++) {
+            this.replicateData.xAxis.data.push(time[i]);
+            this.replicateData.series[0].data.push(series[i]);
+          }
+        } else {
+          let interval = intervalTime / (time.length + 1);
+          let appendData = function () {
+            let t = time.shift();
+            let s = series.shift();
+            _this.replicateData.xAxis.data.shift();
+            _this.replicateData.xAxis.data.push(t);
+            _this.replicateData.series[0].data.shift();
+            _this.replicateData.series[0].data.push(s);
+
+            if (time.length > 0)
+              setTimeout(appendData, interval);
+          };
+          appendData();
+        }
       }
     },
 

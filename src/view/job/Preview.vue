@@ -75,8 +75,8 @@
         if (id !== "all") {
           this.stageId = id;
         }
-        this.getSelectData()
-      })
+        this.getSelectData();
+      });
     },
 
     watch: {

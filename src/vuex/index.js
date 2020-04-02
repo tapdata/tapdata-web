@@ -27,7 +27,8 @@ const store = new Vuex.Store({
       status: '',
       person: '',
       classification: [],
-    }
+    },
+
   },
 
  actions,

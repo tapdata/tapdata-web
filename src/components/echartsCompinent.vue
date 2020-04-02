@@ -32,32 +32,22 @@
 		},
 		mounted() {
 			let that = this;
-			// let publicCharts = that.echartOption(that.echartObj)
 			this.$nextTick(() => {
         that.loadEchart(that.echartsId, that.echartObj);
 			});
-      this.resizefun = ()=>{
-        Echarts.init(document.getElementById(that.echartsId)).resize();
-      }
-      window.addEventListener('resize',this.resizefun)
 		},
 
 		methods: {
 			loadEchart(id, data) {
 				let _this = this;
-				// setTimeout(function(){
 				_this.myChart = Echarts.init(document.getElementById(id));
 				_this.myChart.clear();   //清空再重绘
-				// _this.myChart.setOption(data)
-				// let myChart = Echarts.init(this.refs.echarts);
 				let publicCharts = _this.echartOption(data);
 				_this.myChart.setOption(publicCharts);
-        /*窗口自适应，关键代码*/
+        /*窗口自适应*/
 				window.addEventListener("resize", () => {
           _this.myChart.resize();
 				});
-				// }, 0);
-
 			},
 			echartOption(configures) {
 				let MyOption = {
