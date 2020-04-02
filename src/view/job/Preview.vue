@@ -3,9 +3,9 @@
     <el-select v-model="selectNode" :placeholder="$t('message.placeholderSelect')">
       <el-option
         v-for="item in nodeList"
-        :key="item.id"
-        :label="item.name"
-        :value="item.id">
+        :key="item"
+        :label="item"
+        :value="item">
       </el-option>
     </el-select>
     <el-table border fit :height="tableHeight" class="tableStyle" :data="itemList" v-loading="isloading">
@@ -56,8 +56,9 @@
     },
 
     mounted() {
+      this.stageId = this.dataFlow.stages[0].id;
+      this.getSelectData();
       this.$nextTick(() => {
-        this.getSelectData();
         this.tableHeight = this.$refs.boxHeight.clientHeight - 90;
       });
       // 这是一个定时器
@@ -67,7 +68,15 @@
 
       this.$on("selected:stage", (selectStage) => {
         this.stageId = selectStage.id;
+        this.getSelectData();
       });
+
+      this.$bus.on("currentStageId",(id) => {  
+        if (id !== "all") {
+          this.stageId = id;
+        }
+        this.getSelectData()
+      })
     },
 
     watch: {
@@ -86,21 +95,23 @@
         };
         await DataFlowsDebugs.getTables(params).then(res => {
           if (res.status === 200 && res.statusText === "OK") {
-            if (res.data && res.data.length > 0) {
-              this.nodeList = res.data;
+            if (res.data && res.data.data.length > 0) {
+              this.nodeList = res.data.data;
               if (this.nodeList.length > 0) {
-                this.selectNode = this.nodeList[0].id;
+                this.selectNode = this.nodeList[0];
               }
             }
           }
         });
       },
+
+      //获取表格数据
       async getDataTableApi() {
-        // let tableList = [];
-        let headerList = [], tableList = [];
+        let headerList = [];
         let params = {
           'filter[where][__tapd8.dataFlowId][regexp]': `^${this.dataFlow.id}$`,
-          'filter[where][__tapd8.stageId]': this.selectNode
+          'filter[where][__tapd8.stageId]': this.stageId,
+          'filter[where][__tapd8.tableName]':this.selectNode,
         };
 
         await DataFlowsDebugs.get(params).then(res => {
@@ -112,12 +123,13 @@
               //     tableList = res.data[i];
               //   }
               // }
-              tableList = res.data.forEach(item => {
+              res.data.forEach(item => {
                 delete item.id;
                 delete item.__tapd8;
                 item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
-              });
-              tableList.forEach(item => {  // 获取表头
+
+             });
+              res.data.forEach(item => {  // 获取表头
                 for (let key of Object.keys(item)) {
                   headerList.push(key);
                 }
@@ -126,7 +138,7 @@
                 return self.indexOf(element) === index;
               });
               this.headers = headerList;
-              this.itemList = tableList;
+              this.itemList = res.data;
             } else {
               this.itemList = [];
             }
@@ -134,6 +146,7 @@
         });
       }
     },
+
     destroyed() {
       //清除定时器
       clearInterval(this.timer);

@@ -18,7 +18,8 @@
 		},
 		data() {
 			return {
-				myChart: null
+				myChart: null,
+        timer: ''
 			};
 		},
 		watch: {
@@ -33,8 +34,12 @@
 			let that = this;
 			// let publicCharts = that.echartOption(that.echartObj)
 			this.$nextTick(() => {
-				that.loadEchart(that.echartsId, that.echartObj);
+        that.loadEchart(that.echartsId, that.echartObj);
 			});
+      this.resizefun = ()=>{
+        Echarts.init(document.getElementById(that.echartsId)).resize();
+      }
+      window.addEventListener('resize',this.resizefun)
 		},
 
 		methods: {
@@ -47,8 +52,9 @@
 				// let myChart = Echarts.init(this.refs.echarts);
 				let publicCharts = _this.echartOption(data);
 				_this.myChart.setOption(publicCharts);
+        /*窗口自适应，关键代码*/
 				window.addEventListener("resize", () => {
-					_this.myChart.resize();
+          _this.myChart.resize();
 				});
 				// }, 0);
 

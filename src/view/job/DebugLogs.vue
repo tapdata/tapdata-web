@@ -35,10 +35,11 @@
 		},
 
 		mounted() {
+      this.getLogsData();
 			// 这是一个定时器
 			this.timer = setInterval(() => {
 				this.getLogsData();
-			}, 5000);
+			}, 10000);
 		},
 
 		watch: {
@@ -74,7 +75,7 @@
 								let item = res.data[i];
 								$(this.$refs.logContainer).prepend(
 									$(`<li style="padding-bottom:10px;">
-                      <span>[<i style="font-weight: bold;" class="${item.level == 'ERROR' ? 'redColor' : ''}">${item.level}</i>]</span> &nbsp;
+                      <span>[<i style="font-weight: bold;" class="${item.level == 'ERROR' ? 'redActive' : ''}">${item.level}</i>]</span> &nbsp;
                       <span>${item.date}</span>&nbsp;
                       <span>[${item.threadName}]</span>&nbsp;
                       <span>${item.loggerName}</span>&nbsp;-&nbsp;
@@ -99,7 +100,7 @@
 		}
 	};
 </script>
-<style scoped>
+<style scoped lang="less">
 	.debugLog {
 		width: 100%;
     height: 100%;
@@ -111,13 +112,15 @@
 	li {
 		list-style: none;
 	}
-
 	.log {
 		width: 100%;
 		display: inline-block;
 		height: calc(100% - 50px);
 		padding-top: 20px;
 		overflow: auto;
+    li .redActive {
+      color: red!important;
+    }
 	}
 
 	.noText {
@@ -133,8 +136,9 @@
 	.inputStyle {
 		width: 300px;
 	}
-
-	.redColor {
-		color: red;
-	}
+</style>
+<style>
+  .redActive {
+    color: red!important;
+  }
 </style>
