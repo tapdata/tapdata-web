@@ -1,6 +1,6 @@
 <template>
 	<div class="box">
-		<div>
+		<div class="box-head">
 			<el-input class="search" v-model="filterText"><i slot="suffix" class="el-input__icon el-icon-search"></i></el-input>
 			<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
 		</div>
@@ -221,7 +221,7 @@
 	}
 
 	.search {
-		width: 170px;
+		width: 190px;
 		margin-bottom: 10px;
 	}
 
@@ -237,10 +237,17 @@
 
 	.filter-Graph {
 		display: inline-block;
-		margin-right: 5px;
+		margin-right:12px;
 	}
 	.table-label{
 		display: inline-block;
 		width: 140px;
+	}
+	.box-head{
+		position: fixed;
+		z-index: 2;
+	}
+	.el-tree{
+		padding-top: 40px;
 	}
 </style>
