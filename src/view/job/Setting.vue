@@ -6,7 +6,7 @@
 					<el-form-item>
 						<div>{{$t('dataFlow.taskName')}}</div>
 						<el-input
-								:placeholder="$t('dataFlow.searchPlaceholder')" v-model="formData.name"></el-input>
+								:placeholder="$t('dataFlow.taskName')" v-model="formData.name"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="11">
@@ -52,10 +52,10 @@
 							<template slot="append">ms</template>
 						</el-input>
 					</el-form-item>
-					<el-form-item>
-						<div>{{$t('dataFlow.mission')}}</div>
-						<el-input v-model="formData.description"></el-input>
-					</el-form-item>
+<!--					<el-form-item>-->
+<!--						<div>{{$t('dataFlow.mission')}}</div>-->
+<!--						<el-input v-model="formData.description"></el-input>-->
+<!--					</el-form-item>-->
 				</el-col>
 				<el-col :span="12">
 					<el-form-item>
