@@ -223,7 +223,7 @@ export default class Editor extends BaseObject {
 	}
 
 	//setting
-	showSetting(){
+	showSetting(name){
 		let self = this;
 		self.initSettings();
 		let rightTabPanel = self.getRightTabPanel();
@@ -231,6 +231,7 @@ export default class Editor extends BaseObject {
 			let setting = rightTabPanel.getChildByName('setting');
 			if( setting ){
 				let settingData = self.graph.getSettingData();
+				settingData.name = name;
 				setting.setData(settingData);
 			}
 			rightTabPanel.select(setting);

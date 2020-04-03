@@ -466,7 +466,11 @@
 			},
 			showSetting(){
 				log('Job.showSetting');
-				this.editor.showSetting();
+				let name = '';
+				if(this.$route.query.name){
+					name = this.$route.query.name;
+				}
+				this.editor.showSetting(name);
 			},
 			showLogs(){
 				this.editor.showLogs(this.dataFlow);

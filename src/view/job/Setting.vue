@@ -138,15 +138,13 @@
 					increment:false, //sql
 					isSchedule:false, //调度任务
 					emailWaring: {        // 发送告警邮件
-						edited: true,            // 当任务被编辑时
+						edited: false,            // 当任务被编辑时
 						started: false,      // 当任务启动时
-						error: true,      // 当任务出错
+						error: false,      // 当任务出错
 						paused: false      // 任务停止
 					},
 					stopOnError:false,
 				},
-				checkboxGroup1: ['1','3'],
-				radio3:true,
 			};
 		},
 		mounted() {

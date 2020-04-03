@@ -277,9 +277,9 @@
 					item.newStatus = 'running' === item.status ? 'running' : 'paused';
 
 					if (item.stats) {
-						item.input = item.stats.input.rows;
-						item.output = item.stats.output.rows;
-						item.transmissionTime = item.stats.transmissionTime;
+						item.input = item.stats.input.rows ? item.stats.input.rows:'-';
+						item.output = item.stats.output.rows ? item.stats.output.rows:'-';
+						item.transmissionTime = item.stats.transmissionTime ? item.stats.transmissionTime:'-';
 						item.hasChildren = false;
 						let children = item.stats.stagesMetrics;
 						item.children = [];
@@ -287,16 +287,21 @@
 							children.map(k => {
 								let node = {
 									id: k.stageId,
-									input: k.input.rows,
-									output: k.output.rows,
-									transmissionTime: k.transmissionTime,
+									input: k.input.rows ? k.input.rows :'-',
+									output: k.output.rows ?k.output.rows : '-',
+									transmissionTime: k.transmissionTime ? k.transmissionTime :'-',
 									hasChildren: true,
 								};
 								item.children.push(node);
 							});
 						}
+					}else {
+						item.input = '-';
+						item.output = '-';
+						item.transmissionTime = '-';
 					}
 				});
+				console.log('data',data);
 			},
 			handleDelete(id) {
 				this.$confirm(this.$t('message.deteleMessage'), this.$t('message.prompt'), {
