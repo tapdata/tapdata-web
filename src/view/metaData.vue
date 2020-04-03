@@ -2,7 +2,8 @@
 	<div>
 		<div class="box-tree">
 			<div class="box-head">
-				<el-input class="search" v-model="filterText"><i slot="suffix" class="el-input__icon el-icon-search"></i></el-input>
+				<el-input class="search" v-model="filterText"><i slot="suffix"
+																 class="el-input__icon el-icon-search"></i></el-input>
 				<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
 			</div>
 			<el-tree
@@ -17,7 +18,8 @@
 				<span>
 					<span v-if="data.meta_type ==='database'" class="iconfont icon-shujuku filter-icon"></span>
 					<span v-if="data.meta_type ==='table'" class="iconfont icon-table2  filter-icon-table"></span>
-					<span v-if="data.meta_type ==='collection'" class="iconfont icon-collection filter-icon-table"></span>
+					<span v-if="data.meta_type ==='collection'"
+						  class="iconfont icon-collection filter-icon-table"></span>
 					<span class="table-label">{{ node.label }}</span>
 				</span>
 			</span>
@@ -45,7 +47,7 @@
 	import log from "../log";
 
 	const MetadataDefinitions = factory('MetadataDefinitions');
-	// const MetadataInstances = factory('MetadataInstances');
+	const MetadataInstances = factory('MetadataInstances');
 
 	export default {
 		name: 'TableSelector',
@@ -65,7 +67,7 @@
 					table: 'app.Table',
 					database: 'app.Database',
 				},
-				listdata:[],
+				listdata: [],
 			};
 		},
 		mounted() {
@@ -119,27 +121,33 @@
 			},
 			handleList() {
 				let params = {
-					// 'filter[limit]': rowsPerPage,
-					// 'filter[skip]': (page - 1) * rowsPerPage,
-					'filter[where][is_deleted]': false,
-					'filter[fields][name]': true,
-					'filter[fields][original_name]': true,
-					'filter[fields][owner]': true,
-					'filter[fields][meta_type]': true,
-					'filter[fields][description]': true,
-					'filter[fields][qualified_name]': true,
-					'filter[fields][db]': true,
-					'filter[fields][stats]': true,
-					'filter[fields][classifications]': true,
-					'filter[fields][last_user_name]': true,
-					'filter[fields][last_updated]': true,
-					'filter[fields][create_time]': true,
-					'filter[fields][collection]': true,
-					'filter[fields][id]': true,
-					'filter[fields][source._id]': true,
-					'filter[fields][databaseId]': true
+					filter: JSON.stringify({
+						where: {
+							is_deleted: false,
+						},
+						fields: {
+							name: true,
+							original_name: true,
+							owner: true,
+							meta_type: true,
+							description: true,
+							qualified_name: true,
+							db: true,
+							stats: true,
+							classifications: true,
+							last_user_name: true,
+							last_updated: true,
+							create_time: true,
+							collection: true,
+							id: true,
+							source: {
+								_id: true
+							},
+							databaseId: true
+						}
+					})
 				};
-				MetadataInstances.get({params}).then(res => {
+				MetadataInstances.get(params).then(res => {
 					let self = this;
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data) {
@@ -150,7 +158,7 @@
 					this.$message.error('MetadataInstances error');
 				});
 			},
-			handleDefault_expanded(){
+			handleDefault_expanded() {
 				let self = this;
 				let treeList = this.data;
 				for (let i = 0; i < treeList.length; i++) {
@@ -216,13 +224,16 @@
 	.el-tree {
 		padding-top: 40px;
 	}
-	.box-tree{
+
+	.box-tree {
 		float: left;
 	}
-	.box-ul{
+
+	.box-ul {
 		float: left;
 	}
-	.classify-ul{
+
+	.classify-ul {
 		border-radius: 4px;
 		border: 1px solid #ebeef5;
 		background-color: #fff;
@@ -234,18 +245,20 @@
 		font-size: 12px;
 		width: 260px;
 	}
-	.classify-ul li{
-		width:234px;
-		height:43px;
+
+	.classify-ul li {
+		width: 234px;
+		height: 43px;
 		line-height: 43px;
 		margin-left: 8px;
 		margin-bottom: 10px;
 		padding-left: 10px;
-		background:rgba(255,255,255,1);
-		border:1px solid rgba(234, 234, 235, 1);
-		border-radius:3px;
+		background: rgba(255, 255, 255, 1);
+		border: 1px solid rgba(234, 234, 235, 1);
+		border-radius: 3px;
 	}
-	.icon-color{
+
+	.icon-color {
 		color: #599656;
 		font-size: 14px;
 	}
