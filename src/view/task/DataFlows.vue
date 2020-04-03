@@ -119,7 +119,7 @@
 										class="iconfont task-list-icon icon-ceshishenqing"></i></router-link>
 							</el-tooltip>
 							<el-tooltip class="item" :content="$t('dataFlow.copy')" placement="bottom">
-								<i class="iconfont task-list-icon icon-fuzhi1"></i>
+								<i class="iconfont task-list-icon icon-fuzhi1" @click="handlerCopy(scope.row.id)"></i>
 							</el-tooltip>
 							<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
 								<i class="iconfont task-list-icon icon-shanchu" @click="handleDelete(scope.row.id)"></i>
@@ -372,6 +372,19 @@
 					this.$message.success(this.$t('message.resetOk'));
 				}).catch(() => {
 					this.$message.info(this.$t('message.cancleReset'));
+				});
+			},
+			handlerCopy(id){
+				let self = this;
+				dataFlows.copy(id).then(res => {
+					if (res.statusText === "OK" || res.status === 200) {
+						self.getData();
+						this.$message.success(this.$t('message.copySuccess'));
+					} else {
+						this.$message.error(this.$t('message.copyFail'));
+					}
+				}).catch(err => {
+					this.$message.error(this.$t('message.copyFail'));
 				});
 			},
 			formatterTime(row) {

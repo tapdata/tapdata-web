@@ -4,10 +4,15 @@
  * @description
  */
 import PublicAPI from "./publicApi";
+import axios from "axios";
 
 export default class DataFlows extends PublicAPI{
 
 	constructor(){
 		super('/api/DataFlows');
+	}
+
+	copy(id) {
+		return axios.post(`${this.url}/${id}/copy`);
 	}
 }
