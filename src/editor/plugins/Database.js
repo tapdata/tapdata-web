@@ -100,6 +100,24 @@ export const databaseConfig = {
 				if( !data.connectionId )
 					throw new Error(name + ': Database cannot be empty.');
 				return true;
+			},
+
+			/**
+			 * validate this allow connect to target
+			 * @param targetCell
+			 * @return {boolean}
+			 */
+			allowTarget(targetCell) {
+				return ['app.Database'].includes(targetCell.get('type'));
+			},
+
+			/**
+			 * validate accept source connection
+			 * @param sourceCell
+			 * @return {boolean}
+			 */
+			allowSource(sourceCell) {
+				return ['app.Database'].includes(sourceCell.get('type'));
 			}
 		},
 		/**

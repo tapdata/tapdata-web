@@ -234,6 +234,24 @@ export const baseElementConfig = {
 			},
 			validate(){
 				return true;
+			},
+
+			/**
+			 * validate this allow connect to target
+			 * @param targetCell
+			 * @return {boolean}
+			 */
+			allowTarget(targetCell) {
+				return false;
+			},
+
+			/**
+			 * validate accept source connection
+			 * @param sourceCell
+			 * @return {boolean}
+			 */
+			allowSource(sourceCell) {
+				return false;
 			}
 		},
 
