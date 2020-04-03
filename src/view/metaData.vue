@@ -45,7 +45,7 @@
 	import log from "../log";
 
 	const MetadataDefinitions = factory('MetadataDefinitions');
-	const MetadataInstances = factory('MetadataInstances');
+	// const MetadataInstances = factory('MetadataInstances');
 
 	export default {
 		name: 'TableSelector',

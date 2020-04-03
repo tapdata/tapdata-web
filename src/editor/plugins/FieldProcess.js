@@ -14,9 +14,9 @@ export const fieldProcessConfig = {
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
-			size:{width:120,height:28},
+			size: {width: 120, height: 28},
 			attrs: {
-				image:{
+				image: {
 					xlinkHref: 'static/editor/o-js.svg',
 					refWidth: '25%',
 					refHeight: '84%',
@@ -24,10 +24,10 @@ export const fieldProcessConfig = {
 					refY: '-28%'
 				},
 				body: {
-					rx:14,
-					ry:14
+					rx: 14,
+					ry: 14
 				},
-				label:{
+				label: {
 					text: 'Field Processor',
 				}
 			}
@@ -37,38 +37,56 @@ export const fieldProcessConfig = {
 				tagName: 'text',
 				selector: 'portLabel',
 			}],
-      initialize(){
-        this.on('change:' + FORM_DATA_KEY, () => {
-          this.updateOutputSchema();
-        });
-      },
+			initialize() {
+				this.on('change:' + FORM_DATA_KEY, () => {
+					this.updateOutputSchema();
+				});
+			},
 			mergeOutputSchema(outputSchema) {
 				let data = this.getFormData();
-        log('FieldProcess.mergeOutputSchema', data, outputSchema);
-        if( !outputSchema || !data)
-          return;
-        data.operations.map((item,index) =>{
-          let targetIndex = outputSchema.fields.findIndex(function(n, index) {
-            return n.id=== item.id;
-          });
-          if(targetIndex === -1){
-            // data.operations.splice(index,1); //删除找不到id的数据
-            return;
-          }
-          if(item.op === "RENAME"){
-            let name = outputSchema.fields[targetIndex].field_name;
-            name = name.split('.');
-            name[name.length - 1] = item.operand;
-            outputSchema.fields[targetIndex].field_name = name.join('.');
-          }else if(item.op === "CONVERT"){
-            outputSchema.fields[targetIndex].javaType = item.operand;
-          }else if(item.op === "REMOVE"){
-            outputSchema.fields.splice(targetIndex,1);
-          }
+				log('FieldProcess.mergeOutputSchema', data, outputSchema);
+				if (!outputSchema || !data)
+					return;
+				data.operations.map((item, index) => {
+					let targetIndex = outputSchema.fields.findIndex(function (n, index) {
+						return n.id === item.id;
+					});
+					if (targetIndex === -1) {
+						// data.operations.splice(index,1); //删除找不到id的数据
+						return;
+					}
+					if (item.op === "RENAME") {
+						let name = outputSchema.fields[targetIndex].field_name;
+						name = name.split('.');
+						name[name.length - 1] = item.operand;
+						outputSchema.fields[targetIndex].field_name = name.join('.');
+					} else if (item.op === "CONVERT") {
+						outputSchema.fields[targetIndex].javaType = item.operand;
+					} else if (item.op === "REMOVE") {
+						outputSchema.fields.splice(targetIndex, 1);
+					}
 
-        });
-        log('FieldProcess.mergeOutputSchema', outputSchema);
+				});
+				log('FieldProcess.mergeOutputSchema', outputSchema);
 				return outputSchema;
+			},
+
+			/**
+			 * validate this allow connect to target
+			 * @param targetCell
+			 * @return {boolean}
+			 */
+			allowTarget(targetCell) {
+				return !['app.Database'].includes(targetCell.get('type'));
+			},
+
+			/**
+			 * validate accept source connection
+			 * @param sourceCell
+			 * @return {boolean}
+			 */
+			allowSource(sourceCell) {
+				return !['app.Database'].includes(sourceCell.get('type'));
 			}
 		},
 		//staticProperties: {}
@@ -199,7 +217,7 @@ export const fieldProcessConfig = {
 				rx: 2,
 				ry: 2,
 				stroke: '#fff',
-				fill:'#fff',
+				fill: '#fff',
 				strokeWidth: 0,
 				strokeDasharray: '0'
 			},
@@ -220,8 +238,8 @@ export const fieldProcessConfig = {
 				strokeWidth: 0,
 				refX: '75%',
 				refY: '40%',
-				x:-35,
-				y:27
+				x: -35,
+				y: 27
 			}
 		}
 	},

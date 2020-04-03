@@ -176,7 +176,7 @@
 				}
 			},
 
-			getDataFlowData() {
+			getDataFlowData(validateGraph = true) {
 				// validate
 				let verified = this.editor.graph.validate();
 				if( verified !== true) {
@@ -188,6 +188,14 @@
 				let graphData = editorData.graphData;
 				let settingData = editorData.settingData;
 
+				// validate graph
+				if( validateGraph ){
+					verified = this.validateGraphData(editorData);
+					if( verified !== true) {
+						this.$message.error(verified);
+						return;
+					}
+				}
 
 				let cells = graphData.cells ? graphData.cells : [];
 				let edgeCells = {};
@@ -262,6 +270,46 @@
 					postData.id = this.dataFlowId;
 
 				return postData;
+			},
+
+			/**
+			 * Validate graph to meet business logic
+			 * @param editorData
+			 * @return {boolean | string}
+			 */
+			validateGraphData(editorData) {
+
+				log('Job.validateGraphData', editorData);
+				let graph = editorData.graph;
+				/*let graphData = editorData.graphData;
+				let graphLib = editorData.graphLib;*/
+
+				// at least 2 data node
+				// at least 1 link
+				let dataNodeCount = 0,
+					linkCount = 0;
+				graph.getCells().forEach(cell => {
+					if( cell.isLink() ){
+						linkCount++;
+					} else if( cell.isElement() && typeof cell.isDataNode === 'function' && cell.isDataNode()) {
+						dataNodeCount++;
+					}
+				});
+				if( dataNodeCount < 2 ){
+					return 'At least 2 data node in graph';
+				}
+				if( linkCount < 1){
+					return 'At least 1 link in graph';
+				}
+
+				// validate graph acyclic
+				let acyclic = this.editor.graph.isAcyclic();
+				if( !acyclic ) {
+					return 'The graph cannot have cyclic';
+				}
+
+
+				return true;
 			},
 
 			doSave(data, cb){

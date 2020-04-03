@@ -267,6 +267,7 @@ export default class Editor extends BaseObject {
 		let capture = this.getBottomTabPanel().getChildByName('capture');
 		if( !capture ){
 			capture = new VueComponent({
+				container: '',
 				title: 'Capture',
 				name: 'capture',
 				editor: this,
@@ -295,6 +296,7 @@ export default class Editor extends BaseObject {
 			graphData: this.graph.getData(),
 			graphLib: this.graph.getGraphLib(),
 			settingData: this.graph.getSettingData(),
+			graph: this.graph.graph,
 		};
 
 	}
