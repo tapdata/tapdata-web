@@ -268,59 +268,66 @@
 
 				log('Job.doSave', data);
 
-				// {"name": "任务", "id": {"neq": "5e87281f6b38ce1f20a84891"}  }
-				let params = {
-					name: data.name
-				};
-				if( data.id ){
-					params.id = {
-						neq: data.id
-					};
-				}
-				self.loading = true;
-				dataFlowsApi.count({where: JSON.stringify(params)}).then(result => {
-					if( result && result.data && result.data.count > 0 ){
-						this.$message.error(`Name already exists: ${data.name}`);
-						self.loading = false;
-					} else {
-						let promise = data.id ?
-							dataFlowsApi.patch(data):
-							dataFlowsApi.post(data);
+				const _doSave = function(){
+					let promise = data.id ?
+						dataFlowsApi.patch(data):
+						dataFlowsApi.post(data);
 
-						promise.then((result) => {
-							if( result && result.data ){
-								let dataFlow = result.data;
+					promise.then((result) => {
+						if( result && result.data ){
+							let dataFlow = result.data;
 
-								self.dataFlowId = dataFlow.id;
-								self.status = dataFlow.status;
-								self.executeMode = dataFlow.executeMode;
+							self.dataFlowId = dataFlow.id;
+							self.status = dataFlow.status;
+							self.executeMode = dataFlow.executeMode;
 
-								self.dataFlow = dataFlow;
+							self.dataFlow = dataFlow;
 
-								if( typeof cb === "function"){
-									cb(null, dataFlow);
-								}
-
-								self.polling();
-							} else {
-								if( typeof cb === "function"){
-									cb(result, null);
-								}
-							}
-							self.loading = false;
-						}).catch(e => {
-							self.loading = false;
 							if( typeof cb === "function"){
-								cb(e, null);
+								cb(null, dataFlow);
 							}
-						});
+
+							self.polling();
+						} else {
+							if( typeof cb === "function"){
+								cb(result, null);
+							}
+						}
+						self.loading = false;
+					}).catch(e => {
+						self.loading = false;
+						if( typeof cb === "function"){
+							cb(e, null);
+						}
+					});
+				};
+
+				if( data.name ){
+					let params = {
+						name: data.name
+					};
+					if( data.id ){
+						params.id = {
+							neq: data.id
+						};
 					}
-				}).catch(e => {
-					self.loading = false;
-					if( typeof cb === "function"){
-						cb(e, null);
-					}
-				});
+					self.loading = true;
+					dataFlowsApi.count({where: JSON.stringify(params)}).then(result => {
+						if( result && result.data && result.data.count > 0 ){
+							this.$message.error(`Name already exists: ${data.name}`);
+							self.loading = false;
+						} else {
+							_doSave();
+						}
+					}).catch(e => {
+						self.loading = false;
+						if( typeof cb === "function"){
+							cb(e, null);
+						}
+					});
+				} else {
+					_doSave();
+				}
 			},
 
 			save(){
