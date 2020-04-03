@@ -1,17 +1,18 @@
 <template>
-	<div class="box">
-		<div class="box-head">
-			<el-input class="search" v-model="filterText"><i slot="suffix" class="el-input__icon el-icon-search"></i></el-input>
-			<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
-		</div>
-		<el-tree
-				node-key="id"
-				:expand-on-click-node="false"
-				lazy
-				:load="loadNodes"
-				:filter-node-method="filterNode"
-				ref="tree"
-		>
+	<div>
+		<div class="box-tree">
+			<div class="box-head">
+				<el-input class="search" v-model="filterText"><i slot="suffix" class="el-input__icon el-icon-search"></i></el-input>
+				<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
+			</div>
+			<el-tree
+					node-key="id"
+					:expand-on-click-node="false"
+					lazy
+					:load="loadNodes"
+					:filter-node-method="filterNode"
+					ref="tree"
+			>
 			<span class="custom-tree-node" slot-scope="{ node, data}">
 				<span>
 					<span v-if="data.meta_type ==='database'" class="iconfont icon-shujuku filter-icon"></span>
@@ -19,9 +20,23 @@
 					<span v-if="data.meta_type ==='collection'" class="iconfont icon-collection filter-icon-table"></span>
 					<span class="table-label">{{ node.label }}</span>
 				</span>
-
 			</span>
-		</el-tree>
+			</el-tree>
+		</div>
+		<div class="box-ul">
+			<ul class="classify-ul">
+				<li v-for="item in listdata" :key="item.id">
+					<div>
+						<span class="iconfont icon-table2 icon-color"></span>
+						<span>{{item.value}}</span>
+					</div>
+					<div>
+
+					</div>
+
+				</li>
+			</ul>
+		</div>
 	</div>
 </template>
 
@@ -37,22 +52,24 @@
 		data() {
 			return {
 				count: 0,
-				filterText:'',
+				filterText: '',
 				data: [],
-				default_expanded:false,
+				default_expanded: false,
 				defaultProps: {
 					children: 'children',
 					label: 'label',
 					isLeaf: 'leaf'
 				},
-				mapping:{
+				mapping: {
 					collection: 'app.Collection',
 					table: 'app.Table',
 					database: 'app.Database',
-				}
+				},
+				listdata:[],
 			};
 		},
 		mounted() {
+			this.handleList();
 		},
 		watch: {
 			filterText(val) {
@@ -66,7 +83,7 @@
 					where: {}
 				};
 
-				if ( node.level === 0) {
+				if (node.level === 0) {
 					filter.where['parent_id'] = {
 						exists: false
 					};
@@ -79,11 +96,11 @@
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data) {
 							self.data.splice(0, self.data.length);
-							let children =[];
+							let children = [];
 							res.data.forEach((record) => {
 								children.push({
 									id: record.id,
-									parent_id:record.parent_id,
+									parent_id: record.parent_id,
 									label: record.value,
 									meta_type: record.item_type,
 								});
@@ -100,8 +117,45 @@
 				if (!value) return true;
 				return data.label.indexOf(value) !== -1;
 			},
-			handleGraph(data) {
-
+			handleList() {
+				let params = {
+					// 'filter[limit]': rowsPerPage,
+					// 'filter[skip]': (page - 1) * rowsPerPage,
+					'filter[where][is_deleted]': false,
+					'filter[fields][name]': true,
+					'filter[fields][original_name]': true,
+					'filter[fields][owner]': true,
+					'filter[fields][meta_type]': true,
+					'filter[fields][description]': true,
+					'filter[fields][qualified_name]': true,
+					'filter[fields][db]': true,
+					'filter[fields][stats]': true,
+					'filter[fields][classifications]': true,
+					'filter[fields][last_user_name]': true,
+					'filter[fields][last_updated]': true,
+					'filter[fields][create_time]': true,
+					'filter[fields][collection]': true,
+					'filter[fields][id]': true,
+					'filter[fields][source._id]': true,
+					'filter[fields][databaseId]': true
+				};
+				MetadataInstances.get({params}).then(res => {
+					let self = this;
+					if (res.statusText === "OK" || res.status === 200) {
+						if (res.data) {
+							self.listdata = res.data;
+						}
+					}
+				}).catch(e => {
+					this.$message.error('MetadataInstances error');
+				});
+			},
+			handleDefault_expanded(){
+				let self = this;
+				let treeList = this.data;
+				for (let i = 0; i < treeList.length; i++) {
+					self.$refs.tree.store.nodesMap[treeList[i].id].expanded = false;
+				}
 			},
 		}
 	};
@@ -111,6 +165,7 @@
 	.box {
 		width: 234px;
 	}
+
 	.custom-tree-node {
 		flex: 1;
 		display: flex;
@@ -145,17 +200,53 @@
 
 	.filter-Graph {
 		display: inline-block;
-		margin-right:12px;
+		margin-right: 12px;
 	}
-	.table-label{
+
+	.table-label {
 		display: inline-block;
 		width: 140px;
 	}
-	.box-head{
+
+	.box-head {
 		position: fixed;
 		z-index: 2;
 	}
-	.el-tree{
+
+	.el-tree {
 		padding-top: 40px;
+	}
+	.box-tree{
+		float: left;
+	}
+	.box-ul{
+		float: left;
+	}
+	.classify-ul{
+		border-radius: 4px;
+		border: 1px solid #ebeef5;
+		background-color: #fff;
+		overflow: hidden;
+		color: #303133;
+		transition: .3s;
+		list-style: none;
+		margin-left: 50px;
+		font-size: 12px;
+		width: 260px;
+	}
+	.classify-ul li{
+		width:234px;
+		height:43px;
+		line-height: 43px;
+		margin-left: 8px;
+		margin-bottom: 10px;
+		padding-left: 10px;
+		background:rgba(255,255,255,1);
+		border:1px solid rgba(234, 234, 235, 1);
+		border-radius:3px;
+	}
+	.icon-color{
+		color: #599656;
+		font-size: 14px;
 	}
 </style>
