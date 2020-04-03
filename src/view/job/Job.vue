@@ -176,9 +176,9 @@
 				}
 			},
 
-			getDataFlowData(validateGraph = true) {
+			getDataFlowData() {
 				// validate
-				let verified = this.editor.graph.validate();
+				let verified = this.editor.validate();
 				if( verified !== true) {
 					this.$message.error(verified);
 					return;
@@ -187,15 +187,6 @@
 				let editorData = this.editor.getData();
 				let graphData = editorData.graphData;
 				let settingData = editorData.settingData;
-
-				// validate graph
-				if( validateGraph ){
-					verified = this.validateGraphData(editorData);
-					if( verified !== true) {
-						this.$message.error(verified);
-						return;
-					}
-				}
 
 				let cells = graphData.cells ? graphData.cells : [];
 				let edgeCells = {};
@@ -272,83 +263,63 @@
 				return postData;
 			},
 
-			/**
-			 * Validate graph to meet business logic
-			 * @param editorData
-			 * @return {boolean | string}
-			 */
-			validateGraphData(editorData) {
-
-				log('Job.validateGraphData', editorData);
-				let graph = editorData.graph;
-				/*let graphData = editorData.graphData;
-				let graphLib = editorData.graphLib;*/
-
-				// at least 2 data node
-				// at least 1 link
-				let dataNodeCount = 0,
-					linkCount = 0;
-				graph.getCells().forEach(cell => {
-					if( cell.isLink() ){
-						linkCount++;
-					} else if( cell.isElement() && typeof cell.isDataNode === 'function' && cell.isDataNode()) {
-						dataNodeCount++;
-					}
-				});
-				if( dataNodeCount < 2 ){
-					return 'At least 2 data node in graph';
-				}
-				if( linkCount < 1){
-					return 'At least 1 link in graph';
-				}
-
-				// validate graph acyclic
-				let acyclic = this.editor.graph.isAcyclic();
-				if( !acyclic ) {
-					return 'The graph cannot have cyclic';
-				}
-
-
-				return true;
-			},
-
 			doSave(data, cb){
 				let self = this;
 
 				log('Job.doSave', data);
 
-				let promise = data.id ?
-					dataFlowsApi.patch(data):
-					dataFlowsApi.post(data);
-
+				// {"name": "任务", "id": {"neq": "5e87281f6b38ce1f20a84891"}  }
+				let params = {
+					name: data.name
+				};
+				if( data.id ){
+					params.id = {
+						neq: data.id
+					};
+				}
 				self.loading = true;
-
-				promise.then((result) => {
-					if( result && result.data ){
-						let dataFlow = result.data;
-
-						self.dataFlowId = dataFlow.id;
-						self.status = dataFlow.status;
-						self.executeMode = dataFlow.executeMode;
-
-						self.dataFlow = dataFlow;
-
-						if( typeof cb === "function"){
-							cb(null, dataFlow);
-						}
-
-						self.polling();
+				dataFlowsApi.count({where: JSON.stringify(params)}).then(result => {
+					if( result && result.data && result.data.count > 0 ){
+						this.$message.error(`Name already exists: ${data.name}`);
+						self.loading = false;
 					} else {
-						if( typeof cb === "function"){
-							cb(result, null);
-						}
+						let promise = data.id ?
+							dataFlowsApi.patch(data):
+							dataFlowsApi.post(data);
+
+						promise.then((result) => {
+							if( result && result.data ){
+								let dataFlow = result.data;
+
+								self.dataFlowId = dataFlow.id;
+								self.status = dataFlow.status;
+								self.executeMode = dataFlow.executeMode;
+
+								self.dataFlow = dataFlow;
+
+								if( typeof cb === "function"){
+									cb(null, dataFlow);
+								}
+
+								self.polling();
+							} else {
+								if( typeof cb === "function"){
+									cb(result, null);
+								}
+							}
+							self.loading = false;
+						}).catch(e => {
+							self.loading = false;
+							if( typeof cb === "function"){
+								cb(e, null);
+							}
+						});
 					}
-					self.loading = false;
 				}).catch(e => {
+					self.loading = false;
 					if( typeof cb === "function"){
 						cb(e, null);
 					}
-					self.loading = false;
 				});
 			},
 

@@ -312,6 +312,50 @@ export default class Editor extends BaseObject {
 		}
 	}
 
+	validate(){
+		let verified = this.graph.validate();
+		if( verified !== true ) return verified;
+		return this.validateGraphData();
+	}
+
+	/**
+	 * Validate graph to meet business logic
+	 * @return {boolean | string}
+	 */
+	validateGraphData() {
+
+		log('Job.validateGraphData');
+		let graph = this.graph.graph;
+		/*let graphData = editorData.graphData;
+		let graphLib = editorData.graphLib;*/
+
+		// at least 2 data node
+		// at least 1 link
+		let dataNodeCount = 0,
+			linkCount = 0;
+		graph.getCells().forEach(cell => {
+			if( cell.isLink() ){
+				linkCount++;
+			} else if( cell.isElement() && typeof cell.isDataNode === 'function' && cell.isDataNode()) {
+				dataNodeCount++;
+			}
+		});
+		if( dataNodeCount < 2 ){
+			return 'At least 2 data node in graph';
+		}
+		if( linkCount < 1){
+			return 'At least 1 link in graph';
+		}
+
+		// validate graph acyclic
+		let acyclic = this.graph.isAcyclic();
+		if( !acyclic ) {
+			return 'The graph cannot have cyclic';
+		}
+
+		return true;
+	}
+
 	getUI(){
 		return this.ui;
 	}
