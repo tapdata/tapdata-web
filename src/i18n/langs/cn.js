@@ -124,6 +124,11 @@ const cn = {
 			read_cdc_interval: '增量同步间隔(ms)',
 			read_batch_size: '每次读取多少',
 			mission: '描述',
+      nodeName: '节点名称',
+      aggFunction: '聚合函数',
+      aggExpression: '聚合表达式',
+      filterPredicate: '过滤器',
+      groupByExpression: '分组表达式'
 		},
 		...zhLocale
 	}

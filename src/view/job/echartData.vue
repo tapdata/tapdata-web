@@ -98,6 +98,7 @@
 
     data() {
       return {
+        dpx: 'QPS',
         selectFlow: 'flow_',  //选中节点
         speed: '',
         time: '',
@@ -359,6 +360,14 @@
     },
 
     watch: {
+      dataFlow:{
+        handler(val){
+          this.flow = val;
+          this.flow.createTime = val.createTime ? this.$moment(val.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
+          this.flow.username = val.user.email;
+        },
+        deep: true
+      },
       domValue: {
         handler(val) {
           this.selectId = val;
@@ -474,11 +483,12 @@
           });
 
           if (ele === "qps") {
+            this.dpx = "QPS";
             this.inputAverage = inputCountList[inputCountList.length - 1];
             this.outputAverage = outputCountList[outputCountList.length - 1];
             this.getThroughputEchart(timeList, inputCountList, outputCountList);
-
           } else {
+            this.dpx = "KB";
             this.inputAverage = inputSizeList[inputSizeList.length - 1];
             this.outputAverage = outputSizeList[outputSizeList.length - 1];
             this.getThroughputEchart(timeList, inputSizeList, outputSizeList);
@@ -579,79 +589,86 @@
 
       getThroughputEchart(time, series1, series2) {
         log('EChartData.getThroughputEchart', time, series1, series2);
-        let self = this;
-        if (this.throughputData.xAxis.data.length === 0) {
-          for (let i = 0; i < time.length; i++) {
-            this.throughputData.xAxis.data.push(time[i]);
-            this.throughputData.series[0].data.push(series1[i]);
-            this.throughputData.series[1].data.push(series2[i]);
-          }
-        } else {
-          let interval = intervalTime / (time.length + 1);
-          let appendData = function () {
-            let t = time.shift();
-            let s1 = series1.shift();
-            let s2 = series2.shift();
-            self.throughputData.xAxis.data.shift();
-            self.throughputData.xAxis.data.push(t);
-            self.throughputData.series[0].data.shift();
-            self.throughputData.series[0].data.push(s1);
-            self.throughputData.series[1].data.shift();
-            self.throughputData.series[1].data.push(s2);
-
-            if (time.length > 0)
-              setTimeout(appendData, interval);
-          };
-          appendData();
-        }
+        this.throughputData.xAxis.data = time;
+        this.throughputData.series[0].data = series1;
+        this.throughputData.series[1].data = series2;
+        // let self = this;
+        // if (this.throughputData.xAxis.data.length === 0) {
+        //   for (let i = 0; i < time.length; i++) {
+        //     this.throughputData.xAxis.data.push(time[i]);
+        //     this.throughputData.series[0].data.push(series1[i]);
+        //     this.throughputData.series[1].data.push(series2[i]);
+        //   }
+        // } else {
+        //   let interval = intervalTime / (time.length + 1);
+        //   let appendData = function () {
+        //     let t = time.shift();
+        //     let s1 = series1.shift();
+        //     let s2 = series2.shift();
+        //     self.throughputData.xAxis.data.shift();
+        //     self.throughputData.xAxis.data.push(t);
+        //     self.throughputData.series[0].data.shift();
+        //     self.throughputData.series[0].data.push(s1);
+        //     self.throughputData.series[1].data.shift();
+        //     self.throughputData.series[1].data.push(s2);
+        //
+        //     if (time.length > 0)
+        //       setTimeout(appendData, interval);
+        //   };
+        //   appendData();
+        // }
       },
 
       getTransTime(time, series) {
-        let _this = this;
-        if (this.transfData.xAxis.data.length === 0) {
-          for (let i = 0; i < time.length; i++) {
-            this.transfData.xAxis.data.push(time[i]);
-            this.transfData.series[0].data.push(series[i]);
-          }
-        } else {
-          let interval = intervalTime / (time.length + 1);
-          let appendData = function () {
-            let t = time.shift();
-            let s = series.shift();
-            _this.transfData.xAxis.data.shift();
-            _this.transfData.xAxis.data.push(t);
-            _this.transfData.series[0].data.shift();
-            _this.transfData.series[0].data.push(s);
-
-            if (time.length > 0)
-              setTimeout(appendData, interval);
-          };
-          appendData();
-        }
+        this.transfData.xAxis.data = time;
+        this.transfData.series[0].data = series;
+        // let _this = this;
+        // if (this.transfData.xAxis.data.length === 0) {
+        //   for (let i = 0; i < time.length; i++) {
+        //     this.transfData.xAxis.data.push(time[i]);
+        //     this.transfData.series[0].data.push(series[i]);
+        //   }
+        // } else {
+        //   let interval = intervalTime / (time.length + 1);
+        //   let appendData = function () {
+        //     let t = time.shift();
+        //     let s = series.shift();
+        //     _this.transfData.xAxis.data.shift();
+        //     _this.transfData.xAxis.data.push(t);
+        //     _this.transfData.series[0].data.shift();
+        //     _this.transfData.series[0].data.push(s);
+        //
+        //     if (time.length > 0)
+        //       setTimeout(appendData, interval);
+        //   };
+        //   appendData();
+        // }
       },
 
       getReplicateTime(time, series) {
-        let _this = this;
-        if (this.replicateData.xAxis.data.length === 0) {
-          for (let i = 0; i < time.length; i++) {
-            this.replicateData.xAxis.data.push(time[i]);
-            this.replicateData.series[0].data.push(series[i]);
-          }
-        } else {
-          let interval = intervalTime / (time.length + 1);
-          let appendData = function () {
-            let t = time.shift();
-            let s = series.shift();
-            _this.replicateData.xAxis.data.shift();
-            _this.replicateData.xAxis.data.push(t);
-            _this.replicateData.series[0].data.shift();
-            _this.replicateData.series[0].data.push(s);
-
-            if (time.length > 0)
-              setTimeout(appendData, interval);
-          };
-          appendData();
-        }
+        this.replicateData.xAxis.data = time;
+        this.replicateData.series[0].data = series;
+        // let _this = this;
+        // if (this.replicateData.xAxis.data.length === 0) {
+        //   for (let i = 0; i < time.length; i++) {
+        //     this.replicateData.xAxis.data.push(time[i]);
+        //     this.replicateData.series[0].data.push(series[i]);
+        //   }
+        // } else {
+        //   let interval = intervalTime / (time.length + 1);
+        //   let appendData = function () {
+        //     let t = time.shift();
+        //     let s = series.shift();
+        //     _this.replicateData.xAxis.data.shift();
+        //     _this.replicateData.xAxis.data.push(t);
+        //     _this.replicateData.series[0].data.shift();
+        //     _this.replicateData.series[0].data.push(s);
+        //
+        //     if (time.length > 0)
+        //       setTimeout(appendData, interval);
+        //   };
+        //   appendData();
+        // }
       }
     },
 

@@ -124,7 +124,12 @@ const en = {
 		read_batch_size: 'How many reads each time',
 		mission: 'Description',
 		yes:'yes',
-		no:'no'
+		no:'no',
+    nodeName: 'Node Name',
+    aggFunction: 'Aggregation Function',
+    aggExpression: 'expression',
+    filterPredicate: 'Filter Predicate',
+    groupByExpression: 'Group By Expression'
 	},
 	...enLocale
 };

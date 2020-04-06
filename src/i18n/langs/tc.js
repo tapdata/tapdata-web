@@ -124,6 +124,11 @@ const tc = {
 		read_cdc_interval: '增量同步間隔(ms)',
 		read_batch_size: '每次讀取多少',
 		mission:'描述',
+    nodeName: '節點名稱',
+    aggFunction: '聚合函數',
+    aggExpression: '聚合表達式',
+    filterPredicate: '過濾器',
+    groupByExpression: '分組表達式'
 	},
 	...tcLocale
 };
