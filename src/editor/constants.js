@@ -17,6 +17,7 @@ export const
 			target: ''
 		}],
 		primaryKeys: '',
+		stageId: ''
 		//fieldProcesses: []
 	},
 

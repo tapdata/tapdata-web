@@ -1,6 +1,6 @@
 <template>
 	<div class="e-table">
-		<el-form label-position="right" label-width="130px" :model="model" ref="form">
+		<el-form label-position="right" label-width="160px" :model="model" ref="form">
 			<el-form-item label="Database" prop="connectionId" :rules="rules" required>
 				<el-select v-model="model.connectionId" :placeholder="`Please select RDBMS database`" @change="handlerConnectionChange">
 					<el-option
@@ -19,6 +19,12 @@
 							:value="item.table_name"
 							v-bind:key="idx"></el-option>
 				</el-select>
+			</el-form-item>
+
+			<el-form-item label="Table primary key" required>
+				<el-input
+						v-model="model.primaryKeys"
+						placeholder="please enter primary key"  class="formitem-width"></el-input>
 			</el-form-item>
 
 			<el-form-item required label="Exists data" v-if="!isSourceDataNode">
@@ -196,6 +202,10 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
+
+		.formitem-width {
+			width: 225px;
+		}
 
 		.e-entity-wrap {
 			flex: 1;

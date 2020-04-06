@@ -147,17 +147,20 @@ export const link = {
 					let joinTable = data.joinTable;
 					if( !joinTable )
 						throw new Error('Settings cannot be none.');
-					if( !joinTable.tableName)
+					/*if( !joinTable.tableName)
 						throw new Error('Table name cannot be empty.');
 					if( !joinTable.primaryKeys)
-						throw new Error(`Table ${joinTable.tableName} primary key cannot be empty.`);
+						throw new Error(`Table ${joinTable.tableName} primary key cannot be empty.`);*/
 					if( !joinTable.joinType )
 						throw new Error('JoinType cannot be empty.');
-					if( !joinTable.joinKeys || joinTable.joinKeys.length === 0 )
-						throw new Error('JoinKeys cannot be empty.');
-					let errorJoinKeys = joinTable.joinKeys.filter(v => !v.source || !v.target);
-					if( errorJoinKeys && errorJoinKeys.length > 0) {
-						throw new Error('JoinKeys cannot be empty.');
+
+					if( 'append' !== joinTable.joinType) {
+						if( !joinTable.joinKeys || joinTable.joinKeys.length === 0 )
+							throw new Error('JoinKeys cannot be empty.');
+						let errorJoinKeys = joinTable.joinKeys.filter(v => !v.source || !v.target);
+						if( errorJoinKeys && errorJoinKeys.length > 0) {
+							throw new Error('JoinKeys cannot be empty.');
+						}
 					}
 					if( ['merge_embed', 'update'].includes(joinTable.joinType) ) {
 						if( !joinTable.joinPath )

@@ -44,6 +44,8 @@ export const collectionConfig = {
 					throw new Error(name + ': Database cannot be empty.');
 				if( !data.tableName )
 					throw new Error(name + ': Collection cannot be empty.');
+				if( !data.primaryKeys)
+					throw new Error(`Table ${data.tableName} primary key cannot be empty.`);
 				return true;
 			},
 

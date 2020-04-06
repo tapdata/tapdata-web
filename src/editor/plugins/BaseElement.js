@@ -183,6 +183,7 @@ export const baseElementConfig = {
 								}
 
 								joinTable.sourceSchema = sourceCell.getOutputSchema();
+								joinTable.stageId = sourceCell.id;
 
 								log('BaseElement.getInputSchema.joinTables', cell.getFormData(), joinTable);
 								return joinTable;

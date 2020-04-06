@@ -3,7 +3,7 @@
 
 		<el-form label-position="right" label-width="160px" :model="model" ref="form">
 
-			<el-form-item label="Table name" required>
+			<!--<el-form-item label="Table name" required>
 				<el-input
 						v-model="model.joinTable.tableName"
 						placeholder="please enter table name"  class="formitem-width"></el-input>
@@ -13,7 +13,7 @@
 				<el-input
 						v-model="model.joinTable.primaryKeys"
 						placeholder="please enter primary key"  class="formitem-width"></el-input>
-			</el-form-item>
+			</el-form-item>-->
 
 			<el-form-item label="Data write model:" required>
 				<el-select v-model="model.joinTable.joinType" :placeholder="`Please select Data Write model`" @change="handlerJoinTypeChanged">
@@ -31,7 +31,7 @@
 						placeholder="please enter Join path"  class="formitem-width"></el-input>
 			</el-form-item>
 
-			<el-form-item label="Association condition:" required>
+			<el-form-item label="Association condition:" required v-if="!['append'].includes(model.joinTable.joinType)">
 				<table class="e-table">
 					<thead>
 						<tr>
