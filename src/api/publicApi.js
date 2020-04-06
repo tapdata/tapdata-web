@@ -60,10 +60,6 @@ export default class PublicAPI {
 		return axios.delete(`${this.url}/${id}`);
 	}
 
-	reset(id) {
-		return axios.post(`${this.url}/${id}/reset`);
-	}
-
 	post(params) {
 		return axios.post(this.url, params);
 	}

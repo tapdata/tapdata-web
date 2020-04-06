@@ -22,6 +22,8 @@ const en = {
 		nullContent: 'Can not be empty',
 		saveOK: 'Saved successfully',
 		saveFail: 'Save failed',
+		copyFail: 'Copy failed',
+		copySuccess: 'Copy successfully',
 		deleteOK: 'successfully deleted',
 		deleteFail: 'failed to delete',
 		selectTime: 'Select time',

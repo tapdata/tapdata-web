@@ -3,11 +3,11 @@
 		<el-form label-width="40px" :data="formData" >
 			<el-row>
 				<el-col :span="12">
-					<el-form-item>
+					<!-- <el-form-item>
 						<div>{{$t('dataFlow.taskName')}}</div>
 						<el-input
 								:placeholder="$t('dataFlow.taskName')" v-model="formData.name"></el-input>
-					</el-form-item>
+					</el-form-item> -->
 				</el-col>
 				<el-col :span="11">
 					<el-form-item>
@@ -126,7 +126,6 @@
 		data() {
 			return {
 				formData: {
-					name: '',
 					sync_type: 'initial_sync', // 默认值：initial_sync+cdc； initial_sync cdc initial_sync+cdc
 					readBatchSize:25000,
 					notificationWindow:0,
@@ -138,15 +137,13 @@
 					increment:false, //sql
 					isSchedule:false, //调度任务
 					emailWaring: {        // 发送告警邮件
-						edited: true,            // 当任务被编辑时
+						edited: false,            // 当任务被编辑时
 						started: false,      // 当任务启动时
-						error: true,      // 当任务出错
+						error: false,      // 当任务出错
 						paused: false      // 任务停止
 					},
 					stopOnError:false,
 				},
-				checkboxGroup1: ['1','3'],
-				radio3:true,
 			};
 		},
 		mounted() {

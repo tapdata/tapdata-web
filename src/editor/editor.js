@@ -17,6 +17,7 @@ import DebugLogs from '../view/job/DebugLogs';
 import log from "../log";
 import Panel from "./ui/panel";
 import TableSelector from "../view/job/TableSelector";
+import {DEFAULT_SETTING} from "./constants";
 
 export default class Editor extends BaseObject {
 
@@ -223,7 +224,7 @@ export default class Editor extends BaseObject {
 	}
 
 	//setting
-	showSetting(){
+	showSetting(name){
 		let self = this;
 		self.initSettings();
 		let rightTabPanel = self.getRightTabPanel();
@@ -231,6 +232,9 @@ export default class Editor extends BaseObject {
 			let setting = rightTabPanel.getChildByName('setting');
 			if( setting ){
 				let settingData = self.graph.getSettingData();
+				if(name){
+					settingData.name = name;
+				}
 				setting.setData(settingData);
 			}
 			rightTabPanel.select(setting);
@@ -266,6 +270,7 @@ export default class Editor extends BaseObject {
 		let capture = this.getBottomTabPanel().getChildByName('capture');
 		if( !capture ){
 			capture = new VueComponent({
+				container: '',
 				title: 'Capture',
 				name: 'capture',
 				editor: this,
@@ -293,7 +298,8 @@ export default class Editor extends BaseObject {
 			name: this.ui.getName(),
 			graphData: this.graph.getData(),
 			graphLib: this.graph.getGraphLib(),
-			settingData: this.graph.getSettingData(),
+			settingData: this.graph.getSettingData() || DEFAULT_SETTING,
+			graph: this.graph.graph,
 		};
 
 	}
@@ -307,6 +313,50 @@ export default class Editor extends BaseObject {
 		} else {
 			this.initRunningMode(dataFlow);
 		}
+	}
+
+	validate(){
+		let verified = this.graph.validate();
+		if( verified !== true ) return verified;
+		return this.validateGraphData();
+	}
+
+	/**
+	 * Validate graph to meet business logic
+	 * @return {boolean | string}
+	 */
+	validateGraphData() {
+
+		log('Job.validateGraphData');
+		let graph = this.graph.graph;
+		/*let graphData = editorData.graphData;
+		let graphLib = editorData.graphLib;*/
+
+		// at least 2 data node
+		// at least 1 link
+		let dataNodeCount = 0,
+			linkCount = 0;
+		graph.getCells().forEach(cell => {
+			if( cell.isLink() ){
+				linkCount++;
+			} else if( cell.isElement() && typeof cell.isDataNode === 'function' && cell.isDataNode()) {
+				dataNodeCount++;
+			}
+		});
+		if( dataNodeCount < 2 ){
+			return 'At least 2 data node in graph';
+		}
+		if( linkCount < 1){
+			return 'At least 1 link in graph';
+		}
+
+		// validate graph acyclic
+		let acyclic = this.graph.isAcyclic();
+		if( !acyclic ) {
+			return 'The graph cannot have cyclic';
+		}
+
+		return true;
 	}
 
 	getUI(){

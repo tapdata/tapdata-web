@@ -22,6 +22,8 @@ const tc = {
 		nullContent: '不能為空',
 		saveOK: '保存成功',
 		saveFail: '保存失敗',
+		copyFail: '复制失败',
+		copySuccess: '复制成功',
 		deleteOK: '刪除成功',
 		deleteFail: '删除失敗',
 		selectTime: '選擇時間',

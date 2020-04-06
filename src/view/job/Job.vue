@@ -10,14 +10,20 @@
 					size="small"
 					style="margin-right: 50px;"
 			>{{$t('dataFlow.state')}}: {{$t('dataFlow.status.' + status)}}</el-tag>
-			<el-button size="mini" type="default" v-if="['draft', 'paused', 'error'].includes(status)" @click="showSetting">Setting</el-button>
-			<el-button size="mini" type="default" v-if="dataFlowId" @click="showLogs">Logs</el-button>
 			<el-button
-					v-if="!['scheduled', 'stopping'].includes(status) && executeMode === 'normal'"
+					v-if="['draft', 'paused', 'error'].includes(status)"
+					size="mini" type="default"
+					@click="showSetting">Setting</el-button>
+			<el-button
+					v-if="dataFlowId && 'draft' !== status"
+					size="mini" type="default"
+					@click="showLogs">Logs</el-button>
+			<el-button
+					v-if="!['scheduled', 'stopping', 'force stopping'].includes(status) && executeMode === 'normal'"
 					size="mini" type="default"
 					@click="capture">Capture</el-button>
 			<el-button
-					v-if="!['scheduled', 'stopping'].includes(status) && executeMode !== 'normal'"
+					v-if="!['scheduled', 'stopping', 'force stopping'].includes(status) && executeMode !== 'normal'"
 					size="mini" type="default"
 					@click="stopCapture">Stop capture</el-button>
 			<el-button
@@ -29,7 +35,15 @@
 					size="mini" type="danger"
 					@click="stop">Stop</el-button>
 			<el-button
-					v-if="!['scheduled', 'running'].includes(status)"
+					v-if="dataFlowId !== null && ['stopping'].includes(status)"
+					size="mini" type="danger"
+					@click="stop(true)">Force Stop</el-button>
+			<el-button
+					v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
+					size="mini" type="default"
+					@click="reset">Reset</el-button>
+			<el-button
+					v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
 					size="mini" type="primary"
 					@click="save">Save</el-button>
 			<!-- <el-button size="mini" type="primary" @click="switchModel">Model</el-button> -->
@@ -178,7 +192,7 @@
 
 			getDataFlowData() {
 				// validate
-				let verified = this.editor.graph.validate();
+				let verified = this.editor.validate();
 				if( verified !== true) {
 					this.$message.error(verified);
 					return;
@@ -187,7 +201,6 @@
 				let editorData = this.editor.getData();
 				let graphData = editorData.graphData;
 				let settingData = editorData.settingData;
-
 
 				let cells = graphData.cells ? graphData.cells : [];
 				let edgeCells = {};
@@ -202,7 +215,7 @@
 				let postData = Object.assign({
 					name: editorData.name,
 					description: "",
-					status: this.status || "draft",		// draft/scheduled/running/paused/stopping/error
+					status: this.status || "draft",		// draft/scheduled/running/paused/stopping/error/force stopping
 					executeMode: this.executeMode || "normal",
 					category: "数据库克隆",
 					stopOnError: false,
@@ -269,39 +282,66 @@
 
 				log('Job.doSave', data);
 
-				let promise = data.id ?
-					dataFlowsApi.patch(data):
-					dataFlowsApi.post(data);
+				const _doSave = function(){
+					let promise = data.id ?
+						dataFlowsApi.patch(data):
+						dataFlowsApi.post(data);
 
-				self.loading = true;
+					promise.then((result) => {
+						if( result && result.data ){
+							let dataFlow = result.data;
 
-				promise.then((result) => {
-					if( result && result.data ){
-						let dataFlow = result.data;
+							self.dataFlowId = dataFlow.id;
+							self.status = dataFlow.status;
+							self.executeMode = dataFlow.executeMode;
 
-						self.dataFlowId = dataFlow.id;
-						self.status = dataFlow.status;
-						self.executeMode = dataFlow.executeMode;
+							self.dataFlow = dataFlow;
 
-						self.dataFlow = dataFlow;
+							if( typeof cb === "function"){
+								cb(null, dataFlow);
+							}
 
-						if( typeof cb === "function"){
-							cb(null, dataFlow);
+							self.polling();
+						} else {
+							if( typeof cb === "function"){
+								cb(result, null);
+							}
 						}
-
-						self.polling();
-					} else {
+						self.loading = false;
+					}).catch(e => {
+						self.loading = false;
 						if( typeof cb === "function"){
-							cb(result, null);
+							cb(e, null);
 						}
+					});
+				};
+
+				if( data.name ){
+					let params = {
+						name: data.name
+					};
+					if( data.id ){
+						params.id = {
+							neq: data.id
+						};
 					}
-					self.loading = false;
-				}).catch(e => {
-					if( typeof cb === "function"){
-						cb(e, null);
-					}
-					self.loading = false;
-				});
+					self.loading = true;
+					dataFlowsApi.count({where: JSON.stringify(params)}).then(result => {
+						if( result && result.data && result.data.count > 0 ){
+							this.$message.error(`Name already exists: ${data.name}`);
+							self.loading = false;
+						} else {
+							_doSave();
+						}
+					}).catch(e => {
+						self.loading = false;
+						if( typeof cb === "function"){
+							cb(e, null);
+						}
+					});
+				} else {
+					_doSave();
+				}
 			},
 
 			save(){
@@ -345,23 +385,23 @@
 				});
 			},
 
-			stop(){
+			stop(forceStop){
 				let self = this,
 					data = {
 						id: self.dataFlowId,
-						status: 'stopping'
+						status: forceStop === true ? 'force stopping' : 'stopping'
 					};
 
-				self.$confirm('Stop jobs?', 'Tip', {
-					confirmButtonText: 'Stop it',
+				self.$confirm(forceStop === true ? 'Force Stop jobs?' : 'Stop jobs?', 'Tip', {
+					confirmButtonText: forceStop === true ? 'Force Stop' : 'Stop',
 					cancelButtonText: 'Cancel',
 					type: 'warning'
 				}).then(() => {
 					self.doSave(data, (err, dataFlow) => {
 						if( err ){
-							self.$message.error('Stop failed');
+							self.$message.error('Save failed');
 						} else {
-							self.$message.success('Stop success');
+							// self.$message.success('Stop success');
 							self.setEditable(true);
 						}
 					});
@@ -416,9 +456,28 @@
 					});
 				}
 			},
+
+			reset() {
+				let self = this,
+					data = this.getDataFlowData();
+
+				if( data.id ){
+					dataFlowsApi.reset(data.id).then(res => {
+						if (res.statusText === "OK" || res.status === 200) {
+							self.$message.success('Reset success');
+						} else {
+							self.$message.error('Reset failed');
+						}
+					});
+				}
+			},
 			showSetting(){
 				log('Job.showSetting');
-				this.editor.showSetting();
+				let name = '';
+				if(this.$route.query.name){
+					name = this.$route.query.name;
+				}
+				this.editor.showSetting(name);
 			},
 			showLogs(){
 				this.editor.showLogs(this.dataFlow);

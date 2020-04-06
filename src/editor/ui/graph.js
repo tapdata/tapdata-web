@@ -14,6 +14,7 @@ import {stencilConfig, selectionConfig, haloConfig, toolbarConfig} from "../lib/
 import {VueAdapter} from '../vue-adapter';
 import log from "../../log";
 import {DATA_FLOW_SETTING_DATA_KEY, FORM_DATA_KEY,SCHEMA_DATA_KEY,OUTPUT_SCHEMA_DATA_KEY} from "../constants";
+import {isAcyclic} from "graphlib/lib/alg";
 
 window.joint = joint;
 
@@ -90,7 +91,28 @@ export default class Graph extends Component{
 						}
 					}
 				}
-			}
+			},
+			validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+
+				// don't allow loop links
+				if (cellViewS === cellViewT) return false;
+
+				let targetView = (end === 'target' ? cellViewT : cellViewS);
+				let sourceView = (end === 'target' ? cellViewS : cellViewT);
+
+				// don't allow link to link connection
+				if (targetView.model.isLink()) return false;
+
+				// target don't accept source connection
+				if( typeof targetView.model.allowSource === 'function'
+					&& !targetView.model.allowSource(sourceView.model)) return false;
+
+				// source don't allow connect to target
+				if( typeof sourceView.model.allowTarget === 'function'
+					&& !sourceView.model.allowTarget(targetView.model)) return false;
+
+				return true;
+			},
 		});
 
 		paper.on('blank:mousewheel',  _.partial(this.onMousewheel, null), this);
@@ -99,13 +121,19 @@ export default class Graph extends Component{
 		paper.on({
 			'link:connect': (linkView, evt, elementViewConnected, magent, arrowhead) => {
 				log('Graph.link.connect', arguments);
-				self.updateOutputSchema(linkView.model);
+				let acyclic = self.isAcyclic();
+				if( acyclic ){
+					self.updateOutputSchema(linkView.model);
+				} else {
+					linkView.model.disconnect();
+					linkView.hideTools();
+				}
 			},
-			'link:disconnect': (linkView, evt, elementViewDisconnected, magent, arrowhead) => {
+			/*'link:disconnect': (linkView, evt, elementViewDisconnected, magent, arrowhead) => {
 				log('Graph.link.disconnect', arguments);
 				// trigger on graph.remove
 				// self.updateOutputSchema(linkView.model);
-			},
+			},*/
 		});
 		graph.on({
 			remove: (model, collection, options) => {
@@ -114,9 +142,9 @@ export default class Graph extends Component{
 				self.updateOutputSchema(model);
 				//}
 			},
-			add: (cell) => {
+			/*add: (cell) => {
 				log('Graph.graph.add');
-			}
+			}*/
 		});
 
 		this.snaplines = new joint.ui.Snaplines({ paper: paper });
@@ -142,6 +170,12 @@ export default class Graph extends Component{
 		this.el = paperScroller.el;
 		this.editor.getUI().add(this);
 		paperScroller.render().center();
+	}
+
+	isAcyclic() {
+		let acyclic = isAcyclic(this.graph.toGraphLib());
+		log('Graph.link.connect.isAcyclic', acyclic);
+		return acyclic;
 	}
 
 	updateOutputSchema(cell){
@@ -376,7 +410,7 @@ export default class Graph extends Component{
 		let toolsView = new joint.dia.ToolsView({
 			name: 'link-pointerdown',
 			tools: [
-				new ns.Vertices({ vertexAdding: false }),
+				new ns.Vertices({ vertexAdding: true }),
 				new ns.SourceAnchor(),
 				new ns.TargetAnchor(),
 				new ns.SourceArrowhead(),

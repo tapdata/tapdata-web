@@ -114,17 +114,17 @@
 								<router-link :to='{path:"/job", query: { id: scope.row.id}}'><i
 										class="iconfont task-list-icon icon-yunyingzhongxin"></i></router-link>
 							</el-tooltip>
-							<el-tooltip class="item" :content="$t('dataFlow.edit')" placement="bottom">
+							<el-tooltip v-if="scope.row.status !== 'scheduled'&& scope.row.status !== 'running'&&scope.row.status !== 'force stopping'&&scope.row.status !== 'stopping'" class="item" :content="$t('dataFlow.edit')" placement="bottom">
 								<router-link :to='{path:"/job", query: { id: scope.row.id}}'><i
 										class="iconfont task-list-icon icon-ceshishenqing"></i></router-link>
 							</el-tooltip>
 							<el-tooltip class="item" :content="$t('dataFlow.copy')" placement="bottom">
-								<i class="iconfont task-list-icon icon-fuzhi1"></i>
+								<i class="iconfont task-list-icon icon-fuzhi1" @click="handlerCopy(scope.row.id)"></i>
 							</el-tooltip>
-							<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
+							<el-tooltip v-if="scope.row.status !== 'scheduled'&& scope.row.status !== 'running'&& scope.row.status !== 'force stopping'&&scope.row.status !== 'stopping'" class="item" :content="$t('message.delete')" placement="bottom">
 								<i class="iconfont task-list-icon icon-shanchu" @click="handleDelete(scope.row.id)"></i>
 							</el-tooltip>
-							<el-tooltip class="item" :content="$t('dataFlow.reset')" placement="bottom">
+							<el-tooltip v-if="scope.row.status !== 'scheduled'&& scope.row.status !== 'running'&&scope.row.status !== 'force stopping'&&scope.row.status !== 'stopping'" class="item" :content="$t('dataFlow.reset')" placement="bottom">
 								<i class="iconfont task-list-icon icon-shuaxin1" @click="handleReset(scope.row.id)"></i>
 							</el-tooltip>
 						</div>
@@ -277,9 +277,9 @@
 					item.newStatus = 'running' === item.status ? 'running' : 'paused';
 
 					if (item.stats) {
-						item.input = item.stats.input.rows;
-						item.output = item.stats.output.rows;
-						item.transmissionTime = item.stats.transmissionTime;
+						item.input = item.stats.input.rows ? item.stats.input.rows:'-';
+						item.output = item.stats.output.rows ? item.stats.output.rows:'-';
+						item.transmissionTime = item.stats.transmissionTime ? item.stats.transmissionTime:'-';
 						item.hasChildren = false;
 						let children = item.stats.stagesMetrics;
 						item.children = [];
@@ -287,16 +287,21 @@
 							children.map(k => {
 								let node = {
 									id: k.stageId,
-									input: k.input.rows,
-									output: k.output.rows,
-									transmissionTime: k.transmissionTime,
+									input: k.input.rows ? k.input.rows :'-',
+									output: k.output.rows ?k.output.rows : '-',
+									transmissionTime: k.transmissionTime ? k.transmissionTime :'-',
 									hasChildren: true,
 								};
 								item.children.push(node);
 							});
 						}
+					}else {
+						item.input = '-';
+						item.output = '-';
+						item.transmissionTime = '-';
 					}
 				});
+				console.log('data',data);
 			},
 			handleDelete(id) {
 				this.$confirm(this.$t('message.deteleMessage'), this.$t('message.prompt'), {
@@ -367,6 +372,19 @@
 					this.$message.success(this.$t('message.resetOk'));
 				}).catch(() => {
 					this.$message.info(this.$t('message.cancleReset'));
+				});
+			},
+			handlerCopy(id){
+				let self = this;
+				dataFlows.copy(id).then(res => {
+					if (res.statusText === "OK" || res.status === 200) {
+						self.getData();
+						this.$message.success(this.$t('message.copySuccess'));
+					} else {
+						this.$message.error(this.$t('message.copyFail'));
+					}
+				}).catch(err => {
+					this.$message.error(this.$t('message.copyFail'));
 				});
 			},
 			formatterTime(row) {

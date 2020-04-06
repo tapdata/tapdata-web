@@ -22,6 +22,8 @@ const cn = {
 			nullContent: '不能为空',
 			saveOK: '保存成功',
 			saveFail: '保存失败',
+			copyFail: '复制失败',
+			copySuccess: '复制成功',
 			deleteOK: '删除成功',
 			deleteFail: '删除失败',
 			selectTime: '选择时间',
