@@ -18,5 +18,25 @@ export const
 		}],
 		primaryKeys: '',
 		//fieldProcesses: []
+	},
+
+	DEFAULT_SETTING = {
+		sync_type: 'initial_sync',
+		readBatchSize:25000,
+		notificationWindow:0,
+		notificationInterval:300,
+		readCdcInterval:500,
+		description:'',
+		drop_target:false,
+		needToCreateIndex:false,
+		increment:false,
+		isSchedule:false,
+		emailWaring: {
+			edited: false,
+			started: false,
+			error: false,
+			paused: false
+		},
+		stopOnError:false,
 	}
 ;

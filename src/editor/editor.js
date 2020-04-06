@@ -17,6 +17,7 @@ import DebugLogs from '../view/job/DebugLogs';
 import log from "../log";
 import Panel from "./ui/panel";
 import TableSelector from "../view/job/TableSelector";
+import {DEFAULT_SETTING} from "./constants";
 
 export default class Editor extends BaseObject {
 
@@ -297,7 +298,7 @@ export default class Editor extends BaseObject {
 			name: this.ui.getName(),
 			graphData: this.graph.getData(),
 			graphLib: this.graph.getGraphLib(),
-			settingData: this.graph.getSettingData(),
+			settingData: this.graph.getSettingData() || DEFAULT_SETTING,
 			graph: this.graph.graph,
 		};
 
