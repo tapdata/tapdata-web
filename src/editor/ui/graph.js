@@ -410,7 +410,7 @@ export default class Graph extends Component{
 		let toolsView = new joint.dia.ToolsView({
 			name: 'link-pointerdown',
 			tools: [
-				new ns.Vertices({ vertexAdding: false }),
+				new ns.Vertices({ vertexAdding: true }),
 				new ns.SourceAnchor(),
 				new ns.TargetAnchor(),
 				new ns.SourceArrowhead(),
