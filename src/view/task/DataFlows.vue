@@ -277,31 +277,54 @@
 					item.newStatus = 'running' === item.status ? 'running' : 'paused';
 
 					if (item.stats) {
-						item.input = item.stats.input.rows ? item.stats.input.rows:'-';
-						item.output = item.stats.output.rows ? item.stats.output.rows:'-';
-						item.transmissionTime = item.stats.transmissionTime ? item.stats.transmissionTime:'-';
 						item.hasChildren = false;
-						let children = item.stats.stagesMetrics;
+
+						let children = item.stages;
 						item.children = [];
+
 						if (children) {
 							children.map(k => {
-								let node = {
-									id: k.stageId,
-									input: k.input.rows ? k.input.rows :'-',
-									output: k.output.rows ?k.output.rows : '-',
-									transmissionTime: k.transmissionTime ? k.transmissionTime :'-',
-									hasChildren: true,
-								};
+								let stage = '';
+								let node = {};
+
+								if(item.stats.stagesMetrics){
+									stage = item.stats.stagesMetrics.filter(v => k.id === v.stageId)
+								}
+
+								if(stage.length === 0){
+									node = {
+										id: k.id,
+										name:k.name,
+										input:'--',
+										output: '--',
+										transmissionTime:'--',
+										hasChildren: true,
+									};
+								}else {
+									node = {
+										id: k.id,
+										name:k.name,
+										input: stage[0].input.rows ? stage[0].input.rows :'--',
+										output: stage[0].output.rows ?stage[0].output.rows : '--',
+										transmissionTime: stage[0].transmissionTime ? stage[0].transmissionTime :'-',
+										hasChildren: true,
+									};
+								}
 								item.children.push(node);
 							});
-						}
-					}else {
-						item.input = '-';
-						item.output = '-';
-						item.transmissionTime = '-';
-					}
+						};
+
+						if(item.stats.input && item.stats.outputs){
+							item.input = item.stats.input.rows ? item.stats.input.rows:'--';
+							item.output = item.stats.output.rows ? item.stats.output.rows:'--';
+							item.transmissionTime = item.stats.transmissionTime ? item.stats.transmissionTime:'--';
+						}else {
+							item.input = '--';
+							item.output = '--';
+							item.transmissionTime = '--';
+						};
+					};
 				});
-				console.log('data',data);
 			},
 			handleDelete(id) {
 				this.$confirm(this.$t('message.deteleMessage'), this.$t('message.prompt'), {
