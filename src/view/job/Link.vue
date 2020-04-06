@@ -141,7 +141,7 @@
 				this.$emit(EditorEventType.RESIZE);
 			},
 
-			setData(data, cell, vueAdapter){
+			setData(data, cell, isSourceDataNode, vueAdapter){
 				if( data ){
 					Object.keys(data).forEach(key => this.model[key] = data[key]);
 				}

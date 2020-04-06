@@ -84,7 +84,7 @@
 		methods: {
 			convertSchemaToTreeData,
 
-			setData(data, cell, vueAdapter) {
+			setData(data, cell, isSourceDataNode, vueAdapter) {
 				log('FieldProcess.setData', arguments);
 				if (data) {
 					Object.keys(data).forEach(key => this.model[key] = data[key]);

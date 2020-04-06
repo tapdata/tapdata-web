@@ -27,7 +27,7 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item required label="Existing data">
+			<el-form-item required label="Existing data" v-if="!isSourceDataNode">
 				<el-select
 						v-model="model.dropTable"
 						:placeholder="`Please select a collection`">
@@ -106,6 +106,8 @@
 					]
 				},
 
+				isSourceDataNode: false,
+
 				model: {
 					connectionId: "",
 					databaseType: '',
@@ -166,10 +168,11 @@
 				}
 			},
 
-			setData(data, cell, vueAdapter){
+			setData(data, cell, isSourceDataNode, vueAdapter){
 				if( data ){
 					Object.keys(data).forEach(key => this.model[key] = data[key]);
 				}
+				this.isSourceDataNode = isSourceDataNode;
 
 				this.mergedSchema = cell.getOutputSchema();
 				cell.on('change:outputSchema', () => {
@@ -179,6 +182,9 @@
 			getData(){
 				let result = _.cloneDeep(this.model);
 				result.name = result.tableName || 'Collection';
+				if( this.isSourceDataNode ){
+					delete result.dropTable;
+				}
 				return result;
 			},
 		}

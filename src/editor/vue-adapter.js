@@ -43,6 +43,8 @@ export class VueAdapter extends BaseObject {
 		let self = this;
 		let name = cell.get('type');
 		let formData = self.getFormDataForCell(cell);
+		let isDataNode = cell.isElement() && typeof cell.isDataNode === 'function' && cell.isDataNode();
+		let isSourceDataNode = isDataNode && self.graphUI.graph.getConnectedLinks(cell, {inbound: true}).length === 0;
 
 		if( vueAdapter[name] && vueAdapter[name].component){
 			let vueComponentConfig = vueAdapter[name];
@@ -67,7 +69,7 @@ export class VueAdapter extends BaseObject {
 			self.vm.$mount(vueContainerDom);
 
 			if( typeof self.vm.setData === "function"){
-				self.vm.setData(formData, cell, self);
+				self.vm.setData(formData, cell, isSourceDataNode, self);
 			} else {
 				throw new Error(`Custom form component does not implement "${name}" method`);
 			}
