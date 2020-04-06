@@ -10,14 +10,20 @@
 					size="small"
 					style="margin-right: 50px;"
 			>{{$t('dataFlow.state')}}: {{$t('dataFlow.status.' + status)}}</el-tag>
-			<el-button size="mini" type="default" v-if="['draft', 'paused', 'error'].includes(status)" @click="showSetting">Setting</el-button>
-			<el-button size="mini" type="default" v-if="dataFlowId" @click="showLogs">Logs</el-button>
 			<el-button
-					v-if="!['scheduled', 'stopping'].includes(status) && executeMode === 'normal'"
+					v-if="['draft', 'paused', 'error'].includes(status)"
+					size="mini" type="default"
+					@click="showSetting">Setting</el-button>
+			<el-button
+					v-if="dataFlowId && 'draft' !== status"
+					size="mini" type="default"
+					@click="showLogs">Logs</el-button>
+			<el-button
+					v-if="!['scheduled', 'stopping', 'force stopping'].includes(status) && executeMode === 'normal'"
 					size="mini" type="default"
 					@click="capture">Capture</el-button>
 			<el-button
-					v-if="!['scheduled', 'stopping'].includes(status) && executeMode !== 'normal'"
+					v-if="!['scheduled', 'stopping', 'force stopping'].includes(status) && executeMode !== 'normal'"
 					size="mini" type="default"
 					@click="stopCapture">Stop capture</el-button>
 			<el-button
@@ -29,7 +35,11 @@
 					size="mini" type="danger"
 					@click="stop">Stop</el-button>
 			<el-button
-					v-if="!['scheduled', 'running'].includes(status)"
+					v-if="dataFlowId !== null && ['stopping'].includes(status)"
+					size="mini" type="danger"
+					@click="stop(true)">Force Stop</el-button>
+			<el-button
+					v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
 					size="mini" type="primary"
 					@click="save">Save</el-button>
 			<!-- <el-button size="mini" type="primary" @click="switchModel">Model</el-button> -->
@@ -201,7 +211,7 @@
 				let postData = Object.assign({
 					name: editorData.name,
 					description: "",
-					status: this.status || "draft",		// draft/scheduled/running/paused/stopping/error
+					status: this.status || "draft",		// draft/scheduled/running/paused/stopping/error/force stopping
 					executeMode: this.executeMode || "normal",
 					category: "数据库克隆",
 					stopOnError: false,
@@ -371,23 +381,23 @@
 				});
 			},
 
-			stop(){
+			stop(forceStop){
 				let self = this,
 					data = {
 						id: self.dataFlowId,
-						status: 'stopping'
+						status: forceStop === true ? 'force stopping' : 'stopping'
 					};
 
-				self.$confirm('Stop jobs?', 'Tip', {
-					confirmButtonText: 'Stop it',
+				self.$confirm(forceStop === true ? 'Force Stop jobs?' : 'Stop jobs?', 'Tip', {
+					confirmButtonText: forceStop === true ? 'Force Stop' : 'Stop',
 					cancelButtonText: 'Cancel',
 					type: 'warning'
 				}).then(() => {
 					self.doSave(data, (err, dataFlow) => {
 						if( err ){
-							self.$message.error('Stop failed');
+							self.$message.error('Save failed');
 						} else {
-							self.$message.success('Stop success');
+							// self.$message.success('Stop success');
 							self.setEditable(true);
 						}
 					});
