@@ -39,7 +39,7 @@
 					size="mini" type="danger"
 					@click="stop(true)">Force Stop</el-button>
 			<el-button
-					v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
+					v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
 					size="mini" type="default"
 					@click="reset">Reset</el-button>
 			<el-button
@@ -462,12 +462,19 @@
 					data = this.getDataFlowData();
 
 				if( data.id ){
-					dataFlowsApi.reset(data.id).then(res => {
-						if (res.statusText === "OK" || res.status === 200) {
-							self.$message.success('Reset success');
-						} else {
-							self.$message.error('Reset failed');
-						}
+
+					self.$confirm('Rest Job?', 'Tip', {
+						confirmButtonText: 'Reset',
+						cancelButtonText: 'Cancel',
+						type: 'warning'
+					}).then(() => {
+						dataFlowsApi.reset(data.id).then(res => {
+							if (res.statusText === "OK" || res.status === 200) {
+								self.$message.success('Reset success');
+							} else {
+								self.$message.error('Reset failed');
+							}
+						});
 					});
 				}
 			},
