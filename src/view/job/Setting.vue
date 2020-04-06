@@ -3,11 +3,11 @@
 		<el-form label-width="40px" :data="formData" >
 			<el-row>
 				<el-col :span="12">
-					<el-form-item>
+					<!-- <el-form-item>
 						<div>{{$t('dataFlow.taskName')}}</div>
 						<el-input
 								:placeholder="$t('dataFlow.taskName')" v-model="formData.name"></el-input>
-					</el-form-item>
+					</el-form-item> -->
 				</el-col>
 				<el-col :span="11">
 					<el-form-item>
@@ -126,7 +126,6 @@
 		data() {
 			return {
 				formData: {
-					name: '',
 					sync_type: 'initial_sync', // 默认值：initial_sync+cdc； initial_sync cdc initial_sync+cdc
 					readBatchSize:25000,
 					notificationWindow:0,
