@@ -41,7 +41,7 @@
 			loadEchart(id, data) {
 				let _this = this;
 				_this.myChart = Echarts.init(document.getElementById(id));
-				_this.myChart.clear();   //清空再重绘
+				// _this.myChart.clear();   //清空再重绘
 				let publicCharts = _this.echartOption(data);
 				_this.myChart.setOption(publicCharts);
         /*窗口自适应*/
@@ -166,9 +166,9 @@
 						},
 					},
 					// type: 'value',
-					// axisLabel: {
-					//   // formatter: configures.yAxis.axisLabel.formatter
-					// }
+					axisLabel: {
+					  formatter: configures.yAxis.axisLabel.formatter
+					},
 					// axisLine: {
 					//   lineStyle: {
 					//     color: this.echartsXYcolor

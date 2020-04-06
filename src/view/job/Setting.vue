@@ -121,29 +121,14 @@
 </template>
 
 <script>
+	import {DEFAULT_SETTING} from "../../editor/constants";
+	import _ from 'lodash';
+
 	export default {
 		name: "Setting.vue",
 		data() {
 			return {
-				formData: {
-					sync_type: 'initial_sync', // 默认值：initial_sync+cdc； initial_sync cdc initial_sync+cdc
-					readBatchSize:25000,
-					notificationWindow:0,
-					notificationInterval:300,
-					readCdcInterval:500,
-					description:'', //描述
-					drop_target:false, //是否同步
-					needToCreateIndex:false, //索引
-					increment:false, //sql
-					isSchedule:false, //调度任务
-					emailWaring: {        // 发送告警邮件
-						edited: false,            // 当任务被编辑时
-						started: false,      // 当任务启动时
-						error: false,      // 当任务出错
-						paused: false      // 任务停止
-					},
-					stopOnError:false,
-				},
+				formData: _.cloneDeep(DEFAULT_SETTING)
 			};
 		},
 		mounted() {

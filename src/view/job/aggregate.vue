@@ -1,68 +1,46 @@
+<script src="../../i18n/langs/cn.js"></script>
 <template>
     <div class="aggregate">
-      <el-form ref="form" :model="form" label-width="200px">
-        <el-form-item label="window type">
-          <el-select v-model="form.windowType" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Time Window">
-          <i class="el-icon-info"></i>
-          <el-select v-model="form.windowTime" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Time Zone">
-          <i class="el-icon-info"></i>
-          <el-select v-model="form.Zone" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Number of Time Windows to Remember">
-          <el-input v-model="form.number"></el-input>
-        </el-form-item>
-        <el-form-item label="Aggregations">
-          <el-row :gutter="20" class="loopFrom" v-for="(item, index) in form.dynamicItem" :key="index">
-            <el-col :span="20" class="fromLoopBox">
-              <el-form-item label="Enabled" :prop="'dynamicItem.' + index +'.enabled'">
-                <el-checkbox v-model="item.enabled"></el-checkbox>
-              </el-form-item>
-              <el-form-item label="Name" :prop="'dynamicItem.' + index +'.name'">
-                <el-input v-model="form.name"></el-input>
-              </el-form-item>
-              <el-form-item label="Aggregation Title" :prop="'dynamicItem.' + index +'.aggregationTitle'">
-                <el-select v-model="item.aggregationTitle " placeholder="请选择活动区域">
-                  <el-option label="区域一" value="shanghai"></el-option>
-                  <el-option label="区域二" value="beijing"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="Filter" :prop="'dynamicItem.' + index +'.filter'">
-                <el-checkbox v-model="item.filter"></el-checkbox>
-              </el-form-item>
-              <el-form-item v-if="item.filter" label="Filter Predicate" :prop="'dynamicItem.' + index +'.filterPredicate'">
-                <el-input v-model="item.filterPredicate"></el-input>
-              </el-form-item>
-              <el-form-item label="Aggregation Function" :prop="'dynamicItem.' + index +'.aggregationFun'">
-                <el-select v-model="item.aggregationFun " placeholder="请选择活动区域">
-                  <el-option label="区域一" value="shanghai"></el-option>
-                  <el-option label="区域二" value="beijing"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="Group By" :prop="'dynamicItem.' + index +'.groupBy'">
-                <el-checkbox v-model="item.groupBy "></el-checkbox>
-              </el-form-item>
-              <el-form-item v-if="item.groupBy" label="Group By Expression" :prop="'dynamicItem.' + index +'.groupByExpression'">
-                <el-input v-model="item.groupByExpression" ></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="2" class="right">
-              <span @click="addRow" class="el-icon-circle-plus"></span>
-              <span @click="removeRow" class="el-icon-remove"></span>
-            </el-col>
-          </el-row>
+      <el-form ref="form" :model="form" label-position="top" label-width="200px">
+        <el-col :span="21">
+          <el-form-item :label="$t('dataFlow.nodeName')">
+            <el-input v-model="form.name" maxlength="20" show-word-limit></el-input>
+          </el-form-item>
+        </el-col>
+        <el-row :gutter="20" class="loopFrom" v-for="(item, index) in form.arrregations" :key="index">
+          <el-col :span="21" class="fromLoopBox">
+            <el-row :gutter="10">
+              <el-col :span="6">
+                <el-form-item :label="$t('dataFlow.aggFunction')" :prop="'arrregations.' + index +'.aggFunction'">
+                  <el-select v-model="item.aggFunction " placeholder="请选择活动区域">
+                    <el-option
+                      v-for="item in selectList"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="18">
+                <el-form-item :label=" '> ' + $t('dataFlow.aggExpression')" :prop="'arrregations.' + index +'.aggExpression'">
+                  <el-input v-model="item.aggExpression" :disabled="item.aggFunction === 'COUNT'" ></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-form-item  :label="$t('dataFlow.filterPredicate')" :prop="'arrregations.' + index +'.filterPredicate'">
+              <el-input v-model="item.filterPredicate" ></el-input>
+            </el-form-item>
+            <el-form-item  :label="$t('dataFlow.groupByExpression')" :prop="'arrregations.' + index +'.groupByExpression'">
+              <el-input v-model="item.groupByExpression" ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="2" class="right">
+            <span @click="removeRow(item,index)" class="iconfont icon-quxiao remove"></span>
+          </el-col>
+        </el-row>
+        <el-form-item>
+          <el-button @click="addRow">add</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -73,19 +51,24 @@
       name: "aggregate",
       data(){
         return {
+          selectList: [
+            {label: 'COUNT',value:'COUNT'},
+            {label: 'AUG(double)',value:'AUGDOUBLE'},
+            {label: 'AUG(int)',value:'AUGINT'},
+            {label: 'StdDev',value:'StdDev'},
+            {label: 'MIN(double)',value:'MINDOUBLE'},
+            {label: 'MIN(int)',value:'MININT'},
+            {label: 'MAX(double)',value:'MAXDOUBLE'},
+            {label: 'MAX(int)',value:'MAXINT'},
+            {label: 'SUM(double)',value:'SUMDOUBLE'},
+            {label: 'SUM(int)',value:'SUMINT'},
+          ],
           form:{
-            windowType: '',
-            windowTime: '',
-            Zone: '',
-            number: '',
-            dynamicItem:[{
-              enabled: '',
-              name: '',
-              aggregationTitle: '',
-              filter: '',
+            name: '',
+            arrregations:[{
               filterPredicate: '',
-              aggregationFun: '',
-              groupBy: '',
+              aggFunction: '',
+              aggExpression: '',
               groupByExpression: ''
             }]
           },
@@ -107,12 +90,14 @@
             groupBy: '',
             groupByExpression: ''
           };
-
-          this.form.dynamicItem.push(list);
+          this.form.arrregations.push(list);
         },
 
-        removeRow(){
-          console.log("shanchu");
+        removeRow(item,index){
+          this.index = this.form.arrregations.indexOf(item);
+          if (index !== -1) {
+            this.form.arrregations.splice(index, 1);
+          }
         }
       }
     };
@@ -122,13 +107,35 @@
   .aggregate {
     width: 100%;
     height: 100%;
+    padding: 20px;
     overflow: auto;
     box-sizing: border-box;
-    .fromLoopBox {}
+    background-color: #fafafa;
+    .loopFrom {
+      margin: 0!important;
+      .fromLoopBox {
+        padding: 10px;
+        margin-bottom: 12px;
+        box-sizing: border-box;
+        background-color: #fff;
+        border: 1px solid #dedee4;
+      }
+      .remove{
+        font-weight: bold;
+        cursor: pointer;
+        border: 1px solid #DEDEE4;
+      }
+    }
   }
 </style>
 <style lang="less">
   .aggregate{
+    .el-form--label-top .el-form-item__label {
+      padding: 0;
+      line-height: 26px;
+    }
+    .el-select { width: 100%;}
 
+    .el-form-item { margin-bottom: 12px;}
   }
 </style>
