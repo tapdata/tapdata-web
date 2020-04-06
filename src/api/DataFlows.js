@@ -15,4 +15,8 @@ export default class DataFlows extends PublicAPI{
 	copy(id) {
 		return axios.post(`${this.url}/${id}/copy`);
 	}
+
+	reset(id) {
+		return axios.post(`${this.url}/${id}/reset`);
+	}
 }

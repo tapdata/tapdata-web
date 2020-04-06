@@ -40,6 +40,10 @@
 					@click="stop(true)">Force Stop</el-button>
 			<el-button
 					v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
+					size="mini" type="default"
+					@click="reset">Reset</el-button>
+			<el-button
+					v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
 					size="mini" type="primary"
 					@click="save">Save</el-button>
 			<!-- <el-button size="mini" type="primary" @click="switchModel">Model</el-button> -->
@@ -448,6 +452,21 @@
 						} else {
 							this.$message.success('Save success');
 							// this.showCapture();
+						}
+					});
+				}
+			},
+
+			reset() {
+				let self = this,
+					data = this.getDataFlowData();
+
+				if( data.id ){
+					dataFlowsApi.reset(data.id).then(res => {
+						if (res.statusText === "OK" || res.status === 200) {
+							self.$message.success('Reset success');
+						} else {
+							self.$message.error('Reset failed');
 						}
 					});
 				}
