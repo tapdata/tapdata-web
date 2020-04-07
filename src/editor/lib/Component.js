@@ -6,6 +6,7 @@
 import BaseObject from './BaseObject';
 import {EditorEventType} from "./events";
 import $ from 'jquery';
+import log from "../../log";
 export default class Component extends BaseObject{
 
 	constructor(opts){
@@ -90,12 +91,14 @@ export default class Component extends BaseObject{
 			}
 		});
 		this.childs.splice(0, this.childs.length);
-		if( this.getContentEl() ){
+		/*if( this.getContentEl() ){
 			this.getContentEl().find('>*').remove();
-		}
+		}*/
 	}
 
 	destroy(){
+		log(`${this.constructor.name}.destroy`);
+		this.el.remove();
 		this.removeAll();
 	}
 

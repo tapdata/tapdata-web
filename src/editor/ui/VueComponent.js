@@ -63,7 +63,8 @@ export default class VueComponent extends Component{
 	}
 
 	destroy(){
-		log('VueComponent.destroy');
+		let component = this.opts.component;
+		log(`VueComponent[${component && component.name}].destroy`);
 		if( this.vm ){
 			this.vm.$destroy();
 		}

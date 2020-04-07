@@ -359,6 +359,10 @@ export default class Editor extends BaseObject {
 		return true;
 	}
 
+	destroy(){
+		this.ui.destroy();
+	}
+
 	getUI(){
 		return this.ui;
 	}
