@@ -4,13 +4,15 @@
  * @description
  */
 import {options} from "../lib/rappid/config";
-import FieldProcess from "../../view/job/FieldProcess";
+import aggregate from "../../view/job/aggregate";
 import {FORM_DATA_KEY} from "../constants";
 import log from "../../log";
+import {uuid} from "../util/Schema";
+import _ from 'lodash';
 
-export const fieldProcessConfig = {
+export const aggregateConfig = {
 
-	type: 'app.FieldProcess',
+	type: 'app.Aggregate',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
@@ -28,7 +30,7 @@ export const fieldProcessConfig = {
 					ry: 14
 				},
 				label: {
-					text: 'Field Processor',
+					text: 'Aggregate',
 				}
 			}
 		},
@@ -44,30 +46,32 @@ export const fieldProcessConfig = {
 			},
 			mergeOutputSchema(outputSchema) {
 				let data = this.getFormData();
-				log('FieldProcess.mergeOutputSchema', data, outputSchema);
+				log('aggregate.mergeOutputSchema', data, outputSchema);
 				if (!outputSchema || !data)
 					return;
-				data.operations.map((item, index) => {
-					let targetIndex = outputSchema.fields.findIndex(function (n, index) {
-						return n.id === item.id;
-					});
-					if (targetIndex === -1) {
-						// data.operations.splice(index,1); //删除找不到id的数据
-						return;
-					}
-					if (item.op === "RENAME") {
-						let name = outputSchema.fields[targetIndex].field_name;
-            name = name.split('.');
-            name[name.length - 1] = item.operand;
-						outputSchema.fields[targetIndex].field_name = name.join('.');
-					} else if (item.op === "CONVERT") {
-						outputSchema.fields[targetIndex].javaType = item.operand;
-					} else if (item.op === "REMOVE") {
-						outputSchema.fields.splice(targetIndex, 1);
-					}
 
-				});
-				log('FieldProcess.mergeOutputSchema', outputSchema);
+				let groupFields = [];
+				let functionNames = [];
+        data.arrregations.forEach(stage => {
+          if( stage.groupByExpression ) groupFields.push(...stage.groupByExpression.split(','));
+          if( stage.aggExpression ) functionNames.push(stage.aggFunction);
+        });
+
+        let fields = outputSchema.fields || [];
+        outputSchema.fields = fields.filter(field => groupFields.includes(field.field_name) ) || [];
+
+        functionNames.forEach( fnName => {
+          outputSchema.fields.push(Object.assign(_.cloneDeep(fields[0] || {}),{
+            "field_name": fnName,
+            "data_type":"DOUBLE",
+            "primary_key_position":0,
+            "original_field_name":fnName,
+            "javaType":"Double",
+            "autoincrement":false,
+            "id": uuid()
+          }));
+        });
+				log('Aggregate.mergeOutputSchema',_.cloneDeep(fields), outputSchema);
 				return outputSchema;
 			},
 
@@ -91,7 +95,20 @@ export const fieldProcessConfig = {
 			 */
 			allowSource(sourceCell) {
 				return !['app.Database'].includes(sourceCell.get('type'));
-			}
+			},
+
+      validate(data) {
+        data = data || this.getFormData();
+        let name = this.attr('label/text');
+        if( !data )
+          throw new Error(name + ': Settings cannot be none.');
+
+        if(data.arrregations && data.arrregations.length === 0)
+          throw new Error(name + ': must have one stage');
+
+        // TODO: validate arrregations
+        return true;
+      },
 		},
 		//staticProperties: {}
 	},
@@ -233,7 +250,7 @@ export const fieldProcessConfig = {
 				refY: '0%'
 			},
 			label: {
-				text: 'Field',
+				text: 'aggregate',
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -253,7 +270,7 @@ export const fieldProcessConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: FieldProcess,
+		component: aggregate,
 	}
 
 };

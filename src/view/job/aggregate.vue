@@ -1,9 +1,9 @@
-<script src="../../i18n/langs/cn.js"></script>
+
 <template>
     <div class="aggregate">
       <el-form ref="form" :model="form" label-position="top" label-width="200px">
-        <el-col :span="21">
-          <el-form-item :label="$t('dataFlow.nodeName')">
+        <el-col :span="21" class="aggregateName">
+          <el-form-item :label="$t('dataFlow.nodeName')" required>
             <el-input v-model="form.name" maxlength="20" show-word-limit></el-input>
           </el-form-item>
         </el-col>
@@ -12,7 +12,7 @@
             <el-row :gutter="10">
               <el-col :span="6">
                 <el-form-item :label="$t('dataFlow.aggFunction')" :prop="'arrregations.' + index +'.aggFunction'">
-                  <el-select v-model="item.aggFunction " placeholder="请选择活动区域">
+                  <el-select v-model="item.aggFunction ">
                     <el-option
                       v-for="item in selectList"
                       :key="item.value"
@@ -32,7 +32,14 @@
               <el-input v-model="item.filterPredicate" ></el-input>
             </el-form-item>
             <el-form-item  :label="$t('dataFlow.groupByExpression')" :prop="'arrregations.' + index +'.groupByExpression'">
-              <el-input v-model="item.groupByExpression" ></el-input>
+              <el-select v-model="item.groupByExpression ">
+                <el-option
+                  v-for="item in groupList"
+                  :key="item.field_name"
+                  :label="item.field_name"
+                  :value="item.field_name">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="2" class="right">
@@ -47,22 +54,21 @@
 </template>
 
 <script>
+    import _ from "lodash";
+    import log from '../../log';
+    import {mergeJoinTablesToTargetSchema} from "../../editor/util/Schema";
     export default {
-      name: "aggregate",
+      name: "Aggregate",
       data(){
         return {
           selectList: [
-            {label: 'COUNT',value:'COUNT'},
-            {label: 'AUG(double)',value:'AUGDOUBLE'},
-            {label: 'AUG(int)',value:'AUGINT'},
-            {label: 'StdDev',value:'StdDev'},
-            {label: 'MIN(double)',value:'MINDOUBLE'},
-            {label: 'MIN(int)',value:'MININT'},
-            {label: 'MAX(double)',value:'MAXDOUBLE'},
-            {label: 'MAX(int)',value:'MAXINT'},
-            {label: 'SUM(double)',value:'SUMDOUBLE'},
-            {label: 'SUM(int)',value:'SUMINT'},
+            {label: 'AVG',value:'AVG'},
+            {label: 'SUM',value:'SUM'},
+            {label: 'MAX',value:'MAX'},
+            {label: 'MIN',value:'MIN'},
+            {label: 'COUNT',value:'COUNT'}
           ],
+          groupList:[],
           form:{
             name: '',
             type:"aggregation_processor",
@@ -77,10 +83,10 @@
       },
 
       watch: {
-        formData: {
+        form: {
           deep: true,
           handler(){
-            this.$emit('backAggregate', this.form);
+            this.$emit('dataChanged', this.getData());
           }
         }
       },
@@ -88,13 +94,9 @@
       methods: {
         addRow() {
           let list = {
-            enabled: '',
-            name: '',
-            aggregationTitle: '',
-            filter: '',
             filterPredicate: '',
-            aggregationFun: '',
-            groupBy: '',
+            aggFunction: '',
+            aggExpression: '',
             groupByExpression: ''
           };
           this.form.arrregations.push(list);
@@ -105,7 +107,28 @@
           if (index !== -1) {
             this.form.arrregations.splice(index, 1);
           }
-        }
+        },
+
+        setData(data, cell, isSourceDataNode, vueAdapter){
+          if( data ){
+            Object.keys(data).forEach(key => this.form[key] = data[key]);
+          }
+
+          let inputSchemas = cell.getInputSchema();
+          let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
+          let object= {};
+          this.groupList = schema.fields;
+
+          this.groupList=this.groupList.reduce((cur,next) => {
+              object[next.field_name] ? "" : object[next.field_name] = true && cur.push(next);
+              return cur;
+            },[]);
+          log('Aggregate.setData.inputSchemas', inputSchemas, this.groupList);
+        },
+
+        getData() {
+          return _.cloneDeep(this.form);
+        },
       }
     };
 </script>
@@ -144,5 +167,9 @@
     .el-select { width: 100%;}
 
     .el-form-item { margin-bottom: 12px;}
+
+    .aggregateName .el-form-item__content {
+      z-index: 2;
+    }
   }
 </style>

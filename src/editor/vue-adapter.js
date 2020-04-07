@@ -9,6 +9,7 @@ import {EditorEventType} from "./lib/events";
 import BaseObject from './lib/BaseObject';
 import log from '../log';
 import {FORM_DATA_KEY} from "./constants";
+import i18n from '../i18n/i18n';
 
 export const vueAdapter = {};
 //const privateMap = new WeakMap();
@@ -52,6 +53,7 @@ export class VueAdapter extends BaseObject {
 			let settings = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
 
 			self.vm = new Comp({
+        i18n,
 				propsData: Object.assign({}, vueComponentConfig.props || {})
 			});
 
