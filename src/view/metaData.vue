@@ -2,8 +2,7 @@
 	<div>
 		<div class="box-tree">
 			<div class="box-head">
-				<el-input class="search" v-model="filterText"><i slot="suffix"
-																 class="el-input__icon el-icon-search"></i></el-input>
+				<el-input class="search" v-model="filterText"><i slot="suffix" class="el-input__icon el-icon-search"></i></el-input>
 				<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
 			</div>
 			<el-tree
@@ -18,8 +17,7 @@
 				<span>
 					<span v-if="data.meta_type ==='database'" class="iconfont icon-shujuku filter-icon"></span>
 					<span v-if="data.meta_type ==='table'" class="iconfont icon-table2  filter-icon-table"></span>
-					<span v-if="data.meta_type ==='collection'"
-						  class="iconfont icon-collection filter-icon-table"></span>
+					<span v-if="data.meta_type ==='collection'" class="iconfont icon-collection filter-icon-table"></span>
 					<span class="table-label">{{ node.label }}</span>
 				</span>
 			</span>
@@ -27,16 +25,44 @@
 		</div>
 		<div class="box-ul">
 			<ul class="classify-ul">
-				<li v-for="item in listdata" :key="item.id">
-					<div>
-						<span class="iconfont icon-table2 icon-color"></span>
-						<span>{{item.value}}</span>
-					</div>
-					<div>
-
-					</div>
-
-				</li>
+				<el-input
+						placeholder="请输入内容"
+						v-model="search">
+					<i slot="prefix" class="el-input__icon el-icon-search"></i>
+				</el-input>
+				<el-dropdown>
+					<span class="el-dropdown-link">
+					下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
+					</span>
+					<el-dropdown-menu slot="dropdown">
+						<el-dropdown-item>黄金糕</el-dropdown-item>
+						<el-dropdown-item>狮子头</el-dropdown-item>
+						<el-dropdown-item>螺蛳粉</el-dropdown-item>
+						<el-dropdown-item disabled>双皮奶</el-dropdown-item>
+						<el-dropdown-item divided>蚵仔煎</el-dropdown-item>
+					</el-dropdown-menu>
+				</el-dropdown>
+				<el-dropdown>
+					<span class="el-dropdown-link">
+					下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
+					</span>
+					<el-dropdown-menu slot="dropdown">
+						<el-dropdown-item>黄金糕</el-dropdown-item>
+						<el-dropdown-item>狮子头</el-dropdown-item>
+						<el-dropdown-item>螺蛳粉</el-dropdown-item>
+						<el-dropdown-item disabled>双皮奶</el-dropdown-item>
+						<el-dropdown-item divided>蚵仔煎</el-dropdown-item>
+					</el-dropdown-menu>
+				</el-dropdown>
+				<el-checkbox  v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+				<el-checkbox-group v-model="checkData" @change="handleCheckedCitiesChange">
+					<li  v-for="item in listdata" :key="item.id">
+						<el-checkbox :label="item.id">
+							<span class="iconfont icon-table2 icon-color"></span>
+							<span>{{item.original_name}}</span>
+						</el-checkbox>
+					</li>
+				</el-checkbox-group>
 			</ul>
 		</div>
 	</div>
@@ -56,6 +82,7 @@
 				count: 0,
 				filterText: '',
 				data: [],
+				search:'',
 				default_expanded: false,
 				defaultProps: {
 					children: 'children',
@@ -68,6 +95,8 @@
 					database: 'app.Database',
 				},
 				listdata: [],
+				checkAll: [],
+				checkData: [],
 			};
 		},
 		mounted() {
@@ -108,7 +137,6 @@
 								});
 							});
 							resolve(children);
-							log('data', children);
 						}
 					}
 				}).catch(e => {
@@ -154,6 +182,7 @@
 							self.listdata = res.data;
 						}
 					}
+					log('listdata', self.listdata.length);
 				}).catch(e => {
 					this.$message.error('MetadataInstances error');
 				});
@@ -165,11 +194,19 @@
 					self.$refs.tree.store.nodesMap[treeList[i].id].expanded = false;
 				}
 			},
+			handleCheckAllChange(val) {
+				this.checkData = val ;
+				log('checkData', val);
+			},
+			handleCheckedCitiesChange(value) {
+				this.checkAll =value ;
+				log('value', value);
+			}
 		}
 	};
 </script>
 
-<style>
+<style scoped lang="less">
 	.box {
 		width: 234px;
 	}
@@ -231,6 +268,7 @@
 
 	.box-ul {
 		float: left;
+		margin-left: 50px;
 	}
 
 	.classify-ul {
@@ -241,11 +279,13 @@
 		color: #303133;
 		transition: .3s;
 		list-style: none;
-		margin-left: 50px;
 		font-size: 12px;
 		width: 260px;
 	}
-
+	.classify-ul{
+		height: calc(100vh - 20px);
+		overflow: auto;
+	}
 	.classify-ul li {
 		width: 234px;
 		height: 43px;
@@ -262,4 +302,5 @@
 		color: #599656;
 		font-size: 14px;
 	}
+
 </style>

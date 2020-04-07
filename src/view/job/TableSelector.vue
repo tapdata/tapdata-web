@@ -14,7 +14,7 @@
 				ref="tree"
 		>
 			<span class="custom-tree-node" slot-scope="{ node, data}">
-				<span>
+				<span @dblclick="handleGraph(data)">
 					<span v-if="data.meta_type ==='database'" class="iconfont icon-shujuku filter-icon"></span>
 					<span v-if="data.meta_type ==='table'" class="iconfont icon-table2  filter-icon-table"></span>
 					<span v-if="data.meta_type ==='collection'" class="iconfont icon-collection filter-icon-table"></span>
@@ -221,7 +221,7 @@
 	}
 
 	.search {
-		width: 190px;
+		width: 77%;
 		margin-bottom: 10px;
 	}
 

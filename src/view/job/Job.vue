@@ -113,10 +113,11 @@
 			});
 		},
 
-		destroy(){
+		beforeDestroy(){
 			if( this.timeoutId ){
 				clearTimeout(this.timeoutId);
 			}
+			this.editor.destroy();
 		},
 
 		methods: {

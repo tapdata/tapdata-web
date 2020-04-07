@@ -158,7 +158,9 @@
 				let self = this;
 				connectionApi.get([connectionId]).then(result => {
 					if( result.data ){
-						self.schemas = result.data.schema && result.data.schema.tables || [];
+						let schemas = result.data.schema && result.data.schema.tables || [];
+						schemas = schemas.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+						self.schemas = schemas;
 					}
 				});
 
