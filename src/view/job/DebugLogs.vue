@@ -52,14 +52,14 @@
 		methods: {
 			async getLogsData() {  //获取日志
 				let paramas = {
-					'filter[order]': 'date DESC',
+					'filter[order]': 'millis DESC',
 					'filter[where][contextMap.dataFlowId][regexp]': `^${this.dataFlow.id}$`
 				};
 				if (!this.lastTime) {
 					paramas['filter[limit]'] = 100;
-				} else {
-					paramas['filter[where][millis][gt]'] = this.lastTime;
-				}
+				} else if (this.lastTime && !this.search) {
+          paramas['filter[where][millis][gt]'] = this.lastTime;
+        }
 				if (this.search) {
 					paramas['filter[where][$text][search]'] = this.search;
 				}
@@ -73,6 +73,8 @@
 
 							for (let i = logCount - 1; i >= 0; i--) {
 								let item = res.data[i];
+                item.date = item.date ? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : '';
+                item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
 								$(this.$refs.logContainer).prepend(
 									$(`<li style="padding-bottom:10px;">
                       <span>[<i style="font-weight: bold;" class="${item.level == 'ERROR' ? 'redActive' : ''}">${item.level}</i>]</span> &nbsp;
@@ -82,8 +84,6 @@
                       <span>${item.message}</span>
                     </li>`)
 								);
-								item.date = item.date ? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : '';
-								item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
 							}
 						}
 					}

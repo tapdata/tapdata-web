@@ -64,6 +64,7 @@
       // 这是一个定时器
       this.timer = setInterval(() => {
         this.getDataTableApi();
+        this.getSelectData();
       }, 10000);
 
       this.$on("selected:stage", (selectStage) => {

@@ -65,6 +65,7 @@
           ],
           form:{
             name: '',
+            type:"aggregation_processor",
             arrregations:[{
               filterPredicate: '',
               aggFunction: '',
@@ -75,7 +76,13 @@
         };
       },
 
-      mounted(){
+      watch: {
+        formData: {
+          deep: true,
+          handler(){
+            this.$emit('backAggregate', this.form);
+          }
+        }
       },
 
       methods: {

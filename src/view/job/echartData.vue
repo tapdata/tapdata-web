@@ -465,12 +465,12 @@
           let inputCount = data.inputCount;
           let outputCount = data.outputCount;
           if (ele === "flow") {
-            this.flow.inputNumber = inputCount ? inputCount : 0;
-            this.flow.outputNumber = outputCount ? outputCount : 0;
+            this.flow.inputNumber = inputCount >0 ? inputCount : 0;
+            this.flow.outputNumber = outputCount>0 ? outputCount : 0;
             this.getScreening(time, inputCount, outputCount);
           } else if (ele === "stage") {
-            this.flow.inputNumber = inputSize ? inputSize : 0;
-            this.flow.outputNumber = outputSize ? outputSize : 0;
+            this.flow.inputNumber = inputSize>0 ? inputSize : 0;
+            this.flow.outputNumber = outputSize>0 ? outputSize : 0;
             this.getScreening(time, inputSize, outputSize);
           }
         } else if (type === "throughput") {
@@ -674,6 +674,7 @@
 
     destroyed() {
       //清除定时器
+      console.log("清除定时器");
       clearInterval(this.timer);
       this.timer = null;
     }
