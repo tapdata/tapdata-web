@@ -130,7 +130,8 @@ const cn = {
       aggFunction: '聚合函数',
       aggExpression: '聚合表达式',
       filterPredicate: '过滤器',
-      groupByExpression: '分组表达式'
+      groupByExpression: '分组表达式',
+      polymerization: '聚合处理'
 		},
 		...zhLocale
 	}

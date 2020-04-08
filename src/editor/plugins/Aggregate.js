@@ -52,8 +52,8 @@ export const aggregateConfig = {
 
 				let groupFields = [];
 				let functionNames = [];
-        data.arrregations.forEach(stage => {
-          if( stage.groupByExpression ) groupFields.push(...stage.groupByExpression.split(','));
+        data.aggregations.forEach(stage => {
+          if( stage.groupByExpression ) groupFields.push(...stage.groupByExpression);
           if( stage.aggExpression ) functionNames.push(stage.aggFunction);
         });
 
@@ -103,14 +103,26 @@ export const aggregateConfig = {
         if( !data )
           throw new Error(name + ': Settings cannot be none.');
 
-        if(data.arrregations && data.arrregations.length === 0)
+        if(data.aggregations && data.aggregations.length === 0)
           throw new Error(name + ': must have one stage');
 
+        if (!data.name)
+          throw new Error(name + ': Name cannot be empty.');
+
+        if (data.aggregations && data.aggregations.length > 0) {
+          data.aggregations.forEach( item =>{
+            if (!item.aggFunction)
+              throw new Error(name + ': aggFunction cannot be empty.');
+            if (!item.groupByExpression)
+              throw new Error(name + ': groupByExpression cannot be empty.');
+            if (!item.aggExpression && item.aggFunction !=="COUNT")
+              throw new Error(name + ': aggExpression cannot be empty.');
+          });
+        }
         // TODO: validate arrregations
         return true;
       },
 		},
-		//staticProperties: {}
 	},
 
 	styleFormConfig: {
