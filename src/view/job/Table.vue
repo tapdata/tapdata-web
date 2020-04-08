@@ -45,7 +45,7 @@
 			</el-form-item>
 
 		</el-form>
-		<div class="e-entity-wrap" style="padding-left: 130px;">
+		<div class="e-entity-wrap" style="text-align: center;">
 			<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 		</div>
 	</div>

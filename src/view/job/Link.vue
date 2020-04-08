@@ -145,6 +145,11 @@
 				if( data ){
 					Object.keys(data).forEach(key => this.model[key] = data[key]);
 				}
+
+				if( cell.getSourceCell()) {
+					this.model.joinTable.stageId = cell.getSourceCell().id;
+				}
+
 				this.$emit(EditorEventType.RESIZE);
 
 				this.showMapping(data, cell, vueAdapter);
