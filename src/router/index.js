@@ -4,6 +4,7 @@ import layout from '../view/layout';
 import Job from '../view/job/Job';
 import Aggregate from '../view/job/aggregate';
 import echartData from '../view/job/echartData';
+import Test from '../view/job/Test';
 
 import clusterManagement from '../view/clusterManagement/clusterManagement';
 import dailyRecord from '../view/clusterManagement/dailyRecord';
@@ -51,6 +52,10 @@ export default new Router({
 			path: '/metadata',
 			name: 'metadata',
 			component: metaData
+		},{
+			path: '/test',
+			name: 'test',
+			component: Test
 		},
 	]
 });
