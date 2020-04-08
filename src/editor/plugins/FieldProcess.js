@@ -17,7 +17,7 @@ export const fieldProcessConfig = {
 			size: {width: 120, height: 28},
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/o-js.svg',
+					xlinkHref: 'static/editor/o-field-processor.svg',
 					refWidth: '25%',
 					refHeight: '84%',
 					refX: '-8%',
@@ -226,7 +226,7 @@ export const fieldProcessConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/js.svg',
+				xlinkHref: 'static/editor/field-processor.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',

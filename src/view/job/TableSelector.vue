@@ -2,7 +2,7 @@
 	<div class="box">
 		<div class="box-head">
 			<el-input class="search" v-model="filterText"><i slot="suffix" class="el-input__icon el-icon-search"></i></el-input>
-			<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
+			<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
 		</div>
 		<el-tree
 				:data="data"
@@ -199,7 +199,7 @@
 	};
 </script>
 
-<style>
+<style scoped>
 	.box {
 		width: 234px;
 	}
@@ -221,7 +221,7 @@
 	}
 
 	.search {
-		width: 77%;
+		width: 77% !important;
 		margin-bottom: 10px;
 	}
 
@@ -242,6 +242,8 @@
 	.table-label{
 		display: inline-block;
 		width: 140px;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	.box-head{
 		position: fixed;
