@@ -11,7 +11,7 @@
           <el-col :span="21" class="fromLoopBox">
             <el-row :gutter="10">
               <el-col :span="6">
-                <el-form-item :label="$t('dataFlow.aggFunction')" :prop="'arrregations.' + index +'.aggFunction'">
+                <el-form-item :label="$t('dataFlow.aggFunction')" :prop="'arrregations.' + index +'.aggFunction'" required>
                   <el-select v-model="item.aggFunction ">
                     <el-option
                       v-for="item in selectList"
@@ -23,7 +23,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="18">
-                <el-form-item :label=" '> ' + $t('dataFlow.aggExpression')" :prop="'arrregations.' + index +'.aggExpression'">
+                <el-form-item :label=" '> ' + $t('dataFlow.aggExpression')" :prop="'arrregations.' + index +'.aggExpression'" required>
                   <el-input v-model="item.aggExpression" :disabled="item.aggFunction === 'COUNT'" ></el-input>
                 </el-form-item>
               </el-col>
@@ -32,7 +32,7 @@
               <el-input v-model="item.filterPredicate" ></el-input>
             </el-form-item>
             <el-form-item  :label="$t('dataFlow.groupByExpression')" :prop="'arrregations.' + index +'.groupByExpression'">
-              <el-select v-model="item.groupByExpression ">
+              <el-select v-model="item.groupByExpression"  multiple>
                 <el-option
                   v-for="item in groupList"
                   :key="item.field_name"
@@ -47,7 +47,7 @@
           </el-col>
         </el-row>
         <el-form-item>
-          <el-button @click="addRow">add</el-button>
+          <el-button @click="addRow">+ add new aggregation</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -57,6 +57,7 @@
     import _ from "lodash";
     import log from '../../log';
     import {mergeJoinTablesToTargetSchema} from "../../editor/util/Schema";
+    let counter = 0;
     export default {
       name: "Aggregate",
       data(){
@@ -74,8 +75,8 @@
             type:"aggregation_processor",
             arrregations:[{
               filterPredicate: '',
-              aggFunction: '',
-              aggExpression: '',
+              aggFunction: 'COUNT',
+              aggExpression: '1',
               groupByExpression: ''
             }]
           },
@@ -95,8 +96,8 @@
         addRow() {
           let list = {
             filterPredicate: '',
-            aggFunction: '',
-            aggExpression: '',
+            aggFunction: 'COUNT',
+            aggExpression: '1',
             groupByExpression: ''
           };
           this.form.arrregations.push(list);
@@ -117,13 +118,22 @@
           let inputSchemas = cell.getInputSchema();
           let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
           let object= {};
-          this.groupList = schema.fields;
-
-          this.groupList=this.groupList.reduce((cur,next) => {
+          this.groupList = schema.fields || [];
+          if(!!this.groupList && this.groupList.length>0)  {
+            this.groupList=this.groupList.reduce((cur,next) => {
               object[next.field_name] ? "" : object[next.field_name] = true && cur.push(next);
               return cur;
             },[]);
-          log('Aggregate.setData.inputSchemas', inputSchemas, this.groupList);
+          }
+          log('Aggregate.setData.inputSchemas', inputSchemas, schema.fields);
+
+          if ( !this.form.name ) {
+            if( counter === 0)
+              this.form.name = this.$t("dataFlow.polymerization");
+            if( counter !== 0)
+              this.form.name = this.$t("dataFlow.polymerization") + (counter);
+              counter++;
+          }
         },
 
         getData() {

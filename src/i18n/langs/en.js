@@ -131,7 +131,8 @@ const en = {
     aggFunction: 'Aggregation Function',
     aggExpression: 'expression',
     filterPredicate: 'Filter Predicate',
-    groupByExpression: 'Group By Expression'
+    groupByExpression: 'Group By Expression',
+    polymerization: 'Polymerization'
 	},
 	...enLocale
 };
