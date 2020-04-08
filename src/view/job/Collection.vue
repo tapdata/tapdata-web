@@ -92,10 +92,22 @@
 						if( this.model.tableName){
 							let schema = this.schemas.filter( s => s.table_name === this.model.tableName);
 							schema = schema && schema.length > 0 ? schema[0] : {};
-							let fields = schema.fields || [];
-							this.model.primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
+							/*let fields = schema.fields || [];
+							let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
+							if( primaryKeys) this.model.primaryKeys = primaryKeys;*/
 							this.$emit('schemaChange', _.cloneDeep(schema));
 						}
+					}
+				}
+			},
+			mergedSchema: {
+				handler(){
+					if( this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0){
+						let primaryKeys = this.mergedSchema.fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
+						let unique = {};
+						primaryKeys.forEach( key => unique[key] = 1);
+						primaryKeys = Object.keys(unique);
+						if( primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
 					}
 				}
 			}
