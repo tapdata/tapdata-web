@@ -122,10 +122,24 @@
 								<i class="iconfont task-list-icon icon-fuzhi1" @click="handlerCopy(scope.row.id)"></i>
 							</el-tooltip>
 							<el-tooltip v-if="scope.row.status !== 'scheduled'&& scope.row.status !== 'running'&& scope.row.status !== 'force stopping'&&scope.row.status !== 'stopping'" class="item" :content="$t('message.delete')" placement="bottom">
-								<i class="iconfont task-list-icon icon-shanchu" @click="handleDelete(scope.row.id)"></i>
+								<el-button type="text" disabled @click="handleDelete(scope.row.id)">
+									<i class="iconfont task-list-icon  icon-shanchu"></i>
+								</el-button>
 							</el-tooltip>
-							<el-tooltip v-if="scope.row.status !== 'scheduled'&& scope.row.status !== 'running'&&scope.row.status !== 'force stopping'&&scope.row.status !== 'stopping'" class="item" :content="$t('dataFlow.reset')" placement="bottom">
-								<i class="iconfont task-list-icon icon-shuaxin1" @click="handleReset(scope.row.id)"></i>
+							<el-tooltip v-else class="item" :content="$t('message.delete')" placement="bottom">
+								<el-button type="text"  @click="handleDelete(scope.row.id)">
+									<i class="iconfont task-list-icon delete-icon icon-shanchu"></i>
+								</el-button>
+							</el-tooltip>
+							<el-tooltip  v-if="scope.row.status !== 'scheduled'&& scope.row.status !== 'running'&&scope.row.status !== 'force stopping'&&scope.row.status !== 'stopping'" class="item" :content="$t('dataFlow.reset')" placement="bottom">
+								<el-button type="text" disabled  @click="handleReset(scope.row.id)">
+									<i class="iconfont task-list-icon icon-shuaxin1" ></i>
+								</el-button>
+							</el-tooltip>
+							<el-tooltip  v-else class="item" :content="$t('dataFlow.reset')" placement="bottom">
+								<el-button type="text"  @click="handleReset(scope.row.id)">
+									<i class="iconfont task-list-icon delete-icon icon-shuaxin1" ></i>
+								</el-button>
 							</el-tooltip>
 						</div>
 					</template>
@@ -288,7 +302,7 @@
 								let node = {};
 
 								if(item.stats.stagesMetrics){
-									stage = item.stats.stagesMetrics.filter(v => k.id === v.stageId)
+									stage = item.stats.stagesMetrics.filter(v => k.id === v.stageId);
 								}
 
 								if(stage.length === 0){
@@ -477,6 +491,9 @@
 	.task-list-icon {
 		font-size: 18px;
 	}
+	.delete-icon{
+		color: #606266 !important;
+	}
 
 	.task-list-time-picker {
 		width: 240px;
@@ -501,7 +518,6 @@
 
 	.item {
 		margin-left: 10px;
-		color: #606266;
 	}
 
 </style>

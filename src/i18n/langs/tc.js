@@ -130,7 +130,8 @@ const tc = {
     aggFunction: '聚合函數',
     aggExpression: '聚合表達式',
     filterPredicate: '過濾器',
-    groupByExpression: '分組表達式'
+    groupByExpression: '分組表達式',
+    polymerization: '聚合處理'
 	},
 	...tcLocale
 };

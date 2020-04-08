@@ -5,9 +5,9 @@
 				<!-- {{schema ? schema.name : ''}} -->
 			</el-header>
 			<el-row class="header-row">
-				<el-col :span="18">字段名</el-col>
-				<el-col :span="4">字符类型</el-col>
-				<el-col :span="2">操作</el-col>
+				<el-col :span="18">name</el-col>
+				<el-col :span="4">type</el-col>
+				<el-col :span="2">operate</el-col>
 			</el-row>
 			<el-main>
 				<el-tree
@@ -28,21 +28,31 @@
 						@node-expand="handlerNodeExpand"
 						@node-collapse="handlerNodeCollapse"
 						ref="tree">
-            <span class="custom-tree-node" slot-scope="{ node, data }">
+					<span class="custom-tree-node" slot-scope="{ node, data }">
 						<span class="e-triangle" :style="`border-bottom-color: ${data.color || '#ddd'};`"></span>
 						<span class="e-port e-port-in" :data-id="getId(data)"></span>
-						<span class="e-label" :class="{ activename: isRename(data.id) }">
+						<span class="e-label" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 ">
+							<span class="e-pk">{{ data.primary_key_position > 0 ? 'PK' : '' }}</span>
+							<el-input v-model="data.label" :disabled="true"></el-input>
+						</span>
+						<span class="e-label" v-else :class="{ activename: isRename(data.id) }" >
 							<el-input v-model="data.label" @blur="handleRename(node,data)" :disabled="isRemove(data.id)"></el-input>
 						</span>
-						<el-select v-model="data.type" class="e-select" :class="{ activedatatype: isConvertDataType(data.id) }" :disabled="isRemove(data.id)" @change="handleDataType(node,data)">
+						<el-select v-model="data.type" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 " class="e-select"  :disabled="true" >
+							<el-option value="String" label="String"></el-option>
+						</el-select>
+						<el-select v-model="data.type" v-else  class="e-select" :class="{ activedatatype: isConvertDataType(data.id) }" :disabled="isRemove(data.id)" @change="handleDataType(node,data)">
 							<el-option value="String" label="String"></el-option>
 							<el-option value="Map" label="Map"></el-option>
 							<el-option value="Integer" label="Integer"></el-option>
 							<el-option value="Double" label="Double"></el-option>
 							<el-option value="Array" label="Array"></el-option>
 						</el-select>
-						<span class="e-data-delete iconfont icon-l-del" @click="handleDelete(node,data)"></span>
-						<span class="e-data-delete iconfont icon-return" @click="handleReset(node,data)"></span>
+						<el-button type="text" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 " class=" e-data-delete iconfont icon-l-del" disabled></el-button>
+						<span v-else class="e-data-delete iconfont icon-l-del"  @click="handleDelete(node,data)"></span>
+
+						<el-button type="text" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 " class=" e-data-delete iconfont icon-return" disabled></el-button>
+						<span v-else class="e-data-delete iconfont icon-return" @click="handleReset(node,data)"></span>
 						<span class="e-port e-port-out" :data-id="getId(data)"></span>
 					</span>
 				</el-tree>
@@ -483,9 +493,20 @@
 		}
 
 	}
+	.e-pk{
+		font-size: 9px;
+		font-weight: bold;
+		color: #FFA000;
+		position: relative;
+		left: -14px;
+		display: inline-block;
+		width: 5px;
+	}
 
 	.e-entity .el-main .el-tree .el-tree-node .icon-none {
 		display: none;
 	}
-
+	.el-button+.el-button{
+		margin-left:0;
+	}
 </style>

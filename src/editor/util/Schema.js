@@ -106,8 +106,10 @@ export const
 		let joinType = mergeOpts.joinType || 'upsert';
 		let joinPath = mergeOpts.joinPath || sourceSchema.table_name || '';
 
-		targetSchema.table_name = targetSchema.table_name || sourceSchema.table_name || '';
+		// targetSchema.table_name = targetSchema.table_name || sourceSchema.table_name || '';
 		targetSchema.fields = targetSchema.fields || [];
+		Object.keys(sourceSchema).filter( key => !['fields'].includes(key))
+			.forEach(key => targetSchema[key] = targetSchema[key] || sourceSchema[key]);
 
 		let sourceSchemaFields = _.cloneDeep(sourceSchema.fields) || [];
 		if( ['append', 'upsert'].includes(joinType) || targetSchema.meta_type === 'table') {
