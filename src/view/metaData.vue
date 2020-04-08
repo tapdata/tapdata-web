@@ -25,36 +25,40 @@
 		</div>
 		<div class="box-ul">
 			<ul class="classify-ul">
-				<el-input
-						placeholder="请输入内容"
-						v-model="search">
+				<div class="select-nav-header">
+					<span>东南区</span>
+					<el-button size="mini" type="primary">批量分类</el-button>
+				</div>
+				<el-input placeholder="请输入内容" v-model="search" class="search-input">
 					<i slot="prefix" class="el-input__icon el-icon-search"></i>
 				</el-input>
-				<el-dropdown>
+				<div class="select-nav">
+					<el-dropdown>
 					<span class="el-dropdown-link">
 					下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
 					</span>
-					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item>黄金糕</el-dropdown-item>
-						<el-dropdown-item>狮子头</el-dropdown-item>
-						<el-dropdown-item>螺蛳粉</el-dropdown-item>
-						<el-dropdown-item disabled>双皮奶</el-dropdown-item>
-						<el-dropdown-item divided>蚵仔煎</el-dropdown-item>
-					</el-dropdown-menu>
-				</el-dropdown>
-				<el-dropdown>
+						<el-dropdown-menu slot="dropdown">
+							<el-dropdown-item>黄金糕</el-dropdown-item>
+							<el-dropdown-item>狮子头</el-dropdown-item>
+							<el-dropdown-item>螺蛳粉</el-dropdown-item>
+							<el-dropdown-item disabled>双皮奶</el-dropdown-item>
+							<el-dropdown-item divided>蚵仔煎</el-dropdown-item>
+						</el-dropdown-menu>
+					</el-dropdown>
+					<el-dropdown>
 					<span class="el-dropdown-link">
 					下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
 					</span>
-					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item>黄金糕</el-dropdown-item>
-						<el-dropdown-item>狮子头</el-dropdown-item>
-						<el-dropdown-item>螺蛳粉</el-dropdown-item>
-						<el-dropdown-item disabled>双皮奶</el-dropdown-item>
-						<el-dropdown-item divided>蚵仔煎</el-dropdown-item>
-					</el-dropdown-menu>
-				</el-dropdown>
-				<el-checkbox  v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+						<el-dropdown-menu slot="dropdown">
+							<el-dropdown-item>黄金糕</el-dropdown-item>
+							<el-dropdown-item>狮子头</el-dropdown-item>
+							<el-dropdown-item>螺蛳粉</el-dropdown-item>
+							<el-dropdown-item disabled>双皮奶</el-dropdown-item>
+							<el-dropdown-item divided>蚵仔煎</el-dropdown-item>
+						</el-dropdown-menu>
+					</el-dropdown>
+					<el-checkbox  v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+				</div>
 				<el-checkbox-group v-model="checkData" @change="handleCheckedCitiesChange">
 					<li  v-for="item in listdata" :key="item.id">
 						<el-checkbox :label="item.id">
@@ -208,7 +212,7 @@
 
 <style scoped lang="less">
 	.box {
-		width: 234px;
+		width: 254px;
 	}
 
 	.custom-tree-node {
@@ -264,6 +268,7 @@
 
 	.box-tree {
 		float: left;
+		width: 170px;
 	}
 
 	.box-ul {
@@ -280,14 +285,14 @@
 		transition: .3s;
 		list-style: none;
 		font-size: 12px;
-		width: 260px;
+		width: 300px;
 	}
 	.classify-ul{
 		height: calc(100vh - 20px);
 		overflow: auto;
 	}
 	.classify-ul li {
-		width: 234px;
+		width: 263px;
 		height: 43px;
 		line-height: 43px;
 		margin-left: 8px;
@@ -297,10 +302,28 @@
 		border: 1px solid rgba(234, 234, 235, 1);
 		border-radius: 3px;
 	}
+	.search-input{
+		width: 94%;
+		margin-left: 10px;
+		margin-right: 10px;
+	}
 
 	.icon-color {
 		color: #599656;
 		font-size: 14px;
 	}
-
+	.select-nav{
+		padding: 10px;
+		display: flex;
+		justify-content: space-between;
+	}
+	.select-nav-header{
+		display: flex;
+		line-height: 30px;
+		justify-content: space-between;
+		padding-left: 10px;
+		padding-right: 10px;
+		padding-bottom: 5px;
+		padding-top: 5px;
+	}
 </style>
