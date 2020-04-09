@@ -335,9 +335,10 @@ export default class Editor extends BaseObject {
 	validateGraphData() {
 
 		log('Job.validateGraphData');
-		let graph = this.graph.graph;
+		let editorData = this.getData();
+		let graph = editorData.graph;
 		/*let graphData = editorData.graphData;
-		let graphLib = editorData.graphLib;*/
+		let graphLib = graphData.graphLib;*/
 
 		// at least 2 data node
 		// at least 1 link
@@ -355,6 +356,14 @@ export default class Editor extends BaseObject {
 		}
 		if( linkCount < 1){
 			return 'At least 1 link in graph';
+		}
+
+		let sources = graph.getSources() || [];
+		let processorSources = sources.filter(
+			cell => cell.isElement() && typeof cell.isProcess === 'function' && cell.isProcess());
+		if( processorSources.length > 0 ){
+			this.graph.selectCell(processorSources);
+			return 'Must start with a data node';
 		}
 
 		// validate graph acyclic

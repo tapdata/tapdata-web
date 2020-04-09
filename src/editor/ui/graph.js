@@ -196,10 +196,10 @@ export default class Graph extends Component{
 		if( this.editable ){
 			this.editor.getRightSidebar().hide();
 		}
-		this.unselectedAllCells();
+		this.unHighlightAllCells();
 	}
 
-	unselectedAllCells(){
+	unHighlightAllCells(){
 		let paper = this.paper;
 		let cells = this.graph.getCells();
 
@@ -213,23 +213,30 @@ export default class Graph extends Component{
 
 	selectCell(cell){
 		let self = this;
-		let first = self.selection.collection.findWhere({id: cell.id});
-		if( !first){
-			self.selection.collection.reset([cell]);
-		}
-		if( cell.isElement() && cell.get('type').startsWith('app.')){
+		if( Array.isArray(cell)) {
+			self.selection.collection.reset(cell);
 			setTimeout(() => {
-				self.unselectedAllCells();
-				let cellView = self.paper.findViewByModel(cell);
-				let isDataNode = cell.isDataNode && cell.isDataNode();
-				cellView.highlight(null, {
-					name: 'stroke',
-					options: {
-						rx: isDataNode ? 20 : 14,
-						ry: isDataNode ? 20 : 14
-					}
-				});
+				self.unHighlightAllCells();
 			}, 0);
+		} else {
+			let first = self.selection.collection.findWhere({id: cell.id});
+			if( !first){
+				self.selection.collection.reset([cell]);
+			}
+			if( cell.isElement() && cell.get('type').startsWith('app.')){
+				setTimeout(() => {
+					self.unHighlightAllCells();
+					let cellView = self.paper.findViewByModel(cell);
+					let isDataNode = cell.isDataNode && cell.isDataNode();
+					cellView.highlight(null, {
+						name: 'stroke',
+						options: {
+							rx: isDataNode ? 20 : 14,
+							ry: isDataNode ? 20 : 14
+						}
+					});
+				}, 0);
+			}
 		}
 	}
 
@@ -762,7 +769,7 @@ export default class Graph extends Component{
 				first = this.selection.collection.shift();
 			}
 
-			this.unselectedAllCells();
+			this.unHighlightAllCells();
 			this.keyboard.disable();
 			this.toolbar.getWidgetByName('redo').disable();
 			this.toolbar.getWidgetByName('undo').disable();

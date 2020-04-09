@@ -1,7 +1,8 @@
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN';
 
 const cn = {
-		message: {
+	...zhLocale,
+	message: {
 			serviceCluMange: '服务集群管理',
 			statusLog: '状态日志',
 			sourchName: '名称搜索',
@@ -49,7 +50,7 @@ const cn = {
 			cancleReset: '已取消重置',
 			resetOk: '重置成功',
 		},
-		dataFlow: {
+	dataFlow: {
 			average: '平均',
 			current: '当前',
 			allNode: '全部节点',
@@ -133,8 +134,9 @@ const cn = {
       groupByExpression: '分组表达式',
       polymerization: '聚合处理'
 		},
-		...zhLocale
+	editor: {
+
 	}
-;
+};
 
 export default cn;
