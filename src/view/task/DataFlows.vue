@@ -307,7 +307,7 @@
 
 								if(stage.length === 0){
 									node = {
-										id: k.id,
+										id: item.id+k.id,
 										name:k.name,
 										input:'--',
 										output: '--',
@@ -316,7 +316,7 @@
 									};
 								}else {
 									node = {
-										id: k.id,
+										id: item.id+k.id,
 										name:k.name,
 										input: stage[0].input.rows ? stage[0].input.rows :'--',
 										output: stage[0].output.rows ?stage[0].output.rows : '--',
@@ -326,7 +326,7 @@
 								}
 								item.children.push(node);
 							});
-						};
+						}
 
 						if(item.stats.input && item.stats.outputs){
 							item.input = item.stats.input.rows ? item.stats.input.rows:'--';
@@ -336,8 +336,8 @@
 							item.input = '--';
 							item.output = '--';
 							item.transmissionTime = '--';
-						};
-					};
+						}
+					}
 				});
 			},
 			handleDelete(id) {
