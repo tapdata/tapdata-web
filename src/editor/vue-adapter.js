@@ -24,9 +24,11 @@ export class VueAdapter extends BaseObject {
 		this.editor = editor;
 		this.graphUI = graphUI;
 
+		this.editor.on(EditorEventType.BEFORE_DESTROY, this.destroy.bind(this));
 		editor.getRightSidebar().on(EditorEventType.RESIZE, this.handlerResize.bind(this));
 		editor.getRightSidebar().on(EditorEventType.HIDE, this.handlerHide.bind(this));
 		editor.getRightTabPanel().on(EditorEventType.SELECTED, this.handlerTapChanged.bind(this));
+		editor.on(EditorEventType.DATA_FLOW_UPDATED, this.handlerDataFlowUpdated.bind(this));
 	}
 
 	render(cell){
@@ -53,7 +55,7 @@ export class VueAdapter extends BaseObject {
 			let settings = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
 
 			self.vm = new Comp({
-        i18n,
+				i18n,
 				propsData: Object.assign({}, vueComponentConfig.props || {})
 			});
 
@@ -111,12 +113,25 @@ export class VueAdapter extends BaseObject {
 	handlerTapChanged(tab){
 		if (this.vm){
 			if( tab && tab.opts && tab.opts.name === 'settings'){
-				this.vm.$emit('show');
+				this.vm.$emit(EditorEventType.SHOW);
 			} else {
-				this.vm.$emit('hide');
+				this.vm.$emit(EditorEventType.HIDE);
 			}
 		}
 
+	}
+
+	handlerDataFlowUpdated(dataFlow){
+		if( this.vm ){
+			this.vm.$emit(EditorEventType.DATA_FLOW_UPDATED, dataFlow);
+		}
+	}
+
+	destroy(){
+		if( this.vm ){
+			this.vm.$destroy();
+		}
+		this.editor.off(EditorEventType.BEFORE_DESTROY, this.destroy);
 	}
 
 	/**
