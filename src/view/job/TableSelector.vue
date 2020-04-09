@@ -1,7 +1,7 @@
 <template>
 	<div class="box">
 		<div class="box-head">
-			<el-input class="search" v-model="filterText" clearable><i slot="suffix" class="el-input__icon el-icon-search"></i></el-input>
+			<el-input class="search" v-model="filterText" clearable><i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
 			<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
 		</div>
 		<el-tree
@@ -69,8 +69,10 @@
 				let params = {
 					filter: JSON.stringify({
 						where: {
-							meta_type: 'database'
-						}
+							meta_type: 'database',
+							is_deleted:false
+						},
+
 					})
 				};
 				MetadataInstances.get(params).then(res => {
@@ -109,7 +111,8 @@
 							},
 							databaseId: {
 								regexp: `^${node.key}$`
-							}
+							},
+							is_deleted:false
 						}
 					})
 				};

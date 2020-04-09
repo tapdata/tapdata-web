@@ -3,6 +3,7 @@
 		<div class="box-tree">
 			<div class="box-head">
 				<el-input class="search" v-model="filterText"><i slot="suffix" class="el-input__icon el-icon-search"></i></el-input>
+				<i class="iconfont icon-sync" @click="handleList"></i>
 				<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
 			</div>
 			<el-tree
@@ -33,7 +34,7 @@
 						<i slot="prefix" class="el-input__icon el-icon-search"></i>
 					</el-input>
 					<div class="select-nav">
-						<el-select v-model="checkType" clearable placeholder="请选择" class="MetaDataSelect">
+						<el-select v-model="checkType" clearable placeholder="请选择" class="MetaDataSelect" @change="handleSearch">
 							<el-option
 									v-for="item in options"
 									:key="item.value"
@@ -41,7 +42,7 @@
 									:value="item.value">
 							</el-option>
 						</el-select>
-						<el-select v-model="checkClassify" clearable placeholder="请选择" class="MetaDataSelect">
+						<el-select v-model="checkClassify" clearable placeholder="请选择" class="MetaDataSelect" @change="handleSearch">
 							<el-option
 									v-for="item in optionsType"
 									:key="item.value"
@@ -94,9 +95,9 @@
 				listdata: [],
 				checkAll: [],
 				checkData: [],
-				checkedValue:'',
+				checkedValue:'all',
 				options: [{
-					value: 'all',
+					value: '',
 					label: 'all'
 				}, {
 					value: 'database',
@@ -127,14 +128,14 @@
 					label: 'mongo_view'
 				}],
 				optionsType: [{
-					value: 'all',
+					value: '',
 					label: 'all'
 				}, {
 					value: 'no type',
 					label: 'no type'
 				}],
-				checkClassify: 'all',
-				checkType:"all",
+				checkClassify: '',
+				checkType:"",
 			};
 		},
 		mounted() {
@@ -208,6 +209,7 @@
 				return data.label.indexOf(value) !== -1;
 			},
 			handleList() {
+				this.checkedValue = 'all';
 				let params = {
 					filter: JSON.stringify({
 						where: {
@@ -265,7 +267,7 @@
 			handleChecked(val){
 				let params = {};
 				this.checkedValue = val.label;
-				params[`filter[where][listtags.id][in][0]`] = val.id;
+				params[`filter[where][classifications.id][in][0]`] = val.id;
 				MetadataInstances.get(params).then(res => {
 					let self = this;
 					if (res.statusText === "OK" || res.status === 200) {
@@ -280,7 +282,14 @@
 			},
 			handleSearch(){
 				let params = {};
-				params[`filter[where][asset_desc][like]`] = this.search;
+				if(this.checkType){
+					params[`filter[where][meta_type]`] = this.checkType;
+				}
+				if(this.search){
+					params[`filter[where][or][1][original_name][like]`] = this.search;
+				}
+				//params[`filter[where][or][1][original_name][like]`] = this.checkClassify;
+
 				MetadataInstances.get(params).then(res => {
 					let self = this;
 					if (res.statusText === "OK" || res.status === 200) {
@@ -323,7 +332,7 @@
 	}
 
 	.search {
-		width: 190px;
+		width: 170px;
 		margin-bottom: 10px;
 	}
 
@@ -440,5 +449,4 @@
 			border: none !important;
 		}
 	}
-
 </style>
