@@ -7,6 +7,7 @@
 			</div>
 			<el-tree
 					node-key="id"
+					:props="props"
 					:expand-on-click-node="false"
 					lazy
 					:load="loadNodes"
@@ -15,53 +16,43 @@
 			>
 			<span class="custom-tree-node" slot-scope="{ node, data}">
 				<span>
-					<span v-if="data.meta_type ==='database'" class="iconfont icon-shujuku filter-icon"></span>
-					<span v-if="data.meta_type ==='table'" class="iconfont icon-table2  filter-icon-table"></span>
-					<span v-if="data.meta_type ==='collection'" class="iconfont icon-collection filter-icon-table"></span>
-					<span class="table-label">{{ node.label }}</span>
+					<span  class="iconfont icon-Folder-closed filter-icon"></span>
+					<span class="table-label" @click="handleChecked(data)">{{ node.label }}</span>
 				</span>
 			</span>
 			</el-tree>
 		</div>
 		<div class="box-ul">
 			<ul class="classify-ul">
-				<div class="select-nav-header">
-					<span>东南区</span>
-					<el-button size="mini" type="primary">批量分类</el-button>
+				<div class="box-head">
+					<div class="select-nav-header">
+						<span>{{ checkedValue }}</span>
+						<el-button size="mini" type="primary">批量分类</el-button>
+					</div>
+					<el-input placeholder="请输入内容" v-model="search" class="search-input" clearable @clear="clear" @change="handleSearch">
+						<i slot="prefix" class="el-input__icon el-icon-search"></i>
+					</el-input>
+					<div class="select-nav">
+						<el-select v-model="checkType" clearable placeholder="请选择" class="MetaDataSelect">
+							<el-option
+									v-for="item in options"
+									:key="item.value"
+									:label="item.label"
+									:value="item.value">
+							</el-option>
+						</el-select>
+						<el-select v-model="checkClassify" clearable placeholder="请选择" class="MetaDataSelect">
+							<el-option
+									v-for="item in optionsType"
+									:key="item.value"
+									:label="item.label"
+									:value="item.value">
+							</el-option>
+						</el-select>
+						<el-checkbox  v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+					</div>
 				</div>
-				<el-input placeholder="请输入内容" v-model="search" class="search-input">
-					<i slot="prefix" class="el-input__icon el-icon-search"></i>
-				</el-input>
-				<div class="select-nav">
-					<el-dropdown>
-					<span class="el-dropdown-link">
-					下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
-					</span>
-						<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item>all</el-dropdown-item>
-							<el-dropdown-item>database</el-dropdown-item>
-							<el-dropdown-item>mongoDB</el-dropdown-item>
-							<el-dropdown-item>table</el-dropdown-item>
-							<el-dropdown-item>collection</el-dropdown-item>
-							<el-dropdown-item>api</el-dropdown-item>
-							<el-dropdown-item>flow</el-dropdown-item>
-							<el-dropdown-item>file</el-dropdown-item>
-							<el-dropdown-item>view</el-dropdown-item>
-							<el-dropdown-item>mongo_view</el-dropdown-item>
-						</el-dropdown-menu>
-					</el-dropdown>
-					<el-dropdown>
-					<span class="el-dropdown-link">
-					下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
-					</span>
-						<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item>all</el-dropdown-item>
-							<el-dropdown-item>no tag</el-dropdown-item>
-						</el-dropdown-menu>
-					</el-dropdown>
-					<el-checkbox  v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
-				</div>
-				<el-checkbox-group v-model="checkData" @change="handleCheckedCitiesChange">
+				<el-checkbox-group v-model="checkData" @change="handleCheckedCitiesChange" class="list-box">
 					<li  v-for="item in listdata" :key="item.id">
 						<el-checkbox :label="item.id">
 							<span class="iconfont icon-table2 icon-color"></span>
@@ -90,7 +81,7 @@
 				data: [],
 				search:'',
 				default_expanded: false,
-				defaultProps: {
+				props: {
 					children: 'children',
 					label: 'label',
 					isLeaf: 'leaf'
@@ -103,10 +94,52 @@
 				listdata: [],
 				checkAll: [],
 				checkData: [],
+				checkedValue:'',
+				options: [{
+					value: 'all',
+					label: 'all'
+				}, {
+					value: 'database',
+					label: 'database'
+				}, {
+					value: 'mongoDB',
+					label: 'mongoDB'
+				}, {
+					value: 'table',
+					label: 'table'
+				}, {
+					value: 'collection',
+					label: 'collection'
+				}, {
+					value: 'api',
+					label: 'api'
+				}, {
+					value: 'flow',
+					label: 'flow'
+				}, {
+					value: 'file',
+					label: 'file'
+				}, {
+					value: 'view',
+					label: 'view'
+				}, {
+					value: 'mongo_view',
+					label: 'mongo_view'
+				}],
+				optionsType: [{
+					value: 'all',
+					label: 'all'
+				}, {
+					value: 'no type',
+					label: 'no type'
+				}],
+				checkClassify: 'all',
+				checkType:"all",
 			};
 		},
 		mounted() {
 			this.handleList();
+			this.keyupEnter();
 		},
 		watch: {
 			filterText(val) {
@@ -124,30 +157,51 @@
 					filter.where['parent_id'] = {
 						exists: false
 					};
+					MetadataDefinitions.get({filter: JSON.stringify(filter)}).then(res => {
+						if (res.statusText === "OK" || res.status === 200) {
+							if (res.data) {
+								self.data.splice(0, self.data.length);
+								let children = [];
+								res.data.forEach((record) => {
+									children.push({
+										id: record.id,
+										parent_id: record.parent_id,
+										label: record.value,
+										meta_type: record.item_type,
+									});
+								});
+								resolve(children);
+							}
+						}
+					}).catch(e => {
+						this.$message.error('MetadataInstances error');
+					});
 				} else {
 					filter.where['parent_id'] = {
 						regexp: `^${node.data.id}$`
 					};
-				}
-				MetadataDefinitions.get({filter: JSON.stringify(filter)}).then(res => {
-					if (res.statusText === "OK" || res.status === 200) {
-						if (res.data) {
-							self.data.splice(0, self.data.length);
-							let children = [];
-							res.data.forEach((record) => {
-								children.push({
-									id: record.id,
-									parent_id: record.parent_id,
-									label: record.value,
-									meta_type: record.item_type,
+					MetadataDefinitions.get({filter: JSON.stringify(filter)}).then(res => {
+						if (res.statusText === "OK" || res.status === 200) {
+							if (res.data) {
+								self.data.splice(0, self.data.length);
+								let children = [];
+								res.data.forEach((record) => {
+									children.push({
+										id: record.id,
+										parent_id: record.parent_id,
+										label: record.value,
+										meta_type: record.item_type,
+										leaf: true,
+									});
 								});
-							});
-							resolve(children);
+								resolve(children);
+							}
 						}
-					}
-				}).catch(e => {
-					this.$message.error('MetadataInstances error');
-				});
+					}).catch(e => {
+						this.$message.error('MetadataInstances error');
+					});
+				}
+
 			},
 			filterNode(value, data) {
 				if (!value) return true;
@@ -188,7 +242,7 @@
 							self.listdata = res.data;
 						}
 					}
-					log('listdata', self.listdata.length);
+					log('listdata', self.listdata);
 				}).catch(e => {
 					this.$message.error('MetadataInstances error');
 				});
@@ -207,7 +261,41 @@
 			handleCheckedCitiesChange(value) {
 				this.checkAll =value ;
 				log('value', value);
-			}
+			},
+			handleChecked(val){
+				let params = {};
+				this.checkedValue = val.label;
+				params[`filter[where][listtags.id][in][0]`] = val.id;
+				MetadataInstances.get(params).then(res => {
+					let self = this;
+					if (res.statusText === "OK" || res.status === 200) {
+						if (res.data) {
+							self.listdata = res.data;
+						}
+					}
+					log('listdata', self.listdata);
+				}).catch(e => {
+					this.$message.error('MetadataInstances error');
+				});
+			},
+			handleSearch(){
+				let params = {};
+				params[`filter[where][asset_desc][like]`] = this.search;
+				MetadataInstances.get(params).then(res => {
+					let self = this;
+					if (res.statusText === "OK" || res.status === 200) {
+						if (res.data) {
+							self.listdata = res.data;
+						}
+					}
+					log('listdata', self.listdata);
+				}).catch(e => {
+					this.$message.error('MetadataInstances error');
+				});
+			},
+			clear() {
+				this.handleList();
+			},
 		}
 	};
 </script>
@@ -277,9 +365,10 @@
 		float: left;
 		margin-left: 50px;
 	}
-
+	.list-box{
+		margin-top: 114px
+	}
 	.classify-ul {
-		border-radius: 4px;
 		border: 1px solid #ebeef5;
 		background-color: #fff;
 		overflow: hidden;
@@ -288,11 +377,10 @@
 		list-style: none;
 		font-size: 12px;
 		width: 300px;
+		height: calc(100vh - 1px);
+		overflow-y: auto;
 	}
-	.classify-ul{
-		height: calc(100vh - 20px);
-		overflow: auto;
-	}
+
 	.classify-ul li {
 		width: 263px;
 		height: 43px;
@@ -303,16 +391,31 @@
 		background: rgba(255, 255, 255, 1);
 		border: 1px solid rgba(234, 234, 235, 1);
 		border-radius: 3px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		span{
+			font-size: 12px;
+		}
+	}
+	.box-head{
+		position: fixed;
+		background: #fff;
+		width: 292px;
+		z-index: 4;
 	}
 	.search-input{
 		width: 94%;
 		margin-left: 10px;
 		margin-right: 10px;
 	}
-
+	.filter-icon{
+		color: #EDC958;
+	}
 	.icon-color {
 		color: #599656;
 		font-size: 14px;
+		background: #c6f8c382;
+		padding: 3px;
 	}
 	.select-nav{
 		padding: 10px;
@@ -328,4 +431,14 @@
 		padding-bottom: 5px;
 		padding-top: 5px;
 	}
+
+</style>
+<style lang="less">
+	.MetaDataSelect {
+		margin-top: -5px;
+		.el-input__inner{
+			border: none !important;
+		}
+	}
+
 </style>

@@ -1,11 +1,12 @@
 <template>
 	<div class="box">
 		<div class="box-head">
-			<el-input class="search" v-model="filterText"><i slot="suffix" class="el-input__icon el-icon-search"></i></el-input>
+			<el-input class="search" v-model="filterText" clearable><i slot="suffix" class="el-input__icon el-icon-search"></i></el-input>
 			<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
 		</div>
 		<el-tree
 				:data="data"
+				:props="props"
 				node-key="id"
 				:expand-on-click-node="false"
 				lazy
@@ -42,7 +43,7 @@
 				filterText:'',
 				data: [],
 				default_expanded:false,
-				defaultProps: {
+				props: {
 					children: 'children',
 					label: 'label',
 					isLeaf: 'leaf'
@@ -122,6 +123,7 @@
 									_id:record.source._id,
 									label: record.name || record.original_name,
 									expanded: true,
+									leaf: true,
 									meta_type: record.meta_type,
 									database_type:record.source.database_type||'',
 									original_name:record.original_name ||'',
@@ -253,6 +255,9 @@
 	.box-head{
 		position: fixed;
 		z-index: 2;
+		background: #fff;
+		overflow: hidden;
+		width: 217px;
 	}
 	.el-tree{
 		padding-top: 40px;

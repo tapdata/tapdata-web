@@ -490,6 +490,7 @@
 		.e-data-delete {
 			text-align: center;
 			width: 40px;
+			font-size: 14px;
 		}
 
 	}
@@ -507,6 +508,6 @@
 		display: none;
 	}
 	.el-button+.el-button{
-		margin-left:0;
+		margin-left:0 !important;
 	}
 </style>
