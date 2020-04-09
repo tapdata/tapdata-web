@@ -395,8 +395,8 @@
         this.isThroughputAll = data;
         this.throughputTime = time;
         let params = {
-          'filter[where][statsType]': "throughput",
-          'filter[where][granularity]': this.selectFlow + time
+          'statsType': "throughput",
+          'granularity': this.selectFlow + time
         };
         switch(time) {
           case "second":
@@ -421,8 +421,8 @@
         this.dataOverviewAll = data;
 
         let params = {
-          'filter[where][statsType]': "data_overview",
-          'filter[where][granularity]': data
+          'statsType': "data_overview",
+          'granularity': data
         };
         this.getApiData(params, type, data);
       },
@@ -448,8 +448,8 @@
               break;
           }
           params = {
-            'filter[where][statsType]': "trans_time",
-            'filter[where][granularity]': this.selectFlow + data
+            'statsType': "trans_time",
+            'granularity': this.selectFlow + data
           };
         } else if (type === "replicate") {
           switch(data) {
@@ -469,8 +469,8 @@
           this.replicateType = type;
           this.replicateTime = data;
           params = {
-            'filter[where][statsType]': "repl_lag",
-            'filter[where][granularity]': this.selectFlow + data
+            'statsType': "repl_lag",
+            'granularity': this.selectFlow + data
           };
         }
         this.getApiData(params, type, data);
@@ -479,12 +479,12 @@
       //获取数据
       async getApiData(params, type, ele) {
         if (this.domValue === "all") {
-          params['filter[where][dataFlowId]'] = this.flow.id;
+          params['dataFlowId'] = this.flow.id;
         } else {
-          params['filter[where][dataFlowId]'] = this.flow.id;
-          params['filter[where][stageId]'] = this.domValue;
+          params['dataFlowId'] = this.flow.id;
+          params['stageId'] = this.domValue;
         }
-        await DataFlowInsights.get(params).then(res => {
+        await DataFlowInsights.runtimeMonitor(params).then(res => {
           if (res.statusText === "OK" || res.status === 200) {
             if (res.data && res.data.length > 0) {
               this.storeData = res.data[0].statsData;

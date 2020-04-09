@@ -13,6 +13,6 @@ export default class DataFlowInsights extends PublicAPI{
   }
 
   runtimeMonitor(params){
-    return axios.get(this.url + '/runtimeMonitor', params);
+    return axios.get(this.url + '/runtimeMonitor', {params});
   }
 }
