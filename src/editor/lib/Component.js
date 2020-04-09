@@ -92,12 +92,13 @@ export default class Component extends BaseObject{
 			}
 			child = this.childs.shift();
 		}
-		if( this.getContentEl() ){
+		if( this.getContentEl && this.getContentEl() && this.getContentEl().find ){
 			this.getContentEl().find('>*').remove();
 		}
 	}
 
 	destroy(){
+		this.emit(EditorEventType.BEFORE_DESTROY, this);
 		log(`${this.constructor.name}.destroy`);
 		this.el.remove();
 		this.removeAll();

@@ -13,4 +13,6 @@ export const EditorEventType = {
 	SHOW: 'show',
 	HIDE: 'hide',
 	SELECTED: 'selected',
+	DATA_FLOW_UPDATED: 'dataFlow:updated',
+	BEFORE_DESTROY: 'beforeDestroy',
 };

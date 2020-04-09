@@ -57,6 +57,7 @@
 	import editor from '../../editor/index';
 	import log from '../../log';
 	import {FORM_DATA_KEY} from "../../editor/constants";
+	import _ from 'lodash';
 
 	const dataFlowsApi = factory('DataFlows');
 	export default {
@@ -183,6 +184,7 @@
 							} else {
 								self.executeMode = 'normal';
 							}
+							self.editor.emit('dataFlow:updated', _.cloneDeep(result.data));
 						}
 					}).catch( err => {
 						log(err);
