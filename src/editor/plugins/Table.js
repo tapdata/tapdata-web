@@ -14,7 +14,7 @@ export const tableConfig = {
 		defaultInstanceProperties: {
 			attrs: {
 				image:{
-					xlinkHref: 'static/editor/table.svg',
+					xlinkHref: 'static/editor/o-table.svg',
 				},
 				label:{
 					text:'table'

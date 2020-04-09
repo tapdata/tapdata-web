@@ -32,20 +32,18 @@ export const
 	/**
 	 * convert schema to Entity tree data
 	 * @param schema {{table_name: '', meta_type: 'collection|table', fields: [{field_name: '', data_type: '', javaType: '', ...}, ...]}}
-	 * @param color
-	 * @returns {{
-					name: 'Order',
-					type: 'collection',
-					fields: [{
-						id: 1,
-						label: 'id',
-						type: 'int',
-						color: '#c325c8',
-						children: [{
-							...
-						}]
-					}, {}... ]
-				}}
+	 * @returns {object} {
+	 * 		name: 'Order',
+	 * 		type: 'collection',
+	 * 		fields: [{
+	 * 			id: 1,
+	 * 			label: 'id',
+	 * 			type: 'int',
+	 * 			color: '#c325c8',
+	 * 			children: [{
+	 * 				...
+	 * 	}]
+	 *
 	 */
 	convertSchemaToTreeData = function(schema) {
 		log('Schema.convertSchemaToTreeData', arguments);
@@ -69,6 +67,7 @@ export const
 						type: field.javaType,
 						color: getColor(field.table_name),
 						primary_key_position: field.primary_key_position,
+						table_name: field.table_name || 'table'
 					};
 					_.set(root, 'children.' + jsonPath.join('.children.'), treeItem);
 				}
@@ -81,7 +80,7 @@ export const
 			};
 			re(root);
 			entityData.fields = root.children;
-      log('Schema.convertSchemaToTreeData.return', entityData);
+			log('Schema.convertSchemaToTreeData.return', entityData);
 			return entityData;
 		} else {
 			return null;
@@ -107,8 +106,10 @@ export const
 		let joinType = mergeOpts.joinType || 'upsert';
 		let joinPath = mergeOpts.joinPath || sourceSchema.table_name || '';
 
-		targetSchema.table_name = targetSchema.table_name || sourceSchema.table_name || '';
+		// targetSchema.table_name = targetSchema.table_name || sourceSchema.table_name || '';
 		targetSchema.fields = targetSchema.fields || [];
+		Object.keys(sourceSchema).filter( key => !['fields'].includes(key))
+			.forEach(key => targetSchema[key] = targetSchema[key] || sourceSchema[key]);
 
 		let sourceSchemaFields = _.cloneDeep(sourceSchema.fields) || [];
 		if( ['append', 'upsert'].includes(joinType) || targetSchema.meta_type === 'table') {

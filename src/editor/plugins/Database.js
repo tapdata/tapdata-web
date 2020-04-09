@@ -53,7 +53,7 @@ export const databaseConfig = {
 		defaultInstanceProperties: {
 			attrs: {
 				image:{
-					xlinkHref: 'static/editor/database2.svg',
+					xlinkHref: 'static/editor/o-DB.svg',
 				},
 				label:{
 					text:'database'

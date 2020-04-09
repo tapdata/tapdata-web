@@ -1,5 +1,5 @@
 <template>
-	<div class="e-mapping">
+	<div class="e-mapping" ref="mappingContainer">
 
 		<div class="e-source" ref="sourceContainer">
 			<Entity ref="sourceEntity" :schema="sourceSchema"></Entity>
@@ -31,6 +31,7 @@
 			let data = {
 				sourceSchema: {},
 				targetSchema: {},
+				tables: {},
 			};
 			return data;
 		},
@@ -86,15 +87,29 @@
 				}
 			},
 
+			isVisible(portDom){
+				let container = this.$refs.mappingContainer;
+				let containerClientRect = container.getBoundingClientRect();
+				let portClientRect = portDom.getBoundingClientRect();
+				log('Mapping.isVisible(containerClientRect, portClientRect)', containerClientRect, portClientRect);
+
+				return portClientRect.top - containerClientRect.top >= 0;
+			},
+
 			position(){
 				let self = this;
 				setTimeout(() => {
 					if( self.lines && self.lines.length > 0 ){
 						for (let i = 0; i < self.lines.length; i++) {
 							let line = self.lines[i];
-							if( self.isConnected(line.end) && self.isConnected(line.start))
-								line.position();
-							else{
+							if( self.isConnected(line.end) && self.isConnected(line.start)){
+								if( self.isVisible(line.end) && self.isVisible(line.start) ){
+									line.show('draw');
+									line.position();
+								} else {
+									line.hide('draw');
+								}
+							} else {
 								line.remove();
 								self.lines.splice(i, 1);
 								i--;
@@ -104,14 +119,16 @@
 				}, 50);
 			},
 
-			createLine(fields){
-				if( !fields ) return;
+			createLine(tables){
+				if( !tables ) return;
 				let self = this;
 
-				for (let i = 0; i < fields.length; i++) {
-					let field = fields[i];
-					let sourceEl = self.$refs.sourceEntity.getOutPortByField(field);
-					let targetEl = self.$refs.targetEntity.getInPortByField(field);
+				let tableNames = Object.keys(tables);
+				for (let i = 0; i < tableNames.length; i++) {
+					let tableName = tableNames[i];
+					let table = tables[tableName];
+					let sourceEl = self.$refs.sourceEntity.getOutPortByTable(table);
+					let targetEl = self.$refs.targetEntity.getInPortByTable(table);
 
 					if(
 						sourceEl && targetEl
@@ -122,7 +139,7 @@
 							end: targetEl,
 							startSocket: 'right',
 							endSocket: 'left',
-							color: field.color || '#8cc6e8',
+							color: table.color || '#8cc6e8',
 							//dash: {animation: true},
 							startPlug: 'square',
 							endPlug: 'arrow1',
@@ -133,8 +150,8 @@
 
 					}
 
-					if( Array.isArray(field.children) && field.children.length > 0) {
-						self.createLine(field.children);
+					if( Array.isArray(table.children) && table.children.length > 0) {
+						self.createLine(table.children);
 					}
 				}
 			},
@@ -157,10 +174,20 @@
 
 				this.targetSchema = _.cloneDeep(target);
 				this.sourceSchema = _.cloneDeep(source);
+				if( source && source.fields){
+					source.fields.forEach(field => {
+						if( !this.tables[field.table_name]) {
+							this.tables[field.table_name] = {
+								color: field.color,
+								table_name: field.table_name,
+							};
+						}
+					});
+				}
 
-				if( this.sourceSchema && this.sourceSchema.fields){
+				if( this.tables){
 					this.$nextTick(() => {
-						this.createLine( this.sourceSchema.fields );
+						this.createLine( this.tables );
 					});
 				}
 			},

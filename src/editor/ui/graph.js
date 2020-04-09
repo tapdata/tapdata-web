@@ -719,6 +719,13 @@ export default class Graph extends Component{
 			this.stencil.options.snaplines = null;
 		}
 	}
+	getClientOffset(){
+		let a = this.paper.clientToLocalRect();
+		let b = this.paper.clientToLocalPoint();
+		let c = this.paper.clientOffset();
+		log(a,b,c);
+		return this.paper.clientToLocalPoint();
+}
 
 	validate(){
 		let self = this;

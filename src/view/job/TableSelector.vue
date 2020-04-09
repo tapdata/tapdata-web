@@ -2,7 +2,7 @@
 	<div class="box">
 		<div class="box-head">
 			<el-input class="search" v-model="filterText"><i slot="suffix" class="el-input__icon el-icon-search"></i></el-input>
-			<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
+			<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
 		</div>
 		<el-tree
 				:data="data"
@@ -148,11 +148,13 @@
 				return data.label.indexOf(value) !== -1;
 			},
 			handleGraph(data) {
-				log('data',data);
+				log('tableSelect handleGraph',data);
 				let mapping = {
 					collection: 'app.Collection',
 					table: 'app.Table',
 					database: 'app.Database',
+					mongo_view: 'app.Collection',
+					view: 'app.Table',
 				};
 
 				let formData = {};
@@ -160,7 +162,7 @@
 				if(data.meta_type ==='database'){
 					formData ={
 						connectionId:data.source._id,
-						name: data.name || data.original_name,
+						name: data.source.name || data.label,
 					};
 				}else if(data.meta_type ==='table' || data.meta_type ==='view'|| data.meta_type ==='collection'|| data.meta_type ==='mongo_view'){
 					let primaryKeys ='';
@@ -180,7 +182,7 @@
 						dropTable: false,
 						type: data.meta_type,
 						primaryKeys: primaryKeys,
-						name: data.name || data.original_name,
+						name: data.label || data.original_name,
 					};
 					schema ={
 						table_name: data.name || data.original_name,
@@ -192,14 +194,17 @@
 
 				this.count = this.count + 50;
 				let cell = this.editor.graph.createCell(mapping[data.meta_type], formData,schema);
-				cell.position(0, this.count);
+				let coordinates = this.editor.graph.getClientOffset();
+				log('coordinates',coordinates);
+				log('coordinates',coordinates.x+40,coordinates.y+this.count+160);
+				cell.position(coordinates.x+400, coordinates.y+this.count+160);
 				this.editor.graph.addCell(cell);
 			},
 		}
 	};
 </script>
 
-<style>
+<style scoped>
 	.box {
 		width: 234px;
 	}
@@ -221,7 +226,7 @@
 	}
 
 	.search {
-		width: 77%;
+		width: 77% !important;
 		margin-bottom: 10px;
 	}
 
@@ -242,6 +247,8 @@
 	.table-label{
 		display: inline-block;
 		width: 140px;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	.box-head{
 		position: fixed;

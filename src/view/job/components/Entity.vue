@@ -25,7 +25,7 @@
 						ref="tree">
 					<span class="custom-tree-node" slot-scope="{ node, data }">
 						<span class="e-triangle" :style="`border-bottom-color: ${data.color || '#ffffff'};`"></span>
-						<span class="e-port e-port-in" :data-id="getId(data)"></span>
+						<span class="e-port e-port-in" :data-id="getId(data)" :data-table="getTableName(data)"></span>
 						<span class="e-pk">{{ data.primary_key_position > 0 ? 'PK' : '' }}</span>
 						<span class="e-label">{{node.label}}</span>
 						<span class="e-data-type">{{ data.type}}</span>
@@ -39,7 +39,7 @@
 							<el-dropdown-item command="change_type" divided>Modified data type</el-dropdown-item>
 							</el-dropdown-menu>
 						</el-dropdown>
-						<span class="e-port e-port-out" :data-id="getId(data)"></span>
+						<span class="e-port e-port-out" :data-id="getId(data)" :data-table="getTableName(data)"></span>
 					</span>
 				</el-tree>
 			</el-main>
@@ -69,6 +69,10 @@
 			editable: {
 				type: Boolean,
 				default: false
+			},
+			tableNameKey: {
+				type: String,
+				default: 'table_name'
 			}
 		},
 
@@ -85,6 +89,9 @@
 			getId(node){
 				return node[this.nodeKey];
 			},
+			getTableName(node){
+				return node[this.tableNameKey];
+			},
 
 			getOutPortByField(node){
 				if( !node )
@@ -97,6 +104,18 @@
 					return null;
 				let id = this.getId(node);
 				return $(this.$refs.entityDom).find(`.e-port-in[data-id=${id}]`)[0];
+			},
+			getOutPortByTable(table){
+				if( !table )
+					return null;
+				let tableName = this.getTableName(table);
+				return $(this.$refs.entityDom).find(`.e-port-out[data-table=${tableName}]`)[0];
+			},
+			getInPortByTable(table){
+				if( !table )
+					return null;
+				let tableName = this.getTableName(table);
+				return $(this.$refs.entityDom).find(`.e-port-in[data-table=${tableName}]`)[0];
 			},
 			handlerNodeExpand(data, node, ev){
 				this.$emit('expand', data);
@@ -152,6 +171,7 @@
 		border: 1px solid @color;
 		display: inline-block;
 		max-width: 300px;
+		text-align: left;
 
 		.el-header {
 			line-height: 23px;

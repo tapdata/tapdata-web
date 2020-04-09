@@ -33,7 +33,7 @@
 			<el-button
 					v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
 					size="mini" type="danger"
-					@click="stop">Stop</el-button>
+					@click="stop(false)">Stop</el-button>
 			<el-button
 					v-if="dataFlowId !== null && ['stopping'].includes(status)"
 					size="mini" type="danger"
