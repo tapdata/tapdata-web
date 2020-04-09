@@ -84,8 +84,8 @@
   import factory from '../../api/factory';
   import log from '../../log';
 
-  const DataFlowStats = factory('DataFlowStats');
-  const intervalTime = 10000;
+  const DataFlowInsights = factory('DataFlowInsights');
+  let intervalTime = 20000;
   export default {
     name: 'echartData',
     components: {echartHead, echartsCompinent, shaftlessEchart},
@@ -133,7 +133,6 @@
             }
           },
           xAxis: {
-            show: true,
             axisLine: {
               lineStyle: {
                 color: '#48b6e2',
@@ -198,7 +197,6 @@
             // }
           },
           xAxis: {
-            show: true,
             axisLine: {
               lineStyle: {
                 color: '#fb8e00',
@@ -251,7 +249,6 @@
             }
           },
           xAxis: {
-            show: true,
             axisLine: {
               lineStyle: {
                 color: '#f56c6c',
@@ -304,6 +301,12 @@
         dataOverviewType: '',
         selectId: '',
         timer: null, //定时器
+        timer1: null, //定时器
+        timer2: null, //定时器
+        timer3: null, //定时器
+        intervalThroughputpop: 20000,
+        intervalTransf: 20000,
+        intervalReplicate:20000,
       };
     },
 
@@ -350,10 +353,9 @@
       };
       this.flow.createTime = this.dataFlow.createTime ? this.$moment(this.dataFlow.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
       this.flow.username = this.dataFlow.user.email;
-
-      this.timer = setInterval(() => {
-        this.getSpeed(this.isThroughputAll, this.throughputTime);
+      this.timer = setInterval(() =>{
         this.getTwoRadio(this.dataOverviewAll, this.dataOverviewType);
+        this.getSpeed(this.isThroughputAll, this.throughputTime);
         this.getTime(this.transfTime, this.transfType);
         this.getTime(this.replicateTime, this.replicateType);
       }, intervalTime);
@@ -365,6 +367,7 @@
           this.flow = val;
           this.flow.createTime = val.createTime ? this.$moment(val.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
           this.flow.username = val.user.email;
+          this.flow.status = val.status;
         },
         deep: true
       },
@@ -395,6 +398,20 @@
           'filter[where][statsType]': "throughput",
           'filter[where][granularity]': this.selectFlow + time
         };
+        switch(time) {
+          case "second":
+            this.intervalThroughputpop = 20000;
+            break;
+          case "minute":
+            this.intervalThroughputpop = 60000;
+            break;
+          case "hour":
+            this.intervalThroughputpop = 360000;
+            break;
+          case "day":
+            this.intervalThroughputpop = 86400000;
+            break;
+        }
         this.getApiData(params, 'throughput', data);
       },
 
@@ -402,6 +419,7 @@
       getTwoRadio(data, type) {
         this.dataOverviewType = type;
         this.dataOverviewAll = data;
+
         let params = {
           'filter[where][statsType]': "data_overview",
           'filter[where][granularity]': data
@@ -415,11 +433,39 @@
         if (type === "transf") {
           this.transfType = type;
           this.transfTime = data;
+          switch(data) {
+            case "second":
+              this.intervalTransf = 20000;
+              break;
+            case "minute":
+              this.intervalTransf = 60000;
+              break;
+            case "hour":
+              this.intervalTransf = 360000;
+              break;
+            case "day":
+              this.intervalTransf = 86400000;
+              break;
+          }
           params = {
             'filter[where][statsType]': "trans_time",
             'filter[where][granularity]': this.selectFlow + data
           };
         } else if (type === "replicate") {
+          switch(data) {
+            case "second":
+              this.intervalReplicate = 20000;
+              break;
+            case "minute":
+              this.intervalReplicate = 60000;
+              break;
+            case "hour":
+              this.intervalReplicate = 360000;
+              break;
+            case "day":
+              this.intervalReplicate = 86400000;
+              break;
+          }
           this.replicateType = type;
           this.replicateTime = data;
           params = {
@@ -438,7 +484,7 @@
           params['filter[where][dataFlowId]'] = this.flow.id;
           params['filter[where][stageId]'] = this.domValue;
         }
-        await DataFlowStats.get(params).then(res => {
+        await DataFlowInsights.get(params).then(res => {
           if (res.statusText === "OK" || res.status === 200) {
             if (res.data && res.data.length > 0) {
               this.storeData = res.data[0].statsData;
@@ -600,7 +646,8 @@
         //     this.throughputData.series[1].data.push(series2[i]);
         //   }
         // } else {
-        //   let interval = intervalTime / (time.length + 1);
+
+        //   let interval = this.intervalThroughputpop / (time.length+1);
         //   let appendData = function () {
         //     let t = time.shift();
         //     let s1 = series1.shift();
@@ -611,7 +658,7 @@
         //     self.throughputData.series[0].data.push(s1);
         //     self.throughputData.series[1].data.shift();
         //     self.throughputData.series[1].data.push(s2);
-        //
+
         //     if (time.length > 0)
         //       setTimeout(appendData, interval);
         //   };
@@ -674,9 +721,9 @@
 
     destroyed() {
       //清除定时器
-      console.log("清除定时器");
       clearInterval(this.timer);
       this.timer = null;
+
     }
 
   };

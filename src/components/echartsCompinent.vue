@@ -98,9 +98,9 @@
 					//x轴的数据以及配置
 					xAxis: {
 						type: 'category', //坐标轴类型。具体参考官方文档
-						boundaryGap: false, //类目轴中 boundaryGap 可以配置为 true 和 false。默认为 true，这时候刻度只是作为分隔线，标签和数据点都会在两个刻度之间的带(band)中间。
+						boundaryGap: true, //类目轴中 boundaryGap 可以配置为 true 和 false。默认为 true，这时候刻度只是作为分隔线，标签和数据点都会在两个刻度之间的带(band)中间。
 						data: configures.xAxis.data, //x轴的数据
-						show: configures.xAxis.show,
+						show: true,
 						axisTick: {show: false},  //是否显示坐标轴刻度
 						splitLine: {
               show: true,
@@ -116,25 +116,21 @@
 							}
 						}, //是否显示坐标轴轴线。
 						axisLabel: {
+              interval: 0,
+              rotate: 25,
+              fontSize: 6,
 							textStyle: {
-								color: '#fff',  //坐标的字体颜色
+								color: '#333',  //坐标的字体颜色
 							}
 						},
 						splitArea: {
 							areaStyle: {
 								color: '#f00'
 							}
-						},
-						// axisLine: {
-						//   lineStyle: {
-						//     color: this.echartsXYcolor
-						//   }
-						// },
-						// axisLabel: {
-						//   textStyle: {
-						//     // color: this.echartsXYcolor
-						//   }
-						// }
+            },
+            nameTextStyle:{
+              fontSize: 12,
+            }
 					},
 					//y轴的数据配置
 					yAxis: {
