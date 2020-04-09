@@ -90,7 +90,9 @@
 				return node[this.nodeKey];
 			},
 			getTableName(node){
-				return node[this.tableNameKey];
+				let tableName = node[this.tableNameKey];
+				tableName = tableName.replace(/[\\.,]/g, '_');
+				return tableName;
 			},
 
 			getOutPortByField(node){

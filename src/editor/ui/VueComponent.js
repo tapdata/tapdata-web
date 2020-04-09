@@ -27,11 +27,10 @@ export default class VueComponent extends Component{
 
 		let Comp = Vue.extend(component);
 
+		let propsData = this.opts.propsData || {};
 		let vm = self.vm = new Comp({
 			i18n,
-			propsData: {
-				dataFlow: this.opts.dataFlow || {}
-			}
+			propsData
 		});
 		vm.editor = editor;
 

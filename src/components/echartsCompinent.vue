@@ -19,7 +19,7 @@
 		data() {
 			return {
 				myChart: null,
-        timer: ''
+				timer: ''
 			};
 		},
 		watch: {
@@ -33,7 +33,7 @@
 		mounted() {
 			let that = this;
 			this.$nextTick(() => {
-        that.loadEchart(that.echartsId, that.echartObj);
+				that.loadEchart(that.echartsId, that.echartObj);
 			});
 		},
 
@@ -44,9 +44,9 @@
 				// _this.myChart.clear();   //清空再重绘
 				let publicCharts = _this.echartOption(data);
 				_this.myChart.setOption(publicCharts);
-        /*窗口自适应*/
+				/*窗口自适应*/
 				window.addEventListener("resize", () => {
-          _this.myChart.resize();
+					_this.myChart.resize();
 				});
 			},
 			echartOption(configures) {
@@ -91,8 +91,8 @@
 						feature: {
 							saveAsImage: {}
 						}
-          },
-          animation: false,
+					},
+					animation: false,
 					//直角坐标系内绘图网格
 					grid: configures.grid,
 					//x轴的数据以及配置
@@ -103,11 +103,11 @@
 						show: true,
 						axisTick: {show: false},  //是否显示坐标轴刻度
 						splitLine: {
-              show: true,
-              lineStyle: {
+							show: true,
+							lineStyle: {
 								color: "#dedee4"
 							}
-            }, //是否显示分隔线
+						}, //是否显示分隔线
 						axisLine: {
 							show: true,
 							lineStyle: {
@@ -116,9 +116,9 @@
 							}
 						}, //是否显示坐标轴轴线。
 						axisLabel: {
-              interval: 0,
-              rotate: 25,
-              fontSize: 6,
+							interval: 0,
+							rotate: 25,
+							fontSize: 6,
 							textStyle: {
 								color: '#333',  //坐标的字体颜色
 							}
@@ -127,10 +127,10 @@
 							areaStyle: {
 								color: '#f00'
 							}
-            },
-            nameTextStyle:{
-              fontSize: 12,
-            }
+						},
+						nameTextStyle: {
+							fontSize: 12,
+						}
 					},
 					//y轴的数据配置
 					yAxis: {
@@ -142,13 +142,13 @@
 								color: configures.yAxis.axisLine.lineStyle.color,
 								width: 1//这里是为了突出显示加上的
 							}
-            },
-            splitLine: {
-              show: true,
-              lineStyle: {
+						},
+						splitLine: {
+							show: true,
+							lineStyle: {
 								color: "#dedee4"
 							}
-            }, //是否显示分隔线
+						}, //是否显示分隔线
 						splitArea: {
 							areaStyle: {
 								color: ['rgba(250,250,250,0.3)', 'rgba(200,200,200,0.3)']
@@ -163,7 +163,7 @@
 					},
 					// type: 'value',
 					axisLabel: {
-					  formatter: configures.yAxis.axisLabel.formatter
+						formatter: configures.yAxis.axisLabel.formatter
 					},
 					// axisLine: {
 					//   lineStyle: {

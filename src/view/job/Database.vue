@@ -58,7 +58,8 @@
 					},*/
 					fields: {
 						name: 1, id: 1, database_type: 1, connection_type: 1, status: 1
-					}
+					},
+					order: 'name ASC'
 				})
 			});
 

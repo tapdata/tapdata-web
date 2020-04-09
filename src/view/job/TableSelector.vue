@@ -30,7 +30,6 @@
 <script>
 	import factory from '../../api/factory';
 	import log from "../../log";
-	import {FORM_DATA_KEY} from "../../editor/constants";
 
 	const MetadataInstances = factory('MetadataInstances');
 
@@ -170,8 +169,7 @@
 						primaryKeys = data.fields.filter(item => item.primary_key_position > 0)
 							.map(item => item.field_name).join(',');
 
-						// TODO: MetadataInstances 中的 field，没有 original_field_name ，找 Sam 确认
-						data.fields.forEach(item => item.original_field_name = item.original_field_name || item.field_name)
+						data.fields.forEach(item => item.original_field_name = item.original_field_name || item.field_name);
 					}
 					log('primaryKeys',primaryKeys);
 					formData ={

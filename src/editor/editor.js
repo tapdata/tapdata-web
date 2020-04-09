@@ -18,6 +18,7 @@ import log from "../log";
 import Panel from "./ui/panel";
 import TableSelector from "../view/job/TableSelector";
 import {DEFAULT_SETTING} from "./constants";
+import {EditorEventType} from "./lib/events";
 
 export default class Editor extends BaseObject {
 
@@ -200,7 +201,9 @@ export default class Editor extends BaseObject {
 			monitor = new VueComponent({
 				name: 'monitor',
 				editor: this,
-				dataFlow: dataFlow,
+				propsData: {
+					dataFlow: dataFlow,
+				},
 				component: EchartData
 			});
 			self.getRightSidebar().add(monitor);
@@ -251,7 +254,9 @@ export default class Editor extends BaseObject {
 				title: 'Logs',
 				name: 'logsPanel',
 				editor: this,
-				dataFlow: dataFlow,
+				propsData: {
+					dataFlow: dataFlow,
+				},
 				component: DebugLogs
 			});
 			this.getBottomTabPanel().add(logsPanel);
@@ -274,7 +279,9 @@ export default class Editor extends BaseObject {
 				title: 'Capture',
 				name: 'capture',
 				editor: this,
-				dataFlow: dataFlow,
+				propsData: {
+					dataFlow: dataFlow,
+				},
 				component: Capture
 			});
 			this.getBottomTabPanel().add(capture);
@@ -360,6 +367,7 @@ export default class Editor extends BaseObject {
 	}
 
 	destroy(){
+		this.emit(EditorEventType.BEFORE_DESTROY, this);
 		this.ui.destroy();
 	}
 
