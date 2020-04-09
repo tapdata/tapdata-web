@@ -38,7 +38,7 @@
 			return {
 				search: '',
 				logCount: 0,
-				lastTime: '',
+				lastLogsId: '',
         timer: null, //定时器
         logsList: []
 			};
@@ -65,10 +65,10 @@
 					'filter[order]': 'millis DESC',
 					'filter[where][contextMap.dataFlowId][eq]': this.dataFlow.id
 				};
-				if (!this.lastTime) {
+				if (!this.lastLogsId) {
 					paramas['filter[limit]'] = 100;
-				} else if (this.lastTime && !this.search) {
-          paramas['filter[where][millis][gt]'] = this.lastTime;
+				} else if (this.lastLogsId && !this.search) {
+          paramas['filter[where][millis][gt]'] = this.lastLogsId;
         }
 				if (this.search) {
 					paramas['filter[where][$text][search]'] = this.search;
@@ -77,7 +77,7 @@
 				logsModel.get(paramas).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data && res.data.length > 0) {
-              this.lastTime = res.data[0].millis;
+              this.lastLogsId = res.data[0].id;
               let logCount = res.data.length;
               this.logCount += logCount;
               for (let i = logCount - 1; i >= 0; i--) {
@@ -95,7 +95,7 @@
                     </li>`)
                   );
                 } else {
-                  this.lastTime = '';
+                  this.lastLogsId = '';
                   this.logCount = 0;
                   this.logsList = res.data;
                 }
