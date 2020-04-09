@@ -1,10 +1,18 @@
 <template>
-	<div>
+	<div class="metadata">
+
 		<div class="box-tree">
-			<div class="box-head">
+			<div class="metadata-header" v-show="isActive">
+				<span>数据分类</span>
+				<div class="metadata-header-right">
+					<i class="iconfont icon-fangdajing" @click="displaySearch(false)"></i>
+					<i class="iconfont icon-sync" @click="handleList"></i>
+					<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
+				</div>
+			</div>
+			<div class="metadata-header"  v-show="!isActive">
+				<i class="iconfont icon-right-circle" @click="displaySearch(true)"></i>
 				<el-input class="search" v-model="filterText"><i slot="suffix" class="el-input__icon el-icon-search"></i></el-input>
-				<i class="iconfont icon-sync" @click="handleList"></i>
-				<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
 			</div>
 			<el-tree
 					node-key="id"
@@ -24,35 +32,35 @@
 			</el-tree>
 		</div>
 		<div class="box-ul">
-			<ul class="classify-ul">
-				<div class="box-head">
-					<div class="select-nav-header">
-						<span>{{ checkedValue }}</span>
-						<el-button size="mini" type="primary">批量分类</el-button>
-					</div>
-					<el-input placeholder="请输入内容" v-model="search" class="search-input" clearable @clear="clear" @change="handleSearch">
-						<i slot="prefix" class="el-input__icon el-icon-search"></i>
-					</el-input>
-					<div class="select-nav">
-						<el-select v-model="checkType" clearable placeholder="请选择" class="MetaDataSelect" @change="handleSearch">
-							<el-option
-									v-for="item in options"
-									:key="item.value"
-									:label="item.label"
-									:value="item.value">
-							</el-option>
-						</el-select>
-						<el-select v-model="checkClassify" clearable placeholder="请选择" class="MetaDataSelect" @change="handleSearch">
-							<el-option
-									v-for="item in optionsType"
-									:key="item.value"
-									:label="item.label"
-									:value="item.value">
-							</el-option>
-						</el-select>
-						<el-checkbox  v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
-					</div>
+			<div class="box-head">
+				<div class="select-nav-header">
+					<span>{{ checkedValue }}</span>
+					<el-button size="mini" type="primary">批量分类</el-button>
 				</div>
+				<el-input placeholder="请输入内容" v-model="search" class="search-input" clearable @clear="clear" @change="handleSearch">
+					<i slot="prefix" class="el-input__icon el-icon-search"></i>
+				</el-input>
+				<div class="select-nav">
+					<el-select v-model="checkType" clearable placeholder="请选择" class="MetaDataSelect" @change="handleSearch">
+						<el-option
+								v-for="item in options"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value">
+						</el-option>
+					</el-select>
+					<el-select v-model="checkClassify" clearable placeholder="请选择" class="MetaDataSelect" @change="handleSearch">
+						<el-option
+								v-for="item in optionsType"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value">
+						</el-option>
+					</el-select>
+				</div>
+			</div>
+			<ul class="classify-ul">
+				<el-checkbox  v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
 				<el-checkbox-group v-model="checkData" @change="handleCheckedCitiesChange" class="list-box">
 					<li  v-for="item in listdata" :key="item.id">
 						<el-checkbox :label="item.id">
@@ -136,6 +144,7 @@
 				}],
 				checkClassify: '',
 				checkType:"",
+				isActive:true,
 			};
 		},
 		mounted() {
@@ -305,6 +314,10 @@
 			clear() {
 				this.handleList();
 			},
+			displaySearch(val){
+				this.isActive = val;
+				log(this.isActive);
+			}
 		}
 	};
 </script>
@@ -332,8 +345,9 @@
 	}
 
 	.search {
-		width: 170px;
+		width: 197px;
 		margin-bottom: 10px;
+		margin-left: 8px;
 	}
 
 	.filter-icon {
@@ -361,24 +375,19 @@
 		z-index: 2;
 	}
 
-	.el-tree {
-		padding-top: 40px;
-	}
-
 	.box-tree {
 		float: left;
-		width: 170px;
+		width: 240px;
+		border: 1px solid #dedee4;
+		height: calc(100vh - 1px);
 	}
-
 	.box-ul {
 		float: left;
-		margin-left: 50px;
 	}
 	.list-box{
 		margin-top: 114px
 	}
 	.classify-ul {
-		border: 1px solid #ebeef5;
 		background-color: #fff;
 		overflow: hidden;
 		color: #303133;
@@ -440,6 +449,20 @@
 		padding-bottom: 5px;
 		padding-top: 5px;
 	}
+	/*头部样式*/
+	.metadata-header{
+		width: 232px;
+		height: 31px;
+		background: #f1f1f1;
+		border-bottom: 1px solid #dedee4;
+		font-size: 12px;
+		line-height: 31px;
+		padding-left: 8px;
+		display: flex;
+	}
+	.metadata-header-right{
+		margin-left: 124px;
+	}
 
 </style>
 <style lang="less">
@@ -448,5 +471,11 @@
 		.el-input__inner{
 			border: none !important;
 		}
+	}
+	.metadata-header{
+		.el-input .el-input__inner {
+				height: 24px;
+				line-height: 24px;
+			}
 	}
 </style>
