@@ -185,7 +185,7 @@ const tc = {
 					none_database: '數據庫必填.',
 
 					form: {
-						placeholder: '清玄這數據庫',
+						placeholder: '請選擇數據庫',
 						label: '數據庫'
 					}
 				},

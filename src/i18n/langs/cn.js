@@ -185,7 +185,7 @@ const cn = {
 					none_database: '数据库必填.',
 
 					form: {
-						placeholder: '清玄这数据库',
+						placeholder: '请选择数据库',
 						label: '数据库'
 					}
 				},
