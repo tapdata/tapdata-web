@@ -22,7 +22,7 @@ export default class UI extends Component {
 			<div class="e-header">
 				<div class="e-action-bar"><a class="e-action-back iconfont icon-xiangzuo"></a></div>
 				<div class="e-title">
-					<h3 contenteditable="true">任务</h3>
+					<h3 contenteditable="true" style="font-size: 12px">任务</h3>
 				</div>
 				<i class='el-icon-edit el-icon'></i>
 				<div class="e-toolbar-container">

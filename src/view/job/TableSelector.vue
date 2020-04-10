@@ -1,11 +1,12 @@
 <template>
 	<div class="box">
 		<div class="box-head">
-			<el-input class="search" v-model="filterText"><i slot="suffix" class="el-input__icon el-icon-search"></i></el-input>
+			<el-input class="search" v-model="filterText" clearable><i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
 			<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
 		</div>
 		<el-tree
 				:data="data"
+				:props="props"
 				node-key="id"
 				:expand-on-click-node="false"
 				lazy
@@ -41,7 +42,7 @@
 				filterText:'',
 				data: [],
 				default_expanded:false,
-				defaultProps: {
+				props: {
 					children: 'children',
 					label: 'label',
 					isLeaf: 'leaf'
@@ -67,8 +68,10 @@
 				let params = {
 					filter: JSON.stringify({
 						where: {
-							meta_type: 'database'
-						}
+							meta_type: 'database',
+							is_deleted:false
+						},
+
 					})
 				};
 				MetadataInstances.get(params).then(res => {
@@ -107,7 +110,8 @@
 							},
 							databaseId: {
 								regexp: `^${node.key}$`
-							}
+							},
+							is_deleted:false
 						}
 					})
 				};
@@ -121,6 +125,7 @@
 									_id:record.source._id,
 									label: record.name || record.original_name,
 									expanded: true,
+									leaf: true,
 									meta_type: record.meta_type,
 									database_type:record.source.database_type||'',
 									original_name:record.original_name ||'',
@@ -161,7 +166,7 @@
 				if(data.meta_type ==='database'){
 					formData ={
 						connectionId:data.source._id,
-						name: data.source.name || data.label,
+						name: this.handleString(data.source.name) || this.handleString(data.label) ,
 					};
 				}else if(data.meta_type ==='table' || data.meta_type ==='view'|| data.meta_type ==='collection'|| data.meta_type ==='mongo_view'){
 					let primaryKeys ='';
@@ -198,6 +203,13 @@
 				cell.position(coordinates.x+400, coordinates.y+this.count+160);
 				this.editor.graph.addCell(cell);
 			},
+			handleString(str){
+				if(!str || str.length <= 20){
+					return str;
+				}
+				return `${ str.substring(0,8)}...${str.substring(str.length-9)}`;
+
+			}
 		}
 	};
 </script>
@@ -251,8 +263,32 @@
 	.box-head{
 		position: fixed;
 		z-index: 2;
+		background: #fff;
+		overflow: hidden;
+		width: 217px;
 	}
 	.el-tree{
 		padding-top: 40px;
+	}
+</style>
+<style scoped>
+	/*头部样式*/
+	.metadata-header{
+		width: 232px;
+		height: 31px;
+		background: #f1f1f1;
+		border-bottom: 1px solid #dedee4;
+		font-size: 12px;
+		line-height: 31px;
+		padding-left: 8px;
+		display: flex;
+	}
+</style>
+<style lang="less">
+	.search{
+		.el-input  .el-input__inner {
+			height: 24px;
+			line-height: 24px;
+		}
 	}
 </style>

@@ -1,67 +1,68 @@
 <template>
-	<div>
+	<div class="metadata">
+
 		<div class="box-tree">
-			<div class="box-head">
+			<div class="metadata-header" v-show="isActive">
+				<span>数据分类</span>
+				<div class="metadata-header-right">
+					<i class="iconfont icon-fangdajing" @click="displaySearch(false)"></i>
+					<i class="iconfont icon-sync" @click="handleList"></i>
+					<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
+				</div>
+			</div>
+			<div class="metadata-header"  v-show="!isActive">
+				<i class="iconfont icon-right-circle" @click="displaySearch(true)"></i>
 				<el-input class="search" v-model="filterText"><i slot="suffix" class="el-input__icon el-icon-search"></i></el-input>
-				<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
 			</div>
 			<el-tree
 					node-key="id"
+					:props="props"
 					:expand-on-click-node="false"
 					lazy
 					:load="loadNodes"
 					:filter-node-method="filterNode"
 					ref="tree"
+					class="metaData-tree"
 			>
 			<span class="custom-tree-node" slot-scope="{ node, data}">
 				<span>
-					<span v-if="data.meta_type ==='database'" class="iconfont icon-shujuku filter-icon"></span>
-					<span v-if="data.meta_type ==='table'" class="iconfont icon-table2  filter-icon-table"></span>
-					<span v-if="data.meta_type ==='collection'" class="iconfont icon-collection filter-icon-table"></span>
-					<span class="table-label">{{ node.label }}</span>
+					<span  class="iconfont icon-Folder-closed filter-icon"></span>
+					<span class="table-label" @click="handleChecked(data)">{{ node.label }}</span>
 				</span>
 			</span>
 			</el-tree>
 		</div>
 		<div class="box-ul">
-			<ul class="classify-ul">
+			<div class="box-head">
 				<div class="select-nav-header">
-					<span>东南区</span>
+					<span style="font-size: 12px">{{ checkedValue }}</span>
 					<el-button size="mini" type="primary">批量分类</el-button>
 				</div>
-				<el-input placeholder="请输入内容" v-model="search" class="search-input">
+				<el-input placeholder="请输入内容" v-model="search" class="search-input" clearable @clear="clear" @change="handleSearch">
 					<i slot="prefix" class="el-input__icon el-icon-search"></i>
 				</el-input>
 				<div class="select-nav">
-					<el-dropdown>
-					<span class="el-dropdown-link">
-					下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
-					</span>
-						<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item>all</el-dropdown-item>
-							<el-dropdown-item>database</el-dropdown-item>
-							<el-dropdown-item>mongoDB</el-dropdown-item>
-							<el-dropdown-item>table</el-dropdown-item>
-							<el-dropdown-item>collection</el-dropdown-item>
-							<el-dropdown-item>api</el-dropdown-item>
-							<el-dropdown-item>flow</el-dropdown-item>
-							<el-dropdown-item>file</el-dropdown-item>
-							<el-dropdown-item>view</el-dropdown-item>
-							<el-dropdown-item>mongo_view</el-dropdown-item>
-						</el-dropdown-menu>
-					</el-dropdown>
-					<el-dropdown>
-					<span class="el-dropdown-link">
-					下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
-					</span>
-						<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item>all</el-dropdown-item>
-							<el-dropdown-item>no tag</el-dropdown-item>
-						</el-dropdown-menu>
-					</el-dropdown>
+					<el-select v-model="checkType" clearable placeholder="请选择" class="MetaDataSelect" @change="handleSearch">
+						<el-option
+								v-for="item in options"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value">
+						</el-option>
+					</el-select>
+					<el-select v-model="checkClassify" clearable placeholder="请选择" class="MetaDataSelect" @change="handleSearch">
+						<el-option
+								v-for="item in optionsType"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value">
+						</el-option>
+					</el-select>
 					<el-checkbox  v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
 				</div>
-				<el-checkbox-group v-model="checkData" @change="handleCheckedCitiesChange">
+			</div>
+			<ul class="classify-ul">
+				<el-checkbox-group v-model="checkData" @change="handleCheckedCitiesChange" class="list-box">
 					<li  v-for="item in listdata" :key="item.id">
 						<el-checkbox :label="item.id">
 							<span class="iconfont icon-table2 icon-color"></span>
@@ -90,7 +91,7 @@
 				data: [],
 				search:'',
 				default_expanded: false,
-				defaultProps: {
+				props: {
 					children: 'children',
 					label: 'label',
 					isLeaf: 'leaf'
@@ -103,6 +104,48 @@
 				listdata: [],
 				checkAll: [],
 				checkData: [],
+				checkedValue:'all datas',
+				options: [{
+					value: '',
+					label: 'all types'
+				}, {
+					value: 'database',
+					label: 'database'
+				}, {
+					value: 'mongoDB',
+					label: 'mongoDB'
+				}, {
+					value: 'table',
+					label: 'table'
+				}, {
+					value: 'collection',
+					label: 'collection'
+				}, {
+					value: 'api',
+					label: 'api'
+				}, {
+					value: 'flow',
+					label: 'flow'
+				}, {
+					value: 'file',
+					label: 'file'
+				}, {
+					value: 'view',
+					label: 'view'
+				}, {
+					value: 'mongo_view',
+					label: 'mongo_view'
+				}],
+				optionsType: [{
+					value: '',
+					label: 'all'
+				}, {
+					value: 'no type',
+					label: 'no type'
+				}],
+				checkClassify: '',
+				checkType:"",
+				isActive:true,
 			};
 		},
 		mounted() {
@@ -124,36 +167,58 @@
 					filter.where['parent_id'] = {
 						exists: false
 					};
+					MetadataDefinitions.get({filter: JSON.stringify(filter)}).then(res => {
+						if (res.statusText === "OK" || res.status === 200) {
+							if (res.data) {
+								self.data.splice(0, self.data.length);
+								let children = [];
+								res.data.forEach((record) => {
+									children.push({
+										id: record.id,
+										parent_id: record.parent_id,
+										label: record.value,
+										meta_type: record.item_type,
+									});
+								});
+								resolve(children);
+							}
+						}
+					}).catch(e => {
+						this.$message.error('MetadataInstances error');
+					});
 				} else {
 					filter.where['parent_id'] = {
 						regexp: `^${node.data.id}$`
 					};
-				}
-				MetadataDefinitions.get({filter: JSON.stringify(filter)}).then(res => {
-					if (res.statusText === "OK" || res.status === 200) {
-						if (res.data) {
-							self.data.splice(0, self.data.length);
-							let children = [];
-							res.data.forEach((record) => {
-								children.push({
-									id: record.id,
-									parent_id: record.parent_id,
-									label: record.value,
-									meta_type: record.item_type,
+					MetadataDefinitions.get({filter: JSON.stringify(filter)}).then(res => {
+						if (res.statusText === "OK" || res.status === 200) {
+							if (res.data) {
+								self.data.splice(0, self.data.length);
+								let children = [];
+								res.data.forEach((record) => {
+									children.push({
+										id: record.id,
+										parent_id: record.parent_id,
+										label: record.value,
+										meta_type: record.item_type,
+										leaf: true,
+									});
 								});
-							});
-							resolve(children);
+								resolve(children);
+							}
 						}
-					}
-				}).catch(e => {
-					this.$message.error('MetadataInstances error');
-				});
+					}).catch(e => {
+						this.$message.error('MetadataInstances error');
+					});
+				}
+
 			},
 			filterNode(value, data) {
 				if (!value) return true;
 				return data.label.indexOf(value) !== -1;
 			},
 			handleList() {
+				this.checkedValue = 'all datas';
 				let params = {
 					filter: JSON.stringify({
 						where: {
@@ -188,7 +253,7 @@
 							self.listdata = res.data;
 						}
 					}
-					log('listdata', self.listdata.length);
+					log('listdata', self.listdata);
 				}).catch(e => {
 					this.$message.error('MetadataInstances error');
 				});
@@ -201,12 +266,65 @@
 				}
 			},
 			handleCheckAllChange(val) {
-				this.checkData = val ;
-				log('checkData', val);
+				if(val){
+					if(this.listdata){
+						this.listdata.forEach(item =>{
+							this.checkData.push(item.id);
+						});
+					}
+				}else {
+					this.checkData = [];
+				}
+				log('checkData', this.checkData);
 			},
 			handleCheckedCitiesChange(value) {
-				this.checkAll =value ;
+				this.checkData =value ;
 				log('value', value);
+			},
+			handleChecked(val){
+				let params = {};
+				this.checkedValue = val.label;
+				params[`filter[where][classifications.id][in][0]`] = val.id;
+				MetadataInstances.get(params).then(res => {
+					let self = this;
+					if (res.statusText === "OK" || res.status === 200) {
+						if (res.data) {
+							self.listdata = res.data;
+						}
+					}
+					log('listdata', self.listdata);
+				}).catch(e => {
+					this.$message.error('MetadataInstances error');
+				});
+			},
+			handleSearch(){
+				let params = {};
+				if(this.checkType){
+					params[`filter[where][meta_type]`] = this.checkType;
+				}
+				if(this.search){
+					params[`filter[where][or][1][original_name][like]`] = this.search;
+				}
+				//params[`filter[where][or][1][original_name][like]`] = this.checkClassify;
+
+				MetadataInstances.get(params).then(res => {
+					let self = this;
+					if (res.statusText === "OK" || res.status === 200) {
+						if (res.data) {
+							self.listdata = res.data;
+						}
+					}
+					log('listdata', self.listdata);
+				}).catch(e => {
+					this.$message.error('MetadataInstances error');
+				});
+			},
+			clear() {
+				this.handleList();
+			},
+			displaySearch(val){
+				this.isActive = val;
+				log(this.isActive);
 			}
 		}
 	};
@@ -235,8 +353,9 @@
 	}
 
 	.search {
-		width: 190px;
+		width: 197px;
 		margin-bottom: 10px;
+		margin-left: 8px;
 	}
 
 	.filter-icon {
@@ -264,23 +383,19 @@
 		z-index: 2;
 	}
 
-	.el-tree {
-		padding-top: 40px;
-	}
-
 	.box-tree {
 		float: left;
-		width: 170px;
+		width: 240px;
+		border: 1px solid #dedee4;
+		height: calc(100vh - 1px);
 	}
-
 	.box-ul {
 		float: left;
-		margin-left: 50px;
 	}
-
+	.list-box{
+		margin-top: 114px
+	}
 	.classify-ul {
-		border-radius: 4px;
-		border: 1px solid #ebeef5;
 		background-color: #fff;
 		overflow: hidden;
 		color: #303133;
@@ -288,36 +403,50 @@
 		list-style: none;
 		font-size: 12px;
 		width: 300px;
+		height: calc(100vh - 1px);
+		overflow-y: auto;
 	}
-	.classify-ul{
-		height: calc(100vh - 20px);
-		overflow: auto;
-	}
+
 	.classify-ul li {
 		width: 263px;
-		height: 43px;
+		height: 34px;
 		line-height: 43px;
 		margin-left: 8px;
-		margin-bottom: 10px;
 		padding-left: 10px;
-		background: rgba(255, 255, 255, 1);
-		border: 1px solid rgba(234, 234, 235, 1);
+		background: #ffffff;
 		border-radius: 3px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		span{
+			font-size: 12px;
+		}
+	}
+	.box-head{
+		position: fixed;
+		width: 292px;
+		z-index: 4;
+		background: #f5f5f5;
+		border-bottom: 1px solid #dedee4;
 	}
 	.search-input{
 		width: 94%;
 		margin-left: 10px;
 		margin-right: 10px;
 	}
-
+	.filter-icon{
+		color: #EDC958;
+	}
 	.icon-color {
-		color: #599656;
-		font-size: 14px;
+		color: #4AAF47;
+		font-size: 16px !important;
+		margin-top: 1px;
 	}
 	.select-nav{
-		padding: 10px;
 		display: flex;
 		justify-content: space-between;
+		padding-top: 5px;
+		padding-right: 10px;
+		font-size: 12px;
 	}
 	.select-nav-header{
 		display: flex;
@@ -327,5 +456,40 @@
 		padding-right: 10px;
 		padding-bottom: 5px;
 		padding-top: 5px;
+	}
+	/*头部样式*/
+	.metadata-header{
+		width: 232px;
+		height: 31px;
+		background: #f5f5f5;
+		border-bottom: 1px solid #dedee4;
+		font-size: 12px;
+		line-height: 31px;
+		padding-left: 8px;
+		display: flex;
+	}
+	.metadata-header-right{
+		margin-left: 124px;
+	}
+
+</style>
+<style lang="less">
+	.MetaDataSelect {
+		margin-top: -5px;
+		.el-input__inner{
+			border: none !important;
+			background: #f5f5f5;
+		}
+	}
+	.metadata-header{
+		.el-input .el-input__inner {
+				height: 24px;
+				line-height: 24px;
+			}
+	}
+	.metaData-tree{
+		.el-tree-node__content{
+			height: 33px;
+		}
 	}
 </style>

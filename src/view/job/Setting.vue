@@ -3,21 +3,6 @@
 		<el-form label-width="40px" :data="formData" >
 			<el-row>
 				<el-col :span="12">
-					<!-- <el-form-item>
-						<div>{{$t('dataFlow.taskName')}}</div>
-						<el-input
-								:placeholder="$t('dataFlow.taskName')" v-model="formData.name"></el-input>
-					</el-form-item> -->
-				</el-col>
-				<el-col :span="11">
-					<el-form-item>
-						<div>{{$t('dataFlow.mission')}}</div>
-						<el-input v-model="formData.description" type="textarea"  :autosize="{ minRows: 5, maxRows: 6}"></el-input>
-					</el-form-item>
-				</el-col>
-			</el-row>
-			<el-row>
-				<el-col>
 					<el-form-item>
 						<div>{{$t('dataFlow.sync_type')}}</div>
 						<el-radio-group v-model="formData.sync_type" size="mini">
@@ -25,6 +10,14 @@
 							<el-radio-button label="initial_sync" >{{$t('dataFlow.initial_sync')}}</el-radio-button>
 							<el-radio-button label="cdc" >{{$t('dataFlow.cdc')}}</el-radio-button>
 						</el-radio-group>
+					</el-form-item>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="12">
+					<el-form-item>
+						<div>{{$t('dataFlow.mission')}}</div>
+						<el-input v-model="formData.description" type="textarea"  :autosize="{ minRows: 2, maxRows: 6}"></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -151,10 +144,16 @@
 		}
 	};
 </script>
-
-<style lang="less" scoped>
+<style lang="less" >
 /*.data-flow-setting{*/
 /*	height: calc(100vh - 50px);*/
 /*	overflow: auto;*/
 /*}*/
+.setBtn{
+	.el-checkbox-button__inner{
+		padding: 6px 10px ;
+		border-left: 1px solid #DCDFE6;
+		margin: -2px
+	}
+}
 </style>

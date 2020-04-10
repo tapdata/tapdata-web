@@ -20,7 +20,7 @@ export const aggregateConfig = {
 			size: {width: 120, height: 28},
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/o-js.svg',
+					xlinkHref: 'static/editor/o-aggregator.svg',
 					refWidth: '25%',
 					refHeight: '84%',
 					refX: '-8%',
@@ -255,7 +255,7 @@ export const aggregateConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/js.svg',
+				xlinkHref: 'static/editor/aggregator.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
