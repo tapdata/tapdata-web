@@ -111,6 +111,7 @@ const tc = {
 		edit: '編輯',
 		copy: '複製',
 		reset: '重置',
+		detail:'任务监控',
 		select_source_connection: '源端連接',
 		select_sync_mode: '同步方式',
 		mapping: '關聯關係',
