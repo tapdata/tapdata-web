@@ -36,7 +36,7 @@
 			<div class="box-head">
 				<div class="select-nav-header">
 					<span style="font-size: 12px">{{ checkedValue }}</span>
-					<el-button size="mini" type="primary">批量分类</el-button>
+					<el-button size="mini" type="primary" @click="handleClassify">批量分类</el-button>
 				</div>
 				<el-input placeholder="请输入内容" v-model="search" class="search-input" clearable @clear="clear" @change="handleSearch">
 					<i slot="prefix" class="el-input__icon el-icon-search"></i>
@@ -71,6 +71,7 @@
 					</li>
 				</el-checkbox-group>
 			</ul>
+			<SelectClassify ref="SelectClassify" :checkData="checkData" :dialogVisible="dialogVisible" :listdata="listdata"></SelectClassify>
 		</div>
 	</div>
 </template>
@@ -78,12 +79,14 @@
 <script>
 	import factory from '../api/factory';
 	import log from "../log";
+	import SelectClassify from './../components/SelectClassify';
 
 	const MetadataDefinitions = factory('MetadataDefinitions');
 	const MetadataInstances = factory('MetadataInstances');
 
 	export default {
-		name: 'TableSelector',
+		name: 'metaData',
+		components: {SelectClassify},
 		data() {
 			return {
 				count: 0,
@@ -146,10 +149,17 @@
 				checkClassify: '',
 				checkType:"",
 				isActive:true,
+				dialogVisible:false,
 			};
 		},
-		mounted() {
+		async mounted() {
 			this.handleList();
+			this.$refs.SelectClassify.$on('dialogVisible', (operations) => {
+				this.dialogVisible = operations;
+			});
+			this.$refs.SelectClassify.$on('clearCheckData', (operations) => {
+				this.checkData = operations;
+			});
 		},
 		watch: {
 			filterText(val) {
@@ -253,7 +263,6 @@
 							self.listdata = res.data;
 						}
 					}
-					log('listdata', self.listdata);
 				}).catch(e => {
 					this.$message.error('MetadataInstances error');
 				});
@@ -279,7 +288,6 @@
 			},
 			handleCheckedCitiesChange(value) {
 				this.checkData =value ;
-				log('value', value);
 			},
 			handleChecked(val){
 				let params = {};
@@ -325,6 +333,13 @@
 			displaySearch(val){
 				this.isActive = val;
 				log(this.isActive);
+			},
+			handleClassify(){
+				if(this.checkData.length === 0){
+					this.$message.info('please select classify');
+					return;
+				}
+				this.dialogVisible = true;
 			}
 		}
 	};

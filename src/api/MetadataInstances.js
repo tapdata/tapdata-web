@@ -4,8 +4,12 @@
  * @description
  */
 import PublicApi from './publicApi';
+import axios from "axios";
 export default class MetadataInstancesAPI extends PublicApi {
 	constructor(){
 		super('/api/MetadataInstances');
+	}
+	classification(params) {
+		return axios.patch(this.url + '/classifications', params);
 	}
 }

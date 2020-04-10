@@ -111,6 +111,7 @@ const cn = {
 		edit: '编辑',
 		copy: '复制',
 		reset: '重置',
+		detail:'任务监控',
 		select_source_connection: '源端连接',
 		select_sync_mode: '同步方式',
 		mapping: '关联关系',
