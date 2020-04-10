@@ -22,6 +22,7 @@
 					:load="loadNodes"
 					:filter-node-method="filterNode"
 					ref="tree"
+					class="metaData-tree"
 			>
 			<span class="custom-tree-node" slot-scope="{ node, data}">
 				<span>
@@ -34,7 +35,7 @@
 		<div class="box-ul">
 			<div class="box-head">
 				<div class="select-nav-header">
-					<span>{{ checkedValue }}</span>
+					<span style="font-size: 12px">{{ checkedValue }}</span>
 					<el-button size="mini" type="primary">批量分类</el-button>
 				</div>
 				<el-input placeholder="请输入内容" v-model="search" class="search-input" clearable @clear="clear" @change="handleSearch">
@@ -57,10 +58,10 @@
 								:value="item.value">
 						</el-option>
 					</el-select>
+					<el-checkbox  v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
 				</div>
 			</div>
 			<ul class="classify-ul">
-				<el-checkbox  v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
 				<el-checkbox-group v-model="checkData" @change="handleCheckedCitiesChange" class="list-box">
 					<li  v-for="item in listdata" :key="item.id">
 						<el-checkbox :label="item.id">
@@ -103,10 +104,10 @@
 				listdata: [],
 				checkAll: [],
 				checkData: [],
-				checkedValue:'all',
+				checkedValue:'all datas',
 				options: [{
 					value: '',
-					label: 'all'
+					label: 'all types'
 				}, {
 					value: 'database',
 					label: 'database'
@@ -149,7 +150,6 @@
 		},
 		mounted() {
 			this.handleList();
-			this.keyupEnter();
 		},
 		watch: {
 			filterText(val) {
@@ -218,7 +218,7 @@
 				return data.label.indexOf(value) !== -1;
 			},
 			handleList() {
-				this.checkedValue = 'all';
+				this.checkedValue = 'all datas';
 				let params = {
 					filter: JSON.stringify({
 						where: {
@@ -266,11 +266,19 @@
 				}
 			},
 			handleCheckAllChange(val) {
-				this.checkData = val ;
-				log('checkData', val);
+				if(val){
+					if(this.listdata){
+						this.listdata.forEach(item =>{
+							this.checkData.push(item.id);
+						});
+					}
+				}else {
+					this.checkData = [];
+				}
+				log('checkData', this.checkData);
 			},
 			handleCheckedCitiesChange(value) {
-				this.checkAll =value ;
+				this.checkData =value ;
 				log('value', value);
 			},
 			handleChecked(val){
@@ -401,13 +409,11 @@
 
 	.classify-ul li {
 		width: 263px;
-		height: 43px;
+		height: 34px;
 		line-height: 43px;
 		margin-left: 8px;
-		margin-bottom: 10px;
 		padding-left: 10px;
-		background: rgba(255, 255, 255, 1);
-		border: 1px solid rgba(234, 234, 235, 1);
+		background: #ffffff;
 		border-radius: 3px;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -417,9 +423,10 @@
 	}
 	.box-head{
 		position: fixed;
-		background: #fff;
 		width: 292px;
 		z-index: 4;
+		background: #f5f5f5;
+		border-bottom: 1px solid #dedee4;
 	}
 	.search-input{
 		width: 94%;
@@ -430,15 +437,16 @@
 		color: #EDC958;
 	}
 	.icon-color {
-		color: #599656;
-		font-size: 14px;
-		background: #c6f8c382;
-		padding: 3px;
+		color: #4AAF47;
+		font-size: 16px !important;
+		margin-top: 1px;
 	}
 	.select-nav{
-		padding: 10px;
 		display: flex;
 		justify-content: space-between;
+		padding-top: 5px;
+		padding-right: 10px;
+		font-size: 12px;
 	}
 	.select-nav-header{
 		display: flex;
@@ -453,7 +461,7 @@
 	.metadata-header{
 		width: 232px;
 		height: 31px;
-		background: #f1f1f1;
+		background: #f5f5f5;
 		border-bottom: 1px solid #dedee4;
 		font-size: 12px;
 		line-height: 31px;
@@ -470,6 +478,7 @@
 		margin-top: -5px;
 		.el-input__inner{
 			border: none !important;
+			background: #f5f5f5;
 		}
 	}
 	.metadata-header{
@@ -477,5 +486,10 @@
 				height: 24px;
 				line-height: 24px;
 			}
+	}
+	.metaData-tree{
+		.el-tree-node__content{
+			height: 33px;
+		}
 	}
 </style>

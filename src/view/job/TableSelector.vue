@@ -167,7 +167,7 @@
 				if(data.meta_type ==='database'){
 					formData ={
 						connectionId:data.source._id,
-						name: data.source.name || data.label,
+						name: this.handleString(data.source.name) || this.handleString(data.label) ,
 					};
 				}else if(data.meta_type ==='table' || data.meta_type ==='view'|| data.meta_type ==='collection'|| data.meta_type ==='mongo_view'){
 					let primaryKeys ='';
@@ -205,6 +205,13 @@
 				cell.position(coordinates.x+400, coordinates.y+this.count+160);
 				this.editor.graph.addCell(cell);
 			},
+			handleString(str){
+				if(!str || str.length <= 20){
+					return str;
+				}
+				return `${ str.substring(0,8)}...${str.substring(str.length-9)}`;
+
+			}
 		}
 	};
 </script>
