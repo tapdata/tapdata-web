@@ -300,6 +300,28 @@ const cn = {
 				none_join_type: '关联类型必填',
 				none_join_key: '关联字段必填',
 				none_join_path: '关联写入路径必填',
+				form: {
+					joinType: {
+						label: '数据写入模式',
+						placeholder: '请选择数据写入模式'
+					},
+					joinPath: {
+						label: '关联后写入路径',
+						placeholder: '请输入关联后写入路径'
+					},
+					joinKeys: {
+						label: '关联条件',
+						sourceField: '源字段',
+						targetField: '目标字段',
+					},
+				},
+
+				writeMode: {
+					append: '追加写入',
+					upsert: '更新已存在或插入新数据',
+					update: '更新写入',
+					merge_embed: '更新内嵌数组',
+				}
 			}
 		},
 		ui: {

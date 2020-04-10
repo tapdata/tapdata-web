@@ -15,8 +15,8 @@
 						placeholder="please enter primary key"  class="formitem-width"></el-input>
 			</el-form-item>-->
 
-			<el-form-item label="Data write model:" required>
-				<el-select v-model="model.joinTable.joinType" :placeholder="`Please select Data Write model`" @change="handlerJoinTypeChanged">
+			<el-form-item :label="$t('editor.cell.link.form.joinType.label')" required>
+				<el-select v-model="model.joinTable.joinType" :placeholder="$t('editor.cell.link.form.joinType.placeholder')" @change="handlerJoinTypeChanged">
 					<el-option
 							v-for="(item, idx) in writeModels"
 							:label="`${item.label}`"
@@ -25,18 +25,18 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item label="Join Path" required v-if="['update', 'merge_embed'].includes(model.joinTable.joinType)">
+			<el-form-item :label="$t('editor.cell.link.form.joinPath.label')" required v-if="['update', 'merge_embed'].includes(model.joinTable.joinType)">
 				<el-input
 						v-model="model.joinTable.joinPath"
-						placeholder="please enter Join path"  class="formitem-width"></el-input>
+						:placeholder="$t('editor.cell.link.form.joinPath.placeholder')"  class="formitem-width"></el-input>
 			</el-form-item>
 
-			<el-form-item label="Association condition:" required v-if="!['append'].includes(model.joinTable.joinType)">
+			<el-form-item :label="$t('editor.cell.link.form.joinKeys.label')" required v-if="!['append'].includes(model.joinTable.joinType)">
 				<table class="e-table">
 					<thead>
 						<tr>
-							<th>Source Field</th>
-							<th>Target Field</th>
+							<th>{{$t('editor.cell.link.form.joinKeys.sourceField')}}</th>
+							<th>{{$t('editor.cell.link.form.joinKeys.targetField')}}</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -86,16 +86,16 @@
 			return {
 
 				writeModels: [{
-					label: 'Append into Target',
+					label: this.$t('editor.cell.link.writeMode.append'),
 					value: 'append' // insert				{source: ''} + {target: ''}  =  {source: '', target: ''}
 				}, {
-					label: 'Match and Merge or Insert New',
+					label: this.$t('editor.cell.link.writeMode.upsert'),
 					value: 'upsert'  // OneOne				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
 				}, {
-					label: 'Match and Merge',
+					label: this.$t('editor.cell.link.writeMode.update'),
 					value: 'update'  // OneMany				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
 				}, {
-					label: 'Match then Embed as Array in target',
+					label: this.$t('editor.cell.link.writeMode.merge_embed'),
 					value: 'merge_embed'  // ManyOne		{source: ''} + {target: ''}  =  {source: '', joinPath: [{target: ''}]}
 				}],
 

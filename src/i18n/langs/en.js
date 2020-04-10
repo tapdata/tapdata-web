@@ -300,6 +300,28 @@ const en = {
 				none_join_type: 'JoinType is required',
 				none_join_key: 'JoinKeys is required',
 				none_join_path: 'JoinPath is required',
+				form: {
+					joinType: {
+						label: 'Data write model',
+						placeholder: 'Please select Data Write model'
+					},
+					joinPath: {
+						label: 'JoinPath',
+						placeholder: 'Please input join path'
+					},
+					joinKeys: {
+						label: 'Association condition',
+						sourceField: 'Source Field',
+						targetField: 'Target Field',
+					},
+				},
+
+				writeMode: {
+					append: 'Append into Target',
+					upsert: 'Match and Merge or Insert New',
+					update: 'Match and Merge',
+					merge_embed: 'Match then Embed as Array in target',
+				}
 			}
 		},
 		ui: {

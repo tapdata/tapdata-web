@@ -300,6 +300,28 @@ const tc = {
 				none_join_type: '關聯類型必填',
 				none_join_key: '關聯字段必填',
 				none_join_path: '關聯寫入路徑必填',
+				form: {
+					joinType: {
+						label: '数据写入模式',
+						placeholder: '请选择数据写入模式'
+					},
+					joinPath: {
+						label: '关联后写入路径',
+						placeholder: '请输入关联后写入路径'
+					},
+					joinKeys: {
+						label: '关联条件',
+						sourceField: '源字段',
+						targetField: '目标字段',
+					},
+
+					writeMode: {
+						append: '追加寫入',
+						upsert: '更新已存在或插入新數據',
+						update: '更新寫入',
+						merge_embed: '更新內嵌數組',
+					}
+				}
 			}
 		},
 		ui: {
