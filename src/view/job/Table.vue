@@ -1,8 +1,8 @@
 <template>
 	<div class="e-table">
 		<el-form label-position="right" label-width="160px" :model="model" ref="form">
-			<el-form-item label="Database" prop="connectionId" :rules="rules" required>
-				<el-select v-model="model.connectionId" :placeholder="`Please select RDBMS database`" @change="handlerConnectionChange">
+			<el-form-item :label="$t('editor.cell.data_node.table.form.database.label')" prop="connectionId" :rules="rules" required>
+				<el-select v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.table.form.database.placeholder')" @change="handlerConnectionChange">
 					<el-option
 							v-for="(item, idx) in databases"
 							:label="`${item.name} (${item.status})`"
@@ -11,8 +11,8 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item label="Table" prop="tableName" :rules="rules" required>
-				<el-select v-model="model.tableName" :placeholder="`Please select a table`">
+			<el-form-item :label="$t('editor.cell.data_node.table.form.table.label')" prop="tableName" :rules="rules" required>
+				<el-select v-model="model.tableName" :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')">
 					<el-option
 							v-for="(item, idx) in schemas"
 							:label="`${item.table_name}`"
@@ -21,27 +21,26 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item label="Table primary key" required>
+			<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
 				<el-input
 						v-model="model.primaryKeys"
-						placeholder="please enter primary key"  class="formitem-width"></el-input>
+						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"  class="formitem-width"></el-input>
 			</el-form-item>
 
-			<el-form-item required label="Exists data" v-if="!isSourceDataNode">
+			<el-form-item required :label="$t('editor.cell.data_node.collection.form.dropTable.label')" v-if="!isSourceDataNode">
 				<el-select
-						v-model="model.dropTable"
-						:placeholder="`Please select a collection`">
+						v-model="model.dropTable">
 					<el-option
-							label="Keep exists data"
+							:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
 							:value="false"></el-option>
 					<el-option
-							label="Remove exists data at before sync"
+							:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
 							:value="true"></el-option>
 				</el-select>
 			</el-form-item>
 
-			<el-form-item label="Custom SQL" prop="sql" :rules="rules" >
-				<el-input type="textarea" rows="10" v-model="model.sql" placeholder="Please input you custom sql"></el-input>
+			<el-form-item :label="$t('editor.cell.data_node.table.form.custom_sql.label')" prop="sql" :rules="rules" >
+				<el-input type="textarea" rows="10" v-model="model.sql" :placeholder="$t('editor.cell.data_node.table.form.custom_sql.placeholder')"></el-input>
 			</el-form-item>
 
 		</el-form>

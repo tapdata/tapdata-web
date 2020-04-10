@@ -5,6 +5,7 @@
  */
 import {options} from "../lib/rappid/config";
 import Table from "../../view/job/Table";
+import i18n from "../../i18n/i18n";
 
 export const tableConfig = {
 
@@ -17,7 +18,7 @@ export const tableConfig = {
 					xlinkHref: 'static/editor/o-table.svg',
 				},
 				label:{
-					text:'table'
+					text: i18n.t('editor.cell.data_node.table.name')
 				}
 			}
 		},
@@ -38,13 +39,13 @@ export const tableConfig = {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
 				if( !data )
-					throw new Error(name + ': Settings cannot be none.');
+					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
 				if( !data.connectionId )
-					throw new Error(name + ': Database cannot be empty.');
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_database')}`);
 				if( !data.tableName )
-					throw new Error(name + ': Table cannot be empty.');
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_table')}`);
 				if( !data.primaryKeys)
-					throw new Error(`Table ${data.tableName} primary key cannot be empty.`);
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_pk')}`);
 				return true;
 			},
 
@@ -186,7 +187,7 @@ export const tableConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: 'RDBMS Table',
+				dataTooltip: i18n.t('editor.cell.data_node.table.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -206,7 +207,7 @@ export const tableConfig = {
 				refY: '0%'
 			},
 			label: {
-				text: 'table',
+				text: i18n.t('editor.cell.data_node.table.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',

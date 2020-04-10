@@ -1,12 +1,12 @@
 <template>
 	<el-form label-position="right" label-width="130px" :model="model" ref="form">
 
-		<el-form-item :required="true" label="Name">
-			<el-input v-model="model.name" class="form-item-width" placeholder="Please enter node name"></el-input>
+		<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.name.label')">
+			<el-input v-model="model.name" class="form-item-width" :placeholder="$t('editor.cell.processor.script.form.name.placeholder')"></el-input>
 		</el-form-item>
 
-		<el-form-item :required="true" label="Script Type">
-			<el-select v-model="model.type" placeholder="Type of script" value="js_processor">
+		<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.type.label')">
+			<el-select v-model="model.type" :placeholder="$t('editor.cell.processor.script.form.type.placeholder')" value="js_processor">
 				<el-option
 						v-for="(item, idx) in scriptTypes"
 						:label="item.label"
@@ -16,7 +16,7 @@
 			</el-select>
 		</el-form-item>
 
-		<el-form-item :required="true" label="Script">
+		<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.script.label')">
 			<el-input type="textarea" rows="10" v-model="model.script"></el-input>
 		</el-form-item>
 	</el-form>

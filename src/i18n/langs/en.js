@@ -1,7 +1,14 @@
 import enLocale from 'element-ui/lib/locale/lang/en';
 
 const en = {
+	...enLocale,
 	message: {
+		api: {
+			get: {
+				error: 'Load data failed.'
+			}
+		},
+		exists_name: 'Name already exists',
 		search: 'search',
 		serviceCluMange: 'Service cluster management',
 		statusLog: 'Status log',
@@ -14,8 +21,10 @@ const en = {
 		manageSys: 'manage system',
 		restart: 'restart',
 		syncGover: 'Syn gover',
+		screen: 'Screen',
 		delete: 'delete',
 		cancle: 'cancle',
+		cancel: 'Cancel',
 		confirm: 'confirm',
 		placeholderMonServer: 'Please enter the monitored service name',
 		placeholderCommand: 'Please enter command',
@@ -46,8 +55,9 @@ const en = {
 		prompt: 'Prompt',
 		resetMessage: 'This operation will reset the task state, will it reset?',
 		deteleMessage: 'This operation will delete the task, will it delete it?',
-		cancleReset: 'canle reset',
-		resetOk: 'reset success',
+		cancleReset: 'cancel reset',
+		resetOk: 'Reset success',
+		resetFailed: 'Reset Failed',
 	},
 	dataFlow: {
 		average: 'Average',
@@ -83,6 +93,7 @@ const en = {
 			scheduled: 'Scheduled',
 			stopping: 'Stopping',
 			error: 'Error',
+			force_stopping: 'Force Stopping',
 		},
 		searchPlaceholder: 'Task Name / Node Name / Library Table Name',
 		dataRange: 'date range',
@@ -98,7 +109,8 @@ const en = {
 		dataMap: 'Data Map',
 		edit: 'Edit',
 		copy: 'Copy',
-		reset: 'Reset',select_source_connection: 'Source-side connection',
+		reset: 'Reset',
+		select_source_connection: 'Source-side connection',
 		select_sync_mode: 'Sync Mode',
 		mapping: 'Association',
 		select_target_connection: 'Target connection',
@@ -125,16 +137,198 @@ const en = {
 		read_cdc_interval: 'Incremental synchronization interval (ms)',
 		read_batch_size: 'How many reads each time',
 		mission: 'Description',
-		yes:'yes',
-		no:'no',
-    nodeName: 'Node Name',
-    aggFunction: 'Aggregation Function',
-    aggExpression: 'expression',
-    filterPredicate: 'Filter Predicate',
-    groupByExpression: 'Group By Expression',
-    polymerization: 'Polymerization'
+		yes: 'yes',
+		no: 'no',
+		nodeName: 'Node Name',
+		aggFunction: 'Aggregation Function',
+		aggExpression: 'expression',
+		filterPredicate: 'Filter Predicate',
+		groupByExpression: 'Group By Expression',
+		polymerization: 'Polymerization',
+		button: {
+			setting: 'Setting',
+			logs: 'Logs',
+			capture: 'Capture',
+			stop_capture: 'Stop Capture',
+			start: 'Start',
+			stop: 'Stop',
+			force_stop: 'Force Stop',
+			reset: 'Reset',
+			save: 'Save',
+		},
+		save_before_running: 'Please save the task before running',
+		reset_job: {
+			msg: 'Reset Job?',
+			tip: 'Tip',
+		},
+		stop_job: {
+			msg: 'Stop jobs?',
+			force_stop_msg: 'Force Stop jobs?',
+			tip: 'Tip'
+		}
 	},
-	...enLocale
+	editor: {
+		cell: {
+			validate: {
+				empty_name: 'Name is required.',
+
+				none_setting: 'Settings cannot be none.',
+				none_stage: 'Must have one stage.',
+			},
+			data_node: {
+				database: {
+					name: 'Database',
+					tip: 'Any Database',
+					defaultText: 'Database',
+
+					none_database: 'Database is required.',
+
+					form: {
+						placeholder: 'Please select database',
+						label: 'Database'
+					}
+				},
+				collection: {
+					name: 'Collection',
+					tip: 'MongoDB Collection',
+					defaultText: 'Collection',
+
+					none_database: 'Database is required.',
+					none_collection: 'Collection is required.',
+					none_pk: 'Primary key is required.',
+
+					form: {
+						database: {
+							label: 'Database',
+							placeholder: 'Please select MongoDB database'
+						},
+						collection: {
+							label: 'Collection',
+							placeholder: 'Please select collection'
+						},
+						pk: {
+							label: 'Primary key',
+							placeholder: 'Please enter primary key'
+						},
+						dropTable: {
+							label: 'Existing data',
+							placeholder: '',
+							keep: 'Keep existing data',
+							remove: 'Remove exists data at before sync'
+						}
+					}
+				},
+				table: {
+					name: 'Table',
+					tip: 'RDBMS Table',
+					defaultText: 'Table',
+
+					none_database: 'Database is required.',
+					none_table: 'Table is required.',
+					none_pk: 'Primary key is required.',
+
+					form: {
+						database: {
+							label: 'Database',
+							placeholder: 'Please select RDBMS database'
+						},
+						table: {
+							label: 'Table',
+							placeholder: 'Please select table'
+						},
+						custom_sql: {
+							label: 'Custom SQL',
+							placeholder: 'Please input you custom sql'
+						}
+					}
+				}
+			},
+			processor: {
+				aggregate: {
+					name: 'Aggregate',
+					tip: 'Aggregate processor',
+					defaultText: 'Aggregate',
+					none_function: 'Aggregate function is required.',
+					none_group: 'Group expression is required.',
+					none_aggregation_expression: 'Aggregate expression is required.',
+				},
+				field: {
+					name: 'Field',
+					tip: 'Field processor',
+					defaultText: 'Field processor'
+				},
+				script: {
+					name: 'Script',
+					tip: 'Script processor',
+					defaultText: 'Script processor',
+
+					none_script_type: 'Script type is required.',
+					none_script: 'Script is required.',
+				}
+			},
+			link: {
+				none_join_type: 'JoinType is required',
+				none_join_key: 'JoinKeys is required',
+				none_join_path: 'JoinPath is required',
+			}
+		},
+		ui: {
+			sidebar: {
+				setting: 'Data Flow Settings',
+				node_setting: 'Node Settings',
+				logs: 'Logs',
+				capture: 'Capture',
+				style: 'Style',
+
+				data_nodes: 'Data Nodes',
+				processor: 'Processor',
+			},
+			toolbar: {
+				undo: {
+					tip: 'Undo'
+				},
+				redo: {
+					tip: 'Redo'
+				},
+				clear_paper: {
+					tip: 'Clear Paper'
+				},
+				export_svg: {
+					tip: 'Open as SVG in a pop-up'
+				},
+				export_png: {
+					tip: 'Open as SVG in a pop-up'
+				},
+				print: {
+					tip: 'Open a Print Dialog'
+				},
+				to_back: {
+					tip: 'Send Object to Back'
+				},
+				to_front: {
+					tip: 'Bring Object to Front'
+				},
+				layout: {
+					tip: 'Auto-layout Graph'
+				},
+				zoom_to_fit: {
+					tip: 'Zoom To Fit'
+				},
+				zoom_out: {
+					tip: 'Zoom Out'
+				},
+				zoom_in: {
+					tip: 'Zoom In'
+				},
+				grid_size: {
+					tip: 'Change Grid Size'
+				},
+				fullscreen: {
+					tip: 'Toggle Fullscreen Mode'
+				}
+			},
+		}
+	}
 };
 
 export default en;

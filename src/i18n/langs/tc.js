@@ -1,7 +1,14 @@
 import tcLocale from 'element-ui/lib/locale/lang/zh-TW';
 
 const tc = {
+	...tcLocale,
 	message: {
+		api: {
+			get: {
+				error: '加載數據失敗.'
+			}
+		},
+		exists_name: '名稱已存在',
 		search: '搜索',
 		serviceCluMange: '服務集群管理',
 		statusLog: '狀態日誌',
@@ -14,18 +21,20 @@ const tc = {
 		manageSys: '管理後台',
 		restart: '重啓',
 		syncGover: '同步治理',
+		screen: '屏幕',
 		delete: '刪除',
 		cancle: '取消',
+		cancel: '取 消',
 		confirm: '確定',
 		placeholderMonServer: '請輸入監控的服務名稱',
 		placeholderCommand: '請輸入command',
 		nullContent: '不能為空',
 		saveOK: '保存成功',
 		saveFail: '保存失敗',
-		copyFail: '复制失败',
-		copySuccess: '复制成功',
+		copyFail: '複製失敗',
+		copySuccess: '複製成功',
 		deleteOK: '刪除成功',
-		deleteFail: '删除失敗',
+		deleteFail: '刪除失敗',
 		selectTime: '選擇時間',
 		selectDate: '選擇日期',
 		server: '服務器',
@@ -43,11 +52,12 @@ const tc = {
 		startupAfter_delete: '請啟動後刪除',
 		startupAfter_add: '請啟動後添加',
 		noData: '暫無數據',
+		prompt: '提示',
 		resetMessage: '此操作將重置該任務狀態, 是否重置?',
 		deteleMessage: '此操作將刪除該任務, 是否刪除?',
-		prompt: '提示',
 		cancleReset: '已取消重置',
 		resetOk: '重置成功',
+		resetFailed: '重置失敗',
 	},
 	dataFlow: {
 		average: '平均',
@@ -73,8 +83,8 @@ const tc = {
 		totalInput: '總輸入',
 		totalOutput: '總輸出',
 		replicate: "數據同步差距",
-		throughputpop: '平均每秒源端數據采集的速度以及目標端寫入的速度，數值越大越好',
-		transtime_pop: '傳輸耗時：除源節點外，事件處理完的時間減去事件的發生時間。 節點間統計：事件從進入節點到輸出到所消耗的時間。 任務流統計：所有節點耗時相加，數值越小越好',
+		throughputpop: '平均每秒源端數據採集的速度以及目標端寫入的速度，數值越大越好',
+		transtime_pop: '傳輸耗時：除源節點外，事件處理完的時間減去事件的發生時間。節點間統計：事件從進入節點到輸出到所消耗的時間。任務流統計：所有節點耗時相加，數值越小越好',
 		replicate_pop: '源庫和目標庫數據最後更新時間的差距，數值越小越好',
 		status: {
 			running: '運行中',
@@ -83,6 +93,7 @@ const tc = {
 			scheduled: '調度中',
 			stopping: '停止中',
 			error: '錯誤',
+			force_stopping: '強制停止',
 		},
 		searchPlaceholder: '任務名稱/節點名/庫表名',
 		dataRange: '創建日期範圍',
@@ -125,15 +136,210 @@ const tc = {
 		send_email_at_most_one_replication: '超過多少秒取消發送',
 		read_cdc_interval: '增量同步間隔(ms)',
 		read_batch_size: '每次讀取多少',
-		mission:'描述',
-    nodeName: '節點名稱',
-    aggFunction: '聚合函數',
-    aggExpression: '聚合表達式',
-    filterPredicate: '過濾器',
-    groupByExpression: '分組表達式',
-    polymerization: '聚合處理'
+		mission: '描述',
+		yes: 'yes',
+		no: 'no',
+		nodeName: '節點名稱',
+		aggFunction: '聚合函數',
+		aggExpression: '聚合表達式',
+		filterPredicate: '過濾器',
+		groupByExpression: '分組表達式',
+		polymerization: '聚合處理',
+		button: {
+			setting: '設置',
+			logs: '日誌',
+			capture: '抓取數據',
+			stop_capture: '停止抓取',
+			start: '啟動',
+			stop: '停止',
+			force_stop: '強制停止',
+			reset: '重置',
+			save: '保存',
+		},
+		save_before_running: '請先保存再運行',
+		reset_job: {
+			msg: '重置任務?',
+			tip: '提示',
+		},
+		stop_job: {
+			msg: '停止任務?',
+			force_stop_msg: '強制停止任務?',
+			tip: '提示'
+		}
 	},
-	...tcLocale
+	editor: {
+		cell: {
+			validate: {
+				empty_name: '名稱必填.',
+
+				none_setting: '設置不能為空.',
+				none_stage: '至少由一個節點.',
+			},
+			data_node: {
+				database: {
+					name: '數據庫',
+					tip: '任意類型數據庫',
+					defaultText: '數據庫',
+
+					none_database: '數據庫必填.',
+
+					form: {
+						placeholder: '清玄這數據庫',
+						label: '數據庫'
+					}
+				},
+				collection: {
+					name: '數據集',
+					tip: 'MongoDB 數據集',
+					defaultText: '數據集',
+
+					none_database: 's數據庫必填.',
+					none_collection: '數據集必填.',
+					none_pk: '主鍵必填.',
+
+					form: {
+						database: {
+							label: '數據庫',
+							placeholder: '請選擇MongoDB數據庫'
+						},
+						collection: {
+							label: '數據集',
+							placeholder: '請選擇數據集'
+						},
+						pk: {
+							label: '主鍵',
+							placeholder: '請輸入主鍵'
+						},
+						dropTable: {
+							label: '已存在的數據',
+							placeholder: '',
+							keep: '保持已存在的數據',
+							remove: '運行前刪除已存在的數據'
+						}
+					}
+				},
+				table: {
+					name: '表',
+					tip: 'RDBMS 表',
+					defaultText: '表',
+
+					none_database: '數據庫必填.',
+					none_table: '表必填.',
+					none_pk: '主鍵必填.',
+
+					form: {
+						database: {
+							label: '數據庫',
+							placeholder: '請選擇數據庫'
+						},
+						table: {
+							label: '表',
+							placeholder: '請選擇表'
+						},
+						custom_sql: {
+							label: '自定義SQL',
+							placeholder: '請輸入自定義SQL'
+						}
+					}
+				}
+			},
+			processor: {
+				aggregate: {
+					name: '聚合',
+					tip: '聚合處理器',
+					defaultText: '聚合',
+					none_function: '聚合函數必填.',
+					none_group: '分組表達式必填.',
+					none_aggregation_expression: '聚合表達式必填.',
+				},
+				field: {
+					name: '字段',
+					tip: '字段處理器',
+					defaultText: '字段處理器',
+
+					form: {
+						name: {
+							label: '节点名称',
+							placeholder: '请输入节点名称'
+						},
+						description: {
+							label: '描述',
+							placeholder: '请输入节点描述'
+						}
+					}
+				},
+				script: {
+					name: '腳本',
+					tip: '腳本處理器',
+					defaultText: '腳本處理器',
+
+					none_script_type: '腳本類型必填.',
+					none_script: '腳本必填.',
+				}
+			},
+			link: {
+				none_join_type: '關聯類型必填',
+				none_join_key: '關聯字段必填',
+				none_join_path: '關聯寫入路徑必填',
+			}
+		},
+		ui: {
+			sidebar: {
+				setting: '任務設置',
+				node_setting: '節點屬性',
+				logs: '日誌',
+				capture: '抓取數據',
+				style: '樣式',
+
+				data_nodes: '數據節點',
+				processor: '處理節點',
+			},
+			toolbar: {
+				undo: {
+					tip: '重做'
+				},
+				redo: {
+					tip: '撤銷'
+				},
+				clear_paper: {
+					tip: '清空'
+				},
+				export_svg: {
+					tip: '導出SVG'
+				},
+				export_png: {
+					tip: '導出PNG'
+				},
+				print: {
+					tip: '打印'
+				},
+				to_back: {
+					tip: '置後'
+				},
+				to_front: {
+					tip: '置前'
+				},
+				layout: {
+					tip: '自動佈局'
+				},
+				zoom_to_fit: {
+					tip: '填充可視區域'
+				},
+				zoom_out: {
+					tip: '放大'
+				},
+				zoom_in: {
+					tip: '縮小'
+				},
+				grid_size: {
+					tip: '網格大小'
+				},
+				fullscreen: {
+					tip: '切換全屏'
+				}
+			},
+		}
+	},
 };
 
 export default tc;

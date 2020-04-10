@@ -62,7 +62,7 @@ export class VueAdapter extends BaseObject {
 			if(!settings) {
 				settings = new Panel({
 					name: 'nodeSettingPanel',
-					title: 'Node Setting'
+					title: i18n.t('editor.ui.sidebar.node_setting')
 				});
 				self.editor.getRightTabPanel().add(settings, true);
 			}

@@ -128,7 +128,7 @@ export const baseElementConfig = {
 					log(`${this.get('type')} validate form data`, formData, verified);
 
 					self.attr('body/stroke', verified ? '#2196F3' : '#ff0000');
-					if( formData.name )
+					if( formData && formData.name )
 						self.attr('label/text', formData.name);
 				});
 			},

@@ -1,7 +1,7 @@
 <template>
 	<el-form label-position="right" :model="model" ref="form">
-		<el-form-item label="Database" prop="connectionId" :rules="rules" required>
-			<el-select v-model="model.connectionId" :placeholder="`Please select database`">
+		<el-form-item :label="$t('editor.cell.data_node.database.form.label')" prop="connectionId" :rules="rules" required>
+			<el-select v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.database.form.placeholder')">
 				<el-option
 						v-for="(item, idx) in databases"
 						:label="`${item.name} (${item.status})`"

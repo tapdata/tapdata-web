@@ -441,7 +441,7 @@ export default class Graph extends Component{
 		if( !styles) {
 			styles = new Panel({
 				name: 'styles',
-				title: 'Styles'
+				title: i18n.t('editor.ui.sidebar.style')
 			});
 			self.ui.rightTabPanel.add(styles);
 		}

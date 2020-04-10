@@ -47,7 +47,7 @@
           </el-col>
         </el-row>
         <el-form-item>
-          <el-button @click="addRow">+ add new aggregation</el-button>
+          <el-button @click="addRow">+ {{$t('editor.cell.processor.aggregate.new_aggregate')}}</el-button>
         </el-form-item>
       </el-form>
     </div>

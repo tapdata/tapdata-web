@@ -5,9 +5,9 @@
 				<!-- {{schema ? schema.name : ''}} -->
 			</el-header>
 			<el-row class="header-row">
-				<el-col :span="18">name</el-col>
-				<el-col :span="4">type</el-col>
-				<el-col :span="2">operate</el-col>
+				<el-col :span="18">{{$t('editor.cell.processor.field.form.fieldName')}}</el-col>
+				<el-col :span="4">{{$t('editor.cell.processor.field.form.fieldType')}}</el-col>
+				<el-col :span="2">{{$t('message.operator')}}</el-col>
 			</el-row>
 			<el-main>
 				<el-tree

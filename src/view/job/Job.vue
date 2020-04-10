@@ -9,43 +9,43 @@
 					effect="plain"
 					size="small"
 					style="margin-right: 50px;"
-			>{{$t('dataFlow.state')}}: {{$t('dataFlow.status.' + status)}}</el-tag>
+			>{{$t('dataFlow.state')}}: {{$t('dataFlow.status.' + status.replace(/ /g, '_'))}}</el-tag>
 			<el-button
 					v-if="['draft', 'paused', 'error'].includes(status)"
 					size="mini" type="default"
-					@click="showSetting">Setting</el-button>
+					@click="showSetting">{{$t('dataFlow.button.setting')}}</el-button>
 			<el-button
 					v-if="dataFlowId && 'draft' !== status"
 					size="mini" type="default"
-					@click="showLogs">Logs</el-button>
+					@click="showLogs">{{$t('dataFlow.button.logs')}}</el-button>
 			<el-button
 					v-if="!['scheduled', 'stopping', 'force stopping'].includes(status) && executeMode === 'normal'"
 					size="mini" type="default"
-					@click="capture">Capture</el-button>
+					@click="capture">{{$t('dataFlow.button.capture')}}</el-button>
 			<el-button
 					v-if="!['scheduled', 'stopping', 'force stopping'].includes(status) && executeMode !== 'normal'"
 					size="mini" type="default"
-					@click="stopCapture">Stop capture</el-button>
+					@click="stopCapture">{{$t('dataFlow.button.stop_capture')}}</el-button>
 			<el-button
 					v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
 					size="mini" type="success"
-					@click="start">Start</el-button>
+					@click="start">{{$t('dataFlow.button.start')}}</el-button>
 			<el-button
 					v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
 					size="mini" type="danger"
-					@click="stop(false)">Stop</el-button>
+					@click="stop(false)">{{$t('dataFlow.button.stop')}}</el-button>
 			<el-button
 					v-if="dataFlowId !== null && ['stopping'].includes(status)"
 					size="mini" type="danger"
-					@click="stop(true)">Force Stop</el-button>
+					@click="stop(true)">{{$t('dataFlow.button.force_stop')}}</el-button>
 			<el-button
 					v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
 					size="mini" type="default"
-					@click="reset">Reset</el-button>
+					@click="reset">{{$t('dataFlow.button.reset')}}</el-button>
 			<el-button
 					v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
 					size="mini" type="primary"
-					@click="save">Save</el-button>
+					@click="save">{{$t('dataFlow.button.save')}}</el-button>
 			<!-- <el-button size="mini" type="primary" @click="switchModel">Model</el-button> -->
 		</div>
 	</div>
@@ -148,13 +148,13 @@
 
 					} else {
 						log(result);
-						self.$message.error('Load data failed');
+						self.$message.error(self.$t('message.api.get.error'));
 					}
 
 					self.loading = false;
 				}).catch((err) => {
 					log(err);
-					self.$message.error('Load data failed');
+					self.$message.error(self.$t('message.api.get.error'));
 					self.loading = false;
 				});
 			},
@@ -188,7 +188,7 @@
 						}
 					}).catch( err => {
 						log(err);
-						self.$message.error('Load data failed');
+						self.$message.error(self.$t('message.api.get.error'));
 					});
 				}
 			},
@@ -331,7 +331,7 @@
 					self.loading = true;
 					dataFlowsApi.count({where: JSON.stringify(params)}).then(result => {
 						if( result && result.data && result.data.count > 0 ){
-							this.$message.error(`Name already exists: ${data.name}`);
+							this.$message.error(`${self.$t('message.exists_name')}: ${data.name}`);
 							self.loading = false;
 						} else {
 							_doSave();
@@ -358,9 +358,9 @@
 
 					self.doSave(data, (err, entityData) => {
 						if( err ){
-							this.$message.error('Save failed');
+							this.$message.error(self.$t('message.saveFail'));
 						} else {
-							this.$message.success('Save success');
+							this.$message.success(self.$t('message.saveOK'));
 						}
 					});
 				}
@@ -380,9 +380,9 @@
 				data.executeMode = "normal";
 				self.doSave(data, (err, dataFlow) => {
 					if( err ){
-						this.$message.error('Start failed');
+						this.$message.error(self.$t('message.saveFail'));
 					} else {
-						this.$message.success('Start success');
+						this.$message.success(self.$t('message.saveOK'));
 						self.setEditable(false);
 					}
 				});
@@ -395,14 +395,18 @@
 						status: forceStop === true ? 'force stopping' : 'stopping'
 					};
 
-				self.$confirm(forceStop === true ? 'Force Stop jobs?' : 'Stop jobs?', 'Tip', {
-					confirmButtonText: forceStop === true ? 'Force Stop' : 'Stop',
-					cancelButtonText: 'Cancel',
+				self.$confirm(
+					forceStop === true ?
+						self.$t('dataFlow.stop_job.force_stop_msg') :
+						self.$t('dataFlow.stop_job.msg'), self.$t('dataFlow.stop_job.tip'), {
+					confirmButtonText: forceStop === true ?
+						self.$t('dataFlow.button.force_stop') : self.$t('dataFlow.button.stop'),
+					cancelButtonText: self.$t('message.cancel'),
 					type: 'warning'
 				}).then(() => {
 					self.doSave(data, (err, dataFlow) => {
 						if( err ){
-							self.$message.error('Save failed');
+							this.$message.error(self.$t('message.saveFail'));
 						} else {
 							// self.$message.success('Stop success');
 							self.setEditable(true);
@@ -431,9 +435,9 @@
 					}
 					self.doSave(data, (err, dataFlow) => {
 						if( err ){
-							this.$message.error('Save failed');
+							this.$message.error(self.$t('message.saveFail'));
 						} else {
-							this.$message.success('Save success');
+							this.$message.success(self.$t('message.saveOK'));
 							this.showCapture();
 						}
 					});
@@ -451,9 +455,9 @@
 						executeMode: 'normal',
 					}, (err, dataFlow) => {
 						if( err ){
-							this.$message.error('Save failed');
+							this.$message.error(self.$t('message.saveFail'));
 						} else {
-							this.$message.success('Save success');
+							this.$message.success(self.$t('message.saveOK'));
 							// this.showCapture();
 						}
 					});
@@ -466,16 +470,16 @@
 
 				if( data.id ){
 
-					self.$confirm('Rest Job?', 'Tip', {
-						confirmButtonText: 'Reset',
-						cancelButtonText: 'Cancel',
+					self.$confirm(self.$t('dataFlow.reset_job.msg'), self.$t('dataFlow.reset_job.tip'), {
+						confirmButtonText: self.$t('dataFlow.button.reset'),
+						cancelButtonText: self.$t('message.cancel'),
 						type: 'warning'
 					}).then(() => {
 						dataFlowsApi.reset(data.id).then(res => {
 							if (res.statusText === "OK" || res.status === 200) {
-								self.$message.success('Reset success');
+								self.$message.success(self.$t('message.resetOk'));
 							} else {
-								self.$message.error('Reset failed');
+								self.$message.error(self.$t('message.resetFailed'));
 							}
 						});
 					});
@@ -502,7 +506,7 @@
 					delete this.dataFlow.editorData;
 					this.editor.setEditable(editable, this.dataFlow);
 				} else {
-					this.$message.error('Please save the task before running');
+					this.$message.error(this.$t('message.save_before_running'));
 				}
 			}
 		}

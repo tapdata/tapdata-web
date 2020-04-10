@@ -5,6 +5,7 @@
  */
 import {options} from "../lib/rappid/config";
 import Collection from "../../view/job/Collection";
+import i18n from "../../i18n/i18n";
 
 export const collectionConfig = {
 
@@ -17,7 +18,7 @@ export const collectionConfig = {
 					xlinkHref: 'static/editor/o-collection.svg',
 				},
 				label:{
-					text:'Collection'
+					text: i18n.t('editor.cell.data_node.collection.name')
 				}
 			}
 		},
@@ -39,13 +40,13 @@ export const collectionConfig = {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
 				if( !data )
-					throw new Error(name + ': Settings cannot be none.');
+					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
 				if( !data.connectionId )
-					throw new Error(name + ': Database cannot be empty.');
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_database')}`);
 				if( !data.tableName )
-					throw new Error(name + ': Collection cannot be empty.');
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_collection')}`);
 				if( !data.primaryKeys)
-					throw new Error(`Table ${data.tableName} primary key cannot be empty.`);
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_pk')}`);
 				return true;
 			},
 
@@ -187,7 +188,7 @@ export const collectionConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: 'MongoDB Collection',
+				dataTooltip: i18n.t('editor.cell.data_node.collection.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -207,7 +208,7 @@ export const collectionConfig = {
 				refY: '0%'
 			},
 			label: {
-				text: 'collection',
+				text: i18n.t('editor.cell.data_node.collection.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',

@@ -5,6 +5,7 @@
  */
 import {options} from "../lib/rappid/config";
 import Database from "../../view/job/Database";
+import i18n from "../../i18n/i18n";
 
 export const databaseConfig = {
 
@@ -56,7 +57,7 @@ export const databaseConfig = {
 					xlinkHref: 'static/editor/o-DB.svg',
 				},
 				label:{
-					text:'database'
+					text: i18n.t('editor.cell.data_node.database.name')
 				}
 			}
 		},
@@ -96,9 +97,9 @@ export const databaseConfig = {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
 				if( !data )
-					throw new Error(name + ': Settings cannot be none.');
+					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
 				if( !data.connectionId )
-					throw new Error(name + ': Database cannot be empty.');
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.database.none_database')}`);
 				return true;
 			},
 
@@ -248,7 +249,7 @@ export const databaseConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: 'Any Database',
+				dataTooltip: i18n.t('editor.cell.data_node.database.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -268,7 +269,7 @@ export const databaseConfig = {
 				refY: '0%'
 			},
 			label: {
-				text: 'database',
+				text: i18n.t('editor.cell.data_node.database.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',

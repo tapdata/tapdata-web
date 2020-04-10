@@ -82,7 +82,7 @@
 				<el-table-column sortable='custom' :label="$t('dataFlow.creatdor')" width="180"></el-table-column>
 				<el-table-column prop="status" sortable='custom' :label="$t('dataFlow.taskStatus')" width="100">
 					<template slot-scope="scope" v-if="!scope.row.hasChildren">
-						<span :style="`color: ${ colorMap[scope.row.status] };`"> {{ $t('dataFlow.status.' + scope.row.status) }} </span>
+						<span :style="`color: ${ colorMap[scope.row.status] };`"> {{ $t('dataFlow.status.' + scope.row.status.replace(/ /g, '_')) }} </span>
 					</template>
 				</el-table-column>
 				<el-table-column
@@ -185,6 +185,9 @@
 				}, {
 					label: this.$t('dataFlow.status.stopping'),
 					value: 'stopping'
+				}, {
+					label: this.$t('dataFlow.status.force_stopping'),
+					value: 'force stopping'
 				}],
 				multipleSelection: [],
 				formData: {

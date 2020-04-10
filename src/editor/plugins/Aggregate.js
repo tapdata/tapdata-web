@@ -9,6 +9,7 @@ import {FORM_DATA_KEY} from "../constants";
 import log from "../../log";
 import {uuid} from "../util/Schema";
 import _ from 'lodash';
+import i18n from "../../i18n/i18n";
 
 export const aggregateConfig = {
 
@@ -30,7 +31,7 @@ export const aggregateConfig = {
 					ry: 14
 				},
 				label: {
-					text: 'Aggregate',
+					text: i18n.t('editor.cell.processor.aggregate.name'),
 				}
 			}
 		},
@@ -52,32 +53,32 @@ export const aggregateConfig = {
 
 				let groupFields = [];
 				let functionNames = [];
-        data.aggregations.forEach(stage => {
-          if( stage.groupByExpression ) groupFields.push(...stage.groupByExpression);
-          if( stage.aggExpression ) functionNames.push(stage.aggFunction);
-        });
+				data.aggregations.forEach(stage => {
+					if (stage.groupByExpression) groupFields.push(...stage.groupByExpression);
+					if (stage.aggExpression) functionNames.push(stage.aggFunction);
+				});
 
-        let fields = outputSchema.fields || [];
-        outputSchema.fields = fields.filter(field => groupFields.includes(field.field_name) ) || [];
+				let fields = outputSchema.fields || [];
+				outputSchema.fields = fields.filter(field => groupFields.includes(field.field_name)) || [];
 
-        functionNames.forEach( fnName => {
-          outputSchema.fields.push(Object.assign(_.cloneDeep(fields[0] || {}),{
-            "field_name": fnName,
-            "data_type":"DOUBLE",
-            "primary_key_position":0,
-            "original_field_name":fnName,
-            "javaType":"Double",
-            "autoincrement":false,
-            "id": uuid()
-          }));
-        });
-				log('Aggregate.mergeOutputSchema',_.cloneDeep(fields), outputSchema);
+				functionNames.forEach(fnName => {
+					outputSchema.fields.push(Object.assign(_.cloneDeep(fields[0] || {}), {
+						"field_name": fnName,
+						"data_type": "DOUBLE",
+						"primary_key_position": 0,
+						"original_field_name": fnName,
+						"javaType": "Double",
+						"autoincrement": false,
+						"id": uuid()
+					}));
+				});
+				log('Aggregate.mergeOutputSchema', _.cloneDeep(fields), outputSchema);
 				return outputSchema;
 			},
 
-      isProcess(){
-        return true;
-      },
+			isProcess() {
+				return true;
+			},
 
 			/**
 			 * validate this allow connect to target
@@ -97,31 +98,30 @@ export const aggregateConfig = {
 				return !['app.Database'].includes(sourceCell.get('type'));
 			},
 
-      validate(data) {
-        data = data || this.getFormData();
-        let name = this.attr('label/text');
-        if( !data )
-          throw new Error(name + ': Settings cannot be none.');
+			validate(data) {
+				data = data || this.getFormData();
+				let name = this.attr('label/text');
+				if (!data)
+					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
 
-        if(data.aggregations && data.aggregations.length === 0)
-          throw new Error(name + ': must have one stage');
+				if (data.aggregations && data.aggregations.length === 0)
+					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_stage')}`);
 
-        if (!data.name)
-          throw new Error(name + ': Name cannot be empty.');
+				if (!data.name)
+					throw new Error(`${name}: ${i18n.t('editor.cell.validate.empty_name')}`);
 
-        if (data.aggregations && data.aggregations.length > 0) {
-          data.aggregations.forEach( item =>{
-            if (!item.aggFunction)
-              throw new Error(name + ': aggFunction cannot be empty.');
-            if (!item.groupByExpression)
-              throw new Error(name + ': groupByExpression cannot be empty.');
-            if (!item.aggExpression && item.aggFunction !=="COUNT")
-              throw new Error(name + ': aggExpression cannot be empty.');
-          });
-        }
-        // TODO: validate arrregations
-        return true;
-      },
+				if (data.aggregations && data.aggregations.length > 0) {
+					data.aggregations.forEach(item => {
+						if (!item.aggFunction)
+							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_function')}`);
+						if (!item.groupByExpression)
+							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_group')}`);
+						if (!item.aggExpression && item.aggFunction !== "COUNT")
+							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_aggregation_expression')}`);
+					});
+				}
+				return true;
+			},
 		},
 	},
 
@@ -242,7 +242,7 @@ export const aggregateConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: 'Field Processor',
+				dataTooltip: i18n.t('editor.cell.processor.aggregate.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -262,7 +262,7 @@ export const aggregateConfig = {
 				refY: '0%'
 			},
 			label: {
-				text: 'aggregate',
+				text: i18n.t('editor.cell.processor.aggregate.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',

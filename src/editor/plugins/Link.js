@@ -9,6 +9,7 @@ import {options} from "../lib/rappid/config";
 import Link from "../../view/job/Link";
 import {FORM_DATA_KEY} from "../constants";
 import log from "../../log";
+import i18n from "../../i18n/i18n";
 
 export const link = {
 
@@ -146,7 +147,7 @@ export const link = {
 				if( data && this.showSettings() ){
 					let joinTable = data.joinTable;
 					if( !joinTable )
-						throw new Error('Settings cannot be none.');
+						throw new Error(`${i18n.t('editor.cell.validate.none_setting')}`);
 					/*if( !joinTable.tableName)
 						throw new Error('Table name cannot be empty.');
 					if( !joinTable.primaryKeys)
@@ -156,15 +157,15 @@ export const link = {
 
 					if( 'append' !== joinTable.joinType) {
 						if( !joinTable.joinKeys || joinTable.joinKeys.length === 0 )
-							throw new Error('JoinKeys cannot be empty.');
+							throw new Error(`${i18n.t('editor.cell.link.none_join_key')}`);
 						let errorJoinKeys = joinTable.joinKeys.filter(v => !v.source || !v.target);
 						if( errorJoinKeys && errorJoinKeys.length > 0) {
-							throw new Error('JoinKeys cannot be empty.');
+							throw new Error(`${i18n.t('editor.cell.link.none_join_key')}`);
 						}
 					}
 					if( ['merge_embed', 'update'].includes(joinTable.joinType) ) {
 						if( !joinTable.joinPath )
-							throw new Error('Join path cannot be empty.');
+							throw new Error(`${i18n.t('editor.cell.link.none_join_path')}`);
 					}
 				}
 				return true;

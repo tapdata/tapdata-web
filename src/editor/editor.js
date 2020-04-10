@@ -19,6 +19,7 @@ import Panel from "./ui/panel";
 import TableSelector from "../view/job/TableSelector";
 import {DEFAULT_SETTING} from "./constants";
 import {EditorEventType} from "./lib/events";
+import i18n from "../i18n/i18n";
 
 export default class Editor extends BaseObject {
 
@@ -163,7 +164,7 @@ export default class Editor extends BaseObject {
 		let setting = rightTabPanel.getChildByName('setting');
 		if( !setting ){
 			setting = new VueComponent({
-				title: 'Data Flow Settings',
+				title: i18n.t('editor.ui.sidebar.setting'),
 				name: 'setting',
 				editor: this,
 				component: Setting
@@ -251,7 +252,7 @@ export default class Editor extends BaseObject {
 
 		if( !logsPanel ) {
 			logsPanel = new VueComponent({
-				title: 'Logs',
+				title: i18n.t('editor.ui.sidebar.logs'),
 				name: 'logsPanel',
 				editor: this,
 				propsData: {
@@ -276,7 +277,7 @@ export default class Editor extends BaseObject {
 		if( !capture ){
 			capture = new VueComponent({
 				container: '',
-				title: 'Capture',
+				title: i18n.t('editor.ui.sidebar.capture'),
 				name: 'capture',
 				editor: this,
 				propsData: {

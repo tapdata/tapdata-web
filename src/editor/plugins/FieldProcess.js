@@ -7,6 +7,7 @@ import {options} from "../lib/rappid/config";
 import FieldProcess from "../../view/job/FieldProcess";
 import {FORM_DATA_KEY} from "../constants";
 import log from "../../log";
+import i18n from "../../i18n/i18n";
 
 export const fieldProcessConfig = {
 
@@ -28,7 +29,7 @@ export const fieldProcessConfig = {
 					ry: 14
 				},
 				label: {
-					text: 'Field Processor',
+					text: i18n.t('editor.cell.processor.field.name'),
 				}
 			}
 		},
@@ -57,8 +58,8 @@ export const fieldProcessConfig = {
 					}
 					if (item.op === "RENAME") {
 						let name = outputSchema.fields[targetIndex].field_name;
-            name = name.split('.');
-            name[name.length - 1] = item.operand;
+						name = name.split('.');
+						name[name.length - 1] = item.operand;
 						outputSchema.fields[targetIndex].field_name = name.join('.');
 					} else if (item.op === "CONVERT") {
 						outputSchema.fields[targetIndex].javaType = item.operand;
@@ -71,9 +72,9 @@ export const fieldProcessConfig = {
 				return outputSchema;
 			},
 
-      isProcess(){
-        return true;
-      },
+			isProcess() {
+				return true;
+			},
 
 			/**
 			 * validate this allow connect to target
@@ -213,7 +214,7 @@ export const fieldProcessConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: 'Field Processor',
+				dataTooltip: i18n.t('editor.cell.processor.field.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -233,7 +234,7 @@ export const fieldProcessConfig = {
 				refY: '0%'
 			},
 			label: {
-				text: 'Field',
+				text: i18n.t('editor.cell.processor.field.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',

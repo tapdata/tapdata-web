@@ -3,10 +3,11 @@
  * @date 2/29/20
  * @description
  */
+import i18n from '../../../../i18n/i18n';
 export const stencilConfig = {
 	groups: {
-		data: {index: 1, label: 'Data Nodes'},
-		processor: {index: 2, label: 'Processor'},
+		data: {index: 1, label: i18n.t('editor.ui.sidebar.data_nodes')},
+		processor: {index: 2, label: i18n.t('editor.ui.sidebar.processor')},
 		// standard: {index: 3, label: 'Standard shapes', closed: true},
 	},
 	shapes: {

@@ -3,6 +3,7 @@
  * @date 2/29/20
  * @description
  */
+import i18n from "../../../../i18n/i18n";
 export const toolbarConfig = {
 	groups: {
 		'undo-redo': { index: 1 },
@@ -23,7 +24,7 @@ export const toolbarConfig = {
 			group: 'undo-redo',
 			attrs: {
 				button: {
-					'data-tooltip': 'Undo',
+					'data-tooltip': i18n.t('editor.ui.toolbar.undo.tip'),
 					'data-tooltip-position': 'top',
 					'data-tooltip-position-selector': '.graph-toolbar'
 				}
@@ -35,7 +36,7 @@ export const toolbarConfig = {
 			group: 'undo-redo',
 			attrs: {
 				button: {
-					'data-tooltip': 'Redo',
+					'data-tooltip': i18n.t('editor.ui.toolbar.redo.tip'),
 					'data-tooltip-position': 'top',
 					'data-tooltip-position-selector': '.graph-toolbar'
 				}
@@ -48,7 +49,7 @@ export const toolbarConfig = {
 			attrs: {
 				button: {
 					id: 'btn-clear',
-					'data-tooltip': 'Clear Paper',
+					'data-tooltip': i18n.t('editor.ui.toolbar.clear_paper.tip'),
 					'data-tooltip-position': 'top',
 					'data-tooltip-position-selector': '.graph-toolbar'
 				}
@@ -62,7 +63,7 @@ export const toolbarConfig = {
 			attrs: {
 				button: {
 					id: 'btn-svg',
-					'data-tooltip': 'Open as SVG in a pop-up',
+					'data-tooltip': i18n.t('editor.ui.toolbar.export_svg.tip'),
 					'data-tooltip-position': 'top',
 					'data-tooltip-position-selector': '.graph-toolbar'
 				}
@@ -76,7 +77,7 @@ export const toolbarConfig = {
 			attrs: {
 				button: {
 					id: 'btn-png',
-					'data-tooltip': 'Open as PNG in a pop-up',
+					'data-tooltip': i18n.t('editor.ui.toolbar.export_png.tip'),
 					'data-tooltip-position': 'top',
 					'data-tooltip-position-selector': '.graph-toolbar'
 				}
@@ -89,7 +90,7 @@ export const toolbarConfig = {
 			attrs: {
 				button: {
 					id: 'btn-print',
-					'data-tooltip': 'Open a Print Dialog',
+					'data-tooltip': i18n.t('editor.ui.toolbar.print.tip'),
 					'data-tooltip-position': 'top',
 					'data-tooltip-position-selector': '.graph-toolbar'
 				}
@@ -103,7 +104,7 @@ export const toolbarConfig = {
 			attrs: {
 				button: {
 					id: 'btn-to-front',
-					'data-tooltip': 'Bring Object to Front',
+					'data-tooltip': i18n.t('editor.ui.toolbar.to_front.tip'),
 					'data-tooltip-position': 'top',
 					'data-tooltip-position-selector': '.graph-toolbar'
 				}
@@ -117,7 +118,7 @@ export const toolbarConfig = {
 			attrs: {
 				button: {
 					id: 'btn-to-back',
-					'data-tooltip': 'Send Object to Back',
+					'data-tooltip': i18n.t('editor.ui.toolbar.to_back.tip'),
 					'data-tooltip-position': 'top',
 					'data-tooltip-position-selector': '.graph-toolbar'
 				}
@@ -129,7 +130,7 @@ export const toolbarConfig = {
 			name: 'layout',
 			attrs: {
 				button: {
-					'data-tooltip': 'Auto-layout Graph',
+					'data-tooltip': i18n.t('editor.ui.toolbar.layout.tip'),
 					'data-tooltip-position': 'top',
 					'data-tooltip-position-selector': '.graph-toolbar'
 				}
@@ -141,7 +142,7 @@ export const toolbarConfig = {
 			group: 'zoom',
 			attrs: {
 				button: {
-					'data-tooltip': 'Zoom To Fit',
+					'data-tooltip': i18n.t('editor.ui.toolbar.zoom_to_fit.tip'),
 					'data-tooltip-position': 'top',
 					'data-tooltip-position-selector': '.graph-toolbar'
 				}
@@ -157,7 +158,7 @@ export const toolbarConfig = {
 			group: 'zoom',
 			attrs: {
 				button: {
-					'data-tooltip': 'Zoom Out',
+					'data-tooltip': i18n.t('editor.ui.toolbar.zoom_out.tip'),
 					'data-tooltip-position': 'top',
 					'data-tooltip-position-selector': '.graph-toolbar'
 				}
@@ -180,7 +181,7 @@ export const toolbarConfig = {
 			group: 'zoom',
 			attrs: {
 				button: {
-					'data-tooltip': 'Zoom In',
+					'data-tooltip': i18n.t('editor.ui.toolbar.zoom_in.tip'),
 					'data-tooltip-position': 'top',
 					'data-tooltip-position-selector': '.graph-toolbar'
 				}
@@ -197,7 +198,7 @@ export const toolbarConfig = {
 			text: 'Grid size:',
 			attrs: {
 				label: {
-					'data-tooltip': 'Change Grid Size',
+					'data-tooltip': i18n.t('editor.ui.toolbar.grid_size.tip'),
 					'data-tooltip-position': 'top',
 					'data-tooltip-position-selector': '.graph-toolbar'
 				}
@@ -219,7 +220,7 @@ export const toolbarConfig = {
 			group: 'fullscreen',
 			attrs: {
 				button: {
-					'data-tooltip': 'Toggle Fullscreen Mode',
+					'data-tooltip': i18n.t('editor.ui.toolbar.fullscreen.tip'),
 					'data-tooltip-position': 'top',
 					'data-tooltip-position-selector': '.graph-toolbar'
 				}

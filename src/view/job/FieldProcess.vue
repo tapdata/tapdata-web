@@ -1,13 +1,13 @@
 <template>
 	<div>
 		<el-form label-position="right" label-width="130px" :model="model" ref="form">
-			<el-form-item :required="true" label="Name">
-				<el-input v-model="model.name" class="formitem-width" placeholder="please enter node name"></el-input>
+			<el-form-item :required="true" :label="$t('editor.cell.processor.field.form.name.label')">
+				<el-input v-model="model.name" class="formitem-width" :placeholder="$t('editor.cell.processor.field.form.name.placeholder')"></el-input>
 			</el-form-item>
-			<el-form-item label="description">
+			<el-form-item :label="$t('editor.cell.processor.field.form.description.label')">
 				<el-input
 						type="textarea" v-model="model.description" class="formitem-width"
-						placeholder="please enter node description"></el-input>
+						:placeholder="$t('editor.cell.processor.field.form.description.placeholder')"></el-input>
 			</el-form-item>
 		</el-form>
 		<div class="contentbox">

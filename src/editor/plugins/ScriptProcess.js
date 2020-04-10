@@ -6,6 +6,7 @@
 import {options} from "../lib/rappid/config";
 import Script from "../../view/job/Script";
 import {FORM_DATA_KEY} from "../constants";
+import i18n from "../../i18n/i18n";
 
 export const scriptProcessConfig = {
 
@@ -27,7 +28,7 @@ export const scriptProcessConfig = {
 					ry:14
 				},
 				label:{
-					text: 'JavaScript',
+					text: i18n.t('editor.cell.processor.script.name'),
 				}
 			},
 
@@ -54,11 +55,11 @@ export const scriptProcessConfig = {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
 				if( !data )
-					throw new Error(name + ': Settings cannot be none.');
+					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
 				if( !data.type )
-					throw new Error(name + ': Script type cannot be empty.');
+					throw new Error(`${name}: ${i18n.t('editor.cell.processor.script.none_script_type')}`);
 				if( !data.script )
-					throw new Error(name + ': Script cannot be empty.');
+					throw new Error(`${name}: ${i18n.t('editor.cell.processor.script.none_script')}`);
 				return true;
 			},
 
@@ -200,7 +201,7 @@ export const scriptProcessConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: 'JavaScript OR Java',
+				dataTooltip: i18n.t('editor.cell.processor.script.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -220,7 +221,7 @@ export const scriptProcessConfig = {
 				refY: '0%'
 			},
 			label: {
-				text: 'JavaScript',
+				text: i18n.t('editor.cell.processor.script.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
