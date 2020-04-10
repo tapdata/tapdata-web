@@ -174,7 +174,11 @@ const cn = {
 				empty_name: '名称必填.',
 
 				none_setting: '设置不能为空.',
-				none_stage: '至少由一个节点.',
+				none_stage: '至少有一个节点.',
+				none_data_node: '至少有两个数据节点',
+				none_link_node: '至少有一个连线',
+				start_with_data_node: '必须使用数据节点作为源',
+				acyclic: '数据处理流程不能有循环'
 			},
 			data_node: {
 				database: {
@@ -252,7 +256,8 @@ const cn = {
 					none_function: '聚合函数必填.',
 					none_group: '分组表达式必填.',
 					none_aggregation_expression: '聚合表达式必填.',
-					new_aggregate: '添加聚合'
+					new_aggregate: '添加聚合',
+					none_stage: '至少有一个聚合处理',
 				},
 				field: {
 					name: '字段',

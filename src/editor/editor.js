@@ -352,25 +352,22 @@ export default class Editor extends BaseObject {
 				dataNodeCount++;
 			}
 		});
-		if( dataNodeCount < 2 ){
-			return 'At least 2 data node in graph';
-		}
-		if( linkCount < 1){
-			return 'At least 1 link in graph';
-		}
+		if( dataNodeCount < 2 ) return i18n.t('editor.cell.validate.none_data_node');
+
+		if( linkCount < 1) return i18n.t('editor.cell.validate.none_link_node');
 
 		let sources = graph.getSources() || [];
 		let processorSources = sources.filter(
 			cell => cell.isElement() && typeof cell.isProcess === 'function' && cell.isProcess());
 		if( processorSources.length > 0 ){
 			this.graph.selectCell(processorSources);
-			return 'Must start with a data node';
+			return i18n.t('editor.cell.validate.start_with_data_node');
 		}
 
 		// validate graph acyclic
 		let acyclic = this.graph.isAcyclic();
 		if( !acyclic ) {
-			return 'The graph cannot have cyclic';
+			return i18n.t('editor.cell.validate.acyclic');
 		}
 
 		return true;

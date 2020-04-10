@@ -175,6 +175,10 @@ const tc = {
 
 				none_setting: '設置不能為空.',
 				none_stage: '至少由一個節點.',
+				none_data_node: '至少有兩個數據節點',
+				none_link_node: '至少有一個連線',
+				start_with_data_node: '必須使用數據節點作為源',
+				acyclic: '數據處理流程不能有循環'
 			},
 			data_node: {
 				database: {
@@ -252,7 +256,8 @@ const tc = {
 					none_function: '聚合函數必填.',
 					none_group: '分組表達式必填.',
 					none_aggregation_expression: '聚合表達式必填.',
-					new_aggregate: '添加聚合'
+					new_aggregate: '添加聚合',
+					none_stage: '至少有一个聚合处理',
 				},
 				field: {
 					name: '字段',

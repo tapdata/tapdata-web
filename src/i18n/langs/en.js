@@ -175,6 +175,10 @@ const en = {
 
 				none_setting: 'Settings cannot be none.',
 				none_stage: 'Must have one stage.',
+				none_data_node: 'At least 2 data node in graph',
+				none_link_node: 'At least 1 link in graph',
+				start_with_data_node: 'Must start with a data node',
+				acyclic: 'The graph cannot have cyclic'
 			},
 			data_node: {
 				database: {
@@ -252,7 +256,8 @@ const en = {
 					none_function: 'Aggregate function is required.',
 					none_group: 'Group expression is required.',
 					none_aggregation_expression: 'Aggregate expression is required.',
-					new_aggregate: 'Add new aggregate'
+					new_aggregate: 'Add new aggregate',
+					none_stage: 'Must have one aggregate',
 				},
 				field: {
 					name: 'Field',

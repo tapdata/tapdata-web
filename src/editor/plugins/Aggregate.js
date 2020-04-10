@@ -105,7 +105,7 @@ export const aggregateConfig = {
 					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
 
 				if (data.aggregations && data.aggregations.length === 0)
-					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_stage')}`);
+					throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_stage')}`);
 
 				if (!data.name)
 					throw new Error(`${name}: ${i18n.t('editor.cell.validate.empty_name')}`);
