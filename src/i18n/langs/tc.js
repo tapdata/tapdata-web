@@ -314,13 +314,13 @@ const tc = {
 						sourceField: '源字段',
 						targetField: '目标字段',
 					},
+				},
 
-					writeMode: {
-						append: '追加寫入',
-						upsert: '更新已存在或插入新數據',
-						update: '更新寫入',
-						merge_embed: '更新內嵌數組',
-					}
+				writeMode: {
+					append: '追加寫入',
+					upsert: '更新已存在或插入新數據',
+					update: '更新寫入',
+					merge_embed: '更新內嵌數組',
 				}
 			}
 		},
