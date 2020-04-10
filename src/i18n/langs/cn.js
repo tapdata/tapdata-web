@@ -169,6 +169,13 @@ const cn = {
 			tip: '提示'
 		}
 	},
+	connection: {
+		status: {
+			testing: '测试中',
+			invalid: '无效',
+			ready: '有效',
+		}
+	},
 	editor: {
 		cell: {
 			validate: {

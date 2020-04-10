@@ -4,7 +4,7 @@
 			<el-select v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.database.form.placeholder')">
 				<el-option
 						v-for="(item, idx) in databases"
-						:label="`${item.name} (${item.status})`"
+						:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
 						:value="item.id"
 						v-bind:key="idx"></el-option>
 			</el-select>
@@ -41,7 +41,7 @@
 				databases: [],
 				rules: {
 					connectionId: [
-						{required: true, trigger: 'blur', message: `Please select database`},
+						{required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.database.form.placeholder')},
 					]
 				},
 				model: {

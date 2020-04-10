@@ -169,6 +169,13 @@ const en = {
 			tip: 'Tip'
 		}
 	},
+	connection: {
+		status: {
+			testing: 'Testing',
+			invalid: 'Invalid',
+			ready: 'Ready',
+		}
+	},
 	editor: {
 		cell: {
 			validate: {
