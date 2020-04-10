@@ -58,6 +58,7 @@ const tc = {
 		cancleReset: '已取消重置',
 		resetOk: '重置成功',
 		resetFailed: '重置失敗',
+		operator: '操作'
 	},
 	dataFlow: {
 		average: '平均',
@@ -251,6 +252,7 @@ const tc = {
 					none_function: '聚合函數必填.',
 					none_group: '分組表達式必填.',
 					none_aggregation_expression: '聚合表達式必填.',
+					new_aggregate: '添加聚合'
 				},
 				field: {
 					name: '字段',
@@ -265,7 +267,9 @@ const tc = {
 						description: {
 							label: '描述',
 							placeholder: '请输入节点描述'
-						}
+						},
+						fieldName: '字段名称',
+						fieldType: '字段类型'
 					}
 				},
 				script: {
@@ -275,6 +279,21 @@ const tc = {
 
 					none_script_type: '腳本類型必填.',
 					none_script: '腳本必填.',
+
+					form: {
+						name: {
+							label: '节点名称',
+							placeholder: '请输入节点名称'
+						},
+						type: {
+							label: '脚本类型',
+							placeholder: '请选择脚本类型'
+						},
+						script: {
+							label: '脚本',
+							placeholder: '请输入脚本'
+						},
+					}
 				}
 			},
 			link: {

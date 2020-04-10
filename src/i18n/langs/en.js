@@ -58,6 +58,7 @@ const en = {
 		cancleReset: 'cancel reset',
 		resetOk: 'Reset success',
 		resetFailed: 'Reset Failed',
+		operator: 'Operator'
 	},
 	dataFlow: {
 		average: 'Average',
@@ -251,11 +252,25 @@ const en = {
 					none_function: 'Aggregate function is required.',
 					none_group: 'Group expression is required.',
 					none_aggregation_expression: 'Aggregate expression is required.',
+					new_aggregate: 'Add new aggregate'
 				},
 				field: {
 					name: 'Field',
 					tip: 'Field processor',
-					defaultText: 'Field processor'
+					defaultText: 'Field processor',
+
+					form: {
+						name: {
+							label: 'Node name',
+							placeholder: 'Please input you node name'
+						},
+						description: {
+							label: 'Description',
+							placeholder: 'Please input you node description'
+						},
+						fieldName: 'Field name',
+						fieldType: 'Field type'
+					}
 				},
 				script: {
 					name: 'Script',
@@ -264,6 +279,21 @@ const en = {
 
 					none_script_type: 'Script type is required.',
 					none_script: 'Script is required.',
+
+					form: {
+						name: {
+							label: 'Node name',
+							placeholder: '请输入节点名称'
+						},
+						type: {
+							label: 'Script Type',
+							placeholder: 'Please select script type'
+						},
+						script: {
+							label: 'Script',
+							placeholder: 'Please input script'
+						},
+					}
 				}
 			},
 			link: {
