@@ -266,3 +266,24 @@
 		padding-top: 40px;
 	}
 </style>
+<style scoped>
+	/*头部样式*/
+	.metadata-header{
+		width: 232px;
+		height: 31px;
+		background: #f1f1f1;
+		border-bottom: 1px solid #dedee4;
+		font-size: 12px;
+		line-height: 31px;
+		padding-left: 8px;
+		display: flex;
+	}
+</style>
+<style lang="less">
+	.search{
+		.el-input  .el-input__inner {
+			height: 24px;
+			line-height: 24px;
+		}
+	}
+</style>
