@@ -22,7 +22,7 @@ export default class UI extends Component {
 			<div class="e-header">
 				<div class="e-action-bar"><a class="e-action-back iconfont icon-xiangzuo"></a></div>
 				<div class="e-title">
-					<h3 contenteditable="true" style="font-size: 12px">任务</h3>
+					<input value="任务" class="ui-input" id="taskNameInput" type="text"  maxlength="24" "/>
 				</div>
 				<i class='el-icon-edit el-icon'></i>
 				<div class="e-toolbar-container">
@@ -43,10 +43,10 @@ export default class UI extends Component {
 		}
 	}
 	getName(){
-		return this.el.find('.e-title h3').text();
+		return this.el.find('.e-title #taskNameInput').val();
 	}
 	setName(name){
-		return this.el.find('.e-title h3').text(name);
+		return this.el.find('.e-title #taskNameInput').val(name);
 	}
 	getBackButtonEl(){
 		return this.el.find('.e-header .e-action-back');

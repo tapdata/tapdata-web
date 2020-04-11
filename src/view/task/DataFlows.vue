@@ -7,7 +7,7 @@
 						<el-col :span="8">
 							<el-form-item :label="$t('message.sourchName')">
 								<el-input
-										:placeholder="$t('dataFlow.searchPlaceholder')" prefix-icon="el-icon-search"
+										:placeholder="$t('dataFlow.searchPlaceholder')" clearable prefix-icon="el-icon-search"
 										v-model="formData.search"></el-input>
 							</el-form-item>
 						</el-col>
@@ -34,22 +34,6 @@
 
 						</el-col>
 					</el-row>
-					<!--          <el-row>-->
-					<!--            <el-col :span="8">-->
-					<!--              <el-form-item label="创建人:">-->
-					<!--                <el-select v-model="formData.person" clearable placeholder="请选择" multiple >-->
-					<!--                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>-->
-					<!--              </el-select>-->
-					<!--              </el-form-item>-->
-					<!--            </el-col>-->
-					<!--            <el-col :span="8">-->
-					<!--              <el-form-item label="目录分类:">-->
-					<!--                <el-select v-model="formData.classification" clearable placeholder="请选择">-->
-					<!--                  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>-->
-					<!--                </el-select>-->
-					<!--              </el-form-item>-->
-					<!--            </el-col>-->
-					<!--          </el-row>-->
 				</el-form>
 			</el-row>
 		</div>
@@ -110,10 +94,6 @@
 				<el-table-column :label="$t('dataFlow.operate')" width="180">
 					<template slot-scope="scope">
 						<div v-if="!scope.row.hasChildren">
-<!--							<el-tooltip class="item" :content="$t('dataFlow.dataMap')" placement="bottom">-->
-<!--								<router-link :to='{path:"/job", query: { id: scope.row.id}}'><i-->
-<!--										class="iconfont task-list-icon icon-yunyingzhongxin"></i></router-link>-->
-<!--							</el-tooltip>-->
 							<el-tooltip v-if="scope.row.status !== 'scheduled'&& scope.row.status !== 'running'&& scope.row.status !== 'force stopping'&&scope.row.status !== 'stopping'" class="item" :content="$t('dataFlow.edit')" placement="bottom">
 								<router-link :to='{path:"/job", query: { id: scope.row.id}}'><i
 										class="iconfont task-list-icon  icon-ceshishenqing"></i></router-link>
@@ -149,6 +129,16 @@
 					</template>
 				</el-table-column>
 			</el-table>
+			<el-pagination background
+					class="pagination-bar"
+					layout="total, prev, pager, next,sizes"
+					:page-sizes="[10, 20, 30, 50,100]"
+					:page-size="pagesize"
+					:total="totalNum"
+					@current-change="handleCurrentChange"
+					@size-change="handleSizeChange">
+					>
+			</el-pagination>
 		</div>
 	</div>
 </template>
@@ -156,6 +146,7 @@
 <script>
 	import factory from '../../api/factory';
 	const dataFlows = factory('DataFlows');
+	import _ from 'lodash';
 
 	export default {
 		data() {
@@ -171,6 +162,9 @@
 				order: '',
 				tableData: [],
 				newData: [],
+				currentPage:1,
+				pagesize: 10,
+				totalNum: 0,
 				options: [{
 					label: this.$t('dataFlow.status.running'),
 					value: 'running'
@@ -210,7 +204,7 @@
 		},
 		computed: {
 			maxHeight: function () {
-				let height = document.body.clientHeight - 190 + "px";
+				let height = document.body.clientHeight - 300 + "px";
 				return height;
 			}
 		},
@@ -256,8 +250,13 @@
 						}];
 					}
 					if (this.formData.timeData && this.formData.timeData.length !== 0) {
+						let dates = _.cloneDeep(this.formData.timeData);
+						if(dates[1]) {
+							dates[1] = new Date(dates[1]);
+							dates[1].setHours(dates[1].getHours() + 8);
+						}
 						where.createTime = {
-							between: this.formData.timeData
+							between: dates
 						};
 					}
 				}
@@ -265,6 +264,8 @@
 					filter: JSON.stringify({
 						where: where,
 						order: order,
+						limit:this.pagesize,
+						skip:(this.currentPage-1)*this.pagesize,
 						fields: {
 							"id": true,
 							"name": true,
@@ -290,6 +291,7 @@
 						}
 					}
 				});
+				this.getCount(where);
 			},
 			handleData(data) {
 				if (!data) return;
@@ -343,6 +345,19 @@
 							item.input = '--';
 							item.output = '--';
 							item.transmissionTime = '--';
+						}
+					}
+				});
+			},
+			getCount(where){
+				where = {
+					where: where,
+				};
+				dataFlows.count(where).then(res => {
+					if (res.statusText === "OK" || res.status === 200) {
+						if (res.data) {
+							this.totalNum = res.data.count;
+							console.log(this.totalNum);
 						}
 					}
 				});
@@ -451,6 +466,14 @@
 			handleSelectionChange(val) {
 				this.multipleSelection = val;
 			},
+			handleCurrentChange(cpage) {
+				this.currentPage = cpage;
+				this.getData();
+			},
+			handleSizeChange(psize) {
+				this.pagesize = psize;
+				this.getData();
+			},
 		},
 	};
 </script>
@@ -526,5 +549,17 @@
 	.item {
 		margin-left: 10px;
 	}
-
+	.task-list  .el-pagination{
+		width: 100%;
+		padding: 10px 50px;
+		-webkit-box-sizing: border-box;
+		box-sizing: border-box;
+		text-align: right;
+		overflow: hidden;
+	}
+</style>
+<style>
+	.task-list .el-pagination .el-pagination__total {
+		float: left;
+	}
 </style>

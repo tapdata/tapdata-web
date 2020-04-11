@@ -178,7 +178,7 @@
 					}
 					log('primaryKeys',primaryKeys);
 					formData ={
-						connectionId: data._id,
+						connectionId: data._id || data.id,
 						databaseType: data.database_type,
 						tableName: data.original_name ,
 						sql: "",
@@ -207,7 +207,7 @@
 				if(!str || str.length <= 20){
 					return str;
 				}
-				return `${ str.substring(0,8)}...${str.substring(str.length-9)}`;
+				return str; //`${ str.substring(0,8)}...${str.substring(str.length-9)}`;
 
 			}
 		}
