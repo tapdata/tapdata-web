@@ -2,7 +2,7 @@
 	<div class="e-collection">
 		<el-form label-position="right" label-width="160px" :model="model" ref="form">
 			<el-form-item :label="$t('editor.cell.data_node.collection.form.database.label')" prop="connectionId" :rules="rules" required>
-				<el-select v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.collection.form.database.placeholder')" @change="handlerConnectionChange">
+				<el-select filterable v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.collection.form.database.placeholder')" @change="handlerConnectionChange">
 					<el-option
 							v-for="(item, idx) in databases"
 							:label="`${item.name} (${item.status})`"
