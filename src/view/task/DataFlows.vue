@@ -129,15 +129,14 @@
 					</template>
 				</el-table-column>
 			</el-table>
-			<el-pagination
-					style="margin-top: 10px"
-					@size-change="handleSizeChange"
-					@current-change="handleCurrentChange"
-					:current-page="currentPage"
+			<el-pagination background
+					class="pagination-bar"
+					layout="total, prev, pager, next,sizes"
 					:page-sizes="[10, 20, 30, 50,100]"
 					:page-size="pagesize"
 					:total="totalNum"
-					layout="total, sizes, prev, pager, next, jumper"
+					@current-change="handleCurrentChange"
+					@size-change="handleSizeChange">
 					>
 			</el-pagination>
 		</div>
@@ -147,6 +146,7 @@
 <script>
 	import factory from '../../api/factory';
 	const dataFlows = factory('DataFlows');
+	import _ from 'lodash';
 
 	export default {
 		data() {
@@ -201,7 +201,6 @@
 			this.formData = this.$store.state.dataFlows;
 			this.screenFn();
 			this.keyupEnter();
-			this.getCount();
 		},
 		computed: {
 			maxHeight: function () {
@@ -251,8 +250,13 @@
 						}];
 					}
 					if (this.formData.timeData && this.formData.timeData.length !== 0) {
+						let dates = _.cloneDeep(this.formData.timeData);
+						if(dates[1]) {
+							dates[1] = new Date(dates[1]);
+							dates[1].setHours(dates[1].getHours() + 8);
+						}
 						where.createTime = {
-							between: this.formData.timeData
+							between: dates
 						};
 					}
 				}
@@ -287,6 +291,7 @@
 						}
 					}
 				});
+				this.getCount();
 			},
 			handleData(data) {
 				if (!data) return;
@@ -541,5 +546,17 @@
 	.item {
 		margin-left: 10px;
 	}
-
+	.task-list  .el-pagination{
+		width: 100%;
+		padding: 10px 50px;
+		-webkit-box-sizing: border-box;
+		box-sizing: border-box;
+		text-align: right;
+		overflow: hidden;
+	}
+</style>
+<style>
+	.task-list .el-pagination .el-pagination__total {
+		float: left;
+	}
 </style>

@@ -22,7 +22,7 @@ export const
 	},
 
 	DEFAULT_SETTING = {
-		sync_type: 'initial_sync',
+		sync_type: 'initial_sync+cdc',
 		readBatchSize:25000,
 		notificationWindow:0,
 		notificationInterval:300,
