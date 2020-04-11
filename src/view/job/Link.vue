@@ -147,7 +147,10 @@
 				}
 
 				if( cell.getSourceCell()) {
-					this.model.joinTable.stageId = cell.getSourceCell().id;
+					let sourceCell = cell.getSourceCell();
+					let parentDataNodes = typeof sourceCell.getParentDataNode === 'function' ? sourceCell.getParentDataNode() : [];
+					this.model.joinTable.stageId = parentDataNodes.length > 0 ? parentDataNodes[0].id : '';
+					//this.model.joinTable.stageId = cell.getSourceCell().id;
 				}
 
 				this.$emit(EditorEventType.RESIZE);

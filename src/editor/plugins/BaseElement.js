@@ -183,7 +183,8 @@ export const baseElementConfig = {
 								}
 
 								joinTable.sourceSchema = sourceCell.getOutputSchema();
-								joinTable.stageId = sourceCell.id;
+								let parentDataNodes = typeof sourceCell.getParentDataNode === 'function' ? sourceCell.getParentDataNode() : [];
+								joinTable.stageId = parentDataNodes.length > 0 ? parentDataNodes[0].id : '';
 
 								log('BaseElement.getInputSchema.joinTables', cell.getFormData(), joinTable);
 								return joinTable;
@@ -233,6 +234,26 @@ export const baseElementConfig = {
 					}
 				}));
 			},
+
+			getParentDataNode(){
+				let graph = this.graph;
+				let inboundLinks = graph.getConnectedLinks(this, {inbound: true});
+				let parentDataNodes = [];
+				for (let i = 0; i < inboundLinks.length; i++) {
+					let link = inboundLinks[i];
+					let sourceCell = link.getSourceCell();
+					if( sourceCell ){
+						if( typeof sourceCell.isDataNode === 'function' && sourceCell.isDataNode() ){
+							parentDataNodes.push(sourceCell);
+						} else if( typeof sourceCell.isProcess === 'function' && sourceCell.isProcess() ) {
+							parentDataNodes.push(...sourceCell.getParentDataNode());
+						}
+					}
+				}
+				log(`${this.get('type')}.getParentDataNode`, parentDataNodes);
+				return parentDataNodes;
+			},
+
 			validate(){
 				return true;
 			},
