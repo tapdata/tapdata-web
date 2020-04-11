@@ -291,7 +291,7 @@
 						}
 					}
 				});
-				this.getCount();
+				this.getCount(where);
 			},
 			handleData(data) {
 				if (!data) return;
@@ -349,8 +349,11 @@
 					}
 				});
 			},
-			getCount(){
-				dataFlows.count().then(res => {
+			getCount(where){
+				where = {
+					where: where,
+				};
+				dataFlows.count(where).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data) {
 							this.totalNum = res.data.count;
