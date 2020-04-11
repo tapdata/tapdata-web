@@ -2,7 +2,7 @@
 	<div class="e-table">
 		<el-form label-position="right" label-width="160px" :model="model" ref="form">
 			<el-form-item :label="$t('editor.cell.data_node.table.form.database.label')" prop="connectionId" :rules="rules" required>
-				<el-select v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.table.form.database.placeholder')" @change="handlerConnectionChange">
+				<el-select filterable v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.table.form.database.placeholder')" @change="handlerConnectionChange">
 					<el-option
 							v-for="(item, idx) in databases"
 							:label="`${item.name} (${item.status})`"
@@ -12,7 +12,7 @@
 			</el-form-item>
 
 			<el-form-item :label="$t('editor.cell.data_node.table.form.table.label')" prop="tableName" :rules="rules" required>
-				<el-select v-model="model.tableName" :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')">
+				<el-select filterable v-model="model.tableName" :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')">
 					<el-option
 							v-for="(item, idx) in schemas"
 							:label="`${item.table_name}`"
