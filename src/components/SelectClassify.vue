@@ -212,11 +212,13 @@
 				};
 				MetadataInstances.classification(metadatas).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
-						this.$message.success('add Classification success');
+						//清空数据
 						this.dialogVisible = false;
 						this.checkData = [];
+						this.tagList = [];
+						this.$refs.tree.setCheckedKeys([]);
 						this.$emit('clearCheckData', []);
-						this.$emit('dialogVisible', this.dialogVisible);
+						this.$emit('dialogVisible', false);
 					}
 				}).catch(e => {
 					this.$message.error('MetadataInstancesClassification error');
@@ -259,11 +261,14 @@
 				};
 				MetadataInstances.classification(metadatas).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
-						this.$message.success('add Classification success');
+
+						//清空数据
 						this.dialogVisible = false;
 						this.checkData = [];
+						this.tagList = [];
+						this.$refs.tree.setCheckedKeys([]);
 						this.$emit('clearCheckData', []);
-						this.$emit('dialogVisible', this.dialogVisible);
+						this.$emit('dialogVisible',false);
 					}
 				}).catch(e => {
 					this.$message.error('MetadataInstancesClassification error');

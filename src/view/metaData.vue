@@ -35,7 +35,7 @@
 		<div class="box-ul">
 			<div class="box-head">
 				<div class="select-nav-header">
-					<span style="font-size: 12px">{{ checkedValue }}</span>
+					<span style="font-size: 12px">{{ checkedValue.label }}</span>
 					<el-button size="mini" type="primary" @click="handleClassify">批量分类</el-button>
 				</div>
 				<el-input placeholder="请输入内容" v-model="search" class="search-input" clearable @clear="clear" @change="handleSearch">
@@ -107,7 +107,9 @@
 				listdata: [],
 				checkAll: [],
 				checkData: [],
-				checkedValue:'all datas',
+				checkedValue:{
+					label:'all datas',
+				},
 				options: [{
 					value: '',
 					label: 'all types'
@@ -155,6 +157,7 @@
 		async mounted() {
 			this.handleList();
 			this.$refs.SelectClassify.$on('dialogVisible', (operations) => {
+				this.handleChecked(this.checkedValue);
 				this.dialogVisible = operations;
 			});
 			this.$refs.SelectClassify.$on('clearCheckData', (operations) => {
@@ -291,7 +294,7 @@
 			},
 			handleChecked(val){
 				let params = {};
-				this.checkedValue = val.label;
+				this.checkedValue = val;
 				params[`filter[where][classifications.id][in][0]`] = val.id;
 				MetadataInstances.get(params).then(res => {
 					let self = this;

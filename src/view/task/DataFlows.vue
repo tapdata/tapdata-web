@@ -7,7 +7,7 @@
 						<el-col :span="8">
 							<el-form-item :label="$t('message.sourchName')">
 								<el-input
-										:placeholder="$t('dataFlow.searchPlaceholder')" prefix-icon="el-icon-search"
+										:placeholder="$t('dataFlow.searchPlaceholder')" clearable prefix-icon="el-icon-search"
 										v-model="formData.search"></el-input>
 							</el-form-item>
 						</el-col>
@@ -34,22 +34,6 @@
 
 						</el-col>
 					</el-row>
-					<!--          <el-row>-->
-					<!--            <el-col :span="8">-->
-					<!--              <el-form-item label="创建人:">-->
-					<!--                <el-select v-model="formData.person" clearable placeholder="请选择" multiple >-->
-					<!--                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>-->
-					<!--              </el-select>-->
-					<!--              </el-form-item>-->
-					<!--            </el-col>-->
-					<!--            <el-col :span="8">-->
-					<!--              <el-form-item label="目录分类:">-->
-					<!--                <el-select v-model="formData.classification" clearable placeholder="请选择">-->
-					<!--                  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>-->
-					<!--                </el-select>-->
-					<!--              </el-form-item>-->
-					<!--            </el-col>-->
-					<!--          </el-row>-->
 				</el-form>
 			</el-row>
 		</div>
@@ -110,10 +94,6 @@
 				<el-table-column :label="$t('dataFlow.operate')" width="180">
 					<template slot-scope="scope">
 						<div v-if="!scope.row.hasChildren">
-<!--							<el-tooltip class="item" :content="$t('dataFlow.dataMap')" placement="bottom">-->
-<!--								<router-link :to='{path:"/job", query: { id: scope.row.id}}'><i-->
-<!--										class="iconfont task-list-icon icon-yunyingzhongxin"></i></router-link>-->
-<!--							</el-tooltip>-->
 							<el-tooltip v-if="scope.row.status !== 'scheduled'&& scope.row.status !== 'running'&& scope.row.status !== 'force stopping'&&scope.row.status !== 'stopping'" class="item" :content="$t('dataFlow.edit')" placement="bottom">
 								<router-link :to='{path:"/job", query: { id: scope.row.id}}'><i
 										class="iconfont task-list-icon  icon-ceshishenqing"></i></router-link>
@@ -149,6 +129,17 @@
 					</template>
 				</el-table-column>
 			</el-table>
+			<el-pagination
+					style="margin-top: 10px"
+					@size-change="handleSizeChange"
+					@current-change="handleCurrentChange"
+					:current-page="currentPage"
+					:page-sizes="[10, 20, 30, 50,100]"
+					:page-size="pagesize"
+					:total="totalNum"
+					layout="total, sizes, prev, pager, next, jumper"
+					>
+			</el-pagination>
 		</div>
 	</div>
 </template>
@@ -171,6 +162,9 @@
 				order: '',
 				tableData: [],
 				newData: [],
+				currentPage:1,
+				pagesize: 10,
+				totalNum: 0,
 				options: [{
 					label: this.$t('dataFlow.status.running'),
 					value: 'running'
@@ -207,10 +201,11 @@
 			this.formData = this.$store.state.dataFlows;
 			this.screenFn();
 			this.keyupEnter();
+			this.getCount();
 		},
 		computed: {
 			maxHeight: function () {
-				let height = document.body.clientHeight - 190 + "px";
+				let height = document.body.clientHeight - 300 + "px";
 				return height;
 			}
 		},
@@ -265,6 +260,8 @@
 					filter: JSON.stringify({
 						where: where,
 						order: order,
+						limit:this.pagesize,
+						skip:(this.currentPage-1)*this.pagesize,
 						fields: {
 							"id": true,
 							"name": true,
@@ -343,6 +340,16 @@
 							item.input = '--';
 							item.output = '--';
 							item.transmissionTime = '--';
+						}
+					}
+				});
+			},
+			getCount(){
+				dataFlows.count().then(res => {
+					if (res.statusText === "OK" || res.status === 200) {
+						if (res.data) {
+							this.totalNum = res.data.count;
+							console.log(this.totalNum);
 						}
 					}
 				});
@@ -450,6 +457,14 @@
 			},
 			handleSelectionChange(val) {
 				this.multipleSelection = val;
+			},
+			handleCurrentChange(cpage) {
+				this.currentPage = cpage;
+				this.getData();
+			},
+			handleSizeChange(psize) {
+				this.pagesize = psize;
+				this.getData();
 			},
 		},
 	};
