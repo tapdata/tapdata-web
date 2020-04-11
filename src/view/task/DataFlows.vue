@@ -357,7 +357,6 @@
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data) {
 							this.totalNum = res.data.count;
-							console.log(this.totalNum);
 						}
 					}
 				});

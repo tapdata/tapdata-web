@@ -66,3 +66,9 @@ button.joint-widget.joint-theme-default{
 .joint-stencil.joint-theme-default {
 	border: none;
 }
+.joint-stencil.joint-theme-default.collapsible >.content{
+	top: 0;
+}
+.joint-stencil.joint-theme-default .group:first-child {
+	border-top: 0;
+}
