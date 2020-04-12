@@ -90,7 +90,7 @@
 	import {EditorEventType} from "../../editor/lib/events";
 
 	const DataFlowInsights = factory('DataFlowInsights');
-	let intervalTime = 20000;
+	let intervalTime = 5000;
 	export default {
 		name: 'echartData',
 		components: {echartHead, echartsCompinent, shaftlessEchart},
@@ -357,7 +357,7 @@
 				tip: this.$t("dataFlow.replicate_pop")
 			};
 			this.flow.createTime = this.dataFlow.createTime ? this.$moment(this.dataFlow.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
-			this.flow.username = this.dataFlow.user.email;
+			this.flow.username = this.dataFlow.user && this.dataFlow.user.email || '';
 			this.timer = setInterval(() => {
 				this.getTwoRadio(this.dataOverviewAll, this.dataOverviewType);
 				this.getSpeed(this.isThroughputAll, this.throughputTime);
@@ -371,7 +371,7 @@
 				handler(val) {
 					this.flow = val;
 					this.flow.createTime = val.createTime ? this.$moment(val.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
-					this.flow.username = val.user.email;
+					this.flow.username = val.user && val.user.email || '';
 					this.flow.status = val.status;
 				},
 				deep: true
