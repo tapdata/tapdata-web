@@ -215,6 +215,7 @@
 				if(['merge_embed', 'update'].includes(this.model.joinTable.joinType)){
 					this.model.joinTable.joinPath = this.model.joinTable.tableName;
 				}
+				this.$refs.mappingComp.$emit(EditorEventType.RESIZE);
 			}
 		},
 
