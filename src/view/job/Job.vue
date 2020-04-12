@@ -166,7 +166,7 @@
 						return;
 
 					dataFlowsApi.get([self.dataFlowId], {
-						fields: ['id', 'status', 'last_updated', 'createTime', 'executeMode', 'stopOnError', 'user_id', 'user', 'startTime']
+						fields: ['id', 'status', 'last_updated', 'createTime', 'executeMode', 'stopOnError', 'user_id', 'user', 'startTime', 'stats', 'pingTime', 'stopTime']
 					}).then((result) => {
 						if( result && result.data ){
 							let newStatus = result.data.status;
@@ -184,6 +184,7 @@
 							} else {
 								self.executeMode = 'normal';
 							}
+							Object.assign(this.dataFlow, result.data);
 							self.editor.emit('dataFlow:updated', _.cloneDeep(result.data));
 						}
 					}).catch( err => {
