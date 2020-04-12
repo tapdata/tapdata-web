@@ -423,6 +423,7 @@
 		width: 300px;
 		height: calc(100vh - 1px);
 		overflow-y: auto;
+		border-right: 1px solid #dedee4;
 	}
 
 	.classify-ul li {
@@ -508,6 +509,11 @@
 	.metaData-tree{
 		.el-tree-node__content{
 			height: 33px;
+		}
+	}
+	.select-nav-header{
+		.el-button--mini, .el-button--mini.is-round {
+			padding: 4px 12px;
 		}
 	}
 </style>

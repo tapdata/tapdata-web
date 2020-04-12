@@ -266,6 +266,7 @@
 		background: #fff;
 		overflow: hidden;
 		width: 217px;
+		padding-left: 5px;
 	}
 	.el-tree{
 		padding-top: 40px;
@@ -285,10 +286,21 @@
 	}
 </style>
 <style lang="less">
-	.search{
-		.el-input  .el-input__inner {
+	.box-head{
+		.el-input .el-input__inner {
 			height: 24px;
 			line-height: 24px;
+		}
+		.el-input .el-input__icon {
+			line-height: 24px;
+		}
+		.el-input__icon {
+			height: 100%;
+			width: 0; 
+			text-align: center;
+			-webkit-transition: all .3s;
+			transition: all .3s;
+			line-height: 40px;
 		}
 	}
 </style>
