@@ -8,7 +8,7 @@
 					v-model="search"
 					size="mini">
 			</el-input>
-			<el-button icon="el-icon-search" size="mini" @click="getLogsData"></el-button>
+			<el-button icon="el-icon-search" size="mini" @click="loadNew"></el-button>
 		</div>
 
 		<ul class="e-log-container" v-show="logCount > 0" ref="logContainer"></ul>
@@ -36,22 +36,46 @@
 				search: '',
 				logCount: 0,
 				lastLogsId: '',
+				firstLogsId: '',
 				timer: null,
+				loading: false,
 			};
 		},
 
 		mounted() {
-			this.getLogsData();
+			let self = this;
+			this.loadNew();
 			this.timer = setInterval(() => {
-				this.getLogsData();
+				this.loadNew();
 			}, 5000);
+
+			let logContainer = self.$refs.logContainer;
+			$(logContainer).scroll((e) => {
+				if( (logContainer.scrollHeight - logContainer.clientHeight - logContainer.scrollTop) < 100) {
+					self.loadOld();
+				}
+			});
 		},
 
 		methods: {
 
-			async getLogsData() {  //获取日志
+			loadOld(){
+				let filter = {
+					where: {
+						'contextMap.dataFlowId': {
+							eq: this.dataFlow.id
+						},
+						id: {
+							lt: this.firstLogsId
+						}
+					},
+					order: 'millis DESC',
+					limit: 100
+				};
+				this.getLogsData(filter, false, false);
+			},
 
-				let self = this;
+			loadNew(){
 				let filter = {
 					where: {
 						'contextMap.dataFlowId': {
@@ -80,10 +104,23 @@
 					];
 				}
 
+				this.getLogsData(filter, reset, true);
+			},
+
+			getLogsData(filter, reset = false, prepend = false) {  //获取日志
+
+				let self = this;
+
+				if( self.loading ) return;
+
+				self.loading = true;
 				logsModel.get({filter}).then(res => {
+					self.loading = false;
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data && res.data.length > 0) {
-							this.lastLogsId = res.data[0].id;
+
+							if( reset || prepend ) this.lastLogsId = res.data[0].id;
+							if( reset || !prepend ) this.firstLogsId = res.data[res.data.length - 1].id;
 
 							let logCount = res.data.length;
 							let logContainer = $(this.$refs.logContainer);
@@ -106,7 +143,7 @@
 								item.date = item.date ? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : '';
 								item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
 
-								logContainer.prepend(
+								logContainer[prepend ? 'prepend' : 'append'](
 									$(`<li>
 										  [<span class="level ${item.level === 'ERROR' ? 'redActive' : ''}">${item.level}</span>] &nbsp;
 										  <span>${item.date}</span>&nbsp;
@@ -119,7 +156,7 @@
 						}
 					}
 				}).catch(err => {
-
+					self.loading = false;
 				});
 			},
 		},
