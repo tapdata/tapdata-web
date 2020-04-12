@@ -47,7 +47,7 @@ export const fieldProcessConfig = {
 				let data = this.getFormData();
 				log('FieldProcess.mergeOutputSchema', data, outputSchema);
 				if (!outputSchema || !data)
-					return;
+					return outputSchema;
 				data.operations.map((item, index) => {
 					let targetIndex = outputSchema.fields.findIndex(function (n, index) {
 						return n.id === item.id;

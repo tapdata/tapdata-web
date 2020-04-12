@@ -98,24 +98,9 @@
 
 					this.$refs.entity.setOperations(_.cloneDeep(this.model.operations));
 
-					let operations = {};
-					this.model.operations.forEach(p => operations[p.id] = p);
+					this.schema = cell.mergeOutputSchema(schema);
 
-					schema.fields.forEach((field => {
-						let operation = operations[field.id];
-						if (operation) {
-							if (operation.op === 'RENAME') {
-								let fieldName = field.field_name.split('.');
-								fieldName[fieldName.length - 1] = operation.operand;
-								field.field_name = fieldName.join('.');
-							} else if (operation.op === 'CONVERT') {
-								field.javaType = operation.operand;
-							//} else if (operation.op === 'REMOVE'){
-							}
-						}
-					}));
-					this.schema = schema;
-					log('FieldProcess.setData.applyOperations', schema, operations);
+					log('FieldProcess.setData.applyOperations', this.schema, this.model.operations);
 				}
 			},
 			getData() {

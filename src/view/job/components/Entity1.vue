@@ -218,7 +218,7 @@
 			},
 			handleRename(node, data) {
 				let nativeData = this.getNativeData(this.originalSchema.fields, data.id);
-				log("nativeData", this.operations);
+				log("Entity1.handlerRename(node,data,nativeData,operations)", node, data, nativeData, this.operations);
 				let ops = this.operations.filter(v => v.id === nativeData.id && v.op === 'RENAME');
 				let op;
 				if (data.label === nativeData.label) {
