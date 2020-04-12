@@ -87,7 +87,6 @@
 	import shaftlessEchart from '../../components/shaftlessEchart';
 	import factory from '../../api/factory';
 	import log from '../../log';
-	import {EditorEventType} from "../../editor/lib/events";
 
 	const DataFlowInsights = factory('DataFlowInsights');
 	let intervalTime = 5000;
@@ -317,8 +316,30 @@
 
 		computed: {
 			updateTime: function () {
-				let time = new Date(this.dataFlow.last_updated).getTime() - new Date(this.dataFlow.startTime).getTime();
-				return time + 'ms';
+				if( this.dataFlow.startTime && this.dataFlow.last_updated) {
+					let time = new Date(this.dataFlow.last_updated).getTime() - new Date(this.dataFlow.startTime).getTime();
+
+					let unit = 'ms';
+					if( time > 1000 ){
+						unit = 's';
+						time = Number((time/1000).toFixed(2));
+					}
+					if( time > 60 ){
+						unit = 'm';
+						time = Number((time/60).toFixed(2));
+					}
+					if( time > 60 ){
+						unit = 'h';
+						time = Number((time/60).toFixed(2));
+					}
+					if( time > 24 ){
+						unit = 'd';
+						time = Number((time/24).toFixed(2));
+					}
+
+					return time + ' ' + unit;
+				}
+				return '-';
 			}
 		},
 
