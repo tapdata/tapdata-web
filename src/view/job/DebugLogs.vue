@@ -1,22 +1,19 @@
 <template>
 	<div class="debugLog">
-		<el-input
-				class="inputStyle"
-				:placeholder="$t('message.search')"
-				v-model="search">
-			<i slot="prefix" class="el-input__icon el-icon-search"></i>
-		</el-input>
-    <ul v-if="search">
-      <li style="padding-bottom:10px;" v-for="(item,index) in logsList" :key="index">
-        <span>[<i style="font-weight: bold;" :class="item.level == 'ERROR' ? 'redActive' : ''">{{item.level}}</i>]</span> &nbsp;
-        <span>{{item.date}}</span>&nbsp;
-        <span>[{{item.threadName}}]</span>&nbsp;
-        <span>{{item.loggerName}}</span>&nbsp;-&nbsp;
-        <span>{{item.message}}</span>
-      </li>
-    </ul>
-		<ul class="log" v-show="logCount > 0" ref="logContainer"></ul>
-		<div v-show="logsList.lenght === 0 || (!search && logCount === 0)" class="noText">
+
+		<div>
+			<el-input
+					class="inputStyle"
+					:placeholder="$t('message.search')"
+					v-model="search"
+					size="mini">
+			</el-input>
+			<el-button icon="el-icon-search" size="mini" @click="getLogsData"></el-button>
+		</div>
+
+		<ul class="e-log-container" v-show="logCount > 0" ref="logContainer"></ul>
+
+		<div v-show="logCount === 0" class="noText">
 			<i class="iconfont icon icon-zanwushuju1" style="font-size: 174px"></i>
 		</div>
 	</div>
@@ -39,67 +36,86 @@
 				search: '',
 				logCount: 0,
 				lastLogsId: '',
-        timer: null, //定时器
-        logsList: []
+				timer: null,
 			};
 		},
 
 		mounted() {
-      this.getLogsData();
-			// 这是一个定时器
+			this.getLogsData();
 			this.timer = setInterval(() => {
 				this.getLogsData();
-			}, 10000);
-		},
-
-		watch: {
-			search(val) {
-				this.search = val;
-        this.getLogsData();
-			}
+			}, 5000);
 		},
 
 		methods: {
+
 			async getLogsData() {  //获取日志
-				let paramas = {
-					'filter[order]': 'millis DESC',
-					'filter[where][contextMap.dataFlowId][eq]': this.dataFlow.id
+
+				let self = this;
+				let filter = {
+					where: {
+						'contextMap.dataFlowId': {
+							eq: this.dataFlow.id
+						}
+					},
+					order: 'millis DESC',
 				};
-				if (!this.lastLogsId) {
-					paramas['filter[limit]'] = 100;
-				} else if (this.lastLogsId && !this.search) {
-          paramas['filter[where][millis][gt]'] = this.lastLogsId;
-        }
-				if (this.search) {
-					paramas['filter[where][$text][search]'] = this.search;
+
+				let reset = self.lastKeyword !== this.search;
+				self.lastKeyword = this.search;
+
+				if( !reset && this.lastLogsId ){
+					filter.where.id = {
+						gt: this.lastLogsId
+					};
+				} else {
+					filter.limit = 100;
+				}
+				if( this.search ){
+					filter.where.or = [
+						{threadName: { regexp: this.search }},
+						{loggerName: { regexp: this.search }},
+						{message: { regexp: this.search }},
+						{level: { regexp: this.search }}
+					];
 				}
 
-				logsModel.get(paramas).then(res => {
+				logsModel.get({filter}).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data && res.data.length > 0) {
-              this.lastLogsId = res.data[0].id;
-              let logCount = res.data.length;
-              this.logCount += logCount;
-              for (let i = logCount - 1; i >= 0; i--) {
-                let item = res.data[i];
-                item.date = item.date ? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : '';
-                item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
-                if(!this.search) {
-                  $(this.$refs.logContainer).prepend(
-                  $(`<li style="padding-bottom:10px;">
-                      <span>[<i style="font-weight: bold;" class="${item.level == 'ERROR' ? 'redActive' : ''}">${item.level}</i>]</span> &nbsp;
-                      <span>${item.date}</span>&nbsp;
-                      <span>[${item.threadName}]</span>&nbsp;
-                      <span>${item.loggerName}</span>&nbsp;-&nbsp;
-                      <span>${item.message}</span>
-                    </li>`)
-                  );
-                } else {
-                  this.lastLogsId = '';
-                  this.logCount = 0;
-                  this.logsList = res.data;
-                }
-              }
+							this.lastLogsId = res.data[0].id;
+
+							let logCount = res.data.length;
+							let logContainer = $(this.$refs.logContainer);
+
+							if( reset ){
+								this.logCount = logCount;
+								logContainer.find('li').remove();
+							} else {
+								this.logCount += logCount;
+							}
+
+							let markKeyword = function(text){
+								if( self.search && text.indexOf(self.search) >= 0){
+									return text.split(self.search).join(`<span class="keyword">${self.search}</span>`);
+								}
+								return text;
+							};
+							for (let i = logCount - 1; i >= 0; i--) {
+								let item = res.data[i];
+								item.date = item.date ? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : '';
+								item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
+
+								logContainer.prepend(
+									$(`<li>
+										  [<span class="level ${item.level === 'ERROR' ? 'redActive' : ''}">${item.level}</span>] &nbsp;
+										  <span>${item.date}</span>&nbsp;
+										  <span>[${markKeyword(item.threadName)}]</span>&nbsp;
+										  <span>${markKeyword(item.loggerName)}</span>&nbsp;-&nbsp;
+										  <span>${markKeyword(item.message)}</span>
+										</li>`)
+								);
+							}
 						}
 					}
 				}).catch(err => {
@@ -109,33 +125,45 @@
 		},
 
 		destroyed() {
-			//清除定时器
 			clearInterval(this.timer);
 			this.timer = null;
 		}
 	};
 </script>
-<style scoped lang="less">
+<style lang="less">
 	.debugLog {
 		width: 100%;
-    height: 100%;
-    padding: 20px 0 0 20px;
-    box-sizing: border-box;
+		height: 100%;
+		padding: 20px 0 0 20px;
+		box-sizing: border-box;
 		overflow: hidden;
 	}
 
-	li {
-		list-style: none;
-	}
-	.log {
+	.e-log-container {
 		width: 100%;
 		display: inline-block;
 		height: calc(100% - 50px);
 		padding-top: 20px;
 		overflow: auto;
-    li .redActive {
-      color: red!important;
-    }
+		font-size: 11px;
+		color: #222222;
+
+		li {
+			list-style: none;
+			padding-bottom:5px;
+
+			.level {
+				font-weight: bold;
+			}
+
+			.redActive {
+				color: red;
+			}
+
+			.keyword {
+				background: #ffff00;
+			}
+		}
 	}
 
 	.noText {
@@ -151,9 +179,4 @@
 	.inputStyle {
 		width: 300px;
 	}
-</style>
-<style>
-  .redActive {
-    color: red!important;
-  }
 </style>
