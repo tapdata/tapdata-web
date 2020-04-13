@@ -15,6 +15,7 @@ import {VueAdapter} from '../vue-adapter';
 import log from "../../log";
 import {DATA_FLOW_SETTING_DATA_KEY, FORM_DATA_KEY,SCHEMA_DATA_KEY,OUTPUT_SCHEMA_DATA_KEY} from "../constants";
 import {isAcyclic} from "graphlib/lib/alg";
+import {EditorEventType} from "../lib/events";
 
 window.joint = joint;
 
@@ -193,6 +194,7 @@ export default class Graph extends Component{
 	}
 
 	onClickBlank(){
+		this.emit(EditorEventType.SELECTED_STAGE);
 		if( this.editable ){
 			this.editor.getRightSidebar().hide();
 		}
@@ -381,7 +383,7 @@ export default class Graph extends Component{
 			}
 		}
 		if( cell.isElement()) {
-			this.emit('selected:stage', cell.toJSON());
+			this.emit(EditorEventType.SELECTED_STAGE, cell.toJSON());
 		}
 	}
 
