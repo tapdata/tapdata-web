@@ -24,6 +24,7 @@
 </template>
 <script>
   import factory from '../../api/factory';
+  import {EditorEventType} from "../../editor/lib/events";
 
   const DataFlowsDebugs = factory('DataFlowsDebugs');
   export default {
@@ -67,8 +68,8 @@
         this.getSelectData();
       }, 10000);
 
-      this.$on("selected:stage", (selectStage) => {
-        this.stageId = selectStage.id;
+      this.$on(EditorEventType.SELECTED_STAGE, (selectStage) => {
+        this.stageId = selectStage ? selectStage.id : '';
         this.getSelectData();
       });
 

@@ -50,6 +50,7 @@
 						class="fr echartMain" :echartObj="dataScreening" v-if="dataScreening"
 						:echartsId="'dataScreeningId'" style="width: 100%"></shaftless-echart>
 			</div>
+
 			<div class="echartlist">
 				<echart-head :data="inputOutputObj" @getSpeed="getSpeed"></echart-head>
 				<div class="floatLayer">
@@ -87,6 +88,7 @@
 	import shaftlessEchart from '../../components/shaftlessEchart';
 	import factory from '../../api/factory';
 	import log from '../../log';
+	import {EditorEventType} from "../../editor/lib/events";
 
 	const DataFlowInsights = factory('DataFlowInsights');
 	let intervalTime = 5000;
@@ -164,7 +166,7 @@
 						{
 							name: this.$t('dataFlow.input'),
 							type: 'line',
-							smooth: 1,
+							smooth: true,
 							data: [],
 							itemStyle: {
 								color: '#2ba7c3'
@@ -233,7 +235,7 @@
 					series: [
 						{
 							type: 'line',
-							smooth: 1,
+							smooth: true,
 							data: [],
 							itemStyle: {
 								color: '#fb8e00'
@@ -289,7 +291,7 @@
 						{
 							type: 'line',
 							data: [],
-							smooth: 1,
+							smooth: true,
 							itemStyle: {
 								color: '#f56c6c'
 							},
@@ -299,8 +301,10 @@
 						}
 					]
 				},
+
 				dataScreening: null,    //数据总览的echart数据
 				screeningObj: null,      //数据总览的头
+
 				inputOutputObj: null,
 				transfObj: null,
 				storeData: null,
@@ -359,8 +363,8 @@
 		},
 
 		mounted() {
-			this.$on("selected:stage", (selectStage) => {
-        this.domValue = selectStage.id;
+			this.$on(EditorEventType.SELECTED_STAGE, (selectStage) => {
+				this.domValue = selectStage ? selectStage.id : 'all';
 			});
 			this.flow = this.dataFlow;
 			// this.getApiData();
