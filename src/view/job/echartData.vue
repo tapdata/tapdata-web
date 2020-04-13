@@ -178,7 +178,7 @@
 						{
 							name: this.$t('dataFlow.output'),
 							type: 'line',
-							smooth: 1,
+							smooth: true,
 							data: [],
 							itemStyle: {
 								color: '#61a569'
