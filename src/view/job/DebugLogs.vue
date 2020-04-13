@@ -1,15 +1,19 @@
 <template>
-	<div class="debugLog">
+	<div class="e-debug-log">
 
-		<div>
-			<el-input
-					class="inputStyle"
-					:placeholder="$t('message.search')"
-					v-model="search"
-					size="mini">
-			</el-input>
-			<el-button icon="el-icon-search" size="mini" @click="loadNew"></el-button>
-		</div>
+		<el-form inline>
+			<el-form-item>
+				<el-input
+						class="inputStyle"
+						:placeholder="$t('message.search')"
+						v-model="search"
+						size="mini">
+				</el-input>
+			</el-form-item>
+			<el-form-item>
+				<el-button icon="el-icon-search" size="mini" @click="loadNew"></el-button>
+			</el-form-item>
+		</el-form>
 
 		<ul class="e-log-container" v-show="logCount > 0" ref="logContainer"></ul>
 
@@ -168,12 +172,16 @@
 	};
 </script>
 <style lang="less">
-	.debugLog {
+	.e-debug-log {
 		width: 100%;
 		height: 100%;
 		padding: 20px 0 0 20px;
 		box-sizing: border-box;
 		overflow: hidden;
+
+		.el-form-item {
+			margin-bottom: 0;
+		}
 	}
 
 	.e-log-container {
