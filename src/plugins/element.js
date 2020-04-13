@@ -31,6 +31,7 @@ import {
 	Col,
 	Pagination,
 	DatePicker,
+	Drawer,
 	Container,
 	Main,
 	Header,
@@ -78,6 +79,7 @@ Vue.component(DatePicker.name, DatePicker);
 Vue.component(Switch.name, Switch);
 Vue.component(Tooltip.name, Tooltip);
 Vue.component(Tag.name, Tag);
+Vue.component(Drawer.name, Drawer);
 
 Vue.use(Loading.directive);
 /***提示只显示一次**/

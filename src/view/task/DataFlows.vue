@@ -8,7 +8,7 @@
 							<el-form-item :label="$t('message.sourchName')">
 								<el-input
 										:placeholder="$t('dataFlow.searchPlaceholder')" clearable prefix-icon="el-icon-search"
-										v-model="formData.search"></el-input>
+										v-model="formData.search" size="mini"></el-input>
 							</el-form-item>
 						</el-col>
 						<el-col :span="8">
@@ -23,7 +23,7 @@
 						</el-col>
 						<el-col :span="8">
 							<el-form-item :label=" $t('dataFlow.taskStatus') ">
-								<el-select v-model="formData.status" clearable :placeholder=" $t('dataFlow.taskStatusPlaceholder')">
+								<el-select v-model="formData.status"  size="mini" clearable :placeholder=" $t('dataFlow.taskStatusPlaceholder')">
 									<el-option
 											v-for="item in options" :key="item.value" :label="item.label"
 											:value="item.value"></el-option>
