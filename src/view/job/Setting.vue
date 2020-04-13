@@ -2,7 +2,7 @@
 	<div class="data-flow-setting">
 		<el-form label-width="40px" :data="formData" >
 			<el-row>
-				<el-col :span="12">
+				<el-col :span="24">
 					<el-form-item>
 						<div>{{$t('dataFlow.sync_type')}}</div>
 						<el-radio-group v-model="formData.sync_type" size="mini">
@@ -25,23 +25,23 @@
 				<el-col :span="12">
 					<el-form-item >
 						<div>{{$t('dataFlow.notification_lag')}}</div>
-						<el-input v-model="formData.notificationWindow">
+						<el-input v-model="formData.notificationWindow" size="mini">
 							<template slot="prepend">发送间隔</template>
 							<template slot="append">ms</template>
 						</el-input>
-						<el-input v-model="formData.notificationInterval">
+						<el-input v-model="formData.notificationInterval" size="mini">
 							<template slot="append">秒后取消发送</template>
 						</el-input>
 					</el-form-item>
 					<el-form-item>
 						<div>{{$t('dataFlow.read_cdc_interval')}}</div>
-						<el-input v-model="formData.readCdcInterval">
+						<el-input v-model="formData.readCdcInterval" size="mini">
 							<template slot="append">ms</template>
 						</el-input>
 					</el-form-item>
 					<el-form-item>
 						<div>{{$t('dataFlow.read_batch_size')}}</div>
-						<el-input v-model="formData.readBatchSize">
+						<el-input v-model="formData.readBatchSize" size="mini">
 							<template slot="append">ms</template>
 						</el-input>
 					</el-form-item>

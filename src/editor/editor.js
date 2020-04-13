@@ -14,6 +14,7 @@ import EchartData from '../view/job/echartData';
 import Capture from '../view/job/Preview';
 import Setting from '../view/job/Setting';
 import DebugLogs from '../view/job/DebugLogs';
+import DataVerify from  '../view/job/DataVerify/List';
 import log from "../log";
 import Panel from "./ui/panel";
 import TableSelector from "../view/job/TableSelector";
@@ -107,7 +108,7 @@ export default class Editor extends BaseObject {
 			hidden: true,
 			maxWidth: 1000,
 			minWidth: 500,
-			width: 520
+			width: 600
 		});
 		ui.add(self.rightSidebar);
 
@@ -229,6 +230,7 @@ export default class Editor extends BaseObject {
 
 	//setting
 	showSetting(name){
+		this.getRightSidebar().removeAll();
 		let self = this;
 		self.initSettings();
 		let rightTabPanel = self.getRightTabPanel();
@@ -294,7 +296,26 @@ export default class Editor extends BaseObject {
 			this.getBottomSidebar().show();
 		}
 	}
-
+	showDataVerify(){
+		// add capture
+		this.getRightSidebar().removeAll();
+		let dataVerify = this.getBottomTabPanel().getChildByName('dataVerify');
+		if( !dataVerify ){
+			dataVerify = new VueComponent({
+				container: '',
+				title: i18n.t('editor.ui.sidebar.capture'),
+				name: 'dataVerify',
+				editor: this,
+				propsData: {
+					dataFlow: '',
+				},
+				component: DataVerify
+			});
+			this.getRightSidebar().add(dataVerify);
+		}
+		this.getRightSidebar().show();
+		this.getBottomSidebar().hide();
+	}
 	setData(dataFlow){
 		this.graph.loadData(JSON.parse(dataFlow.editorData));
 		this.ui.setName(dataFlow.name);
