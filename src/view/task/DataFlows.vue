@@ -253,7 +253,7 @@
 						let dates = _.cloneDeep(this.formData.timeData);
 						if(dates[1]) {
 							dates[1] = new Date(dates[1]);
-							dates[1].setHours(dates[1].getHours() + 8);
+							dates[1].setHours(dates[1].getHours() + 24);
 						}
 						where.createTime = {
 							between: dates
