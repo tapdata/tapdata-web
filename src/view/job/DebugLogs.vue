@@ -187,7 +187,7 @@
 	.e-log-container {
 		width: 100%;
 		display: inline-block;
-		height: calc(100% - 50px);
+		height: calc(100% - 61px);
 		padding-top: 20px;
 		overflow: auto;
 		font-size: 11px;
