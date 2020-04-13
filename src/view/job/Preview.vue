@@ -100,7 +100,13 @@
 			selectNode(val) {
 				this.selectNode = val;
 				this.getDataTableApi();
+			},
+			stageId: {
+				handler(){
+					this.getDataTableApi();
+				}
 			}
+
 		},
 
 		methods: {
@@ -114,7 +120,10 @@
 					if (res.status === 200 && res.statusText === "OK") {
 						if (res.data && res.data.data.length > 0) {
 							this.nodeList = res.data.data;
-							if (this.nodeList.length > 0) {
+							if (!this.selectNode && this.nodeList.length > 0) {
+								this.selectNode = this.nodeList[0];
+							}
+							if( !this.nodeList.includes(this.selectNode) ){
 								this.selectNode = this.nodeList[0];
 							}
 						}
