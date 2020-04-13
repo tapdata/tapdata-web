@@ -520,7 +520,8 @@
 						}
 					}
 				});
-			},
+      },
+
 			//数据处理
 			dataProcessing(data, type, ele) {
 				let timeList = [],
@@ -614,7 +615,7 @@
 								width: 0
 							}
 						},
-						data: [this.$t('dataFlow.outputNumber'), this.$t('dataFlow.inputNumber')],
+						data: [this.$t('dataFlow.inputNumber'),this.$t('dataFlow.outputNumber')],
 						axisPointer: {
 							type: 'shadow'
 						},

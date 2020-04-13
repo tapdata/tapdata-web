@@ -23,7 +23,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="18">
-                <el-form-item :label=" '> ' + $t('dataFlow.aggExpression')" :prop="'aggregations.' + index +'.aggExpression'" required>
+                <el-form-item :label=" '> ' + $t('dataFlow.aggExpression')" :prop="'aggregations.' + index +'.aggExpression'" :required="item.aggFunction !== 'COUNT'">
                   <el-input v-model="item.aggExpression" :disabled="item.aggFunction === 'COUNT'" ></el-input>
                 </el-form-item>
               </el-col>
@@ -76,7 +76,7 @@
             aggregations:[{
               filterPredicate: '',
               aggFunction: 'COUNT',
-              aggExpression: '1',
+              aggExpression: '',
               groupByExpression: ''
             }]
           },
@@ -86,7 +86,17 @@
       watch: {
         form: {
           deep: true,
-          handler(){
+          handler(val){
+            if(val.aggregations && val.aggregations.length >0) {
+              val.aggregations.forEach(item =>{
+                if(item.aggFunction !== "COUNT") {
+                  item.aggExpression = '1';
+                } else {
+                  item.aggExpression = '';
+                }
+              });
+            }
+            console.log("表达式",val);
             this.$emit('dataChanged', this.getData());
           }
         }
