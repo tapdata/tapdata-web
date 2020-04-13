@@ -161,7 +161,7 @@
 						{
 							name: this.$t('dataFlow.input'),
 							type: 'line',
-							smooth: 1,
+							smooth: true,
 							data: [],
 							itemStyle: {
 								color: '#2ba7c3'
@@ -225,7 +225,7 @@
 					series: [
 						{
 							type: 'line',
-							smooth: 1,
+							smooth: true,
 							data: [],
 							itemStyle: {
 								color: '#fb8e00'
@@ -276,7 +276,7 @@
 						{
 							type: 'line',
 							data: [],
-							smooth: 1,
+							smooth: true,
 							itemStyle: {
 								color: '#f56c6c'
 							},
