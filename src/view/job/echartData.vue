@@ -345,7 +345,7 @@
 
 		mounted() {
 			this.$on("selected:stage", (selectStage) => {
-				this.domValue = selectStage.id;
+        this.domValue = selectStage.id;
 			});
 			this.flow = this.dataFlow;
 			// this.getApiData();

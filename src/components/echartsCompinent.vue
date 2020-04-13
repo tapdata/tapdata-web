@@ -117,8 +117,8 @@
 						}, //是否显示坐标轴轴线。
 						axisLabel: {
 							interval: 3,
-							rotate: 25,
-							fontSize: 6,
+							rotate: -8,
+							fontSize: 8,
 							textStyle: {
 								color: '#333',  //坐标的字体颜色
 							}
