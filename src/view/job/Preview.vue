@@ -1,7 +1,7 @@
 <template>
 	<div class="preview" ref="boxHeight">
 		<el-form inline>
-			<el-form-item>
+			<el-form-item :label="$t('editor.preview.stage')">
 				<el-select v-model="stageId" :placeholder="$t('message.placeholderSelect')" size="mini">
 					<el-option
 							v-for="stage in dataFlow.stages"
@@ -12,7 +12,7 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item>
+			<el-form-item :label="$t('editor.preview.table')">
 				<el-select v-model="selectNode" :placeholder="$t('message.placeholderSelect')" size="mini">
 					<el-option
 							v-for="item in nodeList"

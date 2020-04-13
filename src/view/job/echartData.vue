@@ -1,18 +1,22 @@
 <template>
 	<div class="echartData">
-		<el-select v-model="domValue">
-			<el-option
-					key="all"
-					:label="$t('dataFlow.allNode')"
-					value="all">
-			</el-option>
-			<el-option
-					v-for="item in flow.stages"
-					:key="item.id"
-					:label="item.name"
-					:value="item.id">
-			</el-option>
-		</el-select>
+		<el-form inline>
+			<el-form-item>
+				<el-select v-model="domValue" size="mini">
+					<el-option
+							key="all"
+							:label="$t('dataFlow.allNode')"
+							value="all">
+					</el-option>
+					<el-option
+							v-for="item in flow.stages"
+							:key="item.id"
+							:label="item.name"
+							:value="item.id">
+					</el-option>
+				</el-select>
+			</el-form-item>
+		</el-form>
 		<div class="echartMain">
 			<div class="echartlist">
 				<echart-head :data="screeningObj" @twoRadio="getTwoRadio"></echart-head>
@@ -779,6 +783,10 @@
 		width: 100%;
 		padding: 10px 15px 15px;
 		box-sizing: border-box;
+
+		.el-form-item{
+			margin-bottom: 0;
+		}
 
 		.echartMain {
 			height: 100%;
