@@ -116,7 +116,7 @@
 							}
 						}, //是否显示坐标轴轴线。
 						axisLabel: {
-							interval: 0,
+							interval: 3,
 							rotate: 25,
 							fontSize: 6,
 							textStyle: {
