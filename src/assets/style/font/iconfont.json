@@ -6,6 +6,139 @@
   "description": "Tapdata 线装小图标",
   "glyphs": [
     {
+      "icon_id": "5022268",
+      "name": "右&左",
+      "font_class": "you2",
+      "unicode": "e697",
+      "unicode_decimal": 59031
+    },
+    {
+      "icon_id": "11958370",
+      "name": "数据库",
+      "font_class": "shujuku1",
+      "unicode": "e673",
+      "unicode_decimal": 58995
+    },
+    {
+      "icon_id": "13870089",
+      "name": "kafka",
+      "font_class": "kafka1",
+      "unicode": "e674",
+      "unicode_decimal": 58996
+    },
+    {
+      "icon_id": "13387995",
+      "name": "关系",
+      "font_class": "guanxi",
+      "unicode": "e6ca",
+      "unicode_decimal": 59082
+    },
+    {
+      "icon_id": "12126936",
+      "name": "核查比对",
+      "font_class": "hechabidui",
+      "unicode": "e66c",
+      "unicode_decimal": 58988
+    },
+    {
+      "icon_id": "7641601",
+      "name": "elastic-search-clust",
+      "font_class": "elastic-search-clust",
+      "unicode": "e66e",
+      "unicode_decimal": 58990
+    },
+    {
+      "icon_id": "4968706",
+      "name": "Elasticsearch fill",
+      "font_class": "Elasticsearchfill",
+      "unicode": "e709",
+      "unicode_decimal": 59145
+    },
+    {
+      "icon_id": "13910696",
+      "name": "全局",
+      "font_class": "quanju",
+      "unicode": "e6c7",
+      "unicode_decimal": 59079
+    },
+    {
+      "icon_id": "11678970",
+      "name": "柱状图",
+      "font_class": "zhuzhuangtu",
+      "unicode": "e698",
+      "unicode_decimal": 59032
+    },
+    {
+      "icon_id": "9902220",
+      "name": "柱状图",
+      "font_class": "data",
+      "unicode": "e74d",
+      "unicode_decimal": 59213
+    },
+    {
+      "icon_id": "13917183",
+      "name": "o-table",
+      "font_class": "o-table",
+      "unicode": "e630",
+      "unicode_decimal": 58928
+    },
+    {
+      "icon_id": "9366719",
+      "name": "-filter",
+      "font_class": "-filter",
+      "unicode": "e66d",
+      "unicode_decimal": 58989
+    },
+    {
+      "icon_id": "12932089",
+      "name": "l-link",
+      "font_class": "l-link",
+      "unicode": "e798",
+      "unicode_decimal": 59288
+    },
+    {
+      "icon_id": "13900120",
+      "name": "mongoview",
+      "font_class": "mongoview",
+      "unicode": "e66a",
+      "unicode_decimal": 58986
+    },
+    {
+      "icon_id": "13900121",
+      "name": "file",
+      "font_class": "file1",
+      "unicode": "e66b",
+      "unicode_decimal": 58987
+    },
+    {
+      "icon_id": "9324339",
+      "name": "邮件",
+      "font_class": "youjian",
+      "unicode": "e641",
+      "unicode_decimal": 58945
+    },
+    {
+      "icon_id": "5769242",
+      "name": "广播",
+      "font_class": "guangbo",
+      "unicode": "ec39",
+      "unicode_decimal": 60473
+    },
+    {
+      "icon_id": "923208",
+      "name": "右",
+      "font_class": "you",
+      "unicode": "e685",
+      "unicode_decimal": 59013
+    },
+    {
+      "icon_id": "11675624",
+      "name": "右",
+      "font_class": "you1",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
       "icon_id": "13842112",
       "name": "link4",
       "font_class": "link5",
@@ -95,13 +228,6 @@
       "font_class": "fieldprocessor",
       "unicode": "e65d",
       "unicode_decimal": 58973
-    },
-    {
-      "icon_id": "13837750",
-      "name": "o-table",
-      "font_class": "o-table",
-      "unicode": "e630",
-      "unicode_decimal": 58928
     },
     {
       "icon_id": "13837751",
@@ -286,13 +412,6 @@
       "unicode_decimal": 58947
     },
     {
-      "icon_id": "13479199",
-      "name": "客服",
-      "font_class": "B",
-      "unicode": "e707",
-      "unicode_decimal": 59143
-    },
-    {
       "icon_id": "5460560",
       "name": "客服",
       "font_class": "kefu",
@@ -312,13 +431,6 @@
       "font_class": "lianjie2",
       "unicode": "e640",
       "unicode_decimal": 58944
-    },
-    {
-      "icon_id": "11377280",
-      "name": "链接",
-      "font_class": "lianjie3",
-      "unicode": "e641",
-      "unicode_decimal": 58945
     },
     {
       "icon_id": "12815633",
