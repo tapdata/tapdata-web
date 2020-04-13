@@ -152,7 +152,12 @@
 							}
 						},
 						axisLabel: {
-							formatter: '{value}'
+							formatter: function (value, index) {
+                if (value >= 10000) {
+                    value = value / 10000 + "W";
+                }
+                return value;
+              }
 						}
 					},
 					series: [
@@ -217,7 +222,12 @@
 							}
 						},
 						axisLabel: {
-							formatter: '{value}'
+							formatter: function (value, index) {
+                if (value >= 10000) {
+                    value = value / 10000 + "W";
+                }
+                return value;
+              }
 						}
 					},
 					series: [
@@ -267,7 +277,12 @@
 							}
 						},
 						axisLabel: {
-							formatter: '{value}'
+							formatter: function (value, index) {
+                if (value >= 10000) {
+                    value = value / 10000 + "W";
+                }
+                return value;
+              }
 						}
 					},
 					series: [
