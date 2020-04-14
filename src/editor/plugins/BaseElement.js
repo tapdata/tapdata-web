@@ -184,6 +184,7 @@ export const baseElementConfig = {
 				let joinTables = graph.getConnectedLinks(self, {inbound: true})
 						.map( cell => {
 							let sourceCell = cell.getSourceCell();
+							let targetCell = cell.getTargetCell();
 
 							if( sourceCell ) {
 								let formData = cell.getFormData();
@@ -205,7 +206,7 @@ export const baseElementConfig = {
 								}
 
 								joinTable.sourceSchema = schema;
-								let parentDataNodes = typeof sourceCell.getParentDataNode === 'function' ? sourceCell.getParentDataNode() : [];
+								let parentDataNodes = typeof targetCell.getParentDataNode === 'function' ? targetCell.getParentDataNode() : [];
 								joinTable.stageId = parentDataNodes.length > 0 ? parentDataNodes[0].id : '';
 
 								log('BaseElement.getInputSchema.joinTables', cell.getFormData(), joinTable);
