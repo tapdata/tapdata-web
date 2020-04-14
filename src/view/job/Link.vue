@@ -1,22 +1,26 @@
 <template>
 	<div class="e-link-wrap">
 
-		<el-form label-position="right" label-width="160px" :model="model" ref="form">
+		<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form">
 
 			<!--<el-form-item label="Table name" required>
 				<el-input
 						v-model="model.joinTable.tableName"
-						placeholder="please enter table name"  class="formitem-width"></el-input>
+						placeholder="please enter table name"></el-input>
 			</el-form-item>
 
 			<el-form-item label="Table primary key" required>
 				<el-input
 						v-model="model.joinTable.primaryKeys"
-						placeholder="please enter primary key"  class="formitem-width"></el-input>
+						placeholder="please enter primary key"></el-input>
 			</el-form-item>-->
 
 			<el-form-item :label="$t('editor.cell.link.form.joinType.label')" required>
-				<el-select v-model="model.joinTable.joinType" :placeholder="$t('editor.cell.link.form.joinType.placeholder')" @change="handlerJoinTypeChanged" size="mini">
+				<el-select
+						v-model="model.joinTable.joinType"
+						:placeholder="$t('editor.cell.link.form.joinType.placeholder')"
+						@change="handlerJoinTypeChanged"
+						size="mini">
 					<el-option
 							v-for="(item, idx) in writeModels"
 							:label="`${item.label}`"
@@ -28,7 +32,7 @@
 			<el-form-item :label="$t('editor.cell.link.form.joinPath.label')" v-if="supportEmbedArray() && ['update', 'merge_embed'].includes(model.joinTable.joinType)">
 				<el-input
 						v-model="model.joinTable.joinPath"
-						:placeholder="$t('editor.cell.link.form.joinPath.placeholder')"  class="formitem-width" size="mini"></el-input>
+						:placeholder="$t('editor.cell.link.form.joinPath.placeholder')"  size="mini"></el-input>
 			</el-form-item>
 
 			<el-form-item :label="$t('editor.cell.link.form.joinKeys.label')" required v-if="!['append'].includes(model.joinTable.joinType)">
@@ -266,8 +270,11 @@
 		flex-direction: column;
 		justify-content: start;
 
-		.formitem-width {
-			width: 225px;
+		.e-form {
+			.el-input, .el-select {
+				max-width: 400px;
+				width: 80%;
+			}
 		}
 
 		.e-table {
@@ -291,11 +298,12 @@
 
 			input {
 				color: #606266;
-				width: 90px;
+				width: 198px;
 				height: 20px;
 				outline: none;
 				border: none;
 				padding: 0 10px;
+				box-sizing: border-box;
 			}
 
 			.e-action-bar {

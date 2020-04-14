@@ -1,6 +1,6 @@
 <template>
 	<div class="e-table">
-		<el-form label-position="right" label-width="160px" :model="model" ref="form">
+		<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form">
 			<el-form-item :label="$t('editor.cell.data_node.table.form.database.label')" prop="connectionId" :rules="rules" required>
 				<el-select filterable v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.table.form.database.placeholder')" @change="handlerConnectionChange" size="mini">
 					<el-option
@@ -216,6 +216,12 @@
 		flex-direction: column;
 		justify-content: center;
 
+		.e-form {
+			.el-input, .el-select, .el-textarea {
+				max-width: 400px;
+				width: 80%;
+			}
+		}
 		.el-form-item{
 			margin-bottom: 10px;
 		}
