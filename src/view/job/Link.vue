@@ -216,6 +216,10 @@
 
 					let mergedTargetSchema = targetCell.getOutputSchema(); //mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
 
+					let targetJoinFields = mergedTargetSchema.fields.filter( field => field.field_name === this.model.joinTable.joinPath);
+					let isArray = targetJoinFields && targetJoinFields.length > 0 && targetJoinFields[0].javaType === 'Array';
+					if( this.model.joinTable.isArray !== isArray ) this.model.joinTable.isArray = isArray;
+
 					this.$refs.mappingComp.setSchema(sourceSchema, mergedTargetSchema);
 					log('Link.renderSchema', sourceSchema, mergedTargetSchema);
 				}
