@@ -149,11 +149,13 @@
 							//     tableList = res.data[i];
 							//   }
 							// }
-							res.data.forEach(item => {
-								delete item.id;
-								delete item.__tapd8;
-								item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
-
+							// res.data.forEach(item => {
+							// 	delete item.id;
+							// 	delete item.__tapd8;
+							// 	item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
+							// });
+							res.data = res.data.map(item => {
+								return item.masterData;
 							});
 							res.data.forEach(item => {  // 获取表头
 								for (let key of Object.keys(item)) {
