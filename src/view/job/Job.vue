@@ -466,14 +466,11 @@
 					if( data && data.id ) {
 						data = {
 							id: data.id,
-							status: ['scheduled', 'running', 'stopping'].includes(data.status) ? data.status : 'scheduled',
-							executeMode: ['running_debug', 'editing_debug'].includes(this.executeMode) ? 'normal' :
-								['scheduled', 'running', 'stopping'].includes(data.status) ? 'running_debug' : 'editing_debug'
+							executeMode: 'running_debug'
 						};
 					} else {
 						Object.assign(data, {
-							status: 'scheduled',
-							executeMode: 'editing_debug'
+							executeMode: 'running_debug'
 						});
 					}
 					self.doSave(data, (err, dataFlow) => {

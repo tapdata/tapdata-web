@@ -1,7 +1,7 @@
 <template>
 	<div class="e-debug-log">
 
-		<el-form inline>
+		<el-form inline action="javascript: void(0);">
 			<el-form-item>
 				<el-input
 						class="inputStyle"
