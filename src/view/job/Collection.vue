@@ -2,7 +2,7 @@
 	<div class="e-collection">
 		<el-form label-position="right" label-width="160px" :model="model" ref="form">
 			<el-form-item :label="$t('editor.cell.data_node.collection.form.database.label')" prop="connectionId" :rules="rules" required>
-				<el-select filterable v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.collection.form.database.placeholder')" @change="handlerConnectionChange">
+				<el-select filterable v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.collection.form.database.placeholder')" @change="handlerConnectionChange" size="mini">
 					<el-option
 							v-for="(item, idx) in databases"
 							:label="`${item.name} (${item.status})`"
@@ -18,7 +18,7 @@
 						allow-create
 						default-first-option
 						clearable
-						:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')">
+						:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')" size="mini">
 					<el-option
 							v-for="(item, idx) in schemas"
 							:label="`${item.table_name}`"
@@ -30,12 +30,12 @@
 			<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
 				<el-input
 						v-model="model.primaryKeys"
-						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"  class="formitem-width"></el-input>
+						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"  size="mini"></el-input>
 			</el-form-item>
 
 			<el-form-item required :label="$t('editor.cell.data_node.collection.form.dropTable.label')" v-if="!isSourceDataNode">
 				<el-select
-						v-model="model.dropTable">
+						v-model="model.dropTable" size="mini">
 					<el-option
 							:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
 							:value="false"></el-option>
@@ -222,8 +222,8 @@
 		flex-direction: column;
 		justify-content: center;
 
-		.formitem-width {
-			width: 225px;
+		.el-form-item{
+			margin-bottom: 10px;
 		}
 
 		.e-entity-wrap {

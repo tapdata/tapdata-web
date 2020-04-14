@@ -2,7 +2,7 @@
 	<div class="e-table">
 		<el-form label-position="right" label-width="160px" :model="model" ref="form">
 			<el-form-item :label="$t('editor.cell.data_node.table.form.database.label')" prop="connectionId" :rules="rules" required>
-				<el-select filterable v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.table.form.database.placeholder')" @change="handlerConnectionChange">
+				<el-select filterable v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.table.form.database.placeholder')" @change="handlerConnectionChange" size="mini">
 					<el-option
 							v-for="(item, idx) in databases"
 							:label="`${item.name} (${item.status})`"
@@ -12,7 +12,7 @@
 			</el-form-item>
 
 			<el-form-item :label="$t('editor.cell.data_node.table.form.table.label')" prop="tableName" :rules="rules" required>
-				<el-select filterable v-model="model.tableName" :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')">
+				<el-select filterable v-model="model.tableName" :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')" size="mini">
 					<el-option
 							v-for="(item, idx) in schemas"
 							:label="`${item.table_name}`"
@@ -24,12 +24,12 @@
 			<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
 				<el-input
 						v-model="model.primaryKeys"
-						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"  class="formitem-width"></el-input>
+						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')" size="mini"></el-input>
 			</el-form-item>
 
 			<el-form-item required :label="$t('editor.cell.data_node.collection.form.dropTable.label')" v-if="!isSourceDataNode">
 				<el-select
-						v-model="model.dropTable">
+						v-model="model.dropTable" size="mini">
 					<el-option
 							:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
 							:value="false"></el-option>
@@ -40,7 +40,7 @@
 			</el-form-item>
 
 			<el-form-item :label="$t('editor.cell.data_node.table.form.custom_sql.label')" prop="sql" :rules="rules" >
-				<el-input type="textarea" rows="10" v-model="model.sql" :placeholder="$t('editor.cell.data_node.table.form.custom_sql.placeholder')"></el-input>
+				<el-input type="textarea" rows="10" v-model="model.sql" :placeholder="$t('editor.cell.data_node.table.form.custom_sql.placeholder')" size="mini"></el-input>
 			</el-form-item>
 
 		</el-form>
@@ -216,8 +216,8 @@
 		flex-direction: column;
 		justify-content: center;
 
-		.formitem-width {
-			width: 225px;
+		.el-form-item{
+			margin-bottom: 10px;
 		}
 
 		.e-entity-wrap {

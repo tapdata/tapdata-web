@@ -91,7 +91,7 @@
 				let container = this.$refs.mappingContainer;
 				let containerClientRect = container.getBoundingClientRect();
 				let portClientRect = portDom.getBoundingClientRect();
-				log('Mapping.isVisible(containerClientRect, portClientRect)', containerClientRect, portClientRect);
+				// log('Mapping.isVisible(containerClientRect, portClientRect)', containerClientRect, portClientRect);
 
 				return portClientRect.top - containerClientRect.top >= 0;
 			},

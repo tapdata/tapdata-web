@@ -319,8 +319,8 @@ const en = {
 						placeholder: 'Please select Data Write model'
 					},
 					joinPath: {
-						label: 'JoinPath',
-						placeholder: 'Please input join path'
+						label: 'Target Path',
+						placeholder: 'Please input target path'
 					},
 					joinKeys: {
 						label: 'Association condition',
