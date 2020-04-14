@@ -150,10 +150,9 @@ const en = {
 		button: {
 			setting: 'Setting',
 			logs: 'Logs',
-      preview: 'Preview',
-      stop_preview: 'Stop Preview',
-			capture: 'Capture',
-			stop_capture: 'Stop Capture',
+      preview: 'Data trace',
+			capture: 'Data trace',
+			stop_capture: 'Stop trace',
 			start: 'Start',
 			stop: 'Stop',
 			force_stop: 'Force Stop',
