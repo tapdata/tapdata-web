@@ -394,7 +394,11 @@ const en = {
 					tip: 'Toggle Fullscreen Mode'
 				}
 			},
-		}
+		},
+		preview: {
+			stage: 'Stage',
+			table: 'Table'
+		},
 	}
 };
 

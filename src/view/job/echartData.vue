@@ -1,18 +1,22 @@
 <template>
 	<div class="echartData">
-		<el-select v-model="domValue">
-			<el-option
-					key="all"
-					:label="$t('dataFlow.allNode')"
-					value="all">
-			</el-option>
-			<el-option
-					v-for="item in flow.stages"
-					:key="item.id"
-					:label="item.name"
-					:value="item.id">
-			</el-option>
-		</el-select>
+		<el-form inline>
+			<el-form-item>
+				<el-select v-model="domValue" size="mini">
+					<el-option
+							key="all"
+							:label="$t('dataFlow.allNode')"
+							value="all">
+					</el-option>
+					<el-option
+							v-for="item in flow.stages"
+							:key="item.id"
+							:label="item.name"
+							:value="item.id">
+					</el-option>
+				</el-select>
+			</el-form-item>
+		</el-form>
 		<div class="echartMain">
 			<div class="echartlist">
 				<echart-head :data="screeningObj" @twoRadio="getTwoRadio"></echart-head>
@@ -50,6 +54,7 @@
 						class="fr echartMain" :echartObj="dataScreening" v-if="dataScreening"
 						:echartsId="'dataScreeningId'" style="width: 100%"></shaftless-echart>
 			</div>
+
 			<div class="echartlist">
 				<echart-head :data="inputOutputObj" @getSpeed="getSpeed"></echart-head>
 				<div class="floatLayer">
@@ -87,6 +92,7 @@
 	import shaftlessEchart from '../../components/shaftlessEchart';
 	import factory from '../../api/factory';
 	import log from '../../log';
+	import {EditorEventType} from "../../editor/lib/events";
 
 	const DataFlowInsights = factory('DataFlowInsights');
 	let intervalTime = 5000;
@@ -152,14 +158,19 @@
 							}
 						},
 						axisLabel: {
-							formatter: '{value}'
+							formatter: function (value, index) {
+                if (value >= 10000) {
+                    value = value / 10000 + "W";
+                }
+                return value;
+              }
 						}
 					},
 					series: [
 						{
 							name: this.$t('dataFlow.input'),
 							type: 'line',
-							smooth: 1,
+							smooth: true,
 							data: [],
 							itemStyle: {
 								color: '#2ba7c3'
@@ -171,7 +182,7 @@
 						{
 							name: this.$t('dataFlow.output'),
 							type: 'line',
-							smooth: 1,
+							smooth: true,
 							data: [],
 							itemStyle: {
 								color: '#61a569'
@@ -217,13 +228,18 @@
 							}
 						},
 						axisLabel: {
-							formatter: '{value}'
+							formatter: function (value, index) {
+                if (value >= 10000) {
+                    value = value / 10000 + "W";
+                }
+                return value;
+              }
 						}
 					},
 					series: [
 						{
 							type: 'line',
-							smooth: 1,
+							smooth: true,
 							data: [],
 							itemStyle: {
 								color: '#fb8e00'
@@ -267,14 +283,19 @@
 							}
 						},
 						axisLabel: {
-							formatter: '{value}'
+							formatter: function (value, index) {
+                if (value >= 10000) {
+                    value = value / 10000 + "W";
+                }
+                return value;
+              }
 						}
 					},
 					series: [
 						{
 							type: 'line',
 							data: [],
-							smooth: 1,
+							smooth: true,
 							itemStyle: {
 								color: '#f56c6c'
 							},
@@ -284,8 +305,10 @@
 						}
 					]
 				},
+
 				dataScreening: null,    //数据总览的echart数据
 				screeningObj: null,      //数据总览的头
+
 				inputOutputObj: null,
 				transfObj: null,
 				storeData: null,
@@ -344,8 +367,8 @@
 		},
 
 		mounted() {
-			this.$on("selected:stage", (selectStage) => {
-				this.domValue = selectStage.id;
+			this.$on(EditorEventType.SELECTED_STAGE, (selectStage) => {
+				this.domValue = selectStage ? selectStage.id : 'all';
 			});
 			this.flow = this.dataFlow;
 			// this.getApiData();
@@ -760,6 +783,10 @@
 		width: 100%;
 		padding: 10px 15px 15px;
 		box-sizing: border-box;
+
+		.el-form-item{
+			margin-bottom: 0;
+		}
 
 		.echartMain {
 			height: 100%;

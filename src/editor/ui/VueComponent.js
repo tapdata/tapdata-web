@@ -8,6 +8,7 @@ import $ from 'jquery';
 import log from "../../log";
 import i18n from '../../i18n/i18n';
 import Vue from 'vue';
+import {EditorEventType} from "../lib/events";
 
 export default class VueComponent extends Component{
 
@@ -41,7 +42,7 @@ export default class VueComponent extends Component{
 			self.emit('dataChanged', data);
 		});
 
-		editor.graph.on('selected:stage', this.selectedStage, this);
+		editor.graph.on(EditorEventType.SELECTED_STAGE, this.selectedStage, this);
 	}
 
 	getContentEl() {
@@ -51,7 +52,7 @@ export default class VueComponent extends Component{
 	selectedStage(stageData) {
 		log('VueComponent.selected.stage', stageData);
 		if( this.vm ){
-			this.vm.$emit('selected:stage', stageData);
+			this.vm.$emit(EditorEventType.SELECTED_STAGE, stageData);
 		}
 	}
 
@@ -67,7 +68,7 @@ export default class VueComponent extends Component{
 		if( this.vm ){
 			this.vm.$destroy();
 		}
-		this.opts.editor.off('selected:stage', this.selectedStage);
+		this.opts.editor.off(EditorEventType.SELECTED_STAGE, this.selectedStage);
 		this.el.remove();
 	}
 

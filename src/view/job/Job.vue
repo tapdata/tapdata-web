@@ -11,6 +11,11 @@
 					style="margin-right: 50px;"
 			>{{$t('dataFlow.state')}}: {{$t('dataFlow.status.' + status.replace(/ /g, '_'))}}</el-tag>
 			<el-button
+				size="mini" type="default"
+				@click="showDataVerify">
+				dataVerify
+			</el-button>
+			<el-button
 					v-if="['draft', 'paused', 'error'].includes(status)"
 					size="mini" type="default"
 					@click="showSetting">{{$t('dataFlow.button.setting')}}</el-button>
@@ -72,7 +77,6 @@
 	export default {
 		name: "Job",
 		dataFlow: null,
-
 		data() {
 			return {
 				// run model: editable,readonly
@@ -83,6 +87,7 @@
 				executeMode: 'normal',
 
 				loading: true,
+				disabledDataVerify:false,
 			};
 		},
 
@@ -537,7 +542,11 @@
 			showCapture(){
 				this.editor.showCapture(this.dataFlow);
 			},
-
+			showDataVerify(){
+				this.disabledDataVerify =!this.disabledDataVerify;
+				console.log(this.disabledDataVerify);
+				this.editor.showDataVerify(this.disabledDataVerify);
+			},
 			setEditable(editable){
 				log('Job.setEditable', editable, this.dataFlow);
 				if( this.dataFlow ){

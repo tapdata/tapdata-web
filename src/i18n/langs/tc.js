@@ -394,7 +394,11 @@ const tc = {
 					tip: '切換全屏'
 				}
 			},
-		}
+		},
+		preview: {
+			stage: '節點',
+			table: '數據表'
+		},
 	},
 };
 

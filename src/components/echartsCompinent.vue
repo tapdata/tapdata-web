@@ -107,7 +107,11 @@
 							lineStyle: {
 								color: "#dedee4"
 							}
-						}, //是否显示分隔线
+            }, //是否显示分隔线
+            grid: {
+              left: 50,
+              // containLabel: true
+            },
 						axisLine: {
 							show: true,
 							lineStyle: {
@@ -117,8 +121,8 @@
 						}, //是否显示坐标轴轴线。
 						axisLabel: {
 							interval: 3,
-							rotate: 25,
-							fontSize: 6,
+							rotate: -8,
+							fontSize: 10,
 							textStyle: {
 								color: '#333',  //坐标的字体颜色
 							}

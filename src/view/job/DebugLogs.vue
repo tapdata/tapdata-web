@@ -1,15 +1,19 @@
 <template>
-	<div class="debugLog">
+	<div class="e-debug-log">
 
-		<div>
-			<el-input
-					class="inputStyle"
-					:placeholder="$t('message.search')"
-					v-model="search"
-					size="mini">
-			</el-input>
-			<el-button icon="el-icon-search" size="mini" @click="loadNew"></el-button>
-		</div>
+		<el-form inline>
+			<el-form-item>
+				<el-input
+						class="inputStyle"
+						:placeholder="$t('message.search')"
+						v-model="search"
+						size="mini">
+				</el-input>
+			</el-form-item>
+			<el-form-item>
+				<el-button icon="el-icon-search" size="mini" @click="loadNew"></el-button>
+			</el-form-item>
+		</el-form>
 
 		<ul class="e-log-container" v-show="logCount > 0" ref="logContainer"></ul>
 
@@ -59,6 +63,19 @@
 
 		methods: {
 
+			addFilter(filter){
+
+				if( this.search ){
+					filter.where.or = [
+						{threadName: { regexp: this.search }},
+						{loggerName: { regexp: this.search }},
+						{message: { regexp: this.search }},
+						{level: { regexp: this.search }}
+					];
+				}
+				return filter;
+			},
+
 			loadOld(){
 				let filter = {
 					where: {
@@ -72,6 +89,7 @@
 					order: 'millis DESC',
 					limit: 100
 				};
+				this.addFilter(filter);
 				this.getLogsData(filter, false, false);
 			},
 
@@ -95,14 +113,7 @@
 				} else {
 					filter.limit = 100;
 				}
-				if( this.search ){
-					filter.where.or = [
-						{threadName: { regexp: this.search }},
-						{loggerName: { regexp: this.search }},
-						{message: { regexp: this.search }},
-						{level: { regexp: this.search }}
-					];
-				}
+				this.addFilter(filter);
 
 				this.getLogsData(filter, reset, true);
 			},
@@ -168,18 +179,22 @@
 	};
 </script>
 <style lang="less">
-	.debugLog {
+	.e-debug-log {
 		width: 100%;
 		height: 100%;
 		padding: 20px 0 0 20px;
 		box-sizing: border-box;
 		overflow: hidden;
+
+		.el-form-item {
+			margin-bottom: 0;
+		}
 	}
 
 	.e-log-container {
 		width: 100%;
 		display: inline-block;
-		height: calc(100% - 50px);
+		height: calc(100% - 61px);
 		padding-top: 20px;
 		overflow: auto;
 		font-size: 11px;
