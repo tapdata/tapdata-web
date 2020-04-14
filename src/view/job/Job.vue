@@ -23,14 +23,23 @@
 					v-if="dataFlowId && 'draft' !== status"
 					size="mini" type="default"
 					@click="showLogs">{{$t('dataFlow.button.logs')}}</el-button>
+
+      <!-- editing debug -->
+      <el-button
+        v-if="['paused', 'error', 'draft'].includes(status)"
+        size="mini" type="default"
+        @click="preview">{{$t('dataFlow.button.preview')}}</el-button>
+
+      <!-- running debug -->
 			<el-button
-					v-if="!['scheduled', 'stopping', 'force stopping'].includes(status) && executeMode === 'normal'"
+					v-if="['scheduled', 'running'].includes(status) && executeMode === 'normal'"
 					size="mini" type="default"
 					@click="capture">{{$t('dataFlow.button.capture')}}</el-button>
 			<el-button
-					v-if="!['scheduled', 'stopping', 'force stopping'].includes(status) && executeMode !== 'normal'"
+					v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
 					size="mini" type="default"
 					@click="stopCapture">{{$t('dataFlow.button.stop_capture')}}</el-button>
+
 			<el-button
 					v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
 					size="mini" type="success"
@@ -421,6 +430,34 @@
 				});
 			},
 
+      preview() {
+        let self = this,
+          data = this.getDataFlowData();
+
+        if( data ){
+          if( data.id ) {
+            data = {
+              id: data.id,
+              status: ['scheduled', 'running', 'stopping'].includes(data.status) ? data.status : 'scheduled',
+              executeMode: 'editing_debug'
+            };
+          } else {
+            Object.assign(data, {
+              status: 'scheduled',
+              executeMode: 'editing_debug'
+            });
+          }
+          self.doSave(data, (err, dataFlow) => {
+            if( err ){
+              this.$message.error(self.$t('message.saveFail'));
+            } else {
+              this.$message.success(self.$t('message.saveOK'));
+              this.showCapture();
+            }
+          });
+        }
+      },
+
 			capture() {
 				let self = this,
 					data = this.getDataFlowData();
@@ -429,14 +466,11 @@
 					if( data && data.id ) {
 						data = {
 							id: data.id,
-							status: ['scheduled', 'running', 'stopping'].includes(data.status) ? data.status : 'scheduled',
-							executeMode: ['running_debug', 'editing_debug'].includes(this.executeMode) ? 'normal' :
-								['scheduled', 'running', 'stopping'].includes(data.status) ? 'running_debug' : 'editing_debug'
+							executeMode: 'running_debug'
 						};
 					} else {
 						Object.assign(data, {
-							status: 'scheduled',
-							executeMode: 'editing_debug'
+							executeMode: 'running_debug'
 						});
 					}
 					self.doSave(data, (err, dataFlow) => {

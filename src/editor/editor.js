@@ -15,6 +15,9 @@ import Capture from '../view/job/Preview';
 import Setting from '../view/job/Setting';
 import DebugLogs from '../view/job/DebugLogs';
 import DataVerify from  '../view/job/DataVerify/List';
+import DVLoading from  '../view/job/DataVerify/Loading';
+import DVResult from  '../view/job/DataVerify/Result';
+
 import log from "../log";
 import Panel from "./ui/panel";
 import TableSelector from "../view/job/TableSelector";
@@ -289,12 +292,12 @@ export default class Editor extends BaseObject {
 			});
 			this.getBottomTabPanel().add(capture);
 		}
-		if( this.getBottomSidebar().isShow() && capture.selected ) {
-			this.getBottomSidebar().hide();
-		} else {
+		// if( this.getBottomSidebar().isShow() && capture.selected ) {
+		// 	this.getBottomSidebar().hide();
+		// } else {
 			this.getBottomTabPanel().select(capture);
 			this.getBottomSidebar().show();
-		}
+		// }
 	}
 	showDataVerify(){
 		// add capture
@@ -312,6 +315,46 @@ export default class Editor extends BaseObject {
 				component: DataVerify
 			});
 			this.getRightSidebar().add(dataVerify);
+		}
+		this.getRightSidebar().show();
+		this.getBottomSidebar().hide();
+	}
+	showLoading(){
+		// add capture
+		this.getRightSidebar().removeAll();
+		let dvLoading = this.getBottomTabPanel().getChildByName('dvLoading');
+		if( !dvLoading ){
+			dvLoading = new VueComponent({
+				container: '',
+				title: i18n.t('editor.ui.sidebar.capture'),
+				name: 'dvLoading',
+				editor: this,
+				propsData: {
+					dataFlow: '',
+				},
+				component: DVLoading
+			});
+			this.getRightSidebar().add(dvLoading);
+		}
+		this.getRightSidebar().show();
+		this.getBottomSidebar().hide();
+	}
+	showResult(){
+		// add capture
+		this.getRightSidebar().removeAll();
+		let dvResult = this.getBottomTabPanel().getChildByName('dvResult');
+		if( !dvResult ){
+			dvResult = new VueComponent({
+				container: '',
+				title: i18n.t('editor.ui.sidebar.capture'),
+				name: 'dvResult',
+				editor: this,
+				propsData: {
+					dataFlow: '',
+				},
+				component: DVResult
+			});
+			this.getRightSidebar().add(dvResult);
 		}
 		this.getRightSidebar().show();
 		this.getBottomSidebar().hide();
