@@ -150,6 +150,8 @@ const tc = {
 		button: {
 			setting: '設置',
 			logs: '日誌',
+      preview: '預覽',
+      stop_preview: '停止預覽',
 			capture: '抓取數據',
 			stop_capture: '停止抓取',
 			start: '啟動',

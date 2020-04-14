@@ -150,6 +150,8 @@ const cn = {
 		button: {
 			setting: '设置',
 			logs: '日志',
+      preview: '预览',
+      stop_preview: '停止预览',
 			capture: '抓取数据',
 			stop_capture: '停止抓取',
 			start: '启动',
