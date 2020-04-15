@@ -115,9 +115,38 @@ export const link = {
 					}
 				}
 			},
+			initialize() {
+				let self = this;
+				self.on('change:' + FORM_DATA_KEY, () => {
+					let formData = self.getFormData();
 
+					log('Link.form_data.change', formData);
+
+					if( formData && formData.label ){
+						self.labels([{
+							attrs: {
+								text: {
+									text: formData.label
+								}
+							},
+							position: {
+								offset: {
+									x: 0, y: 0
+								},
+								distance: 0.5
+							}
+						}]);
+					} else {
+						self.labels([]);
+					}
+				});
+			},
 			getFormData() {
 				return this.get(FORM_DATA_KEY);
+			},
+
+			setFormData(data) {
+				this.set(FORM_DATA_KEY, data);
 			},
 
 			getMarkerWidth: function(type) {
@@ -130,6 +159,10 @@ export const link = {
 			}),
 
 			showSettings(){
+				return true;
+			},
+
+			configJoinTable(){
 				let targetId = this.target().id;
 				if( !targetId) return false;
 				let targetCell = this.getTargetCell();
@@ -144,7 +177,10 @@ export const link = {
 			validate: function(data){
 				data = data || this.getFormData();
 				log(`Link.validate`, data);
-				if( data && this.showSettings() ){
+
+				let configJoinTable = this.configJoinTable();
+
+				if( data && configJoinTable ){
 					let joinTable = data.joinTable;
 					if( !joinTable )
 						throw new Error(`${i18n.t('editor.cell.validate.none_setting')}`);

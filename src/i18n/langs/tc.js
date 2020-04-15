@@ -111,7 +111,7 @@ const tc = {
 		edit: '編輯',
 		copy: '複製',
 		reset: '重置',
-		detail:'任务监控',
+		detail: '任务监控',
 		select_source_connection: '源端連接',
 		select_sync_mode: '同步方式',
 		mapping: '關聯關係',
@@ -150,7 +150,7 @@ const tc = {
 		button: {
 			setting: '設置',
 			logs: '日誌',
-      preview: '預覽',
+			preview: '預覽',
 			capture: '數據檢視',
 			stop_capture: '停止檢視',
 			start: '啟動',
@@ -178,9 +178,9 @@ const tc = {
 		}
 	},
 	editor: {
-    nodeSettings: "節點設置",
-    choose: '選擇',
-    newTxt: '新建',
+		nodeSettings: "節點設置",
+		choose: '選擇',
+		newTxt: '新建',
 		cell: {
 			validate: {
 				empty_name: '名稱必填.',
@@ -258,32 +258,32 @@ const tc = {
 							placeholder: '請輸入自定義SQL'
 						}
 					}
-        },
-        file: {
-          tip: '文件節點',
-          name: '文件',
-          none_fileName: '文件名不能為空',
-          configurationFile: '配置文件',
-          choiceFileName:'請選擇文件名'
-        },
-        gridfs: {
-          name: 'GridFS',
-          tip: 'GridFS節點',
-          chooseGridFsName: '請選擇GridFS',
-          gridFs_isNull: 'GridFS不能為空'
-        },
-        dummy:{
-          name: 'Dummy',
-          tip: 'Dummy節點',
-          chooseDummyName: '請選擇Dummy',
-          dummy_isNull: 'Dummy不能為空'
-        },
-        api: {
-          name: 'API',
-          tip: 'api節點',
-          chooseApiName: '請選擇API',
-          api_isNull: 'API不能為空'
-        },
+				},
+				file: {
+					tip: '文件節點',
+					name: '文件',
+					none_fileName: '文件名不能為空',
+					configurationFile: '配置文件',
+					choiceFileName: '請選擇文件名'
+				},
+				gridfs: {
+					name: 'GridFS',
+					tip: 'GridFS節點',
+					chooseGridFsName: '請選擇GridFS',
+					gridFs_isNull: 'GridFS不能為空'
+				},
+				dummy: {
+					name: 'Dummy',
+					tip: 'Dummy節點',
+					chooseDummyName: '請選擇Dummy',
+					dummy_isNull: 'Dummy不能為空'
+				},
+				api: {
+					name: 'API',
+					tip: 'api節點',
+					chooseApiName: '請選擇API',
+					api_isNull: 'API不能為空'
+				},
 			},
 			processor: {
 				aggregate: {
@@ -343,6 +343,10 @@ const tc = {
 				none_join_key: '關聯字段必填',
 				none_join_path: '關聯寫入路徑必填',
 				form: {
+					label: {
+						label: '标签',
+						placeholder: '请输入标签'
+					},
 					joinType: {
 						label: '数据写入模式',
 						placeholder: '请选择数据写入模式'
@@ -428,9 +432,9 @@ const tc = {
 		}
 	},
 	dataVerify: {
-		row:"行数校验",
-		hash:'哈希校验',
-		advance:'高级校验'
+		row: "行数校验",
+		hash: '哈希校验',
+		advance: '高级校验'
 	}
 };
 

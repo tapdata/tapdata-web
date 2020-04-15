@@ -111,7 +111,7 @@ const cn = {
 		edit: '编辑',
 		copy: '复制',
 		reset: '重置',
-		detail:'任务监控',
+		detail: '任务监控',
 		select_source_connection: '源端连接',
 		select_sync_mode: '同步方式',
 		mapping: '关联关系',
@@ -150,7 +150,7 @@ const cn = {
 		button: {
 			setting: '设置',
 			logs: '日志',
-      preview: '预览',
+			preview: '预览',
 			capture: '数据检视',
 			stop_capture: '停止检视',
 			start: '启动',
@@ -178,9 +178,9 @@ const cn = {
 		}
 	},
 	editor: {
-    nodeSettings: '节点设置',
-    choose: '选择',
-    newTxt: '新建',
+		nodeSettings: '节点设置',
+		choose: '选择',
+		newTxt: '新建',
 		cell: {
 			validate: {
 				empty_name: '名称必填.',
@@ -233,7 +233,7 @@ const cn = {
 							keep: '保持已存在的数据',
 							remove: '运行前删除已存在的数据'
 						}
-          }
+					}
 				},
 				table: {
 					name: '表',
@@ -257,38 +257,38 @@ const cn = {
 							placeholder: '请输入自定义SQL'
 						}
 					}
-        },
-        file: {
-          name: '文件',
-          tip: '文件节点',
-          none_fileName: '文件名不能为空',
-          configurationFile: '配置文件',
-          chooseFileName:'请选择文件名'
-        },
-        gridfs: {
-          name: 'GridFS',
-          tip: 'GridFS节点',
-          chooseGridFsName: '请选择GridFS',
-          gridFs_isNull: 'GridFS不能为空'
-        },
-        dummy:{
-          name: 'Dummy',
-          tip: 'Dummy节点',
-          chooseDummyName: '请选择Dummy',
-          dummy_isNull: 'Dummy不能为空'
-        },
-        api: {
-          name: 'API',
-          tip: 'api节点',
-          chooseApiName: '请选择API',
-          api_isNull: 'API不能为空'
-        },
-        Processing: {
-          name: 'API',
-          tip: 'api节点',
-          chooseApiName: '请选择API',
-          api_isNull: 'API不能为空'
-        }
+				},
+				file: {
+					name: '文件',
+					tip: '文件节点',
+					none_fileName: '文件名不能为空',
+					configurationFile: '配置文件',
+					chooseFileName: '请选择文件名'
+				},
+				gridfs: {
+					name: 'GridFS',
+					tip: 'GridFS节点',
+					chooseGridFsName: '请选择GridFS',
+					gridFs_isNull: 'GridFS不能为空'
+				},
+				dummy: {
+					name: 'Dummy',
+					tip: 'Dummy节点',
+					chooseDummyName: '请选择Dummy',
+					dummy_isNull: 'Dummy不能为空'
+				},
+				api: {
+					name: 'API',
+					tip: 'api节点',
+					chooseApiName: '请选择API',
+					api_isNull: 'API不能为空'
+				},
+				Processing: {
+					name: 'API',
+					tip: 'api节点',
+					chooseApiName: '请选择API',
+					api_isNull: 'API不能为空'
+				}
 			},
 			processor: {
 				aggregate: {
@@ -341,7 +341,7 @@ const cn = {
 							placeholder: '请输入脚本'
 						},
 					}
-        },
+				},
 
 			},
 			link: {
@@ -349,6 +349,10 @@ const cn = {
 				none_join_key: '关联字段必填',
 				none_join_path: '关联写入路径必填',
 				form: {
+					label: {
+						label: '标签',
+						placeholder: '请输入标签'
+					},
 					joinType: {
 						label: '数据写入模式',
 						placeholder: '请选择数据写入模式'
@@ -434,9 +438,9 @@ const cn = {
 		}
 	},
 	dataVerify: {
-		row:"行数校验",
-		hash:'哈希校验',
-		advance:'高级校验'
+		row: "行数校验",
+		hash: '哈希校验',
+		advance: '高级校验'
 	}
 };
 
