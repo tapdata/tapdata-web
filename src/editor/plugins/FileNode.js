@@ -1,6 +1,5 @@
-import log from "../../log";
 import {options} from "../lib/rappid/config";
-import FileNode from "../../view/job/fileNode";
+import FileNode from "../../view/job/FileNode";
 import i18n from "../../i18n/i18n";
 
 export const fileNodeConfig = {
@@ -30,7 +29,7 @@ export const fileNodeConfig = {
 			portLabelMarkup: [{
 				tagName: 'text',
 				selector: 'portLabel',
-      }],
+			}],
 
 			isDataNode() {
 				return true;
@@ -42,8 +41,8 @@ export const fileNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-        log("target",targetCell,['app.GridFSNode'].includes(targetCell.get('type')));
-        return ['app.GridFSNode'].includes(targetCell.get('type'));
+				// log("FileNode.allowTarget", targetCell, ['app.GridFSNode'].includes(targetCell.get('type')));
+				return ['app.GridFSNode'].includes(targetCell.get('type'));
 
 			},
 
@@ -53,8 +52,8 @@ export const fileNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-        log("souce",sourceCell,['app.GridFSNode'].includes(sourceCell.get('type')));
-        return false;
+				// log("FileNode.allowSource", sourceCell, ['app.GridFSNode'].includes(sourceCell.get('type')));
+				return false;
 			},
 
 			validate(data) {

@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import layout from '../view/layout';
 import Job from '../view/job/Job';
-import Aggregate from '../view/job/aggregate';
+import Aggregate from '../view/job/Aggregate';
 import echartData from '../view/job/echartData';
 import DataVerify from '../view/job/DataVerify/List';
 
