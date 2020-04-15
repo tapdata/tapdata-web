@@ -32,7 +32,7 @@
         :prop="head"
         :label="head">
         <template slot-scope="scope">
-          {{scope.row[head]}}
+          <span title="{{scope.row[head]}}">{{scope.row[head]}}</span>
         </template>
       </el-table-column>
     </el-table>
