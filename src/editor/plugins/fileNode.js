@@ -11,7 +11,7 @@ export const fileNodeConfig = {
 			size: {width: 120, height: 28},
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/file.svg',
+					xlinkHref: 'static/editor/o-file.svg',
 					refWidth: '25%',
 					refHeight: '84%',
 					refX: '-8%',
