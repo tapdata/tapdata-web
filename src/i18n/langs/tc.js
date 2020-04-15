@@ -150,8 +150,9 @@ const tc = {
 		button: {
 			setting: '設置',
 			logs: '日誌',
-			capture: '抓取數據',
-			stop_capture: '停止抓取',
+      preview: '預覽',
+			capture: '數據檢視',
+			stop_capture: '停止檢視',
 			start: '啟動',
 			stop: '停止',
 			force_stop: '強制停止',
@@ -420,7 +421,11 @@ const tc = {
 					tip: '切換全屏'
 				}
 			},
-		}
+		},
+		preview: {
+			stage: '節點',
+			table: '數據表'
+		},
 	},
 };
 

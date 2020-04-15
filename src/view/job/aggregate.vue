@@ -24,7 +24,14 @@
               </el-col>
               <el-col :span="18">
                 <el-form-item :label=" '> ' + $t('dataFlow.aggExpression')" :prop="'aggregations.' + index +'.aggExpression'" :required="item.aggFunction !== 'COUNT'">
-                  <el-input v-model="item.aggExpression" :disabled="item.aggFunction === 'COUNT'" ></el-input>
+                  <el-select v-model="item.aggExpression" :disabled="item.aggFunction === 'COUNT'">
+                    <el-option
+                      v-for="item in expressionList"
+                      :key="item.field_name"
+                      :label="item.field_name"
+                      :value="item.field_name">
+                    </el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -70,6 +77,7 @@
             {label: 'COUNT',value:'COUNT'}
           ],
           groupList:[],
+          expressionList:[],
           form:{
             name: '',
             type:"aggregation_processor",
@@ -96,7 +104,7 @@
           handler(val){
             let aggaggExpression = '1'
             if(val.aggregations && val.aggregations.length >0) {
-              val.aggregations.forEach((item,index) =>{
+              val.aggregations.forEach(item =>{
                 if(item.aggFunction === "COUNT") {
                   item.aggExpression = '';
                 }
@@ -140,6 +148,7 @@
               return cur;
             },[]);
           }
+          this.expressionList = this.groupList
           log('Aggregate.setData.inputSchemas', inputSchemas, schema.fields);
 
           if ( !this.form.name ) {

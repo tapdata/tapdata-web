@@ -2,7 +2,7 @@
 	<div>
 		<el-form label-position="right" label-width="130px" :model="model" ref="form">
 			<el-form-item :required="true" :label="$t('editor.cell.processor.field.form.name.label')">
-				<el-input v-model="model.name" class="formitem-width" :placeholder="$t('editor.cell.processor.field.form.name.placeholder')"></el-input>
+				<el-input v-model="model.name" size="mini" class="formitem-width" :placeholder="$t('editor.cell.processor.field.form.name.placeholder')"></el-input>
 			</el-form-item>
 			<el-form-item :label="$t('editor.cell.processor.field.form.description.label')">
 				<el-input

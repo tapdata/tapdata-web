@@ -91,7 +91,8 @@
 			},
 			getTableName(node){
 				let tableName = node[this.tableNameKey];
-				tableName = tableName.replace(/[\\.,]/g, '_');
+				if( tableName )
+					tableName = tableName.replace(/[\\.,]/g, '_');
 				return tableName;
 			},
 
@@ -142,7 +143,14 @@
 				return type !== 'inner';
 			},
 			allowDrag(draggingNode) {
-				return draggingNode.data.children && draggingNode.data.children.length > 0;
+				return draggingNode.data && draggingNode.data.children
+					&& draggingNode.data.children.length > 0
+					&& (
+						!draggingNode.parent
+						|| (draggingNode.parent
+							&& draggingNode.parent.data
+							&& draggingNode.parent.data.table_name !== draggingNode.data.table_name)
+					);
 			},
 			handlerCommand(command, data, node){
 				if( command === 'rename') {

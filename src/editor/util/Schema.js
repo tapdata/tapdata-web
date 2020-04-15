@@ -59,7 +59,7 @@ export const
 			for (let i = 0; i < fields.length; i++) {
 				let field = fields[i];
 				if( field && field.field_name && field.original_field_name){
-					let jsonPath = field.original_field_name.split('.');
+					// let jsonPath = field.original_field_name.split('.');
 					let jsonPathForFieldName = field.field_name.split('.');
 					let treeItem = {
 						id: field.id || `${field.table_name}${field.original_field_name ? ('_' + field.original_field_name) : ''}`.replace(/\./g, '_'),
@@ -69,7 +69,7 @@ export const
 						primary_key_position: field.primary_key_position,
 						table_name: field.table_name || 'table'
 					};
-					_.set(root, 'children.' + jsonPath.join('.children.'), treeItem);
+					_.set(root, 'children.' + jsonPathForFieldName.join('.children.'), treeItem);
 				}
 			}
 			let re = function(field){
@@ -98,7 +98,7 @@ export const
 	/**
 	 * merge schema by joinType
 	 * @param targetSchema {{table_name: '', meta_type: 'collection|table', fields: [{field_name: '', data_type: '', javaType: '', ...}, ...]}}
-	 * @param sourceSchema {{}}
+	 * @param sourceSchema {{table_name: '', meta_type: 'collection|table', fields: [{field_name: '', data_type: '', javaType: '', ...}, ...]}}
 	 * @param mergeOpts: { {jointType: 'append|upsert|update|merge_embed', joinPath: '' }}
 	 * @return
 	 */
@@ -112,7 +112,7 @@ export const
 		mergeOpts = mergeOpts || {};
 
 		let joinType = mergeOpts.joinType || 'upsert';
-		let joinPath = mergeOpts.joinPath || sourceSchema.table_name || '';
+		let joinPath = mergeOpts.joinPath || '';
 
 		// targetSchema.table_name = targetSchema.table_name || sourceSchema.table_name || '';
 		targetSchema.fields = targetSchema.fields || [];
@@ -123,23 +123,40 @@ export const
 		if( ['append', 'upsert'].includes(joinType) || targetSchema.meta_type === 'table') {
 			targetSchema.fields.push(...sourceSchemaFields);
 		} else {
+			let joinFieldName = [];
+
 			joinPath.split('.').forEach(fieldName => {
+				joinFieldName.push(fieldName);
+				let currentFieldName = joinFieldName.join('.');
+				let currentFieldType;
+
+				let existsField = targetSchema.fields.filter(field => field.field_name === currentFieldName);
+				if( existsField && existsField.length > 0){
+					existsField[0].javaType = existsField[0].javaType === 'Array' ? 'Array' : 'Map';
+					return;
+				} else if( !currentFieldType ){
+					if( joinPath === currentFieldName)
+						currentFieldType = joinType === 'merge_embed' ? 'Array' : 'Map';
+					else
+						currentFieldType = 'Map';
+				}
+
+
 				targetSchema.fields.push({
-					//id: uuid(),
-					field_name: fieldName,
-					javaType: joinType === 'merge_embed' ? 'Array' : 'Map',
-					data_type: joinType === 'merge_embed' ? 'ARRAY' : 'DOCUMENT',
+					id: uuid(),
+					field_name: currentFieldName,
+					javaType: currentFieldType,
+					data_type: currentFieldType === 'Array' ? 'ARRAY' : 'DOCUMENT',
 					table_name: sourceSchema.table_name,
 					original_field_name: fieldName,
+					primary_key_position: 0,
 				});
 			});
 			sourceSchemaFields.forEach((field) => {
 				if( field ) {
 					targetSchema.fields.push(Object.assign(field, {
-						field_name: joinPath + '.' + field.field_name,
-						original_field_name: joinPath + '.' + field.original_field_name,
-						javaType: field.javaType,
-						data_type: field.data_type
+						field_name: (joinPath ? (joinPath + '.')  :  '' ) + field.field_name,
+						// original_field_name: (joinPath ? (joinPath + '.')  :  '' ) + field.original_field_name,
 					}));
 				}
 			});

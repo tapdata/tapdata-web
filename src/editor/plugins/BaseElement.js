@@ -184,6 +184,7 @@ export const baseElementConfig = {
 				let joinTables = graph.getConnectedLinks(self, {inbound: true})
 						.map( cell => {
 							let sourceCell = cell.getSourceCell();
+							let targetCell = cell.getTargetCell();
 
 							if( sourceCell ) {
 								let formData = cell.getFormData();
@@ -196,16 +197,16 @@ export const baseElementConfig = {
 									let fields = schema.fields || [];
 									joinTable.primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
 									joinTable.tableName = schema && schema.table_name;
-									if( ['merge_embed', 'update'].includes(joinTable.joinType)){
+									/*if( !joinTable.joinPath && ['merge_embed', 'update'].includes(joinTable.joinType)){
 										joinTable.joinPath = joinTable.tableName;
-									}
+									}*/
 									cell.set(FORM_DATA_KEY, {
 										joinTable: _.cloneDeep(joinTable)
 									});
 								}
 
-								joinTable.sourceSchema = sourceCell.getOutputSchema();
-								let parentDataNodes = typeof sourceCell.getParentDataNode === 'function' ? sourceCell.getParentDataNode() : [];
+								joinTable.sourceSchema = schema;
+								let parentDataNodes = typeof targetCell.getParentDataNode === 'function' ? targetCell.getParentDataNode() : [];
 								joinTable.stageId = parentDataNodes.length > 0 ? parentDataNodes[0].id : '';
 
 								log('BaseElement.getInputSchema.joinTables', cell.getFormData(), joinTable);
@@ -222,7 +223,9 @@ export const baseElementConfig = {
 			},
 			__mergeOutputSchema(){
 				let inputSchema = this.getInputSchema() || [];
-				let schema= this.getSchema();
+				let schema = this.getSchema() || {
+					meta_type: this.get('type') === 'app.Collection' ? 'collection' : 'table'
+				};
 				let outputSchema = mergeJoinTablesToTargetSchema(schema, inputSchema);
 				log(this.get('type') + '.__mergeOutputSchema[this.schema,inputSchema,outputSchema]', [schema, inputSchema, outputSchema]);
 				let _outputSchema;

@@ -150,8 +150,9 @@ const en = {
 		button: {
 			setting: 'Setting',
 			logs: 'Logs',
-			capture: 'Capture',
-			stop_capture: 'Stop Capture',
+      preview: 'Data trace',
+			capture: 'Data trace',
+			stop_capture: 'Stop trace',
 			start: 'Start',
 			stop: 'Stop',
 			force_stop: 'Force Stop',
@@ -347,8 +348,8 @@ const en = {
 						placeholder: 'Please select Data Write model'
 					},
 					joinPath: {
-						label: 'JoinPath',
-						placeholder: 'Please input join path'
+						label: 'Target Path',
+						placeholder: 'Please input target path'
 					},
 					joinKeys: {
 						label: 'Association condition',
@@ -420,7 +421,11 @@ const en = {
 					tip: 'Toggle Fullscreen Mode'
 				}
 			},
-		}
+		},
+		preview: {
+			stage: 'Stage',
+			table: 'Table'
+		},
 	}
 };
 

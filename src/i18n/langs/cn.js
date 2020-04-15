@@ -150,8 +150,9 @@ const cn = {
 		button: {
 			setting: '设置',
 			logs: '日志',
-			capture: '抓取数据',
-			stop_capture: '停止抓取',
+      preview: '预览',
+			capture: '数据检视',
+			stop_capture: '停止检视',
 			start: '启动',
 			stop: '停止',
 			force_stop: '强制停止',
@@ -421,7 +422,11 @@ const cn = {
 					tip: '切换全屏'
 				}
 			},
-		}
+		},
+		preview: {
+			stage: '节点',
+			table: '数据表'
+		},
 	}
 };
 

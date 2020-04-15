@@ -1,7 +1,7 @@
 <template>
 	<div class="e-debug-log">
 
-		<el-form inline>
+		<el-form inline action="javascript: void(0);">
 			<el-form-item>
 				<el-input
 						class="inputStyle"
@@ -63,6 +63,19 @@
 
 		methods: {
 
+			addFilter(filter){
+
+				if( this.search ){
+					filter.where.or = [
+						{threadName: { regexp: this.search }},
+						{loggerName: { regexp: this.search }},
+						{message: { regexp: this.search }},
+						{level: { regexp: this.search }}
+					];
+				}
+				return filter;
+			},
+
 			loadOld(){
 				let filter = {
 					where: {
@@ -76,6 +89,7 @@
 					order: 'millis DESC',
 					limit: 100
 				};
+				this.addFilter(filter);
 				this.getLogsData(filter, false, false);
 			},
 
@@ -99,14 +113,7 @@
 				} else {
 					filter.limit = 100;
 				}
-				if( this.search ){
-					filter.where.or = [
-						{threadName: { regexp: this.search }},
-						{loggerName: { regexp: this.search }},
-						{message: { regexp: this.search }},
-						{level: { regexp: this.search }}
-					];
-				}
+				this.addFilter(filter);
 
 				this.getLogsData(filter, reset, true);
 			},
@@ -187,7 +194,7 @@
 	.e-log-container {
 		width: 100%;
 		display: inline-block;
-		height: calc(100% - 50px);
+		height: calc(100% - 61px);
 		padding-top: 20px;
 		overflow: auto;
 		font-size: 11px;

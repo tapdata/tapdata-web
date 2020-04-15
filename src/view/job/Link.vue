@@ -1,22 +1,26 @@
 <template>
 	<div class="e-link-wrap">
 
-		<el-form label-position="right" label-width="160px" :model="model" ref="form">
+		<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form">
 
 			<!--<el-form-item label="Table name" required>
 				<el-input
 						v-model="model.joinTable.tableName"
-						placeholder="please enter table name"  class="formitem-width"></el-input>
+						placeholder="please enter table name"></el-input>
 			</el-form-item>
 
 			<el-form-item label="Table primary key" required>
 				<el-input
 						v-model="model.joinTable.primaryKeys"
-						placeholder="please enter primary key"  class="formitem-width"></el-input>
+						placeholder="please enter primary key"></el-input>
 			</el-form-item>-->
 
 			<el-form-item :label="$t('editor.cell.link.form.joinType.label')" required>
-				<el-select v-model="model.joinTable.joinType" :placeholder="$t('editor.cell.link.form.joinType.placeholder')" @change="handlerJoinTypeChanged">
+				<el-select
+						v-model="model.joinTable.joinType"
+						:placeholder="$t('editor.cell.link.form.joinType.placeholder')"
+						@change="handlerJoinTypeChanged"
+						size="mini">
 					<el-option
 							v-for="(item, idx) in writeModels"
 							:label="`${item.label}`"
@@ -25,10 +29,10 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item :label="$t('editor.cell.link.form.joinPath.label')" required v-if="['update', 'merge_embed'].includes(model.joinTable.joinType)">
+			<el-form-item :label="$t('editor.cell.link.form.joinPath.label')" v-if="supportEmbedArray() && ['update', 'merge_embed'].includes(model.joinTable.joinType)">
 				<el-input
 						v-model="model.joinTable.joinPath"
-						:placeholder="$t('editor.cell.link.form.joinPath.placeholder')"  class="formitem-width"></el-input>
+						:placeholder="$t('editor.cell.link.form.joinPath.placeholder')"  size="mini"></el-input>
 			</el-form-item>
 
 			<el-form-item :label="$t('editor.cell.link.form.joinKeys.label')" required v-if="!['append'].includes(model.joinTable.joinType)">
@@ -74,7 +78,6 @@
 	import _ from 'lodash';
 	import {EditorEventType} from "../../editor/lib/events";
 	import Mapping from './components/Mapping';
-	import {mergeJoinTablesToTargetSchema} from "../../editor/util/Schema";
 	import log from "../../log";
 	import {JOIN_TABLE_TPL} from "../../editor/constants";
 
@@ -85,22 +88,11 @@
 		data(){
 			return {
 
-				writeModels: [{
-					label: this.$t('editor.cell.link.writeMode.append'),
-					value: 'append' // insert				{source: ''} + {target: ''}  =  {source: '', target: ''}
-				}, {
-					label: this.$t('editor.cell.link.writeMode.upsert'),
-					value: 'upsert'  // OneOne				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
-				}, {
-					label: this.$t('editor.cell.link.writeMode.update'),
-					value: 'update'  // OneMany				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
-				}, {
-					label: this.$t('editor.cell.link.writeMode.merge_embed'),
-					value: 'merge_embed'  // ManyOne		{source: ''} + {target: ''}  =  {source: '', joinPath: [{target: ''}]}
-				}],
+				writeModels: [],
 
 				sourceSchema: [],
 				targetSchema: [],
+				targetCellType: '',
 
 				model: {
 					joinTable: _.cloneDeep(JOIN_TABLE_TPL)
@@ -114,7 +106,33 @@
 				handler(){
 					this.$emit('dataChanged', this.getData());
 				}
+			},
+			targetCellType: {
+				handler() {
+					this.writeModels.splice(0, this.writeModels.length);
+					if(this.supportEmbedArray()) {
+						this.WRITE_MODELS.forEach( model => this.writeModels.push(model));
+					} else {
+						this.WRITE_MODELS.filter(model => model.value !== 'merge_embed').forEach( model => this.writeModels.push(model));
+					}
+				}
 			}
+		},
+
+		created(){
+			this.WRITE_MODELS = [{
+				label: this.$t('editor.cell.link.writeMode.append'),
+				value: 'append' // insert				{source: ''} + {target: ''}  =  {source: '', target: ''}
+			}, {
+				label: this.$t('editor.cell.link.writeMode.upsert'),
+				value: 'upsert'  // OneOne				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
+			}, {
+				label: this.$t('editor.cell.link.writeMode.update'),
+				value: 'update'  // OneMany				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
+			}, {
+				label: this.$t('editor.cell.link.writeMode.merge_embed'),
+				value: 'merge_embed'  // ManyOne		{source: ''} + {target: ''}  =  {source: '', joinPath: [{target: ''}]}
+			}];
 		},
 
 		mounted() {
@@ -132,6 +150,9 @@
 		},
 
 		methods: {
+			supportEmbedArray(){
+				return !['app.Table'].includes(this.targetCellType);
+			},
 			removeCondition(idx) {
 				this.model.joinTable.joinKeys.splice(idx, 1);
 				this.$emit(EditorEventType.RESIZE);
@@ -146,9 +167,9 @@
 					Object.keys(data).forEach(key => this.model[key] = data[key]);
 				}
 
-				if( cell.getSourceCell()) {
-					let sourceCell = cell.getSourceCell();
-					let parentDataNodes = typeof sourceCell.getParentDataNode === 'function' ? sourceCell.getParentDataNode() : [];
+				if( cell.getTargetCell()) {
+					let targetCell = cell.getTargetCell();
+					let parentDataNodes = typeof targetCell.getParentDataNode === 'function' ? targetCell.getParentDataNode() : [];
 					this.model.joinTable.stageId = parentDataNodes.length > 0 ? parentDataNodes[0].id : '';
 					//this.model.joinTable.stageId = cell.getSourceCell().id;
 				}
@@ -174,6 +195,7 @@
 			showMapping(data, cell, vueAdapter) {
 				this.cell = cell;
 				this.targetCell = this.cell.getTargetCell();
+				this.targetCellType = this.targetCell.get('type');
 
 				this.unwatch = this.$watch('model.joinTable', () => {
 					log('Link.showMapping.watchJoinTable', arguments);
@@ -189,14 +211,22 @@
 				if( this.cell ){
 					let sourceCell = this.cell.getSourceCell(),
 						targetCell = this.cell.getTargetCell(),
-						sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null,
-						targetInputSchema = targetCell ? targetCell.getInputSchema() : null,
-						targetSchema = targetCell ? targetCell.getSchema() : null
+						sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null
+						/*targetInputSchema = targetCell ? targetCell.getInputSchema() : null,
+						targetSchema = targetCell ? targetCell.getSchema() : {
+							meta_type: this.targetCell.get('type') === 'app.Collection' ? 'collection' : 'table'
+						}*/
 					;
 
-					let mergedTargetSchema = mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
+					let mergedTargetSchema = targetCell.getOutputSchema(); //mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
+
+					let targetSchemaFields = mergedTargetSchema && mergedTargetSchema.fields || [];
+					let targetJoinFields = targetSchemaFields.filter( field => field.field_name === this.model.joinTable.joinPath);
+					let isArray = targetJoinFields && targetJoinFields.length > 0 && targetJoinFields[0].javaType === 'Array';
+					if( this.model.joinTable.isArray !== isArray ) this.model.joinTable.isArray = isArray;
 
 					this.$refs.mappingComp.setSchema(sourceSchema, mergedTargetSchema);
+					log('Link.renderSchema', sourceSchema, mergedTargetSchema);
 				}
 			},
 
@@ -212,7 +242,7 @@
 			},
 
 			handlerJoinTypeChanged(){
-				if(['merge_embed', 'update'].includes(this.model.joinTable.joinType)){
+				if(!this.model.joinTable.joinPath && ['merge_embed', 'update'].includes(this.model.joinTable.joinType)){
 					this.model.joinTable.joinPath = this.model.joinTable.tableName;
 				}
 				this.$refs.mappingComp.$emit(EditorEventType.RESIZE);
@@ -241,8 +271,11 @@
 		flex-direction: column;
 		justify-content: start;
 
-		.formitem-width {
-			width: 225px;
+		.e-form {
+			.el-input, .el-select {
+				max-width: 400px;
+				width: 80%;
+			}
 		}
 
 		.e-table {
@@ -266,11 +299,12 @@
 
 			input {
 				color: #606266;
-				width: 90px;
+				width: 198px;
 				height: 20px;
 				outline: none;
 				border: none;
 				padding: 0 10px;
+				box-sizing: border-box;
 			}
 
 			.e-action-bar {

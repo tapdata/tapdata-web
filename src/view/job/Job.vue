@@ -11,6 +11,11 @@
 					style="margin-right: 50px;"
 			>{{$t('dataFlow.state')}}: {{$t('dataFlow.status.' + status.replace(/ /g, '_'))}}</el-tag>
 			<el-button
+				size="mini" type="default"
+				@click="showDataVerify">
+				dataVerify
+			</el-button>
+			<el-button
 					v-if="['draft', 'paused', 'error'].includes(status)"
 					size="mini" type="default"
 					@click="showSetting">{{$t('dataFlow.button.setting')}}</el-button>
@@ -18,14 +23,23 @@
 					v-if="dataFlowId && 'draft' !== status"
 					size="mini" type="default"
 					@click="showLogs">{{$t('dataFlow.button.logs')}}</el-button>
+
+      <!-- editing debug -->
+      <el-button
+        v-if="['paused', 'error', 'draft'].includes(status)"
+        size="mini" type="default"
+        @click="preview">{{$t('dataFlow.button.preview')}}</el-button>
+
+      <!-- running debug -->
 			<el-button
-					v-if="!['scheduled', 'stopping', 'force stopping'].includes(status) && executeMode === 'normal'"
+					v-if="['scheduled', 'running'].includes(status) && executeMode === 'normal'"
 					size="mini" type="default"
 					@click="capture">{{$t('dataFlow.button.capture')}}</el-button>
 			<el-button
-					v-if="!['scheduled', 'stopping', 'force stopping'].includes(status) && executeMode !== 'normal'"
+					v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
 					size="mini" type="default"
 					@click="stopCapture">{{$t('dataFlow.button.stop_capture')}}</el-button>
+
 			<el-button
 					v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
 					size="mini" type="success"
@@ -63,7 +77,6 @@
 	export default {
 		name: "Job",
 		dataFlow: null,
-
 		data() {
 			return {
 				// run model: editable,readonly
@@ -74,6 +87,7 @@
 				executeMode: 'normal',
 
 				loading: true,
+				disabledDataVerify:false,
 			};
 		},
 
@@ -416,6 +430,34 @@
 				});
 			},
 
+      preview() {
+        let self = this,
+          data = this.getDataFlowData();
+
+        if( data ){
+          if( data.id ) {
+            data = {
+              id: data.id,
+              status: ['scheduled', 'running', 'stopping'].includes(data.status) ? data.status : 'scheduled',
+              executeMode: 'editing_debug'
+            };
+          } else {
+            Object.assign(data, {
+              status: 'scheduled',
+              executeMode: 'editing_debug'
+            });
+          }
+          self.doSave(data, (err, dataFlow) => {
+            if( err ){
+              this.$message.error(self.$t('message.saveFail'));
+            } else {
+              this.$message.success(self.$t('message.saveOK'));
+              this.showCapture();
+            }
+          });
+        }
+      },
+
 			capture() {
 				let self = this,
 					data = this.getDataFlowData();
@@ -424,14 +466,11 @@
 					if( data && data.id ) {
 						data = {
 							id: data.id,
-							status: ['scheduled', 'running', 'stopping'].includes(data.status) ? data.status : 'scheduled',
-							executeMode: ['running_debug', 'editing_debug'].includes(this.executeMode) ? 'normal' :
-								['scheduled', 'running', 'stopping'].includes(data.status) ? 'running_debug' : 'editing_debug'
+							executeMode: 'running_debug'
 						};
 					} else {
 						Object.assign(data, {
-							status: 'scheduled',
-							executeMode: 'editing_debug'
+							executeMode: 'running_debug'
 						});
 					}
 					self.doSave(data, (err, dataFlow) => {
@@ -500,7 +539,11 @@
 			showCapture(){
 				this.editor.showCapture(this.dataFlow);
 			},
-
+			showDataVerify(){
+				this.disabledDataVerify =!this.disabledDataVerify;
+				console.log(this.disabledDataVerify);
+				this.editor.showDataVerify(this.disabledDataVerify);
+			},
 			setEditable(editable){
 				log('Job.setEditable', editable, this.dataFlow);
 				if( this.dataFlow ){

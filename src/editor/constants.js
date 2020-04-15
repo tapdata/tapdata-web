@@ -17,7 +17,8 @@ export const
 			target: ''
 		}],
 		primaryKeys: '',
-		stageId: ''
+		stageId: '',
+		isArray: false,
 		//fieldProcesses: []
 	},
 

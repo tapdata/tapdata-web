@@ -163,10 +163,10 @@ export const link = {
 							throw new Error(`${i18n.t('editor.cell.link.none_join_key')}`);
 						}
 					}
-					if( ['merge_embed', 'update'].includes(joinTable.joinType) ) {
+					/*if( ['merge_embed', 'update'].includes(joinTable.joinType) ) {
 						if( !joinTable.joinPath )
 							throw new Error(`${i18n.t('editor.cell.link.none_join_path')}`);
-					}
+					}*/
 				}
 				return true;
 			}
