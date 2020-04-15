@@ -425,7 +425,12 @@ const en = {
 		preview: {
 			stage: 'Stage',
 			table: 'Table'
-		},
+		}
+	},
+	dataVerify: {
+		row:"row data verify",
+		hash:'hash data verify',
+		advance:'advance data verify'
 	}
 };
 

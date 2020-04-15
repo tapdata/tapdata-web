@@ -10,6 +10,9 @@
 						prop="type"
 						label="校验方式"
 						width="80">
+					<template slot-scope="scope">
+						<span :style="`color: ${ colorMap[scope.row.type] };`"> {{ $t('dataVerify.' + scope.row.type.replace(/ /g, '_')) }} </span>
+					</template>
 				</el-table-column>
 				<el-table-column
 						prop="condition.value"
@@ -51,22 +54,23 @@
 			<el-form class="dv-add-form">
 				<div class="dv-add-form-text" >校验方式</div>
 				<el-form-item>
-					<el-radio-group v-model="radio4" size="mini">
-						<el-radio border  label="行数校验" width="150px"></el-radio>
-						<el-radio border  label="哈希校验" width="150px"></el-radio>
-						<el-radio border  label="高级校验" width="150px"></el-radio>
+					<el-radio-group v-model="type" size="mini">
+						<el-radio border  label="row" width="150px"></el-radio>
+						<el-radio border  label="hash" width="150px"></el-radio>
+						<el-radio border  label="advance" width="150px"></el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item>
 					<div class="dv-add-form-text">校验条件</div>
 					<el-row gutter="10">
 						<el-col :span="12">
-							<el-select size="mini">
-								<option value="1"></option>
+							<el-select size="mini" v-model="condition.type">
+								<option value="row">按行数</option>
+								<option value="sampleRate">按采样率</option>
 							</el-select>
 						</el-col>
-						<el-col :span="12">
-							<el-input size="mini"></el-input>
+						<el-col :span="12" >
+							<el-input size="mini" v-model="condition.value"></el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
@@ -74,7 +78,9 @@
 					<div class="dv-add-form-text">源头表</div>
 					<el-row>
 						<el-col :span="24">
-							<el-select size="mini" style="width: 100%">
+							<el-select size="mini" style="width: 100%" v-model="source.tableName">
+								<option value="1"></option>
+								<option value="1"></option>
 								<option value="1"></option>
 							</el-select>
 						</el-col>
@@ -85,15 +91,17 @@
 					</el-row>
 					<el-row>
 						<el-col :span="24">
-							<el-input type="textarea"></el-input>
+							<el-input type="textarea" v-model="source.filter"></el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
 				<el-form-item>
 					<div class="dv-add-form-text">目标表</div>
 					<el-row>
-						<el-col :span="24">
+						<el-col :span="24" v-model="target.tableName">
 							<el-select size="mini" style="width: 100%">
+								<option value="1"></option>
+								<option value="1"></option>
 								<option value="1"></option>
 							</el-select>
 						</el-col>
@@ -101,7 +109,7 @@
 					<div class="dv-add-form-text">JS校验代码</div>
 					<el-row>
 						<el-col :span="24">
-							<el-input type="textarea"></el-input>
+							<el-input type="textarea" v-model="validateCode"></el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
@@ -124,7 +132,62 @@
 			return {
 				disabledDrawer: false,
 				direction: 'rtl',
+				type: "row",// row: 行数 hash：哈希  advance：高级校验
+				condition: {
+					type: "rows",      //# rows：按行数参与校验，sampleRate：按采样率参与校验
+					//# type为rows时表示行数；type为sampleRate时，表示采样率，如：
+					value: "",
+				},
+				source: {
+					stageId: "",
+					tableName: "",
+					filter: ""
+				},
+				target: {
+					stageId: "",
+					tableName: ""
+				},
+				validateCode:'',
+				colorMap: {
+					row: '#48B6E2',
+					hash: '#62A569',
+					advance: '#9889D8',
+				},
 				tableData: [{
+					type: "row",// row: 行数 hash：哈希  advance：高级校验
+					condition: {
+						type: "rows",      //# rows：按行数参与校验，sampleRate：按采样率参与校验
+						//# type为rows时表示行数；type为sampleRate时，表示采样率，如：
+						value: "90",
+					},
+					source: {
+						stageId: "5e9408531d431f06308e9c4d",
+						tableName: "POLICY",
+						filter: "select * from POLICY where POLICY_ID > 1000"
+					},
+					target: {
+						stageId: "5e9408531d431f06308e9c4d",
+						tableName: "CustomerPolicy"
+					},
+					validateCode: "xxxxxxxxxx" //#Javascript
+				},{
+					type: "hash",// row: 行数 hash：哈希  advance：高级校验
+					condition: {
+						type: "rows",      //# rows：按行数参与校验，sampleRate：按采样率参与校验
+						//# type为rows时表示行数；type为sampleRate时，表示采样率，如：
+						value: "90",
+					},
+					source: {
+						stageId: "5e9408531d431f06308e9c4d",
+						tableName: "POLICY",
+						filter: "select * from POLICY where POLICY_ID > 1000"
+					},
+					target: {
+						stageId: "5e9408531d431f06308e9c4d",
+						tableName: "CustomerPolicy"
+					},
+					validateCode: "xxxxxxxxxx" //#Javascript
+				},{
 					type: "advance",// row: 行数 hash：哈希  advance：高级校验
 					condition: {
 						type: "rows",      //# rows：按行数参与校验，sampleRate：按采样率参与校验

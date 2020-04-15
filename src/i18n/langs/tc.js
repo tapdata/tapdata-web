@@ -425,8 +425,13 @@ const tc = {
 		preview: {
 			stage: '節點',
 			table: '數據表'
-		},
+		}
 	},
+	dataVerify: {
+		row:"行数校验",
+		hash:'哈希校验',
+		advance:'高级校验'
+	}
 };
 
 export default tc;

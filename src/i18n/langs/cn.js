@@ -426,7 +426,12 @@ const cn = {
 		preview: {
 			stage: '节点',
 			table: '数据表'
-		},
+		}
+	},
+	dataVerify: {
+		row:"行数校验",
+		hash:'哈希校验',
+		advance:'高级校验'
 	}
 };
 

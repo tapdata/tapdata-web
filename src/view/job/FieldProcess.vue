@@ -98,9 +98,9 @@
 
 					this.$refs.entity.setOperations(_.cloneDeep(this.model.operations));
 
-					this.schema = cell.mergeOutputSchema(schema);
+					this.schema = cell.mergeOutputSchema(schema, false);
 
-					log('FieldProcess.setData.applyOperations', this.schema, this.model.operations);
+					log('FieldProcess.setData.applyOperations', this.originalSchema, this.schema, this.model.operations);
 				}
 			},
 			getData() {

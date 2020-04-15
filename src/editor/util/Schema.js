@@ -141,7 +141,6 @@ export const
 						currentFieldType = 'Map';
 				}
 
-
 				targetSchema.fields.push({
 					id: uuid(),
 					field_name: currentFieldName,
@@ -162,6 +161,16 @@ export const
 			});
 		}
 
+		let existsFieldName = {};
+		for (let i = 0; i < targetSchema.fields.length; i++) {
+			let field = targetSchema.fields[i];
+			if( existsFieldName[field.field_name] ){
+				targetSchema.fields.splice(i, 1);
+				i--;
+			} else {
+				existsFieldName[field.field_name] = true;
+			}
+		}
 		return targetSchema;
 	},
 
