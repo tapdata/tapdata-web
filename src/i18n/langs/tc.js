@@ -178,6 +178,9 @@ const tc = {
 		}
 	},
 	editor: {
+    nodeSettings: "節點設置",
+    choose: '選擇',
+    newTxt: '新建',
 		cell: {
 			validate: {
 				empty_name: '名稱必填.',
@@ -255,7 +258,32 @@ const tc = {
 							placeholder: '請輸入自定義SQL'
 						}
 					}
-				}
+        },
+        file: {
+          tip: '文件節點',
+          name: '文件',
+          none_fileName: '文件名不能為空',
+          configurationFile: '配置文件',
+          choiceFileName:'請選擇文件名'
+        },
+        gridfs: {
+          name: 'GridFS',
+          tip: 'GridFS節點',
+          chooseGridFsName: '請選擇GridFS',
+          gridFs_isNull: 'GridFS不能為空'
+        },
+        dummy:{
+          name: 'Dummy',
+          tip: 'Dummy節點',
+          chooseDummyName: '請選擇Dummy',
+          dummy_isNull: 'Dummy不能為空'
+        },
+        api: {
+          name: 'API',
+          tip: 'api節點',
+          chooseApiName: '請選擇API',
+          api_isNull: 'API不能為空'
+        },
 			},
 			processor: {
 				aggregate: {

@@ -12,3 +12,7 @@ export * from './ScriptProcess';
 export * from './FieldProcess';
 export * from './Aggregate';
 export * from './Link';
+export * from './FileNode';
+export * from './GridFsNode';
+export * from './Dummy';
+export * from './ApiNode';
