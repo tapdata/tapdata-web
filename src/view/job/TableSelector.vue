@@ -3,6 +3,8 @@
 		<div class="box-head">
 			<el-input class="search" v-model="filterText" clearable><i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
 			<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
+			<i class="el-icon-refresh" v-if="!loading" @click="loadDataBase"></i>
+			<i class="el-icon-loading" v-if="loading"></i>
 		</div>
 		<el-tree
 				:data="data"
@@ -51,7 +53,9 @@
 					collection: 'app.Collection',
 					table: 'app.Table',
 					database: 'app.Database',
-				}
+				},
+
+				loading: false
 			};
 		},
 		mounted() {
@@ -74,11 +78,12 @@
 						order:'original_name ASC'
 					})
 				};
+				self.loading = true;
 				MetadataInstances.get(params).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data) {
-							self.data.splice(0, self.data.length);
-
+							// self.data.splice(0, self.data.length);
+							self.data = [];
 							res.data.forEach((record) => {
 								self.data.push({
 									id: record.id,
@@ -87,11 +92,13 @@
 									source:record.source||''
 								});
 							});
-							log('data', self.data);
+							log('TableSelector.loadDataBase', self.data);
 						}
 					}
+					self.loading = false;
 				}).catch(e => {
 					this.$message.error('MetadataInstances error');
+					self.loading = false;
 				});
 			},
 			loadTables(node, resolve) {

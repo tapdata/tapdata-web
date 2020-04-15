@@ -10,6 +10,7 @@
 				:content="tip">
 			<span class="icon iconfont icon-tishi1" slot="reference"></span>
 		</el-popover>
+		<i class="el-icon-loading" v-if="data.loading"></i>
 		<div class="rightOpt fr">
 			<el-radio-group v-model="num" size="mini" :class="selectColor" @change="changeRadio" v-if="isScreeing">
 				<el-radio-button label="flow">{{$t("dataFlow.rowCount")}}</el-radio-button>
@@ -32,7 +33,7 @@
 	export default {
 		name: "echartHead",
 		props: {
-			data: Object
+			data: Object,
 		},
 		data() {
 			return {
@@ -40,7 +41,7 @@
 				tip: '',
 				num: 'flow',
 				speed: 'qps',
-				time: 'second',
+				time: 'minute',
 				rowCount: null,
 				kbs: null,
 				isScreeing: false,
@@ -62,7 +63,7 @@
 				this.$emit("getTime", this.time, this.data.type);
 				if (this.data.type === "screening") {
 					this.selectColor = 'screeningColor';
-				} else if (this.data.type === "inputOutput") {
+				} else if (this.data.type === "throughput") {
 					this.selectColor = 'putColor';
 				} else if (this.data.type === "transf") {
 					this.selectColor = 'transfColor';

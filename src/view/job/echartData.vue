@@ -159,11 +159,11 @@
 						},
 						axisLabel: {
 							formatter: function (value, index) {
-                if (value >= 10000) {
-                    value = value / 10000 + "W";
-                }
-                return value;
-              }
+								if (value >= 10000) {
+									value = value / 10000 + "W";
+								}
+								return value;
+							}
 						}
 					},
 					series: [
@@ -229,11 +229,11 @@
 						},
 						axisLabel: {
 							formatter: function (value, index) {
-                if (value >= 10000) {
-                    value = value / 10000 + "W";
-                }
-                return value;
-              }
+								if (value >= 10000) {
+									value = value / 10000 + "W";
+								}
+								return value;
+							}
 						}
 					},
 					series: [
@@ -284,11 +284,11 @@
 						},
 						axisLabel: {
 							formatter: function (value, index) {
-                if (value >= 10000) {
-                    value = value / 10000 + "W";
-                }
-                return value;
-              }
+								if (value >= 10000) {
+									value = value / 10000 + "W";
+								}
+								return value;
+							}
 						}
 					},
 					series: [
@@ -339,25 +339,25 @@
 
 		computed: {
 			updateTime: function () {
-				if( this.dataFlow.startTime && this.dataFlow.last_updated) {
+				if (this.dataFlow.startTime && this.dataFlow.last_updated) {
 					let time = new Date(this.dataFlow.last_updated).getTime() - new Date(this.dataFlow.startTime).getTime();
 
 					let unit = 'ms';
-					if( time > 1000 ){
+					if (time > 1000) {
 						unit = 's';
-						time = Number((time/1000).toFixed(2));
+						time = Number((time / 1000).toFixed(2));
 					}
-					if( time > 60 ){
+					if (time > 60) {
 						unit = 'm';
-						time = Number((time/60).toFixed(2));
+						time = Number((time / 60).toFixed(2));
 					}
-					if( time > 60 ){
+					if (time > 60) {
 						unit = 'h';
-						time = Number((time/60).toFixed(2));
+						time = Number((time / 60).toFixed(2));
 					}
-					if( time > 24 ){
+					if (time > 24) {
 						unit = 'd';
-						time = Number((time/24).toFixed(2));
+						time = Number((time / 24).toFixed(2));
 					}
 
 					return time + ' ' + unit;
@@ -383,7 +383,8 @@
 				isScreeing: false,
 				isIput: true,
 				isSpeed: true,
-				type: 'inputOutput',
+				loading: false,
+				type: 'throughput',
 				tip: this.$t("dataFlow.throughputpop")
 			};
 
@@ -391,6 +392,7 @@
 				title: this.$t('dataFlow.transf'),
 				type: 'transf',
 				isIput: true,
+				loading: false,
 				tip: this.$t("dataFlow.transtime_pop")
 			};
 
@@ -398,6 +400,7 @@
 				title: this.$t('dataFlow.replicate'),
 				type: 'replicate',
 				isIput: true,
+				loading: false,
 				tip: this.$t("dataFlow.replicate_pop")
 			};
 			this.flow.createTime = this.dataFlow.createTime ? this.$moment(this.dataFlow.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
@@ -533,6 +536,13 @@
 					params['dataFlowId'] = this.flow.id;
 					params['stageId'] = this.domValue;
 				}
+				if (type === this.inputOutputObj.type) {
+					this.inputOutputObj.loading = true;
+				} else if (type === this.transfObj.type) {
+					this.transfObj.loading = true;
+				} else if (type === this.replicateObj.type) {
+					this.replicateObj.loading = true;
+				}
 				await DataFlowInsights.runtimeMonitor(params).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data && res.data.length > 0) {
@@ -542,8 +552,24 @@
 							this.$message.error(this.$t('message.noData'));
 						}
 					}
+
+					if (type === this.inputOutputObj.type) {
+						this.inputOutputObj.loading = false;
+					} else if (type === this.transfObj.type) {
+						this.transfObj.loading = false;
+					} else if (type === this.replicateObj.type) {
+						this.replicateObj.loading = false;
+					}
+				}).cache(e => {
+					if (type === this.inputOutputObj.type) {
+						this.inputOutputObj.loading = false;
+					} else if (type === this.transfObj.type) {
+						this.transfObj.loading = false;
+					} else if (type === this.replicateObj.type) {
+						this.replicateObj.loading = false;
+					}
 				});
-      },
+			},
 
 			//数据处理
 			dataProcessing(data, type, ele) {
@@ -638,7 +664,7 @@
 								width: 0
 							}
 						},
-						data: [this.$t('dataFlow.inputNumber'),this.$t('dataFlow.outputNumber')],
+						data: [this.$t('dataFlow.inputNumber'), this.$t('dataFlow.outputNumber')],
 						axisPointer: {
 							type: 'shadow'
 						},
@@ -784,7 +810,7 @@
 		padding: 10px 15px 15px;
 		box-sizing: border-box;
 
-		.el-form-item{
+		.el-form-item {
 			margin-bottom: 0;
 		}
 

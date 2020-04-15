@@ -11,8 +11,11 @@
 				</el-input>
 			</el-form-item>
 			<el-form-item>
-				<el-button icon="el-icon-search" size="mini" @click="loadNew"></el-button>
+				<el-button icon="el-icon-search" size="mini" @click="loadNew" :disabled="loading"></el-button>
 			</el-form-item>
+
+			<i class="el-icon-loading" v-if="loading"></i>
+
 		</el-form>
 
 		<ul class="e-log-container" v-show="logCount > 0" ref="logContainer"></ul>
@@ -130,8 +133,8 @@
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data && res.data.length > 0) {
 
-							if( reset || prepend ) this.lastLogsId = res.data[0].id;
-							if( reset || !prepend ) this.firstLogsId = res.data[res.data.length - 1].id;
+							if( reset || prepend || !this.lastLogsId) this.lastLogsId = res.data[0].id;
+							if( reset || !prepend || !this.firstLogsId) this.firstLogsId = res.data[res.data.length - 1].id;
 
 							let logCount = res.data.length;
 							let logContainer = $(this.$refs.logContainer);
@@ -182,12 +185,22 @@
 	.e-debug-log {
 		width: 100%;
 		height: 100%;
-		padding: 20px 0 0 20px;
+		padding: 10px 0 0 20px;
 		box-sizing: border-box;
 		overflow: hidden;
 
-		.el-form-item {
-			margin-bottom: 0;
+		.el-form {
+			position: relative;
+
+			.el-form-item {
+				margin-bottom: 0;
+			}
+
+			.el-icon-loading {
+				right: 10px;
+				top: 10px;
+				position: absolute;
+			}
 		}
 	}
 
@@ -195,7 +208,7 @@
 		width: 100%;
 		display: inline-block;
 		height: calc(100% - 61px);
-		padding-top: 20px;
+		padding-top: 10px;
 		overflow: auto;
 		font-size: 11px;
 		color: #222222;
