@@ -1,17 +1,19 @@
-import log from "../../log";
 import {options} from "../lib/rappid/config";
-import FileNode from "../../view/job/fileNode";
+import ApiNode from "../../view/job/ApiNode";
 import i18n from "../../i18n/i18n";
 
-export const fileNodeConfig = {
-	type: 'app.FileNode',
+export const ApiNodeConfig = {
+	type: 'app.ApiNode',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
-			size: {width: 120, height: 28},
+			size: {
+				width: 120,
+				height: 28
+			},
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/o-file.svg',
+					xlinkHref: 'static/editor/api.svg',
 					refWidth: '25%',
 					refHeight: '84%',
 					refX: '-8%',
@@ -22,7 +24,7 @@ export const fileNodeConfig = {
 					ry: 14
 				},
 				label: {
-					text: i18n.t('editor.cell.data_node.file.name'),
+					text: i18n.t('editor.cell.data_node.api.name'),
 				}
 			}
 		},
@@ -30,7 +32,7 @@ export const fileNodeConfig = {
 			portLabelMarkup: [{
 				tagName: 'text',
 				selector: 'portLabel',
-      }],
+			}],
 
 			isDataNode() {
 				return true;
@@ -42,9 +44,7 @@ export const fileNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-        log("target",targetCell,['app.GridFSNode'].includes(targetCell.get('type')));
-        return ['app.GridFSNode'].includes(targetCell.get('type'));
-
+				return !['app.FileNode', 'app.Database', 'app.GridFSNode'].includes(targetCell.get('type'));
 			},
 
 			/**
@@ -53,15 +53,14 @@ export const fileNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-        log("souce",sourceCell,['app.GridFSNode'].includes(sourceCell.get('type')));
-        return false;
+				return false;
 			},
 
 			validate(data) {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
 				if (!data)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`);
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`);
 				return true;
 			},
 		},
@@ -184,7 +183,7 @@ export const fileNodeConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.data_node.file.tip'),
+				dataTooltip: i18n.t('editor.cell.data_node.api.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -197,14 +196,14 @@ export const fileNodeConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/file.svg',
+				xlinkHref: 'static/editor/api.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.data_node.file.name'),
+				text: i18n.t('editor.cell.data_node.api.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -224,7 +223,7 @@ export const fileNodeConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: FileNode,
+		component: ApiNode,
 	}
 
 };

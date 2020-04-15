@@ -1,17 +1,16 @@
-import log from "../../log";
 import {options} from "../lib/rappid/config";
-import ApiNode from "../../view/job/apiNode";
+import GridFSNode from "../../view/job/GridFsNode";
 import i18n from "../../i18n/i18n";
 
-export const ApiNodeConfig = {
-	type: 'app.ApiNode',
+export const GridFSNodeConfig = {
+	type: 'app.GridFSNode',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
 			size: {width: 120, height: 28},
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/api.svg',
+					xlinkHref: 'static/editor/o-gridfs2.svg',
 					refWidth: '25%',
 					refHeight: '84%',
 					refX: '-8%',
@@ -22,7 +21,7 @@ export const ApiNodeConfig = {
 					ry: 14
 				},
 				label: {
-					text: i18n.t('editor.cell.data_node.api.name'),
+					text: i18n.t('editor.cell.data_node.gridfs.name'),
 				}
 			}
 		},
@@ -30,7 +29,7 @@ export const ApiNodeConfig = {
 			portLabelMarkup: [{
 				tagName: 'text',
 				selector: 'portLabel',
-      }],
+			}],
 
 			isDataNode() {
 				return true;
@@ -42,7 +41,8 @@ export const ApiNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-        return !['app.FileNode','app.Database','app.GridFSNode'].includes(targetCell.get('type'));
+				// log("GridFsNode.allowTarget", targetCell);
+				return !['app.GridFSNode', 'app.Database'].includes(targetCell.get('type'));
 			},
 
 			/**
@@ -51,14 +51,16 @@ export const ApiNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-        return false;
+				// log("GridFsNode.allowSource", sourceCell);
+				return ['app.FileNode'].includes(sourceCell.get('type'));
 			},
 
 			validate(data) {
+				// log("GridFsNode.validate", data);
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
 				if (!data)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`);
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.gridfs.gridFs_isNull')}`);
 				return true;
 			},
 		},
@@ -181,7 +183,7 @@ export const ApiNodeConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.data_node.api.tip'),
+				dataTooltip: i18n.t('editor.cell.data_node.gridfs.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -194,14 +196,14 @@ export const ApiNodeConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/api.svg',
+				xlinkHref: 'static/editor/gridfs2.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.data_node.api.name'),
+				text: i18n.t('editor.cell.data_node.gridfs.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -221,7 +223,7 @@ export const ApiNodeConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: ApiNode,
+		component: GridFSNode,
 	}
 
 };

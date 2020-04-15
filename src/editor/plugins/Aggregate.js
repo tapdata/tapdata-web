@@ -1,6 +1,5 @@
-
 import {options} from "../lib/rappid/config";
-import aggregate from "../../view/job/aggregate";
+import Aggregate from "../../view/job/Aggregate";
 import {FORM_DATA_KEY} from "../constants";
 import log from "../../log";
 import {uuid} from "../util/Schema";
@@ -277,7 +276,7 @@ export const aggregateConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: aggregate,
+		component: Aggregate,
 	}
 
 };

@@ -1,6 +1,6 @@
 <template>
 	<div class="data-contPreView">
-		<div class="dv-pre-btn"><el-button size="mini" type="primary">再次校验</el-button></div>
+		<div class="dv-pre-btn"><el-button size="mini" type="primary" @click="handleAddList">再次校验</el-button></div>
 		<div class="clear"></div>
 		<div class="dv-pre-box">
 			<div class="dv-pre-label">校验总览
@@ -150,6 +150,10 @@
 			handleShowDrawer(){
 				this.disabledDataVerify = true;
 			},
+			handleAddList(){
+				let self = this;
+				self.editor.showDataVerify();
+			}
 		}
 	};
 </script>

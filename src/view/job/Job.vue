@@ -543,7 +543,6 @@
 			},
 			showDataVerify(){
 				this.disabledDataVerify =!this.disabledDataVerify;
-				console.log(this.disabledDataVerify);
 				this.editor.showDataVerify(this.disabledDataVerify);
 			},
 			setEditable(editable){

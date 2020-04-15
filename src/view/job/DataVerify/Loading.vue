@@ -8,7 +8,6 @@
 </template>
 
 <script>
-	import editor from '../../../editor/index';
 	export default {
 		name: "Loading.vue",
 		data(){
