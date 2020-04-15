@@ -98,7 +98,7 @@
 					//x轴的数据以及配置
 					xAxis: {
 						type: 'category', //坐标轴类型。具体参考官方文档
-						boundaryGap: true, //类目轴中 boundaryGap 可以配置为 true 和 false。默认为 true，这时候刻度只是作为分隔线，标签和数据点都会在两个刻度之间的带(band)中间。
+						boundaryGap: false, //类目轴中 boundaryGap 可以配置为 true 和 false。默认为 true，这时候刻度只是作为分隔线，标签和数据点都会在两个刻度之间的带(band)中间。
 						data: configures.xAxis.data, //x轴的数据
 						show: true,
 						axisTick: {show: false},  //是否显示坐标轴刻度

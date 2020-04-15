@@ -20,7 +20,7 @@
 				<el-radio-button label="kbs">KB/S</el-radio-button>
 			</el-radio-group>
 			<el-radio-group v-model="time" size="mini" :class="selectColor" @change="changeTime" v-if="isIput">
-				<el-radio-button label="second">{{$t("dataFlow.second")}}</el-radio-button>
+				<el-radio-button label="second" v-if="this.data.type !== 'replicate'">{{$t("dataFlow.second")}}</el-radio-button>
 				<el-radio-button label="minute">{{$t("dataFlow.min")}}</el-radio-button>
 				<el-radio-button label="hour">{{$t("dataFlow.hour")}}</el-radio-button>
 				<el-radio-button label="day">{{$t("dataFlow.day")}}</el-radio-button>
@@ -56,6 +56,10 @@
 				this.isScreeing = this.data.isScreeing;
 				this.isIput = this.data.isIput;
 				this.isSpeed = this.data.isSpeed;
+
+				if(this.data.type === "replicate") {
+				  this.time = 'minute';
+        }
 
 				this.$emit("twoRadio", this.num, this.data.type);
 				this.$emit("getSpeed", this.speed, this.time);
