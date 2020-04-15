@@ -144,10 +144,9 @@
 </template>
 
 <script>
+	import _ from 'lodash';
 	import factory from '../../api/factory';
 	const dataFlows = factory('DataFlows');
-	import _ from 'lodash';
-
 	export default {
 		data() {
 			return {

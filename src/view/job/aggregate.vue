@@ -80,23 +80,28 @@
               groupByExpression: ''
             }]
           },
+          aggaggExpression: '1'
         };
       },
-
+      mounted () {
+        this.form.aggregations.forEach(item =>{
+          if(item.aggFunction === "COUNT") {
+            item.aggExpression = '';
+          }
+        });
+      },
       watch: {
         form: {
           deep: true,
           handler(val){
+            let aggaggExpression = '1'
             if(val.aggregations && val.aggregations.length >0) {
-              val.aggregations.forEach(item =>{
-                if(item.aggFunction !== "COUNT") {
-                  item.aggExpression = '1';
-                } else {
+              val.aggregations.forEach((item,index) =>{
+                if(item.aggFunction === "COUNT") {
                   item.aggExpression = '';
                 }
               });
             }
-            console.log("表达式",val);
             this.$emit('dataChanged', this.getData());
           }
         }

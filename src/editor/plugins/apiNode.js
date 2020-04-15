@@ -1,21 +1,17 @@
-
-import {options} from "../lib/rappid/config";
-import aggregate from "../../view/job/aggregate";
-import {FORM_DATA_KEY} from "../constants";
 import log from "../../log";
-import {uuid} from "../util/Schema";
-import _ from 'lodash';
+import {options} from "../lib/rappid/config";
+import ApiNode from "../../view/job/apiNode";
 import i18n from "../../i18n/i18n";
 
-export const aggregateConfig = {
-	type: 'app.Aggregate',
+export const ApiNodeConfig = {
+	type: 'app.ApiNode',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
 			size: {width: 120, height: 28},
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/o-aggregator.svg',
+					xlinkHref: 'static/editor/api.svg',
 					refWidth: '25%',
 					refHeight: '84%',
 					refX: '-8%',
@@ -26,7 +22,7 @@ export const aggregateConfig = {
 					ry: 14
 				},
 				label: {
-					text: i18n.t('editor.cell.processor.aggregate.name'),
+					text: i18n.t('editor.cell.data_node.api.name'),
 				}
 			}
 		},
@@ -34,44 +30,9 @@ export const aggregateConfig = {
 			portLabelMarkup: [{
 				tagName: 'text',
 				selector: 'portLabel',
-			}],
-			initialize() {
-				this.on('change:' + FORM_DATA_KEY, () => {
-					this.updateOutputSchema();
-				});
-			},
-			mergeOutputSchema(outputSchema) {
-				let data = this.getFormData();
-				log('aggregate.mergeOutputSchema', data, outputSchema);
-				if (!outputSchema || !data)
-					return;
+      }],
 
-				let groupFields = [];
-				let functionNames = [];
-				data.aggregations.forEach(stage => {
-					if (stage.groupByExpression) groupFields.push(...stage.groupByExpression);
-					if (stage.aggExpression) functionNames.push(stage.aggFunction);
-				});
-
-				let fields = outputSchema.fields || [];
-				outputSchema.fields = fields.filter(field => groupFields.includes(field.field_name)) || [];
-
-				functionNames.forEach(fnName => {
-					outputSchema.fields.push(Object.assign(_.cloneDeep(fields[0] || {}), {
-						"field_name": fnName,
-						"data_type": "DOUBLE",
-						"primary_key_position": 0,
-						"original_field_name": fnName,
-						"javaType": "Double",
-						"autoincrement": false,
-						"id": uuid()
-					}));
-				});
-				log('Aggregate.mergeOutputSchema', _.cloneDeep(fields), outputSchema);
-				return outputSchema;
-			},
-
-			isProcess() {
+			isDataNode() {
 				return true;
 			},
 
@@ -81,7 +42,7 @@ export const aggregateConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-				return !['app.Database'].includes(targetCell.get('type'));
+        return !['app.FileNode','app.Database','app.GridFSNode'].includes(targetCell.get('type'));
 			},
 
 			/**
@@ -90,31 +51,14 @@ export const aggregateConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-				return !['app.Database'].includes(sourceCell.get('type'));
+        return false;
 			},
 
 			validate(data) {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
 				if (!data)
-					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
-
-				if (data.aggregations && data.aggregations.length === 0)
-					throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_stage')}`);
-
-				if (!data.name)
-					throw new Error(`${name}: ${i18n.t('editor.cell.validate.empty_name')}`);
-
-				if (data.aggregations && data.aggregations.length > 0) {
-					data.aggregations.forEach(item => {
-						if (!item.aggFunction)
-							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_function')}`);
-						if (!item.groupByExpression)
-							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_group')}`);
-						if (!item.aggExpression && item.aggFunction !== "COUNT")
-							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_aggregation_expression')}`);
-					});
-				}
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`);
 				return true;
 			},
 		},
@@ -228,7 +172,7 @@ export const aggregateConfig = {
 		/**
 		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：processor；标准图形：standard
 		 */
-		group: 'processor',
+		group: 'data',
 		/**
 		 * 界面显示的分组名称
 		 */
@@ -237,7 +181,7 @@ export const aggregateConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.processor.aggregate.tip'),
+				dataTooltip: i18n.t('editor.cell.data_node.api.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -250,14 +194,14 @@ export const aggregateConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/aggregator.svg',
+				xlinkHref: 'static/editor/api.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.processor.aggregate.name'),
+				text: i18n.t('editor.cell.data_node.api.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -277,7 +221,7 @@ export const aggregateConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: aggregate,
+		component: ApiNode,
 	}
 
 };
