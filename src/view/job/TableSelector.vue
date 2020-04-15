@@ -71,7 +71,7 @@
 							meta_type: 'database',
 							is_deleted:false
 						},
-
+						order:'original_name ASC'
 					})
 				};
 				MetadataInstances.get(params).then(res => {
@@ -112,7 +112,8 @@
 								regexp: `^${node.key}$`
 							},
 							is_deleted:false
-						}
+						},
+						order:'original_name ASC'|| 'name ASC'
 					})
 				};
 				MetadataInstances.get(params).then(res => {
@@ -296,7 +297,7 @@
 		}
 		.el-input__icon {
 			height: 100%;
-			width: 0; 
+			width: 0;
 			text-align: center;
 			-webkit-transition: all .3s;
 			transition: all .3s;

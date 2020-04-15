@@ -7,21 +7,21 @@
 					border
 					style="width: 100%">
 				<el-table-column
-						prop="date"
+						prop="type"
 						label="校验方式"
-						width="180">
+						width="80">
 				</el-table-column>
 				<el-table-column
-						prop="name"
+						prop="condition.value"
 						label="检验条件"
-						width="180">
+						width="80">
 				</el-table-column>
 				<el-table-column
-						prop="address"
+						prop="source.tableName"
 						label="源头表">
 				</el-table-column>
 				<el-table-column
-						prop="address"
+						prop="target.tableName"
 						label="目标表">
 				</el-table-column>
 				<el-table-column
@@ -122,24 +122,25 @@
 	export default {
 		data() {
 			return {
-				disabledDrawer:false,
+				disabledDrawer: false,
 				direction: 'rtl',
 				tableData: [{
-					date: '2016-05-02',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-04',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1517 弄'
-				}, {
-					date: '2016-05-01',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1519 弄'
-				}, {
-					date: '2016-05-03',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1516 弄'
+					type: "advance",// row: 行数 hash：哈希  advance：高级校验
+					condition: {
+						type: "rows",      //# rows：按行数参与校验，sampleRate：按采样率参与校验
+						//# type为rows时表示行数；type为sampleRate时，表示采样率，如：
+						value: "90",
+					},
+					source: {
+						stageId: "5e9408531d431f06308e9c4d",
+						tableName: "POLICY",
+						filter: "select * from POLICY where POLICY_ID > 1000"
+					},
+					target: {
+						stageId: "5e9408531d431f06308e9c4d",
+						tableName: "CustomerPolicy"
+					},
+					validateCode: "xxxxxxxxxx" //#Javascript
 				}]
 			};
 		},
