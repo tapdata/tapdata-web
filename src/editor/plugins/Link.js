@@ -159,11 +159,14 @@ export const link = {
 			}),
 
 			showSettings(){
-				/*let targetId = this.target().id;
+				return true;
+			},
+
+			configJoinTable(){
+				let targetId = this.target().id;
 				if( !targetId) return false;
 				let targetCell = this.getTargetCell();
-				return targetCell && targetCell.isDataNode && targetCell.isDataNode() && ['app.Table', 'app.Collection'].includes(targetCell.get('type'));*/
-				return true;
+				return targetCell && targetCell.isDataNode && targetCell.isDataNode() && ['app.Table', 'app.Collection'].includes(targetCell.get('type'));
 			},
 
 			/**
@@ -174,7 +177,10 @@ export const link = {
 			validate: function(data){
 				data = data || this.getFormData();
 				log(`Link.validate`, data);
-				if( data && this.showSettings() ){
+
+				let configJoinTable = this.configJoinTable();
+
+				if( data && configJoinTable ){
 					let joinTable = data.joinTable;
 					if( !joinTable )
 						throw new Error(`${i18n.t('editor.cell.validate.none_setting')}`);

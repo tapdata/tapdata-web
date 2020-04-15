@@ -91,7 +91,6 @@
 	import echartsCompinent from '../../components/echartsCompinent';
 	import shaftlessEchart from '../../components/shaftlessEchart';
 	import factory from '../../api/factory';
-	import log from '../../log';
 	import {EditorEventType} from "../../editor/lib/events";
 
 	const DataFlowInsights = factory('DataFlowInsights');
@@ -560,7 +559,7 @@
 					} else if (type === this.replicateObj.type) {
 						this.replicateObj.loading = false;
 					}
-				}).cache(e => {
+				}).catch(e => {
 					if (type === this.inputOutputObj.type) {
 						this.inputOutputObj.loading = false;
 					} else if (type === this.transfObj.type) {
@@ -710,7 +709,7 @@
 			},
 
 			getThroughputEchart(time, series1, series2) {
-				log('EChartData.getThroughputEchart', time, series1, series2);
+				//log('EChartData.getThroughputEchart', time, series1, series2);
 				this.throughputData.xAxis.data = time;
 				this.throughputData.series[0].data = series1;
 				this.throughputData.series[1].data = series2;

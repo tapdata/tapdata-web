@@ -13,7 +13,7 @@
 
 		</el-form>
 
-		<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form" v-show="targetIsDataNode" action="javascript:void(0);">
+		<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form" v-show="configJoinTable" action="javascript:void(0);">
 
 			<!--<el-form-item label="Table name" required>
 				<el-input
@@ -80,7 +80,7 @@
 			</el-form-item>
 		</el-form>
 
-		<div class="e-mapping-wrap" v-show="targetIsDataNode">
+		<div class="e-mapping-wrap" v-show="configJoinTable">
 			<Mapping ref="mappingComp"></Mapping>
 		</div>
 	</div>
@@ -106,7 +106,7 @@
 				targetSchema: [],
 				targetCellType: '',
 
-				targetIsDataNode: false,
+				configJoinTable: false,
 
 				model: {
 					label: '',
@@ -182,13 +182,9 @@
 					Object.keys(data).forEach(key => this.model[key] = data[key]);
 				}
 
-				let targetCell = cell.getTargetCell();
-				this.targetIsDataNode = targetCell
-					&& targetCell.isDataNode
-					&& targetCell.isDataNode()
-					&& ['app.Table', 'app.Collection'].includes(targetCell.get('type'));
+				this.configJoinTable = cell.configJoinTable && cell.configJoinTable();
 
-				if( !this.targetIsDataNode )
+				if( !this.configJoinTable )
 					return;
 
 				if( cell.getSourceCell()) {
@@ -208,7 +204,7 @@
 					let joinKeys = data.joinTable.joinKeys.filter( key => key.source && key.target);
 					data.joinTable.joinKeys = joinKeys;
 				}*/
-				if( !this.targetIsDataNode) {
+				if( !this.configJoinTable) {
 					delete data.joinTable;
 				}
 				return data;

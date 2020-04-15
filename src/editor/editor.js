@@ -281,7 +281,6 @@ export default class Editor extends BaseObject {
 		let capture = this.getBottomTabPanel().getChildByName('capture');
 		if( !capture ){
 			capture = new VueComponent({
-				container: '',
 				title: i18n.t('editor.ui.sidebar.capture'),
 				name: 'capture',
 				editor: this,
@@ -305,7 +304,6 @@ export default class Editor extends BaseObject {
 		let dataVerify = this.getBottomTabPanel().getChildByName('dataVerify');
 		if( !dataVerify ){
 			dataVerify = new VueComponent({
-				container: '',
 				title: i18n.t('editor.ui.sidebar.capture'),
 				name: 'dataVerify',
 				editor: this,
@@ -325,7 +323,6 @@ export default class Editor extends BaseObject {
 		let dvLoading = this.getBottomTabPanel().getChildByName('dvLoading');
 		if( !dvLoading ){
 			dvLoading = new VueComponent({
-				container: '',
 				title: i18n.t('editor.ui.sidebar.capture'),
 				name: 'dvLoading',
 				editor: this,
@@ -345,7 +342,6 @@ export default class Editor extends BaseObject {
 		let dvResult = this.getBottomTabPanel().getChildByName('dvResult');
 		if( !dvResult ){
 			dvResult = new VueComponent({
-				container: '',
 				title: i18n.t('editor.ui.sidebar.capture'),
 				name: 'dvResult',
 				editor: this,
