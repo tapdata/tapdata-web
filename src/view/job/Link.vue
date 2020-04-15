@@ -167,9 +167,9 @@
 					Object.keys(data).forEach(key => this.model[key] = data[key]);
 				}
 
-				if( cell.getSourceCell()) {
-					let sourceCell = cell.getSourceCell();
-					let parentDataNodes = typeof sourceCell.getParentDataNode === 'function' ? sourceCell.getParentDataNode() : [];
+				if( cell.getTargetCell()) {
+					let targetCell = cell.getTargetCell();
+					let parentDataNodes = typeof targetCell.getParentDataNode === 'function' ? targetCell.getParentDataNode() : [];
 					this.model.joinTable.stageId = parentDataNodes.length > 0 ? parentDataNodes[0].id : '';
 					//this.model.joinTable.stageId = cell.getSourceCell().id;
 				}
@@ -220,7 +220,8 @@
 
 					let mergedTargetSchema = targetCell.getOutputSchema(); //mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
 
-					let targetJoinFields = mergedTargetSchema.fields.filter( field => field.field_name === this.model.joinTable.joinPath);
+					let targetSchemaFields = mergedTargetSchema && mergedTargetSchema.fields || [];
+					let targetJoinFields = targetSchemaFields.filter( field => field.field_name === this.model.joinTable.joinPath);
 					let isArray = targetJoinFields && targetJoinFields.length > 0 && targetJoinFields[0].javaType === 'Array';
 					if( this.model.joinTable.isArray !== isArray ) this.model.joinTable.isArray = isArray;
 
