@@ -6,7 +6,7 @@
 			class="SelectClassify-dialog"
 			:before-close="handleClose">
 		<div>
-			<el-tag size="mini" class="SelectClassify-tag" closable v-for="item in tagList" @close="handleCloseTag(item)">{{item.value}}</el-tag>
+			<el-tag size="mini" class="SelectClassify-tag" closable v-for="item in tagList" v-bind:key="item.value" @close="handleCloseTag(item)">{{item.value}}</el-tag>
 		</div>
 		<el-tree
 				node-key="id"
@@ -21,7 +21,7 @@
 				@check-change="handleCheckChange"
 				class="metaData-tree SelectClassify-tree"
 		>
-			<span class="custom-tree-node" slot-scope="{ node, data}">
+			<span class="custom-tree-node" slot-scope="{ node}">
 				<span>
 					<span class="iconfont icon-Folder-closed filter-icon"></span>
 					<span class="table-label">{{ node.label }}</span>
@@ -29,7 +29,7 @@
 			</span>
 		</el-tree>
 		<span slot="footer" class="dialog-footer">
-				<el-button type="danger" @click="handleCancle" size="mini">- 批量移除</el-button>
+				<el-button type="danger" @click="handleCancel" size="mini">- 批量移除</el-button>
 				<el-button type="primary" @click="handleAdd" size="mini">+ 批量添加</el-button>
 		</span>
 	</el-dialog>
@@ -37,7 +37,6 @@
 
 <script>
 	import factory from '../api/factory';
-	import log from "../log";
 
 	const MetadataDefinitions = factory('MetadataDefinitions');
 	const MetadataInstances = factory('MetadataInstances');
@@ -170,7 +169,7 @@
 					}
 				});
 			},
-			handleCancle(){
+			handleCancel(){
 				let metadatas =[];
 				if(this.checkData){
 					this.checkData.forEach(item =>{
@@ -206,7 +205,6 @@
 						metadatas.push(node);
 					});
 				}
-				console.log(metadatas);
 				metadatas = {
 					metadatas:metadatas,
 				};
@@ -255,7 +253,6 @@
 						metadatas.push(node);
 					});
 				}
-				console.log(metadatas);
 				metadatas = {
 					metadatas:metadatas,
 				};

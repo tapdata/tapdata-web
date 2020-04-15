@@ -132,7 +132,7 @@
 			<el-pagination background
 					class="pagination-bar"
 					layout="total, prev, pager, next,sizes"
-					:page-sizes="[10, 20, 30, 50,100]"
+					:page-sizes="[12, 20, 30, 50,100]"
 					:page-size="pagesize"
 					:total="totalNum"
 					@current-change="handleCurrentChange"
@@ -144,10 +144,9 @@
 </template>
 
 <script>
+	import _ from 'lodash';
 	import factory from '../../api/factory';
 	const dataFlows = factory('DataFlows');
-	import _ from 'lodash';
-
 	export default {
 		data() {
 			return {
@@ -163,7 +162,7 @@
 				tableData: [],
 				newData: [],
 				currentPage:1,
-				pagesize: 10,
+				pagesize: 12,
 				totalNum: 0,
 				options: [{
 					label: this.$t('dataFlow.status.running'),
@@ -204,7 +203,7 @@
 		},
 		computed: {
 			maxHeight: function () {
-				let height = document.body.clientHeight - 300 + "px";
+				let height = document.body.clientHeight - 220 + "px";
 				return height;
 			}
 		},

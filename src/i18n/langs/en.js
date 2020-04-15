@@ -178,6 +178,9 @@ const en = {
 		}
 	},
 	editor: {
+    nodeSettings: "Node settings",
+    choose: 'Select',
+     newTxt: 'New',
 		cell: {
 			validate: {
 				empty_name: 'Name is required.',
@@ -255,7 +258,32 @@ const en = {
 							placeholder: 'Please input you custom sql'
 						}
 					}
-				}
+        },
+        file: {
+          name: 'File',
+          tip: 'File node',
+          none_fileName: 'The file name cannot be empty',
+          configurationFile: 'Configuration file',
+          chooseFileName: 'Please select a file name'
+        },
+        gridfs: {
+          name: 'GridFS',
+          tip: 'GridFS node',
+          chooseGridFsName: 'Please select GridFS',
+          gridFs_isNull: 'GridFS cannot be empty'
+        },
+        dummy: {
+          name: 'Dummy',
+          tip: 'Dummy node',
+          chooseDummyName: 'Please select Dummy',
+          dummy_isNull: 'Dummy cannot be empty'
+        },
+        api: {
+          name: 'API',
+          tip: 'api node',
+          chooseApiName: 'Please select API',
+          api_isNull: 'API cannot be empty'
+        }
 			},
 			processor: {
 				aggregate: {
@@ -397,7 +425,12 @@ const en = {
 		preview: {
 			stage: 'Stage',
 			table: 'Table'
-		},
+		}
+	},
+	dataVerify: {
+		row:"row data verify",
+		hash:'hash data verify',
+		advance:'advance data verify'
 	}
 };
 

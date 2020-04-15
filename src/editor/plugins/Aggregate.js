@@ -1,10 +1,5 @@
-/**
- * @author lg<lirufei0808@gmail.com>
- * @date 3/5/20
- * @description
- */
 import {options} from "../lib/rappid/config";
-import aggregate from "../../view/job/aggregate";
+import Aggregate from "../../view/job/Aggregate";
 import {FORM_DATA_KEY} from "../constants";
 import log from "../../log";
 import {uuid} from "../util/Schema";
@@ -12,7 +7,6 @@ import _ from 'lodash';
 import i18n from "../../i18n/i18n";
 
 export const aggregateConfig = {
-
 	type: 'app.Aggregate',
 	shape: {
 		extends: 'app.BaseElement',
@@ -282,7 +276,7 @@ export const aggregateConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: aggregate,
+		component: Aggregate,
 	}
 
 };

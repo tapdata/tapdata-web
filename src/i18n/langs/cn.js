@@ -178,6 +178,9 @@ const cn = {
 		}
 	},
 	editor: {
+    nodeSettings: '节点设置',
+    choose: '选择',
+    newTxt: '新建',
 		cell: {
 			validate: {
 				empty_name: '名称必填.',
@@ -230,13 +233,12 @@ const cn = {
 							keep: '保持已存在的数据',
 							remove: '运行前删除已存在的数据'
 						}
-					}
+          }
 				},
 				table: {
 					name: '表',
 					tip: 'RDBMS 表',
 					defaultText: '表',
-
 					none_database: '数据库必填.',
 					none_table: '表必填.',
 					none_pk: '主键必填.',
@@ -255,7 +257,38 @@ const cn = {
 							placeholder: '请输入自定义SQL'
 						}
 					}
-				}
+        },
+        file: {
+          name: '文件',
+          tip: '文件节点',
+          none_fileName: '文件名不能为空',
+          configurationFile: '配置文件',
+          chooseFileName:'请选择文件名'
+        },
+        gridfs: {
+          name: 'GridFS',
+          tip: 'GridFS节点',
+          chooseGridFsName: '请选择GridFS',
+          gridFs_isNull: 'GridFS不能为空'
+        },
+        dummy:{
+          name: 'Dummy',
+          tip: 'Dummy节点',
+          chooseDummyName: '请选择Dummy',
+          dummy_isNull: 'Dummy不能为空'
+        },
+        api: {
+          name: 'API',
+          tip: 'api节点',
+          chooseApiName: '请选择API',
+          api_isNull: 'API不能为空'
+        },
+        Processing: {
+          name: 'API',
+          tip: 'api节点',
+          chooseApiName: '请选择API',
+          api_isNull: 'API不能为空'
+        }
 			},
 			processor: {
 				aggregate: {
@@ -308,7 +341,8 @@ const cn = {
 							placeholder: '请输入脚本'
 						},
 					}
-				}
+        },
+
 			},
 			link: {
 				none_join_type: '关联类型必填',
@@ -397,7 +431,12 @@ const cn = {
 		preview: {
 			stage: '节点',
 			table: '数据表'
-		},
+		}
+	},
+	dataVerify: {
+		row:"行数校验",
+		hash:'哈希校验',
+		advance:'高级校验'
 	}
 };
 
