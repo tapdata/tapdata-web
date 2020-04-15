@@ -11,7 +11,7 @@ export const GridFSNodeConfig = {
 			size: {width: 120, height: 28},
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/gridfs.svg',
+					xlinkHref: 'static/editor/o-gridfs2.svg',
 					refWidth: '25%',
 					refHeight: '84%',
 					refX: '-8%',
@@ -197,7 +197,7 @@ export const GridFSNodeConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/gridfs.svg',
+				xlinkHref: 'static/editor/gridfs2.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',

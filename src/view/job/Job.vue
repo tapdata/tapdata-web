@@ -219,6 +219,7 @@
 				let editorData = this.editor.getData();
 				let graphData = editorData.graphData;
 				let settingData = editorData.settingData;
+				let distanceForSink = editorData.distanceForSink || {};
 
 				let cells = graphData.cells ? graphData.cells : [];
 				let edgeCells = {};
@@ -253,6 +254,7 @@
 						inputLanes: [],
 						outputLanes: [],
 						syncType: "initial_sync+cdc",
+						distance: distanceForSink[cell.id]
 					}, cell[FORM_DATA_KEY] || {});
 
 					if( ['app.Database'].includes(cell.type) ){
@@ -287,7 +289,7 @@
 				});
 				postData.stages = Object.values(stages);
 
-				log('Job.getDataFlowData', graphData, postData);
+				log('Job.getDataFlowData', editorData, postData);
 
 				if( this.dataFlowId )
 					postData.id = this.dataFlowId;

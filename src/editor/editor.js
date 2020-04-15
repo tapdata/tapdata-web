@@ -366,14 +366,37 @@ export default class Editor extends BaseObject {
 
 	getData(){
 
+		let graphLib = this.graph.getGraphLib();
+		let distance = this.distanceForSink(graphLib);
+
 		return {
 			name: this.ui.getName(),
 			graphData: this.graph.getData(),
-			graphLib: this.graph.getGraphLib(),
+			graphLib: graphLib,
+			distanceForSink: distance,
 			settingData: this.graph.getSettingData() || DEFAULT_SETTING,
 			graph: this.graph.graph,
 		};
 
+	}
+
+	distanceForSink(graphLib){
+		let distanceResult = {};
+
+		let predecessors = function(node, distance){
+
+			if( distanceResult.hasOwnProperty(node) )
+				distanceResult[node] = distanceResult[node] >= distance ? distanceResult[node] : distance;
+			else
+				distanceResult[node] = distance;
+
+			graphLib.predecessors(node).forEach((node) => predecessors(node, distance + 1));
+		};
+		graphLib.sinks().forEach( (node) => predecessors(node, 0) );
+
+		log('Editor.distanceForSink', distanceResult);
+
+		return distanceResult;
 	}
 
 	setEditable(editable, dataFlow) {
