@@ -115,9 +115,38 @@ export const link = {
 					}
 				}
 			},
+			initialize() {
+				let self = this;
+				self.on('change:' + FORM_DATA_KEY, () => {
+					let formData = self.getFormData();
 
+					log('Link.form_data.change', formData);
+
+					if( formData && formData.label ){
+						self.labels([{
+							attrs: {
+								text: {
+									text: formData.label
+								}
+							},
+							position: {
+								offset: {
+									x: 0, y: 0
+								},
+								distance: 0.5
+							}
+						}]);
+					} else {
+						self.labels([]);
+					}
+				});
+			},
 			getFormData() {
 				return this.get(FORM_DATA_KEY);
+			},
+
+			setFormData(data) {
+				this.set(FORM_DATA_KEY, data);
 			},
 
 			getMarkerWidth: function(type) {
@@ -130,10 +159,11 @@ export const link = {
 			}),
 
 			showSettings(){
-				let targetId = this.target().id;
+				/*let targetId = this.target().id;
 				if( !targetId) return false;
 				let targetCell = this.getTargetCell();
-				return targetCell && targetCell.isDataNode && targetCell.isDataNode() && ['app.Table', 'app.Collection'].includes(targetCell.get('type'));
+				return targetCell && targetCell.isDataNode && targetCell.isDataNode() && ['app.Table', 'app.Collection'].includes(targetCell.get('type'));*/
+				return true;
 			},
 
 			/**

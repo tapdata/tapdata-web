@@ -163,6 +163,10 @@ export const baseElementConfig = {
 			getFormData() {
 				return this.get(FORM_DATA_KEY);
 			},
+
+			setFormData(data) {
+				this.set(FORM_DATA_KEY, data);
+			},
 			isDataNode(){
 				return false;
 			},
@@ -212,7 +216,7 @@ export const baseElementConfig = {
 								}
 
 								joinTable.sourceSchema = schema;
-								let parentDataNodes = typeof targetCell.getParentDataNode === 'function' ? targetCell.getParentDataNode() : [];
+								let parentDataNodes = typeof targetCell.getFirstDataNode === 'function' ? targetCell.getFirstDataNode() : [];
 								joinTable.stageId = parentDataNodes.length > 0 ? parentDataNodes[0].id : '';
 
 								log('BaseElement.getInputSchema.joinTables', cell.getFormData(), joinTable);
@@ -266,7 +270,9 @@ export const baseElementConfig = {
 				}));
 			},
 
-			getParentDataNode(){
+			getFirstDataNode(){
+				if( typeof this.isDataNode === 'function' && this.isDataNode())
+					return [this];
 				let graph = this.graph;
 				let inboundLinks = graph.getConnectedLinks(this, {inbound: true});
 				let parentDataNodes = [];
@@ -277,7 +283,7 @@ export const baseElementConfig = {
 						if( typeof sourceCell.isDataNode === 'function' && sourceCell.isDataNode() ){
 							parentDataNodes.push(sourceCell);
 						} else if( typeof sourceCell.isProcess === 'function' && sourceCell.isProcess() ) {
-							parentDataNodes.push(...sourceCell.getParentDataNode());
+							parentDataNodes.push(...sourceCell.getFirstDataNode());
 						}
 					}
 				}

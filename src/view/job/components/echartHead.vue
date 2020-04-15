@@ -59,7 +59,7 @@
 				this.isSpeed = this.data.isSpeed;
 
 				if(this.data.type === "replicate") {
-				  this.time = 'minute';
+					this.time = 'minute';
         }
 
 				this.$emit("twoRadio", this.num, this.data.type);
