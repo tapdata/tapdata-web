@@ -239,7 +239,6 @@ const cn = {
 					name: '表',
 					tip: 'RDBMS 表',
 					defaultText: '表',
-
 					none_database: '数据库必填.',
 					none_table: '表必填.',
 					none_pk: '主键必填.',
@@ -284,6 +283,12 @@ const cn = {
           chooseApiName: '请选择API',
           api_isNull: 'API不能为空'
         },
+        Processing: {
+          name: 'API',
+          tip: 'api节点',
+          chooseApiName: '请选择API',
+          api_isNull: 'API不能为空'
+        }
 			},
 			processor: {
 				aggregate: {
