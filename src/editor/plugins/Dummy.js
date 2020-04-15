@@ -11,7 +11,7 @@ export const DummyConfig = {
 			size: {width: 120, height: 28},
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/dummy.svg',
+					xlinkHref: 'static/editor/o-dummy.svg',
 					refWidth: '25%',
 					refHeight: '84%',
 					refX: '-8%',
@@ -197,7 +197,7 @@ export const DummyConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/o-dummy.svg',
+				xlinkHref: 'static/editor/dummy.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
