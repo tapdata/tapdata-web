@@ -1,6 +1,5 @@
-import log from "../../log";
 import {options} from "../lib/rappid/config";
-import GridFSNode from "../../view/job/gridFsNode";
+import GridFSNode from "../../view/job/GridFsNode";
 import i18n from "../../i18n/i18n";
 
 export const GridFSNodeConfig = {
@@ -30,7 +29,7 @@ export const GridFSNodeConfig = {
 			portLabelMarkup: [{
 				tagName: 'text',
 				selector: 'portLabel',
-      }],
+			}],
 
 			isDataNode() {
 				return true;
@@ -42,8 +41,8 @@ export const GridFSNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-        log("target",targetCell);
-				return !['app.GridFSNode','app.Database'].includes(targetCell.get('type'));
+				// log("GridFsNode.allowTarget", targetCell);
+				return !['app.GridFSNode', 'app.Database'].includes(targetCell.get('type'));
 			},
 
 			/**
@@ -52,12 +51,12 @@ export const GridFSNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-        log("souce",sourceCell);
+				// log("GridFsNode.allowSource", sourceCell);
 				return ['app.FileNode'].includes(sourceCell.get('type'));
 			},
 
 			validate(data) {
-        log("选中的gridFs数据",data);
+				// log("GridFsNode.validate", data);
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
 				if (!data)

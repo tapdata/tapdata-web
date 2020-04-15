@@ -117,7 +117,6 @@
 </template>
 
 <script>
-	import editor from '../../../editor/index';
 
 	export default {
 		data() {

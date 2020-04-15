@@ -1,6 +1,5 @@
-import log from "../../log";
 import {options} from "../lib/rappid/config";
-import ApiNode from "../../view/job/apiNode";
+import ApiNode from "../../view/job/ApiNode";
 import i18n from "../../i18n/i18n";
 
 export const ApiNodeConfig = {
@@ -8,7 +7,10 @@ export const ApiNodeConfig = {
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
-			size: {width: 120, height: 28},
+			size: {
+				width: 120,
+				height: 28
+			},
 			attrs: {
 				image: {
 					xlinkHref: 'static/editor/api.svg',
@@ -30,7 +32,7 @@ export const ApiNodeConfig = {
 			portLabelMarkup: [{
 				tagName: 'text',
 				selector: 'portLabel',
-      }],
+			}],
 
 			isDataNode() {
 				return true;
@@ -42,7 +44,7 @@ export const ApiNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-        return !['app.FileNode','app.Database','app.GridFSNode'].includes(targetCell.get('type'));
+				return !['app.FileNode', 'app.Database', 'app.GridFSNode'].includes(targetCell.get('type'));
 			},
 
 			/**
@@ -51,7 +53,7 @@ export const ApiNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-        return false;
+				return false;
 			},
 
 			validate(data) {

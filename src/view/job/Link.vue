@@ -218,7 +218,7 @@
 						}*/
 					;
 
-					let mergedTargetSchema = targetCell.getOutputSchema(); //mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
+					let mergedTargetSchema = targetCell && typeof targetCell.getOutputSchema === 'function' ? targetCell.getOutputSchema() : null; //mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
 
 					let targetSchemaFields = mergedTargetSchema && mergedTargetSchema.fields || [];
 					let targetJoinFields = targetSchemaFields.filter( field => field.field_name === this.model.joinTable.joinPath);

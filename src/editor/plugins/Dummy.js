@@ -1,6 +1,6 @@
 import log from "../../log";
 import {options} from "../lib/rappid/config";
-import Dummy from "../../view/job/dummy";
+import Dummy from "../../view/job/Dummy";
 import i18n from "../../i18n/i18n";
 
 export const DummyConfig = {
