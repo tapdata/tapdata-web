@@ -66,7 +66,7 @@
 				<el-table-column sortable='custom' :label="$t('dataFlow.creatdor')" width="180"></el-table-column>
 				<el-table-column prop="status" sortable='custom' :label="$t('dataFlow.taskStatus')" width="100">
 					<template slot-scope="scope" v-if="!scope.row.hasChildren">
-						<span :style="`color: ${ colorMap[scope.row.status] };`"> {{ $t('dataFlow.status.' + scope.row.status.replace(/ /g, '_')) }} </span>
+						<span :style="`color: ${ colorMap[scope.row.status] };`"> {{ $t('dataFlow.status.' +  scope.row.status && scope.row.status !==undefined ? scope.row.status.replace(/ /g, '_') : scope.row.status )}} </span>
 					</template>
 				</el-table-column>
 				<el-table-column

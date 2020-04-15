@@ -5,27 +5,27 @@
 		<div class="dv-pre-box">
 			<div class="dv-pre-label">校验总览
 				<div class="dv-pre-right">
-					<span>校验时间：2020-11-22:22:33 </span>
-					<span> 耗时：12min</span>
+					<span>校验时间：{{overview.validateTime}} </span>
+					<span> 耗时：{{overview.costTime}}</span>
 				</div>
 			</div>
 			<div class="dv-pre-rowTotal">
-				<p>行数校验 10000</p>
-				<p>哈希校验 10000</p>
-				<p>高级校验 10000</p>
+				<p>行数校验 {{overview.validateRows}}</p>
+				<p>哈希校验 {{overview.validateHashRows}}</p>
+				<p>高级校验 {{overview.validateJsRows}}</p>
 			</div>
 			<div class="dv-pre-dataBox">
 				<div class="dv-pre-rowCheck">
-					<p>总体行数差（条）</p>
-					<div class="dv-pre-dataBox-item">-133,24</div>
+					<p>总体行数差</p>
+					<div class="dv-pre-dataBox-item">{{overview.rowsDiffer}}</div>
 				</div>
 				<div class="dv-pre-rowCheck">
-					<p>总体行数差（条）</p>
-					<div class="dv-pre-dataBox-item">-133,24</div>
+					<p>不匹配条数</p>
+					<div class="dv-pre-dataBox-item">{{overview.rowsMismatch}}</div>
 				</div>
 				<div class="dv-pre-rowCheck">
-					<p>总体行数差（条）</p>
-					<div class="dv-pre-dataBox-item">-133,24</div>
+					<p>一致率</p>
+					<div class="dv-pre-dataBox-item">{{overview.consistencyRate}}</div>
 				</div>
 			</div>
 		</div>
@@ -140,7 +140,20 @@
 	export default {
 		data() {
 			return {
-
+				overview:[{
+					id: "5e95db94a0507ad6ed3ec048",
+					//overview校验结果总览，tableOverview：按表统计，failedRow: 校验失败的记录
+					type: "overview",
+					validateTime: "1586920931000",   // #执行校验时间
+					costTime: "30000",    //#校验耗时
+					validateRows: "45000",    //#行数校验条数
+					validateHashRows: "12000",    //#哈希校验条数
+					validateJsRows: "15000",    //#高级校验条数
+					rowsDiffer: "325",    //#总体行数差
+					rowsMismatch: "12",    //#不匹配条数
+					consistencyRate: "80",   // #一致率（0-100）
+					dataFlowId: "5e9408531d431f06308e9c4d"  //#该记录所属的dataFlow ID
+				}]
 			};
 		},
 		methods: {
