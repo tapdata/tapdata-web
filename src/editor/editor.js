@@ -10,7 +10,7 @@ import {loadPlugins} from './plugins';
 import Sidebar from "./ui/sidebar";
 import Tab from "./ui/tab";
 import VueComponent from "./ui/VueComponent";
-import EchartData from '../view/job/echartData';
+import Monitor from '../view/job/Monitor';
 import Capture from '../view/job/Preview';
 import Setting from '../view/job/Setting';
 import DebugLogs from '../view/job/DebugLogs';
@@ -209,7 +209,7 @@ export default class Editor extends BaseObject {
 				propsData: {
 					dataFlow: dataFlow,
 				},
-				component: EchartData
+				component: Monitor
 			});
 			self.getRightSidebar().add(monitor);
 		}

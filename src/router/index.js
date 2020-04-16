@@ -3,7 +3,6 @@ import Router from 'vue-router';
 import layout from '../view/layout';
 import Job from '../view/job/Job';
 import Aggregate from '../view/job/Aggregate';
-import echartData from '../view/job/echartData';
 import DataVerify from '../view/job/DataVerify/List';
 
 import clusterManagement from '../view/clusterManagement/clusterManagement';
@@ -40,10 +39,6 @@ export default new Router({
 			path: '/dataFlows',
 			name: 'DataFlows',
 			component: DataFlows
-		}, {
-			path: '/echartData',
-			name: 'echartData',
-			component: echartData
 		}, {
 			path: '/aggregate',
 			name: 'aggregate',
