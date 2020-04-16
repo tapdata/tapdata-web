@@ -1,14 +1,14 @@
 <template>
 	<div class="data-verify">
 		<div class="table-box">
-			<div class="dv-header">数据校验</div>
+			<div class="dv-header">{{ $t('dataVerify.dataVerify') }} </div>
 			<el-table
 					:data="tableData"
 					border
 					style="width: 100%">
 				<el-table-column
 						prop="type"
-						label="校验方式"
+						:label="$t('dataVerify.dataWay')"
 						width="150">
 					<template slot-scope="scope">
 						<span :style="`color: ${ colorMap[scope.row.type] };`"> {{ $t('dataVerify.' + scope.row.type) }} </span>
@@ -16,12 +16,13 @@
 				</el-table-column>
 				<el-table-column
 						prop="condition.value"
-						label="采样范围"
+						:label="$t('dataVerify.range')"
 						width="80">
 				</el-table-column>
 				<el-table-column
 						prop="source.tableName"
-						label="源头表">
+						:label="$t('dataVerify.source')"
+						>
 					<template slot-scope="scope">
 						<span v-if="scope.row.source.filter" class="dv-tag">SQL</span>
 						<span> {{ scope.row.source.tableName}} </span>
@@ -29,7 +30,8 @@
 				</el-table-column>
 				<el-table-column
 						prop="target.tableName"
-						label="目标表">
+						:label="$t('dataVerify.target')"
+						>
 					<template slot-scope="scope">
 						<span v-if="scope.row.validateCode" class="dv-tagJS">JS</span>
 						<span> {{ scope.row.target.tableName}} </span>
@@ -37,7 +39,8 @@
 				</el-table-column>
 				<el-table-column
 						width="60"
-						label="操作">
+						:label="$t('dataVerify.operate')"
+						>
 					<template slot-scope="scope">
 						<span class="el-icon-edit" @click="handleEdit(scope.$index)"></span>
 						<span class="el-icon-close" @click="handleDelete(scope.$index)"></span>
@@ -48,8 +51,8 @@
 		<el-button class="dv-btn" size="mini" icon="el-icon-plus" @click="handleShowDrawer"></el-button>
 		<div class="dv-btn-footer-wrapper">
 			<div class="dv-btn-footer-box">
-				<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleLoading">开始检验</el-button>
-				<el-button size="mini" class="dv-btn-footer">返回</el-button>
+				<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleLoading">{{ $t('dataVerify.start')}}</el-button>
+				<el-button size="mini" class="dv-btn-footer">{{ $t('dataVerify.back')}}</el-button>
 			</div>
 		</div>
 		<el-drawer
@@ -59,23 +62,23 @@
 				class="dv-drawer"
 				:with-header="false"
 				:before-close="handleClose">
-			<div class="dv-add-header">校验条件设置</div>
+			<div class="dv-add-header">{{ $t('dataVerify.dataVerifySetting')}}</div>
 			<el-form class="dv-add-form">
-				<div class="dv-add-form-text" >校验方式</div>
+				<div class="dv-add-form-text" >{{ $t('dataVerify.dataWay')}}</div>
 				<el-form-item>
 					<el-radio-group v-model="type" size="mini">
-						<el-radio border  label="row" width="150px">行数校验</el-radio>
-						<el-radio border  label="hash" width="150px">哈希校验</el-radio>
-						<el-radio border  label="advance" width="150px">高级校验</el-radio>
+						<el-radio border  label="row" width="150px">{{ $t('dataVerify.row')}}</el-radio>
+						<el-radio border  label="hash" width="150px">{{ $t('dataVerify.hash')}}</el-radio>
+						<el-radio border  label="advance" width="150px">{{ $t('dataVerify.advance')}}</el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item v-show="type !=='row'">
-					<div class="dv-add-form-text">校验条件</div>
+					<div class="dv-add-form-text">{{ $t('dataVerify.condition')}}</div>
 					<el-row gutter="10">
 						<el-col :span="12">
 							<el-select size="mini" v-model="condition.type">
-								<el-option value="rows" label="按行数"></el-option>
-								<el-option value="sampleRate" label="按采样率"></el-option>
+								<el-option value="rows" :label="$t('dataVerify.rows')"></el-option>
+								<el-option value="sampleRate" :label="$t('dataVerify.sampleRate')"></el-option>
 							</el-select>
 						</el-col>
 						<el-col :span="12" >
@@ -84,7 +87,7 @@
 					</el-row>
 				</el-form-item>
 				<el-form-item >
-					<div class="dv-add-form-text">源头表</div>
+					<div class="dv-add-form-text">{{ $t('dataVerify.source')}}</div>
 					<el-row>
 						<el-col :span="24">
 							<el-select size="mini" style="width: 100%" v-model="source.stageId">
@@ -99,7 +102,7 @@
 					</el-row>
 					<el-row v-show="type !=='advance'">
 						<el-checkbox v-model="checkedSource"></el-checkbox>
-						<span style="font-size: 12px">SQL/MQL条件</span>
+						<span style="font-size: 12px">SQL/MQL</span>
 					</el-row>
 					<el-row v-show="checkedSource && type !=='advance'">
 						<el-col :span="24">
@@ -108,7 +111,7 @@
 					</el-row>
 				</el-form-item>
 				<el-form-item>
-					<div class="dv-add-form-text">目标表</div>
+					<div class="dv-add-form-text">{{ $t('dataVerify.target')}}</div>
 					<el-row>
 						<el-col :span="24" >
 							<el-select size="mini" style="width: 100%" v-model="target.stageId">
@@ -123,14 +126,14 @@
 					</el-row>
 					<el-row v-show="type!=='advance'">
 						<el-checkbox v-model="checkedTarget"></el-checkbox>
-						<span style="font-size: 12px">SQL/MQL条件</span>
+						<span style="font-size: 12px">SQL/MQL</span>
 					</el-row>
 					<el-row v-show="checkedTarget && type!=='advance'" >
 						<el-col :span="24">
 							<el-input type="textarea" v-model="target.filter"></el-input>
 						</el-col>
 					</el-row>
-					<div v-show="type==='advance'" class="dv-add-form-text">JS校验代码</div>
+					<div v-show="type==='advance'" class="dv-add-form-text">JS</div>
 					<el-row v-show="type==='advance'">
 						<el-col :span="24">
 							<el-input type="textarea" v-model="validateCode"></el-input>
@@ -140,8 +143,8 @@
 			</el-form>
 			<div class="dv-btn-footer-wrapper">
 				<div class="dv-btn-footer-box">
-					<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleAdd">确认</el-button>
-					<el-button size="mini" class="dv-btn-footer" @click="disabledDrawer=false">取消</el-button>
+					<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleAdd">{{ $t('dataVerify.confirm')}}</el-button>
+					<el-button size="mini" class="dv-btn-footer" @click="disabledDrawer=false">{{ $t('dataVerify.cancel')}}</el-button>
 				</div>
 			</div>
 		</el-drawer>

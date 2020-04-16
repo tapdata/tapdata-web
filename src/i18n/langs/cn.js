@@ -440,7 +440,32 @@ const cn = {
 	dataVerify: {
 		row: "行数校验",
 		hash: '哈希校验',
-		advance: '高级校验'
+		advance: '高级校验',
+		dataVerify: '数据校验',
+		dataWay:'校验方式',
+		range:"采样范围",
+		source:'源表',
+		target:'目标表',
+		operate: '操作',
+		dataVerifySetting:'校验条件设置',
+		confirm: '确认',
+		start:'开始校验',
+		back:'返回',
+		add:'添加',
+		refresh:'刷新',
+		cancel:'取消',
+		overView:'校验总览',
+		time:'校验时间',
+		duration:'耗时',
+		result:'校验结果',
+		linageDifference:'总体行数差',
+		errorTotal:'不匹配条数',
+		accuracyRate:'准确率',
+		errorComparison:'错误对比',
+		again:'再次校验',
+		rows:'按行数校验',
+		sampleRate:'按百分比',
+		condition:'校验条件',
 	}
 };
 

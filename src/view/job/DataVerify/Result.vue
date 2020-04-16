@@ -3,28 +3,28 @@
 		<div class="dv-pre-btn"><el-button size="mini" type="primary" @click="handleAddList">再次校验</el-button></div>
 		<div class="clear"></div>
 		<div class="dv-pre-box">
-			<div class="dv-pre-label">校验总览
+			<div class="dv-pre-label">{{ $t('dataVerify.overView')}}
 				<div class="dv-pre-right">
-					<span>校验时间：{{overview.validateTime}} </span>
-					<span> 耗时：{{overview.costTime}}</span>
+					<span>{{ $t('dataVerify.time')}}{{overview.validateTime}} </span>
+					<span> {{ $t('dataVerify.duration')}}{{overview.costTime}}</span>
 				</div>
 			</div>
 			<div class="dv-pre-rowTotal">
-				<p>行数校验 {{overview.validateRows}}</p>
-				<p>哈希校验 {{overview.validateHashRows}}</p>
-				<p>高级校验 {{overview.validateJsRows}}</p>
+				<p>{{ $t('dataVerify.row')}} {{overview.validateRows}}</p>
+				<p>{{ $t('dataVerify.hash')}} {{overview.validateHashRows}}</p>
+				<p>{{ $t('dataVerify.advance')}} {{overview.validateJsRows}}</p>
 			</div>
 			<div class="dv-pre-dataBox">
 				<div class="dv-pre-rowCheck">
-					<p>总体行数差</p>
+					<p>{{ $t('dataVerify.linageDifference')}}</p>
 					<div class="dv-pre-dataBox-item">{{overview.rowsDiffer}}</div>
 				</div>
 				<div class="dv-pre-rowCheck">
-					<p>不匹配条数</p>
+					<p>{{ $t('dataVerify.errorTotal')}}</p>
 					<div class="dv-pre-dataBox-item">{{overview.rowsMismatch}}</div>
 				</div>
 				<div class="dv-pre-rowCheck">
-					<p>一致率</p>
+					<p>{{ $t('dataVerify.accuracyRate')}}</p>
 					<div class="dv-pre-dataBox-item">{{overview.consistencyRate}}</div>
 				</div>
 			</div>
@@ -36,25 +36,25 @@
 					style="width: 100%">
 				<el-table-column
 						prop="date"
-						label="源表"
+						:label="$t('dataVerify.source')"
 						width="80">
 				</el-table-column>
 				<el-table-column
 						prop="name"
-						label="校验方式"
+						:label="$t('dataVerify.dataWay')"
 						width="80">
 				</el-table-column>
 				<el-table-column
 						prop="address"
-						label="采样条件">
+						:label="$t('dataVerify.range')">
 				</el-table-column>
 				<el-table-column
 						prop="address"
-						label="校验结果">
+						:label="$t('dataVerify.result')">
 				</el-table-column>
 				<el-table-column
 						prop="address"
-						label="准确率">
+						:label="$t('dataVerify.accuracyRate')">
 				</el-table-column>
 			</el-table>
 		</div>
@@ -62,9 +62,9 @@
 			<el-row :gutter="10">
 				<el-col :span="8">
 					<el-select size="mini" v-model="overview.validateType">
-						<el-option value="row" label="行数校验"></el-option>
-						<el-option value="hash" label="哈希校验"></el-option>
-						<el-option value="advance" label="高级校验"></el-option>
+						<el-option value="row" :label="$t('dataVerify.row')"></el-option>
+						<el-option value="hash" :label="$t('dataVerify.hash')"></el-option>
+						<el-option value="advance" :label="$t('dataVerify.advance')"></el-option>
 					</el-select>
 				</el-col>
 				<el-col :span="8">
@@ -75,9 +75,9 @@
 			</el-row>
 			<div class="dv-contrast-box">
 				<div class="dv-contrast-header">
-					错误对比
+					{{$t('dataVerify.errorComparison')}}
 					<div class="dv-pre-right">
-						<span>高级校验 </span>
+						<span>{{$t('dataVerify.advance')}} </span>
 						<el-pagination
 								class="dv-result-pagination"
 								:page-size="20"
@@ -89,7 +89,7 @@
 				</div>
 				<div class="dv-contrast-content">
 					<div class="dv-contrast-content-item">
-						<div class="dv-contrast-content-item-tip">源头表</div>
+						<div class="dv-contrast-content-item-tip">{{$t('dataVerify.source')}} </div>
 						<div  class="dv-contrast-content-item-text">
 							_id : 5d2b01296d8c71218475f4bd
 							CLAIM_ID : "CL_000000001"
@@ -105,7 +105,7 @@
 						</div>
 					</div>
 					<div class="dv-contrast-content-item">
-						<div  class="dv-contrast-content-item-tip">目标表</div>
+						<div  class="dv-contrast-content-item-tip">{{$t('dataVerify.target')}} </div>
 						<div  class="dv-contrast-content-item-text">
 							_id : 5d2b01296d8c71218475f4bd
 							CLAIM_ID : "CL_000000001"

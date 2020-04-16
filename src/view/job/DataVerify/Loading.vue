@@ -2,9 +2,9 @@
 	<div >
 		<div v-loading="loading" style="margin-top: 100px;padding-bottom:100px"></div>
 		<div class="btn-box">
-			<el-button @click="handleShowResult" size="mini">刷新</el-button>
-			<el-button @click="handleShowAddList" size="mini">返回</el-button>
-			<el-button @click="handleVerifyCancle" size="mini">取消</el-button>
+			<el-button @click="handleShowResult" size="mini">{{ $t('dataVerify.refresh')}}</el-button>
+			<el-button @click="handleShowAddList" size="mini">{{ $t('dataVerify.back')}}</el-button>
+			<el-button @click="handleVerifyCancle" size="mini">{{ $t('dataVerify.cancel')}}</el-button>
 		</div>
 	</div>
 </template>

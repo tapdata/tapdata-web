@@ -432,9 +432,34 @@ const en = {
 		}
 	},
 	dataVerify: {
-		row: "row data verify",
-		hash: 'hash data verify',
-		advance: 'advance data verify'
+		row: "row verify",
+		hash: 'hash verify',
+		advance: 'advance verify',
+		dataVerify: 'data verify',
+		dataWay:'data way',
+		range:"range",
+		source:'source',
+		target:'target',
+		operate: 'operate',
+		dataVerifySetting:'data verify Setting',
+		confirm: 'confirm',
+		start:'start',
+		back:'back',
+		add:'add',
+		refresh:'refresh',
+		cancel:'cancel',
+		overView:'overView',
+		time:'time',
+		duration:'duration',
+		result:'result',
+		linageDifference:'linage difference',
+		errorTotal:'error Total',
+		accuracyRate:'accuracy Rate',
+		errorComparison:'error Comparison',
+		again: 'Check again',
+		rows: 'Check by number of rows',
+		sampleRate: 'By percentage',
+		condition: 'Check condition',
 	}
 };
 

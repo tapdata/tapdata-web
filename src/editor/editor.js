@@ -299,26 +299,27 @@ export default class Editor extends BaseObject {
 		// }
 	}
 	showDataVerify(disableDirective){
-		if(disableDirective){
-			this.getRightSidebar().removeAll();
-			let dataVerify = this.getBottomTabPanel().getChildByName('dataVerify');
-			if( !dataVerify ){
-				dataVerify = new VueComponent({
-					title: i18n.t('editor.ui.sidebar.capture'),
-					name: 'dataVerify',
-					editor: this,
-					propsData: {
-						dataFlow: '',
-					},
-					component: DataVerify
-				});
-				this.getRightSidebar().add(dataVerify);
-			}
-			this.getRightSidebar().show();
-		}else {
-			this.getRightSidebar().removeAll();
-			this.getRightSidebar().hide();
+		this.getRightSidebar().removeAll();
+		let dataVerify = this.getBottomTabPanel().getChildByName('dataVerify');
+		if( !dataVerify ){
+			dataVerify = new VueComponent({
+				title: i18n.t('editor.ui.sidebar.capture'),
+				name: 'dataVerify',
+				editor: this,
+				propsData: {
+					dataFlow: '',
+				},
+				component: DataVerify
+			});
+			this.getRightSidebar().add(dataVerify);
 		}
+		this.getRightSidebar().show();
+		// if(disableDirective){
+		//
+		// }else {
+		// 	this.getRightSidebar().removeAll();
+		// 	this.getRightSidebar().hide();
+		// }
 
 	}
 	showLoading(){
