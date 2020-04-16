@@ -132,7 +132,7 @@
 			</el-form>
 			<div class="dv-btn-footer-wrapper">
 				<div class="dv-btn-footer-box">
-					<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleSubmit">确认</el-button>
+					<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleAdd">确认</el-button>
 					<el-button size="mini" class="dv-btn-footer" @click="disabledDrawer=false">取消</el-button>
 				</div>
 			</div>
@@ -142,12 +142,15 @@
 
 <script>
 	import factory from '../../../api/factory';
+	import log from "../../../log";
+
 	const dataFlows = factory('DataFlows');
 
 	export default {
 		data() {
 			return {
 				id:'',
+				editIndex:-1,
 				disabledDrawer: false,
 				direction: 'rtl',
 				checkedSource:false,
@@ -251,12 +254,16 @@
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data) {
 							this.tableData = res.data.validationSettings;
-							console.log(this.tableData);
+							log('dataVerify.tableData',this.tableData);
 						}
 					}
 				});
 			},
-			handleSubmit(){
+			handleAdd(){
+				log('edit_status',this.editIndex);
+				if(this.editIndex !== -1){
+					this.tableData.splice(this.editIndex,1); //是否是编辑 先删除后新增
+				}
 				let add = {
 					type: this.type,// row: 行数 hash：哈希  advance：高级校验
 					condition: this.condition,
@@ -269,6 +276,7 @@
 				let data ={
 					validationSettings:this.tableData
 				};
+
 				dataFlows.patchId(this.id,data).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						this.disabledDrawer =false;
@@ -294,6 +302,7 @@
 			},
 			handleEdit(index){
 				this.disabledDrawer =true;
+				this.editIndex = index;
 				this.condition = this.tableData[index].condition;
 				this.source = this.tableData[index].source;
 				this.target = this.tableData[index].target;
