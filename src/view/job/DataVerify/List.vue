@@ -87,10 +87,13 @@
 					<div class="dv-add-form-text">源头表</div>
 					<el-row>
 						<el-col :span="24">
-							<el-select size="mini" style="width: 100%" v-model="source.tableName">
-								<el-option value="1"></el-option>
-								<el-option value="1"></el-option>
-								<el-option value="1"></el-option>
+							<el-select size="mini" style="width: 100%" v-model="source.stageId">
+								<el-option
+										v-for="item in sourceList"
+										:key="item.stageId"
+										:label="item.tableName"
+										:value="item.stageId">
+								</el-option	>
 							</el-select>
 						</el-col>
 					</el-row>
@@ -107,9 +110,14 @@
 				<el-form-item>
 					<div class="dv-add-form-text">目标表</div>
 					<el-row>
-						<el-col :span="24" v-model="target.tableName">
-							<el-select size="mini" style="width: 100%">
-								<el-option value="5e9408531d431f06308e9c4d"></el-option>
+						<el-col :span="24" >
+							<el-select size="mini" style="width: 100%" v-model="target.stageId">
+								<el-option
+										v-for="item in sourceList"
+										:key="item.stageId"
+										:label="item.tableName"
+										:value="item.stageId">
+								</el-option>
 							</el-select>
 						</el-col>
 					</el-row>
@@ -155,6 +163,7 @@
 				direction: 'rtl',
 				checkedSource:false,
 				checkedTarget:false,
+				sourceList:[],
 				type: "row",// row: 行数 hash：哈希  advance：高级校验
 				condition: {
 					type:'rows',      //# rows：按行数参与校验，sampleRate：按采样率参与校验
@@ -168,7 +177,8 @@
 				},
 				target: {
 					stageId: "",
-					tableName: ""
+					tableName: "",
+					filter: ""
 				},
 				validateCode:'',
 				colorMap: {
@@ -177,63 +187,12 @@
 					advance: '#9889D8',
 				},
 				tableData:[],
-				// tableData: [{
-				// 	type: "row",// row: 行数 hash：哈希  advance：高级校验
-				// 	condition: {
-				// 		type: "rows",      //# rows：按行数参与校验，sampleRate：按采样率参与校验
-				// 		//# type为rows时表示行数；type为sampleRate时，表示采样率，如：
-				// 		value: "90",
-				// 	},
-				// 	source: {
-				// 		stageId: "5e9408531d431f06308e9c4d",
-				// 		tableName: "POLICY",
-				// 		filter: "select * from POLICY where POLICY_ID > 1000"
-				// 	},
-				// 	target: {
-				// 		stageId: "5e9408531d431f06308e9c4d",
-				// 		tableName: "CustomerPolicy"
-				// 	},
-				// 	validateCode: "xxxxxxxxxx" //#Javascript
-				// },{
-				// 	type: "hash",// row: 行数 hash：哈希  advance：高级校验
-				// 	condition: {
-				// 		type: "rows",      //# rows：按行数参与校验，sampleRate：按采样率参与校验
-				// 		//# type为rows时表示行数；type为sampleRate时，表示采样率，如：
-				// 		value: "90",
-				// 	},
-				// 	source: {
-				// 		stageId: "5e9408531d431f06308e9c4d",
-				// 		tableName: "POLICY",
-				// 		filter: "select * from POLICY where POLICY_ID > 1000"
-				// 	},
-				// 	target: {
-				// 		stageId: "5e9408531d431f06308e9c4d",
-				// 		tableName: "CustomerPolicy"
-				// 	},
-				// 	validateCode: "xxxxxxxxxx" //#Javascript
-				// },{
-				// 	type: "advance",// row: 行数 hash：哈希  advance：高级校验
-				// 	condition: {
-				// 		type: "rows",      //# rows：按行数参与校验，sampleRate：按采样率参与校验
-				// 		//# type为rows时表示行数；type为sampleRate时，表示采样率，如：
-				// 		value: "90",
-				// 	},
-				// 	source: {
-				// 		stageId: "5e9408531d431f06308e9c4d",
-				// 		tableName: "POLICY",
-				// 		filter: "select * from POLICY where POLICY_ID > 1000"
-				// 	},
-				// 	target: {
-				// 		stageId: "5e9408531d431f06308e9c4d",
-				// 		tableName: "CustomerPolicy"
-				// 	},
-				// 	validateCode: "" //#Javascript
-				// }]
 			};
 		},
 		created() {
 			this.id =this.getUrlSearch('id');
 			this.getData(this.id);
+			this.getSourceList();
 		},
 		methods: {
 			handleClose(){
@@ -247,6 +206,8 @@
 					filter: JSON.stringify({
 						fields: {
 							"validationSettings": true,
+							"validateStatus": true,
+							"dataFlowId": true,
 						}
 					})
 				}, params);
@@ -264,6 +225,25 @@
 				if(this.editIndex !== -1){
 					this.tableData.splice(this.editIndex,1); //是否是编辑 先删除后新增
 				}
+
+				if(this.source.stageId){
+					let op = this.sourceList.filter(item => item.stageId === this.source.stageId);
+					log('op.source',op);
+					this.source.tableName = op[0].tableName;
+					this.source.stageId = op[0].stageId;
+					this.source.primaryKeys = op[0].primaryKeys;
+					this.source.connectionId = op[0].connectionId;
+				}
+				if(this.target.stageId){
+					let op = this.sourceList.filter(item => item.stageId === this.target.stageId);
+					log('op.target',op);
+					this.target.tableName = op[0].tableName;
+					this.target.stageId = op[0].stageId;
+					this.target.primaryKeys =op[0].primaryKeys;
+					this.target.connectionId = op[0].connectionId;
+					log(this.target);
+				}
+
 				let add = {
 					type: this.type,// row: 行数 hash：哈希  advance：高级校验
 					condition: this.condition,
@@ -271,8 +251,12 @@
 					target:this.target ,
 					validateCode:this.validateCode,
 				};
-				this.tableData.push(add);
-
+				if(!this.tableData){
+					this.tableData = [];
+					this.tableData.push(add);
+				}else {
+					this.tableData.push(add);
+				}
 				let data ={
 					validationSettings:this.tableData
 				};
@@ -285,8 +269,20 @@
 				});
 			},
 			handleLoading(){
+				if(this.tableData.length === 0){
+					this.$message.info('please add data verify');
+					return;
+				}
 				let self = this;
-				self.editor.showLoading();
+				// 状态修改为 waiting
+				let data ={
+					validateStatus:'waiting'
+				};
+				dataFlows.patchId(this.id,data).then(res => {
+					if (res.statusText === "OK" || res.status === 200) {
+						self.editor.showLoading();
+					}
+				});
 			},
 			handleDelete(index){
 				this.tableData.splice(index,1);
@@ -308,6 +304,14 @@
 				this.target = this.tableData[index].target;
 				this.type = this.tableData[index].type;
 				this.validateCode = this.tableData[index].validateCode;
+			},
+			getSourceList(){
+				dataFlows.getSourceList(this.id).then(res => {
+					if (res.statusText === "OK" || res.status === 200) {
+						this.sourceList = res.data;
+						log('source.list',res.data);
+					}
+				});
 			},
 			getUrlSearch(name) {
 				// 未传参，返回空

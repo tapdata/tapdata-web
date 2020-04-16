@@ -221,7 +221,7 @@
 		width: 72%;
 		display: flex;
 		margin-left: 10px;
-		justify-content:space-between;
+		justify-content:space-around;
 	}
 	.dv-pre-dataBox-item{
 		font-size:50px;

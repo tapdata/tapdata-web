@@ -10,6 +10,11 @@
 </template>
 
 <script>
+	import factory from '../../../api/factory';
+	import log from "../../../log";
+
+	const dataFlows = factory('DataFlows');
+
 	export default {
 		name: "Loading.vue",
 		data(){
@@ -27,8 +32,16 @@
 				self.editor.showDataVerify();
 			},
 			handleVerifyCancle(){
-				// let self = this;
-				// self.editor.showResult();
+				let self = this;
+				// 状态修改为 draft
+				let data ={
+					validateStatus:'draft'
+				};
+				dataFlows.patchId(this.id,data).then(res => {
+					if (res.statusText === "OK" || res.status === 200) {
+						self.editor.showLoading();
+					}
+				});
 			}
 		}
 	};

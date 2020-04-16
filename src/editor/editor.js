@@ -298,24 +298,28 @@ export default class Editor extends BaseObject {
 			this.getBottomSidebar().show();
 		// }
 	}
-	showDataVerify(){
-		// add capture
-		this.getRightSidebar().removeAll();
-		let dataVerify = this.getBottomTabPanel().getChildByName('dataVerify');
-		if( !dataVerify ){
-			dataVerify = new VueComponent({
-				title: i18n.t('editor.ui.sidebar.capture'),
-				name: 'dataVerify',
-				editor: this,
-				propsData: {
-					dataFlow: '',
-				},
-				component: DataVerify
-			});
-			this.getRightSidebar().add(dataVerify);
+	showDataVerify(disableDirective){
+		if(disableDirective){
+			this.getRightSidebar().removeAll();
+			let dataVerify = this.getBottomTabPanel().getChildByName('dataVerify');
+			if( !dataVerify ){
+				dataVerify = new VueComponent({
+					title: i18n.t('editor.ui.sidebar.capture'),
+					name: 'dataVerify',
+					editor: this,
+					propsData: {
+						dataFlow: '',
+					},
+					component: DataVerify
+				});
+				this.getRightSidebar().add(dataVerify);
+			}
+			this.getRightSidebar().show();
+		}else {
+			this.getRightSidebar().removeAll();
+			this.getRightSidebar().hide();
 		}
-		this.getRightSidebar().show();
-		this.getBottomSidebar().hide();
+
 	}
 	showLoading(){
 		// add capture
@@ -334,7 +338,6 @@ export default class Editor extends BaseObject {
 			this.getRightSidebar().add(dvLoading);
 		}
 		this.getRightSidebar().show();
-		this.getBottomSidebar().hide();
 	}
 	showResult(){
 		// add capture
@@ -353,7 +356,6 @@ export default class Editor extends BaseObject {
 			this.getRightSidebar().add(dvResult);
 		}
 		this.getRightSidebar().show();
-		this.getBottomSidebar().hide();
 	}
 	setData(dataFlow){
 		this.graph.loadData(JSON.parse(dataFlow.editorData));
