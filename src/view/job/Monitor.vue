@@ -1,5 +1,5 @@
 <template>
-	<div class="echartData">
+	<div class="e-job-monitor">
 		<el-form inline>
 			<el-form-item>
 				<el-select v-model="domValue" size="mini">
@@ -96,7 +96,7 @@
 	const DataFlowInsights = factory('DataFlowInsights');
 	let intervalTime = 5000;
 	export default {
-		name: 'echartData',
+		name: 'JobMonitor',
 		components: {echartHead, echartsCompinent, shaftlessEchart},
 		props: {
 			dataFlow: {
@@ -709,7 +709,6 @@
 			},
 
 			getThroughputEchart(time, series1, series2) {
-				//log('EChartData.getThroughputEchart', time, series1, series2);
 				this.throughputData.xAxis.data = time;
 				this.throughputData.series[0].data = series1;
 				this.throughputData.series[1].data = series2;
@@ -804,7 +803,7 @@
 	};
 </script>
 <style scoped lang="less">
-	.echartData {
+	.e-job-monitor {
 		width: 100%;
 		padding: 10px 15px 15px;
 		box-sizing: border-box;

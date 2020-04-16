@@ -87,7 +87,7 @@
 	};
 
 	export default {
-		name: "Entity1",
+		name: "SchemaEditor",
 		props: {
 			width: {
 				type: Number,
@@ -111,11 +111,6 @@
 			}
 		},
 		data() {
-			//TODO: 1. 修改父节点名字时，下面会多出一行
-			//TODO: 2. 父级节点数据类型只能有 map, array
-			//TODO: 3. 组合操作 回退无效
-			//TODO： 4. 删除时 颜色置灰
-
 			return {
 				operations: [],
 			};
