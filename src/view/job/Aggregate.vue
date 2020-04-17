@@ -28,7 +28,9 @@
 									:label=" '> ' + $t('dataFlow.aggExpression')"
 									:prop="'aggregations.' + index +'.aggExpression'"
 									:required="item.aggFunction !== 'COUNT'">
-								<el-select v-model="item.aggExpression" :disabled="item.aggFunction === 'COUNT'">
+								<el-select v-model="item.aggExpression" filterable allow-create
+                  default-first-option
+                  :disabled="item.aggFunction === 'COUNT'">
 									<el-option
 											v-for="item in expressionList"
 											:key="item.field_name"
@@ -219,11 +221,20 @@
 		}
 
 		.el-form-item {
-			margin-bottom: 12px;
+      margin-bottom: 12px;
+      .el-form-item__label,.el-input__inner {
+        font-size: 12px;
+      }
+      .el-input__inner { height: 30px; line-height: 30px;}
 		}
 
 		.aggregateName .el-form-item__content {
-			z-index: 2;
+      z-index: 2;
+    }
+
+    .el-form-item__content {
+      .el-button { padding: 8px 15px; font-size: 12px;}
+      .el-input__inner { height: 30px!important; line-height: 30px;}
 		}
 	}
 </style>

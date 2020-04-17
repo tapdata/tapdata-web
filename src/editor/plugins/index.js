@@ -16,3 +16,4 @@ export * from './FileNode';
 export * from './GridFsNode';
 export * from './Dummy';
 export * from './ApiNode';
+export * from './ESNode';

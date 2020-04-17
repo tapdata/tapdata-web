@@ -1,88 +1,95 @@
 <template>
 	<div class="data-contPreView">
-		<div class="dv-pre-btn"><el-button size="mini" type="primary" @click="handleAddList">再次校验</el-button></div>
+		<div class="dv-pre-btn"><el-button size="mini" type="primary" @click="handleAddList"> {{ $t('dataVerify.again')}}</el-button></div>
 		<div class="clear"></div>
 		<div class="dv-pre-box">
-			<div class="dv-pre-label">校验总览
+			<div class="dv-pre-label">{{ $t('dataVerify.overView')}}
 				<div class="dv-pre-right">
-					<span>校验时间：{{overview.validateTime}} </span>
-					<span> 耗时：{{overview.costTime}}</span>
+					<span>{{ $t('dataVerify.time')}}: {{overview.validateTime}} </span>
+					<span> {{ $t('dataVerify.duration')}}: {{overview.costTime}}</span>
 				</div>
 			</div>
 			<div class="dv-pre-rowTotal">
-				<p>行数校验 {{overview.validateRows}}</p>
-				<p>哈希校验 {{overview.validateHashRows}}</p>
-				<p>高级校验 {{overview.validateJsRows}}</p>
+				<p>{{ $t('dataVerify.row')}} {{overview.validateRows}}</p>
+				<p>{{ $t('dataVerify.hash')}} {{overview.validateHashRows}}</p>
+				<p>{{ $t('dataVerify.advance')}} {{overview.validateJsRows}}</p>
 			</div>
 			<div class="dv-pre-dataBox">
 				<div class="dv-pre-rowCheck">
-					<p>总体行数差</p>
+					<p>{{ $t('dataVerify.linageDifference')}}</p>
 					<div class="dv-pre-dataBox-item">{{overview.rowsDiffer}}</div>
 				</div>
 				<div class="dv-pre-rowCheck">
-					<p>不匹配条数</p>
+					<p>{{ $t('dataVerify.errorTotal')}}</p>
 					<div class="dv-pre-dataBox-item">{{overview.rowsMismatch}}</div>
 				</div>
 				<div class="dv-pre-rowCheck">
-					<p>一致率</p>
+					<p>{{ $t('dataVerify.accuracyRate')}}</p>
 					<div class="dv-pre-dataBox-item">{{overview.consistencyRate}}</div>
 				</div>
 			</div>
 		</div>
 		<div class="dv-contrast-table">
 			<el-table
-					:data="tableData"
 					border
 					height="250"
 					style="width: 100%">
 				<el-table-column
 						prop="date"
-						label="源表"
-						width="180">
+						:label="$t('dataVerify.source')"
+						width="80">
 				</el-table-column>
 				<el-table-column
 						prop="name"
-						label="校验方式"
-						width="180">
+						:label="$t('dataVerify.dataWay')"
+						width="80">
 				</el-table-column>
 				<el-table-column
 						prop="address"
-						label="采样条件">
+						:label="$t('dataVerify.range')">
 				</el-table-column>
 				<el-table-column
 						prop="address"
-						label="校验结果">
+						:label="$t('dataVerify.result')">
 				</el-table-column>
 				<el-table-column
 						prop="address"
-						label="准确率">
+						:label="$t('dataVerify.accuracyRate')">
 				</el-table-column>
 			</el-table>
 		</div>
 		<div>
-			<el-row gutter="10">
+			<el-row :gutter="10">
 				<el-col :span="8">
-					<el-select size="mini" style="width: 100%">
-						<option value="1"></option>
+					<el-select size="mini" v-model="overview.validateType">
+						<el-option value="row" :label="$t('dataVerify.row')"></el-option>
+						<el-option value="hash" :label="$t('dataVerify.hash')"></el-option>
+						<el-option value="advance" :label="$t('dataVerify.advance')"></el-option>
 					</el-select>
 				</el-col>
 				<el-col :span="8">
-					<el-select size="mini" style="width: 100%">
-						<option value="1"></option>
+					<el-select size="mini" v-model="overview.source">
+						<el-option value="5e9408531d431f06308e9c4d" label="POLICY"></el-option>
 					</el-select>
 				</el-col>
 			</el-row>
 			<div class="dv-contrast-box">
 				<div class="dv-contrast-header">
-					错误对比
+					{{$t('dataVerify.errorComparison')}}
 					<div class="dv-pre-right">
-						<span>高级校验 </span>
-						<span> 耗时：12min</span>
+						<span>{{$t('dataVerify.advance')}} </span>
+						<el-pagination
+								class="dv-result-pagination"
+								:page-size="20"
+								:pager-count="0"
+								layout="prev, next"
+								:total="1000">
+						</el-pagination>
 					</div>
 				</div>
 				<div class="dv-contrast-content">
 					<div class="dv-contrast-content-item">
-						<div class="dv-contrast-content-item-tip">源头表</div>
+						<div class="dv-contrast-content-item-tip">{{$t('dataVerify.source')}} </div>
 						<div  class="dv-contrast-content-item-text">
 							_id : 5d2b01296d8c71218475f4bd
 							CLAIM_ID : "CL_000000001"
@@ -98,7 +105,7 @@
 						</div>
 					</div>
 					<div class="dv-contrast-content-item">
-						<div  class="dv-contrast-content-item-tip">目标表</div>
+						<div  class="dv-contrast-content-item-tip">{{$t('dataVerify.target')}} </div>
 						<div  class="dv-contrast-content-item-text">
 							_id : 5d2b01296d8c71218475f4bd
 							CLAIM_ID : "CL_000000001"
@@ -140,7 +147,7 @@
 	export default {
 		data() {
 			return {
-				overview:[{
+				overview:{
 					id: "5e95db94a0507ad6ed3ec048",
 					//overview校验结果总览，tableOverview：按表统计，failedRow: 校验失败的记录
 					type: "overview",
@@ -152,17 +159,13 @@
 					rowsDiffer: "325",    //#总体行数差
 					rowsMismatch: "12",    //#不匹配条数
 					consistencyRate: "80",   // #一致率（0-100）
-					dataFlowId: "5e9408531d431f06308e9c4d"  //#该记录所属的dataFlow ID
-				}]
+					dataFlowId: "5e9408531d431f06308e9c4d", //#该记录所属的dataFlow ID，
+					validateType:'row',
+					source:'5e9408531d431f06308e9c4d',
+				}
 			};
 		},
 		methods: {
-			handleClose(){
-				this.disabledDataVerify = false;
-			},
-			handleShowDrawer(){
-				this.disabledDataVerify = true;
-			},
 			handleAddList(){
 				let self = this;
 				self.editor.showDataVerify();
@@ -173,7 +176,7 @@
 <style lang="less" scoped>
 	.dv-pre-box{
 		width:100%;
-		height:135px;
+		height:180px;
 		margin-bottom: 10px;
 		margin-top: 10px;
 		font-size: 12px;
@@ -189,7 +192,7 @@
 		font-size:14px;
 		font-weight:400;
 		color:rgba(153,153,153,1);
-		line-height:28px
+		line-height:58px;
 	}
 	.dv-pre-label{
 		height: 39px;
@@ -205,9 +208,9 @@
 	}
 	.dv-pre-rowTotal{
 		float: left;
-		width:20%;
+		width:24%;
 		font-size:12px;
-		line-height: 24px;
+		line-height: 40px;
 		height: auto;
 		margin-top: 10px;
 		margin-left: 10px;
@@ -218,13 +221,13 @@
 		width: 72%;
 		display: flex;
 		margin-left: 10px;
-		justify-content:space-between;
+		justify-content:space-around;
 	}
 	.dv-pre-dataBox-item{
-		font-size:33px;
+		font-size:50px;
 		font-weight:400;
 		color:rgba(72,182,226,1);
-		line-height:48px;
+		line-height:56px;
 	}
 	.dv-contrast-table{
 		margin-bottom: 10px;
@@ -239,8 +242,8 @@
 		border-radius:4px;
 	}
 	.dv-contrast-header{
-		height:51px;
-		line-height: 50px;
+		height:39px;
+		line-height: 39px;
 		font-size: 14px;
 		padding-left: 10px;
 		background:rgba(250,250,250,1);
@@ -274,5 +277,30 @@
 	}
 	.clear{
 		clear: both;
+	}
+</style>
+<style lang="less">
+	.dv-pre-right .el-pagination  {
+		white-space: nowrap;
+		padding: 0;
+		font-weight: 700;
+		display: inline-block;
+		background: #fafafa;
+		height: 16px;
+	}
+	.dv-pre-right  .el-pagination button:disabled{
+		background-color: #fafafa;
+	}
+	.dv-pre-right  .el-pagination button:disabled{
+		background-color: #fafafa;
+	}
+	.dv-pre-right  .el-pagination .btn-next {
+		padding-left: 0;
+	}
+	.dv-pre-right .el-pagination .btn-next, .el-pagination .btn-prev {
+		background-color: #fafafa;
+	}
+	.el-pagination button, .el-pagination span:not([class*=suffix]) {
+		height:39px;
 	}
 </style>

@@ -554,9 +554,37 @@
 			showCapture() {
 				this.editor.showCapture(this.dataFlow);
 			},
-			showDataVerify() {
+			showDataVerify(params) {
 				this.disabledDataVerify = !this.disabledDataVerify;
-				this.editor.showDataVerify(this.disabledDataVerify);
+
+				if (this.$route.query && this.$route.query.id) {
+					let _params = Object.assign({
+						filter: JSON.stringify({
+							fields: {
+								"validateStatus": true,
+							}
+						})
+					}, params);
+					dataFlowsApi.getId(this.$route.query.id,_params).then(res => {
+						if (res.statusText === "OK" || res.status === 200) {
+							if (res.data) {
+								log('dataVerify.validateStatus',res.data.validateStatus);
+								let validateStatus = res.data.validateStatus;
+
+								if(!validateStatus || validateStatus ==='draft'){
+									this.editor.showDataVerify(this.disabledDataVerify);
+								}else  if(validateStatus && validateStatus ==='completed'){
+									this.editor.showResult(this.disabledDataVerify);
+								}else  if(validateStatus && validateStatus ==='error'){
+									this.editor.showResult(this.disabledDataVerify);
+								}else  if(validateStatus && (validateStatus ==='validating' || validateStatus ==='waiting')){
+
+									this.editor.showLoading(this.disabledDataVerify);
+								}
+							}
+						}
+					});
+				}
 			},
 			setEditable(editable) {
 				log('Job.setEditable', editable, this.dataFlow);
@@ -566,7 +594,7 @@
 				} else {
 					this.$message.error(this.$t('message.save_before_running'));
 				}
-			}
+			},
 		}
 	};
 </script>

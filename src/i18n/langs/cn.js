@@ -257,38 +257,45 @@ const cn = {
 							placeholder: '请输入自定义SQL'
 						}
 					}
-				},
-				file: {
-					name: '文件',
-					tip: '文件节点',
-					none_fileName: '文件名不能为空',
-					configurationFile: '配置文件',
-					chooseFileName: '请选择文件名'
-				},
-				gridfs: {
-					name: 'GridFS',
-					tip: 'GridFS节点',
-					chooseGridFsName: '请选择GridFS',
-					gridFs_isNull: 'GridFS不能为空'
-				},
-				dummy: {
-					name: 'Dummy',
-					tip: 'Dummy节点',
-					chooseDummyName: '请选择Dummy',
-					dummy_isNull: 'Dummy不能为空'
-				},
-				api: {
-					name: 'API',
-					tip: 'api节点',
-					chooseApiName: '请选择API',
-					api_isNull: 'API不能为空'
-				},
-				Processing: {
-					name: 'API',
-					tip: 'api节点',
-					chooseApiName: '请选择API',
-					api_isNull: 'API不能为空'
-				}
+        },
+        file: {
+          name: '文件',
+          tip: '文件节点',
+          none_fileName: '文件名不能为空',
+          configurationFile: '配置文件',
+          chooseFileName:'请选择文件名'
+        },
+        gridfs: {
+          name: 'GridFS',
+          tip: 'GridFS节点',
+          chooseGridFsName: '请选择GridFS',
+          gridFs_isNull: 'GridFS不能为空'
+        },
+        dummy:{
+          name: 'Dummy',
+          tip: 'Dummy节点',
+          chooseDummyName: '请选择Dummy',
+          dummy_isNull: 'Dummy不能为空'
+        },
+        api: {
+          name: 'API',
+          tip: 'api节点',
+          chooseApiName: '请选择API',
+          api_isNull: 'API不能为空'
+        },
+        Processing: {
+          name: 'API',
+          tip: 'api节点',
+          chooseApiName: '请选择API',
+          api_isNull: 'API不能为空'
+        },
+        es: {
+          name: 'ES',
+          tip: 'Elastic search节点',
+          configurationES: '配置Elastic search',
+          chooseESName: '请选择Elastic search',
+          es_isNull: 'Elastic search不能为空'
+        }
 			},
 			processor: {
 				aggregate: {
@@ -443,7 +450,32 @@ const cn = {
 	dataVerify: {
 		row: "行数校验",
 		hash: '哈希校验',
-		advance: '高级校验'
+		advance: '高级校验',
+		dataVerify: '数据校验',
+		dataWay:'校验方式',
+		range:"采样范围",
+		source:'源表',
+		target:'目标表',
+		operate: '操作',
+		dataVerifySetting:'校验条件设置',
+		confirm: '确认',
+		start:'开始校验',
+		back:'返回',
+		add:'添加',
+		refresh:'刷新',
+		cancel:'取消',
+		overView:'校验总览',
+		time:'校验时间',
+		duration:'耗时',
+		result:'校验结果',
+		linageDifference:'总体行数差',
+		errorTotal:'不匹配条数',
+		accuracyRate:'准确率',
+		errorComparison:'错误对比',
+		again:'再次校验',
+		rows:'按行数校验',
+		sampleRate:'按百分比',
+		condition:'校验条件',
 	}
 };
 

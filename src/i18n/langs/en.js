@@ -142,8 +142,8 @@ const en = {
 		yes: 'yes',
 		no: 'no',
 		nodeName: 'Node Name',
-		aggFunction: 'Aggregation Function',
-		aggExpression: 'expression',
+		aggFunction: 'Polymerization',
+		aggExpression: 'Aggregation',
 		filterPredicate: 'Filter Predicate',
 		groupByExpression: 'Group By Expression',
 		polymerization: 'Polymerization',
@@ -258,32 +258,39 @@ const en = {
 							placeholder: 'Please input you custom sql'
 						}
 					}
-				},
-				file: {
-					name: 'File',
-					tip: 'File node',
-					none_fileName: 'The file name cannot be empty',
-					configurationFile: 'Configuration file',
-					chooseFileName: 'Please select a file name'
-				},
-				gridfs: {
-					name: 'GridFS',
-					tip: 'GridFS node',
-					chooseGridFsName: 'Please select GridFS',
-					gridFs_isNull: 'GridFS cannot be empty'
-				},
-				dummy: {
-					name: 'Dummy',
-					tip: 'Dummy node',
-					chooseDummyName: 'Please select Dummy',
-					dummy_isNull: 'Dummy cannot be empty'
-				},
-				api: {
-					name: 'API',
-					tip: 'api node',
-					chooseApiName: 'Please select API',
-					api_isNull: 'API cannot be empty'
-				}
+        },
+        file: {
+          name: 'File',
+          tip: 'File node',
+          none_fileName: 'The file name cannot be empty',
+          configurationFile: 'Configuration file',
+          chooseFileName: 'Please select a file name'
+        },
+        gridfs: {
+          name: 'GridFS',
+          tip: 'GridFS node',
+          chooseGridFsName: 'Please select GridFS',
+          gridFs_isNull: 'GridFS cannot be empty'
+        },
+        dummy: {
+          name: 'Dummy',
+          tip: 'Dummy node',
+          chooseDummyName: 'Please select Dummy',
+          dummy_isNull: 'Dummy cannot be empty'
+        },
+        api: {
+          name: 'API',
+          tip: 'api node',
+          chooseApiName: 'Please select API',
+          api_isNull: 'API cannot be empty'
+        },
+        es: {
+          name: 'ES',
+          tip: 'Elastic search node',
+          configurationES: 'Configure Elastic search',
+          chooseESName: 'Please select Elastic search',
+          es_isNull: 'Elastic search cannot be empty'
+        }
 			},
 			processor: {
 				aggregate: {
@@ -435,9 +442,34 @@ const en = {
 		}
 	},
 	dataVerify: {
-		row: "row data verify",
-		hash: 'hash data verify',
-		advance: 'advance data verify'
+		row: "row verify",
+		hash: 'hash verify',
+		advance: 'advance verify',
+		dataVerify: 'data verify',
+		dataWay:'data way',
+		range:"range",
+		source:'source',
+		target:'target',
+		operate: 'operate',
+		dataVerifySetting:'data verify Setting',
+		confirm: 'confirm',
+		start:'start',
+		back:'back',
+		add:'add',
+		refresh:'refresh',
+		cancel:'cancel',
+		overView:'overView',
+		time:'time',
+		duration:'duration',
+		result:'result',
+		linageDifference:'linage difference',
+		errorTotal:'error Total',
+		accuracyRate:'accuracy Rate',
+		errorComparison:'error Comparison',
+		again: 'Check again',
+		rows: 'Check by number of rows',
+		sampleRate: 'By percentage',
+		condition: 'Check condition',
 	}
 };
 

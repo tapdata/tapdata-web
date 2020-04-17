@@ -298,10 +298,13 @@ export default class Editor extends BaseObject {
 			this.getBottomSidebar().show();
 		// }
 	}
-	showDataVerify(){
-		// add capture
+	showDataVerify(disableDirective){
+
 		this.getRightSidebar().removeAll();
-		let dataVerify = this.getBottomTabPanel().getChildByName('dataVerify');
+		let monitor = this.getRightSidebar().getChildByName('monitor');
+		if( monitor ) this.getRightSidebar().remove(monitor);
+
+		let dataVerify = this.getRightSidebar().getChildByName('dataVerify');
 		if( !dataVerify ){
 			dataVerify = new VueComponent({
 				title: i18n.t('editor.ui.sidebar.capture'),
@@ -315,12 +318,18 @@ export default class Editor extends BaseObject {
 			this.getRightSidebar().add(dataVerify);
 		}
 		this.getRightSidebar().show();
-		this.getBottomSidebar().hide();
+		// if(disableDirective){
+		//
+		// }else {
+		// 	this.getRightSidebar().removeAll();
+		// 	this.getRightSidebar().hide();
+		// }
+
 	}
 	showLoading(){
 		// add capture
 		this.getRightSidebar().removeAll();
-		let dvLoading = this.getBottomTabPanel().getChildByName('dvLoading');
+		let dvLoading = this.getRightSidebar().getChildByName('dvLoading');
 		if( !dvLoading ){
 			dvLoading = new VueComponent({
 				title: i18n.t('editor.ui.sidebar.capture'),
@@ -334,12 +343,11 @@ export default class Editor extends BaseObject {
 			this.getRightSidebar().add(dvLoading);
 		}
 		this.getRightSidebar().show();
-		this.getBottomSidebar().hide();
 	}
 	showResult(){
 		// add capture
 		this.getRightSidebar().removeAll();
-		let dvResult = this.getBottomTabPanel().getChildByName('dvResult');
+		let dvResult = this.getRightSidebar().getChildByName('dvResult');
 		if( !dvResult ){
 			dvResult = new VueComponent({
 				title: i18n.t('editor.ui.sidebar.capture'),
@@ -353,7 +361,6 @@ export default class Editor extends BaseObject {
 			this.getRightSidebar().add(dvResult);
 		}
 		this.getRightSidebar().show();
-		this.getBottomSidebar().hide();
 	}
 	setData(dataFlow){
 		this.graph.loadData(JSON.parse(dataFlow.editorData));
