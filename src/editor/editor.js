@@ -414,6 +414,10 @@ export default class Editor extends BaseObject {
 	}
 
 	validate(){
+
+		let name = this.ui.getName();
+		if( !name ) return i18n.t('editor.cell.validate.empty_name');
+
 		let verified = this.graph.validate();
 		if( verified !== true ) return verified;
 		return this.validateGraphData();

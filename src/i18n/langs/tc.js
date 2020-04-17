@@ -258,39 +258,39 @@ const tc = {
 							placeholder: '請輸入自定義SQL'
 						}
 					}
-        },
-        file: {
-          tip: '文件節點',
-          name: '文件',
-          none_fileName: '文件名不能為空',
-          configurationFile: '配置文件',
-          choiceFileName:'請選擇文件名'
-        },
-        gridfs: {
-          name: 'GridFS',
-          tip: 'GridFS節點',
-          chooseGridFsName: '請選擇GridFS',
-          gridFs_isNull: 'GridFS不能為空'
-        },
-        dummy:{
-          name: 'Dummy',
-          tip: 'Dummy節點',
-          chooseDummyName: '請選擇Dummy',
-          dummy_isNull: 'Dummy不能為空'
-        },
-        api: {
-          name: 'API',
-          tip: 'api節點',
-          chooseApiName: '請選擇API',
-          api_isNull: 'API不能為空'
-        },
-        es: {
-          name: 'ES',
-          tip: 'Elastic search節點',
-          configurationES: '配置Elastic search',
-          chooseESName: '請選擇Elastic search',
-          es_isNull: 'Elastic search不能為空'
-        }
+				},
+				file: {
+					tip: '文件節點',
+					name: '文件',
+					none_fileName: '文件名不能為空',
+					configurationFile: '配置文件',
+					choiceFileName: '請選擇文件名'
+				},
+				gridfs: {
+					name: 'GridFS',
+					tip: 'GridFS節點',
+					chooseGridFsName: '請選擇GridFS',
+					gridFs_isNull: 'GridFS不能為空'
+				},
+				dummy: {
+					name: 'Dummy',
+					tip: 'Dummy節點',
+					chooseDummyName: '請選擇Dummy',
+					dummy_isNull: 'Dummy不能為空'
+				},
+				api: {
+					name: 'API',
+					tip: 'api節點',
+					chooseApiName: '請選擇API',
+					api_isNull: 'API不能為空'
+				},
+				es: {
+					name: 'ES',
+					tip: 'Elastic search節點',
+					configurationES: '配置Elastic search',
+					chooseESName: '請選擇Elastic search',
+					es_isNull: 'Elastic search不能為空'
+				}
 			},
 			processor: {
 				aggregate: {
@@ -446,30 +446,30 @@ const tc = {
 		hash: '哈希校驗',
 		advance: '高級校驗',
 		dataVerify: '數據校驗',
-		dataWay:'校驗方式',
-		range:"採樣範圍",
-		source:'源表',
-		target:'目標表',
+		dataWay: '校驗方式',
+		range: "採樣範圍",
+		source: '源表',
+		target: '目標表',
 		operate: '操作',
-		dataVerifySetting:'校驗條件設置',
+		dataVerifySetting: '校驗條件設置',
 		confirm: '確認',
-		start:'開始校驗',
-		back:'返回',
-		add:'添加',
-		refresh:'刷新',
-		cancel:'取消',
-		overView:'校驗總覽',
-		time:'校驗時間',
-		duration:'耗時',
-		result:'校驗結果',
-		linageDifference:'總體行數差',
-		errorTotal:'不匹配條數',
-		accuracyRate:'準確率',
-		errorComparison:'錯誤對比',
-		again:'再次校驗',
-		rows:'按行數校驗',
-		sampleRate:'按百分比',
-		condition:'校驗條件',
+		start: '開始校驗',
+		back: '返回',
+		add: '添加',
+		refresh: '刷新',
+		cancel: '取消',
+		overView: '校驗總覽',
+		time: '校驗時間',
+		duration: '耗時',
+		result: '校驗結果',
+		linageDifference: '總體行數差',
+		errorTotal: '不匹配條數',
+		accuracyRate: '準確率',
+		errorComparison: '錯誤對比',
+		again: '再次校驗',
+		rows: '按行數校驗',
+		sampleRate: '按百分比',
+		condition: '校驗條件',
 	}
 };
 
