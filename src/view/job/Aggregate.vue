@@ -28,7 +28,9 @@
 									:label=" '> ' + $t('dataFlow.aggExpression')"
 									:prop="'aggregations.' + index +'.aggExpression'"
 									:required="item.aggFunction !== 'COUNT'">
-								<el-select v-model="item.aggExpression" :disabled="item.aggFunction === 'COUNT'">
+								<el-select v-model="item.aggExpression" filterable allow-create
+                  default-first-option
+                  :disabled="item.aggFunction === 'COUNT'">
 									<el-option
 											v-for="item in expressionList"
 											:key="item.field_name"

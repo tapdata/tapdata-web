@@ -283,6 +283,13 @@ const en = {
           tip: 'api node',
           chooseApiName: 'Please select API',
           api_isNull: 'API cannot be empty'
+        },
+        es: {
+          name: 'ES',
+          tip: 'Elastic search node',
+          configurationES: 'Configure Elastic search',
+          chooseESName: 'Please select Elastic search',
+          es_isNull: 'Elastic search cannot be empty'
         }
 			},
 			processor: {

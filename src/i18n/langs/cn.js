@@ -288,6 +288,13 @@ const cn = {
           tip: 'api节点',
           chooseApiName: '请选择API',
           api_isNull: 'API不能为空'
+        },
+        es: {
+          name: 'ES',
+          tip: 'Elastic search节点',
+          configurationES: '配置Elastic search',
+          chooseESName: '请选择Elastic search',
+          es_isNull: 'Elastic search不能为空'
         }
 			},
 			processor: {

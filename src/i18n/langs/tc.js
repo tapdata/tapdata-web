@@ -284,6 +284,13 @@ const tc = {
           chooseApiName: '請選擇API',
           api_isNull: 'API不能為空'
         },
+        es: {
+          name: 'ES',
+          tip: 'Elastic search節點',
+          configurationES: '配置Elastic search',
+          chooseESName: '請選擇Elastic search',
+          es_isNull: 'Elastic search不能為空'
+        }
 			},
 			processor: {
 				aggregate: {
