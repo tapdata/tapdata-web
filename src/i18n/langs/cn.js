@@ -25,7 +25,7 @@ const cn = {
 		delete: '删除',
 		cancle: '取 消',
 		cancel: '取 消',
-		confirm: '确定',
+		confirm: '确 定',
 		placeholderMonServer: '请输入监控的服务名称',
 		placeholderCommand: '请输入命令',
 		nullContent: '不能为空',
@@ -316,7 +316,10 @@ const cn = {
 							placeholder: '请输入节点描述'
 						},
 						fieldName: '字段名称',
-						fieldType: '字段类型'
+						fieldType: '字段类型',
+						addField: '添加字段',
+						addEmbedField: '添加内嵌字段',
+						scriptDialogTitle: '设置字段脚本',
 					}
 				},
 				script: {

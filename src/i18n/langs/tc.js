@@ -303,15 +303,18 @@ const tc = {
 
 					form: {
 						name: {
-							label: '节点名称',
-							placeholder: '请输入节点名称'
+							label: '節點名稱',
+							placeholder: '請輸入節點名稱'
 						},
 						description: {
 							label: '描述',
-							placeholder: '请输入节点描述'
+							placeholder: '請輸入節點描述'
 						},
-						fieldName: '字段名称',
-						fieldType: '字段类型'
+						fieldName: '字段名稱',
+						fieldType: '字段類型',
+						addField: '添加字段',
+						addEmbedField: '添加內嵌字段',
+						scriptDialogTitle: '設置字段腳本',
 					}
 				},
 				script: {

@@ -1,6 +1,6 @@
 <template>
 	<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form">
-		<el-form-item class="e-form" :label="$t('editor.cell.data_node.database.form.label')" prop="connectionId" :rules="rules" required>
+		<el-form-item :label="$t('editor.cell.data_node.database.form.label')" prop="connectionId" :rules="rules" required>
 			<el-select filterable v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.database.form.placeholder')" size="mini">
 				<el-option
           v-for="(item, idx) in databases"

@@ -48,6 +48,32 @@ export const fieldProcessConfig = {
 				log('FieldProcess.mergeOutputSchema', data, outputSchema);
 				if (!outputSchema || !data)
 					return outputSchema;
+
+				data.operations.map((item, index) => {
+					if(item.op === 'CREATE') {
+						let triggerFieldId = item.triggerFieldId;
+						let newField = {
+							id: item.id,
+							field_name: item.field_name,
+							table_name: item.table_name,
+							original_field_name: item.field_name,
+							javaType: item.javaType,
+							data_type: "STRING",
+							primary_key_position: 0,
+							dataType: 2,
+							is_nullable: true,
+							columnSize: 0,
+							autoincrement: false,
+						};
+						if(triggerFieldId) {
+							let triggerFieldIndex = outputSchema.fields.findIndex( f => f.id === triggerFieldId);
+							outputSchema.fields.splice(triggerFieldIndex + 1, 0, newField);
+						} else
+							outputSchema.fields.push(newField);
+					}
+
+				});
+
 				data.operations.map((item, index) => {
 					let targetIndex = outputSchema.fields.findIndex(function (n, index) {
 						return n.id === item.id;

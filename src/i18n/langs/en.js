@@ -311,7 +311,10 @@ const en = {
 							placeholder: 'Please input you node description'
 						},
 						fieldName: 'Field name',
-						fieldType: 'Field type'
+						fieldType: 'Field type',
+						addField: 'Add Field',
+						addEmbedField: 'Add Embed Field',
+						scriptDialogTitle: 'Set Script',
 					}
 				},
 				script: {
