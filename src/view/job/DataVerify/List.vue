@@ -204,7 +204,7 @@
 			},
 			handleShowDrawer(){
 				this.disabledDrawer = false;
-				this.type = "row",// row: 行数 hash：哈希  advance：高级校验
+				this.type = "advance",// row: 行数 hash：哈希  advance：高级校验
 					this.condition = {
 					type:'rows',      //# rows：按行数参与校验，sampleRate：按采样率参与校验
 						//# type为rows时表示行数；type为sampleRate时，表示采样率，如：
@@ -258,7 +258,7 @@
 					this.source.connectionId = op[0].connectionId;
 				}
 				if(this.target.stageId){
-					let op = this.sourceList.filter(item => item.stageId === this.target.stageId);
+					let op = this.targetList.filter(item => item.stageId === this.target.stageId);
 					log('op.target',op);
 					this.target.tableName = op[0].tableName;
 					this.target.stageId = op[0].stageId;
