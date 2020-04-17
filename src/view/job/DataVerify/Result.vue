@@ -1,12 +1,12 @@
 <template>
 	<div class="data-contPreView">
-		<div class="dv-pre-btn"><el-button size="mini" type="primary" @click="handleAddList">再次校验</el-button></div>
+		<div class="dv-pre-btn"><el-button size="mini" type="primary" @click="handleAddList"> {{ $t('dataVerify.again')}}</el-button></div>
 		<div class="clear"></div>
 		<div class="dv-pre-box">
 			<div class="dv-pre-label">{{ $t('dataVerify.overView')}}
 				<div class="dv-pre-right">
-					<span>{{ $t('dataVerify.time')}}{{overview.validateTime}} </span>
-					<span> {{ $t('dataVerify.duration')}}{{overview.costTime}}</span>
+					<span>{{ $t('dataVerify.time')}}: {{overview.validateTime}} </span>
+					<span> {{ $t('dataVerify.duration')}}: {{overview.costTime}}</span>
 				</div>
 			</div>
 			<div class="dv-pre-rowTotal">
@@ -208,7 +208,7 @@
 	}
 	.dv-pre-rowTotal{
 		float: left;
-		width:20%;
+		width:24%;
 		font-size:12px;
 		line-height: 40px;
 		height: auto;

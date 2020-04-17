@@ -299,8 +299,12 @@ export default class Editor extends BaseObject {
 		// }
 	}
 	showDataVerify(disableDirective){
+
 		this.getRightSidebar().removeAll();
-		let dataVerify = this.getBottomTabPanel().getChildByName('dataVerify');
+		let monitor = this.getRightSidebar().getChildByName('monitor');
+		if( monitor ) this.getRightSidebar().remove(monitor);
+
+		let dataVerify = this.getRightSidebar().getChildByName('dataVerify');
 		if( !dataVerify ){
 			dataVerify = new VueComponent({
 				title: i18n.t('editor.ui.sidebar.capture'),
@@ -325,7 +329,7 @@ export default class Editor extends BaseObject {
 	showLoading(){
 		// add capture
 		this.getRightSidebar().removeAll();
-		let dvLoading = this.getBottomTabPanel().getChildByName('dvLoading');
+		let dvLoading = this.getRightSidebar().getChildByName('dvLoading');
 		if( !dvLoading ){
 			dvLoading = new VueComponent({
 				title: i18n.t('editor.ui.sidebar.capture'),
@@ -343,7 +347,7 @@ export default class Editor extends BaseObject {
 	showResult(){
 		// add capture
 		this.getRightSidebar().removeAll();
-		let dvResult = this.getBottomTabPanel().getChildByName('dvResult');
+		let dvResult = this.getRightSidebar().getChildByName('dvResult');
 		if( !dvResult ){
 			dvResult = new VueComponent({
 				title: i18n.t('editor.ui.sidebar.capture'),

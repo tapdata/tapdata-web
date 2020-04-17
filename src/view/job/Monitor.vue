@@ -1,7 +1,8 @@
 <template>
 	<div class="e-job-monitor">
-		<el-form inline>
-			<el-form-item>
+		<el-button class="e-job-monitor-btn" size="mini" type="primary" @click="handleGoDataVerify">{{ $t('dataVerify.dataVerify') }} </el-button>
+		<el-form inline >
+			<el-form-item >
 				<el-select v-model="domValue" size="mini">
 					<el-option
 							key="all"
@@ -92,6 +93,8 @@
 	import shaftlessEchart from '../../components/shaftlessEchart';
 	import factory from '../../api/factory';
 	import {EditorEventType} from "../../editor/lib/events";
+	import $ from "jquery";
+
 
 	const DataFlowInsights = factory('DataFlowInsights');
 	let intervalTime = 5000;
@@ -790,6 +793,10 @@
 				//   };
 				//   appendData();
 				// }
+			},
+			//跳转到数据校验页面
+			handleGoDataVerify(){
+				this.editor.showDataVerify();
 			}
 		},
 
@@ -807,7 +814,12 @@
 		width: 100%;
 		padding: 10px 15px 15px;
 		box-sizing: border-box;
-
+		position: relative;
+		.e-job-monitor-btn{
+			position: absolute;
+			top: 15px;
+			right: 15px;
+		}
 		.el-form-item {
 			margin-bottom: 0;
 		}
