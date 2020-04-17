@@ -1,21 +1,21 @@
 <template>
-	<div>
-		<el-form label-position="right" label-width="130px" :model="model" ref="form">
+	<div class="e-field-process">
+		<el-form class="e-form" label-position="right" label-width="130px" :model="model" ref="form">
 			<el-form-item :required="true" :label="$t('editor.cell.processor.field.form.name.label')">
-				<el-input v-model="model.name" size="mini" class="formitem-width" :placeholder="$t('editor.cell.processor.field.form.name.placeholder')"></el-input>
+				<el-input v-model="model.name" size="mini" :placeholder="$t('editor.cell.processor.field.form.name.placeholder')"></el-input>
 			</el-form-item>
 			<el-form-item :label="$t('editor.cell.processor.field.form.description.label')">
 				<el-input
-						type="textarea" v-model="model.description" class="formitem-width"
+						type="textarea" v-model="model.description"
 						:placeholder="$t('editor.cell.processor.field.form.description.placeholder')"></el-input>
 			</el-form-item>
 		</el-form>
-		<div class="contentbox">
-			<div class="contentbase contentbox-left">
+		<div class="schema-editor-container">
+			<div class="schema-editor-wrap schema-editor-container-left">
 				<schema-editor ref="entity" :originalSchema="convertSchemaToTreeData(originalSchema)"
 						:schema="convertSchemaToTreeData(schema)" :editable="true"></schema-editor>
 			</div>
-			<!-- <div class="contentbase contentbox-right">
+			<!-- <div class="schema-editor-wrap schema-editor-container-right">
 				<ul class="info-list">
 					<li>
 						<span class="text-color">name</span>
@@ -64,6 +64,7 @@
 
 				model: {
 					operations: [],
+					scripts: [],
 					name: 'Field Process',
 					type: 'field_processor',
 				},
@@ -75,9 +76,10 @@
 
 		async mounted() {
 
-			this.$refs.entity.$on('dataChanged', (operations) => {
-				log('FieldProcess.operations.changed', arguments);
-				this.model.operations = operations;
+			this.$refs.entity.$on('dataChanged', (model) => {
+				log('FieldProcess.SchemaEditor.dataChanged', model);
+				this.model.operations = model.operations;
+				this.model.scripts = model.scripts;
 			});
 		},
 
@@ -97,6 +99,7 @@
 				if (this.model.operations && schema && schema.fields) {
 
 					this.$refs.entity.setOperations(_.cloneDeep(this.model.operations));
+					this.$refs.entity.setScripts(_.cloneDeep(this.model.scripts));
 
 					this.schema = cell.mergeOutputSchema(schema, false);
 
@@ -111,42 +114,55 @@
 	};
 </script>
 
-<style scoped>
-	.formitem-width {
-		width: 300px;
-	}
+<style lang="less" scoped>
+	.e-field-process {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		height: 100%;
 
-	.contentbase {
-		float: left;
-	}
+		.e-form {
+			.el-input, .el-select, .el-textarea {
+				max-width: 400px;
+				width: 80%;
+			}
+		}
 
-	.contentbox {
-		margin-left: 130px;
-		margin-right: 20px;
-	}
+		.schema-editor-wrap {
+			margin: 0 auto;
+			width: 400px;
+			max-width: 700px;
+			min-width: 300px;
+		}
 
-	.contentbox-left {
-		width: 100%;
-	}
+		.schema-editor-container {
+			flex: 1;
+			overflow-y: auto;
+		}
 
-	.contentbox-right {
-		width: 49%;
-	}
+		.schema-editor-container-left {
+			/*width: 100%;*/
+		}
 
-	.info-list li {
-		font-size: 11px;
-		border: 1px solid #dedee4;
-		background: #f6f6f6;
-		line-height: 30px;
-		padding-left: 10px;
-		margin-bottom: 5px;
-	}
+		.schema-editor-container-right {
+			/*width: 49%;*/
+		}
 
-	.hight-color {
-		color: #c51916;
-	}
+		.info-list li {
+			font-size: 11px;
+			border: 1px solid #dedee4;
+			background: #f6f6f6;
+			line-height: 30px;
+			padding-left: 10px;
+			margin-bottom: 5px;
+		}
 
-	.text-color {
-		color: #0068b7;
+		.hight-color {
+			color: #c51916;
+		}
+
+		.text-color {
+			color: #0068b7;
+		}
 	}
 </style>

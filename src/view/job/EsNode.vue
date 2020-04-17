@@ -1,5 +1,5 @@
 <template>
-<div class="fieldName nodeStye">
+<div class="esNode nodeStye">
   <head>
     <span class="headIcon iconfont icon-you2" type="primary"></span>
     <span class="txt">{{$t("editor.nodeSettings")}}</span>
@@ -7,8 +7,8 @@
   <div class="nodeBody">
     <el-form class="e-form" label-position="top" :model="model" ref="form">
       <!-- <span class="addTxt">+新建文件</span> -->
-      <el-form-item :label="$t('editor.cell.data_node.file.configurationFile')" prop="connectionId" :rules="rules" required>
-        <el-select filterable v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.file.chooseFileName')">
+      <el-form-item :label="$t('editor.cell.data_node.es.configurationES')" prop="connectionId" :rules="rules" required>
+        <el-select filterable v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.es.chooseESName')">
           <el-option
             v-for="(item, idx) in databases"
             :label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
@@ -26,7 +26,7 @@ import factory from '../../api/factory';
 let connections = factory('connections');
 
 export default {
-  name: "FileNode",
+  name: "esNode",
   props: {
     connection_type: {
       type: String,
@@ -39,7 +39,7 @@ export default {
       databases: [],
       rules: {
         connectionId: [
-          {required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.file.chooseFileName')},
+          {required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.es.chooseFileName')},
         ]
       },
       model: {
@@ -52,7 +52,7 @@ export default {
     let result = await connections.get({
       filter: JSON.stringify({
         where: {
-          database_type: 'file'
+          database_type: 'es'
         },
         fields: {
           name: 1, id: 1, database_type: 1, connection_type: 1, status: 1,
@@ -95,6 +95,3 @@ export default {
   }
 };
 </script>
-<style lang="less">
-
-</style>

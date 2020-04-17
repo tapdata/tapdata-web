@@ -204,6 +204,7 @@
 			flex-direction: row;
 
 			line-height: 25px;
+			font-size: 11px;
 
 			.e-port{
 				width: 10px;
@@ -255,7 +256,7 @@
 			}
 
 			.e-data-type {
-				font-size: 0.8em;
+				font-size: 0.9em;
 			}
 
 			.el-icon-more{

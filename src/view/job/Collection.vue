@@ -168,7 +168,6 @@
 			},
 
 			loadDataModels(connectionId){
-
 				if( !connectionId ){
 					return;
 				}
@@ -180,7 +179,6 @@
 						self.schemas = schemas;
 					}
 				});
-
 			},
 
 			handlerConnectionChange(){

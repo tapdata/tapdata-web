@@ -284,6 +284,13 @@ const tc = {
 					chooseApiName: '請選擇API',
 					api_isNull: 'API不能為空'
 				},
+				es: {
+					name: 'ES',
+					tip: 'Elastic search節點',
+					configurationES: '配置Elastic search',
+					chooseESName: '請選擇Elastic search',
+					es_isNull: 'Elastic search不能為空'
+				}
 			},
 			processor: {
 				aggregate: {
@@ -303,15 +310,18 @@ const tc = {
 
 					form: {
 						name: {
-							label: '节点名称',
-							placeholder: '请输入节点名称'
+							label: '節點名稱',
+							placeholder: '請輸入節點名稱'
 						},
 						description: {
 							label: '描述',
-							placeholder: '请输入节点描述'
+							placeholder: '請輸入節點描述'
 						},
-						fieldName: '字段名称',
-						fieldType: '字段类型'
+						fieldName: '字段名稱',
+						fieldType: '字段類型',
+						addField: '添加字段',
+						addEmbedField: '添加內嵌字段',
+						scriptDialogTitle: '設置字段腳本',
 					}
 				},
 				script: {
@@ -436,30 +446,30 @@ const tc = {
 		hash: '哈希校驗',
 		advance: '高級校驗',
 		dataVerify: '數據校驗',
-		dataWay:'校驗方式',
-		range:"採樣範圍",
-		source:'源表',
-		target:'目標表',
+		dataWay: '校驗方式',
+		range: "採樣範圍",
+		source: '源表',
+		target: '目標表',
 		operate: '操作',
-		dataVerifySetting:'校驗條件設置',
+		dataVerifySetting: '校驗條件設置',
 		confirm: '確認',
-		start:'開始校驗',
-		back:'返回',
-		add:'添加',
-		refresh:'刷新',
-		cancel:'取消',
-		overView:'校驗總覽',
-		time:'校驗時間',
-		duration:'耗時',
-		result:'校驗結果',
-		linageDifference:'總體行數差',
-		errorTotal:'不匹配條數',
-		accuracyRate:'準確率',
-		errorComparison:'錯誤對比',
-		again:'再次校驗',
-		rows:'按行數校驗',
-		sampleRate:'按百分比',
-		condition:'校驗條件',
+		start: '開始校驗',
+		back: '返回',
+		add: '添加',
+		refresh: '刷新',
+		cancel: '取消',
+		overView: '校驗總覽',
+		time: '校驗時間',
+		duration: '耗時',
+		result: '校驗結果',
+		linageDifference: '總體行數差',
+		errorTotal: '不匹配條數',
+		accuracyRate: '準確率',
+		errorComparison: '錯誤對比',
+		again: '再次校驗',
+		rows: '按行數校驗',
+		sampleRate: '按百分比',
+		condition: '校驗條件',
 	}
 };
 
