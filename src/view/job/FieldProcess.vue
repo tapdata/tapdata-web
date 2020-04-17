@@ -64,6 +64,7 @@
 
 				model: {
 					operations: [],
+					scripts: [],
 					name: 'Field Process',
 					type: 'field_processor',
 				},
@@ -75,9 +76,10 @@
 
 		async mounted() {
 
-			this.$refs.entity.$on('dataChanged', (operations) => {
-				log('FieldProcess.operations.changed', arguments);
-				this.model.operations = operations;
+			this.$refs.entity.$on('dataChanged', (model) => {
+				log('FieldProcess.SchemaEditor.dataChanged', model);
+				this.model.operations = model.operations;
+				this.model.scripts = model.scripts;
 			});
 		},
 
@@ -97,6 +99,7 @@
 				if (this.model.operations && schema && schema.fields) {
 
 					this.$refs.entity.setOperations(_.cloneDeep(this.model.operations));
+					this.$refs.entity.setScripts(_.cloneDeep(this.model.scripts));
 
 					this.schema = cell.mergeOutputSchema(schema, false);
 
