@@ -3,7 +3,6 @@
 		<div v-loading="loading" style="margin-top: 100px;padding-bottom:100px"></div>
 		<div class="btn-box">
 			<el-button @click="handleShowResult" size="mini">{{ $t('dataVerify.refresh')}}</el-button>
-			<el-button @click="handleShowAddList" size="mini">{{ $t('dataVerify.back')}}</el-button>
 			<el-button @click="handleVerifyCancel" size="mini">{{ $t('dataVerify.cancel')}}</el-button>
 		</div>
 	</div>
@@ -28,12 +27,7 @@
 		},
 		methods:{
 			handleShowResult(){
-				let self = this;
-				self.editor.showResult();
-			},
-			handleShowAddList(){
-				let self = this;
-				self.editor.showDataVerify();
+				this.editor.showResult();
 			},
 			handleVerifyCancel(){
 				let self = this;

@@ -299,7 +299,6 @@ export default class Editor extends BaseObject {
 		// }
 	}
 	showDataVerify(disableDirective){
-
 		this.getRightSidebar().removeAll();
 		let monitor = this.getRightSidebar().getChildByName('monitor');
 		if( monitor ) this.getRightSidebar().remove(monitor);

@@ -16,6 +16,7 @@ import log from "../../log";
 import {DATA_FLOW_SETTING_DATA_KEY, FORM_DATA_KEY,SCHEMA_DATA_KEY,OUTPUT_SCHEMA_DATA_KEY} from "../constants";
 import {isAcyclic} from "graphlib/lib/alg";
 import {EditorEventType} from "../lib/events";
+import Tab from "./tab";
 
 window.joint = joint;
 
@@ -196,6 +197,15 @@ export default class Graph extends Component{
 	onClickBlank(){
 		this.emit(EditorEventType.SELECTED_STAGE);
 		if( this.editable ){
+			this.editor.getRightSidebar().removeAll(); //清除当前所有的vue
+			let rightTabPanel = this.editor.getRightTabPanel();
+			if( !rightTabPanel) {
+				rightTabPanel = new Tab({
+					name: 'rightTabPanel'
+				});
+				this.editor.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
+			}
+			this.editor.rightSidebar.add(rightTabPanel);
 			this.editor.getRightSidebar().hide();
 		}
 		this.unHighlightAllCells();
