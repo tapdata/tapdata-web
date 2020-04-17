@@ -12,8 +12,8 @@
 		</el-form>
 		<div class="contentbox">
 			<div class="contentbase contentbox-left">
-				<entity ref="entity" :originalSchema="convertSchemaToTreeData(originalSchema)"
-						:schema="convertSchemaToTreeData(schema)" :editable="true"></entity>
+				<schema-editor ref="entity" :originalSchema="convertSchemaToTreeData(originalSchema)"
+						:schema="convertSchemaToTreeData(schema)" :editable="true"></schema-editor>
 			</div>
 			<!-- <div class="contentbase contentbox-right">
 				<ul class="info-list">
@@ -39,14 +39,14 @@
 </template>
 
 <script>
-	import Entity from './components/Entity1';
+	import SchemaEditor from './components/SchemaEditor';
 	import {convertSchemaToTreeData, mergeJoinTablesToTargetSchema} from "../../editor/util/Schema";
 	import log from "../../log";
 	import _ from 'lodash';
 
 	export default {
 		name: "FieldProcess",
-		components: {Entity},
+		components: {SchemaEditor},
 
 		watch: {
 			model: {
@@ -98,9 +98,9 @@
 
 					this.$refs.entity.setOperations(_.cloneDeep(this.model.operations));
 
-					this.schema = cell.mergeOutputSchema(schema);
+					this.schema = cell.mergeOutputSchema(schema, false);
 
-					log('FieldProcess.setData.applyOperations', this.schema, this.model.operations);
+					log('FieldProcess.setData.applyOperations', this.originalSchema, this.schema, this.model.operations);
 				}
 			},
 			getData() {

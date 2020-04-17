@@ -111,7 +111,7 @@ const en = {
 		edit: 'Edit',
 		copy: 'Copy',
 		reset: 'Reset',
-		detail:'Running detail',
+		detail: 'Running detail',
 		select_source_connection: 'Source-side connection',
 		select_sync_mode: 'Sync Mode',
 		mapping: 'Association',
@@ -150,7 +150,7 @@ const en = {
 		button: {
 			setting: 'Setting',
 			logs: 'Logs',
-      preview: 'Data trace',
+			preview: 'Data trace',
 			capture: 'Data trace',
 			stop_capture: 'Stop trace',
 			start: 'Start',
@@ -178,9 +178,9 @@ const en = {
 		}
 	},
 	editor: {
-    nodeSettings: "Node settings",
-    choose: 'Select',
-     newTxt: 'New',
+		nodeSettings: "Node settings",
+		choose: 'Select',
+		newTxt: 'New',
 		cell: {
 			validate: {
 				empty_name: 'Name is required.',
@@ -350,6 +350,10 @@ const en = {
 				none_join_key: 'JoinKeys is required',
 				none_join_path: 'JoinPath is required',
 				form: {
+					label: {
+						label: 'Label',
+						placeholder: 'Please input label'
+					},
 					joinType: {
 						label: 'Data write model',
 						placeholder: 'Please select Data Write model'
@@ -432,7 +436,37 @@ const en = {
 		preview: {
 			stage: 'Stage',
 			table: 'Table'
-		},
+		}
+	},
+	dataVerify: {
+		row: "row verify",
+		hash: 'hash verify',
+		advance: 'advance verify',
+		dataVerify: 'data verify',
+		dataWay:'data way',
+		range:"range",
+		source:'source',
+		target:'target',
+		operate: 'operate',
+		dataVerifySetting:'data verify Setting',
+		confirm: 'confirm',
+		start:'start',
+		back:'back',
+		add:'add',
+		refresh:'refresh',
+		cancel:'cancel',
+		overView:'overView',
+		time:'time',
+		duration:'duration',
+		result:'result',
+		linageDifference:'linage difference',
+		errorTotal:'error Total',
+		accuracyRate:'accuracy Rate',
+		errorComparison:'error Comparison',
+		again: 'Check again',
+		rows: 'Check by number of rows',
+		sampleRate: 'By percentage',
+		condition: 'Check condition',
 	}
 };
 

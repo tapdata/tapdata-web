@@ -43,7 +43,7 @@ export const fieldProcessConfig = {
 					this.updateOutputSchema();
 				});
 			},
-			mergeOutputSchema(outputSchema) {
+			mergeOutputSchema(outputSchema, applyRemoveOperation = true) {
 				let data = this.getFormData();
 				log('FieldProcess.mergeOutputSchema', data, outputSchema);
 				if (!outputSchema || !data)
@@ -64,7 +64,8 @@ export const fieldProcessConfig = {
 					} else if (item.op === "CONVERT") {
 						outputSchema.fields[targetIndex].javaType = item.operand;
 					} else if (item.op === "REMOVE") {
-						outputSchema.fields.splice(targetIndex, 1);
+						if( applyRemoveOperation !== false)
+							outputSchema.fields.splice(targetIndex, 1);
 					}
 
 				});

@@ -111,7 +111,7 @@ const tc = {
 		edit: '編輯',
 		copy: '複製',
 		reset: '重置',
-		detail:'任务监控',
+		detail: '任务监控',
 		select_source_connection: '源端連接',
 		select_sync_mode: '同步方式',
 		mapping: '關聯關係',
@@ -150,7 +150,7 @@ const tc = {
 		button: {
 			setting: '設置',
 			logs: '日誌',
-      preview: '預覽',
+			preview: '預覽',
 			capture: '數據檢視',
 			stop_capture: '停止檢視',
 			start: '啟動',
@@ -178,9 +178,9 @@ const tc = {
 		}
 	},
 	editor: {
-    nodeSettings: "節點設置",
-    choose: '選擇',
-    newTxt: '新建',
+		nodeSettings: "節點設置",
+		choose: '選擇',
+		newTxt: '新建',
 		cell: {
 			validate: {
 				empty_name: '名稱必填.',
@@ -350,6 +350,10 @@ const tc = {
 				none_join_key: '關聯字段必填',
 				none_join_path: '關聯寫入路徑必填',
 				form: {
+					label: {
+						label: '标签',
+						placeholder: '请输入标签'
+					},
 					joinType: {
 						label: '数据写入模式',
 						placeholder: '请选择数据写入模式'
@@ -432,8 +436,38 @@ const tc = {
 		preview: {
 			stage: '節點',
 			table: '數據表'
-		},
+		}
 	},
+	dataVerify: {
+		row: "行數校驗",
+		hash: '哈希校驗',
+		advance: '高級校驗',
+		dataVerify: '數據校驗',
+		dataWay:'校驗方式',
+		range:"採樣範圍",
+		source:'源表',
+		target:'目標表',
+		operate: '操作',
+		dataVerifySetting:'校驗條件設置',
+		confirm: '確認',
+		start:'開始校驗',
+		back:'返回',
+		add:'添加',
+		refresh:'刷新',
+		cancel:'取消',
+		overView:'校驗總覽',
+		time:'校驗時間',
+		duration:'耗時',
+		result:'校驗結果',
+		linageDifference:'總體行數差',
+		errorTotal:'不匹配條數',
+		accuracyRate:'準確率',
+		errorComparison:'錯誤對比',
+		again:'再次校驗',
+		rows:'按行數校驗',
+		sampleRate:'按百分比',
+		condition:'校驗條件',
+	}
 };
 
 export default tc;

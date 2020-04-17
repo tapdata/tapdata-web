@@ -1,7 +1,19 @@
 <template>
 	<div class="e-link-wrap">
 
-		<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form">
+		<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form" action="javascript:void(0);">
+
+			<el-form-item :label="$t('editor.cell.link.form.label.label')">
+				<el-input
+						v-model="model.label"
+						:placeholder="$t('editor.cell.link.form.label.placeholder')"
+						size="mini">
+				</el-input>
+			</el-form-item>
+
+		</el-form>
+
+		<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form" v-show="configJoinTable" action="javascript:void(0);">
 
 			<!--<el-form-item label="Table name" required>
 				<el-input
@@ -68,7 +80,7 @@
 			</el-form-item>
 		</el-form>
 
-		<div class="e-mapping-wrap">
+		<div class="e-mapping-wrap" v-show="configJoinTable">
 			<Mapping ref="mappingComp"></Mapping>
 		</div>
 	</div>
@@ -94,7 +106,10 @@
 				targetSchema: [],
 				targetCellType: '',
 
+				configJoinTable: false,
+
 				model: {
+					label: '',
 					joinTable: _.cloneDeep(JOIN_TABLE_TPL)
 				}
 			};
@@ -167,10 +182,15 @@
 					Object.keys(data).forEach(key => this.model[key] = data[key]);
 				}
 
-				if( cell.getTargetCell()) {
-					let targetCell = cell.getTargetCell();
-					let parentDataNodes = typeof targetCell.getParentDataNode === 'function' ? targetCell.getParentDataNode() : [];
-					this.model.joinTable.stageId = parentDataNodes.length > 0 ? parentDataNodes[0].id : '';
+				this.configJoinTable = cell.configJoinTable && cell.configJoinTable();
+
+				if( !this.configJoinTable )
+					return;
+
+				if( cell.getSourceCell()) {
+					let sourceCell = cell.getSourceCell();
+					let firstDataNode = typeof sourceCell.getFirstDataNode === 'function' ? sourceCell.getFirstDataNode() : [];
+					this.model.joinTable.stageId = firstDataNode.length > 0 ? firstDataNode[0].id : '';
 					//this.model.joinTable.stageId = cell.getSourceCell().id;
 				}
 
@@ -184,6 +204,9 @@
 					let joinKeys = data.joinTable.joinKeys.filter( key => key.source && key.target);
 					data.joinTable.joinKeys = joinKeys;
 				}*/
+				if( !this.configJoinTable) {
+					delete data.joinTable;
+				}
 				return data;
 			},
 

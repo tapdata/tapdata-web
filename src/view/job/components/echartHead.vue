@@ -10,6 +10,7 @@
 				:content="tip">
 			<span class="icon iconfont icon-tishi1" slot="reference"></span>
 		</el-popover>
+		<i class="el-icon-loading" v-if="data && data.loading"></i>
 		<div class="rightOpt fr">
 			<el-radio-group v-model="num" size="mini" :class="selectColor" @change="changeRadio" v-if="isScreeing">
 				<el-radio-button label="flow">{{$t("dataFlow.rowCount")}}</el-radio-button>
@@ -20,7 +21,7 @@
 				<el-radio-button label="kbs">KB/S</el-radio-button>
 			</el-radio-group>
 			<el-radio-group v-model="time" size="mini" :class="selectColor" @change="changeTime" v-if="isIput">
-				<el-radio-button label="second">{{$t("dataFlow.second")}}</el-radio-button>
+				<el-radio-button label="second" v-if="this.data.type !== 'replicate'">{{$t("dataFlow.second")}}</el-radio-button>
 				<el-radio-button label="minute">{{$t("dataFlow.min")}}</el-radio-button>
 				<el-radio-button label="hour">{{$t("dataFlow.hour")}}</el-radio-button>
 				<el-radio-button label="day">{{$t("dataFlow.day")}}</el-radio-button>
@@ -32,7 +33,7 @@
 	export default {
 		name: "echartHead",
 		props: {
-			data: Object
+			data: Object,
 		},
 		data() {
 			return {
@@ -40,7 +41,7 @@
 				tip: '',
 				num: 'flow',
 				speed: 'qps',
-				time: 'second',
+				time: 'minute',
 				rowCount: null,
 				kbs: null,
 				isScreeing: false,
@@ -57,12 +58,16 @@
 				this.isIput = this.data.isIput;
 				this.isSpeed = this.data.isSpeed;
 
+				if(this.data.type === "replicate") {
+					this.time = 'minute';
+        }
+
 				this.$emit("twoRadio", this.num, this.data.type);
 				this.$emit("getSpeed", this.speed, this.time);
 				this.$emit("getTime", this.time, this.data.type);
 				if (this.data.type === "screening") {
 					this.selectColor = 'screeningColor';
-				} else if (this.data.type === "inputOutput") {
+				} else if (this.data.type === "throughput") {
 					this.selectColor = 'putColor';
 				} else if (this.data.type === "transf") {
 					this.selectColor = 'transfColor';

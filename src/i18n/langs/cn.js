@@ -111,7 +111,7 @@ const cn = {
 		edit: '编辑',
 		copy: '复制',
 		reset: '重置',
-		detail:'任务监控',
+		detail: '任务监控',
 		select_source_connection: '源端连接',
 		select_sync_mode: '同步方式',
 		mapping: '关联关系',
@@ -150,7 +150,7 @@ const cn = {
 		button: {
 			setting: '设置',
 			logs: '日志',
-      preview: '预览',
+			preview: '预览',
 			capture: '数据检视',
 			stop_capture: '停止检视',
 			start: '启动',
@@ -178,9 +178,9 @@ const cn = {
 		}
 	},
 	editor: {
-    nodeSettings: '节点设置',
-    choose: '选择',
-    newTxt: '新建',
+		nodeSettings: '节点设置',
+		choose: '选择',
+		newTxt: '新建',
 		cell: {
 			validate: {
 				empty_name: '名称必填.',
@@ -233,7 +233,7 @@ const cn = {
 							keep: '保持已存在的数据',
 							remove: '运行前删除已存在的数据'
 						}
-          }
+					}
 				},
 				table: {
 					name: '表',
@@ -348,7 +348,7 @@ const cn = {
 							placeholder: '请输入脚本'
 						},
 					}
-        },
+				},
 
 			},
 			link: {
@@ -356,6 +356,10 @@ const cn = {
 				none_join_key: '关联字段必填',
 				none_join_path: '关联写入路径必填',
 				form: {
+					label: {
+						label: '标签',
+						placeholder: '请输入标签'
+					},
 					joinType: {
 						label: '数据写入模式',
 						placeholder: '请选择数据写入模式'
@@ -438,7 +442,37 @@ const cn = {
 		preview: {
 			stage: '节点',
 			table: '数据表'
-		},
+		}
+	},
+	dataVerify: {
+		row: "行数校验",
+		hash: '哈希校验',
+		advance: '高级校验',
+		dataVerify: '数据校验',
+		dataWay:'校验方式',
+		range:"采样范围",
+		source:'源表',
+		target:'目标表',
+		operate: '操作',
+		dataVerifySetting:'校验条件设置',
+		confirm: '确认',
+		start:'开始校验',
+		back:'返回',
+		add:'添加',
+		refresh:'刷新',
+		cancel:'取消',
+		overView:'校验总览',
+		time:'校验时间',
+		duration:'耗时',
+		result:'校验结果',
+		linageDifference:'总体行数差',
+		errorTotal:'不匹配条数',
+		accuracyRate:'准确率',
+		errorComparison:'错误对比',
+		again:'再次校验',
+		rows:'按行数校验',
+		sampleRate:'按百分比',
+		condition:'校验条件',
 	}
 };
 

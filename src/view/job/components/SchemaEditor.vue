@@ -87,7 +87,7 @@
 	};
 
 	export default {
-		name: "Entity1",
+		name: "SchemaEditor",
 		props: {
 			width: {
 				type: Number,
@@ -111,11 +111,6 @@
 			}
 		},
 		data() {
-			//TODO: 1. 修改父节点名字时，下面会多出一行
-			//TODO: 2. 父级节点数据类型只能有 map, array
-			//TODO: 3. 组合操作 回退无效
-			//TODO： 4. 删除时 颜色置灰
-
 			return {
 				operations: [],
 			};
@@ -233,8 +228,8 @@
 					this.operations.push(op);
 				} else {
 					Object.assign(ops[0], {
-						id: data.id,
-						field: nativeData.label,
+						// id: data.id,
+						// field: nativeData.label,
 						operand: data.label
 					});
 				}
@@ -249,7 +244,7 @@
 					for (let i = 0; i < self.operations.length; i++) { //删除所有的重命名的操作
 						let ops = self.operations[i];
 						if (self.operations[i].id === field.id && ops.op === 'RENAME') {
-							let originalNode = self.getNativeData(self.schema.fields, field.id);
+							let originalNode = self.getNativeData(self.originalSchema.fields, field.id);
 							originalNode.label = field.label;
 							self.operations.splice(i, 1);
 						}
@@ -257,7 +252,7 @@
 					for (let i = 0; i < self.operations.length; i++) { //删除所有的类型改变的操作
 						let ops = self.operations[i];
 						if (self.operations[i].id === field.id && ops.op === 'CONVERT') {
-							let originalNode = self.getNativeData(self.schema.fields, field.id); //替换原始数据 主要是操作子节点
+							let originalNode = self.getNativeData(self.originalSchema.fields, field.id); //替换原始数据 主要是操作子节点
 							originalNode.type = field.type;
 							self.operations.splice(i, 1);
 						}
