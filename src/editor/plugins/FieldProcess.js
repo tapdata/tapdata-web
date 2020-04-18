@@ -54,9 +54,9 @@ export const fieldProcessConfig = {
 						let triggerFieldId = item.triggerFieldId;
 						let newField = {
 							id: item.id,
-							field_name: item.field_name,
-							table_name: item.table_name,
-							original_field_name: item.field_name,
+							field_name: item.field || item.field_name,
+							table_name: item.tableName || item.table_name,
+							original_field_name: item.field || item.field_name,
 							javaType: item.javaType,
 							data_type: "STRING",
 							primary_key_position: 0,

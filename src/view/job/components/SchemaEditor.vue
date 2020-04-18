@@ -119,8 +119,8 @@
 	};
 	const CREATE_OPS_TPL = {
 		op: 'CREATE',
-		field_name: '',
-		table_name: '',
+		field: '',
+		tableName: '',
 		javaType: 'String',
 		id: '',
 
@@ -129,7 +129,7 @@
 	};
 	const SCRIPT_TPL = {
 		tableName: '',
-		fieldName: '',
+		field: '',
 		scriptType: 'js',
 		script: '',
 		id: '',
@@ -292,9 +292,9 @@
 				if( createOps && createOps.length > 0 ){
 					let op = createOps[0];
 					let level = op.level;
-					let fieldNames = op.field_name.split('.');
+					let fieldNames = (op.field || op.field_name).split('.');
 					fieldNames[level] = data.label;
-					op.field_name = fieldNames.join('.');
+					op.field = fieldNames.join('.');
 				} else {
 					let nativeData = this.getNativeData(this.originalSchema.fields, data.id);
 					log("Entity1.handlerRename(node,data,nativeData,operations)", node, data, nativeData, this.model.operations);
@@ -331,7 +331,8 @@
 
 					for (let i = 0; i < this.model.operations.length; i++) {
 						let op = this.model.operations[i];
-						if( op.field_name.indexOf(fieldName) === 0 && op.field_name.length === fieldName.length) {
+						let opFieldName = op.field || op.field_name;
+						if( opFieldName.indexOf(fieldName) === 0 && opFieldName.length === fieldName.length) {
 							this.model.operations.splice(i, 1);
 							i--;
 						}
@@ -472,8 +473,8 @@
 
 				let fieldId = uuid();
 				let newFieldOperation = Object.assign(_.cloneDeep(CREATE_OPS_TPL), {
-					field_name: parentFieldName ? (parentFieldName + '.newFieldName') : 'newFieldName',
-					table_name: data.table_name,
+					field: parentFieldName ? (parentFieldName + '.newFieldName') : 'newFieldName',
+					tableName: data.table_name,
 					javaType: 'String',
 					id: fieldId,
 
@@ -527,7 +528,7 @@
 				}else {
 					script = _.cloneDeep(SCRIPT_TPL);
 					Object.assign(script, {
-						fieldName,
+						field: fieldName,
 						tableName,
 						id,
 					});
