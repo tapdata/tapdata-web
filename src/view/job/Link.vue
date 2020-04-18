@@ -41,7 +41,7 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item :label="$t('editor.cell.link.form.joinPath.label')" v-if="supportEmbedArray() && ['update', 'merge_embed'].includes(model.joinTable.joinType)">
+			<el-form-item :label="$t('editor.cell.link.form.joinPath.label')" v-if="supportEmbedArray() && ['upsert', 'update', 'merge_embed'].includes(model.joinTable.joinType)">
 				<el-input
 						v-model="model.joinTable.joinPath"
 						:placeholder="$t('editor.cell.link.form.joinPath.placeholder')"  size="mini"></el-input>
@@ -207,6 +207,8 @@
 				if( !this.configJoinTable) {
 					delete data.joinTable;
 				}
+				if(data.joinType === 'append')
+					delete data.joinPath;
 				return data;
 			},
 

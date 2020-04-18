@@ -65,7 +65,7 @@ const en = {
 		current: 'Current',
 		allNode: 'All Nodes',
 		taskName: 'Flow Name',
-		creatdor: 'Creater',
+		creatdor: 'Creator',
 		creationTime: 'Create Time',
 		state: 'State',
 		executionTime: 'Lapsed Time',
