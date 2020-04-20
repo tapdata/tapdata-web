@@ -198,7 +198,7 @@
 						if (item.checked) {
 							item.checked = false;
 						}
-					})
+					});
 				}
 			},
 
@@ -231,8 +231,8 @@
 
 			// 移除
 			removeTable(item, index) {
-				let removeTable = this.tables.splice(index, 1);
-				this.model.excludeTables.push(removeTable);
+        this.model.excludeTables.push(item);
+				this.tables.splice(index, 1);
 			},
 
 			// 单选
