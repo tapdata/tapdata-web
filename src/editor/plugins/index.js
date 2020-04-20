@@ -17,3 +17,4 @@ export * from './GridFS/GridFsNode';
 export * from './dummy/Dummy';
 export * from './api/ApiNode';
 export * from './ElasticSearch/ESNode';
+export * from './DataFilter/DataFilter';

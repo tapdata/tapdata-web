@@ -346,7 +346,47 @@ const en = {
 							placeholder: 'Please input script'
 						},
 					}
-				}
+				},
+				dataFilter: {
+					name: 'Row Filter',
+					tip: 'Row Data Filter',
+					validate: {
+						none_expression: 'Conditional expression cannot be empty',
+						none_action: 'The execution action cannot be empty',
+					},
+					form: {
+						name: {
+							label: 'Node name',
+							placeholder: 'Please enter the node name'
+						},
+						expression: {
+							label: 'Conditional expression',
+							placeholder: 'Please enter an expression',
+							labelTip: 'Expressions can use comparison and calculation operators in JavaScript'
+						},
+						action: {
+							label: 'Execute action',
+							discard: 'Discard',
+							retain: 'Retain'
+						},
+						expressionExample: {
+							label: 'Example expression',
+							labelTip: 'Expressions can use comparison and calculation operators in JavaScript',
+							tip: 'Select men over 50 years old and people over 30 years old with income below 10,000, the expression is as follows:'
+						},
+						symbol: {
+							label: 'Supported symbols',
+							gtLt: 'Greater than, less than',
+							geLe: 'Greater than and equal to, less than and equal to',
+							eq: 'equal to',
+							not: 'NO',
+							and: 'And',
+							or: 'Or',
+							regexp: 'Regular expression',
+							group: 'Conditional grouping'
+						}
+					}
+				},
 			},
 			link: {
 				none_join_type: 'JoinType is required',

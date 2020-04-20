@@ -239,7 +239,6 @@ const tc = {
 					name: '表',
 					tip: 'RDBMS 表',
 					defaultText: '表',
-
 					none_database: '數據庫必填.',
 					none_table: '表必填.',
 					none_pk: '主鍵必填.',
@@ -346,7 +345,47 @@ const tc = {
 							placeholder: '请输入脚本'
 						},
 					}
-				}
+				},
+				dataFilter: {
+					name: '數據過濾',
+					tip: '行級數據過濾',
+					validate: {
+						none_expression: '條件表達式不能為空',
+						none_action: '執行動作不能為空',
+					},
+					form: {
+						name: {
+							label: '節點名稱',
+							placeholder: '請輸入節點名稱'
+						},
+						expression: {
+							label: '條件表達式',
+							placeholder: '請輸入表達式',
+							labelTip: '表達式可以使用JavaScript中的比較符和計算符'
+						},
+						action: {
+							label: '執行動作',
+							discard: '丟棄',
+							retain: '保留'
+						},
+						expressionExample: {
+							label: '表達式示例',
+							labelTip: '表達式可以使用JavaScript中的比較符和計算符',
+							tip: '篩選出50歲以上的男性以及收入一萬以下的30歲以上的人,表達式如下：'
+						},
+						symbol: {
+							label: '支持的符號',
+							gtLt: '大於、小於',
+							geLe: '大於等於、小於等於',
+							eq: '等於',
+							not: '非',
+							and: '且',
+							or: '或',
+							regexp: '正則表達式',
+							group: '條件分組'
+						}
+					}
+				},
 			},
 			link: {
 				none_join_type: '關聯類型必填',

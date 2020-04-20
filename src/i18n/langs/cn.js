@@ -259,8 +259,8 @@ const cn = {
 					}
 				},
 				file: {
-					name: '文件',
 					tip: '文件节点',
+					name: '文件',
 					none_fileName: '文件名不能为空',
 					configurationFile: '配置文件',
 					chooseFileName: '请选择文件名'
@@ -278,12 +278,6 @@ const cn = {
 					dummy_isNull: 'Dummy不能为空'
 				},
 				api: {
-					name: 'API',
-					tip: 'api节点',
-					chooseApiName: '请选择API',
-					api_isNull: 'API不能为空'
-				},
-				Processing: {
 					name: 'API',
 					tip: 'api节点',
 					chooseApiName: '请选择API',
@@ -352,7 +346,46 @@ const cn = {
 						},
 					}
 				},
-
+				dataFilter: {
+					name: '数据过滤',
+					tip: '行级数据过滤',
+					validate: {
+						none_expression: '条件表达式不能为空',
+						none_action: '执行动作不能为空',
+					},
+					form: {
+						name: {
+							label: '节点名称',
+							placeholder: '请输入节点名称'
+						},
+						expression: {
+							label: '条件表达式',
+							placeholder: '请输入表达式',
+							labelTip: '表达式可以使用JavaScript中的比较符和计算符'
+						},
+						action: {
+							label: '执行动作',
+							discard: '丢弃匹配数据',
+							retain: '保留匹配数据'
+						},
+						expressionExample: {
+							label: '表达式示例',
+							labelTip: '表达式可以使用JavaScript中的比较符和计算符',
+							tip: '筛选出50岁以上的男性以及收入一万以下的30岁以上的人,表达式如下：'
+						},
+						symbol: {
+							label: '支持的符号',
+							gtLt: '大于、小于',
+							geLe: '大于等于、小于等于',
+							eq: '等于',
+							not: '非',
+							and: '且',
+							or: '或',
+							regexp: '正则表达式',
+							group: '条件分组'
+						}
+					}
+				},
 			},
 			link: {
 				none_join_type: '关联类型必填',

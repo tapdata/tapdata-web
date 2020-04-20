@@ -4,13 +4,13 @@
  * @description
  */
 import {options} from "../../lib/rappid/config";
-import Script from "./Script";
-import {FORM_DATA_KEY} from "../../constants";
+import DataFilterAttribute from "./DataFilterAttribute";
+// import {FORM_DATA_KEY} from "../../constants";
 import i18n from "../../../i18n/i18n";
 
-export const scriptProcessConfig = {
+export const DataFilterConfig = {
 
-	type: 'app.Script',
+	type: 'app.DataFilter',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
@@ -28,15 +28,13 @@ export const scriptProcessConfig = {
 					ry:14
 				},
 				label:{
-					text: i18n.t('editor.cell.processor.script.name'),
+					text: i18n.t('editor.cell.processor.dataFilter.name'),
 				}
 			},
 
-			[FORM_DATA_KEY]: {
-				name: 'JavaScript',
-				type: "js_processor",
-				script: "function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}"
-			}
+			/*[FORM_DATA_KEY]: {
+				name: 'DataFilter',
+			}*/
 		},
 		prototypeProperties: {
 			portLabelMarkup: [{
@@ -57,10 +55,10 @@ export const scriptProcessConfig = {
 				let name = this.attr('label/text');
 				if( !data )
 					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
-				if( !data.type )
-					throw new Error(`${name}: ${i18n.t('editor.cell.processor.script.none_script_type')}`);
-				if( !data.script )
-					throw new Error(`${name}: ${i18n.t('editor.cell.processor.script.none_script')}`);
+				if( !data.expression )
+					throw new Error(`${name}: ${i18n.t('editor.cell.processor.dataFilter.validate.none_expression')}`);
+				if( !data.action )
+					throw new Error(`${name}: ${i18n.t('editor.cell.processor.dataFilter.validate.none_action')}`);
 				return true;
 			},
 
@@ -202,7 +200,7 @@ export const scriptProcessConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.processor.script.tip'),
+				dataTooltip: i18n.t('editor.cell.processor.dataFilter.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -222,7 +220,7 @@ export const scriptProcessConfig = {
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.processor.script.name'),
+				text: i18n.t('editor.cell.processor.dataFilter.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -242,7 +240,7 @@ export const scriptProcessConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: Script,
+		component: DataFilterAttribute,
 	}
 
 };
