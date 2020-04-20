@@ -1,105 +1,38 @@
-/**
- * @author lg<lirufei0808@gmail.com>
- * @date 3/4/20
- * @description
- */
-import {options} from "../lib/rappid/config";
-import Database from "../../view/job/Database";
-import i18n from "../../i18n/i18n";
+import log from "../../../log";
+import {options} from "../../lib/rappid/config";
+import DummyAttribute from "./DummyAttribute";
+import i18n from "../../../i18n/i18n";
 
-export const databaseConfig = {
-
-	/**
-	 * the name of the subtype class.
-	 *
-	 */
-	type: 'app.Database',
-
-	/**
-	 * define shape
-	 * docs see https://github.com/clientIO/joint/blob/master/tutorials/custom-elements.html
-	 * @type {object}
-	 */
+export const DummyConfig = {
+	type: 'app.Dummy',
 	shape: {
-		/**
-		 * extends exists shape
-		 */
 		extends: 'app.BaseElement',
-
-		/**
-		 * object that contains properties to be assigned to every constructed instance of the subtype.
-		 *
-		 * @example <pre>
-		 *     {
-		 *        attrs: {
-		 *           body: {
-		 *              refWidth: '100%',
-		 *              refHeight: '100%',
-		 *              strokeWidth: 2,
-		 *              stroke: '#000000',
-		 *              fill: '#FFFFFF'
-		 *           },
-		 *           label: {
-		 *              textVerticalAnchor: 'middle',
-		 *              textAnchor: 'middle',
-		 *              refX: '50%',
-		 *              refY: '50%',
-		 *              fontSize: 14,
-		 *              fill: '#333333'
-		 *           }
-		 *        }
-		 *     }
-		 * </pre>
-		 */
 		defaultInstanceProperties: {
+			size: {width: 120, height: 28},
 			attrs: {
-				image:{
-					xlinkHref: 'static/editor/o-DB.svg',
+				image: {
+					xlinkHref: 'static/editor/o-dummy.svg',
+					refWidth: '25%',
+					refHeight: '84%',
+					refX: '-8%',
+					refY: '-28%'
 				},
-				label:{
-					text: i18n.t('editor.cell.data_node.database.name')
+				body: {
+					rx: 14,
+					ry: 14
+				},
+				label: {
+					text: i18n.t('editor.cell.data_node.dummy.name'),
 				}
 			}
 		},
-		/**
-		 * object that contains properties to be assigned on the subtype prototype.
-		 * Intended for properties intrinsic to the subtype, not usually modified.
-		 *
-		 * @example <pre>
-		 *
-		 * {
-		 *     markup: [{
-		 *          tagName: 'rect',
-		 *          selector: 'body',
-		 *     }, {
-		 *          tagName: 'text',
-		 *          selector: 'label'
-		 *     }]
-		 * }
-		 *
-		 * </pre>
-		 */
 		prototypeProperties: {
 			portLabelMarkup: [{
 				tagName: 'text',
-				selector: 'portLabel'
-			}],
-			isDataNode(){
-				return true;
-			},
+				selector: 'portLabel',
+      }],
 
-			/**
-			 * validate user-filled data
-			 * @param data
-			 *
-			 */
-			validate: function(data){
-				data = data || this.getFormData();
-				let name = this.attr('label/text');
-				if( !data )
-					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
-				if( !data.connectionId )
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.database.none_database')}`);
+			isDataNode() {
 				return true;
 			},
 
@@ -109,7 +42,9 @@ export const databaseConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-				return ['app.Database'].includes(targetCell.get('type'));
+        log("app.Dummy.target",targetCell);
+        return !['app.Database','app.FileNode','app.GridFSNode'].includes(targetCell.get('type'));
+
 			},
 
 			/**
@@ -118,20 +53,20 @@ export const databaseConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-				return ['app.Database'].includes(sourceCell.get('type'));
-			}
+        return !['app.FileNode','app.Database'].includes(sourceCell.get('type'));
+			},
+
+			validate(data) {
+        log("选中的Dummy数据",data);
+				data = data || this.getFormData();
+				let name = this.attr('label/text');
+				if (!data)
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.dummy.dummy_isNull')}`);
+				return true;
+			},
 		},
-		/**
-		 * object that contains properties to be assigned on the subtype constructor.
-		 */
-		//staticProperties: {}
 	},
 
-	/**
-	 * 图形(Element子类
-	 * )样式表单配置
-	 * @type {object}
-	 */
 	styleFormConfig: {
 		inputs: {
 			attrs: {
@@ -238,7 +173,7 @@ export const databaseConfig = {
 	 */
 	stencil: {
 		/**
-		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：process；标准图形：standard
+		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：processor；标准图形：standard
 		 */
 		group: 'data',
 		/**
@@ -249,7 +184,7 @@ export const databaseConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.data_node.database.tip'),
+				dataTooltip: i18n.t('editor.cell.data_node.dummy.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -257,19 +192,19 @@ export const databaseConfig = {
 				rx: 2,
 				ry: 2,
 				stroke: '#fff',
-				fill:'#fff',
+				fill: '#fff',
 				strokeWidth: 0,
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/database2.svg',
+				xlinkHref: 'static/editor/dummy.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.data_node.database.name'),
+				text: i18n.t('editor.cell.data_node.dummy.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -278,8 +213,8 @@ export const databaseConfig = {
 				strokeWidth: 0,
 				refX: '75%',
 				refY: '40%',
-				x:-35,
-				y:27
+				x: -35,
+				y: 27
 			}
 		}
 	},
@@ -289,10 +224,7 @@ export const databaseConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: Database,
-		/*props: {
-			connection_type: 'source'
-		},*/
+		component: DummyAttribute,
 	}
 
 };

@@ -22,7 +22,7 @@
 </template>
 <script>
 import _ from "lodash";
-import factory from '../../api/factory';
+import factory from '../../../api/factory';
 let connections = factory('connections');
 
 export default {

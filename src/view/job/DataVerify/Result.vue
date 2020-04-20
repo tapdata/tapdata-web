@@ -5,7 +5,7 @@
 		<div class="dv-pre-box">
 			<div class="dv-pre-label">{{ $t('dataVerify.overView')}}
 				<div class="dv-pre-right">
-					<span>{{ $t('dataVerify.time')}}: {{overview.validateTime}} </span>
+					<span>{{ $t('dataVerify.time')}}: {{overview.createTime}} </span>
 					<span> {{ $t('dataVerify.duration')}}: {{overview.costTime}}</span>
 				</div>
 			</div>
@@ -32,28 +32,32 @@
 		<div class="dv-contrast-table">
 			<el-table
 					border
+					:data="validateStats"
 					height="250"
 					style="width: 100%">
 				<el-table-column
-						prop="date"
+						prop="source"
 						:label="$t('dataVerify.source')"
 						width="80">
 				</el-table-column>
 				<el-table-column
-						prop="name"
+						prop="validateType"
 						:label="$t('dataVerify.dataWay')"
 						width="80">
+					<template slot-scope="scope">
+						<span :style="`color: ${ colorMap[scope.row.validateType] };`"> {{ $t('dataVerify.' + scope.row.validateType) }} </span>
+					</template>
 				</el-table-column>
 				<el-table-column
-						prop="address"
+						prop="rows"
 						:label="$t('dataVerify.range')">
 				</el-table-column>
 				<el-table-column
-						prop="address"
+						prop="rowsDiffer"
 						:label="$t('dataVerify.result')">
 				</el-table-column>
 				<el-table-column
-						prop="address"
+						prop="consistencyRate"
 						:label="$t('dataVerify.accuracyRate')">
 				</el-table-column>
 			</el-table>
@@ -68,8 +72,13 @@
 					</el-select>
 				</el-col>
 				<el-col :span="8">
-					<el-select size="mini" v-model="overview.source">
-						<el-option value="5e9408531d431f06308e9c4d" label="POLICY"></el-option>
+					<el-select size="mini" v-model="source.tableName">
+						<el-option
+								v-for="item in validateStats"
+								:key="item.source"
+								:label="item.source"
+								:value="item.source">
+						</el-option>
 					</el-select>
 				</el-col>
 			</el-row>
@@ -77,66 +86,37 @@
 				<div class="dv-contrast-header">
 					{{$t('dataVerify.errorComparison')}}
 					<div class="dv-pre-right">
-						<span>{{$t('dataVerify.advance')}} </span>
+						<span style="color: #48B6E2">{{$t('dataVerify.advance')}} </span>
+						<span style="color: #F56C6C"> error :{{count}}</span>
 						<el-pagination
 								class="dv-result-pagination"
-								:page-size="20"
+								:page-size="1"
 								:pager-count="0"
 								layout="prev, next"
-								:total="1000">
+								:total="count">
 						</el-pagination>
 					</div>
 				</div>
-				<div class="dv-contrast-content">
-					<div class="dv-contrast-content-item">
-						<div class="dv-contrast-content-item-tip">{{$t('dataVerify.source')}} </div>
-						<div  class="dv-contrast-content-item-text">
-							_id : 5d2b01296d8c71218475f4bd
-							CLAIM_ID : "CL_000000001"
-							CLAIM_AMOUNT : 7253
-							CLAIM_DATE : 2010-07-04T16:00:00.000+00:00
-							CLAIM_REASON : "SCRATCH"
-							LAST_CHANGE : 2019-07-04T09:13:42.993+00:00
-							POLICY_ID : "PC_000000001"
-							SETTLED_AMOUNT : 7253
-							SETTLED_DATE : 2010-11-09T16:00:00.000+00:00
-							tapd8 : Object
-							ts : 2019-07-15T10:41:53.386+00:00
-						</div>
-					</div>
-					<div class="dv-contrast-content-item">
-						<div  class="dv-contrast-content-item-tip">{{$t('dataVerify.target')}} </div>
-						<div  class="dv-contrast-content-item-text">
-							_id : 5d2b01296d8c71218475f4bd
-							CLAIM_ID : "CL_000000001"
-							CLAIM_AMOUNT : 7253
-							CLAIM_DATE : 2010-07-04T16:00:00.000+00:00
-							CLAIM_REASON : "SCRATCH"
-							LAST_CHANGE : 2019-07-04T09:13:42.993+00:00
-							POLICY_ID : "PC_000000001"
-							SETTLED_AMOUNT : 7253
-							SETTLED_DATE : 2010-11-09T16:00:00.000+00:00
-							tapd8 : Object
-							ts : 2019-07-15T10:41:53.386+00:00
-						</div>
-					</div>
-					<div class="dv-contrast-content-item">
-						<div  class="dv-contrast-content-item-tip">MSQ</div>
-						<div  class="dv-contrast-content-item-text">
-							_id : 5d2b01296d8c71218475f4bd
-							CLAIM_ID : "CL_000000001"
-							CLAIM_AMOUNT : 7253
-							CLAIM_DATE : 2010-07-04T16:00:00.000+00:00
-							CLAIM_REASON : "SCRATCH"
-							LAST_CHANGE : 2019-07-04T09:13:42.993+00:00
-							POLICY_ID : "PC_000000001"
-							SETTLED_AMOUNT : 7253
-							SETTLED_DATE : 2010-11-09T16:00:00.000+00:00
-							tapd8 : Object
-							ts : 2019-07-15T10:41:53.386+00:00
-						</div>
-					</div>
-				</div>
+				<el-table
+						border
+						:data="failedRow"
+						class="dv-result-fail-table"
+						style="width: 100%">
+					<el-table-column
+							prop="sourceTableData"
+							:label="$t('dataVerify.source')">
+					</el-table-column>
+					<el-table-column
+							prop="targetTableData"
+							:label="$t('dataVerify.target')"
+							>
+					</el-table-column>
+					<el-table-column
+							prop="message"
+							label="MSQ"
+							width="100">
+					</el-table-column>
+				</el-table>
 			</div>
 		</div>
 
@@ -144,6 +124,11 @@
 </template>
 
 <script>
+	import factory from '../../../api/factory';
+	import log from "../../../log";
+
+	const ValidationResults = factory('validationResults');
+
 	export default {
 		data() {
 			return {
@@ -162,14 +147,75 @@
 					dataFlowId: "5e9408531d431f06308e9c4d", //#该记录所属的dataFlow ID，
 					validateType:'row',
 					source:'5e9408531d431f06308e9c4d',
-				}
+				},
+				failedRow:[],
+				validateStats:[],
+				count:'',
+				source:{
+					tableName:'',
+				},
+				colorMap: {
+					row: '#48B6E2',
+					hash: '#62A569',
+					advance: '#9889D8',
+				},
 			};
+		},
+		created() {
+			this.getData();
 		},
 		methods: {
 			handleAddList(){
-				let self = this;
-				self.editor.showDataVerify();
-			}
+				this.editor.showDataVerify();
+			},
+			getData(){
+				ValidationResults.get().then(res => {
+					if (res.statusText === "OK" || res.status === 200) {
+						if (res.data) {
+							if(res.data[0]){
+								this.overview = res.data[0];
+							}
+							if(res.data[2]){
+								this.validateStats = res.data[2].validateStats;
+								this.validateStats.sourceTableData = this.validateStats.sourceTableData ?JSON.parse(this.validateStats.sourceTableData):'';
+								this.validateStats.targetTableData = this.validateStats.targetTableData ?JSON.parse(this.validateStats.targetTableData):'';
+							}
+							log('dataVerify.result',res.data);
+						}
+					}
+				});
+
+				let where = {
+					filter:{
+						where: {
+							type:'failedRow',
+						},
+					},
+				};
+
+				let whereCount = {
+					where: {
+						type:'failedRow',
+					},
+				};
+
+				ValidationResults.get(where).then(res => {
+					if (res.statusText === "OK" || res.status === 200) {
+						if (res.data) {
+							this.failedRow =res.data;
+							log('dataVerify.count',res.data);
+						}
+					}
+				});
+				ValidationResults.count(whereCount).then(res => {
+					if (res.statusText === "OK" || res.status === 200) {
+						if (res.data) {
+							this.count = res.data.count;
+							log('dataVerify.count',res.data.count);
+						}
+					}
+				});
+			},
 		}
 	};
 </script>
@@ -237,7 +283,7 @@
 		width:100%;
 		margin-top: 10px;
 		background:rgba(255,255,255,1);
-		border:1px solid rgba(220, 223, 230, 1);
+		//border:1px solid rgba(220, 223, 230, 1);
 		box-shadow:2px 2px 7px 0px rgba(0, 0, 0, 0.1);
 		border-radius:4px;
 	}
@@ -247,7 +293,9 @@
 		font-size: 14px;
 		padding-left: 10px;
 		background:rgba(250,250,250,1);
-		border-bottom:1px solid rgba(220, 223, 230, 1);
+		border-top:1px solid rgba(220, 223, 230, 1);
+		border-left:1px solid rgba(220, 223, 230, 1);
+		border-right:1px solid rgba(220, 223, 230, 1);
 	}
 	.dv-contrast-content{
 		display: flex;
@@ -259,9 +307,11 @@
 		padding-left: 10px;
 		background:rgba(250,250,250,1);
 		border-bottom:1px solid rgba(220, 223, 230, 1);
+		color: #666;
 	}
 	.dv-contrast-content-item-text{
 		padding: 10px;
+		color: #666;
 	}
 	.dv-contrast-content :first-child{
 		border-left:none;
@@ -302,5 +352,8 @@
 	}
 	.el-pagination button, .el-pagination span:not([class*=suffix]) {
 		height:39px;
+	}
+	.dv-result-fail-table  td .cell, .el-table th .cell {
+		white-space: normal;
 	}
 </style>

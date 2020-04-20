@@ -16,7 +16,7 @@
 	import Entity from './Entity';
 	import {LeaderLine} from '../../../../static/js/leader-line';
 	import _ from 'lodash';
-	import { convertSchemaToTreeData } from '../../../editor/util/Schema';
+	import { convertSchemaToTreeData } from '../../util/Schema';
 	import log from '../../../log';
 
 	export default {

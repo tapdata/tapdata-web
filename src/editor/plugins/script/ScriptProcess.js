@@ -3,23 +3,38 @@
  * @date 3/5/20
  * @description
  */
-import {options} from "../lib/rappid/config";
-import Table from "../../view/job/Table";
-import i18n from "../../i18n/i18n";
+import {options} from "../../lib/rappid/config";
+import Script from "./Script";
+import {FORM_DATA_KEY} from "../../constants";
+import i18n from "../../../i18n/i18n";
 
-export const tableConfig = {
+export const scriptProcessConfig = {
 
-	type: 'app.Table',
+	type: 'app.Script',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
+			size:{width:120,height:28},
 			attrs: {
 				image:{
-					xlinkHref: 'static/editor/o-table.svg',
+					xlinkHref: 'static/editor/o-js.svg',
+					refWidth: '25%',
+					refHeight: '84%',
+					refX: '-8%',
+					refY: '-28%'
+				},
+				body: {
+					rx:14,
+					ry:14
 				},
 				label:{
-					text: i18n.t('editor.cell.data_node.table.name')
+					text: i18n.t('editor.cell.processor.script.name'),
 				}
+			},
+
+			[FORM_DATA_KEY]: {
+				type: "js_processor",
+				script: "function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}"
 			}
 		},
 		prototypeProperties: {
@@ -27,9 +42,10 @@ export const tableConfig = {
 				tagName: 'text',
 				selector: 'portLabel'
 			}],
-			isDataNode(){
+			isProcess(){
 				return true;
 			},
+
 			/**
 			 * validate user-filled data
 			 * @param data
@@ -40,12 +56,10 @@ export const tableConfig = {
 				let name = this.attr('label/text');
 				if( !data )
 					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
-				if( !data.connectionId )
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_database')}`);
-				if( !data.tableName )
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_table')}`);
-				if( !data.primaryKeys)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_pk')}`);
+				if( !data.type )
+					throw new Error(`${name}: ${i18n.t('editor.cell.processor.script.none_script_type')}`);
+				if( !data.script )
+					throw new Error(`${name}: ${i18n.t('editor.cell.processor.script.none_script')}`);
 				return true;
 			},
 
@@ -176,9 +190,9 @@ export const tableConfig = {
 	 */
 	stencil: {
 		/**
-		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：process；标准图形：standard
+		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：processor；标准图形：standard
 		 */
-		group: 'data',
+		group: 'processor',
 		/**
 		 * 界面显示的分组名称
 		 */
@@ -187,7 +201,7 @@ export const tableConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.data_node.table.tip'),
+				dataTooltip: i18n.t('editor.cell.processor.script.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -200,14 +214,14 @@ export const tableConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/table.svg',
+				xlinkHref: 'static/editor/js.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.data_node.table.name'),
+				text: i18n.t('editor.cell.processor.script.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -227,7 +241,7 @@ export const tableConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: Table,
+		component: Script,
 	}
 
 };

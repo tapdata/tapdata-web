@@ -2,7 +2,6 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import layout from '../view/layout';
 import Job from '../view/job/Job';
-import Aggregate from '../view/job/Aggregate';
 import DataVerify from '../view/job/DataVerify/List';
 
 import clusterManagement from '../view/clusterManagement/clusterManagement';
@@ -40,10 +39,6 @@ export default new Router({
 			name: 'DataFlows',
 			component: DataFlows
 		}, {
-			path: '/aggregate',
-			name: 'aggregate',
-			component: Aggregate
-		},{
 			path: '/metadata',
 			name: 'metadata',
 			component: metaData

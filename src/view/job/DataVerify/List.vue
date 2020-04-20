@@ -52,7 +52,7 @@
 		<div class="dv-btn-footer-wrapper">
 			<div class="dv-btn-footer-box">
 				<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleLoading">{{ $t('dataVerify.start')}}</el-button>
-				<el-button size="mini" class="dv-btn-footer">{{ $t('dataVerify.back')}}</el-button>
+				<el-button size="mini" class="dv-btn-footer" @click="handleBack">{{ $t('dataVerify.back')}}</el-button>
 			</div>
 		</div>
 		<el-drawer
@@ -66,7 +66,7 @@
 			<el-form class="dv-add-form">
 				<div class="dv-add-form-text" >{{ $t('dataVerify.dataWay')}}</div>
 				<el-form-item>
-					<el-radio-group v-model="type" size="mini">
+					<el-radio-group v-model="type" size="mini" class="dv-radio">
 						<el-radio border  label="row" width="150px">{{ $t('dataVerify.row')}}</el-radio>
 						<el-radio border  label="hash" width="150px">{{ $t('dataVerify.hash')}}</el-radio>
 						<el-radio border  label="advance" width="150px">{{ $t('dataVerify.advance')}}</el-radio>
@@ -74,7 +74,7 @@
 				</el-form-item>
 				<el-form-item v-show="type !=='row'">
 					<div class="dv-add-form-text">{{ $t('dataVerify.condition')}}</div>
-					<el-row gutter="10">
+					<el-row :gutter="10">
 						<el-col :span="12">
 							<el-select size="mini" v-model="condition.type">
 								<el-option value="rows" :label="$t('dataVerify.rows')"></el-option>
@@ -116,7 +116,7 @@
 						<el-col :span="24" >
 							<el-select size="mini" style="width: 100%" v-model="target.stageId">
 								<el-option
-										v-for="item in sourceList"
+										v-for="item in targetList"
 										:key="item.stageId"
 										:label="item.tableName"
 										:value="item.stageId">
@@ -167,7 +167,8 @@
 				checkedSource:false,
 				checkedTarget:false,
 				sourceList:[],
-				type: "row",// row: 行数 hash：哈希  advance：高级校验
+				targetList:[],
+				type: "advance",// row: 行数 hash：哈希  advance：高级校验
 				condition: {
 					type:'rows',      //# rows：按行数参与校验，sampleRate：按采样率参与校验
 					//# type为rows时表示行数；type为sampleRate时，表示采样率，如：
@@ -202,6 +203,24 @@
 				this.disabledDrawer = false;
 			},
 			handleShowDrawer(){
+				this.disabledDrawer = false;
+				this.type = "advance",// row: 行数 hash：哈希  advance：高级校验
+					this.condition = {
+					type:'rows',      //# rows：按行数参与校验，sampleRate：按采样率参与校验
+						//# type为rows时表示行数；type为sampleRate时，表示采样率，如：
+						value: "1000",
+				};
+				this.source =  {
+					stageId: "",
+						tableName: "",
+						filter: ""
+				};
+				this.target = {
+					stageId: "",
+						tableName: "",
+						filter: ""
+				};
+				this.validateCode = '';
 				this.disabledDrawer = true;
 			},
 			getData(params){
@@ -217,14 +236,15 @@
 				dataFlows.getId(this.id,_params).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data) {
-							this.tableData = res.data.validationSettings;
+							this.tableData = res.data.validationSettings?res.data.validationSettings:[];
 							log('dataVerify.tableData',this.tableData);
 						}
 					}
 				});
 			},
 			handleAdd(){
-				log('edit_status',this.editIndex);
+				log('edit_edit',this.editIndex);
+
 				if(this.editIndex !== -1){
 					this.tableData.splice(this.editIndex,1); //是否是编辑 先删除后新增
 				}
@@ -238,13 +258,12 @@
 					this.source.connectionId = op[0].connectionId;
 				}
 				if(this.target.stageId){
-					let op = this.sourceList.filter(item => item.stageId === this.target.stageId);
+					let op = this.targetList.filter(item => item.stageId === this.target.stageId);
 					log('op.target',op);
 					this.target.tableName = op[0].tableName;
 					this.target.stageId = op[0].stageId;
 					this.target.primaryKeys =op[0].primaryKeys;
 					this.target.connectionId = op[0].connectionId;
-					log(this.target);
 				}
 
 				let add = {
@@ -254,12 +273,16 @@
 					target:this.target ,
 					validateCode:this.validateCode,
 				};
+				log('add',add); //添加的数据
+
 				if(!this.tableData){
 					this.tableData = [];
-					this.tableData.push(add);
+					this.tableData.push(add); //判断tabledata 是否存在
 				}else {
 					this.tableData.push(add);
+					log('tableData',this.tableData);
 				}
+
 				let data ={
 					validationSettings:this.tableData
 				};
@@ -267,6 +290,7 @@
 				dataFlows.patchId(this.id,data).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						this.disabledDrawer =false;
+						this.editIndex = -1;
 						this.getData();
 					}
 				});
@@ -300,6 +324,7 @@
 				});
 			},
 			handleEdit(index){
+				this.disabledDrawer = false;
 				this.disabledDrawer =true;
 				this.editIndex = index;
 				this.condition = this.tableData[index].condition;
@@ -311,10 +336,14 @@
 			getSourceList(){
 				dataFlows.getSourceList(this.id).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
-						this.sourceList = res.data;
+						this.sourceList = res.data.source;
+						this.targetList = res.data.target;
 						log('source.list',res.data);
 					}
 				});
+			},
+			handleBack(){
+				this.editor.showResult();
 			},
 			getUrlSearch(name) {
 				// 未传参，返回空
@@ -443,5 +472,10 @@
 	}
 	.dv-add-form .el-form-item{
 		margin-bottom:0;
+	}
+	.dv-radio .el-radio {
+		color: #606266;
+		cursor: pointer;
+		margin-right: 0;
 	}
 </style>

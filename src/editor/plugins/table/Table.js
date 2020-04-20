@@ -1,76 +1,51 @@
-import {options} from "../lib/rappid/config";
-import Aggregate from "../../view/job/Aggregate";
-import {FORM_DATA_KEY} from "../constants";
-import log from "../../log";
-import {uuid} from "../util/Schema";
-import _ from 'lodash';
-import i18n from "../../i18n/i18n";
+/**
+ * @author lg<lirufei0808@gmail.com>
+ * @date 3/5/20
+ * @description
+ */
+import {options} from "../../lib/rappid/config";
+import TableAttribute from "./TableAttribute";
+import i18n from "../../../i18n/i18n";
 
-export const aggregateConfig = {
-	type: 'app.Aggregate',
+export const tableConfig = {
+
+	type: 'app.Table',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
-			size: {width: 120, height: 28},
 			attrs: {
-				image: {
-					xlinkHref: 'static/editor/o-aggregator.svg',
-					refWidth: '25%',
-					refHeight: '84%',
-					refX: '-8%',
-					refY: '-28%'
+				image:{
+					xlinkHref: 'static/editor/o-table.svg',
 				},
-				body: {
-					rx: 14,
-					ry: 14
-				},
-				label: {
-					text: i18n.t('editor.cell.processor.aggregate.name'),
+				label:{
+					text: i18n.t('editor.cell.data_node.table.name')
 				}
 			}
 		},
 		prototypeProperties: {
 			portLabelMarkup: [{
 				tagName: 'text',
-				selector: 'portLabel',
+				selector: 'portLabel'
 			}],
-			initialize() {
-				this.on('change:' + FORM_DATA_KEY, () => {
-					this.updateOutputSchema();
-				});
+			isDataNode(){
+				return true;
 			},
-			mergeOutputSchema(outputSchema) {
-				let data = this.getFormData();
-				log('aggregate.mergeOutputSchema', data, outputSchema);
-				if (!outputSchema || !data)
-					return;
-
-				let groupFields = [];
-				let functionNames = [];
-				data.aggregations.forEach(stage => {
-					if (stage.groupByExpression) groupFields.push(...stage.groupByExpression);
-					if (stage.aggExpression) functionNames.push(stage.aggFunction);
-				});
-
-				let fields = outputSchema.fields || [];
-				outputSchema.fields = fields.filter(field => groupFields.includes(field.field_name)) || [];
-
-				functionNames.forEach(fnName => {
-					outputSchema.fields.push(Object.assign(_.cloneDeep(fields[0] || {}), {
-						"field_name": fnName,
-						"data_type": "DOUBLE",
-						"primary_key_position": 0,
-						"original_field_name": fnName,
-						"javaType": "Double",
-						"autoincrement": false,
-						"id": uuid()
-					}));
-				});
-				log('Aggregate.mergeOutputSchema', _.cloneDeep(fields), outputSchema);
-				return outputSchema;
-			},
-
-			isProcess() {
+			/**
+			 * validate user-filled data
+			 * @param data
+			 *
+			 */
+			validate: function(data){
+				data = data || this.getFormData();
+				let name = this.attr('label/text');
+				if( !data )
+					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
+				if( !data.connectionId )
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_database')}`);
+				if( !data.tableName )
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_table')}`);
+				if( !data.primaryKeys)
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_pk')}`);
 				return true;
 			},
 
@@ -90,33 +65,9 @@ export const aggregateConfig = {
 			 */
 			allowSource(sourceCell) {
 				return !['app.Database'].includes(sourceCell.get('type'));
-			},
-
-			validate(data) {
-				data = data || this.getFormData();
-				let name = this.attr('label/text');
-				if (!data)
-					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
-
-				if (data.aggregations && data.aggregations.length === 0)
-					throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_stage')}`);
-
-				if (!data.name)
-					throw new Error(`${name}: ${i18n.t('editor.cell.validate.empty_name')}`);
-
-				if (data.aggregations && data.aggregations.length > 0) {
-					data.aggregations.forEach(item => {
-						if (!item.aggFunction)
-							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_function')}`);
-						if (!item.groupByExpression)
-							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_group')}`);
-						if (!item.aggExpression && item.aggFunction !== "COUNT")
-							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_aggregation_expression')}`);
-					});
-				}
-				return true;
-			},
+			}
 		},
+		//staticProperties: {}
 	},
 
 	styleFormConfig: {
@@ -225,9 +176,9 @@ export const aggregateConfig = {
 	 */
 	stencil: {
 		/**
-		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：processor；标准图形：standard
+		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：process；标准图形：standard
 		 */
-		group: 'processor',
+		group: 'data',
 		/**
 		 * 界面显示的分组名称
 		 */
@@ -236,7 +187,7 @@ export const aggregateConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.processor.aggregate.tip'),
+				dataTooltip: i18n.t('editor.cell.data_node.table.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -244,19 +195,19 @@ export const aggregateConfig = {
 				rx: 2,
 				ry: 2,
 				stroke: '#fff',
-				fill: '#fff',
+				fill:'#fff',
 				strokeWidth: 0,
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/aggregator.svg',
+				xlinkHref: 'static/editor/table.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.processor.aggregate.name'),
+				text: i18n.t('editor.cell.data_node.table.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -265,8 +216,8 @@ export const aggregateConfig = {
 				strokeWidth: 0,
 				refX: '75%',
 				refY: '40%',
-				x: -35,
-				y: 27
+				x:-35,
+				y:27
 			}
 		}
 	},
@@ -276,7 +227,7 @@ export const aggregateConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: Aggregate,
+		component: TableAttribute,
 	}
 
 };

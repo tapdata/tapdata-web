@@ -72,8 +72,8 @@
 
 <script>
 	import _ from "lodash";
-	import log from '../../log';
-	import {mergeJoinTablesToTargetSchema} from "../../editor/util/Schema";
+	import log from '../../../log';
+	import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
 
 	let counter = 0;
 	export default {

@@ -1,37 +1,105 @@
-import {options} from "../lib/rappid/config";
-import EsNode from "../../view/job/EsNode";
-import i18n from "../../i18n/i18n";
+/**
+ * @author lg<lirufei0808@gmail.com>
+ * @date 3/4/20
+ * @description
+ */
+import {options} from "../../lib/rappid/config";
+import DatabaseAttribute from "./DatabaseAttribute";
+import i18n from "../../../i18n/i18n";
 
-export const esNodeConfig = {
-	type: 'app.ESNode',
+export const databaseConfig = {
+
+	/**
+	 * the name of the subtype class.
+	 *
+	 */
+	type: 'app.Database',
+
+	/**
+	 * define shape
+	 * docs see https://github.com/clientIO/joint/blob/master/tutorials/custom-elements.html
+	 * @type {object}
+	 */
 	shape: {
+		/**
+		 * extends exists shape
+		 */
 		extends: 'app.BaseElement',
+
+		/**
+		 * object that contains properties to be assigned to every constructed instance of the subtype.
+		 *
+		 * @example <pre>
+		 *     {
+		 *        attrs: {
+		 *           body: {
+		 *              refWidth: '100%',
+		 *              refHeight: '100%',
+		 *              strokeWidth: 2,
+		 *              stroke: '#000000',
+		 *              fill: '#FFFFFF'
+		 *           },
+		 *           label: {
+		 *              textVerticalAnchor: 'middle',
+		 *              textAnchor: 'middle',
+		 *              refX: '50%',
+		 *              refY: '50%',
+		 *              fontSize: 14,
+		 *              fill: '#333333'
+		 *           }
+		 *        }
+		 *     }
+		 * </pre>
+		 */
 		defaultInstanceProperties: {
-			size: {width: 120, height: 28},
 			attrs: {
-				image: {
-					xlinkHref: 'static/editor/o-es.svg',
-					refWidth: '25%',
-					refHeight: '84%',
-					refX: '-8%',
-					refY: '-28%'
+				image:{
+					xlinkHref: 'static/editor/o-DB.svg',
 				},
-				body: {
-					rx: 14,
-					ry: 14
-				},
-				label: {
-					text: i18n.t('editor.cell.data_node.es.name'),
+				label:{
+					text: i18n.t('editor.cell.data_node.database.name')
 				}
 			}
 		},
+		/**
+		 * object that contains properties to be assigned on the subtype prototype.
+		 * Intended for properties intrinsic to the subtype, not usually modified.
+		 *
+		 * @example <pre>
+		 *
+		 * {
+		 *     markup: [{
+		 *          tagName: 'rect',
+		 *          selector: 'body',
+		 *     }, {
+		 *          tagName: 'text',
+		 *          selector: 'label'
+		 *     }]
+		 * }
+		 *
+		 * </pre>
+		 */
 		prototypeProperties: {
 			portLabelMarkup: [{
 				tagName: 'text',
-				selector: 'portLabel',
+				selector: 'portLabel'
 			}],
+			isDataNode(){
+				return true;
+			},
 
-			isDataNode() {
+			/**
+			 * validate user-filled data
+			 * @param data
+			 *
+			 */
+			validate: function(data){
+				data = data || this.getFormData();
+				let name = this.attr('label/text');
+				if( !data )
+					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
+				if( !data.connectionId )
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.database.none_database')}`);
 				return true;
 			},
 
@@ -41,7 +109,7 @@ export const esNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-        return false;
+				return ['app.Database'].includes(targetCell.get('type'));
 			},
 
 			/**
@@ -50,19 +118,20 @@ export const esNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-        return !['app.FileNode'].includes(sourceCell.get('type'));
-			},
-
-			validate(data) {
-				data = data || this.getFormData();
-				let name = this.attr('label/text');
-				if (!data)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`);
-				return true;
-			},
+				return ['app.Database'].includes(sourceCell.get('type'));
+			}
 		},
+		/**
+		 * object that contains properties to be assigned on the subtype constructor.
+		 */
+		//staticProperties: {}
 	},
 
+	/**
+	 * 图形(Element子类
+	 * )样式表单配置
+	 * @type {object}
+	 */
 	styleFormConfig: {
 		inputs: {
 			attrs: {
@@ -169,7 +238,7 @@ export const esNodeConfig = {
 	 */
 	stencil: {
 		/**
-		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：processor；标准图形：standard
+		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：process；标准图形：standard
 		 */
 		group: 'data',
 		/**
@@ -180,7 +249,7 @@ export const esNodeConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.data_node.file.tip'),
+				dataTooltip: i18n.t('editor.cell.data_node.database.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -188,19 +257,19 @@ export const esNodeConfig = {
 				rx: 2,
 				ry: 2,
 				stroke: '#fff',
-				fill: '#fff',
+				fill:'#fff',
 				strokeWidth: 0,
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/Elasticsearch_fill.svg',
+				xlinkHref: 'static/editor/database2.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.data_node.es.name'),
+				text: i18n.t('editor.cell.data_node.database.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -209,8 +278,8 @@ export const esNodeConfig = {
 				strokeWidth: 0,
 				refX: '75%',
 				refY: '40%',
-				x: -35,
-				y: 27
+				x:-35,
+				y:27
 			}
 		}
 	},
@@ -220,7 +289,10 @@ export const esNodeConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: EsNode,
+		component: DatabaseAttribute,
+		/*props: {
+			connection_type: 'source'
+		},*/
 	}
 
 };

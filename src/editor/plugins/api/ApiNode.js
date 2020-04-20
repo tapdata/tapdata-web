@@ -1,16 +1,19 @@
-import {options} from "../lib/rappid/config";
-import GridFSNode from "../../view/job/GridFsNode";
-import i18n from "../../i18n/i18n";
+import {options} from "../../lib/rappid/config";
+import ApiAttribute from "./ApiAttribute";
+import i18n from "../../../i18n/i18n";
 
-export const GridFSNodeConfig = {
-	type: 'app.GridFSNode',
+export const ApiNodeConfig = {
+	type: 'app.ApiNode',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
-			size: {width: 120, height: 28},
+			size: {
+				width: 120,
+				height: 28
+			},
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/o-gridfs2.svg',
+					xlinkHref: 'static/editor/api.svg',
 					refWidth: '25%',
 					refHeight: '84%',
 					refX: '-8%',
@@ -21,7 +24,7 @@ export const GridFSNodeConfig = {
 					ry: 14
 				},
 				label: {
-					text: i18n.t('editor.cell.data_node.gridfs.name'),
+					text: i18n.t('editor.cell.data_node.api.name'),
 				}
 			}
 		},
@@ -41,8 +44,7 @@ export const GridFSNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-				// log("GridFsNode.allowTarget", targetCell);
-				return !['app.GridFSNode', 'app.Database'].includes(targetCell.get('type'));
+				return !['app.FileNode', 'app.Database', 'app.GridFSNode'].includes(targetCell.get('type'));
 			},
 
 			/**
@@ -51,16 +53,14 @@ export const GridFSNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-				// log("GridFsNode.allowSource", sourceCell);
-				return ['app.FileNode'].includes(sourceCell.get('type'));
+				return false;
 			},
 
 			validate(data) {
-				// log("GridFsNode.validate", data);
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
 				if (!data)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.gridfs.gridFs_isNull')}`);
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`);
 				return true;
 			},
 		},
@@ -183,7 +183,7 @@ export const GridFSNodeConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.data_node.gridfs.tip'),
+				dataTooltip: i18n.t('editor.cell.data_node.api.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -196,14 +196,14 @@ export const GridFSNodeConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/gridfs2.svg',
+				xlinkHref: 'static/editor/api.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.data_node.gridfs.name'),
+				text: i18n.t('editor.cell.data_node.api.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -223,7 +223,7 @@ export const GridFSNodeConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: GridFSNode,
+		component: ApiAttribute,
 	}
 
 };

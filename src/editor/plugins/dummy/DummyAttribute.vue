@@ -1,5 +1,5 @@
 <template>
-	<div class="apiNode nodeStye">
+	<div class="dummy nodeStye">
 		<head>
 			<span class="headIcon iconfont icon-you2" type="primary"></span>
 			<span class="txt">{{$t("editor.nodeSettings")}}</span>
@@ -7,10 +7,10 @@
 		<div class="nodeBody">
 			<el-form class="e-form" label-position="top" :model="model" ref="form">
 				<!-- <span class="addTxt">+新建文件</span> -->
-				<el-form-item :label="$t('editor.choose') + 'API'" prop="connectionId" :rules="rules" required>
+				<el-form-item :label="$t('editor.choose') + 'Dummy'" prop="connectionId" :rules="rules" required>
 					<el-select
 							filterable v-model="model.connectionId"
-							:placeholder="$t('editor.cell.data_node.api.chooseApiName')">
+							:placeholder="$t('editor.cell.data_node.dummy.chooseDummyName')">
 						<el-option
 								v-for="(item, idx) in databases"
 								:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
@@ -24,19 +24,23 @@
 </template>
 <script>
 	import _ from "lodash";
-	import factory from '../../api/factory';
+	import factory from '../../../api/factory';
 
 	let connections = factory('connections');
 
 	export default {
-		name: "ApiNode",
+		name: "Dummy",
 
 		data() {
 			return {
 				databases: [],
 				rules: {
 					connectionId: [
-						{required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.api.chooseApiName')},
+						{
+							required: true,
+							trigger: 'blur',
+							message: this.$t('editor.cell.data_node.dummy.chooseDummyName')
+						},
 					]
 				},
 				model: {
@@ -49,11 +53,10 @@
 			let result = await connections.get({
 				filter: JSON.stringify({
 					where: {
-						database_type: 'rest api',
-
+						database_type: 'dummy'
 					},
 					fields: {
-						name: 1, id: 1, database_type: 1, connection_type: 1, status: 1, schema: 1
+						name: 1, id: 1, database_type: 1, connection_type: 1, status: 1
 					},
 					order: 'name ASC'
 				})

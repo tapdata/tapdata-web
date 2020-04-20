@@ -3,50 +3,103 @@
  * @date 3/5/20
  * @description
  */
-import {options} from "../lib/rappid/config";
-import Collection from "../../view/job/Collection";
-import i18n from "../../i18n/i18n";
+import {options} from "../../lib/rappid/config";
+import FieldProcessAttribute from "./FieldProcessAttribute";
+import {FORM_DATA_KEY} from "../../constants";
+import log from "../../../log";
+import i18n from "../../../i18n/i18n";
 
-export const collectionConfig = {
+export const fieldProcessConfig = {
 
-	type: 'app.Collection',
+	type: 'app.FieldProcess',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
+			size: {width: 120, height: 28},
 			attrs: {
-				image:{
-					xlinkHref: 'static/editor/o-collection.svg',
+				image: {
+					xlinkHref: 'static/editor/o-field-processor.svg',
+					refWidth: '25%',
+					refHeight: '84%',
+					refX: '-8%',
+					refY: '-28%'
 				},
-				label:{
-					text: i18n.t('editor.cell.data_node.collection.name')
+				body: {
+					rx: 14,
+					ry: 14
+				},
+				label: {
+					text: i18n.t('editor.cell.processor.field.name'),
 				}
 			}
 		},
 		prototypeProperties: {
 			portLabelMarkup: [{
 				tagName: 'text',
-				selector: 'portLabel'
+				selector: 'portLabel',
 			}],
-			isDataNode(){
-				return true;
+			initialize() {
+				this.on('change:' + FORM_DATA_KEY, () => {
+					this.updateOutputSchema();
+				});
+			},
+			mergeOutputSchema(outputSchema, applyRemoveOperation = true) {
+				let data = this.getFormData();
+				log('FieldProcess.mergeOutputSchema', data, outputSchema);
+				if (!outputSchema || !data)
+					return outputSchema;
+
+				data.operations.map((item, index) => {
+					if(item.op === 'CREATE') {
+						let triggerFieldId = item.triggerFieldId;
+						let newField = {
+							id: item.id,
+							field_name: item.field || item.field_name,
+							table_name: item.tableName || item.table_name,
+							original_field_name: item.field || item.field_name,
+							javaType: item.javaType,
+							data_type: "STRING",
+							primary_key_position: 0,
+							dataType: 2,
+							is_nullable: true,
+							columnSize: 0,
+							autoincrement: false,
+						};
+						if(triggerFieldId) {
+							let triggerFieldIndex = outputSchema.fields.findIndex( f => f.id === triggerFieldId);
+							outputSchema.fields.splice(triggerFieldIndex + 1, 0, newField);
+						} else
+							outputSchema.fields.push(newField);
+					}
+
+				});
+
+				data.operations.map((item, index) => {
+					let targetIndex = outputSchema.fields.findIndex(function (n, index) {
+						return n.id === item.id;
+					});
+					if (targetIndex === -1) {
+						// data.operations.splice(index,1); //删除找不到id的数据
+						return;
+					}
+					if (item.op === "RENAME") {
+						let name = outputSchema.fields[targetIndex].field_name;
+						name = name.split('.');
+						name[name.length - 1] = item.operand;
+						outputSchema.fields[targetIndex].field_name = name.join('.');
+					} else if (item.op === "CONVERT") {
+						outputSchema.fields[targetIndex].javaType = item.operand;
+					} else if (item.op === "REMOVE") {
+						if( applyRemoveOperation !== false)
+							outputSchema.fields.splice(targetIndex, 1);
+					}
+
+				});
+				log('FieldProcess.mergeOutputSchema', outputSchema);
+				return outputSchema;
 			},
 
-			/**
-			 * validate user-filled data
-			 * @param data
-			 *
-			 */
-			validate: function(data){
-				data = data || this.getFormData();
-				let name = this.attr('label/text');
-				if( !data )
-					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
-				if( !data.connectionId )
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_database')}`);
-				if( !data.tableName )
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_collection')}`);
-				if( !data.primaryKeys)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_pk')}`);
+			isProcess() {
 				return true;
 			},
 
@@ -67,7 +120,7 @@ export const collectionConfig = {
 			allowSource(sourceCell) {
 				return !['app.Database'].includes(sourceCell.get('type'));
 			}
-		}
+		},
 		//staticProperties: {}
 	},
 
@@ -177,9 +230,9 @@ export const collectionConfig = {
 	 */
 	stencil: {
 		/**
-		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：process；标准图形：standard
+		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：processor；标准图形：standard
 		 */
-		group: 'data',
+		group: 'processor',
 		/**
 		 * 界面显示的分组名称
 		 */
@@ -188,7 +241,7 @@ export const collectionConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.data_node.collection.tip'),
+				dataTooltip: i18n.t('editor.cell.processor.field.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -196,19 +249,19 @@ export const collectionConfig = {
 				rx: 2,
 				ry: 2,
 				stroke: '#fff',
-				fill:'#fff',
+				fill: '#fff',
 				strokeWidth: 0,
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/collection2.svg',
+				xlinkHref: 'static/editor/field-processor.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.data_node.collection.name'),
+				text: i18n.t('editor.cell.processor.field.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -217,8 +270,8 @@ export const collectionConfig = {
 				strokeWidth: 0,
 				refX: '75%',
 				refY: '40%',
-				x:-35,
-				y:27
+				x: -35,
+				y: 27
 			}
 		}
 	},
@@ -228,7 +281,7 @@ export const collectionConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: Collection
+		component: FieldProcessAttribute,
 	}
 
 };

@@ -1,8 +1,8 @@
 <template>
-	<div class="e-table">
+	<div class="e-collection">
 		<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form">
-			<el-form-item :label="$t('editor.cell.data_node.table.form.database.label')" prop="connectionId" :rules="rules" required>
-				<el-select filterable v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.table.form.database.placeholder')" @change="handlerConnectionChange" size="mini">
+			<el-form-item :label="$t('editor.cell.data_node.collection.form.database.label')" prop="connectionId" :rules="rules" required>
+				<el-select filterable v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.collection.form.database.placeholder')" @change="handlerConnectionChange" size="mini">
 					<el-option
 							v-for="(item, idx) in databases"
 							:label="`${item.name} (${item.status})`"
@@ -11,8 +11,14 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item :label="$t('editor.cell.data_node.table.form.table.label')" prop="tableName" :rules="rules" required>
-				<el-select filterable v-model="model.tableName" :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')" size="mini">
+			<el-form-item :label="$t('editor.cell.data_node.collection.form.collection.label')" prop="tableName" :rules="rules" required>
+				<el-select
+						v-model="model.tableName"
+						filterable
+						allow-create
+						default-first-option
+						clearable
+						:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')" size="mini">
 					<el-option
 							v-for="(item, idx) in schemas"
 							:label="`${item.table_name}`"
@@ -24,7 +30,7 @@
 			<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
 				<el-input
 						v-model="model.primaryKeys"
-						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')" size="mini"></el-input>
+						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"  size="mini"></el-input>
 			</el-form-item>
 
 			<el-form-item required :label="$t('editor.cell.data_node.collection.form.dropTable.label')" v-if="!isSourceDataNode">
@@ -39,10 +45,6 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item :label="$t('editor.cell.data_node.table.form.custom_sql.label')" prop="sql" :rules="rules" >
-				<el-input type="textarea" rows="10" v-model="model.sql" :placeholder="$t('editor.cell.data_node.table.form.custom_sql.placeholder')" size="mini"></el-input>
-			</el-form-item>
-
 		</el-form>
 		<div class="e-entity-wrap" style="text-align: center;">
 			<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
@@ -51,20 +53,20 @@
 </template>
 
 <script>
-	import { convertSchemaToTreeData } from "../../editor/util/Schema";
-	import Entity from './components/Entity';
+	import { convertSchemaToTreeData } from "../../util/Schema";
+	import Entity from '../link/Entity';
 	import _ from 'lodash';
-	import factory from '../../api/factory';
+	import factory from '../../../api/factory';
 	let connectionApi = factory('connections');
 
 	export default {
-		name: "Table",
+		name: "Collection",
 		components: {Entity},
 		props: {
 			database_types: {
 				type: Array,
 				default: function(){
-					return ['mysql', 'oracle', 'sqlserver', 'sybase ase', 'gbase-8s', 'db2', 'gaussdb200', 'postgres'];
+					return ['mongodb'];
 				}
 			}
 		},
@@ -88,7 +90,12 @@
 					if( this.schemas.length > 0 ){
 						if( this.model.tableName){
 							let schema = this.schemas.filter( s => s.table_name === this.model.tableName);
-							schema = schema && schema.length > 0 ? schema[0] : {};
+							schema = schema && schema.length > 0 ? schema[0] : {
+								table_name: this.model.tableName,
+								cdc_enabled: true,
+								meta_type: 'collection',
+								fields: []
+							};
 							/*let fields = schema.fields || [];
 							let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
 							if( primaryKeys) this.model.primaryKeys = primaryKeys;*/
@@ -127,9 +134,8 @@
 					connectionId: "",
 					databaseType: '',
 					tableName: "",
-					sql: '',
 					dropTable: false,
-					type: 'table',
+					type: 'collection',
 					primaryKeys: ''
 				},
 
@@ -162,7 +168,6 @@
 			},
 
 			loadDataModels(connectionId){
-
 				if( !connectionId ){
 					return;
 				}
@@ -174,7 +179,6 @@
 						self.schemas = schemas;
 					}
 				});
-
 			},
 
 			handlerConnectionChange(){
@@ -199,7 +203,7 @@
 			},
 			getData(){
 				let result = _.cloneDeep(this.model);
-				result.name = result.tableName || 'Table';
+				result.name = result.tableName || 'Collection';
 				if( this.isSourceDataNode ){
 					delete result.dropTable;
 				}
@@ -210,14 +214,14 @@
 </script>
 
 <style lang="less" scoped>
-	.e-table {
+	.e-collection {
 		height: 100%;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 
 		.e-form {
-			.el-input, .el-select, .el-textarea {
+			.el-input, .el-select {
 				max-width: 400px;
 				width: 80%;
 			}

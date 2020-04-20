@@ -65,7 +65,7 @@
 						</el-dropdown>
 
 						<el-button type="text" v-if="isRemove(data.id) || ['Array', 'Map'].includes(data.type)" class=" e-field-action iconfont icon-script" disabled></el-button>
-						<span v-else class="e-field-action iconfont icon-script"  @click="handleScript(node, data)"></span>
+						<span v-else class="e-field-action iconfont icon-script" :style=" isScript(data.id) ? 'color: #71c179;' : '' " @click="handleScript(node, data)"></span>
 
 						<el-button type="text" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 " class=" e-field-action iconfont icon-l-del" disabled></el-button>
 						<span v-else class="e-field-action iconfont icon-l-del"  @click="handleDelete(node,data)"></span>
@@ -97,7 +97,7 @@
 	import $ from 'jquery';
 	import log from '../../../log';
 	import _ from 'lodash';
-	import {uuid} from "../../../editor/util/Schema";
+	import {uuid} from "../../util/Schema";
 
 	const REMOVE_OPS_TPL = {
 		id: '',
@@ -119,8 +119,8 @@
 	};
 	const CREATE_OPS_TPL = {
 		op: 'CREATE',
-		field_name: '',
-		table_name: '',
+		field: '',
+		tableName: '',
 		javaType: 'String',
 		id: '',
 
@@ -129,7 +129,7 @@
 	};
 	const SCRIPT_TPL = {
 		tableName: '',
-		fieldName: '',
+		field: '',
 		scriptType: 'js',
 		script: '',
 		id: '',
@@ -168,25 +168,34 @@
 					fn: function(){}
 				},
 
-				operations: [],
-				scripts: [],
+				model: {
+					operations: [],
+					scripts: [],
+				},
 			};
 		},
 		methods: {
 			setOperations(operations) {
-				this.operations = operations;
+				this.model.operations = operations;
+			},
+			setScripts(scripts) {
+				this.model.scripts= scripts;
 			},
 			isRemove(id) {
-				let ops = this.operations.filter(v => v.id === id && v.op === 'REMOVE');
+				let ops = this.model.operations.filter(v => v.id === id && v.op === 'REMOVE');
 				return ops && ops.length > 0;
 			},
 			isRename(id) {
-				let ops = this.operations.filter(v => v.id === id && (v.op === 'RENAME' || v.op === 'CREATE'));
+				let ops = this.model.operations.filter(v => v.id === id && (v.op === 'RENAME' || v.op === 'CREATE'));
 				return ops && ops.length > 0;
 			},
 			isConvertDataType(id) {
-				let ops = this.operations.filter(v => v.id === id && v.op === 'CONVERT');
+				let ops = this.model.operations.filter(v => v.id === id && v.op === 'CONVERT');
 				return ops && ops.length > 0;
+			},
+			isScript(id){
+				let scripts = this.model.scripts.filter(v => v.id === id);
+				return scripts && scripts.length > 0;
 			},
 
 			getId(node) {
@@ -252,13 +261,13 @@
 			handleDataType(node, data) {
 
 				log('SchemaEditor.handleDataType', node, data);
-				let createOps = this.operations.filter(v => v.id === data.id && v.op === 'CREATE');
+				let createOps = this.model.operations.filter(v => v.id === data.id && v.op === 'CREATE');
 				if( createOps && createOps.length > 0 ){
 					let op = createOps[0];
 					op.javaType = data.type;
 				} else {
 					let nativeData = this.getNativeData(this.originalSchema.fields, data.id);
-					let ops = this.operations.filter(v => v.id === data.id && v.op === 'CONVERT');
+					let ops = this.model.operations.filter(v => v.id === data.id && v.op === 'CONVERT');
 					let op;
 					if (ops.length === 0) {
 						op = Object.assign(_.cloneDeep(CONVERT_OPS_TPL), {
@@ -267,7 +276,7 @@
 							operand: data.type,
 							originalDataType: nativeData.type,
 						});
-						this.operations.push(op);
+						this.model.operations.push(op);
 					} else {
 						op = ops[0];
 					}
@@ -275,21 +284,21 @@
 					op.operand = data.type;
 				}
 
-				this.$emit('dataChanged', this.operations);
+				this.$emit('dataChanged', this.model);
 			},
 			handleRename(node, data) {
 				log('SchemaEditor.handleRename', node, data);
-				let createOps = this.operations.filter(v => v.id === data.id && v.op === 'CREATE');
+				let createOps = this.model.operations.filter(v => v.id === data.id && v.op === 'CREATE');
 				if( createOps && createOps.length > 0 ){
 					let op = createOps[0];
 					let level = op.level;
-					let fieldNames = op.field_name.split('.');
+					let fieldNames = (op.field || op.field_name).split('.');
 					fieldNames[level] = data.label;
-					op.field_name = fieldNames.join('.');
+					op.field = fieldNames.join('.');
 				} else {
 					let nativeData = this.getNativeData(this.originalSchema.fields, data.id);
-					log("Entity1.handlerRename(node,data,nativeData,operations)", node, data, nativeData, this.operations);
-					let ops = this.operations.filter(v => v.id === nativeData.id && v.op === 'RENAME');
+					log("Entity1.handlerRename(node,data,nativeData,operations)", node, data, nativeData, this.model.operations);
+					let ops = this.model.operations.filter(v => v.id === nativeData.id && v.op === 'RENAME');
 					let op;
 					if (data.label === nativeData.label) {
 						return;
@@ -300,7 +309,7 @@
 							field: nativeData.label,
 							operand: data.label
 						});
-						this.operations.push(op);
+						this.model.operations.push(op);
 					} else {
 						Object.assign(ops[0], {
 							// id: data.id,
@@ -309,21 +318,22 @@
 						});
 					}
 				}
-				this.$emit('dataChanged', this.operations);
+				this.$emit('dataChanged', this.model);
 			},
 			handleDelete(node, data) {
 
 				log('SchemaEditor.handleDelete', node, data);
-				let createOpsIndex = this.operations.findIndex(v => v.id === data.id && v.op === 'CREATE');
+				let createOpsIndex = this.model.operations.findIndex(v => v.id === data.id && v.op === 'CREATE');
 				if( createOpsIndex >= 0){
 
-					let fieldName = this.operations[createOpsIndex].field_name + '.';
-					this.operations.splice(createOpsIndex, 1);
+					let fieldName = this.model.operations[createOpsIndex].field_name + '.';
+					this.model.operations.splice(createOpsIndex, 1);
 
-					for (let i = 0; i < this.operations.length; i++) {
-						let op = this.operations[i];
-						if( op.field_name.indexOf(fieldName) === 0 && op.field_name.length === fieldName.length) {
-							this.operations.splice(i, 1);
+					for (let i = 0; i < this.model.operations.length; i++) {
+						let op = this.model.operations[i];
+						let opFieldName = op.field || op.field_name;
+						if( opFieldName.indexOf(fieldName) === 0 && opFieldName.length === fieldName.length) {
+							this.model.operations.splice(i, 1);
 							i--;
 						}
 					}
@@ -334,24 +344,24 @@
 
 					let fn = function (field) {
 
-						for (let i = 0; i < self.operations.length; i++) { //删除所有的重命名的操作
-							let ops = self.operations[i];
+						for (let i = 0; i < self.model.operations.length; i++) { //删除所有的重命名的操作
+							let ops = self.model.operations[i];
 							if (ops.id === field.id && ops.op === 'RENAME') {
 								let originalNode = self.getNativeData(self.originalSchema.fields, field.id);
 								originalNode.label = field.label;
-								self.operations.splice(i, 1);
+								self.model.operations.splice(i, 1);
 							}
 						}
-						for (let i = 0; i < self.operations.length; i++) { //删除所有的类型改变的操作
-							let ops = self.operations[i];
+						for (let i = 0; i < self.model.operations.length; i++) { //删除所有的类型改变的操作
+							let ops = self.model.operations[i];
 							if (ops.id === field.id && ops.op === 'CONVERT') {
 								let originalNode = self.getNativeData(self.originalSchema.fields, field.id); //替换原始数据 主要是操作子节点
 								originalNode.type = field.type;
-								self.operations.splice(i, 1);
+								self.model.operations.splice(i, 1);
 							}
 						}
 
-						let ops = self.operations.filter(v => v.op === 'REMOVE' && v.id === field.id);
+						let ops = self.model.operations.filter(v => v.op === 'REMOVE' && v.id === field.id);
 
 						let op;
 						if (ops.length === 0) {
@@ -360,7 +370,7 @@
 								field: field.label,
 								operand: true
 							});
-							self.operations.push(op);
+							self.model.operations.push(op);
 						}
 
 						if (field.children) {
@@ -370,13 +380,13 @@
 					if( originalField) fn(originalField);
 				}
 
-				this.$emit('dataChanged', this.operations);
+				this.$emit('dataChanged', this.model);
 			},
 			handleReset(node, data) {
 
 				log('SchemaEditor.handleReset', node, data);
 				let parentId = node.parent.data.id;
-				let indexId = this.operations.filter(v => v.op === 'REMOVE' && v.id === parentId);
+				let indexId = this.model.operations.filter(v => v.op === 'REMOVE' && v.id === parentId);
 				if (parentId && indexId.length !== 0) {
 					return;
 				}
@@ -392,11 +402,11 @@
 					}
 
 					let nativeData = self.getNativeData(self.originalSchema.fields, data.id);
-					for (let i = 0; i < self.operations.length; i++) {
-						if (self.operations[i].id === data.id) {
-							let ops = self.operations[i];
+					for (let i = 0; i < self.model.operations.length; i++) {
+						if (self.model.operations[i].id === data.id) {
+							let ops = self.model.operations[i];
 							if (ops.op === 'REMOVE') {
-								self.operations.splice(i, 1);
+								self.model.operations.splice(i, 1);
 								i--;
 								/*node.childNodes.forEach((childNode) => {
 									fn(childNode, childNode.data);
@@ -404,7 +414,7 @@
 								//break;
 							}
 							if (ops.op === 'CREATE') {
-								self.operations.splice(i, 1);
+								self.model.operations.splice(i, 1);
 								i--;
 								/*node.childNodes.forEach((childNode) => {
 									fn(childNode, childNode.data);
@@ -415,14 +425,14 @@
 							if (ops.op === 'RENAME') {
 								if( nativeData )
 									node.data.label = nativeData.label;
-								self.operations.splice(i, 1);
+								self.model.operations.splice(i, 1);
 								i--;
 								//break;
 							}
 							if (ops.op === 'CONVERT') {
 								if( nativeData )
 									node.data.type = nativeData.type;
-								self.operations.splice(i, 1);
+								self.model.operations.splice(i, 1);
 								i--;
 								//break;
 							}
@@ -430,7 +440,7 @@
 					}
 				};
 				fn(node, data);
-				this.$emit('dataChanged', this.operations);
+				this.$emit('dataChanged', this.model);
 			},
 
 			getParentFieldName(node){
@@ -463,8 +473,8 @@
 
 				let fieldId = uuid();
 				let newFieldOperation = Object.assign(_.cloneDeep(CREATE_OPS_TPL), {
-					field_name: parentFieldName ? (parentFieldName + '.newFieldName') : 'newFieldName',
-					table_name: data.table_name,
+					field: parentFieldName ? (parentFieldName + '.newFieldName') : 'newFieldName',
+					tableName: data.table_name,
 					javaType: 'String',
 					id: fieldId,
 
@@ -472,8 +482,8 @@
 					triggerFieldId: node.data.id,
 					level: level - 1,
 				});
-				this.operations.push(newFieldOperation);
-				this.$emit('dataChanged', this.operations);
+				this.model.operations.push(newFieldOperation);
+				this.$emit('dataChanged', this.model);
 
 				let newNodeData = {
 					id: fieldId,
@@ -511,14 +521,14 @@
 				let tableName = self.scriptDialog.tableName = data.table_name;
 				let id = data.id;
 
-				let idx = self.scripts.findIndex( script => script.id === id);
+				let idx = self.model.scripts.findIndex( script => script.id === id);
 				let script;
 				if( idx !== -1 ){
-					script = self.scripts[idx];
+					script = self.model.scripts[idx];
 				}else {
 					script = _.cloneDeep(SCRIPT_TPL);
 					Object.assign(script, {
-						fieldName,
+						field: fieldName,
 						tableName,
 						id,
 					});
@@ -530,14 +540,15 @@
 					script.script = self.scriptDialog.script;
 
 					if( idx === -1) {
-						self.scripts.push(script);
+						self.model.scripts.push(script);
 					}
 
-					log('SchemaEditor.handleScript', node, data, script, self.scripts);
+					log('SchemaEditor.handleScript', node, data, script, self.model.scripts);
 
 					self.scriptDialog.open = false;
 					self.scriptDialog.fn = function(){};
 					self.scriptDialog.script = '';
+					self.$emit('dataChanged', self.model);
 
 				};
 			}
