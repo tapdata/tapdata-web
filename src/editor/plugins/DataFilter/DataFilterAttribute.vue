@@ -21,16 +21,15 @@
 				<el-input
 						type="textarea"
 						v-model="model.expression"
-						rows="5"
-						:placeholder="$t('editor.cell.processor.dataFilter.form.expression.placeholder')"></el-input>
-			</el-form-item>
-
-			<el-form-item
-					size="mini"
-					:label="$t('editor.cell.processor.dataFilter.form.expressionExample.label')">
+						rows="3"
+						:placeholder="$t('editor.cell.processor.dataFilter.form.expression.placeholder')"
+						:title="$t('editor.cell.processor.dataFilter.form.expression.labelTip')"></el-input>
 				<div style="color: #888888; font-size: 0.8em;">
-					{{$t('editor.cell.processor.dataFilter.form.expressionExample.tip')}}
-					<div class="e-expression-demo">
+					<h3 style="font-size: 1.1em; font-weight: bold;">{{$t('editor.cell.processor.dataFilter.form.expressionExample.label')}}:</h3>
+					<p style="text-indent: 2em;">
+						{{$t('editor.cell.processor.dataFilter.form.expressionExample.tip')}}
+					</p>
+					<p style="text-indent: 2em;">
 						<span style="color: red;">(</span> record.gender
 						<span style="color: #F5AF3F;">==</span> 0
 						<span style="color: #F5AF3F;">&&</span> record.age
@@ -42,15 +41,80 @@
 						<span style="color: #F5AF3F;">&&</span> record.salary
 						<span style="color: #F5AF3F;">&le;</span> 10000
 						<span style="color: red;">)</span>
-					</div>
+					</p>
+
+					<h3 style="font-size: 1.1em; font-weight: bold;">{{$t('editor.cell.processor.dataFilter.form.symbol.label')}}:</h3>
+					<table>
+						<tr>
+							<td style="width: 60px; text-align: center;">
+								<span style="color: #F5AF3F;">&gt;, &lt;</span>
+								<span style="color: #F5AF3F;"></span>
+							</td>
+							<td style="width: 140px; text-align: left;">
+								{{$t('editor.cell.processor.dataFilter.form.symbol.gtLt')}}
+							</td>
+
+							<td style="width: 60px; text-align: center;">
+								<span style="color: #F5AF3F;">&ge;, &le;</span>
+							</td>
+							<td style="width: 140px; text-align: left;">
+								{{$t('editor.cell.processor.dataFilter.form.symbol.geLe')}}
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 60px; text-align: center;">
+								<span style="color: #F5AF3F;">==</span>
+							</td>
+							<td style="width: 140px; text-align: left;">
+								{{$t('editor.cell.processor.dataFilter.form.symbol.eq')}}
+							</td>
+
+							<td style="width: 60px; text-align: center;">
+								<span style="color: #F5AF3F;">!</span>
+							</td>
+							<td style="width: 140px; text-align: left;">
+								{{$t('editor.cell.processor.dataFilter.form.symbol.not')}}
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 60px; text-align: center;">
+								<span style="color: #F5AF3F;">&&</span>
+							</td>
+							<td style="width: 140px; text-align: left;">
+								{{$t('editor.cell.processor.dataFilter.form.symbol.and')}}
+							</td>
+
+							<td style="width: 60px; text-align: center;">
+								<span style="color: #F5AF3F;">||</span>
+							</td>
+							<td style="width: 140px; text-align: left;">
+								{{$t('editor.cell.processor.dataFilter.form.symbol.or')}}
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 60px; text-align: center;">
+								<span style="color: #F5AF3F;">/^.*$/.test( )</span>
+							</td>
+							<td style="width: 140px; text-align: left;">
+								{{$t('editor.cell.processor.dataFilter.form.symbol.regexp')}}
+							</td>
+
+							<td style="width: 60px; text-align: center;">
+								<span style="color: #F5AF3F;">( )</span>
+							</td>
+							<td style="width: 140px; text-align: left;">
+								{{$t('editor.cell.processor.dataFilter.form.symbol.group')}}
+							</td>
+						</tr>
+					</table>
 				</div>
 			</el-form-item>
 
 			<el-form-item :required="true" size="mini" :label="$t('editor.cell.processor.dataFilter.form.action.label')">
-				<el-radio-group v-model="model.action">
-					<el-radio-button label="discard">{{$t('editor.cell.processor.dataFilter.form.action.discard')}}</el-radio-button>
-					<el-radio-button label="retain">{{$t('editor.cell.processor.dataFilter.form.action.retain')}}</el-radio-button>
-				</el-radio-group>
+				<el-select v-model="model.action">
+					<el-option value="retain" :label="$t('editor.cell.processor.dataFilter.form.action.retain')"></el-option>
+					<el-option value="discard" :label="$t('editor.cell.processor.dataFilter.form.action.discard')"></el-option>
+				</el-select>
 			</el-form-item>
 
 		</el-form>
@@ -64,9 +128,9 @@
 		data() {
 			return {
 				model: {
-					name: 'DataFilter',
+					name: 'Row Filter',
 					expression: '',
-					action: 'discard', // discard,retain
+					action: 'retain', // discard,retain
 				}
 			};
 		},

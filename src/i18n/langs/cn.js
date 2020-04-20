@@ -365,13 +365,24 @@ const cn = {
 						},
 						action: {
 							label: '执行动作',
-							discard: '丢弃',
-							retain: '保留'
+							discard: '丢弃匹配数据',
+							retain: '保留匹配数据'
 						},
 						expressionExample: {
 							label: '表达式示例',
 							labelTip: '表达式可以使用JavaScript中的比较符和计算符',
 							tip: '筛选出50岁以上的男性以及收入一万以下的30岁以上的人,表达式如下：'
+						},
+						symbol: {
+							label: '支持的符号',
+							gtLt: '大于、小于',
+							geLe: '大于等于、小于等于',
+							eq: '等于',
+							not: '非',
+							and: '且',
+							or: '或',
+							regexp: '正则表达式',
+							group: '条件分组'
 						}
 					}
 				},

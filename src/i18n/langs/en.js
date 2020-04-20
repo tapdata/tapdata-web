@@ -373,6 +373,17 @@ const en = {
 							label: 'Example expression',
 							labelTip: 'Expressions can use comparison and calculation operators in JavaScript',
 							tip: 'Select men over 50 years old and people over 30 years old with income below 10,000, the expression is as follows:'
+						},
+						symbol: {
+							label: 'Supported symbols',
+							gtLt: 'Greater than, less than',
+							geLe: 'Greater than and equal to, less than and equal to',
+							eq: 'equal to',
+							not: 'NO',
+							and: 'And',
+							or: 'Or',
+							regexp: 'Regular expression',
+							group: 'Conditional grouping'
 						}
 					}
 				},
