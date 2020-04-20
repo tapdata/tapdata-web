@@ -88,10 +88,10 @@
 
 <script>
 	import _ from 'lodash';
-	import {EditorEventType} from "../../editor/lib/events";
-	import Mapping from './components/Mapping';
-	import log from "../../log";
-	import {JOIN_TABLE_TPL} from "../../editor/constants";
+	import {EditorEventType} from "../../lib/events";
+	import Mapping from './Mapping';
+	import log from "../../../log";
+	import {JOIN_TABLE_TPL} from "../../constants";
 
 	export default {
 		name: "Link",

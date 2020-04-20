@@ -3,11 +3,11 @@
  * @date 3/5/20
  * @description
  */
-import {options} from "../lib/rappid/config";
-import FieldProcess from "../../view/job/FieldProcess";
-import {FORM_DATA_KEY} from "../constants";
-import log from "../../log";
-import i18n from "../../i18n/i18n";
+import {options} from "../../lib/rappid/config";
+import FieldProcessAttribute from "./FieldProcessAttribute";
+import {FORM_DATA_KEY} from "../../constants";
+import log from "../../../log";
+import i18n from "../../../i18n/i18n";
 
 export const fieldProcessConfig = {
 
@@ -281,7 +281,7 @@ export const fieldProcessConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: FieldProcess,
+		component: FieldProcessAttribute,
 	}
 
 };

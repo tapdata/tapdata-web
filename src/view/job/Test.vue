@@ -6,7 +6,7 @@
 
 <script>
 
-	import Mapping from "./components/Mapping";
+	import Mapping from "../../editor/plugins/link/Mapping";
 	import _ from 'lodash';
 
 	export default {

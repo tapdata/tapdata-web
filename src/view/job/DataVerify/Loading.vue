@@ -10,7 +10,6 @@
 
 <script>
 	import factory from '../../../api/factory';
-	import log from "../../../log";
 
 	const dataFlows = factory('DataFlows');
 

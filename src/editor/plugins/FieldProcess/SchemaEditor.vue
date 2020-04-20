@@ -97,7 +97,7 @@
 	import $ from 'jquery';
 	import log from '../../../log';
 	import _ from 'lodash';
-	import {uuid} from "../../../editor/util/Schema";
+	import {uuid} from "../../util/Schema";
 
 	const REMOVE_OPS_TPL = {
 		id: '',

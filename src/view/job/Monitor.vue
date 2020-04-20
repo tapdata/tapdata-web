@@ -93,7 +93,6 @@
 	import shaftlessEchart from '../../components/shaftlessEchart';
 	import factory from '../../api/factory';
 	import {EditorEventType} from "../../editor/lib/events";
-	import $ from "jquery";
 
 
 	const DataFlowInsights = factory('DataFlowInsights');

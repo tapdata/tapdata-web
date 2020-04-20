@@ -4,12 +4,12 @@
  * @description
  */
 import _ from 'lodash';
-import joint from '../lib/rappid/rappid';
-import {options} from "../lib/rappid/config";
-import Link from "../../view/job/Link";
-import {FORM_DATA_KEY} from "../constants";
-import log from "../../log";
-import i18n from "../../i18n/i18n";
+import joint from '../../lib/rappid/rappid';
+import {options} from "../../lib/rappid/config";
+import LinkAttribute from "./LinkAttribute";
+import {FORM_DATA_KEY} from "../../constants";
+import log from "../../../log";
+import i18n from "../../../i18n/i18n";
 
 export const link = {
 
@@ -336,7 +336,7 @@ export const link = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: Link
+		component: LinkAttribute
 	}
 
 };

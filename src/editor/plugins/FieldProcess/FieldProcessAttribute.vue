@@ -39,9 +39,9 @@
 </template>
 
 <script>
-	import SchemaEditor from './components/SchemaEditor';
-	import {convertSchemaToTreeData, mergeJoinTablesToTargetSchema} from "../../editor/util/Schema";
-	import log from "../../log";
+	import SchemaEditor from './SchemaEditor';
+	import {convertSchemaToTreeData, mergeJoinTablesToTargetSchema} from "../../util/Schema";
+	import log from "../../../log";
 	import _ from 'lodash';
 
 	export default {

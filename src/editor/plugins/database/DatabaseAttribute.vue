@@ -79,7 +79,7 @@
 </template>
 
 <script>
-	import factory from '../../api/factory';
+	import factory from '../../../api/factory';
 	import _ from 'lodash';
 
 	let connections = factory('connections');
@@ -180,7 +180,7 @@
 					if (id === item.id) {
 						this.database_type = item.database_type;
 					}
-				})
+				});
 			},
 
 			//切换标签
@@ -192,13 +192,13 @@
 						if (item.checked) {
 							item.checked = false;
 						}
-					})
+					});
 				} else {
 					this.tables.forEach(item => {
 						if (item.checked) {
 							item.checked = false;
 						}
-					})
+					});
 				}
 			},
 

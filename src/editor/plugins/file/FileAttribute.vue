@@ -1,5 +1,5 @@
 <template>
-<div class="gridFsNode nodeStye">
+<div class="fieldName nodeStye">
   <head>
     <span class="headIcon iconfont icon-you2" type="primary"></span>
     <span class="txt">{{$t("editor.nodeSettings")}}</span>
@@ -7,8 +7,8 @@
   <div class="nodeBody">
     <el-form class="e-form" label-position="top" :model="model" ref="form">
       <!-- <span class="addTxt">+新建文件</span> -->
-      <el-form-item :label="$t('editor.choose') + 'GridFs'" prop="connectionId" :rules="rules" required>
-        <el-select filterable v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.gridfs.chooseGridFsName')">
+      <el-form-item :label="$t('editor.cell.data_node.file.configurationFile')" prop="connectionId" :rules="rules" required>
+        <el-select filterable v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.file.chooseFileName')">
           <el-option
             v-for="(item, idx) in databases"
             :label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
@@ -22,18 +22,24 @@
 </template>
 <script>
 import _ from "lodash";
-import factory from '../../api/factory';
+import factory from '../../../api/factory';
 let connections = factory('connections');
 
 export default {
-  name: "GridFsNode",
+  name: "FileNode",
+  props: {
+    connection_type: {
+      type: String,
+      default: 'source'
+    }
+  },
 
   data() {
     return {
       databases: [],
       rules: {
         connectionId: [
-          {required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.gridfs.chooseGridFsName')},
+          {required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.file.chooseFileName')},
         ]
       },
       model: {
@@ -46,10 +52,10 @@ export default {
     let result = await connections.get({
       filter: JSON.stringify({
         where: {
-          database_type: 'gridfs'
+          database_type: 'file'
         },
         fields: {
-          name: 1, id: 1, database_type: 1, connection_type: 1, status: 1
+          name: 1, id: 1, database_type: 1, connection_type: 1, status: 1,
         },
         order: 'name ASC'
       })
@@ -63,7 +69,7 @@ export default {
   watch: {
     model: {
       deep: true,
-      handler(val){
+      handler(){
         this.$emit('dataChanged', this.getData());
       }
     }
@@ -89,4 +95,6 @@ export default {
   }
 };
 </script>
+<style lang="less">
 
+</style>

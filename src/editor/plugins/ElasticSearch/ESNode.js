@@ -1,17 +1,16 @@
-import log from "../../log";
-import {options} from "../lib/rappid/config";
-import Dummy from "../../view/job/Dummy";
-import i18n from "../../i18n/i18n";
+import {options} from "../../lib/rappid/config";
+import EsNodeAttribute from "./EsNodeAttribute";
+import i18n from "../../../i18n/i18n";
 
-export const DummyConfig = {
-	type: 'app.Dummy',
+export const esNodeConfig = {
+	type: 'app.ESNode',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
 			size: {width: 120, height: 28},
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/o-dummy.svg',
+					xlinkHref: 'static/editor/o-es.svg',
 					refWidth: '25%',
 					refHeight: '84%',
 					refX: '-8%',
@@ -22,7 +21,7 @@ export const DummyConfig = {
 					ry: 14
 				},
 				label: {
-					text: i18n.t('editor.cell.data_node.dummy.name'),
+					text: i18n.t('editor.cell.data_node.es.name'),
 				}
 			}
 		},
@@ -30,7 +29,7 @@ export const DummyConfig = {
 			portLabelMarkup: [{
 				tagName: 'text',
 				selector: 'portLabel',
-      }],
+			}],
 
 			isDataNode() {
 				return true;
@@ -42,9 +41,7 @@ export const DummyConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-        log("app.Dummy.target",targetCell);
-        return !['app.Database','app.FileNode','app.GridFSNode'].includes(targetCell.get('type'));
-
+        return false;
 			},
 
 			/**
@@ -53,15 +50,14 @@ export const DummyConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-        return !['app.FileNode','app.Database'].includes(sourceCell.get('type'));
+        return !['app.FileNode'].includes(sourceCell.get('type'));
 			},
 
 			validate(data) {
-        log("选中的Dummy数据",data);
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
 				if (!data)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.dummy.dummy_isNull')}`);
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`);
 				return true;
 			},
 		},
@@ -184,7 +180,7 @@ export const DummyConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.data_node.dummy.tip'),
+				dataTooltip: i18n.t('editor.cell.data_node.file.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -197,14 +193,14 @@ export const DummyConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/dummy.svg',
+				xlinkHref: 'static/editor/Elasticsearch_fill.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.data_node.dummy.name'),
+				text: i18n.t('editor.cell.data_node.es.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -224,7 +220,7 @@ export const DummyConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: Dummy,
+		component: EsNodeAttribute,
 	}
 
 };

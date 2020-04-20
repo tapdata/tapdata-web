@@ -1,52 +1,37 @@
-/**
- * @author lg<lirufei0808@gmail.com>
- * @date 3/5/20
- * @description
- */
-import {options} from "../lib/rappid/config";
-import Collection from "../../view/job/Collection";
-import i18n from "../../i18n/i18n";
+import {options} from "../../lib/rappid/config";
+import FileAttribute from "./FileAttribute";
+import i18n from "../../../i18n/i18n";
 
-export const collectionConfig = {
-
-	type: 'app.Collection',
+export const fileNodeConfig = {
+	type: 'app.FileNode',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
+			size: {width: 120, height: 28},
 			attrs: {
-				image:{
-					xlinkHref: 'static/editor/o-collection.svg',
+				image: {
+					xlinkHref: 'static/editor/o-file.svg',
+					refWidth: '25%',
+					refHeight: '84%',
+					refX: '-8%',
+					refY: '-28%'
 				},
-				label:{
-					text: i18n.t('editor.cell.data_node.collection.name')
+				body: {
+					rx: 14,
+					ry: 14
+				},
+				label: {
+					text: i18n.t('editor.cell.data_node.file.name'),
 				}
 			}
 		},
 		prototypeProperties: {
 			portLabelMarkup: [{
 				tagName: 'text',
-				selector: 'portLabel'
+				selector: 'portLabel',
 			}],
-			isDataNode(){
-				return true;
-			},
 
-			/**
-			 * validate user-filled data
-			 * @param data
-			 *
-			 */
-			validate: function(data){
-				data = data || this.getFormData();
-				let name = this.attr('label/text');
-				if( !data )
-					throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
-				if( !data.connectionId )
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_database')}`);
-				if( !data.tableName )
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_collection')}`);
-				if( !data.primaryKeys)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_pk')}`);
+			isDataNode() {
 				return true;
 			},
 
@@ -56,7 +41,9 @@ export const collectionConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-				return !['app.Database'].includes(targetCell.get('type'));
+				// log("FileNode.allowTarget", targetCell, ['app.GridFSNode'].includes(targetCell.get('type')));
+				return ['app.GridFSNode'].includes(targetCell.get('type'));
+
 			},
 
 			/**
@@ -65,10 +52,18 @@ export const collectionConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-				return !['app.Database'].includes(sourceCell.get('type'));
-			}
-		}
-		//staticProperties: {}
+				// log("FileNode.allowSource", sourceCell, ['app.GridFSNode'].includes(sourceCell.get('type')));
+				return false;
+			},
+
+			validate(data) {
+				data = data || this.getFormData();
+				let name = this.attr('label/text');
+				if (!data)
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`);
+				return true;
+			},
+		},
 	},
 
 	styleFormConfig: {
@@ -177,7 +172,7 @@ export const collectionConfig = {
 	 */
 	stencil: {
 		/**
-		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：process；标准图形：standard
+		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：processor；标准图形：standard
 		 */
 		group: 'data',
 		/**
@@ -188,7 +183,7 @@ export const collectionConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.data_node.collection.tip'),
+				dataTooltip: i18n.t('editor.cell.data_node.file.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -196,19 +191,19 @@ export const collectionConfig = {
 				rx: 2,
 				ry: 2,
 				stroke: '#fff',
-				fill:'#fff',
+				fill: '#fff',
 				strokeWidth: 0,
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/collection2.svg',
+				xlinkHref: 'static/editor/file.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.data_node.collection.name'),
+				text: i18n.t('editor.cell.data_node.file.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -217,8 +212,8 @@ export const collectionConfig = {
 				strokeWidth: 0,
 				refX: '75%',
 				refY: '40%',
-				x:-35,
-				y:27
+				x: -35,
+				y: 27
 			}
 		}
 	},
@@ -228,7 +223,7 @@ export const collectionConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: Collection
+		component: FileAttribute,
 	}
 
 };
