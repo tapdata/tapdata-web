@@ -197,7 +197,7 @@ export const baseElementConfig = {
 							let targetCell = cell.getTargetCell();
 
 							if( sourceCell ) {
-								let formData = cell.getFormData();
+								let formData = cell.getFormData() || {};
 								let joinTable = formData ? formData.joinTable : null;
 								let schema = sourceCell.getOutputSchema();
 
@@ -210,9 +210,8 @@ export const baseElementConfig = {
 									/*if( !joinTable.joinPath && ['merge_embed', 'update'].includes(joinTable.joinType)){
 										joinTable.joinPath = joinTable.tableName;
 									}*/
-									cell.set(FORM_DATA_KEY, {
-										joinTable: _.cloneDeep(joinTable)
-									});
+									formData.joinTable = _.cloneDeep(joinTable);
+									cell.set(FORM_DATA_KEY, formData);
 								}
 
 								joinTable.sourceSchema = schema;
