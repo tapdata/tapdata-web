@@ -299,31 +299,29 @@ export default class Editor extends BaseObject {
 		// }
 	}
 	showDataVerify(disableDirective){
-		this.getRightSidebar().removeAll();
-		let monitor = this.getRightSidebar().getChildByName('monitor');
-		if( monitor ) this.getRightSidebar().remove(monitor);
+		if(disableDirective){
+			this.getRightSidebar().removeAll();
+			let monitor = this.getRightSidebar().getChildByName('monitor');
+			if( monitor ) this.getRightSidebar().remove(monitor);
 
-		let dataVerify = this.getRightSidebar().getChildByName('dataVerify');
-		if( !dataVerify ){
-			dataVerify = new VueComponent({
-				title: i18n.t('editor.ui.sidebar.capture'),
-				name: 'dataVerify',
-				editor: this,
-				propsData: {
-					dataFlow: '',
-				},
-				component: DataVerify
-			});
-			this.getRightSidebar().add(dataVerify);
+			let dataVerify = this.getRightSidebar().getChildByName('dataVerify');
+			if( !dataVerify ){
+				dataVerify = new VueComponent({
+					title: i18n.t('editor.ui.sidebar.capture'),
+					name: 'dataVerify',
+					editor: this,
+					propsData: {
+						dataFlow: '',
+					},
+					component: DataVerify
+				});
+				this.getRightSidebar().add(dataVerify);
+			}
+			this.getRightSidebar().show();
+		}else {
+			this.getRightSidebar().removeAll();
+			this.getRightSidebar().hide();
 		}
-		this.getRightSidebar().show();
-		// if(disableDirective){
-		//
-		// }else {
-		// 	this.getRightSidebar().removeAll();
-		// 	this.getRightSidebar().hide();
-		// }
-
 	}
 	showLoading(){
 		// add capture

@@ -1,7 +1,7 @@
 <template>
 	<div class="data-verify">
 		<div class="table-box">
-			<div class="dv-header">{{ $t('dataVerify.dataVerify') }} </div>
+			<div class="dv-header" ref="dataVerify">{{ $t('dataVerify.dataVerify') }} </div>
 			<el-table
 					:data="tableData"
 					border
@@ -154,6 +154,7 @@
 <script>
 	import factory from '../../../api/factory';
 	import log from "../../../log";
+	import {EditorEventType} from "../../../editor/lib/events";
 
 	const dataFlows = factory('DataFlows');
 
@@ -204,7 +205,7 @@
 			},
 			handleShowDrawer(){
 				this.disabledDrawer = false;
-				this.type = "advance",// row: 行数 hash：哈希  advance：高级校验
+				this.type = "advance";// row: 行数 hash：哈希  advance：高级校验
 					this.condition = {
 					type:'rows',      //# rows：按行数参与校验，sampleRate：按采样率参与校验
 						//# type为rows时表示行数；type为sampleRate时，表示采样率，如：
@@ -300,16 +301,41 @@
 					this.$message.info('please add data verify');
 					return;
 				}
-				let self = this;
-				// 状态修改为 waiting
-				let data ={
-					validateStatus:'waiting'
-				};
-				dataFlows.patchId(this.id,data).then(res => {
-					if (res.statusText === "OK" || res.status === 200) {
-						self.editor.showLoading();
-					}
-				});
+				if(this.disabledDrawer){
+					this.$confirm('新的校验条件还在编辑中，继续执行校验？', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						let self = this;
+						// 状态修改为 waiting
+						let data ={
+							validateStatus:'waiting'
+						};
+						dataFlows.patchId(this.id,data).then(res => {
+							if (res.statusText === "OK" || res.status === 200) {
+								self.editor.showLoading();
+							}
+						});
+					}).catch(() => {
+						this.$message({
+							type: 'info',
+							message: '已取消执行'
+						});
+					});
+				}
+				else {
+					let self = this;
+					// 状态修改为 waiting
+					let data ={
+						validateStatus:'waiting'
+					};
+					dataFlows.patchId(this.id,data).then(res => {
+						if (res.statusText === "OK" || res.status === 200) {
+							self.editor.showLoading();
+						}
+					});
+				}
 			},
 			handleDelete(index){
 				this.tableData.splice(index,1);

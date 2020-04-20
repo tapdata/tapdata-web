@@ -166,7 +166,7 @@
 		},
 		methods: {
 			handleAddList(){
-				this.editor.showDataVerify();
+				this.editor.showDataVerify(true);
 			},
 			getData(){
 				ValidationResults.get().then(res => {

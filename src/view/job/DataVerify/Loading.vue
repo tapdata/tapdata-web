@@ -36,7 +36,7 @@
 				};
 				dataFlows.patchId(this.id,data).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
-						self.editor.showDataVerify();
+						self.editor.showDataVerify(true);
 					}
 				});
 			},

@@ -7,9 +7,11 @@ import Vue from 'vue';
 import Panel from "./ui/panel";
 import {EditorEventType} from "./lib/events";
 import BaseObject from './lib/BaseObject';
+import Component from './lib/Component';
 import log from '../log';
 import {FORM_DATA_KEY} from "./constants";
 import i18n from '../i18n/i18n';
+import Tab from "./ui/tab";
 
 export const vueAdapter = {};
 //const privateMap = new WeakMap();
@@ -52,13 +54,9 @@ export class VueAdapter extends BaseObject {
 		if( vueAdapter[name] && vueAdapter[name].component){
 			let vueComponentConfig = vueAdapter[name];
 			let Comp = Vue.extend(vueComponentConfig.component);
+
+			this.handleClearPanel();
 			let settings = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
-
-			self.vm = new Comp({
-				i18n,
-				propsData: Object.assign({}, vueComponentConfig.props || {})
-			});
-
 			if(!settings) {
 				settings = new Panel({
 					name: 'nodeSettingPanel',
@@ -66,8 +64,15 @@ export class VueAdapter extends BaseObject {
 				});
 				self.editor.getRightTabPanel().add(settings, true);
 			}
+
+			self.vm = new Comp({
+				i18n,
+				propsData: Object.assign({}, vueComponentConfig.props || {})
+			});
+
 			self.editor.getRightTabPanel().select(settings);
 			settings.removeAll();
+
 			let vueContainerDom = document.createElement('div');
 			settings.getContentEl().append(vueContainerDom);
 			self.vm.$mount(vueContainerDom);
@@ -134,6 +139,16 @@ export class VueAdapter extends BaseObject {
 		this.editor.off(EditorEventType.BEFORE_DESTROY, this.destroy);
 	}
 
+	handleClearPanel(){
+		this.editor.getRightSidebar().removeAll();
+		let rightTabPanel = this.editor.getRightTabPanel();
+		if( !rightTabPanel) {
+			rightTabPanel = new Tab({
+				name: 'rightTabPanel'
+			});
+			this.editor.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
+		}
+	}
 	/**
 	 *
 	 * @param cell
