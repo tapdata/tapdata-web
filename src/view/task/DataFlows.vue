@@ -2,58 +2,57 @@
 	<div class="task-list" style="overflow: auto;">
 		<div class="task-list-operating-area box-card">
 			<el-row :gutter="10">
-				<el-form label-width="100px" :data="formData">
+				<el-form label-width="100px" :data="formData" :inline="true">
 					<el-row>
-						<el-col :span="8">
-							<el-form-item :label="$t('message.sourchName')">
+						<el-col :span="16">
+							<el-form-item>
 								<el-input
 										:placeholder="$t('dataFlow.searchPlaceholder')" clearable prefix-icon="el-icon-search"
-										v-model="formData.search" size="mini"></el-input>
+										v-model="formData.search" size="mini" @change="screenFn"></el-input>
 							</el-form-item>
-						</el-col>
-						<el-col :span="8">
-							<el-form-item :label="$t('dataFlow.creationTime')">
-								<el-date-picker type="daterange" v-model="formData.timeData" size="small "
-												class="task-list-time-picker"
-												:range-separator="$t('dataFlow.separator')"
-												:start-placeholder="$t('dataFlow.startTime')"
-												:end-placeholder="$t('dataFlow.endTime')"
-												:placeholder="$t('dataFlow.dataPlaceholder')"></el-date-picker>
-							</el-form-item>
-						</el-col>
-						<el-col :span="8">
-							<el-form-item :label=" $t('dataFlow.taskStatus') ">
-								<el-select v-model="formData.status"  size="mini" clearable :placeholder=" $t('dataFlow.taskStatusPlaceholder')">
+<!--							<el-form-item >-->
+<!--								<el-date-picker type="daterange" v-model="formData.timeData" size="small "-->
+<!--												class="task-list-time-picker"-->
+<!--												:range-separator="$t('dataFlow.separator')"-->
+<!--												:start-placeholder="$t('dataFlow.startTime')"-->
+<!--												:end-placeholder="$t('dataFlow.endTime')"-->
+<!--												:placeholder="$t('dataFlow.dataPlaceholder')"></el-date-picker>-->
+<!--							</el-form-item>-->
+							<el-form-item>
+								<el-select v-model="formData.status"  size="mini" clearable :placeholder=" $t('dataFlow.taskStatusPlaceholder')" style="width:160px" @change="screenFn">
 									<el-option
 											v-for="item in options" :key="item.value" :label="item.label"
 											:value="item.value"></el-option>
 								</el-select>
-								<el-button type="primary" size="mini" @click="screenFn">{{ $t('message.filter') }}
+							</el-form-item>
+							<el-form-item>
+								<el-button class="df-btn-box" size="mini">
+									<i class="iconfont icon-shuaxin1 df-btn" @click="handleClear"></i>
 								</el-button>
 							</el-form-item>
-
 						</el-col>
+						<div class="task-list-menu-right">
+							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('paused')"><i class="iconfont icon-xinzeng1 back-btn-icon"></i></el-button>
+							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('running')"><i class="iconfont icon-xinzeng1 back-btn-icon"></i></el-button>
+							<el-button class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-xinzeng1 back-btn-icon"></i></el-button>
+							<el-button class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-xinzeng1 back-btn-icon"></i></el-button>
+							<el-button class="back-btn-icon-box" @click="$router.push({path: '/job'})"><i class="iconfont icon-xinzeng1 back-btn-icon"></i></el-button>
+						</div>
 					</el-row>
 				</el-form>
 			</el-row>
 		</div>
 		<div class="task-list-main">
 			<div>
-				<div class="task-list-menu-left">
-					<i class="iconfont icon-icon_yingyongguanli"></i>
-					<i class="iconfont icon-liebiao"></i>
-				</div>
-				<div class="task-list-menu-right">
-					<i class="iconfont task-list-menu-cion icon-play-circle" @click="handleAllStatus('paused')"></i>
-					<i class="iconfont task-list-menu-cion  icon-zanting" @click="handleAllStatus('running')"></i>
-					<i
-							class="iconfont task-list-menu-cion  icon-icon_tianjia"
-							@click="$router.push({path: '/job'})"></i>
-				</div>
+<!--				<div class="task-list-menu-left">-->
+<!--					<i class="iconfont icon-icon_yingyongguanli"></i>-->
+<!--					<i class="iconfont icon-liebiao"></i>-->
+<!--				</div>-->
 			</div>
 			<div class="clear"></div>
 			<el-table
-					:data="tableData" style="width: 99%;border: 1px solid #dedee4;margin-top: 10px;"
+					:data="tableData" style="width: 99%;border: 1px solid #dedee4;"
+					class="dv-table"
 					:max-height="maxHeight" row-key="id"
 					:tree-props="{children: 'children', hasChildren: 'hasChildren'}"
 					@sort-change="handleSortTable"
@@ -461,6 +460,11 @@
 				this.order = mapping[column.prop] + " " + currentOrder;
 				this.getData();
 			},
+			handleClear(){
+				this.formData.search = '';
+				this.formData.status = '';
+				this.screenFn();
+			},
 			handleSelectionChange(val) {
 				this.multipleSelection = val;
 			},
@@ -485,11 +489,9 @@
 	}
 
 	.task-list-operating-area {
-		border: 1px solid #ebebeb;
 		border-radius: 3px;
 		transition: .2s;
-		padding: 10px;
-		margin: 20px;
+		padding-left: 5px;
 		margin-left: 0px;
 
 		.el-input, .el-select {
@@ -501,7 +503,15 @@
 			margin-bottom: 6px;
 		}
 	}
-
+	.df-btn-box{
+		padding: 0;
+		width: 30px;
+		height: 28px;
+	}
+	.df-btn{
+		color: #999;
+		font-size: 15px;
+	}
 	.el-table .el-table__row .el-table__row--level .el-table__expand-icon {
 		width: 25px;
 		margin-left: -20px !important;
@@ -534,6 +544,7 @@
 	.task-list-menu-right {
 		float: right;
 		margin-right: 20px;
+		margin-top: 7px;
 	}
 
 	.el-table .sort-caret {
@@ -555,9 +566,52 @@
 		text-align: right;
 		overflow: hidden;
 	}
+	.back-btn-icon-box{
+		width: 28px;
+		height: 28px;
+		display: inline-block;
+		border-radius: 4px;
+		line-height: 1;
+		white-space: nowrap;
+		cursor: pointer;
+		background: #48B6E2;
+		border: 0;
+		color: red;
+		-webkit-appearance: none;
+		text-align: center;
+		-webkit-box-sizing: border-box;
+		box-sizing: border-box;
+		outline: 0;
+		margin: 0;
+		-webkit-transition: .1s;
+		transition: .1s;
+		font-weight: normal;
+		padding:0;
+		font-size: 14px;
+	}
+	.dv-btn-icon{
+		background: #f5f5f5;
+		border: 1px solid #DCDFE6;
+	}
+	.back-btn-icon-box:hover{
+		background:#6dc5e8;
+	}
+	.back-btn-icon{
+		color: #fff;
+	}
 </style>
-<style>
+<style lang="less">
 	.task-list .el-pagination .el-pagination__total {
 		float: left;
+	}
+	.task-list .el-form--inline .el-form-item{
+		margin-right:4px;
+	}
+	.dv-table  thead{
+		color:#333;
+		th{
+			padding:0;
+			background: #fafafa;
+		}
 	}
 </style>

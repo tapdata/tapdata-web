@@ -1,11 +1,14 @@
 <template>
 	<div class="data-verify">
-		<el-button class="back-btn" size="mini" @click="GoBack">back</el-button>
+		<div class="back-btn-box">
+			<el-button class="back-btn-icon-box" @click="GoBack"><i class="iconfont icon-you2 back-btn-icon"></i></el-button>
+			<span class="back-btn-text">{{ $t('dataVerify.dataVerify') }}</span>
+		</div>
 		<div class="table-box">
-			<div class="dv-header" ref="dataVerify">{{ $t('dataVerify.dataVerify') }} </div>
 			<el-table
 					:data="tableData"
 					border
+					class="dv-table"
 					style="width: 100%">
 				<el-table-column
 						prop="type"
@@ -53,7 +56,6 @@
 		<div class="dv-btn-footer-wrapper">
 			<div class="dv-btn-footer-box">
 				<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleLoading">{{ $t('dataVerify.start')}}</el-button>
-				<el-button size="mini" class="dv-btn-footer" @click="handleBack">{{ $t('dataVerify.back')}}</el-button>
 			</div>
 		</div>
 		<el-drawer
@@ -94,9 +96,8 @@
 							<el-select size="mini" style="width: 100%" v-model="source.stageId">
 								<el-option
 										v-for="item in sourceList"
-										:key="item.stageId"
 										:label="item.tableName"
-										:value="item.stageId">
+										:value="item.stageId + item.tableName">
 								</el-option	>
 							</el-select>
 						</el-col>
@@ -118,9 +119,8 @@
 							<el-select size="mini" style="width: 100%" v-model="target.stageId">
 								<el-option
 										v-for="item in targetList"
-										:key="item.stageId"
 										:label="item.tableName"
-										:value="item.stageId">
+										:value="item.stageId + item.tableName">
 								</el-option>
 							</el-select>
 						</el-col>
@@ -178,13 +178,9 @@
 				},
 				source: {
 					stageId: "",
-					tableName: "",
-					filter: ""
 				},
 				target: {
 					stageId: "",
-					tableName: "",
-					filter: ""
 				},
 				validateCode:'',
 				colorMap: {
@@ -199,6 +195,7 @@
 			this.id =this.getUrlSearch('id');
 			this.getData(this.id);
 			this.getSourceList();
+			this.$on('resize' );
 		},
 		methods: {
 			handleClose(){
@@ -252,7 +249,8 @@
 				}
 
 				if(this.source.stageId){
-					let op = this.sourceList.filter(item => item.stageId === this.source.stageId);
+					log(this.source.stageId);
+					let op = this.sourceList.filter(item => (item.stageId+item.tableName) === this.source.stageId);
 					log('op.source',op);
 					this.source.tableName = op[0].tableName;
 					this.source.stageId = op[0].stageId;
@@ -260,7 +258,7 @@
 					this.source.connectionId = op[0].connectionId;
 				}
 				if(this.target.stageId){
-					let op = this.targetList.filter(item => item.stageId === this.target.stageId);
+					let op = this.targetList.filter(item =>  (item.stageId+item.tableName) === this.target.stageId);
 					log('op.target',op);
 					this.target.tableName = op[0].tableName;
 					this.target.stageId = op[0].stageId;
@@ -355,8 +353,12 @@
 				this.disabledDrawer =true;
 				this.editIndex = index;
 				this.condition = this.tableData[index].condition;
+
 				this.source = this.tableData[index].source;
+				this.source.stageId =  this.tableData[index].source.stageId + this.tableData[index].source.tableName;
+
 				this.target = this.tableData[index].target;
+				this.target.stageId =  this.tableData[index].target.stageId + this.tableData[index].target.tableName;
 				this.type = this.tableData[index].type;
 				this.validateCode = this.tableData[index].validateCode;
 			},
@@ -368,9 +370,6 @@
 						log('source.list',res.data);
 					}
 				});
-			},
-			handleBack(){
-				this.editor.showResult();
 			},
 			GoBack(){
 				this.editor.showMonitor();
@@ -409,19 +408,24 @@
 		position: relative;;
 	}
 	.dv-header{
-		width:100%;
 		line-height: 32px;
 		font-size:12px;
 		font-weight:400;
 		padding-left: 12px;
 		color:rgba(51,51,51,1);
+		background: #fafafa;
+		border: 1px solid #EBEEF5;
+		border-bottom: none;
 	}
 	.table-box{
 		margin: 10px;
-		box-shadow:0px 0px 4px 0px rgba(0, 0, 0, 0.2);
+		/*box-shadow:0px 0px 4px 0px rgba(0, 0, 0, 0.2);*/
 	}
 	.dv-btn{
 		margin-left: 10px;
+		padding: 0;
+		width: 28px;
+		height: 28px;
 	}
 	.dv-btn-footer-wrapper{
 		width: 600px;
@@ -466,11 +470,46 @@
 		background:#48B6E2;
 		border-radius:3px;
 	}
-	.back-btn{
-		margin: 10px 0 0 10px;
+	.back-btn-box{
+		width: 100%;
+		height: 29px;
+		background: #f5f5f5;
+		border-bottom: 1px solid #dedee4;
+	}
+	.back-btn-text{
+		font-size: 12px;
+	}
+	.back-btn-icon-box{
+		width: 30px;
+		height: 30px;
+		display: inline-block;
+		border-radius: 0;
+		line-height: 1;
+		white-space: nowrap;
+		cursor: pointer;
+		background: #48B6E2;
+		border: 0;
+		color: red;
+		-webkit-appearance: none;
+		text-align: center;
+		-webkit-box-sizing: border-box;
+		box-sizing: border-box;
+		outline: 0;
+		margin: 0;
+		-webkit-transition: .1s;
+		transition: .1s;
+		font-weight: normal;
+		padding:0;
+		font-size: 14px;
+	}
+	.back-btn-icon-box:hover{
+		background:#6dc5e8;
+	}
+	.back-btn-icon{
+		color: #fff;
 	}
 </style>
-<style>
+<style lang="less">
 	.v-modal {
 		position: fixed;
 		left: 0;
@@ -510,5 +549,20 @@
 		color: #606266;
 		cursor: pointer;
 		margin-right: 0;
+	}
+	.dv-table  thead{
+		color:#333;
+		th{
+			padding:0;
+			background: #fafafa;
+			.cell{
+				height: 32px;
+				line-height: 32px;
+			}
+		}
+	}
+	.el-table__empty-block{
+		height: 32px !important;
+		min-height:32px;
 	}
 </style>

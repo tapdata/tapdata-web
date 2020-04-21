@@ -13,8 +13,10 @@
 				:expand-on-click-node="false"
 				lazy
 				:load="loadTables"
+				icon-class="ts-icon iconfont icon-hebing-copy "
 				:filter-node-method="filterNode"
 				ref="tree"
+				class="ts-tree"
 		>
 			<span class="custom-tree-node" slot-scope="{ node, data}">
 				<span @dblclick="handleGraph(data)">
@@ -249,7 +251,7 @@
 	}
 
 	.filter-icon {
-		font-size: 12px;
+		font-size: 14px;
 		color: #48b6e2;
 	}
 
@@ -278,6 +280,10 @@
 	}
 	.el-tree{
 		padding-top: 40px;
+	}
+	.ts-icon{
+		color: #333;
+
 	}
 </style>
 <style scoped>
@@ -310,5 +316,18 @@
 			transition: all .3s;
 			line-height: 40px;
 		}
+	}
+	.el-tree-node__expand-icon{
+		color: #333;
+	}
+	.table-label{
+		vertical-align: bottom;
+	}
+	.el-tree-node__content>.el-tree-node__expand-icon {
+		padding: 6px;
+		padding-right: 0;
+	}
+	.el-tree-node__content {
+		height: 30px;
 	}
 </style>

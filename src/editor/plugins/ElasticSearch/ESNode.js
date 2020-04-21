@@ -193,7 +193,7 @@ export const esNodeConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/Elasticsearch_fill.svg',
+				xlinkHref: 'static/editor/elastic-search-clust.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',

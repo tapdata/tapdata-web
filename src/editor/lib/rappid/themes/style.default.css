@@ -72,3 +72,21 @@ button.joint-widget.joint-theme-default{
 .joint-stencil.joint-theme-default .group:first-child {
 	border-top: 0;
 }
+.joint-stencil.joint-theme-default .group.closed>.group-label:before {
+	top: 0px;
+	left: 2px;
+	border: 5px solid transparent;
+	border-left-color: #000;
+}
+.joint-stencil.joint-theme-default .group>.group-label:before {
+	position: relative;
+	top: 3px;
+	content: '';
+	width: 0;
+	height: 0;
+	display: inline-block;
+	border: 5px solid transparent;
+	border-top-color: #000;
+	margin-left: 2px;
+	margin-right: 5px;
+}

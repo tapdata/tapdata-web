@@ -6,6 +6,20 @@
   "description": "Tapdata 线装小图标",
   "glyphs": [
     {
+      "icon_id": "9686905",
+      "name": "编辑器-函数",
+      "font_class": "bianjiqi-hanshu",
+      "unicode": "e68f",
+      "unicode_decimal": 59023
+    },
+    {
+      "icon_id": "10461151",
+      "name": "没有数据",
+      "font_class": "meiyoushuju",
+      "unicode": "e68e",
+      "unicode_decimal": 59022
+    },
+    {
       "icon_id": "587088",
       "name": "script",
       "font_class": "script",
@@ -97,13 +111,6 @@
       "unicode_decimal": 59366
     },
     {
-      "icon_id": "14100699",
-      "name": "数据同步",
-      "font_class": "shujutongbu",
-      "unicode": "e681",
-      "unicode_decimal": 59009
-    },
-    {
       "icon_id": "14090626",
       "name": "o-file",
       "font_class": "o-file",
@@ -172,6 +179,13 @@
       "font_class": "hebing",
       "unicode": "ed1c",
       "unicode_decimal": 60700
+    },
+    {
+      "icon_id": "14220360",
+      "name": "左",
+      "font_class": "hebing-copy",
+      "unicode": "ed1d",
+      "unicode_decimal": 60701
     },
     {
       "icon_id": "14066031",
