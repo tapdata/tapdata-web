@@ -232,6 +232,11 @@ const cn = {
 							placeholder: '',
 							keep: '保持已存在的数据',
 							remove: '运行前删除已存在的数据'
+						},
+						filter: {
+							label: '过滤条件',
+							placeholder: '过滤条件(Mongo Query Filter Document)',
+							invalidJSON: '无效的JSON'
 						}
 					}
 				},

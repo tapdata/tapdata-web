@@ -1,6 +1,6 @@
 <template>
 	<div class="e-collection">
-		<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form">
+		<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form" :rules="rules">
 			<el-form-item :label="$t('editor.cell.data_node.collection.form.database.label')" prop="connectionId" :rules="rules" required>
 				<el-select filterable v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.collection.form.database.placeholder')" @change="handlerConnectionChange" size="mini">
 					<el-option
@@ -11,7 +11,7 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item :label="$t('editor.cell.data_node.collection.form.collection.label')" prop="tableName" :rules="rules" required>
+			<el-form-item :label="$t('editor.cell.data_node.collection.form.collection.label')" prop="tableName" required>
 				<el-select
 						v-model="model.tableName"
 						filterable
@@ -43,6 +43,13 @@
 							:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
 							:value="true"></el-option>
 				</el-select>
+			</el-form-item>
+
+			<el-form-item :label="$t('editor.cell.data_node.collection.form.filter.label')">
+				<el-input
+						v-model="model.filter"
+						rows="5"
+						:placeholder="$t('editor.cell.data_node.collection.form.filter.placeholder')"  size="mini"></el-input>
 			</el-form-item>
 
 		</el-form>
@@ -125,7 +132,21 @@
 				rules: {
 					connectionId: [
 						{required: true, trigger: 'blur', message: `Please select database`},
-					]
+					],
+					filter: {
+						type: 'string',
+						message: this.$t('editor.cell.data_node.collection.form.filter.invalidJSON'),
+						validator: (rule, value) => {
+							if( value ){
+								try {
+									JSON.parse(value);
+									return true;
+								} catch (e) {
+									return false;
+								}
+							}
+						}
+					}
 				},
 
 				isSourceDataNode: false,
@@ -136,7 +157,8 @@
 					tableName: "",
 					dropTable: false,
 					type: 'collection',
-					primaryKeys: ''
+					primaryKeys: '',
+					filter: ''
 				},
 
 				mergedSchema: null

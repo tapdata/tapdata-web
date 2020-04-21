@@ -232,6 +232,11 @@ const tc = {
 							placeholder: '',
 							keep: '保持已存在的數據',
 							remove: '運行前刪除已存在的數據'
+						},
+						filter: {
+							label: '過濾條件',
+							placeholder: '過濾條件(Mongo Query Filter Document)',
+								invalidJSON: 'Invalid JSON'
 						}
 					}
 				},

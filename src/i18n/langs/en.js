@@ -232,6 +232,11 @@ const en = {
 							placeholder: '',
 							keep: 'Keep existing data',
 							remove: 'Remove exists data at before sync'
+						},
+						filter: {
+							label: 'Filter',
+							placeholder: 'Mongo Query Filter Document',
+							invalidJSON: 'Invalid JSON'
 						}
 					}
 				},
