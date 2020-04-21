@@ -48,6 +48,7 @@
 			<el-form-item :label="$t('editor.cell.data_node.collection.form.filter.label')">
 				<el-input
 						v-model="model.filter"
+						type="textarea"
 						rows="5"
 						:placeholder="$t('editor.cell.data_node.collection.form.filter.placeholder')"  size="mini"></el-input>
 			</el-form-item>
