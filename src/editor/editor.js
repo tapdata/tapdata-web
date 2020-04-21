@@ -116,7 +116,8 @@ export default class Editor extends BaseObject {
 		ui.add(self.rightSidebar);
 
 		let rightTabPanel = new Tab({
-			name: 'rightTabPanel'
+			name: 'rightTabPanel',
+			hiddenTabBar:true,
 		});
 		self.rightSidebar.add(rightTabPanel);
 
@@ -188,20 +189,25 @@ export default class Editor extends BaseObject {
 		// hide stencil
 		this.getLeftSidebar().hide();
 
+		self.getRightTabPanel().removeAll();
 		// remove stage config
-		let nodeSettingPanel = self.getRightTabPanel().getChildByName('nodeSettingPanel');
-		if( nodeSettingPanel ) self.getRightTabPanel().remove(nodeSettingPanel);
+		// let nodeSettingPanel = self.getRightTabPanel().getChildByName('nodeSettingPanel');
+		// if( nodeSettingPanel ) self.getRightTabPanel().remove(nodeSettingPanel);
 
 		// remove setting
-		let setting = self.getRightTabPanel().getChildByName('setting');
-		if( setting ) self.getRightTabPanel().remove(setting);
-
-		// remove right tab panel
-		let rightTabPanel = self.getRightSidebar().getChildByName('rightTabPanel');
-		if( rightTabPanel ) self.getRightSidebar().remove(rightTabPanel);
+		// let setting = self.getRightTabPanel().getChildByName('setting');
+		// if( setting ) self.getRightTabPanel().remove(setting);
 
 		// add monitor
-		let monitor = self.getRightSidebar().getChildByName('monitor');
+		/*let rightTabPanel = self.getRightSidebar().getChildByName('rightTabPanel');
+		if( !rightTabPanel) {
+			rightTabPanel = new Tab({
+				name: 'rightTabPanel'
+			});
+			self.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
+		}*/
+
+		let monitor = self.getRightTabPanel().getChildByName('monitor');
 		if( !monitor ){
 			monitor = new VueComponent({
 				name: 'monitor',
@@ -211,7 +217,7 @@ export default class Editor extends BaseObject {
 				},
 				component: Monitor
 			});
-			self.getRightSidebar().add(monitor);
+			self.getRightTabPanel().add(monitor);
 		}
 		self.getRightSidebar().show();
 
@@ -220,7 +226,8 @@ export default class Editor extends BaseObject {
 
 	initEditingMode(){
 		log('editor.initEditingMode');
-		this.getRightSidebar().removeAll();
+		//this.getRightSidebar().removeAll();
+		this.getRightTabPanel().removeAll();
 		this.getRightSidebar().hide();
 
 		this.initSettings();
@@ -299,34 +306,56 @@ export default class Editor extends BaseObject {
 		// }
 	}
 	showDataVerify(disableDirective){
-		if(disableDirective){
-			this.getRightSidebar().removeAll();
-			let monitor = this.getRightSidebar().getChildByName('monitor');
-			if( monitor ) this.getRightSidebar().remove(monitor);
+		// remove setting
+		let dvResult = this.getRightTabPanel().getChildByName('dvResult');
+		if( dvResult ) this.getRightTabPanel().remove(dvResult);
 
-			let dataVerify = this.getRightSidebar().getChildByName('dataVerify');
-			if( !dataVerify ){
-				dataVerify = new VueComponent({
-					title: i18n.t('editor.ui.sidebar.capture'),
-					name: 'dataVerify',
-					editor: this,
-					propsData: {
-						dataFlow: '',
-					},
-					component: DataVerify
-				});
-				this.getRightSidebar().add(dataVerify);
-			}
-			this.getRightSidebar().show();
-		}else {
-			this.getRightSidebar().removeAll();
-			this.getRightSidebar().hide();
+		// add data verify
+		let self = this;
+		let rightTabPanel = self.getRightSidebar().getChildByName('rightTabPanel');
+		if( !rightTabPanel) {
+			rightTabPanel = new Tab({
+				name: 'rightTabPanel'
+			});
+			self.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
 		}
+		let dataVerify = self.getRightSidebar().getChildByName('dataVerify');
+		if( !dataVerify ){
+			dataVerify = new VueComponent({
+				title: i18n.t('editor.ui.sidebar.capture'),
+				name: 'dataVerify',
+				editor: this,
+				propsData: {
+					dataFlow: '',
+				},
+				component: DataVerify
+			});
+			self.getRightTabPanel().add(dataVerify);
+			self.getRightTabPanel().select(dataVerify);
+		}
+		self.getRightSidebar().show();
+	}
+	showMonitor(){
+		// remove dataVerify
+		let dataVerify = this.getRightTabPanel().getChildByName('dataVerify');
+		if( dataVerify ) this.getRightTabPanel().remove(dataVerify);
+
+		let monitor = this.getRightTabPanel().getChildByName('monitor');
+		this.getRightTabPanel().select(monitor);
 	}
 	showLoading(){
-		// add capture
-		this.getRightSidebar().removeAll();
-		let dvLoading = this.getRightSidebar().getChildByName('dvLoading');
+		let dataVerify = this.getRightTabPanel().getChildByName('dataVerify');
+		if( dataVerify ) this.getRightTabPanel().remove(dataVerify);
+		// add loading
+		let self = this;
+		let rightTabPanel = self.getRightSidebar().getChildByName('rightTabPanel');
+		if( !rightTabPanel) {
+			rightTabPanel = new Tab({
+				name: 'rightTabPanel'
+			});
+			self.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
+		}
+		let dvLoading = self.getRightSidebar().getChildByName('dvLoading');
 		if( !dvLoading ){
 			dvLoading = new VueComponent({
 				title: i18n.t('editor.ui.sidebar.capture'),
@@ -337,14 +366,24 @@ export default class Editor extends BaseObject {
 				},
 				component: DVLoading
 			});
-			this.getRightSidebar().add(dvLoading);
+			self.getRightTabPanel().add(dvLoading);
+			self.getRightTabPanel().select(dvLoading);
 		}
-		this.getRightSidebar().show();
+		self.getRightSidebar().show();
 	}
 	showResult(){
-		// add capture
-		this.getRightSidebar().removeAll();
-		let dvResult = this.getRightSidebar().getChildByName('dvResult');
+		let dvLoading = this.getRightTabPanel().getChildByName('dvLoading');
+		if( dvLoading ) this.getRightTabPanel().remove(dvLoading);
+		// add result
+		let self = this;
+		let rightTabPanel = self.getRightSidebar().getChildByName('rightTabPanel');
+		if( !rightTabPanel) {
+			rightTabPanel = new Tab({
+				name: 'rightTabPanel'
+			});
+			self.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
+		}
+		let dvResult = self.getRightSidebar().getChildByName('dvResult');
 		if( !dvResult ){
 			dvResult = new VueComponent({
 				title: i18n.t('editor.ui.sidebar.capture'),
@@ -355,9 +394,10 @@ export default class Editor extends BaseObject {
 				},
 				component: DVResult
 			});
-			this.getRightSidebar().add(dvResult);
+			self.getRightTabPanel().add(dvResult);
+			self.getRightTabPanel().select(dvResult);
 		}
-		this.getRightSidebar().show();
+		self.getRightSidebar().show();
 	}
 	setData(dataFlow){
 		this.graph.loadData(JSON.parse(dataFlow.editorData));
