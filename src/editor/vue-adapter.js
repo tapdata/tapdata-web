@@ -7,7 +7,6 @@ import Vue from 'vue';
 import Panel from "./ui/panel";
 import {EditorEventType} from "./lib/events";
 import BaseObject from './lib/BaseObject';
-import Component from './lib/Component';
 import log from '../log';
 import {FORM_DATA_KEY} from "./constants";
 import i18n from '../i18n/i18n';
@@ -55,7 +54,6 @@ export class VueAdapter extends BaseObject {
 			let vueComponentConfig = vueAdapter[name];
 			let Comp = Vue.extend(vueComponentConfig.component);
 
-			this.handleClearPanel();
 			let settings = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
 			if(!settings) {
 				settings = new Panel({
@@ -139,16 +137,6 @@ export class VueAdapter extends BaseObject {
 		this.editor.off(EditorEventType.BEFORE_DESTROY, this.destroy);
 	}
 
-	handleClearPanel(){
-		this.editor.getRightSidebar().removeAll();
-		let rightTabPanel = this.editor.getRightTabPanel();
-		if( !rightTabPanel) {
-			rightTabPanel = new Tab({
-				name: 'rightTabPanel'
-			});
-			this.editor.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
-		}
-	}
 	/**
 	 *
 	 * @param cell

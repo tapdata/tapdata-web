@@ -12,6 +12,8 @@ export default class Tab extends Component{
 	constructor(opts) {
 		super(opts);
 
+		this.showTapbar = true;
+
 		this.init();
 	}
 
@@ -22,11 +24,24 @@ export default class Tab extends Component{
 			<div class="e-tab-content"></div>
 		</div>
 		`);
+
+		if(this.opts.hiddenTabBar){
+			this.hideTapBar();
+		}
 	}
 
 	__id = 1;
 	generatorId(){
 		return this.__id++;
+	}
+
+	hideTapBar(){
+		this.el.find('.e-tab-bar').hide();
+		this.showTapbar = false;
+	}
+	showTapBar(){
+		this.showTapbar = true;
+		this.el.find('.e-tab-bar').show();
 	}
 
 	add(tab, prepend = false){

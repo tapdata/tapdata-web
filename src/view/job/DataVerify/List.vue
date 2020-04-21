@@ -1,5 +1,6 @@
 <template>
 	<div class="data-verify">
+		<el-button class="back-btn" size="mini" @click="GoBack">back</el-button>
 		<div class="table-box">
 			<div class="dv-header" ref="dataVerify">{{ $t('dataVerify.dataVerify') }} </div>
 			<el-table
@@ -371,6 +372,9 @@
 			handleBack(){
 				this.editor.showResult();
 			},
+			GoBack(){
+				this.editor.showMonitor();
+			},
 			getUrlSearch(name) {
 				// 未传参，返回空
 				if (!name) return null;
@@ -461,6 +465,9 @@
 		display: inline-block;
 		background:#48B6E2;
 		border-radius:3px;
+	}
+	.back-btn{
+		margin: 10px 0 0 10px;
 	}
 </style>
 <style>
