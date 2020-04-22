@@ -40,7 +40,8 @@
 					]
 				},
 				model: {
-					connectionId: ""
+          connectionId: "",
+          type: "api"
 				}
 			};
 		},

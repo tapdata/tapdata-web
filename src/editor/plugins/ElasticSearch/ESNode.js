@@ -7,18 +7,9 @@ export const esNodeConfig = {
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
-			size: {width: 120, height: 28},
 			attrs: {
 				image: {
 					xlinkHref: 'static/editor/o-es.svg',
-					refWidth: '25%',
-					refHeight: '84%',
-					refX: '-8%',
-					refY: '-28%'
-				},
-				body: {
-					rx: 14,
-					ry: 14
 				},
 				label: {
 					text: i18n.t('editor.cell.data_node.es.name'),

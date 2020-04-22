@@ -43,7 +43,8 @@ export default {
         ]
       },
       model: {
-        connectionId: ""
+        connectionId: "",
+        type: "file"
       }
     };
   },

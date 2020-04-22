@@ -7,7 +7,6 @@ export const fileNodeConfig = {
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
-			size: {width: 120, height: 28},
 			attrs: {
 				image: {
 					xlinkHref: 'static/editor/o-file.svg',

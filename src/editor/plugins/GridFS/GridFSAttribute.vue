@@ -37,7 +37,8 @@ export default {
         ]
       },
       model: {
-        connectionId: ""
+        connectionId: "",
+        type: "gridfs"
       }
     };
   },

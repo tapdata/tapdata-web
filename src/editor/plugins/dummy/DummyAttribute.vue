@@ -44,7 +44,8 @@
 					]
 				},
 				model: {
-					connectionId: ""
+          connectionId: "",
+          type: "dummy"
 				}
 			};
 		},
@@ -53,7 +54,7 @@
 			let result = await connections.get({
 				filter: JSON.stringify({
 					where: {
-						database_type: 'dummy'
+						database_type: 'dummy db'
 					},
 					fields: {
 						name: 1, id: 1, database_type: 1, connection_type: 1, status: 1
