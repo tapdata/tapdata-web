@@ -20,9 +20,16 @@
 		>
 			<span class="custom-tree-node" slot-scope="{ node, data}">
 				<span @dblclick="handleGraph(data)">
-					<span v-if="data.meta_type ==='database'" class="iconfont icon-shujuku filter-icon"></span>
+
+					<span v-if="data.meta_type ==='database'" class="iconfont icon-database filter-icon-table"></span>
+<!--					<span v-if="data.meta_type ==='database' &&(data.source.database_type ==='mongodb' || data.source.database_type ==='oracle'|| data.source.database_type ==='mysql' || data.source.database_type ==='sqlserver' || data.source.database_type ==='db2' || data.source.database_type ==='sybase ase')" class="iconfont icon-database filter-icon-table"></span>-->
 					<span v-if="data.meta_type ==='table'" class="iconfont icon-table2  filter-icon-table"></span>
 					<span v-if="data.meta_type ==='collection'" class="iconfont icon-collection filter-icon-table"></span>
+<!--					<span v-if="data.source && data.source.database_type ==='dummy db' && data.meta_type ==='database'" class="iconfont icon-dummy filter-icon-table"></span>-->
+<!--					<span v-if="data.source&& data.source.database_type ==='gridfs' && data.meta_type ==='database'" class="iconfont icon-gridfs2 filter-icon-table"></span><span v-if="data.source.database_type ==='dummy db'" class="iconfont icon-collection filter-icon-table"></span>-->
+<!--					<span v-if="data.source && data.source.database_type ==='elasticsearch' && data.meta_type ==='database'" class="iconfont icon-elastic-search-clust filter-icon-table"></span>-->
+<!--					<span v-if="data.source && data.source.database_type ==='file'&& data.meta_type ==='database'" class="iconfont icon-file1 filter-icon-table"></span>-->
+<!--					<span v-if="data.source && data.source.database_type ==='rest api' && data.meta_type ==='database'" class="iconfont icon-api filter-icon-table"></span>-->
 					<span class="table-label">{{ node.label }}</span>
 				</span>
 				<span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>
@@ -110,7 +117,13 @@
 				if (node.level >1) {
 					return resolve([]);
 				}
-
+				if(node.data.source.database_type ==="dummy db" ||
+					node.data.source.database_type ==="gridfs" ||
+					node.data.source.database_type ==="file" ||
+					node.data.source.database_type ==="elasticsearch" ||
+					node.data.source.database_type ==="rest api"){
+					return resolve([]);
+				}
 				let params = {
 					filter: JSON.stringify({
 						where: {
@@ -167,8 +180,14 @@
 					collection: 'app.Collection',
 					table: 'app.Table',
 					database: 'app.Database',
+					mongodb: 'app.Database',
 					mongo_view: 'app.Collection',
 					view: 'app.Table',
+					dummy_db:'app.Dummy',
+					elasticsearch:'app.ESNode',
+					file:'app.FileNode',
+					gridfs: 'app.GridFSNode',
+					rest_api: 'app.ApiNode',
 				};
 
 				let formData = {};
@@ -176,7 +195,7 @@
 				if(data.meta_type ==='database'){
 					formData ={
 						connectionId:data.source._id,
-						name: this.handleString(data.source.name) || this.handleString(data.label) ,
+						name: data.source.name || data.label ,
 					};
 				}else if(data.meta_type ==='table' || data.meta_type ==='view'|| data.meta_type ==='collection'|| data.meta_type ==='mongo_view'){
 					let primaryKeys ='';
@@ -206,20 +225,20 @@
 				}
 
 				this.count = this.count + 50;
-				let cell = this.editor.graph.createCell(mapping[data.meta_type], formData,schema);
+				let cell ='';
+				if(data.meta_type === 'database'){
+					let dataType = data.source.database_type ? data.source.database_type.replace(/ /g, '_') : data.source.database_type;
+					log(dataType);
+					cell = this.editor.graph.createCell(mapping[dataType], formData,schema);
+				}else {
+					cell = this.editor.graph.createCell(mapping[data.meta_type], formData,schema);
+				}
+
 				let coordinates = this.editor.graph.getClientOffset();
-				log('coordinates',coordinates);
 				log('coordinates',coordinates.x+40,coordinates.y+this.count+160);
 				cell.position(coordinates.x+400, coordinates.y+this.count+160);
 				this.editor.graph.addCell(cell);
 			},
-			handleString(str){
-				if(!str || str.length <= 20){
-					return str;
-				}
-				return str; //`${ str.substring(0,8)}...${str.substring(str.length-9)}`;
-
-			}
 		}
 	};
 </script>
@@ -307,6 +326,9 @@
 		}
 		.el-input .el-input__icon {
 			line-height: 24px;
+		}
+		.el-input__suffix{
+			left:125px;
 		}
 		.el-input__icon {
 			height: 100%;

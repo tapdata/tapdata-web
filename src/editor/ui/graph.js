@@ -70,7 +70,7 @@ export default class Graph extends Component{
 			model: graph,
 			width: 800,
 			height: 800,
-			gridSize: 15,
+			gridSize: 0,
 			drawGrid: true,
 			linkPinning: false,
 			//markAvailable: true,
@@ -263,9 +263,9 @@ export default class Graph extends Component{
 			dropAnimation: true,
 			groupsToggleButtons: true,
 			layout: {
-				columnWidth: 75,
+				columnWidth: 70,
 				columns: 3,
-				rowHeight: 47,
+				rowHeight: 45,
 			},
 			/*search: {
 				'*': ['type', 'attrs/text/text', 'attrs/root/dataTooltip', 'attrs/label/text'],
@@ -569,7 +569,7 @@ export default class Graph extends Component{
 			'snapline:change': this.changeSnapLines.bind(this),
 			'clear:pointerclick': this.graph.clear.bind(this.graph),
 			'print:pointerclick': this.paper.print.bind(this.paper),
-			'grid-size:change': this.paper.setGridSize.bind(this.paper)
+			// 'grid-size:change': this.paper.setGridSize.bind(this.paper)
 		});
 
 		this.editor.getUI().getGraphToolbarEl().append(toolbar.el);
