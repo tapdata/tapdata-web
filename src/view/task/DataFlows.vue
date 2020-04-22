@@ -1,5 +1,5 @@
 <template>
-	<div class="task-list" style="overflow: auto;">
+	<div class="task-list">
 		<div class="task-list-operating-area box-card">
 			<el-row :gutter="10">
 				<el-form label-width="100px" :data="formData" :inline="true">
@@ -32,11 +32,12 @@
 							</el-form-item>
 						</el-col>
 						<div class="task-list-menu-right">
-							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('paused')"><i class="iconfont icon-xinzeng1 back-btn-icon"></i></el-button>
-							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('running')"><i class="iconfont icon-xinzeng1 back-btn-icon"></i></el-button>
-							<el-button class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-xinzeng1 back-btn-icon"></i></el-button>
-							<el-button class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-xinzeng1 back-btn-icon"></i></el-button>
-							<el-button class="back-btn-icon-box" @click="$router.push({path: '/job'})"><i class="iconfont icon-xinzeng1 back-btn-icon"></i></el-button>
+							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-hanshu back-btn-icon"></i></el-button>
+							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-biaoqian back-btn-icon"></i></el-button>
+							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('paused')"><i class="iconfont icon-zanting2 back-btn-icon"></i></el-button>
+							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('running')"><i class="iconfont icon-yunhang1 back-btn-icon"></i></el-button>
+							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-shanchu1 back-btn-icon"></i></el-button>
+							<el-button class="add-btn-icon-box" @click="$router.push({path: '/job'})"><i class="iconfont icon-jia add-btn-icon"></i></el-button>
 						</div>
 					</el-row>
 				</el-form>
@@ -58,7 +59,7 @@
 					@sort-change="handleSortTable"
 					@selection-change="handleSelectionChange"
 					:default-sort="{ prop: 'createTime', order: 'descending'}">
-				<el-table-column type="selection" width="55" :selectable="handleSelectable">
+				<el-table-column type="selection" width="45" :selectable="handleSelectable">
 				</el-table-column>
 				<el-table-column prop="name" :label="$t('dataFlow.taskName')">
 				</el-table-column>
@@ -130,8 +131,8 @@
 			</el-table>
 			<el-pagination background
 					class="pagination-bar"
-					layout="total, prev, pager, next,sizes"
-					:page-sizes="[12, 20, 30, 50,100]"
+					layout="prev, pager, next,sizes"
+					:page-sizes="[20, 30, 50,100]"
 					:page-size="pagesize"
 					:total="totalNum"
 					@current-change="handleCurrentChange"
@@ -161,7 +162,7 @@
 				tableData: [],
 				newData: [],
 				currentPage:1,
-				pagesize: 12,
+				pagesize: 20,
 				totalNum: 0,
 				options: [{
 					label: this.$t('dataFlow.status.running'),
@@ -202,7 +203,7 @@
 		},
 		computed: {
 			maxHeight: function () {
-				let height = document.body.clientHeight - 220 + "px";
+				let height = document.body.clientHeight - 120 + "px";
 				return height;
 			}
 		},
@@ -484,7 +485,6 @@
 	.task-list {
 		font-size: 14px;
 		margin-left: 20px;
-		overflow: auto;
 		/*height: calc(100% - 48px);*/
 	}
 
@@ -492,7 +492,7 @@
 		border-radius: 3px;
 		transition: .2s;
 		padding-left: 5px;
-		margin-left: 0px;
+		margin-left: 0;
 
 		.el-input, .el-select {
 			display: inline-block;
@@ -500,7 +500,8 @@
 		}
 
 		.el-form-item {
-			margin-bottom: 6px;
+			margin-top: 2px;
+			margin-bottom: 4px;
 		}
 	}
 	.df-btn-box{
@@ -560,13 +561,14 @@
 	}
 	.task-list  .el-pagination{
 		width: 100%;
-		padding: 10px 50px;
+		padding: 10px 0;
 		-webkit-box-sizing: border-box;
 		box-sizing: border-box;
 		text-align: right;
 		overflow: hidden;
+		z-index: 999;
 	}
-	.back-btn-icon-box{
+	.back-btn-icon-box , .add-btn-icon-box{
 		width: 28px;
 		height: 28px;
 		display: inline-block;
@@ -594,9 +596,13 @@
 		border: 1px solid #DCDFE6;
 	}
 	.back-btn-icon-box:hover{
-		background:#6dc5e8;
+		background:#dedee4;
 	}
+
 	.back-btn-icon{
+		color: #666;
+	}
+	.add-btn-icon{
 		color: #fff;
 	}
 </style>
@@ -610,7 +616,7 @@
 	.dv-table  thead{
 		color:#333;
 		th{
-			padding:0;
+			padding:5px 0;
 			background: #fafafa;
 		}
 	}

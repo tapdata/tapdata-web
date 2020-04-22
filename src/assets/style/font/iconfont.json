@@ -6,6 +6,132 @@
   "description": "Tapdata 线装小图标",
   "glyphs": [
     {
+      "icon_id": "14226568",
+      "name": "o-collection5",
+      "font_class": "o-collection5",
+      "unicode": "e661",
+      "unicode_decimal": 58977
+    },
+    {
+      "icon_id": "14226415",
+      "name": "collection5",
+      "font_class": "collection51",
+      "unicode": "e6a2",
+      "unicode_decimal": 59042
+    },
+    {
+      "icon_id": "14226350",
+      "name": "清除",
+      "font_class": "qingchu",
+      "unicode": "e69b",
+      "unicode_decimal": 59035
+    },
+    {
+      "icon_id": "14226351",
+      "name": "子节点",
+      "font_class": "zijiedian",
+      "unicode": "e69f",
+      "unicode_decimal": 59039
+    },
+    {
+      "icon_id": "14226353",
+      "name": "同级节点2",
+      "font_class": "tongjijiedian2",
+      "unicode": "e6a0",
+      "unicode_decimal": 59040
+    },
+    {
+      "icon_id": "14226171",
+      "name": "dummy",
+      "font_class": "dummy1",
+      "unicode": "e69c",
+      "unicode_decimal": 59036
+    },
+    {
+      "icon_id": "14226172",
+      "name": "o-dummy2",
+      "font_class": "o-dummy2",
+      "unicode": "e69d",
+      "unicode_decimal": 59037
+    },
+    {
+      "icon_id": "14226173",
+      "name": "o-dummy",
+      "font_class": "o-dummy1",
+      "unicode": "e69e",
+      "unicode_decimal": 59038
+    },
+    {
+      "icon_id": "14226138",
+      "name": "o-rf",
+      "font_class": "o-rf",
+      "unicode": "e696",
+      "unicode_decimal": 59030
+    },
+    {
+      "icon_id": "14226139",
+      "name": "rf",
+      "font_class": "rf",
+      "unicode": "e699",
+      "unicode_decimal": 59033
+    },
+    {
+      "icon_id": "14226155",
+      "name": "o-api",
+      "font_class": "o-api",
+      "unicode": "e69a",
+      "unicode_decimal": 59034
+    },
+    {
+      "icon_id": "14201068",
+      "name": "运行",
+      "font_class": "yunhang1",
+      "unicode": "e681",
+      "unicode_decimal": 59009
+    },
+    {
+      "icon_id": "14225841",
+      "name": "标签",
+      "font_class": "biaoqian",
+      "unicode": "e690",
+      "unicode_decimal": 59024
+    },
+    {
+      "icon_id": "14225869",
+      "name": "函数",
+      "font_class": "hanshu",
+      "unicode": "e691",
+      "unicode_decimal": 59025
+    },
+    {
+      "icon_id": "14225889",
+      "name": "暂停",
+      "font_class": "zanting2",
+      "unicode": "e692",
+      "unicode_decimal": 59026
+    },
+    {
+      "icon_id": "14226004",
+      "name": "删除",
+      "font_class": "shanchu1",
+      "unicode": "e693",
+      "unicode_decimal": 59027
+    },
+    {
+      "icon_id": "14226008",
+      "name": "标签2",
+      "font_class": "biaoqian2",
+      "unicode": "e694",
+      "unicode_decimal": 59028
+    },
+    {
+      "icon_id": "14226026",
+      "name": "加",
+      "font_class": "jia",
+      "unicode": "e695",
+      "unicode_decimal": 59029
+    },
+    {
       "icon_id": "9686905",
       "name": "编辑器-函数",
       "font_class": "bianjiqi-hanshu",
@@ -151,13 +277,6 @@
       "font_class": "bangzhu5",
       "unicode": "e683",
       "unicode_decimal": 59011
-    },
-    {
-      "icon_id": "14066680",
-      "name": "collection4",
-      "font_class": "collection4",
-      "unicode": "e66a",
-      "unicode_decimal": 58986
     },
     {
       "icon_id": "14066522",
@@ -335,13 +454,6 @@
       "unicode_decimal": 58989
     },
     {
-      "icon_id": "12932089",
-      "name": "l-link",
-      "font_class": "l-link",
-      "unicode": "e798",
-      "unicode_decimal": 59288
-    },
-    {
       "icon_id": "13900121",
       "name": "file",
       "font_class": "file1",
@@ -377,34 +489,6 @@
       "unicode_decimal": 58882
     },
     {
-      "icon_id": "13842112",
-      "name": "link4",
-      "font_class": "link5",
-      "unicode": "e668",
-      "unicode_decimal": 58984
-    },
-    {
-      "icon_id": "13841868",
-      "name": "link3",
-      "font_class": "link4",
-      "unicode": "e667",
-      "unicode_decimal": 58983
-    },
-    {
-      "icon_id": "13841011",
-      "name": "link1",
-      "font_class": "link2",
-      "unicode": "e663",
-      "unicode_decimal": 58979
-    },
-    {
-      "icon_id": "13841012",
-      "name": "link2",
-      "font_class": "link3",
-      "unicode": "e666",
-      "unicode_decimal": 58982
-    },
-    {
       "icon_id": "13839740",
       "name": "json",
       "font_class": "json",
@@ -424,13 +508,6 @@
       "font_class": "json4",
       "unicode": "e665",
       "unicode_decimal": 58981
-    },
-    {
-      "icon_id": "13839517",
-      "name": "json2",
-      "font_class": "json1",
-      "unicode": "e661",
-      "unicode_decimal": 58977
     },
     {
       "icon_id": "13839404",
