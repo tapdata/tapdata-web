@@ -156,6 +156,7 @@
 	import factory from '../../../api/factory';
 	import log from "../../../log";
 	import {EditorEventType} from "../../../editor/lib/events";
+	import $ from 'jquery';
 
 	const dataFlows = factory('DataFlows');
 
@@ -164,6 +165,7 @@
 			return {
 				id:'',
 				editIndex:-1,
+				width:'',
 				disabledDrawer: false,
 				direction: 'rtl',
 				checkedSource:false,
@@ -195,7 +197,13 @@
 			this.id =this.getUrlSearch('id');
 			this.getData(this.id);
 			this.getSourceList();
-			this.$on('resize' );
+
+		},
+		mounted() {
+			let self =  this;
+			this.$on(EditorEventType.RESIZE, (width) => {
+				$('.el-drawer__wrapper').css('right',width);
+			});
 		},
 		methods: {
 			handleClose(){

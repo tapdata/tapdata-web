@@ -20,9 +20,9 @@ export default class UI extends Component {
 	doInit() {
 		this.el = $(`<div class="editor">
 			<div class="e-header">
-				<div class="e-action-bar"><a class="e-action-back iconfont icon-xiangzuo"></a></div>
+				<div class="e-action-bar"><a class="e-action-back iconfont icon-biaotongbu"></a></div>
 				<div class="e-title">
-					<input value="任务" class="ui-input" id="taskNameInput" type="text"  maxlength="24" "/>
+					<input value="新任务未命名" class="ui-input" id="taskNameInput" type="text"  maxlength="24" "/>
 				</div>
 				<i class='el-icon-edit el-icon'></i>
 				<div class="e-toolbar-container">

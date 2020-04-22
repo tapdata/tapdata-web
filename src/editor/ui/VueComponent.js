@@ -43,10 +43,19 @@ export default class VueComponent extends Component{
 		});
 
 		editor.graph.on(EditorEventType.SELECTED_STAGE, this.selectedStage, this);
+		this.on(EditorEventType.RESIZE, function(){
+			self.handlerResize(...arguments);
+		});
 	}
 
 	getContentEl() {
 		return this.el;
+	}
+
+	handlerResize(){
+		if( this.vm ){
+			this.vm.$emit(EditorEventType.RESIZE, ...arguments);
+		}
 	}
 
 	selectedStage(stageData) {

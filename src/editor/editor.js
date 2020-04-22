@@ -32,6 +32,7 @@ export default class Editor extends BaseObject {
 	 * @type {UI}
 	 */
 	ui = null;
+	vm = null;
 
 	/**
 	 * left sidebar
@@ -109,7 +110,7 @@ export default class Editor extends BaseObject {
 			region: 'right',
 			editor: this,
 			hidden: true,
-			maxWidth: 1000,
+			maxWidth: 800,
 			minWidth: 500,
 			width: 600
 		});
@@ -126,7 +127,7 @@ export default class Editor extends BaseObject {
 			region: 'bottom',
 			editor: this,
 			hidden: true,
-			maxHeight: 1000,
+			maxHeight: 800,
 			height: 520
 		});
 		ui.add(self.bottomSidebar);
@@ -332,6 +333,9 @@ export default class Editor extends BaseObject {
 			});
 			self.getRightTabPanel().add(dataVerify);
 			self.getRightTabPanel().select(dataVerify);
+			self.getRightSidebar().on(EditorEventType.RESIZE, function(){
+				dataVerify.emit(EditorEventType.RESIZE, ...arguments);
+			});
 		}
 		self.getRightSidebar().show();
 	}

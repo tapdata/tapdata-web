@@ -37,7 +37,9 @@
 							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('paused')"><i class="iconfont icon-zanting2 back-btn-icon"></i></el-button>
 							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('running')"><i class="iconfont icon-yunhang1 back-btn-icon"></i></el-button>
 							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-shanchu1 back-btn-icon"></i></el-button>
-							<el-button class="add-btn-icon-box" @click="$router.push({path: '/job'})"><i class="iconfont icon-jia add-btn-icon"></i></el-button>
+							<router-link target="_blank" to="/job">
+								<el-button class="add-btn-icon-box" ><i class="iconfont icon-jia add-btn-icon"></i></el-button>
+							</router-link>
 						</div>
 					</el-row>
 				</el-form>
@@ -95,10 +97,10 @@
 					<template slot-scope="scope">
 						<div v-if="!scope.row.hasChildren">
 							<el-tooltip v-if="scope.row.status !== 'scheduled'&& scope.row.status !== 'running'&& scope.row.status !== 'force stopping'&&scope.row.status !== 'stopping'" class="item" :content="$t('dataFlow.edit')" placement="bottom">
-								<router-link :to='{path:"/job", query: { id: scope.row.id}}'><i
+								<router-link :to='{path:"/job", query: { id: scope.row.id}}'  target="_blank"><i
 										class="iconfont task-list-icon  icon-ceshishenqing"></i></router-link>
 							</el-tooltip>
-							<el-tooltip v-else class="item" :content="$t('dataFlow.detail')" placement="bottom">
+							<el-tooltip v-else class="item" :content="$t('dataFlow.detail')"  target="_blank" placement="bottom">
 								<router-link :to='{path:"/job", query: { id: scope.row.id}}'><i
 										class="iconfont task-list-icon icon-chaxun"></i></router-link>
 							</el-tooltip>
