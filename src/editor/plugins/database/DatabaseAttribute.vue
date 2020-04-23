@@ -26,40 +26,56 @@
 		</div>
 		<div class="processingBody">
 			<div class="allCheck" v-if="activeName ==='first'">
-				<el-checkbox v-model="allChecked" @change='checkedAll'></el-checkbox>
-				<span @click="bulkRemoval()">批量移除</span>
+				<el-checkbox v-model="selectAllTables"></el-checkbox>
+				<span @click="bulkRemoval()">{{$t('editor.cell.data_node.database.bulkRemoval')}}</span>
 			</div>
 
 			<div class="allCheck" v-if="activeName ==='second'">
-				<el-checkbox v-model="allChecked" @change='checkedAll'></el-checkbox>
-				<span @click="bulkRevocation()">批量撤销</span>
+				<el-checkbox v-model="selectAllRemoveTables"></el-checkbox>
+				<span @click="bulkRevocation()">{{$t('editor.cell.data_node.database.bulkRevocation')}}</span>
 			</div>
 
 			<el-tabs class="e-tabs" v-model="activeName" @tab-click="handleClick">
 
-				<el-tab-pane :label="'待复制队列' + '('+tables.length+')'" name="first">
-					<el-row class="list"
-							v-for="(item,index) in tables"
+				<el-tab-pane :label="$t('editor.cell.data_node.database.queueCopied') + '('+tables.length+')'" name="first">
+          <div class="search">
+            <el-input
+              :placeholder="$t('editor.cell.data_node.database.enterName')"
+              prefix-icon="el-icon-search"
+              v-model="search">
+            </el-input>
+          </div>
+					<el-row class="list" :class="{active:item.checked}"
+							v-for="(item,index) in computedTables"
 							:key="item.id"
 							:gutter="20">
-						<el-col :span="2">
-							<el-checkbox v-model="item.checked" @change='checkedOne(item,index)'></el-checkbox>
-						</el-col>
-						<el-col :span="17">
-							<i class="iconfont icon-table2"></i>
-							<span class="tableName">{{item.table_name}}</span>
-						</el-col>
-						<el-col :span="5">
-							<el-button type="text" @click="removeTable(item,index)">移除</el-button>
-						</el-col>
+              <el-col :span="2">
+                <el-checkbox v-model="item.checked" @change='checkedOne(item,index)'></el-checkbox>
+              </el-col>
+              <el-col :span="17">
+                <i class="iconfont icon-table2"></i>
+                <span class="tableName">{{item.table_name}}</span>
+              </el-col>
+              <el-col :span="5" class="text-center">
+                <el-button type="text" @click="removeTable(item,index)">{{$t('editor.cell.data_node.database.remove')}}</el-button>
+              </el-col>
 					</el-row>
 				</el-tab-pane>
 
-				<el-tab-pane :label="'已移除表' + '('+model.excludeTables.length+')'" name="second">
+				<el-tab-pane :label="$t('editor.cell.data_node.database.tableRemoved') + '('+model.excludeTables.length+')'" name="second">
+          <div class="search">
+            <el-input
+              :placeholder="$t('editor.cell.data_node.database.enterName')"
+              prefix-icon="el-icon-search"
+              v-model="removeSearch">
+            </el-input>
+          </div>
+
 					<el-row class="list"
-							v-for="(item,index) in model.excludeTables"
-							:key="item.id"
-							:gutter="20">
+            :class="{active:item.checked}"
+            v-for="(item,index) in computedRemoveTables"
+            :key="item.id"
+            :gutter="20">
 						<el-col :span="2">
 							<el-checkbox v-model="item.checked" @change='checkedOne(item,index)'></el-checkbox>
 						</el-col>
@@ -67,8 +83,8 @@
 							<i class="iconfont icon-table2"></i>
 							<span class="tableName">{{item.table_name}}</span>
 						</el-col>
-						<el-col :span="5">
-							<el-button type="text" @click="undotble(item,index)">撤销</el-button>
+						<el-col :span="5" class="text-center">
+							<el-button type="text" @click="undotble(item,index)">{{$t('editor.cell.data_node.database.Undo')}}</el-button>
 						</el-col>
 					</el-row>
 				</el-tab-pane>
@@ -80,7 +96,7 @@
 
 <script>
 	import factory from '../../../api/factory';
-	import _ from 'lodash';
+  import _ from 'lodash';
 
 	let connections = factory('connections');
 
@@ -96,10 +112,15 @@
 
 		data() {
 			return {
-				allChecked: false,
-				checkList: [],
-				hoverIndex: -1,
-				tables: [],
+        removeSearch: '',
+        search: '',
+
+        tables: [],
+        removeTables: [],
+
+        selectAllTables: false,
+        selectAllRemoveTables: false,
+
 				databases: [],
 				activeName: 'first',
 				rules: {
@@ -115,9 +136,26 @@
 					connectionId: "",
 					excludeTables: [],
 				},
-				database_type: ''
+        database_type: '',
 			};
-		},
+    },
+
+    computed: {
+      computedTables(){
+        if( this.search ){
+          return this.tables.filter( t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0 );
+        } else {
+          return this.tables;
+        }
+      },
+      computedRemoveTables(){
+        if( this.removeSearch ){
+          return this.removeTables.filter( t => t.table_name.toLowerCase().indexOf(this.removeSearch.toLowerCase()) >= 0 );
+        } else {
+          return this.removeTables;
+        }
+      }
+    },
 
 		async mounted() {
 			let result = await connections.get({
@@ -133,7 +171,8 @@
 			});
 
 			if (result.data) {
-				this.databases = result.data;
+        this.databases = result.data;
+        this.lookupDatabaseType();
 			}
 		},
 
@@ -147,130 +186,103 @@
 			'model.connectionId': {
 				immediate: true,
 				handler() {
+          this.lookupDatabaseType();
 					this.loadDataModels(this.model.connectionId);
 				}
-			},
-		},
+      },
+      selectAllTables: {
+        handler(){
+          this.tables.forEach( t => t.checked = this.selectAllTables);
+        }
+      },
+      selectAllRemoveTables: {
+        handler(){
+          this.removeTables.forEach( t => t.checked = this.selectAllRemoveTables);
+        }
+      }
+    },
 
 		methods: {
+
+      lookupDatabaseType(){
+          if(!this.model.connectionId)
+            return;
+          let selectedDbs = this.databases.filter( db => db.id === this.model.connectionId);
+          if( selectedDbs && selectedDbs.length > 0){
+            this.database_type = selectedDbs[0].database_type;
+          }
+      },
+
 			// 获取表名称
 			loadDataModels(connectionId) {
 				if (!connectionId) {
 					return;
 				}
-				let _this = this;
-
+        let self = this;
 				connections.get([connectionId]).then(result => {
 					if (result.data) {
-						let tables = result.data.schema && result.data.schema.tables || [];
-						tables = tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+            let tables = result.data.schema && result.data.schema.tables || [];
+            tables = tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
 						tables.forEach(item => {
-							_this.$set(item, 'checked', false);
+              let tableName = item.table_name;
+              if( self.model.excludeTables.indexOf(tableName) >= 0 ){
+                self.removeTables.push({
+                  table_name: item.table_name, checked: false
+                });
+              } else {
+                self.tables.push({
+                  table_name: item.table_name, checked:false
+                });
+              }
 						});
-
-						let remove_tableName = this.model.excludeTables.map(item => item.table_name);
-						_this.tables = tables.filter(item => !remove_tableName.includes(item.table_name));
 					}
 				});
-			},
+      },
+      // 移除
+      removeTable(item, idx){
+        item.checked = false;
+        this.tables.splice(idx,1);
+        this.removeTables.push(item);
+        this.removeTables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
 
-			//获取databse下拉的信息
-			getSelectType(id) {
-				this.databases.forEach(item => {
-					if (id === item.id) {
-						this.database_type = item.database_type;
-					}
-				});
-			},
+        if(this.model.excludeTables.indexOf(item.table_name) === -1){
+          this.model.excludeTables.push(item.table_name);
+        }
+      },
+      // 撤销
+      undotble(item, idx) {
+        item.checked = false;
+        this.removeTables.splice(idx, 1);
+        this.tables.push(item);
+        this.tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
 
-			//切换标签
-			handleClick(tab, event) {
-				this.checkList = [];
-				this.allChecked = false;
-				if (tab.name === "second") {
-					this.model.excludeTables.forEach(item => {
-						if (item.checked) {
-							item.checked = false;
-						}
-					});
-				} else {
-					this.tables.forEach(item => {
-						if (item.checked) {
-							item.checked = false;
-						}
-					});
-				}
-			},
-
-			// 批量撤销
-			bulkRevocation() {
-				let removeArr = [];
-				removeArr = this.model.excludeTables.filter(item => item.checked === true);
-				this.model.excludeTables = this.model.excludeTables.filter(item => item.checked === false);
-				this.tables.push(...removeArr);
-				if (this.model.excludeTables.length === 0) {
-					this.allChecked = false;
-				}
-			},
-
-			// 批量移除
-			bulkRemoval(arr) {
-				let removeArr = this.tables.filter(item => item.checked === true);
-				this.tables = this.tables.filter(item => item.checked === false);
-				this.model.excludeTables.push(...removeArr);
-				if (this.tables.length === 0) {
-					this.allChecked = false;
-				}
-			},
-
-			// 撤销
-			undotble(item, index) {
-				this.tables.push(item);
-				this.model.excludeTables.splice(index, 1);
-			},
-
-			// 移除
-			removeTable(item, index) {
-        this.model.excludeTables.push(item);
-				this.tables.splice(index, 1);
-			},
-
-			// 单选
-			checkedOne(item, index) {
-				if (item.checked) {
-					this.checkList.push(item.id);
-				} else {
-					this.checkList.forEach((el, childIndex) => {
-						if (!el.checked && item.id === el) {
-							this.checkList.splice(childIndex, 1);
-						}
-					});
-				}
-
-				if (this.tables.length === this.checkList.length) {
-					this.allChecked = true;
-				} else {
-					this.allChecked = false;
-				}
-
-			},
-
-			// 全选
-			checkedAll(val) {
-				this.checkList = [];
-				if (val) {
-					this.tables.forEach(item => {
-						item.checked = true;
-						this.checkList.push(item.id);
-					});
-				} else {
-					this.tables.forEach(item => {
-						item.checked = false;
-					});
-					this.checkList = [];
-				}
-
-			},
+        let index = this.model.excludeTables.indexOf(item.table_name);
+        if(index >= 0){
+          this.model.excludeTables.splice(index, 1);
+        }
+      },
+      // 全部移除
+      bulkRemoval(){
+        for(let i = 0; i < this.tables.length; i++){
+          let item = this.tables[i];
+          if(item.checked === true){
+            this.removeTable(item, i);
+            i--;
+          }
+        }
+        this.selectAllTables = false;
+      },
+      // 全部撤销
+      bulkRevocation(){
+        for(let i = 0; i < this.removeTables.length; i++){
+          let item = this.removeTables[i];
+          if(item.checked === true){
+            this.undotble(item, i);
+            i--;
+          }
+        }
+        this.selectAllRemoveTables = false;
+      },
 
 			setData(data) {
 				if (data) {
@@ -292,6 +304,7 @@
 </script>
 <style lang="less">
 	.database {
+    .el-form-item { margin-bottom: 10px;}
 		.processingBody {
 			position: relative;
 			height: calc(100% - 165px);
@@ -340,28 +353,32 @@
 				.list {
 					width: 100%;
 					height: 36px;
-					line-height: 36px;
-					padding: 0 25px;
+          line-height: 36px;
+          margin: 0!important;
+					padding: 0 15px;
 					font-size: 12px;
 					overflow: hidden;
-
+          .iconfont {
+						color: #4AAF47;
+					}
 					.el-button--text {
 						font-size: 12px;
 						opacity: 0;
 						visibility: hidden;
 					}
-
+          .text-right {
+            text-align: right;
+          }
+          .text-center {
+            text-align: center;
+          }
 					.el-checkbox {
 						opacity: 0;
 						visibility: hidden;
 					}
 				}
 
-				.list {
-					.iconfont {
-						color: #4AAF47;
-					}
-
+				.list:hover, .active {
 					.tableName {
 						color: #48b6e2;
 					}
@@ -380,7 +397,17 @@
 				}
 			}
 		}
-
+    .search{
+      width: 100%;
+      padding: 0 25px 10px;
+      box-sizing: border-box;
+      // overflow: hidden;
+      .el-input,.el-input__inner,.el-input__icon {
+        height: 30px;
+        line-height: 30px;
+        font-size: 12px;
+      }
+    }
 		.databaseInfo {
 			span {
 				margin-right: 20px;

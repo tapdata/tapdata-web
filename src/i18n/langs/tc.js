@@ -203,7 +203,14 @@ const tc = {
 					form: {
 						placeholder: '請選擇數據庫',
 						label: '數據庫'
-					}
+          },
+          remove: '移除',
+          Undo: '撤銷',
+          bulkRemoval: '批量移除',
+          bulkRevocation: '批量撤銷',
+          queueCopied: '待複製隊列',
+          tableRemoved: '已移除表',
+          enterName: '請輸入名稱/字段名進行搜索'
 				},
 				collection: {
 					name: '數據集',

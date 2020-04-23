@@ -203,7 +203,14 @@ const en = {
 					form: {
 						placeholder: 'Please select database',
 						label: 'Database'
-					}
+          },
+          remove: 'Remove',
+          Undo: 'Undo',
+          bulkRemoval: 'Bulk removal',
+          bulkRevocation: 'Bulk revocation',
+          queueCopied: 'Queue to be copied',
+          tableRemoved: 'Table removed',
+          enterName: 'Please enter the name / field name to search'
 				},
 				collection: {
 					name: 'Collection',

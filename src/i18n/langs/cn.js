@@ -184,7 +184,6 @@ const cn = {
 		cell: {
 			validate: {
 				empty_name: '名称必填.',
-
 				none_setting: '设置不能为空.',
 				none_stage: '至少有一个节点.',
 				none_data_node: '至少有两个数据节点',
@@ -203,7 +202,14 @@ const cn = {
 					form: {
 						placeholder: '请选择数据库',
 						label: '数据库'
-					}
+          },
+          remove: '移除',
+          Undo: '撤销',
+          bulkRemoval: '批量移除',
+          bulkRevocation: '批量撤销',
+          queueCopied: '待复制队列',
+          tableRemoved: '已移除表',
+          enterName: '请输入名称/字段名进行搜索'
 				},
 				collection: {
 					name: '数据集',
