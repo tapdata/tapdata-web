@@ -120,7 +120,7 @@ export const
 			.forEach(key => targetSchema[key] = targetSchema[key] || sourceSchema[key]);
 
 		let sourceSchemaFields = _.cloneDeep(sourceSchema.fields) || [];
-		if( ['append', 'upsert'].includes(joinType) || targetSchema.meta_type === 'table') {
+		if( ['append'].includes(joinType) || targetSchema.meta_type === 'table') {
 			targetSchema.fields.push(...sourceSchemaFields);
 		} else {
 			let joinFieldName = [];
