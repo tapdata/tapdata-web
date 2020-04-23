@@ -128,7 +128,7 @@
 		data() {
 			return {
 				model: {
-				  type: 'row_filter_processor',
+					type: 'row_filter_processor',
 					name: 'Row Filter',
 					expression: '',
 					action: 'retain', // discard,retain
