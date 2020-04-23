@@ -34,20 +34,22 @@
 
 						<span class="e-port e-port-in" :data-id="getId(data)"></span>
 
-						<span class="e-label" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 ">
-							<span class="e-pk">{{ data.primary_key_position > 0 ? 'PK' : '' }}</span>
-							<el-input v-model="data.label" :disabled="true"></el-input>
-						</span>
+						<!--<span class="e-label" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 ">-->
+							<!--<span class="e-pk">{{ data.primary_key_position > 0 ? 'PK' : '' }}</span>-->
+							<!--<el-input v-model="data.label" :disabled="true"></el-input>-->
+						<!--</span>-->
 
-						<span class="e-label" v-else :class="{ activename: isRename(data.id) }" >
+						<!--<span class="e-label" v-else :class="{ activename: isRename(data.id) }" >-->
+						<span class="e-label" :class="{ activename: isRename(data.id) }" >
 							<el-input v-model="data.label" @blur="handleRename(node,data)" :disabled="isRemove(data.id)"></el-input>
 						</span>
 
-						<el-select v-model="data.type" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 " class="e-select"  :disabled="true" >
-							<el-option value="String" label="String"></el-option>
-						</el-select>
+						<!--<el-select v-model="data.type" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 " class="e-select"  :disabled="true" >-->
+							<!--<el-option value="String" label="String"></el-option>-->
+						<!--</el-select>-->
 
-						<el-select v-model="data.type" v-else  class="e-select" :class="{ activedatatype: isConvertDataType(data.id) }" :disabled="isRemove(data.id)" @change="handleDataType(node,data)">
+						<!--<el-select v-model="data.type" v-else  class="e-select" :class="{ activedatatype: isConvertDataType(data.id) }" :disabled="isRemove(data.id)" @change="handleDataType(node,data)">-->
+						<el-select v-model="data.type" class="e-select" :class="{ activedatatype: isConvertDataType(data.id) }" :disabled="isRemove(data.id)" @change="handleDataType(node,data)">
 							<el-option value="String" label="String" v-if="!data.children || data.children.length === 0"></el-option>
 							<el-option value="Integer" label="Integer" v-if="!data.children || data.children.length === 0"></el-option>
 							<el-option value="Double" label="Double" v-if="!data.children || data.children.length === 0"></el-option>
