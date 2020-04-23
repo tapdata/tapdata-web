@@ -10,14 +10,6 @@ export const GridFSNodeConfig = {
 			attrs: {
 				image: {
 					xlinkHref: 'static/editor/o-gridfs2.svg',
-					refWidth: '25%',
-					refHeight: '84%',
-					refX: '-8%',
-					refY: '-28%'
-				},
-				body: {
-					rx: 14,
-					ry: 14
 				},
 				label: {
 					text: i18n.t('editor.cell.data_node.gridfs.name'),

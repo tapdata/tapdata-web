@@ -70,8 +70,8 @@ export default class Graph extends Component{
 			model: graph,
 			width: 800,
 			height: 800,
-			gridSize: 15,
-			drawGrid: true,
+			gridSize: 10,
+			drawGrid: false,
 			linkPinning: false,
 			//markAvailable: true,
 			defaultLink: new joint.shapes.app.Link,
@@ -263,9 +263,9 @@ export default class Graph extends Component{
 			dropAnimation: true,
 			groupsToggleButtons: true,
 			layout: {
-				columnWidth: 75,
+				columnWidth: 70,
 				columns: 3,
-				rowHeight: 47,
+				rowHeight: 45,
 			},
 			/*search: {
 				'*': ['type', 'attrs/text/text', 'attrs/root/dataTooltip', 'attrs/label/text'],

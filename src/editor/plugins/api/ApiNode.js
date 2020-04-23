@@ -15,10 +15,6 @@ export const ApiNodeConfig = {
 					refX: '-8%',
 					refY: '-28%'
 				},
-				body: {
-					rx: 14,
-					ry: 14
-				},
 				label: {
 					text: i18n.t('editor.cell.data_node.api.name'),
 				}

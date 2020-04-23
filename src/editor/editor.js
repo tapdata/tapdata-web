@@ -32,7 +32,6 @@ export default class Editor extends BaseObject {
 	 * @type {UI}
 	 */
 	ui = null;
-	vm = null;
 
 	/**
 	 * left sidebar

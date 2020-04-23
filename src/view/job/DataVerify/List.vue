@@ -97,7 +97,8 @@
 								<el-option
 										v-for="item in sourceList"
 										:label="item.tableName"
-										:value="item.stageId + item.tableName">
+										:value="item.stageId + item.tableName"
+										v-bind:key="item.stageId">
 								</el-option	>
 							</el-select>
 						</el-col>
@@ -120,7 +121,8 @@
 								<el-option
 										v-for="item in targetList"
 										:label="item.tableName"
-										:value="item.stageId + item.tableName">
+										:value="item.stageId + item.tableName"
+										v-bind:key="item.stageId">
 								</el-option>
 							</el-select>
 						</el-col>
@@ -200,7 +202,6 @@
 
 		},
 		mounted() {
-			let self =  this;
 			this.$on(EditorEventType.RESIZE, (width) => {
 				$('.el-drawer__wrapper').css('right',width);
 			});

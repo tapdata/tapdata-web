@@ -10,14 +10,6 @@ export const fileNodeConfig = {
 			attrs: {
 				image: {
 					xlinkHref: 'static/editor/o-file.svg',
-					refWidth: '25%',
-					refHeight: '84%',
-					refX: '-8%',
-					refY: '-28%'
-				},
-				body: {
-					rx: 14,
-					ry: 14
 				},
 				label: {
 					text: i18n.t('editor.cell.data_node.file.name'),

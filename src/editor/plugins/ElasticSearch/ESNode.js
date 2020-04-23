@@ -32,7 +32,7 @@ export const esNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-        return false;
+				return false;
 			},
 
 			/**
@@ -41,7 +41,7 @@ export const esNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-        return !['app.FileNode'].includes(sourceCell.get('type'));
+				return !['app.FileNode'].includes(sourceCell.get('type'));
 			},
 
 			validate(data) {

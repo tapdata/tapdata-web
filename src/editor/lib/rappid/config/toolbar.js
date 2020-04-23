@@ -164,7 +164,7 @@ export const toolbarConfig = {
 				}
 			}
 		},
-		{
+		/*{
 			type: 'label',
 			name: 'zoom-slider-label',
 			group: 'zoom',
@@ -174,7 +174,7 @@ export const toolbarConfig = {
 			type: 'zoom-slider',
 			name: 'zoom-slider',
 			group: 'zoom'
-		},
+		},*/
 		{
 			type: 'zoom-in',
 			name: 'zoom-in',

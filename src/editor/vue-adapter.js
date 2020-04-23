@@ -10,7 +10,6 @@ import BaseObject from './lib/BaseObject';
 import log from '../log';
 import {FORM_DATA_KEY} from "./constants";
 import i18n from '../i18n/i18n';
-import Tab from "./ui/tab";
 
 export const vueAdapter = {};
 //const privateMap = new WeakMap();
