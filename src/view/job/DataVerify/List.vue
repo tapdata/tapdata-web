@@ -66,8 +66,8 @@
 				:with-header="false"
 				:before-close="handleClose">
 			<div class="dv-add-header">{{ $t('dataVerify.dataVerifySetting')}}</div>
-			<el-form class="dv-add-form">
-				<div class="dv-add-form-text" >{{ $t('dataVerify.dataWay')}}</div>
+			<el-form class="dv-add-form" :model="formData" :rules="rules" ref="ruleForm">
+				<div class="dv-add-form-text">{{ $t('dataVerify.dataWay')}}</div>
 				<el-form-item>
 					<el-radio-group v-model="type" size="mini" class="dv-radio">
 						<el-radio border  label="row" width="150px">{{ $t('dataVerify.row')}}</el-radio>
@@ -79,21 +79,21 @@
 					<div class="dv-add-form-text">{{ $t('dataVerify.condition')}}</div>
 					<el-row :gutter="10">
 						<el-col :span="12">
-							<el-select size="mini" v-model="condition.type">
+							<el-select size="mini" v-model="formData.condition.type">
 								<el-option value="rows" :label="$t('dataVerify.rows')"></el-option>
 								<el-option value="sampleRate" :label="$t('dataVerify.sampleRate')"></el-option>
 							</el-select>
 						</el-col>
 						<el-col :span="12" >
-							<el-input size="mini" v-model="condition.value"></el-input>
+							<el-input size="mini" v-model="formData.condition.value"></el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
-				<el-form-item >
+				<el-form-item prop="sourceTageId">
 					<div class="dv-add-form-text">{{ $t('dataVerify.source')}}</div>
 					<el-row>
 						<el-col :span="24">
-							<el-select size="mini" style="width: 100%" v-model="source.stageId">
+							<el-select size="mini" style="width: 100%" v-model="formData.sourceTageId">
 								<el-option
 										v-for="item in sourceList"
 										:label="item.tableName"
@@ -109,15 +109,15 @@
 					</el-row>
 					<el-row v-show="checkedSource && type !=='advance'">
 						<el-col :span="24">
-							<el-input type="textarea" v-model="source.filter"></el-input>
+							<el-input type="textarea" v-model="formData.sourceFilter"></el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
-				<el-form-item>
+				<el-form-item  prop="targetTageId">
 					<div class="dv-add-form-text">{{ $t('dataVerify.target')}}</div>
 					<el-row>
 						<el-col :span="24" >
-							<el-select size="mini" style="width: 100%" v-model="target.stageId">
+							<el-select size="mini" style="width: 100%" v-model="formData.targetTageId">
 								<el-option
 										v-for="item in targetList"
 										:label="item.tableName"
@@ -133,21 +133,23 @@
 					</el-row>
 					<el-row v-show="checkedTarget && type!=='advance'" >
 						<el-col :span="24">
-							<el-input type="textarea" v-model="target.filter"></el-input>
+							<el-input type="textarea" v-model="formData.targetFilter"></el-input>
 						</el-col>
 					</el-row>
+				</el-form-item>
+				<el-form-item prop="validateCode" >
 					<div v-show="type==='advance'" class="dv-add-form-text">JS</div>
 					<el-row v-show="type==='advance'">
 						<el-col :span="24">
-							<el-input type="textarea" v-model="validateCode"></el-input>
+							<el-input type="textarea" v-model="formData.validateCode"></el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
 			</el-form>
 			<div class="dv-btn-footer-wrapper">
 				<div class="dv-btn-footer-box">
-					<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleAdd">{{ $t('dataVerify.confirm')}}</el-button>
-					<el-button size="mini" class="dv-btn-footer" @click="disabledDrawer=false">{{ $t('dataVerify.cancel')}}</el-button>
+					<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleAdd('ruleForm')">{{ $t('dataVerify.confirm')}}</el-button>
+					<el-button size="mini" class="dv-btn-footer" @click="handleClose">{{ $t('dataVerify.cancel')}}</el-button>
 				</div>
 			</div>
 		</el-drawer>
@@ -174,32 +176,42 @@
 				checkedTarget:false,
 				sourceList:[],
 				targetList:[],
+				formData:{
+					condition: {
+						type:'rows',      //# rows：按行数参与校验，sampleRate：按采样率参与校验
+						//# type为rows时表示行数；type为sampleRate时，表示采样率，如：
+						value: "1000",
+					},
+					sourceTageId:'',
+					targetTageId:'',
+					sourceFilter:'',
+					targetFilter:'',
+					validateCode:'',
+				},
 				type: "advance",// row: 行数 hash：哈希  advance：高级校验
-				condition: {
-					type:'rows',      //# rows：按行数参与校验，sampleRate：按采样率参与校验
-					//# type为rows时表示行数；type为sampleRate时，表示采样率，如：
-					value: "1000",
-				},
-				source: {
-					stageId: "",
-				},
-				target: {
-					stageId: "",
-				},
-				validateCode:'',
 				colorMap: {
 					row: '#48B6E2',
 					hash: '#62A569',
 					advance: '#9889D8',
 				},
 				tableData:[],
+				rules: {
+					sourceTageId: [
+						{ required: true, message: 'please select source', trigger: 'change' }
+					],
+					targetTageId: [
+						{ required: true, message: 'please select target', trigger: 'change' }
+					],
+					validateCode: [
+						{ required: true, message: 'please enter js validate code', trigger: 'change' }
+					],
+				}
 			};
 		},
 		created() {
 			this.id =this.getUrlSearch('id');
 			this.getData(this.id);
 			this.getSourceList();
-
 		},
 		mounted() {
 			this.$on(EditorEventType.RESIZE, (width) => {
@@ -207,30 +219,6 @@
 			});
 		},
 		methods: {
-			handleClose(){
-				this.disabledDrawer = false;
-			},
-			handleShowDrawer(){
-				this.disabledDrawer = false;
-				this.type = "advance";// row: 行数 hash：哈希  advance：高级校验
-					this.condition = {
-					type:'rows',      //# rows：按行数参与校验，sampleRate：按采样率参与校验
-						//# type为rows时表示行数；type为sampleRate时，表示采样率，如：
-						value: "1000",
-				};
-				this.source =  {
-					stageId: "",
-						tableName: "",
-						filter: ""
-				};
-				this.target = {
-					stageId: "",
-						tableName: "",
-						filter: ""
-				};
-				this.validateCode = '';
-				this.disabledDrawer = true;
-			},
 			getData(params){
 				let _params = Object.assign({
 					filter: JSON.stringify({
@@ -250,57 +238,67 @@
 					}
 				});
 			},
-			handleAdd(){
-				log('edit_edit',this.editIndex);
-
-				if(this.editIndex !== -1){
-					this.tableData.splice(this.editIndex,1); //是否是编辑 先删除后新增
-				}
-
-				if(this.source.stageId){
-					log(this.source.stageId);
-					let op = this.sourceList.filter(item => (item.stageId+item.tableName) === this.source.stageId);
-					log('op.source',op);
-					this.source.tableName = op[0].tableName;
-					this.source.stageId = op[0].stageId;
-					this.source.primaryKeys = op[0].primaryKeys;
-					this.source.connectionId = op[0].connectionId;
-				}
-				if(this.target.stageId){
-					let op = this.targetList.filter(item =>  (item.stageId+item.tableName) === this.target.stageId);
-					log('op.target',op);
-					this.target.tableName = op[0].tableName;
-					this.target.stageId = op[0].stageId;
-					this.target.primaryKeys =op[0].primaryKeys;
-					this.target.connectionId = op[0].connectionId;
-				}
-
-				let add = {
-					type: this.type,// row: 行数 hash：哈希  advance：高级校验
-					condition: this.condition,
-					source: this.source,
-					target:this.target ,
-					validateCode:this.validateCode,
+			handleClose(){
+				this.$refs.ruleForm.clearValidate();
+				this.disabledDrawer = false;
+			},
+			handleShowDrawer(){
+				this.disabledDrawer = false;
+				this.formData = {
+					condition: {
+						type:'rows',      //# rows：按行数参与校验，sampleRate：按采样率参与校验
+						//# type为rows时表示行数；type为sampleRate时，表示采样率，如：
+						value: "1000",
+					},
 				};
-				log('add',add); //添加的数据
+				this.type = "advance";
+				this.checkedSource = false;
+				this.checkedTarget = false;
+				this.disabledDrawer = true;
+			},
+			handleAdd(formName){
+				this.$refs[formName].validate((valid) => {
+					if (valid) {
+						log('edit_edit',this.editIndex);
 
-				if(!this.tableData){
-					this.tableData = [];
-					this.tableData.push(add); //判断tabledata 是否存在
-				}else {
-					this.tableData.push(add);
-					log('tableData',this.tableData);
-				}
+						if(this.editIndex !== -1){
+							this.tableData.splice(this.editIndex,1); //是否是编辑 先删除后新增
+						}
+						let opSource = this.sourceList.filter(item => (item.stageId+item.tableName) === this.formData.sourceTageId);
+						let opTarget = this.targetList.filter(item => (item.stageId+item.tableName) === this.formData.targetTageId);
+						if(opSource.length !== 0) opSource[0].filter = this.formData.sourceFilter;
+						if(opTarget.length !== 0) opTarget[0].filter = this.formData.targetFilter;
 
-				let data ={
-					validationSettings:this.tableData
-				};
+						let add = {
+							type: this.type,// row: 行数 hash：哈希  advance：高级校验
+							condition: this.formData.condition,
+							source: opSource[0],
+							target:opTarget[0],
+							validateCode:this.formData.validateCode,
+						};
 
-				dataFlows.patchId(this.id,data).then(res => {
-					if (res.statusText === "OK" || res.status === 200) {
-						this.disabledDrawer =false;
-						this.editIndex = -1;
-						this.getData();
+						if(!this.tableData){
+							this.tableData = [];
+							this.tableData.push(add); //判断tabledata 是否存在
+						}else {
+							this.tableData.push(add);
+						}
+
+						let data ={
+							validationSettings:this.tableData
+						};
+						log('data',data);
+
+						dataFlows.patchId(this.id,data).then(res => {
+							if (res.statusText === "OK" || res.status === 200) {
+								this.disabledDrawer =false;
+								this.$refs.ruleForm.clearValidate();
+								this.editIndex = -1;
+								this.getData();
+							}
+						});
+					} else {
+						return false;
 					}
 				});
 			},
@@ -361,15 +359,18 @@
 				this.disabledDrawer = false;
 				this.disabledDrawer =true;
 				this.editIndex = index;
-				this.condition = this.tableData[index].condition;
-
-				this.source = this.tableData[index].source;
-				this.source.stageId =  this.tableData[index].source.stageId + this.tableData[index].source.tableName;
-
-				this.target = this.tableData[index].target;
-				this.target.stageId =  this.tableData[index].target.stageId + this.tableData[index].target.tableName;
+				this.formData = this.tableData[index];
+				this.formData.sourceTageId =  this.tableData[index].source.stageId + this.tableData[index].source.tableName;
+				this.formData.targetTageId =  this.tableData[index].target.stageId + this.tableData[index].target.tableName;
+				if(this.tableData[index].target.filter){
+					this.formData.targetFilter = this.tableData[index].target.filter;
+					this.checkedTarget = true;
+				}
+				if(this.tableData[index].source.filter){
+					this.formData.sourceFilter = this.tableData[index].source.filter;
+					this.checkedSource = true;
+				}
 				this.type = this.tableData[index].type;
-				this.validateCode = this.tableData[index].validateCode;
 			},
 			getSourceList(){
 				dataFlows.getSourceList(this.id).then(res => {

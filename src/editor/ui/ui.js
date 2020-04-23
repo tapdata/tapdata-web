@@ -48,9 +48,9 @@ export default class UI extends Component {
 	setName(name){
 		return this.el.find('.e-title #taskNameInput').val(name);
 	}
-	getBackButtonEl(){
-		return this.el.find('.e-header .e-action-back');
-	}
+	// getBackButtonEl(){
+	// 	return this.el.find('.e-header .e-action-back');
+	// }
 	getContentEl(){
 		return this.el.find('.e-content');
 	}
