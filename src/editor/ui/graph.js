@@ -70,8 +70,8 @@ export default class Graph extends Component{
 			model: graph,
 			width: 800,
 			height: 800,
-			gridSize: 0,
-			drawGrid: true,
+			gridSize: 10,
+			drawGrid: false,
 			linkPinning: false,
 			//markAvailable: true,
 			defaultLink: new joint.shapes.app.Link,
@@ -569,7 +569,7 @@ export default class Graph extends Component{
 			'snapline:change': this.changeSnapLines.bind(this),
 			'clear:pointerclick': this.graph.clear.bind(this.graph),
 			'print:pointerclick': this.paper.print.bind(this.paper),
-			// 'grid-size:change': this.paper.setGridSize.bind(this.paper)
+			'grid-size:change': this.paper.setGridSize.bind(this.paper)
 		});
 
 		this.editor.getUI().getGraphToolbarEl().append(toolbar.el);

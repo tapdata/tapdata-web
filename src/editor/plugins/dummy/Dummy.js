@@ -22,7 +22,7 @@ export const DummyConfig = {
 			portLabelMarkup: [{
 				tagName: 'text',
 				selector: 'portLabel',
-      }],
+			}],
 
 			isDataNode() {
 				return true;
@@ -34,8 +34,8 @@ export const DummyConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-        log("app.Dummy.target",targetCell);
-        return !['app.Database','app.FileNode','app.GridFSNode'].includes(targetCell.get('type'));
+				log("app.Dummy.target", targetCell);
+				return !['app.Database', 'app.FileNode', 'app.GridFSNode'].includes(targetCell.get('type'));
 
 			},
 
@@ -45,11 +45,11 @@ export const DummyConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-        return !['app.FileNode','app.Database'].includes(sourceCell.get('type'));
+				return !['app.FileNode', 'app.Database'].includes(sourceCell.get('type'));
 			},
 
 			validate(data) {
-        log("选中的Dummy数据",data);
+				log("选中的Dummy数据", data);
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
 				if (!data)

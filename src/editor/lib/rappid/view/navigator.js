@@ -25,7 +25,7 @@ export default (joint) => {
 		},
 
 		render: function() {
-			var doc = util.parseDOMJSON(this.markup);
+			let doc = util.parseDOMJSON(this.markup);
 			this.body = doc.selectors.body;
 			this.el.appendChild(doc.fragment);
 			this.updateNodesAttributes();
@@ -33,7 +33,7 @@ export default (joint) => {
 		},
 
 		updateNodesAttributes: function() {
-			var size = this.model.get('size');
+			let size = this.model.get('size');
 			this.body.setAttribute('width', size.width);
 			this.body.setAttribute('height', size.height);
 		}
