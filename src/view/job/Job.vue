@@ -259,7 +259,7 @@
 						id: cell.id,
 						inputLanes: [],
 						outputLanes: [],
-						syncType: "initial_sync+cdc",
+						// syncType: "initial_sync+cdc",
 						distance: distanceForSink[cell.id]
 					}, cell[FORM_DATA_KEY] || {});
 
