@@ -20,20 +20,11 @@
 		>
 			<span class="custom-tree-node" slot-scope="{ node, data}">
 				<span @dblclick="handleGraph(data)">
-
-					<span v-if="data.meta_type ==='database'" class="iconfont icon-database filter-icon-table"></span>
-<!--					<span v-if="data.meta_type ==='database' &&(data.source.database_type ==='mongodb' || data.source.database_type ==='oracle'|| data.source.database_type ==='mysql' || data.source.database_type ==='sqlserver' || data.source.database_type ==='db2' || data.source.database_type ==='sybase ase')" class="iconfont icon-database filter-icon-table"></span>-->
-					<span v-if="data.meta_type ==='table'" class="iconfont icon-table2  filter-icon-table"></span>
-					<span v-if="data.meta_type ==='collection'" class="iconfont icon-collection filter-icon-table"></span>
-<!--					<span v-if="data.source && data.source.database_type ==='dummy db' && data.meta_type ==='database'" class="iconfont icon-dummy filter-icon-table"></span>-->
-<!--					<span v-if="data.source&& data.source.database_type ==='gridfs' && data.meta_type ==='database'" class="iconfont icon-gridfs2 filter-icon-table"></span><span v-if="data.source.database_type ==='dummy db'" class="iconfont icon-collection filter-icon-table"></span>-->
-<!--					<span v-if="data.source && data.source.database_type ==='elasticsearch' && data.meta_type ==='database'" class="iconfont icon-elastic-search-clust filter-icon-table"></span>-->
-<!--					<span v-if="data.source && data.source.database_type ==='file'&& data.meta_type ==='database'" class="iconfont icon-file1 filter-icon-table"></span>-->
-<!--					<span v-if="data.source && data.source.database_type ==='rest api' && data.meta_type ==='database'" class="iconfont icon-api filter-icon-table"></span>-->
+					<span  v-if="data.meta_type !=='database'" :class="`iconfont filter-icon-table ${mapping[data.meta_type]}`"></span>
+					<span v-if="data.meta_type ==='database'" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>
 					<span class="table-label">{{ node.label }}</span>
 				</span>
 				<span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>
-
 			</span>
 		</el-tree>
 	</div>
@@ -58,12 +49,19 @@
 					label: 'label',
 					isLeaf: 'leaf'
 				},
-				mapping:{
-					collection: 'app.Collection',
-					table: 'app.Table',
-					database: 'app.Database',
+				mapping: {
+					'collection': 'icon-collection',
+					'table': 'icon-table2',
+					'database': 'icon-database',
+					'mongodb': 'icon-database',
+					'mongo_view': 'icon-database',
+					'view': 'icon-table2',
+					'dummy db':'icon-dummy1',
+					'elasticsearch':'icon-elastic-search-clust',
+					'file':'icon-file1',
+					'gridfs': 'icon-gridfs2',
+					'rest api': 'icon-api',
 				},
-
 				loading: false
 			};
 		},
@@ -177,17 +175,17 @@
 			handleGraph(data) {
 				log('tableSelect handleGraph',data);
 				let mapping = {
-					collection: 'app.Collection',
-					table: 'app.Table',
-					database: 'app.Database',
-					mongodb: 'app.Database',
-					mongo_view: 'app.Collection',
-					view: 'app.Table',
-					dummy_db:'app.Dummy',
-					elasticsearch:'app.ESNode',
-					file:'app.FileNode',
-					gridfs: 'app.GridFSNode',
-					rest_api: 'app.ApiNode',
+					'collection': 'app.Collection',
+					'table': 'app.Table',
+					'database': 'app.Database',
+					'mongodb': 'app.Database',
+					'mongo_view': 'app.Collection',
+					'view': 'app.Table',
+					'dummy db':'app.Dummy',
+					'elasticsearch':'app.ESNode',
+					'file':'app.FileNode',
+					'gridfs': 'app.GridFSNode',
+					'rest api': 'app.ApiNode',
 				};
 
 				let formData = {};
@@ -227,8 +225,7 @@
 				this.count = this.count + 50;
 				let cell ='';
 				if(data.meta_type === 'database'){
-					let dataType = data.source.database_type ? data.source.database_type.replace(/ /g, '_') : data.source.database_type;
-					log(dataType);
+					let dataType = data.source.database_type;
 					cell = this.editor.graph.createCell(mapping[dataType], formData,schema);
 				}else {
 					cell = this.editor.graph.createCell(mapping[data.meta_type], formData,schema);

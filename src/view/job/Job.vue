@@ -129,9 +129,9 @@
 				self.loading = false;
 			}
 
-			self.editor.getUI().getBackButtonEl().on('click', () => {
-				self.$router.push({path: '/dataFlows'});
-			});
+			// self.editor.getUI().getBackButtonEl().on('click', () => {
+			// 	self.$router.push({path: '/dataFlows'});
+			// });
 		},
 
 		beforeDestroy() {

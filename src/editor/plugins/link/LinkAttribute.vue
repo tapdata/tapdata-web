@@ -7,7 +7,7 @@
 				<el-input
 						v-model="model.label"
 						:placeholder="$t('editor.cell.link.form.label.placeholder')"
-						size="mini">
+						size="mini"  maxlength="15"  show-word-limit>
 				</el-input>
 			</el-form-item>
 
