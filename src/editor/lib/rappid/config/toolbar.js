@@ -149,10 +149,6 @@ export const toolbarConfig = {
 			}
 		},
 		{
-			type: 'separator',
-			group: 'zoom'
-		},
-		{
 			type: 'zoom-out',
 			name: 'zoom-out',
 			group: 'zoom',
@@ -186,6 +182,10 @@ export const toolbarConfig = {
 					'data-tooltip-position-selector': '.graph-toolbar'
 				}
 			}
+		},
+		{
+			type: 'separator',
+			group: 'zoom'
 		},
 		/*{
 			type: 'separator',

@@ -105,7 +105,7 @@
 					}
 				}
 			},*/
-			/*status: {
+			status: {
 				handler(){
 					if( ['draft', 'error', 'paused'].includes(this.status)) {
 						this.setEditable(true);
@@ -113,7 +113,7 @@
 						this.setEditable(false);
 					}
 				}
-			}*/
+			}
 		},
 		mounted() {
 			let self = this;
@@ -319,6 +319,12 @@
 
 							self.dataFlowId = dataFlow.id;
 							self.status = dataFlow.status;
+							self.$router.push({
+								path: '/job',
+								query: {
+									id: dataFlow.id
+								}
+							});
 							self.executeMode = dataFlow.executeMode;
 
 							self.dataFlow = dataFlow;

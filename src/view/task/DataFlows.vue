@@ -622,7 +622,7 @@
 			background: #fafafa;
 		}
 	}
-	.add-btn-icon-box .el-button:focus, .el-button:hover{
+	.add-btn-icon-box .el-button:focus, .add-btn-icon-box .el-button:hover{
 		background-color: #48b6e2;
 	}
 </style>

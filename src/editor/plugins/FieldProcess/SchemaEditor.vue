@@ -41,7 +41,7 @@
 
 						<!--<span class="e-label" v-else :class="{ activename: isRename(data.id) }" >-->
 						<span class="e-label" :class="{ activename: isRename(data.id) }" >
-							<el-input v-model="data.label" @blur="handleRename(node,data)" :disabled="isRemove(data.id)"></el-input>
+							<el-input v-model="data.label" @blur="handleRename(node,data)" @change="handleRename(node,data)" :disabled="isRemove(data.id)"></el-input>
 						</span>
 
 						<!--<el-select v-model="data.type" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 " class="e-select"  :disabled="true" >-->

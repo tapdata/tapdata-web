@@ -160,7 +160,8 @@ export default class Editor extends BaseObject {
 		let rightTabPanel = this.getRightTabPanel();
 		if( !rightTabPanel) {
 			rightTabPanel = new Tab({
-				name: 'rightTabPanel'
+				name: 'rightTabPanel',
+				hiddenTabBar:true,
 			});
 			this.getRightSidebar().add(rightTabPanel);
 		}
@@ -240,7 +241,7 @@ export default class Editor extends BaseObject {
 
 	//setting
 	showSetting(name){
-		this.getRightSidebar().removeAll();
+		this.getRightTabPanel().removeAll();
 		let self = this;
 		self.initSettings();
 		let rightTabPanel = self.getRightTabPanel();
@@ -312,13 +313,6 @@ export default class Editor extends BaseObject {
 
 		// add data verify
 		let self = this;
-		let rightTabPanel = self.getRightSidebar().getChildByName('rightTabPanel');
-		if( !rightTabPanel) {
-			rightTabPanel = new Tab({
-				name: 'rightTabPanel'
-			});
-			self.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
-		}
 		let dataVerify = self.getRightSidebar().getChildByName('dataVerify');
 		if( !dataVerify ){
 			dataVerify = new VueComponent({

@@ -201,7 +201,8 @@ export default class Graph extends Component{
 			let rightTabPanel = this.editor.getRightTabPanel();
 			if( !rightTabPanel) {
 				rightTabPanel = new Tab({
-					name: 'rightTabPanel'
+					name: 'rightTabPanel',
+					hiddenTabBar:true,
 				});
 				this.editor.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
 			}

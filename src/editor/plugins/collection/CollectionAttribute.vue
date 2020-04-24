@@ -244,7 +244,7 @@
 		justify-content: center;
 
 		.e-form {
-			.el-input, .el-select {
+			.el-input, .el-select, .el-textarea {
 				max-width: 400px;
 				width: 80%;
 			}
