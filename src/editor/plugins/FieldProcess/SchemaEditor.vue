@@ -40,7 +40,7 @@
 						<!--</span>-->
 
 						<!--<span class="e-label" v-else :class="{ activename: isRename(data.id) }" >-->
-						<span class="e-label" :class="{ activename: isRename(data.id) }" >
+						<span class="e-label" :class="{ activename: isRename(data.id) || isCreate(data.id) }" >
 							<el-input v-model="data.label" @blur="handleRename(node,data)" @change="handleRename(node,data)" :disabled="isRemove(data.id)"></el-input>
 						</span>
 
@@ -50,11 +50,16 @@
 
 						<!--<el-select v-model="data.type" v-else  class="e-select" :class="{ activedatatype: isConvertDataType(data.id) }" :disabled="isRemove(data.id)" @change="handleDataType(node,data)">-->
 						<el-select v-model="data.type" class="e-select" :class="{ activedatatype: isConvertDataType(data.id) }" :disabled="isRemove(data.id)" @change="handleDataType(node,data)">
-							<el-option value="String" label="String" v-if="!data.children || data.children.length === 0"></el-option>
-							<el-option value="Integer" label="Integer" v-if="!data.children || data.children.length === 0"></el-option>
-							<el-option value="Double" label="Double" v-if="!data.children || data.children.length === 0"></el-option>
-							<el-option value="Map" label="Map"></el-option>
-							<el-option value="Array" label="Array"></el-option>
+							<el-option value="String" label="String" v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"></el-option>
+							<el-option value="Integer" label="Integer" v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"></el-option>
+							<el-option value="Double" label="Double" v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"></el-option>
+							<el-option value="Float" label="Float" v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"></el-option>
+							<el-option value="BigDecimal" label="BigDecimal" v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"></el-option>
+							<el-option value="Long" label="Long" v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"></el-option>
+							<el-option value="Short" label="Short" v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"></el-option>
+
+							<el-option value="Map" label="Map" v-if="isCreate(data.id)"></el-option>
+							<el-option value="Array" label="Array" v-if="isCreate(data.id)"></el-option>
 						</el-select>
 
 						<el-button type="text" v-if="isRemove(data.id)" class=" e-field-action el-icon-plus" disabled></el-button>
@@ -62,7 +67,7 @@
 							<span class="e-field-action el-icon-plus" @click="handleCreate('create_sibling', node,data)"></span>
 							<el-dropdown-menu slot="dropdown">
 								<el-dropdown-item command="create_sibling" icon="iconfont icon-create_sibling_node">{{$t('editor.cell.processor.field.form.addField')}}</el-dropdown-item>
-								<el-dropdown-item command="create_child" icon="iconfont icon-create_child_node">{{$t('editor.cell.processor.field.form.addEmbedField')}}</el-dropdown-item>
+								<el-dropdown-item command="create_child" icon="iconfont icon-create_child_node" v-if="['Map', 'Array'].includes(data.type)">{{$t('editor.cell.processor.field.form.addEmbedField')}}</el-dropdown-item>
 							</el-dropdown-menu>
 						</el-dropdown>
 
@@ -188,7 +193,7 @@
 				return ops && ops.length > 0;
 			},
 			isRename(id) {
-				let ops = this.model.operations.filter(v => v.id === id && (v.op === 'RENAME' || v.op === 'CREATE'));
+				let ops = this.model.operations.filter(v => v.id === id && v.op === 'RENAME');
 				return ops && ops.length > 0;
 			},
 			isConvertDataType(id) {
@@ -198,6 +203,10 @@
 			isScript(id){
 				let scripts = this.model.scripts.filter(v => v.id === id);
 				return scripts && scripts.length > 0;
+			},
+			isCreate(id) {
+				let ops = this.model.operations.filter(v => v.id === id && v.op === 'CREATE');
+				return ops && ops.length > 0;
 			},
 
 			getId(node) {
