@@ -21,7 +21,8 @@
 			<span class="custom-tree-node" slot-scope="{ node, data}">
 				<span @dblclick="handleGraph(data)">
 					<span  v-if="data.meta_type !=='database'" :class="`iconfont filter-icon-table ${mapping[data.meta_type]}`"></span>
-					<span v-if="['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>
+					<span v-if="['database'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>
+<!--					<span v-if="['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>-->
 					<span class="table-label">{{ node.label }}</span>
 				</span>
 				<span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>
@@ -80,7 +81,8 @@
 					filter: JSON.stringify({
 						where: {
 							meta_type: {
-								in: ['database', 'directory', 'ftp', 'apiendpoint']
+								in: ['database']
+								// in: ['database', 'directory', 'ftp', 'apiendpoint']
 							},
 							is_deleted:false
 						},
@@ -222,7 +224,8 @@
 
 				this.count = this.count + 50;
 				let cell ='';
-				if(['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)){
+				if(['database'].includes(data.meta_type)){
+				// if(['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)){
 					let dataType = data.source.database_type;
 					cell = this.editor.graph.createCell(mapping[dataType], formData,schema);
 				}else {

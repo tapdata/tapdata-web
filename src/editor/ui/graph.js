@@ -197,7 +197,7 @@ export default class Graph extends Component{
 	onClickBlank(){
 		this.emit(EditorEventType.SELECTED_STAGE);
 		if( this.editable ){
-			this.editor.getRightSidebar().removeAll(); //清除当前所有的vue
+			this.editor.getRightTabPanel().removeAll(); //清除当前所有的vue
 			let rightTabPanel = this.editor.getRightTabPanel();
 			if( !rightTabPanel) {
 				rightTabPanel = new Tab({

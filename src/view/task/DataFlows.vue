@@ -32,11 +32,11 @@
 							</el-form-item>
 						</el-col>
 						<div class="task-list-menu-right">
-							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-hanshu back-btn-icon"></i></el-button>
-							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-biaoqian back-btn-icon"></i></el-button>
+<!--							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-hanshu back-btn-icon"></i></el-button>-->
+<!--							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-biaoqian back-btn-icon"></i></el-button>-->
 							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('paused')"><i class="iconfont icon-zanting2 back-btn-icon"></i></el-button>
 							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('running')"><i class="iconfont icon-yunhang1 back-btn-icon"></i></el-button>
-							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-shanchu1 back-btn-icon"></i></el-button>
+<!--							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-shanchu1 back-btn-icon"></i></el-button>-->
 							<router-link target="_blank" to="/job">
 								<el-button class="add-btn-icon-box" ><i class="iconfont icon-jia add-btn-icon"></i></el-button>
 							</router-link>

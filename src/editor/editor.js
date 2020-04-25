@@ -100,7 +100,8 @@ export default class Editor extends BaseObject {
 
 		let stencilPanel = new Panel({
 			name: 'stencil',
-			bodyStyle: 'height:365px'
+			bodyStyle: 'height:270px'
+			// bodyStyle: 'height:365px'
 		});
 		leftSidebar.add(stencilPanel);
 
