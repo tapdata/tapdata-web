@@ -24,7 +24,7 @@
 				</div>
 			</el-form>
 		</div>
-		<div class="processingBody">
+		<div class="processingBody" style="display: none;">
 			<div class="allCheck" v-if="activeName ==='first'">
 				<el-checkbox v-model="selectAllTables"></el-checkbox>
 				<span @click="bulkRemoval()">{{$t('editor.cell.data_node.database.bulkRemoval')}}</span>
