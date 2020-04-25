@@ -236,8 +236,8 @@ export default class Editor extends BaseObject {
 
 		this.getLeftSidebar().show();
 
-		this.getBottomSidebar().hide();
-		this.getBottomTabPanel().removeAll();
+		//this.getBottomSidebar().hide();
+		//this.getBottomTabPanel().removeAll();
 	}
 
 	//setting
