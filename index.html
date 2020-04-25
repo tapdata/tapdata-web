@@ -6,6 +6,11 @@
 	<meta name="description" content="Your Data on Tap A real time data platform for replication, integration, governance and publish.">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0">
 	<title>Tapdata Daas</title>
+	<link rel="icon" type="image/png" sizes="32x32" href="static/icon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="static/icon/favicon-16x16.png">
+	<!-- [if IE]><link rel="shortcut icon" href="static/img/icons/favicon.ico"><![endif] -->
+	<!-- Add to home screen for Android and modern mobile browsers -->
+	<link rel="shortcut icon" href="static/icon/favicon-32x32.png">
 	<style>
 		html, body {
 			width: 100%;
@@ -43,3 +48,9 @@
 <!-- built files will be auto injected -->
 </body>
 </html>
+<script>
+	import MetaData from "./src/view/metaData";
+	export default {
+		components: {MetaData}
+	};
+</script>
