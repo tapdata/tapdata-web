@@ -17,7 +17,7 @@ export const DataFilterConfig = {
 			size:{width:120,height:28},
 			attrs: {
 				image:{
-					xlinkHref: 'static/editor/o-js.svg',
+					xlinkHref: 'static/editor/o-rf.svg',
 					refWidth: '25%',
 					refHeight: '84%',
 					refX: '-8%',
@@ -213,7 +213,7 @@ export const DataFilterConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/js.svg',
+				xlinkHref: 'static/editor/rf.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
