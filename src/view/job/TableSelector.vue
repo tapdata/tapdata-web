@@ -80,10 +80,16 @@
 				let params = {
 					filter: JSON.stringify({
 						where: {
+							'source.database_type':{
+								nin:["file","dummy db","gridfs","rest api"]
+							},
 							meta_type: {
 								in: ['database']
-								// in: ['database', 'directory', 'ftp', 'apiendpoint']
 							},
+							// meta_type: {
+							// 	in: ['database']
+							// 	// in: ['database', 'directory', 'ftp', 'apiendpoint']
+							// },
 							is_deleted:false
 						},
 						order:'original_name ASC'
