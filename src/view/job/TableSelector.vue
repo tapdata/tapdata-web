@@ -21,7 +21,7 @@
 			<span class="custom-tree-node" slot-scope="{ node, data}">
 				<span @dblclick="handleGraph(data)">
 					<span  v-if="data.meta_type !=='database'" :class="`iconfont filter-icon-table ${mapping[data.meta_type]}`"></span>
-					<span v-if="data.meta_type ==='database'" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>
+					<span v-if="['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>
 					<span class="table-label">{{ node.label }}</span>
 				</span>
 				<span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>
@@ -79,7 +79,9 @@
 				let params = {
 					filter: JSON.stringify({
 						where: {
-							meta_type: 'database',
+							meta_type: {
+								in: ['database', 'directory', 'ftp', 'apiendpoint']
+							},
 							is_deleted:false
 						},
 						order:'original_name ASC'
@@ -115,11 +117,7 @@
 				if (node.level >1) {
 					return resolve([]);
 				}
-				if(node.data.source.database_type ==="dummy db" ||
-					node.data.source.database_type ==="gridfs" ||
-					node.data.source.database_type ==="file" ||
-					node.data.source.database_type ==="elasticsearch" ||
-					node.data.source.database_type ==="rest api"){
+				if(['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(node.data.source.database_type)){
 					return resolve([]);
 				}
 				let params = {
@@ -224,7 +222,7 @@
 
 				this.count = this.count + 50;
 				let cell ='';
-				if(data.meta_type === 'database'){
+				if(['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)){
 					let dataType = data.source.database_type;
 					cell = this.editor.graph.createCell(mapping[dataType], formData,schema);
 				}else {
