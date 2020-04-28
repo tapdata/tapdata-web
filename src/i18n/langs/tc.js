@@ -61,6 +61,9 @@ const tc = {
 		operator: '操作'
 	},
 	dataFlow: {
+    loadLogTip: '運行日誌努力加載中，可能需要5~10秒，請稍等......',
+    noLogTip: '沒有數據',
+    clickLoadTxt: '點擊加載',
 		average: '平均',
 		current: '當前',
 		allNode: '全部節點',
@@ -301,7 +304,13 @@ const tc = {
 					configurationES: '配置Elastic search',
 					chooseESName: '請選擇Elastic search',
 					es_isNull: 'Elastic search不能為空'
-				}
+        },
+        custom: {
+					tip: 'Custom節點',
+					name: 'Custom',
+					none_fileName: 'Custom不能為空',
+					chooseCustomName: '請選擇Custom'
+				},
 			},
 			processor: {
 				aggregate: {
