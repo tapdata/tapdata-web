@@ -19,6 +19,19 @@
 								v-bind:key="idx"></el-option>
 					</el-select>
 				</el-form-item>
+
+        <el-form-item required :label="$t('editor.cell.data_node.collection.form.dropTable.label')" v-if="!isSourceDataNode">
+          <el-select
+            v-model="model.dropTable" size="mini">
+            <el-option
+              :label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
+              :value="false"></el-option>
+            <el-option
+              :label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
+              :value="true"></el-option>
+          </el-select>
+        </el-form-item>
+
 				<div class="databaseInfo">
 					<span v-show="database_type">{{database_type}}</span>
 				</div>
@@ -118,6 +131,8 @@
         tables: [],
         removeTables: [],
 
+        isSourceDataNode: false,
+
         selectAllTables: false,
         selectAllRemoveTables: false,
 
@@ -135,6 +150,7 @@
 				model: {
 					connectionId: "",
 					excludeTables: [],
+          dropTable: false
 				},
         database_type: '',
 			};
@@ -284,15 +300,22 @@
         this.selectAllRemoveTables = false;
       },
 
-			setData(data) {
+			setData(data, cell, isSourceDataNode) {
 				if (data) {
 					Object.keys(data).forEach(key => this.model[key] = data[key]);
 				}
+
+        this.isSourceDataNode = isSourceDataNode;
 			},
 			getData() {
 				let result = _.cloneDeep(this.model);
 				if (result.connectionId) {
 					let database = this.databases.filter(db => db.id === result.connectionId);
+
+          if( this.isSourceDataNode ){
+            delete result.dropTable;
+          }
+
 					if (database && database.length > 0) {
 						result.name = database[0].name;
 					}
