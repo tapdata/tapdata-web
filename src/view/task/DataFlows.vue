@@ -2,7 +2,7 @@
 	<div class="task-list">
 		<div class="task-list-operating-area box-card">
 			<el-row :gutter="10">
-				<el-form label-width="100px" :data="formData" :inline="true">
+				<el-form label-width="100px" :data="formData" :inline="true" class="dataFlowsFlow">
 					<el-row>
 						<el-col :span="16">
 							<el-form-item>
@@ -26,9 +26,14 @@
 								</el-select>
 							</el-form-item>
 							<el-form-item>
-								<el-button class="df-btn-box" size="mini">
-									<i class="iconfont icon-shuaxin1 df-btn" @click="handleClear"></i>
-								</el-button>
+								<el-select v-model="formData.way"  size="mini" clearable :placeholder=" $t('dataFlow.taskStatusPlaceholder')" style="width:160px" @change="screenFn">
+									<el-option
+											v-for="item in optionsKey" :key="item.value" :label="item.label"
+											:value="item.value"></el-option>
+								</el-select>
+							</el-form-item>
+							<el-form-item>
+								<el-button class="back-btn-icon-box dv-btn-icon"  @click="handleClear"><i class="iconfont icon-shuaxin1 back-btn-icon"></i></el-button>
 							</el-form-item>
 						</el-col>
 						<div class="task-list-menu-right">
@@ -166,6 +171,16 @@
 				currentPage:1,
 				pagesize: 20,
 				totalNum: 0,
+				optionsKey:[{
+					label: this.$t('dataFlow.initial_sync'),
+					value: 'initial_sync'
+				},{
+					label: this.$t('dataFlow.cdc'),
+					value: 'cdc'
+				},{
+					label: this.$t('dataFlow.initial_sync') + this.$t('dataFlow.cdc'),
+					value: 'initial_sync+cdc'
+				}],
 				options: [{
 					label: this.$t('dataFlow.status.running'),
 					value: 'running'
@@ -194,6 +209,7 @@
 					timeData: [],
 					status: '',
 					person: '',
+					way:'',
 					classification: [],
 				}
 			};
@@ -241,6 +257,9 @@
 					if (this.formData.status && this.formData.status !== '') {
 						where.status = this.formData.status;
 					}
+					if (this.formData.way && this.formData.way !== '') {
+						where['setting.sync_type'] = this.formData.way;
+					}
 					if (this.formData.search && this.formData.search !== '') {
 						where.or = [{
 							name: {regex: this.formData.search}
@@ -280,7 +299,8 @@
 							"createTime": true,
 							"children": true,
 							"stats": true,
-							"stages": true
+							"stages": true,
+							"setting":true,
 						},
 					})
 				}, params);
@@ -502,7 +522,6 @@
 		}
 
 		.el-form-item {
-			margin-top: 2px;
 			margin-bottom: 4px;
 		}
 	}
@@ -547,7 +566,8 @@
 	.task-list-menu-right {
 		float: right;
 		margin-right: 20px;
-		margin-top: 7px;
+		/*margin-top: 10px;*/
+		margin-bottom: 10px;
 	}
 
 	.el-table .sort-caret {
@@ -607,6 +627,9 @@
 	.add-btn-icon{
 		color: #fff;
 	}
+	.dataFlowsFlow{
+		margin-top: 10px;
+	}
 </style>
 <style lang="less">
 	.task-list .el-pagination .el-pagination__total {
@@ -624,5 +647,8 @@
 	}
 	.add-btn-icon-box .el-button:focus, .add-btn-icon-box .el-button:hover{
 		background-color: #48b6e2;
+	}
+	.dataFlowsFlow  .el-form-item__content{
+		line-height:0;
 	}
 </style>
