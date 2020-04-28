@@ -25,6 +25,9 @@ import {DEFAULT_SETTING} from "./constants";
 import {EditorEventType} from "./lib/events";
 import i18n from "../i18n/i18n";
 
+import factory from '../api/factory';
+const connections = factory('connections');
+
 export default class Editor extends BaseObject {
 
 	/**
@@ -68,6 +71,15 @@ export default class Editor extends BaseObject {
 	 * @type {boolean}
 	 */
 	editable = true;
+
+	/**
+	 * loadSchema
+	 * @type {boolean}
+	 */
+	mapping = {
+		'app.Collection':'connectionId',
+		'app.Table':'connectionId',
+	};
 
 	constructor(opts){
 		super();
@@ -501,7 +513,81 @@ export default class Editor extends BaseObject {
 
 		return true;
 	}
+	reloadSchema(){
+		//1. 遍历当前有模型的节点(合并相同连接ID)
+		let self = this;
+		let dataCells = self.graph.graph.getCells()//.filter(cell => cell.isDataNode && cell.isDataNode())
+			.filter( cell => {
+				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
+				let type = cell.get('type');
+				let connectionIdFieldName = self.mapping[type];
+				return formData && connectionIdFieldName && formData[connectionIdFieldName];
+			});
+		let dataCellIds = [];
+		dataCells.forEach( cell => {
+			let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
+			let type = cell.get('type');
+			let connectionIdFieldName = self.mapping[type];
+			let connectionId = formData[connectionIdFieldName];
+			dataCellIds.push(connectionId);
+		});
+		dataCellIds = Array.from(new Set(dataCellIds));
+		log('Editor.reloadSchema.modelData', dataCells);
 
+		//2.请求节点schema数据
+		//TODO: add id parameter
+
+		log('dataCellIds',dataCellIds);
+		let params = {
+			filter: JSON.stringify({
+				where: {
+					id: {
+						inq: dataCellIds
+					},
+				},
+			})
+		};
+		connections.get(params).then(result => {
+			if (result.data && result.data.length !==0) {
+				/**
+				 * connectionId -> table name -> schema
+				 * @type {{object}}
+				 */
+				let connectionSchemaData = {};
+
+				result.data.forEach( connection => {
+					if(connection.schema && connection.schema.tables){
+						let tables = {};
+						connection.schema.tables.forEach(table => tables[table.table_name] = table);
+						connectionSchemaData[connection.id] = tables;
+					}
+				});
+
+				//3.分别更新对应节点schema
+				if(dataCells){
+					dataCells.map((cell) => {
+
+						let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
+						if( !formData ) return;
+
+						let type = cell.get('type');
+						let connectionIdFieldName = self.mapping[type];
+						let connectionId = formData[connectionIdFieldName];
+						let tableName = formData.tableName;
+
+						let schema = connectionSchemaData[connectionId] && connectionSchemaData[connectionId][tableName];
+
+						if(!connectionId || !tableName || !schema)
+							return;
+						cell.setSchema(schema,false);
+					});
+
+					// update all node schema
+					self.graph.graph.getSources().forEach(cell => cell.updateOutputSchema());
+				}
+			}
+		});
+	}
 	destroy(){
 		this.emit(EditorEventType.BEFORE_DESTROY, this);
 		this.ui.destroy();
