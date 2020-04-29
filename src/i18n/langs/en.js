@@ -337,7 +337,7 @@ const en = {
 					}
 				},
 				script: {
-					name: 'Script',
+					name: 'JavaScript',
 					tip: 'Script processor',
 					defaultText: 'Script processor',
 
