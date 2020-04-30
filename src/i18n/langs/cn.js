@@ -61,6 +61,9 @@ const cn = {
 		operator: '操作'
 	},
 	dataFlow: {
+    loadLogTip: '运行日志努力加载中，可能需要5~10秒，请稍等......',
+    noLogTip: '没有数据',
+    clickLoadTxt: '点击加载',
 		average: '平均',
 		current: '当前',
 		allNode: '全部节点',
@@ -300,7 +303,13 @@ const cn = {
 					configurationES: '配置Elastic search',
 					chooseESName: '请选择Elastic search',
 					es_isNull: 'Elastic search不能为空'
-				}
+        },
+        custom: {
+					tip: 'Custom节点',
+					name: 'Custom',
+					none_fileName: 'Custom不能为空',
+					chooseCustomName: '请选择Custom'
+				},
 			},
 			processor: {
 				aggregate: {

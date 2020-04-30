@@ -38,10 +38,10 @@
 						<span class="info-label">{{ $t('dataFlow.state') }}:</span>
 						<span class="info-text" style="color: #62a569;">{{$t('dataFlow.status.' + flow.status)}}</span>
 					</div>
-					<!--<div class="info-list">-->
-						<!--<span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>-->
-						<!--<span class="info-text">{{updateTime}}</span>-->
-					<!--</div>-->
+					<div class="info-list">
+						<span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
+						<span class="info-text">{{updateTime}}</span>
+					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
 						<span class="info-text"> {{flow.inputNumber}}</span>
