@@ -18,11 +18,11 @@
 				ref="tree"
 				class="ts-tree"
 		>
-			<span class="custom-tree-node" slot-scope="{ node, data}" @dblclick="handleGraph(data)">
-				<span>
+			<span class="custom-tree-node" slot-scope="{ node, data}">
+				<span @dblclick="handleGraph(data)">
 					<span  v-if="data.meta_type !=='database'" :class="`iconfont filter-icon-table ${mapping[data.meta_type]}`"></span>
-					<span v-if="['database'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>
-<!--					<span v-if="['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>-->
+<!--					<span v-if="['database'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>-->
+					<span v-if="['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>
 					<span class="table-label">{{ node.label }}</span>
 				</span>
 				<span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>
@@ -80,16 +80,15 @@
 				let params = {
 					filter: JSON.stringify({
 						where: {
-							'source.database_type':{
-								nin:["file","dummy db","gridfs","rest api"]
-							},
-							meta_type: {
-								in: ['database']
-							},
+							// 'source.database_type':{
+							// 	nin:["file","dummy db","gridfs","rest api"]
+							// },
 							// meta_type: {
 							// 	in: ['database']
-							// 	// in: ['database', 'directory', 'ftp', 'apiendpoint']
 							// },
+							meta_type: {
+								in: ['database', 'directory', 'ftp', 'apiendpoint']
+							},
 							is_deleted:false
 						},
 						order:'original_name ASC'
@@ -230,10 +229,10 @@
 
 				this.count = this.count + 50;
 				let cell ='';
-				if(['database'].includes(data.meta_type)){
-				// if(['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)){
-					//let dataType = data.source.database_type;
-					cell = this.editor.graph.createCell(mapping[data.meta_type], formData,schema);
+				// if(['database'].includes(data.meta_type)){
+				if(['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)){
+					let dataType = data.source.database_type;
+					cell = this.editor.graph.createCell(mapping[dataType], formData,schema);
 				}else {
 					cell = this.editor.graph.createCell(mapping[data.meta_type], formData,schema);
 				}
@@ -301,17 +300,12 @@
 		width: 217px;
 		padding-left: 5px;
 	}
+	.el-tree{
+		padding-top: 40px;
+	}
 	.ts-icon{
 		color: #333;
 
-	}
-	.ts-tree{
-		-moz-user-select: none;
-		-webkit-user-select: none;
-		-ms-user-select: none;
-		-khtml-user-select: none;
-		user-select: none;
-		padding-top: 27px;
 	}
 </style>
 <style scoped>
@@ -348,19 +342,17 @@
 			line-height: 40px;
 		}
 	}
-	.ts-tree{
-		.el-tree-node__expand-icon{
-			color: #333;
-		}
-		.table-label{
-			vertical-align: bottom;
-		}
-		.el-tree-node__content>.el-tree-node__expand-icon {
-			padding: 6px;
-			padding-right: 0;
-		}
-		.el-tree-node__content {
-			height: 30px;
-		}
+	.el-tree-node__expand-icon{
+		color: #333;
+	}
+	.table-label{
+		vertical-align: bottom;
+	}
+	.el-tree-node__content>.el-tree-node__expand-icon {
+		padding: 6px;
+		padding-right: 0;
+	}
+	.el-tree-node__content {
+		height: 30px;
 	}
 </style>
