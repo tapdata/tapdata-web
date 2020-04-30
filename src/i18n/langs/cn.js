@@ -171,7 +171,14 @@ const cn = {
 			msg: '停止任务?',
 			force_stop_msg: '强制停止任务?',
 			tip: '提示'
-		}
+		},
+    file_preview_fields: {
+      file_name: "文件名称",
+      file_size_ondisk: "文件大小(Byte)",
+      file_modify_time_ondisk: "更新时间",
+      file_create_time_ondisk: "创建时间",
+      file_path: "文件路径"
+    }
 	},
 	connection: {
 		status: {
