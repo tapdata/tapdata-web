@@ -99,7 +99,7 @@
 			},
 			mergedSchema: {
 				handler(){
-					if( this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0){
+					if(!this.model.primaryKeys && this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0){
 						let primaryKeys = this.mergedSchema.fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
 						let unique = {};
 						primaryKeys.forEach( key => unique[key] = 1);

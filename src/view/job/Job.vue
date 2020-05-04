@@ -12,6 +12,10 @@
 			>{{$t('dataFlow.state')}}: {{$t('dataFlow.status.' + status.replace(/ /g, '_'))}}
 			</el-tag>
 			<el-button
+					size="mini" type="default"
+					@click="reloadSchema">reloadSchema
+			</el-button>
+			<el-button
 					v-if="['draft', 'paused', 'error'].includes(status)"
 					size="mini" type="default"
 					@click="showSetting">{{$t('dataFlow.button.setting')}}
@@ -555,38 +559,9 @@
 			showCapture() {
 				this.editor.showCapture(this.dataFlow);
 			},
-			// showDataVerify(params) {
-			// 	this.disabledDataVerify = !this.disabledDataVerify;
-			//
-			// 	if (this.$route.query && this.$route.query.id) {
-			// 		let _params = Object.assign({
-			// 			filter: JSON.stringify({
-			// 				fields: {
-			// 					"validateStatus": true,
-			// 				}
-			// 			})
-			// 		}, params);
-			// 		dataFlowsApi.getId(this.$route.query.id,_params).then(res => {
-			// 			if (res.statusText === "OK" || res.status === 200) {
-			// 				if (res.data) {
-			// 					log('dataVerify.validateStatus',res.data.validateStatus);
-			// 					let validateStatus = res.data.validateStatus;
-			//
-			// 					if(!validateStatus || validateStatus ==='draft'){
-			// 						this.editor.showDataVerify(this.disabledDataVerify);
-			// 					}else  if(validateStatus && validateStatus ==='completed'){
-			// 						this.editor.showResult(this.disabledDataVerify);
-			// 					}else  if(validateStatus && validateStatus ==='error'){
-			// 						this.editor.showResult(this.disabledDataVerify);
-			// 					}else  if(validateStatus && (validateStatus ==='validating' || validateStatus ==='waiting')){
-			//
-			// 						this.editor.showLoading(this.disabledDataVerify);
-			// 					}
-			// 				}
-			// 			}
-			// 		});
-			// 	}
-			// },
+			reloadSchema(){
+				this.editor.reloadSchema();
+			},
 			setEditable(editable) {
 				log('Job.setEditable', editable, this.dataFlow);
 				if (this.dataFlow) {
