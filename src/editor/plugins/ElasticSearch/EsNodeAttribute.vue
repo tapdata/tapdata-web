@@ -17,20 +17,28 @@
         </el-select>
       </el-form-item>
     </el-form>
+    <div class="e-entity-wrap" style="text-align: center;">
+      <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
+    </div>
   </div>
 </div>
 </template>
 <script>
-import _ from "lodash";
+import { convertSchemaToTreeData } from "../../util/Schema";
+import Entity from '../link/Entity';
+import _ from 'lodash';
 import factory from '../../../api/factory';
 let connections = factory('connections');
 
 export default {
   name: "esNode",
+  components: {Entity},
   props: {
-    connection_type: {
-      type: String,
-      default: 'source'
+    database_types: {
+      type: Array,
+      default: function(){
+        return ['elasticsearch'];
+      }
     }
   },
 
@@ -44,8 +52,9 @@ export default {
       },
       model: {
         connectionId: "",
-        type: "es"
-      }
+        type: "elasticsearch"
+      },
+      mergedSchema: null
     };
   },
 
@@ -53,7 +62,7 @@ export default {
     let result = await connections.get({
       filter: JSON.stringify({
         where: {
-          database_type: 'es'
+          database_type: 'elasticsearch'
         },
         fields: {
           name: 1, id: 1, database_type: 1, connection_type: 1, status: 1,
@@ -73,24 +82,76 @@ export default {
       handler(){
         this.$emit('dataChanged', this.getData());
       }
+    },
+    mergedSchema: {
+      handler(){
+        if(!this.model.primaryKeys && this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0){
+          let primaryKeys = this.mergedSchema.fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
+          let unique = {};
+          primaryKeys.forEach( key => unique[key] = 1);
+          primaryKeys = Object.keys(unique);
+          if( primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
+        }
+      }
     }
   },
 
   methods: {
-    setData(data){
+    convertSchemaToTreeData,
+
+    async loadDataSource() {
+      let result = await connections.get({
+        filter: JSON.stringify({
+          where: {
+            database_type: {in: this.database_types}
+          },
+          fields: {
+            name: 1, id: 1, database_type: 1, connection_type: 1, status: 1
+          }
+        })
+      });
+
+      if( result.data ){
+        this.databases = result.data;
+      }
+    },
+
+    loadDataModels(connectionId){
+      if( !connectionId ){
+        return;
+      }
+      let self = this;
+      connections.get([connectionId]).then(result => {
+        if( result.data ){
+          let schemas = result.data.schema && result.data.schema.tables || [];
+          schemas = schemas.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+          self.schemas = schemas;
+        }
+      });
+    },
+
+    handlerConnectionChange(){
+      this.model.tableName = '';
+      for (let i = 0; i < this.databases.length; i++) {
+        if( this.model.connectionId === this.databases[i].id){
+          this.model.databaseType = this.databases[i]['database_type'];
+        }
+      }
+    },
+
+    setData(data, cell, isSourceDataNode, vueAdapter){
       if( data ){
         Object.keys(data).forEach(key => this.model[key] = data[key]);
       }
-		},
 
-    getData() {
+      this.mergedSchema = cell.getOutputSchema();
+      cell.on('change:outputSchema', () => {
+        this.mergedSchema = cell.getOutputSchema();
+      });
+    },
+    getData(){
       let result = _.cloneDeep(this.model);
-      if( result.connectionId){
-        let database = this.databases.filter( db => db.id === result.connectionId);
-        if( database && database.length > 0){
-          result.name = database[0].name;
-        }
-      }
+      result.name = result.name || 'Collection';
       return result;
     },
   }

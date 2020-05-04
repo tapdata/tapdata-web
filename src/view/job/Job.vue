@@ -277,7 +277,7 @@
 							readBatchSize: 25000,
 						});
 
-					} else if (['app.Table', 'app.Collection'].includes(cell.type)) {
+					} else if (['app.Table', 'app.Collection', 'app.ESNode'].includes(cell.type)) {
 
 						postData.mappingTemplate = 'custom';
 
