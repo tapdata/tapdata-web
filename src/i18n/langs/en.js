@@ -58,7 +58,8 @@ const en = {
 		cancleReset: 'cancel reset',
 		resetOk: 'Reset success',
 		resetFailed: 'Reset Failed',
-		operator: 'Operator'
+		operator: 'Operator',
+    edit: 'edit'
 	},
 	dataFlow: {
 		average: 'Average',

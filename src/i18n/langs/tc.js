@@ -58,7 +58,8 @@ const tc = {
 		cancleReset: '已取消重置',
 		resetOk: '重置成功',
 		resetFailed: '重置失敗',
-		operator: '操作'
+		operator: '操作',
+    edit: '修改'
 	},
 	dataFlow: {
 		average: '平均',
