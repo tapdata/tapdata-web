@@ -199,7 +199,8 @@
           // 关联字段自动填充
           let sourceArr = sourceSchema && sourceSchema.fields && sourceSchema.fields.length > 0 ?sourceSchema.fields.filter(item=> item.primary_key_position > 0):[];
           let targetArr = mergedTargetSchema.fields && mergedTargetSchema.fields.length > 0 ?mergedTargetSchema.fields.filter(item=> item.primary_key_position > 0):[];
-          this.model.joinTable.joinKeys = sourceArr.map((fields,i) =>({source:fields.field_name, target: targetArr[i].field_name}));
+
+          this.model.joinTable.joinKeys = sourceArr && sourceArr.length > 0? sourceArr.map((fields,i) =>({source:fields.field_name, target: targetArr[i].field_name})): this.model.joinTable.joinKeys;
         }
 
 				this.$emit(EditorEventType.RESIZE);

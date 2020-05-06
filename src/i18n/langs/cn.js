@@ -61,6 +61,7 @@ const cn = {
 		operator: '操作'
 	},
 	dataFlow: {
+
     loadLogTip: '运行日志努力加载中，可能需要5~10秒，请稍等......',
     noLogTip: '没有数据',
     clickLoadTxt: '点击加载',
@@ -143,12 +144,15 @@ const cn = {
 		read_batch_size: '每次读取多少',
 		mission: '描述',
 		yes: '是',
-		no: '否',
+    no: '否',
+    selectGrpupFiled: '请选择分组字段',
+    selectTargetField: '请选择目标字段',
+    aggName: '子处理名称',
 		nodeName: '节点名称',
 		aggFunction: '聚合函数',
-		aggExpression: '聚合表达式',
+		aggExpression: '目标字段',
 		filterPredicate: '过滤器',
-		groupByExpression: '分组表达式',
+		groupByExpression: '分组字段',
 		polymerization: '聚合处理',
 		button: {
 			setting: '设置',
@@ -317,8 +321,9 @@ const cn = {
 					tip: '聚合处理器',
 					defaultText: '聚合',
 					none_function: '聚合函数必填.',
-					none_group: '分组表达式必填.',
-					none_aggregation_expression: '聚合表达式必填.',
+          none_group: '分组表达式必填.',
+          none_name: '子处理名称必填',
+					none_aggregation_expression: '目标字段必填.',
 					new_aggregate: '添加聚合',
 					none_stage: '至少有一个聚合处理',
 				},

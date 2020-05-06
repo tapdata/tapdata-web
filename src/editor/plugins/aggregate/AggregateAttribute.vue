@@ -25,11 +25,12 @@
 						</el-col>
 						<el-col :span="18">
 							<el-form-item
-									:label=" '> ' + $t('dataFlow.aggExpression')"
+									:label="$t('dataFlow.aggExpression')"
 									:prop="'aggregations.' + index +'.aggExpression'"
 									:required="item.aggFunction !== 'COUNT'">
 								<el-select v-model="item.aggExpression" filterable allow-create
                   default-first-option
+                  :placeholder="$t('dataFlow.selectTargetField')"
                   :disabled="item.aggFunction === 'COUNT'">
 									<el-option
 											v-for="item in expressionList"
@@ -41,6 +42,12 @@
 							</el-form-item>
 						</el-col>
 					</el-row>
+          <el-form-item
+            required
+            :label="$t('dataFlow.aggName')"
+            :prop="'aggregations.' + index +'.name'">
+						<el-input v-model="item.name"></el-input>
+					</el-form-item>
 					<el-form-item
 							:label="$t('dataFlow.filterPredicate')"
 							:prop="'aggregations.' + index +'.filterPredicate'">
@@ -49,7 +56,10 @@
 					<el-form-item
 							:label="$t('dataFlow.groupByExpression')"
 							:prop="'aggregations.' + index +'.groupByExpression'">
-						<el-select v-model="item.groupByExpression" multiple>
+						<el-select
+              v-model="item.groupByExpression"
+              :placeholder="$t('dataFlow.selectGrpupFiled')"
+              multiple>
 							<el-option
 									v-for="item in groupList"
 									:key="item.field_name"
@@ -93,6 +103,7 @@
 					name: '',
 					type: "aggregation_processor",
 					aggregations: [{
+            name: '',
 						filterPredicate: '',
 						aggFunction: 'COUNT',
 						aggExpression: '',
@@ -108,7 +119,8 @@
 					item.aggExpression = '';
 				}
 			});
-		},
+    },
+
 		watch: {
 			form: {
 				deep: true,
@@ -123,18 +135,39 @@
 					}
 					this.$emit('dataChanged', this.getData());
 				}
-			}
+      },
+      'form.aggregations': {
+        handler(data) {
+          let count = 0;
+
+          for(let i=0; i<data.length; i++) {
+            let item = data[i];
+            let aggFunctionArr = [];
+            aggFunctionArr.push(item.aggFunction);
+            if(i === 0) {
+              item.name = item.aggFunction;
+            } else if (count !== 0 ) {
+              item.name = item.aggFunction + '_' + count;
+            }
+            count ++;
+          }
+        },
+        deep: true,
+      }
 		},
 
 		methods: {
 			addRow() {
 				let list = {
+          name: '',
 					filterPredicate: '',
 					aggFunction: 'COUNT',
 					aggExpression: '1',
 					groupByExpression: ''
 				};
-				this.form.aggregations.push(list);
+        this.form.aggregations.push(list);
+
+        log("length",this.form.aggregations.length);
 			},
 
 			removeRow(item, index) {
