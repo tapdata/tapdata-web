@@ -153,7 +153,8 @@ const cn = {
 		aggExpression: '目标字段',
 		filterPredicate: '过滤器',
 		groupByExpression: '分组字段',
-		polymerization: '聚合处理',
+    polymerization: '聚合处理',
+    nameTip: '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
 		button: {
 			setting: '设置',
 			logs: '日志',

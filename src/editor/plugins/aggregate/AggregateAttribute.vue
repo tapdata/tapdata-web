@@ -46,6 +46,13 @@
             required
             :label="$t('dataFlow.aggName')"
             :prop="'aggregations.' + index +'.name'">
+            <el-popover class="aggtip"
+              placement="top-start"
+              width="200"
+              trigger="hover"
+              :content="$t('dataFlow.nameTip')">
+              <span class="icon iconfont icon-tishi1" slot="reference"></span>
+            </el-popover>
 						<el-input v-model="item.name"></el-input>
 					</el-form-item>
 					<el-form-item
@@ -139,17 +146,19 @@
       'form.aggregations': {
         handler(data) {
           let count = 0;
-
+          let aggFunctionArr = [];
           for(let i=0; i<data.length; i++) {
             let item = data[i];
-            let aggFunctionArr = [];
+
             aggFunctionArr.push(item.aggFunction);
-            if(i === 0) {
+            if(new Set(aggFunctionArr).size !== aggFunctionArr.length){
+              count ++;
+            }
+            if(count === 0) {
               item.name = item.aggFunction;
-            } else if (count !== 0 ) {
+            } else {
               item.name = item.aggFunction + '_' + count;
             }
-            count ++;
           }
         },
         deep: true,
@@ -244,6 +253,17 @@
 </style>
 <style lang="less">
 	.aggregate {
+    .aggtip {
+      position: absolute;
+      top: -34px;
+      left: 120px;
+      .iconfont {
+        display: inline-block;
+        color: #999;
+        cursor: pointer;
+        transform: rotate(-180deg);
+      }
+    }
 		.el-form--label-top .el-form-item__label {
 			padding: 0;
 			line-height: 26px;
