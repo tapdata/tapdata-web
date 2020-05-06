@@ -197,7 +197,7 @@
 					this.model.joinTable.stageId = firstDataNode.length > 0 ? firstDataNode[0].id : '';
           //this.model.joinTable.stageId = cell.getSourceCell().id;
           // 关联字段自动填充
-          let sourceArr = sourceSchema.fields && sourceSchema.fields.length > 0 ?sourceSchema.fields.filter(item=> item.primary_key_position > 0):[];
+          let sourceArr = sourceSchema && sourceSchema.fields && sourceSchema.fields.length > 0 ?sourceSchema.fields.filter(item=> item.primary_key_position > 0):[];
           let targetArr = mergedTargetSchema.fields && mergedTargetSchema.fields.length > 0 ?mergedTargetSchema.fields.filter(item=> item.primary_key_position > 0):[];
           this.model.joinTable.joinKeys = sourceArr.map((fields,i) =>({source:fields.field_name, target: targetArr[i].field_name}));
         }
