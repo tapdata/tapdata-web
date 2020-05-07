@@ -307,6 +307,13 @@
 		color: #333;
 
 	}
+	.ts-tree{
+		/*设置文字不能被选中     以下为css样式*/
+		-webkit-user-select:none;
+		-moz-user-select:none;
+		-ms-user-select:none;
+		user-select:none;
+	}
 </style>
 <style scoped>
 	/*头部样式*/
