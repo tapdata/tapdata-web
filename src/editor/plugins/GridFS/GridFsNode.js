@@ -171,7 +171,7 @@ export const GridFSNodeConfig = {
 		 */
 		//groupLabel: '',
 
-		size: {width: 5, height: 3},
+		size: {width: 5, height: 4},
 		attrs: {
 			root: {
 				dataTooltip: i18n.t('editor.cell.data_node.gridfs.tip'),
@@ -203,7 +203,7 @@ export const GridFSNodeConfig = {
 				strokeWidth: 0,
 				refX: '75%',
 				refY: '40%',
-				x: -35,
+				x: -32,
 				y: 27
 			}
 		}

@@ -166,6 +166,7 @@ const en = {
 			force_stop: 'Force Stop',
 			reset: 'Reset',
 			save: 'Save',
+			reloadSchema:'reloadSchema'
 		},
 		save_before_running: 'Please save the task before running',
 		reset_job: {
@@ -354,7 +355,7 @@ const en = {
 					}
 				},
 				script: {
-					name: 'Script',
+					name: 'JavaScript',
 					tip: 'Script processor',
 					defaultText: 'Script processor',
 

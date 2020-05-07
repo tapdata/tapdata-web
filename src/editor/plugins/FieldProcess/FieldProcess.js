@@ -238,7 +238,7 @@ export const fieldProcessConfig = {
 		 */
 		//groupLabel: '',
 
-		size: {width: 5, height: 3},
+		size: {width: 5, height: 4},
 		attrs: {
 			root: {
 				dataTooltip: i18n.t('editor.cell.processor.field.tip'),
@@ -270,7 +270,7 @@ export const fieldProcessConfig = {
 				strokeWidth: 0,
 				refX: '75%',
 				refY: '40%',
-				x: -35,
+				x: -32,
 				y: 27
 			}
 		}

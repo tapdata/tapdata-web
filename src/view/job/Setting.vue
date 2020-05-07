@@ -58,13 +58,13 @@
 							<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.edited">{{$t('dataFlow.edited')}}</el-checkbox-button>
 							<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.started">{{$t('dataFlow.started')}}</el-checkbox-button>
 					</el-form-item>
-					<el-form-item v-show="formData.sync_type !== 'initial_sync+cdc'">
-						<div>{{$t('dataFlow.drop_target_before_start')}}</div>  <!-- 开启任务前是否删除目标表-->
-						<el-radio-group v-model="formData.drop_target" size="mini">
-							<el-radio-button label="true">{{$t('dataFlow.yes')}}</el-radio-button>
-							<el-radio-button label="false">{{$t('dataFlow.no')}}</el-radio-button>
-						</el-radio-group>
-					</el-form-item>
+<!--					<el-form-item v-show="formData.sync_type !== 'initial_sync+cdc'">-->
+<!--						<div>{{$t('dataFlow.drop_target_before_start')}}</div>  &lt;!&ndash; 开启任务前是否删除目标表&ndash;&gt;-->
+<!--						<el-radio-group v-model="formData.drop_target" size="mini">-->
+<!--							<el-radio-button label="true">{{$t('dataFlow.yes')}}</el-radio-button>-->
+<!--							<el-radio-button label="false">{{$t('dataFlow.no')}}</el-radio-button>-->
+<!--						</el-radio-group>-->
+<!--					</el-form-item>-->
 					<el-form-item v-show="formData.sync_type === 'initial_sync' ">
 						<div>{{$t('dataFlow.run_custom_sql')}}</div>
 						<el-radio-group v-model="formData.increment" size="mini"> <!-- 重复运行自定义SQL -->
@@ -79,13 +79,13 @@
 							<el-radio-button label="false">{{$t('dataFlow.no')}}</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
-					<el-form-item v-show="formData.sync_type === 'initial_sync' ">
-						<div>{{$t('dataFlow.is_schedule')}}</div> <!-- 定期调度任务 -->
-						<el-radio-group v-model="formData.isSchedule" size="mini">
-							<el-radio-button label="true">{{$t('dataFlow.yes')}}</el-radio-button>
-							<el-radio-button label="false">{{$t('dataFlow.no')}}</el-radio-button>
-						</el-radio-group>
-					</el-form-item>
+<!--					<el-form-item v-show="formData.sync_type === 'initial_sync' ">-->
+<!--						<div>{{$t('dataFlow.is_schedule')}}</div> &lt;!&ndash; 定期调度任务 &ndash;&gt;-->
+<!--						<el-radio-group v-model="formData.isSchedule" size="mini">-->
+<!--							<el-radio-button label="true">{{$t('dataFlow.yes')}}</el-radio-button>-->
+<!--							<el-radio-button label="false">{{$t('dataFlow.no')}}</el-radio-button>-->
+<!--						</el-radio-group>-->
+<!--					</el-form-item>-->
 					<el-form-item>
 						<div>{{$t('dataFlow.need_to_create_Index')}}</div> <!-- 自动创建目标索引 -->
 						<el-radio-group v-model="formData.needToCreateIndex" size="mini">
