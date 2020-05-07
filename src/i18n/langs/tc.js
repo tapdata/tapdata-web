@@ -158,6 +158,7 @@ const tc = {
 			force_stop: '強制停止',
 			reset: '重置',
 			save: '保存',
+			reloadSchema:'重新加載'
 		},
 		save_before_running: '請先保存再運行',
 		reset_job: {

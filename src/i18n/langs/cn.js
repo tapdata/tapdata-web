@@ -158,6 +158,7 @@ const cn = {
 			force_stop: '强制停止',
 			reset: '重置',
 			save: '保存',
+			reloadSchema:'重新加载'
 		},
 		save_before_running: '请先保存再运行',
 		reset_job: {
