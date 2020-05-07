@@ -153,20 +153,19 @@ const en = {
 		aggExpression: 'Target Field',
 		filterPredicate: 'Filter Predicate',
 		groupByExpression: 'Group Field',
-    aggregation: 'Aggregation',
+    polymerization: 'Polymerization',
     nameTip: 'Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ',
 		button: {
 			setting: 'Setting',
 			logs: 'Logs',
-			preview: 'Data trace',
-			capture: 'Data trace',
-			stop_capture: 'Stop trace',
+      preview: 'Data Trace',
+      capture: 'Data Trace',
+      stop_capture: 'Stop Trace',
 			start: 'Start',
 			stop: 'Stop',
 			force_stop: 'Force Stop',
 			reset: 'Reset',
 			save: 'Save',
-			reloadSchema:'reloadSchema'
 		},
 		save_before_running: 'Please save the task before running',
 		reset_job: {
@@ -177,7 +176,14 @@ const en = {
 			msg: 'Stop jobs?',
 			force_stop_msg: 'Force Stop jobs?',
 			tip: 'Tip'
-		}
+		},
+    file_preview_fields: {
+      file_name: "File Name",
+      file_size_ondisk: "File Size(Byte)",
+      file_modify_time_ondisk: "File Modify Time",
+      file_create_time_ondisk: "File Create Time",
+      file_path: "File Path"
+    }
 	},
 	connection: {
 		status: {
@@ -329,9 +335,7 @@ const en = {
           none_name: 'Sub-process name is required',
 					none_aggregation_expression: 'Target field is required.',
 					new_aggregate: 'Add new aggregate',
-          none_stage: 'Must have one aggregate',
-          none_subprocessingName: 'Subprocess name cannot be empty',
-          name_notRepeated: 'Subprocess name cannot be repeated'
+					none_stage: 'Must have one aggregate',
 				},
 				field: {
 					name: 'Field',

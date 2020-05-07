@@ -177,7 +177,14 @@ const tc = {
 			msg: '停止任務?',
 			force_stop_msg: '強制停止任務?',
 			tip: '提示'
-		}
+		},
+    file_preview_fields: {
+      file_name: "文件名稱",
+      file_size_ondisk: "文件大小(Byte)",
+      file_modify_time_ondisk: "更新時間",
+      file_create_time_ondisk: "創建時間",
+      file_path: "文件路徑"
+    }
 	},
 	connection: {
 		status: {
