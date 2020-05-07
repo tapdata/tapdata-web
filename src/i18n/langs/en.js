@@ -329,7 +329,8 @@ const en = {
 					none_aggregation_expression: 'Target field is required.',
 					new_aggregate: 'Add new aggregate',
           none_stage: 'Must have one aggregate',
-          none_subprocessingName: 'Subprocess name cannot be empty'
+          none_subprocessingName: 'Subprocess name cannot be empty',
+          name_notRepeated: 'Subprocess name cannot be repeated'
 				},
 				field: {
 					name: 'Field',

@@ -159,10 +159,8 @@
             count ++;
           }
           if(count === 0) {
-            // _this.$set(item,'name',item.aggFunction);
             item.name = item.aggFunction;
           } else {
-            // _this.$set(item,'name',item.aggFunction + '_' + count);
             item.name = item.aggFunction + '_' + count;
           }
         }

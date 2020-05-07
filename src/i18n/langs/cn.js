@@ -328,7 +328,8 @@ const cn = {
 					none_aggregation_expression: '目标字段必填.',
 					new_aggregate: '添加聚合',
           none_stage: '至少有一个聚合处理',
-          none_subprocessingName: '子处理名称不能为空'
+          none_subprocessingName: '子处理名称不能为空',
+          name_notRepeated: '子处理名称不能重复'
 				},
 				field: {
 					name: '字段',

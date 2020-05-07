@@ -105,16 +105,20 @@ export const aggregateConfig = {
 					throw new Error(`${name}: ${i18n.t('editor.cell.validate.empty_name')}`);
 
 				if (data.aggregations && data.aggregations.length > 0) {
+          let aggFunctionArr = [];
 					data.aggregations.forEach(item => {
+            aggFunctionArr.push(item.aggFunction);
 						if (!item.aggFunction)
 							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_function')}`);
 						if (!item.groupByExpression)
 							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_group')}`);
 						if (!item.aggExpression && item.aggFunction !== "COUNT")
 							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_aggregation_expression')}`);
-          });
-          if(new Set(data.aggregations).size !== data.aggregations.length) {
-            throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_subprocessingName')}`);
+            if (!item.name)
+              throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_subprocessingName')}`);
+            });
+          if(new Set(aggFunctionArr).size !== aggFunctionArr.length) {
+            throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.name_notRepeated')}`);
           }
 
 				}
