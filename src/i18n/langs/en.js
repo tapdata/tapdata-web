@@ -58,7 +58,8 @@ const en = {
 		cancleReset: 'cancel reset',
 		resetOk: 'Reset success',
 		resetFailed: 'Reset Failed',
-		operator: 'Operator'
+		operator: 'Operator',
+    edit: 'edit'
 	},
 	dataFlow: {
     loadLogTip: 'Run log is trying to load, it may take 5 ~ 10 seconds, please wait ...',
