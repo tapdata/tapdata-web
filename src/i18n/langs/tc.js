@@ -153,7 +153,7 @@ const tc = {
 		aggExpression: '目標字段',
 		filterPredicate: '過濾器',
 		groupByExpression: '分組字段',
-    polymerization: '聚合處理',
+    aggregation: '聚合處理',
     nameTip: '後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ',
 		button: {
 			setting: '設置',
@@ -327,7 +327,8 @@ const tc = {
           none_name: '子處理名稱必填',
 					none_aggregation_expression: '目標字段必填.',
 					new_aggregate: '添加聚合',
-					none_stage: '至少有一个聚合处理',
+          none_stage: '至少有一个聚合处理',
+          none_subprocessingName: '子處理名稱不能為空'
 				},
 				field: {
 					name: '字段',

@@ -112,7 +112,11 @@ export const aggregateConfig = {
 							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_group')}`);
 						if (!item.aggExpression && item.aggFunction !== "COUNT")
 							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_aggregation_expression')}`);
-					});
+          });
+          if(new Set(data.aggregations).size !== data.aggregations.length) {
+            throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_subprocessingName')}`);
+          }
+
 				}
 				return true;
 			},

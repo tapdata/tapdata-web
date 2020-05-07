@@ -154,7 +154,7 @@ const cn = {
 		aggExpression: '目标字段',
 		filterPredicate: '过滤器',
 		groupByExpression: '分组字段',
-    polymerization: '聚合处理',
+    aggregation: '聚合处理',
     nameTip: '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
 		button: {
 			setting: '设置',
@@ -327,7 +327,8 @@ const cn = {
           none_name: '子处理名称必填',
 					none_aggregation_expression: '目标字段必填.',
 					new_aggregate: '添加聚合',
-					none_stage: '至少有一个聚合处理',
+          none_stage: '至少有一个聚合处理',
+          none_subprocessingName: '子处理名称不能为空'
 				},
 				field: {
 					name: '字段',

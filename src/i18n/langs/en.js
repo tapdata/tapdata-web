@@ -153,7 +153,7 @@ const en = {
 		aggExpression: 'Target Field',
 		filterPredicate: 'Filter Predicate',
 		groupByExpression: 'Group Field',
-    polymerization: 'Polymerization',
+    aggregation: 'Aggregation',
     nameTip: 'Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ',
 		button: {
 			setting: 'Setting',
@@ -328,7 +328,8 @@ const en = {
           none_name: 'Sub-process name is required',
 					none_aggregation_expression: 'Target field is required.',
 					new_aggregate: 'Add new aggregate',
-					none_stage: 'Must have one aggregate',
+          none_stage: 'Must have one aggregate',
+          none_subprocessingName: 'Subprocess name cannot be empty'
 				},
 				field: {
 					name: 'Field',

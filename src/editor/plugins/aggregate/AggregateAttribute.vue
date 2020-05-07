@@ -211,9 +211,9 @@
 
 				if (!this.form.name) {
 					if (counter === 0)
-						this.form.name = this.$t("dataFlow.polymerization");
+						this.form.name = this.$t("dataFlow.aggregation");
 					if (counter !== 0)
-						this.form.name = this.$t("dataFlow.polymerization") + (counter);
+						this.form.name = this.$t("dataFlow.aggregation") + (counter);
 					counter++;
 				}
 			},
