@@ -10,7 +10,7 @@
 						class="e-form" :label="$t('editor.cell.data_node.database.form.label')"
 						prop="connectionId" :rules="rules" required>
 					<el-select
-							filterable v-model="model.connectionId" @change="getSelectType"
+							filterable v-model="model.connectionId"
 							:placeholder="$t('editor.cell.data_node.database.form.placeholder')" size="mini">
 						<el-option
 								v-for="(item, idx) in databases"
@@ -34,10 +34,11 @@
 
 				<div class="databaseInfo">
 					<span v-show="database_type">{{database_type}}</span>
+          <span v-show="database_port">{{database_port}}</span>
 				</div>
 			</el-form>
 		</div>
-		<div class="processingBody" style="display: none;">
+		<div class="processingBody">
 			<div class="allCheck" v-if="activeName ==='first'">
 				<el-checkbox v-model="selectAllTables"></el-checkbox>
 				<span @click="bulkRemoval()">{{$t('editor.cell.data_node.database.bulkRemoval')}}</span>
@@ -48,7 +49,7 @@
 				<span @click="bulkRevocation()">{{$t('editor.cell.data_node.database.bulkRevocation')}}</span>
 			</div>
 
-			<el-tabs class="e-tabs" v-model="activeName" @tab-click="handleClick">
+			<el-tabs class="e-tabs" v-model="activeName">
 
 				<el-tab-pane :label="$t('editor.cell.data_node.database.queueCopied') + '('+tables.length+')'" name="first">
           <div class="search">
@@ -153,6 +154,7 @@
           dropTable: false
 				},
         database_type: '',
+        database_port: ''
 			};
     },
 
@@ -250,7 +252,12 @@
                   table_name: item.table_name, checked:false
                 });
               }
-						});
+            });
+
+            let uriArr = result.data.database_uri.split(":");
+            let ip = uriArr?uriArr[1].split("/")[2]:[];
+            let port = uriArr?uriArr[2].split('/')[0]:[];
+            this.database_port = result.data.database_port&&result.data.database_port !==0?result.data.database_port: port
 					}
 				});
       },

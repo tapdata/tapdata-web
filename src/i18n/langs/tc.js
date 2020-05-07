@@ -62,6 +62,9 @@ const tc = {
     edit: '修改'
 	},
 	dataFlow: {
+    loadLogTip: '運行日誌努力加載中，可能需要5~10秒，請稍等......',
+    noLogTip: '沒有數據',
+    clickLoadTxt: '點擊加載',
 		average: '平均',
 		current: '當前',
 		allNode: '全部節點',
@@ -141,13 +144,17 @@ const tc = {
 		read_batch_size: '每次讀取多少',
 		mission: '描述',
 		yes: 'yes',
-		no: 'no',
+    no: 'no',
+    selectGrpupFiled: '請選擇分組字段',
+    selectTargetField: '請選擇目標字段',
+    aggName: '子處理名稱',
 		nodeName: '節點名稱',
 		aggFunction: '聚合函數',
-		aggExpression: '聚合表達式',
+		aggExpression: '目標字段',
 		filterPredicate: '過濾器',
-		groupByExpression: '分組表達式',
-		polymerization: '聚合處理',
+		groupByExpression: '分組字段',
+    polymerization: '聚合處理',
+    nameTip: '後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ',
 		button: {
 			setting: '設置',
 			logs: '日誌',
@@ -302,7 +309,13 @@ const tc = {
 					configurationES: '配置Elastic search',
 					chooseESName: '請選擇Elastic search',
 					es_isNull: 'Elastic search不能為空'
-				}
+        },
+        custom: {
+					tip: 'Custom節點',
+					name: 'Custom',
+					none_fileName: 'Custom不能為空',
+					chooseCustomName: '請選擇Custom'
+				},
 			},
 			processor: {
 				aggregate: {
@@ -310,8 +323,9 @@ const tc = {
 					tip: '聚合處理器',
 					defaultText: '聚合',
 					none_function: '聚合函數必填.',
-					none_group: '分組表達式必填.',
-					none_aggregation_expression: '聚合表達式必填.',
+          none_group: '分組表達式必填.',
+          none_name: '子處理名稱必填',
+					none_aggregation_expression: '目標字段必填.',
 					new_aggregate: '添加聚合',
 					none_stage: '至少有一个聚合处理',
 				},

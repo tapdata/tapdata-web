@@ -3,6 +3,7 @@ import Vue from 'vue';
 
 
 import {
+  Image,
 	Tabs,
 	TabPane,
 	Popover,
@@ -44,6 +45,7 @@ import {
 } from 'element-ui';
 
 
+Vue.component(Image.name, Image);
 Vue.component(Tabs.name, Tabs);
 Vue.component(TabPane.name, TabPane);
 Vue.component(Popover.name, Popover);
