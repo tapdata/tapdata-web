@@ -233,7 +233,7 @@ export const aggregateConfig = {
 		 */
 		//groupLabel: '',
 
-		size: {width: 5, height: 3},
+		size: {width: 5, height: 4},
 		attrs: {
 			root: {
 				dataTooltip: i18n.t('editor.cell.processor.aggregate.tip'),
@@ -265,7 +265,7 @@ export const aggregateConfig = {
 				strokeWidth: 0,
 				refX: '75%',
 				refY: '40%',
-				x: -35,
+				x: -32,
 				y: 27
 			}
 		}
