@@ -117,7 +117,8 @@
                     <div class="btn fr">
                       <el-button type="text"
                       @click="delServe(child,item.status)">{{ $t('message.delete') }}</el-button>
-
+                      <el-button type="text"
+                      @click="editServe(child,item.status,item)">{{ $t('message.edit') }}</el-button>
                     </div>
                   </el-col>
                 </el-row>
@@ -131,7 +132,7 @@
        </div>
     </div>
     <el-dialog :title="$t('message.addServerMon')" custom-class="serverDialog" :visible.sync="dialogForm" :append-to-body="true" :lock-scroll="false" width="600px" @close='closeDialogForm()'>
-      <addServe :data="currentData" ref="childRules"></addServe>
+      <addServe :data="currentData" :editItem="editItem" ref="childRules"></addServe>
       <div slot="footer" class="dialog-footer">
         <el-button size="small"  @click="closeDialogForm()">{{ $t('message.cancle') }}</el-button>
         <el-button size="small"  type="primary" @click="submitForm('ruleForm')">{{ $t('message.confirm') }}</el-button>
@@ -159,7 +160,8 @@ export default {
       engineState: '',
       managementState: '',
       apiServerState: '',
-      list:[]
+      list:[],
+      editItem:{}
     };
   },
   created () {
@@ -181,22 +183,40 @@ export default {
             command: getFrom.command,
             arguments: getFrom.arguments
           };
-          await cluster.addMonitor(data).then(res => {
-            if(res.statusText === "OK" || res.status === 200) {
+          if(getFrom.id === '') {
+            await cluster.addMonitor(data).then(res => {
+              if (res.statusText === "OK" || res.status === 200) {
+                this.dialogForm = false;
+                this.getDataApi();
+                this.$message.success(this.$t('message.saveOK'));
+              } else {
+                this.$message.error(this.$t('message.saveFail'));
+              }
               this.dialogForm = false;
-              this.getDataApi();
-              this.$message.success(this.$t('message.saveOK'));
-            } else{
-              this.$message.error(this.$t('message.saveFail'));
-            }
-            this.dialogForm = false;
-          });
+            });
+          }else{
+            data.id = getFrom.id;
+            await cluster.editMonitor(data).then(res => {
+              if (res.statusText === "OK" || res.status === 200) {
+                this.dialogForm = false;
+                this.getDataApi();
+                this.$message.success(this.$t('message.saveOK'));
+              } else {
+                this.$message.error(this.$t('message.saveFail'));
+              }
+              this.dialogForm = false;
+            });
+          }
         }
       } else {
         this.$message.error(this.$t('message.startupAfter_add'));
       }
     },
-
+    editServe(item,status,data) {
+      this.currentData = data;
+      this.editItem = item;
+      this.dialogForm = true;
+    },
     //删除
     delServe(data,status) {
       let params = {
@@ -224,6 +244,7 @@ export default {
     },
     addServeFn(item) {
       this.currentData = item;
+      this.editItem = {};
       this.dialogForm = true;
     },
     //启动

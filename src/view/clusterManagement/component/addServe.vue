@@ -18,17 +18,26 @@
 export default {
   name: "AddServe",
   props: {
-    data: Object
+    data: Object,
+    editItem: Object,
   },
   data(){
     return {
-      ruleForm :{
-        name: '',
-        command: '',
-        arguments: ''
-      },
+      ruleForm:
+        {
+          id: this.editItem.id ? this.editItem.id : "",
+          uuid: this.editItem.uuid ? this.editItem.uuid : "",
+          name: this.editItem.name ? this.editItem.name : "",
+          command: this.editItem.command ? this.editItem.command : "",
+          arguments: this.editItem.arguments || this.editItem.arguments !== null ? this.editItem.arguments : "",
+        },
       rules: {}
     };
+  },
+  watch: {
+    editItem: function (newValue) {
+      this.ruleForm = newValue;
+    }
   },
   methods: {
     closeDialogForm(){
