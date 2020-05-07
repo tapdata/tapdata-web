@@ -13,7 +13,7 @@
 							<el-form-item
 									:label="$t('dataFlow.aggFunction')"
 									:prop="'aggregations.' + index +'.aggFunction'" required>
-								<el-select v-model="item.aggFunction ">
+								<el-select v-model="item.aggFunction " @change="changeAggFunction(item)">
 									<el-option
 											v-for="item in selectList"
 											:key="item.value"
@@ -110,7 +110,7 @@
 					name: '',
 					type: "aggregation_processor",
 					aggregations: [{
-            name: '',
+            name: 'COUNT',
 						filterPredicate: '',
 						aggFunction: 'COUNT',
 						aggExpression: '',
@@ -143,29 +143,31 @@
 					this.$emit('dataChanged', this.getData());
 				}
       },
-      'form.aggregations': {
-        handler(data) {
-          let count = 0;
-          let aggFunctionArr = [];
-          for(let i=0; i<data.length; i++) {
-            let item = data[i];
+      // 'form.aggregations'(data){
 
-            aggFunctionArr.push(item.aggFunction);
-            if(new Set(aggFunctionArr).size !== aggFunctionArr.length){
-              count ++;
-            }
-            if(count === 0) {
-              item.name = item.aggFunction;
-            } else {
-              item.name = item.aggFunction + '_' + count;
-            }
-          }
-        },
-        deep: true,
-      }
+      // }
 		},
 
 		methods: {
+      changeAggFunction(data) {
+        let count = 0;
+        let aggFunctionArr = [];
+        for(let i=0; i<this.form.aggregations.length; i++) {
+          let item = this.form.aggregations[i];
+          aggFunctionArr.push(item.aggFunction);
+          if(new Set(aggFunctionArr).size !== aggFunctionArr.length){
+            count ++;
+          }
+          if(count === 0) {
+            // _this.$set(item,'name',item.aggFunction);
+            item.name = item.aggFunction;
+          } else {
+            // _this.$set(item,'name',item.aggFunction + '_' + count);
+            item.name = item.aggFunction + '_' + count;
+          }
+        }
+      },
+
 			addRow() {
 				let list = {
           name: '',
@@ -175,7 +177,7 @@
 					groupByExpression: ''
 				};
         this.form.aggregations.push(list);
-
+        this.changeAggFunction();
         log("length",this.form.aggregations.length);
 			},
 
