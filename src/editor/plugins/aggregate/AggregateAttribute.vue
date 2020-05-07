@@ -13,7 +13,7 @@
 							<el-form-item
 									:label="$t('dataFlow.aggFunction')"
 									:prop="'aggregations.' + index +'.aggFunction'" required>
-								<el-select v-model="item.aggFunction ">
+								<el-select v-model="item.aggFunction " @change="changeAggFunction(item)">
 									<el-option
 											v-for="item in selectList"
 											:key="item.value"
@@ -25,11 +25,12 @@
 						</el-col>
 						<el-col :span="18">
 							<el-form-item
-									:label=" '> ' + $t('dataFlow.aggExpression')"
+									:label="$t('dataFlow.aggExpression')"
 									:prop="'aggregations.' + index +'.aggExpression'"
 									:required="item.aggFunction !== 'COUNT'">
 								<el-select v-model="item.aggExpression" filterable allow-create
                   default-first-option
+                  :placeholder="$t('dataFlow.selectTargetField')"
                   :disabled="item.aggFunction === 'COUNT'">
 									<el-option
 											v-for="item in expressionList"
@@ -41,6 +42,19 @@
 							</el-form-item>
 						</el-col>
 					</el-row>
+          <el-form-item
+            required
+            :label="$t('dataFlow.aggName')"
+            :prop="'aggregations.' + index +'.name'">
+            <el-popover class="aggtip"
+              placement="top-start"
+              width="200"
+              trigger="hover"
+              :content="$t('dataFlow.nameTip')">
+              <span class="icon iconfont icon-tishi1" slot="reference"></span>
+            </el-popover>
+						<el-input v-model="item.name"></el-input>
+					</el-form-item>
 					<el-form-item
 							:label="$t('dataFlow.filterPredicate')"
 							:prop="'aggregations.' + index +'.filterPredicate'">
@@ -49,7 +63,10 @@
 					<el-form-item
 							:label="$t('dataFlow.groupByExpression')"
 							:prop="'aggregations.' + index +'.groupByExpression'">
-						<el-select v-model="item.groupByExpression" multiple>
+						<el-select
+              v-model="item.groupByExpression"
+              :placeholder="$t('dataFlow.selectGrpupFiled')"
+              multiple>
 							<el-option
 									v-for="item in groupList"
 									:key="item.field_name"
@@ -93,6 +110,7 @@
 					name: '',
 					type: "aggregation_processor",
 					aggregations: [{
+            name: 'COUNT',
 						filterPredicate: '',
 						aggFunction: 'COUNT',
 						aggExpression: '',
@@ -108,7 +126,8 @@
 					item.aggExpression = '';
 				}
 			});
-		},
+    },
+
 		watch: {
 			form: {
 				deep: true,
@@ -123,18 +142,43 @@
 					}
 					this.$emit('dataChanged', this.getData());
 				}
-			}
+      },
+      // 'form.aggregations'(data){
+
+      // }
 		},
 
 		methods: {
+      changeAggFunction(data) {
+        let count = 0;
+        let aggFunctionArr = [];
+        for(let i=0; i<this.form.aggregations.length; i++) {
+          let item = this.form.aggregations[i];
+          aggFunctionArr.push(item.aggFunction);
+          if(new Set(aggFunctionArr).size !== aggFunctionArr.length){
+            count ++;
+          }
+          if(count === 0) {
+            // _this.$set(item,'name',item.aggFunction);
+            item.name = item.aggFunction;
+          } else {
+            // _this.$set(item,'name',item.aggFunction + '_' + count);
+            item.name = item.aggFunction + '_' + count;
+          }
+        }
+      },
+
 			addRow() {
 				let list = {
+          name: '',
 					filterPredicate: '',
 					aggFunction: 'COUNT',
 					aggExpression: '1',
 					groupByExpression: ''
 				};
-				this.form.aggregations.push(list);
+        this.form.aggregations.push(list);
+        this.changeAggFunction();
+        log("length",this.form.aggregations.length);
 			},
 
 			removeRow(item, index) {
@@ -211,6 +255,17 @@
 </style>
 <style lang="less">
 	.aggregate {
+    .aggtip {
+      position: absolute;
+      top: -34px;
+      left: 120px;
+      .iconfont {
+        display: inline-block;
+        color: #999;
+        cursor: pointer;
+        transform: rotate(-180deg);
+      }
+    }
 		.el-form--label-top .el-form-item__label {
 			padding: 0;
 			line-height: 26px;

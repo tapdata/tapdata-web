@@ -1,18 +1,18 @@
 import {options} from "../../lib/rappid/config";
-import ApiAttribute from "./ApiAttribute";
+import CustomAttribute from "./CustomAttribute";
 import i18n from "../../../i18n/i18n";
 
-export const ApiNodeConfig = {
-	type: 'app.ApiNode',
+export const customNodeConfig = {
+	type: 'app.CustomNode',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/o-api.svg',
+					xlinkHref: 'static/editor/o-custom.svg',
 				},
 				label: {
-					text: i18n.t('editor.cell.data_node.api.name'),
+					text: i18n.t('editor.cell.data_node.custom.name'),
 				}
 			}
 		},
@@ -32,7 +32,7 @@ export const ApiNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-				return !['app.FileNode', 'app.Database', 'app.GridFSNode'].includes(targetCell.get('type'));
+        return true;
 			},
 
 			/**
@@ -41,14 +41,15 @@ export const ApiNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-				return false;
+				return ['app.Dummy' ,'app.Collection','app.Table'].includes(sourceCell.get('type'));
+
 			},
 
 			validate(data) {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
 				if (!data)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`);
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.custom.none_fileName')}`);
 				return true;
 			},
 		},
@@ -171,7 +172,7 @@ export const ApiNodeConfig = {
 		size: {width: 5, height: 3},
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.data_node.api.tip'),
+				dataTooltip: i18n.t('editor.cell.data_node.file.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -184,14 +185,14 @@ export const ApiNodeConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/api.svg',
+				xlinkHref: 'static/editor/custom.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.data_node.api.name'),
+				text: i18n.t('editor.cell.data_node.custom.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -211,7 +212,7 @@ export const ApiNodeConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: ApiAttribute,
+		component: CustomAttribute,
 	}
 
 };

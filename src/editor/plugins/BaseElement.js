@@ -176,9 +176,11 @@ export const baseElementConfig = {
 			showSettings() {
 				return true;
 			},
-			setSchema(schema){
+			setSchema(schema, updateSchema){
 				this.set(SCHEMA_DATA_KEY, schema);
-				this.updateOutputSchema();
+
+				if(updateSchema !== false)
+					this.updateOutputSchema();
 			},
 			getSchema(){
 				return _.cloneDeep(this.get(SCHEMA_DATA_KEY));

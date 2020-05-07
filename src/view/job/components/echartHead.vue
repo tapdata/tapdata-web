@@ -51,29 +51,32 @@
 			};
 		},
 		mounted() {
+
 			this.$nextTick(() => {
-				this.title = this.data.title;
-				this.tip = this.data.tip;
-				this.isScreeing = this.data.isScreeing;
-				this.isIput = this.data.isIput;
-				this.isSpeed = this.data.isSpeed;
+        if(this.data) {
+          this.title = this.data.title?this.data.title:'';
+          this.tip = this.data.tip;
+          this.isScreeing = this.data.isScreeing;
+          this.isIput = this.data.isIput;
+          this.isSpeed = this.data.isSpeed;
 
-				if(this.data.type === "replicate") {
-					this.time = 'minute';
+          if(this.data.type === "replicate") {
+            this.time = 'minute';
+          }
+
+          this.$emit("twoRadio", this.num, this.data.type);
+          this.$emit("getSpeed", this.speed, this.time);
+          this.$emit("getTime", this.time, this.data.type);
+          if (this.data.type === "screening") {
+            this.selectColor = 'screeningColor';
+          } else if (this.data.type === "throughput") {
+            this.selectColor = 'putColor';
+          } else if (this.data.type === "transf") {
+            this.selectColor = 'transfColor';
+          } else if (this.data.type === "replicate") {
+            this.selectColor = 'replicateColor';
+          }
         }
-
-				this.$emit("twoRadio", this.num, this.data.type);
-				this.$emit("getSpeed", this.speed, this.time);
-				this.$emit("getTime", this.time, this.data.type);
-				if (this.data.type === "screening") {
-					this.selectColor = 'screeningColor';
-				} else if (this.data.type === "throughput") {
-					this.selectColor = 'putColor';
-				} else if (this.data.type === "transf") {
-					this.selectColor = 'transfColor';
-				} else if (this.data.type === "replicate") {
-					this.selectColor = 'replicateColor';
-				}
 			});
 		},
 		methods: {
