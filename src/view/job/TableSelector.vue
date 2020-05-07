@@ -230,7 +230,7 @@
 				this.count = this.count + 50;
 				let cell ='';
 				// if(['database'].includes(data.meta_type)){
-				if(['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)){
+				if(['directory', 'ftp', 'apiendpoint'].includes(data.meta_type)){
 					let dataType = data.source.database_type;
 					cell = this.editor.graph.createCell(mapping[dataType], formData,schema);
 				}else {
@@ -306,6 +306,13 @@
 	.ts-icon{
 		color: #333;
 
+	}
+	.ts-tree{
+		/*设置文字不能被选中     以下为css样式*/
+		-webkit-user-select:none;
+		-moz-user-select:none;
+		-ms-user-select:none;
+		user-select:none;
 	}
 </style>
 <style scoped>

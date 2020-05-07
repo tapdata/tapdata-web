@@ -13,7 +13,7 @@
 			</el-tag>
 			<el-button
 					size="mini" type="default"
-					@click="reloadSchema">reloadSchema
+					@click="reloadSchema">{{$t('dataFlow.button.reloadSchema')}}
 			</el-button>
 			<el-button
 					v-if="['draft', 'paused', 'error'].includes(status)"
