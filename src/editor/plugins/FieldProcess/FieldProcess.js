@@ -31,6 +31,11 @@ export const fieldProcessConfig = {
 				label: {
 					text: i18n.t('editor.cell.processor.field.name'),
 				}
+			},
+			[FORM_DATA_KEY]: {
+				type: 'field_processor',
+				scripts: [],
+				operations: [],
 			}
 		},
 		prototypeProperties: {
