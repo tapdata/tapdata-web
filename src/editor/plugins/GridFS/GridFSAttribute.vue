@@ -75,6 +75,9 @@ export default {
         ],
         primaryKeys:[
           {required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.gridfs.none_pk')}
+        ],
+        tableName:[
+          {required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.gridfs.none_collection')}
         ]
       },
       isSourceDataNode: false,

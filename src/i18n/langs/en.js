@@ -300,19 +300,23 @@ const en = {
 					tip: 'GridFS node',
 					chooseGridFsName: 'Please select GridFS',
           none_collection: 'Collection is required.',
-					gridFs_isNull: 'GridFS cannot be empty',
-          none_pk: 'Primary key is required.'
+          none_pk: 'Primary key is required.',
+          gridFs_isNull: 'GridFS cannot be empty'
 				},
 				dummy: {
 					name: 'Dummy',
 					tip: 'Dummy node',
 					chooseDummyName: 'Please select Dummy',
+          none_collection: 'Collection is required.',
+          none_pk: 'Primary key is required.',
 					dummy_isNull: 'Dummy cannot be empty'
 				},
 				api: {
 					name: 'API',
 					tip: 'api node',
 					chooseApiName: 'Please select API',
+          none_collection: 'Collection is required.',
+          none_pk: 'Primary key is required.',
 					api_isNull: 'API cannot be empty'
 				},
 				es: {

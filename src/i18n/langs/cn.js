@@ -299,19 +299,23 @@ const cn = {
 					tip: 'GridFS节点',
 					chooseGridFsName: '请选择GridFS',
           none_collection: '数据集必填.',
-					gridFs_isNull: 'GridFS不能为空',
-          none_pk: '主键必填.'
+          none_pk: '主键必填.',
+          gridFs_isNull: 'GridFS不能为空'
 				},
 				dummy: {
 					name: 'Dummy',
 					tip: 'Dummy节点',
 					chooseDummyName: '请选择Dummy',
+          none_collection: '数据集必填.',
+          none_pk: '主键必填.',
 					dummy_isNull: 'Dummy不能为空'
 				},
 				api: {
 					name: 'API',
 					tip: 'api节点',
 					chooseApiName: '请选择API',
+          none_collection: '数据集必填.',
+          none_pk: '主键必填.',
 					api_isNull: 'API不能为空'
 				},
 				es: {

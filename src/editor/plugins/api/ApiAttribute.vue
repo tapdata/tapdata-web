@@ -34,7 +34,7 @@
                 v-bind:key="idx"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
+        <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" prop="primaryKeys" required>
           <el-input
               v-model="model.primaryKeys"
               :placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"  size="mini"></el-input>
@@ -62,7 +62,13 @@
 				rules: {
 					connectionId: [
 						{required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.api.chooseApiName')},
-					]
+					],
+          primaryKeys:[
+            {required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.api.none_pk')}
+          ],
+          tableName:[
+            {required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.api.none_collection')}
+          ]
 				},
 				model: {
           connectionId: "",

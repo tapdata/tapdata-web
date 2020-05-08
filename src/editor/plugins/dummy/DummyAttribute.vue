@@ -33,7 +33,7 @@
                 v-bind:key="idx"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
+        <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" prop="primaryKeys" :rules="rules" required>
           <el-input
               v-model="model.primaryKeys"
               :placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"  size="mini"></el-input>
@@ -65,7 +65,13 @@
 							trigger: 'blur',
 							message: this.$t('editor.cell.data_node.dummy.chooseDummyName')
 						},
-					]
+					],
+          primaryKeys:[
+            {required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.dummy.none_pk')}
+          ],
+          tableName:[
+            {required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.dummy.none_collection')}
+          ]
 				},
 				model: {
           connectionId: "",

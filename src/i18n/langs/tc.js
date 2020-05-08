@@ -299,20 +299,24 @@ const tc = {
 					tip: 'GridFS節點',
 					chooseGridFsName: '請選擇GridFS',
           none_collection: '數據集必填.',
-					gridFs_isNull: 'GridFS不能為空',
           none_pk: '主鍵必填.',
+          gridFs_isNull: 'GridFS不能為空',
 				},
 				dummy: {
 					name: 'Dummy',
 					tip: 'Dummy節點',
 					chooseDummyName: '請選擇Dummy',
-					dummy_isNull: 'Dummy不能為空'
+					dummy_isNull: 'Dummy不能為空',
+          none_collection: '數據集必填.',
+          none_pk: '主鍵必填.',
 				},
 				api: {
 					name: 'API',
 					tip: 'api節點',
 					chooseApiName: '請選擇API',
-					api_isNull: 'API不能為空'
+					api_isNull: 'API不能為空',
+          none_collection: '數據集必填.',
+          none_pk: '主鍵必填.'
 				},
 				es: {
 					name: 'ES',
