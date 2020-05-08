@@ -298,7 +298,9 @@ const cn = {
 					name: 'GridFS',
 					tip: 'GridFS节点',
 					chooseGridFsName: '请选择GridFS',
-					gridFs_isNull: 'GridFS不能为空'
+          none_collection: '数据集必填.',
+					gridFs_isNull: 'GridFS不能为空',
+          none_pk: '主键必填.'
 				},
 				dummy: {
 					name: 'Dummy',

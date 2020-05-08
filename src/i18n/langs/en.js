@@ -299,7 +299,9 @@ const en = {
 					name: 'GridFS',
 					tip: 'GridFS node',
 					chooseGridFsName: 'Please select GridFS',
-					gridFs_isNull: 'GridFS cannot be empty'
+          none_collection: 'Collection is required.',
+					gridFs_isNull: 'GridFS cannot be empty',
+          none_pk: 'Primary key is required.'
 				},
 				dummy: {
 					name: 'Dummy',
