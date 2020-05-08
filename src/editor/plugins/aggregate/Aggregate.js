@@ -103,17 +103,22 @@ export const aggregateConfig = {
 
 				if (!data.name)
 					throw new Error(`${name}: ${i18n.t('editor.cell.validate.empty_name')}`);
-
+        let aggFunctionArr = [];
 				if (data.aggregations && data.aggregations.length > 0) {
 					data.aggregations.forEach(item => {
+            aggFunctionArr.push(item.name);
 						if (!item.aggFunction)
 							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_function')}`);
 						if (!item.groupByExpression)
 							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_group')}`);
 						if (!item.aggExpression && item.aggFunction !== "COUNT")
 							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_aggregation_expression')}`);
-					});
-				}
+            if (!item.name)
+              throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_subprocessingName')}`);
+          });
+        }
+        if(new Set(aggFunctionArr).size !== aggFunctionArr.length)
+            throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.name_notRepeated')}`);
 				return true;
 			},
 		},
@@ -233,7 +238,7 @@ export const aggregateConfig = {
 		 */
 		//groupLabel: '',
 
-		size: {width: 5, height: 3},
+		size: {width: 5, height: 4},
 		attrs: {
 			root: {
 				dataTooltip: i18n.t('editor.cell.processor.aggregate.tip'),
@@ -265,7 +270,7 @@ export const aggregateConfig = {
 				strokeWidth: 0,
 				refX: '75%',
 				refY: '40%',
-				x: -35,
+				x: -32,
 				y: 27
 			}
 		}

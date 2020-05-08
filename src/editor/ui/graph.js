@@ -266,7 +266,7 @@ export default class Graph extends Component{
 			layout: {
 				columnWidth: 70,
 				columns: 3,
-				rowHeight: 45,
+				rowHeight: 49,
 			},
 			/*search: {
 				'*': ['type', 'attrs/text/text', 'attrs/root/dataTooltip', 'attrs/label/text'],

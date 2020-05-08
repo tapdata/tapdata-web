@@ -24,4 +24,7 @@ export default class ClusterAPI extends PublicAPI{
     return axios.post(this.url + '/removeMonitor', params);
   }
 
+  editMonitor(params) {
+    return axios.post(this.url + '/editMonitor', params);
+  }
 }

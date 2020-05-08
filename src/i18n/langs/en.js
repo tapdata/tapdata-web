@@ -58,9 +58,13 @@ const en = {
 		cancleReset: 'cancel reset',
 		resetOk: 'Reset success',
 		resetFailed: 'Reset Failed',
-		operator: 'Operator'
+		operator: 'Operator',
+    edit: 'edit'
 	},
 	dataFlow: {
+    loadLogTip: 'Run log is trying to load, it may take 5 ~ 10 seconds, please wait ...',
+    noLogTip: 'No data',
+    clickLoadTxt: 'Click to load',
 		average: 'Average',
 		current: 'Current',
 		allNode: 'All Nodes',
@@ -140,19 +144,23 @@ const en = {
 		read_batch_size: 'How many reads each time',
 		mission: 'Description',
 		yes: 'yes',
-		no: 'no',
+    no: 'no',
+    selectGrpupFiled: 'Please select a grouping field',
+    selectTargetField: 'Please select the target field',
+    aggName: 'Sub-process name',
 		nodeName: 'Node Name',
 		aggFunction: 'Polymerization',
-		aggExpression: 'Aggregation',
+		aggExpression: 'Target Field',
 		filterPredicate: 'Filter Predicate',
-		groupByExpression: 'Group By Expression',
-		polymerization: 'Polymerization',
+		groupByExpression: 'Group Field',
+    polymerization: 'Polymerization',
+    nameTip: 'Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ',
 		button: {
 			setting: 'Setting',
 			logs: 'Logs',
-			preview: 'Data trace',
-			capture: 'Data trace',
-			stop_capture: 'Stop trace',
+      preview: 'Data Trace',
+      capture: 'Data Trace',
+      stop_capture: 'Stop Trace',
 			start: 'Start',
 			stop: 'Stop',
 			force_stop: 'Force Stop',
@@ -168,7 +176,14 @@ const en = {
 			msg: 'Stop jobs?',
 			force_stop_msg: 'Force Stop jobs?',
 			tip: 'Tip'
-		}
+		},
+    file_preview_fields: {
+      file_name: "File Name",
+      file_size_ondisk: "File Size(Byte)",
+      file_modify_time_ondisk: "File Modify Time",
+      file_create_time_ondisk: "File Create Time",
+      file_path: "File Path"
+    }
 	},
 	connection: {
 		status: {
@@ -302,7 +317,13 @@ const en = {
 					configurationES: 'Configure Elastic search',
 					chooseESName: 'Please select Elastic search',
 					es_isNull: 'Elastic search cannot be empty'
-				}
+        },
+        custom: {
+					tip: 'Custom node',
+					name: 'Custom',
+					none_fileName: 'Custom cannot be empty',
+					chooseCustomName: 'Please select Custom'
+				},
 			},
 			processor: {
 				aggregate: {
@@ -310,8 +331,9 @@ const en = {
 					tip: 'Aggregate processor',
 					defaultText: 'Aggregate',
 					none_function: 'Aggregate function is required.',
-					none_group: 'Group expression is required.',
-					none_aggregation_expression: 'Aggregate expression is required.',
+          none_group: 'Group expression is required.',
+          none_name: 'Sub-process name is required',
+					none_aggregation_expression: 'Target field is required.',
 					new_aggregate: 'Add new aggregate',
 					none_stage: 'Must have one aggregate',
 				},
@@ -337,7 +359,7 @@ const en = {
 					}
 				},
 				script: {
-					name: 'Script',
+					name: 'JavaScript',
 					tip: 'Script processor',
 					defaultText: 'Script processor',
 

@@ -17,12 +17,22 @@
 			<i class="el-icon-loading" v-if="loading"></i>
 
 		</el-form>
+    <div class="logBox"
+      v-loading="loading"
+      :element-loading-text="$t('dataFlow.loadLogTip')">
+      <ul class="e-log-container" v-show="logCount > 0" ref="logContainer"></ul>
 
-		<ul class="e-log-container" v-show="logCount > 0" ref="logContainer"></ul>
+      <div v-show="logCount === 0" class="noData">
+        <div class="imageBox">
+          <el-image
+            style="width: 200px; height: 200px"
+            :src="imageUrl"
+          ></el-image>
+        </div>
 
-		<div v-show="logCount === 0" class="noText">
-			<i class="iconfont icon icon-zanwushuju1" style="font-size: 174px"></i>
-		</div>
+        <div>{{$t('dataFlow.noLogTip')}}?_(:з」∠)...... <span class="clickLoad" @click="clickLoad">{{$t('dataFlow.clickLoadTxt')}}</span></div>
+      </div>
+    </div>
 	</div>
 </template>
 <script>
@@ -45,7 +55,8 @@
 				lastLogsId: '',
 				firstLogsId: '',
 				timer: null,
-				loading: false,
+        loading: false,
+        imageUrl: 'static/image/noData.svg'
 			};
 		},
 
@@ -94,7 +105,11 @@
 				};
 				this.addFilter(filter);
 				this.getLogsData(filter, false, false);
-			},
+      },
+      // 点击加载
+      clickLoad() {
+        this.loadNew();
+      },
 
 			loadNew(){
 				let filter = {
@@ -132,7 +147,6 @@
 					self.loading = false;
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data && res.data.length > 0) {
-
 							if( reset || prepend || !this.lastLogsId) this.lastLogsId = res.data[0].id;
 							if( reset || !prepend || !this.firstLogsId) this.firstLogsId = res.data[res.data.length - 1].id;
 
@@ -159,12 +173,12 @@
 
 								logContainer[prepend ? 'prepend' : 'append'](
 									$(`<li>
-										  [<span class="level ${item.level === 'ERROR' ? 'redActive' : ''}">${item.level}</span>] &nbsp;
-										  <span>${item.date}</span>&nbsp;
-										  <span>[${markKeyword(item.threadName)}]</span>&nbsp;
-										  <span>${markKeyword(item.loggerName)}</span>&nbsp;-&nbsp;
-										  <span>${markKeyword(item.message)}</span>
-										</li>`)
+                    [<span class="level ${item.level === 'ERROR' ? 'redActive' : ''}">${item.level}</span>] &nbsp;
+                    <span>${item.date}</span>&nbsp;
+                    <span>[${markKeyword(item.threadName)}]</span>&nbsp;
+                    <span>${markKeyword(item.loggerName)}</span>&nbsp;-&nbsp;
+                    <span>${markKeyword(item.message)}</span>
+									</li>`)
 								);
 							}
 						}
@@ -229,16 +243,30 @@
 				background: #ffff00;
 			}
 		}
-	}
+  }
 
-	.noText {
-		display: flex;
-		height: calc(100% - 60px);
-		align-items: center;
-		justify-content: center;
-		color: #1976D2;
-		font-size: 16px;
-		background-color: #fff;
+  .logBox {
+    height: calc(100% - 44px);
+    .el-loading-spinner .el-loading-text {
+      font-size: 12px;
+      color: #333;
+    }
+  }
+
+	.noData {
+    height: calc(100% - 60px);
+    padding-top: 9%;
+		color: #999;
+		font-size: 12px;
+    background-color: #fff;
+    div {
+      text-align: center;
+
+    }
+    .clickLoad {
+      cursor: pointer;
+      color: #48b6e2;
+    }
 	}
 
 	.inputStyle {

@@ -188,14 +188,22 @@
 					return;
 
 				if( cell.getSourceCell()) {
-					let sourceCell = cell.getSourceCell();
+          let sourceCell = cell.getSourceCell(),
+              targetCell = cell.getTargetCell(),
+              sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null,
+              mergedTargetSchema = targetCell && typeof targetCell.getOutputSchema === 'function' ? targetCell.getOutputSchema() : null;
+
 					let firstDataNode = typeof sourceCell.getFirstDataNode === 'function' ? sourceCell.getFirstDataNode() : [];
 					this.model.joinTable.stageId = firstDataNode.length > 0 ? firstDataNode[0].id : '';
-					//this.model.joinTable.stageId = cell.getSourceCell().id;
-				}
+          //this.model.joinTable.stageId = cell.getSourceCell().id;
+          // 关联字段自动填充
+          let sourceArr = sourceSchema && sourceSchema.fields && sourceSchema.fields.length > 0 ?sourceSchema.fields.filter(item=> item.primary_key_position > 0):[];
+          let targetArr = mergedTargetSchema.fields && mergedTargetSchema.fields.length > 0 ?mergedTargetSchema.fields.filter(item=> item.primary_key_position > 0):[];
+
+          this.model.joinTable.joinKeys = sourceArr && sourceArr.length > 0? sourceArr.map((fields,i) =>({source:fields.field_name, target: targetArr[i].field_name})): this.model.joinTable.joinKeys;
+        }
 
 				this.$emit(EditorEventType.RESIZE);
-
 				this.showMapping(data, cell, vueAdapter);
 			},
 			getData(){
@@ -213,10 +221,10 @@
 			},
 
 			/**
-			 * show current link source schema, target schema and config mapping
-			 * @param cell
-			 * @param vueAdapter
-			 */
+       * show current link source schema, target schema and config mapping
+       * @param cell
+       * @param vueAdapter
+       */
 			showMapping(data, cell, vueAdapter) {
 				this.cell = cell;
 				this.targetCell = this.cell.getTargetCell();
@@ -249,11 +257,10 @@
 					let targetJoinFields = targetSchemaFields.filter( field => field.field_name === this.model.joinTable.joinPath);
 					let isArray = targetJoinFields && targetJoinFields.length > 0 && targetJoinFields[0].javaType === 'Array';
 					if( this.model.joinTable.isArray !== isArray ) this.model.joinTable.isArray = isArray;
-
 					this.$refs.mappingComp.setSchema(sourceSchema, mergedTargetSchema);
 					log('Link.renderSchema', sourceSchema, mergedTargetSchema);
 				}
-			},
+      },
 
 			initByType(type){
 				if( type === 'app.Table'){

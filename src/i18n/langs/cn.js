@@ -58,9 +58,14 @@ const cn = {
 		cancleReset: '已取消重置',
 		resetOk: '重置成功',
 		resetFailed: '重置失败',
-		operator: '操作'
+		operator: '操作',
+    edit: '修改'
 	},
 	dataFlow: {
+
+    loadLogTip: '运行日志努力加载中，可能需要5~10秒，请稍等......',
+    noLogTip: '没有数据',
+    clickLoadTxt: '点击加载',
 		average: '平均',
 		current: '当前',
 		allNode: '全部节点',
@@ -140,13 +145,17 @@ const cn = {
 		read_batch_size: '每次读取多少',
 		mission: '描述',
 		yes: '是',
-		no: '否',
+    no: '否',
+    selectGrpupFiled: '请选择分组字段',
+    selectTargetField: '请选择目标字段',
+    aggName: '子处理名称',
 		nodeName: '节点名称',
 		aggFunction: '聚合函数',
-		aggExpression: '聚合表达式',
+		aggExpression: '目标字段',
 		filterPredicate: '过滤器',
-		groupByExpression: '分组表达式',
-		polymerization: '聚合处理',
+		groupByExpression: '分组字段',
+    aggregation: '聚合处理',
+    nameTip: '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
 		button: {
 			setting: '设置',
 			logs: '日志',
@@ -158,6 +167,7 @@ const cn = {
 			force_stop: '强制停止',
 			reset: '重置',
 			save: '保存',
+			reloadSchema:'重新加载'
 		},
 		save_before_running: '请先保存再运行',
 		reset_job: {
@@ -168,7 +178,14 @@ const cn = {
 			msg: '停止任务?',
 			force_stop_msg: '强制停止任务?',
 			tip: '提示'
-		}
+		},
+    file_preview_fields: {
+      file_name: "文件名称",
+      file_size_ondisk: "文件大小(Byte)",
+      file_modify_time_ondisk: "更新时间",
+      file_create_time_ondisk: "创建时间",
+      file_path: "文件路径"
+    }
 	},
 	connection: {
 		status: {
@@ -300,7 +317,13 @@ const cn = {
 					configurationES: '配置Elastic search',
 					chooseESName: '请选择Elastic search',
 					es_isNull: 'Elastic search不能为空'
-				}
+        },
+        custom: {
+					tip: 'Custom节点',
+					name: 'Custom',
+					none_fileName: 'Custom不能为空',
+					chooseCustomName: '请选择Custom'
+				},
 			},
 			processor: {
 				aggregate: {
@@ -308,10 +331,13 @@ const cn = {
 					tip: '聚合处理器',
 					defaultText: '聚合',
 					none_function: '聚合函数必填.',
-					none_group: '分组表达式必填.',
-					none_aggregation_expression: '聚合表达式必填.',
+          none_group: '分组表达式必填.',
+          none_name: '子处理名称必填',
+					none_aggregation_expression: '目标字段必填.',
 					new_aggregate: '添加聚合',
-					none_stage: '至少有一个聚合处理',
+          none_stage: '至少有一个聚合处理',
+          none_subprocessingName: '子处理名称不能为空',
+          name_notRepeated: '子处理名称不能重复'
 				},
 				field: {
 					name: '字段',

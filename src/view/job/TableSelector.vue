@@ -21,8 +21,8 @@
 			<span class="custom-tree-node" slot-scope="{ node, data}">
 				<span @dblclick="handleGraph(data)">
 					<span  v-if="data.meta_type !=='database'" :class="`iconfont filter-icon-table ${mapping[data.meta_type]}`"></span>
-					<span v-if="['database'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>
-<!--					<span v-if="['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>-->
+<!--					<span v-if="['database'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>-->
+					<span v-if="['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>
 					<span class="table-label">{{ node.label }}</span>
 				</span>
 				<span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>
@@ -80,16 +80,15 @@
 				let params = {
 					filter: JSON.stringify({
 						where: {
-							'source.database_type':{
-								nin:["file","dummy db","gridfs","rest api"]
-							},
-							meta_type: {
-								in: ['database']
-							},
+							// 'source.database_type':{
+							// 	nin:["file","dummy db","gridfs","rest api"]
+							// },
 							// meta_type: {
 							// 	in: ['database']
-							// 	// in: ['database', 'directory', 'ftp', 'apiendpoint']
 							// },
+							meta_type: {
+								in: ['database', 'directory', 'ftp', 'apiendpoint']
+							},
 							is_deleted:false
 						},
 						order:'original_name ASC'
@@ -230,8 +229,8 @@
 
 				this.count = this.count + 50;
 				let cell ='';
-				if(['database'].includes(data.meta_type)){
-				// if(['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)){
+				// if(['database'].includes(data.meta_type)){
+				if(['directory', 'ftp', 'apiendpoint'].includes(data.meta_type)){
 					let dataType = data.source.database_type;
 					cell = this.editor.graph.createCell(mapping[dataType], formData,schema);
 				}else {
@@ -307,6 +306,13 @@
 	.ts-icon{
 		color: #333;
 
+	}
+	.ts-tree{
+		/*设置文字不能被选中     以下为css样式*/
+		-webkit-user-select:none;
+		-moz-user-select:none;
+		-ms-user-select:none;
+		user-select:none;
 	}
 </style>
 <style scoped>

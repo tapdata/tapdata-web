@@ -1,18 +1,18 @@
 import {options} from "../../lib/rappid/config";
-import EsNodeAttribute from "./EsNodeAttribute";
+import CustomAttribute from "./CustomAttribute";
 import i18n from "../../../i18n/i18n";
 
-export const esNodeConfig = {
-	type: 'app.ESNode',
+export const customNodeConfig = {
+	type: 'app.CustomNode',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/o-es.svg',
+					xlinkHref: 'static/editor/o-custom.svg',
 				},
 				label: {
-					text: i18n.t('editor.cell.data_node.es.name'),
+					text: i18n.t('editor.cell.data_node.custom.name'),
 				}
 			}
 		},
@@ -32,7 +32,7 @@ export const esNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-				return false;
+        return true;
 			},
 
 			/**
@@ -41,14 +41,15 @@ export const esNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-				return !['app.FileNode'].includes(sourceCell.get('type'));
+				return ['app.Dummy' ,'app.Collection','app.Table'].includes(sourceCell.get('type'));
+
 			},
 
 			validate(data) {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
 				if (!data)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`);
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.custom.none_fileName')}`);
 				return true;
 			},
 		},
@@ -168,7 +169,7 @@ export const esNodeConfig = {
 		 */
 		//groupLabel: '',
 
-		size: {width: 5, height: 4},
+		size: {width: 5, height: 3},
 		attrs: {
 			root: {
 				dataTooltip: i18n.t('editor.cell.data_node.file.tip'),
@@ -184,14 +185,14 @@ export const esNodeConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/elastic-search-clust.svg',
+				xlinkHref: 'static/editor/custom.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.data_node.es.name'),
+				text: i18n.t('editor.cell.data_node.custom.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -200,7 +201,7 @@ export const esNodeConfig = {
 				strokeWidth: 0,
 				refX: '75%',
 				refY: '40%',
-				x: -32,
+				x: -35,
 				y: 27
 			}
 		}
@@ -211,7 +212,7 @@ export const esNodeConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: EsNodeAttribute,
+		component: CustomAttribute,
 	}
 
 };
