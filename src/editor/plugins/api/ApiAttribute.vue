@@ -73,12 +73,6 @@
 					this.$emit('dataChanged', this.getData());
 				}
       },
-      'model.connectionId': {
-				immediate: true,
-				handler(){
-					this.loadDataModels(this.model.connectionId);
-				}
-			},
 		},
 
 		methods: {
