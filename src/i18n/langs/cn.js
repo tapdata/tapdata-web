@@ -107,7 +107,7 @@ const cn = {
 		endTime: '结束时间',
 		separator: "至",
 		dataPlaceholder: "选择时间范围",
-		taskStatus: '运行状态',
+		taskStatus: '启动开关',
 		taskStatusPlaceholder: '请选择任务状态',
 		updateTime: '更新时间',
 		runningSpeed: '运行速度',
