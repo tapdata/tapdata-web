@@ -665,7 +665,7 @@
 								width: 0
 							}
 						},
-						data: [this.$t('dataFlow.inputNumber'), this.$t('dataFlow.outputNumber')],
+						data: [this.$t('dataFlow.outputNumber'), this.$t('dataFlow.inputNumber')],
 						axisPointer: {
 							type: 'shadow'
 						},
@@ -688,13 +688,13 @@
 					},
 					series: [{
 						type: 'bar',
-						data: [series1, series2],
+						data: [series2, series1],
 						barWidth: 70,
 						barGap: '-100%',
 						itemStyle: {
 							normal: {
 								color: function (params) {
-									var colorList = ['#48b6e2', '#62a569'];
+									var colorList = ['#62a569', '#48b6e2'];
 									return colorList[params.dataIndex];
 								},
 								label: {

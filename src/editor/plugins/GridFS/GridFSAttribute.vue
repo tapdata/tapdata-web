@@ -23,6 +23,7 @@
 <script>
 import _ from "lodash";
 import factory from '../../../api/factory';
+import { convertSchemaToTreeData } from "../../util/Schema";
 let connections = factory('connections');
 
 export default {
@@ -39,7 +40,8 @@ export default {
       model: {
         connectionId: "",
         type: "gridfs"
-      }
+      },
+      mergedSchema: null
     };
   },
 
@@ -71,10 +73,15 @@ export default {
   },
 
   methods: {
-    setData(data){
+    convertSchemaToTreeData,
+    setData(data, cell, isSourceDataNode, vueAdapter){
       if( data ){
         Object.keys(data).forEach(key => this.model[key] = data[key]);
       }
+      this.mergedSchema = cell.getOutputSchema();
+      cell.on('change:outputSchema', () => {
+        this.mergedSchema = cell.getOutputSchema();
+      });
 		},
 
     getData() {

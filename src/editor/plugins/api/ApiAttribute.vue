@@ -18,6 +18,22 @@
               v-bind:key="idx"></el-option>
 					</el-select>
 				</el-form-item>
+
+        <el-form-item :label="$t('editor.cell.data_node.collection.form.collection.label')" prop="tableName" required>
+          <el-select
+              v-model="model.tableName"
+              filterable
+              allow-create
+              default-first-option
+              clearable
+              :placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')" size="mini">
+            <el-option
+                v-for="(item, idx) in schemas"
+                :label="`${item.table_name}`"
+                :value="item.table_name"
+                v-bind:key="idx"></el-option>
+          </el-select>
+        </el-form-item>
 			</el-form>
 		</div>
 	</div>
@@ -25,7 +41,7 @@
 <script>
 	import _ from "lodash";
 	import factory from '../../../api/factory';
-  // import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
+  import { convertSchemaToTreeData } from "../../util/Schema";
 	let connections = factory('connections');
 
 	export default {
@@ -43,7 +59,7 @@
           connectionId: "",
           type: "rest api"
         },
-        schemas: [],
+        mergedSchema: null,
 			};
 		},
 
@@ -73,16 +89,40 @@
 					this.$emit('dataChanged', this.getData());
 				}
       },
+
+      'model.connectionId': {
+				immediate: true,
+				handler(){
+					this.loadDataModels(this.model.connectionId);
+				}
+			},
 		},
 
 		methods: {
+      convertSchemaToTreeData,
+
+      loadDataModels(connectionId){
+				if( !connectionId ){
+					return;
+				}
+				let self = this;
+				connections.get([connectionId]).then(result => {
+					if( result.data ){
+						let schemas = result.data.schema && result.data.schema.tables || [];
+						schemas = schemas.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+						self.schemas = schemas;
+					}
+        });
+      },
 
 			setData(data, cell, isSourceDataNode, vueAdapter) {
 				if (data) {
 					Object.keys(data).forEach(key => this.model[key] = data[key]);
         }
-        // let inputSchemas = cell.getInputSchema();
-        // let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
+        this.mergedSchema = cell.getOutputSchema();
+        cell.on('change:outputSchema', () => {
+					this.mergedSchema = cell.getOutputSchema();
+				});
 
 			},
 
