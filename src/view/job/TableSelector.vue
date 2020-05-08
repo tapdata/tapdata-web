@@ -225,20 +225,26 @@
 						meta_type: "table",
 						fields:data.fields,
 					};
+				}else if(['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(data.source.database_type)){
+					formData ={
+						connectionId:data.source._id,
+						name: data.source.name || data.label ,
+						type: data.source.database_type
+					};
 				}
 
 				this.count = this.count + 50;
 				let cell ='';
 				// if(['database'].includes(data.meta_type)){
-				if(['directory', 'ftp', 'apiendpoint'].includes(data.meta_type)){
+				if(['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(data.source.database_type)){
 					let dataType = data.source.database_type;
 					cell = this.editor.graph.createCell(mapping[dataType], formData,schema);
 				}else {
 					cell = this.editor.graph.createCell(mapping[data.meta_type], formData,schema);
 				}
-
 				let coordinates = this.editor.graph.getClientOffset();
 				log('coordinates',coordinates.x+40,coordinates.y+this.count+160);
+
 				cell.position(coordinates.x+400, coordinates.y+this.count+160);
 				this.editor.graph.addCell(cell);
 			},
