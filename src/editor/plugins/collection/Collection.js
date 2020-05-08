@@ -7,7 +7,6 @@ import {options} from "../../lib/rappid/config";
 import CollectionAttribute from "./CollectionAttribute";
 import {FORM_DATA_KEY} from "../../constants";
 import i18n from "../../../i18n/i18n";
-import {FORM_DATA_KEY} from "../../constants";
 
 export const collectionConfig = {
 
