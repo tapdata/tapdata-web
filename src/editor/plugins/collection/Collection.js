@@ -6,6 +6,7 @@
 import {options} from "../../lib/rappid/config";
 import CollectionAttribute from "./CollectionAttribute";
 import i18n from "../../../i18n/i18n";
+import {FORM_DATA_KEY} from "../../constants";
 
 export const collectionConfig = {
 
@@ -20,6 +21,13 @@ export const collectionConfig = {
 				label:{
 					text: i18n.t('editor.cell.data_node.collection.name')
 				}
+			},
+			[FORM_DATA_KEY]: {
+				connectionId: '',
+				excludeTables: [],
+				name: '',
+				freeTransform: false,
+				type: 'collection'
 			}
 		},
 		prototypeProperties: {

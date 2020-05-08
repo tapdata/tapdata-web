@@ -6,6 +6,7 @@
 import {options} from "../../lib/rappid/config";
 import DatabaseAttribute from "./DatabaseAttribute";
 import i18n from "../../../i18n/i18n";
+import {FORM_DATA_KEY} from "../../constants";
 
 export const databaseConfig = {
 
@@ -59,7 +60,13 @@ export const databaseConfig = {
 				label:{
 					text: i18n.t('editor.cell.data_node.database.name')
 				}
-			}
+			},
+			[FORM_DATA_KEY]: {
+				connectionId: "",
+				excludeTables: [],
+				dropTable: false,
+				type: 'database',
+			},
 		},
 		/**
 		 * object that contains properties to be assigned on the subtype prototype.

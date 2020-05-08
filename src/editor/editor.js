@@ -79,6 +79,7 @@ export default class Editor extends BaseObject {
 	mapping = {
 		'app.Collection':'connectionId',
 		'app.Table':'connectionId',
+		'app.Database':'connectionId',
 	};
 
 	constructor(opts){
@@ -516,6 +517,7 @@ export default class Editor extends BaseObject {
 	reloadSchema(){
 		//1. 遍历当前有模型的节点(合并相同连接ID)
 		let self = this;
+		log(' self.graph.graph.getCells()', self.graph.graph.getCells());
 		let dataCells = self.graph.graph.getCells()//.filter(cell => cell.isDataNode && cell.isDataNode())
 			.filter( cell => {
 				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
