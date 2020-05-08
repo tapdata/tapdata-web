@@ -1,5 +1,6 @@
 import {options} from "../../lib/rappid/config";
 import GridFSAttribute from "./GridFSAttribute";
+import {FORM_DATA_KEY} from "../../constants";
 import i18n from "../../../i18n/i18n";
 
 export const GridFSNodeConfig = {
@@ -13,7 +14,11 @@ export const GridFSNodeConfig = {
 				},
 				label: {
 					text: i18n.t('editor.cell.data_node.gridfs.name'),
-				}
+        },
+        [FORM_DATA_KEY]: {
+          type: 'gridfs',
+          connectionId: ''
+        }
 			}
 		},
 		prototypeProperties: {

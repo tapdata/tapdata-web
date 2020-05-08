@@ -34,6 +34,7 @@
 
 				<div class="databaseInfo">
 					<span v-show="database_type">{{database_type}}</span>
+          <span v-show="database_host">{{database_host}}</span>
           <span v-show="database_port">{{database_port}}</span>
 				</div>
 			</el-form>
@@ -75,8 +76,8 @@
               </el-col>
 					</el-row>
 				</el-tab-pane>
-
-				<el-tab-pane :label="$t('editor.cell.data_node.database.tableRemoved') + '('+model.excludeTables.length+')'" name="second">
+<!-- model.excludeTables -->
+				<el-tab-pane :label="$t('editor.cell.data_node.database.tableRemoved') + '('+removeTables.length+')'" name="second">
           <div class="search">
             <el-input
               :placeholder="$t('editor.cell.data_node.database.enterName')"
@@ -154,7 +155,8 @@
           dropTable: false
 				},
         database_type: '',
-        database_port: ''
+        database_port: '',
+        database_host: ''
 			};
     },
 
@@ -204,6 +206,8 @@
 			'model.connectionId': {
 				immediate: true,
 				handler() {
+          this.tables = [];
+          this.removeTables = [];
           this.lookupDatabaseType();
 					this.loadDataModels(this.model.connectionId);
 				}
@@ -235,7 +239,8 @@
 			loadDataModels(connectionId) {
 				if (!connectionId) {
 					return;
-				}
+        }
+
         let self = this;
 				connections.get([connectionId]).then(result => {
 					if (result.data) {
@@ -255,7 +260,7 @@
             });
 
             let uriArr = result.data.database_uri.split(":");
-            let ip = uriArr?uriArr[1].split("/")[2]:[];
+            this.database_host = uriArr?uriArr[1].split("/")[2]:[];
             let port = uriArr?uriArr[2].split('/')[0]:[];
             this.database_port = result.data.database_port&&result.data.database_port !==0?result.data.database_port: port
 					}
@@ -334,7 +339,7 @@
 </script>
 <style lang="less">
 	.database {
-    .el-form-item { margin-bottom: 10px;}
+    .el-form-item { margin-bottom: 14px;}
 		.processingBody {
 			position: relative;
 			height: calc(100% - 165px);

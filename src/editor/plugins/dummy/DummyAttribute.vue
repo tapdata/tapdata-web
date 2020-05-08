@@ -45,7 +45,7 @@
 				},
 				model: {
           connectionId: "",
-          type: "dummy"
+          type: "dummy db",
 				}
 			};
 		},

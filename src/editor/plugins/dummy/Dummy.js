@@ -1,6 +1,7 @@
 import log from "../../../log";
 import {options} from "../../lib/rappid/config";
 import DummyAttribute from "./DummyAttribute";
+import {FORM_DATA_KEY} from "../../constants";
 import i18n from "../../../i18n/i18n";
 
 export const DummyConfig = {
@@ -15,7 +16,11 @@ export const DummyConfig = {
 
 				label: {
 					text: i18n.t('editor.cell.data_node.dummy.name'),
-				}
+        },
+        [FORM_DATA_KEY]: {
+          type: 'dummy db',
+          connectionId: ''
+        }
 			}
 		},
 		prototypeProperties: {

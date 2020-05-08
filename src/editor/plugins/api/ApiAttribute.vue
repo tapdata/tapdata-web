@@ -12,10 +12,10 @@
 							filterable v-model="model.connectionId"
 							:placeholder="$t('editor.cell.data_node.api.chooseApiName')">
 						<el-option
-								v-for="(item, idx) in databases"
-								:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
-								:value="item.id"
-								v-bind:key="idx"></el-option>
+              v-for="(item, idx) in databases"
+              :label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
+              :value="item.id"
+              v-bind:key="idx"></el-option>
 					</el-select>
 				</el-form-item>
 			</el-form>
@@ -25,7 +25,7 @@
 <script>
 	import _ from "lodash";
 	import factory from '../../../api/factory';
-
+  // import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
 	let connections = factory('connections');
 
 	export default {
@@ -41,8 +41,9 @@
 				},
 				model: {
           connectionId: "",
-          type: "api"
-				}
+          type: "rest api"
+        },
+        schemas: [],
 			};
 		},
 
@@ -71,14 +72,24 @@
 				handler(val) {
 					this.$emit('dataChanged', this.getData());
 				}
-			}
+      },
+      'model.connectionId': {
+				immediate: true,
+				handler(){
+					this.loadDataModels(this.model.connectionId);
+				}
+			},
 		},
 
 		methods: {
-			setData(data) {
+
+			setData(data, cell, isSourceDataNode, vueAdapter) {
 				if (data) {
 					Object.keys(data).forEach(key => this.model[key] = data[key]);
-				}
+        }
+        // let inputSchemas = cell.getInputSchema();
+        // let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
+
 			},
 
 			getData() {

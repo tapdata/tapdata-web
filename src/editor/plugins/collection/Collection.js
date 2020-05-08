@@ -5,6 +5,7 @@
  */
 import {options} from "../../lib/rappid/config";
 import CollectionAttribute from "./CollectionAttribute";
+import {FORM_DATA_KEY} from "../../constants";
 import i18n from "../../../i18n/i18n";
 
 export const collectionConfig = {
@@ -19,7 +20,11 @@ export const collectionConfig = {
 				},
 				label:{
 					text: i18n.t('editor.cell.data_node.collection.name')
-				}
+        },
+        [FORM_DATA_KEY]: {
+          type: 'collection',
+          model: {}
+        }
 			}
 		},
 		prototypeProperties: {

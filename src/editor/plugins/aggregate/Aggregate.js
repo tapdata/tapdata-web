@@ -26,7 +26,11 @@ export const aggregateConfig = {
 				},
 				label: {
 					text: i18n.t('editor.cell.processor.aggregate.name'),
-				}
+        },
+        [FORM_DATA_KEY]: {
+          type: 'aggregation_processor',
+          form: {}
+        }
 			}
 		},
 		prototypeProperties: {
