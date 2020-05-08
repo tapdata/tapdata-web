@@ -115,7 +115,7 @@ export const aggregateConfig = {
 							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_function')}`);
 						if (!item.groupByExpression)
 							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_group')}`);
-						if (!item.aggExpression && item.aggFunction !== "COUNT")
+						if (item.aggFunction !== "COUNT" && !item.aggExpression )
 							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_aggregation_expression')}`);
             if (!item.name)
               throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_subprocessingName')}`);

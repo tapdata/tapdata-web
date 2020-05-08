@@ -154,6 +154,7 @@ const tc = {
 		filterPredicate: '過濾器',
 		groupByExpression: '分組字段',
     aggregation: '聚合處理',
+    enterFilterTable: '請輸入過濾表內容',
     nameTip: '後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ',
 		button: {
 			setting: '設置',

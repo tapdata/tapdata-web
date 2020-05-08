@@ -344,6 +344,8 @@
 .nodeStye {
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
   background-color: #FAFAFA;
   head {
     // display: block;
@@ -363,6 +365,7 @@
       font-size: 12px;
      }
   }
+
   .nodeBody { /**节点选择样式**/
     padding: 20px;
     .e-form {
@@ -392,4 +395,10 @@
       }
     }
   }
+
+  .e-entity-wrap {
+    flex: 1;
+    overflow: auto;
+  }
+
 }

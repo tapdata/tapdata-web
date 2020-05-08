@@ -153,7 +153,8 @@ const en = {
 		aggExpression: 'Target Field',
 		filterPredicate: 'Filter Predicate',
 		groupByExpression: 'Group Field',
-    polymerization: 'Polymerization',
+    aggregation: 'Aggregation',
+    enterFilterTable: 'Please enter the filter table content',
     nameTip: 'Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ',
 		button: {
 			setting: 'Setting',

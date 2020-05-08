@@ -58,7 +58,7 @@
 					<el-form-item
 							:label="$t('dataFlow.filterPredicate')"
 							:prop="'aggregations.' + index +'.filterPredicate'">
-						<el-input v-model="item.filterPredicate"></el-input>
+						<el-input type="textarea" v-model="item.filterPredicate" :placeholder="$t('dataFlow.enterFilterTable')"></el-input>
 					</el-form-item>
 					<el-form-item
 							:label="$t('dataFlow.groupByExpression')"
@@ -80,7 +80,7 @@
 					<span @click="removeRow(item,index)" class="iconfont icon-quxiao remove"></span>
 				</el-col>
 			</el-row>
-			<el-form-item>
+			<el-form-item class="btnClass">
 				<el-button @click="addRow">+ {{$t('editor.cell.processor.aggregate.new_aggregate')}}</el-button>
 			</el-form-item>
 		</el-form>
@@ -150,32 +150,41 @@
 
 		methods: {
       changeAggFunction(data) {
-        let count = 0;
-        let aggFunctionArr = [];
-        for(let i=0; i<this.form.aggregations.length; i++) {
-          let item = this.form.aggregations[i];
-          aggFunctionArr.push(item.aggFunction);
-          if(new Set(aggFunctionArr).size !== aggFunctionArr.length){
-            count ++;
-          }
-          if(count === 0) {
-            item.name = item.aggFunction;
-          } else {
-            item.name = item.aggFunction + '_' + count;
-          }
-        }
-      },
+        log('data',data, this.form.aggregations);
 
+        let item =  this.form.aggregations.filter(v => v.aggFunction === data.aggFunction);
+        log('temi',item);
+        if(item.length > 1) {
+          data.name =  data.aggFunction +'_'+(item.length-1);
+        } else {
+          data.name =  data.aggFunction;
+        }
+        // let count =0;
+        // let aggFunctionArr = [];
+        // for(let i=0; i<this.form.aggregations.length; i++) {
+        //   let item = this.form.aggregations[i];
+        //   aggFunctionArr.push(item.aggFunction);
+        //   if(new Set(aggFunctionArr).size !== aggFunctionArr.length){
+        //     count ++;
+        //   }
+        //   if(count === 0) {
+        //     item.name = item.aggFunction;
+        //   } else {
+        //     item.name = item.aggFunction + '_' + count;
+        //   }
+        // }
+
+      },
 			addRow() {
 				let list = {
-          name: '',
+          name: 'COUNT',
 					filterPredicate: '',
 					aggFunction: 'COUNT',
 					aggExpression: '1',
 					groupByExpression: ''
 				};
         this.form.aggregations.push(list);
-        this.changeAggFunction();
+        this.changeAggFunction(list);
         log("length",this.form.aggregations.length);
 			},
 
@@ -274,7 +283,7 @@
 		}
 
 		.el-form-item {
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       .el-form-item__label,.el-input__inner {
         font-size: 12px;
       }
@@ -288,6 +297,7 @@
     .el-form-item__content {
       .el-button { padding: 8px 15px; font-size: 12px;}
       .el-input__inner { height: 30px!important; line-height: 30px;}
-		}
+    }
+    .btnClass .el-form-item__content { line-height: 30px!important;}
 	}
 </style>

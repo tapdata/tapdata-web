@@ -58,9 +58,33 @@
 					<tbody>
 						<tr v-for="(item, idx) in model.joinTable.joinKeys" v-bind:key="idx">
 							<td>
+                <!-- <el-select filterable v-model="item.source">
+                  <el-option
+                    v-for="(item, idx) in sourceList"
+                    :value="item.id"
+                    v-bind:key="idx"></el-option>
+                </el-select> -->
+                <!-- <select  v-model="item.source">
+                  <option
+                    v-for="(item, idx) in sourceList"
+                    :value="item.id"
+                    :key="idx"></option>
+                </select> -->
 								<input type="text" v-model="item.source">
 							</td>
 							<td>
+                <!-- <select v-model="item.target">
+                  <option
+                    v-for="(item, idx) in targetList"
+                    :value="item.id"
+                    :key="idx"></option>
+                </select> -->
+                <!-- <el-select filterable v-model="item.target">
+                  <el-option
+                    v-for="(item, idx) in targetList"
+                    :value="item.id"
+                    v-bind:key="idx"></el-option>
+                </el-select> -->
 								<input type="text" v-model="item.target">
 								<div class="e-action-bar">
 									<el-button
@@ -99,7 +123,8 @@
 
 		data(){
 			return {
-
+        sourceList: [],
+        targetList: [],
 				writeModels: [],
 
 				sourceSchema: [],

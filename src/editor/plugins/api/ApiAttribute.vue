@@ -34,19 +34,28 @@
                 v-bind:key="idx"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
+          <el-input
+              v-model="model.primaryKeys"
+              :placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"  size="mini"></el-input>
+        </el-form-item>
 			</el-form>
 		</div>
+    <div class="e-entity-wrap" style="text-align: center; overflow:auto;">
+      <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
+    </div>
 	</div>
 </template>
 <script>
 	import _ from "lodash";
-	import factory from '../../../api/factory';
+  import factory from '../../../api/factory';
+  import Entity from '../link/Entity';
   import { convertSchemaToTreeData } from "../../util/Schema";
 	let connections = factory('connections');
 
 	export default {
 		name: "ApiNode",
-
+    components: {Entity},
 		data() {
 			return {
 				databases: [],
@@ -57,8 +66,11 @@
 				},
 				model: {
           connectionId: "",
-          type: "rest api"
+          type: "rest api",
+          tableName: "",
+          primaryKeys: '',
         },
+        schemas:[],
         mergedSchema: null,
 			};
 		},
@@ -95,7 +107,35 @@
 				handler(){
 					this.loadDataModels(this.model.connectionId);
 				}
-			},
+      },
+      'model.tableName': {
+				immediate: true,
+				handler(){
+					if( this.schemas.length > 0 ){
+						if( this.model.tableName){
+							let schema = this.schemas.filter( s => s.table_name === this.model.tableName);
+							schema = schema && schema.length > 0 ? schema[0] : {
+								table_name: this.model.tableName,
+								cdc_enabled: true,
+								meta_type: 'rest api',
+								fields: []
+							};
+							this.$emit('schemaChange', _.cloneDeep(schema));
+						}
+					}
+				}
+      },
+      mergedSchema: {
+				handler(){
+					if(!this.model.primaryKeys && this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0){
+						let primaryKeys = this.mergedSchema.fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
+						let unique = {};
+						primaryKeys.forEach( key => unique[key] = 1);
+						primaryKeys = Object.keys(unique);
+						if( primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
+					}
+				}
+			}
 		},
 
 		methods: {
@@ -139,4 +179,9 @@
 		}
 	};
 </script>
+<style lang="less">
+.apiNode {
+  .el-form-item { margin-bottom: 10px;}
+}
+</style>
 
