@@ -181,7 +181,7 @@ export default {
             uuid: this.currentData.uuid,
             name: getFrom.name,
             command: getFrom.command,
-            arguments: getFrom.arguments
+            arguments: getFrom.arguments?getFrom.arguments:""
           };
           if(getFrom.id === '') {
             await cluster.addMonitor(data).then(res => {
