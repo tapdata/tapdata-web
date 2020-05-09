@@ -39,8 +39,8 @@
 						<div class="task-list-menu-right">
 <!--							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-hanshu back-btn-icon"></i></el-button>-->
 <!--							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-biaoqian back-btn-icon"></i></el-button>-->
-							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('paused')"><i class="iconfont icon-zanting2 back-btn-icon"></i></el-button>
-							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('running')"><i class="iconfont icon-yunhang1 back-btn-icon"></i></el-button>
+							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('scheduled')"><i class="iconfont icon-zanting2 back-btn-icon"></i></el-button>
+							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('stopping')"><i class="iconfont icon-yunhang1 back-btn-icon"></i></el-button>
 <!--							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-shanchu1 back-btn-icon"></i></el-button>-->
 							<router-link target="_blank" to="/job">
 								<el-button class="add-btn-icon-box" ><i class="iconfont icon-jia add-btn-icon"></i></el-button>
@@ -93,7 +93,7 @@
 						<div v-if="!scope.row.hasChildren">
 							<el-switch
 									v-model="scope.row.newStatus"
-									inactive-value="paused" active-value="running"
+									inactive-value="stopping" active-value="scheduled"
 									@change="handleStatus(scope.row.id, scope.row.newStatus)"></el-switch>
 						</div>
 					</template>
@@ -317,7 +317,7 @@
 				if (!data) return;
 
 				data.map(item => {
-					item.newStatus = 'running' === item.status ? 'running' : 'paused';
+					item.newStatus = ['running','scheduled'].includes(item.status) ? 'scheduled' : 'stopping';
 					if (item.stats) {
 						item.hasChildren = false;
 						item.input = item.stats.input? item.stats.input.rows :'--' ;
@@ -396,7 +396,7 @@
 				let data = {
 					status: status,
 				};
-				status = status === 'running' ? 'paused' : 'scheduled';
+				status = status === 'running' ? 'stopping' : 'scheduled';
 				await dataFlows.updateById(id, data).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						this.getData();
