@@ -151,7 +151,7 @@ const cn = {
     aggName: '子处理名称',
 		nodeName: '节点名称',
 		aggFunction: '聚合函数',
-		aggExpression: '目标字段',
+		aggExpression: '作用目标',
 		filterPredicate: '过滤器',
 		groupByExpression: '分组字段',
     aggregation: '聚合处理',

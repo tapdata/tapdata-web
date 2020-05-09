@@ -150,7 +150,7 @@ const en = {
     aggName: 'Sub-process name',
 		nodeName: 'Node Name',
 		aggFunction: 'Polymerization',
-		aggExpression: 'Target Field',
+		aggExpression: 'Target',
 		filterPredicate: 'Filter Predicate',
 		groupByExpression: 'Group Field',
     aggregation: 'Aggregation',

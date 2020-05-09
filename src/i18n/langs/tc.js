@@ -150,7 +150,7 @@ const tc = {
     aggName: '子處理名稱',
 		nodeName: '節點名稱',
 		aggFunction: '聚合函數',
-		aggExpression: '目標字段',
+		aggExpression: '作用目標',
 		filterPredicate: '過濾器',
 		groupByExpression: '分組字段',
     aggregation: '聚合處理',

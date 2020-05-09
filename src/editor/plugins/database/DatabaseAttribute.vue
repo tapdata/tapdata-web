@@ -34,8 +34,9 @@
 
 				<div class="databaseInfo">
 					<span v-show="database_type">{{database_type}}</span>
-          <span v-show="database_host">{{database_host}}</span>
-          <span v-show="database_port">{{database_port}}</span>
+          <span v-show="database_host && database_type !=='mongodb'">{{database_host}}</span>
+          <span v-show="database_port && database_type !=='mongodb'">{{database_port }}</span>
+          <span v-show="database_type === 'mongodb' && database_uri">{{database_uri}}</span>
 				</div>
 			</el-form>
 		</div>
@@ -57,6 +58,7 @@
             <el-input
               :placeholder="$t('editor.cell.data_node.database.enterName')"
               prefix-icon="el-icon-search"
+              clearable
               v-model="search">
             </el-input>
           </div>
@@ -82,6 +84,7 @@
             <el-input
               :placeholder="$t('editor.cell.data_node.database.enterName')"
               prefix-icon="el-icon-search"
+              clearable
               v-model="removeSearch">
             </el-input>
           </div>
@@ -156,7 +159,8 @@
 				},
         database_type: '',
         database_port: '',
-        database_host: ''
+        database_host: '',
+        database_uri:''
 			};
     },
 
@@ -227,12 +231,12 @@
 		methods: {
 
       lookupDatabaseType(){
-          if(!this.model.connectionId)
-            return;
-          let selectedDbs = this.databases.filter( db => db.id === this.model.connectionId);
-          if( selectedDbs && selectedDbs.length > 0){
-            this.database_type = selectedDbs[0].database_type;
-          }
+        if(!this.model.connectionId)
+          return;
+        let selectedDbs = this.databases.filter( db => db.id === this.model.connectionId);
+        if( selectedDbs && selectedDbs.length > 0){
+          this.database_type = selectedDbs[0].database_type;
+        }
       },
 
 			// 获取表名称
@@ -258,12 +262,10 @@
                 });
               }
             });
-
-            let uriArr = result.data.database_uri.split(":");
-            this.database_host = uriArr?uriArr[1].split("/")[2]:[];
-            let port = uriArr?uriArr[2].split('/')[0]:[]; //端口号
-            this.database_port = result.data.database_port&&result.data.database_port !==0?result.data.database_port : port;
-					}
+          }
+           this.database_host = result.data.database_host;
+           this.database_port = result.data.database_port;
+           this.database_uri = result.data.database_uri;
 				});
       },
       // 移除
