@@ -101,35 +101,27 @@
 				<el-table-column :label="$t('dataFlow.operate')" width="180">
 					<template slot-scope="scope">
 						<div v-if="!scope.row.hasChildren">
-							<el-tooltip v-if="scope.row.status !== 'scheduled'&& scope.row.status !== 'running'&& scope.row.status !== 'force stopping'&&scope.row.status !== 'stopping'" class="item" :content="$t('dataFlow.edit')" placement="bottom">
-								<router-link :to='{path:"/job", query: { id: scope.row.id}}'  target="_blank"><i
-										class="iconfont task-list-icon  icon-ceshishenqing"></i></router-link>
+							<el-tooltip  class="item" :content="$t('dataFlow.edit')" placement="bottom">
+								<el-button type="text" :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)" @click="handleDetail(scope.row.id)">
+									<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
+								</el-button>
 							</el-tooltip>
-							<el-tooltip v-else class="item" :content="$t('dataFlow.detail')"  target="_blank" placement="bottom">
-								<router-link :to='{path:"/job", query: { id: scope.row.id}}'><i
-										class="iconfont task-list-icon icon-chaxun"></i></router-link>
+							<el-tooltip  class="item" :content="$t('dataFlow.detail')" placement="bottom">
+								<el-button type="text" :disabled="['draft'].includes(scope.row.status)" @click="handleDetail(scope.row.id)">
+									<i class="iconfont  task-list-icon icon-chaxun"></i>
+								</el-button>
 							</el-tooltip>
 							<el-tooltip class="item" :content="$t('dataFlow.copy')" placement="bottom">
 								<i class="iconfont task-list-icon icon-fuzhi1" @click="handlerCopy(scope.row.id)"></i>
 							</el-tooltip>
-							<el-tooltip v-if="scope.row.status !== 'scheduled'&& scope.row.status !== 'running'&& scope.row.status !== 'force stopping'&&scope.row.status !== 'stopping'" class="item" :content="$t('message.delete')" placement="bottom">
-								<el-button type="text" @click="handleDelete(scope.row.id)">
-									<i class="iconfont task-list-icon delete-icon  icon-shanchu"></i>
+							<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
+								<el-button type="text" :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)" @click="handleDelete(scope.row.id)">
+									<i class="iconfont task-list-icon icon-shanchu"></i>
 								</el-button>
 							</el-tooltip>
-							<el-tooltip v-else class="item" :content="$t('message.delete')" placement="bottom">
-								<el-button type="text" disabled  @click="handleDelete(scope.row.id)">
-									<i class="iconfont task-list-icon  icon-shanchu"></i>
-								</el-button>
-							</el-tooltip>
-							<el-tooltip  v-if="scope.row.status !== 'scheduled'&& scope.row.status !== 'running'&&scope.row.status !== 'force stopping'&&scope.row.status !== 'stopping'" class="item" :content="$t('dataFlow.reset')" placement="bottom">
-								<el-button type="text"   @click="handleReset(scope.row.id)">
-									<i class="iconfont task-list-icon delete-icon  icon-shuaxin1" ></i>
-								</el-button>
-							</el-tooltip>
-							<el-tooltip  v-else class="item" :content="$t('dataFlow.reset')" placement="bottom">
-								<el-button type="text" disabled @click="handleReset(scope.row.id)">
-									<i class="iconfont task-list-icon icon-shuaxin1" ></i>
+							<el-tooltip  class="item" :content="$t('dataFlow.reset')" placement="bottom">
+								<el-button type="text" :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)"  @click="handleReset(scope.row.id)">
+									<i class="iconfont task-list-icon  icon-shuaxin1" ></i>
 								</el-button>
 							</el-tooltip>
 						</div>
@@ -226,6 +218,13 @@
 			}
 		},
 		methods: {
+			handleDetail(id){
+				let routeUrl = this.$router.resolve({
+					path: "/job",
+					query: {id:id}
+				});
+				window.open(routeUrl .href, '_blank');
+			},
 			handleSelectable(row) {
 				if (row.hasChildren) {
 					return false;
@@ -508,6 +507,12 @@
 		font-size: 14px;
 		margin-left: 20px;
 		/*height: calc(100% - 48px);*/
+		.el-button.is-disabled{
+			color: #C0C4CC;
+		}
+		.el-button--text{
+			color: #606266;
+		}
 	}
 
 	.task-list-operating-area {
