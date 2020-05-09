@@ -58,34 +58,24 @@
 					<tbody>
 						<tr v-for="(item, idx) in model.joinTable.joinKeys" v-bind:key="idx">
 							<td>
-                <!-- <el-select filterable v-model="item.source">
+                <el-select filterable v-model="item.source">
                   <el-option
                     v-for="(item, idx) in sourceList"
                     :value="item.id"
+                    :label="item.field_name"
                     v-bind:key="idx"></el-option>
-                </el-select> -->
-                <!-- <select  v-model="item.source">
-                  <option
-                    v-for="(item, idx) in sourceList"
-                    :value="item.id"
-                    :key="idx"></option>
-                </select> -->
-								<input type="text" v-model="item.source">
+                </el-select>
+								<!-- <input type="text" v-model="item.source"> -->
 							</td>
 							<td>
-                <!-- <select v-model="item.target">
-                  <option
-                    v-for="(item, idx) in targetList"
-                    :value="item.id"
-                    :key="idx"></option>
-                </select> -->
-                <!-- <el-select filterable v-model="item.target">
+                <el-select filterable v-model="item.target">
                   <el-option
                     v-for="(item, idx) in targetList"
                     :value="item.id"
+                    :label="item.field_name"
                     v-bind:key="idx"></el-option>
-                </el-select> -->
-								<input type="text" v-model="item.target">
+                </el-select>
+								<!-- <input type="text" v-model="item.target"> -->
 								<div class="e-action-bar">
 									<el-button
 											v-if="model.joinTable.joinKeys.length > 1"
@@ -97,7 +87,6 @@
 											@click="addCondition"></el-button>
 								</div>
 							</td>
-
 						</tr>
 					</tbody>
 				</table>
@@ -225,6 +214,8 @@
           let sourceArr = sourceSchema && sourceSchema.fields && sourceSchema.fields.length > 0 ?sourceSchema.fields.filter(item=> item.primary_key_position > 0):[];
           let targetArr = mergedTargetSchema.fields && mergedTargetSchema.fields.length > 0 ?mergedTargetSchema.fields.filter(item=> item.primary_key_position > 0):[];
 
+          this.sourceList = sourceSchema.fields;
+          this.targetList = mergedTargetSchema.fields;
           this.model.joinTable.joinKeys = sourceArr && sourceArr.length > 0? sourceArr.map((fields,i) =>({source:fields.field_name, target: targetArr[i].field_name})): this.model.joinTable.joinKeys;
         }
 
@@ -356,7 +347,7 @@
 
 			input {
 				color: #606266;
-				width: 198px;
+				width: 174px;
 				height: 20px;
 				outline: none;
 				border: none;
@@ -385,5 +376,15 @@
 		align-items: baseline;
 		flex-flow: column;
 		padding-left: 55px;
-	}
+  }
+  .e-link-wrap{
+    .e-table .el-select {
+      width: 174px!important;
+      border: 0;
+      .el-input__inner {
+        border: 0;
+        height: 30px;
+      }
+    }
+  }
 </style>

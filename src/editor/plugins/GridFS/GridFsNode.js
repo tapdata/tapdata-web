@@ -1,7 +1,9 @@
 import {options} from "../../lib/rappid/config";
 import GridFSAttribute from "./GridFSAttribute";
 import {FORM_DATA_KEY} from "../../constants";
+import log from '../../../log';
 import i18n from "../../../i18n/i18n";
+
 
 export const GridFSNodeConfig = {
 	type: 'app.GridFSNode',
@@ -52,17 +54,19 @@ export const GridFSNodeConfig = {
 			},
 
 			validate(data) {
-				// log("GridFsNode.validate", data);
+				log("GridFsNode.validate", data);
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
 				if (!data)
 					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.gridfs.gridFs_isNull')}`);
         if( !data.connectionId )
           throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_database')}`);
-        if( !data.tableName )
-          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_collection')}`);
-        if( !data.primaryKeys)
-          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_pk')}`);
+        if(data.isSource) {
+          if( !data.tableName )
+            throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_collection')}`);
+          if( !data.primaryKeys)
+            throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_pk')}`);
+        }
 				return true;
 			},
 		},

@@ -13,7 +13,7 @@
 							<el-form-item
 									:label="$t('dataFlow.aggFunction')"
 									:prop="'aggregations.' + index +'.aggFunction'" required>
-								<el-select v-model="item.aggFunction " @change="changeAggFunction(item)">
+								<el-select v-model="item.aggFunction " @change="changeAggFunction(item, index)">
 									<el-option
 											v-for="item in selectList"
 											:key="item.value"
@@ -97,13 +97,13 @@
 		name: "Aggregate",
 		data() {
 			return {
-				selectList: [
-					{label: 'AVG', value: 'AVG'},
-					{label: 'SUM', value: 'SUM'},
-					{label: 'MAX', value: 'MAX'},
-					{label: 'MIN', value: 'MIN'},
-					{label: 'COUNT', value: 'COUNT'}
-				],
+				selectList: [
+          {label: 'AVG', value: 'AVG'},
+          {label: 'SUM', value: 'SUM'},
+          {label: 'MAX', value: 'MAX'},
+          {label: 'MIN', value: 'MIN'},
+          {label: 'COUNT', value: 'COUNT'}
+        ],
 				groupList: [],
 				expressionList: [],
 				form: {
@@ -117,7 +117,14 @@
 						groupByExpression: ''
 					}]
 				},
-				aggaggExpression: '1'
+        aggaggExpression: '1',
+        countObj: {
+          AVG: 0,
+          SUM: 0,
+          MAX: 0,
+          MIN: 0,
+          COUNT: 0
+        }
 			};
 		},
 		mounted() {
@@ -143,41 +150,32 @@
 					this.$emit('dataChanged', this.getData());
 				}
       },
-      // 'form.aggregations'(data){
-
-      // }
 		},
 
 		methods: {
-      changeAggFunction(data) {
-        log('data',data, this.form.aggregations);
-
-        let item =  this.form.aggregations.filter(v => v.aggFunction === data.aggFunction);
-        log('temi',item);
-        if(item.length > 1) {
-          data.name =  data.aggFunction +'_'+(item.length-1);
-        } else {
-          data.name =  data.aggFunction;
+      changeAggFunction(data, index) {
+        if(data.aggFunction !== "COUNT") {
+          data.aggExpression = '1';
         }
-        // let count =0;
-        // let aggFunctionArr = [];
-        // for(let i=0; i<this.form.aggregations.length; i++) {
-        //   let item = this.form.aggregations[i];
-        //   aggFunctionArr.push(item.aggFunction);
-        //   if(new Set(aggFunctionArr).size !== aggFunctionArr.length){
-        //     count ++;
-        //   }
-        //   if(count === 0) {
-        //     item.name = item.aggFunction;
-        //   } else {
-        //     item.name = item.aggFunction + '_' + count;
-        //   }
-        // }
+        let aggFunctionArr = [];
+        for(let i=0; i<this.form.aggregations.length; i++) {
+          let item = this.form.aggregations[i];
+          aggFunctionArr.push(item.name);
+          if(new Set(aggFunctionArr).size !== aggFunctionArr.length){
+            this.countObj[data.aggFunction]++;
+
+          }
+          if(this.countObj[data.aggFunction] === 0) {
+            data.name = data.aggFunction;
+          } else {
+            data.name = data.aggFunction + '_' + this.countObj[data.aggFunction];
+          }
+        }
 
       },
 			addRow() {
 				let list = {
-          name: 'COUNT',
+          name: '',
 					filterPredicate: '',
 					aggFunction: 'COUNT',
 					aggExpression: '1',
