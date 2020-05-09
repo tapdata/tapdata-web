@@ -222,4 +222,9 @@ export default {
   }
 };
 </script>
+<style lang="less">
+.gridFsNode {
+  .el-form-item { margin-bottom: 10px;}
+}
+</style>
 
