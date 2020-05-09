@@ -105,7 +105,7 @@
 						splitLine: {
 							show: true,
 							lineStyle: {
-								color: "#dedee4"
+								color: "#eee"
 							}
             }, //是否显示分隔线
             grid: {
@@ -150,7 +150,7 @@
 						splitLine: {
 							show: true,
 							lineStyle: {
-								color: "#dedee4"
+								color: "#eee"
 							}
 						}, //是否显示分隔线
 						splitArea: {

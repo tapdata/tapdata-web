@@ -570,7 +570,7 @@
 						this.replicateObj.loading = false;
 					}
 				});
-			},
+      },
 
 			//数据处理
 			dataProcessing(data, type, ele) {
@@ -811,7 +811,7 @@
 <style scoped lang="less">
 	.e-job-monitor {
 		width: 100%;
-		padding: 10px 15px 15px;
+		padding: 5px 12px 10px;
 		box-sizing: border-box;
 		position: relative;
 		.e-job-monitor-btn{
@@ -830,7 +830,7 @@
 				position: relative;
 				width: 100%;
 				height: 330px;
-				margin-top: 20px;
+				margin-top: 6px;
 				border: 1px solid #dcdfe6;
 				border-radius: 3px;
 				box-shadow: 1.414px 1.414px 5px rgba(0, 0, 0, 0.1);

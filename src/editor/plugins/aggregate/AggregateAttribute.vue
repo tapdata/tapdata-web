@@ -294,7 +294,7 @@
 
     .el-form-item__content {
       .el-button { padding: 8px 15px; font-size: 12px;}
-      .el-input__inner { line-height: 30px;}
+      .el-input__inner[style="height: 40px;"] { height: 30px!important;}
     }
     .btnClass .el-form-item__content { line-height: 30px!important;}
 	}
