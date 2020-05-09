@@ -17,7 +17,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="$t('editor.cell.data_node.collection.form.collection.label')" prop="tableName" required>
+      <el-form-item v-if="isSourceDataNode" :label="$t('editor.cell.data_node.collection.form.collection.label')" prop="tableName" required>
         <el-select
           v-model="model.tableName"
           filterable
@@ -33,7 +33,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" prop="primaryKeys" :rules="rules" required>
+      <el-form-item v-if="isSourceDataNode" :label="$t('editor.cell.data_node.collection.form.pk.label')" prop="primaryKeys" :rules="rules" required>
         <el-input
           v-model="model.primaryKeys"
           :placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"  size="mini"></el-input>
@@ -41,7 +41,7 @@
 
     </el-form>
   </div>
-  <div class="e-entity-wrap" style="text-align: center;">
+  <div v-if="isSourceDataNode" class="e-entity-wrap" style="text-align: center;">
     <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
   </div>
 </div>
@@ -87,7 +87,7 @@ export default {
         type: "gridfs",
         databaseType: '',
         tableName: "",
-        dropTable: false,
+        isSource: true,
         primaryKeys: '',
         filter: ''
       },
@@ -138,9 +138,6 @@ export default {
               meta_type: 'gridfs',
               fields: []
             };
-            /*let fields = schema.fields || [];
-                          let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
-                          if( primaryKeys) this.model.primaryKeys = primaryKeys;*/
             this.$emit('schemaChange', _.cloneDeep(schema));
           }
         }
@@ -162,23 +159,6 @@ export default {
   methods: {
     convertSchemaToTreeData,
 
-    async loadDataSource() {
-      let result = await connections.get({
-        filter: JSON.stringify({
-          where: {
-            database_type: {in: this.database_types}
-          },
-          fields: {
-            name: 1, id: 1, database_type: 1, connection_type: 1, status: 1
-          }
-        })
-      });
-
-      if( result.data ){
-        this.databases = result.data;
-      }
-    },
-
     loadDataModels(connectionId){
       if( !connectionId ){
         return;
@@ -193,21 +173,11 @@ export default {
       });
     },
 
-    handlerConnectionChange(){
-      this.model.tableName = '';
-      for (let i = 0; i < this.databases.length; i++) {
-        if( this.model.connectionId === this.databases[i].id){
-          this.model.databaseType = this.databases[i]['database_type'];
-        }
-      }
-    },
-
     setData(data, cell, isSourceDataNode, vueAdapter){
       if( data ){
         Object.keys(data).forEach(key => this.model[key] = data[key]);
       }
       this.isSourceDataNode = isSourceDataNode;
-
       this.mergedSchema = cell.getOutputSchema();
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema();
@@ -216,7 +186,11 @@ export default {
     getData(){
       let result = _.cloneDeep(this.model);
       result.name = result.tableName || 'GridFsNode';
-
+      if( !this.isSourceDataNode ){
+        result.isSource = false;
+        delete result.tableName;
+        delete result.primaryKeys;
+      }
       return result;
     },
   }

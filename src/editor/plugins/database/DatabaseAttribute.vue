@@ -261,8 +261,8 @@
 
             let uriArr = result.data.database_uri.split(":");
             this.database_host = uriArr?uriArr[1].split("/")[2]:[];
-            let port = uriArr?uriArr[2].split('/')[0]:[];
-            this.database_port = result.data.database_port&&result.data.database_port !==0?result.data.database_port: port
+            let port = uriArr?uriArr[2].split('/')[0]:[]; //端口号
+            this.database_port = result.data.database_port&&result.data.database_port !==0?result.data.database_port : port;
 					}
 				});
       },
