@@ -97,13 +97,13 @@
 		name: "Aggregate",
 		data() {
 			return {
-				selectList: [
-          {label: 'AVG', value: 'AVG'},
-          {label: 'SUM', value: 'SUM'},
-          {label: 'MAX', value: 'MAX'},
-          {label: 'MIN', value: 'MIN'},
-          {label: 'COUNT', value: 'COUNT'}
-        ],
+				selectList:[
+          {label:'AVG',value:'AVG'},
+          {label:'SUM',value:'SUM'},
+          {label:'MAX',value:'MAX'},
+          {label:'MIN',value:'MIN'},
+          {label:'COUNT',value:'COUNT'}
+        ],
 				groupList: [],
 				expressionList: [],
 				form: {
@@ -294,7 +294,7 @@
 
     .el-form-item__content {
       .el-button { padding: 8px 15px; font-size: 12px;}
-      .el-input__inner { height: 30px!important; line-height: 30px;}
+      .el-input__inner { line-height: 30px;}
     }
     .btnClass .el-form-item__content { line-height: 30px!important;}
 	}
