@@ -66,10 +66,10 @@
 							v-for="(item,index) in computedTables"
 							:key="item.id"
 							:gutter="20">
-              <el-col :span="2">
+              <el-col :span="1">
                 <el-checkbox v-model="item.checked" @change='checkedOne(item,index)'></el-checkbox>
               </el-col>
-              <el-col :span="17">
+              <el-col :span="17" style="padding-left:20px;">
                 <i class="iconfont icon-table2"></i>
                 <span class="tableName">{{item.table_name}}</span>
               </el-col>
