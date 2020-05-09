@@ -7,7 +7,7 @@
   <div class="nodeBody">
     <el-form class="e-form" label-position="top" :model="model" :rules="rules"  ref="form">
       <!-- <span class="addTxt">+新建文件</span> -->
-      <el-form-item :label="$t('editor.choose') + 'GridFs'" prop="connectionId" :rules="rules" required>
+      <el-form-item :label="'GridFS'" prop="connectionId" :rules="rules" required>
         <el-select filterable v-model="model.connectionId" :placeholder="$t('editor.cell.data_node.gridfs.chooseGridFsName')">
           <el-option
             v-for="(item, idx) in databases"
