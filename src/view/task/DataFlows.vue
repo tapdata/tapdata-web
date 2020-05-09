@@ -315,13 +315,14 @@
 			},
 			handleData(data) {
 				if (!data) return;
+
 				data.map(item => {
-
 					item.newStatus = 'running' === item.status ? 'running' : 'paused';
-
 					if (item.stats) {
 						item.hasChildren = false;
-
+						item.input = item.stats.input? item.stats.input.rows :'--' ;
+						item.output = item.stats.output ? item.stats.output.rows :'--';
+						item.transmissionTime = item.stats.transmissionTime ? item.stats.transmissionTime:'--';
 						let children = item.stages;
 						item.children = [];
 
@@ -329,11 +330,9 @@
 							children.map(k => {
 								let stage = '';
 								let node = {};
-
 								if(item.stats.stagesMetrics){
 									stage = item.stats.stagesMetrics.filter(v => k.id === v.stageId);
 								}
-
 								if(stage.length === 0){
 									node = {
 										id: item.id+k.id,
@@ -347,25 +346,19 @@
 									node = {
 										id: item.id+k.id,
 										name:k.name,
-										input: stage[0].input.rows ? stage[0].input.rows :'--',
-										output: stage[0].output.rows ?stage[0].output.rows : '--',
-										transmissionTime: stage[0].transmissionTime ? stage[0].transmissionTime :'-',
+										input: stage[0].input.rows,
+										output: stage[0].output.rows,
+										transmissionTime: stage[0].transmissionTime,
 										hasChildren: true,
 									};
 								}
 								item.children.push(node);
 							});
 						}
-
-						if(item.stats.input && item.stats.outputs){
-							item.input = item.stats.input.rows ? item.stats.input.rows:'--';
-							item.output = item.stats.output.rows ? item.stats.output.rows:'--';
-							item.transmissionTime = item.stats.transmissionTime ? item.stats.transmissionTime:'--';
-						}else {
-							item.input = '--';
-							item.output = '--';
-							item.transmissionTime = '--';
-						}
+					}else {
+						item.input = '--';
+						item.output = '--';
+						item.transmissionTime = '--';
 					}
 				});
 			},
