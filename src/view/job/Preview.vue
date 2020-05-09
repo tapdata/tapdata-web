@@ -112,8 +112,7 @@
 				handler() {
 					this.getStageTables();
 				}
-			}
-
+      }
 		},
 
 		methods: {
