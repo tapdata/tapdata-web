@@ -190,6 +190,8 @@ export default {
         result.isSource = false;
         delete result.tableName;
         delete result.primaryKeys;
+      } else {
+        result.isSource = true;
       }
       return result;
     },

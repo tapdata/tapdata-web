@@ -58,20 +58,28 @@
 					<tbody>
 						<tr v-for="(item, idx) in model.joinTable.joinKeys" v-bind:key="idx">
 							<td>
-                <el-select filterable v-model="item.source">
+                <el-select
+                v-model="item.source"
+                filterable
+                allow-create
+                default-first-option>
                   <el-option
                     v-for="(item, idx) in sourceList"
-                    :value="item.id"
+                    :value="item.field_name"
                     :label="item.field_name"
                     v-bind:key="idx"></el-option>
                 </el-select>
 								<!-- <input type="text" v-model="item.source"> -->
 							</td>
 							<td>
-                <el-select filterable v-model="item.target">
+                <el-select
+                v-model="item.target"
+                filterable
+                allow-create
+                default-first-option>
                   <el-option
                     v-for="(item, idx) in targetList"
-                    :value="item.id"
+                    :value="item.field_name"
                     :label="item.field_name"
                     v-bind:key="idx"></el-option>
                 </el-select>
@@ -132,10 +140,10 @@
 		watch: {
 			model: {
 				deep: true,
-				handler(){
+				handler(data){
 					this.$emit('dataChanged', this.getData());
 				}
-			},
+      },
 			targetCellType: {
 				handler() {
 					this.writeModels.splice(0, this.writeModels.length);
@@ -213,10 +221,13 @@
           // 关联字段自动填充
           let sourceArr = sourceSchema && sourceSchema.fields && sourceSchema.fields.length > 0 ?sourceSchema.fields.filter(item=> item.primary_key_position > 0):[];
           let targetArr = mergedTargetSchema.fields && mergedTargetSchema.fields.length > 0 ?mergedTargetSchema.fields.filter(item=> item.primary_key_position > 0):[];
-
+          let initialAssociationArr =  sourceArr && sourceArr.length > 0? sourceArr.map((fields,i) =>({source:fields.field_name, target: targetArr[i].field_name})): this.model.joinTable.joinKeys;
           this.sourceList = sourceSchema.fields;
           this.targetList = mergedTargetSchema.fields;
-          this.model.joinTable.joinKeys = sourceArr && sourceArr.length > 0? sourceArr.map((fields,i) =>({source:fields.field_name, target: targetArr[i].field_name})): this.model.joinTable.joinKeys;
+
+          if( this.model.joinTable.joinKeys[0].source === ''|| this.model.joinTable.joinKeys[0].target === '') {
+            this.model.joinTable.joinKeys = initialAssociationArr;
+          }
         }
 
 				this.$emit(EditorEventType.RESIZE);
