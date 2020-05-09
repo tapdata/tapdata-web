@@ -196,11 +196,19 @@
 				let formData = {};
 				let schema = {};
 				if(data.meta_type ==='database'){
-					formData ={
-						connectionId:data.source._id,
-						name: data.source.name || data.label ,
-					};
-				}else if(data.meta_type ==='table' || data.meta_type ==='view'|| data.meta_type ==='collection'|| data.meta_type ==='mongo_view'){
+					if(data.source.database_type && (['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(data.source.database_type))){
+						formData ={
+							connectionId:data.source._id,
+							name: data.source.name || data.label ,
+							type: data.source.database_type
+						};
+					}else {
+						formData ={
+							connectionId:data.source._id,
+							name: data.source.name || data.label ,
+						};
+					}
+				}else if(['table','view','collection','mongo_view'].includes(data.meta_type)){
 					let primaryKeys ='';
 					if(data.fields){
 						primaryKeys = data.fields.filter(item => item.primary_key_position > 0)
@@ -225,26 +233,22 @@
 						meta_type: "table",
 						fields:data.fields,
 					};
-				}else if(['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(data.source.database_type)){
-					formData ={
-						connectionId:data.source._id,
-						name: data.source.name || data.label ,
-						type: data.source.database_type
-					};
 				}
 
 				this.count = this.count + 50;
 				let cell ='';
-				// if(['database'].includes(data.meta_type)){
-				if(['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(data.source.database_type)){
-					let dataType = data.source.database_type;
-					cell = this.editor.graph.createCell(mapping[dataType], formData,schema);
+				if(['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)){
+					if(data.source.database_type && (['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(data.source.database_type))){
+						let dataType = data.source.database_type;
+						cell = this.editor.graph.createCell(mapping[dataType], formData,schema);
+					}else {
+						cell = this.editor.graph.createCell(mapping[data.meta_type], formData,schema);
+					}
 				}else {
 					cell = this.editor.graph.createCell(mapping[data.meta_type], formData,schema);
 				}
-				let coordinates = this.editor.graph.getClientOffset();
-				log('coordinates',coordinates.x+40,coordinates.y+this.count+160);
 
+				let coordinates = this.editor.graph.getClientOffset();
 				cell.position(coordinates.x+400, coordinates.y+this.count+160);
 				this.editor.graph.addCell(cell);
 			},
