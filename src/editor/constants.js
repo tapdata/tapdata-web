@@ -40,5 +40,9 @@ export const
 			paused: false
 		},
 		stopOnError:false,
+		syncPoint: 'current',
+		syncTime: '',
+		syncDatePicker: '',
+		syncTimePicker: ''
 	}
 ;

@@ -32,6 +32,7 @@ import {
 	Col,
 	Pagination,
 	DatePicker,
+	TimePicker,
 	Drawer,
 	Container,
 	Main,
@@ -70,6 +71,7 @@ Vue.component(Row.name, Row);
 Vue.component(Col.name, Col);
 Vue.component(Pagination.name, Pagination);
 Vue.component(DatePicker.name, DatePicker);
+Vue.component(TimePicker.name, TimePicker);
 Vue.component(Container.name, Container);
 Vue.component(Main.name, Main);
 Vue.component(Header.name, Header);
