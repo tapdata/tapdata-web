@@ -95,9 +95,13 @@
 						if( this.model.tableName){
 							let schema = this.schemas.filter( s => s.table_name === this.model.tableName);
 							schema = schema && schema.length > 0 ? schema[0] : {};
-							/*let fields = schema.fields || [];
+							let fields = schema.fields || [];
 							let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
-							if( primaryKeys) this.model.primaryKeys = primaryKeys;*/
+							if( primaryKeys) {
+								this.model.primaryKeys = primaryKeys;
+							}else {
+								this.model.primaryKeys ='';
+							}
 							this.$emit('schemaChange', _.cloneDeep(schema));
 						}
 					}
