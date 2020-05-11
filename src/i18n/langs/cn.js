@@ -107,7 +107,7 @@ const cn = {
 		endTime: '结束时间',
 		separator: "至",
 		dataPlaceholder: "选择时间范围",
-		taskStatus: '运行状态',
+		taskStatus: '启动开关',
 		taskStatusPlaceholder: '请选择任务状态',
 		updateTime: '更新时间',
 		runningSpeed: '运行速度',
@@ -151,11 +151,12 @@ const cn = {
     aggName: '子处理名称',
 		nodeName: '节点名称',
 		aggFunction: '聚合函数',
-		aggExpression: '目标字段',
+		aggExpression: '作用目标',
 		filterPredicate: '过滤器',
 		groupByExpression: '分组字段',
     aggregation: '聚合处理',
     nameTip: '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
+    enterFilterTable: '请输入过滤表内容',
 		button: {
 			setting: '设置',
 			logs: '日志',
@@ -213,7 +214,8 @@ const cn = {
 					name: '数据库',
 					tip: '任意类型数据库',
 					defaultText: '数据库',
-
+					tableSuffix: '表后缀',
+					tablePrefix: '表前缀',
 					none_database: '数据库必填.',
 
 					form: {
@@ -297,18 +299,24 @@ const cn = {
 					name: 'GridFS',
 					tip: 'GridFS节点',
 					chooseGridFsName: '请选择GridFS',
-					gridFs_isNull: 'GridFS不能为空'
+          none_collection: '数据集必填.',
+          none_pk: '主键必填.',
+          gridFs_isNull: 'GridFS不能为空'
 				},
 				dummy: {
 					name: 'Dummy',
 					tip: 'Dummy节点',
 					chooseDummyName: '请选择Dummy',
+          none_collection: '数据集必填.',
+          none_pk: '主键必填.',
 					dummy_isNull: 'Dummy不能为空'
 				},
 				api: {
 					name: 'API',
 					tip: 'api节点',
 					chooseApiName: '请选择API',
+          none_collection: '数据集必填.',
+          none_pk: '主键必填.',
 					api_isNull: 'API不能为空'
 				},
 				es: {

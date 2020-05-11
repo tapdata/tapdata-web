@@ -9,6 +9,7 @@
 						type="textarea" v-model="model.description"
 						:placeholder="$t('editor.cell.processor.field.form.description.placeholder')"></el-input>
 			</el-form-item>
+      
 		</el-form>
 		<div class="schema-editor-container">
 			<div class="schema-editor-wrap schema-editor-container-left">

@@ -6,6 +6,7 @@
 import {options} from "../../lib/rappid/config";
 import TableAttribute from "./TableAttribute";
 import i18n from "../../../i18n/i18n";
+import {FORM_DATA_KEY} from "../../constants";
 
 export const tableConfig = {
 
@@ -20,7 +21,16 @@ export const tableConfig = {
 				label:{
 					text: i18n.t('editor.cell.data_node.table.name')
 				}
-			}
+			},
+			[FORM_DATA_KEY]: {
+				connectionId: "",
+				databaseType: '',
+				tableName: "",
+				sql: '',
+				dropTable: false,
+				type: 'table',
+				primaryKeys: ''
+			},
 		},
 		prototypeProperties: {
 			portLabelMarkup: [{

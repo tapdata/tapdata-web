@@ -12,7 +12,13 @@
 			</el-form-item>
 
 			<el-form-item :label="$t('editor.cell.data_node.table.form.table.label')" prop="tableName" :rules="rules" required>
-				<el-select filterable v-model="model.tableName" :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')" size="mini">
+				<el-select
+          filterable
+          allow-create
+          default-first-option
+          clearable
+          v-model="model.tableName"
+          :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')" size="mini">
 					<el-option
 							v-for="(item, idx) in schemas"
 							:label="`${item.table_name}`"

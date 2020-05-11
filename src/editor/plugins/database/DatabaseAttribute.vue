@@ -20,21 +20,24 @@
 					</el-select>
 				</el-form-item>
 
-        <el-form-item required :label="$t('editor.cell.data_node.collection.form.dropTable.label')" v-if="!isSourceDataNode">
-          <el-select
-            v-model="model.dropTable" size="mini">
-            <el-option
-              :label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
-              :value="false"></el-option>
-            <el-option
-              :label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
-              :value="true"></el-option>
-          </el-select>
-        </el-form-item>
+				<el-form-item required :label="$t('editor.cell.data_node.collection.form.dropTable.label')"
+							  v-if="!isSourceDataNode">
+					<el-select
+							v-model="model.dropTable" size="mini">
+						<el-option
+								:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
+								:value="false"></el-option>
+						<el-option
+								:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
+								:value="true"></el-option>
+					</el-select>
+				</el-form-item>
 
 				<div class="databaseInfo">
 					<span v-show="database_type">{{database_type}}</span>
-          <span v-show="database_port">{{database_port}}</span>
+					<span v-show="database_host && database_type !=='mongodb'">{{database_host}}</span>
+					<span v-show="database_port && database_type !=='mongodb'">{{database_port }}</span>
+					<span v-show="database_type === 'mongodb' && database_uri">{{database_uri}}</span>
 				</div>
 			</el-form>
 		</div>
@@ -52,44 +55,56 @@
 			<el-tabs class="e-tabs" v-model="activeName">
 
 				<el-tab-pane :label="$t('editor.cell.data_node.database.queueCopied') + '('+tables.length+')'" name="first">
-          <div class="search">
-            <el-input
-              :placeholder="$t('editor.cell.data_node.database.enterName')"
-              prefix-icon="el-icon-search"
-              v-model="search">
-            </el-input>
-          </div>
+					<div class="search">
+						<el-input
+								:placeholder="$t('editor.cell.data_node.database.enterName')"
+								prefix-icon="el-icon-search"
+								clearable
+								v-model="search">
+						</el-input>
+					</div>
+					<el-row class="table-preffix-box" :gutter="10">
+						<el-col  style="width: 50%">
+							<el-input clearable v-model="model.table_prefix" :placeholder="$t('editor.cell.data_node.database.tablePrefix')"></el-input>
+						</el-col>
+						<el-col style="width: 50%">
+							<el-input clearable v-model="model.table_suffix" :placeholder="$t('editor.cell.data_node.database.tableSuffix')"></el-input>
+						</el-col>
+					</el-row>
 					<el-row class="list" :class="{active:item.checked}"
 							v-for="(item,index) in computedTables"
 							:key="item.id"
 							:gutter="20">
-              <el-col :span="2">
-                <el-checkbox v-model="item.checked" @change='checkedOne(item,index)'></el-checkbox>
-              </el-col>
-              <el-col :span="17">
-                <i class="iconfont icon-table2"></i>
-                <span class="tableName">{{item.table_name}}</span>
-              </el-col>
-              <el-col :span="5" class="text-center">
-                <el-button type="text" @click="removeTable(item,index)">{{$t('editor.cell.data_node.database.remove')}}</el-button>
-              </el-col>
+						<el-col :span="1">
+							<el-checkbox v-model="item.checked" @change='checkedOne(item,index)'></el-checkbox>
+						</el-col>
+						<el-col :span="17" style="padding-left:20px;">
+							<i class="iconfont icon-table2"></i>
+							<span class="tableName">{{item.table_name}}</span>
+						</el-col>
+						<el-col :span="5" class="text-center">
+							<el-button type="text" @click="removeTable(item,index)">
+								{{$t('editor.cell.data_node.database.remove')}}
+							</el-button>
+						</el-col>
 					</el-row>
 				</el-tab-pane>
-
-				<el-tab-pane :label="$t('editor.cell.data_node.database.tableRemoved') + '('+model.excludeTables.length+')'" name="second">
-          <div class="search">
-            <el-input
-              :placeholder="$t('editor.cell.data_node.database.enterName')"
-              prefix-icon="el-icon-search"
-              v-model="removeSearch">
-            </el-input>
-          </div>
+				<!-- model.excludeTables -->
+				<el-tab-pane :label="$t('editor.cell.data_node.database.tableRemoved') + '('+removeTables.length+')'" name="second">
+					<div class="search">
+						<el-input
+								:placeholder="$t('editor.cell.data_node.database.enterName')"
+								prefix-icon="el-icon-search"
+								clearable
+								v-model="removeSearch">
+						</el-input>
+					</div>
 
 					<el-row class="list"
-            :class="{active:item.checked}"
-            v-for="(item,index) in computedRemoveTables"
-            :key="item.id"
-            :gutter="20">
+							:class="{active:item.checked}"
+							v-for="(item,index) in computedRemoveTables"
+							:key="item.id"
+							:gutter="20">
 						<el-col :span="2">
 							<el-checkbox v-model="item.checked" @change='checkedOne(item,index)'></el-checkbox>
 						</el-col>
@@ -98,7 +113,9 @@
 							<span class="tableName">{{item.table_name}}</span>
 						</el-col>
 						<el-col :span="5" class="text-center">
-							<el-button type="text" @click="undotble(item,index)">{{$t('editor.cell.data_node.database.Undo')}}</el-button>
+							<el-button type="text" @click="undotble(item,index)">
+								{{$t('editor.cell.data_node.database.Undo')}}
+							</el-button>
 						</el-col>
 					</el-row>
 				</el-tab-pane>
@@ -110,7 +127,7 @@
 
 <script>
 	import factory from '../../../api/factory';
-  import _ from 'lodash';
+	import _ from 'lodash';
 
 	let connections = factory('connections');
 
@@ -126,16 +143,16 @@
 
 		data() {
 			return {
-        removeSearch: '',
-        search: '',
+				removeSearch: '',
+				search: '',
 
-        tables: [],
-        removeTables: [],
+				tables: [],
+				removeTables: [],
 
-        isSourceDataNode: false,
+				isSourceDataNode: false,
 
-        selectAllTables: false,
-        selectAllRemoveTables: false,
+				selectAllTables: false,
+				selectAllRemoveTables: false,
 
 				databases: [],
 				activeName: 'first',
@@ -151,29 +168,33 @@
 				model: {
 					connectionId: "",
 					excludeTables: [],
-          dropTable: false
+					dropTable: false,
+					table_prefix:'',
+					table_suffix:''
 				},
-        database_type: '',
-        database_port: ''
+				database_type: '',
+				database_port: '',
+				database_host: '',
+				database_uri: ''
 			};
-    },
+		},
 
-    computed: {
-      computedTables(){
-        if( this.search ){
-          return this.tables.filter( t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0 );
-        } else {
-          return this.tables;
-        }
-      },
-      computedRemoveTables(){
-        if( this.removeSearch ){
-          return this.removeTables.filter( t => t.table_name.toLowerCase().indexOf(this.removeSearch.toLowerCase()) >= 0 );
-        } else {
-          return this.removeTables;
-        }
-      }
-    },
+		computed: {
+			computedTables() {
+				if (this.search) {
+					return this.tables.filter(t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0);
+				} else {
+					return this.tables;
+				}
+			},
+			computedRemoveTables() {
+				if (this.removeSearch) {
+					return this.removeTables.filter(t => t.table_name.toLowerCase().indexOf(this.removeSearch.toLowerCase()) >= 0);
+				} else {
+					return this.removeTables;
+				}
+			}
+		},
 
 		async mounted() {
 			let result = await connections.get({
@@ -189,8 +210,8 @@
 			});
 
 			if (result.data) {
-        this.databases = result.data;
-        this.lookupDatabaseType();
+				this.databases = result.data;
+				this.lookupDatabaseType();
 			}
 		},
 
@@ -204,124 +225,125 @@
 			'model.connectionId': {
 				immediate: true,
 				handler() {
-          this.lookupDatabaseType();
+					this.tables = [];
+					this.removeTables = [];
+					this.lookupDatabaseType();
 					this.loadDataModels(this.model.connectionId);
 				}
-      },
-      selectAllTables: {
-        handler(){
-          this.tables.forEach( t => t.checked = this.selectAllTables);
-        }
-      },
-      selectAllRemoveTables: {
-        handler(){
-          this.removeTables.forEach( t => t.checked = this.selectAllRemoveTables);
-        }
-      }
-    },
+			},
+			selectAllTables: {
+				handler() {
+					this.tables.forEach(t => t.checked = this.selectAllTables);
+				}
+			},
+			selectAllRemoveTables: {
+				handler() {
+					this.removeTables.forEach(t => t.checked = this.selectAllRemoveTables);
+				}
+			}
+		},
 
 		methods: {
 
-      lookupDatabaseType(){
-          if(!this.model.connectionId)
-            return;
-          let selectedDbs = this.databases.filter( db => db.id === this.model.connectionId);
-          if( selectedDbs && selectedDbs.length > 0){
-            this.database_type = selectedDbs[0].database_type;
-          }
-      },
+			lookupDatabaseType() {
+				if (!this.model.connectionId)
+					return;
+				let selectedDbs = this.databases.filter(db => db.id === this.model.connectionId);
+				if (selectedDbs && selectedDbs.length > 0) {
+					this.database_type = selectedDbs[0].database_type;
+				}
+			},
 
 			// 获取表名称
 			loadDataModels(connectionId) {
 				if (!connectionId) {
 					return;
 				}
-        let self = this;
+
+				let self = this;
 				connections.get([connectionId]).then(result => {
 					if (result.data) {
-            let tables = result.data.schema && result.data.schema.tables || [];
-            tables = tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+						let tables = result.data.schema && result.data.schema.tables || [];
+						tables = tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
 						tables.forEach(item => {
-              let tableName = item.table_name;
-              if( self.model.excludeTables.indexOf(tableName) >= 0 ){
-                self.removeTables.push({
-                  table_name: item.table_name, checked: false
-                });
-              } else {
-                self.tables.push({
-                  table_name: item.table_name, checked:false
-                });
-              }
-            });
-
-            let uriArr = result.data.database_uri.split(":");
-            let ip = uriArr?uriArr[1].split("/")[2]:[];
-            let port = uriArr?uriArr[2].split('/')[0]:[];
-            this.database_port = result.data.database_port&&result.data.database_port !==0?result.data.database_port: port
+							let tableName = item.table_name;
+							if (self.model.excludeTables.indexOf(tableName) >= 0) {
+								self.removeTables.push({
+									table_name: item.table_name, checked: false
+								});
+							} else {
+								self.tables.push({
+									table_name: item.table_name, checked: false
+								});
+							}
+						});
 					}
+					this.database_host = result.data.database_host;
+					this.database_port = result.data.database_port;
+					this.database_uri = result.data.database_uri;
 				});
-      },
-      // 移除
-      removeTable(item, idx){
-        item.checked = false;
-        this.tables.splice(idx,1);
-        this.removeTables.push(item);
-        this.removeTables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+			},
+			// 移除
+			removeTable(item, idx) {
+				item.checked = false;
+				this.tables.splice(idx, 1);
+				this.removeTables.push(item);
+				this.removeTables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
 
-        if(this.model.excludeTables.indexOf(item.table_name) === -1){
-          this.model.excludeTables.push(item.table_name);
-        }
-      },
-      // 撤销
-      undotble(item, idx) {
-        item.checked = false;
-        this.removeTables.splice(idx, 1);
-        this.tables.push(item);
-        this.tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+				if (this.model.excludeTables.indexOf(item.table_name) === -1) {
+					this.model.excludeTables.push(item.table_name);
+				}
+			},
+			// 撤销
+			undotble(item, idx) {
+				item.checked = false;
+				this.removeTables.splice(idx, 1);
+				this.tables.push(item);
+				this.tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
 
-        let index = this.model.excludeTables.indexOf(item.table_name);
-        if(index >= 0){
-          this.model.excludeTables.splice(index, 1);
-        }
-      },
-      // 全部移除
-      bulkRemoval(){
-        for(let i = 0; i < this.tables.length; i++){
-          let item = this.tables[i];
-          if(item.checked === true){
-            this.removeTable(item, i);
-            i--;
-          }
-        }
-        this.selectAllTables = false;
-      },
-      // 全部撤销
-      bulkRevocation(){
-        for(let i = 0; i < this.removeTables.length; i++){
-          let item = this.removeTables[i];
-          if(item.checked === true){
-            this.undotble(item, i);
-            i--;
-          }
-        }
-        this.selectAllRemoveTables = false;
-      },
+				let index = this.model.excludeTables.indexOf(item.table_name);
+				if (index >= 0) {
+					this.model.excludeTables.splice(index, 1);
+				}
+			},
+			// 全部移除
+			bulkRemoval() {
+				for (let i = 0; i < this.tables.length; i++) {
+					let item = this.tables[i];
+					if (item.checked === true) {
+						this.removeTable(item, i);
+						i--;
+					}
+				}
+				this.selectAllTables = false;
+			},
+			// 全部撤销
+			bulkRevocation() {
+				for (let i = 0; i < this.removeTables.length; i++) {
+					let item = this.removeTables[i];
+					if (item.checked === true) {
+						this.undotble(item, i);
+						i--;
+					}
+				}
+				this.selectAllRemoveTables = false;
+			},
 
 			setData(data, cell, isSourceDataNode) {
 				if (data) {
 					Object.keys(data).forEach(key => this.model[key] = data[key]);
 				}
 
-        this.isSourceDataNode = isSourceDataNode;
+				this.isSourceDataNode = isSourceDataNode;
 			},
 			getData() {
 				let result = _.cloneDeep(this.model);
 				if (result.connectionId) {
 					let database = this.databases.filter(db => db.id === result.connectionId);
 
-          if( this.isSourceDataNode ){
-            delete result.dropTable;
-          }
+					if (this.isSourceDataNode) {
+						delete result.dropTable;
+					}
 
 					if (database && database.length > 0) {
 						result.name = database[0].name;
@@ -334,7 +356,10 @@
 </script>
 <style lang="less">
 	.database {
-    .el-form-item { margin-bottom: 10px;}
+		.el-form-item {
+			margin-bottom: 14px;
+		}
+
 		.processingBody {
 			position: relative;
 			height: calc(100% - 165px);
@@ -383,25 +408,30 @@
 				.list {
 					width: 100%;
 					height: 36px;
-          line-height: 36px;
-          margin: 0!important;
+					line-height: 36px;
+					margin: 0 !important;
 					padding: 0 15px;
 					font-size: 12px;
 					overflow: hidden;
-          .iconfont {
+
+					.iconfont {
 						color: #4AAF47;
 					}
+
 					.el-button--text {
 						font-size: 12px;
 						opacity: 0;
 						visibility: hidden;
 					}
-          .text-right {
-            text-align: right;
-          }
-          .text-center {
-            text-align: center;
-          }
+
+					.text-right {
+						text-align: right;
+					}
+
+					.text-center {
+						text-align: center;
+					}
+
 					.el-checkbox {
 						opacity: 0;
 						visibility: hidden;
@@ -427,17 +457,29 @@
 				}
 			}
 		}
-    .search{
-      width: 100%;
-      padding: 0 25px 10px;
-      box-sizing: border-box;
-      // overflow: hidden;
-      .el-input,.el-input__inner,.el-input__icon {
-        height: 30px;
-        line-height: 30px;
-        font-size: 12px;
-      }
-    }
+
+		.search {
+			width: 100%;
+			padding: 0 25px 10px;
+			box-sizing: border-box;
+			// overflow: hidden;
+			.el-input, .el-input__inner, .el-input__icon {
+				height: 30px;
+				line-height: 30px;
+				font-size: 12px;
+			}
+		}
+		.table-preffix-box{
+			width: 100%;
+			padding: 0 13px 0 25px;
+			box-sizing: border-box;
+			// overflow: hidden;
+			.el-input, .el-input__inner, .el-input__icon {
+				height: 30px;
+				line-height: 30px;
+				font-size: 12px;
+			}
+		}
 		.databaseInfo {
 			span {
 				margin-right: 20px;

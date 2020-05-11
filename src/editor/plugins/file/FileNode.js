@@ -1,5 +1,6 @@
 import {options} from "../../lib/rappid/config";
 import FileAttribute from "./FileAttribute";
+import {FORM_DATA_KEY} from "../../constants";
 import i18n from "../../../i18n/i18n";
 
 export const fileNodeConfig = {
@@ -13,7 +14,11 @@ export const fileNodeConfig = {
 				},
 				label: {
 					text: i18n.t('editor.cell.data_node.file.name'),
-				}
+        },
+        [FORM_DATA_KEY]: {
+          type: 'file',
+          connectionId: ''
+        }
 			}
 		},
 		prototypeProperties: {

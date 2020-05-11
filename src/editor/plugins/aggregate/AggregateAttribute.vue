@@ -13,7 +13,7 @@
 							<el-form-item
 									:label="$t('dataFlow.aggFunction')"
 									:prop="'aggregations.' + index +'.aggFunction'" required>
-								<el-select v-model="item.aggFunction " @change="changeAggFunction(item)">
+								<el-select v-model="item.aggFunction " @change="changeAggFunction(item, index)">
 									<el-option
 											v-for="item in selectList"
 											:key="item.value"
@@ -58,7 +58,7 @@
 					<el-form-item
 							:label="$t('dataFlow.filterPredicate')"
 							:prop="'aggregations.' + index +'.filterPredicate'">
-						<el-input v-model="item.filterPredicate"></el-input>
+						<el-input type="textarea" v-model="item.filterPredicate" :placeholder="$t('dataFlow.enterFilterTable')"></el-input>
 					</el-form-item>
 					<el-form-item
 							:label="$t('dataFlow.groupByExpression')"
@@ -80,7 +80,7 @@
 					<span @click="removeRow(item,index)" class="iconfont icon-quxiao remove"></span>
 				</el-col>
 			</el-row>
-			<el-form-item>
+			<el-form-item class="btnClass">
 				<el-button @click="addRow">+ {{$t('editor.cell.processor.aggregate.new_aggregate')}}</el-button>
 			</el-form-item>
 		</el-form>
@@ -97,13 +97,13 @@
 		name: "Aggregate",
 		data() {
 			return {
-				selectList: [
-					{label: 'AVG', value: 'AVG'},
-					{label: 'SUM', value: 'SUM'},
-					{label: 'MAX', value: 'MAX'},
-					{label: 'MIN', value: 'MIN'},
-					{label: 'COUNT', value: 'COUNT'}
-				],
+				selectList:[
+          {label:'AVG',value:'AVG'},
+          {label:'SUM',value:'SUM'},
+          {label:'MAX',value:'MAX'},
+          {label:'MIN',value:'MIN'},
+          {label:'COUNT',value:'COUNT'}
+        ],
 				groupList: [],
 				expressionList: [],
 				form: {
@@ -117,7 +117,14 @@
 						groupByExpression: ''
 					}]
 				},
-				aggaggExpression: '1'
+        aggaggExpression: '1',
+        countObj: {
+          AVG: 0,
+          SUM: 0,
+          MAX: 0,
+          MIN: 0,
+          COUNT: 0
+        }
 			};
 		},
 		mounted() {
@@ -143,29 +150,29 @@
 					this.$emit('dataChanged', this.getData());
 				}
       },
-      // 'form.aggregations'(data){
-
-      // }
 		},
 
 		methods: {
-      changeAggFunction(data) {
-        let count = 0;
+      changeAggFunction(data, index) {
+        if(data.aggFunction !== "COUNT") {
+          data.aggExpression = '1';
+        }
         let aggFunctionArr = [];
         for(let i=0; i<this.form.aggregations.length; i++) {
           let item = this.form.aggregations[i];
-          aggFunctionArr.push(item.aggFunction);
+          aggFunctionArr.push(item.name);
           if(new Set(aggFunctionArr).size !== aggFunctionArr.length){
-            count ++;
+            this.countObj[data.aggFunction]++;
+
           }
-          if(count === 0) {
-            item.name = item.aggFunction;
+          if(this.countObj[data.aggFunction] === 0) {
+            data.name = data.aggFunction;
           } else {
-            item.name = item.aggFunction + '_' + count;
+            data.name = data.aggFunction + '_' + this.countObj[data.aggFunction];
           }
         }
-      },
 
+      },
 			addRow() {
 				let list = {
           name: '',
@@ -175,7 +182,7 @@
 					groupByExpression: ''
 				};
         this.form.aggregations.push(list);
-        this.changeAggFunction();
+        this.changeAggFunction(list);
         log("length",this.form.aggregations.length);
 			},
 
@@ -274,7 +281,7 @@
 		}
 
 		.el-form-item {
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       .el-form-item__label,.el-input__inner {
         font-size: 12px;
       }
@@ -287,7 +294,8 @@
 
     .el-form-item__content {
       .el-button { padding: 8px 15px; font-size: 12px;}
-      .el-input__inner { height: 30px!important; line-height: 30px;}
-		}
+      .el-input__inner[style="height: 40px;"] { height: 30px!important;}
+    }
+    .btnClass .el-form-item__content { line-height: 30px!important;}
 	}
 </style>

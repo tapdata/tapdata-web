@@ -150,10 +150,11 @@ const tc = {
     aggName: '子處理名稱',
 		nodeName: '節點名稱',
 		aggFunction: '聚合函數',
-		aggExpression: '目標字段',
+		aggExpression: '作用目標',
 		filterPredicate: '過濾器',
 		groupByExpression: '分組字段',
     aggregation: '聚合處理',
+    enterFilterTable: '請輸入過濾表內容',
     nameTip: '後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ',
 		button: {
 			setting: '設置',
@@ -213,7 +214,8 @@ const tc = {
 					name: '數據庫',
 					tip: '任意類型數據庫',
 					defaultText: '數據庫',
-
+					tableSuffix: '表後綴',
+					tablePrefix: '表前綴',
 					none_database: '數據庫必填.',
 
 					form: {
@@ -297,19 +299,25 @@ const tc = {
 					name: 'GridFS',
 					tip: 'GridFS節點',
 					chooseGridFsName: '請選擇GridFS',
-					gridFs_isNull: 'GridFS不能為空'
+          none_collection: '數據集必填.',
+          none_pk: '主鍵必填.',
+          gridFs_isNull: 'GridFS不能為空',
 				},
 				dummy: {
 					name: 'Dummy',
 					tip: 'Dummy節點',
 					chooseDummyName: '請選擇Dummy',
-					dummy_isNull: 'Dummy不能為空'
+					dummy_isNull: 'Dummy不能為空',
+          none_collection: '數據集必填.',
+          none_pk: '主鍵必填.',
 				},
 				api: {
 					name: 'API',
 					tip: 'api節點',
 					chooseApiName: '請選擇API',
-					api_isNull: 'API不能為空'
+					api_isNull: 'API不能為空',
+          none_collection: '數據集必填.',
+          none_pk: '主鍵必填.'
 				},
 				es: {
 					name: 'ES',

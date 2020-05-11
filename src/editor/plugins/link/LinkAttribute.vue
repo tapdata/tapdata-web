@@ -58,10 +58,32 @@
 					<tbody>
 						<tr v-for="(item, idx) in model.joinTable.joinKeys" v-bind:key="idx">
 							<td>
-								<input type="text" v-model="item.source">
+                <el-select
+                v-model="item.source"
+                filterable
+                allow-create
+                default-first-option>
+                  <el-option
+                    v-for="(item, idx) in sourceList"
+                    :value="item.field_name"
+                    :label="item.field_name"
+                    v-bind:key="idx"></el-option>
+                </el-select>
+								<!-- <input type="text" v-model="item.source"> -->
 							</td>
 							<td>
-								<input type="text" v-model="item.target">
+                <el-select
+                v-model="item.target"
+                filterable
+                allow-create
+                default-first-option>
+                  <el-option
+                    v-for="(item, idx) in targetList"
+                    :value="item.field_name"
+                    :label="item.field_name"
+                    v-bind:key="idx"></el-option>
+                </el-select>
+								<!-- <input type="text" v-model="item.target"> -->
 								<div class="e-action-bar">
 									<el-button
 											v-if="model.joinTable.joinKeys.length > 1"
@@ -73,7 +95,6 @@
 											@click="addCondition"></el-button>
 								</div>
 							</td>
-
 						</tr>
 					</tbody>
 				</table>
@@ -99,7 +120,8 @@
 
 		data(){
 			return {
-
+        sourceList: [],
+        targetList: [],
 				writeModels: [],
 
 				sourceSchema: [],
@@ -118,10 +140,10 @@
 		watch: {
 			model: {
 				deep: true,
-				handler(){
+				handler(data){
 					this.$emit('dataChanged', this.getData());
 				}
-			},
+      },
 			targetCellType: {
 				handler() {
 					this.writeModels.splice(0, this.writeModels.length);
@@ -199,8 +221,13 @@
           // 关联字段自动填充
           let sourceArr = sourceSchema && sourceSchema.fields && sourceSchema.fields.length > 0 ?sourceSchema.fields.filter(item=> item.primary_key_position > 0):[];
           let targetArr = mergedTargetSchema.fields && mergedTargetSchema.fields.length > 0 ?mergedTargetSchema.fields.filter(item=> item.primary_key_position > 0):[];
+          let initialAssociationArr =  sourceArr && sourceArr.length > 0 && targetArr && targetArr.length > 0? sourceArr.map((fields,i) =>({source:fields.field_name, target: targetArr[i].field_name})): this.model.joinTable.joinKeys;
+          this.sourceList = sourceSchema.fields;
+          this.targetList = mergedTargetSchema.fields;
 
-          this.model.joinTable.joinKeys = sourceArr && sourceArr.length > 0? sourceArr.map((fields,i) =>({source:fields.field_name, target: targetArr[i].field_name})): this.model.joinTable.joinKeys;
+          if( this.model.joinTable.joinKeys[0].source === ''|| this.model.joinTable.joinKeys[0].target === '') {
+            this.model.joinTable.joinKeys = initialAssociationArr;
+          }
         }
 
 				this.$emit(EditorEventType.RESIZE);
@@ -331,7 +358,7 @@
 
 			input {
 				color: #606266;
-				width: 198px;
+				width: 174px;
 				height: 20px;
 				outline: none;
 				border: none;
@@ -360,5 +387,15 @@
 		align-items: baseline;
 		flex-flow: column;
 		padding-left: 55px;
-	}
+  }
+  .e-link-wrap{
+    .e-table .el-select {
+      width: 174px!important;
+      border: 0;
+      .el-input__inner {
+        border: 0;
+        height: 30px;
+      }
+    }
+  }
 </style>

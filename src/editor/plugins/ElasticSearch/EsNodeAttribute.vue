@@ -151,7 +151,12 @@ export default {
     },
     getData(){
       let result = _.cloneDeep(this.model);
-      result.name = result.name || 'Collection';
+      if (result.connectionId) {
+        let database = this.databases.filter(db => db.id === result.connectionId);
+        if (database && database.length > 0) {
+          result.name = database[0].name;
+        }
+      }
       return result;
     },
   }

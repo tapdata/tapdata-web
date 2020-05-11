@@ -85,7 +85,7 @@ const en = {
 		day: "DAY",
 		input: 'Input',
 		output: 'Output',
-		totalInput: 'Total input',
+		totalInput: 'Total Input',
 		totalOutput: 'Total Output',
 		replicate: "Replicate Lag",
 		throughputpop: 'The read speed from source node and the write speed to the target node, larger number is better',
@@ -106,11 +106,11 @@ const en = {
 		endTime: 'End time',
 		separator: "to",
 		dataPlaceholder: "Select time range",
-		taskStatus: 'Run status',
+		taskStatus: 'Status',
 		taskStatusPlaceholder: 'Please select a task status',
 		updateTime: 'Update time',
-		runningSpeed: 'Running speed',
-		operate: 'Operate',
+		runningSpeed: 'Switch',
+		operate: 'Operation',
 		dataMap: 'Data Map',
 		edit: 'Edit',
 		copy: 'Copy',
@@ -150,10 +150,11 @@ const en = {
     aggName: 'Sub-process name',
 		nodeName: 'Node Name',
 		aggFunction: 'Polymerization',
-		aggExpression: 'Target Field',
+		aggExpression: 'Target',
 		filterPredicate: 'Filter Predicate',
 		groupByExpression: 'Group Field',
-    polymerization: 'Polymerization',
+    aggregation: 'Aggregation',
+    enterFilterTable: 'Please enter the filter table content',
     nameTip: 'Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ',
 		button: {
 			setting: 'Setting',
@@ -215,7 +216,8 @@ const en = {
 					defaultText: 'Database',
 
 					none_database: 'Database is required.',
-
+					tableSuffix: 'Please enter table suffix',
+					tablePrefix: 'Please enter table prefix',
 					form: {
 						placeholder: 'Please select database',
 						label: 'Database'
@@ -298,18 +300,24 @@ const en = {
 					name: 'GridFS',
 					tip: 'GridFS node',
 					chooseGridFsName: 'Please select GridFS',
-					gridFs_isNull: 'GridFS cannot be empty'
+          none_collection: 'Collection is required.',
+          none_pk: 'Primary key is required.',
+          gridFs_isNull: 'GridFS cannot be empty'
 				},
 				dummy: {
 					name: 'Dummy',
 					tip: 'Dummy node',
 					chooseDummyName: 'Please select Dummy',
+          none_collection: 'Collection is required.',
+          none_pk: 'Primary key is required.',
 					dummy_isNull: 'Dummy cannot be empty'
 				},
 				api: {
 					name: 'API',
 					tip: 'api node',
 					chooseApiName: 'Please select API',
+          none_collection: 'Collection is required.',
+          none_pk: 'Primary key is required.',
 					api_isNull: 'API cannot be empty'
 				},
 				es: {

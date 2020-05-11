@@ -1,6 +1,7 @@
 import log from "../../../log";
 import {options} from "../../lib/rappid/config";
 import DummyAttribute from "./DummyAttribute";
+import {FORM_DATA_KEY} from "../../constants";
 import i18n from "../../../i18n/i18n";
 
 export const DummyConfig = {
@@ -15,7 +16,11 @@ export const DummyConfig = {
 
 				label: {
 					text: i18n.t('editor.cell.data_node.dummy.name'),
-				}
+        },
+        [FORM_DATA_KEY]: {
+          type: 'dummy db',
+          connectionId: ''
+        }
 			}
 		},
 		prototypeProperties: {
@@ -54,6 +59,12 @@ export const DummyConfig = {
 				let name = this.attr('label/text');
 				if (!data)
 					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.dummy.dummy_isNull')}`);
+        if( !data.connectionId )
+          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_database')}`);
+        if( !data.tableName )
+          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_collection')}`);
+        if( !data.primaryKeys)
+          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_pk')}`);
 				return true;
 			},
 		},

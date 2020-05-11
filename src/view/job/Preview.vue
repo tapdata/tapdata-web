@@ -112,8 +112,7 @@
 				handler() {
 					this.getStageTables();
 				}
-			}
-
+      }
 		},
 
 		methods: {
@@ -202,6 +201,8 @@
 </script>
 <style scope lang="less">
 	.preview {
+    display: flex;
+    flex-direction: column;
 		width: 100%;
 		height: 100%;
 		padding: 20px;
@@ -228,7 +229,8 @@
 		}
 
 		.tableStyle {
-			margin-top: 20px;
+      margin-top: 20px;
+      flex: 1;
 		}
 
 		li {
@@ -244,13 +246,12 @@
 </style>
 <style lang="less">
 	.preview {
-
 		.el-tab-pane, .card {
 			height: 100% !important;
 		}
 
 		.el-tabs__content {
-			height: calc(100% - 40px) !important;
+			// height: calc(100% - 40px) !important;
 			box-sizing: border-box;
 		}
 

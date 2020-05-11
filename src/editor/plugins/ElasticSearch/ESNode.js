@@ -1,5 +1,6 @@
 import {options} from "../../lib/rappid/config";
 import EsNodeAttribute from "./EsNodeAttribute";
+import {FORM_DATA_KEY} from "../../constants";
 import i18n from "../../../i18n/i18n";
 
 export const esNodeConfig = {
@@ -13,7 +14,11 @@ export const esNodeConfig = {
 				},
 				label: {
 					text: i18n.t('editor.cell.data_node.es.name'),
-				}
+        },
+        [FORM_DATA_KEY]: {
+          type: 'elasticsearch',
+          connectionId: ''
+        }
 			}
 		},
 		prototypeProperties: {

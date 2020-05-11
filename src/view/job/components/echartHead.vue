@@ -139,7 +139,7 @@
 <style lang="less">
 	.echartHead {
 		.el-radio-button--mini .el-radio-button__inner {
-			padding: 7px 10px;
+			padding: 4px 6px;
 		}
 
 		.el-radio-group {

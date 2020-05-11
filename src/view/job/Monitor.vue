@@ -38,10 +38,10 @@
 						<span class="info-label">{{ $t('dataFlow.state') }}:</span>
 						<span class="info-text" style="color: #62a569;">{{$t('dataFlow.status.' + flow.status)}}</span>
 					</div>
-					<div class="info-list">
+					<!-- <div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
 						<span class="info-text">{{updateTime}}</span>
-					</div>
+					</div> -->
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
 						<span class="info-text"> {{flow.inputNumber}}</span>
@@ -570,7 +570,7 @@
 						this.replicateObj.loading = false;
 					}
 				});
-			},
+      },
 
 			//数据处理
 			dataProcessing(data, type, ele) {
@@ -665,7 +665,7 @@
 								width: 0
 							}
 						},
-						data: [this.$t('dataFlow.inputNumber'), this.$t('dataFlow.outputNumber')],
+						data: [this.$t('dataFlow.outputNumber'), this.$t('dataFlow.inputNumber')],
 						axisPointer: {
 							type: 'shadow'
 						},
@@ -688,13 +688,13 @@
 					},
 					series: [{
 						type: 'bar',
-						data: [series1, series2],
+						data: [series2, series1],
 						barWidth: 70,
 						barGap: '-100%',
 						itemStyle: {
 							normal: {
 								color: function (params) {
-									var colorList = ['#48b6e2', '#62a569'];
+									var colorList = ['#62a569', '#48b6e2'];
 									return colorList[params.dataIndex];
 								},
 								label: {
@@ -811,7 +811,7 @@
 <style scoped lang="less">
 	.e-job-monitor {
 		width: 100%;
-		padding: 10px 15px 15px;
+		padding: 5px 12px 10px;
 		box-sizing: border-box;
 		position: relative;
 		.e-job-monitor-btn{
@@ -830,7 +830,7 @@
 				position: relative;
 				width: 100%;
 				height: 330px;
-				margin-top: 20px;
+				margin-top: 6px;
 				border: 1px solid #dcdfe6;
 				border-radius: 3px;
 				box-shadow: 1.414px 1.414px 5px rgba(0, 0, 0, 0.1);

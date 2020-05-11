@@ -44,7 +44,7 @@ export default {
       },
       model: {
         connectionId: "",
-        type: "custom"
+        type: "custom_connection"
       }
     };
   },
