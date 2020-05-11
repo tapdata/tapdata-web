@@ -312,6 +312,10 @@ export default class Editor extends BaseObject {
 				component: Capture
 			});
 			this.getBottomTabPanel().add(capture);
+		} else {
+			if(capture.vm && typeof capture.vm.setData === 'function'){
+				capture.vm.setData(dataFlow);
+			}
 		}
 		// if( this.getBottomSidebar().isShow() && capture.selected ) {
 		// 	this.getBottomSidebar().hide();
