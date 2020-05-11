@@ -216,7 +216,8 @@ const en = {
 					defaultText: 'Database',
 
 					none_database: 'Database is required.',
-
+					tableSuffix: 'Please enter table suffix',
+					tablePrefix: 'Please enter table prefix',
 					form: {
 						placeholder: 'Please select database',
 						label: 'Database'

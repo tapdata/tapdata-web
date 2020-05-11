@@ -214,7 +214,8 @@ const tc = {
 					name: '數據庫',
 					tip: '任意類型數據庫',
 					defaultText: '數據庫',
-
+					tableSuffix: '表後綴',
+					tablePrefix: '表前綴',
 					none_database: '數據庫必填.',
 
 					form: {

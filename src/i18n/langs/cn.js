@@ -214,7 +214,8 @@ const cn = {
 					name: '数据库',
 					tip: '任意类型数据库',
 					defaultText: '数据库',
-
+					tableSuffix: '表后缀',
+					tablePrefix: '表前缀',
 					none_database: '数据库必填.',
 
 					form: {
