@@ -121,7 +121,6 @@
 		},
 		mounted() {
 			let self = this;
-
 			self.editor = editor({
 				container: $('.editor-container'),
 				actionBarEl: $('.editor-container .action-buttons')
@@ -157,7 +156,7 @@
 						self.status = dataFlow.status;
 						self.executeMode = dataFlow.executeMode;
 
-						self.dataFlow = dataFlow;
+            self.dataFlow = dataFlow;
 
 						self.editor.setData(dataFlow);
 
@@ -452,8 +451,10 @@
 
 			preview() {
 				let self = this,
-					data = this.getDataFlowData();
-
+          data = this.getDataFlowData();
+      //   let dataFlow = this.editor.getDataflows();
+      //   let capture = this.editor.getBottomTabPanel().getChildByName('capture');
+      //  let jj =  capture.vm.setData();
 				if (data) {
 					if (data.id) {
 						data = {

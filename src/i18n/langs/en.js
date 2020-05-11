@@ -224,7 +224,7 @@ const en = {
           },
           remove: 'Remove',
           Undo: 'Undo',
-          bulkRemoval: 'Bulk removal',
+          bulkRemoval: 'Select All',
           bulkRevocation: 'Bulk revocation',
           queueCopied: 'Queue to be copied',
           tableRemoved: 'Table removed',
