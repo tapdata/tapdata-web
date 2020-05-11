@@ -314,16 +314,17 @@ export default class Editor extends BaseObject {
 			this.getBottomTabPanel().add(capture);
 		} else {
 			if(capture.vm && typeof capture.vm.setData === 'function'){
-				capture.vm.setData(dataFlow);
+        capture.vm.setData(dataFlow);
 			}
-		}
+    }
 		// if( this.getBottomSidebar().isShow() && capture.selected ) {
 		// 	this.getBottomSidebar().hide();
 		// } else {
 			this.getBottomTabPanel().select(capture);
 			this.getBottomSidebar().show();
 		// }
-	}
+  }
+
 	showDataVerify(disableDirective){
 		// remove setting
 		let dvResult = this.getRightTabPanel().getChildByName('dvResult');

@@ -44,7 +44,7 @@
 <script>
 	import factory from '../../api/factory';
 	import {EditorEventType} from "../../editor/lib/events";
-
+  import editor from '../../editor/index';
 	const DataFlowsDebugs = factory('DataFlowsDebugs');
 	export default {
 		name: "Preview",
@@ -77,6 +77,8 @@
 		},
 
 		mounted() {
+      this.dataFlow = this.editor.setData();
+      console.log('preview######',this.dataFlow,this.editor.setData())
 			if (this.dataFlow && this.dataFlow.stages && this.dataFlow.stages.length > 0) {
 				this.stageId = this.dataFlow.stages[0].id;
 			}
@@ -101,7 +103,8 @@
 					this.stageId = id;
 				}
 				this.getStageTables();
-			});
+      });
+
 		},
 
 		watch: {
