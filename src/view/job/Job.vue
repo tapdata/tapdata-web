@@ -158,9 +158,13 @@
 						self.executeMode = dataFlow.executeMode;
 
 						self.dataFlow = dataFlow;
-
-						self.editor.setData(dataFlow);
-
+						log(dataFlow.editorData);
+						if(!dataFlow.editorData){
+              dataFlow.editorData = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
+            }
+            self.editor.setData(dataFlow);
+						this.editor.graph.layoutDirectedGraph();
+						this.editor.reloadSchema();
 						if (['scheduled', 'running', 'stopping'].includes(self.status)) {
 							self.setEditable(false);
 						}
@@ -571,6 +575,91 @@
 					this.$message.error(this.$t('message.save_before_running'));
 				}
 			},
+      creatApiEditorData(data){//1. 创建cell 2. 加载schema 3.自动布局
+        let cells = [];
+        let mapping = {
+          'collection': 'app.Collection',
+          'table': 'app.Table',
+          'database': 'app.Database',
+          'mongodb': 'app.Database',
+          'mongo_view': 'app.Collection',
+          'view': 'app.Table',
+          'dummy db':'app.Dummy',
+          'elasticsearch':'app.ESNode',
+          'file':'app.FileNode',
+          'gridfs': 'app.GridFSNode',
+          'rest api': 'app.ApiNode',
+        };
+        if(data){
+          data.map((v,index) =>{
+            if(['table','view','collection','mongo_view'].includes(v.type)){
+              let node ={
+                type:mapping[v.type],
+                id:v.id,
+                freeTransform:false,
+                form_data : {
+                  connectionId: v.connectionId,
+                  databaseType: v.databaseType,
+                  tableName: v.tableName ,
+                  sql: "",
+                  dropTable: false,
+                  type:v.type,
+                  primaryKeys: v.primaryKeys,
+                  name: v.name,
+                },
+                schema:{},
+                outputSchema: {},
+              };
+              cells.push(node);
+            }else if(v.type ==='database'){
+                if(v.database_type && (['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(v.database_type))){
+                  let node ={
+                    form_data :{
+                      connectionId:data.source._id,
+                      name: data.source.name || data.label ,
+                      type: data.source.database_type
+                    }
+                  };
+                  cells.push(node);
+
+                }else {
+                  let node ={
+                    form_data :{
+                      connectionId:data.source._id,
+                      name: data.source.name || data.label ,
+                    }
+                  };
+                  cells.push(node);
+                }
+            }
+              if(v.outputLanes){
+                v.outputLanes.map(k =>{
+                  let node ={
+                    type:'app.Link',
+                    source:v.id,
+                    target:k,
+                    router:{
+                      "name":"manhattan"
+                    },
+                    connector:{
+                      "name":"rounded"
+                    },
+                    form_data:{
+                      "label":""
+                    },
+                    labels:'',
+                    attrs:'',
+                  };
+                  cells.push(node);
+                });
+              }
+          });
+        }
+        log('cells',cells);
+        return {
+          cells:cells
+        };
+      }
 		}
 	};
 </script>
