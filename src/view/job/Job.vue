@@ -163,8 +163,10 @@
               dataFlow.editorData = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
             }
             self.editor.setData(dataFlow);
+            this.editor.reloadSchema();
+
 						this.editor.graph.layoutDirectedGraph();
-						this.editor.reloadSchema();
+
 						if (['scheduled', 'running', 'stopping'].includes(self.status)) {
 							self.setEditable(false);
 						}
@@ -607,27 +609,52 @@
                   primaryKeys: v.primaryKeys,
                   name: v.name,
                 },
-                schema:{},
-                outputSchema: {},
+                size:{
+                  "width":160,
+                  "height":36
+                },
+                schema:null,
+                outputSchema: null,
+                "attrs":{
+                  "label":{
+                    "text":"xml_source_001"
+                  },
+                  "body":{
+                    "stroke":"#2196F3"
+                  }
+                },
+                "angle":0,
               };
               cells.push(node);
             }else if(v.type ==='database'){
                 if(v.database_type && (['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(v.database_type))){
                   let node ={
+                    type:mapping[v.type],
                     form_data :{
-                      connectionId:data.source._id,
-                      name: data.source.name || data.label ,
-                      type: data.source.database_type
-                    }
+                      connectionId:v.connectionId,
+                      name: v.name,
+                      type: mapping[v.databaseType]
+                    },
+                    size:{
+                      "width":160,
+                      "height":36
+                    },
                   };
                   cells.push(node);
 
                 }else {
                   let node ={
+                    type:mapping[v.type],
                     form_data :{
-                      connectionId:data.source._id,
-                      name: data.source.name || data.label ,
-                    }
+                      connectionId:v.connectionId,
+                      name: v.name,
+                      table_prefix: "",
+                      table_suffix: ""
+                    },
+                    size:{
+                      "width":160,
+                      "height":36
+                    },
                   };
                   cells.push(node);
                 }
@@ -636,8 +663,12 @@
                 v.outputLanes.map(k =>{
                   let node ={
                     type:'app.Link',
-                    source:v.id,
-                    target:k,
+                    source:{
+                      id:v.id
+                    },
+                    target:{
+                      id:k
+                    },
                     router:{
                       "name":"manhattan"
                     },
