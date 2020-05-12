@@ -156,7 +156,7 @@
 						self.status = dataFlow.status;
 						self.executeMode = dataFlow.executeMode;
 
-            self.dataFlow = dataFlow;
+						self.dataFlow = dataFlow;
 
 						self.editor.setData(dataFlow);
 
@@ -322,15 +322,18 @@
 
 							self.dataFlowId = dataFlow.id;
 							self.status = dataFlow.status;
-							self.$router.push({
-								path: '/job',
-								query: {
-									id: dataFlow.id
-								}
-							});
 							self.executeMode = dataFlow.executeMode;
 
 							self.dataFlow = dataFlow;
+
+							if( !self.$route.query || !self.$route.query.id) {
+								self.$router.push({
+									path: '/job',
+									query: {
+										id: dataFlow.id
+									}
+								});
+							}
 
 							if (typeof cb === "function") {
 								cb(null, dataFlow);
@@ -451,17 +454,15 @@
 
 			preview() {
 				let self = this,
-          data = this.getDataFlowData();
-      //   let dataFlow = this.editor.getDataflows();
-      //   let capture = this.editor.getBottomTabPanel().getChildByName('capture');
-      //  let jj =  capture.vm.setData();
+				data = this.getDataFlowData();
 				if (data) {
 					if (data.id) {
-						data = {
-							id: data.id,
+						// 不管新增删除，预览前都先保存数据，在执行预览
+						Object.assign(data, {
+							//id: data.id,
 							status: ['scheduled', 'running', 'stopping'].includes(data.status) ? data.status : 'scheduled',
 							executeMode: 'editing_debug'
-						};
+						});
 					} else {
 						Object.assign(data, {
 							status: 'scheduled',
