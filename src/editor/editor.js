@@ -14,9 +14,9 @@ import Monitor from '../view/job/Monitor';
 import Capture from '../view/job/Preview';
 import Setting from '../view/job/Setting';
 import DebugLogs from '../view/job/DebugLogs';
-import DataVerify from  '../view/job/DataVerify/List';
-import DVLoading from  '../view/job/DataVerify/Loading';
-import DVResult from  '../view/job/DataVerify/Result';
+import DataVerify from '../view/job/DataVerify/List';
+import DVLoading from '../view/job/DataVerify/Loading';
+import DVResult from '../view/job/DataVerify/Result';
 
 import log from "../log";
 import Panel from "./ui/panel";
@@ -26,6 +26,7 @@ import {EditorEventType} from "./lib/events";
 import i18n from "../i18n/i18n";
 
 import factory from '../api/factory';
+
 const connections = factory('connections');
 
 export default class Editor extends BaseObject {
@@ -77,12 +78,12 @@ export default class Editor extends BaseObject {
 	 * @type {boolean}
 	 */
 	mapping = {
-		'app.Collection':'connectionId',
-		'app.Table':'connectionId',
-		'app.Database':'connectionId',
+		'app.Collection': 'connectionId',
+		'app.Table': 'connectionId',
+		'app.Database': 'connectionId',
 	};
 
-	constructor(opts){
+	constructor(opts) {
 		super();
 
 		this.container = opts.container;
@@ -91,7 +92,7 @@ export default class Editor extends BaseObject {
 		this.doInit();
 	}
 
-	doInit(){
+	doInit() {
 		let self = this;
 
 		// login plugins
@@ -131,7 +132,7 @@ export default class Editor extends BaseObject {
 
 		let rightTabPanel = new Tab({
 			name: 'rightTabPanel',
-			hiddenTabBar:true,
+			hiddenTabBar: true,
 		});
 		self.rightSidebar.add(rightTabPanel);
 
@@ -169,20 +170,20 @@ export default class Editor extends BaseObject {
 		this.initSettings();
 	}
 
-	initSettings(){
+	initSettings() {
 		let self = this;
 		let rightTabPanel = this.getRightTabPanel();
-		if( !rightTabPanel) {
+		if (!rightTabPanel) {
 			rightTabPanel = new Tab({
 				name: 'rightTabPanel',
-				hiddenTabBar:true,
+				hiddenTabBar: true,
 			});
 			this.getRightSidebar().add(rightTabPanel);
 		}
 		this.rightSidebar.add(rightTabPanel);
 
 		let setting = rightTabPanel.getChildByName('setting');
-		if( !setting ){
+		if (!setting) {
 			setting = new VueComponent({
 				title: i18n.t('editor.ui.sidebar.setting'),
 				name: 'setting',
@@ -223,7 +224,7 @@ export default class Editor extends BaseObject {
 		}*/
 
 		let monitor = self.getRightTabPanel().getChildByName('monitor');
-		if( !monitor ){
+		if (!monitor) {
 			monitor = new VueComponent({
 				name: 'monitor',
 				editor: this,
@@ -239,7 +240,7 @@ export default class Editor extends BaseObject {
 		self.showLogs(dataFlow);
 	}
 
-	initEditingMode(){
+	initEditingMode() {
 		log('editor.initEditingMode');
 		//this.getRightSidebar().removeAll();
 		this.getRightTabPanel().removeAll();
@@ -254,16 +255,16 @@ export default class Editor extends BaseObject {
 	}
 
 	//setting
-	showSetting(name){
+	showSetting(name) {
 		this.getRightTabPanel().removeAll();
 		let self = this;
 		self.initSettings();
 		let rightTabPanel = self.getRightTabPanel();
-		if( rightTabPanel ) {
+		if (rightTabPanel) {
 			let setting = rightTabPanel.getChildByName('setting');
-			if( setting ){
+			if (setting) {
 				let settingData = self.graph.getSettingData();
-				if(name){
+				if (name) {
 					settingData.name = name;
 				}
 				setting.setData(settingData);
@@ -273,11 +274,11 @@ export default class Editor extends BaseObject {
 		}
 	}
 
-	showLogs(dataFlow){
+	showLogs(dataFlow) {
 		let bottomTabPanel = this.getBottomTabPanel();
 		let logsPanel = bottomTabPanel.getChildByName('logsPanel');
 
-		if( !logsPanel ) {
+		if (!logsPanel) {
 			logsPanel = new VueComponent({
 				title: i18n.t('editor.ui.sidebar.logs'),
 				name: 'logsPanel',
@@ -290,7 +291,7 @@ export default class Editor extends BaseObject {
 			this.getBottomTabPanel().add(logsPanel);
 		}
 
-		if( this.getBottomSidebar().isShow() && logsPanel.selected ) {
+		if (this.getBottomSidebar().isShow() && logsPanel.selected) {
 			this.getBottomSidebar().hide();
 		} else {
 			this.getBottomTabPanel().select(logsPanel);
@@ -301,7 +302,7 @@ export default class Editor extends BaseObject {
 	showCapture(dataFlow) {
 		// add capture
 		let capture = this.getBottomTabPanel().getChildByName('capture');
-		if( !capture ){
+		if (!capture) {
 			capture = new VueComponent({
 				title: i18n.t('editor.ui.sidebar.capture'),
 				name: 'capture',
@@ -313,27 +314,27 @@ export default class Editor extends BaseObject {
 			});
 			this.getBottomTabPanel().add(capture);
 		} else {
-			if(capture.vm && typeof capture.vm.setData === 'function'){
-        capture.vm.setData(dataFlow);
+			if (capture.vm && typeof capture.vm.setDataFlow === 'function') {
+				capture.vm.setDataFlow(dataFlow);
 			}
-    }
+		}
 		// if( this.getBottomSidebar().isShow() && capture.selected ) {
 		// 	this.getBottomSidebar().hide();
 		// } else {
-			this.getBottomTabPanel().select(capture);
-			this.getBottomSidebar().show();
+		this.getBottomTabPanel().select(capture);
+		this.getBottomSidebar().show();
 		// }
-  }
+	}
 
-	showDataVerify(disableDirective){
+	showDataVerify(disableDirective) {
 		// remove setting
 		let dvResult = this.getRightTabPanel().getChildByName('dvResult');
-		if( dvResult ) this.getRightTabPanel().remove(dvResult);
+		if (dvResult) this.getRightTabPanel().remove(dvResult);
 
 		// add data verify
 		let self = this;
 		let dataVerify = self.getRightSidebar().getChildByName('dataVerify');
-		if( !dataVerify ){
+		if (!dataVerify) {
 			dataVerify = new VueComponent({
 				title: i18n.t('editor.ui.sidebar.capture'),
 				name: 'dataVerify',
@@ -345,34 +346,36 @@ export default class Editor extends BaseObject {
 			});
 			self.getRightTabPanel().add(dataVerify);
 			self.getRightTabPanel().select(dataVerify);
-			self.getRightSidebar().on(EditorEventType.RESIZE, function(){
+			self.getRightSidebar().on(EditorEventType.RESIZE, function () {
 				dataVerify.emit(EditorEventType.RESIZE, ...arguments);
 			});
 		}
 		self.getRightSidebar().show();
 	}
-	showMonitor(){
+
+	showMonitor() {
 		// remove dataVerify
 		let dataVerify = this.getRightTabPanel().getChildByName('dataVerify');
-		if( dataVerify ) this.getRightTabPanel().remove(dataVerify);
+		if (dataVerify) this.getRightTabPanel().remove(dataVerify);
 
 		let monitor = this.getRightTabPanel().getChildByName('monitor');
 		this.getRightTabPanel().select(monitor);
 	}
-	showLoading(){
+
+	showLoading() {
 		let dataVerify = this.getRightTabPanel().getChildByName('dataVerify');
-		if( dataVerify ) this.getRightTabPanel().remove(dataVerify);
+		if (dataVerify) this.getRightTabPanel().remove(dataVerify);
 		// add loading
 		let self = this;
 		let rightTabPanel = self.getRightSidebar().getChildByName('rightTabPanel');
-		if( !rightTabPanel) {
+		if (!rightTabPanel) {
 			rightTabPanel = new Tab({
 				name: 'rightTabPanel'
 			});
 			self.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
 		}
 		let dvLoading = self.getRightSidebar().getChildByName('dvLoading');
-		if( !dvLoading ){
+		if (!dvLoading) {
 			dvLoading = new VueComponent({
 				title: i18n.t('editor.ui.sidebar.capture'),
 				name: 'dvLoading',
@@ -387,20 +390,21 @@ export default class Editor extends BaseObject {
 		}
 		self.getRightSidebar().show();
 	}
-	showResult(){
+
+	showResult() {
 		let dvLoading = this.getRightTabPanel().getChildByName('dvLoading');
-		if( dvLoading ) this.getRightTabPanel().remove(dvLoading);
+		if (dvLoading) this.getRightTabPanel().remove(dvLoading);
 		// add result
 		let self = this;
 		let rightTabPanel = self.getRightSidebar().getChildByName('rightTabPanel');
-		if( !rightTabPanel) {
+		if (!rightTabPanel) {
 			rightTabPanel = new Tab({
 				name: 'rightTabPanel'
 			});
 			self.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
 		}
 		let dvResult = self.getRightSidebar().getChildByName('dvResult');
-		if( !dvResult ){
+		if (!dvResult) {
 			dvResult = new VueComponent({
 				title: i18n.t('editor.ui.sidebar.capture'),
 				name: 'dvResult',
@@ -415,12 +419,13 @@ export default class Editor extends BaseObject {
 		}
 		self.getRightSidebar().show();
 	}
-	setData(dataFlow){
+
+	setData(dataFlow) {
 		this.graph.loadData(JSON.parse(dataFlow.editorData));
 		this.ui.setName(dataFlow.name);
 	}
 
-	getData(){
+	getData() {
 
 		let graphLib = this.graph.getGraphLib();
 		let distance = this.distanceForSink(graphLib);
@@ -436,19 +441,19 @@ export default class Editor extends BaseObject {
 
 	}
 
-	distanceForSink(graphLib){
+	distanceForSink(graphLib) {
 		let distanceResult = {};
 
-		let predecessors = function(node, distance){
+		let predecessors = function (node, distance) {
 
-			if( distanceResult.hasOwnProperty(node) )
+			if (distanceResult.hasOwnProperty(node))
 				distanceResult[node] = distanceResult[node] >= distance ? distanceResult[node] : distance;
 			else
 				distanceResult[node] = distance;
 
 			graphLib.predecessors(node).forEach((node) => predecessors(node, distance + 1));
 		};
-		graphLib.sinks().forEach( (node) => predecessors(node, 0) );
+		graphLib.sinks().forEach((node) => predecessors(node, 0));
 
 		log('Editor.distanceForSink', distanceResult);
 
@@ -459,20 +464,20 @@ export default class Editor extends BaseObject {
 		log('Editor.setEditable', editable, dataFlow);
 		this.editable = editable;
 		this.graph.setEditable(editable);
-		if( editable ){
+		if (editable) {
 			this.initEditingMode();
 		} else {
 			this.initRunningMode(dataFlow);
 		}
 	}
 
-	validate(){
+	validate() {
 
 		let name = this.ui.getName();
-		if( !name ) return i18n.t('editor.cell.validate.empty_name');
+		if (!name) return i18n.t('editor.cell.validate.empty_name');
 
 		let verified = this.graph.validate();
-		if( verified !== true ) return verified;
+		if (verified !== true) return verified;
 		return this.validateGraphData();
 	}
 
@@ -493,45 +498,46 @@ export default class Editor extends BaseObject {
 		let dataNodeCount = 0,
 			linkCount = 0;
 		graph.getCells().forEach(cell => {
-			if( cell.isLink() ){
+			if (cell.isLink()) {
 				linkCount++;
-			} else if( cell.isElement() && typeof cell.isDataNode === 'function' && cell.isDataNode()) {
+			} else if (cell.isElement() && typeof cell.isDataNode === 'function' && cell.isDataNode()) {
 				dataNodeCount++;
 			}
 		});
-		if( dataNodeCount < 2 ) return i18n.t('editor.cell.validate.none_data_node');
+		if (dataNodeCount < 2) return i18n.t('editor.cell.validate.none_data_node');
 
-		if( linkCount < 1) return i18n.t('editor.cell.validate.none_link_node');
+		if (linkCount < 1) return i18n.t('editor.cell.validate.none_link_node');
 
 		let sources = graph.getSources() || [];
 		let processorSources = sources.filter(
 			cell => cell.isElement() && typeof cell.isProcess === 'function' && cell.isProcess());
-		if( processorSources.length > 0 ){
+		if (processorSources.length > 0) {
 			this.graph.selectCell(processorSources);
 			return i18n.t('editor.cell.validate.start_with_data_node');
 		}
 
 		// validate graph acyclic
 		let acyclic = this.graph.isAcyclic();
-		if( !acyclic ) {
+		if (!acyclic) {
 			return i18n.t('editor.cell.validate.acyclic');
 		}
 
 		return true;
 	}
-	reloadSchema(){
+
+	reloadSchema() {
 		//1. 遍历当前有模型的节点(合并相同连接ID)
 		let self = this;
 		log(' self.graph.graph.getCells()', self.graph.graph.getCells());
 		let dataCells = self.graph.graph.getCells()//.filter(cell => cell.isDataNode && cell.isDataNode())
-			.filter( cell => {
+			.filter(cell => {
 				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
 				let type = cell.get('type');
 				let connectionIdFieldName = self.mapping[type];
 				return formData && connectionIdFieldName && formData[connectionIdFieldName];
 			});
 		let dataCellIds = [];
-		dataCells.forEach( cell => {
+		dataCells.forEach(cell => {
 			let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
 			let type = cell.get('type');
 			let connectionIdFieldName = self.mapping[type];
@@ -544,7 +550,7 @@ export default class Editor extends BaseObject {
 		//2.请求节点schema数据
 		//TODO: add id parameter
 
-		log('dataCellIds',dataCellIds);
+		log('dataCellIds', dataCellIds);
 		let params = {
 			filter: JSON.stringify({
 				where: {
@@ -555,15 +561,15 @@ export default class Editor extends BaseObject {
 			})
 		};
 		connections.get(params).then(result => {
-			if (result.data && result.data.length !==0) {
+			if (result.data && result.data.length !== 0) {
 				/**
 				 * connectionId -> table name -> schema
 				 * @type {{object}}
 				 */
 				let connectionSchemaData = {};
 
-				result.data.forEach( connection => {
-					if(connection.schema && connection.schema.tables){
+				result.data.forEach(connection => {
+					if (connection.schema && connection.schema.tables) {
 						let tables = {};
 						connection.schema.tables.forEach(table => tables[table.table_name] = table);
 						connectionSchemaData[connection.id] = tables;
@@ -571,11 +577,11 @@ export default class Editor extends BaseObject {
 				});
 
 				//3.分别更新对应节点schema
-				if(dataCells){
+				if (dataCells) {
 					dataCells.map((cell) => {
 
 						let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
-						if( !formData ) return;
+						if (!formData) return;
 
 						let type = cell.get('type');
 						let connectionIdFieldName = self.mapping[type];
@@ -584,9 +590,9 @@ export default class Editor extends BaseObject {
 
 						let schema = connectionSchemaData[connectionId] && connectionSchemaData[connectionId][tableName];
 
-						if(!connectionId || !tableName || !schema)
+						if (!connectionId || !tableName || !schema)
 							return;
-						cell.setSchema(schema,false);
+						cell.setSchema(schema, false);
 					});
 
 					// update all node schema
@@ -595,37 +601,45 @@ export default class Editor extends BaseObject {
 			}
 		});
 	}
-	destroy(){
+
+	destroy() {
 		this.emit(EditorEventType.BEFORE_DESTROY, this);
 		this.ui.destroy();
 	}
 
-	getUI(){
+	getUI() {
 		return this.ui;
 	}
-	getLeftSidebar(){
+
+	getLeftSidebar() {
 		return this.leftSidebar;
 	}
-	getRightSidebar(){
+
+	getRightSidebar() {
 		return this.rightSidebar;
 	}
-	getRightTabPanel(){
+
+	getRightTabPanel() {
 		let rightSidebar = this.getRightSidebar();
-		if( rightSidebar ){
+		if (rightSidebar) {
 			return rightSidebar.getChildByName('rightTabPanel');
 		}
 		return null;
 	}
-	getBottomSidebar(){
+
+	getBottomSidebar() {
 		return this.bottomSidebar;
 	}
-	getBottomTabPanel(){
+
+	getBottomTabPanel() {
 		return this.bottomTabPanel;
 	}
-	getLeftSidebarEl(){
+
+	getLeftSidebarEl() {
 		return this.leftSidebar.getContentEl();
 	}
-	getRightSidebarEl(){
+
+	getRightSidebarEl() {
 		return this.rightSidebar.getContentEl();
 	}
 }
