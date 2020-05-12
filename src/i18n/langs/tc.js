@@ -62,6 +62,8 @@ const tc = {
     edit: '修改'
 	},
 	dataFlow: {
+    loadingError: '加載失敗,請',
+    dataLoading: '數據努力加載中...',
     loadLogTip: '運行日誌努力加載中，可能需要5~10秒，請稍等......',
     noLogTip: '沒有數據',
     clickLoadTxt: '點擊加載',

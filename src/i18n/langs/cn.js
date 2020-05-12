@@ -62,7 +62,8 @@ const cn = {
     edit: '修改'
 	},
 	dataFlow: {
-
+    loadingError: '加载失败,请',
+    dataLoading: '数据努力加载中...',
     loadLogTip: '运行日志努力加载中，可能需要5~10秒，请稍等......',
     noLogTip: '没有数据',
     clickLoadTxt: '点击加载',
