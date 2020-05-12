@@ -225,9 +225,10 @@
           this.sourceList = sourceSchema.fields;
           this.targetList = mergedTargetSchema.fields;
 
-          if( this.model.joinTable.joinKeys[0].source === ''|| this.model.joinTable.joinKeys[0].target === '') {
+          // if( this.model.joinTable.joinKeys[0].source === ''|| this.model.joinTable.joinKeys[0].target === '') {
             this.model.joinTable.joinKeys = initialAssociationArr;
-          }
+          // }
+
         }
 
 				this.$emit(EditorEventType.RESIZE);
