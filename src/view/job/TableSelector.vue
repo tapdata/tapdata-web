@@ -6,28 +6,33 @@
 			<i class="el-icon-refresh" v-if="!loading" @click="loadDataBase"></i>
 			<i class="el-icon-loading" v-if="loading"></i>
 		</div>
-		<el-tree
-				:data="data"
-				:props="props"
-				node-key="id"
-				:expand-on-click-node="false"
-				lazy
-				:load="loadTables"
-				icon-class="ts-icon iconfont icon-hebing-copy "
-				:filter-node-method="filterNode"
-				ref="tree"
-				class="ts-tree"
-		>
-			<span class="custom-tree-node" slot-scope="{ node, data}">
-				<span @dblclick="handleGraph(data)">
-					<span  v-if="data.meta_type !=='database'" :class="`iconfont filter-icon-table ${mapping[data.meta_type]}`"></span>
-<!--					<span v-if="['database'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>-->
-					<span v-if="['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>
-					<span class="table-label">{{ node.label }}</span>
-				</span>
-				<span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>
-			</span>
-		</el-tree>
+    <div class="treeBox" v-loading="loading" :element-loading-text="$t('dataFlow.dataLoading')">
+      <el-tree
+        :data="data"
+        :props="props"
+        node-key="id"
+        :expand-on-click-node="false"
+        lazy
+        :load="loadTables"
+        icon-class="ts-icon iconfont icon-hebing-copy "
+        :filter-node-method="filterNode"
+        ref="tree"
+        class="ts-tree"
+      >
+        <span class="custom-tree-node" slot-scope="{ node, data}">
+          <span @dblclick="handleGraph(data)">
+            <span  v-if="data.meta_type !=='database'" :class="`iconfont filter-icon-table ${mapping[data.meta_type]}`"></span>
+  <!--					<span v-if="['database'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>-->
+            <span v-if="['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>
+            <span class="table-label">{{ node.label }}</span>
+          </span>
+          <span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>
+        </span>
+      </el-tree>
+      <div class="noData" v-if="loadingError">
+        <div>{{$t('dataFlow.loadingError')}}<span class="clickLoad" @click="clickLoad">{{$t('dataVerify.refresh')}}</span></div>
+    </div>
+    </div>
 	</div>
 </template>
 
@@ -41,6 +46,7 @@
 		name: 'TableSelector',
 		data() {
 			return {
+        loadingError: false,
 				count: 0,
 				filterText:'',
 				data: [],
@@ -75,6 +81,11 @@
 			}
 		},
 		methods: {
+      // 点击加载
+      clickLoad() {
+        this.loadDataBase();
+      },
+
 			loadDataBase() {
 				let self = this;
 				let params = {
@@ -111,8 +122,10 @@
 							log('TableSelector.loadDataBase', self.data);
 						}
 					}
-					self.loading = false;
+          self.loading = false;
+          self.loadingError = false;
 				}).catch(e => {
+          self.loadingError = true;
 					this.$message.error('MetadataInstances error');
 					self.loading = false;
 				});
@@ -371,5 +384,29 @@
 	}
 	.el-tree-node__content {
 		height: 30px;
-	}
+  }
+
+  .treeBox {
+    .el-loading-text {
+      font-size: 12px;
+      color: #666!important;
+    }
+    .el-loading-spinner {margin-top: 70px;}
+    .noData {
+      height: calc(100% - 60px);
+      padding-top: 9%;
+      color: #999;
+      font-size: 12px;
+      background-color: #fff;
+      div {
+        text-align: center;
+
+      }
+      .clickLoad {
+        cursor: pointer;
+        color: #48b6e2;
+      }
+    }
+  }
+
 </style>
