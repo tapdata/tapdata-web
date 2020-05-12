@@ -108,6 +108,7 @@ const tc = {
 		dataPlaceholder: "選擇時間範圍",
 		taskStatus: '運行狀態',
 		taskStatusPlaceholder: '請選擇任務狀態',
+    taskSettingPlaceholder: '請選擇任務同步類型',
 		updateTime: '更新時間',
 		runningSpeed: '運行速度',
 		operate: '操作',

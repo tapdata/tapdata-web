@@ -109,6 +109,7 @@ const cn = {
 		dataPlaceholder: "选择时间范围",
 		taskStatus: '启动开关',
 		taskStatusPlaceholder: '请选择任务状态',
+    taskSettingPlaceholder: '请选择任务同步类型',
 		updateTime: '更新时间',
 		runningSpeed: '运行速度',
 		operate: '操作',
