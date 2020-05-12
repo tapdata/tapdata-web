@@ -112,7 +112,8 @@ const en = {
 		taskStatusPlaceholder: 'Please select task status',
     taskSettingPlaceholder: 'Please select Sync type',
 		updateTime: 'Update time',
-		runningSpeed: 'Switch',
+		runningSpeed: 'Running speed',
+    taskSwitch: 'Switch',
 		operate: 'Operation',
 		dataMap: 'Data Map',
 		edit: 'Edit',
@@ -170,7 +171,7 @@ const en = {
 			force_stop: 'Force Stop',
 			reset: 'Reset',
 			save: 'Save',
-			reloadSchema:'reloadSchema'
+			reloadSchema:'Reload Schema'
 		},
 		save_before_running: 'Please save the task before running',
 		reset_job: {

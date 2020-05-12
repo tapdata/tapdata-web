@@ -88,7 +88,7 @@
 				<el-table-column
 						prop="createTime" :label="$t('dataFlow.creationTime')" width="140" sortable='custom'
 						:formatter="formatterTime"></el-table-column>
-				<el-table-column :label="$t('dataFlow.taskStatus')" width="70">
+				<el-table-column :label="$t('dataFlow.taskSwitch')" width="70">
 					<template slot-scope="scope">
 						<div v-if="!scope.row.hasChildren">
 							<el-switch

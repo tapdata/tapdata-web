@@ -113,6 +113,7 @@ const tc = {
     taskSettingPlaceholder: '請選擇任務同步類型',
 		updateTime: '更新時間',
 		runningSpeed: '運行速度',
+    taskSwitch: '运行开关',
 		operate: '操作',
 		dataMap: '數據地圖',
 		edit: '編輯',
