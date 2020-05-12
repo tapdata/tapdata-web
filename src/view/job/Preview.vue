@@ -27,7 +27,7 @@
 
 		</el-form>
 
-		<el-table border fit :height="tableHeight" class="tableStyle" :data="itemList" v-loading="isloading">
+		<el-table border fit :height="tableHeight" class="tableStyle" :data="itemList" v-loading="isloading" :element-loading-text="$t('dataFlow.dataLoading')">
 			<el-table-column
 					minWidth="120"
 					v-for="(head, key) in headers"
@@ -154,7 +154,8 @@
 					'filter[order]': 'createTime DESC',
 					'filter[limit]': 100
 				};
-				this.loading = true;
+        this.loading = true;
+        this.isloading = true;
 				await DataFlowsDebugs.get(params).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						// this.nodeList = Object.keys(res.data);   // 获取下拉项
@@ -188,9 +189,11 @@
 							this.itemList = [];
 						}
 					}
-					this.loading = false;
+          this.loading = false;
+          this.isloading = false;
 				}).catch(err => {
-					this.loading = false;
+          this.loading = false;
+          this.isloading = false;
 				});
 			},
 
@@ -285,6 +288,10 @@
 
 		.el-form-item {
 			margin-bottom: 0;
-		}
+    }
+    .el-loading-text {
+      font-size: 12px;
+      color: #666!important;
+    }
 	}
 </style>
