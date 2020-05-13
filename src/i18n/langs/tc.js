@@ -319,7 +319,14 @@ const tc = {
 					chooseApiName: '請選擇API',
 					api_isNull: 'API不能為空',
           none_collection: '數據集必填.',
-          none_pk: '主鍵必填.'
+          none_pk: '主鍵必填.',
+          dataApiName: '數據發布API名稱',
+          description:'描述',
+          method: '方法',
+          fieldSettings:'字段設置',
+          table_field: '字段',
+          table_type: '類型',
+          table_setting: '設置',
 				},
 				es: {
 					name: 'ES',

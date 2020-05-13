@@ -320,7 +320,15 @@ const en = {
 					chooseApiName: 'Please select API',
           none_collection: 'Collection is required.',
           none_pk: 'Primary key is required.',
-					api_isNull: 'API cannot be empty'
+          api_isNull: 'API cannot be empty',
+          dataApiName: 'Data publishing API name',
+          description: 'Description',
+          method: 'Method',
+          fieldSettings: 'Field Settings',
+          table_field: 'field',
+          table_type: 'Type',
+          table_setting: 'Settings',
+
 				},
 				es: {
 					name: 'ES',

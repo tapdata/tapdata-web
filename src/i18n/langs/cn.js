@@ -318,7 +318,14 @@ const cn = {
 					chooseApiName: '请选择API',
           none_collection: '数据集必填.',
           none_pk: '主键必填.',
-					api_isNull: 'API不能为空'
+          api_isNull: 'API不能为空',
+          dataApiName: '数据发布API名称',
+          description:'描述',
+          method: '方法',
+          fieldSettings:'字段设置',
+          table_field: '字段',
+          table_type: '类型',
+          table_setting: '设置',
 				},
 				es: {
 					name: 'ES',
