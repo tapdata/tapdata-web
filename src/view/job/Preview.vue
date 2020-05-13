@@ -129,7 +129,7 @@
 				await DataFlowsDebugs.getTables(params).then(res => {
 					if (res.status === 200 && res.statusText === "OK") {
 						if (res.data && res.data.data.length > 0) {
-							this.nodeList = res.data.data;
+							this.nodeList = res.data.data?res.data.data:[];
 							if (!this.selectTableName && this.nodeList.length > 0) {
 								this.selectTableName = this.nodeList[0];
 							}
