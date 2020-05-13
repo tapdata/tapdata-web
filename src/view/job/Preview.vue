@@ -132,12 +132,17 @@
 							this.nodeList = res.data.data?res.data.data:[];
 							if (!this.selectTableName && this.nodeList.length > 0) {
 								this.selectTableName = this.nodeList[0];
-							}
+							} else {
+                this.selectTableName = ''
+              }
 							if (!this.nodeList.includes(this.selectTableName)) {
 								this.selectTableName = this.nodeList[0];
 							}
-						}
-					}
+						} else {
+              this.selectTableName = '';
+              this.nodeList = [];
+            }
+          }
 					this.loading = false;
 					this.getDataTableApi();
 				}).catch(err => {
