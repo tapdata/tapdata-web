@@ -129,7 +129,7 @@ const tc = {
 		initial_sync: '初始化',
 		cdc: '增量同步',
 		send_email: '發送郵件',
-		stopped: ' 當任務停止',
+    paused: ' 當任務停止',
 		error: '當任務出錯',
 		edited: '當任務被編輯',
 		started: '當任務開啟',
