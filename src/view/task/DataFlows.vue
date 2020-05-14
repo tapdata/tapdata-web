@@ -36,16 +36,32 @@
 								<el-button class="back-btn-icon-box dv-btn-icon"  @click="handleClear"><i class="iconfont icon-shuaxin1 back-btn-icon"></i></el-button>
 							</el-form-item>
 						</el-col>
-						<div class="task-list-menu-right">
+            <div class="task-list-menu-right">
+              <el-button  class="back-btn-icon-box dv-btn-icon"  @click="handleImport"><i class="iconfont icon-daoru back-btn-icon"></i></el-button>
+              <el-dropdown @command="handleCommand">
+                <el-button  class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-piliang back-btn-icon"></i></el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="a">批量导出</el-dropdown-item>
+                  <el-dropdown-item command="b">批量启动</el-dropdown-item>
+                  <el-dropdown-item command="c">批量暂停</el-dropdown-item>
+                  <el-dropdown-item command="d">批量删除</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+
+              <router-link target="_blank" to="/job">
+                <el-button class="add-btn-icon-box" ><i class="iconfont icon-jia add-btn-icon"></i></el-button>
+              </router-link>
+            </div>
+<!--						<div class="task-list-menu-right">-->
 <!--							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-hanshu back-btn-icon"></i></el-button>-->
 <!--							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-biaoqian back-btn-icon"></i></el-button>-->
-							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('scheduled')"><i class="iconfont icon-zanting2 back-btn-icon"></i></el-button>
-							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('stopping')"><i class="iconfont icon-yunhang1 back-btn-icon"></i></el-button>
+<!--							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('scheduled')"><i class="iconfont icon-zanting2 back-btn-icon"></i></el-button>-->
+<!--							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('stopping')"><i class="iconfont icon-yunhang1 back-btn-icon"></i></el-button>-->
 <!--							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-shanchu1 back-btn-icon"></i></el-button>-->
-							<router-link target="_blank" to="/job">
-								<el-button class="add-btn-icon-box" ><i class="iconfont icon-jia add-btn-icon"></i></el-button>
-							</router-link>
-						</div>
+<!--							<router-link target="_blank" to="/job">-->
+<!--								<el-button class="add-btn-icon-box" ><i class="iconfont icon-jia add-btn-icon"></i></el-button>-->
+<!--							</router-link>-->
+<!--						</div>-->
 					</el-row>
 				</el-form>
 			</el-row>
@@ -119,11 +135,21 @@
 									<i class="iconfont task-list-icon icon-shanchu"></i>
 								</el-button>
 							</el-tooltip>
-							<el-tooltip  class="item" :content="$t('dataFlow.reset')" placement="bottom">
-								<el-button type="text" :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)"  @click="handleReset(scope.row.id)">
-									<i class="iconfont task-list-icon  icon-shuaxin1" ></i>
-								</el-button>
-							</el-tooltip>
+              <el-dropdown @command="handleRowCommand" class="item">
+                <el-button type="text"><i class="iconfont icon-gengduo3  task-list-icon"></i></el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="a">导出</el-dropdown-item>
+                  <el-dropdown-item command="b" >复制</el-dropdown-item>
+                  <el-dropdown-item command="c">重置</el-dropdown-item>
+                  <el-dropdown-item command="d">强制停止</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+<!--							<el-tooltip  class="item" :content="$t('dataFlow.reset')" placement="bottom">-->
+<!--								<el-button type="text" :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)"  @click="handleReset(scope.row.id)">-->
+<!--									<i class="iconfont task-list-icon  icon-shuaxin1" ></i>-->
+<!--								</el-button>-->
+<!--							</el-tooltip>-->
+
 						</div>
 					</template>
 				</el-table-column>
@@ -225,6 +251,18 @@
 				});
 				window.open(routeUrl .href, '_blank');
 			},
+      handleCommand(command){
+			  if(command === 'a'){
+          this.handleDownload();
+        }else if(command === 'b'){
+			    this.handleAllStatus('scheduled');
+        }else if(command === 'c'){
+          this.handleAllStatus('stopping');
+        }
+      },
+      handleImport(){
+
+      },
 			handleSelectable(row) {
 				if (row.hasChildren) {
 					return false;
@@ -447,6 +485,7 @@
 			},
 			handlerCopy(id){
 				let self = this;
+				log('qqqqqqqqq')
 				dataFlows.copy(id).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						self.getData();

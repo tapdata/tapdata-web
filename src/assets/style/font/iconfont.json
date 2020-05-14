@@ -6,6 +6,27 @@
   "description": "Tapdata 线装小图标",
   "glyphs": [
     {
+      "icon_id": "7069155",
+      "name": "更多",
+      "font_class": "gengduo3",
+      "unicode": "e739",
+      "unicode_decimal": 59193
+    },
+    {
+      "icon_id": "1279405",
+      "name": "刷新",
+      "font_class": "shuaxin2",
+      "unicode": "e6a7",
+      "unicode_decimal": 59047
+    },
+    {
+      "icon_id": "2808157",
+      "name": "导入",
+      "font_class": "daoru",
+      "unicode": "e6a6",
+      "unicode_decimal": 59046
+    },
+    {
       "icon_id": "5651573",
       "name": "云下载",
       "font_class": "yunxiazai",
