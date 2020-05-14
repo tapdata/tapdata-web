@@ -62,6 +62,8 @@ const en = {
     edit: 'edit'
 	},
 	dataFlow: {
+    loadingError: 'Loading failed, please',
+    dataLoading: 'Data is hard to load ...',
     loadLogTip: 'Run log is trying to load, it may take 5 ~ 10 seconds, please wait ...',
     noLogTip: 'No data',
     clickLoadTxt: 'Click to load',
@@ -107,9 +109,11 @@ const en = {
 		separator: "to",
 		dataPlaceholder: "Select time range",
 		taskStatus: 'Status',
-		taskStatusPlaceholder: 'Please select a task status',
+		taskStatusPlaceholder: 'Please select task status',
+    taskSettingPlaceholder: 'Please select Sync type',
 		updateTime: 'Update time',
-		runningSpeed: 'Switch',
+		runningSpeed: 'Running speed',
+    taskSwitch: 'Switch',
 		operate: 'Operation',
 		dataMap: 'Data Map',
 		edit: 'Edit',
@@ -167,7 +171,7 @@ const en = {
 			force_stop: 'Force Stop',
 			reset: 'Reset',
 			save: 'Save',
-			reloadSchema:'reloadSchema'
+			reloadSchema:'Reload Schema'
 		},
 		save_before_running: 'Please save the task before running',
 		reset_job: {

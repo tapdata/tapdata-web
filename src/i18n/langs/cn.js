@@ -62,7 +62,8 @@ const cn = {
     edit: '修改'
 	},
 	dataFlow: {
-
+    loadingError: '加载失败,请',
+    dataLoading: '数据努力加载中...',
     loadLogTip: '运行日志努力加载中，可能需要5~10秒，请稍等......',
     noLogTip: '没有数据',
     clickLoadTxt: '点击加载',
@@ -107,10 +108,12 @@ const cn = {
 		endTime: '结束时间',
 		separator: "至",
 		dataPlaceholder: "选择时间范围",
-		taskStatus: '启动开关',
+		taskStatus: '运行状态',
 		taskStatusPlaceholder: '请选择任务状态',
+    taskSettingPlaceholder: '请选择任务同步类型',
 		updateTime: '更新时间',
 		runningSpeed: '运行速度',
+    taskSwitch: '运行开关',
 		operate: '操作',
 		dataMap: '数据地图',
 		edit: '编辑',

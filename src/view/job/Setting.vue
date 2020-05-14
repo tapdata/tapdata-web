@@ -26,11 +26,11 @@
 					<el-form-item >
 						<div>{{$t('dataFlow.notification_lag')}}</div>
 						<el-input v-model="formData.notificationWindow" size="mini">
-							<template slot="prepend">发送间隔</template>
-							<template slot="append">ms</template>
+							<template slot="prepend">Resend</template>
+							<template slot="append">s</template>
 						</el-input>
 						<el-input v-model="formData.notificationInterval" size="mini">
-							<template slot="append">秒后取消发送</template>
+							<template slot="append">Cancel sending</template>
 						</el-input>
 					</el-form-item>
 					<el-form-item>
@@ -85,15 +85,15 @@
 					<el-form-item v-show="formData.sync_type === 'initial_sync' ">
 						<div>{{$t('dataFlow.run_custom_sql')}}</div>
 						<el-radio-group v-model="formData.increment" size="mini"> <!-- 重复运行自定义SQL -->
-							<el-radio-button label="true">{{$t('dataFlow.yes')}}</el-radio-button>
-							<el-radio-button label="false">{{$t('dataFlow.no')}}</el-radio-button>
+							<el-radio-button :label="true">{{$t('dataFlow.yes')}}</el-radio-button>
+							<el-radio-button :label="false">{{$t('dataFlow.no')}}</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
 					<el-form-item>
 						<div>{{$t('dataFlow.stop_on_error')}}</div> <!-- 遇到错误时停止同步 -->
 						<el-radio-group v-model="formData.stopOnError" size="mini">
-							<el-radio-button label="true">{{$t('dataFlow.yes')}}</el-radio-button>
-							<el-radio-button label="false">{{$t('dataFlow.no')}}</el-radio-button>
+							<el-radio-button :label="true">{{$t('dataFlow.yes')}}</el-radio-button>
+							<el-radio-button :label="false">{{$t('dataFlow.no')}}</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
 <!--					<el-form-item v-show="formData.sync_type === 'initial_sync' ">-->
@@ -106,8 +106,8 @@
 					<el-form-item>
 						<div>{{$t('dataFlow.need_to_create_Index')}}</div> <!-- 自动创建目标索引 -->
 						<el-radio-group v-model="formData.needToCreateIndex" size="mini">
-							<el-radio-button label="true">{{$t('dataFlow.yes')}}</el-radio-button>
-							<el-radio-button label="false">{{$t('dataFlow.no')}}</el-radio-button>
+							<el-radio-button :label="true">{{$t('dataFlow.yes')}}</el-radio-button>
+							<el-radio-button :label="false">{{$t('dataFlow.no')}}</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
 <!--					<el-form-item>-->

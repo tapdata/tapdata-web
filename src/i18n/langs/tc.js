@@ -62,6 +62,8 @@ const tc = {
     edit: '修改'
 	},
 	dataFlow: {
+    loadingError: '加載失敗,請',
+    dataLoading: '數據努力加載中...',
     loadLogTip: '運行日誌努力加載中，可能需要5~10秒，請稍等......',
     noLogTip: '沒有數據',
     clickLoadTxt: '點擊加載',
@@ -108,8 +110,10 @@ const tc = {
 		dataPlaceholder: "選擇時間範圍",
 		taskStatus: '運行狀態',
 		taskStatusPlaceholder: '請選擇任務狀態',
+    taskSettingPlaceholder: '請選擇任務同步類型',
 		updateTime: '更新時間',
 		runningSpeed: '運行速度',
+    taskSwitch: '运行开关',
 		operate: '操作',
 		dataMap: '數據地圖',
 		edit: '編輯',

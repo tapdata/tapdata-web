@@ -228,6 +228,10 @@
 				let editorData = this.editor.getData();
 				let graphData = editorData.graphData;
 				let settingData = editorData.settingData;
+        settingData.notificationInterval = Number( settingData.notificationInterval);
+        settingData.notificationWindow = Number( settingData.notificationWindow);
+        settingData.readBatchSize = Number( settingData.readBatchSize);
+        settingData.readCdcInterval = Number( settingData.readCdcInterval);
 				let distanceForSink = editorData.distanceForSink || {};
 
 				let cells = graphData.cells ? graphData.cells : [];

@@ -27,7 +27,7 @@
 
 		</el-form>
 
-		<el-table border fit :height="tableHeight" class="tableStyle" :data="itemList" v-loading="isloading">
+		<el-table border fit :height="tableHeight" class="tableStyle" :data="itemList" v-loading="isloading" :element-loading-text="$t('dataFlow.dataLoading')">
 			<el-table-column
 					minWidth="120"
 					v-for="(head, key) in headers"
@@ -129,15 +129,20 @@
 				await DataFlowsDebugs.getTables(params).then(res => {
 					if (res.status === 200 && res.statusText === "OK") {
 						if (res.data && res.data.data.length > 0) {
-							this.nodeList = res.data.data;
+							this.nodeList = res.data.data?res.data.data:[];
 							if (!this.selectTableName && this.nodeList.length > 0) {
 								this.selectTableName = this.nodeList[0];
-							}
+							} else {
+                this.selectTableName = ''
+              }
 							if (!this.nodeList.includes(this.selectTableName)) {
 								this.selectTableName = this.nodeList[0];
 							}
-						}
-					}
+						} else {
+              this.selectTableName = '';
+              this.nodeList = [];
+            }
+          }
 					this.loading = false;
 					this.getDataTableApi();
 				}).catch(err => {
@@ -154,7 +159,8 @@
 					'filter[order]': 'createTime DESC',
 					'filter[limit]': 100
 				};
-				this.loading = true;
+        this.loading = true;
+        this.isloading = true;
 				await DataFlowsDebugs.get(params).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						// this.nodeList = Object.keys(res.data);   // 获取下拉项
@@ -188,9 +194,11 @@
 							this.itemList = [];
 						}
 					}
-					this.loading = false;
+          this.loading = false;
+          this.isloading = false;
 				}).catch(err => {
-					this.loading = false;
+          this.loading = false;
+          this.isloading = false;
 				});
 			},
 
@@ -285,6 +293,10 @@
 
 		.el-form-item {
 			margin-bottom: 0;
-		}
+    }
+    .el-loading-text {
+      font-size: 12px;
+      color: #666!important;
+    }
 	}
 </style>

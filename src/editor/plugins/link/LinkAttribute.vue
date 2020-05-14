@@ -219,15 +219,16 @@
 					this.model.joinTable.stageId = firstDataNode.length > 0 ? firstDataNode[0].id : '';
           //this.model.joinTable.stageId = cell.getSourceCell().id;
           // 关联字段自动填充
+
           let sourceArr = sourceSchema && sourceSchema.fields && sourceSchema.fields.length > 0 ?sourceSchema.fields.filter(item=> item.primary_key_position > 0):[];
           let targetArr = mergedTargetSchema.fields && mergedTargetSchema.fields.length > 0 ?mergedTargetSchema.fields.filter(item=> item.primary_key_position > 0):[];
           let initialAssociationArr =  sourceArr && sourceArr.length > 0 && targetArr && targetArr.length > 0? sourceArr.map((fields,i) =>({source:fields.field_name, target: targetArr[i].field_name})): this.model.joinTable.joinKeys;
-          this.sourceList = sourceSchema.fields;
-          this.targetList = mergedTargetSchema.fields;
+          this.sourceList = sourceSchema && sourceSchema.fields?sourceSchema.fields:[];
+          this.targetList = mergedTargetSchema.fields||[];
 
-          // if( this.model.joinTable.joinKeys[0].source === ''|| this.model.joinTable.joinKeys[0].target === '') {
+          if( sourceSchema && mergedTargetSchema.fields) {
             this.model.joinTable.joinKeys = initialAssociationArr;
-          // }
+          }
 
         }
 
