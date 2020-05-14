@@ -6,6 +6,97 @@
   "description": "Tapdata 线装小图标",
   "glyphs": [
     {
+      "icon_id": "5651573",
+      "name": "云下载",
+      "font_class": "yunxiazai",
+      "unicode": "e6ab",
+      "unicode_decimal": 59051
+    },
+    {
+      "icon_id": "6253900",
+      "name": "iconfont icon-xitong",
+      "font_class": "iconfonticon-xitong",
+      "unicode": "e6a4",
+      "unicode_decimal": 59044
+    },
+    {
+      "icon_id": "13644690",
+      "name": "云下载",
+      "font_class": "yunxiazai1",
+      "unicode": "e6a5",
+      "unicode_decimal": 59045
+    },
+    {
+      "icon_id": "4686546",
+      "name": "保存",
+      "font_class": "baocun",
+      "unicode": "ec0e",
+      "unicode_decimal": 60430
+    },
+    {
+      "icon_id": "8632473",
+      "name": "批量登记",
+      "font_class": "piliang",
+      "unicode": "e6a3",
+      "unicode_decimal": 59043
+    },
+    {
+      "icon_id": "10982626",
+      "name": "笔 编辑",
+      "font_class": "bibianji",
+      "unicode": "e70d",
+      "unicode_decimal": 59149
+    },
+    {
+      "icon_id": "14401891",
+      "name": "GaussDB2",
+      "font_class": "GaussDB2",
+      "unicode": "e66a",
+      "unicode_decimal": 58986
+    },
+    {
+      "icon_id": "14401892",
+      "name": "o-GaussDB",
+      "font_class": "o-GaussDB",
+      "unicode": "e6a1",
+      "unicode_decimal": 59041
+    },
+    {
+      "icon_id": "6337498",
+      "name": "编辑",
+      "font_class": "tianxie",
+      "unicode": "ec88",
+      "unicode_decimal": 60552
+    },
+    {
+      "icon_id": "14373100",
+      "name": "0-custom",
+      "font_class": "0-custom",
+      "unicode": "e667",
+      "unicode_decimal": 58983
+    },
+    {
+      "icon_id": "14373101",
+      "name": "custom(1)",
+      "font_class": "custom1",
+      "unicode": "e668",
+      "unicode_decimal": 58984
+    },
+    {
+      "icon_id": "12458944",
+      "name": "同步",
+      "font_class": "tongbu",
+      "unicode": "e663",
+      "unicode_decimal": 58979
+    },
+    {
+      "icon_id": "14201069",
+      "name": "云刷新",
+      "font_class": "yunshuaxin",
+      "unicode": "e666",
+      "unicode_decimal": 58982
+    },
+    {
       "icon_id": "14226568",
       "name": "o-collection5",
       "font_class": "o-collection5",
