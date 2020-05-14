@@ -129,7 +129,7 @@ const en = {
 		initial_sync: 'INITIAL SYNC',
 		cdc: ' CDC ',
 		send_email: 'Send Email',
-		stopped: 'task stopped',
+    paused: 'task paused',
 		error: 'task error',
 		edited: 'task edited',
 		started: 'task started',
