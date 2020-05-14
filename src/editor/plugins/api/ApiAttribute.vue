@@ -32,18 +32,24 @@
           :data="form.tableData"
           style="width: 100%">
           <el-table-column
-            prop="date"
+            prop="table_field"
             :label="$t('editor.cell.data_node.api.table_field')">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="table_type"
             :label="$t('editor.cell.data_node.api.table_type')"
             width="100">
           </el-table-column>
           <el-table-column
-            prop="address"
+            prop="checkList"
             :label="$t('editor.cell.data_node.api.table_setting')"
-            width="150">
+            width="180">
+            <template slot-scope="scope">
+              <el-checkbox-group v-model="scope.row.checkList">
+                <el-checkbox label="必填"></el-checkbox>
+                <el-checkbox label="可用查询"></el-checkbox>
+              </el-checkbox-group>
+            </template>
           </el-table-column>
         </el-table>
       </el-form-item>
@@ -56,10 +62,9 @@
 
 <script>
 	import _ from "lodash";
-	import log from '../../../log';
-	import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
+	// import log from '../../../log';
+	// import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
 
-	let counter = 0;
 	export default {
 		name: "ReleaseApi",
 		data() {
@@ -75,7 +80,9 @@
           comment: '',
           method: '',
           url: '',
-					tableData: [],
+					tableData: [
+            {'table_field':1,'table_type': 2,checkList:'必填'}
+          ],
 				},
         aggaggExpression: '1',
         countObj: {
@@ -111,29 +118,6 @@
 					Object.keys(data).forEach(key => this.form[key] = data[key]);
 				}
 
-				let inputSchemas = cell.getInputSchema();
-				let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
-				let object = {};
-				this.groupList = schema.fields || [];
-				if (!!this.groupList && this.groupList.length > 0) {
-					this.groupList = this.groupList.reduce((cur, next) => {
-						if(!object[next.field_name]) {
-							object[next.field_name] = true;
-							cur.push(next);
-						}
-						return cur;
-					}, []);
-				}
-				this.expressionList = this.groupList;
-				log('Aggregate.setData.inputSchemas', inputSchemas, schema.fields);
-
-				if (!this.form.name) {
-					if (counter === 0)
-						this.form.name = this.$t("dataFlow.aggregation");
-					if (counter !== 0)
-						this.form.name = this.$t("dataFlow.aggregation") + (counter);
-					counter++;
-				}
 			},
 
 			getData() {
@@ -210,5 +194,15 @@
       .el-input__inner[style="height: 40px;"] { height: 30px!important;}
     }
     .btnClass .el-form-item__content { line-height: 30px!important;}
+    .el-table {
+      line-height: 30px;
+      td,th {
+        padding: 0;
+      }
+      th {
+        background-color:#F5F5F5;
+      }
+      .el-checkbox-group,.el-checkbox .el-checkbox__label{ font-size: 11px;}
+    }
 	}
 </style>
