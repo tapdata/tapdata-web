@@ -1,208 +1,193 @@
 <template>
-	<div class="releaseApi">
-		<el-form ref="form" :model="form" label-position="top" label-width="200px">
-      <el-form-item :label="$t('editor.cell.data_node.api.dataApiName')">
-        <el-input v-model="form.name" maxlength="20" show-word-limit></el-input>
-      </el-form-item>
-      <el-form-item :label="$t('editor.cell.data_node.api.description')">
-        <el-input type="textarea" v-model="form.comment" :placeholder="$t('dataFlow.enterFilterTable')"></el-input>
-      </el-form-item>
-      <el-row :gutter="10">
-        <el-col :span="6">
-          <el-form-item :label="$t('editor.cell.data_node.api.method')">
-            <el-select v-model="form.method" @change="changeAggFunction(item, index)">
-              <el-option
-                  v-for="item in selectList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="18">
-          <el-form-item label="URL/API/V1/">
-            <el-input v-model="form.url" :placeholder="$t('dataFlow.enterFilterTable')"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-form-item :label="$t('editor.cell.data_node.api.fieldSettings')">
-         <el-table
-          border
-          :data="form.tableData"
-          style="width: 100%">
-          <el-table-column
-            prop="table_field"
-            :label="$t('editor.cell.data_node.api.table_field')">
-          </el-table-column>
-          <el-table-column
-            prop="table_type"
-            :label="$t('editor.cell.data_node.api.table_type')"
-            width="100">
-          </el-table-column>
-          <el-table-column
-            prop="checkList"
-            :label="$t('editor.cell.data_node.api.table_setting')"
-            width="180">
-            <template slot-scope="scope">
-              <el-checkbox-group v-model="scope.row.checkList">
-                <el-checkbox label="必填"></el-checkbox>
-                <el-checkbox label="可用查询"></el-checkbox>
-              </el-checkbox-group>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-form-item>
-			<!-- <el-form-item class="btnClass">
-				<el-button @click="addRow">+ {{$t('editor.cell.processor.aggregate.new_aggregate')}}</el-button>
-			</el-form-item> -->
-		</el-form>
+	<div class="apiNode nodeStye">
+		<head>
+			<span class="headIcon iconfont icon-you2" type="primary"></span>
+			<span class="txt">{{$t("editor.nodeSettings")}}</span>
+		</head>
+		<div class="nodeBody">
+			<el-form class="e-form" label-position="top" :model="model" ref="form">
+				<!-- <span class="addTxt">+新建文件</span> -->
+				<el-form-item :label="$t('editor.choose') + 'API'" prop="connectionId" :rules="rules" required>
+					<el-select
+							filterable v-model="model.connectionId"
+							:placeholder="$t('editor.cell.data_node.api.chooseApiName')">
+						<el-option
+              v-for="(item, idx) in databases"
+              :label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
+              :value="item.id"
+              v-bind:key="idx"></el-option>
+					</el-select>
+				</el-form-item>
+
+        <el-form-item :label="$t('editor.cell.data_node.collection.form.collection.label')" prop="tableName" required>
+          <el-select
+              v-model="model.tableName"
+              filterable
+              allow-create
+              default-first-option
+              clearable
+              :placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')" size="mini">
+            <el-option
+                v-for="(item, idx) in schemas"
+                :label="`${item.table_name}`"
+                :value="item.table_name"
+                v-bind:key="idx"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" prop="primaryKeys" required>
+          <el-input
+              v-model="model.primaryKeys"
+              :placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"  size="mini"></el-input>
+        </el-form-item>
+			</el-form>
+		</div>
+    <div class="e-entity-wrap" style="text-align: center; overflow:auto;">
+      <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
+    </div>
 	</div>
 </template>
-
 <script>
 	import _ from "lodash";
-	// import log from '../../../log';
-	// import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
+  import factory from '../../../api/factory';
+  import Entity from '../link/Entity';
+  import { convertSchemaToTreeData } from "../../util/Schema";
+	let connections = factory('connections');
 
 	export default {
-		name: "ReleaseApi",
+		name: "ApiNode",
+    components: {Entity},
 		data() {
 			return {
-				selectList:[
-          {label:'GET',value:'GET'},
-          {label:'POST',value:'POST'}
-        ],
-				groupList: [],
-				expressionList: [],
-				form: {
-          name: '',
-          comment: '',
-          method: '',
-          url: '',
-					tableData: [
-            {'table_field':1,'table_type': 2,checkList:'必填'}
+				databases: [],
+				rules: {
+					connectionId: [
+						{required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.api.chooseApiName')},
+					],
+          primaryKeys:[
+            {required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.api.none_pk')}
           ],
+          tableName:[
+            {required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.api.none_collection')}
+          ]
 				},
-        aggaggExpression: '1',
-        countObj: {
-          AVG: 0,
-          SUM: 0,
-          MAX: 0,
-          MIN: 0,
-          COUNT: 0
-        }
+				model: {
+          connectionId: "",
+          type: "rest api",
+          tableName: "",
+          primaryKeys: '',
+        },
+        schemas:[],
+        mergedSchema: null,
 			};
 		},
-		mounted() {
 
-    },
+		async mounted() {
+			let result = await connections.get({
+				filter: JSON.stringify({
+					where: {
+						database_type: 'rest api',
+
+					},
+					fields: {
+						name: 1, id: 1, database_type: 1, connection_type: 1, status: 1, schema: 1
+					},
+					order: 'name ASC'
+				})
+			});
+
+			if (result.data) {
+				this.databases = result.data;
+			}
+		},
 
 		watch: {
-			form: {
+			model: {
 				deep: true,
 				handler(val) {
 					this.$emit('dataChanged', this.getData());
 				}
       },
+
+      'model.connectionId': {
+				immediate: true,
+				handler(){
+					this.loadDataModels(this.model.connectionId);
+				}
+      },
+      'model.tableName': {
+				immediate: true,
+				handler(){
+					if( this.schemas.length > 0 ){
+						if( this.model.tableName){
+							let schema = this.schemas.filter( s => s.table_name === this.model.tableName);
+							schema = schema && schema.length > 0 ? schema[0] : {
+								table_name: this.model.tableName,
+								cdc_enabled: true,
+								meta_type: 'rest api',
+								fields: []
+							};
+							this.$emit('schemaChange', _.cloneDeep(schema));
+						}
+					}
+				}
+      },
+      mergedSchema: {
+				handler(){
+					if(!this.model.primaryKeys && this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0){
+						let primaryKeys = this.mergedSchema.fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
+						let unique = {};
+						primaryKeys.forEach( key => unique[key] = 1);
+						primaryKeys = Object.keys(unique);
+						if( primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
+					}
+				}
+			}
 		},
 
 		methods: {
-      changeAggFunction(data, index) {
+      convertSchemaToTreeData,
 
+      loadDataModels(connectionId){
+				if( !connectionId ){
+					return;
+				}
+				let self = this;
+				connections.get([connectionId]).then(result => {
+					if( result.data ){
+						let schemas = result.data.schema && result.data.schema.tables || [];
+						schemas = schemas.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+						self.schemas = schemas;
+					}
+        });
       },
-
 
 			setData(data, cell, isSourceDataNode, vueAdapter) {
 				if (data) {
-					Object.keys(data).forEach(key => this.form[key] = data[key]);
-				}
+					Object.keys(data).forEach(key => this.model[key] = data[key]);
+        }
+        this.mergedSchema = cell.getOutputSchema();
+        cell.on('change:outputSchema', () => {
+					this.mergedSchema = cell.getOutputSchema();
+				});
 
 			},
 
 			getData() {
-				return _.cloneDeep(this.form);
+				let result = _.cloneDeep(this.model);
+				if (result.connectionId) {
+					let database = this.databases.filter(db => db.id === result.connectionId);
+					if (database && database.length > 0) {
+						result.name = database[0].name;
+					}
+				}
+				return result;
 			},
 		}
 	};
 </script>
-
-<style scoped lang="less">
-	.releaseApi {
-		width: 100%;
-		height: 100%;
-		padding: 20px;
-		overflow: auto;
-		box-sizing: border-box;
-		background-color: #fafafa;
-
-		.loopFrom {
-			margin: 0 !important;
-
-			.fromLoopBox {
-				padding: 10px;
-				margin-bottom: 12px;
-				box-sizing: border-box;
-				background-color: #fff;
-				border: 1px solid #dedee4;
-			}
-
-			.remove {
-				font-weight: bold;
-				cursor: pointer;
-				border: 1px solid #DEDEE4;
-			}
-		}
-	}
-</style>
 <style lang="less">
-	.releaseApi {
-    .aggtip {
-      position: absolute;
-      top: -34px;
-      left: 120px;
-      .iconfont {
-        display: inline-block;
-        color: #999;
-        cursor: pointer;
-        transform: rotate(-180deg);
-      }
-    }
-		.el-form--label-top .el-form-item__label {
-			padding: 0;
-			line-height: 26px;
-		}
-
-		.el-select {
-			width: 100%;
-		}
-
-		.el-form-item {
-      margin-bottom: 8px;
-      .el-form-item__label,.el-input__inner {
-        font-size: 12px;
-      }
-      .el-input__inner { height: 30px; line-height: 30px;}
-		}
-
-		.aggregateName .el-form-item__content {
-      z-index: 2;
-    }
-
-    .el-form-item__content {
-      .el-button { padding: 8px 15px; font-size: 12px;}
-      .el-input__inner[style="height: 40px;"] { height: 30px!important;}
-    }
-    .btnClass .el-form-item__content { line-height: 30px!important;}
-    .el-table {
-      line-height: 30px;
-      td,th {
-        padding: 0;
-      }
-      th {
-        background-color:#F5F5F5;
-      }
-      .el-checkbox-group,.el-checkbox .el-checkbox__label{ font-size: 11px;}
-    }
-	}
+.apiNode {
+  .el-form-item { margin-bottom: 10px;}
+}
 </style>
+

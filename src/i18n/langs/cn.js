@@ -326,6 +326,13 @@ const cn = {
           table_field: '字段',
           table_type: '类型',
           table_setting: '设置',
+          enterPublishApiName: '请输入数据发布API的名称',
+          enterNewlyReleasedApi: '请输入对新建发布API的描述',
+          enterEndUrl: '请输入url末端路径名',
+          required:'必填',
+          availableQueries: '可用查询',
+          publishApi_nameNone: 'API名称不能为空',
+          publishApi_commentNone: '描述不为空',
 				},
 				es: {
 					name: 'ES',

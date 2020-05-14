@@ -327,6 +327,11 @@ const tc = {
           table_field: '字段',
           table_type: '類型',
           table_setting: '設置',
+          enterPublishApiName: '請輸入數據發布API的名稱',
+          enterNewlyReleasedApi: '請輸入對新建發布API的描述',
+          enterEndUrl: '請輸入url末端路徑名',
+          required:'必填',
+          availableQueries: '可用查詢',
 				},
 				es: {
 					name: 'ES',
