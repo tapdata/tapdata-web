@@ -100,13 +100,13 @@
 <!--							<el-radio-button label="false">{{$t('dataFlow.no')}}</el-radio-button>-->
 <!--						</el-radio-group>-->
 <!--					</el-form-item>-->
-<!--					<el-form-item>-->
-<!--						<div>{{$t('dataFlow.isOpenAutoDDL')}}</div> &lt;!&ndash; 自动处理DDL操作 &ndash;&gt;-->
-<!--						<el-radio-group v-model="isOpenAutoDDL" size="mini">-->
-<!--							<el-radio-button label="true">{{$t('dataFlow.yes')}}</el-radio-button>-->
-<!--							<el-radio-button label="false">{{$t('dataFlow.no')}}</el-radio-button>-->
-<!--						</el-radio-group>-->
-<!--					</el-form-item>-->
+					<el-form-item v-show="formData.sync_type !== 'initial_sync' ">
+						<div>{{$t('dataFlow.isOpenAutoDDL')}}</div> <!-- 自动处理DDL操作 -->
+						<el-radio-group v-model="formData.isOpenAutoDDL" size="mini">
+							<el-radio-button :label="true">{{$t('dataFlow.yes')}}</el-radio-button>
+							<el-radio-button :label="false">{{$t('dataFlow.no')}}</el-radio-button>
+						</el-radio-group>
+					</el-form-item>
 				</el-col>
 			</el-row>
 		</el-form>

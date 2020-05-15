@@ -33,6 +33,7 @@ export const
 		needToCreateIndex:false,
 		increment:false,
 		isSchedule:false,
+    isOpenAutoDDL:false,
 		emailWaring: {
 			edited: false,
 			started: false,
