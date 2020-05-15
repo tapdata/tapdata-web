@@ -21,13 +21,12 @@
     data() {
       return {
         fileList: [],
-        action:'https://jsonplaceholder.typicode.com/posts/',
+        action:'',
         upsert:1,
       };
     },
     created() {
-      this.action= 'https://jsonplaceholder.typicode.com/posts?upsert='+this.upsert;
-      //this.action = window.location.hostname +":"+window.location.port +"/api/MetadataInstances/upload?upsert="+this.upsert;
+      this.action =  window.location.protocol + window.location.hostname +":"+window.location.port +"/api/MetadataInstances/upload?upsert="+this.upsert;
     },
     methods: {
       handleRemove(file, fileList) {
