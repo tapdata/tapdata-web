@@ -37,7 +37,7 @@
 							</el-form-item>
 						</el-col>
             <div class="task-list-menu-right">
-              <el-button  class="back-btn-icon-box dv-btn-icon"  @click="handleImport"><i class="iconfont icon-daoru back-btn-icon"></i></el-button>
+              <el-button  class="back-btn-icon-box dv-btn-icon" @click="handleImport"><i class="iconfont icon-daoru back-btn-icon"></i></el-button>
               <el-dropdown @command="handleCommand">
                 <el-button  class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-piliang back-btn-icon"></i></el-button>
                 <el-dropdown-menu slot="dropdown">
@@ -86,7 +86,7 @@
 				</el-table-column>
 				<el-table-column prop="name" :label="$t('dataFlow.taskName')">
 				</el-table-column>
-				<el-table-column sortable='custom' :label="$t('dataFlow.creatdor')" width="180"></el-table-column>
+<!--				<el-table-column sortable='custom' :label="$t('dataFlow.creatdor')" width="180"></el-table-column>-->
 				<el-table-column prop="status" sortable='custom' :label="$t('dataFlow.taskStatus')" width="100">
 					<template slot-scope="scope" v-if="!scope.row.hasChildren">
 						<span :style="`color: ${ colorMap[scope.row.status] };`"> {{ $t('dataFlow.status.' +  scope.row.status && scope.row.status !==undefined ? scope.row.status.replace(/ /g, '_') : scope.row.status )}} </span>
@@ -135,7 +135,7 @@
 									<i class="iconfont task-list-icon icon-shanchu"></i>
 								</el-button>
 							</el-tooltip>
-              <el-dropdown @command="handleRowCommand" class="item">
+              <el-dropdown @command="handleRowCommand" class="item" @click="hanldeid(scope.row.id)">
                 <el-button type="text"><i class="iconfont icon-gengduo3  task-list-icon"></i></el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="a">导出</el-dropdown-item>
@@ -172,6 +172,7 @@
 	import _ from 'lodash';
 	import factory from '../../api/factory';
 	const dataFlows = factory('DataFlows');
+  const MetadataInstance = factory('MetadataInstances');
 	export default {
 		data() {
 			return {
@@ -251,17 +252,47 @@
 				});
 				window.open(routeUrl .href, '_blank');
 			},
+      handleImport(){
+        let routeUrl = this.$router.resolve({
+          path: "/upload"
+        });
+        window.open(routeUrl .href, '_blank');
+      },
       handleCommand(command){
-			  if(command === 'a'){
+        if(command === 'a'){
           this.handleDownload();
         }else if(command === 'b'){
-			    this.handleAllStatus('scheduled');
+          this.handleAllStatus('scheduled');
         }else if(command === 'c'){
           this.handleAllStatus('stopping');
         }
       },
-      handleImport(){
-
+      handleDownload(){
+        if (this.multipleSelection.length === 0) {
+          return;
+        }
+        let multipleSelection = [];
+        this.multipleSelection.map(item => {
+          multipleSelection.push(item.id);
+        });
+        let where = {
+          _id: {
+            in: multipleSelection
+          },
+        };
+        MetadataInstance.download(where).then(res => {
+          if (res.statusText === "OK" || res.status === 200) {
+          }
+        });
+      },
+      handleRowCommand(command){
+        if(command === 'a'){
+          this.handleDownload();
+        }else if(command === 'b'){
+          this.handleAllStatus('scheduled');
+        }else if(command === 'c'){
+          this.handleAllStatus('stopping');
+        }
       },
 			handleSelectable(row) {
 				if (row.hasChildren) {
