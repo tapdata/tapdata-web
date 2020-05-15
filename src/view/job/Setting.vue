@@ -5,7 +5,7 @@
 				<el-col :span="24">
 					<el-form-item>
 						<div>{{$t('dataFlow.sync_type')}}</div>
-						<el-radio-group v-model="formData.sync_type" size="mini">
+						<el-radio-group v-model="formData.sync_type" size="mini" @change="hanldeChangeSyncType">
 							<el-radio-button label="initial_sync+cdc" >{{$t('dataFlow.initial_sync') +'+'+ $t('dataFlow.cdc')}}</el-radio-button>
 							<el-radio-button label="initial_sync" >{{$t('dataFlow.initial_sync')}}</el-radio-button>
 							<el-radio-button label="cdc" >{{$t('dataFlow.cdc')}}</el-radio-button>
@@ -131,6 +131,11 @@
 			formData: {
 				deep: true,
 				handler(){
+          if(this.formData.initial_sync === 'initial_sync'){
+            this.formData.isOpenAutoDDL = false;
+          }else {
+            this.formData.run_custom_sql = false;
+          }
 					this.$emit('dataChanged', this.formData);
 				}
 			}
@@ -141,6 +146,13 @@
 					Object.keys(data).forEach(key => this.formData[key] = data[key]);
 				}
 			},
+      hanldeChangeSyncType(type){
+			  if(type === 'initial_sync'){
+          this.formData.isOpenAutoDDL = false;
+        }else {
+          this.formData.run_custom_sql = false;
+        }
+      }
 		}
 	};
 </script>

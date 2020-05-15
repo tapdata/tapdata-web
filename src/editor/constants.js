@@ -30,6 +30,7 @@ export const
 		readCdcInterval:500,
 		description:'',
 		drop_target:false,
+    run_custom_sql:false,
 		needToCreateIndex:false,
 		increment:false,
 		isSchedule:false,
