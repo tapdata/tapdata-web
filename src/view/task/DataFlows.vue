@@ -135,11 +135,11 @@
 									<i class="iconfont task-list-icon icon-shanchu"></i>
 								</el-button>
 							</el-tooltip>
-              <el-dropdown @command="handleRowCommand" class="item" @click="hanldeid(scope.row.id)">
+              <el-dropdown @command="handleRowCommand" class="item">
                 <el-button type="text"><i class="iconfont icon-gengduo3  task-list-icon"></i></el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="a">导出</el-dropdown-item>
-                  <el-dropdown-item command="b" >复制</el-dropdown-item>
+                  <el-dropdown-item :command="'export'+scope.row.id ">导出</el-dropdown-item>
+                  <el-dropdown-item command="b">复制</el-dropdown-item>
                   <el-dropdown-item command="c">重置</el-dropdown-item>
                   <el-dropdown-item command="d">强制停止</el-dropdown-item>
                 </el-dropdown-menu>
