@@ -157,18 +157,16 @@
 						self.status = dataFlow.status;
 						self.executeMode = dataFlow.executeMode;
 						self.dataFlow = dataFlow;
-						// if(!dataFlow.editorData){
-            //   let j = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
+						if(!dataFlow.editorData){
+              let j = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
+              dataFlow.editorData = j;
+              this.editor.reloadSchema();
+              this.editor.graph.layoutDirectedGraph();
+            }
+            // let j = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
             //   log('jjjjjjjjj',j);
             //   dataFlow.editorData = j;
-            // }
-            let j = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
-              log('jjjjjjjjj',j);
-              dataFlow.editorData = j;
             self.editor.setData(dataFlow);
-            this.editor.reloadSchema();
-
-						this.editor.graph.layoutDirectedGraph();
 
 						if (['scheduled', 'running', 'stopping'].includes(self.status)) {
 							self.setEditable(false);
@@ -597,7 +595,8 @@
           'field_processor':'app.FieldProcess',
           'aggregation_processor':'app.Aggregate',
           'js_processor':'app.Script',
-          'row_filter_processor':'app.DataFilter'
+          'row_filter_processor':'app.DataFilter',
+          'java_processor':'app.FieldProcess',
         };
         // let node1 ={
         //     type:'app.Database',
@@ -760,7 +759,7 @@
                     },
                   };
                   cells.push(node);
-            }else if(['field_processor','js_processor','aggregation_processor','row_filter_processor'].includes(v.type)){
+            }else if(['field_processor','java_processor','js_processor','aggregation_processor','row_filter_processor'].includes(v.type)){
                 let node ={
                   type:mapping[v.type],
                   id:v.id,

@@ -80,6 +80,7 @@ export default class Editor extends BaseObject {
 		'app.Collection':'connectionId',
 		'app.Table':'connectionId',
 		'app.Database':'connectionId',
+    'app.Dummy ':'connectionId',
 	};
 
 	constructor(opts){
