@@ -127,9 +127,6 @@
 									<i class="iconfont  task-list-icon icon-chaxun"></i>
 								</el-button>
 							</el-tooltip>
-							<el-tooltip class="item" :content="$t('dataFlow.copy')" placement="bottom">
-								<i class="iconfont task-list-icon icon-fuzhi1" @click="handlerCopy(scope.row.id)"></i>
-							</el-tooltip>
 							<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
 								<el-button type="text" :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)" @click="handleDelete(scope.row.id)">
 									<i class="iconfont task-list-icon icon-shanchu"></i>
@@ -139,17 +136,11 @@
                 <el-button type="text"><i class="iconfont icon-gengduo3  task-list-icon"></i></el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item :command="'export'+scope.row.id ">导出</el-dropdown-item>
-                  <el-dropdown-item command="b">复制</el-dropdown-item>
-                  <el-dropdown-item command="c">重置</el-dropdown-item>
-                  <el-dropdown-item command="d">强制停止</el-dropdown-item>
+                  <el-dropdown-item :command="'copy'+scope.row.id ">复制</el-dropdown-item>
+                  <el-dropdown-item :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)" :command="'resent'+scope.row.id ">重置</el-dropdown-item>
+                  <el-dropdown-item :command="'force_stopping'+scope.row.id ">强制停止</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
-<!--							<el-tooltip  class="item" :content="$t('dataFlow.reset')" placement="bottom">-->
-<!--								<el-button type="text" :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)"  @click="handleReset(scope.row.id)">-->
-<!--									<i class="iconfont task-list-icon  icon-shuaxin1" ></i>-->
-<!--								</el-button>-->
-<!--							</el-tooltip>-->
-
 						</div>
 					</template>
 				</el-table-column>
@@ -265,6 +256,8 @@
           this.handleAllStatus('scheduled');
         }else if(command === 'c'){
           this.handleAllStatus('stopping');
+        }else if(command === 'd'){
+          this.handleDelete('stopping');
         }
       },
       handleDownload(){
@@ -286,12 +279,26 @@
         });
       },
       handleRowCommand(command){
-        if(command === 'a'){
-          this.handleDownload();
-        }else if(command === 'b'){
-          this.handleAllStatus('scheduled');
-        }else if(command === 'c'){
-          this.handleAllStatus('stopping');
+        if(command.indexOf('export') !== -1){
+          let id = command.replace('export','');
+          let where = {
+            _id: {
+              in:id
+            },
+          };
+          MetadataInstance.download(where).then(res => {
+            if (res.statusText === "OK" || res.status === 200) {
+            }
+          });
+        }else if(command.indexOf('copy') !== -1){
+          let id = command.replace('copy','');
+          this.handlerCopy(id);
+        }else if(command.indexOf('resent') !== -1){
+          let id = command.replace('resent','');
+          this.handleReset(id);
+        }else if(command.indexOf('force_stopping') !== -1){
+          let id = command.replace('force_stopping','');
+          this.handleStatus(id,'force stopping');
         }
       },
 			handleSelectable(row) {
@@ -443,6 +450,35 @@
 					}
 				});
 			},
+      handleAllDelete(){
+        if (this.multipleSelection.length === 0) {
+          return;
+        }
+        let multipleSelection = [];
+        this.multipleSelection.map(item => {
+          multipleSelection.push(item.id);
+        });
+        let where = {
+          _id: {
+            in: multipleSelection
+          },
+        };
+        this.$confirm(this.$t('message.deteleMessage'), this.$t('message.prompt'), {
+          confirmButtonText: this.$t('message.delete'),
+          cancelButtonText: this.$t('message.cancle'),
+          type: 'warning'
+        }).then(() => {
+          dataFlows.allDelete(where).then(res => {
+            if (res.statusText === "OK" || res.status === 200) {
+              this.getData();
+            }
+            this.$message.success(this.$('message.deleteOK'));
+          });
+
+        }).catch(() => {
+          this.$message.info(this.$t('message.deleteFail'));
+        });
+      },
 			handleDelete(id) {
 				this.$confirm(this.$t('message.deteleMessage'), this.$t('message.prompt'), {
 					confirmButtonText: this.$t('message.delete'),
@@ -465,7 +501,6 @@
 				let data = {
 					status: status,
 				};
-				status = status === 'running' ? 'stopping' : 'scheduled';
 				await dataFlows.updateById(id, data).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						this.getData();
@@ -516,7 +551,6 @@
 			},
 			handlerCopy(id){
 				let self = this;
-				log('qqqqqqqqq')
 				dataFlows.copy(id).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						self.getData();
