@@ -49,6 +49,24 @@
 <!--						<div>{{$t('dataFlow.mission')}}</div>-->
 <!--						<el-input v-model="formData.description"></el-input>-->
 <!--					</el-form-item>-->
+
+          <el-form-item size="mini">
+            <div>SyncPoint</div>
+            <el-radio-group v-model="formData.syncPoint">
+              <el-radio-button label="current">Current</el-radio-button>
+              <el-radio-button label="sync_time">SyncTime</el-radio-button>
+            </el-radio-group>
+
+            <el-row v-if="formData.syncPoint === 'sync_time'">
+              <el-col :span="12">
+                <el-date-picker format="yyyy-MM-dd" style="width: 100%;" v-model="formData.syncDatePicker"></el-date-picker>
+              </el-col>
+              <el-col :span="12">
+                <el-time-picker format="HH:mm:ss" style="width: 100%;" v-model="formData.syncTimePicker"></el-time-picker>
+              </el-col>
+            </el-row>
+          </el-form-item>
+
 `				</el-col>
 				<el-col :span="12">
 					<el-form-item>
