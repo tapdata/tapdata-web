@@ -1,17 +1,17 @@
 <template>
   <div class="dataflow-upload">
-    <div class="dataflow-head">任务导入</div>
+    <div class="dataflow-head">{{$t('dataFlow.import')}}</div>
     <el-upload
       class="upload-demo"
       :action="action"
       :on-preview="handlePreview"
       :on-remove="handleRemove"
       :file-list="fileList">
-      <el-button size="small" type="text">点击上传</el-button>
+      <el-button size="small" type="text">{{$t('dataFlow.upload')}}</el-button>
     </el-upload>
     <div class="dataflow-radio">
-      <el-radio v-model="upsert" :label="1">覆盖已有数据</el-radio>
-      <el-radio v-model="upsert" :label="0">跳过已有数据</el-radio>
+      <el-radio v-model="upsert" :label="1">{{$t('dataFlow.overWrite')}}</el-radio>
+      <el-radio v-model="upsert" :label="0">{{$t('dataFlow.skipData')}}</el-radio>
     </div>
   </div>
 </template>
@@ -27,6 +27,14 @@
     },
     created() {
       this.action =  window.location.protocol +'//'+ window.location.hostname +":"+window.location.port +"/api/MetadataInstances/upload?upsert="+this.upsert;
+    },
+    watch:{
+      upsert:{
+        deep:true,
+        handler(){
+          this.action =  window.location.protocol +'//'+ window.location.hostname +":"+window.location.port +"/api/MetadataInstances/upload?upsert="+this.upsert;
+        }
+      }
     },
     methods: {
       handleRemove(file, fileList) {
@@ -45,7 +53,7 @@
     margin: 0 auto;
   }
   .dataflow-head{
-    width:48px;
+    width:70px;
     line-height: 48px;
     font-size:12px;
     font-weight:400;

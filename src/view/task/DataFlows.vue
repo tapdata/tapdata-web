@@ -41,10 +41,10 @@
               <el-dropdown @command="handleCommand">
                 <el-button  class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-piliang back-btn-icon"></i></el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="a">批量导出</el-dropdown-item>
-                  <el-dropdown-item command="b">批量启动</el-dropdown-item>
-                  <el-dropdown-item command="c">批量暂停</el-dropdown-item>
-                  <el-dropdown-item command="d">批量删除</el-dropdown-item>
+                  <el-dropdown-item command="a">{{$t('dataFlow.bulkExport')}}</el-dropdown-item>
+                  <el-dropdown-item command="b">{{$t('dataFlow.bulkScheuled')}}</el-dropdown-item>
+                  <el-dropdown-item command="c">{{$t('dataFlow.bulkStopping')}}</el-dropdown-item>
+                  <el-dropdown-item command="d">{{$t('dataFlow.batchDelete')}}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
 
@@ -135,10 +135,10 @@
               <el-dropdown @command="handleRowCommand" class="item">
                 <el-button type="text"><i class="iconfont icon-gengduo3  task-list-icon"></i></el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item :command="'export'+scope.row.id ">导出</el-dropdown-item>
-                  <el-dropdown-item :command="'copy'+scope.row.id ">复制</el-dropdown-item>
-                  <el-dropdown-item :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)" :command="'resent'+scope.row.id ">重置</el-dropdown-item>
-                  <el-dropdown-item :command="'force_stopping'+scope.row.id ">强制停止</el-dropdown-item>
+                  <el-dropdown-item :command="'export'+scope.row.id ">{{$t('dataFlow.dataFlowExport')}}</el-dropdown-item>
+                  <el-dropdown-item :command="'copy'+scope.row.id ">{{$t('dataFlow.copy')}}</el-dropdown-item>
+                  <el-dropdown-item :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)" :command="'reset'+scope.row.id ">{{$t('dataFlow.reset')}}</el-dropdown-item>
+                  <el-dropdown-item :command="'force_stopping'+scope.row.id ">{{$t('dataFlow.status.force_stopping')}}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
 						</div>
@@ -294,8 +294,8 @@
         }else if(command.indexOf('copy') !== -1){
           let id = command.replace('copy','');
           this.handlerCopy(id);
-        }else if(command.indexOf('resent') !== -1){
-          let id = command.replace('resent','');
+        }else if(command.indexOf('reset') !== -1){
+          let id = command.replace('reset','');
           this.handleReset(id);
         }else if(command.indexOf('force_stopping') !== -1){
           let id = command.replace('force_stopping','');

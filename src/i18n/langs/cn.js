@@ -62,6 +62,15 @@ const cn = {
     edit: '修改'
 	},
 	dataFlow: {
+	  batchDelete:'批量删除',
+    bulkExport:'批量导出',
+    bulkScheuled:'批量启动',
+    bulkStopping:"批量停止",
+	  upload:'点击上传',
+    import:'任务导入',
+    dataFlowexport:'导出',
+    overWrite: '覆盖已有数据',
+    skipData:'跳过已有数据',
     loadingError: '加载失败,请',
     dataLoading: '数据努力加载中...',
     loadLogTip: '运行日志努力加载中，可能需要5~10秒，请稍等......',

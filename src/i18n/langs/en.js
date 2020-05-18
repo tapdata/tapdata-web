@@ -62,6 +62,15 @@ const en = {
     edit: 'edit'
 	},
 	dataFlow: {
+    batchDelete:'Batch delete',
+    bulkExport:'Batch export',
+    bulkScheuled:'Batch Scheuled',
+    bulkStopping:"Batch stopping",
+	  upload:'Click to upload',
+    import:'Task import',
+    dataFlowExport:'Export',
+    overWrite: 'Overwrite existing data',
+    skipData:'Skip existing data',
     loadingError: 'Loading failed, please',
     dataLoading: 'Data is hard to load ...',
     loadLogTip: 'Run log is trying to load, it may take 5 ~ 10 seconds, please wait ...',
