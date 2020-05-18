@@ -33,6 +33,7 @@ export const
 		needToCreateIndex:false,
 		increment:false,
 		isSchedule:false,
+        cronExpression:'',
 		emailWaring: {
 			edited: false,
 			started: false,

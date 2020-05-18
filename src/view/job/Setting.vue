@@ -97,13 +97,18 @@
 							<el-radio-button :label="false">{{$t('dataFlow.no')}}</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
-<!--					<el-form-item v-show="formData.sync_type === 'initial_sync' ">-->
-<!--						<div>{{$t('dataFlow.is_schedule')}}</div> &lt;!&ndash; 定期调度任务 &ndash;&gt;-->
-<!--						<el-radio-group v-model="formData.isSchedule" size="mini">-->
-<!--							<el-radio-button label="true">{{$t('dataFlow.yes')}}</el-radio-button>-->
-<!--							<el-radio-button label="false">{{$t('dataFlow.no')}}</el-radio-button>-->
-<!--						</el-radio-group>-->
-<!--					</el-form-item>-->
+					<el-form-item v-show="formData.sync_type === 'initial_sync' ">
+						<div>{{$t('dataFlow.is_schedule')}}</div> <!-- 定期调度任务 -->
+						<el-radio-group v-model="formData.isSchedule" size="mini">
+							<el-radio-button label="true">{{$t('dataFlow.yes')}}</el-radio-button>
+							<el-radio-button label="false">{{$t('dataFlow.no')}}</el-radio-button>
+						</el-radio-group>
+					</el-form-item>
+					<el-form-item v-show="formData.isSchedule === 'true' ">
+						<div>{{$t('dataFlow.cron_expression')}}</div> <!-- 定期调度任务 -->
+            <el-input v-model="formData.cronExpression" size="mini">
+            </el-input>
+					</el-form-item>
 					<el-form-item>
 						<div>{{$t('dataFlow.need_to_create_Index')}}</div> <!-- 自动创建目标索引 -->
 						<el-radio-group v-model="formData.needToCreateIndex" size="mini">
