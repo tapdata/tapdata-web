@@ -225,8 +225,8 @@ const cn = {
           },
           remove: '移除',
           Undo: '撤销',
-          bulkRemoval: '全选',
-          bulkRevocation: '全选',
+          bulkRemoval: '批量移除',
+          bulkRevocation: '批量撤销',
           queueCopied: '待复制队列',
           tableRemoved: '已移除表',
           enterName: '请输入名称/字段名进行搜索'

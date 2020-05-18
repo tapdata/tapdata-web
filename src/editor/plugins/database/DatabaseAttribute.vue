@@ -21,7 +21,7 @@
 				</el-form-item>
 
 				<el-form-item required :label="$t('editor.cell.data_node.collection.form.dropTable.label')"
-							  v-if="!isSourceDataNode">
+						v-if="!isSourceDataNode">
 					<el-select
 							v-model="model.dropTable" size="mini">
 						<el-option

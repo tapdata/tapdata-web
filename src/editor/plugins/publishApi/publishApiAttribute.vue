@@ -2,7 +2,7 @@
 	<div class="releaseApi">
 		<el-form ref="form" :model="form" label-position="top" label-width="200px">
       <el-form-item :label="$t('editor.cell.data_node.api.dataApiName')">
-        <el-input v-model="form.name" maxlength="20" :placeholder="$t('editor.cell.data_node.api.enterPublishApiName')" show-word-limit></el-input>
+        <el-input v-model="form.name" maxlength="20" :placeholder="$t('editor.cell.data_node.api.enterPublishApiName')" show-word-limit required></el-input>
       </el-form-item>
       <el-form-item :label="$t('editor.cell.data_node.api.description')" class="pdTop5">
         <el-input type="textarea" v-model="form.comment" :placeholder="$t('editor.cell.data_node.api.enterNewlyReleasedApi')" maxlength="100" show-word-limit></el-input>
@@ -34,11 +34,29 @@
           <el-table-column
             prop="table_field"
             :label="$t('editor.cell.data_node.api.table_field')">
+
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.table_field" size="mini"></el-input>
+            </template>
           </el-table-column>
           <el-table-column
             prop="table_type"
             :label="$t('editor.cell.data_node.api.table_type')"
             width="100">
+            <template slot-scope="scope">
+              <el-select
+                v-model="scope.row.table_type"
+                filterable
+                allow-create
+                default-first-option>
+                  <el-option
+                    v-for="(item, idx) in typeList"
+                    :value="item.type"
+                    :label="item.type"
+                    v-bind:key="idx">
+                  </el-option>
+              </el-select>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -47,8 +65,8 @@
             width="180">
             <template slot-scope="scope">
               <el-checkbox-group v-model="scope.row.checkList">
-                <el-checkbox :label="$t('editor.cell.data_node.api.required')"></el-checkbox>
-                <el-checkbox :label="$t('editor.cell.data_node.api.availableQueries')"></el-checkbox>
+                <el-checkbox label="required">{{$t('editor.cell.data_node.api.required')}}</el-checkbox>
+                <el-checkbox label="query">{{$t('editor.cell.data_node.api.availableQueries')}}</el-checkbox>
               </el-checkbox-group>
             </template>
           </el-table-column>
@@ -74,6 +92,12 @@
           {label:'GET',value:'GET'},
           {label:'POST',value:'POST'}
         ],
+        typeList:[
+          {type: 'String'},
+          {type: 'Number'},
+          {type: 'Boolean'},
+          {type: 'Date'},
+        ],
 				groupList: [],
 				expressionList: [],
 				form: {
@@ -82,7 +106,7 @@
           method: 'GET',
           url: '',
 					tableData: [
-            {'table_field':1,'table_type': 2,checkList:'必填'}
+            {'table_field':1,'table_type': 'String',checkList:['required']}
           ],
 				},
         aggaggExpression: '1',
@@ -109,11 +133,6 @@
 		},
 
 		methods: {
-      changeAggFunction(data, index) {
-
-      },
-
-
 			setData(data, cell, isSourceDataNode, vueAdapter) {
 				if (data) {
 					Object.keys(data).forEach(key => this.form[key] = data[key]);
@@ -122,7 +141,7 @@
 			},
 
 			getData() {
-				return _.cloneDeep(this.form);
+        return _.cloneDeep(this.form);
 			},
 		}
 	};
