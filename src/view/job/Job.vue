@@ -155,10 +155,19 @@
 						self.dataFlowId = dataFlow.id;
 						self.status = dataFlow.status;
 						self.executeMode = dataFlow.executeMode;
-
 						self.dataFlow = dataFlow;
+						// if(!dataFlow.editorData){
+            //   let j = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
+            //   log('jjjjjjjjj',j);
+            //   dataFlow.editorData = j;
+            // }
+            let j = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
+              log('jjjjjjjjj',j);
+              dataFlow.editorData = j;
+            self.editor.setData(dataFlow);
+            this.editor.reloadSchema();
 
-						self.editor.setData(dataFlow);
+						this.editor.graph.layoutDirectedGraph();
 
 						if (['scheduled', 'running', 'stopping'].includes(self.status)) {
 							self.setEditable(false);
@@ -577,6 +586,261 @@
 					this.$message.error(this.$t('message.save_before_running'));
 				}
 			},
+      creatApiEditorData(data){//1. 创建cell 2. 加载schema 3.自动布局
+        let cells = [];
+        let mapping = {
+          'collection': 'app.Collection',
+          'table': 'app.Table',
+          'database': 'app.Database',
+          'mongodb': 'app.Database',
+          'mongo_view': 'app.Collection',
+          'view': 'app.Table',
+          'dummy db':'app.Dummy',
+          'elasticsearch':'app.ESNode',
+          'file':'app.FileNode',
+          'gridfs': 'app.GridFSNode',
+          'rest api': 'app.ApiNode',
+          'field_processor':'app.FieldProcess',
+          'aggregation_processor':'app.Aggregate',
+          'js_processor':'app.Script',
+          'row_filter_processor':'app.DataFilter'
+        };
+        // let node1 ={
+        //     type:'app.Database',
+        //     id:'95078ec4-5a71-476c-a400-3a94d7bfa4c8',
+        //     freeTransform:false,
+        //     form_data : {
+        //       connectionId: '5e9979d6bfafb2192208238c',
+        //       excludeTables:[],
+        //       table_prefix:'',
+        //       table_suffix:'',
+        //       name: '77888test',
+        //     },
+        //   position:{
+        //       x:-280,
+        //      y:280,
+        //   },
+        //     size:{
+        //       "width":160,
+        //       "height":36
+        //     },
+        //     schema:{},
+        //     outputSchema: {},
+        //     "attrs":{
+        //       "label":{
+        //         "text":"1"
+        //       },
+        //       "body":{
+        //         "stroke":"#2196F3"
+        //       }
+        //     },
+        //     "angle":0,
+        //   z:1
+        //   };
+        // cells.push(node1);
+        // let node2={
+        //   type:'app.Database',
+        //   id:'0d07d3cc-126e-4d6e-852e-704312608de1',
+        //   freeTransform:false,
+        //   form_data : {
+        //     connectionId: '5ea4507e99a8a20c29e59ae4',
+        //     excludeTables:[],
+        //     table_prefix:'',
+        //     table_suffix:'',
+        //     name: 'AT_oracle-source',
+        //   },
+        //   size:{
+        //     "width":160,
+        //     "height":36
+        //   },
+        //   position:{
+        //     x:-340,
+        //     y:340,
+        //   },
+        //   schema:{},
+        //   outputSchema: {},
+        //   "attrs":{
+        //     "label":{
+        //       "text":"2"
+        //     },
+        //     "body":{
+        //       "stroke":"#2196F3"
+        //     }
+        //   },
+        //   "angle":0,
+        //   z:2
+        // };
+        // cells.push(node2);
+        // let node3 ={
+        //   type:'app.Link',
+        //   source:{
+        //     id:'95078ec4-5a71-476c-a400-3a94d7bfa4c8'
+        //   },
+        //   target:{
+        //     id:'0d07d3cc-126e-4d6e-852e-704312608de1'
+        //   },
+        //   router:{
+        //     "name":"manhattan"
+        //   },
+        //   connector:{
+        //     "name":"rounded"
+        //   },
+        //   form_data:{
+        //     "label":""
+        //   },
+        //   labels:'',
+        //   attrs:{},
+        //   z:3
+        // };
+        // cells.push(node3);
+        if(data){
+          data.map((v,index) =>{
+            if(['table','view','collection','mongo_view'].includes(v.type)){
+              let node ={
+                type:mapping[v.type],
+                id:v.id,
+                freeTransform:false,
+                form_data : {
+                  connectionId: v.connectionId,
+                  databaseType: v.databaseType,
+                  tableName: v.tableName ,
+                  sql: "",
+                  dropTable: false,
+                  type:v.type,
+                  primaryKeys: v.primaryKeys,
+                  name: v.name,
+                },
+                schema:null,
+                outputSchema: null,
+                attrs:{
+                  label:{
+                    text: v.tableName,
+                  },
+                },
+                angle:0,
+              };
+              cells.push(node);
+            }else if(v.type && (['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(v.type))){
+                  let node ={
+                    type:mapping[v.type],
+                    id:v.id,
+                    freeTransform:false,
+                    schema:null,
+                    outputSchema: null,
+                    attrs:{
+                      label:{
+                        text: v.name,
+                      },
+                    },
+                    form_data :{
+                      connectionId:v.connectionId,
+                      name: v.name,
+                      filter:v.filter,
+                      tableName:v.tableName,
+                      dropTable:false,
+                      type:v.type,
+                      primaryKeys:v.primaryKeys
+                    },
+                  };
+                  cells.push(node);
+
+                }else if(v.type === 'database') {
+                  let node ={
+                    type:mapping[v.type],
+                    id:v.id,
+                    freeTransform:false,
+                    form_data :{
+                      connectionId:v.connectionId,
+                      name: v.name,
+                      table_prefix: "",
+                      table_suffix: "",
+                      type:v.type,
+                      excludeTables:[],
+                    },
+                    schema:null,
+                    outputSchema: null,
+                    attrs:{
+                      label:{
+                        text: v.name,
+                      },
+                    },
+                  };
+                  cells.push(node);
+            }else if(['field_processor','js_processor','aggregation_processor','row_filter_processor'].includes(v.type)){
+                let node ={
+                  type:mapping[v.type],
+                  id:v.id,
+                  freeTransform:false,
+                  angle:0,
+                  schema:null,
+                  outputSchema: null,
+                  attrs:{
+                    label:{
+                      text: v.name,
+                    },
+                  },
+                };
+                if(['field_processor'].includes(v.type)){
+                  node.form_data = {
+                      operations: v.operations,
+                      name: v.name,
+                      scripts: v.scripts,
+                    };
+                  }else if(['aggregation_processor'].includes(v.type)){
+                    node.form_data = {
+                      type:v.type,
+                      name: v.name,
+                      aggregations: v.scripts,
+                    };
+                    node.aggregations = v.aggregations;
+                }else if(['js_processor'].includes(v.type)){
+                  node.form_data = {
+                    type:v.type,
+                    name: v.name,
+                    script: v.script,
+                  };
+                }else if(['row_filter_processor'].includes(v.type)){
+                  node.form_data = {
+                    expression:v.expression,
+                    name: v.name,
+                    action: v.action,
+                    type:v.type,
+                  };
+                }
+                cells.push(node);
+            }
+            if(v.outputLanes){
+              v.outputLanes.map(k =>{
+                let node ={
+                  type:'app.Link',
+                  source:{
+                    id:v.id
+                  },
+                  target:{
+                    id:k
+                  },
+                  router:{
+                    "name":"manhattan"
+                  },
+                  connector:{
+                    "name":"rounded"
+                  },
+                  form_data:{
+                    "label":""
+                  },
+                  labels:'',
+                  attrs:{},
+                };
+                cells.push(node);
+              });
+            }
+          });
+        }
+        log('cells',cells);
+        return {
+          cells:cells
+        };
+      }
 		}
 	};
 </script>
