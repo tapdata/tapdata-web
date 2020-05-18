@@ -183,7 +183,7 @@
 				}
 
 				return result;
-			}
+			},
       hanldeChangeSyncType(type){
 			  if(type === 'initial_sync'){
           this.formData.isOpenAutoDDL = false;
