@@ -26,7 +26,7 @@
       };
     },
     created() {
-      this.action =  window.location.protocol  +"/api/MetadataInstances/upload?upsert="+this.upsert;
+      this.action =  window.location.protocol +'//'+ window.location.hostname +":"+window.location.port +"/api/MetadataInstances/upload?upsert="+this.upsert;
     },
     methods: {
       handleRemove(file, fileList) {
