@@ -62,6 +62,15 @@ const tc = {
     edit: '修改'
 	},
 	dataFlow: {
+    batchDelete:'批量刪除',
+    bulkExport:'批量導出',
+    bulkScheuled:'批量啟動',
+    bulkStopping:"批量停止",
+    upload:'點擊上傳',
+    import:'任務導入',
+    dataFlowexport:'導出',
+    overWrite: '覆蓋已有數據',
+    skipData:'跳過已有數據',
     loadingError: '加載失敗,請',
     dataLoading: '數據努力加載中...',
     loadLogTip: '運行日誌努力加載中，可能需要5~10秒，請稍等......',

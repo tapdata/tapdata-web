@@ -36,16 +36,32 @@
 								<el-button class="back-btn-icon-box dv-btn-icon"  @click="handleClear"><i class="iconfont icon-shuaxin1 back-btn-icon"></i></el-button>
 							</el-form-item>
 						</el-col>
-						<div class="task-list-menu-right">
+            <div class="task-list-menu-right">
+              <el-button  class="back-btn-icon-box dv-btn-icon" @click="handleImport"><i class="iconfont icon-daoru back-btn-icon"></i></el-button>
+              <el-dropdown @command="handleCommand">
+                <el-button  class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-piliang back-btn-icon"></i></el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="a">{{$t('dataFlow.bulkExport')}}</el-dropdown-item>
+                  <el-dropdown-item command="b">{{$t('dataFlow.bulkScheuled')}}</el-dropdown-item>
+                  <el-dropdown-item command="c">{{$t('dataFlow.bulkStopping')}}</el-dropdown-item>
+                  <el-dropdown-item command="d">{{$t('dataFlow.batchDelete')}}</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+
+              <router-link target="_blank" to="/job">
+                <el-button class="add-btn-icon-box" ><i class="iconfont icon-jia add-btn-icon"></i></el-button>
+              </router-link>
+            </div>
+<!--						<div class="task-list-menu-right">-->
 <!--							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-hanshu back-btn-icon"></i></el-button>-->
 <!--							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-biaoqian back-btn-icon"></i></el-button>-->
-							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('scheduled')"><i class="iconfont icon-zanting2 back-btn-icon"></i></el-button>
-							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('stopping')"><i class="iconfont icon-yunhang1 back-btn-icon"></i></el-button>
+<!--							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('scheduled')"><i class="iconfont icon-zanting2 back-btn-icon"></i></el-button>-->
+<!--							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleAllStatus('stopping')"><i class="iconfont icon-yunhang1 back-btn-icon"></i></el-button>-->
 <!--							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-shanchu1 back-btn-icon"></i></el-button>-->
-							<router-link target="_blank" to="/job">
-								<el-button class="add-btn-icon-box" ><i class="iconfont icon-jia add-btn-icon"></i></el-button>
-							</router-link>
-						</div>
+<!--							<router-link target="_blank" to="/job">-->
+<!--								<el-button class="add-btn-icon-box" ><i class="iconfont icon-jia add-btn-icon"></i></el-button>-->
+<!--							</router-link>-->
+<!--						</div>-->
 					</el-row>
 				</el-form>
 			</el-row>
@@ -70,7 +86,7 @@
 				</el-table-column>
 				<el-table-column prop="name" :label="$t('dataFlow.taskName')">
 				</el-table-column>
-				<el-table-column sortable='custom' :label="$t('dataFlow.creatdor')" width="180"></el-table-column>
+<!--				<el-table-column sortable='custom' :label="$t('dataFlow.creatdor')" width="180"></el-table-column>-->
 				<el-table-column prop="status" sortable='custom' :label="$t('dataFlow.taskStatus')" width="100">
 					<template slot-scope="scope" v-if="!scope.row.hasChildren">
 						<span :style="`color: ${ colorMap[scope.row.status] };`"> {{ $t('dataFlow.status.' +  scope.row.status && scope.row.status !==undefined ? scope.row.status.replace(/ /g, '_') : scope.row.status )}} </span>
@@ -101,29 +117,30 @@
 				<el-table-column :label="$t('dataFlow.operate')" width="180">
 					<template slot-scope="scope">
 						<div v-if="!scope.row.hasChildren">
-							<el-tooltip  class="item" :content="$t('dataFlow.edit')" placement="bottom">
-								<el-button type="text" :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)" @click="handleDetail(scope.row.id)">
-									<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
-								</el-button>
-							</el-tooltip>
 							<el-tooltip  class="item" :content="$t('dataFlow.detail')" placement="bottom">
-								<el-button type="text" :disabled="['draft'].includes(scope.row.status)" @click="handleDetail(scope.row.id)">
+								<el-button type="text" :disabled="['draft','paused'].includes(scope.row.status)" @click="handleDetail(scope.row.id)">
 									<i class="iconfont  task-list-icon icon-chaxun"></i>
 								</el-button>
 							</el-tooltip>
-							<el-tooltip class="item" :content="$t('dataFlow.copy')" placement="bottom">
-								<i class="iconfont task-list-icon icon-fuzhi1" @click="handlerCopy(scope.row.id)"></i>
-							</el-tooltip>
+              <el-tooltip  class="item" :content="$t('dataFlow.edit')" placement="bottom">
+                <el-button type="text" :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)" @click="handleDetail(scope.row.id)">
+                  <i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
+                </el-button>
+              </el-tooltip>
 							<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
 								<el-button type="text" :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)" @click="handleDelete(scope.row.id)">
 									<i class="iconfont task-list-icon icon-shanchu"></i>
 								</el-button>
 							</el-tooltip>
-							<el-tooltip  class="item" :content="$t('dataFlow.reset')" placement="bottom">
-								<el-button type="text" :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)"  @click="handleReset(scope.row.id)">
-									<i class="iconfont task-list-icon  icon-shuaxin1" ></i>
-								</el-button>
-							</el-tooltip>
+              <el-dropdown @command="handleRowCommand" class="item">
+                <el-button type="text"><i class="iconfont icon-gengduo3  task-list-icon"></i></el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item :command="'export'+scope.row.id ">{{$t('dataFlow.dataFlowExport')}}</el-dropdown-item>
+                  <el-dropdown-item :command="'copy'+scope.row.id ">{{$t('dataFlow.copy')}}</el-dropdown-item>
+                  <el-dropdown-item :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)" :command="'reset'+scope.row.id ">{{$t('dataFlow.reset')}}</el-dropdown-item>
+                  <el-dropdown-item :command="'force_stopping'+scope.row.id ">{{$t('dataFlow.status.force_stopping')}}</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
 						</div>
 					</template>
 				</el-table-column>
@@ -146,6 +163,7 @@
 	import _ from 'lodash';
 	import factory from '../../api/factory';
 	const dataFlows = factory('DataFlows');
+  const MetadataInstance = factory('MetadataInstances');
 	export default {
 		data() {
 			return {
@@ -225,6 +243,65 @@
 				});
 				window.open(routeUrl .href, '_blank');
 			},
+      handleImport(){
+        let routeUrl = this.$router.resolve({
+          path: "/upload"
+        });
+        window.open(routeUrl .href, '_blank');
+      },
+      handleCommand(command){
+        if(command === 'a'){
+          this.handleDownload();
+        }else if(command === 'b'){
+          this.handleAllStatus('scheduled');
+        }else if(command === 'c'){
+          this.handleAllStatus('stopping');
+        }else if(command === 'd'){
+          this.handleDelete('stopping');
+        }
+      },
+      handleDownload(){
+        if (this.multipleSelection.length === 0) {
+          return;
+        }
+        let multipleSelection = [];
+        this.multipleSelection.map(item => {
+          multipleSelection.push(item.id);
+        });
+        let where = {
+          _id: {
+            in: multipleSelection
+          },
+        };
+        MetadataInstance.download(where).then(res => {
+          if (res.statusText === "OK" || res.status === 200) {
+          }
+        });
+      },
+      handleRowCommand(command){
+        if(command.indexOf('export') !== -1){
+          let id =[];
+          id.push(command.replace('export',''));
+          let where = {
+            _id: {
+              in:id
+            },
+          };
+          MetadataInstance.download(where).then(res => {
+            if (res.statusText === "OK" || res.status === 200) {
+            }
+          });
+        }else if(command.indexOf('copy') !== -1){
+          let id = command.replace('copy','');
+          this.handlerCopy(id);
+        }else if(command.indexOf('reset') !== -1){
+          let id = command.replace('reset','');
+          this.handleReset(id);
+        }else if(command.indexOf('force_stopping') !== -1){
+          let id = command.replace('force_stopping','');
+          this.handleStatus(id,'force stopping');
+        }
+      },
 			handleSelectable(row) {
 				if (row.hasChildren) {
 					return false;
@@ -374,6 +451,35 @@
 					}
 				});
 			},
+      handleAllDelete(){
+        if (this.multipleSelection.length === 0) {
+          return;
+        }
+        let multipleSelection = [];
+        this.multipleSelection.map(item => {
+          multipleSelection.push(item.id);
+        });
+        let where = {
+          _id: {
+            in: multipleSelection
+          },
+        };
+        this.$confirm(this.$t('message.deteleMessage'), this.$t('message.prompt'), {
+          confirmButtonText: this.$t('message.delete'),
+          cancelButtonText: this.$t('message.cancle'),
+          type: 'warning'
+        }).then(() => {
+          dataFlows.allDelete(where).then(res => {
+            if (res.statusText === "OK" || res.status === 200) {
+              this.getData();
+            }
+            this.$message.success(this.$('message.deleteOK'));
+          });
+
+        }).catch(() => {
+          this.$message.info(this.$t('message.deleteFail'));
+        });
+      },
 			handleDelete(id) {
 				this.$confirm(this.$t('message.deteleMessage'), this.$t('message.prompt'), {
 					confirmButtonText: this.$t('message.delete'),
@@ -396,7 +502,6 @@
 				let data = {
 					status: status,
 				};
-				status = status === 'running' ? 'stopping' : 'scheduled';
 				await dataFlows.updateById(id, data).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						this.getData();

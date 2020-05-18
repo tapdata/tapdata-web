@@ -8,6 +8,7 @@ import clusterManagement from '../view/clusterManagement/clusterManagement';
 import dailyRecord from '../view/clusterManagement/dailyRecord';
 import DataFlows from "../view/task/DataFlows";
 import metaData from "../view/metaData";
+import Upload from "../components/upload";
 
 Vue.use(Router);
 
@@ -46,6 +47,10 @@ export default new Router({
 			path: '/dataVerify',
 			name: 'DataVerify',
 			component: DataVerify
-		},
+		},{
+      path: '/upload',
+      name: 'Upload',
+      component: Upload
+    },
 	]
 });

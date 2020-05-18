@@ -121,6 +121,7 @@
 		},
 		mounted() {
 			let self = this;
+
 			self.editor = editor({
 				container: $('.editor-container'),
 				actionBarEl: $('.editor-container .action-buttons')
@@ -159,16 +160,13 @@
 						if(!dataFlow.editorData){
               let j = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
               dataFlow.editorData = j;
-              self.editor.setData(dataFlow);
               this.editor.reloadSchema();
               this.editor.graph.layoutDirectedGraph();
-            }else {
-              self.editor.setData(dataFlow);
             }
             // let j = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
             //   log('jjjjjjjjj',j);
             //   dataFlow.editorData = j;
-
+            self.editor.setData(dataFlow);
 
 						if (['scheduled', 'running', 'stopping'].includes(self.status)) {
 							self.setEditable(false);
@@ -238,10 +236,6 @@
 				let editorData = this.editor.getData();
 				let graphData = editorData.graphData;
 				let settingData = editorData.settingData;
-        settingData.notificationInterval = Number( settingData.notificationInterval);
-        settingData.notificationWindow = Number( settingData.notificationWindow);
-        settingData.readBatchSize = Number( settingData.readBatchSize);
-        settingData.readCdcInterval = Number( settingData.readCdcInterval);
 				let distanceForSink = editorData.distanceForSink || {};
 
 				let cells = graphData.cells ? graphData.cells : [];
@@ -336,18 +330,15 @@
 
 							self.dataFlowId = dataFlow.id;
 							self.status = dataFlow.status;
+							self.$router.push({
+								path: '/job',
+								query: {
+									id: dataFlow.id
+								}
+							});
 							self.executeMode = dataFlow.executeMode;
 
 							self.dataFlow = dataFlow;
-
-							if( !self.$route.query || !self.$route.query.id) {
-								self.$router.push({
-									path: '/job',
-									query: {
-										id: dataFlow.id
-									}
-								});
-							}
 
 							if (typeof cb === "function") {
 								cb(null, dataFlow);
@@ -468,15 +459,15 @@
 
 			preview() {
 				let self = this,
-				data = this.getDataFlowData();
+					data = this.getDataFlowData();
+
 				if (data) {
 					if (data.id) {
-						// 不管新增删除，预览前都先保存数据，在执行预览
-						Object.assign(data, {
-							//id: data.id,
+						data = {
+							id: data.id,
 							status: ['scheduled', 'running', 'stopping'].includes(data.status) ? data.status : 'scheduled',
 							executeMode: 'editing_debug'
-						});
+						};
 					} else {
 						Object.assign(data, {
 							status: 'scheduled',
