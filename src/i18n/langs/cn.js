@@ -68,7 +68,7 @@ const cn = {
     bulkStopping:"批量停止",
 	  upload:'点击上传',
     import:'任务导入',
-    dataFlowexport:'导出',
+    dataFlowExport:'导出',
     overWrite: '覆盖已有数据',
     skipData:'跳过已有数据',
     loadingError: '加载失败,请',

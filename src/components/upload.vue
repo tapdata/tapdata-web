@@ -1,18 +1,18 @@
 <template>
   <div class="dataflow-upload">
     <div class="dataflow-head">{{$t('dataFlow.import')}}</div>
+    <div class="dataflow-radio">
+      <el-radio v-model="upsert" :label="1">{{$t('dataFlow.overWrite')}}</el-radio>
+      <el-radio v-model="upsert" :label="0">{{$t('dataFlow.skipData')}}</el-radio>
+    </div>
     <el-upload
       class="upload-demo"
       :action="action"
       :on-preview="handlePreview"
       :on-remove="handleRemove"
       :file-list="fileList">
-      <el-button size="small" type="text">{{$t('dataFlow.upload')}}</el-button>
+      <el-button size="small" >{{$t('dataFlow.upload')}}</el-button>
     </el-upload>
-    <div class="dataflow-radio">
-      <el-radio v-model="upsert" :label="1">{{$t('dataFlow.overWrite')}}</el-radio>
-      <el-radio v-model="upsert" :label="0">{{$t('dataFlow.skipData')}}</el-radio>
-    </div>
   </div>
 </template>
 
@@ -38,10 +38,10 @@
     },
     methods: {
       handleRemove(file, fileList) {
-        console.log(file, fileList);
+
       },
       handlePreview(file) {
-        console.log(file);
+
       }
     }
   }
@@ -53,15 +53,16 @@
     margin: 0 auto;
   }
   .dataflow-head{
-    width:70px;
+    width:140px;
     line-height: 48px;
-    font-size:12px;
+    font-size:24px;
     font-weight:400;
     color:rgba(0,0,0,1);
     margin-bottom: 30px;
-    margin-top: 100px;
+    margin-top: 240px;
   }
   .dataflow-radio{
-    margin-top: 100px;
+    margin-top: 50px;
+    margin-bottom: 50px;
   }
 </style>

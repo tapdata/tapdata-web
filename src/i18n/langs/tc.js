@@ -68,7 +68,7 @@ const tc = {
     bulkStopping:"批量停止",
     upload:'點擊上傳',
     import:'任務導入',
-    dataFlowexport:'導出',
+    dataFlowExport:'導出',
     overWrite: '覆蓋已有數據',
     skipData:'跳過已有數據',
     loadingError: '加載失敗,請',
