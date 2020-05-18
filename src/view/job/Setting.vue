@@ -50,7 +50,7 @@
 <!--						<el-input v-model="formData.description"></el-input>-->
 <!--					</el-form-item>-->
 
-          <el-form-item size="mini">
+          <el-form-item v-show="formData.sync_type === 'cdc' " size="mini">
             <div>SyncPoint</div>
             <el-radio-group v-model="formData.syncPoint">
               <el-radio-button label="current">Current</el-radio-button>
