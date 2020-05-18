@@ -280,7 +280,8 @@
       },
       handleRowCommand(command){
         if(command.indexOf('export') !== -1){
-          let id = command.replace('export','');
+          let id =[];
+          id.push(command.replace('export',''));
           let where = {
             _id: {
               in:id
