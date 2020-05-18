@@ -117,16 +117,16 @@
 				<el-table-column :label="$t('dataFlow.operate')" width="180">
 					<template slot-scope="scope">
 						<div v-if="!scope.row.hasChildren">
-							<el-tooltip  class="item" :content="$t('dataFlow.edit')" placement="bottom">
-								<el-button type="text" :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)" @click="handleDetail(scope.row.id)">
-									<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
-								</el-button>
-							</el-tooltip>
 							<el-tooltip  class="item" :content="$t('dataFlow.detail')" placement="bottom">
-								<el-button type="text" :disabled="['draft'].includes(scope.row.status)" @click="handleDetail(scope.row.id)">
+								<el-button type="text" :disabled="['draft','paused'].includes(scope.row.status)" @click="handleDetail(scope.row.id)">
 									<i class="iconfont  task-list-icon icon-chaxun"></i>
 								</el-button>
 							</el-tooltip>
+              <el-tooltip  class="item" :content="$t('dataFlow.edit')" placement="bottom">
+                <el-button type="text" :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)" @click="handleDetail(scope.row.id)">
+                  <i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
+                </el-button>
+              </el-tooltip>
 							<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
 								<el-button type="text" :disabled="['scheduled','running','force stopping','stopping'].includes(scope.row.status)" @click="handleDelete(scope.row.id)">
 									<i class="iconfont task-list-icon icon-shanchu"></i>
