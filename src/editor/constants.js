@@ -30,10 +30,12 @@ export const
 		readCdcInterval:500,
 		description:'',
 		drop_target:false,
+    run_custom_sql:false,
 		needToCreateIndex:false,
 		increment:false,
 		isSchedule:false,
         cronExpression:'',
+    isOpenAutoDDL:false,
 		emailWaring: {
 			edited: false,
 			started: false,

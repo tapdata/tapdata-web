@@ -5,7 +5,7 @@
 				<el-col :span="24">
 					<el-form-item>
 						<div>{{$t('dataFlow.sync_type')}}</div>
-						<el-radio-group v-model="formData.sync_type" size="mini">
+						<el-radio-group v-model="formData.sync_type" size="mini" @change="hanldeChangeSyncType">
 							<el-radio-button label="initial_sync+cdc" >{{$t('dataFlow.initial_sync') +'+'+ $t('dataFlow.cdc')}}</el-radio-button>
 							<el-radio-button label="initial_sync" >{{$t('dataFlow.initial_sync')}}</el-radio-button>
 							<el-radio-button label="cdc" >{{$t('dataFlow.cdc')}}</el-radio-button>
@@ -123,13 +123,13 @@
 <!--							<el-radio-button label="false">{{$t('dataFlow.no')}}</el-radio-button>-->
 <!--						</el-radio-group>-->
 <!--					</el-form-item>-->
-<!--					<el-form-item>-->
-<!--						<div>{{$t('dataFlow.isOpenAutoDDL')}}</div> &lt;!&ndash; 自动处理DDL操作 &ndash;&gt;-->
-<!--						<el-radio-group v-model="isOpenAutoDDL" size="mini">-->
-<!--							<el-radio-button label="true">{{$t('dataFlow.yes')}}</el-radio-button>-->
-<!--							<el-radio-button label="false">{{$t('dataFlow.no')}}</el-radio-button>-->
-<!--						</el-radio-group>-->
-<!--					</el-form-item>-->
+					<el-form-item v-show="formData.sync_type !== 'initial_sync' ">
+						<div>{{$t('dataFlow.isOpenAutoDDL')}}</div> <!-- 自动处理DDL操作 -->
+						<el-radio-group v-model="formData.isOpenAutoDDL" size="mini">
+							<el-radio-button :label="true">{{$t('dataFlow.yes')}}</el-radio-button>
+							<el-radio-button :label="false">{{$t('dataFlow.no')}}</el-radio-button>
+						</el-radio-group>
+					</el-form-item>
 				</el-col>
 			</el-row>
 		</el-form>
@@ -156,6 +156,12 @@
 				deep: true,
 				handler(){
 					this.$emit('dataChanged', this.getData());
+          if(this.formData.initial_sync === 'initial_sync'){
+            this.formData.isOpenAutoDDL = false;
+          }else {
+            this.formData.run_custom_sql = false;
+          }
+					this.$emit('dataChanged', this.formData);
 				}
 			}
 		},
@@ -178,6 +184,13 @@
 
 				return result;
 			}
+      hanldeChangeSyncType(type){
+			  if(type === 'initial_sync'){
+          this.formData.isOpenAutoDDL = false;
+        }else {
+          this.formData.run_custom_sql = false;
+        }
+      }
 		}
 	};
 </script>
