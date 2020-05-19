@@ -8,11 +8,14 @@
     <el-upload
       class="upload-demo"
       :action="action"
-      :on-preview="handlePreview"
-      :on-remove="handleRemove"
+      :accept="accept"
+      :on-success ="handleSuccess"
       :file-list="fileList">
-      <el-button size="small" >{{$t('dataFlow.upload')}}</el-button>
+      <el-button type="primary" plain size="small" >{{$t('dataFlow.upload')}}</el-button>
     </el-upload>
+    <div v-show="status" class="tooltip">
+      {{$t('dataFlow.uploadOK')}} ,<router-link  to="/dataFlows"> {{$t('dataFlow.uploadInfo')}}</router-link>
+    </div>
   </div>
 </template>
 
@@ -23,11 +26,14 @@
         fileList: [],
         action:'',
         upsert:1,
+        accept:'.gz',
+        status:false,
       };
     },
     created() {
       this.action =  window.location.protocol +'//'+ window.location.hostname +":"+window.location.port +"/api/MetadataInstances/upload?upsert="+this.upsert;
     },
+
     watch:{
       upsert:{
         deep:true,
@@ -37,17 +43,14 @@
       }
     },
     methods: {
-      handleRemove(file, fileList) {
-
-      },
-      handlePreview(file) {
-
+      handleSuccess(){
+        this.status = true;
       }
     }
-  }
+  };
 </script>
 
-<style>
+<style lang="less" scoped>
   .dataflow-upload{
     width: 600px;
     margin: 0 auto;
@@ -59,10 +62,31 @@
     font-weight:400;
     color:rgba(0,0,0,1);
     margin-bottom: 30px;
-    margin-top: 240px;
+    margin-top: 120px;
   }
   .dataflow-radio{
     margin-top: 50px;
     margin-bottom: 50px;
+  }
+  .tooltip{
+    height:20px;
+    font-size:14px;
+    color:rgba(102,102,102,1);
+    line-height:43px;
+    margin-top: 20px;
+    a{
+      color:#48B6E2;
+    }
+  }
+</style>
+<style>
+  .dataflow-upload .el-upload-list{
+    margin-top: 30px;
+  }
+  .dataflow-upload .el-icon-close{
+    display: none;
+  }
+  .dataflow-upload .el-upload-list__item:hover .el-icon-close{
+    opacity: 0;
   }
 </style>

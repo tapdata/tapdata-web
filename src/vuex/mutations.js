@@ -4,6 +4,9 @@ const mutations = {
     },
     delDataFlows (state, payload) {
       state.dataFlows = payload;
+    },
+    tableSelector(state,payload){
+      state.tableSelectorSearch = payload;
     }
 };
 export default mutations;

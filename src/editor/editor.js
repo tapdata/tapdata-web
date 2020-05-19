@@ -156,7 +156,7 @@ export default class Editor extends BaseObject {
 
 		let treePanel = new Panel({
 			name: 'treePanel',
-			bodyStyle: 'flex: 1;height:57%;position:relative'
+			bodyStyle: 'flex: 1;height:57%;position:relative;background:#fff'
 		});
 		leftSidebar.add(treePanel);
 

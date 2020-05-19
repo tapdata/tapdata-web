@@ -262,6 +262,7 @@
       },
       handleDownload(){
         if (this.multipleSelection.length === 0) {
+          this.$message.info('please select row data');
           return;
         }
         let multipleSelection = [];
@@ -453,6 +454,7 @@
 			},
       handleAllDelete(){
         if (this.multipleSelection.length === 0) {
+          this.$message.info('please select row data');
           return;
         }
         let multipleSelection = [];
@@ -510,6 +512,7 @@
 			},
 			handleAllStatus(status) {
 				if (this.multipleSelection.length === 0) {
+          this.$message.info('please select row data');
 					return;
 				}
 				let multipleSelection = [];

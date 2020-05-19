@@ -20,13 +20,16 @@
         class="ts-tree"
       >
         <span class="custom-tree-node" slot-scope="{ node, data}">
-          <span @dblclick="handleGraph(data)">
+          <span @click="handleGraph(data)">
             <span  v-if="data.meta_type !=='database'" :class="`iconfont filter-icon-table ${mapping[data.meta_type]}`"></span>
-  <!--					<span v-if="['database'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>-->
             <span v-if="['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>
-            <span class="table-label">{{ node.label }}</span>
+            <span class="table-label">
+              <el-tooltip class="table-tooltip" effect="dark" :content="node.label" placement="right">
+                <span>{{node.label}}</span>
+              </el-tooltip>
+            </span>
           </span>
-          <span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>
+<!--          <span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>-->
         </span>
       </el-tree>
       <div class="noData" v-if="loadingError">
@@ -39,6 +42,7 @@
 <script>
 	import factory from '../../api/factory';
 	import log from "../../log";
+  import Cookie from 'tiny-cookie';
 
 	const MetadataInstances = factory('MetadataInstances');
 
@@ -74,10 +78,12 @@
 		},
 		mounted() {
 			this.loadDataBase();
+			//this.filterText = Cookie.get('tableSelector') ? Cookie.get('tableSelector'):'';
 		},
 		watch: {
 			filterText(val) {
 				this.$refs.tree.filter(val);
+        //Cookie.set('tableSelector',val);
 			}
 		},
 		methods: {
@@ -85,7 +91,6 @@
       clickLoad() {
         this.loadDataBase();
       },
-
 			loadDataBase() {
 				let self = this;
 				let params = {
@@ -100,6 +105,9 @@
 							meta_type: {
 								in: ['database', 'directory', 'ftp', 'apiendpoint']
 							},
+              // source:{
+              //   user_id:'5ec37a2d7135340e652e6c0b',
+              // },
 							is_deleted:false
 						},
 						order:'original_name ASC'
@@ -311,7 +319,7 @@
 	}
 	.table-label{
 		display: inline-block;
-		width: 140px;
+		width: 180px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
@@ -337,6 +345,10 @@
 		-ms-user-select:none;
 		user-select:none;
 	}
+  .table-tooltip{
+    display: inline-block;
+    width: 180px;
+  }
 </style>
 <style scoped>
 	/*头部样式*/
