@@ -37,7 +37,7 @@ export const PublishApiConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-				return !['app.FileNode', 'app.Database', 'app.GridFSNode'].includes(targetCell.get('type'));
+        return false;
 			},
 
 			/**
@@ -46,20 +46,20 @@ export const PublishApiConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-				return false;
+        return ['app.Collection'].includes(sourceCell.get('type'));
 			},
 
 			validate(data) {
 				data = data || this.getFormData();
-				let name = this.attr('label/text');
-				if (!data)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`);
-        if( !data.name )
-          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_database')}`);
-        if( !data.method )
-          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_collection')}`);
-        if( !data.url)
-          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_pk')}`);
+				// let name = this.attr('label/text');
+				// if (!data)
+				// 	throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`);
+        // if( !data.name )
+        //   throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_database')}`);
+        // if( !data.method )
+        //   throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_collection')}`);
+        // if( !data.url)
+        //   throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_pk')}`);
 
 				return true;
 			},

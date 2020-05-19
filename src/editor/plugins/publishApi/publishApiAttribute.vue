@@ -5,7 +5,7 @@
         <el-input v-model="form.name" maxlength="20" :placeholder="$t('editor.cell.data_node.api.enterPublishApiName')" show-word-limit required></el-input>
       </el-form-item>
       <el-form-item :label="$t('editor.cell.data_node.api.description')" class="pdTop5">
-        <el-input type="textarea" v-model="form.comment" :placeholder="$t('editor.cell.data_node.api.enterNewlyReleasedApi')" maxlength="100" show-word-limit></el-input>
+        <el-input type="textarea" v-model="form.description" :placeholder="$t('editor.cell.data_node.api.enterNewlyReleasedApi')" maxlength="100" show-word-limit></el-input>
       </el-form-item>
       <el-row :gutter="10">
         <el-col :span="6">
@@ -22,28 +22,28 @@
         </el-col>
         <el-col :span="18">
           <el-form-item label="URL/API/V1/">
-            <el-input v-model="form.url" :placeholder="$t('dataFlow.enterFilterTable')"></el-input>
+            <el-input v-model="form.path" :placeholder="$t('dataFlow.enterFilterTable')"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
       <el-form-item :label="$t('editor.cell.data_node.api.fieldSettings')" class="pdTop5">
          <el-table
           border
-          :data="form.tableData"
+          :data="form.paths.fields"
           style="width: 100%">
           <el-table-column
-            prop="table_field"
+            prop="field_name"
             :label="$t('editor.cell.data_node.api.table_field')">
 
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.table_field" size="mini"></el-input>
-            </template>
+            <!-- <template slot-scope="scope">
+              <el-input v-model="scope.row.field_name" size="mini"></el-input>
+            </template> -->
           </el-table-column>
           <el-table-column
-            prop="table_type"
+            prop="javaType"
             :label="$t('editor.cell.data_node.api.table_type')"
             width="100">
-            <template slot-scope="scope">
+            <!-- <template slot-scope="scope">
               <el-select
                 v-model="scope.row.table_type"
                 filterable
@@ -56,7 +56,7 @@
                     v-bind:key="idx">
                   </el-option>
               </el-select>
-            </template>
+            </template> -->
           </el-table-column>
           <el-table-column
             align="center"
@@ -90,38 +90,28 @@
 			return {
 				selectList:[
           {label:'GET',value:'GET'},
-          {label:'POST',value:'POST'}
-        ],
-        typeList:[
-          {type: 'String'},
-          {type: 'Number'},
-          {type: 'Boolean'},
-          {type: 'Date'},
+          {label:'STREAM',value:'STREAM'}
         ],
 				groupList: [],
 				expressionList: [],
 				form: {
+          apiVersion: 'V1',
           name: '',
-          comment: '',
-          method: 'GET',
-          url: '',
-					tableData: [
-            {'table_field':1,'table_type': 'String',checkList:['required']}
-          ],
+          description: '',
+          paths: {
+            method:'GET',
+            fields:[],
+            availableQueryField:[],
+            requiredQueryField: []
+          },
+          path: '',
+          mergedSchema: null,
+					// tableData: [
+          //   {'table_field':1,'table_type': 'String',checkList:['required']}
+          // ],
 				},
-        aggaggExpression: '1',
-        countObj: {
-          AVG: 0,
-          SUM: 0,
-          MAX: 0,
-          MIN: 0,
-          COUNT: 0
-        }
 			};
 		},
-		mounted() {
-
-    },
 
 		watch: {
 			form: {
@@ -130,14 +120,29 @@
 					this.$emit('dataChanged', this.getData());
 				}
       },
+      mergedSchema: {
+        handler(){
+
+        }
+      }
 		},
 
 		methods: {
 			setData(data, cell, isSourceDataNode, vueAdapter) {
 				if (data) {
 					Object.keys(data).forEach(key => this.form[key] = data[key]);
-				}
-
+        }
+        let fields = [];
+        this.mergedSchema = cell.getOutputSchema();
+        this.mergedSchema.fields.forEach(field =>{
+          fields.push({
+            field_name: field.field_name,
+            table_name: field.table_name,
+            javaType: field.javaType,
+            checkList: []
+          });
+        });
+        this.form.paths.fields = fields;
 			},
 
 			getData() {
