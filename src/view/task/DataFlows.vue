@@ -59,6 +59,8 @@
 			</div>
 			<div class="clear"></div>
 			<el-table
+          v-loading="loading"
+          :element-loading-text="$t('dataFlow.dataLoading')"
 					:data="tableData" style="width: 99%;border: 1px solid #dedee4;"
 					class="dv-table"
 					:max-height="maxHeight" row-key="id"
@@ -156,7 +158,8 @@
 					scheduled: '#cccccc',
 					stopping: '#F19149',
 					error: '#f53724',
-				},
+        },
+        loading: false,
 				order: '',
 				tableData: [],
 				newData: [],
@@ -244,7 +247,7 @@
 				};
 			},
 			async getData(params) {
-
+        this.loading = true;
 				this.$store.commit('dataFlows', this.formData);
 
 				let where = {};
@@ -309,7 +312,8 @@
 							this.tableData = res.data;
 							this.handleData(this.tableData);
 						}
-					}
+          }
+          this.loading = false;
 				});
 				this.getCount(where);
 			},
