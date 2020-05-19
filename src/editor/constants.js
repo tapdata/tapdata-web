@@ -24,7 +24,7 @@ export const
 
 	DEFAULT_SETTING = {
 		sync_type: 'initial_sync+cdc',
-		readBatchSize:25000,
+		readBatchSize:1000,
 		notificationWindow:0,
 		notificationInterval:300,
 		readCdcInterval:500,
