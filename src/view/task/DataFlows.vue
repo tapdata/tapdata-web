@@ -468,7 +468,7 @@
         };
         this.$confirm(this.$t('message.deteleMessage'), this.$t('message.prompt'), {
           confirmButtonText: this.$t('message.delete'),
-          cancelButtonText: this.$t('message.cancle'),
+          cancelButtonText: this.$t('message.cancel'),
           type: 'warning'
         }).then(() => {
           dataFlows.allDelete(where).then(res => {
@@ -485,7 +485,7 @@
 			handleDelete(id) {
 				this.$confirm(this.$t('message.deteleMessage'), this.$t('message.prompt'), {
 					confirmButtonText: this.$t('message.delete'),
-					cancelButtonText: this.$t('message.cancle'),
+					cancelButtonText: this.$t('message.cancel'),
 					type: 'warning'
 				}).then(() => {
 					dataFlows.delete(id).then(res => {
@@ -536,7 +536,7 @@
 			handleReset(id) {
 				this.$confirm(this.$t('message.resetMessage'), this.$t('message.prompt'), {
 					confirmButtonText: this.$t('dataFlow.reset'),
-					cancelButtonText: this.$t('message.cancle'),
+					cancelButtonText: this.$t('message.cancel'),
 					type: 'warning'
 				}).then(() => {
 					// let attributes = {

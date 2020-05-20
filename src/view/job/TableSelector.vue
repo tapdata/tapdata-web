@@ -1,7 +1,7 @@
 <template>
 	<div class="box">
 		<div class="box-head">
-			<el-input class="search" v-model="filterText" clearable><i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
+			<el-input class="search" v-model="filterText" clearable @change="handleSearchTree()"><i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
 			<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
 			<i class="el-icon-refresh" v-if="!loading" @click="loadDataBase"></i>
 			<i class="el-icon-loading" v-if="loading"></i>
@@ -42,7 +42,7 @@
 <script>
 	import factory from '../../api/factory';
 	import log from "../../log";
-  import Cookie from 'tiny-cookie';
+  //import Cookie from 'tiny-cookie';
 
 	const MetadataInstances = factory('MetadataInstances');
 
@@ -80,16 +80,61 @@
 			this.loadDataBase();
 			//this.filterText = Cookie.get('tableSelector') ? Cookie.get('tableSelector'):'';
 		},
-		watch: {
-			filterText(val) {
-				this.$refs.tree.filter(val);
-        //Cookie.set('tableSelector',val);
-			}
-		},
+		// watch: {
+		// 	filterText(val) {
+		// 		this.$refs.tree.filter(val);
+    //     //Cookie.set('tableSelector',val);
+		// 	}
+		// },
 		methods: {
       // 点击加载
       clickLoad() {
         this.loadDataBase();
+      },
+      handleSearchTree(){
+        let self = this;
+        let params = {
+          filter: JSON.stringify({
+            where: {
+              meta_type: {
+                in: ['database', 'directory', 'ftp', 'apiendpoint','table','collection']
+              },
+              original_name:{
+                like:self.filterText,
+                options:'i',
+              },
+              is_deleted:false
+            },
+            order:'original_name ASC'
+          })
+        };
+        self.loading = true;
+        MetadataInstances.get(params).then(res => {
+          if (res.statusText === "OK" || res.status === 200) {
+            if (res.data) {
+              // self.data.splice(0, self.data.length);
+              self.data = [];
+              res.data.forEach((record) => {
+                let node ={
+                  id: record.id,
+                  label: record.name || record.original_name,
+                  meta_type: record.meta_type,
+                  source:record.source||''
+                };
+                if(['collection', 'table', 'mongo_view', 'view'].includes(record.meta_type)){
+                  node.leaf = true;
+                }
+                self.data.push(node);
+              });
+            }
+          }
+          self.loading = false;
+          self.loadingError = false;
+        }).catch(e => {
+          self.loadingError = true;
+          this.$message.error('MetadataInstances error');
+          self.loading = false;
+        });
       },
 			loadDataBase() {
 				let self = this;
