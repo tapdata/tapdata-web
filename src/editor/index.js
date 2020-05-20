@@ -5,5 +5,5 @@
  */
 import Editor from "./editor";
 export default function(container, opts) {
-  return new Editor(container, opts);
+	return new Editor(container, opts);
 }

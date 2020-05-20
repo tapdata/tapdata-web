@@ -21,10 +21,10 @@ Vue.prototype.$moment = moment;
 // Vue.prototype.i18n = window.jQuery.i18n
 
 new Vue({
-  el: "#app",
-  router,
-  store,
-  i18n,
-  components: { App },
-  template: "<App/>"
+	el: "#app",
+	router,
+	store,
+	i18n,
+	components: { App },
+	template: "<App/>"
 });

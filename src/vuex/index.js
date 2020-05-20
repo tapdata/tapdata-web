@@ -7,32 +7,32 @@ import actions from "./actions";
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
-  plugins: [
-    createPersistedState({
-      key: "tapdata",
-      storage: window.sessionStorage ||
-        window.localStorage || {
-          getItem: key => {},
-          setItem: (key, value) => {},
-          removeItem: (key, value) => {}
-        }
-    })
-  ],
+	plugins: [
+		createPersistedState({
+			key: "tapdata",
+			storage: window.sessionStorage ||
+				window.localStorage || {
+					getItem: key => {},
+					setItem: (key, value) => {},
+					removeItem: (key, value) => {}
+				}
+		})
+	],
 
-  // 全局变量
-  state: {
-    dataFlows: {
-      search: "",
-      timeData: [],
-      status: "",
-      person: "",
-      classification: []
-    }
-  },
+	// 全局变量
+	state: {
+		dataFlows: {
+			search: "",
+			timeData: [],
+			status: "",
+			person: "",
+			classification: []
+		}
+	},
 
-  actions,
+	actions,
 
-  mutations
+	mutations
 });
 
 export default store;

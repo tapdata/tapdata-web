@@ -2,47 +2,47 @@
 import Vue from "vue";
 
 import {
-  Image,
-  Tabs,
-  TabPane,
-  Popover,
-  Radio,
-  RadioGroup,
-  RadioButton,
-  Checkbox,
-  CheckboxGroup,
-  CheckboxButton,
-  Dialog,
-  Switch,
-  Loading,
-  MessageBox,
-  Message,
-  Menu,
-  MenuItem,
-  Form,
-  FormItem,
-  Input,
-  Button,
-  Select,
-  Table,
-  TableColumn,
-  Option,
-  Row,
-  Col,
-  Pagination,
-  DatePicker,
-  TimePicker,
-  Drawer,
-  Container,
-  Main,
-  Header,
-  Tree,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  Tag,
-  Tooltip,
-  Upload
+	Image,
+	Tabs,
+	TabPane,
+	Popover,
+	Radio,
+	RadioGroup,
+	RadioButton,
+	Checkbox,
+	CheckboxGroup,
+	CheckboxButton,
+	Dialog,
+	Switch,
+	Loading,
+	MessageBox,
+	Message,
+	Menu,
+	MenuItem,
+	Form,
+	FormItem,
+	Input,
+	Button,
+	Select,
+	Table,
+	TableColumn,
+	Option,
+	Row,
+	Col,
+	Pagination,
+	DatePicker,
+	TimePicker,
+	Drawer,
+	Container,
+	Main,
+	Header,
+	Tree,
+	Dropdown,
+	DropdownItem,
+	DropdownMenu,
+	Tag,
+	Tooltip,
+	Upload
 } from "element-ui";
 
 Vue.component(Upload.name, Upload);
@@ -92,31 +92,31 @@ Vue.use(Loading.directive);
 const showMessage = Symbol("showMessage");
 
 class DoneMessage {
-  [showMessage](type, options, single) {
-    if (single) {
-      if (document.getElementsByClassName("el-message").length === 0) {
-        Message[type](options);
-      }
-    } else {
-      Message[type](options);
-    }
-  }
+	[showMessage](type, options, single) {
+		if (single) {
+			if (document.getElementsByClassName("el-message").length === 0) {
+				Message[type](options);
+			}
+		} else {
+			Message[type](options);
+		}
+	}
 
-  info(options, single = true) {
-    this[showMessage]("info", options, single);
-  }
+	info(options, single = true) {
+		this[showMessage]("info", options, single);
+	}
 
-  warning(options, single = true) {
-    this[showMessage]("warning", options, single);
-  }
+	warning(options, single = true) {
+		this[showMessage]("warning", options, single);
+	}
 
-  error(options, single = true) {
-    this[showMessage]("error", options, single);
-  }
+	error(options, single = true) {
+		this[showMessage]("error", options, single);
+	}
 
-  success(options, single = true) {
-    this[showMessage]("success", options, single);
-  }
+	success(options, single = true) {
+		this[showMessage]("success", options, single);
+	}
 }
 
 export const message = new DoneMessage();

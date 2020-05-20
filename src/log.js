@@ -5,5 +5,5 @@
  */
 let counter = 0;
 export default function() {
-  window["console"].error(++counter, ...arguments);
+	window["console"].error(++counter, ...arguments);
 }

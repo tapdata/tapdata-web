@@ -6,7 +6,7 @@
 import PublicAPI from "./publicApi";
 
 export default class Connections extends PublicAPI {
-  constructor() {
-    super("/api/Connections");
-  }
+	constructor() {
+		super("/api/Connections");
+	}
 }

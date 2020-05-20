@@ -13,49 +13,49 @@ import Upload from "../components/upload";
 Vue.use(Router);
 
 export default new Router({
-  routes: [
-    {
-      path: "/",
-      name: "layout",
-      redirect: "/clusterManagement",
-      component: layout,
-      children: [
-        {
-          path: "clusterManagement",
-          name: "clusterManagement",
-          component: clusterManagement
-        },
-        {
-          path: "dailyRecord",
-          name: "dailyRecord",
-          component: dailyRecord
-        }
-      ]
-    },
-    {
-      path: "/job",
-      name: "job",
-      component: Job
-    },
-    {
-      path: "/dataFlows",
-      name: "DataFlows",
-      component: DataFlows
-    },
-    {
-      path: "/metadata",
-      name: "metadata",
-      component: metaData
-    },
-    {
-      path: "/dataVerify",
-      name: "DataVerify",
-      component: DataVerify
-    },
-    {
-      path: "/upload",
-      name: "Upload",
-      component: Upload
-    }
-  ]
+	routes: [
+		{
+			path: "/",
+			name: "layout",
+			redirect: "/clusterManagement",
+			component: layout,
+			children: [
+				{
+					path: "clusterManagement",
+					name: "clusterManagement",
+					component: clusterManagement
+				},
+				{
+					path: "dailyRecord",
+					name: "dailyRecord",
+					component: dailyRecord
+				}
+			]
+		},
+		{
+			path: "/job",
+			name: "job",
+			component: Job
+		},
+		{
+			path: "/dataFlows",
+			name: "DataFlows",
+			component: DataFlows
+		},
+		{
+			path: "/metadata",
+			name: "metadata",
+			component: metaData
+		},
+		{
+			path: "/dataVerify",
+			name: "DataVerify",
+			component: DataVerify
+		},
+		{
+			path: "/upload",
+			name: "Upload",
+			component: Upload
+		}
+	]
 });

@@ -9,23 +9,23 @@ import tc from "./langs/tc";
 
 Vue.use(VueI18n);
 const i18n = new VueI18n({
-  // locale: localStorage.lang || 'en',
-  locale: localStorage.getItem("localize_lang") || "en",
-  messages: {
-    sc, // 中文
-    en, // 英文
-    tc // 繁体
-  }
+	// locale: localStorage.lang || 'en',
+	locale: localStorage.getItem("localize_lang") || "en",
+	messages: {
+		sc, // 中文
+		en, // 英文
+		tc // 繁体
+	}
 });
 
 if (module.hot) {
-  module.hot.accept(["./langs/en", "./langs/cn", "./langs/tc"], function() {
-    i18n.setLocaleMessage("en", require("./langs/en").default);
-    i18n.setLocaleMessage("cn", require("./langs/cn").default);
-    i18n.setLocaleMessage("tc", require("./langs/tc").default);
-    // app.$i18n.setLocaleMessage('en', require('./en').default)
-    // app.$i18n.setLocaleMessage('ja', require('./ja').default)
-  });
+	module.hot.accept(["./langs/en", "./langs/cn", "./langs/tc"], function() {
+		i18n.setLocaleMessage("en", require("./langs/en").default);
+		i18n.setLocaleMessage("cn", require("./langs/cn").default);
+		i18n.setLocaleMessage("tc", require("./langs/tc").default);
+		// app.$i18n.setLocaleMessage('en', require('./en').default)
+		// app.$i18n.setLocaleMessage('ja', require('./ja').default)
+	});
 }
 
 locale.i18n((key, value) => i18n.t(key, value)); // 重点：为了实现element插件的多语言切换
