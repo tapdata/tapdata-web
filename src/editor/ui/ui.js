@@ -4,21 +4,20 @@
  * @description
  */
 import Component from "../lib/Component";
-import $ from 'jquery';
+import $ from "jquery";
 
 export default class UI extends Component {
+  constructor(opts) {
+    super();
 
-	constructor(opts) {
-		super();
+    this.editor = opts.editor;
+    this.opts = opts;
 
-		this.editor = opts.editor;
-		this.opts = opts;
+    this.init();
+  }
 
-		this.init();
-	}
-
-	doInit() {
-		this.el = $(`<div class="editor">
+  doInit() {
+    this.el = $(`<div class="editor">
 			<div class="e-header">
 				<div class="e-action-bar"><a class="e-action-back iconfont icon-biaotongbu"></a></div>
 				<div class="e-title">
@@ -38,35 +37,35 @@ export default class UI extends Component {
 			<div class="e-footer"></div>
 		</div>`);
 
-		if( this.opts.actionBarEl ){
-			this.getActionBarEl().append(this.opts.actionBarEl);
-		}
-	}
-	getName(){
-		return this.el.find('.e-title #taskNameInput').val();
-	}
-	setName(name){
-		return this.el.find('.e-title #taskNameInput').val(name);
-	}
-	// getBackButtonEl(){
-	// 	return this.el.find('.e-header .e-action-back');
-	// }
-	getContentEl(){
-		return this.el.find('.e-content');
-	}
-	getNavigatorEl(){
-		return this.el.find('.navigator-container');
-	}
-	getToolbarEl(){
-		return this.el.find('.e-toolbar-container');
-	}
-	getGraphToolbarEl(){
-		return this.el.find('.e-toolbar-container .graph-toolbar');
-	}
-	getActionBarEl(){
-		return this.el.find('.action-toolbar');
-	}
-	getGraphContainer() {
-		return this.el.find('.graph-container');
-	}
+    if (this.opts.actionBarEl) {
+      this.getActionBarEl().append(this.opts.actionBarEl);
+    }
+  }
+  getName() {
+    return this.el.find(".e-title #taskNameInput").val();
+  }
+  setName(name) {
+    return this.el.find(".e-title #taskNameInput").val(name);
+  }
+  // getBackButtonEl(){
+  // 	return this.el.find('.e-header .e-action-back');
+  // }
+  getContentEl() {
+    return this.el.find(".e-content");
+  }
+  getNavigatorEl() {
+    return this.el.find(".navigator-container");
+  }
+  getToolbarEl() {
+    return this.el.find(".e-toolbar-container");
+  }
+  getGraphToolbarEl() {
+    return this.el.find(".e-toolbar-container .graph-toolbar");
+  }
+  getActionBarEl() {
+    return this.el.find(".action-toolbar");
+  }
+  getGraphContainer() {
+    return this.el.find(".graph-container");
+  }
 }

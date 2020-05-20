@@ -3,155 +3,169 @@
  * @date 3/2/20
  * @description
  */
-import Vue from 'vue';
+import Vue from "vue";
 import Panel from "./ui/panel";
-import {EditorEventType} from "./lib/events";
-import BaseObject from './lib/BaseObject';
-import log from '../log';
-import {FORM_DATA_KEY} from "./constants";
-import i18n from '../i18n/i18n';
+import { EditorEventType } from "./lib/events";
+import BaseObject from "./lib/BaseObject";
+import log from "../log";
+import { FORM_DATA_KEY } from "./constants";
+import i18n from "../i18n/i18n";
 
 export const vueAdapter = {};
-//const privateMap = new WeakMap();
+// const privateMap = new WeakMap();
 
 export class VueAdapter extends BaseObject {
+  vm = null;
 
-	vm = null;
+  constructor(editor, graphUI) {
+    super();
 
-	constructor(editor, graphUI){
-		super();
+    this.editor = editor;
+    this.graphUI = graphUI;
 
-		this.editor = editor;
-		this.graphUI = graphUI;
+    this.editor.on(EditorEventType.BEFORE_DESTROY, this.destroy.bind(this));
+    editor
+      .getRightSidebar()
+      .on(EditorEventType.RESIZE, this.handlerResize.bind(this));
+    editor
+      .getRightSidebar()
+      .on(EditorEventType.HIDE, this.handlerHide.bind(this));
+    editor
+      .getRightTabPanel()
+      .on(EditorEventType.SELECTED, this.handlerTapChanged.bind(this));
+    editor.on(
+      EditorEventType.DATA_FLOW_UPDATED,
+      this.handlerDataFlowUpdated.bind(this)
+    );
+  }
 
-		this.editor.on(EditorEventType.BEFORE_DESTROY, this.destroy.bind(this));
-		editor.getRightSidebar().on(EditorEventType.RESIZE, this.handlerResize.bind(this));
-		editor.getRightSidebar().on(EditorEventType.HIDE, this.handlerHide.bind(this));
-		editor.getRightTabPanel().on(EditorEventType.SELECTED, this.handlerTapChanged.bind(this));
-		editor.on(EditorEventType.DATA_FLOW_UPDATED, this.handlerDataFlowUpdated.bind(this));
-	}
+  render(cell) {
+    log("VueAdapter.render", cell);
 
-	render(cell){
-		log('VueAdapter.render', cell);
+    if (this.vm) {
+      this.vm.$destroy();
+      this.vm = null;
+    }
 
-		if( this.vm ){
-			this.vm.$destroy();
-			this.vm = null;
-		}
+    if (!cell.showSettings || !cell.showSettings()) {
+      return null;
+    }
 
-		if( !cell.showSettings || !cell.showSettings()){
-			return null;
-		}
+    let self = this;
+    let name = cell.get("type");
+    let formData = self.getFormDataForCell(cell);
+    let isDataNode =
+      cell.isElement() &&
+      typeof cell.isDataNode === "function" &&
+      cell.isDataNode();
+    let isSourceDataNode =
+      isDataNode &&
+      self.graphUI.graph.getConnectedLinks(cell, { inbound: true }).length ===
+        0;
 
-		let self = this;
-		let name = cell.get('type');
-		let formData = self.getFormDataForCell(cell);
-		let isDataNode = cell.isElement() && typeof cell.isDataNode === 'function' && cell.isDataNode();
-		let isSourceDataNode = isDataNode && self.graphUI.graph.getConnectedLinks(cell, {inbound: true}).length === 0;
+    if (vueAdapter[name] && vueAdapter[name].component) {
+      let vueComponentConfig = vueAdapter[name];
+      let Comp = Vue.extend(vueComponentConfig.component);
 
-		if( vueAdapter[name] && vueAdapter[name].component){
-			let vueComponentConfig = vueAdapter[name];
-			let Comp = Vue.extend(vueComponentConfig.component);
+      let settings = self.editor
+        .getRightTabPanel()
+        .getChildByName("nodeSettingPanel");
+      if (!settings) {
+        settings = new Panel({
+          name: "nodeSettingPanel",
+          title: i18n.t("editor.ui.sidebar.node_setting")
+        });
+        self.editor.getRightTabPanel().add(settings, true);
+      }
 
-			let settings = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
-			if(!settings) {
-				settings = new Panel({
-					name: 'nodeSettingPanel',
-					title: i18n.t('editor.ui.sidebar.node_setting')
-				});
-				self.editor.getRightTabPanel().add(settings, true);
-			}
+      self.vm = new Comp({
+        i18n,
+        propsData: Object.assign({}, vueComponentConfig.props || {})
+      });
 
-			self.vm = new Comp({
-				i18n,
-				propsData: Object.assign({}, vueComponentConfig.props || {})
-			});
+      self.editor.getRightTabPanel().select(settings);
+      settings.removeAll();
 
-			self.editor.getRightTabPanel().select(settings);
-			settings.removeAll();
+      let vueContainerDom = document.createElement("div");
+      settings.getContentEl().append(vueContainerDom);
+      self.vm.$mount(vueContainerDom);
 
-			let vueContainerDom = document.createElement('div');
-			settings.getContentEl().append(vueContainerDom);
-			self.vm.$mount(vueContainerDom);
+      if (typeof self.vm.setData === "function") {
+        self.vm.setData(formData, cell, isSourceDataNode, self);
+      } else {
+        throw new Error(
+          `Custom form component does not implement "${name}" method`
+        );
+      }
 
-			if( typeof self.vm.setData === "function"){
-				self.vm.setData(formData, cell, isSourceDataNode, self);
-			} else {
-				throw new Error(`Custom form component does not implement "${name}" method`);
-			}
+      self.vm.$on("dataChanged", data => {
+        self.setFormData(cell, data);
+      });
 
-			self.vm.$on('dataChanged', (data) => {
-				self.setFormData(cell, data);
-			});
+      self.vm.$on("schemaChange", schema => {
+        log("VueAdapter.schemaChange", arguments);
+        cell.setSchema(schema);
+      });
 
-			self.vm.$on('schemaChange', (schema) => {
-				log('VueAdapter.schemaChange', arguments);
-				cell.setSchema(schema);
-			});
+      self.editor.getRightSidebar().show();
 
-			self.editor.getRightSidebar().show();
+      return self.vm;
+    }
+  }
 
-			return self.vm;
+  handlerResize(e) {
+    if (this.vm) {
+      this.vm.$emit(EditorEventType.RESIZE, e);
+    }
+  }
 
-		}
-	}
+  handlerHide(e) {
+    if (this.vm) {
+      this.vm.$destroy();
+    }
+    let settings = this.editor.getRightSidebar().getChildByName("settings");
+    if (settings) {
+      this.editor.getRightSidebar().remove(settings);
+    }
+  }
 
-	handlerResize(e){
-		if( this.vm ){
-			this.vm.$emit(EditorEventType.RESIZE, e);
-		}
-	}
+  handlerTapChanged(tab) {
+    if (this.vm) {
+      if (tab && tab.opts && tab.opts.name === "settings") {
+        this.vm.$emit(EditorEventType.SHOW);
+      } else {
+        this.vm.$emit(EditorEventType.HIDE);
+      }
+    }
+  }
 
-	handlerHide(e){
-		if( this.vm ){
-			this.vm.$destroy();
-		}
-		let settings = this.editor.getRightSidebar().getChildByName('settings');
-		if( settings ) {
-			this.editor.getRightSidebar().remove(settings);
-		}
-	}
+  handlerDataFlowUpdated(dataFlow) {
+    if (this.vm) {
+      this.vm.$emit(EditorEventType.DATA_FLOW_UPDATED, dataFlow);
+    }
+  }
 
-	handlerTapChanged(tab){
-		if (this.vm){
-			if( tab && tab.opts && tab.opts.name === 'settings'){
-				this.vm.$emit(EditorEventType.SHOW);
-			} else {
-				this.vm.$emit(EditorEventType.HIDE);
-			}
-		}
+  destroy() {
+    if (this.vm) {
+      this.vm.$destroy();
+    }
+    this.editor.off(EditorEventType.BEFORE_DESTROY, this.destroy);
+  }
 
-	}
+  /**
+   *
+   * @param cell
+   * @param data
+   */
+  setFormData(cell, data) {
+    log("VueAdapter.setFormData", this, ...arguments);
+    cell.set(FORM_DATA_KEY, data);
+  }
+  getFormDataForCell(cell) {
+    if (typeof cell === "string") cell = this.graphUI.graph.getCell(cell);
 
-	handlerDataFlowUpdated(dataFlow){
-		if( this.vm ){
-			this.vm.$emit(EditorEventType.DATA_FLOW_UPDATED, dataFlow);
-		}
-	}
+    if (typeof cell.id === "string") cell = this.graphUI.graph.getCell(cell.id);
 
-	destroy(){
-		if( this.vm ){
-			this.vm.$destroy();
-		}
-		this.editor.off(EditorEventType.BEFORE_DESTROY, this.destroy);
-	}
-
-	/**
-	 *
-	 * @param cell
-	 * @param data
-	 */
-	setFormData(cell, data) {
-		log('VueAdapter.setFormData', this, ...arguments);
-		cell.set(FORM_DATA_KEY, data);
-	}
-	getFormDataForCell(cell){
-		if( typeof cell === 'string')
-			cell = this.graphUI.graph.getCell(cell);
-
-		if( typeof cell.id === 'string')
-			cell = this.graphUI.graph.getCell(cell.id);
-
-		return cell && cell.get(FORM_DATA_KEY);
-	}
+    return cell && cell.get(FORM_DATA_KEY);
+  }
 }

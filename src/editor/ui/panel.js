@@ -4,22 +4,22 @@
  * @description
  */
 import Component from "../lib/Component";
-import $ from 'jquery';
+import $ from "jquery";
 
 export default class Panel extends Component {
+  constructor(opts) {
+    super(opts);
 
-	constructor(opts){
-		super(opts);
+    this.init();
+  }
 
-		this.init();
-	}
+  doInit() {
+    this.el = $(
+      `<div class="e-panel" style="${this.opts.bodyStyle || ""}"></div>`
+    );
+  }
 
-	doInit() {
-		this.el = $(`<div class="e-panel" style="${this.opts.bodyStyle || ''}"></div>`);
-	}
-
-	getContentEl() {
-		return this.el;
-	}
-
+  getContentEl() {
+    return this.el;
+  }
 }

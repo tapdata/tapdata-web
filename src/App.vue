@@ -1,18 +1,17 @@
 <template>
   <div id="app">
     <!-- <img src="./assets/logo.png"> -->
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'App'
+  name: "App"
 };
 </script>
-<style lang='less'>
-@import 'assets/style/index.less';
+<style lang="less">
+@import "assets/style/index.less";
 
 #app {
   width: 100%;
