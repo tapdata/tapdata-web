@@ -151,13 +151,12 @@
 			formData: {
 				deep: true,
 				handler(){
-					this.$emit('dataChanged', this.getData());
           if(this.formData.initial_sync === 'initial_sync'){
             this.formData.isOpenAutoDDL = false;
           }else {
             this.formData.run_custom_sql = false;
           }
-					this.$emit('dataChanged', this.formData);
+					this.$emit('dataChanged', this.getData());
 				}
 			}
 		},
@@ -168,7 +167,6 @@
 				}
 			},
 			getData(){
-
 				let result = _.cloneDeep(this.formData);
 				if( result.syncPoint === 'sync_time'){
 					let dateStr = moment(result.syncDatePicker).format('YYYY-MM-DD');
