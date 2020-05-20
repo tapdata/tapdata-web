@@ -4,12 +4,7 @@
  * @description
  */
 import log from "../../log";
-import {
-	FORM_DATA_KEY,
-	SCHEMA_DATA_KEY,
-	OUTPUT_SCHEMA_DATA_KEY,
-	JOIN_TABLE_TPL
-} from "../constants";
+import { FORM_DATA_KEY, SCHEMA_DATA_KEY, OUTPUT_SCHEMA_DATA_KEY, JOIN_TABLE_TPL } from "../constants";
 import { mergeJoinTablesToTargetSchema } from "../util/Schema";
 import _ from "lodash";
 import joint from "../lib/rappid/rappid";
@@ -137,10 +132,8 @@ export const baseElementConfig = {
 					self.attr("body/stroke", verified ? "#2196F3" : "#ff0000");
 					if (formData && formData.name) {
 						let name = formData.name;
-						let isDataNode =
-							typeof self.isDataNode === "function" ? self.isDataNode() : false;
-						let isProcess =
-							typeof self.isProcess === "function" ? self.isProcess() : false;
+						let isDataNode = typeof self.isDataNode === "function" ? self.isDataNode() : false;
+						let isProcess = typeof self.isProcess === "function" ? self.isProcess() : false;
 						let width = isDataNode ? 125 : isProcess ? 95 : false;
 						if (width) {
 							name = self.breakText(name, width);
@@ -226,9 +219,7 @@ export const baseElementConfig = {
 							let joinTable = formData ? formData.joinTable : null;
 							let schema = sourceCell.getOutputSchema();
 
-							joinTable = joinTable
-								? _.cloneDeep(joinTable)
-								: _.cloneDeep(JOIN_TABLE_TPL);
+							joinTable = joinTable ? _.cloneDeep(joinTable) : _.cloneDeep(JOIN_TABLE_TPL);
 
 							if (schema) {
 								let fields = schema.fields || [];
@@ -246,17 +237,10 @@ export const baseElementConfig = {
 
 							joinTable.sourceSchema = schema;
 							let parentDataNodes =
-								typeof targetCell.getFirstDataNode === "function"
-									? targetCell.getFirstDataNode()
-									: [];
-							joinTable.stageId =
-								parentDataNodes.length > 0 ? parentDataNodes[0].id : "";
+								typeof targetCell.getFirstDataNode === "function" ? targetCell.getFirstDataNode() : [];
+							joinTable.stageId = parentDataNodes.length > 0 ? parentDataNodes[0].id : "";
 
-							log(
-								"BaseElement.getInputSchema.joinTables",
-								cell.getFormData(),
-								joinTable
-							);
+							log("BaseElement.getInputSchema.joinTables", cell.getFormData(), joinTable);
 							return joinTable;
 						} else {
 							return null;
@@ -274,10 +258,11 @@ export const baseElementConfig = {
 					meta_type: this.get("type") === "app.Collection" ? "collection" : "table"
 				};
 				let outputSchema = mergeJoinTablesToTargetSchema(schema, inputSchema);
-				log(
-					this.get("type") + ".__mergeOutputSchema[this.schema,inputSchema,outputSchema]",
-					[schema, inputSchema, outputSchema]
-				);
+				log(this.get("type") + ".__mergeOutputSchema[this.schema,inputSchema,outputSchema]", [
+					schema,
+					inputSchema,
+					outputSchema
+				]);
 				let _outputSchema;
 				try {
 					_outputSchema = this.mergeOutputSchema(outputSchema);
@@ -321,15 +306,9 @@ export const baseElementConfig = {
 					let link = inboundLinks[i];
 					let sourceCell = link.getSourceCell();
 					if (sourceCell) {
-						if (
-							typeof sourceCell.isDataNode === "function" &&
-							sourceCell.isDataNode()
-						) {
+						if (typeof sourceCell.isDataNode === "function" && sourceCell.isDataNode()) {
 							parentDataNodes.push(sourceCell);
-						} else if (
-							typeof sourceCell.isProcess === "function" &&
-							sourceCell.isProcess()
-						) {
+						} else if (typeof sourceCell.isProcess === "function" && sourceCell.isProcess()) {
 							parentDataNodes.push(...sourceCell.getFirstDataNode());
 						}
 					}

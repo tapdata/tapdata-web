@@ -9,10 +9,7 @@
 				trigger: 'blur'
 			}"
 		>
-			<el-input
-				v-model="ruleForm.name"
-				:placeholder="$t('message.placeholderMonServer')"
-			></el-input>
+			<el-input v-model="ruleForm.name" :placeholder="$t('message.placeholderMonServer')"></el-input>
 		</el-form-item>
 
 		<el-form-item
@@ -24,10 +21,7 @@
 				trigger: 'blur'
 			}"
 		>
-			<el-input
-				v-model="ruleForm.command"
-				:placeholder="$t('message.placeholderCommand')"
-			></el-input>
+			<el-input v-model="ruleForm.command" :placeholder="$t('message.placeholderCommand')"></el-input>
 		</el-form-item>
 
 		<el-form-item label="arguements" prop="arguements">
@@ -49,10 +43,7 @@ export default {
 				uuid: this.editItem.uuid ? this.editItem.uuid : "",
 				name: this.editItem.name ? this.editItem.name : "",
 				command: this.editItem.command ? this.editItem.command : "",
-				arguments:
-					this.editItem.arguments || this.editItem.arguments !== null
-						? this.editItem.arguments
-						: ""
+				arguments: this.editItem.arguments || this.editItem.arguments !== null ? this.editItem.arguments : ""
 			},
 			rules: {}
 		};

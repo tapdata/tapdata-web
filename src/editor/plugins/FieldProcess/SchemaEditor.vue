@@ -34,10 +34,7 @@
 					ref="tree"
 				>
 					<span class="custom-tree-node" slot-scope="{ node, data }">
-						<span
-							class="e-triangle"
-							:style="`border-bottom-color: ${data.color || '#ddd'};`"
-						></span>
+						<span class="e-triangle" :style="`border-bottom-color: ${data.color || '#ddd'};`"></span>
 
 						<span class="e-port e-port-in" :data-id="getId(data)"></span>
 
@@ -112,11 +109,7 @@
 							></el-option>
 
 							<el-option value="Map" label="Map" v-if="isCreate(data.id)"></el-option>
-							<el-option
-								value="Array"
-								label="Array"
-								v-if="isCreate(data.id)"
-							></el-option>
+							<el-option value="Array" label="Array" v-if="isCreate(data.id)"></el-option>
 						</el-select>
 
 						<el-button
@@ -137,20 +130,14 @@
 								@click="handleCreate('create_sibling', node, data)"
 							></span>
 							<el-dropdown-menu slot="dropdown">
-								<el-dropdown-item
-									command="create_sibling"
-									icon="iconfont icon-create_sibling_node"
-									>{{
-										$t("editor.cell.processor.field.form.addField")
-									}}</el-dropdown-item
-								>
+								<el-dropdown-item command="create_sibling" icon="iconfont icon-create_sibling_node">{{
+									$t("editor.cell.processor.field.form.addField")
+								}}</el-dropdown-item>
 								<el-dropdown-item
 									command="create_child"
 									icon="iconfont icon-create_child_node"
 									v-if="['Map', 'Array'].includes(data.type)"
-									>{{
-										$t("editor.cell.processor.field.form.addEmbedField")
-									}}</el-dropdown-item
+									>{{ $t("editor.cell.processor.field.form.addEmbedField") }}</el-dropdown-item
 								>
 							</el-dropdown-menu>
 						</el-dropdown>
@@ -170,10 +157,7 @@
 
 						<el-button
 							type="text"
-							v-if="
-								originalSchema.type === 'collection' &&
-									data.primary_key_position > 0
-							"
+							v-if="originalSchema.type === 'collection' && data.primary_key_position > 0"
 							class=" e-field-action iconfont icon-l-del"
 							disabled
 						></el-button>
@@ -185,10 +169,7 @@
 
 						<el-button
 							type="text"
-							v-if="
-								originalSchema.type === 'collection' &&
-									data.primary_key_position > 0
-							"
+							v-if="originalSchema.type === 'collection' && data.primary_key_position > 0"
 							class=" e-field-action iconfont icon-return"
 							disabled
 						></el-button>
@@ -222,12 +203,8 @@
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button @click="scriptDialog.open = false" size="mini">{{
-					$t("message.cancel")
-				}}</el-button>
-				<el-button @click="scriptDialog.fn" type="primary" size="mini">{{
-					$t("message.confirm")
-				}}</el-button>
+				<el-button @click="scriptDialog.open = false" size="mini">{{ $t("message.cancel") }}</el-button>
+				<el-button @click="scriptDialog.fn" type="primary" size="mini">{{ $t("message.confirm") }}</el-button>
 			</div>
 		</el-dialog>
 	</div>
@@ -397,9 +374,7 @@ export default {
 		},
 		handleDataType(node, data) {
 			log("SchemaEditor.handleDataType", node, data);
-			let createOps = this.model.operations.filter(
-				v => v.id === data.id && v.op === "CREATE"
-			);
+			let createOps = this.model.operations.filter(v => v.id === data.id && v.op === "CREATE");
 			if (createOps && createOps.length > 0) {
 				let op = createOps[0];
 				op.javaType = data.type;
@@ -426,9 +401,7 @@ export default {
 		},
 		handleRename(node, data) {
 			log("SchemaEditor.handleRename", node, data);
-			let createOps = this.model.operations.filter(
-				v => v.id === data.id && v.op === "CREATE"
-			);
+			let createOps = this.model.operations.filter(v => v.id === data.id && v.op === "CREATE");
 			if (createOps && createOps.length > 0) {
 				let op = createOps[0];
 				let level = op.level;
@@ -444,9 +417,7 @@ export default {
 					nativeData,
 					this.model.operations
 				);
-				let ops = this.model.operations.filter(
-					v => v.id === nativeData.id && v.op === "RENAME"
-				);
+				let ops = this.model.operations.filter(v => v.id === nativeData.id && v.op === "RENAME");
 				let op;
 				if (data.label === nativeData.label) {
 					return;
@@ -470,9 +441,7 @@ export default {
 		},
 		handleDelete(node, data) {
 			log("SchemaEditor.handleDelete", node, data);
-			let createOpsIndex = this.model.operations.findIndex(
-				v => v.id === data.id && v.op === "CREATE"
-			);
+			let createOpsIndex = this.model.operations.findIndex(v => v.id === data.id && v.op === "CREATE");
 			if (createOpsIndex >= 0) {
 				let fieldName = this.model.operations[createOpsIndex].field_name + ".";
 				this.model.operations.splice(createOpsIndex, 1);
@@ -480,10 +449,7 @@ export default {
 				for (let i = 0; i < this.model.operations.length; i++) {
 					let op = this.model.operations[i];
 					let opFieldName = op.field || op.field_name;
-					if (
-						opFieldName.indexOf(fieldName) === 0 &&
-						opFieldName.length === fieldName.length
-					) {
+					if (opFieldName.indexOf(fieldName) === 0 && opFieldName.length === fieldName.length) {
 						this.model.operations.splice(i, 1);
 						i--;
 					}
@@ -498,10 +464,7 @@ export default {
 						// 删除所有的重命名的操作
 						let ops = self.model.operations[i];
 						if (ops.id === field.id && ops.op === "RENAME") {
-							let originalNode = self.getNativeData(
-								self.originalSchema.fields,
-								field.id
-							);
+							let originalNode = self.getNativeData(self.originalSchema.fields, field.id);
 							originalNode.label = field.label;
 							self.model.operations.splice(i, 1);
 						}
@@ -510,18 +473,13 @@ export default {
 						// 删除所有的类型改变的操作
 						let ops = self.model.operations[i];
 						if (ops.id === field.id && ops.op === "CONVERT") {
-							let originalNode = self.getNativeData(
-								self.originalSchema.fields,
-								field.id
-							); // 替换原始数据 主要是操作子节点
+							let originalNode = self.getNativeData(self.originalSchema.fields, field.id); // 替换原始数据 主要是操作子节点
 							originalNode.type = field.type;
 							self.model.operations.splice(i, 1);
 						}
 					}
 
-					let ops = self.model.operations.filter(
-						v => v.op === "REMOVE" && v.id === field.id
-					);
+					let ops = self.model.operations.filter(v => v.op === "REMOVE" && v.id === field.id);
 
 					let op;
 					if (ops.length === 0) {

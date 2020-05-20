@@ -71,9 +71,7 @@ export const fieldProcessConfig = {
 							autoincrement: false
 						};
 						if (triggerFieldId) {
-							let triggerFieldIndex = outputSchema.fields.findIndex(
-								f => f.id === triggerFieldId
-							);
+							let triggerFieldIndex = outputSchema.fields.findIndex(f => f.id === triggerFieldId);
 							outputSchema.fields.splice(triggerFieldIndex + 1, 0, newField);
 						} else outputSchema.fields.push(newField);
 					}
@@ -95,8 +93,7 @@ export const fieldProcessConfig = {
 					} else if (item.op === "CONVERT") {
 						outputSchema.fields[targetIndex].javaType = item.operand;
 					} else if (item.op === "REMOVE") {
-						if (applyRemoveOperation !== false)
-							outputSchema.fields.splice(targetIndex, 1);
+						if (applyRemoveOperation !== false) outputSchema.fields.splice(targetIndex, 1);
 					}
 				});
 				log("FieldProcess.mergeOutputSchema", outputSchema);

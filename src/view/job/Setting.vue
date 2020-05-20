@@ -5,17 +5,11 @@
 				<el-col :span="24">
 					<el-form-item>
 						<div>{{ $t("dataFlow.sync_type") }}</div>
-						<el-radio-group
-							v-model="formData.sync_type"
-							size="mini"
-							@change="hanldeChangeSyncType"
-						>
+						<el-radio-group v-model="formData.sync_type" size="mini" @change="hanldeChangeSyncType">
 							<el-radio-button label="initial_sync+cdc">{{
 								$t("dataFlow.initial_sync") + "+" + $t("dataFlow.cdc")
 							}}</el-radio-button>
-							<el-radio-button label="initial_sync">{{
-								$t("dataFlow.initial_sync")
-							}}</el-radio-button>
+							<el-radio-button label="initial_sync">{{ $t("dataFlow.initial_sync") }}</el-radio-button>
 							<el-radio-button label="cdc">{{ $t("dataFlow.cdc") }}</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
@@ -92,30 +86,18 @@
 				<el-col :span="12">
 					<el-form-item>
 						<div>{{ $t("dataFlow.send_email") }}</div>
-						<el-checkbox-button
-							border
-							class="setBtn"
-							v-model="formData.emailWaring.paused"
-							>{{ $t("dataFlow.paused") }}</el-checkbox-button
-						>
-						<el-checkbox-button
-							border
-							class="setBtn"
-							v-model="formData.emailWaring.error"
-							>{{ $t("dataFlow.error") }}</el-checkbox-button
-						>
-						<el-checkbox-button
-							border
-							class="setBtn"
-							v-model="formData.emailWaring.edited"
-							>{{ $t("dataFlow.edited") }}</el-checkbox-button
-						>
-						<el-checkbox-button
-							border
-							class="setBtn"
-							v-model="formData.emailWaring.started"
-							>{{ $t("dataFlow.started") }}</el-checkbox-button
-						>
+						<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.paused">{{
+							$t("dataFlow.paused")
+						}}</el-checkbox-button>
+						<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.error">{{
+							$t("dataFlow.error")
+						}}</el-checkbox-button>
+						<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.edited">{{
+							$t("dataFlow.edited")
+						}}</el-checkbox-button>
+						<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.started">{{
+							$t("dataFlow.started")
+						}}</el-checkbox-button>
 						`
 					</el-form-item>
 					<!--					<el-form-item v-show="formData.sync_type !== 'initial_sync+cdc'">-->
@@ -129,24 +111,16 @@
 						<div>{{ $t("dataFlow.run_custom_sql") }}</div>
 						<el-radio-group v-model="formData.increment" size="mini">
 							<!-- 重复运行自定义SQL -->
-							<el-radio-button :label="true">{{
-								$t("dataFlow.yes")
-							}}</el-radio-button>
-							<el-radio-button :label="false">{{
-								$t("dataFlow.no")
-							}}</el-radio-button>
+							<el-radio-button :label="true">{{ $t("dataFlow.yes") }}</el-radio-button>
+							<el-radio-button :label="false">{{ $t("dataFlow.no") }}</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
 					<el-form-item>
 						<div>{{ $t("dataFlow.stop_on_error") }}</div>
 						<!-- 遇到错误时停止同步 -->
 						<el-radio-group v-model="formData.stopOnError" size="mini">
-							<el-radio-button :label="true">{{
-								$t("dataFlow.yes")
-							}}</el-radio-button>
-							<el-radio-button :label="false">{{
-								$t("dataFlow.no")
-							}}</el-radio-button>
+							<el-radio-button :label="true">{{ $t("dataFlow.yes") }}</el-radio-button>
+							<el-radio-button :label="false">{{ $t("dataFlow.no") }}</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
 					<el-form-item v-show="formData.sync_type === 'initial_sync'">
@@ -166,12 +140,8 @@
 						<div>{{ $t("dataFlow.need_to_create_Index") }}</div>
 						<!-- 自动创建目标索引 -->
 						<el-radio-group v-model="formData.needToCreateIndex" size="mini">
-							<el-radio-button :label="true">{{
-								$t("dataFlow.yes")
-							}}</el-radio-button>
-							<el-radio-button :label="false">{{
-								$t("dataFlow.no")
-							}}</el-radio-button>
+							<el-radio-button :label="true">{{ $t("dataFlow.yes") }}</el-radio-button>
+							<el-radio-button :label="false">{{ $t("dataFlow.no") }}</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
 					<!--					<el-form-item>-->
@@ -185,12 +155,8 @@
 						<div>{{ $t("dataFlow.isOpenAutoDDL") }}</div>
 						<!-- 自动处理DDL操作 -->
 						<el-radio-group v-model="formData.isOpenAutoDDL" size="mini">
-							<el-radio-button :label="true">{{
-								$t("dataFlow.yes")
-							}}</el-radio-button>
-							<el-radio-button :label="false">{{
-								$t("dataFlow.no")
-							}}</el-radio-button>
+							<el-radio-button :label="true">{{ $t("dataFlow.yes") }}</el-radio-button>
+							<el-radio-button :label="false">{{ $t("dataFlow.no") }}</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
 				</el-col>

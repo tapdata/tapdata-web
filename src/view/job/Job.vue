@@ -27,20 +27,12 @@
 				@click="showSetting"
 				>{{ $t("dataFlow.button.setting") }}
 			</el-button>
-			<el-button
-				v-if="dataFlowId && 'draft' !== status"
-				size="mini"
-				type="default"
-				@click="showLogs"
+			<el-button v-if="dataFlowId && 'draft' !== status" size="mini" type="default" @click="showLogs"
 				>{{ $t("dataFlow.button.logs") }}
 			</el-button>
 
 			<!-- editing debug -->
-			<el-button
-				v-if="['paused', 'error', 'draft'].includes(status)"
-				size="mini"
-				type="default"
-				@click="preview"
+			<el-button v-if="['paused', 'error', 'draft'].includes(status)" size="mini" type="default" @click="preview"
 				>{{ $t("dataFlow.button.preview") }}
 			</el-button>
 
@@ -82,10 +74,7 @@
 				>{{ $t("dataFlow.button.force_stop") }}
 			</el-button>
 			<el-button
-				v-if="
-					dataFlowId !== null &&
-						!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)
-				"
+				v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
 				size="mini"
 				type="default"
 				@click="reset"
@@ -486,15 +475,11 @@ export default {
 			};
 
 			self.$confirm(
-				forceStop === true
-					? self.$t("dataFlow.stop_job.force_stop_msg")
-					: self.$t("dataFlow.stop_job.msg"),
+				forceStop === true ? self.$t("dataFlow.stop_job.force_stop_msg") : self.$t("dataFlow.stop_job.msg"),
 				self.$t("dataFlow.stop_job.tip"),
 				{
 					confirmButtonText:
-						forceStop === true
-							? self.$t("dataFlow.button.force_stop")
-							: self.$t("dataFlow.button.stop"),
+						forceStop === true ? self.$t("dataFlow.button.force_stop") : self.$t("dataFlow.button.stop"),
 					cancelButtonText: self.$t("message.cancel"),
 					type: "warning"
 				}
@@ -518,9 +503,7 @@ export default {
 				if (data.id) {
 					data = {
 						id: data.id,
-						status: ["scheduled", "running", "stopping"].includes(data.status)
-							? data.status
-							: "scheduled",
+						status: ["scheduled", "running", "stopping"].includes(data.status) ? data.status : "scheduled",
 						executeMode: "editing_debug"
 					};
 				} else {
@@ -593,15 +576,11 @@ export default {
 			let data = this.getDataFlowData();
 
 			if (data && data.id) {
-				self.$confirm(
-					self.$t("dataFlow.reset_job.msg"),
-					self.$t("dataFlow.reset_job.tip"),
-					{
-						confirmButtonText: self.$t("dataFlow.button.reset"),
-						cancelButtonText: self.$t("message.cancel"),
-						type: "warning"
-					}
-				).then(() => {
+				self.$confirm(self.$t("dataFlow.reset_job.msg"), self.$t("dataFlow.reset_job.tip"), {
+					confirmButtonText: self.$t("dataFlow.button.reset"),
+					cancelButtonText: self.$t("message.cancel"),
+					type: "warning"
+				}).then(() => {
 					dataFlowsApi.reset(data.id).then(res => {
 						if (res.statusText === "OK" || res.status === 200) {
 							self.$message.success(self.$t("message.resetOk"));
@@ -774,10 +753,7 @@ export default {
 							angle: 0
 						};
 						cells.push(node);
-					} else if (
-						v.type &&
-						["dummy db", "gridfs", "file", "elasticsearch", "rest api"].includes(v.type)
-					) {
+					} else if (v.type && ["dummy db", "gridfs", "file", "elasticsearch", "rest api"].includes(v.type)) {
 						let node = {
 							type: mapping[v.type],
 							id: v.id,

@@ -59,10 +59,7 @@
 
 			<el-form-item
 				:label="$t('editor.cell.link.form.joinPath.label')"
-				v-if="
-					supportEmbedArray() &&
-						['upsert', 'update', 'merge_embed'].includes(model.joinTable.joinType)
-				"
+				v-if="supportEmbedArray() && ['upsert', 'update', 'merge_embed'].includes(model.joinTable.joinType)"
 			>
 				<el-input
 					v-model="model.joinTable.joinPath"
@@ -90,12 +87,7 @@
 					<tbody>
 						<tr v-for="(item, idx) in model.joinTable.joinKeys" v-bind:key="idx">
 							<td>
-								<el-select
-									v-model="item.source"
-									filterable
-									allow-create
-									default-first-option
-								>
+								<el-select v-model="item.source" filterable allow-create default-first-option>
 									<el-option
 										v-for="(item, idx) in sourceList"
 										:value="item.field_name"
@@ -106,12 +98,7 @@
 								<!-- <input type="text" v-model="item.source"> -->
 							</td>
 							<td>
-								<el-select
-									v-model="item.target"
-									filterable
-									allow-create
-									default-first-option
-								>
+								<el-select v-model="item.target" filterable allow-create default-first-option>
 									<el-option
 										v-for="(item, idx) in targetList"
 										:value="item.field_name"
@@ -192,9 +179,9 @@ export default {
 				if (this.supportEmbedArray()) {
 					this.WRITE_MODELS.forEach(model => this.writeModels.push(model));
 				} else {
-					this.WRITE_MODELS.filter(
-						model => model.value !== "merge_embed"
-					).forEach(model => this.writeModels.push(model));
+					this.WRITE_MODELS.filter(model => model.value !== "merge_embed").forEach(model =>
+						this.writeModels.push(model)
+					);
 				}
 			}
 		}
@@ -267,9 +254,7 @@ export default {
 						: null;
 
 				let firstDataNode =
-					typeof sourceCell.getFirstDataNode === "function"
-						? sourceCell.getFirstDataNode()
-						: [];
+					typeof sourceCell.getFirstDataNode === "function" ? sourceCell.getFirstDataNode() : [];
 				this.model.joinTable.stageId = firstDataNode.length > 0 ? firstDataNode[0].id : "";
 				// this.model.joinTable.stageId = cell.getSourceCell().id;
 				// 关联字段自动填充
@@ -286,10 +271,7 @@ export default {
 					sourceArr && sourceArr.length > 0 && targetArr && targetArr.length > 0
 						? sourceArr.map((fields, i) => ({
 								source: fields.field_name,
-								target:
-									targetArr[i] && targetArr[i].field_name
-										? targetArr[i].field_name
-										: ""
+								target: targetArr[i] && targetArr[i].field_name ? targetArr[i].field_name : ""
 						  }))
 						: this.model.joinTable.joinKeys;
 
@@ -360,11 +342,8 @@ export default {
 					field => field.field_name === this.model.joinTable.joinPath
 				);
 				let isArray =
-					targetJoinFields &&
-					targetJoinFields.length > 0 &&
-					targetJoinFields[0].javaType === "Array";
-				if (this.model.joinTable.isArray !== isArray)
-					this.model.joinTable.isArray = isArray;
+					targetJoinFields && targetJoinFields.length > 0 && targetJoinFields[0].javaType === "Array";
+				if (this.model.joinTable.isArray !== isArray) this.model.joinTable.isArray = isArray;
 				this.$refs.mappingComp.setSchema(sourceSchema, mergedTargetSchema);
 				log("Link.renderSchema", sourceSchema, mergedTargetSchema);
 			}
@@ -382,10 +361,7 @@ export default {
 		},
 
 		handlerJoinTypeChanged() {
-			if (
-				!this.model.joinTable.joinPath &&
-				["merge_embed", "update"].includes(this.model.joinTable.joinType)
-			) {
+			if (!this.model.joinTable.joinPath && ["merge_embed", "update"].includes(this.model.joinTable.joinType)) {
 				this.model.joinTable.joinPath = this.model.joinTable.tableName;
 			}
 			this.$refs.mappingComp.$emit(EditorEventType.RESIZE);

@@ -13,33 +13,15 @@
 		</el-popover>
 		<i class="el-icon-loading" v-if="data && data.loading"></i>
 		<div class="rightOpt fr">
-			<el-radio-group
-				v-model="num"
-				size="mini"
-				:class="selectColor"
-				@change="changeRadio"
-				v-if="isScreeing"
-			>
+			<el-radio-group v-model="num" size="mini" :class="selectColor" @change="changeRadio" v-if="isScreeing">
 				<el-radio-button label="flow">{{ $t("dataFlow.rowCount") }}</el-radio-button>
 				<el-radio-button label="stage">KB</el-radio-button>
 			</el-radio-group>
-			<el-radio-group
-				v-model="speed"
-				size="mini"
-				:class="selectColor"
-				@change="changeSpeed"
-				v-if="isSpeed"
-			>
+			<el-radio-group v-model="speed" size="mini" :class="selectColor" @change="changeSpeed" v-if="isSpeed">
 				<el-radio-button label="qps">QPS</el-radio-button>
 				<el-radio-button label="kbs">KB/S</el-radio-button>
 			</el-radio-group>
-			<el-radio-group
-				v-model="time"
-				size="mini"
-				:class="selectColor"
-				@change="changeTime"
-				v-if="isIput"
-			>
+			<el-radio-group v-model="time" size="mini" :class="selectColor" @change="changeTime" v-if="isIput">
 				<el-radio-button label="second" v-if="this.data.type !== 'replicate'">{{
 					$t("dataFlow.second")
 				}}</el-radio-button>

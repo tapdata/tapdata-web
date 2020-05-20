@@ -6,12 +6,7 @@
 					<el-input v-model="form.name" maxlength="20" show-word-limit></el-input>
 				</el-form-item>
 			</el-col>
-			<el-row
-				:gutter="20"
-				class="loopFrom"
-				v-for="(item, index) in form.aggregations"
-				:key="index"
-			>
+			<el-row :gutter="20" class="loopFrom" v-for="(item, index) in form.aggregations" :key="index">
 				<el-col :span="21" class="fromLoopBox">
 					<el-row :gutter="10">
 						<el-col :span="6">
@@ -20,10 +15,7 @@
 								:prop="'aggregations.' + index + '.aggFunction'"
 								required
 							>
-								<el-select
-									v-model="item.aggFunction"
-									@change="changeAggFunction(item, index)"
-								>
+								<el-select v-model="item.aggFunction" @change="changeAggFunction(item, index)">
 									<el-option
 										v-for="item in selectList"
 										:key="item.value"
@@ -59,11 +51,7 @@
 							</el-form-item>
 						</el-col>
 					</el-row>
-					<el-form-item
-						required
-						:label="$t('dataFlow.aggName')"
-						:prop="'aggregations.' + index + '.name'"
-					>
+					<el-form-item required :label="$t('dataFlow.aggName')" :prop="'aggregations.' + index + '.name'">
 						<el-popover
 							class="aggtip"
 							placement="top-start"
@@ -105,16 +93,11 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="2" class="right">
-					<span
-						@click="removeRow(item, index)"
-						class="iconfont icon-quxiao remove"
-					></span>
+					<span @click="removeRow(item, index)" class="iconfont icon-quxiao remove"></span>
 				</el-col>
 			</el-row>
 			<el-form-item class="btnClass">
-				<el-button @click="addRow"
-					>+ {{ $t("editor.cell.processor.aggregate.new_aggregate") }}</el-button
-				>
+				<el-button @click="addRow">+ {{ $t("editor.cell.processor.aggregate.new_aggregate") }}</el-button>
 			</el-form-item>
 		</el-form>
 	</div>

@@ -58,8 +58,7 @@ export const aggregateConfig = {
 				});
 
 				let fields = outputSchema.fields || [];
-				outputSchema.fields =
-					fields.filter(field => groupFields.includes(field.field_name)) || [];
+				outputSchema.fields = fields.filter(field => groupFields.includes(field.field_name)) || [];
 
 				functionNames.forEach(fnName => {
 					outputSchema.fields.push(
@@ -103,48 +102,32 @@ export const aggregateConfig = {
 			validate(data) {
 				data = data || this.getFormData();
 				let name = this.attr("label/text");
-				if (!data)
-					throw new Error(`${name}: ${i18n.t("editor.cell.validate.none_setting")}`);
+				if (!data) throw new Error(`${name}: ${i18n.t("editor.cell.validate.none_setting")}`);
 
 				if (data.aggregations && data.aggregations.length === 0)
-					throw new Error(
-						`${name}: ${i18n.t("editor.cell.processor.aggregate.none_stage")}`
-					);
+					throw new Error(`${name}: ${i18n.t("editor.cell.processor.aggregate.none_stage")}`);
 
-				if (!data.name)
-					throw new Error(`${name}: ${i18n.t("editor.cell.validate.empty_name")}`);
+				if (!data.name) throw new Error(`${name}: ${i18n.t("editor.cell.validate.empty_name")}`);
 				let aggFunctionArr = [];
 				if (data.aggregations && data.aggregations.length > 0) {
 					data.aggregations.forEach(item => {
 						aggFunctionArr.push(item.name);
 						if (!item.aggFunction)
-							throw new Error(
-								`${name}: ${i18n.t(
-									"editor.cell.processor.aggregate.none_function"
-								)}`
-							);
+							throw new Error(`${name}: ${i18n.t("editor.cell.processor.aggregate.none_function")}`);
 						if (!item.groupByExpression)
-							throw new Error(
-								`${name}: ${i18n.t("editor.cell.processor.aggregate.none_group")}`
-							);
+							throw new Error(`${name}: ${i18n.t("editor.cell.processor.aggregate.none_group")}`);
 						if (!item.aggExpression && item.aggFunction !== "COUNT")
 							throw new Error(
-								`${name}: ${i18n.t(
-									"editor.cell.processor.aggregate.none_aggregation_expression"
-								)}`
+								`${name}: ${i18n.t("editor.cell.processor.aggregate.none_aggregation_expression")}`
 							);
 						if (!item.name)
 							throw new Error(
-								`${name}: ${i18n.t(
-									"editor.cell.processor.aggregate.none_subprocessingName"
-								)}`
+								`${name}: ${i18n.t("editor.cell.processor.aggregate.none_subprocessingName")}`
 							);
 					});
 				}
 				if (new Set(aggFunctionArr).size !== aggFunctionArr.length)
-					throw new Error(
-						`${name}: ${i18n.t("editor.cell.processor.aggregate.name_notRepeated")}`
-					);
+					throw new Error(`${name}: ${i18n.t("editor.cell.processor.aggregate.name_notRepeated")}`);
 				return true;
 			}
 		}

@@ -126,12 +126,7 @@ export default {
 				let sourceEl = self.$refs.sourceEntity.getOutPortByTable(table);
 				let targetEl = self.$refs.targetEntity.getInPortByTable(table);
 
-				if (
-					sourceEl &&
-					targetEl &&
-					self.isConnected(sourceEl) &&
-					self.isConnected(targetEl)
-				) {
+				if (sourceEl && targetEl && self.isConnected(sourceEl) && self.isConnected(targetEl)) {
 					let line = new LeaderLine({
 						start: sourceEl,
 						end: targetEl,

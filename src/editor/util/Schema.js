@@ -30,8 +30,7 @@ const getColor = function(tableName) {
 	let color = tableColors[tableName];
 	if (color) return color;
 	else {
-		tableColors[tableName] =
-			allColorList[Object.keys(tableColors).length % allColorList.length];
+		tableColors[tableName] = allColorList[Object.keys(tableColors).length % allColorList.length];
 		return tableColors[tableName];
 	}
 };
@@ -117,12 +116,7 @@ export const /**
 export const mergeSchema = function(targetSchema, sourceSchema, mergeOpts) {
 	log("Schema.mergeSchema", arguments);
 
-	if (
-		!sourceSchema ||
-		!sourceSchema.table_name ||
-		!sourceSchema.fields ||
-		sourceSchema.fields.length === 0
-	)
+	if (!sourceSchema || !sourceSchema.table_name || !sourceSchema.fields || sourceSchema.fields.length === 0)
 		return targetSchema;
 
 	targetSchema = targetSchema || {};
@@ -148,15 +142,12 @@ export const mergeSchema = function(targetSchema, sourceSchema, mergeOpts) {
 			let currentFieldName = joinFieldName.join(".");
 			let currentFieldType;
 
-			let existsField = targetSchema.fields.filter(
-				field => field.field_name === currentFieldName
-			);
+			let existsField = targetSchema.fields.filter(field => field.field_name === currentFieldName);
 			if (existsField && existsField.length > 0) {
 				existsField[0].javaType = existsField[0].javaType === "Array" ? "Array" : "Map";
 				return;
 			} else if (!currentFieldType) {
-				if (joinPath === currentFieldName)
-					currentFieldType = joinType === "merge_embed" ? "Array" : "Map";
+				if (joinPath === currentFieldName) currentFieldType = joinType === "merge_embed" ? "Array" : "Map";
 				else currentFieldType = "Map";
 			}
 
@@ -230,11 +221,7 @@ export const mergeJoinTablesToTargetSchema = function(targetSchema, joinTables) 
 	let mergedTargetSchema = targetSchema || {};
 	const mergeTargetSchema = function(jt) {
 		if (jt && (jt.sourceSchemas || jt.sourceSchema)) {
-			mergeSchema(
-				mergedTargetSchema,
-				mergeSourceSchema(jt.sourceSchemas || jt.sourceSchema),
-				jt
-			);
+			mergeSchema(mergedTargetSchema, mergeSourceSchema(jt.sourceSchemas || jt.sourceSchema), jt);
 		}
 	};
 	if (joinTables) joinTables.forEach(mergeTargetSchema);

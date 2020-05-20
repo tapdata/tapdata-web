@@ -20,10 +20,7 @@
 					>
 						<el-option
 							v-for="(item, idx) in databases"
-							:label="
-								`${item.name} (${$t('connection.status.' + item.status) ||
-									item.status})`
-							"
+							:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
 							:value="item.id"
 							v-bind:key="idx"
 						></el-option>

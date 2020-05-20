@@ -119,13 +119,11 @@ export const options = {
 	imageGender: [
 		{
 			value: "static/editor/member-male.png",
-			content:
-				'<img height="50px" src="static/editor/member-male.png" style="margin: 5px 0 0 2px;"/>'
+			content: '<img height="50px" src="static/editor/member-male.png" style="margin: 5px 0 0 2px;"/>'
 		},
 		{
 			value: "static/editor/member-female.png",
-			content:
-				'<img height="50px" src="static/editor/member-female.png" style="margin: 5px 0 0 2px;"/>'
+			content: '<img height="50px" src="static/editor/member-female.png" style="margin: 5px 0 0 2px;"/>'
 		}
 	],
 
@@ -139,31 +137,26 @@ export const options = {
 	strokeWidth: [
 		{
 			value: 1,
-			content:
-				'<div style="background:#fff;width:2px;height:30px;margin:0 14px;border-radius: 2px;"/>'
+			content: '<div style="background:#fff;width:2px;height:30px;margin:0 14px;border-radius: 2px;"/>'
 		},
 		{
 			value: 2,
-			content:
-				'<div style="background:#fff;width:4px;height:30px;margin:0 13px;border-radius: 2px;"/>'
+			content: '<div style="background:#fff;width:4px;height:30px;margin:0 13px;border-radius: 2px;"/>'
 		},
 		{
 			value: 4,
-			content:
-				'<div style="background:#fff;width:8px;height:30px;margin:0 11px;border-radius: 2px;"/>'
+			content: '<div style="background:#fff;width:8px;height:30px;margin:0 11px;border-radius: 2px;"/>'
 		},
 		{
 			value: 8,
-			content:
-				'<div style="background:#fff;width:16px;height:30px;margin:0 8px;border-radius: 2px;"/>'
+			content: '<div style="background:#fff;width:16px;height:30px;margin:0 8px;border-radius: 2px;"/>'
 		}
 	],
 
 	router: [
 		{
 			value: "normal",
-			content:
-				'<p style="background:#fff;width:2px;height:30px;margin:0 14px;border-radius: 2px;"/>'
+			content: '<p style="background:#fff;width:2px;height:30px;margin:0 14px;border-radius: 2px;"/>'
 		},
 		{
 			value: "orthogonal",
@@ -172,8 +165,7 @@ export const options = {
 		},
 		{
 			value: "oneSide",
-			content:
-				'<p style="width:20px;height:30px;margin:0 5px;border: 2px solid #fff;border-top: none;"/>'
+			content: '<p style="width:20px;height:30px;margin:0 5px;border: 2px solid #fff;border-top: none;"/>'
 		}
 	],
 

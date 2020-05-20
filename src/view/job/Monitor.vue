@@ -5,12 +5,7 @@
 			<el-form-item>
 				<el-select v-model="domValue" size="mini">
 					<el-option key="all" :label="$t('dataFlow.allNode')" value="all"> </el-option>
-					<el-option
-						v-for="item in flow.stages"
-						:key="item.id"
-						:label="item.name"
-						:value="item.id"
-					>
+					<el-option v-for="item in flow.stages" :key="item.id" :label="item.name" :value="item.id">
 					</el-option>
 				</el-select>
 			</el-form-item>
@@ -360,9 +355,7 @@ export default {
 	computed: {
 		updateTime: function() {
 			if (this.dataFlow.startTime && this.dataFlow.last_updated) {
-				let time =
-					new Date(this.dataFlow.last_updated).getTime() -
-					new Date(this.dataFlow.startTime).getTime();
+				let time = new Date(this.dataFlow.last_updated).getTime() - new Date(this.dataFlow.startTime).getTime();
 
 				let unit = "ms";
 				if (time > 1000) {
@@ -441,9 +434,7 @@ export default {
 		dataFlow: {
 			handler(val) {
 				this.flow = val;
-				this.flow.createTime = val.createTime
-					? this.$moment(val.createTime).format("YYYY-MM-DD HH:mm:ss")
-					: "";
+				this.flow.createTime = val.createTime ? this.$moment(val.createTime).format("YYYY-MM-DD HH:mm:ss") : "";
 				this.flow.username = (val.user && val.user.email) || "";
 				this.flow.status = val.status;
 			},

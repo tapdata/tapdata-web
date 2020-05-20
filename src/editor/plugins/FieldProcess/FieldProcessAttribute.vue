@@ -1,16 +1,7 @@
 <template>
 	<div class="e-field-process">
-		<el-form
-			class="e-form"
-			label-position="right"
-			label-width="130px"
-			:model="model"
-			ref="form"
-		>
-			<el-form-item
-				:required="true"
-				:label="$t('editor.cell.processor.field.form.name.label')"
-			>
+		<el-form class="e-form" label-position="right" label-width="130px" :model="model" ref="form">
+			<el-form-item :required="true" :label="$t('editor.cell.processor.field.form.name.label')">
 				<el-input
 					v-model="model.name"
 					size="mini"
@@ -118,12 +109,7 @@ export default {
 
 				this.schema = cell.mergeOutputSchema(schema, false);
 
-				log(
-					"FieldProcess.setData.applyOperations",
-					this.originalSchema,
-					this.schema,
-					this.model.operations
-				);
+				log("FieldProcess.setData.applyOperations", this.originalSchema, this.schema, this.model.operations);
 			}
 		},
 		getData() {

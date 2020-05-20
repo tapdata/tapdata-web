@@ -1,12 +1,6 @@
 <template>
 	<div class="e-table">
-		<el-form
-			class="e-form"
-			label-position="right"
-			label-width="160px"
-			:model="model"
-			ref="form"
-		>
+		<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form">
 			<el-form-item
 				:label="$t('editor.cell.data_node.table.form.database.label')"
 				prop="connectionId"
@@ -78,11 +72,7 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item
-				:label="$t('editor.cell.data_node.table.form.custom_sql.label')"
-				prop="sql"
-				:rules="rules"
-			>
+			<el-form-item :label="$t('editor.cell.data_node.table.form.custom_sql.label')" prop="sql" :rules="rules">
 				<el-input
 					type="textarea"
 					rows="10"
@@ -112,16 +102,7 @@ export default {
 		database_types: {
 			type: Array,
 			default: function() {
-				return [
-					"mysql",
-					"oracle",
-					"sqlserver",
-					"sybase ase",
-					"gbase-8s",
-					"db2",
-					"gaussdb200",
-					"postgres"
-				];
+				return ["mysql", "oracle", "sqlserver", "sybase ase", "gbase-8s", "db2", "gaussdb200", "postgres"];
 			}
 		}
 	},
@@ -144,9 +125,7 @@ export default {
 			handler() {
 				if (this.schemas.length > 0) {
 					if (this.model.tableName) {
-						let schema = this.schemas.filter(
-							s => s.table_name === this.model.tableName
-						);
+						let schema = this.schemas.filter(s => s.table_name === this.model.tableName);
 						schema = schema && schema.length > 0 ? schema[0] : {};
 						let fields = schema.fields || [];
 						let primaryKeys = fields

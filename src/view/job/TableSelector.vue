@@ -29,11 +29,7 @@
 						></span>
 						<!--					<span v-if="['database'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>-->
 						<span
-							v-if="
-								['database', 'directory', 'ftp', 'apiendpoint'].includes(
-									data.meta_type
-								)
-							"
+							v-if="['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)"
 							:class="
 								`iconfont filter-icon-table ${
 									mapping[data.source.database_type]
@@ -44,18 +40,13 @@
 						></span>
 						<span class="table-label">{{ node.label }}</span>
 					</span>
-					<span
-						@click="handleGraph(data)"
-						class="iconfont icon-xiayibu1 filter-icon filter-Graph"
-					></span>
+					<span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>
 				</span>
 			</el-tree>
 			<div class="noData" v-if="loadingError">
 				<div>
 					{{ $t("dataFlow.loadingError")
-					}}<span class="clickLoad" @click="clickLoad">{{
-						$t("dataVerify.refresh")
-					}}</span>
+					}}<span class="clickLoad" @click="clickLoad">{{ $t("dataVerify.refresh") }}</span>
 				</div>
 			</div>
 		</div>
@@ -165,11 +156,7 @@ export default {
 			if (node.level > 1) {
 				return resolve([]);
 			}
-			if (
-				["dummy db", "gridfs", "file", "elasticsearch", "rest api"].includes(
-					node.data.source.database_type
-				)
-			) {
+			if (["dummy db", "gridfs", "file", "elasticsearch", "rest api"].includes(node.data.source.database_type)) {
 				return resolve([]);
 			}
 			let params = {
@@ -245,9 +232,7 @@ export default {
 			if (data.meta_type === "database") {
 				if (
 					data.source.database_type &&
-					["dummy db", "gridfs", "file", "elasticsearch", "rest api"].includes(
-						data.source.database_type
-					)
+					["dummy db", "gridfs", "file", "elasticsearch", "rest api"].includes(data.source.database_type)
 				) {
 					formData = {
 						connectionId: data.source._id,
@@ -269,8 +254,7 @@ export default {
 						.join(",");
 
 					data.fields.forEach(
-						item =>
-							(item.original_field_name = item.original_field_name || item.field_name)
+						item => (item.original_field_name = item.original_field_name || item.field_name)
 					);
 				}
 				log("primaryKeys", primaryKeys);
@@ -297,9 +281,7 @@ export default {
 			if (["database", "directory", "ftp", "apiendpoint"].includes(data.meta_type)) {
 				if (
 					data.source.database_type &&
-					["dummy db", "gridfs", "file", "elasticsearch", "rest api"].includes(
-						data.source.database_type
-					)
+					["dummy db", "gridfs", "file", "elasticsearch", "rest api"].includes(data.source.database_type)
 				) {
 					let dataType = data.source.database_type;
 					cell = this.editor.graph.createCell(mapping[dataType], formData, schema);

@@ -58,23 +58,14 @@ export const GridFSNodeConfig = {
 				log("GridFsNode.validate", data);
 				data = data || this.getFormData();
 				let name = this.attr("label/text");
-				if (!data)
-					throw new Error(
-						`${name}: ${i18n.t("editor.cell.data_node.gridfs.gridFs_isNull")}`
-					);
+				if (!data) throw new Error(`${name}: ${i18n.t("editor.cell.data_node.gridfs.gridFs_isNull")}`);
 				if (!data.connectionId)
-					throw new Error(
-						`${name}: ${i18n.t("editor.cell.data_node.collection.none_database")}`
-					);
+					throw new Error(`${name}: ${i18n.t("editor.cell.data_node.collection.none_database")}`);
 				if (data.isSource) {
 					if (!data.tableName)
-						throw new Error(
-							`${name}: ${i18n.t("editor.cell.data_node.collection.none_collection")}`
-						);
+						throw new Error(`${name}: ${i18n.t("editor.cell.data_node.collection.none_collection")}`);
 					if (!data.primaryKeys)
-						throw new Error(
-							`${name}: ${i18n.t("editor.cell.data_node.collection.none_pk")}`
-						);
+						throw new Error(`${name}: ${i18n.t("editor.cell.data_node.collection.none_pk")}`);
 				}
 				return true;
 			}

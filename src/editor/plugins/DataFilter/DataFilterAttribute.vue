@@ -1,11 +1,7 @@
 <template>
 	<div class="e-data-filter">
 		<el-form class="e-form" label-position="top" label-width="130px" :model="model" ref="form">
-			<el-form-item
-				:required="true"
-				:label="$t('editor.cell.processor.dataFilter.form.name.label')"
-				size="mini"
-			>
+			<el-form-item :required="true" :label="$t('editor.cell.processor.dataFilter.form.name.label')" size="mini">
 				<el-input
 					v-model="model.name"
 					:placeholder="$t('editor.cell.processor.dataFilter.form.name.placeholder')"
@@ -26,9 +22,7 @@
 					type="textarea"
 					v-model="model.expression"
 					rows="3"
-					:placeholder="
-						$t('editor.cell.processor.dataFilter.form.expression.placeholder')
-					"
+					:placeholder="$t('editor.cell.processor.dataFilter.form.expression.placeholder')"
 					:title="$t('editor.cell.processor.dataFilter.form.expression.labelTip')"
 				></el-input>
 				<div style="color: #888888; font-size: 0.8em;">
@@ -39,14 +33,11 @@
 						{{ $t("editor.cell.processor.dataFilter.form.expressionExample.tip") }}
 					</p>
 					<p style="text-indent: 2em;">
-						<span style="color: red;">(</span> record.gender
-						<span style="color: #F5AF3F;">==</span> 0
-						<span style="color: #F5AF3F;">&&</span> record.age
-						<span style="color: #F5AF3F;">&gt;</span> 50
+						<span style="color: red;">(</span> record.gender <span style="color: #F5AF3F;">==</span> 0
+						<span style="color: #F5AF3F;">&&</span> record.age <span style="color: #F5AF3F;">&gt;</span> 50
 						<span style="color: red;">)</span>
 						<span style="color: #F5AF3F;">|| </span>
-						<span style="color: red;">(</span> record.age
-						<span style="color: #F5AF3F;">&ge;</span>30
+						<span style="color: red;">(</span> record.age <span style="color: #F5AF3F;">&ge;</span>30
 						<span style="color: #F5AF3F;">&&</span> record.salary
 						<span style="color: #F5AF3F;">&le;</span> 10000
 						<span style="color: red;">)</span>

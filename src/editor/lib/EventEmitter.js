@@ -105,10 +105,7 @@ export default class EventEmitter {
 	 * @return {bool}
 	 */
 	_achieveMaxListener(eventName) {
-		return (
-			internal(this)._maxListeners !== null &&
-			internal(this)._maxListeners <= this.listenersNumber(eventName)
-		);
+		return internal(this)._maxListeners !== null && internal(this)._maxListeners <= this.listenersNumber(eventName);
 	}
 
 	/**
@@ -122,8 +119,7 @@ export default class EventEmitter {
 	 */
 	_callbackIsExists(eventName, callback, context) {
 		const callbackInd = this._getCallbackIndex(eventName, callback);
-		const activeCallback =
-			callbackInd !== -1 ? this._getCallbacks(eventName)[callbackInd] : void 0;
+		const activeCallback = callbackInd !== -1 ? this._getCallbacks(eventName)[callbackInd] : void 0;
 
 		return callbackInd !== -1 && activeCallback && activeCallback.context === context;
 	}
@@ -165,17 +161,12 @@ export default class EventEmitter {
 		} else {
 			// Check if we reached maximum number of listeners.
 			if (this._achieveMaxListener(eventName)) {
-				self._console.warn(
-					`Max listeners (${self._maxListeners})` +
-						` for event "${eventName}" is reached!`
-				);
+				self._console.warn(`Max listeners (${self._maxListeners})` + ` for event "${eventName}" is reached!`);
 			}
 
 			// Check if the same callback has already added.
 			if (this._callbackIsExists(...arguments)) {
-				self._console.warn(
-					`Event "${eventName}"` + ` already has the callback ${callback}.`
-				);
+				self._console.warn(`Event "${eventName}"` + ` already has the callback ${callback}.`);
 			}
 		}
 

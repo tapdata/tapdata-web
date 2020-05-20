@@ -2,21 +2,11 @@
 	<div class="e-debug-log">
 		<el-form inline action="javascript: void(0);">
 			<el-form-item>
-				<el-input
-					class="inputStyle"
-					:placeholder="$t('message.search')"
-					v-model="search"
-					size="mini"
-				>
+				<el-input class="inputStyle" :placeholder="$t('message.search')" v-model="search" size="mini">
 				</el-input>
 			</el-form-item>
 			<el-form-item>
-				<el-button
-					icon="el-icon-search"
-					size="mini"
-					@click="loadNew"
-					:disabled="loading"
-				></el-button>
+				<el-button icon="el-icon-search" size="mini" @click="loadNew" :disabled="loading"></el-button>
 			</el-form-item>
 
 			<i class="el-icon-loading" v-if="loading"></i>
@@ -31,9 +21,7 @@
 
 				<div>
 					{{ $t("dataFlow.noLogTip") }}?_(:з」∠)......
-					<span class="clickLoad" @click="clickLoad">{{
-						$t("dataFlow.clickLoadTxt")
-					}}</span>
+					<span class="clickLoad" @click="clickLoad">{{ $t("dataFlow.clickLoadTxt") }}</span>
 				</div>
 			</div>
 		</div>
@@ -73,10 +61,7 @@ export default {
 
 		let logContainer = self.$refs.logContainer;
 		$(logContainer).scroll(e => {
-			if (
-				logContainer.scrollHeight - logContainer.clientHeight - logContainer.scrollTop <
-				100
-			) {
+			if (logContainer.scrollHeight - logContainer.clientHeight - logContainer.scrollTop < 100) {
 				self.loadOld();
 			}
 		});
@@ -155,8 +140,7 @@ export default {
 					self.loading = false;
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data && res.data.length > 0) {
-							if (reset || prepend || !this.lastLogsId)
-								this.lastLogsId = res.data[0].id;
+							if (reset || prepend || !this.lastLogsId) this.lastLogsId = res.data[0].id;
 							if (reset || !prepend || !this.firstLogsId)
 								this.firstLogsId = res.data[res.data.length - 1].id;
 
@@ -172,26 +156,20 @@ export default {
 
 							let markKeyword = function(text) {
 								if (self.search && text.indexOf(self.search) >= 0) {
-									return text
-										.split(self.search)
-										.join(`<span class="keyword">${self.search}</span>`);
+									return text.split(self.search).join(`<span class="keyword">${self.search}</span>`);
 								}
 								return text;
 							};
 							for (let i = logCount - 1; i >= 0; i--) {
 								let item = res.data[i];
-								item.date = item.date
-									? this.$moment(item.date).format("YYYY-MM-DD HH:mm:ss")
-									: "";
+								item.date = item.date ? this.$moment(item.date).format("YYYY-MM-DD HH:mm:ss") : "";
 								item.last_updated = item.last_updated
 									? this.$moment(item.last_updated).format("YYYY-MM-DD HH:mm:ss")
 									: "";
 
 								logContainer[prepend ? "prepend" : "append"](
 									$(`<li>
-                    [<span class="level ${item.level === "ERROR" ? "redActive" : ""}">${
-										item.level
-									}</span>] &nbsp;
+                    [<span class="level ${item.level === "ERROR" ? "redActive" : ""}">${item.level}</span>] &nbsp;
                     <span>${item.date}</span>&nbsp;
                     <span>[${markKeyword(item.threadName)}]</span>&nbsp;
                     <span>${markKeyword(item.loggerName)}</span>&nbsp;-&nbsp;

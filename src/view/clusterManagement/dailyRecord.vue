@@ -39,10 +39,7 @@
 				</el-col>
 				<el-col :span="4">
 					<el-form-item :label="$t('message.serviceType')">
-						<el-select
-							v-model="form.serverType"
-							:placeholder="$t('message.placeholderSelect')"
-						>
+						<el-select v-model="form.serverType" :placeholder="$t('message.placeholderSelect')">
 							<el-option
 								v-for="item in serverTypeList"
 								:label="item.lable"
@@ -54,10 +51,7 @@
 				</el-col>
 				<el-col :span="4">
 					<el-form-item :label="$t('message.level')">
-						<el-select
-							v-model="form.level"
-							:placeholder="$t('message.placeholderSelect')"
-						>
+						<el-select v-model="form.level" :placeholder="$t('message.placeholderSelect')">
 							<el-option
 								v-for="item in levelList"
 								:label="item.lable"
@@ -68,9 +62,7 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="4" class="center">
-					<el-button type="primary" @click="screenFn">{{
-						$t("message.filter")
-					}}</el-button>
+					<el-button type="primary" @click="screenFn">{{ $t("message.filter") }}</el-button>
 				</el-col>
 			</el-form>
 		</el-row>
@@ -94,28 +86,18 @@
 					:label="$t('message.hostName')"
 					:show-overflow-tooltip="true"
 				></el-table-column>
-				<el-table-column
-					prop="ip"
-					:label="$t('message.ipAddress')"
-					width="150"
-				></el-table-column>
+				<el-table-column prop="ip" :label="$t('message.ipAddress')" width="150"></el-table-column>
 				<el-table-column
 					prop="uuid"
 					:label="$t('message.uniqueEncode')"
 					:show-overflow-tooltip="true"
 				></el-table-column>
-				<el-table-column
-					prop="threadName"
-					:label="$t('message.serviceType')"
-					width="100"
-				></el-table-column>
+				<el-table-column prop="threadName" :label="$t('message.serviceType')" width="100"></el-table-column>
 				<el-table-column prop="level" :label="$t('message.level')" width="100">
 					<template slot-scope="scope">
-						<span
-							:class="scope.row.level === 'ERROR' ? 'red' : ''"
-							disable-transitions
-							>{{ scope.row.level }}</span
-						>
+						<span :class="scope.row.level === 'ERROR' ? 'red' : ''" disable-transitions>{{
+							scope.row.level
+						}}</span>
 					</template>
 				</el-table-column>
 				<el-table-column

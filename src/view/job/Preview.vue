@@ -2,29 +2,15 @@
 	<div class="preview" ref="boxHeight">
 		<el-form inline>
 			<el-form-item :label="$t('editor.preview.stage')">
-				<el-select
-					v-model="stageId"
-					:placeholder="$t('message.placeholderSelect')"
-					size="mini"
-				>
-					<el-option
-						v-for="stage in dataFlow.stages"
-						:key="stage.id"
-						:label="stage.name"
-						:value="stage.id"
-					>
+				<el-select v-model="stageId" :placeholder="$t('message.placeholderSelect')" size="mini">
+					<el-option v-for="stage in dataFlow.stages" :key="stage.id" :label="stage.name" :value="stage.id">
 					</el-option>
 				</el-select>
 			</el-form-item>
 
 			<el-form-item :label="$t('editor.preview.table')">
-				<el-select
-					v-model="selectTableName"
-					:placeholder="$t('message.placeholderSelect')"
-					size="mini"
-				>
-					<el-option v-for="item in nodeList" :key="item" :label="item" :value="item">
-					</el-option>
+				<el-select v-model="selectTableName" :placeholder="$t('message.placeholderSelect')" size="mini">
+					<el-option v-for="item in nodeList" :key="item" :label="item" :value="item"> </el-option>
 				</el-select>
 			</el-form-item>
 
@@ -40,13 +26,7 @@
 			v-loading="isloading"
 			:element-loading-text="$t('dataFlow.dataLoading')"
 		>
-			<el-table-column
-				minWidth="120"
-				v-for="(head, key) in headers"
-				:key="key"
-				:prop="head"
-				:label="head"
-			>
+			<el-table-column minWidth="120" v-for="(head, key) in headers" :key="key" :prop="head" :label="head">
 				<template slot-scope="scope">
 					<span :title="scope.row[head]">{{ scope.row[head] }}</span>
 				</template>

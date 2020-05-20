@@ -7,12 +7,7 @@
 		<div class="nodeBody">
 			<el-form class="e-form" label-position="top" :model="model" ref="form">
 				<!-- <span class="addTxt">+新建文件</span> -->
-				<el-form-item
-					:label="$t('editor.choose') + 'API'"
-					prop="connectionId"
-					:rules="rules"
-					required
-				>
+				<el-form-item :label="$t('editor.choose') + 'API'" prop="connectionId" :rules="rules" required>
 					<el-select
 						filterable
 						v-model="model.connectionId"
@@ -20,10 +15,7 @@
 					>
 						<el-option
 							v-for="(item, idx) in databases"
-							:label="
-								`${item.name} (${$t('connection.status.' + item.status) ||
-									item.status})`
-							"
+							:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
 							:value="item.id"
 							v-bind:key="idx"
 						></el-option>
@@ -41,9 +33,7 @@
 						allow-create
 						default-first-option
 						clearable
-						:placeholder="
-							$t('editor.cell.data_node.collection.form.collection.placeholder')
-						"
+						:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
 						size="mini"
 					>
 						<el-option
@@ -54,11 +44,7 @@
 						></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item
-					:label="$t('editor.cell.data_node.collection.form.pk.label')"
-					prop="primaryKeys"
-					required
-				>
+				<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" prop="primaryKeys" required>
 					<el-input
 						v-model="model.primaryKeys"
 						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
@@ -161,9 +147,7 @@ export default {
 			handler() {
 				if (this.schemas.length > 0) {
 					if (this.model.tableName) {
-						let schema = this.schemas.filter(
-							s => s.table_name === this.model.tableName
-						);
+						let schema = this.schemas.filter(s => s.table_name === this.model.tableName);
 						schema =
 							schema && schema.length > 0
 								? schema[0]

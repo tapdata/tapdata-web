@@ -13,9 +13,7 @@
 							v-model="sourch"
 						>
 						</el-input>
-						<el-button type="primary" @click="screenFn">{{
-							$t("message.filter")
-						}}</el-button>
+						<el-button type="primary" @click="screenFn">{{ $t("message.filter") }}</el-button>
 					</div>
 				</el-col>
 				<el-col class="text-rf screen" :span="2" :offset="9"> </el-col>
@@ -23,20 +21,11 @@
 
 			<div class="content" v-if="waterfallData.length > 0">
 				<el-row :gutter="20" class="waterfall">
-					<el-col
-						class="list"
-						:md="12"
-						:sm="24"
-						v-for="(element, i) in waterfallData"
-						:key="i"
-					>
+					<el-col class="list" :md="12" :sm="24" v-for="(element, i) in waterfallData" :key="i">
 						<div class="grid-content listBox" v-for="item in element" :key="item.ip">
 							<div class="boxTop">
 								<div class="fl" style="width: 60%;">
-									<i
-										class="circular"
-										:class="item.status !== 'running' ? 'bgred' : 'bggreen'"
-									></i>
+									<i class="circular" :class="item.status !== 'running' ? 'bgred' : 'bggreen'"></i>
 									<h2 class="name">
 										{{ item.systemInfo.hostname }}
 									</h2>
@@ -46,12 +35,9 @@
 									<span>{{ item.systemInfo.ip }}</span>
 								</div>
 								<div class="fr" style="width: 40%;">
-									<el-button
-										size="mini"
-										class="fr addBtn"
-										@click="addServeFn(item)"
-										>{{ $t("message.addServerMon") }}</el-button
-									>
+									<el-button size="mini" class="fr addBtn" @click="addServeFn(item)">{{
+										$t("message.addServerMon")
+									}}</el-button>
 								</div>
 								<!--  -->
 							</div>
@@ -59,78 +45,33 @@
 								<el-row :gutter="20" class="data-list">
 									<el-col :span="8">
 										<span class="txt"
-											><i class="icon iconfont iconhoutai"></i
-											>{{ $t("message.manageSys") }}</span
+											><i class="icon iconfont iconhoutai"></i>{{ $t("message.manageSys") }}</span
 										>
 									</el-col>
 									<el-col :span="4">
-										<span
-											:class="
-												item.management.status == 'stopped'
-													? 'red'
-													: 'green'
-											"
-											>{{ item.management.status }}</span
-										>
+										<span :class="item.management.status == 'stopped' ? 'red' : 'green'">{{
+											item.management.status
+										}}</span>
 									</el-col>
 									<el-col :span="12">
 										<div class="btn fr">
 											<el-button
-												:type="
-													item.management.status == 'stopped'
-														? 'primary'
-														: 'info'
-												"
-												:disabled="
-													item.management.status == 'stopped'
-														? false
-														: true
-												"
-												@click="
-													startFn(
-														item,
-														item.management.status,
-														'management',
-														'start'
-													)
-												"
+												:type="item.management.status == 'stopped' ? 'primary' : 'info'"
+												:disabled="item.management.status == 'stopped' ? false : true"
+												@click="startFn(item, item.management.status, 'management', 'start')"
 												>{{ $t("message.startUp") }}</el-button
 											>
 											<el-button
-												:type="
-													item.management.status == 'running'
-														? 'danger'
-														: 'info'
-												"
-												:disabled="
-													item.management.status == 'running'
-														? false
-														: true
-												"
-												@click="
-													closeFn(
-														item,
-														item.management.status,
-														'management',
-														'stop'
-													)
-												"
+												:type="item.management.status == 'running' ? 'danger' : 'info'"
+												:disabled="item.management.status == 'running' ? false : true"
+												@click="closeFn(item, item.management.status, 'management', 'stop')"
 												>{{ $t("message.close") }}</el-button
 											>
 											<el-button
 												type="text"
-												:disabled="
-													item.management.status == 'running'
-														? false
-														: true
-												"
+												:disabled="item.management.status == 'running' ? false : true"
 												@click="
-													restartFn(
-														item,
-														item.management.status,
-														'management',
-														'restart'
-													)
+													restartFn(item, item.management.status, 'management', 'restart')
 												"
 												>{{ $t("message.restart") }}</el-button
 											>
@@ -140,52 +81,32 @@
 								<el-row :gutter="20" class="data-list">
 									<el-col :span="8">
 										<span class="txt"
-											><i class="icon iconfont icontongbu"></i
-											>{{ $t("message.syncGover") }}</span
+											><i class="icon iconfont icontongbu"></i>{{ $t("message.syncGover") }}</span
 										>
 									</el-col>
 									<el-col :span="4">
-										<span
-											:class="
-												item.engine.status == 'stopped' ? 'red' : 'green'
-											"
-											>{{ item.engine.status }}</span
-										>
+										<span :class="item.engine.status == 'stopped' ? 'red' : 'green'">{{
+											item.engine.status
+										}}</span>
 									</el-col>
 									<el-col :span="12">
 										<div class="btn fr">
 											<el-button
-												:type="
-													item.engine.status == 'stopped'
-														? 'primary'
-														: 'info'
-												"
-												:disabled="
-													item.engine.status == 'stopped' ? false : true
-												"
+												:type="item.engine.status == 'stopped' ? 'primary' : 'info'"
+												:disabled="item.engine.status == 'stopped' ? false : true"
 												@click="startFn(item, item.engine.status, 'engine')"
 												>{{ $t("message.startUp") }}</el-button
 											>
 											<el-button
-												:type="
-													item.engine.status == 'running'
-														? 'danger'
-														: 'info'
-												"
-												:disabled="
-													item.engine.status == 'running' ? false : true
-												"
+												:type="item.engine.status == 'running' ? 'danger' : 'info'"
+												:disabled="item.engine.status == 'running' ? false : true"
 												@click="closeFn(item, item.engine.status, 'engine')"
 												>{{ $t("message.close") }}</el-button
 											>
 											<el-button
 												type="text"
-												:disabled="
-													item.engine.status == 'running' ? false : true
-												"
-												@click="
-													restartFn(item, item.engine.status, 'engine')
-												"
+												:disabled="item.engine.status == 'running' ? false : true"
+												@click="restartFn(item, item.engine.status, 'engine')"
 												>{{ $t("message.restart") }}</el-button
 											>
 										</div>
@@ -193,74 +114,31 @@
 								</el-row>
 								<el-row :gutter="20" class="data-list">
 									<el-col :span="8">
-										<span class="txt"
-											><i class="icon iconfont iconAPI"></i>API SEVER</span
-										>
+										<span class="txt"><i class="icon iconfont iconAPI"></i>API SEVER</span>
 									</el-col>
 									<el-col :span="4">
-										<span
-											:class="
-												item.apiServer.status == 'stopped' ? 'red' : 'green'
-											"
-											>{{ item.apiServer.status }}</span
-										>
+										<span :class="item.apiServer.status == 'stopped' ? 'red' : 'green'">{{
+											item.apiServer.status
+										}}</span>
 									</el-col>
 									<el-col :span="12">
 										<div class="btn fr">
 											<el-button
-												:type="
-													item.apiServer.status == 'stopped'
-														? 'primary'
-														: 'info'
-												"
-												:disabled="
-													item.apiServer.status == 'stopped'
-														? false
-														: true
-												"
-												@click="
-													startFn(
-														item,
-														item.apiServer.status,
-														'apiServer'
-													)
-												"
+												:type="item.apiServer.status == 'stopped' ? 'primary' : 'info'"
+												:disabled="item.apiServer.status == 'stopped' ? false : true"
+												@click="startFn(item, item.apiServer.status, 'apiServer')"
 												>{{ $t("message.startUp") }}</el-button
 											>
 											<el-button
-												:type="
-													item.apiServer.status == 'running'
-														? 'danger'
-														: 'info'
-												"
-												:disabled="
-													item.apiServer.status == 'running'
-														? false
-														: true
-												"
-												@click="
-													closeFn(
-														item,
-														item.apiServer.status,
-														'apiServer'
-													)
-												"
+												:type="item.apiServer.status == 'running' ? 'danger' : 'info'"
+												:disabled="item.apiServer.status == 'running' ? false : true"
+												@click="closeFn(item, item.apiServer.status, 'apiServer')"
 												>{{ $t("message.close") }}</el-button
 											>
 											<el-button
 												type="text"
-												:disabled="
-													item.apiServer.status == 'running'
-														? false
-														: true
-												"
-												@click="
-													restartFn(
-														item,
-														item.apiServer.status,
-														'apiServer'
-													)
-												"
+												:disabled="item.apiServer.status == 'running' ? false : true"
+												@click="restartFn(item, item.apiServer.status, 'apiServer')"
 												>{{ $t("message.restart") }}</el-button
 											>
 										</div>
@@ -276,25 +154,18 @@
 										<span class="txt">{{ child.name }}</span>
 									</el-col>
 									<el-col :span="4">
-										<span
-											:class="
-												item.apiServer.status == 'stopped' ? 'red' : 'green'
-											"
-											>{{ child.status }}</span
-										>
+										<span :class="item.apiServer.status == 'stopped' ? 'red' : 'green'">{{
+											child.status
+										}}</span>
 									</el-col>
 									<el-col :span="7" :offset="5">
 										<div class="btn fr">
-											<el-button
-												type="text"
-												@click="delServe(child, item.status)"
-												>{{ $t("message.delete") }}</el-button
-											>
-											<el-button
-												type="text"
-												@click="editServe(child, item.status, item)"
-												>{{ $t("message.edit") }}</el-button
-											>
+											<el-button type="text" @click="delServe(child, item.status)">{{
+												$t("message.delete")
+											}}</el-button>
+											<el-button type="text" @click="editServe(child, item.status, item)">{{
+												$t("message.edit")
+											}}</el-button>
 										</div>
 									</el-col>
 								</el-row>
@@ -318,9 +189,7 @@
 		>
 			<addServe :data="currentData" :editItem="editItem" ref="childRules"></addServe>
 			<div slot="footer" class="dialog-footer">
-				<el-button size="small" @click="closeDialogForm()">{{
-					$t("message.cancle")
-				}}</el-button>
+				<el-button size="small" @click="closeDialogForm()">{{ $t("message.cancle") }}</el-button>
 				<el-button size="small" type="primary" @click="submitForm('ruleForm')">{{
 					$t("message.confirm")
 				}}</el-button>
@@ -462,13 +331,10 @@ export default {
 					server: server,
 					operation: "stop"
 				};
-				this.$confirm(
-					this.$t("message.confirm") + " " + name + " " + this.$t("message.closeSever"),
-					{
-						confirmButtonText: this.$t("message.confirm"),
-						cancelButtonText: this.$t("message.cancle")
-					}
-				).then(() => {
+				this.$confirm(this.$t("message.confirm") + " " + name + " " + this.$t("message.closeSever"), {
+					confirmButtonText: this.$t("message.confirm"),
+					cancelButtonText: this.$t("message.cancle")
+				}).then(() => {
 					this.operationFn(data);
 				});
 			}
@@ -488,17 +354,10 @@ export default {
 					server: server,
 					operation: "restart"
 				};
-				this.$confirm(
-					this.$t("message.confirm") +
-						" " +
-						name +
-						" " +
-						this.$t("message.restartServer"),
-					{
-						confirmButtonText: this.$t("message.confirm"),
-						cancelButtonText: this.$t("message.cancle")
-					}
-				).then(() => {
+				this.$confirm(this.$t("message.confirm") + " " + name + " " + this.$t("message.restartServer"), {
+					confirmButtonText: this.$t("message.confirm"),
+					cancelButtonText: this.$t("message.cancle")
+				}).then(() => {
 					this.operationFn(data);
 				});
 			}

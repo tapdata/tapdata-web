@@ -15,8 +15,7 @@
 						</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="condition.value" :label="$t('dataVerify.range')" width="80">
-				</el-table-column>
+				<el-table-column prop="condition.value" :label="$t('dataVerify.range')" width="80"> </el-table-column>
 				<el-table-column prop="source.tableName" :label="$t('dataVerify.source')">
 					<template slot-scope="scope">
 						<span v-if="scope.row.source.filter" class="dv-tag">SQL</span>
@@ -37,21 +36,12 @@
 				</el-table-column>
 			</el-table>
 		</div>
-		<el-button
-			class="dv-btn"
-			size="mini"
-			icon="el-icon-plus"
-			@click="handleShowDrawer"
-		></el-button>
+		<el-button class="dv-btn" size="mini" icon="el-icon-plus" @click="handleShowDrawer"></el-button>
 		<div class="dv-btn-footer-wrapper">
 			<div class="dv-btn-footer-box">
-				<el-button
-					size="mini"
-					class="dv-btn-footer"
-					type="primary"
-					@click="handleLoading"
-					>{{ $t("dataVerify.start") }}</el-button
-				>
+				<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleLoading">{{
+					$t("dataVerify.start")
+				}}</el-button>
 			</div>
 		</div>
 		<el-drawer
@@ -71,15 +61,9 @@
 				</div>
 				<el-form-item>
 					<el-radio-group v-model="type" size="mini" class="dv-radio">
-						<el-radio border label="row" width="150px">{{
-							$t("dataVerify.row")
-						}}</el-radio>
-						<el-radio border label="hash" width="150px">{{
-							$t("dataVerify.hash")
-						}}</el-radio>
-						<el-radio border label="advance" width="150px">{{
-							$t("dataVerify.advance")
-						}}</el-radio>
+						<el-radio border label="row" width="150px">{{ $t("dataVerify.row") }}</el-radio>
+						<el-radio border label="hash" width="150px">{{ $t("dataVerify.hash") }}</el-radio>
+						<el-radio border label="advance" width="150px">{{ $t("dataVerify.advance") }}</el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item v-show="type !== 'row'">
@@ -90,10 +74,7 @@
 						<el-col :span="12">
 							<el-select size="mini" v-model="formData.condition.type">
 								<el-option value="rows" :label="$t('dataVerify.rows')"></el-option>
-								<el-option
-									value="sampleRate"
-									:label="$t('dataVerify.sampleRate')"
-								></el-option>
+								<el-option value="sampleRate" :label="$t('dataVerify.sampleRate')"></el-option>
 							</el-select>
 						</el-col>
 						<el-col :span="12">
@@ -107,11 +88,7 @@
 					</div>
 					<el-row>
 						<el-col :span="24">
-							<el-select
-								size="mini"
-								style="width: 100%"
-								v-model="formData.sourceTageId"
-							>
+							<el-select size="mini" style="width: 100%" v-model="formData.sourceTageId">
 								<el-option
 									v-for="item in sourceList"
 									:label="item.tableName"
@@ -138,11 +115,7 @@
 					</div>
 					<el-row>
 						<el-col :span="24">
-							<el-select
-								size="mini"
-								style="width: 100%"
-								v-model="formData.targetTageId"
-							>
+							<el-select size="mini" style="width: 100%" v-model="formData.targetTageId">
 								<el-option
 									v-for="item in targetList"
 									:label="item.tableName"
@@ -176,13 +149,9 @@
 			</el-form>
 			<div class="dv-btn-footer-wrapper">
 				<div class="dv-btn-footer-box">
-					<el-button
-						size="mini"
-						class="dv-btn-footer"
-						type="primary"
-						@click="handleAdd('ruleForm')"
-						>{{ $t("dataVerify.confirm") }}</el-button
-					>
+					<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleAdd('ruleForm')">{{
+						$t("dataVerify.confirm")
+					}}</el-button>
 					<el-button size="mini" class="dv-btn-footer" @click="handleClose">{{
 						$t("dataVerify.cancel")
 					}}</el-button>
@@ -283,9 +252,7 @@ export default {
 			dataFlows.getId(this.id, _params).then(res => {
 				if (res.statusText === "OK" || res.status === 200) {
 					if (res.data) {
-						this.tableData = res.data.validationSettings
-							? res.data.validationSettings
-							: [];
+						this.tableData = res.data.validationSettings ? res.data.validationSettings : [];
 						log("dataVerify.tableData", this.tableData);
 					}
 				}
@@ -418,10 +385,8 @@ export default {
 			this.disabledDrawer = true;
 			this.editIndex = index;
 			this.formData = this.tableData[index];
-			this.formData.sourceTageId =
-				this.tableData[index].source.stageId + this.tableData[index].source.tableName;
-			this.formData.targetTageId =
-				this.tableData[index].target.stageId + this.tableData[index].target.tableName;
+			this.formData.sourceTageId = this.tableData[index].source.stageId + this.tableData[index].source.tableName;
+			this.formData.targetTageId = this.tableData[index].target.stageId + this.tableData[index].target.tableName;
 			if (this.tableData[index].target.filter) {
 				this.formData.targetFilter = this.tableData[index].target.filter;
 				this.checkedTarget = true;

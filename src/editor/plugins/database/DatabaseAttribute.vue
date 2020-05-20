@@ -5,13 +5,7 @@
 			<span class="txt">{{ $t("editor.nodeSettings") }}</span>
 		</head>
 		<div class="nodeBody">
-			<el-form
-				class="e-form"
-				label-position="top"
-				label-width="160px"
-				:model="model"
-				ref="form"
-			>
+			<el-form class="e-form" label-position="top" label-width="160px" :model="model" ref="form">
 				<el-form-item
 					class="e-form"
 					:label="$t('editor.cell.data_node.database.form.label')"
@@ -27,10 +21,7 @@
 					>
 						<el-option
 							v-for="(item, idx) in databases"
-							:label="
-								`${item.name} (${$t('connection.status.' + item.status) ||
-									item.status})`
-							"
+							:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
 							:value="item.id"
 							v-bind:key="idx"
 						></el-option>
@@ -56,38 +47,26 @@
 
 				<div class="databaseInfo">
 					<span v-show="database_type">{{ database_type }}</span>
-					<span v-show="database_host && database_type !== 'mongodb'">{{
-						database_host
-					}}</span>
-					<span v-show="database_port && database_type !== 'mongodb'">{{
-						database_port
-					}}</span>
-					<span v-show="database_type === 'mongodb' && database_uri">{{
-						database_uri
-					}}</span>
+					<span v-show="database_host && database_type !== 'mongodb'">{{ database_host }}</span>
+					<span v-show="database_port && database_type !== 'mongodb'">{{ database_port }}</span>
+					<span v-show="database_type === 'mongodb' && database_uri">{{ database_uri }}</span>
 				</div>
 			</el-form>
 		</div>
 		<div class="processingBody">
 			<div class="allCheck" v-if="activeName === 'first'">
 				<el-checkbox v-model="selectAllTables"></el-checkbox>
-				<span @click="bulkRemoval()">{{
-					$t("editor.cell.data_node.database.bulkRemoval")
-				}}</span>
+				<span @click="bulkRemoval()">{{ $t("editor.cell.data_node.database.bulkRemoval") }}</span>
 			</div>
 
 			<div class="allCheck" v-if="activeName === 'second'">
 				<el-checkbox v-model="selectAllRemoveTables"></el-checkbox>
-				<span @click="bulkRevocation()">{{
-					$t("editor.cell.data_node.database.bulkRevocation")
-				}}</span>
+				<span @click="bulkRevocation()">{{ $t("editor.cell.data_node.database.bulkRevocation") }}</span>
 			</div>
 
 			<el-tabs class="e-tabs" v-model="activeName">
 				<el-tab-pane
-					:label="
-						$t('editor.cell.data_node.database.queueCopied') + '(' + tables.length + ')'
-					"
+					:label="$t('editor.cell.data_node.database.queueCopied') + '(' + tables.length + ')'"
 					name="first"
 				>
 					<div class="search">
@@ -123,10 +102,7 @@
 						:gutter="20"
 					>
 						<el-col :span="1">
-							<el-checkbox
-								v-model="item.checked"
-								@change="checkedOne(item, index)"
-							></el-checkbox>
+							<el-checkbox v-model="item.checked" @change="checkedOne(item, index)"></el-checkbox>
 						</el-col>
 						<el-col :span="17" style="padding-left:20px;">
 							<i class="iconfont icon-table2"></i>
@@ -141,12 +117,7 @@
 				</el-tab-pane>
 				<!-- model.excludeTables -->
 				<el-tab-pane
-					:label="
-						$t('editor.cell.data_node.database.tableRemoved') +
-							'(' +
-							removeTables.length +
-							')'
-					"
+					:label="$t('editor.cell.data_node.database.tableRemoved') + '(' + removeTables.length + ')'"
 					name="second"
 				>
 					<div class="search">
@@ -167,10 +138,7 @@
 						:gutter="20"
 					>
 						<el-col :span="2">
-							<el-checkbox
-								v-model="item.checked"
-								@change="checkedOne(item, index)"
-							></el-checkbox>
+							<el-checkbox v-model="item.checked" @change="checkedOne(item, index)"></el-checkbox>
 						</el-col>
 						<el-col :span="17">
 							<i class="iconfont icon-table2"></i>
@@ -245,9 +213,7 @@ export default {
 	computed: {
 		computedTables() {
 			if (this.search) {
-				return this.tables.filter(
-					t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0
-				);
+				return this.tables.filter(t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0);
 			} else {
 				return this.tables;
 			}

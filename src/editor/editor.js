@@ -438,8 +438,7 @@ export default class Editor extends BaseObject {
 
 		let predecessors = function(node, distance) {
 			if (distanceResult.hasOwnProperty(node))
-				distanceResult[node] =
-					distanceResult[node] >= distance ? distanceResult[node] : distance;
+				distanceResult[node] = distanceResult[node] >= distance ? distanceResult[node] : distance;
 			else distanceResult[node] = distance;
 
 			graphLib.predecessors(node).forEach(node => predecessors(node, distance + 1));
@@ -489,11 +488,7 @@ export default class Editor extends BaseObject {
 		graph.getCells().forEach(cell => {
 			if (cell.isLink()) {
 				linkCount++;
-			} else if (
-				cell.isElement() &&
-				typeof cell.isDataNode === "function" &&
-				cell.isDataNode()
-			) {
+			} else if (cell.isElement() && typeof cell.isDataNode === "function" && cell.isDataNode()) {
 				dataNodeCount++;
 			}
 		});
@@ -565,9 +560,7 @@ export default class Editor extends BaseObject {
 				result.data.forEach(connection => {
 					if (connection.schema && connection.schema.tables) {
 						let tables = {};
-						connection.schema.tables.forEach(
-							table => (tables[table.table_name] = table)
-						);
+						connection.schema.tables.forEach(table => (tables[table.table_name] = table));
 						connectionSchemaData[connection.id] = tables;
 					}
 				});
@@ -575,8 +568,7 @@ export default class Editor extends BaseObject {
 				// 3.分别更新对应节点schema
 				if (dataCells) {
 					dataCells.map(cell => {
-						let formData =
-							typeof cell.getFormData === "function" ? cell.getFormData() : null;
+						let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
 						if (!formData) return;
 
 						let type = cell.get("type");
@@ -585,8 +577,7 @@ export default class Editor extends BaseObject {
 						let tableName = formData.tableName;
 
 						let schema =
-							connectionSchemaData[connectionId] &&
-							connectionSchemaData[connectionId][tableName];
+							connectionSchemaData[connectionId] && connectionSchemaData[connectionId][tableName];
 
 						if (!connectionId || !tableName || !schema) return;
 						cell.setSchema(schema, false);

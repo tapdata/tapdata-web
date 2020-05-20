@@ -152,10 +152,7 @@ export const link = {
 			},
 
 			getMarkerWidth: function(type) {
-				let d =
-					type === "source"
-						? this.attr("line/sourceMarker/d")
-						: this.attr("line/targetMarker/d");
+				let d = type === "source" ? this.attr("line/sourceMarker/d") : this.attr("line/targetMarker/d");
 				return this.getDataWidth(d);
 			},
 
@@ -192,8 +189,7 @@ export const link = {
 
 				if (data && configJoinTable) {
 					let joinTable = data.joinTable;
-					if (!joinTable)
-						throw new Error(`${i18n.t("editor.cell.validate.none_setting")}`);
+					if (!joinTable) throw new Error(`${i18n.t("editor.cell.validate.none_setting")}`);
 					/* if( !joinTable.tableName)
 						throw new Error('Table name cannot be empty.');
 					if( !joinTable.primaryKeys)
@@ -228,15 +224,7 @@ export const link = {
 				if (modelType.indexOf("uml") === 0) opt.selector = "root";
 				// taking the border stroke-width into account
 				if (modelType === "standard.InscribedImage") opt.selector = "border";
-				return joint.connectionPoints.boundary.call(
-					this,
-					line,
-					view,
-					magnet,
-					opt,
-					type,
-					linkView
-				);
+				return joint.connectionPoints.boundary.call(this, line, view, magnet, opt, type, linkView);
 			}
 		}
 	},

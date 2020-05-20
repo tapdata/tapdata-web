@@ -15,10 +15,7 @@
 					>
 						<el-option
 							v-for="(item, idx) in databases"
-							:label="
-								`${item.name} (${$t('connection.status.' + item.status) ||
-									item.status})`
-							"
+							:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
 							:value="item.id"
 							v-bind:key="idx"
 						></el-option>
@@ -37,9 +34,7 @@
 						allow-create
 						default-first-option
 						clearable
-						:placeholder="
-							$t('editor.cell.data_node.collection.form.collection.placeholder')
-						"
+						:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
 						size="mini"
 					>
 						<el-option
@@ -172,9 +167,7 @@ export default {
 			handler() {
 				if (this.schemas.length > 0) {
 					if (this.model.tableName) {
-						let schema = this.schemas.filter(
-							s => s.table_name === this.model.tableName
-						);
+						let schema = this.schemas.filter(s => s.table_name === this.model.tableName);
 						schema =
 							schema && schema.length > 0
 								? schema[0]

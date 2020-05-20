@@ -103,8 +103,7 @@ const en = {
 			"The read speed from source node and the write speed to the target node, larger number is better",
 		transtime_pop:
 			"The time lapsed from the data record is read from the source node until the data is written into target node",
-		replicate_pop:
-			"The time gap between source node last update time and target node last update time",
+		replicate_pop: "The time gap between source node last update time and target node last update time",
 		status: {
 			running: "Running",
 			paused: "Paused",
@@ -422,8 +421,7 @@ const en = {
 						expression: {
 							label: "Conditional expression",
 							placeholder: "Please enter an expression",
-							labelTip:
-								"Expressions can use comparison and calculation operators in JavaScript"
+							labelTip: "Expressions can use comparison and calculation operators in JavaScript"
 						},
 						action: {
 							label: "Execute action",
@@ -432,8 +430,7 @@ const en = {
 						},
 						expressionExample: {
 							label: "Example expression",
-							labelTip:
-								"Expressions can use comparison and calculation operators in JavaScript",
+							labelTip: "Expressions can use comparison and calculation operators in JavaScript",
 							tip:
 								"Select men over 50 years old and people over 30 years old with income below 10,000, the expression is as follows:"
 						},

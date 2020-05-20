@@ -1,9 +1,7 @@
 <template>
 	<div class="data-contPreView">
 		<div class="dv-pre-btn">
-			<el-button size="mini" type="primary" @click="handleAddList">
-				{{ $t("dataVerify.again") }}</el-button
-			>
+			<el-button size="mini" type="primary" @click="handleAddList"> {{ $t("dataVerify.again") }}</el-button>
 		</div>
 		<div class="clear"></div>
 		<div class="dv-pre-box">
@@ -42,8 +40,7 @@
 		</div>
 		<div class="dv-contrast-table">
 			<el-table border :data="validateStats" height="250" style="width: 100%">
-				<el-table-column prop="source" :label="$t('dataVerify.source')" width="80">
-				</el-table-column>
+				<el-table-column prop="source" :label="$t('dataVerify.source')" width="80"> </el-table-column>
 				<el-table-column prop="validateType" :label="$t('dataVerify.dataWay')" width="80">
 					<template slot-scope="scope">
 						<span :style="`color: ${colorMap[scope.row.validateType]};`">
@@ -52,10 +49,8 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop="rows" :label="$t('dataVerify.range')"> </el-table-column>
-				<el-table-column prop="rowsDiffer" :label="$t('dataVerify.result')">
-				</el-table-column>
-				<el-table-column prop="consistencyRate" :label="$t('dataVerify.accuracyRate')">
-				</el-table-column>
+				<el-table-column prop="rowsDiffer" :label="$t('dataVerify.result')"> </el-table-column>
+				<el-table-column prop="consistencyRate" :label="$t('dataVerify.accuracyRate')"> </el-table-column>
 			</el-table>
 		</div>
 		<div>
@@ -96,10 +91,8 @@
 					</div>
 				</div>
 				<el-table border :data="failedRow" class="dv-result-fail-table" style="width: 100%">
-					<el-table-column prop="sourceTableData" :label="$t('dataVerify.source')">
-					</el-table-column>
-					<el-table-column prop="targetTableData" :label="$t('dataVerify.target')">
-					</el-table-column>
+					<el-table-column prop="sourceTableData" :label="$t('dataVerify.source')"> </el-table-column>
+					<el-table-column prop="targetTableData" :label="$t('dataVerify.target')"> </el-table-column>
 					<el-table-column prop="message" label="MSQ" width="100"> </el-table-column>
 				</el-table>
 			</div>

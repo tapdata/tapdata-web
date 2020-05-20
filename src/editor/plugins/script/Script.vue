@@ -1,10 +1,6 @@
 <template>
 	<el-form label-position="right" label-width="130px" :model="model" ref="form">
-		<el-form-item
-			:required="true"
-			:label="$t('editor.cell.processor.script.form.name.label')"
-			size="mini"
-		>
+		<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.name.label')" size="mini">
 			<el-input
 				v-model="model.name"
 				class="form-item-width"
@@ -12,11 +8,7 @@
 			></el-input>
 		</el-form-item>
 
-		<el-form-item
-			:required="true"
-			:label="$t('editor.cell.processor.script.form.type.label')"
-			size="mini"
-		>
+		<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.type.label')" size="mini">
 			<el-select
 				v-model="model.type"
 				:placeholder="$t('editor.cell.processor.script.form.type.placeholder')"
@@ -31,11 +23,7 @@
 			</el-select>
 		</el-form-item>
 
-		<el-form-item
-			:required="true"
-			:label="$t('editor.cell.processor.script.form.script.label')"
-			size="mini"
-		>
+		<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.script.label')" size="mini">
 			<el-input type="textarea" rows="10" v-model="model.script"></el-input>
 		</el-form-item>
 	</el-form>
@@ -71,8 +59,7 @@ export default {
 			model: {
 				name: "JavaScript",
 				type: "js_processor",
-				script:
-					"function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}"
+				script: "function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}"
 			}
 		};
 	},

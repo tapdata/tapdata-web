@@ -2,12 +2,8 @@
 	<div>
 		<div v-loading="loading" style="margin-top: 100px;padding-bottom:100px"></div>
 		<div class="btn-box">
-			<el-button @click="handleShowResult" size="mini">{{
-				$t("dataVerify.refresh")
-			}}</el-button>
-			<el-button @click="handleVerifyCancel" size="mini">{{
-				$t("dataVerify.cancel")
-			}}</el-button>
+			<el-button @click="handleShowResult" size="mini">{{ $t("dataVerify.refresh") }}</el-button>
+			<el-button @click="handleVerifyCancel" size="mini">{{ $t("dataVerify.cancel") }}</el-button>
 		</div>
 	</div>
 </template>
