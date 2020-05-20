@@ -31,12 +31,9 @@ export default class Sidebar extends Component {
 		this.el = $(
 			`<div class="e-sidebar e-sidebar-${
 				this.opts.region
-			}"><div class="e-sidebar-content" style="${this.opts.bodyStyle ||
-				""}"></div></div>`
+			}"><div class="e-sidebar-content" style="${this.opts.bodyStyle || ""}"></div></div>`
 		);
-		this.splitEl = $(
-			`<div class="e-slider e-slider-${this.opts.region}"><!--||--></div>`
-		);
+		this.splitEl = $(`<div class="e-slider e-slider-${this.opts.region}"><!--||--></div>`);
 
 		if (this.opts.split) this.enableSplit();
 		else this.disableSplit();
@@ -76,36 +73,18 @@ export default class Sidebar extends Component {
 
 				let offsetX = e.clientX - startX;
 				let offsetY = e.clientY - startY;
-				let _width =
-					region === "left"
-						? startWidth + offsetX
-						: startWidth - offsetX;
-				let _height =
-					region === "top"
-						? startHeight + offsetY
-						: startHeight - offsetY;
+				let _width = region === "left" ? startWidth + offsetX : startWidth - offsetX;
+				let _height = region === "top" ? startHeight + offsetY : startHeight - offsetY;
 
 				if (self.opts.minWidth)
-					_width =
-						_width < self.opts.minWidth
-							? self.opts.minWidth
-							: _width;
+					_width = _width < self.opts.minWidth ? self.opts.minWidth : _width;
 				if (self.opts.maxWidth)
-					_width =
-						_width > self.opts.maxWidth
-							? self.opts.maxWidth
-							: _width;
+					_width = _width > self.opts.maxWidth ? self.opts.maxWidth : _width;
 
 				if (self.opts.minHeight)
-					_height =
-						_height < self.opts.minHeight
-							? self.opts.minHeight
-							: _height;
+					_height = _height < self.opts.minHeight ? self.opts.minHeight : _height;
 				if (self.opts.minHeight)
-					_height =
-						_height > self.opts.maxHeight
-							? self.opts.maxHeight
-							: _height;
+					_height = _height > self.opts.maxHeight ? self.opts.maxHeight : _height;
 
 				if (region === "left" || region === "right") {
 					if (self.el.width() !== _width) {

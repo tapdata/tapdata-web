@@ -20,9 +20,7 @@
 				@change="changeRadio"
 				v-if="isScreeing"
 			>
-				<el-radio-button label="flow">{{
-					$t("dataFlow.rowCount")
-				}}</el-radio-button>
+				<el-radio-button label="flow">{{ $t("dataFlow.rowCount") }}</el-radio-button>
 				<el-radio-button label="stage">KB</el-radio-button>
 			</el-radio-group>
 			<el-radio-group
@@ -42,20 +40,12 @@
 				@change="changeTime"
 				v-if="isIput"
 			>
-				<el-radio-button
-					label="second"
-					v-if="this.data.type !== 'replicate'"
-					>{{ $t("dataFlow.second") }}</el-radio-button
-				>
-				<el-radio-button label="minute">{{
-					$t("dataFlow.min")
+				<el-radio-button label="second" v-if="this.data.type !== 'replicate'">{{
+					$t("dataFlow.second")
 				}}</el-radio-button>
-				<el-radio-button label="hour">{{
-					$t("dataFlow.hour")
-				}}</el-radio-button>
-				<el-radio-button label="day">{{
-					$t("dataFlow.day")
-				}}</el-radio-button>
+				<el-radio-button label="minute">{{ $t("dataFlow.min") }}</el-radio-button>
+				<el-radio-button label="hour">{{ $t("dataFlow.hour") }}</el-radio-button>
+				<el-radio-button label="day">{{ $t("dataFlow.day") }}</el-radio-button>
 			</el-radio-group>
 		</div>
 	</div>

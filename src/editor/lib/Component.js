@@ -93,11 +93,7 @@ export default class Component extends BaseObject {
 			}
 			child = this.childs.shift();
 		}
-		if (
-			this.getContentEl &&
-			this.getContentEl() &&
-			this.getContentEl().find
-		) {
+		if (this.getContentEl && this.getContentEl() && this.getContentEl().find) {
 			this.getContentEl()
 				.find(">*")
 				.remove();
@@ -129,11 +125,7 @@ export default class Component extends BaseObject {
 
 	getChildByName(name) {
 		for (let i = 0; i < this.childs.length; i++) {
-			if (
-				this.childs[i] &&
-				this.childs[i].opts &&
-				this.childs[i].opts.name === name
-			)
+			if (this.childs[i] && this.childs[i].opts && this.childs[i].opts.name === name)
 				return this.childs[i];
 		}
 		return null;

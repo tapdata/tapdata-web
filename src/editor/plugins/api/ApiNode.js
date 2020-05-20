@@ -39,11 +39,9 @@ export const ApiNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-				return ![
-					"app.FileNode",
-					"app.Database",
-					"app.GridFSNode"
-				].includes(targetCell.get("type"));
+				return !["app.FileNode", "app.Database", "app.GridFSNode"].includes(
+					targetCell.get("type")
+				);
 			},
 
 			/**
@@ -59,30 +57,18 @@ export const ApiNodeConfig = {
 				data = data || this.getFormData();
 				let name = this.attr("label/text");
 				if (!data)
-					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.data_node.api.api_isNull"
-						)}`
-					);
+					throw new Error(`${name}: ${i18n.t("editor.cell.data_node.api.api_isNull")}`);
 
 				if (!data.connectionId)
 					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.data_node.api.none_database"
-						)}`
+						`${name}: ${i18n.t("editor.cell.data_node.api.none_database")}`
 					);
 				if (!data.tableName)
 					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.data_node.api.none_collection"
-						)}`
+						`${name}: ${i18n.t("editor.cell.data_node.api.none_collection")}`
 					);
 				if (!data.primaryKeys)
-					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.data_node.api.none_pk"
-						)}`
-					);
+					throw new Error(`${name}: ${i18n.t("editor.cell.data_node.api.none_pk")}`);
 
 				return true;
 			}

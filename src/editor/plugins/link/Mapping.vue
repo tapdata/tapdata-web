@@ -98,14 +98,8 @@ export default {
 				if (self.lines && self.lines.length > 0) {
 					for (let i = 0; i < self.lines.length; i++) {
 						let line = self.lines[i];
-						if (
-							self.isConnected(line.end) &&
-							self.isConnected(line.start)
-						) {
-							if (
-								self.isVisible(line.end) &&
-								self.isVisible(line.start)
-							) {
+						if (self.isConnected(line.end) && self.isConnected(line.start)) {
+							if (self.isVisible(line.end) && self.isVisible(line.start)) {
 								line.show("draw");
 								line.position();
 							} else {
@@ -153,20 +147,14 @@ export default {
 					line.position();
 				}
 
-				if (
-					Array.isArray(table.children) &&
-					table.children.length > 0
-				) {
+				if (Array.isArray(table.children) && table.children.length > 0) {
 					self.createLine(table.children);
 				}
 			}
 		},
 
 		isConnected(dom) {
-			return !(
-				dom.compareDocumentPosition(document) &
-				Node.DOCUMENT_POSITION_DISCONNECTED
-			);
+			return !(dom.compareDocumentPosition(document) & Node.DOCUMENT_POSITION_DISCONNECTED);
 		},
 
 		/**

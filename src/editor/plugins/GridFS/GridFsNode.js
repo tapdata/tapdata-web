@@ -41,9 +41,7 @@ export const GridFSNodeConfig = {
 			 */
 			allowTarget(targetCell) {
 				// log("GridFsNode.allowTarget", targetCell);
-				return !["app.GridFSNode", "app.Database"].includes(
-					targetCell.get("type")
-				);
+				return !["app.GridFSNode", "app.Database"].includes(targetCell.get("type"));
 			},
 
 			/**
@@ -62,28 +60,20 @@ export const GridFSNodeConfig = {
 				let name = this.attr("label/text");
 				if (!data)
 					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.data_node.gridfs.gridFs_isNull"
-						)}`
+						`${name}: ${i18n.t("editor.cell.data_node.gridfs.gridFs_isNull")}`
 					);
 				if (!data.connectionId)
 					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.data_node.collection.none_database"
-						)}`
+						`${name}: ${i18n.t("editor.cell.data_node.collection.none_database")}`
 					);
 				if (data.isSource) {
 					if (!data.tableName)
 						throw new Error(
-							`${name}: ${i18n.t(
-								"editor.cell.data_node.collection.none_collection"
-							)}`
+							`${name}: ${i18n.t("editor.cell.data_node.collection.none_collection")}`
 						);
 					if (!data.primaryKeys)
 						throw new Error(
-							`${name}: ${i18n.t(
-								"editor.cell.data_node.collection.none_pk"
-							)}`
+							`${name}: ${i18n.t("editor.cell.data_node.collection.none_pk")}`
 						);
 				}
 				return true;

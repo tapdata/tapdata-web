@@ -175,9 +175,7 @@ export const link = {
 					targetCell &&
 					targetCell.isDataNode &&
 					targetCell.isDataNode() &&
-					["app.Table", "app.Collection", "app.ESNode"].includes(
-						targetCell.get("type")
-					)
+					["app.Table", "app.Collection", "app.ESNode"].includes(targetCell.get("type"))
 				);
 			},
 
@@ -195,31 +193,19 @@ export const link = {
 				if (data && configJoinTable) {
 					let joinTable = data.joinTable;
 					if (!joinTable)
-						throw new Error(
-							`${i18n.t("editor.cell.validate.none_setting")}`
-						);
+						throw new Error(`${i18n.t("editor.cell.validate.none_setting")}`);
 					/* if( !joinTable.tableName)
 						throw new Error('Table name cannot be empty.');
 					if( !joinTable.primaryKeys)
 						throw new Error(`Table ${joinTable.tableName} primary key cannot be empty.`); */
-					if (!joinTable.joinType)
-						throw new Error("JoinType cannot be empty.");
+					if (!joinTable.joinType) throw new Error("JoinType cannot be empty.");
 
 					if (joinTable.joinType !== "append") {
-						if (
-							!joinTable.joinKeys ||
-							joinTable.joinKeys.length === 0
-						)
-							throw new Error(
-								`${i18n.t("editor.cell.link.none_join_key")}`
-							);
-						let errorJoinKeys = joinTable.joinKeys.filter(
-							v => !v.source || !v.target
-						);
+						if (!joinTable.joinKeys || joinTable.joinKeys.length === 0)
+							throw new Error(`${i18n.t("editor.cell.link.none_join_key")}`);
+						let errorJoinKeys = joinTable.joinKeys.filter(v => !v.source || !v.target);
 						if (errorJoinKeys && errorJoinKeys.length > 0) {
-							throw new Error(
-								`${i18n.t("editor.cell.link.none_join_key")}`
-							);
+							throw new Error(`${i18n.t("editor.cell.link.none_join_key")}`);
 						}
 					}
 					/* if( ['merge_embed', 'update'].includes(joinTable.joinType) ) {
@@ -241,8 +227,7 @@ export const link = {
 				let modelType = view.model.get("type");
 				if (modelType.indexOf("uml") === 0) opt.selector = "root";
 				// taking the border stroke-width into account
-				if (modelType === "standard.InscribedImage")
-					opt.selector = "border";
+				if (modelType === "standard.InscribedImage") opt.selector = "border";
 				return joint.connectionPoints.boundary.call(
 					this,
 					line,

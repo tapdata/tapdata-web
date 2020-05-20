@@ -21,23 +21,12 @@
 
 			<i class="el-icon-loading" v-if="loading"></i>
 		</el-form>
-		<div
-			class="logBox"
-			v-loading="loading"
-			:element-loading-text="$t('dataFlow.loadLogTip')"
-		>
-			<ul
-				class="e-log-container"
-				v-show="logCount > 0"
-				ref="logContainer"
-			></ul>
+		<div class="logBox" v-loading="loading" :element-loading-text="$t('dataFlow.loadLogTip')">
+			<ul class="e-log-container" v-show="logCount > 0" ref="logContainer"></ul>
 
 			<div v-show="logCount === 0" class="noData">
 				<div class="imageBox">
-					<el-image
-						style="width: 200px; height: 200px"
-						:src="imageUrl"
-					></el-image>
+					<el-image style="width: 200px; height: 200px" :src="imageUrl"></el-image>
 				</div>
 
 				<div>
@@ -85,9 +74,7 @@ export default {
 		let logContainer = self.$refs.logContainer;
 		$(logContainer).scroll(e => {
 			if (
-				logContainer.scrollHeight -
-					logContainer.clientHeight -
-					logContainer.scrollTop <
+				logContainer.scrollHeight - logContainer.clientHeight - logContainer.scrollTop <
 				100
 			) {
 				self.loadOld();
@@ -171,8 +158,7 @@ export default {
 							if (reset || prepend || !this.lastLogsId)
 								this.lastLogsId = res.data[0].id;
 							if (reset || !prepend || !this.firstLogsId)
-								this.firstLogsId =
-									res.data[res.data.length - 1].id;
+								this.firstLogsId = res.data[res.data.length - 1].id;
 
 							let logCount = res.data.length;
 							let logContainer = $(this.$refs.logContainer);
@@ -185,36 +171,27 @@ export default {
 							}
 
 							let markKeyword = function(text) {
-								if (
-									self.search &&
-									text.indexOf(self.search) >= 0
-								) {
+								if (self.search && text.indexOf(self.search) >= 0) {
 									return text
 										.split(self.search)
-										.join(
-											`<span class="keyword">${self.search}</span>`
-										);
+										.join(`<span class="keyword">${self.search}</span>`);
 								}
 								return text;
 							};
 							for (let i = logCount - 1; i >= 0; i--) {
 								let item = res.data[i];
 								item.date = item.date
-									? this.$moment(item.date).format(
-											"YYYY-MM-DD HH:mm:ss"
-									  )
+									? this.$moment(item.date).format("YYYY-MM-DD HH:mm:ss")
 									: "";
 								item.last_updated = item.last_updated
-									? this.$moment(item.last_updated).format(
-											"YYYY-MM-DD HH:mm:ss"
-									  )
+									? this.$moment(item.last_updated).format("YYYY-MM-DD HH:mm:ss")
 									: "";
 
 								logContainer[prepend ? "prepend" : "append"](
 									$(`<li>
-                    [<span class="level ${
-						item.level === "ERROR" ? "redActive" : ""
-					}">${item.level}</span>] &nbsp;
+                    [<span class="level ${item.level === "ERROR" ? "redActive" : ""}">${
+										item.level
+									}</span>] &nbsp;
                     <span>${item.date}</span>&nbsp;
                     <span>[${markKeyword(item.threadName)}]</span>&nbsp;
                     <span>${markKeyword(item.loggerName)}</span>&nbsp;-&nbsp;

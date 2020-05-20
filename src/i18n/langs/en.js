@@ -53,10 +53,8 @@ const en = {
 		startupAfter_add: "Please add after startup",
 		noData: "NO DATA ",
 		prompt: "Prompt",
-		resetMessage:
-			"This operation will reset the task state, will it reset?",
-		deteleMessage:
-			"This operation will delete the task, will it delete it?",
+		resetMessage: "This operation will reset the task state, will it reset?",
+		deteleMessage: "This operation will delete the task, will it delete it?",
 		cancleReset: "cancel reset",
 		resetOk: "Reset success",
 		resetFailed: "Reset Failed",
@@ -75,8 +73,7 @@ const en = {
 		skipData: "Skip existing data",
 		loadingError: "Loading failed, please",
 		dataLoading: "Data is hard to load ...",
-		loadLogTip:
-			"Run log is trying to load, it may take 5 ~ 10 seconds, please wait ...",
+		loadLogTip: "Run log is trying to load, it may take 5 ~ 10 seconds, please wait ...",
 		noLogTip: "No data",
 		clickLoadTxt: "Click to load",
 		average: "Average",
@@ -148,8 +145,7 @@ const en = {
 		error: "task error",
 		edited: "task edited",
 		started: "task started",
-		drop_target_before_start:
-			"Whether the target table is deleted before starting the task",
+		drop_target_before_start: "Whether the target table is deleted before starting the task",
 		run_custom_sql: "Run custom SQL repeatedly",
 		stop_on_error: "Stop synchronization when an error is encountered",
 		need_to_create_Index: "Create target index automatically",
@@ -159,8 +155,7 @@ const en = {
 		notification_lag: "Notification",
 		isOpenAutoDDL: "Automatically handle DDL operations",
 		send_email_when_replication: "Resend in a few seconds",
-		send_email_at_most_one_replication:
-			"Cancel sending in more than seconds",
+		send_email_at_most_one_replication: "Cancel sending in more than seconds",
 		read_cdc_interval: "Incremental synchronization interval (ms)",
 		read_batch_size: "How many reads each time",
 		mission: "Description",
@@ -416,8 +411,7 @@ const en = {
 					name: "Row Filter",
 					tip: "Row Data Filter",
 					validate: {
-						none_expression:
-							"Conditional expression cannot be empty",
+						none_expression: "Conditional expression cannot be empty",
 						none_action: "The execution action cannot be empty"
 					},
 					form: {
@@ -446,8 +440,7 @@ const en = {
 						symbol: {
 							label: "Supported symbols",
 							gtLt: "Greater than, less than",
-							geLe:
-								"Greater than and equal to, less than and equal to",
+							geLe: "Greater than and equal to, less than and equal to",
 							eq: "equal to",
 							not: "NO",
 							and: "And",

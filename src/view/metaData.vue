@@ -4,22 +4,13 @@
 			<div class="metadata-header" v-show="isActive">
 				<span>数据分类</span>
 				<div class="metadata-header-right">
-					<i
-						class="iconfont icon-fangdajing"
-						@click="displaySearch(false)"
-					></i>
+					<i class="iconfont icon-fangdajing" @click="displaySearch(false)"></i>
 					<i class="iconfont icon-sync" @click="handleList"></i>
-					<i
-						class="iconfont icon-xiangxiahebing2"
-						@click="handleDefault_expanded"
-					></i>
+					<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
 				</div>
 			</div>
 			<div class="metadata-header" v-show="!isActive">
-				<i
-					class="iconfont icon-right-circle"
-					@click="displaySearch(true)"
-				></i>
+				<i class="iconfont icon-right-circle" @click="displaySearch(true)"></i>
 				<el-input class="search" v-model="filterText"
 					><i slot="suffix" class="el-input__icon el-icon-search"></i
 				></el-input>
@@ -36,14 +27,8 @@
 			>
 				<span class="custom-tree-node" slot-scope="{ node, data }">
 					<span>
-						<span
-							class="iconfont icon-Folder-closed filter-icon"
-						></span>
-						<span
-							class="table-label"
-							@click="handleChecked(data)"
-							>{{ node.label }}</span
-						>
+						<span class="iconfont icon-Folder-closed filter-icon"></span>
+						<span class="table-label" @click="handleChecked(data)">{{ node.label }}</span>
 					</span>
 				</span>
 			</el-tree>
@@ -51,15 +36,8 @@
 		<div class="box-ul">
 			<div class="box-head">
 				<div class="select-nav-header">
-					<span style="font-size: 12px">{{
-						checkedValue.label
-					}}</span>
-					<el-button
-						size="mini"
-						type="primary"
-						@click="handleClassify"
-						>批量分类</el-button
-					>
+					<span style="font-size: 12px">{{ checkedValue.label }}</span>
+					<el-button size="mini" type="primary" @click="handleClassify">批量分类</el-button>
 				</div>
 				<el-input
 					placeholder="请输入内容"
@@ -79,12 +57,7 @@
 						class="MetaDataSelect"
 						@change="handleSearch"
 					>
-						<el-option
-							v-for="item in options"
-							:key="item.value"
-							:label="item.label"
-							:value="item.value"
-						>
+						<el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
 						</el-option>
 					</el-select>
 					<el-select
@@ -102,24 +75,14 @@
 						>
 						</el-option>
 					</el-select>
-					<el-checkbox
-						v-model="checkAll"
-						@change="handleCheckAllChange"
-						>全选</el-checkbox
-					>
+					<el-checkbox v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
 				</div>
 			</div>
 			<ul class="classify-ul">
-				<el-checkbox-group
-					v-model="checkData"
-					@change="handleCheckedCitiesChange"
-					class="list-box"
-				>
+				<el-checkbox-group v-model="checkData" @change="handleCheckedCitiesChange" class="list-box">
 					<li v-for="item in listdata" :key="item.id">
 						<el-checkbox :label="item.id">
-							<span
-								class="iconfont icon-table2 icon-color"
-							></span>
+							<span class="iconfont icon-table2 icon-color"></span>
 							<span>{{ item.original_name }}</span>
 						</el-checkbox>
 					</li>
@@ -145,7 +108,9 @@ const MetadataInstances = factory("MetadataInstances");
 
 export default {
 	name: "metaData",
-	components: { SelectClassify },
+	components: {
+		SelectClassify
+	},
 	data() {
 		return {
 			count: 0,
@@ -253,7 +218,9 @@ export default {
 				filter.where["parent_id"] = {
 					exists: false
 				};
-				MetadataDefinitions.get({ filter: JSON.stringify(filter) })
+				MetadataDefinitions.get({
+					filter: JSON.stringify(filter)
+				})
 					.then(res => {
 						if (res.statusText === "OK" || res.status === 200) {
 							if (res.data) {
@@ -278,7 +245,9 @@ export default {
 				filter.where["parent_id"] = {
 					regexp: `^${node.data.id}$`
 				};
-				MetadataDefinitions.get({ filter: JSON.stringify(filter) })
+				MetadataDefinitions.get({
+					filter: JSON.stringify(filter)
+				})
 					.then(res => {
 						if (res.statusText === "OK" || res.status === 200) {
 							if (res.data) {
@@ -394,9 +363,7 @@ export default {
 				params[`filter[where][meta_type]`] = this.checkType;
 			}
 			if (this.search) {
-				params[
-					`filter[where][or][1][original_name][like]`
-				] = this.search;
+				params[`filter[where][or][1][original_name][like]`] = this.search;
 			}
 			// params[`filter[where][or][1][original_name][like]`] = this.checkClassify;
 

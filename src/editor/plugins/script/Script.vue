@@ -1,10 +1,5 @@
 <template>
-	<el-form
-		label-position="right"
-		label-width="130px"
-		:model="model"
-		ref="form"
-	>
+	<el-form label-position="right" label-width="130px" :model="model" ref="form">
 		<el-form-item
 			:required="true"
 			:label="$t('editor.cell.processor.script.form.name.label')"
@@ -13,9 +8,7 @@
 			<el-input
 				v-model="model.name"
 				class="form-item-width"
-				:placeholder="
-					$t('editor.cell.processor.script.form.name.placeholder')
-				"
+				:placeholder="$t('editor.cell.processor.script.form.name.placeholder')"
 			></el-input>
 		</el-form-item>
 
@@ -26,9 +19,7 @@
 		>
 			<el-select
 				v-model="model.type"
-				:placeholder="
-					$t('editor.cell.processor.script.form.type.placeholder')
-				"
+				:placeholder="$t('editor.cell.processor.script.form.type.placeholder')"
 				value="js_processor"
 			>
 				<el-option
@@ -45,11 +36,7 @@
 			:label="$t('editor.cell.processor.script.form.script.label')"
 			size="mini"
 		>
-			<el-input
-				type="textarea"
-				rows="10"
-				v-model="model.script"
-			></el-input>
+			<el-input type="textarea" rows="10" v-model="model.script"></el-input>
 		</el-form-item>
 	</el-form>
 </template>

@@ -1,18 +1,9 @@
 <template>
 	<div class="aggregate">
-		<el-form
-			ref="form"
-			:model="form"
-			label-position="top"
-			label-width="200px"
-		>
+		<el-form ref="form" :model="form" label-position="top" label-width="200px">
 			<el-col :span="21" class="aggregateName">
 				<el-form-item :label="$t('dataFlow.nodeName')" required>
-					<el-input
-						v-model="form.name"
-						maxlength="20"
-						show-word-limit
-					></el-input>
+					<el-input v-model="form.name" maxlength="20" show-word-limit></el-input>
 				</el-form-item>
 			</el-col>
 			<el-row
@@ -46,9 +37,7 @@
 						<el-col :span="18">
 							<el-form-item
 								:label="$t('dataFlow.aggExpression')"
-								:prop="
-									'aggregations.' + index + '.aggExpression'
-								"
+								:prop="'aggregations.' + index + '.aggExpression'"
 								:required="item.aggFunction !== 'COUNT'"
 							>
 								<el-select
@@ -56,9 +45,7 @@
 									filterable
 									allow-create
 									default-first-option
-									:placeholder="
-										$t('dataFlow.selectTargetField')
-									"
+									:placeholder="$t('dataFlow.selectTargetField')"
 									:disabled="item.aggFunction === 'COUNT'"
 								>
 									<el-option
@@ -84,10 +71,7 @@
 							trigger="hover"
 							:content="$t('dataFlow.nameTip')"
 						>
-							<span
-								class="icon iconfont icon-tishi1"
-								slot="reference"
-							></span>
+							<span class="icon iconfont icon-tishi1" slot="reference"></span>
 						</el-popover>
 						<el-input v-model="item.name"></el-input>
 					</el-form-item>
@@ -129,10 +113,7 @@
 			</el-row>
 			<el-form-item class="btnClass">
 				<el-button @click="addRow"
-					>+
-					{{
-						$t("editor.cell.processor.aggregate.new_aggregate")
-					}}</el-button
+					>+ {{ $t("editor.cell.processor.aggregate.new_aggregate") }}</el-button
 				>
 			</el-form-item>
 		</el-form>
@@ -221,10 +202,7 @@ export default {
 				if (this.countObj[data.aggFunction] === 0) {
 					data.name = data.aggFunction;
 				} else {
-					data.name =
-						data.aggFunction +
-						"_" +
-						this.countObj[data.aggFunction];
+					data.name = data.aggFunction + "_" + this.countObj[data.aggFunction];
 				}
 			}
 		},
@@ -270,10 +248,8 @@ export default {
 			log("Aggregate.setData.inputSchemas", inputSchemas, schema.fields);
 
 			if (!this.form.name) {
-				if (counter === 0)
-					this.form.name = this.$t("dataFlow.aggregation");
-				if (counter !== 0)
-					this.form.name = this.$t("dataFlow.aggregation") + counter;
+				if (counter === 0) this.form.name = this.$t("dataFlow.aggregation");
+				if (counter !== 0) this.form.name = this.$t("dataFlow.aggregation") + counter;
 				counter++;
 			}
 		},

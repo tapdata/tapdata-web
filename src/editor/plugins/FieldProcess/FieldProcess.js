@@ -74,20 +74,13 @@ export const fieldProcessConfig = {
 							let triggerFieldIndex = outputSchema.fields.findIndex(
 								f => f.id === triggerFieldId
 							);
-							outputSchema.fields.splice(
-								triggerFieldIndex + 1,
-								0,
-								newField
-							);
+							outputSchema.fields.splice(triggerFieldIndex + 1, 0, newField);
 						} else outputSchema.fields.push(newField);
 					}
 				});
 
 				data.operations.map((item, index) => {
-					let targetIndex = outputSchema.fields.findIndex(function(
-						n,
-						index
-					) {
+					let targetIndex = outputSchema.fields.findIndex(function(n, index) {
 						return n.id === item.id;
 					});
 					if (targetIndex === -1) {
@@ -98,12 +91,9 @@ export const fieldProcessConfig = {
 						let name = outputSchema.fields[targetIndex].field_name;
 						name = name.split(".");
 						name[name.length - 1] = item.operand;
-						outputSchema.fields[targetIndex].field_name = name.join(
-							"."
-						);
+						outputSchema.fields[targetIndex].field_name = name.join(".");
 					} else if (item.op === "CONVERT") {
-						outputSchema.fields[targetIndex].javaType =
-							item.operand;
+						outputSchema.fields[targetIndex].javaType = item.operand;
 					} else if (item.op === "REMOVE") {
 						if (applyRemoveOperation !== false)
 							outputSchema.fields.splice(targetIndex, 1);

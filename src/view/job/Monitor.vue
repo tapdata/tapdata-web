@@ -4,12 +4,7 @@
 		<el-form inline>
 			<el-form-item>
 				<el-select v-model="domValue" size="mini">
-					<el-option
-						key="all"
-						:label="$t('dataFlow.allNode')"
-						value="all"
-					>
-					</el-option>
+					<el-option key="all" :label="$t('dataFlow.allNode')" value="all"> </el-option>
 					<el-option
 						v-for="item in flow.stages"
 						:key="item.id"
@@ -22,35 +17,22 @@
 		</el-form>
 		<div class="echartMain">
 			<div class="echartlist">
-				<echart-head
-					:data="screeningObj"
-					@twoRadio="getTwoRadio"
-				></echart-head>
+				<echart-head :data="screeningObj" @twoRadio="getTwoRadio"></echart-head>
 				<div class="info fl">
 					<div class="info-list">
-						<span class="info-label"
-							>{{ $t("dataFlow.taskName") }}:</span
-						>
-						<span class="info-text" style="color: #48b6e2;">{{
-							flow.name
-						}}</span>
+						<span class="info-label">{{ $t("dataFlow.taskName") }}:</span>
+						<span class="info-text" style="color: #48b6e2;">{{ flow.name }}</span>
 					</div>
 					<div class="info-list">
-						<span class="info-label"
-							>{{ $t("dataFlow.creatdor") }}:</span
-						>
+						<span class="info-label">{{ $t("dataFlow.creatdor") }}:</span>
 						<span class="info-text">{{ flow.username }}</span>
 					</div>
 					<div class="info-list">
-						<span class="info-label"
-							>{{ $t("dataFlow.creationTime") }}:</span
-						>
+						<span class="info-label">{{ $t("dataFlow.creationTime") }}:</span>
 						<span class="info-text">{{ flow.createTime }}</span>
 					</div>
 					<div class="info-list">
-						<span class="info-label"
-							>{{ $t("dataFlow.state") }}:</span
-						>
+						<span class="info-label">{{ $t("dataFlow.state") }}:</span>
 						<span class="info-text" style="color: #62a569;">{{
 							$t("dataFlow.status." + flow.status)
 						}}</span>
@@ -60,15 +42,11 @@
 						<span class="info-text">{{updateTime}}</span>
 					</div> -->
 					<div class="info-list">
-						<span class="info-label"
-							>{{ $t("dataFlow.inputNumber") }}:</span
-						>
+						<span class="info-label">{{ $t("dataFlow.inputNumber") }}:</span>
 						<span class="info-text"> {{ flow.inputNumber }}</span>
 					</div>
 					<div class="info-list">
-						<span class="info-label"
-							>{{ $t("dataFlow.outputNumber") }}:</span
-						>
+						<span class="info-label">{{ $t("dataFlow.outputNumber") }}:</span>
 						<span class="info-text">{{ flow.outputNumber }}</span>
 					</div>
 				</div>
@@ -82,22 +60,13 @@
 			</div>
 
 			<div class="echartlist">
-				<echart-head
-					:data="inputOutputObj"
-					@getSpeed="getSpeed"
-				></echart-head>
+				<echart-head :data="inputOutputObj" @getSpeed="getSpeed"></echart-head>
 				<div class="floatLayer">
-					<span
-						style="background-color:rgba(72,182,226,.3);color:#48b6e2;"
-						>{{ $t("dataFlow.average") }}:{{
-							this.inputAverage
-						}}</span
+					<span style="background-color:rgba(72,182,226,.3);color:#48b6e2;"
+						>{{ $t("dataFlow.average") }}:{{ this.inputAverage }}</span
 					>
-					<span
-						style="background-color:rgba(98,165,105,.3);color:#62a569;"
-						>{{ $t("dataFlow.average") }}:{{
-							this.outputAverage
-						}}</span
+					<span style="background-color:rgba(98,165,105,.3);color:#62a569;"
+						>{{ $t("dataFlow.average") }}:{{ this.outputAverage }}</span
 					>
 				</div>
 				<echarts-compinent
@@ -110,11 +79,8 @@
 			<div class="echartlist">
 				<echart-head :data="transfObj" @getTime="getTime"></echart-head>
 				<div class="floatLayer">
-					<span
-						style="background-color:rgba(251,142,0,.3);color:#fb8e00;"
-						>{{ $t("dataFlow.current") }}:{{
-							this.currentTime
-						}}</span
+					<span style="background-color:rgba(251,142,0,.3);color:#fb8e00;"
+						>{{ $t("dataFlow.current") }}:{{ this.currentTime }}</span
 					>
 				</div>
 				<echarts-compinent
@@ -125,13 +91,9 @@
 				></echarts-compinent>
 			</div>
 			<div class="echartlist">
-				<echart-head
-					:data="replicateObj"
-					@getTime="getTime"
-				></echart-head>
+				<echart-head :data="replicateObj" @getTime="getTime"></echart-head>
 				<div class="floatLayer">
-					<span
-						style="background-color:rgba(7245,108,108,.3);color:#f56c6c;"
+					<span style="background-color:rgba(7245,108,108,.3);color:#f56c6c;"
 						>{{ $t("dataFlow.current") }}:{{ this.ransfTime }}</span
 					>
 				</div>
@@ -464,12 +426,9 @@ export default {
 			tip: this.$t("dataFlow.replicate_pop")
 		};
 		this.flow.createTime = this.dataFlow.createTime
-			? this.$moment(this.dataFlow.createTime).format(
-					"YYYY-MM-DD HH:mm:ss"
-			  )
+			? this.$moment(this.dataFlow.createTime).format("YYYY-MM-DD HH:mm:ss")
 			: "";
-		this.flow.username =
-			(this.dataFlow.user && this.dataFlow.user.email) || "";
+		this.flow.username = (this.dataFlow.user && this.dataFlow.user.email) || "";
 		this.timer = setInterval(() => {
 			this.getTwoRadio(this.dataOverviewAll, this.dataOverviewType);
 			this.getSpeed(this.isThroughputAll, this.throughputTime);
@@ -675,25 +634,14 @@ export default {
 
 				if (ele === "qps") {
 					this.dpx = "QPS";
-					this.inputAverage =
-						inputCountList[inputCountList.length - 1];
-					this.outputAverage =
-						outputCountList[outputCountList.length - 1];
-					this.getThroughputEchart(
-						timeList,
-						inputCountList,
-						outputCountList
-					);
+					this.inputAverage = inputCountList[inputCountList.length - 1];
+					this.outputAverage = outputCountList[outputCountList.length - 1];
+					this.getThroughputEchart(timeList, inputCountList, outputCountList);
 				} else {
 					this.dpx = "KB";
 					this.inputAverage = inputSizeList[inputSizeList.length - 1];
-					this.outputAverage =
-						outputSizeList[outputSizeList.length - 1];
-					this.getThroughputEchart(
-						timeList,
-						inputSizeList,
-						outputSizeList
-					);
+					this.outputAverage = outputSizeList[outputSizeList.length - 1];
+					this.getThroughputEchart(timeList, inputSizeList, outputSizeList);
 				}
 			} else {
 				data.forEach(item => {
@@ -744,10 +692,7 @@ export default {
 							width: 0
 						}
 					},
-					data: [
-						this.$t("dataFlow.outputNumber"),
-						this.$t("dataFlow.inputNumber")
-					],
+					data: [this.$t("dataFlow.outputNumber"), this.$t("dataFlow.inputNumber")],
 					axisPointer: {
 						type: "shadow"
 					},

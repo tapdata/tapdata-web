@@ -4,22 +4,11 @@
 			<el-input class="search" v-model="filterText" clearable
 				><i slot="prefix" class="el-input__icon el-icon-search"></i
 			></el-input>
-			<i
-				class="iconfont icon-xiangshanghebing2"
-				@click="handleDefault_expanded"
-			></i>
-			<i
-				class="el-icon-refresh"
-				v-if="!loading"
-				@click="loadDataBase"
-			></i>
+			<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
+			<i class="el-icon-refresh" v-if="!loading" @click="loadDataBase"></i>
 			<i class="el-icon-loading" v-if="loading"></i>
 		</div>
-		<div
-			class="treeBox"
-			v-loading="loading"
-			:element-loading-text="$t('dataFlow.dataLoading')"
-		>
+		<div class="treeBox" v-loading="loading" :element-loading-text="$t('dataFlow.dataLoading')">
 			<el-tree
 				:data="data"
 				:props="props"
@@ -36,21 +25,14 @@
 					<span @dblclick="handleGraph(data)">
 						<span
 							v-if="data.meta_type !== 'database'"
-							:class="
-								`iconfont filter-icon-table ${
-									mapping[data.meta_type]
-								}`
-							"
+							:class="`iconfont filter-icon-table ${mapping[data.meta_type]}`"
 						></span>
 						<!--					<span v-if="['database'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>-->
 						<span
 							v-if="
-								[
-									'database',
-									'directory',
-									'ftp',
-									'apiendpoint'
-								].includes(data.meta_type)
+								['database', 'directory', 'ftp', 'apiendpoint'].includes(
+									data.meta_type
+								)
 							"
 							:class="
 								`iconfont filter-icon-table ${
@@ -184,13 +166,9 @@ export default {
 				return resolve([]);
 			}
 			if (
-				[
-					"dummy db",
-					"gridfs",
-					"file",
-					"elasticsearch",
-					"rest api"
-				].includes(node.data.source.database_type)
+				["dummy db", "gridfs", "file", "elasticsearch", "rest api"].includes(
+					node.data.source.database_type
+				)
 			) {
 				return resolve([]);
 			}
@@ -221,8 +199,7 @@ export default {
 									expanded: true,
 									leaf: true,
 									meta_type: record.meta_type,
-									database_type:
-										record.source.database_type || "",
+									database_type: record.source.database_type || "",
 									original_name: record.original_name || "",
 									fields: record.fields
 								});
@@ -268,13 +245,9 @@ export default {
 			if (data.meta_type === "database") {
 				if (
 					data.source.database_type &&
-					[
-						"dummy db",
-						"gridfs",
-						"file",
-						"elasticsearch",
-						"rest api"
-					].includes(data.source.database_type)
+					["dummy db", "gridfs", "file", "elasticsearch", "rest api"].includes(
+						data.source.database_type
+					)
 				) {
 					formData = {
 						connectionId: data.source._id,
@@ -287,11 +260,7 @@ export default {
 						name: data.source.name || data.label
 					};
 				}
-			} else if (
-				["table", "view", "collection", "mongo_view"].includes(
-					data.meta_type
-				)
-			) {
+			} else if (["table", "view", "collection", "mongo_view"].includes(data.meta_type)) {
 				let primaryKeys = "";
 				if (data.fields) {
 					primaryKeys = data.fields
@@ -301,8 +270,7 @@ export default {
 
 					data.fields.forEach(
 						item =>
-							(item.original_field_name =
-								item.original_field_name || item.field_name)
+							(item.original_field_name = item.original_field_name || item.field_name)
 					);
 				}
 				log("primaryKeys", primaryKeys);
@@ -326,47 +294,24 @@ export default {
 
 			this.count = this.count + 50;
 			let cell = "";
-			if (
-				["database", "directory", "ftp", "apiendpoint"].includes(
-					data.meta_type
-				)
-			) {
+			if (["database", "directory", "ftp", "apiendpoint"].includes(data.meta_type)) {
 				if (
 					data.source.database_type &&
-					[
-						"dummy db",
-						"gridfs",
-						"file",
-						"elasticsearch",
-						"rest api"
-					].includes(data.source.database_type)
+					["dummy db", "gridfs", "file", "elasticsearch", "rest api"].includes(
+						data.source.database_type
+					)
 				) {
 					let dataType = data.source.database_type;
-					cell = this.editor.graph.createCell(
-						mapping[dataType],
-						formData,
-						schema
-					);
+					cell = this.editor.graph.createCell(mapping[dataType], formData, schema);
 				} else {
-					cell = this.editor.graph.createCell(
-						mapping[data.meta_type],
-						formData,
-						schema
-					);
+					cell = this.editor.graph.createCell(mapping[data.meta_type], formData, schema);
 				}
 			} else {
-				cell = this.editor.graph.createCell(
-					mapping[data.meta_type],
-					formData,
-					schema
-				);
+				cell = this.editor.graph.createCell(mapping[data.meta_type], formData, schema);
 			}
 
 			let coordinates = this.editor.graph.getClientOffset();
-			cell.position(
-				coordinates.x + 400,
-				coordinates.y + this.count + 160
-			);
+			cell.position(coordinates.x + 400, coordinates.y + this.count + 160);
 			this.editor.graph.addCell(cell);
 		}
 	}

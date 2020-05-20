@@ -22,19 +22,14 @@
 					<el-select
 						filterable
 						v-model="model.connectionId"
-						:placeholder="
-							$t(
-								'editor.cell.data_node.database.form.placeholder'
-							)
-						"
+						:placeholder="$t('editor.cell.data_node.database.form.placeholder')"
 						size="mini"
 					>
 						<el-option
 							v-for="(item, idx) in databases"
 							:label="
-								`${item.name} (${$t(
-									'connection.status.' + item.status
-								) || item.status})`
+								`${item.name} (${$t('connection.status.' + item.status) ||
+									item.status})`
 							"
 							:value="item.id"
 							v-bind:key="idx"
@@ -44,28 +39,16 @@
 
 				<el-form-item
 					required
-					:label="
-						$t(
-							'editor.cell.data_node.collection.form.dropTable.label'
-						)
-					"
+					:label="$t('editor.cell.data_node.collection.form.dropTable.label')"
 					v-if="!isSourceDataNode"
 				>
 					<el-select v-model="model.dropTable" size="mini">
 						<el-option
-							:label="
-								$t(
-									'editor.cell.data_node.collection.form.dropTable.keep'
-								)
-							"
+							:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
 							:value="false"
 						></el-option>
 						<el-option
-							:label="
-								$t(
-									'editor.cell.data_node.collection.form.dropTable.remove'
-								)
-							"
+							:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
 							:value="true"
 						></el-option>
 					</el-select>
@@ -73,18 +56,15 @@
 
 				<div class="databaseInfo">
 					<span v-show="database_type">{{ database_type }}</span>
-					<span
-						v-show="database_host && database_type !== 'mongodb'"
-						>{{ database_host }}</span
-					>
-					<span
-						v-show="database_port && database_type !== 'mongodb'"
-						>{{ database_port }}</span
-					>
-					<span
-						v-show="database_type === 'mongodb' && database_uri"
-						>{{ database_uri }}</span
-					>
+					<span v-show="database_host && database_type !== 'mongodb'">{{
+						database_host
+					}}</span>
+					<span v-show="database_port && database_type !== 'mongodb'">{{
+						database_port
+					}}</span>
+					<span v-show="database_type === 'mongodb' && database_uri">{{
+						database_uri
+					}}</span>
 				</div>
 			</el-form>
 		</div>
@@ -106,18 +86,13 @@
 			<el-tabs class="e-tabs" v-model="activeName">
 				<el-tab-pane
 					:label="
-						$t('editor.cell.data_node.database.queueCopied') +
-							'(' +
-							tables.length +
-							')'
+						$t('editor.cell.data_node.database.queueCopied') + '(' + tables.length + ')'
 					"
 					name="first"
 				>
 					<div class="search">
 						<el-input
-							:placeholder="
-								$t('editor.cell.data_node.database.enterName')
-							"
+							:placeholder="$t('editor.cell.data_node.database.enterName')"
 							prefix-icon="el-icon-search"
 							clearable
 							v-model="search"
@@ -129,22 +104,14 @@
 							<el-input
 								clearable
 								v-model="model.table_prefix"
-								:placeholder="
-									$t(
-										'editor.cell.data_node.database.tablePrefix'
-									)
-								"
+								:placeholder="$t('editor.cell.data_node.database.tablePrefix')"
 							></el-input>
 						</el-col>
 						<el-col style="width: 50%">
 							<el-input
 								clearable
 								v-model="model.table_suffix"
-								:placeholder="
-									$t(
-										'editor.cell.data_node.database.tableSuffix'
-									)
-								"
+								:placeholder="$t('editor.cell.data_node.database.tableSuffix')"
 							></el-input>
 						</el-col>
 					</el-row>
@@ -166,13 +133,8 @@
 							<span class="tableName">{{ item.table_name }}</span>
 						</el-col>
 						<el-col :span="5" class="text-center">
-							<el-button
-								type="text"
-								@click="removeTable(item, index)"
-							>
-								{{
-									$t("editor.cell.data_node.database.remove")
-								}}
+							<el-button type="text" @click="removeTable(item, index)">
+								{{ $t("editor.cell.data_node.database.remove") }}
 							</el-button>
 						</el-col>
 					</el-row>
@@ -189,9 +151,7 @@
 				>
 					<div class="search">
 						<el-input
-							:placeholder="
-								$t('editor.cell.data_node.database.enterName')
-							"
+							:placeholder="$t('editor.cell.data_node.database.enterName')"
 							prefix-icon="el-icon-search"
 							clearable
 							v-model="removeSearch"
@@ -217,10 +177,7 @@
 							<span class="tableName">{{ item.table_name }}</span>
 						</el-col>
 						<el-col :span="5" class="text-center">
-							<el-button
-								type="text"
-								@click="undotble(item, index)"
-							>
+							<el-button type="text" @click="undotble(item, index)">
 								{{ $t("editor.cell.data_node.database.Undo") }}
 							</el-button>
 						</el-col>
@@ -267,9 +224,7 @@ export default {
 					{
 						required: true,
 						trigger: "blur",
-						message: this.$t(
-							"editor.cell.data_node.database.form.placeholder"
-						)
+						message: this.$t("editor.cell.data_node.database.form.placeholder")
 					}
 				]
 			},
@@ -291,10 +246,7 @@ export default {
 		computedTables() {
 			if (this.search) {
 				return this.tables.filter(
-					t =>
-						t.table_name
-							.toLowerCase()
-							.indexOf(this.search.toLowerCase()) >= 0
+					t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0
 				);
 			} else {
 				return this.tables;
@@ -303,10 +255,7 @@ export default {
 		computedRemoveTables() {
 			if (this.removeSearch) {
 				return this.removeTables.filter(
-					t =>
-						t.table_name
-							.toLowerCase()
-							.indexOf(this.removeSearch.toLowerCase()) >= 0
+					t => t.table_name.toLowerCase().indexOf(this.removeSearch.toLowerCase()) >= 0
 				);
 			} else {
 				return this.removeTables;
@@ -362,9 +311,7 @@ export default {
 		},
 		selectAllRemoveTables: {
 			handler() {
-				this.removeTables.forEach(
-					t => (t.checked = this.selectAllRemoveTables)
-				);
+				this.removeTables.forEach(t => (t.checked = this.selectAllRemoveTables));
 			}
 		}
 	},
@@ -372,9 +319,7 @@ export default {
 	methods: {
 		lookupDatabaseType() {
 			if (!this.model.connectionId) return;
-			let selectedDbs = this.databases.filter(
-				db => db.id === this.model.connectionId
-			);
+			let selectedDbs = this.databases.filter(db => db.id === this.model.connectionId);
 			if (selectedDbs && selectedDbs.length > 0) {
 				this.database_type = selectedDbs[0].database_type;
 			}
@@ -389,14 +334,9 @@ export default {
 			let self = this;
 			connections.get([connectionId]).then(result => {
 				if (result.data) {
-					let tables =
-						(result.data.schema && result.data.schema.tables) || [];
+					let tables = (result.data.schema && result.data.schema.tables) || [];
 					tables = tables.sort((t1, t2) =>
-						t1.table_name > t2.table_name
-							? 1
-							: t1.table_name === t2.table_name
-							? 0
-							: -1
+						t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
 					);
 					tables.forEach(item => {
 						let tableName = item.table_name;
@@ -424,11 +364,7 @@ export default {
 			this.tables.splice(idx, 1);
 			this.removeTables.push(item);
 			this.removeTables.sort((t1, t2) =>
-				t1.table_name > t2.table_name
-					? 1
-					: t1.table_name === t2.table_name
-					? 0
-					: -1
+				t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
 			);
 
 			if (this.model.excludeTables.indexOf(item.table_name) === -1) {
@@ -441,11 +377,7 @@ export default {
 			this.removeTables.splice(idx, 1);
 			this.tables.push(item);
 			this.tables.sort((t1, t2) =>
-				t1.table_name > t2.table_name
-					? 1
-					: t1.table_name === t2.table_name
-					? 0
-					: -1
+				t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
 			);
 
 			let index = this.model.excludeTables.indexOf(item.table_name);
@@ -486,9 +418,7 @@ export default {
 		getData() {
 			let result = _.cloneDeep(this.model);
 			if (result.connectionId) {
-				let database = this.databases.filter(
-					db => db.id === result.connectionId
-				);
+				let database = this.databases.filter(db => db.id === result.connectionId);
 
 				if (this.isSourceDataNode) {
 					delete result.dropTable;

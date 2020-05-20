@@ -11,8 +11,7 @@
 				>{{ $t("message.serviceCluMange") }}</el-menu-item
 			>
 			<el-menu-item index="2"
-				><i class="icon iconfont iconrizhi"></i
-				>{{ $t("message.statusLog") }}</el-menu-item
+				><i class="icon iconfont iconrizhi"></i>{{ $t("message.statusLog") }}</el-menu-item
 			>
 		</el-menu>
 		<!-- <el-select v-model="langType" class="changeLangType" size="mini" @change="changeLangType">

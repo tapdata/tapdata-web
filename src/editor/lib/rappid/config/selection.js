@@ -31,8 +31,7 @@ export const selectionConfig = {
 			attrs: {
 				".handle": {
 					"data-tooltip-class-name": "small",
-					"data-tooltip":
-						"Click and drag to rotate the selected elements",
+					"data-tooltip": "Click and drag to rotate the selected elements",
 					"data-tooltip-position": "right",
 					"data-tooltip-padding": 15
 				}
@@ -49,8 +48,7 @@ export const selectionConfig = {
 			attrs: {
 				".handle": {
 					"data-tooltip-class-name": "small",
-					"data-tooltip":
-						"Click and drag to resize the selected elements",
+					"data-tooltip": "Click and drag to resize the selected elements",
 					"data-tooltip-position": "left",
 					"data-tooltip-padding": 15
 				}

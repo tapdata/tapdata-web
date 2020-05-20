@@ -53,17 +53,13 @@ export const aggregateConfig = {
 				let groupFields = [];
 				let functionNames = [];
 				data.aggregations.forEach(stage => {
-					if (stage.groupByExpression)
-						groupFields.push(...stage.groupByExpression);
-					if (stage.aggExpression)
-						functionNames.push(stage.aggFunction);
+					if (stage.groupByExpression) groupFields.push(...stage.groupByExpression);
+					if (stage.aggExpression) functionNames.push(stage.aggFunction);
 				});
 
 				let fields = outputSchema.fields || [];
 				outputSchema.fields =
-					fields.filter(field =>
-						groupFields.includes(field.field_name)
-					) || [];
+					fields.filter(field => groupFields.includes(field.field_name)) || [];
 
 				functionNames.forEach(fnName => {
 					outputSchema.fields.push(
@@ -78,11 +74,7 @@ export const aggregateConfig = {
 						})
 					);
 				});
-				log(
-					"Aggregate.mergeOutputSchema",
-					_.cloneDeep(fields),
-					outputSchema
-				);
+				log("Aggregate.mergeOutputSchema", _.cloneDeep(fields), outputSchema);
 				return outputSchema;
 			},
 
@@ -112,23 +104,15 @@ export const aggregateConfig = {
 				data = data || this.getFormData();
 				let name = this.attr("label/text");
 				if (!data)
-					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.validate.none_setting"
-						)}`
-					);
+					throw new Error(`${name}: ${i18n.t("editor.cell.validate.none_setting")}`);
 
 				if (data.aggregations && data.aggregations.length === 0)
 					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.processor.aggregate.none_stage"
-						)}`
+						`${name}: ${i18n.t("editor.cell.processor.aggregate.none_stage")}`
 					);
 
 				if (!data.name)
-					throw new Error(
-						`${name}: ${i18n.t("editor.cell.validate.empty_name")}`
-					);
+					throw new Error(`${name}: ${i18n.t("editor.cell.validate.empty_name")}`);
 				let aggFunctionArr = [];
 				if (data.aggregations && data.aggregations.length > 0) {
 					data.aggregations.forEach(item => {
@@ -141,9 +125,7 @@ export const aggregateConfig = {
 							);
 						if (!item.groupByExpression)
 							throw new Error(
-								`${name}: ${i18n.t(
-									"editor.cell.processor.aggregate.none_group"
-								)}`
+								`${name}: ${i18n.t("editor.cell.processor.aggregate.none_group")}`
 							);
 						if (!item.aggExpression && item.aggFunction !== "COUNT")
 							throw new Error(
@@ -161,9 +143,7 @@ export const aggregateConfig = {
 				}
 				if (new Set(aggFunctionArr).size !== aggFunctionArr.length)
 					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.processor.aggregate.name_notRepeated"
-						)}`
+						`${name}: ${i18n.t("editor.cell.processor.aggregate.name_notRepeated")}`
 					);
 				return true;
 			}

@@ -23,12 +23,7 @@
 					:placeholder="$t('message.placeholderSelect')"
 					size="mini"
 				>
-					<el-option
-						v-for="item in nodeList"
-						:key="item"
-						:label="item"
-						:value="item"
-					>
+					<el-option v-for="item in nodeList" :key="item" :label="item" :value="item">
 					</el-option>
 				</el-select>
 			</el-form-item>
@@ -97,11 +92,7 @@ export default {
 	},
 
 	mounted() {
-		if (
-			this.dataFlow &&
-			this.dataFlow.stages &&
-			this.dataFlow.stages.length > 0
-		) {
+		if (this.dataFlow && this.dataFlow.stages && this.dataFlow.stages.length > 0) {
 			this.stageId = this.dataFlow.stages[0].id;
 		}
 		this.getStageTables();
@@ -152,10 +143,7 @@ export default {
 					if (res.status === 200 && res.statusText === "OK") {
 						if (res.data && res.data.data.length > 0) {
 							this.nodeList = res.data.data ? res.data.data : [];
-							if (
-								!this.selectTableName &&
-								this.nodeList.length > 0
-							) {
+							if (!this.selectTableName && this.nodeList.length > 0) {
 								this.selectTableName = this.nodeList[0];
 							} else {
 								this.selectTableName = "";

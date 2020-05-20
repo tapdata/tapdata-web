@@ -1,11 +1,5 @@
 <template>
-	<el-form
-		:model="ruleForm"
-		:rules="rules"
-		ref="ruleForm"
-		label-width="100px"
-		class="addServe"
-	>
+	<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="addServe">
 		<el-form-item
 			label="name"
 			prop="name"
@@ -37,10 +31,7 @@
 		</el-form-item>
 
 		<el-form-item label="arguements" prop="arguements">
-			<el-input
-				v-model="ruleForm.arguments"
-				placeholder="arguements"
-			></el-input>
+			<el-input v-model="ruleForm.arguments" placeholder="arguements"></el-input>
 		</el-form-item>
 	</el-form>
 </template>

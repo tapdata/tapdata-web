@@ -49,9 +49,7 @@ export default class Tab extends Component {
 
 		tab.id = self.generatorId();
 
-		let titleEl = $(
-			`<div class="e-tab-title">${tab.title || tab.opts.title}</div>`
-		);
+		let titleEl = $(`<div class="e-tab-title">${tab.title || tab.opts.title}</div>`);
 		let tabEl = $(`<div class="e-tab"></div>`);
 
 		titleEl.attr("data-target", `${tab.id}`);
@@ -77,18 +75,10 @@ export default class Tab extends Component {
 
 	select(tab) {
 		this.el.find(".active").removeClass("active");
-		let id = tab.id
-			? tab.id
-			: tab.target
-			? $(tab.target).data("target")
-			: "";
+		let id = tab.id ? tab.id : tab.target ? $(tab.target).data("target") : "";
 		if (id) {
-			this.el
-				.find(`>.e-tab-bar>.e-tab-title[data-target=${id}]`)
-				.addClass("active");
-			this.el
-				.find(`>.e-tab-content>.e-tab[data-value=${id}]`)
-				.addClass("active");
+			this.el.find(`>.e-tab-bar>.e-tab-title[data-target=${id}]`).addClass("active");
+			this.el.find(`>.e-tab-content>.e-tab[data-value=${id}]`).addClass("active");
 		}
 		this.childs.forEach(child => (child.selected = child === tab));
 		this.emit(EditorEventType.SELECTED, tab);
@@ -98,9 +88,7 @@ export default class Tab extends Component {
 		super.remove(child);
 		let id = child.id;
 		if (id) {
-			this.el
-				.find(`>.e-tab-bar>.e-tab-title[data-target=${id}]`)
-				.remove();
+			this.el.find(`>.e-tab-bar>.e-tab-title[data-target=${id}]`).remove();
 			this.el.find(`>.e-tab-content>.e-tab[data-value=${id}]`).remove();
 		}
 		if (this.childs.length > 0) {

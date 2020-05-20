@@ -1,9 +1,5 @@
 <template>
-	<div
-		class="e-schema-editor"
-		:style="width > 0 ? `width: ${width}px;` : ''"
-		ref="entityDom"
-	>
+	<div class="e-schema-editor" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom">
 		<el-container>
 			<el-header height="20">
 				<!--{{schema ? schema.name : ''}}-->
@@ -40,15 +36,10 @@
 					<span class="custom-tree-node" slot-scope="{ node, data }">
 						<span
 							class="e-triangle"
-							:style="
-								`border-bottom-color: ${data.color || '#ddd'};`
-							"
+							:style="`border-bottom-color: ${data.color || '#ddd'};`"
 						></span>
 
-						<span
-							class="e-port e-port-in"
-							:data-id="getId(data)"
-						></span>
+						<span class="e-port e-port-in" :data-id="getId(data)"></span>
 
 						<!--<span class="e-label" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 ">-->
 						<!--<span class="e-pk">{{ data.primary_key_position > 0 ? 'PK' : '' }}</span>-->
@@ -59,8 +50,7 @@
 						<span
 							class="e-label"
 							:class="{
-								activename:
-									isRename(data.id) || isCreate(data.id)
+								activename: isRename(data.id) || isCreate(data.id)
 							}"
 						>
 							<el-input
@@ -88,65 +78,40 @@
 							<el-option
 								value="String"
 								label="String"
-								v-if="
-									isCreate(data.id) ||
-										!['Map', 'Array'].includes(data.type)
-								"
+								v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
 							></el-option>
 							<el-option
 								value="Integer"
 								label="Integer"
-								v-if="
-									isCreate(data.id) ||
-										!['Map', 'Array'].includes(data.type)
-								"
+								v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
 							></el-option>
 							<el-option
 								value="Double"
 								label="Double"
-								v-if="
-									isCreate(data.id) ||
-										!['Map', 'Array'].includes(data.type)
-								"
+								v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
 							></el-option>
 							<el-option
 								value="Float"
 								label="Float"
-								v-if="
-									isCreate(data.id) ||
-										!['Map', 'Array'].includes(data.type)
-								"
+								v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
 							></el-option>
 							<el-option
 								value="BigDecimal"
 								label="BigDecimal"
-								v-if="
-									isCreate(data.id) ||
-										!['Map', 'Array'].includes(data.type)
-								"
+								v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
 							></el-option>
 							<el-option
 								value="Long"
 								label="Long"
-								v-if="
-									isCreate(data.id) ||
-										!['Map', 'Array'].includes(data.type)
-								"
+								v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
 							></el-option>
 							<el-option
 								value="Short"
 								label="Short"
-								v-if="
-									isCreate(data.id) ||
-										!['Map', 'Array'].includes(data.type)
-								"
+								v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
 							></el-option>
 
-							<el-option
-								value="Map"
-								label="Map"
-								v-if="isCreate(data.id)"
-							></el-option>
+							<el-option value="Map" label="Map" v-if="isCreate(data.id)"></el-option>
 							<el-option
 								value="Array"
 								label="Array"
@@ -165,24 +130,18 @@
 							size="mini"
 							:show-timeout="10"
 							:hide-on-click="false"
-							@command="
-								command => handleCreate(command, node, data)
-							"
+							@command="command => handleCreate(command, node, data)"
 						>
 							<span
 								class="e-field-action el-icon-plus"
-								@click="
-									handleCreate('create_sibling', node, data)
-								"
+								@click="handleCreate('create_sibling', node, data)"
 							></span>
 							<el-dropdown-menu slot="dropdown">
 								<el-dropdown-item
 									command="create_sibling"
 									icon="iconfont icon-create_sibling_node"
 									>{{
-										$t(
-											"editor.cell.processor.field.form.addField"
-										)
+										$t("editor.cell.processor.field.form.addField")
 									}}</el-dropdown-item
 								>
 								<el-dropdown-item
@@ -190,9 +149,7 @@
 									icon="iconfont icon-create_child_node"
 									v-if="['Map', 'Array'].includes(data.type)"
 									>{{
-										$t(
-											"editor.cell.processor.field.form.addEmbedField"
-										)
+										$t("editor.cell.processor.field.form.addEmbedField")
 									}}</el-dropdown-item
 								>
 							</el-dropdown-menu>
@@ -200,10 +157,7 @@
 
 						<el-button
 							type="text"
-							v-if="
-								isRemove(data.id) ||
-									['Array', 'Map'].includes(data.type)
-							"
+							v-if="isRemove(data.id) || ['Array', 'Map'].includes(data.type)"
 							class=" e-field-action iconfont icon-script"
 							disabled
 						></el-button>
@@ -244,10 +198,7 @@
 							@click="handleReset(node, data)"
 						></span>
 
-						<span
-							class="e-port e-port-out"
-							:data-id="getId(data)"
-						></span>
+						<span class="e-port e-port-out" :data-id="getId(data)"></span>
 					</span>
 				</el-tree>
 			</el-main>
@@ -267,23 +218,16 @@
 		>
 			<el-form>
 				<el-form-item>
-					<el-input
-						type="textarea"
-						v-model="scriptDialog.script"
-						rows="10"
-					></el-input>
+					<el-input type="textarea" v-model="scriptDialog.script" rows="10"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="scriptDialog.open = false" size="mini">{{
 					$t("message.cancel")
 				}}</el-button>
-				<el-button
-					@click="scriptDialog.fn"
-					type="primary"
-					size="mini"
-					>{{ $t("message.confirm") }}</el-button
-				>
+				<el-button @click="scriptDialog.fn" type="primary" size="mini">{{
+					$t("message.confirm")
+				}}</el-button>
 			</div>
 		</el-dialog>
 	</div>
@@ -378,21 +322,15 @@ export default {
 			this.model.scripts = scripts;
 		},
 		isRemove(id) {
-			let ops = this.model.operations.filter(
-				v => v.id === id && v.op === "REMOVE"
-			);
+			let ops = this.model.operations.filter(v => v.id === id && v.op === "REMOVE");
 			return ops && ops.length > 0;
 		},
 		isRename(id) {
-			let ops = this.model.operations.filter(
-				v => v.id === id && v.op === "RENAME"
-			);
+			let ops = this.model.operations.filter(v => v.id === id && v.op === "RENAME");
 			return ops && ops.length > 0;
 		},
 		isConvertDataType(id) {
-			let ops = this.model.operations.filter(
-				v => v.id === id && v.op === "CONVERT"
-			);
+			let ops = this.model.operations.filter(v => v.id === id && v.op === "CONVERT");
 			return ops && ops.length > 0;
 		},
 		isScript(id) {
@@ -400,9 +338,7 @@ export default {
 			return scripts && scripts.length > 0;
 		},
 		isCreate(id) {
-			let ops = this.model.operations.filter(
-				v => v.id === id && v.op === "CREATE"
-			);
+			let ops = this.model.operations.filter(v => v.id === id && v.op === "CREATE");
 			return ops && ops.length > 0;
 		},
 
@@ -413,9 +349,7 @@ export default {
 		getOutPortByField(node) {
 			if (!node) return null;
 			let id = this.getId(node);
-			return $(this.$refs.entityDom).find(
-				`.e-port-out[data-id=${id}]`
-			)[0];
+			return $(this.$refs.entityDom).find(`.e-port-out[data-id=${id}]`)[0];
 		},
 		getInPortByField(node) {
 			if (!node) return null;
@@ -440,10 +374,7 @@ export default {
 			return type !== "inner";
 		},
 		allowDrag(draggingNode) {
-			return (
-				draggingNode.data.children &&
-				draggingNode.data.children.length > 0
-			);
+			return draggingNode.data.children && draggingNode.data.children.length > 0;
 		},
 		getNativeData(fields, id) {
 			let field = null;
@@ -473,13 +404,8 @@ export default {
 				let op = createOps[0];
 				op.javaType = data.type;
 			} else {
-				let nativeData = this.getNativeData(
-					this.originalSchema.fields,
-					data.id
-				);
-				let ops = this.model.operations.filter(
-					v => v.id === data.id && v.op === "CONVERT"
-				);
+				let nativeData = this.getNativeData(this.originalSchema.fields, data.id);
+				let ops = this.model.operations.filter(v => v.id === data.id && v.op === "CONVERT");
 				let op;
 				if (ops.length === 0) {
 					op = Object.assign(_.cloneDeep(CONVERT_OPS_TPL), {
@@ -510,10 +436,7 @@ export default {
 				fieldNames[level] = data.label;
 				op.field = fieldNames.join(".");
 			} else {
-				let nativeData = this.getNativeData(
-					this.originalSchema.fields,
-					data.id
-				);
+				let nativeData = this.getNativeData(this.originalSchema.fields, data.id);
 				log(
 					"Entity1.handlerRename(node,data,nativeData,operations)",
 					node,
@@ -551,8 +474,7 @@ export default {
 				v => v.id === data.id && v.op === "CREATE"
 			);
 			if (createOpsIndex >= 0) {
-				let fieldName =
-					this.model.operations[createOpsIndex].field_name + ".";
+				let fieldName = this.model.operations[createOpsIndex].field_name + ".";
 				this.model.operations.splice(createOpsIndex, 1);
 
 				for (let i = 0; i < this.model.operations.length; i++) {
@@ -568,10 +490,7 @@ export default {
 				}
 				this.$refs.tree.remove(node);
 			} else {
-				let originalField = this.getNativeData(
-					this.originalSchema.fields,
-					data.id
-				);
+				let originalField = this.getNativeData(this.originalSchema.fields, data.id);
 				let self = this;
 
 				let fn = function(field) {
@@ -626,19 +545,13 @@ export default {
 		handleReset(node, data) {
 			log("SchemaEditor.handleReset", node, data);
 			let parentId = node.parent.data.id;
-			let indexId = this.model.operations.filter(
-				v => v.op === "REMOVE" && v.id === parentId
-			);
+			let indexId = this.model.operations.filter(v => v.op === "REMOVE" && v.id === parentId);
 			if (parentId && indexId.length !== 0) {
 				return;
 			}
 			let self = this;
 			let fn = function(node, data) {
-				for (
-					let i = 0, length = node.childNodes.length;
-					i < node.childNodes.length;
-					i++
-				) {
+				for (let i = 0, length = node.childNodes.length; i < node.childNodes.length; i++) {
 					let childNode = node.childNodes[i];
 					fn(childNode, childNode.data);
 					if (node.childNodes.length !== length) {
@@ -646,10 +559,7 @@ export default {
 					}
 				}
 
-				let nativeData = self.getNativeData(
-					self.originalSchema.fields,
-					data.id
-				);
+				let nativeData = self.getNativeData(self.originalSchema.fields, data.id);
 				for (let i = 0; i < self.model.operations.length; i++) {
 					if (self.model.operations[i].id === data.id) {
 						let ops = self.model.operations[i];
@@ -693,8 +603,7 @@ export default {
 			let fieldName = node.data && node.data.label ? node.data.label : "";
 			if (node.level > 1 && node.parent && node.parent.data) {
 				let parentFieldName = this.getParentFieldName(node.parent);
-				if (parentFieldName)
-					fieldName = parentFieldName + "." + fieldName;
+				if (parentFieldName) fieldName = parentFieldName + "." + fieldName;
 			}
 			return fieldName;
 		},
@@ -719,9 +628,7 @@ export default {
 
 			let fieldId = uuid();
 			let newFieldOperation = Object.assign(_.cloneDeep(CREATE_OPS_TPL), {
-				field: parentFieldName
-					? parentFieldName + ".newFieldName"
-					: "newFieldName",
+				field: parentFieldName ? parentFieldName + ".newFieldName" : "newFieldName",
 				tableName: data.table_name,
 				javaType: "String",
 				id: fieldId,
@@ -746,8 +653,7 @@ export default {
 				let parentData = parentNode.data;
 
 				this.$refs.tree.insertAfter(newNodeData, node);
-				if (!["Array", "Map"].includes(parentData.type))
-					parentData.type = "Map";
+				if (!["Array", "Map"].includes(parentData.type)) parentData.type = "Map";
 			} else if (action === "create_child") {
 				this.$refs.tree.append(newNodeData, node);
 				if (!["Array", "Map"].includes(data.type)) data.type = "Map";
@@ -763,9 +669,7 @@ export default {
 		handleScript(node, data) {
 			let self = this;
 
-			let fieldName = (self.scriptDialog.fieldName = self.getParentFieldName(
-				node
-			));
+			let fieldName = (self.scriptDialog.fieldName = self.getParentFieldName(node));
 			let tableName = (self.scriptDialog.tableName = data.table_name);
 			let id = data.id;
 
@@ -790,13 +694,7 @@ export default {
 					self.model.scripts.push(script);
 				}
 
-				log(
-					"SchemaEditor.handleScript",
-					node,
-					data,
-					script,
-					self.model.scripts
-				);
+				log("SchemaEditor.handleScript", node, data, script, self.model.scripts);
 
 				self.scriptDialog.open = false;
 				self.scriptDialog.fn = function() {};

@@ -30,20 +30,12 @@
 						v-for="(element, i) in waterfallData"
 						:key="i"
 					>
-						<div
-							class="grid-content listBox"
-							v-for="item in element"
-							:key="item.ip"
-						>
+						<div class="grid-content listBox" v-for="item in element" :key="item.ip">
 							<div class="boxTop">
 								<div class="fl" style="width: 60%;">
 									<i
 										class="circular"
-										:class="
-											item.status !== 'running'
-												? 'bgred'
-												: 'bggreen'
-										"
+										:class="item.status !== 'running' ? 'bgred' : 'bggreen'"
 									></i>
 									<h2 class="name">
 										{{ item.systemInfo.hostname }}
@@ -58,9 +50,7 @@
 										size="mini"
 										class="fr addBtn"
 										@click="addServeFn(item)"
-										>{{
-											$t("message.addServerMon")
-										}}</el-button
+										>{{ $t("message.addServerMon") }}</el-button
 									>
 								</div>
 								<!--  -->
@@ -69,17 +59,14 @@
 								<el-row :gutter="20" class="data-list">
 									<el-col :span="8">
 										<span class="txt"
-											><i
-												class="icon iconfont iconhoutai"
-											></i
+											><i class="icon iconfont iconhoutai"></i
 											>{{ $t("message.manageSys") }}</span
 										>
 									</el-col>
 									<el-col :span="4">
 										<span
 											:class="
-												item.management.status ==
-												'stopped'
+												item.management.status == 'stopped'
 													? 'red'
 													: 'green'
 											"
@@ -90,14 +77,12 @@
 										<div class="btn fr">
 											<el-button
 												:type="
-													item.management.status ==
-													'stopped'
+													item.management.status == 'stopped'
 														? 'primary'
 														: 'info'
 												"
 												:disabled="
-													item.management.status ==
-													'stopped'
+													item.management.status == 'stopped'
 														? false
 														: true
 												"
@@ -109,20 +94,16 @@
 														'start'
 													)
 												"
-												>{{
-													$t("message.startUp")
-												}}</el-button
+												>{{ $t("message.startUp") }}</el-button
 											>
 											<el-button
 												:type="
-													item.management.status ==
-													'running'
+													item.management.status == 'running'
 														? 'danger'
 														: 'info'
 												"
 												:disabled="
-													item.management.status ==
-													'running'
+													item.management.status == 'running'
 														? false
 														: true
 												"
@@ -134,15 +115,12 @@
 														'stop'
 													)
 												"
-												>{{
-													$t("message.close")
-												}}</el-button
+												>{{ $t("message.close") }}</el-button
 											>
 											<el-button
 												type="text"
 												:disabled="
-													item.management.status ==
-													'running'
+													item.management.status == 'running'
 														? false
 														: true
 												"
@@ -154,9 +132,7 @@
 														'restart'
 													)
 												"
-												>{{
-													$t("message.restart")
-												}}</el-button
+												>{{ $t("message.restart") }}</el-button
 											>
 										</div>
 									</el-col>
@@ -164,18 +140,14 @@
 								<el-row :gutter="20" class="data-list">
 									<el-col :span="8">
 										<span class="txt"
-											><i
-												class="icon iconfont icontongbu"
-											></i
+											><i class="icon iconfont icontongbu"></i
 											>{{ $t("message.syncGover") }}</span
 										>
 									</el-col>
 									<el-col :span="4">
 										<span
 											:class="
-												item.engine.status == 'stopped'
-													? 'red'
-													: 'green'
+												item.engine.status == 'stopped' ? 'red' : 'green'
 											"
 											>{{ item.engine.status }}</span
 										>
@@ -184,70 +156,37 @@
 										<div class="btn fr">
 											<el-button
 												:type="
-													item.engine.status ==
-													'stopped'
+													item.engine.status == 'stopped'
 														? 'primary'
 														: 'info'
 												"
 												:disabled="
-													item.engine.status ==
-													'stopped'
-														? false
-														: true
+													item.engine.status == 'stopped' ? false : true
 												"
-												@click="
-													startFn(
-														item,
-														item.engine.status,
-														'engine'
-													)
-												"
-												>{{
-													$t("message.startUp")
-												}}</el-button
+												@click="startFn(item, item.engine.status, 'engine')"
+												>{{ $t("message.startUp") }}</el-button
 											>
 											<el-button
 												:type="
-													item.engine.status ==
-													'running'
+													item.engine.status == 'running'
 														? 'danger'
 														: 'info'
 												"
 												:disabled="
-													item.engine.status ==
-													'running'
-														? false
-														: true
+													item.engine.status == 'running' ? false : true
 												"
-												@click="
-													closeFn(
-														item,
-														item.engine.status,
-														'engine'
-													)
-												"
-												>{{
-													$t("message.close")
-												}}</el-button
+												@click="closeFn(item, item.engine.status, 'engine')"
+												>{{ $t("message.close") }}</el-button
 											>
 											<el-button
 												type="text"
 												:disabled="
-													item.engine.status ==
-													'running'
-														? false
-														: true
+													item.engine.status == 'running' ? false : true
 												"
 												@click="
-													restartFn(
-														item,
-														item.engine.status,
-														'engine'
-													)
+													restartFn(item, item.engine.status, 'engine')
 												"
-												>{{
-													$t("message.restart")
-												}}</el-button
+												>{{ $t("message.restart") }}</el-button
 											>
 										</div>
 									</el-col>
@@ -255,19 +194,13 @@
 								<el-row :gutter="20" class="data-list">
 									<el-col :span="8">
 										<span class="txt"
-											><i
-												class="icon iconfont iconAPI"
-											></i
-											>API SEVER</span
+											><i class="icon iconfont iconAPI"></i>API SEVER</span
 										>
 									</el-col>
 									<el-col :span="4">
 										<span
 											:class="
-												item.apiServer.status ==
-												'stopped'
-													? 'red'
-													: 'green'
+												item.apiServer.status == 'stopped' ? 'red' : 'green'
 											"
 											>{{ item.apiServer.status }}</span
 										>
@@ -276,14 +209,12 @@
 										<div class="btn fr">
 											<el-button
 												:type="
-													item.apiServer.status ==
-													'stopped'
+													item.apiServer.status == 'stopped'
 														? 'primary'
 														: 'info'
 												"
 												:disabled="
-													item.apiServer.status ==
-													'stopped'
+													item.apiServer.status == 'stopped'
 														? false
 														: true
 												"
@@ -294,20 +225,16 @@
 														'apiServer'
 													)
 												"
-												>{{
-													$t("message.startUp")
-												}}</el-button
+												>{{ $t("message.startUp") }}</el-button
 											>
 											<el-button
 												:type="
-													item.apiServer.status ==
-													'running'
+													item.apiServer.status == 'running'
 														? 'danger'
 														: 'info'
 												"
 												:disabled="
-													item.apiServer.status ==
-													'running'
+													item.apiServer.status == 'running'
 														? false
 														: true
 												"
@@ -318,15 +245,12 @@
 														'apiServer'
 													)
 												"
-												>{{
-													$t("message.close")
-												}}</el-button
+												>{{ $t("message.close") }}</el-button
 											>
 											<el-button
 												type="text"
 												:disabled="
-													item.apiServer.status ==
-													'running'
+													item.apiServer.status == 'running'
 														? false
 														: true
 												"
@@ -337,9 +261,7 @@
 														'apiServer'
 													)
 												"
-												>{{
-													$t("message.restart")
-												}}</el-button
+												>{{ $t("message.restart") }}</el-button
 											>
 										</div>
 									</el-col>
@@ -351,17 +273,12 @@
 									:key="child.id"
 								>
 									<el-col :span="7" :offset="1">
-										<span class="txt">{{
-											child.name
-										}}</span>
+										<span class="txt">{{ child.name }}</span>
 									</el-col>
 									<el-col :span="4">
 										<span
 											:class="
-												item.apiServer.status ==
-												'stopped'
-													? 'red'
-													: 'green'
+												item.apiServer.status == 'stopped' ? 'red' : 'green'
 											"
 											>{{ child.status }}</span
 										>
@@ -370,25 +287,13 @@
 										<div class="btn fr">
 											<el-button
 												type="text"
-												@click="
-													delServe(child, item.status)
-												"
-												>{{
-													$t("message.delete")
-												}}</el-button
+												@click="delServe(child, item.status)"
+												>{{ $t("message.delete") }}</el-button
 											>
 											<el-button
 												type="text"
-												@click="
-													editServe(
-														child,
-														item.status,
-														item
-													)
-												"
-												>{{
-													$t("message.edit")
-												}}</el-button
+												@click="editServe(child, item.status, item)"
+												>{{ $t("message.edit") }}</el-button
 											>
 										</div>
 									</el-col>
@@ -399,10 +304,7 @@
 				</el-row>
 			</div>
 			<div v-else class="noText">
-				<i
-					class="iconfont icon iconkongyemian_zanwuwendang"
-					style="font-size: 174px"
-				></i>
+				<i class="iconfont icon iconkongyemian_zanwuwendang" style="font-size: 174px"></i>
 			</div>
 		</div>
 		<el-dialog
@@ -414,21 +316,14 @@
 			width="600px"
 			@close="closeDialogForm()"
 		>
-			<addServe
-				:data="currentData"
-				:editItem="editItem"
-				ref="childRules"
-			></addServe>
+			<addServe :data="currentData" :editItem="editItem" ref="childRules"></addServe>
 			<div slot="footer" class="dialog-footer">
 				<el-button size="small" @click="closeDialogForm()">{{
 					$t("message.cancle")
 				}}</el-button>
-				<el-button
-					size="small"
-					type="primary"
-					@click="submitForm('ruleForm')"
-					>{{ $t("message.confirm") }}</el-button
-				>
+				<el-button size="small" type="primary" @click="submitForm('ruleForm')">{{
+					$t("message.confirm")
+				}}</el-button>
 			</div>
 		</el-dialog>
 	</div>
@@ -481,13 +376,9 @@ export default {
 							if (res.statusText === "OK" || res.status === 200) {
 								this.dialogForm = false;
 								this.getDataApi();
-								this.$message.success(
-									this.$t("message.saveOK")
-								);
+								this.$message.success(this.$t("message.saveOK"));
 							} else {
-								this.$message.error(
-									this.$t("message.saveFail")
-								);
+								this.$message.error(this.$t("message.saveFail"));
 							}
 							this.dialogForm = false;
 						});
@@ -497,13 +388,9 @@ export default {
 							if (res.statusText === "OK" || res.status === 200) {
 								this.dialogForm = false;
 								this.getDataApi();
-								this.$message.success(
-									this.$t("message.saveOK")
-								);
+								this.$message.success(this.$t("message.saveOK"));
 							} else {
-								this.$message.error(
-									this.$t("message.saveFail")
-								);
+								this.$message.error(this.$t("message.saveFail"));
 							}
 							this.dialogForm = false;
 						});
@@ -576,11 +463,7 @@ export default {
 					operation: "stop"
 				};
 				this.$confirm(
-					this.$t("message.confirm") +
-						" " +
-						name +
-						" " +
-						this.$t("message.closeSever"),
+					this.$t("message.confirm") + " " + name + " " + this.$t("message.closeSever"),
 					{
 						confirmButtonText: this.$t("message.confirm"),
 						cancelButtonText: this.$t("message.cancle")

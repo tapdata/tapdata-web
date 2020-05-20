@@ -105,16 +105,10 @@ export const databaseConfig = {
 				data = data || this.getFormData();
 				let name = this.attr("label/text");
 				if (!data)
-					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.validate.none_setting"
-						)}`
-					);
+					throw new Error(`${name}: ${i18n.t("editor.cell.validate.none_setting")}`);
 				if (!data.connectionId)
 					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.data_node.database.none_database"
-						)}`
+						`${name}: ${i18n.t("editor.cell.data_node.database.none_database")}`
 					);
 				return true;
 			},

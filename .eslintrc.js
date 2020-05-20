@@ -25,9 +25,10 @@ module.exports = {
 	rules: {
 		"prettier/prettier": "error",
 		// allow async-await
-    'generator-star-spacing': 'off',
-    'no-new': 'off',
+    	'generator-star-spacing': 'off',
+		'no-new': 'off',
+		'standard/computed-property-even-spacing': 0,
 		// allow debugger during development
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+    	'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
 	}
 };

@@ -2,19 +2,12 @@
 	<div class="task-list">
 		<div class="task-list-operating-area box-card">
 			<el-row :gutter="10">
-				<el-form
-					label-width="100px"
-					:data="formData"
-					:inline="true"
-					class="dataFlowsFlow"
-				>
+				<el-form label-width="100px" :data="formData" :inline="true" class="dataFlowsFlow">
 					<el-row>
 						<el-col :span="16">
 							<el-form-item>
 								<el-input
-									:placeholder="
-										$t('dataFlow.searchPlaceholder')
-									"
+									:placeholder="$t('dataFlow.searchPlaceholder')"
 									clearable
 									prefix-icon="el-icon-search"
 									v-model="formData.search"
@@ -35,9 +28,7 @@
 									v-model="formData.status"
 									size="mini"
 									clearable
-									:placeholder="
-										$t('dataFlow.taskStatusPlaceholder')
-									"
+									:placeholder="$t('dataFlow.taskStatusPlaceholder')"
 									style="width:160px"
 									@change="screenFn"
 								>
@@ -54,9 +45,7 @@
 									v-model="formData.way"
 									size="mini"
 									clearable
-									:placeholder="
-										$t('dataFlow.taskSettingPlaceholder')
-									"
+									:placeholder="$t('dataFlow.taskSettingPlaceholder')"
 									style="width:160px"
 									@change="screenFn"
 								>
@@ -72,25 +61,17 @@
 								<el-button
 									class="back-btn-icon-box dv-btn-icon"
 									@click="handleClear"
-									><i
-										class="iconfont icon-shuaxin1 back-btn-icon"
-									></i
+									><i class="iconfont icon-shuaxin1 back-btn-icon"></i
 								></el-button>
 							</el-form-item>
 						</el-col>
 						<div class="task-list-menu-right">
-							<el-button
-								class="back-btn-icon-box dv-btn-icon"
-								@click="handleImport"
-								><i
-									class="iconfont icon-daoru back-btn-icon"
-								></i
+							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleImport"
+								><i class="iconfont icon-daoru back-btn-icon"></i
 							></el-button>
 							<el-dropdown @command="handleCommand">
 								<el-button class="back-btn-icon-box dv-btn-icon"
-									><i
-										class="iconfont icon-piliang back-btn-icon"
-									></i
+									><i class="iconfont icon-piliang back-btn-icon"></i
 								></el-button>
 								<el-dropdown-menu slot="dropdown">
 									<el-dropdown-item command="a">{{
@@ -110,9 +91,7 @@
 
 							<router-link target="_blank" to="/job">
 								<el-button class="add-btn-icon-box"
-									><i
-										class="iconfont icon-jia add-btn-icon"
-									></i
+									><i class="iconfont icon-jia add-btn-icon"></i
 								></el-button>
 							</router-link>
 						</div>
@@ -152,14 +131,9 @@
 				@selection-change="handleSelectionChange"
 				:default-sort="{ prop: 'createTime', order: 'descending' }"
 			>
-				<el-table-column
-					type="selection"
-					width="45"
-					:selectable="handleSelectable"
-				>
+				<el-table-column type="selection" width="45" :selectable="handleSelectable">
 				</el-table-column>
-				<el-table-column prop="name" :label="$t('dataFlow.taskName')">
-				</el-table-column>
+				<el-table-column prop="name" :label="$t('dataFlow.taskName')"> </el-table-column>
 				<!--				<el-table-column sortable='custom' :label="$t('dataFlow.creatdor')" width="180"></el-table-column>-->
 				<el-table-column
 					prop="status"
@@ -212,12 +186,7 @@
 								v-model="scope.row.newStatus"
 								inactive-value="stopping"
 								active-value="scheduled"
-								@change="
-									handleStatus(
-										scope.row.id,
-										scope.row.newStatus
-									)
-								"
+								@change="handleStatus(scope.row.id, scope.row.newStatus)"
 							></el-switch>
 						</div>
 					</template>
@@ -232,16 +201,10 @@
 							>
 								<el-button
 									type="text"
-									:disabled="
-										['draft', 'paused'].includes(
-											scope.row.status
-										)
-									"
+									:disabled="['draft', 'paused'].includes(scope.row.status)"
 									@click="handleDetail(scope.row.id)"
 								>
-									<i
-										class="iconfont  task-list-icon icon-chaxun"
-									></i>
+									<i class="iconfont  task-list-icon icon-chaxun"></i>
 								</el-button>
 							</el-tooltip>
 							<el-tooltip
@@ -261,9 +224,7 @@
 									"
 									@click="handleDetail(scope.row.id)"
 								>
-									<i
-										class="iconfont  task-list-icon  icon-ceshishenqing"
-									></i>
+									<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
 								</el-button>
 							</el-tooltip>
 							<el-tooltip
@@ -283,33 +244,20 @@
 									"
 									@click="handleDelete(scope.row.id)"
 								>
-									<i
-										class="iconfont task-list-icon icon-shanchu"
-									></i>
+									<i class="iconfont task-list-icon icon-shanchu"></i>
 								</el-button>
 							</el-tooltip>
-							<el-dropdown
-								@command="handleRowCommand"
-								class="item"
-							>
+							<el-dropdown @command="handleRowCommand" class="item">
 								<el-button type="text"
-									><i
-										class="iconfont icon-gengduo3  task-list-icon"
-									></i
+									><i class="iconfont icon-gengduo3  task-list-icon"></i
 								></el-button>
 								<el-dropdown-menu slot="dropdown">
-									<el-dropdown-item
-										:command="'export' + scope.row.id"
-										>{{
-											$t("dataFlow.dataFlowExport")
-										}}</el-dropdown-item
-									>
-									<el-dropdown-item
-										:command="'copy' + scope.row.id"
-										>{{
-											$t("dataFlow.copy")
-										}}</el-dropdown-item
-									>
+									<el-dropdown-item :command="'export' + scope.row.id">{{
+										$t("dataFlow.dataFlowExport")
+									}}</el-dropdown-item>
+									<el-dropdown-item :command="'copy' + scope.row.id">{{
+										$t("dataFlow.copy")
+									}}</el-dropdown-item>
 									<el-dropdown-item
 										:disabled="
 											[
@@ -320,18 +268,11 @@
 											].includes(scope.row.status)
 										"
 										:command="'reset' + scope.row.id"
-										>{{
-											$t("dataFlow.reset")
-										}}</el-dropdown-item
+										>{{ $t("dataFlow.reset") }}</el-dropdown-item
 									>
-									<el-dropdown-item
-										:command="
-											'force_stopping' + scope.row.id
-										"
-										>{{
-											$t("dataFlow.status.force_stopping")
-										}}</el-dropdown-item
-									>
+									<el-dropdown-item :command="'force_stopping' + scope.row.id">{{
+										$t("dataFlow.status.force_stopping")
+									}}</el-dropdown-item>
 								</el-dropdown-menu>
 							</el-dropdown>
 						</div>
@@ -386,9 +327,7 @@ export default {
 					value: "cdc"
 				},
 				{
-					label:
-						this.$t("dataFlow.initial_sync") +
-						this.$t("dataFlow.cdc"),
+					label: this.$t("dataFlow.initial_sync") + this.$t("dataFlow.cdc"),
 					value: "initial_sync+cdc"
 				}
 			],
@@ -557,10 +496,7 @@ export default {
 						}
 					];
 				}
-				if (
-					this.formData.timeData &&
-					this.formData.timeData.length !== 0
-				) {
+				if (this.formData.timeData && this.formData.timeData.length !== 0) {
 					let dates = _.cloneDeep(this.formData.timeData);
 					if (dates[1]) {
 						dates[1] = new Date(dates[1]);
@@ -617,12 +553,8 @@ export default {
 					: "stopping";
 				if (item.stats) {
 					item.hasChildren = false;
-					item.input = item.stats.input
-						? item.stats.input.rows
-						: "--";
-					item.output = item.stats.output
-						? item.stats.output.rows
-						: "--";
+					item.input = item.stats.input ? item.stats.input.rows : "--";
+					item.output = item.stats.output ? item.stats.output.rows : "--";
 					item.transmissionTime = item.stats.transmissionTime
 						? item.stats.transmissionTime
 						: "--";
@@ -634,9 +566,7 @@ export default {
 							let stage = "";
 							let node = {};
 							if (item.stats.stagesMetrics) {
-								stage = item.stats.stagesMetrics.filter(
-									v => k.id === v.stageId
-								);
+								stage = item.stats.stagesMetrics.filter(v => k.id === v.stageId);
 							}
 							if (stage.length === 0) {
 								node = {
@@ -692,15 +622,11 @@ export default {
 					in: multipleSelection
 				}
 			};
-			this.$confirm(
-				this.$t("message.deteleMessage"),
-				this.$t("message.prompt"),
-				{
-					confirmButtonText: this.$t("message.delete"),
-					cancelButtonText: this.$t("message.cancle"),
-					type: "warning"
-				}
-			)
+			this.$confirm(this.$t("message.deteleMessage"), this.$t("message.prompt"), {
+				confirmButtonText: this.$t("message.delete"),
+				cancelButtonText: this.$t("message.cancle"),
+				type: "warning"
+			})
 				.then(() => {
 					dataFlows.allDelete(where).then(res => {
 						if (res.statusText === "OK" || res.status === 200) {
@@ -714,15 +640,11 @@ export default {
 				});
 		},
 		handleDelete(id) {
-			this.$confirm(
-				this.$t("message.deteleMessage"),
-				this.$t("message.prompt"),
-				{
-					confirmButtonText: this.$t("message.delete"),
-					cancelButtonText: this.$t("message.cancle"),
-					type: "warning"
-				}
-			)
+			this.$confirm(this.$t("message.deteleMessage"), this.$t("message.prompt"), {
+				confirmButtonText: this.$t("message.delete"),
+				cancelButtonText: this.$t("message.cancle"),
+				type: "warning"
+			})
 				.then(() => {
 					dataFlows.delete(id).then(res => {
 						if (res.statusText === "OK" || res.status === 200) {
@@ -768,15 +690,11 @@ export default {
 			});
 		},
 		handleReset(id) {
-			this.$confirm(
-				this.$t("message.resetMessage"),
-				this.$t("message.prompt"),
-				{
-					confirmButtonText: this.$t("dataFlow.reset"),
-					cancelButtonText: this.$t("message.cancle"),
-					type: "warning"
-				}
-			)
+			this.$confirm(this.$t("message.resetMessage"), this.$t("message.prompt"), {
+				confirmButtonText: this.$t("dataFlow.reset"),
+				cancelButtonText: this.$t("message.cancle"),
+				type: "warning"
+			})
 				.then(() => {
 					// let attributes = {
 					// 	status: 'draft',

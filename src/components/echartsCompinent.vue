@@ -1,11 +1,6 @@
 <template>
 	<div class="echartBox">
-		<div
-			class="echarts"
-			:id="echartsId"
-			:echartObj="echartObj"
-			ref="echarts"
-		></div>
+		<div class="echarts" :id="echartsId" :echartObj="echartObj" ref="echarts"></div>
 	</div>
 </template>
 <script>
@@ -160,10 +155,7 @@ export default {
 					}, // 是否显示分隔线
 					splitArea: {
 						areaStyle: {
-							color: [
-								"rgba(250,250,250,0.3)",
-								"rgba(200,200,200,0.3)"
-							]
+							color: ["rgba(250,250,250,0.3)", "rgba(200,200,200,0.3)"]
 						}
 					},
 					axisLabel: {

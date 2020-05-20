@@ -46,20 +46,14 @@
 
 			<!-- running debug -->
 			<el-button
-				v-if="
-					['scheduled', 'running'].includes(status) &&
-						executeMode === 'normal'
-				"
+				v-if="['scheduled', 'running'].includes(status) && executeMode === 'normal'"
 				size="mini"
 				type="default"
 				@click="capture"
 				>{{ $t("dataFlow.button.capture") }}
 			</el-button>
 			<el-button
-				v-if="
-					['scheduled', 'running'].includes(status) &&
-						executeMode === 'running_debug'
-				"
+				v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
 				size="mini"
 				type="default"
 				@click="stopCapture"
@@ -67,20 +61,14 @@
 			</el-button>
 
 			<el-button
-				v-if="
-					dataFlowId !== null &&
-						['draft', 'paused', 'error'].includes(status)
-				"
+				v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
 				size="mini"
 				type="success"
 				@click="start"
 				>{{ $t("dataFlow.button.start") }}
 			</el-button>
 			<el-button
-				v-if="
-					dataFlowId !== null &&
-						['scheduled', 'running'].includes(status)
-				"
+				v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
 				size="mini"
 				type="danger"
 				@click="stop(false)"
@@ -96,12 +84,7 @@
 			<el-button
 				v-if="
 					dataFlowId !== null &&
-						![
-							'scheduled',
-							'running',
-							'stopping',
-							'force stopping'
-						].includes(status)
+						!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)
 				"
 				size="mini"
 				type="default"
@@ -109,14 +92,7 @@
 				>{{ $t("dataFlow.button.reset") }}
 			</el-button>
 			<el-button
-				v-if="
-					![
-						'scheduled',
-						'running',
-						'stopping',
-						'force stopping'
-					].includes(status)
-				"
+				v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
 				size="mini"
 				type="primary"
 				@click="save"
@@ -211,9 +187,7 @@ export default {
 						self.executeMode = dataFlow.executeMode;
 						self.dataFlow = dataFlow;
 						if (!dataFlow.editorData) {
-							let j = JSON.stringify(
-								this.creatApiEditorData(dataFlow.stages)
-							);
+							let j = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
 							dataFlow.editorData = j;
 							this.editor.reloadSchema();
 							this.editor.graph.layoutDirectedGraph();
@@ -223,11 +197,7 @@ export default {
 						//   dataFlow.editorData = j;
 						self.editor.setData(dataFlow);
 
-						if (
-							["scheduled", "running", "stopping"].includes(
-								self.status
-							)
-						) {
+						if (["scheduled", "running", "stopping"].includes(self.status)) {
 							self.setEditable(false);
 						}
 						if (self.executeMode !== "normal") {
@@ -252,8 +222,7 @@ export default {
 		polling() {
 			let self = this;
 			if (self.dataFlowId) {
-				if (!["scheduled", "running", "stopping"].includes(self.status))
-					return;
+				if (!["scheduled", "running", "stopping"].includes(self.status)) return;
 
 				dataFlowsApi
 					.get([self.dataFlowId], {
@@ -282,25 +251,14 @@ export default {
 							if (self.executeMode !== result.data.executeMode)
 								self.executeMode = result.data.executeMode;
 
-							if (
-								["scheduled", "running", "stopping"].includes(
-									newStatus
-								)
-							) {
-								if (self.timeoutId)
-									clearTimeout(self.timeoutId);
-								self.timeoutId = setTimeout(
-									self.polling.bind(self),
-									2000
-								);
+							if (["scheduled", "running", "stopping"].includes(newStatus)) {
+								if (self.timeoutId) clearTimeout(self.timeoutId);
+								self.timeoutId = setTimeout(self.polling.bind(self), 2000);
 							} else {
 								self.executeMode = "normal";
 							}
 							Object.assign(this.dataFlow, result.data);
-							self.editor.emit(
-								"dataFlow:updated",
-								_.cloneDeep(result.data)
-							);
+							self.editor.emit("dataFlow:updated", _.cloneDeep(result.data));
 						}
 					})
 					.catch(err => {
@@ -375,25 +333,14 @@ export default {
 						readCdcInterval: 500,
 						readBatchSize: 25000
 					});
-				} else if (
-					["app.Table", "app.Collection", "app.ESNode"].includes(
-						cell.type
-					)
-				) {
+				} else if (["app.Table", "app.Collection", "app.ESNode"].includes(cell.type)) {
 					postData.mappingTemplate = "custom";
 
 					Object.assign(stage, {
 						dataQualityTag: false,
 						joinTables: Object.values(edgeCells)
-							.filter(
-								edge =>
-									edge.target && edge.target.id === cell.id
-							)
-							.map(
-								edge =>
-									edge[FORM_DATA_KEY] &&
-									edge[FORM_DATA_KEY].joinTable
-							)
+							.filter(edge => edge.target && edge.target.id === cell.id)
+							.map(edge => edge[FORM_DATA_KEY] && edge[FORM_DATA_KEY].joinTable)
 					});
 				}
 			});
@@ -401,10 +348,8 @@ export default {
 				if (cell.type === "app.Link") {
 					let sourceId = cell.source.id;
 					let targetId = cell.target.id;
-					if (sourceId && stages[sourceId])
-						stages[sourceId].outputLanes.push(targetId);
-					if (targetId && stages[targetId])
-						stages[targetId].inputLanes.push(sourceId);
+					if (sourceId && stages[sourceId]) stages[sourceId].outputLanes.push(targetId);
+					if (targetId && stages[targetId]) stages[targetId].inputLanes.push(sourceId);
 				}
 			});
 			postData.stages = Object.values(stages);
@@ -422,9 +367,7 @@ export default {
 			log("Job.doSave", data);
 
 			const _doSave = function() {
-				let promise = data.id
-					? dataFlowsApi.patch(data)
-					: dataFlowsApi.post(data);
+				let promise = data.id ? dataFlowsApi.patch(data) : dataFlowsApi.post(data);
 
 				promise
 					.then(result => {
@@ -477,11 +420,7 @@ export default {
 					.count({ where: JSON.stringify(params) })
 					.then(result => {
 						if (result && result.data && result.data.count > 0) {
-							this.$message.error(
-								`${self.$t("message.exists_name")}: ${
-									data.name
-								}`
-							);
+							this.$message.error(`${self.$t("message.exists_name")}: ${data.name}`);
 							self.loading = false;
 						} else {
 							_doSave();
@@ -579,9 +518,7 @@ export default {
 				if (data.id) {
 					data = {
 						id: data.id,
-						status: ["scheduled", "running", "stopping"].includes(
-							data.status
-						)
+						status: ["scheduled", "running", "stopping"].includes(data.status)
 							? data.status
 							: "scheduled",
 						executeMode: "editing_debug"
@@ -812,11 +749,7 @@ export default {
 			// cells.push(node3);
 			if (data) {
 				data.map((v, index) => {
-					if (
-						["table", "view", "collection", "mongo_view"].includes(
-							v.type
-						)
-					) {
+					if (["table", "view", "collection", "mongo_view"].includes(v.type)) {
 						let node = {
 							type: mapping[v.type],
 							id: v.id,
@@ -843,13 +776,7 @@ export default {
 						cells.push(node);
 					} else if (
 						v.type &&
-						[
-							"dummy db",
-							"gridfs",
-							"file",
-							"elasticsearch",
-							"rest api"
-						].includes(v.type)
+						["dummy db", "gridfs", "file", "elasticsearch", "rest api"].includes(v.type)
 					) {
 						let node = {
 							type: mapping[v.type],

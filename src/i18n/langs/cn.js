@@ -99,8 +99,7 @@ const cn = {
 		totalInput: "总输入",
 		totalOutput: "总输出",
 		replicate: "数据同步差距",
-		throughputpop:
-			"平均每秒源端数据采集的速度以及目标端写入的速度，数值越大越好",
+		throughputpop: "平均每秒源端数据采集的速度以及目标端写入的速度，数值越大越好",
 		transtime_pop:
 			"传输耗时:除源节点外，事件处理完的时间减去事件的发生时间。 节点间统计:事件从进入节点到输出到所消耗的时间 任务流统计:所有节点耗时相加，数值越小越好",
 		replicate_pop: "源库和目标库数据最后更新时间的差距，数值越小越好",
@@ -275,8 +274,7 @@ const cn = {
 						},
 						filter: {
 							label: "过滤条件",
-							placeholder:
-								"过滤条件(Mongo Query Filter Document)",
+							placeholder: "过滤条件(Mongo Query Filter Document)",
 							invalidJSON: "无效的JSON"
 						}
 					}
@@ -422,8 +420,7 @@ const cn = {
 						expression: {
 							label: "条件表达式",
 							placeholder: "请输入表达式",
-							labelTip:
-								"表达式可以使用JavaScript中的比较符和计算符"
+							labelTip: "表达式可以使用JavaScript中的比较符和计算符"
 						},
 						action: {
 							label: "执行动作",
@@ -432,10 +429,8 @@ const cn = {
 						},
 						expressionExample: {
 							label: "表达式示例",
-							labelTip:
-								"表达式可以使用JavaScript中的比较符和计算符",
-							tip:
-								"筛选出50岁以上的男性以及收入一万以下的30岁以上的人,表达式如下："
+							labelTip: "表达式可以使用JavaScript中的比较符和计算符",
+							tip: "筛选出50岁以上的男性以及收入一万以下的30岁以上的人,表达式如下："
 						},
 						symbol: {
 							label: "支持的符号",

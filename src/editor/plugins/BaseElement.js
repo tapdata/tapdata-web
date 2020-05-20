@@ -132,31 +132,19 @@ export const baseElementConfig = {
 						verified = false;
 					}
 
-					log(
-						`${this.get("type")} validate form data`,
-						formData,
-						verified
-					);
+					log(`${this.get("type")} validate form data`, formData, verified);
 
 					self.attr("body/stroke", verified ? "#2196F3" : "#ff0000");
 					if (formData && formData.name) {
 						let name = formData.name;
 						let isDataNode =
-							typeof self.isDataNode === "function"
-								? self.isDataNode()
-								: false;
+							typeof self.isDataNode === "function" ? self.isDataNode() : false;
 						let isProcess =
-							typeof self.isProcess === "function"
-								? self.isProcess()
-								: false;
+							typeof self.isProcess === "function" ? self.isProcess() : false;
 						let width = isDataNode ? 125 : isProcess ? 95 : false;
 						if (width) {
 							name = self.breakText(name, width);
-							log(
-								`${this.get("type")} break text`,
-								formData.name,
-								name
-							);
+							log(`${this.get("type")} break text`, formData.name, name);
 						}
 						self.attr("label/text", name);
 					}
@@ -235,9 +223,7 @@ export const baseElementConfig = {
 
 						if (sourceCell) {
 							let formData = cell.getFormData() || {};
-							let joinTable = formData
-								? formData.joinTable
-								: null;
+							let joinTable = formData ? formData.joinTable : null;
 							let schema = sourceCell.getOutputSchema();
 
 							joinTable = joinTable
@@ -250,8 +236,7 @@ export const baseElementConfig = {
 									.filter(f => f.primary_key_position > 0)
 									.map(f => f.field_name)
 									.join(",");
-								joinTable.tableName =
-									schema && schema.table_name;
+								joinTable.tableName = schema && schema.table_name;
 								/* if( !joinTable.joinPath && ['merge_embed', 'update'].includes(joinTable.joinType)){
 										joinTable.joinPath = joinTable.tableName;
 									} */
@@ -261,14 +246,11 @@ export const baseElementConfig = {
 
 							joinTable.sourceSchema = schema;
 							let parentDataNodes =
-								typeof targetCell.getFirstDataNode ===
-								"function"
+								typeof targetCell.getFirstDataNode === "function"
 									? targetCell.getFirstDataNode()
 									: [];
 							joinTable.stageId =
-								parentDataNodes.length > 0
-									? parentDataNodes[0].id
-									: "";
+								parentDataNodes.length > 0 ? parentDataNodes[0].id : "";
 
 							log(
 								"BaseElement.getInputSchema.joinTables",
@@ -289,18 +271,11 @@ export const baseElementConfig = {
 			__mergeOutputSchema() {
 				let inputSchema = this.getInputSchema() || [];
 				let schema = this.getSchema() || {
-					meta_type:
-						this.get("type") === "app.Collection"
-							? "collection"
-							: "table"
+					meta_type: this.get("type") === "app.Collection" ? "collection" : "table"
 				};
-				let outputSchema = mergeJoinTablesToTargetSchema(
-					schema,
-					inputSchema
-				);
+				let outputSchema = mergeJoinTablesToTargetSchema(schema, inputSchema);
 				log(
-					this.get("type") +
-						".__mergeOutputSchema[this.schema,inputSchema,outputSchema]",
+					this.get("type") + ".__mergeOutputSchema[this.schema,inputSchema,outputSchema]",
 					[schema, inputSchema, outputSchema]
 				);
 				let _outputSchema;
@@ -324,31 +299,19 @@ export const baseElementConfig = {
 				}
 				let mergedOutputSchema = this.__mergeOutputSchema();
 				this.set(OUTPUT_SCHEMA_DATA_KEY, mergedOutputSchema);
-				log(
-					`${this.get("type")}.updateOutputSchema`,
-					mergedOutputSchema
-				);
+				log(`${this.get("type")}.updateOutputSchema`, mergedOutputSchema);
 
 				let graph = this.graph;
-				graph
-					.getConnectedLinks(this, { outbound: true })
-					.forEach(link => {
-						let targetCell = link.getTargetCell();
-						if (
-							targetCell &&
-							typeof targetCell.updateOutputSchema === "function"
-						) {
-							setTimeout(
-								() => targetCell.updateOutputSchema(),
-								0
-							);
-						}
-					});
+				graph.getConnectedLinks(this, { outbound: true }).forEach(link => {
+					let targetCell = link.getTargetCell();
+					if (targetCell && typeof targetCell.updateOutputSchema === "function") {
+						setTimeout(() => targetCell.updateOutputSchema(), 0);
+					}
+				});
 			},
 
 			getFirstDataNode() {
-				if (typeof this.isDataNode === "function" && this.isDataNode())
-					return [this];
+				if (typeof this.isDataNode === "function" && this.isDataNode()) return [this];
 				let graph = this.graph;
 				let inboundLinks = graph.getConnectedLinks(this, {
 					inbound: true
@@ -367,9 +330,7 @@ export const baseElementConfig = {
 							typeof sourceCell.isProcess === "function" &&
 							sourceCell.isProcess()
 						) {
-							parentDataNodes.push(
-								...sourceCell.getFirstDataNode()
-							);
+							parentDataNodes.push(...sourceCell.getFirstDataNode());
 						}
 					}
 				}

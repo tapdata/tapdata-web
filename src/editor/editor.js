@@ -363,9 +363,7 @@ export default class Editor extends BaseObject {
 		if (dataVerify) this.getRightTabPanel().remove(dataVerify);
 		// add loading
 		let self = this;
-		let rightTabPanel = self
-			.getRightSidebar()
-			.getChildByName("rightTabPanel");
+		let rightTabPanel = self.getRightSidebar().getChildByName("rightTabPanel");
 		if (!rightTabPanel) {
 			rightTabPanel = new Tab({
 				name: "rightTabPanel"
@@ -393,9 +391,7 @@ export default class Editor extends BaseObject {
 		if (dvLoading) this.getRightTabPanel().remove(dvLoading);
 		// add result
 		let self = this;
-		let rightTabPanel = self
-			.getRightSidebar()
-			.getChildByName("rightTabPanel");
+		let rightTabPanel = self.getRightSidebar().getChildByName("rightTabPanel");
 		if (!rightTabPanel) {
 			rightTabPanel = new Tab({
 				name: "rightTabPanel"
@@ -443,14 +439,10 @@ export default class Editor extends BaseObject {
 		let predecessors = function(node, distance) {
 			if (distanceResult.hasOwnProperty(node))
 				distanceResult[node] =
-					distanceResult[node] >= distance
-						? distanceResult[node]
-						: distance;
+					distanceResult[node] >= distance ? distanceResult[node] : distance;
 			else distanceResult[node] = distance;
 
-			graphLib
-				.predecessors(node)
-				.forEach(node => predecessors(node, distance + 1));
+			graphLib.predecessors(node).forEach(node => predecessors(node, distance + 1));
 		};
 		graphLib.sinks().forEach(node => predecessors(node, 0));
 
@@ -505,17 +497,13 @@ export default class Editor extends BaseObject {
 				dataNodeCount++;
 			}
 		});
-		if (dataNodeCount < 2)
-			return i18n.t("editor.cell.validate.none_data_node");
+		if (dataNodeCount < 2) return i18n.t("editor.cell.validate.none_data_node");
 
 		if (linkCount < 1) return i18n.t("editor.cell.validate.none_link_node");
 
 		let sources = graph.getSources() || [];
 		let processorSources = sources.filter(
-			cell =>
-				cell.isElement() &&
-				typeof cell.isProcess === "function" &&
-				cell.isProcess()
+			cell => cell.isElement() && typeof cell.isProcess === "function" && cell.isProcess()
 		);
 		if (processorSources.length > 0) {
 			this.graph.selectCell(processorSources);
@@ -537,24 +525,14 @@ export default class Editor extends BaseObject {
 		let dataCells = self.graph.graph
 			.getCells() // .filter(cell => cell.isDataNode && cell.isDataNode())
 			.filter(cell => {
-				let formData =
-					typeof cell.getFormData === "function"
-						? cell.getFormData()
-						: null;
+				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
 				let type = cell.get("type");
 				let connectionIdFieldName = self.mapping[type];
-				return (
-					formData &&
-					connectionIdFieldName &&
-					formData[connectionIdFieldName]
-				);
+				return formData && connectionIdFieldName && formData[connectionIdFieldName];
 			});
 		let dataCellIds = [];
 		dataCells.forEach(cell => {
-			let formData =
-				typeof cell.getFormData === "function"
-					? cell.getFormData()
-					: null;
+			let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
 			let type = cell.get("type");
 			let connectionIdFieldName = self.mapping[type];
 			let connectionId = formData[connectionIdFieldName];
@@ -598,9 +576,7 @@ export default class Editor extends BaseObject {
 				if (dataCells) {
 					dataCells.map(cell => {
 						let formData =
-							typeof cell.getFormData === "function"
-								? cell.getFormData()
-								: null;
+							typeof cell.getFormData === "function" ? cell.getFormData() : null;
 						if (!formData) return;
 
 						let type = cell.get("type");
@@ -617,9 +593,7 @@ export default class Editor extends BaseObject {
 					});
 
 					// update all node schema
-					self.graph.graph
-						.getSources()
-						.forEach(cell => cell.updateOutputSchema());
+					self.graph.graph.getSources().forEach(cell => cell.updateOutputSchema());
 				}
 			}
 		});

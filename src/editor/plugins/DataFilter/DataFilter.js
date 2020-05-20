@@ -55,11 +55,7 @@ export const DataFilterConfig = {
 				data = data || this.getFormData();
 				let name = this.attr("label/text");
 				if (!data)
-					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.validate.none_setting"
-						)}`
-					);
+					throw new Error(`${name}: ${i18n.t("editor.cell.validate.none_setting")}`);
 				if (!data.expression)
 					throw new Error(
 						`${name}: ${i18n.t(

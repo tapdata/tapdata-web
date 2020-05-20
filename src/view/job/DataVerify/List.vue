@@ -7,61 +7,32 @@
 			<span class="back-btn-text">{{ $t("dataVerify.dataVerify") }}</span>
 		</div>
 		<div class="table-box">
-			<el-table
-				:data="tableData"
-				border
-				class="dv-table"
-				style="width: 100%"
-			>
-				<el-table-column
-					prop="type"
-					:label="$t('dataVerify.dataWay')"
-					width="150"
-				>
+			<el-table :data="tableData" border class="dv-table" style="width: 100%">
+				<el-table-column prop="type" :label="$t('dataVerify.dataWay')" width="150">
 					<template slot-scope="scope">
 						<span :style="`color: ${colorMap[scope.row.type]};`">
 							{{ $t("dataVerify." + scope.row.type) }}
 						</span>
 					</template>
 				</el-table-column>
-				<el-table-column
-					prop="condition.value"
-					:label="$t('dataVerify.range')"
-					width="80"
-				>
+				<el-table-column prop="condition.value" :label="$t('dataVerify.range')" width="80">
 				</el-table-column>
-				<el-table-column
-					prop="source.tableName"
-					:label="$t('dataVerify.source')"
-				>
+				<el-table-column prop="source.tableName" :label="$t('dataVerify.source')">
 					<template slot-scope="scope">
-						<span v-if="scope.row.source.filter" class="dv-tag"
-							>SQL</span
-						>
+						<span v-if="scope.row.source.filter" class="dv-tag">SQL</span>
 						<span> {{ scope.row.source.tableName }} </span>
 					</template>
 				</el-table-column>
-				<el-table-column
-					prop="target.tableName"
-					:label="$t('dataVerify.target')"
-				>
+				<el-table-column prop="target.tableName" :label="$t('dataVerify.target')">
 					<template slot-scope="scope">
-						<span v-if="scope.row.validateCode" class="dv-tagJS"
-							>JS</span
-						>
+						<span v-if="scope.row.validateCode" class="dv-tagJS">JS</span>
 						<span> {{ scope.row.target.tableName }} </span>
 					</template>
 				</el-table-column>
 				<el-table-column width="60" :label="$t('dataVerify.operate')">
 					<template slot-scope="scope">
-						<span
-							class="el-icon-edit"
-							@click="handleEdit(scope.$index)"
-						></span>
-						<span
-							class="el-icon-close"
-							@click="handleDelete(scope.$index)"
-						></span>
+						<span class="el-icon-edit" @click="handleEdit(scope.$index)"></span>
+						<span class="el-icon-close" @click="handleDelete(scope.$index)"></span>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -94,12 +65,7 @@
 			<div class="dv-add-header">
 				{{ $t("dataVerify.dataVerifySetting") }}
 			</div>
-			<el-form
-				class="dv-add-form"
-				:model="formData"
-				:rules="rules"
-				ref="ruleForm"
-			>
+			<el-form class="dv-add-form" :model="formData" :rules="rules" ref="ruleForm">
 				<div class="dv-add-form-text">
 					{{ $t("dataVerify.dataWay") }}
 				</div>
@@ -122,14 +88,8 @@
 					</div>
 					<el-row :gutter="10">
 						<el-col :span="12">
-							<el-select
-								size="mini"
-								v-model="formData.condition.type"
-							>
-								<el-option
-									value="rows"
-									:label="$t('dataVerify.rows')"
-								></el-option>
+							<el-select size="mini" v-model="formData.condition.type">
+								<el-option value="rows" :label="$t('dataVerify.rows')"></el-option>
 								<el-option
 									value="sampleRate"
 									:label="$t('dataVerify.sampleRate')"
@@ -137,10 +97,7 @@
 							</el-select>
 						</el-col>
 						<el-col :span="12">
-							<el-input
-								size="mini"
-								v-model="formData.condition.value"
-							></el-input>
+							<el-input size="mini" v-model="formData.condition.value"></el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
@@ -171,10 +128,7 @@
 					</el-row>
 					<el-row v-show="checkedSource && type !== 'advance'">
 						<el-col :span="24">
-							<el-input
-								type="textarea"
-								v-model="formData.sourceFilter"
-							></el-input>
+							<el-input type="textarea" v-model="formData.sourceFilter"></el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
@@ -205,10 +159,7 @@
 					</el-row>
 					<el-row v-show="checkedTarget && type !== 'advance'">
 						<el-col :span="24">
-							<el-input
-								type="textarea"
-								v-model="formData.targetFilter"
-							></el-input>
+							<el-input type="textarea" v-model="formData.targetFilter"></el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
@@ -218,10 +169,7 @@
 					</div>
 					<el-row v-show="type === 'advance'">
 						<el-col :span="24">
-							<el-input
-								type="textarea"
-								v-model="formData.validateCode"
-							></el-input>
+							<el-input type="textarea" v-model="formData.validateCode"></el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
@@ -235,12 +183,9 @@
 						@click="handleAdd('ruleForm')"
 						>{{ $t("dataVerify.confirm") }}</el-button
 					>
-					<el-button
-						size="mini"
-						class="dv-btn-footer"
-						@click="handleClose"
-						>{{ $t("dataVerify.cancel") }}</el-button
-					>
+					<el-button size="mini" class="dv-btn-footer" @click="handleClose">{{
+						$t("dataVerify.cancel")
+					}}</el-button>
 				</div>
 			</div>
 		</el-drawer>
@@ -373,19 +318,13 @@ export default {
 						this.tableData.splice(this.editIndex, 1); // 是否是编辑 先删除后新增
 					}
 					let opSource = this.sourceList.filter(
-						item =>
-							item.stageId + item.tableName ===
-							this.formData.sourceTageId
+						item => item.stageId + item.tableName === this.formData.sourceTageId
 					);
 					let opTarget = this.targetList.filter(
-						item =>
-							item.stageId + item.tableName ===
-							this.formData.targetTageId
+						item => item.stageId + item.tableName === this.formData.targetTageId
 					);
-					if (opSource.length !== 0)
-						opSource[0].filter = this.formData.sourceFilter;
-					if (opTarget.length !== 0)
-						opTarget[0].filter = this.formData.targetFilter;
+					if (opSource.length !== 0) opSource[0].filter = this.formData.sourceFilter;
+					if (opTarget.length !== 0) opTarget[0].filter = this.formData.targetFilter;
 
 					let add = {
 						type: this.type, // row: 行数 hash：哈希  advance：高级校验
@@ -426,15 +365,11 @@ export default {
 				return;
 			}
 			if (this.disabledDrawer) {
-				this.$confirm(
-					"新的校验条件还在编辑中，继续执行校验？",
-					"提示",
-					{
-						confirmButtonText: "确定",
-						cancelButtonText: "取消",
-						type: "warning"
-					}
-				)
+				this.$confirm("新的校验条件还在编辑中，继续执行校验？", "提示", {
+					confirmButtonText: "确定",
+					cancelButtonText: "取消",
+					type: "warning"
+				})
 					.then(() => {
 						let self = this;
 						// 状态修改为 waiting
@@ -484,21 +419,15 @@ export default {
 			this.editIndex = index;
 			this.formData = this.tableData[index];
 			this.formData.sourceTageId =
-				this.tableData[index].source.stageId +
-				this.tableData[index].source.tableName;
+				this.tableData[index].source.stageId + this.tableData[index].source.tableName;
 			this.formData.targetTageId =
-				this.tableData[index].target.stageId +
-				this.tableData[index].target.tableName;
+				this.tableData[index].target.stageId + this.tableData[index].target.tableName;
 			if (this.tableData[index].target.filter) {
-				this.formData.targetFilter = this.tableData[
-					index
-				].target.filter;
+				this.formData.targetFilter = this.tableData[index].target.filter;
 				this.checkedTarget = true;
 			}
 			if (this.tableData[index].source.filter) {
-				this.formData.sourceFilter = this.tableData[
-					index
-				].source.filter;
+				this.formData.sourceFilter = this.tableData[index].source.filter;
 				this.checkedSource = true;
 			}
 			this.type = this.tableData[index].type;

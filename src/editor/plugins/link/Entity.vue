@@ -1,9 +1,5 @@
 <template>
-	<div
-		class="e-entity"
-		:style="width > 0 ? `width: ${width}px;` : ''"
-		ref="entityDom"
-	>
+	<div class="e-entity" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom">
 		<el-container>
 			<el-header height="20">
 				{{ schema ? schema.name : "" }}
@@ -31,19 +27,14 @@
 					<span class="custom-tree-node" slot-scope="{ node, data }">
 						<span
 							class="e-triangle"
-							:style="
-								`border-bottom-color: ${data.color ||
-									'#ffffff'};`
-							"
+							:style="`border-bottom-color: ${data.color || '#ffffff'};`"
 						></span>
 						<span
 							class="e-port e-port-in"
 							:data-id="getId(data)"
 							:data-table="getTableName(data)"
 						></span>
-						<span class="e-pk">{{
-							data.primary_key_position > 0 ? "PK" : ""
-						}}</span>
+						<span class="e-pk">{{ data.primary_key_position > 0 ? "PK" : "" }}</span>
 						<span class="e-label">{{ node.label }}</span>
 						<span class="e-data-type">{{ data.type }}</span>
 						<el-dropdown
@@ -59,12 +50,8 @@
 								<i class="el-icon-more el-icon--right"></i>
 							</span>
 							<el-dropdown-menu slot="dropdown">
-								<el-dropdown-item command="rename"
-									>Rename</el-dropdown-item
-								>
-								<el-dropdown-item command="delete"
-									>Delete</el-dropdown-item
-								>
+								<el-dropdown-item command="rename">Rename</el-dropdown-item>
+								<el-dropdown-item command="delete">Delete</el-dropdown-item>
 								<el-dropdown-item command="change_type" divided
 									>Modified data type</el-dropdown-item
 								>
@@ -132,9 +119,7 @@ export default {
 		getOutPortByField(node) {
 			if (!node) return null;
 			let id = this.getId(node);
-			return $(this.$refs.entityDom).find(
-				`.e-port-out[data-id=${id}]`
-			)[0];
+			return $(this.$refs.entityDom).find(`.e-port-out[data-id=${id}]`)[0];
 		},
 		getInPortByField(node) {
 			if (!node) return null;
@@ -144,16 +129,12 @@ export default {
 		getOutPortByTable(table) {
 			if (!table) return null;
 			let tableName = this.getTableName(table);
-			return $(this.$refs.entityDom).find(
-				`.e-port-out[data-table=${tableName}]`
-			)[0];
+			return $(this.$refs.entityDom).find(`.e-port-out[data-table=${tableName}]`)[0];
 		},
 		getInPortByTable(table) {
 			if (!table) return null;
 			let tableName = this.getTableName(table);
-			return $(this.$refs.entityDom).find(
-				`.e-port-in[data-table=${tableName}]`
-			)[0];
+			return $(this.$refs.entityDom).find(`.e-port-in[data-table=${tableName}]`)[0];
 		},
 		handlerNodeExpand(data, node, ev) {
 			this.$emit("expand", data);
@@ -180,8 +161,7 @@ export default {
 				(!draggingNode.parent ||
 					(draggingNode.parent &&
 						draggingNode.parent.data &&
-						draggingNode.parent.data.table_name !==
-							draggingNode.data.table_name))
+						draggingNode.parent.data.table_name !== draggingNode.data.table_name))
 			);
 		},
 		handlerCommand(command, data, node) {

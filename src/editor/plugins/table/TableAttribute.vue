@@ -16,11 +16,7 @@
 				<el-select
 					filterable
 					v-model="model.connectionId"
-					:placeholder="
-						$t(
-							'editor.cell.data_node.table.form.database.placeholder'
-						)
-					"
+					:placeholder="$t('editor.cell.data_node.table.form.database.placeholder')"
 					@change="handlerConnectionChange"
 					size="mini"
 				>
@@ -45,9 +41,7 @@
 					default-first-option
 					clearable
 					v-model="model.tableName"
-					:placeholder="
-						$t('editor.cell.data_node.table.form.table.placeholder')
-					"
+					:placeholder="$t('editor.cell.data_node.table.form.table.placeholder')"
 					size="mini"
 				>
 					<el-option
@@ -59,43 +53,26 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item
-				:label="$t('editor.cell.data_node.collection.form.pk.label')"
-				required
-			>
+			<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
 				<el-input
 					v-model="model.primaryKeys"
-					:placeholder="
-						$t(
-							'editor.cell.data_node.collection.form.pk.placeholder'
-						)
-					"
+					:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
 					size="mini"
 				></el-input>
 			</el-form-item>
 
 			<el-form-item
 				required
-				:label="
-					$t('editor.cell.data_node.collection.form.dropTable.label')
-				"
+				:label="$t('editor.cell.data_node.collection.form.dropTable.label')"
 				v-if="!isSourceDataNode"
 			>
 				<el-select v-model="model.dropTable" size="mini">
 					<el-option
-						:label="
-							$t(
-								'editor.cell.data_node.collection.form.dropTable.keep'
-							)
-						"
+						:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
 						:value="false"
 					></el-option>
 					<el-option
-						:label="
-							$t(
-								'editor.cell.data_node.collection.form.dropTable.remove'
-							)
-						"
+						:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
 						:value="true"
 					></el-option>
 				</el-select>
@@ -110,20 +87,13 @@
 					type="textarea"
 					rows="10"
 					v-model="model.sql"
-					:placeholder="
-						$t(
-							'editor.cell.data_node.table.form.custom_sql.placeholder'
-						)
-					"
+					:placeholder="$t('editor.cell.data_node.table.form.custom_sql.placeholder')"
 					size="mini"
 				></el-input>
 			</el-form-item>
 		</el-form>
 		<div class="e-entity-wrap" style="text-align: center;">
-			<entity
-				:schema="convertSchemaToTreeData(mergedSchema)"
-				:editable="false"
-			></entity>
+			<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 		</div>
 	</div>
 </template>
@@ -207,8 +177,7 @@ export default {
 					let unique = {};
 					primaryKeys.forEach(key => (unique[key] = 1));
 					primaryKeys = Object.keys(unique);
-					if (primaryKeys.length > 0)
-						this.model.primaryKeys = primaryKeys.join(",");
+					if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(",");
 				}
 			}
 		}
@@ -280,14 +249,9 @@ export default {
 			let self = this;
 			connectionApi.get([connectionId]).then(result => {
 				if (result.data) {
-					let schemas =
-						(result.data.schema && result.data.schema.tables) || [];
+					let schemas = (result.data.schema && result.data.schema.tables) || [];
 					schemas = schemas.sort((t1, t2) =>
-						t1.table_name > t2.table_name
-							? 1
-							: t1.table_name === t2.table_name
-							? 0
-							: -1
+						t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
 					);
 					self.schemas = schemas;
 				}
@@ -298,9 +262,7 @@ export default {
 			this.model.tableName = "";
 			for (let i = 0; i < this.databases.length; i++) {
 				if (this.model.connectionId === this.databases[i].id) {
-					this.model.databaseType = this.databases[i][
-						"database_type"
-					];
+					this.model.databaseType = this.databases[i]["database_type"];
 				}
 			}
 		},

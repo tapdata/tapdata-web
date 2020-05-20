@@ -11,16 +11,12 @@
 							@change="hanldeChangeSyncType"
 						>
 							<el-radio-button label="initial_sync+cdc">{{
-								$t("dataFlow.initial_sync") +
-									"+" +
-									$t("dataFlow.cdc")
+								$t("dataFlow.initial_sync") + "+" + $t("dataFlow.cdc")
 							}}</el-radio-button>
 							<el-radio-button label="initial_sync">{{
 								$t("dataFlow.initial_sync")
 							}}</el-radio-button>
-							<el-radio-button label="cdc">{{
-								$t("dataFlow.cdc")
-							}}</el-radio-button>
+							<el-radio-button label="cdc">{{ $t("dataFlow.cdc") }}</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
 				</el-col>
@@ -41,28 +37,17 @@
 				<el-col :span="12">
 					<el-form-item>
 						<div>{{ $t("dataFlow.notification_lag") }}</div>
-						<el-input
-							v-model="formData.notificationWindow"
-							size="mini"
-						>
+						<el-input v-model="formData.notificationWindow" size="mini">
 							<template slot="prepend">Resend</template>
 							<template slot="append">s</template>
 						</el-input>
-						<el-input
-							v-model="formData.notificationInterval"
-							size="mini"
-						>
-							<template slot="append"
-								>(s) Cancel sending</template
-							>
+						<el-input v-model="formData.notificationInterval" size="mini">
+							<template slot="append">(s) Cancel sending</template>
 						</el-input>
 					</el-form-item>
 					<el-form-item>
 						<div>{{ $t("dataFlow.read_cdc_interval") }}</div>
-						<el-input
-							v-model="formData.readCdcInterval"
-							size="mini"
-						>
+						<el-input v-model="formData.readCdcInterval" size="mini">
 							<template slot="append">ms</template>
 						</el-input>
 					</el-form-item>
@@ -77,18 +62,11 @@
 					<!--						<el-input v-model="formData.description"></el-input>-->
 					<!--					</el-form-item>-->
 
-					<el-form-item
-						v-show="formData.sync_type === 'cdc'"
-						size="mini"
-					>
+					<el-form-item v-show="formData.sync_type === 'cdc'" size="mini">
 						<div>SyncPoint</div>
 						<el-radio-group v-model="formData.syncPoint">
-							<el-radio-button label="current"
-								>Current</el-radio-button
-							>
-							<el-radio-button label="sync_time"
-								>SyncTime</el-radio-button
-							>
+							<el-radio-button label="current">Current</el-radio-button>
+							<el-radio-button label="sync_time">SyncTime</el-radio-button>
 						</el-radio-group>
 
 						<el-row v-if="formData.syncPoint === 'sync_time'">
@@ -147,14 +125,9 @@
 					<!--							<el-radio-button label="false">{{$t('dataFlow.no')}}</el-radio-button>-->
 					<!--						</el-radio-group>-->
 					<!--					</el-form-item>-->
-					<el-form-item
-						v-show="formData.sync_type === 'initial_sync'"
-					>
+					<el-form-item v-show="formData.sync_type === 'initial_sync'">
 						<div>{{ $t("dataFlow.run_custom_sql") }}</div>
-						<el-radio-group
-							v-model="formData.increment"
-							size="mini"
-						>
+						<el-radio-group v-model="formData.increment" size="mini">
 							<!-- 重复运行自定义SQL -->
 							<el-radio-button :label="true">{{
 								$t("dataFlow.yes")
@@ -167,10 +140,7 @@
 					<el-form-item>
 						<div>{{ $t("dataFlow.stop_on_error") }}</div>
 						<!-- 遇到错误时停止同步 -->
-						<el-radio-group
-							v-model="formData.stopOnError"
-							size="mini"
-						>
+						<el-radio-group v-model="formData.stopOnError" size="mini">
 							<el-radio-button :label="true">{{
 								$t("dataFlow.yes")
 							}}</el-radio-button>
@@ -179,36 +149,23 @@
 							}}</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
-					<el-form-item
-						v-show="formData.sync_type === 'initial_sync'"
-					>
+					<el-form-item v-show="formData.sync_type === 'initial_sync'">
 						<div>{{ $t("dataFlow.is_schedule") }}</div>
 						<!-- 定期调度任务 -->
-						<el-radio-group
-							v-model="formData.isSchedule"
-							size="mini"
-						>
-							<el-radio-button label="true">{{
-								$t("dataFlow.yes")
-							}}</el-radio-button>
-							<el-radio-button label="false">{{
-								$t("dataFlow.no")
-							}}</el-radio-button>
+						<el-radio-group v-model="formData.isSchedule" size="mini">
+							<el-radio-button label="true">{{ $t("dataFlow.yes") }}</el-radio-button>
+							<el-radio-button label="false">{{ $t("dataFlow.no") }}</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
 					<el-form-item v-show="formData.isSchedule === 'true'">
 						<div>{{ $t("dataFlow.cron_expression") }}</div>
 						<!-- 定期调度任务 -->
-						<el-input v-model="formData.cronExpression" size="mini">
-						</el-input>
+						<el-input v-model="formData.cronExpression" size="mini"> </el-input>
 					</el-form-item>
 					<el-form-item>
 						<div>{{ $t("dataFlow.need_to_create_Index") }}</div>
 						<!-- 自动创建目标索引 -->
-						<el-radio-group
-							v-model="formData.needToCreateIndex"
-							size="mini"
-						>
+						<el-radio-group v-model="formData.needToCreateIndex" size="mini">
 							<el-radio-button :label="true">{{
 								$t("dataFlow.yes")
 							}}</el-radio-button>
@@ -224,15 +181,10 @@
 					<!--							<el-radio-button label="false">{{$t('dataFlow.no')}}</el-radio-button>-->
 					<!--						</el-radio-group>-->
 					<!--					</el-form-item>-->
-					<el-form-item
-						v-show="formData.sync_type !== 'initial_sync'"
-					>
+					<el-form-item v-show="formData.sync_type !== 'initial_sync'">
 						<div>{{ $t("dataFlow.isOpenAutoDDL") }}</div>
 						<!-- 自动处理DDL操作 -->
-						<el-radio-group
-							v-model="formData.isOpenAutoDDL"
-							size="mini"
-						>
+						<el-radio-group v-model="formData.isOpenAutoDDL" size="mini">
 							<el-radio-button :label="true">{{
 								$t("dataFlow.yes")
 							}}</el-radio-button>
@@ -279,17 +231,13 @@ export default {
 	methods: {
 		setData(data) {
 			if (data) {
-				Object.keys(data).forEach(
-					key => (this.formData[key] = data[key])
-				);
+				Object.keys(data).forEach(key => (this.formData[key] = data[key]));
 			}
 		},
 		getData() {
 			let result = _.cloneDeep(this.formData);
 			if (result.syncPoint === "sync_time") {
-				let dateStr = moment(result.syncDatePicker).format(
-					"YYYY-MM-DD"
-				);
+				let dateStr = moment(result.syncDatePicker).format("YYYY-MM-DD");
 				let timeStr = moment(result.syncTimePicker).format("HH:mm:ss");
 				result.syncTime = `${dateStr} ${timeStr}`;
 			} else {

@@ -72,24 +72,15 @@ export const /**
 						id:
 							field.id ||
 							`${field.table_name}${
-								field.original_field_name
-									? "_" + field.original_field_name
-									: ""
+								field.original_field_name ? "_" + field.original_field_name : ""
 							}`.replace(/\./g, "_"),
-						label:
-							jsonPathForFieldName[
-								jsonPathForFieldName.length - 1
-							],
+						label: jsonPathForFieldName[jsonPathForFieldName.length - 1],
 						type: field.javaType,
 						color: getColor(field.table_name),
 						primary_key_position: field.primary_key_position,
 						table_name: field.table_name || "table"
 					};
-					_.set(
-						root,
-						"children." + jsonPathForFieldName.join(".children."),
-						treeItem
-					);
+					_.set(root, "children." + jsonPathForFieldName.join(".children."), treeItem);
 				}
 			}
 			let re = function(field) {
@@ -103,11 +94,7 @@ export const /**
 			let sort = function(node) {
 				if (node.children && node.children.length > 0) {
 					node.children.sort((c1, c2) =>
-						c1.table_name > c2.table_name
-							? 1
-							: c1.table_name === c2.table_name
-							? 0
-							: -1
+						c1.table_name > c2.table_name ? 1 : c1.table_name === c2.table_name ? 0 : -1
 					);
 					node.children.forEach(sort);
 				}
@@ -148,9 +135,7 @@ export const mergeSchema = function(targetSchema, sourceSchema, mergeOpts) {
 	targetSchema.fields = targetSchema.fields || [];
 	Object.keys(sourceSchema)
 		.filter(key => !["fields"].includes(key))
-		.forEach(
-			key => (targetSchema[key] = targetSchema[key] || sourceSchema[key])
-		);
+		.forEach(key => (targetSchema[key] = targetSchema[key] || sourceSchema[key]));
 
 	let sourceSchemaFields = _.cloneDeep(sourceSchema.fields) || [];
 	if (["append"].includes(joinType) || targetSchema.meta_type === "table") {
@@ -167,13 +152,11 @@ export const mergeSchema = function(targetSchema, sourceSchema, mergeOpts) {
 				field => field.field_name === currentFieldName
 			);
 			if (existsField && existsField.length > 0) {
-				existsField[0].javaType =
-					existsField[0].javaType === "Array" ? "Array" : "Map";
+				existsField[0].javaType = existsField[0].javaType === "Array" ? "Array" : "Map";
 				return;
 			} else if (!currentFieldType) {
 				if (joinPath === currentFieldName)
-					currentFieldType =
-						joinType === "merge_embed" ? "Array" : "Map";
+					currentFieldType = joinType === "merge_embed" ? "Array" : "Map";
 				else currentFieldType = "Map";
 			}
 
@@ -191,8 +174,7 @@ export const mergeSchema = function(targetSchema, sourceSchema, mergeOpts) {
 			if (field) {
 				targetSchema.fields.push(
 					Object.assign(field, {
-						field_name:
-							(joinPath ? joinPath + "." : "") + field.field_name
+						field_name: (joinPath ? joinPath + "." : "") + field.field_name
 						// original_field_name: (joinPath ? (joinPath + '.')  :  '' ) + field.original_field_name,
 					})
 				);
@@ -221,9 +203,7 @@ export const mergeSourceSchema = function(sourceSchemas) {
 	log("Schema.mergeSourceSchema", arguments);
 	let source = null;
 
-	sourceSchemas = Array.isArray(sourceSchemas)
-		? sourceSchemas
-		: [sourceSchemas];
+	sourceSchemas = Array.isArray(sourceSchemas) ? sourceSchemas : [sourceSchemas];
 
 	sourceSchemas.forEach(schema => {
 		if (!schema) return;
@@ -246,10 +226,7 @@ export const mergeSourceSchema = function(sourceSchemas) {
  * @param joinTables
  * @return {*}
  */
-export const mergeJoinTablesToTargetSchema = function(
-	targetSchema,
-	joinTables
-) {
+export const mergeJoinTablesToTargetSchema = function(targetSchema, joinTables) {
 	let mergedTargetSchema = targetSchema || {};
 	const mergeTargetSchema = function(jt) {
 		if (jt && (jt.sourceSchemas || jt.sourceSchema)) {
@@ -262,11 +239,7 @@ export const mergeJoinTablesToTargetSchema = function(
 	};
 	if (joinTables) joinTables.forEach(mergeTargetSchema);
 
-	log(
-		"Schema.mergeJoinTablesToTargetSchema",
-		...arguments,
-		mergedTargetSchema
-	);
+	log("Schema.mergeJoinTablesToTargetSchema", ...arguments, mergedTargetSchema);
 
 	return mergedTargetSchema;
 };

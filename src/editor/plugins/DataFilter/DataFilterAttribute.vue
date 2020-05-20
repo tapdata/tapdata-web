@@ -1,12 +1,6 @@
 <template>
 	<div class="e-data-filter">
-		<el-form
-			class="e-form"
-			label-position="top"
-			label-width="130px"
-			:model="model"
-			ref="form"
-		>
+		<el-form class="e-form" label-position="top" label-width="130px" :model="model" ref="form">
 			<el-form-item
 				:required="true"
 				:label="$t('editor.cell.processor.dataFilter.form.name.label')"
@@ -14,28 +8,16 @@
 			>
 				<el-input
 					v-model="model.name"
-					:placeholder="
-						$t(
-							'editor.cell.processor.dataFilter.form.name.placeholder'
-						)
-					"
+					:placeholder="$t('editor.cell.processor.dataFilter.form.name.placeholder')"
 				></el-input>
 			</el-form-item>
 
 			<el-form-item :required="true" size="mini">
 				<template slot="label">
-					{{
-						$t(
-							"editor.cell.processor.dataFilter.form.expression.label"
-						)
-					}}
+					{{ $t("editor.cell.processor.dataFilter.form.expression.label") }}
 					<el-tooltip placement="right-end">
 						<div slot="content">
-							{{
-								$t(
-									"editor.cell.processor.dataFilter.form.expression.labelTip"
-								)
-							}}
+							{{ $t("editor.cell.processor.dataFilter.form.expression.labelTip") }}
 						</div>
 						<i class="e-primary el-icon-warning-outline"></i>
 					</el-tooltip>
@@ -45,30 +27,16 @@
 					v-model="model.expression"
 					rows="3"
 					:placeholder="
-						$t(
-							'editor.cell.processor.dataFilter.form.expression.placeholder'
-						)
+						$t('editor.cell.processor.dataFilter.form.expression.placeholder')
 					"
-					:title="
-						$t(
-							'editor.cell.processor.dataFilter.form.expression.labelTip'
-						)
-					"
+					:title="$t('editor.cell.processor.dataFilter.form.expression.labelTip')"
 				></el-input>
 				<div style="color: #888888; font-size: 0.8em;">
 					<h3 style="font-size: 1.1em; font-weight: bold;">
-						{{
-							$t(
-								"editor.cell.processor.dataFilter.form.expressionExample.label"
-							)
-						}}:
+						{{ $t("editor.cell.processor.dataFilter.form.expressionExample.label") }}:
 					</h3>
 					<p style="text-indent: 2em;">
-						{{
-							$t(
-								"editor.cell.processor.dataFilter.form.expressionExample.tip"
-							)
-						}}
+						{{ $t("editor.cell.processor.dataFilter.form.expressionExample.tip") }}
 					</p>
 					<p style="text-indent: 2em;">
 						<span style="color: red;">(</span> record.gender
@@ -85,11 +53,7 @@
 					</p>
 
 					<h3 style="font-size: 1.1em; font-weight: bold;">
-						{{
-							$t(
-								"editor.cell.processor.dataFilter.form.symbol.label"
-							)
-						}}:
+						{{ $t("editor.cell.processor.dataFilter.form.symbol.label") }}:
 					</h3>
 					<table>
 						<tr>
@@ -98,22 +62,14 @@
 								<span style="color: #F5AF3F;"></span>
 							</td>
 							<td style="width: 140px; text-align: left;">
-								{{
-									$t(
-										"editor.cell.processor.dataFilter.form.symbol.gtLt"
-									)
-								}}
+								{{ $t("editor.cell.processor.dataFilter.form.symbol.gtLt") }}
 							</td>
 
 							<td style="width: 60px; text-align: center;">
 								<span style="color: #F5AF3F;">&ge;, &le;</span>
 							</td>
 							<td style="width: 140px; text-align: left;">
-								{{
-									$t(
-										"editor.cell.processor.dataFilter.form.symbol.geLe"
-									)
-								}}
+								{{ $t("editor.cell.processor.dataFilter.form.symbol.geLe") }}
 							</td>
 						</tr>
 						<tr>
@@ -121,22 +77,14 @@
 								<span style="color: #F5AF3F;">==</span>
 							</td>
 							<td style="width: 140px; text-align: left;">
-								{{
-									$t(
-										"editor.cell.processor.dataFilter.form.symbol.eq"
-									)
-								}}
+								{{ $t("editor.cell.processor.dataFilter.form.symbol.eq") }}
 							</td>
 
 							<td style="width: 60px; text-align: center;">
 								<span style="color: #F5AF3F;">!</span>
 							</td>
 							<td style="width: 140px; text-align: left;">
-								{{
-									$t(
-										"editor.cell.processor.dataFilter.form.symbol.not"
-									)
-								}}
+								{{ $t("editor.cell.processor.dataFilter.form.symbol.not") }}
 							</td>
 						</tr>
 						<tr>
@@ -144,47 +92,29 @@
 								<span style="color: #F5AF3F;">&&</span>
 							</td>
 							<td style="width: 140px; text-align: left;">
-								{{
-									$t(
-										"editor.cell.processor.dataFilter.form.symbol.and"
-									)
-								}}
+								{{ $t("editor.cell.processor.dataFilter.form.symbol.and") }}
 							</td>
 
 							<td style="width: 60px; text-align: center;">
 								<span style="color: #F5AF3F;">||</span>
 							</td>
 							<td style="width: 140px; text-align: left;">
-								{{
-									$t(
-										"editor.cell.processor.dataFilter.form.symbol.or"
-									)
-								}}
+								{{ $t("editor.cell.processor.dataFilter.form.symbol.or") }}
 							</td>
 						</tr>
 						<tr>
 							<td style="width: 60px; text-align: center;">
-								<span style="color: #F5AF3F;"
-									>/^.*$/.test( )</span
-								>
+								<span style="color: #F5AF3F;">/^.*$/.test( )</span>
 							</td>
 							<td style="width: 140px; text-align: left;">
-								{{
-									$t(
-										"editor.cell.processor.dataFilter.form.symbol.regexp"
-									)
-								}}
+								{{ $t("editor.cell.processor.dataFilter.form.symbol.regexp") }}
 							</td>
 
 							<td style="width: 60px; text-align: center;">
 								<span style="color: #F5AF3F;">( )</span>
 							</td>
 							<td style="width: 140px; text-align: left;">
-								{{
-									$t(
-										"editor.cell.processor.dataFilter.form.symbol.group"
-									)
-								}}
+								{{ $t("editor.cell.processor.dataFilter.form.symbol.group") }}
 							</td>
 						</tr>
 					</table>
@@ -194,26 +124,16 @@
 			<el-form-item
 				:required="true"
 				size="mini"
-				:label="
-					$t('editor.cell.processor.dataFilter.form.action.label')
-				"
+				:label="$t('editor.cell.processor.dataFilter.form.action.label')"
 			>
 				<el-select v-model="model.action">
 					<el-option
 						value="retain"
-						:label="
-							$t(
-								'editor.cell.processor.dataFilter.form.action.retain'
-							)
-						"
+						:label="$t('editor.cell.processor.dataFilter.form.action.retain')"
 					></el-option>
 					<el-option
 						value="discard"
-						:label="
-							$t(
-								'editor.cell.processor.dataFilter.form.action.discard'
-							)
-						"
+						:label="$t('editor.cell.processor.dataFilter.form.action.discard')"
 					></el-option>
 				</el-select>
 			</el-form-item>

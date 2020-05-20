@@ -41,15 +41,10 @@
 						placeholder="please enter primary key"></el-input>
 			</el-form-item>-->
 
-			<el-form-item
-				:label="$t('editor.cell.link.form.joinType.label')"
-				required
-			>
+			<el-form-item :label="$t('editor.cell.link.form.joinType.label')" required>
 				<el-select
 					v-model="model.joinTable.joinType"
-					:placeholder="
-						$t('editor.cell.link.form.joinType.placeholder')
-					"
+					:placeholder="$t('editor.cell.link.form.joinType.placeholder')"
 					@change="handlerJoinTypeChanged"
 					size="mini"
 				>
@@ -66,16 +61,12 @@
 				:label="$t('editor.cell.link.form.joinPath.label')"
 				v-if="
 					supportEmbedArray() &&
-						['upsert', 'update', 'merge_embed'].includes(
-							model.joinTable.joinType
-						)
+						['upsert', 'update', 'merge_embed'].includes(model.joinTable.joinType)
 				"
 			>
 				<el-input
 					v-model="model.joinTable.joinPath"
-					:placeholder="
-						$t('editor.cell.link.form.joinPath.placeholder')
-					"
+					:placeholder="$t('editor.cell.link.form.joinPath.placeholder')"
 					size="mini"
 				></el-input>
 			</el-form-item>
@@ -89,26 +80,15 @@
 					<thead>
 						<tr>
 							<th>
-								{{
-									$t(
-										"editor.cell.link.form.joinKeys.sourceField"
-									)
-								}}
+								{{ $t("editor.cell.link.form.joinKeys.sourceField") }}
 							</th>
 							<th>
-								{{
-									$t(
-										"editor.cell.link.form.joinKeys.targetField"
-									)
-								}}
+								{{ $t("editor.cell.link.form.joinKeys.targetField") }}
 							</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr
-							v-for="(item, idx) in model.joinTable.joinKeys"
-							v-bind:key="idx"
-						>
+						<tr v-for="(item, idx) in model.joinTable.joinKeys" v-bind:key="idx">
 							<td>
 								<el-select
 									v-model="item.source"
@@ -142,21 +122,14 @@
 								<!-- <input type="text" v-model="item.target"> -->
 								<div class="e-action-bar">
 									<el-button
-										v-if="
-											model.joinTable.joinKeys.length > 1
-										"
+										v-if="model.joinTable.joinKeys.length > 1"
 										type="text"
 										class="el-icon-close"
 										size="mini"
 										@click="removeCondition(idx)"
 									></el-button>
 									<el-button
-										v-if="
-											idx ===
-												model.joinTable.joinKeys
-													.length -
-													1
-										"
+										v-if="idx === model.joinTable.joinKeys.length - 1"
 										type="text"
 										class="el-icon-plus"
 										size="mini"
@@ -217,9 +190,7 @@ export default {
 			handler() {
 				this.writeModels.splice(0, this.writeModels.length);
 				if (this.supportEmbedArray()) {
-					this.WRITE_MODELS.forEach(model =>
-						this.writeModels.push(model)
-					);
+					this.WRITE_MODELS.forEach(model => this.writeModels.push(model));
 				} else {
 					this.WRITE_MODELS.filter(
 						model => model.value !== "merge_embed"
@@ -282,20 +253,16 @@ export default {
 				Object.keys(data).forEach(key => (this.model[key] = data[key]));
 			}
 
-			this.configJoinTable =
-				cell.configJoinTable && cell.configJoinTable();
+			this.configJoinTable = cell.configJoinTable && cell.configJoinTable();
 
 			if (!this.configJoinTable) return;
 
 			if (cell.getSourceCell()) {
 				let sourceCell = cell.getSourceCell();
 				let targetCell = cell.getTargetCell();
-				let sourceSchema = sourceCell
-					? sourceCell.getOutputSchema()
-					: null;
+				let sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null;
 				let mergedTargetSchema =
-					targetCell &&
-					typeof targetCell.getOutputSchema === "function"
+					targetCell && typeof targetCell.getOutputSchema === "function"
 						? targetCell.getOutputSchema()
 						: null;
 
@@ -303,31 +270,20 @@ export default {
 					typeof sourceCell.getFirstDataNode === "function"
 						? sourceCell.getFirstDataNode()
 						: [];
-				this.model.joinTable.stageId =
-					firstDataNode.length > 0 ? firstDataNode[0].id : "";
+				this.model.joinTable.stageId = firstDataNode.length > 0 ? firstDataNode[0].id : "";
 				// this.model.joinTable.stageId = cell.getSourceCell().id;
 				// 关联字段自动填充
 
 				let sourceArr =
-					sourceSchema &&
-					sourceSchema.fields &&
-					sourceSchema.fields.length > 0
-						? sourceSchema.fields.filter(
-								item => item.primary_key_position > 0
-						  )
+					sourceSchema && sourceSchema.fields && sourceSchema.fields.length > 0
+						? sourceSchema.fields.filter(item => item.primary_key_position > 0)
 						: [];
 				let targetArr =
-					mergedTargetSchema.fields &&
-					mergedTargetSchema.fields.length > 0
-						? mergedTargetSchema.fields.filter(
-								item => item.primary_key_position > 0
-						  )
+					mergedTargetSchema.fields && mergedTargetSchema.fields.length > 0
+						? mergedTargetSchema.fields.filter(item => item.primary_key_position > 0)
 						: [];
 				let initialAssociationArr =
-					sourceArr &&
-					sourceArr.length > 0 &&
-					targetArr &&
-					targetArr.length > 0
+					sourceArr && sourceArr.length > 0 && targetArr && targetArr.length > 0
 						? sourceArr.map((fields, i) => ({
 								source: fields.field_name,
 								target:
@@ -337,10 +293,7 @@ export default {
 						  }))
 						: this.model.joinTable.joinKeys;
 
-				this.sourceList =
-					sourceSchema && sourceSchema.fields
-						? sourceSchema.fields
-						: [];
+				this.sourceList = sourceSchema && sourceSchema.fields ? sourceSchema.fields : [];
 				this.targetList = mergedTargetSchema.fields || [];
 
 				if (sourceSchema && mergedTargetSchema.fields) {
@@ -392,21 +345,17 @@ export default {
 			if (this.cell) {
 				let sourceCell = this.cell.getSourceCell();
 				let targetCell = this.cell.getTargetCell();
-				let sourceSchema = sourceCell
-					? sourceCell.getOutputSchema()
-					: null;
+				let sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null;
 				/* targetInputSchema = targetCell ? targetCell.getInputSchema() : null,
 						targetSchema = targetCell ? targetCell.getSchema() : {
 							meta_type: this.targetCell.get('type') === 'app.Collection' ? 'collection' : 'table'
 						} */
 				let mergedTargetSchema =
-					targetCell &&
-					typeof targetCell.getOutputSchema === "function"
+					targetCell && typeof targetCell.getOutputSchema === "function"
 						? targetCell.getOutputSchema()
 						: null; // mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
 
-				let targetSchemaFields =
-					(mergedTargetSchema && mergedTargetSchema.fields) || [];
+				let targetSchemaFields = (mergedTargetSchema && mergedTargetSchema.fields) || [];
 				let targetJoinFields = targetSchemaFields.filter(
 					field => field.field_name === this.model.joinTable.joinPath
 				);
@@ -416,10 +365,7 @@ export default {
 					targetJoinFields[0].javaType === "Array";
 				if (this.model.joinTable.isArray !== isArray)
 					this.model.joinTable.isArray = isArray;
-				this.$refs.mappingComp.setSchema(
-					sourceSchema,
-					mergedTargetSchema
-				);
+				this.$refs.mappingComp.setSchema(sourceSchema, mergedTargetSchema);
 				log("Link.renderSchema", sourceSchema, mergedTargetSchema);
 			}
 		},
@@ -438,9 +384,7 @@ export default {
 		handlerJoinTypeChanged() {
 			if (
 				!this.model.joinTable.joinPath &&
-				["merge_embed", "update"].includes(
-					this.model.joinTable.joinType
-				)
+				["merge_embed", "update"].includes(this.model.joinTable.joinType)
 			) {
 				this.model.joinTable.joinPath = this.model.joinTable.tableName;
 			}

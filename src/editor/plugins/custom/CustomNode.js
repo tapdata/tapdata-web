@@ -58,9 +58,7 @@ export const customNodeConfig = {
 				let name = this.attr("label/text");
 				if (!data)
 					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.data_node.custom.none_fileName"
-						)}`
+						`${name}: ${i18n.t("editor.cell.data_node.custom.none_fileName")}`
 					);
 				return true;
 			}

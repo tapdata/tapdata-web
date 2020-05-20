@@ -27,10 +27,7 @@
 				</el-col>
 				<el-col :span="4">
 					<el-form-item :label="$t('message.server')">
-						<el-select
-							v-model="form.ip"
-							:placeholder="$t('message.placeholderSelect')"
-						>
+						<el-select v-model="form.ip" :placeholder="$t('message.placeholderSelect')">
 							<el-option
 								v-for="item in ipList"
 								:label="item.value"
@@ -112,11 +109,7 @@
 					:label="$t('message.serviceType')"
 					width="100"
 				></el-table-column>
-				<el-table-column
-					prop="level"
-					:label="$t('message.level')"
-					width="100"
-				>
+				<el-table-column prop="level" :label="$t('message.level')" width="100">
 					<template slot-scope="scope">
 						<span
 							:class="scope.row.level === 'ERROR' ? 'red' : ''"

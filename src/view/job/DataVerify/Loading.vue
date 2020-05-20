@@ -1,9 +1,6 @@
 <template>
 	<div>
-		<div
-			v-loading="loading"
-			style="margin-top: 100px;padding-bottom:100px"
-		></div>
+		<div v-loading="loading" style="margin-top: 100px;padding-bottom:100px"></div>
 		<div class="btn-box">
 			<el-button @click="handleShowResult" size="mini">{{
 				$t("dataVerify.refresh")

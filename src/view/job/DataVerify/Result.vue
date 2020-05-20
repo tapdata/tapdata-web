@@ -10,23 +10,14 @@
 			<div class="dv-pre-label">
 				{{ $t("dataVerify.overView") }}
 				<div class="dv-pre-right">
-					<span
-						>{{ $t("dataVerify.time") }}: {{ overview.createTime }}
-					</span>
-					<span>
-						{{ $t("dataVerify.duration") }}:
-						{{ overview.costTime }}</span
-					>
+					<span>{{ $t("dataVerify.time") }}: {{ overview.createTime }} </span>
+					<span> {{ $t("dataVerify.duration") }}: {{ overview.costTime }}</span>
 				</div>
 			</div>
 			<div class="dv-pre-rowTotal">
 				<p>{{ $t("dataVerify.row") }} {{ overview.validateRows }}</p>
-				<p>
-					{{ $t("dataVerify.hash") }} {{ overview.validateHashRows }}
-				</p>
-				<p>
-					{{ $t("dataVerify.advance") }} {{ overview.validateJsRows }}
-				</p>
+				<p>{{ $t("dataVerify.hash") }} {{ overview.validateHashRows }}</p>
+				<p>{{ $t("dataVerify.advance") }} {{ overview.validateJsRows }}</p>
 			</div>
 			<div class="dv-pre-dataBox">
 				<div class="dv-pre-rowCheck">
@@ -50,44 +41,20 @@
 			</div>
 		</div>
 		<div class="dv-contrast-table">
-			<el-table
-				border
-				:data="validateStats"
-				height="250"
-				style="width: 100%"
-			>
-				<el-table-column
-					prop="source"
-					:label="$t('dataVerify.source')"
-					width="80"
-				>
+			<el-table border :data="validateStats" height="250" style="width: 100%">
+				<el-table-column prop="source" :label="$t('dataVerify.source')" width="80">
 				</el-table-column>
-				<el-table-column
-					prop="validateType"
-					:label="$t('dataVerify.dataWay')"
-					width="80"
-				>
+				<el-table-column prop="validateType" :label="$t('dataVerify.dataWay')" width="80">
 					<template slot-scope="scope">
-						<span
-							:style="
-								`color: ${colorMap[scope.row.validateType]};`
-							"
-						>
+						<span :style="`color: ${colorMap[scope.row.validateType]};`">
 							{{ $t("dataVerify." + scope.row.validateType) }}
 						</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="rows" :label="$t('dataVerify.range')">
+				<el-table-column prop="rows" :label="$t('dataVerify.range')"> </el-table-column>
+				<el-table-column prop="rowsDiffer" :label="$t('dataVerify.result')">
 				</el-table-column>
-				<el-table-column
-					prop="rowsDiffer"
-					:label="$t('dataVerify.result')"
-				>
-				</el-table-column>
-				<el-table-column
-					prop="consistencyRate"
-					:label="$t('dataVerify.accuracyRate')"
-				>
+				<el-table-column prop="consistencyRate" :label="$t('dataVerify.accuracyRate')">
 				</el-table-column>
 			</el-table>
 		</div>
@@ -95,18 +62,9 @@
 			<el-row :gutter="10">
 				<el-col :span="8">
 					<el-select size="mini" v-model="overview.validateType">
-						<el-option
-							value="row"
-							:label="$t('dataVerify.row')"
-						></el-option>
-						<el-option
-							value="hash"
-							:label="$t('dataVerify.hash')"
-						></el-option>
-						<el-option
-							value="advance"
-							:label="$t('dataVerify.advance')"
-						></el-option>
+						<el-option value="row" :label="$t('dataVerify.row')"></el-option>
+						<el-option value="hash" :label="$t('dataVerify.hash')"></el-option>
+						<el-option value="advance" :label="$t('dataVerify.advance')"></el-option>
 					</el-select>
 				</el-col>
 				<el-col :span="8">
@@ -125,9 +83,7 @@
 				<div class="dv-contrast-header">
 					{{ $t("dataVerify.errorComparison") }}
 					<div class="dv-pre-right">
-						<span style="color: #48B6E2"
-							>{{ $t("dataVerify.advance") }}
-						</span>
+						<span style="color: #48B6E2">{{ $t("dataVerify.advance") }} </span>
 						<span style="color: #F56C6C"> error :{{ count }}</span>
 						<el-pagination
 							class="dv-result-pagination"
@@ -139,24 +95,12 @@
 						</el-pagination>
 					</div>
 				</div>
-				<el-table
-					border
-					:data="failedRow"
-					class="dv-result-fail-table"
-					style="width: 100%"
-				>
-					<el-table-column
-						prop="sourceTableData"
-						:label="$t('dataVerify.source')"
-					>
+				<el-table border :data="failedRow" class="dv-result-fail-table" style="width: 100%">
+					<el-table-column prop="sourceTableData" :label="$t('dataVerify.source')">
 					</el-table-column>
-					<el-table-column
-						prop="targetTableData"
-						:label="$t('dataVerify.target')"
-					>
+					<el-table-column prop="targetTableData" :label="$t('dataVerify.target')">
 					</el-table-column>
-					<el-table-column prop="message" label="MSQ" width="100">
-					</el-table-column>
+					<el-table-column prop="message" label="MSQ" width="100"> </el-table-column>
 				</el-table>
 			</div>
 		</div>
@@ -217,12 +161,10 @@ export default {
 						}
 						if (res.data[2]) {
 							this.validateStats = res.data[2].validateStats;
-							this.validateStats.sourceTableData = this
-								.validateStats.sourceTableData
+							this.validateStats.sourceTableData = this.validateStats.sourceTableData
 								? JSON.parse(this.validateStats.sourceTableData)
 								: "";
-							this.validateStats.targetTableData = this
-								.validateStats.targetTableData
+							this.validateStats.targetTableData = this.validateStats.targetTableData
 								? JSON.parse(this.validateStats.targetTableData)
 								: "";
 						}

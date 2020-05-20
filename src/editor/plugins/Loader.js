@@ -19,14 +19,9 @@ export const loadPlugins = function() {
 
 		let parentObj = _.get(joint.shapes, shape.extends);
 
-		if (
-			parentObj &&
-			parentObj.define &&
-			typeof parentObj.define === "function"
-		) {
+		if (parentObj && parentObj.define && typeof parentObj.define === "function") {
 			let args = [shapeType];
-			if (shape.defaultInstanceProperties)
-				args.push(shape.defaultInstanceProperties);
+			if (shape.defaultInstanceProperties) args.push(shape.defaultInstanceProperties);
 			if (shape.prototypeProperties) {
 				args.push(shape.prototypeProperties);
 				let initialize = shape.prototypeProperties.initialize;
@@ -65,12 +60,7 @@ export const loadPlugins = function() {
 		delete stencil.group;
 		delete stencil.groupLabel;
 		stencil.type = type;
-		if (
-			stencil &&
-			stencil.attrs &&
-			stencil.attrs.label &&
-			stencil.attrs.label.text
-		) {
+		if (stencil && stencil.attrs && stencil.attrs.label && stencil.attrs.label.text) {
 			stencil.attrs.label.text = joint.util.breakText(
 				stencil.attrs.label.text,
 				{ width: 60, height: 40 },
@@ -101,15 +91,11 @@ export const loadPlugins = function() {
 			let plugin = _.cloneDeep(plugins[name]);
 
 			if (plugin.shape && !plugin.shape.extends) {
-				throw Error(
-					`Plugin ${name}.shape mast be extends exists shape.`
-				);
+				throw Error(`Plugin ${name}.shape mast be extends exists shape.`);
 			}
 
 			if (plugin.stencil && !plugin.stencil.group) {
-				throw Error(
-					`Plugin ${name}.stencil is missing group configuration.`
-				);
+				throw Error(`Plugin ${name}.stencil is missing group configuration.`);
 			}
 
 			let type = plugin.type;

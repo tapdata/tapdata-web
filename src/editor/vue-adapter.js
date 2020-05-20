@@ -24,19 +24,10 @@ export class VueAdapter extends BaseObject {
 		this.graphUI = graphUI;
 
 		this.editor.on(EditorEventType.BEFORE_DESTROY, this.destroy.bind(this));
-		editor
-			.getRightSidebar()
-			.on(EditorEventType.RESIZE, this.handlerResize.bind(this));
-		editor
-			.getRightSidebar()
-			.on(EditorEventType.HIDE, this.handlerHide.bind(this));
-		editor
-			.getRightTabPanel()
-			.on(EditorEventType.SELECTED, this.handlerTapChanged.bind(this));
-		editor.on(
-			EditorEventType.DATA_FLOW_UPDATED,
-			this.handlerDataFlowUpdated.bind(this)
-		);
+		editor.getRightSidebar().on(EditorEventType.RESIZE, this.handlerResize.bind(this));
+		editor.getRightSidebar().on(EditorEventType.HIDE, this.handlerHide.bind(this));
+		editor.getRightTabPanel().on(EditorEventType.SELECTED, this.handlerTapChanged.bind(this));
+		editor.on(EditorEventType.DATA_FLOW_UPDATED, this.handlerDataFlowUpdated.bind(this));
 	}
 
 	render(cell) {
@@ -55,21 +46,16 @@ export class VueAdapter extends BaseObject {
 		let name = cell.get("type");
 		let formData = self.getFormDataForCell(cell);
 		let isDataNode =
-			cell.isElement() &&
-			typeof cell.isDataNode === "function" &&
-			cell.isDataNode();
+			cell.isElement() && typeof cell.isDataNode === "function" && cell.isDataNode();
 		let isSourceDataNode =
 			isDataNode &&
-			self.graphUI.graph.getConnectedLinks(cell, { inbound: true })
-				.length === 0;
+			self.graphUI.graph.getConnectedLinks(cell, { inbound: true }).length === 0;
 
 		if (vueAdapter[name] && vueAdapter[name].component) {
 			let vueComponentConfig = vueAdapter[name];
 			let Comp = Vue.extend(vueComponentConfig.component);
 
-			let settings = self.editor
-				.getRightTabPanel()
-				.getChildByName("nodeSettingPanel");
+			let settings = self.editor.getRightTabPanel().getChildByName("nodeSettingPanel");
 			if (!settings) {
 				settings = new Panel({
 					name: "nodeSettingPanel",
@@ -93,9 +79,7 @@ export class VueAdapter extends BaseObject {
 			if (typeof self.vm.setData === "function") {
 				self.vm.setData(formData, cell, isSourceDataNode, self);
 			} else {
-				throw new Error(
-					`Custom form component does not implement "${name}" method`
-				);
+				throw new Error(`Custom form component does not implement "${name}" method`);
 			}
 
 			self.vm.$on("dataChanged", data => {
@@ -164,8 +148,7 @@ export class VueAdapter extends BaseObject {
 	getFormDataForCell(cell) {
 		if (typeof cell === "string") cell = this.graphUI.graph.getCell(cell);
 
-		if (typeof cell.id === "string")
-			cell = this.graphUI.graph.getCell(cell.id);
+		if (typeof cell.id === "string") cell = this.graphUI.graph.getCell(cell.id);
 
 		return cell && cell.get(FORM_DATA_KEY);
 	}

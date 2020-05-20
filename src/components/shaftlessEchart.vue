@@ -1,11 +1,6 @@
 <template>
 	<div class="shaftlessBox">
-		<div
-			class="echarts"
-			:id="echartsId"
-			:echartObj="echartObj"
-			ref="echarts"
-		></div>
+		<div class="echarts" :id="echartsId" :echartObj="echartObj" ref="echarts"></div>
 	</div>
 </template>
 <script>

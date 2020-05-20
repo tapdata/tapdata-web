@@ -60,18 +60,15 @@ export const options = {
 	fontFamily: [
 		{
 			value: "Alegreya Sans",
-			content:
-				'<span style="font-family: Alegreya Sans">Alegreya Sans</span>'
+			content: '<span style="font-family: Alegreya Sans">Alegreya Sans</span>'
 		},
 		{
 			value: "Averia Libre",
-			content:
-				'<span style="font-family: Averia Libre">Averia Libre</span>'
+			content: '<span style="font-family: Averia Libre">Averia Libre</span>'
 		},
 		{
 			value: "Roboto Condensed",
-			content:
-				'<span style="font-family: Roboto Condensed">Roboto Condensed</span>'
+			content: '<span style="font-family: Roboto Condensed">Roboto Condensed</span>'
 		}
 	],
 
@@ -3412,8 +3409,7 @@ export const inspectorConfig = {
 							and: [
 								{
 									ne: {
-										"attrs/.uml-state-body/stroke":
-											"transparent"
+										"attrs/.uml-state-body/stroke": "transparent"
 									}
 								},
 								{

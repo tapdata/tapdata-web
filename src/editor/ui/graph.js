@@ -10,12 +10,7 @@ import joint from "../lib/rappid/rappid";
 // import shapes from '../lib/rappid/models/shapes';
 import navigatorElementView from "../lib/rappid/view/navigator";
 // import Panel from "./panel";
-import {
-	stencilConfig,
-	selectionConfig,
-	haloConfig,
-	toolbarConfig
-} from "../lib/rappid/config";
+import { stencilConfig, selectionConfig, haloConfig, toolbarConfig } from "../lib/rappid/config";
 import { VueAdapter } from "../vue-adapter";
 import log from "../../log";
 import {
@@ -107,14 +102,7 @@ export default class Graph extends Component {
 					}
 				}
 			},
-			validateConnection: function(
-				cellViewS,
-				magnetS,
-				cellViewT,
-				magnetT,
-				end,
-				linkView
-			) {
+			validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
 				// don't allow loop links
 				if (cellViewS === cellViewT) return false;
 
@@ -146,13 +134,7 @@ export default class Graph extends Component {
 		paper.on("cell:mousewheel", this.onMousewheel, this);
 		paper.on("blank:pointerclick", this.onClickBlank.bind(this));
 		paper.on({
-			"link:connect": (
-				linkView,
-				evt,
-				elementViewConnected,
-				magent,
-				arrowhead
-			) => {
+			"link:connect": (linkView, evt, elementViewConnected, magent, arrowhead) => {
 				log("Graph.link.connect", arguments);
 				let acyclic = self.isAcyclic();
 				if (acyclic) {
@@ -219,10 +201,7 @@ export default class Graph extends Component {
 			if (!targetCell && cell.target() && cell.target().id) {
 				targetCell = self.graph.getCell(cell.target().id);
 			}
-			if (
-				targetCell &&
-				typeof targetCell.updateOutputSchema === "function"
-			) {
+			if (targetCell && typeof targetCell.updateOutputSchema === "function") {
 				targetCell.updateOutputSchema();
 			}
 		}
@@ -316,9 +295,7 @@ export default class Graph extends Component {
 			}
 		}));
 
-		let stencilPanel = this.editor
-			.getLeftSidebar()
-			.getChildByName("stencil");
+		let stencilPanel = this.editor.getLeftSidebar().getChildByName("stencil");
 		stencilPanel.getContentEl().append(stencil.el);
 		stencil.render().load(stencilConfig.shapes);
 	}
@@ -349,10 +326,7 @@ export default class Graph extends Component {
 			useModelGeometry: true
 		});
 
-		this.selection.collection.on(
-			"reset add remove",
-			this.onSelectionChange.bind(this)
-		);
+		this.selection.collection.on("reset add remove", this.onSelectionChange.bind(this));
 
 		// Initiate selecting when the user grabs the blank area of the paper while the Shift key is pressed.
 		// Otherwise, initiate paper pan.
@@ -452,8 +426,7 @@ export default class Graph extends Component {
 				cellView: elementView,
 				allowRotation: false,
 				preserveAspectRatio: !!element.get("preserveAspectRatio"),
-				allowOrthogonalResize:
-					element.get("allowOrthogonalResize") !== false
+				allowOrthogonalResize: element.get("allowOrthogonalResize") !== false
 			}).render();
 		}
 
@@ -515,10 +488,7 @@ export default class Graph extends Component {
 					let cell = cellView.model;
 					let collection = this.selection.collection;
 					if (collection.includes(cell)) return;
-					if (
-						cell.isLink() &&
-						(!cell.getTargetCell() || !cell.getSourceCell())
-					) {
+					if (cell.isLink() && (!cell.getTargetCell() || !cell.getSourceCell())) {
 						cell.remove();
 					} else {
 						collection.reset([cell]);
@@ -614,10 +584,7 @@ export default class Graph extends Component {
 		toolbar.on({
 			"svg:pointerclick": this.openAsSVG.bind(this),
 			"png:pointerclick": this.openAsPNG.bind(this),
-			"to-front:pointerclick": this.applyOnSelection.bind(
-				this,
-				"toFront"
-			),
+			"to-front:pointerclick": this.applyOnSelection.bind(this, "toFront"),
 			"to-back:pointerclick": this.applyOnSelection.bind(this, "toBack"),
 			"layout:pointerclick": this.layoutDirectedGraph.bind(this),
 			"snapline:change": this.changeSnapLines.bind(this),
@@ -639,10 +606,7 @@ export default class Graph extends Component {
 			{
 				"ctrl+c": function() {
 					// Copy all selected elements and their associated links.
-					this.clipboard.copyElements(
-						this.selection.collection,
-						this.graph
-					);
+					this.clipboard.copyElements(this.selection.collection, this.graph);
 				},
 
 				"ctrl+v": function() {
@@ -661,10 +625,7 @@ export default class Graph extends Component {
 				},
 
 				"ctrl+x shift+delete": function() {
-					this.clipboard.cutElements(
-						this.selection.collection,
-						this.graph
-					);
+					this.clipboard.cutElements(this.selection.collection, this.graph);
 				},
 
 				"delete backspace": function(evt) {

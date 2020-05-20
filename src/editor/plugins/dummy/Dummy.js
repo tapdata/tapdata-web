@@ -42,11 +42,9 @@ export const DummyConfig = {
 			 */
 			allowTarget(targetCell) {
 				log("app.Dummy.target", targetCell);
-				return ![
-					"app.Database",
-					"app.FileNode",
-					"app.GridFSNode"
-				].includes(targetCell.get("type"));
+				return !["app.Database", "app.FileNode", "app.GridFSNode"].includes(
+					targetCell.get("type")
+				);
 			},
 
 			/**
@@ -55,9 +53,7 @@ export const DummyConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-				return !["app.FileNode", "app.Database"].includes(
-					sourceCell.get("type")
-				);
+				return !["app.FileNode", "app.Database"].includes(sourceCell.get("type"));
 			},
 
 			validate(data) {
@@ -66,27 +62,19 @@ export const DummyConfig = {
 				let name = this.attr("label/text");
 				if (!data)
 					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.data_node.dummy.dummy_isNull"
-						)}`
+						`${name}: ${i18n.t("editor.cell.data_node.dummy.dummy_isNull")}`
 					);
 				if (!data.connectionId)
 					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.data_node.collection.none_database"
-						)}`
+						`${name}: ${i18n.t("editor.cell.data_node.collection.none_database")}`
 					);
 				if (!data.tableName)
 					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.data_node.collection.none_collection"
-						)}`
+						`${name}: ${i18n.t("editor.cell.data_node.collection.none_collection")}`
 					);
 				if (!data.primaryKeys)
 					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.data_node.collection.none_pk"
-						)}`
+						`${name}: ${i18n.t("editor.cell.data_node.collection.none_pk")}`
 					);
 				return true;
 			}

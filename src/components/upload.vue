@@ -2,12 +2,8 @@
 	<div class="dataflow-upload">
 		<div class="dataflow-head">{{ $t("dataFlow.import") }}</div>
 		<div class="dataflow-radio">
-			<el-radio v-model="upsert" :label="1">{{
-				$t("dataFlow.overWrite")
-			}}</el-radio>
-			<el-radio v-model="upsert" :label="0">{{
-				$t("dataFlow.skipData")
-			}}</el-radio>
+			<el-radio v-model="upsert" :label="1">{{ $t("dataFlow.overWrite") }}</el-radio>
+			<el-radio v-model="upsert" :label="0">{{ $t("dataFlow.skipData") }}</el-radio>
 		</div>
 		<el-upload
 			class="upload-demo"

@@ -41,11 +41,7 @@ export default class VueComponent extends Component {
 			self.emit("dataChanged", data);
 		});
 
-		editor.graph.on(
-			EditorEventType.SELECTED_STAGE,
-			this.selectedStage,
-			this
-		);
+		editor.graph.on(EditorEventType.SELECTED_STAGE, this.selectedStage, this);
 		this.on(EditorEventType.RESIZE, function() {
 			self.handlerResize(...arguments);
 		});
@@ -80,10 +76,7 @@ export default class VueComponent extends Component {
 		if (this.vm) {
 			this.vm.$destroy();
 		}
-		this.opts.editor.off(
-			EditorEventType.SELECTED_STAGE,
-			this.selectedStage
-		);
+		this.opts.editor.off(EditorEventType.SELECTED_STAGE, this.selectedStage);
 		this.el.remove();
 	}
 }

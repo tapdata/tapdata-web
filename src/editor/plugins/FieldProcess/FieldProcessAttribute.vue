@@ -14,24 +14,14 @@
 				<el-input
 					v-model="model.name"
 					size="mini"
-					:placeholder="
-						$t('editor.cell.processor.field.form.name.placeholder')
-					"
+					:placeholder="$t('editor.cell.processor.field.form.name.placeholder')"
 				></el-input>
 			</el-form-item>
-			<el-form-item
-				:label="
-					$t('editor.cell.processor.field.form.description.label')
-				"
-			>
+			<el-form-item :label="$t('editor.cell.processor.field.form.description.label')">
 				<el-input
 					type="textarea"
 					v-model="model.description"
-					:placeholder="
-						$t(
-							'editor.cell.processor.field.form.description.placeholder'
-						)
-					"
+					:placeholder="$t('editor.cell.processor.field.form.description.placeholder')"
 				></el-input>
 			</el-form-item>
 		</el-form>
@@ -68,10 +58,7 @@
 
 <script>
 import SchemaEditor from "./SchemaEditor";
-import {
-	convertSchemaToTreeData,
-	mergeJoinTablesToTargetSchema
-} from "../../util/Schema";
+import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from "../../util/Schema";
 import log from "../../../log";
 import _ from "lodash";
 
@@ -121,17 +108,12 @@ export default {
 				Object.keys(data).forEach(key => (this.model[key] = data[key]));
 			}
 
-			this.originalSchema = mergeJoinTablesToTargetSchema(
-				null,
-				cell.getInputSchema()
-			);
+			this.originalSchema = mergeJoinTablesToTargetSchema(null, cell.getInputSchema());
 			let schema = _.cloneDeep(this.originalSchema);
 
 			// apply operations to schema
 			if (this.model.operations && schema && schema.fields) {
-				this.$refs.entity.setOperations(
-					_.cloneDeep(this.model.operations)
-				);
+				this.$refs.entity.setOperations(_.cloneDeep(this.model.operations));
 				this.$refs.entity.setScripts(_.cloneDeep(this.model.scripts));
 
 				this.schema = cell.mergeOutputSchema(schema, false);

@@ -29,8 +29,7 @@ export const haloConfig = {
 			attrs: {
 				".handle": {
 					"data-tooltip-class-name": "small",
-					"data-tooltip":
-						"Click and drag to clone and connect the object in one go",
+					"data-tooltip": "Click and drag to clone and connect the object in one go",
 					"data-tooltip-position": "left",
 					"data-tooltip-padding": 15
 				}
@@ -60,8 +59,7 @@ export const haloConfig = {
 			attrs: {
 				".handle": {
 					"data-tooltip-class-name": "small",
-					"data-tooltip":
-						"Click to break all connections to other objects",
+					"data-tooltip": "Click to break all connections to other objects",
 					"data-tooltip-position": "right",
 					"data-tooltip-padding": 15
 				}

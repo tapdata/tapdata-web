@@ -58,22 +58,14 @@ export const scriptProcessConfig = {
 				data = data || this.getFormData();
 				let name = this.attr("label/text");
 				if (!data)
-					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.validate.none_setting"
-						)}`
-					);
+					throw new Error(`${name}: ${i18n.t("editor.cell.validate.none_setting")}`);
 				if (!data.type)
 					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.processor.script.none_script_type"
-						)}`
+						`${name}: ${i18n.t("editor.cell.processor.script.none_script_type")}`
 					);
 				if (!data.script)
 					throw new Error(
-						`${name}: ${i18n.t(
-							"editor.cell.processor.script.none_script"
-						)}`
+						`${name}: ${i18n.t("editor.cell.processor.script.none_script")}`
 					);
 				return true;
 			},

@@ -32,20 +32,14 @@
 		>
 			<span class="custom-tree-node" slot-scope="{ node }">
 				<span>
-					<span
-						class="iconfont icon-Folder-closed filter-icon"
-					></span>
+					<span class="iconfont icon-Folder-closed filter-icon"></span>
 					<span class="table-label">{{ node.label }}</span>
 				</span>
 			</span>
 		</el-tree>
 		<span slot="footer" class="dialog-footer">
-			<el-button type="danger" @click="handleCancel" size="mini"
-				>- 批量移除</el-button
-			>
-			<el-button type="primary" @click="handleAdd" size="mini"
-				>+ 批量添加</el-button
-			>
+			<el-button type="danger" @click="handleCancel" size="mini">- 批量移除</el-button>
+			<el-button type="primary" @click="handleAdd" size="mini">+ 批量添加</el-button>
 		</span>
 	</el-dialog>
 </template>
@@ -195,10 +189,7 @@ export default {
 					if (this.listdata) {
 						this.listdata.map(v => {
 							if (v.id === item) {
-								if (
-									v.classifications &&
-									v.classifications.length !== 0
-								) {
+								if (v.classifications && v.classifications.length !== 0) {
 									classifications.push(v.classifications);
 								} else {
 									classifications = [];
@@ -242,9 +233,7 @@ export default {
 					}
 				})
 				.catch(e => {
-					this.$message.error(
-						"MetadataInstancesClassification error"
-					);
+					this.$message.error("MetadataInstancesClassification error");
 				});
 		},
 		handleAdd() {
@@ -255,10 +244,7 @@ export default {
 					if (this.listdata) {
 						this.listdata.map(v => {
 							if (v.id === item) {
-								if (
-									v.classifications &&
-									v.classifications.length !== 0
-								) {
+								if (v.classifications && v.classifications.length !== 0) {
 									classifications.push(v.classifications);
 								} else {
 									classifications = [];
@@ -297,9 +283,7 @@ export default {
 					}
 				})
 				.catch(e => {
-					this.$message.error(
-						"MetadataInstancesClassification error"
-					);
+					this.$message.error("MetadataInstancesClassification error");
 				});
 		}
 	}
