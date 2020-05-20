@@ -218,19 +218,27 @@
 					let firstDataNode = typeof sourceCell.getFirstDataNode === 'function' ? sourceCell.getFirstDataNode() : [];
 					this.model.joinTable.stageId = firstDataNode.length > 0 ? firstDataNode[0].id : '';
           //this.model.joinTable.stageId = cell.getSourceCell().id;
-          // 关联字段自动填充
 
-          let sourceArr = sourceSchema && sourceSchema.fields && sourceSchema.fields.length > 0 ?sourceSchema.fields.filter(item=> item.primary_key_position > 0):[];
-          let targetArr = mergedTargetSchema.fields && mergedTargetSchema.fields.length > 0 ?mergedTargetSchema.fields.filter(item=> item.primary_key_position > 0):[];
-          let initialAssociationArr =  sourceArr && sourceArr.length > 0 && targetArr && targetArr.length > 0? sourceArr.map((fields,i) =>({source:fields.field_name, target: targetArr[i]&&targetArr[i].field_name?targetArr[i].field_name:''})): this.model.joinTable.joinKeys;
+          this.sourceList = sourceSchema ? sourceSchema.fields : [];
+          this.targetList = mergedTargetSchema ? mergedTargetSchema.fields : [];
 
-          this.sourceList = sourceSchema && sourceSchema.fields?sourceSchema.fields:[];
-          this.targetList = mergedTargetSchema.fields||[];
-
-          if( sourceSchema && mergedTargetSchema.fields) {
-            this.model.joinTable.joinKeys = initialAssociationArr;
+          let joinKeys = this.model.joinTable.joinKeys;
+          if( joinKeys.length === 0 || (joinKeys.length === 1 && (joinKeys[0].source === ''|| joinKeys[0].target === '')) ){
+            // 关联字段自动填充
+            let sourceArr = sourceSchema && sourceSchema.fields && sourceSchema.fields.length > 0 ?
+                              sourceSchema.fields.filter(item=> item.primary_key_position > 0).sort((v1,v2) => v1 > v2 ? 1 : v1 === v2 ? 0 : -1 ) :
+                              [];
+            let targetArr = mergedTargetSchema.fields && mergedTargetSchema.fields.length > 0 ?
+                              mergedTargetSchema.fields.filter(item=> item.primary_key_position > 0).sort((v1,v2) => v1 > v2 ? 1 : v1 === v2 ? 0 : -1 ) :
+                              [];
+            let initialAssociationArr =  sourceArr && sourceArr.length > 0 && targetArr && targetArr.length > 0 ?
+                                          sourceArr.map((field,i) =>({source:field.field_name, target: targetArr[i] ? targetArr[i].field_name : ''})) :
+                                          this.model.joinTable.joinKeys;
+            //修改后显示修改的内容
+            //if( this.model.joinTable.joinKeys[0].source === ''|| this.model.joinTable.joinKeys[0].target === '') {
+              this.model.joinTable.joinKeys = initialAssociationArr;
+            //}
           }
-
         }
 
 				this.$emit(EditorEventType.RESIZE);

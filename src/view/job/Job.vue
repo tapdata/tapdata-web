@@ -281,7 +281,7 @@
 						Object.assign(stage, {
 							type: "database",
 							readCdcInterval: 500,
-							readBatchSize: 25000,
+							readBatchSize: 1000,
 						});
 
 					} else if (['app.Table', 'app.Collection', 'app.ESNode'].includes(cell.type)) {
