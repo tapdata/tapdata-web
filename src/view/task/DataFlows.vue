@@ -257,7 +257,7 @@
         }else if(command === 'c'){
           this.handleAllStatus('stopping');
         }else if(command === 'd'){
-          this.handleDelete('stopping');
+          this.handleAllDelete();
         }
       },
       handleDownload(){
@@ -463,7 +463,7 @@
         });
         let where = {
           _id: {
-            in: multipleSelection
+            inq: multipleSelection
           },
         };
         this.$confirm(this.$t('message.deteleMessage'), this.$t('message.prompt'), {
