@@ -10,6 +10,7 @@
       :action="action"
       :accept="accept"
       :on-success ="handleSuccess"
+      :before-remove ='handleRemove'
       :file-list="fileList">
       <el-button type="primary" plain size="small" >{{$t('dataFlow.upload')}}</el-button>
     </el-upload>
@@ -45,6 +46,9 @@
     methods: {
       handleSuccess(){
         this.status = true;
+      },
+      handleRemove(){
+        return false;
       }
     }
   };
