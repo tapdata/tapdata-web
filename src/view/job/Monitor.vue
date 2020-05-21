@@ -547,21 +547,23 @@
 				await DataFlowInsights.runtimeMonitor(params).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data && res.data.length > 0) {
-            res.data[0].statsData.forEach(time => {
-                switch(res.data[0].granularity) {
-                  case 'flow_second':
-                    time.t = time.t.substring(11,19)
-                    break;
-                  case 'flow_minute':
-                    time.t = time.t.substring(14,19);
-                    break;
-                  case 'flow_hour':
-                    time.t = time.t.substring(11,16);
-                    break;
-                  case 'flow_day':
-                    time.t = time.t.substring(6,10);
-                }
-              })
+              if(res.data[0].statsData && res.data[0].statsData.length > 0){
+                res.data[0].statsData.forEach(time => {
+                  switch(res.data[0].granularity) {
+                    case 'flow_second':
+                      time.t = time.t.substring(11,19);
+                      break;
+                    case 'flow_minute':
+                      time.t = time.t.substring(14,19);
+                      break;
+                    case 'flow_hour':
+                      time.t = time.t.substring(11,16);
+                      break;
+                    case 'flow_day':
+                      time.t = time.t.substring(6,10);
+                  }
+                });
+              }
               this.storeData = res.data[0].statsData;
 							this.dataProcessing(this.storeData, type, ele);
 						} else {
