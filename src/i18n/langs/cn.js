@@ -71,6 +71,7 @@ const cn = {
 	  upload:'点击上传',
     import:'任务导入',
     uploadOK:'上传成功',
+    uploadError:'上传失败',
     uploadInfo:'点击查看详情',
     dataFlowExport:'导出',
     overWrite: '覆盖已有数据',

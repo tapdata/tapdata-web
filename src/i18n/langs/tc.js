@@ -70,6 +70,7 @@ const tc = {
     bulkStopping:"批量停止",
     upload:'點擊上傳',
     import:'任務導入',
+    uploadError:'上傳失敗',
     uploadOK:'上傳成功',
     uploadInfo:'點擊查看詳情',
     dataFlowExport:'導出',

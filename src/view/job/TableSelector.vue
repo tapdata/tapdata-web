@@ -72,6 +72,7 @@
 					'file':'icon-file1',
 					'gridfs': 'icon-gridfs2',
 					'rest api': 'icon-api',
+          'custom_connection':'icon-custom1'
 				},
 				loading: false
 			};
@@ -190,7 +191,7 @@
 				if (node.level >1) {
 					return resolve([]);
 				}
-				if(['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(node.data.source.database_type)){
+				if(['dummy db', 'gridfs', 'file', 'elasticsearch','rest api','custom_connection'].includes(node.data.source.database_type)){
 					return resolve([]);
 				}
 				let params = {
@@ -257,12 +258,13 @@
 					'file':'app.FileNode',
 					'gridfs': 'app.GridFSNode',
 					'rest api': 'app.ApiNode',
+          'custom_connection':'app.CustomNode'
 				};
 
 				let formData = {};
 				let schema = {};
 				if(data.meta_type ==='database'){
-					if(data.source.database_type && (['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(data.source.database_type))){
+					if(data.source.database_type && (['dummy db', 'gridfs', 'file', 'elasticsearch','rest api','custom_connection'].includes(data.source.database_type))){
 						formData ={
 							connectionId:data.source._id,
 							name: data.source.name || data.label ,
@@ -304,7 +306,7 @@
 				this.count = this.count + 50;
 				let cell ='';
 				if(['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)){
-					if(data.source.database_type && (['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(data.source.database_type))){
+					if(data.source.database_type && (['dummy db', 'gridfs', 'file', 'elasticsearch','rest api','custom_connection'].includes(data.source.database_type))){
 						let dataType = data.source.database_type;
 						cell = this.editor.graph.createCell(mapping[dataType], formData,schema);
 					}else {

@@ -72,6 +72,7 @@ const en = {
     import:'Task import',
     dataFlowExport:'Export',
     uploadOK:'Upload successful',
+    uploadError:'Upload error',
     uploadInfo:'Click to details',
     overWrite: 'Overwrite existing data',
     skipData:'Skip existing data',

@@ -480,7 +480,7 @@
             if (res.statusText === "OK" || res.status === 200) {
               this.getData();
             }
-            this.$message.success(this.$('message.deleteOK'));
+            this.$message.success(this.$t('message.deleteOK'));
           });
 
         }).catch(() => {
@@ -497,7 +497,7 @@
 						if (res.statusText === "OK" || res.status === 200) {
 							this.getData();
 						}
-						this.$message.success(this.$('message.deleteOK'));
+						this.$message.success(this.$t('message.deleteOK'));
 					});
 
 				}).catch(() => {
