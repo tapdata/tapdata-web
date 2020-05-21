@@ -54,10 +54,10 @@
 					</el-form-item>
 
           <el-form-item v-show="formData.sync_type === 'cdc' " size="mini">
-            <div>SyncPoint</div>
+            <div>{{$t('dataFlow.SyncPoint')}} </div>
             <el-radio-group v-model="formData.syncPoint">
-              <el-radio-button label="current">Current</el-radio-button>
-              <el-radio-button label="sync_time">SyncTime</el-radio-button>
+              <el-radio-button label="current">{{$t('dataFlow.Current')}}</el-radio-button>
+              <el-radio-button label="sync_time">{{$t('dataFlow.SyncTime')}}</el-radio-button>
             </el-radio-group>
 
             <el-row v-if="formData.syncPoint === 'sync_time'">

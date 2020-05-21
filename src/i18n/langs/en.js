@@ -61,6 +61,9 @@ const en = {
     edit: 'edit'
 	},
 	dataFlow: {
+    SyncPoint:'Sync point',
+    Current:'Current',
+    SyncTime:'Sync time',
     batchDelete:'Batch delete',
     bulkExport:'Batch export',
     bulkScheuled:'Batch Scheuled',

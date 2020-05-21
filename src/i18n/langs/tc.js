@@ -61,6 +61,9 @@ const tc = {
     edit: '修改'
 	},
 	dataFlow: {
+    SyncPoint:'同步節點',
+    Current:'當前時間',
+    SyncTime:'同步時間',
     batchDelete:'批量刪除',
     bulkExport:'批量導出',
     bulkScheuled:'批量啟動',

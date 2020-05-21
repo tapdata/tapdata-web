@@ -61,6 +61,9 @@ const cn = {
     edit: '修改'
 	},
 	dataFlow: {
+    SyncPoint:'同步节点',
+    Current:'当前时间',
+    SyncTime:'同步时间',
 	  batchDelete:'批量删除',
     bulkExport:'批量导出',
     bulkScheuled:'批量启动',
