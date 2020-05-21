@@ -160,13 +160,16 @@
 						if(!dataFlow.editorData){
               let j = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
               dataFlow.editorData = j;
-              this.editor.reloadSchema();
-              this.editor.graph.layoutDirectedGraph();
+              self.editor.setData(dataFlow);
+              self.editor.reloadSchema();
+              self.editor.graph.layoutDirectedGraph();
+            }else {
+              self.editor.setData(dataFlow);
             }
             // let j = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
             //   log('jjjjjjjjj',j);
             //   dataFlow.editorData = j;
-            self.editor.setData(dataFlow);
+
 
 						if (['scheduled', 'running', 'stopping'].includes(self.status)) {
 							self.setEditable(false);
