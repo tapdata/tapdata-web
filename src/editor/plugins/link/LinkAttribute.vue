@@ -245,7 +245,7 @@
 				}
 				if(data.joinType === 'append')
 					delete data.joinPath;
-				return data;
+        return data;
 			},
 
 			/**

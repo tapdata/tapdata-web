@@ -10,7 +10,7 @@
       <el-row :gutter="10">
         <el-col :span="6">
           <el-form-item :label="$t('editor.cell.data_node.api.method')">
-            <el-select v-model="form.method" @change="changeAggFunction(item, index)">
+            <el-select v-model="form.method">
               <el-option
                   v-for="item in selectList"
                   :key="item.value"
@@ -64,10 +64,10 @@
             :label="$t('editor.cell.data_node.api.table_setting')"
             width="180">
             <template slot-scope="scope">
-              <el-checkbox-group v-model="scope.row.checkList">
-                <el-checkbox label="required">{{$t('editor.cell.data_node.api.required')}}</el-checkbox>
-                <el-checkbox label="query">{{$t('editor.cell.data_node.api.availableQueries')}}</el-checkbox>
-              </el-checkbox-group>
+              <!-- <el-checkbox-group v-model="scope.row.checkList"> -->
+                <el-checkbox v-model="scope.row.required">{{$t('editor.cell.data_node.api.required')}}</el-checkbox>
+                <el-checkbox v-model="scope.row.query">{{$t('editor.cell.data_node.api.availableQueries')}}</el-checkbox>
+              <!-- </el-checkbox-group> -->
             </template>
           </el-table-column>
         </el-table>
@@ -80,9 +80,10 @@
 </template>
 
 <script>
-	import _ from "lodash";
+  import _ from "lodash";
+  import { convertSchemaToTreeData } from "../../util/Schema";
 	// import log from '../../../log';
-	// import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
+	import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
 
 	export default {
 		name: "ReleaseApi",
@@ -120,33 +121,73 @@
 					this.$emit('dataChanged', this.getData());
 				}
       },
-      mergedSchema: {
-        handler(){
+      // 'form.paths': {
+      //   handler(data) {
+      //     data.fields.forEach((item,index) => {
+      //       // if(item.required) {
+      //       //   data.requiredQueryField.push(item.field_name);
+      //       // } else if(item.query) {
+      //       //   data.availableQueryField.push(item.field_name);
+      //       // // } else {
+      //       // //   this.form.paths.requiredQueryField.splice(index,1);
+      //       // //   this.form.paths.availableQueryField.splice(index,1);
+      //       // }
+      //       console.log('数据',data)
+      //     });
 
-        }
-      }
+      //   },
+      //   // deep: true
+      // }
 		},
 
 		methods: {
+      // convertSchemaToTreeData,
 			setData(data, cell, isSourceDataNode, vueAdapter) {
 				if (data) {
 					Object.keys(data).forEach(key => this.form[key] = data[key]);
         }
-        let fields = [];
+
+        // let fields = [];
+        let inputSchemas = cell.getInputSchema();
         this.mergedSchema = cell.getOutputSchema();
-        this.mergedSchema.fields.forEach(field =>{
-          fields.push({
-            field_name: field.field_name,
-            table_name: field.table_name,
-            javaType: field.javaType,
-            checkList: []
+        // let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
+        if(this.mergedSchema &&  this.mergedSchema.fields) {
+          this.mergedSchema.fields.forEach(field =>{
+            this.$set(field,'required',false);
+            this.$set(field,'query',false);
+            // fields.push({
+            //   field_name: field.field_name,
+            //   table_name: field.table_name,
+            //   javaType: field.javaType,
+            //   checkList: []
+            // });
           });
-        });
-        this.form.paths.fields = fields;
+          // if (cell.getSourceCell()) {
+
+          // }
+          this.form.paths.fields = this.mergedSchema.fields;
+        }
+        console.log('====',data,this.mergedSchema,inputSchemas );
+
 			},
 
 			getData() {
-        return _.cloneDeep(this.form);
+        let data = _.cloneDeep(this.form);
+
+        if (data.paths.fields) {
+          data.paths.fields.forEach((item,index) => {
+            if(item.required) {
+              data.paths.requiredQueryField.push(item.field_name);
+            } else if(item.query) {
+              data.paths.availableQueryField.push(item.field_name);
+            } else {
+              data.paths.requiredQueryField.splice(index,1);
+              data.paths.availableQueryField.splice(index,1);
+            }
+          });
+        }
+         console.log(data,'****');
+        return data;
 			},
 		}
 	};

@@ -21,7 +21,7 @@
 				</el-form-item>
 
 				<el-form-item required :label="$t('editor.cell.data_node.collection.form.dropTable.label')"
-						 v-if="!isSourceDataNode">
+					v-if="!isSourceDataNode">
 					<el-select
 							v-model="model.dropTable" size="mini">
 						<el-option
@@ -76,7 +76,7 @@
 							:key="item.id"
 							:gutter="20">
 						<el-col :span="1">
-							<el-checkbox v-model="item.checked" @change='checkedOne(item,index)'></el-checkbox>
+							<el-checkbox v-model="item.checked"></el-checkbox>
 						</el-col>
 						<el-col :span="17" style="padding-left:20px;">
 							<i class="iconfont icon-table2"></i>
@@ -106,7 +106,7 @@
 							:key="item.id"
 							:gutter="20">
 						<el-col :span="2">
-							<el-checkbox v-model="item.checked" @change='checkedOne(item,index)'></el-checkbox>
+							<el-checkbox v-model="item.checked"></el-checkbox>
 						</el-col>
 						<el-col :span="17">
 							<i class="iconfont icon-table2"></i>
@@ -285,21 +285,46 @@
 			},
 			// 移除
 			removeTable(item, idx) {
-				item.checked = false;
-				this.tables.splice(idx, 1);
-				this.removeTables.push(item);
-				this.removeTables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+        item.checked = false;
+        if(this.search) {
+          this.computedTables.splice(idx, 1);
+          this.tables.forEach((table,index) => {
+            if(item.table_name === table.table_name) {
+              this.tables.splice(index, 1);
+            }
+          });
+
+          this.computedRemoveTables.push(item);
+          this.computedRemoveTables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+        } else {
+          this.tables.splice(idx, 1);
+          this.removeTables.push(item);
+          this.removeTables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+        }
 
 				if (this.model.excludeTables.indexOf(item.table_name) === -1) {
 					this.model.excludeTables.push(item.table_name);
-				}
+        }
+
 			},
 			// 撤销
 			undotble(item, idx) {
-				item.checked = false;
-				this.removeTables.splice(idx, 1);
-				this.tables.push(item);
-				this.tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+        item.checked = false;
+        if(this.search) {
+          this.computedRemoveTables.splice(idx, 1);
+          this.removeTables.forEach((table,index) => {
+            if(item.table_name === table.table_name) {
+              this.removeTables.splice(index, 1);
+            }
+          });
+
+          this.computedTables.push(item);
+          this.computedTables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+        } else {
+          this.removeTables.splice(idx, 1);
+          this.tables.push(item);
+          this.tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+        }
 
 				let index = this.model.excludeTables.indexOf(item.table_name);
 				if (index >= 0) {
