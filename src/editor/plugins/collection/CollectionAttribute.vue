@@ -222,7 +222,7 @@
 				this.mergedSchema = cell.getOutputSchema();
 				cell.on('change:outputSchema', () => {
 					this.mergedSchema = cell.getOutputSchema();
-				});
+        });
 			},
 			getData(){
 				let result = _.cloneDeep(this.model);
