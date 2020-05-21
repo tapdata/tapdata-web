@@ -381,6 +381,7 @@
 							"stats": true,
 							"stages": true,
 							"setting":true,
+              "user_id":true,
 						},
 					})
 				}, params);
