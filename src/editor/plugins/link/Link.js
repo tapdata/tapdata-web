@@ -206,6 +206,10 @@ export const link = {
 						if( !joinTable.joinPath )
 							throw new Error(`${i18n.t('editor.cell.link.none_join_path')}`);
 					}*/
+					if('merge_embed' === joinTable.joinType) {
+						if(!joinTable.arrayUniqueKey)
+							throw new Error(`${i18n.t('editor.cell.link.none_array_unique_key')}`);
+					}
 				}
 				return true;
 			}
