@@ -196,7 +196,7 @@ export const baseElementConfig = {
 				let joinTables = graph.getConnectedLinks(self, {inbound: true})
 						.map( cell => {
 							let sourceCell = cell.getSourceCell();
-							let targetCell = cell.getTargetCell();
+							// let targetCell = cell.getTargetCell();
 
 							if( sourceCell ) {
 								let formData = cell.getFormData() || {};
@@ -212,13 +212,14 @@ export const baseElementConfig = {
 									/*if( !joinTable.joinPath && ['merge_embed', 'update'].includes(joinTable.joinType)){
 										joinTable.joinPath = joinTable.tableName;
 									}*/
-									formData.joinTable = _.cloneDeep(joinTable);
-									cell.set(FORM_DATA_KEY, formData);
 								}
+								let parentDataNodes = typeof sourceCell.getFirstDataNode === 'function' ? sourceCell.getFirstDataNode() : [];
+								joinTable.stageId = parentDataNodes.length > 0 ? parentDataNodes[0].id : '';
+
+								formData.joinTable = _.cloneDeep(joinTable);
+								cell.set(FORM_DATA_KEY, formData);
 
 								joinTable.sourceSchema = schema;
-								let parentDataNodes = typeof targetCell.getFirstDataNode === 'function' ? targetCell.getFirstDataNode() : [];
-								joinTable.stageId = parentDataNodes.length > 0 ? parentDataNodes[0].id : '';
 
 								log('BaseElement.getInputSchema.joinTables', cell.getFormData(), joinTable);
 								return joinTable;
