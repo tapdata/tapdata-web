@@ -440,6 +440,7 @@ const tc = {
 				none_join_type: '關聯類型必填',
 				none_join_key: '關聯字段必填',
 				none_join_path: '關聯寫入路徑必填',
+				none_array_unique_key: '合併進數組時，必須提供唯一鍵',
 				form: {
 					label: {
 						label: '标签',
@@ -457,6 +458,10 @@ const tc = {
 						label: '关联条件',
 						sourceField: '源字段',
 						targetField: '目标字段',
+					},
+					arrayUniqueKey: {
+						label: '內嵌數組匹配條件',
+						placeholder: '內嵌數組匹配條件'
 					},
 				},
 

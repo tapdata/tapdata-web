@@ -439,6 +439,7 @@ const cn = {
 				none_join_type: '关联类型必填',
 				none_join_key: '关联字段必填',
 				none_join_path: '关联写入路径必填',
+				none_array_unique_key: '合并进数组时，必须提供唯一键',
 				form: {
 					label: {
 						label: '标签',
@@ -456,6 +457,10 @@ const cn = {
 						label: '关联条件',
 						sourceField: '源字段',
 						targetField: '目标字段',
+					},
+					arrayUniqueKey: {
+						label: '内嵌数组匹配条件',
+						placeholder: '内嵌数组匹配条件'
 					},
 				},
 
