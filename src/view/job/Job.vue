@@ -79,6 +79,7 @@
 	import $ from 'jquery';
 	import factory from "../../api/factory";
 	import editor from '../../editor/index';
+	import breakText from  '../../editor/breakText';
 	import log from '../../log';
 	import {FORM_DATA_KEY} from "../../editor/constants";
 	import _ from 'lodash';
@@ -166,11 +167,6 @@
             }else {
               self.editor.setData(dataFlow);
             }
-            // let j = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
-            //   log('jjjjjjjjj',j);
-            //   dataFlow.editorData = j;
-
-
 						if (['scheduled', 'running', 'stopping'].includes(self.status)) {
 							self.setEditable(false);
 						}
@@ -601,94 +597,6 @@
           'row_filter_processor':'app.DataFilter',
           'java_processor':'app.FieldProcess',
         };
-        // let node1 ={
-        //     type:'app.Database',
-        //     id:'95078ec4-5a71-476c-a400-3a94d7bfa4c8',
-        //     freeTransform:false,
-        //     form_data : {
-        //       connectionId: '5e9979d6bfafb2192208238c',
-        //       excludeTables:[],
-        //       table_prefix:'',
-        //       table_suffix:'',
-        //       name: '77888test',
-        //     },
-        //   position:{
-        //       x:-280,
-        //      y:280,
-        //   },
-        //     size:{
-        //       "width":160,
-        //       "height":36
-        //     },
-        //     schema:{},
-        //     outputSchema: {},
-        //     "attrs":{
-        //       "label":{
-        //         "text":"1"
-        //       },
-        //       "body":{
-        //         "stroke":"#2196F3"
-        //       }
-        //     },
-        //     "angle":0,
-        //   z:1
-        //   };
-        // cells.push(node1);
-        // let node2={
-        //   type:'app.Database',
-        //   id:'0d07d3cc-126e-4d6e-852e-704312608de1',
-        //   freeTransform:false,
-        //   form_data : {
-        //     connectionId: '5ea4507e99a8a20c29e59ae4',
-        //     excludeTables:[],
-        //     table_prefix:'',
-        //     table_suffix:'',
-        //     name: 'AT_oracle-source',
-        //   },
-        //   size:{
-        //     "width":160,
-        //     "height":36
-        //   },
-        //   position:{
-        //     x:-340,
-        //     y:340,
-        //   },
-        //   schema:{},
-        //   outputSchema: {},
-        //   "attrs":{
-        //     "label":{
-        //       "text":"2"
-        //     },
-        //     "body":{
-        //       "stroke":"#2196F3"
-        //     }
-        //   },
-        //   "angle":0,
-        //   z:2
-        // };
-        // cells.push(node2);
-        // let node3 ={
-        //   type:'app.Link',
-        //   source:{
-        //     id:'95078ec4-5a71-476c-a400-3a94d7bfa4c8'
-        //   },
-        //   target:{
-        //     id:'0d07d3cc-126e-4d6e-852e-704312608de1'
-        //   },
-        //   router:{
-        //     "name":"manhattan"
-        //   },
-        //   connector:{
-        //     "name":"rounded"
-        //   },
-        //   form_data:{
-        //     "label":""
-        //   },
-        //   labels:'',
-        //   attrs:{},
-        //   z:3
-        // };
-        // cells.push(node3);
         if(data){
           data.map((v,index) =>{
             if(['table','view','collection','mongo_view'].includes(v.type)){
@@ -710,7 +618,7 @@
                 outputSchema: null,
                 attrs:{
                   label:{
-                    text: v.tableName,
+                    text: breakText.breakText(v.tableName, 125),
                   },
                 },
                 angle:0,
@@ -725,7 +633,7 @@
                     outputSchema: null,
                     attrs:{
                       label:{
-                        text: v.name,
+                        text: breakText.breakText(v.name, 125),
                       },
                     },
                     form_data :{
@@ -757,7 +665,7 @@
                     outputSchema: null,
                     attrs:{
                       label:{
-                        text: v.name,
+                        text: breakText.breakText(v.name, 125)
                       },
                     },
                   };
@@ -772,7 +680,7 @@
                   outputSchema: null,
                   attrs:{
                     label:{
-                      text: v.name,
+                      text: breakText.breakText(v.name, 95),
                     },
                   },
                 };
