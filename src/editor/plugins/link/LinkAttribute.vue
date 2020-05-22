@@ -225,10 +225,10 @@
           let joinKeys = this.model.joinTable.joinKeys;
           if( joinKeys.length === 0 || (joinKeys.length === 1 && (joinKeys[0].source === ''|| joinKeys[0].target === '')) ){
             // 关联字段自动填充
-            let sourceArr = sourceSchema && sourceSchema.fields && sourceSchema.fields.length > 0 ?
+            let sourceArr = (sourceSchema && sourceSchema.fields && sourceSchema.fields.length > 0) ?
                               sourceSchema.fields.filter(item=> item.primary_key_position > 0).sort((v1,v2) => v1 > v2 ? 1 : v1 === v2 ? 0 : -1 ) :
                               [];
-            let targetArr = mergedTargetSchema.fields && mergedTargetSchema.fields.length > 0 ?
+            let targetArr = (mergedTargetSchema.fields && mergedTargetSchema.fields.length > 0) ?
                               mergedTargetSchema.fields.filter(item=> item.primary_key_position > 0).sort((v1,v2) => v1 > v2 ? 1 : v1 === v2 ? 0 : -1 ) :
                               [];
             let initialAssociationArr =  sourceArr && sourceArr.length > 0 && targetArr && targetArr.length > 0 ?

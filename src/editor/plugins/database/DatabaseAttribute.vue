@@ -167,7 +167,7 @@
 				},
 				model: {
 					connectionId: "",
-					excludeTables: [],
+					includeTables: [],
 					dropTable: false,
 					table_prefix:'',
 					table_suffix:''
@@ -267,12 +267,12 @@
 						tables = tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
 						tables.forEach(item => {
 							let tableName = item.table_name;
-							if (self.model.excludeTables.indexOf(tableName) >= 0) {
-								self.removeTables.push({
+							if (self.model.includeTables.indexOf(tableName) >= 0) {
+                self.tables.push({
 									table_name: item.table_name, checked: false
 								});
 							} else {
-								self.tables.push({
+                self.removeTables.push({
 									table_name: item.table_name, checked: false
 								});
 							}
@@ -302,9 +302,14 @@
           this.removeTables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
         }
 
-				if (this.model.excludeTables.indexOf(item.table_name) === -1) {
-					this.model.excludeTables.push(item.table_name);
-        }
+        let index = this.model.includeTables.indexOf(item.table_name);
+				if (index >= 0) {
+					this.model.includeTables.splice(index, 1);
+				}
+
+				// if (this.model.includeTables.indexOf(item.table_name) === -1) {
+				// 	this.model.includeTables.push(item.table_name);
+        // }
 
 			},
 			// 撤销
@@ -326,10 +331,13 @@
           this.tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
         }
 
-				let index = this.model.excludeTables.indexOf(item.table_name);
-				if (index >= 0) {
-					this.model.excludeTables.splice(index, 1);
-				}
+        if (this.model.includeTables.indexOf(item.table_name) === -1) {
+					this.model.includeTables.push(item.table_name);
+        }
+				// let index = this.model.includeTables.indexOf(item.table_name);
+				// if (index >= 0) {
+				// 	this.model.includeTables.splice(index, 1);
+				// }
 			},
 			// 全部移除
 			bulkRemoval() {
