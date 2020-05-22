@@ -23,7 +23,7 @@ export const collectionConfig = {
 				}
 			},
 			[FORM_DATA_KEY]: {
-				itconnectionId: '',
+				connectionId: '',
 				excludeTables: [],
 				name: '',
 				freeTransform: false,
