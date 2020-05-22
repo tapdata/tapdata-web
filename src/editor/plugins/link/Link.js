@@ -166,7 +166,10 @@ export const link = {
 				let targetId = this.target().id;
 				if( !targetId) return false;
 				let targetCell = this.getTargetCell();
-				return targetCell && targetCell.isDataNode && targetCell.isDataNode() && ['app.Table', 'app.Collection', 'app.ESNode'].includes(targetCell.get('type'));
+				return targetCell
+          && targetCell.isDataNode
+          && targetCell.isDataNode()
+          && ['app.Table', 'app.Collection', 'app.ESNode'].includes(targetCell.get('type'));
 			},
 
 			/**
