@@ -30,33 +30,17 @@
          <el-table
           border
           :data="form.paths.fields"
+          row-key="id"
+          :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
           style="width: 100%">
           <el-table-column
             prop="field_name"
             :label="$t('editor.cell.data_node.api.table_field')">
-
-            <!-- <template slot-scope="scope">
-              <el-input v-model="scope.row.field_name" size="mini"></el-input>
-            </template> -->
           </el-table-column>
           <el-table-column
             prop="javaType"
             :label="$t('editor.cell.data_node.api.table_type')"
             width="100">
-            <!-- <template slot-scope="scope">
-              <el-select
-                v-model="scope.row.table_type"
-                filterable
-                allow-create
-                default-first-option>
-                  <el-option
-                    v-for="(item, idx) in typeList"
-                    :value="item.type"
-                    :label="item.type"
-                    v-bind:key="idx">
-                  </el-option>
-              </el-select>
-            </template> -->
           </el-table-column>
           <el-table-column
             align="center"
@@ -72,18 +56,15 @@
           </el-table-column>
         </el-table>
       </el-form-item>
-			<!-- <el-form-item class="btnClass">
-				<el-button @click="addRow">+ {{$t('editor.cell.processor.aggregate.new_aggregate')}}</el-button>
-			</el-form-item> -->
 		</el-form>
 	</div>
 </template>
 
 <script>
   import _ from "lodash";
-  import { convertSchemaToTreeData } from "../../util/Schema";
+  // import { convertSchemaToTreeData } from "../../util/Schema";
 	// import log from '../../../log';
-	import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
+	// import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
 
 	export default {
 		name: "ReleaseApi",
@@ -96,7 +77,9 @@
 				groupList: [],
 				expressionList: [],
 				form: {
+          id: '',
           apiVersion: 'V1',
+          connection: '',
           name: '',
           description: '',
           paths: {
@@ -106,38 +89,22 @@
             requiredQueryField: []
           },
           path: '',
-          mergedSchema: null,
+          fields: []
 					// tableData: [
           //   {'table_field':1,'table_type': 'String',checkList:['required']}
           // ],
-				},
+        },
+        mergedSchema: null,
 			};
 		},
 
 		watch: {
 			form: {
 				deep: true,
-				handler(val) {
+				handler(data) {
 					this.$emit('dataChanged', this.getData());
 				}
-      },
-      // 'form.paths': {
-      //   handler(data) {
-      //     data.fields.forEach((item,index) => {
-      //       // if(item.required) {
-      //       //   data.requiredQueryField.push(item.field_name);
-      //       // } else if(item.query) {
-      //       //   data.availableQueryField.push(item.field_name);
-      //       // // } else {
-      //       // //   this.form.paths.requiredQueryField.splice(index,1);
-      //       // //   this.form.paths.availableQueryField.splice(index,1);
-      //       // }
-      //       console.log('数据',data)
-      //     });
-
-      //   },
-      //   // deep: true
-      // }
+      }
 		},
 
 		methods: {
@@ -155,17 +122,25 @@
           this.mergedSchema.fields.forEach(field =>{
             this.$set(field,'required',false);
             this.$set(field,'query',false);
-            // fields.push({
-            //   field_name: field.field_name,
-            //   table_name: field.table_name,
-            //   javaType: field.javaType,
-            //   checkList: []
-            // });
           });
-          // if (cell.getSourceCell()) {
-
-          // }
           this.form.paths.fields = this.mergedSchema.fields;
+        }
+
+        if(data) {
+          for(let i = 0; i<this.form.paths.fields.length; i++) {
+            let item = this.form.paths.fields[i];
+            data.paths.availableQueryField.forEach(field => {
+              if (item.field_name === field) {
+                item.query = true;
+              }
+            });
+
+            data.paths.requiredQueryField.forEach(field => {
+              if (item.field_name === field) {
+                item.required = true;
+              }
+            });
+          }
         }
         console.log('====',data,this.mergedSchema,inputSchemas );
 
@@ -173,19 +148,34 @@
 
 			getData() {
         let data = _.cloneDeep(this.form);
-
         if (data.paths.fields) {
-          data.paths.fields.forEach((item,index) => {
+          data.paths.requiredQueryField = [];
+          data.paths.availableQueryField = [];
+          data.paths.fields.forEach(item => {
             if(item.required) {
               data.paths.requiredQueryField.push(item.field_name);
-            } else if(item.query) {
+            } else {
+              data.paths.requiredQueryField.forEach((field,index) => {
+                if(item.field_name === field) {
+                  data.paths.requiredQueryField.splice(index,1);
+                }
+              });
+            }
+
+            if(item.query) {
               data.paths.availableQueryField.push(item.field_name);
             } else {
-              data.paths.requiredQueryField.splice(index,1);
-              data.paths.availableQueryField.splice(index,1);
+              data.paths.availableQueryField.forEach((field,index) => {
+                if(item.field_name === field) {
+                  data.paths.availableQueryField.splice(index,1);
+                }
+              });
             }
+            delete item.required;
+            delete item.query;
           });
         }
+
          console.log(data,'****');
         return data;
 			},

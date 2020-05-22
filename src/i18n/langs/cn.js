@@ -333,6 +333,7 @@ const cn = {
           availableQueries: '可用查询',
           publishApi_nameNone: 'API名称不能为空',
           publishApi_commentNone: '描述不为空',
+          publishApi_path: 'API路径不为空',
 				},
 				es: {
 					name: 'ES',

@@ -86,13 +86,13 @@ export const PublishApiConfig = {
 			validate(data) {
         data = data || this.getFormData();
         log('publishAPI.validate', data);
-				// let name = this.attr('label/text');
+				let name = this.attr('label/text');
 				// if (!data)
 				// 	throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`);
-        // if( !data.name )
-        //   throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_database')}`);
-        // if( !data.method )
-        //   throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_collection')}`);
+        if( !data.name )
+          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.publishApi_nameNone')}`);
+        if( !data.paths.path )
+          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.publishApi_path')}`);
         // if( !data.url)
         //   throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_pk')}`);
 
