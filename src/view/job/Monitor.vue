@@ -551,15 +551,19 @@
                 res.data[0].statsData.forEach(time => {
                   switch(res.data[0].granularity) {
                     case 'flow_second':
+                    case 'stage_second':
                       time.t = time.t.substring(11,19);
                       break;
                     case 'flow_minute':
+                    case 'stage_minute':
                       time.t = time.t.substring(14,19);
                       break;
                     case 'flow_hour':
+                    case 'stage_hour':
                       time.t = time.t.substring(11,16);
                       break;
                     case 'flow_day':
+                    case 'stage_day':
                       time.t = time.t.substring(6,10);
                   }
                 });
