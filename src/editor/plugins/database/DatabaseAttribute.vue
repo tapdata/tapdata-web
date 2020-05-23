@@ -10,6 +10,7 @@
 						class="e-form" :label="$t('editor.cell.data_node.database.form.label')"
 						prop="connectionId" :rules="rules" required>
 					<el-select
+              @change="changeConnection"
 							filterable v-model="model.connectionId"
 							:placeholder="$t('editor.cell.data_node.database.form.placeholder')" size="mini">
 						<el-option
@@ -54,7 +55,7 @@
 
 			<el-tabs class="e-tabs" v-model="activeName">
 
-				<el-tab-pane :label="$t('editor.cell.data_node.database.queueCopied') + '('+tables.length+')'" name="first">
+				<el-tab-pane :label="$t('editor.cell.data_node.database.queueCopied') + '('+computedTables.length+')'" name="first">
 					<div class="search">
 						<el-input
 								:placeholder="$t('editor.cell.data_node.database.enterName')"
@@ -90,7 +91,7 @@
 					</el-row>
 				</el-tab-pane>
 				<!-- model.excludeTables -->
-				<el-tab-pane :label="$t('editor.cell.data_node.database.tableRemoved') + '('+removeTables.length+')'" name="second">
+				<el-tab-pane :label="$t('editor.cell.data_node.database.tableRemoved') + '('+computedRemoveTables.length+')'" name="second">
 					<div class="search">
 						<el-input
 								:placeholder="$t('editor.cell.data_node.database.enterName')"
@@ -230,12 +231,14 @@
 					this.lookupDatabaseType();
 					this.loadDataModels(this.model.connectionId);
 				}
-			},
+      },
+      // 移除全选
 			selectAllTables: {
 				handler() {
 					this.tables.forEach(t => t.checked = this.selectAllTables);
 				}
-			},
+      },
+      // 撤销全选
 			selectAllRemoveTables: {
 				handler() {
 					this.removeTables.forEach(t => t.checked = this.selectAllRemoveTables);
@@ -244,7 +247,9 @@
 		},
 
 		methods: {
-
+      changeConnection() {
+        this.model.includeTables = [];
+      },
 			lookupDatabaseType() {
 				if (!this.model.connectionId)
 					return;
@@ -260,13 +265,14 @@
 					return;
 				}
 
-				let self = this;
+        let self = this;
+
 				connections.get([connectionId]).then(result => {
 					if (result.data) {
 						let tables = result.data.schema && result.data.schema.tables || [];
             tables = tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
             let includeTables = [];
-						tables.forEach(item => {
+            tables.forEach(item => {
               let tableName = item.table_name;
               includeTables.push(item.table_name);
               if(self.model.includeTables.length === 0) {
@@ -275,76 +281,52 @@
 
               if (self.model.includeTables.indexOf(tableName) >= 0) {
                 self.tables.push({
-									table_name: item.table_name, checked: false
-								});
-							} else {
+                    table_name: item.table_name, checked: false
+                });
+              } else {
                 self.removeTables.push({
-									table_name: item.table_name, checked: false
-								});
-							}
-						});
+                  table_name: item.table_name, checked: false
+                });
+              }
+            });
 					}
 					this.database_host = result.data.database_host;
 					this.database_port = result.data.database_port;
 					this.database_uri = result.data.database_uri;
 				});
-			},
+      },
+
 			// 移除
 			removeTable(item, idx) {
         item.checked = false;
-        if(this.search) {
-          this.computedTables.splice(idx, 1);
-          this.tables.forEach((table,index) => {
-            if(item.table_name === table.table_name) {
-              this.tables.splice(index, 1);
-            }
-          });
+        let tableIndex = this.tables.findIndex(table => table.table_name === item.table_name);
+        if( tableIndex >= 0)
+          this.tables.splice(tableIndex, 1);
 
-          this.computedRemoveTables.push(item);
-          this.computedRemoveTables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
-        } else {
-          this.tables.splice(idx, 1);
-          this.removeTables.push(item);
-          this.removeTables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
-        }
+        this.removeTables.push(item);
+        this.removeTables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
 
         let index = this.model.includeTables.indexOf(item.table_name);
 				if (index >= 0) {
 					this.model.includeTables.splice(index, 1);
         }
-
-				// if (this.model.includeTables.indexOf(item.table_name) === -1) {
-				// 	this.model.includeTables.push(item.table_name);
-        // }
-
 			},
 			// 撤销
 			undotble(item, idx) {
         item.checked = false;
-        if(this.search) {
-          this.computedRemoveTables.splice(idx, 1);
-          this.removeTables.forEach((table,index) => {
-            if(item.table_name === table.table_name) {
-              this.removeTables.splice(index, 1);
-            }
-          });
+        let tableIndex = this.removeTables.findIndex(table => table.table_name === item.table_name);
+        if( tableIndex >= 0)
+          this.removeTables.splice(tableIndex, 1);
 
-          this.computedTables.push(item);
-          this.computedTables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
-        } else {
-          this.removeTables.splice(idx, 1);
           this.tables.push(item);
           this.tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
-        }
+
 
         if (this.model.includeTables.indexOf(item.table_name) === -1) {
 					this.model.includeTables.push(item.table_name);
         }
-				// let index = this.model.includeTables.indexOf(item.table_name);
-				// if (index >= 0) {
-				// 	this.model.includeTables.splice(index, 1);
-				// }
-			},
+      },
+
 			// 全部移除
 			bulkRemoval() {
 				for (let i = 0; i < this.tables.length; i++) {

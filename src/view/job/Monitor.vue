@@ -420,7 +420,10 @@
 					this.flow = val;
 					this.flow.createTime = val.createTime ? this.$moment(val.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
 					this.flow.username = val.user && val.user.email || '';
-					this.flow.status = val.status;
+          this.flow.status = val.status;
+          if(this.flow.status === 'force stopping') {
+            this.flow.status = 'force_stopping';
+          }
 				},
 				deep: true
 			},
