@@ -79,7 +79,7 @@
 	import $ from 'jquery';
 	import factory from "../../api/factory";
 	import editor from '../../editor/index';
-	import breakText from  '../../editor/breakText';
+	import breakText from '../../editor/breakText';
 	import log from '../../log';
 	import {FORM_DATA_KEY} from "../../editor/constants";
 	import _ from 'lodash';
@@ -111,8 +111,8 @@
 				}
 			},*/
 			status: {
-				handler(){
-					if( ['draft', 'error', 'paused'].includes(this.status)) {
+				handler() {
+					if (['draft', 'error', 'paused'].includes(this.status)) {
 						this.setEditable(true);
 					} else {
 						this.setEditable(false);
@@ -157,17 +157,18 @@
 						self.dataFlowId = dataFlow.id;
 						self.status = dataFlow.status;
 						self.executeMode = dataFlow.executeMode;
+
 						self.dataFlow = dataFlow;
-						if(!dataFlow.editorData){
-              let j = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
-              dataFlow.editorData = j;
-              self.editor.setData(dataFlow);
-              self.editor.reloadSchema();
-              self.editor.graph.layoutDirectedGraph();
-            }else {
-              self.editor.setData(dataFlow);
-            }
-						if (['scheduled', 'running', 'stopping'].includes(self.status)) {
+						if (!dataFlow.editorData) {
+							let j = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
+							dataFlow.editorData = j;
+							self.editor.setData(dataFlow);
+							self.editor.reloadSchema();
+							self.editor.graph.layoutDirectedGraph();
+						} else {
+							self.editor.setData(dataFlow);
+						}
+						if (['scheduled', 'running', 'stopping', 'force stopping'].includes(self.status)) {
 							self.setEditable(false);
 						}
 						if (self.executeMode !== 'normal') {
@@ -192,7 +193,7 @@
 			polling() {
 				let self = this;
 				if (self.dataFlowId) {
-					if (!['scheduled', 'running', 'stopping'].includes(self.status))
+					if (!['scheduled', 'running', 'stopping', 'force stopping'].includes(self.status))
 						return;
 
 					dataFlowsApi.get([self.dataFlowId], {
@@ -207,7 +208,7 @@
 							if (self.executeMode !== result.data.executeMode)
 								self.executeMode = result.data.executeMode;
 
-							if (['scheduled', 'running', 'stopping'].includes(newStatus)) {
+							if (['scheduled', 'running', 'stopping', 'force stopping'].includes(newStatus)) {
 								if (self.timeoutId)
 									clearTimeout(self.timeoutId);
 								self.timeoutId = setTimeout(self.polling.bind(self), 2000);
@@ -235,6 +236,10 @@
 				let editorData = this.editor.getData();
 				let graphData = editorData.graphData;
 				let settingData = editorData.settingData;
+				settingData.notificationInterval = Number(settingData.notificationInterval);
+				settingData.notificationWindow = Number(settingData.notificationWindow);
+				settingData.readBatchSize = Number(settingData.readBatchSize);
+				settingData.readCdcInterval = Number(settingData.readCdcInterval);
 				let distanceForSink = editorData.distanceForSink || {};
 
 				let cells = graphData.cells ? graphData.cells : [];
@@ -329,15 +334,18 @@
 
 							self.dataFlowId = dataFlow.id;
 							self.status = dataFlow.status;
-							self.$router.push({
-								path: '/job',
-								query: {
-									id: dataFlow.id
-								}
-							});
 							self.executeMode = dataFlow.executeMode;
 
 							self.dataFlow = dataFlow;
+
+							if (!self.$route.query || !self.$route.query.id) {
+								self.$router.push({
+									path: '/job',
+									query: {
+										id: dataFlow.id
+									}
+								});
+							}
 
 							if (typeof cb === "function") {
 								cb(null, dataFlow);
@@ -565,7 +573,7 @@
 			showCapture() {
 				this.editor.showCapture(this.dataFlow);
 			},
-			reloadSchema(){
+			reloadSchema() {
 				this.editor.reloadSchema();
 			},
 			setEditable(editable) {
@@ -577,174 +585,174 @@
 					this.$message.error(this.$t('message.save_before_running'));
 				}
 			},
-      creatApiEditorData(data){//1. 创建cell 2. 加载schema 3.自动布局
-        let cells = [];
-        let mapping = {
-          'collection': 'app.Collection',
-          'table': 'app.Table',
-          'database': 'app.Database',
-          'mongodb': 'app.Database',
-          'mongo_view': 'app.Collection',
-          'view': 'app.Table',
-          'dummy db':'app.Dummy',
-          'elasticsearch':'app.ESNode',
-          'file':'app.FileNode',
-          'gridfs': 'app.GridFSNode',
-          'rest api': 'app.ApiNode',
-          'field_processor':'app.FieldProcess',
-          'aggregation_processor':'app.Aggregate',
-          'js_processor':'app.Script',
-          'row_filter_processor':'app.DataFilter',
-          'java_processor':'app.FieldProcess',
-        };
-        if(data){
-          data.map((v,index) =>{
-            if(['table','view','collection','mongo_view'].includes(v.type)){
-              let node ={
-                type:mapping[v.type],
-                id:v.id,
-                freeTransform:false,
-                form_data : {
-                  connectionId: v.connectionId,
-                  databaseType: v.databaseType,
-                  tableName: v.tableName ,
-                  sql: "",
-                  dropTable: false,
-                  type:v.type,
-                  primaryKeys: v.primaryKeys,
-                  name: v.name,
-                },
-                schema:null,
-                outputSchema: null,
-                attrs:{
-                  label:{
-                    text: breakText.breakText(v.tableName, 125),
-                  },
-                },
-                angle:0,
-              };
-              cells.push(node);
-            }else if(v.type && (['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(v.type))){
-                  let node ={
-                    type:mapping[v.type],
-                    id:v.id,
-                    freeTransform:false,
-                    schema:null,
-                    outputSchema: null,
-                    attrs:{
-                      label:{
-                        text: breakText.breakText(v.name, 125),
-                      },
-                    },
-                    form_data :{
-                      connectionId:v.connectionId,
-                      name: v.name,
-                      filter:v.filter,
-                      tableName:v.tableName,
-                      dropTable:false,
-                      type:v.type,
-                      primaryKeys:v.primaryKeys
-                    },
-                  };
-                  cells.push(node);
+			creatApiEditorData(data) {//1. 创建cell 2. 加载schema 3.自动布局
+				let cells = [];
+				let mapping = {
+					'collection': 'app.Collection',
+					'table': 'app.Table',
+					'database': 'app.Database',
+					'mongodb': 'app.Database',
+					'mongo_view': 'app.Collection',
+					'view': 'app.Table',
+					'dummy db': 'app.Dummy',
+					'elasticsearch': 'app.ESNode',
+					'file': 'app.FileNode',
+					'gridfs': 'app.GridFSNode',
+					'rest api': 'app.ApiNode',
+					'field_processor': 'app.FieldProcess',
+					'aggregation_processor': 'app.Aggregate',
+					'js_processor': 'app.Script',
+					'row_filter_processor': 'app.DataFilter',
+					'java_processor': 'app.FieldProcess',
+				};
+				if (data) {
+					data.map((v, index) => {
+						if (['table', 'view', 'collection', 'mongo_view'].includes(v.type)) {
+							let node = {
+								type: mapping[v.type],
+								id: v.id,
+								freeTransform: false,
+								form_data: {
+									connectionId: v.connectionId,
+									databaseType: v.databaseType,
+									tableName: v.tableName,
+									sql: "",
+									dropTable: false,
+									type: v.type,
+									primaryKeys: v.primaryKeys,
+									name: v.name,
+								},
+								schema: null,
+								outputSchema: null,
+								attrs: {
+									label: {
+										text: breakText.breakText(v.tableName, 125),
+									},
+								},
+								angle: 0,
+							};
+							cells.push(node);
+						} else if (v.type && (['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api'].includes(v.type))) {
+							let node = {
+								type: mapping[v.type],
+								id: v.id,
+								freeTransform: false,
+								schema: null,
+								outputSchema: null,
+								attrs: {
+									label: {
+										text: breakText.breakText(v.name, 125),
+									},
+								},
+								form_data: {
+									connectionId: v.connectionId,
+									name: v.name,
+									filter: v.filter,
+									tableName: v.tableName,
+									dropTable: false,
+									type: v.type,
+									primaryKeys: v.primaryKeys
+								},
+							};
+							cells.push(node);
 
-                }else if(v.type === 'database') {
-                  let node ={
-                    type:mapping[v.type],
-                    id:v.id,
-                    freeTransform:false,
-                    form_data :{
-                      connectionId:v.connectionId,
-                      name: v.name,
-                      table_prefix: "",
-                      table_suffix: "",
-                      type:v.type,
-                      excludeTables:[],
-                    },
-                    schema:null,
-                    outputSchema: null,
-                    attrs:{
-                      label:{
-                        text: breakText.breakText(v.name, 125)
-                      },
-                    },
-                  };
-                  cells.push(node);
-            }else if(['field_processor','java_processor','js_processor','aggregation_processor','row_filter_processor'].includes(v.type)){
-                let node ={
-                  type:mapping[v.type],
-                  id:v.id,
-                  freeTransform:false,
-                  angle:0,
-                  schema:null,
-                  outputSchema: null,
-                  attrs:{
-                    label:{
-                      text: breakText.breakText(v.name, 95),
-                    },
-                  },
-                };
-                if(['field_processor'].includes(v.type)){
-                  node.form_data = {
-                      operations: v.operations,
-                      name: v.name,
-                      scripts: v.scripts,
-                    };
-                  }else if(['aggregation_processor'].includes(v.type)){
-                    node.form_data = {
-                      type:v.type,
-                      name: v.name,
-                      aggregations: v.scripts,
-                    };
-                    node.aggregations = v.aggregations;
-                }else if(['js_processor'].includes(v.type)){
-                  node.form_data = {
-                    type:v.type,
-                    name: v.name,
-                    script: v.script,
-                  };
-                }else if(['row_filter_processor'].includes(v.type)){
-                  node.form_data = {
-                    expression:v.expression,
-                    name: v.name,
-                    action: v.action,
-                    type:v.type,
-                  };
-                }
-                cells.push(node);
-            }
-            if(v.outputLanes){
-              v.outputLanes.map(k =>{
-                let node ={
-                  type:'app.Link',
-                  source:{
-                    id:v.id
-                  },
-                  target:{
-                    id:k
-                  },
-                  router:{
-                    "name":"manhattan"
-                  },
-                  connector:{
-                    "name":"rounded"
-                  },
-                  form_data:{
-                    "label":""
-                  },
-                  labels:'',
-                  attrs:{},
-                };
-                cells.push(node);
-              });
-            }
-          });
-        }
-        log('cells',cells);
-        return {
-          cells:cells
-        };
-      }
+						} else if (v.type === 'database') {
+							let node = {
+								type: mapping[v.type],
+								id: v.id,
+								freeTransform: false,
+								form_data: {
+									connectionId: v.connectionId,
+									name: v.name,
+									table_prefix: "",
+									table_suffix: "",
+									type: v.type,
+									excludeTables: [],
+								},
+								schema: null,
+								outputSchema: null,
+								attrs: {
+									label: {
+										text: breakText.breakText(v.name, 125)
+									},
+								},
+							};
+							cells.push(node);
+						} else if (['field_processor', 'java_processor', 'js_processor', 'aggregation_processor', 'row_filter_processor'].includes(v.type)) {
+							let node = {
+								type: mapping[v.type],
+								id: v.id,
+								freeTransform: false,
+								angle: 0,
+								schema: null,
+								outputSchema: null,
+								attrs: {
+									label: {
+										text: breakText.breakText(v.name, 95),
+									},
+								},
+							};
+							if (['field_processor'].includes(v.type)) {
+								node.form_data = {
+									operations: v.operations,
+									name: v.name,
+									scripts: v.scripts,
+								};
+							} else if (['aggregation_processor'].includes(v.type)) {
+								node.form_data = {
+									type: v.type,
+									name: v.name,
+									aggregations: v.scripts,
+								};
+								node.aggregations = v.aggregations;
+							} else if (['js_processor'].includes(v.type)) {
+								node.form_data = {
+									type: v.type,
+									name: v.name,
+									script: v.script,
+								};
+							} else if (['row_filter_processor'].includes(v.type)) {
+								node.form_data = {
+									expression: v.expression,
+									name: v.name,
+									action: v.action,
+									type: v.type,
+								};
+							}
+							cells.push(node);
+						}
+						if (v.outputLanes) {
+							v.outputLanes.map(k => {
+								let node = {
+									type: 'app.Link',
+									source: {
+										id: v.id
+									},
+									target: {
+										id: k
+									},
+									router: {
+										"name": "manhattan"
+									},
+									connector: {
+										"name": "rounded"
+									},
+									form_data: {
+										"label": ""
+									},
+									labels: '',
+									attrs: {},
+								};
+								cells.push(node);
+							});
+						}
+					});
+				}
+				log('cells', cells);
+				return {
+					cells: cells
+				};
+			}
 		}
 	};
 </script>
