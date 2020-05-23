@@ -161,9 +161,8 @@
 						self.dataFlow = dataFlow;
 
             //管理端api创建任务来源以及editorData 数据丢失情况
-						if(!dataFlow.editorData){
+						if(!dataFlow.editorData && dataFlow.stages){
               // 1. 拿到创建所有的节点数据
-              if(dataFlow.stages) return;
               let cells = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
               dataFlow.editorData = cells;
 
