@@ -246,7 +246,7 @@
 					//this.model.joinTable.stageId = cell.getSourceCell().id;
 
 					this.sourceList = sourceSchema && sourceSchema.fields ? sourceSchema.fields : [];
-					this.targetList = mergedTargetSchema.fields || [];
+					this.targetList =(mergedTargetSchema && mergedTargetSchema.fields) || [];
 
 					let joinKeys = this.model.joinTable.joinKeys;
 					if( joinKeys.length === 0 || (joinKeys.length === 1 && (joinKeys[0].source === ''|| joinKeys[0].target === '')) ) {
