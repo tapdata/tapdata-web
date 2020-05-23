@@ -251,7 +251,7 @@
 				let selectedDbs = this.databases.filter(db => db.id === this.model.connectionId);
 				if (selectedDbs && selectedDbs.length > 0) {
 					this.database_type = selectedDbs[0].database_type;
-				}
+        }
 			},
 
 			// 获取表名称
@@ -264,10 +264,16 @@
 				connections.get([connectionId]).then(result => {
 					if (result.data) {
 						let tables = result.data.schema && result.data.schema.tables || [];
-						tables = tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+            tables = tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+            let includeTables = [];
 						tables.forEach(item => {
-							let tableName = item.table_name;
-							if (self.model.includeTables.indexOf(tableName) >= 0) {
+              let tableName = item.table_name;
+              includeTables.push(item.table_name);
+              if(self.model.includeTables.length === 0) {
+                self.model.includeTables = includeTables;
+              }
+
+              if (self.model.includeTables.indexOf(tableName) >= 0) {
                 self.tables.push({
 									table_name: item.table_name, checked: false
 								});
@@ -305,7 +311,7 @@
         let index = this.model.includeTables.indexOf(item.table_name);
 				if (index >= 0) {
 					this.model.includeTables.splice(index, 1);
-				}
+        }
 
 				// if (this.model.includeTables.indexOf(item.table_name) === -1) {
 				// 	this.model.includeTables.push(item.table_name);
