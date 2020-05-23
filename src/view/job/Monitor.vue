@@ -556,7 +556,7 @@
                       break;
                     case 'flow_minute':
                     case 'stage_minute':
-                      time.t = time.t.substring(14,19);
+                      time.t = time.t.substring(11,16);
                       break;
                     case 'flow_hour':
                     case 'stage_hour':
