@@ -81,7 +81,7 @@
 	import editor from '../../editor/index';
 	import breakText from  '../../editor/breakText';
 	import log from '../../log';
-	import {FORM_DATA_KEY} from "../../editor/constants";
+  import {FORM_DATA_KEY, JOIN_TABLE_TPL} from "../../editor/constants";
 	import _ from 'lodash';
 
 	const dataFlowsApi = factory('DataFlows');
@@ -99,6 +99,7 @@
 
 				loading: true,
 				disabledDataVerify: false,
+        cells:[]
 			};
 		},
 
@@ -158,12 +159,25 @@
 						self.status = dataFlow.status;
 						self.executeMode = dataFlow.executeMode;
 						self.dataFlow = dataFlow;
+
+            //管理端api创建任务来源以及editorData 数据丢失情况
 						if(!dataFlow.editorData){
-              let j = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
-              dataFlow.editorData = j;
+              // 1. 拿到创建所有的节点数据
+              if(dataFlow.stages) return;
+              let cells = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
+              dataFlow.editorData = cells;
+
+              //2. 调用画布创建节点方法
               self.editor.setData(dataFlow);
+
+              //3. 更新schema
               self.editor.reloadSchema();
+
+              //4. 节点布局
               self.editor.graph.layoutDirectedGraph();
+
+              //5. 处理joinTables
+              self.handleJoinTables(dataFlow.stages);
             }else {
               self.editor.setData(dataFlow);
             }
@@ -579,6 +593,7 @@
 			},
       creatApiEditorData(data){//1. 创建cell 2. 加载schema 3.自动布局
         let cells = [];
+        //TODO: 统一节点类型
         let mapping = {
           'collection': 'app.Collection',
           'table': 'app.Table',
@@ -608,7 +623,7 @@
                   connectionId: v.connectionId,
                   databaseType: v.databaseType,
                   tableName: v.tableName ,
-                  sql: "",
+                  sql:v.sql || '',
                   dropTable: false,
                   type:v.type,
                   primaryKeys: v.primaryKeys,
@@ -694,9 +709,8 @@
                     node.form_data = {
                       type:v.type,
                       name: v.name,
-                      aggregations: v.scripts,
+                      aggregations: v.aggregations,
                     };
-                    node.aggregations = v.aggregations;
                 }else if(['js_processor'].includes(v.type)){
                   node.form_data = {
                     type:v.type,
@@ -730,7 +744,8 @@
                     "name":"rounded"
                   },
                   form_data:{
-                    "label":""
+                    label:'',
+                    joinTable:_.cloneDeep(JOIN_TABLE_TPL)
                   },
                   labels:'',
                   attrs:{},
@@ -740,10 +755,29 @@
             }
           });
         }
-        log('cells',cells);
+        log('job loadSchema cells',cells);
+        this.cells = cells;
         return {
           cells:cells
         };
+      },
+      handleJoinTables(data){
+        if(data){
+          data.map(v =>{
+            if(v.joinTables && v.inputLanes && ['field_processor','java_processor','js_processor','aggregation_processor','row_filter_processor'].includes(v.type)){ //目标节点 数据节点 jointable
+              let linkDtata = this.cells.filter(cell => cell.type === 'app.Link' && [cell.target.id]).includes(v.inputLanes);
+              if(linkDtata&& linkDtata.length >0){
+                linkDtata.map(link =>{
+                  v.joinTables.map(table => {
+                    if(link.tableName === table.tableName){
+                      link.form_data = table;
+                    }
+                  });
+                });
+              }
+            }
+          });
+        }
       }
 		}
 	};

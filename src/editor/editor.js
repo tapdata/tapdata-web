@@ -522,7 +522,7 @@ export default class Editor extends BaseObject {
 	reloadSchema(){
 		//1. 遍历当前有模型的节点(合并相同连接ID)
 		let self = this;
-		log(' self.graph.graph.getCells()', self.graph.graph.getCells());
+		log('editor.graph.graph.getCells()', self.graph.graph.getCells());
 		let dataCells = self.graph.graph.getCells()//.filter(cell => cell.isDataNode && cell.isDataNode())
 			.filter( cell => {
 				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
@@ -570,7 +570,7 @@ export default class Editor extends BaseObject {
 					}
 				});
 
-				//3.分别更新对应节点schema
+				//3. 分别更新对应节点schema
 				if(dataCells){
 					dataCells.map((cell) => {
 
@@ -589,7 +589,7 @@ export default class Editor extends BaseObject {
 						cell.setSchema(schema,false);
 					});
 
-					// update all node schema
+					// 4. 更新所有节点的schema
 					self.graph.graph.getSources().forEach(cell => cell.updateOutputSchema());
 				}
 			}
