@@ -465,6 +465,7 @@ const en = {
 				none_join_type: 'JoinType is required',
 				none_join_key: 'JoinKeys is required',
 				none_join_path: 'JoinPath is required',
+				none_array_unique_key: 'Array unique key is required',
 				form: {
 					label: {
 						label: 'Label',
@@ -482,6 +483,10 @@ const en = {
 						label: 'Association condition',
 						sourceField: 'Source Field',
 						targetField: 'Target Field',
+					},
+					arrayUniqueKey: {
+						label: 'In Array Match Key',
+						placeholder: 'Please enter in embed array match key '
 					},
 				},
 

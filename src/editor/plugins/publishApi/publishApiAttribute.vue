@@ -83,7 +83,7 @@
   import _ from "lodash";
   import { convertSchemaToTreeData } from "../../util/Schema";
 	// import log from '../../../log';
-	import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
+	// import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
 
 	export default {
 		name: "ReleaseApi",
@@ -120,55 +120,24 @@
 				handler(val) {
 					this.$emit('dataChanged', this.getData());
 				}
-      },
-      // 'form.paths': {
-      //   handler(data) {
-      //     data.fields.forEach((item,index) => {
-      //       // if(item.required) {
-      //       //   data.requiredQueryField.push(item.field_name);
-      //       // } else if(item.query) {
-      //       //   data.availableQueryField.push(item.field_name);
-      //       // // } else {
-      //       // //   this.form.paths.requiredQueryField.splice(index,1);
-      //       // //   this.form.paths.availableQueryField.splice(index,1);
-      //       // }
-      //       console.log('数据',data)
-      //     });
-
-      //   },
-      //   // deep: true
-      // }
+      }
 		},
 
 		methods: {
-      // convertSchemaToTreeData,
+      convertSchemaToTreeData,
 			setData(data, cell, isSourceDataNode, vueAdapter) {
 				if (data) {
 					Object.keys(data).forEach(key => this.form[key] = data[key]);
         }
-
-        // let fields = [];
-        let inputSchemas = cell.getInputSchema();
         this.mergedSchema = cell.getOutputSchema();
         // let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
         if(this.mergedSchema &&  this.mergedSchema.fields) {
           this.mergedSchema.fields.forEach(field =>{
             this.$set(field,'required',false);
             this.$set(field,'query',false);
-            // fields.push({
-            //   field_name: field.field_name,
-            //   table_name: field.table_name,
-            //   javaType: field.javaType,
-            //   checkList: []
-            // });
           });
-          // if (cell.getSourceCell()) {
-
-          // }
           this.form.paths.fields = this.mergedSchema.fields;
         }
-        console.log('====',data,this.mergedSchema,inputSchemas );
-
 			},
 
 			getData() {

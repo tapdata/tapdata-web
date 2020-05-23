@@ -19,7 +19,8 @@ export const
 		primaryKeys: '',
 		stageId: '',
 		isArray: false,
-		//fieldProcesses: []
+		//fieldProcesses: [],
+		arrayUniqueKey: '',
 	},
 
 	DEFAULT_SETTING = {
