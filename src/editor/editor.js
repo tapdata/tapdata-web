@@ -92,6 +92,9 @@ export default class Editor extends BaseObject {
 		this.doInit();
 	}
 
+	/**
+	 * init editor
+	 */
 	doInit(){
 		let self = this;
 
@@ -170,6 +173,9 @@ export default class Editor extends BaseObject {
 		this.initSettings();
 	}
 
+	/**
+	 * init settings panel
+	 */
 	initSettings(){
 		let self = this;
 		let rightTabPanel = this.getRightTabPanel();
@@ -198,6 +204,10 @@ export default class Editor extends BaseObject {
 		});
 	}
 
+	/**
+	 * init running mode
+	 * @param dataFlow
+	 */
 	initRunningMode(dataFlow) {
 		log('Editor.initRunningMode');
 		let self = this;
@@ -240,6 +250,9 @@ export default class Editor extends BaseObject {
 		self.showLogs(dataFlow);
 	}
 
+	/**
+	 * init editing mode
+	 */
 	initEditingMode(){
 		log('editor.initEditingMode');
 		//this.getRightSidebar().removeAll();
@@ -254,7 +267,10 @@ export default class Editor extends BaseObject {
 		//this.getBottomTabPanel().removeAll();
 	}
 
-	//setting
+	/**
+	 * show setting panel
+	 * @param name
+	 */
 	showSetting(name){
 		this.getRightTabPanel().removeAll();
 		let self = this;
@@ -274,6 +290,10 @@ export default class Editor extends BaseObject {
 		}
 	}
 
+	/**
+	 * show logs panel
+	 * @param dataFlow
+	 */
 	showLogs(dataFlow){
 		let bottomTabPanel = this.getBottomTabPanel();
 		let logsPanel = bottomTabPanel.getChildByName('logsPanel');
@@ -299,6 +319,10 @@ export default class Editor extends BaseObject {
 		}
 	}
 
+	/**
+	 * show capture panel
+	 * @param dataFlow
+	 */
 	showCapture(dataFlow) {
 		// add capture
 		let capture = this.getBottomTabPanel().getChildByName('capture');
@@ -325,6 +349,11 @@ export default class Editor extends BaseObject {
 			this.getBottomSidebar().show();
 		// }
 	}
+
+	/**
+	 * show dataVerify panel
+	 * @param disableDirective
+	 */
 	showDataVerify(disableDirective){
 		// remove setting
 		let dvResult = this.getRightTabPanel().getChildByName('dvResult');
@@ -351,6 +380,10 @@ export default class Editor extends BaseObject {
 		}
 		self.getRightSidebar().show();
 	}
+
+	/**
+	 * show data flow monitor panel
+	 */
 	showMonitor(){
 		// remove dataVerify
 		let dataVerify = this.getRightTabPanel().getChildByName('dataVerify');
@@ -436,6 +469,10 @@ export default class Editor extends BaseObject {
 
 	}
 
+	/**
+	 *
+	 * @param graphLib
+	 */
 	distanceForSink(graphLib){
 		let distanceResult = {};
 
@@ -466,6 +503,10 @@ export default class Editor extends BaseObject {
 		}
 	}
 
+	/**
+	 * Validate graph data for data flow
+	 * @return {*}
+	 */
 	validate(){
 
 		let name = this.ui.getName();
@@ -519,6 +560,10 @@ export default class Editor extends BaseObject {
 
 		return true;
 	}
+
+	/**
+	 * reload schema
+	 */
 	reloadSchema(){
 		//1. 遍历当前有模型的节点(合并相同连接ID)
 		let self = this;

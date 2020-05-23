@@ -31,6 +31,11 @@ export class VueAdapter extends BaseObject {
 		editor.on(EditorEventType.DATA_FLOW_UPDATED, this.handlerDataFlowUpdated.bind(this));
 	}
 
+	/**
+	 * render selected cell attribute form
+	 * @param cell
+	 * @return {*}
+	 */
 	render(cell){
 		log('VueAdapter.render', cell);
 

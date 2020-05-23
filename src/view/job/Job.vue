@@ -123,11 +123,13 @@
 		mounted() {
 			let self = this;
 
+			// build editor
 			self.editor = editor({
 				container: $('.editor-container'),
 				actionBarEl: $('.editor-container .action-buttons')
 			});
 
+			// load dataFlow if exists data flow id
 			if (self.$route.query && self.$route.query.id) {
 				self.loadDataFlow(self.$route.query.id);
 			} else {
@@ -148,6 +150,10 @@
 
 		methods: {
 
+			/**
+			 * load data flow by id
+			 * @param id
+			 */
 			loadDataFlow(id) {
 				let self = this;
 				dataFlowsApi.get([id]).then((result) => {
@@ -190,6 +196,9 @@
 				});
 			},
 
+			/**
+			 * Polling task
+			 */
 			polling() {
 				let self = this;
 				if (self.dataFlowId) {
@@ -225,6 +234,10 @@
 				}
 			},
 
+			/**
+			 * get editor data
+			 * @return {{name: *, description: string, status: string, executeMode: string, category: string, stopOnError: boolean, mappingTemplate: string, emailWaring: {edited: boolean, started: boolean, error: boolean, paused: boolean}, stages: Array, setting: *} & {editorData: string}}
+			 */
 			getDataFlowData() {
 				// validate
 				let verified = this.editor.validate();
@@ -318,6 +331,11 @@
 				return postData;
 			},
 
+			/**
+			 * request server do save data flow
+			 * @param data
+			 * @param cb
+			 */
 			doSave(data, cb) {
 				let self = this;
 
@@ -394,6 +412,9 @@
 				}
 			},
 
+			/**
+			 * save button handler
+			 */
 			save() {
 				let self = this,
 					data = this.getDataFlowData();
@@ -413,6 +434,9 @@
 				}
 			},
 
+			/**
+			 * start button handler
+			 */
 			start() {
 				let self = this,
 					data = this.getDataFlowData();
@@ -437,6 +461,10 @@
 				}
 			},
 
+			/**
+			 * stop button handler
+			 * @param forceStop
+			 */
 			stop(forceStop) {
 				let self = this,
 					data = {
@@ -464,6 +492,9 @@
 				});
 			},
 
+			/**
+			 * preview button handler
+			 */
 			preview() {
 				let self = this,
 					data = this.getDataFlowData();
@@ -492,6 +523,9 @@
 				}
 			},
 
+			/**
+			 * capture button handler
+			 */
 			capture() {
 				let self = this,
 					data = this.getDataFlowData();
@@ -518,6 +552,9 @@
 				}
 			},
 
+			/**
+			 * stop capture button handler
+			 */
 			stopCapture() {
 				let self = this,
 					data = this.getDataFlowData();
@@ -538,6 +575,9 @@
 				}
 			},
 
+			/**
+			 * reset button handler
+			 */
 			reset() {
 				let self = this,
 					data = this.getDataFlowData();
@@ -559,6 +599,10 @@
 					});
 				}
 			},
+
+			/**
+			 * show setting button handler
+			 */
 			showSetting() {
 				log('Job.showSetting');
 				let name = '';
@@ -567,15 +611,32 @@
 				}
 				this.editor.showSetting(name);
 			},
+
+			/**
+			 * show logs button handler
+			 */
 			showLogs() {
 				this.editor.showLogs(this.dataFlow);
 			},
+
+			/**
+			 * show capture button handler
+			 */
 			showCapture() {
 				this.editor.showCapture(this.dataFlow);
 			},
+
+			/**
+			 * reload shcema
+			 */
 			reloadSchema() {
 				this.editor.reloadSchema();
 			},
+
+			/**
+			 * switch edit mode
+			 * @param editable
+			 */
 			setEditable(editable) {
 				log('Job.setEditable', editable, this.dataFlow);
 				if (this.dataFlow) {
@@ -585,6 +646,12 @@
 					this.$message.error(this.$t('message.save_before_running'));
 				}
 			},
+
+			/**
+			 * Reverse editor data
+			 * @param data
+			 * @return {{cells: Array}}
+			 */
 			creatApiEditorData(data) {//1. 创建cell 2. 加载schema 3.自动布局
 				let cells = [];
 				let mapping = {
