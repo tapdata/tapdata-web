@@ -160,7 +160,7 @@
 
 						self.editor.setData(dataFlow);
 
-						if (['scheduled', 'running', 'stopping'].includes(self.status)) {
+						if (['scheduled', 'running', 'stopping', 'force stopping'].includes(self.status)) {
 							self.setEditable(false);
 						}
 						if (self.executeMode !== 'normal') {
@@ -185,7 +185,7 @@
 			polling() {
 				let self = this;
 				if (self.dataFlowId) {
-					if (!['scheduled', 'running', 'stopping'].includes(self.status))
+					if (!['scheduled', 'running', 'stopping', 'force stopping'].includes(self.status))
 						return;
 
 					dataFlowsApi.get([self.dataFlowId], {
@@ -200,7 +200,7 @@
 							if (self.executeMode !== result.data.executeMode)
 								self.executeMode = result.data.executeMode;
 
-							if (['scheduled', 'running', 'stopping'].includes(newStatus)) {
+							if (['scheduled', 'running', 'stopping', 'force stopping'].includes(newStatus)) {
 								if (self.timeoutId)
 									clearTimeout(self.timeoutId);
 								self.timeoutId = setTimeout(self.polling.bind(self), 2000);
@@ -228,10 +228,10 @@
 				let editorData = this.editor.getData();
 				let graphData = editorData.graphData;
 				let settingData = editorData.settingData;
-        settingData.notificationInterval = Number( settingData.notificationInterval);
-        settingData.notificationWindow = Number( settingData.notificationWindow);
-        settingData.readBatchSize = Number( settingData.readBatchSize);
-        settingData.readCdcInterval = Number( settingData.readCdcInterval);
+				settingData.notificationInterval = Number( settingData.notificationInterval);
+				settingData.notificationWindow = Number( settingData.notificationWindow);
+				settingData.readBatchSize = Number( settingData.readBatchSize);
+				settingData.readCdcInterval = Number( settingData.readCdcInterval);
 				let distanceForSink = editorData.distanceForSink || {};
 
 				let cells = graphData.cells ? graphData.cells : [];
