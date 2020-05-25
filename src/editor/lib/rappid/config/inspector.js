@@ -4,186 +4,240 @@
  * @description
  */
 export const options = {
-
 	colorPalette: [
-		{content: 'transparent', icon: 'static/editor/transparent-icon.svg'},
-		{content: '#f6f6f6'},
-		{content: '#dcd7d7'},
-		{content: '#8f8f8f'},
-		{content: '#c6c7e2'},
-		{content: '#feb663'},
-		{content: '#fe854f'},
-		{content: '#b75d32'},
-		{content: '#31d0c6'},
-		{content: '#7c68fc'},
-		{content: '#61549c'},
-		{content: '#6a6c8a'},
-		{content: '#4b4a67'},
-		{content: '#3c4260'},
-		{content: '#33334e'},
-		{content: '#222138'}
+		{ content: "transparent", icon: "static/editor/transparent-icon.svg" },
+		{ content: "#f6f6f6" },
+		{ content: "#dcd7d7" },
+		{ content: "#8f8f8f" },
+		{ content: "#c6c7e2" },
+		{ content: "#feb663" },
+		{ content: "#fe854f" },
+		{ content: "#b75d32" },
+		{ content: "#31d0c6" },
+		{ content: "#7c68fc" },
+		{ content: "#61549c" },
+		{ content: "#6a6c8a" },
+		{ content: "#4b4a67" },
+		{ content: "#3c4260" },
+		{ content: "#33334e" },
+		{ content: "#222138" }
 	],
 
 	colorPaletteReset: [
-		{content: undefined, icon: 'static/editor/no-color-icon.svg'},
-		{content: '#f6f6f6'},
-		{content: '#dcd7d7'},
-		{content: '#8f8f8f'},
-		{content: '#c6c7e2'},
-		{content: '#feb663'},
-		{content: '#fe854f'},
-		{content: '#b75d32'},
-		{content: '#31d0c6'},
-		{content: '#7c68fc'},
-		{content: '#61549c'},
-		{content: '#6a6c8a'},
-		{content: '#4b4a67'},
-		{content: '#3c4260'},
-		{content: '#33334e'},
-		{content: '#222138'}
+		{ content: undefined, icon: "static/editor/no-color-icon.svg" },
+		{ content: "#f6f6f6" },
+		{ content: "#dcd7d7" },
+		{ content: "#8f8f8f" },
+		{ content: "#c6c7e2" },
+		{ content: "#feb663" },
+		{ content: "#fe854f" },
+		{ content: "#b75d32" },
+		{ content: "#31d0c6" },
+		{ content: "#7c68fc" },
+		{ content: "#61549c" },
+		{ content: "#6a6c8a" },
+		{ content: "#4b4a67" },
+		{ content: "#3c4260" },
+		{ content: "#33334e" },
+		{ content: "#222138" }
 	],
 
 	fontWeight: [
-		{value: '300', content: '<span style="font-weight: 300">Light</span>'},
-		{value: 'Normal', content: '<span style="font-weight: Normal">Normal</span>'},
-		{value: 'Bold', content: '<span style="font-weight: Bolder">Bold</span>'}
+		{
+			value: "300",
+			content: '<span style="font-weight: 300">Light</span>'
+		},
+		{
+			value: "Normal",
+			content: '<span style="font-weight: Normal">Normal</span>'
+		},
+		{
+			value: "Bold",
+			content: '<span style="font-weight: Bolder">Bold</span>'
+		}
 	],
 
 	fontFamily: [
-		{value: 'Alegreya Sans', content: '<span style="font-family: Alegreya Sans">Alegreya Sans</span>'},
-		{value: 'Averia Libre', content: '<span style="font-family: Averia Libre">Averia Libre</span>'},
-		{value: 'Roboto Condensed', content: '<span style="font-family: Roboto Condensed">Roboto Condensed</span>'}
+		{
+			value: "Alegreya Sans",
+			content: '<span style="font-family: Alegreya Sans">Alegreya Sans</span>'
+		},
+		{
+			value: "Averia Libre",
+			content: '<span style="font-family: Averia Libre">Averia Libre</span>'
+		},
+		{
+			value: "Roboto Condensed",
+			content: '<span style="font-family: Roboto Condensed">Roboto Condensed</span>'
+		}
 	],
 
 	strokeStyle: [
-		{value: '0', content: 'Solid'},
-		{value: '2,5', content: 'Dotted'},
-		{value: '10,5', content: 'Dashed'}
+		{ value: "0", content: "Solid" },
+		{ value: "2,5", content: "Dotted" },
+		{ value: "10,5", content: "Dashed" }
 	],
 
 	side: [
-		{value: 'top', content: 'Top Side'},
-		{value: 'right', content: 'Right Side'},
-		{value: 'bottom', content: 'Bottom Side'},
-		{value: 'left', content: 'Left Side'}
+		{ value: "top", content: "Top Side" },
+		{ value: "right", content: "Right Side" },
+		{ value: "bottom", content: "Bottom Side" },
+		{ value: "left", content: "Left Side" }
 	],
 
 	portLabelPositionRectangle: [
-		{value: {name: 'top', args: {y: -12}}, content: 'Above'},
-		{value: {name: 'right', args: {y: 0}}, content: 'On Right'},
-		{value: {name: 'bottom', args: {y: 12}}, content: 'Below'},
-		{value: {name: 'left', args: {y: 0}}, content: 'On Left'}
+		{ value: { name: "top", args: { y: -12 } }, content: "Above" },
+		{ value: { name: "right", args: { y: 0 } }, content: "On Right" },
+		{ value: { name: "bottom", args: { y: 12 } }, content: "Below" },
+		{ value: { name: "left", args: { y: 0 } }, content: "On Left" }
 	],
 
 	portLabelPositionEllipse: [
-		{value: 'radial', content: 'Horizontal'},
-		{value: 'radialOriented', content: 'Angled'}
+		{ value: "radial", content: "Horizontal" },
+		{ value: "radialOriented", content: "Angled" }
 	],
 
 	imageIcons: [
-		{value: 'static/editor/image-icon1.svg', content: '<img height="42px" src="static/editor/image-icon1.svg"/>'},
-		{value: 'static/editor/image-icon2.svg', content: '<img height="80px" src="static/editor/image-icon2.svg"/>'},
-		{value: 'static/editor/image-icon3.svg', content: '<img height="80px" src="static/editor/image-icon3.svg"/>'},
-		{value: 'static/editor/image-icon4.svg', content: '<img height="80px" src="static/editor/image-icon4.svg"/>'}
+		{
+			value: "static/editor/image-icon1.svg",
+			content: '<img height="42px" src="static/editor/image-icon1.svg"/>'
+		},
+		{
+			value: "static/editor/image-icon2.svg",
+			content: '<img height="80px" src="static/editor/image-icon2.svg"/>'
+		},
+		{
+			value: "static/editor/image-icon3.svg",
+			content: '<img height="80px" src="static/editor/image-icon3.svg"/>'
+		},
+		{
+			value: "static/editor/image-icon4.svg",
+			content: '<img height="80px" src="static/editor/image-icon4.svg"/>'
+		}
 	],
 
 	imageGender: [
 		{
-			value: 'static/editor/member-male.png',
+			value: "static/editor/member-male.png",
 			content: '<img height="50px" src="static/editor/member-male.png" style="margin: 5px 0 0 2px;"/>'
 		},
 		{
-			value: 'static/editor/member-female.png',
+			value: "static/editor/member-female.png",
 			content: '<img height="50px" src="static/editor/member-female.png" style="margin: 5px 0 0 2px;"/>'
 		}
 	],
 
 	arrowheadSize: [
-		{value: 'M 0 0 0 0', content: 'None'},
-		{value: 'M 0 -3 -6 0 0 3 z', content: 'Small'},
-		{value: 'M 0 -5 -10 0 0 5 z', content: 'Medium'},
-		{value: 'M 0 -10 -15 0 0 10 z', content: 'Large'},
+		{ value: "M 0 0 0 0", content: "None" },
+		{ value: "M 0 -3 -6 0 0 3 z", content: "Small" },
+		{ value: "M 0 -5 -10 0 0 5 z", content: "Medium" },
+		{ value: "M 0 -10 -15 0 0 10 z", content: "Large" }
 	],
 
 	strokeWidth: [
-		{value: 1, content: '<div style="background:#fff;width:2px;height:30px;margin:0 14px;border-radius: 2px;"/>'},
-		{value: 2, content: '<div style="background:#fff;width:4px;height:30px;margin:0 13px;border-radius: 2px;"/>'},
-		{value: 4, content: '<div style="background:#fff;width:8px;height:30px;margin:0 11px;border-radius: 2px;"/>'},
-		{value: 8, content: '<div style="background:#fff;width:16px;height:30px;margin:0 8px;border-radius: 2px;"/>'}
+		{
+			value: 1,
+			content: '<div style="background:#fff;width:2px;height:30px;margin:0 14px;border-radius: 2px;"/>'
+		},
+		{
+			value: 2,
+			content: '<div style="background:#fff;width:4px;height:30px;margin:0 13px;border-radius: 2px;"/>'
+		},
+		{
+			value: 4,
+			content: '<div style="background:#fff;width:8px;height:30px;margin:0 11px;border-radius: 2px;"/>'
+		},
+		{
+			value: 8,
+			content: '<div style="background:#fff;width:16px;height:30px;margin:0 8px;border-radius: 2px;"/>'
+		}
 	],
 
 	router: [
 		{
-			value: 'normal',
+			value: "normal",
 			content: '<p style="background:#fff;width:2px;height:30px;margin:0 14px;border-radius: 2px;"/>'
 		},
 		{
-			value: 'orthogonal',
-			content: '<p style="width:20px;height:30px;margin:0 5px;border-bottom: 2px solid #fff;border-left: 2px solid #fff;"/>'
+			value: "orthogonal",
+			content:
+				'<p style="width:20px;height:30px;margin:0 5px;border-bottom: 2px solid #fff;border-left: 2px solid #fff;"/>'
 		},
 		{
-			value: 'oneSide',
+			value: "oneSide",
 			content: '<p style="width:20px;height:30px;margin:0 5px;border: 2px solid #fff;border-top: none;"/>'
 		}
 	],
 
 	connector: [
 		{
-			value: 'normal',
-			content: '<p style="width:20px;height:20px;margin:5px;border-top:2px solid #fff;border-left:2px solid #fff;"/>'
+			value: "normal",
+			content:
+				'<p style="width:20px;height:20px;margin:5px;border-top:2px solid #fff;border-left:2px solid #fff;"/>'
 		},
 		{
-			value: 'rounded',
-			content: '<p style="width:20px;height:20px;margin:5px;border-top-left-radius:30%;border-top:2px solid #fff;border-left:2px solid #fff;"/>'
+			value: "rounded",
+			content:
+				'<p style="width:20px;height:20px;margin:5px;border-top-left-radius:30%;border-top:2px solid #fff;border-left:2px solid #fff;"/>'
 		},
 		{
-			value: 'smooth',
-			content: '<p style="width:20px;height:20px;margin:5px;border-top-left-radius:100%;border-top:2px solid #fff;border-left:2px solid #fff;"/>'
+			value: "smooth",
+			content:
+				'<p style="width:20px;height:20px;margin:5px;border-top-left-radius:100%;border-top:2px solid #fff;border-left:2px solid #fff;"/>'
 		}
 	],
 
 	labelPosition: [
-		{value: 30, content: 'Close to source'},
-		{value: 0.5, content: 'In the middle'},
-		{value: -30, content: 'Close to target'},
+		{ value: 30, content: "Close to source" },
+		{ value: 0.5, content: "In the middle" },
+		{ value: -30, content: "Close to target" }
 	],
 
-	portMarkup: [{
-		value: [{
-			tagName: 'rect',
-			selector: 'portBody',
-			attributes: {
-				'width': 20,
-				'height': 20,
-				'x': -10,
-				'y': -10
-			}
-		}],
-		content: 'Rectangle'
-	}, {
-		value: [{
-			tagName: 'circle',
-			selector: 'portBody',
-			attributes: {
-				'r': 10
-			}
-		}],
-		content: 'Circle'
-	}, {
-		value: [{
-			tagName: 'path',
-			selector: 'portBody',
-			attributes: {
-				'd': 'M -10 -10 10 -10 0 10 z'
-			}
-		}],
-		content: 'Triangle'
-	}]
+	portMarkup: [
+		{
+			value: [
+				{
+					tagName: "rect",
+					selector: "portBody",
+					attributes: {
+						width: 20,
+						height: 20,
+						x: -10,
+						y: -10
+					}
+				}
+			],
+			content: "Rectangle"
+		},
+		{
+			value: [
+				{
+					tagName: "circle",
+					selector: "portBody",
+					attributes: {
+						r: 10
+					}
+				}
+			],
+			content: "Circle"
+		},
+		{
+			value: [
+				{
+					tagName: "path",
+					selector: "portBody",
+					attributes: {
+						d: "M -10 -10 10 -10 0 10 z"
+					}
+				}
+			],
+			content: "Triangle"
+		}
+	]
 };
 
 export const inspectorConfig = {
-
-	/*'app.Link': {
+	/* 'app.Link': {
 		inputs: {
 			attrs: {
 				line: {
@@ -561,89 +615,88 @@ export const inspectorConfig = {
 				index: 2
 			}
 		}
-	},*/
-	'standard.Rectangle': {
+	}, */
+	"standard.Rectangle": {
 		inputs: {
 			attrs: {
 				label: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
 					fontSize: {
-						type: 'range',
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}
-						},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 2
 					},
 					fontFamily: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 3
 					},
 					fontWeight: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 5
 					}
 				},
 				body: {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 2
 					},
 					strokeWidth: {
-						type: 'range',
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'presentation',
-						when: {ne: {'attrs/body/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "presentation",
+						when: { ne: { "attrs/body/stroke": "transparent" } },
 						index: 3
 					},
 					strokeDasharray: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'presentation',
+						label: "Outline style",
+						group: "presentation",
 						when: {
 							and: [
-								{ne: {'attrs/body/stroke': 'transparent'}},
-								{ne: {'attrs/body/strokeWidth': 0}}
+								{ ne: { "attrs/body/stroke": "transparent" } },
+								{ ne: { "attrs/body/strokeWidth": 0 } }
 							]
 						},
 						index: 4
@@ -653,96 +706,96 @@ export const inspectorConfig = {
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 1
 			},
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 2
 			}
 		}
 	},
-	'standard.Ellipse': {
+	"standard.Ellipse": {
 		inputs: {
 			attrs: {
 				label: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
 					fontSize: {
-						type: 'range',
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 2
 					},
 					fontFamily: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 3
 					},
 					fontWeight: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 5
 					}
 				},
 				body: {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 2
 					},
 					strokeWidth: {
-						type: 'range',
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'presentation',
-						when: {ne: {'attrs/body/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "presentation",
+						when: { ne: { "attrs/body/stroke": "transparent" } },
 						index: 3
 					},
 					strokeDasharray: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'presentation',
+						label: "Outline style",
+						group: "presentation",
 						when: {
 							and: [
-								{ne: {'attrs/body/stroke': 'transparent'}},
-								{ne: {'attrs/body/stroke-width': 0}}
+								{ ne: { "attrs/body/stroke": "transparent" } },
+								{ ne: { "attrs/body/stroke-width": 0 } }
 							]
 						},
 						index: 4
@@ -752,96 +805,96 @@ export const inspectorConfig = {
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 1
 			},
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 2
 			}
 		}
 	},
-	'standard.Polygon': {
+	"standard.Polygon": {
 		inputs: {
 			attrs: {
 				label: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
 					fontSize: {
-						type: 'range',
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 2
 					},
 					fontFamily: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 3
 					},
 					fontWeight: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 5
 					}
 				},
 				body: {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 2
 					},
 					strokeWidth: {
-						type: 'range',
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'presentation',
-						when: {ne: {'attrs/body/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "presentation",
+						when: { ne: { "attrs/body/stroke": "transparent" } },
 						index: 3
 					},
 					strokeDasharray: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'presentation',
+						label: "Outline style",
+						group: "presentation",
 						when: {
 							and: [
-								{ne: {'attrs/body/stroke': 'transparent'}},
-								{ne: {'attrs/body/strokeWidth': 0}}
+								{ ne: { "attrs/body/stroke": "transparent" } },
+								{ ne: { "attrs/body/strokeWidth": 0 } }
 							]
 						},
 						index: 4
@@ -851,96 +904,96 @@ export const inspectorConfig = {
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 1
 			},
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 2
 			}
 		}
 	},
-	'standard.Cylinder': {
+	"standard.Cylinder": {
 		inputs: {
 			attrs: {
 				label: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
 					fontSize: {
-						type: 'range',
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 2
 					},
 					fontFamily: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 3
 					},
 					fontWeight: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 5
 					}
 				},
 				body: {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 2
 					},
 					strokeWidth: {
-						type: 'range',
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'presentation',
-						when: {ne: {'attrs/body/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "presentation",
+						when: { ne: { "attrs/body/stroke": "transparent" } },
 						index: 3
 					},
 					strokeDasharray: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'presentation',
+						label: "Outline style",
+						group: "presentation",
 						when: {
 							and: [
-								{ne: {'attrs/body/stroke': 'transparent'}},
-								{ne: {'attrs/body/strokeWidth': 0}}
+								{ ne: { "attrs/body/stroke": "transparent" } },
+								{ ne: { "attrs/body/strokeWidth": 0 } }
 							]
 						},
 						index: 4
@@ -948,40 +1001,40 @@ export const inspectorConfig = {
 				},
 				top: {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'top',
+						label: "Fill",
+						group: "top",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'top',
+						label: "Outline",
+						group: "top",
 						index: 2
 					},
 					strokeWidth: {
-						type: 'range',
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'top',
-						when: {ne: {'attrs/body/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "top",
+						when: { ne: { "attrs/body/stroke": "transparent" } },
 						index: 3
 					},
 					strokeDasharray: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'top',
+						label: "Outline style",
+						group: "top",
 						when: {
 							and: [
-								{ne: {'attrs/body/stroke': 'transparent'}},
-								{ne: {'attrs/body/strokeWidth': 0}}
+								{ ne: { "attrs/body/stroke": "transparent" } },
+								{ ne: { "attrs/body/strokeWidth": 0 } }
 							]
 						},
 						index: 4
@@ -991,70 +1044,70 @@ export const inspectorConfig = {
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 1
 			},
 			top: {
-				label: 'Top',
+				label: "Top",
 				index: 2
 			},
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 3
 			}
 		}
 	},
-	'standard.Image': {
+	"standard.Image": {
 		inputs: {
 			attrs: {
 				label: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
 					fontSize: {
-						type: 'range',
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 2
 					},
 					fontFamily: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 3
 					},
 					fontWeight: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 5
 					}
 				},
 				image: {
 					xlinkHref: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.imageIcons,
-						label: 'Image',
-						group: 'presentation',
+						label: "Image",
+						group: "presentation",
 						index: 1
 					}
 				}
@@ -1062,193 +1115,193 @@ export const inspectorConfig = {
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 1
 			},
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 2
 			}
 		}
 	},
-	'standard.InscribedImage': {
+	"standard.InscribedImage": {
 		inputs: {
 			attrs: {
 				label: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
 					fontSize: {
-						type: 'range',
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 2
 					},
 					fontFamily: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 3
 					},
 					fontWeight: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 5
 					}
 				},
 				image: {
 					xlinkHref: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.imageIcons,
-						label: 'Image',
-						group: 'presentation',
+						label: "Image",
+						group: "presentation",
 						index: 1
 					}
 				},
 				background: {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 2
 					}
 				},
 				border: {
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 3
 					},
 					strokeWidth: {
-						type: 'range',
+						type: "range",
 						min: 0,
 						max: 10,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'presentation',
-						when: {ne: {'attrs/border/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "presentation",
+						when: { ne: { "attrs/border/stroke": "transparent" } },
 						index: 4
 					}
 				}
-			},
+			}
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 1
 			},
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 2
 			}
 		}
 	},
-	'standard.EmbeddedImage': {
+	"standard.EmbeddedImage": {
 		inputs: {
 			attrs: {
 				label: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
 					fontSize: {
-						type: 'range',
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 2
 					},
 					fontFamily: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 3
 					},
 					fontWeight: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/label/text": "" } },
 						index: 5
 					}
 				},
 				body: {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 2
 					},
 					strokeWidth: {
-						type: 'range',
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'presentation',
-						when: {ne: {'attrs/body/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "presentation",
+						when: { ne: { "attrs/body/stroke": "transparent" } },
 						index: 3
 					},
 					strokeDasharray: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'presentation',
+						label: "Outline style",
+						group: "presentation",
 						when: {
 							and: [
-								{ne: {'attrs/body/stroke': 'transparent'}},
-								{ne: {'attrs/body/strokeWidth': 0}}
+								{ ne: { "attrs/body/stroke": "transparent" } },
+								{ ne: { "attrs/body/strokeWidth": 0 } }
 							]
 						},
 						index: 4
@@ -1256,10 +1309,10 @@ export const inspectorConfig = {
 				},
 				image: {
 					xlinkHref: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.imageIcons,
-						label: 'Image',
-						group: 'image',
+						label: "Image",
+						group: "image",
 						index: 1
 					}
 				}
@@ -1267,144 +1320,144 @@ export const inspectorConfig = {
 		},
 		groups: {
 			image: {
-				label: 'image',
+				label: "image",
 				index: 1
 			},
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 2
 			},
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 3
 			}
 		}
 	},
-	'standard.HeaderedRectangle': {
+	"standard.HeaderedRectangle": {
 		inputs: {
 			attrs: {
 				bodyText: {
 					textWrap: {
 						text: {
-							type: 'content-editable',
-							label: 'Wrapped text',
-							group: 'text',
+							type: "content-editable",
+							label: "Wrapped text",
+							group: "text",
 							index: 1
 						}
 					},
 					fontSize: {
-						type: 'range',
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/bodyText/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/bodyText/text": "" } },
 						index: 2
 					},
 					fontFamily: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/bodyText/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/bodyText/text": "" } },
 						index: 3
 					},
 					fontWeight: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/bodyText/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/bodyText/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/boduText/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/boduText/text": "" } },
 						index: 5
 					}
 				},
 				headerText: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'headerText',
+						type: "content-editable",
+						label: "Text",
+						group: "headerText",
 						index: 1
 					},
 					fontSize: {
-						type: 'range',
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'headerText',
-						when: {ne: {'attrs/headerText/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "headerText",
+						when: { ne: { "attrs/headerText/text": "" } },
 						index: 2
 					},
 					fontFamily: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'headerText',
-						when: {ne: {'attrs/headerText/text': ''}},
+						label: "Font family",
+						group: "headerText",
+						when: { ne: { "attrs/headerText/text": "" } },
 						index: 3
 					},
 					fontWeight: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'headerText',
-						when: {ne: {'attrs/headerText/text': ''}},
+						label: "Font thickness",
+						group: "headerText",
+						when: { ne: { "attrs/headerText/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'headerText',
-						when: {ne: {'attrs/headerText/text': ''}},
+						label: "Fill",
+						group: "headerText",
+						when: { ne: { "attrs/headerText/text": "" } },
 						index: 5
 					}
 				},
 				body: {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 2
 					},
 					strokeWidth: {
-						type: 'range',
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'presentation',
-						when: {ne: {'attrs/body/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "presentation",
+						when: { ne: { "attrs/body/stroke": "transparent" } },
 						index: 3
 					},
 					strokeDasharray: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'presentation',
+						label: "Outline style",
+						group: "presentation",
 						when: {
 							and: [
-								{ne: {'attrs/body/stroke': 'transparent'}},
-								{ne: {'attrs/body/strokeWidth': 0}}
+								{ ne: { "attrs/body/stroke": "transparent" } },
+								{ ne: { "attrs/body/strokeWidth": 0 } }
 							]
 						},
 						index: 4
@@ -1412,40 +1465,42 @@ export const inspectorConfig = {
 				},
 				header: {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'header',
+						label: "Fill",
+						group: "header",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'header',
+						label: "Outline",
+						group: "header",
 						index: 2
 					},
 					strokeWidth: {
-						type: 'range',
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'header',
-						when: {ne: {'attrs/header/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "header",
+						when: { ne: { "attrs/header/stroke": "transparent" } },
 						index: 3
 					},
 					strokeDasharray: {
-						type: 'select-box',
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'header',
+						label: "Outline style",
+						group: "header",
 						when: {
 							and: [
-								{ne: {'attrs/header/stroke': 'transparent'}},
-								{ne: {'attrs/header/strokeWidth': 0}}
+								{
+									ne: { "attrs/header/stroke": "transparent" }
+								},
+								{ ne: { "attrs/header/strokeWidth": 0 } }
 							]
 						},
 						index: 4
@@ -1455,32 +1510,32 @@ export const inspectorConfig = {
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 1
 			},
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 2
 			},
 			header: {
-				label: 'Header',
+				label: "Header",
 				index: 3
 			},
 			headerText: {
-				label: 'Header Text',
+				label: "Header Text",
 				index: 4
 			}
 		}
 	},
-	'fsa.StartState': {
+	"fsa.StartState": {
 		inputs: {
 			attrs: {
 				circle: {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					}
 				}
@@ -1488,49 +1543,51 @@ export const inspectorConfig = {
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 1
 			}
 		}
 	},
-	'fsa.EndState': {
+	"fsa.EndState": {
 		inputs: {
 			attrs: {
-				'.outer': {
+				".outer": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'presentation',
+						label: "Outline style",
+						group: "presentation",
 						when: {
 							and: [
-								{ne: {'attrs/.outer/stroke': 'transparent'}},
-								{ne: {'attrs/.outer/stroke-width': 0}}
+								{
+									ne: { "attrs/.outer/stroke": "transparent" }
+								},
+								{ ne: { "attrs/.outer/stroke-width": 0 } }
 							]
 						},
 						index: 4
 					}
 				},
-				'.inner': {
+				".inner": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Inner fill',
-						group: 'presentation',
+						label: "Inner fill",
+						group: "presentation",
 						index: 2
 					}
 				}
@@ -1538,96 +1595,98 @@ export const inspectorConfig = {
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 1
 			},
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 2
 			}
 		}
 	},
-	'fsa.State': {
+	"fsa.State": {
 		inputs: {
 			attrs: {
 				text: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
-					'font-size': {
-						type: 'range',
+					"font-size": {
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 2
 					},
-					'font-family': {
-						type: 'select-box',
+					"font-family": {
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 3
 					},
-					'font-weight': {
-						type: 'select-box',
+					"font-weight": {
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 5
 					}
 				},
 				circle: {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'presentation',
-						when: {ne: {'attrs/circle/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "presentation",
+						when: { ne: { "attrs/circle/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'presentation',
+						label: "Outline style",
+						group: "presentation",
 						when: {
 							and: [
-								{ne: {'attrs/circle/stroke': 'transparent'}},
-								{ne: {'attrs/circle/stroke-width': 0}}
+								{
+									ne: { "attrs/circle/stroke": "transparent" }
+								},
+								{ ne: { "attrs/circle/stroke-width": 0 } }
 							]
 						},
 						index: 4
@@ -1637,96 +1696,96 @@ export const inspectorConfig = {
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 1
 			},
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 2
 			}
 		}
 	},
-	'pn.Place': {
+	"pn.Place": {
 		inputs: {
 			attrs: {
-				'.label': {
+				".label": {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
-					'font-size': {
-						type: 'range',
+					"font-size": {
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/.label/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/.label/text": "" } },
 						index: 2
 					},
-					'font-family': {
-						type: 'select-box',
+					"font-family": {
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/.label/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/.label/text": "" } },
 						index: 3
 					},
-					'font-weight': {
-						type: 'select-box',
+					"font-weight": {
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/.label/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/.label/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/.label/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/.label/text": "" } },
 						index: 5
 					}
 				},
-				'.root': {
+				".root": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'presentation',
-						when: {ne: {'attrs/.root/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "presentation",
+						when: { ne: { "attrs/.root/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'presentation',
+						label: "Outline style",
+						group: "presentation",
 						when: {
 							and: [
-								{ne: {'attrs/.root/stroke': 'transparent'}},
-								{ne: {'attrs/.root/stroke-width': 0}}
+								{ ne: { "attrs/.root/stroke": "transparent" } },
+								{ ne: { "attrs/.root/stroke-width": 0 } }
 							]
 						},
 						index: 4
@@ -1734,109 +1793,109 @@ export const inspectorConfig = {
 				}
 			},
 			tokens: {
-				type: 'number',
+				type: "number",
 				min: 1,
 				max: 500,
-				group: 'data',
+				group: "data",
 				index: 1
 			}
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 2
 			},
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 3
 			},
 			data: {
-				label: 'Data',
+				label: "Data",
 				index: 1
 			}
 		}
 	},
-	'pn.Transition': {
+	"pn.Transition": {
 		inputs: {
 			attrs: {
-				'.label': {
+				".label": {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
-					'font-size': {
-						type: 'range',
+					"font-size": {
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/.label/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/.label/text": "" } },
 						index: 2
 					},
-					'font-family': {
-						type: 'select-box',
+					"font-family": {
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/.label/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/.label/text": "" } },
 						index: 3
 					},
-					'font-weight': {
-						type: 'select-box',
+					"font-weight": {
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/.label/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/.label/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/.label/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/.label/text": "" } },
 						index: 5
 					}
 				},
 				rect: {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'presentation',
-						when: {ne: {'attrs/rect/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "presentation",
+						when: { ne: { "attrs/rect/stroke": "transparent" } },
 						index: 2
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'presentation',
+						label: "Outline style",
+						group: "presentation",
 						when: {
 							and: [
-								{ne: {'attrs/rect/stroke': 'transparent'}},
-								{ne: {'attrs/rect/stroke-width': 0}}
+								{ ne: { "attrs/rect/stroke": "transparent" } },
+								{ ne: { "attrs/rect/stroke-width": 0 } }
 							]
 						},
 						index: 3
@@ -1846,96 +1905,98 @@ export const inspectorConfig = {
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 1
 			},
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 2
 			}
 		}
 	},
-	'erd.Entity': {
+	"erd.Entity": {
 		inputs: {
 			attrs: {
 				text: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
-					'font-size': {
-						type: 'range',
+					"font-size": {
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 2
 					},
-					'font-family': {
-						type: 'select-box',
+					"font-family": {
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 3
 					},
-					'font-weight': {
-						type: 'select-box',
+					"font-weight": {
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 5
 					}
 				},
-				'.outer': {
+				".outer": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'presentation',
-						when: {ne: {'attrs/.outer/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "presentation",
+						when: { ne: { "attrs/.outer/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'presentation',
+						label: "Outline style",
+						group: "presentation",
 						when: {
 							and: [
-								{ne: {'attrs/.outer/stroke': 'transparent'}},
-								{ne: {'attrs/.outer/stroke-width': 0}}
+								{
+									ne: { "attrs/.outer/stroke": "transparent" }
+								},
+								{ ne: { "attrs/.outer/stroke-width": 0 } }
 							]
 						},
 						index: 4
@@ -1945,137 +2006,141 @@ export const inspectorConfig = {
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 1
 			},
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 2
 			}
 		}
 	},
-	'erd.WeakEntity': {
+	"erd.WeakEntity": {
 		inputs: {
 			attrs: {
 				text: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
-					'font-size': {
-						type: 'range',
+					"font-size": {
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 2
 					},
-					'font-family': {
-						type: 'select-box',
+					"font-family": {
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 3
 					},
-					'font-weight': {
-						type: 'select-box',
+					"font-weight": {
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 5
 					}
 				},
-				'.outer': {
+				".outer": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'outer',
+						label: "Fill",
+						group: "outer",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'outer',
+						label: "Outline",
+						group: "outer",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'outer',
-						when: {ne: {'attrs/.outer/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "outer",
+						when: { ne: { "attrs/.outer/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'outer',
+						label: "Outline style",
+						group: "outer",
 						when: {
 							and: [
-								{ne: {'attrs/.outer/stroke': 'transparent'}},
-								{ne: {'attrs/.outer/stroke-width': 0}}
+								{
+									ne: { "attrs/.outer/stroke": "transparent" }
+								},
+								{ ne: { "attrs/.outer/stroke-width": 0 } }
 							]
 						},
 						index: 4
 					}
 				},
-				'.inner': {
+				".inner": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'inner',
+						label: "Fill",
+						group: "inner",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'inner',
+						label: "Outline",
+						group: "inner",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'inner',
-						when: {ne: {'attrs/.inner/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "inner",
+						when: { ne: { "attrs/.inner/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'inner',
+						label: "Outline style",
+						group: "inner",
 						when: {
 							and: [
-								{ne: {'attrs/.inner/stroke': 'transparent'}},
-								{ne: {'attrs/.inner/stroke-width': 0}}
+								{
+									ne: { "attrs/.inner/stroke": "transparent" }
+								},
+								{ ne: { "attrs/.inner/stroke-width": 0 } }
 							]
 						},
 						index: 4
@@ -2085,100 +2150,102 @@ export const inspectorConfig = {
 		},
 		groups: {
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 1
 			},
 			outer: {
-				label: 'Outer rectangle',
+				label: "Outer rectangle",
 				index: 2
 			},
 			inner: {
-				label: 'Inner rectangle',
+				label: "Inner rectangle",
 				index: 3
 			}
 		}
 	},
-	'erd.Relationship': {
+	"erd.Relationship": {
 		inputs: {
 			attrs: {
 				text: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
-					'font-size': {
-						type: 'range',
+					"font-size": {
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 2
 					},
-					'font-family': {
-						type: 'select-box',
+					"font-family": {
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 3
 					},
-					'font-weight': {
-						type: 'select-box',
+					"font-weight": {
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 5
 					}
 				},
-				'.outer': {
+				".outer": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'presentation',
-						when: {ne: {'attrs/.outer/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "presentation",
+						when: { ne: { "attrs/.outer/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'presentation',
+						label: "Outline style",
+						group: "presentation",
 						when: {
 							and: [
-								{ne: {'attrs/.outer/stroke': 'transparent'}},
-								{ne: {'attrs/.outer/stroke-width': 0}}
+								{
+									ne: { "attrs/.outer/stroke": "transparent" }
+								},
+								{ ne: { "attrs/.outer/stroke-width": 0 } }
 							]
 						},
 						index: 4
@@ -2188,137 +2255,141 @@ export const inspectorConfig = {
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 1
 			},
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 2
 			}
 		}
 	},
-	'erd.IdentifyingRelationship': {
+	"erd.IdentifyingRelationship": {
 		inputs: {
 			attrs: {
 				text: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
-					'font-size': {
-						type: 'range',
+					"font-size": {
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 2
 					},
-					'font-family': {
-						type: 'select-box',
+					"font-family": {
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 3
 					},
-					'font-weight': {
-						type: 'select-box',
+					"font-weight": {
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 5
 					}
 				},
-				'.outer': {
+				".outer": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'outer',
+						label: "Fill",
+						group: "outer",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'outer',
+						label: "Outline",
+						group: "outer",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'outer',
-						when: {ne: {'attrs/.outer/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "outer",
+						when: { ne: { "attrs/.outer/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'outer',
+						label: "Outline style",
+						group: "outer",
 						when: {
 							and: [
-								{ne: {'attrs/.outer/stroke': 'transparent'}},
-								{ne: {'attrs/.outer/stroke-width': 0}}
+								{
+									ne: { "attrs/.outer/stroke": "transparent" }
+								},
+								{ ne: { "attrs/.outer/stroke-width": 0 } }
 							]
 						},
 						index: 4
 					}
 				},
-				'.inner': {
+				".inner": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'inner',
+						label: "Fill",
+						group: "inner",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'inner',
+						label: "Outline",
+						group: "inner",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'inner',
-						when: {ne: {'attrs/.inner/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "inner",
+						when: { ne: { "attrs/.inner/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'inner',
+						label: "Outline style",
+						group: "inner",
 						when: {
 							and: [
-								{ne: {'attrs/.inner/stroke': 'transparent'}},
-								{ne: {'attrs/.inner/stroke-width': 0}}
+								{
+									ne: { "attrs/.inner/stroke": "transparent" }
+								},
+								{ ne: { "attrs/.inner/stroke-width": 0 } }
 							]
 						},
 						index: 4
@@ -2328,141 +2399,145 @@ export const inspectorConfig = {
 		},
 		groups: {
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 1
 			},
 			outer: {
-				label: 'Outer polygon',
+				label: "Outer polygon",
 				index: 2
 			},
 			inner: {
-				label: 'Inner polygon',
+				label: "Inner polygon",
 				index: 3
 			}
 		}
 	},
-	'erd.Key': {
+	"erd.Key": {
 		inputs: {
 			attrs: {
 				text: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
-					'font-size': {
-						type: 'range',
+					"font-size": {
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 2
 					},
-					'font-family': {
-						type: 'select-box',
+					"font-family": {
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 3
 					},
-					'font-weight': {
-						type: 'select-box',
+					"font-weight": {
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 5
 					}
 				},
-				'.outer': {
+				".outer": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'outer',
+						label: "Fill",
+						group: "outer",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'outer',
+						label: "Outline",
+						group: "outer",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'outer',
-						when: {ne: {'attrs/.outer/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "outer",
+						when: { ne: { "attrs/.outer/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'outer',
+						label: "Outline style",
+						group: "outer",
 						when: {
 							and: [
-								{ne: {'attrs/.outer/stroke': 'transparent'}},
-								{ne: {'attrs/.outer/stroke-width': 0}}
+								{
+									ne: { "attrs/.outer/stroke": "transparent" }
+								},
+								{ ne: { "attrs/.outer/stroke-width": 0 } }
 							]
 						},
 						index: 4
 					}
 				},
-				'.inner': {
+				".inner": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'inner',
+						label: "Fill",
+						group: "inner",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'inner',
+						label: "Outline",
+						group: "inner",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'inner',
-						when: {ne: {'attrs/.inner/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "inner",
+						when: { ne: { "attrs/.inner/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'inner',
+						label: "Outline style",
+						group: "inner",
 						when: {
 							and: [
-								{ne: {'attrs/.inner/stroke': 'transparent'}},
-								{ne: {'attrs/.inner/stroke-width': 0}}
+								{
+									ne: { "attrs/.inner/stroke": "transparent" }
+								},
+								{ ne: { "attrs/.inner/stroke-width": 0 } }
 							]
 						},
 						index: 4
@@ -2472,99 +2547,101 @@ export const inspectorConfig = {
 		},
 		groups: {
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 1
 			},
 			outer: {
-				label: 'Outer ellipse',
+				label: "Outer ellipse",
 				index: 2
 			},
 			inner: {
-				label: 'Inner ellipse',
+				label: "Inner ellipse",
 				index: 3
 			}
 		}
 	},
-	'erd.Normal': {
+	"erd.Normal": {
 		inputs: {
 			attrs: {
 				text: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
-					'font-size': {
-						type: 'range',
+					"font-size": {
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 2
 					},
-					'font-family': {
-						type: 'select-box',
+					"font-family": {
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
+						label: "Font family",
+						group: "text",
 						index: 3
 					},
-					'font-weight': {
-						type: 'select-box',
+					"font-weight": {
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 5
 					}
 				},
-				'.outer': {
+				".outer": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'presentation',
-						when: {ne: {'attrs/.outer/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "presentation",
+						when: { ne: { "attrs/.outer/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'presentation',
+						label: "Outline style",
+						group: "presentation",
 						when: {
 							and: [
-								{ne: {'attrs/.outer/stroke': 'transparent'}},
-								{ne: {'attrs/.outer/stroke-width': 0}}
+								{
+									ne: { "attrs/.outer/stroke": "transparent" }
+								},
+								{ ne: { "attrs/.outer/stroke-width": 0 } }
 							]
 						},
 						index: 4
@@ -2574,137 +2651,141 @@ export const inspectorConfig = {
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 1
 			},
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 2
 			}
 		}
 	},
-	'erd.Multivalued': {
+	"erd.Multivalued": {
 		inputs: {
 			attrs: {
 				text: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
-					'font-size': {
-						type: 'range',
+					"font-size": {
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 2
 					},
-					'font-family': {
-						type: 'select-box',
+					"font-family": {
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 3
 					},
-					'font-weight': {
-						type: 'select-box',
+					"font-weight": {
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 5
 					}
 				},
-				'.outer': {
+				".outer": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'outer',
+						label: "Fill",
+						group: "outer",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'outer',
+						label: "Outline",
+						group: "outer",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'outer',
-						when: {ne: {'attrs/.outer/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "outer",
+						when: { ne: { "attrs/.outer/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'outer',
+						label: "Outline style",
+						group: "outer",
 						when: {
 							and: [
-								{ne: {'attrs/.outer/stroke': 'transparent'}},
-								{ne: {'attrs/.outer/stroke-width': 0}}
+								{
+									ne: { "attrs/.outer/stroke": "transparent" }
+								},
+								{ ne: { "attrs/.outer/stroke-width": 0 } }
 							]
 						},
 						index: 4
 					}
 				},
-				'.inner': {
+				".inner": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'inner',
+						label: "Fill",
+						group: "inner",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'inner',
+						label: "Outline",
+						group: "inner",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'inner',
-						when: {ne: {'attrs/.inner/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "inner",
+						when: { ne: { "attrs/.inner/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'inner',
+						label: "Outline style",
+						group: "inner",
 						when: {
 							and: [
-								{ne: {'attrs/.inner/stroke': 'transparent'}},
-								{ne: {'attrs/.inner/stroke-width': 0}}
+								{
+									ne: { "attrs/.inner/stroke": "transparent" }
+								},
+								{ ne: { "attrs/.inner/stroke-width": 0 } }
 							]
 						},
 						index: 4
@@ -2714,141 +2795,145 @@ export const inspectorConfig = {
 		},
 		groups: {
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 1
 			},
 			outer: {
-				label: 'Outer ellipse',
+				label: "Outer ellipse",
 				index: 2
 			},
 			inner: {
-				label: 'Inner ellipse',
+				label: "Inner ellipse",
 				index: 3
 			}
 		}
 	},
-	'erd.Derived': {
+	"erd.Derived": {
 		inputs: {
 			attrs: {
 				text: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
-					'font-size': {
-						type: 'range',
+					"font-size": {
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 2
 					},
-					'font-family': {
-						type: 'select-box',
+					"font-family": {
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 3
 					},
-					'font-weight': {
-						type: 'select-box',
+					"font-weight": {
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 5
 					}
 				},
-				'.outer': {
+				".outer": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'outer',
+						label: "Fill",
+						group: "outer",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'outer',
+						label: "Outline",
+						group: "outer",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'outer',
-						when: {ne: {'attrs/.outer/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "outer",
+						when: { ne: { "attrs/.outer/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'outer',
+						label: "Outline style",
+						group: "outer",
 						when: {
 							and: [
-								{ne: {'attrs/.outer/stroke': 'transparent'}},
-								{ne: {'attrs/.outer/stroke-width': 0}}
+								{
+									ne: { "attrs/.outer/stroke": "transparent" }
+								},
+								{ ne: { "attrs/.outer/stroke-width": 0 } }
 							]
 						},
 						index: 4
 					}
 				},
-				'.inner': {
+				".inner": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'inner',
+						label: "Fill",
+						group: "inner",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'inner',
+						label: "Outline",
+						group: "inner",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'inner',
-						when: {ne: {'attrs/.inner/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "inner",
+						when: { ne: { "attrs/.inner/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'inner',
+						label: "Outline style",
+						group: "inner",
 						when: {
 							and: [
-								{ne: {'attrs/.inner/stroke': 'transparent'}},
-								{ne: {'attrs/.inner/stroke-width': 0}}
+								{
+									ne: { "attrs/.inner/stroke": "transparent" }
+								},
+								{ ne: { "attrs/.inner/stroke-width": 0 } }
 							]
 						},
 						index: 4
@@ -2858,100 +2943,104 @@ export const inspectorConfig = {
 		},
 		groups: {
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 1
 			},
 			outer: {
-				label: 'Outer ellipse',
+				label: "Outer ellipse",
 				index: 2
 			},
 			inner: {
-				label: 'Inner ellipse',
+				label: "Inner ellipse",
 				index: 3
 			}
 		}
 	},
-	'erd.ISA': {
+	"erd.ISA": {
 		inputs: {
 			attrs: {
 				text: {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'text',
+						type: "content-editable",
+						label: "Text",
+						group: "text",
 						index: 1
 					},
-					'font-size': {
-						type: 'range',
+					"font-size": {
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 2
 					},
-					'font-family': {
-						type: 'select-box',
+					"font-family": {
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font family",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 3
 					},
-					'font-weight': {
-						type: 'select-box',
+					"font-weight": {
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Font thickness",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'attrs/text/text': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { "attrs/text/text": "" } },
 						index: 5
 					}
 				},
 				polygon: {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'presentation',
-						when: {ne: {'attrs/polygon/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "presentation",
+						when: { ne: { "attrs/polygon/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'presentation',
+						label: "Outline style",
+						group: "presentation",
 						when: {
 							and: [
-								{ne: {'attrs/polygon/stroke': 'transparent'}},
-								{ne: {'attrs/polygon/stroke-width': 0}}
+								{
+									ne: {
+										"attrs/polygon/stroke": "transparent"
+									}
+								},
+								{ ne: { "attrs/polygon/stroke-width": 0 } }
 							]
 						},
 						index: 4
@@ -2961,374 +3050,386 @@ export const inspectorConfig = {
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 1
 			},
 			text: {
-				label: 'Text',
+				label: "Text",
 				index: 2
 			}
 		}
 	},
-	'uml.Class': {
+	"uml.Class": {
 		inputs: {
 			attrs: {
-				'.uml-class-name-rect': {
+				".uml-class-name-rect": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'name',
+						label: "Fill",
+						group: "name",
 						index: 4
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'name',
+						label: "Outline",
+						group: "name",
 						index: 5
 					}
 				},
-				'.uml-class-attrs-rect': {
+				".uml-class-attrs-rect": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'attributes',
+						label: "Fill",
+						group: "attributes",
 						index: 4
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'attributes',
+						label: "Outline",
+						group: "attributes",
 						index: 5
 					}
 				},
-				'.uml-class-methods-rect': {
+				".uml-class-methods-rect": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'methods',
+						label: "Fill",
+						group: "methods",
 						index: 4
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'methods',
+						label: "Outline",
+						group: "methods",
 						index: 5
 					}
 				}
 			},
 			name: {
-				type: 'text',
-				group: 'name',
+				type: "text",
+				group: "name",
 				index: 1,
-				label: 'Class name'
+				label: "Class name"
 			},
 			attributes: {
-				type: 'list',
+				type: "list",
 				item: {
-					type: 'text'
+					type: "text"
 				},
-				group: 'attributes',
+				group: "attributes",
 				index: 1,
-				label: 'Attributes'
+				label: "Attributes"
 			},
 			methods: {
-				type: 'list',
+				type: "list",
 				item: {
-					type: 'text'
+					type: "text"
 				},
-				group: 'methods',
+				group: "methods",
 				index: 1,
-				label: 'Methods'
+				label: "Methods"
 			}
 		},
 		groups: {
 			name: {
-				label: 'Class name',
+				label: "Class name",
 				index: 1
 			},
 			attributes: {
-				label: 'Attributes',
+				label: "Attributes",
 				index: 2
 			},
 			methods: {
-				label: 'Methods',
+				label: "Methods",
 				index: 3
 			}
 		}
 	},
-	'uml.Interface': {
+	"uml.Interface": {
 		inputs: {
 			attrs: {
-				'.uml-class-name-rect': {
+				".uml-class-name-rect": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'name',
+						label: "Fill",
+						group: "name",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'name',
+						label: "Outline",
+						group: "name",
 						index: 2
 					}
 				},
-				'.uml-class-attrs-rect': {
+				".uml-class-attrs-rect": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'attributes',
+						label: "Fill",
+						group: "attributes",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'attributes',
+						label: "Outline",
+						group: "attributes",
 						index: 2
 					}
 				},
-				'.uml-class-methods-rect': {
+				".uml-class-methods-rect": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'methods',
+						label: "Fill",
+						group: "methods",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'methods',
+						label: "Outline",
+						group: "methods",
 						index: 2
 					}
 				}
 			},
 			name: {
-				type: 'text',
-				group: 'name',
+				type: "text",
+				group: "name",
 				index: 0,
-				label: 'Interface name'
+				label: "Interface name"
 			},
 			attributes: {
-				type: 'list',
+				type: "list",
 				item: {
-					type: 'text'
+					type: "text"
 				},
-				group: 'attributes',
+				group: "attributes",
 				index: 0,
-				label: 'Attributes'
+				label: "Attributes"
 			},
 			methods: {
-				type: 'list',
+				type: "list",
 				item: {
-					type: 'text'
+					type: "text"
 				},
-				group: 'methods',
+				group: "methods",
 				index: 0,
-				label: 'Methods'
+				label: "Methods"
 			}
 		},
 		groups: {
 			name: {
-				label: 'Interface name',
+				label: "Interface name",
 				index: 1
 			},
 			attributes: {
-				label: 'Attributes',
+				label: "Attributes",
 				index: 2
 			},
 			methods: {
-				label: 'Methods',
+				label: "Methods",
 				index: 3
 			}
 		}
 	},
-	'uml.Abstract': {
+	"uml.Abstract": {
 		inputs: {
 			attrs: {
-				'.uml-class-name-rect': {
+				".uml-class-name-rect": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'name',
+						label: "Fill",
+						group: "name",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'name',
+						label: "Outline",
+						group: "name",
 						index: 2
 					}
 				},
-				'.uml-class-attrs-rect': {
+				".uml-class-attrs-rect": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'attributes',
+						label: "Fill",
+						group: "attributes",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'attributes',
+						label: "Outline",
+						group: "attributes",
 						index: 2
 					}
 				},
-				'.uml-class-methods-rect': {
+				".uml-class-methods-rect": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'methods',
+						label: "Fill",
+						group: "methods",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'methods',
+						label: "Outline",
+						group: "methods",
 						index: 2
 					}
 				}
 			},
 			name: {
-				type: 'text',
-				group: 'name',
+				type: "text",
+				group: "name",
 				index: 0,
-				label: 'Abstract class name'
+				label: "Abstract class name"
 			},
 			attributes: {
-				type: 'list',
+				type: "list",
 				item: {
-					type: 'text'
+					type: "text"
 				},
-				group: 'attributes',
+				group: "attributes",
 				index: 0,
-				label: 'Attributes'
+				label: "Attributes"
 			},
 			methods: {
-				type: 'list',
+				type: "list",
 				item: {
-					type: 'text'
+					type: "text"
 				},
-				group: 'methods',
+				group: "methods",
 				index: 0,
-				label: 'Methods'
+				label: "Methods"
 			}
 		},
 		groups: {
 			name: {
-				label: 'Abstract class name',
+				label: "Abstract class name",
 				index: 1
 			},
 			attributes: {
-				label: 'Attributes Text',
+				label: "Attributes Text",
 				index: 2
 			},
 			methods: {
-				label: 'Methods Text',
+				label: "Methods Text",
 				index: 3
 			}
 		}
 	},
-	'uml.State': {
+	"uml.State": {
 		inputs: {
 			name: {
-				group: 'text',
+				group: "text",
 				index: 1,
-				type: 'text'
+				type: "text"
 			},
 			events: {
-				group: 'events',
+				group: "events",
 				index: 1,
-				type: 'list',
+				type: "list",
 				item: {
-					type: 'text'
+					type: "text"
 				}
 			},
 			attrs: {
-				'.uml-state-name': {
+				".uml-state-name": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'text',
-						when: {ne: {'name': ''}},
+						label: "Fill",
+						group: "text",
+						when: { ne: { name: "" } },
 						index: 5
 					}
 				},
-				'.uml-state-body': {
+				".uml-state-body": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'presentation',
-						when: {ne: {'attrs/.uml-state-body/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "presentation",
+						when: {
+							ne: {
+								"attrs/.uml-state-body/stroke": "transparent"
+							}
+						},
 						index: 4
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'presentation',
+						label: "Outline style",
+						group: "presentation",
 						when: {
 							and: [
-								{ne: {'attrs/.uml-state-body/stroke': 'transparent'}},
-								{ne: {'attrs/.uml-state-body/stroke-width': 0}}
+								{
+									ne: {
+										"attrs/.uml-state-body/stroke": "transparent"
+									}
+								},
+								{
+									ne: {
+										"attrs/.uml-state-body/stroke-width": 0
+									}
+								}
 							]
 						},
 						index: 5
 					}
 				},
-				'.uml-state-separator': {
+				".uml-state-separator": {
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Horizontal rule outline',
-						group: 'presentation',
+						label: "Horizontal rule outline",
+						group: "presentation",
 						index: 3
 					}
 				},
-				'.uml-state-events': {
+				".uml-state-events": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'events',
-						when: {ne: {'events': 0}},
+						label: "Fill",
+						group: "events",
+						when: { ne: { events: 0 } },
 						index: 5
 					}
 				}
@@ -3336,153 +3437,153 @@ export const inspectorConfig = {
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 1
 			},
 			text: {
-				label: 'State name text',
+				label: "State name text",
 				index: 2
 			},
 			events: {
-				label: 'State events text',
+				label: "State events text",
 				index: 3
 			}
 		}
 	},
-	'org.Member': {
+	"org.Member": {
 		inputs: {
 			attrs: {
-				'.rank': {
+				".rank": {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'rank',
+						type: "content-editable",
+						label: "Text",
+						group: "rank",
 						index: 1
 					},
-					'font-size': {
-						type: 'range',
+					"font-size": {
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'rank',
-						when: {ne: {'attrs/.rank/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "rank",
+						when: { ne: { "attrs/.rank/text": "" } },
 						index: 2
 					},
-					'font-family': {
-						type: 'select-box',
+					"font-family": {
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'rank',
-						when: {ne: {'attrs/.rank/text': ''}},
+						label: "Font family",
+						group: "rank",
+						when: { ne: { "attrs/.rank/text": "" } },
 						index: 3
 					},
-					'font-weight': {
-						type: 'select-box',
+					"font-weight": {
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'rank',
-						when: {ne: {'attrs/.rank/text': ''}},
+						label: "Font thickness",
+						group: "rank",
+						when: { ne: { "attrs/.rank/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'rank',
-						when: {ne: {'attrs/.rank/text': ''}},
+						label: "Fill",
+						group: "rank",
+						when: { ne: { "attrs/.rank/text": "" } },
 						index: 5
 					}
 				},
-				'.name': {
+				".name": {
 					text: {
-						type: 'content-editable',
-						label: 'Text',
-						group: 'name',
+						type: "content-editable",
+						label: "Text",
+						group: "name",
 						index: 1
 					},
-					'font-size': {
-						type: 'range',
+					"font-size": {
+						type: "range",
 						min: 5,
 						max: 80,
-						unit: 'px',
-						label: 'Font size',
-						group: 'name',
-						when: {ne: {'attrs/.name/text': ''}},
+						unit: "px",
+						label: "Font size",
+						group: "name",
+						when: { ne: { "attrs/.name/text": "" } },
 						index: 2
 					},
-					'font-family': {
-						type: 'select-box',
+					"font-family": {
+						type: "select-box",
 						options: options.fontFamily,
-						label: 'Font family',
-						group: 'name',
-						when: {ne: {'attrs/.name/text': ''}},
+						label: "Font family",
+						group: "name",
+						when: { ne: { "attrs/.name/text": "" } },
 						index: 3
 					},
-					'font-weight': {
-						type: 'select-box',
+					"font-weight": {
+						type: "select-box",
 						options: options.fontWeight,
-						label: 'Font thickness',
-						group: 'name',
-						when: {ne: {'attrs/.name/text': ''}},
+						label: "Font thickness",
+						group: "name",
+						when: { ne: { "attrs/.name/text": "" } },
 						index: 4
 					},
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'name',
-						when: {ne: {'attrs/.name/text': ''}},
+						label: "Fill",
+						group: "name",
+						when: { ne: { "attrs/.name/text": "" } },
 						index: 5
 					}
 				},
-				'.card': {
+				".card": {
 					fill: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Fill',
-						group: 'presentation',
+						label: "Fill",
+						group: "presentation",
 						index: 1
 					},
 					stroke: {
-						type: 'color-palette',
+						type: "color-palette",
 						options: options.colorPalette,
-						label: 'Outline',
-						group: 'presentation',
+						label: "Outline",
+						group: "presentation",
 						index: 2
 					},
-					'stroke-width': {
-						type: 'range',
+					"stroke-width": {
+						type: "range",
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: 'px',
-						label: 'Outline thickness',
-						group: 'presentation',
-						when: {ne: {'attrs/.card/stroke': 'transparent'}},
+						unit: "px",
+						label: "Outline thickness",
+						group: "presentation",
+						when: { ne: { "attrs/.card/stroke": "transparent" } },
 						index: 3
 					},
-					'stroke-dasharray': {
-						type: 'select-box',
+					"stroke-dasharray": {
+						type: "select-box",
 						options: options.strokeStyle,
-						label: 'Outline style',
-						group: 'presentation',
+						label: "Outline style",
+						group: "presentation",
 						when: {
 							and: [
-								{ne: {'attrs/.card/stroke': 'transparent'}},
-								{ne: {'attrs/.card/stroke-width': 0}}
+								{ ne: { "attrs/.card/stroke": "transparent" } },
+								{ ne: { "attrs/.card/stroke-width": 0 } }
 							]
 						},
 						index: 4
 					}
 				},
 				image: {
-					'xlink:href': {
-						type: 'select-button-group',
+					"xlink:href": {
+						type: "select-button-group",
 						options: options.imageGender,
-						label: 'Gender',
-						group: 'gender',
+						label: "Gender",
+						group: "gender",
 						index: 1
 					}
 				}
@@ -3490,19 +3591,19 @@ export const inspectorConfig = {
 		},
 		groups: {
 			presentation: {
-				label: 'Presentation',
+				label: "Presentation",
 				index: 4
 			},
 			rank: {
-				label: 'Rank',
+				label: "Rank",
 				index: 2
 			},
 			name: {
-				label: 'Name',
+				label: "Name",
 				index: 3
 			},
 			gender: {
-				label: 'Gender',
+				label: "Gender",
 				index: 1
 			}
 		}

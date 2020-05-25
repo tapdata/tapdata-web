@@ -10,6 +10,7 @@
 						class="e-form" :label="$t('editor.cell.data_node.database.form.label')"
 						prop="connectionId" :rules="rules" required>
 					<el-select
+              @change="changeConnection"
 							filterable v-model="model.connectionId"
 							:placeholder="$t('editor.cell.data_node.database.form.placeholder')" size="mini">
 						<el-option
@@ -21,7 +22,7 @@
 				</el-form-item>
 
 				<el-form-item required :label="$t('editor.cell.data_node.collection.form.dropTable.label')"
-							  v-if="!isSourceDataNode">
+					v-if="!isSourceDataNode">
 					<el-select
 							v-model="model.dropTable" size="mini">
 						<el-option
@@ -54,7 +55,7 @@
 
 			<el-tabs class="e-tabs" v-model="activeName">
 
-				<el-tab-pane :label="$t('editor.cell.data_node.database.queueCopied') + '('+tables.length+')'" name="first">
+				<el-tab-pane :label="$t('editor.cell.data_node.database.queueCopied') + '('+computedTables.length+')'" name="first">
 					<div class="search">
 						<el-input
 								:placeholder="$t('editor.cell.data_node.database.enterName')"
@@ -76,7 +77,7 @@
 							:key="item.id"
 							:gutter="20">
 						<el-col :span="1">
-							<el-checkbox v-model="item.checked" @change='checkedOne(item,index)'></el-checkbox>
+							<el-checkbox v-model="item.checked"></el-checkbox>
 						</el-col>
 						<el-col :span="17" style="padding-left:20px;">
 							<i class="iconfont icon-table2"></i>
@@ -90,7 +91,7 @@
 					</el-row>
 				</el-tab-pane>
 				<!-- model.excludeTables -->
-				<el-tab-pane :label="$t('editor.cell.data_node.database.tableRemoved') + '('+removeTables.length+')'" name="second">
+				<el-tab-pane :label="$t('editor.cell.data_node.database.tableRemoved') + '('+computedRemoveTables.length+')'" name="second">
 					<div class="search">
 						<el-input
 								:placeholder="$t('editor.cell.data_node.database.enterName')"
@@ -106,7 +107,7 @@
 							:key="item.id"
 							:gutter="20">
 						<el-col :span="2">
-							<el-checkbox v-model="item.checked" @change='checkedOne(item,index)'></el-checkbox>
+							<el-checkbox v-model="item.checked"></el-checkbox>
 						</el-col>
 						<el-col :span="17">
 							<i class="iconfont icon-table2"></i>
@@ -167,7 +168,7 @@
 				},
 				model: {
 					connectionId: "",
-					excludeTables: [],
+					includeTables: [],
 					dropTable: false,
 					table_prefix:'',
 					table_suffix:''
@@ -230,12 +231,14 @@
 					this.lookupDatabaseType();
 					this.loadDataModels(this.model.connectionId);
 				}
-			},
+      },
+      // 移除全选
 			selectAllTables: {
 				handler() {
 					this.tables.forEach(t => t.checked = this.selectAllTables);
 				}
-			},
+      },
+      // 撤销全选
 			selectAllRemoveTables: {
 				handler() {
 					this.removeTables.forEach(t => t.checked = this.selectAllRemoveTables);
@@ -244,14 +247,16 @@
 		},
 
 		methods: {
-
+      changeConnection() {
+        this.model.includeTables = [];
+      },
 			lookupDatabaseType() {
 				if (!this.model.connectionId)
 					return;
 				let selectedDbs = this.databases.filter(db => db.id === this.model.connectionId);
 				if (selectedDbs && selectedDbs.length > 0) {
 					this.database_type = selectedDbs[0].database_type;
-				}
+        }
 			},
 
 			// 获取表名称
@@ -260,52 +265,68 @@
 					return;
 				}
 
-				let self = this;
+        let self = this;
+
 				connections.get([connectionId]).then(result => {
 					if (result.data) {
 						let tables = result.data.schema && result.data.schema.tables || [];
-						tables = tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
-						tables.forEach(item => {
-							let tableName = item.table_name;
-							if (self.model.excludeTables.indexOf(tableName) >= 0) {
-								self.removeTables.push({
-									table_name: item.table_name, checked: false
-								});
-							} else {
-								self.tables.push({
-									table_name: item.table_name, checked: false
-								});
-							}
-						});
+            tables = tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+            let includeTables = [];
+            tables.forEach(item => {
+              let tableName = item.table_name;
+              includeTables.push(item.table_name);
+              if(self.model.includeTables.length === 0) {
+                self.model.includeTables = includeTables;
+              }
+
+              if (self.model.includeTables.indexOf(tableName) >= 0) {
+                self.tables.push({
+                    table_name: item.table_name, checked: false
+                });
+              } else {
+                self.removeTables.push({
+                  table_name: item.table_name, checked: false
+                });
+              }
+            });
 					}
 					this.database_host = result.data.database_host;
 					this.database_port = result.data.database_port;
 					this.database_uri = result.data.database_uri;
 				});
-			},
+      },
+
 			// 移除
 			removeTable(item, idx) {
-				item.checked = false;
-				this.tables.splice(idx, 1);
-				this.removeTables.push(item);
-				this.removeTables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+        item.checked = false;
+        let tableIndex = this.tables.findIndex(table => table.table_name === item.table_name);
+        if( tableIndex >= 0)
+          this.tables.splice(tableIndex, 1);
 
-				if (this.model.excludeTables.indexOf(item.table_name) === -1) {
-					this.model.excludeTables.push(item.table_name);
-				}
+        this.removeTables.push(item);
+        this.removeTables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+
+        let index = this.model.includeTables.indexOf(item.table_name);
+				if (index >= 0) {
+					this.model.includeTables.splice(index, 1);
+        }
 			},
 			// 撤销
 			undotble(item, idx) {
-				item.checked = false;
-				this.removeTables.splice(idx, 1);
-				this.tables.push(item);
-				this.tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+        item.checked = false;
+        let tableIndex = this.removeTables.findIndex(table => table.table_name === item.table_name);
+        if( tableIndex >= 0)
+          this.removeTables.splice(tableIndex, 1);
 
-				let index = this.model.excludeTables.indexOf(item.table_name);
-				if (index >= 0) {
-					this.model.excludeTables.splice(index, 1);
-				}
-			},
+          this.tables.push(item);
+          this.tables.sort((t1, t2) => t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1);
+
+
+        if (this.model.includeTables.indexOf(item.table_name) === -1) {
+					this.model.includeTables.push(item.table_name);
+        }
+      },
+
 			// 全部移除
 			bulkRemoval() {
 				for (let i = 0; i < this.tables.length; i++) {

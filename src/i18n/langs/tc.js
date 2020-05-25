@@ -22,8 +22,7 @@ const tc = {
 		restart: '重啓',
 		syncGover: '同步治理',
 		screen: '屏幕',
-		delete: '刪除',
-		cancle: '取消',
+		delete: '刪 除',
 		cancel: '取 消',
 		confirm: '確定',
 		placeholderMonServer: '請輸入監控的服務名稱',
@@ -62,6 +61,21 @@ const tc = {
     edit: '修改'
 	},
 	dataFlow: {
+    SyncPoint:'同步節點',
+    Current:'當前時間',
+    SyncTime:'同步時間',
+    batchDelete:'批量刪除',
+    bulkExport:'批量導出',
+    bulkScheuled:'批量啟動',
+    bulkStopping:"批量停止",
+    upload:'點擊上傳',
+    import:'任務導入',
+    uploadError:'上傳失敗',
+    uploadOK:'上傳成功',
+    uploadInfo:'點擊查看詳情',
+    dataFlowExport:'導出',
+    overWrite: '覆蓋已有數據',
+    skipData:'跳過已有數據',
     loadingError: '加載失敗,請',
     dataLoading: '數據努力加載中...',
     loadLogTip: '運行日誌努力加載中，可能需要5~10秒，請稍等......',
@@ -228,8 +242,8 @@ const tc = {
           },
           remove: '移除',
           Undo: '撤銷',
-          bulkRemoval: '全選',
-          bulkRevocation: '全選',
+          bulkRemoval: '批量移除',
+          bulkRevocation: '批量撤銷',
           queueCopied: '待複製隊列',
           tableRemoved: '已移除表',
           enterName: '請輸入名稱/字段名進行搜索'
@@ -321,7 +335,19 @@ const tc = {
 					chooseApiName: '請選擇API',
 					api_isNull: 'API不能為空',
           none_collection: '數據集必填.',
-          none_pk: '主鍵必填.'
+          none_pk: '主鍵必填.',
+          dataApiName: '數據發布API名稱',
+          description:'描述',
+          method: '方法',
+          fieldSettings:'字段設置',
+          table_field: '字段',
+          table_type: '類型',
+          table_setting: '設置',
+          enterPublishApiName: '請輸入數據發布API的名稱',
+          enterNewlyReleasedApi: '請輸入對新建發布API的描述',
+          enterEndUrl: '請輸入url末端路徑名',
+          required:'必填',
+          availableQueries: '可用查詢',
 				},
 				es: {
 					name: 'ES',
@@ -440,6 +466,7 @@ const tc = {
 				none_join_type: '關聯類型必填',
 				none_join_key: '關聯字段必填',
 				none_join_path: '關聯寫入路徑必填',
+				none_array_unique_key: '合併進數組時，必須提供唯一鍵',
 				form: {
 					label: {
 						label: '标签',
@@ -457,6 +484,10 @@ const tc = {
 						label: '关联条件',
 						sourceField: '源字段',
 						targetField: '目标字段',
+					},
+					arrayUniqueKey: {
+						label: '內嵌數組匹配條件',
+						placeholder: '內嵌數組匹配條件'
 					},
 				},
 

@@ -3,9 +3,9 @@
  * @date 3/11/20
  * @description
  */
-import PublicApi from './publicApi';
+import PublicApi from "./publicApi";
 export default class ValidationResultsAPI extends PublicApi {
-	constructor(){
-		super('/api/ValidationResults');
+	constructor() {
+		super("/api/ValidationResults");
 	}
 }

@@ -6,10 +6,9 @@
 import PublicAPI from "./publicApi";
 import axios from "axios";
 
-export default class DataFlows extends PublicAPI{
-
-	constructor(){
-		super('/api/DataFlows');
+export default class DataFlows extends PublicAPI {
+	constructor() {
+		super("/api/DataFlows");
 	}
 
 	copy(id) {
@@ -19,19 +18,23 @@ export default class DataFlows extends PublicAPI{
 	reset(id) {
 		return axios.post(`${this.url}/${id}/reset`);
 	}
-	patchId(id,params) {
-		return axios.patch(`${this.url}/${id}`,params);
+	patchId(id, params) {
+		return axios.patch(`${this.url}/${id}`, params);
 	}
-	getId(id,params, filter) {
+	getId(id, params, filter) {
 		if (Array.isArray(params)) {
-			filter = typeof filter === 'object' ? JSON.stringify(filter) : filter;
-			let qs = filter ? ('?filter=' + filter) : '';
-			return axios.get(this.url + '/'+ id + params.join('/') + qs);
+			filter = typeof filter === "object" ? JSON.stringify(filter) : filter;
+			let qs = filter ? "?filter=" + filter : "";
+			return axios.get(this.url + "/" + id + params.join("/") + qs);
 		}
 		params = params || {};
-		return axios.get(this.url+"/"+id, {params});
+		return axios.get(this.url + "/" + id, { params });
 	}
-	getSourceList(id){
-		return axios.get(this.url+"/dataFlowTables?dataFlowId="+id);
+	getSourceList(id) {
+		return axios.get(this.url + "/dataFlowTables?dataFlowId=" + id);
+	}
+	allDelete(where) {
+		if (typeof where === "object") where = JSON.stringify(where);
+		return axios.post(this.url + "/deleteAll?where=" + where);
 	}
 }

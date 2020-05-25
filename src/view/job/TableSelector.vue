@@ -1,7 +1,7 @@
 <template>
 	<div class="box">
 		<div class="box-head">
-			<el-input class="search" v-model="filterText" clearable><i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
+			<el-input class="search" v-model="filterText" clearable @change="handleSearchTree()"><i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
 			<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
 			<i class="el-icon-refresh" v-if="!loading" @click="loadDataBase"></i>
 			<i class="el-icon-loading" v-if="loading"></i>
@@ -20,13 +20,16 @@
         class="ts-tree"
       >
         <span class="custom-tree-node" slot-scope="{ node, data}">
-          <span @dblclick="handleGraph(data)">
+          <span @click="handleGraph(data)">
             <span  v-if="data.meta_type !=='database'" :class="`iconfont filter-icon-table ${mapping[data.meta_type]}`"></span>
-  <!--					<span v-if="['database'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>-->
             <span v-if="['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)" :class="`iconfont filter-icon-table ${mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']} `"></span>
-            <span class="table-label">{{ node.label }}</span>
+            <span class="table-label">
+              <el-tooltip class="table-tooltip" effect="dark" :content="node.label" placement="right">
+                <span>{{node.label}}</span>
+              </el-tooltip>
+            </span>
           </span>
-          <span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>
+<!--          <span @click="handleGraph(data)" class="iconfont icon-xiayibu1 filter-icon filter-Graph"></span>-->
         </span>
       </el-tree>
       <div class="noData" v-if="loadingError">
@@ -39,6 +42,7 @@
 <script>
 	import factory from '../../api/factory';
 	import log from "../../log";
+  //import Cookie from 'tiny-cookie';
 
 	const MetadataInstances = factory('MetadataInstances');
 
@@ -68,24 +72,71 @@
 					'file':'icon-file1',
 					'gridfs': 'icon-gridfs2',
 					'rest api': 'icon-api',
+          'custom_connection':'icon-custom1'
 				},
 				loading: false
 			};
 		},
 		mounted() {
 			this.loadDataBase();
+			//this.filterText = Cookie.get('tableSelector') ? Cookie.get('tableSelector'):'';
 		},
-		watch: {
-			filterText(val) {
-				this.$refs.tree.filter(val);
-			}
-		},
+		// watch: {
+		// 	filterText(val) {
+		// 		this.$refs.tree.filter(val);
+    //     //Cookie.set('tableSelector',val);
+		// 	}
+		// },
 		methods: {
       // 点击加载
       clickLoad() {
         this.loadDataBase();
       },
-
+      handleSearchTree(){
+        let self = this;
+        let params = {
+          filter: JSON.stringify({
+            where: {
+              meta_type: {
+                in: ['database', 'directory', 'ftp', 'apiendpoint','table','collection']
+              },
+              original_name:{
+                like:self.filterText,
+                options:'i',
+              },
+              is_deleted:false
+            },
+            order:'original_name ASC'
+          })
+        };
+        self.loading = true;
+        MetadataInstances.get(params).then(res => {
+          if (res.statusText === "OK" || res.status === 200) {
+            if (res.data) {
+              // self.data.splice(0, self.data.length);
+              self.data = [];
+              res.data.forEach((record) => {
+                let node ={
+                  id: record.id,
+                  label: record.name || record.original_name,
+                  meta_type: record.meta_type,
+                  source:record.source||''
+                };
+                if(['collection', 'table', 'mongo_view', 'view'].includes(record.meta_type)){
+                  node.leaf = true;
+                }
+                self.data.push(node);
+              });
+            }
+          }
+          self.loading = false;
+          self.loadingError = false;
+        }).catch(e => {
+          self.loadingError = true;
+          this.$message.error('MetadataInstances error');
+          self.loading = false;
+        });
+      },
 			loadDataBase() {
 				let self = this;
 				let params = {
@@ -100,6 +151,9 @@
 							meta_type: {
 								in: ['database', 'directory', 'ftp', 'apiendpoint']
 							},
+              // source:{
+              //   user_id:'5ec37a2d7135340e652e6c0b',
+              // },
 							is_deleted:false
 						},
 						order:'original_name ASC'
@@ -137,7 +191,7 @@
 				if (node.level >1) {
 					return resolve([]);
 				}
-				if(['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(node.data.source.database_type)){
+				if(['dummy db', 'gridfs', 'file', 'elasticsearch','rest api','custom_connection'].includes(node.data.source.database_type)){
 					return resolve([]);
 				}
 				let params = {
@@ -204,12 +258,13 @@
 					'file':'app.FileNode',
 					'gridfs': 'app.GridFSNode',
 					'rest api': 'app.ApiNode',
+          'custom_connection':'app.CustomNode'
 				};
 
 				let formData = {};
 				let schema = {};
 				if(data.meta_type ==='database'){
-					if(data.source.database_type && (['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(data.source.database_type))){
+					if(data.source.database_type && (['dummy db', 'gridfs', 'file', 'elasticsearch','rest api','custom_connection'].includes(data.source.database_type))){
 						formData ={
 							connectionId:data.source._id,
 							name: data.source.name || data.label ,
@@ -251,7 +306,7 @@
 				this.count = this.count + 50;
 				let cell ='';
 				if(['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)){
-					if(data.source.database_type && (['dummy db', 'gridfs', 'file', 'elasticsearch','rest api'].includes(data.source.database_type))){
+					if(data.source.database_type && (['dummy db', 'gridfs', 'file', 'elasticsearch','rest api','custom_connection'].includes(data.source.database_type))){
 						let dataType = data.source.database_type;
 						cell = this.editor.graph.createCell(mapping[dataType], formData,schema);
 					}else {
@@ -311,7 +366,7 @@
 	}
 	.table-label{
 		display: inline-block;
-		width: 140px;
+		width: 180px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
@@ -337,6 +392,10 @@
 		-ms-user-select:none;
 		user-select:none;
 	}
+  .table-tooltip{
+    display: inline-block;
+    width: 180px;
+  }
 </style>
 <style scoped>
 	/*头部样式*/

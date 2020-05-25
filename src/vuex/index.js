@@ -28,7 +28,7 @@ const store = new Vuex.Store({
       person: '',
       classification: [],
     },
-
+    tableSelectorSearch:'',
   },
 
  actions,

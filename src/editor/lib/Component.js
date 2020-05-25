@@ -3,18 +3,20 @@
  * @date 2/26/20
  * @description
  */
-import BaseObject from './BaseObject';
-import {EditorEventType} from "./events";
-import $ from 'jquery';
+import BaseObject from "./BaseObject";
+import { EditorEventType } from "./events";
+import $ from "jquery";
 import log from "../../log";
-export default class Component extends BaseObject{
-
-	constructor(opts){
+export default class Component extends BaseObject {
+	constructor(opts) {
 		super();
 
-		this.opts =  Object.assign( {
-			hidden: false
-		}, opts || {});
+		this.opts = Object.assign(
+			{
+				hidden: false
+			},
+			opts || {}
+		);
 
 		this.el = null;
 		this.childs = [];
@@ -25,17 +27,17 @@ export default class Component extends BaseObject{
 		this.doInit();
 		this.emit(EditorEventType.INIT, this);
 
-		if( this.opts.hidden === true) {
+		if (this.opts.hidden === true) {
 			this.hide();
 		}
 	}
 
-	doInit(){}
+	doInit() {}
 
-	render(container, prepend = false){
+	render(container, prepend = false) {
 		this.emit(EditorEventType.BEFORE_RENDER, this);
 
-		if( prepend ){
+		if (prepend) {
 			$(container).prepend(this.el);
 		} else {
 			$(container).append(this.el);
@@ -47,7 +49,7 @@ export default class Component extends BaseObject{
 	 * get current component content el
 	 * @returns {null}
 	 */
-	getContentEl(){
+	getContentEl() {
 		return this.el;
 	}
 
@@ -55,9 +57,9 @@ export default class Component extends BaseObject{
 	 * add child component
 	 * @param child
 	 */
-	add(child){
+	add(child) {
 		this.childs.push(child);
-		if( child.opts.container) {
+		if (child.opts.container) {
 			child.render(child.opts.container, !!child.opts.prepend);
 		} else {
 			child.render(this.getContentEl(), !!child.opts.prepend);
@@ -68,13 +70,12 @@ export default class Component extends BaseObject{
 	 * remove child component
 	 * @param child
 	 */
-	remove(child){
+	remove(child) {
 		let index = this.childs.indexOf(child);
-		if( index !== -1) {
+		if (index !== -1) {
 			let current = this.childs.splice(index, 1);
-			if( child.el )
-				child.el.remove();
-			if( typeof child.destroy === 'function'){
+			if (child.el) child.el.remove();
+			if (typeof child.destroy === "function") {
 				child.destroy();
 			}
 			return current;
@@ -84,31 +85,33 @@ export default class Component extends BaseObject{
 	/**
 	 * remove all child commend
 	 */
-	removeAll(){
+	removeAll() {
 		let child = this.childs.shift();
-		while(child) {
-			if( typeof child.destroy === 'function'){
+		while (child) {
+			if (typeof child.destroy === "function") {
 				child.destroy();
 			}
 			child = this.childs.shift();
 		}
-		if( this.getContentEl && this.getContentEl() && this.getContentEl().find ){
-			this.getContentEl().find('>*').remove();
+		if (this.getContentEl && this.getContentEl() && this.getContentEl().find) {
+			this.getContentEl()
+				.find(">*")
+				.remove();
 		}
 	}
 
-	destroy(){
+	destroy() {
 		this.emit(EditorEventType.BEFORE_DESTROY, this);
 		log(`${this.constructor.name}.destroy`);
 		this.el.remove();
 		this.removeAll();
 	}
 
-	isShow(){
+	isShow() {
 		return !this.opts.hidden;
 	}
 
-	show(){
+	show() {
 		this.el.show();
 		this.opts.hidden = false;
 		this.emit(EditorEventType.SHOW);
@@ -120,12 +123,10 @@ export default class Component extends BaseObject{
 		this.emit(EditorEventType.HIDE);
 	}
 
-	getChildByName(name){
+	getChildByName(name) {
 		for (let i = 0; i < this.childs.length; i++) {
-			if( this.childs[i] && this.childs[i].opts && this.childs[i].opts.name === name)
-				return this.childs[i];
+			if (this.childs[i] && this.childs[i].opts && this.childs[i].opts.name === name) return this.childs[i];
 		}
 		return null;
 	}
-
 }

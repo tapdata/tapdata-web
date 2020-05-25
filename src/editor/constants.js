@@ -19,20 +19,24 @@ export const
 		primaryKeys: '',
 		stageId: '',
 		isArray: false,
-		//fieldProcesses: []
+		//fieldProcesses: [],
+		arrayUniqueKey: '',
 	},
 
 	DEFAULT_SETTING = {
 		sync_type: 'initial_sync+cdc',
-		readBatchSize:25000,
+		readBatchSize:1000,
 		notificationWindow:0,
 		notificationInterval:300,
 		readCdcInterval:500,
 		description:'',
 		drop_target:false,
+    run_custom_sql:false,
 		needToCreateIndex:false,
 		increment:false,
 		isSchedule:false,
+        cronExpression:'',
+    isOpenAutoDDL:false,
 		emailWaring: {
 			edited: false,
 			started: false,

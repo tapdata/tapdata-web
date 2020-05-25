@@ -3,25 +3,26 @@
  * @date 2/29/20
  * @description
  */
-export default (joint) => {
+export default joint => {
 	const util = joint.util;
 
 	joint.shapes.app.NavigatorElementView = joint.dia.ElementView.extend({
-
 		body: null,
 
-		markup: [{
-			tagName: 'rect',
-			selector: 'body',
-			attributes: {
-				'fill': '#008cee'
+		markup: [
+			{
+				tagName: "rect",
+				selector: "body",
+				attributes: {
+					fill: "#008cee"
+				}
 			}
-		}],
+		],
 
 		presentationAttributes: {
-			position: ['TRANSLATE'],
-			size: ['RESIZE'],
-			angle: ['ROTATE']
+			position: ["TRANSLATE"],
+			size: ["RESIZE"],
+			angle: ["ROTATE"]
 		},
 
 		render: function() {
@@ -33,14 +34,13 @@ export default (joint) => {
 		},
 
 		updateNodesAttributes: function() {
-			let size = this.model.get('size');
-			this.body.setAttribute('width', size.width);
-			this.body.setAttribute('height', size.height);
+			let size = this.model.get("size");
+			this.body.setAttribute("width", size.width);
+			this.body.setAttribute("height", size.height);
 		}
 	});
 
 	joint.shapes.app.NavigatorLinkView = joint.dia.LinkView.extend({
-
 		initialize: util.noop,
 
 		render: util.noop,

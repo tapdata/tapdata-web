@@ -420,7 +420,10 @@
 					this.flow = val;
 					this.flow.createTime = val.createTime ? this.$moment(val.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
 					this.flow.username = val.user && val.user.email || '';
-					this.flow.status = val.status;
+          this.flow.status = val.status;
+          if(this.flow.status === 'force stopping') {
+            this.flow.status = 'force_stopping';
+          }
 				},
 				deep: true
 			},
@@ -543,11 +546,32 @@
 					this.transfObj.loading = true;
 				} else if (type === this.replicateObj.type) {
 					this.replicateObj.loading = true;
-				}
+        }
 				await DataFlowInsights.runtimeMonitor(params).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data && res.data.length > 0) {
-							this.storeData = res.data[0].statsData;
+              if(res.data[0].statsData && res.data[0].statsData.length > 0){
+                res.data[0].statsData.forEach(time => {
+                  switch(res.data[0].granularity) {
+                    case 'flow_second':
+                    case 'stage_second':
+                      time.t = time.t.substring(11,19);
+                      break;
+                    case 'flow_minute':
+                    case 'stage_minute':
+                      time.t = time.t.substring(11,16);
+                      break;
+                    case 'flow_hour':
+                    case 'stage_hour':
+                      time.t = time.t.substring(11,16);
+                      break;
+                    case 'flow_day':
+                    case 'stage_day':
+                      time.t = time.t.substring(6,10);
+                  }
+                });
+              }
+              this.storeData = res.data[0].statsData;
 							this.dataProcessing(this.storeData, type, ele);
 						} else {
 							this.$message.error(this.$t('message.noData'));

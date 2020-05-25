@@ -166,7 +166,10 @@ export const link = {
 				let targetId = this.target().id;
 				if( !targetId) return false;
 				let targetCell = this.getTargetCell();
-				return targetCell && targetCell.isDataNode && targetCell.isDataNode() && ['app.Table', 'app.Collection', 'app.ESNode'].includes(targetCell.get('type'));
+				return targetCell
+          && targetCell.isDataNode
+          && targetCell.isDataNode()
+          && ['app.Table', 'app.Collection', 'app.ESNode'].includes(targetCell.get('type'));
 			},
 
 			/**
@@ -203,6 +206,10 @@ export const link = {
 						if( !joinTable.joinPath )
 							throw new Error(`${i18n.t('editor.cell.link.none_join_path')}`);
 					}*/
+					if('merge_embed' === joinTable.joinType) {
+						if(!joinTable.arrayUniqueKey)
+							throw new Error(`${i18n.t('editor.cell.link.none_array_unique_key')}`);
+					}
 				}
 				return true;
 			}

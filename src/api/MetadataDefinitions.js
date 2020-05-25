@@ -3,9 +3,9 @@
  * @date 3/11/20
  * @description
  */
-import PublicApi from './publicApi';
+import PublicApi from "./publicApi";
 export default class MetadataDefinitionsAPI extends PublicApi {
-	constructor(){
-		super('/api/MetadataDefinitions');
+	constructor() {
+		super("/api/MetadataDefinitions");
 	}
 }

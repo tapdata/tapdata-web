@@ -1,13 +1,5 @@
-import Vue from 'vue';
-import Router from 'vue-router';
-import layout from '../view/layout';
-import Job from '../view/job/Job';
-import DataVerify from '../view/job/DataVerify/List';
-
-import clusterManagement from '../view/clusterManagement/clusterManagement';
-import dailyRecord from '../view/clusterManagement/dailyRecord';
-import DataFlows from "../view/task/DataFlows";
-import metaData from "../view/metaData";
+import Vue from "vue";
+import Router from "vue-router";
 import DataMap from "../view/dataMap/DataMap";
 
 Vue.use(Router);
@@ -15,41 +7,50 @@ Vue.use(Router);
 export default new Router({
 	routes: [
 		{
-			path: '/',
-			name: 'layout',
-			redirect: '/clusterManagement',
-			component: layout,
+			path: "/",
+			name: "layout",
+			redirect: "/clusterManagement",
+			component: () => import("../view/layout"),
 			children: [
 				{
-					path: 'clusterManagement',
-					name: 'clusterManagement',
-					component: clusterManagement
+					path: "clusterManagement",
+					name: "clusterManagement",
+					component: () => import("../view/clusterManagement/clusterManagement")
 				},
 				{
-					path: 'dailyRecord',
-					name: 'dailyRecord',
-					component: dailyRecord
+					path: "dailyRecord",
+					name: "dailyRecord",
+					component: () => import("../view/clusterManagement/dailyRecord")
 				}
 			]
-		}, {
-			path: '/job',
-			name: 'job',
-			component: Job
-		}, {
-			path: '/dataFlows',
-			name: 'DataFlows',
-			component: DataFlows
-		}, {
-			path: '/metadata',
-			name: 'metadata',
-			component: metaData
+		},
+		{
+			path: "/job",
+			name: "job",
+			component: () => import("../view/job/Job")
+		},
+		{
+			path: "/dataFlows",
+			name: "DataFlows",
+			component: () => import("../view/task/DataFlows")
+		},
+		{
+			path: "/metadata",
+			name: "metadata",
+			component: () => import("../view/metaData")
+		},
+		{
+			path: "/dataVerify",
+			name: "DataVerify",
+			component: () => import("../view/job/DataVerify/List")
+		},
+		{
+			path: "/upload",
+			name: "Upload",
+			component: () => import("../components/upload")
 		},{
-			path: '/dataVerify',
-			name: 'DataVerify',
-			component: DataVerify
-		},{
-			path: '/dataMap',
-			name: 'DataMap',
+			path: "/dataMap",
+			name: "DataMap",
 			component: DataMap
 		},
 	]

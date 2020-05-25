@@ -17,7 +17,7 @@ function internal(obj) {
 }
 
 // Excluding callbacks from internal(_callbacks) for speed perfomance.
-//let _callbacks = {};
+// let _callbacks = {};
 
 /** Class EventEmitter for event-driven architecture. */
 export default class EventEmitter {
@@ -39,8 +39,7 @@ export default class EventEmitter {
 		self._events = new Set();
 		self._callbacks = {};
 		self._console = localConsole;
-		self._maxListeners = maxListeners === null ?
-			null : parseInt(maxListeners, 10);
+		self._maxListeners = maxListeners === null ? null : parseInt(maxListeners, 10);
 
 		return this;
 	}
@@ -56,20 +55,18 @@ export default class EventEmitter {
 	 * @return {this}
 	 */
 	_addCallback(eventName, callback, context, weight) {
-		this._getCallbacks(eventName)
-			.push({
-				callback,
-				context,
-				weight
-			});
+		this._getCallbacks(eventName).push({
+			callback,
+			context,
+			weight
+		});
 
 		// @todo instead of sorting insert to right place in Array.
 		// @link http://rjzaworski.com/2013/03/composition-in-javascript
 
 		// Sort the array of callbacks in
 		// the order of their call by "weight".
-		this._getCallbacks(eventName)
-			.sort((a, b) => b.weight - a.weight);
+		this._getCallbacks(eventName).sort((a, b) => b.weight - a.weight);
 
 		return this;
 	}
@@ -95,9 +92,9 @@ export default class EventEmitter {
 	 * @return {number|null}
 	 */
 	_getCallbackIndex(eventName, callback) {
-		return this._has(eventName) ?
-			this._getCallbacks(eventName)
-				.findIndex(element => element.callback === callback) : -1;
+		return this._has(eventName)
+			? this._getCallbacks(eventName).findIndex(element => element.callback === callback)
+			: -1;
 	}
 
 	/**
@@ -108,8 +105,7 @@ export default class EventEmitter {
 	 * @return {bool}
 	 */
 	_achieveMaxListener(eventName) {
-		return (internal(this)._maxListeners !== null &&
-			internal(this)._maxListeners <= this.listenersNumber(eventName));
+		return internal(this)._maxListeners !== null && internal(this)._maxListeners <= this.listenersNumber(eventName);
 	}
 
 	/**
@@ -123,11 +119,9 @@ export default class EventEmitter {
 	 */
 	_callbackIsExists(eventName, callback, context) {
 		const callbackInd = this._getCallbackIndex(eventName, callback);
-		const activeCallback = callbackInd !== -1 ?
-			this._getCallbacks(eventName)[callbackInd] : void 0;
+		const activeCallback = callbackInd !== -1 ? this._getCallbacks(eventName)[callbackInd] : void 0;
 
-		return (callbackInd !== -1 && activeCallback &&
-			activeCallback.context === context);
+		return callbackInd !== -1 && activeCallback && activeCallback.context === context;
 	}
 
 	/**
@@ -155,7 +149,7 @@ export default class EventEmitter {
 		/* eslint no-unused-vars: 0 */
 		const self = internal(this);
 
-		if (typeof callback !== 'function') {
+		if (typeof callback !== "function") {
 			throw new TypeError(`${callback} is not a function`);
 		}
 
@@ -167,14 +161,12 @@ export default class EventEmitter {
 		} else {
 			// Check if we reached maximum number of listeners.
 			if (this._achieveMaxListener(eventName)) {
-				self._console.warn(`Max listeners (${self._maxListeners})` +
-					` for event "${eventName}" is reached!`);
+				self._console.warn(`Max listeners (${self._maxListeners})` + ` for event "${eventName}" is reached!`);
 			}
 
 			// Check if the same callback has already added.
 			if (this._callbackIsExists(...arguments)) {
-				self._console.warn(`Event "${eventName}"` +
-					` already has the callback ${callback}.`);
+				self._console.warn(`Event "${eventName}"` + ` already has the callback ${callback}.`);
 			}
 		}
 
@@ -242,7 +234,7 @@ export default class EventEmitter {
 	 *
 	 * @return {this}
 	 */
-	emit(eventName/* , ...args*/) {
+	emit(eventName /* , ...args */) {
 		/*
 		  if (this._has(eventName)) {
 			this._getCallbacks(eventName)
@@ -311,7 +303,6 @@ export default class EventEmitter {
 	 *                         or null if event isn't exists.
 	 */
 	listenersNumber(eventName) {
-		return this._has(eventName) ?
-			internal(this)._callbacks[eventName].length : null;
+		return this._has(eventName) ? internal(this)._callbacks[eventName].length : null;
 	}
 }

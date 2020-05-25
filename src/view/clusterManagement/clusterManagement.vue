@@ -134,7 +134,7 @@
     <el-dialog :title="$t('message.addServerMon')" custom-class="serverDialog" :visible.sync="dialogForm" :append-to-body="true" :lock-scroll="false" width="600px" @close='closeDialogForm()'>
       <addServe :data="currentData" :editItem="editItem" ref="childRules"></addServe>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small"  @click="closeDialogForm()">{{ $t('message.cancle') }}</el-button>
+        <el-button size="small"  @click="closeDialogForm()">{{ $t('message.cancel') }}</el-button>
         <el-button size="small"  type="primary" @click="submitForm('ruleForm')">{{ $t('message.confirm') }}</el-button>
       </div>
     </el-dialog>

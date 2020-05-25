@@ -5,9 +5,8 @@
  */
 import PublicAPI from "./publicApi";
 
-export default class LogsAPI extends PublicAPI{
-
-	constructor(){
-		super('/api/Logs');
+export default class LogsAPI extends PublicAPI {
+	constructor() {
+		super("/api/Logs");
 	}
 }

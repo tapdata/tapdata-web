@@ -4,11 +4,10 @@
  * @description
  */
 import Component from "../lib/Component";
-import $ from 'jquery';
-import {EditorEventType} from "../lib/events";
+import $ from "jquery";
+import { EditorEventType } from "../lib/events";
 
-export default class Tab extends Component{
-
+export default class Tab extends Component {
 	constructor(opts) {
 		super(opts);
 
@@ -25,26 +24,26 @@ export default class Tab extends Component{
 		</div>
 		`);
 
-		if(this.opts.hiddenTabBar){
+		if (this.opts.hiddenTabBar) {
 			this.hideTapBar();
 		}
 	}
 
 	__id = 1;
-	generatorId(){
+	generatorId() {
 		return this.__id++;
 	}
 
-	hideTapBar(){
-		this.el.find('.e-tab-bar').hide();
+	hideTapBar() {
+		this.el.find(".e-tab-bar").hide();
 		this.showTapbar = false;
 	}
-	showTapBar(){
+	showTapBar() {
 		this.showTapbar = true;
-		this.el.find('.e-tab-bar').show();
+		this.el.find(".e-tab-bar").show();
 	}
 
-	add(tab, prepend = false){
+	add(tab, prepend = false) {
 		let self = this;
 		self.childs.push(tab);
 
@@ -53,46 +52,46 @@ export default class Tab extends Component{
 		let titleEl = $(`<div class="e-tab-title">${tab.title || tab.opts.title}</div>`);
 		let tabEl = $(`<div class="e-tab"></div>`);
 
-		titleEl.attr('data-target', `${tab.id}`);
-		tabEl.attr('data-value', `${tab.id}`);
+		titleEl.attr("data-target", `${tab.id}`);
+		tabEl.attr("data-value", `${tab.id}`);
 
-		if( prepend ){
-			self.el.find('.e-tab-bar').prepend(titleEl);
-			self.el.find('.e-tab-content').prepend(tabEl);
+		if (prepend) {
+			self.el.find(".e-tab-bar").prepend(titleEl);
+			self.el.find(".e-tab-content").prepend(tabEl);
 		} else {
-			self.el.find('.e-tab-bar').append(titleEl);
-			self.el.find('.e-tab-content').append(tabEl);
+			self.el.find(".e-tab-bar").append(titleEl);
+			self.el.find(".e-tab-content").append(tabEl);
 		}
 		tabEl.append(tab.el);
 
-		titleEl.on('click', () => {
+		titleEl.on("click", () => {
 			self.select(tab);
 		});
 
-		if( self.childs.length === 1 ){
+		if (self.childs.length === 1) {
 			self.select(tab);
 		}
 	}
 
-	select(tab){
-		this.el.find('.active').removeClass('active');
-		let id = tab.id ? tab.id : tab.target ? $(tab.target).data('target') : '';
-		if( id ){
-			this.el.find(`>.e-tab-bar>.e-tab-title[data-target=${id}]`).addClass('active');
-			this.el.find(`>.e-tab-content>.e-tab[data-value=${id}]`).addClass('active');
+	select(tab) {
+		this.el.find(".active").removeClass("active");
+		let id = tab.id ? tab.id : tab.target ? $(tab.target).data("target") : "";
+		if (id) {
+			this.el.find(`>.e-tab-bar>.e-tab-title[data-target=${id}]`).addClass("active");
+			this.el.find(`>.e-tab-content>.e-tab[data-value=${id}]`).addClass("active");
 		}
-		this.childs.forEach( child => child.selected = child === tab);
+		this.childs.forEach(child => (child.selected = child === tab));
 		this.emit(EditorEventType.SELECTED, tab);
 	}
 
 	remove(child) {
 		super.remove(child);
-		let id = child.id ;
-		if( id ){
+		let id = child.id;
+		if (id) {
 			this.el.find(`>.e-tab-bar>.e-tab-title[data-target=${id}]`).remove();
 			this.el.find(`>.e-tab-content>.e-tab[data-value=${id}]`).remove();
 		}
-		if( this.childs.length > 0) {
+		if (this.childs.length > 0) {
 			this.select(this.childs[0]);
 		}
 	}
@@ -104,8 +103,6 @@ export default class Tab extends Component{
 	}
 
 	getContentEl() {
-		return this.el.find('>.e-tab-content');
+		return this.el.find(">.e-tab-content");
 	}
-
-
 }
