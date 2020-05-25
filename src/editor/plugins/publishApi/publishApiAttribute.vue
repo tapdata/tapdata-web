@@ -62,6 +62,7 @@
 
 <script>
   import _ from "lodash";
+  import {uuid} from "../../util/Schema";
   // import { convertSchemaToTreeData } from "../../util/Schema";
 	// import log from '../../../log';
 	// import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
@@ -148,7 +149,6 @@
             });
           }
         }
-        // console.log('====',data,this.mergedSchema,this.inputSchemas );
 
 			},
 
@@ -187,8 +187,8 @@
           });
 
           data.connection = this.inputSchemas[0].stageId;
+          data.id = uuid();
         }
-
         return data;
 			},
 		}
