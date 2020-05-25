@@ -2,7 +2,7 @@
 	<div class="releaseApi">
 		<el-form ref="form" :model="form" label-position="top" label-width="200px">
       <el-form-item :label="$t('editor.cell.data_node.api.dataApiName')">
-        <el-input v-model="form.name" maxlength="20" :placeholder="$t('editor.cell.data_node.api.enterPublishApiName')" show-word-limit required></el-input>
+        <el-input v-model="form.name" maxlength="20" @change="changePath" :placeholder="$t('editor.cell.data_node.api.enterPublishApiName')" show-word-limit required></el-input>
       </el-form-item>
       <el-form-item :label="$t('editor.cell.data_node.api.description')" class="pdTop5">
         <el-input type="textarea" v-model="form.description" :placeholder="$t('editor.cell.data_node.api.enterNewlyReleasedApi')" maxlength="100" show-word-limit></el-input>
@@ -95,6 +95,7 @@
           // ],
         },
         mergedSchema: null,
+        inputSchemas: [],
 			};
 		},
 
@@ -108,6 +109,10 @@
 		},
 
 		methods: {
+      /**改变路径**/
+      changePath(name) {
+        this.form.path = name + '/API/V1/' + this.mergedSchema.table_name + '/cust';
+      },
       // convertSchemaToTreeData,
 			setData(data, cell, isSourceDataNode, vueAdapter) {
 				if (data) {
@@ -115,13 +120,14 @@
         }
 
         // let fields = [];
-        let inputSchemas = cell.getInputSchema();
+        this.inputSchemas = cell.getInputSchema();
         this.mergedSchema = cell.getOutputSchema();
         // let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
         if(this.mergedSchema &&  this.mergedSchema.fields) {
           this.mergedSchema.fields.forEach(field =>{
             this.$set(field,'required',false);
             this.$set(field,'query',false);
+            this.$set(field,'visible',true);
           });
           this.form.paths.fields = this.mergedSchema.fields;
         }
@@ -142,7 +148,7 @@
             });
           }
         }
-        console.log('====',data,this.mergedSchema,inputSchemas );
+        // console.log('====',data,this.mergedSchema,this.inputSchemas );
 
 			},
 
@@ -151,32 +157,38 @@
         if (data.paths.fields) {
           data.paths.requiredQueryField = [];
           data.paths.availableQueryField = [];
+          data.fields = [];
           data.paths.fields.forEach(item => {
-            if(item.required) {
+            if (item.required) {
               data.paths.requiredQueryField.push(item.field_name);
             } else {
               data.paths.requiredQueryField.forEach((field,index) => {
-                if(item.field_name === field) {
+                if (item.field_name === field) {
                   data.paths.requiredQueryField.splice(index,1);
                 }
               });
             }
 
-            if(item.query) {
+            if (item.query) {
               data.paths.availableQueryField.push(item.field_name);
             } else {
               data.paths.availableQueryField.forEach((field,index) => {
-                if(item.field_name === field) {
+                if (item.field_name === field) {
                   data.paths.availableQueryField.splice(index,1);
                 }
               });
             }
+
+            if (item.visible) {
+              data.fields.push(item);
+            }
             delete item.required;
             delete item.query;
           });
+
+          data.connection = this.inputSchemas[0].stageId;
         }
 
-         console.log(data,'****');
         return data;
 			},
 		}
