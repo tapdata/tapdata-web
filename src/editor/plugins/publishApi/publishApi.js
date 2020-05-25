@@ -91,11 +91,8 @@ export const PublishApiConfig = {
 				// 	throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`);
         if( !data.name )
           throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.publishApi_nameNone')}`);
-        if( !data.paths.path )
+        if( !data.path )
           throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.publishApi_path')}`);
-        // if( !data.url)
-        //   throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_pk')}`);
-
 				return true;
 			},
 		},

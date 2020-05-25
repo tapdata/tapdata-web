@@ -2,7 +2,7 @@
 	<div class="releaseApi">
 		<el-form ref="form" :model="form" label-position="top" label-width="200px">
       <el-form-item :label="$t('editor.cell.data_node.api.dataApiName')">
-        <el-input v-model="form.name" maxlength="20" @change="changePath" :placeholder="$t('editor.cell.data_node.api.enterPublishApiName')" show-word-limit required></el-input>
+        <el-input v-model="form.name" maxlength="20" :placeholder="$t('editor.cell.data_node.api.enterPublishApiName')" show-word-limit required></el-input>
       </el-form-item>
       <el-form-item :label="$t('editor.cell.data_node.api.description')" class="pdTop5">
         <el-input type="textarea" v-model="form.description" :placeholder="$t('editor.cell.data_node.api.enterNewlyReleasedApi')" maxlength="100" show-word-limit></el-input>
@@ -10,7 +10,7 @@
       <el-row :gutter="10">
         <el-col :span="6">
           <el-form-item :label="$t('editor.cell.data_node.api.method')">
-            <el-select v-model="form.method">
+            <el-select v-model="form.paths.method">
               <el-option
                   v-for="item in selectList"
                   :key="item.value"
@@ -22,7 +22,7 @@
         </el-col>
         <el-col :span="18">
           <el-form-item label="URL/API/V1/">
-            <el-input v-model="form.path" :placeholder="$t('dataFlow.enterFilterTable')"></el-input>
+            <el-input v-model="form.apiPath" :placeholder="$t('dataFlow.enterFilterTable')"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -84,19 +84,17 @@
           name: '',
           description: '',
           paths: {
-            method:'GET',
+            method: 'GET',
             fields:[],
             availableQueryField:[],
             requiredQueryField: []
           },
           path: '',
-          fields: []
-					// tableData: [
-          //   {'table_field':1,'table_type': 'String',checkList:['required']}
-          // ],
+          fields: [],
+          apiPath: '',
         },
         mergedSchema: null,
-        inputSchemas: [],
+        inputSchemas: []
 			};
 		},
 
@@ -106,14 +104,11 @@
 				handler(data) {
 					this.$emit('dataChanged', this.getData());
 				}
-      }
+      },
 		},
 
 		methods: {
-      /**改变路径**/
-      changePath(name) {
-        this.form.path = name + '/API/V1/' + this.mergedSchema.table_name + '/cust';
-      },
+
       // convertSchemaToTreeData,
 			setData(data, cell, isSourceDataNode, vueAdapter) {
 				if (data) {
@@ -149,7 +144,6 @@
             });
           }
         }
-
 			},
 
 			getData() {
@@ -158,6 +152,7 @@
           data.paths.requiredQueryField = [];
           data.paths.availableQueryField = [];
           data.fields = [];
+          data.path = '';
           data.paths.fields.forEach(item => {
             if (item.required) {
               data.paths.requiredQueryField.push(item.field_name);
@@ -188,6 +183,7 @@
 
           data.connection = this.inputSchemas[0].stageId;
           data.id = uuid();
+          data.path = '/API/V1/' + this.mergedSchema.table_name + '/cust/' + data.apiPath;
         }
         return data;
 			},
