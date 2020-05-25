@@ -16,6 +16,7 @@ module.exports = {
 		// https://github.com/standard/standard/blob/master/docs/RULES-en.md
 		'standard',
 		'eslint:recommended',
+		'plugin:prettier/recommended',
 	],
 	// required to lint *.vue files
 	plugins: [
@@ -31,6 +32,7 @@ module.exports = {
 		'no-console': ["error", {allow: ["warn"]}],
 		'no-multiple-empty-lines': ["warn", {"max": 2, "maxEOF": 1}],
 		'semi': [1, 'always'],
-		'no-undef': ["error"]
+		'no-undef': ["error"],
+		"prettier/prettier": "error"
 	}
 };
