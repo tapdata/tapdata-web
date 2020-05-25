@@ -13,7 +13,7 @@ import VueComponent from "./ui/VueComponent";
 import Monitor from '../view/job/Monitor';
 import Capture from '../view/job/Preview';
 import Setting from '../view/job/Setting';
-import DebugLogs from '../view/job/DebugLogs';
+import DebugLogs from "../view/job/DebugLogs";
 import DataVerify from  '../view/job/DataVerify/List';
 import DVLoading from  '../view/job/DataVerify/Loading';
 import DVResult from  '../view/job/DataVerify/Result';
@@ -111,7 +111,7 @@ export default class Editor extends BaseObject {
 			editor: this,
 			split: false,
 			width: 235,
-			bodyStyle: 'display: flex; flex-direction: column;'
+			bodyStyle: "display: flex; flex-direction: column;"
 		});
 		ui.add(leftSidebar);
 
