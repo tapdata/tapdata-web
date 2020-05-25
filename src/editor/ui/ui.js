@@ -41,35 +41,35 @@ export default class UI extends Component {
 		if (this.opts.actionBarEl) {
 			this.getActionBarEl().append(this.opts.actionBarEl);
 		}
-		this.el.find('input.ui-input').on('click', function(){
-      $('#taskNameInput').focus();
-      $('#edit').css('display','none');
-      $('#submit').css('display','inline-block');
-      var input = document.getElementById("taskNameInput");
-      input.setSelectionRange(0, -1);
-    });
-    this.el.find('i.el-icon-edit').on('click',function(){
-      $('#taskNameInput').focus();
-      $('#edit').css('display','none');
-      $('#submit').css('display','inline-block');
-      var input = document.getElementById("taskNameInput");
-      input.setSelectionRange(0, -1);
-    });
+		this.el.find("input.ui-input").on("click", function() {
+			$("#taskNameInput").focus();
+			$("#edit").css("display", "none");
+			$("#submit").css("display", "inline-block");
+			var input = document.getElementById("taskNameInput");
+			input.setSelectionRange(0, -1);
+		});
+		this.el.find("i.el-icon-edit").on("click", function() {
+			$("#taskNameInput").focus();
+			$("#edit").css("display", "none");
+			$("#submit").css("display", "inline-block");
+			var input = document.getElementById("taskNameInput");
+			input.setSelectionRange(0, -1);
+		});
 
-    this.el.find('input.ui-input').on('keyup', function(event){
-      if (event.keyCode == "13") {
-        $('#taskNameInput').blur();
-        $('#submit').css('display','none');
-        $('#edit').css('display','inline-block');
-      }
-    });
+		this.el.find("input.ui-input").on("keyup", function(event) {
+			if (event.keyCode == "13") {
+				$("#taskNameInput").blur();
+				$("#submit").css("display", "none");
+				$("#edit").css("display", "inline-block");
+			}
+		});
 
-    this.el.find('input.ui-input').on('blur', function(){
-      $('#submit').css('display','none');
-      $('#edit').css('display','inline-block');
-      var input = document.getElementById("taskNameInput");
-      input.setSelectionRange(0, 0);
-    });
+		this.el.find("input.ui-input").on("blur", function() {
+			$("#submit").css("display", "none");
+			$("#edit").css("display", "inline-block");
+			var input = document.getElementById("taskNameInput");
+			input.setSelectionRange(0, 0);
+		});
 	}
 	getName() {
 		return this.el.find(".e-title #taskNameInput").val();
