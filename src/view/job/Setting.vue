@@ -13,7 +13,7 @@
 					</el-form-item>
 				</el-col>
 			</el-row>
-			<el-row>
+			<el-row >
 				<el-col :span="12">
 					<el-form-item>
 						<div>{{$t('dataFlow.mission')}}</div>
@@ -21,18 +21,25 @@
 					</el-form-item>
 				</el-col>
 			</el-row>
-			<el-row style="border-top: 1px solid #dedee4">
+      <el-row style="border-top: 1px solid #dedee4" >
+        <el-form-item>
+          <div>{{$t('dataFlow.send_email')}}</div>
+          <el-checkbox-button border class="setBtn" v-model="formData.emailWaring.paused">{{$t('dataFlow.paused')}}</el-checkbox-button>
+          <el-checkbox-button border class="setBtn" v-model="formData.emailWaring.error">{{$t('dataFlow.error')}}</el-checkbox-button>
+          <el-checkbox-button border class="setBtn" v-model="formData.emailWaring.edited">{{$t('dataFlow.edited')}}</el-checkbox-button>
+          <el-checkbox-button border class="setBtn" v-model="formData.emailWaring.started">{{$t('dataFlow.started')}}</el-checkbox-button>
+        </el-form-item>
+      </el-row>
+			<el-row >
 				<el-col :span="12">
-					<el-form-item >
-						<div>{{$t('dataFlow.notification_lag')}}</div>
-						<el-input v-model="formData.notificationWindow" size="mini">
-							<template slot="prepend">Resend</template>
-							<template slot="append">s</template>
-						</el-input>
-						<el-input v-model="formData.notificationInterval" size="mini">
-							<template slot="append">(s) Cancel sending</template>
-						</el-input>
-					</el-form-item>
+          <el-form-item >
+            <div>{{$t('dataFlow.send_email_when_replication')}}</div>
+            <el-input v-model="formData.notificationWindow" size="mini">
+            </el-input>
+            <div>{{$t('dataFlow.send_email_at_most_one_replication')}}</div>
+            <el-input v-model="formData.notificationInterval" size="mini">
+            </el-input>
+          </el-form-item>
 					<el-form-item>
 						<div>{{$t('dataFlow.read_cdc_interval')}}</div>
 						<el-input v-model="formData.readCdcInterval" size="mini">
@@ -45,16 +52,12 @@
 							<template slot="append">row</template>
 						</el-input>
 					</el-form-item>
-<!--					<el-form-item>-->
-<!--						<div>{{$t('dataFlow.mission')}}</div>-->
-<!--						<el-input v-model="formData.description"></el-input>-->
-<!--					</el-form-item>-->
 
           <el-form-item v-show="formData.sync_type === 'cdc' " size="mini">
-            <div>SyncPoint</div>
+            <div>{{$t('dataFlow.SyncPoint')}} </div>
             <el-radio-group v-model="formData.syncPoint">
-              <el-radio-button label="current">Current</el-radio-button>
-              <el-radio-button label="sync_time">SyncTime</el-radio-button>
+              <el-radio-button label="current">{{$t('dataFlow.Current')}}</el-radio-button>
+              <el-radio-button label="sync_time">{{$t('dataFlow.SyncTime')}}</el-radio-button>
             </el-radio-group>
 
             <el-row v-if="formData.syncPoint === 'sync_time'">
@@ -69,13 +72,6 @@
 
 `				</el-col>
 				<el-col :span="12">
-					<el-form-item>
-						<div>{{$t('dataFlow.send_email')}}</div>
-							<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.paused">{{$t('dataFlow.paused')}}</el-checkbox-button>
-							<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.error">{{$t('dataFlow.error')}}</el-checkbox-button>
-							<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.edited">{{$t('dataFlow.edited')}}</el-checkbox-button>
-							<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.started">{{$t('dataFlow.started')}}</el-checkbox-button>
-`					</el-form-item>
 <!--					<el-form-item v-show="formData.sync_type !== 'initial_sync+cdc'">-->
 <!--						<div>{{$t('dataFlow.drop_target_before_start')}}</div>  &lt;!&ndash; 开启任务前是否删除目标表&ndash;&gt;-->
 <!--						<el-radio-group v-model="formData.drop_target" size="mini">-->
@@ -155,13 +151,12 @@
 			formData: {
 				deep: true,
 				handler(){
-					this.$emit('dataChanged', this.getData());
           if(this.formData.initial_sync === 'initial_sync'){
             this.formData.isOpenAutoDDL = false;
           }else {
             this.formData.run_custom_sql = false;
           }
-					this.$emit('dataChanged', this.formData);
+					this.$emit('dataChanged', this.getData());
 				}
 			}
 		},
@@ -172,7 +167,6 @@
 				}
 			},
 			getData(){
-
 				let result = _.cloneDeep(this.formData);
 				if( result.syncPoint === 'sync_time'){
 					let dateStr = moment(result.syncDatePicker).format('YYYY-MM-DD');
