@@ -93,8 +93,6 @@
           fields: [],
           apiPath: '',
         },
-        mergedSchema: null,
-        inputSchemas: []
 			};
 		},
 
@@ -105,19 +103,23 @@
 					this.$emit('dataChanged', this.getData());
 				}
       },
-		},
+    },
 
-		methods: {
+    inputSchemas: [],
+    mergedSchema: {},
+
+    methods: {
 
       // convertSchemaToTreeData,
-			setData(data, cell, isSourceDataNode, vueAdapter) {
-				if (data) {
-					Object.keys(data).forEach(key => this.form[key] = data[key]);
+      setData(data, cell, isSourceDataNode, vueAdapter) {
+        if (data) {
+          Object.keys(data).forEach(key => this.form[key] = data[key]);
         }
 
         // let fields = [];
         this.inputSchemas = cell.getInputSchema();
         this.mergedSchema = cell.getOutputSchema();
+        let formDatas = cell.graph.getConnectedLinks(cell, {inbound: true}).map(link => link.getSourceCell().getFormData());
         // let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
         if(this.mergedSchema &&  this.mergedSchema.fields) {
           this.mergedSchema.fields.forEach(field =>{
@@ -125,6 +127,7 @@
             this.$set(field,'query',false);
             this.$set(field,'visible',true);
           });
+          this.form.connection = formDatas[0].connectionId;
           this.form.paths.fields = this.mergedSchema.fields;
         }
 
@@ -146,7 +149,7 @@
         }
 			},
 
-			getData() {
+      getData() {
         let data = _.cloneDeep(this.form);
         if (data.paths.fields) {
           data.paths.requiredQueryField = [];
@@ -181,12 +184,11 @@
             delete item.query;
           });
 
-          data.connection = this.inputSchemas[0].stageId;
           data.id = uuid();
           data.path = '/API/V1/' + this.mergedSchema.table_name + '/cust/' + data.apiPath;
         }
         return data;
-			},
+      },
 		}
 	};
 </script>
