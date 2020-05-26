@@ -84,14 +84,15 @@
           name: '',
           description: '',
           paths: {
+            path: '',
             method: 'GET',
             fields:[],
             availableQueryField:[],
             requiredQueryField: []
           },
-          path: '',
           fields: [],
           apiPath: '',
+          type: 'publishApi'
         },
 			};
 		},
@@ -155,7 +156,7 @@
           data.paths.requiredQueryField = [];
           data.paths.availableQueryField = [];
           data.fields = [];
-          data.path = '';
+          data.paths.path = '';
           data.paths.fields.forEach(item => {
             if (item.required) {
               data.paths.requiredQueryField.push(item.field_name);
@@ -184,8 +185,8 @@
             delete item.query;
           });
 
-          data.id = uuid();
-          data.path = '/API/V1/' + this.mergedSchema.table_name + '/cust/' + data.apiPath;
+          // data.id = uuid();
+          data.paths.path = '/API/V1/' + this.mergedSchema.table_name + '/cust/' + data.apiPath;
         }
         return data;
       },

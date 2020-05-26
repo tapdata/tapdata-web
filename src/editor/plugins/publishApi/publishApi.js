@@ -17,7 +17,7 @@ export const PublishApiConfig = {
 					text: i18n.t('editor.cell.data_node.api.publishName'),
         },
         [FORM_DATA_KEY]: {
-          type: 'rest api',
+          type: 'publishApi',
           form: {}
         }
 			}
