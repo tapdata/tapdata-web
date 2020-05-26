@@ -14,7 +14,7 @@ export const PublishApiConfig = {
 					xlinkHref: 'static/editor/o-api.svg',
 				},
 				label: {
-					text: i18n.t('editor.cell.data_node.api.name'),
+					text: i18n.t('editor.cell.data_node.api.publishName'),
         },
         [FORM_DATA_KEY]: {
           type: 'rest api',
@@ -235,7 +235,7 @@ export const PublishApiConfig = {
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.data_node.api.name'),
+				text: i18n.t('editor.cell.data_node.api.publishName'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',

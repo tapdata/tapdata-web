@@ -328,6 +328,7 @@ const en = {
           table_field: 'field',
           table_type: 'Type',
           table_setting: 'Settings',
+          publishName: 'Publish API',
           enterPublishApiName: 'Please enter the name of the data publishing API',
           enterNewlyReleasedApi: 'Please enter a description of the newly released API',
           enterEndUrl: 'Please enter the URL end path name',

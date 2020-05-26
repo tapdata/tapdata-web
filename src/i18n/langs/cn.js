@@ -330,6 +330,7 @@ const cn = {
           enterNewlyReleasedApi: '请输入对新建发布API的描述',
           enterEndUrl: '请输入url末端路径名',
           required:'必填',
+          publishName: '发布API',
           availableQueries: '可用查询',
           publishApi_nameNone: 'API名称不能为空',
           publishApi_commentNone: '描述不为空',
