@@ -1,5 +1,5 @@
 <template>
-	<div class="dummy nodeStye">
+	<div class="dummy nodeStyle">
 		<head>
 			<span class="headIcon iconfont icon-you2" type="primary"></span>
 			<span class="txt">{{ $t("editor.nodeSettings") }}</span>

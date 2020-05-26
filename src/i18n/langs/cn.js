@@ -344,6 +344,42 @@ const cn = {
 					name: "Custom",
 					none_fileName: "Custom不能为空",
 					chooseCustomName: "请选择Custom"
+				},
+				memCache: {
+					tip: "内存缓存节点",
+					name: "内存缓存",
+
+					form: {
+						cacheName: {
+							label: "缓存名称",
+							placeholder: "请输入缓存名称",
+							none: "缓存名称必填"
+						},
+						cacheKeys: {
+							label: "缓存键",
+							placeholder: "请选择缓存健",
+							none: "缓存键必填"
+						},
+						maxSize: {
+							label: "缓存最大容量",
+							placeholder: "请输入缓存最大容量",
+							none: "缓存最大容量必填",
+							options: {
+								unlimited: "容量不限",
+								custom: "自定义最大缓存容量"
+							}
+						},
+						maxRows: {
+							label: "缓存最大记录数",
+							placeholder: "请输入缓存最大记录数",
+							none: "缓存最大容量必填",
+							unit: "条",
+							options: {
+								unlimited: "条数不限",
+								custom: "自定义最大记录条数"
+							}
+						}
+					}
 				}
 			},
 			processor: {
