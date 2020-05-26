@@ -50,39 +50,6 @@ export const PublishApiConfig = {
         return ['app.Collection'].includes(sourceCell.get('type'));
       },
 
-      mergeOutputSchema(outputSchema) {
-        let data = this.getFormData();
-        log('publishAPI.mergeOutputSchema', data, outputSchema);
-				if (!outputSchema || !data)
-          return;
-
-        log("publishAPI.data",data);
-
-				// let groupFields = [];
-				// let functionNames = [];
-				// data.aggregations.forEach(stage => {
-				// 	if (stage.groupByExpression) groupFields.push(...stage.groupByExpression);
-				// 	if (stage.aggExpression) functionNames.push(stage.aggFunction);
-				// });
-
-				// let fields = outputSchema.fields || [];
-				// outputSchema.fields = fields.filter(field => groupFields.includes(field.field_name)) || [];
-
-				// functionNames.forEach(fnName => {
-				// 	outputSchema.fields.push(Object.assign(_.cloneDeep(fields[0] || {}), {
-				// 		"field_name": fnName,
-				// 		"data_type": "DOUBLE",
-				// 		"primary_key_position": 0,
-				// 		"original_field_name": fnName,
-				// 		"javaType": "Double",
-				// 		"autoincrement": false,
-				// 		"id": uuid()
-				// 	}));
-				// });
-				log('publishAPI.mergeOutputSchema', data, outputSchema);
-				return outputSchema;
-      },
-
 			validate(data) {
         data = data || this.getFormData();
         log('publishAPI.validate', data);
@@ -91,7 +58,7 @@ export const PublishApiConfig = {
 				// 	throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`);
         if( !data.name )
           throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.publishApi_nameNone')}`);
-        if( !data.path )
+        if( !data.paths.path )
           throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.publishApi_path')}`);
 				return true;
 			},

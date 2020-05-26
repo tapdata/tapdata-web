@@ -62,7 +62,7 @@
 
 <script>
   import _ from "lodash";
-  import {uuid} from "../../util/Schema";
+  // import {uuid} from "../../util/Schema";
   // import { convertSchemaToTreeData } from "../../util/Schema";
 	// import log from '../../../log';
 	// import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
