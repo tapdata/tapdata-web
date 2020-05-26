@@ -78,7 +78,6 @@
 				groupList: [],
 				expressionList: [],
 				form: {
-          id: '',
           apiVersion: 'V1',
           connection: '',
           name: '',
@@ -184,8 +183,6 @@
             delete item.required;
             delete item.query;
           });
-
-          // data.id = uuid();
           data.paths.path = '/API/V1/' + this.mergedSchema.table_name + '/cust/' + data.apiPath;
         }
         return data;
