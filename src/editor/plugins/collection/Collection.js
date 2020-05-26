@@ -24,7 +24,6 @@ export const collectionConfig = {
 			},
 			[FORM_DATA_KEY]: {
 				connectionId: '',
-				excludeTables: [],
 				name: '',
 				freeTransform: false,
 				type: 'collection'
