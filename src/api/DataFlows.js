@@ -35,6 +35,6 @@ export default class DataFlows extends PublicAPI {
 	}
 	allDelete(where) {
 		if (typeof where === "object") where = JSON.stringify(where);
-		return axios.post(this.url + "/deleteAll?where=" + where);
+		return axios.post(this.url + "/removeAll?where=" + where);
 	}
 }
