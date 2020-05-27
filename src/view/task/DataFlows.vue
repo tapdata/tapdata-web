@@ -76,6 +76,7 @@
 									<el-dropdown-item command="b">{{ $t("dataFlow.bulkScheuled") }}</el-dropdown-item>
 									<el-dropdown-item command="c">{{ $t("dataFlow.bulkStopping") }}</el-dropdown-item>
 									<el-dropdown-item command="d">{{ $t("dataFlow.batchDelete") }}</el-dropdown-item>
+									<el-dropdown-item command="e">{{ $t("dataFlow.batchRest") }}</el-dropdown-item>
 								</el-dropdown-menu>
 							</el-dropdown>
 
@@ -373,6 +374,8 @@ export default {
 				this.handleAllStatus("stopping");
 			} else if (command === "d") {
 				this.handleAllDelete();
+			} else if (command === "e") {
+				this.handleAllRest();
 			}
 		},
 		handleDownload() {
@@ -590,7 +593,7 @@ export default {
 				type: "warning"
 			})
 				.then(() => {
-					dataFlows.allDelete(where).then(res => {
+					dataFlows.deleteAll(where).then(res => {
 						if (res.statusText === "OK" || res.status === 200) {
 							this.getData();
 						}
@@ -669,6 +672,33 @@ export default {
 						}
 					});
 					this.$message.success(this.$t("message.resetOk"));
+				})
+				.catch(() => {
+					this.$message.info(this.$t("message.cancleReset"));
+				});
+		},
+		handleAllRest() {
+			if (this.multipleSelection.length === 0) {
+				this.$message.info("please select row data");
+				return;
+			}
+			let multipleSelection = [];
+			this.multipleSelection.map(item => {
+				multipleSelection.push(item.id);
+			});
+			let where = multipleSelection;
+			this.$confirm(this.$t("message.resetMessage"), this.$t("message.prompt"), {
+				confirmButtonText: this.$t("dataFlow.reset"),
+				cancelButtonText: this.$t("message.cancel"),
+				type: "warning"
+			})
+				.then(() => {
+					dataFlows.resetAll(where).then(res => {
+						if (res.statusText === "OK" || res.status === 200) {
+							this.getData();
+						}
+						this.$message.success(this.$t("message.resetOk"));
+					});
 				})
 				.catch(() => {
 					this.$message.info(this.$t("message.cancleReset"));

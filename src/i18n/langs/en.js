@@ -65,6 +65,7 @@ const en = {
 		Current: "Current",
 		SyncTime: "Sync time",
 		batchDelete: "Batch delete",
+		batchRest: "Batch reset",
 		bulkExport: "Batch export",
 		bulkScheuled: "Batch Scheuled",
 		bulkStopping: "Batch stopping",
