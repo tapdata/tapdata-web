@@ -21,7 +21,7 @@ export default class UI extends Component {
 			<div class="e-header">
 				<div class="e-action-bar"><a class="e-action-back iconfont icon-biaotongbu"></a></div>
 				<div class="e-title">
-					<input value="新任务未命名" class="ui-input" id="taskNameInput" type="text"  maxlength="24"/>
+					<input value="新任务未命名" class="ui-input" id="taskNameInput" type="text"  maxlength="50"/>
 				</div>
 				<i class='el-icon-edit el-icon' id="edit"></i>
 				<i class='iconfont icon-baocun el-icon' id="submit" style="display: none;color:##48B6E2" ></i>
