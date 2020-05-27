@@ -175,15 +175,20 @@ export default {
 				Object.keys(data).forEach(key => (this.model[key] = data[key]));
 				this.maxSizeLimited = data.maxSize > 0;
 				this.maxRowsLimited = data.maxRows > 0;
-				this.cacheKeysValues = data.cacheKeys.length ? data.cacheKeys.split(",") : [];
 			}
 			let schema = cell.getInputSchema()[0];
-			if (schema) {
+			let cacheKeys = this.model.cacheKeys;
+			if (schema && schema.sourceSchema) {
 				if (!this.model.name) {
 					this.model.name = this.model.cacheName = schema.tableName;
 				}
 				this.sourceSchemaFields = schema.sourceSchema.fields;
+				if (!cacheKeys) {
+					let field = this.sourceSchemaFields.find(field => field.primary_key_position === 1);
+					cacheKeys = field ? field.field_name : this.sourceSchemaFields[0].field_name;
+				}
 			}
+			this.cacheKeysValues = cacheKeys.length ? cacheKeys.split(",") : [];
 		},
 		getData() {
 			return _.cloneDeep(this.model);
