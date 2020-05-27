@@ -362,6 +362,42 @@ const tc = {
 					name: "Custom",
 					none_fileName: "Custom不能為空",
 					chooseCustomName: "請選擇Custom"
+				},
+				memCache: {
+					tip: "記憶體緩存節點",
+					name: "記憶體緩存",
+
+					form: {
+						cacheName: {
+							label: "緩存名稱",
+							placeholder: "請輸入緩存名稱",
+							none: "緩存名稱必填"
+						},
+						cacheKeys: {
+							label: "緩存鍵",
+							placeholder: "請選擇緩存鍵",
+							none: "緩存鍵必填"
+						},
+						maxSize: {
+							label: "緩存最大容量",
+							placeholder: "請輸入緩存最大容量",
+							none: "緩存最大容量必填",
+							options: {
+								unlimited: "容量不限",
+								custom: "自定義最大緩存容量"
+							}
+						},
+						maxRows: {
+							label: "緩存最大記錄數",
+							placeholder: "請輸入緩存最大記錄數",
+							none: "緩存最大記錄數必填",
+							unit: "條",
+							options: {
+								unlimited: "條數不限",
+								custom: "自定義最大記錄條數"
+							}
+						}
+					}
 				}
 			},
 			processor: {

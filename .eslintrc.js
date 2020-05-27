@@ -12,9 +12,9 @@ module.exports = {
 	extends: [
 		// https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
 		// consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
+		'standard',
 		'plugin:vue/essential',
 		// https://github.com/standard/standard/blob/master/docs/RULES-en.md
-		'standard',
 		'eslint:recommended',
 		'plugin:prettier/recommended',
 	],
@@ -24,8 +24,12 @@ module.exports = {
 	],
 	// add your custom rules here
 	rules: {
+		"prettier/prettier": "error",
 		// allow async-await
-		'generator-star-spacing': 'off',
+    	'generator-star-spacing': 'off',
+		'no-new': 'off',
+		'one-var': 'off',
+		'standard/computed-property-even-spacing': 0,
 		// allow debugger during development
 		'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
 		//'quotes': [1, 'single', 'backtick', 'double'],
@@ -33,6 +37,5 @@ module.exports = {
 		'no-multiple-empty-lines': ["warn", {"max": 2, "maxEOF": 1}],
 		'semi': [1, 'always'],
 		'no-undef': ["error"],
-		"prettier/prettier": "error"
 	}
 };

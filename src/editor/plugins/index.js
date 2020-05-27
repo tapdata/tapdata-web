@@ -19,4 +19,5 @@ export * from "./api/ApiNode";
 // export * from './ElasticSearch/ESNode';
 export * from "./DataFilter/DataFilter";
 export * from "./custom/CustomNode";
+export * from "./MemCache/MemCache";
 // export * from './publishApi/publishApi';

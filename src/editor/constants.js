@@ -20,7 +20,7 @@ export const FORM_DATA_KEY = "form_data",
 		primaryKeys: "",
 		stageId: "",
 		isArray: false,
-		//fieldProcesses: [],
+		// fieldProcesses: [],
 		arrayUniqueKey: ""
 	},
 	DEFAULT_SETTING = {
