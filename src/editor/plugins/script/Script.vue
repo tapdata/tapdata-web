@@ -1,32 +1,40 @@
 <template>
-	<el-form label-position="right" label-width="130px" :model="model" ref="form">
-		<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.name.label')" size="mini">
-			<el-input
-				v-model="model.name"
-				class="form-item-width"
-				:placeholder="$t('editor.cell.processor.script.form.name.placeholder')"
-			></el-input>
-		</el-form-item>
+	<div class="nodeStyle">
+		<div class="nodeBody">
+			<el-form class="e-form" label-position="top" label-width="130px" :model="model" ref="form">
+				<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.name.label')" size="mini">
+					<el-input
+						v-model="model.name"
+						class="form-item-width"
+						:placeholder="$t('editor.cell.processor.script.form.name.placeholder')"
+					></el-input>
+				</el-form-item>
 
-		<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.type.label')" size="mini">
-			<el-select
-				v-model="model.type"
-				:placeholder="$t('editor.cell.processor.script.form.type.placeholder')"
-				value="js_processor"
-			>
-				<el-option
-					v-for="(item, idx) in scriptTypes"
-					:label="item.label"
-					:value="item.value"
-					v-bind:key="idx"
-				></el-option>
-			</el-select>
-		</el-form-item>
+				<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.type.label')" size="mini">
+					<el-select
+						v-model="model.type"
+						:placeholder="$t('editor.cell.processor.script.form.type.placeholder')"
+						value="js_processor"
+					>
+						<el-option
+							v-for="(item, idx) in scriptTypes"
+							:label="item.label"
+							:value="item.value"
+							v-bind:key="idx"
+						></el-option>
+					</el-select>
+				</el-form-item>
 
-		<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.script.label')" size="mini">
-			<el-input type="textarea" rows="10" v-model="model.script"></el-input>
-		</el-form-item>
-	</el-form>
+				<el-form-item
+					:required="true"
+					:label="$t('editor.cell.processor.script.form.script.label')"
+					size="mini"
+				>
+					<el-input type="textarea" rows="10" v-model="model.script"></el-input>
+				</el-form-item>
+			</el-form>
+		</div>
+	</div>
 </template>
 
 <script>
@@ -85,9 +93,3 @@ export default {
 	}
 };
 </script>
-
-<style scoped>
-.form-item-width {
-	width: 300px;
-}
-</style>

@@ -365,6 +365,42 @@ const en = {
 					name: "Custom",
 					none_fileName: "Custom cannot be empty",
 					chooseCustomName: "Please select Custom"
+				},
+				memCache: {
+					tip: "Memery Cache node",
+					name: "Mem Cache",
+
+					form: {
+						cacheName: {
+							label: "Cache name",
+							placeholder: "Please enter cache name.",
+							none: "Cache name is required."
+						},
+						cacheKeys: {
+							label: "Cache key",
+							placeholder: "Please select cache key.",
+							none: "Cache key is required."
+						},
+						maxSize: {
+							label: "Max capacity",
+							placeholder: "Please enter maximum capacity of the cache.",
+							none: "Max capacity is required.",
+							options: {
+								unlimited: "Unlimit",
+								custom: "Custom"
+							}
+						},
+						maxRows: {
+							label: "Max records",
+							placeholder: "Please enter maximum records of the cache.",
+							none: "Max records is required.",
+							unit: "pcs",
+							options: {
+								unlimited: "Unlimit",
+								custom: "Custom"
+							}
+						}
+					}
 				}
 			},
 			processor: {

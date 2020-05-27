@@ -1,88 +1,90 @@
 <template>
-	<div class="e-collection">
-		<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form" :rules="rules">
-			<el-form-item
-				:label="$t('editor.cell.data_node.collection.form.database.label')"
-				prop="connectionId"
-				:rules="rules"
-				required
-			>
-				<el-select
-					filterable
-					v-model="model.connectionId"
-					:placeholder="$t('editor.cell.data_node.collection.form.database.placeholder')"
-					@change="handlerConnectionChange"
-					size="mini"
+	<div class="e-collection nodeStyle">
+		<div class="nodeBody">
+			<el-form class="e-form" label-position="top" label-width="160px" :model="model" ref="form" :rules="rules">
+				<el-form-item
+					:label="$t('editor.cell.data_node.collection.form.database.label')"
+					prop="connectionId"
+					:rules="rules"
+					required
 				>
-					<el-option
-						v-for="(item, idx) in databases"
-						:label="`${item.name} (${item.status})`"
-						:value="item.id"
-						v-bind:key="idx"
-					></el-option>
-				</el-select>
-			</el-form-item>
+					<el-select
+						filterable
+						v-model="model.connectionId"
+						:placeholder="$t('editor.cell.data_node.collection.form.database.placeholder')"
+						@change="handlerConnectionChange"
+						size="mini"
+					>
+						<el-option
+							v-for="(item, idx) in databases"
+							:label="`${item.name} (${item.status})`"
+							:value="item.id"
+							v-bind:key="idx"
+						></el-option>
+					</el-select>
+				</el-form-item>
 
-			<el-form-item
-				:label="$t('editor.cell.data_node.collection.form.collection.label')"
-				prop="tableName"
-				required
-			>
-				<el-select
-					v-model="model.tableName"
-					filterable
-					allow-create
-					default-first-option
-					clearable
-					:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
-					size="mini"
+				<el-form-item
+					:label="$t('editor.cell.data_node.collection.form.collection.label')"
+					prop="tableName"
+					required
 				>
-					<el-option
-						v-for="(item, idx) in schemas"
-						:label="`${item.table_name}`"
-						:value="item.table_name"
-						v-bind:key="idx"
-					></el-option>
-				</el-select>
-			</el-form-item>
+					<el-select
+						v-model="model.tableName"
+						filterable
+						allow-create
+						default-first-option
+						clearable
+						:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
+						size="mini"
+					>
+						<el-option
+							v-for="(item, idx) in schemas"
+							:label="`${item.table_name}`"
+							:value="item.table_name"
+							v-bind:key="idx"
+						></el-option>
+					</el-select>
+				</el-form-item>
 
-			<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
-				<el-input
-					v-model="model.primaryKeys"
-					:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
-					size="mini"
-				></el-input>
-			</el-form-item>
+				<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
+					<el-input
+						v-model="model.primaryKeys"
+						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
+						size="mini"
+					></el-input>
+				</el-form-item>
 
-			<el-form-item
-				required
-				:label="$t('editor.cell.data_node.collection.form.dropTable.label')"
-				v-if="!isSourceDataNode"
-			>
-				<el-select v-model="model.dropTable" size="mini">
-					<el-option
-						:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
-						:value="false"
-					></el-option>
-					<el-option
-						:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
-						:value="true"
-					></el-option>
-				</el-select>
-			</el-form-item>
+				<el-form-item
+					required
+					:label="$t('editor.cell.data_node.collection.form.dropTable.label')"
+					v-if="!isSourceDataNode"
+				>
+					<el-select v-model="model.dropTable" size="mini">
+						<el-option
+							:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
+							:value="false"
+						></el-option>
+						<el-option
+							:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
+							:value="true"
+						></el-option>
+					</el-select>
+				</el-form-item>
 
-			<el-form-item :label="$t('editor.cell.data_node.collection.form.filter.label')">
-				<el-input
-					v-model="model.filter"
-					type="textarea"
-					rows="5"
-					:placeholder="$t('editor.cell.data_node.collection.form.filter.placeholder')"
-					size="mini"
-				></el-input>
-			</el-form-item>
-		</el-form>
-		<div class="e-entity-wrap" style="text-align: center;">
-			<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
+				<el-form-item :label="$t('editor.cell.data_node.collection.form.filter.label')">
+					<el-input
+						v-model="model.filter"
+						type="textarea"
+						rows="5"
+						:placeholder="$t('editor.cell.data_node.collection.form.filter.placeholder')"
+						size="mini"
+					></el-input>
+				</el-form-item>
+			</el-form>
+			<div class="e-entity-wrap" style="text-align: center;">
+				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
+			</div>
 		</div>
 	</div>
 </template>
@@ -279,23 +281,6 @@ export default {
 
 <style lang="less" scoped>
 .e-collection {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-
-	.e-form {
-		.el-input,
-		.el-select,
-		.el-textarea {
-			max-width: 400px;
-			width: 80%;
-		}
-	}
-	.el-form-item {
-		margin-bottom: 10px;
-	}
-
 	.e-entity-wrap {
 		flex: 1;
 		overflow: auto;
