@@ -389,10 +389,7 @@ export default {
 					in: multipleSelection
 				}
 			};
-			MetadataInstance.download(where).then(res => {
-				if (res.statusText === "OK" || res.status === 200) {
-				}
-			});
+			MetadataInstance.download(where);
 		},
 		handleRowCommand(command) {
 			if (command.indexOf("export") !== -1) {
@@ -403,10 +400,7 @@ export default {
 						in: id
 					}
 				};
-				MetadataInstance.download(where).then(res => {
-					if (res.statusText === "OK" || res.status === 200) {
-					}
-				});
+				MetadataInstance.download(where);
 			} else if (command.indexOf("copy") !== -1) {
 				let id = command.replace("copy", "");
 				this.handlerCopy(id);
