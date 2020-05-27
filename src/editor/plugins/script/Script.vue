@@ -24,8 +24,8 @@
 		</el-form-item>
 
 		<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.script.label')" size="mini">
-			<JsEditor :code.sync="model.script"></JsEditor>
-			<!--			<el-input type="textarea" rows="10" v-model="model.script"></el-input>-->
+			<JsEditor :code.sync="model.script" ref="jsEditor" :width.sync="width"></JsEditor>
+<!--						<el-input type="textarea" rows="10" v-model="model.script"></el-input>-->
 		</el-form-item>
 	</el-form>
 </template>
@@ -33,6 +33,7 @@
 <script>
 import JsEditor from "../../../components/JsEditor";
 import log from "../../../log";
+import {EditorEventType} from "../../lib/events";
 export default {
 	name: "Script",
 	components: { JsEditor },
@@ -63,10 +64,16 @@ export default {
 				name: "JavaScript",
 				type: "js_processor",
 				script: "function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}"
-			}
+			},
+			width:'500'
 		};
 	},
-
+	mounted() {
+		let self = this;
+		self.$on(EditorEventType.RESIZE, width => {
+			self.width = width;
+		});
+	},
 	watch: {
 		model: {
 			deep: true,
@@ -80,10 +87,10 @@ export default {
 		setData(data) {
 			if (data) {
 				Object.keys(data).forEach(key => (this.model[key] = data[key]));
+				log("model script", this.model);
 			}
 		},
 		getData() {
-			log("model script", this.model);
 			return JSON.parse(JSON.stringify(this.model));
 		}
 	}

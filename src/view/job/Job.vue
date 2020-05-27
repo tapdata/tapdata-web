@@ -183,7 +183,6 @@ export default {
 						self.executeMode = dataFlow.executeMode;
 
 						self.dataFlow = dataFlow;
-
 						// 管理端api创建任务来源以及editorData 数据丢失情况
 						if (!dataFlow.editorData && dataFlow.stages) {
 							// 1. 拿到创建所有的节点数据
@@ -823,9 +822,8 @@ export default {
 							node.form_data = {
 								type: v.type,
 								name: v.name,
-								aggregations: v.scripts
+								aggregations: v.aggregations
 							};
-							node.aggregations = v.aggregations;
 						} else if (["js_processor"].includes(v.type)) {
 							node.form_data = {
 								type: v.type,

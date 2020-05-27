@@ -1,83 +1,95 @@
 <template>
-	<div id="app">
-		<MonacoEditor
-			height="500"
-			width="500"
-			class="manocaEditor"
-			language="javascript"
-			theme="vs"
-			:code="editorContent"
-			:editorOptions="options"
-			@mounted="onMounted"
-			@codeChange="onCodeChange"
-		>
-		</MonacoEditor>
-	</div>
+	<div ref="container" class="monaco" :style="{width:width}"></div>
 </template>
 
 <script>
-import MonacoEditor from "vue-monaco-editor";
-
-export default {
-	props: {
-		code: {
-			required: true,
-			value: String
-		}
-	},
-	data() {
-		return {
-			editor: null,
-			options: {
-				theme: "vs",
-				selectOnLineNumbers: true,
-				roundedSelection: false,
-				readOnly: false,
-				automaticLayout: true,
-				glyphMargin: true,
-				showFoldingControls: "always",
-				formatOnPaste: true,
-				formatOnType: true,
-				folding: true,
-				contentLeft: 10,
-				contentWidth: 10
-			},
-			editorContent: this.code
-		};
-	},
-	components: {
-		MonacoEditor
-	},
-	methods: {
-		onMounted(editor) {
-			this.editor = editor;
+	import * as monaco from "monaco-editor";// 包体很大了 但是demo可以跑起来
+	import {EditorEventType} from "../editor/lib/events";
+	const suggestions = [
+		{
+			label: '测试1',
+			insertText: '测试1', // 不写的时候不展示。。
+			detail: '提示的文字'
 		},
+		{
+			label: '测试2',
+			insertText: '测试22',
+			detail: '提示的文字'
+		},
+		{
+			label: '格式化',
+			insertText: 'format()',
+			detail: '说明'
+		}
+	];
+	export default{
+		props: {
+			code: {
+				required: true,
+				value: String
+			},
+			width: {
+				required: true,
+				value: Number
+			},
+		},
+		mounted() {
+			monaco.languages.registerCompletionItemProvider('javascript', {
+				provideCompletionItems() {
+					return {
+						suggestions: suggestions
+					};
+				},
+				triggerCharacters: [' ','.']  // 写触发提示的字符，可以有多个
+			});
+			// monaco.languages.typescript.javascriptDefaults.addExtraLib([
+			// 	'declare class Facts {',
+			// 	'    /**',
+			// 	'     * Returns the next fact',
+			// 	'     */',
+			// 	'    static next():string',
+			// 	'}',
+			// ].join('\n'), 'ts:filename/facts.d.ts');
+			let self = this;
+			setTimeout(function () {
+				self.inti();
+			},50)
+		},
+		watch:{
+			width:{
+				handler() {
+					this.inti();
+				}
+			}
+		},
+		methods:{
+			inti(){
+				let self = this;
+				self.$refs.container.innerHTML = '';
+				var editor = monaco.editor.create(this.$refs.container, {
+					value: this.code,
+					language: 'javascript',
+					minimap:{
+						enabled:false
+					},
+					fontSize:'12px',
+					fixedOverflowWidgets: true, // 超出编辑器大小的使用fixed属性显示
+				});
+				editor.onDidChangeModelContent(function(event){
+					self.$emit("update:code", editor.getValue());
+				});
+			},
 
-		onCodeChange(editor) {
-			this.$emit("update:code", this.editor.getValue());
-
-			// this.editor.setValue(this.params) // 参数是编辑器需要展示的json串
-			//
-			// this.editor.trigger('','editor.action.format') // 触发自动格式化
-			//
-			// this.editor.setValue(this.editor.getValue()) // 强制刷新一次
-			//
-			// this.editor.updateOptions({
-			//
-			//
-			//
-			// });
 		}
 	}
-};
 </script>
 <style scoped>
-.manocaEditor {
-	border: 1px solid #dedee4;
-	text-align: left;
-	background-color: #fff;
-}
-.manocaEditor .line-numbers {
-	width: 0;
-}
+	.monaco{
+		width:95%;
+		height:400px;
+		border:1px solid #DCDFE6;
+		text-align: left;
+		margin-right: 20px;
+		border-radius: 4px;
+	}
 </style>

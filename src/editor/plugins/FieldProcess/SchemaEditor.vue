@@ -199,7 +199,7 @@
 		>
 			<el-form>
 				<el-form-item>
-					<JsEditor :code.sync="scriptDialog.script"></JsEditor>
+					<JsEditor :code.sync="scriptDialog.script" :width.sync="jsEditorWidth"></JsEditor>
 					<!--					<el-input type="textarea" v-model="scriptDialog.script" rows="10"></el-input>-->
 				</el-form-item>
 			</el-form>
@@ -283,7 +283,7 @@ export default {
 		return {
 			scriptDialog: {
 				open: false,
-				script: "",
+				script: "//Enter you code at here",
 				fieldName: "",
 				fn: function() {}
 			},
@@ -291,7 +291,8 @@ export default {
 			model: {
 				operations: [],
 				scripts: []
-			}
+			},
+			jsEditorWidth:'500'
 		};
 	},
 	methods: {
