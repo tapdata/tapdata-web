@@ -42,7 +42,6 @@
 <script>
 	import factory from '../../api/factory';
 	import log from "../../log";
-  //import Cookie from 'tiny-cookie';
 
 	const MetadataInstances = factory('MetadataInstances');
 
@@ -79,14 +78,8 @@
 		},
 		mounted() {
 			this.loadDataBase();
-			//this.filterText = Cookie.get('tableSelector') ? Cookie.get('tableSelector'):'';
 		},
-		// watch: {
-		// 	filterText(val) {
-		// 		this.$refs.tree.filter(val);
-    //     //Cookie.set('tableSelector',val);
-		// 	}
-		// },
+
 		methods: {
       // 点击加载
       clickLoad() {
@@ -139,6 +132,7 @@
       },
 			loadDataBase() {
 				let self = this;
+				this.filterText = '';
 				let params = {
 					filter: JSON.stringify({
 						where: {
@@ -151,9 +145,6 @@
 							meta_type: {
 								in: ['database', 'directory', 'ftp', 'apiendpoint']
 							},
-              // source:{
-              //   user_id:'5ec37a2d7135340e652e6c0b',
-              // },
 							is_deleted:false
 						},
 						order:'original_name ASC'
