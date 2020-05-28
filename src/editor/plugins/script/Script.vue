@@ -25,10 +25,14 @@
 					</el-select>
 				</el-form-item>
 
-				<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.script.label')" size="mini">
-			<JsEditor :code.sync="model.script"></JsEditor>
-			<!--			<el-input type="textarea" rows="10" v-model="model.script"></el-input>-->
-		</el-form-item>
+				<el-form-item
+					:required="true"
+					:label="$t('editor.cell.processor.script.form.script.label')"
+					size="mini"
+				>
+					<JsEditor :code.sync="model.script"></JsEditor>
+					<!--			<el-input type="textarea" rows="10" v-model="model.script"></el-input>-->
+				</el-form-item>
 			</el-form>
 		</div>
 	</div>
