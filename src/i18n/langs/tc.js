@@ -65,6 +65,7 @@ const tc = {
 		Current: "當前時間",
 		SyncTime: "同步時間",
 		batchDelete: "批量刪除",
+		batchRest: "批量重置",
 		bulkExport: "批量導出",
 		bulkScheuled: "批量啟動",
 		bulkStopping: "批量停止",

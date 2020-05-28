@@ -33,8 +33,12 @@ export default class DataFlows extends PublicAPI {
 	getSourceList(id) {
 		return axios.get(this.url + "/dataFlowTables?dataFlowId=" + id);
 	}
-	allDelete(where) {
+	deleteAll(where) {
 		if (typeof where === "object") where = JSON.stringify(where);
-		return axios.post(this.url + "/deleteAll?where=" + where);
+		return axios.post(this.url + "/removeAll?where=" + where);
+	}
+	resetAll(where) {
+		if (typeof where === "object") where = JSON.stringify(where);
+		return axios.post(this.url + "/resetAll?id=" + where);
 	}
 }
