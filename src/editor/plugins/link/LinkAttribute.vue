@@ -279,7 +279,7 @@ export default {
 				let firstDataNode =
 					typeof sourceCell.getFirstDataNode === "function" ? sourceCell.getFirstDataNode() : [];
 				this.model.joinTable.stageId = firstDataNode.length > 0 ? firstDataNode[0].id : "";
-				//this.model.joinTable.stageId = cell.getSourceCell().id;
+				// this.model.joinTable.stageId = cell.getSourceCell().id;
 
 				this.sourceList = sourceSchema && sourceSchema.fields ? sourceSchema.fields : [];
 				this.targetList = (mergedTargetSchema && mergedTargetSchema.fields) || [];
@@ -321,10 +321,10 @@ export default {
 		},
 		getData() {
 			let data = JSON.parse(JSON.stringify(this.model));
-			/*if( data.joinTable.joinKeys.length > 0 ){
+			/* if( data.joinTable.joinKeys.length > 0 ){
 					let joinKeys = data.joinTable.joinKeys.filter( key => key.source && key.target);
 					data.joinTable.joinKeys = joinKeys;
-				}*/
+				} */
 			if (!this.configJoinTable) {
 				delete data.joinTable;
 			}
@@ -360,14 +360,14 @@ export default {
 				let sourceCell = this.cell.getSourceCell(),
 					targetCell = this.cell.getTargetCell(),
 					sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null;
-				/*targetInputSchema = targetCell ? targetCell.getInputSchema() : null,
+				/* targetInputSchema = targetCell ? targetCell.getInputSchema() : null,
 						targetSchema = targetCell ? targetCell.getSchema() : {
 							meta_type: this.targetCell.get('type') === 'app.Collection' ? 'collection' : 'table'
-						}*/
+						} */
 				let mergedTargetSchema =
 					targetCell && typeof targetCell.getOutputSchema === "function"
 						? targetCell.getOutputSchema()
-						: null; //mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
+						: null; // mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
 
 				let targetSchemaFields = (mergedTargetSchema && mergedTargetSchema.fields) || [];
 				let targetJoinFields = targetSchemaFields.filter(

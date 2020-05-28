@@ -224,13 +224,13 @@ export default class Editor extends BaseObject {
 		// if( setting ) self.getRightTabPanel().remove(setting);
 
 		// add monitor
-		/*let rightTabPanel = self.getRightSidebar().getChildByName('rightTabPanel');
+		/* let rightTabPanel = self.getRightSidebar().getChildByName('rightTabPanel');
 		if( !rightTabPanel) {
 			rightTabPanel = new Tab({
 				name: 'rightTabPanel'
 			});
 			self.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
-		}*/
+		} */
 
 		let monitor = self.getRightTabPanel().getChildByName("monitor");
 		if (!monitor) {
@@ -254,7 +254,7 @@ export default class Editor extends BaseObject {
 	 */
 	initEditingMode() {
 		log("editor.initEditingMode");
-		//this.getRightSidebar().removeAll();
+		// this.getRightSidebar().removeAll();
 		this.getRightTabPanel().removeAll();
 		this.getRightSidebar().hide();
 
@@ -262,8 +262,8 @@ export default class Editor extends BaseObject {
 
 		this.getLeftSidebar().show();
 
-		//this.getBottomSidebar().hide();
-		//this.getBottomTabPanel().removeAll();
+		// this.getBottomSidebar().hide();
+		// this.getBottomTabPanel().removeAll();
 	}
 
 	/**
@@ -401,7 +401,7 @@ export default class Editor extends BaseObject {
 			rightTabPanel = new Tab({
 				name: "rightTabPanel"
 			});
-			self.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
+			self.getRightSidebar().add(rightTabPanel); // 添加空白panel 节点渲染
 		}
 		let dvLoading = self.getRightSidebar().getChildByName("dvLoading");
 		if (!dvLoading) {
@@ -429,7 +429,7 @@ export default class Editor extends BaseObject {
 			rightTabPanel = new Tab({
 				name: "rightTabPanel"
 			});
-			self.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
+			self.getRightSidebar().add(rightTabPanel); // 添加空白panel 节点渲染
 		}
 		let dvResult = self.getRightSidebar().getChildByName("dvResult");
 		if (!dvResult) {
@@ -519,8 +519,8 @@ export default class Editor extends BaseObject {
 		log("Job.validateGraphData");
 		let editorData = this.getData();
 		let graph = editorData.graph;
-		/*let graphData = editorData.graphData;
-		let graphLib = graphData.graphLib;*/
+		/* let graphData = editorData.graphData;
+		let graphLib = graphData.graphLib; */
 
 		// at least 2 data node
 		// at least 1 link
@@ -559,11 +559,11 @@ export default class Editor extends BaseObject {
 	 * reload schema
 	 */
 	reloadSchema() {
-		//1. 遍历当前有模型的节点(合并相同连接ID)
+		// 1. 遍历当前有模型的节点(合并相同连接ID)
 		let self = this;
 		log("editor.graph.graph.getCells()", self.graph.graph.getCells());
 		let dataCells = self.graph.graph
-			.getCells() //.filter(cell => cell.isDataNode && cell.isDataNode())
+			.getCells() // .filter(cell => cell.isDataNode && cell.isDataNode())
 			.filter(cell => {
 				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
 				let type = cell.get("type");
@@ -581,8 +581,8 @@ export default class Editor extends BaseObject {
 		dataCellIds = Array.from(new Set(dataCellIds));
 		log("Editor.reloadSchema.modelData", dataCells);
 
-		//2.请求节点schema数据
-		//TODO: add id parameter
+		// 2.请求节点schema数据
+		// TODO: add id parameter
 
 		log("dataCellIds", dataCellIds);
 		let params = {
@@ -610,7 +610,7 @@ export default class Editor extends BaseObject {
 					}
 				});
 
-				//3. 分别更新对应节点schema
+				// 3. 分别更新对应节点schema
 				if (dataCells) {
 					dataCells.map(cell => {
 						let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;

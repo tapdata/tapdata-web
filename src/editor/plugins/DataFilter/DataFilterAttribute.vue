@@ -18,13 +18,14 @@
 						<i class="e-primary el-icon-warning-outline"></i>
 					</el-tooltip>
 				</template>
-				<el-input
-					type="textarea"
-					v-model="model.expression"
-					rows="3"
-					:placeholder="$t('editor.cell.processor.dataFilter.form.expression.placeholder')"
-					:title="$t('editor.cell.processor.dataFilter.form.expression.labelTip')"
-				></el-input>
+				<JsEditor :code.sync="model.expression" :width.sync="width"></JsEditor>
+				<!--				<el-input-->
+				<!--					type="textarea"-->
+				<!--					v-model="model.expression"-->
+				<!--					rows="3"-->
+				<!--					:placeholder="$t('editor.cell.processor.dataFilter.form.expression.placeholder')"-->
+				<!--					:title="$t('editor.cell.processor.dataFilter.form.expression.labelTip')"-->
+				<!--				></el-input>-->
 				<div style="color: #888888; font-size: 0.8em;">
 					<h3 style="font-size: 1.1em; font-weight: bold;">
 						{{ $t("editor.cell.processor.dataFilter.form.expressionExample.label") }}:
@@ -133,17 +134,20 @@
 </template>
 
 <script>
+import JsEditor from "../../../components/JsEditor";
+import {EditorEventType} from "../../lib/events";
 export default {
 	name: "DataFilterAttribute",
-
+	components: { JsEditor },
 	data() {
 		return {
 			model: {
 				type: "row_filter_processor",
 				name: "Row Filter",
-				expression: "",
+				expression: "//code",
 				action: "retain" // discard,retain
-			}
+			},
+			width:'500'
 		};
 	},
 
@@ -155,7 +159,12 @@ export default {
 			}
 		}
 	},
-
+	mounted() {
+		let self = this;
+		self.$on(EditorEventType.RESIZE, width => {
+			self.width = width;
+		});
+	},
 	methods: {
 		setData(data) {
 			if (data) {

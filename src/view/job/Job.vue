@@ -120,13 +120,13 @@ export default {
 	},
 
 	watch: {
-		/*executeMode: {
+		/* executeMode: {
 				handler(){
 					if( this.executeMode !== 'normal') {
 						this.showCapture();
 					}
 				}
-			},*/
+			}, */
 		status: {
 			handler() {
 				if (["draft", "error", "paused"].includes(this.status)) {
@@ -183,23 +183,22 @@ export default {
 						self.executeMode = dataFlow.executeMode;
 
 						self.dataFlow = dataFlow;
-
-						//管理端api创建任务来源以及editorData 数据丢失情况
+						// 管理端api创建任务来源以及editorData 数据丢失情况
 						if (!dataFlow.editorData && dataFlow.stages) {
 							// 1. 拿到创建所有的节点数据
 							let cells = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
 							dataFlow.editorData = cells;
 
-							//2. 调用画布创建节点方法
+							// 2. 调用画布创建节点方法
 							self.editor.setData(dataFlow);
 
-							//3. 更新schema
+							// 3. 更新schema
 							self.editor.reloadSchema();
 
-							//4. 节点布局
+							// 4. 节点布局
 							self.editor.graph.layoutDirectedGraph();
 
-							//5. 处理joinTables
+							// 5. 处理joinTables
 							self.handleJoinTables(dataFlow.stages);
 						} else {
 							self.editor.setData(dataFlow);
@@ -358,7 +357,7 @@ export default {
 				}
 			});
 			Object.values(edgeCells).forEach(cell => {
-				if ("app.Link" === cell.type) {
+				if (cell.type === "app.Link") {
 					let sourceId = cell.source.id;
 					let targetId = cell.target.id;
 					if (sourceId && stages[sourceId]) stages[sourceId].outputLanes.push(targetId);
@@ -699,7 +698,7 @@ export default {
 		 * @return {{cells: Array}}
 		 */
 		creatApiEditorData(data) {
-			//1. 创建cell 2. 加载schema 3.自动布局
+			// 1. 创建cell 2. 加载schema 3.自动布局
 			let cells = [];
 			let mapping = {
 				collection: "app.Collection",
@@ -823,9 +822,8 @@ export default {
 							node.form_data = {
 								type: v.type,
 								name: v.name,
-								aggregations: v.scripts
+								aggregations: v.aggregations
 							};
-							node.aggregations = v.aggregations;
 						} else if (["js_processor"].includes(v.type)) {
 							node.form_data = {
 								type: v.type,
@@ -890,7 +888,7 @@ export default {
 							"row_filter_processor"
 						].includes(v.type)
 					) {
-						//目标节点 数据节点 jointable
+						// 目标节点 数据节点 jointable
 						let linkDtata = this.cells
 							.filter(cell => cell.type === "app.Link" && [cell.target.id])
 							.includes(v.inputLanes);

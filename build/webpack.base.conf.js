@@ -3,6 +3,7 @@ const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -32,6 +33,9 @@ module.exports = {
       ? config.build.assetsPublicPath
       : config.dev.assetsPublicPath
   },
+	plugins: [
+		new MonacoWebpackPlugin()
+	],
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {
@@ -41,7 +45,7 @@ module.exports = {
   },
   module: {
     rules: [
-      ...(config.dev.useEslint ? [createLintingRule()] : []),
+     // ...(config.dev.useEslint ? [createLintingRule()] : []),
       {
         test: /\.vue$/,
         loader: 'vue-loader',
@@ -80,7 +84,17 @@ module.exports = {
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
       }
-    ]
+    ],
+	  loaders: [
+		  {
+			  test: /\.js$/,
+			  exclude: /(node_modules|bower_components)/,
+			  loader: 'babel',
+			  query: {
+				  presets: ['es2015']
+			  }
+		  }
+	  ]
   },
   node: {
     // prevent webpack from injecting useless setImmediate polyfill because Vue
@@ -93,5 +107,5 @@ module.exports = {
     net: 'empty',
     tls: 'empty',
     child_process: 'empty'
-  }
+  },
 }

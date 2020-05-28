@@ -6,5 +6,5 @@
     . 在index.js 导出
 #### 修改toolbar icon 步骤
     . 首先更新字体 icofont(asstes/font)
-    . style.default.css
+    . style.default.css (editor/lib/rappid/themes)
     . 相关按钮 对应修改 UIcode
