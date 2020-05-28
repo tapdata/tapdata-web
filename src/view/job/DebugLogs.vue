@@ -11,7 +11,7 @@
 				</el-input>
 			</el-form-item>
 			<el-form-item>
-				<el-button icon="el-icon-search" size="mini" @click="loadNew" :disabled="loading"></el-button>
+				<el-button icon="el-icon-search" size="mini" @click="clearAndLoadNew" :disabled="loading"></el-button>
 			</el-form-item>
 
 			<i class="el-icon-loading" v-if="loading"></i>
@@ -110,7 +110,14 @@
       clickLoad() {
         this.loadNew();
       },
-
+			clearAndLoadNew(){
+				if(this.search){
+					this.logCount = 0;
+					let logContainer = $(this.$refs.logContainer);
+					logContainer.find('li').remove();
+				}
+				this.loadNew();
+			},
 			loadNew(){
 				let filter = {
 					where: {
