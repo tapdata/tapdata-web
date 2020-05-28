@@ -7,7 +7,7 @@ const cn = {
 			get: {
 				error: '加载数据失败.'
 			}
-		},
+    },
 		exists_name: '名称已存在',
 		search: '搜索',
 		serviceCluMange: '服务集群管理',
@@ -58,9 +58,13 @@ const cn = {
 		resetOk: '重置成功',
 		resetFailed: '重置失败',
 		operator: '操作',
-    edit: '修改'
+    edit: '修改',
 	},
 	dataFlow: {
+    submitExecute: '提交并执行',
+    submitOnly: '仅提交',
+    implementationModalities: '执行方式',
+    submitConfirmation: '提交确认',
     SyncPoint:'同步节点',
     Current:'当前时间',
     SyncTime:'同步时间',
@@ -175,6 +179,8 @@ const cn = {
     nameTip: '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
     enterFilterTable: '请输入过滤表内容',
 		button: {
+      submit: '提交',
+      viewConfig: '查看节点配置',
 			setting: '设置',
 			logs: '日志',
 			preview: '预览',
@@ -185,7 +191,9 @@ const cn = {
 			force_stop: '强制停止',
 			reset: '重置',
 			save: '保存',
-			reloadSchema:'重新加载'
+      reloadSchema:'重新加载',
+      quantitative: '定量',
+      increment: '增量'
 		},
 		save_before_running: '请先保存再运行',
 		reset_job: {

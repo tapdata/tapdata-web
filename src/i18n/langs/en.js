@@ -68,7 +68,7 @@ const en = {
     bulkExport:'Batch export',
     bulkScheuled:'Batch Scheuled',
     bulkStopping:"Batch stopping",
-	  upload:'Click to upload',
+    upload:'Click to upload',
     import:'Task import',
     dataFlowExport:'Export',
     uploadOK:'Upload successful',
@@ -175,6 +175,8 @@ const en = {
     enterFilterTable: 'Please enter the filter table content',
     nameTip: 'Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ',
 		button: {
+      submit: 'Submit',
+      viewConfig: 'View node configuration',
 			setting: 'Setting',
 			logs: 'Logs',
       preview: 'Data Trace',

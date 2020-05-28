@@ -1,21 +1,26 @@
 <template>
 	<div class="e-job-monitor">
 <!--		<el-button class="e-job-monitor-btn" size="mini" type="primary" @click="handleGoDataVerify">{{ $t('dataVerify.dataVerify') }} </el-button>-->
-		<el-form inline >
-			<el-form-item >
-				<el-select v-model="domValue" size="mini">
-					<el-option
-							key="all"
-							:label="$t('dataFlow.allNode')"
-							value="all">
-					</el-option>
-					<el-option
-							v-for="item in flow.stages"
-							:key="item.id"
-							:label="item.name"
-							:value="item.id">
-					</el-option>
-				</el-select>
+		<el-form >
+			<el-form-item class="e-form-item">
+				<el-col :span="19">
+          <el-select v-model="domValue" size="mini">
+            <el-option
+                key="all"
+                :label="$t('dataFlow.allNode')"
+                value="all">
+            </el-option>
+            <el-option
+                v-for="item in flow.stages"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="5">
+          <el-button class="e-button" type="primary" @click="onSubmit">{{$t('dataFlow.viewConfig')}}</el-button>
+        </el-col>
 			</el-form-item>
 		</el-form>
 		<div class="echartMain">
@@ -837,7 +842,14 @@
 		width: 100%;
 		padding: 5px 12px 10px;
 		box-sizing: border-box;
-		position: relative;
+    position: relative;
+    .e-form-item {
+      .e-button {
+        height: 30px;
+        line-height: 30px;
+        padding: 0 10px;
+      }
+    }
 		.e-job-monitor-btn{
 			position: absolute;
 			top: 15px;

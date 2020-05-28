@@ -30,7 +30,7 @@
 }
 
 .joint-widget.joint-theme-default[data-name="clear"]:after {
-	content: '\e69b';
+	content: '\ec7b';
 }
 .joint-widget.joint-theme-default[data-name="undo"]:after {
 	content: '\ec0b';

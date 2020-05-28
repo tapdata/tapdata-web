@@ -341,6 +341,12 @@
 .editor-container .editor .e-header .ui-input{
   padding: 0 6px;
 }
+.editor-container .editor .e-header .e-toolbar-container {
+  justify-content: center;
+}
+.editor-container .editor .e-header .e-toolbar-container .action-toolbar {
+  flex: none;
+}
 .nodeStye {
   width: 100%;
   height: 100%;
@@ -401,4 +407,30 @@
     overflow: auto;
   }
 
+}
+.headImg {
+  display: inline-block;
+  cursor: pointer;
+  .text {
+    font-size: 12px;
+    color: #666;
+  }
+}
+.round {
+  padding: 3px 10px;
+  border-radius: 20px;
+  background-color: #E9E9E9;
+  .iconfont {
+    font-size: 12px;
+  }
+}
+.round:hover {
+  background-color:#EDF8FC;
+  color: #48b6e2;
+  .text { color: #48b6e2;}
+}
+.round:active {
+  background-color:#48B6E2;
+  color: #fff;
+  .text { color: #fff;}
 }

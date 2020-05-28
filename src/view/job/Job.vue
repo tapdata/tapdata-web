@@ -1,7 +1,7 @@
 <template>
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
-			<el-tag
+			<!-- <el-tag
 					:type="
 						status === 'running' ? 'success' :
 						status === 'error' ? 'danger' :
@@ -10,16 +10,16 @@
 					size="small"
 					style="margin-right: 50px;"
 			>{{$t('dataFlow.state')}}: {{$t('dataFlow.status.' + status.replace(/ /g, '_'))}}
-			</el-tag>
-			<el-button
+			</el-tag> -->
+			<!-- <el-button
 					size="mini" type="default"
 					@click="reloadSchema">{{$t('dataFlow.button.reloadSchema')}}
-			</el-button>
-			<el-button
+			</el-button> -->
+			<!-- <el-button
 					v-if="['draft', 'paused', 'error'].includes(status)"
 					size="mini" type="default"
 					@click="showSetting">{{$t('dataFlow.button.setting')}}
-			</el-button>
+			</el-button> -->
 			<el-button
 					v-if="dataFlowId && 'draft' !== status"
 					size="mini" type="default"
@@ -27,11 +27,11 @@
 			</el-button>
 
 			<!-- editing debug -->
-			<el-button
+			<!-- <el-button
 					v-if="['paused', 'error', 'draft'].includes(status)"
 					size="mini" type="default"
 					@click="preview">{{$t('dataFlow.button.preview')}}
-			</el-button>
+			</el-button> -->
 
 			<!-- running debug -->
 			<el-button
@@ -65,13 +65,52 @@
 					size="mini" type="default"
 					@click="reset">{{$t('dataFlow.button.reset')}}
 			</el-button>
-			<el-button
+      <div class="headImg round" @click="save" v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)">
+        <span class="iconfont icon-yunduanshangchuan"></span>
+        <span class="text">{{$t('dataFlow.button.save')}}</span>
+      </div>
+      <!-- <div  class="headImg">
+        <span class="iconfont icon-gaojing1"></span>
+      </div> -->
+      <div  class="headImg" @click="preview" :title="$t('dataFlow.button.preview')">
+        <span class="iconfont icon-openeye"></span>
+      </div>
+      <div  class="headImg" @click="reloadSchema" :title="$t('dataFlow.button.reloadSchema')">
+        <span class="iconfont icon-yunshuaxin"></span>
+      </div>
+      <div  class="headImg round" 	@click="showSetting">
+        <span class="iconfont icon-shezhi"></span>
+        <span class="text">{{$t('dataFlow.button.quantitative')}} + {{$t('dataFlow.button.increment')}}</span>
+      </div>
+      <div  class="headImg round" @click="submitLayer">
+        <!-- <el-button type="info" class="iconfont icon-icon_fabu" size="mini" round>{{$t('dataFlow.button.submit')}}</el-button> -->
+        <span class="iconfont icon-icon_fabu"></span>
+        <span class="text">{{$t('dataFlow.button.submit')}}</span>
+      </div>
+
+
+			<!-- <el-button class="iconfont icon-yunduanshangchuan"
 					v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
-					size="mini" type="primary"
+					size="mini" type="text"
 					@click="save">{{$t('dataFlow.button.save')}}
-			</el-button>
+			</el-button> -->
 			<!-- <el-button size="mini" type="primary" @click="switchModel">Model</el-button> -->
 		</div>
+    <el-dialog :title="$t('dataFlow.submitConfirmation')" custom-class="dialogConfig" :visible.sync="dialogFormVisible">
+      <el-form :model="form" label-position="left">
+        <el-form-item :label="$t('dataFlow.taskName')">
+          <el-input class="e-input" v-model="form.taskName" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('dataFlow.implementationModalities')">
+          <el-input class="e-input" v-model="form.type" autocomplete="off" disabled></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">{{$t('message.cancel')}}</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">{{$t('dataFlow.submitOnly')}}</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">{{$t('dataFlow.submitExecute')}}</el-button>
+      </div>
+    </el-dialog>
 	</div>
 </template>
 
@@ -90,6 +129,11 @@
 		dataFlow: null,
 		data() {
 			return {
+        form:{
+          taskName: '',
+          type: this.$t('dataFlow.button.quantitative') + '+' + this.$t('dataFlow.button.increment')
+        },
+        dialogFormVisible: false,
 				// run model: editable,readonly
 				model: 'editable',
 
@@ -623,7 +667,13 @@
 					name = this.$route.query.name;
 				}
 				this.editor.showSetting(name);
-			},
+      },
+      /**
+       * show submit layer
+       */
+      submitLayer() {
+        this.dialogFormVisible = true;
+      },
 
 			/**
 			 * show logs button handler
@@ -858,5 +908,27 @@
 </script>
 
 <style lang="less">
-	@import "../../editor/style/editor";
+  @import "../../editor/style/editor";
+  .dialogConfig {
+    .el-dialog__header {
+      background:rgba(250,250,250,1);
+      border:1px solid rgba(222, 222, 228, 1);
+    }
+    .e-input {
+      width: calc(100% - 100px);
+      height: 30px;
+      line-height: 30px;
+      input {
+        height: 30px;
+        line-height: 30px;
+      }
+    }
+    .el-form-item__content {
+      line-height: 30px;
+    }
+    .el-form--label-left .el-form-item__label {
+      line-height: 30px;
+      font-size: 14px;
+    }
+  }
 </style>
