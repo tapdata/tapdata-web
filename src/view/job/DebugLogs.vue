@@ -168,8 +168,8 @@
 							};
 							for (let i = logCount - 1; i >= 0; i--) {
 								let item = res.data[i];
-								item.date = item.date ? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : '';
-								item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
+								item.date = item.date ? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss.SSS') : '';
+								item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss.SSS') : '';
 
 								logContainer[prepend ? 'prepend' : 'append'](
 									$(`<li>
