@@ -18,7 +18,7 @@
 						<i class="e-primary el-icon-warning-outline"></i>
 					</el-tooltip>
 				</template>
-				<JsEditor :code.sync="model.expression"></JsEditor>
+				<JsEditor :code.sync="model.expression" :width.sync="width"></JsEditor>
 				<!--				<el-input-->
 				<!--					type="textarea"-->
 				<!--					v-model="model.expression"-->
@@ -135,6 +135,7 @@
 
 <script>
 import JsEditor from "../../../components/JsEditor";
+import {EditorEventType} from "../../lib/events";
 export default {
 	name: "DataFilterAttribute",
 	components: { JsEditor },
@@ -145,7 +146,8 @@ export default {
 				name: "Row Filter",
 				expression: "//code",
 				action: "retain" // discard,retain
-			}
+			},
+			width:'500'
 		};
 	},
 
@@ -157,7 +159,12 @@ export default {
 			}
 		}
 	},
-
+	mounted() {
+		let self = this;
+		self.$on(EditorEventType.RESIZE, width => {
+			self.width = width;
+		});
+	},
 	methods: {
 		setData(data) {
 			if (data) {

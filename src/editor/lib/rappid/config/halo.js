@@ -5,7 +5,7 @@
  */
 export const haloConfig = {
 	handles: [
-		{
+		/*{
 			name: "remove",
 			position: "nw",
 			events: { pointerdown: "removeElement" },
@@ -65,6 +65,8 @@ export const haloConfig = {
 				}
 			}
 		},
+		*/
+
 		{
 			name: "link",
 			position: "e",
