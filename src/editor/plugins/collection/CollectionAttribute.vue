@@ -136,9 +136,9 @@ export default {
 										meta_type: "collection",
 										fields: []
 								  };
-						/*let fields = schema.fields || [];
+						/* let fields = schema.fields || [];
 							let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
-							if( primaryKeys) this.model.primaryKeys = primaryKeys;*/
+							if( primaryKeys) this.model.primaryKeys = primaryKeys; */
 						this.$emit("schemaChange", _.cloneDeep(schema));
 					}
 				}

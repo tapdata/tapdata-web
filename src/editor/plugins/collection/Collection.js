@@ -76,7 +76,7 @@ export const collectionConfig = {
 				return !["app.Database"].includes(sourceCell.get("type"));
 			}
 		}
-		//staticProperties: {}
+		// staticProperties: {}
 	},
 
 	styleFormConfig: {
@@ -191,7 +191,7 @@ export const collectionConfig = {
 		/**
 		 * 界面显示的分组名称
 		 */
-		//groupLabel: '',
+		// groupLabel: '',
 
 		size: { width: 5, height: 4 },
 		attrs: {

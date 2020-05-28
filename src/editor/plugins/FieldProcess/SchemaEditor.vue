@@ -199,7 +199,8 @@
 		>
 			<el-form>
 				<el-form-item>
-					<el-input type="textarea" v-model="scriptDialog.script" rows="10"></el-input>
+					<JsEditor :code.sync="scriptDialog.script"></JsEditor>
+					<!--					<el-input type="textarea" v-model="scriptDialog.script" rows="10"></el-input>-->
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -215,6 +216,7 @@ import $ from "jquery";
 import log from "../../../log";
 import _ from "lodash";
 import { uuid } from "../../util/Schema";
+import JsEditor from "../../../components/JsEditor";
 
 const REMOVE_OPS_TPL = {
 	id: "",
@@ -254,6 +256,7 @@ const SCRIPT_TPL = {
 
 export default {
 	name: "SchemaEditor",
+	components: { JsEditor },
 	props: {
 		width: {
 			type: Number,

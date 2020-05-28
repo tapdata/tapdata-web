@@ -124,7 +124,7 @@ export default {
 	data() {
 		return {
 			dpx: "QPS",
-			selectFlow: "flow_", //选中节点
+			selectFlow: "flow_", // 选中节点
 			speed: "",
 			time: "",
 			domValue: "all",
@@ -161,7 +161,7 @@ export default {
 					axisLine: {
 						lineStyle: {
 							color: "#48b6e2",
-							width: 2 //这里是为了突出显示加上的
+							width: 2 // 这里是为了突出显示加上的
 						}
 					},
 					data: []
@@ -203,7 +203,7 @@ export default {
 							color: "#61a569"
 						},
 						lineStyle: {
-							color: "#8cd5c2" //改变折线点的颜色
+							color: "#8cd5c2" // 改变折线点的颜色
 						}
 					}
 				]
@@ -230,7 +230,7 @@ export default {
 					axisLine: {
 						lineStyle: {
 							color: "#fb8e00",
-							width: 2 //这里是为了突出显示加上的
+							width: 2 // 这里是为了突出显示加上的
 						}
 					},
 					data: []
@@ -239,7 +239,7 @@ export default {
 					axisLine: {
 						lineStyle: {
 							color: "#fb8e00",
-							width: 2 //这里是为了突出显示加上的
+							width: 2 // 这里是为了突出显示加上的
 						}
 					},
 					axisLabel: {
@@ -321,16 +321,16 @@ export default {
 				]
 			},
 
-			dataScreening: null, //数据总览的echart数据
-			screeningObj: null, //数据总览的头
+			dataScreening: null, // 数据总览的echart数据
+			screeningObj: null, // 数据总览的头
 
 			inputOutputObj: null,
 			transfObj: null,
 			storeData: null,
 			replicateObj: null,
 			throughput_time: [],
-			inputAverage: "", //输入平均值
-			outputAverage: "", //输出平均值
+			inputAverage: "", // 输入平均值
+			outputAverage: "", // 输出平均值
 			currentTime: "", // 当前耗时
 			ransfTime: "", // 传输耗时
 			throughputTime: "",
@@ -342,10 +342,10 @@ export default {
 			replicateType: "",
 			dataOverviewType: "",
 			selectId: "",
-			timer: null, //定时器
-			timer1: null, //定时器
-			timer2: null, //定时器
-			timer3: null, //定时器
+			timer: null, // 定时器
+			timer1: null, // 定时器
+			timer2: null, // 定时器
+			timer3: null, // 定时器
 			intervalThroughputpop: 20000,
 			intervalTransf: 20000,
 			intervalReplicate: 20000
@@ -487,7 +487,7 @@ export default {
 			this.getApiData(params, "throughput", data);
 		},
 
-		//获取返回的单位
+		// 获取返回的单位
 		getTwoRadio(data, type) {
 			this.dataOverviewType = type;
 			this.dataOverviewAll = data;
@@ -499,7 +499,7 @@ export default {
 			this.getApiData(params, type, data);
 		},
 
-		//获取返回的时间
+		// 获取返回的时间
 		getTime(data, type) {
 			let params;
 			if (type === "transf") {
@@ -548,7 +548,7 @@ export default {
 			this.getApiData(params, type, data);
 		},
 
-		//获取数据
+		// 获取数据
 		async getApiData(params, type, ele) {
 			if (this.domValue === "all") {
 				params["dataFlowId"] = this.flow.id;
@@ -614,7 +614,7 @@ export default {
 				});
 		},
 
-		//数据处理
+		// 数据处理
 		dataProcessing(data, type, ele) {
 			let timeList = [],
 				inputSizeList = [],
@@ -640,7 +640,7 @@ export default {
 				}
 			} else if (type === "throughput") {
 				data.forEach(item => {
-					timeList.push(item.t); //时间
+					timeList.push(item.t); // 时间
 					inputSizeList.push(item.inputSize);
 					outputSizeList.push(item.outputSize);
 					inputCountList.push(item.inputCount);
@@ -660,7 +660,7 @@ export default {
 				}
 			} else {
 				data.forEach(item => {
-					timeList.push(item.t); //时间
+					timeList.push(item.t); // 时间
 					dataList.push(item.d);
 				});
 				if (type === "transf") {
@@ -835,14 +835,14 @@ export default {
 			//   appendData();
 			// }
 		},
-		//跳转到数据校验页面
+		// 跳转到数据校验页面
 		handleGoDataVerifyhandleGoDataVerify() {
 			this.editor.showDataVerify();
 		}
 	},
 
 	destroyed() {
-		//清除定时器
+		// 清除定时器
 		clearInterval(this.timer);
 		this.timer = null;
 	}

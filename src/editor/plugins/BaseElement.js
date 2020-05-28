@@ -57,7 +57,7 @@ export const baseElementConfig = {
 			size: { width: 160, height: 36 },
 			attrs: {
 				image: {
-					//xlinkHref: 'static/editor/table.svg',
+					// xlinkHref: 'static/editor/table.svg',
 					refWidth: "19%",
 					refHeight: "82%",
 					refX: "-4%",
@@ -228,9 +228,9 @@ export const baseElementConfig = {
 									.map(f => f.field_name)
 									.join(",");
 								joinTable.tableName = schema && schema.table_name;
-								/*if( !joinTable.joinPath && ['merge_embed', 'update'].includes(joinTable.joinType)){
+								/* if( !joinTable.joinPath && ['merge_embed', 'update'].includes(joinTable.joinType)){
 										joinTable.joinPath = joinTable.tableName;
-									}*/
+									} */
 							}
 							let parentDataNodes =
 								typeof sourceCell.getFirstDataNode === "function" ? sourceCell.getFirstDataNode() : [];
@@ -339,6 +339,6 @@ export const baseElementConfig = {
 			}
 		}
 
-		//staticProperties: {}
+		// staticProperties: {}
 	}
 };

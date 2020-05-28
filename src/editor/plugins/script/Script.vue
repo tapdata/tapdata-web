@@ -25,22 +25,21 @@
 					</el-select>
 				</el-form-item>
 
-				<el-form-item
-					:required="true"
-					:label="$t('editor.cell.processor.script.form.script.label')"
-					size="mini"
-				>
-					<el-input type="textarea" rows="10" v-model="model.script"></el-input>
-				</el-form-item>
+				<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.script.label')" size="mini">
+			<JsEditor :code.sync="model.script"></JsEditor>
+			<!--			<el-input type="textarea" rows="10" v-model="model.script"></el-input>-->
+		</el-form-item>
 			</el-form>
 		</div>
 	</div>
 </template>
 
 <script>
+import JsEditor from "../../../components/JsEditor";
+import log from "../../../log";
 export default {
 	name: "Script",
-
+	components: { JsEditor },
 	data() {
 		return {
 			scriptTypes: [
@@ -88,6 +87,7 @@ export default {
 			}
 		},
 		getData() {
+			log("model script", this.model);
 			return JSON.parse(JSON.stringify(this.model));
 		}
 	}

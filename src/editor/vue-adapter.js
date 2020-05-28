@@ -12,7 +12,7 @@ import { FORM_DATA_KEY } from "./constants";
 import i18n from "../i18n/i18n";
 
 export const vueAdapter = {};
-//const privateMap = new WeakMap();
+// const privateMap = new WeakMap();
 
 export class VueAdapter extends BaseObject {
 	vm = null;

@@ -59,7 +59,7 @@
 <script>
 import factory from "../../api/factory";
 import log from "../../log";
-//import Cookie from 'tiny-cookie';
+// import Cookie from 'tiny-cookie';
 
 const MetadataInstances = factory("MetadataInstances");
 
@@ -96,7 +96,7 @@ export default {
 	},
 	mounted() {
 		this.loadDataBase();
-		//this.filterText = Cookie.get('tableSelector') ? Cookie.get('tableSelector'):'';
+		// this.filterText = Cookie.get('tableSelector') ? Cookie.get('tableSelector'):'';
 	},
 	// watch: {
 	// 	filterText(val) {
@@ -257,7 +257,7 @@ export default {
 					}
 				})
 				.catch(e => {
-					//TODO: alert error
+					// TODO: alert error
 				});
 		},
 		handleDefault_expanded() {
