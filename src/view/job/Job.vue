@@ -782,7 +782,7 @@
                     node.form_data = {
                       type:v.type,
                       name: v.name,
-                      aggregations: v.scripts,
+                      aggregations: v.aggregations,
                     };
                     node.aggregations = v.aggregations;
                 }else if(['js_processor'].includes(v.type)){

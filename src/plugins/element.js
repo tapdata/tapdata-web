@@ -42,9 +42,10 @@ import {
   DropdownItem,
   DropdownMenu,
   Tag,
-  Tooltip, Upload,
+  Tooltip, Upload, InputNumber,
 } from 'element-ui';
 
+Vue.component(InputNumber.name, InputNumber);
 Vue.component(Upload.name, Upload);
 Vue.component(Image.name, Image);
 Vue.component(Tabs.name, Tabs);

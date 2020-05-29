@@ -32,7 +32,10 @@
 						v-model="model.primaryKeys"
 						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"  size="mini"></el-input>
 			</el-form-item>
-
+      <el-form-item required :label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
+                    v-if="isSourceDataNode">
+        <el-input-number v-model="model.initialSyncOrder" controls-position="right"  :min="1" size="mini"></el-input-number>
+      </el-form-item>
 			<el-form-item required :label="$t('editor.cell.data_node.collection.form.dropTable.label')" v-if="!isSourceDataNode">
 				<el-select
 						v-model="model.dropTable" size="mini">
@@ -159,7 +162,8 @@
 					dropTable: false,
 					type: 'collection',
 					primaryKeys: '',
-					filter: ''
+					filter: '',
+          initialSyncOrder:1,
 				},
 
 				mergedSchema: null
