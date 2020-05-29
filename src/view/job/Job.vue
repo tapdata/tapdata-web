@@ -87,6 +87,7 @@
 				>{{ $t("dataFlow.button.save") }}
 			</el-button>
 			<el-autocomplete
+				v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
 				class="inline-input"
 				v-model="state1"
 				size="mini"
@@ -923,7 +924,7 @@ export default {
 			let dataCellName = [];
 			dataCells.forEach(cell => {
 				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
-				let tableName= { "value": formData.tableName ,'cell':cell};
+				let tableName= { "value": formData.tableName || formData.name,'cell':cell};
 				dataCellName.push(tableName);
 			});
 			var restaurants = dataCellName

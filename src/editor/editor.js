@@ -640,9 +640,9 @@ export default class Editor extends BaseObject {
 			.filter(cell => {
 				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
 				let type = cell.get("type");
-				let connectionIdFieldName = this.mapping[type];
-				return formData && connectionIdFieldName && formData[connectionIdFieldName];
+				return formData  && type != 'app.Link';
 			});
+		console.log(dataCells)
 		return dataCells;
 	}
 	destroy() {
