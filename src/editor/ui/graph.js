@@ -63,6 +63,8 @@ export default class Graph extends Component {
 			"add",
 			function(cell, collection, opt) {
 				if (opt.stencil) self.createInspector(cell);
+
+				self.emit(EditorEventType.ADD_CELL);
 			},
 			this
 		);
@@ -151,6 +153,7 @@ export default class Graph extends Component {
 				// if( model.isLink() ){
 				self.updateOutputSchema(model);
 				// }
+				self.emit(EditorEventType.REMOVE_CELL);
 			}
 			/* add: (cell) => {
 				log('Graph.graph.add');
@@ -817,6 +820,10 @@ export default class Graph extends Component {
 			this.toolbar.getWidgetByName("clear").disable();
 			setTimeout(() => this.paperScroller.centerContent(), 0);
 		}
+	}
+	selectionPosition(cell){
+		this.paperScroller.center();
+		this.selection.collection.add(cell);
 	}
 
 	getData() {

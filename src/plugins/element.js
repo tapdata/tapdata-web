@@ -42,9 +42,11 @@ import {
 	DropdownMenu,
 	Tag,
 	Tooltip,
-	Upload
+	Upload,
+	Autocomplete
 } from "element-ui";
 
+Vue.component(Autocomplete.name, Autocomplete);
 Vue.component(Upload.name, Upload);
 Vue.component(Image.name, Image);
 Vue.component(Tabs.name, Tabs);

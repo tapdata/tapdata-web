@@ -634,6 +634,17 @@ export default class Editor extends BaseObject {
 			}
 		});
 	}
+	getAllCells(){
+		let dataCells = this.graph.graph
+			.getCells() //.filter(cell => cell.isDataNode && cell.isDataNode())
+			.filter(cell => {
+				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
+				let type = cell.get("type");
+				let connectionIdFieldName = this.mapping[type];
+				return formData && connectionIdFieldName && formData[connectionIdFieldName];
+			});
+		return dataCells;
+	}
 	destroy() {
 		this.emit(EditorEventType.BEFORE_DESTROY, this);
 		this.ui.destroy();

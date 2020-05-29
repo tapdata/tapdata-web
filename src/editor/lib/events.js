@@ -15,5 +15,7 @@ export const EditorEventType = {
 	SELECTED: "selected",
 	DATA_FLOW_UPDATED: "dataFlow:updated",
 	BEFORE_DESTROY: "beforeDestroy",
-	SELECTED_STAGE: "selected:stage"
+	SELECTED_STAGE: "selected:stage",
+	ADD_CELL: "addCell",
+	REMOVE_CELL: "removeCell"
 };

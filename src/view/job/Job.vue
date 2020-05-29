@@ -86,6 +86,16 @@
 				@click="save"
 				>{{ $t("dataFlow.button.save") }}
 			</el-button>
+			<el-autocomplete
+				class="inline-input"
+				v-model="state1"
+				size="mini"
+				:fetch-suggestions="querySearch"
+				placeholder="查找节点"
+				@select="handleSearchNode"
+				suffix-icon="el-icon-search"
+			></el-autocomplete>
+<!--			<el-input size="mini" style="width: 100px" @change="handleSearchNode"/>-->
 			<!-- <el-button size="mini" type="primary" @click="switchModel">Model</el-button> -->
 		</div>
 	</div>
@@ -115,7 +125,8 @@ export default {
 
 			loading: true,
 			disabledDataVerify: false,
-			cells: []
+			cells: [],
+			state1:''
 		};
 	},
 
@@ -906,6 +917,28 @@ export default {
 					}
 				});
 			}
+		},
+		querySearch(queryString, cb) {
+			let dataCells = this.editor.getAllCells();
+			let dataCellName = [];
+			dataCells.forEach(cell => {
+				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
+				let tableName= { "value": formData.tableName ,'cell':cell};
+				dataCellName.push(tableName);
+			});
+			var restaurants = dataCellName
+			var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+			// 调用 callback 返回建议列表的数据
+			cb(results);
+		},
+		createFilter(queryString) {
+			return (restaurant) => {
+				return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+			};
+		},
+		handleSearchNode(item){
+			//选中当前节点
+			this.editor.graph.selectionPosition(item.cell);
 		}
 	}
 };
