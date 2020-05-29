@@ -177,6 +177,7 @@ const en = {
 		button: {
       submit: 'Submit',
       viewConfig: 'View node configuration',
+      viewMonitoring: 'View monitoring data',
 			setting: 'Setting',
 			logs: 'Logs',
       preview: 'Data preview',

@@ -181,6 +181,7 @@ const cn = {
 		button: {
       submit: '提交',
       viewConfig: '查看节点配置',
+      viewMonitoring: '查看监控数据',
 			setting: '设置',
 			logs: '日志',
 			preview: '数据预览',

@@ -177,6 +177,7 @@ const tc = {
 		button: {
       submit: '提交',
       viewConfig: '查看節點配置',
+      viewMonitoring: '查看監控數據',
 			setting: '設置',
 			logs: '日誌',
 			preview: '數據預覽',

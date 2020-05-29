@@ -65,7 +65,6 @@ export default class Graph extends Component{
 		}, this);
 
     this.commandManager = new joint.dia.CommandManager({ graph: graph });
-
     this.commandManager.on('stack', this.changeCommandManager);
 
 		const paper = this.paper = new joint.dia.Paper({
@@ -95,8 +94,7 @@ export default class Graph extends Component{
 						}
 					}
 				}
-      },
-
+			},
 			validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
 
 				// don't allow loop links
@@ -179,7 +177,6 @@ export default class Graph extends Component{
 
   changeCommandManager() {
     let  isMove = true;
-    console.log(isMove,'isMove')
     return isMove;
   }
 
@@ -275,7 +272,7 @@ export default class Graph extends Component{
 			layout: {
 				columnWidth: 70,
 				columns: 3,
-				rowHeight: 49,
+				rowHeight: 45,
 			},
 			/*search: {
 				'*': ['type', 'attrs/text/text', 'attrs/root/dataTooltip', 'attrs/label/text'],
@@ -654,8 +651,7 @@ export default class Graph extends Component{
 			}
 
 		}, this);
-  }
-
+	}
 
 	initTooltips() {
 
@@ -728,6 +724,7 @@ export default class Graph extends Component{
 	}
 
 	layoutDirectedGraph() {
+
 		joint.layout.DirectedGraph.layout(this.graph, {
 			setLinkVertices: true,
 			rankDir: 'LR',
@@ -798,12 +795,7 @@ export default class Graph extends Component{
 			this.toolbar.getWidgetByName('clear').disable();
 			setTimeout(() => this.paperScroller.centerContent(), 0);
 		}
-  }
-
-  selectionPosition(cell){
-    this.paperScroller.center();
-    this.selection.collection.add(cell);
-  }
+	}
 
 	getData(){
 		return this.graph.toJSON();
