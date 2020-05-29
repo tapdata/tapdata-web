@@ -180,6 +180,11 @@ export default class Graph extends Component{
     return isMove;
   }
 
+  selectionPosition(cell){
+    this.paperScroller.center();
+    this.selection.collection.add(cell);
+  }
+
 	isAcyclic() {
 		let acyclic = isAcyclic(this.graph.toGraphLib());
 		log('Graph.link.connect.isAcyclic', acyclic);

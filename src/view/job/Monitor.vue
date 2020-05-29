@@ -374,10 +374,10 @@
 		},
 
 		mounted() {
-      this.editor = editor({
-				container: $('.editor-container'),
-				actionBarEl: $('.editor-container .action-buttons')
-			});
+      // this.editor = editor({
+			// 	container: $('.editor-container'),
+			// 	actionBarEl: $('.editor-container .action-buttons')
+			// });
 			this.$on(EditorEventType.SELECTED_STAGE, (selectStage) => {
 				this.domValue = selectStage ? selectStage.id : 'all';
 			});
@@ -456,15 +456,42 @@
 		},
 
 		methods: {
+      getAllCellsNode(queryString) {
+        let dataCells = this.editor.getAllCells();
+        let dataCellName = [];
+        dataCells.forEach(cell => {
+          let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
+          let tableName= {"value": formData.tableName ,'cell':cell};
+          dataCellName.push(tableName);
+        });
+        var restaurants = dataCellName;
+        var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+        // 调用 callback 返回建议列表的数据
+        return results;
+      },
+      createFilter(queryString) {
+        return (restaurant) => {
+          return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+        };
+      },
       /**
        * 查看节点数据
        */
       seeNodeData() {
+        // let dataCells = this.editor.showNodeConfig();
+        let result = this.getAllCellsNode();
+        let selectCell = null;
+        result.forEach(item => {
+          if(this.domValue === item.cell.id) {
+            selectCell = item.cell;
+          }
+        });
         if(this.domValue && this.domValue !=='all') {
-          console.log("22222222",this.domValue);
-          this.editor.graph.selectionPosition(this.domValue);
+          console.log("22222222",this.domValue,this.flow,selectCell);
+          this.editor.graph.selectionPosition(selectCell);
         }
       },
+
       // 输入输出获取数据
 			getSpeed(data, time) {
 				this.isThroughputAll = data;

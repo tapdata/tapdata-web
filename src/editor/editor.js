@@ -559,7 +559,19 @@ export default class Editor extends BaseObject {
 		}
 
 		return true;
-	}
+  }
+
+  getAllCells(){
+    let dataCells=this.graph.graph.getCells().filter(cell=>{
+    let formData=typeof cell.getFormData==="function"?cell.getFormData():null;
+    let type=cell.get("type");
+    let connectionIdFieldName=this.mapping[type];
+    return formData&&connectionIdFieldName&&formData[connectionIdFieldName];
+  });
+    log("editor.getCells",this.graph.graph.getCells());
+    return dataCells;
+  }
+
 
 	/**
 	 * reload schema
