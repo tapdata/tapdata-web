@@ -276,6 +276,9 @@ const cn = {
 							keep: "保持已存在的数据",
 							remove: "运行前删除已存在的数据"
 						},
+            initialSyncOrder: {
+              keep: '初始化节点顺序',
+            },
 						filter: {
 							label: "过滤条件",
 							placeholder: "过滤条件(Mongo Query Filter Document)",

@@ -280,6 +280,9 @@ const en = {
 							keep: "Keep existing data",
 							remove: "Remove exists data at before sync"
 						},
+            initialSyncOrder: {
+              keep: 'initial Sync Order',
+            },
 						filter: {
 							label: "Filter",
 							placeholder: "Mongo Query Filter Document",

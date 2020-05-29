@@ -278,6 +278,9 @@ const tc = {
 							keep: "保持已存在的數據",
 							remove: "運行前刪除已存在的數據"
 						},
+            initialSyncOrder: {
+              keep: '初始化節點順序',
+            },
 						filter: {
 							label: "過濾條件",
 							placeholder: "過濾條件(Mongo Query Filter Document)",
