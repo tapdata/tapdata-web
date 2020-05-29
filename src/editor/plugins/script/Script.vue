@@ -31,10 +31,11 @@
 					size="mini"
 				>
 					<JsEditor :code.sync="model.script" ref="jsEditor" :width.sync="width"></JsEditor>
-					<!--						<el-input type="textarea" rows="10" v-model="model.script"></el-input>-->
 				</el-form-item>
 			</el-form>
+			<el-button class="btn-debug" type="primary" @click="showDebug">连接测试</el-button>
 		</div>
+		<Debug ref="debug"></Debug>
 	</div>
 </template>
 
@@ -42,9 +43,13 @@
 import JsEditor from "../../../components/JsEditor";
 import log from "../../../log";
 import { EditorEventType } from "../../lib/events";
+import Debug from "./Debug";
 export default {
 	name: "Script",
-	components: { JsEditor },
+	components: {
+		JsEditor,
+		Debug
+	},
 	data() {
 		return {
 			scriptTypes: [
@@ -80,6 +85,7 @@ export default {
 		let self = this;
 		self.$on(EditorEventType.RESIZE, width => {
 			self.width = width;
+			this.$refs.debug.resize(width);
 		});
 	},
 	watch: {
@@ -100,7 +106,16 @@ export default {
 		},
 		getData() {
 			return JSON.parse(JSON.stringify(this.model));
+		},
+		showDebug() {
+			this.$refs.debug.show();
 		}
 	}
 };
 </script>
+
+<style lang="less" scoped>
+.btn-debug {
+	float: right;
+}
+</style>
