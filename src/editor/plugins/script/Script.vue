@@ -33,7 +33,7 @@
 					<JsEditor :code.sync="model.script" ref="jsEditor" :width.sync="width"></JsEditor>
 				</el-form-item>
 			</el-form>
-			<el-button class="btn-debug" type="primary" @click="showDebug">连接测试</el-button>
+			<el-button class="btn-debug" type="primary" size="mini" @click="showDebug">连接测试</el-button>
 		</div>
 		<Debug ref="debug"></Debug>
 	</div>
