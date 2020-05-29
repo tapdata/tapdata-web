@@ -179,7 +179,7 @@ const tc = {
       viewConfig: '查看節點配置',
 			setting: '設置',
 			logs: '日誌',
-			preview: '預覽',
+			preview: '數據預覽',
 			capture: '數據檢視',
 			stop_capture: '停止檢視',
 			start: '啟動',
@@ -187,7 +187,10 @@ const tc = {
 			force_stop: '強制停止',
 			reset: '重置',
 			save: '保存',
-			reloadSchema:'重新加載'
+      reloadSchema:'刷新schema',
+      debug: 'debug測試',
+      quantitative: '定量',
+      increment: '增量',
 		},
 		save_before_running: '請先保存再運行',
 		reset_job: {
@@ -514,13 +517,13 @@ const tc = {
 			},
 			toolbar: {
 				undo: {
-					tip: '重做'
+          tip: '撤銷'
 				},
 				redo: {
-					tip: '撤銷'
+          tip: '重做'
 				},
 				clear_paper: {
-					tip: '清空'
+					tip: '清空畫布'
 				},
 				export_svg: {
 					tip: '導出SVG'
@@ -538,7 +541,7 @@ const tc = {
 					tip: '置前'
 				},
 				layout: {
-					tip: '自動佈局'
+					tip: '自動對齊'
 				},
 				zoom_to_fit: {
 					tip: '填充可視區域'
@@ -553,7 +556,7 @@ const tc = {
 					tip: '網格大小'
 				},
 				fullscreen: {
-					tip: '切換全屏'
+					tip: '全屏'
 				}
 			},
 		},

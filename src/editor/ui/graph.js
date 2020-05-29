@@ -64,7 +64,9 @@ export default class Graph extends Component{
 			if (opt.stencil) self.createInspector(cell);
 		}, this);
 
-		this.commandManager = new joint.dia.CommandManager({ graph: graph });
+    this.commandManager = new joint.dia.CommandManager({ graph: graph });
+
+    this.commandManager.on('stack', this.changeCommandManager);
 
 		const paper = this.paper = new joint.dia.Paper({
 			model: graph,
@@ -93,7 +95,8 @@ export default class Graph extends Component{
 						}
 					}
 				}
-			},
+      },
+
 			validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
 
 				// don't allow loop links
@@ -172,7 +175,13 @@ export default class Graph extends Component{
 		this.el = paperScroller.el;
 		this.editor.getUI().add(this);
 		paperScroller.render().center();
-	}
+  }
+
+  changeCommandManager() {
+    let  isMove = true;
+    console.log(isMove,'isMove')
+    return isMove;
+  }
 
 	isAcyclic() {
 		let acyclic = isAcyclic(this.graph.toGraphLib());
@@ -645,7 +654,8 @@ export default class Graph extends Component{
 			}
 
 		}, this);
-	}
+  }
+
 
 	initTooltips() {
 
@@ -718,7 +728,6 @@ export default class Graph extends Component{
 	}
 
 	layoutDirectedGraph() {
-
 		joint.layout.DirectedGraph.layout(this.graph, {
 			setLinkVertices: true,
 			rankDir: 'LR',
@@ -789,7 +798,12 @@ export default class Graph extends Component{
 			this.toolbar.getWidgetByName('clear').disable();
 			setTimeout(() => this.paperScroller.centerContent(), 0);
 		}
-	}
+  }
+
+  selectionPosition(cell){
+    this.paperScroller.center();
+    this.selection.collection.add(cell);
+  }
 
 	getData(){
 		return this.graph.toJSON();

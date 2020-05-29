@@ -179,7 +179,7 @@ const en = {
       viewConfig: 'View node configuration',
 			setting: 'Setting',
 			logs: 'Logs',
-      preview: 'Data Trace',
+      preview: 'Data preview',
       capture: 'Data Trace',
       stop_capture: 'Stop Trace',
 			start: 'Start',
@@ -187,7 +187,10 @@ const en = {
 			force_stop: 'Force Stop',
 			reset: 'Reset',
 			save: 'Save',
-			reloadSchema:'Reload Schema'
+      reloadSchema:'Reload Schema',
+      debug: 'Debug Test',
+      quantitative: 'Quantitative',
+      increment: 'Increment',
 		},
 		save_before_running: 'Please save the task before running',
 		reset_job: {
@@ -537,7 +540,7 @@ const en = {
 					tip: 'Bring Object to Front'
 				},
 				layout: {
-					tip: 'Auto-layout Graph'
+					tip: 'Automatic alignment'
 				},
 				zoom_to_fit: {
 					tip: 'Zoom To Fit'

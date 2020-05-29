@@ -344,8 +344,15 @@
 .editor-container .editor .e-header .e-toolbar-container {
   justify-content: center;
 }
+.editor-container .editor .e-header .e-toolbar-container .graph-toolbar,
 .editor-container .editor .e-header .e-toolbar-container .action-toolbar {
-  flex: none;
+  flex: 1;
+}
+.editor-container .editor .e-header .e-toolbar-container .graph-toolbar .joint-toolbar {
+  float: right;
+}
+.editor-container .editor .e-header .e-toolbar-container .action-toolbar .action-buttons{
+  text-align: left;
 }
 .nodeStye {
   width: 100%;
@@ -410,6 +417,7 @@
 }
 .headImg {
   display: inline-block;
+  padding: 0 5px;
   cursor: pointer;
   .text {
     font-size: 12px;

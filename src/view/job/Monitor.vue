@@ -19,7 +19,7 @@
           </el-select>
         </el-col>
         <el-col :span="5">
-          <el-button class="e-button" type="primary" @click="onSubmit">{{$t('dataFlow.viewConfig')}}</el-button>
+          <el-button class="e-button" type="primary" @click="seeNodeData">{{$t('dataFlow.button.viewConfig')}}</el-button>
         </el-col>
 			</el-form-item>
 		</el-form>
@@ -93,12 +93,13 @@
 	</div>
 </template>
 <script>
+  import $ from 'jquery';
 	import echartHead from './components/echartHead';
 	import echartsCompinent from '../../components/echartsCompinent';
 	import shaftlessEchart from '../../components/shaftlessEchart';
-	import factory from '../../api/factory';
-	import {EditorEventType} from "../../editor/lib/events";
-
+  import factory from '../../api/factory';
+  import editor from '../../editor/index';
+  import {EditorEventType} from "../../editor/lib/events";
 
 	const DataFlowInsights = factory('DataFlowInsights');
 	let intervalTime = 5000;
@@ -373,6 +374,10 @@
 		},
 
 		mounted() {
+      this.editor = editor({
+				container: $('.editor-container'),
+				actionBarEl: $('.editor-container .action-buttons')
+			});
 			this.$on(EditorEventType.SELECTED_STAGE, (selectStage) => {
 				this.domValue = selectStage ? selectStage.id : 'all';
 			});
@@ -451,7 +456,16 @@
 		},
 
 		methods: {
-			// 输入输出获取数据
+      /**
+       * 查看节点数据
+       */
+      seeNodeData() {
+        if(this.domValue && this.domValue !=='all') {
+          console.log("22222222",this.domValue);
+          this.editor.graph.selectionPosition(this.domValue);
+        }
+      },
+      // 输入输出获取数据
 			getSpeed(data, time) {
 				this.isThroughputAll = data;
 				this.throughputTime = time;

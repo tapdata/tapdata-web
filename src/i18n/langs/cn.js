@@ -183,7 +183,7 @@ const cn = {
       viewConfig: '查看节点配置',
 			setting: '设置',
 			logs: '日志',
-			preview: '预览',
+			preview: '数据预览',
 			capture: '数据检视',
 			stop_capture: '停止检视',
 			start: '启动',
@@ -191,9 +191,10 @@ const cn = {
 			force_stop: '强制停止',
 			reset: '重置',
 			save: '保存',
-      reloadSchema:'重新加载',
+      reloadSchema:'刷新schema',
+      debug: 'debug测试',
       quantitative: '定量',
-      increment: '增量'
+      increment: '增量',
 		},
 		save_before_running: '请先保存再运行',
 		reset_job: {
@@ -521,13 +522,13 @@ const cn = {
 			},
 			toolbar: {
 				undo: {
-					tip: '重做'
+          tip: '撤销'
 				},
 				redo: {
-					tip: '撤销'
+          tip: '重做'
 				},
 				clear_paper: {
-					tip: '清空'
+					tip: '清空画布'
 				},
 				export_svg: {
 					tip: '导出SVG'
@@ -545,7 +546,7 @@ const cn = {
 					tip: '置前'
 				},
 				layout: {
-					tip: '自动布局'
+					tip: '自动对齐'
 				},
 				zoom_to_fit: {
 					tip: '填充可视区域'
@@ -560,7 +561,7 @@ const cn = {
 					tip: '网格大小'
 				},
 				fullscreen: {
-					tip: '切换全屏'
+					tip: '全屏'
 				}
 			},
 		},

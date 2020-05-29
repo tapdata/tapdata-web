@@ -65,24 +65,27 @@
 					size="mini" type="default"
 					@click="reset">{{$t('dataFlow.button.reset')}}
 			</el-button>
-      <div class="headImg round" @click="save" v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)">
+      <div class="headImg" @click="save" v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)">
         <span class="iconfont icon-yunduanshangchuan"></span>
         <span class="text">{{$t('dataFlow.button.save')}}</span>
       </div>
       <!-- <div  class="headImg">
         <span class="iconfont icon-gaojing1"></span>
       </div> -->
-      <div  class="headImg" @click="preview" :title="$t('dataFlow.button.preview')">
+      <div  class="headImg" v-if="['paused', 'error', 'draft'].includes(status)" @click="preview" :title="$t('dataFlow.button.preview')">
         <span class="iconfont icon-openeye"></span>
       </div>
       <div  class="headImg" @click="reloadSchema" :title="$t('dataFlow.button.reloadSchema')">
         <span class="iconfont icon-yunshuaxin"></span>
       </div>
-      <div  class="headImg round" 	@click="showSetting">
+      <div  class="headImg"	@click="showLogs" :title="$t('dataFlow.button.debug')">
+        <span class="iconfont icon-bug"></span>
+      </div>
+      <div  class="headImg round" @click="showSetting" 	v-if="['draft', 'paused', 'error'].includes(status)">
         <span class="iconfont icon-shezhi"></span>
         <span class="text">{{$t('dataFlow.button.quantitative')}} + {{$t('dataFlow.button.increment')}}</span>
       </div>
-      <div  class="headImg round" @click="submitLayer">
+      <div  class="headImg round" @click="submitLayer" style="float: right;">
         <!-- <el-button type="info" class="iconfont icon-icon_fabu" size="mini" round>{{$t('dataFlow.button.submit')}}</el-button> -->
         <span class="iconfont icon-icon_fabu"></span>
         <span class="text">{{$t('dataFlow.button.submit')}}</span>
@@ -106,9 +109,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">{{$t('message.cancel')}}</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">{{$t('dataFlow.submitOnly')}}</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">{{$t('dataFlow.submitExecute')}}</el-button>
+        <el-button class="e-button" @click="dialogFormVisible = false">{{$t('message.cancel')}}</el-button>
+        <el-button class="e-button" type="primary" @click="dialogFormVisible = false">{{$t('dataFlow.submitOnly')}}</el-button>
+        <el-button class="e-button" type="primary" @click="dialogFormVisible = false">{{$t('dataFlow.submitExecute')}}</el-button>
       </div>
     </el-dialog>
 	</div>
@@ -117,7 +120,7 @@
 <script>
 	import $ from 'jquery';
 	import factory from "../../api/factory";
-	import editor from '../../editor/index';
+  import editor from '../../editor/index';
 	import breakText from '../../editor/breakText';
 	import log from '../../log';
   import {FORM_DATA_KEY, JOIN_TABLE_TPL} from "../../editor/constants";
@@ -209,7 +212,7 @@
 						self.status = dataFlow.status;
 						self.executeMode = dataFlow.executeMode;
 
-						self.dataFlow = dataFlow;
+            self.dataFlow = dataFlow;
 
             //管理端api创建任务来源以及editorData 数据丢失情况
 						if(!dataFlow.editorData && dataFlow.stages){
@@ -473,6 +476,8 @@
 			 * save button handler
 			 */
 			save() {
+        // let aa =  this.editor.graph.changeCommandManager();
+
 				let self = this,
 					data = this.getDataFlowData();
 
@@ -914,8 +919,11 @@
       background:rgba(250,250,250,1);
       border:1px solid rgba(222, 222, 228, 1);
     }
+    .el-dialog__body {
+      padding-bottom: 0;
+    }
     .e-input {
-      width: calc(100% - 100px);
+      width: calc(100% - 80px);
       height: 30px;
       line-height: 30px;
       input {
@@ -927,8 +935,12 @@
       line-height: 30px;
     }
     .el-form--label-left .el-form-item__label {
+      width: 80px;
       line-height: 30px;
       font-size: 14px;
+    }
+    .el-button {
+      padding: 8px 20px;
     }
   }
 </style>
