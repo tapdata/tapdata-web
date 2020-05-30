@@ -11,22 +11,29 @@
 					<i class="el-icon-arrow-up" @click="hide"></i>
 				</div>
 				<el-table
+					border
+					highlight-current-row
+					size="mini"
+					style="width: 100%"
 					:header-cell-style="headerCellStyle"
 					:cell-style="cellStyle"
-					size="mini"
-					:data="debugList"
-					style="width: 100%"
-					border
+					:data="logList"
+					@row-click="rowHandler"
 				>
-					<el-table-column type="index" align="center" label="连接序号" width="80"></el-table-column>
-					<el-table-column align="center" prop="date" label="返回状态" width="80">
+					<el-table-column type="index" align="center" label="连接顺序" width="80"></el-table-column>
+					<el-table-column align="center" label="返回状态" width="80">
 						<template slot-scope="scope">
-							<span class="color-primary" v-if="scope.status == 1">成功</span>
-							<span class="color-danger" v-else>错误</span>
+							<span class="color-danger" v-if="scope.row.err_out">错误</span>
+							<span class="color-primary" v-else>成功</span>
 						</template>
 					</el-table-column>
-					<el-table-column align="center" prop="date" label="耗时(ms)" width="100"></el-table-column>
-					<el-table-column align="left" prop="date" label="日志"></el-table-column>
+					<el-table-column align="center" prop="time" label="耗时(ms)" width="100"></el-table-column>
+					<el-table-column align="left" label="日志">
+						<template slot-scope="scope">
+							<div v-if="scope.row.err_out">{{ getFirstLine(scope.row.err_out) }}</div>
+							<div v-else>{{ getFirstLine(scope.row.out) }}</div>
+						</template>
+					</el-table-column>
 				</el-table>
 			</div>
 		</transition>
@@ -50,15 +57,22 @@
 				<ul class="details">
 					<li>
 						<label>入参</label>
-						<div class="value"></div>
+						<div class="value">
+							<div class="params" v-for="(p, index) in selectedLog.params" :key="index">
+								<span>参数{{ index + 1 }}: </span>
+								<pre>{{ stringify(p) }}</pre>
+							</div>
+						</div>
 					</li>
 					<li>
 						<label>返回值</label>
-						<div class="value"></div>
+						<div class="value">
+							<pre>{{ stringify(selectedLog.result) }}</pre>
+						</div>
 					</li>
 					<li>
 						<label>日志</label>
-						<div class="value"></div>
+						<div class="value" v-html="logs"></div>
 					</li>
 				</ul>
 			</div>
@@ -78,8 +92,12 @@ export default {
 			color: "rgba(102,102,102,1)"
 		};
 		return {
-			debugList: [{}, {}, {}, {}],
-			debugDetails: null,
+			logList: [{}, {}, {}, {}],
+			selectedLog: {
+				params: [],
+				out: "",
+				err_out: ""
+			},
 
 			visible: false,
 			opened: false,
@@ -95,6 +113,11 @@ export default {
 	computed: {
 		width() {
 			return this.clientWidth - this.sliderWidth - 6;
+		},
+		logs() {
+			let str = this.selectedLog.out + "\n" + this.selectedLog.err_out;
+
+			return str.replace(new RegExp("\n", "g"), "<br>");
 		}
 	},
 	mounted() {
@@ -106,6 +129,26 @@ export default {
 		this.$nextTick(() => {
 			this.sliderWidth = eSideBarRight.clientWidth;
 		});
+		setTimeout(() => {
+			this.logList = [
+				{
+					params: [
+						{
+							les: 122,
+							arr: [1, 2]
+						},
+						"ddee",
+						[1, 2, { name: "kk" }]
+					],
+					result: {},
+					time: 100,
+					out:
+						"[INFO]   2020-05-30 12:13:22  [taskScheduler-38]  io.tapdata.Schedule.ConnectorManager -  Found scheduled job test-js-debug_1",
+					err_out:
+						"[ERROR]   2020-05-30 12:13:58  [taskScheduler-4]  com.tapdata.entity.dataflow.DataFlow -  Schedule data flow test-js-debug failed Failed to call rest api.\n[ERROR]   2020-05-30 12:13:41  [taskScheduler-9]  com.tapdata.entity.dataflow.DataFlow -  Schedule data flow test-js-debug failed Failed to call rest api.\n[ERROR]   2020-05-30 12:13:22  [taskScheduler-38]  io.tapdata.Schedule.ConnectorManager -  Failed to load connection information for the job[job name: test-js-debug_1]."
+				}
+			];
+		}, 1000);
 	},
 	destroyed() {
 		if (this.$el && this.$el.parentNode) {
@@ -127,6 +170,15 @@ export default {
 			setTimeout(() => {
 				this.visible = false;
 			}, 500);
+		},
+		getFirstLine(str) {
+			return str ? str.split("\n")[0] : "";
+		},
+		rowHandler(row, column, event) {
+			this.selectedLog = row;
+		},
+		stringify(value) {
+			return JSON.stringify(value, null, 2);
 		}
 	}
 };
@@ -198,6 +250,16 @@ export default {
 					padding: 5px 10px;
 					background: #fff;
 					border-bottom: 1px solid #ebeef5;
+					white-space: nowrap;
+					.params {
+						display: flex;
+						span {
+							width: 50px;
+						}
+						pre {
+							margin-top: 0;
+						}
+					}
 				}
 			}
 		}
