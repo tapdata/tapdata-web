@@ -10,9 +10,8 @@ import factory from "./factory";
 
 const workerApi = factory("Workers");
 
-class WSClient extends EventEmitter{
-
-	constructor(){
+class WSClient extends EventEmitter {
+	constructor() {
 		super();
 
 		this.autoReconnect = true;
@@ -25,8 +24,8 @@ class WSClient extends EventEmitter{
 	 */
 	reconnect() {
 		let self = this;
-		if(self.autoReconnect){
-			if(self.timeoutId){
+		if (self.autoReconnect) {
+			if (self.timeoutId) {
 				clearTimeout(self.timeoutId);
 			}
 			self.timeoutId = setTimeout(() => {
@@ -41,7 +40,7 @@ class WSClient extends EventEmitter{
 	connect() {
 		let self = this;
 
-		if(self.ws){
+		if (self.ws) {
 			self.disconnect();
 		}
 
@@ -53,7 +52,6 @@ class WSClient extends EventEmitter{
 			self.ws = new WebSocket(`${url}?access_token=${token}`, {
 				perMessageDeflate: true
 			});
-
 		} catch (e) {
 			log("WSClient.connect", "Connect to server fail", e);
 			self.reconnect();
@@ -62,8 +60,8 @@ class WSClient extends EventEmitter{
 		self.__bindEvent();
 	}
 
-	disconnect(){
-		if(this.ws !== null){
+	disconnect() {
+		if (this.ws !== null) {
 			this.ws.removeAllListeners("message");
 			this.ws.removeAllListeners("error");
 			this.ws.removeAllListeners("open");
@@ -72,19 +70,19 @@ class WSClient extends EventEmitter{
 		}
 	}
 
-	__bindEvent(){
+	__bindEvent() {
 		const self = this;
 		self.ws.addEventListener("open", () => {
 			self.subscribeDataAgent();
 		});
 
-		self.ws.addEventListener("message", (e) => {
+		self.ws.addEventListener("message", e => {
 			let msg = e.data;
 			let message = {};
 
 			log("WSClient.receive message: " + msg);
 
-			if(typeof msg === 'string' && /^"?\{.*\}"?$/.test(msg) ){
+			if (typeof msg === "string" && /^"?\{.*\}"?$/.test(msg)) {
 				try {
 					message = JSON.parse(msg);
 				} catch (e) {
@@ -95,12 +93,12 @@ class WSClient extends EventEmitter{
 				return;
 			}
 
-			if(message.type === 'subscribe'){
+			if (message.type === "subscribe") {
 				self.emit(EventName.EXECUTE_SCRIPT, message.data);
 			}
 		});
 
-		self.ws.addEventListener("error", (e) => {
+		self.ws.addEventListener("error", e => {
 			log("WSClient connection error", e.message);
 		});
 
@@ -110,12 +108,12 @@ class WSClient extends EventEmitter{
 		});
 	}
 
-	send(msg){
+	send(msg) {
 		msg = typeof msg === "string" ? msg : JSON.stringify(msg);
 		this.ws.send(msg);
 	}
 
-	subscribeDataAgent(){
+	subscribeDataAgent() {
 		let agentId = this.getAgentId();
 
 		this.send({
@@ -128,37 +126,40 @@ class WSClient extends EventEmitter{
 	 * get current user started data agent
 	 * @return {string}
 	 */
-	getAgentId(cb){
+	getAgentId(cb) {
 		//TODO: get current user started data agent
-		workerApi.findOne({
-			filter: JSON.stringify({
-				where: {
-					worker_type : "connector",
-					user_id: {
-						regexp: `^${this.getUserId()}$`
+		workerApi
+			.findOne({
+				filter: JSON.stringify({
+					where: {
+						worker_type: "connector",
+						user_id: {
+							regexp: `^${this.getUserId()}$`
+						}
+					},
+					fields: {
+						process_id: 1
 					}
-				},
-				fields: {
-					process_id: 1
+				})
+			})
+			.then(worker => {
+				if (worker) {
+					cb(null, worker.process_id);
+				} else {
+					cb("Can not found data agent id");
 				}
 			})
-		}).then( worker => {
-			if( worker ){
-				cb(null, worker.process_id);
-			} else {
-				cb("Can not found data agent id");
-			}
-		}).catch(e => {
-			cb(e);
-		});
+			.catch(e => {
+				cb(e);
+			});
 		return "";
 	}
 
-	getToken(){
+	getToken() {
 		return Cookie.get("token");
 	}
 
-	getUserId(){
+	getUserId() {
 		return Cookie.get("user_id");
 	}
 
