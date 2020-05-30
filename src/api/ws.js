@@ -73,7 +73,7 @@ class WSClient extends EventEmitter {
 	__bindEvent() {
 		const self = this;
 		self.ws.addEventListener("open", () => {
-			self.subscribeDataAgent();
+			// self.subscribeDataAgent();
 		});
 
 		self.ws.addEventListener("message", e => {
@@ -146,7 +146,7 @@ class WSClient extends EventEmitter {
 				if (worker) {
 					cb(null, worker.process_id);
 				} else {
-					cb("Can not found data agent id");
+					cb(new Error("Can not found data agent id"));
 				}
 			})
 			.catch(e => {
