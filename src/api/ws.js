@@ -127,33 +127,36 @@ class WSClient extends EventEmitter {
 	 * get current user started data agent
 	 * @return {string}
 	 */
-	getAgentId(cb){
+	getAgentId(cb) {
 		let self = this;
-		if(self.agentId){
+		if (self.agentId) {
 			cb(null, self.agentId);
 		} else {
-			workerApi.findOne({
-				filter: JSON.stringify({
-					where: {
-						worker_type : "connector",
-						user_id: {
-							regexp: `^${this.getUserId()}$`
+			workerApi
+				.findOne({
+					filter: JSON.stringify({
+						where: {
+							worker_type: "connector",
+							user_id: {
+								regexp: `^${this.getUserId()}$`
+							}
+						},
+						fields: {
+							process_id: 1
 						}
-					},
-					fields: {
-						process_id: 1
+					})
+				})
+				.then(worker => {
+					if (worker) {
+						self.agentId = worker.process_id;
+						cb(null, worker.process_id);
+					} else {
+						cb(new Error("Can not found data agent id"));
 					}
 				})
-			}).then( worker => {
-				if( worker ){
-					self.agentId = worker.process_id;
-					cb(null, worker.process_id);
-				} else {
-					cb(new Error("Can not found data agent id"));
-				}
-			}).catch(e => {
-				cb(e);
-			});
+				.catch(e => {
+					cb(e);
+				});
 		}
 	}
 
@@ -166,7 +169,12 @@ class WSClient extends EventEmitter {
 	}
 
 	getUrl() {
-		return `${location.protocol.indexOf("https") === 0 ? "wss:" : "ws:"}//${location.host}/ws/agent`;
+		let hostname = location.hostname;
+		let host = location.host;
+		if (["localhost", "127.0.0.1"].includes(hostname)) {
+			host = hostname + ":3030";
+		}
+		return `${location.protocol.indexOf("https") === 0 ? "wss:" : "ws:"}//${host}/ws/agent`;
 	}
 }
 
