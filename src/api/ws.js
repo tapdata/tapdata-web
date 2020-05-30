@@ -50,9 +50,7 @@ class WSClient extends EventEmitter {
 		log("WSClient.connect", "Connect to server: " + url);
 		try {
 			let token = self.getToken();
-			self.ws = new WebSocket(`${url}?access_token=${token}`, {
-				perMessageDeflate: true
-			});
+			self.ws = new WebSocket(`${url}?access_token=${token}`);
 		} catch (e) {
 			log("WSClient.connect", "Connect to server fail", e);
 			self.reconnect();
@@ -63,50 +61,68 @@ class WSClient extends EventEmitter {
 
 	disconnect() {
 		if (this.ws !== null) {
-			this.ws.removeAllListeners("message");
-			this.ws.removeAllListeners("error");
-			this.ws.removeAllListeners("open");
-			this.ws.removeAllListeners("close");
-			this.ws.close(1, null);
+			this.ws.removeEventListener("message", this.__message);
+			this.ws.removeEventListener("error", this.__error);
+			this.ws.removeEventListener("open", this.__open);
+			this.ws.removeEventListener("close", this.__close);
+			if([WebSocket.CONNECTING, WebSocket.OPEN].includes(this.ws.readyState))
+				this.ws.close(1, null);
 		}
 	}
 
 	__bindEvent() {
 		const self = this;
-		self.ws.addEventListener("open", () => {
-			// self.subscribeDataAgent();
-		});
 
-		self.ws.addEventListener("message", e => {
-			let msg = e.data;
-			let message = {};
+		self.ws.addEventListener("open", (self.__open = () => {
+			self.handlerOpen();
+		}));
 
-			log("WSClient.receive message: " + msg);
+		self.ws.addEventListener("message", ( self.__message = (msg) => {
+			self.handlerMessage(msg);
+		}));
 
-			if (typeof msg === "string" && /^"?\{.*\}"?$/.test(msg)) {
-				try {
-					message = JSON.parse(msg);
-				} catch (e) {
-					log(`Parse message fail: ` + msg, e);
-				}
-			} else {
-				log.error("Received message is not JSON Object", msg);
-				return;
+		self.ws.addEventListener("error", (self.__error = (e) => {
+			this.handlerError(e);
+		}) );
+
+		self.ws.addEventListener("close", (self.__close = () => {
+			this.handlerClose();
+		}));
+	}
+
+	handlerOpen() {
+		// self.subscribeDataAgent();
+	}
+
+	handlerClose() {
+		log("Disconnect server.");
+		this.reconnect();
+	}
+
+	handlerError(e) {
+		log("WSClient connection error", e.message);
+	}
+
+	handlerMessage(e) {
+		let self = this;
+		let msg = e.data;
+		let message = {};
+
+		log("WSClient.receive message: " + msg);
+
+		if (typeof msg === "string" && /^"?\{.*\}"?$/.test(msg)) {
+			try {
+				message = JSON.parse(msg);
+			} catch (e) {
+				log(`Parse message fail: ` + msg, e);
 			}
+		} else {
+			log.error("Received message is not JSON Object", msg);
+			return;
+		}
 
-			if (message.type === "subscribe") {
-				self.emit(EventName.EXECUTE_SCRIPT, message.data);
-			}
-		});
+		self.emit(message.type, message);
 
-		self.ws.addEventListener("error", e => {
-			log("WSClient connection error", e.message);
-		});
-
-		self.ws.addEventListener("close", () => {
-			log("Disconnect server.");
-			self.reconnect();
-		});
 	}
 
 	send(msg) {
@@ -114,6 +130,9 @@ class WSClient extends EventEmitter {
 		this.ws.send(msg);
 	}
 
+	/**
+	 * @deprecated
+	 */
 	subscribeDataAgent() {
 		let agentId = this.getAgentId();
 
@@ -184,7 +203,7 @@ wsClient.connect();
 export default wsClient;
 
 export const EventName = {
-	EXECUTE_SCRIPT: "execute_script"
+	EXECUTE_SCRIPT_RESULT: "execute_script_result"
 };
 
 /*wsClient.on("execute_script", (msg) => {
