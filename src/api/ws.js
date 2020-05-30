@@ -17,6 +17,7 @@ class WSClient extends EventEmitter {
 		this.autoReconnect = true;
 		this.ws = null;
 		this.timeoutId = null;
+		this.agentId = null;
 	}
 
 	/**
@@ -126,13 +127,15 @@ class WSClient extends EventEmitter {
 	 * get current user started data agent
 	 * @return {string}
 	 */
-	getAgentId(cb) {
-		//TODO: get current user started data agent
-		workerApi
-			.findOne({
+	getAgentId(cb){
+		let self = this;
+		if(self.agentId){
+			cb(null, self.agentId);
+		} else {
+			workerApi.findOne({
 				filter: JSON.stringify({
 					where: {
-						worker_type: "connector",
+						worker_type : "connector",
 						user_id: {
 							regexp: `^${this.getUserId()}$`
 						}
@@ -141,18 +144,17 @@ class WSClient extends EventEmitter {
 						process_id: 1
 					}
 				})
-			})
-			.then(worker => {
-				if (worker) {
+			}).then( worker => {
+				if( worker ){
+					self.agentId = worker.process_id;
 					cb(null, worker.process_id);
 				} else {
 					cb(new Error("Can not found data agent id"));
 				}
-			})
-			.catch(e => {
+			}).catch(e => {
 				cb(e);
 			});
-		return "";
+		}
 	}
 
 	getToken() {
