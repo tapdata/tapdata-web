@@ -44,7 +44,6 @@ import JsEditor from "../../../components/JsEditor";
 import log from "../../../log";
 import { EditorEventType } from "../../lib/events";
 import Debug from "./Debug";
-import ws from "../../../api/ws";
 export default {
 	name: "Script",
 	components: {
@@ -88,8 +87,6 @@ export default {
 			self.width = width;
 			this.$refs.debug.resize(width);
 		});
-		log("11111111111111111");
-		ws.subscribeDataAgent();
 	},
 	watch: {
 		model: {

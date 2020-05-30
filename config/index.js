@@ -14,7 +14,8 @@ module.exports = {
         target: 'http://backend:3030',
         changeOrigin: false
       },
-      '/oauth': {target: 'http://backend:3030', changeOrigin: false},
+	  '/oauth': {target: 'http://backend:3030', changeOrigin: false},
+	  '/ws': {target: 'http://backend:3030', changeOrigin: false}
     },
 
     // Various Dev Server settings
