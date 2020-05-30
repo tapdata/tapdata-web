@@ -10,31 +10,36 @@
 					<h4>js连接测试</h4>
 					<i class="el-icon-arrow-up" @click="hide"></i>
 				</div>
-				<el-table
-					border
-					highlight-current-row
-					size="mini"
-					style="width: 100%"
-					:header-cell-style="headerCellStyle"
-					:cell-style="cellStyle"
-					:data="logList"
-					@row-click="rowHandler"
-				>
-					<el-table-column type="index" align="center" label="连接顺序" width="80"></el-table-column>
-					<el-table-column align="center" label="返回状态" width="80">
-						<template slot-scope="scope">
-							<span class="color-danger" v-if="scope.row.err_out">错误</span>
-							<span class="color-primary" v-else>成功</span>
-						</template>
-					</el-table-column>
-					<el-table-column align="center" prop="time" label="耗时(ms)" width="100"></el-table-column>
-					<el-table-column align="left" label="日志">
-						<template slot-scope="scope">
-							<div v-if="scope.row.err_out">{{ getFirstLine(scope.row.err_out) }}</div>
-							<div v-else>{{ getFirstLine(scope.row.out) }}</div>
-						</template>
-					</el-table-column>
-				</el-table>
+				<div class="table-panel">
+					<el-table
+						border
+						highlight-current-row
+						ref="table"
+						size="mini"
+						style="width: 100%"
+						height="100%"
+						:header-cell-style="headerCellStyle"
+						:cell-style="cellStyle"
+						:data="logList"
+						@current-change="rowHandler"
+						v-loading="!logList"
+					>
+						<el-table-column type="index" align="center" label="连接顺序" width="80"></el-table-column>
+						<el-table-column align="center" label="返回状态" width="80">
+							<template slot-scope="scope">
+								<span class="color-danger" v-if="scope.row.err_out">错误</span>
+								<span class="color-primary" v-else>成功</span>
+							</template>
+						</el-table-column>
+						<el-table-column align="center" prop="time" label="耗时(ms)" width="100"></el-table-column>
+						<el-table-column align="left" label="日志">
+							<template slot-scope="scope">
+								<div v-if="scope.row.err_out">{{ getFirstLine(scope.row.err_out) }}</div>
+								<div v-else>{{ getFirstLine(scope.row.out) }}</div>
+							</template>
+						</el-table-column>
+					</el-table>
+				</div>
 			</div>
 		</transition>
 		<transition
@@ -46,15 +51,20 @@
 				<div class="header">
 					<h4>测试详情</h4>
 					<ul class="bar">
-						<li>连接顺序: 2</li>
-						<li>结果: 成功</li>
-						<li>耗时: 200ms</li>
+						<template v-if="selectedLog">
+							<li>连接顺序: {{selectedLog.index+1}}</li>
+							<li>结果:
+								<span class="color-primary" v-show="!selectedLog.err_out">成功</span>
+								<span class="color-danger" v-show="selectedLog.err_out">错误</span>
+							</li>
+							<li>耗时: {{selectedLog.time}}ms</li>
+						</template>
 						<li>
 							<i class="el-icon-arrow-down" @click="hide"></i>
 						</li>
 					</ul>
 				</div>
-				<ul class="details">
+				<ul class="details" v-if="selectedLog">
 					<li>
 						<label>入参</label>
 						<div class="value">
@@ -92,12 +102,8 @@ export default {
 			color: "rgba(102,102,102,1)"
 		};
 		return {
-			logList: [{}, {}, {}, {}],
-			selectedLog: {
-				params: [],
-				out: "",
-				err_out: ""
-			},
+			logList: null,
+			selectedLog: null,
 
 			visible: false,
 			opened: false,
@@ -115,7 +121,10 @@ export default {
 			return this.clientWidth - this.sliderWidth - 6;
 		},
 		logs() {
-			let str = this.selectedLog.out + "\n" + this.selectedLog.err_out;
+			let log = this.selectedLog || {}
+			let out = log.out || ""
+			let eOut = log.err_out || ""
+			let str = out + "\n" + eOut;
 
 			return str.replace(new RegExp("\n", "g"), "<br>");
 		}
@@ -129,26 +138,6 @@ export default {
 		this.$nextTick(() => {
 			this.sliderWidth = eSideBarRight.clientWidth;
 		});
-		setTimeout(() => {
-			this.logList = [
-				{
-					params: [
-						{
-							les: 122,
-							arr: [1, 2]
-						},
-						"ddee",
-						[1, 2, { name: "kk" }]
-					],
-					result: {},
-					time: 100,
-					out:
-						"[INFO]   2020-05-30 12:13:22  [taskScheduler-38]  io.tapdata.Schedule.ConnectorManager -  Found scheduled job test-js-debug_1",
-					err_out:
-						"[ERROR]   2020-05-30 12:13:58  [taskScheduler-4]  com.tapdata.entity.dataflow.DataFlow -  Schedule data flow test-js-debug failed Failed to call rest api.\n[ERROR]   2020-05-30 12:13:41  [taskScheduler-9]  com.tapdata.entity.dataflow.DataFlow -  Schedule data flow test-js-debug failed Failed to call rest api.\n[ERROR]   2020-05-30 12:13:22  [taskScheduler-38]  io.tapdata.Schedule.ConnectorManager -  Failed to load connection information for the job[job name: test-js-debug_1]."
-				}
-			];
-		}, 1000);
 	},
 	destroyed() {
 		if (this.$el && this.$el.parentNode) {
@@ -159,11 +148,23 @@ export default {
 		resize(width) {
 			this.sliderWidth = width;
 		},
-		show() {
+		show(receiveMessage) {
 			this.visible = true;
 			this.$nextTick(() => {
 				this.opened = true;
 			});
+			this.logList = null;
+			this.selectedLog = null;
+			receiveMessage(msg => {
+				let result = []
+				if(msg) {
+					result = msg.result
+				}
+				this.logList = result.map((item, index) => {
+					item.index = index
+					return item
+				})
+			})
 		},
 		hide() {
 			this.opened = false;
@@ -174,7 +175,7 @@ export default {
 		getFirstLine(str) {
 			return str ? str.split("\n")[0] : "";
 		},
-		rowHandler(row, column, event) {
+		rowHandler(row) {
 			this.selectedLog = row;
 		},
 		stringify(value) {
@@ -221,6 +222,13 @@ export default {
 			}
 		}
 	}
+	.debug-list {
+		display: flex;
+		flex-direction: column;
+		.table-panel {
+			flex: 1;
+		}
+	}
 	.debug-details {
 		display: flex;
 		flex-direction: column;
@@ -251,14 +259,15 @@ export default {
 					background: #fff;
 					border-bottom: 1px solid #ebeef5;
 					white-space: nowrap;
+					line-height: 24px;
 					.params {
 						display: flex;
 						span {
 							width: 50px;
 						}
-						pre {
-							margin-top: 0;
-						}
+					}
+					pre {
+						margin-top: 0;
 					}
 				}
 			}

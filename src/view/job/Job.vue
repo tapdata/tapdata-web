@@ -87,7 +87,7 @@
 				>{{ $t("dataFlow.button.save") }}
 			</el-button>
 			<!-- <el-button size="mini" type="primary" @click="switchModel">Model</el-button> -->
-			<!--<el-button  size="mini" @click="sendMsg">Execute</el-button>-->
+			<el-button  size="mini" @click="sendMsg">Execute</el-button>
 		</div>
 	</div>
 </template>

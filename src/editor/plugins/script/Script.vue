@@ -44,6 +44,8 @@ import JsEditor from "../../../components/JsEditor";
 import log from "../../../log";
 import { EditorEventType } from "../../lib/events";
 import Debug from "./Debug";
+import ws, {EventName} from "../../../api/ws";
+
 export default {
 	name: "Script",
 	components: {
@@ -108,7 +110,21 @@ export default {
 			return JSON.parse(JSON.stringify(this.model));
 		},
 		showDebug() {
-			this.$refs.debug.show();
+			ws.send({
+				type: "execute_script",
+				script: "function process(record){ return record;}",
+				script_type: "",
+				agentId: "c327696c-2892-4966-94d3-1c1229d53e7c",
+				dataFlowId: "",
+				stageId: ""
+			});
+
+			this.$refs.debug.show(cb => {
+				ws.once(EventName.EXECUTE_SCRIPT_RESULT, function(msg){
+					log("Job.ReceiveMessage", msg);
+					cb(msg)
+				});
+			});
 		}
 	}
 };
