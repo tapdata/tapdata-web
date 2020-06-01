@@ -110,7 +110,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="e-button" @click="dialogFormVisible = false">{{$t('message.cancel')}}</el-button>
-        <el-button class="e-button" type="primary" @click="dialogFormVisible = false">{{$t('dataFlow.submitOnly')}}</el-button>
+        <el-button class="e-button" type="primary" @click="submitTemporary">{{$t('dataFlow.submitOnly')}}</el-button>
         <el-button class="e-button" type="primary" @click="dialogFormVisible = false">{{$t('dataFlow.submitExecute')}}</el-button>
       </div>
     </el-dialog>
@@ -124,9 +124,12 @@
 	import breakText from '../../editor/breakText';
 	import log from '../../log';
   import {FORM_DATA_KEY, JOIN_TABLE_TPL} from "../../editor/constants";
-	import _ from 'lodash';
+  import _ from 'lodash';
+  import {EditorEventType} from "../../editor/lib/events";
 
-	const dataFlowsApi = factory('DataFlows');
+  const dataFlowsApi = factory('DataFlows');
+  let changeData = null;
+  let timer = null;
 	export default {
 		name: "Job",
 		dataFlow: null,
@@ -146,7 +149,8 @@
 
 				loading: true,
 				disabledDataVerify: false,
-        cells:[]
+        cells:[],
+        isMove: false,
 			};
 		},
 
@@ -157,7 +161,8 @@
 						this.showCapture();
 					}
 				}
-			},*/
+      },*/
+
 			status: {
 				handler() {
 					if (['draft', 'error', 'paused'].includes(this.status)) {
@@ -170,12 +175,11 @@
 		},
 		mounted() {
 			let self = this;
-
 			// build editor
 			self.editor = editor({
 				container: $('.editor-container'),
 				actionBarEl: $('.editor-container .action-buttons')
-			});
+      });
 
 			// load dataFlow if exists data flow id
 			if (self.$route.query && self.$route.query.id) {
@@ -186,18 +190,84 @@
 
 			// self.editor.getUI().getBackButtonEl().on('click', () => {
 			// 	self.$router.push({path: '/dataFlows'});
-			// });
+      // });
+      this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () =>{
+        changeData = this.getDataFlowData(true);
+      });
+      timer = setInterval(() => {
+        if(changeData) {
+          this.timeSave();
+        }
+      }, 10000);
 		},
 
 		beforeDestroy() {
 			if (this.timeoutId) {
 				clearTimeout(this.timeoutId);
 			}
-			this.editor.destroy();
+      this.editor.destroy();
+      timer.clearTimeout();
 		},
 
 		methods: {
+      submitTemporary() {
+				let self = this,
+          data = this.getDataFlowData();
 
+				if (data) {
+					if (data.id) {
+						data = {
+							id: data.id,
+							status: 'paused',
+						};
+					}
+					data.status = 'paused';
+					data.executeMode = "normal";
+					self.doSave(data, (err, dataFlow) => {
+						if (err) {
+							this.$message.error(self.$t('message.saveFail'));
+						} else {
+							this.$message.success(self.$t('message.saveOK'));
+							self.setEditable(false);
+						}
+					});
+				}
+			},
+      /****
+       * Auto save
+       */
+      timeSave() {
+        let self = this,
+            data = this.getDataFlowData(true),
+            promise =	dataFlowsApi.draft(data);
+
+        if(promise) {
+          promise.then((result) => {
+            if (result && result.data) {
+              let dataFlow = result.data;
+              self.dataFlowId = dataFlow.id;
+              self.status = dataFlow.status;
+              self.executeMode = dataFlow.executeMode;
+
+              self.dataFlow = dataFlow;
+
+              if (!self.$route.query || !self.$route.query.id) {
+                self.$router.push({
+                  path: '/job',
+                  query: {
+                    id: dataFlow.id
+                  }
+                });
+              }
+              self.polling();
+            }
+          }).finally(() => {
+            changeData = null;
+            self.loading = false;
+          });
+        }
+
+      },
 			/**
 			 * load data flow by id
 			 * @param id
@@ -298,13 +368,15 @@
 			 * get editor data
 			 * @return {{name: *, description: string, status: string, executeMode: string, category: string, stopOnError: boolean, mappingTemplate: string, emailWaring: {edited: boolean, started: boolean, error: boolean, paused: boolean}, stages: Array, setting: *} & {editorData: string}}
 			 */
-			getDataFlowData() {
-				// validate
-				let verified = this.editor.validate();
-				if (verified !== true) {
-					this.$message.error(verified);
-					return;
-				}
+			getDataFlowData(autoSave) {
+        if(!autoSave) {
+          // validate
+          let verified = this.editor.validate();
+          if (verified !== true) {
+            this.$message.error(verified);
+            return;
+          }
+        }
 
 				let editorData = this.editor.getData();
 				let graphData = editorData.graphData;
@@ -323,7 +395,7 @@
 						edgeCells[cell.id] = cell;
 					else
 						nodeCells[cell.id] = cell;
-				});
+        });
 
 				let postData = Object.assign({
 					name: editorData.name,
@@ -476,8 +548,6 @@
 			 * save button handler
 			 */
 			save() {
-        // let aa =  this.editor.graph.changeCommandManager();
-
 				let self = this,
 					data = this.getDataFlowData();
 
@@ -677,6 +747,9 @@
        * show submit layer
        */
       submitLayer() {
+        let data = this.getDataFlowData();
+        this.form.taskName = data.name;
+
         this.dialogFormVisible = true;
       },
 

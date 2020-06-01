@@ -12,6 +12,10 @@ export default class DataFlows extends PublicAPI{
 		super('/api/DataFlows');
 	}
 
+  draft(params) {
+    return axios.patch(this.url+ '/draft',params);
+  }
+
 	copy(id) {
 		return axios.post(`${this.url}/${id}/copy`);
 	}

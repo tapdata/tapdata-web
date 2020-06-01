@@ -65,7 +65,7 @@ export default class Graph extends Component{
 		}, this);
 
     this.commandManager = new joint.dia.CommandManager({ graph: graph });
-    this.commandManager.on('stack', this.changeCommandManager);
+    this.commandManager.on('stack', this.emit.bind(this, EditorEventType.DATAFLOW_CHANGED) );
 
 		const paper = this.paper = new joint.dia.Paper({
 			model: graph,
@@ -173,11 +173,6 @@ export default class Graph extends Component{
 		this.el = paperScroller.el;
 		this.editor.getUI().add(this);
 		paperScroller.render().center();
-  }
-
-  changeCommandManager() {
-    let  isMove = true;
-    return isMove;
   }
 
   selectionPosition(cell){
