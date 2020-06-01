@@ -487,7 +487,6 @@
           }
         });
         if(this.domValue && this.domValue !=='all') {
-          console.log("22222222",this.domValue,this.flow,selectCell);
           this.editor.graph.selectionPosition(selectCell);
         }
       },

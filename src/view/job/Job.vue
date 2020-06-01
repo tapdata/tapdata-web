@@ -111,7 +111,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button class="e-button" @click="dialogFormVisible = false">{{$t('message.cancel')}}</el-button>
         <el-button class="e-button" type="primary" @click="submitTemporary">{{$t('dataFlow.submitOnly')}}</el-button>
-        <el-button class="e-button" type="primary" @click="dialogFormVisible = false">{{$t('dataFlow.submitExecute')}}</el-button>
+        <el-button class="e-button" type="primary" @click="start">{{$t('dataFlow.submitExecute')}}</el-button>
       </div>
     </el-dialog>
 	</div>
@@ -210,6 +210,9 @@
 		},
 
 		methods: {
+      /**
+       * submit temporary
+       */
       submitTemporary() {
 				let self = this,
           data = this.getDataFlowData();
@@ -218,11 +221,13 @@
 					if (data.id) {
 						data = {
 							id: data.id,
-							status: 'paused',
+              status: 'paused',
+              name: this.form.taskName
 						};
 					}
 					data.status = 'paused';
-					data.executeMode = "normal";
+          data.executeMode = "normal";
+          data.name = this.form.taskName;
 					self.doSave(data, (err, dataFlow) => {
 						if (err) {
 							this.$message.error(self.$t('message.saveFail'));
@@ -747,10 +752,13 @@
        * show submit layer
        */
       submitLayer() {
-        let data = this.getDataFlowData();
-        this.form.taskName = data.name;
-
         this.dialogFormVisible = true;
+        if(this.dialogFormVisible) {
+          let editorData = this.editor.getData();
+          this.form.taskName = editorData.name;
+        }
+        
+        
       },
 
 			/**

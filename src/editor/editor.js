@@ -495,7 +495,7 @@ export default class Editor extends BaseObject {
 	setEditable(editable, dataFlow) {
 		log('Editor.setEditable', editable, dataFlow);
 		this.editable = editable;
-		this.graph.setEditable(editable);
+		// this.graph.setEditable(editable);
 		if( editable ){
 			this.initEditingMode();
 		} else {
