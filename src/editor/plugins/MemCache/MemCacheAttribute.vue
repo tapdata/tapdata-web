@@ -189,6 +189,7 @@ export default {
 				}
 			}
 			this.cacheKeysValues = cacheKeys.length ? cacheKeys.split(",") : [];
+			this.model.cacheKeys = cacheKeys;
 		},
 		getData() {
 			return _.cloneDeep(this.model);
