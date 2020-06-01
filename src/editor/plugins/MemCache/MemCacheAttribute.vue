@@ -198,7 +198,11 @@ export default {
 			this.model.name = val;
 		},
 		cacheKeysHandler() {
-			this.model.cacheKeys = this.cacheKeysValues.join(",");
+			let cacheKeys = this.cacheKeysValues.join(",").trim();
+			if (!cacheKeys) {
+				this.cacheKeysValues = [];
+			}
+			this.model.cacheKeys = cacheKeys;
 		},
 		maxSizeLimitedHandler(limited) {
 			if (limited) {
