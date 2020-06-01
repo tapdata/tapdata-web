@@ -61,6 +61,7 @@ const cn = {
 		edit: "修改"
 	},
 	dataFlow: {
+		selectNode: '请选择节点',
 		submitExecute: '提交并执行',
 		submitOnly: '仅提交',
 		implementationModalities: '执行方式',

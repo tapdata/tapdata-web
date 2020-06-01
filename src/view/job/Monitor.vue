@@ -117,6 +117,7 @@ import { EditorEventType } from "../../editor/lib/events";
 
 const DataFlowInsights = factory("DataFlowInsights");
 let intervalTime = 5000;
+
 export default {
 	name: "JobMonitor",
 	components: { echartHead, echartsCompinent, shaftlessEchart },
@@ -496,13 +497,12 @@ export default {
 					selectCell = item.cell;
 				}
 			});
-			if(this.domValue && this.domValue !=='all') {
+			if (this.domValue && this.domValue !=='all') {
 				this.editor.graph.selectionPosition(selectCell);
+				console.log($(intput),'adsfadsfa********')
+			} else {
+				this.$message.error(this.$t('dataFlow.selectNode'));
 			}
-		},
-
-		setData(data, cell, isSourceDataNode, vueAdapter) {
-			console.log(data,cell,'0000000')
 		},
 
 		// 输入输出获取数据

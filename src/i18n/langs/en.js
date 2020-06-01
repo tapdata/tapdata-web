@@ -61,6 +61,7 @@ const en = {
 		edit: "edit"
 	},
 	dataFlow: {
+		selectNode: 'Please select a node',
 		SyncPoint: "Sync point",
 		Current: "Current",
 		SyncTime: "Sync time",
