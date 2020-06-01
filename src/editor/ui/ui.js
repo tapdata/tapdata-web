@@ -23,7 +23,7 @@ export default class UI extends Component {
 				<div class="e-title">
 					<input value="新任务未命名" class="ui-input" id="taskNameInput" type="text"  maxlength="50"/>
 				</div>
-				<i class='el-icon-edit el-icon' id="edit"></i>
+				<i class='icon-tianxie iconfont el-icon' id="edit"></i>
 				<i class='iconfont icon-baocun el-icon' id="submit" style="display: none;color:##48B6E2" ></i>
 				<div class="e-toolbar-container">
 					<div class="graph-toolbar"></div>
@@ -57,7 +57,7 @@ export default class UI extends Component {
 		});
 
 		this.el.find("input.ui-input").on("keyup", function(event) {
-			if (event.keyCode == "13") {
+			if (event.keyCode === "13") {
 				$("#taskNameInput").blur();
 				$("#submit").css("display", "none");
 				$("#edit").css("display", "inline-block");

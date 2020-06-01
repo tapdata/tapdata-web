@@ -68,6 +68,7 @@ export default class Graph extends Component {
 		);
 
 		this.commandManager = new joint.dia.CommandManager({ graph: graph });
+		this.commandManager.on("stack", this.emit.bind(this, EditorEventType.DATAFLOW_CHANGED) );
 
 		const paper = (this.paper = new joint.dia.Paper({
 			model: graph,
@@ -182,6 +183,11 @@ export default class Graph extends Component {
 		paperScroller.render().center();
 	}
 
+	selectionPosition(cell){
+		this.paperScroller.center();
+		this.selection.collection.add(cell);
+	}
+
 	isAcyclic() {
 		let acyclic = isAcyclic(this.graph.toGraphLib());
 		log("Graph.link.connect.isAcyclic", acyclic);
@@ -274,7 +280,7 @@ export default class Graph extends Component {
 			layout: {
 				columnWidth: 70,
 				columns: 3,
-				rowHeight: 49
+				rowHeight: 49,
 			},
 			/* search: {
 				'*': ['type', 'attrs/text/text', 'attrs/root/dataTooltip', 'attrs/label/text'],

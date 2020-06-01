@@ -177,6 +177,9 @@ const tc = {
 		enterFilterTable: "請輸入過濾表內容",
 		nameTip: "後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ",
 		button: {
+			submit: "提交",
+			viewConfig: "查看節點配置",
+			viewMonitoring: "查看監控數據",
 			setting: "設置",
 			logs: "日誌",
 			preview: "預覽",
@@ -187,7 +190,10 @@ const tc = {
 			force_stop: "強制停止",
 			reset: "重置",
 			save: "保存",
-			reloadSchema: "重新加載"
+			reloadSchema:"刷新schema",
+			debug: "debug測試",
+			quantitative: "定量",
+			increment: "增量",
 		},
 		save_before_running: "請先保存再運行",
 		reset_job: {
@@ -279,7 +285,7 @@ const tc = {
 							remove: "運行前刪除已存在的數據"
 						},
             initialSyncOrder: {
-              keep: '初始化節點順序',
+              keep: "初始化節點順序",
             },
 						filter: {
 							label: "過濾條件",
@@ -553,13 +559,13 @@ const tc = {
 			},
 			toolbar: {
 				undo: {
-					tip: "重做"
-				},
-				redo: {
 					tip: "撤銷"
 				},
+				redo: {
+					tip: "重做"
+				},
 				clear_paper: {
-					tip: "清空"
+					tip: "清空畫布"
 				},
 				export_svg: {
 					tip: "導出SVG"
@@ -577,7 +583,7 @@ const tc = {
 					tip: "置前"
 				},
 				layout: {
-					tip: "自動佈局"
+					tip: "自動對齊"
 				},
 				zoom_to_fit: {
 					tip: "填充可視區域"
@@ -592,7 +598,7 @@ const tc = {
 					tip: "網格大小"
 				},
 				fullscreen: {
-					tip: "切換全屏"
+					tip: "全屏"
 				}
 			}
 		},

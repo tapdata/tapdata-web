@@ -179,6 +179,9 @@ const en = {
 		nameTip:
 			"Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ",
 		button: {
+			submit: "Submit",
+			viewConfig: "View node configuration",
+			viewMonitoring: "View monitoring data",
 			setting: "Setting",
 			logs: "Logs",
 			preview: "Data Trace",
@@ -189,7 +192,10 @@ const en = {
 			force_stop: "Force Stop",
 			reset: "Reset",
 			save: "Save",
-			reloadSchema: "Reload Schema"
+			reloadSchema: "Reload Schema",
+			debug: "Debug Test",
+			quantitative: "Quantitative",
+			increment: "Increment",
 		},
 		save_before_running: "Please save the task before running",
 		reset_job: {
@@ -281,7 +287,7 @@ const en = {
 							remove: "Remove exists data at before sync"
 						},
             initialSyncOrder: {
-              keep: 'initial Sync Order',
+              keep: "initial Sync Order",
             },
 						filter: {
 							label: "Filter",
@@ -579,7 +585,7 @@ const en = {
 					tip: "Bring Object to Front"
 				},
 				layout: {
-					tip: "Auto-layout Graph"
+					tip: "Automatic alignment"
 				},
 				zoom_to_fit: {
 					tip: "Zoom To Fit"

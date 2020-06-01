@@ -61,6 +61,10 @@ const cn = {
 		edit: "修改"
 	},
 	dataFlow: {
+		submitExecute: '提交并执行',
+		submitOnly: '仅提交',
+		implementationModalities: '执行方式',
+		submitConfirmation: '提交确认',
 		SyncPoint: "同步节点",
 		Current: "当前时间",
 		SyncTime: "同步时间",
@@ -176,6 +180,9 @@ const cn = {
 		nameTip: "后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。",
 		enterFilterTable: "请输入过滤表内容",
 		button: {
+			submit: '提交',
+			viewConfig: '查看节点配置',
+			viewMonitoring: '查看监控数据',
 			setting: "设置",
 			logs: "日志",
 			preview: "预览",
@@ -186,7 +193,10 @@ const cn = {
 			force_stop: "强制停止",
 			reset: "重置",
 			save: "保存",
-			reloadSchema: "重新加载"
+			reloadSchema:'刷新schema',
+			debug: 'debug测试',
+			quantitative: '定量',
+			increment: '增量',
 		},
 		save_before_running: "请先保存再运行",
 		reset_job: {
@@ -553,13 +563,13 @@ const cn = {
 			},
 			toolbar: {
 				undo: {
-					tip: "重做"
-				},
-				redo: {
 					tip: "撤销"
 				},
+				redo: {
+					tip: "重做"
+				},
 				clear_paper: {
-					tip: "清空"
+					tip: "清空画布"
 				},
 				export_svg: {
 					tip: "导出SVG"
@@ -577,7 +587,7 @@ const cn = {
 					tip: "置前"
 				},
 				layout: {
-					tip: "自动布局"
+					tip: "自动对齐"
 				},
 				zoom_to_fit: {
 					tip: "填充可视区域"
@@ -592,7 +602,7 @@ const cn = {
 					tip: "网格大小"
 				},
 				fullscreen: {
-					tip: "切换全屏"
+					tip: "全屏"
 				}
 			}
 		},
