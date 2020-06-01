@@ -48,10 +48,11 @@ export default new Router({
 			path: "/upload",
 			name: "Upload",
 			component: () => import("../components/upload")
-		},{
+		},
+		{
 			path: "/dataMap",
 			name: "DataMap",
 			component: DataMap
-		},
+		}
 	]
 });

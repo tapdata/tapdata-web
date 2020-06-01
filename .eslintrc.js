@@ -16,7 +16,7 @@ module.exports = {
 		'plugin:vue/essential',
 		// https://github.com/standard/standard/blob/master/docs/RULES-en.md
 		'eslint:recommended',
-		'plugin:prettier/recommended',
+		/*'plugin:prettier/recommended',*/
 	],
 	// required to lint *.vue files
 	plugins: [
@@ -24,7 +24,7 @@ module.exports = {
 	],
 	// add your custom rules here
 	rules: {
-		"prettier/prettier": "error",
+		/*"prettier/prettier": "error",*/
 		// allow async-await
     	'generator-star-spacing': 'off',
 		'no-new': 'off',

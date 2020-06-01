@@ -4,7 +4,7 @@
  * @description
  */
 import Component from "../../lib/Component";
-import $ from 'jquery';
+import $ from "jquery";
 
 export default class UI extends Component {
 	constructor(props) {
@@ -21,8 +21,7 @@ export default class UI extends Component {
 		</div>`);
 	}
 
-	getGraphContainer(){
-		return this.el.find('.graph-container');
+	getGraphContainer() {
+		return this.el.find(".graph-container");
 	}
-
 }

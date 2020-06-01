@@ -7,9 +7,8 @@ import Graph from "./ui/graph";
  * @date 5/15/20
  * @description
  */
-export default class DataMap extends BaseObject{
-
-	constructor(props){
+export default class DataMap extends BaseObject {
+	constructor(props) {
 		super(props);
 
 		this.container = props.container;
@@ -17,8 +16,7 @@ export default class DataMap extends BaseObject{
 		this.doInit();
 	}
 
-	doInit(){
-
+	doInit() {
 		this.ui = new UI();
 
 		this.ui.render(this.container);
@@ -27,11 +25,9 @@ export default class DataMap extends BaseObject{
 			dataMap: this,
 			container: this.ui.getGraphContainer()
 		});
-
 	}
 
-	getUI(){
+	getUI() {
 		return this.ui;
 	}
-
 }
