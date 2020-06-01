@@ -61,13 +61,21 @@
             </el-radio-group>
 
             <el-row v-if="formData.syncPoint === 'sync_time'">
-              <el-col :span="12">
+              <el-col :span="12" style="margin-top: 10px">
                 <el-date-picker format="yyyy-MM-dd" style="width: 100%;" v-model="formData.syncDatePicker"></el-date-picker>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="12" style="margin-top: 10px">
                 <el-time-picker format="HH:mm:ss" style="width: 100%;" v-model="formData.syncTimePicker"></el-time-picker>
               </el-col>
             </el-row>
+          </el-form-item>
+          <el-form-item>
+            <div>{{$t('dataFlow.processorConcurrency')}}</div> <!-- 自动处理DDL操作 -->
+            <el-input-number v-model="formData.processorConcurrency" controls-position="right"  :min="1" size="mini"></el-input-number>
+          </el-form-item>
+          <el-form-item v-show="formData.sync_type !== 'cdc' ">
+            <div>{{$t('dataFlow.transformerConcurrency')}}</div> <!-- 自动处理DDL操作 -->
+            <el-input-number v-model="formData.transformerConcurrency" controls-position="right"  :min="1" size="mini"></el-input-number>
           </el-form-item>
 
 `				</el-col>

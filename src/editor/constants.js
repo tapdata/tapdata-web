@@ -47,6 +47,8 @@ export const
 		syncPoint: 'current',
 		syncTime: '',
 		syncDatePicker: '',
-		syncTimePicker: ''
-	}
+		syncTimePicker: '',
+    processorConcurrency:1,
+    transformerConcurrency:8
+  }
 ;

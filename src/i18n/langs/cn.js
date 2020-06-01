@@ -156,6 +156,8 @@ const cn = {
 		data_quality_tag: '添加数据质量标签',
 		notification_lag: '通知',
 		isOpenAutoDDL: '自动处理DDL操作',
+    transformerConcurrency: '目标写入线程数',
+    processorConcurrency:'处理器线程数',
 		send_email_when_replication: '几秒后重新发送',
 		send_email_at_most_one_replication: '超过多少秒取消发送',
 		read_cdc_interval: '增量同步间隔(ms)',
