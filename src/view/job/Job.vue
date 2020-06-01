@@ -87,7 +87,6 @@
 				>{{ $t("dataFlow.button.save") }}
 			</el-button>
 			<!-- <el-button size="mini" type="primary" @click="switchModel">Model</el-button> -->
-			<el-button  size="mini" @click="sendMsg">Execute</el-button>
 		</div>
 	</div>
 </template>
@@ -100,8 +99,7 @@ import breakText from "../../editor/breakText";
 import log from "../../log";
 import { FORM_DATA_KEY, JOIN_TABLE_TPL } from "../../editor/constants";
 import _ from "lodash";
-import ws from "../../api/ws";
-import {EventName} from "../../api/ws";
+// import ws, { EventName } from "../../api/ws";
 
 const dataFlowsApi = factory("DataFlows");
 export default {
@@ -156,8 +154,6 @@ export default {
 			self.loading = false;
 		}
 
-		ws.getUserId(() => {});
-
 		// self.editor.getUI().getBackButtonEl().on('click', () => {
 		// 	self.$router.push({path: '/dataFlows'});
 		// });
@@ -171,20 +167,6 @@ export default {
 	},
 
 	methods: {
-		sendMsg() {
-			ws.send({
-				type: "execute_script",
-				script: "function process(record){ return record;}",
-				script_type: "",
-				agentId: "c327696c-2892-4966-94d3-1c1229d53e7c",
-				dataFlowId: "",
-				stageId: ""
-			});
-
-			ws.once(EventName.EXECUTE_SCRIPT_RESULT, function(msg){
-				log("Job.ReceiveMessage", msg);
-			});
-		},
 		/**
 		 * load data flow by id
 		 * @param id

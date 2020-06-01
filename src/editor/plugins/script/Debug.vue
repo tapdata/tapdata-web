@@ -52,12 +52,13 @@
 					<h4>测试详情</h4>
 					<ul class="bar">
 						<template v-if="selectedLog">
-							<li>连接顺序: {{selectedLog.index+1}}</li>
-							<li>结果:
+							<li>连接顺序: {{ selectedLog.index + 1 }}</li>
+							<li>
+								结果:
 								<span class="color-primary" v-show="!selectedLog.err_out">成功</span>
 								<span class="color-danger" v-show="selectedLog.err_out">错误</span>
 							</li>
-							<li>耗时: {{selectedLog.time}}ms</li>
+							<li>耗时: {{ selectedLog.time }}ms</li>
 						</template>
 						<li>
 							<i class="el-icon-arrow-down" @click="hide"></i>
@@ -121,9 +122,9 @@ export default {
 			return this.clientWidth - this.sliderWidth - 6;
 		},
 		logs() {
-			let log = this.selectedLog || {}
-			let out = log.out || ""
-			let eOut = log.err_out || ""
+			let log = this.selectedLog || {};
+			let out = log.out || "";
+			let eOut = log.err_out || "";
 			let str = out + "\n" + eOut;
 
 			return str.replace(new RegExp("\n", "g"), "<br>");
@@ -156,15 +157,18 @@ export default {
 			this.logList = null;
 			this.selectedLog = null;
 			receiveMessage(msg => {
-				let result = []
-				if(msg) {
-					result = msg.result
+				let result = [];
+				if (msg) {
+					result = msg.result;
 				}
 				this.logList = result.map((item, index) => {
-					item.index = index
-					return item
-				})
-			})
+					item.index = index;
+					return item;
+				});
+				if (this.logList.length) {
+					this.$refs.table.setCurrentRow(this.logList[0]);
+				}
+			});
 		},
 		hide() {
 			this.opened = false;
@@ -227,23 +231,27 @@ export default {
 		flex-direction: column;
 		.table-panel {
 			flex: 1;
+			overflow: hidden;
 		}
 	}
 	.debug-details {
 		display: flex;
 		flex-direction: column;
 		border-top: 1px solid #d3d3d3;
+		padding-bottom: 16px;
+		box-sizing: border-box;
 		.details {
 			flex: 1;
 			display: flex;
 			border-top: 1px solid #ebeef5;
 			color: rgba(102, 102, 102, 1);
-			padding-bottom: 16px;
+			overflow: hidden;
 			li {
 				flex: 1;
 				display: flex;
 				flex-direction: column;
 				border-right: 1px solid #ebeef5;
+				min-width: 80px;
 				&:first-child {
 					border-left: 1px solid #ebeef5;
 				}

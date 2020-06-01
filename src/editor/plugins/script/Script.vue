@@ -44,7 +44,7 @@ import JsEditor from "../../../components/JsEditor";
 import log from "../../../log";
 import { EditorEventType } from "../../lib/events";
 import Debug from "./Debug";
-import ws, {EventName} from "../../../api/ws";
+import ws, { EventName } from "../../../api/ws";
 
 export default {
 	name: "Script",
@@ -120,9 +120,9 @@ export default {
 			});
 
 			this.$refs.debug.show(cb => {
-				ws.once(EventName.EXECUTE_SCRIPT_RESULT, function(msg){
+				ws.once(EventName.EXECUTE_SCRIPT_RESULT, function(msg) {
 					log("Job.ReceiveMessage", msg);
-					cb(msg)
+					cb(msg);
 				});
 			});
 		}

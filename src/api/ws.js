@@ -65,29 +65,40 @@ class WSClient extends EventEmitter {
 			this.ws.removeEventListener("error", this.__error);
 			this.ws.removeEventListener("open", this.__open);
 			this.ws.removeEventListener("close", this.__close);
-			if([WebSocket.CONNECTING, WebSocket.OPEN].includes(this.ws.readyState))
-				this.ws.close(1, null);
+			if ([WebSocket.CONNECTING, WebSocket.OPEN].includes(this.ws.readyState)) this.ws.close(1, null);
 		}
 	}
 
 	__bindEvent() {
 		const self = this;
 
-		self.ws.addEventListener("open", (self.__open = () => {
-			self.handlerOpen();
-		}));
+		self.ws.addEventListener(
+			"open",
+			(self.__open = () => {
+				self.handlerOpen();
+			})
+		);
 
-		self.ws.addEventListener("message", ( self.__message = (msg) => {
-			self.handlerMessage(msg);
-		}));
+		self.ws.addEventListener(
+			"message",
+			(self.__message = msg => {
+				self.handlerMessage(msg);
+			})
+		);
 
-		self.ws.addEventListener("error", (self.__error = (e) => {
-			this.handlerError(e);
-		}) );
+		self.ws.addEventListener(
+			"error",
+			(self.__error = e => {
+				this.handlerError(e);
+			})
+		);
 
-		self.ws.addEventListener("close", (self.__close = () => {
-			this.handlerClose();
-		}));
+		self.ws.addEventListener(
+			"close",
+			(self.__close = () => {
+				this.handlerClose();
+			})
+		);
 	}
 
 	handlerOpen() {
@@ -122,7 +133,6 @@ class WSClient extends EventEmitter {
 		}
 
 		self.emit(message.type, message);
-
 	}
 
 	send(msg) {
