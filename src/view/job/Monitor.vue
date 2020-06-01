@@ -1,13 +1,17 @@
 <template>
 	<div class="e-job-monitor">
-		<!--		<el-button class="e-job-monitor-btn" size="mini" type="primary" @click="handleGoDataVerify">{{ $t('dataVerify.dataVerify') }} </el-button>-->
-		<el-form inline>
-			<el-form-item>
-				<el-select v-model="domValue" size="mini">
-					<el-option key="all" :label="$t('dataFlow.allNode')" value="all"> </el-option>
-					<el-option v-for="item in flow.stages" :key="item.id" :label="item.name" :value="item.id">
-					</el-option>
-				</el-select>
+		<el-form>
+			<el-form-item class="e-form-item">
+				<el-col :span="19">
+					<el-select v-model="domValue" size="mini">
+						<el-option key="all" :label="$t('dataFlow.allNode')" value="all"> </el-option>
+						<el-option v-for="item in flow.stages" :key="item.id" :label="item.name" :value="item.id">
+						</el-option>
+					</el-select>
+				</el-col>
+				<el-col :span="5">
+					<el-button class="e-button" type="primary" @click="seeNodeData">{{$t('dataFlow.button.viewConfig')}}</el-button>
+				</el-col>
 			</el-form-item>
 		</el-form>
 		<div class="echartMain">
@@ -103,10 +107,12 @@
 	</div>
 </template>
 <script>
+import $ from 'jquery';
 import echartHead from "./components/echartHead";
 import echartsCompinent from "../../components/echartsCompinent";
 import shaftlessEchart from "../../components/shaftlessEchart";
 import factory from "../../api/factory";
+import editor from '../../editor/index';
 import { EditorEventType } from "../../editor/lib/events";
 
 const DataFlowInsights = factory("DataFlowInsights");
@@ -462,6 +468,43 @@ export default {
 	},
 
 	methods: {
+		getAllCellsNode(queryString) {
+			let dataCells = this.editor.getAllCells();
+			let dataCellName = [];
+			dataCells.forEach(cell => {
+				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
+				let tableName= {"value": formData.tableName ,'cell':cell};
+				dataCellName.push(tableName);
+			});
+			var restaurants = dataCellName;
+			var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+			// 调用 callback 返回建议列表的数据
+			return results;
+		},
+
+		createFilter(queryString) {
+			return (restaurant) => {
+				return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+			};
+		},
+
+		seeNodeData() {
+			let result = this.getAllCellsNode();
+			let selectCell = null;
+			result.forEach(item => {
+				if(this.domValue === item.cell.id) {
+					selectCell = item.cell;
+				}
+			});
+			if(this.domValue && this.domValue !=='all') {
+				this.editor.graph.selectionPosition(selectCell);
+			}
+		},
+
+		setData(data, cell, isSourceDataNode, vueAdapter) {
+			console.log(data,cell,'0000000')
+		},
+
 		// 输入输出获取数据
 		getSpeed(data, time) {
 			this.isThroughputAll = data;
@@ -854,6 +897,13 @@ export default {
 	padding: 5px 12px 10px;
 	box-sizing: border-box;
 	position: relative;
+	.e-form-item {
+		.e-button {
+			height: 30px;
+			line-height: 30px;
+			padding: 0 10px;
+		}
+    }
 	.e-job-monitor-btn {
 		position: absolute;
 		top: 15px;
