@@ -159,6 +159,8 @@ const en = {
 		data_quality_tag: "Add data quality tag",
 		notification_lag: "Notification",
 		isOpenAutoDDL: "Automatically handle DDL operations",
+		transformerConcurrency: "Transformer Concurrency",
+		processorConcurrency:"Processor Concurrency",
 		send_email_when_replication: "Send email when replication lag is greater than:(seconds)",
 		send_email_at_most_one_replication: "Send at most 1 replication lag email within (seconds)",
 		read_cdc_interval: "Incremental synchronization interval (ms)",
