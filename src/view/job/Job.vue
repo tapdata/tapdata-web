@@ -224,11 +224,14 @@ export default {
 			changeData = this.getDataFlowData(true);
 		});
 
-		timer = setInterval(() => {
-			if(changeData) {
-				this.timeSave();
-			}
-		}, 10000);
+		if (["draft", "error", "paused"].includes(this.status)){
+			timer = setInterval(() => {
+				if(changeData) {
+					this.timeSave();
+				}
+			}, 10000);
+		}
+
 	},
 
 	beforeDestroy() {

@@ -206,8 +206,7 @@ export default {
 	methods: {
 		convertSchemaToTreeData,
 		seeMonitor() {
-			console.log(editor);
-			editor.setEditable(false);
+			editor.goBackMontior();
 		},
 
 		async loadDataSource() {

@@ -66,15 +66,6 @@ export class VueAdapter extends BaseObject {
 				self.editor.getRightTabPanel().add(settings, true);
 			}
 
-
-			let monitor = self.editor.getRightTabPanel().getChildByName('monitor');
-      		if(!monitor) {
-				monitor = new Panel({
-					name: 'monitor',
-				});
-				self.editor.getRightTabPanel().add(monitor, true);
-      		}
-
 			self.vm = new Comp({
 				i18n,
 				propsData: Object.assign({}, vueComponentConfig.props || {})

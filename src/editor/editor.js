@@ -214,7 +214,7 @@ export default class Editor extends BaseObject {
 		// hide stencil
 		this.getLeftSidebar().hide();
 
-		self.getRightTabPanel().removeAll();
+		//self.getRightTabPanel().removeAll();
 		// remove stage config
 		// let nodeSettingPanel = self.getRightTabPanel().getChildByName('nodeSettingPanel');
 		// if( nodeSettingPanel ) self.getRightTabPanel().remove(nodeSettingPanel);
@@ -232,20 +232,20 @@ export default class Editor extends BaseObject {
 			self.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
 		} */
 
-		let monitor = self.getRightTabPanel().getChildByName("monitor");
-		if (!monitor) {
-			monitor = new VueComponent({
-				name: "monitor",
-				editor: this,
-				propsData: {
-					dataFlow: dataFlow
-				},
-				component: Monitor
-			});
-			self.getRightTabPanel().add(monitor);
-		}
-		self.getRightSidebar().show();
-
+		// let monitor = self.getRightTabPanel().getChildByName("monitor");
+		// if (!monitor) {
+		// 	monitor = new VueComponent({
+		// 		name: "monitor",
+		// 		editor: this,
+		// 		propsData: {
+		// 			dataFlow: dataFlow
+		// 		},
+		// 		component: Monitor
+		// 	});
+		// 	self.getRightTabPanel().add(monitor);
+		// }
+		// self.getRightSidebar().show();
+		self.initMonitor(dataFlow);
 		self.showLogs(dataFlow);
 	}
 
@@ -264,6 +264,28 @@ export default class Editor extends BaseObject {
 
 		// this.getBottomSidebar().hide();
 		// this.getBottomTabPanel().removeAll();
+	}
+	initMonitor(dataFlow){
+		this.getRightTabPanel().removeAll();
+		let self = this;
+
+		let rightTabPanel = self.getRightTabPanel();
+		if (rightTabPanel) {
+			let monitor = rightTabPanel.getChildByName("monitor");
+			if (!monitor) {
+				monitor = new VueComponent({
+					name: "monitor",
+					editor: this,
+					propsData: {
+						dataFlow: dataFlow
+					},
+					component: Monitor
+				});
+				self.getRightTabPanel().add(monitor);
+			}
+			rightTabPanel.select(monitor);
+			self.getRightSidebar().show();
+		}
 	}
 
 	/**
@@ -496,6 +518,12 @@ export default class Editor extends BaseObject {
 		} else {
 			this.initRunningMode(dataFlow);
 		}
+	}
+	goBackMontior(){
+		let monitor = this.getRightTabPanel().getChildByName("monitor");
+		console.log('monitormonitormonitormonitor',monitor);
+		debugger
+		this.getRightTabPanel().select(monitor);
 	}
 
 	getAllCells(){
