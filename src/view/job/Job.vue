@@ -1,21 +1,6 @@
 <template>
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
-			<el-tag
-				:type="
-					status === 'running'
-						? 'success'
-						: status === 'error'
-						? 'danger'
-						: status === 'paused'
-						? 'warning'
-						: 'info'
-				"
-				effect="plain"
-				size="small"
-				style="margin-right: 50px;"
-				>{{ $t("dataFlow.state") }}: {{ $t("dataFlow.status." + status.replace(/ /g, "_")) }}
-			</el-tag>
 			<!-- <el-button size="mini" type="default" @click="reloadSchema"
 				>{{ $t("dataFlow.button.reloadSchema") }}
 			</el-button>
@@ -97,23 +82,35 @@
 				<span class="iconfont icon-yunshuaxin"></span>
 			</div>
 			<div  class="headImg"	@click="showLogs" :title="$t('dataFlow.button.debug')">
-				<span class="iconfont icon-bug"></span>
+				<span class="iconfont icon-debug-"></span>
 			</div>
 			<div  class="headImg round" @click="showSetting" 	v-if="['draft', 'paused', 'error'].includes(status)">
 				<span class="iconfont icon-shezhi"></span>
 				<span class="text">{{$t('dataFlow.button.quantitative')}} + {{$t('dataFlow.button.increment')}}</span>
 			</div>
-			<div  class="headImg" @click="start" 	v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)">
+
+			<el-tag
+				:type="status === 'running'
+					? 'success'
+					: status === 'error'
+					? 'danger'
+					: status === 'paused'
+					? 'warning'
+					: 'info'
+				"
+				effect="plain"
+				size="small"
+				style="margin-left: 50px;border-radius: 20px;"
+				>{{ $t("dataFlow.state") }}: {{ $t("dataFlow.status." + status.replace(/ /g, "_")) }}
+			</el-tag>
+			<div  class="headImg borderStyle" @click="start" :title="$t('dataFlow.button.start')"	v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)">
 				<span class="iconfont icon-yunhang1"></span>
-				<span class="text">{{$t('dataFlow.button.start')}}</span>
 			</div>
-			<div  class="headImg" @click="stop(false)" 	v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)">
+			<div  class="headImg borderStyle" @click="stop(false)" :title="$t('dataFlow.button.stop')"	v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)">
 				<span class="iconfont icon-zanting2"></span>
-				<span class="text">{{$t('dataFlow.button.stop')}}</span>
 			</div>
-			<div  class="headImg" @click="reset" 	v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)">
+			<div  class="headImg borderStyle" @click="reset" :title="$t('dataFlow.button.reset')"	v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)">
 				<span class="iconfont icon-shuaxin3"></span>
-				<span class="text">{{$t('dataFlow.button.reset')}}</span>
 			</div>
 			<div  class="headImg round" @click="submitLayer" style="float: right;">
 				<span class="iconfont icon-icon_fabu"></span>
