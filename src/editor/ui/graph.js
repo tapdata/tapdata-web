@@ -88,9 +88,9 @@ export default class Graph extends Component {
 				default: {
 					name: "stroke",
 					options: {
-						padding: 5,
-						rx: 20,
-						ry: 20,
+						padding: 0,
+						rx: 17,
+						ry: 17,
 						attrs: {
 							"stroke-width": 2,
 							stroke: "#00bcd4"
@@ -258,8 +258,8 @@ export default class Graph extends Component {
 					cellView.highlight(null, {
 						name: "stroke",
 						options: {
-							rx: isDataNode ? 20 : 14,
-							ry: isDataNode ? 20 : 14
+							rx: isDataNode ? 20: 16,
+							ry: isDataNode ? 20 : 16
 						}
 					});
 				}, 0);
@@ -450,12 +450,12 @@ export default class Graph extends Component {
 			name: "link-pointerdown",
 			tools: [
 				new ns.Vertices({ vertexAdding: true }),
-				new ns.SourceAnchor(),
-				new ns.TargetAnchor(),
-				new ns.SourceArrowhead(),
+				// new ns.SourceAnchor(),
+				// new ns.TargetAnchor(),
+				// new ns.SourceArrowhead(),
 				new ns.TargetArrowhead(),
 				new ns.Segments(),
-				new ns.Boundary({ padding: 15 }),
+				// new ns.Boundary({ padding: 15 }),
 				new ns.Remove({ offset: -20, distance: 40 })
 			]
 		});
