@@ -46,6 +46,7 @@ import { EditorEventType } from "../../lib/events";
 import Debug from "./Debug";
 import ws, { EventName } from "../../../api/ws";
 
+const gData = {};
 export default {
 	name: "Script",
 	components: {
@@ -100,23 +101,37 @@ export default {
 	},
 
 	methods: {
-		setData(data) {
+		setData(data, cell) {
 			if (data) {
 				Object.keys(data).forEach(key => (this.model[key] = data[key]));
 				log("model script", this.model);
 			}
+			gData.stageId = cell.id;
+			gData.dataFlow = arguments[3].editor.getDataFlow();
 		},
 		getData() {
 			return JSON.parse(JSON.stringify(this.model));
 		},
 		showDebug() {
-			ws.send({
-				type: "execute_script",
-				script: "function process(record){ return record;}",
-				script_type: "",
-				agentId: "c327696c-2892-4966-94d3-1c1229d53e7c",
-				dataFlowId: "",
-				stageId: ""
+			log("启动连接测试");
+			if (!gData.dataFlow || !gData.dataFlow.id) {
+				this.$message.error("当前任务未保存，无法进行连接测试，请保存之后再尝试");
+				return;
+			}
+			ws.getAgentId((err, id) => {
+				if (!err && id) {
+					let params = this.model;
+					ws.send({
+						type: "execute_script",
+						script: params.script,
+						script_type: params.type,
+						agentId: id,
+						dataFlowId: gData.dataFlow.id,
+						stageId: gData.stageId
+					});
+				} else {
+					this.$message.error("连接服务器失败");
+				}
 			});
 
 			this.$refs.debug.show(cb => {

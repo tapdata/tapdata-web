@@ -175,10 +175,10 @@ class WSClient extends EventEmitter {
 						}
 					})
 				})
-				.then(worker => {
-					if (worker) {
-						self.agentId = worker.process_id;
-						cb(null, worker.process_id);
+				.then(result => {
+					if (result && result.data) {
+						self.agentId = result.data.process_id;
+						cb(null, self.agentId);
 					} else {
 						cb(new Error("Can not found data agent id"));
 					}

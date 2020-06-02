@@ -183,6 +183,8 @@ export default {
 						self.status = dataFlow.status;
 						self.executeMode = dataFlow.executeMode;
 
+						self.editor.setDataFlow(dataFlow);
+
 						self.dataFlow = dataFlow;
 						// 管理端api创建任务来源以及editorData 数据丢失情况
 						if (!dataFlow.editorData && dataFlow.stages) {
@@ -395,11 +397,12 @@ export default {
 							self.dataFlowId = dataFlow.id;
 							self.status = dataFlow.status;
 							self.executeMode = dataFlow.executeMode;
+							self.editor.setDataFlow(dataFlow);
 
 							self.dataFlow = dataFlow;
 
 							if (!self.$route.query || !self.$route.query.id) {
-								self.$router.push({
+								self.$router.replace({
 									path: "/job",
 									query: {
 										id: dataFlow.id
