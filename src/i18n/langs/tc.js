@@ -61,6 +61,7 @@ const tc = {
 		edit: "修改"
 	},
 	dataFlow: {
+		selectNode: '請選擇節點',
 		SyncPoint: "同步節點",
 		Current: "當前時間",
 		SyncTime: "同步時間",
