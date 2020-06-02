@@ -645,6 +645,16 @@ export default class Editor extends BaseObject {
 			}
 		});
 	}
+	getAllCells(){
+		let dataCells = this.graph.graph
+			.getCells() //.filter(cell => cell.isDataNode && cell.isDataNode())
+			.filter(cell => {
+				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
+				let type = cell.get("type");
+				return formData && type !== 'app.Link';
+			});
+		return dataCells;
+	}
 	destroy() {
 		this.emit(EditorEventType.BEFORE_DESTROY, this);
 		this.ui.destroy();

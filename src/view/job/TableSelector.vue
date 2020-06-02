@@ -48,8 +48,7 @@
 			</el-tree>
 			<div class="noData" v-if="loadingError">
 				<div>
-					{{ $t("dataFlow.loadingError")
-					}}<span class="clickLoad" @click="clickLoad">{{ $t("dataVerify.refresh") }}</span>
+					{{ $t("dataFlow.loadingError")}}<span class="clickLoad" @click="clickLoad">{{ $t("dataVerify.refresh") }}</span>
 				</div>
 			</div>
 		</div>
