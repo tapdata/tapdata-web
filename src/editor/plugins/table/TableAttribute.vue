@@ -1,5 +1,7 @@
 <template>
 	<div class="e-table">
+		<el-button class="e-button" type="primary" @click="seeMonitor">{{$t('dataFlow.button.viewMonitoring')}}</el-button>
+
 		<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form">
 			<el-form-item
 				:label="$t('editor.cell.data_node.table.form.database.label')"
@@ -97,7 +99,7 @@ import Entity from "../link/Entity";
 import _ from "lodash";
 import factory from "../../../api/factory";
 let connectionApi = factory("connections");
-
+let editor = null;
 export default {
 	name: "Table",
 	components: { Entity },
@@ -203,6 +205,10 @@ export default {
 
 	methods: {
 		convertSchemaToTreeData,
+		seeMonitor() {
+			console.log(editor);
+			editor.setEditable(false);
+		},
 
 		async loadDataSource() {
 			let result = await connectionApi.get({
@@ -260,6 +266,8 @@ export default {
 			cell.on("change:outputSchema", () => {
 				this.mergedSchema = cell.getOutputSchema();
 			});
+			editor = vueAdapter.editor;
+			console.log(data, cell, isSourceDataNode, vueAdapter)
 		},
 		getData() {
 			let result = _.cloneDeep(this.model);
