@@ -510,7 +510,7 @@ export default class Graph extends Component {
 						name: "link-hover",
 						tools: [
 							new ns.Vertices({ vertexAdding: false }),
-							new ns.SourceArrowhead(),
+							// new ns.SourceArrowhead(),
 							new ns.TargetArrowhead()
 						]
 					});
