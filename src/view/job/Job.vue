@@ -119,7 +119,7 @@
 
 			<el-autocomplete
 				v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
-				class="inline-input"
+				class="inline-input searchNode"
 				v-model="state1"
 				size="mini"
 				:fetch-suggestions="querySearch"
@@ -1114,4 +1114,9 @@ export default {
       padding: 8px 20px;
     }
   }
+.searchNode{
+	.el-input__inner{
+		border-radius: 20px;
+	}
+}
 </style>
