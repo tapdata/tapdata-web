@@ -5,6 +5,9 @@
  */
 import joint from "../../lib/rappid/rappid";
 
+/**
+ * @deprecated
+ */
 export default class Lane {
 	constructor(props) {
 		props = props || {};

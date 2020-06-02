@@ -132,5 +132,45 @@ export default (joint) => {
 			}
 		}
 	});
+
+
+	joint.shapes.dataMap.Classification.define('dataMap.APIClassification', {
+		attrs: {
+			image: {
+				xlinkHref: "static/editor/o-DB.svg",
+			},
+			body: {
+				fill: "#b9a5c8",
+			},
+			label: {
+				text: "API Classifcation",
+			}
+		}
+	});
+
+	joint.shapes.standard.HeaderedRectangle.define('dataMap.Lane', {
+		size: {
+			width: 200,
+			height: 200
+		},
+		attrs: {
+			header: {
+				fill: "#feb663",
+				"fill-opacity": 0.2,
+				stroke: "#feb663",
+				"stroke-width": 1,
+				rx: 5,
+				ry: 5
+			},
+			body: {
+				rx: 5,
+				ry: 5,
+				fill: "#feb663",
+				"fill-opacity": 0.2,
+				stroke: "#feb663",
+				"stroke-width": 3
+			}
+		}
+	});
 };
 
