@@ -105,7 +105,9 @@
 					</li>
 					<li>
 						<label>{{ $t("editor.cell.processor.script.debug.log") }}</label>
-						<div class="value" v-html="logs"></div>
+						<div class="value">
+							<LogBox :logs="selectedLog.out" :loadBtn="false"></LogBox>
+						</div>
 					</li>
 				</ul>
 			</div>
@@ -115,9 +117,13 @@
 
 <script>
 import log from "../../../log";
+import LogBox from "@/components/LogBox";
 // import { EditorEventType } from "../../lib/events";
 export default {
 	name: "Debug",
+	components: {
+		LogBox
+	},
 	data() {
 		let style = {
 			padding: 0,
@@ -142,14 +148,6 @@ export default {
 	computed: {
 		width() {
 			return this.clientWidth - this.sliderWidth - 6;
-		},
-		logs() {
-			let log = this.selectedLog || {};
-			let out = log.out || "";
-			let eOut = log.err_out || "";
-			let str = out + "\n" + eOut;
-
-			return str.replace(new RegExp("\n", "g"), "<br>");
 		}
 	},
 	mounted() {

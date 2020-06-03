@@ -1,8 +1,6 @@
 <template>
 	<div class="log-box">
-		<ul class="container" v-show="logsList && logsList.length" ref="logContainer">
-			<li v-for="log in logsList" :key="log.id" v-html="log.html"></li>
-		</ul>
+		<ul class="log-box-container" v-show="logsList && logsList.length" ref="logContainer"></ul>
 
 		<div v-show="logsList && !logsList.length" class="noData">
 			<div class="imageBox">
@@ -22,40 +20,91 @@ import $ from "jquery";
 
 export default {
 	name: "LogBox",
-	props: ["logs", "keyword"],
+	props: {
+		logs: {
+			type: Array,
+			default: null
+		},
+		keyword: {
+			type: String,
+			default: ""
+		},
+		loadBtn: {
+			type: Boolean,
+			default: true
+		}
+	},
 	computed: {
 		logsList() {
 			return this.getLogs(this.logs, this.keyword);
 		}
 	},
+	mounted() {
+		let logContainer = this.$refs.logContainer;
+		$(logContainer).scroll(e => {
+			this.$emit("scroll", logContainer);
+		});
+	},
 	methods: {
 		clickLoad() {
 			this.$emit("click", arguments);
 		},
-		markWord(text, keyword) {
-			if (keyword && text.indexOf(keyword) >= 0) {
-				return text.split(keyword).join(`<span class="keyword">${keyword}</span>`);
-			}
-			return text;
+		formatLog(item, keyword) {
+			let markKeyword = function(text) {
+				if (keyword && text.indexOf(keyword) >= 0) {
+					return text.split(keyword).join(`<span class="keyword">${keyword}</span>`);
+				}
+				return text;
+			};
+
+			let date = item.date ? this.$moment(item.date).format("YYYY-MM-DD HH:mm:ss") : "";
+			let lastModified = item.last_updated ? this.$moment(item.last_updated).format("YYYY-MM-DD HH:mm:ss") : "";
+
+			return $(
+				`<li>` +
+					`[<span class="level ${item.level === "ERROR" ? "redActive" : ""}">${item.level}</span>] &nbsp;` +
+					`<span>${item.date}</span>&nbsp;` +
+					`<span>[${markKeyword(item.threadName)}]</span>&nbsp;` +
+					`<span>${markKeyword(item.loggerName)}</span>&nbsp;-&nbsp;` +
+					`<span>${markKeyword(item.message)}</span>` +
+					`</li>`
+			);
 		},
-		getLogs(logs, keyword) {
+		appendLogs(logs) {
+			let logContainer = $(this.$refs.logContainer);
+			logContainer.append(logs);
+		},
+		add(prepend) {
+			let logContainer = $(this.$refs.logContainer);
+			logContainer[prepend ? "prepend" : "append"](logs);
+		},
+		getLogs(logs, keyword, prepend) {
 			let list = [];
 			if (logs && logs.length) {
-				list = logs.map(item => {
-					let date = item.date ? this.$moment(item.date).format("YYYY-MM-DD HH:mm:ss") : "";
-					let lastUpdated = item.last_updated
+				let markKeyword = function(text) {
+					if (keyword && text.indexOf(keyword) >= 0) {
+						return text.split(keyword).join(`<span class="keyword">${keyword}</span>`);
+					}
+					return text;
+				};
+				for (let i = logCount - 1; i >= 0; i--) {
+					let item = logs[i];
+					item.date = item.date ? this.$moment(item.date).format("YYYY-MM-DD HH:mm:ss") : "";
+					item.last_updated = item.last_updated
 						? this.$moment(item.last_updated).format("YYYY-MM-DD HH:mm:ss")
 						: "";
-					let html = `
-                    	[<span class="level ${item.level === "ERROR" ? "redActive" : ""}">${item.level}</span>] &nbsp;
-                    	<span>${item.date}</span>&nbsp;
-                    	<span>[${this.markWord(item.threadName, keyword)}]</span>&nbsp;
-                    	<span>${this.markWord(item.loggerName, keyword)}</span>&nbsp;-&nbsp;
-                    	<span>${this.markWord(item.message, keyword)}</span>`;
-					return { id: item.id, html };
-				});
+
+					logContainer[prepend ? "prepend" : "append"](
+						$(`<li>
+                    [<span class="level ${item.level === "ERROR" ? "redActive" : ""}">${item.level}</span>] &nbsp;
+                    <span>${item.date}</span>&nbsp;
+                    <span>[${markKeyword(item.threadName)}]</span>&nbsp;
+                    <span>${markKeyword(item.loggerName)}</span>&nbsp;-&nbsp;
+                    <span>${markKeyword(item.message)}</span>
+									</li>`)
+					);
+				}
 			}
-			return list;
 		}
 	}
 };
@@ -63,34 +112,12 @@ export default {
 
 <style lang="less" scoped>
 .log-box {
-	.container {
-		width: 100%;
-		display: inline-block;
-		height: calc(100% - 61px);
-		padding-top: 10px;
-		overflow: auto;
-		font-size: 11px;
-		color: #222222;
-
-		li {
-			list-style: none;
-			padding-bottom: 5px;
-
-			.level {
-				font-weight: bold;
-			}
-
-			.redActive {
-				color: red;
-			}
-
-			.keyword {
-				background: #ffff00;
-			}
-		}
-	}
+	overflow: hidden;
+	height: 100%;
+	box-sizing: border-box;
+	padding-bottom: 5px;
 	.noData {
-		height: calc(100% - 60px);
+		height: 100%;
 		padding-top: 9%;
 		color: #999;
 		font-size: 12px;
@@ -101,6 +128,33 @@ export default {
 		.clickLoad {
 			cursor: pointer;
 			color: #48b6e2;
+		}
+	}
+}
+</style>
+<style lang="less">
+.log-box-container {
+	padding-top: 10px;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	font-size: 11px;
+	color: #222222;
+	box-sizing: border-box;
+	li {
+		list-style: none;
+		padding-bottom: 5px;
+
+		.level {
+			font-weight: bold;
+		}
+
+		.redActive {
+			color: red;
+		}
+
+		.keyword {
+			background: #ffff00;
 		}
 	}
 }

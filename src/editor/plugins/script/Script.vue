@@ -33,9 +33,9 @@
 					<JsEditor :code.sync="model.script" ref="jsEditor" :width.sync="width"></JsEditor>
 				</el-form-item>
 			</el-form>
-			<el-button class="btn-debug" type="primary" size="mini" @click="showDebug">{{
-				$t("editor.cell.processor.script.debug_button_label")
-			}}</el-button>
+			<el-button class="btn-debug" type="primary" size="mini" @click="showDebug">
+				{{ $t("editor.cell.processor.script.debug_button_label") }}
+			</el-button>
 		</div>
 		<Debug ref="debug"></Debug>
 	</div>
@@ -117,7 +117,7 @@ export default {
 		showDebug() {
 			log("Connect to Test Server");
 			if (!gData.dataFlow || !gData.dataFlow.id) {
-				this.$message.error($t("editor.cell.processor.script.warning_for_not_save"));
+				this.$message.error(this.$t("editor.cell.processor.script.warning_for_not_save"));
 				return;
 			}
 			ws.getAgentId((err, id) => {
@@ -132,7 +132,7 @@ export default {
 						stageId: gData.stageId
 					});
 				} else {
-					this.$message.error($t("editor.cell.processor.script.connect_server_fail"));
+					this.$message.error(this.$t("editor.cell.processor.script.connect_server_fail"));
 				}
 			});
 
