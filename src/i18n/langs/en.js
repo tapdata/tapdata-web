@@ -371,6 +371,8 @@ const en = {
 					tip: "Memery Cache node",
 					name: "Mem Cache",
 
+					applicationCode: "Application code",
+
 					form: {
 						cacheName: {
 							label: "Cache name",

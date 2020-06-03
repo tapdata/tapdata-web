@@ -368,6 +368,8 @@ const cn = {
 					tip: "内存缓存节点",
 					name: "内存缓存",
 
+					applicationCode: "应用代码",
+
 					form: {
 						cacheName: {
 							label: "缓存名称",

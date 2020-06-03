@@ -368,6 +368,8 @@ const tc = {
 					tip: "記憶體緩存節點",
 					name: "記憶體緩存",
 
+					applicationCode: "應用程式碼",
+
 					form: {
 						cacheName: {
 							label: "緩存名稱",
