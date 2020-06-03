@@ -162,22 +162,24 @@ class WSClient extends EventEmitter {
 			cb(null, self.agentId);
 		} else {
 			workerApi
-				.findOne({
+				.get({
 					filter: JSON.stringify({
 						where: {
 							worker_type: "connector",
 							user_id: {
 								regexp: `^${this.getUserId()}$`
-							}
+							},
+							ping_time: {gte: new Date().getTime() - 60 * 1000}
 						},
 						fields: {
 							process_id: 1
-						}
+						},
+						order: "ping_time DESC"
 					})
 				})
 				.then(result => {
-					if (result && result.data) {
-						self.agentId = result.data.process_id;
+					if (result && result.data && result.data.length > 0) {
+						self.agentId = result.data[0].process_id;
 						cb(null, self.agentId);
 					} else {
 						cb(new Error("Can not found data agent id"));
