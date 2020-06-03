@@ -1,5 +1,8 @@
 <template>
 	<div class="e-link-wrap">
+		<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
+			{{ $t("dataFlow.button.viewMonitoring") }}
+		</el-button>
 		<el-form
 			class="e-form"
 			label-position="right"
@@ -21,6 +24,7 @@
 		</el-form>
 
 		<el-form
+			:disabled="disabled"
 			class="e-form"
 			label-position="right"
 			label-width="160px"
@@ -149,13 +153,14 @@ import { EditorEventType } from "../../lib/events";
 import Mapping from "./Mapping";
 import log from "../../../log";
 import { JOIN_TABLE_TPL } from "../../constants";
-
+let editorMonitor = null;
 export default {
 	name: "Link",
 	components: { Mapping },
 
 	data() {
 		return {
+			disabled: false,
 			sourceList: [],
 			targetList: [],
 			writeModels: [],
@@ -312,6 +317,8 @@ export default {
 
 			this.$emit(EditorEventType.RESIZE);
 			this.showMapping(data, cell, vueAdapter);
+
+			editorMonitor = vueAdapter.editor;
 		},
 
 		getPKsFromSchema(schema) {
@@ -397,7 +404,15 @@ export default {
 				this.model.joinTable.joinPath = this.model.joinTable.tableName;
 			}
 			this.$refs.mappingComp.$emit(EditorEventType.RESIZE);
-		}
+		},
+
+		setDisabled(disabled) {
+			this.disabled = disabled;
+		},
+
+		seeMonitor() {
+			editorMonitor.goBackMontior();
+		},
 	},
 
 	destroyed() {

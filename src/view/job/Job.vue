@@ -81,54 +81,86 @@
 				@click="save"
 				>{{ $t("dataFlow.button.save") }}
 			</el-button> -->
-			<div class="headImg" @click="save" v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)">
+			<div
+				class="headImg"
+				@click="save"
+				v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
+			>
 				<span class="iconfont icon-yunduanshangchuan"></span>
-				<span class="text">{{$t('dataFlow.button.save')}}</span>
+				<span class="text">{{ $t("dataFlow.button.save") }}</span>
 			</div>
-			 <div  class="headImg" v-if="['paused', 'error', 'draft'].includes(status)" @click="preview" :title="$t('dataFlow.button.preview')">
-				<span class="iconfont icon-openeye"></span>
-			</div>
-			<div  class="headImg" @click="reloadSchema" :title="$t('dataFlow.button.reloadSchema')">
+
+			<div class="headImg" @click="reloadSchema" :title="$t('dataFlow.button.reloadSchema')">
 				<span class="iconfont icon-yunshuaxin"></span>
 			</div>
-			<div  class="headImg"	@click="showLogs" :title="$t('dataFlow.button.debug')">
+			<div
+				class="headImg"
+				v-if="['paused', 'error', 'draft'].includes(status)"
+				@click="preview"
+				:title="$t('dataFlow.button.preview')"
+			>
+				<span class="iconfont icon-openeye"></span>
+			</div>
+			<div class="headImg" @click="showLogs" :title="$t('dataFlow.button.debug')">
 				<span class="iconfont icon-debug-"></span>
 			</div>
-			<div  class="headImg round" @click="showSetting" 	v-if="['draft', 'paused', 'error'].includes(status)">
+			<div class="headImg round" @click="showSetting" v-if="['draft', 'paused', 'error'].includes(status)">
 				<span class="iconfont icon-shezhi"></span>
-				<span class="text">{{$t('dataFlow.button.quantitative')}} + {{$t('dataFlow.button.increment')}}</span>
+				<span class="text"
+					>{{ $t("dataFlow.button.quantitative") }} + {{ $t("dataFlow.button.increment") }}</span
+				>
 			</div>
 
 			<el-tag
-				:type="status === 'running'
-					? 'success'
-					: status === 'error'
-					? 'danger'
-					: status === 'paused'
-					? 'warning'
-					: 'info'
+				:type="
+					status === 'running'
+						? 'success'
+						: status === 'error'
+						? 'danger'
+						: status === 'paused'
+						? 'warning'
+						: 'info'
 				"
 				effect="plain"
 				size="small"
 				style="margin-left: 50px;border-radius: 20px;"
 				>{{ $t("dataFlow.state") }}: {{ $t("dataFlow.status." + status.replace(/ /g, "_")) }}
 			</el-tag>
-			<div  class="headImg borderStyle" @click="start" :title="$t('dataFlow.button.start')"	v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)">
+			<div
+				class="headImg borderStyle"
+				@click="start"
+				:title="$t('dataFlow.button.start')"
+				v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
+			>
 				<span class="iconfont icon-yunhang1"></span>
 			</div>
-			<div  class="headImg borderStyle" @click="stop(false)" :title="$t('dataFlow.button.stop')"	v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)">
+			<div
+				class="headImg borderStyle"
+				@click="stop(false)"
+				:title="$t('dataFlow.button.stop')"
+				v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
+			>
 				<span class="iconfont icon-zanting2"></span>
 			</div>
-			<div  class="headImg borderStyle" @click="reset" :title="$t('dataFlow.button.reset')"	v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)">
+			<div
+				class="headImg borderStyle"
+				@click="reset"
+				:title="$t('dataFlow.button.reset')"
+				v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
+			>
 				<span class="iconfont icon-shuaxin3"></span>
 			</div>
-			<div  class="headImg round" @click="submitLayer" style="float: right;">
+			<div class="headImg round" @click="submitLayer" style="float: right;">
 				<span class="iconfont icon-icon_fabu"></span>
-				<span class="text">{{$t('dataFlow.button.submit')}}</span>
+				<span class="text">{{ $t("dataFlow.button.submit") }}</span>
 			</div>
 			<!-- <el-button size="mini" type="primary" @click="switchModel">Model</el-button> -->
 		</div>
-		<el-dialog :title="$t('dataFlow.submitConfirmation')" custom-class="dialogConfig" :visible.sync="dialogFormVisible">
+		<el-dialog
+			:title="$t('dataFlow.submitConfirmation')"
+			custom-class="dialogConfig"
+			:visible.sync="dialogFormVisible"
+		>
 			<el-form :model="form" label-position="left">
 				<el-form-item :label="$t('dataFlow.taskName')">
 					<el-input class="e-input" v-model="form.taskName" autocomplete="off"></el-input>
@@ -138,9 +170,11 @@
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button class="e-button" @click="dialogFormVisible = false">{{$t('message.cancel')}}</el-button>
-				<el-button class="e-button" type="primary" @click="submitTemporary">{{$t('dataFlow.submitOnly')}}</el-button>
-				<el-button class="e-button" type="primary" @click="start">{{$t('dataFlow.submitExecute')}}</el-button>
+				<el-button class="e-button" @click="dialogFormVisible = false">{{ $t("message.cancel") }}</el-button>
+				<el-button class="e-button" type="primary" @click="submitTemporary">{{
+					$t("dataFlow.submitOnly")
+				}}</el-button>
+				<el-button class="e-button" type="primary" @click="start">{{ $t("dataFlow.submitExecute") }}</el-button>
 			</div>
 		</el-dialog>
 	</div>
@@ -153,7 +187,7 @@ import editor from "../../editor/index";
 import breakText from "../../editor/breakText";
 import log from "../../log";
 import { FORM_DATA_KEY, JOIN_TABLE_TPL } from "../../editor/constants";
-import {EditorEventType} from "../../editor/lib/events";
+import { EditorEventType } from "../../editor/lib/events";
 import _ from "lodash";
 
 const dataFlowsApi = factory("DataFlows");
@@ -165,9 +199,9 @@ export default {
 	data() {
 		return {
 			dialogFormVisible: false,
-			form:{
-				taskName: '',
-				type: this.$t('dataFlow.button.quantitative') + '+' + this.$t('dataFlow.button.increment')
+			form: {
+				taskName: "",
+				type: this.$t("dataFlow.button.quantitative") + "+" + this.$t("dataFlow.button.increment")
 			},
 			// run model: editable,readonly
 			model: "editable",
@@ -179,7 +213,8 @@ export default {
 			loading: true,
 			disabledDataVerify: false,
 			cells: [],
-			state1:''
+			state1: "",
+			editable: false
 		};
 	},
 
@@ -207,7 +242,8 @@ export default {
 		// build editor
 		self.editor = editor({
 			container: $(".editor-container"),
-			actionBarEl: $(".editor-container .action-buttons")
+			actionBarEl: $(".editor-container .action-buttons"),
+			scope: self
 		});
 
 		// load dataFlow if exists data flow id
@@ -220,18 +256,17 @@ export default {
 		// self.editor.getUI().getBackButtonEl().on('click', () => {
 		// 	self.$router.push({path: '/dataFlows'});
 		// });
-		 this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () =>{
+		this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
 			changeData = this.getDataFlowData(true);
 		});
 
-		if (["draft", "error", "paused"].includes(this.status)){
+		if (["draft", "error", "paused"].includes(this.status)) {
 			timer = setInterval(() => {
-				if(changeData) {
-					this.timeSave();
+				if (changeData) {
+					self.timeSave();
 				}
 			}, 10000);
 		}
-
 	},
 
 	beforeDestroy() {
@@ -239,33 +274,35 @@ export default {
 			clearTimeout(this.timeoutId);
 		}
 		this.editor.destroy();
-		timer.clearTimeout();
+		if (["draft", "error", "paused"].includes(this.status)) {
+			timer.clearInterval();
+		}
 	},
 
 	methods: {
 		/**
 		 * submit temporary
 		 */
-      	submitTemporary() {
+		submitTemporary() {
 			let self = this,
-          	data = this.getDataFlowData();
+				data = this.getDataFlowData();
 
 			if (data) {
 				if (data.id) {
 					data = {
 						id: data.id,
-						status: 'paused',
+						status: "paused",
 						name: this.form.taskName
 					};
 				}
-				data.status = 'paused';
+				data.status = "paused";
 				data.executeMode = "normal";
 				data.name = this.form.taskName;
 				self.doSave(data, (err, dataFlow) => {
 					if (err) {
-						this.$message.error(self.$t('message.saveFail'));
+						this.$message.error(self.$t("message.saveFail"));
 					} else {
-						this.$message.success(self.$t('message.saveOK'));
+						this.$message.success(self.$t("message.saveOK"));
 						self.setEditable(false);
 					}
 				});
@@ -281,30 +318,32 @@ export default {
 				data = this.getDataFlowData(true),
 				promise = dataFlowsApi.draft(data);
 
-			if(promise) {
-				promise.then((result) => {
-					if (result && result.data) {
-						let dataFlow = result.data;
-						self.dataFlowId = dataFlow.id;
-						self.status = dataFlow.status;
-						self.executeMode = dataFlow.executeMode;
+			if (promise) {
+				promise
+					.then(result => {
+						if (result && result.data) {
+							let dataFlow = result.data;
+							self.dataFlowId = dataFlow.id;
+							self.status = dataFlow.status;
+							self.executeMode = dataFlow.executeMode;
 
-						self.dataFlow = dataFlow;
+							self.dataFlow = dataFlow;
 
-						if (!self.$route.query || !self.$route.query.id) {
-							self.$router.push({
-								path: '/job',
-								query: {
-									id: dataFlow.id
-								}
-							});
+							if (!self.$route.query || !self.$route.query.id) {
+								self.$router.push({
+									path: "/job",
+									query: {
+										id: dataFlow.id
+									}
+								});
+							}
+							self.polling();
 						}
-						self.polling();
-					}
-				}).finally(() => {
-					changeData = null;
-					self.loading = false;
-				});
+					})
+					.finally(() => {
+						changeData = null;
+						self.loading = false;
+					});
 			}
 		},
 
@@ -313,7 +352,7 @@ export default {
 		 */
 		submitLayer() {
 			this.dialogFormVisible = true;
-			if(this.dialogFormVisible) {
+			if (this.dialogFormVisible) {
 				let editorData = this.editor.getData();
 				this.form.taskName = editorData.name;
 			}
@@ -436,7 +475,7 @@ export default {
 		 */
 		getDataFlowData(autoSave) {
 			// validate
-			if(!autoSave) {
+			if (!autoSave) {
 				let verified = this.editor.validate();
 				if (verified !== true) {
 					this.$message.error(verified);
@@ -840,6 +879,7 @@ export default {
 		 */
 		setEditable(editable) {
 			log("Job.setEditable", editable, this.dataFlow);
+			this.editable = editable;
 			if (this.dataFlow) {
 				delete this.dataFlow.editorData;
 				this.editor.setEditable(editable, this.dataFlow);
@@ -1066,20 +1106,20 @@ export default {
 			let dataCellName = [];
 			dataCells.forEach(cell => {
 				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
-				let tableName= { "value": formData.tableName || formData.name,'cell':cell};
+				let tableName = { value: formData.tableName || formData.name, cell: cell };
 				dataCellName.push(tableName);
 			});
-			var restaurants = dataCellName
+			var restaurants = dataCellName;
 			var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
 			// 调用 callback 返回建议列表的数据
 			cb(results);
 		},
 		createFilter(queryString) {
-			return (restaurant) => {
-				return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+			return restaurant => {
+				return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0;
 			};
 		},
-		handleSearchNode(item){
+		handleSearchNode(item) {
 			//选中当前节点
 			this.editor.graph.selectionPosition(item.cell);
 		}
@@ -1090,36 +1130,36 @@ export default {
 <style lang="less">
 @import "../../editor/style/editor";
 .dialogConfig {
-    .el-dialog__header {
-      background:rgba(250,250,250,1);
-      border:1px solid rgba(222, 222, 228, 1);
-    }
-    .el-dialog__body {
-      padding-bottom: 0;
-    }
-    .e-input {
-      width: calc(100% - 80px);
-      height: 30px;
-      line-height: 30px;
-      input {
-        height: 30px;
-        line-height: 30px;
-      }
-    }
-    .el-form-item__content {
-      line-height: 30px;
-    }
-    .el-form--label-left .el-form-item__label {
-      width: 80px;
-      line-height: 30px;
-      font-size: 14px;
-    }
-    .el-button {
-      padding: 8px 20px;
-    }
-  }
-.searchNode{
-	.el-input__inner{
+	.el-dialog__header {
+		background: rgba(250, 250, 250, 1);
+		border: 1px solid rgba(222, 222, 228, 1);
+	}
+	.el-dialog__body {
+		padding-bottom: 0;
+	}
+	.e-input {
+		width: calc(100% - 100px);
+		height: 30px;
+		line-height: 30px;
+		input {
+			height: 30px;
+			line-height: 30px;
+		}
+	}
+	.el-form-item__content {
+		line-height: 30px;
+	}
+	.el-form--label-left .el-form-item__label {
+		width: 100px;
+		line-height: 30px;
+		font-size: 14px;
+	}
+	.el-button {
+		padding: 8px 20px;
+	}
+}
+.searchNode {
+	.el-input__inner {
 		border-radius: 20px;
 	}
 }

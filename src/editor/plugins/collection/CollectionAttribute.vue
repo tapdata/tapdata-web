@@ -1,7 +1,10 @@
 <template>
 	<div class="e-collection nodeStyle">
 		<div class="nodeBody">
-			<el-form class="e-form" label-position="top" label-width="160px" :model="model" ref="form" :rules="rules">
+			<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
+				{{$t("dataFlow.button.viewMonitoring")}}
+			</el-button>
+			<el-form class="e-form" label-position="top" label-width="160px" :model="model" ref="form" :rules="rules" :disabled="disabled">
 				<el-form-item
 					:label="$t('editor.cell.data_node.collection.form.database.label')"
 					prop="connectionId"
@@ -98,7 +101,7 @@ import Entity from "../link/Entity";
 import _ from "lodash";
 import factory from "../../../api/factory";
 let connectionApi = factory("connections");
-
+let editorMonitor = null;
 export default {
 	name: "Collection",
 	components: { Entity },
@@ -169,6 +172,7 @@ export default {
 
 	data() {
 		return {
+			disabled: false,
 			databases: [],
 			schemas: [],
 
@@ -270,6 +274,8 @@ export default {
 			cell.on("change:outputSchema", () => {
 				this.mergedSchema = cell.getOutputSchema();
 			});
+
+			editorMonitor = vueAdapter.editor;
 		},
 		getData() {
 			let result = _.cloneDeep(this.model);
@@ -278,7 +284,15 @@ export default {
 				delete result.dropTable;
 			}
 			return result;
-		}
+		},
+
+		setDisabled(disabled) {
+			this.disabled = disabled;
+		},
+
+		seeMonitor() {
+			editorMonitor.goBackMontior();
+		},
 	}
 };
 </script>

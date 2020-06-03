@@ -1,6 +1,10 @@
-import { options } from "../../lib/rappid/config";
+import {
+	options
+} from "../../lib/rappid/config";
 import ApiAttribute from "./ApiAttribute";
-import { FORM_DATA_KEY } from "../../constants";
+import {
+	FORM_DATA_KEY
+} from "../../constants";
 import i18n from "../../../i18n/i18n";
 
 export const ApiNodeConfig = {
@@ -10,7 +14,7 @@ export const ApiNodeConfig = {
 		defaultInstanceProperties: {
 			attrs: {
 				image: {
-					xlinkHref: "static/editor/o-api.svg"
+					xlinkHref: "static/editor/0-API-target1.svg"
 				},
 				label: {
 					text: i18n.t("editor.cell.data_node.api.name")
@@ -22,12 +26,10 @@ export const ApiNodeConfig = {
 			}
 		},
 		prototypeProperties: {
-			portLabelMarkup: [
-				{
-					tagName: "text",
-					selector: "portLabel"
-				}
-			],
+			portLabelMarkup: [{
+				tagName: "text",
+				selector: "portLabel"
+			}],
 
 			isDataNode() {
 				return true;
@@ -58,7 +60,8 @@ export const ApiNodeConfig = {
 
 				if (!data.connectionId)
 					throw new Error(`${name}: ${i18n.t("editor.cell.data_node.api.none_database")}`);
-				if (!data.tableName) throw new Error(`${name}: ${i18n.t("editor.cell.data_node.api.none_collection")}`);
+				if (!data.tableName) throw new Error(
+					`${name}: ${i18n.t("editor.cell.data_node.api.none_collection")}`);
 				if (!data.primaryKeys) throw new Error(`${name}: ${i18n.t("editor.cell.data_node.api.none_pk")}`);
 
 				return true;
@@ -83,7 +86,11 @@ export const ApiNodeConfig = {
 						unit: "px",
 						label: "Font size",
 						group: "text",
-						when: { ne: { "attrs/label/text": "" } },
+						when: {
+							ne: {
+								"attrs/label/text": ""
+							}
+						},
 						index: 2
 					},
 					fontFamily: {
@@ -91,7 +98,11 @@ export const ApiNodeConfig = {
 						options: options.fontFamily,
 						label: "Font family",
 						group: "text",
-						when: { ne: { "attrs/label/text": "" } },
+						when: {
+							ne: {
+								"attrs/label/text": ""
+							}
+						},
 						index: 3
 					},
 					fontWeight: {
@@ -99,7 +110,11 @@ export const ApiNodeConfig = {
 						options: options.fontWeight,
 						label: "Font thickness",
 						group: "text",
-						when: { ne: { "attrs/label/text": "" } },
+						when: {
+							ne: {
+								"attrs/label/text": ""
+							}
+						},
 						index: 4
 					},
 					fill: {
@@ -107,7 +122,11 @@ export const ApiNodeConfig = {
 						options: options.colorPalette,
 						label: "Fill",
 						group: "text",
-						when: { ne: { "attrs/label/text": "" } },
+						when: {
+							ne: {
+								"attrs/label/text": ""
+							}
+						},
 						index: 5
 					}
 				},
@@ -135,7 +154,11 @@ export const ApiNodeConfig = {
 						unit: "px",
 						label: "Outline thickness",
 						group: "presentation",
-						when: { ne: { "attrs/body/stroke": "transparent" } },
+						when: {
+							ne: {
+								"attrs/body/stroke": "transparent"
+							}
+						},
 						index: 3
 					},
 					strokeDasharray: {
@@ -144,9 +167,16 @@ export const ApiNodeConfig = {
 						label: "Outline style",
 						group: "presentation",
 						when: {
-							and: [
-								{ ne: { "attrs/body/stroke": "transparent" } },
-								{ ne: { "attrs/body/strokeWidth": 0 } }
+							and: [{
+									ne: {
+										"attrs/body/stroke": "transparent"
+									}
+								},
+								{
+									ne: {
+										"attrs/body/strokeWidth": 0
+									}
+								}
 							]
 						},
 						index: 4
@@ -180,7 +210,10 @@ export const ApiNodeConfig = {
 		 */
 		// groupLabel: '',
 
-		size: { width: 5, height: 4 },
+		size: {
+			width: 5,
+			height: 4
+		},
 		attrs: {
 			root: {
 				dataTooltip: i18n.t("editor.cell.data_node.api.tip"),
@@ -196,7 +229,7 @@ export const ApiNodeConfig = {
 				strokeDasharray: "0"
 			},
 			image: {
-				xlinkHref: "static/editor/api.svg",
+				xlinkHref: "static/editor/API-target1.svg",
 				refWidth: "60%",
 				refHeight: "60%",
 				refX: "2%",

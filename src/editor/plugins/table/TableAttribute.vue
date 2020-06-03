@@ -1,8 +1,17 @@
 <template>
 	<div class="e-table">
-		<el-button class="e-button" type="primary" @click="seeMonitor">{{$t('dataFlow.button.viewMonitoring')}}</el-button>
+		<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">{{
+			$t("dataFlow.button.viewMonitoring")
+		}}</el-button>
 
-		<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form">
+		<el-form
+			class="e-form"
+			label-position="right"
+			label-width="160px"
+			:disabled="disabled"
+			:model="model"
+			ref="form"
+		>
 			<el-form-item
 				:label="$t('editor.cell.data_node.table.form.database.label')"
 				prop="connectionId"
@@ -36,6 +45,7 @@
 					allow-create
 					default-first-option
 					clearable
+					class="e-select"
 					v-model="model.tableName"
 					:placeholder="$t('editor.cell.data_node.table.form.table.placeholder')"
 					size="mini"
@@ -56,9 +66,17 @@
 					size="mini"
 				></el-input>
 			</el-form-item>
-			<el-form-item required :label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
-						  v-if="isSourceDataNode">
-				<el-input-number v-model="model.initialSyncOrder" controls-position="right"  :min="1" size="mini"></el-input-number>
+			<el-form-item
+				required
+				:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
+				v-if="isSourceDataNode"
+			>
+				<el-input-number
+					v-model="model.initialSyncOrder"
+					controls-position="right"
+					:min="1"
+					size="mini"
+				></el-input-number>
 			</el-form-item>
 			<el-form-item
 				required
@@ -171,7 +189,7 @@ export default {
 		return {
 			databases: [],
 			schemas: [],
-
+			disabled: false,
 			rules: {
 				connectionId: [
 					{
@@ -192,7 +210,7 @@ export default {
 				dropTable: false,
 				type: "table",
 				primaryKeys: "",
-				initialSyncOrder:1,
+				initialSyncOrder: 1
 			},
 
 			mergedSchema: null
@@ -266,7 +284,6 @@ export default {
 				this.mergedSchema = cell.getOutputSchema();
 			});
 			editor = vueAdapter.editor;
-			console.log(data, cell, isSourceDataNode, vueAdapter)
 		},
 		getData() {
 			let result = _.cloneDeep(this.model);
@@ -275,6 +292,10 @@ export default {
 				delete result.dropTable;
 			}
 			return result;
+		},
+
+		setDisabled(disabled) {
+			this.disabled = disabled;
 		}
 	}
 };

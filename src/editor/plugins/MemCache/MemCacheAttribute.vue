@@ -1,7 +1,10 @@
 <template>
 	<div class="e-memery-cache nodeStyle">
 		<div class="nodeBody">
-			<el-form class="e-form" label-position="top" label-width="130px" :rules="rules" :model="model" ref="form">
+			<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
+				{{$t("dataFlow.button.viewMonitoring")}}
+			</el-button>
+			<el-form class="e-form" label-position="top" label-width="130px" :disabled="disabled" :rules="rules" :model="model" ref="form">
 				<el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.cacheName.label')">
 					<el-input
 						v-model="model.cacheName"
@@ -117,7 +120,7 @@
 // import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from "../../util/Schema";
 import log from "../../../log";
 import _ from "lodash";
-
+let editorMonitor = null;
 export default {
 	name: "memCache",
 
@@ -133,6 +136,7 @@ export default {
 	data() {
 		let validateNumber = (rule, value, callback) => {};
 		return {
+			disabled: false,
 			databases: [],
 
 			rules: {
@@ -189,16 +193,22 @@ export default {
 				}
 			}
 			this.cacheKeysValues = cacheKeys.length ? cacheKeys.split(",") : [];
+
+			editorMonitor = vueAdapter.editor;
 		},
+
 		getData() {
 			return _.cloneDeep(this.model);
 		},
+
 		nameHandler(val) {
 			this.model.name = val;
 		},
+
 		cacheKeysHandler() {
 			this.model.cacheKeys = this.cacheKeysValues.join(",");
 		},
+
 		maxSizeLimitedHandler(limited) {
 			if (limited) {
 				this.model.maxSize = 50;
@@ -212,7 +222,15 @@ export default {
 			} else {
 				this.model.maxRows = 0;
 			}
-		}
+		},
+
+		setDisabled(disabled) {
+			this.disabled = disabled;
+		},
+
+		seeMonitor() {
+			editorMonitor.goBackMontior();
+		},
 	}
 };
 </script>
