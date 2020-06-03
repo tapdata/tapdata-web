@@ -7,7 +7,7 @@
 		>
 			<div class="panel debug-list" v-show="opened">
 				<div class="header">
-					<h4>js连接测试</h4>
+					<h4>{{ $t("editor.cell.processor.script.debug.top_header") }}</h4>
 					<i class="el-icon-arrow-up" @click="hide"></i>
 				</div>
 				<div class="table-panel">
@@ -24,18 +24,35 @@
 						@current-change="rowHandler"
 						v-loading="!logList"
 					>
-						<el-table-column type="index" align="center" label="连接顺序" width="80"></el-table-column>
-						<el-table-column align="center" label="返回状态" width="80">
+						<el-table-column
+							type="index"
+							align="center"
+							:label="$t('editor.cell.processor.script.debug.order')"
+							width="80"
+						></el-table-column>
+						<el-table-column
+							align="center"
+							:label="$t('editor.cell.processor.script.debug.status')"
+							width="80"
+						>
 							<template slot-scope="scope">
-								<span class="color-danger" v-if="scope.row.err_out">错误</span>
-								<span class="color-primary" v-else>成功</span>
+								<span class="color-danger" v-if="(scope.row.status = 'ERROR')">{{
+									$t("editor.cell.processor.script.debug.status_error")
+								}}</span>
+								<span class="color-primary" v-else>{{
+									$t("editor.cell.processor.script.debug.status_success")
+								}}</span>
 							</template>
 						</el-table-column>
-						<el-table-column align="center" prop="time" label="耗时(ms)" width="100"></el-table-column>
-						<el-table-column align="left" label="日志">
+						<el-table-column
+							align="center"
+							prop="time"
+							:label="$t('editor.cell.processor.script.debug.time') + '(ms)'"
+							width="100"
+						></el-table-column>
+						<el-table-column align="left" :label="$t('editor.cell.processor.script.debug.log')">
 							<template slot-scope="scope">
-								<div v-if="scope.row.err_out">{{ getFirstLine(scope.row.err_out) }}</div>
-								<div v-else>{{ getFirstLine(scope.row.out) }}</div>
+								<div v-html="getFirstLine(scope.row.out)"></div>
 							</template>
 						</el-table-column>
 					</el-table>
@@ -49,41 +66,47 @@
 		>
 			<div class="panel debug-details" v-show="opened">
 				<div class="header">
-					<h4>测试详情</h4>
+					<h4>{{ $t("editor.cell.processor.script.debug.bottom_header") }}</h4>
 					<ul class="bar">
-						<template v-if="selectedLog">
-							<li>连接顺序: {{ selectedLog.index + 1 }}</li>
+						<template v-if="selectedLog.index">
+							<li>{{ $t("editor.cell.processor.script.debug.order") }}: {{ selectedLog.index + 1 }}</li>
 							<li>
-								结果:
-								<span class="color-primary" v-show="!selectedLog.err_out">成功</span>
-								<span class="color-danger" v-show="selectedLog.err_out">错误</span>
+								{{ $t("editor.cell.processor.script.debug.status") }}:
+								<span class="color-primary" v-show="!selectedLog.err_out">
+									{{ $t("editor.cell.processor.script.debug.status_success") }}
+								</span>
+								<span class="color-danger" v-show="selectedLog.err_out">
+									{{ $t("editor.cell.processor.script.debug.status_error") }}
+								</span>
 							</li>
-							<li>耗时: {{ selectedLog.time }}ms</li>
+							<li>{{ $t("editor.cell.processor.script.debug.time") }}: {{ selectedLog.time }}ms</li>
 						</template>
 						<li>
 							<i class="el-icon-arrow-down" @click="hide"></i>
 						</li>
 					</ul>
 				</div>
-				<ul class="details" v-if="selectedLog">
+				<ul class="details">
 					<li>
-						<label>入参</label>
+						<label>{{ $t("editor.cell.processor.script.debug.detail.parameter") }}</label>
 						<div class="value">
 							<div class="params" v-for="(p, index) in selectedLog.params" :key="index">
-								<span>参数{{ index + 1 }}: </span>
+								<span>{{ index + 1 }}: </span>
 								<pre>{{ stringify(p) }}</pre>
 							</div>
 						</div>
 					</li>
 					<li>
-						<label>返回值</label>
+						<label>{{ $t("editor.cell.processor.script.debug.detail.return") }}</label>
 						<div class="value">
 							<pre>{{ stringify(selectedLog.result) }}</pre>
 						</div>
 					</li>
 					<li>
-						<label>日志</label>
-						<div class="value" v-html="logs"></div>
+						<label>{{ $t("editor.cell.processor.script.debug.log") }}</label>
+						<div class="value">
+							<LogBox ref="log"></LogBox>
+						</div>
 					</li>
 				</ul>
 			</div>
@@ -93,9 +116,13 @@
 
 <script>
 import log from "../../../log";
+import LogBox from "@/components/LogBox";
 // import { EditorEventType } from "../../lib/events";
 export default {
 	name: "Debug",
+	components: {
+		LogBox
+	},
 	data() {
 		let style = {
 			padding: 0,
@@ -104,7 +131,7 @@ export default {
 		};
 		return {
 			logList: null,
-			selectedLog: null,
+			selectedLog: {},
 
 			visible: false,
 			opened: false,
@@ -120,14 +147,6 @@ export default {
 	computed: {
 		width() {
 			return this.clientWidth - this.sliderWidth - 6;
-		},
-		logs() {
-			let log = this.selectedLog || {};
-			let out = log.out || "";
-			let eOut = log.err_out || "";
-			let str = out + "\n" + eOut;
-
-			return str.replace(new RegExp("\n", "g"), "<br>");
 		}
 	},
 	mounted() {
@@ -155,7 +174,17 @@ export default {
 				this.opened = true;
 			});
 			this.logList = null;
-			this.selectedLog = null;
+			this.selectedLog = {};
+
+			setTimeout(() => {
+				this.logList = [
+					{
+						index: 1,
+						out: [{}]
+					}
+				];
+			}, 1000);
+
 			receiveMessage(msg => {
 				let result = [];
 				if (msg) {
@@ -176,11 +205,22 @@ export default {
 				this.visible = false;
 			}, 500);
 		},
-		getFirstLine(str) {
-			return str ? str.split("\n")[0] : "";
+		getFirstLine(logs) {
+			if (logs && logs.length) {
+				let log =
+					logs.find(item => {
+						return item.level === "ERROR";
+					}) || logs[0];
+
+				return this.$refs.log.formatLog([log]);
+			}
+			return "";
 		},
 		rowHandler(row) {
 			this.selectedLog = row;
+			this.$nextTick(() => {
+				this.$refs.log.add({ logs: row.out, reset: true });
+			});
 		},
 		stringify(value) {
 			return JSON.stringify(value, null, 2);

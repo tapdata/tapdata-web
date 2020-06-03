@@ -33,7 +33,9 @@
 					<JsEditor :code.sync="model.script" ref="jsEditor" :width.sync="width"></JsEditor>
 				</el-form-item>
 			</el-form>
-			<el-button class="btn-debug" type="primary" size="mini" @click="showDebug">连接测试</el-button>
+			<el-button class="btn-debug" type="primary" size="mini" @click="showDebug">
+				{{ $t("editor.cell.processor.script.debug_button_label") }}
+			</el-button>
 		</div>
 		<Debug ref="debug"></Debug>
 	</div>
@@ -113,9 +115,9 @@ export default {
 			return JSON.parse(JSON.stringify(this.model));
 		},
 		showDebug() {
-			log("启动连接测试");
+			log("Connect to Test Server");
 			if (!gData.dataFlow || !gData.dataFlow.id) {
-				this.$message.error("当前任务未保存，无法进行连接测试，请保存之后再尝试");
+				this.$message.error(this.$t("editor.cell.processor.script.warning_for_not_save"));
 				return;
 			}
 			ws.getAgentId((err, id) => {
@@ -130,7 +132,7 @@ export default {
 						stageId: gData.stageId
 					});
 				} else {
-					this.$message.error("连接服务器失败");
+					this.$message.error(this.$t("editor.cell.processor.script.connect_server_fail"));
 				}
 			});
 
