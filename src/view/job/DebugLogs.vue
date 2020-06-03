@@ -12,28 +12,21 @@
 			<i class="el-icon-loading" v-if="loading"></i>
 		</el-form>
 		<div class="logBox" v-loading="loading" :element-loading-text="$t('dataFlow.loadLogTip')">
-			<ul class="e-log-container" v-show="logCount > 0" ref="logContainer"></ul>
-
-			<div v-show="logCount === 0" class="noData">
-				<div class="imageBox">
-					<el-image style="width: 200px; height: 200px" :src="imageUrl"></el-image>
-				</div>
-
-				<div>
-					{{ $t("dataFlow.noLogTip") }}?_(:з」∠)......
-					<span class="clickLoad" @click="clickLoad">{{ $t("dataFlow.clickLoadTxt") }}</span>
-				</div>
-			</div>
+			<LogBox ref="log" :keyword="search" :load="clickLoad" @scroll="logScroll"></LogBox>
 		</div>
 	</div>
 </template>
 <script>
 import $ from "jquery";
 import factory from "../../api/factory";
+import LogBox from "@/components/LogBox";
 
 const logsModel = factory("logs");
 export default {
 	name: "DebugLogs",
+	components: {
+		LogBox
+	},
 	props: {
 		dataFlow: {
 			type: Object,
@@ -43,7 +36,6 @@ export default {
 	data() {
 		return {
 			search: "",
-			logCount: 0,
 			lastLogsId: "",
 			firstLogsId: "",
 			timer: null,
@@ -58,16 +50,14 @@ export default {
 		this.timer = setInterval(() => {
 			this.loadNew();
 		}, 5000);
-
-		let logContainer = self.$refs.logContainer;
-		$(logContainer).scroll(e => {
-			if (logContainer.scrollHeight - logContainer.clientHeight - logContainer.scrollTop < 100) {
-				self.loadOld();
-			}
-		});
 	},
 
 	methods: {
+		logScroll(logContainer) {
+			if (logContainer.scrollHeight - logContainer.clientHeight - logContainer.scrollTop < 100) {
+				this.loadOld();
+			}
+		},
 		addFilter(filter) {
 			if (this.search) {
 				filter.where.or = [
@@ -140,43 +130,14 @@ export default {
 					self.loading = false;
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data && res.data.length > 0) {
-							if (reset || prepend || !this.lastLogsId) this.lastLogsId = res.data[0].id;
-							if (reset || !prepend || !this.firstLogsId)
+							if (reset || prepend || !this.lastLogsId) {
+								this.lastLogsId = res.data[0].id;
+							}
+							if (reset || !prepend || !this.firstLogsId) {
 								this.firstLogsId = res.data[res.data.length - 1].id;
-
-							let logCount = res.data.length;
-							let logContainer = $(this.$refs.logContainer);
-
-							if (reset) {
-								this.logCount = logCount;
-								logContainer.find("li").remove();
-							} else {
-								this.logCount += logCount;
 							}
 
-							let markKeyword = function(text) {
-								if (self.search && text.indexOf(self.search) >= 0) {
-									return text.split(self.search).join(`<span class="keyword">${self.search}</span>`);
-								}
-								return text;
-							};
-							for (let i = logCount - 1; i >= 0; i--) {
-								let item = res.data[i];
-								item.date = item.date ? this.$moment(item.date).format("YYYY-MM-DD HH:mm:ss") : "";
-								item.last_updated = item.last_updated
-									? this.$moment(item.last_updated).format("YYYY-MM-DD HH:mm:ss")
-									: "";
-
-								logContainer[prepend ? "prepend" : "append"](
-									$(`<li>
-                    [<span class="level ${item.level === "ERROR" ? "redActive" : ""}">${item.level}</span>] &nbsp;
-                    <span>${item.date}</span>&nbsp;
-                    <span>[${markKeyword(item.threadName)}]</span>&nbsp;
-                    <span>${markKeyword(item.loggerName)}</span>&nbsp;-&nbsp;
-                    <span>${markKeyword(item.message)}</span>
-									</li>`)
-								);
-							}
+							this.$refs.log.add({ logs: res.data, prepend, reset });
 						}
 					}
 				})
@@ -192,11 +153,11 @@ export default {
 	}
 };
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .e-debug-log {
 	width: 100%;
 	height: 100%;
-	padding: 10px 0 0 20px;
+	padding: 10px 5px 5px 20px;
 	box-sizing: border-box;
 	overflow: hidden;
 
@@ -214,34 +175,6 @@ export default {
 		}
 	}
 }
-
-.e-log-container {
-	width: 100%;
-	display: inline-block;
-	height: calc(100% - 61px);
-	padding-top: 10px;
-	overflow: auto;
-	font-size: 11px;
-	color: #222222;
-
-	li {
-		list-style: none;
-		padding-bottom: 5px;
-
-		.level {
-			font-weight: bold;
-		}
-
-		.redActive {
-			color: red;
-		}
-
-		.keyword {
-			background: #ffff00;
-		}
-	}
-}
-
 .logBox {
 	height: calc(100% - 44px);
 	.el-loading-spinner .el-loading-text {
@@ -249,22 +182,6 @@ export default {
 		color: #333;
 	}
 }
-
-.noData {
-	height: calc(100% - 60px);
-	padding-top: 9%;
-	color: #999;
-	font-size: 12px;
-	background-color: #fff;
-	div {
-		text-align: center;
-	}
-	.clickLoad {
-		cursor: pointer;
-		color: #48b6e2;
-	}
-}
-
 .inputStyle {
 	width: 300px;
 }

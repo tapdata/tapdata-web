@@ -36,7 +36,7 @@
 							width="80"
 						>
 							<template slot-scope="scope">
-								<span class="color-danger" v-if="scope.row.err_out">{{
+								<span class="color-danger" v-if="(scope.row.status = 'ERROR')">{{
 									$t("editor.cell.processor.script.debug.status_error")
 								}}</span>
 								<span class="color-primary" v-else>{{
@@ -52,8 +52,7 @@
 						></el-table-column>
 						<el-table-column align="left" :label="$t('editor.cell.processor.script.debug.log')">
 							<template slot-scope="scope">
-								<div v-if="scope.row.err_out">{{ getFirstLine(scope.row.err_out) }}</div>
-								<div v-else>{{ getFirstLine(scope.row.out) }}</div>
+								<div v-html="getFirstLine(scope.row.out)"></div>
 							</template>
 						</el-table-column>
 					</el-table>
@@ -69,7 +68,7 @@
 				<div class="header">
 					<h4>{{ $t("editor.cell.processor.script.debug.bottom_header") }}</h4>
 					<ul class="bar">
-						<template v-if="selectedLog">
+						<template v-if="selectedLog.index">
 							<li>{{ $t("editor.cell.processor.script.debug.order") }}: {{ selectedLog.index + 1 }}</li>
 							<li>
 								{{ $t("editor.cell.processor.script.debug.status") }}:
@@ -87,7 +86,7 @@
 						</li>
 					</ul>
 				</div>
-				<ul class="details" v-if="selectedLog">
+				<ul class="details">
 					<li>
 						<label>{{ $t("editor.cell.processor.script.debug.detail.parameter") }}</label>
 						<div class="value">
@@ -106,7 +105,7 @@
 					<li>
 						<label>{{ $t("editor.cell.processor.script.debug.log") }}</label>
 						<div class="value">
-							<LogBox :logs="selectedLog.out" :loadBtn="false"></LogBox>
+							<LogBox ref="log"></LogBox>
 						</div>
 					</li>
 				</ul>
@@ -132,7 +131,7 @@ export default {
 		};
 		return {
 			logList: null,
-			selectedLog: null,
+			selectedLog: {},
 
 			visible: false,
 			opened: false,
@@ -175,7 +174,17 @@ export default {
 				this.opened = true;
 			});
 			this.logList = null;
-			this.selectedLog = null;
+			this.selectedLog = {};
+
+			setTimeout(() => {
+				this.logList = [
+					{
+						index: 1,
+						out: [{}]
+					}
+				];
+			}, 1000);
+
 			receiveMessage(msg => {
 				let result = [];
 				if (msg) {
@@ -196,11 +205,22 @@ export default {
 				this.visible = false;
 			}, 500);
 		},
-		getFirstLine(str) {
-			return str ? str.split("\n")[0] : "";
+		getFirstLine(logs) {
+			if (logs && logs.length) {
+				let log =
+					logs.find(item => {
+						return item.level === "ERROR";
+					}) || logs[0];
+
+				return this.$refs.log.formatLog([log]);
+			}
+			return "";
 		},
 		rowHandler(row) {
 			this.selectedLog = row;
+			this.$nextTick(() => {
+				this.$refs.log.add({ logs: row.out, reset: true });
+			});
 		},
 		stringify(value) {
 			return JSON.stringify(value, null, 2);
