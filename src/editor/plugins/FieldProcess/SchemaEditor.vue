@@ -69,7 +69,7 @@
 							:class="{
 								activedatatype: isConvertDataType(data.id)
 							}"
-							:disabled="isRemove(data.id)"
+							:disabled="isRemove(data.id) || disabledMode"
 							@change="handleDataType(node, data)"
 						>
 							<el-option
@@ -120,6 +120,7 @@
 						></el-button>
 						<el-dropdown
 							v-else
+							v-show="!disabledMode"
 							size="mini"
 							:show-timeout="10"
 							:hide-on-click="false"
@@ -153,6 +154,7 @@
 							class="e-field-action iconfont icon-script"
 							:style="isScript(data.id) ? 'color: #71c179;' : ''"
 							@click="handleScript(node, data)"
+							v-show="!disabledMode"
 						></span>
 
 						<el-button
@@ -164,6 +166,7 @@
 						<span
 							v-else
 							class="e-field-action iconfont icon-l-del"
+							v-show="!disabledMode"
 							@click="handleDelete(node, data)"
 						></span>
 
@@ -174,6 +177,7 @@
 							disabled
 						></el-button>
 						<span
+							v-show="!disabledMode"
 							v-else
 							class="e-field-action iconfont icon-return"
 							@click="handleReset(node, data)"
@@ -199,7 +203,8 @@
 		>
 			<el-form>
 				<el-form-item>
-					<el-input type="textarea" v-model="scriptDialog.script" rows="10"></el-input>
+					<JsEditor :code.sync="scriptDialog.script" :width.sync="jsEditorWidth"></JsEditor>
+					<!--					<el-input type="textarea" v-model="scriptDialog.script" rows="10"></el-input>-->
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -215,6 +220,7 @@ import $ from "jquery";
 import log from "../../../log";
 import _ from "lodash";
 import { uuid } from "../../util/Schema";
+import JsEditor from "../../../components/JsEditor";
 
 const REMOVE_OPS_TPL = {
 	id: "",
@@ -254,7 +260,11 @@ const SCRIPT_TPL = {
 
 export default {
 	name: "SchemaEditor",
+	components: { JsEditor },
 	props: {
+		disabledMode: {
+			type: Boolean 
+		},
 		width: {
 			type: Number,
 			default: 0
@@ -280,7 +290,7 @@ export default {
 		return {
 			scriptDialog: {
 				open: false,
-				script: "",
+				script: "//Enter you code at here",
 				fieldName: "",
 				fn: function() {}
 			},
@@ -288,7 +298,8 @@ export default {
 			model: {
 				operations: [],
 				scripts: []
-			}
+			},
+			jsEditorWidth: "500"
 		};
 	},
 	methods: {

@@ -42,9 +42,13 @@ import {
 	DropdownMenu,
 	Tag,
 	Tooltip,
-	Upload
+	Upload,
+	Autocomplete,
+	InputNumber,
 } from "element-ui";
 
+Vue.component(InputNumber.name, InputNumber);
+Vue.component(Autocomplete.name, Autocomplete);
 Vue.component(Upload.name, Upload);
 Vue.component(Image.name, Image);
 Vue.component(Tabs.name, Tabs);
@@ -86,9 +90,9 @@ Vue.component(Tag.name, Tag);
 Vue.component(Drawer.name, Drawer);
 
 Vue.use(Loading.directive);
-/** *提示只显示一次**/
+/***提示只显示一次**/
 // 因为使用了new DonMessage()的原因，所以导致this.$message(options)的方式无法使用
-// 推荐使用this.$message.success('成功提示')或者this.$message.success(options)的方式进行调用
+// 推荐使用this.$message.success("成功提示")或者this.$message.success(options)的方式进行调用
 const showMessage = Symbol("showMessage");
 
 class DoneMessage {

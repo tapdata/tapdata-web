@@ -1,5 +1,8 @@
 <template>
 	<div class="e-link-wrap">
+		<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
+			{{ $t("dataFlow.button.viewMonitoring") }}
+		</el-button>
 		<el-form
 			class="e-form"
 			label-position="right"
@@ -21,6 +24,7 @@
 		</el-form>
 
 		<el-form
+			:disabled="disabled"
 			class="e-form"
 			label-position="right"
 			label-width="160px"
@@ -149,13 +153,14 @@ import { EditorEventType } from "../../lib/events";
 import Mapping from "./Mapping";
 import log from "../../../log";
 import { JOIN_TABLE_TPL } from "../../constants";
-
+let editorMonitor = null;
 export default {
 	name: "Link",
 	components: { Mapping },
 
 	data() {
 		return {
+			disabled: false,
 			sourceList: [],
 			targetList: [],
 			writeModels: [],
@@ -279,7 +284,7 @@ export default {
 				let firstDataNode =
 					typeof sourceCell.getFirstDataNode === "function" ? sourceCell.getFirstDataNode() : [];
 				this.model.joinTable.stageId = firstDataNode.length > 0 ? firstDataNode[0].id : "";
-				//this.model.joinTable.stageId = cell.getSourceCell().id;
+				// this.model.joinTable.stageId = cell.getSourceCell().id;
 
 				this.sourceList = sourceSchema && sourceSchema.fields ? sourceSchema.fields : [];
 				this.targetList = (mergedTargetSchema && mergedTargetSchema.fields) || [];
@@ -312,6 +317,8 @@ export default {
 
 			this.$emit(EditorEventType.RESIZE);
 			this.showMapping(data, cell, vueAdapter);
+
+			editorMonitor = vueAdapter.editor;
 		},
 
 		getPKsFromSchema(schema) {
@@ -321,10 +328,10 @@ export default {
 		},
 		getData() {
 			let data = JSON.parse(JSON.stringify(this.model));
-			/*if( data.joinTable.joinKeys.length > 0 ){
+			/* if( data.joinTable.joinKeys.length > 0 ){
 					let joinKeys = data.joinTable.joinKeys.filter( key => key.source && key.target);
 					data.joinTable.joinKeys = joinKeys;
-				}*/
+				} */
 			if (!this.configJoinTable) {
 				delete data.joinTable;
 			}
@@ -360,14 +367,14 @@ export default {
 				let sourceCell = this.cell.getSourceCell(),
 					targetCell = this.cell.getTargetCell(),
 					sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null;
-				/*targetInputSchema = targetCell ? targetCell.getInputSchema() : null,
+				/* targetInputSchema = targetCell ? targetCell.getInputSchema() : null,
 						targetSchema = targetCell ? targetCell.getSchema() : {
 							meta_type: this.targetCell.get('type') === 'app.Collection' ? 'collection' : 'table'
-						}*/
+						} */
 				let mergedTargetSchema =
 					targetCell && typeof targetCell.getOutputSchema === "function"
 						? targetCell.getOutputSchema()
-						: null; //mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
+						: null; // mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
 
 				let targetSchemaFields = (mergedTargetSchema && mergedTargetSchema.fields) || [];
 				let targetJoinFields = targetSchemaFields.filter(
@@ -397,7 +404,15 @@ export default {
 				this.model.joinTable.joinPath = this.model.joinTable.tableName;
 			}
 			this.$refs.mappingComp.$emit(EditorEventType.RESIZE);
-		}
+		},
+
+		setDisabled(disabled) {
+			this.disabled = disabled;
+		},
+
+		seeMonitor() {
+			editorMonitor.goBackMontior();
+		},
 	},
 
 	destroyed() {

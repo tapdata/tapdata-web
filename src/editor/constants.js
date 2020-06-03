@@ -43,9 +43,12 @@ export const FORM_DATA_KEY = "form_data",
 			error: false,
 			paused: false
 		},
-		stopOnError: false,
-		syncPoint: "current",
-		syncTime: "",
-		syncDatePicker: "",
-		syncTimePicker: ""
-	};
+		stopOnError:false,
+		syncPoint: 'current',
+		syncTime: '',
+		syncDatePicker: '',
+		syncTimePicker: '',
+    processorConcurrency:1,
+    transformerConcurrency:8
+  }
+;

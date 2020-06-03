@@ -5,10 +5,11 @@
 				<el-col :span="24">
 					<el-form-item>
 						<div>{{ $t("dataFlow.sync_type") }}</div>
-						<el-radio-group v-model="formData.sync_type" size="mini" @change="hanldeChangeSyncType">
+						<el-radio-group v-model="formData.sync_type" size="mini" @change="changeSyncType">
 							<el-radio-button label="initial_sync+cdc">{{
 								$t("dataFlow.initial_sync") + "+" + $t("dataFlow.cdc")
-							}}</el-radio-button>
+								}}
+							</el-radio-button>
 							<el-radio-button label="initial_sync">{{ $t("dataFlow.initial_sync") }}</el-radio-button>
 							<el-radio-button label="cdc">{{ $t("dataFlow.cdc") }}</el-radio-button>
 						</el-radio-group>
@@ -32,25 +33,29 @@
 					<div>{{ $t("dataFlow.send_email") }}</div>
 					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.paused">{{
 						$t("dataFlow.paused")
-					}}</el-checkbox-button>
+						}}
+					</el-checkbox-button>
 					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.error">{{
 						$t("dataFlow.error")
-					}}</el-checkbox-button>
+						}}
+					</el-checkbox-button>
 					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.edited">{{
 						$t("dataFlow.edited")
-					}}</el-checkbox-button>
+						}}
+					</el-checkbox-button>
 					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.started">{{
 						$t("dataFlow.started")
-					}}</el-checkbox-button>
+						}}
+					</el-checkbox-button>
 				</el-form-item>
 			</el-row>
 			<el-row>
 				<el-col :span="12">
 					<el-form-item>
 						<div>{{ $t("dataFlow.send_email_when_replication") }}</div>
-						<el-input v-model="formData.notificationWindow" size="mini"> </el-input>
+						<el-input v-model="formData.notificationWindow" size="mini"></el-input>
 						<div>{{ $t("dataFlow.send_email_at_most_one_replication") }}</div>
-						<el-input v-model="formData.notificationInterval" size="mini"> </el-input>
+						<el-input v-model="formData.notificationInterval" size="mini"></el-input>
 					</el-form-item>
 					<el-form-item>
 						<div>{{ $t("dataFlow.read_cdc_interval") }}</div>
@@ -73,21 +78,25 @@
 						</el-radio-group>
 
 						<el-row v-if="formData.syncPoint === 'sync_time'">
-							<el-col :span="12">
-								<el-date-picker
-									format="yyyy-MM-dd"
-									style="width: 100%;"
-									v-model="formData.syncDatePicker"
-								></el-date-picker>
+							<el-col :span="12" style="margin-top: 10px">
+								<el-date-picker format="yyyy-MM-dd" style="width: 100%;"
+												v-model="formData.syncDatePicker"></el-date-picker>
 							</el-col>
-							<el-col :span="12">
-								<el-time-picker
-									format="HH:mm:ss"
-									style="width: 100%;"
-									v-model="formData.syncTimePicker"
-								></el-time-picker>
+							<el-col :span="12" style="margin-top: 10px">
+								<el-time-picker format="HH:mm:ss" style="width: 100%;"
+												v-model="formData.syncTimePicker"></el-time-picker>
 							</el-col>
 						</el-row>
+					</el-form-item>
+					<el-form-item>
+						<div>{{$t('dataFlow.processorConcurrency')}}</div> <!-- 自动处理DDL操作 -->
+						<el-input-number v-model="formData.processorConcurrency" controls-position="right" :min="1"
+										 size="mini"></el-input-number>
+					</el-form-item>
+					<el-form-item v-show="formData.sync_type !== 'cdc' ">
+						<div>{{$t('dataFlow.transformerConcurrency')}}</div> <!-- 自动处理DDL操作 -->
+						<el-input-number v-model="formData.transformerConcurrency" controls-position="right" :min="1"
+										 size="mini"></el-input-number>
 					</el-form-item>
 
 					`
@@ -127,7 +136,7 @@
 					<el-form-item v-show="formData.isSchedule === true">
 						<div>{{ $t("dataFlow.cron_expression") }}</div>
 						<!-- 定期调度任务 -->
-						<el-input v-model="formData.cronExpression" size="mini"> </el-input>
+						<el-input v-model="formData.cronExpression" size="mini"></el-input>
 					</el-form-item>
 					<el-form-item>
 						<div>{{ $t("dataFlow.need_to_create_Index") }}</div>
@@ -159,71 +168,73 @@
 </template>
 
 <script>
-import { DEFAULT_SETTING } from "../../editor/constants";
-import _ from "lodash";
-import * as moment from "moment";
+	import {DEFAULT_SETTING} from "../../editor/constants";
+	import _ from "lodash";
+	import * as moment from "moment";
 
-export default {
-	name: "Setting.vue",
-	data() {
-		return {
-			formData: _.cloneDeep(DEFAULT_SETTING)
-		};
-	},
-	mounted() {
-		//this.formData = this.dataFlow;
-	},
-	watch: {
-		formData: {
-			deep: true,
-			handler() {
-				if (this.formData.initial_sync === "initial_sync") {
+	export default {
+		name: "Setting.vue",
+		data() {
+			return {
+				formData: _.cloneDeep(DEFAULT_SETTING)
+			};
+		},
+		mounted() {
+			// this.formData = this.dataFlow;
+		},
+		watch: {
+			formData: {
+				deep: true,
+				handler() {
+					if (this.formData.initial_sync === "initial_sync") {
+						this.formData.isOpenAutoDDL = false;
+					} else {
+						this.formData.run_custom_sql = false;
+					}
+					this.$emit("dataChanged", this.getData());
+				}
+			}
+		},
+		methods: {
+			setData(data) {
+				if (data) {
+					Object.keys(data).forEach(key => (this.formData[key] = data[key]));
+				}
+			},
+			getData() {
+				let result = _.cloneDeep(this.formData);
+				if (result.syncPoint === "sync_time") {
+					let dateStr = moment(result.syncDatePicker).format("YYYY-MM-DD");
+					let timeStr = moment(result.syncTimePicker).format("HH:mm:ss");
+					result.syncTime = `${dateStr} ${timeStr}`;
+				} else {
+					result.syncTime = "";
+				}
+
+				return result;
+			},
+			changeSyncType(type) {
+				if (type === "initial_sync") {
 					this.formData.isOpenAutoDDL = false;
 				} else {
 					this.formData.run_custom_sql = false;
+					this.formData.isSchedule = false;
+					this.formData.cronExpression = '';
 				}
-				this.$emit("dataChanged", this.getData());
 			}
 		}
-	},
-	methods: {
-		setData(data) {
-			if (data) {
-				Object.keys(data).forEach(key => (this.formData[key] = data[key]));
-			}
-		},
-		getData() {
-			let result = _.cloneDeep(this.formData);
-			if (result.syncPoint === "sync_time") {
-				let dateStr = moment(result.syncDatePicker).format("YYYY-MM-DD");
-				let timeStr = moment(result.syncTimePicker).format("HH:mm:ss");
-				result.syncTime = `${dateStr} ${timeStr}`;
-			} else {
-				result.syncTime = "";
-			}
-
-			return result;
-		},
-		hanldeChangeSyncType(type) {
-			if (type === "initial_sync") {
-				this.formData.isOpenAutoDDL = false;
-			} else {
-				this.formData.run_custom_sql = false;
-			}
-		}
-	}
-};
+	};
 </script>
 <style lang="less">
-/*.data-flow-setting{*/
-/*	height: calc(100vh - 50px);*/
-/*	overflow: auto;*/
-/*}*/
-.setBtn {
-	.el-checkbox-button__inner {
-		padding: 6px 10px;
-		border-left: 1px solid #dcdfe6;
-		margin: -2px;
+	/*.data-flow-setting{*/
+	/*	height: calc(100vh - 50px);*/
+	/*	overflow: auto;*/
+	/*}*/
+	.setBtn {
+		.el-checkbox-button__inner {
+			padding: 6px 10px;
+			border-left: 1px solid #dcdfe6;
+			margin: -2px;
+		}
 	}
-}
 </style>

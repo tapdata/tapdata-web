@@ -61,6 +61,11 @@ const tc = {
 		edit: "修改"
 	},
 	dataFlow: {
+		selectNode: '請選擇節點',
+		submitExecute: '提交並執行',
+		submitOnly: '僅提交',
+		implementationModalities: '執行方式',
+		submitConfirmation: '提交確認',
 		SyncPoint: "同步節點",
 		Current: "當前時間",
 		SyncTime: "同步時間",
@@ -106,8 +111,7 @@ const tc = {
 		totalOutput: "總輸出",
 		replicate: "數據同步差距",
 		throughputpop: "平均每秒源端數據採集的速度以及目標端寫入的速度，數值越大越好",
-		transtime_pop:
-			"傳輸耗時：除源節點外，事件處理完的時間減去事件的發生時間。節點間統計：事件從進入節點到輸出到所消耗的時間。任務流統計：所有節點耗時相加，數值越小越好",
+		transtime_pop: "傳輸耗時：除源節點外，事件處理完的時間減去事件的發生時間。節點間統計：事件從進入節點到輸出到所消耗的時間。任務流統計：所有節點耗時相加，數值越小越好",
 		replicate_pop: "源庫和目標庫數據最後更新時間的差距，數值越小越好",
 		status: {
 			running: "運行中",
@@ -158,6 +162,8 @@ const tc = {
 		data_quality_tag: "添加數據質量標籤",
 		notification_lag: "通知",
 		isOpenAutoDDL: "自動處理DDL操作",
+		transformerConcurrency: "目标写入线程数",
+		processorConcurrency: "处理器线程数",
 		send_email_when_replication: "幾秒後重新發送",
 		send_email_at_most_one_replication: "超過多少秒取消發送",
 		read_cdc_interval: "增量同步間隔(ms)",
@@ -177,6 +183,9 @@ const tc = {
 		enterFilterTable: "請輸入過濾表內容",
 		nameTip: "後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ",
 		button: {
+			submit: "提交",
+			viewConfig: "查看節點配置",
+			viewMonitoring: "查看監控數據",
 			setting: "設置",
 			logs: "日誌",
 			preview: "預覽",
@@ -187,7 +196,10 @@ const tc = {
 			force_stop: "強制停止",
 			reset: "重置",
 			save: "保存",
-			reloadSchema: "重新加載"
+			reloadSchema: "刷新schema",
+			debug: "debug測試",
+			quantitative: "定量",
+			increment: "增量",
 		},
 		save_before_running: "請先保存再運行",
 		reset_job: {
@@ -278,6 +290,9 @@ const tc = {
 							keep: "保持已存在的數據",
 							remove: "運行前刪除已存在的數據"
 						},
+						initialSyncOrder: {
+							keep: "初始化節點順序",
+						},
 						filter: {
 							label: "過濾條件",
 							placeholder: "過濾條件(Mongo Query Filter Document)",
@@ -367,6 +382,8 @@ const tc = {
 				memCache: {
 					tip: "記憶體緩存節點",
 					name: "記憶體緩存",
+
+					applicationCode: "應用程式碼",
 
 					form: {
 						cacheName: {
@@ -550,13 +567,13 @@ const tc = {
 			},
 			toolbar: {
 				undo: {
-					tip: "重做"
-				},
-				redo: {
 					tip: "撤銷"
 				},
+				redo: {
+					tip: "重做"
+				},
 				clear_paper: {
-					tip: "清空"
+					tip: "清空畫布"
 				},
 				export_svg: {
 					tip: "導出SVG"
@@ -574,7 +591,7 @@ const tc = {
 					tip: "置前"
 				},
 				layout: {
-					tip: "自動佈局"
+					tip: "自動對齊"
 				},
 				zoom_to_fit: {
 					tip: "填充可視區域"
@@ -589,7 +606,7 @@ const tc = {
 					tip: "網格大小"
 				},
 				fullscreen: {
-					tip: "切換全屏"
+					tip: "全屏"
 				}
 			}
 		},

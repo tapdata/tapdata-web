@@ -5,7 +5,10 @@
 			<span class="txt">{{ $t("editor.nodeSettings") }}</span>
 		</head>
 		<div class="nodeBody">
-			<el-form class="e-form" label-position="top" :model="model" ref="form">
+			<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
+				{{$t("dataFlow.button.viewMonitoring")}}
+			</el-button>
+			<el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
 				<!-- <span class="addTxt">+新建文件</span> -->
 				<el-form-item :label="$t('editor.choose') + 'Dummy'" prop="connectionId" :rules="rules" required>
 					<el-select
@@ -68,12 +71,13 @@ import factory from "../../../api/factory";
 import Entity from "../link/Entity";
 import { convertSchemaToTreeData } from "../../util/Schema";
 let connections = factory("connections");
-
+let editorMonitor = null;
 export default {
 	name: "Dummy",
 	components: { Entity },
 	data() {
 		return {
+			disabled: false,
 			databases: [],
 			rules: {
 				connectionId: [
@@ -210,6 +214,8 @@ export default {
 			cell.on("change:outputSchema", () => {
 				this.mergedSchema = cell.getOutputSchema();
 			});
+
+			editorMonitor = vueAdapter.editor;
 		},
 
 		getData() {
@@ -221,7 +227,15 @@ export default {
 				}
 			}
 			return result;
-		}
+		},
+
+		setDisabled(disabled) {
+			this.disabled = disabled;
+		},
+
+		seeMonitor() {
+			editorMonitor.goBackMontior();
+		},
 	}
 };
 </script>

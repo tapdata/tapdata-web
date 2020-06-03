@@ -223,7 +223,7 @@ export default {
 	},
 
 	methods: {
-		//提交
+		// 提交
 		async submitForm() {
 			let getFrom = this.$refs.childRules.ruleForm;
 			let status = this.$refs.childRules.data.status;
@@ -270,7 +270,7 @@ export default {
 			this.editItem = item;
 			this.dialogForm = true;
 		},
-		//删除
+		// 删除
 		delServe(data, status) {
 			let params = {
 				uuid: data.uuid,
@@ -300,7 +300,7 @@ export default {
 			this.editItem = {};
 			this.dialogForm = true;
 		},
-		//启动
+		// 启动
 		startFn(item, status, server) {
 			if (status === "stopped") {
 				let data = {
@@ -311,7 +311,7 @@ export default {
 				this.operationFn(data);
 			}
 		},
-		//关闭
+		// 关闭
 		closeFn(item, status, server) {
 			let name;
 			if (server === "apiServer") {
@@ -358,7 +358,7 @@ export default {
 				});
 			}
 		},
-		//重启---关闭---启动
+		// 重启---关闭---启动
 		async operationFn(data) {
 			await cluster.updateStatus(data).then(res => {
 				if (res.status === 200) {
@@ -366,7 +366,7 @@ export default {
 				}
 			});
 		},
-		//筛选
+		// 筛选
 		screenFn() {
 			let params = {
 				"filter[where][or][0][systemInfo.hostname][like]": this.sourch,
@@ -409,7 +409,7 @@ export default {
 			});
 		},
 
-		//关闭弹窗并且清空验证
+		// 关闭弹窗并且清空验证
 		closeDialogForm() {
 			this.dialogForm = false;
 			this.$refs.childRules.closeDialogForm();

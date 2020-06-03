@@ -1,13 +1,17 @@
 <template>
 	<div class="e-job-monitor">
-		<!--		<el-button class="e-job-monitor-btn" size="mini" type="primary" @click="handleGoDataVerify">{{ $t('dataVerify.dataVerify') }} </el-button>-->
-		<el-form inline>
-			<el-form-item>
-				<el-select v-model="domValue" size="mini">
-					<el-option key="all" :label="$t('dataFlow.allNode')" value="all"> </el-option>
-					<el-option v-for="item in flow.stages" :key="item.id" :label="item.name" :value="item.id">
-					</el-option>
-				</el-select>
+		<el-form>
+			<el-form-item class="e-form-item">
+				<el-col :span="19">
+					<el-select v-model="domValue" size="mini">
+						<el-option key="all" :label="$t('dataFlow.allNode')" value="all"> </el-option>
+						<el-option v-for="item in flow.stages" :key="item.id" :label="item.name" :value="item.id">
+						</el-option>
+					</el-select>
+				</el-col>
+				<el-col :span="5">
+					<el-button class="e-button" type="primary" @click="seeNodeData">{{$t('dataFlow.button.viewConfig')}}</el-button>
+				</el-col>
 			</el-form-item>
 		</el-form>
 		<div class="echartMain">
@@ -103,6 +107,7 @@
 	</div>
 </template>
 <script>
+import $ from 'jquery';
 import echartHead from "./components/echartHead";
 import echartsCompinent from "../../components/echartsCompinent";
 import shaftlessEchart from "../../components/shaftlessEchart";
@@ -111,6 +116,7 @@ import { EditorEventType } from "../../editor/lib/events";
 
 const DataFlowInsights = factory("DataFlowInsights");
 let intervalTime = 5000;
+
 export default {
 	name: "JobMonitor",
 	components: { echartHead, echartsCompinent, shaftlessEchart },
@@ -124,7 +130,7 @@ export default {
 	data() {
 		return {
 			dpx: "QPS",
-			selectFlow: "flow_", //选中节点
+			selectFlow: "flow_", // 选中节点
 			speed: "",
 			time: "",
 			domValue: "all",
@@ -161,7 +167,7 @@ export default {
 					axisLine: {
 						lineStyle: {
 							color: "#48b6e2",
-							width: 2 //这里是为了突出显示加上的
+							width: 2 // 这里是为了突出显示加上的
 						}
 					},
 					data: []
@@ -203,7 +209,7 @@ export default {
 							color: "#61a569"
 						},
 						lineStyle: {
-							color: "#8cd5c2" //改变折线点的颜色
+							color: "#8cd5c2" // 改变折线点的颜色
 						}
 					}
 				]
@@ -230,7 +236,7 @@ export default {
 					axisLine: {
 						lineStyle: {
 							color: "#fb8e00",
-							width: 2 //这里是为了突出显示加上的
+							width: 2 // 这里是为了突出显示加上的
 						}
 					},
 					data: []
@@ -239,7 +245,7 @@ export default {
 					axisLine: {
 						lineStyle: {
 							color: "#fb8e00",
-							width: 2 //这里是为了突出显示加上的
+							width: 2 // 这里是为了突出显示加上的
 						}
 					},
 					axisLabel: {
@@ -321,16 +327,16 @@ export default {
 				]
 			},
 
-			dataScreening: null, //数据总览的echart数据
-			screeningObj: null, //数据总览的头
+			dataScreening: null, // 数据总览的echart数据
+			screeningObj: null, // 数据总览的头
 
 			inputOutputObj: null,
 			transfObj: null,
 			storeData: null,
 			replicateObj: null,
 			throughput_time: [],
-			inputAverage: "", //输入平均值
-			outputAverage: "", //输出平均值
+			inputAverage: "", // 输入平均值
+			outputAverage: "", // 输出平均值
 			currentTime: "", // 当前耗时
 			ransfTime: "", // 传输耗时
 			throughputTime: "",
@@ -342,10 +348,10 @@ export default {
 			replicateType: "",
 			dataOverviewType: "",
 			selectId: "",
-			timer: null, //定时器
-			timer1: null, //定时器
-			timer2: null, //定时器
-			timer3: null, //定时器
+			timer: null, // 定时器
+			timer1: null, // 定时器
+			timer2: null, // 定时器
+			timer3: null, // 定时器
 			intervalThroughputpop: 20000,
 			intervalTransf: 20000,
 			intervalReplicate: 20000
@@ -462,6 +468,41 @@ export default {
 	},
 
 	methods: {
+		getAllCellsNode(queryString) {
+			let dataCells = this.editor.getAllCells();
+			let dataCellName = [];
+			dataCells.forEach(cell => {
+				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
+				let tableName= {"value": formData.tableName ,'cell':cell};
+				dataCellName.push(tableName);
+			});
+			var restaurants = dataCellName;
+			var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+			// 调用 callback 返回建议列表的数据
+			return results;
+		},
+
+		createFilter(queryString) {
+			return (restaurant) => {
+				return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+			};
+		},
+
+		seeNodeData() {
+			let result = this.getAllCellsNode();
+			let selectCell = null;
+			result.forEach(item => {
+				if(this.domValue === item.cell.id) {
+					selectCell = item.cell;
+				}
+			});
+			if (this.domValue && this.domValue !=='all') {
+				this.editor.graph.selectionPosition(selectCell);
+			} else {
+				this.$message.error(this.$t('dataFlow.selectNode'));
+			}
+		},
+
 		// 输入输出获取数据
 		getSpeed(data, time) {
 			this.isThroughputAll = data;
@@ -487,7 +528,7 @@ export default {
 			this.getApiData(params, "throughput", data);
 		},
 
-		//获取返回的单位
+		// 获取返回的单位
 		getTwoRadio(data, type) {
 			this.dataOverviewType = type;
 			this.dataOverviewAll = data;
@@ -499,7 +540,7 @@ export default {
 			this.getApiData(params, type, data);
 		},
 
-		//获取返回的时间
+		// 获取返回的时间
 		getTime(data, type) {
 			let params;
 			if (type === "transf") {
@@ -548,7 +589,7 @@ export default {
 			this.getApiData(params, type, data);
 		},
 
-		//获取数据
+		// 获取数据
 		async getApiData(params, type, ele) {
 			if (this.domValue === "all") {
 				params["dataFlowId"] = this.flow.id;
@@ -614,7 +655,7 @@ export default {
 				});
 		},
 
-		//数据处理
+		// 数据处理
 		dataProcessing(data, type, ele) {
 			let timeList = [],
 				inputSizeList = [],
@@ -640,7 +681,7 @@ export default {
 				}
 			} else if (type === "throughput") {
 				data.forEach(item => {
-					timeList.push(item.t); //时间
+					timeList.push(item.t); // 时间
 					inputSizeList.push(item.inputSize);
 					outputSizeList.push(item.outputSize);
 					inputCountList.push(item.inputCount);
@@ -660,7 +701,7 @@ export default {
 				}
 			} else {
 				data.forEach(item => {
-					timeList.push(item.t); //时间
+					timeList.push(item.t); // 时间
 					dataList.push(item.d);
 				});
 				if (type === "transf") {
@@ -835,14 +876,14 @@ export default {
 			//   appendData();
 			// }
 		},
-		//跳转到数据校验页面
+		// 跳转到数据校验页面
 		handleGoDataVerifyhandleGoDataVerify() {
 			this.editor.showDataVerify();
 		}
 	},
 
 	destroyed() {
-		//清除定时器
+		// 清除定时器
 		clearInterval(this.timer);
 		this.timer = null;
 	}
@@ -854,6 +895,13 @@ export default {
 	padding: 5px 12px 10px;
 	box-sizing: border-box;
 	position: relative;
+	.e-form-item {
+		.e-button {
+			height: 30px;
+			line-height: 30px;
+			padding: 0 10px;
+		}
+    }
 	.e-job-monitor-btn {
 		position: absolute;
 		top: 15px;

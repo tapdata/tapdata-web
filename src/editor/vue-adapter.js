@@ -5,14 +5,18 @@
  */
 import Vue from "vue";
 import Panel from "./ui/panel";
-import { EditorEventType } from "./lib/events";
+import {
+	EditorEventType
+} from "./lib/events";
 import BaseObject from "./lib/BaseObject";
 import log from "../log";
-import { FORM_DATA_KEY } from "./constants";
+import {
+	FORM_DATA_KEY
+} from "./constants";
 import i18n from "../i18n/i18n";
 
 export const vueAdapter = {};
-//const privateMap = new WeakMap();
+// const privateMap = new WeakMap();
 
 export class VueAdapter extends BaseObject {
 	vm = null;
@@ -51,7 +55,9 @@ export class VueAdapter extends BaseObject {
 		let name = cell.get("type");
 		let formData = self.getFormDataForCell(cell);
 		let isDataNode = cell.isElement() && typeof cell.isDataNode === "function" && cell.isDataNode();
-		let isSourceDataNode = isDataNode && self.graphUI.graph.getConnectedLinks(cell, { inbound: true }).length === 0;
+		let isSourceDataNode = isDataNode && self.graphUI.graph.getConnectedLinks(cell, {
+			inbound: true
+		}).length === 0;
 
 		if (vueAdapter[name] && vueAdapter[name].component) {
 			let vueComponentConfig = vueAdapter[name];
@@ -82,6 +88,13 @@ export class VueAdapter extends BaseObject {
 				self.vm.setData(formData, cell, isSourceDataNode, self);
 			} else {
 				throw new Error(`Custom form component does not implement "${name}" method`);
+			}
+
+			let editable = self.editor.editable;
+			if (!editable) { // running mode
+				if (typeof self.vm.setDisabled === "function") {
+					self.vm.setDisabled(true);
+				}
 			}
 
 			self.vm.$on("dataChanged", data => {

@@ -63,11 +63,14 @@ export default class Graph extends Component {
 			"add",
 			function(cell, collection, opt) {
 				if (opt.stencil) self.createInspector(cell);
+
+				self.emit(EditorEventType.ADD_CELL);
 			},
 			this
 		);
 
 		this.commandManager = new joint.dia.CommandManager({ graph: graph });
+		this.commandManager.on("stack", this.emit.bind(this, EditorEventType.DATAFLOW_CHANGED) );
 
 		const paper = (this.paper = new joint.dia.Paper({
 			model: graph,
@@ -87,9 +90,9 @@ export default class Graph extends Component {
 				default: {
 					name: "stroke",
 					options: {
-						padding: 5,
-						rx: 20,
-						ry: 20,
+						padding: 0,
+						rx: 17,
+						ry: 17,
 						attrs: {
 							"stroke-width": 2,
 							stroke: "#00bcd4"
@@ -151,6 +154,7 @@ export default class Graph extends Component {
 				// if( model.isLink() ){
 				self.updateOutputSchema(model);
 				// }
+				self.emit(EditorEventType.REMOVE_CELL);
 			}
 			/* add: (cell) => {
 				log('Graph.graph.add');
@@ -180,6 +184,12 @@ export default class Graph extends Component {
 		this.el = paperScroller.el;
 		this.editor.getUI().add(this);
 		paperScroller.render().center();
+	}
+
+	selectionPosition(cell){
+		// this.paperScroller.center();
+		this.paperScroller.scrollToElement(cell, { animation: { duration: 600 }});
+		this.selection.collection.add(cell);
 	}
 
 	isAcyclic() {
@@ -252,8 +262,8 @@ export default class Graph extends Component {
 					cellView.highlight(null, {
 						name: "stroke",
 						options: {
-							rx: isDataNode ? 20 : 14,
-							ry: isDataNode ? 20 : 14
+							rx: isDataNode ? 20: 16,
+							ry: isDataNode ? 20 : 16
 						}
 					});
 				}, 0);
@@ -274,7 +284,7 @@ export default class Graph extends Component {
 			layout: {
 				columnWidth: 70,
 				columns: 3,
-				rowHeight: 49
+				rowHeight: 49,
 			},
 			/* search: {
 				'*': ['type', 'attrs/text/text', 'attrs/root/dataTooltip', 'attrs/label/text'],
@@ -444,12 +454,12 @@ export default class Graph extends Component {
 			name: "link-pointerdown",
 			tools: [
 				new ns.Vertices({ vertexAdding: true }),
-				new ns.SourceAnchor(),
-				new ns.TargetAnchor(),
-				new ns.SourceArrowhead(),
+				// new ns.SourceAnchor(),
+				// new ns.TargetAnchor(),
+				// new ns.SourceArrowhead(),
 				new ns.TargetArrowhead(),
 				new ns.Segments(),
-				new ns.Boundary({ padding: 15 }),
+				// new ns.Boundary({ padding: 15 }),
 				new ns.Remove({ offset: -20, distance: 40 })
 			]
 		});
@@ -500,7 +510,7 @@ export default class Graph extends Component {
 						name: "link-hover",
 						tools: [
 							new ns.Vertices({ vertexAdding: false }),
-							new ns.SourceArrowhead(),
+							// new ns.SourceArrowhead(),
 							new ns.TargetArrowhead()
 						]
 					});
@@ -817,6 +827,11 @@ export default class Graph extends Component {
 			this.toolbar.getWidgetByName("clear").disable();
 			setTimeout(() => this.paperScroller.centerContent(), 0);
 		}
+	}
+	selectionPosition(cell){
+		this.paperScroller.center();
+		this.selection.collection.reset(cell);
+		this.selection.collection.add(cell);
 	}
 
 	getData() {

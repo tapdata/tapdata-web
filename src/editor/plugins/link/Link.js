@@ -57,7 +57,7 @@ export const link = {
 		defaultInstanceProperties: {
 			router: {
 				name: "manhattan"
-				//name: 'normal',
+				// name: 'normal',
 			},
 			connector: {
 				name: "rounded"
@@ -190,13 +190,13 @@ export const link = {
 				if (data && configJoinTable) {
 					let joinTable = data.joinTable;
 					if (!joinTable) throw new Error(`${i18n.t("editor.cell.validate.none_setting")}`);
-					/*if( !joinTable.tableName)
+					/* if( !joinTable.tableName)
 						throw new Error('Table name cannot be empty.');
 					if( !joinTable.primaryKeys)
-						throw new Error(`Table ${joinTable.tableName} primary key cannot be empty.`);*/
+						throw new Error(`Table ${joinTable.tableName} primary key cannot be empty.`); */
 					if (!joinTable.joinType) throw new Error("JoinType cannot be empty.");
 
-					if ("append" !== joinTable.joinType) {
+					if (joinTable.joinType !== "append") {
 						if (!joinTable.joinKeys || joinTable.joinKeys.length === 0)
 							throw new Error(`${i18n.t("editor.cell.link.none_join_key")}`);
 						let errorJoinKeys = joinTable.joinKeys.filter(v => !v.source || !v.target);
@@ -204,11 +204,11 @@ export const link = {
 							throw new Error(`${i18n.t("editor.cell.link.none_join_key")}`);
 						}
 					}
-					/*if( ['merge_embed', 'update'].includes(joinTable.joinType) ) {
+					/* if( ['merge_embed', 'update'].includes(joinTable.joinType) ) {
 						if( !joinTable.joinPath )
 							throw new Error(`${i18n.t('editor.cell.link.none_join_path')}`);
-					}*/
-					if ("merge_embed" === joinTable.joinType) {
+					} */
+					if (joinTable.joinType === "merge_embed") {
 						if (!joinTable.arrayUniqueKey)
 							throw new Error(`${i18n.t("editor.cell.link.none_array_unique_key")}`);
 					}

@@ -427,7 +427,7 @@ export default {
 		},
 		keyupEnter() {
 			document.onkeydown = e => {
-				//let body = document.getElementsByTagName('body')[0];
+				// let body = document.getElementsByTagName('body')[0];
 				if (e.keyCode === 13) {
 					this.getData();
 				}
@@ -596,13 +596,12 @@ export default {
 					dataFlows.deleteAll(where).then(res => {
 						if (res.statusText === "OK" || res.status === 200) {
 							this.getData();
+							this.$message.success(this.$t("message.deleteOK"));
+						}else {
+							this.$message.info(this.$t("message.deleteFail"));
 						}
-						this.$message.success(this.$t("message.deleteOK"));
 					});
 				})
-				.catch(() => {
-					this.$message.info(this.$t("message.deleteFail"));
-				});
 		},
 		handleDelete(id) {
 			this.$confirm(this.$t("message.deteleMessage"), this.$t("message.prompt"), {
@@ -614,13 +613,13 @@ export default {
 					dataFlows.delete(id).then(res => {
 						if (res.statusText === "OK" || res.status === 200) {
 							this.getData();
+							this.$message.success(this.$t("message.deleteOK"));
+						}else {
+							this.$message.info(this.$t("message.deleteFail"));
 						}
-						this.$message.success(this.$t("message.deleteOK"));
+
 					});
 				})
-				.catch(() => {
-					this.$message.info(this.$t("message.deleteFail"));
-				});
 		},
 		async handleStatus(id, status) {
 			let data = {
@@ -669,13 +668,13 @@ export default {
 					dataFlows.reset(id).then(res => {
 						if (res.statusText === "OK" || res.status === 200) {
 							this.getData();
+							this.$message.success(this.$t("message.resetOk"));
+						}else {
+							this.$message.info(this.$t("message.cancleReset"));
 						}
 					});
-					this.$message.success(this.$t("message.resetOk"));
+
 				})
-				.catch(() => {
-					this.$message.info(this.$t("message.cancleReset"));
-				});
 		},
 		handleAllRest() {
 			if (this.multipleSelection.length === 0) {
@@ -696,13 +695,12 @@ export default {
 					dataFlows.resetAll(where).then(res => {
 						if (res.statusText === "OK" || res.status === 200) {
 							this.getData();
+							this.$message.success(this.$t("message.resetOk"));
+						}else {
+							this.$message.info(this.$t("message.cancleReset"));
 						}
-						this.$message.success(this.$t("message.resetOk"));
 					});
 				})
-				.catch(() => {
-					this.$message.info(this.$t("message.cancleReset"));
-				});
 		},
 		handlerCopy(id) {
 			let self = this;
@@ -716,9 +714,6 @@ export default {
 						this.$message.error(this.$t("message.copyFail"));
 					}
 				})
-				.catch(err => {
-					this.$message.error(this.$t("message.copyFail"));
-				});
 		},
 		formatterTime(row) {
 			let time = row.createTime ? this.$moment(row.createTime).format("YYYY-MM-DD HH:mm:ss") : "";
@@ -740,6 +735,7 @@ export default {
 		handleClear() {
 			this.formData.search = "";
 			this.formData.status = "";
+			this.formData.way = "";
 			this.screenFn();
 		},
 		handleSelectionChange(val) {

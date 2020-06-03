@@ -1,6 +1,17 @@
 <template>
 	<div class="e-table">
-		<el-form class="e-form" label-position="right" label-width="160px" :model="model" ref="form">
+		<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">{{
+			$t("dataFlow.button.viewMonitoring")
+		}}</el-button>
+
+		<el-form
+			class="e-form"
+			label-position="right"
+			label-width="160px"
+			:disabled="disabled"
+			:model="model"
+			ref="form"
+		>
 			<el-form-item
 				:label="$t('editor.cell.data_node.table.form.database.label')"
 				prop="connectionId"
@@ -34,6 +45,7 @@
 					allow-create
 					default-first-option
 					clearable
+					class="e-select"
 					v-model="model.tableName"
 					:placeholder="$t('editor.cell.data_node.table.form.table.placeholder')"
 					size="mini"
@@ -54,7 +66,18 @@
 					size="mini"
 				></el-input>
 			</el-form-item>
-
+			<el-form-item
+				required
+				:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
+				v-if="isSourceDataNode"
+			>
+				<el-input-number
+					v-model="model.initialSyncOrder"
+					controls-position="right"
+					:min="1"
+					size="mini"
+				></el-input-number>
+			</el-form-item>
 			<el-form-item
 				required
 				:label="$t('editor.cell.data_node.collection.form.dropTable.label')"
@@ -94,7 +117,7 @@ import Entity from "../link/Entity";
 import _ from "lodash";
 import factory from "../../../api/factory";
 let connectionApi = factory("connections");
-
+let editor = null;
 export default {
 	name: "Table",
 	components: { Entity },
@@ -166,7 +189,7 @@ export default {
 		return {
 			databases: [],
 			schemas: [],
-
+			disabled: false,
 			rules: {
 				connectionId: [
 					{
@@ -186,7 +209,8 @@ export default {
 				sql: "",
 				dropTable: false,
 				type: "table",
-				primaryKeys: ""
+				primaryKeys: "",
+				initialSyncOrder: 1
 			},
 
 			mergedSchema: null
@@ -199,6 +223,9 @@ export default {
 
 	methods: {
 		convertSchemaToTreeData,
+		seeMonitor() {
+			editor.goBackMontior();
+		},
 
 		async loadDataSource() {
 			let result = await connectionApi.get({
@@ -256,6 +283,7 @@ export default {
 			cell.on("change:outputSchema", () => {
 				this.mergedSchema = cell.getOutputSchema();
 			});
+			editor = vueAdapter.editor;
 		},
 		getData() {
 			let result = _.cloneDeep(this.model);
@@ -264,6 +292,10 @@ export default {
 				delete result.dropTable;
 			}
 			return result;
+		},
+
+		setDisabled(disabled) {
+			this.disabled = disabled;
 		}
 	}
 };
