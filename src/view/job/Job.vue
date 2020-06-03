@@ -31,13 +31,13 @@
 			</el-button> -->
 
 			<!-- running debug -->
-			<el-button
+			<!-- <el-button
 				v-if="['scheduled', 'running'].includes(status) && executeMode === 'normal'"
 				size="mini"
 				type="default"
 				@click="capture"
 				>{{ $t("dataFlow.button.capture") }}
-			</el-button>
+			</el-button> -->
 			<el-button
 				v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
 				size="mini"
@@ -60,13 +60,13 @@
 				@click="stop(false)"
 				>{{ $t("dataFlow.button.stop") }}
 			</el-button> -->
-			<el-button
+			<!-- <el-button
 				v-if="dataFlowId !== null && ['stopping'].includes(status)"
 				size="mini"
 				type="danger"
 				@click="stop(true)"
 				>{{ $t("dataFlow.button.force_stop") }}
-			</el-button>
+			</el-button> -->
 			<!-- <el-button
 				v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
 				size="mini"
@@ -81,13 +81,34 @@
 				@click="save"
 				>{{ $t("dataFlow.button.save") }}
 			</el-button> -->
+			<template v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)">
+				<div class="headImg" v-show="!isSaving" @click="save">
+					<span class="iconfont icon-yunduanshangchuan"></span>
+					<span class="text">{{ $t("dataFlow.button.save") }}</span>
+				</div>
+
+				<div class="headImg" v-show="isSaving" style="color: #48B6E2;">
+					<span class="el-icon-loading"></span>
+					<span class="text" style="color: #48B6E2;">{{ $t("dataFlow.button.saveing") }}</span>
+				</div>
+			</template>
+
 			<div
 				class="headImg"
-				@click="save"
-				v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
+				@click="capture"
+				:title="$t('dataFlow.button.capture')"
+				v-if="['scheduled', 'running'].includes(status) && executeMode === 'normal'"
 			>
-				<span class="iconfont icon-yunduanshangchuan"></span>
-				<span class="text">{{ $t("dataFlow.button.save") }}</span>
+				<span class="iconfont icon-yulan"></span>
+			</div>
+
+			<div
+				class="headImg"
+				@click="stop(true)"
+				:title="$t('dataFlow.button.force_stop')"
+				v-if="dataFlowId !== null && ['stopping'].includes(status)"
+			>
+				<span class="iconfont icon-zhengfangxingxuanzhongzhuangtai"></span>
 			</div>
 
 			<div class="headImg" @click="reloadSchema" :title="$t('dataFlow.button.reloadSchema')">
@@ -99,10 +120,10 @@
 				@click="preview"
 				:title="$t('dataFlow.button.preview')"
 			>
-				<span class="iconfont icon-openeye"></span>
+				<span class="iconfont icon-yulan1"></span>
 			</div>
 			<div class="headImg" @click="showLogs" :title="$t('dataFlow.button.debug')">
-				<span class="iconfont icon-debug-"></span>
+				<span class="iconfont icon-rizhi1"></span>
 			</div>
 			<div class="headImg round" @click="showSetting" v-if="['draft', 'paused', 'error'].includes(status)">
 				<span class="iconfont icon-shezhi"></span>
@@ -126,30 +147,37 @@
 				style="margin-left: 50px;border-radius: 20px;"
 				>{{ $t("dataFlow.state") }}: {{ $t("dataFlow.status." + status.replace(/ /g, "_")) }}
 			</el-tag>
-			<div
+			<!-- <div
 				class="headImg borderStyle"
 				@click="start"
 				:title="$t('dataFlow.button.start')"
 				v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
 			>
 				<span class="iconfont icon-yunhang1"></span>
-			</div>
-			<div
-				class="headImg borderStyle"
+			</div> -->
+			<el-button
+				class="headImg borderStyle iconfont icon-yunhang1"
+				@click="start"
+				:title="$t('dataFlow.button.start')"
+				:disabled="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status) ? false : true"
+			>
+			</el-button>
+			<el-button
+				class="headImg borderStyle iconfont icon-zanting2"
 				@click="stop(false)"
 				:title="$t('dataFlow.button.stop')"
-				v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
-			>
-				<span class="iconfont icon-zanting2"></span>
-			</div>
-			<div
-				class="headImg borderStyle"
+				:disabled="dataFlowId !== null && ['scheduled', 'running'].includes(status) ? false : true"
+			></el-button>
+			<el-button
+				class="headImg borderStyle iconfont icon-shuaxin3"
 				@click="reset"
 				:title="$t('dataFlow.button.reset')"
-				v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
-			>
-				<span class="iconfont icon-shuaxin3"></span>
-			</div>
+				:disabled="
+					dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)
+						? false
+						: true
+				"
+			></el-button>
 			<div class="headImg round" @click="submitLayer" style="float: right;">
 				<span class="iconfont icon-icon_fabu"></span>
 				<span class="text">{{ $t("dataFlow.button.submit") }}</span>
@@ -226,7 +254,8 @@ export default {
 			disabledDataVerify: false,
 			cells: [],
 			state1: "",
-			editable: false
+			editable: false,
+			isSaving: false
 		};
 	},
 
@@ -281,16 +310,6 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
-		if (this.timeoutId) {
-			clearTimeout(this.timeoutId);
-		}
-		this.editor.destroy();
-		if (["draft", "error", "paused"].includes(this.status)) {
-			timer.clearInterval();
-		}
-	},
-
 	methods: {
 		/**
 		 * submit temporary
@@ -326,6 +345,7 @@ export default {
 		 * Auto save
 		 */
 		timeSave() {
+			this.isSaving = true;
 			let self = this,
 				data = this.getDataFlowData(true),
 				promise = dataFlowsApi.draft(data);
@@ -355,6 +375,7 @@ export default {
 					.finally(() => {
 						changeData = null;
 						self.loading = false;
+						self.isSaving = false;
 					});
 			}
 		},
@@ -497,12 +518,20 @@ export default {
 			let editorData = this.editor.getData();
 			let graphData = editorData.graphData;
 			let settingData = editorData.settingData;
-			settingData.notificationInterval = settingData.notificationInterval ? Number(settingData.notificationInterval) : 300;
-			settingData.notificationWindow = settingData.notificationWindow ? Number(settingData.notificationWindow) : 0 ;
-			settingData.readBatchSize = settingData.readBatchSize?Number(settingData.readBatchSize) : 1000;
-			settingData.readCdcInterval =settingData.readCdcInterval ? Number(settingData.readCdcInterval) : 500;
-			settingData.transformerConcurrency =settingData.transformerConcurrency ? Number(settingData.transformerConcurrency) : 8;
-			settingData.processorConcurrency =settingData.processorConcurrency ? Number(settingData.processorConcurrency) : 1;
+			settingData.notificationInterval = settingData.notificationInterval
+				? Number(settingData.notificationInterval)
+				: 300;
+			settingData.notificationWindow = settingData.notificationWindow
+				? Number(settingData.notificationWindow)
+				: 0;
+			settingData.readBatchSize = settingData.readBatchSize ? Number(settingData.readBatchSize) : 1000;
+			settingData.readCdcInterval = settingData.readCdcInterval ? Number(settingData.readCdcInterval) : 500;
+			settingData.transformerConcurrency = settingData.transformerConcurrency
+				? Number(settingData.transformerConcurrency)
+				: 8;
+			settingData.processorConcurrency = settingData.processorConcurrency
+				? Number(settingData.processorConcurrency)
+				: 1;
 			let distanceForSink = editorData.distanceForSink || {};
 
 			let cells = graphData.cells ? graphData.cells : [];
@@ -929,9 +958,9 @@ export default {
 			};
 			if (data) {
 				data.map((v, index) => {
-					let formData =_.cloneDeep(v);
-					delete formData.inputLanes
-					delete formData.outputLanes
+					let formData = _.cloneDeep(v);
+					delete formData.inputLanes;
+					delete formData.outputLanes;
 					if (["table", "view", "collection", "mongo_view"].includes(v.type)) {
 						let node = {
 							type: mapping[v.type],
@@ -960,7 +989,7 @@ export default {
 									text: breakText.breakText(v.name, 125)
 								}
 							},
-							form_data: formData,
+							form_data: formData
 						};
 						cells.push(node);
 					} else if (v.type === "database") {
@@ -1098,6 +1127,16 @@ export default {
 			//选中当前节点
 			this.editor.graph.selectionPosition(item.cell);
 		}
+	},
+
+	beforeDestroy() {
+		if (this.timeoutId) {
+			clearTimeout(this.timeoutId);
+		}
+		this.editor.destroy();
+		if (["draft", "error", "paused"].includes(this.status)) {
+			clearInterval(timer);
+		}
 	}
 };
 </script>
@@ -1113,7 +1152,7 @@ export default {
 		padding-bottom: 0;
 	}
 	.e-input {
-		width: calc(100% - 100px);
+		width: calc(100% - 120px);
 		height: 30px;
 		line-height: 30px;
 		input {
@@ -1125,9 +1164,9 @@ export default {
 		line-height: 30px;
 	}
 	.el-form--label-left .el-form-item__label {
-		width: 100px;
+		width: 120px;
 		line-height: 30px;
-		font-size: 14px;
+		font-size: 13px;
 	}
 	.el-button {
 		padding: 8px 20px;

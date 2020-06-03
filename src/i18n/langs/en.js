@@ -196,6 +196,7 @@ const en = {
 			force_stop: "Force Stop",
 			reset: "Reset",
 			save: "Save",
+			saveing: "Saving",
 			reloadSchema: "Reload Schema",
 			debug: "Debug Test",
 			quantitative: "Quantitative",
