@@ -131,8 +131,9 @@ export default {
 				{ label: "512M", value: 512 },
 				{ label: "1G", value: 1024 },
 				{ label: "10G", value: 1024 * 10 },
+				{ label: "50G", value: 1024 * 50 },
 				{ label: "100G", value: 1024 * 100 },
-				{ label: "512G", value: 1024 * 512 },
+				{ label: "200G", value: 1024 * 200 },
 				{ label: this.$t("editor.cell.data_node.memCache.form.maxSize.options.unlimited"), value: 0 },
 				{ label: this.$t("editor.cell.data_node.memCache.form.maxSize.options.custom"), value: -1 }
 			],
