@@ -196,6 +196,7 @@ const cn = {
 			force_stop: "强制停止",
 			reset: "重置",
 			save: "保存",
+			saveing: "保存中",
 			reloadSchema:'刷新schema',
 			debug: 'debug测试',
 			quantitative: '定量',
