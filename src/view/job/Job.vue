@@ -121,6 +121,7 @@
 				v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
 				class="inline-input searchNode"
 				v-model="state1"
+				id="searchNode"
 				size="mini"
 				:fetch-suggestions="querySearch"
 				placeholder="查找节点"
