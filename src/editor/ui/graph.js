@@ -830,7 +830,7 @@ export default class Graph extends Component {
 	}
 	selectionPosition(cell){
 		this.paperScroller.center();
-		this.selection.collection.reset();
+		this.selection.collection.reset(cell);
 		this.selection.collection.add(cell);
 	}
 

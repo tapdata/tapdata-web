@@ -5,7 +5,10 @@
 			<span class="txt">{{ $t("editor.nodeSettings") }}</span>
 		</head>
 		<div class="nodeBody">
-			<el-form class="e-form" label-position="top" :model="model" ref="form">
+			<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
+				{{$t("dataFlow.button.viewMonitoring")}}
+			</el-button>
+			<el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
 				<!-- <span class="addTxt">+新建文件</span> -->
 				<el-form-item :label="$t('editor.choose') + 'Custom'" prop="connectionId" :rules="rules" required>
 					<el-select
@@ -29,7 +32,7 @@
 import _ from "lodash";
 import factory from "../../../api/factory";
 let connections = factory("connections");
-
+let editorMonitor = null;
 export default {
 	name: "CustomNode",
 	props: {
@@ -41,6 +44,7 @@ export default {
 
 	data() {
 		return {
+			disabled: false,
 			databases: [],
 			rules: {
 				connectionId: [
@@ -90,10 +94,12 @@ export default {
 	},
 
 	methods: {
-		setData(data) {
+		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
 				Object.keys(data).forEach(key => (this.model[key] = data[key]));
 			}
+
+			editorMonitor = vueAdapter.editor;
 		},
 
 		getData() {
@@ -105,7 +111,16 @@ export default {
 				}
 			}
 			return result;
-		}
+		},
+
+		setDisabled(disabled) {
+			this.disabled = disabled;
+		},
+
+		seeMonitor() {
+			editorMonitor.goBackMontior();
+		},
+
 	}
 };
 </script>

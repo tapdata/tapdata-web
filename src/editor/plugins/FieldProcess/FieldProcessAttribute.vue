@@ -1,6 +1,16 @@
 <template>
 	<div class="e-field-process">
-		<el-form class="e-form" label-position="right" label-width="130px" :model="model" ref="form">
+		<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
+			{{ $t("dataFlow.button.viewMonitoring") }}
+		</el-button>
+		<el-form
+			class="e-form"
+			label-position="right"
+			label-width="130px"
+			:disabled="disabled"
+			:model="model"
+			ref="form"
+		>
 			<el-form-item :required="true" :label="$t('editor.cell.processor.field.form.name.label')">
 				<el-input
 					v-model="model.name"
@@ -23,6 +33,7 @@
 					:originalSchema="convertSchemaToTreeData(originalSchema)"
 					:schema="convertSchemaToTreeData(schema)"
 					:editable="true"
+					:disabledMode="disabled"
 				></schema-editor>
 			</div>
 			<!-- <div class="schema-editor-wrap schema-editor-container-right">
@@ -52,7 +63,7 @@ import SchemaEditor from "./SchemaEditor";
 import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from "../../util/Schema";
 import log from "../../../log";
 import _ from "lodash";
-
+let editorMonitor = null;
 export default {
 	name: "FieldProcess",
 	components: { SchemaEditor },
@@ -68,6 +79,7 @@ export default {
 
 	data() {
 		return {
+			disabled: false,
 			databases: [],
 
 			model: {
@@ -111,10 +123,20 @@ export default {
 
 				log("FieldProcess.setData.applyOperations", this.originalSchema, this.schema, this.model.operations);
 			}
+			editorMonitor = vueAdapter.editor;
 		},
+
 		getData() {
 			return _.cloneDeep(this.model);
-		}
+		},
+
+		setDisabled(disabled) {
+			this.disabled = disabled;
+		},
+
+		seeMonitor() {
+			editorMonitor.goBackMontior();
+		},
 	}
 };
 </script>
