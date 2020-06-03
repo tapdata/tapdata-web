@@ -79,7 +79,9 @@ export default class Editor extends BaseObject {
 		"app.Collection": "connectionId",
 		"app.Table": "connectionId",
 		"app.Database": "connectionId",
-		"app.Dummy": "connectionId"
+		"app.Dummy": "connectionId",
+		"app.GridFSNode": "connectionId",
+		"app.ApiNode": "connectionId",
 	};
 
 	constructor(opts) {

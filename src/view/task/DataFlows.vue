@@ -740,6 +740,7 @@ export default {
 		handleClear() {
 			this.formData.search = "";
 			this.formData.status = "";
+			this.formData.way = "";
 			this.screenFn();
 		},
 		handleSelectionChange(val) {
