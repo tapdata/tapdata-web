@@ -334,11 +334,11 @@ export default {
 
 						self.dataFlow = dataFlow;
 						// 管理端api创建任务来源以及editorData 数据丢失情况
-						if (!dataFlow.editorData && dataFlow.stages) {
+						// if (!dataFlow.editorData && dataFlow.stages) {
 							// 1. 拿到创建所有的节点数据
 							let cells = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
 							dataFlow.editorData = cells;
-
+							log('cellll',cells)
 							// 2. 调用画布创建节点方法
 							self.editor.setData(dataFlow);
 
@@ -350,9 +350,9 @@ export default {
 
 							// 5. 处理joinTables
 							self.handleJoinTables(dataFlow.stages);
-						} else {
-							self.editor.setData(dataFlow);
-						}
+						// } else {
+						// 	self.editor.setData(dataFlow);
+						// }
 						if (["scheduled", "running", "stopping", "force stopping"].includes(self.status)) {
 							self.setEditable(false);
 						}
@@ -444,10 +444,12 @@ export default {
 			let editorData = this.editor.getData();
 			let graphData = editorData.graphData;
 			let settingData = editorData.settingData;
-			settingData.notificationInterval = Number(settingData.notificationInterval);
-			settingData.notificationWindow = Number(settingData.notificationWindow);
-			settingData.readBatchSize = Number(settingData.readBatchSize);
-			settingData.readCdcInterval = Number(settingData.readCdcInterval);
+			settingData.notificationInterval = settingData.notificationInterval ? Number(settingData.notificationInterval) : 300;
+			settingData.notificationWindow = settingData.notificationWindow ? Number(settingData.notificationWindow) : 0 ;
+			settingData.readBatchSize = settingData.readBatchSize?Number(settingData.readBatchSize) : 1000;
+			settingData.readCdcInterval =settingData.readCdcInterval ? Number(settingData.readCdcInterval) : 500;
+			settingData.transformerConcurrency =settingData.transformerConcurrency ? Number(settingData.transformerConcurrency) : 8;
+			settingData.processorConcurrency =settingData.processorConcurrency ? Number(settingData.processorConcurrency) : 1;
 			let distanceForSink = editorData.distanceForSink || {};
 
 			let cells = graphData.cells ? graphData.cells : [];
@@ -877,16 +879,7 @@ export default {
 							type: mapping[v.type],
 							id: v.id,
 							freeTransform: false,
-							form_data: {
-								connectionId: v.connectionId,
-								databaseType: v.databaseType,
-								tableName: v.tableName,
-								sql: v.sql || "",
-								dropTable: false,
-								type: v.type,
-								primaryKeys: v.primaryKeys,
-								name: v.name
-							},
+							form_data: v,
 							schema: null,
 							outputSchema: null,
 							attrs: {
@@ -909,15 +902,7 @@ export default {
 									text: breakText.breakText(v.name, 125)
 								}
 							},
-							form_data: {
-								connectionId: v.connectionId,
-								name: v.name,
-								filter: v.filter,
-								tableName: v.tableName,
-								dropTable: false,
-								type: v.type,
-								primaryKeys: v.primaryKeys
-							}
+							form_data: v,
 						};
 						cells.push(node);
 					} else if (v.type === "database") {
@@ -925,14 +910,7 @@ export default {
 							type: mapping[v.type],
 							id: v.id,
 							freeTransform: false,
-							form_data: {
-								connectionId: v.connectionId,
-								name: v.name,
-								table_prefix: "",
-								table_suffix: "",
-								type: v.type,
-								excludeTables: []
-							},
+							form_data: v,
 							schema: null,
 							outputSchema: null,
 							attrs: {
@@ -965,30 +943,13 @@ export default {
 							}
 						};
 						if (["field_processor"].includes(v.type)) {
-							node.form_data = {
-								operations: v.operations,
-								name: v.name,
-								scripts: v.scripts
-							};
+							node.form_data = v;
 						} else if (["aggregation_processor"].includes(v.type)) {
-							node.form_data = {
-								type: v.type,
-								name: v.name,
-								aggregations: v.aggregations
-							};
+							node.form_data = v;
 						} else if (["js_processor"].includes(v.type)) {
-							node.form_data = {
-								type: v.type,
-								name: v.name,
-								script: v.script
-							};
+							node.form_data = v;
 						} else if (["row_filter_processor"].includes(v.type)) {
-							node.form_data = {
-								expression: v.expression,
-								name: v.name,
-								action: v.action,
-								type: v.type
-							};
+							node.form_data = v;
 						}
 						cells.push(node);
 					}

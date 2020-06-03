@@ -5,7 +5,7 @@
 				<el-col :span="24">
 					<el-form-item>
 						<div>{{ $t("dataFlow.sync_type") }}</div>
-						<el-radio-group v-model="formData.sync_type" size="mini" @change="hanldeChangeSyncType">
+						<el-radio-group v-model="formData.sync_type" size="mini" @change="changeSyncType">
 							<el-radio-button label="initial_sync+cdc">{{
 								$t("dataFlow.initial_sync") + "+" + $t("dataFlow.cdc")
 								}}
@@ -213,11 +213,13 @@
 
 				return result;
 			},
-			hanldeChangeSyncType(type) {
+			changeSyncType(type) {
 				if (type === "initial_sync") {
 					this.formData.isOpenAutoDDL = false;
 				} else {
 					this.formData.run_custom_sql = false;
+					this.formData.isSchedule = false;
+					this.formData.cronExpression = '';
 				}
 			}
 		}
