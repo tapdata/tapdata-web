@@ -189,6 +189,7 @@ export default {
 				}
 			}
 			this.cacheKeysValues = cacheKeys.length ? cacheKeys.split(",") : [];
+			this.model.cacheKeys = cacheKeys;
 		},
 		getData() {
 			return _.cloneDeep(this.model);
@@ -197,7 +198,11 @@ export default {
 			this.model.name = val;
 		},
 		cacheKeysHandler() {
-			this.model.cacheKeys = this.cacheKeysValues.join(",");
+			let cacheKeys = this.cacheKeysValues.join(",").trim();
+			if (!cacheKeys) {
+				this.cacheKeysValues = [];
+			}
+			this.model.cacheKeys = cacheKeys;
 		},
 		maxSizeLimitedHandler(limited) {
 			if (limited) {

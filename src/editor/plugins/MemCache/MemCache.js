@@ -52,7 +52,7 @@ export const memCacheConfig = {
 				let name = this.attr("label/text");
 				log("MemCache Formdata");
 				if (!data) throw new Error(`${name}: ${i18n.t("editor.cell.validate.none_setting")}`);
-				if (!data.cacheName)
+				if (!data.cacheName.trim())
 					throw new Error(`${name}: ${i18n.t("editor.cell.data_node.memCache.form.cacheName.none")}`);
 				if (!data.cacheKeys)
 					throw new Error(`${name}: ${i18n.t("editor.cell.data_node.memCache.form.cacheKeys.none")}`);
