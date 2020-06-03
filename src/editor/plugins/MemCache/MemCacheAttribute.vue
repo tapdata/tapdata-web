@@ -2,9 +2,16 @@
 	<div class="e-memery-cache nodeStyle">
 		<div class="nodeBody">
 			<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
-				{{$t("dataFlow.button.viewMonitoring")}}
+				{{ $t("dataFlow.button.viewMonitoring") }}
 			</el-button>
-			<el-form class="e-form" label-position="top" label-width="130px" :disabled="disabled" :model="model" ref="form">
+			<el-form
+				class="e-form"
+				label-position="top"
+				label-width="130px"
+				:disabled="disabled"
+				:model="model"
+				ref="form"
+			>
 				<el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.cacheName.label')">
 					<el-input
 						v-model.trim="model.cacheName"
@@ -180,7 +187,7 @@ export default {
 	},
 
 	methods: {
-		setData(data, cell) {
+		setData(data, cell, isSourceDataNode, vueAdapter) {
 			log("MemCache SetData");
 			if (data) {
 				Object.keys(data).forEach(key => (this.model[key] = data[key]));
@@ -245,7 +252,7 @@ export default {
 
 		seeMonitor() {
 			editorMonitor.goBackMontior();
-		},
+		}
 	}
 };
 </script>
