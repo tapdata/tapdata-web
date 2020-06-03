@@ -334,11 +334,10 @@ export default {
 
 						self.dataFlow = dataFlow;
 						// 管理端api创建任务来源以及editorData 数据丢失情况
-						// if (!dataFlow.editorData && dataFlow.stages) {
+						if (!dataFlow.editorData && dataFlow.stages) {
 							// 1. 拿到创建所有的节点数据
 							let cells = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
 							dataFlow.editorData = cells;
-							log('cellll',cells)
 							// 2. 调用画布创建节点方法
 							self.editor.setData(dataFlow);
 
@@ -350,9 +349,9 @@ export default {
 
 							// 5. 处理joinTables
 							self.handleJoinTables(dataFlow.stages);
-						// } else {
-						// 	self.editor.setData(dataFlow);
-						// }
+						} else {
+							self.editor.setData(dataFlow);
+						}
 						if (["scheduled", "running", "stopping", "force stopping"].includes(self.status)) {
 							self.setEditable(false);
 						}
@@ -874,12 +873,15 @@ export default {
 			};
 			if (data) {
 				data.map((v, index) => {
+					let formData =_.cloneDeep(v);
+					delete formData.inputLanes
+					delete formData.outputLanes
 					if (["table", "view", "collection", "mongo_view"].includes(v.type)) {
 						let node = {
 							type: mapping[v.type],
 							id: v.id,
 							freeTransform: false,
-							form_data: v,
+							form_data: formData,
 							schema: null,
 							outputSchema: null,
 							attrs: {
@@ -902,7 +904,7 @@ export default {
 									text: breakText.breakText(v.name, 125)
 								}
 							},
-							form_data: v,
+							form_data: formData,
 						};
 						cells.push(node);
 					} else if (v.type === "database") {
@@ -910,7 +912,7 @@ export default {
 							type: mapping[v.type],
 							id: v.id,
 							freeTransform: false,
-							form_data: v,
+							form_data: formData,
 							schema: null,
 							outputSchema: null,
 							attrs: {
@@ -943,13 +945,13 @@ export default {
 							}
 						};
 						if (["field_processor"].includes(v.type)) {
-							node.form_data = v;
+							node.form_data = formData;
 						} else if (["aggregation_processor"].includes(v.type)) {
-							node.form_data = v;
+							node.form_data = formData;
 						} else if (["js_processor"].includes(v.type)) {
-							node.form_data = v;
+							node.form_data = formData;
 						} else if (["row_filter_processor"].includes(v.type)) {
-							node.form_data = v;
+							node.form_data = formData;
 						}
 						cells.push(node);
 					}
