@@ -8,12 +8,10 @@ import Component from "../../lib/Component";
 import $ from "jquery";
 import shapes from "../models/shapes";
 import _ from "lodash";
-import factory from "../../../api/factory";
+
 import log from "../../../log";
 
 window.joint = window.joint || joint;
-
-const metadataInstances = factory("MetadataInstances");
 
 export default class Graph extends Component {
 	constructor(props) {
@@ -38,39 +36,8 @@ export default class Graph extends Component {
 
 		this.initGraph();
 
-		this.createLanes();
+		this.initLane();
 
-		this.loadData();
-		// this.loadExampleData();
-
-		this.sourceLane.toBack();
-		this.tapdataLane.toBack();
-		this.apiLane.toBack();
-
-		let embedOpts = {
-			deep: true,
-			padding: {
-				top: 50,
-				left: 50,
-				right: 50,
-				bottom: 50
-			}
-		};
-		this.sourceLane.fitEmbeds(_.cloneDeep(embedOpts));
-		this.tapdataLane.fitEmbeds(_.cloneDeep(embedOpts));
-		this.apiLane.fitEmbeds(_.cloneDeep(embedOpts));
-
-		/*joint.layout.DirectedGraph.layout(this.graph, {
-			setLinkVertices: true,
-			rankDir: "LR",
-			marginX: 100,
-			marginY: 100,
-			resizeToFit: true
-		});*/
-
-		//this.paperScroller.zoomToFit([opt]);
-		this.paper.fitToContent();
-		// this.updateLanes();
 		// this.paper.freeze();
 		this.paperScroller.centerContent();
 
@@ -94,11 +61,20 @@ export default class Graph extends Component {
 				]
 			},*/
 			defaultConnectionPoint: { name: "boundary", args: { extrapolate: true } },
+			// defaultConnectionPoint: joint.shapes.dataMap.Link.connectionPoint,
 			defaultConnector: { name: "rounded" },
-			defaultRouter: { name: "orthogonal" },
+			defaultRouter: { name: "metro" },
 			restrictTranslate: function(elementView) {
 				let parentId = elementView.model.get('parent');
-				return parentId && this.model.getCell(parentId).getBBox();
+				let parentCell = parentId && this.model.getCell(parentId);
+				let parentCellType = parentCell && parentCell.get('type');
+				let parentBBox = parentCell && parentCell.getBBox();
+				if(parentCellType === 'dataMap.Lane'){
+					parentBBox = parentBBox || {};
+					parentBBox.y += 50;
+					parentBBox.height -= 50;
+				}
+				return parentCell && parentBBox;
 			},
 			/*embeddingMode: false,*/
 			// frontParentOnly: false,
@@ -136,6 +112,41 @@ export default class Graph extends Component {
 		this.paperScroller.center();
 	}
 
+	initLane(){
+		this.createLanes();
+
+		// this.loadExampleData();
+
+		this.sourceLane.toBack();
+		this.tapdataLane.toBack();
+		this.apiLane.toBack();
+
+		/*let embedOpts = {
+			deep: true,
+			padding: {
+				top: 50,
+				left: 50,
+				right: 50,
+				bottom: 50
+			}
+		};
+		this.sourceLane.fitEmbeds(_.cloneDeep(embedOpts));
+		this.tapdataLane.fitEmbeds(_.cloneDeep(embedOpts));
+		this.apiLane.fitEmbeds(_.cloneDeep(embedOpts));*/
+
+		/*joint.layout.DirectedGraph.layout(this.graph, {
+			setLinkVertices: true,
+			rankDir: "LR",
+			marginX: 100,
+			marginY: 100,
+			resizeToFit: true
+		});*/
+
+		//this.paperScroller.zoomToFit([opt]);
+		// this.paper.fitToContent();
+		// this.updateLanes();
+	}
+
 	getContentBBox(){
 		const parent = $(this.container).parent();
 		const width = parent.width();
@@ -147,7 +158,7 @@ export default class Graph extends Component {
 	}
 
 	createLanes() {
-		this.sourceLane = new joint.shapes.dataMap.Lane({
+		/*this.sourceLane = new joint.shapes.dataMap.Lane({
 			size: {
 				width: 200,
 				height: 200
@@ -202,7 +213,36 @@ export default class Graph extends Component {
 		}, {
 			id: 'targetLane',
 		});
-		this.graph.addCell(this.apiLane);
+		this.graph.addCell(this.apiLane);*/
+		this.sourceLane = this.createLane({
+			attrs: {
+				headerText: {
+					text: 'SOURCE'
+				}
+			}
+		}, {
+			id: 'sourceLane'
+		});
+
+		this.tapdataLane = this.createLane({
+			attrs: {
+				headerText: {
+					text: 'Tapdata'
+				}
+			}
+		}, {
+			id: 'tapdataLane'
+		});
+
+		this.apiLane = this.createLane({
+			attrs: {
+				headerText: {
+					text: 'API'
+				}
+			}
+		}, {
+			id: 'apiLane'
+		});
 
 		this.sourceLane.on("change:size", (element, newSize, opt) => this.setLaneHeaderStyle(this.sourceLane, newSize.width, this.spacing));
 		this.tapdataLane.on("change:size", (element, newSize, opt) => this.setLaneHeaderStyle(this.sourceLane, newSize.width, this.spacing));
@@ -253,26 +293,42 @@ export default class Graph extends Component {
 		//lane.attr('header/width', width - spacing * 2);
 	}
 
+	createLane(attrs, opts){
+		let lane = new joint.shapes.dataMap.Lane(_.merge({
+			size: {
+				width: 200,
+				height: 200
+			},
+			attrs: {
+				headerText: {
+					text: 'API'
+				}
+			}
+		}, attrs), opts);
+		this.graph.addCell(lane);
+		return lane;
+	}
+
 	createLink(source, target) {
 		return new joint.shapes.standard.Link({
-			router: {
-				name: "manhattan"
-			},
-			connector: {
-				name: "rounded"
-			},
 			source: {
 				id: source
 			},
 			target: {
 				id: target
 			}
-		});
+		}).addTo(this.graph);
 	}
 
-	createCell(cellType, x, y) {
+	createCell(cellType, x, y, attrs, cellData) {
 		let CellConstructor = _.get(joint.shapes, cellType);
-		let cell = new CellConstructor({});
+		let cell = new CellConstructor(_.merge({
+			attrs: {
+				label: {
+					text: cellData.name
+				}
+			}
+		}, attrs || {}));
 
 		cell.position(x, y).addTo(this.graph);
 		return cell;
@@ -327,62 +383,94 @@ export default class Graph extends Component {
 
 	}
 
-	loadData(){
-		let self = this;
-		metadataInstances.dataMap(1).then(result => {
-
-			if(result && result.data){
-				let cells = result.data.records;
-				self.renderCells(cells);
-			}
-
-		}).catch(err => {
-
-		});
-	}
-
-	getData(){
-		return this.graph.toJSON();
-	}
-
-	renderCells(cells){
+	renderCells(level, cells){
 		log("DataMap.renderCells", cells);
+
+		// this.paper.unfreeze();
+		this.graph.clear();
+		this.initLane();
+
 		cells = cells || [];
+		let self = this;
 
 		let links = [];
+		let idMap = {};
 		cells.forEach((cellData) => {
-			let cellType = null;
-			switch (cellData.type) {
-				case "link":
-					links.push(cellData);
-					break;
-				case "database_group":
-					cellType = "dataMap.Classification";
-					break;
-				case "database":
-					cellType = "dataMap.Database";
-					break;
-				case "tapdata":
-					cellType = "dataMap.Tapdata";
-					break;
-				case "api_group":
-					cellType = "dataMap.APIClassification";
-					break;
-				case "api":
-					cellType = "dataMap.API";
-					break;
-				case "model":
-					cellType = "dataMap.API";
-					break;
-				default:
-					cellType = "dataMap.API";
+			let cell = null;
+			let lane = null;
+			if(["link"].includes(cellData.type)) {
+				links.push(cellData);
+			} else if(["database_group"].includes(cellData.type)){
+				lane = self.sourceLane;
+				cell = self.createCell("dataMap.Classification", 20, 50, null, cellData);
+			} else if(["database"].includes(cellData.type)){
+				lane = self.sourceLane;
+				cell = self.createCell("dataMap.Database", 20, 50, null, cellData);
+			} else if(["tapdata"].includes(cellData.type)){
+				lane = self.tapdataLane;
+				cell = self.createCell("dataMap.Tapdata", 20, 50, null, cellData);
+			} else if(["api"].includes(cellData.type)){
+				lane = self.apiLane;
+				cell = self.createCell("dataMap.API", 20, 50, null, cellData);
+			} else if(["api_group"].includes(cellData.type)){
+				lane = self.apiLane;
+				cell = self.createCell("dataMap.Classification", 20, 50, null, cellData);
+			} else if(["model"].includes(cellData.type)){
+				cell = self.createCell("dataMap.API", 20, 50, null, cellData);
 			}
 
-			if(cellType){
-				let cell = self.createCell(cellType, 20, 50);
+			if(cell) {
+				idMap[cellData.id] = cell.id;
+			}
+
+			if(cell && lane) {
+				const laneBBox = lane.getBBox();
+				const cellBBox = cell.getBBox();
+				const embeddedCells = lane.getEmbeddedCells().filter(cell => cell.isElement());
+
+				let embeddedCellBBox = self.graph.getCellsBBox(embeddedCells);
+				embeddedCellBBox = embeddedCellBBox || {
+					height: 0,
+					width: 0
+				};
+
+				let x = (laneBBox.width - cellBBox.width) / 2 + laneBBox.x;
+				let y = embeddedCellBBox.height + (embeddedCells.length > 0 ? 10 : 0) + 50 + laneBBox.y;
+
+				cell.position(x, y);
+				lane.embed(cell);
 			}
 
 		} );
+
+		links.forEach((cellData) => {
+			self.createLink(idMap[cellData.source], idMap[cellData.target]);
+		});
+
+		cells.filter(c => !!c.parent).forEach(cellData => {
+			let parentId = idMap[cellData.parent] || '';
+			let parentCell = self.graph.getCell(parentId);
+			let cell = self.graph.getCell(idMap[cellData.id]);
+			if(parentCell && cell){
+				parentCell.embed(cell);
+			}
+		});
+
+		// this.paper.freeze();
+
+		log("DataMap.graph.getData", self.getData());
+	}
+
+	getData() {
+		return this.graph.toJSON();
+	}
+
+	zoomIn(){
+		this.paperScroller.zoom(0.2, {max: 4});
+	}
+
+	zoomOut(){
+		this.paperScroller.zoom(-0.2, {min: 0.2});
 	}
 
 }
