@@ -112,7 +112,6 @@ import echartHead from "./components/echartHead";
 import echartsCompinent from "../../components/echartsCompinent";
 import shaftlessEchart from "../../components/shaftlessEchart";
 import factory from "../../api/factory";
-import editor from '../../editor/index';
 import { EditorEventType } from "../../editor/lib/events";
 
 const DataFlowInsights = factory("DataFlowInsights");
@@ -499,7 +498,6 @@ export default {
 			});
 			if (this.domValue && this.domValue !=='all') {
 				this.editor.graph.selectionPosition(selectCell);
-				console.log($(intput),'adsfadsfa********')
 			} else {
 				this.$message.error(this.$t('dataFlow.selectNode'));
 			}

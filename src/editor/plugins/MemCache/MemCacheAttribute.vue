@@ -1,10 +1,20 @@
 <template>
 	<div class="e-memery-cache nodeStyle">
 		<div class="nodeBody">
-			<el-form class="e-form" label-position="top" label-width="130px" :rules="rules" :model="model" ref="form">
+			<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
+				{{ $t("dataFlow.button.viewMonitoring") }}
+			</el-button>
+			<el-form
+				class="e-form"
+				label-position="top"
+				label-width="130px"
+				:disabled="disabled"
+				:model="model"
+				ref="form"
+			>
 				<el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.cacheName.label')">
 					<el-input
-						v-model="model.cacheName"
+						v-model.trim="model.cacheName"
 						size="mini"
 						:placeholder="$t('editor.cell.data_node.memCache.form.cacheName.placeholder')"
 						@input="nameHandler"
@@ -40,21 +50,20 @@
 								@change="maxSizeLimitedHandler"
 							>
 								<el-option
-									:label="$t('editor.cell.data_node.memCache.form.maxSize.options.custom')"
-									:value="true"
-								></el-option>
-								<el-option
-									:label="$t('editor.cell.data_node.memCache.form.maxSize.options.unlimited')"
-									:value="false"
+									v-for="opt in sizeLimitedOptions"
+									:key="opt.label"
+									:label="opt.label"
+									:value="opt.value"
 								></el-option>
 							</el-select>
 						</el-col>
 						<el-col :span="12">
 							<el-input
-								:disabled="!maxSizeLimited"
-								type="number"
+								v-show="maxSizeLimited < 0"
+								type="tel"
 								v-model="model.maxSize"
 								size="mini"
+								maxlength="8"
 								:placeholder="$t('editor.cell.data_node.memCache.form.maxSize.placeholder')"
 							>
 								<template slot="append">M</template>
@@ -83,7 +92,7 @@
 						</el-col>
 						<el-col :span="12">
 							<el-input
-								:disabled="!maxRowsLimited"
+								v-show="maxRowsLimited"
 								type="number"
 								v-model="model.maxRows"
 								size="mini"
@@ -97,7 +106,7 @@
 					</el-row>
 				</el-form-item>
 				<div class="code-template">
-					<label>应用代码：</label>
+					<label>{{ $t("editor.cell.data_node.memCache.applicationCode") }}:</label>
 					<div class="code">
 						<span class="color-primary">var</span> cache = CacheService.getCache( "<span
 							class="color-danger"
@@ -117,28 +126,28 @@
 // import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from "../../util/Schema";
 import log from "../../../log";
 import _ from "lodash";
-
+let editorMonitor = null;
 export default {
 	name: "memCache",
 
-	watch: {
-		model: {
-			deep: true,
-			handler() {
-				this.$emit("dataChanged", this.getData());
-			}
-		}
-	},
-
 	data() {
-		let validateNumber = (rule, value, callback) => {};
 		return {
+			disabled: false,
 			databases: [],
 
-			rules: {
-				maxSize: [{ validator: validateNumber, trigger: "blur" }],
-				maxRows: [{ validator: validateNumber, trigger: "blur" }]
-			},
+			sizeLimitedOptions: [
+				{ label: "50M", value: 50 },
+				{ label: "100M", value: 100 },
+				{ label: "200M", value: 200 },
+				{ label: "512M", value: 512 },
+				{ label: "1G", value: 1024 },
+				{ label: "10G", value: 1024 * 10 },
+				{ label: "50G", value: 1024 * 50 },
+				{ label: "100G", value: 1024 * 100 },
+				{ label: "200G", value: 1024 * 200 },
+				{ label: this.$t("editor.cell.data_node.memCache.form.maxSize.options.unlimited"), value: 0 },
+				{ label: this.$t("editor.cell.data_node.memCache.form.maxSize.options.custom"), value: -1 }
+			],
 
 			model: {
 				name: "",
@@ -150,8 +159,8 @@ export default {
 
 			cacheKeysValues: [],
 			sourceSchemaFields: [],
-			maxSizeLimited: false,
-			maxRowsLimited: false
+			maxSizeLimited: 0,
+			maxRowsLimited: 0
 		};
 	},
 
@@ -168,12 +177,21 @@ export default {
 		}
 	},
 
+	watch: {
+		model: {
+			deep: true,
+			handler() {
+				this.$emit("dataChanged", this.getData());
+			}
+		}
+	},
+
 	methods: {
-		setData(data, cell) {
+		setData(data, cell, isSourceDataNode, vueAdapter) {
 			log("MemCache SetData");
 			if (data) {
 				Object.keys(data).forEach(key => (this.model[key] = data[key]));
-				this.maxSizeLimited = data.maxSize > 0;
+				this.setLimited(data.maxSize);
 				this.maxRowsLimited = data.maxRows > 0;
 			}
 			let schema = cell.getInputSchema()[0];
@@ -189,26 +207,35 @@ export default {
 				}
 			}
 			this.cacheKeysValues = cacheKeys.length ? cacheKeys.split(",") : [];
+
+			editorMonitor = vueAdapter.editor;
 			this.model.cacheKeys = cacheKeys;
 		},
+
 		getData() {
 			return _.cloneDeep(this.model);
 		},
+
+		setLimited(val) {
+			let option = this.sizeLimitedOptions.find(opt => opt.value === val);
+			this.maxSizeLimited = option ? val : -1;
+		},
+
 		nameHandler(val) {
 			this.model.name = val;
 		},
+
 		cacheKeysHandler() {
-			let cacheKeys = this.cacheKeysValues.join(",").trim();
-			if (!cacheKeys) {
-				this.cacheKeysValues = [];
-			}
-			this.model.cacheKeys = cacheKeys;
+			let cacheKeys = this.cacheKeysValues.filter(v => !!v.trim());
+			this.cacheKeysValues = cacheKeys;
+			this.model.cacheKeys = cacheKeys.join(",");
 		},
-		maxSizeLimitedHandler(limited) {
-			if (limited) {
+
+		maxSizeLimitedHandler(value) {
+			if (value < 0) {
 				this.model.maxSize = 50;
 			} else {
-				this.model.maxSize = 0;
+				this.model.maxSize = value;
 			}
 		},
 		maxRowLimitedHancler(limited) {
@@ -217,6 +244,14 @@ export default {
 			} else {
 				this.model.maxRows = 0;
 			}
+		},
+
+		setDisabled(disabled) {
+			this.disabled = disabled;
+		},
+
+		seeMonitor() {
+			editorMonitor.goBackMontior();
 		}
 	}
 };

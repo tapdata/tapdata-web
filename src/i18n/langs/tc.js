@@ -62,6 +62,10 @@ const tc = {
 	},
 	dataFlow: {
 		selectNode: '請選擇節點',
+		submitExecute: '提交並執行',
+		submitOnly: '僅提交',
+		implementationModalities: '執行方式',
+		submitConfirmation: '提交確認',
 		SyncPoint: "同步節點",
 		Current: "當前時間",
 		SyncTime: "同步時間",
@@ -107,8 +111,7 @@ const tc = {
 		totalOutput: "總輸出",
 		replicate: "數據同步差距",
 		throughputpop: "平均每秒源端數據採集的速度以及目標端寫入的速度，數值越大越好",
-		transtime_pop:
-			"傳輸耗時：除源節點外，事件處理完的時間減去事件的發生時間。節點間統計：事件從進入節點到輸出到所消耗的時間。任務流統計：所有節點耗時相加，數值越小越好",
+		transtime_pop: "傳輸耗時：除源節點外，事件處理完的時間減去事件的發生時間。節點間統計：事件從進入節點到輸出到所消耗的時間。任務流統計：所有節點耗時相加，數值越小越好",
 		replicate_pop: "源庫和目標庫數據最後更新時間的差距，數值越小越好",
 		status: {
 			running: "運行中",
@@ -160,7 +163,7 @@ const tc = {
 		notification_lag: "通知",
 		isOpenAutoDDL: "自動處理DDL操作",
 		transformerConcurrency: "目标写入线程数",
-		processorConcurrency:"处理器线程数",
+		processorConcurrency: "处理器线程数",
 		send_email_when_replication: "幾秒後重新發送",
 		send_email_at_most_one_replication: "超過多少秒取消發送",
 		read_cdc_interval: "增量同步間隔(ms)",
@@ -193,7 +196,7 @@ const tc = {
 			force_stop: "強制停止",
 			reset: "重置",
 			save: "保存",
-			reloadSchema:"刷新schema",
+			reloadSchema: "刷新schema",
 			debug: "debug測試",
 			quantitative: "定量",
 			increment: "增量",
@@ -287,9 +290,9 @@ const tc = {
 							keep: "保持已存在的數據",
 							remove: "運行前刪除已存在的數據"
 						},
-            initialSyncOrder: {
-              keep: "初始化節點順序",
-            },
+						initialSyncOrder: {
+							keep: "初始化節點順序",
+						},
 						filter: {
 							label: "過濾條件",
 							placeholder: "過濾條件(Mongo Query Filter Document)",
@@ -379,6 +382,8 @@ const tc = {
 				memCache: {
 					tip: "記憶體緩存節點",
 					name: "記憶體緩存",
+
+					applicationCode: "應用程式碼",
 
 					form: {
 						cacheName: {

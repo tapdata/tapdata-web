@@ -52,7 +52,7 @@ export const memCacheConfig = {
 				let name = this.attr("label/text");
 				log("MemCache Formdata");
 				if (!data) throw new Error(`${name}: ${i18n.t("editor.cell.validate.none_setting")}`);
-				if (!data.cacheName.trim())
+				if (!data.cacheName)
 					throw new Error(`${name}: ${i18n.t("editor.cell.data_node.memCache.form.cacheName.none")}`);
 				if (!data.cacheKeys)
 					throw new Error(`${name}: ${i18n.t("editor.cell.data_node.memCache.form.cacheKeys.none")}`);
@@ -81,7 +81,10 @@ export const memCacheConfig = {
 				return (
 					!["app.Database", "app.FileNode", "app.GridFSNode", "app.ESNode", "app.PublishApi"].includes(
 						sourceCell.get("type")
-					) && sourceCell.graph.getConnectedLinks(this, { inbound: true }).length < 1
+					) &&
+					sourceCell.graph.getConnectedLinks(this, {
+						inbound: true
+					}).length < 1
 				);
 			}
 		}
@@ -105,7 +108,11 @@ export const memCacheConfig = {
 						unit: "px",
 						label: "Font size",
 						group: "text",
-						when: { ne: { "attrs/label/text": "" } },
+						when: {
+							ne: {
+								"attrs/label/text": ""
+							}
+						},
 						index: 2
 					},
 					fontFamily: {
@@ -113,7 +120,11 @@ export const memCacheConfig = {
 						options: options.fontFamily,
 						label: "Font family",
 						group: "text",
-						when: { ne: { "attrs/label/text": "" } },
+						when: {
+							ne: {
+								"attrs/label/text": ""
+							}
+						},
 						index: 3
 					},
 					fontWeight: {
@@ -121,7 +132,11 @@ export const memCacheConfig = {
 						options: options.fontWeight,
 						label: "Font thickness",
 						group: "text",
-						when: { ne: { "attrs/label/text": "" } },
+						when: {
+							ne: {
+								"attrs/label/text": ""
+							}
+						},
 						index: 4
 					},
 					fill: {
@@ -129,7 +144,11 @@ export const memCacheConfig = {
 						options: options.colorPalette,
 						label: "Fill",
 						group: "text",
-						when: { ne: { "attrs/label/text": "" } },
+						when: {
+							ne: {
+								"attrs/label/text": ""
+							}
+						},
 						index: 5
 					}
 				},
@@ -157,7 +176,11 @@ export const memCacheConfig = {
 						unit: "px",
 						label: "Outline thickness",
 						group: "presentation",
-						when: { ne: { "attrs/body/stroke": "transparent" } },
+						when: {
+							ne: {
+								"attrs/body/stroke": "transparent"
+							}
+						},
 						index: 3
 					},
 					strokeDasharray: {
@@ -167,8 +190,16 @@ export const memCacheConfig = {
 						group: "presentation",
 						when: {
 							and: [
-								{ ne: { "attrs/body/stroke": "transparent" } },
-								{ ne: { "attrs/body/strokeWidth": 0 } }
+								{
+									ne: {
+										"attrs/body/stroke": "transparent"
+									}
+								},
+								{
+									ne: {
+										"attrs/body/strokeWidth": 0
+									}
+								}
 							]
 						},
 						index: 4
@@ -202,7 +233,10 @@ export const memCacheConfig = {
 		 */
 		// groupLabel: '',
 
-		size: { width: 5, height: 4 },
+		size: {
+			width: 5,
+			height: 4
+		},
 		attrs: {
 			root: {
 				dataTooltip: i18n.t("editor.cell.data_node.memCache.tip"),
