@@ -38,7 +38,7 @@ export default class Graph extends Component {
 
 		this.initLane();
 
-		// this.paper.freeze();
+		this.paper.freeze();
 		this.paperScroller.centerContent();
 
 	}
@@ -105,9 +105,9 @@ export default class Graph extends Component {
 			}
 		}));
 		self.paper.on('blank:pointerdown', self.paperScroller.startPanning);
-		/*self.paper.on('cell:pointerdown', (cellView, evt, x, y) => {
+		self.paper.on('cell:pointerdown', (cellView, evt, x, y) => {
 			self.paperScroller.startPanning(evt, x, y);
-		});*/
+		});
 
 		this.paperScroller.center();
 	}
@@ -120,27 +120,6 @@ export default class Graph extends Component {
 		this.sourceLane.toBack();
 		this.tapdataLane.toBack();
 		this.apiLane.toBack();
-
-		/*let embedOpts = {
-			deep: true,
-			padding: {
-				top: 50,
-				left: 50,
-				right: 50,
-				bottom: 50
-			}
-		};
-		this.sourceLane.fitEmbeds(_.cloneDeep(embedOpts));
-		this.tapdataLane.fitEmbeds(_.cloneDeep(embedOpts));
-		this.apiLane.fitEmbeds(_.cloneDeep(embedOpts));*/
-
-		/*joint.layout.DirectedGraph.layout(this.graph, {
-			setLinkVertices: true,
-			rankDir: "LR",
-			marginX: 100,
-			marginY: 100,
-			resizeToFit: true
-		});*/
 
 		//this.paperScroller.zoomToFit([opt]);
 		// this.paper.fitToContent();
@@ -277,6 +256,39 @@ export default class Graph extends Component {
 		this.setLaneHeaderStyle(this.apiLane, sourceWidth, spacing);
 	}
 
+	fitEmbeds(){
+
+		joint.layout.DirectedGraph.layout(this.graph, {
+			setLinkVertices: false,
+			rankDir: "LR",
+			marginX: 50,
+			marginY: 50,
+			// resizeToFit: true,
+			nodeSep: 10,
+			edgeSep: 10,
+			clusterPadding: { top: 50, left: 10, right: 10, bottom: 10 }
+		});
+
+		/*let embedOpts = {
+			deep: true,
+			padding: {
+				top: 50,
+				left: 50,
+				right: 50,
+				bottom: 50
+			}
+		};
+		this.sourceLane.fitEmbeds(_.cloneDeep(embedOpts));
+		this.tapdataLane.fitEmbeds(_.cloneDeep(embedOpts));
+		this.apiLane.fitEmbeds(_.cloneDeep(embedOpts));*/
+
+		this.paperScroller.zoomToFit();
+		/*this.paper.scaleContentToFit({
+			padding: 50
+		});*/
+
+	}
+
 	setLaneHeaderStyle(lane, width, spacing){
 		lane.attr({
 			header: {
@@ -386,7 +398,7 @@ export default class Graph extends Component {
 	renderCells(level, cells){
 		log("DataMap.renderCells", cells);
 
-		// this.paper.unfreeze();
+		this.paper.unfreeze();
 		this.graph.clear();
 		this.initLane();
 
@@ -456,7 +468,9 @@ export default class Graph extends Component {
 			}
 		});
 
-		// this.paper.freeze();
+		this.fitEmbeds();
+
+		this.paper.freeze();
 
 		log("DataMap.graph.getData", self.getData());
 	}
