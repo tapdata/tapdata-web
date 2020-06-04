@@ -370,31 +370,30 @@ export default {
     // self.editor.getUI().getBackButtonEl().on('click', () => {
     // 	self.$router.push({path: '/dataFlows'});
     // });
-    let autoSave = () => {
-      timer = setInterval(() => {
-        if (["draft", "error", "paused"].includes(this.status)) {
-          self.timeSave();
-        }
-      }, 10000);
-    };
+    let settingSetInterval = null;
     this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
-	  changeData = this.getDataFlowData(true);
-	  if (changeData) {
-		autoSave();
-	  }
+      changeData = this.getDataFlowData(true);
 
+      let settingSetInterval = () => {
+        if (changeData) {
+          timer = setTimeout(() => {
+            if (["draft", "error", "paused"].includes(this.status)) {
+              self.timeSave();
+            }
+          }, 10000);
+        }
+      };
+      if (timer) {
+        clearTimeout(timer);
+        if (changeData) {
+          settingSetInterval();
+        }
+      } else {
+        if (changeData) {
+          settingSetInterval();
+        }
+      }
     });
-
-    if (timer) {
-      clearTimeout(timer);
-      if (changeData) {
-		autoSave();
-	  }
-    } else {
-      if (changeData) {
-		autoSave();
-	  }
-    }
   },
 
   methods: {

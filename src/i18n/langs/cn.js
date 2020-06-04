@@ -110,8 +110,7 @@ const cn = {
 		totalOutput: "总输出",
 		replicate: "数据同步差距",
 		throughputpop: "平均每秒源端数据采集的速度以及目标端写入的速度，数值越大越好",
-		transtime_pop:
-			"传输耗时:除源节点外，事件处理完的时间减去事件的发生时间。 节点间统计:事件从进入节点到输出到所消耗的时间 任务流统计:所有节点耗时相加，数值越小越好",
+		transtime_pop: "传输耗时:除源节点外，事件处理完的时间减去事件的发生时间。 节点间统计:事件从进入节点到输出到所消耗的时间 任务流统计:所有节点耗时相加，数值越小越好",
 		replicate_pop: "源库和目标库数据最后更新时间的差距，数值越小越好",
 		status: {
 			running: "运行中",
@@ -163,7 +162,7 @@ const cn = {
 		notification_lag: "通知",
 		isOpenAutoDDL: "自动处理DDL操作",
 		transformerConcurrency: "目标写入线程数",
-		processorConcurrency:"处理器线程数",
+		processorConcurrency: "处理器线程数",
 		send_email_when_replication: "几秒后重新发送",
 		send_email_at_most_one_replication: "超过多少秒取消发送",
 		read_cdc_interval: "增量同步间隔(ms)",
@@ -197,7 +196,7 @@ const cn = {
 			reset: "重置",
 			save: "保存",
 			saveing: "保存中",
-			reloadSchema:'刷新schema',
+			reloadSchema: '刷新schema',
 			debug: 'debug测试',
 			quantitative: '定量',
 			increment: '增量',
@@ -290,9 +289,9 @@ const cn = {
 							keep: "保持已存在的数据",
 							remove: "运行前删除已存在的数据"
 						},
-            initialSyncOrder: {
-              keep: '初始化节点顺序',
-            },
+						initialSyncOrder: {
+							keep: '初始化节点顺序',
+						},
 						filter: {
 							label: "过滤条件",
 							placeholder: "过滤条件(Mongo Query Filter Document)",
@@ -599,10 +598,10 @@ const cn = {
 					tip: "填充可视区域"
 				},
 				zoom_out: {
-					tip: "放大"
+					tip: "缩小"
 				},
 				zoom_in: {
-					tip: "缩小"
+					tip: "放大"
 				},
 				grid_size: {
 					tip: "网格大小"

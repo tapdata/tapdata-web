@@ -20,4 +20,4 @@ export * from "./api/ApiNode";
 export * from "./DataFilter/DataFilter";
 export * from "./custom/CustomNode";
 export * from "./MemCache/MemCache";
-// export * from './publishApi/publishApi';
+export * from './publishApi/publishApi';

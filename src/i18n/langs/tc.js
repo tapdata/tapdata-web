@@ -598,10 +598,10 @@ const tc = {
 					tip: "填充可視區域"
 				},
 				zoom_out: {
-					tip: "放大"
+					tip: "縮小"
 				},
 				zoom_in: {
-					tip: "縮小"
+					tip: "放大"
 				},
 				grid_size: {
 					tip: "網格大小"

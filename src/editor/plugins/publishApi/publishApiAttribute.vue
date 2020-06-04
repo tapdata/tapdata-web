@@ -1,56 +1,89 @@
 <template>
-	<div class="releaseApi">
-		<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
-			{{ $t("dataFlow.button.viewMonitoring") }}
-		</el-button>
-		<el-form ref="form" :model="form" :disabled="disabled" label-position="top" label-width="200px">
-			<el-form-item :label="$t('editor.cell.data_node.api.dataApiName')">
-				<el-input
-					v-model="form.name"
-					maxlength="20"
-					:placeholder="$t('editor.cell.data_node.api.enterPublishApiName')"
-					show-word-limit
-					required
-				></el-input>
-			</el-form-item>
-			<el-form-item :label="$t('editor.cell.data_node.api.description')" class="pdTop5">
-				<el-input
-					type="textarea"
-					v-model="form.description"
-					:placeholder="$t('editor.cell.data_node.api.enterNewlyReleasedApi')"
-					maxlength="100"
-					show-word-limit
-				></el-input>
-			</el-form-item>
-			<el-row :gutter="10">
-				<el-col :span="6">
-					<el-form-item :label="$t('editor.cell.data_node.api.method')">
-						<el-select v-model="form.method">
-							<el-option
-								v-for="item in selectList"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value"
-							>
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col :span="18">
-					<el-form-item label="URL/API/V1/">
-						<el-input v-model="form.path" :placeholder="$t('dataFlow.enterFilterTable')"></el-input>
-					</el-form-item>
-				</el-col>
-			</el-row>
-			<el-form-item :label="$t('editor.cell.data_node.api.fieldSettings')" class="pdTop5">
-				<el-table border :data="form.paths.fields" style="width: 100%">
-					<el-table-column prop="field_name" :label="$t('editor.cell.data_node.api.table_field')">
-						<!-- <template slot-scope="scope">
+  <div class="releaseApi">
+    <div class="head-btns">
+      <el-button
+        v-if="disabled"
+        class="e-button"
+        type="primary"
+        @click="seeMonitor"
+      >
+        {{$t("dataFlow.button.viewMonitoring")}}
+      </el-button>
+    </div>
+    <el-form
+      ref="form"
+      :model="form"
+      :disabled="disabled"
+      label-position="top"
+      label-width="200px"
+    >
+      <el-form-item :label="$t('editor.cell.data_node.api.dataApiName')">
+        <el-input
+          v-model="form.name"
+          maxlength="20"
+          :placeholder="$t('editor.cell.data_node.api.enterPublishApiName')"
+          show-word-limit
+          required
+        ></el-input>
+      </el-form-item>
+      <el-form-item
+        :label="$t('editor.cell.data_node.api.description')"
+        class="pdTop5"
+      >
+        <el-input
+          type="textarea"
+          v-model="form.description"
+          :placeholder="$t('editor.cell.data_node.api.enterNewlyReleasedApi')"
+          maxlength="100"
+          show-word-limit
+        ></el-input>
+      </el-form-item>
+      <el-row :gutter="10">
+        <el-col :span="6">
+          <el-form-item :label="$t('editor.cell.data_node.api.method')">
+            <el-select v-model="form.method">
+              <el-option
+                v-for="item in selectList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="18">
+          <el-form-item label="URL/API/V1/">
+            <el-input
+              v-model="form.path"
+              :placeholder="$t('dataFlow.enterFilterTable')"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-form-item
+        :label="$t('editor.cell.data_node.api.fieldSettings')"
+        class="pdTop5"
+      >
+        <el-table
+          border
+          :data="form.paths.fields"
+          style="width: 100%"
+        >
+          <el-table-column
+            prop="field_name"
+            :label="$t('editor.cell.data_node.api.table_field')"
+          >
+            <!-- <template slot-scope="scope">
               <el-input v-model="scope.row.field_name" size="mini"></el-input>
             </template> -->
-					</el-table-column>
-					<el-table-column prop="javaType" :label="$t('editor.cell.data_node.api.table_type')" width="100">
-						<!-- <template slot-scope="scope">
+          </el-table-column>
+          <el-table-column
+            prop="javaType"
+            :label="$t('editor.cell.data_node.api.table_type')"
+            width="100"
+          >
+            <!-- <template slot-scope="scope">
               <el-select
                 v-model="scope.row.table_type"
                 filterable
@@ -64,31 +97,31 @@
                   </el-option>
               </el-select>
             </template> -->
-					</el-table-column>
-					<el-table-column
-						align="center"
-						prop="checkList"
-						:label="$t('editor.cell.data_node.api.table_setting')"
-						width="180"
-					>
-						<template slot-scope="scope">
-							<!-- <el-checkbox-group v-model="scope.row.checkList"> -->
-							<el-checkbox v-model="scope.row.required">{{
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="checkList"
+            :label="$t('editor.cell.data_node.api.table_setting')"
+            width="180"
+          >
+            <template slot-scope="scope">
+              <!-- <el-checkbox-group v-model="scope.row.checkList"> -->
+              <el-checkbox v-model="scope.row.required">{{
 								$t("editor.cell.data_node.api.required")
 							}}</el-checkbox>
-							<el-checkbox v-model="scope.row.query">{{
+              <el-checkbox v-model="scope.row.query">{{
 								$t("editor.cell.data_node.api.availableQueries")
 							}}</el-checkbox>
-							<!-- </el-checkbox-group> -->
-						</template>
-					</el-table-column>
-				</el-table>
-			</el-form-item>
-			<!-- <el-form-item class="btnClass">
+              <!-- </el-checkbox-group> -->
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-form-item>
+      <!-- <el-form-item class="btnClass">
 				<el-button @click="addRow">+ {{$t('editor.cell.processor.aggregate.new_aggregate')}}</el-button>
 			</el-form-item> -->
-		</el-form>
-	</div>
+    </el-form>
+  </div>
 </template>
 
 <script>
@@ -98,186 +131,186 @@ import { convertSchemaToTreeData } from "../../util/Schema";
 // import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
 let editorMonitor = null;
 export default {
-	name: "ReleaseApi",
-	data() {
-		return {
-			disabled: false,
-			selectList: [
-				{ label: "GET", value: "GET" },
-				{ label: "STREAM", value: "STREAM" }
-			],
-			groupList: [],
-			expressionList: [],
-			form: {
-				apiVersion: "V1",
-				name: "",
-				description: "",
-				paths: {
-					method: "GET",
-					fields: [],
-					availableQueryField: [],
-					requiredQueryField: []
-				},
-				path: "",
-				mergedSchema: null
-				// tableData: [
-				//   {'table_field':1,'table_type': 'String',checkList:['required']}
-				// ],
-			}
-		};
-	},
+  name: "ReleaseApi",
+  data() {
+    return {
+      disabled: false,
+      selectList: [
+        { label: "GET", value: "GET" },
+        { label: "STREAM", value: "STREAM" }
+      ],
+      groupList: [],
+      expressionList: [],
+      form: {
+        apiVersion: "V1",
+        name: "",
+        description: "",
+        paths: {
+          method: "GET",
+          fields: [],
+          availableQueryField: [],
+          requiredQueryField: []
+        },
+        path: "",
+        mergedSchema: null
+        // tableData: [
+        //   {'table_field':1,'table_type': 'String',checkList:['required']}
+        // ],
+      }
+    };
+  },
 
-	watch: {
-		form: {
-			deep: true,
-			handler(val) {
-				this.$emit("dataChanged", this.getData());
-			}
-		}
-	},
+  watch: {
+    form: {
+      deep: true,
+      handler(val) {
+        this.$emit("dataChanged", this.getData());
+      }
+    }
+  },
 
-	methods: {
-		convertSchemaToTreeData,
-		setData(data, cell, isSourceDataNode, vueAdapter) {
-			if (data) {
-				Object.keys(data).forEach(key => (this.form[key] = data[key]));
-			}
-			this.mergedSchema = cell.getOutputSchema();
-			// let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
-			if (this.mergedSchema && this.mergedSchema.fields) {
-				this.mergedSchema.fields.forEach(field => {
-					this.$set(field, "required", false);
-					this.$set(field, "query", false);
-				});
-				this.form.paths.fields = this.mergedSchema.fields;
-			}
+  methods: {
+    convertSchemaToTreeData,
+    setData(data, cell, isSourceDataNode, vueAdapter) {
+      if (data) {
+        Object.keys(data).forEach(key => (this.form[key] = data[key]));
+      }
+      this.mergedSchema = cell.getOutputSchema();
+      // let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
+      if (this.mergedSchema && this.mergedSchema.fields) {
+        this.mergedSchema.fields.forEach(field => {
+          this.$set(field, "required", false);
+          this.$set(field, "query", false);
+        });
+        this.form.paths.fields = this.mergedSchema.fields;
+      }
 
-			editorMonitor = vueAdapter.editor;
-		},
+      editorMonitor = vueAdapter.editor;
+    },
 
-		getData() {
-			let data = _.cloneDeep(this.form);
+    getData() {
+      let data = _.cloneDeep(this.form);
 
-			if (data.paths.fields) {
-				data.paths.fields.forEach((item, index) => {
-					if (item.required) {
-						data.paths.requiredQueryField.push(item.field_name);
-					} else if (item.query) {
-						data.paths.availableQueryField.push(item.field_name);
-					} else {
-						data.paths.requiredQueryField.splice(index, 1);
-						data.paths.availableQueryField.splice(index, 1);
-					}
-				});
-			}
-			return data;
-		},
+      if (data.paths.fields) {
+        data.paths.fields.forEach((item, index) => {
+          if (item.required) {
+            data.paths.requiredQueryField.push(item.field_name);
+          } else if (item.query) {
+            data.paths.availableQueryField.push(item.field_name);
+          } else {
+            data.paths.requiredQueryField.splice(index, 1);
+            data.paths.availableQueryField.splice(index, 1);
+          }
+        });
+      }
+      return data;
+    },
 
-		setDisabled(disabled) {
-			this.disabled = disabled;
-		},
+    setDisabled(disabled) {
+      this.disabled = disabled;
+    },
 
-		seeMonitor() {
-			editorMonitor.goBackMontior();
-		},
-	}
+    seeMonitor() {
+      editorMonitor.goBackMontior();
+    }
+  }
 };
 </script>
 
 <style scoped lang="less">
 .releaseApi {
-	width: 100%;
-	height: 100%;
-	padding: 20px;
-	overflow: auto;
-	box-sizing: border-box;
-	background-color: #fafafa;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  overflow: auto;
+  box-sizing: border-box;
+  background-color: #fafafa;
 
-	.loopFrom {
-		margin: 0 !important;
+  .loopFrom {
+    margin: 0 !important;
 
-		.fromLoopBox {
-			padding: 10px;
-			margin-bottom: 12px;
-			box-sizing: border-box;
-			background-color: #fff;
-			border: 1px solid #dedee4;
-		}
+    .fromLoopBox {
+      padding: 10px;
+      margin-bottom: 12px;
+      box-sizing: border-box;
+      background-color: #fff;
+      border: 1px solid #dedee4;
+    }
 
-		.remove {
-			font-weight: bold;
-			cursor: pointer;
-			border: 1px solid #dedee4;
-		}
-	}
+    .remove {
+      font-weight: bold;
+      cursor: pointer;
+      border: 1px solid #dedee4;
+    }
+  }
 }
 </style>
 <style lang="less">
 .releaseApi {
-	.pdTop5 .el-form-item__content {
-		padding-top: 5px;
-	}
-	.aggtip {
-		position: absolute;
-		top: -34px;
-		left: 120px;
-		.iconfont {
-			display: inline-block;
-			color: #999;
-			cursor: pointer;
-			transform: rotate(-180deg);
-		}
-	}
-	.el-form--label-top .el-form-item__label {
-		padding: 0;
-		line-height: 26px;
-	}
+  .pdTop5 .el-form-item__content {
+    padding-top: 5px;
+  }
+  .aggtip {
+    position: absolute;
+    top: -34px;
+    left: 120px;
+    .iconfont {
+      display: inline-block;
+      color: #999;
+      cursor: pointer;
+      transform: rotate(-180deg);
+    }
+  }
+  .el-form--label-top .el-form-item__label {
+    padding: 0;
+    line-height: 26px;
+  }
 
-	.el-select {
-		width: 100%;
-	}
+  .el-select {
+    width: 100%;
+  }
 
-	.el-form-item {
-		margin-bottom: 8px;
-		.el-form-item__label,
-		.el-input__inner {
-			font-size: 12px;
-		}
-		.el-input__inner {
-			height: 30px;
-			line-height: 30px;
-		}
-	}
+  .el-form-item {
+    margin-bottom: 8px;
+    .el-form-item__label,
+    .el-input__inner {
+      font-size: 12px;
+    }
+    .el-input__inner {
+      height: 30px;
+      line-height: 30px;
+    }
+  }
 
-	.aggregateName .el-form-item__content {
-		z-index: 2;
-	}
+  .aggregateName .el-form-item__content {
+    z-index: 2;
+  }
 
-	.el-form-item__content {
-		.el-button {
-			padding: 8px 15px;
-			font-size: 12px;
-		}
-		.el-input__inner[style="height: 40px;"] {
-			height: 30px !important;
-		}
-	}
-	.btnClass .el-form-item__content {
-		line-height: 30px !important;
-	}
-	.el-table {
-		line-height: 30px;
-		td,
-		th {
-			padding: 0;
-		}
-		th {
-			background-color: #f5f5f5;
-		}
-		.el-checkbox-group,
-		.el-checkbox .el-checkbox__label {
-			font-size: 11px;
-		}
-	}
+  .el-form-item__content {
+    .el-button {
+      padding: 8px 15px;
+      font-size: 12px;
+    }
+    .el-input__inner[style="height: 40px;"] {
+      height: 30px !important;
+    }
+  }
+  .btnClass .el-form-item__content {
+    line-height: 30px !important;
+  }
+  .el-table {
+    line-height: 30px;
+    td,
+    th {
+      padding: 0;
+    }
+    th {
+      background-color: #f5f5f5;
+    }
+    .el-checkbox-group,
+    .el-checkbox .el-checkbox__label {
+      font-size: 11px;
+    }
+  }
 }
 </style>
