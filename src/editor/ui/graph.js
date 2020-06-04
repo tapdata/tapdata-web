@@ -213,7 +213,6 @@ export default class Graph extends Component {
 	}
 
 	onClickBlank() {
-		document.getElementById('searchNode').blur();
 		this.emit(EditorEventType.SELECTED_STAGE);
 		if (this.editable) {
 			this.editor.getRightTabPanel().removeAll(); // 清除当前所有的vue
@@ -229,6 +228,9 @@ export default class Graph extends Component {
 			this.editor.getRightSidebar().hide();
 		}
 		this.unHighlightAllCells();
+		if(document.getElementById('searchNode')){
+			document.getElementById('searchNode').blur();
+		}
 	}
 
 	unHighlightAllCells() {
@@ -384,7 +386,6 @@ export default class Graph extends Component {
 	}
 
 	onSelectionChange() {
-		document.getElementById('searchNode').blur();
 		let paper = this.paper;
 		let selection = this.selection;
 		let collection = selection.collection;
@@ -401,6 +402,9 @@ export default class Graph extends Component {
 			collection.each(function(cell) {
 				selection.createSelectionBox(cell);
 			});
+		}
+		if(document.getElementById('searchNode')){
+			document.getElementById('searchNode').blur();
 		}
 	}
 

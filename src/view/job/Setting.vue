@@ -219,7 +219,6 @@
 				} else {
 					this.formData.run_custom_sql = false;
 					this.formData.isSchedule = false;
-					this.formData.cronExpression = '';
 				}
 			}
 		}

@@ -2,9 +2,10 @@
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
 			<el-autocomplete
-				v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
+				v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
 				class="inline-input searchNode"
 				v-model="state1"
+				id="searchNode"
 				size="mini"
 				:fetch-suggestions="querySearch"
 				placeholder="查找节点"
@@ -182,18 +183,6 @@
 				<span class="iconfont icon-icon_fabu"></span>
 				<span class="text">{{ $t("dataFlow.button.submit") }}</span>
 			</div>
-
-			<el-autocomplete
-				v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
-				class="inline-input searchNode"
-				v-model="state1"
-				id="searchNode"
-				size="mini"
-				:fetch-suggestions="querySearch"
-				placeholder="查找节点"
-				@select="handleSearchNode"
-				suffix-icon="el-icon-search"
-			></el-autocomplete>
 			<!-- <el-button size="mini" type="primary" @click="switchModel">Model</el-button> -->
 		</div>
 		<el-dialog
