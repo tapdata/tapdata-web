@@ -78,6 +78,12 @@ export default class Editor extends BaseObject {
 	editable = true;
 
 	/**
+	 * dataFlow
+	 * @type {Object}
+	 */
+	dataFlow = null;
+
+	/**
 	 * loadSchema
 	 * @type {boolean}
 	 */
@@ -488,6 +494,12 @@ export default class Editor extends BaseObject {
 		}
 		self.getRightSidebar().show();
 	}
+	setDataFlow(dataFlow) {
+		this.dataFlow = dataFlow;
+	}
+	getDataFlow() {
+		return this.dataFlow;
+	}
 	setData(dataFlow) {
 		this.graph.loadData(JSON.parse(dataFlow.editorData));
 		this.ui.setName(dataFlow.name);
@@ -531,7 +543,7 @@ export default class Editor extends BaseObject {
 	setEditable(editable, dataFlow) {
 		log("Editor.setEditable", editable, dataFlow);
 		this.editable = editable;
-		//this.graph.setEditable(editable);
+		this.graph.setEditable(editable);
 		if (editable) {
 			this.initEditingMode();
 		} else {

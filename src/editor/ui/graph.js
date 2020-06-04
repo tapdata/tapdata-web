@@ -228,6 +228,12 @@ export default class Graph extends Component {
 			this.editor.getRightSidebar().hide();
 		}
 		this.unHighlightAllCells();
+		if(document.getElementById('searchNode')){
+			document.getElementById('searchNode').blur();
+		}
+		if(document.getElementById('taskNameInput')){
+			document.getElementById('taskNameInput').blur();
+		}
 	}
 
 	unHighlightAllCells() {
@@ -268,6 +274,12 @@ export default class Graph extends Component {
 					});
 				}, 0);
 			}
+		}
+		if(document.getElementById('searchNode')){
+			document.getElementById('searchNode').blur();
+		}
+		if(document.getElementById('taskNameInput')){
+			document.getElementById('taskNameInput').blur();
 		}
 	}
 
@@ -759,8 +771,8 @@ export default class Graph extends Component {
 		joint.layout.DirectedGraph.layout(this.graph, {
 			setLinkVertices: true,
 			rankDir: "LR",
-			marginX: 100,
-			marginY: 100
+			marginX: 200,
+			marginY: 200
 		});
 
 		setTimeout(() => {
@@ -829,7 +841,7 @@ export default class Graph extends Component {
 		}
 	}
 	selectionPosition(cell){
-		this.paperScroller.center();
+		this.paperScroller.scrollToElement(cell, { animation: { duration: 600 }});
 		this.selection.collection.reset(cell);
 		this.selection.collection.add(cell);
 	}

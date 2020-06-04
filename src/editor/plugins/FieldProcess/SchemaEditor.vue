@@ -234,6 +234,7 @@
       <el-form>
         <el-form-item>
           <JsEditor
+		  	v-if="scriptDialog.open"
             :code.sync="scriptDialog.script"
             :width.sync="jsEditorWidth"
           ></JsEditor>
@@ -302,332 +303,283 @@ const SCRIPT_TPL = {
 };
 
 export default {
-  name: "SchemaEditor",
-  components: { JsEditor },
-  props: {
-    disabledMode: {
-      type: Boolean
-    },
-    width: {
-      type: Number,
-      default: 0
-    },
-    originalSchema: {
-      required: true,
-      value: [Object, Array, null, undefined]
-    },
-    schema: {
-      required: true,
-      value: [Object, Array, null, undefined]
-    },
-    nodeKey: {
-      type: String,
-      default: "id"
-    },
-    editable: {
-      type: Boolean,
-      default: false
-    }
-  },
-  data() {
-    return {
-      scriptDialog: {
-        open: false,
-        script: "//Enter you code at here",
-        fieldName: "",
-        fn: function() {}
-      },
+	name: "SchemaEditor",
+	components: { JsEditor },
+	props: {
+		disabledMode: {
+			type: Boolean
+		},
+		width: {
+			type: Number,
+			default: 0
+		},
+		originalSchema: {
+			required: true,
+			value: [Object, Array, null, undefined]
+		},
+		schema: {
+			required: true,
+			value: [Object, Array, null, undefined]
+		},
+		nodeKey: {
+			type: String,
+			default: "id"
+		},
+		editable: {
+			type: Boolean,
+			default: false
+		}
+	},
+	data() {
+		return {
+			scriptDialog: {
+				open: false,
+				script: "//Enter you code at here",
+				fieldName: "",
+				fn: function() {}
+			},
 
-      model: {
-        operations: [],
-        scripts: []
-      },
-      jsEditorWidth: "500"
-    };
-  },
-  methods: {
-    setOperations(operations) {
-      this.model.operations = operations;
-    },
-    setScripts(scripts) {
-      this.model.scripts = scripts;
-    },
-    isRemove(id) {
-      let ops = this.model.operations.filter(
-        v => v.id === id && v.op === "REMOVE"
-      );
-      return ops && ops.length > 0;
-    },
-    isRename(id) {
-      let ops = this.model.operations.filter(
-        v => v.id === id && v.op === "RENAME"
-      );
-      return ops && ops.length > 0;
-    },
-    isConvertDataType(id) {
-      let ops = this.model.operations.filter(
-        v => v.id === id && v.op === "CONVERT"
-      );
-      return ops && ops.length > 0;
-    },
-    isScript(id) {
-      let scripts = this.model.scripts.filter(v => v.id === id);
-      return scripts && scripts.length > 0;
-    },
-    isCreate(id) {
-      let ops = this.model.operations.filter(
-        v => v.id === id && v.op === "CREATE"
-      );
-      return ops && ops.length > 0;
-    },
+			model: {
+				operations: [],
+				scripts: []
+			},
+			jsEditorWidth: "500"
+		};
+	},
+	methods: {
+		setOperations(operations) {
+			this.model.operations = operations;
+		},
+		setScripts(scripts) {
+			this.model.scripts = scripts;
+		},
+		isRemove(id) {
+			let ops = this.model.operations.filter(v => v.id === id && v.op === "REMOVE");
+			return ops && ops.length > 0;
+		},
+		isRename(id) {
+			let ops = this.model.operations.filter(v => v.id === id && v.op === "RENAME");
+			return ops && ops.length > 0;
+		},
+		isConvertDataType(id) {
+			let ops = this.model.operations.filter(v => v.id === id && v.op === "CONVERT");
+			return ops && ops.length > 0;
+		},
+		isScript(id) {
+			let scripts = this.model.scripts.filter(v => v.id === id);
+			return scripts && scripts.length > 0;
+		},
+		isCreate(id) {
+			let ops = this.model.operations.filter(v => v.id === id && v.op === "CREATE");
+			return ops && ops.length > 0;
+		},
 
-    getId(node) {
-      return node[this.nodeKey];
-    },
+		getId(node) {
+			return node[this.nodeKey];
+		},
 
-    getOutPortByField(node) {
-      if (!node) return null;
-      let id = this.getId(node);
-      return $(this.$refs.entityDom).find(`.e-port-out[data-id=${id}]`)[0];
-    },
-    getInPortByField(node) {
-      if (!node) return null;
-      let id = this.getId(node);
-      return $(this.$refs.entityDom).find(`.e-port-in[data-id=${id}]`)[0];
-    },
-    handlerNodeExpand(data, node, ev) {
-      this.$emit("expand", data);
-    },
-    handlerNodeCollapse(data, node, ev) {
-      this.$emit("collapse", data);
-    },
-    handleDragStart(node, ev) {},
-    handleDragEnter(draggingNode, dropNode, ev) {},
-    handleDragLeave(draggingNode, dropNode, ev) {},
-    handleDragOver(draggingNode, dropNode, ev) {},
-    handleDragEnd(draggingNode, dropNode, dropType, ev) {},
-    handleDrop(draggingNode, dropNode, dropType, ev) {
-      this.$emit("drop", draggingNode);
-    },
-    allowDrop(draggingNode, dropNode, type) {
-      return type !== "inner";
-    },
-    allowDrag(draggingNode) {
-      return (
-        draggingNode.data.children && draggingNode.data.children.length > 0
-      );
-    },
-    getNativeData(fields, id) {
-      let field = null;
-      let fn = function(fields) {
-        if (!fields) {
-          return;
-        }
-        for (let i = 0; i < fields.length; i++) {
-          let f = fields[i];
-          if (f.id === id) {
-            field = f;
-            break;
-          } else if (f.children) {
-            fn(f.children);
-          }
-        }
-      };
-      fn(fields);
-      return field;
-    },
-    handleDataType(node, data) {
-      log("SchemaEditor.handleDataType", node, data);
-      let createOps = this.model.operations.filter(
-        v => v.id === data.id && v.op === "CREATE"
-      );
-      if (createOps && createOps.length > 0) {
-        let op = createOps[0];
-        op.javaType = data.type;
-      } else {
-        let nativeData = this.getNativeData(
-          this.originalSchema.fields,
-          data.id
-        );
-        let ops = this.model.operations.filter(
-          v => v.id === data.id && v.op === "CONVERT"
-        );
-        let op;
-        if (ops.length === 0) {
-          op = Object.assign(_.cloneDeep(CONVERT_OPS_TPL), {
-            id: data.id,
-            field: nativeData.label,
-            operand: data.type,
-            originalDataType: nativeData.type
-          });
-          this.model.operations.push(op);
-        } else {
-          op = ops[0];
-        }
-        op.id = data.id;
-        op.operand = data.type;
-      }
+		getOutPortByField(node) {
+			if (!node) return null;
+			let id = this.getId(node);
+			return $(this.$refs.entityDom).find(`.e-port-out[data-id=${id}]`)[0];
+		},
+		getInPortByField(node) {
+			if (!node) return null;
+			let id = this.getId(node);
+			return $(this.$refs.entityDom).find(`.e-port-in[data-id=${id}]`)[0];
+		},
+		handlerNodeExpand(data, node, ev) {
+			this.$emit("expand", data);
+		},
+		handlerNodeCollapse(data, node, ev) {
+			this.$emit("collapse", data);
+		},
+		handleDragStart(node, ev) {},
+		handleDragEnter(draggingNode, dropNode, ev) {},
+		handleDragLeave(draggingNode, dropNode, ev) {},
+		handleDragOver(draggingNode, dropNode, ev) {},
+		handleDragEnd(draggingNode, dropNode, dropType, ev) {},
+		handleDrop(draggingNode, dropNode, dropType, ev) {
+			this.$emit("drop", draggingNode);
+		},
+		allowDrop(draggingNode, dropNode, type) {
+			return type !== "inner";
+		},
+		allowDrag(draggingNode) {
+			return draggingNode.data.children && draggingNode.data.children.length > 0;
+		},
+		getNativeData(fields, id) {
+			let field = null;
+			let fn = function(fields) {
+				if (!fields) {
+					return;
+				}
+				for (let i = 0; i < fields.length; i++) {
+					let f = fields[i];
+					if (f.id === id) {
+						field = f;
+						break;
+					} else if (f.children) {
+						fn(f.children);
+					}
+				}
+			};
+			fn(fields);
+			return field;
+		},
+		handleDataType(node, data) {
+			log("SchemaEditor.handleDataType", node, data);
+			let createOps = this.model.operations.filter(v => v.id === data.id && v.op === "CREATE");
+			if (createOps && createOps.length > 0) {
+				let op = createOps[0];
+				op.javaType = data.type;
+			} else {
+				let nativeData = this.getNativeData(this.originalSchema.fields, data.id);
+				let ops = this.model.operations.filter(v => v.id === data.id && v.op === "CONVERT");
+				let op;
+				if (ops.length === 0) {
+					op = Object.assign(_.cloneDeep(CONVERT_OPS_TPL), {
+						id: data.id,
+						field: nativeData.label,
+						operand: data.type,
+						originalDataType: nativeData.type
+					});
+					this.model.operations.push(op);
+				} else {
+					op = ops[0];
+				}
+				op.id = data.id;
+				op.operand = data.type;
+			}
 
-      this.$emit("dataChanged", this.model);
-    },
-    handleRename(node, data) {
-      log("SchemaEditor.handleRename", node, data);
-      let createOps = this.model.operations.filter(
-        v => v.id === data.id && v.op === "CREATE"
-      );
-      if (createOps && createOps.length > 0) {
-        let op = createOps[0];
-        let level = op.level;
-        let fieldNames = (op.field || op.field_name).split(".");
-        fieldNames[level] = data.label;
-        op.field = fieldNames.join(".");
-      } else {
-        let nativeData = this.getNativeData(
-          this.originalSchema.fields,
-          data.id
-        );
-        log(
-          "Entity1.handlerRename(node,data,nativeData,operations)",
-          node,
-          data,
-          nativeData,
-          this.model.operations
-        );
-        let ops = this.model.operations.filter(
-          v => v.id === nativeData.id && v.op === "RENAME"
-        );
-        let op;
-        if (data.label === nativeData.label) {
-          return;
-        }
-        if (ops.length === 0) {
-          op = Object.assign(_.cloneDeep(RENAME_OPS_TPL), {
-            id: data.id,
-            field: nativeData.label,
-            operand: data.label
-          });
-          this.model.operations.push(op);
-        } else {
-          Object.assign(ops[0], {
-            // id: data.id,
-            // field: nativeData.label,
-            operand: data.label
-          });
-        }
-      }
-      this.$emit("dataChanged", this.model);
-    },
-    handleDelete(node, data) {
-      log("SchemaEditor.handleDelete", node, data);
-      let createOpsIndex = this.model.operations.findIndex(
-        v => v.id === data.id && v.op === "CREATE"
-      );
-      if (createOpsIndex >= 0) {
-        let fieldName = this.model.operations[createOpsIndex].field_name + ".";
-        this.model.operations.splice(createOpsIndex, 1);
+			this.$emit("dataChanged", this.model);
+		},
+		handleRename(node, data) {
+			log("SchemaEditor.handleRename", node, data);
+			let createOps = this.model.operations.filter(v => v.id === data.id && v.op === "CREATE");
+			if (createOps && createOps.length > 0) {
+				let op = createOps[0];
+				let level = op.level;
+				let fieldNames = (op.field || op.field_name).split(".");
+				fieldNames[level] = data.label;
+				op.field = fieldNames.join(".");
+			} else {
+				let nativeData = this.getNativeData(this.originalSchema.fields, data.id);
+				log(
+					"Entity1.handlerRename(node,data,nativeData,operations)",
+					node,
+					data,
+					nativeData,
+					this.model.operations
+				);
+				let ops = this.model.operations.filter(v => v.id === nativeData.id && v.op === "RENAME");
+				let op;
+				if (data.label === nativeData.label) {
+					return;
+				}
+				if (ops.length === 0) {
+					op = Object.assign(_.cloneDeep(RENAME_OPS_TPL), {
+						id: data.id,
+						field: nativeData.label,
+						operand: data.label
+					});
+					this.model.operations.push(op);
+				} else {
+					Object.assign(ops[0], {
+						// id: data.id,
+						// field: nativeData.label,
+						operand: data.label
+					});
+				}
+			}
+			this.$emit("dataChanged", this.model);
+		},
+		handleDelete(node, data) {
+			log("SchemaEditor.handleDelete", node, data);
+			let createOpsIndex = this.model.operations.findIndex(v => v.id === data.id && v.op === "CREATE");
+			if (createOpsIndex >= 0) {
+				let fieldName = this.model.operations[createOpsIndex].field_name + ".";
+				this.model.operations.splice(createOpsIndex, 1);
 
-        for (let i = 0; i < this.model.operations.length; i++) {
-          let op = this.model.operations[i];
-          let opFieldName = op.field || op.field_name;
-          if (
-            opFieldName.indexOf(fieldName) === 0 &&
-            opFieldName.length === fieldName.length
-          ) {
-            this.model.operations.splice(i, 1);
-            i--;
-          }
-        }
-        this.$refs.tree.remove(node);
-      } else {
-        let originalField = this.getNativeData(
-          this.originalSchema.fields,
-          data.id
-        );
-        let self = this;
+				for (let i = 0; i < this.model.operations.length; i++) {
+					let op = this.model.operations[i];
+					let opFieldName = op.field || op.field_name;
+					if (opFieldName.indexOf(fieldName) === 0 && opFieldName.length === fieldName.length) {
+						this.model.operations.splice(i, 1);
+						i--;
+					}
+				}
+				this.$refs.tree.remove(node);
+			} else {
+				let originalField = this.getNativeData(this.originalSchema.fields, data.id);
+				let self = this;
 
-        let fn = function(field) {
-          for (let i = 0; i < self.model.operations.length; i++) {
-            // 删除所有的重命名的操作
-            let ops = self.model.operations[i];
-            if (ops.id === field.id && ops.op === "RENAME") {
-              let originalNode = self.getNativeData(
-                self.originalSchema.fields,
-                field.id
-              );
-              originalNode.label = field.label;
-              self.model.operations.splice(i, 1);
-            }
-          }
-          for (let i = 0; i < self.model.operations.length; i++) {
-            // 删除所有的类型改变的操作
-            let ops = self.model.operations[i];
-            if (ops.id === field.id && ops.op === "CONVERT") {
-              let originalNode = self.getNativeData(
-                self.originalSchema.fields,
-                field.id
-              ); // 替换原始数据 主要是操作子节点
-              originalNode.type = field.type;
-              self.model.operations.splice(i, 1);
-            }
-          }
+				let fn = function(field) {
+					for (let i = 0; i < self.model.operations.length; i++) {
+						// 删除所有的重命名的操作
+						let ops = self.model.operations[i];
+						if (ops.id === field.id && ops.op === "RENAME") {
+							let originalNode = self.getNativeData(self.originalSchema.fields, field.id);
+							originalNode.label = field.label;
+							self.model.operations.splice(i, 1);
+						}
+					}
+					for (let i = 0; i < self.model.operations.length; i++) {
+						// 删除所有的类型改变的操作
+						let ops = self.model.operations[i];
+						if (ops.id === field.id && ops.op === "CONVERT") {
+							let originalNode = self.getNativeData(self.originalSchema.fields, field.id); // 替换原始数据 主要是操作子节点
+							originalNode.type = field.type;
+							self.model.operations.splice(i, 1);
+						}
+					}
 
-          let ops = self.model.operations.filter(
-            v => v.op === "REMOVE" && v.id === field.id
-          );
+					let ops = self.model.operations.filter(v => v.op === "REMOVE" && v.id === field.id);
 
-          let op;
-          if (ops.length === 0) {
-            op = Object.assign(_.cloneDeep(REMOVE_OPS_TPL), {
-              id: field.id,
-              field: field.label,
-              operand: true
-            });
-            self.model.operations.push(op);
-          }
+					let op;
+					if (ops.length === 0) {
+						op = Object.assign(_.cloneDeep(REMOVE_OPS_TPL), {
+							id: field.id,
+							field: field.label,
+							operand: true
+						});
+						self.model.operations.push(op);
+					}
 
-          if (field.children) {
-            field.children.forEach(fn);
-          }
-        };
-        if (originalField) fn(originalField);
-      }
+					if (field.children) {
+						field.children.forEach(fn);
+					}
+				};
+				if (originalField) fn(originalField);
+			}
 
-      this.$emit("dataChanged", this.model);
-    },
-    handleReset(node, data) {
-      log("SchemaEditor.handleReset", node, data);
-      let parentId = node.parent.data.id;
-      let indexId = this.model.operations.filter(
-        v => v.op === "REMOVE" && v.id === parentId
-      );
-      if (parentId && indexId.length !== 0) {
-        return;
-      }
-      let self = this;
-      let fn = function(node, data) {
-        for (
-          let i = 0, length = node.childNodes.length;
-          i < node.childNodes.length;
-          i++
-        ) {
-          let childNode = node.childNodes[i];
-          fn(childNode, childNode.data);
-          if (node.childNodes.length !== length) {
-            i--;
-          }
-        }
+			this.$emit("dataChanged", this.model);
+		},
+		handleReset(node, data) {
+			log("SchemaEditor.handleReset", node, data);
+			let parentId = node.parent.data.id;
+			let indexId = this.model.operations.filter(v => v.op === "REMOVE" && v.id === parentId);
+			if (parentId && indexId.length !== 0) {
+				return;
+			}
+			let self = this;
+			let fn = function(node, data) {
+				for (let i = 0, length = node.childNodes.length; i < node.childNodes.length; i++) {
+					let childNode = node.childNodes[i];
+					fn(childNode, childNode.data);
+					if (node.childNodes.length !== length) {
+						i--;
+					}
+				}
 
-        let nativeData = self.getNativeData(
-          self.originalSchema.fields,
-          data.id
-        );
-        for (let i = 0; i < self.model.operations.length; i++) {
-          if (self.model.operations[i].id === data.id) {
-            let ops = self.model.operations[i];
-            if (ops.op === "REMOVE") {
-              self.model.operations.splice(i, 1);
-              i--;
-              /* node.childNodes.forEach((childNode) => {
+				let nativeData = self.getNativeData(self.originalSchema.fields, data.id);
+				for (let i = 0; i < self.model.operations.length; i++) {
+					if (self.model.operations[i].id === data.id) {
+						let ops = self.model.operations[i];
+						if (ops.op === "REMOVE") {
+							self.model.operations.splice(i, 1);
+							i--;
+							/* node.childNodes.forEach((childNode) => {
 									fn(childNode, childNode.data);
 								}); */
               // break;
@@ -638,143 +590,136 @@ export default {
               /* node.childNodes.forEach((childNode) => {
 									fn(childNode, childNode.data);
 								}); */
-              self.$refs.tree.remove(node);
-              // break;
-            }
-            if (ops.op === "RENAME") {
-              if (nativeData) node.data.label = nativeData.label;
-              self.model.operations.splice(i, 1);
-              i--;
-              // break;
-            }
-            if (ops.op === "CONVERT") {
-              if (nativeData) node.data.type = nativeData.type;
-              self.model.operations.splice(i, 1);
-              i--;
-              // break;
-            }
-          }
-        }
-      };
-      fn(node, data);
-      this.$emit("dataChanged", this.model);
-    },
+							self.$refs.tree.remove(node);
+							// break;
+						}
+						if (ops.op === "RENAME") {
+							if (nativeData) node.data.label = nativeData.label;
+							self.model.operations.splice(i, 1);
+							i--;
+							// break;
+						}
+						if (ops.op === "CONVERT") {
+							if (nativeData) node.data.type = nativeData.type;
+							self.model.operations.splice(i, 1);
+							i--;
+							// break;
+						}
+					}
+				}
+			};
+			fn(node, data);
+			this.$emit("dataChanged", this.model);
+		},
 
-    getParentFieldName(node) {
-      let fieldName = node.data && node.data.label ? node.data.label : "";
-      if (node.level > 1 && node.parent && node.parent.data) {
-        let parentFieldName = this.getParentFieldName(node.parent);
-        if (parentFieldName) fieldName = parentFieldName + "." + fieldName;
-      }
-      return fieldName;
-    },
+		getParentFieldName(node) {
+			let fieldName = node.data && node.data.label ? node.data.label : "";
+			if (node.level > 1 && node.parent && node.parent.data) {
+				let parentFieldName = this.getParentFieldName(node.parent);
+				if (parentFieldName) fieldName = parentFieldName + "." + fieldName;
+			}
+			return fieldName;
+		},
 
-    /**
-     *
-     * @param action create_sibling | create_child
-     * @param node
-     * @param data
-     */
-    handleCreate(action, node, data) {
-      log("SchemaEditor.handleCreate", action, node, data);
+		/**
+		 *
+		 * @param action create_sibling | create_child
+		 * @param node
+		 * @param data
+		 */
+		handleCreate(action, node, data) {
+			log("SchemaEditor.handleCreate", action, node, data);
 
-      let parentFieldName = "";
-      let level = node.level;
-      if (action === "create_sibling") {
-        parentFieldName = this.getParentFieldName(node.parent);
-      } else if (action === "create_child") {
-        parentFieldName = this.getParentFieldName(node);
-        level++;
-      }
+			let parentFieldName = "";
+			let level = node.level;
+			if (action === "create_sibling") {
+				parentFieldName = this.getParentFieldName(node.parent);
+			} else if (action === "create_child") {
+				parentFieldName = this.getParentFieldName(node);
+				level++;
+			}
 
-      let fieldId = uuid();
-      let newFieldOperation = Object.assign(_.cloneDeep(CREATE_OPS_TPL), {
-        field: parentFieldName
-          ? parentFieldName + ".newFieldName"
-          : "newFieldName",
-        tableName: data.table_name,
-        javaType: "String",
-        id: fieldId,
+			let fieldId = uuid();
+			let newFieldOperation = Object.assign(_.cloneDeep(CREATE_OPS_TPL), {
+				field: parentFieldName ? parentFieldName + ".newFieldName" : "newFieldName",
+				tableName: data.table_name,
+				javaType: "String",
+				id: fieldId,
 
-        action: action,
-        triggerFieldId: node.data.id,
-        level: level - 1
-      });
-      this.model.operations.push(newFieldOperation);
-      this.$emit("dataChanged", this.model);
+				action: action,
+				triggerFieldId: node.data.id,
+				level: level - 1
+			});
+			this.model.operations.push(newFieldOperation);
+			this.$emit("dataChanged", this.model);
 
-      let newNodeData = {
-        id: fieldId,
-        label: "newFieldName",
-        type: "String",
-        color: data.color,
-        primary_key_position: 0,
-        table_name: data.table_name
-      };
-      if (action === "create_sibling") {
-        let parentNode = node.parent;
-        let parentData = parentNode.data;
+			let newNodeData = {
+				id: fieldId,
+				label: "newFieldName",
+				type: "String",
+				color: data.color,
+				primary_key_position: 0,
+				table_name: data.table_name
+			};
+			if (action === "create_sibling") {
+				let parentNode = node.parent;
+				let parentData = parentNode.data;
 
-        this.$refs.tree.insertAfter(newNodeData, node);
-        if (!["Array", "Map"].includes(parentData.type))
-          parentData.type = "Map";
-      } else if (action === "create_child") {
-        this.$refs.tree.append(newNodeData, node);
-        if (!["Array", "Map"].includes(data.type)) data.type = "Map";
-        this.handleDataType(node, data);
-      }
-    },
+				this.$refs.tree.insertAfter(newNodeData, node);
+				if (!["Array", "Map"].includes(parentData.type)) parentData.type = "Map";
+			} else if (action === "create_child") {
+				this.$refs.tree.append(newNodeData, node);
+				if (!["Array", "Map"].includes(data.type)) data.type = "Map";
+				this.handleDataType(node, data);
+			}
+		},
 
-    /**
-     *
-     * @param node
-     * @param data
-     */
-    handleScript(node, data) {
-      let self = this;
+		/**
+		 *
+		 * @param node
+		 * @param data
+		 */
+		handleScript(node, data) {
+			let self = this;
 
-      let fieldName = (self.scriptDialog.fieldName = self.getParentFieldName(
-        node
-      ));
-      let tableName = (self.scriptDialog.tableName = data.table_name);
-      let id = data.id;
+			let fieldName = (self.scriptDialog.fieldName = self.getParentFieldName(node));
+			let tableName = (self.scriptDialog.tableName = data.table_name);
+			let id = data.id;
 
-      let idx = self.model.scripts.findIndex(script => script.id === id);
-      let script;
-      if (idx !== -1) {
-        script = self.model.scripts[idx];
-      } else {
-        script = _.cloneDeep(SCRIPT_TPL);
-        Object.assign(script, {
-          field: fieldName,
-          tableName,
-          id
-        });
-      }
-      self.scriptDialog.script = script.script;
-      self.scriptDialog.open = true;
-      self.scriptDialog.fn = function() {
-        script.script = self.scriptDialog.script;
+			let idx = self.model.scripts.findIndex(script => script.id === id);
+			let script;
+			if (idx !== -1) {
+				script = self.model.scripts[idx];
+			} else {
+				script = _.cloneDeep(SCRIPT_TPL);
+				Object.assign(script, {
+					field: fieldName,
+					tableName,
+					id
+				});
+			}
+			self.scriptDialog.script = script.script;
+			self.scriptDialog.open = true;
+			self.$nextTick(() => {
+				self.scriptDialog.open= true;
+			});
 
-        if (idx === -1) {
-          self.model.scripts.push(script);
-        }
+			self.scriptDialog.fn = function() {
+				script.script = self.scriptDialog.script;
 
-        log(
-          "SchemaEditor.handleScript",
-          node,
-          data,
-          script,
-          self.model.scripts
-        );
+				if (idx === -1) {
+					self.model.scripts.push(script);
+				}
 
-        self.scriptDialog.open = false;
-        self.scriptDialog.fn = function() {};
-        self.scriptDialog.script = "";
-        self.$emit("dataChanged", self.model);
-      };
-    }
-  }
+				log("SchemaEditor.handleScript", node, data, script, self.model.scripts);
+
+				self.scriptDialog.open = false;
+				self.scriptDialog.fn = function() {};
+				self.scriptDialog.script = "";
+				self.$emit("dataChanged", self.model);
+			};
+		}
+	}
 };
 </script>
 
