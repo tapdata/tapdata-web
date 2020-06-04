@@ -7,19 +7,20 @@ import * as monaco from "monaco-editor"; // 包体很大了 但是demo可以跑�
 // import { EditorEventType } from "../editor/lib/events";
 const suggestions = [
 	{
-		label: "测试1",
-		insertText: "测试1", // 不写的时候不展示。。
-		detail: "提示的文字"
+		label: "split_chinese",
+		insertText: "split_chinese(inputString,language);", // 不写的时候不展示。。
+		detail: "inputString：need split string\n" +
+		"language:\nCH_T：traditional Chinese\nCH_S：Chinese Simplified\n HK_T:Hong Kong Traditional\nTW_T:Taiwan Traditional\n"
 	},
 	{
-		label: "测试2",
-		insertText: "测试22",
-		detail: "提示的文字"
+		label: "uuid",
+		insertText: "var uuid = uuid();",
+		detail: "generate uuid"
 	},
 	{
-		label: "格式化",
-		insertText: "format()",
-		detail: "说明"
+		label: "HashMap",
+		insertText: "var hashMap = new HashMap();",
+		detail: "create hash object"
 	}
 ];
 export default {

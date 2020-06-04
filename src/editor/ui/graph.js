@@ -765,8 +765,8 @@ export default class Graph extends Component {
 		joint.layout.DirectedGraph.layout(this.graph, {
 			setLinkVertices: true,
 			rankDir: "LR",
-			marginX: 100,
-			marginY: 100
+			marginX: 200,
+			marginY: 200
 		});
 
 		setTimeout(() => {
@@ -835,7 +835,7 @@ export default class Graph extends Component {
 		}
 	}
 	selectionPosition(cell){
-		this.paperScroller.center();
+		this.paperScroller.scrollToElement(cell, { animation: { duration: 600 }});
 		this.selection.collection.reset(cell);
 		this.selection.collection.add(cell);
 	}
