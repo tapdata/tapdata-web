@@ -203,7 +203,7 @@
 		>
 			<el-form>
 				<el-form-item>
-					<JsEditor :code.sync="scriptDialog.script" :width.sync="jsEditorWidth"></JsEditor>
+					<JsEditor  v-if="scriptDialog.open" :code.sync="scriptDialog.script" :width.sync="jsEditorWidth"></JsEditor>
 					<!--					<el-input type="textarea" v-model="scriptDialog.script" rows="10"></el-input>-->
 				</el-form-item>
 			</el-form>
@@ -263,7 +263,7 @@ export default {
 	components: { JsEditor },
 	props: {
 		disabledMode: {
-			type: Boolean 
+			type: Boolean
 		},
 		width: {
 			type: Number,
@@ -656,6 +656,10 @@ export default {
 			}
 			self.scriptDialog.script = script.script;
 			self.scriptDialog.open = true;
+			self.$nextTick(() => {
+				self.scriptDialog.open= true;
+			});
+
 			self.scriptDialog.fn = function() {
 				script.script = self.scriptDialog.script;
 
