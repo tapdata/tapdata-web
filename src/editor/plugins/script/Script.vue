@@ -123,15 +123,16 @@ export default {
 			ws.getAgentId((err, id) => {
 				if (!err && id) {
 					let params = this.model;
-					ws.send({
-						type: "execute_script",
-						script: params.script,
-						script_type: params.type,
-						agentId: id,
-						dataFlowId: gData.dataFlow.id,
-						stageId: gData.stageId,
-						clientId: ws.getClientId()
-					});
+					ws.sendPipe(
+						{
+							type: "execute_script",
+							script: params.script,
+							script_type: params.type,
+							dataFlowId: gData.dataFlow.id,
+							stageId: gData.stageId
+						},
+						id
+					);
 				} else {
 					this.$message.error(this.$t("editor.cell.processor.script.connect_server_fail"));
 				}

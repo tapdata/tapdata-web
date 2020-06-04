@@ -7,9 +7,6 @@ import EventEmitter from "../editor/lib/EventEmitter";
 import Cookie from "tiny-cookie";
 import log from "../log";
 import factory from "./factory";
-import {
-	uuid
-} from '../editor/util/Schema'
 
 const workerApi = factory("Workers");
 
@@ -21,7 +18,6 @@ class WSClient extends EventEmitter {
 		this.ws = null;
 		this.timeoutId = null;
 		this.agentId = null;
-		this.clientId = uuid();
 	}
 
 	/**
@@ -136,12 +132,30 @@ class WSClient extends EventEmitter {
 			return;
 		}
 
-		self.emit(message.type, message);
+		if(message.type === "pipe"){
+			let data = message.data || {};
+			let eventName = data.type;
+			if(eventName) {
+				self.emit(eventName, data);
+			} else {
+				self.emit(message.type, message);
+			}
+		} else {
+			self.emit(message.type, message);
+		}
 	}
 
 	send(msg) {
 		msg = typeof msg === "string" ? msg : JSON.stringify(msg);
 		this.ws.send(msg);
+	}
+
+	sendPipe(msg, receiver) {
+		this.send({
+			type: "pipe",
+			receiver: receiver,
+			data: msg
+		});
 	}
 
 	/**
@@ -154,10 +168,6 @@ class WSClient extends EventEmitter {
 			type: "subscribe",
 			topic: `${agentId}`
 		});
-	}
-
-	getClientId() {
-		return this.clientId
 	}
 
 	/**
@@ -188,6 +198,7 @@ class WSClient extends EventEmitter {
 					})
 				})
 				.then(result => {
+					result = {data:[{process_id: "c327696c-2892-4966-94d3-1c1229d53e7c"}]};
 					if (result && result.data && result.data.length > 0) {
 						self.agentId = result.data[0].process_id;
 						cb(null, self.agentId);
@@ -225,7 +236,8 @@ wsClient.connect();
 export default wsClient;
 
 export const EventName = {
-	EXECUTE_SCRIPT_RESULT: "execute_script_result"
+	EXECUTE_SCRIPT_RESULT: "execute_script_result",
+	PIPE: "pipe"
 };
 
 /*wsClient.on("execute_script", (msg) => {
