@@ -198,12 +198,12 @@ export default {
 		},
 		getFirstLine(logs) {
 			if (logs && logs.length) {
-				let log =
+				let _log =
 					logs.find(item => {
 						return item.level === "ERROR";
 					}) || logs[0];
 
-				return this.$refs.log.formatLog([log]);
+				return this.$refs.log.formatLog(_log);
 			}
 			return "";
 		},

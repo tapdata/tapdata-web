@@ -53,7 +53,7 @@ export default {
 			let date = item.date ? this.$moment(item.date).format("YYYY-MM-DD HH:mm:ss") : "";
 			// let lastModified = item.last_updated ? this.$moment(item.last_updated).format("YYYY-MM-DD HH:mm:ss") : "";
 			return (
-				`<li>` +
+				`<li class="log-box-item">` +
 				`[<span class="level ${item.level === "ERROR" ? "redActive" : ""}">${item.level}</span>] &nbsp;` +
 				`<span>${date}</span>&nbsp;` +
 				`<span>[${markKeyword(item.threadName)}]</span>&nbsp;` +
@@ -114,21 +114,23 @@ export default {
 	font-size: 11px;
 	color: #222222;
 	box-sizing: border-box;
-	li {
-		list-style: none;
-		padding-bottom: 5px;
+}
+li.log-box-item {
+	list-style: none;
+	padding-bottom: 5px;
+	color: #222222;
+	font-size: 11px;
 
-		.level {
-			font-weight: bold;
-		}
+	.level {
+		font-weight: bold;
+	}
 
-		.redActive {
-			color: red;
-		}
+	.redActive {
+		color: red;
+	}
 
-		.keyword {
-			background: #ffff00;
-		}
+	.keyword {
+		background: #ffff00;
 	}
 }
 </style>
