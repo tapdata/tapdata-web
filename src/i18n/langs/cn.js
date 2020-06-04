@@ -460,6 +460,25 @@ const cn = {
 					none_script_type: "脚本类型必填.",
 					none_script: "脚本必填.",
 
+					debug_button_label: "连接测试",
+					warning_for_not_save: "当前任务未保存，无法进行连接测试，请保存之后再尝试",
+					connect_server_fail: "连接服务器失败",
+
+					debug: {
+						top_header: "js连接测试",
+						bottom_header: "测试详情",
+						detail: {
+							parameter: "参数",
+							return: "返回值"
+						},
+						order: "连接顺序",
+						status: "返回状态",
+						status_error: "错误",
+						status_success: "成功",
+						time: "耗时",
+						log: "日志"
+					},
+
 					form: {
 						name: {
 							label: "节点名称",

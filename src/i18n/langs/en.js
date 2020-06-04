@@ -457,6 +457,26 @@ const en = {
 					none_script_type: "Script type is required.",
 					none_script: "Script is required.",
 
+					debug_button_label: "Connect test",
+					warning_for_not_save:
+						"The current task has not been saved, unable to connect the test server, please save and try again",
+					connect_server_fail: "Failed to connect to server",
+
+					debug: {
+						top_header: "Script Test",
+						bottom_header: "Test Details",
+						detail: {
+							parameter: "Parameter",
+							return: "Return"
+						},
+						order: "Order",
+						status: "Status",
+						status_error: "Error",
+						status_success: "Success",
+						time: "Time",
+						log: "Log"
+					},
+
 					form: {
 						name: {
 							label: "Node name",

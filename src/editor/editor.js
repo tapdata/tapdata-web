@@ -72,6 +72,12 @@ export default class Editor extends BaseObject {
 	editable = true;
 
 	/**
+	 * dataFlow
+	 * @type {Object}
+	 */
+	dataFlow = null;
+
+	/**
 	 * loadSchema
 	 * @type {boolean}
 	 */
@@ -448,6 +454,12 @@ export default class Editor extends BaseObject {
 			self.getRightTabPanel().select(dvResult);
 		}
 		self.getRightSidebar().show();
+	}
+	setDataFlow(dataFlow) {
+		this.dataFlow = dataFlow;
+	}
+	getDataFlow() {
+		return this.dataFlow;
 	}
 	setData(dataFlow) {
 		this.graph.loadData(JSON.parse(dataFlow.editorData));

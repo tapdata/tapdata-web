@@ -156,6 +156,7 @@ import log from "../../log";
 import { FORM_DATA_KEY, JOIN_TABLE_TPL } from "../../editor/constants";
 import {EditorEventType} from "../../editor/lib/events";
 import _ from "lodash";
+// import ws, { EventName } from "../../api/ws";
 
 const dataFlowsApi = factory("DataFlows");
 let changeData = null;
@@ -331,6 +332,8 @@ export default {
 						self.dataFlowId = dataFlow.id;
 						self.status = dataFlow.status;
 						self.executeMode = dataFlow.executeMode;
+
+						self.editor.setDataFlow(dataFlow);
 
 						self.dataFlow = dataFlow;
 						// 管理端api创建任务来源以及editorData 数据丢失情况
@@ -548,11 +551,12 @@ export default {
 							self.dataFlowId = dataFlow.id;
 							self.status = dataFlow.status;
 							self.executeMode = dataFlow.executeMode;
+							self.editor.setDataFlow(dataFlow);
 
 							self.dataFlow = dataFlow;
 
 							if (!self.$route.query || !self.$route.query.id) {
-								self.$router.push({
+								self.$router.replace({
 									path: "/job",
 									query: {
 										id: dataFlow.id

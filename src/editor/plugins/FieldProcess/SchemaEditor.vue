@@ -292,7 +292,7 @@ export default {
 				operations: [],
 				scripts: []
 			},
-			jsEditorWidth:'500'
+			jsEditorWidth: "500"
 		};
 	},
 	methods: {

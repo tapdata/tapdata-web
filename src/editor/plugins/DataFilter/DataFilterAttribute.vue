@@ -135,7 +135,7 @@
 
 <script>
 import JsEditor from "../../../components/JsEditor";
-import {EditorEventType} from "../../lib/events";
+import { EditorEventType } from "../../lib/events";
 export default {
 	name: "DataFilterAttribute",
 	components: { JsEditor },
@@ -147,7 +147,7 @@ export default {
 				expression: "//code",
 				action: "retain" // discard,retain
 			},
-			width:'500'
+			width: "500"
 		};
 	},
 
