@@ -40,7 +40,7 @@ export const fileNodeConfig = {
 			 */
 			allowTarget(targetCell) {
 				// log("FileNode.allowTarget", targetCell, ['app.GridFSNode'].includes(targetCell.get('type')));
-				return ["app.GridFSNode"].includes(targetCell.get("type"));
+				return ["app.GridFSNode","app.FileNode"].includes(targetCell.get("type"));
 			},
 
 			/**
@@ -50,7 +50,7 @@ export const fileNodeConfig = {
 			 */
 			allowSource(sourceCell) {
 				// log("FileNode.allowSource", sourceCell, ['app.GridFSNode'].includes(sourceCell.get('type')));
-				return false;
+				return ["app.GridFSNode","app.FileNode"].includes(sourceCell.get("type"));
 			},
 
 			validate(data) {

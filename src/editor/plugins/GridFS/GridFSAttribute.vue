@@ -23,7 +23,7 @@
 				</el-form-item>
 
 				<el-form-item
-					v-if="isSourceDataNode"
+					v-if="isSourceDataNode && model.gridfsReadMode !== 'binary'"
 					:label="$t('editor.cell.data_node.collection.form.collection.label')"
 					prop="tableName"
 					required
@@ -47,7 +47,7 @@
 				</el-form-item>
 
 				<el-form-item
-					v-if="isSourceDataNode"
+					v-if="isSourceDataNode && model.gridfsReadMode !== 'binary'"
 					:label="$t('editor.cell.data_node.collection.form.pk.label')"
 					prop="primaryKeys"
 					:rules="rules"
@@ -61,7 +61,7 @@
 				</el-form-item>
 			</el-form>
 		</div>
-		<div v-if="isSourceDataNode" class="e-entity-wrap" style="text-align: center;">
+		<div v-if="isSourceDataNode && model.gridfsReadMode !== 'binary'" class="e-entity-wrap" style="text-align: center;">
 			<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 		</div>
 	</div>
@@ -121,7 +121,8 @@ export default {
 				tableName: "",
 				isSource: true,
 				primaryKeys: "",
-				filter: ""
+				filter: "",
+				gridfsReadMode: ''
 			},
 			mergedSchema: null
 		};
@@ -217,6 +218,7 @@ export default {
 						t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
 					);
 					self.schemas = schemas;
+					self.model.gridfsReadMode = result.data.gridfsReadMode;
 				}
 			});
 		},
@@ -239,7 +241,7 @@ export default {
 					result.name = database[0].name;
 				}
 			}
-			if (!this.isSourceDataNode) {
+			if (!this.isSourceDataNode || this.model.gridfsReadMode ==="binary") {
 				result.isSource = false;
 				delete result.tableName;
 				delete result.primaryKeys;
