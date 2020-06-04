@@ -1,16 +1,24 @@
 <template>
-	<div class="scriptNode">
-		<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
-			{{ $t("dataFlow.button.viewMonitoring") }}
-		</el-button>
-		<el-form label-position="right" label-width="130px" :model="model" :disabled="disabled" ref="form">
-			<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.name.label')" size="mini">
-				<el-input
-					v-model="model.name"
-					class="form-item-width"
-					:placeholder="$t('editor.cell.processor.script.form.name.placeholder')"
-				></el-input>
-			</el-form-item>
+	<div class="nodeStyle">
+		<div class="nodeBody">
+			<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
+				{{ $t("dataFlow.button.viewMonitoring") }}
+			</el-button>
+			<el-form
+				class="e-form"
+				label-position="top"
+				label-width="130px"
+				:model="model"
+				:disabled="disabled"
+				ref="form"
+			>
+				<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.name.label')" size="mini">
+					<el-input
+						v-model="model.name"
+						class="form-item-width"
+						:placeholder="$t('editor.cell.processor.script.form.name.placeholder')"
+					></el-input>
+				</el-form-item>
 
 				<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.type.label')" size="mini">
 					<el-select
@@ -38,6 +46,7 @@
 			<el-button class="btn-debug" type="primary" size="mini" @click="showDebug">
 				{{ $t("editor.cell.processor.script.debug_button_label") }}
 			</el-button>
+		</div>
 		<Debug ref="debug"></Debug>
 	</div>
 </template>
@@ -46,9 +55,9 @@
 import JsEditor from "../../../components/JsEditor";
 import log from "../../../log";
 import { EditorEventType } from "../../lib/events";
-let editorMonitor = null;
 import Debug from "./Debug";
 import ws, { EventName } from "../../../api/ws";
+let editorMonitor = null;
 
 const gData = {};
 export default {
@@ -127,7 +136,7 @@ export default {
 		seeMonitor() {
 			editorMonitor.goBackMontior();
 		},
-		},
+
 		showDebug() {
 			log("Connect to Test Server");
 			if (!gData.dataFlow || !gData.dataFlow.id) {
@@ -159,6 +168,7 @@ export default {
 			});
 		}
 	}
+};
 </script>
 
 <style lang="less" scoped>
