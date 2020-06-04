@@ -177,7 +177,9 @@ class WSClient extends EventEmitter {
 							user_id: {
 								regexp: `^${this.getUserId()}$`
 							},
-							ping_time: {gte: new Date().getTime() - 60 * 1000}
+							ping_time: {
+								gte: new Date().getTime() - 60 * 1000
+							}
 						},
 						fields: {
 							process_id: 1
@@ -213,7 +215,7 @@ class WSClient extends EventEmitter {
 		if (["localhost", "127.0.0.1"].includes(hostname)) {
 			host = hostname + ":3030";
 		}
-		return `${location.protocol.indexOf("https") === 0 ? "wss:" : "ws:"}//192.168.124.28:3030/ws/agent`;
+		return `${location.protocol.indexOf("https") === 0 ? "wss:" : "ws:"}//${host}/ws/agent`;
 	}
 }
 
