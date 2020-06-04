@@ -10,6 +10,7 @@
 				:fetch-suggestions="querySearch"
 				placeholder="查找节点"
 				@select="handleSearchNode"
+				hide-loading
 				suffix-icon="el-icon-search"
 			></el-autocomplete>
 			<!-- <el-button size="mini" type="default" @click="reloadSchema"

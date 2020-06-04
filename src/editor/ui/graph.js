@@ -231,6 +231,9 @@ export default class Graph extends Component {
 		if(document.getElementById('searchNode')){
 			document.getElementById('searchNode').blur();
 		}
+		if(document.getElementById('taskNameInput')){
+			document.getElementById('taskNameInput').blur();
+		}
 	}
 
 	unHighlightAllCells() {
@@ -271,6 +274,12 @@ export default class Graph extends Component {
 					});
 				}, 0);
 			}
+		}
+		if(document.getElementById('searchNode')){
+			document.getElementById('searchNode').blur();
+		}
+		if(document.getElementById('taskNameInput')){
+			document.getElementById('taskNameInput').blur();
 		}
 	}
 
@@ -402,9 +411,6 @@ export default class Graph extends Component {
 			collection.each(function(cell) {
 				selection.createSelectionBox(cell);
 			});
-		}
-		if(document.getElementById('searchNode')){
-			document.getElementById('searchNode').blur();
 		}
 	}
 
