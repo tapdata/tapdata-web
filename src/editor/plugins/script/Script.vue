@@ -129,7 +129,8 @@ export default {
 						script_type: params.type,
 						agentId: id,
 						dataFlowId: gData.dataFlow.id,
-						stageId: gData.stageId
+						stageId: gData.stageId,
+						clientId: ws.getClientId()
 					});
 				} else {
 					this.$message.error(this.$t("editor.cell.processor.script.connect_server_fail"));

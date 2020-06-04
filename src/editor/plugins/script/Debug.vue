@@ -176,15 +176,6 @@ export default {
 			this.logList = null;
 			this.selectedLog = {};
 
-			setTimeout(() => {
-				this.logList = [
-					{
-						index: 1,
-						out: [{}]
-					}
-				];
-			}, 1000);
-
 			receiveMessage(msg => {
 				let result = [];
 				if (msg) {

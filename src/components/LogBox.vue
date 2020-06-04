@@ -27,7 +27,7 @@ export default {
 		},
 		load: {
 			type: Function,
-			default: () => {}
+			default: null
 		}
 	},
 	data() {

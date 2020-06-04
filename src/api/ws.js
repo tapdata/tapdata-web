@@ -7,6 +7,9 @@ import EventEmitter from "../editor/lib/EventEmitter";
 import Cookie from "tiny-cookie";
 import log from "../log";
 import factory from "./factory";
+import {
+	uuid
+} from '../editor/util/Schema'
 
 const workerApi = factory("Workers");
 
@@ -18,6 +21,7 @@ class WSClient extends EventEmitter {
 		this.ws = null;
 		this.timeoutId = null;
 		this.agentId = null;
+		this.clientId = uuid();
 	}
 
 	/**
@@ -152,6 +156,10 @@ class WSClient extends EventEmitter {
 		});
 	}
 
+	getClientId() {
+		return this.clientId
+	}
+
 	/**
 	 * get current user started data agent
 	 * @return {string}
@@ -203,7 +211,7 @@ class WSClient extends EventEmitter {
 		if (["localhost", "127.0.0.1"].includes(hostname)) {
 			host = hostname + ":3030";
 		}
-		return `${location.protocol.indexOf("https") === 0 ? "wss:" : "ws:"}//${host}/ws/agent`;
+		return `${location.protocol.indexOf("https") === 0 ? "wss:" : "ws:"}//192.168.124.28:3030/ws/agent`;
 	}
 }
 
