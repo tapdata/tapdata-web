@@ -43,7 +43,14 @@ export const GridFSNodeConfig = {
 			 */
 			allowTarget(targetCell) {
 				// log("GridFsNode.allowTarget", targetCell);
-				return !["app.GridFSNode", "app.Database"].includes(targetCell.get("type"));
+				let formData = this.getFormData() || {};
+				if (formData.gridfsReadMode === "binary") {
+					return ["app.FileNode"].includes(targetCell.get("type"));
+				} else if (formData.gridfsReadMode === "data") {
+					return !["app.GridFSNode", "app.Database"].includes(targetCell.get("type"));
+				} else {
+					return false;
+				}
 			},
 
 			/**
