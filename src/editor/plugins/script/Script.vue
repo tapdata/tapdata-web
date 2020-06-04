@@ -38,7 +38,6 @@
 			<el-button class="btn-debug" type="primary" size="mini" @click="showDebug">
 				{{ $t("editor.cell.processor.script.debug_button_label") }}
 			</el-button>
-		</div>
 		<Debug ref="debug"></Debug>
 	</div>
 </template>
@@ -160,7 +159,6 @@ export default {
 			});
 		}
 	}
-};
 </script>
 
 <style lang="less" scoped>
