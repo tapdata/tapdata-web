@@ -178,6 +178,9 @@ const en = {
 		enterFilterTable: 'Please enter the filter table content',
 		nameTip: 'Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ',
 		button: {
+			submit: 'Submit',
+			viewConfig: 'Node Config',
+			viewMonitoring: 'Data Monitoring',
 			setting: 'Setting',
 			logs: 'Logs',
 			preview: 'Data Trace',
@@ -188,6 +191,7 @@ const en = {
 			force_stop: 'Force Stop',
 			reset: 'Reset',
 			save: 'Save',
+			saveing: 'Saveing',
 			reloadSchema: 'reloadSchema'
 		},
 		save_before_running: 'Please save the task before running',

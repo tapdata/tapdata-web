@@ -178,6 +178,9 @@ const tc = {
 		enterFilterTable: '請輸入過濾表內容',
 		nameTip: '後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ',
 		button: {
+			submit: '提交',
+			viewConfig: '查看節點配置',
+			viewMonitoring: '查看監控數據',
 			setting: '設置',
 			logs: '日誌',
 			preview: '預覽',
@@ -188,6 +191,7 @@ const tc = {
 			force_stop: '強制停止',
 			reset: '重置',
 			save: '保存',
+			saveing: "保存中",
 			reloadSchema: '重新加載'
 		},
 		save_before_running: '請先保存再運行',
