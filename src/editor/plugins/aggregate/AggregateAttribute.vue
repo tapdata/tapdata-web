@@ -1,6 +1,9 @@
 <template>
 	<div class="aggregate">
-		<el-form ref="form" :model="form" label-position="top" label-width="200px">
+		<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">{{
+			$t("dataFlow.button.viewMonitoring")
+		}}</el-button>
+		<el-form ref="form" :model="form" label-position="top" label-width="200px" :disabled="disabled">
 			<el-col :span="21" class="aggregateName">
 				<el-form-item :label="$t('dataFlow.nodeName')" required>
 					<el-input v-model="form.name" maxlength="20" show-word-limit></el-input>
@@ -109,10 +112,12 @@ import log from "../../../log";
 import { mergeJoinTablesToTargetSchema } from "../../util/Schema";
 
 let counter = 0;
+let editorMonitor = null;
 export default {
 	name: "Aggregate",
 	data() {
 		return {
+			disabled: false,
 			selectList: [
 				{ label: "AVG", value: "AVG" },
 				{ label: "SUM", value: "SUM" },
@@ -235,11 +240,23 @@ export default {
 				if (counter !== 0) this.form.name = this.$t("dataFlow.aggregation") + counter;
 				counter++;
 			}
+
+			editorMonitor = vueAdapter.editor;
 		},
 
 		getData() {
 			return _.cloneDeep(this.form);
-		}
+		},
+
+		setDisabled(disabled) {
+			this.disabled = disabled;
+		},
+
+		seeMonitor() {
+			editorMonitor.goBackMontior();
+		},
+
+		
 	}
 };
 </script>

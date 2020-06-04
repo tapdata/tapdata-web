@@ -1,12 +1,16 @@
 <template>
-	<el-form label-position="right" label-width="130px" :model="model" ref="form">
-		<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.name.label')" size="mini">
-			<el-input
-				v-model="model.name"
-				class="form-item-width"
-				:placeholder="$t('editor.cell.processor.script.form.name.placeholder')"
-			></el-input>
-		</el-form-item>
+	<div class="scriptNode">
+		<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
+			{{ $t("dataFlow.button.viewMonitoring") }}
+		</el-button>
+		<el-form label-position="right" label-width="130px" :model="model" :disabled="disabled" ref="form">
+			<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.name.label')" size="mini">
+				<el-input
+					v-model="model.name"
+					class="form-item-width"
+					:placeholder="$t('editor.cell.processor.script.form.name.placeholder')"
+				></el-input>
+			</el-form-item>
 
 				<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.type.label')" size="mini">
 					<el-select
@@ -43,6 +47,7 @@
 import JsEditor from "../../../components/JsEditor";
 import log from "../../../log";
 import { EditorEventType } from "../../lib/events";
+let editorMonitor = null;
 import Debug from "./Debug";
 import ws, { EventName } from "../../../api/ws";
 
@@ -55,6 +60,7 @@ export default {
 	},
 	data() {
 		return {
+			disabled: false,
 			scriptTypes: [
 				{
 					label: "JavaScript",
@@ -101,16 +107,27 @@ export default {
 	},
 
 	methods: {
-		setData(data, cell) {
+		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
 				Object.keys(data).forEach(key => (this.model[key] = data[key]));
 				log("model script", this.model);
 			}
 			gData.stageId = cell.id;
 			gData.dataFlow = arguments[3].editor.getDataFlow();
+
+			editorMonitor = vueAdapter.editor;
 		},
 		getData() {
 			return JSON.parse(JSON.stringify(this.model));
+		},
+
+		setDisabled(disabled) {
+			this.disabled = disabled;
+		},
+
+		seeMonitor() {
+			editorMonitor.goBackMontior();
+		},
 		},
 		showDebug() {
 			log("Connect to Test Server");

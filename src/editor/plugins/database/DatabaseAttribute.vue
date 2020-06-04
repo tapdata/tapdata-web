@@ -5,7 +5,17 @@
 			<span class="txt">{{ $t("editor.nodeSettings") }}</span>
 		</head>
 		<div class="nodeBody">
-			<el-form class="e-form" label-position="top" label-width="160px" :model="model" ref="form">
+			<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
+				{{$t("dataFlow.button.viewMonitoring")}}
+			</el-button>
+			<el-form
+				class="e-form"
+				label-position="top"
+				label-width="160px"
+				:model="model"
+				ref="form"
+				:disabled="disabled"
+			>
 				<el-form-item
 					class="e-form"
 					:label="$t('editor.cell.data_node.database.form.label')"
@@ -162,7 +172,7 @@ import factory from "../../../api/factory";
 import _ from "lodash";
 
 let connections = factory("connections");
-
+let editorMonitor = null;
 export default {
 	name: "Database",
 
@@ -175,6 +185,7 @@ export default {
 
 	data() {
 		return {
+			disabled: false,
 			removeSearch: "",
 			search: "",
 
@@ -391,12 +402,13 @@ export default {
 			this.selectAllRemoveTables = false;
 		},
 
-		setData(data, cell, isSourceDataNode) {
+		setData(data, cell, isSourceDataNode,vueAdapter) {
 			if (data) {
 				Object.keys(data).forEach(key => (this.model[key] = data[key]));
 			}
 
 			this.isSourceDataNode = isSourceDataNode;
+			editorMonitor = vueAdapter.editor;
 		},
 		getData() {
 			let result = _.cloneDeep(this.model);
@@ -412,7 +424,15 @@ export default {
 				}
 			}
 			return result;
-		}
+		},
+
+		setDisabled(disabled) {
+			this.disabled = disabled;
+		},
+
+		seeMonitor() {
+			editorMonitor.goBackMontior();
+		},
 	}
 };
 </script>

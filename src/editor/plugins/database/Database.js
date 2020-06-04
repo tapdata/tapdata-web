@@ -62,7 +62,7 @@ export const databaseConfig = {
 			},
 			[FORM_DATA_KEY]: {
 				connectionId: "",
-				excludeTables: [],
+				includeTables: [],
 				dropTable: false,
 				type: "database"
 			}

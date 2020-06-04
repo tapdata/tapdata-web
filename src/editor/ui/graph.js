@@ -228,6 +228,9 @@ export default class Graph extends Component {
 			this.editor.getRightSidebar().hide();
 		}
 		this.unHighlightAllCells();
+		if(document.getElementById('searchNode')){
+			document.getElementById('searchNode').blur();
+		}
 	}
 
 	unHighlightAllCells() {
@@ -399,6 +402,9 @@ export default class Graph extends Component {
 			collection.each(function(cell) {
 				selection.createSelectionBox(cell);
 			});
+		}
+		if(document.getElementById('searchNode')){
+			document.getElementById('searchNode').blur();
 		}
 	}
 
@@ -830,7 +836,7 @@ export default class Graph extends Component {
 	}
 	selectionPosition(cell){
 		this.paperScroller.center();
-		this.selection.collection.reset();
+		this.selection.collection.reset(cell);
 		this.selection.collection.add(cell);
 	}
 

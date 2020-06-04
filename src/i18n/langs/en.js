@@ -62,6 +62,10 @@ const en = {
 	},
 	dataFlow: {
 		selectNode: 'Please select a node',
+		submitExecute: 'Submit and execute',
+		submitOnly: 'Submit only',
+		implementationModalities: 'Execution method',
+		submitConfirmation: 'Submit Confirmation',
 		SyncPoint: "Sync point",
 		Current: "Current",
 		SyncTime: "Sync time",
@@ -106,10 +110,8 @@ const en = {
 		totalInput: "Total Input",
 		totalOutput: "Total Output",
 		replicate: "Replicate Lag",
-		throughputpop:
-			"The read speed from source node and the write speed to the target node, larger number is better",
-		transtime_pop:
-			"The time lapsed from the data record is read from the source node until the data is written into target node",
+		throughputpop: "The read speed from source node and the write speed to the target node, larger number is better",
+		transtime_pop: "The time lapsed from the data record is read from the source node until the data is written into target node",
 		replicate_pop: "The time gap between source node last update time and target node last update time",
 		status: {
 			running: "Running",
@@ -161,7 +163,7 @@ const en = {
 		notification_lag: "Notification",
 		isOpenAutoDDL: "Automatically handle DDL operations",
 		transformerConcurrency: "Transformer Concurrency",
-		processorConcurrency:"Processor Concurrency",
+		processorConcurrency: "Processor Concurrency",
 		send_email_when_replication: "Send email when replication lag is greater than:(seconds)",
 		send_email_at_most_one_replication: "Send at most 1 replication lag email within (seconds)",
 		read_cdc_interval: "Incremental synchronization interval (ms)",
@@ -179,8 +181,7 @@ const en = {
 		groupByExpression: "Group Field",
 		aggregation: "Aggregation",
 		enterFilterTable: "Please enter the filter table content",
-		nameTip:
-			"Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ",
+		nameTip: "Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ",
 		button: {
 			submit: "Submit",
 			viewConfig: "View node configuration",
@@ -195,6 +196,7 @@ const en = {
 			force_stop: "Force Stop",
 			reset: "Reset",
 			save: "Save",
+			saveing: "Saving",
 			reloadSchema: "Reload Schema",
 			debug: "Debug Test",
 			quantitative: "Quantitative",
@@ -289,9 +291,9 @@ const en = {
 							keep: "Keep existing data",
 							remove: "Remove exists data at before sync"
 						},
-            initialSyncOrder: {
-              keep: "initial Sync Order",
-            },
+						initialSyncOrder: {
+							keep: "initial Sync Order",
+						},
 						filter: {
 							label: "Filter",
 							placeholder: "Mongo Query Filter Document",
@@ -382,6 +384,8 @@ const en = {
 				memCache: {
 					tip: "Memery Cache node",
 					name: "Mem Cache",
+
+					applicationCode: "Application code",
 
 					form: {
 						cacheName: {
@@ -517,8 +521,7 @@ const en = {
 						expressionExample: {
 							label: "Example expression",
 							labelTip: "Expressions can use comparison and calculation operators in JavaScript",
-							tip:
-								"Select men over 50 years old and people over 30 years old with income below 10,000, the expression is as follows:"
+							tip: "Select men over 50 years old and people over 30 years old with income below 10,000, the expression is as follows:"
 						},
 						symbol: {
 							label: "Supported symbols",
