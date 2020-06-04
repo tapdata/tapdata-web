@@ -5,9 +5,11 @@
 			<span class="txt">{{ $t("editor.nodeSettings") }}</span>
 		</head>
 		<div class="nodeBody">
-			<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
-				{{$t("dataFlow.button.viewMonitoring")}}
-			</el-button>
+			<div class="head-btns">
+				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+					{{ $t("dataFlow.button.viewMonitoring") }}
+				</el-button>
+			</div>
 			<el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
 				<!-- <span class="addTxt">+新建文件</span> -->
 				<el-form-item :label="$t('editor.choose') + 'Custom'" prop="connectionId" :rules="rules" required>
@@ -119,8 +121,7 @@ export default {
 
 		seeMonitor() {
 			editorMonitor.goBackMontior();
-		},
-
+		}
 	}
 };
 </script>
