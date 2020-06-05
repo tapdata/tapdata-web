@@ -1,6 +1,7 @@
 import BaseObject from "../lib/BaseObject";
 import UI from "./ui/ui";
 import Graph from "./ui/graph";
+import Sidebar from "../ui/sidebar";
 
 /**
  * @author lg<lirufei0808@gmail.com>
@@ -13,13 +14,27 @@ export default class DataMap extends BaseObject {
 
 		this.container = props.container;
 
-		this.doInit();
+		this.doInit(props);
 	}
 
-	doInit() {
+	doInit(props) {
 		this.ui = new UI();
-
 		this.ui.render(this.container);
+
+		let leftSidebar = (this.leftSidebar = new Sidebar({
+			container: this.ui.getBody(),
+			prepend: true,
+			region: "left",
+			editor: this,
+			split: true,
+			width: 235,
+			bodyStyle: "display: flex; flex-direction: column;"
+		}));
+		this.ui.add(leftSidebar);
+
+		if(props && props.leftSidebar){
+			leftSidebar.getContentEl().append(props.leftSidebar);
+		}
 
 		this.graph = new Graph({
 			dataMap: this,

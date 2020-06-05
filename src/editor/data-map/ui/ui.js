@@ -17,11 +17,21 @@ export default class UI extends Component {
 		super.doInit();
 
 		this.el = $(`<div class="layout">
-			<div class="graph-container"></div>
+			<div class="editor-container">
+				<div class="editor">
+					<div class="e-body">
+						<div class="graph-container"></div>
+					</div>
+				</div>
+			</div>
 		</div>`);
 	}
 
 	getGraphContainer() {
-		return this.el.find(".graph-container");
+		return this.el.find(".editor-container .e-body .graph-container");
+	}
+
+	getBody(){
+		return this.el.find(".editor-container .e-body");
 	}
 }

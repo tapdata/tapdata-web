@@ -127,7 +127,7 @@ export default class Graph extends Component {
 	}
 
 	getContentBBox(){
-		const parent = $(this.container).parent();
+		const parent = $(this.container);
 		const width = parent.width();
 		const height = parent.height();
 		return {
@@ -230,7 +230,7 @@ export default class Graph extends Component {
 		});
 
 		this.updateLanes();
-		window.addEventListener("resize", this.updateLanes.bind(this));
+		// window.addEventListener("resize", this.updateLanes.bind(this));
 	}
 
 	updateLanes() {
@@ -261,12 +261,14 @@ export default class Graph extends Component {
 		joint.layout.DirectedGraph.layout(this.graph, {
 			setLinkVertices: false,
 			rankDir: "LR",
-			marginX: 50,
-			marginY: 50,
+			marginX: 100,
+			marginY: 100,
 			// resizeToFit: true,
-			nodeSep: 10,
+			nodeSep: 20,
 			edgeSep: 10,
-			clusterPadding: { top: 50, left: 10, right: 10, bottom: 10 }
+			align: "UL",
+			resizeClusters:true,
+			clusterPadding: { top: 50, left: 30, right: 30, bottom: 30 }
 		});
 
 		/*let embedOpts = {
@@ -286,6 +288,11 @@ export default class Graph extends Component {
 		/*this.paper.scaleContentToFit({
 			padding: 50
 		});*/
+
+		/*this.paper.scaleContentToFit({
+			top: 240, bottom: 240, left: 240, right: 240
+		});*/
+		this.paperScroller.centerContent({padding: {top: 200, bottom: 200, left: 200, right: 200}});
 
 	}
 
