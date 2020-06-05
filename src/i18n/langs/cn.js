@@ -466,6 +466,25 @@ const cn = {
 					none_script_type: "脚本类型必填.",
 					none_script: "脚本必填.",
 
+					debug_button_label: "连接测试",
+					warning_for_not_save: "当前任务未保存，无法进行连接测试，请保存之后再尝试",
+					connect_server_fail: "连接服务器失败",
+
+					debug: {
+						top_header: "js连接测试",
+						bottom_header: "测试详情",
+						detail: {
+							parameter: "参数",
+							return: "返回值"
+						},
+						order: "连接顺序",
+						status: "返回状态",
+						status_error: "错误",
+						status_success: "成功",
+						time: "耗时",
+						log: "日志"
+					},
+
 					form: {
 						name: {
 							label: "节点名称",
@@ -526,6 +545,7 @@ const cn = {
 				none_join_type: "关联类型必填",
 				none_join_key: "关联字段必填",
 				none_join_path: "关联写入路径必填",
+				none_array_unique_key: "合并进数组时，必须提供唯一键",
 				form: {
 					label: {
 						label: "标签",
@@ -601,10 +621,10 @@ const cn = {
 					tip: "填充可视区域"
 				},
 				zoom_out: {
-					tip: "缩小"
+					tip: "放大"
 				},
 				zoom_in: {
-					tip: "放大"
+					tip: "缩小"
 				},
 				grid_size: {
 					tip: "网格大小"

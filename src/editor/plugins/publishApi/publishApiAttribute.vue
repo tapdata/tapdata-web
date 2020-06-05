@@ -5,7 +5,7 @@
 				{{ $t("dataFlow.button.viewMonitoring") }}
 			</el-button>
 		</div>
-		<el-form ref="form" :model="form" :disabled="disabled" label-position="top" label-width="200px">
+		<el-form ref="form" :model="form" :rules="rules" :disabled="disabled" label-position="top" label-width="200px">
 			<el-form-item :label="$t('editor.cell.data_node.api.dataApiName')">
 				<el-input
 					v-model="form.name"
@@ -39,7 +39,7 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="18">
-					<el-form-item label="URL/API/V1/">
+					<el-form-item :label="'URL/API/V1/' + form.apiPath">
 						<el-input v-model="form.apiPath" :placeholder="$t('dataFlow.enterFilterTable')"></el-input>
 					</el-form-item>
 				</el-col>
