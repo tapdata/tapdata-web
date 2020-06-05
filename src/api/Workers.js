@@ -8,4 +8,7 @@ export default class WorkerAPI extends PublicApi {
 	constructor() {
 		super("/api/Workers");
 	}
+	getAvailableAgent() {
+		return this.get(["/availableAgent"]);
+	}
 }

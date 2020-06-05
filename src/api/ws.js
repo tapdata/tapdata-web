@@ -180,25 +180,8 @@ class WSClient extends EventEmitter {
 			cb(null, self.agentId);
 		} else {
 			workerApi
-				.get({
-					filter: JSON.stringify({
-						where: {
-							worker_type: "connector",
-							user_id: {
-								regexp: `^${this.getUserId()}$`
-							},
-							ping_time: {
-								gte: new Date().getTime() - 60 * 1000
-							}
-						},
-						fields: {
-							process_id: 1
-						},
-						order: "ping_time DESC"
-					})
-				})
+				.getAvailableAgent()
 				.then(result => {
-					result = {data:[{process_id: "c327696c-2892-4966-94d3-1c1229d53e7c"}]};
 					if (result && result.data && result.data.length > 0) {
 						self.agentId = result.data[0].process_id;
 						cb(null, self.agentId);
