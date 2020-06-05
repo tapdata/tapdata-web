@@ -37,7 +37,7 @@
 				type="default"
 				@click="stopCapture"
 			>{{ $t("dataFlow.button.stop_capture") }}
-			</el-button>
+			</el-button> -->
 
 			<!-- <el-button
 					  v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
@@ -74,34 +74,7 @@
 					  @click="save"
 					  >{{ $t("dataFlow.button.save") }}
 				  </el-button> -->
-			<template v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)">
-				<div
-					class="headImg"
-					v-show="!isSaving"
-					@click="save"
-				>
-					<span class="iconfont icon-yunduanshangchuan"></span>
-					<span class="text">{{ $t("dataFlow.button.save") }}</span>
-				</div>
 
-				<div
-					class="headImg"
-					v-show="isSaving"
-					style="color: #48B6E2;"
-				>
-					<span class="el-icon-loading"></span>
-					<span
-						class="text"
-						style="color: #48B6E2;"
-					>{{ $t("dataFlow.button.saveing") }}</span>
-				</div>
-			</template>
-
-			<div
-				class="headImg"
-				@click="capture"
-				>{{ $t("dataFlow.button.capture") }}
-			</el-button> -->
 			<el-button
 				v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
 				size="mini"
@@ -369,7 +342,7 @@ export default {
 					}
 				});
 			}
-		},
+		},*/
 
 		/**
 		 * capture button handler
@@ -698,8 +671,8 @@ export default {
 					}
 				});
 			}
-		}, 
-		
+		},
+
 		status: {
 			handler() {
 				if (["draft", "error", "paused"].includes(this.status)) {
@@ -710,6 +683,7 @@ export default {
 			}
 		}
 	},
+
 	mounted() {
 		let self = this;
 

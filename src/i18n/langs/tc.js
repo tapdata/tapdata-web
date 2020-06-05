@@ -201,7 +201,7 @@ const tc = {
 			reloadSchema: "刷新schema",
 			debug: "debug測試",
 			quantitative: "定量",
-			increment: "增量",
+			increment: "增量"
 		},
 		save_before_running: "請先保存再運行",
 		reset_job: {
@@ -293,7 +293,7 @@ const tc = {
 							remove: "運行前刪除已存在的數據"
 						},
 						initialSyncOrder: {
-							keep: "初始化節點順序",
+							keep: "初始化節點順序"
 						},
 						filter: {
 							label: "過濾條件",
