@@ -72,12 +72,6 @@ export default class Editor extends BaseObject {
 	editable = true;
 
 	/**
-	 * dataFlow
-	 * @type {Object}
-	 */
-	dataFlow = null;
-
-	/**
 	 * loadSchema
 	 * @type {boolean}
 	 */
@@ -238,7 +232,7 @@ export default class Editor extends BaseObject {
 		// hide stencil
 		this.getLeftSidebar().hide();
 
-		//self.getRightTabPanel().removeAll();
+		// self.getRightTabPanel().removeAll();
 		// remove stage config
 		// let nodeSettingPanel = self.getRightTabPanel().getChildByName('nodeSettingPanel');
 		// if( nodeSettingPanel ) self.getRightTabPanel().remove(nodeSettingPanel);
@@ -493,12 +487,7 @@ export default class Editor extends BaseObject {
 		}
 		self.getRightSidebar().show();
 	}
-	setDataFlow(dataFlow) {
-		this.dataFlow = dataFlow;
-	}
-	getDataFlow() {
-		return this.dataFlow;
-	}
+
 	setData(dataFlow) {
 		this.graph.loadData(JSON.parse(dataFlow.editorData));
 		this.ui.setName(dataFlow.name);
@@ -526,7 +515,7 @@ export default class Editor extends BaseObject {
 		let distanceResult = {};
 
 		let predecessors = function(node, distance) {
-			if (distanceResult.hasOwnProperty(node))
+			if (Object.prototype.hasOwnProperty.call(distanceResult, node))
 				distanceResult[node] = distanceResult[node] >= distance ? distanceResult[node] : distance;
 			else distanceResult[node] = distance;
 
@@ -693,7 +682,7 @@ export default class Editor extends BaseObject {
 	}
 	getAllCells() {
 		let dataCells = this.graph.graph
-			.getCells() //.filter(cell => cell.isDataNode && cell.isDataNode())
+			.getCells() // .filter(cell => cell.isDataNode && cell.isDataNode())
 			.filter(cell => {
 				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
 				let type = cell.get("type");

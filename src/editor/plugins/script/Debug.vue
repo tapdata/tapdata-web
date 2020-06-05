@@ -36,7 +36,7 @@
 							width="80"
 						>
 							<template slot-scope="scope">
-								<span class="color-danger" v-if="(scope.row.status = 'ERROR')">{{
+								<span class="color-danger" v-if="scope.row.status === 'ERROR'">{{
 									$t("editor.cell.processor.script.debug.status_error")
 								}}</span>
 								<span class="color-primary" v-else>{{

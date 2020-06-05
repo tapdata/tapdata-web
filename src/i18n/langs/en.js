@@ -70,6 +70,7 @@ const en = {
 		Current: "Current Time",
 		SyncTime: "Sync Time",
 		batchDelete: "Batch Delete",
+		batchRest: "Batch reset",
 		bulkExport: "Bulk Export",
 		bulkScheuled: "Batch Start",
 		bulkStopping: "Bulk Stop",
@@ -130,9 +131,11 @@ const en = {
 		separator: "to",
 		dataPlaceholder: "Select time range",
 		taskStatus: "Status",
-		taskStatusPlaceholder: "Please select a task status",
+		taskStatusPlaceholder: "Please select task status",
+		taskSettingPlaceholder: "Please select Sync type",
 		updateTime: "Update time",
-		runningSpeed: "Switch",
+		runningSpeed: "Running speed",
+		taskSwitch: "Switch",
 		operate: "Operation",
 		dataMap: "Data Map",
 		edit: "Edit",
@@ -161,6 +164,8 @@ const en = {
 		data_quality_tag: "Add data quality tag",
 		notification_lag: "Notification",
 		isOpenAutoDDL: "Automatically handle DDL operations",
+		transformerConcurrency: "Transformer Concurrency",
+		processorConcurrency: "Processor Concurrency",
 		send_email_when_replication: "Resend in a few seconds",
 		send_email_at_most_one_replication: "Cancel sending in more than seconds",
 		read_cdc_interval: "Incremental synchronization interval (ms)",
@@ -288,6 +293,9 @@ const en = {
 							placeholder: "",
 							keep: "Keep existing data",
 							remove: "Remove exists data at before sync"
+						},
+						initialSyncOrder: {
+							keep: "initial Sync Order",
 						},
 						filter: {
 							label: "Filter",
@@ -458,6 +466,26 @@ const en = {
 					none_script_type: "Script type is required.",
 					none_script: "Script is required.",
 
+					debug_button_label: "Connect test",
+					warning_for_not_save:
+						"The current task has not been saved, unable to connect the test server, please save and try again",
+					connect_server_fail: "Failed to connect to server",
+
+					debug: {
+						top_header: "Script Test",
+						bottom_header: "Test Details",
+						detail: {
+							parameter: "Parameter",
+							return: "Return"
+						},
+						order: "Order",
+						status: "Status",
+						status_error: "Error",
+						status_success: "Success",
+						time: "Time",
+						log: "Log"
+					},
+
 					form: {
 						name: {
 							label: "Node name",
@@ -519,6 +547,7 @@ const en = {
 				none_join_type: "JoinType is required",
 				none_join_key: "JoinKeys is required",
 				none_join_path: "JoinPath is required",
+				none_array_unique_key: "Array unique key is required",
 				form: {
 					label: {
 						label: "Label",

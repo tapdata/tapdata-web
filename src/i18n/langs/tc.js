@@ -70,6 +70,7 @@ const tc = {
 		Current: "當前時間",
 		SyncTime: "同步時間",
 		batchDelete: "批量刪除",
+		batchRest: "批量重置",
 		bulkExport: "批量導出",
 		bulkScheuled: "批量啟動",
 		bulkStopping: "批量停止",
@@ -130,8 +131,10 @@ const tc = {
 		dataPlaceholder: "選擇時間範圍",
 		taskStatus: "運行狀態",
 		taskStatusPlaceholder: "請選擇任務狀態",
+		taskSettingPlaceholder: "請選擇任務同步類型",
 		updateTime: "更新時間",
 		runningSpeed: "運行速度",
+		taskSwitch: "运行开关",
 		operate: "操作",
 		dataMap: "數據地圖",
 		edit: "編輯",
@@ -160,6 +163,8 @@ const tc = {
 		data_quality_tag: "添加數據質量標籤",
 		notification_lag: "通知",
 		isOpenAutoDDL: "自動處理DDL操作",
+		transformerConcurrency: "目標寫入線程數",
+		processorConcurrency: "處理器線程數",
 		send_email_when_replication: "幾秒後重新發送",
 		send_email_at_most_one_replication: "超過多少秒取消發送",
 		read_cdc_interval: "增量同步間隔(ms)",
@@ -193,10 +198,10 @@ const tc = {
 			reset: "重置",
 			save: "保存",
 			saveing: "保存中",
-			reloadSchema: "重新加載",
+			reloadSchema: "刷新schema",
 			debug: "debug測試",
 			quantitative: "定量",
-			increment: "增量"
+			increment: "增量",
 		},
 		save_before_running: "請先保存再運行",
 		reset_job: {
@@ -286,6 +291,9 @@ const tc = {
 							placeholder: "",
 							keep: "保持已存在的數據",
 							remove: "運行前刪除已存在的數據"
+						},
+						initialSyncOrder: {
+							keep: "初始化節點順序",
 						},
 						filter: {
 							label: "過濾條件",
@@ -457,6 +465,25 @@ const tc = {
 					none_script_type: "腳本類型必填.",
 					none_script: "腳本必填.",
 
+					debug_button_label: "連接測試",
+					warning_for_not_save: "當前任務未保存，無法進行連接測試，請保存之後再嘗試",
+					connect_server_fail: "連接服務器失敗",
+
+					debug: {
+						top_header: "代码连接测试",
+						bottom_header: "測試詳情",
+						detail: {
+							parameter: "參數",
+							return: "返回值"
+						},
+						order: "連接順序",
+						status: "返回狀態",
+						status_error: "錯誤",
+						status_success: "成功",
+						time: "耗時",
+						log: "日誌"
+					},
+
 					form: {
 						name: {
 							label: "节点名称",
@@ -517,6 +544,7 @@ const tc = {
 				none_join_type: "關聯類型必填",
 				none_join_key: "關聯字段必填",
 				none_join_path: "關聯寫入路徑必填",
+				none_array_unique_key: "合併進數組時，必須提供唯一鍵",
 				form: {
 					label: {
 						label: "标签",

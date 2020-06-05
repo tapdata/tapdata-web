@@ -35,6 +35,70 @@
 				v-if="['scheduled', 'running'].includes(status) && executeMode === 'normal'"
 				size="mini"
 				type="default"
+				@click="stopCapture"
+			>{{ $t("dataFlow.button.stop_capture") }}
+			</el-button>
+
+			<!-- <el-button
+					  v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
+					  size="mini"
+					  type="success"
+					  @click="start"
+					  >{{ $t("dataFlow.button.start") }}
+				  </el-button> -->
+			<!-- <el-button
+					  v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
+					  size="mini"
+					  type="danger"
+					  @click="stop(false)"
+					  >{{ $t("dataFlow.button.stop") }}
+				  </el-button> -->
+			<!-- <el-button
+					  v-if="dataFlowId !== null && ['stopping'].includes(status)"
+					  size="mini"
+					  type="danger"
+					  @click="stop(true)"
+					  >{{ $t("dataFlow.button.force_stop") }}
+				  </el-button> -->
+			<!-- <el-button
+					  v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
+					  size="mini"
+					  type="default"
+					  @click="reset"
+					  >{{ $t("dataFlow.button.reset") }}
+				  </el-button> -->
+			<!-- <el-button
+					  v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
+					  size="mini"
+					  type="primary"
+					  @click="save"
+					  >{{ $t("dataFlow.button.save") }}
+				  </el-button> -->
+			<template v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)">
+				<div
+					class="headImg"
+					v-show="!isSaving"
+					@click="save"
+				>
+					<span class="iconfont icon-yunduanshangchuan"></span>
+					<span class="text">{{ $t("dataFlow.button.save") }}</span>
+				</div>
+
+				<div
+					class="headImg"
+					v-show="isSaving"
+					style="color: #48B6E2;"
+				>
+					<span class="el-icon-loading"></span>
+					<span
+						class="text"
+						style="color: #48B6E2;"
+					>{{ $t("dataFlow.button.saveing") }}</span>
+				</div>
+			</template>
+
+			<div
+				class="headImg"
 				@click="capture"
 				>{{ $t("dataFlow.button.capture") }}
 			</el-button> -->
@@ -174,7 +238,7 @@
 				class="headImg borderStyle"
 				@click="start"
 				:title="$t('dataFlow.button.start')"
-				v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
+				:disabled="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status) ? false : true"
 			>
 				<span class="iconfont icon-yunhang1"></span>
 			</div> -->
@@ -291,13 +355,351 @@ export default {
 	},
 
 	watch: {
-		/* executeMode: {
-				handler(){
-					if( this.executeMode !== 'normal') {
+	/* executeMode: {
+			handler(){
+				if( this.executeMode !== 'normal') {
+					this.showCapture();
+				}
+				self.doSave(data, (err, dataFlow) => {
+					if (err) {
+						this.$message.error(self.$t("message.saveFail"));
+					} else {
+						this.$message.success(self.$t("message.saveOK"));
 						this.showCapture();
 					}
+				});
+			}
+		},
+
+		/**
+		 * capture button handler
+		 */
+		capture() {
+			let self = this,
+				data = this.getDataFlowData();
+
+			if (data) {
+				if (data && data.id) {
+					data = {
+						id: data.id,
+						executeMode: "running_debug"
+					};
+				} else {
+					Object.assign(data, {
+						executeMode: "running_debug"
+					});
 				}
-			}, */
+				self.doSave(data, (err, dataFlow) => {
+					if (err) {
+						this.$message.error(self.$t("message.saveFail"));
+					} else {
+						this.$message.success(self.$t("message.saveOK"));
+						this.showCapture();
+					}
+				});
+			}
+		},
+
+		/**
+		 * stop capture button handler
+		 */
+		stopCapture() {
+			let self = this,
+				data = this.getDataFlowData();
+
+			if (data && data.id) {
+				self.doSave(
+					{
+						id: data.id,
+						executeMode: "normal"
+					},
+					(err, dataFlow) => {
+						if (err) {
+							this.$message.error(self.$t("message.saveFail"));
+						} else {
+							this.$message.success(self.$t("message.saveOK"));
+							// this.showCapture();
+						}
+					}
+				);
+			}
+		},
+
+		/**
+		 * reset button handler
+		 */
+		reset() {
+			let self = this,
+				data = this.getDataFlowData();
+
+			if (data && data.id) {
+				self
+					.$confirm(
+						self.$t("dataFlow.reset_job.msg"),
+						self.$t("dataFlow.reset_job.tip"),
+						{
+							confirmButtonText: self.$t("dataFlow.button.reset"),
+							cancelButtonText: self.$t("message.cancel"),
+							type: "warning"
+						}
+					)
+					.then(() => {
+						dataFlowsApi.reset(data.id).then(res => {
+							if (res.statusText === "OK" || res.status === 200) {
+								self.$message.success(self.$t("message.resetOk"));
+							} else {
+								self.$message.error(self.$t("message.resetFailed"));
+							}
+						});
+					});
+			}
+		},
+
+		/**
+		 * show setting button handler
+		 */
+		showSetting() {
+			log("Job.showSetting");
+			let name = "";
+			if (this.$route.query.name) {
+				name = this.$route.query.name;
+			}
+			this.editor.showSetting(name);
+		},
+
+		/**
+		 * show logs button handler
+		 */
+		showLogs() {
+			this.editor.showLogs(this.dataFlow);
+		},
+
+		/**
+		 * show capture button handler
+		 */
+		showCapture() {
+			this.editor.showCapture(this.dataFlow);
+		},
+
+		/**
+		 * reload shcema
+		 */
+		reloadSchema() {
+			this.editor.reloadSchema();
+		},
+
+		/**
+		 * switch edit mode
+		 * @param editable
+		 */
+		setEditable(editable) {
+			log("Job.setEditable", editable, this.dataFlow);
+			this.editable = editable;
+			if (this.dataFlow) {
+				delete this.dataFlow.editorData;
+				this.editor.setEditable(editable, this.dataFlow);
+			} else {
+				this.$message.error(this.$t("message.save_before_running"));
+			}
+		},
+
+		/**
+		 * Reverse editor data
+		 * @param data
+		 * @return {{cells: Array}}
+		 */
+		creatApiEditorData(data) {
+			// 1. 创建cell 2. 加载schema 3.自动布局
+			let cells = [];
+			let mapping = {
+				collection: "app.Collection",
+				table: "app.Table",
+				database: "app.Database",
+				mongodb: "app.Database",
+				mongo_view: "app.Collection",
+				view: "app.Table",
+				"dummy db": "app.Dummy",
+				elasticsearch: "app.ESNode",
+				file: "app.FileNode",
+				gridfs: "app.GridFSNode",
+				"rest api": "app.ApiNode",
+				field_processor: "app.FieldProcess",
+				aggregation_processor: "app.Aggregate",
+				js_processor: "app.Script",
+				row_filter_processor: "app.DataFilter",
+				java_processor: "app.FieldProcess"
+			};
+			if (data) {
+				data.map((v, index) => {
+					let formData = _.cloneDeep(v);
+					delete formData.inputLanes;
+					delete formData.outputLanes;
+					if (["table", "view", "collection", "mongo_view"].includes(v.type)) {
+						let node = {
+							type: mapping[v.type],
+							id: v.id,
+							freeTransform: false,
+							form_data: formData,
+							schema: null,
+							outputSchema: null,
+							attrs: {
+								label: {
+									text: breakText.breakText(v.tableName, 125)
+								}
+							},
+							angle: 0
+						};
+						cells.push(node);
+					} else if (
+						v.type &&
+						[
+							"dummy db",
+							"gridfs",
+							"file",
+							"elasticsearch",
+							"rest api"
+						].includes(v.type)
+					) {
+						let node = {
+							type: mapping[v.type],
+							id: v.id,
+							freeTransform: false,
+							schema: null,
+							outputSchema: null,
+							attrs: {
+								label: {
+									text: breakText.breakText(v.name, 125)
+								}
+							},
+							form_data: formData
+						};
+						cells.push(node);
+					} else if (v.type === "database") {
+						let node = {
+							type: mapping[v.type],
+							id: v.id,
+							freeTransform: false,
+							form_data: formData,
+							schema: null,
+							outputSchema: null,
+							attrs: {
+								label: {
+									text: breakText.breakText(v.name, 125)
+								}
+							}
+						};
+						cells.push(node);
+					} else if (
+						[
+							"field_processor",
+							"java_processor",
+							"js_processor",
+							"aggregation_processor",
+							"row_filter_processor"
+						].includes(v.type)
+					) {
+						let node = {
+							type: mapping[v.type],
+							id: v.id,
+							freeTransform: false,
+							angle: 0,
+							schema: null,
+							outputSchema: null,
+							attrs: {
+								label: {
+									text: breakText.breakText(v.name, 95)
+								}
+							}
+						};
+						if (["field_processor"].includes(v.type)) {
+							node.form_data = formData;
+						} else if (["aggregation_processor"].includes(v.type)) {
+							node.form_data = formData;
+						} else if (["js_processor"].includes(v.type)) {
+							node.form_data = formData;
+						} else if (["row_filter_processor"].includes(v.type)) {
+							node.form_data = formData;
+						}
+						cells.push(node);
+					}
+					if (v.outputLanes) {
+						v.outputLanes.map(k => {
+							let node = {
+								type: "app.Link",
+								source: {
+									id: v.id
+								},
+								target: {
+									id: k
+								},
+								router: {
+									name: "manhattan"
+								},
+								connector: {
+									name: "rounded"
+								},
+								form_data: {
+									label: "",
+									joinTable: _.cloneDeep(JOIN_TABLE_TPL)
+								},
+								labels: "",
+								attrs: {}
+							};
+							cells.push(node);
+						});
+					}
+				});
+			}
+			log("job loadSchema cells", cells);
+			return {
+				cells: cells
+			};
+		},
+
+		/**
+		 * handler join table on after reverse editor data
+		 * @param stages
+		 * @param graph
+		 */
+		handleJoinTables(stages, graph) {
+			log("Job.handleJoinTables", stages, graph);
+			if (stages) {
+				stages.map(stage => {
+					if (
+						stage.joinTables &&
+						stage.joinTables.length > 0 &&
+						stage.inputLanes &&
+						stage.inputLanes.length > 0 &&
+						![
+							"field_processor",
+							"java_processor",
+							"js_processor",
+							"aggregation_processor",
+							"row_filter_processor"
+						].includes(stage.type)
+					) {
+						// 目标节点 数据节点 jointables
+						// tableName -> joinTable
+						let joinTables = {};
+						stage.joinTables.map(table => {
+							joinTables[table.stageId] = table;
+						});
+
+						let cell = graph.getCell(stage.id);
+						graph.getConnectedLinks(cell, {inbound: true}).forEach( link => {
+							let sourceCell = link.getSourceCell();
+							let sourceDataCells = sourceCell.getFirstDataNode()
+								.filter( cell => !!joinTables[cell.id]);
+							if(sourceDataCells && sourceDataCells.length > 0){
+								let formData = link.getFormData();
+								formData.joinTable = joinTables[sourceDataCells[0].id];
+							}
+						});
+					}
+				});
+			}
+		}, 
+		
 		status: {
 			handler() {
 				if (["draft", "error", "paused"].includes(this.status)) {
