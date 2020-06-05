@@ -123,7 +123,7 @@ export default {
 				log("model script", this.model);
 			}
 			gData.stageId = cell.id;
-			gData.dataFlow = arguments[3].editor.getDataFlow();
+			gData.dataFlowId = arguments[3].editor.scope.dataFlowId;
 
 			editorMonitor = vueAdapter.editor;
 		},
@@ -141,22 +141,23 @@ export default {
 
 		showDebug() {
 			log("Connect to Test Server");
-			if (!gData.dataFlow || !gData.dataFlow.id) {
+			if (!gData.dataFlowId) {
 				this.$message.error(this.$t("editor.cell.processor.script.warning_for_not_save"));
 				return;
 			}
 			ws.getAgentId((err, id) => {
 				if (!err && id) {
 					let params = this.model;
-					ws.send({
-						type: "execute_script",
-						script: params.script,
-						script_type: params.type,
-						agentId: id,
-						dataFlowId: gData.dataFlow.id,
-						stageId: gData.stageId,
-						clientId: ws.getClientId()
-					});
+					ws.sendPipe(
+						{
+							type: "execute_script",
+							script: params.script,
+							script_type: params.type,
+							dataFlowId: gData.dataFlowId,
+							stageId: gData.stageId
+						},
+						id
+					);
 				} else {
 					this.$message.error(this.$t("editor.cell.processor.script.connect_server_fail"));
 				}

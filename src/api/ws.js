@@ -7,9 +7,6 @@ import EventEmitter from "../editor/lib/EventEmitter";
 import Cookie from "tiny-cookie";
 import log from "../log";
 import factory from "./factory";
-import {
-	uuid
-} from '../editor/util/Schema'
 
 const workerApi = factory("Workers");
 
@@ -21,7 +18,6 @@ class WSClient extends EventEmitter {
 		this.ws = null;
 		this.timeoutId = null;
 		this.agentId = null;
-		this.clientId = uuid();
 	}
 
 	/**
@@ -136,12 +132,30 @@ class WSClient extends EventEmitter {
 			return;
 		}
 
-		self.emit(message.type, message);
+		if(message.type === "pipe"){
+			let data = message.data || {};
+			let eventName = data.type;
+			if(eventName) {
+				self.emit(eventName, data);
+			} else {
+				self.emit(message.type, message);
+			}
+		} else {
+			self.emit(message.type, message);
+		}
 	}
 
 	send(msg) {
 		msg = typeof msg === "string" ? msg : JSON.stringify(msg);
 		this.ws.send(msg);
+	}
+
+	sendPipe(msg, receiver) {
+		this.send({
+			type: "pipe",
+			receiver: receiver,
+			data: msg
+		});
 	}
 
 	/**
@@ -156,10 +170,6 @@ class WSClient extends EventEmitter {
 		});
 	}
 
-	getClientId() {
-		return this.clientId
-	}
-
 	/**
 	 * get current user started data agent
 	 * @return {string}
@@ -170,26 +180,11 @@ class WSClient extends EventEmitter {
 			cb(null, self.agentId);
 		} else {
 			workerApi
-				.get({
-					filter: JSON.stringify({
-						where: {
-							worker_type: "connector",
-							user_id: {
-								regexp: `^${this.getUserId()}$`
-							},
-							ping_time: {
-								gte: new Date().getTime() - 60 * 1000
-							}
-						},
-						fields: {
-							process_id: 1
-						},
-						order: "ping_time DESC"
-					})
-				})
+				.getAvailableAgent()
 				.then(result => {
-					if (result && result.data && result.data.length > 0) {
-						self.agentId = result.data[0].process_id;
+					log("ws.getAgentId:", result);
+					if (result && result.data && result.data.result && result.data.result.length > 0) {
+						self.agentId = result.data.result[0].process_id;
 						cb(null, self.agentId);
 					} else {
 						cb(new Error("Can not found data agent id"));
@@ -225,7 +220,8 @@ wsClient.connect();
 export default wsClient;
 
 export const EventName = {
-	EXECUTE_SCRIPT_RESULT: "execute_script_result"
+	EXECUTE_SCRIPT_RESULT: "execute_script_result",
+	PIPE: "pipe"
 };
 
 /*wsClient.on("execute_script", (msg) => {
