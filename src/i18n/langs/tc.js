@@ -70,6 +70,7 @@ const tc = {
 		Current: "當前時間",
 		SyncTime: "同步時間",
 		batchDelete: "批量刪除",
+		batchRest: "批量重置",
 		bulkExport: "批量導出",
 		bulkScheuled: "批量啟動",
 		bulkStopping: "批量停止",
@@ -133,6 +134,7 @@ const tc = {
 		taskSettingPlaceholder: "請選擇任務同步類型",
 		updateTime: "更新時間",
 		runningSpeed: "運行速度",
+		taskSwitch: "运行开关",
 		operate: "操作",
 		dataMap: "數據地圖",
 		edit: "編輯",
@@ -161,6 +163,8 @@ const tc = {
 		data_quality_tag: "添加數據質量標籤",
 		notification_lag: "通知",
 		isOpenAutoDDL: "自動處理DDL操作",
+		transformerConcurrency: "目標寫入線程數",
+		processorConcurrency: "處理器線程數",
 		send_email_when_replication: "幾秒後重新發送",
 		send_email_at_most_one_replication: "超過多少秒取消發送",
 		read_cdc_interval: "增量同步間隔(ms)",
@@ -194,7 +198,10 @@ const tc = {
 			reset: "重置",
 			save: "保存",
 			saveing: "保存中",
-			reloadSchema: "重新加載"
+			reloadSchema: "刷新schema",
+			debug: "debug測試",
+			quantitative: "定量",
+			increment: "增量",
 		},
 		save_before_running: "請先保存再運行",
 		reset_job: {
@@ -284,6 +291,9 @@ const tc = {
 							placeholder: "",
 							keep: "保持已存在的數據",
 							remove: "運行前刪除已存在的數據"
+						},
+						initialSyncOrder: {
+							keep: "初始化節點順序",
 						},
 						filter: {
 							label: "過濾條件",
@@ -610,10 +620,10 @@ const tc = {
 					tip: "填充可視區域"
 				},
 				zoom_out: {
-					tip: "放大"
+					tip: "縮小"
 				},
 				zoom_in: {
-					tip: "縮小"
+					tip: "放大"
 				},
 				grid_size: {
 					tip: "網格大小"
