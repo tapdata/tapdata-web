@@ -105,9 +105,9 @@ export default class Graph extends Component {
 			}
 		}));
 		self.paper.on('blank:pointerdown', self.paperScroller.startPanning);
-		self.paper.on('cell:pointerdown', (cellView, evt, x, y) => {
+		/*self.paper.on('cell:pointerdown', (cellView, evt, x, y) => {
 			self.paperScroller.startPanning(evt, x, y);
-		});
+		});*/
 
 		this.paperScroller.center();
 	}
@@ -282,7 +282,7 @@ export default class Graph extends Component {
 		this.tapdataLane.fitEmbeds(_.cloneDeep(embedOpts));
 		this.apiLane.fitEmbeds(_.cloneDeep(embedOpts));*/
 
-		this.paperScroller.zoomToFit();
+		//this.paperScroller.zoomToFit();
 		/*this.paper.scaleContentToFit({
 			padding: 50
 		});*/
@@ -427,8 +427,13 @@ export default class Graph extends Component {
 			} else if(["api_group"].includes(cellData.type)){
 				lane = self.apiLane;
 				cell = self.createCell("dataMap.Classification", 20, 50, null, cellData);
+			} else if(["table"].includes(cellData.type)){
+				lane = self.sourceLane;
+				cell = self.createCell("dataMap.Table", 20, 50, null, cellData);
 			} else if(["model"].includes(cellData.type)){
 				cell = self.createCell("dataMap.API", 20, 50, null, cellData);
+			} else {
+				log("Not implement node " + cellData.type);
 			}
 
 			if(cell) {
@@ -470,7 +475,7 @@ export default class Graph extends Component {
 
 		this.fitEmbeds();
 
-		this.paper.freeze();
+		// this.paper.freeze();
 
 		log("DataMap.graph.getData", self.getData());
 	}
