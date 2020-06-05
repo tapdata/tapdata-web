@@ -123,7 +123,7 @@ export default {
 				log("model script", this.model);
 			}
 			gData.stageId = cell.id;
-			gData.dataFlow = arguments[3].editor.getDataFlow();
+			gData.dataFlowId = arguments[3].editor.scope.dataFlowId;
 
 			editorMonitor = vueAdapter.editor;
 		},
@@ -141,7 +141,7 @@ export default {
 
 		showDebug() {
 			log("Connect to Test Server");
-			if (!gData.dataFlow || !gData.dataFlow.id) {
+			if (!gData.dataFlowId) {
 				this.$message.error(this.$t("editor.cell.processor.script.warning_for_not_save"));
 				return;
 			}
@@ -153,7 +153,7 @@ export default {
 							type: "execute_script",
 							script: params.script,
 							script_type: params.type,
-							dataFlowId: gData.dataFlow.id,
+							dataFlowId: gData.dataFlowId,
 							stageId: gData.stageId
 						},
 						id
