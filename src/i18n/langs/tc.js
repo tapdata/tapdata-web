@@ -129,6 +129,7 @@ const tc = {
 		dataPlaceholder: "選擇時間範圍",
 		taskStatus: '運行狀態',
 		taskStatusPlaceholder: '請選擇任務狀態',
+		taskSettingPlaceholder: "請選擇任務同步類型",
 		updateTime: '更新時間',
 		runningSpeed: '運行速度',
 		operate: '操作',
@@ -529,9 +530,10 @@ const tc = {
 				},
 			},
 			link: {
-				none_join_type: '關聯類型必填',
-				none_join_key: '關聯字段必填',
-				none_join_path: '關聯寫入路徑必填',
+				none_join_type: "關聯類型必填",
+				none_join_key: "關聯字段必填",
+				none_join_path: "關聯寫入路徑必填",
+				none_array_unique_key: "合併進數組時，必須提供唯一鍵",
 				form: {
 					label: {
 						label: '标签',
@@ -607,10 +609,10 @@ const tc = {
 					tip: '填充可視區域'
 				},
 				zoom_out: {
-					tip: "縮小"
+					tip: "放大"
 				},
 				zoom_in: {
-					tip: "放大"
+					tip: "縮小"
 				},
 				grid_size: {
 					tip: '網格大小'

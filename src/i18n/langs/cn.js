@@ -541,9 +541,10 @@ const cn = {
 				},
 			},
 			link: {
-				none_join_type: '关联类型必填',
-				none_join_key: '关联字段必填',
-				none_join_path: '关联写入路径必填',
+				none_join_type: "关联类型必填",
+				none_join_key: "关联字段必填",
+				none_join_path: "关联写入路径必填",
+				none_array_unique_key: "合并进数组时，必须提供唯一键",
 				form: {
 					label: {
 						label: '标签',
@@ -619,10 +620,10 @@ const cn = {
 					tip: '填充可视区域'
 				},
 				zoom_out: {
-					tip: "缩小"
+					tip: "放大"
 				},
 				zoom_in: {
-					tip: "放大"
+					tip: "缩小"
 				},
 				grid_size: {
 					tip: '网格大小'

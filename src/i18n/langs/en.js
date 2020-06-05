@@ -529,9 +529,10 @@ const en = {
 				},
 			},
 			link: {
-				none_join_type: 'JoinType is required',
-				none_join_key: 'JoinKeys is required',
-				none_join_path: 'JoinPath is required',
+				none_join_type: "JoinType is required",
+				none_join_key: "JoinKeys is required",
+				none_join_path: "JoinPath is required",
+				none_array_unique_key: "Array unique key is required",
 				form: {
 					label: {
 						label: 'Label',
