@@ -182,8 +182,9 @@ class WSClient extends EventEmitter {
 			workerApi
 				.getAvailableAgent()
 				.then(result => {
-					if (result && result.data && result.data.length > 0) {
-						self.agentId = result.data[0].process_id;
+					log("ws.getAgentId:", result);
+					if (result && result.data && result.data.result && result.data.result.length > 0) {
+						self.agentId = result.data.result[0].process_id;
 						cb(null, self.agentId);
 					} else {
 						cb(new Error("Can not found data agent id"));
