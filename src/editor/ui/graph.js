@@ -10,12 +10,28 @@ import joint from "../lib/rappid/rappid";
 // import shapes from '../lib/rappid/models/shapes';
 import navigatorElementView from "../lib/rappid/view/navigator";
 // import Panel from "./panel";
-import { stencilConfig, selectionConfig, haloConfig, toolbarConfig } from "../lib/rappid/config";
-import { VueAdapter } from "../vue-adapter";
+import {
+	stencilConfig,
+	selectionConfig,
+	haloConfig,
+	toolbarConfig
+} from "../lib/rappid/config";
+import {
+	VueAdapter
+} from "../vue-adapter";
 import log from "../../log";
-import { DATA_FLOW_SETTING_DATA_KEY, FORM_DATA_KEY, SCHEMA_DATA_KEY, OUTPUT_SCHEMA_DATA_KEY } from "../constants";
-import { isAcyclic } from "graphlib/lib/alg";
-import { EditorEventType } from "../lib/events";
+import {
+	DATA_FLOW_SETTING_DATA_KEY,
+	FORM_DATA_KEY,
+	SCHEMA_DATA_KEY,
+	OUTPUT_SCHEMA_DATA_KEY
+} from "../constants";
+import {
+	isAcyclic
+} from "graphlib/lib/alg";
+import {
+	EditorEventType
+} from "../lib/events";
 import Tab from "./tab";
 
 window.joint = joint;
@@ -61,7 +77,7 @@ export default class Graph extends Component {
 
 		graph.on(
 			"add",
-			function(cell, collection, opt) {
+			function (cell, collection, opt) {
 				if (opt.stencil) self.createInspector(cell);
 
 				self.emit(EditorEventType.ADD_CELL);
@@ -69,8 +85,10 @@ export default class Graph extends Component {
 			this
 		);
 
-		this.commandManager = new joint.dia.CommandManager({ graph: graph });
-		this.commandManager.on("stack", this.emit.bind(this, EditorEventType.DATAFLOW_CHANGED) );
+		this.commandManager = new joint.dia.CommandManager({
+			graph: graph
+		});
+		this.commandManager.on("stack", this.emit.bind(this, EditorEventType.DATAFLOW_CHANGED));
 
 		const paper = (this.paper = new joint.dia.Paper({
 			model: graph,
@@ -82,7 +100,9 @@ export default class Graph extends Component {
 			// markAvailable: true,
 			defaultLink: new joint.shapes.app.Link(),
 			defaultConnectionPoint: joint.shapes.app.Link.connectionPoint,
-			interactive: { linkMove: false },
+			interactive: {
+				linkMove: false
+			},
 			async: true,
 			sorting: joint.dia.Paper.sorting.APPROX,
 			snapLinks: 75,
@@ -100,7 +120,7 @@ export default class Graph extends Component {
 					}
 				}
 			},
-			validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+			validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
 				// don't allow loop links
 				if (cellViewS === cellViewT) return false;
 
@@ -161,13 +181,15 @@ export default class Graph extends Component {
 			} */
 		});
 
-		this.snaplines = new joint.ui.Snaplines({ paper: paper });
+		this.snaplines = new joint.ui.Snaplines({
+			paper: paper
+		});
 
 		const paperScroller = (this.paperScroller = new joint.ui.PaperScroller({
 			paper: paper,
 			autoResizePaper: true,
 			cursor: "grab",
-			contentOptions: function(paperScroller) {
+			contentOptions: function (paperScroller) {
 				let visibleArea = paperScroller.getVisibleArea();
 				return {
 					padding: {
@@ -186,10 +208,14 @@ export default class Graph extends Component {
 		paperScroller.render().center();
 	}
 
-	selectionPosition(cell){
+	selectionPosition(cell) {
 		// this.paperScroller.center();
-		this.paperScroller.scrollToElement(cell, { animation: { duration: 600 }});
-		this.selection.collection.add(cell);
+		this.paperScroller.scrollToElement(cell, {
+			animation: {
+				duration: 600
+			}
+		});
+		this.selection.collection.reset([cell]);
 	}
 
 	isAcyclic() {
@@ -228,8 +254,11 @@ export default class Graph extends Component {
 			this.editor.getRightSidebar().hide();
 		}
 		this.unHighlightAllCells();
-		if(document.getElementById('searchNode')){
+		if (document.getElementById('searchNode')) {
 			document.getElementById('searchNode').blur();
+		}
+		if (document.getElementById('taskNameInput')) {
+			document.getElementById('taskNameInput').blur();
 		}
 	}
 
@@ -253,7 +282,9 @@ export default class Graph extends Component {
 				self.unHighlightAllCells();
 			}, 0);
 		} else {
-			let first = self.selection.collection.findWhere({ id: cell.id });
+			let first = self.selection.collection.findWhere({
+				id: cell.id
+			});
 			if (!first) {
 				self.selection.collection.reset([cell]);
 			}
@@ -265,12 +296,18 @@ export default class Graph extends Component {
 					cellView.highlight(null, {
 						name: "stroke",
 						options: {
-							rx: isDataNode ? 20: 16,
+							rx: isDataNode ? 20 : 16,
 							ry: isDataNode ? 20 : 16
 						}
 					});
 				}, 0);
 			}
+		}
+		if (document.getElementById('searchNode')) {
+			document.getElementById('searchNode').blur();
+		}
+		if (document.getElementById('taskNameInput')) {
+			document.getElementById('taskNameInput').blur();
 		}
 	}
 
@@ -294,7 +331,7 @@ export default class Graph extends Component {
 				'org.Member': ['attrs/.rank/text', 'attrs/root/dataTooltip', 'attrs/.name/text']
 			}, */
 			// Remove tooltip definition from clone
-			dragStartClone: function(cell) {
+			dragStartClone: function (cell) {
 				if (cell.get("type").startsWith("app.")) {
 					return self.createCell(cell.get("type"));
 				} else {
@@ -340,7 +377,7 @@ export default class Graph extends Component {
 		// Otherwise, initiate paper pan.
 		this.paper.on(
 			"blank:pointerdown",
-			function(evt, x, y) {
+			function (evt, x, y) {
 				if (this.keyboard.isActive("shift", evt)) {
 					this.selection.startSelecting(evt);
 				} else {
@@ -354,11 +391,11 @@ export default class Graph extends Component {
 
 		this.paper.on(
 			"element:pointerdown",
-			function(elementView, evt) {
+			function (elementView, evt) {
 				// Select an element if CTRL/Meta key is pressed while the element is clicked.
 				if (this.keyboard.isActive("ctrl meta", evt)) {
 					if (
-						this.selection.collection.find(function(cell) {
+						this.selection.collection.find(function (cell) {
 							return cell.isLink();
 						})
 					) {
@@ -374,7 +411,7 @@ export default class Graph extends Component {
 
 		this.selection.on(
 			"selection-box:pointerdown",
-			function(elementView, evt) {
+			function (elementView, evt) {
 				// Unselect an element if the CTRL/Meta key is pressed while a selected element is clicked.
 				if (this.keyboard.isActive("ctrl meta", evt)) {
 					evt.preventDefault();
@@ -399,12 +436,9 @@ export default class Graph extends Component {
 			selection.destroySelectionBox(primaryCell);
 			this.selectPrimaryCell(primaryCellView);
 		} else if (collection.length === 2) {
-			collection.each(function(cell) {
+			collection.each(function (cell) {
 				selection.createSelectionBox(cell);
 			});
-		}
-		if(document.getElementById('searchNode')){
-			document.getElementById('searchNode').blur();
 		}
 	}
 
@@ -418,12 +452,13 @@ export default class Graph extends Component {
 			} else {
 				this.selectPrimaryLink(cellView);
 			}
-			this.createInspector(cell);
+			// this.createInspector(cell);
 		} else {
 			if (cell.isElement()) {
 				this.selectCell(cell);
 			}
 		}
+		this.createInspector(cell);
 		if (cell.isElement()) {
 			this.emit(EditorEventType.SELECTED_STAGE, cell.toJSON());
 		}
@@ -459,14 +494,19 @@ export default class Graph extends Component {
 		let toolsView = new joint.dia.ToolsView({
 			name: "link-pointerdown",
 			tools: [
-				new ns.Vertices({ vertexAdding: true }),
+				new ns.Vertices({
+					vertexAdding: true
+				}),
 				// new ns.SourceAnchor(),
 				// new ns.TargetAnchor(),
 				// new ns.SourceArrowhead(),
 				new ns.TargetArrowhead(),
 				new ns.Segments(),
 				// new ns.Boundary({ padding: 15 }),
-				new ns.Remove({ offset: -20, distance: 40 })
+				new ns.Remove({
+					offset: -20,
+					distance: 40
+				})
 			]
 		});
 
@@ -493,9 +533,8 @@ export default class Graph extends Component {
 
 	initToolsAndInspector() {
 		let self = this;
-		this.paper.on(
-			{
-				"cell:pointerup": function(cellView) {
+		this.paper.on({
+				"cell:pointerup": function (cellView) {
 					let cell = cellView.model;
 					let collection = this.selection.collection;
 					if (collection.includes(cell)) return;
@@ -506,7 +545,7 @@ export default class Graph extends Component {
 					}
 				},
 
-				"link:mouseenter": function(linkView) {
+				"link:mouseenter": function (linkView) {
 					if (linkView.hasTools()) return;
 
 					if (!self.editable) return;
@@ -515,7 +554,9 @@ export default class Graph extends Component {
 					let toolsView = new joint.dia.ToolsView({
 						name: "link-hover",
 						tools: [
-							new ns.Vertices({ vertexAdding: false }),
+							new ns.Vertices({
+								vertexAdding: false
+							}),
 							// new ns.SourceArrowhead(),
 							new ns.TargetArrowhead()
 						]
@@ -524,7 +565,7 @@ export default class Graph extends Component {
 					linkView.addTools(toolsView);
 				},
 
-				"link:mouseleave": function(linkView) {
+				"link:mouseleave": function (linkView) {
 					// Remove only the hover tool, not the pointerdown tool
 					if (linkView.hasTools("link-hover")) {
 						linkView.removeTools();
@@ -536,7 +577,7 @@ export default class Graph extends Component {
 
 		this.graph.on(
 			"change",
-			function(cell, opt) {
+			function (cell, opt) {
 				// if (!cell.isLink() || !opt.inspector) return;
 				/* let ns = joint.linkTools;
 			let toolsView = new joint.dia.ToolsView({
@@ -613,20 +654,22 @@ export default class Graph extends Component {
 
 	initKeyboardShortcuts() {
 		this.keyboard = new joint.ui.Keyboard();
-		this.keyboard.on(
-			{
-				"ctrl+c": function() {
+		this.keyboard.on({
+				"ctrl+c": function () {
 					// Copy all selected elements and their associated links.
 					this.clipboard.copyElements(this.selection.collection, this.graph);
 				},
 
-				"ctrl+v": function() {
+				"ctrl+v": function () {
 					let pastedCells = this.clipboard.pasteCells(this.graph, {
-						translate: { dx: 20, dy: 20 },
+						translate: {
+							dx: 20,
+							dy: 20
+						},
 						useLocalStorage: true
 					});
 
-					let elements = _.filter(pastedCells, function(cell) {
+					let elements = _.filter(pastedCells, function (cell) {
 						return cell.isElement();
 					});
 
@@ -635,44 +678,50 @@ export default class Graph extends Component {
 					this.selection.collection.reset(elements);
 				},
 
-				"ctrl+x shift+delete": function() {
+				"ctrl+x shift+delete": function () {
 					this.clipboard.cutElements(this.selection.collection, this.graph);
 				},
 
-				"delete backspace": function(evt) {
+				"delete backspace": function (evt) {
 					evt.preventDefault();
 					this.graph.removeCells(this.selection.collection.toArray());
 				},
 
-				"ctrl+z": function() {
+				"ctrl+z": function () {
 					this.commandManager.undo();
 					this.selection.cancelSelection();
 				},
 
-				"ctrl+y": function() {
+				"ctrl+y": function () {
 					this.commandManager.redo();
 					this.selection.cancelSelection();
 				},
 
-				"ctrl+a": function() {
+				"ctrl+a": function () {
 					this.selection.collection.reset(this.graph.getElements());
 				},
 
-				"ctrl+plus": function(evt) {
+				"ctrl+plus": function (evt) {
 					evt.preventDefault();
-					this.paperScroller.zoom(0.2, { max: 5, grid: 0.2 });
+					this.paperScroller.zoom(0.2, {
+						max: 5,
+						grid: 0.2
+					});
 				},
 
-				"ctrl+minus": function(evt) {
+				"ctrl+minus": function (evt) {
 					evt.preventDefault();
-					this.paperScroller.zoom(-0.2, { min: 0.2, grid: 0.2 });
+					this.paperScroller.zoom(-0.2, {
+						min: 0.2,
+						grid: 0.2
+					});
 				},
 
-				"keydown:shift": function(evt) {
+				"keydown:shift": function (evt) {
 					this.paperScroller.setCursor("crosshair");
 				},
 
-				"keyup:shift": function() {
+				"keyup:shift": function () {
 					this.paperScroller.setCursor("grab");
 				}
 			},
@@ -717,15 +766,14 @@ export default class Graph extends Component {
 	openAsSVG() {
 		let paper = this.paper;
 		paper.hideTools().toSVG(
-			function(svg) {
+			function (svg) {
 				new joint.ui.Lightbox({
 					image: "data:image/svg+xml," + encodeURIComponent(svg),
 					downloadable: true,
 					fileName: "Rappid"
 				}).open();
 				paper.showTools();
-			},
-			{
+			}, {
 				preserveDimensions: true,
 				convertImagesToDataUris: true,
 				useComputedStyles: false,
@@ -737,15 +785,14 @@ export default class Graph extends Component {
 	openAsPNG() {
 		let paper = this.paper;
 		paper.hideTools().toPNG(
-			function(dataURL) {
+			function (dataURL) {
 				new joint.ui.Lightbox({
 					image: dataURL,
 					downloadable: true,
 					fileName: "Rappid"
 				}).open();
 				paper.showTools();
-			},
-			{
+			}, {
 				padding: 10,
 				useComputedStyles: false,
 				stylesheet: this.exportStylesheet
@@ -755,7 +802,7 @@ export default class Graph extends Component {
 
 	applyOnSelection(method) {
 		this.graph.startBatch("selection");
-		this.selection.collection.models.forEach(function(model) {
+		this.selection.collection.models.forEach(function (model) {
 			model[method]();
 		});
 		this.graph.stopBatch("selection");
@@ -833,11 +880,6 @@ export default class Graph extends Component {
 			this.toolbar.getWidgetByName("clear").disable();
 			setTimeout(() => this.paperScroller.centerContent(), 0);
 		}
-	}
-	selectionPosition(cell){
-		this.paperScroller.scrollToElement(cell, { animation: { duration: 600 }});
-		this.selection.collection.reset(cell);
-		this.selection.collection.add(cell);
 	}
 
 	getData() {

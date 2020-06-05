@@ -1,6 +1,10 @@
-import { options } from "../../lib/rappid/config";
+import {
+	options
+} from "../../lib/rappid/config";
 import GridFSAttribute from "./GridFSAttribute";
-import { FORM_DATA_KEY } from "../../constants";
+import {
+	FORM_DATA_KEY
+} from "../../constants";
 import log from "../../../log";
 import i18n from "../../../i18n/i18n";
 
@@ -23,12 +27,10 @@ export const GridFSNodeConfig = {
 			}
 		},
 		prototypeProperties: {
-			portLabelMarkup: [
-				{
-					tagName: "text",
-					selector: "portLabel"
-				}
-			],
+			portLabelMarkup: [{
+				tagName: "text",
+				selector: "portLabel"
+			}],
 
 			isDataNode() {
 				return true;
@@ -41,7 +43,14 @@ export const GridFSNodeConfig = {
 			 */
 			allowTarget(targetCell) {
 				// log("GridFsNode.allowTarget", targetCell);
-				return !["app.GridFSNode", "app.Database"].includes(targetCell.get("type"));
+				let formData = this.getFormData() || {};
+				if (formData.gridfsReadMode === "binary") {
+					return ["app.FileNode"].includes(targetCell.get("type"));
+				} else if (formData.gridfsReadMode === "data") {
+					return !["app.GridFSNode", "app.Database"].includes(targetCell.get("type"));
+				} else {
+					return false;
+				}
 			},
 
 			/**
@@ -50,7 +59,7 @@ export const GridFSNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-				// log("GridFsNode.allowSource", sourceCell);
+				log("GridFsNode.allowSource", sourceCell);
 				return ["app.FileNode"].includes(sourceCell.get("type"));
 			},
 
@@ -89,7 +98,11 @@ export const GridFSNodeConfig = {
 						unit: "px",
 						label: "Font size",
 						group: "text",
-						when: { ne: { "attrs/label/text": "" } },
+						when: {
+							ne: {
+								"attrs/label/text": ""
+							}
+						},
 						index: 2
 					},
 					fontFamily: {
@@ -97,7 +110,11 @@ export const GridFSNodeConfig = {
 						options: options.fontFamily,
 						label: "Font family",
 						group: "text",
-						when: { ne: { "attrs/label/text": "" } },
+						when: {
+							ne: {
+								"attrs/label/text": ""
+							}
+						},
 						index: 3
 					},
 					fontWeight: {
@@ -105,7 +122,11 @@ export const GridFSNodeConfig = {
 						options: options.fontWeight,
 						label: "Font thickness",
 						group: "text",
-						when: { ne: { "attrs/label/text": "" } },
+						when: {
+							ne: {
+								"attrs/label/text": ""
+							}
+						},
 						index: 4
 					},
 					fill: {
@@ -113,7 +134,11 @@ export const GridFSNodeConfig = {
 						options: options.colorPalette,
 						label: "Fill",
 						group: "text",
-						when: { ne: { "attrs/label/text": "" } },
+						when: {
+							ne: {
+								"attrs/label/text": ""
+							}
+						},
 						index: 5
 					}
 				},
@@ -141,7 +166,11 @@ export const GridFSNodeConfig = {
 						unit: "px",
 						label: "Outline thickness",
 						group: "presentation",
-						when: { ne: { "attrs/body/stroke": "transparent" } },
+						when: {
+							ne: {
+								"attrs/body/stroke": "transparent"
+							}
+						},
 						index: 3
 					},
 					strokeDasharray: {
@@ -150,9 +179,16 @@ export const GridFSNodeConfig = {
 						label: "Outline style",
 						group: "presentation",
 						when: {
-							and: [
-								{ ne: { "attrs/body/stroke": "transparent" } },
-								{ ne: { "attrs/body/strokeWidth": 0 } }
+							and: [{
+									ne: {
+										"attrs/body/stroke": "transparent"
+									}
+								},
+								{
+									ne: {
+										"attrs/body/strokeWidth": 0
+									}
+								}
 							]
 						},
 						index: 4
@@ -186,7 +222,10 @@ export const GridFSNodeConfig = {
 		 */
 		// groupLabel: '',
 
-		size: { width: 5, height: 4 },
+		size: {
+			width: 5,
+			height: 4
+		},
 		attrs: {
 			root: {
 				dataTooltip: i18n.t("editor.cell.data_node.gridfs.tip"),

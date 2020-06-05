@@ -1,9 +1,11 @@
 <template>
 	<div class="nodeStyle">
 		<div class="nodeBody">
-			<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
-				{{ $t("dataFlow.button.viewMonitoring") }}
-			</el-button>
+			<div class="head-btns">
+				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+					{{ $t("dataFlow.button.viewMonitoring") }}
+				</el-button>
+			</div>
 			<el-form
 				class="e-form"
 				label-position="top"

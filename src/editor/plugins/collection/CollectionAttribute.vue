@@ -1,10 +1,20 @@
 <template>
 	<div class="e-collection nodeStyle">
 		<div class="nodeBody">
-			<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
-				{{$t("dataFlow.button.viewMonitoring")}}
-			</el-button>
-			<el-form class="e-form" label-position="top" label-width="160px" :model="model" ref="form" :rules="rules" :disabled="disabled">
+			<div class="head-btns">
+				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+					{{ $t("dataFlow.button.viewMonitoring") }}
+				</el-button>
+			</div>
+			<el-form
+				class="e-form"
+				label-position="top"
+				label-width="160px"
+				:model="model"
+				ref="form"
+				:rules="rules"
+				:disabled="disabled"
+			>
 				<el-form-item
 					:label="$t('editor.cell.data_node.collection.form.database.label')"
 					prop="connectionId"
@@ -57,9 +67,17 @@
 						size="mini"
 					></el-input>
 				</el-form-item>
-				<el-form-item required :label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
-							  v-if="isSourceDataNode">
-					<el-input-number v-model="model.initialSyncOrder" controls-position="right"  :min="1" size="mini"></el-input-number>
+				<el-form-item
+					required
+					:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
+					v-if="isSourceDataNode"
+				>
+					<el-input-number
+						v-model="model.initialSyncOrder"
+						controls-position="right"
+						:min="1"
+						size="mini"
+					></el-input-number>
 				</el-form-item>
 				<el-form-item
 					required
@@ -204,7 +222,7 @@ export default {
 				type: "collection",
 				primaryKeys: "",
 				filter: "",
-				initialSyncOrder:1,
+				initialSyncOrder: 1
 			},
 
 			mergedSchema: null
@@ -292,7 +310,7 @@ export default {
 
 		seeMonitor() {
 			editorMonitor.goBackMontior();
-		},
+		}
 	}
 };
 </script>
