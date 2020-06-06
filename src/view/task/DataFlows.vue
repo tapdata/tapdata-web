@@ -174,7 +174,7 @@
 								v-model="scope.row.newStatus"
 								inactive-value="stopping"
 								active-value="scheduled"
-								@change="handleStatus(scope.row.id, scope.row.newStatus)"
+								@change="handleStatus(scope.row.id,scope.row.status, scope.row.newStatus)"
 							></el-switch>
 						</div>
 					</template>
@@ -621,7 +621,10 @@ export default {
 					});
 				})
 		},
-		async handleStatus(id, status) {
+		async handleStatus(id, oldStatus,status) {
+			if(oldStatus === 'draft'){
+				return ;
+			}
 			let data = {
 				status: status
 			};

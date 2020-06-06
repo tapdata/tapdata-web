@@ -4,6 +4,7 @@
 			<el-autocomplete
 				v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
 				class="inline-input searchNode"
+				id="searchNode"
 				v-model="state1"
 				size="mini"
 				:fetch-suggestions="querySearch"
@@ -75,14 +76,6 @@
 					  >{{ $t("dataFlow.button.save") }}
 				  </el-button> -->
 
-			<el-button
-				v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
-				size="mini"
-				type="default"
-				@click="stopCapture"
-				>{{ $t("dataFlow.button.stop_capture") }}
-			</el-button>
-
 			<!-- <el-button
 				v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
 				size="mini"
@@ -138,7 +131,7 @@
 				<div
 					class="headImg"
 					@click="capture"
-					v-if="['scheduled', 'running'].includes(status) && executeMode === 'normal'"
+					v-if="['running'].includes(status) && executeMode === 'normal'"
 				>
 					<span class="iconfont icon-yulan"></span>
 				</div>
@@ -147,10 +140,10 @@
 			<el-tooltip
 				class="job-head-title"
 				effect="dark"
-				:content="$t('dataFlow.button.force_stop')"
+				:content="$t('dataFlow.button.stop_capture')"
 				placement="bottom"
 			>
-				<div class="headImg" @click="stop(true)" v-if="dataFlowId !== null && ['stopping'].includes(status)">
+				<div class="headImg" @click="stopCapture" v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'">
 					<span class="iconfont icon-zhengfangxingxuanzhongzhuangtai"></span>
 				</div>
 			</el-tooltip>
@@ -161,7 +154,7 @@
 				:content="$t('dataFlow.button.reloadSchema')"
 				placement="bottom"
 			>
-				<div class="headImg" @click="reloadSchema">
+				<div class="headImg" @click="reloadSchema" v-if="['paused', 'error', 'draft'].includes(status)">
 					<span class="iconfont icon-yunshuaxin"></span>
 				</div>
 			</el-tooltip>
@@ -215,34 +208,53 @@
 			>
 				<span class="iconfont icon-yunhang1"></span>
 			</div> -->
-			<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.start')" placement="bottom">
-				<el-button
-					class="headImg borderStyle iconfont icon-yunhang1"
-					@click="start"
-					:disabled="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status) ? false : true"
+			<template v-if="!['draft'].includes(status)">
+				<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.start')" placement="bottom">
+					<el-button
+						class="headImg borderStyle iconfont icon-yunhang1"
+						@click="start"
+						:disabled="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status) ? false : true"
+					>
+					</el-button>
+				</el-tooltip>
+
+				<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.stop')" placement="bottom">
+					<el-button
+						class="headImg borderStyle iconfont icon-zanting2"
+						@click="stop(false)"
+						:disabled="dataFlowId !== null && ['scheduled', 'running'].includes(status) ? false : true"
+					></el-button>
+				</el-tooltip>
+
+				<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.reset')" placement="bottom">
+					<el-button
+						class="headImg borderStyle iconfont icon-shuaxin3"
+						@click="reset"
+						:disabled="
+							dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)
+								? false
+								: true
+						"
+					></el-button>
+				</el-tooltip>
+
+				<el-tooltip
+					class="job-head-title"
+					effect="dark"
+					:content="$t('dataFlow.button.force_stop')"
+					placement="bottom"
 				>
-				</el-button>
-			</el-tooltip>
+					<el-button
+						class="headImg borderStyle iconfont icon-zhengfangxingxuanzhongzhuangtai"
+						@click="stop(true)"
+						:disabled="dataFlowId !== null && ['stopping'].includes(status)?false:true"
+					>
+					</el-button>
+				</el-tooltip>
 
-			<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.stop')" placement="bottom">
-				<el-button
-					class="headImg borderStyle iconfont icon-zanting2"
-					@click="stop(false)"
-					:disabled="dataFlowId !== null && ['scheduled', 'running'].includes(status) ? false : true"
-				></el-button>
-			</el-tooltip>
+			</template>
 
-			<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.reset')" placement="bottom">
-				<el-button
-					class="headImg borderStyle iconfont icon-shuaxin3"
-					@click="reset"
-					:disabled="
-						dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)
-							? false
-							: true
-					"
-				></el-button>
-			</el-tooltip>
+
 			<div class="headImg round" @click="submitLayer" style="float: right;">
 				<span class="iconfont icon-icon_fabu"></span>
 				<span class="text">{{ $t("dataFlow.button.submit") }}</span>
@@ -344,334 +356,6 @@ export default {
 			}
 		},*/
 
-		/**
-		 * capture button handler
-		 */
-		capture() {
-			let self = this,
-				data = this.getDataFlowData();
-
-			if (data) {
-				if (data && data.id) {
-					data = {
-						id: data.id,
-						executeMode: "running_debug"
-					};
-				} else {
-					Object.assign(data, {
-						executeMode: "running_debug"
-					});
-				}
-				self.doSave(data, (err, dataFlow) => {
-					if (err) {
-						this.$message.error(self.$t("message.saveFail"));
-					} else {
-						this.$message.success(self.$t("message.saveOK"));
-						this.showCapture();
-					}
-				});
-			}
-		},
-
-		/**
-		 * stop capture button handler
-		 */
-		stopCapture() {
-			let self = this,
-				data = this.getDataFlowData();
-
-			if (data && data.id) {
-				self.doSave(
-					{
-						id: data.id,
-						executeMode: "normal"
-					},
-					(err, dataFlow) => {
-						if (err) {
-							this.$message.error(self.$t("message.saveFail"));
-						} else {
-							this.$message.success(self.$t("message.saveOK"));
-							// this.showCapture();
-						}
-					}
-				);
-			}
-		},
-
-		/**
-		 * reset button handler
-		 */
-		reset() {
-			let self = this,
-				data = this.getDataFlowData();
-
-			if (data && data.id) {
-				self
-					.$confirm(
-						self.$t("dataFlow.reset_job.msg"),
-						self.$t("dataFlow.reset_job.tip"),
-						{
-							confirmButtonText: self.$t("dataFlow.button.reset"),
-							cancelButtonText: self.$t("message.cancel"),
-							type: "warning"
-						}
-					)
-					.then(() => {
-						dataFlowsApi.reset(data.id).then(res => {
-							if (res.statusText === "OK" || res.status === 200) {
-								self.$message.success(self.$t("message.resetOk"));
-							} else {
-								self.$message.error(self.$t("message.resetFailed"));
-							}
-						});
-					});
-			}
-		},
-
-		/**
-		 * show setting button handler
-		 */
-		showSetting() {
-			log("Job.showSetting");
-			let name = "";
-			if (this.$route.query.name) {
-				name = this.$route.query.name;
-			}
-			this.editor.showSetting(name);
-		},
-
-		/**
-		 * show logs button handler
-		 */
-		showLogs() {
-			this.editor.showLogs(this.dataFlow);
-		},
-
-		/**
-		 * show capture button handler
-		 */
-		showCapture() {
-			this.editor.showCapture(this.dataFlow);
-		},
-
-		/**
-		 * reload shcema
-		 */
-		reloadSchema() {
-			this.editor.reloadSchema();
-		},
-
-		/**
-		 * switch edit mode
-		 * @param editable
-		 */
-		setEditable(editable) {
-			log("Job.setEditable", editable, this.dataFlow);
-			this.editable = editable;
-			if (this.dataFlow) {
-				delete this.dataFlow.editorData;
-				this.editor.setEditable(editable, this.dataFlow);
-			} else {
-				this.$message.error(this.$t("message.save_before_running"));
-			}
-		},
-
-		/**
-		 * Reverse editor data
-		 * @param data
-		 * @return {{cells: Array}}
-		 */
-		creatApiEditorData(data) {
-			// 1. 创建cell 2. 加载schema 3.自动布局
-			let cells = [];
-			let mapping = {
-				collection: "app.Collection",
-				table: "app.Table",
-				database: "app.Database",
-				mongodb: "app.Database",
-				mongo_view: "app.Collection",
-				view: "app.Table",
-				"dummy db": "app.Dummy",
-				elasticsearch: "app.ESNode",
-				file: "app.FileNode",
-				gridfs: "app.GridFSNode",
-				"rest api": "app.ApiNode",
-				field_processor: "app.FieldProcess",
-				aggregation_processor: "app.Aggregate",
-				js_processor: "app.Script",
-				row_filter_processor: "app.DataFilter",
-				java_processor: "app.FieldProcess"
-			};
-			if (data) {
-				data.map((v, index) => {
-					let formData = _.cloneDeep(v);
-					delete formData.inputLanes;
-					delete formData.outputLanes;
-					if (["table", "view", "collection", "mongo_view"].includes(v.type)) {
-						let node = {
-							type: mapping[v.type],
-							id: v.id,
-							freeTransform: false,
-							form_data: formData,
-							schema: null,
-							outputSchema: null,
-							attrs: {
-								label: {
-									text: breakText.breakText(v.tableName, 125)
-								}
-							},
-							angle: 0
-						};
-						cells.push(node);
-					} else if (
-						v.type &&
-						[
-							"dummy db",
-							"gridfs",
-							"file",
-							"elasticsearch",
-							"rest api"
-						].includes(v.type)
-					) {
-						let node = {
-							type: mapping[v.type],
-							id: v.id,
-							freeTransform: false,
-							schema: null,
-							outputSchema: null,
-							attrs: {
-								label: {
-									text: breakText.breakText(v.name, 125)
-								}
-							},
-							form_data: formData
-						};
-						cells.push(node);
-					} else if (v.type === "database") {
-						let node = {
-							type: mapping[v.type],
-							id: v.id,
-							freeTransform: false,
-							form_data: formData,
-							schema: null,
-							outputSchema: null,
-							attrs: {
-								label: {
-									text: breakText.breakText(v.name, 125)
-								}
-							}
-						};
-						cells.push(node);
-					} else if (
-						[
-							"field_processor",
-							"java_processor",
-							"js_processor",
-							"aggregation_processor",
-							"row_filter_processor"
-						].includes(v.type)
-					) {
-						let node = {
-							type: mapping[v.type],
-							id: v.id,
-							freeTransform: false,
-							angle: 0,
-							schema: null,
-							outputSchema: null,
-							attrs: {
-								label: {
-									text: breakText.breakText(v.name, 95)
-								}
-							}
-						};
-						if (["field_processor"].includes(v.type)) {
-							node.form_data = formData;
-						} else if (["aggregation_processor"].includes(v.type)) {
-							node.form_data = formData;
-						} else if (["js_processor"].includes(v.type)) {
-							node.form_data = formData;
-						} else if (["row_filter_processor"].includes(v.type)) {
-							node.form_data = formData;
-						}
-						cells.push(node);
-					}
-					if (v.outputLanes) {
-						v.outputLanes.map(k => {
-							let node = {
-								type: "app.Link",
-								source: {
-									id: v.id
-								},
-								target: {
-									id: k
-								},
-								router: {
-									name: "manhattan"
-								},
-								connector: {
-									name: "rounded"
-								},
-								form_data: {
-									label: "",
-									joinTable: _.cloneDeep(JOIN_TABLE_TPL)
-								},
-								labels: "",
-								attrs: {}
-							};
-							cells.push(node);
-						});
-					}
-				});
-			}
-			log("job loadSchema cells", cells);
-			return {
-				cells: cells
-			};
-		},
-
-		/**
-		 * handler join table on after reverse editor data
-		 * @param stages
-		 * @param graph
-		 */
-		handleJoinTables(stages, graph) {
-			log("Job.handleJoinTables", stages, graph);
-			if (stages) {
-				stages.map(stage => {
-					if (
-						stage.joinTables &&
-						stage.joinTables.length > 0 &&
-						stage.inputLanes &&
-						stage.inputLanes.length > 0 &&
-						![
-							"field_processor",
-							"java_processor",
-							"js_processor",
-							"aggregation_processor",
-							"row_filter_processor"
-						].includes(stage.type)
-					) {
-						// 目标节点 数据节点 jointables
-						// tableName -> joinTable
-						let joinTables = {};
-						stage.joinTables.map(table => {
-							joinTables[table.stageId] = table;
-						});
-
-						let cell = graph.getCell(stage.id);
-						graph.getConnectedLinks(cell, {inbound: true}).forEach( link => {
-							let sourceCell = link.getSourceCell();
-							let sourceDataCells = sourceCell.getFirstDataNode()
-								.filter( cell => !!joinTables[cell.id]);
-							if(sourceDataCells && sourceDataCells.length > 0){
-								let formData = link.getFormData();
-								formData.joinTable = joinTables[sourceDataCells[0].id];
-							}
-						});
-					}
-				});
-			}
-		},
 
 		status: {
 			handler() {
@@ -759,10 +443,6 @@ export default {
 				});
 			}
 			this.dialogFormVisible = false;
-		},
-
-		getLayerName(name) {
-			return name;
 		},
 
 		/****
@@ -1206,6 +886,7 @@ export default {
 		 * preview button handler
 		 */
 		preview() {
+			console.log("ddddddddddd");
 			let self = this,
 				data = this.getDataFlowData();
 

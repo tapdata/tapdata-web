@@ -191,7 +191,7 @@ const en = {
 			viewMonitoring: "Data Monitoring",
 			setting: "Setting",
 			logs: "Logs",
-			preview: "Data Trace",
+			preview: "Preview",
 			capture: "Data Trace",
 			stop_capture: "Stop Trace",
 			start: "Start",

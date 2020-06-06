@@ -19,6 +19,7 @@ export default class UI extends Component {
 
 	doInit() {
 		let editTitle = i18n.t("dataFlow.edit");
+		let saveTitle = i18n.t("dataFlow.button.save");
 
 		this.el = $(`<div class="editor">
 			<div class="e-header">
@@ -27,7 +28,7 @@ export default class UI extends Component {
 					<input value="新任务未命名" class="ui-input" id="taskNameInput" type="text"  maxlength="50"/>
 				</div>
 				<i class='icon-tianxie iconfont el-icon' id="edit" title="${editTitle}" style="cursor: pointer"></i>
-				<i class='iconfont icon-baocun el-icon' id="submit" style="display: none;color:##48B6E2" ></i>
+				<i class='iconfont icon-baocun el-icon' id="submit" title="${saveTitle}" style="display: none;color:##48B6E2;cursor: pointer" ></i>
 				<div class="e-toolbar-container">
 					<div class="graph-toolbar"></div>
 					<div class="action-toolbar"></div>

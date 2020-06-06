@@ -138,6 +138,7 @@
 
             <el-button
               type="text"
+			  v-show="!disabledMode"
               v-if="isRemove(data.id)"
               class=" e-field-action el-icon-plus"
               disabled
@@ -153,6 +154,7 @@
               <span
                 class="e-field-action el-icon-plus"
                 @click="handleCreate('create_sibling', node, data)"
+				v-show="!disabledMode"
               ></span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
@@ -170,6 +172,7 @@
             </el-dropdown>
 
             <el-button
+				v-show="!disabledMode"
               type="text"
               v-if="isRemove(data.id) || ['Array', 'Map'].includes(data.type)"
               class=" e-field-action iconfont icon-script"
@@ -185,6 +188,7 @@
 
             <el-button
               type="text"
+			  v-show="!disabledMode"
               v-if="originalSchema.type === 'collection' && data.primary_key_position > 0"
               class=" e-field-action iconfont icon-l-del"
               disabled
@@ -198,6 +202,7 @@
 
             <el-button
               type="text"
+			  v-show="!disabledMode"
               v-if="originalSchema.type === 'collection' && data.primary_key_position > 0"
               class=" e-field-action iconfont icon-return"
               disabled
