@@ -580,7 +580,11 @@ export default {
 			}
 			let multipleSelection = [];
 			this.multipleSelection.map(item => {
-				multipleSelection.push(item.id);
+				this.tableData.map(row =>{
+					if((row.id === item.id)&&(row.status ==='paused' || row.status ==='error')){
+						multipleSelection.push(item.id);
+					}
+				})
 			});
 			let where = {
 				_id: {
@@ -640,9 +644,24 @@ export default {
 				return;
 			}
 			let multipleSelection = [];
-			this.multipleSelection.map(item => {
-				multipleSelection.push(item.id);
-			});
+			if(status === 'scheduled'){ //全部启动
+				this.multipleSelection.map(item => {
+					this.tableData.map(row =>{
+						if((row.id === item.id)&&(row.status ==='paused' || row.status ==='error')){
+							multipleSelection.push(item.id);
+						}
+					})
+				});
+			}else if(status === 'shopping'){ //全部停止
+				this.multipleSelection.map(item => {
+					this.tableData.map(row =>{
+						if((row.id === item.id)&&(row.status ==='running')){
+							multipleSelection.push(item.id);
+						}
+					})
+				});
+			}
+
 			let where = {
 				_id: {
 					in: multipleSelection
@@ -686,7 +705,11 @@ export default {
 			}
 			let multipleSelection = [];
 			this.multipleSelection.map(item => {
-				multipleSelection.push(item.id);
+				this.tableData.map(row =>{
+					if((row.id === item.id)&&(row.status ==='paused' || row.status ==='error')){
+						multipleSelection.push(item.id);
+					}
+				})
 			});
 			let where = multipleSelection;
 			this.$confirm(this.$t("message.resetMessage"), this.$t("message.prompt"), {

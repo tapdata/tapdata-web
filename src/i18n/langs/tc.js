@@ -172,6 +172,7 @@ const tc = {
 		mission: "描述",
 		yes: "yes",
 		no: "no",
+		cronExpression:"請輸入調度表達式",
 		selectGrpupFiled: "請選擇分組字段",
 		selectTargetField: "請選擇目標字段",
 		aggName: "子處理名稱",

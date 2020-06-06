@@ -174,6 +174,7 @@
 				placeholder="查找节点"
 				@select="handleSearchNode"
 				hide-loading
+				clearable
 				suffix-icon="el-icon-search"
 			></el-autocomplete>
 			<div class="headImg round" @click="showSetting" v-if="['draft', 'paused', 'error'].includes(status)">
