@@ -70,14 +70,14 @@
 				<div class="header">
 					<h4>{{ $t("editor.cell.processor.script.debug.bottom_header") }}</h4>
 					<ul class="bar">
-						<template v-if="selectedLog.index">
+						<template v-if="selectedLog.index >= 0">
 							<li>{{ $t("editor.cell.processor.script.debug.order") }}: {{ selectedLog.index + 1 }}</li>
 							<li>
 								{{ $t("editor.cell.processor.script.debug.status") }}:
-								<span class="color-primary" v-show="!selectedLog.err_out">
+								<span class="color-primary" v-show="!selectedLog.status === 'ERROR'">
 									{{ $t("editor.cell.processor.script.debug.status_success") }}
 								</span>
-								<span class="color-danger" v-show="selectedLog.err_out">
+								<span class="color-danger" v-show="selectedLog.status === 'ERROR'">
 									{{ $t("editor.cell.processor.script.debug.status_error") }}
 								</span>
 							</li>
@@ -179,9 +179,12 @@ export default {
 			});
 			this.logList = null;
 			this.selectedLog = {};
+			this.$refs.log.clear();
+			this.errorMsg = "";
 
 			receiveMessage(msg => {
 				let result = [];
+
 				if (!msg || msg.status === "ERROR") {
 					this.errorMsg = msg.error;
 					return;
@@ -192,7 +195,9 @@ export default {
 					return item;
 				});
 				if (this.logList.length) {
-					this.$refs.table.setCurrentRow(this.logList[0]);
+					this.$nextTick(() => {
+						this.$refs.table.setCurrentRow(this.logList[0]);
+					});
 				}
 			});
 		},
@@ -214,10 +219,12 @@ export default {
 			return "";
 		},
 		rowHandler(row) {
-			this.selectedLog = row;
-			this.$nextTick(() => {
-				this.$refs.log.add({ logs: row.out, reset: true });
-			});
+			if (row) {
+				this.selectedLog = row;
+				this.$nextTick(() => {
+					this.$refs.log.add({ logs: row.out, reset: true });
+				});
+			}
 		},
 		stringify(value) {
 			return JSON.stringify(value, null, 2);

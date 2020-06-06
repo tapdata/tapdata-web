@@ -132,10 +132,10 @@ class WSClient extends EventEmitter {
 			return;
 		}
 
-		if(message.type === "pipe"){
+		if (message.type === "pipe") {
 			let data = message.data || {};
 			let eventName = data.type;
-			if(eventName) {
+			if (eventName) {
 				self.emit(eventName, data);
 			} else {
 				self.emit(message.type, message);

@@ -8,6 +8,7 @@ import { FORM_DATA_KEY, SCHEMA_DATA_KEY, OUTPUT_SCHEMA_DATA_KEY, JOIN_TABLE_TPL 
 import { mergeJoinTablesToTargetSchema } from "../util/Schema";
 import _ from "lodash";
 import joint from "../lib/rappid/rappid";
+import breakText from "../breakText";
 
 export const baseElementConfig = {
 	/**
@@ -134,49 +135,16 @@ export const baseElementConfig = {
 						let name = formData.name;
 						let isDataNode = typeof self.isDataNode === "function" ? self.isDataNode() : false;
 						let isProcess = typeof self.isProcess === "function" ? self.isProcess() : false;
-						let width = isDataNode ? 125 : isProcess ? 95 : false;
+						let width = isDataNode ? 120 : isProcess ? 90 : false;
 						if (width) {
-							name = self.breakText(name, width);
-							log(`${this.get("type")} break text`, formData.name, name);
+							name = breakText.breakText(name, width);
+							log(`${this.get("type")} break text`, formData.name, name,width);
 						}
 						self.attr("label/text", name);
 					}
 				});
 			},
-			breakText(text, width) {
-				let str = joint.util.breakText(
-					text,
-					{ width: width, height: 20 },
-					{ "font-size": 12 },
-					{ hyphen: "^$", ellipsis: true }
-				);
-				if (str === text) {
-					return str;
-				} else {
-					let before = joint.util.breakText(
-						text,
-						{ width: width / 2, height: 20 },
-						{ "font-size": 12 },
-						{ hyphen: "^$" }
-					);
-					let after = text
-						.substr(before.length)
-						.split("")
-						.reverse()
-						.join("");
-					after = joint.util.breakText(
-						after,
-						{ width: width / 2, height: 20 },
-						{ "font-size": 12 },
-						{ hyphen: "^$" }
-					);
-					after = after
-						.split("")
-						.reverse()
-						.join("");
-					return before + "..." + after;
-				}
-			},
+
 			getFormData() {
 				return this.get(FORM_DATA_KEY);
 			},
