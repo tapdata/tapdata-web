@@ -192,7 +192,9 @@ export default {
 					return item;
 				});
 				if (this.logList.length) {
-					this.$refs.table.setCurrentRow(this.logList[0]);
+					this.$nextTick(() => {
+						this.$refs.table.setCurrentRow(this.logList[0]);
+					});
 				}
 			});
 		},
