@@ -133,7 +133,7 @@
 							<el-radio-button :label="false">{{ $t("dataFlow.no") }}</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
-					<el-form-item v-show="formData.isSchedule === true">
+					<el-form-item v-show="formData.isSchedule === true && formData.sync_type === 'initial_sync' ">
 						<div>{{ $t("dataFlow.cron_expression") }}</div>
 						<!-- 定期调度任务 -->
 						<el-input v-model="formData.cronExpression" size="mini"></el-input>
@@ -218,7 +218,6 @@
 					this.formData.isOpenAutoDDL = false;
 				} else {
 					this.formData.run_custom_sql = false;
-					this.formData.isSchedule = false;
 				}
 			}
 		}

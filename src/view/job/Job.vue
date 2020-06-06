@@ -4,6 +4,7 @@
 			<el-autocomplete
 				v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
 				class="inline-input searchNode"
+				id="searchNode"
 				v-model="state1"
 				size="mini"
 				:fetch-suggestions="querySearch"
