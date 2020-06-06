@@ -74,10 +74,10 @@
 							<li>{{ $t("editor.cell.processor.script.debug.order") }}: {{ selectedLog.index + 1 }}</li>
 							<li>
 								{{ $t("editor.cell.processor.script.debug.status") }}:
-								<span class="color-primary" v-show="!selectedLog.err_out">
+								<span class="color-primary" v-show="!selectedLog.status === 'ERROR'">
 									{{ $t("editor.cell.processor.script.debug.status_success") }}
 								</span>
-								<span class="color-danger" v-show="selectedLog.err_out">
+								<span class="color-danger" v-show="selectedLog.status === 'ERROR'">
 									{{ $t("editor.cell.processor.script.debug.status_error") }}
 								</span>
 							</li>
