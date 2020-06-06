@@ -169,7 +169,7 @@ export default {
 			});
 
 			this.$refs.debug.show(cb => {
-				ws.once(EventName.EXECUTE_SCRIPT_RESULT, function(msg) {
+				ws.once(EventName.EXECUTE_SCRIPT_RESULT, msg => {
 					clearTimeout(this.sending);
 					this.sending = null;
 					log("Job.ReceiveMessage", msg);
