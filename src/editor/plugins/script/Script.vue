@@ -45,7 +45,7 @@
 					<JsEditor :code.sync="model.script" ref="jsEditor" :width.sync="width"></JsEditor>
 				</el-form-item>
 			</el-form>
-			<el-button class="btn-debug" type="primary" size="mini" :loading="sending" @click="showDebug">
+			<el-button class="btn-debug" type="primary" size="mini" :loading="!!sending" @click="showDebug">
 				{{ $t("editor.cell.processor.script.debug_button_label") }}
 			</el-button>
 		</div>
@@ -169,7 +169,7 @@ export default {
 			});
 
 			this.$refs.debug.show(cb => {
-				ws.once(EventName.EXECUTE_SCRIPT_RESULT, function(msg) {
+				ws.once(EventName.EXECUTE_SCRIPT_RESULT, msg => {
 					clearTimeout(this.sending);
 					this.sending = null;
 					log("Job.ReceiveMessage", msg);

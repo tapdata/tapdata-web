@@ -40,7 +40,7 @@
 				</el-col>
 				<el-col :span="18">
 					<el-form-item :label="'URL/API/V1/' + form.apiPath">
-						<el-input v-model="form.apiPath" :placeholder="$t('dataFlow.enterFilterTable')"></el-input>
+						<el-input v-model="form.apiPath" :placeholder="$t('editor.cell.data_node.api.enterEndUrl')"></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>
