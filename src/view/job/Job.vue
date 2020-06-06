@@ -1,17 +1,6 @@
 <template>
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
-			<el-autocomplete
-				v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
-				class="inline-input searchNode"
-				id="searchNode"
-				v-model="state1"
-				size="mini"
-				:fetch-suggestions="querySearch"
-				placeholder="查找节点"
-				@select="handleSearchNode"
-				suffix-icon="el-icon-search"
-			></el-autocomplete>
 			<!-- <el-button size="mini" type="default" @click="reloadSchema"
 				>{{ $t("dataFlow.button.reloadSchema") }}
 			</el-button>
@@ -175,7 +164,18 @@
 					<span class="iconfont icon-rizhi1"></span>
 				</div>
 			</el-tooltip>
-
+			<el-autocomplete
+				v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
+				class="inline-input searchNode"
+				id="searchNode"
+				v-model="state1"
+				size="mini"
+				:fetch-suggestions="querySearch"
+				placeholder="查找节点"
+				@select="handleSearchNode"
+				hide-loading
+				suffix-icon="el-icon-search"
+			></el-autocomplete>
 			<div class="headImg round" @click="showSetting" v-if="['draft', 'paused', 'error'].includes(status)">
 				<span class="iconfont icon-shezhi"></span>
 				<span class="text" v-if="sync_type === 'initial_sync+cdc'">{{
@@ -1282,7 +1282,10 @@ export default {
 .searchNode {
 	.el-input__inner {
 		border-radius: 20px;
+		height: 24px;
 	}
+	margin-right: 8px;
+
 }
 .el-tooltip__popper.is-dark {
 	background-color: #d3d3d3 !important;
