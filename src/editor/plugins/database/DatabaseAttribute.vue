@@ -26,20 +26,28 @@
 					:rules="rules"
 					required
 				>
-					<el-select
-						@change="changeConnection"
-						filterable
-						v-model="model.connectionId"
-						:placeholder="$t('editor.cell.data_node.database.form.placeholder')"
-						size="mini"
-					>
-						<el-option
-							v-for="(item, idx) in databases"
-							:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
-							:value="item.id"
-							v-bind:key="idx"
-						></el-option>
-					</el-select>
+					<div style="display:flex;">
+						<el-select
+							@change="changeConnection"
+							filterable
+							v-model="model.connectionId"
+							:placeholder="$t('editor.cell.data_node.database.form.placeholder')"
+							size="mini"
+						>
+							<el-option
+								v-for="(item, idx) in databases"
+								:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
+								:value="item.id"
+								v-bind:key="idx"
+							></el-option>
+						</el-select>
+						<el-button
+							size="mini"
+							icon="el-icon-plus"
+							style="padding: 7px;margin-left: 7px"
+							@click="addDataBase"
+						></el-button>
+					</div>
 				</el-form-item>
 
 				<el-form-item
@@ -167,6 +175,13 @@
 				</el-tab-pane>
 			</el-tabs>
 		</div>
+		<el-dialog :visible.sync="dialogVisible" appendToBody>
+			<form-builder v-model="dataBaseFormModel" :config="dataBaseFormConfig"></form-builder>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="dialogVisible = false">Cancel</el-button>
+				<el-button type="primary" @click="dataBaseSubmit">Enter</el-button>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -221,7 +236,28 @@ export default {
 			database_type: "",
 			database_port: "",
 			database_host: "",
-			database_uri: ""
+			database_uri: "",
+
+			dialogVisible: false,
+			dataBaseFormModel: {
+				title: "db"
+			},
+			dataBaseFormConfig: {
+				items: [
+					{
+						type: "input",
+						field: "title",
+						label: "连接名称",
+						placeHolder: "自定义数据库名称"
+					},
+					{
+						type: "select",
+						field: "type",
+						label: "数据库类型",
+						placeHolder: "选择数据库类型"
+					}
+				]
+			}
 		};
 	},
 
@@ -435,6 +471,15 @@ export default {
 
 		seeMonitor() {
 			editorMonitor.goBackMontior();
+		},
+
+		addDataBase() {
+			this.dialogVisible = true;
+		},
+
+		dataBaseSubmit() {
+			// this.dialogVisible = false;
+			// console.log(this.dataBaseFormModel);
 		}
 	}
 };
