@@ -173,6 +173,7 @@ const en = {
 		mission: "Description",
 		yes: "yes",
 		no: "no",
+		cronExpression:"Please enter cron expression",
 		selectGrpupFiled: "Please select a grouping field",
 		selectTargetField: "Please select the target field",
 		aggName: "Sub-process name",

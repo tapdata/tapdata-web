@@ -172,6 +172,7 @@ const cn = {
 		mission: "描述",
 		yes: "是",
 		no: "否",
+		cronExpression:"请输入调度表达式",
 		selectGrpupFiled: "请选择分组字段",
 		selectTargetField: "请选择目标字段",
 		aggName: "子处理名称",
