@@ -831,6 +831,7 @@ export default {
 				if (data.id) {
 					data.id = data.id
 				}
+				data.name =this.form.taskName;
 				data.status = "scheduled";
 				data.executeMode = "normal";
 				self.doSave(data, (err, dataFlow) => {
@@ -839,6 +840,7 @@ export default {
 					} else {
 						this.$message.success(self.$t("message.saveOK"));
 						self.setEditable(false);
+						this.loadDataFlow(data.id);
 					}
 				});
 			}
