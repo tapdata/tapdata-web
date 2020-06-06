@@ -3,13 +3,13 @@
 		<el-form>
 			<el-form-item class="e-form-item">
 				<el-col :span="19">
-					<el-select v-model="domValue" size="mini">
+					<el-select v-model="stageId" size="mini">
 						<el-option key="all" :label="$t('dataFlow.allNode')" value="all"> </el-option>
 						<el-option v-for="item in flow.stages" :key="item.id" :label="item.name" :value="item.id">
 						</el-option>
 					</el-select>
 				</el-col>
-				<el-col :span="5" style="text-align: right;" v-if="domValue !== 'all'">
+				<el-col :span="5" style="text-align: right;" v-if="stageId !== 'all'">
 					<el-button class="e-button" type="primary" @click="seeNodeData">{{
 						$t("dataFlow.button.viewConfig")
 					}}</el-button>
@@ -52,6 +52,7 @@
 					</div>
 				</div>
 				<shaftless-echart
+					:sliderBar ="sliderBar"
 					class="fr echartMain"
 					:echartObj="dataScreening"
 					v-if="dataScreening"
@@ -71,6 +72,7 @@
 					>
 				</div>
 				<echarts-compinent
+					:sliderBar ="sliderBar"
 					:echartObj="throughputData"
 					v-if="throughputData"
 					:echartsId="'echartsId'"
@@ -85,6 +87,7 @@
 					>
 				</div>
 				<echarts-compinent
+					:sliderBar ="sliderBar"
 					:echartObj="transfData"
 					v-if="transfData"
 					:echartsId="'transfId'"
@@ -99,6 +102,7 @@
 					>
 				</div>
 				<echarts-compinent
+					:sliderBar ="sliderBar"
 					:echartObj="replicateData"
 					v-if="replicateData"
 					:echartsId="'replicateId'"
@@ -131,11 +135,12 @@ export default {
 
 	data() {
 		return {
+			sliderBar: null,
 			dpx: "QPS",
 			selectFlow: "flow_", // 选中节点
 			speed: "",
 			time: "",
-			domValue: "all",
+			stageId: "all",
 			flow: {
 				name: "",
 				username: "",
@@ -390,8 +395,9 @@ export default {
 	},
 
 	mounted() {
+		this.sliderBar = this.editor.rightSidebar;
 		this.$on(EditorEventType.SELECTED_STAGE, selectStage => {
-			this.domValue = selectStage ? selectStage.id : "all";
+			this.stageId = selectStage ? selectStage.id : "all";
 		});
 		this.flow = this.dataFlow;
 		// this.getApiData();
@@ -451,7 +457,7 @@ export default {
 			},
 			deep: true
 		},
-		domValue: {
+		stageId: {
 			handler(val) {
 				this.selectId = val;
 				if (val === "all") {
@@ -459,7 +465,6 @@ export default {
 				} else {
 					this.selectFlow = "stage_";
 				}
-				this.$bus.emit("currentStageId", val);
 				this.getSpeed(this.isThroughputAll, this.throughputTime);
 				this.getTwoRadio(this.dataOverviewAll, this.dataOverviewType);
 				this.getTime(this.transfTime, this.transfType);
@@ -491,15 +496,27 @@ export default {
 		},
 
 		seeNodeData() {
+			let self = this;
 			let result = this.getAllCellsNode();
 			let selectCell = null;
 			result.forEach(item => {
-				if (this.domValue === item.cell.id) {
+				if (this.stageId === item.cell.id) {
 					selectCell = item.cell;
 				}
 			});
-			if (this.domValue && this.domValue !== "all") {
+			if (this.stageId && this.stageId !== "all") {
 				this.editor.graph.selectionPosition(selectCell);
+				let openFormPanel = function(counter){
+					let nodeFormPanel = self.editor.getRightTabPanel().getChildByName("nodeSettingPanel");
+					if(nodeFormPanel){
+						self.editor.getRightTabPanel().select(nodeFormPanel);
+					} else if(counter <= 5){
+						setTimeout(() => {
+							openFormPanel(counter++);
+						}, 1000);
+					}
+				};
+				openFormPanel(1);
 			} else {
 				this.$message.error(this.$t("dataFlow.selectNode"));
 			}
@@ -593,11 +610,11 @@ export default {
 
 		// 获取数据
 		async getApiData(params, type, ele) {
-			if (this.domValue === "all") {
+			if (this.stageId === "all") {
 				params["dataFlowId"] = this.flow.id;
 			} else {
 				params["dataFlowId"] = this.flow.id;
-				params["stageId"] = this.domValue;
+				params["stageId"] = this.stageId;
 			}
 			if (type === this.inputOutputObj.type) {
 				this.inputOutputObj.loading = true;
