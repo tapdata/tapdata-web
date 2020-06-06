@@ -5,10 +5,15 @@
 </template>
 <script>
 import Echarts from "../plugins/echarts";
+import { EditorEventType } from "../editor/lib/events";
+
 // import echarts from 'echarts'
 export default {
 	name: "EchartsCompinent",
 	props: {
+		sliderBar: {
+			type: Object
+		},
 		echartsId: {
 			type: String
 		},
@@ -34,7 +39,11 @@ export default {
 		let that = this;
 		this.$nextTick(() => {
 			that.loadEchart(that.echartsId, that.echartObj);
+			this.sliderBar.on(EditorEventType.RESIZE, width => {
+				this.myChart.resize()
+			})
 		});
+
 	},
 
 	methods: {
@@ -44,10 +53,11 @@ export default {
 			// _this.myChart.clear();   //清空再重绘
 			let publicCharts = _this.echartOption(data);
 			_this.myChart.setOption(publicCharts);
-			/* 窗口自适应 */
-			window.addEventListener("resize", () => {
-				_this.myChart.resize();
-			});
+			// /* 窗口自适应 */
+			// window.addEventListener("resize", () => {
+			// 	debugger
+			// 	_this.myChart.resize();
+			// });
 		},
 		echartOption(configures) {
 			let MyOption = {

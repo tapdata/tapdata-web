@@ -425,13 +425,10 @@ export default {
 
 			if (data) {
 				if (data.id) {
-					data = {
-						id: data.id,
-						status: "paused",
-						name: this.form.taskName
-					};
+					data.id = data.id
 				}
 				data.status = "paused";
+				data.name =this.form.taskName;
 				data.executeMode = "normal";
 				self.doSave(data, (err, dataFlow) => {
 					if (err) {
@@ -832,10 +829,7 @@ export default {
 
 			if (data) {
 				if (data.id) {
-					data = {
-						id: data.id,
-						status: "scheduled"
-					};
+					data.id = data.id
 				}
 				data.status = "scheduled";
 				data.executeMode = "normal";
