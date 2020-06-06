@@ -134,7 +134,7 @@
 						</el-radio-group>
 					</el-form-item>
 					<el-form-item v-show="formData.isSchedule === true && formData.sync_type === 'initial_sync'" prop="cronExpression">
-						<div>{{ $t("dataFlow.cron_expression") }}</div>
+						<div>{{ $t("dataFlow.cronExpression") }}</div>
 						<!-- 定期调度任务 -->
 						<el-input v-model="formData.cronExpression" size="mini"></el-input>
 					</el-form-item>

@@ -552,6 +552,10 @@ export default class Editor extends BaseObject {
 		let name = this.ui.getName();
 		if (!name) return i18n.t("editor.cell.validate.empty_name");
 
+		let getData = this.getData();
+		if(!getData.settingData || !getData.settingData.cronExpression){
+			return i18n.t("dataFlow.cronExpression");
+		}
 		let verified = this.graph.validate();
 		if (verified !== true) return verified;
 		return this.validateGraphData();
