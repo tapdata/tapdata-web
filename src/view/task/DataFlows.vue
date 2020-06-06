@@ -581,11 +581,14 @@ export default {
 			let multipleSelection = [];
 			this.multipleSelection.map(item => {
 				this.tableData.map(row =>{
-					if((row.id === item.id)&&(row.status ==='paused' || row.status ==='error')){
+					if((row.id === item.id)&&(row.status ==='paused' || row.status ==='error' || row.status ==='draft')){
 						multipleSelection.push(item.id);
 					}
 				})
 			});
+			if (multipleSelection.length === 0) {
+				return;
+			}
 			let where = {
 				_id: {
 					inq: multipleSelection
@@ -661,7 +664,9 @@ export default {
 					})
 				});
 			}
-
+			if (multipleSelection.length === 0) {
+				return;
+			}
 			let where = {
 				_id: {
 					in: multipleSelection
@@ -711,6 +716,9 @@ export default {
 					}
 				})
 			});
+			if (multipleSelection.length === 0) {
+				return;
+			}
 			let where = multipleSelection;
 			this.$confirm(this.$t("message.resetMessage"), this.$t("message.prompt"), {
 				confirmButtonText: this.$t("dataFlow.reset"),
