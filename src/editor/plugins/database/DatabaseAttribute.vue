@@ -5,9 +5,12 @@
 			<span class="txt">{{ $t("editor.nodeSettings") }}</span>
 		</head>
 		<div class="nodeBody">
-			<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
-				{{$t("dataFlow.button.viewMonitoring")}}
-			</el-button>
+			<div class="head-btns">
+				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+					{{ $t("dataFlow.button.viewMonitoring") }}
+				</el-button>
+			</div>
+
 			<el-form
 				class="e-form"
 				label-position="top"
@@ -402,7 +405,7 @@ export default {
 			this.selectAllRemoveTables = false;
 		},
 
-		setData(data, cell, isSourceDataNode,vueAdapter) {
+		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
 				Object.keys(data).forEach(key => (this.model[key] = data[key]));
 			}
@@ -432,7 +435,7 @@ export default {
 
 		seeMonitor() {
 			editorMonitor.goBackMontior();
-		},
+		}
 	}
 };
 </script>

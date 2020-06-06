@@ -31,13 +31,50 @@
 			</el-button> -->
 
 			<!-- running debug -->
-			<el-button
+			<!-- <el-button
 				v-if="['scheduled', 'running'].includes(status) && executeMode === 'normal'"
 				size="mini"
 				type="default"
-				@click="capture"
-				>{{ $t("dataFlow.button.capture") }}
-			</el-button>
+				@click="stopCapture"
+			>{{ $t("dataFlow.button.stop_capture") }}
+			</el-button> -->
+
+			<!-- <el-button
+					  v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
+					  size="mini"
+					  type="success"
+					  @click="start"
+					  >{{ $t("dataFlow.button.start") }}
+				  </el-button> -->
+			<!-- <el-button
+					  v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
+					  size="mini"
+					  type="danger"
+					  @click="stop(false)"
+					  >{{ $t("dataFlow.button.stop") }}
+				  </el-button> -->
+			<!-- <el-button
+					  v-if="dataFlowId !== null && ['stopping'].includes(status)"
+					  size="mini"
+					  type="danger"
+					  @click="stop(true)"
+					  >{{ $t("dataFlow.button.force_stop") }}
+				  </el-button> -->
+			<!-- <el-button
+					  v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
+					  size="mini"
+					  type="default"
+					  @click="reset"
+					  >{{ $t("dataFlow.button.reset") }}
+				  </el-button> -->
+			<!-- <el-button
+					  v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
+					  size="mini"
+					  type="primary"
+					  @click="save"
+					  >{{ $t("dataFlow.button.save") }}
+				  </el-button> -->
+
 			<el-button
 				v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
 				size="mini"
@@ -60,13 +97,13 @@
 				@click="stop(false)"
 				>{{ $t("dataFlow.button.stop") }}
 			</el-button> -->
-			<el-button
+			<!-- <el-button
 				v-if="dataFlowId !== null && ['stopping'].includes(status)"
 				size="mini"
 				type="danger"
 				@click="stop(true)"
 				>{{ $t("dataFlow.button.force_stop") }}
-			</el-button>
+			</el-button> -->
 			<!-- <el-button
 				v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
 				size="mini"
@@ -81,34 +118,78 @@
 				@click="save"
 				>{{ $t("dataFlow.button.save") }}
 			</el-button> -->
-			<div
-				class="headImg"
-				@click="save"
-				v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
-			>
-				<span class="iconfont icon-yunduanshangchuan"></span>
-				<span class="text">{{ $t("dataFlow.button.save") }}</span>
-			</div>
+			<template v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)">
+				<div class="headImg" v-show="!isSaving" @click="timeSave">
+					<span class="iconfont icon-yunduanshangchuan"></span>
+					<span class="text">{{ $t("dataFlow.button.save") }}</span>
+				</div>
 
-			<div class="headImg" @click="reloadSchema" :title="$t('dataFlow.button.reloadSchema')">
-				<span class="iconfont icon-yunshuaxin"></span>
-			</div>
-			<div
-				class="headImg"
-				v-if="['paused', 'error', 'draft'].includes(status)"
-				@click="preview"
-				:title="$t('dataFlow.button.preview')"
+				<div class="headImg" v-show="isSaving" style="color: #48B6E2;">
+					<span class="el-icon-loading"></span>
+					<span class="text" style="color: #48B6E2;">{{ $t("dataFlow.button.saveing") }}</span>
+				</div>
+			</template>
+			<el-tooltip
+				class="job-head-title"
+				effect="dark"
+				:content="$t('dataFlow.button.capture')"
+				placement="bottom"
 			>
-				<span class="iconfont icon-openeye"></span>
-			</div>
-			<div class="headImg" @click="showLogs" :title="$t('dataFlow.button.debug')">
-				<span class="iconfont icon-debug-"></span>
-			</div>
+				<div
+					class="headImg"
+					@click="capture"
+					v-if="['scheduled', 'running'].includes(status) && executeMode === 'normal'"
+				>
+					<span class="iconfont icon-yulan"></span>
+				</div>
+			</el-tooltip>
+
+			<el-tooltip
+				class="job-head-title"
+				effect="dark"
+				:content="$t('dataFlow.button.force_stop')"
+				placement="bottom"
+			>
+				<div class="headImg" @click="stop(true)" v-if="dataFlowId !== null && ['stopping'].includes(status)">
+					<span class="iconfont icon-zhengfangxingxuanzhongzhuangtai"></span>
+				</div>
+			</el-tooltip>
+
+			<el-tooltip
+				class="job-head-title"
+				effect="dark"
+				:content="$t('dataFlow.button.reloadSchema')"
+				placement="bottom"
+			>
+				<div class="headImg" @click="reloadSchema">
+					<span class="iconfont icon-yunshuaxin"></span>
+				</div>
+			</el-tooltip>
+
+			<el-tooltip
+				class="job-head-title"
+				effect="dark"
+				:content="$t('dataFlow.button.preview')"
+				placement="bottom"
+			>
+				<div class="headImg" v-if="['paused', 'error', 'draft'].includes(status)" @click="preview">
+					<span class="iconfont icon-yulan1"></span>
+				</div>
+			</el-tooltip>
+
+			<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.debug')" placement="bottom">
+				<div class="headImg" @click="showLogs">
+					<span class="iconfont icon-rizhi1"></span>
+				</div>
+			</el-tooltip>
+
 			<div class="headImg round" @click="showSetting" v-if="['draft', 'paused', 'error'].includes(status)">
 				<span class="iconfont icon-shezhi"></span>
-				<span class="text"
-					>{{ $t("dataFlow.button.quantitative") }} + {{ $t("dataFlow.button.increment") }}</span
-				>
+				<span class="text" v-if="sync_type === 'initial_sync+cdc'">{{
+					$t("dataFlow.initial_sync") + "+" + $t("dataFlow.cdc")
+				}}</span>
+				<span class="text" v-if="sync_type === 'initial_sync'">{{ $t("dataFlow.initial_sync") }}</span>
+				<span class="text" v-if="sync_type === 'cdc'">{{ $t("dataFlow.cdc") }}</span>
 			</div>
 
 			<el-tag
@@ -126,30 +207,42 @@
 				style="margin-left: 50px;border-radius: 20px;"
 				>{{ $t("dataFlow.state") }}: {{ $t("dataFlow.status." + status.replace(/ /g, "_")) }}
 			</el-tag>
-			<div
+			<!-- <div
 				class="headImg borderStyle"
 				@click="start"
 				:title="$t('dataFlow.button.start')"
-				v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
+				:disabled="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status) ? false : true"
 			>
 				<span class="iconfont icon-yunhang1"></span>
-			</div>
-			<div
-				class="headImg borderStyle"
-				@click="stop(false)"
-				:title="$t('dataFlow.button.stop')"
-				v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
-			>
-				<span class="iconfont icon-zanting2"></span>
-			</div>
-			<div
-				class="headImg borderStyle"
-				@click="reset"
-				:title="$t('dataFlow.button.reset')"
-				v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
-			>
-				<span class="iconfont icon-shuaxin3"></span>
-			</div>
+			</div> -->
+			<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.start')" placement="bottom">
+				<el-button
+					class="headImg borderStyle iconfont icon-yunhang1"
+					@click="start"
+					:disabled="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status) ? false : true"
+				>
+				</el-button>
+			</el-tooltip>
+
+			<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.stop')" placement="bottom">
+				<el-button
+					class="headImg borderStyle iconfont icon-zanting2"
+					@click="stop(false)"
+					:disabled="dataFlowId !== null && ['scheduled', 'running'].includes(status) ? false : true"
+				></el-button>
+			</el-tooltip>
+
+			<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.reset')" placement="bottom">
+				<el-button
+					class="headImg borderStyle iconfont icon-shuaxin3"
+					@click="reset"
+					:disabled="
+						dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)
+							? false
+							: true
+					"
+				></el-button>
+			</el-tooltip>
 			<div class="headImg round" @click="submitLayer" style="float: right;">
 				<span class="iconfont icon-icon_fabu"></span>
 				<span class="text">{{ $t("dataFlow.button.submit") }}</span>
@@ -160,13 +253,18 @@
 			:title="$t('dataFlow.submitConfirmation')"
 			custom-class="dialogConfig"
 			:visible.sync="dialogFormVisible"
+			width="600px"
+			:close-on-click-modal="!dialogFormVisible"
 		>
 			<el-form :model="form" label-position="left">
 				<el-form-item :label="$t('dataFlow.taskName')">
 					<el-input class="e-input" v-model="form.taskName" autocomplete="off"></el-input>
 				</el-form-item>
 				<el-form-item :label="$t('dataFlow.implementationModalities')">
-					<el-input class="e-input" v-model="form.type" autocomplete="off" disabled></el-input>
+					<el-select v-model="sync_type" size="mini" disabled>
+						<el-option v-for="item in settingList" :key="item.type" :label="item.name" :value="item.type">
+						</el-option>
+					</el-select>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -189,6 +287,7 @@ import log from "../../log";
 import { FORM_DATA_KEY, JOIN_TABLE_TPL } from "../../editor/constants";
 import { EditorEventType } from "../../editor/lib/events";
 import _ from "lodash";
+// import ws, { EventName } from "../../api/ws";
 
 const dataFlowsApi = factory("DataFlows");
 let changeData = null;
@@ -214,18 +313,366 @@ export default {
 			disabledDataVerify: false,
 			cells: [],
 			state1: "",
-			editable: false
+			editable: false,
+			isSaving: false,
+			sync_type: "initial_sync+cdc",
+			settingList: [
+				{
+					type: "initial_sync+cdc",
+					name: this.$t("dataFlow.initial_sync") + "+" + this.$t("dataFlow.cdc")
+				},
+				{ type: "initial_sync", name: this.$t("dataFlow.initial_sync") },
+				{ type: "cdc", name: this.$t("dataFlow.cdc") }
+			]
 		};
 	},
 
 	watch: {
-		/* executeMode: {
-				handler(){
-					if( this.executeMode !== 'normal') {
+	/* executeMode: {
+			handler(){
+				if( this.executeMode !== 'normal') {
+					this.showCapture();
+				}
+				self.doSave(data, (err, dataFlow) => {
+					if (err) {
+						this.$message.error(self.$t("message.saveFail"));
+					} else {
+						this.$message.success(self.$t("message.saveOK"));
 						this.showCapture();
 					}
+				});
+			}
+		},*/
+
+		/**
+		 * capture button handler
+		 */
+		capture() {
+			let self = this,
+				data = this.getDataFlowData();
+
+			if (data) {
+				if (data && data.id) {
+					data = {
+						id: data.id,
+						executeMode: "running_debug"
+					};
+				} else {
+					Object.assign(data, {
+						executeMode: "running_debug"
+					});
 				}
-			}, */
+				self.doSave(data, (err, dataFlow) => {
+					if (err) {
+						this.$message.error(self.$t("message.saveFail"));
+					} else {
+						this.$message.success(self.$t("message.saveOK"));
+						this.showCapture();
+					}
+				});
+			}
+		},
+
+		/**
+		 * stop capture button handler
+		 */
+		stopCapture() {
+			let self = this,
+				data = this.getDataFlowData();
+
+			if (data && data.id) {
+				self.doSave(
+					{
+						id: data.id,
+						executeMode: "normal"
+					},
+					(err, dataFlow) => {
+						if (err) {
+							this.$message.error(self.$t("message.saveFail"));
+						} else {
+							this.$message.success(self.$t("message.saveOK"));
+							// this.showCapture();
+						}
+					}
+				);
+			}
+		},
+
+		/**
+		 * reset button handler
+		 */
+		reset() {
+			let self = this,
+				data = this.getDataFlowData();
+
+			if (data && data.id) {
+				self
+					.$confirm(
+						self.$t("dataFlow.reset_job.msg"),
+						self.$t("dataFlow.reset_job.tip"),
+						{
+							confirmButtonText: self.$t("dataFlow.button.reset"),
+							cancelButtonText: self.$t("message.cancel"),
+							type: "warning"
+						}
+					)
+					.then(() => {
+						dataFlowsApi.reset(data.id).then(res => {
+							if (res.statusText === "OK" || res.status === 200) {
+								self.$message.success(self.$t("message.resetOk"));
+							} else {
+								self.$message.error(self.$t("message.resetFailed"));
+							}
+						});
+					});
+			}
+		},
+
+		/**
+		 * show setting button handler
+		 */
+		showSetting() {
+			log("Job.showSetting");
+			let name = "";
+			if (this.$route.query.name) {
+				name = this.$route.query.name;
+			}
+			this.editor.showSetting(name);
+		},
+
+		/**
+		 * show logs button handler
+		 */
+		showLogs() {
+			this.editor.showLogs(this.dataFlow);
+		},
+
+		/**
+		 * show capture button handler
+		 */
+		showCapture() {
+			this.editor.showCapture(this.dataFlow);
+		},
+
+		/**
+		 * reload shcema
+		 */
+		reloadSchema() {
+			this.editor.reloadSchema();
+		},
+
+		/**
+		 * switch edit mode
+		 * @param editable
+		 */
+		setEditable(editable) {
+			log("Job.setEditable", editable, this.dataFlow);
+			this.editable = editable;
+			if (this.dataFlow) {
+				delete this.dataFlow.editorData;
+				this.editor.setEditable(editable, this.dataFlow);
+			} else {
+				this.$message.error(this.$t("message.save_before_running"));
+			}
+		},
+
+		/**
+		 * Reverse editor data
+		 * @param data
+		 * @return {{cells: Array}}
+		 */
+		creatApiEditorData(data) {
+			// 1. 创建cell 2. 加载schema 3.自动布局
+			let cells = [];
+			let mapping = {
+				collection: "app.Collection",
+				table: "app.Table",
+				database: "app.Database",
+				mongodb: "app.Database",
+				mongo_view: "app.Collection",
+				view: "app.Table",
+				"dummy db": "app.Dummy",
+				elasticsearch: "app.ESNode",
+				file: "app.FileNode",
+				gridfs: "app.GridFSNode",
+				"rest api": "app.ApiNode",
+				field_processor: "app.FieldProcess",
+				aggregation_processor: "app.Aggregate",
+				js_processor: "app.Script",
+				row_filter_processor: "app.DataFilter",
+				java_processor: "app.FieldProcess"
+			};
+			if (data) {
+				data.map((v, index) => {
+					let formData = _.cloneDeep(v);
+					delete formData.inputLanes;
+					delete formData.outputLanes;
+					if (["table", "view", "collection", "mongo_view"].includes(v.type)) {
+						let node = {
+							type: mapping[v.type],
+							id: v.id,
+							freeTransform: false,
+							form_data: formData,
+							schema: null,
+							outputSchema: null,
+							attrs: {
+								label: {
+									text: breakText.breakText(v.tableName, 125)
+								}
+							},
+							angle: 0
+						};
+						cells.push(node);
+					} else if (
+						v.type &&
+						[
+							"dummy db",
+							"gridfs",
+							"file",
+							"elasticsearch",
+							"rest api"
+						].includes(v.type)
+					) {
+						let node = {
+							type: mapping[v.type],
+							id: v.id,
+							freeTransform: false,
+							schema: null,
+							outputSchema: null,
+							attrs: {
+								label: {
+									text: breakText.breakText(v.name, 125)
+								}
+							},
+							form_data: formData
+						};
+						cells.push(node);
+					} else if (v.type === "database") {
+						let node = {
+							type: mapping[v.type],
+							id: v.id,
+							freeTransform: false,
+							form_data: formData,
+							schema: null,
+							outputSchema: null,
+							attrs: {
+								label: {
+									text: breakText.breakText(v.name, 125)
+								}
+							}
+						};
+						cells.push(node);
+					} else if (
+						[
+							"field_processor",
+							"java_processor",
+							"js_processor",
+							"aggregation_processor",
+							"row_filter_processor"
+						].includes(v.type)
+					) {
+						let node = {
+							type: mapping[v.type],
+							id: v.id,
+							freeTransform: false,
+							angle: 0,
+							schema: null,
+							outputSchema: null,
+							attrs: {
+								label: {
+									text: breakText.breakText(v.name, 95)
+								}
+							}
+						};
+						if (["field_processor"].includes(v.type)) {
+							node.form_data = formData;
+						} else if (["aggregation_processor"].includes(v.type)) {
+							node.form_data = formData;
+						} else if (["js_processor"].includes(v.type)) {
+							node.form_data = formData;
+						} else if (["row_filter_processor"].includes(v.type)) {
+							node.form_data = formData;
+						}
+						cells.push(node);
+					}
+					if (v.outputLanes) {
+						v.outputLanes.map(k => {
+							let node = {
+								type: "app.Link",
+								source: {
+									id: v.id
+								},
+								target: {
+									id: k
+								},
+								router: {
+									name: "manhattan"
+								},
+								connector: {
+									name: "rounded"
+								},
+								form_data: {
+									label: "",
+									joinTable: _.cloneDeep(JOIN_TABLE_TPL)
+								},
+								labels: "",
+								attrs: {}
+							};
+							cells.push(node);
+						});
+					}
+				});
+			}
+			log("job loadSchema cells", cells);
+			return {
+				cells: cells
+			};
+		},
+
+		/**
+		 * handler join table on after reverse editor data
+		 * @param stages
+		 * @param graph
+		 */
+		handleJoinTables(stages, graph) {
+			log("Job.handleJoinTables", stages, graph);
+			if (stages) {
+				stages.map(stage => {
+					if (
+						stage.joinTables &&
+						stage.joinTables.length > 0 &&
+						stage.inputLanes &&
+						stage.inputLanes.length > 0 &&
+						![
+							"field_processor",
+							"java_processor",
+							"js_processor",
+							"aggregation_processor",
+							"row_filter_processor"
+						].includes(stage.type)
+					) {
+						// 目标节点 数据节点 jointables
+						// tableName -> joinTable
+						let joinTables = {};
+						stage.joinTables.map(table => {
+							joinTables[table.stageId] = table;
+						});
+
+						let cell = graph.getCell(stage.id);
+						graph.getConnectedLinks(cell, {inbound: true}).forEach( link => {
+							let sourceCell = link.getSourceCell();
+							let sourceDataCells = sourceCell.getFirstDataNode()
+								.filter( cell => !!joinTables[cell.id]);
+							if(sourceDataCells && sourceDataCells.length > 0){
+								let formData = link.getFormData();
+								formData.joinTable = joinTables[sourceDataCells[0].id];
+							}
+						});
+					}
+				});
+			}
+		},
+
 		status: {
 			handler() {
 				if (["draft", "error", "paused"].includes(this.status)) {
@@ -236,6 +683,7 @@ export default {
 			}
 		}
 	},
+
 	mounted() {
 		let self = this;
 
@@ -256,27 +704,30 @@ export default {
 		// self.editor.getUI().getBackButtonEl().on('click', () => {
 		// 	self.$router.push({path: '/dataFlows'});
 		// });
+		let settingSetInterval = null;
 		this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
 			changeData = this.getDataFlowData(true);
-		});
 
-		if (["draft", "error", "paused"].includes(this.status)) {
-			timer = setInterval(() => {
+			settingSetInterval = () => {
 				if (changeData) {
-					self.timeSave();
+					timer = setTimeout(() => {
+						if (["draft", "error", "paused"].includes(this.status)) {
+							self.timeSave();
+						}
+					}, 10000);
 				}
-			}, 10000);
-		}
-	},
-
-	beforeDestroy() {
-		if (this.timeoutId) {
-			clearTimeout(this.timeoutId);
-		}
-		this.editor.destroy();
-		if (["draft", "error", "paused"].includes(this.status)) {
-			timer.clearInterval();
-		}
+			};
+			if (timer) {
+				clearTimeout(timer);
+				if (changeData) {
+					settingSetInterval();
+				}
+			} else {
+				if (changeData) {
+					settingSetInterval();
+				}
+			}
+		});
 	},
 
 	methods: {
@@ -297,23 +748,28 @@ export default {
 				}
 				data.status = "paused";
 				data.executeMode = "normal";
-				data.name = this.form.taskName;
 				self.doSave(data, (err, dataFlow) => {
 					if (err) {
 						this.$message.error(self.$t("message.saveFail"));
 					} else {
 						this.$message.success(self.$t("message.saveOK"));
 						self.setEditable(false);
+						this.loadDataFlow(data.id);
 					}
 				});
 			}
 			this.dialogFormVisible = false;
 		},
 
+		getLayerName(name) {
+			return name;
+		},
+
 		/****
 		 * Auto save
 		 */
 		timeSave() {
+			this.isSaving = true;
 			let self = this,
 				data = this.getDataFlowData(true),
 				promise = dataFlowsApi.draft(data);
@@ -343,6 +799,7 @@ export default {
 					.finally(() => {
 						changeData = null;
 						self.loading = false;
+						self.isSaving = false;
 					});
 			}
 		},
@@ -382,7 +839,6 @@ export default {
 							dataFlow.editorData = cells;
 							// 2. 调用画布创建节点方法
 							self.editor.setData(dataFlow);
-
 							// 3. 更新schema
 							self.editor.reloadSchema();
 
@@ -485,12 +941,21 @@ export default {
 			let editorData = this.editor.getData();
 			let graphData = editorData.graphData;
 			let settingData = editorData.settingData;
-			settingData.notificationInterval = settingData.notificationInterval ? Number(settingData.notificationInterval) : 300;
-			settingData.notificationWindow = settingData.notificationWindow ? Number(settingData.notificationWindow) : 0 ;
-			settingData.readBatchSize = settingData.readBatchSize?Number(settingData.readBatchSize) : 1000;
-			settingData.readCdcInterval =settingData.readCdcInterval ? Number(settingData.readCdcInterval) : 500;
-			settingData.transformerConcurrency =settingData.transformerConcurrency ? Number(settingData.transformerConcurrency) : 8;
-			settingData.processorConcurrency =settingData.processorConcurrency ? Number(settingData.processorConcurrency) : 1;
+			this.sync_type = settingData.sync_type;
+			settingData.notificationInterval = settingData.notificationInterval
+				? Number(settingData.notificationInterval)
+				: 300;
+			settingData.notificationWindow = settingData.notificationWindow
+				? Number(settingData.notificationWindow)
+				: 0;
+			settingData.readBatchSize = settingData.readBatchSize ? Number(settingData.readBatchSize) : 1000;
+			settingData.readCdcInterval = settingData.readCdcInterval ? Number(settingData.readCdcInterval) : 500;
+			settingData.transformerConcurrency = settingData.transformerConcurrency
+				? Number(settingData.transformerConcurrency)
+				: 8;
+			settingData.processorConcurrency = settingData.processorConcurrency
+				? Number(settingData.processorConcurrency)
+				: 1;
 			let distanceForSink = editorData.distanceForSink || {};
 
 			let cells = graphData.cells ? graphData.cells : [];
@@ -510,7 +975,12 @@ export default {
 					category: "数据库克隆",
 					stopOnError: false,
 					mappingTemplate: "cluster-clone",
-					emailWaring: { edited: true, started: false, error: true, paused: false },
+					emailWaring: {
+						edited: true,
+						started: false,
+						error: true,
+						paused: false
+					},
 					stages: [],
 					setting: settingData
 				},
@@ -917,9 +1387,9 @@ export default {
 			};
 			if (data) {
 				data.map((v, index) => {
-					let formData =_.cloneDeep(v);
-					delete formData.inputLanes
-					delete formData.outputLanes
+					let formData = _.cloneDeep(v);
+					delete formData.inputLanes;
+					delete formData.outputLanes;
 					if (["table", "view", "collection", "mongo_view"].includes(v.type)) {
 						let node = {
 							type: mapping[v.type],
@@ -948,7 +1418,7 @@ export default {
 									text: breakText.breakText(v.name, 125)
 								}
 							},
-							form_data: formData,
+							form_data: formData
 						};
 						cells.push(node);
 					} else if (v.type === "database") {
@@ -1069,7 +1539,10 @@ export default {
 			let dataCellName = [];
 			dataCells.forEach(cell => {
 				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
-				let tableName = { value: formData.tableName || formData.name, cell: cell };
+				let tableName = {
+					value: formData.tableName || formData.name,
+					cell: cell
+				};
 				dataCellName.push(tableName);
 			});
 			var restaurants = dataCellName;
@@ -1086,6 +1559,16 @@ export default {
 			//选中当前节点
 			this.editor.graph.selectionPosition(item.cell);
 		}
+	},
+
+	beforeDestroy() {
+		if (this.timeoutId) {
+			clearTimeout(this.timeoutId);
+		}
+		this.editor.destroy();
+		if (["draft", "error", "paused"].includes(this.status)) {
+			clearInterval(timer);
+		}
 	}
 };
 </script>
@@ -1100,8 +1583,9 @@ export default {
 	.el-dialog__body {
 		padding-bottom: 0;
 	}
-	.e-input {
-		width: calc(100% - 100px);
+	.e-input,
+	.el-select {
+		width: calc(100% - 120px);
 		height: 30px;
 		line-height: 30px;
 		input {
@@ -1113,9 +1597,9 @@ export default {
 		line-height: 30px;
 	}
 	.el-form--label-left .el-form-item__label {
-		width: 100px;
+		width: 120px;
 		line-height: 30px;
-		font-size: 14px;
+		font-size: 13px;
 	}
 	.el-button {
 		padding: 8px 20px;
@@ -1125,5 +1609,19 @@ export default {
 	.el-input__inner {
 		border-radius: 20px;
 	}
+}
+.el-tooltip__popper.is-dark {
+	background-color: #d3d3d3 !important;
+	color: #333 !important;
+	font-size: 16px;
+}
+// 控制主题颜色
+
+.el-tooltip__popper[x-placement^="bottom"] .popper__arrow::after {
+	border-bottom-color: #d3d3d3 !important;
+}
+
+.el-tooltip__popper[x-placement^="bottom"] .popper__arrow {
+	border-bottom-color: #d3d3d3 !important;
 }
 </style>

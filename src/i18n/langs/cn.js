@@ -22,7 +22,8 @@ const cn = {
 		restart: "重启",
 		syncGover: "同步治理",
 		screen: "屏幕",
-		delete: "删 除",
+		delete: "删除",
+		cancle: "取 消",
 		cancel: "取 消",
 		confirm: "确 定",
 		placeholderMonServer: "请输入监控的服务名称",
@@ -61,11 +62,11 @@ const cn = {
 		edit: "修改"
 	},
 	dataFlow: {
-		selectNode: '请选择节点',
-		submitExecute: '提交并执行',
-		submitOnly: '仅提交',
-		implementationModalities: '执行方式',
-		submitConfirmation: '提交确认',
+		selectNode: "请选择节点",
+		submitExecute: "提交并执行",
+		submitOnly: "仅提交",
+		implementationModalities: "执行方式",
+		submitConfirmation: "提交确认",
 		SyncPoint: "同步节点",
 		Current: "当前时间",
 		SyncTime: "同步时间",
@@ -163,7 +164,7 @@ const cn = {
 		notification_lag: "通知",
 		isOpenAutoDDL: "自动处理DDL操作",
 		transformerConcurrency: "目标写入线程数",
-		processorConcurrency:"处理器线程数",
+		processorConcurrency: "处理器线程数",
 		send_email_when_replication: "几秒后重新发送",
 		send_email_at_most_one_replication: "超过多少秒取消发送",
 		read_cdc_interval: "增量同步间隔(ms)",
@@ -183,9 +184,9 @@ const cn = {
 		nameTip: "后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。",
 		enterFilterTable: "请输入过滤表内容",
 		button: {
-			submit: '提交',
-			viewConfig: '查看节点配置',
-			viewMonitoring: '查看监控数据',
+			submit: "提交",
+			viewConfig: "查看节点配置",
+			viewMonitoring: "查看监控数据",
 			setting: "设置",
 			logs: "日志",
 			preview: "预览",
@@ -196,10 +197,11 @@ const cn = {
 			force_stop: "强制停止",
 			reset: "重置",
 			save: "保存",
-			reloadSchema:'刷新schema',
-			debug: 'debug测试',
-			quantitative: '定量',
-			increment: '增量',
+			saveing: "保存中",
+			reloadSchema: "刷新schema",
+			debug: "debug测试",
+			quantitative: "定量",
+			increment: "增量"
 		},
 		save_before_running: "请先保存再运行",
 		reset_job: {
@@ -289,9 +291,9 @@ const cn = {
 							keep: "保持已存在的数据",
 							remove: "运行前删除已存在的数据"
 						},
-            initialSyncOrder: {
-              keep: '初始化节点顺序',
-            },
+						initialSyncOrder: {
+							keep: "初始化节点顺序"
+						},
 						filter: {
 							label: "过滤条件",
 							placeholder: "过滤条件(Mongo Query Filter Document)",
@@ -363,9 +365,11 @@ const cn = {
 					enterNewlyReleasedApi: "请输入对新建发布API的描述",
 					enterEndUrl: "请输入url末端路径名",
 					required: "必填",
+					publishName: "发布API",
 					availableQueries: "可用查询",
 					publishApi_nameNone: "API名称不能为空",
-					publishApi_commentNone: "描述不为空"
+					publishApi_commentNone: "描述不为空",
+					publishApi_path: "API路径不为空"
 				},
 				es: {
 					name: "ES",
@@ -461,6 +465,25 @@ const cn = {
 
 					none_script_type: "脚本类型必填.",
 					none_script: "脚本必填.",
+
+					debug_button_label: "连接测试",
+					warning_for_not_save: "当前任务未保存，无法进行连接测试，请保存之后再尝试",
+					connect_server_fail: "连接服务器失败",
+
+					debug: {
+						top_header: "js连接测试",
+						bottom_header: "测试详情",
+						detail: {
+							parameter: "参数",
+							return: "返回值"
+						},
+						order: "连接顺序",
+						status: "返回状态",
+						status_error: "错误",
+						status_success: "成功",
+						time: "耗时",
+						log: "日志"
+					},
 
 					form: {
 						name: {
@@ -568,13 +591,13 @@ const cn = {
 			},
 			toolbar: {
 				undo: {
-					tip: "撤销"
-				},
-				redo: {
 					tip: "重做"
 				},
+				redo: {
+					tip: "撤销"
+				},
 				clear_paper: {
-					tip: "清空画布"
+					tip: "清空"
 				},
 				export_svg: {
 					tip: "导出SVG"
@@ -592,22 +615,22 @@ const cn = {
 					tip: "置前"
 				},
 				layout: {
-					tip: "自动对齐"
+					tip: "自动布局"
 				},
 				zoom_to_fit: {
 					tip: "填充可视区域"
 				},
 				zoom_out: {
-					tip: "放大"
+					tip: "缩小"
 				},
 				zoom_in: {
-					tip: "缩小"
+					tip: "放大"
 				},
 				grid_size: {
 					tip: "网格大小"
 				},
 				fullscreen: {
-					tip: "全屏"
+					tip: "切换全屏"
 				}
 			}
 		},

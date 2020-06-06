@@ -44,7 +44,7 @@ import {
 	Tooltip,
 	Upload,
 	Autocomplete,
-	InputNumber,
+	InputNumber
 } from "element-ui";
 
 Vue.component(InputNumber.name, InputNumber);

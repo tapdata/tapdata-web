@@ -9,8 +9,10 @@
 						</el-option>
 					</el-select>
 				</el-col>
-				<el-col :span="5">
-					<el-button class="e-button" type="primary" @click="seeNodeData">{{$t('dataFlow.button.viewConfig')}}</el-button>
+				<el-col :span="5" style="text-align: right;" v-if="domValue !== 'all'">
+					<el-button class="e-button" type="primary" @click="seeNodeData">{{
+						$t("dataFlow.button.viewConfig")
+					}}</el-button>
 				</el-col>
 			</el-form-item>
 		</el-form>
@@ -107,7 +109,7 @@
 	</div>
 </template>
 <script>
-import $ from 'jquery';
+import $ from "jquery";
 import echartHead from "./components/echartHead";
 import echartsCompinent from "../../components/echartsCompinent";
 import shaftlessEchart from "../../components/shaftlessEchart";
@@ -473,7 +475,7 @@ export default {
 			let dataCellName = [];
 			dataCells.forEach(cell => {
 				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
-				let tableName= {"value": formData.tableName ,'cell':cell};
+				let tableName = { value: formData.tableName, cell: cell };
 				dataCellName.push(tableName);
 			});
 			var restaurants = dataCellName;
@@ -483,8 +485,8 @@ export default {
 		},
 
 		createFilter(queryString) {
-			return (restaurant) => {
-				return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+			return restaurant => {
+				return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0;
 			};
 		},
 
@@ -492,14 +494,14 @@ export default {
 			let result = this.getAllCellsNode();
 			let selectCell = null;
 			result.forEach(item => {
-				if(this.domValue === item.cell.id) {
+				if (this.domValue === item.cell.id) {
 					selectCell = item.cell;
 				}
 			});
-			if (this.domValue && this.domValue !=='all') {
+			if (this.domValue && this.domValue !== "all") {
 				this.editor.graph.selectionPosition(selectCell);
 			} else {
-				this.$message.error(this.$t('dataFlow.selectNode'));
+				this.$message.error(this.$t("dataFlow.selectNode"));
 			}
 		},
 
@@ -900,8 +902,9 @@ export default {
 			height: 30px;
 			line-height: 30px;
 			padding: 0 10px;
+			font-size: 12px;
 		}
-    }
+	}
 	.e-job-monitor-btn {
 		position: absolute;
 		top: 15px;

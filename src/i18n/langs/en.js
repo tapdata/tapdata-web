@@ -61,25 +61,25 @@ const en = {
 		edit: "edit"
 	},
 	dataFlow: {
-		selectNode: 'Please select a node',
-		submitExecute: 'Submit and execute',
-		submitOnly: 'Submit only',
-		implementationModalities: 'Execution method',
-		submitConfirmation: 'Submit Confirmation',
-		SyncPoint: "Sync point",
-		Current: "Current",
-		SyncTime: "Sync time",
-		batchDelete: "Batch delete",
+		selectNode: "Please select a node",
+		submitExecute: "Submit and execute",
+		submitOnly: "Submit only",
+		implementationModalities: "Execution method",
+		submitConfirmation: "Submit Confirmation",
+		SyncPoint: "Sync Node",
+		Current: "Current Time",
+		SyncTime: "Sync Time",
+		batchDelete: "Batch Delete",
 		batchRest: "Batch reset",
-		bulkExport: "Batch export",
-		bulkScheuled: "Batch Scheuled",
-		bulkStopping: "Batch stopping",
+		bulkExport: "Bulk Export",
+		bulkScheuled: "Batch Start",
+		bulkStopping: "Bulk Stop",
 		upload: "Click to upload",
-		import: "Task import",
-		dataFlowExport: "Export",
+		import: "Task Import",
 		uploadOK: "Upload successful",
-		uploadError: "Upload error",
-		uploadInfo: "Click to details",
+		uploadError: "Upload failed",
+		uploadInfo: "Click to view details",
+		dataFlowExport: "Export",
 		overWrite: "Overwrite existing data",
 		skipData: "Skip existing data",
 		loadingError: "Loading failed, please",
@@ -110,8 +110,10 @@ const en = {
 		totalInput: "Total Input",
 		totalOutput: "Total Output",
 		replicate: "Replicate Lag",
-		throughputpop: "The read speed from source node and the write speed to the target node, larger number is better",
-		transtime_pop: "The time lapsed from the data record is read from the source node until the data is written into target node",
+		throughputpop:
+			"The read speed from source node and the write speed to the target node, larger number is better",
+		transtime_pop:
+			"The time lapsed from the data record is read from the source node until the data is written into target node",
 		replicate_pop: "The time gap between source node last update time and target node last update time",
 		status: {
 			running: "Running",
@@ -149,10 +151,10 @@ const en = {
 		initial_sync: "INITIAL SYNC",
 		cdc: " CDC ",
 		send_email: "Send Email",
-		paused: "Task paused",
-		error: "Task error",
-		edited: "Task edited",
-		started: "Task started",
+		stopped: "task stopped",
+		error: "task error",
+		edited: "task edited",
+		started: "task started",
 		drop_target_before_start: "Whether the target table is deleted before starting the task",
 		run_custom_sql: "Run custom SQL repeatedly",
 		stop_on_error: "Stop synchronization when an error is encountered",
@@ -164,13 +166,13 @@ const en = {
 		isOpenAutoDDL: "Automatically handle DDL operations",
 		transformerConcurrency: "Transformer Concurrency",
 		processorConcurrency: "Processor Concurrency",
-		send_email_when_replication: "Send email when replication lag is greater than:(seconds)",
-		send_email_at_most_one_replication: "Send at most 1 replication lag email within (seconds)",
+		send_email_when_replication: "Resend in a few seconds",
+		send_email_at_most_one_replication: "Cancel sending in more than seconds",
 		read_cdc_interval: "Incremental synchronization interval (ms)",
 		read_batch_size: "How many reads each time",
 		mission: "Description",
-		yes: "Yes",
-		no: "No",
+		yes: "yes",
+		no: "no",
 		selectGrpupFiled: "Please select a grouping field",
 		selectTargetField: "Please select the target field",
 		aggName: "Sub-process name",
@@ -181,11 +183,12 @@ const en = {
 		groupByExpression: "Group Field",
 		aggregation: "Aggregation",
 		enterFilterTable: "Please enter the filter table content",
-		nameTip: "Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ",
+		nameTip:
+			"Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ",
 		button: {
 			submit: "Submit",
-			viewConfig: "View node configuration",
-			viewMonitoring: "View monitoring data",
+			viewConfig: "Node Config",
+			viewMonitoring: "Data Monitoring",
 			setting: "Setting",
 			logs: "Logs",
 			preview: "Data Trace",
@@ -196,10 +199,11 @@ const en = {
 			force_stop: "Force Stop",
 			reset: "Reset",
 			save: "Save",
-			reloadSchema: "Reload Schema",
-			debug: "Debug Test",
+			saveing: "Saveing",
+			reloadSchema: "reloadSchema",
+			debug: "debug test",
 			quantitative: "Quantitative",
-			increment: "Increment",
+			increment: "Increment"
 		},
 		save_before_running: "Please save the task before running",
 		reset_job: {
@@ -361,11 +365,13 @@ const en = {
 					table_field: "field",
 					table_type: "Type",
 					table_setting: "Settings",
+					publishName: "Publish API",
 					enterPublishApiName: "Please enter the name of the data publishing API",
 					enterNewlyReleasedApi: "Please enter a description of the newly released API",
 					enterEndUrl: "Please enter the URL end path name",
 					required: "Required",
-					availableQueries: "Query"
+					availableQueries: "Query",
+					publishApi_path: "API path is not empty"
 				},
 				es: {
 					name: "ES",
@@ -460,6 +466,26 @@ const en = {
 					none_script_type: "Script type is required.",
 					none_script: "Script is required.",
 
+					debug_button_label: "Connect test",
+					warning_for_not_save:
+						"The current task has not been saved, unable to connect the test server, please save and try again",
+					connect_server_fail: "Failed to connect to server",
+
+					debug: {
+						top_header: "Script Test",
+						bottom_header: "Test Details",
+						detail: {
+							parameter: "Parameter",
+							return: "Return"
+						},
+						order: "Order",
+						status: "Status",
+						status_error: "Error",
+						status_success: "Success",
+						time: "Time",
+						log: "Log"
+					},
+
 					form: {
 						name: {
 							label: "Node name",
@@ -500,7 +526,8 @@ const en = {
 						expressionExample: {
 							label: "Example expression",
 							labelTip: "Expressions can use comparison and calculation operators in JavaScript",
-							tip: "Select men over 50 years old and people over 30 years old with income below 10,000, the expression is as follows:"
+							tip:
+								"Select men over 50 years old and people over 30 years old with income below 10,000, the expression is as follows:"
 						},
 						symbol: {
 							label: "Supported symbols",
@@ -590,7 +617,7 @@ const en = {
 					tip: "Bring Object to Front"
 				},
 				layout: {
-					tip: "Automatic alignment"
+					tip: "Auto-layout Graph"
 				},
 				zoom_to_fit: {
 					tip: "Zoom To Fit"

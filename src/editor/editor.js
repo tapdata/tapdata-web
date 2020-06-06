@@ -6,9 +6,7 @@
 import BaseObject from "./lib/BaseObject";
 import UI from "./ui/ui";
 import Graph from "./ui/graph";
-import {
-	loadPlugins
-} from "./plugins";
+import { loadPlugins } from "./plugins";
 import Sidebar from "./ui/sidebar";
 import Tab from "./ui/tab";
 import VueComponent from "./ui/VueComponent";
@@ -23,12 +21,8 @@ import DVResult from "../view/job/DataVerify/Result";
 import log from "../log";
 import Panel from "./ui/panel";
 import TableSelector from "../view/job/TableSelector";
-import {
-	DEFAULT_SETTING
-} from "./constants";
-import {
-	EditorEventType
-} from "./lib/events";
+import { DEFAULT_SETTING } from "./constants";
+import { EditorEventType } from "./lib/events";
 import i18n from "../i18n/i18n";
 
 import factory from "../api/factory";
@@ -87,7 +81,7 @@ export default class Editor extends BaseObject {
 		"app.Database": "connectionId",
 		"app.Dummy": "connectionId",
 		"app.GridFSNode": "connectionId",
-		"app.ApiNode": "connectionId",
+		"app.ApiNode": "connectionId"
 	};
 
 	/**
@@ -117,9 +111,14 @@ export default class Editor extends BaseObject {
 		// login plugins
 		loadPlugins();
 
-		let ui = (self.ui = new UI(Object.assign({
-			editor: self
-		}, this.opts)));
+		let ui = (self.ui = new UI(
+			Object.assign(
+				{
+					editor: self
+				},
+				this.opts
+			)
+		));
 		ui.render(self.container);
 
 		let leftSidebar = (self.leftSidebar = new Sidebar({
@@ -233,7 +232,7 @@ export default class Editor extends BaseObject {
 		// hide stencil
 		this.getLeftSidebar().hide();
 
-		//self.getRightTabPanel().removeAll();
+		// self.getRightTabPanel().removeAll();
 		// remove stage config
 		// let nodeSettingPanel = self.getRightTabPanel().getChildByName('nodeSettingPanel');
 		// if( nodeSettingPanel ) self.getRightTabPanel().remove(nodeSettingPanel);
@@ -414,7 +413,7 @@ export default class Editor extends BaseObject {
 			});
 			self.getRightTabPanel().add(dataVerify);
 			self.getRightTabPanel().select(dataVerify);
-			self.getRightSidebar().on(EditorEventType.RESIZE, function () {
+			self.getRightSidebar().on(EditorEventType.RESIZE, function() {
 				dataVerify.emit(EditorEventType.RESIZE, ...arguments);
 			});
 		}
@@ -488,6 +487,7 @@ export default class Editor extends BaseObject {
 		}
 		self.getRightSidebar().show();
 	}
+
 	setData(dataFlow) {
 		this.graph.loadData(JSON.parse(dataFlow.editorData));
 		this.ui.setName(dataFlow.name);
@@ -514,8 +514,8 @@ export default class Editor extends BaseObject {
 	distanceForSink(graphLib) {
 		let distanceResult = {};
 
-		let predecessors = function (node, distance) {
-			if (distanceResult.hasOwnProperty(node))
+		let predecessors = function(node, distance) {
+			if (Object.prototype.hasOwnProperty.call(distanceResult, node))
 				distanceResult[node] = distanceResult[node] >= distance ? distanceResult[node] : distance;
 			else distanceResult[node] = distance;
 
@@ -531,27 +531,17 @@ export default class Editor extends BaseObject {
 	setEditable(editable, dataFlow) {
 		log("Editor.setEditable", editable, dataFlow);
 		this.editable = editable;
-		//this.graph.setEditable(editable);
+		this.graph.setEditable(editable);
 		if (editable) {
 			this.initEditingMode();
 		} else {
 			this.initRunningMode(dataFlow);
 		}
 	}
+
 	goBackMontior() {
 		let monitor = this.getRightTabPanel().getChildByName("monitor");
 		this.getRightTabPanel().select(monitor);
-	}
-
-	getAllCells() {
-		let dataCells = this.graph.graph.getCells().filter(cell => {
-			let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
-			let type = cell.get("type");
-			let connectionIdFieldName = this.mapping[type];
-			return formData && connectionIdFieldName && formData[connectionIdFieldName];
-		});
-		log("editor.getCells", this.graph.graph.getCells());
-		return dataCells;
 	}
 
 	/**
@@ -661,8 +651,7 @@ export default class Editor extends BaseObject {
 				result.data.forEach(connection => {
 					if (connection.schema && connection.schema.tables) {
 						let tables = {};
-						connection.schema.tables.forEach(table => (tables[table.table_name] =
-							table));
+						connection.schema.tables.forEach(table => (tables[table.table_name] = table));
 						connectionSchemaData[connection.id] = tables;
 					}
 				});
@@ -670,8 +659,7 @@ export default class Editor extends BaseObject {
 				// 3. 分别更新对应节点schema
 				if (dataCells) {
 					dataCells.map(cell => {
-						let formData = typeof cell.getFormData === "function" ? cell.getFormData() :
-							null;
+						let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
 						if (!formData) return;
 
 						let type = cell.get("type");
@@ -680,8 +668,7 @@ export default class Editor extends BaseObject {
 						let tableName = formData.tableName;
 
 						let schema =
-							connectionSchemaData[connectionId] && connectionSchemaData[connectionId]
-							[tableName];
+							connectionSchemaData[connectionId] && connectionSchemaData[connectionId][tableName];
 
 						if (!connectionId || !tableName || !schema) return;
 						cell.setSchema(schema, false);
@@ -695,11 +682,11 @@ export default class Editor extends BaseObject {
 	}
 	getAllCells() {
 		let dataCells = this.graph.graph
-			.getCells() //.filter(cell => cell.isDataNode && cell.isDataNode())
+			.getCells() // .filter(cell => cell.isDataNode && cell.isDataNode())
 			.filter(cell => {
 				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
 				let type = cell.get("type");
-				return formData && type !== 'app.Link';
+				return formData && type !== "app.Link";
 			});
 		return dataCells;
 	}

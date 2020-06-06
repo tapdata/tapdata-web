@@ -1,9 +1,11 @@
 <template>
 	<div class="releaseApi">
-		<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">
-			{{ $t("dataFlow.button.viewMonitoring") }}
-		</el-button>
-		<el-form ref="form" :model="form" :disabled="disabled" label-position="top" label-width="200px">
+		<div class="head-btns">
+			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+				{{ $t("dataFlow.button.viewMonitoring") }}
+			</el-button>
+		</div>
+		<el-form ref="form" :model="form" :rules="rules" :disabled="disabled" label-position="top" label-width="200px">
 			<el-form-item :label="$t('editor.cell.data_node.api.dataApiName')">
 				<el-input
 					v-model="form.name"
@@ -25,7 +27,7 @@
 			<el-row :gutter="10">
 				<el-col :span="6">
 					<el-form-item :label="$t('editor.cell.data_node.api.method')">
-						<el-select v-model="form.method">
+						<el-select v-model="form.paths.method">
 							<el-option
 								v-for="item in selectList"
 								:key="item.value"
@@ -37,33 +39,22 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="18">
-					<el-form-item label="URL/API/V1/">
-						<el-input v-model="form.path" :placeholder="$t('dataFlow.enterFilterTable')"></el-input>
+					<el-form-item :label="'URL/API/V1/' + form.apiPath">
+						<el-input v-model="form.apiPath" :placeholder="$t('dataFlow.enterFilterTable')"></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>
 			<el-form-item :label="$t('editor.cell.data_node.api.fieldSettings')" class="pdTop5">
-				<el-table border :data="form.paths.fields" style="width: 100%">
+				<el-table
+					border
+					:data="form.paths.fields"
+					row-key="id"
+					:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+					style="width: 100%"
+				>
 					<el-table-column prop="field_name" :label="$t('editor.cell.data_node.api.table_field')">
-						<!-- <template slot-scope="scope">
-              <el-input v-model="scope.row.field_name" size="mini"></el-input>
-            </template> -->
 					</el-table-column>
 					<el-table-column prop="javaType" :label="$t('editor.cell.data_node.api.table_type')" width="100">
-						<!-- <template slot-scope="scope">
-              <el-select
-                v-model="scope.row.table_type"
-                filterable
-                allow-create
-                default-first-option>
-                  <el-option
-                    v-for="(item, idx) in typeList"
-                    :value="item.type"
-                    :label="item.type"
-                    v-bind:key="idx">
-                  </el-option>
-              </el-select>
-            </template> -->
 					</el-table-column>
 					<el-table-column
 						align="center"
@@ -84,16 +75,14 @@
 					</el-table-column>
 				</el-table>
 			</el-form-item>
-			<!-- <el-form-item class="btnClass">
-				<el-button @click="addRow">+ {{$t('editor.cell.processor.aggregate.new_aggregate')}}</el-button>
-			</el-form-item> -->
 		</el-form>
 	</div>
 </template>
 
 <script>
 import _ from "lodash";
-import { convertSchemaToTreeData } from "../../util/Schema";
+// import {uuid} from "../../util/Schema";
+// import { convertSchemaToTreeData } from "../../util/Schema";
 // import log from '../../../log';
 // import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
 let editorMonitor = null;
@@ -110,19 +99,19 @@ export default {
 			expressionList: [],
 			form: {
 				apiVersion: "V1",
+				connection: "",
 				name: "",
 				description: "",
 				paths: {
+					path: "",
 					method: "GET",
 					fields: [],
 					availableQueryField: [],
 					requiredQueryField: []
 				},
-				path: "",
-				mergedSchema: null
-				// tableData: [
-				//   {'table_field':1,'table_type': 'String',checkList:['required']}
-				// ],
+				fields: [],
+				apiPath: "",
+				type: "publishApi"
 			}
 		};
 	},
@@ -130,56 +119,103 @@ export default {
 	watch: {
 		form: {
 			deep: true,
-			handler(val) {
+			handler(data) {
 				this.$emit("dataChanged", this.getData());
 			}
 		}
 	},
 
+	inputSchemas: [],
+	mergedSchema: {},
+
 	methods: {
-		convertSchemaToTreeData,
+		// convertSchemaToTreeData,
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
 				Object.keys(data).forEach(key => (this.form[key] = data[key]));
 			}
+
+			// let fields = [];
+			this.inputSchemas = cell.getInputSchema();
 			this.mergedSchema = cell.getOutputSchema();
+			let formDatas = cell.graph
+				.getConnectedLinks(cell, { inbound: true })
+				.map(link => link.getSourceCell().getFormData());
 			// let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
 			if (this.mergedSchema && this.mergedSchema.fields) {
 				this.mergedSchema.fields.forEach(field => {
 					this.$set(field, "required", false);
 					this.$set(field, "query", false);
+					this.$set(field, "visible", true);
 				});
+				this.form.connection = formDatas[0].connectionId;
 				this.form.paths.fields = this.mergedSchema.fields;
 			}
 
+			if (data) {
+				for (let i = 0; i < this.form.paths.fields.length; i++) {
+					let item = this.form.paths.fields[i];
+					data.paths.availableQueryField.forEach(field => {
+						if (item.field_name === field) {
+							item.query = true;
+						}
+					});
+
+					data.paths.requiredQueryField.forEach(field => {
+						if (item.field_name === field) {
+							item.required = true;
+						}
+					});
+				}
+			}
 			editorMonitor = vueAdapter.editor;
 		},
 
 		getData() {
 			let data = _.cloneDeep(this.form);
-
 			if (data.paths.fields) {
-				data.paths.fields.forEach((item, index) => {
+				data.paths.requiredQueryField = [];
+				data.paths.availableQueryField = [];
+				data.fields = [];
+				data.paths.path = "";
+				data.paths.fields.forEach(item => {
 					if (item.required) {
 						data.paths.requiredQueryField.push(item.field_name);
-					} else if (item.query) {
+					} else {
+						data.paths.requiredQueryField.forEach((field, index) => {
+							if (item.field_name === field) {
+								data.paths.requiredQueryField.splice(index, 1);
+							}
+						});
+					}
+
+					if (item.query) {
 						data.paths.availableQueryField.push(item.field_name);
 					} else {
-						data.paths.requiredQueryField.splice(index, 1);
-						data.paths.availableQueryField.splice(index, 1);
+						data.paths.availableQueryField.forEach((field, index) => {
+							if (item.field_name === field) {
+								data.paths.availableQueryField.splice(index, 1);
+							}
+						});
 					}
+
+					if (item.visible) {
+						data.fields.push(item);
+					}
+					delete item.required;
+					delete item.query;
 				});
+				data.paths.path = "/API/V1/" + this.mergedSchema.table_name + "/cust/" + data.apiPath;
 			}
 			return data;
 		},
-
 		setDisabled(disabled) {
 			this.disabled = disabled;
 		},
 
 		seeMonitor() {
 			editorMonitor.goBackMontior();
-		},
+		}
 	}
 };
 </script>

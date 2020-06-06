@@ -69,8 +69,10 @@ export default class Graph extends Component {
 			this
 		);
 
-		this.commandManager = new joint.dia.CommandManager({ graph: graph });
-		this.commandManager.on("stack", this.emit.bind(this, EditorEventType.DATAFLOW_CHANGED) );
+		this.commandManager = new joint.dia.CommandManager({
+			graph: graph
+		});
+		this.commandManager.on("stack", this.emit.bind(this, EditorEventType.DATAFLOW_CHANGED));
 
 		const paper = (this.paper = new joint.dia.Paper({
 			model: graph,
@@ -82,7 +84,9 @@ export default class Graph extends Component {
 			// markAvailable: true,
 			defaultLink: new joint.shapes.app.Link(),
 			defaultConnectionPoint: joint.shapes.app.Link.connectionPoint,
-			interactive: { linkMove: false },
+			interactive: {
+				linkMove: false
+			},
 			async: true,
 			sorting: joint.dia.Paper.sorting.APPROX,
 			snapLinks: 75,
@@ -161,7 +165,9 @@ export default class Graph extends Component {
 			} */
 		});
 
-		this.snaplines = new joint.ui.Snaplines({ paper: paper });
+		this.snaplines = new joint.ui.Snaplines({
+			paper: paper
+		});
 
 		const paperScroller = (this.paperScroller = new joint.ui.PaperScroller({
 			paper: paper,
@@ -186,10 +192,14 @@ export default class Graph extends Component {
 		paperScroller.render().center();
 	}
 
-	selectionPosition(cell){
+	selectionPosition(cell) {
 		// this.paperScroller.center();
-		this.paperScroller.scrollToElement(cell, { animation: { duration: 600 }});
-		this.selection.collection.add(cell);
+		this.paperScroller.scrollToElement(cell, {
+			animation: {
+				duration: 600
+			}
+		});
+		this.selection.collection.reset([cell]);
 	}
 
 	isAcyclic() {
@@ -228,6 +238,12 @@ export default class Graph extends Component {
 			this.editor.getRightSidebar().hide();
 		}
 		this.unHighlightAllCells();
+		if (document.getElementById("searchNode")) {
+			document.getElementById("searchNode").blur();
+		}
+		if (document.getElementById("taskNameInput")) {
+			document.getElementById("taskNameInput").blur();
+		}
 	}
 
 	unHighlightAllCells() {
@@ -250,7 +266,9 @@ export default class Graph extends Component {
 				self.unHighlightAllCells();
 			}, 0);
 		} else {
-			let first = self.selection.collection.findWhere({ id: cell.id });
+			let first = self.selection.collection.findWhere({
+				id: cell.id
+			});
 			if (!first) {
 				self.selection.collection.reset([cell]);
 			}
@@ -262,12 +280,18 @@ export default class Graph extends Component {
 					cellView.highlight(null, {
 						name: "stroke",
 						options: {
-							rx: isDataNode ? 20: 16,
+							rx: isDataNode ? 20 : 16,
 							ry: isDataNode ? 20 : 16
 						}
 					});
 				}, 0);
 			}
+		}
+		if (document.getElementById("searchNode")) {
+			document.getElementById("searchNode").blur();
+		}
+		if (document.getElementById("taskNameInput")) {
+			document.getElementById("taskNameInput").blur();
 		}
 	}
 
@@ -284,7 +308,7 @@ export default class Graph extends Component {
 			layout: {
 				columnWidth: 70,
 				columns: 3,
-				rowHeight: 49,
+				rowHeight: 49
 			},
 			/* search: {
 				'*': ['type', 'attrs/text/text', 'attrs/root/dataTooltip', 'attrs/label/text'],
@@ -412,12 +436,13 @@ export default class Graph extends Component {
 			} else {
 				this.selectPrimaryLink(cellView);
 			}
-			this.createInspector(cell);
+			// this.createInspector(cell);
 		} else {
 			if (cell.isElement()) {
 				this.selectCell(cell);
 			}
 		}
+		this.createInspector(cell);
 		if (cell.isElement()) {
 			this.emit(EditorEventType.SELECTED_STAGE, cell.toJSON());
 		}
@@ -453,14 +478,19 @@ export default class Graph extends Component {
 		let toolsView = new joint.dia.ToolsView({
 			name: "link-pointerdown",
 			tools: [
-				new ns.Vertices({ vertexAdding: true }),
+				new ns.Vertices({
+					vertexAdding: true
+				}),
 				// new ns.SourceAnchor(),
 				// new ns.TargetAnchor(),
 				// new ns.SourceArrowhead(),
 				new ns.TargetArrowhead(),
 				new ns.Segments(),
 				// new ns.Boundary({ padding: 15 }),
-				new ns.Remove({ offset: -20, distance: 40 })
+				new ns.Remove({
+					offset: -20,
+					distance: 40
+				})
 			]
 		});
 
@@ -509,7 +539,9 @@ export default class Graph extends Component {
 					let toolsView = new joint.dia.ToolsView({
 						name: "link-hover",
 						tools: [
-							new ns.Vertices({ vertexAdding: false }),
+							new ns.Vertices({
+								vertexAdding: false
+							}),
 							// new ns.SourceArrowhead(),
 							new ns.TargetArrowhead()
 						]
@@ -616,7 +648,10 @@ export default class Graph extends Component {
 
 				"ctrl+v": function() {
 					let pastedCells = this.clipboard.pasteCells(this.graph, {
-						translate: { dx: 20, dy: 20 },
+						translate: {
+							dx: 20,
+							dy: 20
+						},
 						useLocalStorage: true
 					});
 
@@ -654,12 +689,18 @@ export default class Graph extends Component {
 
 				"ctrl+plus": function(evt) {
 					evt.preventDefault();
-					this.paperScroller.zoom(0.2, { max: 5, grid: 0.2 });
+					this.paperScroller.zoom(0.2, {
+						max: 5,
+						grid: 0.2
+					});
 				},
 
 				"ctrl+minus": function(evt) {
 					evt.preventDefault();
-					this.paperScroller.zoom(-0.2, { min: 0.2, grid: 0.2 });
+					this.paperScroller.zoom(-0.2, {
+						min: 0.2,
+						grid: 0.2
+					});
 				},
 
 				"keydown:shift": function(evt) {
@@ -759,8 +800,8 @@ export default class Graph extends Component {
 		joint.layout.DirectedGraph.layout(this.graph, {
 			setLinkVertices: true,
 			rankDir: "LR",
-			marginX: 100,
-			marginY: 100
+			marginX: 200,
+			marginY: 200
 		});
 
 		setTimeout(() => {
@@ -827,11 +868,6 @@ export default class Graph extends Component {
 			this.toolbar.getWidgetByName("clear").disable();
 			setTimeout(() => this.paperScroller.centerContent(), 0);
 		}
-	}
-	selectionPosition(cell){
-		this.paperScroller.center();
-		this.selection.collection.reset(cell);
-		this.selection.collection.add(cell);
 	}
 
 	getData() {

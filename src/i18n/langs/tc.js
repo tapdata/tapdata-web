@@ -61,11 +61,11 @@ const tc = {
 		edit: "修改"
 	},
 	dataFlow: {
-		selectNode: '請選擇節點',
-		submitExecute: '提交並執行',
-		submitOnly: '僅提交',
-		implementationModalities: '執行方式',
-		submitConfirmation: '提交確認',
+		selectNode: "請選擇節點",
+		submitExecute: "提交並執行",
+		submitOnly: "僅提交",
+		implementationModalities: "執行方式",
+		submitConfirmation: "提交確認",
 		SyncPoint: "同步節點",
 		Current: "當前時間",
 		SyncTime: "同步時間",
@@ -76,8 +76,8 @@ const tc = {
 		bulkStopping: "批量停止",
 		upload: "點擊上傳",
 		import: "任務導入",
-		uploadError: "上傳失敗",
 		uploadOK: "上傳成功",
+		uploadError: "上傳失敗",
 		uploadInfo: "點擊查看詳情",
 		dataFlowExport: "導出",
 		overWrite: "覆蓋已有數據",
@@ -111,7 +111,8 @@ const tc = {
 		totalOutput: "總輸出",
 		replicate: "數據同步差距",
 		throughputpop: "平均每秒源端數據採集的速度以及目標端寫入的速度，數值越大越好",
-		transtime_pop: "傳輸耗時：除源節點外，事件處理完的時間減去事件的發生時間。節點間統計：事件從進入節點到輸出到所消耗的時間。任務流統計：所有節點耗時相加，數值越小越好",
+		transtime_pop:
+			"傳輸耗時：除源節點外，事件處理完的時間減去事件的發生時間。節點間統計：事件從進入節點到輸出到所消耗的時間。任務流統計：所有節點耗時相加，數值越小越好",
 		replicate_pop: "源庫和目標庫數據最後更新時間的差距，數值越小越好",
 		status: {
 			running: "運行中",
@@ -149,7 +150,7 @@ const tc = {
 		initial_sync: "初始化",
 		cdc: "增量同步",
 		send_email: "發送郵件",
-		paused: " 當任務停止",
+		stopped: " 當任務停止",
 		error: "當任務出錯",
 		edited: "當任務被編輯",
 		started: "當任務開啟",
@@ -162,8 +163,8 @@ const tc = {
 		data_quality_tag: "添加數據質量標籤",
 		notification_lag: "通知",
 		isOpenAutoDDL: "自動處理DDL操作",
-		transformerConcurrency: "目标写入线程数",
-		processorConcurrency: "处理器线程数",
+		transformerConcurrency: "目標寫入線程數",
+		processorConcurrency: "處理器線程數",
 		send_email_when_replication: "幾秒後重新發送",
 		send_email_at_most_one_replication: "超過多少秒取消發送",
 		read_cdc_interval: "增量同步間隔(ms)",
@@ -196,10 +197,11 @@ const tc = {
 			force_stop: "強制停止",
 			reset: "重置",
 			save: "保存",
+			saveing: "保存中",
 			reloadSchema: "刷新schema",
 			debug: "debug測試",
 			quantitative: "定量",
-			increment: "增量",
+			increment: "增量"
 		},
 		save_before_running: "請先保存再運行",
 		reset_job: {
@@ -291,7 +293,7 @@ const tc = {
 							remove: "運行前刪除已存在的數據"
 						},
 						initialSyncOrder: {
-							keep: "初始化節點順序",
+							keep: "初始化節點順序"
 						},
 						filter: {
 							label: "過濾條件",
@@ -360,11 +362,13 @@ const tc = {
 					table_field: "字段",
 					table_type: "類型",
 					table_setting: "設置",
+					publishName: "發布API",
 					enterPublishApiName: "請輸入數據發布API的名稱",
 					enterNewlyReleasedApi: "請輸入對新建發布API的描述",
 					enterEndUrl: "請輸入url末端路徑名",
 					required: "必填",
-					availableQueries: "可用查詢"
+					availableQueries: "可用查詢",
+					publishApi_path: "API路徑不為空"
 				},
 				es: {
 					name: "ES",
@@ -460,6 +464,25 @@ const tc = {
 
 					none_script_type: "腳本類型必填.",
 					none_script: "腳本必填.",
+
+					debug_button_label: "連接測試",
+					warning_for_not_save: "當前任務未保存，無法進行連接測試，請保存之後再嘗試",
+					connect_server_fail: "連接服務器失敗",
+
+					debug: {
+						top_header: "代码连接测试",
+						bottom_header: "測試詳情",
+						detail: {
+							parameter: "參數",
+							return: "返回值"
+						},
+						order: "連接順序",
+						status: "返回狀態",
+						status_error: "錯誤",
+						status_success: "成功",
+						time: "耗時",
+						log: "日誌"
+					},
 
 					form: {
 						name: {
@@ -567,13 +590,13 @@ const tc = {
 			},
 			toolbar: {
 				undo: {
-					tip: "撤銷"
-				},
-				redo: {
 					tip: "重做"
 				},
+				redo: {
+					tip: "撤銷"
+				},
 				clear_paper: {
-					tip: "清空畫布"
+					tip: "清空"
 				},
 				export_svg: {
 					tip: "導出SVG"
@@ -591,22 +614,22 @@ const tc = {
 					tip: "置前"
 				},
 				layout: {
-					tip: "自動對齊"
+					tip: "自動佈局"
 				},
 				zoom_to_fit: {
 					tip: "填充可視區域"
 				},
 				zoom_out: {
-					tip: "放大"
+					tip: "縮小"
 				},
 				zoom_in: {
-					tip: "縮小"
+					tip: "放大"
 				},
 				grid_size: {
 					tip: "網格大小"
 				},
 				fullscreen: {
-					tip: "全屏"
+					tip: "切換全屏"
 				}
 			}
 		},

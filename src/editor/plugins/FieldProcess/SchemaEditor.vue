@@ -1,196 +1,226 @@
 <template>
-	<div class="e-schema-editor" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom">
-		<el-container>
-			<el-header height="20">
-				<!--{{schema ? schema.name : ''}}-->
-			</el-header>
-			<div class="header-row">
-				<div class="e-col">
-					{{ $t("editor.cell.processor.field.form.fieldName") }}
-				</div>
-				<div class="e-col">
-					{{ $t("editor.cell.processor.field.form.fieldType") }}
-				</div>
-				<div class="e-col">{{ $t("message.operator") }}</div>
-			</div>
-			<el-main>
-				<el-tree
-					:data="schema ? schema.fields : []"
-					:node-key="nodeKey"
-					default-expand-all
-					:expand-on-click-node="false"
-					@node-drag-start="handleDragStart"
-					@node-drag-enter="handleDragEnter"
-					@node-drag-leave="handleDragLeave"
-					@node-drag-over="handleDragOver"
-					@node-drag-end="handleDragEnd"
-					@node-drop="handleDrop"
-					:draggable="editable"
-					:allow-drop="allowDrop"
-					:allow-drag="allowDrag"
-					icon-class="icon-none"
-					@node-expand="handlerNodeExpand"
-					@node-collapse="handlerNodeCollapse"
-					ref="tree"
-				>
-					<span class="custom-tree-node" slot-scope="{ node, data }">
-						<span class="e-triangle" :style="`border-bottom-color: ${data.color || '#ddd'};`"></span>
+  <div
+    class="e-schema-editor"
+    :style="width > 0 ? `width: ${width}px;` : ''"
+    ref="entityDom"
+  >
+    <el-container>
+      <el-header height="20">
+        <!--{{schema ? schema.name : ''}}-->
+      </el-header>
+      <div class="header-row">
+        <div class="e-col">
+          {{ $t("editor.cell.processor.field.form.fieldName") }}
+        </div>
+        <div class="e-col">
+          {{ $t("editor.cell.processor.field.form.fieldType") }}
+        </div>
+        <div
+          class="e-col"
+          v-show="!disabledMode"
+        >{{ $t("message.operator") }}</div>
+      </div>
+      <el-main>
+        <el-tree
+          :data="schema ? schema.fields : []"
+          :node-key="nodeKey"
+          default-expand-all
+          :expand-on-click-node="false"
+          @node-drag-start="handleDragStart"
+          @node-drag-enter="handleDragEnter"
+          @node-drag-leave="handleDragLeave"
+          @node-drag-over="handleDragOver"
+          @node-drag-end="handleDragEnd"
+          @node-drop="handleDrop"
+          :draggable="editable"
+          :allow-drop="allowDrop"
+          :allow-drag="allowDrag"
+          icon-class="icon-none"
+          @node-expand="handlerNodeExpand"
+          @node-collapse="handlerNodeCollapse"
+          ref="tree"
+        >
+          <span
+            class="custom-tree-node"
+            slot-scope="{ node, data }"
+          >
+            <span
+              class="e-triangle"
+              :style="`border-bottom-color: ${data.color || '#ddd'};`"
+            ></span>
 
-						<span class="e-port e-port-in" :data-id="getId(data)"></span>
+            <span
+              class="e-port e-port-in"
+              :data-id="getId(data)"
+            ></span>
 
-						<!--<span class="e-label" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 ">-->
-						<!--<span class="e-pk">{{ data.primary_key_position > 0 ? 'PK' : '' }}</span>-->
-						<!--<el-input v-model="data.label" :disabled="true"></el-input>-->
-						<!--</span>-->
+            <!--<span class="e-label" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 ">-->
+            <!--<span class="e-pk">{{ data.primary_key_position > 0 ? 'PK' : '' }}</span>-->
+            <!--<el-input v-model="data.label" :disabled="true"></el-input>-->
+            <!--</span>-->
 
-						<!--<span class="e-label" v-else :class="{ activename: isRename(data.id) }" >-->
-						<span
-							class="e-label"
-							:class="{
+            <!--<span class="e-label" v-else :class="{ activename: isRename(data.id) }" >-->
+            <span
+              class="e-label"
+              :class="{
 								activename: isRename(data.id) || isCreate(data.id)
 							}"
-						>
-							<el-input
-								v-model="data.label"
-								@blur="handleRename(node, data)"
-								@change="handleRename(node, data)"
-								:disabled="isRemove(data.id)"
-							></el-input>
-						</span>
+            >
+              <el-input
+                v-model="data.label"
+                @blur="handleRename(node, data)"
+                @change="handleRename(node, data)"
+                :disabled="isRemove(data.id)"
+              ></el-input>
+            </span>
 
-						<!--<el-select v-model="data.type" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 " class="e-select"  :disabled="true" >-->
-						<!--<el-option value="String" label="String"></el-option>-->
-						<!--</el-select>-->
+            <!--<el-select v-model="data.type" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 " class="e-select"  :disabled="true" >-->
+            <!--<el-option value="String" label="String"></el-option>-->
+            <!--</el-select>-->
 
-						<!--<el-select v-model="data.type" v-else  class="e-select" :class="{ activedatatype: isConvertDataType(data.id) }" :disabled="isRemove(data.id)" @change="handleDataType(node,data)">-->
-						<el-select
-							v-model="data.type"
-							class="e-select"
-							:class="{
+            <!--<el-select v-model="data.type" v-else  class="e-select" :class="{ activedatatype: isConvertDataType(data.id) }" :disabled="isRemove(data.id)" @change="handleDataType(node,data)">-->
+            <el-select
+              v-model="data.type"
+              class="e-select"
+              :class="{
 								activedatatype: isConvertDataType(data.id)
 							}"
-							:disabled="isRemove(data.id) || disabledMode"
-							@change="handleDataType(node, data)"
-						>
-							<el-option
-								value="String"
-								label="String"
-								v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
-							></el-option>
-							<el-option
-								value="Integer"
-								label="Integer"
-								v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
-							></el-option>
-							<el-option
-								value="Double"
-								label="Double"
-								v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
-							></el-option>
-							<el-option
-								value="Float"
-								label="Float"
-								v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
-							></el-option>
-							<el-option
-								value="BigDecimal"
-								label="BigDecimal"
-								v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
-							></el-option>
-							<el-option
-								value="Long"
-								label="Long"
-								v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
-							></el-option>
-							<el-option
-								value="Short"
-								label="Short"
-								v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
-							></el-option>
+              :disabled="isRemove(data.id) || disabledMode"
+              @change="handleDataType(node, data)"
+            >
+              <el-option
+                value="String"
+                label="String"
+                v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+              ></el-option>
+              <el-option
+                value="Integer"
+                label="Integer"
+                v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+              ></el-option>
+              <el-option
+                value="Double"
+                label="Double"
+                v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+              ></el-option>
+              <el-option
+                value="Float"
+                label="Float"
+                v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+              ></el-option>
+              <el-option
+                value="BigDecimal"
+                label="BigDecimal"
+                v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+              ></el-option>
+              <el-option
+                value="Long"
+                label="Long"
+                v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+              ></el-option>
+              <el-option
+                value="Short"
+                label="Short"
+                v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+              ></el-option>
 
-							<el-option value="Map" label="Map" v-if="isCreate(data.id)"></el-option>
-							<el-option value="Array" label="Array" v-if="isCreate(data.id)"></el-option>
-						</el-select>
+              <el-option
+                value="Map"
+                label="Map"
+                v-if="isCreate(data.id)"
+              ></el-option>
+              <el-option
+                value="Array"
+                label="Array"
+                v-if="isCreate(data.id)"
+              ></el-option>
+            </el-select>
 
-						<el-button
-							type="text"
-							v-if="isRemove(data.id)"
-							class=" e-field-action el-icon-plus"
-							disabled
-						></el-button>
-						<el-dropdown
-							v-else
-							v-show="!disabledMode"
-							size="mini"
-							:show-timeout="10"
-							:hide-on-click="false"
-							@command="command => handleCreate(command, node, data)"
-						>
-							<span
-								class="e-field-action el-icon-plus"
-								@click="handleCreate('create_sibling', node, data)"
-							></span>
-							<el-dropdown-menu slot="dropdown">
-								<el-dropdown-item command="create_sibling" icon="iconfont icon-create_sibling_node">{{
+            <el-button
+              type="text"
+              v-if="isRemove(data.id)"
+              class=" e-field-action el-icon-plus"
+              disabled
+            ></el-button>
+            <el-dropdown
+              v-else
+              v-show="!disabledMode"
+              size="mini"
+              :show-timeout="10"
+              :hide-on-click="false"
+              @command="command => handleCreate(command, node, data)"
+            >
+              <span
+                class="e-field-action el-icon-plus"
+                @click="handleCreate('create_sibling', node, data)"
+              ></span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  command="create_sibling"
+                  icon="iconfont icon-create_sibling_node"
+                >{{
 									$t("editor.cell.processor.field.form.addField")
 								}}</el-dropdown-item>
-								<el-dropdown-item
-									command="create_child"
-									icon="iconfont icon-create_child_node"
-									v-if="['Map', 'Array'].includes(data.type)"
-									>{{ $t("editor.cell.processor.field.form.addEmbedField") }}</el-dropdown-item
-								>
-							</el-dropdown-menu>
-						</el-dropdown>
+                <el-dropdown-item
+                  command="create_child"
+                  icon="iconfont icon-create_child_node"
+                  v-if="['Map', 'Array'].includes(data.type)"
+                >{{ $t("editor.cell.processor.field.form.addEmbedField") }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
 
-						<el-button
-							type="text"
-							v-if="isRemove(data.id) || ['Array', 'Map'].includes(data.type)"
-							class=" e-field-action iconfont icon-script"
-							disabled
-						></el-button>
-						<span
-							v-else
-							class="e-field-action iconfont icon-script"
-							:style="isScript(data.id) ? 'color: #71c179;' : ''"
-							@click="handleScript(node, data)"
-							v-show="!disabledMode"
-						></span>
+            <el-button
+              type="text"
+              v-if="isRemove(data.id) || ['Array', 'Map'].includes(data.type)"
+              class=" e-field-action iconfont icon-script"
+              disabled
+            ></el-button>
+            <span
+              v-else
+              class="e-field-action iconfont icon-script"
+              :style="isScript(data.id) ? 'color: #71c179;' : ''"
+              @click="handleScript(node, data)"
+              v-show="!disabledMode"
+            ></span>
 
-						<el-button
-							type="text"
-							v-if="originalSchema.type === 'collection' && data.primary_key_position > 0"
-							class=" e-field-action iconfont icon-l-del"
-							disabled
-						></el-button>
-						<span
-							v-else
-							class="e-field-action iconfont icon-l-del"
-							v-show="!disabledMode"
-							@click="handleDelete(node, data)"
-						></span>
+            <el-button
+              type="text"
+              v-if="originalSchema.type === 'collection' && data.primary_key_position > 0"
+              class=" e-field-action iconfont icon-l-del"
+              disabled
+            ></el-button>
+            <span
+              v-else
+              class="e-field-action iconfont icon-l-del"
+              v-show="!disabledMode"
+              @click="handleDelete(node, data)"
+            ></span>
 
-						<el-button
-							type="text"
-							v-if="originalSchema.type === 'collection' && data.primary_key_position > 0"
-							class=" e-field-action iconfont icon-return"
-							disabled
-						></el-button>
-						<span
-							v-show="!disabledMode"
-							v-else
-							class="e-field-action iconfont icon-return"
-							@click="handleReset(node, data)"
-						></span>
+            <el-button
+              type="text"
+              v-if="originalSchema.type === 'collection' && data.primary_key_position > 0"
+              class=" e-field-action iconfont icon-return"
+              disabled
+            ></el-button>
+            <span
+              v-show="!disabledMode"
+              v-else
+              class="e-field-action iconfont icon-return"
+              @click="handleReset(node, data)"
+            ></span>
 
-						<span class="e-port e-port-out" :data-id="getId(data)"></span>
-					</span>
-				</el-tree>
-			</el-main>
-		</el-container>
+            <span
+              v-show="!disabledMode"
+              class="e-port e-port-out"
+              :data-id="getId(data)"
+            ></span>
+          </span>
+        </el-tree>
+      </el-main>
+    </el-container>
 
-		<el-dialog
-			:title="
+    <el-dialog
+      :title="
 				$t('editor.cell.processor.field.form.scriptDialogTitle') +
 					' (' +
 					scriptDialog.tableName +
@@ -198,21 +228,35 @@
 					scriptDialog.fieldName +
 					' ])'
 			"
-			:visible.sync="scriptDialog.open"
-			append-to-body
-		>
-			<el-form>
-				<el-form-item>
-					<JsEditor :code.sync="scriptDialog.script" :width.sync="jsEditorWidth"></JsEditor>
-					<!--					<el-input type="textarea" v-model="scriptDialog.script" rows="10"></el-input>-->
-				</el-form-item>
-			</el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button @click="scriptDialog.open = false" size="mini">{{ $t("message.cancel") }}</el-button>
-				<el-button @click="scriptDialog.fn" type="primary" size="mini">{{ $t("message.confirm") }}</el-button>
-			</div>
-		</el-dialog>
-	</div>
+      :visible.sync="scriptDialog.open"
+      append-to-body
+    >
+      <el-form>
+        <el-form-item>
+          <JsEditor
+		  	v-if="scriptDialog.open"
+            :code.sync="scriptDialog.script"
+            :width.sync="jsEditorWidth"
+          ></JsEditor>
+          <!--					<el-input type="textarea" v-model="scriptDialog.script" rows="10"></el-input>-->
+        </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          @click="scriptDialog.open = false"
+          size="mini"
+        >{{ $t("message.cancel") }}</el-button>
+        <el-button
+          @click="scriptDialog.fn"
+          type="primary"
+          size="mini"
+        >{{ $t("message.confirm") }}</el-button>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -223,39 +267,39 @@ import { uuid } from "../../util/Schema";
 import JsEditor from "../../../components/JsEditor";
 
 const REMOVE_OPS_TPL = {
-	id: "",
-	op: "REMOVE",
-	field: ""
+  id: "",
+  op: "REMOVE",
+  field: ""
 };
 const RENAME_OPS_TPL = {
-	id: "",
-	op: "RENAME",
-	field: "",
-	operand: ""
+  id: "",
+  op: "RENAME",
+  field: "",
+  operand: ""
 };
 const CONVERT_OPS_TPL = {
-	id: "",
-	op: "CONVERT",
-	field: "",
-	operand: "",
-	originalDataType: ""
+  id: "",
+  op: "CONVERT",
+  field: "",
+  operand: "",
+  originalDataType: ""
 };
 const CREATE_OPS_TPL = {
-	op: "CREATE",
-	field: "",
-	tableName: "",
-	javaType: "String",
-	id: "",
+  op: "CREATE",
+  field: "",
+  tableName: "",
+  javaType: "String",
+  id: "",
 
-	action: "",
-	triggerFieldId: ""
+  action: "",
+  triggerFieldId: ""
 };
 const SCRIPT_TPL = {
-	tableName: "",
-	field: "",
-	scriptType: "js",
-	script: "",
-	id: ""
+  tableName: "",
+  field: "",
+  scriptType: "js",
+  script: "",
+  id: ""
 };
 
 export default {
@@ -263,7 +307,7 @@ export default {
 	components: { JsEditor },
 	props: {
 		disabledMode: {
-			type: Boolean 
+			type: Boolean
 		},
 		width: {
 			type: Number,
@@ -538,12 +582,12 @@ export default {
 							/* node.childNodes.forEach((childNode) => {
 									fn(childNode, childNode.data);
 								}); */
-							// break;
-						}
-						if (ops.op === "CREATE") {
-							self.model.operations.splice(i, 1);
-							i--;
-							/* node.childNodes.forEach((childNode) => {
+              // break;
+            }
+            if (ops.op === "CREATE") {
+              self.model.operations.splice(i, 1);
+              i--;
+              /* node.childNodes.forEach((childNode) => {
 									fn(childNode, childNode.data);
 								}); */
 							self.$refs.tree.remove(node);
@@ -656,6 +700,10 @@ export default {
 			}
 			self.scriptDialog.script = script.script;
 			self.scriptDialog.open = true;
+			self.$nextTick(() => {
+				self.scriptDialog.open= true;
+			});
+
 			self.scriptDialog.fn = function() {
 				script.script = self.scriptDialog.script;
 
@@ -679,190 +727,190 @@ export default {
 @color: #71c179;
 
 .e-schema-editor {
-	width: 100%;
-	border: 1px solid @color;
-	display: inline-block;
-	/*max-width: 600px;
+  width: 100%;
+  border: 1px solid @color;
+  display: inline-block;
+  /*max-width: 600px;
 		min-width: 400px;*/
 
-	.el-header {
-		line-height: 23px;
-		background: @color;
-		color: #ffffff;
-		font-weight: bold;
-	}
+  .el-header {
+    line-height: 23px;
+    background: @color;
+    color: #ffffff;
+    font-weight: bold;
+  }
 
-	.el-main {
-		padding: 0;
-		overflow: hidden;
-	}
+  .el-main {
+    padding: 0;
+    overflow: hidden;
+  }
 
-	.custom-tree-node {
-		flex: 1;
+  .custom-tree-node {
+    flex: 1;
 
-		display: flex;
-		justify-content: start;
-		align-items: center;
-		flex-direction: row;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-direction: row;
 
-		line-height: 25px;
+    line-height: 25px;
 
-		.e-port {
-			width: 10px;
-			height: 10px;
-			/*background: #31d0c6;*/
-			position: relative;
-		}
+    .e-port {
+      width: 10px;
+      height: 10px;
+      /*background: #31d0c6;*/
+      position: relative;
+    }
 
-		.e-port-in {
-			left: -11px;
-		}
-		.e-label {
-			flex: 1;
+    .e-port-in {
+      left: -11px;
+    }
+    .e-label {
+      flex: 1;
 
-			input {
-				color: #606266;
-				outline: none;
-				border: none;
-				background: transparent;
-				line-height: 20px;
-				height: 25px;
+      input {
+        color: #606266;
+        outline: none;
+        border: none;
+        background: transparent;
+        line-height: 20px;
+        height: 25px;
 
-				&:focus {
-					background: #ffffaa;
-				}
-			}
-		}
+        &:focus {
+          background: #ffffaa;
+        }
+      }
+    }
 
-		.e-triangle {
-			width: 0;
-			height: 0;
-			border-right: 5px solid transparent;
-			border-left: 5px solid transparent;
-			border-bottom: 5px solid transparent;
+    .e-triangle {
+      width: 0;
+      height: 0;
+      border-right: 5px solid transparent;
+      border-left: 5px solid transparent;
+      border-bottom: 5px solid transparent;
 
-			-webkit-transform: rotate(-45deg);
-			-moz-transform: rotate(-45deg);
-			-ms-transform: rotate(-45deg);
-			-o-transform: rotate(-45deg);
-			transform: rotate(-45deg);
+      -webkit-transform: rotate(-45deg);
+      -moz-transform: rotate(-45deg);
+      -ms-transform: rotate(-45deg);
+      -o-transform: rotate(-45deg);
+      transform: rotate(-45deg);
 
-			position: relative;
-			left: -3px;
-			top: -11px;
-		}
+      position: relative;
+      left: -3px;
+      top: -11px;
+    }
 
-		.e-data-type {
-			font-size: 0.8em;
-		}
+    .e-data-type {
+      font-size: 0.8em;
+    }
 
-		.el-icon-more {
-			-webkit-transform: rotate(90deg);
-			-moz-transform: rotate(90deg);
-			-ms-transform: rotate(90deg);
-			-o-transform: rotate(90deg);
-			transform: rotate(90deg);
-		}
-	}
+    .el-icon-more {
+      -webkit-transform: rotate(90deg);
+      -moz-transform: rotate(90deg);
+      -ms-transform: rotate(90deg);
+      -o-transform: rotate(90deg);
+      transform: rotate(90deg);
+    }
+  }
 }
 </style>
 <style lang="less">
 @color: #71c179;
 .e-schema-editor {
-	font-size: 11px;
+  font-size: 11px;
 }
 
 .header-row {
-	display: flex;
-	background-color: #71c179;
-	color: #fff;
-	line-height: 30px;
+  display: flex;
+  background-color: #71c179;
+  color: #fff;
+  line-height: 30px;
 
-	.e-col {
-		width: 100px;
-		text-align: center;
-	}
-	.e-col:first-child {
-		padding-left: 20px;
-		flex: 1;
-		text-align: left;
-	}
+  .e-col {
+    width: 100px;
+    text-align: center;
+  }
+  .e-col:first-child {
+    padding-left: 20px;
+    flex: 1;
+    text-align: left;
+  }
 }
 
 .row-col-base {
-	display: inline-block;
+  display: inline-block;
 }
 
 .col-name {
-	min-width: 150px;
-	max-width: 430px;
+  min-width: 150px;
+  max-width: 430px;
 }
 
 .col-type {
-	min-width: 100px;
+  min-width: 100px;
 }
 
 .col-op {
-	min-width: 50px;
+  min-width: 50px;
 }
 
 .e-schema-editor .el-main .el-tree .el-tree-node {
-	border-bottom: 1px solid @color;
+  border-bottom: 1px solid @color;
 
-	&:last-child {
-		border-bottom: none;
-	}
+  &:last-child {
+    border-bottom: none;
+  }
 
-	&:first-child {
-		border-top: 1px solid @color;
-	}
+  &:first-child {
+    border-top: 1px solid @color;
+  }
 
-	.el-input__inner {
-		border: none;
-		background-color: transparent;
-		font-size: 11px;
-	}
+  .el-input__inner {
+    border: none;
+    background-color: transparent;
+    font-size: 11px;
+  }
 
-	.activedatatype {
-		.el-input__inner {
-			color: @color;
-		}
-	}
+  .activedatatype {
+    .el-input__inner {
+      color: @color;
+    }
+  }
 
-	.activename {
-		.el-input__inner {
-			color: tomato;
-		}
-	}
+  .activename {
+    .el-input__inner {
+      color: tomato;
+    }
+  }
 
-	.e-select {
-		width: 100px;
-		border-left: 1px solid #71c179;
-		border-right: 1px solid #71c179;
-		font-size: 11px;
-	}
+  .e-select {
+    width: 100px;
+    border-left: 1px solid #71c179;
+    border-right: 1px solid #71c179;
+    font-size: 11px;
+  }
 
-	.e-field-action {
-		cursor: pointer;
-		text-align: center;
-		width: 25px;
-		font-size: 14px;
-	}
+  .e-field-action {
+    cursor: pointer;
+    text-align: center;
+    width: 25px;
+    font-size: 14px;
+  }
 }
 .e-pk {
-	font-size: 9px;
-	font-weight: bold;
-	color: #ffa000;
-	position: relative;
-	left: -14px;
-	display: inline-block;
-	width: 5px;
+  font-size: 9px;
+  font-weight: bold;
+  color: #ffa000;
+  position: relative;
+  left: -14px;
+  display: inline-block;
+  width: 5px;
 }
 
 .e-schema-editor .el-main .el-tree .el-tree-node .icon-none {
-	display: none;
+  display: none;
 }
 .el-button + .el-button {
-	margin-left: 0 !important;
+  margin-left: 0 !important;
 }
 </style>

@@ -1,8 +1,10 @@
 <template>
 	<div class="aggregate">
-		<el-button class="e-button" v-if="disabled" type="primary" @click="seeMonitor">{{
-			$t("dataFlow.button.viewMonitoring")
-		}}</el-button>
+		<div class="head-btns">
+			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+				{{ $t("dataFlow.button.viewMonitoring") }}
+			</el-button>
+		</div>
 		<el-form ref="form" :model="form" label-position="top" label-width="200px" :disabled="disabled">
 			<el-col :span="21" class="aggregateName">
 				<el-form-item :label="$t('dataFlow.nodeName')" required>
@@ -254,9 +256,7 @@ export default {
 
 		seeMonitor() {
 			editorMonitor.goBackMontior();
-		},
-
-		
+		}
 	}
 };
 </script>
