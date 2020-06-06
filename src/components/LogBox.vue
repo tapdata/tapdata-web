@@ -78,6 +78,11 @@ export default {
 					.join("");
 			}
 			logContainer[prepend ? "prepend" : "append"](doms);
+		},
+		clear() {
+			$(this.$refs.logContainer)
+				.find("li")
+				.remove();
 		}
 	}
 };
