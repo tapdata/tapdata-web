@@ -1,7 +1,8 @@
 <script>
 const ele = {
 	input: "FbInput",
-	select: "ElSelect"
+	select: "FbSelect",
+	radio: "FbRadio"
 };
 export default {
 	name: "FormBuilder",
@@ -45,7 +46,6 @@ export default {
 				type: "input",
 				field: "field",
 				label: "字段名",
-				placeHolder: "请输入内容",
 				required: false
 			}
 		};
@@ -70,14 +70,15 @@ export default {
 	methods: {
 		getFormItem(h, itemConfig) {
 			let self = this;
-			let config = Object.assign(this.defaultFormItemConfig, itemConfig);
+			let config = Object.assign({}, this.defaultFormItemConfig, itemConfig);
 			let item = h(
 				"ElFormItem",
 				{
 					class: "e-form-builder-item",
 					props: {
 						prop: config.field,
-						label: config.label
+						label: config.label,
+						rules: config.rules
 					}
 				},
 				[
@@ -88,6 +89,9 @@ export default {
 						},
 						on: {
 							input(val) {
+								if (self.value[config.field] === undefined) {
+									throw new Error(`The field "${config.field}" of the model do not defined!`);
+								}
 								self.value[config.field] = val;
 							}
 						}

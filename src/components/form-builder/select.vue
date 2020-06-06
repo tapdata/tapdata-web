@@ -2,21 +2,28 @@
 export default {
 	name: "FbSelect",
 	props: {
-		value: [String, Number],
+		value: [String, Number, Boolean],
 		config: {
 			require: true,
 			type: Object
 		}
 	},
+	data() {
+		return {
+			defaultConfig: {
+				options: []
+			}
+		};
+	},
 	render(h) {
 		let self = this;
-		let config = self.config;
+		let config = Object.assign({}, this.defaultConfig, self.config);
 		return h(
 			"ElSelect",
 			{
 				props: {
 					value: self.value,
-					placeHolder: config.placeHolder
+					placeholder: config.placeholder
 				},
 				on: {
 					input(val) {

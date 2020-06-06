@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Form from "./form.vue";
 import Input from "./input.vue";
+import Select from "./select.vue";
+import Radio from "./radio.vue";
 
-Vue.component(Input.name, Input);
-Vue.component(Form.name, Form);
+[Form, Input, Select, Radio].map(c => Vue.component(c.name, c));

@@ -240,7 +240,9 @@ export default {
 
 			dialogVisible: false,
 			dataBaseFormModel: {
-				title: "db"
+				title: "db",
+				type: "",
+				power: 0
 			},
 			dataBaseFormConfig: {
 				items: [
@@ -248,13 +250,27 @@ export default {
 						type: "input",
 						field: "title",
 						label: "连接名称",
-						placeHolder: "自定义数据库名称"
+						placeholder: "自定义数据库名称"
 					},
 					{
 						type: "select",
 						field: "type",
 						label: "数据库类型",
-						placeHolder: "选择数据库类型"
+						placeholder: "选择数据库类型",
+						options: [
+							{ label: "选项一", value: 1 },
+							{ label: "选项二", value: 2 }
+						]
+					},
+					{
+						type: "radio",
+						field: "power",
+						label: "数据库权限",
+						options: [
+							{ label: "允许读写", value: 0 },
+							{ label: "仅限读取", value: 1 },
+							{ label: "仅限写入", value: 2 }
+						]
 					}
 				]
 			}

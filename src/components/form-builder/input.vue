@@ -8,13 +8,20 @@ export default {
 			type: Object
 		}
 	},
+	data() {
+		return {
+			defaultConfig: {}
+		};
+	},
 	render(h) {
 		let self = this;
-		let config = self.config;
+		let config = Object.assign({}, this.defaultConfig, self.config);
 		return h("ElInput", {
+			attrs: {
+				placeholder: config.placeholder
+			},
 			props: {
-				value: self.value,
-				placeHolder: config.placeHolder
+				value: self.value
 			},
 			on: {
 				input(val) {
