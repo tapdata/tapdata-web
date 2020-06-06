@@ -71,6 +71,13 @@ export default {
 		getFormItem(h, itemConfig) {
 			let self = this;
 			let config = Object.assign({}, this.defaultFormItemConfig, itemConfig);
+			let rules = config.rules || [];
+			if (config.required && !rules.find(r => r.required)) {
+				rules.push({
+					required: true,
+					message: `${config.label}不能为空`
+				});
+			}
 			let item = h(
 				"ElFormItem",
 				{
@@ -78,7 +85,7 @@ export default {
 					props: {
 						prop: config.field,
 						label: config.label,
-						rules: config.rules
+						rules: rules
 					}
 				},
 				[
@@ -90,7 +97,7 @@ export default {
 						on: {
 							input(val) {
 								if (self.value[config.field] === undefined) {
-									throw new Error(`The field "${config.field}" of the model do not defined!`);
+									throw new Error(`The field "${config.field}" of the model is not defined!`);
 								}
 								self.value[config.field] = val;
 							}

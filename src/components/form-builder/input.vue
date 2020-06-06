@@ -8,14 +8,9 @@ export default {
 			type: Object
 		}
 	},
-	data() {
-		return {
-			defaultConfig: {}
-		};
-	},
 	render(h) {
 		let self = this;
-		let config = Object.assign({}, this.defaultConfig, self.config);
+		let config = self.config;
 		return h("ElInput", {
 			attrs: {
 				placeholder: config.placeholder

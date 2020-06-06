@@ -250,7 +250,8 @@ export default {
 						type: "input",
 						field: "title",
 						label: "连接名称",
-						placeholder: "自定义数据库名称"
+						placeholder: "自定义数据库名称",
+						required: true
 					},
 					{
 						type: "select",
@@ -260,17 +261,48 @@ export default {
 						options: [
 							{ label: "选项一", value: 1 },
 							{ label: "选项二", value: 2 }
-						]
+						],
+						required: true
 					},
 					{
 						type: "radio",
 						field: "power",
 						label: "数据库权限",
+						border: true,
 						options: [
 							{ label: "允许读写", value: 0 },
 							{ label: "仅限读取", value: 1 },
 							{ label: "仅限写入", value: 2 }
-						]
+						],
+						required: true
+					},
+					{
+						type: "input",
+						field: "address",
+						label: "数据库地址",
+						placeholder: "请输入IP地址",
+						required: true
+					},
+					{
+						type: "input",
+						field: "name",
+						label: "数据库名称",
+						placeholder: "请输入数据库名称",
+						required: true
+					},
+					{
+						type: "input",
+						field: "account",
+						label: "账号",
+						placeholder: "请输入数据库账号",
+						required: true
+					},
+					{
+						type: "input",
+						field: "password",
+						label: "密码",
+						placeholder: "请输入密码",
+						required: true
 					}
 				]
 			}

@@ -13,7 +13,7 @@ export default {
 		let config = self.config;
 		if (!config.options) {
 			config.options = [];
-			throw new Error(`The component "FbRadio" did not config options!`);
+			throw new Error(`The component "FbRadio" is not config options!`);
 		}
 		return h(
 			"ElRadioGroup",
