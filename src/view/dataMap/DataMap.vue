@@ -19,6 +19,7 @@
 						:props="{label: 'value'}"
 						@node-click="loadCellsByTag"
 						:expand-on-click-node="false"
+						highlight-current
 					>
 					</el-tree>
 				</div>
@@ -145,7 +146,6 @@ export default {
 						children: []
 					};
 					find_children(rootNode, items);
-					rootNode.children.forEach(node => node.expanded = true);
 					self.treeData.splice(0, self.treeData.length);
 					self.treeData.push(...rootNode.children);
 				}
@@ -155,11 +155,11 @@ export default {
 
 				if (!items || !items.length) return;
 
-				parent.children = [] || parent.children;
-				parent.children = [] || parent.children;
+				parent.children = parent.children || [];
 				for (let i = 0; i < items.length; i++) {
 					let item = items[i];
 					if ((item.parent_id === parent.id) || (!parent.id && !item.parent_id)) {
+						item.selected = false;
 						parent.children.push(item);
 						items.splice(i, 1);
 						i--;

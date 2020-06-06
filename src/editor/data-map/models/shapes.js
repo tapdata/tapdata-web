@@ -221,17 +221,6 @@ export default (joint) => {
 				"stroke-width": 3
 			}
 		}
-	}, null, {
-		connectionPoint: function(line, view, magnet, opt, type, linkView) {
-			let markerWidth = linkView.model.getMarkerWidth(type);
-			opt = { offset: markerWidth, stroke: true };
-			// connection point for UML shapes lies on the root group containg all the shapes components
-			let modelType = view.model.get('type');
-			if (modelType.indexOf('uml') === 0) opt.selector = 'root';
-			// taking the border stroke-width into account
-			if (modelType === 'standard.InscribedImage') opt.selector = 'border';
-			return joint.connectionPoints.boundary.call(this, line, view, magnet, opt, type, linkView);
-		}
 	});
 
 	joint.shapes.standard.Link.define('dataMap.Link', {
