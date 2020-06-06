@@ -12,6 +12,7 @@
 				</div>
 				<div class="table-panel">
 					<el-table
+						v-if="!errorMsg"
 						border
 						highlight-current-row
 						ref="table"
@@ -56,6 +57,7 @@
 							</template>
 						</el-table-column>
 					</el-table>
+					<div class="error-panel">[<span class="color-danger">ERROR</span>] {{ errorMsg }}</div>
 				</div>
 			</div>
 		</transition>
@@ -141,7 +143,9 @@ export default {
 			headerCellStyle: Object.assign({}, style, {
 				background: "#fafafa"
 			}),
-			cellStyle: style
+			cellStyle: style,
+
+			errorMsg: ""
 		};
 	},
 	computed: {
@@ -178,9 +182,11 @@ export default {
 
 			receiveMessage(msg => {
 				let result = [];
-				if (msg) {
-					result = msg.result;
+				if (!msg || msg.status === "ERROR") {
+					this.errorMsg = msg.error;
+					return;
 				}
+				result = msg.result;
 				this.logList = result.map((item, index) => {
 					item.index = index;
 					return item;
@@ -256,6 +262,11 @@ export default {
 				color: rgba(51, 51, 51, 1);
 			}
 		}
+	}
+	.error-panel {
+		height: 100%;
+		background: #fff;
+		line-height: 30px;
 	}
 	.debug-list {
 		display: flex;
