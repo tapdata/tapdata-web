@@ -28,7 +28,8 @@ export default class DataMap extends BaseObject {
 			editor: this,
 			split: true,
 			width: 235,
-			bodyStyle: "display: flex; flex-direction: column;"
+			maxWidth: 600,
+			// bodyStyle: "display: flex; flex-direction: column;"
 		}));
 		this.ui.add(leftSidebar);
 

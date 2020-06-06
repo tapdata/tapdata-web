@@ -18,6 +18,7 @@
 						:filter-node-method="filterNode"
 						:props="{label: 'value'}"
 						@node-click="loadCellsByTag"
+						:expand-on-click-node="false"
 					>
 					</el-tree>
 				</div>

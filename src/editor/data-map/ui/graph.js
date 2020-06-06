@@ -329,6 +329,7 @@ export default class Graph extends Component {
 	}
 
 	createLink(source, target) {
+		if(this.graph.getCell(source) && this.graph.getCell(target))
 		return new joint.shapes.standard.Link({
 			source: {
 				id: source
@@ -337,6 +338,7 @@ export default class Graph extends Component {
 				id: target
 			}
 		}).addTo(this.graph);
+		return null;
 	}
 
 	createCell(cellType, x, y, attrs, cellData) {
@@ -414,6 +416,11 @@ export default class Graph extends Component {
 
 		let links = [];
 		let idMap = {};
+
+		idMap["sourceLane"] = this.sourceLane.id;
+		idMap["tapdataLane"] = this.tapdataLane.id;
+		idMap["apiLane"] = this.apiLane.id;
+
 		cells.forEach((cellData) => {
 			let cell = null;
 			let lane = null;
@@ -447,7 +454,7 @@ export default class Graph extends Component {
 				idMap[cellData.id] = cell.id;
 			}
 
-			if(cell && lane) {
+			/*if(cell && lane) {
 				const laneBBox = lane.getBBox();
 				const cellBBox = cell.getBBox();
 				const embeddedCells = lane.getEmbeddedCells().filter(cell => cell.isElement());
@@ -463,7 +470,7 @@ export default class Graph extends Component {
 
 				cell.position(x, y);
 				lane.embed(cell);
-			}
+			}*/
 
 		} );
 
