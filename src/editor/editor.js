@@ -538,21 +538,11 @@ export default class Editor extends BaseObject {
 			this.initRunningMode(dataFlow);
 		}
 	}
+
 	goBackMontior() {
 		let monitor = this.getRightTabPanel().getChildByName("monitor");
 		this.getRightTabPanel().select(monitor);
 	}
-
-	// getAllCells() {
-	// 	let dataCells = this.graph.graph.getCells().filter(cell => {
-	// 		let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
-	// 		let type = cell.get("type");
-	// 		let connectionIdFieldName = this.mapping[type];
-	// 		return formData && connectionIdFieldName && formData[connectionIdFieldName];
-	// 	});
-	// 	log("editor.getCells", this.graph.graph.getCells());
-	// 	return dataCells;
-	// }
 
 	/**
 	 * Validate graph data for data flow

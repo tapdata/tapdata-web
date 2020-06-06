@@ -200,7 +200,10 @@ const en = {
 			reset: "Reset",
 			save: "Save",
 			saveing: "Saveing",
-			reloadSchema: "reloadSchema"
+			reloadSchema: "reloadSchema",
+			debug: "debug test",
+			quantitative: "Quantitative",
+			increment: "Increment"
 		},
 		save_before_running: "Please save the task before running",
 		reset_job: {
