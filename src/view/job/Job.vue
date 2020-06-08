@@ -133,7 +133,7 @@
 				placement="bottom"
 			>
 				<div class="headImg" @click="stopCapture" v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'">
-					<span class="iconfont icon-zhengfangxingxuanzhongzhuangtai"></span>
+					<span class="iconfont icon-zanting3"></span>
 				</div>
 			</el-tooltip>
 
@@ -438,6 +438,7 @@ export default {
 						self.setEditable(false);
 						this.loadDataFlow(data.id);
 					}
+					// console.log(data,'data###$$$$$$')
 				});
 			}
 			this.dialogFormVisible = false;
@@ -528,6 +529,7 @@ export default {
 						} else {
 							self.editor.setData(dataFlow);
 						}
+						// console.log(dataFlow,'Flow@@@@@@@@@@@')
 						if (["scheduled", "running", "stopping", "force stopping"].includes(self.status)) {
 							self.setEditable(false);
 						}
