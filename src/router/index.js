@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
+import DataMap from "../view/dataMap/DataMap";
 
 Vue.use(Router);
 
@@ -47,6 +48,11 @@ export default new Router({
 			path: "/upload",
 			name: "Upload",
 			component: () => import("../components/upload")
+		},
+		{
+			path: "/dataMap",
+			name: "DataMap",
+			component: DataMap
 		}
 	]
 });
