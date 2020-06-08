@@ -368,9 +368,10 @@ const cn = {
 					required: "必填",
 					publishName: "发布API",
 					availableQueries: "可用查询",
-					publishApi_nameNone: "API名称不能为空",
-					publishApi_commentNone: "描述不为空",
-					publishApi_path: "API路径不为空"
+					enterPublishApiName:"请输入数据发布API的名称",
+					enterNewlyReleasedApi:"请输入对新建发布API的描述",
+					enterEndUrl: "请输入URL末端路径名",
+					variable_name: '只能包含字母、数字、下划线和美元符号,并且数字不能开头',
 				},
 				es: {
 					name: "ES",

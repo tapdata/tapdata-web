@@ -39,7 +39,7 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="18">
-					<el-form-item :label="'URL/API/V1/' + mergedSchema.table_name + '/cust/' +  form.apiPath">
+					<el-form-item :label="mergedSchema && mergedSchema.table_name? 'URL/API/V1/' + mergedSchema.table_name + '/cust/' +  form.apiPath:'URL/API/V1/'">
 						<el-input v-model="form.apiPath" :placeholder="$t('editor.cell.data_node.api.enterEndUrl')"></el-input>
 					</el-form-item>
 				</el-col>

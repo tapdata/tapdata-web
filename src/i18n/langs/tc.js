@@ -369,7 +369,8 @@ const tc = {
 					enterEndUrl: "請輸入url末端路徑名",
 					required: "必填",
 					availableQueries: "可用查詢",
-					publishApi_path: "API路徑不為空"
+					publishApi_path: "API路徑不為空",
+					variable_name: "只能包含字母，數字，下劃線和美元符號，和數字不能開頭",
 				},
 				es: {
 					name: "ES",
