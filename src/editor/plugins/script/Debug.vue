@@ -70,7 +70,7 @@
 				<div class="header">
 					<h4>{{ $t("editor.cell.processor.script.debug.bottom_header") }}</h4>
 					<ul class="bar">
-						<template v-if="selectedLog.index">
+						<template v-if="selectedLog.index >= 0">
 							<li>{{ $t("editor.cell.processor.script.debug.order") }}: {{ selectedLog.index + 1 }}</li>
 							<li>
 								{{ $t("editor.cell.processor.script.debug.status") }}:
@@ -179,9 +179,12 @@ export default {
 			});
 			this.logList = null;
 			this.selectedLog = {};
+			this.$refs.log.clear();
+			this.errorMsg = "";
 
 			receiveMessage(msg => {
 				let result = [];
+
 				if (!msg || msg.status === "ERROR") {
 					this.errorMsg = msg.error;
 					return;
@@ -216,10 +219,12 @@ export default {
 			return "";
 		},
 		rowHandler(row) {
-			this.selectedLog = row;
-			this.$nextTick(() => {
-				this.$refs.log.add({ logs: row.out, reset: true });
-			});
+			if (row) {
+				this.selectedLog = row;
+				this.$nextTick(() => {
+					this.$refs.log.add({ logs: row.out, reset: true });
+				});
+			}
 		},
 		stringify(value) {
 			return JSON.stringify(value, null, 2);

@@ -174,7 +174,7 @@
 								v-model="scope.row.newStatus"
 								inactive-value="stopping"
 								active-value="scheduled"
-								@change="handleStatus(scope.row.id, scope.row.newStatus)"
+								@change="handleStatus(scope.row.id,scope.row.status, scope.row.newStatus)"
 							></el-switch>
 						</div>
 					</template>
@@ -580,8 +580,15 @@ export default {
 			}
 			let multipleSelection = [];
 			this.multipleSelection.map(item => {
-				multipleSelection.push(item.id);
+				this.tableData.map(row =>{
+					if((row.id === item.id)&&(row.status ==='paused' || row.status ==='error' || row.status ==='draft')){
+						multipleSelection.push(item.id);
+					}
+				})
 			});
+			if (multipleSelection.length === 0) {
+				return;
+			}
 			let where = {
 				_id: {
 					inq: multipleSelection
@@ -621,7 +628,10 @@ export default {
 					});
 				})
 		},
-		async handleStatus(id, status) {
+		async handleStatus(id, oldStatus,status) {
+			if(oldStatus === 'draft'){
+				return ;
+			}
 			let data = {
 				status: status
 			};
@@ -637,9 +647,26 @@ export default {
 				return;
 			}
 			let multipleSelection = [];
-			this.multipleSelection.map(item => {
-				multipleSelection.push(item.id);
-			});
+			if(status === 'scheduled'){ //全部启动
+				this.multipleSelection.map(item => {
+					this.tableData.map(row =>{
+						if((row.id === item.id)&&(row.status ==='paused' || row.status ==='error')){
+							multipleSelection.push(item.id);
+						}
+					})
+				});
+			}else if(status === 'shopping'){ //全部停止
+				this.multipleSelection.map(item => {
+					this.tableData.map(row =>{
+						if((row.id === item.id)&&(row.status ==='running')){
+							multipleSelection.push(item.id);
+						}
+					})
+				});
+			}
+			if (multipleSelection.length === 0) {
+				return;
+			}
 			let where = {
 				_id: {
 					in: multipleSelection
@@ -683,8 +710,15 @@ export default {
 			}
 			let multipleSelection = [];
 			this.multipleSelection.map(item => {
-				multipleSelection.push(item.id);
+				this.tableData.map(row =>{
+					if((row.id === item.id)&&(row.status ==='paused' || row.status ==='error')){
+						multipleSelection.push(item.id);
+					}
+				})
 			});
+			if (multipleSelection.length === 0) {
+				return;
+			}
 			let where = multipleSelection;
 			this.$confirm(this.$t("message.resetMessage"), this.$t("message.prompt"), {
 				confirmButtonText: this.$t("dataFlow.reset"),

@@ -9,6 +9,9 @@ import Echarts from "../plugins/echarts";
 export default {
 	name: "EchartsCompinent",
 	props: {
+		sliderBar: {
+			type: Object
+		},
 		echartsId: {
 			type: String
 		},
@@ -34,6 +37,9 @@ export default {
 		// let publicCharts = that.echartOption(that.echartObj)
 		that.$nextTick(() => {
 			that.loadEchart(that.echartsId, that.echartObj);
+			this.sliderBar.on(EditorEventType.RESIZE, width => {
+				this.myChart.resize()
+			})
 		});
 	},
 
@@ -47,9 +53,9 @@ export default {
 				// let myChart = Echarts.init(this.refs.echarts);
 				let publicCharts = _this.echartOption(data);
 				_this.myChart.setOption(publicCharts);
-				window.addEventListener("resize", () => {
-					_this.myChart.resize();
-				});
+				// window.addEventListener("resize", () => {
+				// 	_this.myChart.resize();
+				// });
 			}, 0);
 		},
 		echartOption(configures) {

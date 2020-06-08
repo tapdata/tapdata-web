@@ -77,7 +77,8 @@ export class VueAdapter extends BaseObject {
 				propsData: Object.assign({}, vueComponentConfig.props || {})
 			});
 
-			self.editor.getRightTabPanel().select(settings);
+			if(self.editor.editable)
+				self.editor.getRightTabPanel().select(settings);
 			settings.removeAll();
 
 			let vueContainerDom = document.createElement("div");
