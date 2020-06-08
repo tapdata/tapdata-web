@@ -101,7 +101,7 @@
 				>{{ $t("dataFlow.button.save") }}
 			</el-button> -->
 			<template v-if="['draft'].includes(status)">
-				<div class="headImg" v-show="!isSaving" @click="timeSave">
+				<div :class="[{btnHover:['draft'].includes(status)},'headImg']" v-show="!isSaving" @click="timeSave">
 					<span class="iconfont icon-yunduanshangchuan"></span>
 					<span class="text">{{ $t("dataFlow.button.save") }}</span>
 				</div>
@@ -111,35 +111,31 @@
 					<span class="text" style="color: #48B6E2;">{{ $t("dataFlow.button.saveing") }}</span>
 				</div>
 			</template>
-			<el-tooltip
-				class="job-head-title"
-				effect="dark"
-				:content="$t('dataFlow.button.capture')"
-				placement="bottom"
-			>
-				<!-- <div
-					class="headImg"
-					@click="capture"
-					v-if="['running'].includes(status) && executeMode === 'normal'"
-				>
-					<span class="iconfont icon-yulan"></span>
-				</div> -->
-				<el-button
-					class="headImg iconfont icon-yulan"
-					@click="capture"
-					:disabled="executeMode === 'normal' && ['running'].includes(status)?false:true"
-				>
-				</el-button>
-			</el-tooltip>
+
 
 			<el-tooltip
 				class="job-head-title"
 				effect="dark"
 				:content="$t('dataFlow.button.stop_capture')"
 				placement="bottom"
+				v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
 			>
-				<div class="headImg" @click="stopCapture" v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'">
+				<div :class="['headImg',{ btnHover:['scheduled', 'running'].includes(status) && executeMode === 'running_debug'}]" @click="stopCapture">
 					<span class="iconfont icon-zanting3"></span>
+				</div>
+			</el-tooltip>
+
+			<el-tooltip
+				class="job-head-title"
+				effect="dark"
+				:content="$t('dataFlow.button.capture')"
+				placement="bottom"
+				v-if="['running'].includes(status) && executeMode ==='normal'"
+			>
+				<div :class="['headImg',{ btnHover:['running'].includes(status) && executeMode ==='normal'}]"
+					@click="capture"
+				>
+					<span class="iconfont icon-yulan1"></span>
 				</div>
 			</el-tooltip>
 
@@ -149,7 +145,7 @@
 				:content="$t('dataFlow.button.reloadSchema')"
 				placement="bottom"
 			>
-				<div class="headImg" @click="reloadSchema" v-if="['paused', 'error', 'draft'].includes(status)">
+				<div :class="['headImg',{ btnHover:['paused', 'error', 'draft'].includes(status)}]"  @click="reloadSchema">
 					<span class="iconfont icon-yunshuaxin"></span>
 				</div>
 			</el-tooltip>
@@ -160,21 +156,15 @@
 				:content="$t('dataFlow.button.preview')"
 				placement="bottom"
 			>
-				<div class="headImg" v-if="['paused', 'error', 'draft'].includes(status)" @click="preview">
+				<div :class="['headImg',{ btnHover:['paused', 'error', 'draft'].includes(status)}]" v-if="['paused', 'error', 'draft'].includes(status)" @click="preview">
 					<span class="iconfont icon-yulan1"></span>
 				</div>
 			</el-tooltip>
 
 			<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.logs')" placement="bottom">
-				<!-- <div class="headImg" @click="showLogs">
+				<div class="headImg btnHover" @click="showLogs">
 					<span class="iconfont icon-rizhi1"></span>
-				</div> -->
-				<el-button
-					type="text"
-					class="headImg iconfont icon-rizhi1"
-					@click="showLogs"
-				>
-				</el-button>
+				</div>
 			</el-tooltip>
 			<el-autocomplete
 				v-if="!['scheduled', 'paused', 'running', 'stopping', 'force stopping'].includes(status)"
@@ -189,7 +179,7 @@
 				clearable
 				suffix-icon="el-icon-search"
 			></el-autocomplete>
-			<div class="headImg round" @click="showSetting" v-if="['draft', 'paused', 'error'].includes(status)">
+			<div class="headImg round" @click="showSetting" :class="['headImg',{ btnHover:['paused', 'error', 'draft'].includes(status)}]">
 				<span class="iconfont icon-shezhi"></span>
 				<span class="text" v-if="sync_type === 'initial_sync+cdc'">{{
 					$t("dataFlow.initial_sync") + "+" + $t("dataFlow.cdc")
@@ -226,7 +216,7 @@
 					<el-button
 						class="headImg borderStyle iconfont icon-yunhang1"
 						@click="start"
-						:disabled="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status) ? false : true"
+						:disabled="dataFlowId !== null && ['paused', 'error'].includes(status) ? false : true"
 					>
 					</el-button>
 				</el-tooltip>
@@ -235,7 +225,7 @@
 					<el-button
 						class="headImg borderStyle iconfont icon-zanting2"
 						@click="stop(false)"
-						:disabled="dataFlowId !== null && ['scheduled', 'running'].includes(status) ? false : true"
+						:disabled="dataFlowId !== null && ['running'].includes(status) ? false : true"
 					></el-button>
 				</el-tooltip>
 
@@ -244,7 +234,7 @@
 						class="headImg borderStyle iconfont icon-shuaxin3"
 						@click="reset"
 						:disabled="
-							dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)
+							dataFlowId !== null && ['paused', 'error'].includes(status)
 								? false
 								: true
 						"
@@ -258,7 +248,7 @@
 					placement="bottom"
 				>
 					<el-button
-						class="headImg borderStyle iconfont icon-zhengfangxingxuanzhongzhuangtai"
+						class="headImg borderStyle iconfont icon-zanting3"
 						@click="stop(true)"
 						:disabled="dataFlowId !== null && ['stopping'].includes(status)?false:true"
 					>
@@ -897,29 +887,31 @@ export default {
 		preview() {
 			let self = this,
 				data = this.getDataFlowData();
-
-			if (data) {
-				if (data.id) {
-					data = {
-						id: data.id,
-						status: ["scheduled", "running", "stopping"].includes(data.status) ? data.status : "scheduled",
-						executeMode: "editing_debug"
-					};
-				} else {
-					Object.assign(data, {
-						status: "scheduled",
-						executeMode: "editing_debug"
+			if (['paused', 'error', 'draft'].includes(this.status)) {
+				if (data) {
+					if (data.id) {
+						data = {
+							id: data.id,
+							status: ["scheduled", "running", "stopping"].includes(data.status) ? data.status : "scheduled",
+							executeMode: "editing_debug"
+						};
+					} else {
+						Object.assign(data, {
+							status: "scheduled",
+							executeMode: "editing_debug"
+						});
+					}
+					self.doSave(data, (err, dataFlow) => {
+						if (err) {
+							this.$message.error(self.$t("message.saveFail"));
+						} else {
+							this.$message.success(self.$t("message.saveOK"));
+							this.showCapture();
+						}
 					});
 				}
-				self.doSave(data, (err, dataFlow) => {
-					if (err) {
-						this.$message.error(self.$t("message.saveFail"));
-					} else {
-						this.$message.success(self.$t("message.saveOK"));
-						this.showCapture();
-					}
-				});
 			}
+
 		},
 
 		/**
@@ -1005,11 +997,13 @@ export default {
 		 */
 		showSetting() {
 			log("Job.showSetting");
-			let name = "";
-			if (this.$route.query.name) {
-				name = this.$route.query.name;
+			if (['paused', 'error', 'draft'].includes(this.status)) {
+				let name = "";
+				if (this.$route.query.name) {
+					name = this.$route.query.name;
+				}
+				this.editor.showSetting(name);
 			}
-			this.editor.showSetting(name);
 		},
 
 		/**
@@ -1030,7 +1024,10 @@ export default {
 		 * reload shcema
 		 */
 		reloadSchema() {
-			this.editor.reloadSchema();
+			if (['paused', 'error', 'draft'].includes(this.status)) {
+				this.editor.reloadSchema();
+			}
+
 		},
 
 		/**
