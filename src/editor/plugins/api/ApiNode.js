@@ -14,7 +14,7 @@ export const ApiNodeConfig = {
 		defaultInstanceProperties: {
 			attrs: {
 				image: {
-					xlinkHref: "static/editor/0-API-target1.svg"
+					xlinkHref: "static/editor/o-API-target1.svg"
 				},
 				label: {
 					text: i18n.t("editor.cell.data_node.api.name")

@@ -39,7 +39,7 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="18">
-					<el-form-item :label="'URL/API/V1/' + form.apiPath">
+					<el-form-item :label="'URL/API/V1/' + mergedSchema.table_name + '/cust/' +  form.apiPath">
 						<el-input v-model="form.apiPath" :placeholder="$t('editor.cell.data_node.api.enterEndUrl')"></el-input>
 					</el-form-item>
 				</el-col>
@@ -54,7 +54,7 @@
 				>
 					<el-table-column prop="field_name" :label="$t('editor.cell.data_node.api.table_field')">
 					</el-table-column>
-					<el-table-column prop="javaType" :label="$t('editor.cell.data_node.api.table_type')" width="100">
+					<el-table-column prop="javaType" :label="$t('editor.cell.data_node.api.table_type')" width="80">
 					</el-table-column>
 					<el-table-column
 						align="center"
