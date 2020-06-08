@@ -199,7 +199,7 @@ const en = {
 			stop: "Stop",
 			force_stop: "Force Stop",
 			reset: "Reset",
-			save: "Save",
+			save: "Save Draft",
 			saveing: "Saveing",
 			reloadSchema: "reloadSchema",
 			debug: "debug test",

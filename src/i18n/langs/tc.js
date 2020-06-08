@@ -197,7 +197,7 @@ const tc = {
 			stop: "停止",
 			force_stop: "強制停止",
 			reset: "重置",
-			save: "保存",
+			save: "保存草稿",
 			saveing: "保存中",
 			reloadSchema: "刷新schema",
 			debug: "debug測試",
