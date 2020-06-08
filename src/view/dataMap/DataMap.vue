@@ -2,7 +2,7 @@
 	<div class="data-map-container">
 		<div class="data-map">
 			<div class="left-side-classification">
-				<div class="e-header">分类</div>
+				<div class="e-header">{{$t("dataMap.classification")}}</div>
 				<div>
 					<!--<el-input
 						placeholder="输入关键字进行过滤"
@@ -33,19 +33,22 @@
 			</div>
 			<div class="center-bar">
 				<el-radio-group v-model="level">
-					<el-radio :label="1">顶级</el-radio>
+					<el-radio :label="1">{{$t("dataMap.topLevel")}}</el-radio>
 					<span class="space-line"></span>
-					<el-radio :label="2">库级</el-radio>
+					<el-radio :label="2">{{$t("dataMap.dbLevel")}}</el-radio>
 					<span class="space-line"></span>
-					<el-radio :label="3">表级</el-radio>
+					<el-radio :label="3">{{$t("dataMap.tableLevel")}}</el-radio>
 				</el-radio-group>
 			</div>
 			<div class="right-bar">
+				<span class="e-btn" @click="toggleFullscreen">
+					<i class="fullscreen-btn iconfont icon-quanping"></i>
+				</span>
 				<span class="e-btn" @click="zoomIn">
-					<i class="el-icon-zoom-in"></i>
+					<i class="iconfont icon-zoomin"></i>
 				</span>
 				<span class="e-btn" @click="zoomOut">
-					<i class="el-icon-zoom-out"></i>
+					<i class="iconfont icon-zoomout"></i>
 				</span>
 			</div>
 		</div>
@@ -67,6 +70,9 @@ export default {
 	data(){
 		return {
 			level: 1,
+			tag: "",
+
+			fullscreen: false,
 
 			filterText: "",
 
@@ -93,6 +99,11 @@ export default {
 		this.loadData();
 
 		this.loadClassification();
+
+		this.dataMap.graph.on('drill_down', (level) => {
+			if(self.level !== level && level >= 1 && level <= 3);
+				self.level = level;
+		});
 	},
 
 	methods: {
@@ -110,9 +121,48 @@ export default {
 			this.dataMap.graph.zoomOut();
 		},
 
-		loadData(id){
+		toggleFullscreen(e){
+			if(this.fullscreen)
+				this.exitFullscreen();
+			else
+				this.requestFullscreen($(".data-map-container")[0]);
+
+			this.fullscreen = !this.fullscreen;
+			$(e.target).parent()
+				.find('i.fullscreen-btn')
+				.removeClass('icon-quanping')
+				.removeClass('icon-huanyuanhuabu')
+				.addClass(this.fullscreen ? 'icon-huanyuanhuabu' : 'icon-quanping')
+		},
+
+		requestFullscreen(element) {
+			if(element.requestFullscreen){
+				element.requestFullscreen();
+			}
+			else if(element.mozRequestFullScreen) {
+				element.mozRequestFullScreen();
+			}
+			else if(element.webkitRequestFullscreen) {
+				element.webkitRequestFullscreen();
+			}
+			else if(element.msRequestFullscreen) {
+				element.msRequestFullscreen();
+			}
+		},
+
+		exitFullscreen() {
+			if(document.exitFullscreen) {
+				document.exitFullscreen();
+			} else if(document.mozCancelFullScreen) {
+				document.mozCancelFullScreen();
+			} else if(document.webkitExitFullscreen) {
+				document.webkitExitFullscreen();
+			}
+		},
+
+		loadData(){
 			let self = this;
-			metadataInstances.dataMap(this.level, id).then(result => {
+			metadataInstances.dataMap(this.level, this.tag).then(result => {
 
 				if(result && result.data){
 					let cells = result.data.records;
@@ -125,7 +175,8 @@ export default {
 		},
 
 		loadCellsByTag(data, node, comp){
-			this.loadData(data.id);
+			this.tag = data.id;
+			this.loadData();
 		},
 
 		loadClassification(cb){

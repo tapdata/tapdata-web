@@ -671,6 +671,23 @@ const en = {
 		rows: "Check by number of rows",
 		sampleRate: "By percentage",
 		condition: "Check condition"
+	},
+	dataMap: {
+		classification: "Data Model Classification",
+		topLevel: "Top Level",
+		dbLevel: "Database Level",
+		tableLevel: "Table Level",
+		properties:{
+			name: "Name",
+			type: "Classification",
+			path:'Path',
+			database_type: "Database type",
+			database_host: "Database IP",
+			database_username: "Database User",
+			database_port: "Database Port",
+			database_uri: "Database connection uri",
+			database_name: "Database name"
+		}
 	}
 };
 

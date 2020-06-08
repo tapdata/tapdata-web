@@ -8,6 +8,7 @@ import Component from "../../lib/Component";
 import $ from "jquery";
 import shapes from "../models/shapes";
 import _ from "lodash";
+import i18n from "../../../i18n/i18n";
 
 import log from "../../../log";
 
@@ -109,13 +110,21 @@ export default class Graph extends Component {
 			self.paperScroller.startPanning(evt, x, y);
 		});*/
 
+		self.paper.on({
+			'cell:mouseover': self.showProperties,
+			'blank:mouseover': self.hideProperties,
+
+			'cell:pointerdblclick': self.handlerCellDbClick,
+			'blank:pointerdblclick': self.handlerBlankDbClick
+		}, this);
+
 		this.paperScroller.center();
 	}
 
 	initLane(){
 		this.createLanes();
 
-		this.loadExampleData();
+		// this.loadExampleData();
 
 		this.sourceLane.toBack();
 		this.tapdataLane.toBack();
@@ -225,9 +234,7 @@ export default class Graph extends Component {
 
 		this.sourceLane.on("change:size", (element, newSize, opt) => this.setLaneHeaderStyle(this.sourceLane, newSize.width, this.spacing));
 		this.tapdataLane.on("change:size", (element, newSize, opt) => this.setLaneHeaderStyle(this.sourceLane, newSize.width, this.spacing));
-		this.apiLane.on("change:size", (element, newSize, opt) => {
-			this.setLaneHeaderStyle(this.sourceLane, newSize.width, this.spacing);
-		});
+		this.apiLane.on("change:size", (element, newSize, opt) => this.setLaneHeaderStyle(this.sourceLane, newSize.width, this.spacing));
 
 		this.updateLanes();
 		// window.addEventListener("resize", this.updateLanes.bind(this));
@@ -238,6 +245,9 @@ export default class Graph extends Component {
 		let bbox = this.getContentBBox();
 		let width = (bbox.w - spacing * 4) / 3;
 		let height = bbox.h - spacing * 2;
+
+		width = width * 0.8;
+		height = height * 0.5;
 
 		let sourceWidth = width;
 		let tapdataWidth = width;
@@ -258,6 +268,8 @@ export default class Graph extends Component {
 
 	fitEmbeds(){
 
+		this.updateElementHeader();
+
 		joint.layout.DirectedGraph.layout(this.graph, {
 			setLinkVertices: false,
 			rankDir: "LR",
@@ -265,10 +277,12 @@ export default class Graph extends Component {
 			marginY: 100,
 			// resizeToFit: true,
 			nodeSep: 20,
-			edgeSep: 10,
+			edgeSep: 50,
+			rankSep: 80,
+			// ranker: 'network-simplex',
 			align: "UL",
 			resizeClusters: true,
-			clusterPadding: { top: 50, left: 30, right: 30, bottom: 30 }
+			clusterPadding: { top: 50, left: 35, right: 35, bottom: 20 }
 		});
 
 		/*let embedOpts = {
@@ -294,6 +308,35 @@ export default class Graph extends Component {
 		});*/
 		this.paperScroller.centerContent({padding: {top: 200, bottom: 200, left: 200, right: 200}});
 
+	}
+
+	updateElementHeader(){
+		this.graph.getCells().forEach(cell => {
+			if(!cell.isElement())
+				return;
+
+			if(cell.get('type') === 'dataMap.Lane')
+				return;
+
+			let embedElements = cell.getEmbeddedCells();
+			if(embedElements && embedElements.length > 0) {
+				cell.attr({
+					body: {
+						"fill-opacity": 0.3
+					},
+					image: {
+						visibility: 'hidden'
+					},
+					label: {
+						textVerticalAnchor: 'middle',
+						textAnchor: 'middle',
+						refX: '15%',
+						refY: 15,
+						fill: '#333333'
+					}
+				});
+			}
+		});
 	}
 
 	setLaneHeaderStyle(lane, width, spacing){
@@ -361,7 +404,10 @@ export default class Graph extends Component {
 				label: {
 					text: cellData.name
 				}
-			}
+			},
+			properties: _.assignWith(cellData.properties || {}, {name: cellData.name}, (oldValue, newValue, key, obj, src) => {
+				return oldValue || newValue || "";
+			})
 		}, cellConfig.attrs || {}));
 
 		cell.position(cellConfig.x || 20, cellConfig.y || 50).addTo(this.graph);
@@ -384,7 +430,7 @@ export default class Graph extends Component {
 		this.paper.unfreeze();
 		this.graph.clear();
 
-		if( cells.length === 0){
+		if( cells.length <= 1){
 			this.paper.freeze();
 			return;
 		}
@@ -494,9 +540,61 @@ export default class Graph extends Component {
 
 		this.fitEmbeds();
 
-		// this.paper.freeze();
+		// this.updateLanes();
+
+		this.paper.freeze();
 
 		log("DataMap.graph.getData", self.getData());
+	}
+
+	showProperties(cellView, e){
+		log("DataMap.Graph.showProperties", cellView, e);
+
+		let cell = cellView.model;
+		let properties = cell.get('properties');
+		if(!properties || Object.keys(properties).length === 0){
+			this.hideProperties(cellView, e);
+			return;
+		}
+
+		let bbox = cellView.getBBox();
+		let dom = this.paper.$el.find('.properties-info-container');
+		if(!dom || dom.length === 0) {
+			dom = $(`<div class="properties-info-container"></div>`);
+			this.paper.$el.append(dom);
+		}
+		dom.css('left', `${bbox.x + bbox.width + 10}px`);
+		dom.css('top', `${bbox.y - 15}px`);
+		dom.find('>*').remove();
+		Object.keys(properties).forEach(key => {
+			let label = i18n.t("dataMap.properties." + key) || key;
+			let value = Array.isArray(properties[key]) ? properties[key].join(', ') : properties[key];
+			dom.append($(`<div>${label}: ${value}</div>`));
+		});
+	}
+
+	hideProperties(cellView, e){
+		log("DataMap.Graph.hideProperties", cellView, e);
+		this.paper.$el.find('.properties-info-container').remove();
+	}
+
+	handlerCellDbClick(cellView, evt){
+		log("DataMap.Graph.handlerCellDbClick", cellView, evt);
+		let cellModel = cellView.model;
+		if(!cellModel.isElement())
+			return;
+		let cellType = cellModel.get('type');
+		if(['dataMap.Classification'].includes(cellType)){
+			this.emit('drill_down', 2);
+		} else if(['dataMap.Database'].includes(cellType)){
+			this.emit('drill_down', 3);
+		} else if(['dataMap.Table', 'dataMap.Model'].includes(cellType)) {
+			// field mapping
+		}
+	}
+
+	handlerBlankDbClick() {
+		this.emit('drill_down', 1);
 	}
 
 	getData() {

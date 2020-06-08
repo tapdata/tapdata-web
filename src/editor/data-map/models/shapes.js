@@ -205,9 +205,9 @@ export default (joint) => {
 		},
 		attrs: {
 			header: {
-				fill: "#feb663",
-				"fill-opacity": 0.2,
-				stroke: "#feb663",
+				fill: "#bbbbbb",
+				"fill-opacity": 0.4,
+				stroke: "#dddddd",
 				"stroke-width": 1,
 				rx: 5,
 				ry: 5
@@ -215,9 +215,9 @@ export default (joint) => {
 			body: {
 				rx: 5,
 				ry: 5,
-				fill: "#feb663",
+				fill: "#dddddd",
 				"fill-opacity": 0.2,
-				stroke: "#feb663",
+				stroke: "#dddddd",
 				"stroke-width": 3
 			}
 		}

@@ -668,6 +668,23 @@ const tc = {
 		rows: "按行數校驗",
 		sampleRate: "按百分比",
 		condition: "校驗條件"
+	},
+	dataMap: {
+		classification: "数据模型",
+		topLevel: "Top Level",
+		dbLevel: "Database Level",
+		tableLevel: "Table Level",
+		properties: {
+			name: '名稱',
+			type: '分類',
+			path: '路徑',
+			database_type: '數據庫類型',
+			database_host: "數據庫IP",
+			database_username: "數據庫用戶",
+			database_port: "數據庫端口",
+			database_uri: "數據庫連接",
+			database_name: "數據庫名稱"
+		}
 	}
 };
 
