@@ -1,6 +1,6 @@
 <template>
 	<div class="data-flow-setting">
-		<el-form label-width="40px" :data="formData">
+		<el-form label-width="40px" :data="formData" :rules="rules">
 			<el-row>
 				<el-col :span="24">
 					<el-form-item>
@@ -32,7 +32,7 @@
 				<el-form-item>
 					<div>{{ $t("dataFlow.send_email") }}</div>
 					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.paused">{{
-						$t("dataFlow.paused")
+						$t("dataFlow.stopped")
 						}}
 					</el-checkbox-button>
 					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.error">{{
@@ -133,8 +133,8 @@
 							<el-radio-button :label="false">{{ $t("dataFlow.no") }}</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
-					<el-form-item v-show="formData.isSchedule === true">
-						<div>{{ $t("dataFlow.cron_expression") }}</div>
+					<el-form-item v-show="formData.isSchedule === true && formData.sync_type === 'initial_sync'" prop="cronExpression">
+						<div>{{ $t("dataFlow.cronExpression") }}</div>
 						<!-- 定期调度任务 -->
 						<el-input v-model="formData.cronExpression" size="mini"></el-input>
 					</el-form-item>
@@ -176,7 +176,16 @@
 		name: "Setting.vue",
 		data() {
 			return {
-				formData: _.cloneDeep(DEFAULT_SETTING)
+				formData: _.cloneDeep(DEFAULT_SETTING),
+				rules: {
+					cronExpression: [
+						{
+							required: true,
+							trigger: "blur",
+							message: this.$t("dataFlow.cronExpression")
+						}
+					]
+				},
 			};
 		},
 		mounted() {
@@ -218,9 +227,8 @@
 					this.formData.isOpenAutoDDL = false;
 				} else {
 					this.formData.run_custom_sql = false;
-					this.formData.isSchedule = false;
 				}
-			}
+			},
 		}
 	};
 </script>

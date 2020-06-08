@@ -5,7 +5,7 @@
 				{{ $t("dataFlow.button.viewMonitoring") }}
 			</el-button>
 		</div>
-		<el-form ref="form" :model="form" :rules="rules" :disabled="disabled" label-position="top" label-width="200px">
+		<el-form ref="form" :model="form" :disabled="disabled" label-position="top" label-width="200px">
 			<el-form-item :label="$t('editor.cell.data_node.api.dataApiName')">
 				<el-input
 					v-model="form.name"
@@ -39,8 +39,8 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="18">
-					<el-form-item :label="'URL/API/V1/' + form.apiPath">
-						<el-input v-model="form.apiPath" :placeholder="$t('dataFlow.enterFilterTable')"></el-input>
+					<el-form-item :label="'URL/API/V1/' + mergedSchema.table_name + '/cust/' +  form.apiPath">
+						<el-input v-model="form.apiPath" :placeholder="$t('editor.cell.data_node.api.enterEndUrl')"></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -54,7 +54,7 @@
 				>
 					<el-table-column prop="field_name" :label="$t('editor.cell.data_node.api.table_field')">
 					</el-table-column>
-					<el-table-column prop="javaType" :label="$t('editor.cell.data_node.api.table_type')" width="100">
+					<el-table-column prop="javaType" :label="$t('editor.cell.data_node.api.table_type')" width="80">
 					</el-table-column>
 					<el-table-column
 						align="center"
@@ -205,10 +205,14 @@ export default {
 					delete item.required;
 					delete item.query;
 				});
-				data.paths.path = "/API/V1/" + this.mergedSchema.table_name + "/cust/" + data.apiPath;
+				if(this.mergedSchema) {
+					data.paths.path = "/API/V1/" + this.mergedSchema.table_name + "/cust/" + data.apiPath;
+				}
 			}
+			console.log("=========",data,this.mergedSchema)
 			return data;
 		},
+
 		setDisabled(disabled) {
 			this.disabled = disabled;
 		},

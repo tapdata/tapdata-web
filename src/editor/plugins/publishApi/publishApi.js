@@ -15,11 +15,11 @@ export const PublishApiConfig = {
 				},
 				label: {
 					text: i18n.t('editor.cell.data_node.api.publishName'),
-        },
-        [FORM_DATA_KEY]: {
-          type: 'publishApi',
-          form: {}
-        }
+				},
+				[FORM_DATA_KEY]: {
+				type: 'publishApi',
+				form: {}
+				}
 			}
 		},
 		prototypeProperties: {
@@ -47,19 +47,19 @@ export const PublishApiConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-        return ['app.Collection'].includes(sourceCell.get('type'));
-      },
+				return ['app.Collection'].includes(sourceCell.get('type'));
+			},
 
 			validate(data) {
-        data = data || this.getFormData();
-        log('publishAPI.validate', data);
+				data = data || this.getFormData();
+				log('publishAPI.validate', data);
 				let name = this.attr('label/text');
 				// if (!data)
 				// 	throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`);
-        if( !data.name )
-          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.publishApi_nameNone')}`);
-        if( !data.paths.path )
-          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.publishApi_path')}`);
+				if( !data.name )
+				throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.publishApi_nameNone')}`);
+				if( !data.paths.path )
+				throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.publishApi_path')}`);
 				return true;
 			},
 		},
@@ -195,7 +195,7 @@ export const PublishApiConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/api.svg',
+				xlinkHref: 'static/editor/link.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',

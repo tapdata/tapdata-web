@@ -538,21 +538,11 @@ export default class Editor extends BaseObject {
 			this.initRunningMode(dataFlow);
 		}
 	}
+
 	goBackMontior() {
 		let monitor = this.getRightTabPanel().getChildByName("monitor");
 		this.getRightTabPanel().select(monitor);
 	}
-
-	// getAllCells() {
-	// 	let dataCells = this.graph.graph.getCells().filter(cell => {
-	// 		let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
-	// 		let type = cell.get("type");
-	// 		let connectionIdFieldName = this.mapping[type];
-	// 		return formData && connectionIdFieldName && formData[connectionIdFieldName];
-	// 	});
-	// 	log("editor.getCells", this.graph.graph.getCells());
-	// 	return dataCells;
-	// }
 
 	/**
 	 * Validate graph data for data flow
@@ -561,6 +551,11 @@ export default class Editor extends BaseObject {
 	validate() {
 		let name = this.ui.getName();
 		if (!name) return i18n.t("editor.cell.validate.empty_name");
+
+		let getData = this.getData();
+		if((!getData.settingData || !getData.settingData.cronExpression) && getData.settingData.isSchedule === true && getData.settingData.sync_type === 'initial_sync'){
+			return i18n.t("dataFlow.cronExpression");
+		}
 
 		let verified = this.graph.validate();
 		if (verified !== true) return verified;

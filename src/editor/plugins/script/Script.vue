@@ -45,7 +45,7 @@
 					<JsEditor :code.sync="model.script" ref="jsEditor" :width.sync="width"></JsEditor>
 				</el-form-item>
 			</el-form>
-			<el-button class="btn-debug" type="primary" size="mini" @click="showDebug">
+			<el-button class="btn-debug" type="primary" size="mini" :loading="!!sending" @click="showDebug">
 				{{ $t("editor.cell.processor.script.debug_button_label") }}
 			</el-button>
 		</div>
@@ -97,7 +97,8 @@ export default {
 				type: "js_processor",
 				script: "function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}"
 			},
-			width: "500"
+			width: "500",
+			sending: false
 		};
 	},
 	mounted() {
@@ -158,13 +159,19 @@ export default {
 						},
 						id
 					);
+					this.sending = setTimeout(() => {
+						this.sending = null;
+						this.$refs.debug.logList = [];
+					}, 60 * 1000);
 				} else {
 					this.$message.error(this.$t("editor.cell.processor.script.connect_server_fail"));
 				}
 			});
 
 			this.$refs.debug.show(cb => {
-				ws.once(EventName.EXECUTE_SCRIPT_RESULT, function(msg) {
+				ws.once(EventName.EXECUTE_SCRIPT_RESULT, msg => {
+					clearTimeout(this.sending);
+					this.sending = null;
 					log("Job.ReceiveMessage", msg);
 					cb(msg);
 				});

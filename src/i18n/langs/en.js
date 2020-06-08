@@ -173,6 +173,7 @@ const en = {
 		mission: "Description",
 		yes: "yes",
 		no: "no",
+		cronExpression:"Please enter cron expression",
 		selectGrpupFiled: "Please select a grouping field",
 		selectTargetField: "Please select the target field",
 		aggName: "Sub-process name",
@@ -191,7 +192,7 @@ const en = {
 			viewMonitoring: "Data Monitoring",
 			setting: "Setting",
 			logs: "Logs",
-			preview: "Data Trace",
+			preview: "Preview",
 			capture: "Data Trace",
 			stop_capture: "Stop Trace",
 			start: "Start",
@@ -200,7 +201,10 @@ const en = {
 			reset: "Reset",
 			save: "Save",
 			saveing: "Saveing",
-			reloadSchema: "reloadSchema"
+			reloadSchema: "reloadSchema",
+			debug: "debug test",
+			quantitative: "Quantitative",
+			increment: "Increment"
 		},
 		save_before_running: "Please save the task before running",
 		reset_job: {
