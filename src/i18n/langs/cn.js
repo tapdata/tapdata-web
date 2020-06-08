@@ -150,7 +150,7 @@ const cn = {
 		initial_sync: "初始化",
 		cdc: "增量同步",
 		send_email: "发送邮件",
-		paused: " 当任务停止",
+		stopped: " 当任务停止",
 		error: "当任务出错",
 		edited: "当任务被编辑",
 		started: "当任务开启",

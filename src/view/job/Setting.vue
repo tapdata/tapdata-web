@@ -32,7 +32,7 @@
 				<el-form-item>
 					<div>{{ $t("dataFlow.send_email") }}</div>
 					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.paused">{{
-						$t("dataFlow.paused")
+						$t("dataFlow.stopped")
 						}}
 					</el-checkbox-button>
 					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.error">{{
