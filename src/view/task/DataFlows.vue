@@ -283,7 +283,7 @@ export default {
 			tableData: [],
 			newData: [],
 			currentPage: 1,
-			pagesize: 20,
+			pagesize: localStorage.getItem("flowPagesize")*1 || 20,
 			totalNum: 0,
 			optionsKey: [
 				{
@@ -781,6 +781,7 @@ export default {
 		},
 		handleSizeChange(psize) {
 			this.pagesize = psize;
+			localStorage.setItem("flowPagesize",psize);
 			this.getData();
 		}
 	}
