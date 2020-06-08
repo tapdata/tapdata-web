@@ -524,7 +524,7 @@ export default {
 							self.editor.graph.layoutDirectedGraph();
 
 							// 5. 处理joinTables
-							self.handleJoinTables(dataFlow.stages);
+							self.handleJoinTables(dataFlow.stages,self.editor.graph.graph);
 						} else {
 							self.editor.setData(dataFlow);
 						}
@@ -1180,33 +1180,45 @@ export default {
 				cells: cells
 			};
 		},
-		handleJoinTables(data) {
-			if (data) {
-				data.map(v => {
+		/**
+		 * handler join table on after reverse editor data
+		 * @param stages
+		 * @param graph
+		 */
+		handleJoinTables(stages, graph) {
+			log("Job.handleJoinTables", stages, graph);
+			if (stages) {
+				stages.map(stage => {
 					if (
-						v.joinTables &&
-						v.inputLanes &&
-						[
+						stage.joinTables &&
+						stage.joinTables.length > 0 &&
+						stage.inputLanes &&
+						stage.inputLanes.length > 0 &&
+						![
 							"field_processor",
 							"java_processor",
 							"js_processor",
 							"aggregation_processor",
 							"row_filter_processor"
-						].includes(v.type)
+						].includes(stage.type)
 					) {
-						// 目标节点 数据节点 jointable
-						let linkDtata = this.cells
-							.filter(cell => cell.type === "app.Link" && [cell.target.id])
-							.includes(v.inputLanes);
-						if (linkDtata && linkDtata.length > 0) {
-							linkDtata.map(link => {
-								v.joinTables.map(table => {
-									if (link.tableName === table.tableName) {
-										link.form_data = table;
-									}
-								});
-							});
-						}
+						// 目标节点 数据节点 jointables
+						// tableName -> joinTable
+						let joinTables = {};
+						stage.joinTables.map(table => {
+							joinTables[table.stageId] = table;
+						});
+
+						let cell = graph.getCell(stage.id);
+						graph.getConnectedLinks(cell, {inbound: true}).forEach( link => {
+							let sourceCell = link.getSourceCell();
+							let sourceDataCells = sourceCell.getFirstDataNode()
+								.filter( cell => !!joinTables[cell.id]);
+							if(sourceDataCells && sourceDataCells.length > 0){
+								let formData = link.getFormData();
+								formData.joinTable = joinTables[sourceDataCells[0].id];
+							}
+						});
 					}
 				});
 			}
