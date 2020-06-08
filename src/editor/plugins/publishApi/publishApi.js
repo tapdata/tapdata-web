@@ -195,7 +195,7 @@ export const PublishApiConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/api.svg',
+				xlinkHref: 'static/editor/link.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',

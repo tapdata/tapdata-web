@@ -100,7 +100,7 @@
 				@click="save"
 				>{{ $t("dataFlow.button.save") }}
 			</el-button> -->
-			<template v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)">
+			<template v-if="['draft'].includes(status)">
 				<div class="headImg" v-show="!isSaving" @click="timeSave">
 					<span class="iconfont icon-yunduanshangchuan"></span>
 					<span class="text">{{ $t("dataFlow.button.save") }}</span>
@@ -117,13 +117,19 @@
 				:content="$t('dataFlow.button.capture')"
 				placement="bottom"
 			>
-				<div
+				<!-- <div
 					class="headImg"
 					@click="capture"
 					v-if="['running'].includes(status) && executeMode === 'normal'"
 				>
 					<span class="iconfont icon-yulan"></span>
-				</div>
+				</div> -->
+				<el-button
+					class="headImg iconfont icon-yulan"
+					@click="capture"
+					:disabled="executeMode === 'normal' && ['running'].includes(status)?false:true"
+				>
+				</el-button>
 			</el-tooltip>
 
 			<el-tooltip
@@ -133,7 +139,7 @@
 				placement="bottom"
 			>
 				<div class="headImg" @click="stopCapture" v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'">
-					<span class="iconfont icon-zhengfangxingxuanzhongzhuangtai"></span>
+					<span class="iconfont icon-zanting3"></span>
 				</div>
 			</el-tooltip>
 
@@ -159,13 +165,19 @@
 				</div>
 			</el-tooltip>
 
-			<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.debug')" placement="bottom">
-				<div class="headImg" @click="showLogs">
+			<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.logs')" placement="bottom">
+				<!-- <div class="headImg" @click="showLogs">
 					<span class="iconfont icon-rizhi1"></span>
-				</div>
+				</div> -->
+				<el-button
+					type="text"
+					class="headImg iconfont icon-rizhi1"
+					@click="showLogs"
+				>
+				</el-button>
 			</el-tooltip>
 			<el-autocomplete
-				v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
+				v-if="!['scheduled', 'paused', 'running', 'stopping', 'force stopping'].includes(status)"
 				class="inline-input searchNode"
 				id="searchNode"
 				v-model="state1"
@@ -198,7 +210,7 @@
 				"
 				effect="plain"
 				size="small"
-				style="margin-left: 50px;border-radius: 20px;"
+				style="margin-left: 30px;border-radius: 20px;"
 				>{{ $t("dataFlow.state") }}: {{ $t("dataFlow.status." + status.replace(/ /g, "_")) }}
 			</el-tag>
 			<!-- <div
@@ -389,29 +401,25 @@ export default {
 		// self.editor.getUI().getBackButtonEl().on('click', () => {
 		// 	self.$router.push({path: '/dataFlows'});
 		// });
-		let settingSetInterval = null;
 		this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
 			changeData = this.getDataFlowData(true);
-
-			settingSetInterval = () => {
-				if (changeData) {
+			if (changeData) {
+				let	settingSetInterval = () => {
 					timer = setTimeout(() => {
 						if (["draft", "error", "paused"].includes(this.status)) {
 							self.timeSave();
 						}
+						timer = null;
 					}, 10000);
-				}
-			};
-			if (timer) {
-				clearTimeout(timer);
-				if (changeData) {
+				};
+				if (timer) {
+					clearTimeout(timer);
 					settingSetInterval();
-				}
-			} else {
-				if (changeData) {
+				} else {
 					settingSetInterval();
 				}
 			}
+
 		});
 	},
 
@@ -435,11 +443,12 @@ export default {
 						this.$message.error(self.$t("message.saveFail"));
 					} else {
 						this.$message.success(self.$t("message.saveOK"));
-						self.setEditable(false);
-						this.loadDataFlow(data.id);
+						self.editor.setData(data);
 					}
 				});
 			}
+			clearTimeout(timer);
+			timer = null;
 			this.dialogFormVisible = false;
 		},
 
@@ -524,7 +533,7 @@ export default {
 							self.editor.graph.layoutDirectedGraph();
 
 							// 5. 处理joinTables
-							self.handleJoinTables(dataFlow.stages);
+							self.handleJoinTables(dataFlow.stages,self.editor.graph.graph);
 						} else {
 							self.editor.setData(dataFlow);
 						}
@@ -831,7 +840,10 @@ export default {
 				if (data.id) {
 					data.id = data.id
 				}
-				data.name =this.form.taskName;
+				if(this.form.taskName) {
+					data.name =this.form.taskName;
+				}
+
 				data.status = "scheduled";
 				data.executeMode = "normal";
 				self.doSave(data, (err, dataFlow) => {
@@ -840,7 +852,7 @@ export default {
 					} else {
 						this.$message.success(self.$t("message.saveOK"));
 						self.setEditable(false);
-						this.loadDataFlow(data.id);
+						self.editor.setData(data);
 					}
 				});
 			}
@@ -1180,33 +1192,45 @@ export default {
 				cells: cells
 			};
 		},
-		handleJoinTables(data) {
-			if (data) {
-				data.map(v => {
+		/**
+		 * handler join table on after reverse editor data
+		 * @param stages
+		 * @param graph
+		 */
+		handleJoinTables(stages, graph) {
+			log("Job.handleJoinTables", stages, graph);
+			if (stages) {
+				stages.map(stage => {
 					if (
-						v.joinTables &&
-						v.inputLanes &&
-						[
+						stage.joinTables &&
+						stage.joinTables.length > 0 &&
+						stage.inputLanes &&
+						stage.inputLanes.length > 0 &&
+						![
 							"field_processor",
 							"java_processor",
 							"js_processor",
 							"aggregation_processor",
 							"row_filter_processor"
-						].includes(v.type)
+						].includes(stage.type)
 					) {
-						// 目标节点 数据节点 jointable
-						let linkDtata = this.cells
-							.filter(cell => cell.type === "app.Link" && [cell.target.id])
-							.includes(v.inputLanes);
-						if (linkDtata && linkDtata.length > 0) {
-							linkDtata.map(link => {
-								v.joinTables.map(table => {
-									if (link.tableName === table.tableName) {
-										link.form_data = table;
-									}
-								});
-							});
-						}
+						// 目标节点 数据节点 jointables
+						// tableName -> joinTable
+						let joinTables = {};
+						stage.joinTables.map(table => {
+							joinTables[table.stageId] = table;
+						});
+
+						let cell = graph.getCell(stage.id);
+						graph.getConnectedLinks(cell, {inbound: true}).forEach( link => {
+							let sourceCell = link.getSourceCell();
+							let sourceDataCells = sourceCell.getFirstDataNode()
+								.filter( cell => !!joinTables[cell.id]);
+							if(sourceDataCells && sourceDataCells.length > 0){
+								let formData = link.getFormData();
+								formData.joinTable = joinTables[sourceDataCells[0].id];
+							}
+						});
 					}
 				});
 			}
@@ -1243,7 +1267,7 @@ export default {
 			clearTimeout(this.timeoutId);
 		}
 		this.editor.destroy();
-		if (["draft", "error", "paused"].includes(this.status)) {
+		if (timer) {
 			clearInterval(timer);
 		}
 	}
