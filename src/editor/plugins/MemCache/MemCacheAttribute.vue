@@ -208,7 +208,7 @@ export default {
 				if (!this.model.name) {
 					this.model.name = this.model.cacheName = schema.tableName;
 				}
-				this.sourceSchemaFields = schema.sourceSchema.fields;
+				this.sourceSchemaFields = schema.sourceSchema.fields || [];
 				if (!cacheKeys) {
 					let field = this.sourceSchemaFields.find(field => field.primary_key_position === 1);
 					cacheKeys = field ? field.field_name : this.sourceSchemaFields[0].field_name;
