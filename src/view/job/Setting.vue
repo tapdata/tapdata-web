@@ -182,7 +182,7 @@
 						{
 							required: true,
 							trigger: "blur",
-							message: this.$t("editor.cell.data_node.database.form.placeholder")
+							message: this.$t("dataFlow.cronExpression")
 						}
 					]
 				},
