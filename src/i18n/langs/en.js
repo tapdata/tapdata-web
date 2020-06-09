@@ -673,6 +673,8 @@ const en = {
 		condition: "Check condition"
 	},
 	dataMap: {
+		noneData: "Not match data model by classification",
+
 		classification: "Data Model Classification",
 		topLevel: "Top Level",
 		dbLevel: "Database Level",

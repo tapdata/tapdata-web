@@ -670,10 +670,12 @@ const tc = {
 		condition: "校驗條件"
 	},
 	dataMap: {
-		classification: "数据模型",
-		topLevel: "Top Level",
-		dbLevel: "Database Level",
-		tableLevel: "Table Level",
+		noneData: "沒有匹配到數據模型",
+
+		classification: "數據模型",
+		topLevel: "頂級",
+		dbLevel: "庫級",
+		tableLevel: "表級",
 		properties: {
 			name: '名稱',
 			type: '分類',

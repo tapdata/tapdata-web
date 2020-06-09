@@ -1,6 +1,6 @@
 <template>
 	<div class="data-map-container">
-		<div class="data-map">
+		<div class="data-map" v-loading="loading">
 			<div class="left-side-classification">
 				<div class="e-header">{{$t("dataMap.classification")}}</div>
 				<div>
@@ -60,6 +60,7 @@ import $ from "jquery";
 import DataMap from "../../editor/data-map/index";
 import log from "../../log";
 import factory from "../../api/factory";
+import i18n from "../../i18n/i18n";
 
 const metadataInstances = factory("MetadataInstances");
 const metadataDefinitions = factory("MetadataDefinitions");
@@ -71,6 +72,8 @@ export default {
 		return {
 			level: 1,
 			tag: "",
+
+			loading: true,
 
 			fullscreen: false,
 
@@ -162,15 +165,32 @@ export default {
 
 		loadData(){
 			let self = this;
+			self.loading = true;
 			metadataInstances.dataMap(this.level, this.tag).then(result => {
 
-				if(result && result.data){
+				if(result && result.data && result.data.length > 0){
 					let cells = result.data.records;
 					self.dataMap.graph.renderCells(self.level, cells);
+				} else {
+					self.$message.info({
+						message: '未加载到数据',
+						duration: 0,
+						showClose: true,
+						offset: 100
+					});
 				}
+
+				self.loading = false;
 
 			}).catch(err => {
 				log(err);
+				self.loading = false;
+				self.$message.error({
+					message: i18n.t('message.api.get.error'),
+					duration: 0,
+					showClose: true,
+					offset: 100
+				});
 			});
 		},
 

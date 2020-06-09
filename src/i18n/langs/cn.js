@@ -671,6 +671,8 @@ const cn = {
 		condition: "校验条件"
 	},
 	dataMap: {
+		noneData: "没有匹配到模型",
+
 		classification: "模型分類",
 		topLevel: "頂級",
 		dbLevel: "庫級",
