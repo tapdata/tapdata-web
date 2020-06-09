@@ -200,7 +200,7 @@ const en = {
 			stop: "Stop",
 			force_stop: "Force Stop",
 			reset: "Reset",
-			save: "Save",
+			save: "Save Draft",
 			saveing: "Saveing",
 			reloadSchema: "reloadSchema",
 			debug: "debug test",
@@ -373,7 +373,8 @@ const en = {
 					enterEndUrl: "Please enter the URL end path name",
 					required: "Required",
 					availableQueries: "Query",
-					publishApi_path: "API path is not empty"
+					publishApi_path: "API path is not empty",
+					variable_name: "Can only contain letters, numbers, underscores and dollar signs, and numbers cannot start",
 				},
 				es: {
 					name: "ES",

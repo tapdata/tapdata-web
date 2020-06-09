@@ -17,8 +17,8 @@ export const PublishApiConfig = {
 					text: i18n.t('editor.cell.data_node.api.publishName'),
 				},
 				[FORM_DATA_KEY]: {
-				type: 'publishApi',
-				form: {}
+					type: 'publishApi',
+					form: {}
 				}
 			}
 		},
@@ -38,7 +38,7 @@ export const PublishApiConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-        return false;
+        		return false;
 			},
 
 			/**
@@ -54,12 +54,15 @@ export const PublishApiConfig = {
 				data = data || this.getFormData();
 				log('publishAPI.validate', data);
 				let name = this.attr('label/text');
+				let regName = /^[a-zA-Z\$_][a-zA-Z\d_]*$/;
 				// if (!data)
 				// 	throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`);
-				if( !data.name )
-				throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.publishApi_nameNone')}`);
+				if( !data.name)
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.enterPublishApiName')}`);
+				if (!regName.test(data.name))
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.variable_name')}`);
 				if( !data.paths.path )
-				throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.publishApi_path')}`);
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.enterEndUrl')}`);
 				return true;
 			},
 		},
@@ -195,7 +198,7 @@ export const PublishApiConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/api.svg',
+				xlinkHref: 'static/editor/link.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
