@@ -294,16 +294,15 @@ export default {
       }
       this.cell = cell;
 
-      console.log(cell, "======");
-
       this.configJoinTable = cell.configJoinTable && cell.configJoinTable();
 
       if (!this.configJoinTable) return;
 
       if (cell.getSourceCell()) {
         let sourceCell = cell.getSourceCell(),
-          targetCell = cell.getTargetCell(),
-          sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null,
+          targetCell = cell.getTargetCell(),  
+		  sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null,
+		  targetSchema = targetCell? targetCell.getSchema() : null,
           mergedTargetSchema =
             targetCell && typeof targetCell.getOutputSchema === "function"
               ? targetCell.getOutputSchema()
@@ -332,17 +331,14 @@ export default {
           let sourcePKs = this.getPKsFromSchema(sourceSchema).sort((v1, v2) =>
             v1 > v2 ? 1 : v1 === v2 ? 0 : -1
           );
-          let targetPKs = this.getPKsFromSchema(
-            mergedTargetSchema
-          ).sort((v1, v2) => (v1 > v2 ? 1 : v1 === v2 ? 0 : -1));
-          let initialAssociationPKs =
-            sourcePKs &&
-            sourcePKs.length > 0 &&
-            targetPKs &&
-            targetPKs.length > 0
+		  let mergePKs = this.getPKsFromSchema( mergedTargetSchema).sort((v1, v2) => (v1 > v2 ? 1 : v1 === v2 ? 0 : -1));
+		  let targetPKs =  this.getPKsFromSchema( targetSchema).sort((v1, v2) => (v1 > v2 ? 1 : v1 === v2 ? 0 : -1));
+		  let comparedSchema = targetPKs && targetPKs.length > 0? targetPKs : mergePKs;
+		  let initialAssociationPKs =
+            sourcePKs && sourcePKs.length > 0 && comparedSchema && comparedSchema.length > 0
               ? sourcePKs.map((field, i) => ({
                   source: field.field_name,
-                  target: targetPKs[i].field_name
+                  target: comparedSchema[i].field_name
                 }))
               : this.model.joinTable.joinKeys;
 
