@@ -672,7 +672,7 @@ const tc = {
 		condition: "校驗條件"
 	},
 	dataMap: {
-		noneData: "沒有匹配到數據模型",
+		noneData: "沒有查找到數據模型",
 
 		classification: "數據模型",
 		topLevel: "頂級",
