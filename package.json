@@ -14,15 +14,15 @@
     "build": "node build/build.js"
   },
   "husky": {
-	  "hooks": {
-		  "pre-commit": "lint-staged"
-	  }
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
-	  "*.{js,vue,css}": [
-		  "eslint --fix",
-		  "prettier --write"
-	  ]
+    "*.{js,vue,css}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "alertifyjs": "^1.13.1",

@@ -670,6 +670,23 @@ const cn = {
 		rows: "按行数校验",
 		sampleRate: "按百分比",
 		condition: "校验条件"
+	},
+	dataMap: {
+		classification: "模型分類",
+		topLevel: "頂級",
+		dbLevel: "庫級",
+		tableLevel: "表級",
+		properties: {
+			name: '名称',
+			type: '分类',
+			path: '路径',
+			database_type: '数据库类型',
+			database_host: "数据库IP",
+			database_username: "数据库用户",
+			database_port: "数据库端口",
+			database_uri: "数据库连接",
+			database_name: "数据库名称"
+		}
 	}
 };
 
