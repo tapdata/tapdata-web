@@ -103,7 +103,7 @@
 			<template v-if="['draft'].includes(status)">
 				<div :class="[{btnHover:['draft'].includes(status)},'headImg']" v-show="!isSaving" @click="timeSave">
 					<span class="iconfont icon-yunduanshangchuan"></span>
-					<span class="text">{{ $t("dataFlow.button.save") }}</span>
+					<span class="text">{{ $t("dataFlow.button.saveDraft") }}</span>
 				</div>
 
 				<div class="headImg" v-show="isSaving" style="color: #48B6E2;">
