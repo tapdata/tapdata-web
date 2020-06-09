@@ -108,6 +108,7 @@
 				<!--				</div>-->
 			</div>
 			<div class="clear"></div>
+
 			<el-table
 				v-loading="loading"
 				:element-loading-text="$t('dataFlow.dataLoading')"
@@ -119,7 +120,7 @@
 				:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
 				@sort-change="handleSortTable"
 				@selection-change="handleSelectionChange"
-				:default-sort="{ prop: 'createTime', order: 'descending' }"
+				:default-sort="{ prop: flowProp, order: flowOrder }"
 			>
 				<el-table-column type="selection" width="45" :selectable="handleSelectable"> </el-table-column>
 				<el-table-column prop="name" :label="$t('dataFlow.taskName')"> </el-table-column>
@@ -279,7 +280,9 @@ export default {
 				error: "#f53724"
 			},
 			loading: false,
-			order: "",
+			order: '',
+			flowProp: localStorage.getItem("flowProp") || 'createTime',
+			flowOrder: localStorage.getItem("flowOrder") || 'descending',
 			tableData: [],
 			newData: [],
 			currentPage: 1,
@@ -331,11 +334,11 @@ export default {
 			],
 			multipleSelection: [],
 			formData: {
-				search: "",
+				search: localStorage.getItem("flowSearch") || "",
 				timeData: [],
-				status: "",
+				status: localStorage.getItem("flowStatus") || "",
 				person: "",
-				way: "",
+				way: localStorage.getItem("flowWay") || "",
 				classification: []
 			}
 		};
@@ -423,6 +426,9 @@ export default {
 			}
 		},
 		screenFn() {
+			localStorage.setItem("flowSearch",this.formData.search);
+			localStorage.setItem("flowStatus",this.formData.status);
+			localStorage.setItem("flowWay",this.formData.way);
 			this.getData();
 		},
 		keyupEnter() {
@@ -764,6 +770,8 @@ export default {
 				transmissionTime: "stats.transmissionTime"
 			};
 			this.order = mapping[column.prop] + " " + currentOrder;
+			localStorage.setItem("flowOrder", column.order);
+			localStorage.setItem("flowProp", column.prop);
 			this.getData();
 		},
 		handleClear() {
