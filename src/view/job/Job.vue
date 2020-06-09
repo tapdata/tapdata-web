@@ -155,8 +155,9 @@
 				effect="dark"
 				:content="$t('dataFlow.button.preview')"
 				placement="bottom"
+				v-if="['paused', 'error', 'draft'].includes(status)"
 			>
-				<div :class="['headImg',{ btnHover:['paused', 'error', 'draft'].includes(status)}]" v-if="['paused', 'error', 'draft'].includes(status)" @click="preview">
+				<div :class="['headImg',{ btnHover:['paused', 'error', 'draft'].includes(status)}]" @click="preview">
 					<span class="iconfont icon-yulan1"></span>
 				</div>
 			</el-tooltip>
