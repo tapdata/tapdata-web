@@ -79,25 +79,14 @@ export default class Editor extends BaseObject {
 		"app.Collection": "connectionId",
 		"app.Table": "connectionId",
 		"app.Database": "connectionId",
-		"app.Dummy": "connectionId",
-		"app.GridFSNode": "connectionId",
-		"app.ApiNode": "connectionId"
+		"app.Dummy ": "connectionId"
 	};
-
-	/**
-	 * editor 作用域
-	 */
-	scope = null;
 
 	constructor(opts) {
 		super();
 
 		this.container = opts.container;
 		this.opts = opts;
-
-		if (opts.scope) {
-			this.scope = opts.scope;
-		}
 
 		this.doInit();
 	}
@@ -111,14 +100,7 @@ export default class Editor extends BaseObject {
 		// login plugins
 		loadPlugins();
 
-		let ui = (self.ui = new UI(
-			Object.assign(
-				{
-					editor: self
-				},
-				this.opts
-			)
-		));
+		let ui = (self.ui = new UI(Object.assign({ editor: self }, this.opts)));
 		ui.render(self.container);
 
 		let leftSidebar = (self.leftSidebar = new Sidebar({
@@ -232,7 +214,7 @@ export default class Editor extends BaseObject {
 		// hide stencil
 		this.getLeftSidebar().hide();
 
-		// self.getRightTabPanel().removeAll();
+		self.getRightTabPanel().removeAll();
 		// remove stage config
 		// let nodeSettingPanel = self.getRightTabPanel().getChildByName('nodeSettingPanel');
 		// if( nodeSettingPanel ) self.getRightTabPanel().remove(nodeSettingPanel);
@@ -250,20 +232,20 @@ export default class Editor extends BaseObject {
 			self.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
 		} */
 
-		// let monitor = self.getRightTabPanel().getChildByName("monitor");
-		// if (!monitor) {
-		// 	monitor = new VueComponent({
-		// 		name: "monitor",
-		// 		editor: this,
-		// 		propsData: {
-		// 			dataFlow: dataFlow
-		// 		},
-		// 		component: Monitor
-		// 	});
-		// 	self.getRightTabPanel().add(monitor);
-		// }
-		// self.getRightSidebar().show();
-		self.initMonitor(dataFlow);
+		let monitor = self.getRightTabPanel().getChildByName("monitor");
+		if (!monitor) {
+			monitor = new VueComponent({
+				name: "monitor",
+				editor: this,
+				propsData: {
+					dataFlow: dataFlow
+				},
+				component: Monitor
+			});
+			self.getRightTabPanel().add(monitor);
+		}
+		self.getRightSidebar().show();
+
 		self.showLogs(dataFlow);
 	}
 
@@ -273,7 +255,7 @@ export default class Editor extends BaseObject {
 	initEditingMode() {
 		log("editor.initEditingMode");
 		// this.getRightSidebar().removeAll();
-		this.getRightTabPanel().removeAll();
+		//this.getRightTabPanel().removeAll();
 		this.getRightSidebar().hide();
 
 		this.initSettings();
@@ -282,28 +264,6 @@ export default class Editor extends BaseObject {
 
 		// this.getBottomSidebar().hide();
 		// this.getBottomTabPanel().removeAll();
-	}
-	initMonitor(dataFlow) {
-		this.getRightTabPanel().removeAll();
-		let self = this;
-
-		let rightTabPanel = self.getRightTabPanel();
-		if (rightTabPanel) {
-			let monitor = rightTabPanel.getChildByName("monitor");
-			if (!monitor) {
-				monitor = new VueComponent({
-					name: "monitor",
-					editor: this,
-					propsData: {
-						dataFlow: dataFlow
-					},
-					component: Monitor
-				});
-				self.getRightTabPanel().add(monitor);
-			}
-			rightTabPanel.select(monitor);
-			self.getRightSidebar().show();
-		}
 	}
 
 	/**
@@ -487,7 +447,6 @@ export default class Editor extends BaseObject {
 		}
 		self.getRightSidebar().show();
 	}
-
 	setData(dataFlow) {
 		this.graph.loadData(JSON.parse(dataFlow.editorData));
 		this.ui.setName(dataFlow.name);
@@ -515,7 +474,7 @@ export default class Editor extends BaseObject {
 		let distanceResult = {};
 
 		let predecessors = function(node, distance) {
-			if (Object.prototype.hasOwnProperty.call(distanceResult, node))
+			if (distanceResult.hasOwnProperty(node))
 				distanceResult[node] = distanceResult[node] >= distance ? distanceResult[node] : distance;
 			else distanceResult[node] = distance;
 
@@ -539,11 +498,6 @@ export default class Editor extends BaseObject {
 		}
 	}
 
-	goBackMontior() {
-		let monitor = this.getRightTabPanel().getChildByName("monitor");
-		this.getRightTabPanel().select(monitor);
-	}
-
 	/**
 	 * Validate graph data for data flow
 	 * @return {*}
@@ -551,11 +505,6 @@ export default class Editor extends BaseObject {
 	validate() {
 		let name = this.ui.getName();
 		if (!name) return i18n.t("editor.cell.validate.empty_name");
-
-		let getData = this.getData();
-		if((!getData.settingData || !getData.settingData.cronExpression) && getData.settingData.isSchedule === true && getData.settingData.sync_type === 'initial_sync'){
-			return i18n.t("dataFlow.cronExpression");
-		}
 
 		let verified = this.graph.validate();
 		if (verified !== true) return verified;
@@ -684,16 +633,6 @@ export default class Editor extends BaseObject {
 				}
 			}
 		});
-	}
-	getAllCells() {
-		let dataCells = this.graph.graph
-			.getCells() // .filter(cell => cell.isDataNode && cell.isDataNode())
-			.filter(cell => {
-				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
-				let type = cell.get("type");
-				return formData && type !== "app.Link";
-			});
-		return dataCells;
 	}
 	destroy() {
 		this.emit(EditorEventType.BEFORE_DESTROY, this);
