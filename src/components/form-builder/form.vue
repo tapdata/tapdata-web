@@ -38,9 +38,9 @@ export default {
 				inline: false,
 				labelPosition: "top",
 				labelWidth: "160px",
-				hideRequiredAsterisk: false,
 				size: "mini",
-				disabled: false
+				disabled: false,
+				hideRequiredAsterisk: true
 			},
 			defaultFormItemConfig: {
 				type: "input",
@@ -89,6 +89,14 @@ export default {
 					}
 				},
 				[
+					h(
+						"span",
+						{
+							class: { "e-form-builder-item-label": true, "is-required": config.required },
+							slot: "label"
+						},
+						config.label
+					),
 					h(ele[config.type], {
 						props: {
 							value: self.value[config.field],
@@ -111,4 +119,14 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="less">
+.e-form-builder-container {
+	.e-form-builder-item-label.is-required {
+		&::after {
+			content: "*";
+			color: #ee5353;
+			margin-left: 4px;
+		}
+	}
+}
+</style>
