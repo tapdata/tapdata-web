@@ -5,7 +5,8 @@ const cn = {
 	message: {
 		api: {
 			get: {
-				error: "加载数据失败."
+				error: "加载数据失败.",
+				loading: "正在加载数据",
 			}
 		},
 		exists_name: "名称已存在",

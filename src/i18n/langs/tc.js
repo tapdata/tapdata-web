@@ -5,7 +5,8 @@ const tc = {
 	message: {
 		api: {
 			get: {
-				error: "加載數據失敗."
+				error: "加載數據失敗.",
+				loading: "正在加載數據",
 			}
 		},
 		exists_name: "名稱已存在",

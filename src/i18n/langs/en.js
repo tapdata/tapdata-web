@@ -5,7 +5,8 @@ const en = {
 	message: {
 		api: {
 			get: {
-				error: "Load data failed."
+				error: "Load data failed.",
+				loading: "Loading data...",
 			}
 		},
 		exists_name: "Name already exists",

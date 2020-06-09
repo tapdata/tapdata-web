@@ -1,6 +1,6 @@
 <template>
 	<div class="data-map-container">
-		<div class="data-map" v-loading="loading">
+		<div class="data-map">
 			<div class="left-side-classification">
 				<div class="e-header">{{$t("dataMap.classification")}}</div>
 				<div>
@@ -72,8 +72,6 @@ export default {
 		return {
 			level: 1,
 			tag: "",
-
-			loading: true,
 
 			fullscreen: false,
 
@@ -165,7 +163,9 @@ export default {
 
 		loadData(){
 			let self = this;
-			self.loading = true;
+			let loading = self.$loading({
+				text: i18n.t('message.api.get.loading')
+			});
 			metadataInstances.dataMap(this.level, this.tag).then(result => {
 
 				if(result && result.data && result.data.length > 0){
@@ -173,18 +173,18 @@ export default {
 					self.dataMap.graph.renderCells(self.level, cells);
 				} else {
 					self.$message.info({
-						message: '未加载到数据',
+						message: i18n.t('dataMap.noneData'),
 						duration: 0,
 						showClose: true,
 						offset: 100
 					});
 				}
 
-				self.loading = false;
+				loading.close();
 
 			}).catch(err => {
 				log(err);
-				self.loading = false;
+				loading.close();
 				self.$message.error({
 					message: i18n.t('message.api.get.error'),
 					duration: 0,
