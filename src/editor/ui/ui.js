@@ -13,7 +13,6 @@ export default class UI extends Component {
 
 		this.editor = opts.editor;
 		this.opts = opts;
-
 		this.init();
 	}
 
@@ -75,6 +74,13 @@ export default class UI extends Component {
 			input.setSelectionRange(0, 0);
 		});
 	}
+
+	setDisableName(disable){
+		if(disable){
+			this.el.find(".e-title #taskNameInput").attr('disabled',true)
+		}
+	}
+
 	getName() {
 		return this.el.find(".e-title #taskNameInput").val();
 	}

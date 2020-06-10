@@ -215,6 +215,7 @@ export default class Editor extends BaseObject {
 		this.getLeftSidebar().hide();
 
 		self.getRightTabPanel().removeAll();
+		self.ui.setDisableName(true)
 		// remove stage config
 		// let nodeSettingPanel = self.getRightTabPanel().getChildByName('nodeSettingPanel');
 		// if( nodeSettingPanel ) self.getRightTabPanel().remove(nodeSettingPanel);
@@ -261,6 +262,7 @@ export default class Editor extends BaseObject {
 		this.initSettings();
 
 		this.getLeftSidebar().show();
+		this.ui.setDisableName(false);
 
 		// this.getBottomSidebar().hide();
 		// this.getBottomTabPanel().removeAll();
