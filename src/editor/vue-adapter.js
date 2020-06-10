@@ -36,9 +36,7 @@ export class VueAdapter extends BaseObject {
 	 * @return {*}
 	 */
 	render(cell) {
-		log("VueAdapter.render", cell);
-
-		// if (this.vm) {
+			// if (this.vm) {
 		// 	this.vm.$destroy();
 		// 	this.vm = null;
 		// }
@@ -52,6 +50,7 @@ export class VueAdapter extends BaseObject {
 		let formData = self.getFormDataForCell(cell);
 		let isDataNode = cell.isElement() && typeof cell.isDataNode === "function" && cell.isDataNode();
 		let isSourceDataNode = isDataNode && self.graphUI.graph.getConnectedLinks(cell, { inbound: true }).length === 0;
+		self.curcell = cell;
 
 		if (vueAdapter[name] && vueAdapter[name].component) {
 			if (!vueAdapter[name]._panel || !self.editor.getRightTabPanel().getChildByName(name)) {
@@ -79,12 +78,11 @@ export class VueAdapter extends BaseObject {
 				settings.getContentEl().append(vueContainerDom);
 				self.vm.$mount(vueContainerDom);
 				self.vm.$on("dataChanged", data => {
-					self.setFormData(cell, data);
+					self.setFormData(self.curcell, data);
 				});
 	
 				self.vm.$on("schemaChange", schema => {
-					log("VueAdapter.schemaChange", arguments);
-					cell.setSchema(schema);
+					self.curcell.setSchema(schema);
 				});
 				vueAdapter[name]._vm = self.vm;
 				vueAdapter[name]._panel = settings;
@@ -150,7 +148,6 @@ export class VueAdapter extends BaseObject {
 	 * @param data
 	 */
 	setFormData(cell, data) {
-		log("VueAdapter.setFormData", this, ...arguments);
 		cell.set(FORM_DATA_KEY, data);
 	}
 	getFormDataForCell(cell) {
