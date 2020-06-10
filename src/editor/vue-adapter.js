@@ -5,6 +5,7 @@
  */
 import Vue from "vue";
 import Panel from "./ui/panel";
+import $ from "jquery";
 import { EditorEventType } from "./lib/events";
 import BaseObject from "./lib/BaseObject";
 import log from "../log";
@@ -36,15 +37,11 @@ export class VueAdapter extends BaseObject {
 	 * @return {*}
 	 */
 	render(cell) {
-			// if (this.vm) {
-		// 	this.vm.$destroy();
-		// 	this.vm = null;
-		// }
-
 		if (!cell.showSettings || !cell.showSettings()) {
 			return null;
 		}
 
+		this.editor.getRightSidebar().hide();
 		let self = this;
 		let name = cell.get("type");
 		let formData = self.getFormDataForCell(cell);
@@ -90,6 +87,12 @@ export class VueAdapter extends BaseObject {
 				self.vm = vueAdapter[name]._vm;
 				self.editor.getRightTabPanel().select(vueAdapter[name]._panel);
 			}
+			let editable = self.editor.editable;
+			if (!editable) { // running mode
+				if (typeof self.vm.setDisabled === "function") {
+					self.vm.setDisabled(true);
+				}
+			}
 
 			if (typeof self.vm.setData === "function") {
 				self.vm.setData(formData, cell, isSourceDataNode, self);
@@ -110,8 +113,10 @@ export class VueAdapter extends BaseObject {
 	}
 
 	handlerHide(e) {
+
 		if (this.vm) {
-			this.vm.$destroy();
+			//this.vm.$destroy();
+			this.vm.$emit(EditorEventType.HIDE);
 		}
 		let settings = this.editor.getRightSidebar().getChildByName("settings");
 		if (settings) {
@@ -155,6 +160,6 @@ export class VueAdapter extends BaseObject {
 
 		if (typeof cell.id === "string") cell = this.graphUI.graph.getCell(cell.id);
 
-		return cell && cell.get(FORM_DATA_KEY);
+		return cell && (cell.get('form_data') ? cell.get('form_data') : cell.attributes.attrs.form_data);
 	}
 }

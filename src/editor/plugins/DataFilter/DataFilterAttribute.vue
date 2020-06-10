@@ -196,6 +196,12 @@ export default {
   },
   methods: {
     setData(data, cell, isSourceDataNode, vueAdapter) {
+      this.model = {
+        type: "row_filter_processor",
+        name: "Row Filter",
+        expression: "//code",
+        action: "retain" // discard,retain
+      };
       if (data) {
         Object.keys(data).forEach(key => (this.model[key] = data[key]));
       }

@@ -283,6 +283,16 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
+			this.model = {
+				connectionId: "",
+				databaseType: "",
+				tableName: "",
+				dropTable: false,
+				type: "collection",
+				primaryKeys: "",
+				filter: "",
+				initialSyncOrder: 1
+			};
 			if (data) {
 				Object.keys(data).forEach(key => (this.model[key] = data[key]));
 			}

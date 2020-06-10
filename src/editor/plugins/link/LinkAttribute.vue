@@ -289,6 +289,10 @@ export default {
     },
 
     setData(data, cell, isSourceDataNode, vueAdapter) {
+      this.model = {
+        label: "",
+        joinTable: _.cloneDeep(JOIN_TABLE_TPL)
+      };
       if (data) {
         Object.keys(data).forEach(key => (this.model[key] = data[key]));
       }
