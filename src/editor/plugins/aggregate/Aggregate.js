@@ -54,12 +54,13 @@ export const aggregateConfig = {
 				let functionNames = [];
 				data.aggregations.forEach(stage => {
 					if (stage.groupByExpression) groupFields.push(...stage.groupByExpression);
-					if (stage.aggExpression) functionNames.push(stage.aggFunction);
+					if (stage.aggFunction) functionNames.push(stage.aggFunction);
 				});
 
 				let fields = outputSchema.fields || [];
 				outputSchema.fields = fields.filter(field => groupFields.includes(field.field_name)) || [];
 
+				 console.log(outputSchema.fields,functionNames)
 				functionNames.forEach(fnName => {
 					outputSchema.fields.push(
 						Object.assign(_.cloneDeep(fields[0] || {}), {
