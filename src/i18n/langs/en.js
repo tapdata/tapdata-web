@@ -5,9 +5,11 @@ const en = {
 	message: {
 		api: {
 			get: {
-				error: "Load data failed."
+				error: "Load data failed.",
+				loading: "Loading data...",
 			}
 		},
+		ok: "OK",
 		exists_name: "Name already exists",
 		search: "search",
 		serviceCluMange: "Service cluster management",
@@ -675,20 +677,25 @@ const en = {
 		condition: "Check condition"
 	},
 	dataMap: {
+		noneData: "No data loaded",
+
 		classification: "Data Model Classification",
 		topLevel: "Top Level",
 		dbLevel: "Database Level",
 		tableLevel: "Table Level",
+		fieldLevel: "Field Mapping",
+		dblclickDataModel: "Please double-click the data model to open the field mapping",
 		properties:{
 			name: "Name",
 			type: "Classification",
 			path:'Path',
-			database_type: "Database type",
+			database_type: "Database Type",
 			database_host: "Database IP",
 			database_username: "Database User",
 			database_port: "Database Port",
-			database_uri: "Database connection uri",
-			database_name: "Database name"
+			database_uri: "Database Connection URL",
+			database_name: "Database Name",
+			original_name: "Original Name"
 		}
 	}
 };

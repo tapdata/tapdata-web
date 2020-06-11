@@ -298,6 +298,12 @@ export default {
 						name: data.source.name || data.label
 					};
 				}
+			}else if(data.meta_type === "directory" || data.meta_type === "ftp"){
+				formData = {
+					connectionId: data.source._id || data.source.id,
+					name: data.source.name || data.label,
+					type: data.source.database_type
+				};
 			} else if (["table", "view", "collection", "mongo_view"].includes(data.meta_type)) {
 				let primaryKeys = "";
 				if (data.fields) {

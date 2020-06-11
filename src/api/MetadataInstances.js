@@ -18,7 +18,7 @@ export default class MetadataInstancesAPI extends PublicApi {
 		// return axios.get(this.url + '/download?where=' + where);
 	}
 
-	dataMap(level, tag){
-		return axios.get(this.url + "/dataMap?level=" + level + "&tag=" + (tag || ""));
+	dataMap(params){
+		return axios.get(this.url + "/dataMap", {params});
 	}
 }
