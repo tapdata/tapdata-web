@@ -75,7 +75,8 @@ export class VueAdapter extends BaseObject {
 				settings.getContentEl().append(vueContainerDom);
 				self.vm.$mount(vueContainerDom);
 				self.vm.$on("dataChanged", data => {
-					if (self.curcell.attributes.type.split('.')[1].toLowerCase() == data.type)//堵住链接节点的关联修改，只有不同类型的才有这个问题，所以这个堵死了
+					if (self.curcell.attributes.type.split('.')[1].toLowerCase() == data.type || self.curcell.attributes.attrs.form_data.type == data.type)
+					//堵住链接节点的关联修改，只有不同类型的才有这个问题，所以这个堵死了
 						self.setFormData(self.curcell, data);
 				});
 	
