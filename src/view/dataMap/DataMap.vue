@@ -73,6 +73,9 @@ export default {
 			level: 1,
 			tag: "",
 
+			connectionId: "",
+			tableName: "",
+
 			fullscreen: false,
 
 			filterText: "",
@@ -101,9 +104,12 @@ export default {
 
 		this.loadClassification();
 
-		this.dataMap.graph.on('drill_down', (level) => {
-			if(self.level !== level && level >= 1 && level <= 3);
+		this.dataMap.graph.on('drill_down', (level, connectionId, tableName) => {
+			if(self.level !== level && level >= 1 && level <= 4) {
 				self.level = level;
+				self.connectionId = connectionId;
+				self.tableName = tableName;
+			}
 		});
 	},
 
@@ -166,7 +172,13 @@ export default {
 			let loading = self.$loading({
 				text: i18n.t('message.api.get.loading')
 			});
-			metadataInstances.dataMap(this.level, this.tag).then(result => {
+			let params = {level: 1};
+			if(this.level <= 3){
+				params = {level: this.level, tag: this.tag};
+			} else if(this.level === 4){
+				params = {level: 4, connectionId: this.connectionId, tableName: this.tableName};
+			}
+			metadataInstances.dataMap(params).then(result => {
 
 				if(result && result.data && result.data.records && result.data.records.length > 0){
 					let cells = result.data.records;

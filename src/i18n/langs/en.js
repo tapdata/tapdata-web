@@ -675,7 +675,7 @@ const en = {
 		condition: "Check condition"
 	},
 	dataMap: {
-		noneData: "Not match data model by classification",
+		noneData: "No data loaded",
 
 		classification: "Data Model Classification",
 		topLevel: "Top Level",
@@ -685,12 +685,13 @@ const en = {
 			name: "Name",
 			type: "Classification",
 			path:'Path',
-			database_type: "Database type",
+			database_type: "Database Type",
 			database_host: "Database IP",
 			database_username: "Database User",
 			database_port: "Database Port",
-			database_uri: "Database connection uri",
-			database_name: "Database name"
+			database_uri: "Database Connection URL",
+			database_name: "Database Name",
+			original_name: "Original Name"
 		}
 	}
 };

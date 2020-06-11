@@ -7,6 +7,9 @@ import joint from "../../lib/rappid/rappid";
 import Component from "../../lib/Component";
 import $ from "jquery";
 import shapes from "../models/shapes";
+import anchors from "../models/anchors";
+import routers from "../models/routers";
+import linkTools from "../models/linkTools"
 import _ from "lodash";
 import i18n from "../../../i18n/i18n";
 
@@ -34,6 +37,9 @@ export default class Graph extends Component {
 		super.doInit();
 
 		shapes(joint);
+		anchors(joint);
+		routers(joint);
+		linkTools(joint);
 
 		this.initGraph();
 
@@ -79,9 +85,17 @@ export default class Graph extends Component {
 			},
 			/*embeddingMode: false,*/
 			// frontParentOnly: false,
-			defaultAnchor: { name: 'perpendicular' },
+			defaultAnchor: { name: 'center' },
+			linkPinning: false,
 			/*frozen: true*/
 			//sorting: joint.dia.Paper.sorting.APPROX
+
+			validateConnection: function(sv, sm, tv, tm, end) {
+				if (sv === tv) return false;
+				if (sv.model.isLink() || tv.model.isLink()) return false;
+				if (end === 'target') return tv.model.getItemSide(tv.findAttribute('item-id', tm)) !== 'right';
+				return sv.model.getItemSide(sv.findAttribute('item-id', sm)) !== 'left';
+			}
 		});
 
 		self.paperScroller = (self.paperScroller = new joint.ui.PaperScroller({
@@ -266,11 +280,11 @@ export default class Graph extends Component {
 		this.setLaneHeaderStyle(this.apiLane, apiWidth, spacing);
 	}
 
-	fitEmbeds(){
+	fitEmbeds(opts){
 
 		this.updateElementHeader();
 
-		joint.layout.DirectedGraph.layout(this.graph, {
+		joint.layout.DirectedGraph.layout(this.graph, Object.assign({
 			setLinkVertices: false,
 			rankDir: "LR",
 			marginX: 100,
@@ -279,11 +293,11 @@ export default class Graph extends Component {
 			nodeSep: 20,
 			edgeSep: 50,
 			rankSep: 80,
-			// ranker: 'network-simplex',
-			align: "UL",
+			// ranker: 'tight-tree',
+			// align: "UL",
 			resizeClusters: true,
 			clusterPadding: { top: 50, left: 35, right: 35, bottom: 20 }
-		});
+		}, opts || {}));
 
 		/*let embedOpts = {
 			deep: true,
@@ -340,20 +354,7 @@ export default class Graph extends Component {
 	}
 
 	setLaneHeaderStyle(lane, width, spacing){
-		log("DataMap.Graph.setLaneHeaderStyle", lane, width, spacing);
-		let attr = {
-			header: {
-				x: spacing,
-				y: spacing,
-				refWidth: `${(width - spacing * 2) / width * 100}%`,
-				width: width - spacing * 2
-			},
-			headerText: {
-				refY: spacing + 15,
-				//text: `${(width - spacing * 2) / width * 100}%`
-			}
-		};
-		log(attr.header.width, attr.header.refWidth);
+		// log("DataMap.Graph.setLaneHeaderStyle", lane, width, spacing);
 		lane.attr({
 			header: {
 				x: spacing,
@@ -410,18 +411,253 @@ export default class Graph extends Component {
 			})
 		}, cellConfig.attrs || {}));
 
+		if(cellData.connection)
+			cell.set('connectionId', cellData.connection);
+
 		cell.position(cellConfig.x || 20, cellConfig.y || 50).addTo(this.graph);
 		return cell;
 	}
 
 	loadExampleData(){
-		new joint.shapes.dataMap.Tapdata({
-			attrs: {
-				label: {
-					text: "Tapdata"
+		var order = new joint.shapes.mapping.Record({
+			items: [[{
+				id: 'file',
+				label: 'File: (default)',
+				icon: 'images/file.svg',
+				highlighted: true,
+				items: [{
+					id: 'order',
+					label: 'Order',
+					icon: 'images/document.svg',
+					items: [{
+						id: 'order_id',
+						label: 'id',
+						icon: 'images/document.svg',
+					}, {
+						id: 'order_name',
+						label: 'name',
+						icon: 'images/document.svg',
+					}, {
+						id: 'order_email',
+						label: 'email',
+						icon: 'images/document.svg',
+					}, {
+						id: 'order_entry_date',
+						label: 'entry_date',
+						icon: 'images/file.svg',
+						items: [{
+							id: 'entry_date_year',
+							label: 'year',
+							icon: 'images/document.svg',
+						}, {
+							id: 'entry_date_month',
+							label: 'month',
+							icon: 'images/document.svg',
+						}, {
+							id: 'entry_date_day',
+							label: 'day',
+							icon: 'images/document.svg',
+						}]
+					}, {
+						id: 'address',
+						label: 'address',
+						icon: 'images/file.svg',
+						items: [{
+							id: 'address_city',
+							label: 'city',
+							icon: 'images/document.svg'
+						}, {
+							id: 'address_street',
+							label: 'street',
+							icon: 'images/document.svg'
+						}, {
+							id: 'address_number',
+							label: 'number',
+							icon: 'images/document.svg'
+						}, {
+							id: 'address_shipping',
+							label: 'shipping',
+							icon: 'images/document.svg'
+						}, {
+							id: 'address_billing',
+							label: 'billing',
+							icon: 'images/document.svg'
+						}]
+					}]
+				}]
+			}]]
+		});
+		order.setName('Order');
+		order.position(780, 200);
+		order.addTo(this.graph);
+
+		var nanonull = new joint.shapes.mapping.Record({
+			items: [
+				[{
+					id: 'orders',
+					label: 'orders',
+					icon: 'images/file.svg',
+					items: [{
+						id: 'order_id',
+						label: 'id',
+						icon: 'images/document.svg',
+					}, {
+						id: 'order_created_at',
+						label: 'created_at',
+						icon: 'images/document.svg',
+					}, {
+						id: 'order_updated_at',
+						label: 'updated_at',
+						icon: 'images/document.svg',
+					}, {
+						id: 'orderedproducts',
+						label: 'orderedproducts',
+						icon: 'images/file.svg',
+						group: 'disabled'
+					}, {
+						id: 'users',
+						label: 'users',
+						icon: 'images/file.svg',
+						items: [{
+							id: 'user_id',
+							label: 'id',
+							icon: 'images/document.svg',
+						}, {
+							id: 'user_first_name',
+							label: 'first_name',
+							icon: 'images/document.svg',
+						}, {
+							id: 'user_last_name',
+							label: 'last_name',
+							icon: 'images/document.svg',
+						}, {
+							id: 'user_email',
+							label: 'email',
+							icon: 'images/document.svg',
+						}, {
+							id: 'user_created_at',
+							label: 'created_at',
+							icon: 'images/document.svg',
+						}, {
+							id: 'user_updated_at',
+							label: 'updated_at',
+							icon: 'images/document.svg',
+						}, {
+							id: 'addresses',
+							label: 'addresses',
+							icon: 'images/file.svg',
+							items: [{
+								id: 'address_id',
+								label: 'id',
+								icon: 'images/document.svg',
+							}, {
+								id: 'address_type',
+								label: 'type',
+								icon: 'images/document.svg',
+							}, {
+								id: 'address_city',
+								label: 'city',
+								icon: 'images/document.svg',
+							}, {
+								id: 'address_street',
+								label: 'street',
+								icon: 'images/document.svg',
+							}, {
+								id: 'address_number',
+								label: 'number',
+								icon: 'images/document.svg',
+							}, {
+								id: 'address_is_shipping',
+								label: 'is_shipping',
+								icon: 'images/document.svg',
+							}, {
+								id: 'address_is_billing',
+								label: 'is_billing',
+								icon: 'images/document.svg',
+							}]
+						}]
+					}]
+				}]
+			]
+		});
+		nanonull.setName('Nanonull');
+		nanonull.position(50, 130);
+		nanonull.addTo(this.graph);
+
+		var links = [
+
+			// order
+			new joint.shapes.mapping.Link({
+				source: { id: nanonull.id, port: 'order_id' },
+				target: { id: order.id, port: 'order_id' },
+				anchor: { name: 'mapping' },
+				connectionPoint: { name: 'anchor' },
+			}),
+			new joint.shapes.mapping.Link({
+				source: { id: nanonull.id, port: 'user_email' },
+				target: { id: order.id, port: 'order_email' },
+				anchor: { name: 'mapping' },
+				connectionPoint: { name: 'anchor' },
+			}),
+			new joint.shapes.mapping.Link({
+				source: { id: nanonull.id, port: 'address' },
+				target: { id: order.id, port: 'address' },
+				anchor: { name: 'mapping' },
+				connectionPoint: { name: 'anchor' },
+			}),
+		];
+
+		links.forEach((link) => {
+			link.addTo(this.graph);
+		});
+
+		function linkAction(link) {
+
+			var dialog = new joint.ui.Dialog({
+				title: 'Confirmation',
+				width: 300,
+				content: 'Are you sure you want to delete this link?',
+				buttons: [
+					{ action: 'cancel', content: 'Cancel' },
+					{ action: 'remove', content: '<span style="color:#fe854f">Remove</span>' }
+				]
+			});
+
+			dialog.open();
+			dialog.on({
+				'action:remove': function() {
+					link.remove();
+					dialog.remove();
+				},
+				'action:cancel': function() {
+					dialog.remove();
 				}
-			}
-		}).addTo(this.graph);
+			});
+		}
+		function showLinkTools(linkView) {
+			var tools = new joint.dia.ToolsView({
+				tools: [
+					new joint.linkTools.mapping.SourceArrowhead(),
+					new joint.linkTools.mapping.TargetArrowhead(),
+					new joint.linkTools.mapping.Remove({
+						distance: '25%',
+						action: function() {
+							linkAction(this.model);
+						}
+					})
+				]
+			});
+			linkView.addTools(tools);
+		}
+
+		this.paper.on('link:mouseenter', function(linkView) {
+			this.removeTools();
+			showLinkTools(linkView);
+		});
+
+		this.paper.on('link:mouseleave', function() {
+			this.removeTools();
+		});
 	}
 
 	renderCells(level, cells){
@@ -434,6 +670,210 @@ export default class Graph extends Component {
 			this.paper.freeze();
 			return;
 		}
+
+		if(level <= 3)
+			this._renderCells(level, cells);
+		else if( level === 4)
+			this._renderFieldMapping(level, cells);
+
+		// this.loadExampleData();
+
+		//this.paper.freeze();
+
+		log("DataMap.graph.getData", this.getData());
+	}
+
+	_renderFieldMapping(level, stages){
+
+		let links = [];
+
+		stages.forEach((stage) => {
+
+			if(stage.type === 'link'){
+				links.push(stage);
+				return;
+			}
+
+			if( !stage.stageId || !stage.fields)
+				return;
+
+			let fields = [];
+			let tableName = stage.tableName || (stage.fields && stage.fields.length > 0 ? stage.fields[0].table_name : "");
+			(stage.fields || []).forEach(field => {
+
+				fields.push({
+					id: field.id,
+					label: `${field.field_name} (${field.javaType})`,
+					icon: "static/editor/file.svg",
+				});
+
+			});
+
+			let cell = new joint.shapes.mapping.Record({
+				id: stage.stageId,
+				size: { width: 300 },
+				attrs: {
+					headerLabel: {
+						text: tableName || ""
+					}
+				},
+				items: [fields]
+			}, {
+				id: stage.stageId
+			});
+			this.graph.addCell(cell);
+			cell.autoresize();
+		});
+
+		if( links.length > 0){
+			links.forEach(link => {
+
+				if(_.isObject(link.source) && link.source.port && link.source.id)
+					this.ensurePort(link.source.id, link.source.port);
+
+				if(_.isObject(link.target) && link.target.port && link.target.id)
+					this.ensurePort(link.target.id, link.target.port);
+
+				let sourceCell = this.graph.getCell(_.isObject(link.source) ? link.source.id : link.source);
+				let targetCell = this.graph.getCell(_.isObject(link.target) ? link.target.id : link.target);
+
+				if(sourceCell && targetCell){
+					let linkCell = new joint.shapes.mapping.Link();//.addTo(this.graph);
+					linkCell.source(sourceCell, {
+						anchor: { name: 'mapping' },
+						connectionPoint: { name: 'anchor' },
+						port: link.source.port,
+					});
+					linkCell.target(targetCell, {
+						anchor: { name: 'mapping' },
+						connectionPoint: { name: 'anchor' },
+						port: link.target.port
+					});
+					/*linkCell.connector({
+						name: 'jumpover',
+						args: { jump: 'arc' }
+					});*/
+					linkCell.router({
+						name: 'mapping',
+						args: { padding: 30 }
+					});
+					linkCell.addTo(this.graph);
+				}
+			});
+		}
+
+		this.fitEmbeds({
+			rankSep: 200
+		});
+
+		/*let cell = new joint.shapes.dataMap.Model({
+			attrs: {
+				headerLabel: {
+					text: "Order"
+				}
+			},
+			items: [
+				[{
+					id: 'orders',
+					label: 'orders',
+					icon: 'images/file.svg',
+					items: [{
+						id: 'order_id',
+						label: 'id',
+						icon: 'images/document.svg',
+					}, {
+						id: 'order_created_at',
+						label: 'created_at',
+						icon: 'images/document.svg',
+					}, {
+						id: 'order_updated_at',
+						label: 'updated_at',
+						icon: 'images/document.svg',
+					}, {
+						id: 'orderedproducts',
+						label: 'orderedproducts',
+						icon: 'images/file.svg',
+						group: 'disabled'
+					}, {
+						id: 'users',
+						label: 'users',
+						icon: 'images/file.svg',
+						items: [{
+							id: 'user_id',
+							label: 'id',
+							icon: 'images/document.svg',
+						}, {
+							id: 'user_first_name',
+							label: 'first_name',
+							icon: 'images/document.svg',
+						}, {
+							id: 'user_last_name',
+							label: 'last_name',
+							icon: 'images/document.svg',
+						}, {
+							id: 'user_email',
+							label: 'email',
+							icon: 'images/document.svg',
+						}, {
+							id: 'user_created_at',
+							label: 'created_at',
+							icon: 'images/document.svg',
+						}, {
+							id: 'user_updated_at',
+							label: 'updated_at',
+							icon: 'images/document.svg',
+						}, {
+							id: 'addresses',
+							label: 'addresses',
+							icon: 'images/file.svg',
+							items: [{
+								id: 'address_id',
+								label: 'id',
+								icon: 'images/document.svg',
+							}, {
+								id: 'address_type',
+								label: 'type',
+								icon: 'images/document.svg',
+							}, {
+								id: 'address_city',
+								label: 'city',
+								icon: 'images/document.svg',
+							}, {
+								id: 'address_street',
+								label: 'street',
+								icon: 'images/document.svg',
+							}, {
+								id: 'address_number',
+								label: 'number',
+								icon: 'images/document.svg',
+							}, {
+								id: 'address_is_shipping',
+								label: 'is_shipping',
+								icon: 'images/document.svg',
+							}, {
+								id: 'address_is_billing',
+								label: 'is_billing',
+								icon: 'images/document.svg',
+							}]
+						}]
+					}]
+				}]
+			]
+		});*/
+
+		// this.graph.addCell(cell);
+	}
+
+	ensurePort(cellId, portId){
+		/*let cellModel = this.graph.getCell(cellId);
+		if( cellModel ){
+			cellModel.addPort({
+				id: portId,
+			});
+		}*/
+	}
+
+	_renderCells(level, cells){
 
 		this.initLane();
 
@@ -521,9 +961,7 @@ export default class Graph extends Component {
 		self.graph.getCells().forEach(cell => {
 			let embeddedCells = cell.getEmbeddedCells();
 
-			if(cell.get('type') === 'dataMap.Lane') {
-
-			} else if( embeddedCells.length > 0){
+			if( embeddedCells.length > 0){
 				cell.attr({
 					body: {
 						"fill-opacity": 0.2,
@@ -541,14 +979,10 @@ export default class Graph extends Component {
 		this.fitEmbeds();
 
 		// this.updateLanes();
-
-		this.paper.freeze();
-
-		log("DataMap.graph.getData", self.getData());
 	}
 
 	showProperties(cellView, e){
-		log("DataMap.Graph.showProperties", cellView, e);
+		// log("DataMap.Graph.showProperties", cellView, e);
 
 		let cell = cellView.model;
 		let properties = cell.get('properties');
@@ -574,7 +1008,7 @@ export default class Graph extends Component {
 	}
 
 	hideProperties(cellView, e){
-		log("DataMap.Graph.hideProperties", cellView, e);
+		// log("DataMap.Graph.hideProperties", cellView, e);
 		this.paper.$el.find('.properties-info-container').remove();
 	}
 
@@ -588,8 +1022,13 @@ export default class Graph extends Component {
 			this.emit('drill_down', 2);
 		} else if(['dataMap.Database'].includes(cellType)){
 			this.emit('drill_down', 3);
-		} else if(['dataMap.Table', 'dataMap.Model'].includes(cellType)) {
-			// field mapping
+		} else if(['dataMap.Table'].includes(cellType)) {
+			let connectionId = cellModel.get('connectionId');
+			let properties = cellModel.get('properties') || {};
+			let originalName = properties.original_name || '';
+			this.emit('drill_down', 4, connectionId, originalName);
+		} else if(['dataMap.Model'].includes(cellType)){
+			// non-handler
 		}
 	}
 

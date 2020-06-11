@@ -688,7 +688,8 @@ const cn = {
 			database_username: "数据库用户",
 			database_port: "数据库端口",
 			database_uri: "数据库连接",
-			database_name: "数据库名称"
+			database_name: "数据库名称",
+			original_name: "原名称"
 		}
 	}
 };

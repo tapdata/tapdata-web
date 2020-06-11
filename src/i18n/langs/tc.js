@@ -687,7 +687,8 @@ const tc = {
 			database_username: "數據庫用戶",
 			database_port: "數據庫端口",
 			database_uri: "數據庫連接",
-			database_name: "數據庫名稱"
+			database_name: "數據庫名稱",
+			original_name: "原名稱"
 		}
 	}
 };
