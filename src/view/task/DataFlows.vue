@@ -661,7 +661,7 @@ export default {
 						}
 					})
 				});
-			}else if(status === 'shopping'){ //全部停止
+			}else if(status === 'stopping'){ //全部停止
 				this.multipleSelection.map(item => {
 					this.tableData.map(row =>{
 						if((row.id === item.id)&&(row.status ==='running')){
