@@ -5,6 +5,7 @@
 </template>
 <script>
 import Echarts from "../plugins/echarts";
+import { EditorEventType } from "../editor/lib/events";
 // import echarts from 'echarts'
 export default {
 	name: "EchartsCompinent",

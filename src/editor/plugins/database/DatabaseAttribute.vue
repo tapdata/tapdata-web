@@ -61,9 +61,8 @@
 
 				<div class="databaseInfo">
 					<span v-show="database_type">{{ database_type }}</span>
-					<span v-show="database_host && database_type !== 'mongodb'">{{ database_host }}</span>
-					<span v-show="database_port && database_type !== 'mongodb'">{{ database_port }}</span>
-					<span v-show="database_type === 'mongodb' && database_uri">{{ database_uri }}</span>
+					<span v-show="database_host">{{ database_host }}</span>
+					<span v-show="database_port">{{ database_port }}</span>
 				</div>
 			</el-form>
 		</div>
@@ -280,7 +279,11 @@ export default {
 				this.tables = [];
 				this.removeTables = [];
 				this.lookupDatabaseType();
-				this.loadDataModels(this.model.connectionId);
+				if (this.database_type === "mongodb") {
+					this.getMongoDBData(this.model.connectionId);
+				} else {
+					this.loadDataModels(this.model.connectionId);
+				}
 			}
 		},
 		// 移除全选
@@ -343,11 +346,27 @@ export default {
 							});
 						}
 					});
+					if(this.database_type !== "mongodb") {
+						this.database_host = result.data.database_host;
+						this.database_port = result.data.database_port;
+					}
 				}
-				this.database_host = result.data.database_host;
-				this.database_port = result.data.database_port;
-				this.database_uri = result.data.database_uri;
+
 			});
+		},
+
+		getMongoDBData(connectionId) {
+			if (!connectionId) {
+				return;
+			}
+			let self = this;
+			connections.customQuery([connectionId]).then(result => {
+				if (result.data) {
+					this.loadDataModels([connectionId]);
+					this.database_host = result.data.database_host;
+					this.database_port = result.data.database_port;
+				}
+			})
 		},
 
 		// 移除

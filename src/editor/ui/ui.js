@@ -77,9 +77,9 @@ export default class UI extends Component {
 
 	setDisableName(disable){
 		if(disable){
-			this.el.find(".e-title #taskNameInput").attr('disabled',true)
+			this.el.find(".e-title #taskNameInput").attr('disabled',true);
 		} else {
-			this.el.find(".e-title #taskNameInput").attr('disabled',false)
+			this.el.find(".e-title #taskNameInput").attr('disabled',false);
 		}
 	}
 
