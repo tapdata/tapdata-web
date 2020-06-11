@@ -717,6 +717,32 @@ export default {
 		},
 
 		/**
+		 * get data flow stage and include inputSchema, outputSchema, schema
+		 */
+		getStages(){
+			let dataFlowData = this.getDataFlowData(true);
+			let stages = dataFlowData.stages;
+			let {graph} = this.editor.getData() || {};
+			let dataFlowId = this.dataFlowId;
+			stages.forEach(stage => {
+				let cell = graph.getCell(stage.id) || {};
+				let schema = cell.getSchema();
+				let outputSchema = cell.getOutputSchema();
+				let inputSchema = cell.getInputSchema();
+				if( schema )
+					stage.schema = schema;
+				if( outputSchema)
+					stage.outputSchema = outputSchema;
+				if(inputSchema)
+					stage.inputSchema = inputSchema;
+
+				stage.dataFlowId = dataFlowId;
+			});
+			log("Job.getStages", stages);
+			return stages;
+		},
+
+		/**
 		 * request server do save data flow
 		 * @param data
 		 * @param cb
@@ -767,6 +793,9 @@ export default {
 							cb(e, null);
 						}
 					});
+
+				let stages = self.getStages();
+				dataFlowsApi.saveStage(stages).then(()=>{}).catch(()=>{});
 			};
 
 			if (data.name) {

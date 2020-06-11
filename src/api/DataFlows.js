@@ -45,4 +45,8 @@ export default class DataFlows extends PublicAPI {
 		if (typeof where === "object") where = JSON.stringify(where);
 		return axios.post(this.url + "/resetAll?id=" + where);
 	}
+
+	saveStage(stages){
+		return axios.post(`${this.url}/stages`, stages);
+	}
 }

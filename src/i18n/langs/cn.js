@@ -5,9 +5,11 @@ const cn = {
 	message: {
 		api: {
 			get: {
-				error: "加载数据失败."
+				error: "加载数据失败.",
+				loading: "正在加载数据",
 			}
 		},
+		ok: "确定",
 		exists_name: "名称已存在",
 		search: "搜索",
 		serviceCluMange: "服务集群管理",
@@ -671,10 +673,14 @@ const cn = {
 		condition: "校验条件"
 	},
 	dataMap: {
-		classification: "模型分類",
-		topLevel: "頂級",
-		dbLevel: "庫級",
+		noneData: "没有查找到数据模型",
+
+		classification: "模型分类",
+		topLevel: "顶级",
+		dbLevel: "库级",
 		tableLevel: "表級",
+		fieldLevel: "字段映射",
+		dblclickDataModel: "请双击数据模型打开字段映射",
 		properties: {
 			name: '名称',
 			type: '分类',
@@ -684,7 +690,8 @@ const cn = {
 			database_username: "数据库用户",
 			database_port: "数据库端口",
 			database_uri: "数据库连接",
-			database_name: "数据库名称"
+			database_name: "数据库名称",
+			original_name: "原名称"
 		}
 	}
 };
