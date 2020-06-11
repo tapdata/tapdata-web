@@ -14,6 +14,7 @@ import _ from "lodash";
 import i18n from "../../../i18n/i18n";
 
 import log from "../../../log";
+import {convertSchemaToTreeData} from "../../util/Schema";
 
 window.joint = window.joint || joint;
 
@@ -712,15 +713,16 @@ export default class Graph extends Component {
 
 			let fields = [];
 			let tableName = stage.tableName || (stage.fields && stage.fields.length > 0 ? stage.fields[0].table_name : "");
+			stage.tableName = stage.tableName || tableName;
+			fields = this.convertRecords(stage);
+			/*let schema = convertSchemaToTreeData();
 			(stage.fields || []).forEach(field => {
-
 				fields.push({
 					id: field.id,
 					label: `${field.field_name} (${field.javaType})`,
 					icon: "static/editor/file.svg",
 				});
-
-			});
+			});*/
 
 			let cell = new joint.shapes.mapping.Record({
 				id: stage.stageId,
@@ -888,6 +890,41 @@ export default class Graph extends Component {
 		});*/
 
 		// this.graph.addCell(cell);
+	}
+
+	convertRecords(stage) {
+		if(!stage)
+			return [];
+
+		let schema = convertSchemaToTreeData({
+			table_name: stage.tableName,
+			meta_type: "collection",
+			fields: stage.fields
+		});
+
+		function _convert(parent, fields){
+			if(Array.isArray(fields)){
+				fields.forEach((field) => _convert(parent, field));
+			} else if(_.isObject(fields)) {
+				parent.items = parent.items || [];
+				let record = {
+					id: fields.id,
+					label: `${fields.label}    (${fields.type})`,
+					icon: 'static/editor/file.svg'
+				};
+				if(fields.children && fields.children.length > 0){
+					record.icon = '';
+					record.items = [];
+					_convert(record, fields.children);
+				}
+				parent.items.push(record);
+			}
+		}
+
+		let root = {};
+		_convert(root, schema.fields);
+		log("DataMap.graph.convertRecords", root.items);
+		return root.items;
 	}
 
 	ensurePort(cellId, portId){
