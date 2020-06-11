@@ -429,7 +429,6 @@ export default class Graph extends Component {
 
 	selectPrimaryCell(cellView) {
 		let cell = cellView.model;
-		log("编辑模式",this.editable)
 		if (this.editable) {
 			if (cell.isElement()) {
 				this.selectCell(cell);
@@ -437,13 +436,12 @@ export default class Graph extends Component {
 			} else {
 				this.selectPrimaryLink(cellView);
 			}
-			// this.createInspector(cell);
+			this.createInspector(cell);
 		} else {
 			if (cell.isElement()) {
 				this.selectCell(cell);
 			}
-		}
-		this.createInspector(cell);
+		}		
 		if (cell.isElement()) {
 			this.emit(EditorEventType.SELECTED_STAGE, cell.toJSON());
 		}
@@ -847,7 +845,7 @@ export default class Graph extends Component {
 	}
 
 	setEditable(editable) {
-		log("Graph.setEditable", editable);
+		debugger;
 		this.editable = editable;
 
 		if (editable) {

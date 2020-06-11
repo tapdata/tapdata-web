@@ -5,9 +5,11 @@ const tc = {
 	message: {
 		api: {
 			get: {
-				error: "加載數據失敗."
+				error: "加載數據失敗.",
+				loading: "正在加載數據",
 			}
 		},
+		ok: "確定",
 		exists_name: "名稱已存在",
 		search: "搜索",
 		serviceCluMange: "服務集群管理",
@@ -672,10 +674,14 @@ const tc = {
 		condition: "校驗條件"
 	},
 	dataMap: {
-		classification: "数据模型",
-		topLevel: "Top Level",
-		dbLevel: "Database Level",
-		tableLevel: "Table Level",
+		noneData: "沒有查找到數據模型",
+
+		classification: "數據模型",
+		topLevel: "頂級",
+		dbLevel: "庫級",
+		tableLevel: "表級",
+		fieldLevel: "字段映射",
+		dblclickDataModel: "請雙擊數據模型打開字段映射",
 		properties: {
 			name: '名稱',
 			type: '分類',
@@ -685,7 +691,8 @@ const tc = {
 			database_username: "數據庫用戶",
 			database_port: "數據庫端口",
 			database_uri: "數據庫連接",
-			database_name: "數據庫名稱"
+			database_name: "數據庫名稱",
+			original_name: "原名稱"
 		}
 	}
 };

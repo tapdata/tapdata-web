@@ -32,12 +32,14 @@
 				</span>
 			</div>
 			<div class="center-bar">
-				<el-radio-group v-model="level">
+				<el-radio-group v-model="currentLevel" @change="changeLevel">
 					<el-radio :label="1">{{$t("dataMap.topLevel")}}</el-radio>
 					<span class="space-line"></span>
 					<el-radio :label="2">{{$t("dataMap.dbLevel")}}</el-radio>
 					<span class="space-line"></span>
 					<el-radio :label="3">{{$t("dataMap.tableLevel")}}</el-radio>
+					<span class="space-line"></span>
+					<el-radio :label="4">{{$t("dataMap.fieldLevel")}}</el-radio>
 				</el-radio-group>
 			</div>
 			<div class="right-bar">
@@ -60,6 +62,7 @@ import $ from "jquery";
 import DataMap from "../../editor/data-map/index";
 import log from "../../log";
 import factory from "../../api/factory";
+import i18n from "../../i18n/i18n";
 
 const metadataInstances = factory("MetadataInstances");
 const metadataDefinitions = factory("MetadataDefinitions");
@@ -69,8 +72,12 @@ export default {
 
 	data(){
 		return {
+			currentLevel: 1,
 			level: 1,
 			tag: "",
+
+			connectionId: "",
+			tableName: "",
 
 			fullscreen: false,
 
@@ -83,6 +90,7 @@ export default {
 	watch: {
 		level: {
 			handler(){
+				this.currentLevel = this.level;
 				this.loadData();
 			}
 		}
@@ -100,13 +108,32 @@ export default {
 
 		this.loadClassification();
 
-		this.dataMap.graph.on('drill_down', (level) => {
-			if(self.level !== level && level >= 1 && level <= 3);
+		this.dataMap.graph.on('drill_down', (level, connectionId, tableName) => {
+			log("DataMap.ChangeLevel", level, connectionId, tableName);
+			level = level || (self.level > 1 ? --self.level : self.level);
+			if(self.level !== level && level >= 1 && level <= 4) {
 				self.level = level;
+				self.connectionId = connectionId;
+				self.tableName = tableName;
+			}
 		});
 	},
 
 	methods: {
+		changeLevel(newValue) {
+			if(newValue === 4){
+				let self = this;
+				this.$alert(i18n.t('dataMap.dblclickDataModel'),'', {
+					confirmButtonText: i18n.t('dataMap.ok'),
+					callback: action => {
+						self.currentLevel = self.level;
+					}
+				});
+			} else {
+				this.level = newValue;
+			}
+		},
+
 		upward(){
 			if( this.level > 1){
 				this.level--;
@@ -162,15 +189,40 @@ export default {
 
 		loadData(){
 			let self = this;
-			metadataInstances.dataMap(this.level, this.tag).then(result => {
+			let loading = self.$loading({
+				text: i18n.t('message.api.get.loading')
+			});
+			let params = {level: 1};
+			if(this.level <= 3){
+				params = {level: this.level, tag: this.tag};
+			} else if(this.level === 4){
+				params = {level: 4, connectionId: this.connectionId, tableName: this.tableName};
+			}
+			metadataInstances.dataMap(params).then(result => {
 
-				if(result && result.data){
+				if(result && result.data && result.data.records && result.data.records.length > 0){
 					let cells = result.data.records;
 					self.dataMap.graph.renderCells(self.level, cells);
+				} else {
+					self.$message.info({
+						message: i18n.t('dataMap.noneData'),
+						duration: 0,
+						showClose: true,
+						offset: 100
+					});
 				}
+
+				loading.close();
 
 			}).catch(err => {
 				log(err);
+				loading.close();
+				self.$message.error({
+					message: i18n.t('message.api.get.error'),
+					duration: 0,
+					showClose: true,
+					offset: 100
+				});
 			});
 		},
 
