@@ -196,13 +196,7 @@ export default {
 
 	methods: {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model =  {
-				name: "",
-				cacheName: "",
-				cacheKeys: "",
-				maxSize: 50,
-				maxRows: 10000
-			};
+			log("MemCache SetData");
 			if (data) {
 				Object.keys(data).forEach(key => (this.model[key] = data[key]));
 				this.setLimited(data.maxSize);

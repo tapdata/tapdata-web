@@ -217,19 +217,6 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.form = {
-				name: "",
-				type: "aggregation_processor",
-				aggregations: [
-					{
-						name: "COUNT",
-						filterPredicate: "",
-						aggFunction: "COUNT",
-						aggExpression: "",
-						groupByExpression: ""
-					}
-				]
-			}
 			if (data) {
 				Object.keys(data).forEach(key => (this.form[key] = data[key]));
 			}
@@ -237,7 +224,6 @@ export default {
 			let inputSchemas = cell.getInputSchema();
 			let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
 			let object = {};
-			console.log(schema.fields)
 			this.groupList = schema.fields? schema.fields.sort((v1, v2) => (v1 > v2 ? 1 : v1 === v2 ? 0 : -1)) : [];
 			if (!!this.groupList && this.groupList.length > 0) {
 				this.groupList = this.groupList.reduce((cur, next) => {

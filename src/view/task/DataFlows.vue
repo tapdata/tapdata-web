@@ -280,7 +280,8 @@ export default {
 				error: "#f53724"
 			},
 			loading: false,
-			order: '',
+			order: localStorage.getItem("flowProp") && localStorage.getItem("flowOrder") ?
+				localStorage.getItem("flowProp") + " " + (localStorage.getItem("flowOrder")==="ascending" ? "ASC" : "DESC"): "",
 			flowProp: localStorage.getItem("flowProp") || 'createTime',
 			flowOrder: localStorage.getItem("flowOrder") || 'descending',
 			tableData: [],
@@ -661,7 +662,7 @@ export default {
 						}
 					})
 				});
-			}else if(status === 'shopping'){ //全部停止
+			}else if(status === 'stopping'){ //全部停止
 				this.multipleSelection.map(item => {
 					this.tableData.map(row =>{
 						if((row.id === item.id)&&(row.status ==='running')){
@@ -770,8 +771,13 @@ export default {
 				transmissionTime: "stats.transmissionTime"
 			};
 			this.order = mapping[column.prop] + " " + currentOrder;
+
 			localStorage.setItem("flowOrder", column.order);
 			localStorage.setItem("flowProp", column.prop);
+			if (localStorage.getItem("flowOrder") && localStorage.getItem("flowProp")) {
+				let curOrder = localStorage.getItem("flowOrder") === "ascending" ? "ASC" : "DESC";
+				this.order = localStorage.getItem("flowProp") + " " + curOrder;
+			}
 			this.getData();
 		},
 		handleClear() {

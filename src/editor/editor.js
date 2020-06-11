@@ -232,6 +232,8 @@ export default class Editor extends BaseObject {
 		// hide stencil
 		this.getLeftSidebar().hide();
 
+		self.ui.setDisableName(true);
+
 		// self.getRightTabPanel().removeAll();
 		// remove stage config
 		// let nodeSettingPanel = self.getRightTabPanel().getChildByName('nodeSettingPanel');
@@ -273,12 +275,14 @@ export default class Editor extends BaseObject {
 	initEditingMode() {
 		log("editor.initEditingMode");
 		// this.getRightSidebar().removeAll();
-		//this.getRightTabPanel().removeAll();
+		this.getRightTabPanel().removeAll();
 		this.getRightSidebar().hide();
 
 		this.initSettings();
 
 		this.getLeftSidebar().show();
+
+		this.ui.setDisableName(false);
 
 		// this.getBottomSidebar().hide();
 		// this.getBottomTabPanel().removeAll();
@@ -729,4 +733,3 @@ export default class Editor extends BaseObject {
 		return this.rightSidebar.getContentEl();
 	}
 }
-

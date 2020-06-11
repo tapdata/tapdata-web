@@ -39,7 +39,7 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="18">
-					<el-form-item :label="mergedSchema && mergedSchema.table_name? 'URL/API/V1/' + mergedSchema.table_name + '/cust/' +  form.apiPath:'URL/API/V1/'">
+					<el-form-item :label="mergedSchema && mergedSchema.table_name? 'URL/API/V1/' + mergedSchema.table_name + '/cust/' +  form.apiPath:'URL/API/V1/cust/'+ form.apiPath">
 						<el-input v-model="form.apiPath" :placeholder="$t('editor.cell.data_node.api.enterEndUrl')"></el-input>
 					</el-form-item>
 				</el-col>
@@ -131,22 +131,6 @@ export default {
 	methods: {
 		// convertSchemaToTreeData,
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.form = {
-				apiVersion: "V1",
-				connection: "",
-				name: "",
-				description: "",
-				paths: {
-					path: "",
-					method: "GET",
-					fields: [],
-					availableQueryField: [],
-					requiredQueryField: []
-				},
-				fields: [],
-				apiPath: "",
-				type: "publishApi"
-			};
 			if (data) {
 				Object.keys(data).forEach(key => (this.form[key] = data[key]));
 			}
@@ -223,9 +207,10 @@ export default {
 				});
 				if(this.mergedSchema) {
 					data.paths.path = "/API/V1/" + this.mergedSchema.table_name + "/cust/" + data.apiPath;
+				} else {
+					data.paths.path = "/API/V1/" + "cust/" + data.apiPath;
 				}
 			}
-			console.log("=========",data,this.mergedSchema)
 			return data;
 		},
 
