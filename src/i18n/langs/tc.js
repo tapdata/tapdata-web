@@ -9,6 +9,7 @@ const tc = {
 				loading: "正在加載數據",
 			}
 		},
+		ok: "確定",
 		exists_name: "名稱已存在",
 		search: "搜索",
 		serviceCluMange: "服務集群管理",
@@ -678,6 +679,8 @@ const tc = {
 		topLevel: "頂級",
 		dbLevel: "庫級",
 		tableLevel: "表級",
+		fieldLevel: "字段映射",
+		dblclickDataModel: "請雙擊數據模型打開字段映射",
 		properties: {
 			name: '名稱',
 			type: '分類',

@@ -9,6 +9,7 @@ const en = {
 				loading: "Loading data...",
 			}
 		},
+		ok: "OK",
 		exists_name: "Name already exists",
 		search: "search",
 		serviceCluMange: "Service cluster management",
@@ -681,6 +682,8 @@ const en = {
 		topLevel: "Top Level",
 		dbLevel: "Database Level",
 		tableLevel: "Table Level",
+		fieldLevel: "Field Mapping",
+		dblclickDataModel: "Please double-click the data model to open the field mapping",
 		properties:{
 			name: "Name",
 			type: "Classification",

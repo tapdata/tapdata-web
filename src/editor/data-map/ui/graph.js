@@ -120,9 +120,9 @@ export default class Graph extends Component {
 			}
 		}));
 		self.paper.on('blank:pointerdown', self.paperScroller.startPanning);
-		/*self.paper.on('cell:pointerdown', (cellView, evt, x, y) => {
+		self.paper.on('cell:pointerdown', (cellView, evt, x, y) => {
 			self.paperScroller.startPanning(evt, x, y);
-		});*/
+		});
 
 		self.paper.on({
 			'cell:mouseover': self.showProperties,
@@ -387,7 +387,7 @@ export default class Graph extends Component {
 
 	createLink(source, target) {
 		if(this.graph.getCell(source) && this.graph.getCell(target))
-		return new joint.shapes.standard.Link({
+		return new joint.shapes.dataMap.Link({
 			source: {
 				id: source
 			},
@@ -400,6 +400,9 @@ export default class Graph extends Component {
 
 	createCell(cellConfig, cellData) {
 		let CellConstructor = _.get(joint.shapes, cellConfig.type);
+		let opts = cellConfig.attrs || {};
+		if(cellData.id)
+			opts.id = cellData.id;
 		let cell = new CellConstructor(_.merge({
 			attrs: {
 				label: {
@@ -409,7 +412,7 @@ export default class Graph extends Component {
 			properties: _.assignWith(cellData.properties || {}, {name: cellData.name}, (oldValue, newValue, key, obj, src) => {
 				return oldValue || newValue || "";
 			})
-		}, cellConfig.attrs || {}));
+		}, opts));
 
 		if(cellData.connection)
 			cell.set('connectionId', cellData.connection);
@@ -587,19 +590,19 @@ export default class Graph extends Component {
 		var links = [
 
 			// order
-			new joint.shapes.mapping.Link({
+			new joint.shapes.dataMap.Link({
 				source: { id: nanonull.id, port: 'order_id' },
 				target: { id: order.id, port: 'order_id' },
 				anchor: { name: 'mapping' },
 				connectionPoint: { name: 'anchor' },
 			}),
-			new joint.shapes.mapping.Link({
+			new joint.shapes.dataMap.Link({
 				source: { id: nanonull.id, port: 'user_email' },
 				target: { id: order.id, port: 'order_email' },
 				anchor: { name: 'mapping' },
 				connectionPoint: { name: 'anchor' },
 			}),
-			new joint.shapes.mapping.Link({
+			new joint.shapes.dataMap.Link({
 				source: { id: nanonull.id, port: 'address' },
 				target: { id: order.id, port: 'address' },
 				anchor: { name: 'mapping' },
@@ -678,7 +681,7 @@ export default class Graph extends Component {
 
 		// this.loadExampleData();
 
-		//this.paper.freeze();
+		this.paper.freeze();
 
 		log("DataMap.graph.getData", this.getData());
 	}
@@ -748,29 +751,39 @@ export default class Graph extends Component {
 				let targetCell = this.graph.getCell(_.isObject(link.target) ? link.target.id : link.target);
 
 				if(sourceCell && targetCell){
-					let linkCell = new joint.shapes.mapping.Link();//.addTo(this.graph);
-					let linkConfig = {
-						anchor: { name: 'mapping' },
-						connectionPoint: { name: 'anchor' },
-					};
-					let linkSourceConfig = _.cloneDeep(linkConfig);
-					if(link.source.port)
-						linkSourceConfig.port = link.source.port;
-					linkCell.source(sourceCell, linkSourceConfig);
 
-					let linkTargetConfig = _.cloneDeep(linkConfig);
-					if(link.target.port)
-						linkTargetConfig.port = link.target.port;
-					linkCell.target(targetCell, linkTargetConfig);
-					/*linkCell.connector({
-						name: 'jumpover',
-						args: { jump: 'arc' }
-					});*/
-					linkCell.router({
-						name: 'mapping',
-						args: { padding: 30 }
-					});
-					linkCell.addTo(this.graph);
+					// let sourceCellType = sourceCell.get('type');
+					let targetCellType = targetCell.get('type');
+					let linkCell;
+					if( targetCellType === "mapping.Record"){
+						linkCell = new joint.shapes.dataMap.Link();
+
+						let linkConfig = {
+							anchor: { name: 'mapping' },
+							connectionPoint: { name: 'anchor' },
+						};
+						let linkSourceConfig = _.cloneDeep(linkConfig);
+						if(link.source.port)
+							linkSourceConfig.port = link.source.port;
+						linkCell.source(sourceCell, linkSourceConfig);
+
+						let linkTargetConfig = _.cloneDeep(linkConfig);
+						if(link.target.port)
+							linkTargetConfig.port = link.target.port;
+						linkCell.target(targetCell, linkTargetConfig);
+
+						/*linkCell.connector({
+							name: 'jumpover',
+							args: { jump: 'arc' }
+						});*/
+						linkCell.router({
+							name: 'mapping',
+							args: { padding: 30 }
+						});
+						linkCell.addTo(this.graph);
+					} else {
+						linkCell = this.createLink(link.source, link.target);
+					}
 				}
 			});
 		}
@@ -1046,7 +1059,7 @@ export default class Graph extends Component {
 	}
 
 	handlerBlankDbClick() {
-		this.emit('drill_down', 1);
+		this.emit('drill_down', 0);
 	}
 
 	getData() {

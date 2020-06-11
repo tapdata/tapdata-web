@@ -192,25 +192,22 @@ export default (joint) => {
 	joint.shapes.standard.Link.define('dataMap.Link', {
 		attrs: {
 			line: {
-				stroke: "#8f8f8f",
-				strokeDasharray: "0",
-				strokeWidth: 2,
-				fill: "none",
-				sourceMarker: {
-					type: "path",
-					d: "M 0 0 0 0",
-					stroke: "none"
-				},
 				targetMarker: {
-					type: "path",
-					d: "M 0 -5 -10 0 0 5 z",
-					stroke: "none"
-				}
+					'type': 'path',
+					'fill': '#5755a1',
+					'd': 'M 10 -5 0 0 10 5 z'
+				},
+				/*sourceMarker: {
+					'type': 'path',
+					'fill': '#5755a1',
+					'd': 'M 0 -5 10 0 0 5 z'
+				},*/
+				stroke: 'gray'
 			}
 		}
 	});
 
-	joint.shapes.standard.Link.define('mapping.Link', {
+	/*joint.shapes.standard.Link.define('mapping.Link', {
 		z: -1,
 		attrs: {
 			line: {
@@ -227,7 +224,7 @@ export default (joint) => {
 				stroke: 'gray'
 			}
 		}
-	});
+	});*/
 
 	joint.shapes.standard.HeaderedRecord.define('mapping.Record', {
 		itemHeight: 20,

@@ -32,12 +32,14 @@
 				</span>
 			</div>
 			<div class="center-bar">
-				<el-radio-group v-model="level">
+				<el-radio-group v-model="currentLevel" @change="changeLevel">
 					<el-radio :label="1">{{$t("dataMap.topLevel")}}</el-radio>
 					<span class="space-line"></span>
 					<el-radio :label="2">{{$t("dataMap.dbLevel")}}</el-radio>
 					<span class="space-line"></span>
 					<el-radio :label="3">{{$t("dataMap.tableLevel")}}</el-radio>
+					<span class="space-line"></span>
+					<el-radio :label="4">{{$t("dataMap.fieldLevel")}}</el-radio>
 				</el-radio-group>
 			</div>
 			<div class="right-bar">
@@ -70,6 +72,7 @@ export default {
 
 	data(){
 		return {
+			currentLevel: 1,
 			level: 1,
 			tag: "",
 
@@ -87,6 +90,7 @@ export default {
 	watch: {
 		level: {
 			handler(){
+				this.currentLevel = this.level;
 				this.loadData();
 			}
 		}
@@ -105,6 +109,8 @@ export default {
 		this.loadClassification();
 
 		this.dataMap.graph.on('drill_down', (level, connectionId, tableName) => {
+			log("DataMap.ChangeLevel", level, connectionId, tableName);
+			level = level || (self.level > 1 ? --self.level : self.level);
 			if(self.level !== level && level >= 1 && level <= 4) {
 				self.level = level;
 				self.connectionId = connectionId;
@@ -114,6 +120,20 @@ export default {
 	},
 
 	methods: {
+		changeLevel(newValue) {
+			if(newValue === 4){
+				let self = this;
+				this.$alert(i18n.t('dataMap.dblclickDataModel'),'', {
+					confirmButtonText: i18n.t('dataMap.ok'),
+					callback: action => {
+						self.currentLevel = self.level;
+					}
+				});
+			} else {
+				this.level = newValue;
+			}
+		},
+
 		upward(){
 			if( this.level > 1){
 				this.level--;
