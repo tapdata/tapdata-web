@@ -70,7 +70,17 @@
           ></el-option>
         </el-select>
       </el-form-item>
-
+		<el-form-item
+			:label="$t('editor.cell.link.form.arrayUniqueKey.label')"
+			required
+			v-if="['merge_embed'].includes(model.joinTable.joinType)"
+		>
+			<el-input
+				v-model="model.joinTable.arrayUniqueKey"
+				:placeholder="$t('editor.cell.link.form.arrayUniqueKey.placeholder')"
+				size="mini"
+			></el-input>
+		</el-form-item>
       <el-form-item
         :label="$t('editor.cell.link.form.joinPath.label')"
         v-if="supportEmbedArray() && ['upsert', 'update', 'merge_embed'].includes(model.joinTable.joinType)"
@@ -150,17 +160,6 @@
             </tr>
           </tbody>
         </table>
-      </el-form-item>
-      <el-form-item
-        :label="$t('editor.cell.link.form.arrayUniqueKey.label')"
-        required
-        v-if="['merge_embed'].includes(model.joinTable.joinType)"
-      >
-        <el-input
-          v-model="model.joinTable.arrayUniqueKey"
-          :placeholder="$t('editor.cell.link.form.arrayUniqueKey.placeholder')"
-          size="mini"
-        ></el-input>
       </el-form-item>
     </el-form>
 
@@ -304,7 +303,7 @@ export default {
 
       if (cell.getSourceCell()) {
         let sourceCell = cell.getSourceCell(),
-          targetCell = cell.getTargetCell(),  
+          targetCell = cell.getTargetCell(),
 		  sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null,
 		  targetSchema = targetCell? targetCell.getSchema() : null,
           mergedTargetSchema =

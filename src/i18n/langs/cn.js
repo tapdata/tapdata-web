@@ -70,6 +70,7 @@ const cn = {
 		SyncPoint: "同步节点",
 		Current: "当前时间",
 		SyncTime: "同步时间",
+		batchRest:"批量重置",
 		batchDelete: "批量删除",
 		bulkExport: "批量导出",
 		bulkScheuled: "批量启动",
