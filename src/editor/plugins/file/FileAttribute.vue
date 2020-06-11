@@ -117,10 +117,6 @@ export default {
 
   methods: {
     setData(data, cell, isSourceDataNode, vueAdapter) {
-      this.model = {
-        connectionId: "",
-        type: "file"
-      };
       if (data) {
         Object.keys(data).forEach(key => (this.model[key] = data[key]));
       }

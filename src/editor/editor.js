@@ -275,7 +275,7 @@ export default class Editor extends BaseObject {
 	initEditingMode() {
 		log("editor.initEditingMode");
 		// this.getRightSidebar().removeAll();
-		//this.getRightTabPanel().removeAll();
+		this.getRightTabPanel().removeAll();
 		this.getRightSidebar().hide();
 
 		this.initSettings();
@@ -733,4 +733,3 @@ export default class Editor extends BaseObject {
 		return this.rightSidebar.getContentEl();
 	}
 }
-

@@ -242,12 +242,6 @@ export default {
     },
 
     setData(data, cell, isSourceDataNode, vueAdapter) {
-      this.model = {
-        connectionId: "",
-        type: "dummy db",
-        tableName: "",
-        primaryKeys: ""
-      };
       if (data) {
         Object.keys(data).forEach(key => (this.model[key] = data[key]));
       }

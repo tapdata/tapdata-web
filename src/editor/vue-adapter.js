@@ -5,11 +5,14 @@
  */
 import Vue from "vue";
 import Panel from "./ui/panel";
-import $ from "jquery";
-import { EditorEventType } from "./lib/events";
+import {
+	EditorEventType
+} from "./lib/events";
 import BaseObject from "./lib/BaseObject";
 import log from "../log";
-import { FORM_DATA_KEY } from "./constants";
+import {
+	FORM_DATA_KEY
+} from "./constants";
 import i18n from "../i18n/i18n";
 
 export const vueAdapter = {};
@@ -37,58 +40,57 @@ export class VueAdapter extends BaseObject {
 	 * @return {*}
 	 */
 	render(cell) {
+		log("VueAdapter.render", cell);
+
+		if (this.vm) {
+			this.vm.$destroy();
+			this.vm = null;
+		}
+
 		if (!cell.showSettings || !cell.showSettings()) {
 			return null;
 		}
 
-		this.editor.getRightSidebar().hide();
 		let self = this;
 		let name = cell.get("type");
 		let formData = self.getFormDataForCell(cell);
 		let isDataNode = cell.isElement() && typeof cell.isDataNode === "function" && cell.isDataNode();
-		let isSourceDataNode = isDataNode && self.graphUI.graph.getConnectedLinks(cell, { inbound: true }).length === 0;
-		self.curcell = cell;
+		let isSourceDataNode = isDataNode && self.graphUI.graph.getConnectedLinks(cell, {
+			inbound: true
+		}).length === 0;
 
 		if (vueAdapter[name] && vueAdapter[name].component) {
-			if (!vueAdapter[name]._panel || !self.editor.getRightTabPanel().getChildByName(name)) {
-				let vueComponentConfig = vueAdapter[name];
-				let Comp = Vue.extend(vueComponentConfig.component);
+			let vueComponentConfig = vueAdapter[name];
+			let Comp = Vue.extend(vueComponentConfig.component);
 
-				let settings = self.editor.getRightTabPanel().getChildByName(name);
-				if (!settings) {
-					settings = new Panel({
-						name: name,
-						title: i18n.t("editor.ui.sidebar.node_setting")
-					});
-					self.editor.getRightTabPanel().add(settings, true);
-				}
-
-				self.vm = new Comp({
-					i18n,
-					propsData: Object.assign({}, vueComponentConfig.props || {})
+			let settings = self.editor.getRightTabPanel().getChildByName("nodeSettingPanel");
+			if (!settings) {
+				settings = new Panel({
+					name: "nodeSettingPanel",
+					title: i18n.t("editor.ui.sidebar.node_setting")
 				});
-
-				self.editor.getRightTabPanel().select(settings);
-				settings.removeAll();
-
-				let vueContainerDom = document.createElement("div");
-				settings.getContentEl().append(vueContainerDom);
-				self.vm.$mount(vueContainerDom);
-				self.vm.$on("dataChanged", data => {
-					if (self.curcell.attributes.type.split('.')[1].toLowerCase() == data.type || self.curcell.attributes.attrs.form_data.type == data.type)
-					//堵住链接节点的关联修改，只有不同类型的才有这个问题，所以这个堵死了
-						self.setFormData(self.curcell, data);
-				});
-	
-				self.vm.$on("schemaChange", schema => {
-					self.curcell.setSchema(schema);
-				});
-				vueAdapter[name]._vm = self.vm;
-				vueAdapter[name]._panel = settings;
-			} else {
-				self.vm = vueAdapter[name]._vm;
-				self.editor.getRightTabPanel().select(vueAdapter[name]._panel);
+				self.editor.getRightTabPanel().add(settings, true);
 			}
+
+			self.vm = new Comp({
+				i18n,
+				propsData: Object.assign({}, vueComponentConfig.props || {})
+			});
+
+			if(self.editor.editable)
+				self.editor.getRightTabPanel().select(settings);
+			settings.removeAll();
+
+			let vueContainerDom = document.createElement("div");
+			settings.getContentEl().append(vueContainerDom);
+			self.vm.$mount(vueContainerDom);
+
+			if (typeof self.vm.setData === "function") {
+				self.vm.setData(formData, cell, isSourceDataNode, self);
+			} else {
+				throw new Error(`Custom form component does not implement "${name}" method`);
+			}
+
 			let editable = self.editor.editable;
 			if (!editable) { // running mode
 				if (typeof self.vm.setDisabled === "function") {
@@ -96,11 +98,14 @@ export class VueAdapter extends BaseObject {
 				}
 			}
 
-			if (typeof self.vm.setData === "function") {
-				self.vm.setData(formData, cell, isSourceDataNode, self);
-			} else {
-				throw new Error(`Custom form component does not implement "${name}" method`);
-			}
+			self.vm.$on("dataChanged", data => {
+				self.setFormData(cell, data);
+			});
+
+			self.vm.$on("schemaChange", schema => {
+				log("VueAdapter.schemaChange", arguments);
+				cell.setSchema(schema);
+			});
 
 			self.editor.getRightSidebar().show();
 
@@ -115,10 +120,8 @@ export class VueAdapter extends BaseObject {
 	}
 
 	handlerHide(e) {
-
 		if (this.vm) {
-			//this.vm.$destroy();
-			this.vm.$emit(EditorEventType.HIDE);
+			this.vm.$destroy();
 		}
 		let settings = this.editor.getRightSidebar().getChildByName("settings");
 		if (settings) {
@@ -155,6 +158,7 @@ export class VueAdapter extends BaseObject {
 	 * @param data
 	 */
 	setFormData(cell, data) {
+		log("VueAdapter.setFormData", this, ...arguments);
 		cell.set(FORM_DATA_KEY, data);
 	}
 	getFormDataForCell(cell) {
@@ -162,6 +166,6 @@ export class VueAdapter extends BaseObject {
 
 		if (typeof cell.id === "string") cell = this.graphUI.graph.getCell(cell.id);
 
-		return cell && (cell.get('form_data') ? cell.get('form_data') : cell.attributes.attrs.form_data);
+		return cell && cell.get(FORM_DATA_KEY);
 	}
 }

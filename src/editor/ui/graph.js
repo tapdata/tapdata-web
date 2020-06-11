@@ -225,16 +225,16 @@ export default class Graph extends Component {
 	onClickBlank() {
 		this.emit(EditorEventType.SELECTED_STAGE);
 		if (this.editable) {
-			// this.editor.getRightTabPanel().removeAll(); // 清除当前所有的vue
-			// let rightTabPanel = this.editor.getRightTabPanel();
-			// if (!rightTabPanel) {
-			// 	rightTabPanel = new Tab({
-			// 		name: "rightTabPanel",
-			// 		hiddenTabBar: true
-			// 	});
-			// 	this.editor.getRightSidebar().add(rightTabPanel); // 添加空白panel 节点渲染
-			// }
-			// this.editor.rightSidebar.add(rightTabPanel);
+			this.editor.getRightTabPanel().removeAll(); // 清除当前所有的vue
+			let rightTabPanel = this.editor.getRightTabPanel();
+			if (!rightTabPanel) {
+				rightTabPanel = new Tab({
+					name: "rightTabPanel",
+					hiddenTabBar: true
+				});
+				this.editor.getRightSidebar().add(rightTabPanel); // 添加空白panel 节点渲染
+			}
+			this.editor.rightSidebar.add(rightTabPanel);
 			this.editor.getRightSidebar().hide();
 		}
 		this.unHighlightAllCells();
@@ -429,6 +429,7 @@ export default class Graph extends Component {
 
 	selectPrimaryCell(cellView) {
 		let cell = cellView.model;
+		log("编辑模式",this.editable)
 		if (this.editable) {
 			if (cell.isElement()) {
 				this.selectCell(cell);
@@ -436,12 +437,13 @@ export default class Graph extends Component {
 			} else {
 				this.selectPrimaryLink(cellView);
 			}
-			this.createInspector(cell);
+			// this.createInspector(cell);
 		} else {
 			if (cell.isElement()) {
 				this.selectCell(cell);
 			}
-		}		
+		}
+		this.createInspector(cell);
 		if (cell.isElement()) {
 			this.emit(EditorEventType.SELECTED_STAGE, cell.toJSON());
 		}
@@ -845,7 +847,7 @@ export default class Graph extends Component {
 	}
 
 	setEditable(editable) {
-		debugger;
+		log("Graph.setEditable", editable);
 		this.editable = editable;
 
 		if (editable) {

@@ -217,19 +217,6 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.form = {
-				name: "",
-				type: "aggregation_processor",
-				aggregations: [
-					{
-						name: "COUNT",
-						filterPredicate: "",
-						aggFunction: "COUNT",
-						aggExpression: "",
-						groupByExpression: ""
-					}
-				]
-			}
 			if (data) {
 				Object.keys(data).forEach(key => (this.form[key] = data[key]));
 			}
