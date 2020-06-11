@@ -124,7 +124,7 @@ export default {
 			if(newValue === 4){
 				let self = this;
 				this.$alert(i18n.t('dataMap.dblclickDataModel'),'', {
-					confirmButtonText: i18n.t('dataMap.ok'),
+					confirmButtonText: i18n.t('message.ok'),
 					callback: action => {
 						self.currentLevel = self.level;
 					}
