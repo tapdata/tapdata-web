@@ -694,6 +694,16 @@ export default class Graph extends Component {
 				return;
 			}
 
+			if(stage.type === 'api'){
+				let cell = this.createCell({
+					type: 'dataMap.API',
+					x: 20,
+					y: 20
+				}, stage);
+				cell.addTo(this.graph);
+				return;
+			}
+
 			if( !stage.stageId || !stage.fields)
 				return;
 
@@ -739,16 +749,19 @@ export default class Graph extends Component {
 
 				if(sourceCell && targetCell){
 					let linkCell = new joint.shapes.mapping.Link();//.addTo(this.graph);
-					linkCell.source(sourceCell, {
+					let linkConfig = {
 						anchor: { name: 'mapping' },
 						connectionPoint: { name: 'anchor' },
-						port: link.source.port,
-					});
-					linkCell.target(targetCell, {
-						anchor: { name: 'mapping' },
-						connectionPoint: { name: 'anchor' },
-						port: link.target.port
-					});
+					};
+					let linkSourceConfig = _.cloneDeep(linkConfig);
+					if(link.source.port)
+						linkSourceConfig.port = link.source.port;
+					linkCell.source(sourceCell, linkSourceConfig);
+
+					let linkTargetConfig = _.cloneDeep(linkConfig);
+					if(link.target.port)
+						linkTargetConfig.port = link.target.port;
+					linkCell.target(targetCell, linkTargetConfig);
 					/*linkCell.connector({
 						name: 'jumpover',
 						args: { jump: 'arc' }
