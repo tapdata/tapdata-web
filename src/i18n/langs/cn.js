@@ -678,7 +678,7 @@ const cn = {
 		classification: "模型分类",
 		topLevel: "顶级",
 		dbLevel: "库级",
-		tableLevel: "表級",
+		tableLevel: "表级",
 		fieldLevel: "字段映射",
 		dblclickDataModel: "请双击数据模型打开字段映射",
 		properties: {
