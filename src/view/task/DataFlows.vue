@@ -64,6 +64,7 @@
 							</el-form-item>
 						</el-col>
 						<div class="task-list-menu-right">
+							<el-button class="back-btn-icon-box dv-btn-icon"  @click="handleGoFuntion"><i class="iconfont icon-hanshu back-btn-icon"></i></el-button>
 							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleImport"
 								><i class="iconfont icon-daoru back-btn-icon"></i
 							></el-button>
@@ -280,8 +281,7 @@ export default {
 				error: "#f53724"
 			},
 			loading: false,
-			order: localStorage.getItem("flowProp") && localStorage.getItem("flowOrder") ?
-				localStorage.getItem("flowProp") + " " + (localStorage.getItem("flowOrder")==="ascending" ? "ASC" : "DESC"): "",
+			order: '',
 			flowProp: localStorage.getItem("flowProp") || 'createTime',
 			flowOrder: localStorage.getItem("flowOrder") || 'descending',
 			tableData: [],
@@ -356,6 +356,9 @@ export default {
 		}
 	},
 	methods: {
+		handleGoFuntion(){
+			top.location.href = "/JsFuncs";
+		},
 		handleDetail(id) {
 			let routeUrl = this.$router.resolve({
 				path: "/job",
@@ -654,11 +657,14 @@ export default {
 				return;
 			}
 			let multipleSelection = [];
+			let discardData = [];
 			if(status === 'scheduled'){ //全部启动
 				this.multipleSelection.map(item => {
 					this.tableData.map(row =>{
 						if((row.id === item.id)&&(row.status ==='paused' || row.status ==='error')){
 							multipleSelection.push(item.id);
+						}else {
+							discardData.push(item.id)
 						}
 					})
 				});
@@ -667,11 +673,14 @@ export default {
 					this.tableData.map(row =>{
 						if((row.id === item.id)&&(row.status ==='running')){
 							multipleSelection.push(item.id);
+						}else {
+							discardData.push(item.id)
 						}
 					})
 				});
 			}
 			if (multipleSelection.length === 0) {
+				this.$message.warning(discardData.length+1)
 				return;
 			}
 			let where = {
@@ -771,13 +780,8 @@ export default {
 				transmissionTime: "stats.transmissionTime"
 			};
 			this.order = mapping[column.prop] + " " + currentOrder;
-
 			localStorage.setItem("flowOrder", column.order);
 			localStorage.setItem("flowProp", column.prop);
-			if (localStorage.getItem("flowOrder") && localStorage.getItem("flowProp")) {
-				let curOrder = localStorage.getItem("flowOrder") === "ascending" ? "ASC" : "DESC";
-				this.order = localStorage.getItem("flowProp") + " " + curOrder;
-			}
 			this.getData();
 		},
 		handleClear() {
