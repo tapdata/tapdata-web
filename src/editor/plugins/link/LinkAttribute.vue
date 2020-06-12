@@ -225,13 +225,15 @@ export default {
     "model.joinTable.joinType": {
       handler() {
         if (this.model.joinTable.joinType === "merge_embed" && this.cell) {
-          let sourceCell = this.cell.getSourceCell(),
-            sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null;
-          let sourcePKs = this.getPKsFromSchema(sourceSchema);
-          if (sourcePKs && sourcePKs.length > 0) {
-            this.model.joinTable.arrayUniqueKey =
-              sourcePKs[0].field_name || sourcePKs[0].original_field_name;
-          }
+        	if(!this.model.joinTable.arrayUniqueKey){
+				let sourceCell = this.cell.getSourceCell(),
+					sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null;
+				let sourcePKs = this.getPKsFromSchema(sourceSchema);
+				if (sourcePKs && sourcePKs.length > 0) {
+					this.model.joinTable.arrayUniqueKey =
+						sourcePKs[0].field_name || sourcePKs[0].original_field_name;
+				}
+			}
         } else {
           this.model.joinTable.arrayUniqueKey = "";
         }
