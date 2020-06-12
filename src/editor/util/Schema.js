@@ -74,7 +74,7 @@ export const /**
 								field.original_field_name ? "_" + field.original_field_name : ""
 							}`.replace(/\./g, "_"),
 						label: jsonPathForFieldName[jsonPathForFieldName.length - 1],
-						type: field.javaType,
+						type: field.javaType || field.java_type,
 						color: getColor(field.table_name),
 						primary_key_position: field.primary_key_position,
 						table_name: field.table_name || "table"
