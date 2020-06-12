@@ -289,7 +289,14 @@ export default {
 		// 移除全选
 		selectAllTables: {
 			handler() {
+				let searchTable = this.tables;
+				if (this.search) {
+					this.tables = this.tables.filter(t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0);
+				} else {
+					this.tables = searchTable
+				}
 				this.tables.forEach(t => (t.checked = this.selectAllTables));
+				console.log(this.tables,searchTable,"##########");
 			}
 		},
 		// 撤销全选

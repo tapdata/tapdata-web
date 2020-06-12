@@ -86,6 +86,9 @@
 							v-model="item.groupByExpression"
 							:placeholder="$t('dataFlow.selectGrpupFiled')"
 							multiple
+							filterable
+							allow-create
+							default-first-option
 						>
 							<el-option
 								v-for="item in groupList"
