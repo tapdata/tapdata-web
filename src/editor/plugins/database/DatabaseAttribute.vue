@@ -303,7 +303,6 @@ export default {
 							});
 						})
 					}
-					console.log(this.tables)
 				} else {
 					this.tables.forEach(t => (t.checked = this.selectAllTables));
 				}
