@@ -95,6 +95,14 @@ export default class Graph extends Component {
 				if (sv.model.isLink() || tv.model.isLink()) return false;
 				if (end === 'target') return tv.model.getItemSide(tv.findAttribute('item-id', tm)) !== 'right';
 				return sv.model.getItemSide(sv.findAttribute('item-id', sm)) !== 'left';
+			},
+			highlighting: {
+				default: {
+					name: 'addClass',
+					options: {
+						className: 'active'
+					}
+				}
 			}
 		});
 
@@ -125,14 +133,65 @@ export default class Graph extends Component {
 		});
 
 		self.paper.on({
-			'cell:mouseover': self.showProperties,
+			'element:mouseover': self.showProperties,
 			'blank:mouseover': self.hideProperties,
 
-			'cell:pointerdblclick': self.handlerCellDbClick,
-			'blank:pointerdblclick': self.handlerBlankDbClick
+			'element:pointerdblclick': self.handlerCellDbClick,
+			'blank:pointerdblclick': self.handlerBlankDbClick,
 		}, this);
 
+		self.paper.on('link:mouseenter', function(cellView) {
+			let cells = [];
+			self.getCellInbounds(self.graph, cellView.model, cells);
+			self.getCellOutbounds(self.graph, cellView.model, cells);
+
+			cells.forEach(function(cell) {
+				cell.findView(self.paper).highlight();
+			}, self);
+		});
+
+		self.paper.on('link:mouseleave link:pointerdown', function(cellView) {
+			let cells = [];
+			self.getCellInbounds(self.graph, cellView.model, cells);
+			self.getCellOutbounds(self.graph, cellView.model, cells);
+
+			cells.forEach(function(cell) {
+				cell.findView(self.paper).unhighlight();
+			}, self);
+		});
+
 		this.paperScroller.center();
+	}
+
+	getCellInbounds(graph, cell, result) {
+		result.push(cell);
+		if(cell.isLink()){
+			this.getCellInbounds(graph, cell.getSourceCell(), result);
+		} else if( cell.isElement()){
+			graph.getConnectedLinks(cell,{inbound: true}).forEach(link => this.getCellInbounds(graph, link, result));
+		}
+
+		/*let self = this;
+		let inCell = graph.getNeighbors(cell, { inbound: true }) || [];
+		inCell.forEach( out => {
+			inCell.concat(self.getCellInbounds(graph, out));
+		});
+		return [cell].concat(graph.getConnectedLinks(cell, { inbound: true }));*/
+	}
+
+	getCellOutbounds(graph, cell, result) {
+		result.push(cell);
+		if(cell.isLink()){
+			this.getCellOutbounds(graph, cell.getTargetCell(), result);
+		} else if( cell.isElement()){
+			graph.getConnectedLinks(cell,{outbound: true}).forEach(link => this.getCellOutbounds(graph, link, result));
+		}
+		/*let self = this;
+		let outCell = graph.getNeighbors(cell, { outbound: true }) || [];
+		outCell.forEach( out => {
+			outCell.concat(self.getCellOutbounds(graph, out));
+		});
+		return [cell].concat(graph.getConnectedLinks(cell, { outbound: true }));*/
 	}
 
 	initLane(){
@@ -254,30 +313,58 @@ export default class Graph extends Component {
 		// window.addEventListener("resize", this.updateLanes.bind(this));
 	}
 
+	getCellsBBox(cells, opt) {
+		opt || (opt = {});
+		return _.toArray(cells).reduce(function(memo, cell) {
+			let rect = cell.getBBox(opt);
+			if (!rect) return memo;
+			let angle = cell.angle();
+			if (angle) rect = rect.bbox(angle);
+			if (memo) {
+				return memo.union(rect);
+			}
+			return rect;
+		}, null);
+	}
+
+	resizeLanes(lane, defaultWidth, defaultHeight){
+		let embedElements = lane.getEmbeddedCells();
+		let width = defaultWidth;
+		let height = defaultHeight;
+		if( embedElements && embedElements.length > 0){
+			let embedBBox = this.getCellsBBox(embedElements);
+			width = embedBBox.width > defaultWidth ? embedBBox.width : defaultWidth;
+			height = embedBBox.height > defaultHeight ? embedBBox.height : defaultHeight;
+		}
+		lane.resize(width, height);
+		this.setLaneHeaderStyle(lane, width, this.spacing);
+	}
+
 	updateLanes() {
 		let spacing = this.spacing;
 		let bbox = this.getContentBBox();
 		let width = (bbox.w - spacing * 4) / 3;
 		let height = bbox.h - spacing * 2;
 
-		width = width * 0.8;
-		height = height * 0.5;
+		this.resizeLanes(this.sourceLane, width, height);
+		this.sourceLane.position(spacing, spacing, {deep: true});
+		let sourceBBox = this.sourceLane.getBBox();
+		let sourceWidth = sourceBBox.width;
 
-		let sourceWidth = width;
-		let tapdataWidth = width;
-		let apiWidth = width;
+		this.resizeLanes(this.tapdataLane, width, height);
+		this.tapdataLane.position(spacing + sourceWidth + spacing, spacing, {deep: true});
+		let tapdataBBox = this.tapdataLane.getBBox();
+		let tapdataWidth = tapdataBBox.width;
 
-		this.sourceLane.resize(sourceWidth, height);
-		this.sourceLane.position(spacing, spacing);
-		this.setLaneHeaderStyle(this.sourceLane, sourceWidth, spacing);
+		this.resizeLanes(this.apiLane, width, height);
+		this.apiLane.position(spacing + sourceWidth + spacing + tapdataWidth + spacing, spacing, {deep: true});
+		let apiBBox = this.apiLane.getBBox();
+		let apiWidth = apiBBox.width;
 
-		this.tapdataLane.resize(tapdataWidth, height);
-		this.tapdataLane.position(spacing + sourceWidth + spacing, spacing);
-		this.setLaneHeaderStyle(this.tapdataLane, tapdataWidth, spacing);
-
-		this.apiLane.resize(apiWidth, height);
-		this.apiLane.position(spacing + sourceWidth + spacing + tapdataWidth + spacing, spacing);
-		this.setLaneHeaderStyle(this.apiLane, apiWidth, spacing);
+		let maxHeight = ([sourceBBox.height, tapdataBBox.height, apiBBox.height].sort((a, b) => b - a))[0];
+		this.sourceLane.resize(sourceWidth, maxHeight);
+		this.tapdataLane.resize(tapdataWidth, maxHeight);
+		this.apiLane.resize(apiWidth, maxHeight);
 	}
 
 	fitEmbeds(opts){
@@ -296,8 +383,24 @@ export default class Graph extends Component {
 			// ranker: 'tight-tree',
 			// align: "UL",
 			resizeClusters: true,
-			clusterPadding: { top: 50, left: 35, right: 35, bottom: 20 }
+			clusterPadding: { top: 50, left: 35, right: 35, bottom: 20 },
+			/*setPosition: function(el, position){
+				el.transition('position/x', position.x, {
+					delay: 100,
+					duration: 500,
+					timingFunction: function(t) { return t*t; },
+					valueFunction: function(a, b) { return function(t) { return a + (b - a) * t }}
+				});
+				el.transition('position/y', position.y, {
+					delay: 100,
+					duration: 500,
+					timingFunction: function(t) { return t*t; },
+					valueFunction: function(a, b) { return function(t) { return a + (b - a) * t }}
+				});
+			}*/
 		}, opts || {}));
+
+		this.updateLanes();
 
 		/*let embedOpts = {
 			deep: true,
@@ -1023,8 +1126,10 @@ export default class Graph extends Component {
 			dom = $(`<div class="properties-info-container"></div>`);
 			this.paper.$el.append(dom);
 		}
+		/*let position = cell.position();
+		let paperPoint = this.paper.localToPaperPoint(position.x, position.y);*/
 		dom.css('left', `${bbox.x + bbox.width + 10}px`);
-		dom.css('top', `${bbox.y - 15}px`);
+		dom.css('top', `${bbox.y + bbox.height/2 - 30}px`);
 		dom.find('>*').remove();
 		Object.keys(properties).forEach(key => {
 			let label = i18n.t("dataMap.properties." + key) || key;
@@ -1034,7 +1139,7 @@ export default class Graph extends Component {
 	}
 
 	hideProperties(cellView, e){
-		// log("DataMap.Graph.hideProperties", cellView, e);
+		log("DataMap.Graph.hideProperties", cellView, e);
 		this.paper.$el.find('.properties-info-container').remove();
 	}
 
