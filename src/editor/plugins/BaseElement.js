@@ -116,11 +116,10 @@ export const baseElementConfig = {
 			initialize() {
 				let self = this;
 
-				// validate form data
-				self.on("change:" + FORM_DATA_KEY, () => {
+				let validate = function(){
 					let formData = self.getFormData();
 
-					log(`${this.get("type")} validate form data`, formData);
+					// log(`${this.get("type")} validate form data`, formData);
 					let verified = false;
 					try {
 						verified = self.validate(self.getFormData());
@@ -128,7 +127,7 @@ export const baseElementConfig = {
 						verified = false;
 					}
 
-					log(`${this.get("type")} validate form data`, formData, verified);
+					// log(`${this.get("type")} validate form data`, formData, verified);
 
 					self.attr("body/stroke", verified ? "#2196F3" : "#ff0000");
 					if (formData && formData.name) {
@@ -138,11 +137,17 @@ export const baseElementConfig = {
 						let width = isDataNode ? 120 : isProcess ? 90 : false;
 						if (width) {
 							name = breakText.breakText(name, width);
-							log(`${this.get("type")} break text`, formData.name, name,width);
+							// log(`${this.get("type")} break text`, formData.name, name,width);
 						}
 						self.attr("label/text", name);
 					}
+				};
+
+				// validate form data
+				self.on("change:" + FORM_DATA_KEY, () => {
+					validate();
 				});
+				validate();
 			},
 
 			getFormData() {

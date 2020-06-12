@@ -259,7 +259,6 @@ export default class Graph extends Component {
 	}
 
 	selectCell(cell) {
-		log("选中节点数据",cell);
 		let self = this;
 		if (Array.isArray(cell)) {
 			self.selection.collection.reset(cell);
@@ -429,7 +428,6 @@ export default class Graph extends Component {
 
 	selectPrimaryCell(cellView) {
 		let cell = cellView.model;
-		log("编辑模式",this.editable)
 		if (this.editable) {
 			if (cell.isElement()) {
 				this.selectCell(cell);
