@@ -345,6 +345,10 @@ export default {
 		};
 	},
 	created() {
+		if (localStorage.getItem("flowOrder") && localStorage.getItem("flowProp")) {
+			let prop = localStorage.getItem("flowOrder") === "ascending" ? "ASC" : "DESC";
+			this.order =localStorage.getItem("flowProp") + " " + prop;
+		}
 		this.formData = this.$store.state.dataFlows;
 		this.screenFn();
 		this.keyupEnter();
@@ -780,8 +784,14 @@ export default {
 				transmissionTime: "stats.transmissionTime"
 			};
 			this.order = mapping[column.prop] + " " + currentOrder;
+
 			localStorage.setItem("flowOrder", column.order);
 			localStorage.setItem("flowProp", column.prop);
+
+			if (localStorage.getItem("flowOrder") && localStorage.getItem("flowProp")) {
+				let prop = localStorage.getItem("flowOrder") === "ascending" ? "ASC" : "DESC";
+				this.order =localStorage.getItem("flowProp") + " " + prop;
+			}
 			this.getData();
 		},
 		handleClear() {

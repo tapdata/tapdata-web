@@ -220,23 +220,27 @@ export default {
 			database_type: "",
 			database_port: "",
 			database_host: "",
-			database_uri: ""
+			database_uri: "",
+			seachTables: [],
+			removeSeachTables: []
 		};
 	},
 
 	computed: {
 		computedTables() {
 			if (this.search) {
-				return this.tables.filter(t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0);
+				this.seachTables = this.tables.filter(t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0);
+				return this.seachTables;
 			} else {
 				return this.tables;
 			}
 		},
 		computedRemoveTables() {
 			if (this.removeSearch) {
-				return this.removeTables.filter(
+				this.removeSeachTables = this.removeTables.filter(
 					t => t.table_name.toLowerCase().indexOf(this.removeSearch.toLowerCase()) >= 0
 				);
+				return this.removeSeachTables
 			} else {
 				return this.removeTables;
 			}
@@ -289,20 +293,37 @@ export default {
 		// 移除全选
 		selectAllTables: {
 			handler() {
-				let searchTable = this.tables;
 				if (this.search) {
-					this.tables = this.tables.filter(t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0);
+					if (this.selectAllTables) {
+						this.tables.forEach(item => {
+							this.seachTables.forEach(table => {
+								if (item.table_name === table.table_name) {
+									item.checked = true
+								}
+							});
+						})
+					}
 				} else {
-					this.tables = searchTable
+					this.tables.forEach(t => (t.checked = this.selectAllTables));
 				}
-				this.tables.forEach(t => (t.checked = this.selectAllTables));
-				// console.log(this.tables,searchTable,"##########");
 			}
 		},
 		// 撤销全选
 		selectAllRemoveTables: {
 			handler() {
-				this.removeTables.forEach(t => (t.checked = this.selectAllRemoveTables));
+				if (this.removeSearch) {
+					if (this.selectAllRemoveTables) {
+						this.removeTables.forEach(item => {
+							this.removeSeachTables.forEach(table => {
+								if (item.table_name === table.table_name) {
+									item.checked = true
+								}
+							});
+						})
+					}
+				} else {
+					this.removeTables.forEach(t => (t.checked = this.selectAllRemoveTables));
+				}
 			}
 		}
 	},
