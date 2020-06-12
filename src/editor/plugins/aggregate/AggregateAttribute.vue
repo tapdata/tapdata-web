@@ -221,7 +221,8 @@ export default {
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
-				Object.keys(data).forEach(key => (this.form[key] = data[key]));
+				// Object.keys(data).forEach(key => (this.form[key] = data[key]));
+				_.merge(this.model, data);
 			}
 
 			let inputSchemas = cell.getInputSchema();
