@@ -18,7 +18,11 @@ export default {
 		 * 			{
 		 * 				type: "类型",   //input,select....
 		 *				field: "字段名",
-		 *				label: "字段展示名称"
+		 *				label: "字段展示名称"，
+		 *              required: "是否必填",
+		 *
+		 *              //字段标题label的插槽，传一个function，参数为createElement
+		 *              labelSlot: (createElement) => createElement('span', {}, 'label'),
 		 * 			}
 		 * 		]
 		 *
@@ -39,14 +43,16 @@ export default {
 				labelPosition: "top",
 				labelWidth: "160px",
 				size: "mini",
-				disabled: false,
-				hideRequiredAsterisk: true
+				disabled: false
 			},
 			defaultFormItemConfig: {
 				type: "input",
 				field: "field",
 				label: "字段名",
-				required: false
+				domType: "text",
+				required: false,
+				clearable: true,
+				labelSlot: () => null
 			}
 		};
 	},
@@ -60,7 +66,10 @@ export default {
 			{
 				class: "e-form-builder-container",
 				ref: "form",
-				props: formConfig
+				props: Object.assign(formConfig, {
+					hideRequiredAsterisk: true,
+					inlineMessage: true
+				})
 			},
 			formItems.map(item => {
 				return this.getFormItem(h, item);
@@ -78,6 +87,11 @@ export default {
 					message: `${config.label}不能为空`
 				});
 			}
+			let required = rules.find(r => r.required);
+			let labelSlot = config.labelSlot ? config.labelSlot(h) : null;
+			let prependSlot = config.prependSlot ? config.prependSlot(h) : null;
+			let appendSlot = config.appendSlot ? config.appendSlot(h) : null;
+
 			let item = h(
 				"ElFormItem",
 				{
@@ -90,27 +104,59 @@ export default {
 				},
 				[
 					h(
-						"span",
+						"div",
 						{
-							class: { "e-form-builder-item-label": true, "is-required": config.required },
+							class: { "e-form-builder-item-label": true, "is-required": !labelSlot && required },
 							slot: "label"
 						},
-						config.label
+						labelSlot ? [labelSlot] : config.label
 					),
-					h(ele[config.type], {
-						props: {
-							value: self.value[config.field],
-							config: config
-						},
-						on: {
-							input(val) {
-								if (self.value[config.field] === undefined) {
-									throw new Error(`The field "${config.field}" of the model is not defined!`);
-								}
-								self.value[config.field] = val;
+					h(
+						"div",
+						{
+							class: {
+								"fb-item-group": true
 							}
-						}
-					})
+						},
+						[
+							prependSlot
+								? h(
+										"div",
+										{
+											class: {
+												"fb-form-item-prepend-slot": true
+											}
+										},
+										[prependSlot]
+								  )
+								: null,
+							h(ele[config.type], {
+								props: {
+									value: self.value[config.field],
+									config: config
+								},
+								on: {
+									input(val) {
+										if (self.value[config.field] === undefined) {
+											throw new Error(`The field "${config.field}" of the model is not defined!`);
+										}
+										self.value[config.field] = val;
+									}
+								}
+							}),
+							appendSlot
+								? h(
+										"div",
+										{
+											class: {
+												"fb-form-item-append-slot": true
+											}
+										},
+										[appendSlot]
+								  )
+								: null
+						]
+					)
 				]
 			);
 			return item;
@@ -121,12 +167,32 @@ export default {
 
 <style lang="less">
 .e-form-builder-container {
-	.e-form-builder-item-label.is-required {
-		&::after {
-			content: "*";
-			color: #ee5353;
-			margin-left: 4px;
+	.e-form-builder-item-label {
+		font-size: 12px;
+		&.is-required {
+			&::after {
+				content: "*";
+				color: #ee5353;
+				margin-left: 4px;
+				font-size: 14px;
+			}
 		}
+	}
+	.el-form-item__label {
+		padding-bottom: 0px;
+	}
+	.el-form-item {
+		margin-bottom: 5px;
+	}
+	.fb-item-group {
+		display: flex;
+		align-items: center;
+	}
+	.fb-form-item-prepend-slot {
+		margin-right: 5px;
+	}
+	.fb-form-item-append-slot {
+		margin-left: 5px;
 	}
 }
 </style>

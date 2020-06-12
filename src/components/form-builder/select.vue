@@ -14,6 +14,9 @@ export default {
 		return h(
 			"ElSelect",
 			{
+				class: {
+					"fb-select": true
+				},
 				props: {
 					value: self.value,
 					placeHolder: config.placeHolder
@@ -34,4 +37,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="less">
+.fb-select {
+	width: 100%;
+}
+</style>

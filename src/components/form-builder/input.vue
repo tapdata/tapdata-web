@@ -13,10 +13,13 @@ export default {
 		let config = self.config;
 		return h("ElInput", {
 			attrs: {
-				placeholder: config.placeholder
+				placeholder: config.placeholder || `请输入${config.label}`
 			},
 			props: {
-				value: self.value
+				value: self.value,
+				type: config.domType,
+				clearable: config.clearable,
+				showPassword: config.showPassword
 			},
 			on: {
 				input(val) {

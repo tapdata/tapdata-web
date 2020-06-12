@@ -45,7 +45,7 @@
 							size="mini"
 							icon="el-icon-plus"
 							style="padding: 7px;margin-left: 7px"
-							@click="addDataBase"
+							@click="$refs.createForm.show()"
 						></el-button>
 					</div>
 				</el-form-item>
@@ -175,24 +175,23 @@
 				</el-tab-pane>
 			</el-tabs>
 		</div>
-		<el-dialog :visible.sync="dialogVisible" appendToBody>
-			<form-builder v-model="dataBaseFormModel" :config="dataBaseFormConfig"></form-builder>
-			<span slot="footer" class="dialog-footer">
-				<el-button @click="dialogVisible = false">Cancel</el-button>
-				<el-button type="primary" @click="dataBaseSubmit">Enter</el-button>
-			</span>
-		</el-dialog>
+		<CreateForm ref="createForm"></CreateForm>
 	</div>
 </template>
 
 <script>
 import factory from "../../../api/factory";
 import _ from "lodash";
+import CreateForm from "./DatabaseCreateForm";
 
 let connections = factory("connections");
 let editorMonitor = null;
 export default {
 	name: "Database",
+
+	components: {
+		CreateForm
+	},
 
 	props: {
 		connection_type: {
@@ -236,76 +235,7 @@ export default {
 			database_type: "",
 			database_port: "",
 			database_host: "",
-			database_uri: "",
-
-			dialogVisible: false,
-			dataBaseFormModel: {
-				title: "db",
-				type: "",
-				power: 0
-			},
-			dataBaseFormConfig: {
-				items: [
-					{
-						type: "input",
-						field: "title",
-						label: "连接名称",
-						placeholder: "自定义数据库名称",
-						required: true
-					},
-					{
-						type: "select",
-						field: "type",
-						label: "数据库类型",
-						placeholder: "选择数据库类型",
-						options: [
-							{ label: "选项一", value: 1 },
-							{ label: "选项二", value: 2 }
-						],
-						required: true
-					},
-					{
-						type: "radio",
-						field: "power",
-						label: "数据库权限",
-						border: true,
-						options: [
-							{ label: "允许读写", value: 0 },
-							{ label: "仅限读取", value: 1 },
-							{ label: "仅限写入", value: 2 }
-						],
-						required: true
-					},
-					{
-						type: "input",
-						field: "address",
-						label: "数据库地址",
-						placeholder: "请输入IP地址",
-						required: true
-					},
-					{
-						type: "input",
-						field: "name",
-						label: "数据库名称",
-						placeholder: "请输入数据库名称",
-						required: true
-					},
-					{
-						type: "input",
-						field: "account",
-						label: "账号",
-						placeholder: "请输入数据库账号",
-						required: true
-					},
-					{
-						type: "input",
-						field: "password",
-						label: "密码",
-						placeholder: "请输入密码",
-						required: true
-					}
-				]
-			}
+			database_uri: ""
 		};
 	},
 
@@ -519,15 +449,6 @@ export default {
 
 		seeMonitor() {
 			editorMonitor.goBackMontior();
-		},
-
-		addDataBase() {
-			this.dialogVisible = true;
-		},
-
-		dataBaseSubmit() {
-			// this.dialogVisible = false;
-			// console.log(this.dataBaseFormModel);
 		}
 	}
 };

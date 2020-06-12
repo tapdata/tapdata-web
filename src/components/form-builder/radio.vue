@@ -18,6 +18,9 @@ export default {
 		return h(
 			"ElRadioGroup",
 			{
+				class: {
+					"fb-radio": true
+				},
 				props: {
 					value: self.value
 				},
@@ -31,6 +34,9 @@ export default {
 				return h(
 					config.button ? "ElRadioButton" : "ElRadio",
 					{
+						class: {
+							"fb-radio-option": true
+						},
 						props: {
 							label: opt.value,
 							border: config.border
@@ -44,4 +50,17 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="less">
+.fb-radio {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	.fb-radio-option {
+		flex: 1;
+		margin-right: 10px;
+		&:last-child {
+			margin-right: 0;
+		}
+	}
+}
+</style>
