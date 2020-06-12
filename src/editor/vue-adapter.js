@@ -86,6 +86,7 @@ export class VueAdapter extends BaseObject {
 			self.vm.$mount(vueContainerDom);
 
 			if (typeof self.vm.setData === "function") {
+				log("VueAdapter.setData", formData);
 				self.vm.setData(formData, cell, isSourceDataNode, self);
 			} else {
 				throw new Error(`Custom form component does not implement "${name}" method`);

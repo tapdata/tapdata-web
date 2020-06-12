@@ -296,7 +296,7 @@ export default {
 					this.tables = searchTable
 				}
 				this.tables.forEach(t => (t.checked = this.selectAllTables));
-				console.log(this.tables,searchTable,"##########");
+				// console.log(this.tables,searchTable,"##########");
 			}
 		},
 		// 撤销全选
@@ -433,7 +433,8 @@ export default {
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
-				Object.keys(data).forEach(key => (this.model[key] = data[key]));
+				// Object.keys(data).forEach(key => (this.model[key] = data[key]));
+				_.merge(this.model, data);
 			}
 
 			this.isSourceDataNode = isSourceDataNode;

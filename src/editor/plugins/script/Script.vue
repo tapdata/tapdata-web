@@ -59,6 +59,7 @@ import log from "../../../log";
 import { EditorEventType } from "../../lib/events";
 import Debug from "./Debug";
 import ws, { EventName } from "../../../api/ws";
+import _ from "lodash";
 let editorMonitor = null;
 
 const gData = {};
@@ -120,8 +121,8 @@ export default {
 	methods: {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
-				Object.keys(data).forEach(key => (this.model[key] = data[key]));
-				log("model script", this.model);
+				// Object.keys(data).forEach(key => (this.model[key] = data[key]));
+				_.merge(this.model, data);
 			}
 			gData.stageId = cell.id;
 			gData.dataFlowId = arguments[3].editor.scope.dataFlowId;
@@ -129,7 +130,8 @@ export default {
 			editorMonitor = vueAdapter.editor;
 		},
 		getData() {
-			return JSON.parse(JSON.stringify(this.model));
+			// return JSON.parse(JSON.stringify(this.model));
+			return _.cloneDeep(this.model);
 		},
 
 		setDisabled(disabled) {
