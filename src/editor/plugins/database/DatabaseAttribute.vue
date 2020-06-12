@@ -180,14 +180,14 @@
 </template>
 
 <script>
-import factory from "../../../api/factory";
-import _ from "lodash";
-import CreateForm from "./DatabaseCreateForm";
+import factory from '../../../api/factory';
+import _ from 'lodash';
+import CreateForm from './DatabaseCreateForm';
 
-let connections = factory("connections");
+let connections = factory('connections');
 let editorMonitor = null;
 export default {
-	name: "Database",
+	name: 'Database',
 
 	components: {
 		CreateForm
@@ -196,15 +196,15 @@ export default {
 	props: {
 		connection_type: {
 			type: String,
-			default: "source"
+			default: 'source'
 		}
 	},
 
 	data() {
 		return {
 			disabled: false,
-			removeSearch: "",
-			search: "",
+			removeSearch: '',
+			search: '',
 
 			tables: [],
 			removeTables: [],
@@ -215,27 +215,27 @@ export default {
 			selectAllRemoveTables: false,
 
 			databases: [],
-			activeName: "first",
+			activeName: 'first',
 			rules: {
 				connectionId: [
 					{
 						required: true,
-						trigger: "blur",
-						message: this.$t("editor.cell.data_node.database.form.placeholder")
+						trigger: 'blur',
+						message: this.$t('editor.cell.data_node.database.form.placeholder')
 					}
 				]
 			},
 			model: {
-				connectionId: "",
+				connectionId: '',
 				includeTables: [],
 				dropTable: false,
-				table_prefix: "",
-				table_suffix: ""
+				table_prefix: '',
+				table_suffix: ''
 			},
-			database_type: "",
-			database_port: "",
-			database_host: "",
-			database_uri: ""
+			database_type: '',
+			database_port: '',
+			database_host: '',
+			database_uri: ''
 		};
 	},
 
@@ -262,7 +262,7 @@ export default {
 		let result = await connections.get({
 			filter: JSON.stringify({
 				where: {
-					database_type: { nin: ["file", "dummy", "gridfs", "rest api"] }
+					database_type: { nin: ['file', 'dummy', 'gridfs', 'rest api'] }
 				},
 				fields: {
 					name: 1,
@@ -271,7 +271,7 @@ export default {
 					connection_type: 1,
 					status: 1
 				},
-				order: "name ASC"
+				order: 'name ASC'
 			})
 		});
 
@@ -285,10 +285,10 @@ export default {
 		model: {
 			deep: true,
 			handler() {
-				this.$emit("dataChanged", this.getData());
+				this.$emit('dataChanged', this.getData());
 			}
 		},
-		"model.connectionId": {
+		'model.connectionId': {
 			immediate: true,
 			handler() {
 				this.tables = [];

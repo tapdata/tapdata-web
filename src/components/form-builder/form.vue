@@ -1,34 +1,34 @@
 <script>
+/**
+ * 表单规则设置
+ * @template {
+ *
+ * 		form: {},
+ *
+ * 		items: [
+ * 			{
+ * 				type: "类型",   //input,select....
+ *				field: "字段名",
+ *				label: "字段展示名称"，
+ *              required: "是否必填",
+ *
+ *              //字段标题label的插槽，传一个function，参数为createElement
+ *              labelSlot: (createElement) => createElement('span', {}, 'label'),
+ * 			}
+ * 		]
+ *
+ * }
+ *
+ */
 const ele = {
-	input: "FbInput",
-	select: "FbSelect",
-	radio: "FbRadio"
+	input: 'FbInput',
+	select: 'FbSelect',
+	radio: 'FbRadio'
 };
 export default {
-	name: "FormBuilder",
+	name: 'FormBuilder',
 	props: {
 		value: Object,
-		/**
-		 * 表单规则设置
-		 * @template {
-		 *
-		 * 		form: {},
-		 *
-		 * 		items: [
-		 * 			{
-		 * 				type: "类型",   //input,select....
-		 *				field: "字段名",
-		 *				label: "字段展示名称"，
-		 *              required: "是否必填",
-		 *
-		 *              //字段标题label的插槽，传一个function，参数为createElement
-		 *              labelSlot: (createElement) => createElement('span', {}, 'label'),
-		 * 			}
-		 * 		]
-		 *
-		 * }
-		 *
-		 */
 		config: {
 			require: true,
 			type: Object
@@ -40,16 +40,16 @@ export default {
 				model: null,
 				rules: null,
 				inline: false,
-				labelPosition: "top",
-				labelWidth: "160px",
-				size: "mini",
+				labelPosition: 'top',
+				labelWidth: '160px',
+				size: 'mini',
 				disabled: false
 			},
 			defaultFormItemConfig: {
-				type: "input",
-				field: "field",
-				label: "字段名",
-				domType: "text",
+				type: 'input',
+				field: 'field',
+				label: '字段名',
+				domType: 'text',
 				required: false,
 				clearable: true,
 				labelSlot: () => null
@@ -62,10 +62,10 @@ export default {
 		});
 		let formItems = this.config.items || [];
 		return h(
-			"ElForm",
+			'ElForm',
 			{
-				class: "e-form-builder-container",
-				ref: "form",
+				class: 'e-form-builder-container',
+				ref: 'form',
 				props: Object.assign(formConfig, {
 					hideRequiredAsterisk: true,
 					inlineMessage: true
@@ -93,9 +93,9 @@ export default {
 			let appendSlot = config.appendSlot ? config.appendSlot(h) : null;
 
 			let item = h(
-				"ElFormItem",
+				'ElFormItem',
 				{
-					class: "e-form-builder-item",
+					class: 'e-form-builder-item',
 					props: {
 						prop: config.field,
 						label: config.label,
@@ -104,59 +104,31 @@ export default {
 				},
 				[
 					h(
-						"div",
+						'div',
 						{
-							class: { "e-form-builder-item-label": true, "is-required": !labelSlot && required },
-							slot: "label"
+							class: { 'e-form-builder-item-label': true, 'is-required': required },
+							slot: 'label'
 						},
-						labelSlot ? [labelSlot] : config.label
+						config.label
 					),
-					h(
-						"div",
-						{
-							class: {
-								"fb-item-group": true
-							}
-						},
-						[
-							prependSlot
-								? h(
-										"div",
-										{
-											class: {
-												"fb-form-item-prepend-slot": true
-											}
-										},
-										[prependSlot]
-								  )
-								: null,
-							h(ele[config.type], {
-								props: {
-									value: self.value[config.field],
-									config: config
-								},
-								on: {
-									input(val) {
-										if (self.value[config.field] === undefined) {
-											throw new Error(`The field "${config.field}" of the model is not defined!`);
-										}
-										self.value[config.field] = val;
+					h('div', { class: { 'fb-item-group': true } }, [
+						prependSlot ? h('div', { class: { 'fb-form-item-prepend-slot': true } }, [prependSlot]) : null,
+						h(ele[config.type], {
+							props: {
+								value: self.value[config.field],
+								config: config
+							},
+							on: {
+								input(val) {
+									if (self.value[config.field] === undefined) {
+										throw new Error(`The field "${config.field}" of the model is not defined!`);
 									}
+									self.value[config.field] = val;
 								}
-							}),
-							appendSlot
-								? h(
-										"div",
-										{
-											class: {
-												"fb-form-item-append-slot": true
-											}
-										},
-										[appendSlot]
-								  )
-								: null
-						]
-					)
+							}
+						}),
+						appendSlot ? h('div', { class: { 'fb-form-item-append-slot': true } }, [appendSlot]) : null
+					])
 				]
 			);
 			return item;

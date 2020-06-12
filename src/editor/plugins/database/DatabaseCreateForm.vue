@@ -9,10 +9,29 @@
 </template>
 
 <script>
-import Drawer from "@/components/Drawer";
+import Drawer from '@/components/Drawer';
+import factory from '@/api/factory';
+import formConfig from './config';
+
+const databaseTypesModel = factory('DatabaseTypes');
+const defaultConfig = [
+	{
+		type: 'input',
+		field: 'name',
+		label: '连接名称',
+		required: true
+	},
+	{
+		type: 'select',
+		field: 'database_type',
+		label: '数据库类型',
+		options: [],
+		required: true
+	}
+];
 
 export default {
-	name: "DatabaseCreateForm",
+	name: 'DatabaseCreateForm',
 	components: {
 		Drawer
 	},
@@ -21,109 +40,56 @@ export default {
 			visible: false,
 
 			model: {
-				title: "db",
-				type: "",
-				power: 0,
-				password: "",
-				account: "",
-				address: "",
-				port: ""
+				name: '',
+				database_type: '',
+				connection_type: '',
+				database_host: '',
+				database_port: '',
+				database_name: '',
+				database_username: '',
+				database_password: '',
+				table_filter: '',
+				additionalString: ''
 			},
 			config: {
-				items: [
-					{
-						type: "input",
-						field: "title",
-						label: "连接名称",
-						required: true
-					},
-					{
-						type: "select",
-						field: "type",
-						label: "数据库类型",
-						options: [
-							{ label: "选项一", value: 1 },
-							{ label: "选项二", value: 2 }
-						],
-						required: true
-					},
-					{
-						type: "radio",
-						field: "power",
-						label: "数据库权限",
-						border: true,
-						options: [
-							{ label: "允许读写", value: 0 },
-							{ label: "仅限读取", value: 1 },
-							{ label: "仅限写入", value: 2 }
-						],
-						required: true
-					},
-					{
-						type: "input",
-						field: "address",
-						label: "数据库地址",
-						rules: [
-							{
-								required: true,
-								validator: (rule, value, callback) => {
-									let port = this.config["port"];
-									if (!value || !value.trim()) {
-										callback(new Error("数据库地址不能为空"));
-									} else if (!port || !port.trim()) {
-										callback(new Error("端口不能为空"));
-									} else {
-										callback();
-									}
-								}
-							}
-						],
-						appendSlot: h => {
-							let self = this;
-							return h("FbInput", {
-								props: {
-									value: self.config["port"],
-									config: {
-										placeholder: "端口"
-									}
-								},
-								on: {
-									input(val) {
-										self.config["port"] = val;
-									}
-								}
-							});
-						}
-					},
-					{
-						type: "input",
-						field: "name",
-						label: "数据库名称",
-						required: true
-					},
-					{
-						type: "input",
-						field: "account",
-						label: "账号",
-						required: true
-					},
-					{
-						type: "input",
-						field: "password",
-						label: "密码",
-						required: true,
-						domType: "password",
-						showPassword: true
-					}
-				]
+				items: []
 			}
 		};
+	},
+	created() {
+		this.getDT();
 	},
 	methods: {
 		show() {
 			this.visible = true;
 		},
-		submit() {}
+		async getDT() {
+			let result = await databaseTypesModel.get();
+			if (result.data) {
+				let options = result.data.map(dt => {
+					return { label: dt.name, value: dt.type };
+				});
+
+				let whiteList = ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2']; //目前白名单
+				defaultConfig[1].options = options.filter(opt => whiteList.includes(opt.value));
+				// defaultConfig[1].options = options;
+				if (options.length) {
+					this.model.database_type = options[0].value;
+				}
+				this.getFormConfig();
+			}
+		},
+		getFormConfig() {
+			let factory = formConfig[this.model.database_type];
+			if (factory) {
+				let config = factory(this);
+				let items = defaultConfig.concat(config.items);
+				this.config.items = items;
+			}
+		},
+		submit() {
+			console.log(this.model);
+		}
 	}
 };
 </script>
