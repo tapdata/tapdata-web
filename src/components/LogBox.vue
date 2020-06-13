@@ -42,7 +42,8 @@ export default {
 		});
 	},
 	methods: {
-		formatLog(item, keyword) {
+		formatLog(item) {
+			let keyword = this.keyword;
 			let markKeyword = function(text) {
 				if (keyword && text.indexOf(keyword) >= 0) {
 					return text.split(keyword).join(`<span class="keyword">${keyword}</span>`);
