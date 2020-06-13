@@ -393,6 +393,9 @@ export default {
 		// 	self.$router.push({path: '/dataFlows'});
 		// });
 		this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
+			if(self.loading) {
+				return;
+			}
 			changeData = this.getDataFlowData(true);
 			if (changeData) {
 				let	settingSetInterval = () => {
