@@ -27,7 +27,7 @@
 
 <script>
 export default {
-	name: "Drawer",
+	name: 'Drawer',
 	props: {
 		visible: Boolean,
 		title: String
@@ -37,7 +37,7 @@ export default {
 	},
 	computed: {
 		width() {
-			return this.clientWidth - this.sliderWidth + "px";
+			return this.clientWidth - this.sliderWidth + 'px';
 		}
 	},
 	watch: {
@@ -50,8 +50,8 @@ export default {
 		}
 	},
 	mounted() {
-		let eBodyEl = document.body.getElementsByClassName("e-body")[0];
-		let eSideBarRight = document.body.getElementsByClassName("e-sidebar-right")[0];
+		let eBodyEl = document.body.getElementsByClassName('e-body')[0];
+		let eSideBarRight = document.body.getElementsByClassName('e-sidebar-right')[0];
 		this.clientWidth = eBodyEl.clientWidth;
 		eBodyEl.appendChild(this.$el);
 		this.$nextTick(() => {
@@ -66,7 +66,7 @@ export default {
 	methods: {
 		show() {
 			this.drawerVisible = true;
-			this.$emit("update:visible", true);
+			this.$emit('update:visible', true);
 			this.$nextTick(() => {
 				this.opened = true;
 			});
@@ -74,7 +74,7 @@ export default {
 		hide() {
 			this.opened = false;
 			setTimeout(() => {
-				this.$emit("update:visible", false);
+				this.$emit('update:visible', false);
 				this.drawerVisible = false;
 			}, 500);
 		}
@@ -106,7 +106,7 @@ export default {
 		flex-direction: column;
 		position: relative;
 		height: 100%;
-		width: 40%;
+		min-width: 40%;
 		float: right;
 		background: #fafafa;
 		.drawer-title {

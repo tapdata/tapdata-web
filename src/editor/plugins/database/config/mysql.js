@@ -27,6 +27,10 @@ export default function(vm) {
 								callback(new Error('数据库地址不能为空'));
 							} else if (!port || !port.trim()) {
 								callback(new Error('端口不能为空'));
+							} else if (!/\d+/.test(port)) {
+								callback(new Error('端口必须为数字'));
+							} else if (port < 1 || port > 65535) {
+								callback(new Error('端口号取值范围 1 ~ 65535'));
 							} else {
 								callback();
 							}
@@ -63,7 +67,7 @@ export default function(vm) {
 			},
 			{
 				type: 'input',
-				field: 'database_password',
+				field: 'plain_password',
 				label: '密码',
 				required: true,
 				domType: 'password',
@@ -73,14 +77,12 @@ export default function(vm) {
 				type: 'input',
 				field: 'table_filter',
 				label: '包含表',
-				tips: '(逗号分割的表达式列表，使用 * 代表任意长度任意字符)',
-				required: true
+				tips: '逗号分割的表达式列表，使用 * 代表任意长度任意字符'
 			},
 			{
 				type: 'input',
 				field: 'additionalString',
-				label: '其他连接串参数',
-				required: true
+				label: '其他连接串参数'
 			}
 		]
 	};

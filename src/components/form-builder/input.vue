@@ -1,6 +1,6 @@
 <script>
 export default {
-	name: "FbInput",
+	name: 'FbInput',
 	props: {
 		value: [String, Number],
 		config: {
@@ -11,7 +11,7 @@ export default {
 	render(h) {
 		let self = this;
 		let config = self.config;
-		return h("ElInput", {
+		return h('ElInput', {
 			attrs: {
 				placeholder: config.placeholder || `请输入${config.label}`
 			},
@@ -23,7 +23,7 @@ export default {
 			},
 			on: {
 				input(val) {
-					self.$emit("input", val);
+					self.$emit('input', val);
 				}
 			}
 		});

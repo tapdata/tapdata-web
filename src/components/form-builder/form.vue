@@ -53,7 +53,8 @@ export default {
 				required: false,
 				clearable: true,
 				labelSlot: () => null
-			}
+			},
+			form: null
 		};
 	},
 	render(h) {
@@ -77,6 +78,9 @@ export default {
 		);
 	},
 	methods: {
+		validate(callback) {
+			return this.$refs.form.validate(callback);
+		},
 		getFormItem(h, itemConfig) {
 			let self = this;
 			let config = Object.assign({}, this.defaultFormItemConfig, itemConfig);
@@ -84,7 +88,13 @@ export default {
 			if (config.required && !rules.find(r => r.required)) {
 				rules.push({
 					required: true,
-					message: `${config.label}不能为空`
+					validator(rule, value, callback) {
+						if (!value || !(value + '').trim()) {
+							callback(new Error(`${config.label}不能为空`));
+						} else {
+							callback();
+						}
+					}
 				});
 			}
 			let required = rules.find(r => r.required);
@@ -106,10 +116,33 @@ export default {
 					h(
 						'div',
 						{
-							class: { 'e-form-builder-item-label': true, 'is-required': required },
+							class: { 'e-form-builder-item-label': true },
 							slot: 'label'
 						},
-						config.label
+						[
+							labelSlot ||
+								h('div', { class: { 'is-required': required } }, [
+									config.label,
+									config.tips &&
+										h(
+											'ElPopover',
+											{
+												props: {
+													trigger: 'hover',
+													content: config.tips,
+													placement: 'top'
+												}
+											},
+											[
+												h('i', {
+													class:
+														'el-icon-warning-outline color-warning e-form-builder-item-tips',
+													slot: 'reference'
+												})
+											]
+										)
+								])
+						]
 					),
 					h('div', { class: { 'fb-item-group': true } }, [
 						prependSlot ? h('div', { class: { 'fb-form-item-prepend-slot': true } }, [prependSlot]) : null,
@@ -141,13 +174,17 @@ export default {
 .e-form-builder-container {
 	.e-form-builder-item-label {
 		font-size: 12px;
-		&.is-required {
+		.is-required {
 			&::after {
 				content: "*";
 				color: #ee5353;
 				margin-left: 4px;
 				font-size: 14px;
 			}
+		}
+		.e-form-builder-item-tips {
+			margin-left: 5px;
+			font-size: 14px;
 		}
 	}
 	.el-form-item__label {
