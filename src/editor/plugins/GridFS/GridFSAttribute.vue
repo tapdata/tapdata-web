@@ -256,8 +256,17 @@
 			},
 
 			setData(data, cell, isSourceDataNode, vueAdapter) {
+				this.model = {
+					connectionId: "",
+					type: "gridfs",
+					databaseType: "",
+					tableName: "",
+					isSource: true,
+					primaryKeys: "",
+					filter: "",
+					gridfsReadMode: ''
+				}
 				if (data) {
-					// Object.keys(data).forEach(key => (this.model[key] = data[key]));
 					_.merge(this.model, data);
 				}
 				this.isSourceDataNode = isSourceDataNode;

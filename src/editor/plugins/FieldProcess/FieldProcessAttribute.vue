@@ -119,9 +119,13 @@ export default {
     convertSchemaToTreeData,
 
     setData(data, cell, isSourceDataNode, vueAdapter) {
-      log("FieldProcess.setData", arguments);
+      this.model = {
+        operations: [],
+        scripts: [],
+        name: "Field Process",
+        type: "field_processor"
+      }
       if (data) {
-        // Object.keys(data).forEach(key => (this.model[key] = data[key]));
 		  _.merge(this.model, data);
       }
 

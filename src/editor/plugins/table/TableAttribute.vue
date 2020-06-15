@@ -313,8 +313,17 @@ export default {
     },
 
     setData(data, cell, isSourceDataNode, vueAdapter) {
+      this.model = {
+        connectionId: "",
+        databaseType: "",
+        tableName: "",
+        sql: "",
+        dropTable: false,
+        type: "table",
+        primaryKeys: "",
+        initialSyncOrder: 1
+      }
       if (data) {
-        // Object.keys(data).forEach(key => (this.model[key] = data[key]));
 		  _.merge(this.model, data);
       }
       this.isSourceDataNode = isSourceDataNode;

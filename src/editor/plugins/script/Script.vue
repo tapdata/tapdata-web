@@ -120,8 +120,12 @@ export default {
 
 	methods: {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
+			this.model = {
+				name: "JavaScript",
+				type: "js_processor",
+				script: "function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}"
+			}
 			if (data) {
-				// Object.keys(data).forEach(key => (this.model[key] = data[key]));
 				_.merge(this.model, data);
 			}
 			gData.stageId = cell.id;

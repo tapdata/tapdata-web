@@ -203,8 +203,11 @@ export default {
     },
 
     setData(data, cell, isSourceDataNode, vueAdapter) {
+      this.model =  {
+        connectionId: "",
+        type: "elasticsearch"
+      }
       if (data) {
-        // Object.keys(data).forEach(key => (this.model[key] = data[key]));
 		  _.merge(this.model, data);
       }
 
