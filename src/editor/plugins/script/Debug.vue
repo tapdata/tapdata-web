@@ -118,7 +118,7 @@
 
 <script>
 import log from "../../../log";
-import LogBox from "@/components/LogBox";
+import LogBox from "../../../components/LogBox";
 // import { EditorEventType } from "../../lib/events";
 export default {
 	name: "Debug",
