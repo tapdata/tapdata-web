@@ -339,7 +339,8 @@ export default {
 				},
 				{ type: "initial_sync", name: this.$t("dataFlow.initial_sync") },
 				{ type: "cdc", name: this.$t("dataFlow.cdc") }
-			]
+			],
+			flowDataName: ''
 		};
 	},
 
