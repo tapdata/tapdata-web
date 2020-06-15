@@ -1,4 +1,5 @@
 <template>
+<div v-if="visible">
   <div class="e-table">
     <div class="head-btns">
       <el-button
@@ -132,6 +133,7 @@
       ></entity>
     </div>
   </div>
+</div>
 </template>
 
 <script>
@@ -234,7 +236,7 @@ export default {
           }
         ]
       },
-
+      visible: false,
       isSourceDataNode: false,
 
       model: {

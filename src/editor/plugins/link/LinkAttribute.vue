@@ -1,4 +1,5 @@
 <template>
+
   <div class="e-link-wrap">
     <div class="head-btns">
       <el-button
@@ -195,10 +196,11 @@ export default {
       targetCellType: "",
 
       configJoinTable: false,
-
+      visible: false,
       model: {
         label: "",
-        joinTable: _.cloneDeep(JOIN_TABLE_TPL)
+        joinTable: _.cloneDeep(JOIN_TABLE_TPL),
+        type:'link'
       }
     };
   },
@@ -290,8 +292,10 @@ export default {
     setData(data, cell, isSourceDataNode, vueAdapter) {
       this.model = {
         label: "",
-        joinTable: _.cloneDeep(JOIN_TABLE_TPL)
+        joinTable: _.cloneDeep(JOIN_TABLE_TPL),
+        type:'link'
       };
+      this.visible = true;
       if (data) {
         Object.keys(data).forEach(key => (this.model[key] = data[key]));
       }

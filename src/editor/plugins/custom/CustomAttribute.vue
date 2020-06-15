@@ -1,4 +1,5 @@
 <template>
+<div v-if="visible">
 	<div class="customName nodeStyle">
 		<head>
 			<span class="headIcon iconfont icon-you2" type="primary"></span>
@@ -29,6 +30,7 @@
 			</el-form>
 		</div>
 	</div>
+</div>
 </template>
 <script>
 import _ from "lodash";
@@ -57,6 +59,7 @@ export default {
 					}
 				]
 			},
+			visible: false,
 			model: {
 				connectionId: "",
 				type: "custom_connection"

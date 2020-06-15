@@ -429,7 +429,8 @@ export default class Graph extends Component {
 
 	selectPrimaryCell(cellView) {
 		let cell = cellView.model;
-		if (this.editable) {
+		if (this.editable || localStorage.getItem('fromMonitor')) {
+			localStorage.removeItem('fromMonitor')
 			if (cell.isElement()) {
 				this.selectCell(cell);
 				this.selectPrimaryElement(cellView);
@@ -845,7 +846,6 @@ export default class Graph extends Component {
 	}
 
 	setEditable(editable) {
-		debugger;
 		this.editable = editable;
 
 		if (editable) {

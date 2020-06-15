@@ -1,4 +1,5 @@
 <template>
+<div v-if="visible">
   <div class="esNode nodeStyle">
 
     <head>
@@ -58,6 +59,7 @@
       </div>
     </div>
   </div>
+</div>
 </template>
 <script>
 import { convertSchemaToTreeData } from "../../util/Schema";
@@ -91,6 +93,7 @@ export default {
           }
         ]
       },
+      visible: false,
       model: {
         connectionId: "",
         type: "elasticsearch"

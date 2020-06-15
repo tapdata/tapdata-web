@@ -5,10 +5,8 @@
  */
 import Vue from "vue";
 import Panel from "./ui/panel";
-import $ from "jquery";
 import { EditorEventType } from "./lib/events";
 import BaseObject from "./lib/BaseObject";
-import log from "../log";
 import { FORM_DATA_KEY } from "./constants";
 import i18n from "../i18n/i18n";
 
@@ -75,7 +73,7 @@ export class VueAdapter extends BaseObject {
 				settings.getContentEl().append(vueContainerDom);
 				self.vm.$mount(vueContainerDom);
 				self.vm.$on("dataChanged", data => {
-					if (self.curcell.attributes.type.split('.')[1].toLowerCase() == data.type || self.curcell.attributes.attrs.form_data.type == data.type)
+					//if (self.curcell.attributes.type.split('.')[1].toLowerCase() == data.type || self.curcell.attributes.attrs.form_data.type == data.type)
 					//堵住链接节点的关联修改，只有不同类型的才有这个问题，所以这个堵死了
 						self.setFormData(self.curcell, data);
 				});
@@ -83,11 +81,28 @@ export class VueAdapter extends BaseObject {
 				self.vm.$on("schemaChange", schema => {
 					self.curcell.setSchema(schema);
 				});
+				self.vm.$on(EditorEventType.HIDE, () => {
+					self.vm.$off("dataChanged");
+					self.vm.visible = false;
+				});
 				vueAdapter[name]._vm = self.vm;
 				vueAdapter[name]._panel = settings;
 			} else {
 				self.vm = vueAdapter[name]._vm;
 				self.editor.getRightTabPanel().select(vueAdapter[name]._panel);
+				self.vm.$on("dataChanged", data => {
+					//if (self.curcell.attributes.type.split('.')[1].toLowerCase() == data.type || self.curcell.attributes.attrs.form_data.type == data.type)
+					//堵住链接节点的关联修改，只有不同类型的才有这个问题，所以这个堵死了
+						self.setFormData(self.curcell, data);
+				});
+	
+				self.vm.$on("schemaChange", schema => {
+					self.curcell.setSchema(schema);
+				});
+				self.vm.$on(EditorEventType.HIDE, () => {
+					self.vm.$off("dataChanged");
+					self.vm.visible = false;
+				});
 			}
 			let editable = self.editor.editable;
 			if (!editable) { // running mode
@@ -95,14 +110,13 @@ export class VueAdapter extends BaseObject {
 					self.vm.setDisabled(true);
 				}
 			}
-
+			self.editor.getRightSidebar().show();
 			if (typeof self.vm.setData === "function") {
 				self.vm.setData(formData, cell, isSourceDataNode, self);
+				self.vm.visible = true;
 			} else {
 				throw new Error(`Custom form component does not implement "${name}" method`);
 			}
-
-			self.editor.getRightSidebar().show();
 
 			return self.vm;
 		}

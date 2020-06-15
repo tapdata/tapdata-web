@@ -1,4 +1,5 @@
 <template>
+<div v-if="visible">
   <div class="e-field-process">
     <div class="head-btns">
       <el-button
@@ -66,6 +67,7 @@
 			</div> -->
     </div>
   </div>
+</div>
 </template>
 
 <script>
@@ -94,7 +96,7 @@ export default {
     return {
       disabled: false,
       databases: [],
-
+      visible: false,
       model: {
         operations: [],
         scripts: [],

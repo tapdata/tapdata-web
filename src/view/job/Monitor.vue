@@ -499,6 +499,7 @@ export default {
 			let self = this;
 			let result = this.getAllCellsNode();
 			let selectCell = null;
+			localStorage.setItem('fromMonitor', 't');
 			result.forEach(item => {
 				if (this.stageId === item.cell.id) {
 					selectCell = item.cell;

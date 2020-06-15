@@ -1,4 +1,5 @@
 <template>
+<div v-if="visible">
 	<div class="database nodeStyle">
 		<head>
 			<span class="headIcon iconfont icon-you2" type="primary"></span>
@@ -167,6 +168,7 @@
 			</el-tabs>
 		</div>
 	</div>
+</div>
 </template>
 
 <script>
@@ -210,6 +212,7 @@ export default {
 					}
 				]
 			},
+			visible: false,
 			model: {
 				connectionId: "",
 				includeTables: [],

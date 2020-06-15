@@ -1,4 +1,5 @@
 <template>
+<div v-if="visible">
   <div class="dummy nodeStyle">
 
     <head>
@@ -92,6 +93,7 @@
       ></entity>
     </div>
   </div>
+</div>
 </template>
 <script>
 import _ from "lodash";
@@ -130,6 +132,7 @@ export default {
           }
         ]
       },
+      visible: false,
       model: {
         connectionId: "",
         type: "dummy db",

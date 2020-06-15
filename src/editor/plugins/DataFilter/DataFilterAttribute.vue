@@ -1,4 +1,5 @@
 <template>
+<div v-if="visible">
   <div class="e-data-filter">
     <div class="head-btns">
       <el-button
@@ -157,6 +158,7 @@
       </el-form-item>
     </el-form>
   </div>
+</div>
 </template>
 
 <script>
@@ -170,6 +172,7 @@ export default {
   data() {
     return {
       disabled: false,
+      visible: false,
       model: {
         type: "row_filter_processor",
         name: "Row Filter",

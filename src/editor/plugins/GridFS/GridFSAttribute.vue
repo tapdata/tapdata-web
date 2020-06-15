@@ -1,4 +1,5 @@
 <template>
+<div v-if="visible">
 	<div class="gridFsNode nodeStyle">
 
 		<head>
@@ -92,6 +93,7 @@
 			<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 		</div>
 	</div>
+</div>
 </template>
 <script>
 	import _ from "lodash";
@@ -142,7 +144,7 @@
 					]
 				},
 				isSourceDataNode: false,
-
+				visible: false,
 				model: {
 					connectionId: "",
 					type: "gridfs",

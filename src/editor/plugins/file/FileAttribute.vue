@@ -1,4 +1,5 @@
 <template>
+<div v-if="visible">
   <div class="fieldName nodeStyle">
 
     <head>
@@ -49,6 +50,7 @@
       </el-form>
     </div>
   </div>
+</div>
 </template>
 <script>
 import _ from "lodash";
@@ -77,6 +79,7 @@ export default {
           }
         ]
       },
+      visible: false,
       model: {
         connectionId: "",
         type: "file"
