@@ -69,6 +69,11 @@ const en = {
 		implementationModalities: "Execution method",
 		submitConfirmation: "Submit Confirmation",
 		SyncPoint: "Sync Node",
+		SyncInfo:{
+			localTZC:'Local UTC CDC time: custom a point of  CDC time，in local time zone',
+			localTZ:'Local UTC：default local UTC time',
+			connTZ:'Sever UTC CDC time: custom a point of  CDC time，in the time zone of a specific server'
+		},
 		Current: "Current Time",
 		SyncTime: "Sync Time",
 		batchDelete: "Batch Delete",
