@@ -64,6 +64,7 @@ const cn = {
 		edit: "修改"
 	},
 	dataFlow: {
+		newTaksName: "新任务未命名",
 		selectNode: "请选择节点",
 		submitExecute: "提交并执行",
 		submitOnly: "仅提交",
@@ -143,6 +144,15 @@ const cn = {
 		edit: "编辑",
 		copy: "复制",
 		reset: "重置",
+		cut: "剪切",
+		paste: "粘贴",
+		undo: "撤销",
+		cancelUndo: "取消撤销",
+		selectAll: "全选",
+		amplification: "放大",
+		zoomOut: "缩小",
+		down: "向下",
+		up:"向上",
 		detail: "任务监控",
 		select_source_connection: "源端连接",
 		select_sync_mode: "同步方式",

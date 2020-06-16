@@ -124,7 +124,7 @@
 				:default-sort="{ prop: flowProp, order: flowOrder }"
 			>
 				<el-table-column type="selection" width="45" :selectable="handleSelectable"> </el-table-column>
-				<el-table-column prop="name" :label="$t('dataFlow.taskName')"> </el-table-column>
+				<el-table-column prop="name" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true"> </el-table-column>
 				<el-table-column
 					sortable="custom"
 					:label="$t('dataFlow.creatdor')"

@@ -63,6 +63,7 @@ const en = {
 		edit: "edit"
 	},
 	dataFlow: {
+		newTaksName: "The new task is not named",
 		selectNode: "Please select a node",
 		submitExecute: "Submit and execute",
 		submitOnly: "Submit only",

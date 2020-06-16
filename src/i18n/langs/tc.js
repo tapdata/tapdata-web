@@ -63,6 +63,7 @@ const tc = {
 		edit: "修改"
 	},
 	dataFlow: {
+		newTaksName: "新任務未命名",
 		selectNode: "請選擇節點",
 		submitExecute: "提交並執行",
 		submitOnly: "僅提交",
