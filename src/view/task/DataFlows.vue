@@ -361,7 +361,7 @@ export default {
 	},
 	methods: {
 		handleGoFuntion(){
-			top.location.href = "/JsFuncs";
+			top.location.href = "/#/JsFuncs";
 		},
 		handleDetail(id) {
 			let routeUrl = this.$router.resolve({
