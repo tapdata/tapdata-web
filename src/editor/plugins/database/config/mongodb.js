@@ -16,6 +16,7 @@ export default function(vm) {
 				],
 				required: true
 			},
+			{ type: 'switch', field: 'isUrl', label: '是否使用URI' },
 			{
 				type: 'input',
 				field: 'database_host',
