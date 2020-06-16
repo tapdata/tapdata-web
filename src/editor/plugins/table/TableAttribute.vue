@@ -121,6 +121,16 @@
           size="mini"
         ></el-input>
       </el-form-item>
+
+		<el-form-item
+			:label="$t('editor.cell.data_node.table.form.initial_offset.label')"
+		>
+			<el-input
+				v-model="model.initialOffset"
+				:placeholder="$t('editor.cell.data_node.table.form.initial_offset.placeholder')"
+				size="mini"
+			></el-input>
+		</el-form-item>
     </el-form>
     <div
       class="e-entity-wrap"
@@ -242,6 +252,7 @@ export default {
         databaseType: "",
         tableName: "",
         sql: "",
+	  	initialOffset: "",
         dropTable: false,
         type: "table",
         primaryKeys: "",
