@@ -329,6 +329,10 @@ const en = {
 						custom_sql: {
 							label: "Custom SQL",
 							placeholder: "Please input you custom sql"
+						},
+						initial_offset: {
+							label: "Custom SQL Offset",
+							placeholder: "Please input you custom sql offset"
 						}
 					}
 				},
