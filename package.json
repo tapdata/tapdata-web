@@ -20,9 +20,9 @@
   },
   "lint-staged": {
     "*.{js,vue,css}": [
-      "eslint --fix",
-	  "prettier --write",
-	  "git add"
+		"prettier --write",
+		"eslint --fix",
+		"git add"
     ]
   },
   "dependencies": {
