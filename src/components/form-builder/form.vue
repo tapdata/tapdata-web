@@ -36,6 +36,7 @@ export default {
 	},
 	data() {
 		return {
+			show: true,
 			defaultFormConfig: {
 				model: null,
 				rules: null,
@@ -46,27 +47,41 @@ export default {
 				disabled: false
 			},
 			defaultFormItemConfig: {
+				show: true,
 				type: 'input',
 				field: 'field',
 				label: '字段名',
 				domType: 'text',
 				required: false,
 				clearable: true,
-				labelSlot: () => null
+				labelSlot: () => null,
+				on: {}
 			},
 			form: null
 		};
+	},
+	watch: {
+		config: {
+			deep: true,
+			handler() {
+				this.show = false;
+				this.$nextTick(() => {
+					this.show = true;
+				});
+			}
+		}
 	},
 	render(h) {
 		let formConfig = Object.assign(this.defaultFormConfig, this.config.form, {
 			model: this.value
 		});
 		let formItems = this.config.items || [];
-		return h(
+		let ele = h(
 			'ElForm',
 			{
 				class: 'e-form-builder-container',
 				ref: 'form',
+
 				props: Object.assign(formConfig, {
 					hideRequiredAsterisk: true,
 					inlineMessage: true
@@ -76,10 +91,17 @@ export default {
 				return this.getFormItem(h, item);
 			})
 		);
+		if (this.show) {
+			return ele;
+		}
+		return '';
 	},
 	methods: {
 		validate(callback) {
 			return this.$refs.form.validate(callback);
+		},
+		clearValidate() {
+			return this.$refs.form.clearValidate();
 		},
 		getFormItem(h, itemConfig) {
 			let self = this;
@@ -110,6 +132,9 @@ export default {
 						prop: config.field,
 						label: config.label,
 						rules: rules
+					},
+					style: {
+						display: config.show ? 'block' : 'none'
 					}
 				},
 				[
@@ -127,9 +152,10 @@ export default {
 										h(
 											'ElPopover',
 											{
+												style: { 'vertical-align': 'middle' },
 												props: {
 													trigger: 'hover',
-													content: config.tips,
+													content: config.tips.content || config.tips,
 													placement: 'top'
 												}
 											},
@@ -138,7 +164,8 @@ export default {
 													class:
 														'el-icon-warning-outline color-warning e-form-builder-item-tips',
 													slot: 'reference'
-												})
+												}),
+												config.tips.label
 											]
 										)
 								])
@@ -157,6 +184,10 @@ export default {
 										throw new Error(`The field "${config.field}" of the model is not defined!`);
 									}
 									self.value[config.field] = val;
+									config.on.input && config.on.input(val);
+								},
+								change(...args) {
+									config.on.change && config.on.change(...args);
 								}
 							}
 						}),
@@ -176,7 +207,7 @@ export default {
 		font-size: 12px;
 		.is-required {
 			&::after {
-				content: "*";
+				content: '*';
 				color: #ee5353;
 				margin-left: 4px;
 				font-size: 14px;

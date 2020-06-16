@@ -7,15 +7,17 @@ module.exports = {
 		ecmaFeatures: true
 	},
 	env: {
-		browser: true
+		browser: true,
+		node: true,
+		es6: true
 	},
 	extends: [
 		// https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
 		// consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
 		"plugin:vue/essential",
 		// https://github.com/standard/standard/blob/master/docs/RULES-en.md
-		"plugin:prettier/recommended",
-		"eslint:recommended"
+		"eslint:recommended",
+		"plugin:prettier/recommended"
 	],
 	// required to lint *.vue files
 	plugins: ["vue"],
@@ -23,7 +25,13 @@ module.exports = {
 	rules: {
 		"prettier/prettier": [
 			"error",
-			{ singleQuote: true, trailingComma: "none", bracketSpacing: true, jsxBracketSameLine: true, parser: "flow" }
+			{
+				"singleQuote": true,
+				"trailingComma": "none",
+				"bracketSpacing": true,
+				"jsxBracketSameLine": true
+
+			}
 		],
 		// allow async-await
 		"generator-star-spacing": "off",
@@ -36,7 +44,7 @@ module.exports = {
 		//'quotes': [1, 'single', 'backtick', 'double'],
 		"no-console": ["error", { allow: ["warn"] }],
 		"no-multiple-empty-lines": ["warn", { max: 2, maxEOF: 1 }],
-		semi: [1, "always"],
+		"semi": [1, "always"],
 		"no-undef": ["error"]
 	}
 };

@@ -76,6 +76,12 @@ export default function(vm) {
 			},
 			{
 				type: 'input',
+				field: 'database_owner',
+				label: '数据库归属账户名',
+				required: true
+			},
+			{
+				type: 'input',
 				field: 'table_filter',
 				label: '包含表',
 				tips: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',

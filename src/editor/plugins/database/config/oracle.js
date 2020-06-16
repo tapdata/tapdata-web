@@ -2,7 +2,9 @@ export default function(vm) {
 	// let $t = vm.$t;
 	return {
 		defaultModel: {
-			connection_type: 'source_and_target'
+			connection_type: 'source_and_target',
+			thin_type: 'SID',
+			supportUpdatePk: false
 		},
 		items: [
 			{
@@ -14,12 +16,28 @@ export default function(vm) {
 					{ label: '仅限读取', value: 'source' },
 					{ label: '仅限写入', value: 'target' }
 				],
+				required: true,
+				on: {
+					change() {
+						vm.checkItems();
+					}
+				}
+			},
+			{
+				type: 'radio',
+				field: 'thin_type',
+				label: '认证方式',
+				options: [
+					{ label: 'SID', value: 'SID' },
+					{ label: 'SERVICE_NAME', value: 'SERVICE_NAME' }
+				],
 				required: true
 			},
 			{
 				type: 'input',
 				field: 'database_host',
 				label: '数据库地址',
+
 				rules: [
 					{
 						required: true,
@@ -85,6 +103,23 @@ export default function(vm) {
 				type: 'input',
 				field: 'additionalString',
 				label: '其他连接串参数'
+			},
+			{
+				type: 'select',
+				field: 'database_datetype_without_timezone',
+				label: '数据库类型',
+				options: [],
+				required: true
+			},
+			{
+				type: 'radio',
+				field: 'supportUpdatePk',
+				label: '是否支持同步时更新主键',
+				border: false,
+				options: [
+					{ label: 'True', value: true },
+					{ label: 'False', value: false }
+				]
 			}
 		]
 	};

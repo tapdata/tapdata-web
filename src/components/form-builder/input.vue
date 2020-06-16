@@ -1,6 +1,8 @@
 <script>
+import mixins from './mixin';
 export default {
 	name: 'FbInput',
+	mixins: [mixins],
 	props: {
 		value: [String, Number],
 		config: {
@@ -21,11 +23,7 @@ export default {
 				clearable: config.clearable,
 				showPassword: config.showPassword
 			},
-			on: {
-				input(val) {
-					self.$emit('input', val);
-				}
-			}
+			on: this.on
 		});
 	}
 };

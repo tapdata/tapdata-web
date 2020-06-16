@@ -37,7 +37,7 @@ export default {
 	},
 	computed: {
 		width() {
-			return this.clientWidth - this.sliderWidth + 'px';
+			return this.clientWidth - this.sliderWidth + 2 + 'px';
 		}
 	},
 	watch: {
@@ -87,7 +87,7 @@ export default {
 	position: absolute;
 	left: 0;
 	top: 0;
-	z-index: 100;
+	z-index: 1991;
 	overflow: hidden;
 	height: 100%;
 

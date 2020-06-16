@@ -2,18 +2,14 @@ export default function(vm) {
 	// let $t = vm.$t;
 	return {
 		defaultModel: {
-			connection_type: 'source_and_target'
+			connection_type: 'source'
 		},
 		items: [
 			{
 				type: 'radio',
 				field: 'connection_type',
 				label: '数据库权限',
-				options: [
-					{ label: '允许读写', value: 'source_and_target' },
-					{ label: '仅限读取', value: 'source' },
-					{ label: '仅限写入', value: 'target' }
-				],
+				options: [{ label: '仅限读取', value: 'source' }],
 				required: true
 			},
 			{
@@ -63,6 +59,12 @@ export default function(vm) {
 			},
 			{
 				type: 'input',
+				field: 'database_schema',
+				label: '数据库模式',
+				required: true
+			},
+			{
+				type: 'input',
 				field: 'database_username',
 				label: '账号',
 				required: true
@@ -73,6 +75,11 @@ export default function(vm) {
 				label: '密码',
 				domType: 'password',
 				showPassword: true
+			},
+			{
+				type: 'input',
+				field: 'node_name',
+				label: '编目节点名称'
 			},
 			{
 				type: 'input',

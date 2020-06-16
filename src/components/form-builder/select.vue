@@ -1,6 +1,8 @@
 <script>
+import mixins from './mixin';
 export default {
-	name: "FbSelect",
+	name: 'FbSelect',
+	mixins: [mixins],
 	props: {
 		value: [String, Number],
 		config: {
@@ -12,23 +14,19 @@ export default {
 		let self = this;
 		let config = self.config;
 		return h(
-			"ElSelect",
+			'ElSelect',
 			{
 				class: {
-					"fb-select": true
+					'fb-select': true
 				},
 				props: {
 					value: self.value,
 					placeHolder: config.placeHolder
 				},
-				on: {
-					input(val) {
-						self.$emit("input", val);
-					}
-				}
+				on: this.on
 			},
 			config.options.map(opt => {
-				return h("ElOption", {
+				return h('ElOption', {
 					props: opt
 				});
 			})
