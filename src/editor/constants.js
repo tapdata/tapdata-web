@@ -11,6 +11,7 @@ export const FORM_DATA_KEY = "form_data",
 		tableName: "",
 		joinType: "upsert",
 		joinPath: "",
+		manyOneUpsert: false,
 		joinKeys: [
 			{
 				source: "",

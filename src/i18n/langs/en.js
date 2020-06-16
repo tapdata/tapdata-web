@@ -54,8 +54,10 @@ const en = {
 		startupAfter_add: "Please add after startup",
 		noData: "NO DATA ",
 		prompt: "Prompt",
-		resetMessage: "This operation will reset the task state, will it reset?",
-		deteleMessage: "This operation will delete the task, will it delete it?",
+		resetMessage: "The action of deleting the data flow will cause it unrecoverable, still DELETE?",
+		deteleMessage: "The action of job reset will cause the job to be rerun from the beginning, still RESET ? ",
+		forceStoppingMessage: "The action of Force stopoing will interrupt data transfer immediately, still FORCE STOP ?",
+		stopMessage: "Are you sure to pause the mission?",
 		cancleReset: "cancel reset",
 		resetOk: "Reset success",
 		resetFailed: "Reset Failed",
@@ -63,6 +65,7 @@ const en = {
 		edit: "edit"
 	},
 	dataFlow: {
+		newTaksName: "The new task is not named",
 		selectNode: "Please select a node",
 		submitExecute: "Submit and execute",
 		submitOnly: "Submit only",
@@ -143,6 +146,17 @@ const en = {
 		edit: "Edit",
 		copy: "Copy",
 		reset: "Reset",
+		cut: "cut",
+		paste: "Paste",
+		undo: "Undo",
+		cancelUndo: "Cancel Undo",
+		selectAll: "Select All",
+		amplification: "Amplify",
+		zoomOut: "Zoom out",
+		down: "Down",
+		up:"Up",
+		selectMultipleNode: "Select multiple nodes",
+		mouseDrag: "Mouse Drag",
 		detail: "Running detail",
 		select_source_connection: "Source-side connection",
 		select_sync_mode: "Sync Mode",
@@ -225,7 +239,16 @@ const en = {
 			file_modify_time_ondisk: "File Modify Time",
 			file_create_time_ondisk: "File Create Time",
 			file_path: "File Path"
-		}
+		},
+		importantReminder: "Important notice",
+		modifyEditText: " If you edited the",
+		nodeLayoutProcess: " node arrangement",
+		nodeAttributes: "node attribute",
+		matchingRelationship: "or matching attribute",
+		afterSubmission: "the job should be",
+		runNomally: "to make sure the job running correctly",
+		editLayerTip: "otherwise the job will be abnormal,still wanna EDIT the job？",
+		continueEditing: "Continue editing",
 	},
 	connection: {
 		status: {
@@ -562,6 +585,10 @@ const en = {
 						label: "Label",
 						placeholder: "Please input label"
 					},
+					joinMethod: {
+						label: "Insert Method",
+						placeholder: "Please select the data insertion method"
+					},
 					joinType: {
 						label: "Data write model",
 						placeholder: "Please select Data Write model"
@@ -579,6 +606,11 @@ const en = {
 						label: "In Array Match Key",
 						placeholder: "Please enter in embed array match key "
 					}
+				},
+
+				methodList: {
+					false: "Discard",
+					true: "write",
 				},
 
 				writeMode: {
@@ -701,7 +733,27 @@ const en = {
 			database_name: "Database Name",
 			original_name: "Original Name"
 		}
-	}
+	},
+	apiInfo: {
+		basicAttributes: "基本属性",
+		trquestMethod: "请求方式",
+		status: "状态",
+		supportFormat: "支持格式",
+		founder: "创建人",
+		interfaceClassification: "接口分类",
+		modifyTime: "修改时间",
+		interface: "接口分类",
+		version: "版本",
+		parameter: "参数",
+		typesof: "类型",
+		is_required: "是否必填",
+		examples: "示例",
+		requestParameters: "请求参数",
+		responseParameters: "响应参数",
+		requestExample: "请求示例",
+		backExamples: "返回示例",
+		announcing: "发布中",
+		}
 };
 
 export default en;

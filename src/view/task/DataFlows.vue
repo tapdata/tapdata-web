@@ -124,7 +124,7 @@
 				:default-sort="{ prop: flowProp, order: flowOrder }"
 			>
 				<el-table-column type="selection" width="45" :selectable="handleSelectable"> </el-table-column>
-				<el-table-column prop="name" :label="$t('dataFlow.taskName')"> </el-table-column>
+				<el-table-column prop="name" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true"> </el-table-column>
 				<el-table-column
 					sortable="custom"
 					:label="$t('dataFlow.creatdor')"
@@ -364,11 +364,35 @@ export default {
 			top.location.href = "/#/JsFuncs";
 		},
 		handleDetail(id) {
-			let routeUrl = this.$router.resolve({
-				path: "/job",
-				query: { id: id }
-			});
-			window.open(routeUrl.href, "_blank");
+			const h = this.$createElement;
+			this.$msgbox({
+				title: this.$t("dataFlow.importantReminder"),
+				customClass: "dataflow-clickTip",
+				message: h('p',null,[
+					h('span',null,this.$t("dataFlow.modifyEditText")),
+					h('span',{style: 'color: #48b6e2'},this.$t("dataFlow.nodeLayoutProcess")),
+					h('span',null,'、'),
+					h('span',{style: 'color: #48b6e2'},this.$t("dataFlow.nodeAttributes")),
+					h('span',null,'、'),
+					h('span',{style: 'color: #48b6e2'},this.$t("dataFlow.matchingRelationship")),
+					h('span',null,'、'),
+					h('span',null,this.$t("dataFlow.afterSubmission")),
+					h('span',{style: 'color: #48b6e2'},this.$t("dataFlow.reset")),
+					h('span',null,this.$t("dataFlow.runNomally")),
+					h('span',null,this.$t("dataFlow.editLayerTip"))
+				]),
+				dangerouslyUseHTMLString: true,
+				showCancelButton: true,
+				confirmButtonText: this.$t("dataFlow.continueEditing"),
+				cancelButtonText: this.$t("message.cancel"),
+				type: 'warning'
+			}).then(() => {
+				let routeUrl = this.$router.resolve({
+					path: "/job",
+					query: { id: id }
+				});
+				window.open(routeUrl.href, "_blank");
+			})
 		},
 		handleImport() {
 			let routeUrl = this.$router.resolve({
@@ -419,11 +443,25 @@ export default {
 				let id = command.replace("copy", "");
 				this.handlerCopy(id);
 			} else if (command.indexOf("reset") !== -1) {
-				let id = command.replace("reset", "");
-				this.handleReset(id);
+				this.$confirm(this.$t("message.resetMessage"), this.$t("dataFlow.importantReminder"), {
+					confirmButtonText: this.$t("dataFlow.reset"),
+					cancelButtonText: this.$t("message.cancel"),
+					type: "warning"
+				}).then(() => {
+					let id = command.replace("reset", "");
+					this.handleReset(id);
+				})
+
 			} else if (command.indexOf("force_stopping") !== -1) {
-				let id = command.replace("force_stopping", "");
-				this.handleStatus(id, "force stopping");
+				this.$confirm(this.$t("message.forceStoppingMessage"), this.$t("dataFlow.importantReminder"), {
+					confirmButtonText: this.$t("dataFlow.button.force_stop"),
+					cancelButtonText: this.$t("message.cancel"),
+					type: "warning"
+				}).then(() => {
+					let id = command.replace("force_stopping", "");
+					this.handleStatus(id, "force stopping");
+				})
+
 			}
 		},
 		handleSelectable(row) {
@@ -608,7 +646,7 @@ export default {
 					inq: multipleSelection
 				}
 			};
-			this.$confirm(this.$t("message.deteleMessage"), this.$t("message.prompt"), {
+			this.$confirm(this.$t("message.deteleMessage"), this.$t("dataFlow.importantReminder"), {
 				confirmButtonText: this.$t("message.delete"),
 				cancelButtonText: this.$t("message.cancel"),
 				type: "warning"
@@ -625,7 +663,7 @@ export default {
 				})
 		},
 		handleDelete(id) {
-			this.$confirm(this.$t("message.deteleMessage"), this.$t("message.prompt"), {
+			this.$confirm(this.$t("message.deteleMessage"), this.$t("dataFlow.importantReminder"), {
 				confirmButtonText: this.$t("message.delete"),
 				cancelButtonText: this.$t("message.cancel"),
 				type: "warning"
@@ -642,19 +680,34 @@ export default {
 					});
 				})
 		},
-		async handleStatus(id, oldStatus,status) {
+		handleStatus(id, oldStatus,status) {
 			if(oldStatus === 'draft'){
 				return ;
 			}
 			let data = {
 				status: status
 			};
+			if (status === "stopping") {
+				this.$confirm(this.$t("message.stopMessage"), this.$t("dataFlow.importantReminder"), {
+					confirmButtonText: this.$t("message.confirm"),
+					cancelButtonText: this.$t("message.cancel"),
+					type: "warning"
+				}).then(() => {
+					this.getStatus(id,data)
+				})
+			} else {
+				this.getStatus(id,data)
+			}
+		},
+
+		async getStatus(id,data){
 			await dataFlows.updateById(id, data).then(res => {
 				if (res.statusText === "OK" || res.status === 200) {
 					this.getData();
 				}
 			});
 		},
+
 		handleAllStatus(status) {
 			if (this.multipleSelection.length === 0) {
 				this.$message.info("please select row data");
@@ -673,15 +726,22 @@ export default {
 					})
 				});
 			}else if(status === 'stopping'){ //全部停止
-				this.multipleSelection.map(item => {
-					this.tableData.map(row =>{
-						if((row.id === item.id)&&(row.status ==='running')){
-							multipleSelection.push(item.id);
-						}else {
-							discardData.push(item.id)
-						}
-					})
-				});
+				this.$confirm(this.$t("message.stopMessage"), this.$t("dataFlow.importantReminder"), {
+					confirmButtonText: this.$t("message.confirm"),
+					cancelButtonText: this.$t("message.cancel"),
+					type: "warning"
+				}).then(() => {
+					this.multipleSelection.map(item => {
+						this.tableData.map(row =>{
+							if((row.id === item.id)&&(row.status ==='running')){
+								multipleSelection.push(item.id);
+							}else {
+								discardData.push(item.id)
+							}
+						})
+					});
+				})
+
 			}
 			if (multipleSelection.length === 0) {
 				this.$message.warning(discardData.length+1)
@@ -706,22 +766,20 @@ export default {
 				confirmButtonText: this.$t("dataFlow.reset"),
 				cancelButtonText: this.$t("message.cancel"),
 				type: "warning"
+			}).then(() => {
+				// let attributes = {
+				// 	status: 'draft',
+				// 	stats: '',
+				// };
+				dataFlows.reset(id).then(res => {
+					if (res.statusText === "OK" || res.status === 200) {
+						this.getData();
+						this.$message.success(this.$t("message.resetOk"));
+					}else {
+						this.$message.info(this.$t("message.cancleReset"));
+					}
+				});
 			})
-				.then(() => {
-					// let attributes = {
-					// 	status: 'draft',
-					// 	stats: '',
-					// };
-					dataFlows.reset(id).then(res => {
-						if (res.statusText === "OK" || res.status === 200) {
-							this.getData();
-							this.$message.success(this.$t("message.resetOk"));
-						}else {
-							this.$message.info(this.$t("message.cancleReset"));
-						}
-					});
-
-				})
 		},
 		handleAllRest() {
 			if (this.multipleSelection.length === 0) {
@@ -744,17 +802,16 @@ export default {
 				confirmButtonText: this.$t("dataFlow.reset"),
 				cancelButtonText: this.$t("message.cancel"),
 				type: "warning"
+			}).then(() => {
+				dataFlows.resetAll(where).then(res => {
+					if (res.statusText === "OK" || res.status === 200) {
+						this.getData();
+						this.$message.success(this.$t("message.resetOk"));
+					}else {
+						this.$message.info(this.$t("message.cancleReset"));
+					}
+				});
 			})
-				.then(() => {
-					dataFlows.resetAll(where).then(res => {
-						if (res.statusText === "OK" || res.status === 200) {
-							this.getData();
-							this.$message.success(this.$t("message.resetOk"));
-						}else {
-							this.$message.info(this.$t("message.cancleReset"));
-						}
-					});
-				})
 		},
 		handlerCopy(id) {
 			let self = this;
@@ -972,5 +1029,8 @@ export default {
 }
 .dataFlowsFlow .el-form-item__content {
 	line-height: 0;
+}
+.dataflow-clickTip .el-message-box__status {
+	top: 25%!important;
 }
 </style>

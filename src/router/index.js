@@ -53,6 +53,11 @@ export default new Router({
 			path: "/dataMap",
 			name: "DataMap",
 			component: DataMap
+		},
+		{
+			path: "/apiInfo",
+			name: "ApiInfo",
+			component: () => import("../view/job/apiInfo")
 		}
 	]
 });
