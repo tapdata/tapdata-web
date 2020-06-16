@@ -283,6 +283,7 @@
 					<span>{{$t("dataFlow.zoomOut")}} <i>ctrl+minus</i></span>
 					<span>{{$t("dataFlow.down")}} <i>key down</i></span>
 					<span>{{$t("dataFlow.up")}} <i>key up</i></span>
+					<span>{{$t("dataFlow.selectMultipleNode")}} <i>shift+{{$t("dataFlow.mouseDrag")}}</i></span>
 				</div>
 				<el-button circle class="iconfont icon-jianpan" slot="reference"></el-button>
 			</el-popover>

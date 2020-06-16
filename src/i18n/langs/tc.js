@@ -54,8 +54,10 @@ const tc = {
 		startupAfter_add: "請啟動後添加",
 		noData: "暫無數據",
 		prompt: "提示",
-		resetMessage: "此操作將重置該任務狀態, 是否重置?",
-		deteleMessage: "此操作將刪除該任務, 是否刪除?",
+		resetMessage: "将重新执行任务，确定要重新执行任务吗?",
+		deteleMessage:"删除任务将无法恢复，请问确定要删除任务吗?",
+		forceStoppingMessage: "将立即中断数据传输，是否继续执行?",
+		stopMessage: "确定要暂停任务吗?",
 		cancleReset: "已取消重置",
 		resetOk: "重置成功",
 		resetFailed: "重置失敗",
@@ -143,6 +145,17 @@ const tc = {
 		edit: "編輯",
 		copy: "複製",
 		reset: "重置",
+		cut: "剪切",
+		paste: "粘貼",
+		undo: "撤銷",
+		cancelUndo: "取消撤銷",
+		selectAll: "全選",
+		amplification: "放大",
+		zoomOut: "縮小",
+		down: "向下",
+		up:"向上",
+		selectMultipleNode: "選擇多節點",
+		mouseDrag: "鼠標拖拽",
 		detail: "任务监控",
 		select_source_connection: "源端連接",
 		select_sync_mode: "同步方式",
@@ -224,7 +237,16 @@ const tc = {
 			file_modify_time_ondisk: "更新時間",
 			file_create_time_ondisk: "創建時間",
 			file_path: "文件路徑"
-		}
+		},
+		importantReminder: "重要提醒",
+		modifyEditText: "編輯任務如果修改了",
+		nodeLayoutProcess: "節點排版流程",
+		nodeAttributes: "節點屬性",
+		matchingRelationship: "匹配關係",
+		afterSubmission: "提交後必須",
+		runNomally: "才能正常運行",
+		editLayerTip: " 否則可能導致異常錯誤，請問您要繼續編輯嗎?",
+		continueEditing: "繼續編輯",
 	},
 	connection: {
 		status: {
@@ -695,7 +717,27 @@ const tc = {
 			database_name: "數據庫名稱",
 			original_name: "原名稱"
 		}
-	}
+	},
+	apiInfo: {
+		basicAttributes: "基本屬性",
+		trquestMethod: "請求方式",
+		status: "狀態",
+		supportFormat: "支持格式",
+		founder: "創建人",
+		interfaceClassification: "接口分類",
+		modifyTime: "修改時間",
+		interface: "接口分類",
+		version: "版本",
+		parameter: "參數",
+		typesof: "類型",
+		is_required: "是否必填",
+		examples: "示例",
+		requestParameters: "請求參數",
+		responseParameters: "響應參數",
+		requestExample: "請求示例",
+		backExamples: "返回示例",
+		announcing: "發布中",
+		}
 };
 
 export default tc;
