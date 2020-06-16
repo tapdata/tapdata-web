@@ -29,31 +29,71 @@
 					<span>
 						<span class="iconfont icon-Folder-closed filter-icon"></span>
 						<span class="table-label" @click="handleChecked(data)">{{ node.label }}</span>
-						<span>
-						  <el-dropdown @command="handleRowCommand" class="item">
-								<el-button type="text"
-								><i class="iconfont icon-gengduo3  task-list-icon"></i
-								></el-button>
-								<el-dropdown-menu slot="dropdown">
-									<el-dropdown-item command='addChild'>{{
-										$t("dataFlow.dataFlowExport")
-									}}</el-dropdown-item>
-									<el-dropdown-item command='add'>{{
-										$t("dataFlow.copy")
-									}}</el-dropdown-item>
-									<el-dropdown-item
-										command='edit'
-									>{{ $t("dataFlow.reset") }}</el-dropdown-item
-									>
-									<el-dropdown-item command='delete'>{{
-										$t("dataFlow.status.force_stopping")
-									}}</el-dropdown-item>
-								</el-dropdown-menu>
-							</el-dropdown>
-						</span>
 					</span>
 				</span>
 			</el-tree>
+		</div>
+		<div class="box-ul">
+			<div class="box-head">
+				<div class="select-nav-header">
+					<span style="font-size: 12px">{{ checkedValue.label }}</span>
+					<el-button size="mini" type="primary" @click="handleClassify">批量分类</el-button>
+				</div>
+				<el-input
+					placeholder="请输入内容"
+					v-model="search"
+					class="search-input"
+					clearable
+					@clear="clear"
+					@change="handleSearch"
+				>
+					<i slot="prefix" class="el-input__icon el-icon-search"></i>
+				</el-input>
+				<div class="select-nav">
+					<el-select
+						v-model="checkType"
+						clearable
+						placeholder="请选择"
+						class="MetaDataSelect"
+						@change="handleSearch"
+					>
+						<el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+						</el-option>
+					</el-select>
+					<el-select
+						v-model="checkClassify"
+						clearable
+						placeholder="请选择"
+						class="MetaDataSelect"
+						@change="handleSearch"
+					>
+						<el-option
+							v-for="item in optionsType"
+							:key="item.value"
+							:label="item.label"
+							:value="item.value"
+						>
+						</el-option>
+					</el-select>
+					<el-checkbox v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+				</div>
+			</div>
+			<ul class="classify-ul">
+				<el-checkbox-group v-model="checkData" @change="handleCheckedCitiesChange" class="list-box">
+					<li v-for="item in listdata" :key="item.id">
+						<el-checkbox :label="item.id">
+							<span class="iconfont icon-table2 icon-color"></span>
+							<span>{{ item.original_name }}</span>
+						</el-checkbox>
+					</li>
+				</el-checkbox-group>
+			</ul>
+			<SelectClassify
+				ref="SelectClassify"
+				:checkData="checkData"
+				:dialogVisible="dialogVisible"
+				:listdata="listdata"
+			></SelectClassify>
 		</div>
 	</div>
 </template>
@@ -354,29 +394,6 @@ export default {
 				return;
 			}
 			this.dialogVisible = true;
-		},
-		handleRowCommand(command){
-			if(command === 'add'){
-				this.addNode()
-			}else if(command === 'addChild'){
-				this.addChildNode()
-			}else if(command === 'edit'){
-				this.editNode()
-			}else if(command === 'delete'){
-				this.deleteNode()
-			}
-		},
-		addNode(){
-			
-		},
-		addChildNode(){
-
-		},
-		editNode(){
-
-		},
-		deleteNode(){
-
 		}
 	}
 };
