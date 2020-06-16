@@ -92,6 +92,22 @@
         ></el-input>
       </el-form-item>
 
+	  <el-form-item :label="$t('editor.cell.link.form.joinMethod.label')"  v-if="['merge_embed'].includes(model.joinTable.joinType)">
+			<el-select
+				v-model="model.joinTable.manyOneUpsert"
+				:placeholder="$t('editor.cell.link.form.joinMethod.placeholder')"
+				size="mini"
+			>
+			<el-option
+					v-for="(item, idx) in methodList"
+					:label="item.label"
+					:value="item.value"
+					:key="idx"
+			></el-option>
+			</el-select>
+		</el-form-item>
+
+
       <el-form-item
         :label="$t('editor.cell.link.form.joinKeys.label')"
         required
@@ -185,14 +201,19 @@ export default {
 
   data() {
     return {
-      disabled: false,
-      sourceList: [],
-      targetList: [],
-      writeModels: [],
+		disabled: false,
+		sourceList: [],
+		targetList: [],
+		writeModels: [],
 
-      sourceSchema: [],
-      targetSchema: [],
-      targetCellType: "",
+		sourceSchema: [],
+		targetSchema: [],
+		targetCellType: "",
+
+		methodList: [
+			{label: this.$t("editor.cell.link.methodList.false"), value:false},
+			{label: this.$t("editor.cell.link.methodList.true"), value:true},
+		],
 
       configJoinTable: false,
 
@@ -263,6 +284,7 @@ export default {
   },
 
   mounted() {
+	this.model.joinTable.manyOneUpsert = this.methodList[0].value;
     let self = this;
     self.$on(EditorEventType.RESIZE, () => {
       self.$refs.mappingComp.$emit(EditorEventType.RESIZE);

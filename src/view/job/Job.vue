@@ -101,7 +101,7 @@
 				>{{ $t("dataFlow.button.save") }}
 			</el-button> -->
 			<template v-if="['draft'].includes(status)">
-				<div :class="[{btnHover:['draft'].includes(status)},'headImg']" v-show="!isSaving" @click="timeSave">
+				<div :class="[{btnHover:['draft'].includes(status)},'headImg']" v-show="!isSaving" @click="autoSaveFn">
 					<span class="iconfont icon-yunduanshangchuan"></span>
 					<span class="text">{{ $t("dataFlow.button.saveDraft") }}</span>
 				</div>
@@ -265,6 +265,29 @@
 			</div>
 			<!-- <el-button size="mini" type="primary" @click="switchModel">Model</el-button> -->
 		</div>
+		<div class="fixBtn">
+			<el-popover
+				popper-class ="popperFixbtn"
+				placement="top"
+				width="400"
+				trigger="hover">
+				<div class="btnList">
+					<span>{{$t("dataFlow.copy")}} <i>ctrl+c</i></span>
+					<span>{{$t("dataFlow.paste")}} <i>ctrl+v</i></span>
+					<span>{{$t("dataFlow.cut")}} <i>ctrl+x</i></span>
+					<span>{{$t("message.delete")}} <i>delete</i></span>
+					<span>{{$t("dataFlow.undo")}} <i>ctrl+z</i></span>
+					<span>{{$t("dataFlow.cancelUndo")}} <i>ctrl+y</i></span>
+					<span>{{$t("dataFlow.selectAll")}} <i>ctrl+a</i></span>
+					<span>{{$t("dataFlow.amplification")}} <i>ctrl+plus</i></span>
+					<span>{{$t("dataFlow.zoomOut")}} <i>ctrl+minus</i></span>
+					<span>{{$t("dataFlow.down")}} <i>key down</i></span>
+					<span>{{$t("dataFlow.up")}} <i>key up</i></span>
+					<span>{{$t("dataFlow.selectMultipleNode")}} <i>shift+{{$t("dataFlow.mouseDrag")}}</i></span>
+				</div>
+				<el-button circle class="iconfont icon-jianpan" slot="reference"></el-button>
+			</el-popover>
+		</div>
 		<el-dialog
 			:title="$t('dataFlow.submitConfirmation')"
 			custom-class="dialogConfig"
@@ -339,7 +362,8 @@ export default {
 				},
 				{ type: "initial_sync", name: this.$t("dataFlow.initial_sync") },
 				{ type: "cdc", name: this.$t("dataFlow.cdc") }
-			]
+			],
+			flowDataName: ''
 		};
 	},
 
@@ -418,6 +442,14 @@ export default {
 	},
 
 	methods: {
+		/***
+		 * click save
+		 */
+		autoSaveFn () {
+			this.timeSave();
+			clearTimeout(timer);
+			timer = null;
+		},
 		/**
 		 * submit temporary
 		 */
@@ -449,39 +481,59 @@ export default {
 		/****
 		 * Auto save
 		 */
-		timeSave() {
+		async timeSave() {
 			this.isSaving = true;
 			let self = this,
-				data = this.getDataFlowData(true),
-				promise = dataFlowsApi.draft(data);
+				promise = null,
+				lastString = '',
+				data = this.getDataFlowData(true);
+
+			let params = {
+				'filter[order]': 'name DESC',
+				'filter[limit]': 1,
+				'filter[where][name][like]': data.name
+			}
+
+			let result = await dataFlowsApi.get(params);
+			if (result && result.data.length > 0) {
+				this.flowDataName = result.data[0].name;
+				if (this.flowDataName) {
+					lastString = this.flowDataName.charAt(this.flowDataName.length-1,1)*1;
+					if (lastString > 1 && data.name == this.$t('dataFlow.newTaksName')) {
+						data.name = data.name + (lastString*1 + 1 )
+					}
+				}
+			}
+
+			promise = dataFlowsApi.draft(data);
+
 
 			if (promise) {
-				promise
-					.then(result => {
-						if (result && result.data) {
-							let dataFlow = result.data;
-							self.dataFlowId = dataFlow.id;
-							self.status = dataFlow.status;
-							self.executeMode = dataFlow.executeMode;
+				promise.then(result => {
+					if (result && result.data) {
+						let dataFlow = result.data;
+						self.dataFlowId = dataFlow.id;
+						self.status = dataFlow.status;
+						self.executeMode = dataFlow.executeMode;
 
-							self.dataFlow = dataFlow;
+						self.dataFlow = dataFlow;
 
-							if (!self.$route.query || !self.$route.query.id) {
-								self.$router.push({
-									path: "/job",
-									query: {
-										id: dataFlow.id
-									}
-								});
-							}
-							self.polling();
+						if (!self.$route.query || !self.$route.query.id) {
+							self.$router.push({
+								path: "/job",
+								query: {
+									id: dataFlow.id
+								}
+							});
 						}
-					})
-					.finally(() => {
-						changeData = null;
-						self.loading = false;
-						self.isSaving = false;
-					});
+						self.polling();
+					}
+				})
+				.finally(() => {
+					changeData = null;
+					self.loading = false;
+					self.isSaving = false;
+				});
 			}
 		},
 
@@ -1303,9 +1355,35 @@ export default {
 	}
 };
 </script>
-
+<style scoped lang="less">
+.fixBtn {
+	position: fixed;
+	bottom: 30px;
+	left: 260px;
+	z-index: 99;
+}
+</style>
 <style lang="less">
 @import "../../editor/style/editor";
+.popperFixbtn {
+	width: 160px!important;
+	.btnList {
+		width: 160px;
+		span {
+			display: block;
+			width: 100%;
+			padding: 5px 0;
+			color: #333;
+			font-size: 12px;
+			cursor: pointer;
+			i {
+				float: right;
+				color: #999;
+				font-size: 12px;
+			}
+		}
+	}
+}
 .dialogConfig {
 	.el-dialog__header {
 		background: rgba(250, 250, 250, 1);

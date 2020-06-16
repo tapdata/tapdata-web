@@ -55,8 +55,10 @@ const cn = {
 		startupAfter_add: "请启动后添加",
 		noData: "暂无数据",
 		prompt: "提示",
-		resetMessage: "此操作将重置该任务状态, 是否重置?",
-		deteleMessage: "此操作将删除该任务, 是否删除?",
+		resetMessage: "将重新执行该项任务, 确定要重新执行任务吗?",
+		deteleMessage: "删除任务将无法恢复, 请问确定要删除任务吗?",
+		forceStoppingMessage: "将立即中断数据传输，是否继续执行?",
+		stopMessage: "确定要暂停任务吗?",
 		cancleReset: "已取消重置",
 		resetOk: "重置成功",
 		resetFailed: "重置失败",
@@ -64,6 +66,7 @@ const cn = {
 		edit: "修改"
 	},
 	dataFlow: {
+		newTaksName: "新任务未命名",
 		selectNode: "请选择节点",
 		submitExecute: "提交并执行",
 		submitOnly: "仅提交",
@@ -143,6 +146,17 @@ const cn = {
 		edit: "编辑",
 		copy: "复制",
 		reset: "重置",
+		cut: "剪切",
+		paste: "粘贴",
+		undo: "撤销",
+		cancelUndo: "取消撤销",
+		selectAll: "全选",
+		amplification: "放大",
+		zoomOut: "缩小",
+		down: "向下",
+		up:"向上",
+		selectMultipleNode: "选择多节点",
+		mouseDrag: "鼠标拖拽",
 		detail: "任务监控",
 		select_source_connection: "源端连接",
 		select_sync_mode: "同步方式",
@@ -224,7 +238,16 @@ const cn = {
 			file_modify_time_ondisk: "更新时间",
 			file_create_time_ondisk: "创建时间",
 			file_path: "文件路径"
-		}
+		},
+		importantReminder: "重要提醒",
+		modifyEditText: "编辑任务如果修改了",
+		nodeLayoutProcess: "节点排版流程",
+		nodeAttributes: "节点属性",
+		matchingRelationship: "匹配关系",
+		afterSubmission: "提交后必须",
+		runNomally: "才能正常运行",
+		editLayerTip: " 否则可能导致异常错误，请问您要继续编辑吗?",
+		continueEditing: "继续编辑",
 	},
 	connection: {
 		status: {
@@ -554,6 +577,10 @@ const cn = {
 						label: "标签",
 						placeholder: "请输入标签"
 					},
+					joinMethod: {
+						label: "插入方式",
+						placeholder: "请选择数据插入方式"
+					},
 					joinType: {
 						label: "数据写入模式",
 						placeholder: "请选择数据写入模式"
@@ -571,6 +598,11 @@ const cn = {
 						label: "内嵌数组匹配条件",
 						placeholder: "内嵌数组匹配条件"
 					}
+				},
+
+				methodList: {
+					false: "丢弃",
+					true: "写入",
 				},
 
 				writeMode: {
@@ -693,6 +725,26 @@ const cn = {
 			database_name: "数据库名称",
 			original_name: "原名称"
 		}
+	},
+	apiInfo: {
+		basicAttributes: "基本属性",
+		trquestMethod: "请求方式",
+		status: "状态",
+		supportFormat: "支持格式",
+		founder: "创建人",
+		interfaceClassification: "接口分类",
+		modifyTime: "修改时间",
+		interface: "接口分类",
+		version: "版本",
+		parameter: "参数",
+		typesof: "类型",
+		is_required: "是否必填",
+		examples: "示例",
+		requestParameters: "请求参数",
+		responseParameters: "响应参数",
+		requestExample: "请求示例",
+		backExamples: "返回示例",
+		announcing: "发布中",
 	}
 };
 
