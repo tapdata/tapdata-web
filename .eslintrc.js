@@ -16,8 +16,8 @@ module.exports = {
 		// consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
 		"plugin:vue/essential",
 		// https://github.com/standard/standard/blob/master/docs/RULES-en.md
-		"eslint:recommended",
-		"plugin:prettier/recommended"
+		"plugin:prettier/recommended",
+		"eslint:recommended"
 	],
 	// required to lint *.vue files
 	plugins: ["vue"],
@@ -26,11 +26,10 @@ module.exports = {
 		"prettier/prettier": [
 			"error",
 			{
-				"singleQuote": true,
-				"trailingComma": "none",
-				"bracketSpacing": true,
-				"jsxBracketSameLine": true
-
+				singleQuote: true,
+				trailingComma: "none",
+				bracketSpacing: true,
+				jsxBracketSameLine: true
 			}
 		],
 		// allow async-await
@@ -44,7 +43,7 @@ module.exports = {
 		//'quotes': [1, 'single', 'backtick', 'double'],
 		"no-console": ["error", { allow: ["warn"] }],
 		"no-multiple-empty-lines": ["warn", { max: 2, maxEOF: 1 }],
-		"semi": [1, "always"],
+		semi: [1, "always"],
 		"no-undef": ["error"]
 	}
 };
