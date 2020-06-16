@@ -14,15 +14,15 @@
     "build": "node build/build.js"
   },
   "husky": {
-	  "hooks": {
-		  "pre-commit": "lint-staged"
-	  }
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
-	  "*.{js,vue,css}": [
-		  "eslint --fix",
-		  "prettier --write"
-	  ]
+    "*.{js,vue,css}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "alertifyjs": "^1.13.1",
@@ -83,10 +83,12 @@
     "file-loader": "^1.1.4",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "html-webpack-plugin": "^2.30.1",
+    "husky": "^4.2.5",
     "jest": "^22.0.4",
     "jest-serializer-vue": "^0.3.0",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
+    "lint-staged": "^10.2.10",
     "nightwatch": "^0.9.12",
     "node-notifier": "^5.1.2",
     "optimize-css-assets-webpack-plugin": "^3.2.0",
