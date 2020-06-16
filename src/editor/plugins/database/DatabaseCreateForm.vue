@@ -6,14 +6,14 @@
 				<div>{{ index + 1 }}. {{ item.show_msg }}</div>
 				<div class="test-info">
 					<div style="margin-right: 40px">{{ `Required:${item.required}` }}</div>
-					<div>{{ `Status:${item.status === 'fail' ? 'failed' : item.status}` }}</div>
+					<div>{{ `Status:${item.status === "fail" ? "failed" : item.status}` }}</div>
 				</div>
 				<div v-if="item.fail_message" class="test-info">
 					Message:
 					<b :style="{ color: item.required ? 'red' : '#ffc107' }">{{ item.fail_message }}</b>
 				</div>
 			</div>
-			<div class="test-result">{{ testResult || '测试中...' }}</div>
+			<div class="test-result">{{ testResult || "测试中..." }}</div>
 		</div>
 		<form-builder ref="form" v-model="model" :config="config"></form-builder>
 		<span slot="footer" class="dialog-footer">
@@ -24,16 +24,16 @@
 </template>
 
 <script>
-import Drawer from '@/components/Drawer';
-import factory from '@/api/factory';
-import formConfig from './config';
+import Drawer from "@/components/Drawer";
+import factory from "@/api/factory";
+import formConfig from "./config";
 
-const databaseTypesModel = factory('DatabaseTypes');
-const connectionsModel = factory('connections');
+const databaseTypesModel = factory("DatabaseTypes");
+const connectionsModel = factory("connections");
 const defaultConfig = [];
 
 export default {
-	name: 'DatabaseCreateForm',
+	name: "DatabaseCreateForm",
 	components: {
 		Drawer
 	},
@@ -42,31 +42,32 @@ export default {
 			visible: false,
 			testing: false,
 			testLogs: null,
-			testResult: '',
+			testResult: "",
 			timezones: [],
 
 			model: {
-				name: '',
-				database_type: '',
-				connection_type: '',
-				database_host: '',
-				database_port: '',
-				database_name: '',
-				database_username: '',
-				plain_password: '',
-				table_filter: '',
-				additionalString: '',
-				thin_type: '',
-				database_owner: '',
-				node_name: '',
-				database_schema: '',
+				name: "",
+				database_type: "",
+				connection_type: "",
+				database_host: "",
+				database_port: "",
+				database_name: "",
+				database_username: "",
+				plain_password: "",
+				table_filter: "",
+				additionalString: "",
+				thin_type: "",
+				database_owner: "",
+				node_name: "",
+				database_schema: "",
 
-				database_datetype_without_timezone: '',
+				database_datetype_without_timezone: "",
 				supportUpdatePk: false
 			},
 			config: {
 				items: []
-			}
+			},
+			checkItems: null
 		};
 	},
 	created() {
@@ -76,15 +77,15 @@ export default {
 		defaultConfig.push(
 			...[
 				{
-					type: 'input',
-					field: 'name',
-					label: '连接名称',
+					type: "input",
+					field: "name",
+					label: "连接名称",
 					required: true
 				},
 				{
-					type: 'select',
-					field: 'database_type',
-					label: '数据库类型',
+					type: "select",
+					field: "database_type",
+					label: "数据库类型",
 					options: [],
 					required: true,
 					on: {
@@ -105,42 +106,26 @@ export default {
 			this.visible = true;
 		},
 		initTimezones() {
-			let timezones = [{ label: '(Database Timezone)', value: '' }];
+			let timezones = [{ label: "(Database Timezone)", value: "" }];
 
 			for (let i = -11; i < 15; i++) {
-				let timezone = '';
+				let timezone = "";
 				if (i >= -9 && i <= 9) {
-					timezone = '0' + Math.abs(i);
+					timezone = "0" + Math.abs(i);
 				} else {
 					timezone = Math.abs(i);
 				}
-				timezone += ':00';
+				timezone += ":00";
 
 				if (i < 0) {
-					timezone = '-' + timezone;
+					timezone = "-" + timezone;
 				} else {
-					timezone = '+' + timezone;
+					timezone = "+" + timezone;
 				}
 
 				timezones.push({ label: timezone, value: timezone });
 			}
 			this.timezones = timezones;
-		},
-		checkItems() {
-			let val = this.model.connection_type;
-			let databaseDatetypeWithoutTimezone = this.config.items.find(
-				item => item.field === 'database_datetype_without_timezone'
-			);
-			let supportUpdatePk = this.config.items.find(item => item.field === 'supportUpdatePk');
-			this.$nextTick(() => {
-				if (databaseDatetypeWithoutTimezone) {
-					databaseDatetypeWithoutTimezone.show = val && ['source', 'source_and_target'].includes(val);
-				}
-				if (supportUpdatePk) {
-					supportUpdatePk.show = val && ['target', 'source_and_target'].includes(val);
-				}
-				this.$refs.form.$forceUpdate();
-			});
 		},
 		// 获取数据库类型列表
 		async getDT() {
@@ -150,7 +135,7 @@ export default {
 					return { label: dt.name, value: dt.type };
 				});
 
-				let whiteList = ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2']; //目前白名单
+				let whiteList = ["mysql", "oracle", "mongodb", "sqlserver", "db2"]; //目前白名单
 				defaultConfig[1].options = options.filter(opt => whiteList.includes(opt.value));
 				// defaultConfig[1].options = options;
 				if (options.length) {
@@ -165,32 +150,33 @@ export default {
 			let func = formConfig[this.model.database_type];
 			if (func) {
 				this.initData();
-				let config = func(this, 'config.items');
+				let config = func(this, "config.items");
 				let items = defaultConfig.concat(config.items);
-				let item = items.find(it => it.field === 'database_datetype_without_timezone');
+				let item = items.find(it => it.field === "database_datetype_without_timezone");
 				if (item) {
 					item.options = this.timezones;
 				}
 				this.config.items = items;
 				this.initData(config.defaultModel); //切换类型会后初始化数据
-				this.checkItems();
+				this.checkItems = config.checkItems; //根据model变化更新表单项显示或隐藏
+				this.checkItems && this.checkItems();
 			}
 		},
 		async test(id) {
 			this.testing = true;
-			this.testResult = '';
+			this.testResult = "";
 			this.testLogs = null;
 			let result = await connectionsModel.get([id]);
 			if (result.data) {
 				const data = result.data;
 				let validate_details = data.response_body && data.response_body.validate_details;
 				this.testLogs = validate_details;
-				this.$refs.drawer.$el.getElementsByTagName('main')[0].scrollTop = 0;
-				if (data.status === 'ready') {
+				this.$refs.drawer.$el.getElementsByTagName("main")[0].scrollTop = 0;
+				if (data.status === "ready") {
 					this.testing = false;
-					this.testResult = '测试通过';
-				} else if (data.status === 'invalid') {
-					this.testResult = '测试未通过';
+					this.testResult = "测试通过";
+				} else if (data.status === "invalid") {
+					this.testResult = "测试未通过";
 					this.testing = false;
 				} else {
 					setTimeout(() => {
@@ -203,27 +189,27 @@ export default {
 			this.$refs.form.validate(valid => {
 				if (valid) {
 					let params = Object.assign({}, this.model, {
-						user_id: this.$cookie.get('user_id'),
-						status: 'testing',
+						user_id: this.$cookie.get("user_id"),
+						status: "testing",
 						schema: {},
 						retry: 0,
 						nextRetry: null,
 						response_body: {},
-						project: '',
+						project: "",
 						listtags: []
 					});
 					connectionsModel
 						.post(params)
 						.then(res => {
-							if (res.statusText === 'OK') {
+							if (res.statusText === "OK") {
 								this.test(res.data.id);
 							}
 						})
 						.catch(err => {
 							if (err && err.response.status === 500) {
-								this.$message.error('连接名称已存在');
+								this.$message.error("连接名称已存在");
 							} else {
-								this.$message.error('保存失败');
+								this.$message.error("保存失败");
 							}
 						});
 				}

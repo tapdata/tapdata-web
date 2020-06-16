@@ -21,12 +21,13 @@
  *
  */
 const ele = {
-	input: 'FbInput',
-	select: 'FbSelect',
-	radio: 'FbRadio'
+	input: "FbInput",
+	select: "FbSelect",
+	radio: "FbRadio",
+	switch: "FbSwitch"
 };
 export default {
-	name: 'FormBuilder',
+	name: "FormBuilder",
 	props: {
 		value: Object,
 		config: {
@@ -41,17 +42,17 @@ export default {
 				model: null,
 				rules: null,
 				inline: false,
-				labelPosition: 'top',
-				labelWidth: '160px',
-				size: 'mini',
+				labelPosition: "top",
+				labelWidth: "160px",
+				size: "mini",
 				disabled: false
 			},
 			defaultFormItemConfig: {
 				show: true,
-				type: 'input',
-				field: 'field',
-				label: '字段名',
-				domType: 'text',
+				type: "input",
+				field: "field",
+				label: "字段名",
+				domType: "text",
 				required: false,
 				clearable: true,
 				labelSlot: () => null,
@@ -77,10 +78,10 @@ export default {
 		});
 		let formItems = this.config.items || [];
 		let ele = h(
-			'ElForm',
+			"ElForm",
 			{
-				class: 'e-form-builder-container',
-				ref: 'form',
+				class: "e-form-builder-container",
+				ref: "form",
 
 				props: Object.assign(formConfig, {
 					hideRequiredAsterisk: true,
@@ -94,7 +95,7 @@ export default {
 		if (this.show) {
 			return ele;
 		}
-		return '';
+		return "";
 	},
 	methods: {
 		validate(callback) {
@@ -111,7 +112,7 @@ export default {
 				rules.push({
 					required: true,
 					validator(rule, value, callback) {
-						if (!value || !(value + '').trim()) {
+						if (!value || !(value + "").trim()) {
 							callback(new Error(`${config.label}不能为空`));
 						} else {
 							callback();
@@ -125,45 +126,45 @@ export default {
 			let appendSlot = config.appendSlot ? config.appendSlot(h) : null;
 
 			let item = h(
-				'ElFormItem',
+				"ElFormItem",
 				{
-					class: 'e-form-builder-item',
+					class: "e-form-builder-item",
 					props: {
 						prop: config.field,
 						label: config.label,
 						rules: rules
 					},
 					style: {
-						display: config.show ? 'block' : 'none'
+						display: config.show ? "block" : "none"
 					}
 				},
 				[
 					h(
-						'div',
+						"div",
 						{
-							class: { 'e-form-builder-item-label': true },
-							slot: 'label'
+							class: { "e-form-builder-item-label": true },
+							slot: "label"
 						},
 						[
 							labelSlot ||
-								h('div', { class: { 'is-required': required } }, [
+								h("div", { class: { "is-required": required } }, [
 									config.label,
 									config.tips &&
 										h(
-											'ElPopover',
+											"ElPopover",
 											{
-												style: { 'vertical-align': 'middle' },
+												style: { "vertical-align": "middle" },
 												props: {
-													trigger: 'hover',
+													trigger: "hover",
 													content: config.tips.content || config.tips,
-													placement: 'top'
+													placement: "top"
 												}
 											},
 											[
-												h('i', {
+												h("i", {
 													class:
-														'el-icon-warning-outline color-warning e-form-builder-item-tips',
-													slot: 'reference'
+														"el-icon-warning-outline color-warning e-form-builder-item-tips",
+													slot: "reference"
 												}),
 												config.tips.label
 											]
@@ -171,8 +172,8 @@ export default {
 								])
 						]
 					),
-					h('div', { class: { 'fb-item-group': true } }, [
-						prependSlot ? h('div', { class: { 'fb-form-item-prepend-slot': true } }, [prependSlot]) : null,
+					h("div", { class: { "fb-item-group": true } }, [
+						prependSlot ? h("div", { class: { "fb-form-item-prepend-slot": true } }, [prependSlot]) : null,
 						h(ele[config.type], {
 							props: {
 								value: self.value[config.field],
@@ -191,7 +192,7 @@ export default {
 								}
 							}
 						}),
-						appendSlot ? h('div', { class: { 'fb-form-item-append-slot': true } }, [appendSlot]) : null
+						appendSlot ? h("div", { class: { "fb-form-item-append-slot": true } }, [appendSlot]) : null
 					])
 				]
 			);
@@ -207,7 +208,7 @@ export default {
 		font-size: 12px;
 		.is-required {
 			&::after {
-				content: '*';
+				content: "*";
 				color: #ee5353;
 				margin-left: 4px;
 				font-size: 14px;
