@@ -578,6 +578,10 @@ const tc = {
 						label: "标签",
 						placeholder: "请输入标签"
 					},
+					joinMethod: {
+						label: "插入方式",
+						placeholder: "請選擇數據插入方式"
+					},
 					joinType: {
 						label: "数据写入模式",
 						placeholder: "请选择数据写入模式"
@@ -595,6 +599,11 @@ const tc = {
 						label: "內嵌數組匹配條件",
 						placeholder: "內嵌數組匹配條件"
 					}
+				},
+
+				methodList: {
+					false: "丟棄",
+					true: "寫入",
 				},
 
 				writeMode: {

@@ -581,6 +581,10 @@ const en = {
 						label: "Label",
 						placeholder: "Please input label"
 					},
+					joinMethod: {
+						label: "Insert Method",
+						placeholder: "Please select the data insertion method"
+					},
 					joinType: {
 						label: "Data write model",
 						placeholder: "Please select Data Write model"
@@ -598,6 +602,11 @@ const en = {
 						label: "In Array Match Key",
 						placeholder: "Please enter in embed array match key "
 					}
+				},
+
+				methodList: {
+					false: "Discard",
+					true: "write",
 				},
 
 				writeMode: {

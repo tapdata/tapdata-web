@@ -577,6 +577,10 @@ const cn = {
 						label: "标签",
 						placeholder: "请输入标签"
 					},
+					joinMethod: {
+						label: "插入方式",
+						placeholder: "请选择数据插入方式"
+					},
 					joinType: {
 						label: "数据写入模式",
 						placeholder: "请选择数据写入模式"
@@ -594,6 +598,11 @@ const cn = {
 						label: "内嵌数组匹配条件",
 						placeholder: "内嵌数组匹配条件"
 					}
+				},
+
+				methodList: {
+					false: "丢弃",
+					true: "写入",
 				},
 
 				writeMode: {

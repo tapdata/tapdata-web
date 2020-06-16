@@ -1,7 +1,7 @@
 <template>
 	<el-container class="api-info">
 		<el-header class="e-height">
-			<h1>订单物流API</h1>
+			<h1>{{name}}</h1>
 			<div class="operating">
 				<i class="iconfont icon-bibianji"></i>
 				<i class="iconfont icon-debug-"></i>
