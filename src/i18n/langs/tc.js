@@ -751,6 +751,85 @@ const tc = {
 		requestExample: '請求示例',
 		backExamples: '返回示例',
 		announcing: '發布中'
+	},
+	dataForm: {
+		title: '新建數據庫',
+		saveSuccess: '測試通過並創建成功',
+		saveFail: '保存失敗',
+
+		submit: '保存',
+		cancel: '取消',
+		test: {
+			title: '連接測試',
+			success: '測試通過',
+			fail: '測試未通過',
+			testing: '測試中...'
+		},
+		form: {
+			connectionName: '連接名稱',
+			databaseType: '數據庫類型',
+			connectionType: '數據庫許可權',
+			host: '數據庫地址',
+			port: '端口',
+			databaseName: '數據庫名稱',
+			databaseSchema: '數據庫模式',
+			userName: '帳號',
+			password: '密碼',
+			nodeName: '編目節點名稱',
+			tableFilter: '包含錶',
+			additionalString: '其他連接串參數',
+			isUrl: '是否使用URI',
+			databaseUri: '數據庫 URI',
+			ssl: '使用 TLS/SSL 連接',
+			sslKey: '用戶端私鑰',
+			sslPass: '私鑰密碼',
+			sslValidate: '驗證服務端證書',
+			sslCA: '證書頒發機构',
+			thinType: '認證管道',
+			databaseOwner: '數據庫歸屬帳戶名',
+			timeZone: '時間類型的時區',
+
+			databaseHostPlaceholder: '資料庫地址（127.0.0.1/Domain:{端口}，多個地址請用，分開）',
+
+			uriTips: {
+				label: '示例',
+				content:
+					`<b>MongoDB 數據庫連接 URI 示範:</b><br>` +
+					`複製集: mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
+					`啟用認證的複製集: mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
+					`多節點複製集: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
+					`分片集: mongodb://192.168.0.100:27017/mydb<br>` +
+					`多個mongos: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
+			},
+			tableFilterTips: '逗號分割的表達式列表，使用*代表任意長度任意字符',
+			timeZoneTips: '影響類型: DATE',
+
+			options: {
+				sourceAndTarget: '允許讀寫',
+				source: '僅限讀取',
+				target: '僅限寫入'
+			}
+		},
+		error: {
+			connectionNameExist: '連接名稱已存在',
+			noneHost: '數據庫地址不能為空',
+			nonePort: '端口不能為空',
+			portNumber: '端口必須為數位',
+			portRange: '端口號取值範圍 1 ~ 65535',
+			tableFilterRange: '長度在100個字元以內',
+			noneSslKey: '用戶端私鑰不能為空',
+			noneSslCA: '證書頒發機构不能為空'
+		}
+	},
+	formBuilder: {
+		noneText: '不能為空',
+		file: {
+			placeholder: '請選擇文件',
+			button: '選擇文件'
+		},
+		input: {
+			placeholderPrefix: '請輸入'
+		}
 	}
 };
 

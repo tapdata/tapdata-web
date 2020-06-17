@@ -297,7 +297,7 @@ const cn = {
 					tip: 'MongoDB 数据集',
 					defaultText: '数据集',
 
-					none_database: 's数据库必填.',
+					none_database: '数据库必填.',
 					none_collection: '数据集必填.',
 					none_pk: '主键必填.',
 
@@ -750,6 +750,85 @@ const cn = {
 		requestExample: '请求示例',
 		backExamples: '返回示例',
 		announcing: '发布中'
+	},
+	dataForm: {
+		title: '新建数据库',
+		saveSuccess: '测试通过并创建成功',
+		saveFail: '保存失败',
+
+		submit: '保存',
+		cancel: '取消',
+		test: {
+			title: '连接测试',
+			success: '测试通过',
+			fail: '测试未通过',
+			testing: '测试中...'
+		},
+		form: {
+			connectionName: '连接名称',
+			databaseType: '数据库类型',
+			connectionType: '数据库权限',
+			host: '数据库地址',
+			port: '端口',
+			databaseName: '数据库名称',
+			databaseSchema: '数据库模式',
+			userName: '账号',
+			password: '密码',
+			nodeName: '编目节点名称',
+			tableFilter: '包含表',
+			additionalString: '其他连接串参数',
+			isUrl: '是否使用URI',
+			databaseUri: '数据库 URI',
+			ssl: '使用 TLS/SSL 连接',
+			sslKey: '客户端私钥',
+			sslPass: '私钥密码',
+			sslValidate: '验证服务端证书',
+			sslCA: '证书颁发机构',
+			thinType: '认证方式',
+			databaseOwner: '数据库归属账户名',
+			timeZone: '时间类型的时区',
+
+			databaseHostPlaceholder: '数据库地址(127.0.0.1/Domain:{端口},多个地址请用,分开)',
+
+			uriTips: {
+				label: '示例',
+				content:
+					`<b>MongoDB 数据库连接 URI 示范:</b><br>` +
+					`复制集: mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
+					`启用认证的复制集: mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
+					`多节点复制集: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
+					`分片集: mongodb://192.168.0.100:27017/mydb<br>` +
+					`多个mongos: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
+			},
+			tableFilterTips: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
+			timeZoneTips: '影响类型: DATE',
+
+			options: {
+				sourceAndTarget: '允许读写',
+				source: '仅限读取',
+				target: '仅限写入'
+			}
+		},
+		error: {
+			connectionNameExist: '连接名称已存在',
+			noneHost: '数据库地址不能为空',
+			nonePort: '端口不能为空',
+			portNumber: '端口必须为数字',
+			portRange: '端口号取值范围 1 ~ 65535',
+			tableFilterRange: '长度在100个字符以内',
+			noneSslKey: '客户端私钥不能为空',
+			noneSslCA: '证书颁发机构不能为空'
+		}
+	},
+	formBuilder: {
+		noneText: '不能为空',
+		file: {
+			placeholder: '请选择文件',
+			button: '选择文件'
+		},
+		input: {
+			placeholderPrefix: '请输入'
+		}
 	}
 };
 

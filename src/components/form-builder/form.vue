@@ -52,7 +52,7 @@ export default {
 				show: true,
 				type: 'input',
 				field: 'field',
-				label: '字段名',
+				label: 'label',
 				domType: 'text',
 				required: false,
 				clearable: true,
@@ -104,7 +104,7 @@ export default {
 					required: true,
 					validator(rule, value, callback) {
 						if (!value || !(value + '').trim()) {
-							callback(new Error(`${config.label}不能为空`));
+							callback(new Error(`${config.label}` + self.$t('formBuilder.noneText')));
 						} else {
 							callback();
 						}

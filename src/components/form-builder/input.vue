@@ -15,7 +15,7 @@ export default {
 		let config = self.config;
 		return h('ElInput', {
 			attrs: {
-				placeholder: config.placeholder || `请输入${config.label}`
+				placeholder: config.placeholder || `${self.$t('formBuilder.input.placeholderPrefix')}${config.label}`
 			},
 			props: {
 				value: self.value,

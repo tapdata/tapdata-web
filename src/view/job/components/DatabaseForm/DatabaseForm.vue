@@ -1,7 +1,7 @@
 <template>
-	<Drawer ref="drawer" :visible.sync="visible" title="新建数据库">
+	<Drawer ref="drawer" :visible.sync="visible" :title="$t('dataForm.title')">
 		<div class="test-block" v-if="testing || testLogs">
-			<div class="test-block-title">连接测试</div>
+			<div class="test-block-title">{{ $t('dataForm.test.title') }}</div>
 			<div class="test-log-item" v-for="(item, index) in testLogs" :key="item.sort">
 				<div>{{ index + 1 }}. {{ item.show_msg }}</div>
 				<div class="test-info">
@@ -13,7 +13,7 @@
 					<b :style="{ color: item.required ? 'red' : '#ffc107' }">{{ item.fail_message }}</b>
 				</div>
 			</div>
-			<div class="test-result">{{ testResult || '测试中...' }}</div>
+			<div class="test-result">{{ testResult || $t('dataForm.test.testing') }}</div>
 		</div>
 		<form-builder ref="form" v-model="model" :config="config"></form-builder>
 		<span slot="footer" class="dialog-footer">
@@ -89,13 +89,13 @@ export default {
 				{
 					type: 'input',
 					field: 'name',
-					label: '连接名称',
+					label: self.$t('dataForm.form.connectionName'),
 					required: true
 				},
 				{
 					type: 'select',
 					field: 'database_type',
-					label: '数据库类型',
+					label: self.$t('dataForm.form.databaseType'),
 					options: [],
 					required: true,
 					on: {
@@ -179,7 +179,7 @@ export default {
 			let func = formConfig[this.model.database_type];
 			if (func) {
 				this.initData();
-				let config = func(this, 'config.items');
+				let config = func(this);
 				let items = defaultConfig.concat(config.items);
 				let item = items.find(it => it.field === 'database_datetype_without_timezone');
 				if (item) {
@@ -208,11 +208,11 @@ export default {
 				this.$refs.drawer.$el.getElementsByTagName('main')[0].scrollTop = 0;
 				if (data.status === 'ready') {
 					this.testing = false;
-					this.testResult = '测试通过';
+					this.testResult = this.$t('dataForm.test.success');
 					this.visible = false;
-					this.$message.success('测试并创建通过');
+					this.$message.success(this.$t('dataForm.saveSuccess'));
 				} else if (data.status === 'invalid') {
-					this.testResult = '测试未通过';
+					this.testResult = this.$t('dataForm.test.fail');
 					this.testing = false;
 				} else {
 					setTimeout(() => {
@@ -243,9 +243,9 @@ export default {
 						})
 						.catch(err => {
 							if (err && err.response.status === 500) {
-								this.$message.error('连接名称已存在');
+								this.$message.error(this.$t('dataForm.error.connectionNameExist'));
 							} else {
-								this.$message.error('保存失败');
+								this.$message.error(this.$t('dataForm.saveFail'));
 							}
 						});
 				}

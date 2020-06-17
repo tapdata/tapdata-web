@@ -756,6 +756,85 @@ const en = {
 		requestExample: '请求示例',
 		backExamples: '返回示例',
 		announcing: '发布中'
+	},
+	dataForm: {
+		title: 'Create Database',
+		saveSuccess: 'Test and save success.',
+		saveFail: 'Save failed.',
+
+		submit: 'Submit',
+		cancel: 'Cancel',
+		test: {
+			title: 'Connection Test',
+			success: 'Pass the test',
+			fail: 'Test failed',
+			testing: 'Testing...'
+		},
+		form: {
+			connectionName: 'Connection Name',
+			databaseType: 'Database type',
+			connectionType: 'Database permission',
+			host: 'Database Host',
+			port: 'Port',
+			databaseName: 'Database Name',
+			databaseSchema: 'Database Schema',
+			userName: 'User Name',
+			password: 'Password',
+			nodeName: 'Catalog Node Name',
+			tableFilter: 'Include Table',
+			additionalString: 'Connection String Params',
+			isUrl: 'Use URI',
+			databaseUri: 'Database URI',
+			ssl: 'Use TLS/SSL Connection',
+			sslKey: 'Private Key',
+			sslPass: 'Private Key Password',
+			sslValidate: 'Validate Server Certificate',
+			sslCA: 'Certificate Authority',
+			thinType: 'Thin Type',
+			databaseOwner: 'Database Owner',
+			timeZone: 'Date Type Timezone',
+
+			databaseHostPlaceholder: 'Database Host(127.0.0.1/Domain:{Port},Please use multiple addresses , separate)',
+
+			uriTips: {
+				label: 'Example',
+				content:
+					`<b>MongoDB Connection URI Examples:</b><br>` +
+					`Replicaset: mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
+					`Replicaset with authentication: mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
+					`Replicaset with multiple members: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
+					`Sharded Cluster: mongodb://192.168.0.100:27017/mydb<br>` +
+					`Sharded Cluster with multiple mongos: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
+			},
+			tableFilterTips: 'Comma-delimited list of expression, use * to represent any character of any length.',
+			timeZoneTips: 'Impact Type: DATE',
+
+			options: {
+				sourceAndTarget: 'SOURCE AND TARGET',
+				source: 'SOURCE',
+				target: 'TARGET'
+			}
+		},
+		error: {
+			connectionNameExist: 'Connection name already existed.',
+			noneHost: 'Database host is required.',
+			nonePort: 'Port is required.',
+			portNumber: 'Must be number.',
+			portRange: 'Port should be between 1 ~ 65535',
+			tableFilterRange: 'Less than 100 characters in length.',
+			noneSslKey: 'Private key is required.',
+			noneSslCA: 'Certificate Authority is required.'
+		}
+	},
+	formBuilder: {
+		noneText: ' is required.',
+		file: {
+			placeholder: 'Please select a file',
+			button: 'Select'
+		},
+		input: {
+			placeholderPrefix: 'Enter '
+		}
 	}
 };
 

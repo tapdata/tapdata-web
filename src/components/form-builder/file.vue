@@ -22,7 +22,7 @@ export default {
 			'ElInput',
 			{
 				attrs: {
-					placeholder: config.placeholder || `请选择文件`
+					placeholder: config.placeholder || self.$t('formBuilder.file.placeholder')
 				},
 				props: {
 					value: self.fileName,
@@ -52,7 +52,7 @@ export default {
 						},
 						slot: 'append'
 					},
-					[h('ElButton', '选择文件')]
+					[h('ElButton', self.$t('formBuilder.file.button'))]
 				)
 			]
 		);
