@@ -1,5 +1,5 @@
 <template>
-	<div class="task-list">
+	<div class="task-list" v-loading="restLoading">
 		<div class="task-list-operating-area box-card">
 			<el-row :gutter="10">
 				<el-form label-width="100px" :data="formData" :inline="true" class="dataFlowsFlow">
@@ -188,7 +188,7 @@
 								<el-button
 									type="text"
 									:disabled="['draft', 'paused'].includes(scope.row.status)"
-									@click="handleDetail(scope.row.id)"
+									@click="handleDetail(scope.row.id,'detail')"
 								>
 									<i class="iconfont  task-list-icon icon-chaxun"></i>
 								</el-button>
@@ -201,7 +201,7 @@
 											scope.row.status
 										)
 									"
-									@click="handleDetail(scope.row.id)"
+									@click="handleDetail(scope.row.id,'edit')"
 								>
 									<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
 								</el-button>
@@ -272,6 +272,7 @@ const MetadataInstance = factory("MetadataInstances");
 export default {
 	data() {
 		return {
+			restLoading: false,
 			colorMap: {
 				running: "#67C23A",
 				paused: "#F19149",
@@ -363,36 +364,45 @@ export default {
 		handleGoFuntion(){
 			top.location.href = "/#/JsFuncs";
 		},
-		handleDetail(id) {
+		handleDetail(id,type) {
 			const h = this.$createElement;
-			this.$msgbox({
-				title: this.$t("dataFlow.importantReminder"),
-				customClass: "dataflow-clickTip",
-				message: h('p',null,[
-					h('span',null,this.$t("dataFlow.modifyEditText")),
-					h('span',{style: 'color: #48b6e2'},this.$t("dataFlow.nodeLayoutProcess")),
-					h('span',null,'、'),
-					h('span',{style: 'color: #48b6e2'},this.$t("dataFlow.nodeAttributes")),
-					h('span',null,'、'),
-					h('span',{style: 'color: #48b6e2'},this.$t("dataFlow.matchingRelationship")),
-					h('span',null,'、'),
-					h('span',null,this.$t("dataFlow.afterSubmission")),
-					h('span',{style: 'color: #48b6e2'},this.$t("dataFlow.reset")),
-					h('span',null,this.$t("dataFlow.runNomally")),
-					h('span',null,this.$t("dataFlow.editLayerTip"))
-				]),
-				dangerouslyUseHTMLString: true,
-				showCancelButton: true,
-				confirmButtonText: this.$t("dataFlow.continueEditing"),
-				cancelButtonText: this.$t("message.cancel"),
-				type: 'warning'
-			}).then(() => {
+			if (type === "edit") {
+				this.$msgbox({
+					title: this.$t("dataFlow.importantReminder"),
+					customClass: "dataflow-clickTip",
+					message: h('p',null,[
+						h('span',null,this.$t("dataFlow.modifyEditText")),
+						h('span',{style: 'color: #48b6e2'},this.$t("dataFlow.nodeLayoutProcess")),
+						h('span',null,'、'),
+						h('span',{style: 'color: #48b6e2'},this.$t("dataFlow.nodeAttributes")),
+						h('span',null,'、'),
+						h('span',{style: 'color: #48b6e2'},this.$t("dataFlow.matchingRelationship")),
+						h('span',null,'、'),
+						h('span',null,this.$t("dataFlow.afterSubmission")),
+						h('span',{style: 'color: #48b6e2'},this.$t("dataFlow.reset")),
+						h('span',null,this.$t("dataFlow.runNomally")),
+						h('span',null,this.$t("dataFlow.editLayerTip"))
+					]),
+					dangerouslyUseHTMLString: true,
+					showCancelButton: true,
+					confirmButtonText: this.$t("dataFlow.continueEditing"),
+					cancelButtonText: this.$t("message.cancel"),
+					type: 'warning'
+				}).then(() => {
+					let routeUrl = this.$router.resolve({
+						path: "/job",
+						query: { id: id }
+					});
+					window.open(routeUrl.href, "_blank");
+				})
+			} else {
 				let routeUrl = this.$router.resolve({
 					path: "/job",
 					query: { id: id }
 				});
 				window.open(routeUrl.href, "_blank");
-			})
+			}
+
 		},
 		handleImport() {
 			let routeUrl = this.$router.resolve({
@@ -443,15 +453,8 @@ export default {
 				let id = command.replace("copy", "");
 				this.handlerCopy(id);
 			} else if (command.indexOf("reset") !== -1) {
-				this.$confirm(this.$t("message.resetMessage"), this.$t("dataFlow.importantReminder"), {
-					confirmButtonText: this.$t("dataFlow.reset"),
-					cancelButtonText: this.$t("message.cancel"),
-					type: "warning"
-				}).then(() => {
-					let id = command.replace("reset", "");
-					this.handleReset(id);
-				})
-
+				let id = command.replace("reset", "");
+				this.handleReset(id);
 			} else if (command.indexOf("force_stopping") !== -1) {
 				this.$confirm(this.$t("message.forceStoppingMessage"), this.$t("dataFlow.importantReminder"), {
 					confirmButtonText: this.$t("dataFlow.button.force_stop"),
@@ -625,6 +628,11 @@ export default {
 				}
 			});
 		},
+
+		deleteConfirm() {
+			
+		},
+
 		handleAllDelete() {
 			if (this.multipleSelection.length === 0) {
 				this.$message.info("please select row data");
@@ -680,6 +688,15 @@ export default {
 					});
 				})
 		},
+
+		statusConfirm(callback) {
+			this.$confirm(this.$t("message.stopMessage"), this.$t("dataFlow.importantReminder"), {
+				confirmButtonText: this.$t("message.confirm"),
+				cancelButtonText: this.$t("message.cancel"),
+				type: "warning"
+			}).then(callback)
+		},
+
 		handleStatus(id, oldStatus,status) {
 			if(oldStatus === 'draft'){
 				return ;
@@ -688,11 +705,7 @@ export default {
 				status: status
 			};
 			if (status === "stopping") {
-				this.$confirm(this.$t("message.stopMessage"), this.$t("dataFlow.importantReminder"), {
-					confirmButtonText: this.$t("message.confirm"),
-					cancelButtonText: this.$t("message.cancel"),
-					type: "warning"
-				}).then(() => {
+				this.statusConfirm(() => {
 					this.getStatus(id,data)
 				})
 			} else {
@@ -726,22 +739,15 @@ export default {
 					})
 				});
 			}else if(status === 'stopping'){ //全部停止
-				this.$confirm(this.$t("message.stopMessage"), this.$t("dataFlow.importantReminder"), {
-					confirmButtonText: this.$t("message.confirm"),
-					cancelButtonText: this.$t("message.cancel"),
-					type: "warning"
-				}).then(() => {
-					this.multipleSelection.map(item => {
-						this.tableData.map(row =>{
-							if((row.id === item.id)&&(row.status ==='running')){
-								multipleSelection.push(item.id);
-							}else {
-								discardData.push(item.id)
-							}
-						})
-					});
-				})
-
+				this.multipleSelection.map(item => {
+					this.tableData.map(row =>{
+						if((row.id === item.id)&&(row.status ==='running')){
+							multipleSelection.push(item.id);
+						}else {
+							discardData.push(item.id)
+						}
+					})
+				});
 			}
 			if (multipleSelection.length === 0) {
 				this.$message.warning(discardData.length+1)
@@ -755,22 +761,26 @@ export default {
 			let attributes = {
 				status: status
 			};
-			dataFlows.update(where, attributes).then(res => {
-				if (res.statusText === "OK" || res.status === 200) {
-					this.getData();
-				}
-			});
+
+			if (status === 'stopping') {
+				this.statusConfirm(() => {
+					dataFlows.update(where, attributes).then(res => {
+						if (res.statusText === "OK" || res.status === 200) {
+							this.getData();
+						}
+					});
+				})
+			} else {
+				dataFlows.update(where, attributes).then(res => {
+					if (res.statusText === "OK" || res.status === 200) {
+						this.getData();
+					}
+				});
+			}
 		},
 		handleReset(id) {
-			this.$confirm(this.$t("message.resetMessage"), this.$t("message.prompt"), {
-				confirmButtonText: this.$t("dataFlow.reset"),
-				cancelButtonText: this.$t("message.cancel"),
-				type: "warning"
-			}).then(() => {
-				// let attributes = {
-				// 	status: 'draft',
-				// 	stats: '',
-				// };
+			this.restLoading = true;
+			this.restConfirm(() => {
 				dataFlows.reset(id).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						this.getData();
@@ -778,9 +788,20 @@ export default {
 					}else {
 						this.$message.info(this.$t("message.cancleReset"));
 					}
+				}).finally(()=> {
+					setTimeout(() => {this.restLoading = false},5000);
 				});
 			})
 		},
+
+		restConfirm(callback){
+			this.$confirm(this.$t("message.resetMessage"), this.$t("message.prompt"), {
+				confirmButtonText: this.$t("dataFlow.reset"),
+				cancelButtonText: this.$t("message.cancel"),
+				type: "warning"
+			}).then(callback);
+		},
+
 		handleAllRest() {
 			if (this.multipleSelection.length === 0) {
 				this.$message.info("please select row data");
@@ -798,11 +819,7 @@ export default {
 				return;
 			}
 			let where = multipleSelection;
-			this.$confirm(this.$t("message.resetMessage"), this.$t("message.prompt"), {
-				confirmButtonText: this.$t("dataFlow.reset"),
-				cancelButtonText: this.$t("message.cancel"),
-				type: "warning"
-			}).then(() => {
+			this.restConfirm(() => {
 				dataFlows.resetAll(where).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						this.getData();
@@ -811,7 +828,9 @@ export default {
 						this.$message.info(this.$t("message.cancleReset"));
 					}
 				});
-			})
+			});
+
+
 		},
 		handlerCopy(id) {
 			let self = this;
