@@ -133,7 +133,7 @@ export default {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
 				// Object.keys(data).forEach(key => (this.form[key] = data[key]));
-				_.merge(this.model, data);
+				_.merge(this.form, data);
 			}
 
 			// let fields = [];
