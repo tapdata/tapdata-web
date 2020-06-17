@@ -499,6 +499,7 @@ export default {
   flex-direction: column;
   justify-content: start;
   padding: 10px;
+  box-sizing: border-box;
   .e-form {
     .el-input,
     .el-select {
