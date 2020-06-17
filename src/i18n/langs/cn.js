@@ -6,7 +6,7 @@ const cn = {
 		api: {
 			get: {
 				error: "加载数据失败.",
-				loading: "正在加载数据",
+				loading: "正在加载数据"
 			}
 		},
 		ok: "确定",
@@ -72,7 +72,7 @@ const cn = {
 		SyncPoint: "同步节点",
 		Current: "当前时间",
 		SyncTime: "同步时间",
-		batchRest:"批量重置",
+		batchRest: "批量重置",
 		batchDelete: "批量删除",
 		bulkExport: "批量导出",
 		bulkScheuled: "批量启动",
@@ -175,7 +175,7 @@ const cn = {
 		mission: "描述",
 		yes: "是",
 		no: "否",
-		cronExpression:"请输入调度表达式",
+		cronExpression: "请输入调度表达式",
 		selectGrpupFiled: "请选择分组字段",
 		selectTargetField: "请选择目标字段",
 		aggName: "子处理名称",
@@ -369,10 +369,10 @@ const cn = {
 					required: "必填",
 					publishName: "发布API",
 					availableQueries: "可用查询",
-					enterPublishApiName:"请输入数据发布API的名称",
-					enterNewlyReleasedApi:"请输入对新建发布API的描述",
+					enterPublishApiName: "请输入数据发布API的名称",
+					enterNewlyReleasedApi: "请输入对新建发布API的描述",
 					enterEndUrl: "请输入URL末端路径名",
-					variable_name: '只能包含字母、数字、下划线和美元符号,并且数字不能开头',
+					variable_name: "只能包含字母、数字、下划线和美元符号,并且数字不能开头"
 				},
 				es: {
 					name: "ES",
@@ -682,10 +682,10 @@ const cn = {
 		fieldLevel: "字段映射",
 		dblclickDataModel: "请双击数据模型打开字段映射",
 		properties: {
-			name: '名称',
-			type: '分类',
-			path: '路径',
-			database_type: '数据库类型',
+			name: "名称",
+			type: "分类",
+			path: "路径",
+			database_type: "数据库类型",
 			database_host: "数据库IP",
 			database_username: "数据库用户",
 			database_port: "数据库端口",
@@ -693,6 +693,12 @@ const cn = {
 			database_name: "数据库名称",
 			original_name: "原名称"
 		}
+	},
+	metaData: {
+		addNode: "新增同级分类",
+		addChildernNode: "新增子分类",
+		editNode: "编辑",
+		deleteNode: "删除"
 	}
 };
 
