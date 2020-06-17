@@ -239,7 +239,6 @@ export default {
 			removeSeachTables: []
 		};
 	},
-/* eslint-disable */
 	computed: {
 		computedTables() {
 			if (this.search) {
