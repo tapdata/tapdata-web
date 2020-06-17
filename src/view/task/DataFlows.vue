@@ -806,6 +806,8 @@ export default {
 				this.tableData.map(row =>{
 					if((row.id === item.id)&&(row.status ==='paused' || row.status ==='error')){
 						multipleSelection.push(item.id);
+					} else {
+						this.$message.info(this.$t("message.notRest"));
 					}
 				})
 			});
@@ -826,8 +828,6 @@ export default {
 					setTimeout(() => {this.restLoading = false},5000);
 				});
 			});
-
-
 		},
 		handlerCopy(id) {
 			let self = this;

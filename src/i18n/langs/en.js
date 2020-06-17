@@ -61,6 +61,7 @@ const en = {
 		cancleReset: "cancel reset",
 		resetOk: "Reset success",
 		resetFailed: "Reset Failed",
+		notRest: "Please select the correct data to reset",
 		operator: "Operator",
 		edit: "edit"
 	},

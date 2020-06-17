@@ -1,105 +1,6 @@
 <template>
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
-			<!-- <el-button size="mini" type="default" @click="reloadSchema"
-				>{{ $t("dataFlow.button.reloadSchema") }}
-			</el-button>
-			<el-button
-				v-if="['draft', 'paused', 'error'].includes(status)"
-				size="mini"
-				type="default"
-				@click="showSetting"
-				>{{ $t("dataFlow.button.setting") }}
-			</el-button> -->
-			<!-- <el-button v-if="dataFlowId && 'draft' !== status" size="mini" type="default" @click="showLogs"
-				>{{ $t("dataFlow.button.logs") }}
-			</el-button> -->
-
-			<!-- editing debug -->
-			<!-- <el-button v-if="['paused', 'error', 'draft'].includes(status)" size="mini" type="default" @click="preview"
-				>{{ $t("dataFlow.button.preview") }}
-			</el-button> -->
-
-			<!-- running debug -->
-			<!-- <el-button
-				v-if="['scheduled', 'running'].includes(status) && executeMode === 'normal'"
-				size="mini"
-				type="default"
-				@click="stopCapture"
-			>{{ $t("dataFlow.button.stop_capture") }}
-			</el-button> -->
-
-			<!-- <el-button
-					  v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
-					  size="mini"
-					  type="success"
-					  @click="start"
-					  >{{ $t("dataFlow.button.start") }}
-				  </el-button> -->
-			<!-- <el-button
-					  v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
-					  size="mini"
-					  type="danger"
-					  @click="stop(false)"
-					  >{{ $t("dataFlow.button.stop") }}
-				  </el-button> -->
-			<!-- <el-button
-					  v-if="dataFlowId !== null && ['stopping'].includes(status)"
-					  size="mini"
-					  type="danger"
-					  @click="stop(true)"
-					  >{{ $t("dataFlow.button.force_stop") }}
-				  </el-button> -->
-			<!-- <el-button
-					  v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
-					  size="mini"
-					  type="default"
-					  @click="reset"
-					  >{{ $t("dataFlow.button.reset") }}
-				  </el-button> -->
-			<!-- <el-button
-					  v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
-					  size="mini"
-					  type="primary"
-					  @click="save"
-					  >{{ $t("dataFlow.button.save") }}
-				  </el-button> -->
-
-			<!-- <el-button
-				v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
-				size="mini"
-				type="success"
-				@click="start"
-				>{{ $t("dataFlow.button.start") }}
-			</el-button> -->
-			<!-- <el-button
-				v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
-				size="mini"
-				type="danger"
-				@click="stop(false)"
-				>{{ $t("dataFlow.button.stop") }}
-			</el-button> -->
-			<!-- <el-button
-				v-if="dataFlowId !== null && ['stopping'].includes(status)"
-				size="mini"
-				type="danger"
-				@click="stop(true)"
-				>{{ $t("dataFlow.button.force_stop") }}
-			</el-button> -->
-			<!-- <el-button
-				v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
-				size="mini"
-				type="default"
-				@click="reset"
-				>{{ $t("dataFlow.button.reset") }}
-			</el-button> -->
-			<!-- <el-button
-				v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
-				size="mini"
-				type="primary"
-				@click="save"
-				>{{ $t("dataFlow.button.save") }}
-			</el-button> -->
 			<template v-if="['draft'].includes(status)">
 				<div :class="[{btnHover:['draft'].includes(status)},'headImg']" v-show="!isSaving" @click="autoSaveFn">
 					<span class="iconfont icon-yunduanshangchuan"></span>
@@ -336,6 +237,7 @@ export default {
 	dataFlow: null,
 	data() {
 		return {
+			restLoading: false,
 			dialogFormVisible: false,
 			form: {
 				taskName: "",
@@ -1066,12 +968,15 @@ export default {
 					cancelButtonText: self.$t("message.cancel"),
 					type: "warning"
 				}).then(() => {
+					this.restLoading = true;
 					dataFlowsApi.reset(data.id).then(res => {
 						if (res.statusText === "OK" || res.status === 200) {
 							self.$message.success(self.$t("message.resetOk"));
 						} else {
 							self.$message.error(self.$t("message.resetFailed"));
 						}
+					}).finally(()=> {
+						setTimeout(() => {this.restLoading = false},5000);
 					});
 				});
 			}

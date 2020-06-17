@@ -62,6 +62,7 @@ const cn = {
 		cancleReset: "已取消重置",
 		resetOk: "重置成功",
 		resetFailed: "重置失败",
+		notRest: "请选择正确的数据进行重置",
 		operator: "操作",
 		edit: "修改"
 	},
