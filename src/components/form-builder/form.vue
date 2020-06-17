@@ -21,13 +21,14 @@
  *
  */
 const ele = {
-	input: "FbInput",
-	select: "FbSelect",
-	radio: "FbRadio",
-	switch: "FbSwitch"
+	input: 'FbInput',
+	select: 'FbSelect',
+	radio: 'FbRadio',
+	switch: 'FbSwitch',
+	file: 'FbFile'
 };
 export default {
-	name: "FormBuilder",
+	name: 'FormBuilder',
 	props: {
 		value: Object,
 		config: {
@@ -42,17 +43,17 @@ export default {
 				model: null,
 				rules: null,
 				inline: false,
-				labelPosition: "top",
-				labelWidth: "160px",
-				size: "mini",
+				labelPosition: 'top',
+				labelWidth: '160px',
+				size: 'mini',
 				disabled: false
 			},
 			defaultFormItemConfig: {
 				show: true,
-				type: "input",
-				field: "field",
-				label: "字段名",
-				domType: "text",
+				type: 'input',
+				field: 'field',
+				label: '字段名',
+				domType: 'text',
 				required: false,
 				clearable: true,
 				labelSlot: () => null,
@@ -61,27 +62,17 @@ export default {
 			form: null
 		};
 	},
-	watch: {
-		config: {
-			deep: true,
-			handler() {
-				this.show = false;
-				this.$nextTick(() => {
-					this.show = true;
-				});
-			}
-		}
-	},
+
 	render(h) {
 		let formConfig = Object.assign(this.defaultFormConfig, this.config.form, {
 			model: this.value
 		});
 		let formItems = this.config.items || [];
 		let ele = h(
-			"ElForm",
+			'ElForm',
 			{
-				class: "e-form-builder-container",
-				ref: "form",
+				class: 'e-form-builder-container',
+				ref: 'form',
 
 				props: Object.assign(formConfig, {
 					hideRequiredAsterisk: true,
@@ -92,10 +83,10 @@ export default {
 				return this.getFormItem(h, item);
 			})
 		);
-		if (this.show) {
-			return ele;
-		}
-		return "";
+		this.$nextTick(() => {
+			this.clearValidate();
+		});
+		return ele;
 	},
 	methods: {
 		validate(callback) {
@@ -112,7 +103,7 @@ export default {
 				rules.push({
 					required: true,
 					validator(rule, value, callback) {
-						if (!value || !(value + "").trim()) {
+						if (!value || !(value + '').trim()) {
 							callback(new Error(`${config.label}不能为空`));
 						} else {
 							callback();
@@ -126,54 +117,59 @@ export default {
 			let appendSlot = config.appendSlot ? config.appendSlot(h) : null;
 
 			let item = h(
-				"ElFormItem",
+				'ElFormItem',
 				{
-					class: "e-form-builder-item",
+					class: 'e-form-builder-item',
 					props: {
 						prop: config.field,
 						label: config.label,
 						rules: rules
-					},
-					style: {
-						display: config.show ? "block" : "none"
 					}
 				},
 				[
 					h(
-						"div",
+						'div',
 						{
-							class: { "e-form-builder-item-label": true },
-							slot: "label"
+							class: { 'e-form-builder-item-label': true },
+							slot: 'label'
 						},
 						[
-							labelSlot ||
-								h("div", { class: { "is-required": required } }, [
-									config.label,
-									config.tips &&
+							labelSlot || h('div', { class: { 'is-required': required } }, [config.label]),
+							config.tips &&
+								h(
+									'ElPopover',
+									{
+										style: { 'vertical-align': 'middle' },
+										props: {
+											trigger: 'hover',
+											placement: 'top'
+										}
+									},
+									[
+										h('div', {
+											domProps: {
+												innerHTML: config.tips.content || config.tips
+											}
+										}),
 										h(
-											"ElPopover",
+											'span',
 											{
-												style: { "vertical-align": "middle" },
-												props: {
-													trigger: "hover",
-													content: config.tips.content || config.tips,
-													placement: "top"
-												}
+												class: 'color-warning',
+												slot: 'reference'
 											},
 											[
-												h("i", {
-													class:
-														"el-icon-warning-outline color-warning e-form-builder-item-tips",
-													slot: "reference"
+												h('i', {
+													class: 'el-icon-warning-outline e-form-builder-item-tips'
 												}),
 												config.tips.label
 											]
 										)
-								])
+									]
+								)
 						]
 					),
-					h("div", { class: { "fb-item-group": true } }, [
-						prependSlot ? h("div", { class: { "fb-form-item-prepend-slot": true } }, [prependSlot]) : null,
+					h('div', { class: { 'fb-item-group': true } }, [
+						prependSlot ? h('div', { class: { 'fb-form-item-prepend-slot': true } }, [prependSlot]) : null,
 						h(ele[config.type], {
 							props: {
 								value: self.value[config.field],
@@ -192,11 +188,11 @@ export default {
 								}
 							}
 						}),
-						appendSlot ? h("div", { class: { "fb-form-item-append-slot": true } }, [appendSlot]) : null
+						appendSlot ? h('div', { class: { 'fb-form-item-append-slot': true } }, [appendSlot]) : null
 					])
 				]
 			);
-			return item;
+			return config.show ? item : '';
 		}
 	}
 };
@@ -205,10 +201,12 @@ export default {
 <style lang="less">
 .e-form-builder-container {
 	.e-form-builder-item-label {
+		display: flex;
+		align-items: center;
 		font-size: 12px;
 		.is-required {
 			&::after {
-				content: "*";
+				content: '*';
 				color: #ee5353;
 				margin-left: 4px;
 				font-size: 14px;

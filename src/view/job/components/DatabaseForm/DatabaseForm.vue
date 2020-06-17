@@ -6,14 +6,14 @@
 				<div>{{ index + 1 }}. {{ item.show_msg }}</div>
 				<div class="test-info">
 					<div style="margin-right: 40px">{{ `Required:${item.required}` }}</div>
-					<div>{{ `Status:${item.status === "fail" ? "failed" : item.status}` }}</div>
+					<div>{{ `Status:${item.status === 'fail' ? 'failed' : item.status}` }}</div>
 				</div>
 				<div v-if="item.fail_message" class="test-info">
 					Message:
 					<b :style="{ color: item.required ? 'red' : '#ffc107' }">{{ item.fail_message }}</b>
 				</div>
 			</div>
-			<div class="test-result">{{ testResult || "测试中..." }}</div>
+			<div class="test-result">{{ testResult || '测试中...' }}</div>
 		</div>
 		<form-builder ref="form" v-model="model" :config="config"></form-builder>
 		<span slot="footer" class="dialog-footer">
@@ -24,16 +24,16 @@
 </template>
 
 <script>
-import Drawer from "@/components/Drawer";
-import factory from "@/api/factory";
-import formConfig from "./config";
+import Drawer from '@/components/Drawer';
+import factory from '@/api/factory';
+import formConfig from './config';
 
-const databaseTypesModel = factory("DatabaseTypes");
-const connectionsModel = factory("connections");
+const databaseTypesModel = factory('DatabaseTypes');
+const connectionsModel = factory('connections');
 const defaultConfig = [];
 
 export default {
-	name: "DatabaseCreateForm",
+	name: 'DatabaseForm',
 	components: {
 		Drawer
 	},
@@ -42,27 +42,37 @@ export default {
 			visible: false,
 			testing: false,
 			testLogs: null,
-			testResult: "",
+			testResult: '',
 			timezones: [],
+			dataTypes: [],
+			whiteList: [],
 
 			model: {
-				name: "",
-				database_type: "",
-				connection_type: "",
-				database_host: "",
-				database_port: "",
-				database_name: "",
-				database_username: "",
-				plain_password: "",
-				table_filter: "",
-				additionalString: "",
-				thin_type: "",
-				database_owner: "",
-				node_name: "",
-				database_schema: "",
+				name: '',
+				database_type: '',
+				connection_type: '',
+				database_host: '',
+				database_port: '',
+				database_name: '',
+				database_username: '',
+				plain_password: '',
+				table_filter: '',
+				additionalString: '',
+				thin_type: '',
+				database_owner: '',
+				node_name: '',
+				database_schema: '',
 
-				database_datetype_without_timezone: "",
-				supportUpdatePk: false
+				database_datetype_without_timezone: '',
+				supportUpdatePk: false,
+
+				isUrl: true,
+				database_uri: '',
+				ssl: false,
+				sslKey: '',
+				sslPass: '',
+				sslValidate: false,
+				sslCA: ''
 			},
 			config: {
 				items: []
@@ -77,21 +87,20 @@ export default {
 		defaultConfig.push(
 			...[
 				{
-					type: "input",
-					field: "name",
-					label: "连接名称",
+					type: 'input',
+					field: 'name',
+					label: '连接名称',
 					required: true
 				},
 				{
-					type: "select",
-					field: "database_type",
-					label: "数据库类型",
+					type: 'select',
+					field: 'database_type',
+					label: '数据库类型',
 					options: [],
 					required: true,
 					on: {
 						change() {
 							self.getFormConfig();
-							self.$refs.form.clearValidate();
 						}
 					}
 				}
@@ -102,25 +111,51 @@ export default {
 		initData(data) {
 			this.model = Object.assign(this.model, data);
 		},
-		show() {
+		show({ blackList, whiteList } = {}) {
 			this.visible = true;
+			this.whiteList = [];
+			let list = ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2']; //目前白名单
+			// let list = this.dataTypes;
+			if (whiteList && whiteList.length) {
+				this.whiteList = whiteList;
+			} else if (blackList && blackList.length) {
+				for (let i = 0; i < list.length; i++) {
+					const element = list[i];
+					if (!blackList.includes(element)) {
+						this.whiteList.push(element);
+					}
+				}
+			} else {
+				this.whiteList = list;
+			}
+			this.checkDataTypeOptions();
+		},
+		checkDataTypeOptions() {
+			let options = this.dataTypes;
+			let list = options.filter(opt => this.whiteList.includes(opt.value));
+			defaultConfig[1].options = list;
+			if (list.length) {
+				//默认选择第一个数据库类型
+				this.model.database_type = list[0].value;
+			}
+			this.getFormConfig();
 		},
 		initTimezones() {
-			let timezones = [{ label: "(Database Timezone)", value: "" }];
+			let timezones = [{ label: '(Database Timezone)', value: '' }];
 
 			for (let i = -11; i < 15; i++) {
-				let timezone = "";
+				let timezone = '';
 				if (i >= -9 && i <= 9) {
-					timezone = "0" + Math.abs(i);
+					timezone = '0' + Math.abs(i);
 				} else {
 					timezone = Math.abs(i);
 				}
-				timezone += ":00";
+				timezone += ':00';
 
 				if (i < 0) {
-					timezone = "-" + timezone;
+					timezone = '-' + timezone;
 				} else {
-					timezone = "+" + timezone;
+					timezone = '+' + timezone;
 				}
 
 				timezones.push({ label: timezone, value: timezone });
@@ -134,15 +169,9 @@ export default {
 				let options = result.data.map(dt => {
 					return { label: dt.name, value: dt.type };
 				});
+				this.dataTypes = options;
 
-				let whiteList = ["mysql", "oracle", "mongodb", "sqlserver", "db2"]; //目前白名单
-				defaultConfig[1].options = options.filter(opt => whiteList.includes(opt.value));
-				// defaultConfig[1].options = options;
-				if (options.length) {
-					//默认选择第一个数据库类型
-					this.model.database_type = options[0].value;
-				}
-				this.getFormConfig();
+				this.checkDataTypeOptions();
 			}
 		},
 		// 按照数据库类型获取表单配置规则
@@ -150,9 +179,9 @@ export default {
 			let func = formConfig[this.model.database_type];
 			if (func) {
 				this.initData();
-				let config = func(this, "config.items");
+				let config = func(this, 'config.items');
 				let items = defaultConfig.concat(config.items);
-				let item = items.find(it => it.field === "database_datetype_without_timezone");
+				let item = items.find(it => it.field === 'database_datetype_without_timezone');
 				if (item) {
 					item.options = this.timezones;
 				}
@@ -164,19 +193,26 @@ export default {
 		},
 		async test(id) {
 			this.testing = true;
-			this.testResult = "";
+			this.testResult = '';
 			this.testLogs = null;
-			let result = await connectionsModel.get([id]);
+			let result = null;
+			if (this.model.database_type === 'mongodb') {
+				result = await connectionsModel.customQuery([id]);
+			} else {
+				result = await connectionsModel.get([id]);
+			}
 			if (result.data) {
 				const data = result.data;
 				let validate_details = data.response_body && data.response_body.validate_details;
 				this.testLogs = validate_details;
-				this.$refs.drawer.$el.getElementsByTagName("main")[0].scrollTop = 0;
-				if (data.status === "ready") {
+				this.$refs.drawer.$el.getElementsByTagName('main')[0].scrollTop = 0;
+				if (data.status === 'ready') {
 					this.testing = false;
-					this.testResult = "测试通过";
-				} else if (data.status === "invalid") {
-					this.testResult = "测试未通过";
+					this.testResult = '测试通过';
+					this.visible = false;
+					this.$message.success('测试并创建通过');
+				} else if (data.status === 'invalid') {
+					this.testResult = '测试未通过';
 					this.testing = false;
 				} else {
 					setTimeout(() => {
@@ -189,27 +225,27 @@ export default {
 			this.$refs.form.validate(valid => {
 				if (valid) {
 					let params = Object.assign({}, this.model, {
-						user_id: this.$cookie.get("user_id"),
-						status: "testing",
+						user_id: this.$cookie.get('user_id'),
+						status: 'testing',
 						schema: {},
 						retry: 0,
 						nextRetry: null,
 						response_body: {},
-						project: "",
+						project: '',
 						listtags: []
 					});
 					connectionsModel
 						.post(params)
 						.then(res => {
-							if (res.statusText === "OK") {
+							if (res.statusText === 'OK') {
 								this.test(res.data.id);
 							}
 						})
 						.catch(err => {
 							if (err && err.response.status === 500) {
-								this.$message.error("连接名称已存在");
+								this.$message.error('连接名称已存在');
 							} else {
-								this.$message.error("保存失败");
+								this.$message.error('保存失败');
 							}
 						});
 				}
@@ -221,11 +257,13 @@ export default {
 
 <style scoped lang="less">
 .test-block {
-	margin-bottom: 15px;
+	margin: 0 auto 15px auto;
 	padding: 15px;
 	background: #f1f1f1;
 	font-size: 12px;
 	line-height: 20px;
+	width: 400px;
+	box-sizing: border-box;
 	.test-block-title {
 		margin-bottom: 5px;
 		font-size: 14px;

@@ -1,7 +1,7 @@
 <script>
-import mixins from "./mixin";
+import mixins from './mixin';
 export default {
-	name: "FbSwitch",
+	name: 'FbSwitch',
 	mixins: [mixins],
 	props: {
 		value: [Boolean, String, Number],
@@ -12,7 +12,7 @@ export default {
 	},
 	render(h) {
 		let self = this;
-		return h("ElSwitch", {
+		return h('ElSwitch', {
 			props: {
 				value: self.value
 			},
