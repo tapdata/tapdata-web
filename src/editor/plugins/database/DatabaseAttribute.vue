@@ -70,9 +70,8 @@
 
 				<div class="databaseInfo">
 					<span v-show="database_type">{{ database_type }}</span>
-					<span v-show="database_host && database_type !== 'mongodb'">{{ database_host }}</span>
-					<span v-show="database_port && database_type !== 'mongodb'">{{ database_port }}</span>
-					<span v-show="database_type === 'mongodb' && database_uri">{{ database_uri }}</span>
+					<span v-show="database_host">{{ database_host }}</span>
+					<span v-show="database_port">{{ database_port }}</span>
 				</div>
 			</el-form>
 		</div>
@@ -235,23 +234,29 @@ export default {
 			database_type: '',
 			database_port: '',
 			database_host: '',
-			database_uri: ''
+			database_uri: '',
+			seachTables: [],
+			removeSeachTables: []
 		};
 	},
-
+/* eslint-disable */
 	computed: {
 		computedTables() {
 			if (this.search) {
-				return this.tables.filter(t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0);
+				this.seachTables = this.tables.filter(
+					t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0
+				);
+				return this.seachTables;
 			} else {
 				return this.tables;
 			}
 		},
 		computedRemoveTables() {
 			if (this.removeSearch) {
-				return this.removeTables.filter(
+				this.removeSeachTables = this.removeTables.filter(
 					t => t.table_name.toLowerCase().indexOf(this.removeSearch.toLowerCase()) >= 0
 				);
+				return this.removeSeachTables;
 			} else {
 				return this.removeTables;
 			}
@@ -294,19 +299,47 @@ export default {
 				this.tables = [];
 				this.removeTables = [];
 				this.lookupDatabaseType();
-				this.loadDataModels(this.model.connectionId);
+				if (this.database_type === 'mongodb') {
+					this.getMongoDBData(this.model.connectionId);
+				} else {
+					this.loadDataModels(this.model.connectionId);
+				}
 			}
 		},
 		// 移除全选
 		selectAllTables: {
 			handler() {
-				this.tables.forEach(t => (t.checked = this.selectAllTables));
+				if (this.search) {
+					if (this.selectAllTables) {
+						this.tables.forEach(item => {
+							this.seachTables.forEach(table => {
+								if (item.table_name === table.table_name) {
+									item.checked = true;
+								}
+							});
+						});
+					}
+				} else {
+					this.tables.forEach(t => (t.checked = this.selectAllTables));
+				}
 			}
 		},
 		// 撤销全选
 		selectAllRemoveTables: {
 			handler() {
-				this.removeTables.forEach(t => (t.checked = this.selectAllRemoveTables));
+				if (this.removeSearch) {
+					if (this.selectAllRemoveTables) {
+						this.removeTables.forEach(item => {
+							this.removeSeachTables.forEach(table => {
+								if (item.table_name === table.table_name) {
+									item.checked = true;
+								}
+							});
+						});
+					}
+				} else {
+					this.removeTables.forEach(t => (t.checked = this.selectAllRemoveTables));
+				}
 			}
 		}
 	},
@@ -357,10 +390,24 @@ export default {
 							});
 						}
 					});
+					if (this.database_type !== 'mongodb') {
+						this.database_host = result.data.database_host;
+						this.database_port = result.data.database_port;
+					}
 				}
-				this.database_host = result.data.database_host;
-				this.database_port = result.data.database_port;
-				this.database_uri = result.data.database_uri;
+			});
+		},
+
+		getMongoDBData(connectionId) {
+			if (!connectionId) {
+				return;
+			}
+			connections.customQuery([connectionId]).then(result => {
+				if (result.data) {
+					this.loadDataModels([connectionId]);
+					this.database_host = result.data.database_host;
+					this.database_port = result.data.database_port;
+				}
 			});
 		},
 
@@ -421,7 +468,8 @@ export default {
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
-				Object.keys(data).forEach(key => (this.model[key] = data[key]));
+				// Object.keys(data).forEach(key => (this.model[key] = data[key]));
+				_.merge(this.model, data);
 			}
 
 			this.isSourceDataNode = isSourceDataNode;

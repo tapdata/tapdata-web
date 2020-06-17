@@ -8,22 +8,22 @@
 			</div>
 
 			<div v-if="load">
-				{{ $t("dataFlow.noLogTip") }}?_(:з」∠)......
-				<span class="clickLoad" @click="load">{{ $t("dataFlow.clickLoadTxt") }}</span>
+				{{ $t('dataFlow.noLogTip') }}?_(:з」∠)......
+				<span class="clickLoad" @click="load">{{ $t('dataFlow.clickLoadTxt') }}</span>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import $ from "jquery";
+import $ from 'jquery';
 
 export default {
-	name: "LogBox",
+	name: 'LogBox',
 	props: {
 		keyword: {
 			type: String,
-			default: ""
+			default: ''
 		},
 		load: {
 			type: Function,
@@ -37,12 +37,13 @@ export default {
 	},
 	mounted() {
 		let logContainer = this.$refs.logContainer;
-		$(logContainer).scroll(e => {
-			this.$emit("scroll", logContainer);
+		$(logContainer).scroll(() => {
+			this.$emit('scroll', logContainer);
 		});
 	},
 	methods: {
-		formatLog(item, keyword) {
+		formatLog(item) {
+			let keyword = this.keyword;
 			let markKeyword = function(text) {
 				if (keyword && text.indexOf(keyword) >= 0) {
 					return text.split(keyword).join(`<span class="keyword">${keyword}</span>`);
@@ -50,11 +51,11 @@ export default {
 				return text;
 			};
 
-			let date = item.date ? this.$moment(item.date).format("YYYY-MM-DD HH:mm:ss") : "";
+			let date = item.date ? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : '';
 			// let lastModified = item.last_updated ? this.$moment(item.last_updated).format("YYYY-MM-DD HH:mm:ss") : "";
 			return (
 				`<li class="log-box-item">` +
-				`[<span class="level ${item.level === "ERROR" ? "redActive" : ""}">${item.level}</span>] &nbsp;` +
+				`[<span class="level ${item.level === 'ERROR' ? 'redActive' : ''}">${item.level}</span>] &nbsp;` +
 				`<span>${date}</span>&nbsp;` +
 				`<span>[${markKeyword(item.threadName)}]</span>&nbsp;` +
 				`<span>${markKeyword(item.loggerName)}</span>&nbsp;-&nbsp;` +
@@ -64,24 +65,24 @@ export default {
 		},
 		add({ logs, prepend, reset }) {
 			let logContainer = $(this.$refs.logContainer);
-			let doms = "";
+			let doms = '';
 			this.count += logs.length;
 			if (reset) {
 				this.count = logs.length;
-				logContainer.find("li").remove();
+				logContainer.find('li').remove();
 			}
 			if (logs && logs.length) {
 				doms = logs
 					.map(item => {
 						return this.formatLog(item);
 					})
-					.join("");
+					.join('');
 			}
-			logContainer[prepend ? "prepend" : "append"](doms);
+			logContainer[prepend ? 'prepend' : 'append'](doms);
 		},
 		clear() {
 			$(this.$refs.logContainer)
-				.find("li")
+				.find('li')
 				.remove();
 		}
 	}

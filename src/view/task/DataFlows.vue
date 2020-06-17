@@ -1,5 +1,5 @@
 <template>
-	<div class="task-list">
+	<div class="task-list" v-loading="restLoading">
 		<div class="task-list-operating-area box-card">
 			<el-row :gutter="10">
 				<el-form label-width="100px" :data="formData" :inline="true" class="dataFlowsFlow">
@@ -64,6 +64,9 @@
 							</el-form-item>
 						</el-col>
 						<div class="task-list-menu-right">
+							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleGoFuntion"
+								><i class="iconfont icon-hanshu back-btn-icon"></i
+							></el-button>
 							<el-button class="back-btn-icon-box dv-btn-icon" @click="handleImport"
 								><i class="iconfont icon-daoru back-btn-icon"></i
 							></el-button>
@@ -72,11 +75,11 @@
 									><i class="iconfont icon-piliang back-btn-icon"></i
 								></el-button>
 								<el-dropdown-menu slot="dropdown">
-									<el-dropdown-item command="a">{{ $t("dataFlow.bulkExport") }}</el-dropdown-item>
-									<el-dropdown-item command="b">{{ $t("dataFlow.bulkScheuled") }}</el-dropdown-item>
-									<el-dropdown-item command="c">{{ $t("dataFlow.bulkStopping") }}</el-dropdown-item>
-									<el-dropdown-item command="d">{{ $t("dataFlow.batchDelete") }}</el-dropdown-item>
-									<el-dropdown-item command="e">{{ $t("dataFlow.batchRest") }}</el-dropdown-item>
+									<el-dropdown-item command="a">{{ $t('dataFlow.bulkExport') }}</el-dropdown-item>
+									<el-dropdown-item command="b">{{ $t('dataFlow.bulkScheuled') }}</el-dropdown-item>
+									<el-dropdown-item command="c">{{ $t('dataFlow.bulkStopping') }}</el-dropdown-item>
+									<el-dropdown-item command="d">{{ $t('dataFlow.batchDelete') }}</el-dropdown-item>
+									<el-dropdown-item command="e">{{ $t('dataFlow.batchRest') }}</el-dropdown-item>
 								</el-dropdown-menu>
 							</el-dropdown>
 
@@ -108,6 +111,7 @@
 				<!--				</div>-->
 			</div>
 			<div class="clear"></div>
+
 			<el-table
 				v-loading="loading"
 				:element-loading-text="$t('dataFlow.dataLoading')"
@@ -119,10 +123,11 @@
 				:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
 				@sort-change="handleSortTable"
 				@selection-change="handleSelectionChange"
-				:default-sort="{ prop: 'createTime', order: 'descending' }"
+				:default-sort="{ prop: flowProp, order: flowOrder }"
 			>
 				<el-table-column type="selection" width="45" :selectable="handleSelectable"> </el-table-column>
-				<el-table-column prop="name" :label="$t('dataFlow.taskName')"> </el-table-column>
+				<el-table-column prop="name" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
+				</el-table-column>
 				<el-table-column
 					sortable="custom"
 					:label="$t('dataFlow.creatdor')"
@@ -134,8 +139,8 @@
 						<span :style="`color: ${colorMap[scope.row.status]};`">
 							{{
 								$t(
-									"dataFlow.status." + scope.row.status && scope.row.status !== undefined
-										? scope.row.status.replace(/ /g, "_")
+									'dataFlow.status.' + scope.row.status && scope.row.status !== undefined
+										? scope.row.status.replace(/ /g, '_')
 										: scope.row.status
 								)
 							}}
@@ -174,7 +179,7 @@
 								v-model="scope.row.newStatus"
 								inactive-value="stopping"
 								active-value="scheduled"
-								@change="handleStatus(scope.row.id,scope.row.status, scope.row.newStatus)"
+								@change="handleStatus(scope.row.id, scope.row.status, scope.row.newStatus)"
 							></el-switch>
 						</div>
 					</template>
@@ -186,7 +191,7 @@
 								<el-button
 									type="text"
 									:disabled="['draft', 'paused'].includes(scope.row.status)"
-									@click="handleDetail(scope.row.id)"
+									@click="handleDetail(scope.row.id, 'detail')"
 								>
 									<i class="iconfont  task-list-icon icon-chaxun"></i>
 								</el-button>
@@ -199,7 +204,7 @@
 											scope.row.status
 										)
 									"
-									@click="handleDetail(scope.row.id)"
+									@click="handleDetail(scope.row.id, 'edit')"
 								>
 									<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
 								</el-button>
@@ -223,10 +228,10 @@
 								></el-button>
 								<el-dropdown-menu slot="dropdown">
 									<el-dropdown-item :command="'export' + scope.row.id">{{
-										$t("dataFlow.dataFlowExport")
+										$t('dataFlow.dataFlowExport')
 									}}</el-dropdown-item>
 									<el-dropdown-item :command="'copy' + scope.row.id">{{
-										$t("dataFlow.copy")
+										$t('dataFlow.copy')
 									}}</el-dropdown-item>
 									<el-dropdown-item
 										:disabled="
@@ -235,10 +240,10 @@
 											)
 										"
 										:command="'reset' + scope.row.id"
-										>{{ $t("dataFlow.reset") }}</el-dropdown-item
+										>{{ $t('dataFlow.reset') }}</el-dropdown-item
 									>
 									<el-dropdown-item :command="'force_stopping' + scope.row.id">{{
-										$t("dataFlow.status.force_stopping")
+										$t('dataFlow.status.force_stopping')
 									}}</el-dropdown-item>
 								</el-dropdown-menu>
 							</el-dropdown>
@@ -263,124 +268,166 @@
 </template>
 
 <script>
-import _ from "lodash";
-import factory from "../../api/factory";
-const dataFlows = factory("DataFlows");
-const MetadataInstance = factory("MetadataInstances");
+import _ from 'lodash';
+import factory from '../../api/factory';
+const dataFlows = factory('DataFlows');
+const MetadataInstance = factory('MetadataInstances');
 export default {
 	data() {
 		return {
+			restLoading: false,
 			colorMap: {
-				running: "#67C23A",
-				paused: "#F19149",
-				draft: "#F56C6C",
-				scheduled: "#cccccc",
-				stopping: "#F19149",
-				error: "#f53724"
+				running: '#67C23A',
+				paused: '#F19149',
+				draft: '#F56C6C',
+				scheduled: '#cccccc',
+				stopping: '#F19149',
+				error: '#f53724'
 			},
 			loading: false,
-			order: "",
+			order: '',
+			flowProp: localStorage.getItem('flowProp') || 'createTime',
+			flowOrder: localStorage.getItem('flowOrder') || 'descending',
 			tableData: [],
 			newData: [],
 			currentPage: 1,
-			pagesize: localStorage.getItem("flowPagesize")*1 || 20,
+			pagesize: localStorage.getItem('flowPagesize') * 1 || 20,
 			totalNum: 0,
 			optionsKey: [
 				{
-					label: this.$t("dataFlow.initial_sync"),
-					value: "initial_sync"
+					label: this.$t('dataFlow.initial_sync'),
+					value: 'initial_sync'
 				},
 				{
-					label: this.$t("dataFlow.cdc"),
-					value: "cdc"
+					label: this.$t('dataFlow.cdc'),
+					value: 'cdc'
 				},
 				{
-					label: this.$t("dataFlow.initial_sync") + this.$t("dataFlow.cdc"),
-					value: "initial_sync+cdc"
+					label: this.$t('dataFlow.initial_sync') + this.$t('dataFlow.cdc'),
+					value: 'initial_sync+cdc'
 				}
 			],
 			options: [
 				{
-					label: this.$t("dataFlow.status.running"),
-					value: "running"
+					label: this.$t('dataFlow.status.running'),
+					value: 'running'
 				},
 				{
-					label: this.$t("dataFlow.status.paused"),
-					value: "paused"
+					label: this.$t('dataFlow.status.paused'),
+					value: 'paused'
 				},
 				{
-					label: this.$t("dataFlow.status.error"),
-					value: "error"
+					label: this.$t('dataFlow.status.error'),
+					value: 'error'
 				},
 				{
-					label: this.$t("dataFlow.status.draft"),
-					value: "draft"
+					label: this.$t('dataFlow.status.draft'),
+					value: 'draft'
 				},
 				{
-					label: this.$t("dataFlow.status.scheduled"),
-					value: "scheduled"
+					label: this.$t('dataFlow.status.scheduled'),
+					value: 'scheduled'
 				},
 				{
-					label: this.$t("dataFlow.status.stopping"),
-					value: "stopping"
+					label: this.$t('dataFlow.status.stopping'),
+					value: 'stopping'
 				},
 				{
-					label: this.$t("dataFlow.status.force_stopping"),
-					value: "force stopping"
+					label: this.$t('dataFlow.status.force_stopping'),
+					value: 'force stopping'
 				}
 			],
 			multipleSelection: [],
 			formData: {
-				search: "",
+				search: localStorage.getItem('flowSearch') || '',
 				timeData: [],
-				status: "",
-				person: "",
-				way: "",
+				status: localStorage.getItem('flowStatus') || '',
+				person: '',
+				way: localStorage.getItem('flowWay') || '',
 				classification: []
 			}
 		};
 	},
 	created() {
+		if (localStorage.getItem('flowOrder') && localStorage.getItem('flowProp')) {
+			let prop = localStorage.getItem('flowOrder') === 'ascending' ? 'ASC' : 'DESC';
+			this.order = localStorage.getItem('flowProp') + ' ' + prop;
+		}
 		this.formData = this.$store.state.dataFlows;
 		this.screenFn();
 		this.keyupEnter();
 	},
 	computed: {
 		maxHeight: function() {
-			let height = document.body.clientHeight - 120 + "px";
+			let height = document.body.clientHeight - 120 + 'px';
 			return height;
 		}
 	},
 	methods: {
-		handleDetail(id) {
-			let routeUrl = this.$router.resolve({
-				path: "/job",
-				query: { id: id }
-			});
-			window.open(routeUrl.href, "_blank");
+		handleGoFuntion() {
+			top.location.href = '/#/JsFuncs';
+		},
+		handleDetail(id, type) {
+			const h = this.$createElement;
+			if (type === 'edit') {
+				this.$msgbox({
+					title: this.$t('dataFlow.importantReminder'),
+					customClass: 'dataflow-clickTip',
+					message: h('p', null, [
+						h('span', null, this.$t('dataFlow.modifyEditText')),
+						h('span', { style: 'color: #48b6e2' }, this.$t('dataFlow.nodeLayoutProcess')),
+						h('span', null, '、'),
+						h('span', { style: 'color: #48b6e2' }, this.$t('dataFlow.nodeAttributes')),
+						h('span', null, '、'),
+						h('span', { style: 'color: #48b6e2' }, this.$t('dataFlow.matchingRelationship')),
+						h('span', null, '、'),
+						h('span', null, this.$t('dataFlow.afterSubmission')),
+						h('span', { style: 'color: #48b6e2' }, this.$t('dataFlow.reset')),
+						h('span', null, this.$t('dataFlow.runNomally')),
+						h('span', null, this.$t('dataFlow.editLayerTip'))
+					]),
+					dangerouslyUseHTMLString: true,
+					showCancelButton: true,
+					confirmButtonText: this.$t('dataFlow.continueEditing'),
+					cancelButtonText: this.$t('message.cancel'),
+					type: 'warning'
+				}).then(() => {
+					let routeUrl = this.$router.resolve({
+						path: '/job',
+						query: { id: id }
+					});
+					window.open(routeUrl.href, '_blank');
+				});
+			} else {
+				let routeUrl = this.$router.resolve({
+					path: '/job',
+					query: { id: id }
+				});
+				window.open(routeUrl.href, '_blank');
+			}
 		},
 		handleImport() {
 			let routeUrl = this.$router.resolve({
-				path: "/upload"
+				path: '/upload'
 			});
-			window.open(routeUrl.href, "_blank");
+			window.open(routeUrl.href, '_blank');
 		},
 		handleCommand(command) {
-			if (command === "a") {
+			if (command === 'a') {
 				this.handleDownload();
-			} else if (command === "b") {
-				this.handleAllStatus("scheduled");
-			} else if (command === "c") {
-				this.handleAllStatus("stopping");
-			} else if (command === "d") {
+			} else if (command === 'b') {
+				this.handleAllStatus('scheduled');
+			} else if (command === 'c') {
+				this.handleAllStatus('stopping');
+			} else if (command === 'd') {
 				this.handleAllDelete();
-			} else if (command === "e") {
+			} else if (command === 'e') {
 				this.handleAllRest();
 			}
 		},
 		handleDownload() {
 			if (this.multipleSelection.length === 0) {
-				this.$message.info("please select row data");
+				this.$message.info('please select row data');
 				return;
 			}
 			let multipleSelection = [];
@@ -395,24 +442,30 @@ export default {
 			MetadataInstance.download(where);
 		},
 		handleRowCommand(command) {
-			if (command.indexOf("export") !== -1) {
+			if (command.indexOf('export') !== -1) {
 				let id = [];
-				id.push(command.replace("export", ""));
+				id.push(command.replace('export', ''));
 				let where = {
 					_id: {
 						in: id
 					}
 				};
 				MetadataInstance.download(where);
-			} else if (command.indexOf("copy") !== -1) {
-				let id = command.replace("copy", "");
+			} else if (command.indexOf('copy') !== -1) {
+				let id = command.replace('copy', '');
 				this.handlerCopy(id);
-			} else if (command.indexOf("reset") !== -1) {
-				let id = command.replace("reset", "");
+			} else if (command.indexOf('reset') !== -1) {
+				let id = command.replace('reset', '');
 				this.handleReset(id);
-			} else if (command.indexOf("force_stopping") !== -1) {
-				let id = command.replace("force_stopping", "");
-				this.handleStatus(id, "force stopping");
+			} else if (command.indexOf('force_stopping') !== -1) {
+				this.$confirm(this.$t('message.forceStoppingMessage'), this.$t('dataFlow.importantReminder'), {
+					confirmButtonText: this.$t('dataFlow.button.force_stop'),
+					cancelButtonText: this.$t('message.cancel'),
+					type: 'warning'
+				}).then(() => {
+					let id = command.replace('force_stopping', '');
+					this.handleStatus(id, 'force stopping');
+				});
 			}
 		},
 		handleSelectable(row) {
@@ -423,6 +476,9 @@ export default {
 			}
 		},
 		screenFn() {
+			localStorage.setItem('flowSearch', this.formData.search);
+			localStorage.setItem('flowStatus', this.formData.status);
+			localStorage.setItem('flowWay', this.formData.way);
 			this.getData();
 		},
 		keyupEnter() {
@@ -435,30 +491,30 @@ export default {
 		},
 		async getData(params) {
 			this.loading = true;
-			this.$store.commit("dataFlows", this.formData);
+			this.$store.commit('dataFlows', this.formData);
 
 			let where = {};
-			let order = "createTime DESC";
+			let order = 'createTime DESC';
 			if (this.order) {
 				order = this.order;
 			}
 			if (this.formData) {
-				if (this.formData.status && this.formData.status !== "") {
+				if (this.formData.status && this.formData.status !== '') {
 					where.status = this.formData.status;
 				}
-				if (this.formData.way && this.formData.way !== "") {
-					where["setting.sync_type"] = this.formData.way;
+				if (this.formData.way && this.formData.way !== '') {
+					where['setting.sync_type'] = this.formData.way;
 				}
-				if (this.formData.search && this.formData.search !== "") {
+				if (this.formData.search && this.formData.search !== '') {
 					where.or = [
 						{
 							name: { regex: this.formData.search }
 						},
 						{
-							"stages.name": { regex: this.formData.search }
+							'stages.name': { regex: this.formData.search }
 						},
 						{
-							"stages.tableName": { regex: this.formData.search }
+							'stages.tableName': { regex: this.formData.search }
 						}
 					];
 				}
@@ -502,7 +558,7 @@ export default {
 				params
 			);
 			await dataFlows.get(_params).then(res => {
-				if (res.statusText === "OK" || res.status === 200) {
+				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
 						this.tableData = res.data;
 						this.handleData(this.tableData);
@@ -516,18 +572,18 @@ export default {
 			if (!data) return;
 
 			data.map(item => {
-				item.newStatus = ["running", "scheduled"].includes(item.status) ? "scheduled" : "stopping";
+				item.newStatus = ['running', 'scheduled'].includes(item.status) ? 'scheduled' : 'stopping';
 				if (item.stats) {
 					item.hasChildren = false;
-					item.input = item.stats.input ? item.stats.input.rows : "--";
-					item.output = item.stats.output ? item.stats.output.rows : "--";
-					item.transmissionTime = item.stats.transmissionTime ? item.stats.transmissionTime : "--";
+					item.input = item.stats.input ? item.stats.input.rows : '--';
+					item.output = item.stats.output ? item.stats.output.rows : '--';
+					item.transmissionTime = item.stats.transmissionTime ? item.stats.transmissionTime : '--';
 					let children = item.stages;
 					item.children = [];
 
 					if (children) {
 						children.map(k => {
-							let stage = "";
+							let stage = '';
 							let node = {};
 							if (item.stats.stagesMetrics) {
 								stage = item.stats.stagesMetrics.filter(v => k.id === v.stageId);
@@ -536,9 +592,9 @@ export default {
 								node = {
 									id: item.id + k.id,
 									name: k.name,
-									input: "--",
-									output: "--",
-									transmissionTime: "--",
+									input: '--',
+									output: '--',
+									transmissionTime: '--',
 									hasChildren: true
 								};
 							} else {
@@ -555,9 +611,9 @@ export default {
 						});
 					}
 				} else {
-					item.input = "--";
-					item.output = "--";
-					item.transmissionTime = "--";
+					item.input = '--';
+					item.output = '--';
+					item.transmissionTime = '--';
 				}
 			});
 		},
@@ -566,25 +622,37 @@ export default {
 				where: where
 			};
 			dataFlows.count(where).then(res => {
-				if (res.statusText === "OK" || res.status === 200) {
+				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
 						this.totalNum = res.data.count;
 					}
 				}
 			});
 		},
+
+		deleteConfirm(callback) {
+			this.$confirm(this.$t('message.deteleMessage'), this.$t('message.prompt'), {
+				confirmButtonText: this.$t('message.delete'),
+				cancelButtonText: this.$t('message.cancel'),
+				type: 'warning'
+			}).then(callback);
+		},
+
 		handleAllDelete() {
 			if (this.multipleSelection.length === 0) {
-				this.$message.info("please select row data");
+				this.$message.info('please select row data');
 				return;
 			}
 			let multipleSelection = [];
 			this.multipleSelection.map(item => {
-				this.tableData.map(row =>{
-					if((row.id === item.id)&&(row.status ==='paused' || row.status ==='error' || row.status ==='draft')){
+				this.tableData.map(row => {
+					if (
+						row.id === item.id &&
+						(row.status === 'paused' || row.status === 'error' || row.status === 'draft')
+					) {
 						multipleSelection.push(item.id);
 					}
-				})
+				});
 			});
 			if (multipleSelection.length === 0) {
 				return;
@@ -594,77 +662,94 @@ export default {
 					inq: multipleSelection
 				}
 			};
-			this.$confirm(this.$t("message.deteleMessage"), this.$t("message.prompt"), {
-				confirmButtonText: this.$t("message.delete"),
-				cancelButtonText: this.$t("message.cancel"),
-				type: "warning"
-			})
-				.then(() => {
-					dataFlows.deleteAll(where).then(res => {
-						if (res.statusText === "OK" || res.status === 200) {
-							this.getData();
-							this.$message.success(this.$t("message.deleteOK"));
-						}else {
-							this.$message.info(this.$t("message.deleteFail"));
-						}
-					});
-				})
+			this.deleteConfirm(() => {
+				dataFlows.deleteAll(where).then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						this.getData();
+						this.$message.success(this.$t('message.deleteOK'));
+					} else {
+						this.$message.info(this.$t('message.deleteFail'));
+					}
+				});
+			});
 		},
 		handleDelete(id) {
-			this.$confirm(this.$t("message.deteleMessage"), this.$t("message.prompt"), {
-				confirmButtonText: this.$t("message.delete"),
-				cancelButtonText: this.$t("message.cancel"),
-				type: "warning"
-			})
-				.then(() => {
-					dataFlows.delete(id).then(res => {
-						if (res.statusText === "OK" || res.status === 200) {
-							this.getData();
-							this.$message.success(this.$t("message.deleteOK"));
-						}else {
-							this.$message.info(this.$t("message.deleteFail"));
-						}
-
-					});
-				})
+			this.deleteConfirm(() => {
+				dataFlows.delete(id).then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						this.getData();
+						this.$message.success(this.$t('message.deleteOK'));
+					} else {
+						this.$message.info(this.$t('message.deleteFail'));
+					}
+				});
+			});
 		},
-		async handleStatus(id, oldStatus,status) {
-			if(oldStatus === 'draft'){
-				return ;
+
+		statusConfirm(callback) {
+			this.$confirm(this.$t('message.stopMessage'), this.$t('dataFlow.importantReminder'), {
+				confirmButtonText: this.$t('message.confirm'),
+				cancelButtonText: this.$t('message.cancel'),
+				type: 'warning'
+			}).then(callback);
+		},
+
+		handleStatus(id, oldStatus, status) {
+			if (oldStatus === 'draft') {
+				return;
 			}
 			let data = {
 				status: status
 			};
+			if (status === 'stopping') {
+				this.statusConfirm(() => {
+					this.getStatus(id, data);
+				});
+			} else {
+				this.getStatus(id, data);
+			}
+		},
+
+		async getStatus(id, data) {
 			await dataFlows.updateById(id, data).then(res => {
-				if (res.statusText === "OK" || res.status === 200) {
+				if (res.statusText === 'OK' || res.status === 200) {
 					this.getData();
 				}
 			});
 		},
+
 		handleAllStatus(status) {
 			if (this.multipleSelection.length === 0) {
-				this.$message.info("please select row data");
+				this.$message.info('please select row data');
 				return;
 			}
 			let multipleSelection = [];
-			if(status === 'scheduled'){ //全部启动
+			let discardData = [];
+			if (status === 'scheduled') {
+				//全部启动
 				this.multipleSelection.map(item => {
-					this.tableData.map(row =>{
-						if((row.id === item.id)&&(row.status ==='paused' || row.status ==='error')){
+					this.tableData.map(row => {
+						if (row.id === item.id && (row.status === 'paused' || row.status === 'error')) {
 							multipleSelection.push(item.id);
+						} else {
+							discardData.push(item.id);
 						}
-					})
+					});
 				});
-			}else if(status === 'shopping'){ //全部停止
+			} else if (status === 'stopping') {
+				//全部停止
 				this.multipleSelection.map(item => {
-					this.tableData.map(row =>{
-						if((row.id === item.id)&&(row.status ==='running')){
+					this.tableData.map(row => {
+						if (row.id === item.id && row.status === 'running') {
 							multipleSelection.push(item.id);
+						} else {
+							discardData.push(item.id);
 						}
-					})
+					});
 				});
 			}
 			if (multipleSelection.length === 0) {
+				this.$message.warning(discardData.length + 1);
 				return;
 			}
 			let where = {
@@ -675,101 +760,130 @@ export default {
 			let attributes = {
 				status: status
 			};
-			dataFlows.update(where, attributes).then(res => {
-				if (res.statusText === "OK" || res.status === 200) {
-					this.getData();
-				}
-			});
-		},
-		handleReset(id) {
-			this.$confirm(this.$t("message.resetMessage"), this.$t("message.prompt"), {
-				confirmButtonText: this.$t("dataFlow.reset"),
-				cancelButtonText: this.$t("message.cancel"),
-				type: "warning"
-			})
-				.then(() => {
-					// let attributes = {
-					// 	status: 'draft',
-					// 	stats: '',
-					// };
-					dataFlows.reset(id).then(res => {
-						if (res.statusText === "OK" || res.status === 200) {
+
+			if (status === 'stopping') {
+				this.statusConfirm(() => {
+					dataFlows.update(where, attributes).then(res => {
+						if (res.statusText === 'OK' || res.status === 200) {
 							this.getData();
-							this.$message.success(this.$t("message.resetOk"));
-						}else {
-							this.$message.info(this.$t("message.cancleReset"));
 						}
 					});
-
-				})
+				});
+			} else {
+				dataFlows.update(where, attributes).then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						this.getData();
+					}
+				});
+			}
 		},
+		handleReset(id) {
+			this.restConfirm(() => {
+				this.restLoading = true;
+				dataFlows
+					.reset(id)
+					.then(res => {
+						if (res.statusText === 'OK' || res.status === 200) {
+							this.getData();
+							this.$message.success(this.$t('message.resetOk'));
+						} else {
+							this.$message.info(this.$t('message.cancleReset'));
+						}
+					})
+					.finally(() => {
+						setTimeout(() => {
+							this.restLoading = false;
+						}, 5000);
+					});
+			});
+		},
+
+		restConfirm(callback) {
+			this.$confirm(this.$t('message.resetMessage'), this.$t('message.prompt'), {
+				confirmButtonText: this.$t('dataFlow.reset'),
+				cancelButtonText: this.$t('message.cancel'),
+				type: 'warning'
+			}).then(callback);
+		},
+
 		handleAllRest() {
 			if (this.multipleSelection.length === 0) {
-				this.$message.info("please select row data");
+				this.$message.info('please select row data');
 				return;
 			}
 			let multipleSelection = [];
 			this.multipleSelection.map(item => {
-				this.tableData.map(row =>{
-					if((row.id === item.id)&&(row.status ==='paused' || row.status ==='error')){
+				this.tableData.map(row => {
+					if (row.id === item.id && (row.status === 'paused' || row.status === 'error')) {
 						multipleSelection.push(item.id);
+					} else {
+						this.$message.info(this.$t('message.notRest'));
 					}
-				})
+				});
 			});
 			if (multipleSelection.length === 0) {
 				return;
 			}
 			let where = multipleSelection;
-			this.$confirm(this.$t("message.resetMessage"), this.$t("message.prompt"), {
-				confirmButtonText: this.$t("dataFlow.reset"),
-				cancelButtonText: this.$t("message.cancel"),
-				type: "warning"
-			})
-				.then(() => {
-					dataFlows.resetAll(where).then(res => {
-						if (res.statusText === "OK" || res.status === 200) {
+			this.restConfirm(() => {
+				this.restLoading = true;
+				dataFlows
+					.resetAll(where)
+					.then(res => {
+						if (res.statusText === 'OK' || res.status === 200) {
 							this.getData();
-							this.$message.success(this.$t("message.resetOk"));
-						}else {
-							this.$message.info(this.$t("message.cancleReset"));
+							this.$message.success(this.$t('message.resetOk'));
+						} else {
+							this.$message.info(this.$t('message.cancleReset'));
 						}
+					})
+					.finally(() => {
+						setTimeout(() => {
+							this.restLoading = false;
+						}, 5000);
 					});
-				})
+			});
 		},
 		handlerCopy(id) {
 			let self = this;
-			dataFlows
-				.copy(id)
-				.then(res => {
-					if (res.statusText === "OK" || res.status === 200) {
-						self.getData();
-						this.$message.success(this.$t("message.copySuccess"));
-					} else {
-						this.$message.error(this.$t("message.copyFail"));
-					}
-				})
+			dataFlows.copy(id).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					self.getData();
+					this.$message.success(this.$t('message.copySuccess'));
+				} else {
+					this.$message.error(this.$t('message.copyFail'));
+				}
+			});
 		},
 		formatterTime(row) {
-			let time = row.createTime ? this.$moment(row.createTime).format("YYYY-MM-DD HH:mm:ss") : "";
+			let time = row.createTime ? this.$moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
 			return time;
 		},
 		handleSortTable(column) {
-			let currentOrder = column.order === "ascending" ? "ASC" : "DESC";
+			let currentOrder = column.order === 'ascending' ? 'ASC' : 'DESC';
 			let mapping = {
-				status: "status",
-				last_updated: "last_updated",
-				createTime: "createTime",
-				input: "stats.input.rows",
-				output: "stats.output.rows",
-				transmissionTime: "stats.transmissionTime"
+				status: 'status',
+				last_updated: 'last_updated',
+				createTime: 'createTime',
+				input: 'stats.input.rows',
+				output: 'stats.output.rows',
+				transmissionTime: 'stats.transmissionTime'
 			};
-			this.order = mapping[column.prop] + " " + currentOrder;
+			this.order = mapping[column.prop] + ' ' + currentOrder;
+
+			localStorage.setItem('flowOrder', column.order);
+			localStorage.setItem('flowProp', column.prop);
+
+			if (localStorage.getItem('flowOrder') && localStorage.getItem('flowProp')) {
+				let prop = localStorage.getItem('flowOrder') === 'ascending' ? 'ASC' : 'DESC';
+				this.order = localStorage.getItem('flowProp') + ' ' + prop;
+			}
 			this.getData();
 		},
 		handleClear() {
-			this.formData.search = "";
-			this.formData.status = "";
-			this.formData.way = "";
+			this.formData.search = '';
+			this.formData.status = '';
+			this.formData.way = '';
 			this.screenFn();
 		},
 		handleSelectionChange(val) {
@@ -781,7 +895,7 @@ export default {
 		},
 		handleSizeChange(psize) {
 			this.pagesize = psize;
-			localStorage.setItem("flowPagesize",psize);
+			localStorage.setItem('flowPagesize', psize);
 			this.getData();
 		}
 	}
@@ -944,5 +1058,8 @@ export default {
 }
 .dataFlowsFlow .el-form-item__content {
 	line-height: 0;
+}
+.dataflow-clickTip .el-message-box__status {
+	top: 25% !important;
 }
 </style>

@@ -3,7 +3,7 @@
 		<div class="nodeBody">
 			<div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-					{{ $t("dataFlow.button.viewMonitoring") }}
+					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div>
 			<el-form
@@ -46,7 +46,7 @@
 				</el-form-item>
 			</el-form>
 			<el-button class="btn-debug" type="primary" size="mini" :loading="!!sending" @click="showDebug">
-				{{ $t("editor.cell.processor.script.debug_button_label") }}
+				{{ $t('editor.cell.processor.script.debug_button_label') }}
 			</el-button>
 		</div>
 		<Debug ref="debug"></Debug>
@@ -54,16 +54,17 @@
 </template>
 
 <script>
-import JsEditor from "../../../components/JsEditor";
-import log from "../../../log";
-import { EditorEventType } from "../../lib/events";
-import Debug from "./Debug";
-import ws, { EventName } from "../../../api/ws";
+import JsEditor from '../../../components/JsEditor';
+import log from '../../../log';
+import { EditorEventType } from '../../lib/events';
+import Debug from './Debug';
+import ws, { EventName } from '../../../api/ws';
+import _ from 'lodash';
 let editorMonitor = null;
 
 const gData = {};
 export default {
-	name: "Script",
+	name: 'Script',
 	components: {
 		JsEditor,
 		Debug
@@ -73,12 +74,12 @@ export default {
 			disabled: false,
 			scriptTypes: [
 				{
-					label: "JavaScript",
-					value: "js_processor"
+					label: 'JavaScript',
+					value: 'js_processor'
 				},
 				{
-					label: "Java",
-					value: "java_processor"
+					label: 'Java',
+					value: 'java_processor'
 				}
 			],
 
@@ -87,17 +88,17 @@ export default {
 				connectionId: [
 					{
 						required: true,
-						trigger: "blur",
+						trigger: 'blur',
 						message: `Please select ${this.connection_type} database`
 					}
 				]
 			},
 			model: {
-				name: "JavaScript",
-				type: "js_processor",
-				script: "function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}"
+				name: 'JavaScript',
+				type: 'js_processor',
+				script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}'
 			},
-			width: "500",
+			width: '500',
 			sending: false
 		};
 	},
@@ -112,7 +113,7 @@ export default {
 		model: {
 			deep: true,
 			handler() {
-				this.$emit("dataChanged", this.getData());
+				this.$emit('dataChanged', this.getData());
 			}
 		}
 	},
@@ -120,8 +121,8 @@ export default {
 	methods: {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
-				Object.keys(data).forEach(key => (this.model[key] = data[key]));
-				log("model script", this.model);
+				// Object.keys(data).forEach(key => (this.model[key] = data[key]));
+				_.merge(this.model, data);
 			}
 			gData.stageId = cell.id;
 			gData.dataFlowId = arguments[3].editor.scope.dataFlowId;
@@ -129,7 +130,8 @@ export default {
 			editorMonitor = vueAdapter.editor;
 		},
 		getData() {
-			return JSON.parse(JSON.stringify(this.model));
+			// return JSON.parse(JSON.stringify(this.model));
+			return _.cloneDeep(this.model);
 		},
 
 		setDisabled(disabled) {
@@ -141,9 +143,9 @@ export default {
 		},
 
 		showDebug() {
-			log("Connect to Test Server");
+			log('Connect to Test Server');
 			if (!gData.dataFlowId) {
-				this.$message.error(this.$t("editor.cell.processor.script.warning_for_not_save"));
+				this.$message.error(this.$t('editor.cell.processor.script.warning_for_not_save'));
 				return;
 			}
 			ws.getAgentId((err, id) => {
@@ -151,7 +153,7 @@ export default {
 					let params = this.model;
 					ws.sendPipe(
 						{
-							type: "execute_script",
+							type: 'execute_script',
 							script: params.script,
 							script_type: params.type,
 							dataFlowId: gData.dataFlowId,
@@ -164,7 +166,7 @@ export default {
 						this.$refs.debug.logList = [];
 					}, 60 * 1000);
 				} else {
-					this.$message.error(this.$t("editor.cell.processor.script.connect_server_fail"));
+					this.$message.error(this.$t('editor.cell.processor.script.connect_server_fail'));
 				}
 			});
 
@@ -172,7 +174,7 @@ export default {
 				ws.once(EventName.EXECUTE_SCRIPT_RESULT, msg => {
 					clearTimeout(this.sending);
 					this.sending = null;
-					log("Job.ReceiveMessage", msg);
+					log('Job.ReceiveMessage', msg);
 					cb(msg);
 				});
 			});

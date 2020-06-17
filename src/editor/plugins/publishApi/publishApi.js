@@ -1,8 +1,8 @@
-import {options} from "../../lib/rappid/config";
-import PublishApiAttribute from "./publishApiAttribute";
-import {FORM_DATA_KEY} from "../../constants";
-import log from "../../../log";
-import i18n from "../../../i18n/i18n";
+import { options } from '../../lib/rappid/config';
+import PublishApiAttribute from './publishApiAttribute';
+import { FORM_DATA_KEY } from '../../constants';
+import log from '../../../log';
+import i18n from '../../../i18n/i18n';
 
 export const PublishApiConfig = {
 	type: 'app.PublishApi',
@@ -11,22 +11,24 @@ export const PublishApiConfig = {
 		defaultInstanceProperties: {
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/o-api.svg',
+					xlinkHref: 'static/editor/o-api.svg'
 				},
 				label: {
-					text: i18n.t('editor.cell.data_node.api.publishName'),
+					text: i18n.t('editor.cell.data_node.api.publishName')
 				},
 				[FORM_DATA_KEY]: {
-				type: 'publishApi',
-				form: {}
+					type: 'publishApi',
+					form: {}
 				}
 			}
 		},
 		prototypeProperties: {
-			portLabelMarkup: [{
-				tagName: 'text',
-				selector: 'portLabel',
-			}],
+			portLabelMarkup: [
+				{
+					tagName: 'text',
+					selector: 'portLabel'
+				}
+			],
 
 			isDataNode() {
 				return true;
@@ -37,8 +39,8 @@ export const PublishApiConfig = {
 			 * @param targetCell
 			 * @return {boolean}
 			 */
-			allowTarget(targetCell) {
-        return false;
+			allowTarget() {
+				return false;
 			},
 
 			/**
@@ -54,15 +56,16 @@ export const PublishApiConfig = {
 				data = data || this.getFormData();
 				log('publishAPI.validate', data);
 				let name = this.attr('label/text');
+				let regName = /^[a-zA-Z$_][a-zA-Z\d_]*$/;
 				// if (!data)
 				// 	throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`);
-				if( !data.name )
-				throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.publishApi_nameNone')}`);
-				if( !data.paths.path )
-				throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.publishApi_path')}`);
+				if (!data.name) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.enterPublishApiName')}`);
+				if (!regName.test(data.name))
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.variable_name')}`);
+				if (!data.paths.path) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.enterEndUrl')}`);
 				return true;
-			},
-		},
+			}
+		}
 	},
 
 	styleFormConfig: {
@@ -82,7 +85,7 @@ export const PublishApiConfig = {
 						unit: 'px',
 						label: 'Font size',
 						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						when: { ne: { 'attrs/label/text': '' } },
 						index: 2
 					},
 					fontFamily: {
@@ -90,7 +93,7 @@ export const PublishApiConfig = {
 						options: options.fontFamily,
 						label: 'Font family',
 						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						when: { ne: { 'attrs/label/text': '' } },
 						index: 3
 					},
 					fontWeight: {
@@ -98,7 +101,7 @@ export const PublishApiConfig = {
 						options: options.fontWeight,
 						label: 'Font thickness',
 						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						when: { ne: { 'attrs/label/text': '' } },
 						index: 4
 					},
 					fill: {
@@ -106,7 +109,7 @@ export const PublishApiConfig = {
 						options: options.colorPalette,
 						label: 'Fill',
 						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						when: { ne: { 'attrs/label/text': '' } },
 						index: 5
 					}
 				},
@@ -134,7 +137,7 @@ export const PublishApiConfig = {
 						unit: 'px',
 						label: 'Outline thickness',
 						group: 'presentation',
-						when: {ne: {'attrs/body/stroke': 'transparent'}},
+						when: { ne: { 'attrs/body/stroke': 'transparent' } },
 						index: 3
 					},
 					strokeDasharray: {
@@ -144,8 +147,8 @@ export const PublishApiConfig = {
 						group: 'presentation',
 						when: {
 							and: [
-								{ne: {'attrs/body/stroke': 'transparent'}},
-								{ne: {'attrs/body/strokeWidth': 0}}
+								{ ne: { 'attrs/body/stroke': 'transparent' } },
+								{ ne: { 'attrs/body/strokeWidth': 0 } }
 							]
 						},
 						index: 4
@@ -179,7 +182,7 @@ export const PublishApiConfig = {
 		 */
 		//groupLabel: '',
 
-		size: {width: 5, height: 4},
+		size: { width: 5, height: 4 },
 		attrs: {
 			root: {
 				dataTooltip: i18n.t('editor.cell.data_node.api.tip'),
@@ -222,7 +225,6 @@ export const PublishApiConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: PublishApiAttribute,
+		component: PublishApiAttribute
 	}
-
 };

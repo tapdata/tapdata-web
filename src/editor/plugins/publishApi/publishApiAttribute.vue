@@ -2,7 +2,7 @@
 	<div class="releaseApi">
 		<div class="head-btns">
 			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-				{{ $t("dataFlow.button.viewMonitoring") }}
+				{{ $t('dataFlow.button.viewMonitoring') }}
 			</el-button>
 		</div>
 		<el-form ref="form" :model="form" :disabled="disabled" label-position="top" label-width="200px">
@@ -39,8 +39,17 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="18">
-					<el-form-item :label="'URL/API/V1/' + mergedSchema.table_name + '/cust/' +  form.apiPath">
-						<el-input v-model="form.apiPath" :placeholder="$t('editor.cell.data_node.api.enterEndUrl')"></el-input>
+					<el-form-item
+						:label="
+							mergedSchema && mergedSchema.table_name
+								? 'URL/API/V1/' + mergedSchema.table_name + '/cust/' + form.apiPath
+								: 'URL/API/V1/cust/' + form.apiPath
+						"
+					>
+						<el-input
+							v-model="form.apiPath"
+							:placeholder="$t('editor.cell.data_node.api.enterEndUrl')"
+						></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -65,10 +74,10 @@
 						<template slot-scope="scope">
 							<!-- <el-checkbox-group v-model="scope.row.checkList"> -->
 							<el-checkbox v-model="scope.row.required">{{
-								$t("editor.cell.data_node.api.required")
+								$t('editor.cell.data_node.api.required')
 							}}</el-checkbox>
 							<el-checkbox v-model="scope.row.query">{{
-								$t("editor.cell.data_node.api.availableQueries")
+								$t('editor.cell.data_node.api.availableQueries')
 							}}</el-checkbox>
 							<!-- </el-checkbox-group> -->
 						</template>
@@ -80,38 +89,38 @@
 </template>
 
 <script>
-import _ from "lodash";
+import _ from 'lodash';
 // import {uuid} from "../../util/Schema";
 // import { convertSchemaToTreeData } from "../../util/Schema";
 // import log from '../../../log';
 // import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
 let editorMonitor = null;
 export default {
-	name: "ReleaseApi",
+	name: 'ReleaseApi',
 	data() {
 		return {
 			disabled: false,
 			selectList: [
-				{ label: "GET", value: "GET" },
-				{ label: "STREAM", value: "STREAM" }
+				{ label: 'GET', value: 'GET' },
+				{ label: 'STREAM', value: 'STREAM' }
 			],
 			groupList: [],
 			expressionList: [],
 			form: {
-				apiVersion: "V1",
-				connection: "",
-				name: "",
-				description: "",
+				apiVersion: 'V1',
+				connection: '',
+				name: '',
+				description: '',
 				paths: {
-					path: "",
-					method: "GET",
+					path: '',
+					method: 'GET',
 					fields: [],
 					availableQueryField: [],
 					requiredQueryField: []
 				},
 				fields: [],
-				apiPath: "",
-				type: "publishApi"
+				apiPath: '',
+				type: 'publishApi'
 			}
 		};
 	},
@@ -119,8 +128,8 @@ export default {
 	watch: {
 		form: {
 			deep: true,
-			handler(data) {
-				this.$emit("dataChanged", this.getData());
+			handler() {
+				this.$emit('dataChanged', this.getData());
 			}
 		}
 	},
@@ -132,7 +141,8 @@ export default {
 		// convertSchemaToTreeData,
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
-				Object.keys(data).forEach(key => (this.form[key] = data[key]));
+				// Object.keys(data).forEach(key => (this.form[key] = data[key]));
+				_.merge(this.form, data);
 			}
 
 			// let fields = [];
@@ -144,9 +154,9 @@ export default {
 			// let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
 			if (this.mergedSchema && this.mergedSchema.fields) {
 				this.mergedSchema.fields.forEach(field => {
-					this.$set(field, "required", false);
-					this.$set(field, "query", false);
-					this.$set(field, "visible", true);
+					this.$set(field, 'required', false);
+					this.$set(field, 'query', false);
+					this.$set(field, 'visible', true);
 				});
 				this.form.connection = formDatas[0].connectionId;
 				this.form.paths.fields = this.mergedSchema.fields;
@@ -177,7 +187,7 @@ export default {
 				data.paths.requiredQueryField = [];
 				data.paths.availableQueryField = [];
 				data.fields = [];
-				data.paths.path = "";
+				data.paths.path = '';
 				data.paths.fields.forEach(item => {
 					if (item.required) {
 						data.paths.requiredQueryField.push(item.field_name);
@@ -205,11 +215,12 @@ export default {
 					delete item.required;
 					delete item.query;
 				});
-				if(this.mergedSchema) {
-					data.paths.path = "/API/V1/" + this.mergedSchema.table_name + "/cust/" + data.apiPath;
+				if (this.mergedSchema) {
+					data.paths.path = '/API/V1/' + this.mergedSchema.table_name + '/cust/' + data.apiPath;
+				} else {
+					data.paths.path = '/API/V1/' + 'cust/' + data.apiPath;
 				}
 			}
-			console.log("=========",data,this.mergedSchema)
 			return data;
 		},
 
@@ -298,7 +309,7 @@ export default {
 			padding: 8px 15px;
 			font-size: 12px;
 		}
-		.el-input__inner[style="height: 40px;"] {
+		.el-input__inner[style='height: 40px;'] {
 			height: 30px !important;
 		}
 	}

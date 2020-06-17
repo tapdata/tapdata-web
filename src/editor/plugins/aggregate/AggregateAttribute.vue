@@ -2,7 +2,7 @@
 	<div class="aggregate">
 		<div class="head-btns">
 			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-				{{ $t("dataFlow.button.viewMonitoring") }}
+				{{ $t('dataFlow.button.viewMonitoring') }}
 			</el-button>
 		</div>
 		<el-form ref="form" :model="form" label-position="top" label-width="200px" :disabled="disabled">
@@ -86,6 +86,9 @@
 							v-model="item.groupByExpression"
 							:placeholder="$t('dataFlow.selectGrpupFiled')"
 							multiple
+							filterable
+							allow-create
+							default-first-option
 						>
 							<el-option
 								v-for="item in groupList"
@@ -102,47 +105,47 @@
 				</el-col>
 			</el-row>
 			<el-form-item class="btnClass">
-				<el-button @click="addRow">+ {{ $t("editor.cell.processor.aggregate.new_aggregate") }}</el-button>
+				<el-button @click="addRow">+ {{ $t('editor.cell.processor.aggregate.new_aggregate') }}</el-button>
 			</el-form-item>
 		</el-form>
 	</div>
 </template>
 
 <script>
-import _ from "lodash";
-import log from "../../../log";
-import { mergeJoinTablesToTargetSchema } from "../../util/Schema";
+import _ from 'lodash';
+import log from '../../../log';
+import { mergeJoinTablesToTargetSchema } from '../../util/Schema';
 
 let counter = 0;
 let editorMonitor = null;
 export default {
-	name: "Aggregate",
+	name: 'Aggregate',
 	data() {
 		return {
 			disabled: false,
 			selectList: [
-				{ label: "AVG", value: "AVG" },
-				{ label: "SUM", value: "SUM" },
-				{ label: "MAX", value: "MAX" },
-				{ label: "MIN", value: "MIN" },
-				{ label: "COUNT", value: "COUNT" }
+				{ label: 'AVG', value: 'AVG' },
+				{ label: 'SUM', value: 'SUM' },
+				{ label: 'MAX', value: 'MAX' },
+				{ label: 'MIN', value: 'MIN' },
+				{ label: 'COUNT', value: 'COUNT' }
 			],
 			groupList: [],
 			expressionList: [],
 			form: {
-				name: "",
-				type: "aggregation_processor",
+				name: '',
+				type: 'aggregation_processor',
 				aggregations: [
 					{
-						name: "COUNT",
-						filterPredicate: "",
-						aggFunction: "COUNT",
-						aggExpression: "",
-						groupByExpression: ""
+						name: 'COUNT',
+						filterPredicate: '',
+						aggFunction: 'COUNT',
+						aggExpression: '',
+						groupByExpression: ''
 					}
 				]
 			},
-			aggaggExpression: "1",
+			aggaggExpression: '1',
 			countObj: {
 				AVG: 0,
 				SUM: 0,
@@ -154,8 +157,8 @@ export default {
 	},
 	mounted() {
 		this.form.aggregations.forEach(item => {
-			if (item.aggFunction === "COUNT") {
-				item.aggExpression = "";
+			if (item.aggFunction === 'COUNT') {
+				item.aggExpression = '';
 			}
 		});
 	},
@@ -167,20 +170,20 @@ export default {
 				// let aggaggExpression = '1'
 				if (val.aggregations && val.aggregations.length > 0) {
 					val.aggregations.forEach(item => {
-						if (item.aggFunction === "COUNT") {
-							item.aggExpression = "";
+						if (item.aggFunction === 'COUNT') {
+							item.aggExpression = '';
 						}
 					});
 				}
-				this.$emit("dataChanged", this.getData());
+				this.$emit('dataChanged', this.getData());
 			}
 		}
 	},
 
 	methods: {
-		changeAggFunction(data, index) {
-			if (data.aggFunction !== "COUNT") {
-				data.aggExpression = "1";
+		changeAggFunction(data) {
+			if (data.aggFunction !== 'COUNT') {
+				data.aggExpression = '1';
 			}
 			let aggFunctionArr = [];
 			for (let i = 0; i < this.form.aggregations.length; i++) {
@@ -192,21 +195,21 @@ export default {
 				if (this.countObj[data.aggFunction] === 0) {
 					data.name = data.aggFunction;
 				} else {
-					data.name = data.aggFunction + "_" + this.countObj[data.aggFunction];
+					data.name = data.aggFunction + '_' + this.countObj[data.aggFunction];
 				}
 			}
 		},
 		addRow() {
 			let list = {
-				name: "",
-				filterPredicate: "",
-				aggFunction: "COUNT",
-				aggExpression: "1",
-				groupByExpression: ""
+				name: '',
+				filterPredicate: '',
+				aggFunction: 'COUNT',
+				aggExpression: '1',
+				groupByExpression: ''
 			};
 			this.form.aggregations.push(list);
 			this.changeAggFunction(list);
-			log("length", this.form.aggregations.length);
+			log('length', this.form.aggregations.length);
 		},
 
 		removeRow(item, index) {
@@ -218,13 +221,14 @@ export default {
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
-				Object.keys(data).forEach(key => (this.form[key] = data[key]));
+				// Object.keys(data).forEach(key => (this.form[key] = data[key]));
+				_.merge(this.form, data);
 			}
 
 			let inputSchemas = cell.getInputSchema();
 			let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
 			let object = {};
-			this.groupList = schema.fields || [];
+			this.groupList = schema.fields ? schema.fields.sort((v1, v2) => (v1 > v2 ? 1 : v1 === v2 ? 0 : -1)) : [];
 			if (!!this.groupList && this.groupList.length > 0) {
 				this.groupList = this.groupList.reduce((cur, next) => {
 					if (!object[next.field_name]) {
@@ -235,11 +239,11 @@ export default {
 				}, []);
 			}
 			this.expressionList = this.groupList;
-			log("Aggregate.setData.inputSchemas", inputSchemas, schema.fields);
+			log('Aggregate.setData.inputSchemas', inputSchemas, schema.fields);
 
 			if (!this.form.name) {
-				if (counter === 0) this.form.name = this.$t("dataFlow.aggregation");
-				if (counter !== 0) this.form.name = this.$t("dataFlow.aggregation") + counter;
+				if (counter === 0) this.form.name = this.$t('dataFlow.aggregation');
+				if (counter !== 0) this.form.name = this.$t('dataFlow.aggregation') + counter;
 				counter++;
 			}
 
@@ -332,7 +336,7 @@ export default {
 			padding: 8px 15px;
 			font-size: 12px;
 		}
-		.el-input__inner[style="height: 40px;"] {
+		.el-input__inner[style='height: 40px;'] {
 			height: 30px !important;
 		}
 	}

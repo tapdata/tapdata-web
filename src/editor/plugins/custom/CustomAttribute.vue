@@ -2,12 +2,12 @@
 	<div class="customName nodeStyle">
 		<head>
 			<span class="headIcon iconfont icon-you2" type="primary"></span>
-			<span class="txt">{{ $t("editor.nodeSettings") }}</span>
+			<span class="txt">{{ $t('editor.nodeSettings') }}</span>
 		</head>
 		<div class="nodeBody">
 			<div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-					{{ $t("dataFlow.button.viewMonitoring") }}
+					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div>
 			<el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
@@ -31,16 +31,16 @@
 	</div>
 </template>
 <script>
-import _ from "lodash";
-import factory from "../../../api/factory";
-let connections = factory("connections");
+import _ from 'lodash';
+import factory from '../../../api/factory';
+let connections = factory('connections');
 let editorMonitor = null;
 export default {
-	name: "CustomNode",
+	name: 'CustomNode',
 	props: {
 		connection_type: {
 			type: String,
-			default: "source"
+			default: 'source'
 		}
 	},
 
@@ -52,14 +52,14 @@ export default {
 				connectionId: [
 					{
 						required: true,
-						trigger: "blur",
-						message: this.$t("editor.cell.data_node.custom.chooseCustomName")
+						trigger: 'blur',
+						message: this.$t('editor.cell.data_node.custom.chooseCustomName')
 					}
 				]
 			},
 			model: {
-				connectionId: "",
-				type: "custom_connection"
+				connectionId: '',
+				type: 'custom_connection'
 			}
 		};
 	},
@@ -68,7 +68,7 @@ export default {
 		let result = await connections.get({
 			filter: JSON.stringify({
 				where: {
-					database_type: "custom_connection"
+					database_type: 'custom_connection'
 				},
 				fields: {
 					name: 1,
@@ -77,7 +77,7 @@ export default {
 					connection_type: 1,
 					status: 1
 				},
-				order: "name ASC"
+				order: 'name ASC'
 			})
 		});
 
@@ -90,7 +90,7 @@ export default {
 		model: {
 			deep: true,
 			handler() {
-				this.$emit("dataChanged", this.getData());
+				this.$emit('dataChanged', this.getData());
 			}
 		}
 	},
@@ -98,7 +98,8 @@ export default {
 	methods: {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
-				Object.keys(data).forEach(key => (this.model[key] = data[key]));
+				// Object.keys(data).forEach(key => (this.model[key] = data[key]));
+				_.merge(this.model, data);
 			}
 
 			editorMonitor = vueAdapter.editor;

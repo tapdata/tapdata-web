@@ -3,20 +3,20 @@
  * @date 2/27/20
  * @description
  */
-import Component from "../lib/Component";
+import Component from '../lib/Component';
 
-import _ from "lodash";
-import joint from "../lib/rappid/rappid";
+import _ from 'lodash';
+import joint from '../lib/rappid/rappid';
 // import shapes from '../lib/rappid/models/shapes';
-import navigatorElementView from "../lib/rappid/view/navigator";
+import navigatorElementView from '../lib/rappid/view/navigator';
 // import Panel from "./panel";
-import { stencilConfig, selectionConfig, haloConfig, toolbarConfig } from "../lib/rappid/config";
-import { VueAdapter } from "../vue-adapter";
-import log from "../../log";
-import { DATA_FLOW_SETTING_DATA_KEY, FORM_DATA_KEY, SCHEMA_DATA_KEY, OUTPUT_SCHEMA_DATA_KEY } from "../constants";
-import { isAcyclic } from "graphlib/lib/alg";
-import { EditorEventType } from "../lib/events";
-import Tab from "./tab";
+import { stencilConfig, selectionConfig, haloConfig, toolbarConfig } from '../lib/rappid/config';
+import { VueAdapter } from '../vue-adapter';
+import log from '../../log';
+import { DATA_FLOW_SETTING_DATA_KEY, FORM_DATA_KEY, SCHEMA_DATA_KEY, OUTPUT_SCHEMA_DATA_KEY } from '../constants';
+import { isAcyclic } from 'graphlib/lib/alg';
+import { EditorEventType } from '../lib/events';
+import Tab from './tab';
 
 window.joint = joint;
 
@@ -60,7 +60,7 @@ export default class Graph extends Component {
 		const graph = (this.graph = new joint.dia.Graph());
 
 		graph.on(
-			"add",
+			'add',
 			function(cell, collection, opt) {
 				if (opt.stencil) self.createInspector(cell);
 
@@ -72,7 +72,7 @@ export default class Graph extends Component {
 		this.commandManager = new joint.dia.CommandManager({
 			graph: graph
 		});
-		this.commandManager.on("stack", this.emit.bind(this, EditorEventType.DATAFLOW_CHANGED));
+		this.commandManager.on('stack', this.emit.bind(this, EditorEventType.DATAFLOW_CHANGED));
 
 		const paper = (this.paper = new joint.dia.Paper({
 			model: graph,
@@ -92,38 +92,38 @@ export default class Graph extends Component {
 			snapLinks: 75,
 			highlighting: {
 				default: {
-					name: "stroke",
+					name: 'stroke',
 					options: {
 						padding: 0,
 						rx: 17,
 						ry: 17,
 						attrs: {
-							"stroke-width": 2,
-							stroke: "#00bcd4"
+							'stroke-width': 2,
+							stroke: '#00bcd4'
 						}
 					}
 				}
 			},
-			validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+			validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end) {
 				// don't allow loop links
 				if (cellViewS === cellViewT) return false;
 
-				let targetView = end === "target" ? cellViewT : cellViewS;
-				let sourceView = end === "target" ? cellViewS : cellViewT;
+				let targetView = end === 'target' ? cellViewT : cellViewS;
+				let sourceView = end === 'target' ? cellViewS : cellViewT;
 
 				// don't allow link to link connection
 				if (targetView.model.isLink()) return false;
 
 				// target don't accept source connection
 				if (
-					typeof targetView.model.allowSource === "function" &&
+					typeof targetView.model.allowSource === 'function' &&
 					!targetView.model.allowSource(sourceView.model)
 				)
 					return false;
 
 				// source don't allow connect to target
 				if (
-					typeof sourceView.model.allowTarget === "function" &&
+					typeof sourceView.model.allowTarget === 'function' &&
 					!sourceView.model.allowTarget(targetView.model)
 				)
 					return false;
@@ -132,12 +132,12 @@ export default class Graph extends Component {
 			}
 		}));
 
-		paper.on("blank:mousewheel", _.partial(this.onMousewheel, null), this);
-		paper.on("cell:mousewheel", this.onMousewheel, this);
-		paper.on("blank:pointerclick", this.onClickBlank.bind(this));
+		paper.on('blank:mousewheel', _.partial(this.onMousewheel, null), this);
+		paper.on('cell:mousewheel', this.onMousewheel, this);
+		paper.on('blank:pointerclick', this.onClickBlank.bind(this));
 		paper.on({
-			"link:connect": (linkView, evt, elementViewConnected, magent, arrowhead) => {
-				log("Graph.link.connect", arguments);
+			'link:connect': linkView => {
+				log('Graph.link.connect', arguments);
 				let acyclic = self.isAcyclic();
 				if (acyclic) {
 					self.updateOutputSchema(linkView.model);
@@ -153,8 +153,8 @@ export default class Graph extends Component {
 			}, */
 		});
 		graph.on({
-			remove: (model, collection, options) => {
-				log("Graph.graph.remove");
+			remove: model => {
+				log('Graph.graph.remove');
 				// if( model.isLink() ){
 				self.updateOutputSchema(model);
 				// }
@@ -172,7 +172,7 @@ export default class Graph extends Component {
 		const paperScroller = (this.paperScroller = new joint.ui.PaperScroller({
 			paper: paper,
 			autoResizePaper: true,
-			cursor: "grab",
+			cursor: 'grab',
 			contentOptions: function(paperScroller) {
 				let visibleArea = paperScroller.getVisibleArea();
 				return {
@@ -182,7 +182,7 @@ export default class Graph extends Component {
 						left: visibleArea.width / 2,
 						right: visibleArea.width / 2
 					},
-					allowNewOrigin: "any"
+					allowNewOrigin: 'any'
 				};
 			}
 		}));
@@ -204,19 +204,19 @@ export default class Graph extends Component {
 
 	isAcyclic() {
 		let acyclic = isAcyclic(this.graph.toGraphLib());
-		log("Graph.link.connect.isAcyclic", acyclic);
+		log('Graph.link.connect.isAcyclic', acyclic);
 		return acyclic;
 	}
 
 	updateOutputSchema(cell) {
-		log("Graph.updateOutputSchema");
+		log('Graph.updateOutputSchema');
 		let self = this;
 		if (cell && cell.isLink()) {
 			let targetCell = cell.getTargetCell();
 			if (!targetCell && cell.target() && cell.target().id) {
 				targetCell = self.graph.getCell(cell.target().id);
 			}
-			if (targetCell && typeof targetCell.updateOutputSchema === "function") {
+			if (targetCell && typeof targetCell.updateOutputSchema === 'function') {
 				targetCell.updateOutputSchema();
 			}
 		}
@@ -229,7 +229,7 @@ export default class Graph extends Component {
 			let rightTabPanel = this.editor.getRightTabPanel();
 			if (!rightTabPanel) {
 				rightTabPanel = new Tab({
-					name: "rightTabPanel",
+					name: 'rightTabPanel',
 					hiddenTabBar: true
 				});
 				this.editor.getRightSidebar().add(rightTabPanel); // 添加空白panel 节点渲染
@@ -238,11 +238,11 @@ export default class Graph extends Component {
 			this.editor.getRightSidebar().hide();
 		}
 		this.unHighlightAllCells();
-		if (document.getElementById("searchNode")) {
-			document.getElementById("searchNode").blur();
+		if (document.getElementById('searchNode')) {
+			document.getElementById('searchNode').blur();
 		}
-		if (document.getElementById("taskNameInput")) {
-			document.getElementById("taskNameInput").blur();
+		if (document.getElementById('taskNameInput')) {
+			document.getElementById('taskNameInput').blur();
 		}
 	}
 
@@ -259,7 +259,6 @@ export default class Graph extends Component {
 	}
 
 	selectCell(cell) {
-		log("选中节点数据",cell);
 		let self = this;
 		if (Array.isArray(cell)) {
 			self.selection.collection.reset(cell);
@@ -273,13 +272,13 @@ export default class Graph extends Component {
 			if (!first) {
 				self.selection.collection.reset([cell]);
 			}
-			if (cell.isElement() && cell.get("type").startsWith("app.")) {
+			if (cell.isElement() && cell.get('type').startsWith('app.')) {
 				setTimeout(() => {
 					self.unHighlightAllCells();
 					let cellView = self.paper.findViewByModel(cell);
 					let isDataNode = cell.isDataNode && cell.isDataNode();
 					cellView.highlight(null, {
-						name: "stroke",
+						name: 'stroke',
 						options: {
 							rx: isDataNode ? 20 : 16,
 							ry: isDataNode ? 20 : 16
@@ -288,11 +287,11 @@ export default class Graph extends Component {
 				}, 0);
 			}
 		}
-		if (document.getElementById("searchNode")) {
-			document.getElementById("searchNode").blur();
+		if (document.getElementById('searchNode')) {
+			document.getElementById('searchNode').blur();
 		}
-		if (document.getElementById("taskNameInput")) {
-			document.getElementById("taskNameInput").blur();
+		if (document.getElementById('taskNameInput')) {
+			document.getElementById('taskNameInput').blur();
 		}
 	}
 
@@ -317,23 +316,23 @@ export default class Graph extends Component {
 			}, */
 			// Remove tooltip definition from clone
 			dragStartClone: function(cell) {
-				if (cell.get("type").startsWith("app.")) {
-					return self.createCell(cell.get("type"));
+				if (cell.get('type').startsWith('app.')) {
+					return self.createCell(cell.get('type'));
 				} else {
-					return cell.clone().removeAttr("root/dataTooltip");
+					return cell.clone().removeAttr('root/dataTooltip');
 				}
 			}
 		}));
 
-		let stencilPanel = this.editor.getLeftSidebar().getChildByName("stencil");
+		let stencilPanel = this.editor.getLeftSidebar().getChildByName('stencil');
 		stencilPanel.getContentEl().append(stencil.el);
 		stencil.render().load(stencilConfig.shapes);
 	}
 
 	createCell(cellType, formData, schema) {
-		log("Graph.createCell", cellType, formData);
+		log('Graph.createCell', cellType, formData);
 		let Cell = _.get(joint.shapes, cellType);
-		let cell = new Cell({}).removeAttr("root/dataTooltip");
+		let cell = new Cell({}).removeAttr('root/dataTooltip');
 		if (formData) {
 			cell.set(FORM_DATA_KEY, formData);
 		}
@@ -356,14 +355,14 @@ export default class Graph extends Component {
 			useModelGeometry: true
 		});
 
-		this.selection.collection.on("reset add remove", this.onSelectionChange.bind(this));
+		this.selection.collection.on('reset add remove', this.onSelectionChange.bind(this));
 
 		// Initiate selecting when the user grabs the blank area of the paper while the Shift key is pressed.
 		// Otherwise, initiate paper pan.
 		this.paper.on(
-			"blank:pointerdown",
+			'blank:pointerdown',
 			function(evt, x, y) {
-				if (this.keyboard.isActive("shift", evt)) {
+				if (this.keyboard.isActive('shift', evt)) {
 					this.selection.startSelecting(evt);
 				} else {
 					this.selection.collection.reset([]);
@@ -375,10 +374,10 @@ export default class Graph extends Component {
 		);
 
 		this.paper.on(
-			"element:pointerdown",
+			'element:pointerdown',
 			function(elementView, evt) {
 				// Select an element if CTRL/Meta key is pressed while the element is clicked.
-				if (this.keyboard.isActive("ctrl meta", evt)) {
+				if (this.keyboard.isActive('ctrl meta', evt)) {
 					if (
 						this.selection.collection.find(function(cell) {
 							return cell.isLink();
@@ -395,10 +394,10 @@ export default class Graph extends Component {
 		);
 
 		this.selection.on(
-			"selection-box:pointerdown",
+			'selection-box:pointerdown',
 			function(elementView, evt) {
 				// Unselect an element if the CTRL/Meta key is pressed while a selected element is clicked.
-				if (this.keyboard.isActive("ctrl meta", evt)) {
+				if (this.keyboard.isActive('ctrl meta', evt)) {
 					evt.preventDefault();
 					this.selection.collection.remove(elementView.model);
 				}
@@ -429,7 +428,6 @@ export default class Graph extends Component {
 
 	selectPrimaryCell(cellView) {
 		let cell = cellView.model;
-		log("编辑模式",this.editable)
 		if (this.editable) {
 			if (cell.isElement()) {
 				this.selectCell(cell);
@@ -452,12 +450,12 @@ export default class Graph extends Component {
 	selectPrimaryElement(elementView) {
 		let element = elementView.model;
 
-		if (element.get("freeTransform") !== false) {
+		if (element.get('freeTransform') !== false) {
 			new joint.ui.FreeTransform({
 				cellView: elementView,
 				allowRotation: false,
-				preserveAspectRatio: !!element.get("preserveAspectRatio"),
-				allowOrthogonalResize: element.get("allowOrthogonalResize") !== false
+				preserveAspectRatio: !!element.get('preserveAspectRatio'),
+				allowOrthogonalResize: element.get('allowOrthogonalResize') !== false
 			}).render();
 		}
 
@@ -477,7 +475,7 @@ export default class Graph extends Component {
 	selectPrimaryLink(linkView) {
 		let ns = joint.linkTools;
 		let toolsView = new joint.dia.ToolsView({
-			name: "link-pointerdown",
+			name: 'link-pointerdown',
 			tools: [
 				new ns.Vertices({
 					vertexAdding: true
@@ -520,7 +518,7 @@ export default class Graph extends Component {
 		let self = this;
 		this.paper.on(
 			{
-				"cell:pointerup": function(cellView) {
+				'cell:pointerup': function(cellView) {
 					let cell = cellView.model;
 					let collection = this.selection.collection;
 					if (collection.includes(cell)) return;
@@ -531,14 +529,14 @@ export default class Graph extends Component {
 					}
 				},
 
-				"link:mouseenter": function(linkView) {
+				'link:mouseenter': function(linkView) {
 					if (linkView.hasTools()) return;
 
 					if (!self.editable) return;
 
 					let ns = joint.linkTools;
 					let toolsView = new joint.dia.ToolsView({
-						name: "link-hover",
+						name: 'link-hover',
 						tools: [
 							new ns.Vertices({
 								vertexAdding: false
@@ -551,9 +549,9 @@ export default class Graph extends Component {
 					linkView.addTools(toolsView);
 				},
 
-				"link:mouseleave": function(linkView) {
+				'link:mouseleave': function(linkView) {
 					// Remove only the hover tool, not the pointerdown tool
-					if (linkView.hasTools("link-hover")) {
+					if (linkView.hasTools('link-hover')) {
 						linkView.removeTools();
 					}
 				}
@@ -562,8 +560,8 @@ export default class Graph extends Component {
 		);
 
 		this.graph.on(
-			"change",
-			function(cell, opt) {
+			'change',
+			function() {
 				// if (!cell.isLink() || !opt.inspector) return;
 				/* let ns = joint.linkTools;
 			let toolsView = new joint.dia.ToolsView({
@@ -620,15 +618,15 @@ export default class Graph extends Component {
 		}));
 
 		toolbar.on({
-			"svg:pointerclick": this.openAsSVG.bind(this),
-			"png:pointerclick": this.openAsPNG.bind(this),
-			"to-front:pointerclick": this.applyOnSelection.bind(this, "toFront"),
-			"to-back:pointerclick": this.applyOnSelection.bind(this, "toBack"),
-			"layout:pointerclick": this.layoutDirectedGraph.bind(this),
-			"snapline:change": this.changeSnapLines.bind(this),
-			"clear:pointerclick": this.graph.clear.bind(this.graph),
-			"print:pointerclick": this.paper.print.bind(this.paper),
-			"grid-size:change": this.paper.setGridSize.bind(this.paper)
+			'svg:pointerclick': this.openAsSVG.bind(this),
+			'png:pointerclick': this.openAsPNG.bind(this),
+			'to-front:pointerclick': this.applyOnSelection.bind(this, 'toFront'),
+			'to-back:pointerclick': this.applyOnSelection.bind(this, 'toBack'),
+			'layout:pointerclick': this.layoutDirectedGraph.bind(this),
+			'snapline:change': this.changeSnapLines.bind(this),
+			'clear:pointerclick': this.graph.clear.bind(this.graph),
+			'print:pointerclick': this.paper.print.bind(this.paper),
+			'grid-size:change': this.paper.setGridSize.bind(this.paper)
 		});
 
 		this.editor
@@ -642,12 +640,12 @@ export default class Graph extends Component {
 		this.keyboard = new joint.ui.Keyboard();
 		this.keyboard.on(
 			{
-				"ctrl+c": function() {
+				'ctrl+c': function() {
 					// Copy all selected elements and their associated links.
 					this.clipboard.copyElements(this.selection.collection, this.graph);
 				},
 
-				"ctrl+v": function() {
+				'ctrl+v': function() {
 					let pastedCells = this.clipboard.pasteCells(this.graph, {
 						translate: {
 							dx: 20,
@@ -665,30 +663,30 @@ export default class Graph extends Component {
 					this.selection.collection.reset(elements);
 				},
 
-				"ctrl+x shift+delete": function() {
+				'ctrl+x shift+delete': function() {
 					this.clipboard.cutElements(this.selection.collection, this.graph);
 				},
 
-				"delete backspace": function(evt) {
+				'delete backspace': function(evt) {
 					evt.preventDefault();
 					this.graph.removeCells(this.selection.collection.toArray());
 				},
 
-				"ctrl+z": function() {
+				'ctrl+z': function() {
 					this.commandManager.undo();
 					this.selection.cancelSelection();
 				},
 
-				"ctrl+y": function() {
+				'ctrl+y': function() {
 					this.commandManager.redo();
 					this.selection.cancelSelection();
 				},
 
-				"ctrl+a": function() {
+				'ctrl+a': function() {
 					this.selection.collection.reset(this.graph.getElements());
 				},
 
-				"ctrl+plus": function(evt) {
+				'ctrl+plus': function(evt) {
 					evt.preventDefault();
 					this.paperScroller.zoom(0.2, {
 						max: 5,
@@ -696,7 +694,7 @@ export default class Graph extends Component {
 					});
 				},
 
-				"ctrl+minus": function(evt) {
+				'ctrl+minus': function(evt) {
 					evt.preventDefault();
 					this.paperScroller.zoom(-0.2, {
 						min: 0.2,
@@ -704,12 +702,12 @@ export default class Graph extends Component {
 					});
 				},
 
-				"keydown:shift": function(evt) {
-					this.paperScroller.setCursor("crosshair");
+				'keydown:shift': function() {
+					this.paperScroller.setCursor('crosshair');
 				},
 
-				"keyup:shift": function() {
-					this.paperScroller.setCursor("grab");
+				'keyup:shift': function() {
+					this.paperScroller.setCursor('grab');
 				}
 			},
 			this
@@ -719,8 +717,8 @@ export default class Graph extends Component {
 	initTooltips() {
 		new joint.ui.Tooltip({
 			rootTarget: document.body,
-			target: "[data-tooltip]",
-			direction: "auto",
+			target: '[data-tooltip]',
+			direction: 'auto',
 			padding: 10,
 			animation: true
 		});
@@ -730,13 +728,13 @@ export default class Graph extends Component {
 		this.vueAdapter = new VueAdapter(this.editor, this);
 	}
 
-	resize(width, height) {
+	resize() {
 		// this.graph.resize(width, height);
 		// this.paper.setDimensions(width, height);
 	}
 
 	onMousewheel(cellView, evt, x, y, delta) {
-		if (this.keyboard.isActive("alt", evt)) {
+		if (this.keyboard.isActive('alt', evt)) {
 			evt.preventDefault();
 			this.paperScroller.zoom(delta * 0.2, {
 				min: 0.2,
@@ -748,16 +746,16 @@ export default class Graph extends Component {
 		}
 	}
 
-	exportStylesheet = ".scalable * { vector-effect: non-scaling-stroke }";
+	exportStylesheet = '.scalable * { vector-effect: non-scaling-stroke }';
 
 	openAsSVG() {
 		let paper = this.paper;
 		paper.hideTools().toSVG(
 			function(svg) {
 				new joint.ui.Lightbox({
-					image: "data:image/svg+xml," + encodeURIComponent(svg),
+					image: 'data:image/svg+xml,' + encodeURIComponent(svg),
 					downloadable: true,
-					fileName: "Rappid"
+					fileName: 'Rappid'
 				}).open();
 				paper.showTools();
 			},
@@ -777,7 +775,7 @@ export default class Graph extends Component {
 				new joint.ui.Lightbox({
 					image: dataURL,
 					downloadable: true,
-					fileName: "Rappid"
+					fileName: 'Rappid'
 				}).open();
 				paper.showTools();
 			},
@@ -790,17 +788,17 @@ export default class Graph extends Component {
 	}
 
 	applyOnSelection(method) {
-		this.graph.startBatch("selection");
+		this.graph.startBatch('selection');
 		this.selection.collection.models.forEach(function(model) {
 			model[method]();
 		});
-		this.graph.stopBatch("selection");
+		this.graph.stopBatch('selection');
 	}
 
 	layoutDirectedGraph() {
 		joint.layout.DirectedGraph.layout(this.graph, {
 			setLinkVertices: true,
-			rankDir: "LR",
+			rankDir: 'LR',
 			marginX: 200,
 			marginY: 200
 		});
@@ -834,7 +832,7 @@ export default class Graph extends Component {
 		for (let i = 0; i < cells.length; i++) {
 			let cell = cells[i];
 			try {
-				if (typeof cell.validate === "function") {
+				if (typeof cell.validate === 'function') {
 					cell.validate();
 				}
 			} catch (e) {
@@ -847,14 +845,14 @@ export default class Graph extends Component {
 	}
 
 	setEditable(editable) {
-		log("Graph.setEditable", editable);
+		log('Graph.setEditable', editable);
 		this.editable = editable;
 
 		if (editable) {
 			this.keyboard.enable();
-			this.toolbar.getWidgetByName("redo").enable();
-			this.toolbar.getWidgetByName("undo").enable();
-			this.toolbar.getWidgetByName("clear").enable();
+			this.toolbar.getWidgetByName('redo').enable();
+			this.toolbar.getWidgetByName('undo').enable();
+			this.toolbar.getWidgetByName('clear').enable();
 		} else {
 			// clear selected cells
 			let first = this.selection.collection.shift();
@@ -864,9 +862,9 @@ export default class Graph extends Component {
 
 			this.unHighlightAllCells();
 			this.keyboard.disable();
-			this.toolbar.getWidgetByName("redo").disable();
-			this.toolbar.getWidgetByName("undo").disable();
-			this.toolbar.getWidgetByName("clear").disable();
+			this.toolbar.getWidgetByName('redo').disable();
+			this.toolbar.getWidgetByName('undo').disable();
+			this.toolbar.getWidgetByName('clear').disable();
 			setTimeout(() => this.paperScroller.centerContent(), 0);
 		}
 	}

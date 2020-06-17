@@ -3,17 +3,17 @@
  * @date 3/2/20
  * @description
  */
-import PublicAPI from "./publicApi";
-import axios from "axios";
+import PublicAPI from './publicApi';
+import axios from 'axios';
 
 export default class DataFlows extends PublicAPI {
 	constructor() {
-		super("/api/DataFlows");
+		super('/api/DataFlows');
 	}
 
-  draft(params) {
-    return axios.patch(this.url+ '/draft',params);
-  }
+	draft(params) {
+		return axios.patch(this.url + '/draft', params);
+	}
 
 	copy(id) {
 		return axios.post(`${this.url}/${id}/copy`);
@@ -27,22 +27,26 @@ export default class DataFlows extends PublicAPI {
 	}
 	getId(id, params, filter) {
 		if (Array.isArray(params)) {
-			filter = typeof filter === "object" ? JSON.stringify(filter) : filter;
-			let qs = filter ? "?filter=" + filter : "";
-			return axios.get(this.url + "/" + id + params.join("/") + qs);
+			filter = typeof filter === 'object' ? JSON.stringify(filter) : filter;
+			let qs = filter ? '?filter=' + filter : '';
+			return axios.get(this.url + '/' + id + params.join('/') + qs);
 		}
 		params = params || {};
-		return axios.get(this.url + "/" + id, { params });
+		return axios.get(this.url + '/' + id, { params });
 	}
 	getSourceList(id) {
-		return axios.get(this.url + "/dataFlowTables?dataFlowId=" + id);
+		return axios.get(this.url + '/dataFlowTables?dataFlowId=' + id);
 	}
 	deleteAll(where) {
-		if (typeof where === "object") where = JSON.stringify(where);
-		return axios.post(this.url + "/removeAll?where=" + where);
+		if (typeof where === 'object') where = JSON.stringify(where);
+		return axios.post(this.url + '/removeAll?where=' + where);
 	}
 	resetAll(where) {
-		if (typeof where === "object") where = JSON.stringify(where);
-		return axios.post(this.url + "/resetAll?id=" + where);
+		if (typeof where === 'object') where = JSON.stringify(where);
+		return axios.post(this.url + '/resetAll?id=' + where);
+	}
+
+	saveStage(stages) {
+		return axios.post(`${this.url}/stages`, stages);
 	}
 }

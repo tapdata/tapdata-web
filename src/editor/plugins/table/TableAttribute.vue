@@ -120,6 +120,14 @@
 						size="mini"
 					></el-input>
 				</el-form-item>
+
+				<el-form-item :label="$t('editor.cell.data_node.table.form.initial_offset.label')">
+					<el-input
+						v-model="model.initialOffset"
+						:placeholder="$t('editor.cell.data_node.table.form.initial_offset.placeholder')"
+						size="mini"
+					></el-input>
+				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
 				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
@@ -225,6 +233,7 @@ export default {
 				databaseType: '',
 				tableName: '',
 				sql: '',
+				initialOffset: '',
 				dropTable: false,
 				type: 'table',
 				primaryKeys: '',
@@ -293,7 +302,8 @@ export default {
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
-				Object.keys(data).forEach(key => (this.model[key] = data[key]));
+				// Object.keys(data).forEach(key => (this.model[key] = data[key]));
+				_.merge(this.model, data);
 			}
 			this.isSourceDataNode = isSourceDataNode;
 

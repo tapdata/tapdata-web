@@ -2,12 +2,12 @@
 	<div class="apiNode nodeStyle">
 		<head>
 			<span class="headIcon iconfont icon-you2" type="primary"></span>
-			<span class="txt">{{ $t("editor.nodeSettings") }}</span>
+			<span class="txt">{{ $t('editor.nodeSettings') }}</span>
 		</head>
 		<div class="nodeBody">
 			<div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-					{{ $t("dataFlow.button.viewMonitoring") }}
+					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div>
 			<el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
@@ -64,15 +64,15 @@
 	</div>
 </template>
 <script>
-import _ from "lodash";
-import factory from "../../../api/factory";
-import Entity from "../link/Entity";
-import { convertSchemaToTreeData } from "../../util/Schema";
-let connections = factory("connections");
+import _ from 'lodash';
+import factory from '../../../api/factory';
+import Entity from '../link/Entity';
+import { convertSchemaToTreeData } from '../../util/Schema';
+let connections = factory('connections');
 
 let editorMonitor = null;
 export default {
-	name: "ApiNode",
+	name: 'ApiNode',
 	components: { Entity },
 	data() {
 		return {
@@ -82,30 +82,30 @@ export default {
 				connectionId: [
 					{
 						required: true,
-						trigger: "blur",
-						message: this.$t("editor.cell.data_node.api.chooseApiName")
+						trigger: 'blur',
+						message: this.$t('editor.cell.data_node.api.chooseApiName')
 					}
 				],
 				primaryKeys: [
 					{
 						required: true,
-						trigger: "blur",
-						message: this.$t("editor.cell.data_node.api.none_pk")
+						trigger: 'blur',
+						message: this.$t('editor.cell.data_node.api.none_pk')
 					}
 				],
 				tableName: [
 					{
 						required: true,
-						trigger: "blur",
-						message: this.$t("editor.cell.data_node.api.none_collection")
+						trigger: 'blur',
+						message: this.$t('editor.cell.data_node.api.none_collection')
 					}
 				]
 			},
 			model: {
-				connectionId: "",
-				type: "rest api",
-				tableName: "",
-				primaryKeys: ""
+				connectionId: '',
+				type: 'rest api',
+				tableName: '',
+				primaryKeys: ''
 			},
 			schemas: [],
 			mergedSchema: null
@@ -116,7 +116,7 @@ export default {
 		let result = await connections.get({
 			filter: JSON.stringify({
 				where: {
-					database_type: "rest api"
+					database_type: 'rest api'
 				},
 				fields: {
 					name: 1,
@@ -126,7 +126,7 @@ export default {
 					status: 1,
 					schema: 1
 				},
-				order: "name ASC"
+				order: 'name ASC'
 			})
 		});
 
@@ -138,18 +138,18 @@ export default {
 	watch: {
 		model: {
 			deep: true,
-			handler(val) {
-				this.$emit("dataChanged", this.getData());
+			handler() {
+				this.$emit('dataChanged', this.getData());
 			}
 		},
 
-		"model.connectionId": {
+		'model.connectionId': {
 			immediate: true,
 			handler() {
 				this.loadDataModels(this.model.connectionId);
 			}
 		},
-		"model.tableName": {
+		'model.tableName': {
 			immediate: true,
 			handler() {
 				if (this.schemas.length > 0) {
@@ -161,10 +161,10 @@ export default {
 								: {
 										table_name: this.model.tableName,
 										cdc_enabled: true,
-										meta_type: "rest api",
+										meta_type: 'rest api',
 										fields: []
 								  };
-						this.$emit("schemaChange", _.cloneDeep(schema));
+						this.$emit('schemaChange', _.cloneDeep(schema));
 					}
 				}
 			}
@@ -183,7 +183,7 @@ export default {
 					let unique = {};
 					primaryKeys.forEach(key => (unique[key] = 1));
 					primaryKeys = Object.keys(unique);
-					if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(",");
+					if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
 				}
 			}
 		}
@@ -210,10 +210,11 @@ export default {
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
-				Object.keys(data).forEach(key => (this.model[key] = data[key]));
+				// Object.keys(data).forEach(key => (this.model[key] = data[key]));
+				_.merge(this.model, data);
 			}
 			this.mergedSchema = cell.getOutputSchema();
-			cell.on("change:outputSchema", () => {
+			cell.on('change:outputSchema', () => {
 				this.mergedSchema = cell.getOutputSchema();
 			});
 
