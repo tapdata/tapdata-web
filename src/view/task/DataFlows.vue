@@ -629,8 +629,12 @@ export default {
 			});
 		},
 
-		deleteConfirm() {
-			
+		deleteConfirm (callback) {
+			this.$confirm(this.$t("message.deteleMessage"), this.$t("message.prompt"), {
+				confirmButtonText: this.$t("message.delete"),
+				cancelButtonText: this.$t("message.cancel"),
+				type: "warning"
+			}).then(callback)
 		},
 
 		handleAllDelete() {
@@ -654,39 +658,29 @@ export default {
 					inq: multipleSelection
 				}
 			};
-			this.$confirm(this.$t("message.deteleMessage"), this.$t("dataFlow.importantReminder"), {
-				confirmButtonText: this.$t("message.delete"),
-				cancelButtonText: this.$t("message.cancel"),
-				type: "warning"
+			this.deleteConfirm(() => {
+				dataFlows.deleteAll(where).then(res => {
+					if (res.statusText === "OK" || res.status === 200) {
+						this.getData();
+						this.$message.success(this.$t("message.deleteOK"));
+					}else {
+						this.$message.info(this.$t("message.deleteFail"));
+					}
+				});
 			})
-				.then(() => {
-					dataFlows.deleteAll(where).then(res => {
-						if (res.statusText === "OK" || res.status === 200) {
-							this.getData();
-							this.$message.success(this.$t("message.deleteOK"));
-						}else {
-							this.$message.info(this.$t("message.deleteFail"));
-						}
-					});
-				})
 		},
 		handleDelete(id) {
-			this.$confirm(this.$t("message.deteleMessage"), this.$t("dataFlow.importantReminder"), {
-				confirmButtonText: this.$t("message.delete"),
-				cancelButtonText: this.$t("message.cancel"),
-				type: "warning"
-			})
-				.then(() => {
-					dataFlows.delete(id).then(res => {
-						if (res.statusText === "OK" || res.status === 200) {
-							this.getData();
-							this.$message.success(this.$t("message.deleteOK"));
-						}else {
-							this.$message.info(this.$t("message.deleteFail"));
-						}
+			this.deleteConfirm(() => {
+				dataFlows.delete(id).then(res => {
+					if (res.statusText === "OK" || res.status === 200) {
+						this.getData();
+						this.$message.success(this.$t("message.deleteOK"));
+					}else {
+						this.$message.info(this.$t("message.deleteFail"));
+					}
 
-					});
-				})
+				});
+			})
 		},
 
 		statusConfirm(callback) {
@@ -779,8 +773,8 @@ export default {
 			}
 		},
 		handleReset(id) {
-			this.restLoading = true;
 			this.restConfirm(() => {
+				this.restLoading = true;
 				dataFlows.reset(id).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						this.getData();
@@ -820,6 +814,7 @@ export default {
 			}
 			let where = multipleSelection;
 			this.restConfirm(() => {
+				this.restLoading = true;
 				dataFlows.resetAll(where).then(res => {
 					if (res.statusText === "OK" || res.status === 200) {
 						this.getData();
@@ -827,6 +822,8 @@ export default {
 					}else {
 						this.$message.info(this.$t("message.cancleReset"));
 					}
+				}).finally(()=> {
+					setTimeout(() => {this.restLoading = false},5000);
 				});
 			});
 
