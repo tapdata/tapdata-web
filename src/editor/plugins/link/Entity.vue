@@ -180,7 +180,7 @@ export default {
 	display: inline-block;
 	max-width: 300px;
 	text-align: left;
-
+	margin-bottom: 10px;
 	.el-header {
 		line-height: 23px;
 		background: @color;

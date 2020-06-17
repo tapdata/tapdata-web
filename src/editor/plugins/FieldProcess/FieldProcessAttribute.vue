@@ -170,6 +170,8 @@ export default {
   justify-content: center;
   height: 100%;
   padding: 10px;
+  overflow: auto;
+  box-sizing: border-box;
   .e-form {
     .el-input,
     .el-select,
