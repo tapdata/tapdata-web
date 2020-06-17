@@ -2,6 +2,7 @@
   <div class="e-data-filter">
     <div class="head-btns">
       <el-button
+	  	v-if="disabled"
         class="e-button"
         type="primary"
         @click="seeMonitor"
@@ -224,9 +225,12 @@ export default {
 @primaryColor: #f5af3f;
 
 .e-data-filter {
+	width: 100%;
+	height: 100%;
+	overflow: auto;
   .e-form {
     padding: 10px 20px;
-
+	box-sizing: border-box;
     .e-primary {
       color: @primaryColor;
     }
