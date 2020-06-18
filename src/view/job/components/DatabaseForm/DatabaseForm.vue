@@ -32,7 +32,7 @@ import formConfig from './config';
 
 const databaseTypesModel = factory('DatabaseTypes');
 const connectionsModel = factory('connections');
-const defaultConfig = [];
+let defaultConfig = [];
 const defaultModel = {
 	name: '',
 	database_type: '',
@@ -87,28 +87,26 @@ export default {
 		this.getDT();
 		this.initTimezones();
 		let self = this;
-		defaultConfig.push(
-			...[
-				{
-					type: 'input',
-					field: 'name',
-					label: self.$t('dataForm.form.connectionName'),
-					required: true
-				},
-				{
-					type: 'select',
-					field: 'database_type',
-					label: self.$t('dataForm.form.databaseType'),
-					options: [],
-					required: true,
-					on: {
-						change() {
-							self.getFormConfig();
-						}
+		defaultConfig = [
+			{
+				type: 'input',
+				field: 'name',
+				label: self.$t('dataForm.form.connectionName'),
+				required: true
+			},
+			{
+				type: 'select',
+				field: 'database_type',
+				label: self.$t('dataForm.form.databaseType'),
+				options: [],
+				required: true,
+				on: {
+					change() {
+						self.getFormConfig();
 					}
 				}
-			]
-		);
+			}
+		];
 	},
 	methods: {
 		initData(data) {
