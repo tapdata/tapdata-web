@@ -4,7 +4,6 @@
 			<div class="metadata-header" v-show="isActive">
 				<span>数据分类</span>
 				<div class="metadata-header-right">
-					<i class="iconfont icon-icon_tianjia" @click="addNode()"></i>
 					<i class="iconfont icon-fangdajing" @click="displaySearch(false)"></i>
 					<i class="iconfont icon-sync" @click="handleList"></i>
 					<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
@@ -20,47 +19,81 @@
 				node-key="id"
 				:props="props"
 				:expand-on-click-node="false"
-				:data="data"
+				lazy
+				:load="loadNodes"
 				:filter-node-method="filterNode"
 				ref="tree"
-				default-expand-all
 				class="metaData-tree"
 			>
 				<span class="custom-tree-node" slot-scope="{ node, data }">
 					<span>
 						<span class="iconfont icon-Folder-closed filter-icon"></span>
-						<span class="table-label" @click="handleChecked(data)">{{ data.value }}</span>
-						<span>
-							<el-dropdown @command="handleRowCommand" class="item">
-								<el-button type="text"
-									><i class="iconfont icon-gengduo3  task-list-icon"></i
-								></el-button>
-								<el-dropdown-menu slot="dropdown">
-									<el-dropdown-item :command="'children' + node.key">
-										{{ $t("metaData.addChildernNode") }}</el-dropdown-item
-									>
-									<el-dropdown-item :command="'add' + node.key">
-										{{ $t("metaData.addNode") }}</el-dropdown-item
-									>
-									<el-dropdown-item :command="'edit' + node.key">
-										{{ $t("metaData.editNode") }}</el-dropdown-item
-									>
-									<el-dropdown-item :command="'delete' + node.key">
-										{{ $t("metaData.deleteNode") }}</el-dropdown-item
-									>
-								</el-dropdown-menu>
-							</el-dropdown>
-						</span>
+						<span class="table-label" @click="handleChecked(data)">{{ node.label }}</span>
 					</span>
 				</span>
 			</el-tree>
-			<el-dialog :title="title" :visible.sync="dialogVisibleNodeName" width="30%" :before-close="handleClose">
-				<span><el-input v-model="nodeName"></el-input></span>
-				<span slot="footer" class="dialog-footer">
-					<el-button @click="dialogVisibleNodeName = false">取 消</el-button>
-					<el-button type="primary" @click="handleAddNode()">确 定</el-button>
-				</span>
-			</el-dialog>
+		</div>
+		<div class="box-ul">
+			<div class="box-head">
+				<div class="select-nav-header">
+					<span style="font-size: 12px">{{ checkedValue.label }}</span>
+					<el-button size="mini" type="primary" @click="handleClassify">批量分类</el-button>
+				</div>
+				<el-input
+					placeholder="请输入内容"
+					v-model="search"
+					class="search-input"
+					clearable
+					@clear="clear"
+					@change="handleSearch"
+				>
+					<i slot="prefix" class="el-input__icon el-icon-search"></i>
+				</el-input>
+				<div class="select-nav">
+					<el-select
+						v-model="checkType"
+						clearable
+						placeholder="请选择"
+						class="MetaDataSelect"
+						@change="handleSearch"
+					>
+						<el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+						</el-option>
+					</el-select>
+					<el-select
+						v-model="checkClassify"
+						clearable
+						placeholder="请选择"
+						class="MetaDataSelect"
+						@change="handleSearch"
+					>
+						<el-option
+							v-for="item in optionsType"
+							:key="item.value"
+							:label="item.label"
+							:value="item.value"
+						>
+						</el-option>
+					</el-select>
+					<el-checkbox v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+				</div>
+			</div>
+			<ul class="classify-ul">
+				<el-checkbox-group v-model="checkData" @change="handleCheckedCitiesChange" class="list-box">
+					<li v-for="item in listdata" :key="item.id">
+						<el-checkbox :label="item.id">
+							<span class="iconfont icon-table2 icon-color"></span>
+							<span>{{ item.original_name }}</span>
+						</el-checkbox>
+					</li>
+				</el-checkbox-group>
+			</ul>
+			<SelectClassify
+				ref="SelectClassify"
+				:checkData="checkData"
+				:dialogVisible="dialogVisible"
+				:listdata="listdata"
+			></SelectClassify>
 		</div>
 	</div>
 </template>
@@ -68,12 +101,16 @@
 <script>
 import factory from "../api/factory";
 import log from "../log";
+import SelectClassify from "./../components/SelectClassify";
 
 const MetadataDefinitions = factory("MetadataDefinitions");
 const MetadataInstances = factory("MetadataInstances");
 
 export default {
 	name: "metaData",
+	components: {
+		SelectClassify
+	},
 	data() {
 		return {
 			count: 0,
@@ -152,18 +189,18 @@ export default {
 			checkClassify: "",
 			checkType: "",
 			isActive: true,
-			dialogVisible: false,
-			type: "dataflow",
-			dialogVisibleNodeName: false,
-			typeNode: "",
-			nodeName: "",
-			parent_id: "",
-			title: ""
+			dialogVisible: false
 		};
 	},
 	async mounted() {
 		this.handleList();
-		this.getData();
+		this.$refs.SelectClassify.$on("dialogVisible", operations => {
+			this.handleChecked(this.checkedValue);
+			this.dialogVisible = operations;
+		});
+		this.$refs.SelectClassify.$on("clearCheckData", operations => {
+			this.checkData = operations;
+		});
 	},
 	watch: {
 		filterText(val) {
@@ -171,26 +208,68 @@ export default {
 		}
 	},
 	methods: {
-		getData() {
-			let params = {
-				filter: {
-					where: {
-						or: [{ item_type: this.type }]
-					}
-				}
+		loadNodes(node, resolve) {
+			let self = this;
+			let filter = {
+				where: {}
 			};
-			MetadataDefinitions.get(params).then(res => {
-				if (res.statusText === "OK" || res.status === 200) {
-					if (res.data) {
-						let items = res.data;
-						let rootNode = {
-							children: []
-						};
-						this.find_children(rootNode, items);
-						this.data = rootNode.children;
-					}
-				}
-			});
+
+			if (node.level === 0) {
+				filter.where["parent_id"] = {
+					exists: false
+				};
+				MetadataDefinitions.get({
+					filter: JSON.stringify(filter)
+				})
+					.then(res => {
+						if (res.statusText === "OK" || res.status === 200) {
+							if (res.data) {
+								self.data.splice(0, self.data.length);
+								let children = [];
+								res.data.forEach(record => {
+									children.push({
+										id: record.id,
+										parent_id: record.parent_id,
+										label: record.value,
+										meta_type: record.item_type
+									});
+								});
+								resolve(children);
+							}
+						}
+					})
+					.catch(e => {
+						this.$message.error("MetadataInstances error");
+					});
+			} else {
+				filter.where["parent_id"] = {
+					regexp: `^${node.data.id}$`
+				};
+				MetadataDefinitions.get({
+					filter: JSON.stringify(filter)
+				})
+					.then(res => {
+						if (res.statusText === "OK" || res.status === 200) {
+							if (res.data) {
+								self.data.splice(0, self.data.length);
+								let children = [];
+								res.data.forEach(record => {
+									children.push({
+										id: record.id,
+										parent_id: record.parent_id,
+										label: record.value,
+										meta_type: record.item_type,
+										leaf: true
+									});
+								});
+								resolve(children);
+							}
+						}
+					})
+					.catch(e => {
+						this.$message.error("MetadataInstances error");
+					});
+			}
 		},
 		filterNode(value, data) {
 			if (!value) return true;
@@ -201,8 +280,7 @@ export default {
 			let params = {
 				filter: JSON.stringify({
 					where: {
-						is_deleted: false,
-						meta_type: this.type
+						is_deleted: false
 					},
 					fields: {
 						name: true,
@@ -246,6 +324,39 @@ export default {
 				self.$refs.tree.store.nodesMap[treeList[i].id].expanded = false;
 			}
 		},
+		handleCheckAllChange(val) {
+			if (val) {
+				if (this.listdata) {
+					this.listdata.forEach(item => {
+						this.checkData.push(item.id);
+					});
+				}
+			} else {
+				this.checkData = [];
+			}
+			log("checkData", this.checkData);
+		},
+		handleCheckedCitiesChange(value) {
+			this.checkData = value;
+		},
+		handleChecked(val) {
+			let params = {};
+			this.checkedValue = val;
+			params[`filter[where][classifications.id][in][0]`] = val.id;
+			MetadataInstances.get(params)
+				.then(res => {
+					let self = this;
+					if (res.statusText === "OK" || res.status === 200) {
+						if (res.data) {
+							self.listdata = res.data;
+						}
+					}
+					log("listdata", self.listdata);
+				})
+				.catch(e => {
+					this.$message.error("MetadataInstances error");
+				});
+		},
 		handleSearch() {
 			let params = {};
 			if (this.checkType) {
@@ -254,6 +365,8 @@ export default {
 			if (this.search) {
 				params[`filter[where][or][1][original_name][like]`] = this.search;
 			}
+			// params[`filter[where][or][1][original_name][like]`] = this.checkClassify;
+
 			MetadataInstances.get(params)
 				.then(res => {
 					let self = this;
@@ -281,113 +394,6 @@ export default {
 				return;
 			}
 			this.dialogVisible = true;
-		},
-		handleRowCommand(command) {
-			if (command.indexOf("add") !== -1) {
-				let node = command.replace("add", "");
-				this.addNode(node);
-			} else if (command.indexOf("children") !== -1) {
-				let node = command.replace("children", "");
-				this.addChildNode(node);
-			} else if (command.indexOf("edit") !== -1) {
-				let node = command.replace("edit", "");
-				this.editNode(node);
-			} else if (command.indexOf("delete") !== -1) {
-				let node = command.replace("delete", "");
-				this.deleteNode(node);
-			}
-		},
-		addNode() {
-			//通过node-key 获取node data
-			this.nodeName = "";
-			this.typeNode = "addNode";
-			this.title = this.$t("metaData.addNode");
-			this.dialogVisibleNodeName = true;
-		},
-		addChildNode(id) {
-			this.parent_id = id;
-			this.nodeName = "";
-			this.typeNode = "addChildNode";
-			this.title = this.$t("metaData.addChildernNode");
-			this.dialogVisibleNodeName = true;
-		},
-		editNode(id) {
-			let node = this.$refs.tree.getNode(id);
-			this.parent_id = id;
-			this.nodeName = node.data.value;
-			this.typeNode = "editNode";
-			this.title = this.$t("metaData.editNode");
-			this.dialogVisibleNodeName = true;
-		},
-		deleteNode(id) {
-			this.$confirm(this.$t("metaData.deteleMessage"), {
-				confirmButtonText: this.$t("message.delete"),
-				cancelButtonText: this.$t("message.cancel"),
-				type: "warning"
-			}).then(() => {
-				MetadataDefinitions.delete(id).then(res => {
-					let self = this;
-					if (res.statusText === "OK" || res.status === 200) {
-						if (res.data) {
-							self.data = res.data;
-							self.getData();
-							self.dialogVisibleNodeName = false;
-						}
-					} else {
-						this.$message.info(this.$t("message.deleteFail"));
-					}
-				});
-			});
-		},
-		handleAddNode() {
-			let data = {
-				item_type: [this.type],
-				value: this.nodeName
-			};
-			if (this.typeNode === "addChildNode") {
-				data.parent_id = this.parent_id;
-			}
-			if (this.typeNode === "editNode") {
-				data.id = this.parent_id;
-			}
-			this.handlePostNode(data);
-		},
-		handleClose() {
-			this.dialogVisibleNodeName = false;
-		},
-		handlePostNode(data) {
-			MetadataDefinitions[this.typeNode === "editNode" ? "patch" : "post"](data)
-				.then(res => {
-					let self = this;
-					if (res.statusText === "OK" || res.status === 200) {
-						if (res.data) {
-							self.data = res.data;
-							self.getData();
-							self.dialogVisibleNodeName = false;
-						}
-					}
-				})
-				.catch(e => {
-					this.$message.error("MetadataInstances error");
-				});
-		},
-		find_children(parent, items) {
-			if (!items || !items.length) return;
-			parent.children = [] || parent.children;
-			for (let i = 0; i < items.length; i++) {
-				let item = items[i];
-				if (item.parent_id === parent.id || (!parent.id && !item.parent_id)) {
-					parent.children.forEach(v => (v.islabe = false));
-					parent.children.push(item);
-					items.splice(i, 1);
-					i--;
-				}
-			}
-			if (parent && parent.children && parent.children.length) {
-				for (let j = 0; j < parent.children.length; j++) {
-					this.find_children(parent.children[j], items);
-				}
-			}
 		}
 	}
 };
@@ -533,7 +539,7 @@ export default {
 	display: flex;
 }
 .metadata-header-right {
-	margin-left: 104px;
+	margin-left: 124px;
 }
 </style>
 <style lang="less">

@@ -487,6 +487,8 @@ const cn = {
 							label: '描述',
 							placeholder: '请输入节点描述'
 						},
+						toUpperCase: '转大写',
+						toLowerCase: '转小写',
 						fieldName: '字段名称',
 						fieldType: '字段类型',
 						addField: '添加字段',
@@ -833,6 +835,13 @@ const cn = {
 		input: {
 			placeholderPrefix: '请输入'
 		}
+	},
+	metaData: {
+		addNode: '新增同级分类',
+		addChildernNode: '新增子分类',
+		editNode: '编辑',
+		deleteNode: '删除',
+		deteleMessage: '此操作会将该分类下存在的子类都删除，是否删除'
 	}
 };
 

@@ -87,6 +87,7 @@ export default {
 			model: {
 				operations: [],
 				scripts: [],
+				description: '',
 				name: 'Field Process',
 				type: 'field_processor'
 			},
@@ -110,8 +111,7 @@ export default {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			log('FieldProcess.setData', arguments);
 			if (data) {
-				// Object.keys(data).forEach(key => (this.model[key] = data[key]));
-				_.merge(this.model, data);
+				Object.keys(data).forEach(key => (this.model[key] = data[key]));
 			}
 
 			this.originalSchema = mergeJoinTablesToTargetSchema(null, cell.getInputSchema());
@@ -151,8 +151,6 @@ export default {
 	justify-content: center;
 	height: 100%;
 	padding: 10px;
-	overflow: auto;
-	box-sizing: border-box;
 	.e-form {
 		.el-input,
 		.el-select,

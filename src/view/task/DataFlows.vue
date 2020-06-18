@@ -811,38 +811,41 @@ export default {
 				this.$message.info('please select row data');
 				return;
 			}
+			let errorStatus = [];
 			let multipleSelection = [];
 			this.multipleSelection.map(item => {
 				this.tableData.map(row => {
 					if (row.id === item.id && (row.status === 'paused' || row.status === 'error')) {
 						multipleSelection.push(item.id);
-					} else {
+					} else if (row.id === item.id && (row.status !== 'paused' || row.status !== 'error')) {
 						this.$message.info(this.$t('message.notRest'));
+						errorStatus.push(item.id);
 					}
 				});
 			});
-			if (multipleSelection.length === 0) {
+			if (multipleSelection.length !== 0 && errorStatus.length === 0) {
+				let where = multipleSelection;
+				this.restConfirm(() => {
+					this.restLoading = true;
+					dataFlows
+						.resetAll(where)
+						.then(res => {
+							if (res.statusText === 'OK' || res.status === 200) {
+								this.getData();
+								this.$message.success(this.$t('message.resetOk'));
+							} else {
+								this.$message.info(this.$t('message.cancleReset'));
+							}
+						})
+						.finally(() => {
+							setTimeout(() => {
+								this.restLoading = false;
+							}, 5000);
+						});
+				});
+			} else {
 				return;
 			}
-			let where = multipleSelection;
-			this.restConfirm(() => {
-				this.restLoading = true;
-				dataFlows
-					.resetAll(where)
-					.then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							this.getData();
-							this.$message.success(this.$t('message.resetOk'));
-						} else {
-							this.$message.info(this.$t('message.cancleReset'));
-						}
-					})
-					.finally(() => {
-						setTimeout(() => {
-							this.restLoading = false;
-						}, 5000);
-					});
-			});
 		},
 		handlerCopy(id) {
 			let self = this;

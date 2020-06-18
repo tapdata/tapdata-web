@@ -488,6 +488,8 @@ const tc = {
 							label: '描述',
 							placeholder: '請輸入節點描述'
 						},
+						toUpperCase: '轉大寫',
+						toLowerCase: '轉小寫',
 						fieldName: '字段名稱',
 						fieldType: '字段類型',
 						addField: '添加字段',
@@ -834,6 +836,13 @@ const tc = {
 		input: {
 			placeholderPrefix: '請輸入'
 		}
+	},
+	metaData: {
+		ddNode: '新增同級分類',
+		addChildernNode: '新增子分類',
+		editNode: '編輯',
+		deleteNode: '刪除',
+		deteleMessage: '此操作會將該分類下存在的子類都刪除，是否刪除'
 	}
 };
 

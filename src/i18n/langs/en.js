@@ -491,6 +491,9 @@ const en = {
 							label: 'Description',
 							placeholder: 'Please input you node description'
 						},
+						toUpperCase: 'Upper',
+						toLowerCase: 'Lower',
+						delete: 'Delete',
 						fieldName: 'Field name',
 						fieldType: 'Field type',
 						addField: 'Add Field',
@@ -839,6 +842,13 @@ const en = {
 		input: {
 			placeholderPrefix: 'Enter '
 		}
+	},
+	metaData: {
+		addNode: "Add category at the same level",
+		addChildernNode: "Add Child Category",
+		editNode: "Edit",
+		deleteNode: "Delete",
+		deteleMessage: "This operation will delete all subclasses existing in this category, whether to delete it"
 	}
 };
 
