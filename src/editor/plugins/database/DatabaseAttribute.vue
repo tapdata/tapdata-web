@@ -47,7 +47,7 @@
 							style="padding: 7px;margin-left: 7px"
 							@click="$refs.databaseForm.show()"
 						></el-button>
-						<DatabaseForm ref="databaseForm" @success="getDatabases"></DatabaseForm>
+						<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
 					</div>
 				</el-form-item>
 
