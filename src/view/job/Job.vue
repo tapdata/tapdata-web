@@ -305,28 +305,30 @@ export default {
 		// self.editor.getUI().getBackButtonEl().on('click', () => {
 		// 	self.$router.push({path: '/dataFlows'});
 		// });
-		this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
-			if (self.loading) {
-				return;
-			}
-			changeData = this.getDataFlowData(true);
-			if (changeData) {
-				let settingSetInterval = () => {
-					timer = setTimeout(() => {
-						if (['draft', 'error', 'paused'].includes(this.status)) {
-							self.timeSave();
-						}
-						timer = null;
-					}, 10000);
-				};
-				if (timer) {
-					clearTimeout(timer);
-					settingSetInterval();
-				} else {
-					settingSetInterval();
+		if (this.isEditable()) {
+			this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
+				if (self.loading) {
+					return;
 				}
-			}
-		});
+				changeData = this.getDataFlowData(true);
+				if (changeData) {
+					let settingSetInterval = () => {
+						timer = setTimeout(() => {
+							if (['draft', 'error', 'paused'].includes(this.status)) {
+								self.timeSave();
+							}
+							timer = null;
+						}, 10000);
+					};
+					if (timer) {
+						clearTimeout(timer);
+						settingSetInterval();
+					} else {
+						settingSetInterval();
+					}
+				}
+			});
+		}
 	},
 
 	methods: {
