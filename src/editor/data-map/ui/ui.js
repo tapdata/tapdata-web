@@ -3,8 +3,8 @@
  * @date 5/15/20
  * @description
  */
-import Component from "../../lib/Component";
-import $ from "jquery";
+import Component from '../../lib/Component';
+import $ from 'jquery';
 
 export default class UI extends Component {
 	constructor(props) {
@@ -28,10 +28,10 @@ export default class UI extends Component {
 	}
 
 	getGraphContainer() {
-		return this.el.find(".editor-container .e-body .graph-container");
+		return this.el.find('.editor-container .e-body .graph-container');
 	}
 
-	getBody(){
-		return this.el.find(".editor-container .e-body");
+	getBody() {
+		return this.el.find('.editor-container .e-body');
 	}
 }

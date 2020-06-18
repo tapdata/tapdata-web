@@ -1,63 +1,63 @@
-import Vue from "vue";
-import Router from "vue-router";
-import DataMap from "../view/dataMap/DataMap";
+import Vue from 'vue';
+import Router from 'vue-router';
+import DataMap from '../view/dataMap/DataMap';
 
 Vue.use(Router);
 
 export default new Router({
 	routes: [
 		{
-			path: "/",
-			name: "layout",
-			redirect: "/clusterManagement",
-			component: () => import("../view/layout"),
+			path: '/',
+			name: 'layout',
+			redirect: '/clusterManagement',
+			component: () => import('../view/layout'),
 			children: [
 				{
-					path: "clusterManagement",
-					name: "clusterManagement",
-					component: () => import("../view/clusterManagement/clusterManagement")
+					path: 'clusterManagement',
+					name: 'clusterManagement',
+					component: () => import('../view/clusterManagement/clusterManagement')
 				},
 				{
-					path: "dailyRecord",
-					name: "dailyRecord",
-					component: () => import("../view/clusterManagement/dailyRecord")
+					path: 'dailyRecord',
+					name: 'dailyRecord',
+					component: () => import('../view/clusterManagement/dailyRecord')
 				}
 			]
 		},
 		{
-			path: "/job",
-			name: "job",
-			component: () => import("../view/job/Job")
+			path: '/job',
+			name: 'job',
+			component: () => import('../view/job/Job')
 		},
 		{
-			path: "/dataFlows",
-			name: "DataFlows",
-			component: () => import("../view/task/DataFlows")
+			path: '/dataFlows',
+			name: 'DataFlows',
+			component: () => import('../view/task/DataFlows')
 		},
 		{
-			path: "/metadata",
-			name: "metadata",
-			component: () => import("../view/metaData")
+			path: '/metadata',
+			name: 'metadata',
+			component: () => import('../view/metaData')
 		},
 		{
-			path: "/dataVerify",
-			name: "DataVerify",
-			component: () => import("../view/job/DataVerify/List")
+			path: '/dataVerify',
+			name: 'DataVerify',
+			component: () => import('../view/job/DataVerify/List')
 		},
 		{
-			path: "/upload",
-			name: "Upload",
-			component: () => import("../components/upload")
+			path: '/upload',
+			name: 'Upload',
+			component: () => import('../components/upload')
 		},
 		{
-			path: "/dataMap",
-			name: "DataMap",
+			path: '/dataMap',
+			name: 'DataMap',
 			component: DataMap
 		},
 		{
-			path: "/apiInfo",
-			name: "ApiInfo",
-			component: () => import("../view/job/apiInfo")
+			path: '/apiInfo',
+			name: 'ApiInfo',
+			component: () => import('../view/job/apiInfo')
 		}
 	]
 });

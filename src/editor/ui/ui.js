@@ -3,9 +3,9 @@
  * @date 2/26/20
  * @description
  */
-import Component from "../lib/Component";
-import i18n from "../../i18n/i18n";
-import $ from "jquery";
+import Component from '../lib/Component';
+import i18n from '../../i18n/i18n';
+import $ from 'jquery';
 
 export default class UI extends Component {
 	constructor(opts) {
@@ -17,9 +17,9 @@ export default class UI extends Component {
 	}
 
 	doInit() {
-		let editTitle = i18n.t("dataFlow.edit");
-		let saveTitle = i18n.t("dataFlow.button.save");
-		let taskName = i18n.t("dataFlow.newTaksName");
+		let editTitle = i18n.t('dataFlow.edit');
+		let saveTitle = i18n.t('dataFlow.button.save');
+		let taskName = i18n.t('dataFlow.newTaksName');
 
 		this.el = $(`<div class="editor">
 			<div class="e-header">
@@ -45,71 +45,71 @@ export default class UI extends Component {
 		if (this.opts.actionBarEl) {
 			this.getActionBarEl().append(this.opts.actionBarEl);
 		}
-		this.el.find("input.ui-input").on("click", function() {
-			$("#taskNameInput").focus();
-			$("#edit").css("display", "none");
-			$("#submit").css("display", "inline-block");
-			var input = document.getElementById("taskNameInput");
+		this.el.find('input.ui-input').on('click', function() {
+			$('#taskNameInput').focus();
+			$('#edit').css('display', 'none');
+			$('#submit').css('display', 'inline-block');
+			var input = document.getElementById('taskNameInput');
 			input.setSelectionRange(0, -1);
 		});
-		this.el.find("i.icon-tianxie").on("click", function() {
-			$("#taskNameInput").focus();
-			$("#edit").css("display", "none");
-			$("#submit").css("display", "inline-block");
-			var input = document.getElementById("taskNameInput");
+		this.el.find('i.icon-tianxie').on('click', function() {
+			$('#taskNameInput').focus();
+			$('#edit').css('display', 'none');
+			$('#submit').css('display', 'inline-block');
+			var input = document.getElementById('taskNameInput');
 			input.setSelectionRange(0, -1);
 		});
 
-		this.el.find("input.ui-input").on("keyup", function(event) {
-			if (event.keyCode === "13") {
-				$("#taskNameInput").blur();
-				$("#submit").css("display", "none");
-				$("#edit").css("display", "inline-block");
+		this.el.find('input.ui-input').on('keyup', function(event) {
+			if (event.keyCode === '13') {
+				$('#taskNameInput').blur();
+				$('#submit').css('display', 'none');
+				$('#edit').css('display', 'inline-block');
 			}
 		});
 
-		this.el.find("input.ui-input").on("blur", function() {
-			$("#submit").css("display", "none");
-			$("#edit").css("display", "inline-block");
-			var input = document.getElementById("taskNameInput");
+		this.el.find('input.ui-input').on('blur', function() {
+			$('#submit').css('display', 'none');
+			$('#edit').css('display', 'inline-block');
+			var input = document.getElementById('taskNameInput');
 			input.setSelectionRange(0, 0);
 		});
 	}
 
-	setDisableName(disable){
-		if(disable){
-			this.el.find(".e-title #taskNameInput").attr('disabled',true);
+	setDisableName(disable) {
+		if (disable) {
+			this.el.find('.e-title #taskNameInput').attr('disabled', true);
 		} else {
-			this.el.find(".e-title #taskNameInput").attr('disabled',false);
+			this.el.find('.e-title #taskNameInput').attr('disabled', false);
 		}
 	}
 
 	getName() {
-		return this.el.find(".e-title #taskNameInput").val();
+		return this.el.find('.e-title #taskNameInput').val();
 	}
 	setName(name) {
-		return this.el.find(".e-title #taskNameInput").val(name);
+		return this.el.find('.e-title #taskNameInput').val(name);
 	}
 
 	// getBackButtonEl(){
 	// 	return this.el.find('.e-header .e-action-back');
 	// }
 	getContentEl() {
-		return this.el.find(".e-content");
+		return this.el.find('.e-content');
 	}
 	getNavigatorEl() {
-		return this.el.find(".navigator-container");
+		return this.el.find('.navigator-container');
 	}
 	getToolbarEl() {
-		return this.el.find(".e-toolbar-container");
+		return this.el.find('.e-toolbar-container');
 	}
 	getGraphToolbarEl() {
-		return this.el.find(".e-toolbar-container .graph-toolbar");
+		return this.el.find('.e-toolbar-container .graph-toolbar');
 	}
 	getActionBarEl() {
-		return this.el.find(".action-toolbar");
+		return this.el.find('.action-toolbar');
 	}
 	getGraphContainer() {
-		return this.el.find(".graph-container");
+		return this.el.find('.graph-container');
 	}
 }

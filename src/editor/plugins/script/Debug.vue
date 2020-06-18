@@ -7,7 +7,7 @@
 		>
 			<div class="panel debug-list" v-show="opened">
 				<div class="header">
-					<h4>{{ $t("editor.cell.processor.script.debug.top_header") }}</h4>
+					<h4>{{ $t('editor.cell.processor.script.debug.top_header') }}</h4>
 					<i class="el-icon-arrow-up" @click="hide"></i>
 				</div>
 				<div class="table-panel">
@@ -38,10 +38,10 @@
 						>
 							<template slot-scope="scope">
 								<span class="color-danger" v-if="scope.row.status === 'ERROR'">{{
-									$t("editor.cell.processor.script.debug.status_error")
+									$t('editor.cell.processor.script.debug.status_error')
 								}}</span>
 								<span class="color-primary" v-else>{{
-									$t("editor.cell.processor.script.debug.status_success")
+									$t('editor.cell.processor.script.debug.status_success')
 								}}</span>
 							</template>
 						</el-table-column>
@@ -68,20 +68,20 @@
 		>
 			<div class="panel debug-details" v-show="opened">
 				<div class="header">
-					<h4>{{ $t("editor.cell.processor.script.debug.bottom_header") }}</h4>
+					<h4>{{ $t('editor.cell.processor.script.debug.bottom_header') }}</h4>
 					<ul class="bar">
 						<template v-if="selectedLog.index >= 0">
-							<li>{{ $t("editor.cell.processor.script.debug.order") }}: {{ selectedLog.index + 1 }}</li>
+							<li>{{ $t('editor.cell.processor.script.debug.order') }}: {{ selectedLog.index + 1 }}</li>
 							<li>
-								{{ $t("editor.cell.processor.script.debug.status") }}:
+								{{ $t('editor.cell.processor.script.debug.status') }}:
 								<span class="color-primary" v-show="!selectedLog.status === 'ERROR'">
-									{{ $t("editor.cell.processor.script.debug.status_success") }}
+									{{ $t('editor.cell.processor.script.debug.status_success') }}
 								</span>
 								<span class="color-danger" v-show="selectedLog.status === 'ERROR'">
-									{{ $t("editor.cell.processor.script.debug.status_error") }}
+									{{ $t('editor.cell.processor.script.debug.status_error') }}
 								</span>
 							</li>
-							<li>{{ $t("editor.cell.processor.script.debug.time") }}: {{ selectedLog.time }}ms</li>
+							<li>{{ $t('editor.cell.processor.script.debug.time') }}: {{ selectedLog.time }}ms</li>
 						</template>
 						<li>
 							<i class="el-icon-arrow-down" @click="hide"></i>
@@ -90,7 +90,7 @@
 				</div>
 				<ul class="details">
 					<li>
-						<label>{{ $t("editor.cell.processor.script.debug.detail.parameter") }}</label>
+						<label>{{ $t('editor.cell.processor.script.debug.detail.parameter') }}</label>
 						<div class="value">
 							<div class="params" v-for="(p, index) in selectedLog.params" :key="index">
 								<span>{{ index + 1 }}: </span>
@@ -99,13 +99,13 @@
 						</div>
 					</li>
 					<li>
-						<label>{{ $t("editor.cell.processor.script.debug.detail.return") }}</label>
+						<label>{{ $t('editor.cell.processor.script.debug.detail.return') }}</label>
 						<div class="value">
 							<pre>{{ stringify(selectedLog.result) }}</pre>
 						</div>
 					</li>
 					<li>
-						<label>{{ $t("editor.cell.processor.script.debug.log") }}</label>
+						<label>{{ $t('editor.cell.processor.script.debug.log') }}</label>
 						<div class="value">
 							<LogBox ref="log"></LogBox>
 						</div>
@@ -117,19 +117,19 @@
 </template>
 
 <script>
-import log from "../../../log";
-import LogBox from "../../../components/LogBox";
+import log from '../../../log';
+import LogBox from '../../../components/LogBox';
 // import { EditorEventType } from "../../lib/events";
 export default {
-	name: "Debug",
+	name: 'Debug',
 	components: {
 		LogBox
 	},
 	data() {
 		let style = {
 			padding: 0,
-			"line-height": "26px",
-			color: "rgba(102,102,102,1)"
+			'line-height': '26px',
+			color: 'rgba(102,102,102,1)'
 		};
 		return {
 			logList: null,
@@ -141,11 +141,11 @@ export default {
 			sliderWidth: 0,
 
 			headerCellStyle: Object.assign({}, style, {
-				background: "#fafafa"
+				background: '#fafafa'
 			}),
 			cellStyle: style,
 
-			errorMsg: ""
+			errorMsg: ''
 		};
 	},
 	computed: {
@@ -154,9 +154,9 @@ export default {
 		}
 	},
 	mounted() {
-		log("Debug Component Mounted");
-		let eBodyEl = document.body.getElementsByClassName("e-body")[0];
-		let eSideBarRight = document.body.getElementsByClassName("e-sidebar-right")[0];
+		log('Debug Component Mounted');
+		let eBodyEl = document.body.getElementsByClassName('e-body')[0];
+		let eSideBarRight = document.body.getElementsByClassName('e-sidebar-right')[0];
 		this.clientWidth = eBodyEl.clientWidth;
 		eBodyEl.appendChild(this.$el);
 		this.$nextTick(() => {
@@ -180,12 +180,12 @@ export default {
 			this.logList = null;
 			this.selectedLog = {};
 			this.$refs.log.clear();
-			this.errorMsg = "";
+			this.errorMsg = '';
 
 			receiveMessage(msg => {
 				let result = [];
 
-				if (!msg || msg.status === "ERROR") {
+				if (!msg || msg.status === 'ERROR') {
 					this.errorMsg = msg.error;
 					return;
 				}
@@ -211,12 +211,12 @@ export default {
 			if (logs && logs.length) {
 				let _log =
 					logs.find(item => {
-						return item.level === "ERROR";
+						return item.level === 'ERROR';
 					}) || logs[0];
 
 				return this.$refs.log.formatLog(_log);
 			}
-			return "";
+			return '';
 		},
 		rowHandler(row) {
 			if (row) {

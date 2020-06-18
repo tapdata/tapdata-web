@@ -8,6 +8,7 @@ import store from "./vuex"; // 引入全局数据控制
 import VueCookie from "vue-cookie";
 import i18n from "./i18n/i18n";
 import VueBus from "vue-bus";
+import "./components/form-builder";
 
 import "./plugins/element.js";
 import "./theme/index.css";

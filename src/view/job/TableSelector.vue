@@ -48,7 +48,8 @@
 			</el-tree>
 			<div class="noData" v-if="loadingError">
 				<div>
-					{{ $t("dataFlow.loadingError")}}<span class="clickLoad" @click="clickLoad">{{ $t("dataVerify.refresh") }}</span>
+					{{ $t('dataFlow.loadingError')
+					}}<span class="clickLoad" @click="clickLoad">{{ $t('dataVerify.refresh') }}</span>
 				</div>
 			</div>
 		</div>
@@ -56,38 +57,38 @@
 </template>
 
 <script>
-import factory from "../../api/factory";
-import log from "../../log";
+import factory from '../../api/factory';
+import log from '../../log';
 
-const MetadataInstances = factory("MetadataInstances");
+const MetadataInstances = factory('MetadataInstances');
 
 export default {
-	name: "TableSelector",
+	name: 'TableSelector',
 	data() {
 		return {
 			loadingError: false,
 			count: 0,
-			filterText: "",
+			filterText: '',
 			data: [],
 			default_expanded: false,
 			props: {
-				children: "children",
-				label: "label",
-				isLeaf: "leaf"
+				children: 'children',
+				label: 'label',
+				isLeaf: 'leaf'
 			},
 			mapping: {
-				collection: "icon-collection",
-				table: "icon-table2",
-				database: "icon-database",
-				mongodb: "icon-database",
-				mongo_view: "icon-database",
-				view: "icon-table2",
-				"dummy db": "icon-dummy1",
-				elasticsearch: "icon-elastic-search-clust",
-				file: "icon-file1",
-				gridfs: "icon-gridfs2",
-				"rest api": "icon-api",
-				custom_connection: "icon-custom1"
+				collection: 'icon-collection',
+				table: 'icon-table2',
+				database: 'icon-database',
+				mongodb: 'icon-database',
+				mongo_view: 'icon-database',
+				view: 'icon-table2',
+				'dummy db': 'icon-dummy1',
+				elasticsearch: 'icon-elastic-search-clust',
+				file: 'icon-file1',
+				gridfs: 'icon-gridfs2',
+				'rest api': 'icon-api',
+				custom_connection: 'icon-custom1'
 			},
 			loading: false
 		};
@@ -107,21 +108,21 @@ export default {
 				filter: JSON.stringify({
 					where: {
 						meta_type: {
-							in: ["database", "directory", "ftp", "apiendpoint", "table", "collection"]
+							in: ['database', 'directory', 'ftp', 'apiendpoint', 'table', 'collection']
 						},
 						original_name: {
 							like: self.filterText,
-							options: "i"
+							options: 'i'
 						},
 						is_deleted: false
 					},
-					order: "original_name ASC"
+					order: 'original_name ASC'
 				})
 			};
 			self.loading = true;
 			MetadataInstances.get(params)
 				.then(res => {
-					if (res.statusText === "OK" || res.status === 200) {
+					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data) {
 							// self.data.splice(0, self.data.length);
 							self.data = [];
@@ -130,9 +131,9 @@ export default {
 									id: record.id,
 									label: record.name || record.original_name,
 									meta_type: record.meta_type,
-									source: record.source || ""
+									source: record.source || ''
 								};
-								if (["collection", "table", "mongo_view", "view"].includes(record.meta_type)) {
+								if (['collection', 'table', 'mongo_view', 'view'].includes(record.meta_type)) {
 									node.leaf = true;
 								}
 								self.data.push(node);
@@ -142,15 +143,15 @@ export default {
 					self.loading = false;
 					self.loadingError = false;
 				})
-				.catch(e => {
+				.catch(() => {
 					self.loadingError = true;
-					this.$message.error("MetadataInstances error");
+					this.$message.error('MetadataInstances error');
 					self.loading = false;
 				});
 		},
 		loadDataBase() {
 			let self = this;
-			this.filterText = "";
+			this.filterText = '';
 			let params = {
 				filter: JSON.stringify({
 					where: {
@@ -161,17 +162,17 @@ export default {
 						// 	in: ['database']
 						// },
 						meta_type: {
-							in: ["database", "directory", "ftp", "apiendpoint"]
+							in: ['database', 'directory', 'ftp', 'apiendpoint']
 						},
 						is_deleted: false
 					},
-					order: "original_name ASC"
+					order: 'original_name ASC'
 				})
 			};
 			self.loading = true;
 			MetadataInstances.get(params)
 				.then(res => {
-					if (res.statusText === "OK" || res.status === 200) {
+					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data) {
 							// self.data.splice(0, self.data.length);
 							self.data = [];
@@ -180,18 +181,18 @@ export default {
 									id: record.id,
 									label: record.name || record.original_name,
 									meta_type: record.meta_type,
-									source: record.source || ""
+									source: record.source || ''
 								});
 							});
-							log("TableSelector.loadDataBase", self.data);
+							log('TableSelector.loadDataBase', self.data);
 						}
 					}
 					self.loading = false;
 					self.loadingError = false;
 				})
-				.catch(e => {
+				.catch(() => {
 					self.loadingError = true;
-					this.$message.error("MetadataInstances error");
+					this.$message.error('MetadataInstances error');
 					self.loading = false;
 				});
 		},
@@ -203,7 +204,7 @@ export default {
 				return resolve([]);
 			}
 			if (
-				["dummy db", "gridfs", "file", "elasticsearch", "rest api", "custom_connection"].includes(
+				['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection'].includes(
 					node.data.source.database_type
 				)
 			) {
@@ -213,42 +214,38 @@ export default {
 				filter: JSON.stringify({
 					where: {
 						meta_type: {
-							in: ["collection", "table", "mongo_view", "view"]
+							in: ['collection', 'table', 'mongo_view', 'view']
 						},
 						databaseId: {
 							regexp: `^${node.key}$`
 						},
 						is_deleted: false
 					},
-					order: "original_name ASC" || "name ASC"
+					order: 'original_name ASC' || 'name ASC'
 				})
 			};
-			MetadataInstances.get(params)
-				.then(res => {
-					if (res.statusText === "OK" || res.status === 200) {
-						if (res.data) {
-							let childNodes = [];
-							res.data.forEach(record => {
-								childNodes.push({
-									id: record.id,
-									_id: record.source._id,
-									label: record.name || record.original_name,
-									expanded: true,
-									leaf: true,
-									meta_type: record.meta_type,
-									database_type: record.source.database_type || "",
-									original_name: record.original_name || "",
-									fields: record.fields
-								});
+			MetadataInstances.get(params).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						let childNodes = [];
+						res.data.forEach(record => {
+							childNodes.push({
+								id: record.id,
+								_id: record.source._id,
+								label: record.name || record.original_name,
+								expanded: true,
+								leaf: true,
+								meta_type: record.meta_type,
+								database_type: record.source.database_type || '',
+								original_name: record.original_name || '',
+								fields: record.fields
 							});
-							resolve(childNodes);
-							log("childNodes", childNodes);
-						}
+						});
+						resolve(childNodes);
+						log('childNodes', childNodes);
 					}
-				})
-				.catch(e => {
-					// TODO: alert error
-				});
+				}
+			});
 		},
 		handleDefault_expanded() {
 			let self = this;
@@ -262,28 +259,28 @@ export default {
 			return data.label.indexOf(value) !== -1;
 		},
 		handleGraph(data) {
-			log("tableSelect handleGraph", data);
+			log('tableSelect handleGraph', data);
 			let mapping = {
-				collection: "app.Collection",
-				table: "app.Table",
-				database: "app.Database",
-				mongodb: "app.Database",
-				mongo_view: "app.Collection",
-				view: "app.Table",
-				"dummy db": "app.Dummy",
-				elasticsearch: "app.ESNode",
-				file: "app.FileNode",
-				gridfs: "app.GridFSNode",
-				"rest api": "app.ApiNode",
-				custom_connection: "app.CustomNode"
+				collection: 'app.Collection',
+				table: 'app.Table',
+				database: 'app.Database',
+				mongodb: 'app.Database',
+				mongo_view: 'app.Collection',
+				view: 'app.Table',
+				'dummy db': 'app.Dummy',
+				elasticsearch: 'app.ESNode',
+				file: 'app.FileNode',
+				gridfs: 'app.GridFSNode',
+				'rest api': 'app.ApiNode',
+				custom_connection: 'app.CustomNode'
 			};
 
 			let formData = {};
 			let schema = {};
-			if (data.meta_type === "database") {
+			if (data.meta_type === 'database') {
 				if (
 					data.source.database_type &&
-					["dummy db", "gridfs", "file", "elasticsearch", "rest api", "custom_connection"].includes(
+					['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection'].includes(
 						data.source.database_type
 					)
 				) {
@@ -298,30 +295,30 @@ export default {
 						name: data.source.name || data.label
 					};
 				}
-			}else if(data.meta_type === "directory" || data.meta_type === "ftp"){
+			} else if (data.meta_type === 'directory' || data.meta_type === 'ftp') {
 				formData = {
 					connectionId: data.source._id || data.source.id,
 					name: data.source.name || data.label,
 					type: data.source.database_type
 				};
-			} else if (["table", "view", "collection", "mongo_view"].includes(data.meta_type)) {
-				let primaryKeys = "";
+			} else if (['table', 'view', 'collection', 'mongo_view'].includes(data.meta_type)) {
+				let primaryKeys = '';
 				if (data.fields) {
 					primaryKeys = data.fields
 						.filter(item => item.primary_key_position > 0)
 						.map(item => item.field_name)
-						.join(",");
+						.join(',');
 
 					data.fields.forEach(
 						item => (item.original_field_name = item.original_field_name || item.field_name)
 					);
 				}
-				log("primaryKeys", primaryKeys);
+				log('primaryKeys', primaryKeys);
 				formData = {
 					connectionId: data._id || data.id,
 					databaseType: data.database_type,
 					tableName: data.original_name,
-					sql: "",
+					sql: '',
 					dropTable: false,
 					type: data.meta_type,
 					primaryKeys: primaryKeys,
@@ -330,17 +327,17 @@ export default {
 				schema = {
 					table_name: data.name || data.original_name,
 					cdc_enabled: true,
-					meta_type: "table",
+					meta_type: 'table',
 					fields: data.fields
 				};
 			}
 
 			this.count = this.count + 50;
-			let cell = "";
-			if (["database", "directory", "ftp", "apiendpoint"].includes(data.meta_type)) {
+			let cell = '';
+			if (['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)) {
 				if (
 					data.source.database_type &&
-					["dummy db", "gridfs", "file", "elasticsearch", "rest api", "custom_connection"].includes(
+					['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection'].includes(
 						data.source.database_type
 					)
 				) {
