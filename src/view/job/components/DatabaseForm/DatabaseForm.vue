@@ -17,8 +17,10 @@
 		</div>
 		<form-builder ref="form" v-model="model" :config="config"></form-builder>
 		<span slot="footer" class="dialog-footer">
-			<el-button size="mini" type="primary" :loading="testing" @click="submit">Enter</el-button>
-			<el-button size="mini" @click="visible = false">Cancel</el-button>
+			<el-button size="mini" type="primary" :loading="testing" @click="submit">
+				{{ $t('dataForm.submit') }}
+			</el-button>
+			<el-button size="mini" @click="visible = false">{{ $t('dataForm.cancel') }}</el-button>
 		</span>
 	</Drawer>
 </template>
@@ -30,7 +32,34 @@ import formConfig from './config';
 
 const databaseTypesModel = factory('DatabaseTypes');
 const connectionsModel = factory('connections');
-const defaultConfig = [];
+let defaultConfig = [];
+const defaultModel = {
+	name: '',
+	database_type: '',
+	connection_type: '',
+	database_host: '',
+	database_port: '',
+	database_name: '',
+	database_username: '',
+	plain_password: '',
+	table_filter: '',
+	additionalString: '',
+	thin_type: '',
+	database_owner: '',
+	node_name: '',
+	database_schema: '',
+
+	database_datetype_without_timezone: '',
+	supportUpdatePk: false,
+
+	isUrl: true,
+	database_uri: '',
+	ssl: false,
+	sslKey: '',
+	sslPass: '',
+	sslValidate: false,
+	sslCA: ''
+};
 
 export default {
 	name: 'DatabaseForm',
@@ -47,33 +76,7 @@ export default {
 			dataTypes: [],
 			whiteList: [],
 
-			model: {
-				name: '',
-				database_type: '',
-				connection_type: '',
-				database_host: '',
-				database_port: '',
-				database_name: '',
-				database_username: '',
-				plain_password: '',
-				table_filter: '',
-				additionalString: '',
-				thin_type: '',
-				database_owner: '',
-				node_name: '',
-				database_schema: '',
-
-				database_datetype_without_timezone: '',
-				supportUpdatePk: false,
-
-				isUrl: true,
-				database_uri: '',
-				ssl: false,
-				sslKey: '',
-				sslPass: '',
-				sslValidate: false,
-				sslCA: ''
-			},
+			model: Object.assign({}, defaultModel),
 			config: {
 				items: []
 			},
@@ -84,34 +87,35 @@ export default {
 		this.getDT();
 		this.initTimezones();
 		let self = this;
-		defaultConfig.push(
-			...[
-				{
-					type: 'input',
-					field: 'name',
-					label: self.$t('dataForm.form.connectionName'),
-					required: true
-				},
-				{
-					type: 'select',
-					field: 'database_type',
-					label: self.$t('dataForm.form.databaseType'),
-					options: [],
-					required: true,
-					on: {
-						change() {
-							self.getFormConfig();
-						}
+		defaultConfig = [
+			{
+				type: 'input',
+				field: 'name',
+				label: self.$t('dataForm.form.connectionName'),
+				required: true
+			},
+			{
+				type: 'select',
+				field: 'database_type',
+				label: self.$t('dataForm.form.databaseType'),
+				options: [],
+				required: true,
+				on: {
+					change() {
+						self.getFormConfig();
 					}
 				}
-			]
-		);
+			}
+		];
 	},
 	methods: {
 		initData(data) {
 			this.model = Object.assign(this.model, data);
 		},
 		show({ blackList, whiteList } = {}) {
+			this.testing = false;
+			this.testResult = '';
+			this.testLogs = null;
 			this.visible = true;
 			this.whiteList = [];
 			let list = ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2']; //目前白名单
@@ -178,7 +182,6 @@ export default {
 		getFormConfig() {
 			let func = formConfig[this.model.database_type];
 			if (func) {
-				this.initData();
 				let config = func(this);
 				let items = defaultConfig.concat(config.items);
 				let item = items.find(it => it.field === 'database_datetype_without_timezone');
@@ -186,7 +189,9 @@ export default {
 					item.options = this.timezones;
 				}
 				this.config.items = items;
-				this.initData(config.defaultModel); //切换类型会后初始化数据
+				this.initData(
+					Object.assign(defaultModel, config.defaultModel, { database_type: this.model.database_type })
+				); //切换类型会后初始化数据
 				this.checkItems = config.checkItems; //根据model变化更新表单项显示或隐藏
 				this.checkItems && this.checkItems();
 			}
@@ -211,6 +216,7 @@ export default {
 					this.testResult = this.$t('dataForm.test.success');
 					this.visible = false;
 					this.$message.success(this.$t('dataForm.saveSuccess'));
+					this.$emit('success');
 				} else if (data.status === 'invalid') {
 					this.testResult = this.$t('dataForm.test.fail');
 					this.testing = false;

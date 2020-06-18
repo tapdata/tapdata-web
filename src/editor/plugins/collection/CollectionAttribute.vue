@@ -42,7 +42,7 @@
 							style="padding: 7px;margin-left: 7px"
 							@click="$refs.databaseForm.show({ whiteList: ['mongodb'] })"
 						></el-button>
-						<DatabaseForm ref="databaseForm"></DatabaseForm>
+						<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
 					</div>
 				</el-form-item>
 

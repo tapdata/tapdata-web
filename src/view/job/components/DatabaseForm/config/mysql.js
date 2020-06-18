@@ -28,7 +28,7 @@ export default function(vm) {
 								callback(new Error(vm.$t('dataForm.error.noneHost')));
 							} else if (!port || !port.trim()) {
 								callback(new Error(vm.$t('dataForm.error.nonePort')));
-							} else if (!/\d+/.test(port)) {
+							} else if (!/^(0|\+?[1-9][0-9]*)$/.test(port)) {
 								callback(new Error(vm.$t('dataForm.error.portNumber')));
 							} else if (port < 1 || port > 65535) {
 								callback(new Error(vm.$t('dataForm.error.portRange')));
