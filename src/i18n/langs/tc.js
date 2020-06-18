@@ -488,6 +488,8 @@ const tc = {
 							label: '描述',
 							placeholder: '請輸入節點描述'
 						},
+						toUpperCase: '轉大寫',
+						toLowerCase: '轉小寫',
 						fieldName: '字段名稱',
 						fieldType: '字段類型',
 						addField: '添加字段',
