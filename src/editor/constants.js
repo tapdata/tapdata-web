@@ -45,10 +45,16 @@ export const FORM_DATA_KEY = 'form_data',
 			paused: false
 		},
 		stopOnError: false,
-		syncPoint: 'current',
-		syncTime: '',
-		syncDatePicker: '',
-		syncTimePicker: '',
+		syncPoints: [
+			{
+				connectionId: '',
+				type: 'localTZ', // localTZ: 本地时区； connTZ：连接时区
+				time: '',
+				date: '',
+				name: '',
+				timezone: '+08:00' // 当type为localTZ时有该字段
+			}
+		],
 		processorConcurrency: 1,
 		transformerConcurrency: 8
 	};

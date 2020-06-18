@@ -74,6 +74,11 @@ const cn = {
 		implementationModalities: '执行方式',
 		submitConfirmation: '提交确认',
 		SyncPoint: '同步节点',
+		SyncInfo: {
+			localTZ: '当前时区传输时间：系统所在时区下，开始传输任务的时刻',
+			current: '当前时区时间：默认当前时间',
+			connTZ: '数据库时区传输时间： 数据库所在时区下，开始传输任务的时刻'
+		},
 		Current: '当前时间',
 		SyncTime: '同步时间',
 		batchRest: '批量重置',

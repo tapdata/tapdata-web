@@ -332,7 +332,7 @@ export default {
 	}
 	.e-textarea {
 		.el-input__count {
-			line-height: 20px!important;
+			line-height: 20px !important;
 		}
 	}
 }

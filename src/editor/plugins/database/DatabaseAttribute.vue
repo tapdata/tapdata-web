@@ -244,6 +244,7 @@ export default {
 		};
 	},
 	computed: {
+		/* eslint-disable */
 		computedTables() {
 			if (this.search) {
 				this.seachTables = this.tables.filter(

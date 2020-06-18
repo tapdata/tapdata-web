@@ -232,6 +232,8 @@ export default class Editor extends BaseObject {
 		// hide stencil
 		this.getLeftSidebar().hide();
 
+		self.ui.setDisableName(true);
+
 		// self.getRightTabPanel().removeAll();
 		// remove stage config
 		// let nodeSettingPanel = self.getRightTabPanel().getChildByName('nodeSettingPanel');
@@ -279,6 +281,8 @@ export default class Editor extends BaseObject {
 		this.initSettings();
 
 		this.getLeftSidebar().show();
+
+		this.ui.setDisableName(false);
 
 		// this.getBottomSidebar().hide();
 		// this.getBottomTabPanel().removeAll();
@@ -698,6 +702,22 @@ export default class Editor extends BaseObject {
 				return formData && type !== 'app.Link';
 			});
 		return dataCells;
+	}
+
+	/**
+	 * Return an array of all the roots of the graph. Time complexity: O(|V|)
+	 * @returns {*}
+	 */
+	getSources() {
+		return this.graph.graph.getSources();
+	}
+
+	/**
+	 * Return an array of all the leafs of the graph. Time complexity: O(|V|)
+	 * @returns {*}
+	 */
+	getSinks() {
+		return this.graph.graph.getSinks();
 	}
 	destroy() {
 		this.emit(EditorEventType.BEFORE_DESTROY, this);
