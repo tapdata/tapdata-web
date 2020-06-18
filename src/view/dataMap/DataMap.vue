@@ -2,7 +2,7 @@
 	<div class="data-map-container">
 		<div class="data-map">
 			<div class="left-side-classification">
-				<div class="e-header">{{$t("dataMap.classification")}}</div>
+				<div class="e-header">{{ $t('dataMap.classification') }}</div>
 				<div>
 					<!--<el-input
 						placeholder="输入关键字进行过滤"
@@ -16,7 +16,7 @@
 						:data="treeData"
 						default-expand-all
 						:filter-node-method="filterNode"
-						:props="{label: 'value'}"
+						:props="{ label: 'value' }"
 						@node-click="loadCellsByTag"
 						:expand-on-click-node="false"
 						highlight-current
@@ -33,13 +33,13 @@
 			</div>
 			<div class="center-bar">
 				<el-radio-group v-model="currentLevel" @change="changeLevel">
-					<el-radio :label="1">{{$t("dataMap.topLevel")}}</el-radio>
+					<el-radio :label="1">{{ $t('dataMap.topLevel') }}</el-radio>
 					<span class="space-line"></span>
-					<el-radio :label="2">{{$t("dataMap.dbLevel")}}</el-radio>
+					<el-radio :label="2">{{ $t('dataMap.dbLevel') }}</el-radio>
 					<span class="space-line"></span>
-					<el-radio :label="3">{{$t("dataMap.tableLevel")}}</el-radio>
+					<el-radio :label="3">{{ $t('dataMap.tableLevel') }}</el-radio>
 					<span class="space-line"></span>
-					<el-radio :label="4">{{$t("dataMap.fieldLevel")}}</el-radio>
+					<el-radio :label="4">{{ $t('dataMap.fieldLevel') }}</el-radio>
 				</el-radio-group>
 			</div>
 			<div class="right-bar">
@@ -58,38 +58,38 @@
 </template>
 
 <script>
-import $ from "jquery";
-import DataMap from "../../editor/data-map/index";
-import log from "../../log";
-import factory from "../../api/factory";
-import i18n from "../../i18n/i18n";
+import $ from 'jquery';
+import DataMap from '../../editor/data-map/index';
+import log from '../../log';
+import factory from '../../api/factory';
+import i18n from '../../i18n/i18n';
 
-const metadataInstances = factory("MetadataInstances");
-const metadataDefinitions = factory("MetadataDefinitions");
+const metadataInstances = factory('MetadataInstances');
+const metadataDefinitions = factory('MetadataDefinitions');
 
 export default {
-	name: "DataMap",
+	name: 'DataMap',
 
-	data(){
+	data() {
 		return {
 			currentLevel: 1,
 			level: 1,
-			tag: "",
+			tag: '',
 
-			connectionId: "",
-			tableName: "",
+			connectionId: '',
+			tableName: '',
 
 			fullscreen: false,
 
-			filterText: "",
+			filterText: '',
 
-			treeData: [],
+			treeData: []
 		};
 	},
 
 	watch: {
 		level: {
-			handler(){
+			handler() {
 				this.currentLevel = this.level;
 				this.loadData();
 			}
@@ -100,8 +100,8 @@ export default {
 		let self = this;
 
 		self.dataMap = new DataMap({
-			container: $(".data-map-container .data-map"),
-			leftSidebar: $(".data-map-container .left-side-classification")
+			container: $('.data-map-container .data-map'),
+			leftSidebar: $('.data-map-container .left-side-classification')
 		});
 
 		this.loadData();
@@ -109,9 +109,9 @@ export default {
 		this.loadClassification();
 
 		this.dataMap.graph.on('drill_down', (level, connectionId, tableName) => {
-			log("DataMap.ChangeLevel", level, connectionId, tableName);
+			log('DataMap.ChangeLevel', level, connectionId, tableName);
 			level = level || (self.level > 1 ? --self.level : self.level);
-			if(self.level !== level && level >= 1 && level <= 4) {
+			if (self.level !== level && level >= 1 && level <= 4) {
 				self.level = level;
 				self.connectionId = connectionId;
 				self.tableName = tableName;
@@ -121,11 +121,11 @@ export default {
 
 	methods: {
 		changeLevel(newValue) {
-			if(newValue === 4){
+			if (newValue === 4) {
 				let self = this;
-				this.$alert(i18n.t('dataMap.dblclickDataModel'),'', {
+				this.$alert(i18n.t('dataMap.dblclickDataModel'), '', {
 					confirmButtonText: i18n.t('message.ok'),
-					callback: action => {
+					callback: () => {
 						self.currentLevel = self.level;
 					}
 				});
@@ -134,134 +134,133 @@ export default {
 			}
 		},
 
-		upward(){
-			if( this.level > 1){
+		upward() {
+			if (this.level > 1) {
 				this.level--;
 			}
 		},
 
-		zoomIn(){
+		zoomIn() {
 			this.dataMap.graph.zoomIn();
 		},
 
-		zoomOut(){
+		zoomOut() {
 			this.dataMap.graph.zoomOut();
 		},
 
-		toggleFullscreen(e){
-			if(this.fullscreen)
-				this.exitFullscreen();
-			else
-				this.requestFullscreen($(".data-map-container")[0]);
+		toggleFullscreen(e) {
+			if (this.fullscreen) this.exitFullscreen();
+			else this.requestFullscreen($('.data-map-container')[0]);
 
 			this.fullscreen = !this.fullscreen;
-			$(e.target).parent()
+			$(e.target)
+				.parent()
 				.find('i.fullscreen-btn')
 				.removeClass('icon-quanping')
 				.removeClass('icon-huanyuanhuabu')
-				.addClass(this.fullscreen ? 'icon-huanyuanhuabu' : 'icon-quanping')
+				.addClass(this.fullscreen ? 'icon-huanyuanhuabu' : 'icon-quanping');
 		},
 
 		requestFullscreen(element) {
-			if(element.requestFullscreen){
+			if (element.requestFullscreen) {
 				element.requestFullscreen();
-			}
-			else if(element.mozRequestFullScreen) {
+			} else if (element.mozRequestFullScreen) {
 				element.mozRequestFullScreen();
-			}
-			else if(element.webkitRequestFullscreen) {
+			} else if (element.webkitRequestFullscreen) {
 				element.webkitRequestFullscreen();
-			}
-			else if(element.msRequestFullscreen) {
+			} else if (element.msRequestFullscreen) {
 				element.msRequestFullscreen();
 			}
 		},
 
 		exitFullscreen() {
-			if(document.exitFullscreen) {
+			if (document.exitFullscreen) {
 				document.exitFullscreen();
-			} else if(document.mozCancelFullScreen) {
+			} else if (document.mozCancelFullScreen) {
 				document.mozCancelFullScreen();
-			} else if(document.webkitExitFullscreen) {
+			} else if (document.webkitExitFullscreen) {
 				document.webkitExitFullscreen();
 			}
 		},
 
-		loadData(){
+		loadData() {
 			let self = this;
 			let loading = self.$loading({
 				text: i18n.t('message.api.get.loading')
 			});
-			let params = {level: 1};
-			if(this.level <= 3){
-				params = {level: this.level, tag: this.tag};
-			} else if(this.level === 4){
-				params = {level: 4, connectionId: this.connectionId, tableName: this.tableName};
+			let params = { level: 1 };
+			if (this.level <= 3) {
+				params = { level: this.level, tag: this.tag };
+			} else if (this.level === 4) {
+				params = { level: 4, connectionId: this.connectionId, tableName: this.tableName };
 			}
-			metadataInstances.dataMap(params).then(result => {
+			metadataInstances
+				.dataMap(params)
+				.then(result => {
+					if (result && result.data && result.data.records && result.data.records.length > 0) {
+						let cells = result.data.records;
+						self.dataMap.graph.renderCells(self.level, cells);
+					} else {
+						self.$message.info({
+							message: i18n.t('dataMap.noneData'),
+							duration: 0,
+							showClose: true,
+							offset: 100
+						});
+					}
 
-				if(result && result.data && result.data.records && result.data.records.length > 0){
-					let cells = result.data.records;
-					self.dataMap.graph.renderCells(self.level, cells);
-				} else {
-					self.$message.info({
-						message: i18n.t('dataMap.noneData'),
+					loading.close();
+				})
+				.catch(err => {
+					log(err);
+					loading.close();
+					self.$message.error({
+						message: i18n.t('message.api.get.error'),
 						duration: 0,
 						showClose: true,
 						offset: 100
 					});
-				}
-
-				loading.close();
-
-			}).catch(err => {
-				log(err);
-				loading.close();
-				self.$message.error({
-					message: i18n.t('message.api.get.error'),
-					duration: 0,
-					showClose: true,
-					offset: 100
 				});
-			});
 		},
 
-		loadCellsByTag(data, node, comp){
+		loadCellsByTag(data) {
 			this.tag = data.id;
 			this.loadData();
 		},
 
-		loadClassification(cb){
+		loadClassification() {
 			let self = this;
 			let params = {
-				filter:{
-					where:{
+				filter: {
+					where: {
 						item_type: {
-							inq: ["table", "view", "collection", "mongo_view"]
+							inq: ['table', 'view', 'collection', 'mongo_view']
 						}
 					}
 				}
 			};
-			metadataDefinitions.get(params).then(result => {
-				if( result && result.data){
-					let items = result.data || [];
-					let rootNode = {
-						children: []
-					};
-					find_children(rootNode, items);
-					self.treeData.splice(0, self.treeData.length);
-					self.treeData.push(...rootNode.children);
-				}
-			}).catch(log);
+			metadataDefinitions
+				.get(params)
+				.then(result => {
+					if (result && result.data) {
+						let items = result.data || [];
+						let rootNode = {
+							children: []
+						};
+						find_children(rootNode, items);
+						self.treeData.splice(0, self.treeData.length);
+						self.treeData.push(...rootNode.children);
+					}
+				})
+				.catch(log);
 
-			function find_children (parent, items) {
-
+			function find_children(parent, items) {
 				if (!items || !items.length) return;
 
 				parent.children = parent.children || [];
 				for (let i = 0; i < items.length; i++) {
 					let item = items[i];
-					if ((item.parent_id === parent.id) || (!parent.id && !item.parent_id)) {
+					if (item.parent_id === parent.id || (!parent.id && !item.parent_id)) {
 						item.selected = false;
 						parent.children.push(item);
 						items.splice(i, 1);
@@ -285,20 +284,19 @@ export default {
 </script>
 
 <style lang="less">
-@import "../../editor/data-map/style/data-map";
-	.data-map-container {
-		.left-side-classification {
-			padding: 20px;
-			.el-tree-node__label {
-				font-size: 12px;
-			}
-			.el-tree-node__content{
-				border-bottom: 1px dotted #ddd;
-			}
+@import '../../editor/data-map/style/data-map';
+.data-map-container {
+	.left-side-classification {
+		padding: 20px;
+		.el-tree-node__label {
+			font-size: 12px;
+		}
+		.el-tree-node__content {
+			border-bottom: 1px dotted #ddd;
+		}
 
-			.e-header {
-
-			}
+		.e-header {
 		}
 	}
+}
 </style>

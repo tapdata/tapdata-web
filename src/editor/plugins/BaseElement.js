@@ -3,19 +3,19 @@
  * @date 3/4/20
  * @description
  */
-import log from "../../log";
-import { FORM_DATA_KEY, SCHEMA_DATA_KEY, OUTPUT_SCHEMA_DATA_KEY, JOIN_TABLE_TPL } from "../constants";
-import { mergeJoinTablesToTargetSchema } from "../util/Schema";
-import _ from "lodash";
-import joint from "../lib/rappid/rappid";
-import breakText from "../breakText";
+import log from '../../log';
+import { FORM_DATA_KEY, SCHEMA_DATA_KEY, OUTPUT_SCHEMA_DATA_KEY, JOIN_TABLE_TPL } from '../constants';
+import { mergeJoinTablesToTargetSchema } from '../util/Schema';
+import _ from 'lodash';
+// import joint from '../lib/rappid/rappid';
+import breakText from '../breakText';
 
 export const baseElementConfig = {
 	/**
 	 * the name of the subtype class.
 	 *
 	 */
-	type: "app.BaseElement",
+	type: 'app.BaseElement',
 
 	/**
 	 * define shape
@@ -26,7 +26,7 @@ export const baseElementConfig = {
 		/**
 		 * extends exists shape
 		 */
-		extends: "standard.EmbeddedImage",
+		extends: 'standard.EmbeddedImage',
 
 		/**
 		 * object that contains properties to be assigned to every constructed instance of the subtype.
@@ -59,27 +59,27 @@ export const baseElementConfig = {
 			attrs: {
 				image: {
 					// xlinkHref: 'static/editor/table.svg',
-					refWidth: "19%",
-					refHeight: "82%",
-					refX: "-4%",
-					refY: "-19%"
+					refWidth: '19%',
+					refHeight: '82%',
+					refX: '-4%',
+					refY: '-19%'
 				},
 				body: {
-					fill: "#fafafa",
-					stroke: "#dedee4",
+					fill: '#fafafa',
+					stroke: '#dedee4',
 					strokeWidth: 1,
 					rx: 20,
 					ry: 20,
-					refWidth: "100%",
-					refHeight: "100%"
+					refWidth: '100%',
+					refHeight: '100%'
 				},
 				label: {
-					textVerticalAnchor: "middle",
-					textAnchor: "left",
-					refX: "10%",
-					refY: "50%",
+					textVerticalAnchor: 'middle',
+					textAnchor: 'left',
+					refX: '10%',
+					refY: '50%',
 					fontSize: 11,
-					fill: "#333333",
+					fill: '#333333',
 					x: 0,
 					y: 0
 				}
@@ -109,14 +109,14 @@ export const baseElementConfig = {
 		prototypeProperties: {
 			portLabelMarkup: [
 				{
-					tagName: "text",
-					selector: "portLabel"
+					tagName: 'text',
+					selector: 'portLabel'
 				}
 			],
 			initialize() {
 				let self = this;
 
-				let validate = function(){
+				let validate = function() {
 					let formData = self.getFormData();
 
 					// log(`${this.get("type")} validate form data`, formData);
@@ -129,22 +129,22 @@ export const baseElementConfig = {
 
 					// log(`${this.get("type")} validate form data`, formData, verified);
 
-					self.attr("body/stroke", verified ? "#2196F3" : "#ff0000");
+					self.attr('body/stroke', verified ? '#2196F3' : '#ff0000');
 					if (formData && formData.name) {
 						let name = formData.name;
-						let isDataNode = typeof self.isDataNode === "function" ? self.isDataNode() : false;
-						let isProcess = typeof self.isProcess === "function" ? self.isProcess() : false;
+						let isDataNode = typeof self.isDataNode === 'function' ? self.isDataNode() : false;
+						let isProcess = typeof self.isProcess === 'function' ? self.isProcess() : false;
 						let width = isDataNode ? 120 : isProcess ? 90 : false;
 						if (width) {
 							name = breakText.breakText(name, width);
 							// log(`${this.get("type")} break text`, formData.name, name,width);
 						}
-						self.attr("label/text", name);
+						self.attr('label/text', name);
 					}
 				};
 
 				// validate form data
-				self.on("change:" + FORM_DATA_KEY, () => {
+				self.on('change:' + FORM_DATA_KEY, () => {
 					validate();
 				});
 				validate();
@@ -199,22 +199,22 @@ export const baseElementConfig = {
 								joinTable.primaryKeys = fields
 									.filter(f => f.primary_key_position > 0)
 									.map(f => f.field_name)
-									.join(",");
+									.join(',');
 								joinTable.tableName = schema && schema.table_name;
 								/* if( !joinTable.joinPath && ['merge_embed', 'update'].includes(joinTable.joinType)){
 										joinTable.joinPath = joinTable.tableName;
 									} */
 							}
 							let parentDataNodes =
-								typeof sourceCell.getFirstDataNode === "function" ? sourceCell.getFirstDataNode() : [];
-							joinTable.stageId = parentDataNodes.length > 0 ? parentDataNodes[0].id : "";
+								typeof sourceCell.getFirstDataNode === 'function' ? sourceCell.getFirstDataNode() : [];
+							joinTable.stageId = parentDataNodes.length > 0 ? parentDataNodes[0].id : '';
 
 							formData.joinTable = _.cloneDeep(joinTable);
 							cell.set(FORM_DATA_KEY, formData);
 
 							joinTable.sourceSchema = schema;
 
-							log("BaseElement.getInputSchema.joinTables", cell.getFormData(), joinTable);
+							log('BaseElement.getInputSchema.joinTables', cell.getFormData(), joinTable);
 							return joinTable;
 						} else {
 							return null;
@@ -223,16 +223,16 @@ export const baseElementConfig = {
 					.filter(v => !!v);
 
 				let result = joinTables.filter(v => !!v);
-				log(`${this.get("type")}.getInputSchema`, result);
+				log(`${this.get('type')}.getInputSchema`, result);
 				return result;
 			},
 			__mergeOutputSchema() {
 				let inputSchema = this.getInputSchema() || [];
 				let schema = this.getSchema() || {
-					meta_type: this.get("type") === "app.Collection" ? "collection" : "table"
+					meta_type: this.get('type') === 'app.Collection' ? 'collection' : 'table'
 				};
 				let outputSchema = mergeJoinTablesToTargetSchema(schema, inputSchema);
-				log(this.get("type") + ".__mergeOutputSchema[this.schema,inputSchema,outputSchema]", [
+				log(this.get('type') + '.__mergeOutputSchema[this.schema,inputSchema,outputSchema]', [
 					schema,
 					inputSchema,
 					outputSchema
@@ -242,7 +242,7 @@ export const baseElementConfig = {
 					_outputSchema = this.mergeOutputSchema(outputSchema);
 				} catch (e) {
 					_outputSchema = outputSchema;
-					log(this.get("type") + ".mergeOutputSchema.error", e);
+					log(this.get('type') + '.mergeOutputSchema.error', e);
 				}
 				return _outputSchema || outputSchema;
 			},
@@ -254,23 +254,23 @@ export const baseElementConfig = {
 				try {
 					this.validate();
 				} catch (e) {
-					log(`${this.get("type")}.updateOutputSchema.validate`, e);
+					log(`${this.get('type')}.updateOutputSchema.validate`, e);
 				}
 				let mergedOutputSchema = this.__mergeOutputSchema();
 				this.set(OUTPUT_SCHEMA_DATA_KEY, mergedOutputSchema);
-				log(`${this.get("type")}.updateOutputSchema`, mergedOutputSchema);
+				log(`${this.get('type')}.updateOutputSchema`, mergedOutputSchema);
 
 				let graph = this.graph;
 				graph.getConnectedLinks(this, { outbound: true }).forEach(link => {
 					let targetCell = link.getTargetCell();
-					if (targetCell && typeof targetCell.updateOutputSchema === "function") {
+					if (targetCell && typeof targetCell.updateOutputSchema === 'function') {
 						setTimeout(() => targetCell.updateOutputSchema(), 0);
 					}
 				});
 			},
 
 			getFirstDataNode() {
-				if (typeof this.isDataNode === "function" && this.isDataNode()) return [this];
+				if (typeof this.isDataNode === 'function' && this.isDataNode()) return [this];
 				let graph = this.graph;
 				let inboundLinks = graph.getConnectedLinks(this, { inbound: true });
 				let parentDataNodes = [];
@@ -278,14 +278,14 @@ export const baseElementConfig = {
 					let link = inboundLinks[i];
 					let sourceCell = link.getSourceCell();
 					if (sourceCell) {
-						if (typeof sourceCell.isDataNode === "function" && sourceCell.isDataNode()) {
+						if (typeof sourceCell.isDataNode === 'function' && sourceCell.isDataNode()) {
 							parentDataNodes.push(sourceCell);
-						} else if (typeof sourceCell.isProcess === "function" && sourceCell.isProcess()) {
+						} else if (typeof sourceCell.isProcess === 'function' && sourceCell.isProcess()) {
 							parentDataNodes.push(...sourceCell.getFirstDataNode());
 						}
 					}
 				}
-				log(`${this.get("type")}.getParentDataNode`, parentDataNodes);
+				log(`${this.get('type')}.getParentDataNode`, parentDataNodes);
 				return parentDataNodes;
 			},
 
@@ -298,7 +298,7 @@ export const baseElementConfig = {
 			 * @param targetCell
 			 * @return {boolean}
 			 */
-			allowTarget(targetCell) {
+			allowTarget() {
 				return false;
 			},
 
@@ -307,7 +307,7 @@ export const baseElementConfig = {
 			 * @param sourceCell
 			 * @return {boolean}
 			 */
-			allowSource(sourceCell) {
+			allowSource() {
 				return false;
 			}
 		}

@@ -1,6 +1,6 @@
 @import "../lib/rappid/rappid.css";
 @import "../lib/rappid/themes/style.default.css";
-@import "./animate.css";
+@import "./animate.less";
 
 @borderColor: #d3d3d3;
 @selectedColor: #d3d3d3;
@@ -168,10 +168,10 @@
 				position: relative;
 				flex: 1;
 				overflow: hidden;
-
 				display: flex;
 				flex-direction: column;
-
+				background-color: #fff;
+				z-index: 99;
 				.graph-container {
 					flex: 1;
 					position: relative;
@@ -185,6 +185,12 @@
 						height: 150px;
 						z-index: 100;
 						background: #fff;
+					}
+					.navigator-btn {
+						position: absolute;
+						left: 20px;
+						bottom: 20px;
+						z-index: 100;
 					}
 				}
 

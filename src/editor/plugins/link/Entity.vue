@@ -2,7 +2,7 @@
 	<div class="e-entity" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom">
 		<el-container>
 			<el-header height="20">
-				{{ schema ? schema.name : "" }}
+				{{ schema ? schema.name : '' }}
 			</el-header>
 			<el-main>
 				<el-tree
@@ -27,7 +27,7 @@
 					<span class="custom-tree-node" slot-scope="{ node, data }">
 						<span class="e-triangle" :style="`border-bottom-color: ${data.color || '#ffffff'};`"></span>
 						<span class="e-port e-port-in" :data-id="getId(data)" :data-table="getTableName(data)"></span>
-						<span class="e-pk">{{ data.primary_key_position > 0 ? "PK" : "" }}</span>
+						<span class="e-pk">{{ data.primary_key_position > 0 ? 'PK' : '' }}</span>
 						<span class="e-label">{{ node.label }}</span>
 						<span class="e-data-type">{{ data.type }}</span>
 						<el-dropdown
@@ -57,11 +57,11 @@
 </template>
 
 <script>
-import $ from "jquery";
-import log from "../../../log";
+import $ from 'jquery';
+import log from '../../../log';
 
 export default {
-	name: "Entity",
+	name: 'Entity',
 	props: {
 		width: {
 			type: Number,
@@ -73,7 +73,7 @@ export default {
 		},
 		nodeKey: {
 			type: String,
-			default: "id"
+			default: 'id'
 		},
 		editable: {
 			type: Boolean,
@@ -81,14 +81,14 @@ export default {
 		},
 		tableNameKey: {
 			type: String,
-			default: "table_name"
+			default: 'table_name'
 		}
 	},
 
 	watch: {
 		schema: {
 			handler() {
-				log("Entity.schema.change", this.schema);
+				log('Entity.schema.change', this.schema);
 			}
 		}
 	},
@@ -99,7 +99,7 @@ export default {
 		},
 		getTableName(node) {
 			let tableName = node[this.tableNameKey];
-			if (tableName) tableName = tableName.replace(/[\\.,]/g, "_");
+			if (tableName) tableName = tableName.replace(/[\\.,]/g, '_');
 			return tableName;
 		},
 
@@ -123,22 +123,22 @@ export default {
 			let tableName = this.getTableName(table);
 			return $(this.$refs.entityDom).find(`.e-port-in[data-table=${tableName}]`)[0];
 		},
-		handlerNodeExpand(data, node, ev) {
-			this.$emit("expand", data);
+		handlerNodeExpand(data) {
+			this.$emit('expand', data);
 		},
-		handlerNodeCollapse(data, node, ev) {
-			this.$emit("collapse", data);
+		handlerNodeCollapse(data) {
+			this.$emit('collapse', data);
 		},
-		handleDragStart(node, ev) {},
-		handleDragEnter(draggingNode, dropNode, ev) {},
-		handleDragLeave(draggingNode, dropNode, ev) {},
-		handleDragOver(draggingNode, dropNode, ev) {},
-		handleDragEnd(draggingNode, dropNode, dropType, ev) {},
-		handleDrop(draggingNode, dropNode, dropType, ev) {
-			this.$emit("drop", draggingNode);
+		handleDragStart() {},
+		handleDragEnter() {},
+		handleDragLeave() {},
+		handleDragOver() {},
+		handleDragEnd() {},
+		handleDrop(draggingNode) {
+			this.$emit('drop', draggingNode);
 		},
 		allowDrop(draggingNode, dropNode, type) {
-			return type !== "inner";
+			return type !== 'inner';
 		},
 		allowDrag(draggingNode) {
 			return (
@@ -152,18 +152,18 @@ export default {
 			);
 		},
 		handlerCommand(command, data, node) {
-			if (command === "rename") {
-				this.$prompt("Input new name", "Rename", {
+			if (command === 'rename') {
+				this.$prompt('Input new name', 'Rename', {
 					inputValue: data.label
 				}).then(res => {
 					data.label = res.value;
 				});
-			} else if (command === "delete") {
+			} else if (command === 'delete') {
 				this.$refs.tree.remove(node);
-			} else if (command === "change_type") {
+			} else if (command === 'change_type') {
 				this.$message({
-					message: "Modified data type is not implemented",
-					type: "warning"
+					message: 'Modified data type is not implemented',
+					type: 'warning'
 				});
 			}
 		}
@@ -180,7 +180,7 @@ export default {
 	display: inline-block;
 	max-width: 300px;
 	text-align: left;
-
+	margin-bottom: 10px;
 	.el-header {
 		line-height: 23px;
 		background: @color;

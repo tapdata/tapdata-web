@@ -1,4 +1,4 @@
-export default function (joint) {
+export default function(joint) {
 	let g = joint.g;
 	var DEFAULT_PADDING = 10;
 
@@ -11,7 +11,7 @@ export default function (joint) {
 			point.x--;
 			padding--;
 		}
-		point.move(ref, (ref.x < center.x) ? padding : - bbox.width - padding);
+		point.move(ref, ref.x < center.x ? padding : -bbox.width - padding);
 		if (angle) point.rotate(center, -angle);
 		return point.round();
 	}
@@ -22,25 +22,29 @@ export default function (joint) {
 		// Target Point
 		var source = link.getSourceElement();
 		if (source) {
-			route.push(getOutsidePoint(
-				source.getBBox(),
-				source.angle(),
-				linkView.sourceAnchor,
-				opt.padding || opt.sourcePadding || DEFAULT_PADDING
-			));
+			route.push(
+				getOutsidePoint(
+					source.getBBox(),
+					source.angle(),
+					linkView.sourceAnchor,
+					opt.padding || opt.sourcePadding || DEFAULT_PADDING
+				)
+			);
 		}
 		// Vertices
 		Array.prototype.push.apply(route, vertices);
 		// Source Point
 		var target = link.getTargetElement();
 		if (target) {
-			route.push(getOutsidePoint(
-				target.getBBox(),
-				target.angle(),
-				linkView.targetAnchor,
-				opt.padding || opt.targetPadding || DEFAULT_PADDING
-			));
+			route.push(
+				getOutsidePoint(
+					target.getBBox(),
+					target.angle(),
+					linkView.targetAnchor,
+					opt.padding || opt.targetPadding || DEFAULT_PADDING
+				)
+			);
 		}
 		return route;
-	}
+	};
 }

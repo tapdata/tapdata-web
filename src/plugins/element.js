@@ -1,5 +1,5 @@
 // 按需引入element-ui减少项目体积
-import Vue from "vue";
+import Vue from 'vue';
 
 import {
 	Image,
@@ -45,7 +45,7 @@ import {
 	Upload,
 	Autocomplete,
 	InputNumber
-} from "element-ui";
+} from 'element-ui';
 
 Vue.component(InputNumber.name, InputNumber);
 Vue.component(Autocomplete.name, Autocomplete);
@@ -93,12 +93,12 @@ Vue.use(Loading.directive);
 /***提示只显示一次**/
 // 因为使用了new DonMessage()的原因，所以导致this.$message(options)的方式无法使用
 // 推荐使用this.$message.success("成功提示")或者this.$message.success(options)的方式进行调用
-const showMessage = Symbol("showMessage");
+const showMessage = Symbol('showMessage');
 
 class DoneMessage {
 	[showMessage](type, options, single) {
 		if (single) {
-			if (document.getElementsByClassName("el-message").length === 0) {
+			if (document.getElementsByClassName('el-message').length === 0) {
 				Message[type](options);
 			}
 		} else {
@@ -107,19 +107,19 @@ class DoneMessage {
 	}
 
 	info(options, single = true) {
-		this[showMessage]("info", options, single);
+		this[showMessage]('info', options, single);
 	}
 
 	warning(options, single = true) {
-		this[showMessage]("warning", options, single);
+		this[showMessage]('warning', options, single);
 	}
 
 	error(options, single = true) {
-		this[showMessage]("error", options, single);
+		this[showMessage]('error', options, single);
 	}
 
 	success(options, single = true) {
-		this[showMessage]("success", options, single);
+		this[showMessage]('success', options, single);
 	}
 }
 
@@ -130,3 +130,4 @@ Vue.prototype.$confirm = MessageBox.confirm;
 Vue.prototype.$prompt = MessageBox.prompt;
 Vue.prototype.$alert = MessageBox.alert;
 Vue.prototype.$message = new DoneMessage();
+Vue.prototype.$msgbox = MessageBox;

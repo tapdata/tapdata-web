@@ -3,7 +3,7 @@
 		<div class="nodeBody">
 			<div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-					{{ $t("dataFlow.button.viewMonitoring") }}
+					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div>
 			<el-form
@@ -101,17 +101,17 @@
 								:placeholder="$t('editor.cell.data_node.memCache.form.maxRows.placeholder')"
 							>
 								<template slot="append">{{
-									$t("editor.cell.data_node.memCache.form.maxRows.unit")
+									$t('editor.cell.data_node.memCache.form.maxRows.unit')
 								}}</template>
 							</el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
 				<div class="code-template">
-					<label>{{ $t("editor.cell.data_node.memCache.applicationCode") }}:</label>
+					<label>{{ $t('editor.cell.data_node.memCache.applicationCode') }}:</label>
 					<div class="code">
 						<span class="color-primary">var</span> cachedRow = CacheService.getCache(
-						<span class="color-danger">"{{ model.cacheName || "cachename" }}"</span>
+						<span class="color-danger">"{{ model.cacheName || 'cachename' }}"</span>
 						<template v-if="!model.cacheKeys || !model.cacheKeys.length">
 							<span class="bold">record</span>.<span class="color-danger">category_code</span>
 						</template>
@@ -124,7 +124,7 @@
 					<span>OR</span>
 					<div class="code">
 						<span class="bold">record</span>.category_name = CacheService.getCacheItem(
-						<span class="color-danger">"{{ model.cacheName || "cachename" }}"</span>,
+						<span class="color-danger">"{{ model.cacheName || 'cachename' }}"</span>,
 						<span>'category_name'</span>, defaultValue,
 						<span v-for="key in model.cacheKeys.split(',')" :key="key">
 							, <span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
@@ -139,11 +139,11 @@
 
 <script>
 // import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from "../../util/Schema";
-import log from "../../../log";
-import _ from "lodash";
+import log from '../../../log';
+import _ from 'lodash';
 let editorMonitor = null;
 export default {
-	name: "memCache",
+	name: 'memCache',
 
 	data() {
 		return {
@@ -151,29 +151,29 @@ export default {
 			databases: [],
 
 			sizeLimitedOptions: [
-				{ label: "50M", value: 50 },
-				{ label: "100M", value: 100 },
-				{ label: "200M", value: 200 },
-				{ label: "512M", value: 512 },
-				{ label: "1G", value: 1024 },
-				{ label: "10G", value: 1024 * 10 },
-				{ label: "50G", value: 1024 * 50 },
-				{ label: "100G", value: 1024 * 100 },
-				{ label: "200G", value: 1024 * 200 },
+				{ label: '50M', value: 50 },
+				{ label: '100M', value: 100 },
+				{ label: '200M', value: 200 },
+				{ label: '512M', value: 512 },
+				{ label: '1G', value: 1024 },
+				{ label: '10G', value: 1024 * 10 },
+				{ label: '50G', value: 1024 * 50 },
+				{ label: '100G', value: 1024 * 100 },
+				{ label: '200G', value: 1024 * 200 },
 				{
-					label: this.$t("editor.cell.data_node.memCache.form.maxSize.options.unlimited"),
+					label: this.$t('editor.cell.data_node.memCache.form.maxSize.options.unlimited'),
 					value: 0
 				},
 				{
-					label: this.$t("editor.cell.data_node.memCache.form.maxSize.options.custom"),
+					label: this.$t('editor.cell.data_node.memCache.form.maxSize.options.custom'),
 					value: -1
 				}
 			],
 
 			model: {
-				name: "",
-				cacheName: "",
-				cacheKeys: "",
+				name: '',
+				cacheName: '',
+				cacheKeys: '',
 				maxSize: 50,
 				maxRows: 10000
 			},
@@ -189,14 +189,14 @@ export default {
 		model: {
 			deep: true,
 			handler() {
-				this.$emit("dataChanged", this.getData());
+				this.$emit('dataChanged', this.getData());
 			}
 		}
 	},
 
 	methods: {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			log("MemCache SetData");
+			log('MemCache SetData');
 			if (data) {
 				// Object.keys(data).forEach(key => (this.model[key] = data[key]));
 				_.merge(this.model, data);
@@ -215,7 +215,7 @@ export default {
 					cacheKeys = field ? field.field_name : this.sourceSchemaFields[0].field_name;
 				}
 			}
-			this.cacheKeysValues = cacheKeys.length ? cacheKeys.split(",") : [];
+			this.cacheKeysValues = cacheKeys.length ? cacheKeys.split(',') : [];
 
 			editorMonitor = vueAdapter.editor;
 			this.model.cacheKeys = cacheKeys;
@@ -237,7 +237,7 @@ export default {
 		cacheKeysHandler() {
 			let cacheKeys = this.cacheKeysValues.filter(v => !!v.trim());
 			this.cacheKeysValues = cacheKeys;
-			this.model.cacheKeys = cacheKeys.join(",");
+			this.model.cacheKeys = cacheKeys.join(',');
 		},
 
 		maxSizeLimitedHandler(value) {
