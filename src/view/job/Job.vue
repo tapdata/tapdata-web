@@ -171,7 +171,8 @@
 				</el-tooltip>
 			</template>
 
-			<div class="headImg round" @click="submitLayer" style="float: right;">
+
+			<div class="headImg round" v-if="['draft'].includes(status)" @click="submitLayer" style="float: right;">
 				<span class="iconfont icon-icon_fabu"></span>
 				<span class="text">{{ $t('dataFlow.button.submit') }}</span>
 			</div>

@@ -15,7 +15,7 @@
 					required
 				></el-input>
 			</el-form-item>
-			<el-form-item :label="$t('editor.cell.data_node.api.description')" class="pdTop5">
+			<el-form-item :label="$t('editor.cell.data_node.api.description')" class="pdTop5 e-textarea">
 				<el-input
 					type="textarea"
 					v-model="form.description"
@@ -328,6 +328,11 @@ export default {
 		.el-checkbox-group,
 		.el-checkbox .el-checkbox__label {
 			font-size: 11px;
+		}
+	}
+	.e-textarea {
+		.el-input__count {
+			line-height: 20px!important;
 		}
 	}
 }
