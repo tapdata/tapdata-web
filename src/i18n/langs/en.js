@@ -843,6 +843,13 @@ const en = {
 		input: {
 			placeholderPrefix: 'Enter '
 		}
+	},
+	metaData: {
+		addNode: "Add category at the same level",
+		addChildernNode: "Add Child Category",
+		editNode: "Edit",
+		deleteNode: "Delete",
+		deteleMessage: "This operation will delete all subclasses existing in this category, whether to delete it"
 	}
 };
 
