@@ -62,7 +62,16 @@ export default {
 			form: null
 		};
 	},
-
+	watch: {
+		config: {
+			deep: true,
+			handler() {
+				this.$nextTick(() => {
+					this.clearValidate();
+				});
+			}
+		}
+	},
 	render(h) {
 		let formConfig = Object.assign(this.defaultFormConfig, this.config.form, {
 			model: this.value
@@ -83,9 +92,6 @@ export default {
 				return this.getFormItem(h, item);
 			})
 		);
-		this.$nextTick(() => {
-			this.clearValidate();
-		});
 		return ele;
 	},
 	methods: {

@@ -189,7 +189,9 @@ export default {
 					item.options = this.timezones;
 				}
 				this.config.items = items;
-				this.initData(config.defaultModel); //切换类型会后初始化数据
+				this.initData(
+					Object.assign(defaultModel, config.defaultModel, { database_type: this.model.database_type })
+				); //切换类型会后初始化数据
 				this.checkItems = config.checkItems; //根据model变化更新表单项显示或隐藏
 				this.checkItems && this.checkItems();
 			}
@@ -215,7 +217,6 @@ export default {
 					this.visible = false;
 					this.$message.success(this.$t('dataForm.saveSuccess'));
 					this.$emit('success');
-					this.initData(defaultModel);
 				} else if (data.status === 'invalid') {
 					this.testResult = this.$t('dataForm.test.fail');
 					this.testing = false;
