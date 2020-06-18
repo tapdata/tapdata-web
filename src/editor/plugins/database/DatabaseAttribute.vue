@@ -67,12 +67,12 @@
 			</el-form>
 		</div>
 		<div class="processingBody">
-			<div class="allCheck" v-if="activeName === 'first'">
+			<div class="allCheck" v-if="activeName === 'first' && !disabled">
 				<el-checkbox v-model="selectAllTables"></el-checkbox>
 				<span @click="bulkRemoval()">{{ $t("editor.cell.data_node.database.bulkRemoval") }}</span>
 			</div>
 
-			<div class="allCheck" v-if="activeName === 'second'">
+			<div class="allCheck" v-if="activeName === 'second' && !disabled">
 				<el-checkbox v-model="selectAllRemoveTables"></el-checkbox>
 				<span @click="bulkRevocation()">{{ $t("editor.cell.data_node.database.bulkRevocation") }}</span>
 			</div>
@@ -84,6 +84,7 @@
 				>
 					<div class="search">
 						<el-input
+							:disabled="disabled"
 							:placeholder="$t('editor.cell.data_node.database.enterName')"
 							prefix-icon="el-icon-search"
 							clearable
@@ -95,12 +96,14 @@
 						<el-col style="width: 50%">
 							<el-input
 								clearable
+								:disabled="disabled"
 								v-model="model.table_prefix"
 								:placeholder="$t('editor.cell.data_node.database.tablePrefix')"
 							></el-input>
 						</el-col>
 						<el-col style="width: 50%">
 							<el-input
+								:disabled="disabled"
 								clearable
 								v-model="model.table_suffix"
 								:placeholder="$t('editor.cell.data_node.database.tableSuffix')"
@@ -115,13 +118,13 @@
 						:gutter="20"
 					>
 						<el-col :span="1">
-							<el-checkbox v-model="item.checked"></el-checkbox>
+							<el-checkbox v-model="item.checked" :disabled="disabled"></el-checkbox>
 						</el-col>
 						<el-col :span="17" style="padding-left:20px;">
 							<i class="iconfont icon-table2"></i>
 							<span class="tableName">{{ item.table_name }}</span>
 						</el-col>
-						<el-col :span="5" class="text-center">
+						<el-col :span="5" class="text-center" v-if="!disabled">
 							<el-button type="text" @click="removeTable(item, index)">
 								{{ $t("editor.cell.data_node.database.remove") }}
 							</el-button>
@@ -135,6 +138,7 @@
 				>
 					<div class="search">
 						<el-input
+							:disabled="disabled"
 							:placeholder="$t('editor.cell.data_node.database.enterName')"
 							prefix-icon="el-icon-search"
 							clearable
@@ -151,13 +155,13 @@
 						:gutter="20"
 					>
 						<el-col :span="2">
-							<el-checkbox v-model="item.checked"></el-checkbox>
+							<el-checkbox :disabled="disabled" v-model="item.checked"></el-checkbox>
 						</el-col>
 						<el-col :span="17">
 							<i class="iconfont icon-table2"></i>
 							<span class="tableName">{{ item.table_name }}</span>
 						</el-col>
-						<el-col :span="5" class="text-center">
+						<el-col :span="5" class="text-center" v-if="!disabled">
 							<el-button type="text" @click="undotble(item, index)">
 								{{ $t("editor.cell.data_node.database.Undo") }}
 							</el-button>
@@ -240,7 +244,7 @@ export default {
 				this.removeSeachTables = this.removeTables.filter(
 					t => t.table_name.toLowerCase().indexOf(this.removeSearch.toLowerCase()) >= 0
 				);
-				return this.removeSeachTables
+				return this.removeSeachTables;
 			} else {
 				return this.removeTables;
 			}
@@ -298,10 +302,10 @@ export default {
 						this.tables.forEach(item => {
 							this.seachTables.forEach(table => {
 								if (item.table_name === table.table_name) {
-									item.checked = true
+									item.checked = true;
 								}
 							});
-						})
+						});
 					}
 				} else {
 					this.tables.forEach(t => (t.checked = this.selectAllTables));
@@ -316,10 +320,10 @@ export default {
 						this.removeTables.forEach(item => {
 							this.removeSeachTables.forEach(table => {
 								if (item.table_name === table.table_name) {
-									item.checked = true
+									item.checked = true;
 								}
 							});
-						})
+						});
 					}
 				} else {
 					this.removeTables.forEach(t => (t.checked = this.selectAllRemoveTables));
@@ -394,7 +398,7 @@ export default {
 					this.database_host = result.data.database_host;
 					this.database_port = result.data.database_port;
 				}
-			})
+			});
 		},
 
 		// 移除
