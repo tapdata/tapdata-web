@@ -34,6 +34,7 @@ const databaseTypesModel = factory('DatabaseTypes');
 const connectionsModel = factory('connections');
 let defaultConfig = [];
 const defaultModel = {
+	id: '',
 	name: '',
 	database_type: '',
 	connection_type: '',
@@ -92,7 +93,9 @@ export default {
 				type: 'input',
 				field: 'name',
 				label: self.$t('dataForm.form.connectionName'),
-				required: true
+				required: true,
+				maxlength: 100,
+				showWordLimit: true
 			},
 			{
 				type: 'select',
@@ -240,10 +243,13 @@ export default {
 						project: '',
 						listtags: []
 					});
-					connectionsModel
-						.post(params)
+					if (!this.model.id) {
+						delete this.model.id;
+					}
+					connectionsModel[this.model.id ? 'patch' : 'post'](params)
 						.then(res => {
 							if (res.statusText === 'OK') {
+								this.$set(this.model, 'id', res.data.id);
 								this.test(res.data.id);
 							}
 						})

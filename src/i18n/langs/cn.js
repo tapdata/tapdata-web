@@ -809,9 +809,9 @@ const cn = {
 			timeZoneTips: '影响类型: DATE',
 
 			options: {
-				sourceAndTarget: '允许读写',
-				source: '仅限读取',
-				target: '仅限写入'
+				sourceAndTarget: '源头和目标',
+				source: '源头',
+				target: '目标'
 			}
 		},
 		error: {
@@ -820,7 +820,6 @@ const cn = {
 			nonePort: '端口不能为空',
 			portNumber: '端口必须为数字',
 			portRange: '端口号取值范围 1 ~ 65535',
-			tableFilterRange: '长度在100个字符以内',
 			noneSslKey: '客户端私钥不能为空',
 			noneSslCA: '证书颁发机构不能为空'
 		}

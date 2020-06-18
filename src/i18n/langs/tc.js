@@ -773,7 +773,7 @@ const tc = {
 		form: {
 			connectionName: '連接名稱',
 			databaseType: '數據庫類型',
-			connectionType: '數據庫許可權',
+			connectionType: '連接類型',
 			host: '數據庫地址',
 			port: '端口',
 			databaseName: '數據庫名稱',
@@ -781,7 +781,7 @@ const tc = {
 			userName: '帳號',
 			password: '密碼',
 			nodeName: '編目節點名稱',
-			tableFilter: '包含錶',
+			tableFilter: '包含表',
 			additionalString: '其他連接串參數',
 			isUrl: '是否使用URI',
 			databaseUri: '數據庫 URI',
@@ -790,7 +790,7 @@ const tc = {
 			sslPass: '私鑰密碼',
 			sslValidate: '驗證服務端證書',
 			sslCA: '證書頒發機构',
-			thinType: '認證管道',
+			thinType: '認證方式',
 			databaseOwner: '數據庫歸屬帳戶名',
 			timeZone: '時間類型的時區',
 
@@ -810,9 +810,9 @@ const tc = {
 			timeZoneTips: '影響類型: DATE',
 
 			options: {
-				sourceAndTarget: '允許讀寫',
-				source: '僅限讀取',
-				target: '僅限寫入'
+				sourceAndTarget: '源頭和目標',
+				source: '源頭',
+				target: '目標'
 			}
 		},
 		error: {
@@ -821,7 +821,6 @@ const tc = {
 			nonePort: '端口不能為空',
 			portNumber: '端口必須為數位',
 			portRange: '端口號取值範圍 1 ~ 65535',
-			tableFilterRange: '長度在100個字元以內',
 			noneSslKey: '用戶端私鑰不能為空',
 			noneSslCA: '證書頒發機构不能為空'
 		}

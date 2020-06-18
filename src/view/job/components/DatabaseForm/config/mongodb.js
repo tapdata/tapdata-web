@@ -20,7 +20,7 @@ export default function(vm) {
 						item.show = ssl;
 					}
 					if (item.showWhenSslValidateTrue) {
-						item.show = sslValidate;
+						item.show = ssl && sslValidate;
 					}
 					if (item.show === false) {
 						vm.model[item.field] = item.type === 'switch' ? false : '';
@@ -171,6 +171,7 @@ export default function(vm) {
 				label: vm.$t('dataForm.form.sslCA'),
 				show: false,
 				showWhenSslValidateTrue: true,
+				showWhenSslTrue: true,
 				rules: [
 					{
 						required: true,
@@ -184,6 +185,14 @@ export default function(vm) {
 						}
 					}
 				]
+			},
+			{
+				type: 'input',
+				field: 'table_filter',
+				label: vm.$t('dataForm.form.tableFilter'),
+				tips: vm.$t('dataForm.form.tableFilterTips'),
+				maxlength: 500,
+				showWordLimit: true
 			}
 		]
 	};

@@ -18,6 +18,16 @@ export default {
 	render(h) {
 		let self = this;
 		let config = self.config;
+		let selectFile = file => {
+			let reader = new FileReader();
+			reader.readAsText(file);
+			reader.onload = () => {
+				let text = reader.result;
+				self.fileName = file.name;
+				self.$emit('input', text);
+				self.$emit('change', text);
+			};
+		};
 		return h(
 			'ElInput',
 			{
@@ -40,14 +50,10 @@ export default {
 							accept: config.accept,
 							showFileList: false,
 							onChange: file => {
-								let reader = new FileReader();
-								reader.readAsText(file.raw);
-								reader.onload = () => {
-									let text = reader.result;
-									self.fileName = config.field + 'File';
-									self.$emit('input', text);
-									self.$emit('change', text);
-								};
+								selectFile(file.raw);
+							},
+							onExceed: fileList => {
+								selectFile(fileList[0]);
 							}
 						},
 						slot: 'append'

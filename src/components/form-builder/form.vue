@@ -66,7 +66,9 @@ export default {
 		config: {
 			deep: true,
 			handler() {
+				this.show = false;
 				this.$nextTick(() => {
+					this.show = true;
 					this.clearValidate();
 				});
 			}
@@ -92,14 +94,17 @@ export default {
 				return this.getFormItem(h, item);
 			})
 		);
-		return ele;
+		if (this.show) {
+			return ele;
+		}
+		return '';
 	},
 	methods: {
 		validate(callback) {
 			return this.$refs.form.validate(callback);
 		},
 		clearValidate() {
-			return this.$refs.form.clearValidate();
+			return this.$refs.form && this.$refs.form.clearValidate();
 		},
 		getFormItem(h, itemConfig) {
 			let self = this;

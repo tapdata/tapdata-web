@@ -105,7 +105,8 @@ export default function(vm) {
 				field: 'plain_password',
 				label: vm.$t('dataForm.form.password'),
 				domType: 'password',
-				showPassword: true
+				showPassword: true,
+				required: true
 			},
 			{
 				type: 'input',
@@ -118,17 +119,8 @@ export default function(vm) {
 				field: 'table_filter',
 				label: vm.$t('dataForm.form.tableFilter'),
 				tips: vm.$t('dataForm.form.tableFilterTips'),
-				rules: [
-					{
-						validator: (rule, value, callback) => {
-							if (value && value.length > 100) {
-								callback(new Error(vm.$t('dataForm.error.tableFilterRange')));
-							} else {
-								callback();
-							}
-						}
-					}
-				]
+				maxlength: 100,
+				showWordLimit: true
 			},
 			{
 				type: 'input',
