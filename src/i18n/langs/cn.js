@@ -487,6 +487,8 @@ const cn = {
 							label: '描述',
 							placeholder: '请输入节点描述'
 						},
+						toUpperCase: '转大写',
+						toLowerCase: '转小写',
 						fieldName: '字段名称',
 						fieldType: '字段类型',
 						addField: '添加字段',

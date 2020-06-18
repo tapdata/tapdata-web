@@ -491,6 +491,9 @@ const en = {
 							label: 'Description',
 							placeholder: 'Please input you node description'
 						},
+						toUpperCase: 'Upper',
+						toLowerCase: 'Lower',
+						delete: 'Delete',
 						fieldName: 'Field name',
 						fieldType: 'Field type',
 						addField: 'Add Field',
