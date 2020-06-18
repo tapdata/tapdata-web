@@ -6,7 +6,7 @@ const en = {
 		api: {
 			get: {
 				error: "Load data failed.",
-				loading: "Loading data...",
+				loading: "Loading data..."
 			}
 		},
 		ok: "OK",
@@ -69,10 +69,10 @@ const en = {
 		implementationModalities: "Execution method",
 		submitConfirmation: "Submit Confirmation",
 		SyncPoint: "Sync Node",
-		SyncInfo:{
-			localTZC:'Local UTC CDC time: custom a point of  CDC time，in local time zone',
-			localTZ:'Local UTC：default local UTC time',
-			connTZ:'Sever UTC CDC time: custom a point of  CDC time，in the time zone of a specific server'
+		SyncInfo: {
+			localTZ: "Local UTC CDC time: custom a point of  CDC time，in local time zone",
+			current: "Local UTC：default local UTC time",
+			connTZ: "Sever UTC CDC time: custom a point of  CDC time，in the time zone of a specific server"
 		},
 		Current: "Current Time",
 		SyncTime: "Sync Time",
@@ -180,7 +180,7 @@ const en = {
 		mission: "Description",
 		yes: "yes",
 		no: "no",
-		cronExpression:"Please enter cron expression",
+		cronExpression: "Please enter cron expression",
 		selectGrpupFiled: "Please select a grouping field",
 		selectTargetField: "Please select the target field",
 		aggName: "Sub-process name",
@@ -304,7 +304,7 @@ const en = {
 							remove: "Remove exists data at before sync"
 						},
 						initialSyncOrder: {
-							keep: "initial Sync Order",
+							keep: "initial Sync Order"
 						},
 						filter: {
 							label: "Filter",
@@ -381,7 +381,8 @@ const en = {
 					required: "Required",
 					availableQueries: "Query",
 					publishApi_path: "API path is not empty",
-					variable_name: "Can only contain letters, numbers, underscores and dollar signs, and numbers cannot start",
+					variable_name:
+						"Can only contain letters, numbers, underscores and dollar signs, and numbers cannot start"
 				},
 				es: {
 					name: "ES",
@@ -690,10 +691,10 @@ const en = {
 		tableLevel: "Table Level",
 		fieldLevel: "Field Mapping",
 		dblclickDataModel: "Please double-click the data model to open the field mapping",
-		properties:{
+		properties: {
 			name: "Name",
 			type: "Classification",
-			path:'Path',
+			path: "Path",
 			database_type: "Database Type",
 			database_host: "Database IP",
 			database_username: "Database User",

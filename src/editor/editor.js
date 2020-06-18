@@ -557,7 +557,11 @@ export default class Editor extends BaseObject {
 		if (!name) return i18n.t("editor.cell.validate.empty_name");
 
 		let getData = this.getData();
-		if((!getData.settingData || !getData.settingData.cronExpression) && getData.settingData.isSchedule === true && getData.settingData.sync_type === 'initial_sync'){
+		if (
+			(!getData.settingData || !getData.settingData.cronExpression) &&
+			getData.settingData.isSchedule === true &&
+			getData.settingData.sync_type === "initial_sync"
+		) {
 			return i18n.t("dataFlow.cronExpression");
 		}
 
@@ -698,6 +702,22 @@ export default class Editor extends BaseObject {
 				return formData && type !== "app.Link";
 			});
 		return dataCells;
+	}
+
+	/**
+	 * Return an array of all the roots of the graph. Time complexity: O(|V|)
+	 * @returns {*}
+	 */
+	getSources() {
+		return this.graph.graph.getSources();
+	}
+
+	/**
+	 * Return an array of all the leafs of the graph. Time complexity: O(|V|)
+	 * @returns {*}
+	 */
+	getSinks() {
+		return this.graph.graph.getSinks();
 	}
 	destroy() {
 		this.emit(EditorEventType.BEFORE_DESTROY, this);

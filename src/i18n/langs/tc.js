@@ -6,7 +6,7 @@ const tc = {
 		api: {
 			get: {
 				error: "加載數據失敗.",
-				loading: "正在加載數據",
+				loading: "正在加載數據"
 			}
 		},
 		ok: "確定",
@@ -69,10 +69,10 @@ const tc = {
 		implementationModalities: "執行方式",
 		submitConfirmation: "提交確認",
 		SyncPoint: "同步節點",
-		SyncInfo:{
-			localTZC:'當前時區傳輸時間：系統所在時區下，開始傳輸任務的時刻',
-			localTZ:'當前時區時間：默認當前時間',
-			connTZ:'數據庫時區傳輸時間： 數據庫所在時區下，開始傳輸任務的時刻'
+		SyncInfo: {
+			localTZ: "當前時區傳輸時間：系統所在時區下，開始傳輸任務的時刻",
+			current: "當前時區時間：默認當前時間",
+			connTZ: "數據庫時區傳輸時間： 數據庫所在時區下，開始傳輸任務的時刻"
 		},
 		Current: "當前時間",
 		SyncTime: "同步時間",
@@ -179,7 +179,7 @@ const tc = {
 		mission: "描述",
 		yes: "yes",
 		no: "no",
-		cronExpression:"請輸入調度表達式",
+		cronExpression: "請輸入調度表達式",
 		selectGrpupFiled: "請選擇分組字段",
 		selectTargetField: "請選擇目標字段",
 		aggName: "子處理名稱",
@@ -378,7 +378,7 @@ const tc = {
 					required: "必填",
 					availableQueries: "可用查詢",
 					publishApi_path: "API路徑不為空",
-					variable_name: "只能包含字母，數字，下劃線和美元符號，和數字不能開頭",
+					variable_name: "只能包含字母，數字，下劃線和美元符號，和數字不能開頭"
 				},
 				es: {
 					name: "ES",
@@ -688,10 +688,10 @@ const tc = {
 		fieldLevel: "字段映射",
 		dblclickDataModel: "請雙擊數據模型打開字段映射",
 		properties: {
-			name: '名稱',
-			type: '分類',
-			path: '路徑',
-			database_type: '數據庫類型',
+			name: "名稱",
+			type: "分類",
+			path: "路徑",
+			database_type: "數據庫類型",
 			database_host: "數據庫IP",
 			database_username: "數據庫用戶",
 			database_port: "數據庫端口",

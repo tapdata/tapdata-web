@@ -6,9 +6,8 @@
 					<el-form-item>
 						<div>{{ $t("dataFlow.sync_type") }}</div>
 						<el-radio-group v-model="formData.sync_type" size="mini" @change="changeSyncType">
-							<el-radio-button label="initial_sync+cdc">{{
-								$t("dataFlow.initial_sync") + "+" + $t("dataFlow.cdc")
-								}}
+							<el-radio-button label="initial_sync+cdc"
+								>{{ $t("dataFlow.initial_sync") + "+" + $t("dataFlow.cdc") }}
 							</el-radio-button>
 							<el-radio-button label="initial_sync">{{ $t("dataFlow.initial_sync") }}</el-radio-button>
 							<el-radio-button label="cdc">{{ $t("dataFlow.cdc") }}</el-radio-button>
@@ -31,21 +30,17 @@
 			<el-row style="border-top: 1px solid #dedee4">
 				<el-form-item>
 					<div>{{ $t("dataFlow.send_email") }}</div>
-					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.paused">{{
-						$t("dataFlow.stopped")
-						}}
+					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.paused"
+						>{{ $t("dataFlow.stopped") }}
 					</el-checkbox-button>
-					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.error">{{
-						$t("dataFlow.error")
-						}}
+					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.error"
+						>{{ $t("dataFlow.error") }}
 					</el-checkbox-button>
-					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.edited">{{
-						$t("dataFlow.edited")
-						}}
+					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.edited"
+						>{{ $t("dataFlow.edited") }}
 					</el-checkbox-button>
-					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.started">{{
-						$t("dataFlow.started")
-						}}
+					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.started"
+						>{{ $t("dataFlow.started") }}
 					</el-checkbox-button>
 				</el-form-item>
 			</el-row>
@@ -69,37 +64,26 @@
 							<template slot="append">row</template>
 						</el-input>
 					</el-form-item>
-
-<!--					<el-form-item v-show="formData.sync_type === 'cdc'" size="mini">-->
-<!--						<div>{{ $t("dataFlow.SyncPoint") }}</div>-->
-<!--						<el-radio-group v-model="formData.syncPoint">-->
-<!--							<el-radio-button label="current">{{ $t("dataFlow.Current") }}</el-radio-button>-->
-<!--							<el-radio-button label="sync_time">{{ $t("dataFlow.SyncTime") }}</el-radio-button>-->
-<!--						</el-radio-group>-->
-
-<!--						<el-row v-if="formData.syncPoint === 'sync_time'">-->
-<!--							<el-col :span="12" style="margin-top: 10px">-->
-<!--								<el-date-picker format="yyyy-MM-dd" style="width: 100%;"-->
-<!--												v-model="formData.syncDatePicker"></el-date-picker>-->
-<!--							</el-col>-->
-<!--							<el-col :span="12" style="margin-top: 10px">-->
-<!--								<el-time-picker format="HH:mm:ss" style="width: 100%;"-->
-<!--												v-model="formData.syncTimePicker"></el-time-picker>-->
-<!--							</el-col>-->
-<!--						</el-row>-->
-<!--					</el-form-item>-->
 					<el-form-item>
-						<div>{{$t('dataFlow.processorConcurrency')}}</div> <!-- 自动处理DDL操作 -->
-						<el-input-number v-model="formData.processorConcurrency" controls-position="right" :min="1"
-										 size="mini"></el-input-number>
+						<div>{{ $t("dataFlow.processorConcurrency") }}</div>
+						<!-- 自动处理DDL操作 -->
+						<el-input-number
+							v-model="formData.processorConcurrency"
+							controls-position="right"
+							:min="1"
+							size="mini"
+						></el-input-number>
 					</el-form-item>
-					<el-form-item v-show="formData.sync_type !== 'cdc' ">
-						<div>{{$t('dataFlow.transformerConcurrency')}}</div> <!-- 自动处理DDL操作 -->
-						<el-input-number v-model="formData.transformerConcurrency" controls-position="right" :min="1"
-										 size="mini"></el-input-number>
+					<el-form-item v-show="formData.sync_type !== 'cdc'">
+						<div>{{ $t("dataFlow.transformerConcurrency") }}</div>
+						<!-- 自动处理DDL操作 -->
+						<el-input-number
+							v-model="formData.transformerConcurrency"
+							controls-position="right"
+							:min="1"
+							size="mini"
+						></el-input-number>
 					</el-form-item>
-
-					`
 				</el-col>
 				<el-col :span="12">
 					<!--					<el-form-item v-show="formData.sync_type !== 'initial_sync+cdc'">-->
@@ -133,7 +117,10 @@
 							<el-radio-button :label="false">{{ $t("dataFlow.no") }}</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
-					<el-form-item v-show="formData.isSchedule === true && formData.sync_type === 'initial_sync'" prop="cronExpression">
+					<el-form-item
+						v-show="formData.isSchedule === true && formData.sync_type === 'initial_sync'"
+						prop="cronExpression"
+					>
 						<div>{{ $t("dataFlow.cronExpression") }}</div>
 						<!-- 定期调度任务 -->
 						<el-input v-model="formData.cronExpression" size="mini"></el-input>
@@ -168,33 +155,38 @@
 					{{ $t("dataFlow.SyncPoint") }}
 					<el-tooltip placement="right-end">
 						<div slot="content">
+							<div>{{ $t("dataFlow.SyncInfo.current") }}</div>
 							<div>{{ $t("dataFlow.SyncInfo.localTZ") }}</div>
 							<div>{{ $t("dataFlow.SyncInfo.connTZ") }}</div>
 						</div>
 						<i class="e-primary el-icon-warning-outline"></i>
 					</el-tooltip>
 				</div>
-				<el-row v-for="item in formData.syncPoints" style="margin-top: 10px">
+				<el-row v-for="item in formData.syncPoints" :key="item.name" style="margin-top: 10px">
 					<el-col :span="4">
-						{{item.name}}
+						{{ item.name }}
 					</el-col>
 					<el-col :span="6" style="margin-right: 10px">
 						<el-select v-model="item.type" placeholder="请选择">
-							<el-option
-								v-for="op in options"
-								:key="op.value"
-								:label="op.label"
-								:value="op.value">
+							<el-option v-for="op in options" :key="op.value" :label="op.label" :value="op.value">
 							</el-option>
 						</el-select>
 					</el-col>
-					<el-col :span="6" >
-						<el-date-picker format="yyyy-MM-dd" style="width: 90%;"
-										v-model="item.date" :disabled="item.type === 'localTZ'"></el-date-picker>
+					<el-col :span="6">
+						<el-date-picker
+							format="yyyy-MM-dd"
+							style="width: 90%;"
+							v-model="item.date"
+							:disabled="item.type === 'current'"
+						></el-date-picker>
 					</el-col>
-					<el-col :span="6" >
-						<el-time-picker format="HH:mm:ss" style="width: 90%;"
-										v-model="item.time" :disabled="item.type === 'localTZ'"></el-time-picker>
+					<el-col :span="6">
+						<el-time-picker
+							format="HH:mm:ss"
+							style="width: 90%;"
+							v-model="item.time"
+							:disabled="item.type === 'current'"
+						></el-time-picker>
 					</el-col>
 				</el-row>
 			</el-form-item>
@@ -203,176 +195,162 @@
 </template>
 
 <script>
-	import {DEFAULT_SETTING} from "../../editor/constants";
-	import _ from "lodash";
-	import * as moment from "moment";
-	import factory from "../../api/factory";
-	const  connections = factory("connections");
-	export default {
-		name: "Setting.vue",
-		data() {
-			return {
-				formData: _.cloneDeep(DEFAULT_SETTING),
-				rules: {
-					cronExpression: [
-						{
-							required: true,
-							trigger: "blur",
-							message: this.$t("dataFlow.cronExpression")
-						}
-					]
+import { DEFAULT_SETTING } from "../../editor/constants";
+import _ from "lodash";
+import * as moment from "moment";
+import factory from "../../api/factory";
+const connections = factory("connections");
+export default {
+	name: "Setting.vue",
+	data() {
+		return {
+			formData: _.cloneDeep(DEFAULT_SETTING),
+			rules: {
+				cronExpression: [
+					{
+						required: true,
+						trigger: "blur",
+						message: this.$t("dataFlow.cronExpression")
+					}
+				]
+			},
+			options: [
+				{
+					label: "localTZ",
+					value: "localTZ"
 				},
-				options: [
-					{
-						label: "localTZ",
-						value: "localTZ"
-					},
-					{
-						label: "connTZ",
-						value: "connTZ"
-					}
-				],
-			};
-		},
-		mounted() {
-			// this.formData = this.dataFlow;
-		},
-		watch: {
-			formData: {
-				deep: true,
-				handler() {
-					if (this.formData.initial_sync === "initial_sync") {
-						this.formData.isOpenAutoDDL = false;
-					} else {
-						this.formData.run_custom_sql = false;
-					}
-					this.$emit("dataChanged", this.getData());
+				{
+					label: "connTZ",
+					value: "connTZ"
+				},
+				{
+					label: "current",
+					value: "current"
 				}
-			}
-		},
-		methods: {
-			setData(data) {
-				if (data) {
-					let syncPoints = data.syncPoints || [];
-					let map = this.updateSyncNode(syncPoints)
-					// let connectionIds = this.getAllConnectionIds();
-					// this.getAllConnectionName(connectionIds);
-					//
-					// syncPoints = syncPoints.filter(point => connectionIds.includes(point.connectionId));
-					//
-					// // connectionId -> syncPoint
-					// let map = {};
-					// syncPoints.forEach(s => map[s.connectionId] = s);
-					//
-					// connectionIds.forEach(connectionId => {
-					// 	if(!map[connectionId]){
-					// 		map[connectionId] = {
-					// 			connectionId: connectionId,
-					// 			type: "localTZ",        // localTZ: 本地时区； connTZ：连接时区
-					// 			time: "",
-					// 			timezone:"",
-					// 			name:'',
-					// 		}
-					// 	}
-					// });
-					data.syncPoints = Object.values(map);
-					Object.keys(data).forEach(key => (this.formData[key] = data[key]));
-				}
-			},
-			getData() {
-				let result = _.cloneDeep(this.formData);
-				if(result.syncPoints && result.sync_type ==='cdc'){
-					result.syncPoints.forEach(point =>{
-						point.date =  point.time?moment(point.time).format("YYYY-MM-DD"):'';
-						point.time =  point.timezone?moment(point.timezone).format("HH:mm:ss"):'';
-					})
-				}
-				return result;
-			},
-			changeSyncType(type) {
-				if (type === "initial_sync") {
+			]
+		};
+	},
+	mounted() {
+		// this.formData = this.dataFlow;
+	},
+	watch: {
+		formData: {
+			deep: true,
+			handler() {
+				if (this.formData.initial_sync === "initial_sync") {
 					this.formData.isOpenAutoDDL = false;
-				}else if(type === "cdc" || type === "initial_sync+cdc"){
-					this.formData.syncPoints = Object.values(this.updateSyncNode(this.formData.syncPoints));
 				} else {
 					this.formData.run_custom_sql = false;
 				}
-			},
-			getAllConnectionIds(){
-				//获取所有节点的collectionId
-				let dataCells = this.editor.getAllCells();
-				if(dataCells && dataCells.length >0){
-					return dataCells.map(cell => {
-						let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
-						return formData.connectionId;
-					}).filter(v => !!v);
-				}
-			},
-			async getAllConnectionName(connectionIds){
-				let result =  await connections.get({
-					filter: JSON.stringify({
-						where: {
-							_id: {
-								inq:connectionIds
-							},
-						},
-						fields: {
-							name: true,
-							id:true,
-						}
-					})
-				});
-				if (result.data && result.data.length>0) {
-					result.data.forEach(name =>{
-						this.formData.syncPoints.forEach( point =>{
-							if(name.id === point.connectionId){
-								point.name = name.name;
-							}
-						})
-					})
-
-				}
-			},
-			updateSyncNode(syncPoints){
-				if(!syncPoints){
-					return ;
-				}
-				let connectionIds = this.getAllConnectionIds();
-				this.getAllConnectionName(connectionIds);
-
-				syncPoints = syncPoints.filter(point => connectionIds.includes(point.connectionId));
-
-				// connectionId -> syncPoint
-				let map = {};
-				syncPoints.forEach(s => map[s.connectionId] = s);
-
-				connectionIds.forEach(connectionId => {
-					if(!map[connectionId]){
-						map[connectionId] = {
-							connectionId: connectionId,
-							type: "localTZ",        // localTZ: 本地时区； connTZ：连接时区
-							time: "",
-							date:"",
-							timezone:"+08:00",
-							name:'',
-						}
-					}
-				});
-				return map;
+				this.$emit("dataChanged", this.getData());
 			}
 		}
-	};
-</script>
-<style lang="less">
-	/*.data-flow-setting{*/
-	/*	height: calc(100vh - 50px);*/
-	/*	overflow: auto;*/
-	/*}*/
-	.setBtn {
-		.el-checkbox-button__inner {
-			padding: 6px 10px;
-			border-left: 1px solid #dcdfe6;
-			margin: -2px;
+	},
+	methods: {
+		setData(data) {
+			if (data) {
+				let syncPoints = data.syncPoints || [];
+				let map = this.updateSyncNode(syncPoints);
+				data.syncPoints = Object.values(map);
+				// Object.keys(data).forEach(key => (this.formData[key] = data[key]));
+				_.merge(this.formData, data);
+			}
+		},
+		getData() {
+			let result = _.cloneDeep(this.formData);
+			if (result.syncPoints) {
+				result.syncPoints.forEach(point => {
+					point.date = point.date ? moment(point.date).format("YYYY-MM-DD") : "";
+					//point.time =  point.time?moment(point.time).format("HH:mm:ss"):'';
+				});
+			}
+			return result;
+		},
+		changeSyncType(type) {
+			if (type === "initial_sync") {
+				this.formData.isOpenAutoDDL = false;
+			} else if (type === "cdc" || type === "initial_sync+cdc") {
+				this.formData.syncPoints = Object.values(this.updateSyncNode(this.formData.syncPoints));
+			} else {
+				this.formData.run_custom_sql = false;
+			}
+		},
+		getAllConnectionIds() {
+			//获取所有节点的collectionId ;
+			let dataCells = this.editor.getSources();
+			if (dataCells && dataCells.length > 0) {
+				return dataCells
+					.map(cell => {
+						let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
+						return formData.connectionId;
+					})
+					.filter(v => !!v);
+			}
+		},
+		async getAllConnectionName(connectionIds) {
+			let result = await connections.get({
+				filter: JSON.stringify({
+					where: {
+						_id: {
+							inq: connectionIds
+						}
+					},
+					fields: {
+						name: true,
+						id: true
+					}
+				})
+			});
+			if (result.data && result.data.length > 0) {
+				result.data.forEach(name => {
+					this.formData.syncPoints.forEach(point => {
+						if (name.id === point.connectionId) {
+							point.name = name.name;
+						}
+					});
+				});
+			}
+		},
+		updateSyncNode(syncPoints) {
+			if (!syncPoints) {
+				return;
+			}
+			let connectionIds = this.getAllConnectionIds();
+			this.getAllConnectionName(connectionIds);
+
+			syncPoints = syncPoints.filter(point => connectionIds.includes(point.connectionId));
+
+			// connectionId -> syncPoint
+			let map = {};
+			syncPoints.forEach(s => (map[s.connectionId] = s));
+
+			connectionIds.forEach(connectionId => {
+				if (!map[connectionId]) {
+					map[connectionId] = {
+						connectionId: connectionId,
+						type: "localTZ", // localTZ: 本地时区； connTZ：连接时区
+						time: "",
+						date: "",
+						timezone: "+08:00",
+						name: ""
+					};
+				}
+			});
+			return map;
 		}
 	}
+};
+</script>
+<style lang="less">
+/*.data-flow-setting{*/
+/*	height: calc(100vh - 50px);*/
+/*	overflow: auto;*/
+/*}*/
+.setBtn {
+	.el-checkbox-button__inner {
+		padding: 6px 10px;
+		border-left: 1px solid #dcdfe6;
+		margin: -2px;
+	}
+}
 </style>
