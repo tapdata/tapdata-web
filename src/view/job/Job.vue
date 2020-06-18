@@ -841,8 +841,8 @@ export default {
 				};
 
 			self.$confirm(
-				forceStop === true ? self.$t('dataFlow.stop_job.force_stop_msg') : self.$t('dataFlow.stop_job.msg'),
-				self.$t('dataFlow.stop_job.tip'),
+				forceStop === true ? self.$t('message.forceStoppingMessage') : self.$t('message.stopMessage'),
+				self.$t('dataFlow.importantReminder'),
 				{
 					confirmButtonText:
 						forceStop === true ? self.$t('dataFlow.button.force_stop') : self.$t('dataFlow.button.stop'),
@@ -957,7 +957,7 @@ export default {
 				data = this.getDataFlowData();
 
 			if (data && data.id) {
-				self.$confirm(self.$t('dataFlow.reset_job.msg'), self.$t('dataFlow.reset_job.tip'), {
+				self.$confirm(self.$t('message.resetMessage'), self.$t('dataFlow.importantReminder'), {
 					confirmButtonText: self.$t('dataFlow.button.reset'),
 					cancelButtonText: self.$t('message.cancel'),
 					type: 'warning'
