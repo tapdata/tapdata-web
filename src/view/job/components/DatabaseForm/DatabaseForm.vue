@@ -17,8 +17,10 @@
 		</div>
 		<form-builder ref="form" v-model="model" :config="config"></form-builder>
 		<span slot="footer" class="dialog-footer">
-			<el-button size="mini" type="primary" :loading="testing" @click="submit">Enter</el-button>
-			<el-button size="mini" @click="visible = false">Cancel</el-button>
+			<el-button size="mini" type="primary" :loading="testing" @click="submit">
+				{{ $t('dataForm.submit') }}
+			</el-button>
+			<el-button size="mini" @click="visible = false">{{ $t('dataForm.cancel') }}</el-button>
 		</span>
 	</Drawer>
 </template>
@@ -31,6 +33,33 @@ import formConfig from './config';
 const databaseTypesModel = factory('DatabaseTypes');
 const connectionsModel = factory('connections');
 const defaultConfig = [];
+const defaultModel = {
+	name: '',
+	database_type: '',
+	connection_type: '',
+	database_host: '',
+	database_port: '',
+	database_name: '',
+	database_username: '',
+	plain_password: '',
+	table_filter: '',
+	additionalString: '',
+	thin_type: '',
+	database_owner: '',
+	node_name: '',
+	database_schema: '',
+
+	database_datetype_without_timezone: '',
+	supportUpdatePk: false,
+
+	isUrl: true,
+	database_uri: '',
+	ssl: false,
+	sslKey: '',
+	sslPass: '',
+	sslValidate: false,
+	sslCA: ''
+};
 
 export default {
 	name: 'DatabaseForm',
@@ -47,33 +76,7 @@ export default {
 			dataTypes: [],
 			whiteList: [],
 
-			model: {
-				name: '',
-				database_type: '',
-				connection_type: '',
-				database_host: '',
-				database_port: '',
-				database_name: '',
-				database_username: '',
-				plain_password: '',
-				table_filter: '',
-				additionalString: '',
-				thin_type: '',
-				database_owner: '',
-				node_name: '',
-				database_schema: '',
-
-				database_datetype_without_timezone: '',
-				supportUpdatePk: false,
-
-				isUrl: true,
-				database_uri: '',
-				ssl: false,
-				sslKey: '',
-				sslPass: '',
-				sslValidate: false,
-				sslCA: ''
-			},
+			model: Object.assign({}, defaultModel),
 			config: {
 				items: []
 			},
@@ -112,6 +115,9 @@ export default {
 			this.model = Object.assign(this.model, data);
 		},
 		show({ blackList, whiteList } = {}) {
+			this.testing = false;
+			this.testResult = '';
+			this.testLogs = null;
 			this.visible = true;
 			this.whiteList = [];
 			let list = ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2']; //目前白名单
@@ -178,7 +184,6 @@ export default {
 		getFormConfig() {
 			let func = formConfig[this.model.database_type];
 			if (func) {
-				this.initData();
 				let config = func(this);
 				let items = defaultConfig.concat(config.items);
 				let item = items.find(it => it.field === 'database_datetype_without_timezone');
@@ -211,6 +216,8 @@ export default {
 					this.testResult = this.$t('dataForm.test.success');
 					this.visible = false;
 					this.$message.success(this.$t('dataForm.saveSuccess'));
+					this.$emit('success');
+					this.initData(defaultModel);
 				} else if (data.status === 'invalid') {
 					this.testResult = this.$t('dataForm.test.fail');
 					this.testing = false;

@@ -13,16 +13,7 @@
     "lint": "eslint --ext .js,.vue src test/unit test/e2e/specs",
     "build": "node build/build.js"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{js,vue,css}": [
-		"eslint --fix"
-    ]
-  },
+
   "dependencies": {
     "alertifyjs": "^1.13.1",
     "axios": "^0.19.2",

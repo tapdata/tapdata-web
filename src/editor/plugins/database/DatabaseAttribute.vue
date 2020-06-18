@@ -47,7 +47,7 @@
 							style="padding: 7px;margin-left: 7px"
 							@click="$refs.databaseForm.show()"
 						></el-button>
-						<DatabaseForm ref="databaseForm"></DatabaseForm>
+						<DatabaseForm ref="databaseForm" @success="getDatabases"></DatabaseForm>
 					</div>
 				</el-form-item>
 
@@ -262,27 +262,8 @@ export default {
 		}
 	},
 
-	async mounted() {
-		let result = await connections.get({
-			filter: JSON.stringify({
-				where: {
-					database_type: { nin: ['file', 'dummy', 'gridfs', 'rest api'] }
-				},
-				fields: {
-					name: 1,
-					id: 1,
-					database_type: 1,
-					connection_type: 1,
-					status: 1
-				},
-				order: 'name ASC'
-			})
-		});
-
-		if (result.data) {
-			this.databases = result.data;
-			this.lookupDatabaseType();
-		}
+	mounted() {
+		this.loadDataSource();
 	},
 
 	watch: {
@@ -344,6 +325,28 @@ export default {
 	},
 
 	methods: {
+		async loadDataSource() {
+			let result = await connections.get({
+				filter: JSON.stringify({
+					where: {
+						database_type: { nin: ['file', 'dummy', 'gridfs', 'rest api'] }
+					},
+					fields: {
+						name: 1,
+						id: 1,
+						database_type: 1,
+						connection_type: 1,
+						status: 1
+					},
+					order: 'name ASC'
+				})
+			});
+
+			if (result.data) {
+				this.databases = result.data;
+				this.lookupDatabaseType();
+			}
+		},
 		changeConnection() {
 			this.model.includeTables = [];
 		},

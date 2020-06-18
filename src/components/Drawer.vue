@@ -74,6 +74,10 @@ export default {
 		hide() {
 			this.opened = false;
 			setTimeout(() => {
+				//避免在窗口收起时再次点击显示会闪屏的问题
+				if (this.opened) {
+					return;
+				}
 				this.$emit('update:visible', false);
 				this.drawerVisible = false;
 			}, 500);
