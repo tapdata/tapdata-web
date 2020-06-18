@@ -54,8 +54,8 @@ const en = {
 		startupAfter_add: 'Please add after startup',
 		noData: 'NO DATA ',
 		prompt: 'Prompt',
-		resetMessage: 'The action of deleting the data flow will cause it unrecoverable, still DELETE?',
-		deteleMessage: 'The action of job reset will cause the job to be rerun from the beginning, still RESET ? ',
+		resetMessage: 'The action of job reset will cause the job to be rerun from the beginning, still RESET ?',
+		deteleMessage: 'The action of deleting the data flow will cause it unrecoverable, still DELETE? ',
 		forceStoppingMessage:
 			'The action of Force stopoing will interrupt data transfer immediately, still FORCE STOP ?',
 		stopMessage: 'Are you sure to pause the mission?',
