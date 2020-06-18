@@ -6,7 +6,7 @@ const en = {
 		api: {
 			get: {
 				error: "Load data failed.",
-				loading: "Loading data...",
+				loading: "Loading data..."
 			}
 		},
 		ok: "OK",
@@ -175,7 +175,7 @@ const en = {
 		mission: "Description",
 		yes: "yes",
 		no: "no",
-		cronExpression:"Please enter cron expression",
+		cronExpression: "Please enter cron expression",
 		selectGrpupFiled: "Please select a grouping field",
 		selectTargetField: "Please select the target field",
 		aggName: "Sub-process name",
@@ -299,7 +299,7 @@ const en = {
 							remove: "Remove exists data at before sync"
 						},
 						initialSyncOrder: {
-							keep: "initial Sync Order",
+							keep: "initial Sync Order"
 						},
 						filter: {
 							label: "Filter",
@@ -376,7 +376,8 @@ const en = {
 					required: "Required",
 					availableQueries: "Query",
 					publishApi_path: "API path is not empty",
-					variable_name: "Can only contain letters, numbers, underscores and dollar signs, and numbers cannot start",
+					variable_name:
+						"Can only contain letters, numbers, underscores and dollar signs, and numbers cannot start"
 				},
 				es: {
 					name: "ES",
@@ -685,10 +686,10 @@ const en = {
 		tableLevel: "Table Level",
 		fieldLevel: "Field Mapping",
 		dblclickDataModel: "Please double-click the data model to open the field mapping",
-		properties:{
+		properties: {
 			name: "Name",
 			type: "Classification",
-			path:'Path',
+			path: "Path",
 			database_type: "Database Type",
 			database_host: "Database IP",
 			database_username: "Database User",
@@ -697,6 +698,13 @@ const en = {
 			database_name: "Database Name",
 			original_name: "Original Name"
 		}
+	},
+	metaData: {
+		addNode: "Add category at the same level",
+		addChildernNode: "Add Child Category",
+		editNode: "Edit",
+		deleteNode: "Delete",
+		deteleMessage: "This operation will delete all subclasses existing in this category, whether to delete it"
 	}
 };
 

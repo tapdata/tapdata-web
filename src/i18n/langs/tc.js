@@ -6,7 +6,7 @@ const tc = {
 		api: {
 			get: {
 				error: "加載數據失敗.",
-				loading: "正在加載數據",
+				loading: "正在加載數據"
 			}
 		},
 		ok: "確定",
@@ -174,7 +174,7 @@ const tc = {
 		mission: "描述",
 		yes: "yes",
 		no: "no",
-		cronExpression:"請輸入調度表達式",
+		cronExpression: "請輸入調度表達式",
 		selectGrpupFiled: "請選擇分組字段",
 		selectTargetField: "請選擇目標字段",
 		aggName: "子處理名稱",
@@ -373,7 +373,7 @@ const tc = {
 					required: "必填",
 					availableQueries: "可用查詢",
 					publishApi_path: "API路徑不為空",
-					variable_name: "只能包含字母，數字，下劃線和美元符號，和數字不能開頭",
+					variable_name: "只能包含字母，數字，下劃線和美元符號，和數字不能開頭"
 				},
 				es: {
 					name: "ES",
@@ -683,10 +683,10 @@ const tc = {
 		fieldLevel: "字段映射",
 		dblclickDataModel: "請雙擊數據模型打開字段映射",
 		properties: {
-			name: '名稱',
-			type: '分類',
-			path: '路徑',
-			database_type: '數據庫類型',
+			name: "名稱",
+			type: "分類",
+			path: "路徑",
+			database_type: "數據庫類型",
 			database_host: "數據庫IP",
 			database_username: "數據庫用戶",
 			database_port: "數據庫端口",
@@ -694,6 +694,13 @@ const tc = {
 			database_name: "數據庫名稱",
 			original_name: "原名稱"
 		}
+	},
+	metaData: {
+		ddNode: "新增同級分類",
+		addChildernNode: "新增子分類",
+		editNode: "編輯",
+		deleteNode: "刪除",
+		deteleMessage: "此操作會將該分類下存在的子類都刪除，是否刪除"
 	}
 };
 

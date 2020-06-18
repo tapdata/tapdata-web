@@ -36,25 +36,25 @@
 									><i class="iconfont icon-gengduo3  task-list-icon"></i
 								></el-button>
 								<el-dropdown-menu slot="dropdown">
-									<el-dropdown-item :command="'children' + node.key">{{
-										$t("metaData.addChildernNode")
-									}}</el-dropdown-item>
-									<el-dropdown-item :command="'add' + node.key">{{
-										$t("metaData.addNode")
-									}}</el-dropdown-item>
-									<el-dropdown-item :command="'edit' + node.key">{{
-										$t("metaData.editNode")
-									}}</el-dropdown-item>
-									<el-dropdown-item :command="'delete' + node.key">{{
-										$t("metaData.deleteNode")
-									}}</el-dropdown-item>
+									<el-dropdown-item :command="'children' + node.key">
+										{{ $t("metaData.addChildernNode") }}</el-dropdown-item
+									>
+									<el-dropdown-item :command="'add' + node.key">
+										{{ $t("metaData.addNode") }}</el-dropdown-item
+									>
+									<el-dropdown-item :command="'edit' + node.key">
+										{{ $t("metaData.editNode") }}</el-dropdown-item
+									>
+									<el-dropdown-item :command="'delete' + node.key">
+										{{ $t("metaData.deleteNode") }}</el-dropdown-item
+									>
 								</el-dropdown-menu>
 							</el-dropdown>
 						</span>
 					</span>
 				</span>
 			</el-tree>
-			<el-dialog title="新增分类" :visible.sync="dialogVisibleNodeName" width="30%" :before-close="handleClose">
+			<el-dialog :title="title" :visible.sync="dialogVisibleNodeName" width="30%" :before-close="handleClose">
 				<span><el-input v-model="nodeName"></el-input></span>
 				<span slot="footer" class="dialog-footer">
 					<el-button @click="dialogVisibleNodeName = false">取 消</el-button>
@@ -157,19 +157,13 @@ export default {
 			dialogVisibleNodeName: false,
 			typeNode: "",
 			nodeName: "",
-			parent_id: ""
+			parent_id: "",
+			title: ""
 		};
 	},
 	async mounted() {
 		this.handleList();
 		this.getData();
-		// this.$refs.SelectClassify.$on("dialogVisible", operations => {
-		// 	this.handleChecked(this.checkedValue);
-		// 	this.dialogVisible = operations;
-		// });
-		// this.$refs.SelectClassify.$on("clearCheckData", operations => {
-		// 	this.checkData = operations;
-		// });
 	},
 	watch: {
 		filterText(val) {
@@ -260,8 +254,6 @@ export default {
 			if (this.search) {
 				params[`filter[where][or][1][original_name][like]`] = this.search;
 			}
-			// params[`filter[where][or][1][original_name][like]`] = this.checkClassify;
-
 			MetadataInstances.get(params)
 				.then(res => {
 					let self = this;
@@ -309,12 +301,14 @@ export default {
 			//通过node-key 获取node data
 			this.nodeName = "";
 			this.typeNode = "addNode";
+			this.title = this.$t("metaData.addNode");
 			this.dialogVisibleNodeName = true;
 		},
 		addChildNode(id) {
 			this.parent_id = id;
 			this.nodeName = "";
 			this.typeNode = "addChildNode";
+			this.title = this.$t("metaData.addChildernNode");
 			this.dialogVisibleNodeName = true;
 		},
 		editNode(id) {
@@ -322,11 +316,16 @@ export default {
 			this.parent_id = id;
 			this.nodeName = node.data.value;
 			this.typeNode = "editNode";
+			this.title = this.$t("metaData.editNode");
 			this.dialogVisibleNodeName = true;
 		},
 		deleteNode(id) {
-			MetadataDefinitions.delete(id)
-				.then(res => {
+			this.$confirm(this.$t("metaData.deteleMessage"), {
+				confirmButtonText: this.$t("message.delete"),
+				cancelButtonText: this.$t("message.cancel"),
+				type: "warning"
+			}).then(() => {
+				MetadataDefinitions.delete(id).then(res => {
 					let self = this;
 					if (res.statusText === "OK" || res.status === 200) {
 						if (res.data) {
@@ -334,11 +333,11 @@ export default {
 							self.getData();
 							self.dialogVisibleNodeName = false;
 						}
+					} else {
+						this.$message.info(this.$t("message.deleteFail"));
 					}
-				})
-				.catch(e => {
-					this.$message.error("MetadataInstances error");
 				});
+			});
 		},
 		handleAddNode() {
 			let data = {

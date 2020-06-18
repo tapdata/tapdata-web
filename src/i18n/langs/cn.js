@@ -698,7 +698,8 @@ const cn = {
 		addNode: "新增同级分类",
 		addChildernNode: "新增子分类",
 		editNode: "编辑",
-		deleteNode: "删除"
+		deleteNode: "删除",
+		deteleMessage: "此操作会将该分类下存在的子类都删除，是否删除"
 	}
 };
 
