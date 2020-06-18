@@ -171,34 +171,13 @@
 				</el-tooltip>
 			</template>
 
-
 			<div class="headImg round" v-if="['draft'].includes(status)" @click="submitLayer" style="float: right;">
 				<span class="iconfont icon-icon_fabu"></span>
 				<span class="text">{{ $t('dataFlow.button.submit') }}</span>
 			</div>
 			<!-- <el-button size="mini" type="primary" @click="switchModel">Model</el-button> -->
 		</div>
-		<div class="fixBtn">
-			<el-popover popper-class="popperFixbtn" placement="top" width="400" trigger="hover">
-				<div class="btnList">
-					<span>{{ $t('dataFlow.copy') }} <i>ctrl+c</i></span>
-					<span>{{ $t('dataFlow.paste') }} <i>ctrl+v</i></span>
-					<span>{{ $t('dataFlow.cut') }} <i>ctrl+x</i></span>
-					<span>{{ $t('message.delete') }} <i>delete</i></span>
-					<span>{{ $t('dataFlow.undo') }} <i>ctrl+z</i></span>
-					<span>{{ $t('dataFlow.cancelUndo') }} <i>ctrl+y</i></span>
-					<span>{{ $t('dataFlow.selectAll') }} <i>ctrl+a</i></span>
-					<span>{{ $t('dataFlow.amplification') }} <i>ctrl+plus</i></span>
-					<span>{{ $t('dataFlow.zoomOut') }} <i>ctrl+minus</i></span>
-					<span>{{ $t('dataFlow.down') }} <i>key down</i></span>
-					<span>{{ $t('dataFlow.up') }} <i>key up</i></span>
-					<span
-						>{{ $t('dataFlow.selectMultipleNode') }} <i>shift+{{ $t('dataFlow.mouseDrag') }}</i></span
-					>
-				</div>
-				<el-button circle class="iconfont icon-jianpan" slot="reference"></el-button>
-			</el-popover>
-		</div>
+
 		<el-dialog
 			:title="$t('dataFlow.submitConfirmation')"
 			custom-class="dialogConfig"
@@ -225,6 +204,7 @@
 				<el-button class="e-button" type="primary" @click="start">{{ $t('dataFlow.submitExecute') }}</el-button>
 			</div>
 		</el-dialog>
+		<AddBtnTip v-if="isEditable()"></AddBtnTip>
 	</div>
 </template>
 
@@ -234,6 +214,7 @@ import factory from '../../api/factory';
 import editor from '../../editor/index';
 import breakText from '../../editor/breakText';
 import log from '../../log';
+import AddBtnTip from './addBtnTip';
 import { FORM_DATA_KEY, JOIN_TABLE_TPL } from '../../editor/constants';
 import { EditorEventType } from '../../editor/lib/events';
 import _ from 'lodash';
@@ -245,6 +226,7 @@ let timer = null;
 export default {
 	name: 'Job',
 	dataFlow: null,
+	components: { AddBtnTip },
 	data() {
 		return {
 			restLoading: false,
@@ -298,11 +280,7 @@ export default {
 
 		status: {
 			handler() {
-				if (['draft', 'error', 'paused'].includes(this.status)) {
-					this.setEditable(true);
-				} else {
-					this.setEditable(false);
-				}
+				this.setEditable(this.isEditable());
 			}
 		}
 	},
@@ -352,6 +330,10 @@ export default {
 	},
 
 	methods: {
+		isEditable() {
+			return ['draft', 'error', 'paused'].includes(this.status);
+		},
+
 		/***
 		 * click save
 		 */
@@ -380,6 +362,7 @@ export default {
 					} else {
 						this.$message.success(self.$t('message.saveOK'));
 						self.editor.setData(data);
+						self.$router.push({ path: '/dataFlows' });
 					}
 				});
 			}
@@ -841,6 +824,8 @@ export default {
 					}
 				});
 			}
+			clearTimeout(timer);
+			timer = null;
 			this.dialogFormVisible = false;
 		},
 
