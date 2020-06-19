@@ -781,7 +781,7 @@ const en = {
 		form: {
 			connectionName: 'Connection Name',
 			databaseType: 'Database type',
-			connectionType: 'Database permission',
+			connectionType: 'Connection Type',
 			host: 'Database Host',
 			port: 'Port',
 			databaseName: 'Database Name',
@@ -829,7 +829,6 @@ const en = {
 			nonePort: 'Port is required.',
 			portNumber: 'Must be number.',
 			portRange: 'Port should be between 1 ~ 65535',
-			tableFilterRange: 'Less than 100 characters in length.',
 			noneSslKey: 'Private key is required.',
 			noneSslCA: 'Certificate Authority is required.'
 		}

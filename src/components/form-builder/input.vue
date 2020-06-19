@@ -15,13 +15,18 @@ export default {
 		let config = self.config;
 		return h('ElInput', {
 			attrs: {
+				maxlength: config.maxlength,
 				placeholder: config.placeholder || `${self.$t('formBuilder.input.placeholderPrefix')}${config.label}`
 			},
 			props: {
 				value: self.value,
-				type: config.domType,
+				type: config.domType || 'text',
 				clearable: config.clearable,
-				showPassword: config.showPassword
+				showPassword: config.showPassword,
+				showWordLimit: config.showWordLimit
+			},
+			class: {
+				'el-input-maxlength': config.showWordLimit
 			},
 			on: this.on
 		});
@@ -29,4 +34,13 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="less">
+.el-input-maxlength {
+	.el-input__inner {
+		padding-right: 60px;
+	}
+	&.el-input--suffix .el-input__inner {
+		padding-right: 80px;
+	}
+}
+</style>
