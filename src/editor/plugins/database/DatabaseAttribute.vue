@@ -247,20 +247,20 @@ export default {
 		/* eslint-disable */
 		computedTables() {
 			if (this.search) {
-				this.seachTables = this.tables.filter(
+				return this.tables.filter(
 					t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0
 				);
-				return this.seachTables;
+
 			} else {
 				return this.tables;
 			}
 		},
 		computedRemoveTables() {
 			if (this.removeSearch) {
-				this.removeSeachTables = this.removeTables.filter(
+				return this.removeTables.filter(
 					t => t.table_name.toLowerCase().indexOf(this.removeSearch.toLowerCase()) >= 0
 				);
-				return this.removeSeachTables;
+				//  this.removeSeachTables;
 			} else {
 				return this.removeTables;
 			}
@@ -289,6 +289,20 @@ export default {
 				} else {
 					this.loadDataModels(this.model.connectionId);
 				}
+			}
+		},
+		search(val) {
+			if (val) {
+				this.seachTables = this.tables.filter(
+					t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0
+				);
+			}
+		},
+		removeSearch(val) {
+			if(val) {
+				this.removeSeachTables = this.removeTables.filter(
+					t => t.table_name.toLowerCase().indexOf(this.removeSearch.toLowerCase()) >= 0
+				);
 			}
 		},
 		// 移除全选
