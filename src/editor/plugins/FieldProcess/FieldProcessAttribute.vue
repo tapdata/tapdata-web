@@ -110,12 +110,33 @@ export default {
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			log('FieldProcess.setData', arguments);
-			if (data) {
-				Object.keys(data).forEach(key => (this.model[key] = data[key]));
-			}
 
 			this.originalSchema = mergeJoinTablesToTargetSchema(null, cell.getInputSchema());
 			let schema = _.cloneDeep(this.originalSchema);
+
+			if (data) {
+				// clear invalid field operations and scripts
+				if (schema && schema.fields) {
+					let fieldIds = schema.fields.map(field => field.id);
+					data.operations = data.operations || [];
+					for (let i = 0; i < data.operations.length; i++) {
+						if (!fieldIds.includes(data.operations[i].id)) {
+							data.operations.splice(i, 1);
+							i--;
+						}
+					}
+					for (let i = 0; i < data.scripts.length; i++) {
+						if (!fieldIds.includes(data.scripts[i].id)) {
+							data.scripts.splice(i, 1);
+							i--;
+						}
+					}
+				} else {
+					data.operations = [];
+					data.scripts = [];
+				}
+				Object.keys(data).forEach(key => (this.model[key] = data[key]));
+			}
 
 			// apply operations to schema
 			if (this.model.operations && schema && schema.fields) {
