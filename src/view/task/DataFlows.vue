@@ -508,13 +508,13 @@ export default {
 				if (this.formData.search && this.formData.search !== '') {
 					where.or = [
 						{
-							name: { regex: this.formData.search }
+							name: { like: this.formData.search, options: 'i' }
 						},
 						{
-							'stages.name': { regex: this.formData.search }
+							'stages.name': { like: this.formData.search, options: 'i' }
 						},
 						{
-							'stages.tableName': { regex: this.formData.search }
+							'stages.tableName': { like: this.formData.search, options: 'i' }
 						}
 					];
 				}
