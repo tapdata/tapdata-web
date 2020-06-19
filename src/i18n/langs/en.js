@@ -746,24 +746,30 @@ const en = {
 		}
 	},
 	apiInfo: {
-		basicAttributes: '基本属性',
-		trquestMethod: '请求方式',
-		status: '状态',
-		supportFormat: '支持格式',
-		founder: '创建人',
-		interfaceClassification: '接口分类',
-		modifyTime: '修改时间',
-		interface: '接口分类',
-		version: '版本',
-		parameter: '参数',
-		typesof: '类型',
-		is_required: '是否必填',
-		examples: '示例',
-		requestParameters: '请求参数',
-		responseParameters: '响应参数',
-		requestExample: '请求示例',
-		backExamples: '返回示例',
-		announcing: '发布中'
+		basicAttributes: 'Basic attributes',
+		trquestMethod: 'Request method',
+		status: 'Status',
+		supportFormat: 'Support format',
+		founder: 'Creator',
+		interfaceClassification: 'Interface classification',
+		modifyTime: 'Modify time',
+		interface: 'Interface classification',
+		version: 'Version',
+		parameter: 'parameter',
+		typesof: 'Type',
+		is_required: 'Whether required',
+		examples: 'Examples',
+		requestParameters: 'Request parameters',
+		responseParameters: 'Response parameters',
+		requestExample: 'Request example',
+		backExamples: 'Back to examples',
+		announcing: 'Posting',
+		apiTest: 'API documentation and testing',
+		isPublishAPI: 'Are you sure to publish api?',
+		unpublish_api: 'Are you sure you want to cancel publishing api?',
+		apiPublishSuccess: 'Published',
+		apiPublishError: 'API publishing failed',
+		apiUnpublishSuccess: 'Unpublished'
 	},
 	dataForm: {
 		title: 'Create Database',
@@ -844,11 +850,11 @@ const en = {
 		}
 	},
 	metaData: {
-		addNode: "Add category at the same level",
-		addChildernNode: "Add Child Category",
-		editNode: "Edit",
-		deleteNode: "Delete",
-		deteleMessage: "This operation will delete all subclasses existing in this category, whether to delete it"
+		addNode: 'Add category at the same level',
+		addChildernNode: 'Add Child Category',
+		editNode: 'Edit',
+		deleteNode: 'Delete',
+		deteleMessage: 'This operation will delete all subclasses existing in this category, whether to delete it'
 	}
 };
 

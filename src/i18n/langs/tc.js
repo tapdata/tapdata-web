@@ -757,7 +757,13 @@ const tc = {
 		responseParameters: '響應參數',
 		requestExample: '請求示例',
 		backExamples: '返回示例',
-		announcing: '發布中'
+		announcing: '發布中',
+		apiTest: 'API文檔及測試',
+		isPublishAPI: '是否確認發布api?',
+		unpublish_api: '是否確認取消發布api?',
+		apiPublishSuccess: '已發布',
+		apiPublishError: 'api發布失敗',
+		apiUnpublishSuccess: '未發布'
 	},
 	dataForm: {
 		title: '新建數據庫',

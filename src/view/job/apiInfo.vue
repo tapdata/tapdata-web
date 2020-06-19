@@ -1,108 +1,224 @@
 <template>
 	<el-container class="api-info">
-		<el-header class="e-height">
-			<h1>{{ name }}</h1>
-			<div class="operating">
-				<i class="iconfont icon-bibianji"></i>
-				<i class="iconfont icon-debug-"></i>
-				<i class="iconfont icon-yulan1"></i>
-				<el-switch v-model="publishApi" active-text="发布中"> </el-switch>
-			</div>
-		</el-header>
-		<el-main class="e-main">
-			<div class="api-path">
-				<span class="method">get</span>
-				<span>/api/v3/MDM_search_model1111/{id}</span>
-			</div>
+		<metaData></metaData>
+		<div class="api-content">
+			<el-header class="e-height">
+				<h1>{{ apiData.name }}</h1>
+				<div class="operating">
+					<el-tooltip class="job-head-title" effect="dark" :content="$t('dataFlow.edit')" placement="bottom">
+						<i class="iconfont icon-bibianji" @click="handleEdit"></i>
+					</el-tooltip>
+					<el-tooltip
+						class="job-head-title"
+						effect="dark"
+						:content="$t('apiInfo.apiTest')"
+						placement="bottom"
+					>
+						<i class="iconfont icon-debug-" @click="hanleTest"></i>
+					</el-tooltip>
+					<el-tooltip
+						class="job-head-title"
+						effect="dark"
+						:content="$t('dataFlow.button.preview')"
+						placement="bottom"
+					>
+						<i class="iconfont icon-yulan1" @click="handlePreview"></i>
+					</el-tooltip>
+					<el-switch v-model="publishApi" :active-text="$t('apiInfo.announcing')"> </el-switch>
+				</div>
+			</el-header>
+			<div class="e-main">
+				<div class="api-content basic-attr">
+					<h3>{{ $t('apiInfo.basicAttributes') }}</h3>
+					<el-row :gutter="20" class="e-row">
+						<el-col :span="12">
+							{{ $t('apiInfo.supportFormat') }}: <span>{{ apiData.format }}</span>
+						</el-col>
+						<el-col :span="12">
+							{{ $t('apiInfo.founder') }}: <span>{{ apiData.createUser }}</span>
+						</el-col>
+					</el-row>
+					<el-row :gutter="20" class="e-row">
+						<el-col :span="12">
+							{{ $t('apiInfo.interfaceClassification') }}: <span>{{ apiData.listtags }}</span>
+						</el-col>
+						<el-col :span="12">
+							{{ $t('apiInfo.modifyTime') }}: <span>{{ apiData.last_updated }}</span>
+						</el-col>
+					</el-row>
+				</div>
+				<el-tabs type="border-card">
+					<el-tab-pane v-for="(item, index) in apiData.paths" :key="index" :label="item.method">
+						<div class="api-path">
+							<span class="methodStyle">{{ item.method }}</span>
+							<span>{{ item.path }}</span>
+						</div>
 
-			<div class="api-text">
-				这句话是对这个接口的一段话描述，这段话的内容由系统自动生成，如果用户需要自定义编辑的话，用户可以根据其业务需求自定义
-				编辑；自
-			</div>
+						<div class="api-text">
+							{{ item.description }}
+						</div>
 
-			<div class="api-content basic-attr">
-				<h3>{{ $t('apiInfo.basicAttributes') }}</h3>
-				<el-row :gutter="20" class="e-row">
-					<el-col :span="12"> {{ $t('apiInfo.trquestMethod') }}: <span>Get</span> </el-col>
-					<el-col :span="12"> {{ $t('apiInfo.status') }}: <span>发布中</span> </el-col>
-				</el-row>
-				<el-row :gutter="20" class="e-row">
-					<el-col :span="12"> {{ $t('apiInfo.supportFormat') }}: <span>json</span> </el-col>
-					<el-col :span="12"> {{ $t('apiInfo.founder') }}: <span>发布中</span> </el-col>
-				</el-row>
-				<el-row :gutter="20" class="e-row">
-					<el-col :span="12">
-						{{ $t('apiInfo.interfaceClassification') }}: <span>API发布 | 物流API</span>
-					</el-col>
-					<el-col :span="12"> {{ $t('apiInfo.modifyTime') }}: <span>发布中</span> </el-col>
-				</el-row>
-				<el-row :gutter="20" class="e-row">
-					<el-col :span="12">
-						{{ $t('apiInfo.interface') }}: <span>http:///api/v3/MDM_search_model1111/{id}</span>
-					</el-col>
-					<el-col :span="12"> {{ $t('apiInfo.version') }}: <span>发布中</span> </el-col>
-				</el-row>
-			</div>
+						<div class="api-content">
+							<h3>{{ $t('apiInfo.requestParameters') }}</h3>
+							<el-table
+								:data="item.requestFields"
+								style="width: 100%;margin-bottom: 20px;"
+								row-key="id"
+								border
+								default-expand-all
+								:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+							>
+								<el-table-column prop="field_name" :label="$t('apiInfo.parameter')" width="180">
+								</el-table-column>
+								<el-table-column prop="field_type" :label="$t('apiInfo.typesof')" width="180">
+								</el-table-column>
+								<el-table-column prop="required" :label="$t('apiInfo.is_required')"> </el-table-column>
+								<el-table-column prop="example" :label="$t('apiInfo.examples')"> </el-table-column>
+							</el-table>
+						</div>
 
-			<div class="api-content">
-				<h3>{{ $t('apiInfo.requestParameters') }}</h3>
-				<el-table
-					:data="tableData"
-					style="width: 100%;margin-bottom: 20px;"
-					row-key="id"
-					border
-					default-expand-all
-					:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-				>
-					<el-table-column prop="parameter" :label="$t('apiInfo.parameter')" width="180"> </el-table-column>
-					<el-table-column prop="type" :label="$t('apiInfo.typesof')" width="180"> </el-table-column>
-					<el-table-column prop="is_required" :label="$t('apiInfo.is_required')"> </el-table-column>
-					<el-table-column prop="examples" :label="$t('apiInfo.examples')"> </el-table-column>
-				</el-table>
-			</div>
+						<div class="api-content">
+							<h3>{{ $t('apiInfo.responseParameters') }}</h3>
+							<el-table
+								:data="item.requestFields"
+								style="width: 100%;margin-bottom: 20px;"
+								border
+								default-expand-all
+								:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+							>
+								<el-table-column prop="field_name" :label="$t('apiInfo.parameter')" width="180">
+								</el-table-column>
+								<el-table-column prop="field_type" :label="$t('apiInfo.typesof')" width="180">
+								</el-table-column>
+								<el-table-column prop="required" :label="$t('apiInfo.is_required')"> </el-table-column>
+								<el-table-column prop="example" :label="$t('apiInfo.examples')"> </el-table-column>
+							</el-table>
+						</div>
 
-			<div class="api-content">
-				<h3>{{ $t('apiInfo.responseParameters') }}</h3>
-				<el-table
-					:data="tableData"
-					style="width: 100%;margin-bottom: 20px;"
-					row-key="id"
-					border
-					default-expand-all
-					:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-				>
-					<el-table-column prop="date" label="parameter" sortable width="180"> </el-table-column>
-					<el-table-column prop="type" label="类型" sortable width="180"> </el-table-column>
-					<el-table-column prop="is_required" label="是否必填"> </el-table-column>
-					<el-table-column prop="examples" label="示例"> </el-table-column>
-				</el-table>
-			</div>
+						<div class="api-content">
+							<h3>{{ $t('apiInfo.requestExample') }}（JSON）</h3>
+							<el-input type="textarea" v-model="item.requestExample" class="e-textarea"></el-input>
+						</div>
 
-			<div class="api-content">
-				<h3>{{ $t('apiInfo.requestExample') }}（JSON）</h3>
+						<div class="api-content">
+							<h3>{{ $t('apiInfo.backExamples') }}（JSON）</h3>
+							<el-input type="textarea" v-model="item.backExamples" class="e-textarea"></el-input>
+						</div>
+					</el-tab-pane>
+				</el-tabs>
 			</div>
-
-			<div class="api-content">
-				<h3>{{ $t('apiInfo.backExamples') }}（JSON）</h3>
-			</div>
-		</el-main>
+		</div>
 	</el-container>
 </template>
 
 <script>
+import factory from '../../api/factory';
+import metaData from '../metaData';
+const modules = factory('modules');
+
 export default {
-	name: 'Aggregate',
+	name: 'ApiInfo',
+	components: { metaData },
 	data() {
 		return {
-			tableData: [],
-			publishApi: ''
+			apiData: {
+				name: '',
+				format: '',
+				createUser: '',
+				listtags: '',
+				last_updated: '',
+				basePath: '',
+				apiVersion: '',
+				paths: {
+					method: '',
+					path: '',
+					description: '', //描述
+					requestFields: [], //请求参数列表
+					responseFields: [], //响应参数列表
+					requestExample: null,
+					responseExample: null
+				}
+			},
+			publishApi: '',
+			apiId: ''
 		};
 	},
-	mounted() {},
+	mounted() {
+		if (this.$router && this.$router.id) {
+			this.apiId = this.$router.id;
+		}
+		this.getApiData();
+	},
 
-	watch: {},
+	methods: {
+		/**
+		 * 编辑
+		 */
+		handleEdit() {
+			top.location.href = '/#/module/' + this.apiId;
+		},
+		/**
+		 * 测试
+		 */
+		hanleTest() {
+			let id = this.apiData.basePath + '_' + this.apiData.apiVersion;
+			top.location.href = '/#/apiDocAndTest?id=' + id;
+		},
+		/**
+		 * 预览
+		 */
+		handlePreview() {
+			let id = this.apiData.basePath + '_' + this.apiData.apiVersion;
+			top.location.href = '/#/dataExplorer?id=' + id;
+		},
+		/**
+		 * 发布
+		 */
 
-	methods: {}
+		publish() {
+			this.$confirm(this.$t('apiInfo.isPublishAPI'), this.$t('message.prompt'), {
+				confirmButtonText: this.$t('message.delete'),
+				cancelButtonText: this.$t('message.cancel'),
+				type: 'warning'
+			}).then(() => {
+				let module = {
+					status: 'active',
+					id: this.apiId,
+					tablename: this.apiData.basePath
+				};
+				modules['patch'](module).then(res => {
+					if (res.statusText === 'OK') {
+						this.$message.success(this.$t('apiInfo.apiPublishSuccess'));
+					}
+				});
+			});
+		},
+		async unpublish() {
+			this.$confirm(this.$t('apiInfo.isPublishAPI'), this.$t('message.prompt'), {
+				confirmButtonText: this.$t('message.delete'),
+				cancelButtonText: this.$t('message.cancel'),
+				type: 'warning'
+			}).then(() => {
+				let module = {
+					status: 'pending',
+					id: this.apiId,
+					tablename: this.apiData.basePath
+				};
+				modules['patch'](module).then(res => {
+					if (res.statusText === 'OK') {
+						this.$message.success(this.$t('apiInfo.apiUnpublishSuccess'));
+					}
+				});
+			});
+		},
+		async getApiData() {
+			await modules.getApiDocument(this.apiId).then(res => {
+				if (res.data) {
+					this.apiData = res.data;
+				}
+			});
+		}
+	}
 };
 </script>
 
@@ -125,7 +241,12 @@ export default {
 			}
 		}
 	}
+	.api-content {
+		width: 100%;
+	}
 	.e-main {
+		padding: 20px;
+		box-sizing: border-box;
 		h3 {
 			padding-bottom: 20px;
 			font-size: 16px;
@@ -148,7 +269,7 @@ export default {
 				border-top-right-radius: 3px;
 				border-bottom-right-radius: 3px;
 			}
-			.method {
+			.methodStyle {
 				width: 84px;
 				font-size: 14px;
 				color: #fff;
@@ -182,4 +303,15 @@ export default {
 	}
 }
 </style>
-<style lang="less"></style>
+<style lang="less">
+.api-info {
+	.e-textarea {
+		padding-bottom: 30px;
+		.el-textarea__inner {
+			color: #690;
+			min-height: 300px !important;
+			background-color: #f7f7f7;
+		}
+	}
+}
+</style>

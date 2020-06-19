@@ -756,7 +756,13 @@ const cn = {
 		responseParameters: '响应参数',
 		requestExample: '请求示例',
 		backExamples: '返回示例',
-		announcing: '发布中'
+		announcing: '发布中',
+		apiTest: 'API文档及测试',
+		isPublishAPI: '是否确认发布api?',
+		unpublish_api: '是否确认取消发布api?',
+		apiPublishSuccess: '已发布',
+		apiPublishError: 'api发布失败',
+		apiUnpublishSuccess: '未发布'
 	},
 	dataForm: {
 		title: '新建数据库',
