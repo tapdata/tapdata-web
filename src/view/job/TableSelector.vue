@@ -22,7 +22,7 @@
 				class="ts-tree"
 			>
 				<span class="custom-tree-node" slot-scope="{ node, data }">
-					<span @click="handleGraph(data)">
+					<span @dblclick="handleGraph(data)">
 						<span
 							v-if="data.meta_type !== 'database'"
 							:class="`iconfont filter-icon-table ${mapping[data.meta_type]}`"

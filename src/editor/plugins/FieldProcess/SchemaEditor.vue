@@ -772,7 +772,8 @@ export default {
 	display: inline-block;
 	/*max-width: 600px;
 		min-width: 400px;*/
-
+	margin-bottom: 20px;
+	box-sizing: border-box;
 	.el-header {
 		line-height: 23px;
 		background: @color;
