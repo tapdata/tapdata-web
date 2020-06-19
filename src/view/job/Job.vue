@@ -398,13 +398,11 @@ export default {
 			if (result && result.data.length > 0) {
 				this.flowDataName = result.data[0].name;
 				if (this.flowDataName) {
-					debugger;
 					lastString = this.flowDataName.charAt(this.flowDataName.length - 1, 1) * 1;
 					if (lastString > 1 && data.name == this.$t('dataFlow.newTaksName')) {
-						console.log('88888888888888888');
 						data.name = data.name + (lastString * 1 + 1);
 					} else {
-						data.name = data.name;
+						data.name = data.name + data.id;
 					}
 				}
 			}
