@@ -252,6 +252,7 @@ export default {
 
 		getData() {
 			return _.cloneDeep(this.form);
+			console.log(this.form, '=======');
 		},
 
 		setDisabled(disabled) {

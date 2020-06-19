@@ -26,7 +26,7 @@
 					</el-tooltip>
 					<el-switch
 						@change="hanleChangeStatus"
-						v-model="status"
+						v-model="apiData.status"
 						active-value="active"
 						inactive-value="pending"
 						:active-text="$t('apiInfo.announcing')"
@@ -137,15 +137,7 @@ export default {
 				basePath: '',
 				apiVersion: '',
 				status: 'pending',
-				paths: {
-					method: '',
-					path: '',
-					description: '', //描述
-					requestFields: [], //请求参数列表
-					responseFields: [], //响应参数列表
-					requestExample: null,
-					responseExample: null
-				}
+				paths: []
 			},
 			apiId: ''
 		};
@@ -188,44 +180,40 @@ export default {
 			let id = this.apiData.basePath + '_' + this.apiData.apiVersion;
 			top.location.href = '/#/dataExplorer?id=' + id;
 		},
+
+		hanleChangeStatus(val) {
+			if (val === 'active') {
+				this.publish();
+			} else {
+				this.unpublish();
+			}
+		},
 		/**
 		 * 发布
 		 */
 
 		publish() {
-			this.$confirm(this.$t('apiInfo.isPublishAPI'), this.$t('message.prompt'), {
-				confirmButtonText: this.$t('message.confirm'),
-				cancelButtonText: this.$t('message.cancel'),
-				type: 'warning'
-			}).then(() => {
-				let module = {
-					status: 'active',
-					id: this.apiId,
-					tablename: this.apiData.basePath
-				};
-				modules['patch'](module).then(res => {
-					if (res.statusText === 'OK') {
-						this.$message.success(this.$t('apiInfo.apiPublishSuccess'));
-					}
-				});
+			let module = {
+				status: 'active',
+				id: this.apiId,
+				tablename: this.apiData.basePath
+			};
+			modules['patch'](module).then(res => {
+				if (res.statusText === 'OK') {
+					this.$message.success(this.$t('apiInfo.apiPublishSuccess'));
+				}
 			});
 		},
 		async unpublish() {
-			this.$confirm(this.$t('apiInfo.isPublishAPI'), this.$t('message.prompt'), {
-				confirmButtonText: this.$t('message.confirm'),
-				cancelButtonText: this.$t('message.cancel'),
-				type: 'warning'
-			}).then(() => {
-				let module = {
-					status: 'pending',
-					id: this.apiId,
-					tablename: this.apiData.basePath
-				};
-				modules['patch'](module).then(res => {
-					if (res.statusText === 'OK') {
-						this.$message.success(this.$t('apiInfo.apiUnpublishSuccess'));
-					}
-				});
+			let module = {
+				status: 'pending',
+				id: this.apiId,
+				tablename: this.apiData.basePath
+			};
+			modules['patch'](module).then(res => {
+				if (res.statusText === 'OK') {
+					this.$message.success(this.$t('apiInfo.apiUnpublishSuccess'));
+				}
 			});
 		},
 		async getApiData() {
