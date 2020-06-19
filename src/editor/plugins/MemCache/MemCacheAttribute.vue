@@ -23,24 +23,11 @@
 					></el-input>
 				</el-form-item>
 				<el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.cacheKeys.label')">
-					<el-select
-						size="mini"
-						v-model="cacheKeysValues"
-						multiple
-						filterable
-						allow-create
-						default-first-option
+					<PrimaryKeyInput
+						v-model="model.cacheKeys"
+						:options="primaryKeyOptions"
 						:placeholder="$t('editor.cell.data_node.memCache.form.cacheKeys.placeholder')"
-						@change="cacheKeysHandler"
-					>
-						<el-option
-							v-for="field in sourceSchemaFields"
-							:key="field.field_name"
-							:label="field.field_name"
-							:value="field.field_name"
-						>
-						</el-option>
-					</el-select>
+					></PrimaryKeyInput>
 				</el-form-item>
 				<el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.maxSize.label')">
 					<el-row :gutter="20">
@@ -139,11 +126,14 @@
 
 <script>
 // import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from "../../util/Schema";
+import PrimaryKeyInput from '../../../components/PrimaryKeyInput';
 import log from '../../../log';
 import _ from 'lodash';
 let editorMonitor = null;
 export default {
 	name: 'memCache',
+
+	components: { PrimaryKeyInput },
 
 	data() {
 		return {
@@ -178,8 +168,7 @@ export default {
 				maxRows: 10000
 			},
 
-			cacheKeysValues: [],
-			sourceSchemaFields: [],
+			primaryKeyOptions: [],
 			maxSizeLimited: 0,
 			maxRowsLimited: 0
 		};
@@ -209,16 +198,18 @@ export default {
 				if (!this.model.name) {
 					this.model.name = this.model.cacheName = schema.tableName;
 				}
-				this.sourceSchemaFields = schema.sourceSchema.fields || [];
+				let fields = schema.sourceSchema.fields || [];
+				this.primaryKeyOptions = fields.map(f => f.field_name);
 				if (!cacheKeys) {
-					let field = this.sourceSchemaFields.find(field => field.primary_key_position === 1);
-					cacheKeys = field ? field.field_name : this.sourceSchemaFields[0].field_name;
+					let primaryKeys = fields
+						.filter(f => f.primary_key_position > 0)
+						.map(f => f.field_name)
+						.join(',');
+					this.model.cacheKeys = primaryKeys || this.primaryKeyOptions[0] || '';
 				}
 			}
-			this.cacheKeysValues = cacheKeys.length ? cacheKeys.split(',') : [];
 
 			editorMonitor = vueAdapter.editor;
-			this.model.cacheKeys = cacheKeys;
 		},
 
 		getData() {
@@ -232,12 +223,6 @@ export default {
 
 		nameHandler(val) {
 			this.model.name = val;
-		},
-
-		cacheKeysHandler() {
-			let cacheKeys = this.cacheKeysValues.filter(v => !!v.trim());
-			this.cacheKeysValues = cacheKeys;
-			this.model.cacheKeys = cacheKeys.join(',');
 		},
 
 		maxSizeLimitedHandler(value) {
