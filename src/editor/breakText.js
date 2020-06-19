@@ -4,17 +4,18 @@
  * @description
  */
 
-import joint from "./lib/rappid/rappid";
+import joint from './lib/rappid/rappid';
 const V = joint.V;
 const isString = function(value) {
 	var toString = Object.prototype.toString;
-	return typeof value === 'string' || (!!value && typeof value === 'object' && toString.call(value) === '[object String]');
+	return (
+		typeof value === 'string' ||
+		(!!value && typeof value === 'object' && toString.call(value) === '[object String]')
+	);
 };
 
 const parseCssNumeric = function(val, restrictUnits) {
-
 	function getUnit(validUnitExp) {
-
 		// one or more numbers, followed by
 		// any number of (
 		//  `.`, followed by
@@ -43,14 +44,12 @@ const parseCssNumeric = function(val, restrictUnits) {
 		// no restriction
 		// accept any unit, as well as no unit
 		validUnitExp = '[A-Za-z]*';
-
 	} else if (Array.isArray(restrictUnits)) {
 		// if this is an empty array, top restriction - return `null`
 		if (restrictUnits.length === 0) return null;
 
 		// else: restriction - an array of valid unit strings
 		validUnitExp = restrictUnits.join('|');
-
 	} else if (isString(restrictUnits)) {
 		// restriction - a single valid unit string
 		validUnitExp = restrictUnits;
@@ -66,7 +65,6 @@ const parseCssNumeric = function(val, restrictUnits) {
 };
 
 const breakText = function(text, size, styles, opt) {
-
 	opt = opt || {};
 	styles = styles || {};
 
@@ -75,7 +73,9 @@ const breakText = function(text, size, styles, opt) {
 
 	var svgDocument = opt.svgDocument || V('svg').node;
 	var textSpan = V('tspan').node;
-	var textElement = V('text').attr(styles).append(textSpan).node;
+	var textElement = V('text')
+		.attr(styles)
+		.append(textSpan).node;
 	var textNode = document.createTextNode('');
 
 	// Prevent flickering
@@ -93,11 +93,10 @@ const breakText = function(text, size, styles, opt) {
 	svgDocument.appendChild(textElement);
 
 	if (!opt.svgDocument) {
-
 		document.body.appendChild(svgDocument);
 	}
 
-	var separator = typeof opt.separator !== "string" ? ' ' : opt.separator;
+	var separator = typeof opt.separator !== 'string' ? ' ' : opt.separator;
 	var eol = opt.eol || '\n';
 	var hyphen = opt.hyphen ? new RegExp(opt.hyphen) : /[^\w\d]/;
 
@@ -108,7 +107,6 @@ const breakText = function(text, size, styles, opt) {
 	var lineHeight;
 
 	for (var i = 0, l = 0, len = words.length; i < len; i++) {
-
 		var word = words[i];
 
 		if (!word) continue;
@@ -131,12 +129,9 @@ const breakText = function(text, size, styles, opt) {
 			continue;
 		}
 
-
 		textNode.data = lines[l] ? lines[l] + separator + word : word;
-		console.log(textNode.data, textSpan.getComputedTextLength(), width)
 
 		if (textSpan.getComputedTextLength() <= width) {
-
 			// the current line fits
 			lines[l] = textNode.data;
 
@@ -148,22 +143,16 @@ const breakText = function(text, size, styles, opt) {
 				p = 0;
 				h = 0;
 			}
-
 		} else {
-
 			if (!lines[l] || p) {
-
 				var partition = !!p;
 
 				p = word.length - 1;
 
 				if (partition || !p) {
-
 					// word has only one character.
 					if (!p) {
-
 						if (!lines[l]) {
-
 							// we won't fit this text within our rect
 							lines = [];
 
@@ -188,9 +177,7 @@ const breakText = function(text, size, styles, opt) {
 					// move last letter to the beginning of the next word
 					words[i] = word.substring(0, p);
 					words[i + 1] = word.substring(p) + words[i + 1];
-
 				} else {
-
 					if (h) {
 						// cancel splitting and put the words together again
 						words.splice(i, 2, words[i] + words[i + 1]);
@@ -204,10 +191,9 @@ const breakText = function(text, size, styles, opt) {
 
 						// We initiate partitioning or splitting
 						// split the long word into two words
-						words.splice(i, 1, word.substring(0, h || p), word.substring(h|| p));
+						words.splice(i, 1, word.substring(0, h || p), word.substring(h || p));
 						// adjust words length
 						len++;
-
 					}
 
 					if (l && !full[l - 1]) {
@@ -229,9 +215,7 @@ const breakText = function(text, size, styles, opt) {
 		// if size.height is defined we have to check whether the height of the entire
 		// text exceeds the rect height
 		if (height !== undefined) {
-
 			if (lineHeight === undefined) {
-
 				var heightValue;
 
 				// use the same defaults as in V.prototype.text
@@ -248,7 +232,6 @@ const breakText = function(text, size, styles, opt) {
 			}
 
 			if (lineHeight * lines.length > height) {
-
 				// remove overflowing lines
 				var lastL = Math.floor(height / lineHeight) - 1;
 				lines.splice(lastL + 1);
@@ -266,7 +249,7 @@ const breakText = function(text, size, styles, opt) {
 					lastChar = lastLine[k];
 					lastLineWithOmission = lastLine.substring(0, k);
 					if (!lastChar) {
-						separatorChar = (typeof separator === 'string') ? separator : ' ';
+						separatorChar = typeof separator === 'string' ? separator : ' ';
 						lastLineWithOmission += separatorChar;
 					} else if (lastChar.match(separator)) {
 						lastLineWithOmission += lastChar;
@@ -285,12 +268,9 @@ const breakText = function(text, size, styles, opt) {
 	}
 
 	if (opt.svgDocument) {
-
 		// svg document was provided, remove the text element only
 		svgDocument.removeChild(textElement);
-
 	} else {
-
 		// clean svg document
 		document.body.removeChild(svgDocument);
 	}
@@ -300,12 +280,12 @@ const breakText = function(text, size, styles, opt) {
 
 export default {
 	breakText: function(text, width) {
-		let fontSize = "14px";
+		let fontSize = '14px';
 		let str = breakText(
 			text,
 			{ width: width, height: 20 },
-			{ "font-size": fontSize },
-			{ hyphen: "^$", ellipsis: true, separator: '' }
+			{ 'font-size': fontSize },
+			{ hyphen: '^$', ellipsis: true, separator: '' }
 		);
 		if (str === text) {
 			return str;
@@ -313,25 +293,25 @@ export default {
 			let before = breakText(
 				text,
 				{ width: width / 2, height: 20 },
-				{ "font-size": fontSize },
-				{ hyphen: "^$", separator: '' }
+				{ 'font-size': fontSize },
+				{ hyphen: '^$', separator: '' }
 			);
 			let after = text
 				.substr(before.length)
-				.split("")
+				.split('')
 				.reverse()
-				.join("");
+				.join('');
 			after = breakText(
 				after,
 				{ width: width / 2, height: 20 },
-				{ "font-size": fontSize },
-				{ hyphen: "^$", separator: '' }
+				{ 'font-size': fontSize },
+				{ hyphen: '^$', separator: '' }
 			);
 			after = after
-				.split("")
+				.split('')
 				.reverse()
-				.join("");
-			return before + "..." + after;
+				.join('');
+			return before + '...' + after;
 		}
 	}
 };

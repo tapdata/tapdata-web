@@ -77,7 +77,10 @@ const cn = {
 		SyncInfo: {
 			localTZ: '当前时区传输时间：系统所在时区下，开始传输任务的时刻',
 			current: '当前时区时间：默认当前时间',
-			connTZ: '数据库时区传输时间： 数据库所在时区下，开始传输任务的时刻'
+			connTZ: '数据库时区传输时间： 数据库所在时区下，开始传输任务的时刻',
+			localTZType: '当前时区传输时间',
+			currentType: '当前时区时间',
+			connTZType: '数据库时区传输时间'
 		},
 		Current: '当前时间',
 		SyncTime: '同步时间',
