@@ -5,20 +5,20 @@
 		</div>
 		<div class="e-space"></div>
 		<div class="e-target" ref="targetContainer">
-			<Entity ref="targetEntity" :schema="targetSchema" editable></Entity>
+			<Entity ref="targetEntity" :schema="targetSchema"></Entity>
 		</div>
 	</div>
 </template>
 
 <script>
-import Entity from "./Entity";
-import { LeaderLine } from "../../../../static/js/leader-line";
-import _ from "lodash";
-import { convertSchemaToTreeData } from "../../util/Schema";
-import log from "../../../log";
+import Entity from './Entity';
+import { LeaderLine } from '../../../../static/js/leader-line';
+import _ from 'lodash';
+import { convertSchemaToTreeData } from '../../util/Schema';
+import log from '../../../log';
 
 export default {
-	name: "Mapping",
+	name: 'Mapping',
 	components: { Entity },
 
 	props: {},
@@ -56,28 +56,28 @@ export default {
 			leading: true,
 			trailing: false
 		});
-		this.$refs.sourceContainer.addEventListener("scroll", _position);
-		this.$refs.targetContainer.addEventListener("scroll", _position);
-		this.$refs.sourceEntity.$on("expand", this.position.bind(this));
-		this.$refs.sourceEntity.$on("collapse", this.position.bind(this));
-		this.$refs.sourceEntity.$on("drop", this.position.bind(this));
-		this.$refs.targetEntity.$on("expand", this.position.bind(this));
-		this.$refs.targetEntity.$on("collapse", this.position.bind(this));
-		this.$refs.targetEntity.$on("drop", this.position.bind(this));
-		this.$on("resize", _position);
+		this.$refs.sourceContainer.addEventListener('scroll', _position);
+		this.$refs.targetContainer.addEventListener('scroll', _position);
+		this.$refs.sourceEntity.$on('expand', this.position.bind(this));
+		this.$refs.sourceEntity.$on('collapse', this.position.bind(this));
+		this.$refs.sourceEntity.$on('drop', this.position.bind(this));
+		this.$refs.targetEntity.$on('expand', this.position.bind(this));
+		this.$refs.targetEntity.$on('collapse', this.position.bind(this));
+		this.$refs.targetEntity.$on('drop', this.position.bind(this));
+		this.$on('resize', _position);
 	},
 
 	methods: {
 		hide() {
 			if (this.lines && this.lines.length > 0) {
-				this.lines.forEach(line => line.hide("none"));
+				this.lines.forEach(line => line.hide('none'));
 			}
 		},
 
 		show() {
 			if (this.lines && this.lines.length > 0) {
 				this.lines.forEach(line => {
-					line.show("none");
+					line.show('none');
 					line.position();
 				});
 			}
@@ -100,10 +100,10 @@ export default {
 						let line = self.lines[i];
 						if (self.isConnected(line.end) && self.isConnected(line.start)) {
 							if (self.isVisible(line.end) && self.isVisible(line.start)) {
-								line.show("draw");
+								line.show('draw');
 								line.position();
 							} else {
-								line.hide("draw");
+								line.hide('draw');
 							}
 						} else {
 							line.remove();
@@ -130,12 +130,12 @@ export default {
 					let line = new LeaderLine({
 						start: sourceEl,
 						end: targetEl,
-						startSocket: "right",
-						endSocket: "left",
-						color: table.color || "#8cc6e8",
+						startSocket: 'right',
+						endSocket: 'left',
+						color: table.color || '#8cc6e8',
 						// dash: {animation: true},
-						startPlug: "square",
-						endPlug: "arrow1",
+						startPlug: 'square',
+						endPlug: 'arrow1',
 						size: 1
 					});
 					self.lines.push(line);
@@ -158,7 +158,7 @@ export default {
 		 * @param targetSchema
 		 */
 		setSchema(sourceSchema, targetSchema) {
-			log("Mapping.setSchema", sourceSchema, targetSchema);
+			log('Mapping.setSchema', sourceSchema, targetSchema);
 
 			let source = convertSchemaToTreeData(sourceSchema);
 			let target = convertSchemaToTreeData(targetSchema);
