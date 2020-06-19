@@ -95,7 +95,7 @@ const en = {
 		overWrite: 'Overwrite existing data',
 		skipData: 'Skip existing data',
 		loadingError: 'Loading failed, please',
-		dataLoading: 'Data is hard to load ...',
+		dataLoading: 'Data Loding ...',
 		loadLogTip: 'Run log is trying to load, it may take 5 ~ 10 seconds, please wait ...',
 		noLogTip: 'No data',
 		clickLoadTxt: 'Click to load',

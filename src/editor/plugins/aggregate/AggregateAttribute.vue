@@ -223,6 +223,9 @@ export default {
 			if (data) {
 				// Object.keys(data).forEach(key => (this.form[key] = data[key]));
 				_.merge(this.form, data);
+				this.form.aggregations.map((item, index) => {
+					this.$set(this.form.aggregations, index, item);
+				});
 			}
 
 			let inputSchemas = cell.getInputSchema();
