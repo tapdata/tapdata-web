@@ -24,7 +24,14 @@
 					>
 						<i class="iconfont icon-yulan1" @click="handlePreview"></i>
 					</el-tooltip>
-					<el-switch v-model="publishApi" :active-text="$t('apiInfo.announcing')"> </el-switch>
+					<el-switch
+						@change="hanleChangeStatus"
+						v-model="status"
+						active-value="active"
+						inactive-value="pending"
+						:active-text="$t('apiInfo.announcing')"
+					>
+					</el-switch>
 				</div>
 			</el-header>
 			<div class="e-main">
@@ -129,6 +136,7 @@ export default {
 				last_updated: '',
 				basePath: '',
 				apiVersion: '',
+				status: 'pending',
 				paths: {
 					method: '',
 					path: '',
@@ -139,7 +147,6 @@ export default {
 					responseExample: null
 				}
 			},
-			publishApi: '',
 			apiId: ''
 		};
 	},
@@ -148,6 +155,16 @@ export default {
 			this.apiId = this.$router.id;
 		}
 		this.getApiData();
+	},
+
+	watch: {
+		status(val) {
+			if (val === 'active') {
+				this.publish();
+			} else {
+				this.unpublish();
+			}
+		}
 	},
 
 	methods: {
@@ -177,7 +194,7 @@ export default {
 
 		publish() {
 			this.$confirm(this.$t('apiInfo.isPublishAPI'), this.$t('message.prompt'), {
-				confirmButtonText: this.$t('message.delete'),
+				confirmButtonText: this.$t('message.confirm'),
 				cancelButtonText: this.$t('message.cancel'),
 				type: 'warning'
 			}).then(() => {
@@ -195,7 +212,7 @@ export default {
 		},
 		async unpublish() {
 			this.$confirm(this.$t('apiInfo.isPublishAPI'), this.$t('message.prompt'), {
-				confirmButtonText: this.$t('message.delete'),
+				confirmButtonText: this.$t('message.confirm'),
 				cancelButtonText: this.$t('message.cancel'),
 				type: 'warning'
 			}).then(() => {
