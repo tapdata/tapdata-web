@@ -148,7 +148,13 @@
 					></el-button>
 				</el-tooltip>
 
-				<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.reset')" placement="bottom">
+				<el-tooltip
+					class="item"
+					effect="dark"
+					:content="$t('dataFlow.button.reset')"
+					:hide-after="1000"
+					placement="bottom"
+				>
 					<el-button
 						class="headImg borderStyle iconfont icon-shuaxin3"
 						@click="reset"
@@ -171,7 +177,7 @@
 				</el-tooltip>
 			</template>
 
-			<div class="headImg round" v-if="['draft'].includes(status)" @click="submitLayer" style="float: right;">
+			<div class="headImg round" v-if="isEditable()" @click="submitLayer" style="float: right;">
 				<span class="iconfont icon-icon_fabu"></span>
 				<span class="text">{{ $t('dataFlow.button.submit') }}</span>
 			</div>
@@ -229,7 +235,6 @@ export default {
 	components: { AddBtnTip },
 	data() {
 		return {
-			restLoading: false,
 			dialogFormVisible: false,
 			form: {
 				taskName: '',
@@ -964,7 +969,7 @@ export default {
 					cancelButtonText: self.$t('message.cancel'),
 					type: 'warning'
 				}).then(() => {
-					this.restLoading = true;
+					this.loading = true;
 					dataFlowsApi
 						.reset(data.id)
 						.then(res => {
@@ -976,7 +981,7 @@ export default {
 						})
 						.finally(() => {
 							setTimeout(() => {
-								this.restLoading = false;
+								this.loading = false;
 							}, 5000);
 						});
 				});
