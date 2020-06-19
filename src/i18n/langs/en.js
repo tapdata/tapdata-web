@@ -77,7 +77,10 @@ const en = {
 		SyncInfo: {
 			localTZ: 'Local UTC CDC time: custom a point of  CDC time，in local time zone',
 			current: 'Local UTC：default local UTC time',
-			connTZ: 'Sever UTC CDC time: custom a point of  CDC time，in the time zone of a specific server'
+			connTZ: 'Sever UTC CDC time: custom a point of  CDC time，in the time zone of a specific server',
+			localTZType: 'Local UTC CDC time',
+			currentType: 'Current time',
+			connTZType: 'Sever UTC CDC time'
 		},
 		Current: 'Current Time',
 		SyncTime: 'Sync Time',

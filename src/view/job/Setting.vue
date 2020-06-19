@@ -219,15 +219,15 @@ export default {
 			options: [
 				{
 					label: 'localTZ',
-					value: 'localTZ'
+					value: this.$t('dataFlow.SyncInfo.localTZType')
 				},
 				{
 					label: 'connTZ',
-					value: 'connTZ'
+					value: this.$t('dataFlow.SyncInfo.connTZType')
 				},
 				{
 					label: 'current',
-					value: 'current'
+					value: this.$t('dataFlow.SyncInfo.currentType')
 				}
 			]
 		};
@@ -254,8 +254,11 @@ export default {
 				let syncPoints = data.syncPoints || [];
 				let map = this.updateSyncNode(syncPoints);
 				data.syncPoints = Object.values(map);
-				// Object.keys(data).forEach(key => (this.formData[key] = data[key]));
+				//Object.keys(data).forEach(key => (this.formData[key] = data[key]));
 				_.merge(this.formData, data);
+				this.formData.syncPoints.map((item, index) => {
+					this.$set(this.formData, index, item);
+				});
 			}
 		},
 		getData() {
