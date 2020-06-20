@@ -1,4 +1,5 @@
 <template>
+<div v-if="visible">
 	<div class="aggregate">
 		<div class="head-btns">
 			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
@@ -109,6 +110,7 @@
 			</el-form-item>
 		</el-form>
 	</div>
+</div>
 </template>
 
 <script>
@@ -132,6 +134,7 @@ export default {
 			],
 			groupList: [],
 			expressionList: [],
+			visible: false,
 			form: {
 				name: '',
 				type: 'aggregation_processor',
