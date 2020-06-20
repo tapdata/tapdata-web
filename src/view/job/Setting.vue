@@ -218,16 +218,16 @@ export default {
 			},
 			options: [
 				{
-					label: 'localTZ',
-					value: this.$t('dataFlow.SyncInfo.localTZType')
+					label: this.$t('dataFlow.SyncInfo.localTZType'),
+					value: 'localTZ'
 				},
 				{
-					label: 'connTZ',
-					value: this.$t('dataFlow.SyncInfo.connTZType')
+					label: this.$t('dataFlow.SyncInfo.connTZType'),
+					value: 'connTZ'
 				},
 				{
-					label: 'current',
-					value: this.$t('dataFlow.SyncInfo.currentType')
+					label: this.$t('dataFlow.SyncInfo.currentType'),
+					value: 'current'
 				}
 			]
 		};
