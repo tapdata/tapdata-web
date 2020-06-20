@@ -791,9 +791,7 @@ export default {
 						}
 					})
 					.finally(() => {
-						setTimeout(() => {
-							this.restLoading = false;
-						}, 5000);
+						this.restLoading = false;
 					});
 			});
 		},
@@ -838,9 +836,7 @@ export default {
 							}
 						})
 						.finally(() => {
-							setTimeout(() => {
-								this.restLoading = false;
-							}, 5000);
+							this.restLoading = false;
 						});
 				});
 			} else {

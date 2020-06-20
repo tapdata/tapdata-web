@@ -2,7 +2,11 @@
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
 			<template v-if="['draft'].includes(status)">
-				<div :class="[{btnHover:['draft'].includes(status)},'headImg']" v-show="!isSaving" @click="draftSave">
+				<div
+					:class="[{ btnHover: ['draft'].includes(status) }, 'headImg']"
+					v-show="!isSaving"
+					@click="draftSave"
+				>
 					<span class="iconfont icon-yunduanshangchuan"></span>
 					<span class="text">{{ $t('dataFlow.button.saveDraft') }}</span>
 				</div>
@@ -249,7 +253,7 @@ export default {
 			model: 'editable',
 
 			dataFlowId: null,
-			tempDialogVisible:false,
+			tempDialogVisible: false,
 			status: 'draft',
 			executeMode: 'normal',
 
@@ -315,7 +319,8 @@ export default {
 			localStorage.removeItem('tempSaved');
 		},
 		initData(data) {
-			let self = this, dataFlow = data;
+			let self = this,
+				dataFlow = data;
 			self.dataFlowId = dataFlow.id;
 			self.status = dataFlow.status;
 			self.executeMode = dataFlow.executeMode;
@@ -354,9 +359,9 @@ export default {
 			this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
 				changeData = this.getDataFlowData(true);
 				if (changeData) {
-					let	settingSetInterval = () => {
+					let settingSetInterval = () => {
 						timer = setTimeout(() => {
-							if (["draft", "error", "paused"].includes(this.status)) {
+							if (['draft', 'error', 'paused'].includes(this.status)) {
 								self.timeSave();
 							}
 							timer = null;
@@ -404,13 +409,17 @@ export default {
 		 * Auto save
 		 */
 		timeSave() {
-			let data = this.getDataFlowData(true), maxKey = 1;
+			let data = this.getDataFlowData(true),
+				maxKey = 1;
 			localStorage.setItem('tempSaved', JSON.stringify(data));
 		},
 		//点击draft save按钮
 		async draftSave() {
 			this.isSaving = true;
-			if (localStorage.getItem('tempSaved') && JSON.parse(localStorage.getItem('tempSaved')).id == this.dataFlowId)
+			if (
+				localStorage.getItem('tempSaved') &&
+				JSON.parse(localStorage.getItem('tempSaved')).id == this.dataFlowId
+			)
 				localStorage.removeItem('tempSaved');
 			let self = this,
 				promise = null,
@@ -697,7 +706,10 @@ export default {
 		 */
 		doSave(data, cb) {
 			let self = this;
-			if (localStorage.getItem('tempSaved') && JSON.parse(localStorage.getItem('tempSaved')).id == this.dataFlowId)
+			if (
+				localStorage.getItem('tempSaved') &&
+				JSON.parse(localStorage.getItem('tempSaved')).id == this.dataFlowId
+			)
 				localStorage.removeItem('tempSaved');
 			const _doSave = function() {
 				let promise = data.id ? dataFlowsApi.patch(data) : dataFlowsApi.post(data);
@@ -975,9 +987,7 @@ export default {
 							}
 						})
 						.finally(() => {
-							setTimeout(() => {
-								this.loading = false;
-							}, 5000);
+							this.loading = false;
 						});
 				});
 			}
