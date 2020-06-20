@@ -11,7 +11,7 @@
 				</el-col>
 				<el-col :span="5" style="text-align: right;" v-if="stageId !== 'all'">
 					<el-button class="e-button" type="primary" @click="seeNodeData">{{
-						$t("dataFlow.button.viewConfig")
+						$t('dataFlow.button.viewConfig')
 					}}</el-button>
 				</el-col>
 			</el-form-item>
@@ -21,21 +21,21 @@
 				<echart-head :data="screeningObj" @twoRadio="getTwoRadio"></echart-head>
 				<div class="info fl">
 					<div class="info-list">
-						<span class="info-label">{{ $t("dataFlow.taskName") }}:</span>
+						<span class="info-label">{{ $t('dataFlow.taskName') }}:</span>
 						<span class="info-text" style="color: #48b6e2;">{{ flow.name }}</span>
 					</div>
 					<div class="info-list">
-						<span class="info-label">{{ $t("dataFlow.creatdor") }}:</span>
+						<span class="info-label">{{ $t('dataFlow.creatdor') }}:</span>
 						<span class="info-text">{{ flow.username }}</span>
 					</div>
 					<div class="info-list">
-						<span class="info-label">{{ $t("dataFlow.creationTime") }}:</span>
+						<span class="info-label">{{ $t('dataFlow.creationTime') }}:</span>
 						<span class="info-text">{{ flow.createTime }}</span>
 					</div>
 					<div class="info-list">
-						<span class="info-label">{{ $t("dataFlow.state") }}:</span>
+						<span class="info-label">{{ $t('dataFlow.state') }}:</span>
 						<span class="info-text" style="color: #62a569;">{{
-							$t("dataFlow.status." + flow.status)
+							$t('dataFlow.status.' + flow.status)
 						}}</span>
 					</div>
 					<!-- <div class="info-list">
@@ -43,16 +43,16 @@
 						<span class="info-text">{{updateTime}}</span>
 					</div> -->
 					<div class="info-list">
-						<span class="info-label">{{ $t("dataFlow.inputNumber") }}:</span>
+						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
 						<span class="info-text"> {{ flow.inputNumber }}</span>
 					</div>
 					<div class="info-list">
-						<span class="info-label">{{ $t("dataFlow.outputNumber") }}:</span>
+						<span class="info-label">{{ $t('dataFlow.outputNumber') }}:</span>
 						<span class="info-text">{{ flow.outputNumber }}</span>
 					</div>
 				</div>
 				<shaftless-echart
-					:sliderBar ="sliderBar"
+					:sliderBar="sliderBar"
 					class="fr echartMain"
 					:echartObj="dataScreening"
 					v-if="dataScreening"
@@ -65,14 +65,14 @@
 				<echart-head :data="inputOutputObj" @getSpeed="getSpeed"></echart-head>
 				<div class="floatLayer">
 					<span style="background-color:rgba(72,182,226,.3);color:#48b6e2;"
-						>{{ $t("dataFlow.average") }}:{{ this.inputAverage }}</span
+						>{{ $t('dataFlow.average') }}:{{ this.inputAverage }}</span
 					>
 					<span style="background-color:rgba(98,165,105,.3);color:#62a569;"
-						>{{ $t("dataFlow.average") }}:{{ this.outputAverage }}</span
+						>{{ $t('dataFlow.average') }}:{{ this.outputAverage }}</span
 					>
 				</div>
 				<echarts-compinent
-					:sliderBar ="sliderBar"
+					:sliderBar="sliderBar"
 					:echartObj="throughputData"
 					v-if="throughputData"
 					:echartsId="'echartsId'"
@@ -83,11 +83,11 @@
 				<echart-head :data="transfObj" @getTime="getTime"></echart-head>
 				<div class="floatLayer">
 					<span style="background-color:rgba(251,142,0,.3);color:#fb8e00;"
-						>{{ $t("dataFlow.current") }}:{{ this.currentTime }}</span
+						>{{ $t('dataFlow.current') }}:{{ this.currentTime }}</span
 					>
 				</div>
 				<echarts-compinent
-					:sliderBar ="sliderBar"
+					:sliderBar="sliderBar"
 					:echartObj="transfData"
 					v-if="transfData"
 					:echartsId="'transfId'"
@@ -98,11 +98,11 @@
 				<echart-head :data="replicateObj" @getTime="getTime"></echart-head>
 				<div class="floatLayer">
 					<span style="background-color:rgba(7245,108,108,.3);color:#f56c6c;"
-						>{{ $t("dataFlow.current") }}:{{ this.ransfTime }}</span
+						>{{ $t('dataFlow.current') }}:{{ this.ransfTime }}</span
 					>
 				</div>
 				<echarts-compinent
-					:sliderBar ="sliderBar"
+					:sliderBar="sliderBar"
 					:echartObj="replicateData"
 					v-if="replicateData"
 					:echartsId="'replicateId'"
@@ -113,18 +113,18 @@
 	</div>
 </template>
 <script>
-import $ from "jquery";
-import echartHead from "./components/echartHead";
-import echartsCompinent from "../../components/echartsCompinent";
-import shaftlessEchart from "../../components/shaftlessEchart";
-import factory from "../../api/factory";
-import { EditorEventType } from "../../editor/lib/events";
+import $ from 'jquery';
+import echartHead from './components/echartHead';
+import echartsCompinent from '../../components/echartsCompinent';
+import shaftlessEchart from '../../components/shaftlessEchart';
+import factory from '../../api/factory';
+import { EditorEventType } from '../../editor/lib/events';
 
-const DataFlowInsights = factory("DataFlowInsights");
+const DataFlowInsights = factory('DataFlowInsights');
 let intervalTime = 5000;
 
 export default {
-	name: "JobMonitor",
+	name: 'JobMonitor',
 	components: { echartHead, echartsCompinent, shaftlessEchart },
 	props: {
 		dataFlow: {
@@ -136,25 +136,25 @@ export default {
 	data() {
 		return {
 			sliderBar: null,
-			dpx: "QPS",
-			selectFlow: "flow_", // 选中节点
-			speed: "",
-			time: "",
-			stageId: "all",
+			dpx: 'QPS',
+			selectFlow: 'flow_', // 选中节点
+			speed: '',
+			time: '',
+			stageId: 'all',
 			flow: {
-				name: "",
-				username: "",
-				createTime: "",
-				status: "",
-				updateTime: "",
-				inputNumber: "",
-				outputNumber: "",
+				name: '',
+				username: '',
+				createTime: '',
+				status: '',
+				updateTime: '',
+				inputNumber: '',
+				outputNumber: '',
 				stages: [],
-				id: ""
+				id: ''
 			},
 			throughputData: {
 				tooltip: {
-					trigger: "axis"
+					trigger: 'axis'
 				},
 				legend: {
 					// data: [this.$t('dataFlow.input'),this.$t('dataFlow.output')],
@@ -166,14 +166,14 @@ export default {
 					show: true,
 					feature: {
 						dataZoom: {
-							yAxisIndex: "none"
+							yAxisIndex: 'none'
 						}
 					}
 				},
 				xAxis: {
 					axisLine: {
 						lineStyle: {
-							color: "#48b6e2",
+							color: '#48b6e2',
 							width: 2 // 这里是为了突出显示加上的
 						}
 					},
@@ -182,13 +182,13 @@ export default {
 				yAxis: {
 					axisLine: {
 						lineStyle: {
-							color: "#48b6e2"
+							color: '#48b6e2'
 						}
 					},
 					axisLabel: {
 						formatter: function(value, index) {
 							if (value >= 10000) {
-								value = value / 10000 + "W";
+								value = value / 10000 + 'W';
 							}
 							return value;
 						}
@@ -196,34 +196,34 @@ export default {
 				},
 				series: [
 					{
-						name: this.$t("dataFlow.input"),
-						type: "line",
+						name: this.$t('dataFlow.input'),
+						type: 'line',
 						smooth: true,
 						data: [],
 						itemStyle: {
-							color: "#2ba7c3"
+							color: '#2ba7c3'
 						},
 						lineStyle: {
-							color: "#2ba7c3"
+							color: '#2ba7c3'
 						}
 					},
 					{
-						name: this.$t("dataFlow.output"),
-						type: "line",
+						name: this.$t('dataFlow.output'),
+						type: 'line',
 						smooth: true,
 						data: [],
 						itemStyle: {
-							color: "#61a569"
+							color: '#61a569'
 						},
 						lineStyle: {
-							color: "#8cd5c2" // 改变折线点的颜色
+							color: '#8cd5c2' // 改变折线点的颜色
 						}
 					}
 				]
 			},
 			transfData: {
 				tooltip: {
-					trigger: "axis"
+					trigger: 'axis'
 				},
 				grid: {
 					show: false
@@ -242,7 +242,7 @@ export default {
 				xAxis: {
 					axisLine: {
 						lineStyle: {
-							color: "#fb8e00",
+							color: '#fb8e00',
 							width: 2 // 这里是为了突出显示加上的
 						}
 					},
@@ -251,14 +251,14 @@ export default {
 				yAxis: {
 					axisLine: {
 						lineStyle: {
-							color: "#fb8e00",
+							color: '#fb8e00',
 							width: 2 // 这里是为了突出显示加上的
 						}
 					},
 					axisLabel: {
 						formatter: function(value, index) {
 							if (value >= 10000) {
-								value = value / 10000 + "W";
+								value = value / 10000 + 'W';
 							}
 							return value;
 						}
@@ -266,21 +266,21 @@ export default {
 				},
 				series: [
 					{
-						type: "line",
+						type: 'line',
 						smooth: true,
 						data: [],
 						itemStyle: {
-							color: "#fb8e00"
+							color: '#fb8e00'
 						},
 						lineStyle: {
-							color: "#fb8e00"
+							color: '#fb8e00'
 						}
 					}
 				]
 			},
 			replicateData: {
 				tooltip: {
-					trigger: "axis"
+					trigger: 'axis'
 				},
 				legend: {
 					// data: ['最高气温', '最低气温'],
@@ -292,14 +292,14 @@ export default {
 					show: true,
 					feature: {
 						dataZoom: {
-							yAxisIndex: "none"
+							yAxisIndex: 'none'
 						}
 					}
 				},
 				xAxis: {
 					axisLine: {
 						lineStyle: {
-							color: "#f56c6c"
+							color: '#f56c6c'
 						}
 					},
 					data: []
@@ -307,13 +307,13 @@ export default {
 				yAxis: {
 					axisLine: {
 						lineStyle: {
-							color: "#f56c6c"
+							color: '#f56c6c'
 						}
 					},
 					axisLabel: {
 						formatter: function(value, index) {
 							if (value >= 10000) {
-								value = value / 10000 + "W";
+								value = value / 10000 + 'W';
 							}
 							return value;
 						}
@@ -321,14 +321,14 @@ export default {
 				},
 				series: [
 					{
-						type: "line",
+						type: 'line',
 						data: [],
 						smooth: true,
 						itemStyle: {
-							color: "#f56c6c"
+							color: '#f56c6c'
 						},
 						lineStyle: {
-							color: "#f56c6c"
+							color: '#f56c6c'
 						}
 					}
 				]
@@ -342,19 +342,19 @@ export default {
 			storeData: null,
 			replicateObj: null,
 			throughput_time: [],
-			inputAverage: "", // 输入平均值
-			outputAverage: "", // 输出平均值
-			currentTime: "", // 当前耗时
-			ransfTime: "", // 传输耗时
-			throughputTime: "",
-			isThroughputAll: "",
-			dataOverviewAll: "",
-			transfTime: "",
-			replicateTime: "",
-			transfType: "",
-			replicateType: "",
-			dataOverviewType: "",
-			selectId: "",
+			inputAverage: '', // 输入平均值
+			outputAverage: '', // 输出平均值
+			currentTime: '', // 当前耗时
+			ransfTime: '', // 传输耗时
+			throughputTime: '',
+			isThroughputAll: '',
+			dataOverviewAll: '',
+			transfTime: '',
+			replicateTime: '',
+			transfType: '',
+			replicateType: '',
+			dataOverviewType: '',
+			selectId: '',
 			timer: null, // 定时器
 			timer1: null, // 定时器
 			timer2: null, // 定时器
@@ -370,72 +370,72 @@ export default {
 			if (this.dataFlow.startTime && this.dataFlow.last_updated) {
 				let time = new Date(this.dataFlow.last_updated).getTime() - new Date(this.dataFlow.startTime).getTime();
 
-				let unit = "ms";
+				let unit = 'ms';
 				if (time > 1000) {
-					unit = "s";
+					unit = 's';
 					time = Number((time / 1000).toFixed(2));
 				}
 				if (time > 60) {
-					unit = "m";
+					unit = 'm';
 					time = Number((time / 60).toFixed(2));
 				}
 				if (time > 60) {
-					unit = "h";
+					unit = 'h';
 					time = Number((time / 60).toFixed(2));
 				}
 				if (time > 24) {
-					unit = "d";
+					unit = 'd';
 					time = Number((time / 24).toFixed(2));
 				}
 
-				return time + " " + unit;
+				return time + ' ' + unit;
 			}
-			return "-";
+			return '-';
 		}
 	},
 
 	mounted() {
 		this.sliderBar = this.editor.rightSidebar;
 		this.$on(EditorEventType.SELECTED_STAGE, selectStage => {
-			this.stageId = selectStage ? selectStage.id : "all";
+			this.stageId = selectStage ? selectStage.id : 'all';
 		});
 		this.flow = this.dataFlow;
 		// this.getApiData();
 		this.screeningObj = {
-			title: this.$t("dataFlow.dataScreening"),
-			type: "screening",
+			title: this.$t('dataFlow.dataScreening'),
+			type: 'screening',
 			isScreeing: true
 		};
 
 		this.inputOutputObj = {
-			title: this.$t("dataFlow.inputOutput"),
+			title: this.$t('dataFlow.inputOutput'),
 			isScreeing: false,
 			isIput: true,
 			isSpeed: true,
 			loading: false,
-			type: "throughput",
-			tip: this.$t("dataFlow.throughputpop")
+			type: 'throughput',
+			tip: this.$t('dataFlow.throughputpop')
 		};
 
 		this.transfObj = {
-			title: this.$t("dataFlow.transf"),
-			type: "transf",
+			title: this.$t('dataFlow.transf'),
+			type: 'transf',
 			isIput: true,
 			loading: false,
-			tip: this.$t("dataFlow.transtime_pop")
+			tip: this.$t('dataFlow.transtime_pop')
 		};
 
 		this.replicateObj = {
-			title: this.$t("dataFlow.replicate"),
-			type: "replicate",
+			title: this.$t('dataFlow.replicate'),
+			type: 'replicate',
 			isIput: true,
 			loading: false,
-			tip: this.$t("dataFlow.replicate_pop")
+			tip: this.$t('dataFlow.replicate_pop')
 		};
 		this.flow.createTime = this.dataFlow.createTime
-			? this.$moment(this.dataFlow.createTime).format("YYYY-MM-DD HH:mm:ss")
-			: "";
-		this.flow.username = (this.dataFlow.user && this.dataFlow.user.email) || "";
+			? this.$moment(this.dataFlow.createTime).format('YYYY-MM-DD HH:mm:ss')
+			: '';
+		this.flow.username = (this.dataFlow.user && this.dataFlow.user.email) || '';
 		this.timer = setInterval(() => {
 			this.getTwoRadio(this.dataOverviewAll, this.dataOverviewType);
 			this.getSpeed(this.isThroughputAll, this.throughputTime);
@@ -448,11 +448,11 @@ export default {
 		dataFlow: {
 			handler(val) {
 				this.flow = val;
-				this.flow.createTime = val.createTime ? this.$moment(val.createTime).format("YYYY-MM-DD HH:mm:ss") : "";
-				this.flow.username = (val.user && val.user.email) || "";
+				this.flow.createTime = val.createTime ? this.$moment(val.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
+				this.flow.username = (val.user && val.user.email) || '';
 				this.flow.status = val.status;
-				if (this.flow.status === "force stopping") {
-					this.flow.status = "force_stopping";
+				if (this.flow.status === 'force stopping') {
+					this.flow.status = 'force_stopping';
 				}
 			},
 			deep: true
@@ -460,10 +460,10 @@ export default {
 		stageId: {
 			handler(val) {
 				this.selectId = val;
-				if (val === "all") {
-					this.selectFlow = "flow_";
+				if (val === 'all') {
+					this.selectFlow = 'flow_';
 				} else {
-					this.selectFlow = "stage_";
+					this.selectFlow = 'stage_';
 				}
 				this.getSpeed(this.isThroughputAll, this.throughputTime);
 				this.getTwoRadio(this.dataOverviewAll, this.dataOverviewType);
@@ -479,7 +479,7 @@ export default {
 			let dataCells = this.editor.getAllCells();
 			let dataCellName = [];
 			dataCells.forEach(cell => {
-				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
+				let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null;
 				let tableName = { value: formData.tableName, cell: cell };
 				dataCellName.push(tableName);
 			});
@@ -504,13 +504,13 @@ export default {
 					selectCell = item.cell;
 				}
 			});
-			if (this.stageId && this.stageId !== "all") {
+			if (this.stageId && this.stageId !== 'all') {
 				this.editor.graph.selectionPosition(selectCell);
-				let openFormPanel = function(counter){
-					let nodeFormPanel = self.editor.getRightTabPanel().getChildByName("nodeSettingPanel");
-					if(nodeFormPanel){
+				let openFormPanel = function(counter) {
+					let nodeFormPanel = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
+					if (nodeFormPanel) {
 						self.editor.getRightTabPanel().select(nodeFormPanel);
-					} else if(counter <= 5){
+					} else if (counter <= 5) {
 						setTimeout(() => {
 							openFormPanel(counter++);
 						}, 1000);
@@ -518,7 +518,7 @@ export default {
 				};
 				openFormPanel(1);
 			} else {
-				this.$message.error(this.$t("dataFlow.selectNode"));
+				this.$message.error(this.$t('dataFlow.selectNode'));
 			}
 		},
 
@@ -527,24 +527,24 @@ export default {
 			this.isThroughputAll = data;
 			this.throughputTime = time;
 			let params = {
-				statsType: "throughput",
+				statsType: 'throughput',
 				granularity: this.selectFlow + time
 			};
 			switch (time) {
-				case "second":
+				case 'second':
 					this.intervalThroughputpop = 20000;
 					break;
-				case "minute":
+				case 'minute':
 					this.intervalThroughputpop = 60000;
 					break;
-				case "hour":
+				case 'hour':
 					this.intervalThroughputpop = 360000;
 					break;
-				case "day":
+				case 'day':
 					this.intervalThroughputpop = 86400000;
 					break;
 			}
-			this.getApiData(params, "throughput", data);
+			this.getApiData(params, 'throughput', data);
 		},
 
 		// 获取返回的单位
@@ -553,7 +553,7 @@ export default {
 			this.dataOverviewAll = data;
 
 			let params = {
-				statsType: "data_overview",
+				statsType: 'data_overview',
 				granularity: data
 			};
 			this.getApiData(params, type, data);
@@ -562,46 +562,46 @@ export default {
 		// 获取返回的时间
 		getTime(data, type) {
 			let params;
-			if (type === "transf") {
+			if (type === 'transf') {
 				this.transfType = type;
 				this.transfTime = data;
 				switch (data) {
-					case "second":
+					case 'second':
 						this.intervalTransf = 20000;
 						break;
-					case "minute":
+					case 'minute':
 						this.intervalTransf = 60000;
 						break;
-					case "hour":
+					case 'hour':
 						this.intervalTransf = 360000;
 						break;
-					case "day":
+					case 'day':
 						this.intervalTransf = 86400000;
 						break;
 				}
 				params = {
-					statsType: "trans_time",
+					statsType: 'trans_time',
 					granularity: this.selectFlow + data
 				};
-			} else if (type === "replicate") {
+			} else if (type === 'replicate') {
 				switch (data) {
-					case "second":
+					case 'second':
 						this.intervalReplicate = 20000;
 						break;
-					case "minute":
+					case 'minute':
 						this.intervalReplicate = 60000;
 						break;
-					case "hour":
+					case 'hour':
 						this.intervalReplicate = 360000;
 						break;
-					case "day":
+					case 'day':
 						this.intervalReplicate = 86400000;
 						break;
 				}
 				this.replicateType = type;
 				this.replicateTime = data;
 				params = {
-					statsType: "repl_lag",
+					statsType: 'repl_lag',
 					granularity: this.selectFlow + data
 				};
 			}
@@ -610,11 +610,11 @@ export default {
 
 		// 获取数据
 		async getApiData(params, type, ele) {
-			if (this.stageId === "all") {
-				params["dataFlowId"] = this.flow.id;
+			if (this.stageId === 'all') {
+				params['dataFlowId'] = this.flow.id;
 			} else {
-				params["dataFlowId"] = this.flow.id;
-				params["stageId"] = this.stageId;
+				params['dataFlowId'] = this.flow.id;
+				params['stageId'] = this.stageId;
 			}
 			if (type === this.inputOutputObj.type) {
 				this.inputOutputObj.loading = true;
@@ -625,25 +625,25 @@ export default {
 			}
 			await DataFlowInsights.runtimeMonitor(params)
 				.then(res => {
-					if (res.statusText === "OK" || res.status === 200) {
+					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data && res.data.length > 0) {
 							if (res.data[0].statsData && res.data[0].statsData.length > 0) {
 								res.data[0].statsData.forEach(time => {
 									switch (res.data[0].granularity) {
-										case "flow_second":
-										case "stage_second":
+										case 'flow_second':
+										case 'stage_second':
 											time.t = time.t.substring(11, 19);
 											break;
-										case "flow_minute":
-										case "stage_minute":
+										case 'flow_minute':
+										case 'stage_minute':
 											time.t = time.t.substring(11, 16);
 											break;
-										case "flow_hour":
-										case "stage_hour":
+										case 'flow_hour':
+										case 'stage_hour':
 											time.t = time.t.substring(11, 16);
 											break;
-										case "flow_day":
-										case "stage_day":
+										case 'flow_day':
+										case 'stage_day':
 											time.t = time.t.substring(6, 10);
 									}
 								});
@@ -651,7 +651,7 @@ export default {
 							this.storeData = res.data[0].statsData;
 							this.dataProcessing(this.storeData, type, ele);
 						} else {
-							this.$message.error(this.$t("message.noData"));
+							this.$message.error(this.$t('message.noData'));
 						}
 					}
 
@@ -683,22 +683,22 @@ export default {
 				outputCountList = [],
 				dataList = [];
 
-			if (type === "screening") {
+			if (type === 'screening') {
 				let time = data.t;
 				let inputSize = data.inputSize;
 				let outputSize = data.outputSize;
 				let inputCount = data.inputCount;
 				let outputCount = data.outputCount;
-				if (ele === "flow") {
+				if (ele === 'flow') {
 					this.flow.inputNumber = inputCount > 0 ? inputCount : 0;
 					this.flow.outputNumber = outputCount > 0 ? outputCount : 0;
 					this.getScreening(time, inputCount, outputCount);
-				} else if (ele === "stage") {
+				} else if (ele === 'stage') {
 					this.flow.inputNumber = inputSize > 0 ? inputSize : 0;
 					this.flow.outputNumber = outputSize > 0 ? outputSize : 0;
 					this.getScreening(time, inputSize, outputSize);
 				}
-			} else if (type === "throughput") {
+			} else if (type === 'throughput') {
 				data.forEach(item => {
 					timeList.push(item.t); // 时间
 					inputSizeList.push(item.inputSize);
@@ -707,13 +707,13 @@ export default {
 					outputCountList.push(item.outputCount);
 				});
 
-				if (ele === "qps") {
-					this.dpx = "QPS";
+				if (ele === 'qps') {
+					this.dpx = 'QPS';
 					this.inputAverage = inputCountList[inputCountList.length - 1];
 					this.outputAverage = outputCountList[outputCountList.length - 1];
 					this.getThroughputEchart(timeList, inputCountList, outputCountList);
 				} else {
-					this.dpx = "KB";
+					this.dpx = 'KB';
 					this.inputAverage = inputSizeList[inputSizeList.length - 1];
 					this.outputAverage = outputSizeList[outputSizeList.length - 1];
 					this.getThroughputEchart(timeList, inputSizeList, outputSizeList);
@@ -723,10 +723,10 @@ export default {
 					timeList.push(item.t); // 时间
 					dataList.push(item.d);
 				});
-				if (type === "transf") {
+				if (type === 'transf') {
 					this.currentTime = dataList[dataList.length - 1];
 					this.getTransTime(timeList, dataList);
-				} else if (type === "replicate") {
+				} else if (type === 'replicate') {
 					this.ransfTime = dataList[dataList.length - 1];
 					this.getReplicateTime(timeList, dataList);
 				}
@@ -737,11 +737,11 @@ export default {
 			this.dataScreening = {
 				tooltip: {
 					show: false,
-					trigger: "none",
+					trigger: 'none',
 					axisPointer: {
-						type: "cross",
+						type: 'cross',
 						crossStyle: {
-							color: "#999"
+							color: '#999'
 						}
 					}
 				},
@@ -752,29 +752,29 @@ export default {
 					// data: [this.$('dataFlow.totalOutput'),this.$('dataFlow.totalInput')],
 				},
 				grid: {
-					left: "25%",
-					right: "30%",
-					bottom: "3%",
+					left: '25%',
+					right: '30%',
+					bottom: '3%',
 					containLabel: true
 				},
 				xAxis: {
-					type: "category",
+					type: 'category',
 					show: false,
 					axisLine: {
 						show: false,
 						lineStyle: {
-							color: "#ff00ff",
+							color: '#ff00ff',
 							width: 0
 						}
 					},
-					data: [this.$t("dataFlow.outputNumber"), this.$t("dataFlow.inputNumber")],
+					data: [this.$t('dataFlow.outputNumber'), this.$t('dataFlow.inputNumber')],
 					axisPointer: {
-						type: "shadow"
+						type: 'shadow'
 					},
 					formatter: function() {}
 				},
 				yAxis: {
-					type: "value",
+					type: 'value',
 					min: 0,
 					axisLine: { show: false },
 					axisTick: { show: false },
@@ -782,28 +782,28 @@ export default {
 					splitArea: { show: false },
 					axisLabel: {
 						formatter: function() {
-							return "";
+							return '';
 						}
 					}
 				},
 				series: [
 					{
-						type: "bar",
+						type: 'bar',
 						data: [series2, series1],
 						barWidth: 70,
-						barGap: "-100%",
+						barGap: '-100%',
 						itemStyle: {
 							normal: {
 								color: function(params) {
-									var colorList = ["#62a569", "#48b6e2"];
+									var colorList = ['#62a569', '#48b6e2'];
 									return colorList[params.dataIndex];
 								},
 								label: {
 									show: true,
-									verticalAlign: "middle",
-									position: "top",
+									verticalAlign: 'middle',
+									position: 'top',
 									distance: 20,
-									formatter: "{b}\n{c}"
+									formatter: '{b}\n{c}'
 								}
 							}
 						}
@@ -955,7 +955,7 @@ export default {
 
 				span {
 					display: inline-block;
-					width: 76px;
+					min-width: 60px;
 					margin-bottom: 10px;
 					padding: 3px 6px;
 					font-size: 12px;

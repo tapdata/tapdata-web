@@ -160,26 +160,31 @@ export default {
 		};
 	},
 
-	watch: {
-		model: {
-			deep: true,
-			handler() {
-				this.$emit('dataChanged', this.getData());
-			}
-		}
-	},
-	mounted() {
-		let self = this;
-		self.$on(EditorEventType.RESIZE, width => {
-			self.width = width;
-		});
-	},
-	methods: {
-		setData(data, cell, isSourceDataNode, vueAdapter) {
-			if (data) {
-				// Object.keys(data).forEach(key => (this.model[key] = data[key]));
-				_.merge(this.model, data);
-			}
+  watch: {
+    model: {
+      deep: true,
+      handler() {
+        this.$emit("dataChanged", this.getData());
+      }
+    }
+  },
+  mounted() {
+    let self = this;
+    self.$on(EditorEventType.RESIZE, width => {
+      self.width = width;
+    });
+  },
+  methods: {
+    setData(data, cell, isSourceDataNode, vueAdapter) {
+      this.model = {
+        type: "row_filter_processor",
+        name: "Row Filter",
+        expression: "//code",
+        action: "retain" // discard,retain
+      }
+      if (data) {
+		  _.merge(this.model, data);
+	  }
 
 			editorMonitor = vueAdapter.editor;
 		},

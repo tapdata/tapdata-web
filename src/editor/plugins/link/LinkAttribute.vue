@@ -195,12 +195,13 @@ export default {
 
 			configJoinTable: false,
 
-			model: {
-				label: '',
-				joinTable: _.cloneDeep(JOIN_TABLE_TPL)
-			}
-		};
-	},
+      model: {
+        label: "",
+        joinTable: _.cloneDeep(JOIN_TABLE_TPL),
+        type: 'link'
+      }
+    };
+  },
 
 	watch: {
 		model: {
@@ -289,12 +290,17 @@ export default {
 			this.$emit(EditorEventType.RESIZE);
 		},
 
-		setData(data, cell, isSourceDataNode, vueAdapter) {
-			if (data) {
-				// Object.keys(data).forEach(key => (this.model[key] = data[key]));
-				_.merge(this.model, data);
-			}
-			this.cell = cell;
+    setData(data, cell, isSourceDataNode, vueAdapter) {
+      this.model = {
+        label: "",
+        joinTable: _.cloneDeep(JOIN_TABLE_TPL),
+        type: 'link'
+      };
+
+      if (data) {
+		    _.merge(this.model, data);
+      }
+      this.cell = cell;
 
 			this.configJoinTable = cell.configJoinTable && cell.configJoinTable();
 

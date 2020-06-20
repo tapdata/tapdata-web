@@ -6,6 +6,7 @@
 					:class="[{ btnHover: ['draft'].includes(status) }, 'headImg']"
 					v-show="!isSaving"
 					@click="autoSaveFn"
+					style="cursor: pointer;"
 				>
 					<span class="iconfont icon-yunduanshangchuan"></span>
 					<span class="text">{{ $t('dataFlow.button.saveDraft') }}</span>
@@ -398,11 +399,12 @@ export default {
 			if (result && result.data.length > 0) {
 				this.flowDataName = result.data[0].name;
 				if (this.flowDataName) {
-					lastString = this.flowDataName.charAt(this.flowDataName.length - 1, 1) * 1;
+					lastString = this.flowDataName.charAt(this.flowDataName.length - 1, 1);
+
 					if (lastString > 1 && data.name == this.$t('dataFlow.newTaksName')) {
 						data.name = data.name + (lastString * 1 + 1);
 					} else {
-						data.name = data.name + data.id;
+						data.name = data.name;
 					}
 				}
 			}
@@ -461,11 +463,10 @@ export default {
 				.then(result => {
 					if (result && result.data) {
 						let dataFlow = result.data;
-
 						self.dataFlowId = dataFlow.id;
 						self.status = dataFlow.status;
 						self.executeMode = dataFlow.executeMode;
-
+						self.sync_type = dataFlow.setting.sync_type;
 						self.dataFlow = dataFlow;
 						// 管理端api创建任务来源以及editorData 数据丢失情况
 						if (!dataFlow.editorData && dataFlow.stages) {
