@@ -62,6 +62,7 @@ export const /**
 
 			let root = {};
 			let fields = schema.fields || [];
+			fields = _.sortBy(fields, [field => field.table_name + field.field_name]);
 			for (let i = 0; i < fields.length; i++) {
 				let field = fields[i];
 				if (field && field.field_name && field.original_field_name) {

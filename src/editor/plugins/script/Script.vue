@@ -44,10 +44,12 @@
 				>
 					<JsEditor :code.sync="model.script" ref="jsEditor" :width.sync="width"></JsEditor>
 				</el-form-item>
+				<el-form-item>
+					<el-button class="btn-debug" type="primary" size="mini" :loading="!!sending" @click="showDebug">
+						{{ $t('editor.cell.processor.script.debug_button_label') }}
+					</el-button>
+				</el-form-item>
 			</el-form>
-			<el-button class="btn-debug" type="primary" size="mini" :loading="!!sending" @click="showDebug">
-				{{ $t('editor.cell.processor.script.debug_button_label') }}
-			</el-button>
 		</div>
 		<Debug ref="debug"></Debug>
 	</div>
