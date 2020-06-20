@@ -140,8 +140,23 @@ export default {
 	methods: {
 		// convertSchemaToTreeData,
 		setData(data, cell, isSourceDataNode, vueAdapter) {
+			this.form = {
+				apiVersion: "V1",
+				connection: "",
+				name: "",
+				description: "",
+				paths: {
+					path: "",
+					method: "GET",
+					fields: [],
+					availableQueryField: [],
+					requiredQueryField: []
+				},
+				fields: [],
+				apiPath: "",
+				type: "publishApi"
+			}
 			if (data) {
-				// Object.keys(data).forEach(key => (this.form[key] = data[key]));
 				_.merge(this.form, data);
 			}
 
