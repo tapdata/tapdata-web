@@ -3,7 +3,7 @@
  * @date 5/30/20
  * @description
  */
-import joint from "../../lib/rappid/rappid";
+import joint from '../../lib/rappid/rappid';
 
 /**
  * @deprecated
@@ -12,12 +12,12 @@ export default class Lane {
 	constructor(props) {
 		props = props || {};
 
-		this.color = props.color || "#feb663";
+		this.color = props.color || '#feb663';
 		this.borderSize = props.borderSize || 3;
 		this.opacity = props.opacity || 0.2;
 		this.padding = props.borderSize || 10;
 
-		this.title = props.title || "";
+		this.title = props.title || '';
 		this.titleHeight = props.titleHeight || 30;
 
 		this.width = props.width || 100;
@@ -30,8 +30,8 @@ export default class Lane {
 
 		this.__title.text(this.title, {
 			attrs: {
-				"font-size": 18,
-				fill: "#000",
+				'font-size': 18,
+				fill: '#000',
 				x: 50,
 				y: 0
 			}
@@ -41,11 +41,11 @@ export default class Lane {
 	}
 
 	createBoundary(color, borderSize) {
-		let boundary = joint.V("path").attr({
+		let boundary = joint.V('path').attr({
 			fill: color,
-			"fill-opacity": this.opacity,
+			'fill-opacity': this.opacity,
 			stroke: color,
-			"stroke-width": borderSize || 1
+			'stroke-width': borderSize || 1
 		});
 
 		return boundary;
@@ -58,32 +58,46 @@ export default class Lane {
 		});
 	}
 
-	updateLayout(){
-		let points = [{
-			x: this.x, y: this.y
-		}, {
-			x: this.x + this.width, y: this.y
-		}, {
-			x: this.x + this.width, y: this.y + this.height
-		}, {
-			x: this.x, y: this.y + this.height
-		}];
-		this.__body.attr("d", this.createData(points, 10));
+	updateLayout() {
+		let points = [
+			{
+				x: this.x,
+				y: this.y
+			},
+			{
+				x: this.x + this.width,
+				y: this.y
+			},
+			{
+				x: this.x + this.width,
+				y: this.y + this.height
+			},
+			{
+				x: this.x,
+				y: this.y + this.height
+			}
+		];
+		this.__body.attr('d', this.createData(points, 10));
 
-		let titlePoints = [{
-			x: points[0].x + this.padding,
-			y: points[0].y + this.padding,
-		}, {
-			x: points[1].x - this.padding,
-			y: points[1].y + this.padding,
-		}, {
-			x: points[1].x - this.padding,
-			y: points[1].y + this.padding + this.titleHeight,
-		}, {
-			x: points[0].x + this.padding,
-			y: points[0].y + this.padding + this.titleHeight,
-		}];
-		this.__title.attr("d", this.createData(titlePoints, 5));
+		let titlePoints = [
+			{
+				x: points[0].x + this.padding,
+				y: points[0].y + this.padding
+			},
+			{
+				x: points[1].x - this.padding,
+				y: points[1].y + this.padding
+			},
+			{
+				x: points[1].x - this.padding,
+				y: points[1].y + this.padding + this.titleHeight
+			},
+			{
+				x: points[0].x + this.padding,
+				y: points[0].y + this.padding + this.titleHeight
+			}
+		];
+		this.__title.attr('d', this.createData(titlePoints, 5));
 	}
 
 	/**
@@ -95,7 +109,7 @@ export default class Lane {
 	 * }
 	 * @param bbox
 	 */
-	setBBox(bbox){
+	setBBox(bbox) {
 		Object.assign(this, bbox);
 		this.updateLayout();
 	}
@@ -104,5 +118,4 @@ export default class Lane {
 		joint.V(paper.viewport).prepend(this.__body);
 		joint.V(paper.viewport).prepend(this.__title);
 	}
-
 }

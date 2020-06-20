@@ -3,12 +3,12 @@
 	<div class="database nodeStyle">
 		<head>
 			<span class="headIcon iconfont icon-you2" type="primary"></span>
-			<span class="txt">{{ $t("editor.nodeSettings") }}</span>
+			<span class="txt">{{ $t('editor.nodeSettings') }}</span>
 		</head>
 		<div class="nodeBody">
 			<div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-					{{ $t("dataFlow.button.viewMonitoring") }}
+					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div>
 
@@ -27,20 +27,29 @@
 					:rules="rules"
 					required
 				>
-					<el-select
-						@change="changeConnection"
-						filterable
-						v-model="model.connectionId"
-						:placeholder="$t('editor.cell.data_node.database.form.placeholder')"
-						size="mini"
-					>
-						<el-option
-							v-for="(item, idx) in databases"
-							:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
-							:value="item.id"
-							v-bind:key="idx"
-						></el-option>
-					</el-select>
+					<div style="display:flex;">
+						<el-select
+							@change="changeConnection"
+							filterable
+							v-model="model.connectionId"
+							:placeholder="$t('editor.cell.data_node.database.form.placeholder')"
+							size="mini"
+						>
+							<el-option
+								v-for="(item, idx) in databases"
+								:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
+								:value="item.id"
+								v-bind:key="idx"
+							></el-option>
+						</el-select>
+						<el-button
+							size="mini"
+							icon="el-icon-plus"
+							style="padding: 7px;margin-left: 7px"
+							@click="$refs.databaseForm.show()"
+						></el-button>
+						<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
+					</div>
 				</el-form-item>
 
 				<el-form-item
@@ -68,14 +77,14 @@
 			</el-form>
 		</div>
 		<div class="processingBody">
-			<div class="allCheck" v-if="activeName === 'first'">
+			<div class="allCheck" v-if="activeName === 'first' && !disabled">
 				<el-checkbox v-model="selectAllTables"></el-checkbox>
-				<span @click="bulkRemoval()">{{ $t("editor.cell.data_node.database.bulkRemoval") }}</span>
+				<span @click="bulkRemoval()">{{ $t('editor.cell.data_node.database.bulkRemoval') }}</span>
 			</div>
 
-			<div class="allCheck" v-if="activeName === 'second'">
+			<div class="allCheck" v-if="activeName === 'second' && !disabled">
 				<el-checkbox v-model="selectAllRemoveTables"></el-checkbox>
-				<span @click="bulkRevocation()">{{ $t("editor.cell.data_node.database.bulkRevocation") }}</span>
+				<span @click="bulkRevocation()">{{ $t('editor.cell.data_node.database.bulkRevocation') }}</span>
 			</div>
 
 			<el-tabs class="e-tabs" v-model="activeName">
@@ -85,6 +94,7 @@
 				>
 					<div class="search">
 						<el-input
+							:disabled="disabled"
 							:placeholder="$t('editor.cell.data_node.database.enterName')"
 							prefix-icon="el-icon-search"
 							clearable
@@ -96,12 +106,14 @@
 						<el-col style="width: 50%">
 							<el-input
 								clearable
+								:disabled="disabled"
 								v-model="model.table_prefix"
 								:placeholder="$t('editor.cell.data_node.database.tablePrefix')"
 							></el-input>
 						</el-col>
 						<el-col style="width: 50%">
 							<el-input
+								:disabled="disabled"
 								clearable
 								v-model="model.table_suffix"
 								:placeholder="$t('editor.cell.data_node.database.tableSuffix')"
@@ -116,15 +128,15 @@
 						:gutter="20"
 					>
 						<el-col :span="1">
-							<el-checkbox v-model="item.checked"></el-checkbox>
+							<el-checkbox v-model="item.checked" :disabled="disabled"></el-checkbox>
 						</el-col>
 						<el-col :span="17" style="padding-left:20px;">
 							<i class="iconfont icon-table2"></i>
 							<span class="tableName">{{ item.table_name }}</span>
 						</el-col>
-						<el-col :span="5" class="text-center">
+						<el-col :span="5" class="text-center" v-if="!disabled">
 							<el-button type="text" @click="removeTable(item, index)">
-								{{ $t("editor.cell.data_node.database.remove") }}
+								{{ $t('editor.cell.data_node.database.remove') }}
 							</el-button>
 						</el-col>
 					</el-row>
@@ -136,6 +148,7 @@
 				>
 					<div class="search">
 						<el-input
+							:disabled="disabled"
 							:placeholder="$t('editor.cell.data_node.database.enterName')"
 							prefix-icon="el-icon-search"
 							clearable
@@ -152,15 +165,15 @@
 						:gutter="20"
 					>
 						<el-col :span="2">
-							<el-checkbox v-model="item.checked"></el-checkbox>
+							<el-checkbox :disabled="disabled" v-model="item.checked"></el-checkbox>
 						</el-col>
 						<el-col :span="17">
 							<i class="iconfont icon-table2"></i>
 							<span class="tableName">{{ item.table_name }}</span>
 						</el-col>
-						<el-col :span="5" class="text-center">
+						<el-col :span="5" class="text-center" v-if="!disabled">
 							<el-button type="text" @click="undotble(item, index)">
-								{{ $t("editor.cell.data_node.database.Undo") }}
+								{{ $t('editor.cell.data_node.database.Undo') }}
 							</el-button>
 						</el-col>
 					</el-row>
@@ -172,26 +185,31 @@
 </template>
 
 <script>
-import factory from "../../../api/factory";
-import _ from "lodash";
+import factory from '../../../api/factory';
+import _ from 'lodash';
+import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
 
-let connections = factory("connections");
+let connections = factory('connections');
 let editorMonitor = null;
 export default {
-	name: "Database",
+	name: 'Database',
+
+	components: {
+		DatabaseForm
+	},
 
 	props: {
 		connection_type: {
 			type: String,
-			default: "source"
+			default: 'source'
 		}
 	},
 
 	data() {
 		return {
 			disabled: false,
-			removeSearch: "",
-			search: "",
+			removeSearch: '',
+			search: '',
 
 			tables: [],
 			removeTables: [],
@@ -202,35 +220,40 @@ export default {
 			selectAllRemoveTables: false,
 
 			databases: [],
-			activeName: "first",
+			activeName: 'first',
 			rules: {
 				connectionId: [
 					{
 						required: true,
-						trigger: "blur",
-						message: this.$t("editor.cell.data_node.database.form.placeholder")
+						trigger: 'blur',
+						message: this.$t('editor.cell.data_node.database.form.placeholder')
 					}
 				]
 			},
 			visible: false,
 			model: {
-				connectionId: "",
+				connectionId: '',
 				includeTables: [],
 				dropTable: false,
-				table_prefix: "",
-				table_suffix: ""
+				table_prefix: '',
+				table_suffix: ''
 			},
-			database_type: "",
-			database_port: "",
-			database_host: "",
-			database_uri: ""
+			database_type: '',
+			database_port: '',
+			database_host: '',
+			database_uri: '',
+			seachTables: [],
+			removeSeachTables: []
 		};
 	},
-
 	computed: {
+		/* eslint-disable */
 		computedTables() {
 			if (this.search) {
-				return this.tables.filter(t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0);
+				return this.tables.filter(
+					t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0
+				);
+
 			} else {
 				return this.tables;
 			}
@@ -240,70 +263,112 @@ export default {
 				return this.removeTables.filter(
 					t => t.table_name.toLowerCase().indexOf(this.removeSearch.toLowerCase()) >= 0
 				);
+				//  this.removeSeachTables;
 			} else {
 				return this.removeTables;
 			}
 		}
 	},
 
-	async mounted() {
-		let result = await connections.get({
-			filter: JSON.stringify({
-				where: {
-					database_type: { nin: ["file", "dummy", "gridfs", "rest api"] }
-				},
-				fields: {
-					name: 1,
-					id: 1,
-					database_type: 1,
-					connection_type: 1,
-					status: 1
-				},
-				order: "name ASC"
-			})
-		});
-
-		if (result.data) {
-			this.databases = result.data;
-			this.lookupDatabaseType();
-		}
+	mounted() {
+		this.loadDataSource();
 	},
 
 	watch: {
 		model: {
 			deep: true,
 			handler() {
-				this.$emit("dataChanged", this.getData());
+				this.$emit('dataChanged', this.getData());
 			}
 		},
-		"model.connectionId": {
+		'model.connectionId': {
 			immediate: true,
 			handler() {
 				this.tables = [];
 				this.removeTables = [];
 				this.lookupDatabaseType();
-				if (this.database_type === "mongodb") {
+				if (this.database_type === 'mongodb') {
 					this.getMongoDBData(this.model.connectionId);
 				} else {
 					this.loadDataModels(this.model.connectionId);
 				}
 			}
 		},
+		search(val) {
+			if (val) {
+				this.seachTables = this.tables.filter(
+					t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0
+				);
+			}
+		},
+		removeSearch(val) {
+			if(val) {
+				this.removeSeachTables = this.removeTables.filter(
+					t => t.table_name.toLowerCase().indexOf(this.removeSearch.toLowerCase()) >= 0
+				);
+			}
+		},
 		// 移除全选
 		selectAllTables: {
 			handler() {
-				this.tables.forEach(t => (t.checked = this.selectAllTables));
+				if (this.search) {
+					if (this.selectAllTables) {
+						this.tables.forEach(item => {
+							this.seachTables.forEach(table => {
+								if (item.table_name === table.table_name) {
+									item.checked = true;
+								}
+							});
+						});
+					}
+				} else {
+					this.tables.forEach(t => (t.checked = this.selectAllTables));
+				}
 			}
 		},
 		// 撤销全选
 		selectAllRemoveTables: {
 			handler() {
-				this.removeTables.forEach(t => (t.checked = this.selectAllRemoveTables));
+				if (this.removeSearch) {
+					if (this.selectAllRemoveTables) {
+						this.removeTables.forEach(item => {
+							this.removeSeachTables.forEach(table => {
+								if (item.table_name === table.table_name) {
+									item.checked = true;
+								}
+							});
+						});
+					}
+				} else {
+					this.removeTables.forEach(t => (t.checked = this.selectAllRemoveTables));
+				}
 			}
 		}
 	},
 
 	methods: {
+		async loadDataSource() {
+			let result = await connections.get({
+				filter: JSON.stringify({
+					where: {
+						database_type: { nin: ['file', 'dummy', 'gridfs', 'rest api'] }
+					},
+					fields: {
+						name: 1,
+						id: 1,
+						database_type: 1,
+						connection_type: 1,
+						status: 1
+					},
+					order: 'name ASC'
+				})
+			});
+
+			if (result.data) {
+				this.databases = result.data;
+				this.lookupDatabaseType();
+			}
+		},
 		changeConnection() {
 			this.model.includeTables = [];
 		},
@@ -349,12 +414,11 @@ export default {
 							});
 						}
 					});
-					if(this.database_type !== "mongodb") {
+					if (this.database_type !== 'mongodb') {
 						this.database_host = result.data.database_host;
 						this.database_port = result.data.database_port;
 					}
 				}
-
 			});
 		},
 
@@ -362,18 +426,17 @@ export default {
 			if (!connectionId) {
 				return;
 			}
-			let self = this;
 			connections.customQuery([connectionId]).then(result => {
 				if (result.data) {
 					this.loadDataModels([connectionId]);
 					this.database_host = result.data.database_host;
 					this.database_port = result.data.database_port;
 				}
-			})
+			});
 		},
 
 		// 移除
-		removeTable(item, idx) {
+		removeTable(item) {
 			item.checked = false;
 			let tableIndex = this.tables.findIndex(table => table.table_name === item.table_name);
 			if (tableIndex >= 0) this.tables.splice(tableIndex, 1);
@@ -389,7 +452,7 @@ export default {
 			}
 		},
 		// 撤销
-		undotble(item, idx) {
+		undotble(item) {
 			item.checked = false;
 			let tableIndex = this.removeTables.findIndex(table => table.table_name === item.table_name);
 			if (tableIndex >= 0) this.removeTables.splice(tableIndex, 1);
@@ -434,9 +497,9 @@ export default {
 				dropTable: false,
 				table_prefix: "",
 				table_suffix: ""
-			};
+			}
 			if (data) {
-				Object.keys(data).forEach(key => (this.model[key] = data[key]));
+				_.merge(this.model, data);
 			}
 
 			this.isSourceDataNode = isSourceDataNode;

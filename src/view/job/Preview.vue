@@ -35,14 +35,14 @@
 	</div>
 </template>
 <script>
-import factory from "../../api/factory";
-import { EditorEventType } from "../../editor/lib/events";
-import "../../editor/index";
-import log from "../../log";
+import factory from '../../api/factory';
+import { EditorEventType } from '../../editor/lib/events';
+import '../../editor/index';
+import log from '../../log';
 
-const DataFlowsDebugs = factory("DataFlowsDebugs");
+const DataFlowsDebugs = factory('DataFlowsDebugs');
 export default {
-	name: "Preview",
+	name: 'Preview',
 	props: {
 		dataFlow: {
 			type: Object,
@@ -51,10 +51,10 @@ export default {
 	},
 	data() {
 		return {
-			tableHeight: "",
+			tableHeight: '',
 			nodeList: [], // 下拉
-			selectTableName: "",
-			tableName: "",
+			selectTableName: '',
+			tableName: '',
 			tableName_list: [],
 
 			item: 1,
@@ -65,8 +65,8 @@ export default {
 			totalItems: 0,
 			isloading: false,
 			timer: null, // 定时器
-			status: "",
-			stageId: "",
+			status: '',
+			stageId: '',
 			loading: false
 		};
 	},
@@ -86,13 +86,13 @@ export default {
 
 		this.$on(EditorEventType.SELECTED_STAGE, selectStage => {
 			if (selectStage) {
-				this.stageId = selectStage ? selectStage.id : "";
+				this.stageId = selectStage ? selectStage.id : '';
 				this.getStageTables();
 			}
 		});
 
-		this.$bus.on("currentStageId", id => {
-			if (id !== "all") {
+		this.$bus.on('currentStageId', id => {
+			if (id !== 'all') {
 				this.stageId = id;
 			}
 			this.getStageTables();
@@ -120,19 +120,19 @@ export default {
 			this.loading = true;
 			await DataFlowsDebugs.getTables(params)
 				.then(res => {
-					if (res.status === 200 && res.statusText === "OK") {
+					if (res.status === 200 && res.statusText === 'OK') {
 						if (res.data && res.data.data.length > 0) {
 							this.nodeList = res.data.data ? res.data.data : [];
 							if (!this.selectTableName && this.nodeList.length > 0) {
 								this.selectTableName = this.nodeList[0];
 							} else {
-								this.selectTableName = "";
+								this.selectTableName = '';
 							}
 							if (!this.nodeList.includes(this.selectTableName)) {
 								this.selectTableName = this.nodeList[0];
 							}
 						} else {
-							this.selectTableName = "";
+							this.selectTableName = '';
 							this.nodeList = [];
 						}
 					}
@@ -147,17 +147,17 @@ export default {
 		// 获取表格数据
 		async getDataTableApi() {
 			let params = {
-				"filter[where][__tapd8.dataFlowId][regexp]": `^${this.dataFlow.id}$`,
-				"filter[where][__tapd8.stageId]": this.stageId,
-				"filter[where][__tapd8.tableName]": this.selectTableName,
-				"filter[order]": "createTime DESC",
-				"filter[limit]": 100
+				'filter[where][__tapd8.dataFlowId][regexp]': `^${this.dataFlow.id}$`,
+				'filter[where][__tapd8.stageId]': this.stageId,
+				'filter[where][__tapd8.tableName]': this.selectTableName,
+				'filter[order]': 'createTime DESC',
+				'filter[limit]': 100
 			};
 			this.loading = true;
 			this.isloading = true;
 			await DataFlowsDebugs.get(params)
 				.then(res => {
-					if (res.statusText === "OK" || res.status === 200) {
+					if (res.statusText === 'OK' || res.status === 200) {
 						// this.nodeList = Object.keys(res.data);   // 获取下拉项
 						if (res.data && res.data.length > 0) {
 							// for(let i in res.data) {  // 获取选择后对应的表格数据
@@ -200,7 +200,7 @@ export default {
 		},
 
 		setDataFlow(dataFlow) {
-			log("Preview.setDataFlow", dataFlow);
+			log('Preview.setDataFlow', dataFlow);
 			Object.assign(this.dataFlow, dataFlow);
 		}
 	},

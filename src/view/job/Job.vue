@@ -1,117 +1,22 @@
 <template>
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
-			<!-- <el-button size="mini" type="default" @click="reloadSchema"
-				>{{ $t("dataFlow.button.reloadSchema") }}
-			</el-button>
-			<el-button
-				v-if="['draft', 'paused', 'error'].includes(status)"
-				size="mini"
-				type="default"
-				@click="showSetting"
-				>{{ $t("dataFlow.button.setting") }}
-			</el-button> -->
-			<!-- <el-button v-if="dataFlowId && 'draft' !== status" size="mini" type="default" @click="showLogs"
-				>{{ $t("dataFlow.button.logs") }}
-			</el-button> -->
-
-			<!-- editing debug -->
-			<!-- <el-button v-if="['paused', 'error', 'draft'].includes(status)" size="mini" type="default" @click="preview"
-				>{{ $t("dataFlow.button.preview") }}
-			</el-button> -->
-
-			<!-- running debug -->
-			<!-- <el-button
-				v-if="['scheduled', 'running'].includes(status) && executeMode === 'normal'"
-				size="mini"
-				type="default"
-				@click="stopCapture"
-			>{{ $t("dataFlow.button.stop_capture") }}
-			</el-button> -->
-
-			<!-- <el-button
-					  v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
-					  size="mini"
-					  type="success"
-					  @click="start"
-					  >{{ $t("dataFlow.button.start") }}
-				  </el-button> -->
-			<!-- <el-button
-					  v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
-					  size="mini"
-					  type="danger"
-					  @click="stop(false)"
-					  >{{ $t("dataFlow.button.stop") }}
-				  </el-button> -->
-			<!-- <el-button
-					  v-if="dataFlowId !== null && ['stopping'].includes(status)"
-					  size="mini"
-					  type="danger"
-					  @click="stop(true)"
-					  >{{ $t("dataFlow.button.force_stop") }}
-				  </el-button> -->
-			<!-- <el-button
-					  v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
-					  size="mini"
-					  type="default"
-					  @click="reset"
-					  >{{ $t("dataFlow.button.reset") }}
-				  </el-button> -->
-			<!-- <el-button
-					  v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
-					  size="mini"
-					  type="primary"
-					  @click="save"
-					  >{{ $t("dataFlow.button.save") }}
-				  </el-button> -->
-
-			<!-- <el-button
-				v-if="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status)"
-				size="mini"
-				type="success"
-				@click="start"
-				>{{ $t("dataFlow.button.start") }}
-			</el-button> -->
-			<!-- <el-button
-				v-if="dataFlowId !== null && ['scheduled', 'running'].includes(status)"
-				size="mini"
-				type="danger"
-				@click="stop(false)"
-				>{{ $t("dataFlow.button.stop") }}
-			</el-button> -->
-			<!-- <el-button
-				v-if="dataFlowId !== null && ['stopping'].includes(status)"
-				size="mini"
-				type="danger"
-				@click="stop(true)"
-				>{{ $t("dataFlow.button.force_stop") }}
-			</el-button> -->
-			<!-- <el-button
-				v-if="dataFlowId !== null && !['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
-				size="mini"
-				type="default"
-				@click="reset"
-				>{{ $t("dataFlow.button.reset") }}
-			</el-button> -->
-			<!-- <el-button
-				v-if="!['scheduled', 'running', 'stopping', 'force stopping'].includes(status)"
-				size="mini"
-				type="primary"
-				@click="save"
-				>{{ $t("dataFlow.button.save") }}
-			</el-button> -->
 			<template v-if="['draft'].includes(status)">
-				<div :class="[{btnHover:['draft'].includes(status)},'headImg']" v-show="!isSaving" @click="timeSave">
+				<div
+					:class="[{ btnHover: ['draft'].includes(status) }, 'headImg']"
+					v-show="!isSaving"
+					@click="autoSaveFn"
+					style="cursor: pointer;"
+				>
 					<span class="iconfont icon-yunduanshangchuan"></span>
-					<span class="text">{{ $t("dataFlow.button.saveDraft") }}</span>
+					<span class="text">{{ $t('dataFlow.button.saveDraft') }}</span>
 				</div>
 
 				<div class="headImg" v-show="isSaving" style="color: #48B6E2;">
 					<span class="el-icon-loading"></span>
-					<span class="text" style="color: #48B6E2;">{{ $t("dataFlow.button.saveing") }}</span>
+					<span class="text" style="color: #48B6E2;">{{ $t('dataFlow.button.saveing') }}</span>
 				</div>
 			</template>
-
 
 			<el-tooltip
 				class="job-head-title"
@@ -120,7 +25,13 @@
 				placement="bottom"
 				v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
 			>
-				<div :class="['headImg',{ btnHover:['scheduled', 'running'].includes(status) && executeMode === 'running_debug'}]" @click="stopCapture">
+				<div
+					:class="[
+						'headImg',
+						{ btnHover: ['scheduled', 'running'].includes(status) && executeMode === 'running_debug' }
+					]"
+					@click="stopCapture"
+				>
 					<span class="iconfont icon-zanting3"></span>
 				</div>
 			</el-tooltip>
@@ -130,9 +41,10 @@
 				effect="dark"
 				:content="$t('dataFlow.button.capture')"
 				placement="bottom"
-				v-if="['running'].includes(status) && executeMode ==='normal'"
+				v-if="['running'].includes(status) && executeMode === 'normal'"
 			>
-				<div :class="['headImg',{ btnHover:['running'].includes(status) && executeMode ==='normal'}]"
+				<div
+					:class="['headImg', { btnHover: ['running'].includes(status) && executeMode === 'normal' }]"
 					@click="capture"
 				>
 					<span class="iconfont icon-yulan1"></span>
@@ -145,7 +57,10 @@
 				:content="$t('dataFlow.button.reloadSchema')"
 				placement="bottom"
 			>
-				<div :class="['headImg',{ btnHover:['paused', 'error', 'draft'].includes(status)}]"  @click="reloadSchema">
+				<div
+					:class="['headImg', { btnHover: ['paused', 'error', 'draft'].includes(status) }]"
+					@click="reloadSchema"
+				>
 					<span class="iconfont icon-yunshuaxin"></span>
 				</div>
 			</el-tooltip>
@@ -157,7 +72,7 @@
 				placement="bottom"
 				v-if="['paused', 'error', 'draft'].includes(status)"
 			>
-				<div :class="['headImg',{ btnHover:['paused', 'error', 'draft'].includes(status)}]" @click="preview">
+				<div :class="['headImg', { btnHover: ['paused', 'error', 'draft'].includes(status) }]" @click="preview">
 					<span class="iconfont icon-yulan1"></span>
 				</div>
 			</el-tooltip>
@@ -180,13 +95,17 @@
 				clearable
 				suffix-icon="el-icon-search"
 			></el-autocomplete>
-			<div class="headImg round" @click="showSetting" :class="['headImg',{ btnHover:['paused', 'error', 'draft'].includes(status)}]">
+			<div
+				class="headImg round"
+				@click="showSetting"
+				:class="['headImg', { btnHover: ['paused', 'error', 'draft'].includes(status) }]"
+			>
 				<span class="iconfont icon-shezhi"></span>
 				<span class="text" v-if="sync_type === 'initial_sync+cdc'">{{
-					$t("dataFlow.initial_sync") + "+" + $t("dataFlow.cdc")
+					$t('dataFlow.initial_sync') + '+' + $t('dataFlow.cdc')
 				}}</span>
-				<span class="text" v-if="sync_type === 'initial_sync'">{{ $t("dataFlow.initial_sync") }}</span>
-				<span class="text" v-if="sync_type === 'cdc'">{{ $t("dataFlow.cdc") }}</span>
+				<span class="text" v-if="sync_type === 'initial_sync'">{{ $t('dataFlow.initial_sync') }}</span>
+				<span class="text" v-if="sync_type === 'cdc'">{{ $t('dataFlow.cdc') }}</span>
 			</div>
 
 			<el-tag
@@ -202,7 +121,7 @@
 				effect="plain"
 				size="small"
 				style="margin-left: 30px;border-radius: 20px;"
-				>{{ $t("dataFlow.state") }}: {{ $t("dataFlow.status." + status.replace(/ /g, "_")) }}
+				>{{ $t('dataFlow.state') }}: {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}
 			</el-tag>
 			<!-- <div
 				class="headImg borderStyle"
@@ -230,15 +149,17 @@
 					></el-button>
 				</el-tooltip>
 
-				<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.reset')" placement="bottom">
+				<el-tooltip
+					class="item"
+					effect="dark"
+					:content="$t('dataFlow.button.reset')"
+					:hide-after="1000"
+					placement="bottom"
+				>
 					<el-button
 						class="headImg borderStyle iconfont icon-shuaxin3"
 						@click="reset"
-						:disabled="
-							dataFlowId !== null && ['paused', 'error'].includes(status)
-								? false
-								: true
-						"
+						:disabled="dataFlowId !== null && ['paused', 'error'].includes(status) ? false : true"
 					></el-button>
 				</el-tooltip>
 
@@ -251,20 +172,19 @@
 					<el-button
 						class="headImg borderStyle iconfont icon-zanting3"
 						@click="stop(true)"
-						:disabled="dataFlowId !== null && ['stopping'].includes(status)?false:true"
+						:disabled="dataFlowId !== null && ['stopping'].includes(status) ? false : true"
 					>
 					</el-button>
 				</el-tooltip>
-
 			</template>
 
-
-			<div class="headImg round" @click="submitLayer" style="float: right;">
+			<div class="headImg round" v-if="isEditable()" @click="submitLayer" style="float: right;">
 				<span class="iconfont icon-icon_fabu"></span>
-				<span class="text">{{ $t("dataFlow.button.submit") }}</span>
+				<span class="text">{{ $t('dataFlow.button.submit') }}</span>
 			</div>
 			<!-- <el-button size="mini" type="primary" @click="switchModel">Model</el-button> -->
 		</div>
+
 		<el-dialog
 			:title="$t('dataFlow.submitConfirmation')"
 			custom-class="dialogConfig"
@@ -284,67 +204,71 @@
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button class="e-button" @click="dialogFormVisible = false">{{ $t("message.cancel") }}</el-button>
+				<el-button class="e-button" @click="dialogFormVisible = false">{{ $t('message.cancel') }}</el-button>
 				<el-button class="e-button" type="primary" @click="submitTemporary">{{
-					$t("dataFlow.submitOnly")
+					$t('dataFlow.submitOnly')
 				}}</el-button>
-				<el-button class="e-button" type="primary" @click="start">{{ $t("dataFlow.submitExecute") }}</el-button>
+				<el-button class="e-button" type="primary" @click="start">{{ $t('dataFlow.submitExecute') }}</el-button>
 			</div>
 		</el-dialog>
+		<AddBtnTip v-if="isEditable()"></AddBtnTip>
 	</div>
 </template>
 
 <script>
-import $ from "jquery";
-import factory from "../../api/factory";
-import editor from "../../editor/index";
-import breakText from "../../editor/breakText";
-import log from "../../log";
-import { FORM_DATA_KEY, JOIN_TABLE_TPL } from "../../editor/constants";
-import { EditorEventType } from "../../editor/lib/events";
-import _ from "lodash";
+import $ from 'jquery';
+import factory from '../../api/factory';
+import editor from '../../editor/index';
+import breakText from '../../editor/breakText';
+import log from '../../log';
+import AddBtnTip from './addBtnTip';
+import { FORM_DATA_KEY, JOIN_TABLE_TPL } from '../../editor/constants';
+import { EditorEventType } from '../../editor/lib/events';
+import _ from 'lodash';
 // import ws, { EventName } from "../../api/ws";
 
-const dataFlowsApi = factory("DataFlows");
+const dataFlowsApi = factory('DataFlows');
 let changeData = null;
 let timer = null;
 export default {
-	name: "Job",
+	name: 'Job',
 	dataFlow: null,
+	components: { AddBtnTip },
 	data() {
 		return {
 			dialogFormVisible: false,
 			form: {
-				taskName: "",
-				type: this.$t("dataFlow.button.quantitative") + "+" + this.$t("dataFlow.button.increment")
+				taskName: '',
+				type: this.$t('dataFlow.button.quantitative') + '+' + this.$t('dataFlow.button.increment')
 			},
 			// run model: editable,readonly
-			model: "editable",
+			model: 'editable',
 
 			dataFlowId: null,
-			status: "draft",
-			executeMode: "normal",
+			status: 'draft',
+			executeMode: 'normal',
 
 			loading: true,
 			disabledDataVerify: false,
 			cells: [],
-			state1: "",
+			state1: '',
 			editable: false,
 			isSaving: false,
-			sync_type: "initial_sync+cdc",
+			sync_type: 'initial_sync+cdc',
 			settingList: [
 				{
-					type: "initial_sync+cdc",
-					name: this.$t("dataFlow.initial_sync") + "+" + this.$t("dataFlow.cdc")
+					type: 'initial_sync+cdc',
+					name: this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
 				},
-				{ type: "initial_sync", name: this.$t("dataFlow.initial_sync") },
-				{ type: "cdc", name: this.$t("dataFlow.cdc") }
-			]
+				{ type: 'initial_sync', name: this.$t('dataFlow.initial_sync') },
+				{ type: 'cdc', name: this.$t('dataFlow.cdc') }
+			],
+			flowDataName: ''
 		};
 	},
 
 	watch: {
-	/* executeMode: {
+		/* executeMode: {
 			handler(){
 				if( this.executeMode !== 'normal') {
 					this.showCapture();
@@ -360,14 +284,9 @@ export default {
 			}
 		},*/
 
-
 		status: {
 			handler() {
-				if (["draft", "error", "paused"].includes(this.status)) {
-					this.setEditable(true);
-				} else {
-					this.setEditable(false);
-				}
+				this.setEditable(this.isEditable());
 			}
 		}
 	},
@@ -377,8 +296,8 @@ export default {
 
 		// build editor
 		self.editor = editor({
-			container: $(".editor-container"),
-			actionBarEl: $(".editor-container .action-buttons"),
+			container: $('.editor-container'),
+			actionBarEl: $('.editor-container .action-buttons'),
 			scope: self
 		});
 
@@ -392,29 +311,45 @@ export default {
 		// self.editor.getUI().getBackButtonEl().on('click', () => {
 		// 	self.$router.push({path: '/dataFlows'});
 		// });
-		this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
-			changeData = this.getDataFlowData(true);
-			if (changeData) {
-				let	settingSetInterval = () => {
-					timer = setTimeout(() => {
-						if (["draft", "error", "paused"].includes(this.status)) {
-							self.timeSave();
-						}
-						timer = null;
-					}, 10000);
-				};
-				if (timer) {
-					clearTimeout(timer);
-					settingSetInterval();
-				} else {
-					settingSetInterval();
+		if (this.isEditable()) {
+			this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
+				if (self.loading) {
+					return;
 				}
-			}
-
-		});
+				changeData = this.getDataFlowData(true);
+				if (changeData) {
+					let settingSetInterval = () => {
+						timer = setTimeout(() => {
+							if (['draft', 'error', 'paused'].includes(this.status)) {
+								self.timeSave();
+							}
+							timer = null;
+						}, 10000);
+					};
+					if (timer) {
+						clearTimeout(timer);
+						settingSetInterval();
+					} else {
+						settingSetInterval();
+					}
+				}
+			});
+		}
 	},
 
 	methods: {
+		isEditable() {
+			return ['draft', 'error', 'paused'].includes(this.status);
+		},
+
+		/***
+		 * click save
+		 */
+		autoSaveFn() {
+			this.timeSave();
+			clearTimeout(timer);
+			timer = null;
+		},
 		/**
 		 * submit temporary
 		 */
@@ -424,17 +359,18 @@ export default {
 
 			if (data) {
 				if (data.id) {
-					data.id = data.id
+					data.id = data.id;
 				}
-				data.status = "paused";
-				data.name =this.form.taskName;
-				data.executeMode = "normal";
-				self.doSave(data, (err, dataFlow) => {
+				data.status = 'paused';
+				data.name = this.form.taskName;
+				data.executeMode = 'normal';
+				self.doSave(data, err => {
 					if (err) {
-						this.$message.error(self.$t("message.saveFail"));
+						this.$message.error(self.$t('message.saveFail'));
 					} else {
-						this.$message.success(self.$t("message.saveOK"));
+						this.$message.success(self.$t('message.saveOK'));
 						self.editor.setData(data);
+						self.$router.push({ path: '/dataFlows' });
 					}
 				});
 			}
@@ -446,11 +382,34 @@ export default {
 		/****
 		 * Auto save
 		 */
-		timeSave() {
+		async timeSave() {
 			this.isSaving = true;
 			let self = this,
-				data = this.getDataFlowData(true),
-				promise = dataFlowsApi.draft(data);
+				promise = null,
+				lastString = '',
+				data = this.getDataFlowData(true);
+
+			let params = {
+				'filter[order]': 'name DESC',
+				'filter[limit]': 1,
+				'filter[where][name][like]': data.name
+			};
+
+			let result = await dataFlowsApi.get(params);
+			if (result && result.data.length > 0) {
+				this.flowDataName = result.data[0].name;
+				if (this.flowDataName) {
+					lastString = this.flowDataName.charAt(this.flowDataName.length - 1, 1);
+
+					if (lastString > 1 && data.name == this.$t('dataFlow.newTaksName')) {
+						data.name = data.name + (lastString * 1 + 1);
+					} else {
+						data.name = data.name;
+					}
+				}
+			}
+
+			promise = dataFlowsApi.draft(data);
 
 			if (promise) {
 				promise
@@ -465,7 +424,7 @@ export default {
 
 							if (!self.$route.query || !self.$route.query.id) {
 								self.$router.push({
-									path: "/job",
+									path: '/job',
 									query: {
 										id: dataFlow.id
 									}
@@ -504,11 +463,10 @@ export default {
 				.then(result => {
 					if (result && result.data) {
 						let dataFlow = result.data;
-
 						self.dataFlowId = dataFlow.id;
 						self.status = dataFlow.status;
 						self.executeMode = dataFlow.executeMode;
-
+						self.sync_type = dataFlow.setting.sync_type;
 						self.dataFlow = dataFlow;
 						// 管理端api创建任务来源以及editorData 数据丢失情况
 						if (!dataFlow.editorData && dataFlow.stages) {
@@ -524,28 +482,28 @@ export default {
 							self.editor.graph.layoutDirectedGraph();
 
 							// 5. 处理joinTables
-							self.handleJoinTables(dataFlow.stages,self.editor.graph.graph);
+							self.handleJoinTables(dataFlow.stages, self.editor.graph.graph);
 						} else {
 							self.editor.setData(dataFlow);
 						}
-						if (["scheduled", "running", "stopping", "force stopping"].includes(self.status)) {
+						if (['scheduled', 'running', 'stopping', 'force stopping'].includes(self.status)) {
 							self.setEditable(false);
 						}
-						if (self.executeMode !== "normal") {
+						if (self.executeMode !== 'normal') {
 							self.showCapture();
 						}
 
 						self.polling();
 					} else {
 						log(result);
-						self.$message.error(self.$t("message.api.get.error"));
+						self.$message.error(self.$t('message.api.get.error'));
 					}
 
 					self.loading = false;
 				})
 				.catch(err => {
 					log(err);
-					self.$message.error(self.$t("message.api.get.error"));
+					self.$message.error(self.$t('message.api.get.error'));
 					self.loading = false;
 				});
 		},
@@ -556,23 +514,23 @@ export default {
 		polling() {
 			let self = this;
 			if (self.dataFlowId) {
-				if (!["scheduled", "running", "stopping", "force stopping"].includes(self.status)) return;
+				if (!['scheduled', 'running', 'stopping', 'force stopping'].includes(self.status)) return;
 
 				dataFlowsApi
 					.get([self.dataFlowId], {
 						fields: [
-							"id",
-							"status",
-							"last_updated",
-							"createTime",
-							"executeMode",
-							"stopOnError",
-							"user_id",
-							"user",
-							"startTime",
-							"stats",
-							"pingTime",
-							"stopTime"
+							'id',
+							'status',
+							'last_updated',
+							'createTime',
+							'executeMode',
+							'stopOnError',
+							'user_id',
+							'user',
+							'startTime',
+							'stats',
+							'pingTime',
+							'stopTime'
 						]
 					})
 					.then(result => {
@@ -585,19 +543,19 @@ export default {
 							if (self.executeMode !== result.data.executeMode)
 								self.executeMode = result.data.executeMode;
 
-							if (["scheduled", "running", "stopping", "force stopping"].includes(newStatus)) {
+							if (['scheduled', 'running', 'stopping', 'force stopping'].includes(newStatus)) {
 								if (self.timeoutId) clearTimeout(self.timeoutId);
 								self.timeoutId = setTimeout(self.polling.bind(self), 2000);
 							} else {
-								self.executeMode = "normal";
+								self.executeMode = 'normal';
 							}
 							Object.assign(this.dataFlow, result.data);
-							self.editor.emit("dataFlow:updated", _.cloneDeep(result.data));
+							self.editor.emit('dataFlow:updated', _.cloneDeep(result.data));
 						}
 					})
 					.catch(err => {
 						log(err);
-						self.$message.error(self.$t("message.api.get.error"));
+						self.$message.error(self.$t('message.api.get.error'));
 					});
 			}
 		},
@@ -640,19 +598,19 @@ export default {
 			let edgeCells = {};
 			let nodeCells = {};
 			cells.forEach(cell => {
-				if (cell.type === "app.Link") edgeCells[cell.id] = cell;
+				if (cell.type === 'app.Link') edgeCells[cell.id] = cell;
 				else nodeCells[cell.id] = cell;
 			});
 
 			let postData = Object.assign(
 				{
 					name: editorData.name,
-					description: "",
-					status: this.status || "draft", // draft/scheduled/running/paused/stopping/error/force stopping
-					executeMode: this.executeMode || "normal",
-					category: "数据库克隆",
+					description: '',
+					status: this.status || 'draft', // draft/scheduled/running/paused/stopping/error/force stopping
+					executeMode: this.executeMode || 'normal',
+					category: '数据库克隆',
 					stopOnError: false,
-					mappingTemplate: "cluster-clone",
+					mappingTemplate: 'cluster-clone',
 					emailWaring: {
 						edited: true,
 						started: false,
@@ -680,16 +638,16 @@ export default {
 					cell[FORM_DATA_KEY] || {}
 				));
 
-				if (["app.Database"].includes(cell.type)) {
-					postData.mappingTemplate = "cluster-clone";
+				if (['app.Database'].includes(cell.type)) {
+					postData.mappingTemplate = 'cluster-clone';
 
 					Object.assign(stage, {
-						type: "database",
+						type: 'database',
 						readCdcInterval: 500,
 						readBatchSize: 1000
 					});
-				} else if (["app.Table", "app.Collection", "app.ESNode"].includes(cell.type)) {
-					postData.mappingTemplate = "custom";
+				} else if (['app.Table', 'app.Collection', 'app.ESNode'].includes(cell.type)) {
+					postData.mappingTemplate = 'custom';
 
 					Object.assign(stage, {
 						dataQualityTag: false,
@@ -700,7 +658,7 @@ export default {
 				}
 			});
 			Object.values(edgeCells).forEach(cell => {
-				if (cell.type === "app.Link") {
+				if (cell.type === 'app.Link') {
 					let sourceId = cell.source.id;
 					let targetId = cell.target.id;
 					if (sourceId && stages[sourceId]) stages[sourceId].outputLanes.push(targetId);
@@ -709,7 +667,7 @@ export default {
 			});
 			postData.stages = Object.values(stages);
 
-			log("Job.getDataFlowData", editorData, postData);
+			log('Job.getDataFlowData', editorData, postData);
 
 			if (this.dataFlowId) postData.id = this.dataFlowId;
 
@@ -719,26 +677,23 @@ export default {
 		/**
 		 * get data flow stage and include inputSchema, outputSchema, schema
 		 */
-		getStages(){
+		getStages() {
 			let dataFlowData = this.getDataFlowData(true);
 			let stages = dataFlowData.stages;
-			let {graph} = this.editor.getData() || {};
+			let { graph } = this.editor.getData() || {};
 			let dataFlowId = this.dataFlowId;
 			stages.forEach(stage => {
 				let cell = graph.getCell(stage.id) || {};
 				let schema = cell.getSchema();
 				let outputSchema = cell.getOutputSchema();
 				let inputSchema = cell.getInputSchema();
-				if( schema )
-					stage.schema = schema;
-				if( outputSchema)
-					stage.outputSchema = outputSchema;
-				if(inputSchema)
-					stage.inputSchema = inputSchema;
+				if (schema) stage.schema = schema;
+				if (outputSchema) stage.outputSchema = outputSchema;
+				if (inputSchema) stage.inputSchema = inputSchema;
 
 				stage.dataFlowId = dataFlowId;
 			});
-			log("Job.getStages", stages);
+			log('Job.getStages', stages);
 			return stages;
 		},
 
@@ -750,7 +705,7 @@ export default {
 		doSave(data, cb) {
 			let self = this;
 
-			log("Job.doSave", data);
+			log('Job.doSave', data);
 
 			const _doSave = function() {
 				let promise = data.id ? dataFlowsApi.patch(data) : dataFlowsApi.post(data);
@@ -768,20 +723,20 @@ export default {
 
 							if (!self.$route.query || !self.$route.query.id) {
 								self.$router.push({
-									path: "/job",
+									path: '/job',
 									query: {
 										id: dataFlow.id
 									}
 								});
 							}
 
-							if (typeof cb === "function") {
+							if (typeof cb === 'function') {
 								cb(null, dataFlow);
 							}
 
 							self.polling();
 						} else {
-							if (typeof cb === "function") {
+							if (typeof cb === 'function') {
 								cb(result, null);
 							}
 						}
@@ -789,13 +744,16 @@ export default {
 					})
 					.catch(e => {
 						self.loading = false;
-						if (typeof cb === "function") {
+						if (typeof cb === 'function') {
 							cb(e, null);
 						}
 					});
 
 				let stages = self.getStages();
-				dataFlowsApi.saveStage(stages).then(()=>{}).catch(()=>{});
+				dataFlowsApi
+					.saveStage(stages)
+					.then(() => {})
+					.catch(() => {});
 			};
 
 			if (data.name) {
@@ -812,7 +770,7 @@ export default {
 					.count({ where: JSON.stringify(params) })
 					.then(result => {
 						if (result && result.data && result.data.count > 0) {
-							this.$message.error(`${self.$t("message.exists_name")}: ${data.name}`);
+							this.$message.error(`${self.$t('message.exists_name')}: ${data.name}`);
 							self.loading = false;
 						} else {
 							_doSave();
@@ -820,7 +778,7 @@ export default {
 					})
 					.catch(e => {
 						self.loading = false;
-						if (typeof cb === "function") {
+						if (typeof cb === 'function') {
 							cb(e, null);
 						}
 					});
@@ -839,11 +797,11 @@ export default {
 			if (data) {
 				if (data.id) delete data.status;
 
-				self.doSave(data, (err, entityData) => {
+				self.doSave(data, err => {
 					if (err) {
-						this.$message.error(self.$t("message.saveFail"));
+						this.$message.error(self.$t('message.saveFail'));
 					} else {
-						this.$message.success(self.$t("message.saveOK"));
+						this.$message.success(self.$t('message.saveOK'));
 					}
 				});
 			}
@@ -858,24 +816,26 @@ export default {
 
 			if (data) {
 				if (data.id) {
-					data.id = data.id
+					data.id = data.id;
 				}
-				if(this.form.taskName) {
-					data.name =this.form.taskName;
+				if (this.form.taskName) {
+					data.name = this.form.taskName;
 				}
 
-				data.status = "scheduled";
-				data.executeMode = "normal";
-				self.doSave(data, (err, dataFlow) => {
+				data.status = 'scheduled';
+				data.executeMode = 'normal';
+				self.doSave(data, err => {
 					if (err) {
-						this.$message.error(self.$t("message.saveFail"));
+						this.$message.error(self.$t('message.saveFail'));
 					} else {
-						this.$message.success(self.$t("message.saveOK"));
+						this.$message.success(self.$t('message.saveOK'));
 						self.setEditable(false);
 						self.editor.setData(data);
 					}
 				});
 			}
+			clearTimeout(timer);
+			timer = null;
 			this.dialogFormVisible = false;
 		},
 
@@ -887,22 +847,22 @@ export default {
 			let self = this,
 				data = {
 					id: self.dataFlowId,
-					status: forceStop === true ? "force stopping" : "stopping"
+					status: forceStop === true ? 'force stopping' : 'stopping'
 				};
 
 			self.$confirm(
-				forceStop === true ? self.$t("dataFlow.stop_job.force_stop_msg") : self.$t("dataFlow.stop_job.msg"),
-				self.$t("dataFlow.stop_job.tip"),
+				forceStop === true ? self.$t('message.forceStoppingMessage') : self.$t('message.stopMessage'),
+				self.$t('dataFlow.importantReminder'),
 				{
 					confirmButtonText:
-						forceStop === true ? self.$t("dataFlow.button.force_stop") : self.$t("dataFlow.button.stop"),
-					cancelButtonText: self.$t("message.cancel"),
-					type: "warning"
+						forceStop === true ? self.$t('dataFlow.button.force_stop') : self.$t('dataFlow.button.stop'),
+					cancelButtonText: self.$t('message.cancel'),
+					type: 'warning'
 				}
 			).then(() => {
-				self.doSave(data, (err, dataFlow) => {
+				self.doSave(data, err => {
 					if (err) {
-						this.$message.error(self.$t("message.saveFail"));
+						this.$message.error(self.$t('message.saveFail'));
 					} else {
 						// self.$message.success('Stop success');
 						self.setEditable(true);
@@ -922,26 +882,27 @@ export default {
 					if (data.id) {
 						data = {
 							id: data.id,
-							status: ["scheduled", "running", "stopping"].includes(data.status) ? data.status : "scheduled",
-							executeMode: "editing_debug"
+							status: ['scheduled', 'running', 'stopping'].includes(data.status)
+								? data.status
+								: 'scheduled',
+							executeMode: 'editing_debug'
 						};
 					} else {
 						Object.assign(data, {
-							status: "scheduled",
-							executeMode: "editing_debug"
+							status: 'scheduled',
+							executeMode: 'editing_debug'
 						});
 					}
-					self.doSave(data, (err, dataFlow) => {
+					self.doSave(data, err => {
 						if (err) {
-							this.$message.error(self.$t("message.saveFail"));
+							this.$message.error(self.$t('message.saveFail'));
 						} else {
-							this.$message.success(self.$t("message.saveOK"));
+							this.$message.success(self.$t('message.saveOK'));
 							this.showCapture();
 						}
 					});
 				}
 			}
-
 		},
 
 		/**
@@ -955,18 +916,18 @@ export default {
 				if (data && data.id) {
 					data = {
 						id: data.id,
-						executeMode: "running_debug"
+						executeMode: 'running_debug'
 					};
 				} else {
 					Object.assign(data, {
-						executeMode: "running_debug"
+						executeMode: 'running_debug'
 					});
 				}
-				self.doSave(data, (err, dataFlow) => {
+				self.doSave(data, err => {
 					if (err) {
-						this.$message.error(self.$t("message.saveFail"));
+						this.$message.error(self.$t('message.saveFail'));
 					} else {
-						this.$message.success(self.$t("message.saveOK"));
+						this.$message.success(self.$t('message.saveOK'));
 						this.showCapture();
 					}
 				});
@@ -984,13 +945,13 @@ export default {
 				self.doSave(
 					{
 						id: data.id,
-						executeMode: "normal"
+						executeMode: 'normal'
 					},
-					(err, dataFlow) => {
+					err => {
 						if (err) {
-							this.$message.error(self.$t("message.saveFail"));
+							this.$message.error(self.$t('message.saveFail'));
 						} else {
-							this.$message.success(self.$t("message.saveOK"));
+							this.$message.success(self.$t('message.saveOK'));
 							// this.showCapture();
 						}
 					}
@@ -1006,18 +967,26 @@ export default {
 				data = this.getDataFlowData();
 
 			if (data && data.id) {
-				self.$confirm(self.$t("dataFlow.reset_job.msg"), self.$t("dataFlow.reset_job.tip"), {
-					confirmButtonText: self.$t("dataFlow.button.reset"),
-					cancelButtonText: self.$t("message.cancel"),
-					type: "warning"
+				self.$confirm(self.$t('message.resetMessage'), self.$t('dataFlow.importantReminder'), {
+					confirmButtonText: self.$t('dataFlow.button.reset'),
+					cancelButtonText: self.$t('message.cancel'),
+					type: 'warning'
 				}).then(() => {
-					dataFlowsApi.reset(data.id).then(res => {
-						if (res.statusText === "OK" || res.status === 200) {
-							self.$message.success(self.$t("message.resetOk"));
-						} else {
-							self.$message.error(self.$t("message.resetFailed"));
-						}
-					});
+					this.loading = true;
+					dataFlowsApi
+						.reset(data.id)
+						.then(res => {
+							if (res.statusText === 'OK' || res.status === 200) {
+								self.$message.success(self.$t('message.resetOk'));
+							} else {
+								self.$message.error(self.$t('message.resetFailed'));
+							}
+						})
+						.finally(() => {
+							setTimeout(() => {
+								this.loading = false;
+							}, 5000);
+						});
 				});
 			}
 		},
@@ -1026,9 +995,9 @@ export default {
 		 * show setting button handler
 		 */
 		showSetting() {
-			log("Job.showSetting");
+			log('Job.showSetting');
 			if (['paused', 'error', 'draft'].includes(this.status)) {
-				let name = "";
+				let name = '';
 				if (this.$route.query.name) {
 					name = this.$route.query.name;
 				}
@@ -1057,7 +1026,6 @@ export default {
 			if (['paused', 'error', 'draft'].includes(this.status)) {
 				this.editor.reloadSchema();
 			}
-
 		},
 
 		/**
@@ -1065,13 +1033,13 @@ export default {
 		 * @param editable
 		 */
 		setEditable(editable) {
-			log("Job.setEditable", editable, this.dataFlow);
+			log('Job.setEditable', editable, this.dataFlow);
 			this.editable = editable;
 			if (this.dataFlow) {
 				delete this.dataFlow.editorData;
 				this.editor.setEditable(editable, this.dataFlow);
 			} else {
-				this.$message.error(this.$t("message.save_before_running"));
+				this.$message.error(this.$t('message.save_before_running'));
 			}
 		},
 
@@ -1084,29 +1052,29 @@ export default {
 			// 1. 创建cell 2. 加载schema 3.自动布局
 			let cells = [];
 			let mapping = {
-				collection: "app.Collection",
-				table: "app.Table",
-				database: "app.Database",
-				mongodb: "app.Database",
-				mongo_view: "app.Collection",
-				view: "app.Table",
-				"dummy db": "app.Dummy",
-				elasticsearch: "app.ESNode",
-				file: "app.FileNode",
-				gridfs: "app.GridFSNode",
-				"rest api": "app.ApiNode",
-				field_processor: "app.FieldProcess",
-				aggregation_processor: "app.Aggregate",
-				js_processor: "app.Script",
-				row_filter_processor: "app.DataFilter",
-				java_processor: "app.FieldProcess"
+				collection: 'app.Collection',
+				table: 'app.Table',
+				database: 'app.Database',
+				mongodb: 'app.Database',
+				mongo_view: 'app.Collection',
+				view: 'app.Table',
+				'dummy db': 'app.Dummy',
+				elasticsearch: 'app.ESNode',
+				file: 'app.FileNode',
+				gridfs: 'app.GridFSNode',
+				'rest api': 'app.ApiNode',
+				field_processor: 'app.FieldProcess',
+				aggregation_processor: 'app.Aggregate',
+				js_processor: 'app.Script',
+				row_filter_processor: 'app.DataFilter',
+				java_processor: 'app.FieldProcess'
 			};
 			if (data) {
-				data.map((v, index) => {
+				data.map(v => {
 					let formData = _.cloneDeep(v);
 					delete formData.inputLanes;
 					delete formData.outputLanes;
-					if (["table", "view", "collection", "mongo_view"].includes(v.type)) {
+					if (['table', 'view', 'collection', 'mongo_view'].includes(v.type)) {
 						let node = {
 							type: mapping[v.type],
 							id: v.id,
@@ -1122,7 +1090,7 @@ export default {
 							angle: 0
 						};
 						cells.push(node);
-					} else if (v.type && ["dummy db", "gridfs", "file", "elasticsearch", "rest api"].includes(v.type)) {
+					} else if (v.type && ['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api'].includes(v.type)) {
 						let node = {
 							type: mapping[v.type],
 							id: v.id,
@@ -1137,7 +1105,7 @@ export default {
 							form_data: formData
 						};
 						cells.push(node);
-					} else if (v.type === "database") {
+					} else if (v.type === 'database') {
 						let node = {
 							type: mapping[v.type],
 							id: v.id,
@@ -1154,11 +1122,11 @@ export default {
 						cells.push(node);
 					} else if (
 						[
-							"field_processor",
-							"java_processor",
-							"js_processor",
-							"aggregation_processor",
-							"row_filter_processor"
+							'field_processor',
+							'java_processor',
+							'js_processor',
+							'aggregation_processor',
+							'row_filter_processor'
 						].includes(v.type)
 					) {
 						let node = {
@@ -1174,13 +1142,13 @@ export default {
 								}
 							}
 						};
-						if (["field_processor"].includes(v.type)) {
+						if (['field_processor'].includes(v.type)) {
 							node.form_data = formData;
-						} else if (["aggregation_processor"].includes(v.type)) {
+						} else if (['aggregation_processor'].includes(v.type)) {
 							node.form_data = formData;
-						} else if (["js_processor"].includes(v.type)) {
+						} else if (['js_processor'].includes(v.type)) {
 							node.form_data = formData;
-						} else if (["row_filter_processor"].includes(v.type)) {
+						} else if (['row_filter_processor'].includes(v.type)) {
 							node.form_data = formData;
 						}
 						cells.push(node);
@@ -1188,7 +1156,7 @@ export default {
 					if (v.outputLanes) {
 						v.outputLanes.map(k => {
 							let node = {
-								type: "app.Link",
+								type: 'app.Link',
 								source: {
 									id: v.id
 								},
@@ -1196,16 +1164,16 @@ export default {
 									id: k
 								},
 								router: {
-									name: "manhattan"
+									name: 'manhattan'
 								},
 								connector: {
-									name: "rounded"
+									name: 'rounded'
 								},
 								form_data: {
-									label: "",
+									label: '',
 									joinTable: _.cloneDeep(JOIN_TABLE_TPL)
 								},
-								labels: "",
+								labels: '',
 								attrs: {}
 							};
 							cells.push(node);
@@ -1213,7 +1181,7 @@ export default {
 					}
 				});
 			}
-			log("job loadSchema cells", cells);
+			log('job loadSchema cells', cells);
 			this.cells = cells;
 			return {
 				cells: cells
@@ -1225,7 +1193,7 @@ export default {
 		 * @param graph
 		 */
 		handleJoinTables(stages, graph) {
-			log("Job.handleJoinTables", stages, graph);
+			log('Job.handleJoinTables', stages, graph);
 			if (stages) {
 				stages.map(stage => {
 					if (
@@ -1234,11 +1202,11 @@ export default {
 						stage.inputLanes &&
 						stage.inputLanes.length > 0 &&
 						![
-							"field_processor",
-							"java_processor",
-							"js_processor",
-							"aggregation_processor",
-							"row_filter_processor"
+							'field_processor',
+							'java_processor',
+							'js_processor',
+							'aggregation_processor',
+							'row_filter_processor'
 						].includes(stage.type)
 					) {
 						// 目标节点 数据节点 jointables
@@ -1249,11 +1217,10 @@ export default {
 						});
 
 						let cell = graph.getCell(stage.id);
-						graph.getConnectedLinks(cell, {inbound: true}).forEach( link => {
+						graph.getConnectedLinks(cell, { inbound: true }).forEach(link => {
 							let sourceCell = link.getSourceCell();
-							let sourceDataCells = sourceCell.getFirstDataNode()
-								.filter( cell => !!joinTables[cell.id]);
-							if(sourceDataCells && sourceDataCells.length > 0){
+							let sourceDataCells = sourceCell.getFirstDataNode().filter(cell => !!joinTables[cell.id]);
+							if (sourceDataCells && sourceDataCells.length > 0) {
 								let formData = link.getFormData();
 								formData.joinTable = joinTables[sourceDataCells[0].id];
 							}
@@ -1266,7 +1233,7 @@ export default {
 			let dataCells = this.editor.getAllCells();
 			let dataCellName = [];
 			dataCells.forEach(cell => {
-				let formData = typeof cell.getFormData === "function" ? cell.getFormData() : null;
+				let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null;
 				let tableName = {
 					value: formData.tableName || formData.name,
 					cell: cell
@@ -1300,9 +1267,35 @@ export default {
 	}
 };
 </script>
-
+<style scoped lang="less">
+.fixBtn {
+	position: fixed;
+	bottom: 30px;
+	left: 260px;
+	z-index: 99;
+}
+</style>
 <style lang="less">
-@import "../../editor/style/editor";
+@import '../../editor/style/editor';
+.popperFixbtn {
+	width: 160px !important;
+	.btnList {
+		width: 160px;
+		span {
+			display: block;
+			width: 100%;
+			padding: 5px 0;
+			color: #333;
+			font-size: 12px;
+			cursor: pointer;
+			i {
+				float: right;
+				color: #999;
+				font-size: 12px;
+			}
+		}
+	}
+}
 .dialogConfig {
 	.el-dialog__header {
 		background: rgba(250, 250, 250, 1);
@@ -1339,7 +1332,6 @@ export default {
 		height: 24px;
 	}
 	margin-right: 8px;
-
 }
 .el-tooltip__popper.is-dark {
 	background-color: #d3d3d3 !important;
@@ -1348,11 +1340,11 @@ export default {
 }
 // 控制主题颜色
 
-.el-tooltip__popper[x-placement^="bottom"] .popper__arrow::after {
+.el-tooltip__popper[x-placement^='bottom'] .popper__arrow::after {
 	border-bottom-color: #d3d3d3 !important;
 }
 
-.el-tooltip__popper[x-placement^="bottom"] .popper__arrow {
+.el-tooltip__popper[x-placement^='bottom'] .popper__arrow {
 	border-bottom-color: #d3d3d3 !important;
 }
 </style>

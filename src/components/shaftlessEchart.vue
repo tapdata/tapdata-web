@@ -4,11 +4,11 @@
 	</div>
 </template>
 <script>
-import Echarts from "../plugins/echarts";
-import { EditorEventType } from "../editor/lib/events";
+import Echarts from '../plugins/echarts';
+import { EditorEventType } from '../editor/lib/events';
 // import echarts from 'echarts'
 export default {
-	name: "EchartsCompinent",
+	name: 'EchartsCompinent',
 	props: {
 		sliderBar: {
 			type: Object
@@ -38,9 +38,9 @@ export default {
 		// let publicCharts = that.echartOption(that.echartObj)
 		that.$nextTick(() => {
 			that.loadEchart(that.echartsId, that.echartObj);
-			this.sliderBar.on(EditorEventType.RESIZE, width => {
-				this.myChart.resize()
-			})
+			this.sliderBar.on(EditorEventType.RESIZE, () => {
+				this.myChart.resize();
+			});
 		});
 	},
 
@@ -120,7 +120,7 @@ export default {
 				},
 				// y轴的数据配置
 				yAxis: {
-					type: "value",
+					type: 'value',
 					min: 0,
 					axisTick: { show: false },
 					axisLine: configures.yAxis.axisLine,

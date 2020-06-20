@@ -3,17 +3,18 @@
  * @date 5/18/20
  * @description
  */
-import joint from "../../lib/rappid/rappid";
-import Component from "../../lib/Component";
-import $ from "jquery";
-import shapes from "../models/shapes";
-import anchors from "../models/anchors";
-import routers from "../models/routers";
-import linkTools from "../models/linkTools"
-import _ from "lodash";
-import i18n from "../../../i18n/i18n";
+import joint from '../../lib/rappid/rappid';
+import Component from '../../lib/Component';
+import $ from 'jquery';
+import shapes from '../models/shapes';
+import anchors from '../models/anchors';
+import routers from '../models/routers';
+import linkTools from '../models/linkTools';
+import _ from 'lodash';
+import i18n from '../../../i18n/i18n';
 
-import log from "../../../log";
+import log from '../../../log';
+import { convertSchemaToTreeData } from '../../util/Schema';
 
 window.joint = window.joint || joint;
 
@@ -47,11 +48,9 @@ export default class Graph extends Component {
 
 		this.paper.freeze();
 		this.paperScroller.centerContent();
-
 	}
 
 	initGraph() {
-
 		let self = this;
 		const graph = (self.graph = new joint.dia.Graph());
 
@@ -67,19 +66,19 @@ export default class Graph extends Component {
 					{ color: 'black', scaleFactor: 5, thickness: 1 } //settings for the secondary mesh
 				]
 			},*/
-			defaultConnectionPoint: { name: "boundary", args: { extrapolate: true } },
+			defaultConnectionPoint: { name: 'boundary', args: { extrapolate: true } },
 			// defaultConnectionPoint: joint.shapes.dataMap.Link.connectionPoint,
-			defaultConnector: { name: "rounded" },
-			defaultRouter: { name: "metro" },
+			defaultConnector: { name: 'rounded' },
+			defaultRouter: { name: 'metro' },
 			restrictTranslate: function(elementView) {
 				let parentId = elementView.model.get('parent');
 				let parentCell = parentId && this.model.getCell(parentId);
 				//let parentCellType = parentCell && parentCell.get('type');
 				let parentBBox = parentCell && parentCell.getBBox();
 				//if(parentCellType === 'dataMap.Lane'){
-					parentBBox = parentBBox || {};
-					parentBBox.y += 50;
-					parentBBox.height -= 50;
+				parentBBox = parentBBox || {};
+				parentBBox.y += 50;
+				parentBBox.height -= 50;
 				//}
 				return parentCell && parentBBox;
 			},
@@ -95,15 +94,23 @@ export default class Graph extends Component {
 				if (sv.model.isLink() || tv.model.isLink()) return false;
 				if (end === 'target') return tv.model.getItemSide(tv.findAttribute('item-id', tm)) !== 'right';
 				return sv.model.getItemSide(sv.findAttribute('item-id', sm)) !== 'left';
+			},
+			highlighting: {
+				default: {
+					name: 'addClass',
+					options: {
+						className: 'active'
+					}
+				}
 			}
 		});
 
-		self.paperScroller = (self.paperScroller = new joint.ui.PaperScroller({
+		self.paperScroller = self.paperScroller = new joint.ui.PaperScroller({
 			el: self.container,
 			paper: self.paper,
 			autoResizePaper: true,
-			cursor: "grab",
-			contentOptions: function(paperScroller) {
+			cursor: 'grab',
+			contentOptions: function() {
 				// let visibleArea = paperScroller.getVisibleArea();
 				let bbox = self.getContentBBox();
 				return {
@@ -115,27 +122,83 @@ export default class Graph extends Component {
 						left: 20,
 						right: 20
 					},
-					allowNewOrigin: "any"
+					allowNewOrigin: 'any'
 				};
 			}
-		}));
+		});
 		self.paper.on('blank:pointerdown', self.paperScroller.startPanning);
 		self.paper.on('cell:pointerdown', (cellView, evt, x, y) => {
 			self.paperScroller.startPanning(evt, x, y);
 		});
 
-		self.paper.on({
-			'cell:mouseover': self.showProperties,
-			'blank:mouseover': self.hideProperties,
+		self.paper.on(
+			{
+				'element:mouseover': self.showProperties,
+				'blank:mouseover': self.hideProperties,
 
-			'cell:pointerdblclick': self.handlerCellDbClick,
-			'blank:pointerdblclick': self.handlerBlankDbClick
-		}, this);
+				'element:pointerdblclick': self.handlerCellDbClick,
+				'blank:pointerdblclick': self.handlerBlankDbClick
+			},
+			this
+		);
+
+		self.paper.on('link:mouseenter', function(cellView) {
+			let cells = [];
+			self.getCellInbounds(self.graph, cellView.model, cells);
+			self.getCellOutbounds(self.graph, cellView.model, cells);
+
+			cells.forEach(function(cell) {
+				cell.findView(self.paper).highlight();
+			}, self);
+		});
+
+		self.paper.on('link:mouseleave link:pointerdown', function(cellView) {
+			let cells = [];
+			self.getCellInbounds(self.graph, cellView.model, cells);
+			self.getCellOutbounds(self.graph, cellView.model, cells);
+
+			cells.forEach(function(cell) {
+				cell.findView(self.paper).unhighlight();
+			}, self);
+		});
 
 		this.paperScroller.center();
 	}
 
-	initLane(){
+	getCellInbounds(graph, cell, result) {
+		result.push(cell);
+		if (cell.isLink()) {
+			this.getCellInbounds(graph, cell.getSourceCell(), result);
+		} else if (cell.isElement()) {
+			graph.getConnectedLinks(cell, { inbound: true }).forEach(link => this.getCellInbounds(graph, link, result));
+		}
+
+		/*let self = this;
+		let inCell = graph.getNeighbors(cell, { inbound: true }) || [];
+		inCell.forEach( out => {
+			inCell.concat(self.getCellInbounds(graph, out));
+		});
+		return [cell].concat(graph.getConnectedLinks(cell, { inbound: true }));*/
+	}
+
+	getCellOutbounds(graph, cell, result) {
+		result.push(cell);
+		if (cell.isLink()) {
+			this.getCellOutbounds(graph, cell.getTargetCell(), result);
+		} else if (cell.isElement()) {
+			graph
+				.getConnectedLinks(cell, { outbound: true })
+				.forEach(link => this.getCellOutbounds(graph, link, result));
+		}
+		/*let self = this;
+		let outCell = graph.getNeighbors(cell, { outbound: true }) || [];
+		outCell.forEach( out => {
+			outCell.concat(self.getCellOutbounds(graph, out));
+		});
+		return [cell].concat(graph.getConnectedLinks(cell, { outbound: true }));*/
+	}
+
+	initLane() {
 		this.createLanes();
 
 		// this.loadExampleData();
@@ -149,7 +212,7 @@ export default class Graph extends Component {
 		// this.updateLanes();
 	}
 
-	getContentBBox(){
+	getContentBBox() {
 		const parent = $(this.container);
 		const width = parent.width();
 		const height = parent.height();
@@ -216,42 +279,84 @@ export default class Graph extends Component {
 			id: 'targetLane',
 		});
 		this.graph.addCell(this.apiLane);*/
-		this.sourceLane = this.createLane({
-			attrs: {
-				headerText: {
-					text: 'SOURCE'
+		this.sourceLane = this.createLane(
+			{
+				attrs: {
+					headerText: {
+						text: 'SOURCE'
+					}
 				}
+			},
+			{
+				id: 'sourceLane'
 			}
-		}, {
-			id: 'sourceLane'
-		});
+		);
 
-		this.tapdataLane = this.createLane({
-			attrs: {
-				headerText: {
-					text: 'Tapdata'
+		this.tapdataLane = this.createLane(
+			{
+				attrs: {
+					headerText: {
+						text: 'Tapdata'
+					}
 				}
+			},
+			{
+				id: 'tapdataLane'
 			}
-		}, {
-			id: 'tapdataLane'
-		});
+		);
 
-		this.apiLane = this.createLane({
-			attrs: {
-				headerText: {
-					text: 'API'
+		this.apiLane = this.createLane(
+			{
+				attrs: {
+					headerText: {
+						text: 'API'
+					}
 				}
+			},
+			{
+				id: 'apiLane'
 			}
-		}, {
-			id: 'apiLane'
-		});
+		);
 
-		this.sourceLane.on("change:size", (element, newSize, opt) => this.setLaneHeaderStyle(this.sourceLane, newSize.width, this.spacing));
-		this.tapdataLane.on("change:size", (element, newSize, opt) => this.setLaneHeaderStyle(this.sourceLane, newSize.width, this.spacing));
-		this.apiLane.on("change:size", (element, newSize, opt) => this.setLaneHeaderStyle(this.sourceLane, newSize.width, this.spacing));
+		this.sourceLane.on('change:size', (element, newSize) =>
+			this.setLaneHeaderStyle(this.sourceLane, newSize.width, this.spacing)
+		);
+		this.tapdataLane.on('change:size', (element, newSize) =>
+			this.setLaneHeaderStyle(this.sourceLane, newSize.width, this.spacing)
+		);
+		this.apiLane.on('change:size', (element, newSize) =>
+			this.setLaneHeaderStyle(this.sourceLane, newSize.width, this.spacing)
+		);
 
 		this.updateLanes();
 		// window.addEventListener("resize", this.updateLanes.bind(this));
+	}
+
+	getCellsBBox(cells, opt) {
+		opt || (opt = {});
+		return _.toArray(cells).reduce(function(memo, cell) {
+			let rect = cell.getBBox(opt);
+			if (!rect) return memo;
+			let angle = cell.angle();
+			if (angle) rect = rect.bbox(angle);
+			if (memo) {
+				return memo.union(rect);
+			}
+			return rect;
+		}, null);
+	}
+
+	resizeLanes(lane, defaultWidth, defaultHeight) {
+		let embedElements = lane.getEmbeddedCells();
+		let width = defaultWidth;
+		let height = defaultHeight;
+		if (embedElements && embedElements.length > 0) {
+			let embedBBox = this.getCellsBBox(embedElements);
+			width = embedBBox.width > defaultWidth ? embedBBox.width : defaultWidth;
+			height = embedBBox.height > defaultHeight ? embedBBox.height : defaultHeight;
+		}
+		lane.resize(width, height);
+		this.setLaneHeaderStyle(lane, width, this.spacing);
 	}
 
 	updateLanes() {
@@ -260,44 +365,66 @@ export default class Graph extends Component {
 		let width = (bbox.w - spacing * 4) / 3;
 		let height = bbox.h - spacing * 2;
 
-		width = width * 0.8;
-		height = height * 0.5;
+		this.resizeLanes(this.sourceLane, width, height);
+		this.sourceLane.position(spacing, spacing, { deep: true });
+		let sourceBBox = this.sourceLane.getBBox();
+		let sourceWidth = sourceBBox.width;
 
-		let sourceWidth = width;
-		let tapdataWidth = width;
-		let apiWidth = width;
+		this.resizeLanes(this.tapdataLane, width, height);
+		this.tapdataLane.position(spacing + sourceWidth + spacing, spacing, { deep: true });
+		let tapdataBBox = this.tapdataLane.getBBox();
+		let tapdataWidth = tapdataBBox.width;
 
-		this.sourceLane.resize(sourceWidth, height);
-		this.sourceLane.position(spacing, spacing);
-		this.setLaneHeaderStyle(this.sourceLane, sourceWidth, spacing);
+		this.resizeLanes(this.apiLane, width, height);
+		this.apiLane.position(spacing + sourceWidth + spacing + tapdataWidth + spacing, spacing, { deep: true });
+		let apiBBox = this.apiLane.getBBox();
+		let apiWidth = apiBBox.width;
 
-		this.tapdataLane.resize(tapdataWidth, height);
-		this.tapdataLane.position(spacing + sourceWidth + spacing, spacing);
-		this.setLaneHeaderStyle(this.tapdataLane, tapdataWidth, spacing);
-
-		this.apiLane.resize(apiWidth, height);
-		this.apiLane.position(spacing + sourceWidth + spacing + tapdataWidth + spacing, spacing);
-		this.setLaneHeaderStyle(this.apiLane, apiWidth, spacing);
+		let maxHeight = [sourceBBox.height, tapdataBBox.height, apiBBox.height].sort((a, b) => b - a)[0];
+		this.sourceLane.resize(sourceWidth, maxHeight);
+		this.tapdataLane.resize(tapdataWidth, maxHeight);
+		this.apiLane.resize(apiWidth, maxHeight);
 	}
 
-	fitEmbeds(opts){
-
+	fitEmbeds(opts) {
 		this.updateElementHeader();
 
-		joint.layout.DirectedGraph.layout(this.graph, Object.assign({
-			setLinkVertices: false,
-			rankDir: "LR",
-			marginX: 100,
-			marginY: 100,
-			// resizeToFit: true,
-			nodeSep: 20,
-			edgeSep: 50,
-			rankSep: 80,
-			// ranker: 'tight-tree',
-			// align: "UL",
-			resizeClusters: true,
-			clusterPadding: { top: 50, left: 35, right: 35, bottom: 20 }
-		}, opts || {}));
+		joint.layout.DirectedGraph.layout(
+			this.graph,
+			Object.assign(
+				{
+					setLinkVertices: false,
+					rankDir: 'LR',
+					marginX: 100,
+					marginY: 100,
+					// resizeToFit: true,
+					nodeSep: 20,
+					edgeSep: 50,
+					rankSep: 80,
+					// ranker: 'tight-tree',
+					// align: "UL",
+					resizeClusters: true,
+					clusterPadding: { top: 50, left: 35, right: 35, bottom: 20 }
+					/*setPosition: function(el, position){
+				el.transition('position/x', position.x, {
+					delay: 100,
+					duration: 500,
+					timingFunction: function(t) { return t*t; },
+					valueFunction: function(a, b) { return function(t) { return a + (b - a) * t }}
+				});
+				el.transition('position/y', position.y, {
+					delay: 100,
+					duration: 500,
+					timingFunction: function(t) { return t*t; },
+					valueFunction: function(a, b) { return function(t) { return a + (b - a) * t }}
+				});
+			}*/
+				},
+				opts || {}
+			)
+		);
+
+		this.updateLanes();
 
 		/*let embedOpts = {
 			deep: true,
@@ -320,23 +447,20 @@ export default class Graph extends Component {
 		/*this.paper.scaleContentToFit({
 			top: 240, bottom: 240, left: 240, right: 240
 		});*/
-		this.paperScroller.centerContent({padding: {top: 200, bottom: 200, left: 200, right: 200}});
-
+		this.paperScroller.centerContent({ padding: { top: 200, bottom: 200, left: 200, right: 200 } });
 	}
 
-	updateElementHeader(){
+	updateElementHeader() {
 		this.graph.getCells().forEach(cell => {
-			if(!cell.isElement())
-				return;
+			if (!cell.isElement()) return;
 
-			if(cell.get('type') === 'dataMap.Lane')
-				return;
+			if (cell.get('type') === 'dataMap.Lane') return;
 
 			let embedElements = cell.getEmbeddedCells();
-			if(embedElements && embedElements.length > 0) {
+			if (embedElements && embedElements.length > 0) {
 				cell.attr({
 					body: {
-						"fill-opacity": 0.3
+						'fill-opacity': 0.3
 					},
 					image: {
 						visibility: 'hidden'
@@ -353,142 +477,177 @@ export default class Graph extends Component {
 		});
 	}
 
-	setLaneHeaderStyle(lane, width, spacing){
+	setLaneHeaderStyle(lane, width, spacing) {
 		// log("DataMap.Graph.setLaneHeaderStyle", lane, width, spacing);
 		lane.attr({
 			header: {
 				x: spacing,
 				y: spacing,
-				refWidth: `${(width - spacing * 2) / width * 100}%`,
+				refWidth: `${((width - spacing * 2) / width) * 100}%`,
 				width: width - spacing * 2
 			},
 			headerText: {
-				refY: spacing + 15,
+				refY: spacing + 15
 				//text: `${(width - spacing * 2) / width * 100}%`
 			}
 		});
 	}
 
-	createLane(attrs, opts){
-		let lane = new joint.shapes.dataMap.Lane(_.merge({
-			size: {
-				width: 200,
-				height: 200
-			},
-			attrs: {
-				headerText: {
-					text: 'API'
-				}
-			}
-		}, attrs), opts);
+	createLane(attrs, opts) {
+		let lane = new joint.shapes.dataMap.Lane(
+			_.merge(
+				{
+					size: {
+						width: 200,
+						height: 200
+					},
+					attrs: {
+						headerText: {
+							text: 'API'
+						}
+					}
+				},
+				attrs
+			),
+			opts
+		);
 		this.graph.addCell(lane);
 		return lane;
 	}
 
 	createLink(source, target) {
-		if(this.graph.getCell(source) && this.graph.getCell(target))
-		return new joint.shapes.dataMap.Link({
-			source: {
-				id: source
-			},
-			target: {
-				id: target
-			}
-		}).addTo(this.graph);
+		if (this.graph.getCell(source) && this.graph.getCell(target))
+			return new joint.shapes.dataMap.Link({
+				source: {
+					id: source
+				},
+				target: {
+					id: target
+				}
+			}).addTo(this.graph);
 		return null;
 	}
 
 	createCell(cellConfig, cellData) {
 		let CellConstructor = _.get(joint.shapes, cellConfig.type);
 		let opts = cellConfig.attrs || {};
-		if(cellData.id)
-			opts.id = cellData.id;
-		let cell = new CellConstructor(_.merge({
-			attrs: {
-				label: {
-					text: cellData.name
-				}
-			},
-			properties: _.assignWith(cellData.properties || {}, {name: cellData.name}, (oldValue, newValue, key, obj, src) => {
-				return oldValue || newValue || "";
-			})
-		}, opts));
+		if (cellData.id) opts.id = cellData.id;
+		let cell = new CellConstructor(
+			_.merge(
+				{
+					attrs: {
+						label: {
+							text: cellData.name
+						}
+					},
+					properties: _.assignWith(
+						cellData.properties || {},
+						{ name: cellData.name },
+						(oldValue, newValue) => {
+							return oldValue || newValue || '';
+						}
+					)
+				},
+				opts
+			)
+		);
 
-		if(cellData.connection)
-			cell.set('connectionId', cellData.connection);
+		if (cellData.connection) cell.set('connectionId', cellData.connection);
 
 		cell.position(cellConfig.x || 20, cellConfig.y || 50).addTo(this.graph);
 		return cell;
 	}
 
-	loadExampleData(){
+	loadExampleData() {
 		var order = new joint.shapes.mapping.Record({
-			items: [[{
-				id: 'file',
-				label: 'File: (default)',
-				icon: 'images/file.svg',
-				highlighted: true,
-				items: [{
-					id: 'order',
-					label: 'Order',
-					icon: 'images/document.svg',
-					items: [{
-						id: 'order_id',
-						label: 'id',
-						icon: 'images/document.svg',
-					}, {
-						id: 'order_name',
-						label: 'name',
-						icon: 'images/document.svg',
-					}, {
-						id: 'order_email',
-						label: 'email',
-						icon: 'images/document.svg',
-					}, {
-						id: 'order_entry_date',
-						label: 'entry_date',
+			items: [
+				[
+					{
+						id: 'file',
+						label: 'File: (default)',
 						icon: 'images/file.svg',
-						items: [{
-							id: 'entry_date_year',
-							label: 'year',
-							icon: 'images/document.svg',
-						}, {
-							id: 'entry_date_month',
-							label: 'month',
-							icon: 'images/document.svg',
-						}, {
-							id: 'entry_date_day',
-							label: 'day',
-							icon: 'images/document.svg',
-						}]
-					}, {
-						id: 'address',
-						label: 'address',
-						icon: 'images/file.svg',
-						items: [{
-							id: 'address_city',
-							label: 'city',
-							icon: 'images/document.svg'
-						}, {
-							id: 'address_street',
-							label: 'street',
-							icon: 'images/document.svg'
-						}, {
-							id: 'address_number',
-							label: 'number',
-							icon: 'images/document.svg'
-						}, {
-							id: 'address_shipping',
-							label: 'shipping',
-							icon: 'images/document.svg'
-						}, {
-							id: 'address_billing',
-							label: 'billing',
-							icon: 'images/document.svg'
-						}]
-					}]
-				}]
-			}]]
+						highlighted: true,
+						items: [
+							{
+								id: 'order',
+								label: 'Order',
+								icon: 'images/document.svg',
+								items: [
+									{
+										id: 'order_id',
+										label: 'id',
+										icon: 'images/document.svg'
+									},
+									{
+										id: 'order_name',
+										label: 'name',
+										icon: 'images/document.svg'
+									},
+									{
+										id: 'order_email',
+										label: 'email',
+										icon: 'images/document.svg'
+									},
+									{
+										id: 'order_entry_date',
+										label: 'entry_date',
+										icon: 'images/file.svg',
+										items: [
+											{
+												id: 'entry_date_year',
+												label: 'year',
+												icon: 'images/document.svg'
+											},
+											{
+												id: 'entry_date_month',
+												label: 'month',
+												icon: 'images/document.svg'
+											},
+											{
+												id: 'entry_date_day',
+												label: 'day',
+												icon: 'images/document.svg'
+											}
+										]
+									},
+									{
+										id: 'address',
+										label: 'address',
+										icon: 'images/file.svg',
+										items: [
+											{
+												id: 'address_city',
+												label: 'city',
+												icon: 'images/document.svg'
+											},
+											{
+												id: 'address_street',
+												label: 'street',
+												icon: 'images/document.svg'
+											},
+											{
+												id: 'address_number',
+												label: 'number',
+												icon: 'images/document.svg'
+											},
+											{
+												id: 'address_shipping',
+												label: 'shipping',
+												icon: 'images/document.svg'
+											},
+											{
+												id: 'address_billing',
+												label: 'billing',
+												icon: 'images/document.svg'
+											}
+										]
+									}
+								]
+							}
+						]
+					}
+				]
+			]
 		});
 		order.setName('Order');
 		order.position(780, 200);
@@ -496,91 +655,115 @@ export default class Graph extends Component {
 
 		var nanonull = new joint.shapes.mapping.Record({
 			items: [
-				[{
-					id: 'orders',
-					label: 'orders',
-					icon: 'images/file.svg',
-					items: [{
-						id: 'order_id',
-						label: 'id',
-						icon: 'images/document.svg',
-					}, {
-						id: 'order_created_at',
-						label: 'created_at',
-						icon: 'images/document.svg',
-					}, {
-						id: 'order_updated_at',
-						label: 'updated_at',
-						icon: 'images/document.svg',
-					}, {
-						id: 'orderedproducts',
-						label: 'orderedproducts',
+				[
+					{
+						id: 'orders',
+						label: 'orders',
 						icon: 'images/file.svg',
-						group: 'disabled'
-					}, {
-						id: 'users',
-						label: 'users',
-						icon: 'images/file.svg',
-						items: [{
-							id: 'user_id',
-							label: 'id',
-							icon: 'images/document.svg',
-						}, {
-							id: 'user_first_name',
-							label: 'first_name',
-							icon: 'images/document.svg',
-						}, {
-							id: 'user_last_name',
-							label: 'last_name',
-							icon: 'images/document.svg',
-						}, {
-							id: 'user_email',
-							label: 'email',
-							icon: 'images/document.svg',
-						}, {
-							id: 'user_created_at',
-							label: 'created_at',
-							icon: 'images/document.svg',
-						}, {
-							id: 'user_updated_at',
-							label: 'updated_at',
-							icon: 'images/document.svg',
-						}, {
-							id: 'addresses',
-							label: 'addresses',
-							icon: 'images/file.svg',
-							items: [{
-								id: 'address_id',
+						items: [
+							{
+								id: 'order_id',
 								label: 'id',
-								icon: 'images/document.svg',
-							}, {
-								id: 'address_type',
-								label: 'type',
-								icon: 'images/document.svg',
-							}, {
-								id: 'address_city',
-								label: 'city',
-								icon: 'images/document.svg',
-							}, {
-								id: 'address_street',
-								label: 'street',
-								icon: 'images/document.svg',
-							}, {
-								id: 'address_number',
-								label: 'number',
-								icon: 'images/document.svg',
-							}, {
-								id: 'address_is_shipping',
-								label: 'is_shipping',
-								icon: 'images/document.svg',
-							}, {
-								id: 'address_is_billing',
-								label: 'is_billing',
-								icon: 'images/document.svg',
-							}]
-						}]
-					}]
-				}]
+								icon: 'images/document.svg'
+							},
+							{
+								id: 'order_created_at',
+								label: 'created_at',
+								icon: 'images/document.svg'
+							},
+							{
+								id: 'order_updated_at',
+								label: 'updated_at',
+								icon: 'images/document.svg'
+							},
+							{
+								id: 'orderedproducts',
+								label: 'orderedproducts',
+								icon: 'images/file.svg',
+								group: 'disabled'
+							},
+							{
+								id: 'users',
+								label: 'users',
+								icon: 'images/file.svg',
+								items: [
+									{
+										id: 'user_id',
+										label: 'id',
+										icon: 'images/document.svg'
+									},
+									{
+										id: 'user_first_name',
+										label: 'first_name',
+										icon: 'images/document.svg'
+									},
+									{
+										id: 'user_last_name',
+										label: 'last_name',
+										icon: 'images/document.svg'
+									},
+									{
+										id: 'user_email',
+										label: 'email',
+										icon: 'images/document.svg'
+									},
+									{
+										id: 'user_created_at',
+										label: 'created_at',
+										icon: 'images/document.svg'
+									},
+									{
+										id: 'user_updated_at',
+										label: 'updated_at',
+										icon: 'images/document.svg'
+									},
+									{
+										id: 'addresses',
+										label: 'addresses',
+										icon: 'images/file.svg',
+										items: [
+											{
+												id: 'address_id',
+												label: 'id',
+												icon: 'images/document.svg'
+											},
+											{
+												id: 'address_type',
+												label: 'type',
+												icon: 'images/document.svg'
+											},
+											{
+												id: 'address_city',
+												label: 'city',
+												icon: 'images/document.svg'
+											},
+											{
+												id: 'address_street',
+												label: 'street',
+												icon: 'images/document.svg'
+											},
+											{
+												id: 'address_number',
+												label: 'number',
+												icon: 'images/document.svg'
+											},
+											{
+												id: 'address_is_shipping',
+												label: 'is_shipping',
+												icon: 'images/document.svg'
+											},
+											{
+												id: 'address_is_billing',
+												label: 'is_billing',
+												icon: 'images/document.svg'
+											}
+										]
+									}
+								]
+							}
+						]
+					}
+				]
 			]
 		});
 		nanonull.setName('Nanonull');
@@ -588,34 +771,32 @@ export default class Graph extends Component {
 		nanonull.addTo(this.graph);
 
 		var links = [
-
 			// order
 			new joint.shapes.dataMap.Link({
 				source: { id: nanonull.id, port: 'order_id' },
 				target: { id: order.id, port: 'order_id' },
 				anchor: { name: 'mapping' },
-				connectionPoint: { name: 'anchor' },
+				connectionPoint: { name: 'anchor' }
 			}),
 			new joint.shapes.dataMap.Link({
 				source: { id: nanonull.id, port: 'user_email' },
 				target: { id: order.id, port: 'order_email' },
 				anchor: { name: 'mapping' },
-				connectionPoint: { name: 'anchor' },
+				connectionPoint: { name: 'anchor' }
 			}),
 			new joint.shapes.dataMap.Link({
 				source: { id: nanonull.id, port: 'address' },
 				target: { id: order.id, port: 'address' },
 				anchor: { name: 'mapping' },
-				connectionPoint: { name: 'anchor' },
-			}),
+				connectionPoint: { name: 'anchor' }
+			})
 		];
 
-		links.forEach((link) => {
+		links.forEach(link => {
 			link.addTo(this.graph);
 		});
 
 		function linkAction(link) {
-
 			var dialog = new joint.ui.Dialog({
 				title: 'Confirmation',
 				width: 300,
@@ -663,113 +844,112 @@ export default class Graph extends Component {
 		});
 	}
 
-	renderCells(level, cells){
-		log("DataMap.renderCells", cells);
+	renderCells(level, cells) {
+		log('DataMap.renderCells', cells);
 
 		this.paper.unfreeze();
 		this.graph.clear();
 
-		if( cells.length <= 1){
+		if (cells.length <= 1) {
 			this.paper.freeze();
 			return;
 		}
 
-		if(level <= 3)
-			this._renderCells(level, cells);
-		else if( level === 4)
-			this._renderFieldMapping(level, cells);
+		if (level <= 3) this._renderCells(level, cells);
+		else if (level === 4) this._renderFieldMapping(level, cells);
 
 		// this.loadExampleData();
 
 		this.paper.freeze();
 
-		log("DataMap.graph.getData", this.getData());
+		log('DataMap.graph.getData', this.getData());
 	}
 
-	_renderFieldMapping(level, stages){
-
+	_renderFieldMapping(level, stages) {
 		let links = [];
 
-		stages.forEach((stage) => {
-
-			if(stage.type === 'link'){
+		stages.forEach(stage => {
+			if (stage.type === 'link') {
 				links.push(stage);
 				return;
 			}
 
-			if(stage.type === 'api'){
-				let cell = this.createCell({
-					type: 'dataMap.API',
-					x: 20,
-					y: 20
-				}, stage);
+			if (stage.type === 'api') {
+				let cell = this.createCell(
+					{
+						type: 'dataMap.API',
+						x: 20,
+						y: 20
+					},
+					stage
+				);
 				cell.addTo(this.graph);
 				return;
 			}
 
-			if( !stage.stageId || !stage.fields)
-				return;
+			if (!stage.stageId || !stage.fields) return;
 
 			let fields = [];
-			let tableName = stage.tableName || (stage.fields && stage.fields.length > 0 ? stage.fields[0].table_name : "");
+			let tableName =
+				stage.tableName || (stage.fields && stage.fields.length > 0 ? stage.fields[0].table_name : '');
+			stage.tableName = stage.tableName || tableName;
+			fields = this.convertRecords(stage);
+			/*let schema = convertSchemaToTreeData();
 			(stage.fields || []).forEach(field => {
-
 				fields.push({
 					id: field.id,
 					label: `${field.field_name} (${field.javaType})`,
 					icon: "static/editor/file.svg",
 				});
+			});*/
 
-			});
-
-			let cell = new joint.shapes.mapping.Record({
-				id: stage.stageId,
-				size: { width: 300 },
-				attrs: {
-					headerLabel: {
-						text: tableName || ""
-					}
+			let cell = new joint.shapes.mapping.Record(
+				{
+					id: stage.stageId,
+					size: { width: 300 },
+					attrs: {
+						headerLabel: {
+							text: tableName || ''
+						}
+					},
+					items: [fields]
 				},
-				items: [fields]
-			}, {
-				id: stage.stageId
-			});
+				{
+					id: stage.stageId
+				}
+			);
 			this.graph.addCell(cell);
 			cell.autoresize();
 		});
 
-		if( links.length > 0){
+		if (links.length > 0) {
 			links.forEach(link => {
-
-				if(_.isObject(link.source) && link.source.port && link.source.id)
+				if (_.isObject(link.source) && link.source.port && link.source.id)
 					this.ensurePort(link.source.id, link.source.port);
 
-				if(_.isObject(link.target) && link.target.port && link.target.id)
+				if (_.isObject(link.target) && link.target.port && link.target.id)
 					this.ensurePort(link.target.id, link.target.port);
 
 				let sourceCell = this.graph.getCell(_.isObject(link.source) ? link.source.id : link.source);
 				let targetCell = this.graph.getCell(_.isObject(link.target) ? link.target.id : link.target);
 
-				if(sourceCell && targetCell){
-
+				if (sourceCell && targetCell) {
 					// let sourceCellType = sourceCell.get('type');
 					let targetCellType = targetCell.get('type');
 					let linkCell;
-					if( targetCellType === "mapping.Record"){
+					if (targetCellType === 'mapping.Record') {
 						linkCell = new joint.shapes.dataMap.Link();
 
 						let linkConfig = {
 							anchor: { name: 'mapping' },
-							connectionPoint: { name: 'anchor' },
+							connectionPoint: { name: 'anchor' }
 						};
 						let linkSourceConfig = _.cloneDeep(linkConfig);
-						if(link.source.port)
-							linkSourceConfig.port = link.source.port;
+						if (link.source.port) linkSourceConfig.port = link.source.port;
 						linkCell.source(sourceCell, linkSourceConfig);
 
 						let linkTargetConfig = _.cloneDeep(linkConfig);
-						if(link.target.port)
-							linkTargetConfig.port = link.target.port;
+						if (link.target.port) linkTargetConfig.port = link.target.port;
 						linkCell.target(targetCell, linkTargetConfig);
 
 						/*linkCell.connector({
@@ -890,7 +1070,41 @@ export default class Graph extends Component {
 		// this.graph.addCell(cell);
 	}
 
-	ensurePort(cellId, portId){
+	convertRecords(stage) {
+		if (!stage) return [];
+
+		let schema = convertSchemaToTreeData({
+			table_name: stage.tableName,
+			meta_type: 'collection',
+			fields: stage.fields
+		});
+
+		function _convert(parent, fields) {
+			if (Array.isArray(fields)) {
+				fields.forEach(field => _convert(parent, field));
+			} else if (_.isObject(fields)) {
+				parent.items = parent.items || [];
+				let record = {
+					id: fields.id,
+					label: `${fields.label}    (${fields.type})`,
+					icon: 'static/editor/file.svg'
+				};
+				if (fields.children && fields.children.length > 0) {
+					record.icon = '';
+					record.items = [];
+					_convert(record, fields.children);
+				}
+				parent.items.push(record);
+			}
+		}
+
+		let root = {};
+		_convert(root, schema.fields);
+		log('DataMap.graph.convertRecords', root.items);
+		return root.items;
+	}
+
+	ensurePort() {
 		/*let cellModel = this.graph.getCell(cellId);
 		if( cellModel ){
 			cellModel.addPort({
@@ -899,55 +1113,75 @@ export default class Graph extends Component {
 		}*/
 	}
 
-	_renderCells(level, cells){
-
+	_renderCells(level, cells) {
 		this.initLane();
 
 		cells = cells || [];
 		let self = this;
 
 		let cellTypeMapping = {
-			"database_group": {
-				type: "dataMap.Classification", attrs: null, x: 20, y: 50
+			database_group: {
+				type: 'dataMap.Classification',
+				attrs: null,
+				x: 20,
+				y: 50
 			},
-			"database": {
-				type: "dataMap.Database", attrs: null, x: 20, y: 50
+			database: {
+				type: 'dataMap.Database',
+				attrs: null,
+				x: 20,
+				y: 50
 			},
-			"tapdata": {
-				type: "dataMap.Tapdata", attrs: null, x: 20, y: 50
+			tapdata: {
+				type: 'dataMap.Tapdata',
+				attrs: null,
+				x: 20,
+				y: 50
 			},
-			"api": {
-				type: "dataMap.API", attrs: null, x: 20, y: 50
+			api: {
+				type: 'dataMap.API',
+				attrs: null,
+				x: 20,
+				y: 50
 			},
-			"api_group": {
-				type: "dataMap.Classification", attrs: null, x: 20, y: 50
+			api_group: {
+				type: 'dataMap.Classification',
+				attrs: null,
+				x: 20,
+				y: 50
 			},
-			"table": {
-				type: "dataMap.Table", attrs: null, x: 20, y: 50
+			table: {
+				type: 'dataMap.Table',
+				attrs: null,
+				x: 20,
+				y: 50
 			},
-			"model": {
-				type: "dataMap.API", attrs: null, x: 20, y: 50
+			model: {
+				type: 'dataMap.API',
+				attrs: null,
+				x: 20,
+				y: 50
 			}
 		};
 
 		let links = [];
 		let idMap = {};
 
-		idMap["sourceLane"] = this.sourceLane.id;
-		idMap["tapdataLane"] = this.tapdataLane.id;
-		idMap["apiLane"] = this.apiLane.id;
+		idMap['sourceLane'] = this.sourceLane.id;
+		idMap['tapdataLane'] = this.tapdataLane.id;
+		idMap['apiLane'] = this.apiLane.id;
 
-		cells.forEach((cellData) => {
+		cells.forEach(cellData => {
 			let cell = null;
-			if(["link"].includes(cellData.type)) {
+			if (['link'].includes(cellData.type)) {
 				links.push(cellData);
-			} else if(cellTypeMapping[cellData.type]){
+			} else if (cellTypeMapping[cellData.type]) {
 				cell = self.createCell(cellTypeMapping[cellData.type], cellData);
 			} else {
-				log("Not implement node " + cellData.type);
+				log('Not implement node ' + cellData.type);
 			}
 
-			if(cell) {
+			if (cell) {
 				idMap[cellData.id] = cell.id;
 			}
 
@@ -968,35 +1202,36 @@ export default class Graph extends Component {
 				cell.position(x, y);
 				lane.embed(cell);
 			}*/
+		});
 
-		} );
-
-		links.forEach((cellData) => {
+		links.forEach(cellData => {
 			self.createLink(idMap[cellData.source], idMap[cellData.target]);
 		});
 
-		cells.filter(c => !!c.parent).forEach(cellData => {
-			let parentId = idMap[cellData.parent] || '';
-			let parentCell = self.graph.getCell(parentId);
-			let cell = self.graph.getCell(idMap[cellData.id]);
-			if(parentCell && cell){
-				parentCell.embed(cell);
-			}
-		});
+		cells
+			.filter(c => !!c.parent)
+			.forEach(cellData => {
+				let parentId = idMap[cellData.parent] || '';
+				let parentCell = self.graph.getCell(parentId);
+				let cell = self.graph.getCell(idMap[cellData.id]);
+				if (parentCell && cell) {
+					parentCell.embed(cell);
+				}
+			});
 
 		self.graph.getCells().forEach(cell => {
 			let embeddedCells = cell.getEmbeddedCells();
 
-			if( embeddedCells.length > 0){
+			if (embeddedCells.length > 0) {
 				cell.attr({
 					body: {
-						"fill-opacity": 0.2,
+						'fill-opacity': 0.2
 					},
 					label: {
 						rx: 5,
 						ry: 5,
-						refWidth: "10%",
-						refHeight: "10%"
+						refWidth: '10%',
+						refHeight: '10%'
 					}
 				});
 			}
@@ -1007,53 +1242,54 @@ export default class Graph extends Component {
 		// this.updateLanes();
 	}
 
-	showProperties(cellView, e){
+	showProperties(cellView, e) {
 		// log("DataMap.Graph.showProperties", cellView, e);
 
 		let cell = cellView.model;
 		let properties = cell.get('properties');
-		if(!properties || Object.keys(properties).length === 0){
+		if (!properties || Object.keys(properties).length === 0) {
 			this.hideProperties(cellView, e);
 			return;
 		}
 
 		let bbox = cellView.getBBox();
 		let dom = this.paper.$el.find('.properties-info-container');
-		if(!dom || dom.length === 0) {
+		if (!dom || dom.length === 0) {
 			dom = $(`<div class="properties-info-container"></div>`);
 			this.paper.$el.append(dom);
 		}
+		/*let position = cell.position();
+		let paperPoint = this.paper.localToPaperPoint(position.x, position.y);*/
 		dom.css('left', `${bbox.x + bbox.width + 10}px`);
-		dom.css('top', `${bbox.y - 15}px`);
+		dom.css('top', `${bbox.y + bbox.height / 2 - 30}px`);
 		dom.find('>*').remove();
 		Object.keys(properties).forEach(key => {
-			let label = i18n.t("dataMap.properties." + key) || key;
+			let label = i18n.t('dataMap.properties.' + key) || key;
 			let value = Array.isArray(properties[key]) ? properties[key].join(', ') : properties[key];
 			dom.append($(`<div>${label}: ${value}</div>`));
 		});
 	}
 
-	hideProperties(cellView, e){
-		// log("DataMap.Graph.hideProperties", cellView, e);
+	hideProperties(cellView, e) {
+		log('DataMap.Graph.hideProperties', cellView, e);
 		this.paper.$el.find('.properties-info-container').remove();
 	}
 
-	handlerCellDbClick(cellView, evt){
-		log("DataMap.Graph.handlerCellDbClick", cellView, evt);
+	handlerCellDbClick(cellView, evt) {
+		log('DataMap.Graph.handlerCellDbClick', cellView, evt);
 		let cellModel = cellView.model;
-		if(!cellModel.isElement())
-			return;
+		if (!cellModel.isElement()) return;
 		let cellType = cellModel.get('type');
-		if(['dataMap.Classification'].includes(cellType)){
+		if (['dataMap.Classification'].includes(cellType)) {
 			this.emit('drill_down', 2);
-		} else if(['dataMap.Database'].includes(cellType)){
+		} else if (['dataMap.Database'].includes(cellType)) {
 			this.emit('drill_down', 3);
-		} else if(['dataMap.Table'].includes(cellType)) {
+		} else if (['dataMap.Table'].includes(cellType)) {
 			let connectionId = cellModel.get('connectionId');
 			let properties = cellModel.get('properties') || {};
 			let originalName = properties.original_name || '';
 			this.emit('drill_down', 4, connectionId, originalName);
-		} else if(['dataMap.Model'].includes(cellType)){
+		} else if (['dataMap.Model'].includes(cellType)) {
 			// non-handler
 		}
 	}
@@ -1066,12 +1302,11 @@ export default class Graph extends Component {
 		return this.graph.toJSON();
 	}
 
-	zoomIn(){
-		this.paperScroller.zoom(0.2, {max: 4});
+	zoomIn() {
+		this.paperScroller.zoom(0.2, { max: 4 });
 	}
 
-	zoomOut(){
-		this.paperScroller.zoom(-0.2, {min: 0.2});
+	zoomOut() {
+		this.paperScroller.zoom(-0.2, { min: 0.2 });
 	}
-
 }

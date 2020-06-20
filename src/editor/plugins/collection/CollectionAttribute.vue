@@ -4,7 +4,7 @@
 		<div class="nodeBody">
 			<div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-					{{ $t("dataFlow.button.viewMonitoring") }}
+					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div>
 			<el-form
@@ -22,20 +22,29 @@
 					:rules="rules"
 					required
 				>
-					<el-select
-						filterable
-						v-model="model.connectionId"
-						:placeholder="$t('editor.cell.data_node.collection.form.database.placeholder')"
-						@change="handlerConnectionChange"
-						size="mini"
-					>
-						<el-option
-							v-for="(item, idx) in databases"
-							:label="`${item.name} (${item.status})`"
-							:value="item.id"
-							v-bind:key="idx"
-						></el-option>
-					</el-select>
+					<div style="display:flex;">
+						<el-select
+							filterable
+							v-model="model.connectionId"
+							:placeholder="$t('editor.cell.data_node.collection.form.database.placeholder')"
+							@change="handlerConnectionChange"
+							size="mini"
+						>
+							<el-option
+								v-for="(item, idx) in databases"
+								:label="`${item.name} (${item.status})`"
+								:value="item.id"
+								v-bind:key="idx"
+							></el-option>
+						</el-select>
+						<el-button
+							size="mini"
+							icon="el-icon-plus"
+							style="padding: 7px;margin-left: 7px"
+							@click="$refs.databaseForm.show({ whiteList: ['mongodb'] })"
+						></el-button>
+						<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
+					</div>
 				</el-form-item>
 
 				<el-form-item
@@ -116,20 +125,21 @@
 </template>
 
 <script>
-import { convertSchemaToTreeData } from "../../util/Schema";
-import Entity from "../link/Entity";
-import _ from "lodash";
-import factory from "../../../api/factory";
-let connectionApi = factory("connections");
+import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
+import { convertSchemaToTreeData } from '../../util/Schema';
+import Entity from '../link/Entity';
+import _ from 'lodash';
+import factory from '../../../api/factory';
+let connectionApi = factory('connections');
 let editorMonitor = null;
 export default {
-	name: "Collection",
-	components: { Entity },
+	name: 'Collection',
+	components: { Entity, DatabaseForm },
 	props: {
 		database_types: {
 			type: Array,
 			default: function() {
-				return ["mongodb"];
+				return ['mongodb'];
 			}
 		}
 	},
@@ -138,16 +148,16 @@ export default {
 		model: {
 			deep: true,
 			handler() {
-				this.$emit("dataChanged", this.getData());
+				this.$emit('dataChanged', this.getData());
 			}
 		},
-		"model.connectionId": {
+		'model.connectionId': {
 			immediate: true,
 			handler() {
 				this.loadDataModels(this.model.connectionId);
 			}
 		},
-		"model.tableName": {
+		'model.tableName': {
 			immediate: true,
 			handler() {
 				if (this.schemas.length > 0) {
@@ -159,13 +169,13 @@ export default {
 								: {
 										table_name: this.model.tableName,
 										cdc_enabled: true,
-										meta_type: "collection",
+										meta_type: 'collection',
 										fields: []
 								  };
 						/* let fields = schema.fields || [];
 							let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
 							if( primaryKeys) this.model.primaryKeys = primaryKeys; */
-						this.$emit("schemaChange", _.cloneDeep(schema));
+						this.$emit('schemaChange', _.cloneDeep(schema));
 					}
 				}
 			}
@@ -184,7 +194,7 @@ export default {
 					let unique = {};
 					primaryKeys.forEach(key => (unique[key] = 1));
 					primaryKeys = Object.keys(unique);
-					if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(",");
+					if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
 				}
 			}
 		}
@@ -197,10 +207,10 @@ export default {
 			schemas: [],
 
 			rules: {
-				connectionId: [{ required: true, trigger: "blur", message: `Please select database` }],
+				connectionId: [{ required: true, trigger: 'blur', message: `Please select database` }],
 				filter: {
-					type: "string",
-					message: this.$t("editor.cell.data_node.collection.form.filter.invalidJSON"),
+					type: 'string',
+					message: this.$t('editor.cell.data_node.collection.form.filter.invalidJSON'),
 					validator: (rule, value) => {
 						if (value) {
 							try {
@@ -217,13 +227,13 @@ export default {
 			isSourceDataNode: false,
 			visible: false,
 			model: {
-				connectionId: "",
-				databaseType: "",
-				tableName: "",
+				connectionId: '',
+				databaseType: '',
+				tableName: '',
 				dropTable: false,
-				type: "collection",
-				primaryKeys: "",
-				filter: "",
+				type: 'collection',
+				primaryKeys: '',
+				filter: '',
 				initialSyncOrder: 1
 			},
 
@@ -276,10 +286,10 @@ export default {
 		},
 
 		handlerConnectionChange() {
-			this.model.tableName = "";
+			this.model.tableName = '';
 			for (let i = 0; i < this.databases.length; i++) {
 				if (this.model.connectionId === this.databases[i].id) {
-					this.model.databaseType = this.databases[i]["database_type"];
+					this.model.databaseType = this.databases[i]['database_type'];
 				}
 			}
 		},
@@ -295,11 +305,11 @@ export default {
 				initialSyncOrder: 1
 			};
 			if (data) {
-				Object.keys(data).forEach(key => (this.model[key] = data[key]));
+				_.merge(this.model, data);
 			}
 			this.isSourceDataNode = isSourceDataNode;
 			this.mergedSchema = cell.getOutputSchema();
-			cell.on("change:outputSchema", () => {
+			cell.on('change:outputSchema', () => {
 				this.mergedSchema = cell.getOutputSchema();
 			});
 
@@ -307,7 +317,7 @@ export default {
 		},
 		getData() {
 			let result = _.cloneDeep(this.model);
-			result.name = result.tableName || "Collection";
+			result.name = result.tableName || 'Collection';
 			if (this.isSourceDataNode) {
 				delete result.dropTable;
 			}

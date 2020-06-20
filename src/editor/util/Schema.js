@@ -3,27 +3,27 @@
  * @date 3/13/20
  * @description
  */
-import _ from "lodash";
-import log from "../../log";
+import _ from 'lodash';
+import log from '../../log';
 const allColorList = [
-	"#990066",
-	"#FFCC00",
-	"#CC0033",
-	"#006699",
-	"#009999",
-	"#FF9933",
-	"#FFCCCC",
-	"#FF6600",
-	"#303F9F",
-	"#795548",
-	"#99CCFF",
-	"#FFFFCC",
-	"#0099CC",
-	"#009966",
-	"#CC9999",
-	"#99CCFF",
-	"#333300",
-	"#33CC33"
+	'#990066',
+	'#FFCC00',
+	'#CC0033',
+	'#006699',
+	'#009999',
+	'#FF9933',
+	'#FFCCCC',
+	'#FF6600',
+	'#303F9F',
+	'#795548',
+	'#99CCFF',
+	'#FFFFCC',
+	'#0099CC',
+	'#009966',
+	'#CC9999',
+	'#99CCFF',
+	'#333300',
+	'#33CC33'
 ];
 const tableColors = {};
 const getColor = function(tableName) {
@@ -52,34 +52,35 @@ export const /**
 	 *
 	 */
 	convertSchemaToTreeData = function(schema) {
-		log("Schema.convertSchemaToTreeData", arguments);
+		log('Schema.convertSchemaToTreeData', arguments);
 		if (schema) {
 			let entityData = {
 				name: schema.table_name,
-				type: schema.meta_type || "table",
+				type: schema.meta_type || 'table',
 				fields: []
 			};
 
 			let root = {};
 			let fields = schema.fields || [];
+			fields = _.sortBy(fields, [field => field.table_name + field.field_name]);
 			for (let i = 0; i < fields.length; i++) {
 				let field = fields[i];
 				if (field && field.field_name && field.original_field_name) {
 					// let jsonPath = field.original_field_name.split('.');
-					let jsonPathForFieldName = field.field_name.split(".");
+					let jsonPathForFieldName = field.field_name.split('.');
 					let treeItem = {
 						id:
 							field.id ||
 							`${field.table_name}${
-								field.original_field_name ? "_" + field.original_field_name : ""
-							}`.replace(/\./g, "_"),
+								field.original_field_name ? '_' + field.original_field_name : ''
+							}`.replace(/\./g, '_'),
 						label: jsonPathForFieldName[jsonPathForFieldName.length - 1],
-						type: field.javaType,
+						type: field.javaType || field.java_type,
 						color: getColor(field.table_name),
 						primary_key_position: field.primary_key_position,
-						table_name: field.table_name || "table"
+						table_name: field.table_name || 'table'
 					};
-					_.set(root, "children." + jsonPathForFieldName.join(".children."), treeItem);
+					_.set(root, 'children.' + jsonPathForFieldName.join('.children.'), treeItem);
 				}
 			}
 			let re = function(field) {
@@ -100,7 +101,7 @@ export const /**
 			};
 			sort(root);
 			entityData.fields = root.children;
-			log("Schema.convertSchemaToTreeData.return", entityData);
+			log('Schema.convertSchemaToTreeData.return', entityData);
 			return entityData;
 		} else {
 			return null;
@@ -114,7 +115,7 @@ export const /**
  * @return
  */
 export const mergeSchema = function(targetSchema, sourceSchema, mergeOpts) {
-	log("Schema.mergeSchema", arguments);
+	log('Schema.mergeSchema', arguments);
 
 	if (!sourceSchema || !sourceSchema.table_name || !sourceSchema.fields || sourceSchema.fields.length === 0)
 		return targetSchema;
@@ -122,40 +123,40 @@ export const mergeSchema = function(targetSchema, sourceSchema, mergeOpts) {
 	targetSchema = targetSchema || {};
 	mergeOpts = mergeOpts || {};
 
-	let joinType = mergeOpts.joinType || "upsert";
-	let joinPath = mergeOpts.joinPath || "";
+	let joinType = mergeOpts.joinType || 'upsert';
+	let joinPath = mergeOpts.joinPath || '';
 
 	// targetSchema.table_name = targetSchema.table_name || sourceSchema.table_name || '';
 	targetSchema.fields = targetSchema.fields || [];
 	Object.keys(sourceSchema)
-		.filter(key => !["fields"].includes(key))
+		.filter(key => !['fields'].includes(key))
 		.forEach(key => (targetSchema[key] = targetSchema[key] || sourceSchema[key]));
 
 	let sourceSchemaFields = _.cloneDeep(sourceSchema.fields) || [];
-	if (["append"].includes(joinType) || targetSchema.meta_type === "table") {
+	if (['append'].includes(joinType) || targetSchema.meta_type === 'table') {
 		targetSchema.fields.push(...sourceSchemaFields);
 	} else {
 		let joinFieldName = [];
 
-		joinPath.split(".").forEach(fieldName => {
+		joinPath.split('.').forEach(fieldName => {
 			joinFieldName.push(fieldName);
-			let currentFieldName = joinFieldName.join(".");
+			let currentFieldName = joinFieldName.join('.');
 			let currentFieldType;
 
 			let existsField = targetSchema.fields.filter(field => field.field_name === currentFieldName);
 			if (existsField && existsField.length > 0) {
-				existsField[0].javaType = existsField[0].javaType === "Array" ? "Array" : "Map";
+				existsField[0].javaType = existsField[0].javaType === 'Array' ? 'Array' : 'Map';
 				return;
 			} else if (!currentFieldType) {
-				if (joinPath === currentFieldName) currentFieldType = joinType === "merge_embed" ? "Array" : "Map";
-				else currentFieldType = "Map";
+				if (joinPath === currentFieldName) currentFieldType = joinType === 'merge_embed' ? 'Array' : 'Map';
+				else currentFieldType = 'Map';
 			}
 
 			targetSchema.fields.push({
 				id: uuid(),
 				field_name: currentFieldName,
 				javaType: currentFieldType,
-				data_type: currentFieldType === "Array" ? "ARRAY" : "DOCUMENT",
+				data_type: currentFieldType === 'Array' ? 'ARRAY' : 'DOCUMENT',
 				table_name: sourceSchema.table_name,
 				original_field_name: fieldName,
 				primary_key_position: 0
@@ -165,7 +166,7 @@ export const mergeSchema = function(targetSchema, sourceSchema, mergeOpts) {
 			if (field) {
 				targetSchema.fields.push(
 					Object.assign(field, {
-						field_name: (joinPath ? joinPath + "." : "") + field.field_name
+						field_name: (joinPath ? joinPath + '.' : '') + field.field_name
 						// original_field_name: (joinPath ? (joinPath + '.')  :  '' ) + field.original_field_name,
 					})
 				);
@@ -191,7 +192,7 @@ export const mergeSchema = function(targetSchema, sourceSchema, mergeOpts) {
  * @return {*}
  */
 export const mergeSourceSchema = function(sourceSchemas) {
-	log("Schema.mergeSourceSchema", arguments);
+	log('Schema.mergeSourceSchema', arguments);
 	let source = null;
 
 	sourceSchemas = Array.isArray(sourceSchemas) ? sourceSchemas : [sourceSchemas];
@@ -203,8 +204,8 @@ export const mergeSourceSchema = function(sourceSchemas) {
 			source = schema;
 		} else {
 			mergeSchema(source, schema, {
-				joinType: "upsert",
-				joinPath: ""
+				joinType: 'upsert',
+				joinPath: ''
 			});
 		}
 	});
@@ -226,16 +227,16 @@ export const mergeJoinTablesToTargetSchema = function(targetSchema, joinTables) 
 	};
 	if (joinTables) joinTables.forEach(mergeTargetSchema);
 
-	log("Schema.mergeJoinTablesToTargetSchema", ...arguments, mergedTargetSchema);
+	log('Schema.mergeJoinTablesToTargetSchema', ...arguments, mergedTargetSchema);
 
 	return mergedTargetSchema;
 };
 export const uuid = function() {
 	// credit: http://stackoverflow.com/posts/2117523/revisions
 
-	return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 		var r = (Math.random() * 16) | 0;
-		var v = c === "x" ? r : (r & 0x3) | 0x8;
+		var v = c === 'x' ? r : (r & 0x3) | 0x8;
 		return v.toString(16);
 	});
 };

@@ -66,7 +66,8 @@ export class VueAdapter extends BaseObject {
 					propsData: Object.assign({}, vueComponentConfig.props || {})
 				});
 
-				self.editor.getRightTabPanel().select(settings);
+				if(self.editor.editable)
+					self.editor.getRightTabPanel().select(settings);
 				settings.removeAll();
 
 				let vueContainerDom = document.createElement("div");
@@ -77,7 +78,7 @@ export class VueAdapter extends BaseObject {
 					//堵住链接节点的关联修改，只有不同类型的才有这个问题，所以这个堵死了
 						self.setFormData(self.curcell, data);
 				});
-	
+
 				self.vm.$on("schemaChange", schema => {
 					self.curcell.setSchema(schema);
 				});
@@ -91,11 +92,9 @@ export class VueAdapter extends BaseObject {
 				self.vm = vueAdapter[name]._vm;
 				self.editor.getRightTabPanel().select(vueAdapter[name]._panel);
 				self.vm.$on("dataChanged", data => {
-					//if (self.curcell.attributes.type.split('.')[1].toLowerCase() == data.type || self.curcell.attributes.attrs.form_data.type == data.type)
-					//堵住链接节点的关联修改，只有不同类型的才有这个问题，所以这个堵死了
-						self.setFormData(self.curcell, data);
+					self.setFormData(self.curcell, data);
 				});
-	
+
 				self.vm.$on("schemaChange", schema => {
 					self.curcell.setSchema(schema);
 				});
@@ -105,8 +104,9 @@ export class VueAdapter extends BaseObject {
 				});
 			}
 			let editable = self.editor.editable;
-			if (!editable) { // running mode
-				if (typeof self.vm.setDisabled === "function") {
+			if (!editable) {
+				// running mode
+				if (typeof self.vm.setDisabled === 'function') {
 					self.vm.setDisabled(true);
 				}
 			}
