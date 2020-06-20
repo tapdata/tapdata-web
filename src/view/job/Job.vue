@@ -306,6 +306,7 @@ export default {
 				self.loadDataFlow(self.$route.query.id);
 			} else {
 				self.loading = false;
+				self.onGraphChanged();
 			}
 		},
 		openTempSaved() {
