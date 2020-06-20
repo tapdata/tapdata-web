@@ -100,12 +100,15 @@ export default {
 		}
 	},
 
-	methods: {
-		setData(data, cell, isSourceDataNode, vueAdapter) {
-			if (data) {
-				// Object.keys(data).forEach(key => (this.model[key] = data[key]));
-				_.merge(this.model, data);
-			}
+  methods: {
+    setData(data, cell, isSourceDataNode, vueAdapter) {
+      this.model = {
+        connectionId: "",
+        type: "file"
+      }
+      if (data) {
+		  _.merge(this.model, data);
+      }
 
 			editorMonitor = vueAdapter.editor;
 		},
