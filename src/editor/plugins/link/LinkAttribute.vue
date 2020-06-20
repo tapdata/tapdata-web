@@ -6,6 +6,7 @@
 			</el-button>
 		</div>
 		<el-form
+			:disabled="disabled"
 			class="e-form"
 			label-position="right"
 			label-width="160px"

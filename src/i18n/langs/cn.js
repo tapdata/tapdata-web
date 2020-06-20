@@ -566,7 +566,7 @@ const cn = {
 						expressionExample: {
 							label: '表达式示例',
 							labelTip: '表达式可以使用JavaScript中的比较符和计算符',
-							tip: '筛选出50岁以上的男性以及收入一万以下的30岁以上的人,表达式如下：'
+							tip: '筛选出50岁以上的男性或者收入一万以下的30岁以上的人,表达式如下：'
 						},
 						symbol: {
 							label: '支持的符号',

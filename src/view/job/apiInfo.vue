@@ -120,7 +120,7 @@
 
 <script>
 import factory from '../../api/factory';
-import metaData from '../metaData';
+import metaData from '../metaData2';
 const modules = factory('modules');
 
 export default {
