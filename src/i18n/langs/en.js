@@ -573,7 +573,7 @@ const en = {
 							label: 'Example expression',
 							labelTip: 'Expressions can use comparison and calculation operators in JavaScript',
 							tip:
-								'Select men over 50 years old and people over 30 years old with income below 10,000, the expression is as follows:'
+								'Select men over 50 years old or people over 30 years old with income below 10,000, the expression is as follows:'
 						},
 						symbol: {
 							label: 'Supported symbols',

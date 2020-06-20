@@ -567,7 +567,7 @@ const tc = {
 						expressionExample: {
 							label: '表達式示例',
 							labelTip: '表達式可以使用JavaScript中的比較符和計算符',
-							tip: '篩選出50歲以上的男性以及收入一萬以下的30歲以上的人,表達式如下：'
+							tip: '篩選出50歲以上的男性或者收入一萬以下的30歲以上的人,表達式如下：'
 						},
 						symbol: {
 							label: '支持的符號',

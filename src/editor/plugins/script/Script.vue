@@ -1,4 +1,5 @@
 <template>
+<div v-if="visible">
 	<div class="nodeStyle">
 		<div class="nodeBody">
 			<div class="head-btns">
@@ -53,6 +54,7 @@
 		</div>
 		<Debug ref="debug"></Debug>
 	</div>
+</div>
 </template>
 
 <script>
@@ -95,6 +97,7 @@ export default {
 					}
 				]
 			},
+			visible: false,
 			model: {
 				name: 'JavaScript',
 				type: 'js_processor',

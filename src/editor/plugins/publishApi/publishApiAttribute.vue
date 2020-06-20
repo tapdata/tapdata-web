@@ -1,4 +1,5 @@
 <template>
+<div v-if="visible">
 	<div class="releaseApi">
 		<div class="head-btns">
 			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
@@ -86,6 +87,7 @@
 			</el-form-item>
 		</el-form>
 	</div>
+</div>
 </template>
 
 <script>
@@ -106,6 +108,7 @@ export default {
 			],
 			groupList: [],
 			expressionList: [],
+			visible: false,
 			form: {
 				apiVersion: 'V1',
 				connection: '',

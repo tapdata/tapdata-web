@@ -1,4 +1,5 @@
 <template>
+<div v-if="visible">
 	<div class="e-memery-cache nodeStyle">
 		<div class="nodeBody">
 			<div class="head-btns">
@@ -135,6 +136,7 @@
 			</el-form>
 		</div>
 	</div>
+</div>
 </template>
 
 <script>
@@ -169,7 +171,7 @@ export default {
 					value: -1
 				}
 			],
-
+			visible: false,
 			model: {
 				name: '',
 				cacheName: '',

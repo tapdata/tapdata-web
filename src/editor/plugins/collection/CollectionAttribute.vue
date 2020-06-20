@@ -1,4 +1,5 @@
 <template>
+<div v-if="visible">
 	<div class="e-collection nodeStyle">
 		<div class="nodeBody">
 			<div class="head-btns">
@@ -120,6 +121,7 @@
 			</div>
 		</div>
 	</div>
+</div>
 </template>
 
 <script>
@@ -223,7 +225,7 @@ export default {
 			},
 
 			isSourceDataNode: false,
-
+			visible: false,
 			model: {
 				connectionId: '',
 				databaseType: '',
@@ -291,7 +293,6 @@ export default {
 				}
 			}
 		},
-
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			this.model = {
 				connectionId: "",
@@ -307,7 +308,6 @@ export default {
 				_.merge(this.model, data);
 			}
 			this.isSourceDataNode = isSourceDataNode;
-
 			this.mergedSchema = cell.getOutputSchema();
 			cell.on('change:outputSchema', () => {
 				this.mergedSchema = cell.getOutputSchema();
