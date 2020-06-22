@@ -212,15 +212,15 @@
 		</el-dialog>
 		<el-dialog title="系统提示" :visible.sync="tempDialogVisible" width="30%">
 			<el-form :model="form">
-				<span>有草稿存在，继续编辑？</span><br><br>
+				<span>上次草稿未保存，是否继续编辑？</span><br><br>
 				<div v-for="item in tempData" :key="item.id">
 					<el-col :span="6"><el-link @click="openTempSaved(item)" type="success">{{ item.split('$$$')[2] }}</el-link></el-col>
-					<el-button size="mini" @click="deleteTempData(item)" type="danger" icon="el-icon-delete" circle></el-button>
+					<el-col :span="3"><el-button size="mini" @click="openTempSaved(item)" type="success" plain>打 开</el-button></el-col>
+					<el-button size="mini" @click="deleteTempData(item)" type="danger" icon="el-icon-delete" plain>删 除</el-button>
 				</div>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button @click="loadData">取 消</el-button>
-				<el-button type="primary" @click="openTempSaved">确 定</el-button>
+				<el-button @click="loadData">忽 略</el-button>
 			</div>
 		</el-dialog>
 		<AddBtnTip v-if="isEditable()"></AddBtnTip>
