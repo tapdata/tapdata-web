@@ -212,7 +212,11 @@
 		</el-dialog>
 		<el-dialog title="系统提示" :visible.sync="tempDialogVisible" width="30%">
 			<el-form :model="form">
-				<span>有草稿存在，继续编辑？</span>
+				<span>有草稿存在，继续编辑？</span><br><br>
+				<div v-for="item in tempData" :key="item.id">
+					<el-col :span="6"><el-link @click="openTempSaved(item)" type="success">{{ item.split('$$$')[2] }}</el-link></el-col>
+					<el-button size="mini" @click="deleteTempData(item)" type="danger" icon="el-icon-delete" circle></el-button>
+				</div>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="loadData">取 消</el-button>
@@ -253,7 +257,9 @@ export default {
 			model: 'editable',
 
 			dataFlowId: null,
-			tempDialogVisible: false,
+			tempDialogVisible:false,
+			curTempKey: null,
+			tempData: [],
 			status: 'draft',
 			executeMode: 'normal',
 
@@ -291,7 +297,8 @@ export default {
 			actionBarEl: $('.editor-container .action-buttons'),
 			scope: self
 		});
-		if (localStorage.hasOwnProperty('tempSaved')) {
+		Object.keys(localStorage).forEach(key=> {if (key.startsWith('temp$$$')) this.tempData.push(key);});
+		if (this.tempData.length > 0) {
 			self.loading = false;
 			this.tempDialogVisible = true;
 			return;
@@ -313,10 +320,14 @@ export default {
 				self.onGraphChanged();
 			}
 		},
-		openTempSaved() {
+		openTempSaved(key) {
 			this.tempDialogVisible = false;
-			this.initData(JSON.parse(localStorage.getItem('tempSaved')));
-			localStorage.removeItem('tempSaved');
+			this.initData(JSON.parse(localStorage.getItem(key)));
+			localStorage.removeItem(key);
+		},
+		deleteTempData(key) {
+			this.tempData.splice(this.tempData.indexOf(key), 1);
+			localStorage.removeItem(key);
 		},
 		initData(data) {
 			let self = this,
@@ -409,9 +420,9 @@ export default {
 		 * Auto save
 		 */
 		timeSave() {
-			let data = this.getDataFlowData(true),
-				maxKey = 1;
-			localStorage.setItem('tempSaved', JSON.stringify(data));
+			let data = this.getDataFlowData(true), maxKey = 1, curkey = 1;
+			Object.keys(localStorage).forEach(key=> {if (key.startsWith('temp_')) if (parseInt(key.split('$$$')[1]) >= curkey) curkey = parseInt(key.split('$$$')[1]) + 1;});
+			localStorage.setItem('temp$$$' + curkey + '$$$' + data.name, JSON.stringify(data));
 		},
 		//点击draft save按钮
 		async draftSave() {
