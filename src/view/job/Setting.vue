@@ -165,7 +165,9 @@
 				<el-row v-for="item in formData.syncPoints" :key="item.name" style="margin-top: 10px">
 					<el-col :span="5">
 						<div class="dataBase-name">
-							{{ item.name || item.connectionId }}
+							<el-tooltip :content="item.name || item.connectionId" placement="left-start">
+								<span>{{ item.name || item.connectionId }}</span>
+							</el-tooltip>
 						</div>
 					</el-col>
 					<el-col :span="6" style="margin-right: 10px">
@@ -211,23 +213,30 @@ export default {
 				cronExpression: [
 					{
 						required: true,
-						trigger: 'blur',
-						message: this.$t('dataFlow.cronExpression')
+						validator: (rule, v, callback) => {
+							let value = this.formData.cronExpression;
+							if (!value || !value.trim()) {
+								callback(this.$t('dataFlow.cronExpression'));
+							} else {
+								callback();
+							}
+						},
+						trigger: 'blur'
 					}
 				]
 			},
 			options: [
 				{
-					label: 'localTZ',
-					value: this.$t('dataFlow.SyncInfo.localTZType')
+					label: this.$t('dataFlow.SyncInfo.localTZType'),
+					value: 'localTZ'
 				},
 				{
-					label: 'connTZ',
-					value: this.$t('dataFlow.SyncInfo.connTZType')
+					label: this.$t('dataFlow.SyncInfo.connTZType'),
+					value: 'connTZ'
 				},
 				{
-					label: 'current',
-					value: this.$t('dataFlow.SyncInfo.currentType')
+					label: this.$t('dataFlow.SyncInfo.currentType'),
+					value: 'current'
 				}
 			]
 		};
@@ -317,7 +326,7 @@ export default {
 			}
 		},
 		updateSyncNode(syncPoints) {
-			if (!syncPoints) {
+			if (!syncPoints && syncPoints.length === 0) {
 				return;
 			}
 			let connectionIds = this.getAllConnectionIds();
@@ -332,7 +341,7 @@ export default {
 				if (!map[connectionId]) {
 					map[connectionId] = {
 						connectionId: connectionId,
-						type: 'localTZ', // localTZ: 本地时区； connTZ：连接时区
+						type: 'current', // localTZ: 本地时区； connTZ：连接时区
 						time: '',
 						date: '',
 						timezone: '+08:00',

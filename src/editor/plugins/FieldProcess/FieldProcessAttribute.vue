@@ -112,9 +112,9 @@ export default {
 			this.model = {
 				operations: [],
 				scripts: [],
-				name: "Field Process",
-				type: "field_processor"
-			}
+				name: 'Field Process',
+				type: 'field_processor'
+			};
 
 			this.originalSchema = mergeJoinTablesToTargetSchema(null, cell.getInputSchema());
 			let schema = _.cloneDeep(this.originalSchema);

@@ -1,5 +1,4 @@
 <template>
-<div v-if="visible">
 	<div class="releaseApi">
 		<div class="head-btns">
 			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
@@ -87,7 +86,6 @@
 			</el-form-item>
 		</el-form>
 	</div>
-</div>
 </template>
 
 <script>
@@ -108,7 +106,6 @@ export default {
 			],
 			groupList: [],
 			expressionList: [],
-			visible: false,
 			form: {
 				apiVersion: 'V1',
 				connection: '',
@@ -144,21 +141,21 @@ export default {
 		// convertSchemaToTreeData,
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			this.form = {
-				apiVersion: "V1",
-				connection: "",
-				name: "",
-				description: "",
+				apiVersion: 'V1',
+				connection: '',
+				name: '',
+				description: '',
 				paths: {
-					path: "",
-					method: "GET",
+					path: '',
+					method: 'GET',
 					fields: [],
 					availableQueryField: [],
 					requiredQueryField: []
 				},
 				fields: [],
-				apiPath: "",
-				type: "publishApi"
-			}
+				apiPath: '',
+				type: 'publishApi'
+			};
 			if (data) {
 				_.merge(this.form, data);
 			}

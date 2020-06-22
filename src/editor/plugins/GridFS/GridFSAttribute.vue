@@ -1,5 +1,4 @@
 <template>
-<div v-if="visible">
 	<div class="gridFsNode nodeStyle">
 		<head>
 			<span class="headIcon iconfont icon-you2" type="primary"></span>
@@ -75,7 +74,6 @@
 			<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 		</div>
 	</div>
-</div>
 </template>
 <script>
 import _ from 'lodash';
@@ -236,25 +234,25 @@ export default {
 			});
 		},
 
-			setData(data, cell, isSourceDataNode, vueAdapter) {
-				this.model = {
-					connectionId: "",
-					type: "gridfs",
-					databaseType: "",
-					tableName: "",
-					isSource: true,
-					primaryKeys: "",
-					filter: "",
-					gridfsReadMode: ''
-				}
-				if (data) {
-					_.merge(this.model, data);
-				}
-				this.isSourceDataNode = isSourceDataNode;
+		setData(data, cell, isSourceDataNode, vueAdapter) {
+			this.model = {
+				connectionId: '',
+				type: 'gridfs',
+				databaseType: '',
+				tableName: '',
+				isSource: true,
+				primaryKeys: '',
+				filter: '',
+				gridfsReadMode: ''
+			};
+			if (data) {
+				_.merge(this.model, data);
+			}
+			this.isSourceDataNode = isSourceDataNode;
+			this.mergedSchema = cell.getOutputSchema();
+			cell.on('change:outputSchema', () => {
 				this.mergedSchema = cell.getOutputSchema();
-				cell.on("change:outputSchema", () => {
-					this.mergedSchema = cell.getOutputSchema();
-				});
+			});
 
 			editorMonitor = vueAdapter.editor;
 		},

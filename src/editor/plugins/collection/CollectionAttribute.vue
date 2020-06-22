@@ -1,124 +1,122 @@
 <template>
-	<div v-if="visible">
-		<div class="e-collection nodeStyle">
-			<div class="nodeBody">
-				<div class="head-btns">
-					<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-						{{ $t('dataFlow.button.viewMonitoring') }}
-					</el-button>
-				</div>
-				<el-form
-					class="e-form"
-					label-position="top"
-					label-width="160px"
-					:model="model"
-					ref="form"
+	<div class="e-collection nodeStyle">
+		<div class="nodeBody">
+			<div class="head-btns">
+				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+					{{ $t('dataFlow.button.viewMonitoring') }}
+				</el-button>
+			</div>
+			<el-form
+				class="e-form"
+				label-position="top"
+				label-width="160px"
+				:model="model"
+				ref="form"
+				:rules="rules"
+				:disabled="disabled"
+			>
+				<el-form-item
+					:label="$t('editor.cell.data_node.collection.form.database.label')"
+					prop="connectionId"
 					:rules="rules"
-					:disabled="disabled"
+					required
 				>
-					<el-form-item
-						:label="$t('editor.cell.data_node.collection.form.database.label')"
-						prop="connectionId"
-						:rules="rules"
-						required
-					>
-						<div style="display:flex;">
-							<el-select
-								filterable
-								v-model="model.connectionId"
-								:placeholder="$t('editor.cell.data_node.collection.form.database.placeholder')"
-								@change="handlerConnectionChange"
-								size="mini"
-							>
-								<el-option
-									v-for="(item, idx) in databases"
-									:label="`${item.name} (${item.status})`"
-									:value="item.id"
-									v-bind:key="idx"
-								></el-option>
-							</el-select>
-							<el-button
-								size="mini"
-								icon="el-icon-plus"
-								style="padding: 7px;margin-left: 7px"
-								@click="$refs.databaseForm.show({ whiteList: ['mongodb'] })"
-							></el-button>
-							<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
-						</div>
-					</el-form-item>
-
-					<el-form-item
-						:label="$t('editor.cell.data_node.collection.form.collection.label')"
-						prop="tableName"
-						required
-					>
+					<div style="display:flex;">
 						<el-select
-							v-model="model.tableName"
 							filterable
-							allow-create
-							default-first-option
-							clearable
-							:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
+							v-model="model.connectionId"
+							:placeholder="$t('editor.cell.data_node.collection.form.database.placeholder')"
+							@change="handlerConnectionChange"
 							size="mini"
 						>
 							<el-option
-								v-for="(item, idx) in schemas"
-								:label="`${item.table_name}`"
-								:value="item.table_name"
+								v-for="(item, idx) in databases"
+								:label="`${item.name} (${item.status})`"
+								:value="item.id"
 								v-bind:key="idx"
 							></el-option>
 						</el-select>
-					</el-form-item>
+						<el-button
+							size="mini"
+							icon="el-icon-plus"
+							style="padding: 7px;margin-left: 7px"
+							@click="$refs.databaseForm.show({ whiteList: ['mongodb'] })"
+						></el-button>
+						<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
+					</div>
+				</el-form-item>
 
-					<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
-						<el-input
-							v-model="model.primaryKeys"
-							:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
-							size="mini"
-						></el-input>
-					</el-form-item>
-					<el-form-item
-						required
-						:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
-						v-if="isSourceDataNode"
+				<el-form-item
+					:label="$t('editor.cell.data_node.collection.form.collection.label')"
+					prop="tableName"
+					required
+				>
+					<el-select
+						v-model="model.tableName"
+						filterable
+						allow-create
+						default-first-option
+						clearable
+						:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
+						size="mini"
 					>
-						<el-input-number
-							v-model="model.initialSyncOrder"
-							controls-position="right"
-							:min="1"
-							size="mini"
-						></el-input-number>
-					</el-form-item>
-					<el-form-item
-						required
-						:label="$t('editor.cell.data_node.collection.form.dropTable.label')"
-						v-if="!isSourceDataNode"
-					>
-						<el-select v-model="model.dropTable" size="mini">
-							<el-option
-								:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
-								:value="false"
-							></el-option>
-							<el-option
-								:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
-								:value="true"
-							></el-option>
-						</el-select>
-					</el-form-item>
+						<el-option
+							v-for="(item, idx) in schemas"
+							:label="`${item.table_name}`"
+							:value="item.table_name"
+							v-bind:key="idx"
+						></el-option>
+					</el-select>
+				</el-form-item>
 
-					<el-form-item :label="$t('editor.cell.data_node.collection.form.filter.label')">
-						<el-input
-							v-model="model.filter"
-							type="textarea"
-							rows="5"
-							:placeholder="$t('editor.cell.data_node.collection.form.filter.placeholder')"
-							size="mini"
-						></el-input>
-					</el-form-item>
-				</el-form>
-				<div class="e-entity-wrap" style="text-align: center;">
-					<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
-				</div>
+				<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
+					<PrimaryKeyInput
+						v-model="model.primaryKeys"
+						:options="primaryKeyOptions"
+						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
+					></PrimaryKeyInput>
+				</el-form-item>
+				<el-form-item
+					required
+					:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
+					v-if="isSourceDataNode"
+				>
+					<el-input-number
+						v-model="model.initialSyncOrder"
+						controls-position="right"
+						:min="1"
+						size="mini"
+					></el-input-number>
+				</el-form-item>
+				<el-form-item
+					required
+					:label="$t('editor.cell.data_node.collection.form.dropTable.label')"
+					v-if="!isSourceDataNode"
+				>
+					<el-select v-model="model.dropTable" size="mini">
+						<el-option
+							:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
+							:value="false"
+						></el-option>
+						<el-option
+							:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
+							:value="true"
+						></el-option>
+					</el-select>
+				</el-form-item>
+
+				<el-form-item :label="$t('editor.cell.data_node.collection.form.filter.label')">
+					<el-input
+						v-model="model.filter"
+						type="textarea"
+						rows="5"
+						:placeholder="$t('editor.cell.data_node.collection.form.filter.placeholder')"
+						size="mini"
+					></el-input>
+				</el-form-item>
+			</el-form>
+			<div class="e-entity-wrap" style="text-align: center;">
+				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 			</div>
 		</div>
 	</div>
@@ -126,6 +124,7 @@
 
 <script>
 import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
+import PrimaryKeyInput from '../../../components/PrimaryKeyInput';
 import { convertSchemaToTreeData } from '../../util/Schema';
 import Entity from '../link/Entity';
 import _ from 'lodash';
@@ -134,7 +133,7 @@ let connectionApi = factory('connections');
 let editorMonitor = null;
 export default {
 	name: 'Collection',
-	components: { Entity, DatabaseForm },
+	components: { Entity, DatabaseForm, PrimaryKeyInput },
 	props: {
 		database_types: {
 			type: Array,
@@ -175,6 +174,18 @@ export default {
 						/* let fields = schema.fields || [];
 							let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
 							if( primaryKeys) this.model.primaryKeys = primaryKeys; */
+
+						let fields = schema.fields || [];
+						let primaryKeys = fields
+							.filter(f => f.primary_key_position > 0)
+							.map(f => f.field_name)
+							.join(',');
+						this.primaryKeyOptions = fields.map(f => f.field_name);
+						if (primaryKeys) {
+							this.model.primaryKeys = primaryKeys;
+						} else {
+							this.model.primaryKeys = '';
+						}
 						this.$emit('schemaChange', _.cloneDeep(schema));
 					}
 				}
@@ -182,19 +193,13 @@ export default {
 		},
 		mergedSchema: {
 			handler() {
-				if (
-					!this.model.primaryKeys &&
-					this.mergedSchema &&
-					this.mergedSchema.fields &&
-					this.mergedSchema.fields.length > 0
-				) {
-					let primaryKeys = this.mergedSchema.fields
-						.filter(f => f.primary_key_position > 0)
-						.map(f => f.field_name);
-					let unique = {};
-					primaryKeys.forEach(key => (unique[key] = 1));
-					primaryKeys = Object.keys(unique);
-					if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
+				if (this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0) {
+					let fields = this.mergedSchema.fields;
+					this.primaryKeyOptions = fields.map(f => f.field_name);
+					if (!this.model.primaryKeys) {
+						let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
+						if (primaryKeys.length > 0) this.model.primaryKeys = Array.from(new Set(primaryKeys).join(','));
+					}
 				}
 			}
 		}
@@ -225,7 +230,6 @@ export default {
 			},
 
 			isSourceDataNode: false,
-			visible: false,
 			model: {
 				connectionId: '',
 				databaseType: '',
@@ -237,7 +241,9 @@ export default {
 				initialSyncOrder: 1
 			},
 
-			mergedSchema: null
+			mergedSchema: null,
+
+			primaryKeyOptions: []
 		};
 	},
 

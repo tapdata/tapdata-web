@@ -1,5 +1,4 @@
 <template>
-<div v-if="visible">
 	<div class="nodeStyle">
 		<div class="nodeBody">
 			<div class="head-btns">
@@ -54,7 +53,6 @@
 		</div>
 		<Debug ref="debug"></Debug>
 	</div>
-</div>
 </template>
 
 <script>
@@ -97,7 +95,6 @@ export default {
 					}
 				]
 			},
-			visible: false,
 			model: {
 				name: 'JavaScript',
 				type: 'js_processor',
@@ -126,10 +123,10 @@ export default {
 	methods: {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			this.model = {
-				name: "JavaScript",
-				type: "js_processor",
-				script: "function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}"
-			}
+				name: 'JavaScript',
+				type: 'js_processor',
+				script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}'
+			};
 			if (data) {
 				_.merge(this.model, data);
 			}

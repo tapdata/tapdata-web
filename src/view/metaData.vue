@@ -236,7 +236,7 @@ export default {
 					}
 				})
 				.catch(e => {
-					this.$message.error('MetadataInstances error');
+					this.$message.error('MetadataInstances error' + e);
 				});
 		},
 		handleDefault_expanded() {
@@ -265,7 +265,7 @@ export default {
 					log('listdata', self.listdata);
 				})
 				.catch(e => {
-					this.$message.error('MetadataInstances error');
+					this.$message.error('MetadataInstances error' + e);
 				});
 		},
 		clear() {
@@ -368,7 +368,7 @@ export default {
 					}
 				})
 				.catch(e => {
-					this.$message.error('MetadataInstances error');
+					this.$message.error('MetadataInstances error' + e);
 				});
 		},
 		find_children(parent, items) {
@@ -439,6 +439,7 @@ export default {
 .table-label {
 	display: inline-block;
 	width: 140px;
+	vertical-align: middle;
 }
 
 .box-head {

@@ -1,5 +1,4 @@
 <template>
-<div v-if="visible">
 	<div class="aggregate">
 		<div class="head-btns">
 			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
@@ -110,7 +109,6 @@
 			</el-form-item>
 		</el-form>
 	</div>
-</div>
 </template>
 
 <script>
@@ -134,7 +132,6 @@ export default {
 			],
 			groupList: [],
 			expressionList: [],
-			visible: false,
 			form: {
 				name: '',
 				type: 'aggregation_processor',
@@ -224,18 +221,18 @@ export default {
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			this.form = {
-				name: "",
-				type: "aggregation_processor",
+				name: '',
+				type: 'aggregation_processor',
 				aggregations: [
 					{
-						name: "COUNT",
-						filterPredicate: "",
-						aggFunction: "COUNT",
-						aggExpression: "",
-						groupByExpression: ""
+						name: 'COUNT',
+						filterPredicate: '',
+						aggFunction: 'COUNT',
+						aggExpression: '',
+						groupByExpression: ''
 					}
 				]
-			}
+			};
 			if (data) {
 				_.merge(this.form, data);
 				this.form.aggregations.map((item, index) => {
@@ -270,7 +267,6 @@ export default {
 
 		getData() {
 			return _.cloneDeep(this.form);
-			console.log(this.form, '=======');
 		},
 
 		setDisabled(disabled) {

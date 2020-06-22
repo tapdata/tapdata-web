@@ -396,7 +396,9 @@ export default {
 						path: '/job',
 						query: { id: id }
 					});
-					window.open(routeUrl.href, '_blank');
+					setTimeout(() => {
+						window.open(routeUrl.href, '_blank');
+					}, 200);
 				});
 			} else {
 				let routeUrl = this.$router.resolve({

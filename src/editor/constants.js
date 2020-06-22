@@ -48,7 +48,7 @@ export const FORM_DATA_KEY = 'form_data',
 		syncPoints: [
 			{
 				connectionId: '',
-				type: 'localTZ', // localTZ: 本地时区； connTZ：连接时区
+				type: 'current', // localTZ: 本地时区； connTZ：连接时区
 				time: '',
 				date: '',
 				name: '',

@@ -783,7 +783,7 @@ const cn = {
 		form: {
 			connectionName: '连接名称',
 			databaseType: '数据库类型',
-			connectionType: '数据库权限',
+			connectionType: '连接类型',
 			host: '数据库地址',
 			port: '端口',
 			databaseName: '数据库名称',

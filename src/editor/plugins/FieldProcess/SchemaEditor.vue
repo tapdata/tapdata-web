@@ -4,7 +4,9 @@
 			<span @click="handleAllDelete">{{ $t('editor.cell.processor.field.form.delete') }}</span>
 			<span @click="handleAllReset">{{ $t('dataFlow.reset') }}</span>
 			<span @click="handleAllToUpperCase">{{ $t('editor.cell.processor.field.form.toUpperCase') }}</span>
-			<span @click="handleAllToLowerCase">{{ $t('editor.cell.processor.field.form.toLowerCase') }}</span>
+			<span @click="handleAllToLowerCase('lowerCase')">{{
+				$t('editor.cell.processor.field.form.toLowerCase')
+			}}</span>
 		</el-row>
 		<div class="e-schema-editor" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom">
 			<el-container>
@@ -441,7 +443,7 @@ export default {
 
 			this.$emit('dataChanged', this.model);
 		},
-		handleRename(node, data) {
+		handleRename(node, data, type) {
 			log('SchemaEditor.handleRename', node, data);
 			let createOps = this.model.operations.filter(v => v.id === data.id && v.op === 'CREATE');
 			if (createOps && createOps.length > 0) {
@@ -461,9 +463,9 @@ export default {
 				);
 				let ops = this.model.operations.filter(v => v.id === nativeData.id && v.op === 'RENAME');
 				let op;
-				// if (data.label === nativeData.label) {
-				// 	return;
-				// }
+				if (data.label === nativeData.label && type !== 'lowerCase') {
+					return;
+				}
 				if (ops.length === 0) {
 					op = Object.assign(_.cloneDeep(RENAME_OPS_TPL), {
 						id: data.id,
@@ -570,13 +572,13 @@ export default {
 				});
 			}
 		},
-		handleAllToLowerCase() {
+		handleAllToLowerCase(type) {
 			let ids = this.$refs.tree.getCheckedNodes();
 			if (ids && ids.length > 0) {
 				ids.map(id => {
 					let node = this.$refs.tree.getNode(id);
 					node.data.label = node.data.label.toLowerCase();
-					this.handleRename(node, node.data);
+					this.handleRename(node, node.data, type);
 				});
 			}
 		},
