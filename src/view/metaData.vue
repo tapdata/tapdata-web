@@ -37,16 +37,16 @@
 								></el-button>
 								<el-dropdown-menu slot="dropdown">
 									<el-dropdown-item :command="'children' + node.key">
-										{{ $t("metaData.addChildernNode") }}</el-dropdown-item
+										{{ $t('metaData.addChildernNode') }}</el-dropdown-item
 									>
 									<el-dropdown-item :command="'add' + node.key">
-										{{ $t("metaData.addNode") }}</el-dropdown-item
+										{{ $t('metaData.addNode') }}</el-dropdown-item
 									>
 									<el-dropdown-item :command="'edit' + node.key">
-										{{ $t("metaData.editNode") }}</el-dropdown-item
+										{{ $t('metaData.editNode') }}</el-dropdown-item
 									>
 									<el-dropdown-item :command="'delete' + node.key">
-										{{ $t("metaData.deleteNode") }}</el-dropdown-item
+										{{ $t('metaData.deleteNode') }}</el-dropdown-item
 									>
 								</el-dropdown-menu>
 							</el-dropdown>
@@ -66,99 +66,99 @@
 </template>
 
 <script>
-import factory from "../api/factory";
-import log from "../log";
+import factory from '../api/factory';
+import log from '../log';
 
-const MetadataDefinitions = factory("MetadataDefinitions");
-const MetadataInstances = factory("MetadataInstances");
+const MetadataDefinitions = factory('MetadataDefinitions');
+const MetadataInstances = factory('MetadataInstances');
 
 export default {
-	name: "metaData",
+	name: 'metaData',
 	data() {
 		return {
 			count: 0,
-			filterText: "",
+			filterText: '',
 			data: [],
-			search: "",
+			search: '',
 			default_expanded: false,
 			props: {
-				children: "children",
-				label: "label",
-				isLeaf: "leaf"
+				children: 'children',
+				label: 'label',
+				isLeaf: 'leaf'
 			},
 			mapping: {
-				collection: "app.Collection",
-				table: "app.Table",
-				database: "app.Database"
+				collection: 'app.Collection',
+				table: 'app.Table',
+				database: 'app.Database'
 			},
 			listdata: [],
 			checkAll: [],
 			checkData: [],
 			checkedValue: {
-				label: "all datas"
+				label: 'all datas'
 			},
 			options: [
 				{
-					value: "",
-					label: "all types"
+					value: '',
+					label: 'all types'
 				},
 				{
-					value: "database",
-					label: "database"
+					value: 'database',
+					label: 'database'
 				},
 				{
-					value: "mongoDB",
-					label: "mongoDB"
+					value: 'mongoDB',
+					label: 'mongoDB'
 				},
 				{
-					value: "table",
-					label: "table"
+					value: 'table',
+					label: 'table'
 				},
 				{
-					value: "collection",
-					label: "collection"
+					value: 'collection',
+					label: 'collection'
 				},
 				{
-					value: "api",
-					label: "api"
+					value: 'api',
+					label: 'api'
 				},
 				{
-					value: "flow",
-					label: "flow"
+					value: 'flow',
+					label: 'flow'
 				},
 				{
-					value: "file",
-					label: "file"
+					value: 'file',
+					label: 'file'
 				},
 				{
-					value: "view",
-					label: "view"
+					value: 'view',
+					label: 'view'
 				},
 				{
-					value: "mongo_view",
-					label: "mongo_view"
+					value: 'mongo_view',
+					label: 'mongo_view'
 				}
 			],
 			optionsType: [
 				{
-					value: "",
-					label: "all"
+					value: '',
+					label: 'all'
 				},
 				{
-					value: "no type",
-					label: "no type"
+					value: 'no type',
+					label: 'no type'
 				}
 			],
-			checkClassify: "",
-			checkType: "",
+			checkClassify: '',
+			checkType: '',
 			isActive: true,
 			dialogVisible: false,
-			type: "dataflow",
+			type: 'dataflow',
 			dialogVisibleNodeName: false,
-			typeNode: "",
-			nodeName: "",
-			parent_id: "",
-			title: ""
+			typeNode: '',
+			nodeName: '',
+			parent_id: '',
+			title: ''
 		};
 	},
 	async mounted() {
@@ -180,7 +180,7 @@ export default {
 				}
 			};
 			MetadataDefinitions.get(params).then(res => {
-				if (res.statusText === "OK" || res.status === 200) {
+				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
 						let items = res.data;
 						let rootNode = {
@@ -197,7 +197,7 @@ export default {
 			return data.label.indexOf(value) !== -1;
 		},
 		handleList() {
-			this.checkedValue = "all datas";
+			this.checkedValue = 'all datas';
 			let params = {
 				filter: JSON.stringify({
 					where: {
@@ -229,14 +229,14 @@ export default {
 			MetadataInstances.get(params)
 				.then(res => {
 					let self = this;
-					if (res.statusText === "OK" || res.status === 200) {
+					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data) {
 							self.listdata = res.data;
 						}
 					}
 				})
 				.catch(e => {
-					this.$message.error("MetadataInstances error");
+					this.$message.error('MetadataInstances error' + e);
 				});
 		},
 		handleDefault_expanded() {
@@ -257,15 +257,15 @@ export default {
 			MetadataInstances.get(params)
 				.then(res => {
 					let self = this;
-					if (res.statusText === "OK" || res.status === 200) {
+					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data) {
 							self.listdata = res.data;
 						}
 					}
-					log("listdata", self.listdata);
+					log('listdata', self.listdata);
 				})
 				.catch(e => {
-					this.$message.error("MetadataInstances error");
+					this.$message.error('MetadataInstances error' + e);
 				});
 		},
 		clear() {
@@ -277,64 +277,64 @@ export default {
 		},
 		handleClassify() {
 			if (this.checkData.length === 0) {
-				this.$message.info("please select classify");
+				this.$message.info('please select classify');
 				return;
 			}
 			this.dialogVisible = true;
 		},
 		handleRowCommand(command) {
-			if (command.indexOf("add") !== -1) {
-				let node = command.replace("add", "");
+			if (command.indexOf('add') !== -1) {
+				let node = command.replace('add', '');
 				this.addNode(node);
-			} else if (command.indexOf("children") !== -1) {
-				let node = command.replace("children", "");
+			} else if (command.indexOf('children') !== -1) {
+				let node = command.replace('children', '');
 				this.addChildNode(node);
-			} else if (command.indexOf("edit") !== -1) {
-				let node = command.replace("edit", "");
+			} else if (command.indexOf('edit') !== -1) {
+				let node = command.replace('edit', '');
 				this.editNode(node);
-			} else if (command.indexOf("delete") !== -1) {
-				let node = command.replace("delete", "");
+			} else if (command.indexOf('delete') !== -1) {
+				let node = command.replace('delete', '');
 				this.deleteNode(node);
 			}
 		},
 		addNode() {
 			//通过node-key 获取node data
-			this.nodeName = "";
-			this.typeNode = "addNode";
-			this.title = this.$t("metaData.addNode");
+			this.nodeName = '';
+			this.typeNode = 'addNode';
+			this.title = this.$t('metaData.addNode');
 			this.dialogVisibleNodeName = true;
 		},
 		addChildNode(id) {
 			this.parent_id = id;
-			this.nodeName = "";
-			this.typeNode = "addChildNode";
-			this.title = this.$t("metaData.addChildernNode");
+			this.nodeName = '';
+			this.typeNode = 'addChildNode';
+			this.title = this.$t('metaData.addChildernNode');
 			this.dialogVisibleNodeName = true;
 		},
 		editNode(id) {
 			let node = this.$refs.tree.getNode(id);
 			this.parent_id = id;
 			this.nodeName = node.data.value;
-			this.typeNode = "editNode";
-			this.title = this.$t("metaData.editNode");
+			this.typeNode = 'editNode';
+			this.title = this.$t('metaData.editNode');
 			this.dialogVisibleNodeName = true;
 		},
 		deleteNode(id) {
-			this.$confirm(this.$t("metaData.deteleMessage"), {
-				confirmButtonText: this.$t("message.delete"),
-				cancelButtonText: this.$t("message.cancel"),
-				type: "warning"
+			this.$confirm(this.$t('metaData.deteleMessage'), {
+				confirmButtonText: this.$t('message.delete'),
+				cancelButtonText: this.$t('message.cancel'),
+				type: 'warning'
 			}).then(() => {
 				MetadataDefinitions.delete(id).then(res => {
 					let self = this;
-					if (res.statusText === "OK" || res.status === 200) {
+					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data) {
 							self.data = res.data;
 							self.getData();
 							self.dialogVisibleNodeName = false;
 						}
 					} else {
-						this.$message.info(this.$t("message.deleteFail"));
+						this.$message.info(this.$t('message.deleteFail'));
 					}
 				});
 			});
@@ -344,10 +344,10 @@ export default {
 				item_type: [this.type],
 				value: this.nodeName
 			};
-			if (this.typeNode === "addChildNode") {
+			if (this.typeNode === 'addChildNode') {
 				data.parent_id = this.parent_id;
 			}
-			if (this.typeNode === "editNode") {
+			if (this.typeNode === 'editNode') {
 				data.id = this.parent_id;
 			}
 			this.handlePostNode(data);
@@ -356,10 +356,10 @@ export default {
 			this.dialogVisibleNodeName = false;
 		},
 		handlePostNode(data) {
-			MetadataDefinitions[this.typeNode === "editNode" ? "patch" : "post"](data)
+			MetadataDefinitions[this.typeNode === 'editNode' ? 'patch' : 'post'](data)
 				.then(res => {
 					let self = this;
-					if (res.statusText === "OK" || res.status === 200) {
+					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data) {
 							self.data = res.data;
 							self.getData();
@@ -368,7 +368,7 @@ export default {
 					}
 				})
 				.catch(e => {
-					this.$message.error("MetadataInstances error");
+					this.$message.error('MetadataInstances error' + e);
 				});
 		},
 		find_children(parent, items) {
@@ -439,6 +439,7 @@ export default {
 .table-label {
 	display: inline-block;
 	width: 140px;
+	vertical-align: middle;
 }
 
 .box-head {

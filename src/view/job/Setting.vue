@@ -165,7 +165,9 @@
 				<el-row v-for="item in formData.syncPoints" :key="item.name" style="margin-top: 10px">
 					<el-col :span="5">
 						<div class="dataBase-name">
-							{{ item.name || item.connectionId }}
+							<el-tooltip :content="item.name || item.connectionId" placement="left-start">
+								<span>{{ item.name || item.connectionId }}</span>
+							</el-tooltip>
 						</div>
 					</el-col>
 					<el-col :span="6" style="margin-right: 10px">
@@ -317,7 +319,7 @@ export default {
 			}
 		},
 		updateSyncNode(syncPoints) {
-			if (!syncPoints) {
+			if (!syncPoints && syncPoints.length === 0) {
 				return;
 			}
 			let connectionIds = this.getAllConnectionIds();
@@ -332,7 +334,7 @@ export default {
 				if (!map[connectionId]) {
 					map[connectionId] = {
 						connectionId: connectionId,
-						type: 'localTZ', // localTZ: 本地时区； connTZ：连接时区
+						type: 'current', // localTZ: 本地时区； connTZ：连接时区
 						time: '',
 						date: '',
 						timezone: '+08:00',
