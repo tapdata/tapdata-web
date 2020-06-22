@@ -39,9 +39,6 @@
 									<el-dropdown-item :command="'children' + node.key">
 										{{ $t('metaData.addChildernNode') }}</el-dropdown-item
 									>
-									<el-dropdown-item :command="'add' + node.key">
-										{{ $t('metaData.addNode') }}</el-dropdown-item
-									>
 									<el-dropdown-item :command="'edit' + node.key">
 										{{ $t('metaData.editNode') }}</el-dropdown-item
 									>
@@ -55,10 +52,10 @@
 				</span>
 			</el-tree>
 			<el-dialog :title="title" :visible.sync="dialogVisibleNodeName" width="30%" :before-close="handleClose">
-				<span><el-input v-model="nodeName"></el-input></span>
+				<span><el-input v-model="nodeName" :placeholder="$t('metaData.nodeName')"></el-input></span>
 				<span slot="footer" class="dialog-footer">
-					<el-button @click="dialogVisibleNodeName = false">取 消</el-button>
-					<el-button type="primary" @click="handleAddNode()">确 定</el-button>
+					<el-button @click="dialogVisibleNodeName = false">{{ $t('message.cancel') }}</el-button>
+					<el-button type="primary" @click="handleAddNode()">{{ $t('message.confirm') }}</el-button>
 				</span>
 			</el-dialog>
 		</div>
@@ -340,6 +337,10 @@ export default {
 			});
 		},
 		handleAddNode() {
+			if (!this.nodeName || this.nodeName === '') {
+				this.$message.error(this.$t('metaData.nodeName'));
+				return;
+			}
 			let data = {
 				item_type: [this.type],
 				value: this.nodeName

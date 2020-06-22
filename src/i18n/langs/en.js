@@ -857,6 +857,7 @@ const en = {
 		addChildernNode: 'Add Child Category',
 		editNode: 'Edit',
 		deleteNode: 'Delete',
+		nodeName: 'Please enter classification',
 		deteleMessage: 'This operation will delete all subclasses existing in this category, whether to delete it'
 	}
 };

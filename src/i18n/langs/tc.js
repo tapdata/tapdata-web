@@ -851,6 +851,7 @@ const tc = {
 		addChildernNode: '新增子分類',
 		editNode: '編輯',
 		deleteNode: '刪除',
+		nodeName: '請輸入分類名稱',
 		deteleMessage: '此操作會將該分類下存在的子類都刪除，是否刪除'
 	}
 };

@@ -850,6 +850,7 @@ const cn = {
 		addChildernNode: '新增子分类',
 		editNode: '编辑',
 		deleteNode: '删除',
+		nodeName: '请输入分类名称',
 		deteleMessage: '此操作会将该分类下存在的子类都删除，是否删除'
 	}
 };
