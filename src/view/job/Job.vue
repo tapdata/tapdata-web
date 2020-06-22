@@ -260,7 +260,7 @@ export default {
 
 			dataFlowId: null,
 			tempDialogVisible: false,
-			curTempKey: null,
+			tempKey: null,
 			tempData: [],
 			status: 'draft',
 			executeMode: 'normal',
@@ -377,22 +377,7 @@ export default {
 			let self = this;
 			this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
 				changeData = this.getDataFlowData(true);
-				if (changeData) {
-					let settingSetInterval = () => {
-						timer = setTimeout(() => {
-							if (['draft', 'error', 'paused'].includes(this.status)) {
-								self.timeSave();
-							}
-							timer = null;
-						}, 10000);
-					};
-					if (timer) {
-						clearTimeout(timer);
-						settingSetInterval();
-					} else {
-						settingSetInterval();
-					}
-				}
+				if (changeData) self.timeSave();
 			});
 		},
 		/**
@@ -428,13 +413,16 @@ export default {
 		 * Auto save
 		 */
 		timeSave() {
-			let data = this.getDataFlowData(true),
-				curkey = 1;
-			Object.keys(localStorage).forEach(key => {
-				if (key.startsWith('temp_'))
-					if (parseInt(key.split('$$$')[1]) >= curkey) curkey = parseInt(key.split('$$$')[1]) + 1;
-			});
-			localStorage.setItem('temp$$$' + curkey + '$$$' + data.name, JSON.stringify(data));
+			let data = this.getDataFlowData(true);
+			if (this.tempKey == 0) {
+				this.tempKey = 1;
+				Object.keys(localStorage).forEach(key => {
+					if (key.startsWith('temp_'))
+						if (parseInt(key.split('$$$')[1]) >= this.tempKey)
+							this.tempKey = parseInt(key.split('$$$')[1]) + 1;
+				});
+			}
+			localStorage.setItem('temp$$$' + this.tempKey + '$$$' + data.name, JSON.stringify(data));
 		},
 		//点击draft save按钮
 		async draftSave() {
@@ -1206,7 +1194,6 @@ export default {
 					}
 				});
 			}
-			log('job loadSchema cells', cells);
 			this.cells = cells;
 			return {
 				cells: cells
