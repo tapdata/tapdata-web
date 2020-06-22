@@ -211,8 +211,15 @@ export default {
 				cronExpression: [
 					{
 						required: true,
-						trigger: 'blur',
-						message: this.$t('dataFlow.cronExpression')
+						validator: (rule, v, callback) => {
+							let value = this.formData.cronExpression;
+							if (!value || !value.trim()) {
+								callback(this.$t('dataFlow.cronExpression'));
+							} else {
+								callback();
+							}
+						},
+						trigger: 'blur'
 					}
 				]
 			},
