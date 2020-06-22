@@ -76,7 +76,10 @@ const tc = {
 		SyncInfo: {
 			localTZ: '當前時區傳輸時間：系統所在時區下，開始傳輸任務的時刻',
 			current: '當前時區時間：默認當前時間',
-			connTZ: '數據庫時區傳輸時間： 數據庫所在時區下，開始傳輸任務的時刻'
+			connTZ: '數據庫時區傳輸時間： 數據庫所在時區下，開始傳輸任務的時刻',
+			localTZType: '當前時區傳輸時間',
+			currentType: '當前時區時間',
+			connTZType: '數據庫時區傳輸時間'
 		},
 		Current: '當前時間',
 		SyncTime: '同步時間',
@@ -564,7 +567,7 @@ const tc = {
 						expressionExample: {
 							label: '表達式示例',
 							labelTip: '表達式可以使用JavaScript中的比較符和計算符',
-							tip: '篩選出50歲以上的男性以及收入一萬以下的30歲以上的人,表達式如下：'
+							tip: '篩選出50歲以上的男性或者收入一萬以下的30歲以上的人,表達式如下：'
 						},
 						symbol: {
 							label: '支持的符號',
@@ -757,7 +760,13 @@ const tc = {
 		responseParameters: '響應參數',
 		requestExample: '請求示例',
 		backExamples: '返回示例',
-		announcing: '發布中'
+		announcing: '發布中',
+		apiTest: 'API文檔及測試',
+		isPublishAPI: '是否確認發布api?',
+		unpublish_api: '是否確認取消發布api?',
+		apiPublishSuccess: '已發布',
+		apiPublishError: 'api發布失敗',
+		apiUnpublishSuccess: '未發布'
 	},
 	dataForm: {
 		title: '新建數據庫',

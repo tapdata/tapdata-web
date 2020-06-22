@@ -77,7 +77,10 @@ const en = {
 		SyncInfo: {
 			localTZ: 'Local UTC CDC time: custom a point of  CDC time，in local time zone',
 			current: 'Local UTC：default local UTC time',
-			connTZ: 'Sever UTC CDC time: custom a point of  CDC time，in the time zone of a specific server'
+			connTZ: 'Sever UTC CDC time: custom a point of  CDC time，in the time zone of a specific server',
+			localTZType: 'Local UTC CDC time',
+			currentType: 'Current time',
+			connTZType: 'Sever UTC CDC time'
 		},
 		Current: 'Current Time',
 		SyncTime: 'Sync Time',
@@ -95,7 +98,7 @@ const en = {
 		overWrite: 'Overwrite existing data',
 		skipData: 'Skip existing data',
 		loadingError: 'Loading failed, please',
-		dataLoading: 'Data is hard to load ...',
+		dataLoading: 'Data Loding ...',
 		loadLogTip: 'Run log is trying to load, it may take 5 ~ 10 seconds, please wait ...',
 		noLogTip: 'No data',
 		clickLoadTxt: 'Click to load',
@@ -570,7 +573,7 @@ const en = {
 							label: 'Example expression',
 							labelTip: 'Expressions can use comparison and calculation operators in JavaScript',
 							tip:
-								'Select men over 50 years old and people over 30 years old with income below 10,000, the expression is as follows:'
+								'Select men over 50 years old or people over 30 years old with income below 10,000, the expression is as follows:'
 						},
 						symbol: {
 							label: 'Supported symbols',
@@ -746,24 +749,30 @@ const en = {
 		}
 	},
 	apiInfo: {
-		basicAttributes: '基本属性',
-		trquestMethod: '请求方式',
-		status: '状态',
-		supportFormat: '支持格式',
-		founder: '创建人',
-		interfaceClassification: '接口分类',
-		modifyTime: '修改时间',
-		interface: '接口分类',
-		version: '版本',
-		parameter: '参数',
-		typesof: '类型',
-		is_required: '是否必填',
-		examples: '示例',
-		requestParameters: '请求参数',
-		responseParameters: '响应参数',
-		requestExample: '请求示例',
-		backExamples: '返回示例',
-		announcing: '发布中'
+		basicAttributes: 'Basic attributes',
+		trquestMethod: 'Request method',
+		status: 'Status',
+		supportFormat: 'Support format',
+		founder: 'Creator',
+		interfaceClassification: 'Interface classification',
+		modifyTime: 'Modify time',
+		interface: 'Interface classification',
+		version: 'Version',
+		parameter: 'parameter',
+		typesof: 'Type',
+		is_required: 'Whether required',
+		examples: 'Examples',
+		requestParameters: 'Request parameters',
+		responseParameters: 'Response parameters',
+		requestExample: 'Request example',
+		backExamples: 'Back to examples',
+		announcing: 'Posting',
+		apiTest: 'API documentation and testing',
+		isPublishAPI: 'Are you sure to publish api?',
+		unpublish_api: 'Are you sure you want to cancel publishing api?',
+		apiPublishSuccess: 'Published',
+		apiPublishError: 'API publishing failed',
+		apiUnpublishSuccess: 'Unpublished'
 	},
 	dataForm: {
 		title: 'Create Database',
@@ -844,11 +853,11 @@ const en = {
 		}
 	},
 	metaData: {
-		addNode: "Add category at the same level",
-		addChildernNode: "Add Child Category",
-		editNode: "Edit",
-		deleteNode: "Delete",
-		deteleMessage: "This operation will delete all subclasses existing in this category, whether to delete it"
+		addNode: 'Add category at the same level',
+		addChildernNode: 'Add Child Category',
+		editNode: 'Edit',
+		deleteNode: 'Delete',
+		deteleMessage: 'This operation will delete all subclasses existing in this category, whether to delete it'
 	}
 };
 

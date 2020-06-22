@@ -77,7 +77,10 @@ const cn = {
 		SyncInfo: {
 			localTZ: '当前时区传输时间：系统所在时区下，开始传输任务的时刻',
 			current: '当前时区时间：默认当前时间',
-			connTZ: '数据库时区传输时间： 数据库所在时区下，开始传输任务的时刻'
+			connTZ: '数据库时区传输时间： 数据库所在时区下，开始传输任务的时刻',
+			localTZType: '当前时区传输时间',
+			currentType: '当前时区时间',
+			connTZType: '数据库时区传输时间'
 		},
 		Current: '当前时间',
 		SyncTime: '同步时间',
@@ -563,7 +566,7 @@ const cn = {
 						expressionExample: {
 							label: '表达式示例',
 							labelTip: '表达式可以使用JavaScript中的比较符和计算符',
-							tip: '筛选出50岁以上的男性以及收入一万以下的30岁以上的人,表达式如下：'
+							tip: '筛选出50岁以上的男性或者收入一万以下的30岁以上的人,表达式如下：'
 						},
 						symbol: {
 							label: '支持的符号',
@@ -756,7 +759,13 @@ const cn = {
 		responseParameters: '响应参数',
 		requestExample: '请求示例',
 		backExamples: '返回示例',
-		announcing: '发布中'
+		announcing: '发布中',
+		apiTest: 'API文档及测试',
+		isPublishAPI: '是否确认发布api?',
+		unpublish_api: '是否确认取消发布api?',
+		apiPublishSuccess: '已发布',
+		apiPublishError: 'api发布失败',
+		apiUnpublishSuccess: '未发布'
 	},
 	dataForm: {
 		title: '新建数据库',
@@ -774,7 +783,7 @@ const cn = {
 		form: {
 			connectionName: '连接名称',
 			databaseType: '数据库类型',
-			connectionType: '数据库权限',
+			connectionType: '连接类型',
 			host: '数据库地址',
 			port: '端口',
 			databaseName: '数据库名称',

@@ -6,6 +6,7 @@
 			</el-button>
 		</div>
 		<el-form
+			:disabled="disabled"
 			class="e-form"
 			label-position="right"
 			label-width="160px"
@@ -197,7 +198,8 @@ export default {
 
 			model: {
 				label: '',
-				joinTable: _.cloneDeep(JOIN_TABLE_TPL)
+				joinTable: _.cloneDeep(JOIN_TABLE_TPL),
+				type: 'link'
 			}
 		};
 	},
@@ -290,8 +292,13 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
+			this.model = {
+				label: '',
+				joinTable: _.cloneDeep(JOIN_TABLE_TPL),
+				type: 'link'
+			};
+
 			if (data) {
-				// Object.keys(data).forEach(key => (this.model[key] = data[key]));
 				_.merge(this.model, data);
 			}
 			this.cell = cell;

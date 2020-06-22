@@ -4,7 +4,7 @@ export default {
 	name: 'FbFile',
 	mixins: [mixins],
 	props: {
-		value: [String, Number],
+		value: [File, String],
 		config: {
 			require: true,
 			type: Object
@@ -19,15 +19,11 @@ export default {
 		let self = this;
 		let config = self.config;
 		let selectFile = file => {
-			let reader = new FileReader();
-			reader.readAsText(file);
-			reader.onload = () => {
-				let text = reader.result;
-				self.fileName = file.name;
-				self.$emit('input', text);
-				self.$emit('change', text);
-			};
+			this.fileName = file.name;
+			self.$emit('input', file);
+			self.$emit('change', file);
 		};
+		let fileName = this.value ? this.value.name : '';
 		return h(
 			'ElInput',
 			{
@@ -35,8 +31,14 @@ export default {
 					placeholder: config.placeholder || self.$t('formBuilder.file.placeholder')
 				},
 				props: {
-					value: self.fileName,
+					value: fileName,
 					clearable: config.clearable
+				},
+				on: {
+					clear() {
+						self.$emit('input', null);
+						self.$emit('change', null);
+					}
 				}
 			},
 			[

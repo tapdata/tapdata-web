@@ -5,7 +5,7 @@
 				<div
 					:class="[{ btnHover: ['draft'].includes(status) }, 'headImg']"
 					v-show="!isSaving"
-					@click="autoSaveFn"
+					@click="draftSave"
 				>
 					<span class="iconfont icon-yunduanshangchuan"></span>
 					<span class="text">{{ $t('dataFlow.button.saveDraft') }}</span>
@@ -210,6 +210,29 @@
 				<el-button class="e-button" type="primary" @click="start">{{ $t('dataFlow.submitExecute') }}</el-button>
 			</div>
 		</el-dialog>
+		<el-dialog title="系统提示" :visible.sync="tempDialogVisible" width="30%">
+			<el-form :model="form">
+				<span>上次草稿未保存，是否继续编辑？</span><br /><br />
+				<div v-for="item in tempData" :key="item.id">
+					<el-col :span="6"
+						><el-link @click="openTempSaved(item)" type="success">{{
+							item.split('$$$')[2]
+						}}</el-link></el-col
+					>
+					<el-col :span="3"
+						><el-button size="mini" @click="openTempSaved(item)" type="success" plain
+							>打 开</el-button
+						></el-col
+					>
+					<el-button size="mini" @click="deleteTempData(item)" type="danger" icon="el-icon-delete" plain
+						>删 除</el-button
+					>
+				</div>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="loadData">忽 略</el-button>
+			</div>
+		</el-dialog>
 		<AddBtnTip v-if="isEditable()"></AddBtnTip>
 	</div>
 </template>
@@ -244,6 +267,9 @@ export default {
 			model: 'editable',
 
 			dataFlowId: null,
+			tempDialogVisible: false,
+			curTempKey: null,
+			tempData: [],
 			status: 'draft',
 			executeMode: 'normal',
 
@@ -265,31 +291,13 @@ export default {
 			flowDataName: ''
 		};
 	},
-
 	watch: {
-		/* executeMode: {
-			handler(){
-				if( this.executeMode !== 'normal') {
-					this.showCapture();
-				}
-				self.doSave(data, (err, dataFlow) => {
-					if (err) {
-						this.$message.error(self.$t("message.saveFail"));
-					} else {
-						this.$message.success(self.$t("message.saveOK"));
-						this.showCapture();
-					}
-				});
-			}
-		},*/
-
 		status: {
 			handler() {
 				this.setEditable(this.isEditable());
 			}
 		}
 	},
-
 	mounted() {
 		let self = this;
 
@@ -299,22 +307,83 @@ export default {
 			actionBarEl: $('.editor-container .action-buttons'),
 			scope: self
 		});
-
-		// load dataFlow if exists data flow id
-		if (self.$route.query && self.$route.query.id) {
-			self.loadDataFlow(self.$route.query.id);
-		} else {
+		Object.keys(localStorage).forEach(key => {
+			if (key.startsWith('temp$$$')) this.tempData.push(key);
+		});
+		if (this.tempData.length > 0) {
 			self.loading = false;
+			this.tempDialogVisible = true;
+			return;
 		}
+		this.loadData();
+	},
 
-		// self.editor.getUI().getBackButtonEl().on('click', () => {
-		// 	self.$router.push({path: '/dataFlows'});
-		// });
-		if (this.isEditable()) {
+	methods: {
+		isEditable() {
+			return ['draft', 'error', 'paused'].includes(this.status);
+		},
+		loadData() {
+			let self = this;
+			this.tempDialogVisible = false;
+			if (self.$route.query && self.$route.query.id) {
+				self.loadDataFlow(self.$route.query.id);
+			} else {
+				self.loading = false;
+				self.onGraphChanged();
+			}
+		},
+		openTempSaved(key) {
+			this.tempDialogVisible = false;
+			this.initData(JSON.parse(localStorage.getItem(key)));
+			localStorage.removeItem(key);
+		},
+		deleteTempData(key) {
+			this.tempData.splice(this.tempData.indexOf(key), 1);
+			localStorage.removeItem(key);
+			if (this.tempData.length == 0) {
+				this.tempDialogVisible = false;
+				this.loadData();
+			}
+		},
+		initData(data) {
+			let self = this,
+				dataFlow = data;
+			self.dataFlowId = dataFlow.id;
+			self.status = dataFlow.status;
+			self.executeMode = dataFlow.executeMode;
+			self.sync_type = dataFlow.setting.sync_type;
+			self.dataFlow = dataFlow;
+			// 管理端api创建任务来源以及editorData 数据丢失情况
+			if (!dataFlow.editorData && dataFlow.stages) {
+				// 1. 拿到创建所有的节点数据
+				let cells = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
+				dataFlow.editorData = cells;
+				// 2. 调用画布创建节点方法
+				self.editor.setData(dataFlow);
+				// 3. 更新schema
+				self.editor.reloadSchema();
+
+				// 4. 节点布局
+				self.editor.graph.layoutDirectedGraph();
+
+				// 5. 处理joinTables
+				self.handleJoinTables(dataFlow.stages, self.editor.graph.graph);
+			} else {
+				self.editor.setData(dataFlow);
+			}
+			if (['scheduled', 'running', 'stopping', 'force stopping'].includes(self.status)) {
+				self.setEditable(false);
+			}
+			if (self.executeMode !== 'normal') {
+				self.showCapture();
+			}
+
+			self.polling();
+			self.onGraphChanged();
+		},
+		onGraphChanged() {
+			let self = this;
 			this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
-				if (self.loading) {
-					return;
-				}
 				changeData = this.getDataFlowData(true);
 				if (changeData) {
 					let settingSetInterval = () => {
@@ -333,21 +402,6 @@ export default {
 					}
 				}
 			});
-		}
-	},
-
-	methods: {
-		isEditable() {
-			return ['draft', 'error', 'paused'].includes(this.status);
-		},
-
-		/***
-		 * click save
-		 */
-		autoSaveFn() {
-			this.timeSave();
-			clearTimeout(timer);
-			timer = null;
 		},
 		/**
 		 * submit temporary
@@ -381,8 +435,23 @@ export default {
 		/****
 		 * Auto save
 		 */
-		async timeSave() {
+		timeSave() {
+			let data = this.getDataFlowData(true),
+				curkey = 1;
+			Object.keys(localStorage).forEach(key => {
+				if (key.startsWith('temp_'))
+					if (parseInt(key.split('$$$')[1]) >= curkey) curkey = parseInt(key.split('$$$')[1]) + 1;
+			});
+			localStorage.setItem('temp$$$' + curkey + '$$$' + data.name, JSON.stringify(data));
+		},
+		//点击draft save按钮
+		async draftSave() {
 			this.isSaving = true;
+			if (
+				localStorage.getItem('tempSaved') &&
+				JSON.parse(localStorage.getItem('tempSaved')).id == this.dataFlowId
+			)
+				localStorage.removeItem('tempSaved');
 			let self = this,
 				promise = null,
 				lastString = '',
@@ -398,9 +467,12 @@ export default {
 			if (result && result.data.length > 0) {
 				this.flowDataName = result.data[0].name;
 				if (this.flowDataName) {
-					lastString = this.flowDataName.charAt(this.flowDataName.length - 1, 1) * 1;
+					lastString = this.flowDataName.charAt(this.flowDataName.length - 1, 1);
+
 					if (lastString > 1 && data.name == this.$t('dataFlow.newTaksName')) {
 						data.name = data.name + (lastString * 1 + 1);
+					} else {
+						data.name = data.name;
 					}
 				}
 			}
@@ -458,41 +530,8 @@ export default {
 				.get([id])
 				.then(result => {
 					if (result && result.data) {
-						let dataFlow = result.data;
-
-						self.dataFlowId = dataFlow.id;
-						self.status = dataFlow.status;
-						self.executeMode = dataFlow.executeMode;
-
-						self.dataFlow = dataFlow;
-						// 管理端api创建任务来源以及editorData 数据丢失情况
-						if (!dataFlow.editorData && dataFlow.stages) {
-							// 1. 拿到创建所有的节点数据
-							let cells = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
-							dataFlow.editorData = cells;
-							// 2. 调用画布创建节点方法
-							self.editor.setData(dataFlow);
-							// 3. 更新schema
-							self.editor.reloadSchema();
-
-							// 4. 节点布局
-							self.editor.graph.layoutDirectedGraph();
-
-							// 5. 处理joinTables
-							self.handleJoinTables(dataFlow.stages, self.editor.graph.graph);
-						} else {
-							self.editor.setData(dataFlow);
-						}
-						if (['scheduled', 'running', 'stopping', 'force stopping'].includes(self.status)) {
-							self.setEditable(false);
-						}
-						if (self.executeMode !== 'normal') {
-							self.showCapture();
-						}
-
-						self.polling();
+						self.initData(result.data);
 					} else {
-						log(result);
 						self.$message.error(self.$t('message.api.get.error'));
 					}
 
@@ -664,8 +703,6 @@ export default {
 			});
 			postData.stages = Object.values(stages);
 
-			log('Job.getDataFlowData', editorData, postData);
-
 			if (this.dataFlowId) postData.id = this.dataFlowId;
 
 			return postData;
@@ -690,7 +727,6 @@ export default {
 
 				stage.dataFlowId = dataFlowId;
 			});
-			log('Job.getStages', stages);
 			return stages;
 		},
 
@@ -701,9 +737,11 @@ export default {
 		 */
 		doSave(data, cb) {
 			let self = this;
-
-			log('Job.doSave', data);
-
+			if (
+				localStorage.getItem('tempSaved') &&
+				JSON.parse(localStorage.getItem('tempSaved')).id == this.dataFlowId
+			)
+				localStorage.removeItem('tempSaved');
 			const _doSave = function() {
 				let promise = data.id ? dataFlowsApi.patch(data) : dataFlowsApi.post(data);
 
@@ -980,9 +1018,7 @@ export default {
 							}
 						})
 						.finally(() => {
-							setTimeout(() => {
-								this.loading = false;
-							}, 5000);
+							this.loading = false;
 						});
 				});
 			}

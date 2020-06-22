@@ -8,6 +8,7 @@ import store from './vuex'; // 引入全局数据控制
 import VueCookie from 'vue-cookie';
 import i18n from './i18n/i18n';
 import VueBus from 'vue-bus';
+import VueClipboard from 'vue-clipboard2';
 import './components/form-builder';
 
 import './plugins/element.js';
@@ -16,6 +17,7 @@ import './theme/index.css';
 Vue.config.productionTip = false;
 Vue.use(VueCookie);
 Vue.use(VueBus);
+Vue.use(VueClipboard);
 
 Vue.prototype.$moment = moment;
 

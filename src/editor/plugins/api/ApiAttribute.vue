@@ -1,65 +1,71 @@
 <template>
-	<div class="apiNode nodeStyle">
-		<head>
-			<span class="headIcon iconfont icon-you2" type="primary"></span>
-			<span class="txt">{{ $t('editor.nodeSettings') }}</span>
-		</head>
-		<div class="nodeBody">
-			<div class="head-btns">
-				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-					{{ $t('dataFlow.button.viewMonitoring') }}
-				</el-button>
-			</div>
-			<el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
-				<!-- <span class="addTxt">+新建文件</span> -->
-				<el-form-item :label="$t('editor.choose') + 'API'" prop="connectionId" :rules="rules" required>
-					<el-select
-						filterable
-						v-model="model.connectionId"
-						:placeholder="$t('editor.cell.data_node.api.chooseApiName')"
-					>
-						<el-option
-							v-for="(item, idx) in databases"
-							:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
-							:value="item.id"
-							v-bind:key="idx"
-						></el-option>
-					</el-select>
-				</el-form-item>
+	<div v-if="visible">
+		<div class="apiNode nodeStyle">
+			<head>
+				<span class="headIcon iconfont icon-you2" type="primary"></span>
+				<span class="txt">{{ $t('editor.nodeSettings') }}</span>
+			</head>
+			<div class="nodeBody">
+				<div class="head-btns">
+					<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+						{{ $t('dataFlow.button.viewMonitoring') }}
+					</el-button>
+				</div>
+				<el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
+					<!-- <span class="addTxt">+新建文件</span> -->
+					<el-form-item :label="$t('editor.choose') + 'API'" prop="connectionId" :rules="rules" required>
+						<el-select
+							filterable
+							v-model="model.connectionId"
+							:placeholder="$t('editor.cell.data_node.api.chooseApiName')"
+						>
+							<el-option
+								v-for="(item, idx) in databases"
+								:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
+								:value="item.id"
+								v-bind:key="idx"
+							></el-option>
+						</el-select>
+					</el-form-item>
 
-				<el-form-item
-					:label="$t('editor.cell.data_node.collection.form.collection.label')"
-					prop="tableName"
-					required
-				>
-					<el-select
-						v-model="model.tableName"
-						filterable
-						allow-create
-						default-first-option
-						clearable
-						:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
-						size="mini"
+					<el-form-item
+						:label="$t('editor.cell.data_node.collection.form.collection.label')"
+						prop="tableName"
+						required
 					>
-						<el-option
-							v-for="(item, idx) in schemas"
-							:label="`${item.table_name}`"
-							:value="item.table_name"
-							v-bind:key="idx"
-						></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" prop="primaryKeys" required>
-					<el-input
-						v-model="model.primaryKeys"
-						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
-						size="mini"
-					></el-input>
-				</el-form-item>
-			</el-form>
-		</div>
-		<div class="e-entity-wrap" style="text-align: center; overflow:auto;">
-			<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
+						<el-select
+							v-model="model.tableName"
+							filterable
+							allow-create
+							default-first-option
+							clearable
+							:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
+							size="mini"
+						>
+							<el-option
+								v-for="(item, idx) in schemas"
+								:label="`${item.table_name}`"
+								:value="item.table_name"
+								v-bind:key="idx"
+							></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item
+						:label="$t('editor.cell.data_node.collection.form.pk.label')"
+						prop="primaryKeys"
+						required
+					>
+						<el-input
+							v-model="model.primaryKeys"
+							:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
+							size="mini"
+						></el-input>
+					</el-form-item>
+				</el-form>
+			</div>
+			<div class="e-entity-wrap" style="text-align: center; overflow:auto;">
+				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
+			</div>
 		</div>
 	</div>
 </template>
@@ -101,6 +107,7 @@ export default {
 					}
 				]
 			},
+			visible: false,
 			model: {
 				connectionId: '',
 				type: 'rest api',
@@ -209,8 +216,13 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
+			this.model = {
+				connectionId: '',
+				type: 'rest api',
+				tableName: '',
+				primaryKeys: ''
+			};
 			if (data) {
-				// Object.keys(data).forEach(key => (this.model[key] = data[key]));
 				_.merge(this.model, data);
 			}
 			this.mergedSchema = cell.getOutputSchema();

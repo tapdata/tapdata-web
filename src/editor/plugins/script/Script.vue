@@ -1,55 +1,67 @@
 <template>
-	<div class="nodeStyle">
-		<div class="nodeBody">
-			<div class="head-btns">
-				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-					{{ $t('dataFlow.button.viewMonitoring') }}
-				</el-button>
-			</div>
-			<el-form
-				class="e-form"
-				label-position="top"
-				label-width="130px"
-				:model="model"
-				:disabled="disabled"
-				ref="form"
-			>
-				<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.name.label')" size="mini">
-					<el-input
-						v-model="model.name"
-						class="form-item-width"
-						:placeholder="$t('editor.cell.processor.script.form.name.placeholder')"
-					></el-input>
-				</el-form-item>
-
-				<el-form-item :required="true" :label="$t('editor.cell.processor.script.form.type.label')" size="mini">
-					<el-select
-						v-model="model.type"
-						:placeholder="$t('editor.cell.processor.script.form.type.placeholder')"
-						value="js_processor"
-					>
-						<el-option
-							v-for="(item, idx) in scriptTypes"
-							:label="item.label"
-							:value="item.value"
-							v-bind:key="idx"
-						></el-option>
-					</el-select>
-				</el-form-item>
-
-				<el-form-item
-					:required="true"
-					:label="$t('editor.cell.processor.script.form.script.label')"
-					size="mini"
+	<div v-if="visible">
+		<div class="nodeStyle">
+			<div class="nodeBody">
+				<div class="head-btns">
+					<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+						{{ $t('dataFlow.button.viewMonitoring') }}
+					</el-button>
+				</div>
+				<el-form
+					class="e-form"
+					label-position="top"
+					label-width="130px"
+					:model="model"
+					:disabled="disabled"
+					ref="form"
 				>
-					<JsEditor :code.sync="model.script" ref="jsEditor" :width.sync="width"></JsEditor>
-				</el-form-item>
-			</el-form>
-			<el-button class="btn-debug" type="primary" size="mini" :loading="!!sending" @click="showDebug">
-				{{ $t('editor.cell.processor.script.debug_button_label') }}
-			</el-button>
+					<el-form-item
+						:required="true"
+						:label="$t('editor.cell.processor.script.form.name.label')"
+						size="mini"
+					>
+						<el-input
+							v-model="model.name"
+							class="form-item-width"
+							:placeholder="$t('editor.cell.processor.script.form.name.placeholder')"
+						></el-input>
+					</el-form-item>
+
+					<el-form-item
+						:required="true"
+						:label="$t('editor.cell.processor.script.form.type.label')"
+						size="mini"
+					>
+						<el-select
+							v-model="model.type"
+							:placeholder="$t('editor.cell.processor.script.form.type.placeholder')"
+							value="js_processor"
+						>
+							<el-option
+								v-for="(item, idx) in scriptTypes"
+								:label="item.label"
+								:value="item.value"
+								v-bind:key="idx"
+							></el-option>
+						</el-select>
+					</el-form-item>
+
+					<el-form-item
+						:required="true"
+						:label="$t('editor.cell.processor.script.form.script.label')"
+						size="mini"
+					>
+						<JsEditor :code.sync="model.script" ref="jsEditor" :width.sync="width"></JsEditor>
+					</el-form-item>
+					<el-form-item>
+						<el-button class="btn-debug" type="primary" size="mini" :loading="!!sending" @click="showDebug">
+							{{ $t('editor.cell.processor.script.debug_button_label') }}
+						</el-button>
+					</el-form-item>
+				</el-form>
+			</div>
+			<Debug ref="debug"></Debug>
 		</div>
-		<Debug ref="debug"></Debug>
 	</div>
 </template>
 
@@ -93,6 +105,7 @@ export default {
 					}
 				]
 			},
+			visible: false,
 			model: {
 				name: 'JavaScript',
 				type: 'js_processor',
@@ -120,8 +133,12 @@ export default {
 
 	methods: {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
+			this.model = {
+				name: 'JavaScript',
+				type: 'js_processor',
+				script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}'
+			};
 			if (data) {
-				// Object.keys(data).forEach(key => (this.model[key] = data[key]));
 				_.merge(this.model, data);
 			}
 			gData.stageId = cell.id;
