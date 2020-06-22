@@ -1,6 +1,8 @@
 <template>
 	<el-container class="api-info">
 		<metaData></metaData>
+		<apiPath></apiPath>
+
 		<div class="api-content">
 			<el-header class="e-height">
 				<h1>{{ apiData.name }}</h1>
@@ -120,12 +122,13 @@
 
 <script>
 import factory from '../../api/factory';
-import metaData from '../metaData2';
+import metaData from '../metaData';
+import apiPath from '../apiPath';
 const modules = factory('modules');
 
 export default {
 	name: 'ApiInfo',
-	components: { metaData },
+	components: { metaData, apiPath },
 	data() {
 		return {
 			apiData: {
@@ -229,6 +232,10 @@ export default {
 
 <style scoped lang="less">
 .api-info {
+	.leftTree {
+		display: flex;
+		flex-direction: column;
+	}
 	height: 100%;
 	overflow: auto;
 	.e-height {

@@ -1,38 +1,5 @@
 <template>
 	<div class="metadata">
-		<div class="box-tree">
-			<div class="metadata-header" v-show="isActive">
-				<span>数据分类</span>
-				<div class="metadata-header-right">
-					<i class="iconfont icon-fangdajing" @click="displaySearch(false)"></i>
-					<i class="iconfont icon-sync" @click="handleList"></i>
-					<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
-				</div>
-			</div>
-			<div class="metadata-header" v-show="!isActive">
-				<i class="iconfont icon-right-circle" @click="displaySearch(true)"></i>
-				<el-input class="search" v-model="filterText"
-					><i slot="suffix" class="el-input__icon el-icon-search"></i
-				></el-input>
-			</div>
-			<el-tree
-				node-key="id"
-				:props="props"
-				:expand-on-click-node="false"
-				lazy
-				:load="loadNodes"
-				:filter-node-method="filterNode"
-				ref="tree"
-				class="metaData-tree"
-			>
-				<span class="custom-tree-node" slot-scope="{ node, data }">
-					<span>
-						<span class="iconfont icon-Folder-closed filter-icon"></span>
-						<span class="table-label" @click="handleChecked(data)">{{ node.label }}</span>
-					</span>
-				</span>
-			</el-tree>
-		</div>
 		<div class="box-ul">
 			<div class="box-head">
 				<div class="select-nav-header">
@@ -400,6 +367,7 @@ export default {
 </script>
 
 <style scoped lang="less">
+
 .box {
 	width: 254px;
 }
@@ -448,22 +416,15 @@ export default {
 }
 
 .box-head {
-	position: fixed;
+	// position: fixed;
 	z-index: 2;
 }
 
-.box-tree {
-	float: left;
-	width: 240px;
-	border: 1px solid #dedee4;
-	height: calc(100vh - 1px);
-}
 .box-ul {
 	float: left;
+	height: 100%;
 }
-.list-box {
-	margin-top: 114px;
-}
+
 .classify-ul {
 	background-color: #fff;
 	overflow: hidden;
@@ -472,7 +433,7 @@ export default {
 	list-style: none;
 	font-size: 12px;
 	width: 300px;
-	height: calc(100vh - 1px);
+	height: calc(100% - 114px);
 	overflow-y: auto;
 	border-right: 1px solid #dedee4;
 }
@@ -492,8 +453,8 @@ export default {
 	}
 }
 .box-head {
-	position: fixed;
-	width: 292px;
+	// position: fixed;
+	width: 100%;
 	z-index: 4;
 	background: #f5f5f5;
 	border-bottom: 1px solid #dedee4;
