@@ -233,6 +233,9 @@ export default {
 		submit() {
 			this.$refs.form.validate(valid => {
 				if (valid) {
+					if (!this.model.id) {
+						delete this.model.id;
+					}
 					let params = Object.assign({}, this.model, {
 						user_id: this.$cookie.get('user_id'),
 						status: 'testing',
@@ -243,9 +246,6 @@ export default {
 						project: '',
 						listtags: []
 					});
-					if (!this.model.id) {
-						delete this.model.id;
-					}
 					connectionsModel[this.model.id ? 'patch' : 'post'](params)
 						.then(res => {
 							if (res.statusText === 'OK') {
