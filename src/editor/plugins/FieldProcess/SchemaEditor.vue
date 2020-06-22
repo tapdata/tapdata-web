@@ -3,7 +3,9 @@
 		<el-row class="operation-area">
 			<span @click="handleAllDelete">{{ $t('editor.cell.processor.field.form.delete') }}</span>
 			<span @click="handleAllReset">{{ $t('dataFlow.reset') }}</span>
-			<span @click="handleAllToUpperCase">{{ $t('editor.cell.processor.field.form.toUpperCase') }}</span>
+			<span @click="handleAllToUpperCase('upperCase')">{{
+				$t('editor.cell.processor.field.form.toUpperCase')
+			}}</span>
 			<span @click="handleAllToLowerCase('lowerCase')">{{
 				$t('editor.cell.processor.field.form.toLowerCase')
 			}}</span>
@@ -463,7 +465,7 @@ export default {
 				);
 				let ops = this.model.operations.filter(v => v.id === nativeData.id && v.op === 'RENAME');
 				let op;
-				if (data.label === nativeData.label && type !== 'lowerCase') {
+				if (data.label === nativeData.label && type !== 'lowerCase' && type !== 'upperCase') {
 					return;
 				}
 				if (ops.length === 0) {
@@ -562,13 +564,13 @@ export default {
 				});
 			}
 		},
-		handleAllToUpperCase() {
+		handleAllToUpperCase(type) {
 			let ids = this.$refs.tree.getCheckedNodes();
 			if (ids && ids.length > 0) {
 				ids.map(id => {
 					let node = this.$refs.tree.getNode(id);
 					node.data.label = node.data.label.toUpperCase();
-					this.handleRename(node, node.data);
+					this.handleRename(node, node.data, type);
 				});
 			}
 		},
