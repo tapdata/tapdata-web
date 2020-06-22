@@ -396,7 +396,7 @@ export default {
 				data.executeMode = 'normal';
 				self.doSave(data, err => {
 					if (err) {
-						this.$message.error(err.message);
+						this.$message.error(err.response.data);
 					} else {
 						this.$message.success(self.$t('message.saveOK'));
 						self.editor.setData(data);
@@ -841,7 +841,7 @@ export default {
 				data.executeMode = 'normal';
 				self.doSave(data, err => {
 					if (err) {
-						this.$message.error(self.$t('message.saveFail'));
+						this.$message.error(err.response.data);
 					} else {
 						this.$message.success(self.$t('message.saveOK'));
 						self.setEditable(false);
