@@ -328,6 +328,10 @@ export default {
 		deleteTempData(key) {
 			this.tempData.splice(this.tempData.indexOf(key), 1);
 			localStorage.removeItem(key);
+			if (this.tempData.length == 0) {
+				this.tempDialogVisible = false;
+				this.loadData();
+			}
 		},
 		initData(data) {
 			let self = this,
