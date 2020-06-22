@@ -1,92 +1,90 @@
 <template>
-	<div v-if="visible">
-		<div class="releaseApi">
-			<div class="head-btns">
-				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-					{{ $t('dataFlow.button.viewMonitoring') }}
-				</el-button>
-			</div>
-			<el-form ref="form" :model="form" :disabled="disabled" label-position="top" label-width="200px">
-				<el-form-item :label="$t('editor.cell.data_node.api.dataApiName')">
-					<el-input
-						v-model="form.name"
-						maxlength="20"
-						:placeholder="$t('editor.cell.data_node.api.enterPublishApiName')"
-						show-word-limit
-						required
-					></el-input>
-				</el-form-item>
-				<el-form-item :label="$t('editor.cell.data_node.api.description')" class="pdTop5 e-textarea">
-					<el-input
-						type="textarea"
-						v-model="form.description"
-						:placeholder="$t('editor.cell.data_node.api.enterNewlyReleasedApi')"
-						maxlength="100"
-						show-word-limit
-					></el-input>
-				</el-form-item>
-				<el-row :gutter="10">
-					<el-col :span="6">
-						<el-form-item :label="$t('editor.cell.data_node.api.method')">
-							<el-select v-model="form.paths.method">
-								<el-option
-									v-for="item in selectList"
-									:key="item.value"
-									:label="item.label"
-									:value="item.value"
-								>
-								</el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="18">
-						<el-form-item
-							:label="
-								mergedSchema && mergedSchema.table_name
-									? 'URL/API/V1/' + mergedSchema.table_name + '/cust/' + form.apiPath
-									: 'URL/API/V1/cust/' + form.apiPath
-							"
-						>
-							<el-input
-								v-model="form.apiPath"
-								:placeholder="$t('editor.cell.data_node.api.enterEndUrl')"
-							></el-input>
-						</el-form-item>
-					</el-col>
-				</el-row>
-				<el-form-item :label="$t('editor.cell.data_node.api.fieldSettings')" class="pdTop5">
-					<el-table
-						border
-						:data="form.paths.fields"
-						row-key="id"
-						:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-						style="width: 100%"
-					>
-						<el-table-column prop="field_name" :label="$t('editor.cell.data_node.api.table_field')">
-						</el-table-column>
-						<el-table-column prop="javaType" :label="$t('editor.cell.data_node.api.table_type')" width="80">
-						</el-table-column>
-						<el-table-column
-							align="center"
-							prop="checkList"
-							:label="$t('editor.cell.data_node.api.table_setting')"
-							width="180"
-						>
-							<template slot-scope="scope">
-								<!-- <el-checkbox-group v-model="scope.row.checkList"> -->
-								<el-checkbox v-model="scope.row.required">{{
-									$t('editor.cell.data_node.api.required')
-								}}</el-checkbox>
-								<el-checkbox v-model="scope.row.query">{{
-									$t('editor.cell.data_node.api.availableQueries')
-								}}</el-checkbox>
-								<!-- </el-checkbox-group> -->
-							</template>
-						</el-table-column>
-					</el-table>
-				</el-form-item>
-			</el-form>
+	<div class="releaseApi">
+		<div class="head-btns">
+			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+				{{ $t('dataFlow.button.viewMonitoring') }}
+			</el-button>
 		</div>
+		<el-form ref="form" :model="form" :disabled="disabled" label-position="top" label-width="200px">
+			<el-form-item :label="$t('editor.cell.data_node.api.dataApiName')">
+				<el-input
+					v-model="form.name"
+					maxlength="20"
+					:placeholder="$t('editor.cell.data_node.api.enterPublishApiName')"
+					show-word-limit
+					required
+				></el-input>
+			</el-form-item>
+			<el-form-item :label="$t('editor.cell.data_node.api.description')" class="pdTop5 e-textarea">
+				<el-input
+					type="textarea"
+					v-model="form.description"
+					:placeholder="$t('editor.cell.data_node.api.enterNewlyReleasedApi')"
+					maxlength="100"
+					show-word-limit
+				></el-input>
+			</el-form-item>
+			<el-row :gutter="10">
+				<el-col :span="6">
+					<el-form-item :label="$t('editor.cell.data_node.api.method')">
+						<el-select v-model="form.paths.method">
+							<el-option
+								v-for="item in selectList"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value"
+							>
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-col>
+				<el-col :span="18">
+					<el-form-item
+						:label="
+							mergedSchema && mergedSchema.table_name
+								? 'URL/API/V1/' + mergedSchema.table_name + '/cust/' + form.apiPath
+								: 'URL/API/V1/cust/' + form.apiPath
+						"
+					>
+						<el-input
+							v-model="form.apiPath"
+							:placeholder="$t('editor.cell.data_node.api.enterEndUrl')"
+						></el-input>
+					</el-form-item>
+				</el-col>
+			</el-row>
+			<el-form-item :label="$t('editor.cell.data_node.api.fieldSettings')" class="pdTop5">
+				<el-table
+					border
+					:data="form.paths.fields"
+					row-key="id"
+					:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+					style="width: 100%"
+				>
+					<el-table-column prop="field_name" :label="$t('editor.cell.data_node.api.table_field')">
+					</el-table-column>
+					<el-table-column prop="javaType" :label="$t('editor.cell.data_node.api.table_type')" width="80">
+					</el-table-column>
+					<el-table-column
+						align="center"
+						prop="checkList"
+						:label="$t('editor.cell.data_node.api.table_setting')"
+						width="180"
+					>
+						<template slot-scope="scope">
+							<!-- <el-checkbox-group v-model="scope.row.checkList"> -->
+							<el-checkbox v-model="scope.row.required">{{
+								$t('editor.cell.data_node.api.required')
+							}}</el-checkbox>
+							<el-checkbox v-model="scope.row.query">{{
+								$t('editor.cell.data_node.api.availableQueries')
+							}}</el-checkbox>
+							<!-- </el-checkbox-group> -->
+						</template>
+					</el-table-column>
+				</el-table>
+			</el-form-item>
+		</el-form>
 	</div>
 </template>
 
@@ -108,7 +106,6 @@ export default {
 			],
 			groupList: [],
 			expressionList: [],
-			visible: false,
 			form: {
 				apiVersion: 'V1',
 				connection: '',

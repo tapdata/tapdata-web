@@ -83,7 +83,6 @@ export class VueAdapter extends BaseObject {
 				});
 				self.vm.$on(EditorEventType.HIDE, () => {
 					self.vm.$off('dataChanged');
-					self.vm.visible = false;
 				});
 				vueAdapter[name]._vm = self.vm;
 				vueAdapter[name]._panel = settings;
@@ -99,7 +98,6 @@ export class VueAdapter extends BaseObject {
 				});
 				self.vm.$on(EditorEventType.HIDE, () => {
 					self.vm.$off('dataChanged');
-					self.vm.visible = false;
 				});
 			}
 			let editable = self.editor.editable;
@@ -112,7 +110,6 @@ export class VueAdapter extends BaseObject {
 			self.editor.getRightSidebar().show();
 			if (typeof self.vm.setData === 'function') {
 				self.vm.setData(formData, cell, isSourceDataNode, self);
-				self.vm.visible = true;
 			} else {
 				throw new Error(`Custom form component does not implement "${name}" method`);
 			}

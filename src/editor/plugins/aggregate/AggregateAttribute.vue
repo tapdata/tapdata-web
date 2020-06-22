@@ -1,119 +1,113 @@
 <template>
-	<div v-if="visible">
-		<div class="aggregate">
-			<div class="head-btns">
-				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-					{{ $t('dataFlow.button.viewMonitoring') }}
-				</el-button>
-			</div>
-			<el-form ref="form" :model="form" label-position="top" label-width="200px" :disabled="disabled">
-				<el-col :span="21" class="aggregateName">
-					<el-form-item :label="$t('dataFlow.nodeName')" required>
-						<el-input v-model="form.name" maxlength="20" show-word-limit></el-input>
+	<div class="aggregate">
+		<div class="head-btns">
+			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+				{{ $t('dataFlow.button.viewMonitoring') }}
+			</el-button>
+		</div>
+		<el-form ref="form" :model="form" label-position="top" label-width="200px" :disabled="disabled">
+			<el-col :span="21" class="aggregateName">
+				<el-form-item :label="$t('dataFlow.nodeName')" required>
+					<el-input v-model="form.name" maxlength="20" show-word-limit></el-input>
+				</el-form-item>
+			</el-col>
+			<el-row :gutter="20" class="loopFrom" v-for="(item, index) in form.aggregations" :key="index">
+				<el-col :span="21" class="fromLoopBox">
+					<el-row :gutter="10">
+						<el-col :span="6">
+							<el-form-item
+								:label="$t('dataFlow.aggFunction')"
+								:prop="'aggregations.' + index + '.aggFunction'"
+								required
+							>
+								<el-select v-model="item.aggFunction" @change="changeAggFunction(item, index)">
+									<el-option
+										v-for="item in selectList"
+										:key="item.value"
+										:label="item.label"
+										:value="item.value"
+									>
+									</el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="18">
+							<el-form-item
+								:label="$t('dataFlow.aggExpression')"
+								:prop="'aggregations.' + index + '.aggExpression'"
+								:required="item.aggFunction !== 'COUNT'"
+							>
+								<el-select
+									v-model="item.aggExpression"
+									filterable
+									allow-create
+									default-first-option
+									:placeholder="$t('dataFlow.selectTargetField')"
+									:disabled="item.aggFunction === 'COUNT'"
+								>
+									<el-option
+										v-for="item in expressionList"
+										:key="item.field_name"
+										:label="item.field_name"
+										:value="item.field_name"
+									>
+									</el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+					</el-row>
+					<el-form-item required :label="$t('dataFlow.aggName')" :prop="'aggregations.' + index + '.name'">
+						<el-popover
+							class="aggtip"
+							placement="top-start"
+							width="200"
+							trigger="hover"
+							:content="$t('dataFlow.nameTip')"
+						>
+							<span class="icon iconfont icon-tishi1" slot="reference"></span>
+						</el-popover>
+						<el-input v-model="item.name"></el-input>
+					</el-form-item>
+					<el-form-item
+						:label="$t('dataFlow.filterPredicate')"
+						:prop="'aggregations.' + index + '.filterPredicate'"
+					>
+						<el-input
+							type="textarea"
+							v-model="item.filterPredicate"
+							:placeholder="$t('dataFlow.enterFilterTable')"
+						></el-input>
+					</el-form-item>
+					<el-form-item
+						:label="$t('dataFlow.groupByExpression')"
+						:prop="'aggregations.' + index + '.groupByExpression'"
+					>
+						<el-select
+							v-model="item.groupByExpression"
+							:placeholder="$t('dataFlow.selectGrpupFiled')"
+							multiple
+							filterable
+							allow-create
+							default-first-option
+						>
+							<el-option
+								v-for="item in groupList"
+								:key="item.field_name"
+								:label="item.field_name"
+								:value="item.field_name"
+							>
+							</el-option>
+						</el-select>
 					</el-form-item>
 				</el-col>
-				<el-row :gutter="20" class="loopFrom" v-for="(item, index) in form.aggregations" :key="index">
-					<el-col :span="21" class="fromLoopBox">
-						<el-row :gutter="10">
-							<el-col :span="6">
-								<el-form-item
-									:label="$t('dataFlow.aggFunction')"
-									:prop="'aggregations.' + index + '.aggFunction'"
-									required
-								>
-									<el-select v-model="item.aggFunction" @change="changeAggFunction(item, index)">
-										<el-option
-											v-for="item in selectList"
-											:key="item.value"
-											:label="item.label"
-											:value="item.value"
-										>
-										</el-option>
-									</el-select>
-								</el-form-item>
-							</el-col>
-							<el-col :span="18">
-								<el-form-item
-									:label="$t('dataFlow.aggExpression')"
-									:prop="'aggregations.' + index + '.aggExpression'"
-									:required="item.aggFunction !== 'COUNT'"
-								>
-									<el-select
-										v-model="item.aggExpression"
-										filterable
-										allow-create
-										default-first-option
-										:placeholder="$t('dataFlow.selectTargetField')"
-										:disabled="item.aggFunction === 'COUNT'"
-									>
-										<el-option
-											v-for="item in expressionList"
-											:key="item.field_name"
-											:label="item.field_name"
-											:value="item.field_name"
-										>
-										</el-option>
-									</el-select>
-								</el-form-item>
-							</el-col>
-						</el-row>
-						<el-form-item
-							required
-							:label="$t('dataFlow.aggName')"
-							:prop="'aggregations.' + index + '.name'"
-						>
-							<el-popover
-								class="aggtip"
-								placement="top-start"
-								width="200"
-								trigger="hover"
-								:content="$t('dataFlow.nameTip')"
-							>
-								<span class="icon iconfont icon-tishi1" slot="reference"></span>
-							</el-popover>
-							<el-input v-model="item.name"></el-input>
-						</el-form-item>
-						<el-form-item
-							:label="$t('dataFlow.filterPredicate')"
-							:prop="'aggregations.' + index + '.filterPredicate'"
-						>
-							<el-input
-								type="textarea"
-								v-model="item.filterPredicate"
-								:placeholder="$t('dataFlow.enterFilterTable')"
-							></el-input>
-						</el-form-item>
-						<el-form-item
-							:label="$t('dataFlow.groupByExpression')"
-							:prop="'aggregations.' + index + '.groupByExpression'"
-						>
-							<el-select
-								v-model="item.groupByExpression"
-								:placeholder="$t('dataFlow.selectGrpupFiled')"
-								multiple
-								filterable
-								allow-create
-								default-first-option
-							>
-								<el-option
-									v-for="item in groupList"
-									:key="item.field_name"
-									:label="item.field_name"
-									:value="item.field_name"
-								>
-								</el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="2" class="right">
-						<span @click="removeRow(item, index)" class="iconfont icon-quxiao remove"></span>
-					</el-col>
-				</el-row>
-				<el-form-item class="btnClass">
-					<el-button @click="addRow">+ {{ $t('editor.cell.processor.aggregate.new_aggregate') }}</el-button>
-				</el-form-item>
-			</el-form>
-		</div>
+				<el-col :span="2" class="right">
+					<span @click="removeRow(item, index)" class="iconfont icon-quxiao remove"></span>
+				</el-col>
+			</el-row>
+			<el-form-item class="btnClass">
+				<el-button @click="addRow">+ {{ $t('editor.cell.processor.aggregate.new_aggregate') }}</el-button>
+			</el-form-item>
+		</el-form>
 	</div>
 </template>
 
@@ -138,7 +132,6 @@ export default {
 			],
 			groupList: [],
 			expressionList: [],
-			visible: false,
 			form: {
 				name: '',
 				type: 'aggregation_processor',

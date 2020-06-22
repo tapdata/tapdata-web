@@ -1,187 +1,183 @@
 <template>
-	<div v-if="visible">
-		<div class="database nodeStyle">
-			<head>
-				<span class="headIcon iconfont icon-you2" type="primary"></span>
-				<span class="txt">{{ $t('editor.nodeSettings') }}</span>
-			</head>
-			<div class="nodeBody">
-				<div class="head-btns">
-					<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-						{{ $t('dataFlow.button.viewMonitoring') }}
-					</el-button>
-				</div>
+	<div class="database nodeStyle">
+		<head>
+			<span class="headIcon iconfont icon-you2" type="primary"></span>
+			<span class="txt">{{ $t('editor.nodeSettings') }}</span>
+		</head>
+		<div class="nodeBody">
+			<div class="head-btns">
+				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+					{{ $t('dataFlow.button.viewMonitoring') }}
+				</el-button>
+			</div>
 
-				<el-form
+			<el-form
+				class="e-form"
+				label-position="top"
+				label-width="160px"
+				:model="model"
+				ref="form"
+				:disabled="disabled"
+			>
+				<el-form-item
 					class="e-form"
-					label-position="top"
-					label-width="160px"
-					:model="model"
-					ref="form"
-					:disabled="disabled"
+					:label="$t('editor.cell.data_node.database.form.label')"
+					prop="connectionId"
+					:rules="rules"
+					required
 				>
-					<el-form-item
-						class="e-form"
-						:label="$t('editor.cell.data_node.database.form.label')"
-						prop="connectionId"
-						:rules="rules"
-						required
-					>
-						<div style="display:flex;">
-							<el-select
-								@change="changeConnection"
-								filterable
-								v-model="model.connectionId"
-								:placeholder="$t('editor.cell.data_node.database.form.placeholder')"
-								size="mini"
-							>
-								<el-option
-									v-for="(item, idx) in databases"
-									:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
-									:value="item.id"
-									v-bind:key="idx"
-								></el-option>
-							</el-select>
-							<el-button
-								size="mini"
-								icon="el-icon-plus"
-								style="padding: 7px;margin-left: 7px"
-								@click="$refs.databaseForm.show()"
-							></el-button>
-							<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
-						</div>
-					</el-form-item>
-
-					<el-form-item
-						required
-						:label="$t('editor.cell.data_node.collection.form.dropTable.label')"
-						v-if="!isSourceDataNode"
-					>
-						<el-select v-model="model.dropTable" size="mini">
+					<div style="display:flex;">
+						<el-select
+							@change="changeConnection"
+							filterable
+							v-model="model.connectionId"
+							:placeholder="$t('editor.cell.data_node.database.form.placeholder')"
+							size="mini"
+						>
 							<el-option
-								:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
-								:value="false"
-							></el-option>
-							<el-option
-								:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
-								:value="true"
+								v-for="(item, idx) in databases"
+								:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
+								:value="item.id"
+								v-bind:key="idx"
 							></el-option>
 						</el-select>
-					</el-form-item>
-
-					<div class="databaseInfo">
-						<span v-show="database_type">{{ database_type }}</span>
-						<span v-show="database_host">{{ database_host }}</span>
-						<span v-show="database_port">{{ database_port }}</span>
+						<el-button
+							size="mini"
+							icon="el-icon-plus"
+							style="padding: 7px;margin-left: 7px"
+							@click="$refs.databaseForm.show()"
+						></el-button>
+						<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
 					</div>
-				</el-form>
+				</el-form-item>
+
+				<el-form-item
+					required
+					:label="$t('editor.cell.data_node.collection.form.dropTable.label')"
+					v-if="!isSourceDataNode"
+				>
+					<el-select v-model="model.dropTable" size="mini">
+						<el-option
+							:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
+							:value="false"
+						></el-option>
+						<el-option
+							:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
+							:value="true"
+						></el-option>
+					</el-select>
+				</el-form-item>
+
+				<div class="databaseInfo">
+					<span v-show="database_type">{{ database_type }}</span>
+					<span v-show="database_host">{{ database_host }}</span>
+					<span v-show="database_port">{{ database_port }}</span>
+				</div>
+			</el-form>
+		</div>
+		<div class="processingBody">
+			<div class="allCheck" v-if="activeName === 'first' && !disabled">
+				<el-checkbox v-model="selectAllTables"></el-checkbox>
+				<span @click="bulkRemoval()">{{ $t('editor.cell.data_node.database.bulkRemoval') }}</span>
 			</div>
-			<div class="processingBody">
-				<div class="allCheck" v-if="activeName === 'first' && !disabled">
-					<el-checkbox v-model="selectAllTables"></el-checkbox>
-					<span @click="bulkRemoval()">{{ $t('editor.cell.data_node.database.bulkRemoval') }}</span>
-				</div>
 
-				<div class="allCheck" v-if="activeName === 'second' && !disabled">
-					<el-checkbox v-model="selectAllRemoveTables"></el-checkbox>
-					<span @click="bulkRevocation()">{{ $t('editor.cell.data_node.database.bulkRevocation') }}</span>
-				</div>
+			<div class="allCheck" v-if="activeName === 'second' && !disabled">
+				<el-checkbox v-model="selectAllRemoveTables"></el-checkbox>
+				<span @click="bulkRevocation()">{{ $t('editor.cell.data_node.database.bulkRevocation') }}</span>
+			</div>
 
-				<el-tabs class="e-tabs" v-model="activeName">
-					<el-tab-pane
-						:label="$t('editor.cell.data_node.database.queueCopied') + '(' + computedTables.length + ')'"
-						name="first"
-					>
-						<div class="search">
+			<el-tabs class="e-tabs" v-model="activeName">
+				<el-tab-pane
+					:label="$t('editor.cell.data_node.database.queueCopied') + '(' + computedTables.length + ')'"
+					name="first"
+				>
+					<div class="search">
+						<el-input
+							:disabled="disabled"
+							:placeholder="$t('editor.cell.data_node.database.enterName')"
+							prefix-icon="el-icon-search"
+							clearable
+							v-model="search"
+						>
+						</el-input>
+					</div>
+					<el-row class="table-preffix-box" :gutter="10">
+						<el-col style="width: 50%">
+							<el-input
+								clearable
+								:disabled="disabled"
+								v-model="model.table_prefix"
+								:placeholder="$t('editor.cell.data_node.database.tablePrefix')"
+							></el-input>
+						</el-col>
+						<el-col style="width: 50%">
 							<el-input
 								:disabled="disabled"
-								:placeholder="$t('editor.cell.data_node.database.enterName')"
-								prefix-icon="el-icon-search"
 								clearable
-								v-model="search"
-							>
-							</el-input>
-						</div>
-						<el-row class="table-preffix-box" :gutter="10">
-							<el-col style="width: 50%">
-								<el-input
-									clearable
-									:disabled="disabled"
-									v-model="model.table_prefix"
-									:placeholder="$t('editor.cell.data_node.database.tablePrefix')"
-								></el-input>
-							</el-col>
-							<el-col style="width: 50%">
-								<el-input
-									:disabled="disabled"
-									clearable
-									v-model="model.table_suffix"
-									:placeholder="$t('editor.cell.data_node.database.tableSuffix')"
-								></el-input>
-							</el-col>
-						</el-row>
-						<el-row
-							class="list"
-							:class="{ active: item.checked }"
-							v-for="(item, index) in computedTables"
-							:key="item.id"
-							:gutter="20"
-						>
-							<el-col :span="1">
-								<el-checkbox v-model="item.checked" :disabled="disabled"></el-checkbox>
-							</el-col>
-							<el-col :span="17" style="padding-left:20px;">
-								<i class="iconfont icon-table2"></i>
-								<span class="tableName">{{ item.table_name }}</span>
-							</el-col>
-							<el-col :span="5" class="text-center" v-if="!disabled">
-								<el-button type="text" @click="removeTable(item, index)">
-									{{ $t('editor.cell.data_node.database.remove') }}
-								</el-button>
-							</el-col>
-						</el-row>
-					</el-tab-pane>
-					<!-- model.excludeTables -->
-					<el-tab-pane
-						:label="
-							$t('editor.cell.data_node.database.tableRemoved') + '(' + computedRemoveTables.length + ')'
-						"
-						name="second"
+								v-model="model.table_suffix"
+								:placeholder="$t('editor.cell.data_node.database.tableSuffix')"
+							></el-input>
+						</el-col>
+					</el-row>
+					<el-row
+						class="list"
+						:class="{ active: item.checked }"
+						v-for="(item, index) in computedTables"
+						:key="item.id"
+						:gutter="20"
 					>
-						<div class="search">
-							<el-input
-								:disabled="disabled"
-								:placeholder="$t('editor.cell.data_node.database.enterName')"
-								prefix-icon="el-icon-search"
-								clearable
-								v-model="removeSearch"
-							>
-							</el-input>
-						</div>
-
-						<el-row
-							class="list"
-							:class="{ active: item.checked }"
-							v-for="(item, index) in computedRemoveTables"
-							:key="item.id"
-							:gutter="20"
+						<el-col :span="1">
+							<el-checkbox v-model="item.checked" :disabled="disabled"></el-checkbox>
+						</el-col>
+						<el-col :span="17" style="padding-left:20px;">
+							<i class="iconfont icon-table2"></i>
+							<span class="tableName">{{ item.table_name }}</span>
+						</el-col>
+						<el-col :span="5" class="text-center" v-if="!disabled">
+							<el-button type="text" @click="removeTable(item, index)">
+								{{ $t('editor.cell.data_node.database.remove') }}
+							</el-button>
+						</el-col>
+					</el-row>
+				</el-tab-pane>
+				<!-- model.excludeTables -->
+				<el-tab-pane
+					:label="$t('editor.cell.data_node.database.tableRemoved') + '(' + computedRemoveTables.length + ')'"
+					name="second"
+				>
+					<div class="search">
+						<el-input
+							:disabled="disabled"
+							:placeholder="$t('editor.cell.data_node.database.enterName')"
+							prefix-icon="el-icon-search"
+							clearable
+							v-model="removeSearch"
 						>
-							<el-col :span="2">
-								<el-checkbox :disabled="disabled" v-model="item.checked"></el-checkbox>
-							</el-col>
-							<el-col :span="17">
-								<i class="iconfont icon-table2"></i>
-								<span class="tableName">{{ item.table_name }}</span>
-							</el-col>
-							<el-col :span="5" class="text-center" v-if="!disabled">
-								<el-button type="text" @click="undotble(item, index)">
-									{{ $t('editor.cell.data_node.database.Undo') }}
-								</el-button>
-							</el-col>
-						</el-row>
-					</el-tab-pane>
-				</el-tabs>
-			</div>
+						</el-input>
+					</div>
+
+					<el-row
+						class="list"
+						:class="{ active: item.checked }"
+						v-for="(item, index) in computedRemoveTables"
+						:key="item.id"
+						:gutter="20"
+					>
+						<el-col :span="2">
+							<el-checkbox :disabled="disabled" v-model="item.checked"></el-checkbox>
+						</el-col>
+						<el-col :span="17">
+							<i class="iconfont icon-table2"></i>
+							<span class="tableName">{{ item.table_name }}</span>
+						</el-col>
+						<el-col :span="5" class="text-center" v-if="!disabled">
+							<el-button type="text" @click="undotble(item, index)">
+								{{ $t('editor.cell.data_node.database.Undo') }}
+							</el-button>
+						</el-col>
+					</el-row>
+				</el-tab-pane>
+			</el-tabs>
 		</div>
 	</div>
 </template>
@@ -232,7 +228,6 @@ export default {
 					}
 				]
 			},
-			visible: false,
 			model: {
 				connectionId: '',
 				includeTables: [],

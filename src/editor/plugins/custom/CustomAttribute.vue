@@ -1,34 +1,32 @@
 <template>
-	<div v-if="visible">
-		<div class="customName nodeStyle">
-			<head>
-				<span class="headIcon iconfont icon-you2" type="primary"></span>
-				<span class="txt">{{ $t('editor.nodeSettings') }}</span>
-			</head>
-			<div class="nodeBody">
-				<div class="head-btns">
-					<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-						{{ $t('dataFlow.button.viewMonitoring') }}
-					</el-button>
-				</div>
-				<el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
-					<!-- <span class="addTxt">+新建文件</span> -->
-					<el-form-item :label="$t('editor.choose') + 'Custom'" prop="connectionId" :rules="rules" required>
-						<el-select
-							filterable
-							v-model="model.connectionId"
-							:placeholder="$t('editor.cell.data_node.custom.chooseCustomName')"
-						>
-							<el-option
-								v-for="(item, idx) in databases"
-								:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
-								:value="item.id"
-								v-bind:key="idx"
-							></el-option>
-						</el-select>
-					</el-form-item>
-				</el-form>
+	<div class="customName nodeStyle">
+		<head>
+			<span class="headIcon iconfont icon-you2" type="primary"></span>
+			<span class="txt">{{ $t('editor.nodeSettings') }}</span>
+		</head>
+		<div class="nodeBody">
+			<div class="head-btns">
+				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+					{{ $t('dataFlow.button.viewMonitoring') }}
+				</el-button>
 			</div>
+			<el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
+				<!-- <span class="addTxt">+新建文件</span> -->
+				<el-form-item :label="$t('editor.choose') + 'Custom'" prop="connectionId" :rules="rules" required>
+					<el-select
+						filterable
+						v-model="model.connectionId"
+						:placeholder="$t('editor.cell.data_node.custom.chooseCustomName')"
+					>
+						<el-option
+							v-for="(item, idx) in databases"
+							:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
+							:value="item.id"
+							v-bind:key="idx"
+						></el-option>
+					</el-select>
+				</el-form-item>
+			</el-form>
 		</div>
 	</div>
 </template>
@@ -59,7 +57,6 @@ export default {
 					}
 				]
 			},
-			visible: false,
 			model: {
 				connectionId: '',
 				type: 'custom_connection'

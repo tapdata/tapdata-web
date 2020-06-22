@@ -122,14 +122,6 @@
 				style="margin-left: 30px;border-radius: 20px;"
 				>{{ $t('dataFlow.state') }}: {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}
 			</el-tag>
-			<!-- <div
-				class="headImg borderStyle"
-				@click="start"
-				:title="$t('dataFlow.button.start')"
-				:disabled="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status) ? false : true"
-			>
-				<span class="iconfont icon-yunhang1"></span>
-			</div> -->
 			<template v-if="!['draft'].includes(status)">
 				<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.start')" placement="bottom">
 					<el-button

@@ -1,127 +1,125 @@
 <template>
-	<div v-if="visible">
-		<div class="e-memery-cache nodeStyle">
-			<div class="nodeBody">
-				<div class="head-btns">
-					<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-						{{ $t('dataFlow.button.viewMonitoring') }}
-					</el-button>
-				</div>
-				<el-form
-					class="e-form"
-					label-position="top"
-					label-width="130px"
-					:disabled="disabled"
-					:model="model"
-					ref="form"
-				>
-					<el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.cacheName.label')">
-						<el-input
-							v-model.trim="model.cacheName"
-							size="mini"
-							:placeholder="$t('editor.cell.data_node.memCache.form.cacheName.placeholder')"
-							@input="nameHandler"
-						></el-input>
-					</el-form-item>
-					<el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.cacheKeys.label')">
-						<PrimaryKeyInput
-							v-model="model.cacheKeys"
-							:options="primaryKeyOptions"
-							:placeholder="$t('editor.cell.data_node.memCache.form.cacheKeys.placeholder')"
-						></PrimaryKeyInput>
-					</el-form-item>
-					<el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.maxSize.label')">
-						<el-row :gutter="20">
-							<el-col :span="12">
-								<el-select
-									size="mini"
-									v-model="maxSizeLimited"
-									:placeholder="$t('editor.cell.data_node.memCache.form.maxSize.placeholder')"
-									@change="maxSizeLimitedHandler"
-								>
-									<el-option
-										v-for="opt in sizeLimitedOptions"
-										:key="opt.label"
-										:label="opt.label"
-										:value="opt.value"
-									></el-option>
-								</el-select>
-							</el-col>
-							<el-col :span="12">
-								<el-input
-									v-show="maxSizeLimited < 0"
-									type="tel"
-									v-model="model.maxSize"
-									size="mini"
-									maxlength="8"
-									:placeholder="$t('editor.cell.data_node.memCache.form.maxSize.placeholder')"
-								>
-									<template slot="append">M</template>
-								</el-input>
-							</el-col>
-						</el-row>
-					</el-form-item>
-					<el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.maxRows.label')">
-						<el-row :gutter="20">
-							<el-col :span="12">
-								<el-select
-									size="mini"
-									v-model="maxRowsLimited"
-									:placeholder="$t('editor.cell.data_node.memCache.form.maxRows.placeholder')"
-									@change="maxRowLimitedHancler"
-								>
-									<el-option
-										:label="$t('editor.cell.data_node.memCache.form.maxRows.options.custom')"
-										:value="true"
-									></el-option>
-									<el-option
-										:label="$t('editor.cell.data_node.memCache.form.maxRows.options.unlimited')"
-										:value="false"
-									></el-option>
-								</el-select>
-							</el-col>
-							<el-col :span="12">
-								<el-input
-									v-show="maxRowsLimited"
-									type="number"
-									v-model="model.maxRows"
-									size="mini"
-									:placeholder="$t('editor.cell.data_node.memCache.form.maxRows.placeholder')"
-								>
-									<template slot="append">{{
-										$t('editor.cell.data_node.memCache.form.maxRows.unit')
-									}}</template>
-								</el-input>
-							</el-col>
-						</el-row>
-					</el-form-item>
-					<div class="code-template">
-						<label>{{ $t('editor.cell.data_node.memCache.applicationCode') }}:</label>
-						<div class="code">
-							<span class="color-primary">var</span> cachedRow = CacheService.getCache(
-							<span class="color-danger">"{{ model.cacheName || 'cachename' }}"</span>
-							<template v-if="!model.cacheKeys || !model.cacheKeys.length">
-								<span class="bold">record</span>.<span class="color-danger">category_code</span>
-							</template>
-							<span v-for="key in model.cacheKeys.split(',')" :key="key">
-								, <span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
-							</span>
-							);<br />
-							<span class="bold">record</span>.category_name = cachedRow.category_name;<br />
-						</div>
-						<span>OR</span>
-						<div class="code">
-							<span class="bold">record</span>.category_name = CacheService.getCacheItem(
-							<span class="color-danger">"{{ model.cacheName || 'cachename' }}"</span>,
-							<span>'category_name'</span>, defaultValue,
-							<span v-for="key in model.cacheKeys.split(',')" :key="key">
-								, <span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
-							</span>
-							);
-						</div>
-					</div>
-				</el-form>
+	<div class="e-memery-cache nodeStyle">
+		<div class="nodeBody">
+			<div class="head-btns">
+				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+					{{ $t('dataFlow.button.viewMonitoring') }}
+				</el-button>
 			</div>
+			<el-form
+				class="e-form"
+				label-position="top"
+				label-width="130px"
+				:disabled="disabled"
+				:model="model"
+				ref="form"
+			>
+				<el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.cacheName.label')">
+					<el-input
+						v-model.trim="model.cacheName"
+						size="mini"
+						:placeholder="$t('editor.cell.data_node.memCache.form.cacheName.placeholder')"
+						@input="nameHandler"
+					></el-input>
+				</el-form-item>
+				<el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.cacheKeys.label')">
+					<PrimaryKeyInput
+						v-model="model.cacheKeys"
+						:options="primaryKeyOptions"
+						:placeholder="$t('editor.cell.data_node.memCache.form.cacheKeys.placeholder')"
+					></PrimaryKeyInput>
+				</el-form-item>
+				<el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.maxSize.label')">
+					<el-row :gutter="20">
+						<el-col :span="12">
+							<el-select
+								size="mini"
+								v-model="maxSizeLimited"
+								:placeholder="$t('editor.cell.data_node.memCache.form.maxSize.placeholder')"
+								@change="maxSizeLimitedHandler"
+							>
+								<el-option
+									v-for="opt in sizeLimitedOptions"
+									:key="opt.label"
+									:label="opt.label"
+									:value="opt.value"
+								></el-option>
+							</el-select>
+						</el-col>
+						<el-col :span="12">
+							<el-input
+								v-show="maxSizeLimited < 0"
+								type="tel"
+								v-model="model.maxSize"
+								size="mini"
+								maxlength="8"
+								:placeholder="$t('editor.cell.data_node.memCache.form.maxSize.placeholder')"
+							>
+								<template slot="append">M</template>
+							</el-input>
+						</el-col>
+					</el-row>
+				</el-form-item>
+				<el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.maxRows.label')">
+					<el-row :gutter="20">
+						<el-col :span="12">
+							<el-select
+								size="mini"
+								v-model="maxRowsLimited"
+								:placeholder="$t('editor.cell.data_node.memCache.form.maxRows.placeholder')"
+								@change="maxRowLimitedHancler"
+							>
+								<el-option
+									:label="$t('editor.cell.data_node.memCache.form.maxRows.options.custom')"
+									:value="true"
+								></el-option>
+								<el-option
+									:label="$t('editor.cell.data_node.memCache.form.maxRows.options.unlimited')"
+									:value="false"
+								></el-option>
+							</el-select>
+						</el-col>
+						<el-col :span="12">
+							<el-input
+								v-show="maxRowsLimited"
+								type="number"
+								v-model="model.maxRows"
+								size="mini"
+								:placeholder="$t('editor.cell.data_node.memCache.form.maxRows.placeholder')"
+							>
+								<template slot="append">{{
+									$t('editor.cell.data_node.memCache.form.maxRows.unit')
+								}}</template>
+							</el-input>
+						</el-col>
+					</el-row>
+				</el-form-item>
+				<div class="code-template">
+					<label>{{ $t('editor.cell.data_node.memCache.applicationCode') }}:</label>
+					<div class="code">
+						<span class="color-primary">var</span> cachedRow = CacheService.getCache(
+						<span class="color-danger">"{{ model.cacheName || 'cachename' }}"</span>
+						<template v-if="!model.cacheKeys || !model.cacheKeys.length">
+							<span class="bold">record</span>.<span class="color-danger">category_code</span>
+						</template>
+						<span v-for="key in model.cacheKeys.split(',')" :key="key">
+							, <span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
+						</span>
+						);<br />
+						<span class="bold">record</span>.category_name = cachedRow.category_name;<br />
+					</div>
+					<span>OR</span>
+					<div class="code">
+						<span class="bold">record</span>.category_name = CacheService.getCacheItem(
+						<span class="color-danger">"{{ model.cacheName || 'cachename' }}"</span>,
+						<span>'category_name'</span>, defaultValue,
+						<span v-for="key in model.cacheKeys.split(',')" :key="key">
+							, <span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
+						</span>
+						);
+					</div>
+				</div>
+			</el-form>
 		</div>
 	</div>
 </template>
@@ -161,7 +159,6 @@ export default {
 					value: -1
 				}
 			],
-			visible: false,
 			model: {
 				name: '',
 				cacheName: '',
