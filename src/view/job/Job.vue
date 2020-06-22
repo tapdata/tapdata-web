@@ -59,6 +59,7 @@
 				<div
 					:class="['headImg', { btnHover: ['paused', 'error', 'draft'].includes(status) }]"
 					@click="reloadSchema"
+					:disabled="statusBtMap[status].reloadSchema"
 				>
 					<span class="iconfont icon-yunshuaxin"></span>
 				</div>
@@ -71,13 +72,17 @@
 				placement="bottom"
 				v-if="['paused', 'error', 'draft'].includes(status)"
 			>
-				<div :class="['headImg', { btnHover: ['paused', 'error', 'draft'].includes(status) }]" @click="preview">
+				<div
+					:class="['headImg', { btnHover: ['paused', 'error', 'draft'].includes(status) }]"
+					@click="preview"
+					:disabled="statusBtMap[status].preview"
+				>
 					<span class="iconfont icon-yulan1"></span>
 				</div>
 			</el-tooltip>
 
 			<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.logs')" placement="bottom">
-				<div class="headImg btnHover" @click="showLogs">
+				<div class="headImg btnHover" @click="showLogs" :disabled="statusBtMap[status].logs">
 					<span class="iconfont icon-rizhi1"></span>
 				</div>
 			</el-tooltip>
@@ -97,6 +102,7 @@
 			<div
 				class="headImg round"
 				@click="showSetting"
+				:disabled="statusBtMap[status].setting"
 				:class="['headImg', { btnHover: ['paused', 'error', 'draft'].includes(status) }]"
 			>
 				<span class="iconfont icon-shezhi"></span>
@@ -127,7 +133,7 @@
 					<el-button
 						class="headImg borderStyle iconfont icon-yunhang1"
 						@click="start"
-						:disabled="dataFlowId !== null && ['paused', 'error'].includes(status) ? false : true"
+						:disabled="statusBtMap[status].start"
 					>
 					</el-button>
 				</el-tooltip>
@@ -136,7 +142,7 @@
 					<el-button
 						class="headImg borderStyle iconfont icon-zanting2"
 						@click="stop(false)"
-						:disabled="dataFlowId !== null && ['running'].includes(status) ? false : true"
+						:disabled="statusBtMap[status].stop"
 					></el-button>
 				</el-tooltip>
 
@@ -150,7 +156,7 @@
 					<el-button
 						class="headImg borderStyle iconfont icon-shuaxin3"
 						@click="reset"
-						:disabled="dataFlowId !== null && ['paused', 'error'].includes(status) ? false : true"
+						:disabled="statusBtMap[status].reset"
 					></el-button>
 				</el-tooltip>
 
@@ -163,7 +169,7 @@
 					<el-button
 						class="headImg borderStyle iconfont icon-zanting3"
 						@click="stop(true)"
-						:disabled="dataFlowId !== null && ['stopping'].includes(status) ? false : true"
+						:disabled="statusBtMap[status].forceStop"
 					>
 					</el-button>
 				</el-tooltip>
@@ -196,9 +202,9 @@
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button class="e-button" @click="dialogFormVisible = false">{{ $t('message.cancel') }}</el-button>
-				<el-button class="e-button" type="primary" @click="submitTemporary">{{
+				<!-- <el-button class="e-button" type="primary" @click="submitTemporary">{{
 					$t('dataFlow.submitOnly')
-				}}</el-button>
+				}}</el-button> -->
 				<el-button class="e-button" type="primary" @click="start">{{ $t('dataFlow.submitExecute') }}</el-button>
 			</div>
 		</el-dialog>
@@ -280,7 +286,69 @@ export default {
 				{ type: 'initial_sync', name: this.$t('dataFlow.initial_sync') },
 				{ type: 'cdc', name: this.$t('dataFlow.cdc') }
 			],
-			flowDataName: ''
+			flowDataName: '',
+			statusBtMap: {
+				draft: {
+					start: true,
+					stop: true,
+					forceStop: true,
+					reset: true,
+					setting: false,
+					preview: false,
+					logs: false,
+					reloadSchema: false
+				},
+				running: {
+					start: true,
+					stop: false,
+					forceStop: true,
+					reset: true,
+					setting: true,
+					preview: false,
+					logs: false,
+					reloadSchema: true
+				},
+				stopping: {
+					start: true,
+					stop: true,
+					forceStop: false,
+					reset: true,
+					setting: true,
+					preview: true,
+					logs: true,
+					reloadSchema: true
+				},
+				error: {
+					start: false,
+					stop: true,
+					forceStop: true,
+					reset: false,
+					setting: false,
+					preview: false,
+					logs: false,
+					reloadSchema: false
+				},
+				paused: {
+					start: false,
+					stop: true,
+					forceStop: true,
+					reset: false,
+					setting: false,
+					preview: false,
+					logs: false,
+					reloadSchema: false
+				},
+				force_stopping: {
+					start: true,
+					stop: true,
+					forceStop: true,
+					reset: true,
+					setting: true,
+					preview: true,
+					logs: true,
+					reloadSchema: true
+				}
+			}
 		};
 	},
 	watch: {

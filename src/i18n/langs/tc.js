@@ -68,7 +68,7 @@ const tc = {
 	dataFlow: {
 		newTaksName: '新任務未命名',
 		selectNode: '請選擇節點',
-		submitExecute: '提交並執行',
+		submitExecute: '提交執行',
 		submitOnly: '僅提交',
 		implementationModalities: '執行方式',
 		submitConfirmation: '提交確認',
@@ -210,7 +210,7 @@ const tc = {
 		enterFilterTable: '請輸入過濾表內容',
 		nameTip: '後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ',
 		button: {
-			submit: '提交',
+			submit: '提交執行',
 			viewConfig: '查看節點配置',
 			viewMonitoring: '查看監控數據',
 			setting: '設置',

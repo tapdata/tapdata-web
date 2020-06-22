@@ -69,7 +69,7 @@ const cn = {
 	dataFlow: {
 		newTaksName: '新任务未命名',
 		selectNode: '请选择节点',
-		submitExecute: '提交并执行',
+		submitExecute: '提交执行',
 		submitOnly: '仅提交',
 		implementationModalities: '执行方式',
 		submitConfirmation: '提交确认',
@@ -211,7 +211,7 @@ const cn = {
 		nameTip: '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
 		enterFilterTable: '请输入过滤表内容',
 		button: {
-			submit: '提交',
+			submit: '提交执行',
 			viewConfig: '查看节点配置',
 			viewMonitoring: '查看监控数据',
 			setting: '设置',

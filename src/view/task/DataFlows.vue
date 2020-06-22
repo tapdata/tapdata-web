@@ -178,6 +178,7 @@
 							<el-switch
 								v-model="scope.row.newStatus"
 								inactive-value="stopping"
+								:disabled="statusBtMap[scope.row.status].switch"
 								active-value="scheduled"
 								@change="handleStatus(scope.row.id, scope.row.status, scope.row.newStatus)"
 							></el-switch>
@@ -190,7 +191,7 @@
 							<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
 								<el-button
 									type="text"
-									:disabled="['draft', 'paused'].includes(scope.row.status)"
+									:disabled="statusBtMap[scope.row.status].detail"
 									@click="handleDetail(scope.row.id, 'detail')"
 								>
 									<i class="iconfont  task-list-icon icon-chaxun"></i>
@@ -199,11 +200,7 @@
 							<el-tooltip class="item" :content="$t('dataFlow.edit')" placement="bottom">
 								<el-button
 									type="text"
-									:disabled="
-										['scheduled', 'running', 'force stopping', 'stopping'].includes(
-											scope.row.status
-										)
-									"
+									:disabled="statusBtMap[scope.row.status].edit"
 									@click="handleDetail(scope.row.id, 'edit')"
 								>
 									<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
@@ -212,11 +209,7 @@
 							<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
 								<el-button
 									type="text"
-									:disabled="
-										['scheduled', 'running', 'force stopping', 'stopping'].includes(
-											scope.row.status
-										)
-									"
+									:disabled="statusBtMap[scope.row.status].delete"
 									@click="handleDelete(scope.row.id)"
 								>
 									<i class="iconfont task-list-icon icon-shanchu"></i>
@@ -234,17 +227,15 @@
 										$t('dataFlow.copy')
 									}}</el-dropdown-item>
 									<el-dropdown-item
-										:disabled="
-											['scheduled', 'running', 'force stopping', 'stopping'].includes(
-												scope.row.status
-											)
-										"
+										:disabled="statusBtMap[scope.row.status].reset"
 										:command="'reset' + scope.row.id"
 										>{{ $t('dataFlow.reset') }}</el-dropdown-item
 									>
-									<el-dropdown-item :command="'force_stopping' + scope.row.id">{{
-										$t('dataFlow.status.force_stopping')
-									}}</el-dropdown-item>
+									<el-dropdown-item
+										:command="'force_stopping' + scope.row.id"
+										:disabled="statusBtMap[scope.row.status]['force stopping']"
+										>{{ $t('dataFlow.status.force_stopping') }}</el-dropdown-item
+									>
 								</el-dropdown-menu>
 							</el-dropdown>
 						</div>
@@ -345,6 +336,15 @@ export default {
 				person: '',
 				way: localStorage.getItem('flowWay') || '',
 				classification: []
+			},
+			statusBtMap: {
+				scheduled: { switch: true, delete: true, edit: true, detail: true, forceStop: true, reset: true },
+				draft: { switch: true, delete: false, edit: false, detail: true, forceStop: true, reset: true },
+				running: { switch: false, delete: true, edit: true, detail: true, forceStop: true, reset: true },
+				stopping: { switch: true, delete: true, edit: true, detail: true, forceStop: false, reset: true },
+				error: { switch: false, delete: false, edit: false, detail: true, forceStop: true, reset: false },
+				paused: { switch: false, delete: false, edit: false, detail: true, forceStop: true, reset: false },
+				'force stopping': { switch: true, delete: true, edit: true, detail: true, forceStop: true, reset: true }
 			}
 		};
 	},
