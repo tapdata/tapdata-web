@@ -113,7 +113,7 @@
 	</div>
 </template>
 <script>
-import $ from 'jquery';
+// import $ from 'jquery';
 import echartHead from './components/echartHead';
 import echartsCompinent from '../../components/echartsCompinent';
 import shaftlessEchart from '../../components/shaftlessEchart';
@@ -186,7 +186,7 @@ export default {
 						}
 					},
 					axisLabel: {
-						formatter: function(value, index) {
+						formatter: function(value) {
 							if (value >= 10000) {
 								value = value / 10000 + 'W';
 							}
@@ -256,7 +256,7 @@ export default {
 						}
 					},
 					axisLabel: {
-						formatter: function(value, index) {
+						formatter: function(value) {
 							if (value >= 10000) {
 								value = value / 10000 + 'W';
 							}
@@ -311,7 +311,7 @@ export default {
 						}
 					},
 					axisLabel: {
-						formatter: function(value, index) {
+						formatter: function(value) {
 							if (value >= 10000) {
 								value = value / 10000 + 'W';
 							}
@@ -664,7 +664,7 @@ export default {
 						this.replicateObj.loading = false;
 					}
 				})
-				.catch(e => {
+				.catch(() => {
 					if (type === this.inputOutputObj.type) {
 						this.inputOutputObj.loading = false;
 					} else if (type === this.transfObj.type) {

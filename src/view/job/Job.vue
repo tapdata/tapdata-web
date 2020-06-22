@@ -122,14 +122,6 @@
 				style="margin-left: 30px;border-radius: 20px;"
 				>{{ $t('dataFlow.state') }}: {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}
 			</el-tag>
-			<!-- <div
-				class="headImg borderStyle"
-				@click="start"
-				:title="$t('dataFlow.button.start')"
-				:disabled="dataFlowId !== null && ['draft', 'paused', 'error'].includes(status) ? false : true"
-			>
-				<span class="iconfont icon-yunhang1"></span>
-			</div> -->
 			<template v-if="!['draft'].includes(status)">
 				<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.start')" placement="bottom">
 					<el-button
@@ -212,11 +204,25 @@
 		</el-dialog>
 		<el-dialog title="系统提示" :visible.sync="tempDialogVisible" width="30%">
 			<el-form :model="form">
-				<span>有草稿存在，继续编辑？</span>
+				<span>上次草稿未保存，是否继续编辑？</span><br /><br />
+				<div v-for="item in tempData" :key="item.id">
+					<el-col :span="6"
+						><el-link @click="openTempSaved(item)" type="success">{{
+							item.split('$$$')[2]
+						}}</el-link></el-col
+					>
+					<el-col :span="3"
+						><el-button size="mini" @click="openTempSaved(item)" type="success" plain
+							>打 开</el-button
+						></el-col
+					>
+					<el-button size="mini" @click="deleteTempData(item)" type="danger" icon="el-icon-delete" plain
+						>删 除</el-button
+					>
+				</div>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button @click="loadData">取 消</el-button>
-				<el-button type="primary" @click="openTempSaved">确 定</el-button>
+				<el-button @click="loadData">忽 略</el-button>
 			</div>
 		</el-dialog>
 		<AddBtnTip v-if="isEditable()"></AddBtnTip>
@@ -254,6 +260,8 @@ export default {
 
 			dataFlowId: null,
 			tempDialogVisible: false,
+			tempKey: null,
+			tempData: [],
 			status: 'draft',
 			executeMode: 'normal',
 
@@ -291,7 +299,10 @@ export default {
 			actionBarEl: $('.editor-container .action-buttons'),
 			scope: self
 		});
-		if (localStorage.hasOwnProperty('tempSaved')) {
+		Object.keys(localStorage).forEach(key => {
+			if (key.startsWith('temp$$$')) this.tempData.push(key);
+		});
+		if (this.tempData.length > 0) {
 			self.loading = false;
 			this.tempDialogVisible = true;
 			return;
@@ -313,10 +324,18 @@ export default {
 				self.onGraphChanged();
 			}
 		},
-		openTempSaved() {
+		openTempSaved(key) {
 			this.tempDialogVisible = false;
-			this.initData(JSON.parse(localStorage.getItem('tempSaved')));
-			localStorage.removeItem('tempSaved');
+			this.initData(JSON.parse(localStorage.getItem(key)));
+			localStorage.removeItem(key);
+		},
+		deleteTempData(key) {
+			this.tempData.splice(this.tempData.indexOf(key), 1);
+			localStorage.removeItem(key);
+			if (this.tempData.length == 0) {
+				this.tempDialogVisible = false;
+				this.loadData();
+			}
 		},
 		initData(data) {
 			let self = this,
@@ -358,22 +377,7 @@ export default {
 			let self = this;
 			this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
 				changeData = this.getDataFlowData(true);
-				if (changeData) {
-					let settingSetInterval = () => {
-						timer = setTimeout(() => {
-							if (['draft', 'error', 'paused'].includes(this.status)) {
-								self.timeSave();
-							}
-							timer = null;
-						}, 10000);
-					};
-					if (timer) {
-						clearTimeout(timer);
-						settingSetInterval();
-					} else {
-						settingSetInterval();
-					}
-				}
+				if (changeData) self.timeSave();
 			});
 		},
 		/**
@@ -409,9 +413,16 @@ export default {
 		 * Auto save
 		 */
 		timeSave() {
-			let data = this.getDataFlowData(true),
-				maxKey = 1;
-			localStorage.setItem('tempSaved', JSON.stringify(data));
+			let data = this.getDataFlowData(true);
+			if (this.tempKey == 0) {
+				this.tempKey = 1;
+				Object.keys(localStorage).forEach(key => {
+					if (key.startsWith('temp_'))
+						if (parseInt(key.split('$$$')[1]) >= this.tempKey)
+							this.tempKey = parseInt(key.split('$$$')[1]) + 1;
+				});
+			}
+			localStorage.setItem('temp$$$' + this.tempKey + '$$$' + data.name, JSON.stringify(data));
 		},
 		//点击draft save按钮
 		async draftSave() {
@@ -901,7 +912,7 @@ export default {
 						if (err) {
 							this.$message.error(self.$t('message.saveFail'));
 						} else {
-							this.$message.success(self.$t('message.saveOK'));
+							// this.$message.success(self.$t('message.saveOK'));
 							this.showCapture();
 						}
 					});
@@ -1183,7 +1194,6 @@ export default {
 					}
 				});
 			}
-			log('job loadSchema cells', cells);
 			this.cells = cells;
 			return {
 				cells: cells

@@ -176,14 +176,14 @@ export default {
 			}
 		},
 
-    setData(data, cell, isSourceDataNode, vueAdapter) {
-      this.model =  {
-        connectionId: "",
-        type: "elasticsearch"
-      }
-      if (data) {
-		  _.merge(this.model, data);
-      }
+		setData(data, cell, isSourceDataNode, vueAdapter) {
+			this.model = {
+				connectionId: '',
+				type: 'elasticsearch'
+			};
+			if (data) {
+				_.merge(this.model, data);
+			}
 
 			this.mergedSchema = cell.getOutputSchema();
 			cell.on('change:outputSchema', () => {

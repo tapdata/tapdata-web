@@ -2,7 +2,7 @@
 	<Drawer ref="drawer" :visible.sync="visible" :title="$t('dataForm.title')">
 		<div class="test-block" v-if="testing || testLogs">
 			<div class="test-block-title">{{ $t('dataForm.test.title') }}</div>
-			<div class="test-log-item" v-for="(item, index) in testLogs" :key="item.sort">
+			<div class="test-log-item" v-for="(item, index) in testLogs" :key="index">
 				<div>{{ index + 1 }}. {{ item.show_msg }}</div>
 				<div class="test-info">
 					<div style="margin-right: 40px">{{ `Required:${item.required}` }}</div>
@@ -59,7 +59,9 @@ const defaultModel = {
 	sslKey: '',
 	sslPass: '',
 	sslValidate: false,
-	sslCA: ''
+	sslCA: '',
+	sslCAFile: null,
+	sslKeyFile: null
 };
 
 export default {
@@ -234,6 +236,7 @@ export default {
 			this.$refs.form.validate(valid => {
 				if (valid) {
 					let params = Object.assign({}, this.model, {
+						sslCert: this.model.sslKey,
 						user_id: this.$cookie.get('user_id'),
 						status: 'testing',
 						schema: {},
@@ -243,14 +246,17 @@ export default {
 						project: '',
 						listtags: []
 					});
-					if (!this.model.id) {
-						delete this.model.id;
+					if (!params.id) {
+						delete params.id;
 					}
+					delete params.sslKeyFile;
+					delete params.sslCAFile;
 					connectionsModel[this.model.id ? 'patch' : 'post'](params)
 						.then(res => {
 							if (res.statusText === 'OK') {
-								this.$set(this.model, 'id', res.data.id);
-								this.test(res.data.id);
+								let id = res.data.id;
+								this.model.id = id;
+								this.test(id);
 							}
 						})
 						.catch(err => {

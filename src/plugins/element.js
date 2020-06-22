@@ -21,6 +21,7 @@ import {
 	MenuItem,
 	Form,
 	FormItem,
+	Link,
 	Input,
 	Button,
 	Select,
@@ -46,6 +47,39 @@ import {
 	Autocomplete,
 	InputNumber
 } from 'element-ui';
+//重写ElementUI Select组件多选时的触发函数，去掉去重的处理
+Select.methods.handleOptionSelect = function(option, byClick) {
+	var _this12 = this;
+
+	if (_this12.multiple) {
+		var value = (_this12.value || []).slice();
+		// var optionIndex = _this12.getValueIndex(value, option.value);
+		// if (optionIndex > -1) {
+		// 	value.splice(optionIndex, 1);
+		// } else
+		if (_this12.multipleLimit <= 0 || value.length < _this12.multipleLimit) {
+			value.push(option.value);
+		}
+		_this12.$emit('input', value);
+		_this12.emitChange(value);
+		if (option.created) {
+			_this12.query = '';
+			_this12.handleQueryChange('');
+			_this12.inputLength = 20;
+		}
+		if (_this12.filterable) _this12.$refs.input.focus();
+	} else {
+		_this12.$emit('input', option.value);
+		_this12.emitChange(option.value);
+		_this12.visible = false;
+	}
+	_this12.isSilentBlur = byClick;
+	_this12.setSoftFocus();
+	if (_this12.visible) return;
+	_this12.$nextTick(function() {
+		_this12.scrollToOption(option);
+	});
+};
 
 Vue.component(InputNumber.name, InputNumber);
 Vue.component(Autocomplete.name, Autocomplete);
@@ -80,6 +114,7 @@ Vue.component(Container.name, Container);
 Vue.component(Main.name, Main);
 Vue.component(Header.name, Header);
 Vue.component(Tree.name, Tree);
+Vue.component(Link.name, Link);
 Vue.component(Dropdown.name, Dropdown);
 Vue.component(DropdownItem.name, DropdownItem);
 Vue.component(DropdownMenu.name, DropdownMenu);

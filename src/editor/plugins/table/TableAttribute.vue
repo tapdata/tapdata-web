@@ -72,11 +72,11 @@
 				</el-form-item>
 
 				<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
-					<el-input
+					<PrimaryKeyInput
 						v-model="model.primaryKeys"
+						:options="primaryKeyOptions"
 						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
-						size="mini"
-					></el-input>
+					></PrimaryKeyInput>
 				</el-form-item>
 				<el-form-item
 					required
@@ -138,6 +138,7 @@
 
 <script>
 import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
+import PrimaryKeyInput from '../../../components/PrimaryKeyInput';
 import { convertSchemaToTreeData } from '../../util/Schema';
 import Entity from '../link/Entity';
 import _ from 'lodash';
@@ -146,7 +147,7 @@ let connectionApi = factory('connections');
 let editor = null;
 export default {
 	name: 'Table',
-	components: { Entity, DatabaseForm },
+	components: { Entity, DatabaseForm, PrimaryKeyInput },
 	props: {
 		database_types: {
 			type: Array,
@@ -181,6 +182,7 @@ export default {
 							.filter(f => f.primary_key_position > 0)
 							.map(f => f.field_name)
 							.join(',');
+						this.primaryKeyOptions = fields.map(f => f.field_name);
 						if (primaryKeys) {
 							this.model.primaryKeys = primaryKeys;
 						} else {
@@ -193,19 +195,13 @@ export default {
 		},
 		mergedSchema: {
 			handler() {
-				if (
-					!this.model.primaryKeys &&
-					this.mergedSchema &&
-					this.mergedSchema.fields &&
-					this.mergedSchema.fields.length > 0
-				) {
-					let primaryKeys = this.mergedSchema.fields
-						.filter(f => f.primary_key_position > 0)
-						.map(f => f.field_name);
-					let unique = {};
-					primaryKeys.forEach(key => (unique[key] = 1));
-					primaryKeys = Object.keys(unique);
-					if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
+				if (this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0) {
+					let fields = this.mergedSchema.fields;
+					this.primaryKeyOptions = fields.map(f => f.field_name);
+					if (!this.model.primaryKeys) {
+						let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
+						if (primaryKeys.length > 0) this.model.primaryKeys = Array.from(new Set(primaryKeys).join(','));
+					}
 				}
 			}
 		}
@@ -240,7 +236,9 @@ export default {
 				initialSyncOrder: 1
 			},
 
-			mergedSchema: null
+			mergedSchema: null,
+
+			primaryKeyOptions: []
 		};
 	},
 
@@ -300,21 +298,21 @@ export default {
 			}
 		},
 
-    setData(data, cell, isSourceDataNode, vueAdapter) {
-      this.model = {
-        connectionId: "",
-        databaseType: "",
-        tableName: "",
-        sql: "",
-        dropTable: false,
-        type: "table",
-        primaryKeys: "",
-        initialSyncOrder: 1
-      }
-      if (data) {
-		  _.merge(this.model, data);
-      }
-      this.isSourceDataNode = isSourceDataNode;
+		setData(data, cell, isSourceDataNode, vueAdapter) {
+			this.model = {
+				connectionId: '',
+				databaseType: '',
+				tableName: '',
+				sql: '',
+				dropTable: false,
+				type: 'table',
+				primaryKeys: '',
+				initialSyncOrder: 1
+			};
+			if (data) {
+				_.merge(this.model, data);
+			}
+			this.isSourceDataNode = isSourceDataNode;
 
 			this.mergedSchema = cell.getOutputSchema();
 			cell.on('change:outputSchema', () => {
