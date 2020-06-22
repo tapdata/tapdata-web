@@ -59,7 +59,9 @@ const defaultModel = {
 	sslKey: '',
 	sslPass: '',
 	sslValidate: false,
-	sslCA: ''
+	sslCA: '',
+	sslCAFile: null,
+	sslKeyFile: null
 };
 
 export default {
@@ -233,10 +235,8 @@ export default {
 		submit() {
 			this.$refs.form.validate(valid => {
 				if (valid) {
-					if (!this.model.id) {
-						delete this.model.id;
-					}
 					let params = Object.assign({}, this.model, {
+						sslCert: this.model.sslKey,
 						user_id: this.$cookie.get('user_id'),
 						status: 'testing',
 						schema: {},
@@ -246,11 +246,17 @@ export default {
 						project: '',
 						listtags: []
 					});
+					if (!params.id) {
+						delete params.id;
+					}
+					delete params.sslKeyFile;
+					delete params.sslCAFile;
 					connectionsModel[this.model.id ? 'patch' : 'post'](params)
 						.then(res => {
 							if (res.statusText === 'OK') {
-								this.$set(this.model, 'id', res.data.id);
-								this.test(res.data.id);
+								let id = res.data.id;
+								this.model.id = id;
+								this.test(id);
 							}
 						})
 						.catch(err => {
