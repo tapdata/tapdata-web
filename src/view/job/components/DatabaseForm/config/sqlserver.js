@@ -85,7 +85,7 @@ export default function(vm) {
 				field: 'table_filter',
 				label: vm.$t('dataForm.form.tableFilter'),
 				tips: vm.$t('dataForm.form.tableFilterTips'),
-				maxlength: 100,
+				maxlength: 500,
 				showWordLimit: true
 			},
 			{
