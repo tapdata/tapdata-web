@@ -3,12 +3,12 @@
  * @date 3/24/20
  * @description
  */
-import Component from "../lib/Component";
-import $ from "jquery";
-import log from "../../log";
-import i18n from "../../i18n/i18n";
-import Vue from "vue";
-import { EditorEventType } from "../lib/events";
+import Component from '../lib/Component';
+import $ from 'jquery';
+import log from '../../log';
+import i18n from '../../i18n/i18n';
+import Vue from 'vue';
+import { EditorEventType } from '../lib/events';
 
 export default class VueComponent extends Component {
 	constructor(opts) {
@@ -21,7 +21,7 @@ export default class VueComponent extends Component {
 		let editor = this.opts.editor;
 		let component = this.opts.component;
 
-		log("VueComponent.doInit", this.opts.dataFlow);
+		log('VueComponent.doInit', this.opts.dataFlow);
 
 		self.el = $(`<div class="e-vue-component-wrap"></div>`);
 
@@ -34,11 +34,11 @@ export default class VueComponent extends Component {
 		}));
 		vm.editor = editor;
 
-		let vueContainerDom = document.createElement("div");
+		let vueContainerDom = document.createElement('div');
 		this.getContentEl().append(vueContainerDom);
 		vm.$mount(vueContainerDom);
-		vm.$on("dataChanged", data => {
-			self.emit("dataChanged", data);
+		vm.$on('dataChanged', data => {
+			self.emit('dataChanged', data);
 		});
 
 		editor.graph.on(EditorEventType.SELECTED_STAGE, this.selectedStage, this);
@@ -58,14 +58,14 @@ export default class VueComponent extends Component {
 	}
 
 	selectedStage(stageData) {
-		log("VueComponent.selected.stage", stageData);
+		log('VueComponent.selected.stage', stageData);
 		if (this.vm) {
 			this.vm.$emit(EditorEventType.SELECTED_STAGE, stageData);
 		}
 	}
 
 	setData(data) {
-		if (this.vm && typeof this.vm.setData === "function") {
+		if (this.vm && typeof this.vm.setData === 'function') {
 			this.vm.setData(data);
 		}
 	}

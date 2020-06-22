@@ -2,9 +2,9 @@
 	<div class="tapHeader">
 		<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
 			<el-menu-item index="1"
-				><i class="icon iconfont iconjiqunzhuangtai"></i>{{ $t("message.serviceCluMange") }}</el-menu-item
+				><i class="icon iconfont iconjiqunzhuangtai"></i>{{ $t('message.serviceCluMange') }}</el-menu-item
 			>
-			<el-menu-item index="2"><i class="icon iconfont iconrizhi"></i>{{ $t("message.statusLog") }}</el-menu-item>
+			<el-menu-item index="2"><i class="icon iconfont iconrizhi"></i>{{ $t('message.statusLog') }}</el-menu-item>
 		</el-menu>
 		<!-- <el-select v-model="langType" class="changeLangType" size="mini" @change="changeLangType">
           <el-option value="en" label="English"></el-option>
@@ -33,16 +33,16 @@
 export default {
 	data() {
 		return {
-			activeIndex: "1",
-			langType: "en"
+			activeIndex: '1',
+			langType: 'en'
 		};
 	},
 	methods: {
 		handleSelect(key, keyPath) {
-			if (key === "1") {
-				this.$router.push({ name: "clusterManagement" });
-			} else if (key === "2") {
-				this.$router.push({ name: "dailyRecord" });
+			if (key === '1') {
+				this.$router.push({ name: 'clusterManagement' });
+			} else if (key === '2') {
+				this.$router.push({ name: 'dailyRecord' });
 			}
 		}
 		// changeLangType(type){
