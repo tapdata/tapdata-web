@@ -398,7 +398,7 @@ export default {
 					});
 					setTimeout(() => {
 						window.open(routeUrl.href, '_blank');
-					}, 100);
+					}, 500);
 				});
 			} else {
 				let routeUrl = this.$router.resolve({
