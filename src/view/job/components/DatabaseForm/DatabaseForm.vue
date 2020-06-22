@@ -2,7 +2,7 @@
 	<Drawer ref="drawer" :visible.sync="visible" :title="$t('dataForm.title')">
 		<div class="test-block" v-if="testing || testLogs">
 			<div class="test-block-title">{{ $t('dataForm.test.title') }}</div>
-			<div class="test-log-item" v-for="(item, index) in testLogs" :key="item.sort">
+			<div class="test-log-item" v-for="(item, index) in testLogs" :key="index">
 				<div>{{ index + 1 }}. {{ item.show_msg }}</div>
 				<div class="test-info">
 					<div style="margin-right: 40px">{{ `Required:${item.required}` }}</div>
