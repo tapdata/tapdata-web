@@ -21,6 +21,7 @@ import {
 	MenuItem,
 	Form,
 	FormItem,
+	Link,
 	Input,
 	Button,
 	Select,
@@ -80,6 +81,7 @@ Vue.component(Container.name, Container);
 Vue.component(Main.name, Main);
 Vue.component(Header.name, Header);
 Vue.component(Tree.name, Tree);
+Vue.component(Link.name, Link);
 Vue.component(Dropdown.name, Dropdown);
 Vue.component(DropdownItem.name, DropdownItem);
 Vue.component(DropdownMenu.name, DropdownMenu);
