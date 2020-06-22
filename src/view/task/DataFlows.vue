@@ -633,7 +633,7 @@ export default {
 		},
 
 		deleteConfirm(callback) {
-			this.$confirm(this.$t('message.deteleMessage'), this.$t('message.prompt'), {
+			this.$confirm(this.$t('message.deteleMessage'), this.$t('dataFlow.importantReminder'), {
 				confirmButtonText: this.$t('message.delete'),
 				cancelButtonText: this.$t('message.cancel'),
 				type: 'warning'
@@ -799,7 +799,7 @@ export default {
 		},
 
 		restConfirm(callback) {
-			this.$confirm(this.$t('message.resetMessage'), this.$t('message.prompt'), {
+			this.$confirm(this.$t('message.resetMessage'), this.$t('dataFlow.importantReminder'), {
 				confirmButtonText: this.$t('dataFlow.reset'),
 				cancelButtonText: this.$t('message.cancel'),
 				type: 'warning'
