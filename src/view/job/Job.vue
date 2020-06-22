@@ -924,7 +924,7 @@ export default {
 						if (err) {
 							this.$message.error(self.$t('message.saveFail'));
 						} else {
-							this.$message.success(self.$t('message.saveOK'));
+							// this.$message.success(self.$t('message.saveOK'));
 							this.showCapture();
 						}
 					});
