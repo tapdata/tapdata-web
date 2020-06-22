@@ -42,7 +42,14 @@
 					:label="$t('editor.cell.processor.script.form.script.label')"
 					size="mini"
 				>
-					<JsEditor :code.sync="model.script" ref="jsEditor" :width.sync="width"></JsEditor>
+					<el-input
+						type="textarea"
+						v-model="model.script"
+						:autosize="{ minRows: 20 }"
+						class="form-item-width"
+						v-if="disabled"
+					></el-input>
+					<JsEditor :code.sync="model.script" ref="jsEditor" :width.sync="width" v-if="!disabled"></JsEditor>
 				</el-form-item>
 				<el-form-item>
 					<el-button class="btn-debug" type="primary" size="mini" :loading="!!sending" @click="showDebug">
