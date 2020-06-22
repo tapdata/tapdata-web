@@ -23,7 +23,13 @@
 						<i class="e-primary el-icon-warning-outline"></i>
 					</el-tooltip>
 				</template>
-				<JsEditor :code.sync="model.expression" :width.sync="width"></JsEditor>
+				<el-input
+					type="textarea"
+					v-model="model.expression"
+					:autosize="{ minRows: 20 }"
+					v-if="disabled"
+				></el-input>
+				<JsEditor :code.sync="model.expression" :width.sync="width" v-if="!disabled"></JsEditor>
 				<!--				<el-input-->
 				<!--					type="textarea"-->
 				<!--					v-model="model.expression"-->

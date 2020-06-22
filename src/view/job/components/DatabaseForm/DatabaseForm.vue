@@ -251,6 +251,10 @@ export default {
 					}
 					delete params.sslKeyFile;
 					delete params.sslCAFile;
+					if (params.database_type === 'mongodb') {
+						params.fill = params.isUrl ? 'uri' : '';
+						delete params.isUrl;
+					}
 					connectionsModel[this.model.id ? 'patch' : 'post'](params)
 						.then(res => {
 							if (res.statusText === 'OK') {
