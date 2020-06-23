@@ -6,6 +6,7 @@
 					:class="[{ btnHover: ['draft'].includes(status) }, 'headImg']"
 					v-show="!isSaving"
 					@click="draftSave"
+					style="cursor: pointer;"
 				>
 					<span class="iconfont icon-yunduanshangchuan"></span>
 					<span class="text">{{ $t('dataFlow.button.saveDraft') }}</span>

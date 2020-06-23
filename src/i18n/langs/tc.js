@@ -353,7 +353,7 @@ const tc = {
 						},
 						table: {
 							label: '表',
-							placeholder: '請選擇表'
+							placeholder: '請選擇表，區分大小寫'
 						},
 						custom_sql: {
 							label: '自定義SQL',

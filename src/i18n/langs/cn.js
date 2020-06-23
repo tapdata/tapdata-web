@@ -353,7 +353,7 @@ const cn = {
 						},
 						table: {
 							label: '表',
-							placeholder: '请选择表'
+							placeholder: '请选择表,区分大小写'
 						},
 						custom_sql: {
 							label: '自定义SQL',

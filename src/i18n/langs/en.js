@@ -357,7 +357,7 @@ const en = {
 						},
 						table: {
 							label: 'Table',
-							placeholder: 'Please select table'
+							placeholder: 'Please select table,Case sensitive'
 						},
 						custom_sql: {
 							label: 'Custom SQL',
