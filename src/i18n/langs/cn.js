@@ -499,6 +499,7 @@ const cn = {
 						},
 						toUpperCase: '转大写',
 						toLowerCase: '转小写',
+						delete: '删除',
 						fieldName: '字段名称',
 						fieldType: '字段类型',
 						addField: '添加字段',
@@ -853,6 +854,8 @@ const cn = {
 		}
 	},
 	metaData: {
+		title: '数据分类',
+		nameExist: '分类名称已存在',
 		addNode: '新增同级分类',
 		addChildernNode: '新增子分类',
 		editNode: '编辑',

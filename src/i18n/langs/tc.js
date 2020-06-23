@@ -499,6 +499,7 @@ const tc = {
 							placeholder: '請輸入節點描述'
 						},
 						toUpperCase: '轉大寫',
+						delete: '删除',
 						toLowerCase: '轉小寫',
 						fieldName: '字段名稱',
 						fieldType: '字段類型',
@@ -854,6 +855,8 @@ const tc = {
 		}
 	},
 	metaData: {
+		title: '數據分類',
+		nameExist: '分類名稱已存在',
 		ddNode: '新增同級分類',
 		addChildernNode: '新增子分類',
 		editNode: '編輯',

@@ -163,34 +163,27 @@
 					</el-tooltip>
 				</div>
 				<el-row v-for="item in formData.syncPoints" :key="item.name" style="margin-top: 10px">
-					<el-col :span="5">
+					<el-col :span="8">
 						<div class="dataBase-name">
 							<el-tooltip :content="item.name || item.connectionId" placement="left-start">
 								<span>{{ item.name || item.connectionId }}</span>
 							</el-tooltip>
 						</div>
 					</el-col>
-					<el-col :span="6" style="margin-right: 10px">
+					<el-col :span="7" style="margin-right: 10px">
 						<el-select v-model="item.type" placeholder="请选择">
 							<el-option v-for="op in options" :key="op.value" :label="op.label" :value="op.value">
 							</el-option>
 						</el-select>
 					</el-col>
-					<el-col :span="6">
+					<el-col :span="8">
 						<el-date-picker
-							format="yyyy-MM-dd"
+							format="yyyy-MM-dd HH:mm:ss"
 							style="width: 90%;"
 							v-model="item.date"
+							type="datetime"
 							:disabled="item.type === 'current'"
 						></el-date-picker>
-					</el-col>
-					<el-col :span="6">
-						<el-time-picker
-							format="HH:mm:ss"
-							style="width: 90%;"
-							v-model="item.time"
-							:disabled="item.type === 'current'"
-						></el-time-picker>
 					</el-col>
 				</el-row>
 			</el-form-item>
@@ -263,19 +256,18 @@ export default {
 				let syncPoints = data.syncPoints || [];
 				let map = this.updateSyncNode(syncPoints);
 				data.syncPoints = Object.values(map);
-				//Object.keys(data).forEach(key => (this.formData[key] = data[key]));
-				_.merge(this.formData, data);
-				this.formData.syncPoints.map((item, index) => {
-					this.$set(this.formData, index, item);
-				});
+				Object.keys(data).forEach(key => (this.formData[key] = data[key]));
+				// _.merge(this.formData, data);
+				// this.formData.syncPoints.map((item, index) => {
+				// 	this.$set(this.formData, index, item);
+				// });
 			}
 		},
 		getData() {
 			let result = _.cloneDeep(this.formData);
 			if (result.syncPoints) {
 				result.syncPoints.forEach(point => {
-					point.date = point.date ? moment(point.date).format('YYYY-MM-DD') : '';
-					//point.time =  point.time?moment(point.time).format("HH:mm:ss"):'';
+					point.date = point.date ? moment(point.date).format('YYYY-MM-DD HH:mm:ss') : '';
 				});
 			}
 			return result;

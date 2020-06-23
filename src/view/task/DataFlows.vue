@@ -83,11 +83,9 @@
 								</el-dropdown-menu>
 							</el-dropdown>
 
-							<router-link target="_blank" to="/job">
-								<el-button class="add-btn-icon-box"
-									><i class="iconfont icon-jia add-btn-icon"></i
-								></el-button>
-							</router-link>
+							<el-button class="add-btn-icon-box" @click="create"
+								><i class="iconfont icon-jia add-btn-icon"></i
+							></el-button>
 						</div>
 						<!--						<div class="task-list-menu-right">-->
 						<!--							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-hanshu back-btn-icon"></i></el-button>-->
@@ -289,6 +287,7 @@ export default {
 			flowOrder: localStorage.getItem('flowOrder') || 'descending',
 			tableData: [],
 			newData: [],
+			windows: [],
 			currentPage: 1,
 			pagesize: localStorage.getItem('flowPagesize') * 1 || 20,
 			totalNum: 0,
@@ -375,6 +374,20 @@ export default {
 		handleGoFuntion() {
 			top.location.href = '/#/JsFuncs';
 		},
+		getTempKeys() {
+			let tk = [];
+			this.windows.forEach(it => {
+				if (it.parent != null && it.tempKey) tk.push(it.tempKey);
+			});
+			return tk;
+		},
+		create() {
+			let routeUrl = this.$router.resolve({
+				path: '/job'
+			});
+			this.windows.push(window.open(routeUrl.href, '_blank'));
+			this.windows[this.windows.length - 1].tempKeys = this.getTempKeys();
+		},
 		handleDetail(id, type) {
 			const h = this.$createElement;
 			if (type === 'edit') {
@@ -405,7 +418,8 @@ export default {
 						query: { id: id }
 					});
 					setTimeout(() => {
-						window.open(routeUrl.href, '_blank');
+						this.windows.push(window.open(routeUrl.href, '_blank'));
+						this.windows[this.windows.length - 1].tempKeys = this.getTempKeys();
 					}, 200);
 				});
 			} else {
@@ -413,7 +427,7 @@ export default {
 					path: '/job',
 					query: { id: id }
 				});
-				window.open(routeUrl.href, '_blank');
+				window.open(routeUrl.href, 'monitor');
 			}
 		},
 		handleImport() {
