@@ -24,9 +24,9 @@ const en = {
 		restart: 'restart',
 		syncGover: 'Syn gover',
 		screen: 'Screen',
-		delete: 'delete',
+		delete: 'Delete',
 		cancel: 'Cancel',
-		confirm: 'confirm',
+		confirm: 'Confirm',
 		placeholderMonServer: 'Please enter the monitored service name',
 		placeholderCommand: 'Please enter command',
 		nullContent: 'Can not be empty',
@@ -155,7 +155,7 @@ const en = {
 		dataMap: 'Data Map',
 		edit: 'Edit',
 		copy: 'Copy',
-		reset: 'Reset',
+		reset: ' reset ',
 		cut: 'cut',
 		paste: 'Paste',
 		undo: 'Undo',
@@ -256,9 +256,9 @@ const en = {
 		nodeAttributes: 'node attribute',
 		matchingRelationship: 'or matching attribute',
 		afterSubmission: 'the job should be',
-		runNomally: 'to make sure the job running correctly',
+		runNomally: 'to make sure the job running correctly;',
 		editLayerTip: 'otherwise the job will be abnormal,still wanna EDIT the job？',
-		continueEditing: 'Continue editing'
+		continueEditing: 'Still Edit'
 	},
 	connection: {
 		status: {
@@ -357,7 +357,7 @@ const en = {
 						},
 						table: {
 							label: 'Table',
-							placeholder: 'Please select table'
+							placeholder: 'Please select table,Case sensitive'
 						},
 						custom_sql: {
 							label: 'Custom SQL',

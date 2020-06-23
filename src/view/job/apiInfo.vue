@@ -125,7 +125,7 @@ import factory from '../../api/factory';
 import metaData from '../metaData';
 import apiPath from '../apiPath';
 const modules = factory('modules');
-
+// const MetadataDefinitions = factory('metadataDefinitions');
 export default {
 	name: 'ApiInfo',
 	components: { metaData, apiPath },
@@ -163,6 +163,10 @@ export default {
 	},
 
 	methods: {
+		/**
+		 * 获取左侧分类
+		 */
+		getLeftClass() {},
 		/**
 		 * 编辑
 		 */

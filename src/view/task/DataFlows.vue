@@ -83,11 +83,9 @@
 								</el-dropdown-menu>
 							</el-dropdown>
 
-							<router-link target="_blank" to="/job">
-								<el-button class="add-btn-icon-box"
-									><i class="iconfont icon-jia add-btn-icon"></i
-								></el-button>
-							</router-link>
+							<el-button class="add-btn-icon-box" @click="create"
+								><i class="iconfont icon-jia add-btn-icon"></i
+							></el-button>
 						</div>
 						<!--						<div class="task-list-menu-right">-->
 						<!--							<el-button disabled class="back-btn-icon-box dv-btn-icon" ><i class="iconfont icon-hanshu back-btn-icon"></i></el-button>-->
@@ -229,7 +227,7 @@
 									<el-dropdown-item
 										:disabled="statusBtMap[scope.row.status].reset"
 										:command="'reset' + scope.row.id"
-										>{{ $t('dataFlow.reset') }}</el-dropdown-item
+										>{{ $t('dataFlow.button.reset') }}</el-dropdown-item
 									>
 									<el-dropdown-item
 										:command="'force_stopping' + scope.row.id"
@@ -281,6 +279,7 @@ export default {
 			flowOrder: localStorage.getItem('flowOrder') || 'descending',
 			tableData: [],
 			newData: [],
+			windows: [],
 			currentPage: 1,
 			pagesize: localStorage.getItem('flowPagesize') * 1 || 20,
 			totalNum: 0,
@@ -340,7 +339,7 @@ export default {
 			statusBtMap: {
 				scheduled: { switch: true, delete: true, edit: true, detail: true, forceStop: true, reset: true },
 				draft: { switch: true, delete: false, edit: false, detail: true, forceStop: true, reset: true },
-				running: { switch: false, delete: true, edit: true, detail: true, forceStop: true, reset: true },
+				running: { switch: false, delete: true, edit: true, detail: false, forceStop: true, reset: true },
 				stopping: { switch: true, delete: true, edit: true, detail: true, forceStop: false, reset: true },
 				error: { switch: false, delete: false, edit: false, detail: true, forceStop: true, reset: false },
 				paused: { switch: false, delete: false, edit: false, detail: true, forceStop: true, reset: false },
@@ -367,6 +366,20 @@ export default {
 		handleGoFuntion() {
 			top.location.href = '/#/JsFuncs';
 		},
+		getTempKeys() {
+			let tk = [];
+			this.windows.forEach(it => {
+				if (it.parent != null && it.tempKey) tk.push(it.tempKey);
+			});
+			return tk;
+		},
+		create() {
+			let routeUrl = this.$router.resolve({
+				path: '/job'
+			});
+			this.windows.push(window.open(routeUrl.href, '_blank'));
+			this.windows[this.windows.length - 1].tempKeys = this.getTempKeys();
+		},
 		handleDetail(id, type) {
 			const h = this.$createElement;
 			if (type === 'edit') {
@@ -380,7 +393,7 @@ export default {
 						h('span', { style: 'color: #48b6e2' }, this.$t('dataFlow.nodeAttributes')),
 						h('span', null, '、'),
 						h('span', { style: 'color: #48b6e2' }, this.$t('dataFlow.matchingRelationship')),
-						h('span', null, '、'),
+						h('span', null, '，'),
 						h('span', null, this.$t('dataFlow.afterSubmission')),
 						h('span', { style: 'color: #48b6e2' }, this.$t('dataFlow.reset')),
 						h('span', null, this.$t('dataFlow.runNomally')),
@@ -397,7 +410,8 @@ export default {
 						query: { id: id }
 					});
 					setTimeout(() => {
-						window.open(routeUrl.href, '_blank');
+						this.windows.push(window.open(routeUrl.href, '_blank'));
+						this.windows[this.windows.length - 1].tempKeys = this.getTempKeys();
 					}, 200);
 				});
 			} else {
@@ -405,7 +419,7 @@ export default {
 					path: '/job',
 					query: { id: id }
 				});
-				window.open(routeUrl.href, '_blank');
+				window.open(routeUrl.href, 'monitor');
 			}
 		},
 		handleImport() {
@@ -634,7 +648,7 @@ export default {
 
 		deleteConfirm(callback) {
 			this.$confirm(this.$t('message.deteleMessage'), this.$t('dataFlow.importantReminder'), {
-				confirmButtonText: this.$t('message.delete'),
+				confirmButtonText: this.$t('metaData.deleteNode'),
 				cancelButtonText: this.$t('message.cancel'),
 				type: 'warning'
 			}).then(callback);
@@ -800,7 +814,7 @@ export default {
 
 		restConfirm(callback) {
 			this.$confirm(this.$t('message.resetMessage'), this.$t('dataFlow.importantReminder'), {
-				confirmButtonText: this.$t('dataFlow.reset'),
+				confirmButtonText: this.$t('dataFlow.button.reset'),
 				cancelButtonText: this.$t('message.cancel'),
 				type: 'warning'
 			}).then(callback);
