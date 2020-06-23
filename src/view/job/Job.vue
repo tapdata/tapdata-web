@@ -267,7 +267,7 @@ export default {
 
 			dataFlowId: null,
 			tempDialogVisible: false,
-			tempKey: null,
+			tempKey: 0,
 			tempData: [],
 			status: 'draft',
 			executeMode: 'normal',
@@ -369,9 +369,14 @@ export default {
 			scope: self
 		});
 		Object.keys(localStorage).forEach(key => {
-			if (key.startsWith('temp$$$')) this.tempData.push(key);
+			if (
+				key.startsWith('temp$$$') &&
+				window.tempKeys &&
+				!window.tempKeys.includes(parseInt(key.split('$$$')[1]))
+			)
+				this.tempData.push(key);
 		});
-		if (this.tempData.length > 0) {
+		if (window.name != 'monitor' && this.tempData.length > 0) {
 			self.loading = false;
 			this.tempDialogVisible = true;
 			return;
@@ -486,12 +491,13 @@ export default {
 			if (this.tempKey == 0) {
 				this.tempKey = 1;
 				Object.keys(localStorage).forEach(key => {
-					if (key.startsWith('temp_'))
+					if (key.startsWith('temp$$$'))
 						if (parseInt(key.split('$$$')[1]) >= this.tempKey)
 							this.tempKey = parseInt(key.split('$$$')[1]) + 1;
 				});
 			}
 			localStorage.setItem('temp$$$' + this.tempKey + '$$$' + data.name, JSON.stringify(data));
+			window.tempKey = this.tempKey;
 		},
 		//点击draft save按钮
 		async draftSave() {
