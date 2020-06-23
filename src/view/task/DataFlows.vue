@@ -229,7 +229,7 @@
 									<el-dropdown-item
 										:disabled="statusBtMap[scope.row.status].reset"
 										:command="'reset' + scope.row.id"
-										>{{ $t('dataFlow.reset') }}</el-dropdown-item
+										>{{ $t('dataFlow.button.reset') }}</el-dropdown-item
 									>
 									<el-dropdown-item
 										:command="'force_stopping' + scope.row.id"
@@ -634,7 +634,7 @@ export default {
 
 		deleteConfirm(callback) {
 			this.$confirm(this.$t('message.deteleMessage'), this.$t('dataFlow.importantReminder'), {
-				confirmButtonText: this.$t('message.delete'),
+				confirmButtonText: this.$t('metaData.deleteNode'),
 				cancelButtonText: this.$t('message.cancel'),
 				type: 'warning'
 			}).then(callback);
@@ -800,7 +800,7 @@ export default {
 
 		restConfirm(callback) {
 			this.$confirm(this.$t('message.resetMessage'), this.$t('dataFlow.importantReminder'), {
-				confirmButtonText: this.$t('dataFlow.reset'),
+				confirmButtonText: this.$t('dataFlow.button.reset'),
 				cancelButtonText: this.$t('message.cancel'),
 				type: 'warning'
 			}).then(callback);

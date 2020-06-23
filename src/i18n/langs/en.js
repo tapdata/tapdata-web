@@ -258,7 +258,7 @@ const en = {
 		afterSubmission: 'the job should be',
 		runNomally: 'to make sure the job running correctly;',
 		editLayerTip: 'otherwise the job will be abnormal,still wanna EDIT the job？',
-		continueEditing: 'Continue editing'
+		continueEditing: 'Still Edit'
 	},
 	connection: {
 		status: {

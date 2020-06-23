@@ -56,7 +56,7 @@ const cn = {
 		noData: '暂无数据',
 		prompt: '提示',
 		resetMessage: '重置任务将重新执行该项任务, 确定要重新执行任务吗?',
-		deteleMessage: '删除任务删除任务将无法恢复, 请问确定要删除任务吗?',
+		deteleMessage: '删除任务将无法恢复, 请问确定要删除任务吗?',
 		forceStoppingMessage: '强制停止将立即中断数据传输，是否继续执行?',
 		stopMessage: '确定要暂停任务吗?',
 		cancleReset: '已取消重置',
