@@ -1,165 +1,93 @@
 <template>
 	<div class="metadata">
-		<div class="box-tree">
-			<div class="metadata-header" v-show="isActive">
-				<span>数据分类</span>
-				<div class="metadata-header-right">
-					<i class="iconfont icon-icon_tianjia" @click="addNode()"></i>
-					<i class="iconfont icon-fangdajing" @click="displaySearch(false)"></i>
-					<i class="iconfont icon-sync" @click="handleList"></i>
-					<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
-				</div>
+		<div class="metadata-header" v-show="isActive">
+			<span>{{ $t('metaData.title') }}</span>
+			<div class="metadata-header-btns">
+				<i class="iconfont icon-icon_tianjia" @click="showDialog()"></i>
+				<i class="iconfont icon-fangdajing" @click="isActive = false"></i>
+				<i class="iconfont icon-sync" @click="getData"></i>
+				<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
 			</div>
-			<div class="metadata-header" v-show="!isActive">
-				<i class="iconfont icon-right-circle" @click="displaySearch(true)"></i>
-				<el-input class="search" v-model="filterText"
-					><i slot="suffix" class="el-input__icon el-icon-search"></i
-				></el-input>
-			</div>
+		</div>
+		<div class="metadata-header metadata-header-btns" v-show="!isActive">
+			<i class="iconfont icon-right-circle" @click="isActive = true"></i>
+			<el-input class="search" v-model="filterText">
+				<i slot="suffix" class="el-icon-search"></i>
+			</el-input>
+		</div>
+		<div class="tree-block">
 			<el-tree
 				node-key="id"
+				highlight-current
 				:props="props"
 				:expand-on-click-node="false"
-				:data="data"
+				:data="treeData"
 				:filter-node-method="filterNode"
 				ref="tree"
 				default-expand-all
+				:render-after-expand="false"
 				class="metaData-tree"
 			>
 				<span class="custom-tree-node" slot-scope="{ node, data }">
-					<span>
-						<span class="iconfont icon-Folder-closed filter-icon"></span>
-						<span class="table-label" @click="handleChecked(data)">{{ data.value }}</span>
-						<span>
-							<el-dropdown @command="handleRowCommand" class="item">
-								<el-button type="text"
-									><i class="iconfont icon-gengduo3  task-list-icon"></i
-								></el-button>
-								<el-dropdown-menu slot="dropdown">
-									<el-dropdown-item :command="'children' + node.key">
-										{{ $t('metaData.addChildernNode') }}</el-dropdown-item
-									>
-									<el-dropdown-item :command="'edit' + node.key">
-										{{ $t('metaData.editNode') }}</el-dropdown-item
-									>
-									<el-dropdown-item :command="'delete' + node.key">
-										{{ $t('metaData.deleteNode') }}</el-dropdown-item
-									>
-								</el-dropdown-menu>
-							</el-dropdown>
-						</span>
-					</span>
+					<span class="iconfont icon-Folder-closed icon-folder"></span>
+					<span class="table-label" @click="handleChecked(data)">{{ data.value }}</span>
+					<el-dropdown class="btn-menu" size="mini" @command="handleRowCommand($event, node)">
+						<el-button type="text"><i class="iconfont icon-gengduo3  task-list-icon"></i></el-button>
+						<el-dropdown-menu slot="dropdown">
+							<el-dropdown-item command="add">{{ $t('metaData.addChildernNode') }}</el-dropdown-item>
+							<el-dropdown-item command="edit">{{ $t('metaData.editNode') }}</el-dropdown-item>
+							<el-dropdown-item command="delete">{{ $t('metaData.deleteNode') }}</el-dropdown-item>
+						</el-dropdown-menu>
+					</el-dropdown>
 				</span>
 			</el-tree>
-			<el-dialog :title="title" :visible.sync="dialogVisibleNodeName" width="30%" :before-close="handleClose">
-				<span><el-input v-model="nodeName" :placeholder="$t('metaData.nodeName')"></el-input></span>
-				<span slot="footer" class="dialog-footer">
-					<el-button @click="dialogVisibleNodeName = false">{{ $t('message.cancel') }}</el-button>
-					<el-button type="primary" @click="handleAddNode()">{{ $t('message.confirm') }}</el-button>
-				</span>
-			</el-dialog>
 		</div>
+		<el-dialog size="mini" :visible.sync="dialogConfig.visible" width="30%">
+			<span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
+			<el-input size="mini" v-model="dialogConfig.label" :placeholder="$t('metaData.nodeName')"></el-input>
+			<span slot="footer" class="dialog-footer">
+				<el-button size="mini" @click="hideDialog()">{{ $t('message.cancel') }}</el-button>
+				<el-button size="mini" type="primary" @click="dialogSubmit()">
+					{{ $t('message.confirm') }}
+				</el-button>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 
 <script>
 import factory from '../api/factory';
-import log from '../log';
 
 const MetadataDefinitions = factory('MetadataDefinitions');
-const MetadataInstances = factory('MetadataInstances');
 
 export default {
 	name: 'metaData',
 	data() {
 		return {
-			count: 0,
+			type: 'dataflow',
 			filterText: '',
-			data: [],
-			search: '',
+			treeData: [],
 			default_expanded: false,
 			props: {
-				children: 'children',
-				label: 'label',
-				isLeaf: 'leaf'
+				key: 'id',
+				label: 'value'
 			},
-			mapping: {
-				collection: 'app.Collection',
-				table: 'app.Table',
-				database: 'app.Database'
-			},
-			listdata: [],
-			checkAll: [],
-			checkData: [],
-			checkedValue: {
-				label: 'all datas'
-			},
-			options: [
-				{
-					value: '',
-					label: 'all types'
-				},
-				{
-					value: 'database',
-					label: 'database'
-				},
-				{
-					value: 'mongoDB',
-					label: 'mongoDB'
-				},
-				{
-					value: 'table',
-					label: 'table'
-				},
-				{
-					value: 'collection',
-					label: 'collection'
-				},
-				{
-					value: 'api',
-					label: 'api'
-				},
-				{
-					value: 'flow',
-					label: 'flow'
-				},
-				{
-					value: 'file',
-					label: 'file'
-				},
-				{
-					value: 'view',
-					label: 'view'
-				},
-				{
-					value: 'mongo_view',
-					label: 'mongo_view'
-				}
-			],
-			optionsType: [
-				{
-					value: '',
-					label: 'all'
-				},
-				{
-					value: 'no type',
-					label: 'no type'
-				}
-			],
-			checkClassify: '',
-			checkType: '',
 			isActive: true,
-			dialogVisible: false,
-			type: 'dataflow',
-			dialogVisibleNodeName: false,
-			typeNode: '',
+
+			dialogConfig: {
+				type: 'add',
+				id: '',
+				label: '',
+				title: '',
+				visible: false
+			},
+
 			nodeName: '',
 			parent_id: '',
 			title: ''
 		};
 	},
-	async mounted() {
-		this.handleList();
+	mounted() {
 		this.getData();
 	},
 	watch: {
@@ -168,7 +96,7 @@ export default {
 		}
 	},
 	methods: {
-		getData() {
+		getData(cb) {
 			let params = {
 				filter: {
 					where: {
@@ -179,142 +107,120 @@ export default {
 			MetadataDefinitions.get(params).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
-						let items = res.data;
-						let rootNode = {
-							children: []
-						};
-						this.find_children(rootNode, items);
-						this.data = rootNode.children;
+						this.treeData = this.formatData(res.data);
+						cb && cb(res.data);
 					}
 				}
 			});
 		},
+		//格式化分类数据
+		formatData(items) {
+			if (items && items.length) {
+				let map = {};
+				let nodes = [];
+				//遍历第一次， 先把所有子类按照id分成若干数组
+				items.forEach(it => {
+					if (it.parent_id) {
+						let children = map[it.parent_id] || [];
+						children.push(it);
+						map[it.parent_id] = children;
+					} else {
+						nodes.push(it);
+					}
+				});
+				//接着从没有子类的数据开始递归，将之前分好的数组分配给每一个类目
+				let checkChildren = nodes => {
+					return nodes.map(it => {
+						let children = map[it.id];
+						if (children) {
+							it.children = checkChildren(children);
+						}
+						return it;
+					});
+				};
+				return checkChildren(nodes);
+			}
+		},
 		filterNode(value, data) {
 			if (!value) return true;
-			return data.label.indexOf(value) !== -1;
+			return data.value.indexOf(value) !== -1;
 		},
-		handleList() {
-			this.checkedValue = 'all datas';
-			let params = {
-				filter: JSON.stringify({
-					where: {
-						is_deleted: false,
-						meta_type: this.type
-					},
-					fields: {
-						name: true,
-						original_name: true,
-						owner: true,
-						meta_type: true,
-						description: true,
-						qualified_name: true,
-						db: true,
-						stats: true,
-						classifications: true,
-						last_user_name: true,
-						last_updated: true,
-						create_time: true,
-						collection: true,
-						id: true,
-						source: {
-							_id: true
-						},
-						databaseId: true
-					}
-				})
-			};
-			MetadataInstances.get(params)
-				.then(res => {
-					let self = this;
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							self.listdata = res.data;
-						}
-					}
-				})
-				.catch(e => {
-					this.$message.error('MetadataInstances error' + e);
-				});
-		},
+
 		handleDefault_expanded() {
 			let self = this;
-			let treeList = this.data;
+			let treeList = this.treeData;
 			for (let i = 0; i < treeList.length; i++) {
 				self.$refs.tree.store.nodesMap[treeList[i].id].expanded = false;
 			}
 		},
-		handleSearch() {
-			let params = {};
-			if (this.checkType) {
-				params[`filter[where][meta_type]`] = this.checkType;
+
+		handleRowCommand(command, node) {
+			switch (command) {
+				case 'add':
+				case 'edit':
+					this.showDialog(node, command);
+					break;
+				case 'delete':
+					this.deleteNode(node.key);
 			}
-			if (this.search) {
-				params[`filter[where][or][1][original_name][like]`] = this.search;
+		},
+		showDialog(node, dialogType) {
+			let type = dialogType || 'add';
+			this.dialogConfig = {
+				visible: true,
+				type,
+				id: node ? node.key : '',
+				label: type === 'edit' ? node.label : '',
+				title:
+					type === 'add'
+						? node
+							? this.$t('metaData.addChildernNode')
+							: this.$t('metaData.addNode')
+						: this.$t('metaData.editNode')
+			};
+		},
+		hideDialog() {
+			this.dialogConfig = {
+				visible: false
+			};
+		},
+		async dialogSubmit() {
+			let config = this.dialogConfig;
+			let value = config.label;
+			let id = config.id;
+			let method = 'post';
+			if (!value || value.trim() === '') {
+				this.$message.error(this.$t('metaData.nodeName'));
+				return;
 			}
-			MetadataInstances.get(params)
+			let nameExist = await this.checkName(value);
+			if (nameExist) {
+				return this.$message.error(this.$t('metaData.nameExist'));
+			}
+			let params = {
+				item_type: [this.type],
+				value
+			};
+			if (config.type === 'edit') {
+				method = 'patch';
+				params.id = id;
+			} else if (id) {
+				params.parent_id = id;
+			}
+
+			MetadataDefinitions[method](params)
 				.then(res => {
 					let self = this;
 					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data) {
-							self.listdata = res.data;
+							self.getData();
+							self.hideDialog();
 						}
 					}
-					log('listdata', self.listdata);
 				})
 				.catch(e => {
 					this.$message.error('MetadataInstances error' + e);
 				});
-		},
-		clear() {
-			this.handleList();
-		},
-		displaySearch(val) {
-			this.isActive = val;
-			log(this.isActive);
-		},
-		handleClassify() {
-			if (this.checkData.length === 0) {
-				this.$message.info('please select classify');
-				return;
-			}
-			this.dialogVisible = true;
-		},
-		handleRowCommand(command) {
-			if (command.indexOf('add') !== -1) {
-				let node = command.replace('add', '');
-				this.addNode(node);
-			} else if (command.indexOf('children') !== -1) {
-				let node = command.replace('children', '');
-				this.addChildNode(node);
-			} else if (command.indexOf('edit') !== -1) {
-				let node = command.replace('edit', '');
-				this.editNode(node);
-			} else if (command.indexOf('delete') !== -1) {
-				let node = command.replace('delete', '');
-				this.deleteNode(node);
-			}
-		},
-		addNode() {
-			//通过node-key 获取node data
-			this.nodeName = '';
-			this.typeNode = 'addNode';
-			this.title = this.$t('metaData.addNode');
-			this.dialogVisibleNodeName = true;
-		},
-		addChildNode(id) {
-			this.parent_id = id;
-			this.nodeName = '';
-			this.typeNode = 'addChildNode';
-			this.title = this.$t('metaData.addChildernNode');
-			this.dialogVisibleNodeName = true;
-		},
-		editNode(id) {
-			let node = this.$refs.tree.getNode(id);
-			this.parent_id = id;
-			this.nodeName = node.data.value;
-			this.typeNode = 'editNode';
-			this.title = this.$t('metaData.editNode');
-			this.dialogVisibleNodeName = true;
 		},
 		deleteNode(id) {
 			this.$confirm(this.$t('metaData.deteleMessage'), {
@@ -326,9 +232,7 @@ export default {
 					let self = this;
 					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data) {
-							self.data = res.data;
 							self.getData();
-							self.dialogVisibleNodeName = false;
 						}
 					} else {
 						this.$message.info(this.$t('message.deleteFail'));
@@ -336,216 +240,86 @@ export default {
 				});
 			});
 		},
-		handleAddNode() {
-			if (!this.nodeName || this.nodeName === '') {
-				this.$message.error(this.$t('metaData.nodeName'));
-				return;
-			}
-			let data = {
-				item_type: [this.type],
-				value: this.nodeName
-			};
-			if (this.typeNode === 'addChildNode') {
-				data.parent_id = this.parent_id;
-			}
-			if (this.typeNode === 'editNode') {
-				data.id = this.parent_id;
-			}
-			this.handlePostNode(data);
-		},
-		handleClose() {
-			this.dialogVisibleNodeName = false;
-		},
-		handlePostNode(data) {
-			MetadataDefinitions[this.typeNode === 'editNode' ? 'patch' : 'post'](data)
-				.then(res => {
-					let self = this;
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							self.data = res.data;
-							self.getData();
-							self.dialogVisibleNodeName = false;
-						}
-					}
-				})
-				.catch(e => {
-					this.$message.error('MetadataInstances error' + e);
+		checkName(value) {
+			return new Promise(resolve => {
+				this.getData(items => {
+					resolve(items.find(it => it.value === value));
 				});
+			});
 		},
-		find_children(parent, items) {
-			if (!items || !items.length) return;
-			parent.children = [] || parent.children;
-			for (let i = 0; i < items.length; i++) {
-				let item = items[i];
-				if (item.parent_id === parent.id || (!parent.id && !item.parent_id)) {
-					parent.children.forEach(v => (v.islabe = false));
-					parent.children.push(item);
-					items.splice(i, 1);
-					i--;
-				}
-			}
-			if (parent && parent.children && parent.children.length) {
-				for (let j = 0; j < parent.children.length; j++) {
-					this.find_children(parent.children[j], items);
-				}
-			}
+		handleChecked(data) {
+			this.$emit('nodeClick', data);
 		}
 	}
 };
 </script>
 
 <style scoped lang="less">
-.box {
-	width: 254px;
-}
-
-.custom-tree-node {
-	flex: 1;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	font-size: 11px;
-	padding-right: 8px;
-}
-
-.editor-container .editor .e-body .e-vue-component-wrap {
-	overflow: auto;
-}
-
-.el-checkbox-button .el-checkbox-button__inner {
-	padding: 6px 12px;
-}
-
-.search {
-	width: 197px;
-	margin-bottom: 10px;
-	margin-left: 8px;
-}
-
-.filter-icon {
-	font-size: 12px;
-	color: #48b6e2;
-}
-
-.filter-icon-table {
-	font-size: 13px;
-	color: #4aaf47;
-}
-
-.filter-Graph {
-	display: inline-block;
-	margin-right: 12px;
-}
-
-.table-label {
-	display: inline-block;
-	width: 140px;
-	vertical-align: middle;
-}
-
-.box-head {
-	position: fixed;
-	z-index: 2;
-}
-
-.box-tree {
-	float: left;
-	width: 240px;
+.metadata {
 	border: 1px solid #dedee4;
-	height: calc(100vh - 1px);
-}
-.box-ul {
-	float: left;
-}
-.list-box {
-	margin-top: 114px;
-}
-.classify-ul {
-	background-color: #fff;
+	height: 100%;
+	width: 240px;
 	overflow: hidden;
-	color: #303133;
-	transition: 0.3s;
-	list-style: none;
-	font-size: 12px;
-	width: 300px;
-	height: calc(100vh - 1px);
-	overflow-y: auto;
-	border-right: 1px solid #dedee4;
-}
-
-.classify-ul li {
-	width: 263px;
-	height: 34px;
-	line-height: 43px;
-	margin-left: 8px;
-	padding-left: 10px;
-	background: #ffffff;
-	border-radius: 3px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	span {
+	user-select: none;
+	/*头部样式*/
+	.metadata-header {
+		height: 31px;
+		background: #f5f5f5;
+		border-bottom: 1px solid #dedee4;
 		font-size: 12px;
+		line-height: 31px;
+		padding-left: 8px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		.search {
+			margin: 0 8px;
+		}
 	}
-}
-.box-head {
-	position: fixed;
-	width: 292px;
-	z-index: 4;
-	background: #f5f5f5;
-	border-bottom: 1px solid #dedee4;
-}
-.search-input {
-	width: 94%;
-	margin-left: 10px;
-	margin-right: 10px;
-}
-.filter-icon {
-	color: #edc958;
-}
-.icon-color {
-	color: #4aaf47;
-	font-size: 16px !important;
-	margin-top: 1px;
-}
-.select-nav {
-	display: flex;
-	justify-content: space-between;
-	padding-top: 5px;
-	padding-right: 10px;
-	font-size: 12px;
-}
-.select-nav-header {
-	display: flex;
-	line-height: 30px;
-	justify-content: space-between;
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-bottom: 5px;
-	padding-top: 5px;
-}
-/*头部样式*/
-.metadata-header {
-	width: 232px;
-	height: 31px;
-	background: #f5f5f5;
-	border-bottom: 1px solid #dedee4;
-	font-size: 12px;
-	line-height: 31px;
-	padding-left: 8px;
-	display: flex;
-}
-.metadata-header-right {
-	margin-left: 104px;
+	.metadata-header-btns {
+		color: #999;
+		.iconfont:hover {
+			color: #333;
+		}
+	}
+	.tree-block {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+	}
+	.custom-tree-node {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		font-size: 12px;
+		padding-right: 8px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		line-height: 26px;
+		.icon-folder {
+			margin-right: 5px;
+			font-size: 12px;
+			// color: #48b6e2;
+			color: #edc958;
+		}
+		.table-label {
+			flex: 1;
+			font-size: 12px;
+			vertical-align: middle;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+		.btn-menu {
+			display: none;
+		}
+		&:hover .btn-menu {
+			display: block;
+		}
+	}
 }
 </style>
 <style lang="less">
-.MetaDataSelect {
-	margin-top: -5px;
-	.el-input__inner {
-		border: none !important;
-		background: #f5f5f5;
-	}
-}
 .metadata-header {
 	.el-input .el-input__inner {
 		height: 24px;
@@ -554,13 +328,8 @@ export default {
 }
 .metaData-tree {
 	.el-tree-node__content {
-		height: 33px;
-	}
-}
-.select-nav-header {
-	.el-button--mini,
-	.el-button--mini.is-round {
-		padding: 4px 12px;
+		height: 26px;
+		overflow: hidden;
 	}
 }
 </style>

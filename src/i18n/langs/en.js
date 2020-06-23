@@ -853,6 +853,8 @@ const en = {
 		}
 	},
 	metaData: {
+		title: 'Data Category',
+		nameExist: 'Category name already existed.',
 		addNode: 'Add category at the same level',
 		addChildernNode: 'Add Child Category',
 		editNode: 'Edit',
