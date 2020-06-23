@@ -209,27 +209,31 @@
 				<el-button class="e-button" type="primary" @click="start">{{ $t('dataFlow.submitExecute') }}</el-button>
 			</div>
 		</el-dialog>
-		<el-dialog title="系统提示" :visible.sync="tempDialogVisible" width="30%">
+		<el-dialog :title="$t('dataFlow.systemHint')" custom-class="systemHint" :visible.sync="tempDialogVisible">
 			<el-form :model="form">
-				<span>上次草稿未保存，是否继续编辑？</span><br /><br />
-				<div v-for="item in tempData" :key="item.id">
-					<el-col :span="6"
-						><el-link @click="openTempSaved(item)" type="success">{{
-							item.split('$$$')[2]
-						}}</el-link></el-col
-					>
-					<el-col :span="3"
-						><el-button size="mini" @click="openTempSaved(item)" type="success" plain
-							>打 开</el-button
-						></el-col
-					>
-					<el-button size="mini" @click="deleteTempData(item)" type="danger" icon="el-icon-delete" plain
-						>删 除</el-button
-					>
+				<span class="text">{{ $t('dataFlow.systemText') }}</span>
+				<div class="content">
+					<el-row v-for="item in tempData" :key="item.id">
+						<el-col :span="20"
+							><el-link @click="openTempSaved(item)" type="primary">{{
+								item.split('$$$')[2]
+							}}</el-link></el-col
+						>
+						<el-col :span="4">
+							<el-button size="mini" @click="openTempSaved(item)" type="text">{{
+								$t('dataFlow.stystemOpen')
+							}}</el-button>
+							<el-button size="mini" @click="deleteTempData(item)" type="text">{{
+								$t('message.delete')
+							}}</el-button>
+						</el-col>
+					</el-row>
 				</div>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button @click="loadData">忽 略</el-button>
+				<el-button type="text" class="delet">{{ $t('dataFlow.stystemDeleteAll') }}</el-button>
+				<el-button size="mini" @click="loadData">{{ $t('dataFlow.stystemOpenAll') }}</el-button>
+				<el-button size="mini" @click="loadData">{{ $t('dataFlow.stystemLgnoreAll') }}</el-button>
 			</div>
 		</el-dialog>
 		<AddBtnTip v-if="isEditable()"></AddBtnTip>
@@ -1372,6 +1376,39 @@ export default {
 				font-size: 12px;
 			}
 		}
+	}
+}
+.systemHint {
+	.el-dialog__body {
+		overflow: hidden;
+		padding: 20px !important;
+		box-sizing: border-box;
+		.el-form {
+			overflow: hidden;
+			.text {
+				display: inline-block;
+				padding-bottom: 30px;
+			}
+			.content {
+				max-height: 260px;
+				overflow: auto;
+				.el-row {
+					padding-bottom: 5px;
+					.el-button--text {
+						color: #666;
+					}
+					.el-button--text:hover {
+						color: #409eff;
+					}
+				}
+			}
+		}
+	}
+	.delet.el-button--text {
+		color: #f56c6c;
+	}
+	.delet.el-button--text:hover {
+		color: #f00;
 	}
 }
 .dialogConfig {

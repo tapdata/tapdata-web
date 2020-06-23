@@ -66,6 +66,13 @@ const tc = {
 		edit: '修改'
 	},
 	dataFlow: {
+		draftNotStart: '草稿不能啟動',
+		systemHint: '系統提示',
+		systemText: '系統檢測出有如下任務上次操作後未保存，請問是否繼續編輯',
+		stystemOpen: '打開',
+		stystemOpenAll: '全部打開',
+		stystemDeleteAll: '全部刪除',
+		stystemLgnoreAll: '全部忽略',
 		newTaksName: '新任務未命名',
 		selectNode: '請選擇節點',
 		submitExecute: '提交執行',
@@ -157,7 +164,7 @@ const tc = {
 		cut: '剪切',
 		paste: '粘貼',
 		undo: '撤銷',
-		cancelUndo: '取消撤銷',
+		redo: '重做',
 		selectAll: '全選',
 		amplification: '放大',
 		zoomOut: '縮小',
@@ -642,10 +649,10 @@ const tc = {
 			},
 			toolbar: {
 				undo: {
-					tip: '重做'
+					tip: '撤銷'
 				},
 				redo: {
-					tip: '撤銷'
+					tip: '重做'
 				},
 				clear_paper: {
 					tip: '清空'

@@ -7,14 +7,14 @@
 				<span>{{ $t('dataFlow.cut') }} <i>ctrl+x</i></span>
 				<span>{{ $t('message.delete') }} <i>delete</i></span>
 				<span>{{ $t('dataFlow.undo') }} <i>ctrl+z</i></span>
-				<span>{{ $t('dataFlow.cancelUndo') }} <i>ctrl+y</i></span>
+				<span>{{ $t('dataFlow.redo') }} <i>ctrl+y</i></span>
 				<span>{{ $t('dataFlow.selectAll') }} <i>ctrl+a</i></span>
 				<span>{{ $t('dataFlow.amplification') }} <i>ctrl+plus</i></span>
 				<span>{{ $t('dataFlow.zoomOut') }} <i>ctrl+minus</i></span>
 				<span>{{ $t('dataFlow.down') }} <i>key down</i></span>
 				<span>{{ $t('dataFlow.up') }} <i>key up</i></span>
 				<span
-					>{{ $t('dataFlow.selectMultipleNode') }} <i>shift+{{ $t('dataFlow.mouseDrag') }}</i></span
+					>{{ $t('dataFlow.selectMultipleNode') }} <i>Shift+{{ $t('dataFlow.mouseDrag') }}</i></span
 				>
 			</div>
 			<el-button circle class="iconfont icon-jianpan" slot="reference"></el-button>

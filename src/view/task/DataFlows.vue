@@ -175,13 +175,21 @@
 				<el-table-column :label="$t('dataFlow.taskSwitch')" width="70">
 					<template slot-scope="scope">
 						<div v-if="!scope.row.hasChildren">
-							<el-switch
-								v-model="scope.row.newStatus"
-								inactive-value="stopping"
-								:disabled="statusBtMap[scope.row.status].switch"
-								active-value="scheduled"
-								@change="handleStatus(scope.row.id, scope.row.status, scope.row.newStatus)"
-							></el-switch>
+							<el-tooltip
+								class="item"
+								effect="dark"
+								:content="$t('dataFlow.draftNotStart')"
+								:manual="!['draft'].includes(scope.row.status)"
+								placement="top-start"
+							>
+								<el-switch
+									v-model="scope.row.newStatus"
+									inactive-value="stopping"
+									active-value="scheduled"
+									:disabled="statusBtMap[scope.row.status].switch"
+									@change="handleStatus(scope.row.id, scope.row.status, scope.row.newStatus)"
+								></el-switch>
+							</el-tooltip>
 						</div>
 					</template>
 				</el-table-column>

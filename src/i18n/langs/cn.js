@@ -67,6 +67,13 @@ const cn = {
 		edit: '修改'
 	},
 	dataFlow: {
+		draftNotStart: '草稿不能启动 ',
+		systemHint: '系统提示',
+		systemText: '系统检测出有如下任务上次操作后未保存，请问是否继续编辑',
+		stystemOpen: '打开',
+		stystemOpenAll: '全部打开',
+		stystemDeleteAll: '全部删除',
+		stystemLgnoreAll: '全部忽略',
 		newTaksName: '新任务未命名',
 		selectNode: '请选择节点',
 		submitExecute: '提交执行',
@@ -158,7 +165,7 @@ const cn = {
 		cut: '剪切',
 		paste: '粘贴',
 		undo: '撤销',
-		cancelUndo: '取消撤销',
+		redo: '重做',
 		selectAll: '全选',
 		amplification: '放大',
 		zoomOut: '缩小',
@@ -641,10 +648,10 @@ const cn = {
 			},
 			toolbar: {
 				undo: {
-					tip: '重做'
+					tip: '撤销'
 				},
 				redo: {
-					tip: '撤销'
+					tip: '重做'
 				},
 				clear_paper: {
 					tip: '清空'
