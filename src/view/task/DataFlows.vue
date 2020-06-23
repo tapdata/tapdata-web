@@ -380,7 +380,7 @@ export default {
 						h('span', { style: 'color: #48b6e2' }, this.$t('dataFlow.nodeAttributes')),
 						h('span', null, '、'),
 						h('span', { style: 'color: #48b6e2' }, this.$t('dataFlow.matchingRelationship')),
-						h('span', null, '、'),
+						h('span', null, '，'),
 						h('span', null, this.$t('dataFlow.afterSubmission')),
 						h('span', { style: 'color: #48b6e2' }, this.$t('dataFlow.reset')),
 						h('span', null, this.$t('dataFlow.runNomally')),

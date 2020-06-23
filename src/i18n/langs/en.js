@@ -155,7 +155,7 @@ const en = {
 		dataMap: 'Data Map',
 		edit: 'Edit',
 		copy: 'Copy',
-		reset: 'Reset',
+		reset: ' reset ',
 		cut: 'cut',
 		paste: 'Paste',
 		undo: 'Undo',
@@ -256,7 +256,7 @@ const en = {
 		nodeAttributes: 'node attribute',
 		matchingRelationship: 'or matching attribute',
 		afterSubmission: 'the job should be',
-		runNomally: 'to make sure the job running correctly',
+		runNomally: 'to make sure the job running correctly;',
 		editLayerTip: 'otherwise the job will be abnormal,still wanna EDIT the job？',
 		continueEditing: 'Continue editing'
 	},
