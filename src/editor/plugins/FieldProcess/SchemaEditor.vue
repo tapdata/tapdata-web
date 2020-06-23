@@ -1,14 +1,20 @@
 <template>
 	<div>
 		<el-row class="operation-area">
-			<span @click="handleAllDelete">{{ $t('editor.cell.processor.field.form.delete') }}</span>
-			<span @click="handleAllReset">{{ $t('dataFlow.reset') }}</span>
-			<span @click="handleAllToUpperCase('upperCase')">{{
-				$t('editor.cell.processor.field.form.toUpperCase')
-			}}</span>
-			<span @click="handleAllToLowerCase('lowerCase')">{{
-				$t('editor.cell.processor.field.form.toLowerCase')
-			}}</span>
+			<el-form :disabled="disabledMode">
+				<el-form-item>
+					<el-button type="text" @click="handleAllDelete">{{
+						$t('editor.cell.processor.field.form.delete')
+					}}</el-button>
+					<el-button type="text" @click="handleAllReset">{{ $t('dataFlow.reset') }}</el-button>
+					<el-button type="text" @click="handleAllToUpperCase('upperCase')">{{
+						$t('editor.cell.processor.field.form.toUpperCase')
+					}}</el-button>
+					<el-button type="text" @click="handleAllToLowerCase('lowerCase')">{{
+						$t('editor.cell.processor.field.form.toLowerCase')
+					}}</el-button>
+				</el-form-item>
+			</el-form>
 		</el-row>
 		<div class="e-schema-editor" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom">
 			<el-container>
@@ -41,7 +47,6 @@
 						:expand-on-click-node="false"
 						icon-class="icon-none"
 						show-checkbox
-						check-strictly
 						ref="tree"
 						class="schemaEditor"
 					>
@@ -321,6 +326,7 @@ export default {
 	},
 	data() {
 		return {
+			disabled: false,
 			scriptDialog: {
 				open: false,
 				script: '//Enter you code at here',
@@ -957,6 +963,9 @@ export default {
 }
 .el-button + .el-button {
 	margin-left: 0 !important;
+}
+.operation-area .el-form-item {
+	margin-bottom: 0;
 }
 </style>
 <style lang="less">

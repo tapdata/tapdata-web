@@ -125,6 +125,11 @@ export default {
 					let fieldIds = schema.fields.map(field => field.id);
 					data.operations = data.operations || [];
 					for (let i = 0; i < data.operations.length; i++) {
+						if (data.operations[i].op === 'CREATE') {
+							fieldIds.push(data.operations[i].id);
+							continue;
+						}
+
 						if (!fieldIds.includes(data.operations[i].id)) {
 							data.operations.splice(i, 1);
 							i--;
