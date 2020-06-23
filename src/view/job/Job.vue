@@ -1,7 +1,7 @@
 <template>
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
-			<template v-if="['draft'].includes(status)">
+			<template v-if="isEditable()">
 				<div
 					:class="[{ btnHover: ['draft'].includes(status) }, 'headImg']"
 					v-show="!isSaving"
@@ -57,7 +57,7 @@
 				placement="bottom"
 			>
 				<div
-					:class="['headImg', { btnHover: ['paused', 'error', 'draft'].includes(status) }]"
+					:class="['headImg', { btnHover: isEditable() }]"
 					@click="reloadSchema"
 					:disabled="statusBtMap[status].reloadSchema"
 				>
@@ -70,10 +70,10 @@
 				effect="dark"
 				:content="$t('dataFlow.button.preview')"
 				placement="bottom"
-				v-if="['paused', 'error', 'draft'].includes(status)"
+				v-if="isEditable()"
 			>
 				<div
-					:class="['headImg', { btnHover: ['paused', 'error', 'draft'].includes(status) }]"
+					:class="['headImg', { btnHover: isEditable() }]"
 					@click="preview"
 					:disabled="statusBtMap[status].preview"
 				>
@@ -103,7 +103,7 @@
 				class="headImg round"
 				@click="showSetting"
 				:disabled="statusBtMap[status].setting"
-				:class="['headImg', { btnHover: ['paused', 'error', 'draft'].includes(status) }]"
+				:class="['headImg', { btnHover: isEditable() }]"
 			>
 				<span class="iconfont icon-shezhi"></span>
 				<span class="text" v-if="sync_type === 'initial_sync+cdc'">{{
