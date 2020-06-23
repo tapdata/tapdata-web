@@ -661,10 +661,13 @@ export default {
 	}
 	.databaseInfo {
 		span {
-			margin-right: 20px;
+			display: inline-block;
+			overflow: hidden;
+			margin: 5px 20px 0 0;
 			padding: 5px 10px;
 			font-size: 12px;
 			color: #666;
+			text-overflow: ellipsis;
 			background: #eee;
 			border-radius: 10px;
 		}
