@@ -209,7 +209,7 @@
 				<el-button class="e-button" type="primary" @click="start">{{ $t('dataFlow.submitExecute') }}</el-button>
 			</div>
 		</el-dialog>
-		<el-dialog title="系统提示" :visible.sync="tempDialogVisible" width="30%">
+		<el-dialog title="系统提示" :visible.sync="tempDialogVisible" :before-close="loadData" width="30%">
 			<el-form :model="form">
 				<span>上次草稿未保存，是否继续编辑？</span><br /><br />
 				<div v-for="item in tempData" :key="item.id">
@@ -267,7 +267,8 @@ export default {
 
 			dataFlowId: null,
 			tempDialogVisible: false,
-			tempKey: null,
+			tempKey: 0,
+			tempId: '',
 			tempData: [],
 			status: 'draft',
 			executeMode: 'normal',
@@ -369,9 +370,14 @@ export default {
 			scope: self
 		});
 		Object.keys(localStorage).forEach(key => {
-			if (key.startsWith('temp$$$')) this.tempData.push(key);
+			if (
+				key.startsWith('temp$$$') &&
+				window.tempKeys &&
+				!window.tempKeys.includes(parseInt(key.split('$$$')[1]))
+			)
+				this.tempData.push(key);
 		});
-		if (this.tempData.length > 0) {
+		if (window.name != 'monitor' && this.tempData.length > 0) {
 			self.loading = false;
 			this.tempDialogVisible = true;
 			return;
@@ -396,6 +402,7 @@ export default {
 		openTempSaved(key) {
 			this.tempDialogVisible = false;
 			this.initData(JSON.parse(localStorage.getItem(key)));
+			location.href = location.href.split('=')[0] + '=' + this.dataFlowId;
 			localStorage.removeItem(key);
 		},
 		deleteTempData(key) {
@@ -486,21 +493,19 @@ export default {
 			if (this.tempKey == 0) {
 				this.tempKey = 1;
 				Object.keys(localStorage).forEach(key => {
-					if (key.startsWith('temp_'))
+					if (key.startsWith('temp$$$'))
 						if (parseInt(key.split('$$$')[1]) >= this.tempKey)
 							this.tempKey = parseInt(key.split('$$$')[1]) + 1;
 				});
 			}
-			localStorage.setItem('temp$$$' + this.tempKey + '$$$' + data.name, JSON.stringify(data));
+			this.tempId = 'temp$$$' + this.tempKey + '$$$' + data.name;
+			localStorage.setItem(this.tempId, JSON.stringify(data));
+			window.tempKey = this.tempKey;
 		},
 		//点击draft save按钮
 		async draftSave() {
 			this.isSaving = true;
-			if (
-				localStorage.getItem('tempSaved') &&
-				JSON.parse(localStorage.getItem('tempSaved')).id == this.dataFlowId
-			)
-				localStorage.removeItem('tempSaved');
+			localStorage.removeItem(this.tempId);
 			let self = this,
 				promise = null,
 				lastString = '',
@@ -786,11 +791,7 @@ export default {
 		 */
 		doSave(data, cb) {
 			let self = this;
-			if (
-				localStorage.getItem('tempSaved') &&
-				JSON.parse(localStorage.getItem('tempSaved')).id == this.dataFlowId
-			)
-				localStorage.removeItem('tempSaved');
+			localStorage.removeItem(this.tempId);
 			const _doSave = function() {
 				let promise = data.id ? dataFlowsApi.patch(data) : dataFlowsApi.post(data);
 
