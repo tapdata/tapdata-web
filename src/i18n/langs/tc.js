@@ -492,6 +492,7 @@ const tc = {
 							placeholder: '請輸入節點描述'
 						},
 						toUpperCase: '轉大寫',
+						delete: '删除',
 						toLowerCase: '轉小寫',
 						fieldName: '字段名稱',
 						fieldType: '字段類型',

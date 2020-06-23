@@ -1163,7 +1163,10 @@ export default {
 							outputSchema: null,
 							attrs: {
 								label: {
-									text: breakText.breakText(v.tableName, 125)
+									text:
+										v.tableName !== '' && v.tableName
+											? breakText.breakText(v.tableName, 125)
+											: v.type
 								}
 							},
 							angle: 0
@@ -1178,7 +1181,7 @@ export default {
 							outputSchema: null,
 							attrs: {
 								label: {
-									text: breakText.breakText(v.name, 125)
+									text: v.name !== '' && v.name ? breakText.breakText(v.name, 125) : v.type
 								}
 							},
 							form_data: formData
@@ -1194,7 +1197,7 @@ export default {
 							outputSchema: null,
 							attrs: {
 								label: {
-									text: breakText.breakText(v.name, 125)
+									text: v.name !== '' && v.name ? breakText.breakText(v.name, 125) : v.type
 								}
 							}
 						};
@@ -1217,7 +1220,7 @@ export default {
 							outputSchema: null,
 							attrs: {
 								label: {
-									text: breakText.breakText(v.name, 95)
+									text: v.name !== '' && v.name ? breakText.breakText(v.name, 95) : v.type
 								}
 							}
 						};
@@ -1233,6 +1236,7 @@ export default {
 						cells.push(node);
 					}
 					if (v.outputLanes) {
+						v.outputLanes = v.outputLanes.filter(d => d);
 						v.outputLanes.map(k => {
 							let node = {
 								type: 'app.Link',

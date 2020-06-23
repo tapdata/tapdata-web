@@ -492,6 +492,7 @@ const cn = {
 						},
 						toUpperCase: '转大写',
 						toLowerCase: '转小写',
+						delete: '删除',
 						fieldName: '字段名称',
 						fieldType: '字段类型',
 						addField: '添加字段',
