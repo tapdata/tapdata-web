@@ -373,14 +373,20 @@ export default {
 			actionBarEl: $('.editor-container .action-buttons'),
 			scope: self
 		});
-		Object.keys(localStorage).forEach(key => {
-			if (
-				key.startsWith('temp$$$') &&
-				window.tempKeys &&
-				!window.tempKeys.includes(parseInt(key.split('$$$')[1]))
-			)
-				this.tempData.push(key);
-		});
+		if (!window.tpdata)
+			Object.keys(localStorage).forEach(key => {
+				if (
+					key.startsWith('tapdata.dataflow.$$$') &&
+					window.tempKeys &&
+					!window.tempKeys.includes(parseInt(key.split('$$$')[1]))
+				)
+					this.tempData.push(key);
+			});
+		else {
+			this.initData(window.tpdata);
+			this.loading = false;
+			return;
+		}
 		if (window.name != 'monitor' && this.tempData.length > 0) {
 			self.loading = false;
 			this.tempDialogVisible = true;
@@ -405,9 +411,17 @@ export default {
 		},
 		openTempSaved(key) {
 			this.tempDialogVisible = false;
-			this.initData(JSON.parse(localStorage.getItem(key)));
-			location.href = location.href.split('=')[0] + '=' + this.dataFlowId;
+			let tdata = JSON.parse(localStorage.getItem(key));
 			localStorage.removeItem(key);
+			if (tdata.id != this.$route.query.id) {
+				let routeUrl = this.$router.resolve({
+					path: '/job',
+					query: { id: tdata.id }
+				});
+				window.opener.windows.push(window.open(routeUrl.href, '_blank'));
+				window.opener.windows[window.opener.windows.length - 1].tpdata = tdata;
+				this.loadData();
+			} else this.initData(tdata);
 		},
 		deleteTempData(key) {
 			this.tempData.splice(this.tempData.indexOf(key), 1);
@@ -497,12 +511,12 @@ export default {
 			if (this.tempKey == 0) {
 				this.tempKey = 1;
 				Object.keys(localStorage).forEach(key => {
-					if (key.startsWith('temp$$$'))
+					if (key.startsWith('tapdata.dataflow.$$$'))
 						if (parseInt(key.split('$$$')[1]) >= this.tempKey)
 							this.tempKey = parseInt(key.split('$$$')[1]) + 1;
 				});
 			}
-			this.tempId = 'temp$$$' + this.tempKey + '$$$' + data.name;
+			this.tempId = 'tapdata.dataflow.$$$' + this.tempKey + '$$$' + data.name;
 			localStorage.setItem(this.tempId, JSON.stringify(data));
 			window.tempKey = this.tempKey;
 		},

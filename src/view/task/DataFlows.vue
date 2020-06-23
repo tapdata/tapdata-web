@@ -363,6 +363,7 @@ export default {
 		this.formData = this.$store.state.dataFlows;
 		this.screenFn();
 		this.keyupEnter();
+		window.windows = [];
 	},
 	computed: {
 		maxHeight: function() {
@@ -376,7 +377,7 @@ export default {
 		},
 		getTempKeys() {
 			let tk = [];
-			this.windows.forEach(it => {
+			window.windows.forEach(it => {
 				if (it.parent != null && it.tempKey) tk.push(it.tempKey);
 			});
 			return tk;
@@ -385,8 +386,8 @@ export default {
 			let routeUrl = this.$router.resolve({
 				path: '/job'
 			});
-			this.windows.push(window.open(routeUrl.href, '_blank'));
-			this.windows[this.windows.length - 1].tempKeys = this.getTempKeys();
+			window.windows.push(window.open(routeUrl.href, '_blank'));
+			window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
 		},
 		handleDetail(id, type) {
 			const h = this.$createElement;
@@ -418,8 +419,8 @@ export default {
 						query: { id: id }
 					});
 					setTimeout(() => {
-						this.windows.push(window.open(routeUrl.href, '_blank'));
-						this.windows[this.windows.length - 1].tempKeys = this.getTempKeys();
+						window.windows.push(window.open(routeUrl.href, '_blank'));
+						window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
 					}, 200);
 				});
 			} else {
