@@ -209,7 +209,12 @@
 				<el-button class="e-button" type="primary" @click="start">{{ $t('dataFlow.submitExecute') }}</el-button>
 			</div>
 		</el-dialog>
-		<el-dialog :title="$t('dataFlow.systemHint')" custom-class="systemHint" :visible.sync="tempDialogVisible">
+		<el-dialog
+			:title="$t('dataFlow.systemHint')"
+			custom-class="systemHint"
+			:before-close="loadData"
+			:visible.sync="tempDialogVisible"
+		>
 			<el-form :model="form">
 				<span class="text">{{ $t('dataFlow.systemText') }}</span>
 				<div class="content">
@@ -231,8 +236,10 @@
 				</div>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button type="text" class="delet">{{ $t('dataFlow.stystemDeleteAll') }}</el-button>
-				<el-button size="mini" @click="loadData">{{ $t('dataFlow.stystemOpenAll') }}</el-button>
+				<el-button type="text" class="delet" @click="delAllTempData">{{
+					$t('dataFlow.stystemDeleteAll')
+				}}</el-button>
+				<!-- <el-button size="mini" @click="loadData">{{ $t('dataFlow.stystemOpenAll') }}</el-button> -->
 				<el-button size="mini" @click="loadData">{{ $t('dataFlow.stystemLgnoreAll') }}</el-button>
 			</div>
 		</el-dialog>
@@ -278,7 +285,6 @@ export default {
 			executeMode: 'normal',
 
 			loading: true,
-			disabledDataVerify: false,
 			cells: [],
 			state1: '',
 			editable: false,
@@ -408,6 +414,7 @@ export default {
 				self.loading = false;
 				self.onGraphChanged();
 			}
+			self.loading = false;
 		},
 		openTempSaved(key) {
 			this.tempDialogVisible = false;
@@ -430,6 +437,11 @@ export default {
 				this.tempDialogVisible = false;
 				this.loadData();
 			}
+		},
+		delAllTempData() {
+			Object.keys(localStorage).forEach(key => {
+				if (key.startsWith('tapdata.dataflow.$$$')) localStorage.removeItem(key);
+			});
 		},
 		initData(data) {
 			let self = this,

@@ -729,6 +729,9 @@ const tc = {
 		condition: '校驗條件'
 	},
 	dataMap: {
+		source: '來源',
+		tapdata: '匯聚平台',
+		API: '數據發布',
 		noneData: '沒有查找到數據模型',
 
 		classification: '數據模型',
