@@ -209,7 +209,12 @@
 				<el-button class="e-button" type="primary" @click="start">{{ $t('dataFlow.submitExecute') }}</el-button>
 			</div>
 		</el-dialog>
-		<el-dialog :title="$t('dataFlow.systemHint')" custom-class="systemHint" :visible.sync="tempDialogVisible">
+		<el-dialog
+			:title="$t('dataFlow.systemHint')"
+			custom-class="systemHint"
+			:before-close="loadData"
+			:visible.sync="tempDialogVisible"
+		>
 			<el-form :model="form">
 				<span class="text">{{ $t('dataFlow.systemText') }}</span>
 				<div class="content">
