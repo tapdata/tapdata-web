@@ -278,7 +278,6 @@ export default {
 			executeMode: 'normal',
 
 			loading: true,
-			disabledDataVerify: false,
 			cells: [],
 			state1: '',
 			editable: false,
@@ -408,6 +407,7 @@ export default {
 				self.loading = false;
 				self.onGraphChanged();
 			}
+			self.loading = false;
 		},
 		openTempSaved(key) {
 			this.tempDialogVisible = false;
