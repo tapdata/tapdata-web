@@ -728,6 +728,9 @@ const cn = {
 		condition: '校验条件'
 	},
 	dataMap: {
+		source: '来源',
+		tapdata: '汇聚平台',
+		API: '数据发布',
 		noneData: '没有查找到数据模型',
 
 		classification: '模型分类',

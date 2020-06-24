@@ -734,6 +734,9 @@ const en = {
 		condition: 'Check condition'
 	},
 	dataMap: {
+		source: 'SOURCE',
+		tapdata: 'Tapdata',
+		API: 'API',
 		noneData: 'No data loaded',
 
 		classification: 'Data Model Classification',

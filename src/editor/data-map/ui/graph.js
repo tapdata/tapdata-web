@@ -283,7 +283,7 @@ export default class Graph extends Component {
 			{
 				attrs: {
 					headerText: {
-						text: 'SOURCE'
+						text: i18n.t('dataMap.source')
 					}
 				}
 			},
@@ -296,7 +296,7 @@ export default class Graph extends Component {
 			{
 				attrs: {
 					headerText: {
-						text: 'Tapdata'
+						text: i18n.t('dataMap.tapdata')
 					}
 				}
 			},
@@ -309,7 +309,7 @@ export default class Graph extends Component {
 			{
 				attrs: {
 					headerText: {
-						text: 'API'
+						text: i18n.t('dataMap.API')
 					}
 				}
 			},
