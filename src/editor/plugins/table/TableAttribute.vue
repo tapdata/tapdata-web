@@ -52,23 +52,26 @@
 					:rules="rules"
 					required
 				>
-					<el-select
-						filterable
-						allow-create
-						default-first-option
-						clearable
-						class="e-select"
-						v-model="model.tableName"
-						:placeholder="$t('editor.cell.data_node.table.form.table.placeholder')"
-						size="mini"
-					>
-						<el-option
-							v-for="(item, idx) in schemas"
-							:label="`${item.table_name}`"
-							:value="item.table_name"
-							v-bind:key="idx"
-						></el-option>
-					</el-select>
+					<div class="flex-block">
+						<el-select
+							filterable
+							allow-create
+							default-first-option
+							clearable
+							class="e-select"
+							v-model="model.tableName"
+							:placeholder="$t('editor.cell.data_node.table.form.table.placeholder')"
+							size="mini"
+						>
+							<el-option
+								v-for="(item, idx) in schemas"
+								:label="`${item.table_name}`"
+								:value="item.table_name"
+								v-bind:key="idx"
+							></el-option>
+						</el-select>
+						<ClipButton :value="model.tableName"></ClipButton>
+					</div>
 				</el-form-item>
 
 				<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
@@ -139,6 +142,7 @@
 <script>
 import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
 import PrimaryKeyInput from '../../../components/PrimaryKeyInput';
+import ClipButton from '@/components/ClipButton';
 import { convertSchemaToTreeData } from '../../util/Schema';
 import Entity from '../link/Entity';
 import _ from 'lodash';
@@ -147,7 +151,7 @@ let connectionApi = factory('connections');
 let editor = null;
 export default {
 	name: 'Table',
-	components: { Entity, DatabaseForm, PrimaryKeyInput },
+	components: { Entity, DatabaseForm, PrimaryKeyInput, ClipButton },
 	props: {
 		database_types: {
 			type: Array,
@@ -341,6 +345,10 @@ export default {
 	.e-entity-wrap {
 		flex: 1;
 		overflow: auto;
+	}
+	.flex-block {
+		display: flex;
+		align-items: center;
 	}
 }
 </style>

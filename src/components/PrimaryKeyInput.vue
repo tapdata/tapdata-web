@@ -12,26 +12,16 @@
 		>
 			<el-option v-for="opt in options.filter(i => !!i)" :key="opt" :label="opt" :value="opt"> </el-option>
 		</el-select>
-		<el-tooltip
-			class="item"
-			placement="top"
-			manual
-			content="已复制"
-			popper-class="copy-tooltip"
-			:value="showTooltip"
-		>
-			<i
-				class="el-icon-document-copy"
-				v-clipboard:copy="this.value"
-				v-clipboard:success="onCopy"
-				@mouseleave="showTooltip = false"
-			></i>
-		</el-tooltip>
+		<ClipButton :value="value"></ClipButton>
 	</div>
 </template>
 
 <script>
+import ClipButton from './ClipButton';
 export default {
+	components: {
+		ClipButton
+	},
 	props: {
 		value: {
 			type: [String],
@@ -39,11 +29,6 @@ export default {
 		},
 		options: Array,
 		placeholder: String
-	},
-	data() {
-		return {
-			showTooltip: false
-		};
 	},
 	computed: {
 		values() {
@@ -55,9 +40,6 @@ export default {
 		inputHandler(values) {
 			//过滤空字符串并去重，之后使用逗号分隔
 			this.$emit('input', Array.from(new Set(values.filter(v => !!v.trim()))).join(','));
-		},
-		onCopy() {
-			this.showTooltip = true;
 		}
 	}
 };
@@ -67,19 +49,5 @@ export default {
 .primary-key-input {
 	display: flex;
 	align-items: center;
-	.el-icon-document-copy {
-		color: #999;
-		margin-left: 10px;
-		cursor: pointer;
-		&:hover {
-			color: #333;
-		}
-	}
-}
-</style>
-<style lang="less">
-.el-tooltip__popper.is-dark.copy-tooltip {
-	background: #303133 !important;
-	color: #fff !important;
 }
 </style>
