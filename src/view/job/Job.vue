@@ -231,8 +231,10 @@
 				</div>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button type="text" class="delet">{{ $t('dataFlow.stystemDeleteAll') }}</el-button>
-				<el-button size="mini" @click="loadData">{{ $t('dataFlow.stystemOpenAll') }}</el-button>
+				<el-button type="text" class="delet" @click="delAllTempData">{{
+					$t('dataFlow.stystemDeleteAll')
+				}}</el-button>
+				<!-- <el-button size="mini" @click="loadData">{{ $t('dataFlow.stystemOpenAll') }}</el-button> -->
 				<el-button size="mini" @click="loadData">{{ $t('dataFlow.stystemLgnoreAll') }}</el-button>
 			</div>
 		</el-dialog>
@@ -430,6 +432,11 @@ export default {
 				this.tempDialogVisible = false;
 				this.loadData();
 			}
+		},
+		delAllTempData() {
+			Object.keys(localStorage).forEach(key => {
+				if (key.startsWith('tapdata.dataflow.$$$')) localStorage.removeItem(key);
+			});
 		},
 		initData(data) {
 			let self = this,
