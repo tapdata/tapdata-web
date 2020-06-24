@@ -51,3 +51,8 @@ export default {
 	align-items: center;
 }
 </style>
+<style lang="less">
+.primary-key-input .el-select__input.is-mini {
+	height: 16px;
+}
+</style>
