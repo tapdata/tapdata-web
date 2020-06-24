@@ -195,17 +195,8 @@
 								v-show="!disabledMode"
 								@click="handleDelete(node, data)"
 							></span>
-
-							<el-button
-								type="text"
-								v-show="!disabledMode"
-								v-if="originalSchema.type === 'collection' && data.primary_key_position > 0"
-								class=" e-field-action iconfont icon-return"
-								disabled
-							></el-button>
 							<span
 								v-show="!disabledMode"
-								v-else
 								class="e-field-action iconfont icon-return"
 								@click="handleReset(node, data)"
 							></span>
@@ -566,6 +557,9 @@ export default {
 			if (ids && ids.length > 0) {
 				ids.map(id => {
 					let node = this.$refs.tree.getNode(id);
+					if (this.originalSchema.type === 'collection' && node.data.primary_key_position > 0) {
+						return;
+					}
 					this.handleDelete(node, node.data);
 				});
 			}
