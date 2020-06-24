@@ -73,6 +73,7 @@
 					:placeholder="$t('editor.cell.link.form.arrayUniqueKey.placeholder')"
 					size="mini"
 				></el-input>
+				<ClipButton :value="model.joinTable.arrayUniqueKey"></ClipButton>
 			</el-form-item>
 			<el-form-item
 				:label="$t('editor.cell.link.form.joinPath.label')"
@@ -82,7 +83,9 @@
 					v-model="model.joinTable.joinPath"
 					:placeholder="$t('editor.cell.link.form.joinPath.placeholder')"
 					size="mini"
-				></el-input>
+				>
+				</el-input>
+				<ClipButton :value="model.joinTable.joinPath"></ClipButton>
 			</el-form-item>
 
 			<el-form-item
@@ -173,10 +176,11 @@ import { EditorEventType } from '../../lib/events';
 import Mapping from './Mapping';
 import log from '../../../log';
 import { JOIN_TABLE_TPL } from '../../constants';
+import ClipButton from '@/components/ClipButton';
 let editorMonitor = null;
 export default {
 	name: 'Link',
-	components: { Mapping },
+	components: { Mapping, ClipButton },
 
 	data() {
 		return {
