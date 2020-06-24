@@ -850,6 +850,12 @@ export default {
 							}
 
 							self.polling();
+
+							let stages = self.getStages();
+							dataFlowsApi
+								.saveStage(stages)
+								.then(() => {})
+								.catch(() => {});
 						} else {
 							if (typeof cb === 'function') {
 								cb(result, null);
@@ -863,12 +869,6 @@ export default {
 							cb(e, null);
 						}
 					});
-
-				let stages = self.getStages();
-				dataFlowsApi
-					.saveStage(stages)
-					.then(() => {})
-					.catch(() => {});
 			};
 
 			if (data.name) {
