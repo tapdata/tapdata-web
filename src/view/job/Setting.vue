@@ -179,7 +179,7 @@
 					<el-col :span="8">
 						<el-date-picker
 							format="yyyy-MM-dd HH:mm:ss"
-							style="width: 90%;"
+							style="width: 95%;"
 							v-model="item.date"
 							type="datetime"
 							:disabled="item.type === 'current'"
@@ -196,6 +196,7 @@ import { DEFAULT_SETTING } from '../../editor/constants';
 import _ from 'lodash';
 import * as moment from 'moment';
 import factory from '../../api/factory';
+import log from '../../log';
 const connections = factory('connections');
 export default {
 	name: 'Setting.vue',
@@ -234,9 +235,6 @@ export default {
 			]
 		};
 	},
-	mounted() {
-		// this.formData = this.dataFlow;
-	},
 	watch: {
 		formData: {
 			deep: true,
@@ -252,16 +250,11 @@ export default {
 	},
 	methods: {
 		setData(data) {
+			log('Editor.Setting.setData', data);
 			if (data) {
-				let syncPoints = data.syncPoints || [];
-				let map = this.updateSyncNode(syncPoints);
-				data.syncPoints = Object.values(map);
 				Object.keys(data).forEach(key => (this.formData[key] = data[key]));
-				// _.merge(this.formData, data);
-				// this.formData.syncPoints.map((item, index) => {
-				// 	this.$set(this.formData, index, item);
-				// });
 			}
+			this.formData.syncPoints = Object.values(this.updateSyncNode(this.formData.syncPoints));
 		},
 		getData() {
 			let result = _.cloneDeep(this.formData);
@@ -284,11 +277,25 @@ export default {
 		getAllConnectionIds() {
 			//获取所有节点的collectionId ;
 			let dataCells = this.editor.getAllCells();
+			let targetCell = this.editor.getSinks();
+			let targetCellIds = [];
+			if (targetCell && targetCell.length > 0) {
+				targetCell.forEach(cell => {
+					let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null;
+					targetCellIds.push(formData.connectionId);
+				});
+			}
 			if (dataCells && dataCells.length > 0) {
 				return dataCells
 					.map(cell => {
 						let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null;
-						return formData.connectionId;
+						let index = targetCellIds.indexOf(formData.connectionId);
+						if (index >= 0) {
+							targetCellIds.splice(index, 1);
+							return;
+						} else {
+							return formData.connectionId;
+						}
 					})
 					.filter(v => !!v);
 			}
@@ -318,12 +325,13 @@ export default {
 			}
 		},
 		updateSyncNode(syncPoints) {
-			if (!syncPoints && syncPoints.length === 0) {
-				return;
-			}
+			syncPoints = syncPoints || [];
 			let connectionIds = this.getAllConnectionIds();
-			this.getAllConnectionName(connectionIds);
-
+			if (connectionIds && connectionIds.length > 0) {
+				this.getAllConnectionName(connectionIds)
+					.then(() => {})
+					.catch(() => {});
+			}
 			syncPoints = syncPoints.filter(point => connectionIds.includes(point.connectionId));
 
 			// connectionId -> syncPoint
