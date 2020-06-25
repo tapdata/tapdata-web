@@ -86,12 +86,20 @@
 					:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
 					v-if="isSourceDataNode"
 				>
-					<el-input-number
-						v-model="model.initialSyncOrder"
-						controls-position="right"
-						:min="1"
-						size="mini"
-					></el-input-number>
+					<div class="flex-block">
+						<el-switch
+							v-model="model.enable"
+							style="margin-right: 20px"
+							@change="model.initialSyncOrder = 0"
+						></el-switch>
+						<el-input-number
+							v-if="model.enable"
+							v-model="model.initialSyncOrder"
+							controls-position="right"
+							:min="1"
+							size="mini"
+						></el-input-number>
+					</div>
 				</el-form-item>
 				<el-form-item
 					required
@@ -237,7 +245,8 @@ export default {
 				dropTable: false,
 				type: 'table',
 				primaryKeys: '',
-				initialSyncOrder: 1
+				initialSyncOrder: 0,
+				enable: false
 			},
 
 			mergedSchema: null,
@@ -311,10 +320,15 @@ export default {
 				dropTable: false,
 				type: 'table',
 				primaryKeys: '',
-				initialSyncOrder: 1
+				initialSyncOrder: 0,
+				enable: false
 			};
 			if (data) {
 				_.merge(this.model, data);
+				//老数据的兼容处理
+				if (data.initialSyncOrder > 0) {
+					this.model.enable = true;
+				}
 			}
 			this.isSourceDataNode = isSourceDataNode;
 
