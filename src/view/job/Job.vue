@@ -951,6 +951,7 @@ export default {
 			}
 			clearTimeout(timer);
 			timer = null;
+			this.loading = false;
 			this.dialogFormVisible = false;
 		},
 
@@ -966,11 +967,15 @@ export default {
 				};
 
 			self.$confirm(
-				forceStop === true ? self.$t('message.forceStoppingMessage') : self.$t('message.stopMessage'),
+				forceStop === true
+					? self.$t('message.forceStoppingMessage')
+					: this.sync_type === 'cdc'
+					? self.$t('message.stopMessage')
+					: self.$t('message.stopInitial_syncMessage'),
 				self.$t('dataFlow.importantReminder'),
 				{
 					confirmButtonText:
-						forceStop === true ? self.$t('dataFlow.button.force_stop') : self.$t('dataFlow.button.stop'),
+						forceStop === true ? self.$t('dataFlow.button.force_stop') : self.$t('message.confirm'),
 					cancelButtonText: self.$t('message.cancel'),
 					type: 'warning'
 				}

@@ -185,7 +185,9 @@
 									inactive-value="stopping"
 									active-value="scheduled"
 									:disabled="statusBtMap[scope.row.status].switch"
-									@change="handleStatus(scope.row.id, scope.row.status, scope.row.newStatus)"
+									@change="
+										handleStatus(scope.row.id, scope.row.status, scope.row.newStatus, scope.row)
+									"
 								></el-switch>
 							</el-tooltip>
 						</div>
@@ -711,15 +713,21 @@ export default {
 			});
 		},
 
-		statusConfirm(callback) {
-			this.$confirm(this.$t('message.stopMessage'), this.$t('dataFlow.importantReminder'), {
-				confirmButtonText: this.$t('message.confirm'),
-				cancelButtonText: this.$t('message.cancel'),
-				type: 'warning'
-			}).then(callback);
+		statusConfirm(callback, data) {
+			let initFalg =
+				(data && data.setting && data.setting.sync_type === 'cdc') || data.length === 0 ? true : false;
+			this.$confirm(
+				initFalg ? this.$t('message.stopMessage') : this.$t('message.stopInitial_syncMessage'),
+				this.$t('dataFlow.importantReminder'),
+				{
+					confirmButtonText: this.$t('message.confirm'),
+					cancelButtonText: this.$t('message.cancel'),
+					type: 'warning'
+				}
+			).then(callback);
 		},
 
-		handleStatus(id, oldStatus, status) {
+		handleStatus(id, oldStatus, status, dataItem) {
 			if (oldStatus === 'draft') {
 				return;
 			}
@@ -729,7 +737,7 @@ export default {
 			if (status === 'stopping') {
 				this.statusConfirm(() => {
 					this.getStatus(id, data);
-				});
+				}, dataItem);
 			} else {
 				this.getStatus(id, data);
 			}
@@ -750,6 +758,7 @@ export default {
 			}
 			let multipleSelection = [];
 			let discardData = [];
+			let initData = []; // 设置初始化类型数据
 			if (status === 'scheduled') {
 				//全部启动
 				this.multipleSelection.map(item => {
@@ -767,6 +776,9 @@ export default {
 					this.tableData.map(row => {
 						if (row.id === item.id && row.status === 'running') {
 							multipleSelection.push(item.id);
+							if (row.id === item.id && row.setting.sync_type !== 'cdc') {
+								initData.push(row);
+							}
 						} else {
 							discardData.push(item.id);
 						}
@@ -793,7 +805,7 @@ export default {
 							this.getData();
 						}
 					});
-				});
+				}, initData);
 			} else {
 				dataFlows.update(where, attributes).then(res => {
 					if (res.statusText === 'OK' || res.status === 200) {

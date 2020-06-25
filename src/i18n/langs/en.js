@@ -58,6 +58,8 @@ const en = {
 		deteleMessage: 'The action of deleting the data flow will cause it unrecoverable, still DELETE? ',
 		forceStoppingMessage:
 			'The action of Force stopoing will interrupt data transfer immediately, still FORCE STOP ?',
+		stopInitial_syncMessage:
+			'If the job that type of of initialization is startted again after paused, the job woude be reseted. Are you sure you want to pause the task?',
 		stopMessage: 'Are you sure to pause the mission?',
 		cancleReset: 'cancel reset',
 		resetOk: 'Reset success',

@@ -57,6 +57,7 @@ const tc = {
 		resetMessage: '重置任務將重新執行該項任務, 確定要重新執行任務嗎?',
 		deteleMessage: '刪除任務將無法恢復, 請問確定要刪除任務嗎?',
 		forceStoppingMessage: '強制停止將立即中斷數據傳輸，是否繼續執行?',
+		stopInitial_syncMessage: '初始化类型的任务暂停后如果再次启动，任务会被重新执行，确定要暂停任务吗?',
 		stopMessage: '確定要暫停任務嗎?',
 		cancleReset: '已取消重置',
 		resetOk: '重置成功',
