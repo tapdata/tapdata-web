@@ -14,7 +14,7 @@
 		<i class="el-icon-loading" v-if="data && data.loading"></i>
 		<div class="rightOpt fr">
 			<el-radio-group v-model="num" size="mini" :class="selectColor" @change="changeRadio" v-if="isScreeing">
-				<el-radio-button label="flow">{{ $t("dataFlow.rowCount") }}</el-radio-button>
+				<el-radio-button label="flow">{{ $t('dataFlow.rowCount') }}</el-radio-button>
 				<el-radio-button label="stage">KB</el-radio-button>
 			</el-radio-group>
 			<el-radio-group v-model="speed" size="mini" :class="selectColor" @change="changeSpeed" v-if="isSpeed">
@@ -23,74 +23,78 @@
 			</el-radio-group>
 			<el-radio-group v-model="time" size="mini" :class="selectColor" @change="changeTime" v-if="isIput">
 				<el-radio-button label="second" v-if="this.data.type !== 'replicate'">{{
-					$t("dataFlow.second")
+					$t('dataFlow.second')
 				}}</el-radio-button>
-				<el-radio-button label="minute">{{ $t("dataFlow.min") }}</el-radio-button>
-				<el-radio-button label="hour">{{ $t("dataFlow.hour") }}</el-radio-button>
-				<el-radio-button label="day">{{ $t("dataFlow.day") }}</el-radio-button>
+				<el-radio-button label="minute">{{ $t('dataFlow.min') }}</el-radio-button>
+				<el-radio-button label="hour">{{ $t('dataFlow.hour') }}</el-radio-button>
+				<el-radio-button label="day">{{ $t('dataFlow.day') }}</el-radio-button>
 			</el-radio-group>
+		</div>
+		<div class="unit fr" v-if="isIput && !isSpeed">
+			<span v-if="data.type !== 'replicate'">{{ $t('dataFlow.unit') }} : ms/ {{ $t('dataFlow.article') }}</span>
+			<span v-else>{{ $t('dataFlow.unit') }} : {{ $t('dataFlow.second') }}</span>
 		</div>
 	</div>
 </template>
 <script>
 export default {
-	name: "echartHead",
+	name: 'echartHead',
 	props: {
 		data: Object
 	},
 	data() {
 		return {
-			title: "",
-			tip: "",
-			num: "flow",
-			speed: "qps",
-			time: "minute",
+			title: '',
+			tip: '',
+			num: 'flow',
+			speed: 'qps',
+			time: 'minute',
 			rowCount: null,
 			kbs: null,
 			isScreeing: false,
 			isIput: false,
 			isSpeed: false,
-			selectColor: ""
+			selectColor: ''
 		};
 	},
 	mounted() {
 		this.$nextTick(() => {
 			if (this.data) {
-				this.title = this.data.title ? this.data.title : "";
+				this.title = this.data.title ? this.data.title : '';
 				this.tip = this.data.tip;
 				this.isScreeing = this.data.isScreeing;
 				this.isIput = this.data.isIput;
 				this.isSpeed = this.data.isSpeed;
 
-				if (this.data.type === "replicate") {
-					this.time = "minute";
+				if (this.data.type === 'replicate') {
+					this.time = 'minute';
 				}
 
-				this.$emit("twoRadio", this.num, this.data.type);
-				this.$emit("getSpeed", this.speed, this.time);
-				this.$emit("getTime", this.time, this.data.type);
-				if (this.data.type === "screening") {
-					this.selectColor = "screeningColor";
-				} else if (this.data.type === "throughput") {
-					this.selectColor = "putColor";
-				} else if (this.data.type === "transf") {
-					this.selectColor = "transfColor";
-				} else if (this.data.type === "replicate") {
-					this.selectColor = "replicateColor";
+				this.$emit('twoRadio', this.num, this.data.type);
+				this.$emit('getSpeed', this.speed, this.time);
+				this.$emit('getTime', this.time, this.data.type);
+				if (this.data.type === 'screening') {
+					this.selectColor = 'screeningColor';
+				} else if (this.data.type === 'throughput') {
+					this.selectColor = 'putColor';
+				} else if (this.data.type === 'transf') {
+					this.selectColor = 'transfColor';
+				} else if (this.data.type === 'replicate') {
+					this.selectColor = 'replicateColor';
 				}
 			}
 		});
 	},
 	methods: {
 		changeRadio(val) {
-			this.$emit("twoRadio", val, this.data.type);
+			this.$emit('twoRadio', val, this.data.type);
 		},
 		changeSpeed(val) {
-			this.$emit("getSpeed", val, this.time);
+			this.$emit('getSpeed', val, this.time);
 		},
 		changeTime(val) {
-			this.$emit("getTime", val, this.data.type);
-			this.$emit("getSpeed", this.speed, val);
+			this.$emit('getTime', val, this.data.type);
+			this.$emit('getSpeed', this.speed, val);
 		}
 	}
 };
@@ -134,6 +138,15 @@ export default {
 		.el-icon-caret-bottom {
 			position: absolute;
 			top: 16px;
+		}
+	}
+	.unit {
+		display: inline-block;
+		font-size: 12px;
+		span {
+			padding: 3px 6px;
+			border: 1px solid #ccc;
+			border-radius: 3px;
 		}
 	}
 }

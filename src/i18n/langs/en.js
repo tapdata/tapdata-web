@@ -125,6 +125,8 @@ const en = {
 		inputOutput: 'Throughput',
 		transf: 'Transmission Time',
 		dataScreening: 'Data Screening',
+		unit: 'Unit',
+		article: 'PCS',
 		second: 'SEC',
 		min: 'MIN',
 		hour: 'HOUR',

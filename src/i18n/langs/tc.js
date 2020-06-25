@@ -123,6 +123,8 @@ const tc = {
 		inputOutput: '輸入輸出統計',
 		transf: '傳輸耗時',
 		dataScreening: '數據總覽',
+		unit: '單位',
+		article: '條',
 		second: '秒',
 		min: '分',
 		hour: '時',
