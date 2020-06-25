@@ -125,6 +125,7 @@ const tc = {
 		dataScreening: '數據總覽',
 		unit: '單位',
 		article: '條',
+		secondUnit: '秒',
 		second: '秒',
 		min: '分',
 		hour: '時',

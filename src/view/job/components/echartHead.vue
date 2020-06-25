@@ -32,7 +32,7 @@
 		</div>
 		<div class="unit fr" v-if="isIput && !isSpeed">
 			<span v-if="data.type !== 'replicate'">{{ $t('dataFlow.unit') }} : ms/ {{ $t('dataFlow.article') }}</span>
-			<span v-else>{{ $t('dataFlow.unit') }} : {{ $t('dataFlow.second') }}</span>
+			<span v-else>{{ $t('dataFlow.unit') }} : {{ $t('dataFlow.secondUnit') }}</span>
 		</div>
 	</div>
 </template>

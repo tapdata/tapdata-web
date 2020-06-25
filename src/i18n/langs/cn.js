@@ -126,6 +126,7 @@ const cn = {
 		dataScreening: '数据总览',
 		unit: '单位',
 		article: '条',
+		secondUnit: '秒',
 		second: '秒',
 		min: '分',
 		hour: '时',
