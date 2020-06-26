@@ -20,7 +20,6 @@ import DVResult from '../view/job/DataVerify/Result';
 
 import log from '../log';
 import Panel from './ui/panel';
-import TableSelector from '../view/job/TableSelector';
 import { DEFAULT_SETTING } from './constants';
 import { EditorEventType } from './lib/events';
 import i18n from '../i18n/i18n';
@@ -133,8 +132,7 @@ export default class Editor extends BaseObject {
 		ui.add(leftSidebar);
 
 		let stencilPanel = new Panel({
-			name: 'stencil',
-			bodyStyle: 'height:379px'
+			name: 'stencil'
 			// bodyStyle: 'height:365px'
 		});
 		leftSidebar.add(stencilPanel);
@@ -174,18 +172,18 @@ export default class Editor extends BaseObject {
 			container: self.ui.getGraphContainer()
 		});
 
-		let treePanel = new Panel({
-			name: 'treePanel',
-			bodyStyle: 'flex: 1;height:57%;position:relative;background:#fff'
-		});
-		leftSidebar.add(treePanel);
-
-		let treeVueComponent = new VueComponent({
-			name: 'treeVueComponent',
-			editor: this,
-			component: TableSelector
-		});
-		treePanel.add(treeVueComponent);
+		// let treePanel = new Panel({
+		// 	name: 'treePanel',
+		// 	bodyStyle: 'flex: 1;height:57%;position:relative;background:#fff'
+		// });
+		// leftSidebar.add(treePanel);
+		//
+		// let treeVueComponent = new VueComponent({
+		// 	name: 'treeVueComponent',
+		// 	editor: this,
+		// 	component: TableSelector
+		// });
+		// treePanel.add(treeVueComponent);
 
 		this.initSettings();
 	}

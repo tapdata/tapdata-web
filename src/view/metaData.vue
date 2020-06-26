@@ -44,7 +44,13 @@
 		</div>
 		<el-dialog size="mini" :visible.sync="dialogConfig.visible" width="30%">
 			<span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
-			<el-input size="mini" v-model="dialogConfig.label" :placeholder="$t('metaData.nodeName')"></el-input>
+			<el-input
+				size="mini"
+				v-model="dialogConfig.label"
+				:placeholder="$t('metaData.nodeName')"
+				maxlength="50"
+				show-word-limit
+			></el-input>
 			<span slot="footer" class="dialog-footer">
 				<el-button size="mini" @click="hideDialog()">{{ $t('message.cancel') }}</el-button>
 				<el-button size="mini" type="primary" @click="dialogSubmit()">
