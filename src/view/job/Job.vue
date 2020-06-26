@@ -442,6 +442,9 @@ export default {
 			Object.keys(localStorage).forEach(key => {
 				if (key.startsWith('tapdata.dataflow.$$$')) localStorage.removeItem(key);
 			});
+			this.tempData.length == 0;
+			this.tempDialogVisible = false;
+			this.loadData();
 		},
 		initData(data) {
 			let self = this,
