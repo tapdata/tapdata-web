@@ -863,6 +863,12 @@ export default {
 @color: #71c179;
 .e-schema-editor {
 	font-size: 11px;
+	.el-checkbox__input.is-checked + .el-checkbox__label {
+		color: #fff;
+	}
+	.el-checkbox__label {
+		font-size: 11px;
+	}
 }
 
 .header-row {
@@ -876,7 +882,7 @@ export default {
 		text-align: center;
 	}
 	.e-col:first-child {
-		padding-left: 20px;
+		padding-left: 10px;
 		flex: 1;
 		text-align: left;
 	}
