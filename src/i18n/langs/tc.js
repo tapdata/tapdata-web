@@ -337,7 +337,7 @@ const tc = {
 							remove: '運行前刪除已存在的數據'
 						},
 						initialSyncOrder: {
-							keep: '初始化節點順序'
+							keep: '啟用自定義初始化順序'
 						},
 						filter: {
 							label: '過濾條件',

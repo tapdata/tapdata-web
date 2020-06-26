@@ -341,7 +341,7 @@ const en = {
 							remove: 'Remove exists data at before sync'
 						},
 						initialSyncOrder: {
-							keep: 'initial Sync Order'
+							keep: 'Enable custom initial sync order'
 						},
 						filter: {
 							label: 'Filter',
