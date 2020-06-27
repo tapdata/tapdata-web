@@ -521,7 +521,6 @@ const tc = {
 					none_script: '腳本必填.',
 
 					debug_button_label: '調試腳本',
-					debug_button_tips: '注：外部調用會在調試過程中被跳過',
 					warning_for_not_save: '當前任務未保存，無法進行連接測試，請保存之後再嘗試',
 					connect_server_fail: '連接服務器失敗',
 

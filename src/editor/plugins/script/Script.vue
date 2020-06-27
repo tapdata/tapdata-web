@@ -56,7 +56,6 @@
 						{{ $t('editor.cell.processor.script.debug_button_label') }}
 					</el-button>
 				</el-form-item>
-				<div class="debug-button-tips">({{ $t('editor.cell.processor.script.debug_button_tips') }})</div>
 			</el-form>
 		</div>
 		<Debug ref="debug"></Debug>
@@ -200,10 +199,5 @@ export default {
 <style lang="less" scoped>
 .btn-debug {
 	float: right;
-}
-.debug-button-tips {
-	float: right;
-	font-size: 12px;
-	color: #666;
 }
 </style>

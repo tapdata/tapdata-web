@@ -520,7 +520,6 @@ const cn = {
 					none_script: '脚本必填.',
 
 					debug_button_label: '调试脚本',
-					debug_button_tips: '注：外部调用会在调试过程中被跳过',
 					warning_for_not_save: '当前任务未保存，无法进行连接测试，请保存之后再尝试',
 					connect_server_fail: '连接服务器失败',
 
