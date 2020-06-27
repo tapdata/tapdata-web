@@ -525,13 +525,13 @@ const en = {
 					none_script: 'Script is required.',
 
 					debug_button_label: 'Debug Script',
+					debug_button_tips: 'Note: External function calls are skipped during debug',
 					warning_for_not_save:
 						'The current task has not been saved, unable to connect the test server, please save and try again',
 					connect_server_fail: 'Failed to connect to server',
 
 					debug: {
 						top_header: 'Debug Script',
-						top_tiops: 'Note: External function calls are skipped during debug',
 						bottom_header: 'Debug Details',
 						detail: {
 							parameter: 'Input',
