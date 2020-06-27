@@ -317,6 +317,7 @@ export default {
 					border-bottom: 1px solid #ebeef5;
 					white-space: nowrap;
 					line-height: 24px;
+					overflow: auto;
 					.params {
 						display: flex;
 						span {
