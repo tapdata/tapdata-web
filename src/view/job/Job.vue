@@ -244,7 +244,6 @@
 			</div>
 		</el-dialog>
 		<AddBtnTip v-if="isEditable()"></AddBtnTip>
-		<TableSelector v-if="isEditable()"></TableSelector>
 	</div>
 </template>
 
@@ -258,7 +257,6 @@ import AddBtnTip from './addBtnTip';
 import { FORM_DATA_KEY, JOIN_TABLE_TPL } from '../../editor/constants';
 import { EditorEventType } from '../../editor/lib/events';
 import _ from 'lodash';
-import TableSelector from './TableSelector';
 // import ws, { EventName } from "../../api/ws";
 
 const dataFlowsApi = factory('DataFlows');
@@ -267,7 +265,7 @@ let timer = null;
 export default {
 	name: 'Job',
 	dataFlow: null,
-	components: { TableSelector, AddBtnTip },
+	components: { AddBtnTip },
 	data() {
 		return {
 			dialogFormVisible: false,

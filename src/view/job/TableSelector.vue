@@ -59,8 +59,6 @@
 <script>
 import factory from '../../api/factory';
 import log from '../../log';
-import editor from '../../editor/index';
-import $ from 'jquery';
 
 const MetadataInstances = factory('MetadataInstances');
 
@@ -97,16 +95,6 @@ export default {
 	},
 	mounted() {
 		this.loadDataBase();
-		setTimeout(() => {
-			let eBodyEl = document.body.getElementsByClassName('group')[2];
-			eBodyEl.appendChild(this.$el);
-		}, 20);
-		let self = this;
-		self.editor = editor({
-			container: $('.editor-container'),
-			actionBarEl: $('.editor-container .action-buttons'),
-			scope: self
-		});
 	},
 	destroyed() {
 		if (this.$el && this.$el.parentNode) {
