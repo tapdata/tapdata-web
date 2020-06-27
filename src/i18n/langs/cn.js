@@ -519,18 +519,19 @@ const cn = {
 					none_script_type: '脚本类型必填.',
 					none_script: '脚本必填.',
 
-					debug_button_label: '连接测试',
+					debug_button_label: '调试脚本',
 					warning_for_not_save: '当前任务未保存，无法进行连接测试，请保存之后再尝试',
 					connect_server_fail: '连接服务器失败',
 
 					debug: {
-						top_header: 'js连接测试',
-						bottom_header: '测试详情',
+						top_header: '调试脚本',
+						top_tiops: '注：外部调用会在调试过程中被跳过',
+						bottom_header: '调试详情',
 						detail: {
-							parameter: '参数',
-							return: '返回值'
+							parameter: '输入',
+							return: '输出'
 						},
-						order: '连接顺序',
+						order: '调试顺序',
 						status: '返回状态',
 						status_error: '错误',
 						status_success: '成功',

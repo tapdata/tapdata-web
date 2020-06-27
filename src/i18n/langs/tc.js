@@ -520,18 +520,19 @@ const tc = {
 					none_script_type: '腳本類型必填.',
 					none_script: '腳本必填.',
 
-					debug_button_label: '連接測試',
+					debug_button_label: '調試腳本',
 					warning_for_not_save: '當前任務未保存，無法進行連接測試，請保存之後再嘗試',
 					connect_server_fail: '連接服務器失敗',
 
 					debug: {
-						top_header: '代码连接测试',
-						bottom_header: '測試詳情',
+						top_header: '調試腳本',
+						top_tiops: '注：外部調用會在調試過程中被跳過',
+						bottom_header: '調試詳情',
 						detail: {
-							parameter: '參數',
-							return: '返回值'
+							parameter: '輸入',
+							return: '輸出'
 						},
-						order: '連接順序',
+						order: '調試順序',
 						status: '返回狀態',
 						status_error: '錯誤',
 						status_success: '成功',
