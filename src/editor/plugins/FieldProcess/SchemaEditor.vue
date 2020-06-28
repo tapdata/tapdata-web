@@ -94,6 +94,11 @@
 									v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
 								></el-option>
 								<el-option
+									value="Date"
+									label="Date"
+									v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+								></el-option>
+								<el-option
 									value="Integer"
 									label="Integer"
 									v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"

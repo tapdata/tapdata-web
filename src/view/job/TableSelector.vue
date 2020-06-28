@@ -442,9 +442,6 @@ export default {
 }
 </style>
 <style lang="less">
-.editor-container .editor .e-body .e-vue-component-wrap {
-	width: 234px;
-}
 .box-head {
 	.el-input .el-input__inner {
 		height: 24px;
