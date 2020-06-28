@@ -7,7 +7,9 @@
 		>
 			<div class="panel debug-list" v-show="opened">
 				<div class="header">
-					<h4>{{ $t('editor.cell.processor.script.debug.top_header') }}</h4>
+					<h4>
+						{{ $t('editor.cell.processor.script.debug.top_header') }}
+					</h4>
 					<i class="el-icon-arrow-up" @click="hide"></i>
 				</div>
 				<div class="table-panel">
@@ -317,6 +319,7 @@ export default {
 					border-bottom: 1px solid #ebeef5;
 					white-space: nowrap;
 					line-height: 24px;
+					overflow: auto;
 					.params {
 						display: flex;
 						span {

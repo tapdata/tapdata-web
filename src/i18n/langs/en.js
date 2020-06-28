@@ -344,7 +344,7 @@ const en = {
 							remove: 'Remove exists data at before sync'
 						},
 						initialSyncOrder: {
-							keep: 'initial Sync Order'
+							keep: 'Enable custom initial sync order'
 						},
 						filter: {
 							label: 'Filter',
@@ -524,17 +524,17 @@ const en = {
 					none_script_type: 'Script type is required.',
 					none_script: 'Script is required.',
 
-					debug_button_label: 'Connect test',
+					debug_button_label: 'Debug Script',
 					warning_for_not_save:
 						'The current task has not been saved, unable to connect the test server, please save and try again',
 					connect_server_fail: 'Failed to connect to server',
 
 					debug: {
-						top_header: 'Script Test',
-						bottom_header: 'Test Details',
+						top_header: 'Debug Script',
+						bottom_header: 'Debug Details',
 						detail: {
-							parameter: 'Parameter',
-							return: 'Return'
+							parameter: 'Input',
+							return: 'Output'
 						},
 						order: 'Order',
 						status: 'Status',

@@ -96,7 +96,11 @@ export default {
 	mounted() {
 		this.loadDataBase();
 	},
-
+	destroyed() {
+		if (this.$el && this.$el.parentNode) {
+			this.$el.parentNode.removeChild(this.$el);
+		}
+	},
 	methods: {
 		// 点击加载
 		clickLoad() {
@@ -405,15 +409,11 @@ export default {
 	text-overflow: ellipsis;
 }
 .box-head {
-	position: fixed;
 	z-index: 2;
 	background: #fff;
 	overflow: hidden;
 	width: 217px;
 	padding-left: 5px;
-}
-.el-tree {
-	padding-top: 40px;
 }
 .ts-icon {
 	color: #333;
@@ -447,10 +447,10 @@ export default {
 .box-head {
 	.el-input .el-input__inner {
 		height: 24px;
-		line-height: 24px;
+		line-height: 30px;
 	}
 	.el-input .el-input__icon {
-		line-height: 24px;
+		line-height: 30px;
 	}
 	.el-input__suffix {
 		left: 125px;
