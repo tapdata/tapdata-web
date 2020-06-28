@@ -4,3 +4,4 @@
 /*.js
 /test/unit/coverage/
 /src/editor/lib/rappid/rappid.js
+/src/editor/lib/rappid/themes/style.default.css
