@@ -137,7 +137,7 @@
 import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
 import PrimaryKeyInput from '../../../components/PrimaryKeyInput';
 import ClipButton from '@/components/ClipButton';
-import { convertSchemaToTreeData } from '../../util/Schema';
+import { convertSchemaToTreeData, uuid } from '../../util/Schema';
 import Entity from '../link/Entity';
 import _ from 'lodash';
 import factory from '../../../api/factory';
@@ -181,7 +181,24 @@ export default {
 										table_name: this.model.tableName,
 										cdc_enabled: true,
 										meta_type: 'collection',
-										fields: []
+										fields: [
+											{
+												autoincrement: false,
+												columnSize: 0,
+												dataType: 7,
+												data_type: 'OBJECT_ID',
+												field_name: '_id',
+												id: uuid(),
+												is_nullable: true,
+												javaType: 'String',
+												key: 'PRI',
+												original_field_name: '_id',
+												precision: 0,
+												primary_key_position: 1,
+												scale: 0,
+												table_name: this.model.tableName
+											}
+										]
 								  };
 						/* let fields = schema.fields || [];
 							let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
