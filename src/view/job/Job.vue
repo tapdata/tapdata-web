@@ -228,7 +228,7 @@
 							<el-button size="mini" @click="openTempSaved(item)" type="text">{{
 								$t('dataFlow.stystemOpen')
 							}}</el-button>
-							<el-button size="mini" @click="deleteTempData(item)" type="text">{{
+							<el-button size="mini" class="delStyle" @click="deleteTempData(item)" type="text">{{
 								$t('message.delete')
 							}}</el-button>
 						</el-col>
@@ -1435,6 +1435,9 @@ export default {
 					}
 					.el-button--text:hover {
 						color: #409eff;
+					}
+					.delStyle:hover {
+						color: #f56c6c;
 					}
 				}
 			}

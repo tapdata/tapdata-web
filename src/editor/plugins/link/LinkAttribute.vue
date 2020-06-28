@@ -326,8 +326,21 @@ export default {
 				this.model.joinTable.stageId = firstDataNode.length > 0 ? firstDataNode[0].id : '';
 				// this.model.joinTable.stageId = cell.getSourceCell().id;
 
-				this.sourceList = sourceSchema && sourceSchema.fields ? sourceSchema.fields : [];
-				this.targetList = (mergedTargetSchema && mergedTargetSchema.fields) || [];
+				let sourceList =
+					sourceSchema && sourceSchema.fields
+						? sourceSchema.fields.sort((v1, v2) =>
+								v1.field_name > v2.field_name ? 1 : v1.field_name === v2.field_name ? 0 : -1
+						  )
+						: [];
+
+				let targetList =
+					mergedTargetSchema && mergedTargetSchema.fields
+						? mergedTargetSchema.fields.sort((v1, v2) =>
+								v1.field_name > v2.field_name ? 1 : v1.field_name === v2.field_name ? 0 : -1
+						  )
+						: [];
+				this.sourceList = (sourceList && sourceList.filter(item => item.field_name !== '')) || [];
+				this.targetList = (targetList && targetList.filter(item => item.field_name !== '')) || [];
 
 				let joinKeys = this.model.joinTable.joinKeys;
 				if (

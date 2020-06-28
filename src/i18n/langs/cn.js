@@ -733,7 +733,7 @@ const cn = {
 	},
 	dataMap: {
 		source: '来源',
-		tapdata: '汇聚平台',
+		tapdata: 'Tapdata',
 		API: '数据发布',
 		noneData: '没有查找到数据模型',
 

@@ -11,19 +11,20 @@
 
 			<i class="el-icon-loading" v-if="loading"></i>
 		</el-form>
-		<div class="logBox" v-loading="loading" :element-loading-text="$t('dataFlow.loadLogTip')">
+		<!-- v-loading="loading" :element-loading-text="$t('dataFlow.loadLogTip')" -->
+		<div class="logBox">
 			<LogBox ref="log" :keyword="search" :load="clickLoad" @scroll="logScroll"></LogBox>
 		</div>
 	</div>
 </template>
 <script>
-import $ from "jquery";
-import factory from "../../api/factory";
-import LogBox from "@/components/LogBox";
+// import $ from 'jquery';
+import factory from '../../api/factory';
+import LogBox from '@/components/LogBox';
 
-const logsModel = factory("logs");
+const logsModel = factory('logs');
 export default {
-	name: "DebugLogs",
+	name: 'DebugLogs',
 	components: {
 		LogBox
 	},
@@ -35,17 +36,16 @@ export default {
 	},
 	data() {
 		return {
-			search: "",
-			lastLogsId: "",
-			firstLogsId: "",
+			search: '',
+			lastLogsId: '',
+			firstLogsId: '',
 			timer: null,
 			loading: false,
-			imageUrl: "static/image/noData.svg"
+			imageUrl: 'static/image/noData.svg'
 		};
 	},
 
 	mounted() {
-		let self = this;
 		this.loadNew();
 		this.timer = setInterval(() => {
 			this.loadNew();
@@ -73,14 +73,14 @@ export default {
 		loadOld() {
 			let filter = {
 				where: {
-					"contextMap.dataFlowId": {
+					'contextMap.dataFlowId': {
 						eq: this.dataFlow.id
 					},
 					id: {
 						lt: this.firstLogsId
 					}
 				},
-				order: "millis DESC",
+				order: 'millis DESC',
 				limit: 100
 			};
 			this.addFilter(filter);
@@ -94,11 +94,11 @@ export default {
 		loadNew() {
 			let filter = {
 				where: {
-					"contextMap.dataFlowId": {
+					'contextMap.dataFlowId': {
 						eq: this.dataFlow.id
 					}
 				},
-				order: "millis DESC"
+				order: 'millis DESC'
 			};
 
 			let reset = self.lastKeyword !== this.search;
@@ -128,7 +128,7 @@ export default {
 				.get({ filter })
 				.then(res => {
 					self.loading = false;
-					if (res.statusText === "OK" || res.status === 200) {
+					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data && res.data.length > 0) {
 							if (reset || prepend || !this.lastLogsId) {
 								this.lastLogsId = res.data[0].id;
