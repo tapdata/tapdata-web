@@ -23,13 +23,9 @@
 				</el-header>
 				<div class="header-row">
 					<div class="e-col">
-						<el-checkbox
-							:indeterminate="isIndeterminate"
-							v-model="checkAll"
-							@change="handleCheckAllChange"
-							style="color: #fff"
-							>{{ $t('dataFlow.selectAll') }}</el-checkbox
-						>
+						<el-checkbox v-model="checkAll" @change="handleCheckAllChange" style="color: #fff">{{
+							$t('dataFlow.selectAll')
+						}}</el-checkbox>
 					</div>
 					<div class="e-col">
 						{{ $t('editor.cell.processor.field.form.fieldName') }}
@@ -330,8 +326,7 @@ export default {
 				scripts: []
 			},
 			jsEditorWidth: '500',
-			checkAll: false,
-			isIndeterminate: true
+			checkAll: false
 		};
 	},
 	methods: {
@@ -590,7 +585,6 @@ export default {
 			} else {
 				this.$refs.tree.setCheckedKeys([]);
 			}
-			this.isIndeterminate = false;
 		},
 		handleReset(node, data) {
 			log('SchemaEditor.handleReset', node, data);
