@@ -1,7 +1,7 @@
 <template>
 	<div class="box">
 		<div class="box-head">
-			<el-input class="search" v-model="filterText" clearable @change="handleSearchTree()"
+			<el-input class="search" v-model="filterText" clearable @change="handleSearchTree()" @clear="loadDataBase"
 				><i slot="prefix" class="el-input__icon el-icon-search"></i
 			></el-input>
 			<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
@@ -107,6 +107,9 @@ export default {
 			this.loadDataBase();
 		},
 		handleSearchTree() {
+			if (this.filterText === '') {
+				return;
+			}
 			let self = this;
 			let params = {
 				filter: JSON.stringify({
@@ -375,10 +378,6 @@ export default {
 	padding-right: 8px;
 }
 
-.editor-container .editor .e-body .e-vue-component-wrap {
-	overflow: auto;
-}
-
 .el-checkbox-button .el-checkbox-button__inner {
 	padding: 6px 12px;
 }
@@ -409,7 +408,6 @@ export default {
 	text-overflow: ellipsis;
 }
 .box-head {
-	z-index: 2;
 	background: #fff;
 	overflow: hidden;
 	width: 217px;
@@ -444,6 +442,9 @@ export default {
 }
 </style>
 <style lang="less">
+.editor-container .editor .e-body .e-vue-component-wrap {
+	width: 234px;
+}
 .box-head {
 	.el-input .el-input__inner {
 		height: 24px;
