@@ -172,19 +172,21 @@ export default class Editor extends BaseObject {
 			editor: self,
 			container: self.ui.getGraphContainer()
 		});
-
-		let treePanel = new Panel({
-			name: 'treePanel',
-			bodyStyle: 'flex: 1;height:57%;position:relative;background:#fff'
-		});
-		leftSidebar.add(treePanel);
-
 		let treeVueComponent = new VueComponent({
 			name: 'treeVueComponent',
 			editor: this,
 			component: TableSelector
 		});
-		treePanel.add(treeVueComponent);
+
+		leftSidebar
+			.getContentEl()
+			.find('[data-name=tableSelector] .elements>*')
+			.remove();
+		leftSidebar
+			.getContentEl()
+			.find('[data-name=tableSelector] .elements')
+			.prepend(treeVueComponent.getContentEl());
+		//treePanel.add(treeVueComponent);
 
 		this.initSettings();
 	}
