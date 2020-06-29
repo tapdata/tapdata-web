@@ -36,7 +36,7 @@ const en = {
 		copySuccess: 'Copy successfully',
 		deleteOK: 'Successfully deleted',
 		deleteFail: 'Failed to delete',
-		taskStart: 'Task is starting',
+		taskStart: 'Job is getting started',
 		selectTime: 'Select time',
 		selectDate: 'Select date',
 		server: 'Server',
