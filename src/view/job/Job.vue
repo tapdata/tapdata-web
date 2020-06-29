@@ -133,7 +133,7 @@
 				<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.start')" placement="bottom">
 					<el-button
 						class="headImg borderStyle iconfont icon-yunhang1"
-						@click="start"
+						@click="start('start')"
 						:disabled="statusBtMap[status].start"
 					>
 					</el-button>
@@ -928,7 +928,7 @@ export default {
 		/**
 		 * start button handler
 		 */
-		start() {
+		start(status) {
 			let self = this,
 				data = this.getDataFlowData();
 
@@ -946,7 +946,12 @@ export default {
 					if (err) {
 						this.$message.error(err.response.data);
 					} else {
-						this.$message.success(self.$t('message.saveOK'));
+						if (status === 'start') {
+							this.$message.success(self.$t('message.taskStart'));
+						} else {
+							this.$message.success(self.$t('message.saveOK'));
+						}
+
 						self.setEditable(false);
 						self.editor.setData(data);
 					}

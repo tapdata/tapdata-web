@@ -36,6 +36,7 @@ const tc = {
 		copySuccess: '複製成功',
 		deleteOK: '刪除成功',
 		deleteFail: '刪除失敗',
+		taskStart: '任務啟動中',
 		selectTime: '選擇時間',
 		selectDate: '選擇日期',
 		server: '服務器',
