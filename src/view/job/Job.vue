@@ -372,7 +372,6 @@ export default {
 	},
 	mounted() {
 		let self = this;
-
 		// build editor
 		self.editor = editor({
 			container: $('.editor-container'),
@@ -393,7 +392,7 @@ export default {
 			this.loading = false;
 			return;
 		}
-		if (window.name.startsWith('monitor') && this.tempData.length > 0) {
+		if (!window.name.startsWith('monitor') && this.tempData.length > 0) {
 			self.loading = false;
 			this.tempDialogVisible = true;
 			return;
