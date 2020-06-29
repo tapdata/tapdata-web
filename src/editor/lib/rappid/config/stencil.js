@@ -8,7 +8,7 @@ export const stencilConfig = {
 	groups: {
 		data: { index: 1, label: i18n.t('editor.ui.sidebar.data_nodes') },
 		processor: { index: 2, label: i18n.t('editor.ui.sidebar.processor') },
-		tableSelector: { index: 3, label: 'Table selector' }
+		tableSelector: { index: 3, label: i18n.t('editor.ui.sidebar.tableSelector') }
 	},
 	shapes: {
 		data: [

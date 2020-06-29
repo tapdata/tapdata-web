@@ -649,7 +649,8 @@ const cn = {
 				style: '样式',
 
 				data_nodes: '数据节点',
-				processor: '处理节点'
+				processor: '处理节点',
+				tableSelector: '快速选择'
 			},
 			toolbar: {
 				undo: {

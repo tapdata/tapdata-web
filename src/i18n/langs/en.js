@@ -656,7 +656,8 @@ const en = {
 				style: 'Style',
 
 				data_nodes: 'Data Nodes',
-				processor: 'Processor'
+				processor: 'Processor',
+				tableSelector: 'Fast selection'
 			},
 			toolbar: {
 				undo: {

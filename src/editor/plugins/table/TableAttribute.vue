@@ -320,6 +320,7 @@ export default {
 				dropTable: false,
 				type: 'table',
 				primaryKeys: '',
+				initialOffset: '',
 				initialSyncOrder: 0,
 				enable: false
 			};

@@ -650,7 +650,8 @@ const tc = {
 				style: '樣式',
 
 				data_nodes: '數據節點',
-				processor: '處理節點'
+				processor: '處理節點',
+				tableSelector: '快速選擇'
 			},
 			toolbar: {
 				undo: {
