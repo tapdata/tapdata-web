@@ -430,7 +430,7 @@ export default {
 					path: '/job',
 					query: { id: id }
 				});
-				window.open(routeUrl.href, 'monitor');
+				window.open(routeUrl.href, 'monitor_' + id);
 			}
 		},
 		handleImport() {

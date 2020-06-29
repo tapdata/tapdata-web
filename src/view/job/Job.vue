@@ -393,7 +393,7 @@ export default {
 			this.loading = false;
 			return;
 		}
-		if (window.name != 'monitor' && this.tempData.length > 0) {
+		if (window.name.startsWith('monitor') && this.tempData.length > 0) {
 			self.loading = false;
 			this.tempDialogVisible = true;
 			return;
