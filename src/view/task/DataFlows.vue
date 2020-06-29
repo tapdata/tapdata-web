@@ -347,10 +347,10 @@ export default {
 				classification: []
 			},
 			statusBtMap: {
-				scheduled: { switch: true, delete: true, edit: true, detail: true, forceStop: true, reset: true },
+				scheduled: { switch: true, delete: true, edit: true, detail: false, forceStop: true, reset: true },
 				draft: { switch: true, delete: false, edit: false, detail: true, forceStop: true, reset: true },
 				running: { switch: false, delete: true, edit: true, detail: false, forceStop: true, reset: true },
-				stopping: { switch: true, delete: true, edit: true, detail: true, forceStop: false, reset: true },
+				stopping: { switch: true, delete: true, edit: true, detail: false, forceStop: false, reset: true },
 				error: { switch: false, delete: false, edit: false, detail: true, forceStop: true, reset: false },
 				paused: { switch: false, delete: false, edit: false, detail: true, forceStop: true, reset: false },
 				'force stopping': { switch: true, delete: true, edit: true, detail: true, forceStop: true, reset: true }
@@ -430,7 +430,7 @@ export default {
 					path: '/job',
 					query: { id: id }
 				});
-				window.open(routeUrl.href, 'monitor');
+				window.open(routeUrl.href, 'monitor_' + id);
 			}
 		},
 		handleImport() {
