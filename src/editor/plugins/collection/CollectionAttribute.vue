@@ -130,12 +130,15 @@
 				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 			</div>
 		</div>
+
+		<!-- <relatedTasks></relatedTasks> -->
 	</div>
 </template>
 
 <script>
 import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
 import PrimaryKeyInput from '../../../components/PrimaryKeyInput';
+// import RelatedTasks from '../../../components/relatedTasks';
 import ClipButton from '@/components/ClipButton';
 import { convertSchemaToTreeData, uuid } from '../../util/Schema';
 import Entity from '../link/Entity';

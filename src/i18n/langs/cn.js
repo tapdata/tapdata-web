@@ -37,6 +37,7 @@ const cn = {
 		copySuccess: '复制成功',
 		deleteOK: '删除成功',
 		deleteFail: '删除失败',
+		taskStart: '任务启动中',
 		selectTime: '选择时间',
 		selectDate: '选择日期',
 		server: '服务器',
