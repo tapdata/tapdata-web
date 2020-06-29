@@ -1,5 +1,5 @@
 <template>
-	<div class="dummy nodeStyle">
+	<div class="dummy nodeStyle" :class="{ nodeHeight: disabled }">
 		<head>
 			<span class="headIcon iconfont icon-you2" type="primary"></span>
 			<span class="txt">{{ $t('editor.nodeSettings') }}</span>
@@ -65,20 +65,26 @@
 		<div class="e-entity-wrap" style="text-align: center;overflow:auto;">
 			<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 		</div>
+		<relatedTasks :taskData="taskData" v-if="disabled"></relatedTasks>
 	</div>
 </template>
 <script>
 import _ from 'lodash';
 import factory from '../../../api/factory';
 import Entity from '../link/Entity';
+import RelatedTasks from '../../../components/relatedTasks';
 import { convertSchemaToTreeData } from '../../util/Schema';
 let connections = factory('connections');
 let editorMonitor = null;
 export default {
 	name: 'Dummy',
-	components: { Entity },
+	components: { Entity, RelatedTasks },
 	data() {
 		return {
+			taskData: {
+				id: '',
+				tableName: ''
+			},
 			disabled: false,
 			databases: [],
 			rules: {
@@ -148,6 +154,9 @@ export default {
 			immediate: true,
 			handler() {
 				this.loadDataModels(this.model.connectionId);
+				if (this.model.connectionId) {
+					this.taskData.id = this.model.connectionId;
+				}
 			}
 		},
 		'model.tableName': {
@@ -168,6 +177,7 @@ export default {
 						this.$emit('schemaChange', _.cloneDeep(schema));
 					}
 				}
+				this.taskData.tableName = this.model.tableName;
 			}
 		},
 		mergedSchema: {

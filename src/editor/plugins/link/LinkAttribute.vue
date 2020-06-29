@@ -357,7 +357,9 @@ export default {
 					let targetPKs = this.getPKsFromSchema(targetSchema).sort((v1, v2) =>
 						v1 > v2 ? 1 : v1 === v2 ? 0 : -1
 					);
+					debugger;
 					let comparedSchema = targetPKs && targetPKs.length > 0 ? targetPKs : mergePKs;
+
 					let initialAssociationPKs =
 						sourcePKs && sourcePKs.length > 0 && comparedSchema && comparedSchema.length > 0
 							? sourcePKs.map((field, i) => ({

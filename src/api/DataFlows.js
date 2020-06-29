@@ -49,4 +49,8 @@ export default class DataFlows extends PublicAPI {
 	saveStage(stages) {
 		return axios.post(`${this.url}/stages`, stages);
 	}
+
+	relatedDataFlows(params) {
+		return axios.get(this.url + '/relatedDataFlows', { params });
+	}
 }
