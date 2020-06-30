@@ -181,7 +181,7 @@ export const mergeSchema = function(targetSchema, sourceSchema, mergeOpts) {
 	}
 
 	targetSchema.fields.forEach(field => {
-		field.source = field.source || [field];
+		field.source = field.source || [_.cloneDeep(field)];
 	});
 
 	let existsField = {};
