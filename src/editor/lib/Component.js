@@ -3,10 +3,10 @@
  * @date 2/26/20
  * @description
  */
-import BaseObject from "./BaseObject";
-import { EditorEventType } from "./events";
-import $ from "jquery";
-import log from "../../log";
+import BaseObject from './BaseObject';
+import { EditorEventType } from './events';
+import $ from 'jquery';
+import log from '../../log';
 export default class Component extends BaseObject {
 	constructor(opts) {
 		super();
@@ -64,6 +64,11 @@ export default class Component extends BaseObject {
 		} else {
 			child.render(this.getContentEl(), !!child.opts.prepend);
 		}
+		child.setParent(this);
+	}
+
+	setParent(parent) {
+		this.parent = parent;
 	}
 
 	/**
@@ -75,7 +80,7 @@ export default class Component extends BaseObject {
 		if (index !== -1) {
 			let current = this.childs.splice(index, 1);
 			if (child.el) child.el.remove();
-			if (typeof child.destroy === "function") {
+			if (typeof child.destroy === 'function') {
 				child.destroy();
 			}
 			return current;
@@ -88,14 +93,14 @@ export default class Component extends BaseObject {
 	removeAll() {
 		let child = this.childs.shift();
 		while (child) {
-			if (typeof child.destroy === "function") {
+			if (typeof child.destroy === 'function') {
 				child.destroy();
 			}
 			child = this.childs.shift();
 		}
 		if (this.getContentEl && this.getContentEl() && this.getContentEl().find) {
 			this.getContentEl()
-				.find(">*")
+				.find('>*')
 				.remove();
 		}
 	}

@@ -279,7 +279,7 @@ export default {
 			dataFlowId: null,
 			tempDialogVisible: false,
 			tempKey: 0,
-			tempId: '',
+			tempId: false,
 			tempData: [],
 			status: 'draft',
 			executeMode: 'normal',
@@ -530,11 +530,14 @@ export default {
 							this.tempKey = parseInt(key.split('$$$')[1]) + 1;
 				});
 			}
-			this.tempId = 'tapdata.dataflow.$$$' + this.tempKey + '$$$' + data.name;
+			if (!this.tempId) this.tempId = 'tapdata.dataflow.$$$' + this.tempKey + '$$$' + data.name;
+			else {
+				localStorage.removeItem(this.tempId);
+				this.tempId = 'tapdata.dataflow.$$$' + this.tempKey + '$$$' + data.name;
+			}
 			try {
 				localStorage.setItem(this.tempId, JSON.stringify(data));
 			} catch (e) {
-				debugger;
 				let ids = [],
 					size = 0;
 				Object.keys(localStorage).forEach(key => {

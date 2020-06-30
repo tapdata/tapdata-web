@@ -67,7 +67,8 @@ const cn = {
 		notRest: '请选择正确的数据进行重置',
 		operator: '操作',
 		edit: '修改',
-		clickRelatedTasks: '点击查看相关任务'
+		clickRelatedTasks: '点击查看相关任务',
+		currentTaskOpen: '当前任务已打开'
 	},
 	dataFlow: {
 		draftNotStart: '草稿不能启动 ',
