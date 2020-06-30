@@ -1,7 +1,7 @@
 <template>
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
-			<template v-if="['draft', 'paused'].includes(status)">
+			<template v-if="isEditable()">
 				<div
 					:class="[{ btnHover: ['draft'].includes(status) }, 'headImg']"
 					v-show="!isSaving"
@@ -9,7 +9,7 @@
 					style="cursor: pointer;"
 				>
 					<span class="iconfont icon-yunduanshangchuan"></span>
-					<span class="text">{{ $t('dataFlow.button.saveDraft') }}</span>
+					<span class="text">{{ $t('dataFlow.button.save') }}</span>
 				</div>
 
 				<div class="headImg" v-show="isSaving" style="color: #48B6E2;">
@@ -321,6 +321,16 @@ export default {
 					reloadSchema: true
 				},
 				stopping: {
+					start: true,
+					stop: true,
+					forceStop: false,
+					reset: true,
+					setting: true,
+					preview: true,
+					logs: true,
+					reloadSchema: true
+				},
+				scheduled: {
 					start: true,
 					stop: true,
 					forceStop: false,
@@ -656,7 +666,7 @@ export default {
 		polling() {
 			let self = this;
 			if (self.dataFlowId) {
-				if (!['scheduled', 'running', 'stopping', 'force stopping'].includes(self.status)) return;
+				//if (!['scheduled', 'running', 'stopping', 'force stopping'].includes(self.status)) return;
 
 				dataFlowsApi
 					.get([self.dataFlowId], {
@@ -685,13 +695,14 @@ export default {
 							if (self.executeMode !== result.data.executeMode)
 								self.executeMode = result.data.executeMode;
 
-							if (['scheduled', 'running', 'stopping', 'force stopping'].includes(newStatus)) {
-								if (self.timeoutId) clearTimeout(self.timeoutId);
-								self.timeoutId = setTimeout(self.polling.bind(self), 2000);
-							} else {
+							if (self.timeoutId) clearTimeout(self.timeoutId);
+							self.timeoutId = setTimeout(self.polling.bind(self), 2000);
+
+							if (!['scheduled', 'running', 'stopping', 'force stopping'].includes(newStatus)) {
+								// } else {
 								self.executeMode = 'normal';
 							}
-							Object.assign(this.dataFlow, result.data);
+							Object.assign(self.dataFlow, result.data);
 							self.editor.emit('dataFlow:updated', _.cloneDeep(result.data));
 						}
 					})

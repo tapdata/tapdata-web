@@ -180,14 +180,20 @@ export const mergeSchema = function(targetSchema, sourceSchema, mergeOpts) {
 		});
 	}
 
-	let existsFieldName = {};
+	targetSchema.fields.forEach(field => {
+		field.source = field.source || [field];
+	});
+
+	let existsField = {};
 	for (let i = 0; i < targetSchema.fields.length; i++) {
 		let field = targetSchema.fields[i];
-		if (existsFieldName[field.field_name]) {
+		if (existsField[field.field_name]) {
+			existsField[field.field_name].source = existsField[field.field_name].source || [];
+			existsField[field.field_name].source.push(field);
 			targetSchema.fields.splice(i, 1);
 			i--;
 		} else {
-			existsFieldName[field.field_name] = true;
+			existsField[field.field_name] = field;
 		}
 	}
 	return targetSchema;

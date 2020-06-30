@@ -149,7 +149,7 @@ const en = {
 		status: {
 			running: 'Running',
 			paused: 'Paused',
-			draft: 'Draft',
+			draft: 'Editting',
 			scheduled: 'Scheduled',
 			stopping: 'Stopping',
 			error: 'Error',
