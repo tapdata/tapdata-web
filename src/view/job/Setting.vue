@@ -150,7 +150,7 @@
 					</el-form-item>
 				</el-col>
 			</el-row>
-			<el-form-item v-show="formData.sync_type !== 'initial_sync'" size="mini">
+			<el-form-item v-show="formData.sync_type === 'cdc'" size="mini">
 				<div>
 					{{ $t('dataFlow.SyncPoint') }}
 					<el-tooltip placement="right-end">
@@ -254,7 +254,10 @@ export default {
 			if (data) {
 				Object.keys(data).forEach(key => (this.formData[key] = data[key]));
 			}
-			this.formData.syncPoints = Object.values(this.updateSyncNode(this.formData.syncPoints));
+			let map = this.updateSyncNode(this.formData.syncPoints);
+			if (map) {
+				this.formData.syncPoints = Object.values(map);
+			}
 		},
 		getData() {
 			let result = _.cloneDeep(this.formData);
@@ -268,8 +271,11 @@ export default {
 		changeSyncType(type) {
 			if (type === 'initial_sync') {
 				this.formData.isOpenAutoDDL = false;
-			} else if (type === 'cdc' || type === 'initial_sync+cdc') {
-				this.formData.syncPoints = Object.values(this.updateSyncNode(this.formData.syncPoints));
+			} else if (type === 'cdc') {
+				let map = this.updateSyncNode(this.formData.syncPoints);
+				if (map) {
+					this.formData.syncPoints = Object.values(map);
+				}
 			} else {
 				this.formData.run_custom_sql = false;
 			}
@@ -331,25 +337,25 @@ export default {
 				this.getAllConnectionName(connectionIds)
 					.then(() => {})
 					.catch(() => {});
-			}
-			syncPoints = syncPoints.filter(point => connectionIds.includes(point.connectionId));
+				syncPoints = syncPoints.filter(point => connectionIds.includes(point.connectionId));
+				let map = {};
+				// connectionId -> syncPoint
+				syncPoints.forEach(s => (map[s.connectionId] = s));
 
-			// connectionId -> syncPoint
-			let map = {};
-			syncPoints.forEach(s => (map[s.connectionId] = s));
-			connectionIds.forEach(connectionId => {
-				if (!map[connectionId]) {
-					map[connectionId] = {
-						connectionId: connectionId,
-						type: 'current', // localTZ: 本地时区； connTZ：连接时区
-						time: '',
-						date: '',
-						timezone: '+08:00',
-						name: ''
-					};
-				}
-			});
-			return map;
+				connectionIds.forEach(connectionId => {
+					if (!map[connectionId]) {
+						map[connectionId] = {
+							connectionId: connectionId,
+							type: 'current', // localTZ: 本地时区； connTZ：连接时区
+							time: '',
+							date: '',
+							timezone: '+08:00',
+							name: ''
+						};
+					}
+				});
+				return map;
+			}
 		}
 	}
 };
