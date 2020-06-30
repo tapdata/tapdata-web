@@ -271,6 +271,16 @@ export default {
 		changeSyncType(type) {
 			if (type === 'initial_sync') {
 				this.formData.isOpenAutoDDL = false;
+				this.formData.syncPoints = [
+					{
+						connectionId: '',
+						type: 'current', // localTZ: 本地时区； connTZ：连接时区
+						time: '',
+						date: '',
+						name: '',
+						timezone: '+08:00' // 当type为localTZ时有该字段
+					}
+				];
 			} else if (type === 'cdc') {
 				let map = this.updateSyncNode(this.formData.syncPoints);
 				if (map) {
@@ -278,6 +288,16 @@ export default {
 				}
 			} else {
 				this.formData.run_custom_sql = false;
+				this.formData.syncPoints = [
+					{
+						connectionId: '',
+						type: 'current', // localTZ: 本地时区； connTZ：连接时区
+						time: '',
+						date: '',
+						name: '',
+						timezone: '+08:00' // 当type为localTZ时有该字段
+					}
+				];
 			}
 		},
 		getAllConnectionIds() {
