@@ -235,7 +235,7 @@ export default {
 					this.primaryKeyOptions = fields.map(f => f.field_name);
 					if (!this.model.primaryKeys) {
 						let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
-						if (primaryKeys.length > 0) this.model.primaryKeys = Array.from(new Set(primaryKeys).join(','));
+						if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
 					}
 				}
 			}
