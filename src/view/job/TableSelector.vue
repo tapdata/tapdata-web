@@ -171,7 +171,10 @@ export default {
 						meta_type: {
 							in: ['database', 'directory', 'ftp', 'apiendpoint']
 						},
-						is_deleted: false
+						is_deleted: false,
+						'source.user_id': {
+							like: this.$cookie.get('user_id')
+						}
 					},
 					order: 'original_name ASC'
 				})
