@@ -613,7 +613,7 @@ const en = {
 				repeatId: {
 					title: 'Field _id conflict',
 					message:
-						'The target model already exists "_id" field, please use the field processor to rename the "_id"!'
+						'"_id" field exists in target model, please use the field processor to rename the "_id" field before continue.'
 				},
 				form: {
 					label: {
