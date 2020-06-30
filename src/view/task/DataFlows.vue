@@ -421,7 +421,7 @@ export default {
 						query: { id: id }
 					});
 					setTimeout(() => {
-						window.windows.push(window.open(routeUrl.href, '_blank'));
+						window.windows.push(window.open(routeUrl.href, 'edit_' + id));
 						window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
 					}, 200);
 				});

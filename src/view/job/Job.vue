@@ -531,7 +531,24 @@ export default {
 				});
 			}
 			this.tempId = 'tapdata.dataflow.$$$' + this.tempKey + '$$$' + data.name;
-			localStorage.setItem(this.tempId, JSON.stringify(data));
+			try {
+				localStorage.setItem(this.tempId, JSON.stringify(data));
+			} catch (e) {
+				debugger;
+				let ids = [],
+					size = 0;
+				Object.keys(localStorage).forEach(key => {
+					if (key.startsWith('tapdata.dataflow.$$$'))
+						ids.push({ id: parseInt(key.split('$$$')[1]), item: key });
+				});
+				ids = ids.sort((a, b) => a.id - b.id);
+				for (let i = 0; i < ids.length; i++) {
+					size += localStorage.getItem(ids[i].item).length;
+					localStorage.removeItem(ids[i].item);
+					if (size > JSON.stringify(data).length) break;
+				}
+				localStorage.setItem(this.tempId, JSON.stringify(data));
+			}
 			window.tempKey = this.tempKey;
 		},
 		//点击draft save按钮
