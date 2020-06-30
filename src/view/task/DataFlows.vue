@@ -137,9 +137,10 @@
 						<span :style="`color: ${colorMap[scope.row.status]};`">
 							{{
 								$t(
-									'dataFlow.status.' + scope.row.status && scope.row.status !== undefined
-										? scope.row.status.replace(/ /g, '_')
-										: scope.row.status
+									'dataFlow.status.' +
+										(scope.row.status && scope.row.status !== undefined
+											? scope.row.status.replace(/ /g, '_')
+											: scope.row.status)
 								)
 							}}
 						</span>

@@ -67,7 +67,8 @@ const tc = {
 		operator: '操作',
 		edit: '修改',
 		clickRelatedTasks: '點擊查看相關任務',
-		currentTaskOpen: '當前任務已打開'
+		currentTaskOpen: '當前任務已打開',
+		noRelatedTask: '暫無相關任務'
 	},
 	dataFlow: {
 		draftNotStart: '草稿不能啟動',
@@ -145,7 +146,7 @@ const tc = {
 		status: {
 			running: '運行中',
 			paused: '已暫停',
-			draft: '草稿',
+			draft: '編輯中',
 			scheduled: '調度中',
 			stopping: '停止中',
 			error: '錯誤',

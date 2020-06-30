@@ -162,12 +162,6 @@ export default {
 			let params = {
 				filter: JSON.stringify({
 					where: {
-						// 'source.database_type':{
-						// 	nin:["file","dummy db","gridfs","rest api"]
-						// },
-						// meta_type: {
-						// 	in: ['database']
-						// },
 						meta_type: {
 							in: ['database', 'directory', 'ftp', 'apiendpoint']
 						},
@@ -242,7 +236,7 @@ export default {
 							childNodes.push({
 								id: record.id,
 								_id: record.source._id,
-								label: record.name || record.original_name,
+								label: record.original_name,
 								expanded: true,
 								leaf: true,
 								meta_type: record.meta_type,
@@ -251,6 +245,7 @@ export default {
 								fields: record.fields
 							});
 						});
+						childNodes.filter(node => node.original_name !== '');
 						resolve(childNodes);
 						log('childNodes', childNodes);
 					}

@@ -69,7 +69,8 @@ const en = {
 		operator: 'Operator',
 		edit: 'Edit',
 		clickRelatedTasks: 'Click to view related tasks',
-		currentTaskOpen: 'The current task has been opened'
+		currentTaskOpen: 'The current task has been opened',
+		noRelatedTask: 'No related tasks'
 	},
 	dataFlow: {
 		draftNotStart: 'Draft can‘t be started',
@@ -148,7 +149,7 @@ const en = {
 		status: {
 			running: 'Running',
 			paused: 'Paused',
-			draft: 'Draft',
+			draft: 'Editting',
 			scheduled: 'Scheduled',
 			stopping: 'Stopping',
 			error: 'Error',

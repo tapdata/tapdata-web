@@ -1,9 +1,13 @@
 <template>
 	<div class="relatedTasks">
 		<el-popover placement="top" width="400" popper-class="taskLink-popover" trigger="click">
-			<div v-for="item in taskList" :key="item.id" class="text item" @click="handleTask(item)">
-				{{ item.name }}
-			</div>
+			<template v-if="taskList.length > 0">
+				<div v-for="item in taskList" :key="item.id" class="text item" @click="handleTask(item)">
+					{{ item.name }}
+				</div>
+			</template>
+
+			<div v-else class="noData">{{ $t('message.noRelatedTask') }}</div>
 
 			<el-button class="e-button" slot="reference">{{ $t('message.clickRelatedTasks') }}</el-button>
 		</el-popover>
@@ -45,25 +49,10 @@ export default {
 		 * 选择任务
 		 */
 		handleTask(data) {
-			// console.log(data.id, this.taskData.id, '======');
-			let routeUrl = window.location.host + window.location.pathname + '#' + '/job?id=' + data.id;
 			if (this.taskData.id !== data.id) {
-				window.open(routeUrl, 'monitor_' + data.id);
-			} else {
-				this.$message.error(this.$t('message.currentTaskOpen'));
+				window.open(window.location.href.split('=')[0] + '=' + data.id, 'monitor_' + data.id);
 			}
-			// setTimeout(() => {
-			// 	window.open(routeUrl, '_blank');
-			// }, 200);
 		}
-
-		// getTempKeys() {
-		// 	let tk = [];
-		// 	window.windows.forEach(it => {
-		// 		if (it.parent != null && it.tempKey) tk.push(it.tempKey);
-		// 	});
-		// 	return tk;
-		// }
 	}
 };
 </script>
@@ -88,6 +77,9 @@ export default {
 	}
 	.item:hover {
 		color: #48b6e2;
+	}
+	.noData {
+		text-align: center;
 	}
 }
 </style>
