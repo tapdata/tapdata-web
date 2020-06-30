@@ -1,7 +1,7 @@
 <template>
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
-			<template v-if="isEditable()">
+			<template v-if="['draft'].includes(status)">
 				<div
 					:class="[{ btnHover: ['draft'].includes(status) }, 'headImg']"
 					v-show="!isSaving"

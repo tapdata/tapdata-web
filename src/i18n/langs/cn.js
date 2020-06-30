@@ -66,7 +66,8 @@ const cn = {
 		resetFailed: '重置失败',
 		notRest: '请选择正确的数据进行重置',
 		operator: '操作',
-		edit: '修改'
+		edit: '修改',
+		clickRelatedTasks: '点击查看相关任务'
 	},
 	dataFlow: {
 		draftNotStart: '草稿不能启动 ',

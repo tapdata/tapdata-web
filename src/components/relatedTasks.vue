@@ -3,10 +3,9 @@
 		<el-popover placement="top" width="400" popper-class="taskLink-popover" trigger="click">
 			<div v-for="item in taskList" :key="item.id" class="text item" @click="handleTask(item)">
 				{{ item.name }}
-				<!-- <router-link tag="a" target="_blank" :to="{ name: 'job', query: { id: item.id } }"></router-link> -->
 			</div>
 
-			<el-button class="e-button" slot="reference">点击查看相关任务</el-button>
+			<el-button class="e-button" slot="reference">{{ $t('message.clickRelatedTasks') }}</el-button>
 		</el-popover>
 	</div>
 </template>
@@ -46,25 +45,30 @@ export default {
 		 * 选择任务
 		 */
 		handleTask(data) {
-			debugger;
-			let routeUrl = this.$router.resolve({
-				path: '/job',
-				query: { id: data.id }
-			});
-
+			// let routeUrl = this.$router.resolve({
+			// 	path: '/job',
+			// 	query: { id: data.id }
+			// });
+			let routeUrl =
+				window.location.protocol +
+				'//' +
+				window.location.hostname +
+				':' +
+				window.location.port +
+				'/job?id=' +
+				data.id;
 			setTimeout(() => {
-				window.windows.push(window.open(routeUrl.href, '_blank'));
-				window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
+				window.open(routeUrl, '_blank');
 			}, 200);
-		},
-
-		getTempKeys() {
-			let tk = [];
-			window.windows.forEach(it => {
-				if (it.parent != null && it.tempKey) tk.push(it.tempKey);
-			});
-			return tk;
 		}
+
+		// getTempKeys() {
+		// 	let tk = [];
+		// 	window.windows.forEach(it => {
+		// 		if (it.parent != null && it.tempKey) tk.push(it.tempKey);
+		// 	});
+		// 	return tk;
+		// }
 	}
 };
 </script>

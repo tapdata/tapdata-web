@@ -67,7 +67,8 @@ const en = {
 		resetFailed: 'Reset Failed',
 		notRest: 'Please select the correct data to reset',
 		operator: 'Operator',
-		edit: 'Edit'
+		edit: 'Edit',
+		clickRelatedTasks: 'Click to view related tasks'
 	},
 	dataFlow: {
 		draftNotStart: 'Draft can‘t be started',

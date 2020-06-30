@@ -4,14 +4,14 @@
 			<el-button class="back-btn-icon-box" @click="GoBack"
 				><i class="iconfont icon-you2 back-btn-icon"></i
 			></el-button>
-			<span class="back-btn-text">{{ $t("dataVerify.dataVerify") }}</span>
+			<span class="back-btn-text">{{ $t('dataVerify.dataVerify') }}</span>
 		</div>
 		<div class="table-box">
 			<el-table :data="tableData" border class="dv-table" style="width: 100%">
 				<el-table-column prop="type" :label="$t('dataVerify.dataWay')" width="150">
 					<template slot-scope="scope">
 						<span :style="`color: ${colorMap[scope.row.type]};`">
-							{{ $t("dataVerify." + scope.row.type) }}
+							{{ $t('dataVerify.' + scope.row.type) }}
 						</span>
 					</template>
 				</el-table-column>
@@ -40,7 +40,7 @@
 		<div class="dv-btn-footer-wrapper">
 			<div class="dv-btn-footer-box">
 				<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleLoading">{{
-					$t("dataVerify.start")
+					$t('dataVerify.start')
 				}}</el-button>
 			</div>
 		</div>
@@ -53,22 +53,22 @@
 			:before-close="handleClose"
 		>
 			<div class="dv-add-header">
-				{{ $t("dataVerify.dataVerifySetting") }}
+				{{ $t('dataVerify.dataVerifySetting') }}
 			</div>
 			<el-form class="dv-add-form" :model="formData" :rules="rules" ref="ruleForm">
 				<div class="dv-add-form-text">
-					{{ $t("dataVerify.dataWay") }}
+					{{ $t('dataVerify.dataWay') }}
 				</div>
 				<el-form-item>
 					<el-radio-group v-model="type" size="mini" class="dv-radio">
-						<el-radio border label="row" width="150px">{{ $t("dataVerify.row") }}</el-radio>
-						<el-radio border label="hash" width="150px">{{ $t("dataVerify.hash") }}</el-radio>
-						<el-radio border label="advance" width="150px">{{ $t("dataVerify.advance") }}</el-radio>
+						<el-radio border label="row" width="150px">{{ $t('dataVerify.row') }}</el-radio>
+						<el-radio border label="hash" width="150px">{{ $t('dataVerify.hash') }}</el-radio>
+						<el-radio border label="advance" width="150px">{{ $t('dataVerify.advance') }}</el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item v-show="type !== 'row'">
 					<div class="dv-add-form-text">
-						{{ $t("dataVerify.condition") }}
+						{{ $t('dataVerify.condition') }}
 					</div>
 					<el-row :gutter="10">
 						<el-col :span="12">
@@ -84,7 +84,7 @@
 				</el-form-item>
 				<el-form-item prop="sourceTageId">
 					<div class="dv-add-form-text">
-						{{ $t("dataVerify.source") }}
+						{{ $t('dataVerify.source') }}
 					</div>
 					<el-row>
 						<el-col :span="24">
@@ -111,7 +111,7 @@
 				</el-form-item>
 				<el-form-item prop="targetTageId">
 					<div class="dv-add-form-text">
-						{{ $t("dataVerify.target") }}
+						{{ $t('dataVerify.target') }}
 					</div>
 					<el-row>
 						<el-col :span="24">
@@ -150,10 +150,10 @@
 			<div class="dv-btn-footer-wrapper">
 				<div class="dv-btn-footer-box">
 					<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleAdd('ruleForm')">{{
-						$t("dataVerify.confirm")
+						$t('dataVerify.confirm')
 					}}</el-button>
 					<el-button size="mini" class="dv-btn-footer" @click="handleClose">{{
-						$t("dataVerify.cancel")
+						$t('dataVerify.cancel')
 					}}</el-button>
 				</div>
 			</div>
@@ -162,77 +162,77 @@
 </template>
 
 <script>
-import factory from "../../../api/factory";
-import log from "../../../log";
-import { EditorEventType } from "../../../editor/lib/events";
-import $ from "jquery";
+import factory from '../../../api/factory';
+import log from '../../../log';
+import { EditorEventType } from '../../../editor/lib/events';
+import $ from 'jquery';
 
-const dataFlows = factory("DataFlows");
+const dataFlows = factory('DataFlows');
 
 export default {
 	data() {
 		return {
-			id: "",
+			id: '',
 			editIndex: -1,
-			width: "",
+			width: '',
 			disabledDrawer: false,
-			direction: "rtl",
+			direction: 'rtl',
 			checkedSource: false,
 			checkedTarget: false,
 			sourceList: [],
 			targetList: [],
 			formData: {
 				condition: {
-					type: "rows", // # rows：按行数参与校验，sampleRate：按采样率参与校验
+					type: 'rows', // # rows：按行数参与校验，sampleRate：按采样率参与校验
 					// # type为rows时表示行数；type为sampleRate时，表示采样率，如：
-					value: "1000"
+					value: '1000'
 				},
-				sourceTageId: "",
-				targetTageId: "",
-				sourceFilter: "",
-				targetFilter: "",
-				validateCode: ""
+				sourceTageId: '',
+				targetTageId: '',
+				sourceFilter: '',
+				targetFilter: '',
+				validateCode: ''
 			},
-			type: "advance", // row: 行数 hash：哈希  advance：高级校验
+			type: 'advance', // row: 行数 hash：哈希  advance：高级校验
 			colorMap: {
-				row: "#48B6E2",
-				hash: "#62A569",
-				advance: "#9889D8"
+				row: '#48B6E2',
+				hash: '#62A569',
+				advance: '#9889D8'
 			},
 			tableData: [],
 			rules: {
 				sourceTageId: [
 					{
 						required: true,
-						message: "please select source",
-						trigger: "change"
+						message: 'please select source',
+						trigger: 'change'
 					}
 				],
 				targetTageId: [
 					{
 						required: true,
-						message: "please select target",
-						trigger: "change"
+						message: 'please select target',
+						trigger: 'change'
 					}
 				],
 				validateCode: [
 					{
 						required: true,
-						message: "please enter js validate code",
-						trigger: "change"
+						message: 'please enter js validate code',
+						trigger: 'change'
 					}
 				]
 			}
 		};
 	},
 	created() {
-		this.id = this.getUrlSearch("id");
+		this.id = this.getUrlSearch('id');
 		this.getData(this.id);
 		this.getSourceList();
 	},
 	mounted() {
 		this.$on(EditorEventType.RESIZE, width => {
-			$(".el-drawer__wrapper").css("right", width);
+			$('.el-drawer__wrapper').css('right', width);
 		});
 	},
 	methods: {
@@ -250,10 +250,10 @@ export default {
 				params
 			);
 			dataFlows.getId(this.id, _params).then(res => {
-				if (res.statusText === "OK" || res.status === 200) {
+				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
 						this.tableData = res.data.validationSettings ? res.data.validationSettings : [];
-						log("dataVerify.tableData", this.tableData);
+						log('dataVerify.tableData', this.tableData);
 					}
 				}
 			});
@@ -266,12 +266,12 @@ export default {
 			this.disabledDrawer = false;
 			this.formData = {
 				condition: {
-					type: "rows", // # rows：按行数参与校验，sampleRate：按采样率参与校验
+					type: 'rows', // # rows：按行数参与校验，sampleRate：按采样率参与校验
 					// # type为rows时表示行数；type为sampleRate时，表示采样率，如：
-					value: "1000"
+					value: '1000'
 				}
 			};
-			this.type = "advance";
+			this.type = 'advance';
 			this.checkedSource = false;
 			this.checkedTarget = false;
 			this.disabledDrawer = true;
@@ -279,7 +279,7 @@ export default {
 		handleAdd(formName) {
 			this.$refs[formName].validate(valid => {
 				if (valid) {
-					log("edit_edit", this.editIndex);
+					log('edit_edit', this.editIndex);
 
 					if (this.editIndex !== -1) {
 						this.tableData.splice(this.editIndex, 1); // 是否是编辑 先删除后新增
@@ -311,10 +311,10 @@ export default {
 					let data = {
 						validationSettings: this.tableData
 					};
-					log("data", data);
+					log('data', data);
 
 					dataFlows.patchId(this.id, data).then(res => {
-						if (res.statusText === "OK" || res.status === 200) {
+						if (res.statusText === 'OK' || res.status === 200) {
 							this.disabledDrawer = false;
 							this.$refs.ruleForm.clearValidate();
 							this.editIndex = -1;
@@ -328,41 +328,41 @@ export default {
 		},
 		handleLoading() {
 			if (this.tableData.length === 0) {
-				this.$message.info("please add data verify");
+				this.$message.info('please add data verify');
 				return;
 			}
 			if (this.disabledDrawer) {
-				this.$confirm("新的校验条件还在编辑中，继续执行校验？", "提示", {
-					confirmButtonText: "确定",
-					cancelButtonText: "取消",
-					type: "warning"
+				this.$confirm('新的校验条件还在编辑中，继续执行校验？', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
 				})
 					.then(() => {
 						let self = this;
 						// 状态修改为 waiting
 						let data = {
-							validateStatus: "waiting"
+							validateStatus: 'waiting'
 						};
 						dataFlows.patchId(this.id, data).then(res => {
-							if (res.statusText === "OK" || res.status === 200) {
+							if (res.statusText === 'OK' || res.status === 200) {
 								self.editor.showLoading();
 							}
 						});
 					})
 					.catch(() => {
 						this.$message({
-							type: "info",
-							message: "已取消执行"
+							type: 'info',
+							message: '已取消执行'
 						});
 					});
 			} else {
 				let self = this;
 				// 状态修改为 waiting
 				let data = {
-					validateStatus: "waiting"
+					validateStatus: 'waiting'
 				};
 				dataFlows.patchId(this.id, data).then(res => {
-					if (res.statusText === "OK" || res.status === 200) {
+					if (res.statusText === 'OK' || res.status === 200) {
 						self.editor.showLoading();
 					}
 				});
@@ -374,7 +374,7 @@ export default {
 				validationSettings: this.tableData
 			};
 			dataFlows.patchId(this.id, data).then(res => {
-				if (res.statusText === "OK" || res.status === 200) {
+				if (res.statusText === 'OK' || res.status === 200) {
 					this.disabledDrawer = false;
 					this.getData();
 				}
@@ -399,10 +399,10 @@ export default {
 		},
 		getSourceList() {
 			dataFlows.getSourceList(this.id).then(res => {
-				if (res.statusText === "OK" || res.status === 200) {
+				if (res.statusText === 'OK' || res.status === 200) {
 					this.sourceList = res.data.source;
 					this.targetList = res.data.target;
-					log("source.list", res.data);
+					log('source.list', res.data);
 				}
 			});
 		},
@@ -414,12 +414,12 @@ export default {
 			if (!name) return null;
 			// 查询参数：先通过search取值，如果取不到就通过hash来取
 			var after = window.location.search;
-			after = after.substr(1) || window.location.hash.split("?")[1];
+			after = after.substr(1) || window.location.hash.split('?')[1];
 			// 地址栏URL没有查询参数，返回空
 			if (!after) return null;
 			// 如果查询参数中没有"name"，返回空
 			if (after.indexOf(name) === -1) return null;
-			var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+			var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)');
 			// 当地址栏参数存在中文时，需要解码，不然会乱码
 			var r = decodeURI(after).match(reg);
 			// 如果url中"name"没有值，返回空
