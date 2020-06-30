@@ -45,21 +45,16 @@ export default {
 		 * 选择任务
 		 */
 		handleTask(data) {
-			// let routeUrl = this.$router.resolve({
-			// 	path: '/job',
-			// 	query: { id: data.id }
-			// });
-			let routeUrl =
-				window.location.protocol +
-				'//' +
-				window.location.hostname +
-				':' +
-				window.location.port +
-				'/job?id=' +
-				data.id;
-			setTimeout(() => {
-				window.open(routeUrl, '_blank');
-			}, 200);
+			// console.log(data.id, this.taskData.id, '======');
+			let routeUrl = window.location.host + window.location.pathname + '#' + '/job?id=' + data.id;
+			if (this.taskData.id !== data.id) {
+				window.open(routeUrl, 'monitor_' + data.id);
+			} else {
+				this.$message.error(this.$t('message.currentTaskOpen'));
+			}
+			// setTimeout(() => {
+			// 	window.open(routeUrl, '_blank');
+			// }, 200);
 		}
 
 		// getTempKeys() {

@@ -342,11 +342,8 @@ export default {
 				this.sourceList = (sourceList && sourceList.filter(item => item.field_name !== '')) || [];
 				this.targetList = (targetList && targetList.filter(item => item.field_name !== '')) || [];
 
-				let joinKeys = this.model.joinTable.joinKeys;
-				if (
-					joinKeys.length === 0 ||
-					(joinKeys.length === 1 && (joinKeys[0].source === '' || joinKeys[0].target === ''))
-				) {
+				if (this.model.joinTable.joinType === 'upsert') {
+					let joinKeys = this.model.joinTable.joinKeys;
 					// 关联字段自动填充
 					let sourcePKs = this.getPKsFromSchema(sourceSchema).sort((v1, v2) =>
 						v1 > v2 ? 1 : v1 === v2 ? 0 : -1
@@ -354,24 +351,37 @@ export default {
 					let mergePKs = this.getPKsFromSchema(mergedTargetSchema).sort((v1, v2) =>
 						v1 > v2 ? 1 : v1 === v2 ? 0 : -1
 					);
-					// let targetPKs = this.getPKsFromSchema(targetSchema).sort((v1, v2) =>
-					// 	v1 > v2 ? 1 : v1 === v2 ? 0 : -1
-					// );
-					let comparedSchema = mergePKs || [];
+					if (
+						joinKeys.length === 0 ||
+						(joinKeys.length === 1 && (joinKeys[0].source === '' || joinKeys[0].target === ''))
+					) {
+						// let targetPKs = this.getPKsFromSchema(targetSchema).sort((v1, v2) =>
+						// 	v1 > v2 ? 1 : v1 === v2 ? 0 : -1
+						// );
+						let comparedSchema = mergePKs || [];
 
-					let initialAssociationPKs =
-						sourcePKs && sourcePKs.length > 0 && comparedSchema && comparedSchema.length > 0
-							? sourcePKs.map((field, i) => ({
-									source: field.field_name,
-									target:
-										comparedSchema[i] && comparedSchema[i].field_name
-											? comparedSchema[i].field_name
-											: field.field_name
-							  }))
-							: this.model.joinTable.joinKeys;
+						let initialAssociationPKs =
+							sourcePKs && sourcePKs.length > 0 && comparedSchema && comparedSchema.length > 0
+								? sourcePKs.map((field, i) => ({
+										source: field.field_name,
+										target:
+											comparedSchema[i] && comparedSchema[i].field_name
+												? comparedSchema[i].field_name
+												: field.field_name
+								  }))
+								: this.model.joinTable.joinKeys;
 
-					if (sourceSchema && mergedTargetSchema.fields) {
-						this.model.joinTable.joinKeys = initialAssociationPKs;
+						if (sourceSchema && mergedTargetSchema.fields) {
+							this.model.joinTable.joinKeys = initialAssociationPKs;
+						}
+					}
+
+					if (sourcePKs && sourcePKs.length > 0) {
+						sourcePKs.map((field, i) => {
+							if (field.field_name !== joinKeys[i].source) {
+								joinKeys[i].source = field.field_name;
+							}
+						});
 					}
 				}
 			}

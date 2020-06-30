@@ -66,7 +66,8 @@ const tc = {
 		notRest: '請選擇正確的數據進行重置',
 		operator: '操作',
 		edit: '修改',
-		clickRelatedTasks: '點擊查看相關任務'
+		clickRelatedTasks: '點擊查看相關任務',
+		currentTaskOpen: '當前任務已打開'
 	},
 	dataFlow: {
 		draftNotStart: '草稿不能啟動',

@@ -1,9 +1,9 @@
 <template>
 	<div class="dataflow-upload">
-		<div class="dataflow-head">{{ $t("dataFlow.import") }}</div>
+		<div class="dataflow-head">{{ $t('dataFlow.import') }}</div>
 		<div class="dataflow-radio">
-			<el-radio v-model="upsert" :label="1">{{ $t("dataFlow.overWrite") }}</el-radio>
-			<el-radio v-model="upsert" :label="0">{{ $t("dataFlow.skipData") }}</el-radio>
+			<el-radio v-model="upsert" :label="1">{{ $t('dataFlow.overWrite') }}</el-radio>
+			<el-radio v-model="upsert" :label="0">{{ $t('dataFlow.skipData') }}</el-radio>
 		</div>
 		<el-upload
 			class="upload-demo"
@@ -14,10 +14,10 @@
 			:on-error="handleError"
 			:file-list="fileList"
 		>
-			<el-button type="primary" plain size="small">{{ $t("dataFlow.upload") }}</el-button>
+			<el-button type="primary" plain size="small">{{ $t('dataFlow.upload') }}</el-button>
 		</el-upload>
 		<div v-show="status" class="tooltip">
-			{{ $t("dataFlow.uploadOK") }} ,<router-link to="/dataFlows"> {{ $t("dataFlow.uploadInfo") }}</router-link>
+			{{ $t('dataFlow.uploadOK') }} ,<router-link to="/dataFlows"> {{ $t('dataFlow.uploadInfo') }}</router-link>
 		</div>
 	</div>
 </template>
@@ -27,20 +27,20 @@ export default {
 	data() {
 		return {
 			fileList: [],
-			action: "",
+			action: '',
 			upsert: 1,
-			accept: ".gz",
+			accept: '.gz',
 			status: false
 		};
 	},
 	created() {
 		this.action =
 			window.location.protocol +
-			"//" +
+			'//' +
 			window.location.hostname +
-			":" +
+			':' +
 			window.location.port +
-			"/api/MetadataInstances/upload?upsert=" +
+			'/api/MetadataInstances/upload?upsert=' +
 			this.upsert;
 	},
 
@@ -50,11 +50,11 @@ export default {
 			handler() {
 				this.action =
 					window.location.protocol +
-					"//" +
+					'//' +
 					window.location.hostname +
-					":" +
+					':' +
 					window.location.port +
-					"/api/MetadataInstances/upload?upsert=" +
+					'/api/MetadataInstances/upload?upsert=' +
 					this.upsert;
 			}
 		}
@@ -63,9 +63,9 @@ export default {
 		handleSuccess() {
 			this.status = true;
 		},
-		handleError(err) {
+		handleError() {
 			this.status = false;
-			this.$message.error(this.$t("dataFlow.uploadError"));
+			this.$message.error(this.$t('dataFlow.uploadError'));
 		},
 		handleRemove() {
 			return false;

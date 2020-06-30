@@ -68,7 +68,8 @@ const en = {
 		notRest: 'Please select the correct data to reset',
 		operator: 'Operator',
 		edit: 'Edit',
-		clickRelatedTasks: 'Click to view related tasks'
+		clickRelatedTasks: 'Click to view related tasks',
+		currentTaskOpen: 'The current task has been opened'
 	},
 	dataFlow: {
 		draftNotStart: 'Draft can‘t be started',

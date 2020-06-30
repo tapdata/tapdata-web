@@ -534,7 +534,6 @@ export default {
 			try {
 				localStorage.setItem(this.tempId, JSON.stringify(data));
 			} catch (e) {
-				debugger;
 				let ids = [],
 					size = 0;
 				Object.keys(localStorage).forEach(key => {
