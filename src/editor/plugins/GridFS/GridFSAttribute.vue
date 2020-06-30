@@ -1,5 +1,5 @@
 <template>
-	<div class="gridFsNode nodeStyle">
+	<div class="gridFsNode nodeStyle" :class="{ nodeHeight: disabled }">
 		<head>
 			<span class="headIcon iconfont icon-you2" type="primary"></span>
 			<span class="txt">{{ $t('editor.nodeSettings') }}</span>
@@ -73,6 +73,7 @@
 		>
 			<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 		</div>
+		<relatedTasks :taskData="taskData" v-if="disabled && model.gridfsReadMode !== 'binary'"></relatedTasks>
 	</div>
 </template>
 <script>
@@ -80,12 +81,12 @@ import _ from 'lodash';
 import factory from '../../../api/factory';
 import Entity from '../link/Entity';
 import { convertSchemaToTreeData } from '../../util/Schema';
-
+import RelatedTasks from '../../../components/relatedTasks';
 let connections = factory('connections');
 let editorMonitor = null;
 export default {
 	name: 'GridFsNode',
-	components: { Entity },
+	components: { Entity, RelatedTasks },
 	props: {
 		database_types: {
 			type: Array,
@@ -97,6 +98,10 @@ export default {
 
 	data() {
 		return {
+			taskData: {
+				id: '',
+				tableName: ''
+			},
 			disabled: false,
 			databases: [],
 			schemas: [],
@@ -172,6 +177,9 @@ export default {
 			immediate: true,
 			handler() {
 				this.loadDataModels(this.model.connectionId);
+				if (this.model.connectionId) {
+					this.taskData.id = this.model.connectionId;
+				}
 			}
 		},
 		'model.tableName': {
@@ -192,6 +200,7 @@ export default {
 						this.$emit('schemaChange', _.cloneDeep(schema));
 					}
 				}
+				this.taskData.tableName = this.model.tableName;
 			}
 		},
 		mergedSchema: {

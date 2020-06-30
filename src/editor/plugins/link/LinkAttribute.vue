@@ -315,7 +315,7 @@ export default {
 				let sourceCell = cell.getSourceCell(),
 					targetCell = cell.getTargetCell(),
 					sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null,
-					targetSchema = targetCell ? targetCell.getSchema() : null,
+					// targetSchema = targetCell ? targetCell.getSchema() : null,
 					mergedTargetSchema =
 						targetCell && typeof targetCell.getOutputSchema === 'function'
 							? targetCell.getOutputSchema()
@@ -354,15 +354,19 @@ export default {
 					let mergePKs = this.getPKsFromSchema(mergedTargetSchema).sort((v1, v2) =>
 						v1 > v2 ? 1 : v1 === v2 ? 0 : -1
 					);
-					let targetPKs = this.getPKsFromSchema(targetSchema).sort((v1, v2) =>
-						v1 > v2 ? 1 : v1 === v2 ? 0 : -1
-					);
-					let comparedSchema = targetPKs && targetPKs.length > 0 ? targetPKs : mergePKs;
+					// let targetPKs = this.getPKsFromSchema(targetSchema).sort((v1, v2) =>
+					// 	v1 > v2 ? 1 : v1 === v2 ? 0 : -1
+					// );
+					let comparedSchema = mergePKs || [];
+
 					let initialAssociationPKs =
 						sourcePKs && sourcePKs.length > 0 && comparedSchema && comparedSchema.length > 0
 							? sourcePKs.map((field, i) => ({
 									source: field.field_name,
-									target: comparedSchema[i].field_name
+									target:
+										comparedSchema[i] && comparedSchema[i].field_name
+											? comparedSchema[i].field_name
+											: field.field_name
 							  }))
 							: this.model.joinTable.joinKeys;
 

@@ -1,5 +1,5 @@
 <template>
-	<div class="e-table nodeStyle">
+	<div class="e-table nodeStyle" :class="{ nodeHeight: disabled }">
 		<div class="nodeBody">
 			<div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
@@ -144,6 +144,7 @@
 				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 			</div>
 		</div>
+		<relatedTasks :taskData="taskData" v-if="disabled"></relatedTasks>
 	</div>
 </template>
 
@@ -152,6 +153,7 @@ import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm
 import PrimaryKeyInput from '../../../components/PrimaryKeyInput';
 import ClipButton from '@/components/ClipButton';
 import { convertSchemaToTreeData } from '../../util/Schema';
+import RelatedTasks from '../../../components/relatedTasks';
 import Entity from '../link/Entity';
 import _ from 'lodash';
 import factory from '../../../api/factory';
@@ -159,7 +161,7 @@ let connectionApi = factory('connections');
 let editor = null;
 export default {
 	name: 'Table',
-	components: { Entity, DatabaseForm, PrimaryKeyInput, ClipButton },
+	components: { Entity, DatabaseForm, PrimaryKeyInput, ClipButton, RelatedTasks },
 	props: {
 		database_types: {
 			type: Array,
@@ -180,6 +182,9 @@ export default {
 			immediate: true,
 			handler() {
 				this.loadDataModels(this.model.connectionId);
+				if (this.model.connectionId) {
+					this.taskData.id = this.model.connectionId;
+				}
 			}
 		},
 		'model.tableName': {
@@ -203,6 +208,7 @@ export default {
 						this.$emit('schemaChange', _.cloneDeep(schema));
 					}
 				}
+				this.taskData.tableName = this.model.tableName;
 			}
 		},
 		mergedSchema: {
@@ -221,6 +227,10 @@ export default {
 
 	data() {
 		return {
+			taskData: {
+				id: '',
+				tableName: ''
+			},
 			databases: [],
 			schemas: [],
 			disabled: false,

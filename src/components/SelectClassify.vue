@@ -45,13 +45,13 @@
 </template>
 
 <script>
-import factory from "../api/factory";
+import factory from '../api/factory';
 
-const MetadataDefinitions = factory("MetadataDefinitions");
-const MetadataInstances = factory("MetadataInstances");
+const MetadataDefinitions = factory('MetadataDefinitions');
+const MetadataInstances = factory('MetadataInstances');
 
 export default {
-	name: "SelectClassify.vue",
+	name: 'SelectClassify.vue',
 	props: {
 		dialogVisible: {
 			required: true,
@@ -70,9 +70,9 @@ export default {
 		return {
 			default_expanded: false,
 			props: {
-				children: "children",
-				label: "label",
-				isLeaf: "leaf"
+				children: 'children',
+				label: 'label',
+				isLeaf: 'leaf'
 			},
 			data: [],
 			tagList: []
@@ -80,7 +80,7 @@ export default {
 	},
 	watch: {
 		dialogVisible: function() {
-			this.$emit("dialogVisible", this.dialogVisible);
+			this.$emit('dialogVisible', this.dialogVisible);
 		}
 	},
 	methods: {
@@ -91,12 +91,12 @@ export default {
 			};
 
 			if (node.level === 0) {
-				filter.where["parent_id"] = {
+				filter.where['parent_id'] = {
 					exists: false
 				};
 				MetadataDefinitions.get({ filter: JSON.stringify(filter) })
 					.then(res => {
-						if (res.statusText === "OK" || res.status === 200) {
+						if (res.statusText === 'OK' || res.status === 200) {
 							if (res.data) {
 								self.data.splice(0, self.data.length);
 								let children = [];
@@ -112,16 +112,16 @@ export default {
 							}
 						}
 					})
-					.catch(e => {
-						this.$message.error("MetadataInstances error");
+					.catch(() => {
+						this.$message.error('MetadataInstances error');
 					});
 			} else {
-				filter.where["parent_id"] = {
+				filter.where['parent_id'] = {
 					regexp: `^${node.data.id}$`
 				};
 				MetadataDefinitions.get({ filter: JSON.stringify(filter) })
 					.then(res => {
-						if (res.statusText === "OK" || res.status === 200) {
+						if (res.statusText === 'OK' || res.status === 200) {
 							if (res.data) {
 								self.data.splice(0, self.data.length);
 								let children = [];
@@ -138,8 +138,8 @@ export default {
 							}
 						}
 					})
-					.catch(e => {
-						this.$message.error("MetadataInstances error");
+					.catch(() => {
+						this.$message.error('MetadataInstances error');
 					});
 			}
 		},
@@ -199,7 +199,7 @@ export default {
 					}
 					if (classifications.length === 0) {
 						this.tagList = [];
-						this.$message.error("该数据源无此分类 不需要删除");
+						this.$message.error('该数据源无此分类 不需要删除');
 						return;
 					} else {
 						classifications.map(v => {
@@ -222,18 +222,18 @@ export default {
 			};
 			MetadataInstances.classification(metadatas)
 				.then(res => {
-					if (res.statusText === "OK" || res.status === 200) {
+					if (res.statusText === 'OK' || res.status === 200) {
 						// 清空数据
 						this.dialogVisible = false;
 						this.checkData = [];
 						this.tagList = [];
 						this.$refs.tree.setCheckedKeys([]);
-						this.$emit("clearCheckData", []);
-						this.$emit("dialogVisible", false);
+						this.$emit('clearCheckData', []);
+						this.$emit('dialogVisible', false);
 					}
 				})
-				.catch(e => {
-					this.$message.error("MetadataInstancesClassification error");
+				.catch(() => {
+					this.$message.error('MetadataInstancesClassification error');
 				});
 		},
 		handleAdd() {
@@ -272,18 +272,18 @@ export default {
 			};
 			MetadataInstances.classification(metadatas)
 				.then(res => {
-					if (res.statusText === "OK" || res.status === 200) {
+					if (res.statusText === 'OK' || res.status === 200) {
 						// 清空数据
 						this.dialogVisible = false;
 						this.checkData = [];
 						this.tagList = [];
 						this.$refs.tree.setCheckedKeys([]);
-						this.$emit("clearCheckData", []);
-						this.$emit("dialogVisible", false);
+						this.$emit('clearCheckData', []);
+						this.$emit('dialogVisible', false);
 					}
 				})
-				.catch(e => {
-					this.$message.error("MetadataInstancesClassification error");
+				.catch(() => {
+					this.$message.error('MetadataInstancesClassification error');
 				});
 		}
 	}

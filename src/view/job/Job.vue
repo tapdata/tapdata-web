@@ -1,7 +1,7 @@
 <template>
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
-			<template v-if="isEditable()">
+			<template v-if="['draft'].includes(status)">
 				<div
 					:class="[{ btnHover: ['draft'].includes(status) }, 'headImg']"
 					v-show="!isSaving"
@@ -372,7 +372,6 @@ export default {
 	},
 	mounted() {
 		let self = this;
-
 		// build editor
 		self.editor = editor({
 			container: $('.editor-container'),
@@ -393,7 +392,7 @@ export default {
 			this.loading = false;
 			return;
 		}
-		if (window.name.startsWith('monitor') && this.tempData.length > 0) {
+		if (!window.name.startsWith('monitor') && this.tempData.length > 0) {
 			self.loading = false;
 			this.tempDialogVisible = true;
 			return;
@@ -532,7 +531,24 @@ export default {
 				});
 			}
 			this.tempId = 'tapdata.dataflow.$$$' + this.tempKey + '$$$' + data.name;
-			localStorage.setItem(this.tempId, JSON.stringify(data));
+			try {
+				localStorage.setItem(this.tempId, JSON.stringify(data));
+			} catch (e) {
+				debugger;
+				let ids = [],
+					size = 0;
+				Object.keys(localStorage).forEach(key => {
+					if (key.startsWith('tapdata.dataflow.$$$'))
+						ids.push({ id: parseInt(key.split('$$$')[1]), item: key });
+				});
+				ids = ids.sort((a, b) => a.id - b.id);
+				for (let i = 0; i < ids.length; i++) {
+					size += localStorage.getItem(ids[i].item).length;
+					localStorage.removeItem(ids[i].item);
+					if (size > JSON.stringify(data).length) break;
+				}
+				localStorage.setItem(this.tempId, JSON.stringify(data));
+			}
 			window.tempKey = this.tempKey;
 		},
 		//点击draft save按钮
