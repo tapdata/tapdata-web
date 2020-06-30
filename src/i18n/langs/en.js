@@ -610,6 +610,11 @@ const en = {
 				none_join_key: 'JoinKeys is required',
 				none_join_path: 'JoinPath is required',
 				none_array_unique_key: 'Array unique key is required',
+				repeatId: {
+					title: 'Field _id conflict',
+					message:
+						'System has been detected that the field “_id” existed in the target node, and System will removes the duplicated field “_id” . If you want to keep it, please rename the original “_id” field'
+				},
 				form: {
 					label: {
 						label: 'Label',

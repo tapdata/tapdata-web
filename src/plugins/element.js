@@ -45,7 +45,8 @@ import {
 	Tooltip,
 	Upload,
 	Autocomplete,
-	InputNumber
+	InputNumber,
+	Notification
 } from 'element-ui';
 //重写ElementUI Select组件多选时的触发函数，去掉去重的处理
 Select.methods.handleOptionSelect = function(option, byClick) {
@@ -123,6 +124,7 @@ Vue.component(Switch.name, Switch);
 Vue.component(Tooltip.name, Tooltip);
 Vue.component(Tag.name, Tag);
 Vue.component(Drawer.name, Drawer);
+Vue.component(Notification.name, Notification);
 
 Vue.use(Loading.directive);
 /***提示只显示一次**/
@@ -166,3 +168,4 @@ Vue.prototype.$prompt = MessageBox.prompt;
 Vue.prototype.$alert = MessageBox.alert;
 Vue.prototype.$message = new DoneMessage();
 Vue.prototype.$msgbox = MessageBox;
+Vue.prototype.$notify = Notification;

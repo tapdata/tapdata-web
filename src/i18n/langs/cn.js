@@ -603,6 +603,10 @@ const cn = {
 				none_join_key: '关联字段必填',
 				none_join_path: '关联写入路径必填',
 				none_array_unique_key: '合并进数组时，必须提供唯一键',
+				repeatId: {
+					title: '_id字段冲突',
+					message: '检测到目标节点已存在 _id 字段，系统将移除已重复的 _id 字段，如果想保留请将原 _id 字段改名'
+				},
 				form: {
 					label: {
 						label: '标签',

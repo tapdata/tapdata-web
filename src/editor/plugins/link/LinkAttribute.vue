@@ -83,6 +83,7 @@
 					v-model="model.joinTable.joinPath"
 					:placeholder="$t('editor.cell.link.form.joinPath.placeholder')"
 					size="mini"
+					@input="checkRepeatId()"
 				>
 				</el-input>
 				<ClipButton :value="model.joinTable.joinPath"></ClipButton>
@@ -283,6 +284,45 @@ export default {
 	},
 
 	methods: {
+		/**
+		 * 	提示用户_id重复，需要更名
+		 *  1. 数据写入模式：更新已存在或插入新数据、更新写入模式
+		 *	2. 关联后写入路径为空
+		 *	3. 两表合并且都存在_id
+		 */
+		checkRepeatId() {
+			let self = this;
+			let path = self.model.joinTable.joinPath;
+			let type = self.model.joinTable.joinType;
+
+			if (path && path.trim()) {
+				return;
+			}
+			if (type !== 'update' && type !== 'upsert') {
+				return;
+			}
+			let cell = self.cell;
+			let targetCell = cell.getTargetCell();
+			let fields = targetCell.attributes.outputSchema.fields || [];
+			const h = self.$createElement;
+			let messageArr = self.$t('editor.cell.link.repeatId.message').split('_id');
+			let msgNode = [];
+			messageArr.forEach((m, i) => {
+				msgNode.push(m);
+				if (i < messageArr.length - 1) {
+					msgNode.push(h('i', { class: 'color-primary' }, '_id'));
+				}
+			});
+			fields.forEach(field => {
+				if (field.field_name === '_id' && field.source.length > 1) {
+					self.$notify({
+						title: self.$t('editor.cell.link.repeatId.title'),
+						message: h('i', {}, msgNode),
+						duration: 0
+					});
+				}
+			});
+		},
 		supportEmbedArray() {
 			return !['app.Table'].includes(this.targetCellType);
 		},
@@ -386,6 +426,8 @@ export default {
 				}
 			}
 
+			this.checkRepeatId();
+
 			this.$emit(EditorEventType.RESIZE);
 			this.showMapping(data, cell, vueAdapter);
 
@@ -471,6 +513,7 @@ export default {
 		},
 
 		handlerJoinTypeChanged() {
+			this.checkRepeatId();
 			if (!this.model.joinTable.joinPath && ['merge_embed', 'update'].includes(this.model.joinTable.joinType)) {
 				this.model.joinTable.joinPath = this.model.joinTable.tableName;
 			}
