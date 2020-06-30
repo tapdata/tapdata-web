@@ -80,7 +80,13 @@ export const /**
 						primary_key_position: field.primary_key_position,
 						table_name: field.table_name || 'table'
 					};
-					_.set(root, 'children.' + jsonPathForFieldName.join('.children.'), treeItem);
+					let path = 'children.' + jsonPathForFieldName.join('.children.');
+					let partField = _.get(root, path);
+					if (!partField) {
+						_.set(root, path, treeItem);
+					} else {
+						_.set(root, path, _.merge(partField, treeItem));
+					}
 				}
 			}
 			let re = function(field) {
