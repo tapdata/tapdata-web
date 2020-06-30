@@ -68,7 +68,8 @@ const cn = {
 		operator: '操作',
 		edit: '修改',
 		clickRelatedTasks: '点击查看相关任务',
-		currentTaskOpen: '当前任务已打开'
+		currentTaskOpen: '当前任务已打开',
+		noRelatedTask: '暂无相关任务'
 	},
 	dataFlow: {
 		draftNotStart: '草稿不能启动 ',

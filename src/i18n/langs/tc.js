@@ -67,7 +67,8 @@ const tc = {
 		operator: '操作',
 		edit: '修改',
 		clickRelatedTasks: '點擊查看相關任務',
-		currentTaskOpen: '當前任務已打開'
+		currentTaskOpen: '當前任務已打開',
+		noRelatedTask: '暫無相關任務'
 	},
 	dataFlow: {
 		draftNotStart: '草稿不能啟動',

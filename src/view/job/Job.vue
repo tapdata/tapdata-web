@@ -1,7 +1,7 @@
 <template>
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
-			<template v-if="['draft'].includes(status)">
+			<template v-if="['draft', 'paused'].includes(status)">
 				<div
 					:class="[{ btnHover: ['draft'].includes(status) }, 'headImg']"
 					v-show="!isSaving"
@@ -129,7 +129,7 @@
 				style="margin-left: 30px;border-radius: 20px;"
 				>{{ $t('dataFlow.state') }}: {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}
 			</el-tag>
-			<template v-if="!['draft'].includes(status)">
+			<template>
 				<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.start')" placement="bottom">
 					<el-button
 						class="headImg borderStyle iconfont icon-yunhang1"
@@ -176,10 +176,10 @@
 				</el-tooltip>
 			</template>
 
-			<div class="headImg round" v-if="isEditable()" @click="submitLayer" style="float: right;">
+			<!-- <div class="headImg round" v-if="isEditable()" @click="submitLayer" style="float: right;">
 				<span class="iconfont icon-icon_fabu"></span>
 				<span class="text">{{ $t('dataFlow.button.submit') }}</span>
-			</div>
+			</div> -->
 			<!-- <el-button size="mini" type="primary" @click="switchModel">Model</el-button> -->
 		</div>
 
@@ -301,10 +301,10 @@ export default {
 			flowDataName: '',
 			statusBtMap: {
 				draft: {
-					start: true,
+					start: false,
 					stop: true,
 					forceStop: true,
-					reset: true,
+					reset: false,
 					setting: false,
 					preview: false,
 					logs: false,
