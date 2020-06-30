@@ -613,7 +613,7 @@ const en = {
 				repeatId: {
 					title: 'Field _id conflict',
 					message:
-						'System has been detected that the field “_id” existed in the target node, and System will removes the duplicated field “_id” . If you want to keep it, please rename the original “_id” field'
+						'The target model already exists "_id" field, please use the field processor to rename the "_id"!'
 				},
 				form: {
 					label: {

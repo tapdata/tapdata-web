@@ -605,7 +605,7 @@ const cn = {
 				none_array_unique_key: '合并进数组时，必须提供唯一键',
 				repeatId: {
 					title: '_id字段冲突',
-					message: '检测到目标节点已存在 _id 字段，系统将移除已重复的 _id 字段，如果想保留请将原 _id 字段改名'
+					message: '目标数据模型已存在 _id 字段，请使用字段处理器对源表的 _id 进行重命名！'
 				},
 				form: {
 					label: {
