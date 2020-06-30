@@ -330,6 +330,16 @@ export default {
 					logs: true,
 					reloadSchema: true
 				},
+				scheduled: {
+					start: true,
+					stop: true,
+					forceStop: false,
+					reset: true,
+					setting: true,
+					preview: true,
+					logs: true,
+					reloadSchema: true
+				},
 				error: {
 					start: false,
 					stop: true,
@@ -656,7 +666,7 @@ export default {
 		polling() {
 			let self = this;
 			if (self.dataFlowId) {
-				if (!['scheduled', 'running', 'stopping', 'force stopping'].includes(self.status)) return;
+				//if (!['scheduled', 'running', 'stopping', 'force stopping'].includes(self.status)) return;
 
 				dataFlowsApi
 					.get([self.dataFlowId], {
@@ -685,13 +695,14 @@ export default {
 							if (self.executeMode !== result.data.executeMode)
 								self.executeMode = result.data.executeMode;
 
-							if (['scheduled', 'running', 'stopping', 'force stopping'].includes(newStatus)) {
-								if (self.timeoutId) clearTimeout(self.timeoutId);
-								self.timeoutId = setTimeout(self.polling.bind(self), 2000);
-							} else {
+							if (self.timeoutId) clearTimeout(self.timeoutId);
+							self.timeoutId = setTimeout(self.polling.bind(self), 2000);
+
+							if (!['scheduled', 'running', 'stopping', 'force stopping'].includes(newStatus)) {
+								// } else {
 								self.executeMode = 'normal';
 							}
-							Object.assign(this.dataFlow, result.data);
+							Object.assign(self.dataFlow, result.data);
 							self.editor.emit('dataFlow:updated', _.cloneDeep(result.data));
 						}
 					})
