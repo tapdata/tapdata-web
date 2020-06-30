@@ -1,7 +1,7 @@
 <template>
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
-			<template v-if="['draft', 'paused'].includes(status)">
+			<template v-if="isEditable()">
 				<div
 					:class="[{ btnHover: ['draft'].includes(status) }, 'headImg']"
 					v-show="!isSaving"
@@ -9,7 +9,7 @@
 					style="cursor: pointer;"
 				>
 					<span class="iconfont icon-yunduanshangchuan"></span>
-					<span class="text">{{ $t('dataFlow.button.saveDraft') }}</span>
+					<span class="text">{{ $t('dataFlow.button.save') }}</span>
 				</div>
 
 				<div class="headImg" v-show="isSaving" style="color: #48B6E2;">
