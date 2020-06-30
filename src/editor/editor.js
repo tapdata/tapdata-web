@@ -347,6 +347,7 @@ export default class Editor extends BaseObject {
 				title: i18n.t('editor.ui.sidebar.logs'),
 				name: 'logsPanel',
 				editor: this,
+				closeBtn: true,
 				propsData: {
 					dataFlow: dataFlow
 				},

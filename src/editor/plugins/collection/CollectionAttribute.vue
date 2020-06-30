@@ -86,12 +86,12 @@
 				>
 					<div class="flex-block">
 						<el-switch
-							v-model="model.enable"
+							v-model="model.enableInitialOrder"
 							style="margin-right: 20px"
 							@change="model.initialSyncOrder = 0"
 						></el-switch>
 						<el-input-number
-							v-if="model.enable"
+							v-if="model.enableInitialOrder"
 							v-model="model.initialSyncOrder"
 							controls-position="right"
 							:min="1"
@@ -235,7 +235,7 @@ export default {
 					this.primaryKeyOptions = fields.map(f => f.field_name);
 					if (!this.model.primaryKeys) {
 						let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
-						if (primaryKeys.length > 0) this.model.primaryKeys = Array.from(new Set(primaryKeys).join(','));
+						if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
 					}
 				}
 			}
@@ -280,7 +280,7 @@ export default {
 				primaryKeys: '',
 				filter: '',
 				initialSyncOrder: 0,
-				enable: false
+				enableInitialOrder: false
 			},
 
 			mergedSchema: null,
@@ -351,13 +351,13 @@ export default {
 				primaryKeys: '',
 				filter: '',
 				initialSyncOrder: 0,
-				enable: false
+				enableInitialOrder: false
 			};
 			if (data) {
 				_.merge(this.model, data);
 				//老数据的兼容处理
 				if (data.initialSyncOrder > 0) {
-					this.model.enable = true;
+					this.model.enableInitialOrder = true;
 				}
 			}
 			this.isSourceDataNode = isSourceDataNode;

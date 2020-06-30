@@ -88,12 +88,12 @@
 				>
 					<div class="flex-block">
 						<el-switch
-							v-model="model.enable"
+							v-model="model.enableInitialOrder"
 							style="margin-right: 20px"
 							@change="model.initialSyncOrder = 0"
 						></el-switch>
 						<el-input-number
-							v-if="model.enable"
+							v-if="model.enableInitialOrder"
 							v-model="model.initialSyncOrder"
 							controls-position="right"
 							:min="1"
@@ -256,7 +256,7 @@ export default {
 				type: 'table',
 				primaryKeys: '',
 				initialSyncOrder: 0,
-				enable: false
+				enableInitialOrder: false
 			},
 
 			mergedSchema: null,
@@ -332,13 +332,13 @@ export default {
 				primaryKeys: '',
 				initialOffset: '',
 				initialSyncOrder: 0,
-				enable: false
+				enableInitialOrder: false
 			};
 			if (data) {
 				_.merge(this.model, data);
 				//老数据的兼容处理
 				if (data.initialSyncOrder > 0) {
-					this.model.enable = true;
+					this.model.enableInitialOrder = true;
 				}
 			}
 			this.isSourceDataNode = isSourceDataNode;
