@@ -198,6 +198,9 @@ export default class Graph extends Component {
 		return [cell].concat(graph.getConnectedLinks(cell, { outbound: true }));*/
 	}
 
+	/**
+	 * @deprecated
+	 */
 	initLane() {
 		this.createLanes();
 
@@ -222,6 +225,9 @@ export default class Graph extends Component {
 		};
 	}
 
+	/**
+	 * @deprecated
+	 */
 	createLanes() {
 		/*this.sourceLane = new joint.shapes.dataMap.Lane({
 			size: {
@@ -359,6 +365,9 @@ export default class Graph extends Component {
 		this.setLaneHeaderStyle(lane, width, this.spacing);
 	}
 
+	/**
+	 * @deprecated
+	 */
 	updateLanes() {
 		let spacing = this.spacing;
 		let bbox = this.getContentBBox();
@@ -477,6 +486,12 @@ export default class Graph extends Component {
 		});
 	}
 
+	/**
+	 * @deprecated
+	 * @param lane
+	 * @param width
+	 * @param spacing
+	 */
 	setLaneHeaderStyle(lane, width, spacing) {
 		// log("DataMap.Graph.setLaneHeaderStyle", lane, width, spacing);
 		lane.attr({
@@ -493,6 +508,11 @@ export default class Graph extends Component {
 		});
 	}
 
+	/**
+	 * @deprecated
+	 * @param attrs
+	 * @param opts
+	 */
 	createLane(attrs, opts) {
 		let lane = new joint.shapes.dataMap.Lane(
 			_.merge(
@@ -1165,6 +1185,10 @@ export default class Graph extends Component {
 		};
 
 		let links = [];
+		/**
+		 * server data node id -> joint cell id
+		 * @type {{}}
+		 */
 		let idMap = {};
 
 		/*idMap['sourceLane'] = this.sourceLane.id;
@@ -1212,6 +1236,7 @@ export default class Graph extends Component {
 			tapdataChildren = [],
 			apiChildren = [];
 
+		// process element embed
 		cells
 			.filter(c => !!c.parent)
 			.forEach(cellData => {
@@ -1247,21 +1272,21 @@ export default class Graph extends Component {
 			sourceCells.push(cell);
 			sourceCells = sourceCells.concat(cell.getEmbeddedCells({ deep: true }));
 		});
-		applyStyle(sourceCells, '#f2ca90');
+		applyStyle(sourceCells, '#ffffff');
 
 		let tapdataCells = [];
 		tapdataChildren.forEach(cell => {
 			tapdataCells.push(cell);
 			tapdataCells = tapdataCells.concat(cell.getEmbeddedCells({ deep: true }));
 		});
-		applyStyle(tapdataCells, '#f2902c');
+		applyStyle(tapdataCells, '#ffffff');
 
 		let apiCells = [];
 		apiChildren.forEach(cell => {
 			apiCells.push(cell);
 			apiCells = apiCells.concat(cell.getEmbeddedCells({ deep: true }));
 		});
-		applyStyle(apiCells, '#90f22c');
+		applyStyle(apiCells, '#ffffff');
 
 		self.graph.getCells().forEach(cell => {
 			let embeddedCells = cell.getEmbeddedCells();
