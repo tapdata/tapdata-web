@@ -204,8 +204,7 @@ export default {
 			model: {
 				label: '',
 				joinTable: _.cloneDeep(JOIN_TABLE_TPL),
-				type: 'link',
-				joinTableKeys: []
+				type: 'link'
 			},
 			initialUpSertData: []
 		};
@@ -347,8 +346,7 @@ export default {
 			this.model = {
 				label: '',
 				joinTable: _.cloneDeep(JOIN_TABLE_TPL),
-				type: 'link',
-				joinTableKeys: []
+				type: 'link'
 			};
 
 			if (data) {
