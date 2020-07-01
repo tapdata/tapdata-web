@@ -62,7 +62,11 @@ export default class Graph extends Component {
 		graph.on(
 			'add',
 			function(cell, collection, opt) {
-				if (opt.stencil) self.createInspector(cell);
+				log('Editor.graph.add', cell, collection, opt);
+				// self.createInspector(cell);
+				setTimeout(() => {
+					self.selection.collection.reset([cell]);
+				}, 0);
 				self.emit(EditorEventType.ADD_CELL);
 			},
 			this
@@ -498,9 +502,6 @@ export default class Graph extends Component {
 
 	createInspector(cell) {
 		this.vueAdapter.render(cell);
-		setTimeout(() => {
-			this.selectCell(cell);
-		}, 200);
 
 		/* let styles = self.ui.rightTabPanel.getChildByName('styles');
 		// styles.removeAll();
