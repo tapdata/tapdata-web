@@ -35,19 +35,17 @@ export default joint => {
 		// defaultAttributes
 		size: { width: 220, height: 80 },
 		attrs: {
-			image: {
-				xlinkHref: 'static/editor/o-DB.svg',
-				refWidth: '19%',
-				refHeight: '82%',
-				refX: '-4%',
-				refY: '-7%'
-			},
+			// image: {
+			// 	xlinkHref: 'static/editor/o-DB.svg',
+			// 	refWidth: '19%',
+			// 	refHeight: '82%',
+			// 	refX: '-4%',
+			// 	refY: '-7%'
+			// },
 			body: {
 				fill: '#e699ab',
 				stroke: '#000000',
 				strokeWidth: 1,
-				rx: 5,
-				ry: 5,
 				refWidth: '100%',
 				refHeight: '100%'
 			},
@@ -55,9 +53,9 @@ export default joint => {
 				text: 'Classification',
 				textVerticalAnchor: 'middle',
 				textAnchor: 'left',
-				refX: '10%',
+				refX: '30%',
 				refY: '50%',
-				fontSize: 12,
+				fontSize: 16,
 				fill: '#333333',
 				x: 0,
 				y: 0
@@ -138,11 +136,11 @@ export default joint => {
 		size: { width: 220, height: 42 },
 		attrs: {
 			image: {
-				xlinkHref: 'static/editor/API-target1.svg',
-				refWidth: '19%',
-				refHeight: '82%',
+				xlinkHref: 'static/editor/link.svg',
+				refWidth: '17%',
+				refHeight: '70%',
 				refX: '-4%',
-				refY: '-15%'
+				refY: '-10%'
 			},
 			body: {
 				fill: '#b6a5c5',
@@ -208,6 +206,9 @@ export default joint => {
 				stroke: '#999',
 				strokeWidth: '1'
 			}
+		},
+		position: {
+			distance: 0.5
 		}
 	});
 
