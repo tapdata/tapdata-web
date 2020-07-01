@@ -15,6 +15,7 @@ import i18n from '../../../i18n/i18n';
 
 import log from '../../../log';
 import { convertSchemaToTreeData } from '../../util/Schema';
+import breakText from '../../breakText';
 
 window.joint = window.joint || joint;
 
@@ -407,7 +408,7 @@ export default class Graph extends Component {
 					marginX: 100,
 					marginY: 100,
 					// resizeToFit: true,
-					nodeSep: 20,
+					nodeSep: 30,
 					edgeSep: 10,
 					rankSep: 80,
 					// ranker: 'tight-tree',
@@ -557,7 +558,10 @@ export default class Graph extends Component {
 				{
 					attrs: {
 						label: {
-							text: cellData.name
+							text:
+								cellData.name !== '' && cellData.name
+									? breakText.breakText(cellData.name, 200)
+									: cellConfig.type
 						}
 					},
 					properties: _.assignWith(

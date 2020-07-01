@@ -208,7 +208,8 @@ export default joint => {
 			}
 		},
 		position: {
-			distance: 0.5
+			distance: 0.1,
+			angle: 90
 		}
 	});
 
