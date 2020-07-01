@@ -1257,11 +1257,12 @@ export default class Graph extends Component {
 				}
 			});
 
-		let applyStyle = function(cells, bgColor) {
+		let applyStyle = function(cells, bgColor, borderColor) {
 			cells.forEach(cell => {
 				cell.attr({
 					body: {
-						fill: bgColor
+						fill: bgColor,
+						stroke: borderColor
 					}
 				});
 			});
@@ -1272,21 +1273,21 @@ export default class Graph extends Component {
 			sourceCells.push(cell);
 			sourceCells = sourceCells.concat(cell.getEmbeddedCells({ deep: true }));
 		});
-		applyStyle(sourceCells, '#ffffff');
+		applyStyle(sourceCells, '#fcf9fe', '#dedede');
 
 		let tapdataCells = [];
 		tapdataChildren.forEach(cell => {
 			tapdataCells.push(cell);
 			tapdataCells = tapdataCells.concat(cell.getEmbeddedCells({ deep: true }));
 		});
-		applyStyle(tapdataCells, '#ffffff');
+		applyStyle(tapdataCells, '#ebf7fc', '#b1e4f8');
 
 		let apiCells = [];
 		apiChildren.forEach(cell => {
 			apiCells.push(cell);
 			apiCells = apiCells.concat(cell.getEmbeddedCells({ deep: true }));
 		});
-		applyStyle(apiCells, '#ffffff');
+		applyStyle(apiCells, '#fbecec', '#f7dddd');
 
 		self.graph.getCells().forEach(cell => {
 			let embeddedCells = cell.getEmbeddedCells();
