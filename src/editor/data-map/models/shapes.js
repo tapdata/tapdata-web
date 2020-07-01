@@ -8,7 +8,7 @@ export default joint => {
 		'dataMap.Tapdata',
 		{
 			// defaultAttributes
-			size: { width: 160, height: 80 },
+			size: { width: 220, height: 80 },
 			attrs: {
 				body: {
 					fill: '#8eb0d5',
@@ -33,21 +33,19 @@ export default joint => {
 
 	joint.shapes.standard.EmbeddedImage.define('dataMap.Classification', {
 		// defaultAttributes
-		size: { width: 200, height: 80 },
+		size: { width: 220, height: 80 },
 		attrs: {
-			image: {
-				xlinkHref: 'static/editor/o-DB.svg',
-				refWidth: '19%',
-				refHeight: '82%',
-				refX: '-4%',
-				refY: '-7%'
-			},
+			// image: {
+			// 	xlinkHref: 'static/editor/o-DB.svg',
+			// 	refWidth: '19%',
+			// 	refHeight: '82%',
+			// 	refX: '-4%',
+			// 	refY: '-7%'
+			// },
 			body: {
 				fill: '#e699ab',
 				stroke: '#000000',
 				strokeWidth: 1,
-				rx: 5,
-				ry: 5,
 				refWidth: '100%',
 				refHeight: '100%'
 			},
@@ -55,9 +53,9 @@ export default joint => {
 				text: 'Classification',
 				textVerticalAnchor: 'middle',
 				textAnchor: 'left',
-				refX: '10%',
+				refX: '30%',
 				refY: '50%',
-				fontSize: 12,
+				fontSize: 16,
 				fill: '#333333',
 				x: 0,
 				y: 0
@@ -67,14 +65,14 @@ export default joint => {
 
 	joint.shapes.standard.EmbeddedImage.define('dataMap.Database', {
 		// defaultAttributes
-		size: { width: 160, height: 30 },
+		size: { width: 220, height: 42 },
 		attrs: {
 			image: {
 				xlinkHref: 'static/editor/o-DB.svg',
 				refWidth: '19%',
 				refHeight: '82%',
 				refX: '-4%',
-				refY: '-23%'
+				refY: '-15%'
 			},
 			body: {
 				fill: '#f2ca90',
@@ -101,7 +99,7 @@ export default joint => {
 
 	joint.shapes.standard.EmbeddedImage.define('dataMap.Table', {
 		// defaultAttributes
-		size: { width: 160, height: 30 },
+		size: { width: 220, height: 30 },
 		attrs: {
 			image: {
 				xlinkHref: 'static/editor/o-table.svg',
@@ -135,14 +133,14 @@ export default joint => {
 
 	joint.shapes.standard.EmbeddedImage.define('dataMap.API', {
 		// defaultAttributes
-		size: { width: 160, height: 30 },
+		size: { width: 220, height: 42 },
 		attrs: {
 			image: {
-				xlinkHref: 'static/editor/API-target1.svg',
-				refWidth: '19%',
-				refHeight: '82%',
+				xlinkHref: 'static/editor/link.svg',
+				refWidth: '17%',
+				refHeight: '70%',
 				refX: '-4%',
-				refY: '-23%'
+				refY: '-10%'
 			},
 			body: {
 				fill: '#b6a5c5',
@@ -197,7 +195,7 @@ export default joint => {
 			line: {
 				targetMarker: {
 					type: 'path',
-					fill: '#5755a1',
+					fill: '#999999',
 					d: 'M 10 -5 0 0 10 5 z'
 				},
 				/*sourceMarker: {
@@ -205,8 +203,12 @@ export default joint => {
 					'fill': '#5755a1',
 					'd': 'M 0 -5 10 0 0 5 z'
 				},*/
-				stroke: 'gray'
+				stroke: '#999',
+				strokeWidth: '1'
 			}
+		},
+		position: {
+			distance: 0.5
 		}
 	});
 
