@@ -436,8 +436,6 @@ export default {
 				}
 			}
 
-			this.checkRepeatId();
-
 			this.$emit(EditorEventType.RESIZE);
 			this.showMapping(data, cell, vueAdapter);
 
