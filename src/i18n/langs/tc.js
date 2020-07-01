@@ -71,7 +71,7 @@ const tc = {
 		noRelatedTask: '暫無相關任務'
 	},
 	dataFlow: {
-		draftNotStart: '草稿不能啟動',
+		draftNotStart: '編輯中不能啟動，請進入編輯頁面啟動',
 		systemHint: '系統提示',
 		systemText: '系統檢測出有如下任務上次操作後未保存，請問是否繼續編輯',
 		stystemOpen: '打開',
