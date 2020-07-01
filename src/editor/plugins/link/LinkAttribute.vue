@@ -243,6 +243,11 @@ export default {
 				} else {
 					this.model.joinTable.arrayUniqueKey = '';
 				}
+
+				if (this.model.joinTable.joinType !== 'upsert') {
+					this.model.joinTable.joinKeys.source = '';
+					this.model.joinTable.joinKeys.target = '';
+				}
 			}
 		}
 	},
@@ -382,9 +387,9 @@ export default {
 				this.sourceList = (sourceList && sourceList.filter(item => item.field_name !== '')) || [];
 				this.targetList = (targetList && targetList.filter(item => item.field_name !== '')) || [];
 
+				let joinKeys = this.model.joinTable.joinKeys;
+				// 关联字段自动填充
 				if (this.model.joinTable.joinType === 'upsert') {
-					let joinKeys = this.model.joinTable.joinKeys;
-					// 关联字段自动填充
 					let sourcePKs = this.getPKsFromSchema(sourceSchema).sort((v1, v2) =>
 						v1 > v2 ? 1 : v1 === v2 ? 0 : -1
 					);
@@ -414,14 +419,14 @@ export default {
 						if (sourceSchema && mergedTargetSchema.fields) {
 							this.model.joinTable.joinKeys = initialAssociationPKs;
 						}
-					}
 
-					if (sourcePKs && sourcePKs.length > 0) {
-						sourcePKs.map((field, i) => {
-							if (field.field_name !== joinKeys[i].source) {
-								joinKeys[i].source = field.field_name;
-							}
-						});
+						if (sourcePKs && sourcePKs.length > 0) {
+							sourcePKs.map((field, i) => {
+								if (field.field_name !== joinKeys[i].source) {
+									joinKeys[i].source = field.field_name;
+								}
+							});
+						}
 					}
 				}
 			}
