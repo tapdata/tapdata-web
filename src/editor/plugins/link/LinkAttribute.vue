@@ -205,7 +205,8 @@ export default {
 				label: '',
 				joinTable: _.cloneDeep(JOIN_TABLE_TPL),
 				type: 'link'
-			}
+			},
+			initialUpSertData: []
 		};
 	},
 
@@ -245,8 +246,9 @@ export default {
 				}
 
 				if (this.model.joinTable.joinType !== 'upsert') {
-					this.model.joinTable.joinKeys.source = '';
-					this.model.joinTable.joinKeys.target = '';
+					this.model.joinTable.joinKeys = [{ source: '', target: '' }];
+				} else {
+					this.model.joinTable.joinKeys = this.initialUpSertData;
 				}
 			}
 		}
@@ -389,6 +391,7 @@ export default {
 
 				let joinKeys = this.model.joinTable.joinKeys;
 				// 关联字段自动填充
+
 				if (this.model.joinTable.joinType === 'upsert') {
 					let sourcePKs = this.getPKsFromSchema(sourceSchema).sort((v1, v2) =>
 						v1 > v2 ? 1 : v1 === v2 ? 0 : -1
@@ -415,7 +418,7 @@ export default {
 												: field.field_name
 								  }))
 								: this.model.joinTable.joinKeys;
-
+						this.initialUpSertData = initialAssociationPKs;
 						if (sourceSchema && mergedTargetSchema.fields) {
 							this.model.joinTable.joinKeys = initialAssociationPKs;
 						}
@@ -427,6 +430,8 @@ export default {
 								}
 							});
 						}
+					} else {
+						this.initialUpSertData = this.model.joinTable.joinKeys;
 					}
 				}
 			}
@@ -438,6 +443,8 @@ export default {
 
 			editorMonitor = vueAdapter.editor;
 		},
+
+		handleUpSert() {},
 
 		getPKsFromSchema(schema) {
 			return schema && schema.fields && schema.fields.length > 0
