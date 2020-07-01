@@ -391,40 +391,45 @@ export default {
 
 				let joinKeys = this.model.joinTable.joinKeys;
 				// 关联字段自动填充
+				if (
+					joinKeys.length === 0 ||
+					(joinKeys.length === 1 && (joinKeys[0].source === '' || joinKeys[0].target === ''))
+				) {
+					if (this.model.joinTable.joinType === 'upsert') {
+						let sourcePKs = this.getPKsFromSchema(sourceSchema).sort((v1, v2) =>
+							v1 > v2 ? 1 : v1 === v2 ? 0 : -1
+						);
+						let mergeFields = [];
+						if (mergedTargetSchema && mergedTargetSchema.fields) {
+							mergeFields = mergedTargetSchema.fields;
+						}
 
-				if (this.model.joinTable.joinType === 'upsert') {
-					let sourcePKs = this.getPKsFromSchema(sourceSchema).sort((v1, v2) =>
-						v1 > v2 ? 1 : v1 === v2 ? 0 : -1
-					);
-					let mergePKs = this.getPKsFromSchema(mergedTargetSchema).sort((v1, v2) =>
-						v1 > v2 ? 1 : v1 === v2 ? 0 : -1
-					);
-					if (
-						joinKeys.length === 0 ||
-						(joinKeys.length === 1 && (joinKeys[0].source === '' || joinKeys[0].target === ''))
-					) {
+						mergeFields.sort((v1, v2) => (v1 > v2 ? 1 : v1 === v2 ? 0 : -1));
+
 						// let targetPKs = this.getPKsFromSchema(targetSchema).sort((v1, v2) =>
 						// 	v1 > v2 ? 1 : v1 === v2 ? 0 : -1
 						// );
-						let comparedSchema = mergePKs || [];
+						// let comparedPKs = mergePKs || [];
 
-						let initialAssociationPKs = [];
-						if (sourcePKs && sourcePKs.length > 0 && comparedSchema && comparedSchema.length > 0) {
-							initialAssociationPKs = sourcePKs.map((field, i) => ({
-								source: field.field_name,
-								target:
-									comparedSchema[i] && comparedSchema[i].field_name
-										? comparedSchema[i].field_name
-										: field.field_name
-							}));
-						} else {
-							initialAssociationPKs = this.model.joinTable.joinKeys;
+						let initialAssociationPKs = this.model.joinTable.joinKeys;
+						if (sourcePKs && sourcePKs.length > 0) {
+							initialAssociationPKs = sourcePKs.map(field => {
+								let source = field.field_name;
+								let target = '';
+								if (mergeFields && mergeFields.length) {
+									let pk = mergeFields.find(tField => tField.field_name === field.field_name);
+									if (pk) {
+										target = pk.field_name;
+									}
+								}
+								return {
+									source,
+									target
+								};
+							});
 						}
-						this.initialUpSertData = _.cloneDeep(initialAssociationPKs);
-						if (sourceSchema && mergedTargetSchema.fields) {
-							this.model.joinTable.joinKeys = initialAssociationPKs;
-						}
-					} else {
+						this.model.joinTable.joinKeys = initialAssociationPKs;
+
 						this.initialUpSertData = _.cloneDeep(this.model.joinTable.joinKeys);
 					}
 				}
