@@ -1,30 +1,6 @@
 <template>
 	<div class="data-map-container">
-		<div class="data-map">
-			<div class="left-side-classification">
-				<div class="e-header">{{ $t('dataMap.classification') }}</div>
-				<div>
-					<!--<el-input
-						placeholder="输入关键字进行过滤"
-						clearable
-						v-model="filterText"
-						size="mini">
-					</el-input>-->
-
-					<el-tree
-						class="filter-tree"
-						:data="treeData"
-						default-expand-all
-						:filter-node-method="filterNode"
-						:props="{ label: 'value' }"
-						@node-click="loadCellsByTag"
-						:expand-on-click-node="false"
-						highlight-current
-					>
-					</el-tree>
-				</div>
-			</div>
-		</div>
+		<div class="data-map"></div>
 		<div class="action-bar">
 			<div class="left-bar">
 				<span class="e-btn" @click="upward">
@@ -52,6 +28,33 @@
 				<span class="e-btn" @click="zoomOut">
 					<i class="iconfont icon-zoomout"></i>
 				</span>
+			</div>
+			<div class="e-classification">
+				<el-cascader
+					size="mini"
+					:options="treeData"
+					clearable
+					:filter-method="filterNode"
+					@change="loadCellsByTag"
+					filterable
+					:props="{ label: 'value', value: 'id', expandTrigger: 'hover', checkStrictly: true }"
+				>
+				</el-cascader>
+				<!--<div class="e-header">{{ $t('dataMap.classification') }}</div>
+				<div>
+					<el-cascader size="small" :options="treeData" clearable></el-cascader>
+					&lt;!&ndash;<el-tree
+						class="filter-tree"
+						:data="treeData"
+						default-expand-all
+						:filter-node-method="filterNode"
+						:props="{ label: 'value' }"
+						@node-click="loadCellsByTag"
+						:expand-on-click-node="false"
+						highlight-current
+					>
+					</el-tree>&ndash;&gt;
+				</div>-->
 			</div>
 		</div>
 	</div>
@@ -100,8 +103,8 @@ export default {
 		let self = this;
 
 		self.dataMap = new DataMap({
-			container: $('.data-map-container .data-map'),
-			leftSidebar: $('.data-map-container .left-side-classification')
+			container: $('.data-map-container .data-map')
+			//leftSidebar: $('.data-map-container .e-classification')
 		});
 
 		this.loadData();
@@ -203,7 +206,7 @@ export default {
 					} else {
 						self.$message.info({
 							message: i18n.t('dataMap.noneData'),
-							duration: 0,
+							duration: 10000,
 							showClose: true,
 							offset: 100
 						});
@@ -216,15 +219,16 @@ export default {
 					loading.close();
 					self.$message.error({
 						message: i18n.t('message.api.get.error'),
-						duration: 0,
+						duration: 10000,
 						showClose: true,
 						offset: 100
 					});
 				});
 		},
 
-		loadCellsByTag(data) {
-			this.tag = data.id;
+		loadCellsByTag(values) {
+			if (values && values.length > 0) this.tag = values[values.length - 1];
+			else this.tag = '';
 			this.loadData();
 		},
 
@@ -267,17 +271,19 @@ export default {
 						i--;
 					}
 				}
-				if (parent && parent.children && parent.children.length) {
+				if (parent.children.length > 0) {
 					for (let j = 0; j < parent.children.length; j++) {
 						find_children(parent.children[j], items);
 					}
+				} else {
+					delete parent.children;
 				}
 			}
 		},
 
-		filterNode(value, data) {
-			if (!value) return true;
-			return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1;
+		filterNode(node, keyword) {
+			if (!keyword) return true;
+			return node.label.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
 		}
 	}
 };
@@ -286,7 +292,7 @@ export default {
 <style lang="less">
 @import '../../editor/data-map/style/data-map';
 .data-map-container {
-	.left-side-classification {
+	.e-classification {
 		padding: 20px;
 		.el-tree-node__label {
 			font-size: 12px;

@@ -46,7 +46,8 @@ import {
 	Upload,
 	Autocomplete,
 	InputNumber,
-	Notification
+	Notification,
+	Cascader
 } from 'element-ui';
 //重写ElementUI Select组件多选时的触发函数，去掉去重的处理
 Select.methods.handleOptionSelect = function(option, byClick) {
@@ -125,6 +126,7 @@ Vue.component(Tooltip.name, Tooltip);
 Vue.component(Tag.name, Tag);
 Vue.component(Drawer.name, Drawer);
 Vue.component(Notification.name, Notification);
+Vue.component(Cascader.name, Cascader);
 
 Vue.use(Loading.directive);
 /***提示只显示一次**/
