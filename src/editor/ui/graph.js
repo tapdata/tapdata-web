@@ -65,7 +65,11 @@ export default class Graph extends Component {
 				log('Editor.graph.add', cell, collection, opt);
 				// self.createInspector(cell);
 				setTimeout(() => {
-					self.selection.collection.reset([cell]);
+					if (cell && cell.isLink()) {
+						self.createInspector(cell);
+					} else if (cell.isElement()) {
+						self.selection.collection.reset([cell]);
+					}
 				}, 0);
 				self.emit(EditorEventType.ADD_CELL);
 			},
