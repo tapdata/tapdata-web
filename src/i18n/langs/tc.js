@@ -606,7 +606,8 @@ const tc = {
 				none_array_unique_key: '合併進數組時，必須提供唯一鍵',
 				repeatId: {
 					title: '_id字段衝突',
-					message: '目標資料模型已存在 _id 字段，請使用字段處理器對源錶的 _id 進行重命名！'
+					message:
+						'目標資料模型已存在 _id 字段，系統默認會移除已重複的_id字段，如想保留，請使用字段處理器對源錶的 _id 進行重命名！'
 				},
 				form: {
 					label: {

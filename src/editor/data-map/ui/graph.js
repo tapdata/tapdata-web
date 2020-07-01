@@ -69,7 +69,7 @@ export default class Graph extends Component {
 			defaultConnectionPoint: { name: 'boundary', args: { extrapolate: true } },
 			// defaultConnectionPoint: joint.shapes.dataMap.Link.connectionPoint,
 			defaultConnector: { name: 'rounded' },
-			defaultRouter: { name: 'metro' },
+			defaultRouter: { name: 'manhattan' },
 			restrictTranslate: function(elementView) {
 				let parentId = elementView.model.get('parent');
 				let parentCell = parentId && this.model.getCell(parentId);
@@ -415,19 +415,19 @@ export default class Graph extends Component {
 					resizeClusters: true,
 					clusterPadding: { top: 50, left: 35, right: 35, bottom: 20 }
 					/*setPosition: function(el, position){
-				el.transition('position/x', position.x, {
-					delay: 100,
-					duration: 500,
-					timingFunction: function(t) { return t*t; },
-					valueFunction: function(a, b) { return function(t) { return a + (b - a) * t }}
-				});
-				el.transition('position/y', position.y, {
-					delay: 100,
-					duration: 500,
-					timingFunction: function(t) { return t*t; },
-					valueFunction: function(a, b) { return function(t) { return a + (b - a) * t }}
-				});
-			}*/
+						el.transition('position/x', position.x, {
+							delay: 100,
+							duration: 500,
+							timingFunction: function(t) { return t*t; },
+							valueFunction: function(a, b) { return function(t) { return a + (b - a) * t }}
+						});
+						el.transition('position/y', position.y, {
+							delay: 100,
+							duration: 500,
+							timingFunction: function(t) { return t*t; },
+							valueFunction: function(a, b) { return function(t) { return a + (b - a) * t }}
+						});
+					}*/
 				},
 				opts || {}
 			)
