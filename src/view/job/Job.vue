@@ -647,10 +647,14 @@ export default {
 				.then(result => {
 					if (result && result.data) {
 						self.initData(result.data);
+						Object.keys(localStorage).forEach(key => {
+							if (key.startsWith('tapdata.dataflow.$$$') && key.split('$$$')[2] == result.data.name)
+								if (JSON.parse(localStorage.getItem(key)).id == result.data.id)
+									localStorage.removeItem(key);
+						});
 					} else {
 						self.$message.error(self.$t('message.api.get.error'));
 					}
-
 					self.loading = false;
 				})
 				.catch(err => {

@@ -70,7 +70,7 @@ export default class Graph extends Component {
 					} else if (cell.isElement()) {
 						self.selection.collection.reset([cell]);
 					}
-				}, 0);
+				}, 100);
 				self.emit(EditorEventType.ADD_CELL);
 			},
 			this

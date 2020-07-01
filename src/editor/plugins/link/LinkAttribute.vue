@@ -205,8 +205,7 @@ export default {
 				label: '',
 				joinTable: _.cloneDeep(JOIN_TABLE_TPL),
 				type: 'link'
-			},
-			initialUpSertData: []
+			}
 		};
 	},
 
@@ -244,12 +243,7 @@ export default {
 				} else {
 					this.model.joinTable.arrayUniqueKey = '';
 				}
-
-				if (this.model.joinTable.joinType !== 'upsert') {
-					this.model.joinTable.joinKeys = [{ source: '', target: '' }];
-				} else {
-					this.model.joinTable.joinKeys = this.initialUpSertData;
-				}
+				this.model.joinTable.joinKeys = [{ source: '', target: '' }];
 			}
 		}
 	},
@@ -429,8 +423,6 @@ export default {
 							});
 						}
 						this.model.joinTable.joinKeys = initialAssociationPKs;
-
-						this.initialUpSertData = _.cloneDeep(this.model.joinTable.joinKeys);
 					}
 				}
 			}

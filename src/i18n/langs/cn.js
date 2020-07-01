@@ -72,7 +72,7 @@ const cn = {
 		noRelatedTask: '暂无相关任务'
 	},
 	dataFlow: {
-		draftNotStart: '草稿不能启动 ',
+		draftNotStart: '编辑中不能启动，请进入编辑页面启动',
 		systemHint: '系统提示',
 		systemText: '系统检测出有如下任务上次操作后未保存，请问是否继续编辑',
 		stystemOpen: '打开',
