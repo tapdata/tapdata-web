@@ -5,8 +5,8 @@
 				{{ $t('dataFlow.button.viewMonitoring') }}
 			</el-button>
 		</div>
-		<el-form ref="form" :model="form" :disabled="disabled" label-position="top" label-width="200px">
-			<el-form-item :label="$t('editor.cell.data_node.api.dataApiName')">
+		<el-form ref="form" :model="form" :rules="rules" :disabled="disabled" label-position="top" label-width="200px">
+			<el-form-item prop="name" :label="$t('editor.cell.data_node.api.dataApiName')">
 				<el-input
 					v-model="form.name"
 					maxlength="20"
@@ -121,6 +121,16 @@ export default {
 				fields: [],
 				apiPath: '',
 				type: 'publishApi'
+			},
+			rules: {
+				name: [
+					{
+						required: true,
+						message: this.$t('editor.cell.data_node.api.enterPublishApiName'),
+						trigger: 'blur'
+					},
+					{ pattern: /^[a-zA-Z$_][a-zA-Z\d_]*$/, message: this.$t('editor.cell.data_node.api.variable_name') }
+				]
 			}
 		};
 	},
@@ -312,6 +322,9 @@ export default {
 		.el-input__inner {
 			height: 30px;
 			line-height: 30px;
+		}
+		.el-form-item__error {
+			margin-top: 0 !important;
 		}
 	}
 
