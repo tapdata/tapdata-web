@@ -408,30 +408,24 @@ export default {
 						// );
 						let comparedSchema = mergePKs || [];
 
-						let initialAssociationPKs =
-							sourcePKs && sourcePKs.length > 0 && comparedSchema && comparedSchema.length > 0
-								? sourcePKs.map((field, i) => ({
-										source: field.field_name,
-										target:
-											comparedSchema[i] && comparedSchema[i].field_name
-												? comparedSchema[i].field_name
-												: field.field_name
-								  }))
-								: this.model.joinTable.joinKeys;
-						this.initialUpSertData = initialAssociationPKs;
+						let initialAssociationPKs = [];
+						if (sourcePKs && sourcePKs.length > 0 && comparedSchema && comparedSchema.length > 0) {
+							initialAssociationPKs = sourcePKs.map((field, i) => ({
+								source: field.field_name,
+								target:
+									comparedSchema[i] && comparedSchema[i].field_name
+										? comparedSchema[i].field_name
+										: field.field_name
+							}));
+						} else {
+							initialAssociationPKs = this.model.joinTable.joinKeys;
+						}
+						this.initialUpSertData = _.cloneDeep(initialAssociationPKs);
 						if (sourceSchema && mergedTargetSchema.fields) {
 							this.model.joinTable.joinKeys = initialAssociationPKs;
 						}
-
-						if (sourcePKs && sourcePKs.length > 0) {
-							sourcePKs.map((field, i) => {
-								if (field.field_name !== joinKeys[i].source) {
-									joinKeys[i].source = field.field_name;
-								}
-							});
-						}
 					} else {
-						this.initialUpSertData = this.model.joinTable.joinKeys;
+						this.initialUpSertData = _.cloneDeep(this.model.joinTable.joinKeys);
 					}
 				}
 			}
