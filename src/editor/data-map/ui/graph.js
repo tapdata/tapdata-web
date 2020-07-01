@@ -408,7 +408,7 @@ export default class Graph extends Component {
 					marginY: 100,
 					// resizeToFit: true,
 					nodeSep: 20,
-					edgeSep: 50,
+					edgeSep: 10,
 					rankSep: 80,
 					// ranker: 'tight-tree',
 					// align: "UL",
