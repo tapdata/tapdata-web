@@ -69,7 +69,7 @@ export default class Graph extends Component {
 			defaultConnectionPoint: { name: 'boundary', args: { extrapolate: true } },
 			// defaultConnectionPoint: joint.shapes.dataMap.Link.connectionPoint,
 			defaultConnector: { name: 'rounded' },
-			defaultRouter: { name: 'metro' },
+			defaultRouter: { name: 'manhattan' },
 			restrictTranslate: function(elementView) {
 				let parentId = elementView.model.get('parent');
 				let parentCell = parentId && this.model.getCell(parentId);
@@ -415,19 +415,19 @@ export default class Graph extends Component {
 					resizeClusters: true,
 					clusterPadding: { top: 50, left: 35, right: 35, bottom: 20 }
 					/*setPosition: function(el, position){
-				el.transition('position/x', position.x, {
-					delay: 100,
-					duration: 500,
-					timingFunction: function(t) { return t*t; },
-					valueFunction: function(a, b) { return function(t) { return a + (b - a) * t }}
-				});
-				el.transition('position/y', position.y, {
-					delay: 100,
-					duration: 500,
-					timingFunction: function(t) { return t*t; },
-					valueFunction: function(a, b) { return function(t) { return a + (b - a) * t }}
-				});
-			}*/
+						el.transition('position/x', position.x, {
+							delay: 100,
+							duration: 500,
+							timingFunction: function(t) { return t*t; },
+							valueFunction: function(a, b) { return function(t) { return a + (b - a) * t }}
+						});
+						el.transition('position/y', position.y, {
+							delay: 100,
+							duration: 500,
+							timingFunction: function(t) { return t*t; },
+							valueFunction: function(a, b) { return function(t) { return a + (b - a) * t }}
+						});
+					}*/
 				},
 				opts || {}
 			)
@@ -1257,11 +1257,12 @@ export default class Graph extends Component {
 				}
 			});
 
-		let applyStyle = function(cells, bgColor) {
+		let applyStyle = function(cells, bgColor, borderColor) {
 			cells.forEach(cell => {
 				cell.attr({
 					body: {
-						fill: bgColor
+						fill: bgColor,
+						stroke: borderColor
 					}
 				});
 			});
@@ -1272,21 +1273,21 @@ export default class Graph extends Component {
 			sourceCells.push(cell);
 			sourceCells = sourceCells.concat(cell.getEmbeddedCells({ deep: true }));
 		});
-		applyStyle(sourceCells, '#ffffff');
+		applyStyle(sourceCells, '#fcf9fe', '#dedede');
 
 		let tapdataCells = [];
 		tapdataChildren.forEach(cell => {
 			tapdataCells.push(cell);
 			tapdataCells = tapdataCells.concat(cell.getEmbeddedCells({ deep: true }));
 		});
-		applyStyle(tapdataCells, '#ffffff');
+		applyStyle(tapdataCells, '#ebf7fc', '#b1e4f8');
 
 		let apiCells = [];
 		apiChildren.forEach(cell => {
 			apiCells.push(cell);
 			apiCells = apiCells.concat(cell.getEmbeddedCells({ deep: true }));
 		});
-		applyStyle(apiCells, '#ffffff');
+		applyStyle(apiCells, '#fbecec', '#f7dddd');
 
 		self.graph.getCells().forEach(cell => {
 			let embeddedCells = cell.getEmbeddedCells();

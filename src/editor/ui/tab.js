@@ -63,7 +63,7 @@ export default class Tab extends Component {
 			self.el.find('.e-tab-content').append(tabEl);
 		}
 		if (tab.opts.closeBtn) {
-			let closeBt = $('<span style="color: gray;position: absolute;right: 23px;">X</span>');
+			let closeBt = $('<i class="el-icon-close" style="position:absolute;right:23px;cursor:pointer"></i>');
 			closeBt.click(() => {
 				self.parent.hide();
 			});
