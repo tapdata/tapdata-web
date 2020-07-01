@@ -205,7 +205,8 @@ export default {
 				label: '',
 				joinTable: _.cloneDeep(JOIN_TABLE_TPL),
 				type: 'link'
-			}
+			},
+			initialUpSertData: []
 		};
 	},
 
@@ -242,6 +243,12 @@ export default {
 					}
 				} else {
 					this.model.joinTable.arrayUniqueKey = '';
+				}
+
+				if (this.model.joinTable.joinType !== 'upsert') {
+					this.model.joinTable.joinKeys = [{ source: '', target: '' }];
+				} else {
+					this.model.joinTable.joinKeys = this.initialUpSertData;
 				}
 			}
 		}
@@ -314,7 +321,7 @@ export default {
 				}
 			});
 			fields.forEach(field => {
-				if (field.source && field.field_name === '_id' && field.source.length > 2) {
+				if (field.fromDB && field.field_name === '_id' && field.fromDB.length > 2) {
 					self.$notify({
 						title: self.$t('editor.cell.link.repeatId.title'),
 						message: h('i', {}, msgNode),
@@ -382,9 +389,10 @@ export default {
 				this.sourceList = (sourceList && sourceList.filter(item => item.field_name !== '')) || [];
 				this.targetList = (targetList && targetList.filter(item => item.field_name !== '')) || [];
 
+				let joinKeys = this.model.joinTable.joinKeys;
+				// 关联字段自动填充
+
 				if (this.model.joinTable.joinType === 'upsert') {
-					let joinKeys = this.model.joinTable.joinKeys;
-					// 关联字段自动填充
 					let sourcePKs = this.getPKsFromSchema(sourceSchema).sort((v1, v2) =>
 						v1 > v2 ? 1 : v1 === v2 ? 0 : -1
 					);
@@ -410,29 +418,31 @@ export default {
 												: field.field_name
 								  }))
 								: this.model.joinTable.joinKeys;
-
+						this.initialUpSertData = initialAssociationPKs;
 						if (sourceSchema && mergedTargetSchema.fields) {
 							this.model.joinTable.joinKeys = initialAssociationPKs;
 						}
-					}
 
-					if (sourcePKs && sourcePKs.length > 0) {
-						sourcePKs.map((field, i) => {
-							if (field.field_name !== joinKeys[i].source) {
-								joinKeys[i].source = field.field_name;
-							}
-						});
+						if (sourcePKs && sourcePKs.length > 0) {
+							sourcePKs.map((field, i) => {
+								if (field.field_name !== joinKeys[i].source) {
+									joinKeys[i].source = field.field_name;
+								}
+							});
+						}
+					} else {
+						this.initialUpSertData = this.model.joinTable.joinKeys;
 					}
 				}
 			}
-
-			this.checkRepeatId();
 
 			this.$emit(EditorEventType.RESIZE);
 			this.showMapping(data, cell, vueAdapter);
 
 			editorMonitor = vueAdapter.editor;
 		},
+
+		handleUpSert() {},
 
 		getPKsFromSchema(schema) {
 			return schema && schema.fields && schema.fields.length > 0

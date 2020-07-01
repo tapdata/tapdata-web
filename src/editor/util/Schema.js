@@ -181,15 +181,15 @@ export const mergeSchema = function(targetSchema, sourceSchema, mergeOpts) {
 	}
 
 	targetSchema.fields.forEach(field => {
-		field.source = field.source || [_.cloneDeep(field)];
+		field.fromDB = field.fromDB || [_.cloneDeep(field)];
 	});
 
 	let existsField = {};
 	for (let i = 0; i < targetSchema.fields.length; i++) {
 		let field = targetSchema.fields[i];
 		if (existsField[field.field_name]) {
-			existsField[field.field_name].source = existsField[field.field_name].source || [];
-			existsField[field.field_name].source.push(field);
+			existsField[field.field_name].fromDB = existsField[field.field_name].fromDB || [];
+			existsField[field.field_name].fromDB.push(field);
 			targetSchema.fields.splice(i, 1);
 			i--;
 		} else {
