@@ -603,6 +603,10 @@ const cn = {
 				none_join_key: '关联字段必填',
 				none_join_path: '关联写入路径必填',
 				none_array_unique_key: '合并进数组时，必须提供唯一键',
+				repeatId: {
+					title: '_id字段冲突',
+					message: '目标数据模型已存在 _id 字段，请使用字段处理器对源表的 _id 进行重命名！'
+				},
 				form: {
 					label: {
 						label: '标签',

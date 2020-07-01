@@ -610,6 +610,11 @@ const en = {
 				none_join_key: 'JoinKeys is required',
 				none_join_path: 'JoinPath is required',
 				none_array_unique_key: 'Array unique key is required',
+				repeatId: {
+					title: 'Field _id conflict',
+					message:
+						'"_id" field exists in target model, please use the field processor to rename the "_id" field before continue.'
+				},
 				form: {
 					label: {
 						label: 'Label',

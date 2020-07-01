@@ -604,6 +604,10 @@ const tc = {
 				none_join_key: '關聯字段必填',
 				none_join_path: '關聯寫入路徑必填',
 				none_array_unique_key: '合併進數組時，必須提供唯一鍵',
+				repeatId: {
+					title: '_id字段衝突',
+					message: '目標資料模型已存在 _id 字段，請使用字段處理器對源錶的 _id 進行重命名！'
+				},
 				form: {
 					label: {
 						label: '标签',
