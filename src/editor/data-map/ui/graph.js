@@ -44,7 +44,7 @@ export default class Graph extends Component {
 
 		this.initGraph();
 
-		this.initLane();
+		// this.initLane();
 
 		this.paper.freeze();
 		this.paperScroller.centerContent();
@@ -424,7 +424,7 @@ export default class Graph extends Component {
 			)
 		);
 
-		this.updateLanes();
+		// this.updateLanes();
 
 		/*let embedOpts = {
 			deep: true,
@@ -1114,7 +1114,7 @@ export default class Graph extends Component {
 	}
 
 	_renderCells(level, cells) {
-		this.initLane();
+		// this.initLane();
 
 		cells = cells || [];
 		let self = this;
@@ -1167,9 +1167,9 @@ export default class Graph extends Component {
 		let links = [];
 		let idMap = {};
 
-		idMap['sourceLane'] = this.sourceLane.id;
+		/*idMap['sourceLane'] = this.sourceLane.id;
 		idMap['tapdataLane'] = this.tapdataLane.id;
-		idMap['apiLane'] = this.apiLane.id;
+		idMap['apiLane'] = this.apiLane.id;*/
 
 		cells.forEach(cellData => {
 			let cell = null;
@@ -1208,16 +1208,60 @@ export default class Graph extends Component {
 			self.createLink(idMap[cellData.source], idMap[cellData.target]);
 		});
 
+		let sourceChildren = [],
+			tapdataChildren = [],
+			apiChildren = [];
+
 		cells
 			.filter(c => !!c.parent)
 			.forEach(cellData => {
 				let parentId = idMap[cellData.parent] || '';
 				let parentCell = self.graph.getCell(parentId);
 				let cell = self.graph.getCell(idMap[cellData.id]);
-				if (parentCell && cell) {
-					parentCell.embed(cell);
+				if (cell) {
+					if (parentCell) {
+						parentCell.embed(cell);
+					}
+					if (cellData.parent === 'sourceLane') {
+						sourceChildren.push(cell);
+					} else if (cellData.parent === 'tapdataLane') {
+						tapdataChildren.push(cell);
+					} else if (cellData.parent === 'apiLane') {
+						apiChildren.push(cell);
+					}
 				}
 			});
+
+		let applyStyle = function(cells, bgColor) {
+			cells.forEach(cell => {
+				cell.attr({
+					body: {
+						fill: bgColor
+					}
+				});
+			});
+		};
+
+		let sourceCells = [];
+		sourceChildren.forEach(cell => {
+			sourceCells.push(cell);
+			sourceCells = sourceCells.concat(cell.getEmbeddedCells({ deep: true }));
+		});
+		applyStyle(sourceCells, '#f2ca90');
+
+		let tapdataCells = [];
+		tapdataChildren.forEach(cell => {
+			tapdataCells.push(cell);
+			tapdataCells = tapdataCells.concat(cell.getEmbeddedCells({ deep: true }));
+		});
+		applyStyle(tapdataCells, '#f2902c');
+
+		let apiCells = [];
+		apiChildren.forEach(cell => {
+			apiCells.push(cell);
+			apiCells = apiCells.concat(cell.getEmbeddedCells({ deep: true }));
+		});
+		applyStyle(apiCells, '#90f22c');
 
 		self.graph.getCells().forEach(cell => {
 			let embeddedCells = cell.getEmbeddedCells();
