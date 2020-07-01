@@ -314,7 +314,7 @@ export default {
 				}
 			});
 			fields.forEach(field => {
-				if (field.field_name === '_id' && field.source.length > 2) {
+				if (field.source && field.field_name === '_id' && field.source.length > 2) {
 					self.$notify({
 						title: self.$t('editor.cell.link.repeatId.title'),
 						message: h('i', {}, msgNode),
