@@ -243,7 +243,6 @@ export default {
 				} else {
 					this.model.joinTable.arrayUniqueKey = '';
 				}
-				this.model.joinTable.joinKeys = [{ source: '', target: '' }];
 			}
 		}
 	},
@@ -519,6 +518,7 @@ export default {
 				this.model.joinTable.joinPath = this.model.joinTable.tableName;
 			}
 			this.$refs.mappingComp.$emit(EditorEventType.RESIZE);
+			this.model.joinTable.joinKeys = [{ source: '', target: '' }];
 		},
 
 		setDisabled(disabled) {
