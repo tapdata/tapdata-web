@@ -758,7 +758,6 @@ export default {
 				return;
 			}
 			let multipleSelection = [];
-			let discardData = [];
 			let initData = []; // 设置初始化类型数据
 			if (status === 'scheduled') {
 				//全部启动
@@ -766,8 +765,6 @@ export default {
 					this.tableData.map(row => {
 						if (row.id === item.id && (row.status === 'paused' || row.status === 'error')) {
 							multipleSelection.push(item.id);
-						} else {
-							discardData.push(item.id);
 						}
 					});
 				});
@@ -780,14 +777,11 @@ export default {
 							if (row.id === item.id && row.setting.sync_type !== 'cdc') {
 								initData.push(row);
 							}
-						} else {
-							discardData.push(item.id);
 						}
 					});
 				});
 			}
 			if (multipleSelection.length === 0) {
-				this.$message.warning(discardData.length + 1);
 				return;
 			}
 			let where = {

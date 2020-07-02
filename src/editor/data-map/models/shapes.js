@@ -52,8 +52,8 @@ export default joint => {
 			label: {
 				text: 'Classification',
 				textVerticalAnchor: 'middle',
-				textAnchor: 'left',
-				refX: '30%',
+				textAnchor: 'middle',
+				refX: '40%',
 				refY: '50%',
 				fontSize: 16,
 				fill: '#333333',

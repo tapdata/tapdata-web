@@ -73,7 +73,7 @@ const en = {
 		noRelatedTask: 'No related tasks'
 	},
 	dataFlow: {
-		draftNotStart: 'Draft can‘t be started',
+		draftNotStart: 'Editting can‘t be started, enter edit page to start',
 		systemHint: 'System prompt',
 		systemText: 'The system detected that the following tasks were not saved， keep editing?',
 		stystemOpen: 'Open',
@@ -759,6 +759,9 @@ const en = {
 		dbLevel: 'Database Level',
 		tableLevel: 'Table Level',
 		fieldLevel: 'Field Mapping',
+		infoSource: 'SOURCE',
+		infoDAAS: 'DAAS',
+		infoAPI: 'API',
 		dblclickDataModel: 'Please double-click the data model to open the field mapping',
 		properties: {
 			name: 'Name',

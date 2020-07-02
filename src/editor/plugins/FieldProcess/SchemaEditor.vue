@@ -7,10 +7,10 @@
 						$t('editor.cell.processor.field.form.delete')
 					}}</el-button>
 					<el-button type="text" @click="handleAllReset">{{ $t('dataFlow.reset') }}</el-button>
-					<el-button type="text" @click="handleAllToUpperCase('upperCase')">{{
+					<el-button type="text" @click="handleAllToUpperCase()">{{
 						$t('editor.cell.processor.field.form.toUpperCase')
 					}}</el-button>
-					<el-button type="text" @click="handleAllToLowerCase('lowerCase')">{{
+					<el-button type="text" @click="handleAllToLowerCase()">{{
 						$t('editor.cell.processor.field.form.toLowerCase')
 					}}</el-button>
 				</el-form-item>
@@ -442,7 +442,7 @@ export default {
 
 			this.$emit('dataChanged', this.model);
 		},
-		handleRename(node, data, type) {
+		handleRename(node, data) {
 			log('SchemaEditor.handleRename', node, data);
 			let createOps = this.model.operations.filter(v => v.id === data.id && v.op === 'CREATE');
 			if (createOps && createOps.length > 0) {
@@ -462,9 +462,6 @@ export default {
 				);
 				let ops = this.model.operations.filter(v => v.id === nativeData.id && v.op === 'RENAME');
 				let op;
-				if (data.label === nativeData.label && type !== 'lowerCase' && type !== 'upperCase') {
-					return;
-				}
 				if (ops.length === 0) {
 					op = Object.assign(_.cloneDeep(RENAME_OPS_TPL), {
 						id: data.id,
@@ -478,6 +475,18 @@ export default {
 						// field: nativeData.label,
 						operand: data.label
 					});
+				}
+				//删除 相同字段名称
+				if (this.model.scripts && this.model.operations.length && this.model.operations.length > 0) {
+					for (let i = 0; i < this.model.operations.length; i++) {
+						if (
+							this.model.operations[i].field === this.model.operations[i].operand &&
+							this.model.operations[i].op === 'RENAME'
+						) {
+							this.model.operations.splice(i, 1);
+							i--;
+						}
+					}
 				}
 			}
 			this.$emit('dataChanged', this.model);
@@ -572,23 +581,23 @@ export default {
 				});
 			}
 		},
-		handleAllToUpperCase(type) {
+		handleAllToUpperCase() {
 			let ids = this.$refs.tree.getCheckedNodes();
 			if (ids && ids.length > 0) {
 				ids.map(id => {
 					let node = this.$refs.tree.getNode(id);
 					node.data.label = node.data.label.toUpperCase();
-					this.handleRename(node, node.data, type);
+					this.handleRename(node, node.data);
 				});
 			}
 		},
-		handleAllToLowerCase(type) {
+		handleAllToLowerCase() {
 			let ids = this.$refs.tree.getCheckedNodes();
 			if (ids && ids.length > 0) {
 				ids.map(id => {
 					let node = this.$refs.tree.getNode(id);
 					node.data.label = node.data.label.toLowerCase();
-					this.handleRename(node, node.data, type);
+					this.handleRename(node, node.data);
 				});
 			}
 		},

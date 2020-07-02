@@ -1,6 +1,22 @@
 <template>
 	<div class="data-map-container">
 		<div class="data-map"></div>
+		<div class="data-map-info">
+			<ul>
+				<li>
+					<span class="circle source-color"></span>
+					<span>{{ $t('dataMap.infoSource') }}</span>
+				</li>
+				<li>
+					<span class="circle target-color"></span>
+					<span>{{ $t('dataMap.infoDAAS') }}</span>
+				</li>
+				<li>
+					<span class="circle api-color"></span>
+					<span>{{ $t('dataMap.infoAPI') }}</span>
+				</li>
+			</ul>
+		</div>
 		<div class="action-bar">
 			<div class="left-bar">
 				<span class="e-btn" @click="upward">
@@ -302,6 +318,48 @@ export default {
 		}
 
 		.e-header {
+		}
+	}
+}
+</style>
+<style scoped lang="less">
+.source-color {
+	background: #fcf9fe;
+	border: 1px solid #dedede;
+}
+.target-color {
+	background: #ebf7fc;
+	border: 1px solid #b1e4f8;
+}
+.api-color {
+	background: #fbecec;
+	border: 1px solid #f7dddd;
+}
+.data-map-info {
+	width: 100px;
+	height: 105px;
+	border-radius: 6px;
+	opacity: 0.8;
+	position: absolute;
+	top: 25px;
+	right: 25px;
+	border: 1px solid #dedede;
+	font-size: 12px;
+	margin: 20px;
+	ul li {
+		float: left;
+		width: 140px;
+		margin-top: 15px;
+		margin-left: 15px;
+		span {
+			display: inline-block;
+		}
+		.circle {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			vertical-align: middle;
+			margin-right: 5px;
 		}
 	}
 }

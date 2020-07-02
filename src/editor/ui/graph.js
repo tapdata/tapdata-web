@@ -31,6 +31,8 @@ export default class Graph extends Component {
 	 * @type {boolean}
 	 */
 	editable = true;
+	currentCell = false;
+	cellTimeout = false;
 
 	constructor(opts) {
 		super(opts);
@@ -505,21 +507,12 @@ export default class Graph extends Component {
 	}
 
 	createInspector(cell) {
-		this.vueAdapter.render(cell);
-
-		/* let styles = self.ui.rightTabPanel.getChildByName('styles');
-		// styles.removeAll();
-		if( !styles) {
-			styles = new Panel({
-				name: 'styles',
-				title: i18n.t('editor.ui.sidebar.style')
-			});
-			self.ui.rightTabPanel.add(styles);
-		}
-
-		joint.ui.Inspector.create(styles.getContentEl(), _.extend({
-			cell: cell
-		}, inspectorConfig[cell.get('type')])); */
+		let that = this;
+		this.currentCell = cell;
+		clearTimeout(this.cellTimeout);
+		this.cellTimeout = setTimeout(() => {
+			that.vueAdapter.render(that.currentCell);
+		}, 300);
 	}
 
 	initToolsAndInspector() {
