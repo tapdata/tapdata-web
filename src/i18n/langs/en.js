@@ -55,12 +55,11 @@ const en = {
 		startupAfter_add: 'Please add after startup',
 		noData: 'NO DATA ',
 		prompt: 'Prompt',
-		resetMessage: 'The action of job reset will cause the job to be rerun from the beginning, still RESET ?',
-		deteleMessage: 'The action of deleting the data flow will cause it unrecoverable, still DELETE? ',
-		forceStoppingMessage:
-			'The action of Force stopoing will interrupt data transfer immediately, still FORCE STOP ?',
+		resetMessage: 'This will cause the job to be rerun from the beginning, continue?',
+		deteleMessage: 'This will permanently delete the data flow, continue? ',
+		forceStoppingMessage: 'This will interrupt the data transfer immediately, continue?',
 		stopInitial_syncMessage:
-			'If the job that type of of initialization is startted again after paused, the job woude be reseted. Are you sure you want to pause the task?',
+			'Pausing job while it is in the initial sync stage may cause it to run from the beginning, are you sure you want to pause?',
 		stopMessage: 'Are you sure to pause the mission?',
 		cancleReset: 'cancel reset',
 		resetOk: 'Reset success',
@@ -273,7 +272,7 @@ const en = {
 		matchingRelationship: 'or matching attribute',
 		afterSubmission: 'the job should be',
 		runNomally: 'to make sure the job running correctly;',
-		editLayerTip: 'otherwise the job will be abnormal,still wanna EDIT the job？',
+		editLayerTip: 'otherwise the job will be abnormal, continue？',
 		continueEditing: 'Still Edit'
 	},
 	connection: {
