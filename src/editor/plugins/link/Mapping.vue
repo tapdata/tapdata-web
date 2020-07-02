@@ -52,19 +52,16 @@ export default {
 		}
 
 		if (this.sourceSchema) this.createLine(this.sourceSchema.fields);
-		let _position = _.throttle(this.position.bind(this), 150, {
-			leading: true,
-			trailing: false
-		});
-		this.$refs.sourceContainer.addEventListener('scroll', _position);
-		this.$refs.targetContainer.addEventListener('scroll', _position);
+
+		this.$refs.sourceContainer.addEventListener('scroll', this.position.bind(this));
+		this.$refs.targetContainer.addEventListener('scroll', this.position.bind(this));
 		this.$refs.sourceEntity.$on('expand', this.position.bind(this));
 		this.$refs.sourceEntity.$on('collapse', this.position.bind(this));
 		this.$refs.sourceEntity.$on('drop', this.position.bind(this));
 		this.$refs.targetEntity.$on('expand', this.position.bind(this));
 		this.$refs.targetEntity.$on('collapse', this.position.bind(this));
 		this.$refs.targetEntity.$on('drop', this.position.bind(this));
-		this.$on('resize', _position);
+		this.$on('resize', this.position.bind(this));
 	},
 
 	methods: {

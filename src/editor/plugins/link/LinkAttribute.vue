@@ -1,5 +1,5 @@
 <template>
-	<div class="e-link-wrap">
+	<div class="e-link-wrap" @scroll="$refs.mappingComp.position()">
 		<div class="head-btns">
 			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 				{{ $t('dataFlow.button.viewMonitoring') }}
@@ -551,6 +551,7 @@ export default {
 	justify-content: start;
 	padding: 10px;
 	box-sizing: border-box;
+	overflow: auto;
 	.e-form {
 		.el-input,
 		.el-select {
