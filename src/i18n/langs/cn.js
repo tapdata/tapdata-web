@@ -752,6 +752,9 @@ const cn = {
 		dbLevel: '库级',
 		tableLevel: '表级',
 		fieldLevel: '字段映射',
+		infoSource: '数据源',
+		infoDAAS: '数据中台',
+		infoAPI: 'API',
 		dblclickDataModel: '请双击数据模型打开字段映射',
 		properties: {
 			name: '名称',

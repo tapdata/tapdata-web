@@ -753,6 +753,9 @@ const tc = {
 		dbLevel: '庫級',
 		tableLevel: '表級',
 		fieldLevel: '字段映射',
+		infoSource: '數據源',
+		infoDAAS: '數據中台',
+		infoAPI: 'API',
 		dblclickDataModel: '請雙擊數據模型打開字段映射',
 		properties: {
 			name: '名稱',

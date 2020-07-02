@@ -759,6 +759,9 @@ const en = {
 		dbLevel: 'Database Level',
 		tableLevel: 'Table Level',
 		fieldLevel: 'Field Mapping',
+		infoSource: 'SOURCE',
+		infoDAAS: 'DAAS',
+		infoAPI: 'API',
 		dblclickDataModel: 'Please double-click the data model to open the field mapping',
 		properties: {
 			name: 'Name',
