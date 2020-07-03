@@ -560,7 +560,11 @@ export default {
 					localStorage.removeItem(ids[i].item);
 					if (size > JSON.stringify(data).length) break;
 				}
-				localStorage.setItem(this.tempId, JSON.stringify(data));
+				try {
+					localStorage.setItem(this.tempId, JSON.stringify(data));
+				} catch (err) {
+					log(err);
+				}
 			}
 			window.tempKey = this.tempKey;
 		},
