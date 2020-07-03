@@ -78,7 +78,8 @@ export const /**
 						type: field.javaType || field.java_type,
 						color: getColor(field.table_name),
 						primary_key_position: field.primary_key_position,
-						table_name: field.table_name || 'table'
+						table_name: field.table_name || 'table',
+						original_field_name: field.field_name
 					};
 					let path = 'children.' + jsonPathForFieldName.join('.children.');
 					let partField = _.get(root, path);

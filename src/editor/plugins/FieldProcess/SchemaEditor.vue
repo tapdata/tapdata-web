@@ -428,7 +428,7 @@ export default {
 				if (ops.length === 0) {
 					op = Object.assign(_.cloneDeep(CONVERT_OPS_TPL), {
 						id: data.id,
-						field: nativeData.label,
+						field: nativeData.original_field_name,
 						operand: data.type,
 						originalDataType: nativeData.type
 					});
@@ -465,7 +465,7 @@ export default {
 				if (ops.length === 0) {
 					op = Object.assign(_.cloneDeep(RENAME_OPS_TPL), {
 						id: data.id,
-						field: nativeData.label,
+						field: nativeData.original_field_name,
 						operand: data.label
 					});
 					this.model.operations.push(op);
@@ -479,8 +479,13 @@ export default {
 				//删除 相同字段名称
 				if (this.model.scripts && this.model.operations.length && this.model.operations.length > 0) {
 					for (let i = 0; i < this.model.operations.length; i++) {
+						let originalFieldName = this.model.operations[i].field;
+						if (originalFieldName.indexOf('.') >= 0) {
+							originalFieldName = originalFieldName.split('.');
+							originalFieldName = originalFieldName[originalFieldName.length - 1];
+						}
 						if (
-							this.model.operations[i].field === this.model.operations[i].operand &&
+							originalFieldName === this.model.operations[i].operand &&
 							this.model.operations[i].op === 'RENAME'
 						) {
 							this.model.operations.splice(i, 1);
@@ -516,8 +521,8 @@ export default {
 						// 删除所有的重命名的操作
 						let ops = self.model.operations[i];
 						if (ops.id === field.id && ops.op === 'RENAME') {
-							let originalNode = self.getNativeData(self.originalSchema.fields, field.id);
-							originalNode.label = field.label;
+							// let originalNode = self.getNativeData(self.originalSchema.fields, field.id);
+							// originalNode.label = field.label;
 							self.model.operations.splice(i, 1);
 						}
 					}
@@ -525,8 +530,8 @@ export default {
 						// 删除所有的类型改变的操作
 						let ops = self.model.operations[i];
 						if (ops.id === field.id && ops.op === 'CONVERT') {
-							let originalNode = self.getNativeData(self.originalSchema.fields, field.id); // 替换原始数据 主要是操作子节点
-							originalNode.type = field.type;
+							// let originalNode = self.getNativeData(self.originalSchema.fields, field.id); // 替换原始数据 主要是操作子节点
+							// originalNode.type = field.type;
 							self.model.operations.splice(i, 1);
 						}
 					}
@@ -537,7 +542,7 @@ export default {
 					if (ops.length === 0) {
 						op = Object.assign(_.cloneDeep(REMOVE_OPS_TPL), {
 							id: field.id,
-							field: field.label,
+							field: originalField.original_field_name,
 							operand: true
 						});
 						self.model.operations.push(op);
