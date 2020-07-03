@@ -548,19 +548,19 @@ export default {
 			try {
 				localStorage.setItem(this.tempId, JSON.stringify(data));
 			} catch (e) {
-				let ids = [],
-					size = 0;
-				Object.keys(localStorage).forEach(key => {
-					if (key.startsWith('tapdata.dataflow.$$$'))
-						ids.push({ id: parseInt(key.split('$$$')[1]), item: key });
-				});
-				ids = ids.sort((a, b) => a.id - b.id);
-				for (let i = 0; i < ids.length; i++) {
-					size += localStorage.getItem(ids[i].item).length;
-					localStorage.removeItem(ids[i].item);
-					if (size > JSON.stringify(data).length) break;
-				}
 				try {
+					let ids = [],
+						size = 0;
+					Object.keys(localStorage).forEach(key => {
+						if (key.startsWith('tapdata.dataflow.$$$'))
+							ids.push({ id: parseInt(key.split('$$$')[1]), item: key });
+					});
+					ids = ids.sort((a, b) => a.id - b.id);
+					for (let i = 0; i < ids.length; i++) {
+						size += localStorage.getItem(ids[i].item).length;
+						localStorage.removeItem(ids[i].item);
+						if (size > JSON.stringify(data).length) break;
+					}
 					localStorage.setItem(this.tempId, JSON.stringify(data));
 				} catch (err) {
 					log(err);
