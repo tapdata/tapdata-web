@@ -444,6 +444,17 @@ export default {
 		},
 		handleRename(node, data) {
 			log('SchemaEditor.handleRename', node, data);
+			let nativeData = this.getNativeData(this.originalSchema.fields, data.id); //查找初始schema
+
+			// 改名前查找同级中是否重名，若有则return且还原改动并提示
+			if (node && node.parent && node.parent.childNodes) {
+				let parentNode = node.parent.childNodes.filter(v => data.label === v.data.label);
+				if (parentNode && parentNode.length === 2) {
+					this.$message.error(data.label + this.$t('message.exists_name'));
+					data.label = nativeData.label;
+					return;
+				}
+			}
 			let createOps = this.model.operations.filter(v => v.id === data.id && v.op === 'CREATE');
 			if (createOps && createOps.length > 0) {
 				let op = createOps[0];
@@ -452,7 +463,6 @@ export default {
 				fieldNames[level] = data.label;
 				op.field = fieldNames.join('.');
 			} else {
-				let nativeData = this.getNativeData(this.originalSchema.fields, data.id);
 				log(
 					'Entity1.handlerRename(node,data,nativeData,operations)',
 					node,
@@ -518,7 +528,7 @@ export default {
 
 				let fn = function(field) {
 					for (let i = 0; i < self.model.operations.length; i++) {
-						// 删除所有的重命名的操作
+						// 删除所有的rename的操作
 						let ops = self.model.operations[i];
 						if (ops.id === field.id && ops.op === 'RENAME') {
 							// let originalNode = self.getNativeData(self.originalSchema.fields, field.id);
