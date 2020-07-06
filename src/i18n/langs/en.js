@@ -242,7 +242,7 @@ const en = {
 			reset: 'Reset',
 			save: 'Save',
 			saveDraft: 'Save Draft',
-			saveing: 'Saveing',
+			saveing: 'Saving',
 			reloadSchema: 'reloadSchema',
 			debug: 'debug test',
 			quantitative: 'Quantitative',
