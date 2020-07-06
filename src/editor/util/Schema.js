@@ -182,7 +182,12 @@ export const mergeSchema = function(targetSchema, sourceSchema, mergeOpts) {
 	}
 
 	targetSchema.fields.forEach(field => {
-		field.fromDB = field.fromDB || [_.cloneDeep(field)];
+		field.fromDB = field.fromDB || [];
+		field.fromDB.push({
+			id: field.id,
+			table_name: field.table_name,
+			field_name: field.field_name
+		});
 	});
 
 	let existsField = {};
@@ -190,7 +195,11 @@ export const mergeSchema = function(targetSchema, sourceSchema, mergeOpts) {
 		let field = targetSchema.fields[i];
 		if (existsField[field.field_name]) {
 			existsField[field.field_name].fromDB = existsField[field.field_name].fromDB || [];
-			existsField[field.field_name].fromDB.push(field);
+			existsField[field.field_name].fromDB.push({
+				id: field.id,
+				table_name: field.table_name,
+				field_name: field.field_name
+			});
 			targetSchema.fields.splice(i, 1);
 			i--;
 		} else {

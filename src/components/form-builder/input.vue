@@ -23,7 +23,8 @@ export default {
 				type: config.domType || 'text',
 				clearable: config.clearable,
 				showPassword: config.showPassword,
-				showWordLimit: config.showWordLimit
+				showWordLimit: config.showWordLimit,
+				autocomplete: config.domType === 'password' ? 'new-password' : 'off'
 			},
 			class: {
 				'el-input-maxlength': config.showWordLimit
