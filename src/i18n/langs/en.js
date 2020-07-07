@@ -9,6 +9,7 @@ const en = {
 				loading: 'Loading data...'
 			}
 		},
+		modifyName: 'Modify name',
 		ok: 'OK',
 		exists_name: 'Name already exists',
 		search: 'search',

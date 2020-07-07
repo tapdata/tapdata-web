@@ -9,6 +9,7 @@ const cn = {
 				loading: '正在加载数据'
 			}
 		},
+		modifyName: '修改名称',
 		ok: '确定',
 		exists_name: '名称已存在',
 		search: '搜索',

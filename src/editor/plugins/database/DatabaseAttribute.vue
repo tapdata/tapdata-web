@@ -305,6 +305,7 @@ export default {
 				);
 			}
 		},
+
 		// 移除全选
 		selectAllTables: {
 			handler() {
@@ -323,6 +324,7 @@ export default {
 				}
 			}
 		},
+
 		// 撤销全选
 		selectAllRemoveTables: {
 			handler() {
@@ -366,9 +368,11 @@ export default {
 				this.lookupDatabaseType();
 			}
 		},
+		
 		changeConnection() {
 			this.model.includeTables = [];
 		},
+
 		lookupDatabaseType() {
 			if (!this.model.connectionId) return;
 			let selectedDbs = this.databases.filter(db => db.id === this.model.connectionId);
