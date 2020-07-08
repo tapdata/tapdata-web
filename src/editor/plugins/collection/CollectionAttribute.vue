@@ -62,9 +62,9 @@
 							size="mini"
 						>
 							<el-option
-								v-for="(item, idx) in schemas"
-								:label="`${item.table_name}`"
-								:value="item.table_name"
+								v-for="(item, idx) in tableNames"
+								:label="`${item}`"
+								:value="item"
 								v-bind:key="idx"
 							></el-option>
 						</el-select>
@@ -146,6 +146,7 @@ import _ from 'lodash';
 import factory from '../../../api/factory';
 let connectionApi = factory('connections');
 let editorMonitor = null;
+let schemas = [];
 export default {
 	name: 'Collection',
 	components: { Entity, DatabaseForm, PrimaryKeyInput, ClipButton, RelatedTasks },
@@ -177,9 +178,9 @@ export default {
 		'model.tableName': {
 			immediate: true,
 			handler() {
-				if (this.schemas.length > 0) {
+				if (schemas.length > 0) {
 					if (this.model.tableName) {
-						let schema = this.schemas.filter(s => s.table_name === this.model.tableName);
+						let schema = schemas.filter(s => s.table_name === this.model.tableName);
 						schema =
 							schema && schema.length > 0
 								? schema[0]
@@ -250,7 +251,7 @@ export default {
 			},
 			disabled: false,
 			databases: [],
-			schemas: [],
+			tableNames: [],
 
 			rules: {
 				connectionId: [{ required: true, trigger: 'blur', message: `Please select database` }],
@@ -324,11 +325,11 @@ export default {
 			let self = this;
 			connectionApi.get([connectionId]).then(result => {
 				if (result.data) {
-					let schemas = (result.data.schema && result.data.schema.tables) || [];
-					schemas = schemas.sort((t1, t2) =>
+					let _schemas = (result.data.schema && result.data.schema.tables) || [];
+					schemas = _schemas.sort((t1, t2) =>
 						t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
 					);
-					self.schemas = schemas;
+					self.tableNames = schemas.map(it => it.table_name);
 				}
 			});
 		},
