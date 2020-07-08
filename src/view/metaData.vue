@@ -262,15 +262,15 @@ export default {
 <style scoped lang="less">
 .metadata {
 	border: 1px solid #dedee4;
-	height: 100%;
+	height: calc(100vh - 80px);
 	width: 240px;
 	overflow: hidden;
 	user-select: none;
+	margin-top: 10px;
 	/*头部样式*/
 	.metadata-header {
-		height: 31px;
+		height: 28px;
 		background: #f5f5f5;
-		border-bottom: 1px solid #dedee4;
 		font-size: 12px;
 		line-height: 31px;
 		padding-left: 8px;
