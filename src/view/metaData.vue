@@ -150,7 +150,6 @@ export default {
 			if (!value) return true;
 			return data.value.indexOf(value) !== -1;
 		},
-
 		handleDefault_expanded() {
 			let self = this;
 			let treeList = this.treeData;
@@ -158,7 +157,6 @@ export default {
 				self.$refs.tree.store.nodesMap[treeList[i].id].expanded = false;
 			}
 		},
-
 		handleRowCommand(command, node) {
 			switch (command) {
 				case 'add':
@@ -263,7 +261,7 @@ export default {
 .metadata {
 	border: 1px solid #dedee4;
 	height: calc(100vh - 80px);
-	width: 240px;
+	width: 100%;
 	overflow: hidden;
 	user-select: none;
 	margin-top: 10px;

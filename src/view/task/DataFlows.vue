@@ -1,7 +1,7 @@
 <template>
-	<el-row :gutter="100">
+	<el-row :gutter="10">
 		<el-col :span="3">
-			<metaData></metaData>
+			<metaData v-on:nodeClick="nodeClick"></metaData>
 		</el-col>
 		<el-col :span="21" class="task-list" v-loading="restLoading">
 			<div class="task-list-operating-area box-card">
@@ -19,14 +19,6 @@
 										@change="screenFn"
 									></el-input>
 								</el-form-item>
-								<!--							<el-form-item >-->
-								<!--								<el-date-picker type="daterange" v-model="formData.timeData" size="small "-->
-								<!--												class="task-list-time-picker"-->
-								<!--												:range-separator="$t('dataFlow.separator')"-->
-								<!--												:start-placeholder="$t('dataFlow.startTime')"-->
-								<!--												:end-placeholder="$t('dataFlow.endTime')"-->
-								<!--												:placeholder="$t('dataFlow.dataPlaceholder')"></el-date-picker>-->
-								<!--							</el-form-item>-->
 								<el-form-item>
 									<el-select
 										v-model="formData.status"
@@ -71,7 +63,7 @@
 								<el-button class="back-btn-icon-box dv-btn-icon" @click="handleGoFuntion"
 									><i class="iconfont icon-hanshu back-btn-icon"></i
 								></el-button>
-								<el-button disabled class="back-btn-icon-box dv-btn-icon">
+								<el-button class="back-btn-icon-box dv-btn-icon">
 									<i class="iconfont icon-biaoqian back-btn-icon"></i
 								></el-button>
 								<el-button class="back-btn-icon-box dv-btn-icon" @click="handleImport"
@@ -267,6 +259,12 @@
 				</el-pagination>
 			</div>
 		</el-col>
+		<SelectClassify
+			ref="SelectClassify"
+			:checkData="checkData"
+			:dialogVisible="dialogVisible"
+			:listdata="listdata"
+		></SelectClassify>
 	</el-row>
 </template>
 
@@ -276,10 +274,15 @@ import factory from '../../api/factory';
 const dataFlows = factory('DataFlows');
 const MetadataInstance = factory('MetadataInstances');
 import metaData from '../metaData';
+import SelectClassify from '../../components/SelectClassify';
 export default {
-	components: { metaData },
+	components: { metaData, SelectClassify },
 	data() {
 		return {
+			tageId: '',
+			listdata: [],
+			checkAll: [],
+			checkData: [],
 			restLoading: false,
 			colorMap: {
 				running: '#67C23A',
@@ -933,6 +936,11 @@ export default {
 			this.pagesize = psize;
 			localStorage.setItem('flowPagesize', psize);
 			this.getData();
+		},
+		nodeClick(data) {
+			if (data) {
+				this.tageId = data.id;
+			}
 		}
 	}
 };
