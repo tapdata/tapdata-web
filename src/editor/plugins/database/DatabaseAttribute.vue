@@ -25,15 +25,15 @@
 					prop="connectionId"
 					:rules="rules"
 					required
-					v-loading="!databases"
 				>
 					<div style="display:flex;">
 						<el-select
 							@change="changeConnection"
-							filterable
+							:filterable="!databaseLoading"
 							v-model="model.connectionId"
 							:placeholder="$t('editor.cell.data_node.database.form.placeholder')"
 							size="mini"
+							:loading="databaseLoading"
 						>
 							<el-option
 								v-for="(item, idx) in databases"
@@ -198,7 +198,8 @@ export default {
 			selectAllTables: false,
 			selectAllRemoveTables: false,
 
-			databases: null,
+			databases: [],
+			databaseLoading: false,
 			rules: {
 				connectionId: [
 					{
@@ -263,6 +264,7 @@ export default {
 			editorMonitor = vueAdapter.editor;
 		},
 		async loadDataSource() {
+			this.databaseLoading = true;
 			let result = await connections.get({
 				filter: JSON.stringify({
 					where: {
@@ -279,6 +281,7 @@ export default {
 				})
 			});
 
+			this.databaseLoading = false;
 			if (result.data) {
 				this.databases = result.data;
 				this.lookupDatabaseType();
