@@ -23,7 +23,8 @@
 				>
 					<div style="display:flex;">
 						<el-select
-							filterable
+							:filterable="!databaseLoading"
+							:loading="databaseLoading"
 							v-model="model.connectionId"
 							:placeholder="$t('editor.cell.data_node.table.form.database.placeholder')"
 							@change="handlerConnectionChange"
@@ -54,7 +55,8 @@
 				>
 					<div class="flex-block">
 						<el-select
-							filterable
+							:filterable="!schemasLoading"
+							:loading="schemasLoading"
 							allow-create
 							default-first-option
 							clearable
@@ -232,7 +234,9 @@ export default {
 				tableName: ''
 			},
 			databases: [],
+			databaseLoading: false,
 			schemas: [],
+			schemasLoading: false,
 			disabled: false,
 			rules: {
 				connectionId: [
@@ -276,6 +280,7 @@ export default {
 		},
 
 		async loadDataSource() {
+			this.databaseLoading = true;
 			let result = await connectionApi.get({
 				filter: JSON.stringify({
 					where: {
@@ -291,6 +296,7 @@ export default {
 				})
 			});
 
+			this.databaseLoading = false;
 			if (result.data) {
 				this.databases = result.data;
 			}
@@ -301,15 +307,21 @@ export default {
 				return;
 			}
 			let self = this;
-			connectionApi.get([connectionId]).then(result => {
-				if (result.data) {
-					let schemas = (result.data.schema && result.data.schema.tables) || [];
-					schemas = schemas.sort((t1, t2) =>
-						t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-					);
-					self.schemas = schemas;
-				}
-			});
+			this.schemasLoading = true;
+			connectionApi
+				.get([connectionId])
+				.then(result => {
+					if (result.data) {
+						let schemas = (result.data.schema && result.data.schema.tables) || [];
+						schemas = schemas.sort((t1, t2) =>
+							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
+						);
+						self.schemas = schemas;
+					}
+				})
+				.finally(() => {
+					this.schemasLoading = false;
+				});
 		},
 
 		handlerConnectionChange() {

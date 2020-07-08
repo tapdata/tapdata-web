@@ -14,7 +14,8 @@
 				<!-- <span class="addTxt">+新建文件</span> -->
 				<el-form-item :label="$t('editor.choose') + 'Dummy'" prop="connectionId" :rules="rules" required>
 					<el-select
-						filterable
+						:filterable="!databaseLoading"
+						:loading="databaseLoading"
 						v-model="model.connectionId"
 						:placeholder="$t('editor.cell.data_node.dummy.chooseDummyName')"
 					>
@@ -33,7 +34,8 @@
 				>
 					<el-select
 						v-model="model.tableName"
-						filterable
+						:filterable="!schemaLoading"
+						:loading="schemaLoading"
 						allow-create
 						default-first-option
 						clearable
@@ -87,6 +89,7 @@ export default {
 			},
 			disabled: false,
 			databases: [],
+			databaseLoading: false,
 			rules: {
 				connectionId: [
 					{
@@ -117,11 +120,13 @@ export default {
 				primaryKeys: ''
 			},
 			schemas: [],
+			schemaLoading: false,
 			mergedSchema: null
 		};
 	},
 
 	async mounted() {
+		this.databaseLoading = true;
 		let result = await connections.get({
 			filter: JSON.stringify({
 				where: {
@@ -138,6 +143,7 @@ export default {
 			})
 		});
 
+		this.databaseLoading = false;
 		if (result.data) {
 			this.databases = result.data;
 		}
@@ -207,15 +213,21 @@ export default {
 				return;
 			}
 			let self = this;
-			connections.get([connectionId]).then(result => {
-				if (result.data) {
-					let schemas = (result.data.schema && result.data.schema.tables) || [];
-					schemas = schemas.sort((t1, t2) =>
-						t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-					);
-					self.schemas = schemas;
-				}
-			});
+			this.schemaLoading = true;
+			connections
+				.get([connectionId])
+				.then(result => {
+					if (result.data) {
+						let schemas = (result.data.schema && result.data.schema.tables) || [];
+						schemas = schemas.sort((t1, t2) =>
+							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
+						);
+						self.schemas = schemas;
+					}
+				})
+				.finally(() => {
+					this.schemaLoading = false;
+				});
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {

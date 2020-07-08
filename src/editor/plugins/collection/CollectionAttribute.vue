@@ -23,7 +23,8 @@
 				>
 					<div style="display:flex;">
 						<el-select
-							filterable
+							:filterable="!databaseLoading"
+							:loading="databaseLoading"
 							v-model="model.connectionId"
 							:placeholder="$t('editor.cell.data_node.collection.form.database.placeholder')"
 							@change="handlerConnectionChange"
@@ -54,7 +55,8 @@
 					<div class="flex-block">
 						<el-select
 							v-model="model.tableName"
-							filterable
+							:filterable="!schemaLoading"
+							:loading="schemaLoading"
 							allow-create
 							default-first-option
 							clearable
@@ -250,7 +252,9 @@ export default {
 			},
 			disabled: false,
 			databases: [],
+			databaseLoading: false,
 			schemas: [],
+			schemaLoading: false,
 
 			rules: {
 				connectionId: [{ required: true, trigger: 'blur', message: `Please select database` }],
@@ -297,6 +301,7 @@ export default {
 		convertSchemaToTreeData,
 
 		async loadDataSource() {
+			this.databaseLoading = true;
 			let result = await connectionApi.get({
 				filter: JSON.stringify({
 					where: {
@@ -312,6 +317,7 @@ export default {
 				})
 			});
 
+			this.databaseLoading = false;
 			if (result.data) {
 				this.databases = result.data;
 			}
@@ -322,15 +328,21 @@ export default {
 				return;
 			}
 			let self = this;
-			connectionApi.get([connectionId]).then(result => {
-				if (result.data) {
-					let schemas = (result.data.schema && result.data.schema.tables) || [];
-					schemas = schemas.sort((t1, t2) =>
-						t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-					);
-					self.schemas = schemas;
-				}
-			});
+			this.schemaLoading = true;
+			connectionApi
+				.get([connectionId])
+				.then(result => {
+					if (result.data) {
+						let schemas = (result.data.schema && result.data.schema.tables) || [];
+						schemas = schemas.sort((t1, t2) =>
+							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
+						);
+						self.schemas = schemas;
+					}
+				})
+				.finally(() => {
+					this.schemaLoading = false;
+				});
 		},
 
 		handlerConnectionChange() {
