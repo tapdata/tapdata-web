@@ -54,6 +54,33 @@
 						<ClipButton :value="model.tableName"></ClipButton>
 					</div>
 				</el-form-item>
+				<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
+					<PrimaryKeyInput
+						v-model="model.primaryKeys"
+						:options="primaryKeyOptions"
+						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
+					></PrimaryKeyInput>
+				</el-form-item>
+				<el-form-item
+					required
+					:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
+					v-if="isSourceDataNode"
+				>
+					<div class="flex-block">
+						<el-switch
+							v-model="model.enableInitialOrder"
+							style="margin-right: 20px"
+							@change="model.initialSyncOrder = 0"
+						></el-switch>
+						<el-input-number
+							v-if="model.enableInitialOrder"
+							v-model="model.initialSyncOrder"
+							controls-position="right"
+							:min="1"
+							size="mini"
+						></el-input-number>
+					</div>
+				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
 				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
@@ -66,7 +93,9 @@
 <script>
 import _ from 'lodash';
 import factory from '../../../api/factory';
+import PrimaryKeyInput from '../../../components/PrimaryKeyInput';
 import RelatedTasks from '../../../components/relatedTasks';
+import ClipButton from '@/components/ClipButton';
 import Entity from '../link/Entity';
 import { convertSchemaToTreeData, uuid } from '../../util/Schema';
 
@@ -74,7 +103,7 @@ let connectionApi = factory('connections');
 let editorMonitor = null;
 export default {
 	name: 'CustomNode',
-	components: { Entity, RelatedTasks },
+	components: { Entity, PrimaryKeyInput, ClipButton, RelatedTasks },
 	props: {
 		connection_type: {
 			type: String,
@@ -89,6 +118,7 @@ export default {
 			},
 			schemas: [],
 			disabled: false,
+			isSourceDataNode: true,
 			databases: [],
 			rules: {
 				connectionId: [
@@ -102,9 +132,11 @@ export default {
 			model: {
 				connectionId: '',
 				tableName: '',
-				type: 'custom_connection'
+				type: 'custom_connection',
+				primaryKeys: ''
 			},
-			mergedSchema: null
+			mergedSchema: null,
+			primaryKeyOptions: []
 		};
 	},
 
@@ -207,7 +239,10 @@ export default {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			this.model = {
 				connectionId: '',
-				type: 'custom_connection'
+				type: 'custom_connection',
+				primaryKeys: '',
+				initialSyncOrder: 0,
+				enableInitialOrder: false
 			};
 			if (data) {
 				_.merge(this.model, data);
