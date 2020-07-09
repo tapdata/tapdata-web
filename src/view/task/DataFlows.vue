@@ -352,7 +352,7 @@ export default {
 				draft: { switch: true, delete: false, edit: false, detail: true, forceStop: true, reset: true },
 				running: { switch: false, delete: true, edit: true, detail: false, forceStop: true, reset: true },
 				stopping: { switch: true, delete: true, edit: true, detail: false, forceStop: false, reset: true },
-				error: { switch: false, delete: false, edit: false, detail: true, forceStop: true, reset: false },
+				error: { switch: false, delete: false, edit: false, detail: false, forceStop: true, reset: false },
 				paused: { switch: false, delete: false, edit: false, detail: true, forceStop: true, reset: false },
 				'force stopping': { switch: true, delete: true, edit: true, detail: true, forceStop: true, reset: true }
 			}

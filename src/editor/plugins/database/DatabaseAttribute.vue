@@ -290,10 +290,12 @@ export default {
 				this.lookupDatabaseType();
 			}
 		},
+
 		changeConnection() {
 			this.model.includeTables = [];
 			this.lookupDatabaseType();
 		},
+
 		lookupDatabaseType() {
 			if (!this.model.connectionId) return;
 			let selectedDbs = this.databaseSelectConfig.options.filter(db => db.id === this.model.connectionId);

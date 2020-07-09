@@ -9,6 +9,7 @@ const tc = {
 				loading: '正在加載數據'
 			}
 		},
+		modifyName: '修改名稱',
 		ok: '確定',
 		exists_name: '名稱已存在',
 		search: '搜索',

@@ -17,10 +17,10 @@ export default class UI extends Component {
 	}
 
 	doInit() {
-		let editTitle = i18n.t('dataFlow.edit');
-		let saveTitle = i18n.t('dataFlow.button.save');
+		let editTitle = i18n.t('message.modifyName');
+		// let saveTitle = i18n.t('dataFlow.button.save');
 		let taskName = i18n.t('dataFlow.newTaksName');
-
+		// <i class='iconfont icon-baocun el-icon' id="submit" title="${saveTitle}" style="display: none;color:##48B6E2;cursor: pointer" ></i>
 		this.el = $(`<div class="editor">
 			<div class="e-header">
 				<div class="e-action-bar"><a class="e-action-back iconfont icon-biaotongbu"></a></div>
@@ -28,7 +28,7 @@ export default class UI extends Component {
 					<input value="${taskName}" class="ui-input" id="taskNameInput" type="text"  maxlength="150"/>
 				</div>
 				<i class='icon-tianxie iconfont el-icon' id="edit" title="${editTitle}" style="cursor: pointer"></i>
-				<i class='iconfont icon-baocun el-icon' id="submit" title="${saveTitle}" style="display: none;color:##48B6E2;cursor: pointer" ></i>
+
 				<div class="e-toolbar-container">
 					<div class="graph-toolbar"></div>
 					<div class="action-toolbar"></div>
@@ -54,8 +54,8 @@ export default class UI extends Component {
 		});
 		this.el.find('i.icon-tianxie').on('click', function() {
 			$('#taskNameInput').focus();
-			$('#edit').css('display', 'none');
-			$('#submit').css('display', 'inline-block');
+			// $('#edit').css('display', 'none');
+			// $('#submit').css('display', 'inline-block');
 			var input = document.getElementById('taskNameInput');
 			input.setSelectionRange(0, -1);
 		});
