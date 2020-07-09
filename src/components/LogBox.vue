@@ -53,9 +53,13 @@ export default {
 
 			let date = item.date ? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : '';
 			// let lastModified = item.last_updated ? this.$moment(item.last_updated).format("YYYY-MM-DD HH:mm:ss") : "";
+			let colorMap = {
+				ERROR: 'redActive',
+				WARN: 'color-warning'
+			};
 			return (
 				`<li class="log-box-item">` +
-				`[<span class="level ${item.level === 'ERROR' ? 'redActive' : ''}">${item.level}</span>] &nbsp;` +
+				`[<span class="level ${colorMap[item.level] || ''}">${item.level}</span>] &nbsp;` +
 				`<span>${date}</span>&nbsp;` +
 				`<span>[${markKeyword(item.threadName)}]</span>&nbsp;` +
 				`<span>${markKeyword(item.loggerName)}</span>&nbsp;-&nbsp;` +
