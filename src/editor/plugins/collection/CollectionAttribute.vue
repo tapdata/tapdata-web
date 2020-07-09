@@ -118,6 +118,7 @@ import _ from 'lodash';
 import factory from '../../../api/factory';
 let connectionApi = factory('connections');
 let editorMonitor = null;
+let tempSchemas = [];
 export default {
 	name: 'Collection',
 	components: { Entity, DatabaseForm, PrimaryKeyInput, ClipButton, RelatedTasks },
@@ -149,7 +150,7 @@ export default {
 		'model.tableName': {
 			immediate: true,
 			handler() {
-				let schemas = this.schemaSelectConfig.options;
+				let schemas = tempSchemas;
 				if (schemas.length > 0) {
 					if (this.model.tableName) {
 						let schema = schemas.filter(s => s.table_name === this.model.tableName);
@@ -334,10 +335,10 @@ export default {
 				.then(result => {
 					if (result.data) {
 						let schemas = (result.data.schema && result.data.schema.tables) || [];
-						schemas = schemas.sort((t1, t2) =>
+						tempSchemas = schemas.sort((t1, t2) =>
 							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
 						);
-						self.schemaSelectConfig.options = schemas.map(item => ({
+						self.schemaSelectConfig.options = tempSchemas.map(item => ({
 							label: item.table_name,
 							value: item.table_name
 						}));
