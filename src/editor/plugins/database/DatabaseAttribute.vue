@@ -27,21 +27,7 @@
 					required
 				>
 					<div style="display:flex;">
-						<el-select
-							@change="changeConnection"
-							:filterable="!databaseLoading"
-							v-model="model.connectionId"
-							:placeholder="$t('editor.cell.data_node.database.form.placeholder')"
-							size="mini"
-							:loading="databaseLoading"
-						>
-							<el-option
-								v-for="(item, idx) in databases"
-								:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
-								:value="item.id"
-								v-bind:key="idx"
-							></el-option>
-						</el-select>
+						<FbSelect v-model="model.connectionId" :config="databaseSelectConfig"></FbSelect>
 						<el-button
 							size="mini"
 							icon="el-icon-plus"
@@ -171,6 +157,7 @@ export default {
 	},
 
 	data() {
+		let self = this;
 		return {
 			disabled: false,
 			activeName: '0',
@@ -195,11 +182,19 @@ export default {
 
 			isSourceDataNode: false,
 
-			selectAllTables: false,
-			selectAllRemoveTables: false,
+			databaseSelectConfig: {
+				size: 'mini',
+				placeholder: this.$t('editor.cell.data_node.database.form.placeholder'),
+				loading: false,
+				filterable: true,
+				on: {
+					change() {
+						self.changeConnection();
+					}
+				},
+				options: []
+			},
 
-			databases: [],
-			databaseLoading: false,
 			rules: {
 				connectionId: [
 					{
@@ -264,7 +259,7 @@ export default {
 			editorMonitor = vueAdapter.editor;
 		},
 		async loadDataSource() {
-			this.databaseLoading = true;
+			this.databaseSelectConfig.loading = true;
 			let result = await connections.get({
 				filter: JSON.stringify({
 					where: {
@@ -281,9 +276,17 @@ export default {
 				})
 			});
 
-			this.databaseLoading = false;
+			this.databaseSelectConfig.loading = false;
 			if (result.data) {
-				this.databases = result.data;
+				this.databaseSelectConfig.options = result.data.map(item => {
+					return {
+						id: item.id,
+						name: item.name,
+						label: `${item.name} (${this.$t('connection.status.' + item.status) || item.status})`,
+						value: item.id
+					};
+				});
+
 				this.lookupDatabaseType();
 			}
 		},
@@ -293,7 +296,7 @@ export default {
 		},
 		lookupDatabaseType() {
 			if (!this.model.connectionId) return;
-			let selectedDbs = this.databases.filter(db => db.id === this.model.connectionId);
+			let selectedDbs = this.databaseSelectConfig.options.filter(db => db.id === this.model.connectionId);
 			if (selectedDbs && selectedDbs.length > 0) {
 				this.database_type = selectedDbs[0].database_type;
 			}
@@ -352,7 +355,7 @@ export default {
 			});
 		},
 		filter(list, keyword) {
-			let reg = new RegExp(keyword, 'i');
+			let reg = new RegExp(keyword, 'ig');
 			return keyword ? list.filter(t => t.table_name.match(reg)) : list;
 		},
 		checkAll() {
@@ -393,7 +396,7 @@ export default {
 		getData() {
 			let result = _.cloneDeep(this.model);
 			if (result.connectionId) {
-				let database = this.databases || [];
+				let database = this.databaseSelectConfig.options || [];
 				database = database.filter(db => db.id === result.connectionId);
 
 				if (this.isSourceDataNode) {
