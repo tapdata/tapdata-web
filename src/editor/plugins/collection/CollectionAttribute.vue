@@ -22,20 +22,7 @@
 					required
 				>
 					<div style="display:flex;">
-						<el-select
-							filterable
-							v-model="model.connectionId"
-							:placeholder="$t('editor.cell.data_node.collection.form.database.placeholder')"
-							@change="handlerConnectionChange"
-							size="mini"
-						>
-							<el-option
-								v-for="(item, idx) in databases"
-								:label="`${item.name} (${item.status})`"
-								:value="item.id"
-								v-bind:key="idx"
-							></el-option>
-						</el-select>
+						<FbSelect v-model="model.connectionId" :config="databaseSelectConfig"></FbSelect>
 						<el-button
 							size="mini"
 							icon="el-icon-plus"
@@ -52,22 +39,7 @@
 					required
 				>
 					<div class="flex-block">
-						<el-select
-							v-model="model.tableName"
-							filterable
-							allow-create
-							default-first-option
-							clearable
-							:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
-							size="mini"
-						>
-							<el-option
-								v-for="(item, idx) in tableNames"
-								:label="`${item}`"
-								:value="item"
-								v-bind:key="idx"
-							></el-option>
-						</el-select>
+						<FbSelect class="e-select" v-model="model.tableName" :config="schemaSelectConfig"></FbSelect>
 						<ClipButton :value="model.tableName"></ClipButton>
 					</div>
 				</el-form-item>
@@ -146,7 +118,7 @@ import _ from 'lodash';
 import factory from '../../../api/factory';
 let connectionApi = factory('connections');
 let editorMonitor = null;
-let schemas = [];
+let tempSchemas = [];
 export default {
 	name: 'Collection',
 	components: { Entity, DatabaseForm, PrimaryKeyInput, ClipButton, RelatedTasks },
@@ -178,6 +150,7 @@ export default {
 		'model.tableName': {
 			immediate: true,
 			handler() {
+				let schemas = tempSchemas;
 				if (schemas.length > 0) {
 					if (this.model.tableName) {
 						let schema = schemas.filter(s => s.table_name === this.model.tableName);
@@ -244,14 +217,37 @@ export default {
 	},
 
 	data() {
+		let self = this;
 		return {
 			taskData: {
 				id: '',
 				tableName: ''
 			},
 			disabled: false,
-			databases: [],
-			tableNames: [],
+
+			databaseSelectConfig: {
+				size: 'mini',
+				placeholder: this.$t('editor.cell.data_node.database.form.placeholder'),
+				loading: false,
+				filterable: true,
+				on: {
+					change() {
+						self.handlerConnectionChange();
+					}
+				},
+				options: []
+			},
+
+			schemaSelectConfig: {
+				size: 'mini',
+				placeholder: this.$t('editor.cell.data_node.collection.form.collection.placeholder'),
+				loading: false,
+				filterable: true,
+				options: [],
+				allowCreate: true,
+				defaultFirstOption: true,
+				clearable: true
+			},
 
 			rules: {
 				connectionId: [{ required: true, trigger: 'blur', message: `Please select database` }],
@@ -298,6 +294,7 @@ export default {
 		convertSchemaToTreeData,
 
 		async loadDataSource() {
+			this.databaseSelectConfig.loading = true;
 			let result = await connectionApi.get({
 				filter: JSON.stringify({
 					where: {
@@ -313,8 +310,16 @@ export default {
 				})
 			});
 
+			this.databaseSelectConfig.loading = false;
 			if (result.data) {
-				this.databases = result.data;
+				this.databaseSelectConfig.options = result.data.map(item => {
+					return {
+						id: item.id,
+						name: item.name,
+						label: `${item.name} (${item.status})`,
+						value: item.id
+					};
+				});
 			}
 		},
 
@@ -323,22 +328,33 @@ export default {
 				return;
 			}
 			let self = this;
-			connectionApi.get([connectionId]).then(result => {
-				if (result.data) {
-					let _schemas = (result.data.schema && result.data.schema.tables) || [];
-					schemas = _schemas.sort((t1, t2) =>
-						t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-					);
-					self.tableNames = schemas.map(it => it.table_name);
-				}
-			});
+			this.schemaSelectConfig.loading = true;
+
+			connectionApi
+				.get([connectionId])
+				.then(result => {
+					if (result.data) {
+						let schemas = (result.data.schema && result.data.schema.tables) || [];
+						tempSchemas = schemas.sort((t1, t2) =>
+							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
+						);
+						self.schemaSelectConfig.options = tempSchemas.map(item => ({
+							label: item.table_name,
+							value: item.table_name
+						}));
+					}
+				})
+				.finally(() => {
+					this.schemaSelectConfig.loading = false;
+				});
 		},
 
 		handlerConnectionChange() {
 			this.model.tableName = '';
-			for (let i = 0; i < this.databases.length; i++) {
-				if (this.model.connectionId === this.databases[i].id) {
-					this.model.databaseType = this.databases[i]['database_type'];
+			let list = this.databaseSelectConfig.options;
+			for (let i = 0; i < list.length; i++) {
+				if (this.model.connectionId === list[i].id) {
+					this.model.databaseType = list[i]['database_type'];
 				}
 			}
 		},
