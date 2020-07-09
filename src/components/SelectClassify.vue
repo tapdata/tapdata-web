@@ -21,19 +21,18 @@
 			node-key="id"
 			:props="props"
 			:expand-on-click-node="false"
-			lazy
 			show-checkbox
-			:load="loadNodes"
+			:data="treeData"
 			:filter-node-method="filterNode"
 			ref="tree"
 			check-strictly
 			@check-change="handleCheckChange"
 			class="metaData-tree SelectClassify-tree"
 		>
-			<span class="custom-tree-node" slot-scope="{ node }">
+			<span class="custom-tree-node" slot-scope="{ node, data }">
 				<span>
 					<span class="iconfont icon-Folder-closed filter-icon"></span>
-					<span class="table-label">{{ node.label }}</span>
+					<span class="table-label">{{ data.value }}</span>
 				</span>
 			</span>
 		</el-tree>
@@ -48,22 +47,17 @@
 import factory from '../api/factory';
 
 const MetadataDefinitions = factory('MetadataDefinitions');
-const MetadataInstances = factory('MetadataInstances');
 
 export default {
 	name: 'SelectClassify.vue',
 	props: {
 		dialogVisible: {
 			required: true,
-			value: [Object, Array, null, undefined]
+			value: Boolean
 		},
-		checkData: {
+		type: {
 			required: true,
-			value: [Object, Array, null, undefined]
-		},
-		listdata: {
-			required: true,
-			value: [Object, Array, null, undefined]
+			value: String
 		}
 	},
 	data() {
@@ -74,73 +68,57 @@ export default {
 				label: 'label',
 				isLeaf: 'leaf'
 			},
-			data: [],
+			treeData: [],
 			tagList: []
 		};
 	},
-	watch: {
-		dialogVisible: function() {
-			this.$emit('dialogVisible', this.dialogVisible);
-		}
+	created() {
+		this.getData();
 	},
 	methods: {
-		loadNodes(node, resolve) {
-			let self = this;
-			let filter = {
-				where: {}
+		getData(cb) {
+			let params = {
+				filter: {
+					where: {
+						or: [{ item_type: this.type }]
+					}
+				}
 			};
-
-			if (node.level === 0) {
-				filter.where['parent_id'] = {
-					exists: false
-				};
-				MetadataDefinitions.get({ filter: JSON.stringify(filter) })
-					.then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							if (res.data) {
-								self.data.splice(0, self.data.length);
-								let children = [];
-								res.data.forEach(record => {
-									children.push({
-										id: record.id,
-										parent_id: record.parent_id,
-										label: record.value,
-										meta_type: record.item_type
-									});
-								});
-								resolve(children);
-							}
+			MetadataDefinitions.get(params).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.treeData = this.formatData(res.data);
+						cb && cb(res.data);
+					}
+				}
+			});
+		},
+		//格式化分类数据
+		formatData(items) {
+			if (items && items.length) {
+				let map = {};
+				let nodes = [];
+				//遍历第一次， 先把所有子类按照id分成若干数组
+				items.forEach(it => {
+					if (it.parent_id) {
+						let children = map[it.parent_id] || [];
+						children.push(it);
+						map[it.parent_id] = children;
+					} else {
+						nodes.push(it);
+					}
+				});
+				//接着从没有子类的数据开始递归，将之前分好的数组分配给每一个类目
+				let checkChildren = nodes => {
+					return nodes.map(it => {
+						let children = map[it.id];
+						if (children) {
+							it.children = checkChildren(children);
 						}
-					})
-					.catch(() => {
-						this.$message.error('MetadataInstances error');
+						return it;
 					});
-			} else {
-				filter.where['parent_id'] = {
-					regexp: `^${node.data.id}$`
 				};
-				MetadataDefinitions.get({ filter: JSON.stringify(filter) })
-					.then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							if (res.data) {
-								self.data.splice(0, self.data.length);
-								let children = [];
-								res.data.forEach(record => {
-									children.push({
-										id: record.id,
-										parent_id: record.parent_id,
-										label: record.value,
-										meta_type: record.item_type,
-										leaf: true
-									});
-								});
-								resolve(children);
-							}
-						}
-					})
-					.catch(() => {
-						this.$message.error('MetadataInstances error');
-					});
+				return checkChildren(nodes);
 			}
 		},
 		filterNode(value, data) {
@@ -148,13 +126,16 @@ export default {
 			return data.label.indexOf(value) !== -1;
 		},
 		handleClose() {
-			this.dialogVisible = false;
+			this.$refs.tree.setCheckedKeys([]);
+			this.tagList = [];
+			this.$emit('dialogVisible', false);
 		},
 		handleCheckChange(data, checked) {
+			this.tagList = this.tagList || [];
 			if (checked) {
 				let node = {
 					id: data.id,
-					value: data.label
+					value: data.value
 				};
 				this.tagList.push(node);
 			} else {
@@ -182,109 +163,22 @@ export default {
 			});
 		},
 		handleCancel() {
-			let metadatas = [];
-			if (this.checkData) {
-				this.checkData.forEach(item => {
-					let classifications = [];
-					if (this.listdata) {
-						this.listdata.map(v => {
-							if (v.id === item) {
-								if (v.classifications && v.classifications.length !== 0) {
-									classifications.push(v.classifications);
-								} else {
-									classifications = [];
-								}
-							}
-						});
-					}
-					if (classifications.length === 0) {
-						this.tagList = [];
-						this.$message.error('该数据源无此分类 不需要删除');
-						return;
-					} else {
-						classifications.map(v => {
-							this.tagList.map((k, index) => {
-								if (v.id === k.id) {
-									classifications.splice(index, 1);
-								}
-							});
-						});
-					}
-					let node = {
-						id: item,
-						classifications: classifications
-					};
-					metadatas.push(node);
-				});
+			if (this.tagList && this.tagList.length === 0) {
+				this.$message.info('please select tag');
+				return;
 			}
-			metadatas = {
-				metadatas: metadatas
-			};
-			MetadataInstances.classification(metadatas)
-				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						// 清空数据
-						this.dialogVisible = false;
-						this.checkData = [];
-						this.tagList = [];
-						this.$refs.tree.setCheckedKeys([]);
-						this.$emit('clearCheckData', []);
-						this.$emit('dialogVisible', false);
-					}
-				})
-				.catch(() => {
-					this.$message.error('MetadataInstancesClassification error');
-				});
+			let operationType = 'delete';
+			this.$emit('operationsClassify', operationType, this.tagList);
+			this.handleClose();
 		},
 		handleAdd() {
-			let metadatas = [];
-			if (this.checkData) {
-				this.checkData.forEach(item => {
-					let classifications = [];
-					if (this.listdata) {
-						this.listdata.map(v => {
-							if (v.id === item) {
-								if (v.classifications && v.classifications.length !== 0) {
-									classifications.push(v.classifications);
-								} else {
-									classifications = [];
-								}
-							}
-						});
-					}
-					if (classifications.length === 0) {
-						classifications = this.tagList;
-					} else {
-						this.tagList.map(v => {
-							classifications.push(v);
-						});
-					}
-					let node = {
-						id: item,
-						classifications: classifications
-					};
-
-					metadatas.push(node);
-				});
+			if (this.tagList && this.tagList.length === 0) {
+				this.$message.info('please select tag');
+				return;
 			}
-			metadatas = {
-				metadatas: metadatas
-			};
-			MetadataInstances.classification(metadatas)
-				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						// 清空数据
-						this.dialogVisible = false;
-						this.checkData = [];
-						this.tagList = [];
-						this.$refs.tree.setCheckedKeys([]);
-						this.$emit('clearCheckData', []);
-						this.$emit('dialogVisible', false);
-					}
-				})
-				.catch(() => {
-					this.$message.error('MetadataInstancesClassification error');
-				});
+			let operationType = 'add';
+			this.$emit('operationsClassify', operationType, this.tagList);
+			this.handleClose();
 		}
 	}
 };

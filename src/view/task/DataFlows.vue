@@ -63,7 +63,7 @@
 								<el-button class="back-btn-icon-box dv-btn-icon" @click="handleGoFuntion"
 									><i class="iconfont icon-hanshu back-btn-icon"></i
 								></el-button>
-								<el-button class="back-btn-icon-box dv-btn-icon">
+								<el-button class="back-btn-icon-box dv-btn-icon" @click="handleClassify">
 									<i class="iconfont icon-biaoqian back-btn-icon"></i
 								></el-button>
 								<el-button class="back-btn-icon-box dv-btn-icon" @click="handleImport"
@@ -261,9 +261,10 @@
 		</el-col>
 		<SelectClassify
 			ref="SelectClassify"
-			:checkData="checkData"
 			:dialogVisible="dialogVisible"
-			:listdata="listdata"
+			type="dataflow"
+			v-on:dialogVisible="handleDialogVisible"
+			v-on:operationsClassify="handleOperationClassify"
 		></SelectClassify>
 	</el-row>
 </template>
@@ -275,14 +276,14 @@ const dataFlows = factory('DataFlows');
 const MetadataInstance = factory('MetadataInstances');
 import metaData from '../metaData';
 import SelectClassify from '../../components/SelectClassify';
+
 export default {
 	components: { metaData, SelectClassify },
 	data() {
 		return {
 			tageId: '',
-			listdata: [],
-			checkAll: [],
-			checkData: [],
+			listtags: [],
+			dialogVisible: false,
 			restLoading: false,
 			colorMap: {
 				running: '#67C23A',
@@ -383,6 +384,67 @@ export default {
 		}
 	},
 	methods: {
+		handleDialogVisible() {
+			this.dialogVisible = false;
+		},
+		handleClassify() {
+			if (this.multipleSelection.length === 0) {
+				this.$message.info('please select row data');
+				return;
+			}
+			this.dialogVisible = true;
+		},
+		handleOperationClassify(type, listtags) {
+			let attributes = [];
+			this.multipleSelection.forEach(row => {
+				row.listtags = row.listtags || [];
+				if (type === 'delete') {
+					if (row.listtags.length === 0) {
+						//该记录本无分类，删除分类操作无效
+					} else {
+						row.listtags.map((tag, index) => {
+							listtags.map(newTag => {
+								if (tag.id === newTag.id) {
+									row.listtags.splice(index, 1);
+								}
+							});
+						});
+						let node = {
+							id: row.id,
+							listtags: row.listtags
+						};
+						attributes.push(node);
+					}
+				} else {
+					if (row.listtags.length === 0) {
+						//该记录本无分类，直接新增
+						let node = {
+							id: row.id,
+							listtags: listtags
+						};
+						attributes.push(node);
+					} else {
+						row.listtags.map(tag => {
+							listtags.map(newTag => {
+								if (tag.id !== newTag.id) {
+									row.listtags.push(newTag);
+								}
+							});
+						});
+						let node = {
+							id: row.id,
+							listtags: row.listtags
+						};
+						attributes.push(node);
+					}
+				}
+			});
+			dataFlows.patch(attributes).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					this.getData();
+				}
+			});
+		},
 		handleGoFuntion() {
 			top.location.href = '/#/JsFuncs';
 		},
@@ -587,7 +649,8 @@ export default {
 							stats: true,
 							stages: true,
 							setting: true,
-							user_id: true
+							user_id: true,
+							listtags: true
 						}
 					})
 				},
