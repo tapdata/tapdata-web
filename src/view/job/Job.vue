@@ -598,7 +598,7 @@ export default {
 			}
 
 			promise = dataFlowsApi.draft(data);
-
+			this.$message.success(self.$t('message.saveOK'));
 			if (promise) {
 				promise
 					.then(result => {
