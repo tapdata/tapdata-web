@@ -2,21 +2,22 @@
 	<div class="metadata">
 		<div class="box-ul">
 			<div class="box-head">
-				<div class="select-nav-header">
+				<!-- <div class="select-nav-header" style="dispaly: none!important;">
 					<span style="font-size: 12px">{{ checkedValue.label }}</span>
 					<el-button size="mini" type="primary" @click="handleClassify">批量分类</el-button>
-				</div>
+				</div> -->
 				<el-input
 					placeholder="请输入内容"
 					v-model="search"
 					class="search-input"
 					clearable
+					size="mini"
 					@clear="clear"
 					@change="handleSearch"
 				>
 					<i slot="prefix" class="el-input__icon el-icon-search"></i>
 				</el-input>
-				<div class="select-nav">
+				<!-- <div class="select-nav">
 					<el-select
 						v-model="checkType"
 						clearable
@@ -42,18 +43,18 @@
 						>
 						</el-option>
 					</el-select>
-					<el-checkbox v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
-				</div>
+					<el-checkbox v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox> -->
+				<!-- </div> -->
 			</div>
 			<ul class="classify-ul">
-				<el-checkbox-group v-model="checkData" @change="handleCheckedCitiesChange" class="list-box">
-					<li v-for="item in listdata" :key="item.id">
-						<el-checkbox :label="item.id">
-							<span class="iconfont icon-table2 icon-color"></span>
-							<span>{{ item.original_name }}</span>
-						</el-checkbox>
-					</li>
-				</el-checkbox-group>
+				<!-- <el-checkbox-group v-model="checkData" @change="handleCheckedCitiesChange" class="list-box"> -->
+				<li v-for="item in listdata" :key="item.id" @click="handClickApiData(item)">
+					<!-- <el-checkbox :label="item.id"> -->
+					<span class="iconfont icon-table2 icon-color"></span>
+					<span>{{ item.basePath }}_{{ item.apiVersion }}</span>
+					<!-- </el-checkbox> -->
+				</li>
+				<!-- </el-checkbox-group> -->
 			</ul>
 			<SelectClassify
 				ref="SelectClassify"
@@ -72,11 +73,17 @@ import SelectClassify from './../components/SelectClassify';
 
 const MetadataDefinitions = factory('MetadataDefinitions');
 const MetadataInstances = factory('MetadataInstances');
+const modules = factory('modules');
 
 export default {
 	name: 'metaData',
 	components: {
 		SelectClassify
+	},
+	props: {
+		selectNodeId: {
+			type: String
+		}
 	},
 	data() {
 		return {
@@ -172,9 +179,16 @@ export default {
 	watch: {
 		filterText(val) {
 			this.$refs.tree.filter(val);
+		},
+		selectNodeId() {
+			this.handleList();
 		}
 	},
 	methods: {
+		// 点击api的数据
+		handClickApiData(data) {
+			this.$emit('backApiData', data);
+		},
 		loadNodes(node, resolve) {
 			let self = this;
 			let filter = {
@@ -187,55 +201,53 @@ export default {
 				};
 				MetadataDefinitions.get({
 					filter: JSON.stringify(filter)
-				})
-					.then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							if (res.data) {
-								self.data.splice(0, self.data.length);
-								let children = [];
-								res.data.forEach(record => {
-									children.push({
-										id: record.id,
-										parent_id: record.parent_id,
-										label: record.value,
-										meta_type: record.item_type
-									});
+				}).then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						if (res.data) {
+							self.data.splice(0, self.data.length);
+							let children = [];
+							res.data.forEach(record => {
+								children.push({
+									id: record.id,
+									parent_id: record.parent_id,
+									label: record.value,
+									meta_type: record.item_type
 								});
-								resolve(children);
-							}
+							});
+							resolve(children);
 						}
-					})
-					.catch(e => {
-						this.$message.error('MetadataInstances error');
-					});
+					}
+				});
+				// .catch(e => {
+				// 	this.$message.error('MetadataInstances error');
+				// });
 			} else {
 				filter.where['parent_id'] = {
 					regexp: `^${node.data.id}$`
 				};
 				MetadataDefinitions.get({
 					filter: JSON.stringify(filter)
-				})
-					.then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							if (res.data) {
-								self.data.splice(0, self.data.length);
-								let children = [];
-								res.data.forEach(record => {
-									children.push({
-										id: record.id,
-										parent_id: record.parent_id,
-										label: record.value,
-										meta_type: record.item_type,
-										leaf: true
-									});
+				}).then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						if (res.data) {
+							self.data.splice(0, self.data.length);
+							let children = [];
+							res.data.forEach(record => {
+								children.push({
+									id: record.id,
+									parent_id: record.parent_id,
+									label: record.value,
+									meta_type: record.item_type,
+									leaf: true
 								});
-								resolve(children);
-							}
+							});
+							resolve(children);
 						}
-					})
-					.catch(e => {
-						this.$message.error('MetadataInstances error');
-					});
+					}
+				});
+				// .catch(e => {
+				// 	this.$message.error('MetadataInstances error');
+				// });
 			}
 		},
 		filterNode(value, data) {
@@ -247,42 +259,41 @@ export default {
 			let params = {
 				filter: JSON.stringify({
 					where: {
-						is_deleted: false
+						'listtags.id': {
+							regexp: `^${this.selectNodeId}$`
+						}
 					},
 					fields: {
-						name: true,
-						original_name: true,
-						owner: true,
-						meta_type: true,
+						apiVersion: true,
+						basePath: true,
+						connection: true,
+						datasource: true,
 						description: true,
-						qualified_name: true,
-						db: true,
-						stats: true,
-						classifications: true,
-						last_user_name: true,
-						last_updated: true,
-						create_time: true,
-						collection: true,
 						id: true,
-						source: {
-							_id: true
-						},
-						databaseId: true
+						stats: true,
+						tablename: true,
+						user_id: true,
+						last_updated: true,
+						listtags: true
 					}
 				})
 			};
-			MetadataInstances.get(params)
-				.then(res => {
-					let self = this;
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							self.listdata = res.data;
-						}
+			// let where = {};
+			// if (!parseInt(this.$cookie.get('isAdmin'))) {
+			// 	params['filter[where][user_id][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+			// 	where['where[user_id][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+			// }
+			modules.get(params).then(res => {
+				let self = this;
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						self.listdata = res.data;
 					}
-				})
-				.catch(e => {
-					this.$message.error('MetadataInstances error');
-				});
+				}
+			});
+			// .catch(e => {
+			// 	this.$message.error('MetadataInstances error');
+			// });
 		},
 		handleDefault_expanded() {
 			let self = this;
@@ -310,19 +321,18 @@ export default {
 			let params = {};
 			this.checkedValue = val;
 			params[`filter[where][classifications.id][in][0]`] = val.id;
-			MetadataInstances.get(params)
-				.then(res => {
-					let self = this;
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							self.listdata = res.data;
-						}
+			MetadataInstances.get(params).then(res => {
+				let self = this;
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						self.listdata = res.data;
 					}
-					log('listdata', self.listdata);
-				})
-				.catch(e => {
-					this.$message.error('MetadataInstances error');
-				});
+				}
+				log('listdata', self.listdata);
+			});
+			// .catch(e => {
+			// 	this.$message.error('MetadataInstances error');
+			// });
 		},
 		handleSearch() {
 			let params = {};
@@ -334,19 +344,18 @@ export default {
 			}
 			// params[`filter[where][or][1][original_name][like]`] = this.checkClassify;
 
-			MetadataInstances.get(params)
-				.then(res => {
-					let self = this;
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							self.listdata = res.data;
-						}
+			MetadataInstances.get(params).then(res => {
+				let self = this;
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						self.listdata = res.data;
 					}
-					log('listdata', self.listdata);
-				})
-				.catch(e => {
-					this.$message.error('MetadataInstances error');
-				});
+				}
+				log('listdata', self.listdata);
+			});
+			// .catch(e => {
+			// 	this.$message.error('MetadataInstances error');
+			// });
 		},
 		clear() {
 			this.handleList();
@@ -367,7 +376,11 @@ export default {
 </script>
 
 <style scoped lang="less">
-
+.metadata {
+	height: 100%;
+	box-sizing: border-box;
+	overflow: hidden;
+}
 .box {
 	width: 254px;
 }
@@ -423,6 +436,10 @@ export default {
 .box-ul {
 	float: left;
 	height: 100%;
+	width: 100%;
+	box-sizing: border-box;
+	border-right: 1px solid #dedee4;
+	overflow: hidden;
 }
 
 .classify-ul {
@@ -432,18 +449,18 @@ export default {
 	transition: 0.3s;
 	list-style: none;
 	font-size: 12px;
-	width: 300px;
-	height: calc(100% - 114px);
+	width: 100%;
+	height: calc(100% - 41px);
 	overflow-y: auto;
-	border-right: 1px solid #dedee4;
 }
 
 .classify-ul li {
-	width: 263px;
+	width: 100%;
 	height: 34px;
 	line-height: 43px;
 	margin-left: 8px;
 	padding-left: 10px;
+	cursor: pointer;
 	background: #ffffff;
 	border-radius: 3px;
 	overflow: hidden;
@@ -455,12 +472,14 @@ export default {
 .box-head {
 	// position: fixed;
 	width: 100%;
+	height: 32px;
+	line-height: 32px;
 	z-index: 4;
 	background: #f5f5f5;
 	border-bottom: 1px solid #dedee4;
 }
 .search-input {
-	width: 94%;
+	width: auto;
 	margin-left: 10px;
 	margin-right: 10px;
 }
