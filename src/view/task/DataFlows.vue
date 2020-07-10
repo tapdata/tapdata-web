@@ -683,6 +683,7 @@ export default {
 				});
 			});
 			if (multipleSelection.length === 0) {
+				this.$message.warning(this.$t('dataFlow.multiError.allSelectionError'));
 				return;
 			}
 			let where = {
@@ -694,7 +695,7 @@ export default {
 				dataFlows.deleteAll(where).then(res => {
 					if (res.statusText === 'OK' || res.status === 200) {
 						this.getData();
-						this.$message.success(this.$t('message.deleteOK'));
+						this.responseHandler(res.data, this.$t('message.deleteOK'));
 					} else {
 						this.$message.info(this.$t('message.deleteFail'));
 					}
@@ -782,6 +783,7 @@ export default {
 				});
 			}
 			if (multipleSelection.length === 0) {
+				this.$message.warning(this.$t('dataFlow.multiError.allSelectionError'));
 				return;
 			}
 			let where = {
@@ -793,20 +795,21 @@ export default {
 				status: status
 			};
 
-			if (status === 'stopping') {
-				this.statusConfirm(() => {
-					dataFlows.update(where, attributes).then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							this.getData();
-						}
-					});
-				}, initData);
-			} else {
+			let request = () => {
 				dataFlows.update(where, attributes).then(res => {
 					if (res.statusText === 'OK' || res.status === 200) {
 						this.getData();
+						this.responseHandler(res.data);
 					}
 				});
+			};
+
+			if (status === 'stopping') {
+				this.statusConfirm(() => {
+					request();
+				}, initData);
+			} else {
+				request();
 			}
 		},
 		handleReset(id) {
@@ -853,27 +856,27 @@ export default {
 					}
 				});
 			});
-			if (multipleSelection.length !== 0 && errorStatus.length === 0) {
-				let where = multipleSelection;
-				this.restConfirm(() => {
-					this.restLoading = true;
-					dataFlows
-						.resetAll(where)
-						.then(res => {
-							if (res.statusText === 'OK' || res.status === 200) {
-								this.getData();
-								this.$message.success(this.$t('message.resetOk'));
-							} else {
-								this.$message.info(this.$t('message.cancleReset'));
-							}
-						})
-						.finally(() => {
-							this.restLoading = false;
-						});
-				});
-			} else {
+			if (multipleSelection.length === 0 || errorStatus.length !== 0) {
+				this.$message.warning(this.$t('dataFlow.multiError.allSelectionError'));
 				return;
 			}
+			let where = multipleSelection;
+			this.restConfirm(() => {
+				this.restLoading = true;
+				dataFlows
+					.resetAll(where)
+					.then(res => {
+						if (res.statusText === 'OK' || res.status === 200) {
+							this.getData();
+							this.responseHandler(res.data, this.$message.success(this.$t('message.resetOk')));
+						} else {
+							this.$message.info(this.$t('message.cancleReset'));
+						}
+					})
+					.finally(() => {
+						this.restLoading = false;
+					});
+			});
 		},
 		handlerCopy(id) {
 			let self = this;
@@ -928,6 +931,33 @@ export default {
 			this.pagesize = psize;
 			localStorage.setItem('flowPagesize', psize);
 			this.getData();
+		},
+		responseHandler(data, msg) {
+			let failList = data.fail || [];
+			if (failList.length) {
+				let msgMapping = {
+					5: this.$t('dataFlow.multiError.notFound'),
+					6: this.$t('dataFlow.multiError.statusError'),
+					7: this.$t('dataFlow.multiError.otherError'),
+					8: this.$t('dataFlow.multiError.statusError')
+				};
+				let nameMapping = {};
+				this.tableData.forEach(item => {
+					nameMapping[item.id] = item.name;
+				});
+				this.$message.warning({
+					dangerouslyUseHTMLString: true,
+					message: failList
+						.map(item => {
+							return `<div style="line-height: 24px;"><span style="color: #409EFF">${
+								nameMapping[item.id]
+							}</span> : <span style="color: #F56C6C">${msgMapping[item.code]}</span></div>`;
+						})
+						.join('')
+				});
+			} else if (msg) {
+				this.$message.success(msg);
+			}
 		}
 	}
 };

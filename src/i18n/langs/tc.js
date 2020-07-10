@@ -72,6 +72,12 @@ const tc = {
 		noRelatedTask: '暫無相關任務'
 	},
 	dataFlow: {
+		multiError: {
+			allSelectionError: '選中的任務狀態不允許這種操作',
+			notFound: '此任務不存在',
+			statusError: '任務狀態不允許這種操作',
+			otherError: '操作失敗，請重試'
+		},
 		draftNotStart: '編輯中不能啟動，請進入編輯頁面啟動',
 		systemHint: '系統提示',
 		systemText: '系統檢測出有如下任務上次操作後未保存，請問是否繼續編輯',
