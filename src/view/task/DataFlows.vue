@@ -868,7 +868,7 @@ export default {
 					.then(res => {
 						if (res.statusText === 'OK' || res.status === 200) {
 							this.getData();
-							this.responseHandler(res.data, this.$message.success(this.$t('message.resetOk')));
+							this.responseHandler(res.data, this.$t('message.resetOk'));
 						} else {
 							this.$message.info(this.$t('message.cancleReset'));
 						}
