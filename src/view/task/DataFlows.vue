@@ -683,6 +683,7 @@ export default {
 				});
 			});
 			if (multipleSelection.length === 0) {
+				this.$message.warning(this.$t('dataFlow.multiError.allSelectionError'));
 				return;
 			}
 			let where = {
@@ -855,27 +856,27 @@ export default {
 					}
 				});
 			});
-			if (multipleSelection.length !== 0 && errorStatus.length === 0) {
-				let where = multipleSelection;
-				this.restConfirm(() => {
-					this.restLoading = true;
-					dataFlows
-						.resetAll(where)
-						.then(res => {
-							if (res.statusText === 'OK' || res.status === 200) {
-								this.getData();
-								this.responseHandler(res.data, this.$message.success(this.$t('message.resetOk')));
-							} else {
-								this.$message.info(this.$t('message.cancleReset'));
-							}
-						})
-						.finally(() => {
-							this.restLoading = false;
-						});
-				});
-			} else {
+			if (multipleSelection.length === 0 || errorStatus.length !== 0) {
+				this.$message.warning(this.$t('dataFlow.multiError.allSelectionError'));
 				return;
 			}
+			let where = multipleSelection;
+			this.restConfirm(() => {
+				this.restLoading = true;
+				dataFlows
+					.resetAll(where)
+					.then(res => {
+						if (res.statusText === 'OK' || res.status === 200) {
+							this.getData();
+							this.responseHandler(res.data, this.$message.success(this.$t('message.resetOk')));
+						} else {
+							this.$message.info(this.$t('message.cancleReset'));
+						}
+					})
+					.finally(() => {
+						this.restLoading = false;
+					});
+			});
 		},
 		handlerCopy(id) {
 			let self = this;
