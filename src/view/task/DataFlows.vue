@@ -399,47 +399,32 @@ export default {
 			this.multipleSelection.forEach(row => {
 				row.listtags = row.listtags || [];
 				if (type === 'delete') {
-					if (row.listtags.length === 0) {
-						//该记录本无分类，删除分类操作无效
-					} else {
-						row.listtags.map((tag, index) => {
-							listtags.map(newTag => {
-								if (tag.id === newTag.id) {
-									row.listtags.splice(index, 1);
-								}
-							});
+					if (row.listtags.length > 0) {
+						listtags.forEach(tag => {
+							if (row.listtags.findIndex(it => it.id == tag.id) >= 0) {
+								row.listtags.splice(
+									row.listtags.findIndex(it => it.id == tag.id),
+									1
+								);
+							}
 						});
-						let node = {
-							id: row.id,
-							listtags: row.listtags
-						};
-						attributes.push(node);
 					}
 				} else {
-					if (row.listtags.length === 0) {
-						//该记录本无分类，直接新增
-						let node = {
-							id: row.id,
-							listtags: listtags
-						};
-						attributes.push(node);
+					if (row.listtags.length == 0) {
+						row.listtags = listtags;
 					} else {
-						row.listtags.map(tag => {
-							listtags.map(newTag => {
-								if (tag.id !== newTag.id) {
-									row.listtags.push(newTag);
-								}
-							});
+						listtags.forEach(tag => {
+							if (row.listtags.findIndex(it => it.id == tag.id) < 0) row.listtags.push(tag);
 						});
-						let node = {
-							id: row.id,
-							listtags: row.listtags
-						};
-						attributes.push(node);
 					}
 				}
+				let node = {
+					id: row.id,
+					listtags: row.listtags
+				};
+				attributes.push(node);
 			});
-			dataFlows.patch(attributes).then(res => {
+			dataFlows.patchAll({ attrs: attributes }).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					this.getData();
 				}
