@@ -51,11 +51,12 @@
 				<li v-for="item in listdata" :key="item.id" @click="handClickApiData(item)">
 					<!-- <el-checkbox :label="item.id"> -->
 					<span class="iconfont icon-table2 icon-color"></span>
-					<span>{{ item.basePath }}_{{ item.apiVersion }}</span>
+					<span>{{ item.tablename }}_{{ item.apiVersion }}</span>
 					<!-- </el-checkbox> -->
 				</li>
 				<!-- </el-checkbox-group> -->
 			</ul>
+			<div cl></div>
 			<SelectClassify
 				ref="SelectClassify"
 				:checkData="checkData"
@@ -254,6 +255,8 @@ export default {
 			if (!value) return true;
 			return data.label.indexOf(value) !== -1;
 		},
+
+		// 获取当前数据
 		handleList() {
 			this.checkedValue = 'all datas';
 			let params = {
@@ -278,6 +281,20 @@ export default {
 					}
 				})
 			};
+			let searchObj = null;
+			if (this.search) {
+				searchObj = {
+					filter: JSON.stringify({
+						where: {
+							tablename: {
+								like: this.search,
+								options: 'i'
+							}
+						}
+					})
+				};
+			}
+			params = Object.assign(params, searchObj);
 			// let where = {};
 			// if (!parseInt(this.$cookie.get('isAdmin'))) {
 			// 	params['filter[where][user_id][regexp]'] = `^${this.$cookie.get('user_id')}$`;
@@ -335,27 +352,7 @@ export default {
 			// });
 		},
 		handleSearch() {
-			let params = {};
-			if (this.checkType) {
-				params[`filter[where][meta_type]`] = this.checkType;
-			}
-			if (this.search) {
-				params[`filter[where][or][1][original_name][like]`] = this.search;
-			}
-			// params[`filter[where][or][1][original_name][like]`] = this.checkClassify;
-
-			MetadataInstances.get(params).then(res => {
-				let self = this;
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						self.listdata = res.data;
-					}
-				}
-				log('listdata', self.listdata);
-			});
-			// .catch(e => {
-			// 	this.$message.error('MetadataInstances error');
-			// });
+			this.handleList();
 		},
 		clear() {
 			this.handleList();

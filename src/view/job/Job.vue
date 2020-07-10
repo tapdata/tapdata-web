@@ -1154,11 +1154,7 @@ export default {
 		showSetting() {
 			log('Job.showSetting');
 			if (['paused', 'error', 'draft'].includes(this.status)) {
-				let name = '';
-				if (this.$route.query.name) {
-					name = this.$route.query.name;
-				}
-				this.editor.showSetting(name);
+				this.editor.showSetting();
 			}
 		},
 

@@ -9,7 +9,8 @@
 						</el-option>
 					</el-select>
 				</el-col>
-				<el-col :span="5" style="text-align: right;" v-if="stageId !== 'all'">
+				<!-- v-if="stageId !== 'all'" -->
+				<el-col :span="5" style="text-align: right;">
 					<el-button class="e-button" type="primary" @click="seeNodeData">{{
 						$t('dataFlow.button.viewConfig')
 					}}</el-button>
@@ -519,7 +520,7 @@ export default {
 				};
 				openFormPanel(1);
 			} else {
-				this.$message.error(this.$t('dataFlow.selectNode'));
+				this.editor.showSetting(true);
 			}
 		},
 
