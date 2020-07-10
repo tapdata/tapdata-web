@@ -73,6 +73,12 @@ const en = {
 		noRelatedTask: 'No related tasks'
 	},
 	dataFlow: {
+		multiError: {
+			allSelectionError: 'The status of selected job does not allow this operation.',
+			notFound: 'This job does not existed.',
+			statusError: 'Job status does not allow to do this operation.',
+			otherError: 'Operation failed, please try it again.'
+		},
 		draftNotStart: 'Editting can‘t be started, enter edit page to start',
 		systemHint: 'System prompt',
 		systemText: 'The system detected that the following tasks were not saved， keep editing?',
