@@ -27,6 +27,10 @@ export default {
 	render(h) {
 		let self = this;
 		let config = Object.assign(this.defaultConfig, self.config);
+		let select = this.$refs.select;
+		if (select && config.filterable && config.loading) {
+			select.previousQuery = '';
+		}
 		return h(
 			'ElSelect',
 			{
@@ -44,7 +48,13 @@ export default {
 					defaultFirstOption: config.defaultFirstOption,
 					clearable: config.clearable
 				},
-				on: Object.assign(this.on, config.on)
+				on: Object.assign(this.on, config.on, {
+					blur() {
+						self.filterMethod('');
+						config.on && config.on.blur && config.on.blur();
+					}
+				}),
+				ref: 'select'
 			},
 			this.filterList.map(opt => {
 				return h('ElOption', {
