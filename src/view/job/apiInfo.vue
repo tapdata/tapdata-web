@@ -1,13 +1,13 @@
 <template>
 	<el-container class="api-info">
 		<el-row class="e-row">
-			<el-col :span="4" class="e-col">
+			<el-col :span="3" class="e-col">
 				<metaData type="api" @nodeClick="getSelsetClassification"></metaData>
 			</el-col>
-			<el-col :span="4" class="e-col">
+			<el-col :span="3" class="e-col">
 				<apiPath :selectNodeId="classificationId" @backApiData="getCurrentApiData"></apiPath>
 			</el-col>
-			<el-col :span="16" class="e-col">
+			<el-col :span="18" class="e-col">
 				<div class="api-content api-main">
 					<el-header class="e-height">
 						<h1>{{ apiData.name }}</h1>

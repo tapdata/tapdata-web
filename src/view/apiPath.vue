@@ -7,7 +7,7 @@
 					<el-button size="mini" type="primary" @click="handleClassify">批量分类</el-button>
 				</div> -->
 				<el-input
-					placeholder="请输入内容"
+					:placeholder="$t('formBuilder.input.placeholderPrefix')"
 					v-model="search"
 					class="search-input"
 					clearable
@@ -260,46 +260,25 @@ export default {
 		handleList() {
 			this.checkedValue = 'all datas';
 			let params = {
-				filter: JSON.stringify({
-					where: {
-						'listtags.id': {
-							regexp: `^${this.selectNodeId}$`
-						}
-					},
-					fields: {
-						apiVersion: true,
-						basePath: true,
-						connection: true,
-						datasource: true,
-						description: true,
-						id: true,
-						stats: true,
-						tablename: true,
-						user_id: true,
-						last_updated: true,
-						listtags: true
-					}
-				})
+				'filter[fields][apiVersion]': true,
+				'filter[fields][basePath]': true,
+				'filter[fields][connection]': true,
+				'filter[fields][datasource]': true,
+				'filter[fields][description]': true,
+				'filter[fields][id]': true,
+				'filter[fields][status]': true,
+				'filter[fields][tablename]': true,
+				'filter[fields][user_id]': true,
+				'filter[fields][last_updated]': true,
+				'filter[fields][listtags]': true
 			};
-			let searchObj = null;
-			if (this.search) {
-				searchObj = {
-					filter: JSON.stringify({
-						where: {
-							tablename: {
-								like: this.search,
-								options: 'i'
-							}
-						}
-					})
-				};
+			if (this.selectNodeId) {
+				params['filter[where][listtags.id][regexp]'] = `^${this.selectNodeId}$`;
 			}
-			params = Object.assign(params, searchObj);
-			// let where = {};
-			// if (!parseInt(this.$cookie.get('isAdmin'))) {
-			// 	params['filter[where][user_id][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-			// 	where['where[user_id][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-			// }
+			if (this.search) {
+				params['filter[where][tablename][like]'] = this.search;
+				params['filter[where][tablename][options]'] = 'i';
+			}
 			modules.get(params).then(res => {
 				let self = this;
 				if (res.statusText === 'OK' || res.status === 200) {
@@ -308,9 +287,6 @@ export default {
 					}
 				}
 			});
-			// .catch(e => {
-			// 	this.$message.error('MetadataInstances error');
-			// });
 		},
 		handleDefault_expanded() {
 			let self = this;

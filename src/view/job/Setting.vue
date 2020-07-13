@@ -262,12 +262,9 @@ export default {
 			if (map) {
 				this.formData.syncPoints = Object.values(map);
 			}
-
 			if (data.editDisable) {
 				this.disabled = data.editDisable;
 			}
-
-			// editorMonitor = vueAdapter.editor;
 		},
 		getData() {
 			let result = _.cloneDeep(this.formData);
