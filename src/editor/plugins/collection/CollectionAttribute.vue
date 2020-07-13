@@ -151,7 +151,7 @@ export default {
 			immediate: true,
 			handler() {
 				let schemas = tempSchemas;
-				if (schemas.length > 0) {
+				if (this.schemaSelectConfig.options.length > 0) {
 					if (this.model.tableName) {
 						let schema = schemas.filter(s => s.table_name === this.model.tableName);
 						schema =
