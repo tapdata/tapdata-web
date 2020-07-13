@@ -107,11 +107,11 @@ export default {
 
 	methods: {
 		isRemove(id) {
-			let ops = this.operations.filter(v => v.id === id && v.op === 'DELETE');
+			let ops = this.operations ? this.operations.filter(v => v.id === id && v.op === 'DELETE') : [];
 			return ops && ops.length > 0;
 		},
 		isRetained(id) {
-			let ops = this.operations.filter(v => v.id === id && v.op === 'RETAINED');
+			let ops = this.operations ? this.operations.filter(v => v.id === id && v.op === 'RETAINED') : [];
 			return ops && ops.length > 0;
 		},
 		getId(node) {
@@ -212,7 +212,7 @@ export default {
 		padding: 0;
 	}
 	.activeDelete {
-		background: #f19595;
+		background: #dedee4;
 	}
 	.activeRetained {
 		background: #b4f18d;

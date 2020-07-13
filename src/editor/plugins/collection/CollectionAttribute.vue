@@ -82,7 +82,7 @@
 				>
 					<PrimaryKeyInput
 						v-model="model.fieldFilter"
-						:options="primaryKeyOptions"
+						:options="fieldFilterOptions"
 						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
 					></PrimaryKeyInput>
 				</el-form-item>
@@ -135,7 +135,7 @@
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
 				<entity
-					:schema="convertSchemaToTreeData(mergedSchema)"
+					:schema="convertSchemaToTreeData(defaultSchema)"
 					:editable="false"
 					:operations="model.operations"
 				></entity>
@@ -242,6 +242,8 @@ export default {
 						} else {
 							this.model.primaryKeys = '';
 						}
+						this.defaultSchema = schema;
+						this.fieldFilterOptions = _.cloneDeep(this.primaryKeyOptions);
 						this.$emit('schemaChange', _.cloneDeep(schema));
 					}
 				}
@@ -271,7 +273,7 @@ export default {
 				} else if (this.model.fieldFilterType === 'deleteField') {
 					this.handleDeleteField(this.getFieldData(fieldFilter));
 				}
-				this.$emit('schemaChange', _.cloneDeep(this.mergedSchema));
+				this.$emit('schemaChange', _.cloneDeep(this.defaultSchema));
 			}
 		}
 	},
@@ -355,7 +357,9 @@ export default {
 				operations: []
 			},
 			mergedSchema: null,
-			primaryKeyOptions: []
+			primaryKeyOptions: [],
+			fieldFilterOptions: [],
+			defaultSchema: null
 		};
 	},
 
@@ -403,7 +407,7 @@ export default {
 		getFieldData(fieldFilter) {
 			let currentFiled = [];
 			fieldFilter.forEach(f => {
-				let ops = this.mergedSchema.fields.filter(item => item.field_name === f);
+				let ops = this.defaultSchema.fields.filter(item => item.field_name === f);
 				currentFiled.push(ops[0]);
 			});
 			return currentFiled;
@@ -503,6 +507,9 @@ export default {
 			}
 			this.isSourceDataNode = isSourceDataNode;
 			this.mergedSchema = cell.getOutputSchema();
+
+			this.defaultSchema = this.mergedSchema;
+
 			cell.on('change:outputSchema', () => {
 				this.mergedSchema = cell.getOutputSchema();
 			});

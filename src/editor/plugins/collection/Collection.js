@@ -7,7 +7,7 @@ import { options } from '../../lib/rappid/config';
 import CollectionAttribute from './CollectionAttribute';
 import { FORM_DATA_KEY } from '../../constants';
 import i18n from '../../../i18n/i18n';
-//import log from "../../../log";
+import log from '../../../log';
 
 export const collectionConfig = {
 	type: 'app.Collection',
@@ -57,27 +57,29 @@ export const collectionConfig = {
 					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_pk')}`);
 				return true;
 			},
-			// mergeOutputSchema(outputSchema, applyRemoveOperation = true) {
-			// 	let data = this.getFormData();
-			// 	log('collection.mergeOutputSchema', data, outputSchema);
-			// 	if (!outputSchema || !data) return outputSchema;
-			// 	let fieldFilter = data.fieldFilter ? data.fieldFilter.split(',') : [];
-			// 	if (fieldFilter.length === 0) return outputSchema;
-			// 	fieldFilter.forEach(filed => {
-			// 		let index = outputSchema.fields.findIndex(f => filed === f.field_name);
-			// 		let newSchema = [];
-			// 		if (index >= 0) {
-			// 			if (data.fieldFilterType === 'retainedField') {
-			// 				newSchema.push(outputSchema.fields[index]);
-			// 				outputSchema.fields = newSchema;
-			// 			} else if (data.fieldFilterType === 'deleteField') {
-			// 				outputSchema.fields.splice(index, 1);
-			// 			}
-			// 		}
-			// 	});
-			// 	log('collection.mergeOutputSchema', outputSchema);
-			// 	return outputSchema;
-			// },
+			mergeOutputSchema(outputSchema) {
+				let data = this.getFormData();
+				log('collection.mergeOutputSchema', data, outputSchema);
+				if (!outputSchema || !data) return outputSchema;
+				let fieldFilter = data.fieldFilter ? data.fieldFilter.split(',') : [];
+				if (fieldFilter.length === 0) return outputSchema;
+				let newSchema = [];
+				fieldFilter.forEach(filed => {
+					let index = outputSchema.fields.findIndex(f => filed === f.field_name);
+					if (index >= 0) {
+						if (data.fieldFilterType === 'retainedField') {
+							newSchema.push(outputSchema.fields[index]);
+						} else if (data.fieldFilterType === 'deleteField') {
+							outputSchema.fields.splice(index, 1);
+						}
+					}
+				});
+				if (data.fieldFilterType === 'retainedField') {
+					outputSchema.fields = newSchema;
+				}
+				log('collection.mergeOutputSchema', outputSchema);
+				return outputSchema;
+			},
 
 			/**
 			 * validate this allow connect to target
