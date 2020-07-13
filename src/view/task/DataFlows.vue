@@ -53,6 +53,9 @@
 										></el-option>
 									</el-select>
 								</el-form-item>
+								<el-form-item v-if="checkedTag && checkedTag !== ''">
+									<el-tag size="small" closable @close="handleClose()">{{ checkedTag.value }}</el-tag>
+								</el-form-item>
 								<el-form-item>
 									<el-button class="back-btn-icon-box dv-btn-icon" @click="handleClear"
 										><i class="iconfont icon-shuaxin1 back-btn-icon"></i
@@ -281,7 +284,7 @@ export default {
 	components: { metaData, SelectClassify },
 	data() {
 		return {
-			tageId: '',
+			checkedTag: '',
 			listtags: [],
 			dialogVisible: false,
 			restLoading: false,
@@ -611,6 +614,13 @@ export default {
 						between: dates
 					};
 				}
+			}
+			if (this.checkedTag && this.checkedTag !== '') {
+				where.listtags = {
+					id: {
+						in: this.checkedTag.id
+					}
+				};
 			}
 			let _params = Object.assign(
 				{
@@ -971,6 +981,7 @@ export default {
 			this.formData.search = '';
 			this.formData.status = '';
 			this.formData.way = '';
+			this.checkedTag = '';
 			this.screenFn();
 		},
 		handleSelectionChange(val) {
@@ -987,8 +998,16 @@ export default {
 		},
 		nodeClick(data) {
 			if (data) {
-				this.tageId = data.id;
+				this.checkedTag = {
+					id: data.id,
+					value: data.value
+				};
+				this.getData();
 			}
+		},
+		handleClose() {
+			this.checkedTag = '';
+			this.getData();
 		}
 	}
 };
