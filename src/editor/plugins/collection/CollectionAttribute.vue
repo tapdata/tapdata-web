@@ -51,6 +51,41 @@
 						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
 					></PrimaryKeyInput>
 				</el-form-item>
+				<el-form-item>
+					<template slot="label">
+						{{ $t('editor.cell.data_node.collection.form.fieldFilterTip.label') }}
+						<el-tooltip placement="right-end">
+							<div slot="content">
+								<div>
+									{{ $t('editor.cell.data_node.collection.form.fieldFilterTip.keepAllFields') }}
+								</div>
+								<div>
+									{{ $t('editor.cell.data_node.collection.form.fieldFilterTip.retainedField') }}
+								</div>
+								<div>{{ $t('editor.cell.data_node.collection.form.fieldFilterTip.deleteField') }}</div>
+							</div>
+							<i class="e-primary el-icon-warning-outline"></i>
+						</el-tooltip>
+					</template>
+					<el-select v-model="model.fieldFilterType" @change="handleFieldFilterType">
+						<el-option
+							v-for="item in filterTypeOptions"
+							:key="item.value"
+							:label="item.label"
+							:value="item.value"
+						></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item
+					:label="$t('editor.cell.data_node.collection.form.pk.label')"
+					v-if="model.fieldFilterType !== 'keepAllFields'"
+				>
+					<PrimaryKeyInput
+						v-model="model.fieldFilter"
+						:options="primaryKeyOptions"
+						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
+					></PrimaryKeyInput>
+				</el-form-item>
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
@@ -99,7 +134,11 @@
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
-				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
+				<entity
+					:schema="convertSchemaToTreeData(mergedSchema)"
+					:editable="false"
+					:operations="model.operations"
+				></entity>
 			</div>
 		</div>
 
@@ -119,6 +158,14 @@ import factory from '../../../api/factory';
 let connectionApi = factory('connections');
 let editorMonitor = null;
 let tempSchemas = [];
+const RETAINED_OPS_TPL = {
+	id: '',
+	op: 'RETAINED'
+};
+const DELETE_OPS_TPL = {
+	id: '',
+	op: 'DELETE'
+};
 export default {
 	name: 'Collection',
 	components: { Entity, DatabaseForm, PrimaryKeyInput, ClipButton, RelatedTasks },
@@ -213,9 +260,21 @@ export default {
 					}
 				}
 			}
+		},
+		'model.fieldFilter': {
+			handler: function() {
+				//根据类型判断 fieldFilterType 不过滤字段Keep all fields、保留字段Retained field、删除字段Delete field。默认显示：不过滤字段。
+				let fieldFilter = this.model.fieldFilter ? this.model.fieldFilter.split(',') : [];
+				if (fieldFilter.length === 0) return;
+				if (this.model.fieldFilterType === 'retainedField') {
+					this.handleRetainedField(this.getFieldData(fieldFilter));
+				} else if (this.model.fieldFilterType === 'deleteField') {
+					this.handleDeleteField(this.getFieldData(fieldFilter));
+				}
+				this.$emit('schemaChange', _.cloneDeep(this.mergedSchema));
+			}
 		}
 	},
-
 	data() {
 		let self = this;
 		return {
@@ -224,7 +283,20 @@ export default {
 				tableName: ''
 			},
 			disabled: false,
-
+			filterTypeOptions: [
+				{
+					label: this.$t('editor.cell.data_node.collection.form.fieldFilterType.keepAllFields'),
+					value: 'keepAllFields'
+				},
+				{
+					label: this.$t('editor.cell.data_node.collection.form.fieldFilterType.retainedField'),
+					value: 'retainedField'
+				},
+				{
+					label: this.$t('editor.cell.data_node.collection.form.fieldFilterType.deleteField'),
+					value: 'deleteField'
+				}
+			],
 			databaseSelectConfig: {
 				size: 'mini',
 				placeholder: this.$t('editor.cell.data_node.database.form.placeholder'),
@@ -276,12 +348,13 @@ export default {
 				type: 'collection',
 				primaryKeys: '',
 				filter: '',
+				fieldFilterType: 'keepAllFields',
+				fieldFilter: '',
 				initialSyncOrder: 0,
-				enableInitialOrder: false
+				enableInitialOrder: false,
+				operations: []
 			},
-
 			mergedSchema: null,
-
 			primaryKeyOptions: []
 		};
 	},
@@ -291,6 +364,54 @@ export default {
 	},
 
 	methods: {
+		handleDeleteField(fieldFilter) {
+			this.model.operations = [];
+			fieldFilter.forEach(f => {
+				let self = this;
+				let fn = function(field) {
+					let ops = self.model.operations.filter(v => v.op === 'DELETE' && v.id === field.id);
+					let op;
+					if (ops.length === 0) {
+						op = Object.assign(_.cloneDeep(DELETE_OPS_TPL), {
+							id: field.id,
+							field: field.field_name
+						});
+						self.model.operations.push(op);
+					}
+					if (field.children) {
+						field.children.forEach(fn);
+					}
+				};
+				if (f) fn(f);
+			});
+		},
+		handleRetainedField(fieldFilter) {
+			this.model.operations = [];
+			fieldFilter.forEach(f => {
+				let self = this;
+				let ops = self.model.operations.filter(v => v.op === 'RETAINED' && v.id === f.id);
+				let op;
+				if (ops.length === 0) {
+					op = Object.assign(_.cloneDeep(RETAINED_OPS_TPL), {
+						id: f.id,
+						field: f.field_name
+					});
+					self.model.operations.push(op);
+				}
+			});
+		},
+		getFieldData(fieldFilter) {
+			let currentFiled = [];
+			fieldFilter.forEach(f => {
+				let ops = this.mergedSchema.fields.filter(item => item.field_name === f);
+				currentFiled.push(ops[0]);
+			});
+			return currentFiled;
+		},
+		handleFieldFilterType() {
+			this.model.operations = [];
+			this.model.fieldFilter = '';
+		},
 		convertSchemaToTreeData,
 
 		async loadDataSource() {
@@ -367,8 +488,11 @@ export default {
 				type: 'collection',
 				primaryKeys: '',
 				filter: '',
+				fieldFilterType: 'keepAllFields',
+				fieldFilter: '',
 				initialSyncOrder: 0,
-				enableInitialOrder: false
+				enableInitialOrder: false,
+				operations: []
 			};
 			if (data) {
 				_.merge(this.model, data);
@@ -382,7 +506,6 @@ export default {
 			cell.on('change:outputSchema', () => {
 				this.mergedSchema = cell.getOutputSchema();
 			});
-
 			editorMonitor = vueAdapter.editor;
 		},
 		getData() {

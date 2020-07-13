@@ -24,7 +24,11 @@
 					@node-collapse="handlerNodeCollapse"
 					ref="tree"
 				>
-					<span class="custom-tree-node" slot-scope="{ node, data }">
+					<span
+						class="custom-tree-node"
+						slot-scope="{ node, data }"
+						:class="{ activeDelete: isRemove(data.id), activeRetained: isRetained(data.id) }"
+					>
 						<span class="e-triangle" :style="`border-bottom-color: ${data.color || '#ffffff'};`"></span>
 						<span class="e-port e-port-in" :data-id="getId(data)" :data-table="getTableName(data)"></span>
 						<span class="e-pk">{{ data.primary_key_position > 0 ? 'PK' : '' }}</span>
@@ -82,6 +86,9 @@ export default {
 		tableNameKey: {
 			type: String,
 			default: 'table_name'
+		},
+		operations: {
+			type: Array
 		}
 	},
 
@@ -90,10 +97,23 @@ export default {
 			handler() {
 				log('Entity.schema.change', this.schema);
 			}
+		},
+		operations: {
+			handler() {
+				log('Entity.schema.change', this.operations);
+			}
 		}
 	},
 
 	methods: {
+		isRemove(id) {
+			let ops = this.operations.filter(v => v.id === id && v.op === 'DELETE');
+			return ops && ops.length > 0;
+		},
+		isRetained(id) {
+			let ops = this.operations.filter(v => v.id === id && v.op === 'RETAINED');
+			return ops && ops.length > 0;
+		},
 		getId(node) {
 			return node[this.nodeKey];
 		},
@@ -191,7 +211,12 @@ export default {
 	.el-main {
 		padding: 0;
 	}
-
+	.activeDelete {
+		background: #f19595;
+	}
+	.activeRetained {
+		background: #b4f18d;
+	}
 	.custom-tree-node {
 		flex: 1;
 

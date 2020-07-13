@@ -341,6 +341,23 @@ const en = {
 							label: 'Primary key',
 							placeholder: 'Please enter primary key'
 						},
+						fieldFilterType: {
+							keepAllFields: 'Keep all fields',
+							retainedField: 'Retained field',
+							deleteField: 'Delete field'
+						},
+						fieldFilter: {
+							placeholderKeep: ' Select the fields to keep',
+							placeholderDelete: ' Select the fields to delete'
+						},
+						fieldFilterTip: {
+							label: 'Field filter',
+							keepAllFields: 'Keep all fields: Keep all fields of this collection.',
+							retainedField:
+								'Retained field: the selected fields will be retained and all other fields will be discarded.',
+							deleteField:
+								'Delete field: the selected fields will be deleted and all other fields will be retained.'
+						},
 						dropTable: {
 							label: 'Existing data',
 							placeholder: '',
