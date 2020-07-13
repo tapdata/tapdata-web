@@ -616,10 +616,8 @@ export default {
 				}
 			}
 			if (this.checkedTag && this.checkedTag !== '') {
-				where.listtags = {
-					id: {
-						in: this.checkedTag.id
-					}
+				where['listtags.id'] = {
+					in: [this.checkedTag.id]
 				};
 			}
 			let _params = Object.assign(
