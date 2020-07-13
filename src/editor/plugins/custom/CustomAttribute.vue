@@ -14,7 +14,8 @@
 				<!-- <span class="addTxt">+新建文件</span> -->
 				<el-form-item :label="$t('editor.choose') + 'Custom'" prop="connectionId" :rules="rules" required>
 					<el-select
-						filterable
+						:filterable="!databaseLoading"
+						:loading="databaseLoading"
 						v-model="model.connectionId"
 						:placeholder="$t('editor.cell.data_node.custom.chooseCustomName')"
 						@change="handlerConnectionChange"
@@ -120,6 +121,7 @@ export default {
 			disabled: false,
 			isSourceDataNode: true,
 			databases: [],
+			databaseLoading: false,
 			rules: {
 				connectionId: [
 					{
@@ -141,6 +143,7 @@ export default {
 	},
 
 	async mounted() {
+		this.databaseLoading = true;
 		let result = await connectionApi.get({
 			filter: JSON.stringify({
 				where: {
@@ -156,6 +159,8 @@ export default {
 				order: 'name ASC'
 			})
 		});
+
+		this.databaseLoading = false;
 		if (result.data) {
 			this.databases = result.data;
 		}
