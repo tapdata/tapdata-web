@@ -41,7 +41,7 @@
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
-						<span class="info-text">{{ flow.updateTime }}</span>
+						<span class="info-text">{{ $moment(flow.startTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
@@ -147,7 +147,7 @@ export default {
 				username: '',
 				createTime: '',
 				status: '',
-				updateTime: '',
+				startTime: '',
 				inputNumber: '',
 				outputNumber: '',
 				stages: [],
@@ -366,34 +366,34 @@ export default {
 		};
 	},
 
-	computed: {
-		updateTime: function() {
-			if (this.dataFlow.startTime && this.dataFlow.last_updated) {
-				let time = new Date(this.dataFlow.last_updated).getTime() - new Date(this.dataFlow.startTime).getTime();
+	// computed: {
+	// 	updateTime: function() {
+	// 		if (this.dataFlow.startTime && this.dataFlow.last_updated) {
+	// 			let time = new Date(this.dataFlow.last_updated).getTime() - new Date(this.dataFlow.startTime).getTime();
 
-				let unit = 'ms';
-				if (time > 1000) {
-					unit = 's';
-					time = Number((time / 1000).toFixed(2));
-				}
-				if (time > 60) {
-					unit = 'm';
-					time = Number((time / 60).toFixed(2));
-				}
-				if (time > 60) {
-					unit = 'h';
-					time = Number((time / 60).toFixed(2));
-				}
-				if (time > 24) {
-					unit = 'd';
-					time = Number((time / 24).toFixed(2));
-				}
+	// 			let unit = 'ms';
+	// 			if (time > 1000) {
+	// 				unit = 's';
+	// 				time = Number((time / 1000).toFixed(2));
+	// 			}
+	// 			if (time > 60) {
+	// 				unit = 'm';
+	// 				time = Number((time / 60).toFixed(2));
+	// 			}
+	// 			if (time > 60) {
+	// 				unit = 'h';
+	// 				time = Number((time / 60).toFixed(2));
+	// 			}
+	// 			if (time > 24) {
+	// 				unit = 'd';
+	// 				time = Number((time / 24).toFixed(2));
+	// 			}
 
-				return time + ' ' + unit;
-			}
-			return '-';
-		}
-	},
+	// 			return time + ' ' + unit;
+	// 		}
+	// 		return '-';
+	// 	}
+	// },
 
 	mounted() {
 		this.sliderBar = this.editor.rightSidebar;
