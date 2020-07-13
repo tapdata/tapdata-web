@@ -39,7 +39,12 @@
 					required
 				>
 					<div class="flex-block">
-						<FbSelect class="e-select" v-model="model.tableName" :config="schemaSelectConfig"></FbSelect>
+						<FbSelect
+							class="e-select"
+							v-model="model.tableName"
+							:config="schemaSelectConfig"
+							@change="handleFieldFilterType"
+						></FbSelect>
 						<ClipButton :value="model.tableName"></ClipButton>
 					</div>
 				</el-form-item>
@@ -67,7 +72,7 @@
 							<i class="e-primary el-icon-warning-outline"></i>
 						</el-tooltip>
 					</template>
-					<el-select v-model="model.fieldFilterType" @change="handleFieldFilterType">
+					<el-select v-model="model.fieldFilterType" @change="handleCurrentFieldFilterType">
 						<el-option
 							v-for="item in filterTypeOptions"
 							:key="item.value"
@@ -76,14 +81,15 @@
 						></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item
-					:label="$t('editor.cell.data_node.collection.form.pk.label')"
-					v-if="model.fieldFilterType !== 'keepAllFields'"
-				>
+				<el-form-item v-if="model.fieldFilterType !== 'keepAllFields'">
 					<PrimaryKeyInput
 						v-model="model.fieldFilter"
 						:options="fieldFilterOptions"
-						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
+						:placeholder="
+							model.fieldFilterType === 'retainedField'
+								? $t('editor.cell.data_node.collection.form.fieldFilter.placeholderKeep')
+								: $t('editor.cell.data_node.collection.form.fieldFilter.placeholderDelete')
+						"
 					></PrimaryKeyInput>
 				</el-form-item>
 				<el-form-item
@@ -267,7 +273,10 @@ export default {
 			handler: function() {
 				//根据类型判断 fieldFilterType 不过滤字段Keep all fields、保留字段Retained field、删除字段Delete field。默认显示：不过滤字段。
 				let fieldFilter = this.model.fieldFilter ? this.model.fieldFilter.split(',') : [];
-				if (fieldFilter.length === 0) return;
+				if (fieldFilter.length === 0) {
+					this.handleFieldFilterType();
+					return;
+				}
 				if (this.model.fieldFilterType === 'retainedField') {
 					this.handleRetainedField(this.getFieldData(fieldFilter));
 				} else if (this.model.fieldFilterType === 'deleteField') {
@@ -413,6 +422,11 @@ export default {
 			return currentFiled;
 		},
 		handleFieldFilterType() {
+			this.model.operations = [];
+			this.model.fieldFilter = '';
+			this.model.fieldFilterType = 'keepAllFields';
+		},
+		handleCurrentFieldFilterType() {
 			this.model.operations = [];
 			this.model.fieldFilter = '';
 		},

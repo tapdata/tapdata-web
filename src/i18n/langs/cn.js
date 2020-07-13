@@ -338,6 +338,21 @@ const cn = {
 							label: '主键',
 							placeholder: '请输入主键'
 						},
+						fieldFilterType: {
+							keepAllFields: '不过滤字段',
+							retainedField: '保留字段',
+							deleteField: '删除字段'
+						},
+						fieldFilter: {
+							placeholderKeep: ' 请选择要保留的字段',
+							placeholderDelete: '  请选择要删除的字段'
+						},
+						fieldFilterTip: {
+							label: '字段过滤',
+							keepAllFields: '不过滤字段：保留此数据集的全部字段',
+							retainedField: '选择此项操作，将保留所选择的字段，舍弃其它字段全部.',
+							deleteField: '选择此项操作，将删除所选择的字段，保留其它全部字段.'
+						},
 						dropTable: {
 							label: '已存在的数据',
 							placeholder: '',

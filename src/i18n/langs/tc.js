@@ -338,6 +338,21 @@ const tc = {
 							label: '主鍵',
 							placeholder: '請輸入主鍵'
 						},
+						fieldFilterType: {
+							keepAllFields: '不過濾字段',
+							retainedField: '保留字段',
+							deleteField: '刪除字段'
+						},
+						fieldFilter: {
+							placeholderKeep: ' 請選擇要保留的字段',
+							placeholderDelete: ' 請選擇要刪除的字段'
+						},
+						fieldFilterTip: {
+							label: '字段過濾',
+							keepAllFields: '不過濾字段：保留此數據集的全部字段',
+							retainedField: '選擇此項操作，將保留所選擇的字段，捨棄其它字段全部.',
+							deleteField: '選擇此項操作，將刪除所選擇的字段，保留其它全部字段.'
+						},
 						dropTable: {
 							label: '已存在的數據',
 							placeholder: '',
