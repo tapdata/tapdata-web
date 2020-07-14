@@ -24,7 +24,6 @@
 				:data="treeData"
 				:filter-node-method="filterNode"
 				ref="tree"
-				default-expand-all
 				:render-after-expand="false"
 				class="metaData-tree"
 			>
