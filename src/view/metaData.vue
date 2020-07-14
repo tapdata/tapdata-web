@@ -111,7 +111,7 @@ export default {
 			let params = {
 				filter: {
 					where: {
-						or: [{ item_type: this.type }, { item_type: [] }]
+						or: [{ item_type: this.type }]
 					}
 				}
 			};

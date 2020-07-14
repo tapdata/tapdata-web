@@ -121,6 +121,9 @@ export default {
 							like: self.filterText,
 							options: 'i'
 						},
+						'source.user_id': {
+							like: this.$cookie.get('user_id')
+						},
 						is_deleted: false
 					},
 					order: 'original_name ASC'
