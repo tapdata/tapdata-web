@@ -195,11 +195,7 @@
 						<template slot-scope="scope">
 							<div v-if="!scope.row.hasChildren">
 								<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
-									<el-button
-										type="text"
-										:disabled="statusBtMap[scope.row.status].detail"
-										@click="handleDetail(scope.row.id, 'detail')"
-									>
+									<el-button type="text" @click="handleDetail(scope.row.id, 'detail')">
 										<i class="iconfont  task-list-icon icon-chaxun"></i>
 									</el-button>
 								</el-tooltip>
