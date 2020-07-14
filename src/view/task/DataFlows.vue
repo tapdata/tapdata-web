@@ -62,8 +62,12 @@
 										style="width:160px"
 										@change="screenFn"
 									>
-										<el-option :label="$t('dataFlow.status.initing')" value="initing"></el-option>
-										<el-option :label="$t('dataFlow.status.cdcing')" value="cdcing"></el-option>
+										<el-option
+											v-for="opt in ['initializing', 'cdc', 'initialized']"
+											:key="opt"
+											:label="$t('dataFlow.status.' + opt)"
+											:value="opt"
+										></el-option>
 									</el-select>
 								</el-form-item>
 								<el-form-item v-if="checkedTag && checkedTag !== ''">
