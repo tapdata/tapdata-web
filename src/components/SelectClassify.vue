@@ -72,8 +72,14 @@ export default {
 			tagList: []
 		};
 	},
-	created() {
-		this.getData();
+	watch: {
+		dialogVisible: {
+			handler() {
+				if (this.dialogVisible) {
+					this.getData();
+				}
+			}
+		}
 	},
 	methods: {
 		getData(cb) {
