@@ -290,6 +290,8 @@ const tc = {
 		nodeSettings: '節點設置',
 		choose: '選擇',
 		newTxt: '新建',
+
+		noResult: '未搜索到相關結果',
 		cell: {
 			validate: {
 				empty_name: '名稱必填.',

@@ -291,6 +291,8 @@ const cn = {
 		nodeSettings: '节点设置',
 		choose: '选择',
 		newTxt: '新建',
+
+		noResult: '未搜索到相关结果',
 		cell: {
 			validate: {
 				empty_name: '名称必填.',
