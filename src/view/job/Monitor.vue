@@ -33,16 +33,6 @@
 						<span class="info-text">{{ flow.createTime }}</span>
 					</div>
 					<div class="info-list">
-						<span class="info-label">{{ $t('dataFlow.state') }}:</span>
-						<span class="info-text" style="color: #62a569;">{{
-							$t('dataFlow.status.' + flow.status)
-						}}</span>
-					</div>
-					<!-- <div class="info-list">
-						<span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
-						<span class="info-text">{{updateTime}}</span>
-					</div> -->
-					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
 						<span class="info-text"> {{ flow.inputNumber }}</span>
 					</div>
@@ -396,6 +386,7 @@ export default {
 
 	mounted() {
 		this.sliderBar = this.editor.rightSidebar;
+		this.editor.seeMonitor = true;
 		this.$on(EditorEventType.SELECTED_STAGE, selectStage => {
 			this.stageId = selectStage ? selectStage.id : 'all';
 		});
@@ -496,28 +487,16 @@ export default {
 		},
 
 		seeNodeData() {
-			let self = this;
 			let result = this.getAllCellsNode();
 			let selectCell = null;
-			localStorage.setItem('fromMonitor', 't');
 			result.forEach(item => {
 				if (this.stageId === item.cell.id) {
 					selectCell = item.cell;
 				}
 			});
 			if (this.stageId && this.stageId !== 'all') {
+				this.editor.seeMonitor = false;
 				this.editor.graph.selectionPosition(selectCell);
-				let openFormPanel = function(counter) {
-					let nodeFormPanel = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
-					if (nodeFormPanel) {
-						self.editor.getRightTabPanel().select(nodeFormPanel);
-					} else if (counter <= 5) {
-						setTimeout(() => {
-							openFormPanel(counter++);
-						}, 1000);
-					}
-				};
-				openFormPanel(1);
 			} else {
 				this.$message.error(this.$t('dataFlow.selectNode'));
 			}

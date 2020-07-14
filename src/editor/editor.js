@@ -276,6 +276,7 @@ export default class Editor extends BaseObject {
 	initEditingMode() {
 		log('editor.initEditingMode');
 		// this.getRightSidebar().removeAll();
+		this.seeMonitor = false;
 		this.getRightTabPanel().removeAll();
 		this.getRightSidebar().hide();
 
@@ -290,6 +291,7 @@ export default class Editor extends BaseObject {
 	}
 	initMonitor(dataFlow) {
 		this.getRightTabPanel().removeAll();
+		this.seeMonitor = true;
 		let self = this;
 
 		let rightTabPanel = self.getRightTabPanel();
@@ -546,6 +548,7 @@ export default class Editor extends BaseObject {
 	}
 
 	goBackMontior() {
+		this.seeMonitor = true;
 		let monitor = this.getRightTabPanel().getChildByName('monitor');
 		this.getRightTabPanel().select(monitor);
 	}
