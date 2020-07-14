@@ -76,14 +76,15 @@ export default {
 		]);
 	},
 	methods: {
-		filterMethod(keyword) {
+		filterMethod(keyword = '') {
+			keyword = keyword.toLowerCase();
 			let reg = new RegExp(keyword, 'ig');
 			this.filterList = this.config.options
 				.filter(d => d.label.match(reg))
 				.sort((a, b) => {
-					if (a.label === keyword) {
+					if (a.label.toLowerCase() === keyword) {
 						return -1;
-					} else if (b.label === keyword) {
+					} else if (b.label.toLowerCase() === keyword) {
 						return 1;
 					} else {
 						return a.label <= b.label ? -1 : 1;
