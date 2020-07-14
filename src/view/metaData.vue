@@ -271,11 +271,13 @@ export default {
 	box-sizing: border-box;
 	border-right: 1px solid #dedee4;
 	border-bottom: 1px solid #dedee4;
+	background: #fff;
 	/*头部样式*/
 	.metadata-header {
 		height: 28px;
 		background: #f5f5f5;
 		border-bottom: 1px solid #dedee4;
+		border-top: 1px solid #dedee4;
 		font-size: 12px;
 		line-height: 31px;
 		padding-left: 8px;
