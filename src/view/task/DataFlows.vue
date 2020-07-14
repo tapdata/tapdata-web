@@ -735,21 +735,8 @@ export default {
 				this.$message.info('please select row data');
 				return;
 			}
-			let multipleSelection = [];
-			this.multipleSelection.map(item => {
-				this.tableData.map(row => {
-					if (
-						row.id === item.id &&
-						(row.status === 'paused' || row.status === 'error' || row.status === 'draft')
-					) {
-						multipleSelection.push(item.id);
-					}
-				});
-			});
-			if (multipleSelection.length === 0) {
-				this.$message.warning(this.$t('dataFlow.multiError.allSelectionError'));
-				return;
-			}
+			let multipleSelection = this.multipleSelection.map(item => item.id);
+
 			let where = {
 				_id: {
 					inq: multipleSelection
@@ -822,34 +809,20 @@ export default {
 				this.$message.info('please select row data');
 				return;
 			}
-			let multipleSelection = [];
+			let multipleSelection = this.multipleSelection.map(item => item.id);
 			let initData = []; // 设置初始化类型数据
-			if (status === 'scheduled') {
-				//全部启动
-				this.multipleSelection.map(item => {
-					this.tableData.map(row => {
-						if (row.id === item.id && (row.status === 'paused' || row.status === 'error')) {
-							multipleSelection.push(item.id);
-						}
-					});
-				});
-			} else if (status === 'stopping') {
+
+			if (status === 'stopping') {
 				//全部停止
 				this.multipleSelection.map(item => {
 					this.tableData.map(row => {
-						if (row.id === item.id && row.status === 'running') {
-							multipleSelection.push(item.id);
-							if (row.id === item.id && row.setting.sync_type !== 'cdc') {
-								initData.push(row);
-							}
+						if (row.id === item.id && row.status === 'running' && row.setting.sync_type !== 'cdc') {
+							initData.push(row);
 						}
 					});
 				});
 			}
-			if (multipleSelection.length === 0) {
-				this.$message.warning(this.$t('dataFlow.multiError.allSelectionError'));
-				return;
-			}
+
 			let where = {
 				_id: {
 					in: multipleSelection
@@ -908,22 +881,8 @@ export default {
 				this.$message.info('please select row data');
 				return;
 			}
-			let errorStatus = [];
-			let multipleSelection = [];
-			this.multipleSelection.map(item => {
-				this.tableData.map(row => {
-					if (row.id === item.id && (row.status === 'paused' || row.status === 'error')) {
-						multipleSelection.push(item.id);
-					} else if (row.id === item.id && (row.status !== 'paused' || row.status !== 'error')) {
-						this.$message.info(this.$t('message.notRest'));
-						errorStatus.push(item.id);
-					}
-				});
-			});
-			if (multipleSelection.length === 0 || errorStatus.length !== 0) {
-				this.$message.warning(this.$t('dataFlow.multiError.allSelectionError'));
-				return;
-			}
+			let multipleSelection = this.multipleSelection.map(item => item.id);
+
 			let where = multipleSelection;
 			this.restConfirm(() => {
 				this.restLoading = true;
