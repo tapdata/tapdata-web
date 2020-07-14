@@ -258,7 +258,6 @@
 					@current-change="handleCurrentChange"
 					@size-change="handleSizeChange"
 				>
-					>
 				</el-pagination>
 			</div>
 		</el-col>
@@ -1086,7 +1085,7 @@ export default {
 }
 .task-list .el-pagination {
 	width: 100%;
-	padding: 10px 0;
+	padding-top: 10px;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 	text-align: right;
