@@ -293,6 +293,8 @@ const en = {
 		nodeSettings: 'Node settings',
 		choose: 'Select',
 		newTxt: 'New',
+
+		noResult: 'No search results found',
 		cell: {
 			validate: {
 				empty_name: 'Name is required.',
