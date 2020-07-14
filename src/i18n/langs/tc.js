@@ -158,8 +158,14 @@ const tc = {
 			scheduled: '調度中',
 			stopping: '停止中',
 			error: '錯誤',
-			force_stopping: '強制停止'
+			force_stopping: '強制停止',
+			cdcing: '增量中',
+			initing: '初始化中',
+			initialzed: '初始化完成',
+			initComplete: '初始化完成'
 		},
+		lag: '滯後',
+		executionStatus: '執行狀態',
 		searchPlaceholder: '任務名稱/節點名/庫表名',
 		dataRange: '創建日期範圍',
 		startTime: '開始時間',

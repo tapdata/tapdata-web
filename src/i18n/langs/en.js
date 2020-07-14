@@ -160,8 +160,14 @@ const en = {
 			scheduled: 'Scheduled',
 			stopping: 'Stopping',
 			error: 'Error',
-			force_stopping: 'Force Stopping'
+			force_stopping: 'Force Stopping',
+			cdcing: 'CDCing',
+			initing: 'INITing',
+			initialzed: 'Initialized',
+			initComplete: 'INIT complete'
 		},
+		lag: 'lag',
+		executionStatus: 'Execution status',
 		searchPlaceholder: 'Task Name / Node Name / Library Table Name',
 		dataRange: 'Date range',
 		startTime: 'Start time',

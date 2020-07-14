@@ -159,8 +159,14 @@ const cn = {
 			scheduled: '调度中',
 			stopping: '停止中',
 			error: '错误',
-			force_stopping: '强制停止'
+			force_stopping: '强制停止',
+			cdcing: '增量中',
+			initing: '初始化中',
+			initialzed: '初始化完成',
+			initComplete: '初始化完成'
 		},
+		lag: '滞后',
+		executionStatus: '执行状态',
 		searchPlaceholder: '任务名称/节点名/库表名',
 		dataRange: '创建日期范围',
 		startTime: '开始时间',
