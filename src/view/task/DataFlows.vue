@@ -248,18 +248,17 @@
 						</template>
 					</el-table-column>
 				</el-table>
-				<el-pagination
-					background
-					class="pagination-bar"
-					layout="prev, pager, next,sizes"
-					:page-sizes="[20, 30, 50, 100]"
-					:page-size="pagesize"
-					:total="totalNum"
-					@current-change="handleCurrentChange"
-					@size-change="handleSizeChange"
-				>
-				</el-pagination>
 			</div>
+			<el-pagination
+				background
+				layout="prev, pager, next,sizes"
+				:page-sizes="[20, 30, 50, 100]"
+				:page-size="pagesize"
+				:total="totalNum"
+				@current-change="handleCurrentChange"
+				@size-change="handleSizeChange"
+			>
+			</el-pagination>
 		</el-col>
 		<SelectClassify
 			ref="SelectClassify"
@@ -381,7 +380,7 @@ export default {
 	},
 	computed: {
 		maxHeight: function() {
-			let height = document.body.clientHeight - 60 + 'px';
+			let height = document.body.clientHeight - 90 + 'px';
 			return height;
 		}
 	},

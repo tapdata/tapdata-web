@@ -264,9 +264,8 @@ export default {
 
 <style scoped lang="less">
 .metadata {
-	height: calc(100vh - 80px);
+	height: calc(100vh - 15px);
 	width: 100%;
-	overflow: hidden;
 	user-select: none;
 	margin-top: 10px;
 	box-sizing: border-box;
@@ -338,6 +337,7 @@ export default {
 	}
 }
 .metaData-tree {
+	padding-bottom: 50px;
 	.el-tree-node__content {
 		height: 26px;
 		overflow: hidden;
