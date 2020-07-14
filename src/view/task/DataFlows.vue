@@ -836,7 +836,7 @@ export default {
 				dataFlows.update(where, attributes).then(res => {
 					if (res.statusText === 'OK' || res.status === 200) {
 						this.getData();
-						this.responseHandler(res.data);
+						this.responseHandler(res.data, this.$t('message.operationSuccuess'));
 					}
 				});
 			};
