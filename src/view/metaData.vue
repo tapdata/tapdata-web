@@ -264,19 +264,20 @@ export default {
 
 <style scoped lang="less">
 .metadata {
-	height: calc(100vh - 80px);
+	height: calc(100vh - 15px);
 	width: 100%;
-	overflow: hidden;
 	user-select: none;
 	margin-top: 10px;
 	box-sizing: border-box;
 	border-right: 1px solid #dedee4;
 	border-bottom: 1px solid #dedee4;
+	background: #fff;
 	/*头部样式*/
 	.metadata-header {
 		height: 28px;
 		background: #f5f5f5;
 		border-bottom: 1px solid #dedee4;
+		border-top: 1px solid #dedee4;
 		font-size: 12px;
 		line-height: 31px;
 		padding-left: 8px;
@@ -338,6 +339,7 @@ export default {
 	}
 }
 .metaData-tree {
+	padding-bottom: 50px;
 	.el-tree-node__content {
 		height: 26px;
 		overflow: hidden;

@@ -364,8 +364,8 @@ const tc = {
 						fieldFilterTip: {
 							label: '字段過濾',
 							keepAllFields: '不過濾字段：保留此數據集的全部字段',
-							retainedField: '選擇此項操作，將保留所選擇的字段，捨棄其它字段全部.',
-							deleteField: '選擇此項操作，將刪除所選擇的字段，保留其它全部字段.'
+							retainedField: '保留字段：選擇此項操作，將保留所選擇的字段，捨棄其它字段全部.',
+							deleteField: '删除字段：選擇此項操作，將刪除所選擇的字段，保留其它全部字段.'
 						},
 						dropTable: {
 							label: '已存在的數據',
