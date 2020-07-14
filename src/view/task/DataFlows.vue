@@ -152,7 +152,7 @@
 									<el-tag
 										v-for="(value, key) in scope.row.statusMap"
 										:key="key"
-										type="success"
+										:type="scope.row.statusMap.initialized ? 'warning' : 'success'"
 										effect="dark"
 										size="mini"
 									>
@@ -698,6 +698,7 @@ export default {
 					item.children = [];
 
 					if (children) {
+						let finishedCount = 0;
 						children.map(k => {
 							let stage = '';
 							let node = {};
@@ -725,6 +726,9 @@ export default {
 								if (status === 'initializing') {
 									item.statusMap.initializing = true;
 								}
+								if (status === 'initialized') {
+									finishedCount += 1;
+								}
 								node = {
 									id: item.id + k.id,
 									name: k.name,
@@ -737,7 +741,7 @@ export default {
 							}
 							item.children.push(node);
 						});
-						if (!Object.keys(item.statusMap).length) {
+						if (finishedCount && finishedCount === item.children.length) {
 							item.statusMap.initialized = true;
 						}
 					}
