@@ -53,6 +53,19 @@
 										></el-option>
 									</el-select>
 								</el-form-item>
+								<el-form-item>
+									<el-select
+										v-model="formData.executionStatus"
+										size="mini"
+										clearable
+										:placeholder="$t('dataFlow.executionStatus')"
+										style="width:160px"
+										@change="screenFn"
+									>
+										<el-option :label="$t('dataFlow.status.initing')" value="initing"></el-option>
+										<el-option :label="$t('dataFlow.status.cdcing')" value="cdcing"></el-option>
+									</el-select>
+								</el-form-item>
 								<el-form-item v-if="checkedTag && checkedTag !== ''">
 									<el-tag size="small" closable @close="handleClose()">{{ checkedTag.value }}</el-tag>
 								</el-form-item>
@@ -129,18 +142,24 @@
 						width="180"
 						prop="user.email"
 					></el-table-column>
-					<el-table-column prop="status" sortable="custom" :label="$t('dataFlow.taskStatus')" width="100">
-						<template slot-scope="scope" v-if="!scope.row.hasChildren">
-							<span :style="`color: ${colorMap[scope.row.status]};`">
-								{{
-									$t(
-										'dataFlow.status.' +
-											(scope.row.status && scope.row.status !== undefined
-												? scope.row.status.replace(/ /g, '_')
-												: scope.row.status)
-									)
-								}}
-							</span>
+					<el-table-column prop="status" sortable="custom" :label="$t('dataFlow.taskStatus')" width="180">
+						<template slot-scope="scope">
+							<div>
+								<span :style="`color: ${colorMap[scope.row.status]};`">
+									{{ scope.row.statusLabel }}
+								</span>
+								<span v-if="!scope.row.hasChildren">
+									<el-tag
+										v-for="(value, key) in scope.row.statusMap"
+										:key="key"
+										type="success"
+										effect="dark"
+										size="mini"
+									>
+										{{ $t('dataFlow.status.' + key) }}
+									</el-tag>
+								</span>
+							</div>
 						</template>
 					</el-table-column>
 					<el-table-column
@@ -356,6 +375,7 @@ export default {
 				status: localStorage.getItem('flowStatus') || '',
 				person: '',
 				way: localStorage.getItem('flowWay') || '',
+				executionStatus: localStorage.getItem('flowExecutionStatus') || '',
 				classification: []
 			},
 			statusBtMap: {
@@ -564,6 +584,7 @@ export default {
 			localStorage.setItem('flowSearch', this.formData.search);
 			localStorage.setItem('flowStatus', this.formData.status);
 			localStorage.setItem('flowWay', this.formData.way);
+			localStorage.setItem('flowExecutionStatus', this.formData.executionStatus);
 			this.getData();
 		},
 		keyupEnter() {
@@ -602,6 +623,9 @@ export default {
 							'stages.tableName': { like: this.formData.search, options: 'i' }
 						}
 					];
+				}
+				if (this.formData.executionStatus) {
+					where['stats.stagesMetrics.status'] = this.formData.executionStatus;
 				}
 				if (this.formData.timeData && this.formData.timeData.length !== 0) {
 					let dates = _.cloneDeep(this.formData.timeData);
@@ -664,6 +688,8 @@ export default {
 
 			data.map(item => {
 				item.newStatus = ['running', 'scheduled'].includes(item.status) ? 'scheduled' : 'stopping';
+				item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
+				item.statusMap = {};
 				if (item.stats) {
 					item.hasChildren = false;
 					item.input = item.stats.input ? item.stats.input.rows : '--';
@@ -679,27 +705,42 @@ export default {
 							if (item.stats.stagesMetrics) {
 								stage = item.stats.stagesMetrics.filter(v => k.id === v.stageId);
 							}
-							if (stage.length === 0) {
+							if (!stage.length) {
 								node = {
 									id: item.id + k.id,
 									name: k.name,
 									input: '--',
 									output: '--',
 									transmissionTime: '--',
-									hasChildren: true
+									hasChildren: true,
+									statusLabel: '--'
 								};
 							} else {
+								let stg = stage[0];
+								let statusLabel = stg.status ? this.$t('dataFlow.status.' + stg.status) : '--';
+								let lag = `(${this.$t('dataFlow.lag')}${stg.replicationLag}s)`;
+								if (status === 'cdc') {
+									statusLabel += lag;
+									item.statusMap.cdc = true;
+								}
+								if (status === 'initializing') {
+									item.statusMap.initializing = true;
+								}
 								node = {
 									id: item.id + k.id,
 									name: k.name,
-									input: stage[0].input.rows,
-									output: stage[0].output.rows,
-									transmissionTime: stage[0].transmissionTime,
-									hasChildren: true
+									input: stg.input.rows,
+									output: stg.output.rows,
+									transmissionTime: stg.transmissionTime,
+									hasChildren: true,
+									statusLabel
 								};
 							}
 							item.children.push(node);
 						});
+						if (!Object.keys(item.statusMap).length) {
+							item.statusMap.initialized = true;
+						}
 					}
 				} else {
 					item.input = '--';

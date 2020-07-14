@@ -161,10 +161,9 @@ const en = {
 			stopping: 'Stopping',
 			error: 'Error',
 			force_stopping: 'Force Stopping',
-			cdcing: 'CDCing',
-			initing: 'INITing',
-			initialzed: 'Initialized',
-			initComplete: 'INIT complete'
+			cdc: 'CDC',
+			initializing: 'Initializing',
+			initialized: 'Initialized'
 		},
 		lag: 'lag',
 		executionStatus: 'Execution status',
