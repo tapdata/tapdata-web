@@ -293,7 +293,7 @@ export default class Editor extends BaseObject {
 		this.getRightTabPanel().removeAll();
 		this.seeMonitor = true;
 		let self = this;
-
+		if (dataFlow) this.dataFlow = dataFlow;
 		let rightTabPanel = self.getRightTabPanel();
 		if (rightTabPanel) {
 			let monitor = rightTabPanel.getChildByName('monitor');
@@ -302,7 +302,7 @@ export default class Editor extends BaseObject {
 					name: 'monitor',
 					editor: this,
 					propsData: {
-						dataFlow: dataFlow
+						dataFlow: dataFlow || this.dataFlow
 					},
 					component: Monitor
 				});
@@ -317,7 +317,7 @@ export default class Editor extends BaseObject {
 	 * show setting panel
 	 * @param name
 	 */
-	showSetting(name) {
+	showSetting(editDisable) {
 		this.getRightTabPanel().removeAll();
 		let self = this;
 		self.initSettings();
@@ -326,9 +326,7 @@ export default class Editor extends BaseObject {
 			let setting = rightTabPanel.getChildByName('setting');
 			if (setting) {
 				let settingData = self.graph.getSettingData();
-				if (name) {
-					settingData.name = name;
-				}
+				if (editDisable) settingData.editDisable = editDisable;
 				setting.setData(settingData);
 			}
 			rightTabPanel.select(setting);

@@ -9,6 +9,7 @@ const tc = {
 				loading: '正在加載數據'
 			}
 		},
+		operationSuccuess: '操作成功',
 		modifyName: '修改名稱',
 		ok: '確定',
 		exists_name: '名稱已存在',
@@ -72,6 +73,12 @@ const tc = {
 		noRelatedTask: '暫無相關任務'
 	},
 	dataFlow: {
+		multiError: {
+			allSelectionError: '選中的任務狀態不允許這種操作',
+			notFound: '此任務不存在',
+			statusError: '任務狀態不允許這種操作',
+			otherError: '操作失敗，請重試'
+		},
 		draftNotStart: '編輯中不能啟動，請進入編輯頁面啟動',
 		systemHint: '系統提示',
 		systemText: '系統檢測出有如下任務上次操作後未保存，請問是否繼續編輯',
@@ -151,8 +158,14 @@ const tc = {
 			scheduled: '調度中',
 			stopping: '停止中',
 			error: '錯誤',
-			force_stopping: '強制停止'
+			force_stopping: '強制停止',
+			cdcing: '增量中',
+			initing: '初始化中',
+			initialzed: '初始化完成',
+			initComplete: '初始化完成'
 		},
+		lag: '滯後',
+		executionStatus: '執行狀態',
 		searchPlaceholder: '任務名稱/節點名/庫表名',
 		dataRange: '創建日期範圍',
 		startTime: '開始時間',
@@ -284,6 +297,8 @@ const tc = {
 		nodeSettings: '節點設置',
 		choose: '選擇',
 		newTxt: '新建',
+
+		noResult: '未搜索到相關結果',
 		cell: {
 			validate: {
 				empty_name: '名稱必填.',
@@ -337,6 +352,21 @@ const tc = {
 						pk: {
 							label: '主鍵',
 							placeholder: '請輸入主鍵'
+						},
+						fieldFilterType: {
+							keepAllFields: '不過濾字段',
+							retainedField: '保留字段',
+							deleteField: '刪除字段'
+						},
+						fieldFilter: {
+							placeholderKeep: ' 請選擇要保留的字段',
+							placeholderDelete: ' 請選擇要刪除的字段'
+						},
+						fieldFilterTip: {
+							label: '字段過濾',
+							keepAllFields: '不過濾字段：保留此數據集的全部字段',
+							retainedField: '保留字段：選擇此項操作，將保留所選擇的字段，捨棄其它字段全部.',
+							deleteField: '删除字段：選擇此項操作，將刪除所選擇的字段，保留其它全部字段.'
 						},
 						dropTable: {
 							label: '已存在的數據',

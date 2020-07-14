@@ -19,7 +19,8 @@
 					required
 				>
 					<el-select
-						filterable
+						:filterable="!databaseLoading"
+						:loading="databaseLoading"
 						v-model="model.connectionId"
 						:placeholder="$t('editor.cell.data_node.es.chooseESName')"
 					>
@@ -61,6 +62,7 @@ export default {
 		return {
 			disabled: false,
 			databases: [],
+			databaseLoading: false,
 			rules: {
 				connectionId: [
 					{
@@ -79,6 +81,7 @@ export default {
 	},
 
 	async mounted() {
+		this.databaseLoading = true;
 		let result = await connections.get({
 			filter: JSON.stringify({
 				where: {
@@ -95,6 +98,7 @@ export default {
 			})
 		});
 
+		this.databaseLoading = false;
 		if (result.data) {
 			this.databases = result.data;
 		}

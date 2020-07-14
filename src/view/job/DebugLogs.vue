@@ -138,6 +138,8 @@ export default {
 							}
 
 							this.$refs.log.add({ logs: res.data, prepend, reset });
+						} else if (this.search) {
+							this.$message.info(this.$t('editor.noResult'));
 						}
 					}
 				})

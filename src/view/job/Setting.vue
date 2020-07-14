@@ -1,6 +1,11 @@
 <template>
 	<div class="data-flow-setting">
-		<el-form label-width="40px" :data="formData" :rules="rules">
+		<div class="head-btns">
+			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+				{{ $t('dataFlow.button.viewMonitoring') }}
+			</el-button>
+		</div>
+		<el-form label-width="40px" :data="formData" :disabled="disabled" :rules="rules">
 			<el-row>
 				<el-col :span="24">
 					<el-form-item>
@@ -196,12 +201,12 @@ import { DEFAULT_SETTING } from '../../editor/constants';
 import _ from 'lodash';
 import * as moment from 'moment';
 import factory from '../../api/factory';
-import log from '../../log';
 const connections = factory('connections');
 export default {
 	name: 'Setting.vue',
 	data() {
 		return {
+			disabled: false,
 			formData: _.cloneDeep(DEFAULT_SETTING),
 			rules: {
 				cronExpression: [
@@ -250,13 +255,15 @@ export default {
 	},
 	methods: {
 		setData(data) {
-			log('Editor.Setting.setData', data);
 			if (data) {
 				Object.keys(data).forEach(key => (this.formData[key] = data[key]));
 			}
 			let map = this.updateSyncNode(this.formData.syncPoints);
 			if (map) {
 				this.formData.syncPoints = Object.values(map);
+			}
+			if (data.editDisable) {
+				this.disabled = data.editDisable;
 			}
 		},
 		getData() {
@@ -267,6 +274,10 @@ export default {
 				});
 			}
 			return result;
+		},
+
+		seeMonitor() {
+			this.editor.initMonitor();
 		},
 		changeSyncType(type) {
 			if (type === 'initial_sync') {
@@ -381,6 +392,9 @@ export default {
 };
 </script>
 <style scoped>
+.e-button {
+	margin: 10px 10px 0 0;
+}
 .dataBase-name {
 	margin-right: 5px;
 	overflow: hidden;

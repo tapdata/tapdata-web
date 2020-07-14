@@ -8,7 +8,7 @@ import axios from 'axios';
 
 export default class Modules extends PublicAPI {
 	constructor() {
-		super('/api/modules');
+		super('/api/Modules');
 	}
 
 	getApiDocument(id) {

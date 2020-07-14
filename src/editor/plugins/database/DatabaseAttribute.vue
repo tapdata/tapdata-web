@@ -27,20 +27,7 @@
 					required
 				>
 					<div style="display:flex;">
-						<el-select
-							@change="changeConnection"
-							filterable
-							v-model="model.connectionId"
-							:placeholder="$t('editor.cell.data_node.database.form.placeholder')"
-							size="mini"
-						>
-							<el-option
-								v-for="(item, idx) in databases"
-								:label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
-								:value="item.id"
-								v-bind:key="idx"
-							></el-option>
-						</el-select>
+						<FbSelect v-model="model.connectionId" :config="databaseSelectConfig"></FbSelect>
 						<el-button
 							size="mini"
 							icon="el-icon-plus"
@@ -75,21 +62,18 @@
 				</div>
 			</el-form>
 		</div>
-		<div class="processingBody">
-			<div class="allCheck" v-if="activeName === 'first' && !disabled">
-				<el-checkbox v-model="selectAllTables"></el-checkbox>
-				<span @click="bulkRemoval()">{{ $t('editor.cell.data_node.database.bulkRemoval') }}</span>
+		<div class="table-block">
+			<div v-for="(pane, index) in tabs" :key="index" class="check-all" v-show="activeName == index && !disabled">
+				<el-checkbox v-model="pane.checkAll" @input="checkAll"></el-checkbox>
+				<span @click="moveAll()">{{ pane.checkAllLabel }}</span>
 			</div>
-
-			<div class="allCheck" v-if="activeName === 'second' && !disabled">
-				<el-checkbox v-model="selectAllRemoveTables"></el-checkbox>
-				<span @click="bulkRevocation()">{{ $t('editor.cell.data_node.database.bulkRevocation') }}</span>
-			</div>
-
 			<el-tabs class="e-tabs" v-model="activeName">
 				<el-tab-pane
-					:label="$t('editor.cell.data_node.database.queueCopied') + '(' + computedTables.length + ')'"
-					name="first"
+					class="tab-pane"
+					v-for="(pane, index) in tabs"
+					:key="index"
+					:name="index + ''"
+					:label="pane.label + '(' + filterTables[index].length + ')'"
 				>
 					<div class="search">
 						<el-input
@@ -97,11 +81,15 @@
 							:placeholder="$t('editor.cell.data_node.database.enterName')"
 							prefix-icon="el-icon-search"
 							clearable
-							v-model="search"
+							v-model="pane.keyword"
+							@input="
+								tabs[activeName].checkAll = false;
+								checkAll();
+							"
 						>
 						</el-input>
 					</div>
-					<el-row class="table-preffix-box" :gutter="10">
+					<el-row class="table-preffix-box" :gutter="10" v-if="index === 0">
 						<el-col style="width: 50%">
 							<el-input
 								clearable
@@ -121,59 +109,24 @@
 					</el-row>
 					<el-row
 						class="list"
+						v-for="item in filterTables[index]"
 						:class="{ active: item.checked }"
-						v-for="(item, index) in computedTables"
 						:key="item.id"
 						:gutter="20"
 					>
 						<el-col :span="1">
-							<el-checkbox v-model="item.checked" :disabled="disabled"></el-checkbox>
+							<el-checkbox
+								v-model="item.checked"
+								:disabled="disabled"
+								@input="tabs[activeName].checkAll = false"
+							></el-checkbox>
 						</el-col>
 						<el-col :span="17" style="padding-left:20px;">
 							<i class="iconfont icon-table2"></i>
 							<span class="tableName">{{ item.table_name }}</span>
 						</el-col>
 						<el-col :span="5" class="text-center" v-if="!disabled">
-							<el-button type="text" @click="removeTable(item, index)">
-								{{ $t('editor.cell.data_node.database.remove') }}
-							</el-button>
-						</el-col>
-					</el-row>
-				</el-tab-pane>
-				<!-- model.excludeTables -->
-				<el-tab-pane
-					:label="$t('editor.cell.data_node.database.tableRemoved') + '(' + computedRemoveTables.length + ')'"
-					name="second"
-				>
-					<div class="search">
-						<el-input
-							:disabled="disabled"
-							:placeholder="$t('editor.cell.data_node.database.enterName')"
-							prefix-icon="el-icon-search"
-							clearable
-							v-model="removeSearch"
-						>
-						</el-input>
-					</div>
-
-					<el-row
-						class="list"
-						:class="{ active: item.checked }"
-						v-for="(item, index) in computedRemoveTables"
-						:key="item.id"
-						:gutter="20"
-					>
-						<el-col :span="2">
-							<el-checkbox :disabled="disabled" v-model="item.checked"></el-checkbox>
-						</el-col>
-						<el-col :span="17">
-							<i class="iconfont icon-table2"></i>
-							<span class="tableName">{{ item.table_name }}</span>
-						</el-col>
-						<el-col :span="5" class="text-center" v-if="!disabled">
-							<el-button type="text" @click="undotble(item, index)">
-								{{ $t('editor.cell.data_node.database.Undo') }}
-							</el-button>
+							<el-button type="text" @click="move([item])">{{ pane.buttonLabel }}</el-button>
 						</el-col>
 					</el-row>
 				</el-tab-pane>
@@ -204,21 +157,44 @@ export default {
 	},
 
 	data() {
+		let self = this;
 		return {
 			disabled: false,
-			removeSearch: '',
-			search: '',
-
-			tables: [],
-			removeTables: [],
+			activeName: '0',
+			tabs: [
+				{
+					list: [],
+					checkAll: false,
+					keyword: '',
+					label: this.$t('editor.cell.data_node.database.queueCopied'),
+					checkAllLabel: this.$t('editor.cell.data_node.database.bulkRemoval'),
+					buttonLabel: this.$t('editor.cell.data_node.database.remove')
+				},
+				{
+					list: [],
+					checkAll: false,
+					keyword: '',
+					label: this.$t('editor.cell.data_node.database.tableRemoved'),
+					checkAllLabel: this.$t('editor.cell.data_node.database.bulkRevocation'),
+					buttonLabel: this.$t('editor.cell.data_node.database.Undo')
+				}
+			],
 
 			isSourceDataNode: false,
 
-			selectAllTables: false,
-			selectAllRemoveTables: false,
+			databaseSelectConfig: {
+				size: 'mini',
+				placeholder: this.$t('editor.cell.data_node.database.form.placeholder'),
+				loading: false,
+				filterable: true,
+				on: {
+					change() {
+						self.changeConnection();
+					}
+				},
+				options: []
+			},
 
-			databases: [],
-			activeName: 'first',
 			rules: {
 				connectionId: [
 					{
@@ -238,32 +214,18 @@ export default {
 			database_type: '',
 			database_port: '',
 			database_host: '',
-			database_uri: '',
-			seachTables: [],
-			removeSeachTables: []
+			database_uri: ''
 		};
 	},
-	computed: {
-		/* eslint-disable */
-		computedTables() {
-			if (this.search) {
-				return this.tables.filter(
-					t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0
-				);
 
-			} else {
-				return this.tables;
-			}
-		},
-		computedRemoveTables() {
-			if (this.removeSearch) {
-				return this.removeTables.filter(
-					t => t.table_name.toLowerCase().indexOf(this.removeSearch.toLowerCase()) >= 0
-				);
-				//  this.removeSeachTables;
-			} else {
-				return this.removeTables;
-			}
+	computed: {
+		filterTables() {
+			let pane_0 = this.tabs[0];
+			let pane_1 = this.tabs[1];
+			return {
+				0: this.filter(pane_0.list, pane_0.keyword),
+				1: this.filter(pane_1.list, pane_1.keyword)
+			};
 		}
 	},
 
@@ -277,76 +239,27 @@ export default {
 			handler() {
 				this.$emit('dataChanged', this.getData());
 			}
-		},
-		'model.connectionId': {
-			immediate: true,
-			handler() {
-				this.tables = [];
-				this.removeTables = [];
-				this.lookupDatabaseType();
-				if (this.database_type === 'mongodb') {
-					this.getMongoDBData(this.model.connectionId);
-				} else {
-					this.loadDataModels(this.model.connectionId);
-				}
-			}
-		},
-		search(val) {
-			if (val) {
-				this.seachTables = this.tables.filter(
-					t => t.table_name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0
-				);
-			}
-		},
-		removeSearch(val) {
-			if(val) {
-				this.removeSeachTables = this.removeTables.filter(
-					t => t.table_name.toLowerCase().indexOf(this.removeSearch.toLowerCase()) >= 0
-				);
-			}
-		},
-
-		// 移除全选
-		selectAllTables: {
-			handler() {
-				if (this.search) {
-					if (this.selectAllTables) {
-						this.tables.forEach(item => {
-							this.seachTables.forEach(table => {
-								if (item.table_name === table.table_name) {
-									item.checked = true;
-								}
-							});
-						});
-					}
-				} else {
-					this.tables.forEach(t => (t.checked = this.selectAllTables));
-				}
-			}
-		},
-
-		// 撤销全选
-		selectAllRemoveTables: {
-			handler() {
-				if (this.removeSearch) {
-					if (this.selectAllRemoveTables) {
-						this.removeTables.forEach(item => {
-							this.removeSeachTables.forEach(table => {
-								if (item.table_name === table.table_name) {
-									item.checked = true;
-								}
-							});
-						});
-					}
-				} else {
-					this.removeTables.forEach(t => (t.checked = this.selectAllRemoveTables));
-				}
-			}
 		}
 	},
 
 	methods: {
+		setData(data, cell, isSourceDataNode, vueAdapter) {
+			this.model = {
+				connectionId: '',
+				includeTables: [],
+				dropTable: false,
+				table_prefix: '',
+				table_suffix: ''
+			};
+			if (data) {
+				_.merge(this.model, data);
+			}
+
+			this.isSourceDataNode = isSourceDataNode;
+			editorMonitor = vueAdapter.editor;
+		},
 		async loadDataSource() {
+			this.databaseSelectConfig.loading = true;
 			let result = await connections.get({
 				filter: JSON.stringify({
 					where: {
@@ -363,58 +276,67 @@ export default {
 				})
 			});
 
+			this.databaseSelectConfig.loading = false;
 			if (result.data) {
-				this.databases = result.data;
+				this.databaseSelectConfig.options = result.data.map(item => {
+					return {
+						id: item.id,
+						name: item.name,
+						label: `${item.name} (${this.$t('connection.status.' + item.status) || item.status})`,
+						value: item.id
+					};
+				});
+
 				this.lookupDatabaseType();
 			}
 		},
-		
+
 		changeConnection() {
 			this.model.includeTables = [];
+			this.lookupDatabaseType();
 		},
 
 		lookupDatabaseType() {
 			if (!this.model.connectionId) return;
-			let selectedDbs = this.databases.filter(db => db.id === this.model.connectionId);
+			let selectedDbs = this.databaseSelectConfig.options.filter(db => db.id === this.model.connectionId);
 			if (selectedDbs && selectedDbs.length > 0) {
 				this.database_type = selectedDbs[0].database_type;
 			}
+			if (this.database_type === 'mongodb') {
+				this.getMongoDBData(this.model.connectionId);
+			} else {
+				this.loadDataModels(this.model.connectionId);
+			}
 		},
-
 		// 获取表名称
 		loadDataModels(connectionId) {
 			if (!connectionId) {
 				return;
 			}
-
-			let self = this;
-
 			connections.get([connectionId]).then(result => {
 				if (result.data) {
 					let tables = (result.data.schema && result.data.schema.tables) || [];
 					tables = tables.sort((t1, t2) =>
 						t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
 					);
-					let includeTables = [];
-					tables.forEach(item => {
-						let tableName = item.table_name;
-						includeTables.push(item.table_name);
-						if (self.model.includeTables.length === 0) {
-							self.model.includeTables = includeTables;
-						}
+					let modelIncludeTables = this.model.includeTables || [];
+					let inList = [];
+					let outList = [];
+					if (!modelIncludeTables.length) {
+						inList = tables;
+						this.model.includeTables = inList.map(t => t.table_name);
+					} else {
+						tables.forEach(t => {
+							if (modelIncludeTables.includes(t.table_name)) {
+								inList.push(t);
+							} else {
+								outList.push(t);
+							}
+						});
+					}
+					this.tabs[0].list = inList;
+					this.tabs[1].list = outList;
 
-						if (self.model.includeTables.indexOf(tableName) >= 0) {
-							self.tables.push({
-								table_name: item.table_name,
-								checked: false
-							});
-						} else {
-							self.removeTables.push({
-								table_name: item.table_name,
-								checked: false
-							});
-						}
-					});
 					if (this.database_type !== 'mongodb') {
 						this.database_host = result.data.database_host;
 						this.database_port = result.data.database_port;
@@ -422,7 +344,6 @@ export default {
 				}
 			});
 		},
-
 		getMongoDBData(connectionId) {
 			if (!connectionId) {
 				return;
@@ -435,81 +356,50 @@ export default {
 				}
 			});
 		},
-
-		// 移除
-		removeTable(item) {
-			item.checked = false;
-			let tableIndex = this.tables.findIndex(table => table.table_name === item.table_name);
-			if (tableIndex >= 0) this.tables.splice(tableIndex, 1);
-
-			this.removeTables.push(item);
-			this.removeTables.sort((t1, t2) =>
-				t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-			);
-
-			let index = this.model.includeTables.indexOf(item.table_name);
-			if (index >= 0) {
-				this.model.includeTables.splice(index, 1);
-			}
+		filter(list, keyword) {
+			let reg = new RegExp(keyword, 'ig');
+			return keyword ? list.filter(t => t.table_name.match(reg)) : list;
 		},
-		// 撤销
-		undotble(item) {
-			item.checked = false;
-			let tableIndex = this.removeTables.findIndex(table => table.table_name === item.table_name);
-			if (tableIndex >= 0) this.removeTables.splice(tableIndex, 1);
-
-			this.tables.push(item);
-			this.tables.sort((t1, t2) =>
-				t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-			);
-
-			if (this.model.includeTables.indexOf(item.table_name) === -1) {
-				this.model.includeTables.push(item.table_name);
-			}
+		checkAll() {
+			let pane = this.tabs[this.activeName];
+			let checkAll = pane.checkAll;
+			let filterList = this.filterTables[this.activeName];
+			filterList.map(item => {
+				item.checked = checkAll;
+			});
 		},
 
-		// 全部移除
-		bulkRemoval() {
-			for (let i = 0; i < this.tables.length; i++) {
-				let item = this.tables[i];
-				if (item.checked === true) {
-					this.removeTable(item, i);
-					i--;
-				}
-			}
-			this.selectAllTables = false;
-		},
-		// 全部撤销
-		bulkRevocation() {
-			for (let i = 0; i < this.removeTables.length; i++) {
-				let item = this.removeTables[i];
-				if (item.checked === true) {
-					this.undotble(item, i);
-					i--;
-				}
-			}
-			this.selectAllRemoveTables = false;
+		move(list) {
+			this.tabs[this.activeName].checkAll = false;
+			let inList = this.tabs[0].list;
+			let outList = this.tabs[1].list;
+			let sourceList = this.activeName === '0' ? inList : outList;
+			let targetList = this.activeName === '0' ? outList : inList;
+
+			list.forEach(item => {
+				item.checked = false;
+
+				let tableIndex = sourceList.findIndex(table => table.table_name === item.table_name);
+				sourceList.splice(tableIndex, 1);
+
+				targetList.push(item);
+			});
+
+			targetList.sort((t1, t2) => (t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1));
+
+			this.model.includeTables = inList.map(t => t.table_name);
 		},
 
-		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model = {
-				connectionId: "",
-				includeTables: [],
-				dropTable: false,
-				table_prefix: "",
-				table_suffix: ""
-			}
-			if (data) {
-				_.merge(this.model, data);
-			}
-
-			this.isSourceDataNode = isSourceDataNode;
-			editorMonitor = vueAdapter.editor;
+		moveAll() {
+			let list = this.filterTables[this.activeName];
+			this.move(list.filter(t => t.checked));
 		},
+
 		getData() {
 			let result = _.cloneDeep(this.model);
 			if (result.connectionId) {
-				let database = this.databases.filter(db => db.id === result.connectionId);
+				let database = this.databaseSelectConfig.options || [];
+				database = database.filter(db => db.id === result.connectionId);
 
 				if (this.isSourceDataNode) {
 					delete result.dropTable;
@@ -535,14 +425,15 @@ export default {
 <style lang="less">
 .database {
 	.el-form-item {
+		position: relative;
 		margin-bottom: 14px;
 	}
 
-	.processingBody {
+	.table-block {
 		position: relative;
 		height: calc(100% - 165px);
 
-		.allCheck {
+		.check-all {
 			position: absolute;
 			right: 25px;
 			line-height: 36px;
@@ -561,7 +452,6 @@ export default {
 
 		.el-tabs {
 			height: 100%;
-
 			.el-tabs__nav {
 				margin: 0 25px;
 
