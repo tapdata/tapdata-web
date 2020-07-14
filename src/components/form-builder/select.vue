@@ -45,9 +45,10 @@ export default {
 						clearable: config.clearable
 					},
 					on: Object.assign(this.on, config.on, {
-						blur() {
-							self.filterMethod('');
-							config.on && config.on.blur && config.on.blur();
+						'visible-change'(value) {
+							if (value) {
+								self.filterMethod('');
+							}
 						}
 					}),
 					ref: 'select'
