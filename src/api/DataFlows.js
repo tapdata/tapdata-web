@@ -25,6 +25,11 @@ export default class DataFlows extends PublicAPI {
 	patchId(id, params) {
 		return axios.patch(`${this.url}/${id}`, params);
 	}
+
+	patchAll(params) {
+		return axios.patch(`${this.url}/updateBatch`, params);
+	}
+
 	getId(id, params, filter) {
 		if (Array.isArray(params)) {
 			filter = typeof filter === 'object' ? JSON.stringify(filter) : filter;

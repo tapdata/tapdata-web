@@ -9,6 +9,7 @@ const en = {
 				loading: 'Loading data...'
 			}
 		},
+		modifyName: 'Modify name',
 		ok: 'OK',
 		exists_name: 'Name already exists',
 		search: 'search',
@@ -72,6 +73,12 @@ const en = {
 		noRelatedTask: 'No related tasks'
 	},
 	dataFlow: {
+		multiError: {
+			allSelectionError: 'The status of selected job does not allow this operation.',
+			notFound: 'This job does not existed.',
+			statusError: 'Job status does not allow to do this operation.',
+			otherError: 'Operation failed, please try it again.'
+		},
 		draftNotStart: 'Editting can‘t be started, enter edit page to start',
 		systemHint: 'System prompt',
 		systemText: 'The system detected that the following tasks were not saved， keep editing?',
@@ -286,6 +293,8 @@ const en = {
 		nodeSettings: 'Node settings',
 		choose: 'Select',
 		newTxt: 'New',
+
+		noResult: 'No search results found',
 		cell: {
 			validate: {
 				empty_name: 'Name is required.',
@@ -339,6 +348,23 @@ const en = {
 						pk: {
 							label: 'Primary key',
 							placeholder: 'Please enter primary key'
+						},
+						fieldFilterType: {
+							keepAllFields: 'Keep all fields',
+							retainedField: 'Retained field',
+							deleteField: 'Delete field'
+						},
+						fieldFilter: {
+							placeholderKeep: ' Select the fields to keep',
+							placeholderDelete: ' Select the fields to delete'
+						},
+						fieldFilterTip: {
+							label: 'Field filter',
+							keepAllFields: 'Keep all fields: Keep all fields of this collection.',
+							retainedField:
+								'Retained field: the selected fields will be retained and all other fields will be discarded.',
+							deleteField:
+								'Delete field: the selected fields will be deleted and all other fields will be retained.'
 						},
 						dropTable: {
 							label: 'Existing data',

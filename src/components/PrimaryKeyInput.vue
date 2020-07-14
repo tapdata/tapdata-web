@@ -33,7 +33,7 @@ export default {
 	computed: {
 		values() {
 			let value = this.value;
-			return value.length ? value.split(',') : [];
+			return value && value.length ? value.split(',') : [];
 		}
 	},
 	methods: {

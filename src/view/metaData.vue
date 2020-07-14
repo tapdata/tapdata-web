@@ -24,6 +24,7 @@
 				:data="treeData"
 				:filter-node-method="filterNode"
 				ref="tree"
+				default-expand-all
 				:render-after-expand="false"
 				class="metaData-tree"
 			>
@@ -67,9 +68,14 @@ const MetadataDefinitions = factory('MetadataDefinitions');
 
 export default {
 	name: 'metaData',
+	props: {
+		type: {
+			type: String,
+			default: 'dataflow'
+		}
+	},
 	data() {
 		return {
-			type: 'dataflow',
 			filterText: '',
 			treeData: [],
 			default_expanded: false,
@@ -105,7 +111,7 @@ export default {
 			let params = {
 				filter: {
 					where: {
-						or: [{ item_type: this.type }]
+						or: [{ item_type: this.type }, { item_type: [] }]
 					}
 				}
 			};
@@ -150,7 +156,6 @@ export default {
 			if (!value) return true;
 			return data.value.indexOf(value) !== -1;
 		},
-
 		handleDefault_expanded() {
 			let self = this;
 			let treeList = this.treeData;
@@ -158,7 +163,6 @@ export default {
 				self.$refs.tree.store.nodesMap[treeList[i].id].expanded = false;
 			}
 		},
-
 		handleRowCommand(command, node) {
 			switch (command) {
 				case 'add':
@@ -261,14 +265,17 @@ export default {
 
 <style scoped lang="less">
 .metadata {
-	border: 1px solid #dedee4;
-	height: 100%;
-	width: 240px;
+	height: calc(100vh - 80px);
+	width: 100%;
 	overflow: hidden;
 	user-select: none;
+	margin-top: 10px;
+	box-sizing: border-box;
+	border-right: 1px solid #dedee4;
+	border-bottom: 1px solid #dedee4;
 	/*头部样式*/
 	.metadata-header {
-		height: 31px;
+		height: 28px;
 		background: #f5f5f5;
 		border-bottom: 1px solid #dedee4;
 		font-size: 12px;
