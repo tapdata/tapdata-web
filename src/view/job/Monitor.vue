@@ -2,21 +2,17 @@
 	<div class="e-job-monitor">
 		<el-form>
 			<el-form-item class="e-form-item">
-				<el-col :span="16">
+				<el-col :span="19">
 					<el-select v-model="stageId" size="mini">
 						<el-option key="all" :label="$t('dataFlow.allNode')" value="all"> </el-option>
 						<el-option v-for="item in flow.stages" :key="item.id" :label="item.name" :value="item.id">
 						</el-option>
 					</el-select>
 				</el-col>
-				<el-col :span="4" style="text-align: right;" v-if="stageId !== 'all'">
+				<!-- v-if="stageId !== 'all'" -->
+				<el-col :span="5" style="text-align: right;">
 					<el-button class="e-button" type="primary" @click="seeNodeData">{{
 						$t('dataFlow.button.viewConfig')
-					}}</el-button>
-				</el-col>
-				<el-col :span="4" style="text-align: right;">
-					<el-button class="e-button" size="mini" type="primary" @click="handleGoDataVerify">{{
-						$t('dataVerify.dataVerify')
 					}}</el-button>
 				</el-col>
 			</el-form-item>
@@ -43,10 +39,10 @@
 							$t('dataFlow.status.' + flow.status)
 						}}</span>
 					</div>
-					<!-- <div class="info-list">
+					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
-						<span class="info-text">{{updateTime}}</span>
-					</div> -->
+						<span class="info-text">{{ $moment(flow.startTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
 						<span class="info-text"> {{ flow.inputNumber }}</span>
@@ -151,7 +147,7 @@ export default {
 				username: '',
 				createTime: '',
 				status: '',
-				updateTime: '',
+				startTime: '',
 				inputNumber: '',
 				outputNumber: '',
 				stages: [],
@@ -370,34 +366,34 @@ export default {
 		};
 	},
 
-	computed: {
-		updateTime: function() {
-			if (this.dataFlow.startTime && this.dataFlow.last_updated) {
-				let time = new Date(this.dataFlow.last_updated).getTime() - new Date(this.dataFlow.startTime).getTime();
+	// computed: {
+	// 	updateTime: function() {
+	// 		if (this.dataFlow.startTime && this.dataFlow.last_updated) {
+	// 			let time = new Date(this.dataFlow.last_updated).getTime() - new Date(this.dataFlow.startTime).getTime();
 
-				let unit = 'ms';
-				if (time > 1000) {
-					unit = 's';
-					time = Number((time / 1000).toFixed(2));
-				}
-				if (time > 60) {
-					unit = 'm';
-					time = Number((time / 60).toFixed(2));
-				}
-				if (time > 60) {
-					unit = 'h';
-					time = Number((time / 60).toFixed(2));
-				}
-				if (time > 24) {
-					unit = 'd';
-					time = Number((time / 24).toFixed(2));
-				}
+	// 			let unit = 'ms';
+	// 			if (time > 1000) {
+	// 				unit = 's';
+	// 				time = Number((time / 1000).toFixed(2));
+	// 			}
+	// 			if (time > 60) {
+	// 				unit = 'm';
+	// 				time = Number((time / 60).toFixed(2));
+	// 			}
+	// 			if (time > 60) {
+	// 				unit = 'h';
+	// 				time = Number((time / 60).toFixed(2));
+	// 			}
+	// 			if (time > 24) {
+	// 				unit = 'd';
+	// 				time = Number((time / 24).toFixed(2));
+	// 			}
 
-				return time + ' ' + unit;
-			}
-			return '-';
-		}
-	},
+	// 			return time + ' ' + unit;
+	// 		}
+	// 		return '-';
+	// 	}
+	// },
 
 	mounted() {
 		this.sliderBar = this.editor.rightSidebar;
@@ -524,7 +520,7 @@ export default {
 				};
 				openFormPanel(1);
 			} else {
-				this.$message.error(this.$t('dataFlow.selectNode'));
+				this.editor.showSetting(true);
 			}
 		},
 
@@ -902,7 +898,7 @@ export default {
 			// }
 		},
 		// 跳转到数据校验页面
-		handleGoDataVerify() {
+		handleGoDataVerifyhandleGoDataVerify() {
 			this.editor.showDataVerify();
 		}
 	},

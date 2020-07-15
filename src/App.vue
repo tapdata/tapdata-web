@@ -7,11 +7,11 @@
 
 <script>
 export default {
-	name: "App"
+	name: 'App'
 };
 </script>
 <style lang="less">
-@import "assets/style/index.less";
+@import 'assets/style/index.less';
 
 #app {
 	width: 100%;

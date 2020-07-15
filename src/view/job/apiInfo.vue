@@ -1,122 +1,146 @@
 <template>
 	<el-container class="api-info">
-		<metaData></metaData>
-		<apiPath></apiPath>
-
-		<div class="api-content">
-			<el-header class="e-height">
-				<h1>{{ apiData.name }}</h1>
-				<div class="operating">
-					<el-tooltip class="job-head-title" effect="dark" :content="$t('dataFlow.edit')" placement="bottom">
-						<i class="iconfont icon-bibianji" @click="handleEdit"></i>
-					</el-tooltip>
-					<el-tooltip
-						class="job-head-title"
-						effect="dark"
-						:content="$t('apiInfo.apiTest')"
-						placement="bottom"
-					>
-						<i class="iconfont icon-debug-" @click="hanleTest"></i>
-					</el-tooltip>
-					<el-tooltip
-						class="job-head-title"
-						effect="dark"
-						:content="$t('dataFlow.button.preview')"
-						placement="bottom"
-					>
-						<i class="iconfont icon-yulan1" @click="handlePreview"></i>
-					</el-tooltip>
-					<el-switch
-						@change="hanleChangeStatus"
-						v-model="apiData.status"
-						active-value="active"
-						inactive-value="pending"
-						:active-text="$t('apiInfo.announcing')"
-					>
-					</el-switch>
-				</div>
-			</el-header>
-			<div class="e-main">
-				<div class="api-content basic-attr">
-					<h3>{{ $t('apiInfo.basicAttributes') }}</h3>
-					<el-row :gutter="20" class="e-row">
-						<el-col :span="12">
-							{{ $t('apiInfo.supportFormat') }}: <span>{{ apiData.format }}</span>
-						</el-col>
-						<el-col :span="12">
-							{{ $t('apiInfo.founder') }}: <span>{{ apiData.createUser }}</span>
-						</el-col>
-					</el-row>
-					<el-row :gutter="20" class="e-row">
-						<el-col :span="12">
-							{{ $t('apiInfo.interfaceClassification') }}: <span>{{ apiData.listtags }}</span>
-						</el-col>
-						<el-col :span="12">
-							{{ $t('apiInfo.modifyTime') }}: <span>{{ apiData.last_updated }}</span>
-						</el-col>
-					</el-row>
-				</div>
-				<el-tabs type="border-card">
-					<el-tab-pane v-for="(item, index) in apiData.paths" :key="index" :label="item.method">
-						<div class="api-path">
-							<span class="methodStyle">{{ item.method }}</span>
-							<span>{{ item.path }}</span>
-						</div>
-
-						<div class="api-text">
-							{{ item.description }}
-						</div>
-
-						<div class="api-content">
-							<h3>{{ $t('apiInfo.requestParameters') }}</h3>
-							<el-table
-								:data="item.requestFields"
-								style="width: 100%;margin-bottom: 20px;"
-								row-key="id"
-								border
-								default-expand-all
-								:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+		<el-row class="e-row">
+			<el-col :span="3" class="e-col">
+				<metaData type="api" @nodeClick="getSelsetClassification"></metaData>
+			</el-col>
+			<el-col :span="3" class="e-col">
+				<apiPath :selectNodeId="classificationId" @backApiData="getCurrentApiData"></apiPath>
+			</el-col>
+			<el-col :span="18" class="e-col">
+				<div class="api-content api-main">
+					<el-header class="e-height">
+						<h1>{{ apiData.name }}</h1>
+						<div class="operating">
+							<el-tooltip
+								class="job-head-title"
+								effect="dark"
+								:content="$t('dataFlow.edit')"
+								placement="bottom"
 							>
-								<el-table-column prop="field_name" :label="$t('apiInfo.parameter')" width="180">
-								</el-table-column>
-								<el-table-column prop="field_type" :label="$t('apiInfo.typesof')" width="180">
-								</el-table-column>
-								<el-table-column prop="required" :label="$t('apiInfo.is_required')"> </el-table-column>
-								<el-table-column prop="example" :label="$t('apiInfo.examples')"> </el-table-column>
-							</el-table>
-						</div>
-
-						<div class="api-content">
-							<h3>{{ $t('apiInfo.responseParameters') }}</h3>
-							<el-table
-								:data="item.requestFields"
-								style="width: 100%;margin-bottom: 20px;"
-								border
-								default-expand-all
-								:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+								<i class="iconfont icon-bibianji" @click="handleEdit"></i>
+							</el-tooltip>
+							<el-tooltip
+								class="job-head-title"
+								effect="dark"
+								:content="$t('apiInfo.apiTest')"
+								placement="bottom"
 							>
-								<el-table-column prop="field_name" :label="$t('apiInfo.parameter')" width="180">
-								</el-table-column>
-								<el-table-column prop="field_type" :label="$t('apiInfo.typesof')" width="180">
-								</el-table-column>
-								<el-table-column prop="required" :label="$t('apiInfo.is_required')"> </el-table-column>
-								<el-table-column prop="example" :label="$t('apiInfo.examples')"> </el-table-column>
-							</el-table>
+								<i class="iconfont icon-debug-" @click="hanleTest"></i>
+							</el-tooltip>
+							<el-tooltip
+								class="job-head-title"
+								effect="dark"
+								:content="$t('dataFlow.button.preview')"
+								placement="bottom"
+							>
+								<i class="iconfont icon-yulan1" @click="handlePreview"></i>
+							</el-tooltip>
+							<el-switch
+								@change="hanleChangeStatus"
+								v-model="apiData.status"
+								active-value="active"
+								inactive-value="pending"
+								:active-text="$t('apiInfo.announcing')"
+							>
+							</el-switch>
 						</div>
+					</el-header>
+					<div class="e-main">
+						<div class="api-content basic-attr">
+							<h3>{{ $t('apiInfo.basicAttributes') }}</h3>
+							<el-row :gutter="20" class="e-row">
+								<el-col :span="12">
+									{{ $t('apiInfo.supportFormat') }}: <span>{{ apiData.format }}</span>
+								</el-col>
+								<el-col :span="12">
+									{{ $t('apiInfo.founder') }}: <span>{{ apiData.createUser }}</span>
+								</el-col>
+							</el-row>
+							<el-row :gutter="20" class="e-row">
+								<el-col :span="12">
+									{{ $t('apiInfo.interfaceClassification') }}:
+									<span v-for="item in apiData.listtags" :key="item.id">
+										<span>{{ item.value }}</span>
+									</span>
+								</el-col>
+								<el-col :span="12">
+									{{ $t('apiInfo.modifyTime') }}:
+									<span>{{ $moment(apiData.last_updated).format('YYYY-MM-DD HH:mm:ss') }}</span>
+								</el-col>
+							</el-row>
+						</div>
+						<el-tabs type="border-card">
+							<el-tab-pane v-for="(item, index) in apiData.paths" :key="index" :label="item.method">
+								<div class="api-path">
+									<span class="methodStyle">{{ item.method }}</span>
+									<span>{{ item.path }}</span>
+								</div>
 
-						<div class="api-content">
-							<h3>{{ $t('apiInfo.requestExample') }}（JSON）</h3>
-							<el-input type="textarea" v-model="item.requestExample" class="e-textarea"></el-input>
-						</div>
+								<div class="api-text">
+									{{ item.description }}
+								</div>
 
-						<div class="api-content">
-							<h3>{{ $t('apiInfo.backExamples') }}（JSON）</h3>
-							<el-input type="textarea" v-model="item.backExamples" class="e-textarea"></el-input>
-						</div>
-					</el-tab-pane>
-				</el-tabs>
-			</div>
-		</div>
+								<div class="api-content">
+									<h3>{{ $t('apiInfo.requestParameters') }}</h3>
+									<el-table
+										:data="item.requestFields"
+										style="width: 100%;margin-bottom: 20px;"
+										row-key="id"
+										border
+										default-expand-all
+										:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+									>
+										<el-table-column prop="field_name" :label="$t('apiInfo.parameter')" width="180">
+										</el-table-column>
+										<el-table-column prop="field_type" :label="$t('apiInfo.typesof')" width="180">
+										</el-table-column>
+										<el-table-column prop="required" :label="$t('apiInfo.is_required')">
+										</el-table-column>
+										<el-table-column prop="example" :label="$t('apiInfo.examples')">
+										</el-table-column>
+									</el-table>
+								</div>
+
+								<div class="api-content">
+									<h3>{{ $t('apiInfo.responseParameters') }}</h3>
+									<el-table
+										:data="item.requestFields"
+										style="width: 100%;margin-bottom: 20px;"
+										border
+										default-expand-all
+										:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+									>
+										<el-table-column prop="field_name" :label="$t('apiInfo.parameter')" width="180">
+										</el-table-column>
+										<el-table-column prop="field_type" :label="$t('apiInfo.typesof')" width="180">
+										</el-table-column>
+										<el-table-column prop="required" :label="$t('apiInfo.is_required')">
+										</el-table-column>
+										<el-table-column prop="example" :label="$t('apiInfo.examples')">
+										</el-table-column>
+									</el-table>
+								</div>
+
+								<div class="api-content">
+									<h3>{{ $t('apiInfo.requestExample') }}（JSON）</h3>
+									<el-input
+										type="textarea"
+										v-model="item.requestExample"
+										class="e-textarea"
+									></el-input>
+								</div>
+
+								<div class="api-content">
+									<h3>{{ $t('apiInfo.backExamples') }}（JSON）</h3>
+									<el-input type="textarea" v-model="item.backExamples" class="e-textarea"></el-input>
+								</div>
+							</el-tab-pane>
+						</el-tabs>
+					</div>
+				</div>
+			</el-col>
+		</el-row>
 	</el-container>
 </template>
 
@@ -125,7 +149,8 @@ import factory from '../../api/factory';
 import metaData from '../metaData';
 import apiPath from '../apiPath';
 const modules = factory('modules');
-// const MetadataDefinitions = factory('metadataDefinitions');
+// const MetadataInstances = factory('MetadataInstances');
+
 export default {
 	name: 'ApiInfo',
 	components: { metaData, apiPath },
@@ -142,13 +167,14 @@ export default {
 				status: 'pending',
 				paths: []
 			},
-			apiId: ''
+			apiId: '',
+			classificationId: ''
 		};
 	},
 	mounted() {
-		if (this.$router && this.$router.id) {
-			this.apiId = this.$router.id;
-		}
+		// if (this.$router && this.$router.id) {
+		// 	this.apiId = this.$router.id;
+		// }
 		this.getApiData();
 	},
 
@@ -164,9 +190,17 @@ export default {
 
 	methods: {
 		/**
-		 * 获取左侧分类
+		 * 获取选中分类数据
 		 */
-		getLeftClass() {},
+		getSelsetClassification(data) {
+			this.classificationId = data.id;
+		},
+
+		// 获取点击的api
+		getCurrentApiData(data) {
+			this.apiId = data.id;
+			this.getApiData();
+		},
 		/**
 		 * 编辑
 		 */
@@ -236,12 +270,23 @@ export default {
 
 <style scoped lang="less">
 .api-info {
+	height: 100%;
+	overflow: hidden;
+	.e-row {
+		width: 100%;
+		.e-col {
+			height: 100%;
+		}
+	}
+
+	.api-main {
+		height: 100%;
+		overflow: auto;
+	}
 	.leftTree {
 		display: flex;
 		flex-direction: column;
 	}
-	height: 100%;
-	overflow: auto;
 	.e-height {
 		line-height: 60px;
 		h1 {

@@ -9,6 +9,7 @@ const cn = {
 				loading: '正在加载数据'
 			}
 		},
+		modifyName: '修改名称',
 		ok: '确定',
 		exists_name: '名称已存在',
 		search: '搜索',
@@ -72,6 +73,12 @@ const cn = {
 		noRelatedTask: '暂无相关任务'
 	},
 	dataFlow: {
+		multiError: {
+			allSelectionError: '选中的任务状态不允许这种操作',
+			notFound: '此任务不存在',
+			statusError: '任务状态不允许这种操作',
+			otherError: '操作失败, 请重试'
+		},
 		draftNotStart: '编辑中不能启动，请进入编辑页面启动',
 		systemHint: '系统提示',
 		systemText: '系统检测出有如下任务上次操作后未保存，请问是否继续编辑',
@@ -284,6 +291,8 @@ const cn = {
 		nodeSettings: '节点设置',
 		choose: '选择',
 		newTxt: '新建',
+
+		noResult: '未搜索到相关结果',
 		cell: {
 			validate: {
 				empty_name: '名称必填.',
@@ -336,6 +345,21 @@ const cn = {
 						pk: {
 							label: '主键',
 							placeholder: '请输入主键'
+						},
+						fieldFilterType: {
+							keepAllFields: '不过滤字段',
+							retainedField: '保留字段',
+							deleteField: '删除字段'
+						},
+						fieldFilter: {
+							placeholderKeep: ' 请选择要保留的字段',
+							placeholderDelete: '  请选择要删除的字段'
+						},
+						fieldFilterTip: {
+							label: '字段过滤',
+							keepAllFields: '不过滤字段：保留此数据集的全部字段',
+							retainedField: '选择此项操作，将保留所选择的字段，舍弃其它字段全部.',
+							deleteField: '选择此项操作，将删除所选择的字段，保留其它全部字段.'
 						},
 						dropTable: {
 							label: '已存在的数据',

@@ -598,7 +598,7 @@ export default {
 			}
 
 			promise = dataFlowsApi.draft(data);
-
+			this.$message.success(self.$t('message.saveOK'));
 			if (promise) {
 				promise
 					.then(result => {
@@ -1154,11 +1154,7 @@ export default {
 		showSetting() {
 			log('Job.showSetting');
 			if (['paused', 'error', 'draft'].includes(this.status)) {
-				let name = '';
-				if (this.$route.query.name) {
-					name = this.$route.query.name;
-				}
-				this.editor.showSetting(name);
+				this.editor.showSetting();
 			}
 		},
 
