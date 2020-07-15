@@ -218,11 +218,7 @@
 						<template slot-scope="scope">
 							<div v-if="!scope.row.hasChildren">
 								<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
-									<el-button
-										type="text"
-										:disabled="statusBtMap[scope.row.status].detail"
-										@click="handleDetail(scope.row.id, 'detail')"
-									>
+									<el-button type="text" @click="handleDetail(scope.row.id, 'detail')">
 										<i class="iconfont  task-list-icon icon-chaxun"></i>
 									</el-button>
 								</el-tooltip>
@@ -323,7 +319,6 @@ export default {
 			flowOrder: localStorage.getItem('flowOrder') || 'descending',
 			tableData: [],
 			newData: [],
-			windows: [],
 			currentPage: 1,
 			pagesize: localStorage.getItem('flowPagesize') * 1 || 20,
 			totalNum: 0,
@@ -509,7 +504,7 @@ export default {
 			} else {
 				let routeUrl = this.$router.resolve({
 					path: '/job',
-					query: { id: id }
+					query: { id: id, isMoniting: true }
 				});
 				window.open(routeUrl.href, 'monitor_' + id);
 			}

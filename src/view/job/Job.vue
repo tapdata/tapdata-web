@@ -1,13 +1,8 @@
 <template>
 	<div class="editor-container" v-loading="loading">
 		<div class="action-buttons">
-			<template v-if="isEditable()">
-				<div
-					:class="[{ btnHover: ['draft'].includes(status) }, 'headImg']"
-					v-show="!isSaving"
-					@click="draftSave"
-					style="cursor: pointer;"
-				>
+			<template v-if="isEditable() && !isMoniting">
+				<div :class="['btnHover', 'headImg']" v-show="!isSaving" @click="draftSave" style="cursor: pointer;">
 					<span class="iconfont icon-yunduanshangchuan"></span>
 					<span class="text">{{ $t('dataFlow.button.save') }}</span>
 				</div>
@@ -25,13 +20,7 @@
 				placement="bottom"
 				v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
 			>
-				<div
-					:class="[
-						'headImg',
-						{ btnHover: ['scheduled', 'running'].includes(status) && executeMode === 'running_debug' }
-					]"
-					@click="stopCapture"
-				>
+				<div :class="['headImg', 'btnHover']" @click="stopCapture">
 					<span class="iconfont icon-zanting3"></span>
 				</div>
 			</el-tooltip>
@@ -43,10 +32,7 @@
 				placement="bottom"
 				v-if="['running'].includes(status) && executeMode === 'normal'"
 			>
-				<div
-					:class="['headImg', { btnHover: ['running'].includes(status) && executeMode === 'normal' }]"
-					@click="capture"
-				>
+				<div :class="['headImg', 'btnHover']" @click="capture">
 					<span class="iconfont icon-yulan1"></span>
 				</div>
 			</el-tooltip>
@@ -58,7 +44,7 @@
 				placement="bottom"
 			>
 				<div
-					:class="['headImg', { btnHover: isEditable() }]"
+					:class="['headImg', { btnHover: !statusBtMap[status].reloadSchema }]"
 					@click="reloadSchema"
 					:disabled="statusBtMap[status].reloadSchema"
 				>
@@ -74,7 +60,7 @@
 				v-if="isEditable()"
 			>
 				<div
-					:class="['headImg', { btnHover: isEditable() }]"
+					:class="['headImg', { btnHover: !statusBtMap[status].preview }]"
 					@click="preview"
 					:disabled="statusBtMap[status].preview"
 				>
@@ -88,7 +74,7 @@
 				</div>
 			</el-tooltip>
 			<el-autocomplete
-				v-if="!['scheduled', 'paused', 'running', 'stopping', 'force stopping'].includes(status)"
+				v-if="!statusBtMap[status].finder"
 				class="inline-input searchNode"
 				id="searchNode"
 				v-model="state1"
@@ -104,7 +90,7 @@
 				class="headImg round"
 				@click="showSetting"
 				:disabled="statusBtMap[status].setting"
-				:class="['headImg', { btnHover: isEditable() }]"
+				:class="['headImg', { btnHover: !statusBtMap[status].setting }]"
 			>
 				<span class="iconfont icon-shezhi"></span>
 				<span class="text" v-if="sync_type === 'initial_sync+cdc'">{{
@@ -174,13 +160,14 @@
 					>
 					</el-button>
 				</el-tooltip>
+				<el-tooltip class="item" effect="dark" :content="$t('dataFlow.edit')" placement="bottom">
+					<el-button
+						class="headImg borderStyle iconfont icon-ceshishenqing"
+						@click="setEditable(true)"
+						v-if="!statusBtMap[status].edit && !editable"
+					></el-button>
+				</el-tooltip>
 			</template>
-
-			<!-- <div class="headImg round" v-if="isEditable()" @click="submitLayer" style="float: right;">
-				<span class="iconfont icon-icon_fabu"></span>
-				<span class="text">{{ $t('dataFlow.button.submit') }}</span>
-			</div> -->
-			<!-- <el-button size="mini" type="primary" @click="switchModel">Model</el-button> -->
 		</div>
 
 		<el-dialog
@@ -203,9 +190,6 @@
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button class="e-button" @click="dialogFormVisible = false">{{ $t('message.cancel') }}</el-button>
-				<!-- <el-button class="e-button" type="primary" @click="submitTemporary">{{
-					$t('dataFlow.submitOnly')
-				}}</el-button> -->
 				<el-button class="e-button" type="primary" @click="start">{{ $t('dataFlow.submitExecute') }}</el-button>
 			</div>
 		</el-dialog>
@@ -261,7 +245,6 @@ import _ from 'lodash';
 
 const dataFlowsApi = factory('DataFlows');
 let changeData = null;
-let timer = null;
 export default {
 	name: 'Job',
 	dataFlow: null,
@@ -273,8 +256,6 @@ export default {
 				taskName: '',
 				type: this.$t('dataFlow.button.quantitative') + '+' + this.$t('dataFlow.button.increment')
 			},
-			// run model: editable,readonly
-			model: 'editable',
 
 			dataFlowId: null,
 			tempDialogVisible: false,
@@ -283,11 +264,13 @@ export default {
 			tempData: [],
 			status: 'draft',
 			executeMode: 'normal',
+			isPreview: false, //只有这一个场景需要切换编辑状态
 
 			loading: true,
 			cells: [],
 			state1: '',
 			editable: false,
+			isMoniting: false,
 			isSaving: false,
 			sync_type: 'initial_sync+cdc',
 			settingList: [
@@ -308,7 +291,9 @@ export default {
 					setting: false,
 					preview: false,
 					logs: false,
-					reloadSchema: false
+					reloadSchema: false,
+					finder: false,
+					edit: false
 				},
 				running: {
 					start: true,
@@ -318,7 +303,9 @@ export default {
 					setting: true,
 					preview: false,
 					logs: false,
-					reloadSchema: true
+					reloadSchema: true,
+					finder: true,
+					edit: true
 				},
 				stopping: {
 					start: true,
@@ -328,7 +315,9 @@ export default {
 					setting: true,
 					preview: true,
 					logs: true,
-					reloadSchema: true
+					reloadSchema: true,
+					finder: true,
+					edit: true
 				},
 				scheduled: {
 					start: true,
@@ -338,7 +327,9 @@ export default {
 					setting: true,
 					preview: true,
 					logs: true,
-					reloadSchema: true
+					reloadSchema: true,
+					finder: true,
+					edit: true
 				},
 				error: {
 					start: false,
@@ -348,7 +339,9 @@ export default {
 					setting: false,
 					preview: false,
 					logs: false,
-					reloadSchema: false
+					reloadSchema: false,
+					finder: false,
+					edit: false
 				},
 				paused: {
 					start: false,
@@ -358,7 +351,9 @@ export default {
 					setting: false,
 					preview: false,
 					logs: false,
-					reloadSchema: false
+					reloadSchema: false,
+					finder: true,
+					edit: false
 				},
 				force_stopping: {
 					start: true,
@@ -368,7 +363,9 @@ export default {
 					setting: true,
 					preview: true,
 					logs: true,
-					reloadSchema: true
+					reloadSchema: true,
+					finder: true,
+					edit: true
 				}
 			}
 		};
@@ -376,7 +373,7 @@ export default {
 	watch: {
 		status: {
 			handler() {
-				this.setEditable(this.isEditable());
+				if (this.isPreview) this.setEditable(this.isEditable());
 			}
 		}
 	},
@@ -388,6 +385,7 @@ export default {
 			actionBarEl: $('.editor-container .action-buttons'),
 			scope: self
 		});
+		if (self.$route.query.isMoniting == 'true') self.isMoniting = true;
 		if (!window.tpdata)
 			Object.keys(localStorage).forEach(key => {
 				if (
@@ -422,8 +420,49 @@ export default {
 			} else {
 				self.loading = false;
 				self.onGraphChanged();
+				self.loading = false;
 			}
-			self.loading = false;
+		},
+		/****
+		 * Auto save
+		 */
+		timeSave() {
+			let data = this.getDataFlowData(true);
+			if (this.tempKey == 0) {
+				this.tempKey = 1;
+				Object.keys(localStorage).forEach(key => {
+					if (key.startsWith('tapdata.dataflow.$$$'))
+						if (parseInt(key.split('$$$')[1]) >= this.tempKey)
+							this.tempKey = parseInt(key.split('$$$')[1]) + 1;
+				});
+			}
+			if (!this.tempId) this.tempId = 'tapdata.dataflow.$$$' + this.tempKey + '$$$' + data.name;
+			else {
+				localStorage.removeItem(this.tempId);
+				this.tempId = 'tapdata.dataflow.$$$' + this.tempKey + '$$$' + data.name;
+			}
+			try {
+				localStorage.setItem(this.tempId, JSON.stringify(data));
+			} catch (e) {
+				try {
+					let ids = [],
+						size = 0;
+					Object.keys(localStorage).forEach(key => {
+						if (key.startsWith('tapdata.dataflow.$$$'))
+							ids.push({ id: parseInt(key.split('$$$')[1]), item: key });
+					});
+					ids = ids.sort((a, b) => a.id - b.id);
+					for (let i = 0; i < ids.length; i++) {
+						size += localStorage.getItem(ids[i].item).length;
+						localStorage.removeItem(ids[i].item);
+						if (size > JSON.stringify(data).length) break;
+					}
+					localStorage.setItem(this.tempId, JSON.stringify(data));
+				} catch (err) {
+					log(err);
+				}
+			}
+			window.tempKey = this.tempKey;
 		},
 		openTempSaved(key) {
 			this.tempDialogVisible = false;
@@ -472,21 +511,16 @@ export default {
 				self.editor.setData(dataFlow);
 				// 3. 更新schema
 				self.editor.reloadSchema();
-
 				// 4. 节点布局
 				self.editor.graph.layoutDirectedGraph();
-
 				// 5. 处理joinTables
 				self.handleJoinTables(dataFlow.stages, self.editor.graph.graph);
 			} else {
 				self.editor.setData(dataFlow);
 			}
-			if (['scheduled', 'running', 'stopping', 'force stopping'].includes(self.status)) {
-				self.setEditable(false);
-			}
-			if (self.executeMode !== 'normal') {
-				self.showCapture();
-			}
+			if (self.statusBtMap[self.status].start || self.isMoniting) self.setEditable(false);
+			else self.setEditable(true);
+			if (self.executeMode !== 'normal') self.showCapture();
 
 			self.polling();
 			self.onGraphChanged();
@@ -497,76 +531,6 @@ export default {
 				changeData = this.getDataFlowData(true);
 				if (changeData) self.timeSave();
 			});
-		},
-		/**
-		 * submit temporary
-		 */
-		submitTemporary() {
-			let self = this,
-				data = this.getDataFlowData();
-
-			if (data) {
-				if (data.id) {
-					data.id = data.id;
-				}
-				data.status = 'paused';
-				data.name = this.form.taskName;
-				data.executeMode = 'normal';
-				self.doSave(data, err => {
-					if (err) {
-						this.$message.error(err.response.data);
-					} else {
-						this.$message.success(self.$t('message.saveOK'));
-						self.editor.setData(data);
-						self.$router.push({ path: '/dataFlows' });
-					}
-				});
-			}
-			clearTimeout(timer);
-			timer = null;
-			this.dialogFormVisible = false;
-		},
-
-		/****
-		 * Auto save
-		 */
-		timeSave() {
-			let data = this.getDataFlowData(true);
-			if (this.tempKey == 0) {
-				this.tempKey = 1;
-				Object.keys(localStorage).forEach(key => {
-					if (key.startsWith('tapdata.dataflow.$$$'))
-						if (parseInt(key.split('$$$')[1]) >= this.tempKey)
-							this.tempKey = parseInt(key.split('$$$')[1]) + 1;
-				});
-			}
-			if (!this.tempId) this.tempId = 'tapdata.dataflow.$$$' + this.tempKey + '$$$' + data.name;
-			else {
-				localStorage.removeItem(this.tempId);
-				this.tempId = 'tapdata.dataflow.$$$' + this.tempKey + '$$$' + data.name;
-			}
-			try {
-				localStorage.setItem(this.tempId, JSON.stringify(data));
-			} catch (e) {
-				try {
-					let ids = [],
-						size = 0;
-					Object.keys(localStorage).forEach(key => {
-						if (key.startsWith('tapdata.dataflow.$$$'))
-							ids.push({ id: parseInt(key.split('$$$')[1]), item: key });
-					});
-					ids = ids.sort((a, b) => a.id - b.id);
-					for (let i = 0; i < ids.length; i++) {
-						size += localStorage.getItem(ids[i].item).length;
-						localStorage.removeItem(ids[i].item);
-						if (size > JSON.stringify(data).length) break;
-					}
-					localStorage.setItem(this.tempId, JSON.stringify(data));
-				} catch (err) {
-					log(err);
-				}
-			}
-			window.tempKey = this.tempKey;
 		},
 		//点击draft save按钮
 		async draftSave() {
@@ -607,9 +571,7 @@ export default {
 							self.dataFlowId = dataFlow.id;
 							self.status = dataFlow.status;
 							self.executeMode = dataFlow.executeMode;
-
 							self.dataFlow = dataFlow;
-
 							if (!self.$route.query || !self.$route.query.id) {
 								self.$router.push({
 									path: '/job',
@@ -658,6 +620,7 @@ export default {
 						});
 					} else {
 						self.$message.error(self.$t('message.api.get.error'));
+						self.setEditable(false);
 					}
 					self.loading = false;
 				})
@@ -674,7 +637,7 @@ export default {
 		polling() {
 			let self = this;
 			if (self.dataFlowId) {
-				//if (!['scheduled', 'running', 'stopping', 'force stopping'].includes(self.status)) return;
+				if (!self.statusBtMap[self.status].start) return;
 
 				dataFlowsApi
 					.get([self.dataFlowId], {
@@ -695,10 +658,7 @@ export default {
 					})
 					.then(result => {
 						if (result && result.data) {
-							let newStatus = result.data.status;
-							if (self.status !== newStatus) {
-								self.status = newStatus;
-							}
+							self.status = result.data.status;
 
 							if (self.executeMode !== result.data.executeMode)
 								self.executeMode = result.data.executeMode;
@@ -706,8 +666,7 @@ export default {
 							if (self.timeoutId) clearTimeout(self.timeoutId);
 							self.timeoutId = setTimeout(self.polling.bind(self), 2000);
 
-							if (!['scheduled', 'running', 'stopping', 'force stopping'].includes(newStatus)) {
-								// } else {
+							if (!self.statusBtMap[self.status].start) {
 								self.executeMode = 'normal';
 							}
 							Object.assign(self.dataFlow, result.data);
@@ -767,7 +726,7 @@ export default {
 				{
 					name: editorData.name,
 					description: '',
-					status: this.status || 'draft', // draft/scheduled/running/paused/stopping/error/force stopping
+					status: this.status || 'draft',
 					executeMode: this.executeMode || 'normal',
 					category: '数据库克隆',
 					stopOnError: false,
@@ -991,8 +950,6 @@ export default {
 					}
 				});
 			}
-			clearTimeout(timer);
-			timer = null;
 			this.loading = false;
 			this.dialogFormVisible = false;
 		},
@@ -1027,7 +984,7 @@ export default {
 						this.$message.error(self.$t('message.saveFail'));
 					} else {
 						// self.$message.success('Stop success');
-						self.setEditable(true);
+						//self.setEditable(true);
 					}
 				});
 			});
@@ -1039,7 +996,7 @@ export default {
 		preview() {
 			let self = this,
 				data = this.getDataFlowData();
-			if (['paused', 'error', 'draft'].includes(this.status)) {
+			if (!self.statusBtMap[this.status].start) {
 				if (data) {
 					if (data.id) {
 						data = {
@@ -1055,6 +1012,7 @@ export default {
 							executeMode: 'editing_debug'
 						});
 					}
+					this.isPreview = true;
 					self.doSave(data, err => {
 						if (err) {
 							this.$message.error(self.$t('message.saveFail'));
@@ -1153,9 +1111,11 @@ export default {
 		 */
 		showSetting() {
 			log('Job.showSetting');
-			if (['paused', 'error', 'draft'].includes(this.status)) {
-				this.editor.showSetting();
+			let name = '';
+			if (this.$route.query.name) {
+				name = this.$route.query.name;
 			}
+			this.editor.showSetting(name);
 		},
 
 		/**
@@ -1176,9 +1136,7 @@ export default {
 		 * reload shcema
 		 */
 		reloadSchema() {
-			if (['paused', 'error', 'draft'].includes(this.status)) {
-				this.editor.reloadSchema();
-			}
+			this.editor.reloadSchema();
 		},
 
 		/**
@@ -1188,6 +1146,7 @@ export default {
 		setEditable(editable) {
 			log('Job.setEditable', editable, this.dataFlow);
 			this.editable = editable;
+			if (editable) this.isMoniting = false;
 			if (this.dataFlow) {
 				delete this.dataFlow.editorData;
 				this.editor.setEditable(editable, this.dataFlow);
@@ -1417,9 +1376,6 @@ export default {
 			clearTimeout(this.timeoutId);
 		}
 		this.editor.destroy();
-		if (timer) {
-			clearInterval(timer);
-		}
 	}
 };
 </script>

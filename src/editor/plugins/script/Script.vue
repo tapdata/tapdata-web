@@ -111,7 +111,7 @@ export default {
 			sending: false
 		};
 	},
-	mounted() {
+	created() {
 		let self = this;
 		self.$on(EditorEventType.RESIZE, width => {
 			self.width = width;

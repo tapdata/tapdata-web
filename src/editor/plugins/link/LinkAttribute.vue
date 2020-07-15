@@ -266,10 +266,6 @@ export default {
 				value: 'merge_embed' // ManyOne		{source: ''} + {target: ''}  =  {source: '', joinPath: [{target: ''}]}
 			}
 		];
-	},
-
-	mounted() {
-		this.model.joinTable.manyOneUpsert = this.methodList[0].value;
 		let self = this;
 		self.$on(EditorEventType.RESIZE, () => {
 			self.$refs.mappingComp.$emit(EditorEventType.RESIZE);
@@ -281,6 +277,10 @@ export default {
 		this.$on(EditorEventType.SHOW, () => {
 			this.$refs.mappingComp.show();
 		});
+	},
+
+	mounted() {
+		this.model.joinTable.manyOneUpsert = this.methodList[0].value;
 	},
 
 	methods: {
