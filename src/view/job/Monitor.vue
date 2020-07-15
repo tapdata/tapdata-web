@@ -397,6 +397,7 @@ export default {
 
 	mounted() {
 		this.sliderBar = this.editor.rightSidebar;
+		this.editor.seeMonitor = true;
 		this.$on(EditorEventType.SELECTED_STAGE, selectStage => {
 			this.stageId = selectStage ? selectStage.id : 'all';
 		});
@@ -497,28 +498,16 @@ export default {
 		},
 
 		seeNodeData() {
-			let self = this;
 			let result = this.getAllCellsNode();
 			let selectCell = null;
-			localStorage.setItem('fromMonitor', 't');
 			result.forEach(item => {
 				if (this.stageId === item.cell.id) {
 					selectCell = item.cell;
 				}
 			});
 			if (this.stageId && this.stageId !== 'all') {
+				this.editor.seeMonitor = false;
 				this.editor.graph.selectionPosition(selectCell);
-				let openFormPanel = function(counter) {
-					let nodeFormPanel = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
-					if (nodeFormPanel) {
-						self.editor.getRightTabPanel().select(nodeFormPanel);
-					} else if (counter <= 5) {
-						setTimeout(() => {
-							openFormPanel(counter++);
-						}, 1000);
-					}
-				};
-				openFormPanel(1);
 			} else {
 				this.editor.showSetting(true);
 			}

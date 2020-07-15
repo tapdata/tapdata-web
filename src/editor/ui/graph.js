@@ -438,15 +438,13 @@ export default class Graph extends Component {
 
 	selectPrimaryCell(cellView) {
 		let cell = cellView.model;
-		if (this.editable || localStorage.getItem('fromMonitor')) {
-			localStorage.removeItem('fromMonitor');
+		if (this.editable) {
 			if (cell.isElement()) {
 				this.selectCell(cell);
 				this.selectPrimaryElement(cellView);
 			} else {
 				this.selectPrimaryLink(cellView);
 			}
-			// this.createInspector(cell);
 		} else {
 			if (cell.isElement()) {
 				this.selectCell(cell);
