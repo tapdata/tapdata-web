@@ -145,6 +145,13 @@ export default class Graph extends Component {
 		paper.on('cell:mousewheel', this.onMousewheel, this);
 		paper.on('blank:pointerclick', this.onClickBlank.bind(this));
 		paper.on({
+			//鼠标移入Pager区域后，其他元素失去焦点
+			'paper:mouseenter': () => {
+				let ele = document.querySelector(':focus');
+				ele && ele.blur();
+			}
+		});
+		paper.on({
 			'link:connect': linkView => {
 				log('Graph.link.connect', arguments);
 				let acyclic = self.isAcyclic();
@@ -247,12 +254,6 @@ export default class Graph extends Component {
 			this.editor.getRightSidebar().hide();
 		}
 		this.unHighlightAllCells();
-		if (document.getElementById('searchNode')) {
-			document.getElementById('searchNode').blur();
-		}
-		if (document.getElementById('taskNameInput')) {
-			document.getElementById('taskNameInput').blur();
-		}
 	}
 
 	unHighlightAllCells() {
