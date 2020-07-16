@@ -107,16 +107,13 @@ export default {
 	},
 	methods: {
 		getData(cb) {
-			let params = {};
-			if (!cb) {
-				params = {
-					filter: {
-						where: {
-							or: [{ item_type: this.type }]
-						}
+			let params = {
+				filter: {
+					where: {
+						or: [{ item_type: this.type }]
 					}
-				};
-			}
+				}
+			};
 			MetadataDefinitions.get(params).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {

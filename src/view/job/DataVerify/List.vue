@@ -319,7 +319,8 @@ export default {
 			// 状态修改为 waiting
 			let data = {
 				validateStatus: 'waiting',
-				validateBatchId: new Date().valueOf()
+				validateBatchId: new Date().valueOf(),
+				validateFailedMSG: ''
 			};
 			dataFlows.patchId(this.id, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
