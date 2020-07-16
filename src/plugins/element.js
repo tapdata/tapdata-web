@@ -47,7 +47,8 @@ import {
 	Autocomplete,
 	InputNumber,
 	Notification,
-	Cascader
+	Cascader,
+	Alert
 } from 'element-ui';
 //重写ElementUI Select组件多选时的触发函数，去掉去重的处理
 Select.methods.handleOptionSelect = function(option, byClick) {
@@ -127,7 +128,7 @@ Vue.component(Tag.name, Tag);
 Vue.component(Drawer.name, Drawer);
 Vue.component(Notification.name, Notification);
 Vue.component(Cascader.name, Cascader);
-
+Vue.component(Alert.name, Alert);
 Vue.use(Loading.directive);
 /***提示只显示一次**/
 // 因为使用了new DonMessage()的原因，所以导致this.$message(options)的方式无法使用
