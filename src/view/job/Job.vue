@@ -236,6 +236,7 @@ import $ from 'jquery';
 import factory from '../../api/factory';
 import editor from '../../editor/index';
 import breakText from '../../editor/breakText';
+import { statusBtMap } from '../../editor/states';
 import log from '../../log';
 import AddBtnTip from './addBtnTip';
 import { FORM_DATA_KEY, JOIN_TABLE_TPL } from '../../editor/constants';
@@ -282,92 +283,7 @@ export default {
 				{ type: 'cdc', name: this.$t('dataFlow.cdc') }
 			],
 			flowDataName: '',
-			statusBtMap: {
-				draft: {
-					start: false,
-					stop: true,
-					forceStop: true,
-					reset: false,
-					setting: false,
-					preview: false,
-					logs: false,
-					reloadSchema: false,
-					finder: false,
-					edit: false
-				},
-				running: {
-					start: true,
-					stop: false,
-					forceStop: true,
-					reset: true,
-					setting: true,
-					preview: false,
-					logs: false,
-					reloadSchema: true,
-					finder: true,
-					edit: true
-				},
-				stopping: {
-					start: true,
-					stop: true,
-					forceStop: false,
-					reset: true,
-					setting: true,
-					preview: true,
-					logs: true,
-					reloadSchema: true,
-					finder: true,
-					edit: true
-				},
-				scheduled: {
-					start: true,
-					stop: true,
-					forceStop: false,
-					reset: true,
-					setting: true,
-					preview: true,
-					logs: true,
-					reloadSchema: true,
-					finder: true,
-					edit: true
-				},
-				error: {
-					start: false,
-					stop: true,
-					forceStop: true,
-					reset: false,
-					setting: false,
-					preview: false,
-					logs: false,
-					reloadSchema: false,
-					finder: false,
-					edit: false
-				},
-				paused: {
-					start: false,
-					stop: true,
-					forceStop: true,
-					reset: false,
-					setting: false,
-					preview: false,
-					logs: false,
-					reloadSchema: false,
-					finder: true,
-					edit: false
-				},
-				force_stopping: {
-					start: true,
-					stop: true,
-					forceStop: true,
-					reset: true,
-					setting: true,
-					preview: true,
-					logs: true,
-					reloadSchema: true,
-					finder: true,
-					edit: true
-				}
-			}
+			statusBtMap
 		};
 	},
 	watch: {
@@ -413,14 +329,14 @@ export default {
 			return ['draft', 'error', 'paused'].includes(this.status);
 		},
 		loadData() {
-			let self = this;
 			this.tempDialogVisible = false;
-			if (self.$route.query && self.$route.query.id) {
-				self.loadDataFlow(self.$route.query.id);
+			if (this.$route.query && this.$route.query.id) {
+				this.loadDataFlow(this.$route.query.id);
 			} else {
-				self.loading = false;
-				self.onGraphChanged();
-				self.loading = false;
+				this.loading = false;
+				this.onGraphChanged();
+				this.loading = false;
+				this.setEditable(true);
 			}
 		},
 		/****
@@ -495,35 +411,34 @@ export default {
 			this.loadData();
 		},
 		initData(data) {
-			let self = this,
-				dataFlow = data;
-			self.dataFlowId = dataFlow.id;
-			self.status = dataFlow.status;
-			self.executeMode = dataFlow.executeMode;
-			self.sync_type = dataFlow.setting.sync_type;
-			self.dataFlow = dataFlow;
+			let dataFlow = data;
+			this.dataFlowId = dataFlow.id;
+			this.status = dataFlow.status;
+			this.executeMode = dataFlow.executeMode;
+			this.sync_type = dataFlow.setting.sync_type;
+			this.dataFlow = dataFlow;
 			// 管理端api创建任务来源以及editorData 数据丢失情况
 			if (!dataFlow.editorData && dataFlow.stages) {
 				// 1. 拿到创建所有的节点数据
 				let cells = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
 				dataFlow.editorData = cells;
 				// 2. 调用画布创建节点方法
-				self.editor.setData(dataFlow);
+				this.editor.setData(dataFlow);
 				// 3. 更新schema
-				self.editor.reloadSchema();
+				this.editor.reloadSchema();
 				// 4. 节点布局
-				self.editor.graph.layoutDirectedGraph();
+				this.editor.graph.layoutDirectedGraph();
 				// 5. 处理joinTables
-				self.handleJoinTables(dataFlow.stages, self.editor.graph.graph);
+				this.handleJoinTables(dataFlow.stages, this.editor.graph.graph);
 			} else {
-				self.editor.setData(dataFlow);
+				this.editor.setData(dataFlow);
 			}
-			if (self.statusBtMap[self.status].start || self.isMoniting) self.setEditable(false);
-			else self.setEditable(true);
-			if (self.executeMode !== 'normal') self.showCapture();
+			if (this.statusBtMap[this.status].start || this.isMoniting) this.setEditable(false);
+			else this.setEditable(true);
+			if (this.executeMode !== 'normal') this.showCapture();
 
-			self.polling();
-			self.onGraphChanged();
+			this.polling();
+			this.onGraphChanged();
 		},
 		onGraphChanged() {
 			let self = this;
