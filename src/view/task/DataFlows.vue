@@ -998,6 +998,7 @@ export default {
 			this.formData.search = '';
 			this.formData.status = '';
 			this.formData.way = '';
+			this.formData.executionStatus = '';
 			this.checkedTag = '';
 			this.screenFn();
 		},
