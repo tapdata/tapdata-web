@@ -12,6 +12,13 @@
 				<el-button size="mini" type="primary" @click="handleAddList"> {{ $t('dataVerify.again') }}</el-button>
 			</div>
 			<div class="clear"></div>
+			<el-alert
+				v-if="validateFailedMSG && validateFailedMSG !== ''"
+				:title="validateFailedMSG"
+				:closable="false"
+				type="error"
+			>
+			</el-alert>
 			<div class="dv-pre-box">
 				<div class="dv-pre-label">
 					{{ $t('dataVerify.overView') }}
@@ -149,7 +156,8 @@ export default {
 				hash: '#62A569',
 				advance: '#9889D8'
 			},
-			timer: ''
+			timer: '',
+			validateFailedMSG: ''
 		};
 	},
 	created() {
@@ -170,12 +178,13 @@ export default {
 		getValidateBatchId() {
 			dataFlows
 				.get([this.id], {
-					fields: ['validateBatchId', 'validateStatus']
+					fields: ['validateBatchId', 'validateStatus', 'validateFailedMSG']
 				})
 				.then(res => {
 					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data.validateStatus === 'completed' || res.data.validateStatus === 'error') {
 							let validateBatchId = res.data.validateBatchId;
+							this.validateFailedMSG = res.data.validateFailedMSG;
 							this.getData(validateBatchId);
 						} else {
 							this.loading = true;
@@ -184,6 +193,7 @@ export default {
 				});
 		},
 		getData(validateBatchId) {
+			validateBatchId = validateBatchId.toString();
 			let where = {
 				filter: {
 					where: {
@@ -227,7 +237,7 @@ export default {
 			let whereFailedRow = {
 				filter: {
 					where: {
-						validateBatchId: '1594804403281',
+						validateBatchId: validateBatchId,
 						dataFlowId: {
 							regexp: `^${this.id}$`
 						},
@@ -247,7 +257,7 @@ export default {
 			});
 			let whereCount = {
 				where: {
-					validateBatchId: '1594804403281',
+					validateBatchId: validateBatchId,
 					dataFlowId: {
 						regexp: `^${this.id}$`
 					},
