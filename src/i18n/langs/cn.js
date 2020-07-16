@@ -147,6 +147,7 @@ const cn = {
 		output: '输出',
 		totalInput: '总输入',
 		totalOutput: '总输出',
+		category: '类别',
 		replicate: '数据同步差距',
 		throughputpop: '平均每秒源端数据采集的速度以及目标端写入的速度，数值越大越好',
 		transtime_pop:

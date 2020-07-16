@@ -146,6 +146,7 @@ const tc = {
 		output: '輸出',
 		totalInput: '總輸入',
 		totalOutput: '總輸出',
+		category: '類別',
 		replicate: '數據同步差距',
 		throughputpop: '平均每秒源端數據採集的速度以及目標端寫入的速度，數值越大越好',
 		transtime_pop:
