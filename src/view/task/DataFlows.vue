@@ -702,7 +702,6 @@ export default {
 					item.transmissionTime = item.stats.transmissionTime ? item.stats.transmissionTime : '--';
 					let children = item.stages;
 					item.children = [];
-
 					if (children) {
 						let finishedCount = 0;
 						children.map(k => {
@@ -725,14 +724,14 @@ export default {
 								let stg = stage[0];
 								let statusLabel = stg.status ? this.$t('dataFlow.status.' + stg.status) : '--';
 								let lag = `(${this.$t('dataFlow.lag')}${stg.replicationLag}s)`;
-								if (status === 'cdc') {
+								if (stg.status === 'cdc') {
 									statusLabel += lag;
 									item.statusMap.cdc = true;
 								}
-								if (status === 'initializing') {
+								if (stg.status === 'initializing') {
 									item.statusMap.initializing = true;
 								}
-								if (status === 'initialized') {
+								if (stg.status === 'initialized') {
 									finishedCount += 1;
 								}
 								node = {
