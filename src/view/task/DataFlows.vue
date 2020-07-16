@@ -168,22 +168,29 @@
 					</el-table-column>
 					<el-table-column
 						prop="input"
-						sortable="custom"
-						:label="$t('dataFlow.totalInput')"
-						width="120"
-					></el-table-column>
+						sortable="input"
+						:label="
+							$t('dataFlow.totalInput') +
+								'/' +
+								$t('dataFlow.totalOutput') +
+								'/' +
+								$t('dataFlow.runningSpeed')
+						"
+						width="200"
+					>
+						<template slot-scope="scope">
+							<span
+								>{{ scope.row.input }} / {{ scope.row.output }} / {{ scope.row.transmissionTime }}</span
+							>
+						</template>
+					</el-table-column>
 					<el-table-column
-						prop="output"
-						sortable="custom"
-						:label="$t('dataFlow.totalOutput')"
+						prop="listtags"
+						:label="$t('dataFlow.category')"
+						:formatter="listtagsFormatter"
 						width="120"
-					></el-table-column>
-					<el-table-column
-						prop="transmissionTime"
-						sortable="custom"
-						:label="$t('dataFlow.runningSpeed')"
-						width="120"
-					></el-table-column>
+					>
+					</el-table-column>
 					<el-table-column
 						prop="createTime"
 						:label="$t('dataFlow.creationTime')"
@@ -794,6 +801,13 @@ export default {
 					}
 				});
 			});
+		},
+		listtagsFormatter(row) {
+			let value = '';
+			if (row.listtags) {
+				value = row.listtags[0].value;
+			}
+			return value;
 		},
 		handleDelete(id) {
 			this.deleteConfirm(() => {

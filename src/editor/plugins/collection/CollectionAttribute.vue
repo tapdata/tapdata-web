@@ -84,7 +84,7 @@
 				<el-form-item v-if="model.fieldFilterType !== 'keepAllFields'">
 					<PrimaryKeyInput
 						v-model="model.fieldFilter"
-						:options="fieldFilterOptions"
+						:options="primaryKeyOptions"
 						:placeholder="
 							model.fieldFilterType === 'retainedField'
 								? $t('editor.cell.data_node.collection.form.fieldFilter.placeholderKeep')
@@ -157,7 +157,7 @@ import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm
 import PrimaryKeyInput from '../../../components/PrimaryKeyInput';
 import RelatedTasks from '../../../components/relatedTasks';
 import ClipButton from '@/components/ClipButton';
-import { convertSchemaToTreeData, uuid } from '../../util/Schema';
+import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, uuid } from '../../util/Schema';
 import Entity from '../link/Entity';
 import _ from 'lodash';
 import factory from '../../../api/factory';
@@ -249,7 +249,6 @@ export default {
 							this.model.primaryKeys = '';
 						}
 						this.defaultSchema = schema;
-						this.fieldFilterOptions = _.cloneDeep(this.primaryKeyOptions);
 						this.$emit('schemaChange', _.cloneDeep(schema));
 					}
 				}
@@ -257,10 +256,10 @@ export default {
 				this.taskData.tableName = this.model.tableName;
 			}
 		},
-		mergedSchema: {
+		defaultSchema: {
 			handler() {
-				if (this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0) {
-					let fields = this.mergedSchema.fields;
+				if (this.defaultSchema && this.defaultSchema.fields && this.defaultSchema.fields.length > 0) {
+					let fields = this.defaultSchema.fields;
 					this.primaryKeyOptions = fields.map(f => f.field_name);
 					if (!this.model.primaryKeys) {
 						let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
@@ -274,7 +273,6 @@ export default {
 				//根据类型判断 fieldFilterType 不过滤字段Keep all fields、保留字段Retained field、删除字段Delete field。默认显示：不过滤字段。
 				let fieldFilter = this.model.fieldFilter ? this.model.fieldFilter.split(',') : [];
 				if (fieldFilter.length === 0) {
-					this.handleFieldFilterType();
 					return;
 				}
 				if (this.model.fieldFilterType === 'retainedField') {
@@ -365,7 +363,6 @@ export default {
 				enableInitialOrder: false,
 				operations: []
 			},
-			mergedSchema: null,
 			primaryKeyOptions: [],
 			fieldFilterOptions: [],
 			defaultSchema: null
@@ -426,9 +423,10 @@ export default {
 			this.model.fieldFilter = '';
 			this.model.fieldFilterType = 'keepAllFields';
 		},
-		handleCurrentFieldFilterType() {
+		handleCurrentFieldFilterType(type) {
 			this.model.operations = [];
 			this.model.fieldFilter = '';
+			this.model.fieldFilterType = type;
 		},
 		convertSchemaToTreeData,
 
@@ -520,13 +518,7 @@ export default {
 				}
 			}
 			this.isSourceDataNode = isSourceDataNode;
-			this.mergedSchema = cell.getOutputSchema();
-
-			this.defaultSchema = this.mergedSchema;
-
-			cell.on('change:outputSchema', () => {
-				this.mergedSchema = cell.getOutputSchema();
-			});
+			this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema());
 			editorMonitor = vueAdapter.editor;
 		},
 		getData() {

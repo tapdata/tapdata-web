@@ -147,6 +147,7 @@ const en = {
 		output: 'Output',
 		totalInput: 'Total Input',
 		totalOutput: 'Total Output',
+		category: 'Category',
 		replicate: 'Replicate Lag',
 		throughputpop:
 			'The read speed from source node and the write speed to the target node, larger number is better',
@@ -777,7 +778,8 @@ const en = {
 		again: 'Check again',
 		rows: 'Check by number of rows',
 		sampleRate: 'By percentage',
-		condition: 'Check condition'
+		condition: 'Check condition',
+		showResult: 'Show result'
 	},
 	dataMap: {
 		source: 'SOURCE',

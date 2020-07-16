@@ -42,6 +42,9 @@
 				<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleLoading">{{
 					$t('dataVerify.start')
 				}}</el-button>
+				<el-button size="mini" class="dv-btn-footer" @click="showResult">{{
+					$t('dataVerify.showResult')
+				}}</el-button>
 			</div>
 		</div>
 		<el-drawer
@@ -55,7 +58,7 @@
 			<div class="dv-add-header">
 				{{ $t('dataVerify.dataVerifySetting') }}
 			</div>
-			<el-form class="dv-add-form" :model="formData" :rules="rules" ref="ruleForm">
+			<el-form class="dv-add-form" :model="formData">
 				<div class="dv-add-form-text">
 					{{ $t('dataVerify.dataWay') }}
 				</div>
@@ -82,7 +85,7 @@
 						</el-col>
 					</el-row>
 				</el-form-item>
-				<el-form-item prop="sourceTageId">
+				<el-form-item>
 					<div class="dv-add-form-text">
 						{{ $t('dataVerify.source') }}
 					</div>
@@ -109,7 +112,7 @@
 						</el-col>
 					</el-row>
 				</el-form-item>
-				<el-form-item prop="targetTageId">
+				<el-form-item>
 					<div class="dv-add-form-text">
 						{{ $t('dataVerify.target') }}
 					</div>
@@ -126,17 +129,17 @@
 							</el-select>
 						</el-col>
 					</el-row>
-					<el-row v-show="type !== 'advance'">
+					<el-row v-show="type === 'row'">
 						<el-checkbox v-model="checkedTarget"></el-checkbox>
 						<span style="font-size: 12px">SQL/MQL</span>
 					</el-row>
-					<el-row v-show="checkedTarget && type !== 'advance'">
+					<el-row v-show="checkedTarget && type === 'row'">
 						<el-col :span="24">
 							<el-input type="textarea" v-model="formData.targetFilter"></el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
-				<el-form-item prop="validateCode">
+				<el-form-item>
 					<div v-show="type === 'advance'" class="dv-add-form-text">
 						JS
 					</div>
@@ -149,7 +152,7 @@
 			</el-form>
 			<div class="dv-btn-footer-wrapper">
 				<div class="dv-btn-footer-box">
-					<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleAdd('ruleForm')">{{
+					<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleAdd()">{{
 						$t('dataVerify.confirm')
 					}}</el-button>
 					<el-button size="mini" class="dv-btn-footer" @click="handleClose">{{
@@ -166,6 +169,7 @@ import factory from '../../../api/factory';
 import log from '../../../log';
 import { EditorEventType } from '../../../editor/lib/events';
 import $ from 'jquery';
+import getUrlSearch from './getUrlSearch';
 
 const dataFlows = factory('DataFlows');
 
@@ -199,35 +203,12 @@ export default {
 				hash: '#62A569',
 				advance: '#9889D8'
 			},
-			tableData: [],
-			rules: {
-				sourceTageId: [
-					{
-						required: true,
-						message: 'please select source',
-						trigger: 'change'
-					}
-				],
-				targetTageId: [
-					{
-						required: true,
-						message: 'please select target',
-						trigger: 'change'
-					}
-				],
-				validateCode: [
-					{
-						required: true,
-						message: 'please enter js validate code',
-						trigger: 'change'
-					}
-				]
-			}
+			tableData: []
 		};
 	},
 	created() {
-		this.id = this.getUrlSearch('id');
-		this.getData(this.id);
+		this.id = getUrlSearch.getUrlSearch('id');
+		this.getData();
 		this.getSourceList();
 	},
 	mounted() {
@@ -236,30 +217,21 @@ export default {
 		});
 	},
 	methods: {
-		getData(params) {
-			let _params = Object.assign(
-				{
-					filter: JSON.stringify({
-						fields: {
-							validationSettings: true,
-							validateStatus: true,
-							dataFlowId: true
+		getData() {
+			dataFlows
+				.get([this.id], {
+					fields: ['validationSettings', 'dataFlowId', 'validateStatus']
+				})
+				.then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						if (res.data) {
+							this.tableData = res.data.validationSettings ? res.data.validationSettings : [];
+							log('dataVerify.tableData', this.tableData);
 						}
-					})
-				},
-				params
-			);
-			dataFlows.getId(this.id, _params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.tableData = res.data.validationSettings ? res.data.validationSettings : [];
-						log('dataVerify.tableData', this.tableData);
 					}
-				}
-			});
+				});
 		},
 		handleClose() {
-			this.$refs.ruleForm.clearValidate();
 			this.disabledDrawer = false;
 		},
 		handleShowDrawer() {
@@ -276,53 +248,62 @@ export default {
 			this.checkedTarget = false;
 			this.disabledDrawer = true;
 		},
-		handleAdd(formName) {
-			this.$refs[formName].validate(valid => {
-				if (valid) {
-					log('edit_edit', this.editIndex);
+		handleAdd() {
+			// if ((this.formData.sourceTageId === '' ||this.formData.sourceTageId) && this.checkedSource && this.type !== 'advance') {
+			// 	this.$message.error('please select source');
+			// 	return;
+			// }
+			if (this.formData.sourceTageId === '' || !this.formData.sourceTageId) {
+				this.$message.error('please select source');
+				return;
+			}
+			if (this.formData.targetTageId === '' || !this.formData.targetTageId) {
+				this.$message.error('please select target');
+				return;
+			}
+			// if ((this.formData.targetTageId === '' || !this.formData.targetTageId) && this.checkedTarget && this.type !== 'advance') {
+			// 	this.$message.error('please select target');
+			// 	return;
+			// }
+			if ((this.formData.validateCode === '' || !this.formData.validateCode) && this.type === 'advance') {
+				this.$message.error('please enter js validate code');
+				return;
+			}
+			log('edit_edit', this.editIndex);
 
-					if (this.editIndex !== -1) {
-						this.tableData.splice(this.editIndex, 1); // 是否是编辑 先删除后新增
-					}
-					let opSource = this.sourceList.filter(
-						item => item.stageId + item.tableName === this.formData.sourceTageId
-					);
-					let opTarget = this.targetList.filter(
-						item => item.stageId + item.tableName === this.formData.targetTageId
-					);
-					if (opSource.length !== 0) opSource[0].filter = this.formData.sourceFilter;
-					if (opTarget.length !== 0) opTarget[0].filter = this.formData.targetFilter;
+			if (this.editIndex !== -1) {
+				this.tableData.splice(this.editIndex, 1); // 是否是编辑 先删除后新增
+			}
+			let opSource = this.sourceList.filter(item => item.stageId + item.tableName === this.formData.sourceTageId);
+			let opTarget = this.targetList.filter(item => item.stageId + item.tableName === this.formData.targetTageId);
+			if (opSource.length !== 0) opSource[0].filter = this.formData.sourceFilter;
+			if (opTarget.length !== 0) opTarget[0].filter = this.formData.targetFilter;
 
-					let add = {
-						type: this.type, // row: 行数 hash：哈希  advance：高级校验
-						condition: this.formData.condition,
-						source: opSource[0],
-						target: opTarget[0],
-						validateCode: this.formData.validateCode
-					};
+			let add = {
+				type: this.type, // row: 行数 hash：哈希  advance：高级校验
+				condition: this.formData.condition,
+				source: opSource[0],
+				target: opTarget[0],
+				validateCode: this.formData.validateCode
+			};
 
-					if (!this.tableData) {
-						this.tableData = [];
-						this.tableData.push(add); // 判断tabledata 是否存在
-					} else {
-						this.tableData.push(add);
-					}
+			if (!this.tableData) {
+				this.tableData = [];
+				this.tableData.push(add); // 判断tabledata 是否存在
+			} else {
+				this.tableData.push(add);
+			}
 
-					let data = {
-						validationSettings: this.tableData
-					};
-					log('data', data);
+			let data = {
+				validationSettings: this.tableData
+			};
+			log('data', data);
 
-					dataFlows.patchId(this.id, data).then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							this.disabledDrawer = false;
-							this.$refs.ruleForm.clearValidate();
-							this.editIndex = -1;
-							this.getData();
-						}
-					});
-				} else {
-					return false;
+			dataFlows.patchId(this.id, data).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					this.disabledDrawer = false;
+					this.editIndex = -1;
+					this.getData();
 				}
 			});
 		},
@@ -332,41 +313,19 @@ export default {
 				return;
 			}
 			if (this.disabledDrawer) {
-				this.$confirm('新的校验条件还在编辑中，继续执行校验？', '提示', {
-					confirmButtonText: '确定',
-					cancelButtonText: '取消',
-					type: 'warning'
-				})
-					.then(() => {
-						let self = this;
-						// 状态修改为 waiting
-						let data = {
-							validateStatus: 'waiting'
-						};
-						dataFlows.patchId(this.id, data).then(res => {
-							if (res.statusText === 'OK' || res.status === 200) {
-								self.editor.showLoading();
-							}
-						});
-					})
-					.catch(() => {
-						this.$message({
-							type: 'info',
-							message: '已取消执行'
-						});
-					});
-			} else {
-				let self = this;
-				// 状态修改为 waiting
-				let data = {
-					validateStatus: 'waiting'
-				};
-				dataFlows.patchId(this.id, data).then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						self.editor.showLoading();
-					}
-				});
+				this.disabledDrawer = false;
 			}
+			let self = this;
+			// 状态修改为 waiting
+			let data = {
+				validateStatus: 'waiting',
+				validateBatchId: new Date().valueOf()
+			};
+			dataFlows.patchId(this.id, data).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					self.editor.showResult(true);
+				}
+			});
 		},
 		handleDelete(index) {
 			this.tableData.splice(index, 1);
@@ -409,22 +368,9 @@ export default {
 		GoBack() {
 			this.editor.showMonitor();
 		},
-		getUrlSearch(name) {
-			// 未传参，返回空
-			if (!name) return null;
-			// 查询参数：先通过search取值，如果取不到就通过hash来取
-			var after = window.location.search;
-			after = after.substr(1) || window.location.hash.split('?')[1];
-			// 地址栏URL没有查询参数，返回空
-			if (!after) return null;
-			// 如果查询参数中没有"name"，返回空
-			if (after.indexOf(name) === -1) return null;
-			var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)');
-			// 当地址栏参数存在中文时，需要解码，不然会乱码
-			var r = decodeURI(after).match(reg);
-			// 如果url中"name"没有值，返回空
-			if (!r) return null;
-			return r[2];
+		showResult() {
+			this.disabledDrawer = false;
+			this.editor.showResult();
 		}
 	}
 };
