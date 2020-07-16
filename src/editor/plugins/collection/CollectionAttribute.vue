@@ -157,7 +157,7 @@ import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm
 import PrimaryKeyInput from '../../../components/PrimaryKeyInput';
 import RelatedTasks from '../../../components/relatedTasks';
 import ClipButton from '@/components/ClipButton';
-import { convertSchemaToTreeData, uuid } from '../../util/Schema';
+import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, uuid } from '../../util/Schema';
 import Entity from '../link/Entity';
 import _ from 'lodash';
 import factory from '../../../api/factory';
@@ -520,9 +520,8 @@ export default {
 				}
 			}
 			this.isSourceDataNode = isSourceDataNode;
+			this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema());
 			this.mergedSchema = cell.getOutputSchema();
-
-			this.defaultSchema = this.mergedSchema;
 
 			cell.on('change:outputSchema', () => {
 				this.mergedSchema = cell.getOutputSchema();
