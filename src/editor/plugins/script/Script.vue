@@ -139,7 +139,7 @@ export default {
 			}
 			gData.stageId = cell.id;
 			gData.dataFlowId = arguments[3].editor.scope.dataFlowId;
-
+			this.$refs.jsEditor.init(this.model.script);
 			editorMonitor = vueAdapter.editor;
 		},
 		getData() {

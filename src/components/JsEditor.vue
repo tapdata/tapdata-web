@@ -3,24 +3,25 @@
 </template>
 
 <script>
-import * as monaco from "monaco-editor"; // 包体很大了 但是demo可以跑起来
+import * as monaco from 'monaco-editor'; // 包体很大了 但是demo可以跑起来
 // import { EditorEventType } from "../editor/lib/events";
 const suggestions = [
 	{
-		label: "split_chinese",
-		insertText: "split_chinese(inputString,language);", // 不写的时候不展示。。
-		detail: "inputString：need split string\n" +
-		"language:\nCH_T：traditional Chinese\nCH_S：Chinese Simplified\n HK_T:Hong Kong Traditional\nTW_T:Taiwan Traditional\n"
+		label: 'split_chinese',
+		insertText: 'split_chinese(inputString,language);', // 不写的时候不展示。。
+		detail:
+			'inputString：need split string\n' +
+			'language:\nCH_T：traditional Chinese\nCH_S：Chinese Simplified\n HK_T:Hong Kong Traditional\nTW_T:Taiwan Traditional\n'
 	},
 	{
-		label: "uuid",
-		insertText: "var uuid = uuid();",
-		detail: "generate uuid"
+		label: 'uuid',
+		insertText: 'var uuid = uuid();',
+		detail: 'generate uuid'
 	},
 	{
-		label: "HashMap",
-		insertText: "var hashMap = new HashMap();",
-		detail: "create hash object"
+		label: 'HashMap',
+		insertText: 'var hashMap = new HashMap();',
+		detail: 'create hash object'
 	}
 ];
 export default {
@@ -35,13 +36,13 @@ export default {
 		}
 	},
 	mounted() {
-		monaco.languages.registerCompletionItemProvider("javascript", {
+		monaco.languages.registerCompletionItemProvider('javascript', {
 			provideCompletionItems() {
 				return {
 					suggestions: suggestions
 				};
 			},
-			triggerCharacters: [" ", "."] // 写触发提示的字符，可以有多个
+			triggerCharacters: [' ', '.'] // 写触发提示的字符，可以有多个
 		});
 		// monaco.languages.typescript.javascriptDefaults.addExtraLib([
 		// 	'declare class Facts {',
@@ -53,31 +54,32 @@ export default {
 		// ].join('\n'), 'ts:filename/facts.d.ts');
 		let self = this;
 		setTimeout(function() {
-			self.inti();
+			self.init();
 		}, 50);
 	},
 	watch: {
 		width: {
 			handler() {
-				this.inti();
+				this.init();
 			}
 		}
 	},
 	methods: {
-		inti() {
+		init(script) {
 			let self = this;
-			self.$refs.container.innerHTML = "";
+			if (script) this.code = script;
+			self.$refs.container.innerHTML = '';
 			var editor = monaco.editor.create(this.$refs.container, {
 				value: this.code,
-				language: "javascript",
+				language: 'javascript',
 				minimap: {
 					enabled: false
 				},
-				fontSize: "12px",
+				fontSize: '12px',
 				fixedOverflowWidgets: true // 超出编辑器大小的使用fixed属性显示
 			});
-			editor.onDidChangeModelContent(function(event) {
-				self.$emit("update:code", editor.getValue());
+			editor.onDidChangeModelContent(function() {
+				self.$emit('update:code', editor.getValue());
 			});
 		}
 	}
