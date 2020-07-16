@@ -15,7 +15,6 @@ import Capture from '../view/job/Preview';
 import Setting from '../view/job/Setting';
 import DebugLogs from '../view/job/DebugLogs';
 import DataVerify from '../view/job/DataVerify/List';
-import DVLoading from '../view/job/DataVerify/Loading';
 import DVResult from '../view/job/DataVerify/Result';
 
 import log from '../log';
@@ -436,34 +435,6 @@ export default class Editor extends BaseObject {
 
 		let monitor = this.getRightTabPanel().getChildByName('monitor');
 		this.getRightTabPanel().select(monitor);
-	}
-	showLoading() {
-		let dataVerify = this.getRightTabPanel().getChildByName('dataVerify');
-		if (dataVerify) this.getRightTabPanel().remove(dataVerify);
-		// add loading
-		let self = this;
-		let rightTabPanel = self.getRightSidebar().getChildByName('rightTabPanel');
-		if (!rightTabPanel) {
-			rightTabPanel = new Tab({
-				name: 'rightTabPanel'
-			});
-			self.getRightSidebar().add(rightTabPanel); // 添加空白panel 节点渲染
-		}
-		let dvLoading = self.getRightSidebar().getChildByName('dvLoading');
-		if (!dvLoading) {
-			dvLoading = new VueComponent({
-				title: i18n.t('editor.ui.sidebar.capture'),
-				name: 'dvLoading',
-				editor: this,
-				propsData: {
-					dataFlow: ''
-				},
-				component: DVLoading
-			});
-			self.getRightTabPanel().add(dvLoading);
-			self.getRightTabPanel().select(dvLoading);
-		}
-		self.getRightSidebar().show();
 	}
 	showResult() {
 		let dvLoading = this.getRightTabPanel().getChildByName('dvLoading');
