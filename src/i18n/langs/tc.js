@@ -771,7 +771,8 @@ const tc = {
 		again: '再次校驗',
 		rows: '按行數校驗',
 		sampleRate: '按百分比',
-		condition: '校驗條件'
+		condition: '校驗條件',
+		showResult: '顯示數據校驗結果'
 	},
 	dataMap: {
 		source: '來源',

@@ -43,7 +43,7 @@
 					$t('dataVerify.start')
 				}}</el-button>
 				<el-button size="mini" class="dv-btn-footer" @click="showResult">{{
-					$t('dataVerify.cancel')
+					$t('dataVerify.showResult')
 				}}</el-button>
 			</div>
 		</div>

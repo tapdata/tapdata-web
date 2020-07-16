@@ -778,7 +778,8 @@ const en = {
 		again: 'Check again',
 		rows: 'Check by number of rows',
 		sampleRate: 'By percentage',
-		condition: 'Check condition'
+		condition: 'Check condition',
+		showResult: 'Show result'
 	},
 	dataMap: {
 		source: 'SOURCE',

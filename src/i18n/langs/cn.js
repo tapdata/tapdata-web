@@ -770,7 +770,8 @@ const cn = {
 		again: '再次校验',
 		rows: '按行数校验',
 		sampleRate: '按百分比',
-		condition: '校验条件'
+		condition: '校验条件',
+		showResult: '显示数据校验结果'
 	},
 	dataMap: {
 		source: '来源',
