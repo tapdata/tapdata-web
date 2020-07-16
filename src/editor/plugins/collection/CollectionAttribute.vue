@@ -273,7 +273,6 @@ export default {
 				//根据类型判断 fieldFilterType 不过滤字段Keep all fields、保留字段Retained field、删除字段Delete field。默认显示：不过滤字段。
 				let fieldFilter = this.model.fieldFilter ? this.model.fieldFilter.split(',') : [];
 				if (fieldFilter.length === 0) {
-					this.handleFieldFilterType();
 					return;
 				}
 				if (this.model.fieldFilterType === 'retainedField') {
@@ -424,9 +423,10 @@ export default {
 			this.model.fieldFilter = '';
 			this.model.fieldFilterType = 'keepAllFields';
 		},
-		handleCurrentFieldFilterType() {
+		handleCurrentFieldFilterType(type) {
 			this.model.operations = [];
 			this.model.fieldFilter = '';
+			this.model.fieldFilterType = type;
 		},
 		convertSchemaToTreeData,
 
