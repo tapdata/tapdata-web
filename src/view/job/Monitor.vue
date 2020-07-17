@@ -10,13 +10,13 @@
 					</el-select>
 				</el-col>
 				<el-col :span="4" style="text-align: right;">
-					<el-button class="e-button" size="mini" type="primary" @click="handleGoDataVerify">{{
-						$t('dataVerify.dataVerify')
+					<el-button class="e-button" type="primary" @click="seeNodeData" :disabled="stageId === 'all'">{{
+						$t('dataFlow.button.viewConfig')
 					}}</el-button>
 				</el-col>
-				<el-col :span="4" style="text-align: right;" v-if="stageId !== 'all'">
-					<el-button class="e-button" type="primary" @click="seeNodeData">{{
-						$t('dataFlow.button.viewConfig')
+				<el-col :span="4" style="text-align: right;">
+					<el-button class="e-button" size="mini" type="primary" @click="handleGoDataVerify">{{
+						$t('dataVerify.dataVerify')
 					}}</el-button>
 				</el-col>
 			</el-form-item>
@@ -120,6 +120,7 @@ import factory from '../../api/factory';
 import { EditorEventType } from '../../editor/lib/events';
 
 const DataFlowInsights = factory('DataFlowInsights');
+const dataFlows = factory('DataFlows');
 let intervalTime = 5000;
 
 export default {
@@ -364,35 +365,6 @@ export default {
 		};
 	},
 
-	// computed: {
-	// 	updateTime: function() {
-	// 		if (this.dataFlow.startTime && this.dataFlow.last_updated) {
-	// 			let time = new Date(this.dataFlow.last_updated).getTime() - new Date(this.dataFlow.startTime).getTime();
-
-	// 			let unit = 'ms';
-	// 			if (time > 1000) {
-	// 				unit = 's';
-	// 				time = Number((time / 1000).toFixed(2));
-	// 			}
-	// 			if (time > 60) {
-	// 				unit = 'm';
-	// 				time = Number((time / 60).toFixed(2));
-	// 			}
-	// 			if (time > 60) {
-	// 				unit = 'h';
-	// 				time = Number((time / 60).toFixed(2));
-	// 			}
-	// 			if (time > 24) {
-	// 				unit = 'd';
-	// 				time = Number((time / 24).toFixed(2));
-	// 			}
-
-	// 			return time + ' ' + unit;
-	// 		}
-	// 		return '-';
-	// 	}
-	// },
-
 	mounted() {
 		this.sliderBar = this.editor.rightSidebar;
 		this.$on(EditorEventType.SELECTED_STAGE, selectStage => {
@@ -518,7 +490,7 @@ export default {
 				};
 				openFormPanel(1);
 			} else {
-				this.editor.showSetting(true);
+				this.$message.error(this.$t('dataFlow.selectNode'));
 			}
 		},
 
@@ -897,7 +869,19 @@ export default {
 		},
 		// 跳转到数据校验页面
 		handleGoDataVerify() {
-			this.editor.showDataVerify();
+			dataFlows
+				.get([this.flow.id], {
+					fields: ['validateBatchId', 'validateStatus', 'validateFailedMSG']
+				})
+				.then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						if (Object.keys(res.data).length === 0) {
+							this.editor.showDataVerify();
+						} else {
+							this.editor.showResult();
+						}
+					}
+				});
 		}
 	},
 
