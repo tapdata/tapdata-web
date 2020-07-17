@@ -7,6 +7,12 @@
 				<el-button @click="handleVerifyCancel" size="mini">{{ $t('dataVerify.cancel') }}</el-button>
 			</div>
 		</div>
+		<div class="back-btn-box" v-if="!loading">
+			<el-button class="back-btn-icon-box" @click="GoBack"
+				><i class="iconfont icon-you2 back-btn-icon"></i
+			></el-button>
+			<span class="back-btn-text">{{ $t('dataVerify.dataVerify') }}</span>
+		</div>
 		<div class="data-contPreView" v-if="!loading">
 			<div class="dv-pre-btn">
 				<el-button size="mini" type="primary" @click="handleAddList"> {{ $t('dataVerify.again') }}</el-button>
@@ -28,26 +34,53 @@
 					</div>
 				</div>
 				<div class="dv-pre-rowTotal">
-					<p>{{ $t('dataVerify.row') }}: {{ overview.validateRows }} /条</p>
-					<p>{{ $t('dataVerify.hash') }}: {{ overview.validateHashRows }} /条</p>
-					<p>{{ $t('dataVerify.advance') }}: {{ overview.validateJsRows }} /条</p>
+					<p>
+						{{ $t('dataVerify.row') }}: <span>{{ overview.validateRows }}</span>
+					</p>
+					<p>
+						{{ $t('dataVerify.hash') }}: <span>{{ overview.validateHashRows }}</span>
+					</p>
+					<p>
+						{{ $t('dataVerify.advance') }}: <span>{{ overview.validateJsRows }}</span>
+					</p>
 				</div>
 				<div class="dv-pre-dataBox">
 					<div class="dv-pre-rowCheck">
 						<p>{{ $t('dataVerify.linageDifference') }}</p>
-						<div class="dv-pre-dataBox-item">
+						<div
+							class="dv-pre-dataBox-item"
+							v-if="overview.rowsDiffer !== 0 || overview.rowsDiffer == -1"
+							style="color: rgb(245, 108, 108);"
+						>
+							{{ overview.rowsDiffer }}
+						</div>
+						<div class="dv-pre-dataBox-item" v-else>
 							{{ overview.rowsDiffer }}
 						</div>
 					</div>
 					<div class="dv-pre-rowCheck">
 						<p>{{ $t('dataVerify.errorTotal') }}</p>
-						<div class="dv-pre-dataBox-item">
+						<div
+							class="dv-pre-dataBox-item"
+							v-if="overview.rowsMismatch !== 0 || overview.rowsMismatch == -1"
+							style="color: rgb(245, 108, 108);"
+						>
+							{{ overview.rowsMismatch }}
+						</div>
+						<div class="dv-pre-dataBox-item" v-else>
 							{{ overview.rowsMismatch }}
 						</div>
 					</div>
 					<div class="dv-pre-rowCheck">
 						<p>{{ $t('dataVerify.accuracyRate') }}</p>
-						<div class="dv-pre-dataBox-item">
+						<div
+							class="dv-pre-dataBox-item"
+							v-if="overview.consistencyRate !== '--'"
+							style="color: rgb(245, 108, 108);"
+						>
+							{{ overview.consistencyRate }}
+						</div>
+						<div class="dv-pre-dataBox-item" v-else>
 							{{ overview.consistencyRate }}
 						</div>
 					</div>
@@ -55,7 +88,7 @@
 			</div>
 			<div class="dv-contrast-table">
 				<el-table border :data="validateStats" height="250" style="width: 100%">
-					<el-table-column prop="sourceTableName" :label="$t('dataVerify.source')" width="80">
+					<el-table-column prop="sourceTableName" :label="$t('dataVerify.source')" width="180">
 					</el-table-column>
 					<el-table-column prop="validateType" :label="$t('dataVerify.dataWay')" width="80">
 						<template slot-scope="scope">
@@ -66,20 +99,38 @@
 					</el-table-column>
 					<el-table-column prop="rows" :label="$t('dataVerify.range')"> </el-table-column>
 					<el-table-column prop="rowsDiffer" :label="$t('dataVerify.result')"> </el-table-column>
-					<el-table-column prop="consistencyRate" :label="$t('dataVerify.accuracyRate')"> </el-table-column>
+					<el-table-column prop="consistencyRate" :label="$t('dataVerify.accuracyRate')">
+						<template slot-scope="scope">
+							<span>
+								{{ scope.row.consistencyRate == '-1' ? '--' : scope.row.consistencyRate }}
+							</span>
+						</template>
+					</el-table-column>
 				</el-table>
 			</div>
 			<div>
-				<el-row :gutter="10">
-					<el-col :span="8">
-						<el-select size="mini" v-model="overview.validateType">
-							<el-option value="row" :label="$t('dataVerify.row')"></el-option>
-							<el-option value="hash" :label="$t('dataVerify.hash')"></el-option>
-							<el-option value="advance" :label="$t('dataVerify.advance')"></el-option>
-						</el-select>
-					</el-col>
-					<el-col :span="8">
-						<el-select size="mini" v-model="source.tableName">
+				<div class="dv-contrast-box">
+					<div class="dv-contrast-header">
+						<div class="dv-pre-right">
+							<span style="color: #F56C6C"> error :{{ count }}</span>
+							<el-pagination
+								class="dv-result-pagination"
+								:pager-count="0"
+								layout="prev, next"
+								:total="count"
+								:page-size="pageSize"
+								@current-change="handleCurrentChange"
+							>
+							</el-pagination>
+						</div>
+						{{ $t('dataVerify.errorComparison') }}
+						<el-select
+							size="mini"
+							v-model="source.tableName"
+							class="dv-pre-right"
+							@change="getFailedRow"
+							clearable
+						>
 							<el-option
 								v-for="item in validateStats"
 								:key="item.sourceTableName"
@@ -88,23 +139,6 @@
 							>
 							</el-option>
 						</el-select>
-					</el-col>
-				</el-row>
-				<div class="dv-contrast-box">
-					<div class="dv-contrast-header">
-						{{ $t('dataVerify.errorComparison') }}
-						<div class="dv-pre-right">
-							<span style="color: #48B6E2">{{ $t('dataVerify.advance') }} </span>
-							<span style="color: #F56C6C"> error :{{ count }}</span>
-							<el-pagination
-								class="dv-result-pagination"
-								:page-size="1"
-								:pager-count="0"
-								layout="prev, next"
-								:total="count"
-							>
-							</el-pagination>
-						</div>
 					</div>
 					<el-table border :data="failedRow" class="dv-result-fail-table" style="width: 100%">
 						<el-table-column prop="sourceTableData" :label="$t('dataVerify.source')"> </el-table-column>
@@ -138,9 +172,9 @@ export default {
 				validateRows: '0', // #行数校验条数
 				validateHashRows: '0', // #哈希校验条数
 				validateJsRows: '0', // #高级校验条数
-				rowsDiffer: '-', // #总体行数差
-				rowsMismatch: '-', // #不匹配条数
-				consistencyRate: '-', // #一致率（0-100）
+				rowsDiffer: '--', // #总体行数差
+				rowsMismatch: '--', // #不匹配条数
+				consistencyRate: '--', // #一致率（0-100）
 				dataFlowId: '', // #该记录所属的dataFlow ID，
 				validateType: '',
 				source: ''
@@ -157,14 +191,18 @@ export default {
 				advance: '#9889D8'
 			},
 			timer: '',
-			validateFailedMSG: ''
+			validateFailedMSG: '',
+			currentPage: 1,
+			pageSize: 10,
+			validateBatchId: ''
 		};
 	},
 	created() {
 		this.id = getUrlSearch.getUrlSearch('id');
+		this.getValidateBatchId();
 		this.timer = setInterval(() => {
 			this.getValidateBatchId();
-		}, 5000);
+		}, 2000);
 	},
 	destroyed() {
 		// 清除定时器
@@ -183,21 +221,24 @@ export default {
 				.then(res => {
 					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data.validateStatus === 'completed' || res.data.validateStatus === 'error') {
-							let validateBatchId = res.data.validateBatchId;
+							this.validateBatchId = res.data.validateBatchId ? res.data.validateBatchId.toString() : '';
 							this.validateFailedMSG = res.data.validateFailedMSG;
-							this.getData(validateBatchId);
+							// 清除定时器
+							clearInterval(this.timer);
+							this.timer = null;
+							this.getData();
+							this.getFailedRow();
 						} else {
 							this.loading = true;
 						}
 					}
 				});
 		},
-		getData(validateBatchId) {
-			validateBatchId = validateBatchId.toString();
+		getData() {
 			let where = {
 				filter: {
 					where: {
-						validateBatchId: validateBatchId,
+						validateBatchId: this.validateBatchId,
 						dataFlowId: {
 							regexp: `^${this.id}$`
 						},
@@ -217,7 +258,8 @@ export default {
 								? moment(this.overview.createTime).format('YYYY-MM-DD HH:mm:ss')
 								: '';
 							this.overview.consistencyRate =
-								this.overview.consistencyRate === -1 ? '-' : this.overview.consistencyRate;
+								this.overview.consistencyRate == -1 ? '--' : this.overview.consistencyRate;
+							this.overview.costTime = this.overview.costTime ? this.overview.costTime / 1000 + ' s' : '';
 						}
 						if (res.data[0]) {
 							this.validateStats = res.data[0].validateStats;
@@ -234,30 +276,9 @@ export default {
 					this.loading = false;
 				}
 			});
-			let whereFailedRow = {
-				filter: {
-					where: {
-						validateBatchId: validateBatchId,
-						dataFlowId: {
-							regexp: `^${this.id}$`
-						},
-						type: {
-							inq: ['failedRow']
-						}
-					}
-				}
-			};
-			ValidationResults.get(whereFailedRow).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.failedRow = res.data;
-						log('dataVerify.error', res.data);
-					}
-				}
-			});
 			let whereCount = {
 				where: {
-					validateBatchId: validateBatchId,
+					validateBatchId: this.validateBatchId,
 					dataFlowId: {
 						regexp: `^${this.id}$`
 					},
@@ -275,6 +296,38 @@ export default {
 				}
 			});
 		},
+		handleCurrentChange(cpage) {
+			this.currentPage = cpage;
+			this.getFailedRow(this.validateBatchId);
+		},
+		getFailedRow() {
+			let whereFailedRow = {
+				filter: {
+					where: {
+						validateBatchId: this.validateBatchId,
+						dataFlowId: {
+							regexp: `^${this.id}$`
+						},
+						type: {
+							inq: ['failedRow']
+						}
+					},
+					limit: this.pageSize,
+					skip: (this.currentPage - 1) * this.pageSize
+				}
+			};
+			if (this.source.tableName && this.source.tableName !== '') {
+				whereFailedRow.filter.where['sourceStage.tableName'] = this.source.tableName;
+			}
+			ValidationResults.get(whereFailedRow).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.failedRow = res.data;
+						log('dataVerify.error', res.data);
+					}
+				}
+			});
+		},
 		handleVerifyCancel() {
 			let self = this;
 			// 状态修改为 draft
@@ -286,6 +339,9 @@ export default {
 					self.editor.showDataVerify(true);
 				}
 			});
+		},
+		GoBack() {
+			this.editor.showMonitor();
 		}
 	}
 };
@@ -345,10 +401,13 @@ export default {
 	font-weight: 400;
 	color: rgba(72, 182, 226, 1);
 	line-height: 56px;
+	text-align: center;
 }
 .dv-contrast-table {
 	margin-bottom: 10px;
 	box-shadow: 2px 2px 7px 0px rgba(0, 0, 0, 0.1);
+	min-height: 100px;
+	max-height: 250px;
 }
 .dv-contrast-box {
 	width: 100%;
@@ -403,6 +462,48 @@ export default {
 	display: flex;
 	justify-content: center;
 	margin-top: 30px;
+}
+.back-btn-box {
+	width: 100%;
+	height: 29px;
+	background: #f5f5f5;
+	border-bottom: 1px solid #dedee4;
+}
+.back-btn-text {
+	font-size: 12px;
+}
+.back-btn-icon-box {
+	width: 30px;
+	height: 30px;
+	display: inline-block;
+	border-radius: 0;
+	line-height: 1;
+	white-space: nowrap;
+	cursor: pointer;
+	background: #48b6e2;
+	border: 0;
+	color: red;
+	-webkit-appearance: none;
+	text-align: center;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	outline: 0;
+	margin: 0;
+	-webkit-transition: 0.1s;
+	transition: 0.1s;
+	font-weight: normal;
+	padding: 0;
+	font-size: 14px;
+}
+.back-btn-icon-box:hover {
+	background: #6dc5e8;
+}
+.back-btn-icon {
+	color: #fff;
+}
+.dv-pre-rowText {
+	display: inline-block;
+	padding-left: 20px;
 }
 </style>
 <style lang="less">

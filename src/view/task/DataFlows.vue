@@ -803,7 +803,7 @@ export default {
 		},
 		listtagsFormatter(row) {
 			let value = '';
-			if (row.listtags) {
+			if (row.listtags && row.listtags.length !== 0) {
 				value = row.listtags[0].value;
 			}
 			return value;
@@ -1215,5 +1215,10 @@ export default {
 }
 .dataflow-clickTip .el-message-box__status {
 	top: 25% !important;
+}
+.task-list .el-tag--small {
+	height: 28px;
+	padding: 0 8px;
+	line-height: 28px;
 }
 </style>
