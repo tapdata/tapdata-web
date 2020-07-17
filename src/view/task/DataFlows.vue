@@ -807,7 +807,7 @@ export default {
 		listtagsFormatter(row) {
 			let value = '';
 			if (row.listtags && row.listtags.length !== 0) {
-				value = row.listtags[0].value;
+				value = row.listtags[row.listtags.length - 1].value;
 			}
 			return value;
 		},

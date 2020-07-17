@@ -23,6 +23,7 @@
 				:title="validateFailedMSG"
 				:closable="false"
 				type="error"
+				class="el-alert"
 			>
 			</el-alert>
 			<div class="dv-pre-box">
@@ -329,16 +330,7 @@ export default {
 			});
 		},
 		handleVerifyCancel() {
-			let self = this;
-			// 状态修改为 draft
-			let data = {
-				validateStatus: 'draft'
-			};
-			dataFlows.patchId(this.id, data).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					self.editor.showDataVerify(true);
-				}
-			});
+			this.editor.showDataVerify();
 		},
 		GoBack() {
 			this.editor.showMonitor();
@@ -457,6 +449,9 @@ export default {
 }
 .clear {
 	clear: both;
+}
+.el-alert {
+	margin-top: 10px;
 }
 .btn-box {
 	display: flex;

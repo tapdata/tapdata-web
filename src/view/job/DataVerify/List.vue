@@ -47,23 +47,13 @@
 				}}</el-button>
 			</div>
 		</div>
-		<el-drawer
-			:visible.sync="disabledDrawer"
-			:direction="direction"
-			:append-to-body="true"
-			class="dv-drawer"
-			:with-header="false"
-			:before-close="handleClose"
-		>
-			<div class="dv-add-header">
-				{{ $t('dataVerify.dataVerifySetting') }}
-			</div>
+		<Drawer ref="drawer" :visible.sync="disabledDrawer" :title="$t('dataVerify.dataVerifySetting')">
 			<el-form class="dv-add-form" :model="formData">
 				<div class="dv-add-form-text">
 					{{ $t('dataVerify.dataWay') }}
 				</div>
 				<el-form-item>
-					<el-radio-group v-model="type" size="mini" class="dv-radio">
+					<el-radio-group v-model="type" size="mini" class="dv-radio" @change="changeType">
 						<el-radio border label="row" width="150px">{{ $t('dataVerify.row') }}</el-radio>
 						<el-radio border label="hash" width="150px">{{ $t('dataVerify.hash') }}</el-radio>
 						<el-radio border label="advance" width="150px">{{ $t('dataVerify.advance') }}</el-radio>
@@ -81,7 +71,19 @@
 							</el-select>
 						</el-col>
 						<el-col :span="12">
-							<el-input size="mini" v-model="formData.condition.value"></el-input>
+							<el-input
+								size="mini"
+								v-model="formData.condition.value"
+								v-if="formData.condition.type === 'rows'"
+							></el-input>
+							<el-input-number
+								size="mini"
+								v-model="formData.condition.value"
+								v-if="formData.condition.type === 'sampleRate'"
+								:min="1"
+								:max="100"
+								:controls="false"
+							></el-input-number>
 						</el-col>
 					</el-row>
 				</el-form-item>
@@ -150,17 +152,13 @@
 					</el-row>
 				</el-form-item>
 			</el-form>
-			<div class="dv-btn-footer-wrapper">
-				<div class="dv-btn-footer-box">
-					<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleAdd()">{{
-						$t('dataVerify.confirm')
-					}}</el-button>
-					<el-button size="mini" class="dv-btn-footer" @click="handleClose">{{
-						$t('dataVerify.cancel')
-					}}</el-button>
-				</div>
-			</div>
-		</el-drawer>
+			<span slot="footer" class="dialog-footer">
+				<el-button size="mini" type="primary" :loading="testing" @click="handleAdd">
+					{{ $t('dataVerify.confirm') }}
+				</el-button>
+				<el-button size="mini" @click="disabledDrawer = false">{{ $t('dataForm.cancel') }}</el-button>
+			</span>
+		</Drawer>
 	</div>
 </template>
 
@@ -168,16 +166,19 @@
 import factory from '../../../api/factory';
 import log from '../../../log';
 import { EditorEventType } from '../../../editor/lib/events';
-import $ from 'jquery';
 import getUrlSearch from './getUrlSearch';
 const dataFlows = factory('DataFlows');
+import Drawer from '@/components/Drawer';
 
 export default {
+	components: {
+		Drawer
+	},
 	data() {
 		return {
 			id: '',
 			editIndex: -1,
-			width: '',
+			widthDrawer: '',
 			disabledDrawer: false,
 			direction: 'rtl',
 			checkedSource: false,
@@ -212,8 +213,9 @@ export default {
 		this.getSourceList();
 	},
 	mounted() {
+		let self = this;
 		this.$on(EditorEventType.RESIZE, width => {
-			$('.el-drawer__wrapper').css('right', width);
+			self.widthDrawer = width;
 		});
 	},
 	methods: {
@@ -251,11 +253,20 @@ export default {
 			this.checkedTarget = false;
 			this.disabledDrawer = true;
 		},
+		changeType(type) {
+			if (type !== 'advance') {
+				this.formData.validateCode = '';
+			}
+		},
 		handleAdd() {
-			// if ((this.formData.sourceTageId === '' ||this.formData.sourceTageId) && this.checkedSource && this.type !== 'advance') {
-			// 	this.$message.error('please select source');
-			// 	return;
-			// }
+			if (
+				(this.formData.sourceFilter === '' || this.formData.sourceFilter) &&
+				this.checkedSource &&
+				this.type !== 'advance'
+			) {
+				this.$message.error('please select source SQL/MQL');
+				return;
+			}
 			if (this.formData.sourceTageId === '' || !this.formData.sourceTageId) {
 				this.$message.error('please select source');
 				return;
@@ -264,12 +275,12 @@ export default {
 				this.$message.error('please select target');
 				return;
 			}
-			// if ((this.formData.targetTageId === '' || !this.formData.targetTageId) && this.checkedTarget && this.type !== 'advance') {
-			// 	this.$message.error('please select target');
-			// 	return;
-			// }
-			if ((this.formData.validateCode === '' || !this.formData.validateCode) && this.type === 'advance') {
-				this.$message.error('please enter js validate code');
+			if (
+				(this.formData.targetFilter === '' || !this.formData.targetFilter) &&
+				this.checkedTarget &&
+				this.type === 'row'
+			) {
+				this.$message.error('please select target SQL/MQL');
 				return;
 			}
 			log('edit_edit', this.editIndex);
@@ -404,7 +415,8 @@ export default {
 }
 .table-box {
 	margin: 10px;
-	/*box-shadow:0px 0px 4px 0px rgba(0, 0, 0, 0.2);*/
+	overflow: auto;
+	height: calc(100vh - 150px);
 }
 .dv-btn {
 	margin-left: 10px;
@@ -495,35 +507,6 @@ export default {
 }
 </style>
 <style lang="less">
-.v-modal {
-	position: fixed;
-	left: 0;
-	top: 40px;
-	width: calc(100% - 800px);
-	height: 100%;
-	opacity: 0.5;
-	background: #000;
-}
-.el-drawer__wrapper {
-	z-index: 2001;
-	width: 220px;
-	height: 100%;
-	right: 596px;
-	top: 40px;
-}
-.el-drawer {
-	width: 420px !important;
-	box-shadow: none;
-	border: 1px solid #dedee4;
-}
-.el-drawer__open .el-drawer.rtl {
-	-webkit-animation: rtl-drawer-in 0ms cubic-bezier(0, 0, 0.2, 1) 0s;
-	animation: rtl-drawer-in 0ms cubic-bezier(0, 0, 0.2, 1) 0s;
-}
-.el-drawer__open .el-drawer.rtl {
-	-webkit-animation: rtl-drawer-out 0ms cubic-bezier(0, 0, 0.2, 1) 0s;
-	animation: rtl-drawer-out 0ms cubic-bezier(0, 0, 0.2, 1) 0s;
-}
 :focus {
 	outline: 0px;
 }
