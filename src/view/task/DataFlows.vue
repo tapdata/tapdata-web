@@ -468,6 +468,9 @@ export default {
 			window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
 		},
 		handleDetail(id, type) {
+			document.querySelectorAll('.el-tooltip__popper').forEach(it => {
+				it.outerHTML = '';
+			});
 			const h = this.$createElement;
 			if (type === 'edit') {
 				this.$msgbox({

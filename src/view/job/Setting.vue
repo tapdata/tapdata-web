@@ -257,13 +257,11 @@ export default {
 		setData(data) {
 			if (data) {
 				Object.keys(data).forEach(key => (this.formData[key] = data[key]));
+				if (data.editDisable) this.disabled = data.editDisable;
 			}
 			let map = this.updateSyncNode(this.formData.syncPoints);
 			if (map) {
 				this.formData.syncPoints = Object.values(map);
-			}
-			if (data.editDisable) {
-				this.disabled = data.editDisable;
 			}
 		},
 		getData() {

@@ -340,6 +340,7 @@ export default {
 		},
 		setScripts(scripts) {
 			this.model.scripts = scripts;
+			this.checkAll = false;
 		},
 		isRemove(id) {
 			let ops = this.model.operations.filter(v => v.id === id && v.op === 'REMOVE');

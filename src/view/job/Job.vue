@@ -854,14 +854,14 @@ export default {
 
 				data.status = 'scheduled';
 				data.executeMode = 'normal';
+				this.loading = true;
 				self.doSave(data, err => {
 					if (err) {
 						this.$message.error(err.response.data);
 					} else {
-						this.$message.success(self.$t('message.taskStart'));
-
 						self.setEditable(false);
 						self.editor.setData(data);
+						this.$message.success(self.$t('message.taskStart'));
 					}
 				});
 			}
@@ -1066,7 +1066,7 @@ export default {
 				delete this.dataFlow.editorData;
 				this.editor.setEditable(editable, this.dataFlow);
 			} else {
-				this.$message.error(this.$t('message.save_before_running'));
+				//this.$message.error(this.$t('message.save_before_running'));
 			}
 		},
 
