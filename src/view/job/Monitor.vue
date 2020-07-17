@@ -490,7 +490,7 @@ export default {
 				};
 				openFormPanel(1);
 			} else {
-				this.editor.showSetting(true);
+				this.$message.error(this.$t('dataFlow.selectNode'));
 			}
 		},
 

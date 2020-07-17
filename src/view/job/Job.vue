@@ -861,6 +861,13 @@ export default {
 					} else {
 						self.setEditable(false);
 						self.editor.setData(data);
+						self.$router.push({
+							path: '/job',
+							query: {
+								id: data.id,
+								isMoniting: true
+							}
+						});
 						this.$message.success(self.$t('message.taskStart'));
 					}
 				});
@@ -1030,7 +1037,8 @@ export default {
 			if (this.$route.query.name) {
 				name = this.$route.query.name;
 			}
-			this.editor.showSetting(name);
+			if (this.$route.query.isMoniting == 'true') this.editor.showSetting(true);
+			else this.editor.showSetting(name);
 		},
 
 		/**
