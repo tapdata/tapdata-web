@@ -90,6 +90,7 @@
 								? $t('editor.cell.data_node.collection.form.fieldFilter.placeholderKeep')
 								: $t('editor.cell.data_node.collection.form.fieldFilter.placeholderDelete')
 						"
+						@removeTag="handleFilterChange"
 					></PrimaryKeyInput>
 				</el-form-item>
 				<el-form-item
@@ -269,18 +270,8 @@ export default {
 			}
 		},
 		'model.fieldFilter': {
-			handler: function() {
-				//根据类型判断 fieldFilterType 不过滤字段Keep all fields、保留字段Retained field、删除字段Delete field。默认显示：不过滤字段。
-				let fieldFilter = this.model.fieldFilter ? this.model.fieldFilter.split(',') : [];
-				if (fieldFilter.length === 0) {
-					return;
-				}
-				if (this.model.fieldFilterType === 'retainedField') {
-					this.handleRetainedField(this.getFieldData(fieldFilter));
-				} else if (this.model.fieldFilterType === 'deleteField') {
-					this.handleDeleteField(this.getFieldData(fieldFilter));
-				}
-				this.$emit('schemaChange', _.cloneDeep(this.defaultSchema));
+			handler() {
+				this.handleFilterChange();
 			}
 		}
 	},
@@ -395,26 +386,50 @@ export default {
 				if (f) fn(f);
 			});
 		},
-		handleRetainedField(fieldFilter) {
+		handleFilterChange(tagName) {
+			//根据类型判断 fieldFilterType 不过滤字段Keep all fields、保留字段Retained field、删除字段Delete field。默认显示：不过滤字段。
+			let fieldFilter = this.model.fieldFilter ? this.model.fieldFilter.split(',') : [];
+			if (fieldFilter.length === 0) {
+				return;
+			}
+			if (this.model.fieldFilterType === 'retainedField') {
+				this.handleRetainedField(this.getFieldData(fieldFilter), tagName);
+			} else if (this.model.fieldFilterType === 'deleteField') {
+				this.handleDeleteField(this.getFieldData(fieldFilter));
+			}
+			this.$emit('schemaChange', _.cloneDeep(this.defaultSchema));
+		},
+		handleRetainedField(fieldFilter, tagName) {
 			this.model.operations = [];
+
 			fieldFilter.forEach(f => {
-				let self = this;
-				let ops = self.model.operations.filter(v => v.op === 'RETAINED' && v.id === f.id);
-				let op;
-				if (ops.length === 0) {
-					op = Object.assign(_.cloneDeep(RETAINED_OPS_TPL), {
-						id: f.id,
-						field: f.field_name
-					});
-					self.model.operations.push(op);
+				if (!tagName && f.parent && !fieldFilter.find(item => item.field_name === f.parent)) {
+					this.model.fieldFilter += ',' + f.parent;
+				} else if (tagName) {
+					let field = fieldFilter.find(item => item.parent === tagName);
+					let fields = this.model.fieldFilter.split(',');
+					let index = fields.findIndex(f => f === field.field_name);
+					fields.splice(index, 1);
+					this.model.fieldFilter = fields.join(',');
+				} else {
+					let self = this;
+					let ops = self.model.operations.filter(v => v.op === 'RETAINED' && v.id === f.id);
+					let op;
+					if (ops.length === 0) {
+						op = Object.assign(_.cloneDeep(RETAINED_OPS_TPL), {
+							id: f.id,
+							field: f.field_name
+						});
+						self.model.operations.push(op);
+					}
 				}
 			});
 		},
 		getFieldData(fieldFilter) {
 			let currentFiled = [];
 			fieldFilter.forEach(f => {
-				let ops = this.defaultSchema.fields.filter(item => item.field_name === f);
-				currentFiled.push(ops[0]);
+				let op = this.defaultSchema.fields.find(item => item.field_name === f);
+				currentFiled.push(op);
 			});
 			return currentFiled;
 		},

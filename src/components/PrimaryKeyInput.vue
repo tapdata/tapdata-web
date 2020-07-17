@@ -8,6 +8,7 @@
 			allow-create
 			default-first-option
 			:placeholder="placeholder"
+			@remove-tag="$emit('removeTag', $event)"
 			@input="inputHandler"
 		>
 			<el-option v-for="opt in options.filter(i => !!i)" :key="opt" :label="opt" :value="opt"> </el-option>
