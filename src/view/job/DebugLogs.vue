@@ -138,7 +138,7 @@ export default {
 							}
 
 							this.$refs.log.add({ logs: res.data, prepend, reset });
-						} else if (this.search) {
+						} else if (this.search && reset) {
 							this.$message.info(this.$t('editor.noResult'));
 						}
 					}
