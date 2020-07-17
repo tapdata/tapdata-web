@@ -42,7 +42,7 @@
 				<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleLoading">{{
 					$t('dataVerify.start')
 				}}</el-button>
-				<el-button size="mini" class="dv-btn-footer" @click="showResult">{{
+				<el-button size="mini" class="dv-btn-footer" @click="showResult" :disabled="firstVerify">{{
 					$t('dataVerify.cancel')
 				}}</el-button>
 			</div>
@@ -170,7 +170,6 @@ import log from '../../../log';
 import { EditorEventType } from '../../../editor/lib/events';
 import $ from 'jquery';
 import getUrlSearch from './getUrlSearch';
-
 const dataFlows = factory('DataFlows');
 
 export default {
@@ -203,7 +202,8 @@ export default {
 				hash: '#62A569',
 				advance: '#9889D8'
 			},
-			tableData: []
+			tableData: [],
+			firstVerify: false
 		};
 	},
 	created() {
@@ -226,6 +226,9 @@ export default {
 					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data) {
 							this.tableData = res.data.validationSettings ? res.data.validationSettings : [];
+							if (!res.data.validateStatus) {
+								this.firstVerify = true;
+							}
 							log('dataVerify.tableData', this.tableData);
 						}
 					}
@@ -319,7 +322,8 @@ export default {
 			// 状态修改为 waiting
 			let data = {
 				validateStatus: 'waiting',
-				validateBatchId: new Date().valueOf()
+				validateBatchId: new Date().valueOf(),
+				validateFailedMSG: ''
 			};
 			dataFlows.patchId(this.id, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {

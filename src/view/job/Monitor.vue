@@ -2,17 +2,21 @@
 	<div class="e-job-monitor">
 		<el-form>
 			<el-form-item class="e-form-item">
-				<el-col :span="19">
+				<el-col :span="16">
 					<el-select v-model="stageId" size="mini">
 						<el-option key="all" :label="$t('dataFlow.allNode')" value="all"> </el-option>
 						<el-option v-for="item in flow.stages" :key="item.id" :label="item.name" :value="item.id">
 						</el-option>
 					</el-select>
 				</el-col>
-				<!-- v-if="stageId !== 'all'" -->
-				<el-col :span="5" style="text-align: right;">
-					<el-button class="e-button" type="primary" @click="seeNodeData">{{
+				<el-col :span="4" style="text-align: right;">
+					<el-button class="e-button" type="primary" @click="seeNodeData" :disabled="stageId === 'all'">{{
 						$t('dataFlow.button.viewConfig')
+					}}</el-button>
+				</el-col>
+				<el-col :span="4" style="text-align: right;">
+					<el-button class="e-button" size="mini" type="primary" @click="handleGoDataVerify">{{
+						$t('dataVerify.dataVerify')
 					}}</el-button>
 				</el-col>
 			</el-form-item>
@@ -116,6 +120,7 @@ import factory from '../../api/factory';
 import { EditorEventType } from '../../editor/lib/events';
 
 const DataFlowInsights = factory('DataFlowInsights');
+const dataFlows = factory('DataFlows');
 let intervalTime = 5000;
 
 export default {
@@ -362,7 +367,6 @@ export default {
 
 	mounted() {
 		this.sliderBar = this.editor.rightSidebar;
-		this.editor.seeMonitor = true;
 		this.$on(EditorEventType.SELECTED_STAGE, selectStage => {
 			this.stageId = selectStage ? selectStage.id : 'all';
 		});
@@ -463,16 +467,28 @@ export default {
 		},
 
 		seeNodeData() {
+			let self = this;
 			let result = this.getAllCellsNode();
 			let selectCell = null;
+			localStorage.setItem('fromMonitor', 't');
 			result.forEach(item => {
 				if (this.stageId === item.cell.id) {
 					selectCell = item.cell;
 				}
 			});
 			if (this.stageId && this.stageId !== 'all') {
-				this.editor.seeMonitor = false;
 				this.editor.graph.selectionPosition(selectCell);
+				let openFormPanel = function(counter) {
+					let nodeFormPanel = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
+					if (nodeFormPanel) {
+						self.editor.getRightTabPanel().select(nodeFormPanel);
+					} else if (counter <= 5) {
+						setTimeout(() => {
+							openFormPanel(counter++);
+						}, 1000);
+					}
+				};
+				openFormPanel(1);
 			} else {
 				this.editor.showSetting(true);
 			}
@@ -852,8 +868,20 @@ export default {
 			// }
 		},
 		// 跳转到数据校验页面
-		handleGoDataVerifyhandleGoDataVerify() {
-			this.editor.showDataVerify();
+		handleGoDataVerify() {
+			dataFlows
+				.get([this.flow.id], {
+					fields: ['validateBatchId', 'validateStatus', 'validateFailedMSG']
+				})
+				.then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						if (Object.keys(res.data).length === 0) {
+							this.editor.showDataVerify();
+						} else {
+							this.editor.showResult();
+						}
+					}
+				});
 		}
 	},
 

@@ -168,22 +168,29 @@
 					</el-table-column>
 					<el-table-column
 						prop="input"
-						sortable="custom"
-						:label="$t('dataFlow.totalInput')"
-						width="120"
-					></el-table-column>
+						sortable="input"
+						:label="
+							$t('dataFlow.totalInput') +
+								'/' +
+								$t('dataFlow.totalOutput') +
+								'/' +
+								$t('dataFlow.runningSpeed')
+						"
+						width="200"
+					>
+						<template slot-scope="scope">
+							<span
+								>{{ scope.row.input }} / {{ scope.row.output }} / {{ scope.row.transmissionTime }}</span
+							>
+						</template>
+					</el-table-column>
 					<el-table-column
-						prop="output"
-						sortable="custom"
-						:label="$t('dataFlow.totalOutput')"
+						prop="listtags"
+						:label="$t('dataFlow.category')"
+						:formatter="listtagsFormatter"
 						width="120"
-					></el-table-column>
-					<el-table-column
-						prop="transmissionTime"
-						sortable="custom"
-						:label="$t('dataFlow.runningSpeed')"
-						width="120"
-					></el-table-column>
+					>
+					</el-table-column>
 					<el-table-column
 						prop="createTime"
 						:label="$t('dataFlow.creationTime')"
@@ -698,7 +705,6 @@ export default {
 					item.transmissionTime = item.stats.transmissionTime ? item.stats.transmissionTime : '--';
 					let children = item.stages;
 					item.children = [];
-
 					if (children) {
 						let finishedCount = 0;
 						children.map(k => {
@@ -721,14 +727,14 @@ export default {
 								let stg = stage[0];
 								let statusLabel = stg.status ? this.$t('dataFlow.status.' + stg.status) : '--';
 								let lag = `(${this.$t('dataFlow.lag')}${stg.replicationLag}s)`;
-								if (status === 'cdc') {
+								if (stg.status === 'cdc') {
 									statusLabel += lag;
 									item.statusMap.cdc = true;
 								}
-								if (status === 'initializing') {
+								if (stg.status === 'initializing') {
 									item.statusMap.initializing = true;
 								}
-								if (status === 'initialized') {
+								if (stg.status === 'initialized') {
 									finishedCount += 1;
 								}
 								node = {
@@ -797,6 +803,13 @@ export default {
 					}
 				});
 			});
+		},
+		listtagsFormatter(row) {
+			let value = '';
+			if (row.listtags && row.listtags.length !== 0) {
+				value = row.listtags[0].value;
+			}
+			return value;
 		},
 		handleDelete(id) {
 			this.deleteConfirm(() => {
@@ -987,6 +1000,7 @@ export default {
 			this.formData.search = '';
 			this.formData.status = '';
 			this.formData.way = '';
+			this.formData.executionStatus = '';
 			this.checkedTag = '';
 			this.screenFn();
 		},
@@ -1204,5 +1218,10 @@ export default {
 }
 .dataflow-clickTip .el-message-box__status {
 	top: 25% !important;
+}
+.task-list .el-tag--small {
+	height: 28px;
+	padding: 0 8px;
+	line-height: 28px;
 }
 </style>
