@@ -323,10 +323,14 @@ export default {
 					let inList = [];
 					let outList = [];
 					if (!modelIncludeTables.length) {
-						inList = tables;
+						inList = tables.map(item => {
+							item.checked = false;
+							return item;
+						});
 						this.model.includeTables = inList.map(t => t.table_name);
 					} else {
 						tables.forEach(t => {
+							t.checked = false;
 							if (modelIncludeTables.includes(t.table_name)) {
 								inList.push(t);
 							} else {
@@ -336,6 +340,7 @@ export default {
 					}
 					this.tabs[0].list = inList;
 					this.tabs[1].list = outList;
+					this.$set('tabs', this.tabs);
 
 					if (this.database_type !== 'mongodb') {
 						this.database_host = result.data.database_host;
