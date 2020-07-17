@@ -365,35 +365,6 @@ export default {
 		};
 	},
 
-	// computed: {
-	// 	updateTime: function() {
-	// 		if (this.dataFlow.startTime && this.dataFlow.last_updated) {
-	// 			let time = new Date(this.dataFlow.last_updated).getTime() - new Date(this.dataFlow.startTime).getTime();
-
-	// 			let unit = 'ms';
-	// 			if (time > 1000) {
-	// 				unit = 's';
-	// 				time = Number((time / 1000).toFixed(2));
-	// 			}
-	// 			if (time > 60) {
-	// 				unit = 'm';
-	// 				time = Number((time / 60).toFixed(2));
-	// 			}
-	// 			if (time > 60) {
-	// 				unit = 'h';
-	// 				time = Number((time / 60).toFixed(2));
-	// 			}
-	// 			if (time > 24) {
-	// 				unit = 'd';
-	// 				time = Number((time / 24).toFixed(2));
-	// 			}
-
-	// 			return time + ' ' + unit;
-	// 		}
-	// 		return '-';
-	// 	}
-	// },
-
 	mounted() {
 		this.sliderBar = this.editor.rightSidebar;
 		this.$on(EditorEventType.SELECTED_STAGE, selectStage => {
@@ -519,7 +490,7 @@ export default {
 				};
 				openFormPanel(1);
 			} else {
-				this.editor.showSetting(true);
+				this.$message.error(this.$t('dataFlow.selectNode'));
 			}
 		},
 

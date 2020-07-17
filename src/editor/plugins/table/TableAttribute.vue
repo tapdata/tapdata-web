@@ -358,6 +358,10 @@ export default {
 				}
 			}
 			this.isSourceDataNode = isSourceDataNode;
+			this.loadDataModels(this.model.connectionId);
+			if (this.model.connectionId) {
+				this.taskData.id = this.model.connectionId;
+			}
 
 			this.mergedSchema = cell.getOutputSchema();
 			cell.on('change:outputSchema', () => {
