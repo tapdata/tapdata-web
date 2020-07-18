@@ -330,7 +330,16 @@ export default {
 			});
 		},
 		handleVerifyCancel() {
-			this.editor.showDataVerify();
+			let self = this;
+			// 状态修改为 interrupted 停止校验
+			let data = {
+				validateStatus: 'interrupted'
+			};
+			dataFlows.patchId(this.id, data).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					self.editor.showMonitor();
+				}
+			});
 		},
 		GoBack() {
 			this.editor.showMonitor();

@@ -260,7 +260,7 @@ export default {
 		},
 		handleAdd() {
 			if (
-				(this.formData.sourceFilter === '' || this.formData.sourceFilter) &&
+				(this.formData.sourceFilter === '' || !this.formData.sourceFilter) &&
 				this.checkedSource &&
 				this.type !== 'advance'
 			) {
@@ -334,13 +334,24 @@ export default {
 			let data = {
 				validateStatus: 'waiting',
 				validateBatchId: new Date().valueOf(),
-				validateFailedMSG: ''
+				lastValidateBatchId: ''
 			};
-			dataFlows.patchId(this.id, data).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					self.editor.showResult(true);
-				}
-			});
+			dataFlows
+				.get([this.id], {
+					fields: ['validateBatchId']
+				})
+				.then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						if (Object.keys(res.data).length === 0) {
+							data.lastValidateBatchId = res.data.validateBatchId ? res.data.validateBatchId : '';
+							dataFlows.patchId(this.id, data).then(res => {
+								if (res.statusText === 'OK' || res.status === 200) {
+									self.editor.showResult(true);
+								}
+							});
+						}
+					}
+				});
 		},
 		handleDelete(index) {
 			this.tableData.splice(index, 1);
@@ -416,7 +427,7 @@ export default {
 .table-box {
 	margin: 10px;
 	overflow: auto;
-	height: calc(100vh - 150px);
+	max-height: calc(100vh - 150px);
 }
 .dv-btn {
 	margin-left: 10px;

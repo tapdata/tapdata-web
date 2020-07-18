@@ -1,9 +1,9 @@
 <template>
-	<el-row :gutter="10">
-		<el-col :span="3">
-			<metaData v-on:nodeClick="nodeClick"></metaData>
-		</el-col>
-		<el-col :span="21" class="task-list" v-loading="restLoading">
+	<div>
+		<!--		<el-col :span="3">-->
+		<!--			<metaData v-on:nodeClick="nodeClick"></metaData>-->
+		<!--		</el-col>-->
+		<div class="task-list" v-loading="restLoading">
 			<div class="task-list-operating-area box-card">
 				<el-row :gutter="10">
 					<el-form label-width="100px" :data="formData" :inline="true" class="dataFlowsFlow">
@@ -83,9 +83,9 @@
 								<el-button class="back-btn-icon-box dv-btn-icon" @click="handleGoFuntion"
 									><i class="iconfont icon-hanshu back-btn-icon"></i
 								></el-button>
-								<el-button class="back-btn-icon-box dv-btn-icon" @click="handleClassify">
-									<i class="iconfont icon-biaoqian back-btn-icon"></i
-								></el-button>
+								<!--								<el-button class="back-btn-icon-box dv-btn-icon" @click="handleClassify">-->
+								<!--									<i class="iconfont icon-biaoqian back-btn-icon"></i-->
+								<!--								></el-button>-->
 								<el-button class="back-btn-icon-box dv-btn-icon" @click="handleImport"
 									><i class="iconfont icon-daoru back-btn-icon"></i
 								></el-button>
@@ -184,13 +184,13 @@
 							>
 						</template>
 					</el-table-column>
-					<el-table-column
-						prop="listtags"
-						:label="$t('dataFlow.category')"
-						:formatter="listtagsFormatter"
-						width="120"
-					>
-					</el-table-column>
+					<!--					<el-table-column-->
+					<!--						prop="listtags"-->
+					<!--						:label="$t('dataFlow.category')"-->
+					<!--						:formatter="listtagsFormatter"-->
+					<!--						width="120"-->
+					<!--					>-->
+					<!--					</el-table-column>-->
 					<el-table-column
 						prop="createTime"
 						:label="$t('dataFlow.creationTime')"
@@ -285,15 +285,15 @@
 				@size-change="handleSizeChange"
 			>
 			</el-pagination>
-		</el-col>
-		<SelectClassify
-			ref="SelectClassify"
-			:dialogVisible="dialogVisible"
-			type="dataflow"
-			v-on:dialogVisible="handleDialogVisible"
-			v-on:operationsClassify="handleOperationClassify"
-		></SelectClassify>
-	</el-row>
+		</div>
+		<!--		<SelectClassify-->
+		<!--			ref="SelectClassify"-->
+		<!--			:dialogVisible="dialogVisible"-->
+		<!--			type="dataflow"-->
+		<!--			v-on:dialogVisible="handleDialogVisible"-->
+		<!--			v-on:operationsClassify="handleOperationClassify"-->
+		<!--		></SelectClassify>-->
+	</div>
 </template>
 
 <script>
@@ -301,11 +301,11 @@ import _ from 'lodash';
 import factory from '../../api/factory';
 const dataFlows = factory('DataFlows');
 const MetadataInstance = factory('MetadataInstances');
-import metaData from '../metaData';
-import SelectClassify from '../../components/SelectClassify';
+// import metaData from '../metaData';
+// import SelectClassify from '../../components/SelectClassify';
 
 export default {
-	components: { metaData, SelectClassify },
+	// components: { metaData, SelectClassify },
 	data() {
 		return {
 			checkedTag: '',
@@ -1016,15 +1016,15 @@ export default {
 			localStorage.setItem('flowPagesize', psize);
 			this.getData();
 		},
-		nodeClick(data) {
-			if (data) {
-				this.checkedTag = {
-					id: data.id,
-					value: data.value
-				};
-				this.getData();
-			}
-		},
+		// nodeClick(data) {
+		// 	if (data) {
+		// 		this.checkedTag = {
+		// 			id: data.id,
+		// 			value: data.value
+		// 		};
+		// 		this.getData();
+		// 	}
+		// },
 		handleClose() {
 			this.checkedTag = '';
 			this.getData();
@@ -1063,6 +1063,7 @@ export default {
 <style lang="less" scoped>
 .task-list {
 	font-size: 14px;
+	margin-left: 20px;
 	/*height: calc(100% - 48px);*/
 	.el-button.is-disabled {
 		color: #c0c4cc;

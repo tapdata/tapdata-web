@@ -272,10 +272,10 @@ export default {
 		});
 
 		this.$on(EditorEventType.HIDE, () => {
-			this.$refs.mappingComp.hide();
+			self.$refs.mappingComp.hide();
 		});
 		this.$on(EditorEventType.SHOW, () => {
-			this.$refs.mappingComp.show();
+			self.$refs.mappingComp.show();
 		});
 	},
 
