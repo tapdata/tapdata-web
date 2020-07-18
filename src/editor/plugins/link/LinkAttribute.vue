@@ -272,10 +272,10 @@ export default {
 		});
 
 		this.$on(EditorEventType.HIDE, () => {
-			this.$refs.mappingComp.hide();
+			self.$refs.mappingComp.hide();
 		});
 		this.$on(EditorEventType.SHOW, () => {
-			this.$refs.mappingComp.show();
+			self.$refs.mappingComp.show();
 		});
 	},
 
@@ -498,17 +498,6 @@ export default {
 				if (this.model.joinTable.isArray !== isArray) this.model.joinTable.isArray = isArray;
 				this.$refs.mappingComp.setSchema(sourceSchema, mergedTargetSchema);
 				log('Link.renderSchema', sourceSchema, mergedTargetSchema);
-			}
-		},
-
-		initByType(type) {
-			if (type === 'app.Table') {
-				for (let i = 0; i < this.writeModels.length; i++) {
-					if (this.writeModels[i].value === 'merge_embed') {
-						this.writeModels.splice(i, 1);
-						i--;
-					}
-				}
 			}
 		},
 

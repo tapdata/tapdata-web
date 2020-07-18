@@ -118,7 +118,6 @@ import echartsCompinent from '../../components/echartsCompinent';
 import shaftlessEchart from '../../components/shaftlessEchart';
 import factory from '../../api/factory';
 import { EditorEventType } from '../../editor/lib/events';
-
 const DataFlowInsights = factory('DataFlowInsights');
 const dataFlows = factory('DataFlows');
 let intervalTime = 5000;
@@ -467,28 +466,16 @@ export default {
 		},
 
 		seeNodeData() {
-			let self = this;
 			let result = this.getAllCellsNode();
 			let selectCell = null;
-			localStorage.setItem('fromMonitor', 't');
 			result.forEach(item => {
 				if (this.stageId === item.cell.id) {
 					selectCell = item.cell;
 				}
 			});
 			if (this.stageId && this.stageId !== 'all') {
+				this.editor.seeMonitor = false;
 				this.editor.graph.selectionPosition(selectCell);
-				let openFormPanel = function(counter) {
-					let nodeFormPanel = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
-					if (nodeFormPanel) {
-						self.editor.getRightTabPanel().select(nodeFormPanel);
-					} else if (counter <= 5) {
-						setTimeout(() => {
-							openFormPanel(counter++);
-						}, 1000);
-					}
-				};
-				openFormPanel(1);
 			} else {
 				this.$message.error(this.$t('dataFlow.selectNode'));
 			}
