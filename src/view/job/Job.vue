@@ -1071,7 +1071,7 @@ export default {
 			log('Job.setEditable', editable, this.dataFlow);
 			this.editable = editable;
 			if (editable)
-				self.$router.push({
+				this.$router.push({
 					path: '/job',
 					query: {
 						id: this.dataFlow.id
