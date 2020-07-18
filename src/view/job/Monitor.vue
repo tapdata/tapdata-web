@@ -14,11 +14,11 @@
 						$t('dataFlow.button.viewConfig')
 					}}</el-button>
 				</el-col>
-				<el-col :span="4" style="text-align: right;">
-					<el-button class="e-button" size="mini" type="primary" @click="handleGoDataVerify">{{
-						$t('dataVerify.dataVerify')
-					}}</el-button>
-				</el-col>
+				<!--				<el-col :span="4" style="text-align: right;">-->
+				<!--					<el-button class="e-button" size="mini" type="primary" @click="handleGoDataVerify">{{-->
+				<!--						$t('dataVerify.dataVerify')-->
+				<!--					}}</el-button>-->
+				<!--				</el-col>-->
 			</el-form-item>
 		</el-form>
 		<div class="echartMain">
@@ -119,7 +119,7 @@ import shaftlessEchart from '../../components/shaftlessEchart';
 import factory from '../../api/factory';
 import { EditorEventType } from '../../editor/lib/events';
 const DataFlowInsights = factory('DataFlowInsights');
-const dataFlows = factory('DataFlows');
+// const dataFlows = factory('DataFlows');
 let intervalTime = 5000;
 
 export default {
@@ -853,26 +853,26 @@ export default {
 			//   };
 			//   appendData();
 			// }
-		},
-		// 跳转到数据校验页面
-		handleGoDataVerify() {
-			dataFlows
-				.get([this.flow.id], {
-					fields: ['validateBatchId', 'validateStatus', 'validateFailedMSG']
-				})
-				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (
-							Object.keys(res.data).length === 0 ||
-							(res.data.validateBatchId && res.data.validateBatchId === '')
-						) {
-							this.editor.showDataVerify();
-						} else {
-							this.editor.showResult();
-						}
-					}
-				});
 		}
+		// 跳转到数据校验页面
+		// handleGoDataVerify() {
+		// 	dataFlows
+		// 		.get([this.flow.id], {
+		// 			fields: ['validateBatchId', 'validateStatus', 'validateFailedMSG']
+		// 		})
+		// 		.then(res => {
+		// 			if (res.statusText === 'OK' || res.status === 200) {
+		// 				if (
+		// 					Object.keys(res.data).length === 0 ||
+		// 					(res.data.validateBatchId && res.data.validateBatchId === '')
+		// 				) {
+		// 					this.editor.showDataVerify();
+		// 				} else {
+		// 					this.editor.showResult();
+		// 				}
+		// 			}
+		// 		});
+		// }
 	},
 
 	destroyed() {
