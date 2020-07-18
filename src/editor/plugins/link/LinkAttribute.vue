@@ -501,17 +501,6 @@ export default {
 			}
 		},
 
-		initByType(type) {
-			if (type === 'app.Table') {
-				for (let i = 0; i < this.writeModels.length; i++) {
-					if (this.writeModels[i].value === 'merge_embed') {
-						this.writeModels.splice(i, 1);
-						i--;
-					}
-				}
-			}
-		},
-
 		handlerJoinTypeChanged() {
 			this.checkRepeatId();
 			if (!this.model.joinTable.joinPath && ['merge_embed', 'update'].includes(this.model.joinTable.joinType)) {
