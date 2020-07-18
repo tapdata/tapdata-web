@@ -4,7 +4,7 @@
 			<div v-loading="loading" style="margin-top: 100px;padding-bottom:100px"></div>
 			<div class="btn-box">
 				<el-button @click="getValidateBatchId" size="mini">{{ $t('dataVerify.refresh') }}</el-button>
-				<el-button @click="GoBack" size="mini">{{ $t('dataVerify.cancel') }}</el-button>
+				<el-button @click="handleVerifyCancel" size="mini">{{ $t('dataVerify.cancel') }}</el-button>
 			</div>
 		</div>
 		<div class="back-btn-box" v-if="!loading">
@@ -326,6 +326,18 @@ export default {
 						this.failedRow = res.data;
 						log('dataVerify.error', res.data);
 					}
+				}
+			});
+		},
+		handleVerifyCancel() {
+			let self = this;
+			// 状态修改为 interrupted 停止校验
+			let data = {
+				validateStatus: 'interrupted'
+			};
+			dataFlows.patchId(this.id, data).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					self.editor.showMonitor();
 				}
 			});
 		},
