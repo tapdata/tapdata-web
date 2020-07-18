@@ -152,16 +152,13 @@
 								<span :style="`color: ${colorMap[scope.row.status]};`">
 									{{ scope.row.statusLabel }}
 								</span>
-								<span v-if="!scope.row.hasChildren">
-									<el-tag
-										v-for="(value, key) in scope.row.statusMap"
-										:key="key"
-										:type="scope.row.statusMap.initialized ? 'warning' : 'success'"
-										effect="dark"
-										size="mini"
-									>
+								<span style="color: #999" v-if="!scope.row.hasChildren && scope.row.statusList.length">
+									(
+									<span v-for="(key, index) in scope.row.statusList" :key="key">
 										{{ $t('dataFlow.status.' + key) }}
-									</el-tag>
+										<span v-if="index < scope.row.statusList.length - 1">&nbsp;</span>
+									</span>
+									)
 								</span>
 							</div>
 						</template>
@@ -697,7 +694,7 @@ export default {
 			data.map(item => {
 				item.newStatus = ['running', 'scheduled'].includes(item.status) ? 'scheduled' : 'stopping';
 				item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
-				item.statusMap = {};
+				let statusMap = {};
 				if (item.stats) {
 					item.hasChildren = false;
 					item.input = item.stats.input ? item.stats.input.rows : '--';
@@ -729,10 +726,10 @@ export default {
 								let lag = `(${this.$t('dataFlow.lag')}${stg.replicationLag}s)`;
 								if (stg.status === 'cdc') {
 									statusLabel += lag;
-									item.statusMap.cdc = true;
+									statusMap.cdc = true;
 								}
 								if (stg.status === 'initializing') {
-									item.statusMap.initializing = true;
+									statusMap.initializing = true;
 								}
 								if (stg.status === 'initialized') {
 									finishedCount += 1;
@@ -749,9 +746,14 @@ export default {
 							}
 							item.children.push(node);
 						});
-						if (finishedCount && !item.statusMap.cdc && !item.statusMap.initializing) {
-							item.statusMap.initialized = true;
+						if (finishedCount && !statusMap.cdc && !statusMap.initializing) {
+							statusMap.initialized = true;
 						}
+						let statusList = [];
+						for (const key in statusMap) {
+							statusList.push(key);
+						}
+						item.statusList = statusList;
 					}
 				} else {
 					item.input = '--';
