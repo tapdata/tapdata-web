@@ -59,7 +59,13 @@
 						</template>
 					</el-table-column>
 					<el-table-column prop="rows" :label="$t('dataVerify.range')"> </el-table-column>
-					<el-table-column prop="rowsDiffer" :label="$t('dataVerify.result')"> </el-table-column>
+					<el-table-column prop="rowsDiffer" :label="$t('dataVerify.result')">
+						<template slot-scope="scope">
+							<span>
+								{{ scope.row.validateType == 'row' ? scope.row.rowsDiffer : scope.row.rowsMismatch }}
+							</span>
+						</template>
+					</el-table-column>
 					<el-table-column prop="consistencyRate" :label="$t('dataVerify.accuracyRate')" width="80">
 						<template slot-scope="scope">
 							<span>

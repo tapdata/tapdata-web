@@ -65,7 +65,7 @@
 					</div>
 					<el-row :gutter="10">
 						<el-col :span="12">
-							<el-select size="mini" v-model="formData.condition.type">
+							<el-select size="mini" v-model="formData.condition.type" @change="changeConditionType">
 								<el-option value="rows" :label="$t('dataVerify.rows')"></el-option>
 								<el-option value="sampleRate" :label="$t('dataVerify.sampleRate')"></el-option>
 							</el-select>
@@ -395,6 +395,13 @@ export default {
 		showResult() {
 			this.disabledDrawer = false;
 			this.editor.showResult();
+		},
+		changeConditionType(type) {
+			if (type === 'sampleRate') {
+				this.formData.condition.value = 5;
+			} else {
+				this.formData.condition.value = 1000;
+			}
 		}
 	}
 };
