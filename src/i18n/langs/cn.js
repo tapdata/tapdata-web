@@ -771,14 +771,20 @@ const cn = {
 		rows: '按行数校验',
 		sampleRate: '按百分比',
 		condition: '校验条件',
-		showResult: '显示数据校验结果'
+		verifyRunningInfo: '后台运行',
+		verifyStatusWaiting: '校验阶段3-1:数据校验排队中，请等待... 点击',
+		verifyStatusDraft: '校验阶段3-2:数据校验调度中，请等待... 点击',
+		verifyStatusValidating: '校验阶段3-3:数据校验执行中，请等待... 后台运行点击',
+		verifyStatusInterrupted: '数据校验终止中，请等待... 后台运行点击',
+		verifyStatusStop: '终止校验',
+		verifyStatusCompleted: '数据校验结果加载中',
+		or: '或'
 	},
 	dataMap: {
 		source: '来源',
 		tapdata: 'Tapdata',
 		API: '数据发布',
 		noneData: '没有查找到数据模型',
-
 		classification: '模型分类',
 		topLevel: '顶级',
 		dbLevel: '库级',

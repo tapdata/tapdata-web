@@ -343,6 +343,7 @@ export default {
 		 * Auto save
 		 */
 		timeSave() {
+			if (this.isMoniting) return;
 			let data = this.getDataFlowData(true);
 			if (this.tempKey == 0) {
 				this.tempKey = 1;
@@ -1069,7 +1070,13 @@ export default {
 		setEditable(editable) {
 			log('Job.setEditable', editable, this.dataFlow);
 			this.editable = editable;
-			if (editable) this.isMoniting = false;
+			if (editable)
+				self.$router.push({
+					path: '/job',
+					query: {
+						id: this.dataFlow.id
+					}
+				});
 			if (this.dataFlow) {
 				delete this.dataFlow.editorData;
 				this.editor.setEditable(editable, this.dataFlow);

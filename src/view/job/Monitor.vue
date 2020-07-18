@@ -862,7 +862,10 @@ export default {
 				})
 				.then(res => {
 					if (res.statusText === 'OK' || res.status === 200) {
-						if (Object.keys(res.data).length === 0) {
+						if (
+							Object.keys(res.data).length === 0 ||
+							(res.data.validateBatchId && res.data.validateBatchId === '')
+						) {
 							this.editor.showDataVerify();
 						} else {
 							this.editor.showResult();

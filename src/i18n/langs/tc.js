@@ -772,7 +772,15 @@ const tc = {
 		rows: '按行數校驗',
 		sampleRate: '按百分比',
 		condition: '校驗條件',
-		showResult: '顯示數據校驗結果'
+		showResult: '顯示數據校驗結果',
+		verifyRunningInfo: '後台運行',
+		verifyStatusWaiting: '校驗階段3-1:數據校驗排隊中，請等待... 點擊',
+		verifyStatusDraft: '校驗階段3-2:數據校驗調度中，請等待... 點擊',
+		verifyStatusValidating: '校驗階段3-3:數據校驗執行中，請等待... 後台運行點擊',
+		verifyStatusInterrupted: '數據校驗終止中，請等待... 後台運行點擊',
+		verifyStatusStop: '終止校驗',
+		verifyStatusCompleted: '數據校驗結果加載中',
+		or: '或'
 	},
 	dataMap: {
 		source: '來源',

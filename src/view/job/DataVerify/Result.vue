@@ -2,9 +2,23 @@
 	<div>
 		<div v-if="loading">
 			<div v-loading="loading" style="margin-top: 100px;padding-bottom:100px"></div>
-			<div class="btn-box">
-				<el-button @click="getValidateBatchId" size="mini">{{ $t('dataVerify.refresh') }}</el-button>
-				<el-button @click="handleVerifyCancel" size="mini">{{ $t('dataVerify.cancel') }}</el-button>
+			<div
+				v-if="validateStatus == 'waiting' || validateStatus == 'draft' || validateStatus == 'interrupted'"
+				class="verifyLog"
+			>
+				<span>{{ verifylog[validateStatus] }}</span>
+				<span @click="GoBack" class="verify-backBtn">{{ $t('dataVerify.back') }}</span>
+			</div>
+			<div v-if="validateStatus === 'validating'" class="verifyLog">
+				<span>{{ verifylog[validateStatus] }}</span>
+				<span class="verify-backBtn" @click="GoBack">
+					{{ $t('dataVerify.back') }}
+				</span>
+				<span>{{ $t('dataVerify.or') }}</span>
+				<span class="verify-backBtn" @click="handleVerifyCancel">{{ $t('dataVerify.verifyStatusStop') }}</span>
+			</div>
+			<div v-if="validateStatus == 'error' || validateStatus == 'completed'" class="verifyLog">
+				<span>{{ verifylog[validateStatus] }}</span>
 			</div>
 		</div>
 		<div class="back-btn-box" v-if="!loading">
@@ -26,7 +40,7 @@
 				class="el-alert"
 			>
 			</el-alert>
-			<div class="dv-pre-box">
+			<div class="dv-contrast-table">
 				<div class="dv-pre-label">
 					{{ $t('dataVerify.overView') }}
 					<div class="dv-pre-right">
@@ -34,60 +48,6 @@
 						<span> {{ $t('dataVerify.duration') }}: {{ overview.costTime }}</span>
 					</div>
 				</div>
-				<div class="dv-pre-rowTotal">
-					<p>
-						{{ $t('dataVerify.row') }}: <span>{{ overview.validateRows }}</span>
-					</p>
-					<p>
-						{{ $t('dataVerify.hash') }}: <span>{{ overview.validateHashRows }}</span>
-					</p>
-					<p>
-						{{ $t('dataVerify.advance') }}: <span>{{ overview.validateJsRows }}</span>
-					</p>
-				</div>
-				<div class="dv-pre-dataBox">
-					<div class="dv-pre-rowCheck">
-						<p>{{ $t('dataVerify.linageDifference') }}</p>
-						<div
-							class="dv-pre-dataBox-item"
-							v-if="overview.rowsDiffer !== 0 || overview.rowsDiffer == -1"
-							style="color: rgb(245, 108, 108);"
-						>
-							{{ overview.rowsDiffer }}
-						</div>
-						<div class="dv-pre-dataBox-item" v-else>
-							{{ overview.rowsDiffer }}
-						</div>
-					</div>
-					<div class="dv-pre-rowCheck">
-						<p>{{ $t('dataVerify.errorTotal') }}</p>
-						<div
-							class="dv-pre-dataBox-item"
-							v-if="overview.rowsMismatch !== 0 || overview.rowsMismatch == -1"
-							style="color: rgb(245, 108, 108);"
-						>
-							{{ overview.rowsMismatch }}
-						</div>
-						<div class="dv-pre-dataBox-item" v-else>
-							{{ overview.rowsMismatch }}
-						</div>
-					</div>
-					<div class="dv-pre-rowCheck">
-						<p>{{ $t('dataVerify.accuracyRate') }}</p>
-						<div
-							class="dv-pre-dataBox-item"
-							v-if="overview.consistencyRate !== '--'"
-							style="color: rgb(245, 108, 108);"
-						>
-							{{ overview.consistencyRate }}
-						</div>
-						<div class="dv-pre-dataBox-item" v-else>
-							{{ overview.consistencyRate }}
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="dv-contrast-table">
 				<el-table border :data="validateStats" height="250" style="width: 100%">
 					<el-table-column prop="sourceTableName" :label="$t('dataVerify.source')" width="180">
 					</el-table-column>
@@ -100,7 +60,7 @@
 					</el-table-column>
 					<el-table-column prop="rows" :label="$t('dataVerify.range')"> </el-table-column>
 					<el-table-column prop="rowsDiffer" :label="$t('dataVerify.result')"> </el-table-column>
-					<el-table-column prop="consistencyRate" :label="$t('dataVerify.accuracyRate')">
+					<el-table-column prop="consistencyRate" :label="$t('dataVerify.accuracyRate')" width="80">
 						<template slot-scope="scope">
 							<span>
 								{{ scope.row.consistencyRate == '-1' ? '--' : scope.row.consistencyRate }}
@@ -144,7 +104,7 @@
 					<el-table border :data="failedRow" class="dv-result-fail-table" style="width: 100%">
 						<el-table-column prop="sourceTableData" :label="$t('dataVerify.source')"> </el-table-column>
 						<el-table-column prop="targetTableData" :label="$t('dataVerify.target')"> </el-table-column>
-						<el-table-column prop="message" label="MSQ" width="100"> </el-table-column>
+						<el-table-column prop="message" label="MSQ"> </el-table-column>
 					</el-table>
 				</div>
 			</div>
@@ -195,7 +155,16 @@ export default {
 			validateFailedMSG: '',
 			currentPage: 1,
 			pageSize: 10,
-			validateBatchId: ''
+			validateBatchId: '',
+			validateStatus: '',
+			verifylog: {
+				waiting: this.$t('dataVerify.verifyStatusWaiting'),
+				draft: this.$t('dataVerify.verifyStatusDraft'),
+				validating: this.$t('dataVerify.verifyStatusValidating'),
+				completed: this.$t('dataVerify.verifyStatusCompleted'),
+				error: this.$t('dataVerify.verifyStatusCompleted'),
+				interrupted: this.$t('dataVerify.verifyStatusInterrupted')
+			}
 		};
 	},
 	created() {
@@ -221,6 +190,7 @@ export default {
 				})
 				.then(res => {
 					if (res.statusText === 'OK' || res.status === 200) {
+						this.validateStatus = res.data.validateStatus;
 						if (res.data.validateStatus === 'completed' || res.data.validateStatus === 'error') {
 							this.validateBatchId = res.data.validateBatchId ? res.data.validateBatchId.toString() : '';
 							this.validateFailedMSG = res.data.validateFailedMSG;
@@ -229,8 +199,6 @@ export default {
 							this.timer = null;
 							this.getData();
 							this.getFailedRow();
-						} else {
-							this.loading = true;
 						}
 					}
 				});
@@ -348,16 +316,6 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.dv-pre-box {
-	width: 100%;
-	height: 180px;
-	margin-bottom: 10px;
-	margin-top: 10px;
-	font-size: 12px;
-	border: 1px solid rgba(220, 223, 230, 1);
-	box-shadow: 2px 2px 7px 0px rgba(0, 0, 0, 0.1);
-	background: rgba(255, 255, 255, 1);
-}
 .data-contPreView {
 	margin-left: 20px;
 	margin-right: 20px;
@@ -408,7 +366,10 @@ export default {
 	margin-bottom: 10px;
 	box-shadow: 2px 2px 7px 0px rgba(0, 0, 0, 0.1);
 	min-height: 100px;
-	max-height: 250px;
+	margin-top: 10px;
+	font-size: 12px;
+	border: 1px solid rgba(220, 223, 230, 1);
+	background: rgba(255, 255, 255, 1);
 }
 .dv-contrast-box {
 	width: 100%;
@@ -508,6 +469,15 @@ export default {
 .dv-pre-rowText {
 	display: inline-block;
 	padding-left: 20px;
+}
+.verifyLog {
+	text-align: center;
+	color: #999;
+	font-size: 12px;
+}
+.verify-backBtn {
+	cursor: pointer;
+	color: #5fa9ee;
 }
 </style>
 <style lang="less">
