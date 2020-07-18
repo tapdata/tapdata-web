@@ -749,7 +749,7 @@ export default {
 							}
 							item.children.push(node);
 						});
-						if (finishedCount && finishedCount === item.children.length) {
+						if (finishedCount && !item.statusMap.cdc && !item.statusMap.initializing) {
 							item.statusMap.initialized = true;
 						}
 					}
