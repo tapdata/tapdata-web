@@ -152,7 +152,10 @@
 								<span :style="`color: ${colorMap[scope.row.status]};`">
 									{{ scope.row.statusLabel }}
 								</span>
-								<span style="color: #999" v-if="!scope.row.hasChildren && scope.row.statusList.length">
+								<span
+									style="color: #999"
+									v-if="!scope.row.hasChildren && scope.row.statusList && scope.row.statusList.length"
+								>
 									(
 									<span v-for="(key, index) in scope.row.statusList" :key="key">
 										{{ $t('dataFlow.status.' + key) }}
