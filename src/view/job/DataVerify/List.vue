@@ -342,14 +342,12 @@ export default {
 				})
 				.then(res => {
 					if (res.statusText === 'OK' || res.status === 200) {
-						if (Object.keys(res.data).length === 0) {
-							data.lastValidateBatchId = res.data.validateBatchId ? res.data.validateBatchId : '';
-							dataFlows.patchId(this.id, data).then(res => {
-								if (res.statusText === 'OK' || res.status === 200) {
-									self.editor.showResult(true);
-								}
-							});
-						}
+						data.lastValidateBatchId = res.data.validateBatchId ? res.data.validateBatchId : '';
+						dataFlows.patchId(this.id, data).then(res => {
+							if (res.statusText === 'OK' || res.status === 200) {
+								self.editor.showResult(true);
+							}
+						});
 					}
 				});
 		},
