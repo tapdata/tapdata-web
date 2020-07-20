@@ -125,7 +125,7 @@ export default {
 					let fieldIds = schema.fields.map(field => field.id);
 					data.operations = data.operations || [];
 					for (let i = 0; i < data.operations.length; i++) {
-						if (data.operations[i].op === 'CREATE') {
+						if (data.operations[i].op === 'CREATE' && schema.table_name === data.operations[i].tableName) {
 							fieldIds.push(data.operations[i].id);
 							continue;
 						}

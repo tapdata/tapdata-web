@@ -250,7 +250,6 @@ export default {
 						} else {
 							this.model.primaryKeys = '';
 						}
-						this.defaultSchema = schema;
 						this.$emit('schemaChange', _.cloneDeep(schema));
 					}
 				}
@@ -549,6 +548,9 @@ export default {
 			}
 			this.isSourceDataNode = isSourceDataNode;
 			this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema());
+			cell.on('change:outputSchema', () => {
+				this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema());
+			});
 			editorMonitor = vueAdapter.editor;
 		},
 		getData() {
