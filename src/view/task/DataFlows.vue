@@ -677,6 +677,8 @@ export default {
 							children: true,
 							stats: true,
 							stages: true,
+							'stages.id': true,
+							'stages.name': true,
 							setting: true,
 							user_id: true,
 							listtags: true
