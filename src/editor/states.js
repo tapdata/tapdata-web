@@ -76,7 +76,7 @@ let statusBtMap = {
 		finder: true,
 		edit: false
 	},
-	force_stopping: {
+	'force stopping': {
 		start: true,
 		stop: true,
 		forceStop: true,
