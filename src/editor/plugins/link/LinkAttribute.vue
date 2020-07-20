@@ -189,10 +189,8 @@ export default {
 			sourceList: [],
 			targetList: [],
 			writeModels: [],
-
 			sourceSchema: [],
 			targetSchema: [],
-			targetCellType: '',
 
 			methodList: [
 				{ label: this.$t('editor.cell.link.methodList.false'), value: false },
@@ -200,7 +198,6 @@ export default {
 			],
 
 			configJoinTable: false,
-
 			model: {
 				label: '',
 				joinTable: _.cloneDeep(JOIN_TABLE_TPL),
@@ -214,18 +211,6 @@ export default {
 			deep: true,
 			handler() {
 				this.$emit('dataChanged', this.getData());
-			}
-		},
-		targetCellType: {
-			handler() {
-				this.writeModels.splice(0, this.writeModels.length);
-				if (this.supportEmbedArray()) {
-					this.WRITE_MODELS.forEach(model => this.writeModels.push(model));
-				} else {
-					this.WRITE_MODELS.filter(model => model.value !== 'merge_embed').forEach(model =>
-						this.writeModels.push(model)
-					);
-				}
 			}
 		},
 		'model.joinTable.joinType': {
@@ -460,6 +445,14 @@ export default {
 		showMapping() {
 			this.targetCell = this.cell.getTargetCell();
 			this.targetCellType = this.targetCell.get('type');
+			this.writeModels.splice(0, this.writeModels.length);
+			if (this.supportEmbedArray()) {
+				this.WRITE_MODELS.forEach(model => this.writeModels.push(model));
+			} else {
+				this.WRITE_MODELS.filter(model => model.value !== 'merge_embed').forEach(model =>
+					this.writeModels.push(model)
+				);
+			}
 
 			this.unwatch = this.$watch(
 				'model.joinTable',
