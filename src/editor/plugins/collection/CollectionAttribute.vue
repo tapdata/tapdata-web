@@ -396,7 +396,9 @@ export default {
 			} else if (this.model.fieldFilterType === 'deleteField') {
 				this.handleDeleteField(fieldList);
 			}
-			this.$emit('schemaChange', _.cloneDeep(this.defaultSchema));
+			this.$nextTick(() => {
+				this.$emit('schemaChange', _.cloneDeep(this.defaultSchema));
+			});
 		},
 
 		checkFieldChild(name) {
@@ -404,8 +406,10 @@ export default {
 			let fieldFilter = this.getFieldData(fields);
 			if (name) {
 				let index = fields.findIndex(f => f === name);
-				fields.splice(index, 1);
-				this.model.fieldFilter = fields.join(',');
+				if (index >= 0) {
+					fields.splice(index, 1);
+					this.model.fieldFilter = fields.join(',');
+				}
 			}
 			for (let i = 0; i < fieldFilter.length; i++) {
 				const f = fieldFilter[i];
@@ -437,8 +441,10 @@ export default {
 		getFieldData(fieldFilter) {
 			let currentFiled = [];
 			fieldFilter.forEach(f => {
-				let op = this.defaultSchema.fields.find(item => item.field_name === f);
-				currentFiled.push(op);
+				if (f && f.length) {
+					let op = this.defaultSchema.fields.find(item => item.field_name === f);
+					currentFiled.push(op);
+				}
 			});
 			return currentFiled;
 		},
