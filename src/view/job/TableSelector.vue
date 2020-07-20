@@ -141,7 +141,10 @@ export default {
 									id: record.id,
 									label: record.name || record.original_name,
 									meta_type: record.meta_type,
-									source: record.source || ''
+									source: record.source || '',
+									database_type: record.source.database_type || '',
+									original_name: record.original_name || '',
+									fields: record.fields
 								};
 								if (['collection', 'table', 'mongo_view', 'view'].includes(record.meta_type)) {
 									node.leaf = true;
@@ -323,7 +326,7 @@ export default {
 				}
 				log('primaryKeys', primaryKeys);
 				formData = {
-					connectionId: data._id || data.id,
+					connectionId: data.source._id || data.source.id,
 					databaseType: data.database_type,
 					tableName: data.original_name,
 					sql: '',
