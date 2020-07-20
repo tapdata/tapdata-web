@@ -506,6 +506,23 @@ const cn = {
 							}
 						}
 					}
+				},
+
+				logminer: {
+					name: 'Oracle日志挖掘器',
+					miningLogTime: '挖掘日志时间',
+					logSaveTime: '日志保存时长',
+					logSourceSetting: '日志源设置',
+					currentTimeZone: '当前时区',
+					databaseTimeZone: '数据库时区',
+					allTables: '全部表',
+					reservationTable: '保留表',
+					exclusionTable: '排除表',
+					nodeFunDes: '节点功能说明',
+					function: '功 能',
+					functionContent:
+						'此节点用于采集指定数据库和表的日志，保存到MongoDB数据库，共享日志数据不需要重复开 启日志采集进程，能极大缓解源库资源的占用和浪费。',
+					connectionTarget: '只能连接Collection节点'
 				}
 			},
 			processor: {
