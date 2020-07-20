@@ -93,7 +93,12 @@
 					</div>
 					<el-row>
 						<el-col :span="24">
-							<el-select size="mini" style="width: 100%" v-model="formData.sourceTageId">
+							<el-select
+								size="mini"
+								style="width: 100%"
+								v-model="formData.sourceTageId"
+								@input="handleForceUpdate"
+							>
 								<el-option
 									v-for="item in sourceList"
 									:label="item.tableName"
@@ -120,7 +125,12 @@
 					</div>
 					<el-row>
 						<el-col :span="24">
-							<el-select size="mini" style="width: 100%" v-model="formData.targetTageId">
+							<el-select
+								size="mini"
+								style="width: 100%"
+								v-model="formData.targetTageId"
+								@input="handleForceUpdate"
+							>
 								<el-option
 									v-for="item in targetList"
 									:label="item.tableName"
@@ -147,7 +157,7 @@
 					</div>
 					<el-row v-show="type === 'advance'">
 						<el-col :span="24">
-							<el-input type="textarea" v-model="formData.validateCode"></el-input>
+							<el-input type="textarea" v-model="formData.validateCode" :rows="20"></el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
@@ -402,6 +412,9 @@ export default {
 			} else {
 				this.formData.condition.value = 1000;
 			}
+		},
+		handleForceUpdate() {
+			this.$forceUpdate();
 		}
 	}
 };
