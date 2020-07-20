@@ -1070,7 +1070,7 @@ export default {
 		setEditable(editable) {
 			log('Job.setEditable', editable, this.dataFlow);
 			this.editable = editable;
-			if (editable)
+			if (editable && this.$route.query.isMoniting)
 				this.$router.push({
 					path: '/job',
 					query: {
