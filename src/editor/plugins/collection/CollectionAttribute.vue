@@ -397,7 +397,9 @@ export default {
 			} else if (this.model.fieldFilterType === 'deleteField') {
 				this.handleDeleteField(fieldList);
 			}
-			this.$emit('schemaChange', _.cloneDeep(this.defaultSchema));
+			this.$nextTick(() => {
+				this.$emit('schemaChange', _.cloneDeep(this.defaultSchema));
+			});
 		},
 
 		checkFieldChild(name) {
