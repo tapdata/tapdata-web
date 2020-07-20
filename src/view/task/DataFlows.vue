@@ -475,9 +475,6 @@ export default {
 			window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
 		},
 		handleDetail(id, type) {
-			document.querySelectorAll('.el-tooltip__popper').forEach(it => {
-				it.outerHTML = '';
-			});
 			const h = this.$createElement;
 			if (type === 'edit') {
 				this.$msgbox({
@@ -507,11 +504,19 @@ export default {
 						query: { id: id }
 					});
 					setTimeout(() => {
+						document.querySelectorAll('.el-tooltip__popper').forEach(it => {
+							it.outerHTML = '';
+						});
 						window.windows.push(window.open(routeUrl.href, 'edit_' + id));
 						window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
 					}, 200);
 				});
 			} else {
+				setTimeout(() => {
+					document.querySelectorAll('.el-tooltip__popper').forEach(it => {
+						it.outerHTML = '';
+					});
+				}, 200);
 				let routeUrl = this.$router.resolve({
 					path: '/job',
 					query: { id: id, isMoniting: true }
