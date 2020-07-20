@@ -494,6 +494,7 @@ export default {
 			if (!connectionId) {
 				return;
 			}
+
 			let self = this;
 			this.schemaSelectConfig.loading = true;
 
@@ -540,11 +541,15 @@ export default {
 				enableInitialOrder: false,
 				operations: []
 			};
+
 			if (data) {
 				_.merge(this.model, data);
 				//老数据的兼容处理
 				if (data.initialSyncOrder > 0) {
 					this.model.enableInitialOrder = true;
+				}
+				if (data.connectionId) {
+					this.loadDataModels(data.connectionId);
 				}
 			}
 
