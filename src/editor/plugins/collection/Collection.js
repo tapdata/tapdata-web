@@ -63,22 +63,49 @@ export const collectionConfig = {
 				if (!outputSchema || !data) return outputSchema;
 				let fieldFilter = data.fieldFilter ? data.fieldFilter.split(',') : [];
 				if (fieldFilter.length === 0) return outputSchema;
-				let newSchema = [];
-				fieldFilter.forEach(filed => {
-					let index = outputSchema.fields.findIndex(f => filed === f.field_name);
+				let defaultFields = outputSchema.fields;
+				let newSchema = data.fieldFilterType === 'retainedField' ? [] : defaultFields;
+				fieldFilter.forEach(filedName => {
+					let index = defaultFields.findIndex(f => filedName === f.field_name);
 					if (index >= 0) {
+						let field = defaultFields[index];
 						if (data.fieldFilterType === 'retainedField') {
-							newSchema.push(outputSchema.fields[index]);
+							newSchema.push(field);
+							this.checkParent(defaultFields, field, newSchema);
 						} else if (data.fieldFilterType === 'deleteField') {
-							outputSchema.fields.splice(index, 1);
+							newSchema.splice(index, 1);
+							this.checkChildren(fieldFilter, newSchema, field);
 						}
 					}
 				});
-				if (data.fieldFilterType === 'retainedField') {
-					outputSchema.fields = newSchema;
-				}
+				outputSchema.fields = newSchema;
 				log('collection.mergeOutputSchema', outputSchema);
 				return outputSchema;
+			},
+
+			checkParent(fields, field, schema) {
+				if (field.parent && !schema.find(f => f.field_name === field.parent)) {
+					let parentField = fields.find(f => f.field_name === field.parent);
+					schema.push(parentField);
+					this.checkParent(fields, parentField, schema);
+				}
+			},
+
+			checkChildren(filter, schema, field) {
+				debugger;
+				let childrenFields = schema.filter(f => f.parent === field.field_name);
+				if (childrenFields && childrenFields.length) {
+					childrenFields.forEach(cf => {
+						if (!filter.includes(cf.field_name)) {
+							let index = schema.findIndex(f => f.field_name === cf.field_name);
+							if (index >= 0) {
+								let childField = schema[index];
+								schema.splice(index, 1);
+								this.checkChildren(filter, schema, childField);
+							}
+						}
+					});
+				}
 			},
 
 			/**
