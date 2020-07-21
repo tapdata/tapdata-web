@@ -39,7 +39,13 @@
 				</el-table-column>
 			</el-table>
 		</div>
-		<el-button class="dv-btn" size="mini" icon="el-icon-plus" @click="handleShowDrawer"></el-button>
+		<el-button
+			class="dv-btn"
+			size="mini"
+			icon="el-icon-plus"
+			@click="handleShowDrawer"
+			:disabled="editIndex !== -1"
+		></el-button>
 		<div class="dv-btn-footer-wrapper">
 			<div class="dv-btn-footer-box">
 				<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleLoading">{{
@@ -190,7 +196,14 @@
 				<el-button size="mini" type="primary" :loading="testing" @click="handleAdd">
 					{{ $t('dataVerify.confirm') }}
 				</el-button>
-				<el-button size="mini" @click="disabledDrawer = false">{{ $t('dataForm.cancel') }}</el-button>
+				<el-button
+					size="mini"
+					@click="
+						disabledDrawer = false;
+						editIndex = -1;
+					"
+					>{{ $t('dataForm.cancel') }}</el-button
+				>
 			</span>
 		</Drawer>
 	</div>
@@ -320,7 +333,7 @@ export default {
 			log('edit_edit', this.editIndex);
 
 			if (this.editIndex !== -1) {
-				this.tableData.splice(this.editIndex, 1); // 是否是编辑 先删除后新增
+				this.tableData.splice(this.editIndex, 1); // 不是编辑 先删除后新增 -1非编辑模式
 			}
 			let opSource = this.sourceList.filter(item => item.stageId + item.tableName === this.formData.sourceTageId);
 			let opTarget = this.targetList.filter(item => item.stageId + item.tableName === this.formData.targetTageId);
