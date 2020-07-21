@@ -690,8 +690,8 @@ export default {
 			await dataFlows.get(_params).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
+						this.handleData(res.data);
 						this.tableData = res.data;
-						this.handleData(this.tableData);
 					}
 				}
 				this.loading = false;
@@ -701,7 +701,7 @@ export default {
 		handleData(data) {
 			if (!data) return;
 
-			data.map(item => {
+			data.forEach(item => {
 				item.newStatus = ['running', 'scheduled'].includes(item.status) ? 'scheduled' : 'stopping';
 				item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
 				let statusMap = {};
@@ -714,7 +714,7 @@ export default {
 					item.children = [];
 					if (children) {
 						let finishedCount = 0;
-						children.map(k => {
+						children.forEach(k => {
 							let stage = '';
 							let node = {};
 							if (item.stats.stagesMetrics) {
