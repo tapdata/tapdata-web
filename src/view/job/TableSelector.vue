@@ -125,8 +125,8 @@ export default {
 							like: this.$cookie.get('user_id')
 						},
 						is_deleted: false
-					},
-					order: 'original_name ASC'
+					}
+					// order: 'original_name ASC'
 				})
 			};
 			self.loading = true;
