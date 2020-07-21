@@ -130,20 +130,25 @@
 					</el-row>
 					<el-row v-show="type !== 'advance'">
 						<el-checkbox v-model="checkedSource"></el-checkbox>
-						<span v-if="opSource[0] && opSource[0].databaseType == 'mongodb'"
+						<span class="JS-label displayInline" v-if="opSource[0] && opSource[0].databaseType == 'mongodb'"
 							>MQL {{ $t('dataVerify.filter') }}</span
 						>
-						<span v-else>SQL {{ $t('dataVerify.filter') }}</span>
+						<span v-else class="JS-label displayInline">SQL {{ $t('dataVerify.filter') }}</span>
 					</el-row>
 					<el-row v-show="checkedSource && type !== 'advance'">
 						<span
-							v-if="opSource[0] && opSource[0].databaseType == 'mongodb'"
+							v-if="opSource[0] && opSource[0].databaseType !== 'mongodb'"
 							class="JS-label displayInline"
-							>{{ `seclect count(1) from${opSource[0].tableName}where` }}</span
+							>{{ `seclect count(1) from ${opSource[0].tableName} where` }}</span
+						>
+						<span
+							v-if="opSource[0] && opSource[0].databaseType === 'mongodb'"
+							class="JS-label displayInline"
+							>{{ `db.${opSource[0].tableName}.find {{` }}</span
 						>
 						<el-col :span="24">
 							<el-input
-								:rows="10"
+								:rows="7"
 								type="textarea"
 								v-model="formData.sourceFilter"
 								@input="handleForceUpdate"
@@ -179,10 +184,9 @@
 					<el-row v-show="type === 'row'">
 						<el-checkbox v-model="checkedTarget"></el-checkbox>
 						<span v-if="opTarget[0] && opTarget[0].databaseType == 'mongodb'">
-							<span>MQL {{ $t('dataVerify.filter') }}</span>
-							<div></div>
+							<span class="JS-label displayInline">MQL {{ $t('dataVerify.filter') }}</span>
 						</span>
-						<span v-else>SQL {{ $t('dataVerify.filter') }}</span>
+						<span v-else class="JS-label displayInline">SQL {{ $t('dataVerify.filter') }}</span>
 					</el-row>
 					<el-row v-show="checkedTarget && type === 'row'">
 						<span
@@ -190,12 +194,17 @@
 							class="JS-label displayInline"
 							>{{ `db.${opTarget[0].tableName}.find {{` }}</span
 						>
+						<span
+							v-if="opTarget[0] && opTarget[0].databaseType !== 'mongodb'"
+							class="JS-label displayInline"
+							>{{ `seclect count(1) from ${opTarget[0].tableName} where` }}</span
+						>
 						<el-col :span="24">
 							<el-input
 								type="textarea"
 								v-model="formData.targetFilter"
 								@input="handleForceUpdate"
-								:rows="10"
+								:rows="7"
 								:placeholder="$t('dataVerify.SQL')"
 							></el-input>
 						</el-col>
