@@ -364,6 +364,12 @@ export default {
 				this.$message.error('please select target SQL/MQL');
 				return;
 			}
+			if (!this.checkedTarget) {
+				this.formData.targetFilter === '';
+			}
+			if (!this.checkedSource) {
+				this.formData.sourceFilter === '';
+			}
 			log('edit_edit', this.editIndex);
 
 			if (this.editIndex !== -1) {
@@ -504,7 +510,7 @@ export default {
 			);
 		},
 		formatterRange(row) {
-			if (row.condition.type === 'rows') {
+			if (row.condition.type === 'rows' && row.type !== 'row') {
 				return row.condition.value + this.$t('dataVerify.psc');
 			} else if (row.condition.type === 'sampleRate') {
 				return row.condition.value + '%';
