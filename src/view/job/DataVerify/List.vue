@@ -322,6 +322,8 @@ export default {
 							if (!res.data.validateStatus) {
 								this.firstVerify = true;
 							}
+							this.changeSourceTable();
+							this.changeTargetTable();
 							log('dataVerify.tableData', this.tableData);
 						}
 					}
@@ -385,14 +387,16 @@ export default {
 			if (this.editIndex !== -1) {
 				this.tableData.splice(this.editIndex, 1); // 不是编辑 先删除后新增 -1非编辑模式
 			}
-			if (this.opSource.length !== 0) this.opSource[0].filter = this.formData.sourceFilter;
-			if (this.opTarget.length !== 0) this.opTarget[0].filter = this.formData.targetFilter;
+			let opSource = this.sourceList.filter(item => item.stageId + item.tableName === this.formData.sourceTageId);
+			let opTarget = this.targetList.filter(item => item.stageId + item.tableName === this.formData.targetTageId);
+			if (opSource.length !== 0 && opSource[0]) opSource[0]['filter'] = this.formData.sourceFilter;
+			if (opTarget.length !== 0 && opTarget[0]) opTarget[0]['filter'] = this.formData.targetFilter;
 
 			let add = {
 				type: this.type, // row: 行数 hash：哈希  advance：高级校验
 				condition: this.formData.condition,
-				source: this.opSource[0],
-				target: this.opTarget[0],
+				source: opSource[0],
+				target: opTarget[0],
 				validateCode: this.formData.validateCode
 			};
 
