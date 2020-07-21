@@ -144,7 +144,7 @@
 						<span
 							v-if="opSource[0] && opSource[0].databaseType === 'mongodb'"
 							class="JS-label displayInline"
-							>{{ `db.${opSource[0].tableName}.find {{` }}</span
+							>{{ `db.${opSource[0].tableName}.find ({` }}</span
 						>
 						<el-col :span="24">
 							<el-input
@@ -155,6 +155,7 @@
 								:placeholder="$t('dataVerify.SQL')"
 							></el-input>
 						</el-col>
+						<div v-if="opSource[0] && opSource[0].databaseType == 'mongodb'" class="JS-label">})</div>
 					</el-row>
 				</el-form-item>
 				<el-form-item>
@@ -190,12 +191,12 @@
 					</el-row>
 					<el-row v-show="checkedTarget && type === 'row'">
 						<span
-							v-if="opTarget[0] && opTarget[0].databaseType == 'mongodb'"
+							v-if="opTarget[0] && opTarget[0].databaseType == 'mongodb' && formData.type !== 'hash'"
 							class="JS-label displayInline"
-							>{{ `db.${opTarget[0].tableName}.find {{` }}</span
+							>{{ `db.${opTarget[0].tableName}.find ({` }}</span
 						>
 						<span
-							v-if="opTarget[0] && opTarget[0].databaseType !== 'mongodb'"
+							v-if="opTarget[0] && opTarget[0].databaseType !== 'mongodb' && formData.type !== 'hash'"
 							class="JS-label displayInline"
 							>{{ `seclect count(1) from ${opTarget[0].tableName} where` }}</span
 						>
@@ -208,7 +209,7 @@
 								:placeholder="$t('dataVerify.SQL')"
 							></el-input>
 						</el-col>
-						<div v-if="opTarget[0] && opTarget[0].databaseType == 'mongodb'" class="JS-label">}}</div>
+						<div v-if="opTarget[0] && opTarget[0].databaseType == 'mongodb'" class="JS-label">})</div>
 					</el-row>
 				</el-form-item>
 				<el-form-item>
