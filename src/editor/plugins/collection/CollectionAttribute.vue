@@ -90,8 +90,7 @@
 								? $t('editor.cell.data_node.collection.form.fieldFilter.placeholderKeep')
 								: $t('editor.cell.data_node.collection.form.fieldFilter.placeholderDelete')
 						"
-						@input="handleFilterChange()"
-						@removeTag="handleFilterChange"
+						@change="handleFilterChange()"
 					></PrimaryKeyInput>
 				</el-form-item>
 				<el-form-item
@@ -360,6 +359,35 @@ export default {
 	},
 
 	methods: {
+		handleFilterChange() {
+			let fieldFilter = this.model.fieldFilter ? this.model.fieldFilter.split(',') : [];
+
+			let fieldList = this.getFieldData(fieldFilter);
+			if (this.model.fieldFilterType === 'retainedField') {
+				this.handleRetainedField(fieldList);
+			} else if (this.model.fieldFilterType === 'deleteField') {
+				this.handleDeleteField(fieldList);
+			}
+			this.$nextTick(() => {
+				this.$emit('schemaChange', _.cloneDeep(this.defaultSchema));
+			});
+		},
+		handleRetainedField(fieldFilter) {
+			this.model.operations = [];
+
+			fieldFilter.forEach(f => {
+				let self = this;
+				let ops = self.model.operations.filter(v => v.op === 'RETAINED' && v.id === f.id);
+				let op;
+				if (ops.length === 0) {
+					op = Object.assign(_.cloneDeep(RETAINED_OPS_TPL), {
+						id: f.id,
+						field: f.field_name
+					});
+					self.model.operations.push(op);
+				}
+			});
+		},
 		handleDeleteField(fieldFilter) {
 			this.model.operations = [];
 			fieldFilter.forEach(f => {
@@ -379,62 +407,6 @@ export default {
 					}
 				};
 				if (f) fn(f);
-			});
-		},
-		handleFilterChange(tagName) {
-			if (this.model.fieldFilterType === 'retainedField') {
-				this.checkFieldChild(tagName);
-			}
-
-			//根据类型判断 fieldFilterType 不过滤字段Keep all fields、保留字段Retained field、删除字段Delete field。默认显示：不过滤字段。
-			let fieldFilter = this.model.fieldFilter ? this.model.fieldFilter.split(',') : [];
-
-			let fieldList = this.getFieldData(fieldFilter);
-			if (this.model.fieldFilterType === 'retainedField') {
-				this.handleRetainedField(fieldList);
-			} else if (this.model.fieldFilterType === 'deleteField') {
-				this.handleDeleteField(fieldList);
-			}
-			this.$nextTick(() => {
-				this.$emit('schemaChange', _.cloneDeep(this.defaultSchema));
-			});
-		},
-
-		checkFieldChild(name) {
-			let fields = this.model.fieldFilter.split(',');
-			let fieldFilter = this.getFieldData(fields);
-			if (name) {
-				let index = fields.findIndex(f => f === name);
-				if (index >= 0) {
-					fields.splice(index, 1);
-					this.model.fieldFilter = fields.join(',');
-				}
-			}
-			for (let i = 0; i < fieldFilter.length; i++) {
-				const f = fieldFilter[i];
-				if (name && f.parent === name) {
-					this.checkFieldChild(f.field_name);
-				} else if (!name && f.parent && !fieldFilter.find(item => item.field_name === f.parent)) {
-					this.model.fieldFilter += ',' + f.parent;
-					this.checkFieldChild();
-					break;
-				}
-			}
-		},
-		handleRetainedField(fieldFilter) {
-			this.model.operations = [];
-
-			fieldFilter.forEach(f => {
-				let self = this;
-				let ops = self.model.operations.filter(v => v.op === 'RETAINED' && v.id === f.id);
-				let op;
-				if (ops.length === 0) {
-					op = Object.assign(_.cloneDeep(RETAINED_OPS_TPL), {
-						id: f.id,
-						field: f.field_name
-					});
-					self.model.operations.push(op);
-				}
 			});
 		},
 		getFieldData(fieldFilter) {
