@@ -15,23 +15,35 @@
 						</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="condition.value" :label="$t('dataVerify.range')" width="100"> </el-table-column>
+				<el-table-column
+					prop="condition.value"
+					:label="$t('dataVerify.range')"
+					width="100"
+					:formatter="formatterRange"
+				>
+				</el-table-column>
 				<el-table-column prop="source.tableName" :label="$t('dataVerify.source')">
 					<template slot-scope="scope">
-						<el-tooltip class="item" effect="dark" content="Top Center 提示文字" placement="top">
-							<span v-if="scope.row.source.filter" class="dv-tag"></span>
-							<span> {{ scope.row.source.tableName }} </span>
+						<el-tooltip class="item" effect="dark" content="SQL/MQL" placement="top-end">
+							<span>
+								<span v-if="scope.row.source.filter" class="dv-tag"></span>
+								<span> {{ scope.row.source.tableName }} </span>
+							</span>
 						</el-tooltip>
 					</template>
 				</el-table-column>
 				<el-table-column prop="target.tableName" :label="$t('dataVerify.target')">
 					<template slot-scope="scope">
-						<span v-if="scope.row.validateCode" class="dv-tagJS"></span>
-						<span v-if="scope.row.target.filter" class="dv-tag"></span>
-						<span> {{ scope.row.target.tableName }} </span>
+						<el-tooltip class="item" effect="dark" content="SQL/MQL" placement="top-end">
+							<span>
+								<span v-if="scope.row.validateCode" class="dv-tagJS"></span>
+								<span v-if="scope.row.target.filter" class="dv-tag"></span>
+								<span> {{ scope.row.target.tableName }} </span>
+							</span>
+						</el-tooltip>
 					</template>
 				</el-table-column>
-				<el-table-column width="60" :label="$t('dataVerify.operate')">
+				<el-table-column width="80" :label="$t('dataVerify.operate')">
 					<template slot-scope="scope">
 						<span class="el-icon-edit" @click="handleEdit(scope.$index)"></span>
 						<span class="el-icon-close" @click="handleDelete(scope.$index)"></span>
@@ -104,6 +116,7 @@
 								v-model="formData.sourceTageId"
 								:placeholder="$t('dataVerify.sourceText')"
 								@input="handleForceUpdate"
+								@change="changeSourceTable"
 							>
 								<el-option
 									v-for="item in sourceList"
@@ -117,9 +130,17 @@
 					</el-row>
 					<el-row v-show="type !== 'advance'">
 						<el-checkbox v-model="checkedSource"></el-checkbox>
-						<span style="font-size: 12px">SQL/MQL{{ $t('dataVerify.filter') }}</span>
+						<span v-if="opSource[0] && opSource[0].databaseType == 'mongodb'"
+							>MQL {{ $t('dataVerify.filter') }}</span
+						>
+						<span v-else>SQL {{ $t('dataVerify.filter') }}</span>
 					</el-row>
 					<el-row v-show="checkedSource && type !== 'advance'">
+						<span
+							v-if="opSource[0] && opSource[0].databaseType == 'mongodb'"
+							class="JS-label displayInline"
+							>{{ `seclect count(1) from${opSource[0].tableName}where` }}</span
+						>
 						<el-col :span="24">
 							<el-input
 								:rows="10"
@@ -142,6 +163,7 @@
 								style="width: 100%"
 								v-model="formData.targetTageId"
 								@input="handleForceUpdate"
+								@change="changeTargetTable"
 								:placeholder="$t('dataVerify.targetText')"
 							>
 								<el-option
@@ -156,9 +178,18 @@
 					</el-row>
 					<el-row v-show="type === 'row'">
 						<el-checkbox v-model="checkedTarget"></el-checkbox>
-						<span style="font-size: 12px">SQL/MQL{{ $t('dataVerify.filter') }}</span>
+						<span v-if="opTarget[0] && opTarget[0].databaseType == 'mongodb'">
+							<span>MQL {{ $t('dataVerify.filter') }}</span>
+							<div></div>
+						</span>
+						<span v-else>SQL {{ $t('dataVerify.filter') }}</span>
 					</el-row>
 					<el-row v-show="checkedTarget && type === 'row'">
+						<span
+							v-if="opTarget[0] && opTarget[0].databaseType == 'mongodb'"
+							class="JS-label displayInline"
+							>{{ `db.${opTarget[0].tableName}.find {{` }}</span
+						>
 						<el-col :span="24">
 							<el-input
 								type="textarea"
@@ -168,6 +199,7 @@
 								:placeholder="$t('dataVerify.SQL')"
 							></el-input>
 						</el-col>
+						<div v-if="opTarget[0] && opTarget[0].databaseType == 'mongodb'" class="JS-label">}}</div>
 					</el-row>
 				</el-form-item>
 				<el-form-item>
@@ -175,7 +207,7 @@
 						JS
 					</div>
 					<el-row v-show="type === 'advance'">
-						<span class="JS-label">
+						<span class="JS-label displayInline">
 							function validate(sourceRow){
 						</span>
 						<el-col :span="24">
@@ -185,7 +217,7 @@
 								:rows="18"
 								@input="handleForceUpdate"
 							></el-input>
-							<span class="JS-label">
+							<span class="JS-label displayInline">
 								}
 							</span>
 						</el-col>
@@ -251,6 +283,8 @@ export default {
 				advance: '#9889D8'
 			},
 			tableData: [],
+			opSource: [],
+			opTarget: [],
 			firstVerify: false
 		};
 	},
@@ -335,16 +369,14 @@ export default {
 			if (this.editIndex !== -1) {
 				this.tableData.splice(this.editIndex, 1); // 不是编辑 先删除后新增 -1非编辑模式
 			}
-			let opSource = this.sourceList.filter(item => item.stageId + item.tableName === this.formData.sourceTageId);
-			let opTarget = this.targetList.filter(item => item.stageId + item.tableName === this.formData.targetTageId);
-			if (opSource.length !== 0) opSource[0].filter = this.formData.sourceFilter;
-			if (opTarget.length !== 0) opTarget[0].filter = this.formData.targetFilter;
+			if (this.opSource.length !== 0) this.opSource[0].filter = this.formData.sourceFilter;
+			if (this.opTarget.length !== 0) this.opTarget[0].filter = this.formData.targetFilter;
 
 			let add = {
 				type: this.type, // row: 行数 hash：哈希  advance：高级校验
 				condition: this.formData.condition,
-				source: opSource[0],
-				target: opTarget[0],
+				source: this.opSource[0],
+				target: this.opTarget[0],
 				validateCode: this.formData.validateCode
 			};
 
@@ -460,6 +492,25 @@ export default {
 		},
 		handleForceUpdate() {
 			this.$forceUpdate();
+		},
+		changeSourceTable() {
+			this.opSource = this.sourceList.filter(
+				item => item.stageId + item.tableName === this.formData.sourceTageId
+			);
+		},
+		changeTargetTable() {
+			this.opTarget = this.targetList.filter(
+				item => item.stageId + item.tableName === this.formData.targetTageId
+			);
+		},
+		formatterRange(row) {
+			if (row.condition.type === 'rows') {
+				return row.condition.value + this.$t('dataVerify.psc');
+			} else if (row.condition.type === 'sampleRate') {
+				return row.condition.value + '%';
+			} else if (row.condition.type === 'rows' && row.type === 'row') {
+				return this.$t('dataVerify.all');
+			}
 		}
 	}
 };
@@ -583,6 +634,8 @@ export default {
 	color: #999;
 	font-size: 12px;
 	margin-top: 0px;
+}
+.displayInline {
 	display: inline-block;
 }
 </style>

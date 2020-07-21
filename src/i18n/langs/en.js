@@ -786,7 +786,7 @@ const en = {
 		advance: 'Advance verify',
 		dataVerify: 'Data verify',
 		dataWay: 'Verify mode',
-		range: 'Sampling(pcs)',
+		range: 'Sampling',
 		source: 'Source',
 		target: 'Target',
 		sourceText: 'Select source table',
@@ -821,7 +821,9 @@ const en = {
 		verifyStatusInterrupted: 'Verification job being stopped，please wait...   Click',
 		verifyStatusStop: 'Stop verification',
 		verifyStatusCompleted: 'Verification result loading , please wait for a while',
-		or: 'or'
+		or: 'or',
+		psc: 'psc',
+		all: 'all'
 	},
 	dataMap: {
 		source: 'SOURCE',
