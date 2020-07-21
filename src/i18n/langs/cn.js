@@ -748,7 +748,7 @@ const cn = {
 		advance: '高级校验',
 		dataVerify: '数据校验',
 		dataWay: '校验方式',
-		range: '采样范围(条)',
+		range: '采样范围',
 		source: '源表',
 		target: '目标表',
 		sourceText: '请选择源表',
@@ -782,7 +782,9 @@ const cn = {
 		verifyStatusInterrupted: '数据校验终止中，请等待... 点击',
 		verifyStatusStop: '终止校验',
 		verifyStatusCompleted: '数据校验结果加载中',
-		or: '或'
+		or: '或',
+		psc: '条',
+		all: '全部'
 	},
 	dataMap: {
 		source: '来源',

@@ -749,7 +749,7 @@ const tc = {
 		advance: '高級校驗',
 		dataVerify: '數據校驗',
 		dataWay: '校驗方式',
-		range: '採樣範圍(条)',
+		range: '採樣範圍',
 		source: '源表',
 		sourceText: '請選擇源表',
 		targetText: '請選擇目標表',
@@ -784,7 +784,9 @@ const tc = {
 		verifyStatusInterrupted: '數據校驗終止中，請等待... 點擊',
 		verifyStatusStop: '終止校驗',
 		verifyStatusCompleted: '數據校驗結果加載中',
-		or: '或'
+		or: '或',
+		psc: '條',
+		all: '全部'
 	},
 	dataMap: {
 		source: '來源',
