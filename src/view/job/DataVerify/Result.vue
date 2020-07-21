@@ -8,12 +8,14 @@
 			>
 				<span>{{ verifylog[validateStatus] }}</span>
 				<span @click="GoBack" class="verify-backBtn">{{ $t('dataVerify.back') }}</span>
+				<span>{{ $t('dataVerify.verifyRunningInfo') }}</span>
 			</div>
 			<div v-if="validateStatus === 'validating'" class="verifyLog">
 				<span>{{ verifylog[validateStatus] }}</span>
 				<span class="verify-backBtn" @click="GoBack">
 					{{ $t('dataVerify.back') }}
 				</span>
+				<span>{{ $t('dataVerify.verifyRunningInfo') }}</span>
 				<span>{{ $t('dataVerify.or') }}</span>
 				<span class="verify-backBtn" @click="handleVerifyCancel">{{ $t('dataVerify.verifyStatusStop') }}</span>
 			</div>
@@ -110,7 +112,7 @@
 					<el-table border :data="failedRow" class="dv-result-fail-table" style="width: 100%">
 						<el-table-column prop="sourceTableData" :label="$t('dataVerify.source')"> </el-table-column>
 						<el-table-column prop="targetTableData" :label="$t('dataVerify.target')"> </el-table-column>
-						<el-table-column prop="message" label="MSQ"> </el-table-column>
+						<el-table-column prop="message" label="Message"> </el-table-column>
 					</el-table>
 				</div>
 			</div>
