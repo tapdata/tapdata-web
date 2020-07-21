@@ -1,63 +1,66 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import DataMap from '../view/dataMap/DataMap';
+
+const view = path => () => import(`../view/${path}`);
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
 	routes: [
 		{
-			path: '/',
-			name: 'layout',
-			redirect: '/clusterManagement',
-			component: () => import('../view/layout'),
-			children: [
-				{
-					path: 'clusterManagement',
-					name: 'clusterManagement',
-					component: () => import('../view/clusterManagement/clusterManagement')
-				},
-				{
-					path: 'dailyRecord',
-					name: 'dailyRecord',
-					component: () => import('../view/clusterManagement/dailyRecord')
-				}
-			]
+			path: '/login',
+			name: 'login',
+			component: view('login')
 		},
 		{
 			path: '/job',
 			name: 'job',
-			component: () => import('../view/job/Job')
+			component: view('job/Job')
 		},
 		{
-			path: '/dataFlows',
-			name: 'DataFlows',
-			component: () => import('../view/task/DataFlows')
-		},
-		{
-			path: '/metadata',
-			name: 'metadata',
-			component: () => import('../view/metaData')
-		},
-		{
-			path: '/dataVerify',
-			name: 'DataVerify',
-			component: () => import('../view/job/DataVerify/List')
-		},
-		{
-			path: '/upload',
-			name: 'Upload',
-			component: () => import('../components/upload')
-		},
-		{
-			path: '/dataMap',
-			name: 'DataMap',
-			component: DataMap
-		},
-		{
-			path: '/apiInfo',
-			name: 'ApiInfo',
-			component: () => import('../view/job/apiInfo')
+			path: '/',
+			name: 'layout',
+			component: view('layout'),
+			children: [
+				{
+					path: 'clusterManagement',
+					component: view('clusterManagement/layout'),
+					children: [
+						{
+							path: '',
+							name: 'clusterManagement',
+							component: view('clusterManagement/clusterManagement')
+						},
+						{
+							path: 'dailyRecord',
+							name: 'dailyRecord',
+							component: view('clusterManagement/dailyRecord')
+						}
+					]
+				},
+				{
+					path: '/dataFlows',
+					name: 'DataFlows',
+					component: view('task/DataFlows')
+				},
+				{
+					path: '/upload',
+					name: 'Upload',
+					component: view('Upload')
+				},
+				{
+					path: '/dataMap',
+					name: 'DataMap',
+					component: view('dataMap/DataMap')
+				},
+				{
+					path: '/apiInfo',
+					name: 'ApiInfo',
+					component: view('job/apiInfo')
+				}
+			]
 		}
 	]
 });
+
+export default router;
