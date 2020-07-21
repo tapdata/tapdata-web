@@ -10,21 +10,24 @@
 			<el-table :data="tableData" border class="dv-table" style="width: 100%">
 				<el-table-column prop="type" :label="$t('dataVerify.dataWay')" width="150">
 					<template slot-scope="scope">
-						<span :style="`color: ${colorMap[scope.row.type]};`">
+						<span>
 							{{ $t('dataVerify.' + scope.row.type) }}
 						</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="condition.value" :label="$t('dataVerify.range')" width="80"> </el-table-column>
+				<el-table-column prop="condition.value" :label="$t('dataVerify.range')" width="100"> </el-table-column>
 				<el-table-column prop="source.tableName" :label="$t('dataVerify.source')">
 					<template slot-scope="scope">
-						<span v-if="scope.row.source.filter" class="dv-tag">SQL</span>
-						<span> {{ scope.row.source.tableName }} </span>
+						<el-tooltip class="item" effect="dark" content="Top Center 提示文字" placement="top">
+							<span v-if="scope.row.source.filter" class="dv-tag"></span>
+							<span> {{ scope.row.source.tableName }} </span>
+						</el-tooltip>
 					</template>
 				</el-table-column>
 				<el-table-column prop="target.tableName" :label="$t('dataVerify.target')">
 					<template slot-scope="scope">
-						<span v-if="scope.row.validateCode" class="dv-tagJS">JS</span>
+						<span v-if="scope.row.validateCode" class="dv-tagJS"></span>
+						<span v-if="scope.row.target.filter" class="dv-tag"></span>
 						<span> {{ scope.row.target.tableName }} </span>
 					</template>
 				</el-table-column>
@@ -63,27 +66,23 @@
 					<div class="dv-add-form-text">
 						{{ $t('dataVerify.condition') }}
 					</div>
-					<el-row :gutter="10">
+					<el-row :gutter="5">
 						<el-col :span="12">
 							<el-select size="mini" v-model="formData.condition.type" @change="changeConditionType">
 								<el-option value="rows" :label="$t('dataVerify.rows')"></el-option>
 								<el-option value="sampleRate" :label="$t('dataVerify.sampleRate')"></el-option>
 							</el-select>
 						</el-col>
-						<el-col :span="12">
+						<el-col :span="12" class="condition-value">
 							<el-input
+								@change="handleCondition"
 								size="mini"
+								type="number"
 								v-model="formData.condition.value"
-								v-if="formData.condition.type === 'rows'"
-							></el-input>
-							<el-input-number
-								size="mini"
-								v-model="formData.condition.value"
-								v-if="formData.condition.type === 'sampleRate'"
-								:min="1"
-								:max="100"
-								:controls="false"
-							></el-input-number>
+							>
+								<template slot="append" v-if="formData.condition.type === 'rows'">psc</template>
+								<template slot="append" v-if="formData.condition.type === 'sampleRate'">%</template>
+							</el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
@@ -97,6 +96,7 @@
 								size="mini"
 								style="width: 100%"
 								v-model="formData.sourceTageId"
+								:placeholder="$t('dataVerify.sourceText')"
 								@input="handleForceUpdate"
 							>
 								<el-option
@@ -111,11 +111,17 @@
 					</el-row>
 					<el-row v-show="type !== 'advance'">
 						<el-checkbox v-model="checkedSource"></el-checkbox>
-						<span style="font-size: 12px">SQL/MQL</span>
+						<span style="font-size: 12px">SQL/MQL{{ $t('dataVerify.filter') }}</span>
 					</el-row>
 					<el-row v-show="checkedSource && type !== 'advance'">
 						<el-col :span="24">
-							<el-input type="textarea" v-model="formData.sourceFilter"></el-input>
+							<el-input
+								:rows="10"
+								type="textarea"
+								v-model="formData.sourceFilter"
+								@input="handleForceUpdate"
+								:placeholder="$t('dataVerify.SQL')"
+							></el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
@@ -130,6 +136,7 @@
 								style="width: 100%"
 								v-model="formData.targetTageId"
 								@input="handleForceUpdate"
+								:placeholder="$t('dataVerify.targetText')"
 							>
 								<el-option
 									v-for="item in targetList"
@@ -143,11 +150,17 @@
 					</el-row>
 					<el-row v-show="type === 'row'">
 						<el-checkbox v-model="checkedTarget"></el-checkbox>
-						<span style="font-size: 12px">SQL/MQL</span>
+						<span style="font-size: 12px">SQL/MQL{{ $t('dataVerify.filter') }}</span>
 					</el-row>
 					<el-row v-show="checkedTarget && type === 'row'">
 						<el-col :span="24">
-							<el-input type="textarea" v-model="formData.targetFilter"></el-input>
+							<el-input
+								type="textarea"
+								v-model="formData.targetFilter"
+								@input="handleForceUpdate"
+								:rows="10"
+								:placeholder="$t('dataVerify.SQL')"
+							></el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
@@ -156,8 +169,19 @@
 						JS
 					</div>
 					<el-row v-show="type === 'advance'">
+						<span class="JS-label">
+							function validate(sourceRow){
+						</span>
 						<el-col :span="24">
-							<el-input type="textarea" v-model="formData.validateCode" :rows="20"></el-input>
+							<el-input
+								type="textarea"
+								v-model="formData.validateCode"
+								:rows="18"
+								@input="handleForceUpdate"
+							></el-input>
+							<span class="JS-label">
+								}
+							</span>
 						</el-col>
 					</el-row>
 				</el-form-item>
@@ -373,6 +397,14 @@ export default {
 				}
 			});
 		},
+		handleCondition(value) {
+			if (this.formData.condition.type === 'sampleRate') {
+				if (value <= 0 || value > 100) {
+					this.formData.condition.value = 5;
+					this.$message.error('sampleRate 1~100');
+				}
+			}
+		},
 		handleEdit(index) {
 			this.disabledDrawer = false;
 			this.disabledDrawer = true;
@@ -431,6 +463,7 @@ export default {
 }
 .data-verify {
 	position: relative;
+	font-family: 'Microsoft YaHei';
 }
 .dv-header {
 	line-height: 32px;
@@ -475,26 +508,22 @@ export default {
 	color: rgba(51, 51, 51, 1);
 }
 .dv-tag {
-	width: 36px;
-	height: 19px;
-	font-size: 12px;
-	line-height: 19px;
+	width: 8px;
+	height: 8px;
+	margin: 0 auto;
 	text-align: center;
-	color: #fff;
 	display: inline-block;
 	background: rgba(98, 165, 105, 1);
-	border-radius: 3px;
+	border-radius: 50%;
 }
 .dv-tagJS {
-	width: 36px;
-	height: 19px;
-	font-size: 12px;
-	line-height: 19px;
+	width: 8px;
+	height: 8px;
+	margin: 0 auto;
 	text-align: center;
-	color: #fff;
 	display: inline-block;
 	background: #48b6e2;
-	border-radius: 3px;
+	border-radius: 50%;
 }
 .back-btn-box {
 	width: 100%;
@@ -533,6 +562,15 @@ export default {
 }
 .back-btn-icon {
 	color: #fff;
+}
+.condition-value {
+	margin-top: 6px;
+}
+.JS-label {
+	color: #999;
+	font-size: 12px;
+	margin-top: 0px;
+	display: inline-block;
 }
 </style>
 <style lang="less">
