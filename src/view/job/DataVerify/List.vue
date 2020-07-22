@@ -141,7 +141,7 @@
 						<span
 							v-if="opSource[0] && opSource[0].databaseType !== 'mongodb'"
 							class="JS-label displayInline"
-							>{{ `seclect count(1) from ${opSource[0].tableName} where` }}</span
+							>{{ `select count(1) from ${opSource[0].tableName} where` }}</span
 						>
 						<span
 							v-if="opSource[0] && opSource[0].databaseType === 'mongodb'"
@@ -200,7 +200,7 @@
 						<span
 							v-if="opTarget[0] && opTarget[0].databaseType !== 'mongodb' && formData.type !== 'hash'"
 							class="JS-label displayInline"
-							>{{ `seclect count(1) from ${opTarget[0].tableName} where` }}</span
+							>{{ `select count(1) from ${opTarget[0].tableName} where` }}</span
 						>
 						<el-col :span="24">
 							<el-input

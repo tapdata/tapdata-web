@@ -230,22 +230,19 @@ export default {
 					if (res.data) {
 						this.loading = false;
 						if (res.data[1]) {
-							this.overview = res.data[1];
+							this.overview = res.data[1].type === 'overview' ? res.data[1] : res.data[0];
 							this.overview.createTime = this.overview.createTime
 								? moment(this.overview.createTime).format('YYYY-MM-DD HH:mm:ss')
 								: '';
 							this.overview.costTime = this.overview.costTime ? this.overview.costTime / 1000 + ' s' : '';
 						}
 						if (res.data[0]) {
-							this.validateStats = res.data[0].validateStats;
-							this.validateStats.sourceTableData = this.validateStats.sourceTableData
-								? JSON.parse(this.validateStats.sourceTableData)
-								: '';
-							this.validateStats.targetTableData = this.validateStats.targetTableData
-								? JSON.parse(this.validateStats.targetTableData)
-								: '';
+							this.validateStats =
+								res.data[0].type === 'tableOverview'
+									? res.data[0].validateStats
+									: res.data[1].validateStats;
 						}
-						log('dataVerify.result', res.data);
+						log('dataVerify.result', this.validateStats);
 					}
 				} else {
 					this.loading = false;
