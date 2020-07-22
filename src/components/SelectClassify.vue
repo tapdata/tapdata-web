@@ -17,16 +17,25 @@
 				>{{ item.value }}</el-tag
 			>
 		</div>
+		<div>
+			<el-tag
+				size="mini"
+				type="info"
+				class="SelectClassify-tag"
+				v-for="item in oldTagList"
+				v-bind:key="item.value"
+				>{{ item.value }}</el-tag
+			>
+		</div>
 		<el-tree
 			node-key="id"
 			:props="props"
 			:expand-on-click-node="false"
-			show-checkbox
 			:data="treeData"
 			:filter-node-method="filterNode"
 			ref="tree"
 			check-strictly
-			@check-change="handleCheckChange"
+			@node-click="handleCheckChange"
 			class="metaData-tree SelectClassify-tree"
 		>
 			<span class="custom-tree-node" slot-scope="{ node, data }">
@@ -37,8 +46,8 @@
 			</span>
 		</el-tree>
 		<span slot="footer" class="dialog-footer">
-			<el-button type="danger" @click="handleCancel" size="mini">- 批量移除</el-button>
-			<el-button type="primary" @click="handleAdd" size="mini">+ 批量添加</el-button>
+			<el-button @click="handleCancel" size="mini">取消</el-button>
+			<el-button type="primary" @click="handleAdd" size="mini">保存修改</el-button>
 		</span>
 	</el-dialog>
 </template>
@@ -58,6 +67,10 @@ export default {
 		type: {
 			required: true,
 			value: String
+		},
+		oldTagList: {
+			required: true,
+			value: Object
 		}
 	},
 	data() {
@@ -132,24 +145,21 @@ export default {
 			return data.label.indexOf(value) !== -1;
 		},
 		handleClose() {
-			this.$refs.tree.setCheckedKeys([]);
 			this.tagList = [];
+			this.oldTagList = {};
 			this.$emit('dialogVisible', false);
 		},
-		handleCheckChange(data, checked) {
-			this.tagList = this.tagList || [];
-			if (checked) {
+		handleCheckChange(data) {
+			this.oldTagList = {};
+			if (this.tagList.lengt > 0 && data.id === this.tagList[0].id) {
+				this.tagList = [];
+			} else {
+				this.tagList = [];
 				let node = {
 					id: data.id,
 					value: data.value
 				};
 				this.tagList.push(node);
-			} else {
-				this.tagList.map((k, index) => {
-					if (k.id === data.id) {
-						this.tagList.splice(index, 1);
-					}
-				});
 			}
 		},
 		handleCloseTag(data) {
@@ -169,21 +179,13 @@ export default {
 			});
 		},
 		handleCancel() {
-			if (this.tagList && this.tagList.length === 0) {
-				this.$message.info('please select tag');
-				return;
-			}
-			let operationType = 'delete';
-			this.$emit('operationsClassify', operationType, this.tagList);
 			this.handleClose();
 		},
 		handleAdd() {
 			if (this.tagList && this.tagList.length === 0) {
-				this.$message.info('please select tag');
-				return;
+				this.tagList = [];
 			}
-			let operationType = 'add';
-			this.$emit('operationsClassify', operationType, this.tagList);
+			this.$emit('operationsClassify', this.tagList);
 			this.handleClose();
 		}
 	}
@@ -206,6 +208,7 @@ export default {
 .SelectClassify-tag {
 	margin-right: 5px;
 	margin-top: 5px;
+	margin-bottom: 10px;
 }
 </style>
 <style lang="less">
