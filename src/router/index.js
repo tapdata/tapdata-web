@@ -20,8 +20,14 @@ const router = new Router({
 		{
 			path: '/',
 			name: 'layout',
+			redirect: 'dashboard',
 			component: view('layout'),
 			children: [
+				{
+					path: 'dashboard',
+					name: 'dashboard',
+					component: view('dashboard/Dashboard')
+				},
 				{
 					path: 'clusterManagement',
 					component: view('clusterManagement/layout'),
@@ -61,6 +67,10 @@ const router = new Router({
 			]
 		}
 	]
+});
+
+router.beforeEach((to, from, next) => {
+	next();
 });
 
 export default router;
