@@ -792,7 +792,7 @@ const en = {
 		verifyStatusStop: 'Stop verification',
 		verifyStatusCompleted: 'Verification result loading , please wait for a while',
 		or: 'or',
-		psc: 'psc',
+		psc: 'pcs',
 		all: 'All'
 	},
 	dataMap: {
