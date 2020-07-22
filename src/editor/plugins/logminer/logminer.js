@@ -1,31 +1,21 @@
 import { options } from '../../lib/rappid/config';
-import LogminerAttribute from './logminerAttribute';
+import LogminerAttribute from './LogminerAttribute';
 import { FORM_DATA_KEY } from '../../constants';
 import log from '../../../log';
 import { uuid } from '../../util/Schema';
-import _ from 'lodash';
 import i18n from '../../../i18n/i18n';
 
-export const aggregateConfig = {
+export const logminerConfig = {
 	type: 'app.Logminer',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
-			size: { width: 120, height: 28 },
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/o-digger.svg',
-					refWidth: '25%',
-					refHeight: '84%',
-					refX: '-8%',
-					refY: '-28%'
-				},
-				body: {
-					rx: 14,
-					ry: 14
+					xlinkHref: 'static/editor/o-digger.svg'
 				},
 				label: {
-					text: i18n.t('editor.cell.processor.aggregate.name')
+					text: i18n.t('editor.cell.data_node.logminer.name')
 				},
 				[FORM_DATA_KEY]: {
 					type: 'aggregation_processor',
@@ -45,37 +35,37 @@ export const aggregateConfig = {
 					this.updateOutputSchema();
 				});
 			},
-			mergeOutputSchema(outputSchema) {
-				let data = this.getFormData();
-				log('aggregate.mergeOutputSchema', data, outputSchema);
-				if (!outputSchema || !data) return;
+			// mergeOutputSchema(outputSchema) {
+			// 	let data = this.getFormData();
+			// 	log('aggregate.mergeOutputSchema', data, outputSchema);
+			// 	if (!outputSchema || !data) return;
 
-				let groupFields = [];
-				let functionNames = [];
-				data.aggregations.forEach(stage => {
-					if (stage.groupByExpression) groupFields.push(...stage.groupByExpression);
-					if (stage.aggFunction) functionNames.push(stage.aggFunction);
-				});
+			// 	let groupFields = [];
+			// 	let functionNames = [];
+			// 	data.aggregations.forEach(stage => {
+			// 		if (stage.groupByExpression) groupFields.push(...stage.groupByExpression);
+			// 		if (stage.aggFunction) functionNames.push(stage.aggFunction);
+			// 	});
 
-				let fields = outputSchema.fields || [];
-				outputSchema.fields = fields.filter(field => groupFields.includes(field.field_name)) || [];
+			// 	let fields = outputSchema.fields || [];
+			// 	outputSchema.fields = fields.filter(field => groupFields.includes(field.field_name)) || [];
 
-				functionNames.forEach(fnName => {
-					outputSchema.fields.push(
-						Object.assign(_.cloneDeep(fields[0] || {}), {
-							field_name: fnName,
-							data_type: 'DOUBLE',
-							primary_key_position: 0,
-							original_field_name: fnName,
-							javaType: 'Double',
-							autoincrement: false,
-							id: uuid()
-						})
-					);
-				});
-				log('Aggregate.mergeOutputSchema', _.cloneDeep(fields), outputSchema);
-				return outputSchema;
-			},
+			// 	functionNames.forEach(fnName => {
+			// 		outputSchema.fields.push(
+			// 			Object.assign(_.cloneDeep(fields[0] || {}), {
+			// 				field_name: fnName,
+			// 				data_type: 'DOUBLE',
+			// 				primary_key_position: 0,
+			// 				original_field_name: fnName,
+			// 				javaType: 'Double',
+			// 				autoincrement: false,
+			// 				id: uuid()
+			// 			})
+			// 		);
+			// 	});
+			// 	log('Aggregate.mergeOutputSchema', _.cloneDeep(fields), outputSchema);
+			// 	return outputSchema;
+			// },
 
 			isProcess() {
 				return true;
@@ -87,7 +77,7 @@ export const aggregateConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-				return !['app.Database'].includes(targetCell.get('type'));
+				return ['app.Collection'].includes(targetCell.get('type'));
 			},
 
 			/**
@@ -95,17 +85,15 @@ export const aggregateConfig = {
 			 * @param sourceCell
 			 * @return {boolean}
 			 */
-			allowSource(sourceCell) {
-				return !['app.Database'].includes(sourceCell.get('type'));
+			allowSource() {
+				return false;
 			},
 
 			validate(data) {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
+				log("aaaaaaaaa$$$",data)
 				if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
-
-				if (data.aggregations && data.aggregations.length === 0)
-					throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_stage')}`);
 
 				if (!data.name) throw new Error(`${name}: ${i18n.t('editor.cell.validate.empty_name')}`);
 				let aggFunctionArr = [];
@@ -241,7 +229,7 @@ export const aggregateConfig = {
 		/**
 		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：processor；标准图形：standard
 		 */
-		group: 'processor',
+		group: 'data',
 		/**
 		 * 界面显示的分组名称
 		 */
@@ -250,7 +238,7 @@ export const aggregateConfig = {
 		size: { width: 5, height: 4 },
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.processor.aggregate.tip'),
+				dataTooltip: i18n.t('editor.cell.data_node.logminer.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -270,7 +258,7 @@ export const aggregateConfig = {
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.processor.aggregate.name'),
+				text: i18n.t('editor.cell.data_node.logminer.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',

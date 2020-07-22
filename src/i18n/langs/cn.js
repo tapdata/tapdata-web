@@ -509,7 +509,10 @@ const cn = {
 				},
 
 				logminer: {
-					name: 'Oracle日志挖掘器',
+					add: '添加',
+					day: '天',
+					name: '日志挖掘',
+					tip: '日志挖掘器',
 					miningLogTime: '挖掘日志时间',
 					logSaveTime: '日志保存时长',
 					logSourceSetting: '日志源设置',
@@ -522,7 +525,17 @@ const cn = {
 					function: '功 能',
 					functionContent:
 						'此节点用于采集指定数据库和表的日志，保存到MongoDB数据库，共享日志数据不需要重复开 启日志采集进程，能极大缓解源库资源的占用和浪费。',
-					connectionTarget: '只能连接Collection节点'
+					connectionTarget: '只能连接Collection节点',
+					tableFilter: {
+						placeSletSource: '请选择采集的数据源',
+						tableFilter: ' 请选择要保留的表',
+						placeholderDelete: '请选择要排除的表'
+					},
+					validate: {
+						name: '节点名称不能为空',
+						source: '数据源不能为空',
+						table: '数据表不能为空'
+					}
 				}
 			},
 			processor: {
