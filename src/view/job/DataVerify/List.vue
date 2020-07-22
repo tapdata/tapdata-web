@@ -379,10 +379,10 @@ export default {
 				return;
 			}
 			if (!this.checkedTarget) {
-				this.formData.targetFilter === '';
+				this.formData.targetFilter = '';
 			}
 			if (!this.checkedSource) {
-				this.formData.sourceFilter === '';
+				this.formData.sourceFilter = '';
 			}
 			log('edit_edit', this.editIndex);
 

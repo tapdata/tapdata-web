@@ -178,7 +178,7 @@
 							<span
 								v-else
 								class="e-field-action iconfont icon-script"
-								:style="isScript(data.id) ? 'color: #71c179;' : ''"
+								:style="isScript(data.id) ? 'color: #f98004;' : ''"
 								@click="handleScript(node, data)"
 								v-show="!disabledMode"
 							></span>
@@ -678,6 +678,15 @@ export default {
 				}
 			};
 			fn(node, data);
+			//删除 对应字段js脚本处理
+			if (this.model.scripts && this.model.scripts.length && this.model.scripts.length > 0) {
+				for (let i = 0; i < this.model.scripts.length; i++) {
+					if (data.id === this.model.scripts[i].id) {
+						this.model.scripts.splice(i, 1);
+						i--;
+					}
+				}
+			}
 			this.$emit('dataChanged', this.model);
 		},
 		getParentFieldName(node) {
@@ -892,7 +901,8 @@ export default {
 }
 </style>
 <style lang="less">
-@color: #71c179;
+@color: #f98004; //更改颜色
+@colorBorder: #71c179;
 .e-schema-editor {
 	font-size: 11px;
 	.el-checkbox__input.is-checked + .el-checkbox__label {
@@ -905,7 +915,7 @@ export default {
 
 .header-row {
 	display: flex;
-	background-color: #71c179;
+	background-color: @colorBorder;
 	color: #fff;
 	line-height: 30px;
 
@@ -938,14 +948,14 @@ export default {
 }
 
 .e-schema-editor .el-main .el-tree .el-tree-node {
-	border-bottom: 1px solid @color;
+	border-bottom: 1px solid @colorBorder;
 
 	&:last-child {
 		border-bottom: none;
 	}
 
 	&:first-child {
-		border-top: 1px solid @color;
+		border-top: 1px solid @colorBorder;
 	}
 
 	.el-input__inner {
@@ -968,8 +978,8 @@ export default {
 
 	.e-select {
 		width: 100px;
-		border-left: 1px solid #71c179;
-		border-right: 1px solid #71c179;
+		border-left: 1px solid @colorBorder;
+		border-right: 1px solid @colorBorder;
 		font-size: 11px;
 	}
 
