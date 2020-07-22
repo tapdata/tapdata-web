@@ -98,7 +98,9 @@
 								type="number"
 								v-model="formData.condition.value"
 							>
-								<template slot="append" v-if="formData.condition.type === 'rows'">psc</template>
+								<template slot="append" v-if="formData.condition.type === 'rows'">{{
+									$t('dataVerify.psc')
+								}}</template>
 								<template slot="append" v-if="formData.condition.type === 'sampleRate'">%</template>
 							</el-input>
 						</el-col>
@@ -486,6 +488,8 @@ export default {
 				this.checkedSource = true;
 			}
 			this.type = this.tableData[index].type;
+			this.changeSourceTable();
+			this.changeTargetTable();
 		},
 		getSourceList() {
 			dataFlows.getSourceList(this.id).then(res => {
