@@ -129,6 +129,7 @@ import Entity from '../link/Entity';
 import _ from 'lodash';
 import factory from '../../../api/factory';
 let connectionApi = factory('connections');
+const MetadataInstances = factory('MetadataInstances');
 let editor = null;
 let tempSchemas = [];
 export default {
@@ -162,23 +163,37 @@ export default {
 		'model.tableName': {
 			immediate: true,
 			handler() {
-				let schemas = tempSchemas;
+				let schemas = tempSchemas,
+					self = this;
 				if (this.schemaSelectConfig.options.length > 0) {
 					if (this.model.tableName) {
 						let schema = schemas.filter(s => s.table_name === this.model.tableName);
 						schema = schema && schema.length > 0 ? schema[0] : {};
-						let fields = schema.fields || [];
-						let primaryKeys = fields
-							.filter(f => f.primary_key_position > 0)
-							.map(f => f.field_name)
-							.join(',');
-						this.primaryKeyOptions = fields.map(f => f.field_name);
-						if (primaryKeys) {
-							this.model.primaryKeys = primaryKeys;
-						} else {
-							this.model.primaryKeys = '';
-						}
-						this.$emit('schemaChange', _.cloneDeep(schema));
+						let params = {
+							filter: JSON.stringify({
+								where: {
+									id: schema.id,
+									is_deleted: false
+								}
+							})
+						};
+						self.loading = true;
+						MetadataInstances.get(params).then(res => {
+							if (res.statusText === 'OK' || res.status === 200) {
+								let fields = res.data[0].fields;
+								let primaryKeys = fields
+									.filter(f => f.primary_key_position > 0)
+									.map(f => f.field_name)
+									.join(',');
+								self.primaryKeyOptions = fields.map(f => f.field_name);
+								if (primaryKeys) {
+									self.model.primaryKeys = primaryKeys;
+								} else {
+									self.model.primaryKeys = '';
+								}
+								self.$emit('schemaChange', _.cloneDeep(res.data[0]));
+							}
+						});
 					}
 				}
 				this.taskData.tableName = this.model.tableName;
@@ -308,11 +323,29 @@ export default {
 			}
 			let self = this;
 			this.schemaSelectConfig.loading = true;
-			connectionApi
-				.get([connectionId])
-				.then(result => {
-					if (result.data) {
-						let schemas = (result.data.schema && result.data.schema.tables) || [];
+			let params = {
+				filter: JSON.stringify({
+					where: {
+						'source.id': connectionId,
+						meta_type: {
+							in: ['collection', 'table', 'view'] //,
+						},
+						is_deleted: false
+					},
+					fields: {
+						id: true,
+						original_name: true
+					}
+				})
+			};
+			self.loading = true;
+			MetadataInstances.get(params)
+				.then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						let schemas = res.data.map(it => {
+							it.table_name = it.original_name;
+							return it;
+						});
 						tempSchemas = schemas.sort((t1, t2) =>
 							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
 						);

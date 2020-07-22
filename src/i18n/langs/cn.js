@@ -130,6 +130,7 @@ const cn = {
 		creationTime: '创建时间',
 		state: '状态',
 		executionTime: '本次执行时间',
+		finishTime: '本次结束时间',
 		inputNumber: '本次输入',
 		outputNumber: '本次输出',
 		rowCount: '条数',

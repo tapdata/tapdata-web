@@ -856,7 +856,7 @@ export default {
 				data.status = 'scheduled';
 				data.executeMode = 'normal';
 				this.loading = true;
-				self.doSave(data, err => {
+				self.doSave(data, (err, rest) => {
 					if (err) {
 						this.$message.error(err.response.data);
 					} else {
@@ -865,7 +865,7 @@ export default {
 						self.$router.push({
 							path: '/job',
 							query: {
-								id: data.id,
+								id: rest.id,
 								isMoniting: true
 							}
 						});
