@@ -163,38 +163,45 @@ export default {
 		'model.tableName': {
 			immediate: true,
 			handler() {
-				let schemas = tempSchemas,
-					self = this;
-				if (this.schemaSelectConfig.options.length > 0) {
-					if (this.model.tableName) {
-						let schema = schemas.filter(s => s.table_name === this.model.tableName);
-						schema = schema && schema.length > 0 ? schema[0] : {};
-						let params = {
-							filter: JSON.stringify({
-								where: {
-									id: schema.id,
-									is_deleted: false
-								}
-							})
-						};
-						self.loading = true;
-						MetadataInstances.get(params).then(res => {
-							if (res.statusText === 'OK' || res.status === 200) {
-								let fields = res.data[0].fields;
-								let primaryKeys = fields
-									.filter(f => f.primary_key_position > 0)
-									.map(f => f.field_name)
-									.join(',');
-								self.primaryKeyOptions = fields.map(f => f.field_name);
-								if (primaryKeys) {
-									self.model.primaryKeys = primaryKeys;
-								} else {
-									self.model.primaryKeys = '';
-								}
-								self.$emit('schemaChange', _.cloneDeep(res.data[0]));
+				let self = this;
+				if (tempSchemas.length > 0) {
+					let schemas = tempSchemas.filter(s => s.table_name === this.model.tableName);
+					if (schemas && schemas.length > 0) this.model.tableId = schemas[0].id;
+				}
+
+				if (this.model.tableId) {
+					let params = {
+						filter: JSON.stringify({
+							where: {
+								id: this.model.tableId,
+								is_deleted: false
 							}
-						});
-					}
+						})
+					};
+					self.loading = true;
+					MetadataInstances.get(params).then(res => {
+						if (res.statusText === 'OK' || res.status === 200) {
+							let fields = res.data[0].fields;
+							fields.forEach(it => {
+								it.table_name = self.model.tableName;
+								if (it.unique) it.key = it.unique;
+								it.dataType = it.data_code;
+								if (typeof it['is_nullable'] == 'string') it.is_nullable = it['is_nullable'] == 'YES';
+								if (!it['original_field_name']) it['original_field_name'] = it['field_name'] || '';
+							});
+							let primaryKeys = fields
+								.filter(f => f.primary_key_position > 0)
+								.map(f => f.field_name)
+								.join(',');
+							self.primaryKeyOptions = fields.map(f => f.field_name);
+							if (primaryKeys) {
+								self.model.primaryKeys = primaryKeys;
+							} else {
+								self.model.primaryKeys = '';
+							}
+							self.$emit('schemaChange', _.cloneDeep(res.data[0]));
+						}
+					});
 				}
 				this.taskData.tableName = this.model.tableName;
 			}
@@ -373,8 +380,10 @@ export default {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			this.model = {
 				connectionId: '',
+				connectionName: '',
 				databaseType: '',
 				tableName: '',
+				tableId: '',
 				sql: '',
 				dropTable: false,
 				type: 'table',
@@ -390,6 +399,7 @@ export default {
 					this.model.enableInitialOrder = true;
 				}
 			}
+			tempSchemas.length = 0;
 			this.isSourceDataNode = isSourceDataNode;
 			this.loadDataModels(this.model.connectionId);
 			if (this.model.connectionId) {
