@@ -42,7 +42,7 @@
 						<span class="info-text">{{ $moment(flow.startTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
 					</div>
 					<div v-if="flow.finishTime" class="info-list">
-						<span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
+						<span class="info-label">{{ $t('dataFlow.finishTime') }}:</span>
 						<span class="info-text">{{ flow.finishTime }}</span>
 					</div>
 					<div class="info-list">
