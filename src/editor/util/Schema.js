@@ -55,7 +55,7 @@ export const /**
 		log('Schema.convertSchemaToTreeData', arguments);
 		if (schema) {
 			let entityData = {
-				name: schema.table_name,
+				name: schema.table_name || schema.name,
 				type: schema.meta_type || 'table',
 				fields: []
 			};
