@@ -129,6 +129,7 @@ const tc = {
 		creationTime: '創建時間',
 		state: '狀態',
 		executionTime: '本次執行時間',
+		finishTime: '本次結束時間',
 		inputNumber: '本次輸入',
 		outputNumber: '本次輸出',
 		rowCount: '條數',

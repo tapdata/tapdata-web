@@ -130,6 +130,7 @@ const en = {
 		creationTime: 'Create Time',
 		state: 'State',
 		executionTime: 'Lapsed Time',
+		finishTime: 'finish Time',
 		inputNumber: 'Input Total',
 		outputNumber: 'Output Total',
 		rowCount: 'Records',
