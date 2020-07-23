@@ -424,6 +424,10 @@ export default {
 						this.model.joinTable.joinKeys = initialAssociationPKs;
 					}
 				}
+				// 日志挖掘
+				if (sourceCell.get('type') === 'app.Logminer') {
+					this.model.joinTable.joinType = 'append';
+				}
 			}
 
 			this.$emit(EditorEventType.RESIZE);

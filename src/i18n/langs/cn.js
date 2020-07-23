@@ -522,10 +522,11 @@ const cn = {
 					reservationTable: '保留表',
 					exclusionTable: '排除表',
 					nodeFunDes: '节点功能说明',
-					function: '功 能',
+					function: '功              能',
 					functionContent:
 						'此节点用于采集指定数据库和表的日志，保存到MongoDB数据库，共享日志数据不需要重复开 启日志采集进程，能极大缓解源库资源的占用和浪费。',
-					connectionTarget: '只能连接Collection节点',
+					connectionTarget: '连接目标',
+					connectionText: '只能连接Collection节点',
 					tableFilter: {
 						placeSletSource: '请选择采集的数据源',
 						tableFilter: ' 请选择要保留的表',

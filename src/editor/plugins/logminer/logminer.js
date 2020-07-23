@@ -1,8 +1,6 @@
 import { options } from '../../lib/rappid/config';
 import LogminerAttribute from './LogminerAttribute';
 import { FORM_DATA_KEY } from '../../constants';
-import log from '../../../log';
-import { uuid } from '../../util/Schema';
 import i18n from '../../../i18n/i18n';
 
 export const logminerConfig = {
@@ -18,8 +16,7 @@ export const logminerConfig = {
 					text: i18n.t('editor.cell.data_node.logminer.name')
 				},
 				[FORM_DATA_KEY]: {
-					type: 'aggregation_processor',
-					form: {}
+					type: 'logminer'
 				}
 			}
 		},
@@ -92,30 +89,16 @@ export const logminerConfig = {
 			validate(data) {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
-				log("aaaaaaaaa$$$",data)
-				if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
 
-				if (!data.name) throw new Error(`${name}: ${i18n.t('editor.cell.validate.empty_name')}`);
-				let aggFunctionArr = [];
-				if (data.aggregations && data.aggregations.length > 0) {
-					data.aggregations.forEach(item => {
-						aggFunctionArr.push(item.name);
-						if (!item.aggFunction)
-							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_function')}`);
-						if (!item.groupByExpression)
-							throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_group')}`);
-						if (!item.aggExpression && item.aggFunction !== 'COUNT')
-							throw new Error(
-								`${name}: ${i18n.t('editor.cell.processor.aggregate.none_aggregation_expression')}`
-							);
-						if (!item.name)
-							throw new Error(
-								`${name}: ${i18n.t('editor.cell.processor.aggregate.none_subprocessingName')}`
-							);
+				if (!data.name) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.logminer.validate.name')}`);
+				if (data.logCollectorSettings && data.logCollectorSettings.length > 0) {
+					data.logCollectorSettings.forEach(item => {
+						if (!item.connectionId)
+							throw new Error(`${name}: ${i18n.t('editor.cell.data_node.logminer.validate.source')}`);
+						if (item.selectType !== 'allTables' && !item.includeTables)
+							throw new Error(`${name}: ${i18n.t('editor.cell.data_node.logminer.validate.table')}`);
 					});
 				}
-				if (new Set(aggFunctionArr).size !== aggFunctionArr.length)
-					throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.name_notRepeated')}`);
 				return true;
 			}
 		}

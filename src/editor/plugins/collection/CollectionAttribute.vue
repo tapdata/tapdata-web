@@ -541,9 +541,19 @@ export default {
 					this.model.enableInitialOrder = true;
 				}
 			}
+
 			this.isSourceDataNode = isSourceDataNode;
 			this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema());
 			editorMonitor = vueAdapter.editor;
+
+			let getCellData = vueAdapter.editor.graph.graph.getCells();
+
+			if (getCellData && getCellData.length) {
+				if (getCellData[0].get('type') === 'app.Logminer') {
+					this.model.dropTable = true;
+				}
+			}
+			// let sourceType = '';
 		},
 		getData() {
 			let result = _.cloneDeep(this.model);
