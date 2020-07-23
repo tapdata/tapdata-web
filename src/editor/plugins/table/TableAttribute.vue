@@ -179,16 +179,9 @@ export default {
 						})
 					};
 					self.loading = true;
-					MetadataInstances.get(params).then(res => {
+					MetadataInstances.schema(params).then(res => {
 						if (res.statusText === 'OK' || res.status === 200) {
-							let fields = res.data[0].fields;
-							fields.forEach(it => {
-								it.table_name = self.model.tableName;
-								if (it.unique) it.key = it.unique;
-								it.dataType = it.data_code;
-								if (typeof it['is_nullable'] == 'string') it.is_nullable = it['is_nullable'] == 'YES';
-								if (!it['original_field_name']) it['original_field_name'] = it['field_name'] || '';
-							});
+							let fields = res.data.records[0].schema.tables[0].fields;
 							let primaryKeys = fields
 								.filter(f => f.primary_key_position > 0)
 								.map(f => f.field_name)
@@ -199,7 +192,7 @@ export default {
 							} else {
 								self.model.primaryKeys = '';
 							}
-							self.$emit('schemaChange', _.cloneDeep(res.data[0]));
+							self.$emit('schemaChange', _.cloneDeep(res.data.records[0].schema.tables[0]));
 						}
 					});
 				}
