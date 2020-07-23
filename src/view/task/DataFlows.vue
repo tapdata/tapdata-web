@@ -85,21 +85,25 @@
 								<div class="task-list-menu-right">
 									<el-button class="back-btn-icon-box dv-btn-icon" @click="handleGoFuntion"
 										><i class="iconfont icon-hanshu back-btn-icon"></i
-									></el-button>
+										><span> {{ $t('dataFlow.taskBulkFx') }}</span></el-button
+									>
 									<el-button
 										class="back-btn-icon-box dv-btn-icon"
 										@click="handleClassify"
 										v-show="multipleSelection.length > 0"
 									>
 										<i class="iconfont icon-biaoqian back-btn-icon"></i
-									></el-button>
+										><span> {{ $t('dataFlow.taskBulkTag') }}</span></el-button
+									>
 									<el-button class="back-btn-icon-box dv-btn-icon" @click="handleImport"
 										><i class="iconfont icon-daoru back-btn-icon"></i
-									></el-button>
+										><span> {{ $t('dataFlow.bulkExport') }}</span></el-button
+									>
 									<el-dropdown @command="handleCommand" v-show="multipleSelection.length > 0">
 										<el-button class="back-btn-icon-box dv-btn-icon"
 											><i class="iconfont icon-piliang back-btn-icon"></i
-										></el-button>
+											><span> {{ $t('dataFlow.taskBulkOperation') }}</span></el-button
+										>
 										<el-dropdown-menu slot="dropdown">
 											<el-dropdown-item command="a">{{
 												$t('dataFlow.bulkExport')
@@ -142,14 +146,15 @@
 						:default-sort="{ prop: flowProp, order: flowOrder }"
 					>
 						<el-table-column type="selection" width="45" :selectable="handleSelectable"> </el-table-column>
-						<el-table-column prop="name" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
-						</el-table-column>
 						<el-table-column
-							sortable="custom"
-							:label="$t('dataFlow.creatdor')"
-							width="180"
-							prop="user.email"
-						></el-table-column>
+							:label="$t('dataFlow.taskName') + '/' + $t('dataFlow.creatdor')"
+							:show-overflow-tooltip="true"
+						>
+							<template slot-scope="scope">
+								<span>{{ scope.row.name }}</span>
+								<div style="margin-left: 20px">{{ scope.row.user ? scope.row.user.email : '' }}</div>
+							</template>
+						</el-table-column>
 						<el-table-column prop="status" sortable="custom" :label="$t('dataFlow.taskStatus')" width="180">
 							<template slot-scope="scope">
 								<div>
@@ -1177,7 +1182,8 @@ export default {
 }
 .back-btn-icon-box,
 .add-btn-icon-box {
-	width: 28px;
+	width: auto;
+	min-width: 28px;
 	height: 28px;
 	display: inline-block;
 	border-radius: 4px;
@@ -1186,7 +1192,7 @@ export default {
 	cursor: pointer;
 	background: #48b6e2;
 	border: 0;
-	color: red;
+	color: #666;
 	-webkit-appearance: none;
 	text-align: center;
 	-webkit-box-sizing: border-box;
@@ -1196,8 +1202,8 @@ export default {
 	-webkit-transition: 0.1s;
 	transition: 0.1s;
 	font-weight: normal;
-	padding: 0;
-	font-size: 14px;
+	padding: 0 10px;
+	font-size: 12px;
 }
 .dv-btn-icon {
 	background: #f5f5f5;
