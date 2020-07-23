@@ -2,6 +2,41 @@ import enLocale from 'element-ui/lib/locale/lang/en';
 
 const en = {
 	...enLocale,
+	app: {
+		menu: {
+			dashboard: 'Dashboard',
+			dataSource: 'Data Source',
+			connections: 'Connections',
+			connection: 'Create Connection',
+			dataFlows: 'Data Collect',
+			dataGovernance: 'Data Governance',
+			metadataDefinition: 'Data Catalog',
+			dataQuality: 'Data Quality',
+			timeToLive: 'Time To Live',
+			dataMap: 'Data Lineage',
+			dataRules: 'Data Rules',
+			dictionary: 'Dictionary model',
+			dataPublish: 'Data Publish',
+			apiPublic: 'API Management',
+			dataExplorer: 'API Data Explorer',
+			apiDocAndTest: 'API Doc&Test',
+			apiAnalysis: 'API Stats',
+			applications: 'API Clients',
+			apiServers: 'API Server',
+			oldDataCollect: 'Data Collect(Old)',
+			dataCollect: 'Jobs',
+			system: 'System',
+			tasks: 'Schedule Tasks',
+			agentdownload: 'Agent Download',
+			clusterManagement: 'Cluster management',
+			agents: 'Agents',
+			serversOversee: 'Servers Oversee',
+			users: 'User Management',
+			journal: 'User action log',
+			roles: 'Roles',
+			settings: 'Settings'
+		}
+	},
 	message: {
 		api: {
 			get: {

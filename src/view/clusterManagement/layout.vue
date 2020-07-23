@@ -1,9 +1,9 @@
 <template>
 	<div class="tapHeader">
 		<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-			<el-menu-item index="1"
-				><i class="icon iconfont iconjiqunzhuangtai"></i>{{ $t('message.serviceCluMange') }}</el-menu-item
-			>
+			<el-menu-item index="1">
+				<i class="icon iconfont iconjiqunzhuangtai"></i>{{ $t('message.serviceCluMange') }}
+			</el-menu-item>
 			<el-menu-item index="2"><i class="icon iconfont iconrizhi"></i>{{ $t('message.statusLog') }}</el-menu-item>
 		</el-menu>
 		<!-- <el-select v-model="langType" class="changeLangType" size="mini" @change="changeLangType">
@@ -12,7 +12,8 @@
           <el-option value="tc" label="中文繁體"></el-option>
     </el-select> -->
 		<div class="main">
-			<router-view />
+			<ClusterManagement v-if="activeIndex == 1"></ClusterManagement>
+			<DailyRecord v-else></DailyRecord>
 			<!-- <el-row class="fun_area">
         <el-col :span="8">
           <div class="demo-input-suffix">
@@ -30,7 +31,13 @@
 	</div>
 </template>
 <script>
+import ClusterManagement from './clusterManagement';
+import DailyRecord from './dailyRecord';
 export default {
+	components: {
+		ClusterManagement,
+		DailyRecord
+	},
 	data() {
 		return {
 			activeIndex: '1',
@@ -39,11 +46,12 @@ export default {
 	},
 	methods: {
 		handleSelect(key) {
-			if (key === '1') {
-				this.$router.push({ name: 'clusterManagement' });
-			} else if (key === '2') {
-				this.$router.push({ name: 'dailyRecord' });
-			}
+			this.activeIndex = key;
+			// if (key === '1') {
+			// 	this.$router.push({ name: 'clusterManagement' });
+			// } else if (key === '2') {
+			// 	this.$router.push({ name: 'dailyRecord' });
+			// }
 		}
 		// changeLangType(type){
 		//   localStorage.setItem('locale',type);

@@ -2,6 +2,41 @@ import zhLocale from 'element-ui/lib/locale/lang/zh-CN';
 
 const cn = {
 	...zhLocale,
+	app: {
+		menu: {
+			dashboard: '控制台',
+			dataSource: '数据源',
+			connections: '连接列表',
+			connection: '新建连接',
+			dataFlows: '数据采集',
+			dataGovernance: '数据治理',
+			metadataDefinition: '数据目录',
+			dataQuality: '数据质量',
+			timeToLive: '生命周期管理',
+			dataMap: '数据地图',
+			dataRules: '数据规则',
+			dictionary: '字典模板',
+			dataPublish: '数据发布',
+			apiPublic: 'API 发布',
+			dataExplorer: 'API 数据浏览',
+			apiDocAndTest: 'API 文档及测试',
+			apiAnalysis: 'API 统计分析',
+			applications: 'API 客户端',
+			apiServers: 'API 服务器',
+			oldDataCollect: '数据采集(旧版)',
+			dataCollect: '任务列表',
+			system: '系统管理',
+			tasks: '调度任务',
+			agentdownload: '代理下载',
+			clusterManagement: '集群管理',
+			agents: '进程管理',
+			serversOversee: '运维',
+			users: '用户管理',
+			journal: '用户操作日志',
+			roles: '角色管理',
+			settings: '系统设置'
+		}
+	},
 	message: {
 		api: {
 			get: {

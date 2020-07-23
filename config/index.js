@@ -21,11 +21,15 @@ module.exports = {
 			'/ws': {
 				target: 'ws://backend:3030',
 				changeOrigin: false
+			},
+			'/old': {
+				target: 'http://localhost:8081/',
+				changeOrigin: false
 			}
 		},
 
 		// Various Dev Server settings
-		port: 8081, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+		port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
 		autoOpenBrowser: true,
 		errorOverlay: true,
 		notifyOnErrors: true,
@@ -44,7 +48,7 @@ module.exports = {
 		 */
 
 		// https://webpack.js.org/configuration/devtool/#development
-		devtool: 'cheap-module-eval-source-map',
+		devtool: 'source-map',
 
 		// If you have problems debugging vue-files in devtools,
 		// set this to false - it *may* help

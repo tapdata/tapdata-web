@@ -2,6 +2,41 @@ import tcLocale from 'element-ui/lib/locale/lang/zh-TW';
 
 const tc = {
 	...tcLocale,
+	app: {
+		menu: {
+			dashboard: '控制台',
+			dataSource: '資料來源',
+			connections: '連接清單',
+			connection: '新建連接',
+			dataFlows: '資料獲取',
+			dataGovernance: '數據治理',
+			metadataDefinition: '數據目錄',
+			dataQuality: '數據質量',
+			timeToLive: '生命週期管理',
+			dataMap: '數據地圖',
+			dataRules: '數據規則',
+			dictionary: '字典範本',
+			dataPublish: '數據發佈',
+			apiPublic: 'API發佈',
+			dataExplorer: 'API數據瀏覽',
+			apiDocAndTest: 'API檔案及測試',
+			apiAnalysis: 'API統計分析',
+			applications: 'API用戶端',
+			apiServers: 'API服務器',
+			oldDataCollect: '資料獲取（舊版）',
+			dataCollect: '任務清單',
+			system: '系統管理',
+			tasks: '調度任務',
+			agentdownload: '代理下載',
+			clusterManagement: '集羣管理',
+			agents: '進程管理',
+			serversOversee: '運維',
+			users: '用戶管理',
+			journal: '用戶操作日誌',
+			roles: '角色管理',
+			settings: '系統設置'
+		}
+	},
 	message: {
 		api: {
 			get: {
