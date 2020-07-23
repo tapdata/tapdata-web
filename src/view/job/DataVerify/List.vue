@@ -131,33 +131,38 @@
 						</el-col>
 					</el-row>
 					<el-row v-show="type !== 'advance'">
-						<el-checkbox v-model="checkedSource"></el-checkbox>
-						<span class="JS-label displayInline" v-if="opSource[0] && opSource[0].databaseType == 'mongodb'"
-							>MQL {{ $t('dataVerify.filter') }}</span
-						>
-						<span v-else class="JS-label displayInline">SQL {{ $t('dataVerify.filter') }}</span>
-					</el-row>
-					<el-row v-show="checkedSource && type !== 'advance'">
-						<span
-							v-if="opSource[0] && opSource[0].databaseType !== 'mongodb'"
-							class="JS-label displayInline"
-							>{{ `select count(1) from ${opSource[0].tableName} where` }}</span
-						>
-						<span
-							v-if="opSource[0] && opSource[0].databaseType === 'mongodb'"
-							class="JS-label displayInline"
-							>{{ `db.${opSource[0].tableName}.find ({` }}</span
-						>
-						<el-col :span="24">
-							<el-input
-								:rows="7"
-								type="textarea"
-								v-model="formData.sourceFilter"
-								@input="handleForceUpdate"
-								:placeholder="$t('dataVerify.SQL')"
-							></el-input>
-						</el-col>
-						<div v-if="opSource[0] && opSource[0].databaseType == 'mongodb'" class="JS-label">})</div>
+						<div v-if="opSource[0] && opSource[0].databaseType && opSource[0].databaseType === 'mongodb'">
+							<el-checkbox v-model="checkedSource"></el-checkbox>
+							<span>MQL</span>
+							<span class="JS-label displayInline">{{ $t('dataVerify.filterMQL') }}</span>
+							<div v-show="checkedSource">
+								<el-input
+									:rows="7"
+									type="textarea"
+									v-model="formData.sourceFilter"
+									@input="handleForceUpdate"
+									:placeholder="
+										type === 'hash' ? $t('dataVerify.exampleHashMQL') : $t('dataVerify.exampleMQL')
+									"
+								></el-input>
+							</div>
+						</div>
+						<div v-else>
+							<el-checkbox v-model="checkedSource"></el-checkbox>
+							<span>SQL</span>
+							<span class="JS-label displayInline">{{ $t('dataVerify.filterSQL') }}</span>
+							<div v-show="checkedSource">
+								<el-input
+									:rows="7"
+									type="textarea"
+									v-model="formData.sourceFilter"
+									@input="handleForceUpdate"
+									:placeholder="
+										type === 'hash' ? $t('dataVerify.exampleHashSQL') : $t('dataVerify.exampleSQL')
+									"
+								></el-input>
+							</div>
+						</div>
 					</el-row>
 				</el-form-item>
 				<el-form-item>
@@ -185,33 +190,34 @@
 						</el-col>
 					</el-row>
 					<el-row v-show="type === 'row'">
-						<el-checkbox v-model="checkedTarget"></el-checkbox>
-						<span v-if="opTarget[0] && opTarget[0].databaseType == 'mongodb'">
-							<span class="JS-label displayInline">MQL {{ $t('dataVerify.filter') }}</span>
-						</span>
-						<span v-else class="JS-label displayInline">SQL {{ $t('dataVerify.filter') }}</span>
-					</el-row>
-					<el-row v-show="checkedTarget && type === 'row'">
-						<span
-							v-if="opTarget[0] && opTarget[0].databaseType == 'mongodb' && formData.type !== 'hash'"
-							class="JS-label displayInline"
-							>{{ `db.${opTarget[0].tableName}.find ({` }}</span
-						>
-						<span
-							v-if="opTarget[0] && opTarget[0].databaseType !== 'mongodb' && formData.type !== 'hash'"
-							class="JS-label displayInline"
-							>{{ `select count(1) from ${opTarget[0].tableName} where` }}</span
-						>
-						<el-col :span="24">
-							<el-input
-								type="textarea"
-								v-model="formData.targetFilter"
-								@input="handleForceUpdate"
-								:rows="7"
-								:placeholder="$t('dataVerify.SQL')"
-							></el-input>
-						</el-col>
-						<div v-if="opTarget[0] && opTarget[0].databaseType == 'mongodb'" class="JS-label">})</div>
+						<div v-if="opTarget[0] && opTarget[0].databaseType && opTarget[0].databaseType === 'mongodb'">
+							<el-checkbox v-model="checkedTarget"></el-checkbox>
+							<sapn>MQL</sapn>
+							<span class="JS-label displayInline">{{ $t('dataVerify.filterMQL') }}</span>
+							<div v-show="checkedTarget">
+								<el-input
+									:rows="7"
+									type="textarea"
+									v-model="formData.targetFilter"
+									@input="handleForceUpdate"
+									:placeholder="$t('dataVerify.exampleMQL')"
+								></el-input>
+							</div>
+						</div>
+						<div v-else>
+							<el-checkbox v-model="checkedTarget"></el-checkbox>
+							<span>SQL</span>
+							<span class="JS-label displayInline">{{ $t('dataVerify.filterSQL') }}</span>
+							<div v-show="checkedTarget">
+								<el-input
+									:rows="7"
+									type="textarea"
+									v-model="formData.targetFilter"
+									@input="handleForceUpdate"
+									:placeholder="$t('dataVerify.exampleSQL')"
+								></el-input>
+							</div>
+						</div>
 					</el-row>
 				</el-form-item>
 				<el-form-item>
@@ -378,7 +384,8 @@ export default {
 				this.$message.error('please select target SQL/MQL');
 				return;
 			}
-			if (!this.checkedTarget) {
+			if (!this.checkedTarget || this.formData.type === 'hash') {
+				this.checkedTarget = false;
 				this.formData.targetFilter = '';
 			}
 			if (!this.checkedSource) {
