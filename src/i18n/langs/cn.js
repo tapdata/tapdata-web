@@ -94,6 +94,7 @@ const cn = {
 		implementationModalities: '执行方式',
 		submitConfirmation: '提交确认',
 		SyncPoint: '同步节点',
+		syncType: '同步类型',
 		SyncInfo: {
 			localTZ: '当前时区传输时间：系统所在时区下，开始传输任务的时刻',
 			current: '当前时区时间：默认当前时间',

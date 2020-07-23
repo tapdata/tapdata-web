@@ -93,6 +93,7 @@ const tc = {
 		implementationModalities: '執行方式',
 		submitConfirmation: '提交確認',
 		SyncPoint: '同步節點',
+		syncType: '同步類型',
 		SyncInfo: {
 			localTZ: '當前時區傳輸時間：系統所在時區下，開始傳輸任務的時刻',
 			current: '當前時區時間：默認當前時間',

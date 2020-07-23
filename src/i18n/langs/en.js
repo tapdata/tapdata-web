@@ -94,6 +94,7 @@ const en = {
 		implementationModalities: 'Execution method',
 		submitConfirmation: 'Submit Confirmation',
 		SyncPoint: 'Sync Node',
+		syncType: 'Sync type',
 		SyncInfo: {
 			localTZ: 'Local UTC CDC time: custom a point of  CDC time，in local time zone',
 			current: 'Local UTC：default local UTC time',

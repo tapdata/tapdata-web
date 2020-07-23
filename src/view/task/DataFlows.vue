@@ -152,8 +152,12 @@
 						>
 							<template slot-scope="scope">
 								<span>{{ scope.row.name }}</span>
-								<div style="margin-left: 20px">{{ scope.row.user ? scope.row.user.email : '' }}</div>
+								<div style="margin-left: 20px;color:#ccc">
+									{{ scope.row.user ? scope.row.user.email : '' }}
+								</div>
 							</template>
+						</el-table-column>
+						<el-table-column prop="setting.sync_type" :label="$t('dataFlow.syncType')" width="120">
 						</el-table-column>
 						<el-table-column prop="status" sortable="custom" :label="$t('dataFlow.taskStatus')" width="180">
 							<template slot-scope="scope">
