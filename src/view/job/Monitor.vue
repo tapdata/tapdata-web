@@ -39,7 +39,7 @@
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
-						<span class="info-text">{{ $moment(flow.startTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+						<span class="info-text">{{ flow.startTime }}</span>
 					</div>
 					<div v-if="flow.finishTime" class="info-list">
 						<span class="info-label">{{ $t('dataFlow.finishTime') }}:</span>
@@ -423,6 +423,7 @@ export default {
 			handler(val) {
 				this.flow = val;
 				this.flow.createTime = val.createTime ? this.$moment(val.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
+				this.flow.startTime = val.startTime ? this.$moment(val.startTime).format('YYYY-MM-DD HH:mm:ss') : '--';
 				this.flow.finishTime = val.finishTime
 					? this.$moment(val.finishTime).format('YYYY-MM-DD HH:mm:ss')
 					: false;
