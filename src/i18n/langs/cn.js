@@ -286,7 +286,12 @@ const cn = {
 		afterSubmission: '提交后必须',
 		runNomally: '才能正常运行',
 		editLayerTip: ' 否则可能导致异常错误，请问您要继续编辑吗?',
-		continueEditing: '继续编辑'
+		continueEditing: '继续编辑',
+		setting: {
+			distinctWriteType: '数据写入去重处理',
+			intellect: '智能去重写入',
+			compel: '强制去重写入'
+		}
 	},
 	connection: {
 		status: {

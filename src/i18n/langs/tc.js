@@ -285,7 +285,12 @@ const tc = {
 		afterSubmission: '提交後必須',
 		runNomally: '才能正常運行',
 		editLayerTip: ' 否則可能導致異常錯誤，請問您要繼續編輯嗎?',
-		continueEditing: '繼續編輯'
+		continueEditing: '繼續編輯',
+		setting: {
+			distinctWriteType: '數據寫入去重處理',
+			intellect: '智能去重寫入',
+			compel: '強制去重寫入'
+		}
 	},
 	connection: {
 		status: {

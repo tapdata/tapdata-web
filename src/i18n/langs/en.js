@@ -288,7 +288,12 @@ const en = {
 		afterSubmission: 'the job should be',
 		runNomally: 'to make sure the job running correctly;',
 		editLayerTip: 'otherwise the job will be abnormal, continue？',
-		continueEditing: 'Still Edit'
+		continueEditing: 'Still Edit',
+		setting: {
+			distinctWriteType: 'Data write deduplication processing',
+			intellect: 'Intelligent de-rewrite',
+			compel: 'Force de-rewrite'
+		}
 	},
 	connection: {
 		status: {
