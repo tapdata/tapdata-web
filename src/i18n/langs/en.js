@@ -514,36 +514,36 @@ const en = {
 							}
 						}
 					}
-				}
-			},
-			logminer: {
-				add: 'Add',
-				day: 'day',
-				name: 'Log mining',
-				tip: 'Log Miner',
-				miningLogTime: 'Mining log time',
-				logSaveTime: 'Log save time',
-				logSourceSetting: 'Log source setting',
-				currentTimeZone: 'Current Time Zone',
-				databaseTimeZone: 'Database Time Zone',
-				allTables: 'All tables',
-				reservationTable: 'Reservation Table',
-				exclusionTable: 'Exclusion Table',
-				nodeFunDes: 'Node function description',
-				function: 'Function',
-				functionContent:
-					'This node is used to collect logs from specified source databases to save to target MongoDB database share log data, in order to avoid the action of repeatedly starting the logging process to greatly alleviate theoccupation and waste of source database resources. ',
-				connectionTarget: 'Connection Target',
-				connectionText: 'COLLECTION nodes',
-				tableFilter: {
-					placeSletSource: 'Please select the source of the collected data',
-					tableFilter: 'Please select the table to keep',
-					placeholderDelete: 'Please select the table to exclude'
 				},
-				validate: {
-					name: 'Node name cannot be empty',
-					source: 'Data source cannot be empty',
-					table: 'Data table cannot be empty'
+				logminer: {
+					add: 'Add',
+					day: 'day',
+					name: 'Log mining',
+					tip: 'Log Miner',
+					miningLogTime: 'Mining log time',
+					logSaveTime: 'Log save time',
+					logSourceSetting: 'Log source setting',
+					currentTimeZone: 'Current Time Zone',
+					databaseTimeZone: 'Database Time Zone',
+					allTables: 'All tables',
+					reservationTable: 'Reservation Table',
+					exclusionTable: 'Exclusion Table',
+					nodeFunDes: 'Node function description',
+					function: 'Function',
+					functionContent:
+						'This node is used to collect logs from specified source databases to save to target MongoDB database share log data, in order to avoid the action of repeatedly starting the logging process to greatly alleviate theoccupation and waste of source database resources. ',
+					connectionTarget: 'Connection Target',
+					connectionText: 'COLLECTION nodes',
+					tableFilter: {
+						placeSletSource: 'Please select the source of the collected data',
+						tableFilter: 'Please select the table to keep',
+						placeholderDelete: 'Please select the table to exclude'
+					},
+					validate: {
+						name: 'Node name cannot be empty',
+						source: 'Data source cannot be empty',
+						table: 'Data table cannot be empty'
+					}
 				}
 			},
 			processor: {

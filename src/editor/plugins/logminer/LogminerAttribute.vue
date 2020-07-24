@@ -16,14 +16,25 @@
 				<el-col :span="11">
 					<el-form-item :label="$t('editor.cell.data_node.logminer.miningLogTime')" required>
 						<el-select v-model="model.syncPoint.type" @change="changeTimeZone">
-							<el-option v-for="item in timeZoneList" :key="item" :label="item" :value="item">
+							<el-option
+								v-for="item in timeZoneList"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value"
+							>
 							</el-option>
 						</el-select>
 					</el-form-item>
 				</el-col>
 				<el-col :span="11">
 					<el-form-item style="margin-top: 26px;">
-						<el-date-picker v-model="model.syncPoint.date" type="datetime"> </el-date-picker>
+						<el-date-picker
+							format="yyyy-MM-dd HH:mm:ss"
+							v-model="model.syncPoint.date"
+							type="datetime"
+							:disabled="model.syncPoint.type === 'current'"
+						>
+						</el-date-picker>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -52,6 +63,9 @@
 						:prop="'logCollectorSettings.' + index + '.connectionId'"
 						required
 					>
+						<el-tooltip :content="item.name || item.connectionId" placement="left-start">
+							<span>{{ item.name || item.connectionId }}</span>
+						</el-tooltip>
 						<el-select
 							v-model="item.connectionId"
 							:placeholder="$t('editor.cell.data_node.logminer.tableFilter.placeSletSource')"
@@ -162,7 +176,20 @@ export default {
 			connectionList: [], // 连接数组
 
 			logSaveList: [1, 2, 3, 4, 5, 6, 7],
-			timeZoneList: ['connTZ', 'localTZ', 'current'],
+			timeZoneList: [
+				{
+					label: this.$t('dataFlow.SyncInfo.localTZType'),
+					value: 'localTZ'
+				},
+				{
+					label: this.$t('dataFlow.SyncInfo.connTZType'),
+					value: 'connTZ'
+				},
+				{
+					label: this.$t('dataFlow.SyncInfo.currentType'),
+					value: 'current'
+				}
+			],
 			tableTypeList: [
 				{ label: this.$t('editor.cell.data_node.logminer.allTables'), value: 'allTables' },
 				{ label: this.$t('editor.cell.data_node.logminer.reservationTable'), value: 'reservationTable' },

@@ -507,38 +507,39 @@ const tc = {
 							}
 						}
 					}
-				}
-			},
-			logminer: {
-				add: '添加',
-				day: '天',
-				name: '日誌挖掘',
-				tip: '日誌挖掘器',
-				miningLogTime: '挖掘日誌時間',
-				logSaveTime: '日誌保存時長',
-				logSourceSetting: '日誌源設置',
-				currentTimeZone: '當前時區',
-				databaseTimeZone: '數據庫時區',
-				allTables: '全部表',
-				reservationTable: '保留表',
-				exclusionTable: '排除表',
-				nodeFunDes: '節點功能說明',
-				function: '功 能',
-				functionContent:
-					'此節點用於採集指定數據庫和表的日誌，保存到MongoDB數據庫，共享日誌數據不需要重複開 啟日誌採集進程，能極大緩解源庫資源的佔用和浪費。 ',
-				connectionTarget: '連接目標',
-				connectionText: '只能連接Collection節點',
-				tableFilter: {
-					placeSletSource: '請選擇採集的數據源',
-					tableFilter: ' 請選擇要保留的表',
-					placeholderDelete: '請選擇要排除的表'
 				},
-				validate: {
-					name: '節點名稱不能為空',
-					source: '數據源不能為空',
-					table: '數據表不能為空'
+				logminer: {
+					add: '添加',
+					day: '天',
+					name: '日誌挖掘',
+					tip: '日誌挖掘器',
+					miningLogTime: '挖掘日誌時間',
+					logSaveTime: '日誌保存時長',
+					logSourceSetting: '日誌源設置',
+					currentTimeZone: '當前時區',
+					databaseTimeZone: '數據庫時區',
+					allTables: '全部表',
+					reservationTable: '保留表',
+					exclusionTable: '排除表',
+					nodeFunDes: '節點功能說明',
+					function: '功 能',
+					functionContent:
+						'此節點用於採集指定數據庫和表的日誌，保存到MongoDB數據庫，共享日誌數據不需要重複開 啟日誌採集進程，能極大緩解源庫資源的佔用和浪費。 ',
+					connectionTarget: '連接目標',
+					connectionText: '只能連接Collection節點',
+					tableFilter: {
+						placeSletSource: '請選擇採集的數據源',
+						tableFilter: ' 請選擇要保留的表',
+						placeholderDelete: '請選擇要排除的表'
+					},
+					validate: {
+						name: '節點名稱不能為空',
+						source: '數據源不能為空',
+						table: '數據表不能為空'
+					}
 				}
 			},
+
 			processor: {
 				aggregate: {
 					name: '聚合',
