@@ -259,6 +259,9 @@ export default {
 				data.includeTables = includeArr;
 			} else if (data.selectType === 'reservationTable') {
 				data.includeTables = data.selectTables;
+			} else {
+				data.includeTables = data.includeTablesList;
+				data.selectTables = [];
 			}
 		},
 
@@ -315,6 +318,9 @@ export default {
 						self.model.logCollectorSettings.forEach(i => {
 							if (i.connectionId === ids[0]) {
 								i.includeTablesList = includeTablesList;
+								if (i.selectType === 'allTables') {
+									i.includeTables = i.includeTablesList;
+								}
 							}
 						});
 					}

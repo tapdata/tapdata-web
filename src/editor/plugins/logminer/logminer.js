@@ -17,7 +17,7 @@ export const logminerConfig = {
 				}
 			},
 			[FORM_DATA_KEY]: {
-				type: 'logminer'
+				type: 'log_collect'
 			}
 		},
 		prototypeProperties: {

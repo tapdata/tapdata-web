@@ -119,7 +119,7 @@
 					:label="$t('editor.cell.data_node.collection.form.dropTable.label')"
 					v-if="!isSourceDataNode"
 				>
-					<el-select v-model="model.dropTable" size="mini">
+					<el-select v-model="model.dropTable" size="mini" :disabled="logsFlag">
 						<el-option
 							:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
 							:value="false"
@@ -274,6 +274,7 @@ export default {
 	data() {
 		let self = this;
 		return {
+			logsFlag: false,
 			taskData: {
 				id: '',
 				tableName: ''
@@ -549,7 +550,8 @@ export default {
 			let getCellData = vueAdapter.editor.graph.graph.getCells();
 
 			if (getCellData && getCellData.length) {
-				if (getCellData[0].get('type') === 'app.Logminer') {
+				this.logsFlag = getCellData[0].get('type') === 'app.Logminer' ? true : false;
+				if (this.logsFlag) {
 					this.model.dropTable = true;
 				}
 			}
