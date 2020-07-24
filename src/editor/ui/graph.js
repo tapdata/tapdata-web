@@ -800,7 +800,8 @@ export default class Graph extends Component {
 			setLinkVertices: true,
 			rankDir: 'LR',
 			marginX: 200,
-			marginY: 200
+			marginY: 200,
+			rankSep: 200
 		});
 
 		setTimeout(() => {
