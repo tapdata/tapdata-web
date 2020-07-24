@@ -18,7 +18,12 @@
 						<!-- <el-tooltip placement="left-start">
 							<span>111111</span>
 						</el-tooltip> -->
-						<el-popover class="aggtip" placement="top-start" width="200" trigger="hover">
+						<el-popover class="aggtip" placement="top-start" width="400" trigger="hover">
+							<ul>
+								<li>{{ $t('dataFlow.SyncInfo.localTZ') }}</li>
+								<li>{{ $t('dataFlow.SyncInfo.connTZ') }}</li>
+								<li>{{ $t('dataFlow.SyncInfo.current') }}</li>
+							</ul>
 							<span class="icon iconfont icon-tishi1" slot="reference"></span>
 						</el-popover>
 						<el-select v-model="model.syncPoint.type" @change="changeTimeZone">
@@ -216,11 +221,17 @@ export default {
 	methods: {
 		/**改变时区**/
 		changeTimeZone(val) {
-			if (val === 'localTZ') {
-				this.model.syncPoint.timezone = new Date().getTimezoneOffset() / 60;
-			} else {
+			if (val === 'connTZ') {
 				this.model.syncPoint.timezone = '';
+			} else {
+				let timeZone = new Date().getTimezoneOffset() / 60;
+				if (timeZone > 0) {
+					this.model.syncPoint.timezone = 0 - timeZone;
+				} else {
+					this.model.syncPoint.timezone = '+' + -timeZone;
+				}
 			}
+			this.model.syncPoint.date = '';
 		},
 
 		/**改变表类型**/
