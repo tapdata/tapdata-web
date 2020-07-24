@@ -14,10 +14,10 @@ export const logminerConfig = {
 				},
 				label: {
 					text: i18n.t('editor.cell.data_node.logminer.name')
-				},
-				[FORM_DATA_KEY]: {
-					type: 'logminer'
 				}
+			},
+			[FORM_DATA_KEY]: {
+				type: 'logminer'
 			}
 		},
 		prototypeProperties: {
@@ -27,11 +27,14 @@ export const logminerConfig = {
 					selector: 'portLabel'
 				}
 			],
-			initialize() {
-				this.on('change:' + FORM_DATA_KEY, () => {
-					this.updateOutputSchema();
-				});
+			isDataNode() {
+				return true;
 			},
+			// initialize() {
+			// 	this.on('change:' + FORM_DATA_KEY, () => {
+			// 		this.updateOutputSchema();
+			// 	});
+			// },
 			// mergeOutputSchema(outputSchema) {
 			// 	let data = this.getFormData();
 			// 	log('aggregate.mergeOutputSchema', data, outputSchema);
@@ -63,10 +66,6 @@ export const logminerConfig = {
 			// 	log('Aggregate.mergeOutputSchema', _.cloneDeep(fields), outputSchema);
 			// 	return outputSchema;
 			// },
-
-			isProcess() {
-				return true;
-			},
 
 			/**
 			 * validate this allow connect to target

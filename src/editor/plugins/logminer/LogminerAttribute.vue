@@ -15,6 +15,12 @@
 			<el-row :gutter="30">
 				<el-col :span="11">
 					<el-form-item :label="$t('editor.cell.data_node.logminer.miningLogTime')" required>
+						<!-- <el-tooltip placement="left-start">
+							<span>111111</span>
+						</el-tooltip> -->
+						<el-popover class="aggtip" placement="top-start" width="200" trigger="hover">
+							<span class="icon iconfont icon-tishi1" slot="reference"></span>
+						</el-popover>
 						<el-select v-model="model.syncPoint.type" @change="changeTimeZone">
 							<el-option
 								v-for="item in timeZoneList"
@@ -63,9 +69,6 @@
 						:prop="'logCollectorSettings.' + index + '.connectionId'"
 						required
 					>
-						<el-tooltip :content="item.name || item.connectionId" placement="left-start">
-							<span>{{ item.name || item.connectionId }}</span>
-						</el-tooltip>
 						<el-select
 							v-model="item.connectionId"
 							:placeholder="$t('editor.cell.data_node.logminer.tableFilter.placeSletSource')"
@@ -254,7 +257,7 @@ export default {
 			let result = await connectionApi.get({
 				filter: JSON.stringify({
 					where: {
-						database_type: { in: ['mongodb'] }
+						database_type: { in: ['oracle'] }
 					},
 					fields: {
 						name: 1,
