@@ -3,6 +3,20 @@ import zhLocale from 'element-ui/lib/locale/lang/zh-CN';
 const cn = {
 	...zhLocale,
 	app: {
+		signIn: {
+			slogan: '像自来水一样方便地使用您的数据',
+			signIn: '登录',
+			keepSignIn: '保持登录状态',
+			email_placeholder: '请输入邮箱',
+			password_placeholder: '请输入邮箱',
+
+			email_require: '邮箱地址必填',
+			email_invalid: '请输入有效邮箱地址',
+			password_invalid: '密码至少5个字符',
+			account_waiting_approve: '您的账户还未通过管理员审核',
+			account_disabled: '您的账户已被管理员禁用',
+			permission_denied: '没有权限'
+		},
 		menu: {
 			dashboard: '控制台',
 			dataSource: '数据源',
@@ -17,7 +31,7 @@ const cn = {
 			dataRules: '数据规则',
 			dictionary: '字典模板',
 			dataPublish: '数据发布',
-			apiPublic: 'API 发布',
+			modules: 'API 发布',
 			dataExplorer: 'API 数据浏览',
 			apiDocAndTest: 'API 文档及测试',
 			apiAnalysis: 'API 统计分析',

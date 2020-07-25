@@ -3,6 +3,20 @@ import enLocale from 'element-ui/lib/locale/lang/en';
 const en = {
 	...enLocale,
 	app: {
+		signIn: {
+			slogan: 'Use your data as easily as tap water.',
+			signIn: 'Sign in',
+			keepSignIn: 'Stay logged in',
+			email_placeholder: 'Enter your email',
+			password_placeholder: 'Enter your password',
+
+			email_require: 'E-mail is required.',
+			email_invalid: 'E-mail must be valid.',
+			password_invalid: 'Password at least 5 characters.',
+			account_waiting_approve: 'Your account is waiting administrator to approve.',
+			account_disabled: 'Your account is disabled by administrator.',
+			permission_denied: 'Permission denied.'
+		},
 		menu: {
 			dashboard: 'Dashboard',
 			dataSource: 'Data Source',
@@ -17,7 +31,7 @@ const en = {
 			dataRules: 'Data Rules',
 			dictionary: 'Dictionary model',
 			dataPublish: 'Data Publish',
-			apiPublic: 'API Management',
+			modules: 'API Management',
 			dataExplorer: 'API Data Explorer',
 			apiDocAndTest: 'API Doc&Test',
 			apiAnalysis: 'API Stats',

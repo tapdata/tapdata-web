@@ -3,6 +3,20 @@ import tcLocale from 'element-ui/lib/locale/lang/zh-TW';
 const tc = {
 	...tcLocale,
 	app: {
+		signIn: {
+			slogan: '像自來水一樣方便地使用您的數據',
+			signIn: '登入',
+			keepSignIn: '保持登入狀態',
+			email_placeholder: '請輸入郵箱',
+			password_placeholder: '請輸入郵箱',
+
+			email_require: '郵箱地址必填',
+			email_invalid: '請輸入有效郵箱地址',
+			password_invalid: '密碼至少5個字元',
+			account_waiting_approve: '您的賬戶還未通過管理員審核',
+			account_disabled: '您的賬戶已被管理員禁用',
+			permission_denied: '没有权限'
+		},
 		menu: {
 			dashboard: '控制台',
 			dataSource: '資料來源',
@@ -17,7 +31,7 @@ const tc = {
 			dataRules: '數據規則',
 			dictionary: '字典範本',
 			dataPublish: '數據發佈',
-			apiPublic: 'API發佈',
+			modules: 'API發佈',
 			dataExplorer: 'API數據瀏覽',
 			apiDocAndTest: 'API檔案及測試',
 			apiAnalysis: 'API統計分析',

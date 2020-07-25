@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import factor from '../api/factory';
+import { Loading, Message } from 'element-ui';
 
 const view = path => () => import(`../view/${path}`);
 
@@ -15,7 +17,8 @@ const router = new Router({
 		{
 			path: '/job',
 			name: 'job',
-			component: view('job/Job')
+			component: view('job/Job'),
+			meta: { requiresAuth: true }
 		},
 		{
 			path: '/',
@@ -28,12 +31,6 @@ const router = new Router({
 					name: 'dashboard',
 					component: view('dashboard/Dashboard'),
 					meta: { requiresAuth: true }
-				},
-				{
-					path: '/oldDashboard',
-					name: 'oldDashboard',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/dashboard' }
 				},
 				{
 					path: '/connections',
@@ -78,8 +75,8 @@ const router = new Router({
 					meta: { requiresAuth: true, url: '/old/index.html#/dictionary' }
 				},
 				{
-					path: '/apiPublic',
-					name: 'apiPublic',
+					path: '/modules',
+					name: 'modules',
 					component: view('ExternalLink'),
 					meta: { requiresAuth: true, url: '/old/index.html#/modules' }
 				},
@@ -167,6 +164,7 @@ const router = new Router({
 					component: view('ExternalLink'),
 					meta: { requiresAuth: true, url: '/old/index.html#/settings' }
 				},
+				/*-----------------------------------------------------------------*/
 				{
 					path: '/clusterManagement',
 					name: 'clusterManagement',
@@ -200,8 +198,83 @@ const router = new Router({
 	]
 });
 
-router.beforeEach((to, from, next) => {
-	next();
+let usersModel = factor('users');
+router.beforeEach(async (to, from, next) => {
+	let cookie = window.VueCookie;
+	let token = cookie.get('token');
+	if (token) {
+		//若token存在，获取权限
+		let permissions = sessionStorage.getItem('tapdata_permissions');
+		if (!permissions) {
+			//无权限，说明是首次进入页面，重新请求后台获取
+			let loading = Loading.service({
+				fullscreen: true,
+				lock: true,
+				text: 'Loading...',
+				background: 'rgba(0, 0, 0, 0.7)'
+			});
+			let userId = cookie.get('user_id');
+			let token = cookie.get('token');
+			let result = await usersModel.getPermissions(`/${userId}/permissions?access_token=${token}`);
+			loading.close();
+			if (result.statusText === 'OK' && result.data) {
+				permissions = result.data.permissions || [];
+				if (permissions.length) {
+					//权限存在则存入缓存并继续向下走
+					let menus = [];
+					if (permissions) {
+						permissions.forEach(permission => {
+							if (permission.resources && permission.resources.length > 0) {
+								permission.resources.forEach(res => {
+									if (res.type === 'page') menus.push(res);
+								});
+							}
+						});
+					}
+					sessionStorage.setItem('tapdata_permissions', JSON.stringify(menus));
+				} else {
+					//权限列表为空，说明没有权限进入，执行sign out操作并跳转到登录页面
+					Message.error({
+						message: 'Permission denied'
+					});
+					this.$cookie.delete('token');
+					next('/login');
+					return;
+				}
+			} else {
+				Message.error({
+					message: result.statusText
+				});
+				return;
+			}
+		} else {
+			//若缓存中有权限值，则格式化成json后继续向下走
+			permissions = JSON.parse(permissions);
+		}
+
+		//判断当前路由的页面是否有权限，无权限则不跳转，有权限则执行跳转
+		let matched = true;
+		if (to.meta.requiresAuth) {
+			matched = permissions.some(p => p.name === to.name || p.path === to.path);
+		}
+		if (matched) {
+			if (to.name === 'login') {
+				next('/');
+			} else {
+				next();
+			}
+		} else {
+			Message.error({
+				message: 'Permission denied'
+			});
+		}
+	} else {
+		if (to.name === 'login') {
+			next();
+		} else {
+			next('/login');
+		}
+	}
 });
 
 export default router;

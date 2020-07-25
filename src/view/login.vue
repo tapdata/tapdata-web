@@ -14,25 +14,37 @@
 					</span>
 				</div>
 			</div>
-			<div class="slogan">像自来水一样方便地使用您的数据</div>
+			<div class="slogan">{{ $t('app.signIn.slogan') }}</div>
 		</header>
 		<main>
 			<div class="body">
 				<el-card class="sign-in-panel">
-					<div class="title">登录</div>
-					<div class="error-tips" v-show="errorMessage">{{ errorMessage }}</div>
+					<div class="title">{{ $t('app.signIn.signIn') }}</div>
+					<div class="error-tips" v-show="errorMessage">
+						<i class="el-icon-warning-outline"></i>
+						{{ errorMessage }}
+					</div>
 					<form>
-						<input class="input" type="email" placeholder="请输入邮箱" v-model="form.email" />
+						<input
+							class="input"
+							type="email"
+							:placeholder="$t('app.signIn.email_placeholder')"
+							v-model="form.email"
+						/>
 						<input
 							class="input"
 							type="password"
-							placeholder="密码"
+							:placeholder="$t('app.signIn.password_placeholder')"
 							autocomplete="new-password"
 							v-model="form.password"
 						/>
 					</form>
-					<el-checkbox class="keep-sign-in" v-model="keepSignIn">保持登录状态</el-checkbox>
-					<el-button class="btn-sign-in" type="primary" size="medium" @click="submit">登录</el-button>
+					<el-checkbox class="keep-sign-in" v-model="keepSignIn">
+						{{ $t('app.signIn.keepSignIn') }}
+					</el-checkbox>
+					<el-button class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
+						{{ $t('app.signIn.signIn') }}
+					</el-button>
 				</el-card>
 			</div>
 		</main>
@@ -49,13 +61,14 @@ export default {
 	name: 'SignIn',
 	data() {
 		return {
+			loading: false,
 			languages: Languages,
 			lang: localStorage.getItem('tapdata_localize_lang') || 'sc',
 			form: {
 				email: '',
 				password: ''
 			},
-			keepSignIn: false,
+			keepSignIn: true,
 			errorMessage: ''
 		};
 	},
@@ -64,7 +77,50 @@ export default {
 			localStorage.setItem('tapdata_localize_lang', lang);
 			location.reload();
 		},
-		submit() {}
+		async submit() {
+			let form = this.form;
+			let message = '';
+			if (!form.email || !form.email.trim()) {
+				message = this.$t('app.signIn.email_require');
+				// eslint-disable-next-line
+			} else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)) {
+				message = this.$t('app.signIn.email_invalid');
+			} else if (!form.password || form.password.length < 5) {
+				message = this.$t('app.signIn.password_invalid');
+			}
+			if (message) {
+				this.errorMessage = message;
+				return;
+			}
+			this.loading = true;
+			let usersModel = this.$api('users');
+			let { data } = await usersModel.login(this.form);
+			this.loading = false;
+			if (data.textStatus === 'WAITING_APPROVE') {
+				this.errorMessage = this.$t('app.signIn.account_waiting_approve');
+				return;
+			}
+			if (data.textStatus === 'ACCOUNT_DISABLED') {
+				this.errorMessage = this.$t('app.signIn.account_disabled');
+				return;
+			}
+			if (!data.permissions || data.permissions.length === 0) {
+				this.errorMessage = this.$t('app.signIn.permission_denied');
+				return;
+			}
+			this.loading = true;
+			let user = await usersModel.getUserById(`/${data.userId}?access_token=${data.id}`);
+			this.loading = false;
+			this.$cookie.set('email', this.form.email);
+			this.$cookie.set('username', user.data.username);
+			this.$cookie.set('login', 1);
+			this.$cookie.set('token', data.id);
+			this.$cookie.set('isAdmin', parseInt(user.data.role) || 0);
+			this.$cookie.set('user_id', data.userId);
+			this.$router.replace({
+				name: 'dashboard'
+			});
+		}
 	}
 };
 </script>
@@ -106,6 +162,7 @@ export default {
 				}
 				.bold {
 					color: #333333;
+					font-weight: 500;
 				}
 			}
 		}

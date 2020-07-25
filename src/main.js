@@ -9,6 +9,7 @@ import VueCookie from 'vue-cookie';
 import i18n from './i18n/i18n';
 import VueBus from 'vue-bus';
 import VueClipboard from 'vue-clipboard2';
+import factory from './api/factory';
 
 import './plugins/element.js';
 import './theme/index.css';
@@ -21,6 +22,9 @@ Vue.use(VueBus);
 Vue.use(VueClipboard);
 
 Vue.prototype.$moment = moment;
+Vue.prototype.$api = factory;
+
+window.VueCookie = VueCookie;
 
 // Vue.prototype.i18n = window.jQuery.i18n
 

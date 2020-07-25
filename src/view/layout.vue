@@ -2,31 +2,31 @@
 	<el-container class="layout-container">
 		<el-header class="layout-header" height="48px">
 			<a class="logo" href="/">
-				<img src="http://photo.16pic.com/00/07/44/16pic_744551_b.jpg" />
+				<img src="static/icon/logo.png" />
 			</a>
 			<div class="button-bar">
-				<el-button class="btn-create" type="primary" size="mini">
+				<!-- <el-button class="btn-create" type="primary" size="mini">
 					<i class="el-icon-plus"></i>
 					<span>新建</span>
-				</el-button>
-				<a class="btn"><i class="el-icon-download"></i></a>
-				<el-dropdown class="btn">
+				</el-button> -->
+				<a class="btn" @click="command('download')"><i class="el-icon-download"></i></a>
+				<el-dropdown class="btn" @command="command">
 					<i class="el-icon-question"></i>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item>帮助文档</el-dropdown-item>
-						<el-dropdown-item>在线咨询</el-dropdown-item>
-						<el-dropdown-item>操作引导</el-dropdown-item>
+						<el-dropdown-item command="help">帮助文档</el-dropdown-item>
+						<el-dropdown-item command="question">在线咨询</el-dropdown-item>
+						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
 					</el-dropdown-menu>
 				</el-dropdown>
-				<a class="btn"><i class="el-icon-s-tools"></i></a>
-				<el-dropdown class="menu-user">
+				<a class="btn" @click="command('setting')"><i class="el-icon-s-tools"></i></a>
+				<el-dropdown class="menu-user" @command="command">
 					<el-button class="menu-button" size="mini"
 						>用户名<i class="el-icon-caret-bottom el-icon--right"></i
 					></el-button>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item>系统版本</el-dropdown-item>
-						<el-dropdown-item>官网</el-dropdown-item>
-						<el-dropdown-item>退出登录</el-dropdown-item>
+						<el-dropdown-item command="version">系统版本</el-dropdown-item>
+						<el-dropdown-item command="home">官网</el-dropdown-item>
+						<el-dropdown-item command="signOut">退出登录</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
 			</div>
@@ -41,16 +41,18 @@
 					@select="isCollapse = true"
 				>
 					<template v-for="menu in menus">
-						<el-submenu v-if="menu.children" :key="menu.name" :index="menu.name">
+						<el-submenu v-if="menu.children && !menu.hidden" :key="menu.name" :index="menu.name">
 							<template slot="title">
 								<i :class="`el-icon-${menu.icon}`"></i>
 								<span slot="title">{{ menu.label }}</span>
 							</template>
-							<el-menu-item v-for="cMenu in menu.children" :key="cMenu.name" :index="cMenu.path">
-								<span style="display: block; padding-left: 12px;">{{ cMenu.label }}</span>
-							</el-menu-item>
+							<template v-for="cMenu in menu.children">
+								<el-menu-item :key="cMenu.name" :index="cMenu.path" v-if="!cMenu.hidden">
+									<span style="display: block; padding-left: 12px;">{{ cMenu.label }}</span>
+								</el-menu-item>
+							</template>
 						</el-submenu>
-						<el-menu-item v-else :key="menu.name" :index="menu.path">
+						<el-menu-item v-else-if="!menu.hidden" :key="menu.name" :index="menu.path">
 							<i :class="`el-icon-${menu.icon}`"></i>
 							<span slot="title">{{ menu.label }}</span>
 						</el-menu-item>
@@ -69,7 +71,7 @@
 
 <script>
 let menuSetting = [
-	{ name: 'oldDashboard', icon: 'user', i18n: 'dashboard' },
+	{ name: 'dashboard', icon: 'user' },
 	{
 		name: 'dataSource',
 		icon: 'user',
@@ -92,7 +94,7 @@ let menuSetting = [
 		name: 'dataPublish',
 		icon: 'user',
 		children: [
-			{ name: 'apiPublic' },
+			{ name: 'modules' },
 			{ name: 'dataExplorer' },
 			{ name: 'apiDocAndTest' },
 			{ name: 'apiAnalysis' },
@@ -130,11 +132,18 @@ export default {
 		};
 	},
 	created() {
-		this.getMenus();
 		this.activeMenu = this.$route.path;
+		this.getMenus();
+	},
+	watch: {
+		'$route.name'() {
+			this.activeMenu = this.$route.path;
+		}
 	},
 	methods: {
 		getMenus() {
+			let permissions = sessionStorage.getItem('tapdata_permissions');
+			permissions = JSON.parse(permissions);
 			let routerMap = {};
 			let routes = this.$router.options.routes.find(r => r.name === 'layout').children;
 			routes.forEach(r => {
@@ -145,15 +154,59 @@ export default {
 				return items.map(item => {
 					let router = routerMap[item.name];
 					let menu = Object.assign({}, item, router);
-					let i18n = menu.i18n || menu.name;
-					menu.label = this.$t('app.menu.' + i18n);
+					menu.label = this.$t('app.menu.' + menu.name);
+
+					let matched = permissions.some(p => p.name === menu.name || p.path === menu.path);
+
 					if (menu.children) {
 						menu.children = formatMenu(menu.children);
+						if (menu.children.every(m => m.hidden)) {
+							menu.hidden = true;
+						}
+					} else if (!matched) {
+						menu.hidden = true;
 					}
 					return menu;
 				});
 			};
 			this.menus = formatMenu(menuSetting);
+		},
+		command(command) {
+			switch (command) {
+				case 'help':
+					window.open('https://docs.tapdata.io/', '_blank');
+					break;
+				case 'question':
+					break;
+				case 'version':
+					this.$message.info('DAAS_BUILD_NUMBER');
+					break;
+				case 'home':
+					window.open('https://tapdata.net/', '_blank');
+					break;
+				case 'signOut':
+					this.signOut();
+					break;
+				case 'setting':
+					this.$router.push({
+						name: 'settings'
+					});
+					break;
+				default:
+					this.$message.info('Coming soon!');
+					break;
+			}
+		},
+		signOut() {
+			this.$cookie.delete('email');
+			this.$cookie.delete('isAdmin');
+			this.$cookie.delete('login');
+			this.$cookie.delete('token');
+			this.$cookie.delete('user_id');
+			this.$cookie.delete('username');
+			this.$router.replace({
+				name: 'login'
+			});
 		}
 	}
 };
@@ -172,12 +225,13 @@ export default {
 		.logo {
 			margin-left: 8px;
 			display: block;
+			height: 14px;
 			width: 99px;
-			height: 11px;
 			img {
 				display: block;
-				width: 100%;
 				height: 100%;
+				width: 100%;
+				object-fit: contain;
 			}
 		}
 		.button-bar {
@@ -239,7 +293,11 @@ export default {
 				}
 				&.is-active {
 					color: #48b6e2;
+					background: rgba(241, 241, 241, 1);
 				}
+			}
+			.is-active .el-submenu__title {
+				background: rgba(241, 241, 241, 1);
 			}
 		}
 		.menu-footer {
@@ -270,7 +328,6 @@ export default {
 		}
 	}
 	.layout-main {
-		flex: 1;
 		background: #fff;
 	}
 }
