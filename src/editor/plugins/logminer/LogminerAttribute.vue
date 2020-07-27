@@ -231,7 +231,7 @@ export default {
 					this.model.syncPoint.timezone = '+' + -timeZone;
 				}
 			}
-			this.model.syncPoint.date = '';
+			this.model.syncPoint.date = this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
 		},
 
 		/**改变表类型**/
@@ -353,11 +353,17 @@ export default {
 		},
 
 		setData(data) {
+			let timeZone = new Date().getTimezoneOffset() / 60;
+			if (timeZone > 0) {
+				timeZone = 0 - timeZone;
+			} else {
+				timeZone = '+' + -timeZone;
+			}
 			this.model = {
 				name: 'Orcle' + this.$t('editor.cell.data_node.logminer.name'),
 				syncPoint: {
 					type: 'localTZ',
-					timezone: new Date().getTimezoneOffset() / 60,
+					timezone: timeZone,
 					date: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
 				},
 				logTtl: 3,
