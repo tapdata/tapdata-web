@@ -21,4 +21,7 @@ export default class MetadataInstancesAPI extends PublicApi {
 	dataMap(params) {
 		return axios.get(this.url + '/dataMap', { params });
 	}
+	schema(params) {
+		return axios.get(this.url + '/schema', { params });
+	}
 }
