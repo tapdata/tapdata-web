@@ -122,9 +122,9 @@ import echartsCompinent from '../../components/echartsCompinent';
 import shaftlessEchart from '../../components/shaftlessEchart';
 import factory from '../../api/factory';
 import { EditorEventType } from '../../editor/lib/events';
+//import ws from '../../api/ws';
 const DataFlowInsights = factory('DataFlowInsights');
 const dataFlows = factory('DataFlows');
-let intervalTime = 5000;
 
 export default {
 	name: 'JobMonitor',
@@ -410,12 +410,19 @@ export default {
 			? this.$moment(this.dataFlow.createTime).format('YYYY-MM-DD HH:mm:ss')
 			: '';
 		this.flow.username = (this.dataFlow.user && this.dataFlow.user.email) || '';
-		this.timer = setInterval(() => {
-			this.getTwoRadio(this.dataOverviewAll, this.dataOverviewType);
-			this.getSpeed(this.isThroughputAll, this.throughputTime);
-			this.getTime(this.transfTime, this.transfType);
-			this.getTime(this.replicateTime, this.replicateType);
-		}, intervalTime);
+		//let that = this;
+
+		// ws.on('dataFlows',function(data){
+		// 	that.tableData = data.data;
+		// 	that.handleData(that.tableData);
+		// 	that.loading = false;
+		// });
+		// this.timer = setInterval(() => {
+		// 	this.getTwoRadio(this.dataOverviewAll, this.dataOverviewType);
+		// 	this.getSpeed(this.isThroughputAll, this.throughputTime);
+		// 	this.getTime(this.transfTime, this.transfType);
+		// 	this.getTime(this.replicateTime, this.replicateType);
+		// }, intervalTime);
 	},
 
 	watch: {
