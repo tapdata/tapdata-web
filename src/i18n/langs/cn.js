@@ -48,7 +48,10 @@ const cn = {
 			users: '用户管理',
 			journal: '用户操作日志',
 			roles: '角色管理',
-			settings: '系统设置'
+			settings: '系统设置',
+			favorite: '我的收藏',
+
+			delFavMenu: '删除收藏'
 		}
 	},
 	message: {
@@ -58,6 +61,7 @@ const cn = {
 				loading: '正在加载数据'
 			}
 		},
+		comfirm: '你确定要',
 		operationSuccuess: '操作成功',
 		modifyName: '修改名称',
 		ok: '确定',

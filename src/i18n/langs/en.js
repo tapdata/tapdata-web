@@ -48,7 +48,10 @@ const en = {
 			users: 'User Management',
 			journal: 'User action log',
 			roles: 'Roles',
-			settings: 'Settings'
+			settings: 'Settings',
+			favorite: 'Favorite',
+
+			delFavMenu: 'Delete Favorite'
 		}
 	},
 	message: {
@@ -58,6 +61,7 @@ const en = {
 				loading: 'Loading data...'
 			}
 		},
+		comfirm: 'Are you sure you want to ',
 		operationSuccuess: 'Operation succuess.',
 		modifyName: 'Modify name',
 		ok: 'OK',

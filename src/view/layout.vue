@@ -33,13 +33,7 @@
 		</el-header>
 		<el-container style="width: 100%;flex: 1; overflow:hidden;">
 			<el-aside class="layout-aside" width="auto">
-				<el-menu
-					class="menu"
-					router
-					:default-active="activeMenu"
-					:collapse="isCollapse"
-					@select="isCollapse = true"
-				>
+				<el-menu class="menu" :default-active="activeMenu" :collapse="isCollapse" @select="menuHandler($event)">
 					<template v-for="menu in menus">
 						<el-submenu v-if="menu.children && !menu.hidden" :key="menu.name" :index="menu.name">
 							<template slot="title">
@@ -47,16 +41,34 @@
 								<span slot="title">{{ menu.label }}</span>
 							</template>
 							<template v-for="cMenu in menu.children">
-								<el-menu-item :key="cMenu.name" :index="cMenu.path" v-if="!cMenu.hidden">
-									<span style="display: block; padding-left: 12px;">{{ cMenu.label }}</span>
+								<el-menu-item :key="cMenu.name" :index="cMenu.path" :route="cMenu" v-if="!cMenu.hidden">
+									<div class="submenu-item">{{ cMenu.label }}</div>
 								</el-menu-item>
 							</template>
 						</el-submenu>
-						<el-menu-item v-else-if="!menu.hidden" :key="menu.name" :index="menu.path">
+						<el-menu-item v-else-if="!menu.hidden" :key="menu.name" :index="menu.path" :route="menu">
 							<i :class="`el-icon-${menu.icon}`"></i>
 							<span slot="title">{{ menu.label }}</span>
 						</el-menu-item>
 					</template>
+					<el-submenu v-if="favMenus.length" index="favorite">
+						<template slot="title">
+							<i :class="`el-icon-user`"></i>
+							<span slot="title">{{ $t('app.menu.favorite') }}</span>
+						</template>
+						<el-menu-item
+							v-for="(menu, index) in favMenus"
+							:key="menu.name + '_' + menu.meta.title"
+							:index="'#favorite_' + index"
+						>
+							<div class="submenu-item">
+								<span>{{ menu.meta.title }}</span>
+								<span class="btn-del-fav-menu" @click.stop="delFavMenu(index)">
+									<i class="el-icon-remove"></i>
+								</span>
+							</div>
+						</el-menu-item>
+					</el-submenu>
 				</el-menu>
 				<div class="menu-footer" @click="isCollapse = !isCollapse">
 					<i class="el-icon-d-arrow-left btn-collapse" :class="{ 'is-collapse': isCollapse }"></i>
@@ -128,12 +140,20 @@ export default {
 		return {
 			isCollapse: false,
 			menus: [],
-			activeMenu: ''
+			activeMenu: '',
+			favMenus: []
 		};
 	},
 	created() {
 		this.activeMenu = this.$route.path;
 		this.getMenus();
+		this.getFavMenus();
+		this.$root.$on('updateMenu', () => {
+			this.getFavMenus();
+		});
+	},
+	destroyed() {
+		this.$root.$off('updateMenu');
 	},
 	watch: {
 		'$route.name'() {
@@ -141,6 +161,27 @@ export default {
 		}
 	},
 	methods: {
+		async getFavMenus() {
+			let userId = this.$cookie.get('user_id');
+			let result = await this.$api('users').get([userId]);
+			if (result.status === 200) {
+				this.favMenus = result.data.favorites || [];
+			}
+		},
+		delFavMenu(idx) {
+			this.$confirm(
+				this.$t('message.comfirm') + this.$t('app.menu.delFavMenu'),
+				this.$t('app.menu.delFavMenu')
+			).then(async () => {
+				this.favMenus.splice(idx, 1);
+				let result = await this.$api('users').updateById(this.$cookie.get('user_id'), {
+					favorites: this.favMenus
+				});
+				if (result.status === 200) {
+					this.$message.success(this.$t('message.saveOK'));
+				}
+			});
+		},
 		getMenus() {
 			let permissions = sessionStorage.getItem('tapdata_permissions');
 			permissions = JSON.parse(permissions);
@@ -207,12 +248,44 @@ export default {
 			this.$router.replace({
 				name: 'login'
 			});
+		},
+		menuHandler(index) {
+			this.isCollapse = true;
+			if (index.includes('#favorite_')) {
+				let i = index.split('#favorite_')[1];
+				let router = this.favMenus[i];
+				if (this.$route.name === router.name) {
+					this.$router.replace(router);
+				}
+				this.$router.push(router);
+			} else {
+				this.$router.push(index);
+			}
 		}
 	}
 };
 </script>
 
 <style lang="less">
+.btn-del-fav-menu {
+	display: none;
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translate(0, -50%);
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	cursor: pointer;
+	[class^='el-icon-'] {
+		margin: 0;
+		color: #f56c6c !important;
+	}
+}
+.el-menu--inline .el-menu-item:hover .btn-del-fav-menu {
+	display: block;
+}
 .layout-container {
 	height: 100%;
 	background: rgba(250, 250, 250, 1);
@@ -269,6 +342,9 @@ export default {
 		display: flex;
 		height: 100%;
 		overflow: hidden;
+		.el-menu--popup .submenu-item .btn-del {
+			display: none;
+		}
 		.menu {
 			width: 260px;
 			flex: 1;
@@ -288,6 +364,9 @@ export default {
 				height: 50px;
 				line-height: 50px;
 				color: rgba(51, 51, 51, 1);
+				.submenu-item {
+					padding-left: 12px;
+				}
 				&:hover {
 					background: rgba(241, 241, 241, 1);
 				}

@@ -10,11 +10,33 @@ export default {
 		};
 	},
 	created() {
-		this.url = this.$route.meta.url;
+		this.getUrl();
+		window.updateFavMenu = () => {
+			this.$root.$emit('updateMenu');
+		};
 	},
 	watch: {
 		'$route.meta.url'(url) {
-			this.url = url;
+			this.getUrl(url);
+		}
+	},
+	methods: {
+		getUrl(url) {
+			let query = this.$route.query;
+			let queryStr = '';
+			if (query) {
+				queryStr = '?';
+				let arr = [];
+				for (let key in query) {
+					if (query.hasOwnProperty(key)) {
+						let value = query[key];
+						arr.push(key + '=' + value);
+					}
+				}
+				queryStr += arr.join('&');
+			}
+			url = url || this.$route.meta.url;
+			this.url = url + queryStr;
 		}
 	}
 };

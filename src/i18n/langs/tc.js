@@ -48,7 +48,10 @@ const tc = {
 			users: '用戶管理',
 			journal: '用戶操作日誌',
 			roles: '角色管理',
-			settings: '系統設置'
+			settings: '系統設置',
+			favorite: '我的收藏',
+
+			delFavMenu: '删除收藏'
 		}
 	},
 	message: {
@@ -58,6 +61,7 @@ const tc = {
 				loading: '正在加載數據'
 			}
 		},
+		comfirm: '您確定要',
 		operationSuccuess: '操作成功',
 		modifyName: '修改名稱',
 		ok: '確定',
