@@ -3,6 +3,20 @@ import zhLocale from 'element-ui/lib/locale/lang/zh-CN';
 const cn = {
 	...zhLocale,
 	app: {
+		document: '帮助文档',
+		qa: '客服',
+		version: '系统版本',
+		home: '官网',
+		signOut: '退出登录',
+		customerService: {
+			technicalSupport: '技术支持',
+			technicalSupportText: '在使用过程中，有任何问题，请在',
+			technicalSupportText1: '留言，（用户支持的账户和密码，与cloud.tapdata.net中的相同），我们会尽快答复。',
+			userSupport: '用户支持',
+			otherDmands: '其他需求',
+			otherDmandsText: '其他需求，请扫描下方企业微信二维码。如果没有微信，可以通过',
+			otherDmandsText1: '联系我们。'
+		},
 		signIn: {
 			slogan: '像自来水一样方便地使用您的数据',
 			signIn: '登录',
@@ -15,7 +29,8 @@ const cn = {
 			password_invalid: '密码至少5个字符',
 			account_waiting_approve: '您的账户还未通过管理员审核',
 			account_disabled: '您的账户已被管理员禁用',
-			permission_denied: '没有权限'
+			permission_denied: '没有权限',
+			signInFail: '登录失败'
 		},
 		menu: {
 			dashboard: '控制台',

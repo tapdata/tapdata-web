@@ -1,5 +1,6 @@
 <template>
 	<el-container class="layout-container">
+		<CustomerService v-model="isShowCustomerService"></CustomerService>
 		<el-header class="layout-header" height="48px">
 			<a class="logo" href="/">
 				<img src="static/icon/logo.png" />
@@ -9,24 +10,41 @@
 					<i class="el-icon-plus"></i>
 					<span>新建</span>
 				</el-button> -->
-				<a class="btn" @click="command('download')"><i class="el-icon-download"></i></a>
-				<el-dropdown class="btn" @command="command">
-					<i class="el-icon-question"></i>
+				<a class="btn" @click="command('download')"><i class="iconfont icon-import1"></i></a>
+				<el-dropdown class="btn" placement="bottom" @command="command">
+					<i class="iconfont icon-bangzhu1-copy"></i>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item command="help">帮助文档</el-dropdown-item>
-						<el-dropdown-item command="question">在线咨询</el-dropdown-item>
+						<el-dropdown-item command="help">{{ $t('app.document') }}</el-dropdown-item>
+						<el-dropdown-item command="question">{{ $t('app.qa') }}</el-dropdown-item>
 						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
 					</el-dropdown-menu>
 				</el-dropdown>
-				<a class="btn" @click="command('setting')"><i class="el-icon-s-tools"></i></a>
-				<el-dropdown class="menu-user" @command="command">
-					<el-button class="menu-button" size="mini"
-						>用户名<i class="el-icon-caret-bottom el-icon--right"></i
-					></el-button>
+				<a class="btn" @click="command('setting')"><i class="iconfont icon-shezhi1"></i></a>
+				<el-dropdown class="btn" placement="bottom" @command="changeLanguage">
+					<i
+						class="iconfont"
+						:class="{
+							'icon-zhongwen1': lang === 'sc',
+							'icon-yingwen1': lang === 'en',
+							'icon-fanti': lang === 'tc'
+						}"
+						style="font-size: 18px"
+					></i>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item command="version">系统版本</el-dropdown-item>
-						<el-dropdown-item command="home">官网</el-dropdown-item>
-						<el-dropdown-item command="signOut">退出登录</el-dropdown-item>
+						<el-dropdown-item v-for="(value, key) in languages" :key="key" :command="key">
+							{{ value }}
+						</el-dropdown-item>
+						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
+					</el-dropdown-menu>
+				</el-dropdown>
+				<el-dropdown class="menu-user" placement="bottom" @command="command">
+					<el-button class="menu-button" size="mini">
+						{{ userName }}<i class="el-icon-caret-bottom el-icon--right"></i>
+					</el-button>
+					<el-dropdown-menu slot="dropdown">
+						<el-dropdown-item command="version">{{ $t('app.version') }}</el-dropdown-item>
+						<el-dropdown-item command="home">{{ $t('app.home') }}</el-dropdown-item>
+						<el-dropdown-item command="signOut">{{ $t('app.signOut') }}</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
 			</div>
@@ -37,7 +55,7 @@
 					<template v-for="menu in menus">
 						<el-submenu v-if="menu.children && !menu.hidden" :key="menu.name" :index="menu.name">
 							<template slot="title">
-								<i :class="`el-icon-${menu.icon}`"></i>
+								<i :class="`iconfont icon-${menu.icon}`"></i>
 								<span slot="title">{{ menu.label }}</span>
 							</template>
 							<template v-for="cMenu in menu.children">
@@ -47,13 +65,13 @@
 							</template>
 						</el-submenu>
 						<el-menu-item v-else-if="!menu.hidden" :key="menu.name" :index="menu.path" :route="menu">
-							<i :class="`el-icon-${menu.icon}`"></i>
+							<i :class="`iconfont icon-${menu.icon}`"></i>
 							<span slot="title">{{ menu.label }}</span>
 						</el-menu-item>
 					</template>
 					<el-submenu v-if="favMenus.length" index="favorite">
 						<template slot="title">
-							<i :class="`el-icon-user`"></i>
+							<i class="iconfont icon-tubiaozhizuomoban-"></i>
 							<span slot="title">{{ $t('app.menu.favorite') }}</span>
 						</template>
 						<el-menu-item
@@ -82,17 +100,23 @@
 </template>
 
 <script>
+import CustomerService from '@/components/CustomerService';
+const Languages = {
+	sc: '中文 (简)',
+	en: 'English',
+	tc: '中文 (繁)'
+};
 let menuSetting = [
-	{ name: 'dashboard', icon: 'user' },
+	{ name: 'dashboard', icon: 'shujukanban' },
 	{
 		name: 'dataSource',
-		icon: 'user',
+		icon: 'shenjing',
 		children: [{ name: 'connections' }, { name: 'connection' }]
 	},
-	{ name: 'dataFlows', icon: 'user' },
+	{ name: 'dataFlows', icon: 'shejibiangeng' },
 	{
 		name: 'dataGovernance',
-		icon: 'user',
+		icon: 'guanxi',
 		children: [
 			{ name: 'metadataDefinition' },
 			{ name: 'dataQuality' },
@@ -104,7 +128,7 @@ let menuSetting = [
 	},
 	{
 		name: 'dataPublish',
-		icon: 'user',
+		icon: 'link-copy',
 		children: [
 			{ name: 'modules' },
 			{ name: 'dataExplorer' },
@@ -116,12 +140,12 @@ let menuSetting = [
 	},
 	{
 		name: 'oldDataCollect',
-		icon: 'user',
+		icon: 'shujucaiji',
 		children: [{ name: 'dataCollect' }]
 	},
 	{
 		name: 'system',
-		icon: 'user',
+		icon: 'jiekoufuwu',
 		children: [
 			{ name: 'tasks' },
 			{ name: 'agentdownload' },
@@ -136,12 +160,18 @@ let menuSetting = [
 	}
 ];
 export default {
+	components: { CustomerService },
 	data() {
 		return {
+			languages: Languages,
+			lang: localStorage.getItem('tapdata_localize_lang') || 'en',
 			isCollapse: false,
 			menus: [],
 			activeMenu: '',
-			favMenus: []
+			favMenus: [],
+			userName: '',
+
+			isShowCustomerService: false
 		};
 	},
 	created() {
@@ -165,7 +195,9 @@ export default {
 			let userId = this.$cookie.get('user_id');
 			let result = await this.$api('users').get([userId]);
 			if (result.status === 200) {
-				this.favMenus = result.data.favorites || [];
+				let user = result.data || {};
+				this.favMenus = user.favorites || [];
+				this.userName = user.username || '';
 			}
 		},
 		delFavMenu(idx) {
@@ -218,6 +250,7 @@ export default {
 					window.open('https://docs.tapdata.io/', '_blank');
 					break;
 				case 'question':
+					this.isShowCustomerService = !this.isShowCustomerService;
 					break;
 				case 'version':
 					this.$message.info('DAAS_BUILD_NUMBER');
@@ -261,6 +294,10 @@ export default {
 			} else {
 				this.$router.push(index);
 			}
+		},
+		changeLanguage(lang) {
+			localStorage.setItem('tapdata_localize_lang', lang);
+			location.reload();
 		}
 	}
 };
@@ -318,6 +355,7 @@ export default {
 				color: #999;
 				cursor: pointer;
 				i {
+					display: inline-block;
 					line-height: 28px;
 					text-align: center;
 					height: 28px;
@@ -350,9 +388,13 @@ export default {
 			flex: 1;
 			padding-bottom: 48px;
 			background: rgba(250, 250, 250, 1);
-			[class*=' el-icon-'],
-			[class^='el-icon-'] {
+			.iconfont {
+				display: inline-block;
+				margin-right: 5px;
+				width: 24px;
+				text-align: center;
 				color: rgba(51, 51, 51, 1);
+				font-size: 14px;
 			}
 			overflow-y: auto;
 			user-select: none;

@@ -3,6 +3,11 @@ import enLocale from 'element-ui/lib/locale/lang/en';
 const en = {
 	...enLocale,
 	app: {
+		document: 'Documentation',
+		qa: 'Customer Service',
+		version: 'Version',
+		home: 'Home',
+		signOut: 'Sign out',
 		signIn: {
 			slogan: 'Use your data as easily as tap water.',
 			signIn: 'Sign in',
@@ -15,7 +20,8 @@ const en = {
 			password_invalid: 'Password at least 5 characters.',
 			account_waiting_approve: 'Your account is waiting administrator to approve.',
 			account_disabled: 'Your account is disabled by administrator.',
-			permission_denied: 'Permission denied.'
+			permission_denied: 'Permission denied.',
+			signInFail: 'Sign in failed.'
 		},
 		menu: {
 			dashboard: 'Dashboard',

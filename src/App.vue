@@ -38,4 +38,10 @@ export default {
 	border-radius: 10px;
 	background: #ccc;
 }
+.crisp-client .crisp-1rjpbb7 .crisp-1rf4xdh .crisp-kquevr,
+.crisp-client .crisp-1rjpbb7 .crisp-1rf4xdh .crisp-kquevr .crisp-x94m06 {
+	display: none !important;
+	opacity: 0 !important;
+	visibility: hidden !important;
+}
 </style>

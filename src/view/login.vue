@@ -37,6 +37,7 @@
 							:placeholder="$t('app.signIn.password_placeholder')"
 							autocomplete="new-password"
 							v-model="form.password"
+							@keyup.enter="submit"
 						/>
 					</form>
 					<el-checkbox class="keep-sign-in" v-model="keepSignIn">
@@ -63,7 +64,7 @@ export default {
 		return {
 			loading: false,
 			languages: Languages,
-			lang: localStorage.getItem('tapdata_localize_lang') || 'sc',
+			lang: localStorage.getItem('tapdata_localize_lang') || 'en',
 			form: {
 				email: '',
 				password: ''
@@ -93,33 +94,38 @@ export default {
 				return;
 			}
 			this.loading = true;
-			let usersModel = this.$api('users');
-			let { data } = await usersModel.login(this.form);
-			this.loading = false;
-			if (data.textStatus === 'WAITING_APPROVE') {
-				this.errorMessage = this.$t('app.signIn.account_waiting_approve');
-				return;
+			try {
+				let usersModel = this.$api('users');
+				let { data } = await usersModel.login(this.form);
+				this.loading = false;
+				if (data.textStatus === 'WAITING_APPROVE') {
+					this.errorMessage = this.$t('app.signIn.account_waiting_approve');
+					return;
+				}
+				if (data.textStatus === 'ACCOUNT_DISABLED') {
+					this.errorMessage = this.$t('app.signIn.account_disabled');
+					return;
+				}
+				if (!data.permissions || data.permissions.length === 0) {
+					this.errorMessage = this.$t('app.signIn.permission_denied');
+					return;
+				}
+				this.loading = true;
+				let user = await usersModel.getUserById(`/${data.userId}?access_token=${data.id}`);
+				this.loading = false;
+				this.$cookie.set('email', this.form.email);
+				this.$cookie.set('username', user.data.username);
+				this.$cookie.set('login', 1);
+				this.$cookie.set('token', data.id);
+				this.$cookie.set('isAdmin', parseInt(user.data.role) || 0);
+				this.$cookie.set('user_id', data.userId);
+				this.$router.replace({
+					name: 'dashboard'
+				});
+			} catch (error) {
+				this.errorMessage = this.$t('app.signIn.signInFail');
+				this.loading = false;
 			}
-			if (data.textStatus === 'ACCOUNT_DISABLED') {
-				this.errorMessage = this.$t('app.signIn.account_disabled');
-				return;
-			}
-			if (!data.permissions || data.permissions.length === 0) {
-				this.errorMessage = this.$t('app.signIn.permission_denied');
-				return;
-			}
-			this.loading = true;
-			let user = await usersModel.getUserById(`/${data.userId}?access_token=${data.id}`);
-			this.loading = false;
-			this.$cookie.set('email', this.form.email);
-			this.$cookie.set('username', user.data.username);
-			this.$cookie.set('login', 1);
-			this.$cookie.set('token', data.id);
-			this.$cookie.set('isAdmin', parseInt(user.data.role) || 0);
-			this.$cookie.set('user_id', data.userId);
-			this.$router.replace({
-				name: 'dashboard'
-			});
 		}
 	}
 };

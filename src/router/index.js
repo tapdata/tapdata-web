@@ -12,7 +12,7 @@ const router = new Router({
 		{
 			path: '/login',
 			name: 'login',
-			component: view('login')
+			component: view('Login')
 		},
 		{
 			path: '/job',
@@ -24,7 +24,7 @@ const router = new Router({
 			path: '/',
 			name: 'layout',
 			redirect: 'dashboard',
-			component: view('layout'),
+			component: view('Layout'),
 			children: [
 				{
 					path: '/dashboard',
@@ -232,6 +232,7 @@ router.beforeEach(async (to, from, next) => {
 						});
 					}
 					sessionStorage.setItem('tapdata_permissions', JSON.stringify(menus));
+					permissions = menus;
 				} else {
 					//权限列表为空，说明没有权限进入，执行sign out操作并跳转到登录页面
 					Message.error({

@@ -3,6 +3,11 @@ import tcLocale from 'element-ui/lib/locale/lang/zh-TW';
 const tc = {
 	...tcLocale,
 	app: {
+		document: '幫助文檔',
+		qa: '客服',
+		version: '系統版本',
+		home: '官網',
+		signOut: '登出',
 		signIn: {
 			slogan: '像自來水一樣方便地使用您的數據',
 			signIn: '登入',
@@ -15,7 +20,8 @@ const tc = {
 			password_invalid: '密碼至少5個字元',
 			account_waiting_approve: '您的賬戶還未通過管理員審核',
 			account_disabled: '您的賬戶已被管理員禁用',
-			permission_denied: '没有权限'
+			permission_denied: '没有权限',
+			signInFail: '登入失敗'
 		},
 		menu: {
 			dashboard: '控制台',
