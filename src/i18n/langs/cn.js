@@ -379,8 +379,27 @@ const cn = {
 						},
 						filter: {
 							label: '过滤条件',
-							placeholder: '过滤条件(Mongo Query Filter Document)',
-							invalidJSON: '无效的JSON'
+							invalidJSON: '无效的JSON',
+							fiflterSetting: '过滤设置',
+							fieldFilter: '字段过滤',
+							openFiflter: '开启过滤',
+							closeFiflter: '关闭过滤',
+							sqlFilter: 'SQL过滤',
+							saveFields: '保留字段',
+							allField: '全部字段',
+							deleteField: '删除字段',
+							rowLimit: '行数限制',
+							allRows: '全部行数',
+							oneThousandRows: '1000行',
+							tenThousandRows: '10000行',
+							placeholder: {
+								savefield: '请选择保留字段',
+								delField: '请选择',
+								selectField: '请选择字段',
+								Operator: '运算符',
+								enterContent: '请输入条件内容',
+								placeholder: '过滤条件(Mongo Query Filter Document)'
+							}
 						}
 					}
 				},

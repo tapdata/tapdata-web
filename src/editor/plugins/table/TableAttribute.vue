@@ -72,6 +72,125 @@
 						></el-input-number>
 					</div>
 				</el-form-item>
+
+				<el-form-item
+					required
+					:label="$t('editor.cell.data_node.collection.form.filter.fiflterSetting')"
+					v-if="isSourceDataNode"
+				>
+					<div class="flex-block">
+						<el-switch
+							v-model="model.isFilter"
+							style="margin-right: 20px"
+							:active-value="$t('editor.cell.data_node.collection.form.filter.openFiflter')"
+							:inactive-value="$t('editor.cell.data_node.collection.form.filter.closeFiflter')"
+							@change="model.initialSyncOrder = 0"
+						></el-switch>
+					</div>
+				</el-form-item>
+
+				<el-tabs type="border-card">
+					<el-tab-pane :label="$t('editor.cell.data_node.collection.form.filter.fiflterSetting')">
+						<el-form-item>
+							<el-select v-model="model.fieldFilterType" @change="handleCurrentFieldFilterType">
+								<el-option
+									v-for="item in filterTypeOptions"
+									:key="item.value"
+									:label="item.label"
+									:value="item.value"
+								></el-option>
+							</el-select>
+						</el-form-item>
+						<el-form-item
+							v-if="model.fieldFilterType !== 'keepAllFields'"
+							:placeholder="
+								model.fieldFilterType === 'retainedField'
+									? $t('editor.cell.data_node.collection.form.fieldFilter.placeholderKeep')
+									: $t('editor.cell.data_node.collection.form.fieldFilter.placeholderDelete')
+							"
+						>
+							<el-select v-model="model.fieldFilter" size="mini">
+								<el-option
+									v-for="item in selectSaveList"
+									:key="item"
+									:label="item"
+									:value="item"
+								></el-option>
+							</el-select>
+						</el-form-item>
+						<div class="fiflter">
+							<div class="title">{{ $t('editor.cell.data_node.collection.form.filter.label') }}</div>
+							<div class="rowSlot">
+								<span slot="prepend">{{
+									$t('editor.cell.data_node.collection.form.filter.rowLimit')
+								}}</span>
+								<el-select v-model="model.dropTable" size="mini" class="e-select">
+									<el-option
+										v-for="item in rowNumberList"
+										:key="item.value"
+										:label="item.label"
+										:value="item.value"
+									></el-option>
+								</el-select>
+							</div>
+							<el-row :gutter="12" class="e-row">
+								<el-col :span="8">
+									<el-select v-model="model.dropTable" multiple filterable size="mini">
+										<el-option
+											:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
+											:value="false"
+										></el-option>
+									</el-select>
+								</el-col>
+								<el-col :span="5">
+									<el-select v-model="model.dropTable" size="mini">
+										<el-option
+											v-for="item in calculationList"
+											:label="item"
+											:value="item"
+											:key="item"
+										></el-option>
+									</el-select>
+								</el-col>
+
+								<el-col :span="6">
+									<el-input type="text" v-model="model.dropTable" size="mini"></el-input>
+								</el-col>
+
+								<el-col :span="5">
+									<div class="btn">
+										<span class="iconfont icon-quxiao remove"></span>
+										<span class="iconfont icon-xinzeng2 remove">or</span>
+									</div>
+									<!-- <el-radio-group v-model="labelPosition" size="small">
+										<el-radio-button label="left">X</el-radio-button>
+										<el-radio-button label="right">+ or</el-radio-button>
+									</el-radio-group> -->
+								</el-col>
+							</el-row>
+						</div>
+					</el-tab-pane>
+					<el-tab-pane :label="$t('editor.cell.data_node.collection.form.filter.fiflterSetting')">
+						<el-form-item prop="sql" :rules="rules">
+							<el-input
+								type="textarea"
+								rows="10"
+								v-model="model.sql"
+								:placeholder="$t('editor.cell.data_node.table.form.custom_sql.placeholder')"
+								size="mini"
+							></el-input>
+						</el-form-item>
+
+						<el-form-item :label="$t('editor.cell.data_node.table.form.initial_offset.label')">
+							<el-input
+								v-model="model.initialOffset"
+								:placeholder="$t('editor.cell.data_node.table.form.initial_offset.placeholder')"
+								size="mini"
+							></el-input>
+						</el-form-item>
+					</el-tab-pane>
+				</el-tabs>
+
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.dropTable.label')"
@@ -87,28 +206,6 @@
 							:value="true"
 						></el-option>
 					</el-select>
-				</el-form-item>
-
-				<el-form-item
-					:label="$t('editor.cell.data_node.table.form.custom_sql.label')"
-					prop="sql"
-					:rules="rules"
-				>
-					<el-input
-						type="textarea"
-						rows="10"
-						v-model="model.sql"
-						:placeholder="$t('editor.cell.data_node.table.form.custom_sql.placeholder')"
-						size="mini"
-					></el-input>
-				</el-form-item>
-
-				<el-form-item :label="$t('editor.cell.data_node.table.form.initial_offset.label')">
-					<el-input
-						v-model="model.initialOffset"
-						:placeholder="$t('editor.cell.data_node.table.form.initial_offset.placeholder')"
-						size="mini"
-					></el-input>
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
@@ -253,12 +350,45 @@ export default {
 				type: 'table',
 				primaryKeys: '',
 				initialSyncOrder: 0,
-				enableInitialOrder: false
+				enableInitialOrder: false,
+
+				fieldFilterType: 'keepAllFields',
+				fieldFilter: [],
+				selectSaveList: []
 			},
 
 			mergedSchema: null,
 
-			primaryKeyOptions: []
+			primaryKeyOptions: [],
+			filterTypeOptions: [
+				{
+					label: this.$t('editor.cell.data_node.collection.form.filter.allField'),
+					value: 'keepAllFields'
+				},
+				{
+					label: this.$t('editor.cell.data_node.collection.form.fieldFilterType.retainedField'),
+					value: 'retainedField'
+				},
+				{
+					label: this.$t('editor.cell.data_node.collection.form.fieldFilterType.deleteField'),
+					value: 'deleteField'
+				}
+			],
+			rowNumberList: [
+				{
+					label: this.$t('editor.cell.data_node.collection.form.filter.allRows'),
+					value: 'all'
+				},
+				{
+					label: this.$t('editor.cell.data_node.collection.form.filter.oneThousandRows'),
+					value: '1000'
+				},
+				{
+					label: this.$t('editor.cell.data_node.collection.form.filter.tenThousandRows'),
+					value: '10000'
+				}
+			],
+			calculationList: ['=', '!=', '>', '<', '>=', '<=', 'like']
 		};
 	},
 
@@ -394,6 +524,74 @@ export default {
 	.flex-block {
 		display: flex;
 		align-items: center;
+	}
+	.fiflter {
+		padding: 10px 12px;
+		box-sizing: border-box;
+		border: 1px solid #dcdfe6;
+		.title {
+			font-size: 14px;
+			padding-bottom: 10px;
+		}
+		.rowSlot {
+			display: inline-block;
+			margin-bottom: 12px;
+			border: 1px solid #dcdfe6;
+			border-radius: 4px;
+			box-sizing: border-box;
+			span {
+				float: left;
+				display: inline-block;
+				height: 28px;
+				width: 80px;
+				line-height: 28px;
+				text-align: center;
+				font-size: 12px;
+				background-color: #f5f7fa;
+			}
+			.e-select {
+				width: 160px;
+			}
+		}
+		.e-row {
+			padding-bottom: 5px;
+			.btn {
+				width: 84px;
+				height: 28px;
+				line-height: 27px;
+				border: 1px solid #dcdfe6;
+				border-radius: 4px;
+				box-sizing: border-box;
+				span {
+					float: left;
+					display: inline-block;
+					text-align: center;
+					color: #999;
+					font-size: 12px;
+					cursor: pointer;
+					box-sizing: border-box;
+				}
+				span:first-child {
+					width: 40px;
+				}
+				span:last-child {
+					width: 42px;
+					border-left: 1px solid #dcdfe6;
+				}
+				span:hover {
+					background-color: #ecf5ff;
+				}
+			}
+		}
+	}
+}
+</style>
+<style lang="less">
+.e-table {
+	.fiflter {
+		.e-select .el-input--mini .el-input__inner {
+			border: 0;
+		}
 	}
 }
 </style>

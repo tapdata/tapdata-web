@@ -383,9 +383,28 @@ const en = {
 							keep: 'Enable custom initial sync order'
 						},
 						filter: {
-							label: 'Filter',
-							placeholder: 'Mongo Query Filter Document',
-							invalidJSON: 'Invalid JSON'
+							label: 'Filter conditions',
+							invalidJSON: 'Invalid JSON',
+							fiflterSetting: 'Filter settings',
+							fieldFilter: 'Field Filter',
+							openFiflter: 'Enable filtering',
+							closeFiflter: 'Close filtering',
+							sqlFilter: 'SQL Filter',
+							saveFields: 'Reserved fields',
+							allField: 'All fields',
+							deleteField: 'Delete field',
+							rowLimit: 'Row limit',
+							allRows: 'All rows',
+							oneThousandRows: '1000 rows',
+							tenThousandRows: '10000 rows',
+							placeholder: {
+								savefield: 'Please select a reserved field',
+								delField: 'Please select',
+								selectField: 'Please select a field',
+								Operator: 'Operator',
+								enterContent: 'Please enter the content of the conditions',
+								placeholder: 'Filter Condition (Mongo Query Filter Document)'
+							}
 						}
 					}
 				},

@@ -379,8 +379,27 @@ const tc = {
 						},
 						filter: {
 							label: '過濾條件',
-							placeholder: '過濾條件(Mongo Query Filter Document)',
-							invalidJSON: 'Invalid JSON'
+							invalidJSON: '無效的JSON',
+							fiflterSetting: '過濾設置',
+							fieldFilter: '字段過濾',
+							openFiflter: '開啟過濾',
+							closeFiflter: '關閉過濾',
+							sqlFilter: 'SQL過濾',
+							saveFields: '保留字段',
+							allField: '全部字段',
+							deleteField: '刪除字段',
+							rowLimit: '行數限制',
+							allRows: '全部行數',
+							oneThousandRows: '1000行',
+							tenThousandRows: '10000行',
+							placeholder: {
+								savefield: '請選擇保留字段',
+								delField: '請選擇',
+								selectField: '請選擇字段',
+								Operator: '運算符',
+								enterContent: '請輸入條件內容',
+								placeholder: '過濾條件(Mongo Query Filter Document)'
+							}
 						}
 					}
 				},
