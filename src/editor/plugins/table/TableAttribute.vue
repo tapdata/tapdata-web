@@ -110,12 +110,7 @@
 							"
 						>
 							<el-select v-model="model.fieldFilter" size="mini">
-								<el-option
-									v-for="item in selectSaveList"
-									:key="item"
-									:label="item"
-									:value="item"
-								></el-option>
+								<el-option v-for="opt in options" :key="opt" :label="opt" :value="opt"></el-option>
 							</el-select>
 						</el-form-item>
 						<div class="fiflter">
