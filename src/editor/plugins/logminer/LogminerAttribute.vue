@@ -164,6 +164,7 @@ export default {
 	data() {
 		return {
 			model: {
+				connectionId: '',
 				name: '',
 				logTtl: 0,
 				syncPoint: {},
@@ -231,7 +232,13 @@ export default {
 					this.model.syncPoint.timezone = '+' + -timeZone;
 				}
 			}
-			this.model.syncPoint.date = this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+			if (this.model.syncPoint.type === 'current') {
+				this.model.syncPoint.date = '';
+			} else {
+				this.model.syncPoint.date = this.model.syncPoint.date
+					? this.model.syncPoint.date
+					: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+			}
 		},
 
 		/**改变表类型**/
@@ -380,6 +387,13 @@ export default {
 			// let self = this;
 			if (data) {
 				_.merge(this.model, data);
+				if (this.model.syncPoint.type === 'current') {
+					this.model.syncPoint.date = '';
+				}
+
+				this.model.connectionId = this.model.logCollectorSettings[0].connectionId
+					? this.model.logCollectorSettings[0].connectionId
+					: '';
 				this.model.logCollectorSettings.map((item, index) => {
 					if (item.selectType === 'exclusionTable') {
 						item.selectTables = item.includeTablesList.filter(table => {
@@ -400,7 +414,12 @@ export default {
 
 		getData() {
 			let result = _.cloneDeep(this.model);
-			result.syncPoint.date = this.$moment(result.syncPoint.date).format('YYYY-MM-DD HH:mm:ss');
+			result.connectionId = result.logCollectorSettings[0].connectionId
+				? result.logCollectorSettings[0].connectionId
+				: '';
+			this.model.syncPoint.date = result.syncPoint.date
+				? this.$moment(result.syncPoint.date).format('YYYY-MM-DD HH:mm:ss')
+				: '';
 			return result;
 		}
 
