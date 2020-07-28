@@ -62,12 +62,7 @@
 					</el-select>
 				</el-form-item>
 			</el-col>
-			<el-row
-				:gutter="20"
-				class="loopFrom"
-				v-for="(item, index) in model.logCollectorSettings"
-				:key="item.connectionId"
-			>
+			<el-row :gutter="20" class="loopFrom" v-for="(item, index) in model.logCollectorSettings" :key="index">
 				<el-col :span="21" class="fromLoopBox">
 					<el-form-item
 						:label="$t('editor.cell.data_node.logminer.logSourceSetting')"
@@ -77,11 +72,11 @@
 						<el-select
 							v-model="item.connectionId"
 							:placeholder="$t('editor.cell.data_node.logminer.tableFilter.placeSletSource')"
-							@change="changeConnectionId(item.connectionId)"
+							@change="changeConnectionId(item)"
 						>
 							<el-option
-								v-for="item in connectionList"
-								:key="item.value"
+								v-for="(item, index) in connectionList"
+								:key="index"
 								:label="item.label"
 								:value="item.value"
 							>
@@ -247,13 +242,16 @@ export default {
 		},
 
 		/**改变连接**/
-		changeConnectionId(val) {
-			this.loadDataModels([val]);
+		changeConnectionId(data) {
+			this.loadDataModels([data.connectionId]);
+			let arr = [];
 			this.model.logCollectorSettings.forEach(item => {
-				if (item.connectionId === val) {
-					item.selectTables = [];
-				}
+				arr.push(item.connectionId);
 			});
+			if (new Set(arr).size !== arr.length) {
+				data.connectionId = '';
+				this.$message.error(this.$t('editor.cell.data_node.logminer.validate.sameConnection'));
+			}
 		},
 
 		/**获取表数据**/
@@ -367,7 +365,7 @@ export default {
 				timeZone = '+' + -timeZone;
 			}
 			this.model = {
-				name: 'Orcle' + this.$t('editor.cell.data_node.logminer.name'),
+				name: 'Oracle' + this.$t('editor.cell.data_node.logminer.name'),
 				syncPoint: {
 					type: 'localTZ',
 					timezone: timeZone,

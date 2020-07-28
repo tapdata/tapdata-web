@@ -535,7 +535,8 @@ const cn = {
 					validate: {
 						name: '节点名称不能为空',
 						source: '数据源不能为空',
-						table: '数据表不能为空'
+						table: '数据表不能为空',
+						sameConnection: '不能选择相同连接'
 					}
 				}
 			},
