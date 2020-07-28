@@ -59,11 +59,10 @@ Select.methods.handleOptionSelect = function(option, byClick) {
 
 	if (_this12.multiple) {
 		var value = (_this12.value || []).slice();
-		// var optionIndex = _this12.getValueIndex(value, option.value);
-		// if (optionIndex > -1) {
-		// 	value.splice(optionIndex, 1);
-		// } else
-		if (_this12.multipleLimit <= 0 || value.length < _this12.multipleLimit) {
+		var optionIndex = _this12.getValueIndex(value, option.value);
+		if (optionIndex > -1 && byClick) {
+			value.splice(optionIndex, 1);
+		} else if (_this12.multipleLimit <= 0 || value.length < _this12.multipleLimit) {
 			value.push(option.value);
 		}
 		_this12.$emit('input', value);

@@ -453,8 +453,27 @@ const cn = {
 						},
 						filter: {
 							label: '过滤条件',
-							placeholder: '过滤条件(Mongo Query Filter Document)',
-							invalidJSON: '无效的JSON'
+							invalidJSON: '无效的JSON',
+							fiflterSetting: '过滤设置',
+							fieldFilter: '字段过滤',
+							openFiflter: '开启过滤',
+							closeFiflter: '关闭过滤',
+							sqlFilter: 'SQL过滤',
+							saveFields: '保留字段',
+							allField: '全部字段',
+							deleteField: '删除字段',
+							rowLimit: '行数限制',
+							allRows: '全部行数',
+							oneThousandRows: '1000行',
+							tenThousandRows: '10000行',
+							placeholder: {
+								savefield: '请选择保留字段',
+								delField: '请选择',
+								selectField: '请选择字段',
+								Operator: '运算符',
+								enterContent: '请输入条件内容',
+								placeholder: '过滤条件(Mongo Query Filter Document)'
+							}
 						}
 					}
 				},
@@ -579,6 +598,37 @@ const cn = {
 								custom: '自定义最大记录条数'
 							}
 						}
+					}
+				},
+
+				logminer: {
+					add: '添加',
+					day: '天',
+					name: '日志挖掘',
+					tip: '日志挖掘器',
+					miningLogTime: '挖掘日志时间',
+					logSaveTime: '日志保存时长',
+					logSourceSetting: '日志源设置',
+					currentTimeZone: '当前时区',
+					databaseTimeZone: '数据库时区',
+					allTables: '全部表',
+					reservationTable: '保留表',
+					exclusionTable: '排除表',
+					nodeFunDes: '节点功能说明',
+					function: '功              能',
+					functionContent:
+						'此节点用于采集指定数据库和表的日志，保存到MongoDB数据库，共享日志数据不需要重复开 启日志采集进程，能极大缓解源库资源的占用和浪费。',
+					connectionTarget: '连接目标',
+					connectionText: '只能连接Collection节点',
+					tableFilter: {
+						placeSletSource: '请选择采集的数据源',
+						tableFilter: ' 请选择要保留的表',
+						placeholderDelete: '请选择要排除的表'
+					},
+					validate: {
+						name: '节点名称不能为空',
+						source: '数据源不能为空',
+						table: '数据表不能为空'
 					}
 				}
 			},

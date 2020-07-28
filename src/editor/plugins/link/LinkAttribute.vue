@@ -54,6 +54,7 @@
 					:placeholder="$t('editor.cell.link.form.joinType.placeholder')"
 					@change="handlerJoinTypeChanged"
 					size="mini"
+					:disabled="logsFlag"
 				>
 					<el-option
 						v-for="(item, idx) in writeModels"
@@ -186,6 +187,7 @@ export default {
 	data() {
 		return {
 			disabled: false,
+			logsFlag: false,
 			sourceList: [],
 			targetList: [],
 			writeModels: [],
@@ -408,6 +410,11 @@ export default {
 						}
 						this.model.joinTable.joinKeys = initialAssociationPKs;
 					}
+				}
+				// 日志挖掘
+				this.logsFlag = sourceCell.get('type') === 'app.Logminer' ? true : false;
+				if (this.logsFlag) {
+					this.model.joinTable.joinType = 'append';
 				}
 			}
 

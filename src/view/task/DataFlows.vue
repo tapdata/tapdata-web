@@ -315,6 +315,7 @@
 <script>
 import _ from 'lodash';
 import factory from '../../api/factory';
+import ws from '../../api/ws';
 const dataFlows = factory('DataFlows');
 const MetadataInstance = factory('MetadataInstances');
 import metaData from '../metaData';
@@ -420,6 +421,20 @@ export default {
 		this.screenFn();
 		this.keyupEnter();
 		window.windows = [];
+		let self = this;
+		ws.on('watch', function(data) {
+			let dat = data.data.fullDocument;
+			self.$set(
+				self.tableData,
+				self.tableData.findIndex(it => it.id == dat.id),
+				self.cookRecord(
+					_.merge(
+						self.tableData.find(it => it.id == dat.id),
+						dat
+					)
+				)
+			);
+		});
 	},
 	computed: {
 		maxHeight: function() {
@@ -675,12 +690,10 @@ export default {
 						fields: {
 							id: true,
 							name: true,
-							description: true,
 							status: true,
 							executeMode: true,
 							category: true,
 							stopOnError: true,
-							mappingTemplate: true,
 							last_updated: true,
 							createTime: true,
 							children: true,
@@ -689,7 +702,6 @@ export default {
 							'stages.id': true,
 							'stages.name': true,
 							setting: true,
-							user_id: true,
 							listtags: true
 						}
 					})
@@ -701,85 +713,112 @@ export default {
 					if (res.data) {
 						this.handleData(res.data);
 						this.tableData = res.data;
+						let msg = {
+							type: 'watch',
+							collection: 'DataFlows',
+							filter: {
+								where: { 'fullDocument._id': { $in: this.tableData.map(it => it.id) } }, //查询条件
+								fields: {
+									'fullDocument.id': true,
+									'fullDocument.name': true,
+									'fullDocument.status': true,
+									'fullDocument.executeMode': true,
+									'fullDocument.stopOnError': true,
+									'fullDocument.last_updated': true,
+									'fullDocument.createTime': true,
+									'fullDocument.children': true,
+									'fullDocument.stats': true,
+									'fullDocument.stages.id': true,
+									'fullDocument.stages.name': true,
+									'fullDocument.setting': true,
+									'fullDocument.listtags': true
+								}
+							}
+						};
+						if (ws.ws.readyState == 1) ws.send(msg);
 					}
 				}
 				this.loading = false;
 			});
+
 			this.getCount(where);
 		},
 		handleData(data) {
 			if (!data) return;
-
 			data.forEach(item => {
-				item.newStatus = ['running', 'scheduled'].includes(item.status) ? 'scheduled' : 'stopping';
-				item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
-				let statusMap = {};
-				if (item.stats) {
-					item.hasChildren = false;
-					item.input = item.stats.input ? item.stats.input.rows : '--';
-					item.output = item.stats.output ? item.stats.output.rows : '--';
-					item.transmissionTime = item.stats.transmissionTime ? item.stats.transmissionTime : '--';
-					let children = item.stages;
-					item.children = [];
-					if (children) {
-						let finishedCount = 0;
-						children.forEach(k => {
-							let stage = '';
-							let node = {};
-							if (item.stats.stagesMetrics) {
-								stage = item.stats.stagesMetrics.filter(v => k.id === v.stageId);
-							}
-							if (!stage.length) {
-								node = {
-									id: item.id + k.id,
-									name: k.name,
-									input: '--',
-									output: '--',
-									transmissionTime: '--',
-									hasChildren: true,
-									statusLabel: '--'
-								};
-							} else {
-								let stg = stage[0];
-								let statusLabel = stg.status ? this.$t('dataFlow.status.' + stg.status) : '--';
-								let lag = `(${this.$t('dataFlow.lag')}${stg.replicationLag}s)`;
-								if (stg.status === 'cdc') {
-									statusLabel += lag;
-									statusMap.cdc = true;
-								}
-								if (stg.status === 'initializing') {
-									statusMap.initializing = true;
-								}
-								if (stg.status === 'initialized') {
-									finishedCount += 1;
-								}
-								node = {
-									id: item.id + k.id,
-									name: k.name,
-									input: stg.input.rows,
-									output: stg.output.rows,
-									transmissionTime: stg.transmissionTime,
-									hasChildren: true,
-									statusLabel
-								};
-							}
-							item.children.push(node);
-						});
-						if (finishedCount && !statusMap.cdc && !statusMap.initializing) {
-							statusMap.initialized = true;
-						}
-						let statusList = [];
-						for (const key in statusMap) {
-							statusList.push(key);
-						}
-						item.statusList = statusList;
-					}
-				} else {
-					item.input = '--';
-					item.output = '--';
-					item.transmissionTime = '--';
-				}
+				this.cookRecord(item);
 			});
+		},
+		cookRecord(item) {
+			item.newStatus = ['running', 'scheduled'].includes(item.status) ? 'scheduled' : 'stopping';
+			item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
+			let statusMap = {};
+			if (item.stats) {
+				item.hasChildren = false;
+				item.input = item.stats.input ? item.stats.input.rows : '--';
+				item.output = item.stats.output ? item.stats.output.rows : '--';
+				item.transmissionTime = item.stats.transmissionTime ? item.stats.transmissionTime : '--';
+				let children = item.stages;
+				item.children = [];
+				if (children) {
+					let finishedCount = 0;
+					children.forEach(k => {
+						let stage = '';
+						let node = {};
+						if (item.stats.stagesMetrics) {
+							stage = item.stats.stagesMetrics.filter(v => k.id === v.stageId);
+						}
+						if (!stage.length) {
+							node = {
+								id: item.id + k.id,
+								name: k.name,
+								input: '--',
+								output: '--',
+								transmissionTime: '--',
+								hasChildren: true,
+								statusLabel: '--'
+							};
+						} else {
+							let stg = stage[0];
+							let statusLabel = stg.status ? this.$t('dataFlow.status.' + stg.status) : '--';
+							let lag = `(${this.$t('dataFlow.lag')}${stg.replicationLag}s)`;
+							if (stg.status === 'cdc') {
+								statusLabel += lag;
+								statusMap.cdc = true;
+							}
+							if (stg.status === 'initializing') {
+								statusMap.initializing = true;
+							}
+							if (stg.status === 'initialized') {
+								finishedCount += 1;
+							}
+							node = {
+								id: item.id + k.id,
+								name: k.name,
+								input: stg.input.rows,
+								output: stg.output.rows,
+								transmissionTime: stg.transmissionTime,
+								hasChildren: true,
+								statusLabel
+							};
+						}
+						item.children.push(node);
+					});
+					if (finishedCount && !statusMap.cdc && !statusMap.initializing) {
+						statusMap.initialized = true;
+					}
+					let statusList = [];
+					for (const key in statusMap) {
+						statusList.push(key);
+					}
+					item.statusList = statusList;
+				}
+			} else {
+				item.input = '--';
+				item.output = '--';
+				item.transmissionTime = '--';
+			}
+			return item;
 		},
 		getCount(where) {
 			where = {
