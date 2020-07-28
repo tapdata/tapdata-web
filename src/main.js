@@ -9,10 +9,12 @@ import VueCookie from 'vue-cookie';
 import i18n from './i18n/i18n';
 import VueBus from 'vue-bus';
 import VueClipboard from 'vue-clipboard2';
-import './components/form-builder';
+import factory from './api/factory';
 
 import './plugins/element.js';
 import './theme/index.css';
+
+import './components/form-builder';
 
 Vue.config.productionTip = false;
 Vue.use(VueCookie);
@@ -20,10 +22,13 @@ Vue.use(VueBus);
 Vue.use(VueClipboard);
 
 Vue.prototype.$moment = moment;
+Vue.prototype.$api = factory;
+
+window.VueCookie = VueCookie;
 
 // Vue.prototype.i18n = window.jQuery.i18n
 
-new Vue({
+window.App = new Vue({
 	el: '#app',
 	router,
 	store,

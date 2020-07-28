@@ -2,6 +2,73 @@ import zhLocale from 'element-ui/lib/locale/lang/zh-CN';
 
 const cn = {
 	...zhLocale,
+	app: {
+		document: '帮助文档',
+		qa: '客服',
+		version: '系统版本',
+		home: '官网',
+		signOut: '退出登录',
+		customerService: {
+			technicalSupport: '技术支持',
+			technicalSupportText: '在使用过程中，有任何问题，请在',
+			technicalSupportText1: '留言，（用户支持的账户和密码，与cloud.tapdata.net中的相同），我们会尽快答复。',
+			userSupport: '用户支持',
+			otherDmands: '其他需求',
+			otherDmandsText: '其他需求，请扫描下方企业微信二维码。如果没有微信，可以通过',
+			otherDmandsText1: '联系我们。'
+		},
+		signIn: {
+			slogan: '像自来水一样方便地使用您的数据',
+			signIn: '登录',
+			keepSignIn: '保持登录状态',
+			email_placeholder: '请输入邮箱',
+			password_placeholder: '请输入邮箱',
+
+			email_require: '邮箱地址必填',
+			email_invalid: '请输入有效邮箱地址',
+			password_invalid: '密码至少5个字符',
+			account_waiting_approve: '您的账户还未通过管理员审核',
+			account_disabled: '您的账户已被管理员禁用',
+			permission_denied: '没有权限',
+			signInFail: '登录失败'
+		},
+		menu: {
+			dashboard: '控制台',
+			dataSource: '数据源',
+			connections: '连接列表',
+			connection: '新建连接',
+			dataFlows: '数据采集',
+			dataGovernance: '数据治理',
+			metadataDefinition: '数据目录',
+			dataQuality: '数据质量',
+			timeToLive: '生命周期管理',
+			dataMap: '数据地图',
+			dataRules: '数据规则',
+			dictionary: '字典模板',
+			dataPublish: '数据发布',
+			modules: 'API 发布',
+			dataExplorer: 'API 数据浏览',
+			apiDocAndTest: 'API 文档及测试',
+			apiAnalysis: 'API 统计分析',
+			applications: 'API 客户端',
+			apiServers: 'API 服务器',
+			oldDataCollect: '数据采集(旧版)',
+			dataCollect: '任务列表',
+			system: '系统管理',
+			tasks: '调度任务',
+			agentdownload: '代理下载',
+			clusterManagement: '集群管理',
+			agents: '进程管理',
+			serversOversee: '运维',
+			users: '用户管理',
+			journal: '用户操作日志',
+			roles: '角色管理',
+			settings: '系统设置',
+			favorite: '我的收藏',
+
+			delFavMenu: '删除收藏'
+		}
+	},
 	message: {
 		api: {
 			get: {
@@ -9,6 +76,7 @@ const cn = {
 				loading: '正在加载数据'
 			}
 		},
+		comfirm: '你确定要',
 		operationSuccuess: '操作成功',
 		modifyName: '修改名称',
 		ok: '确定',

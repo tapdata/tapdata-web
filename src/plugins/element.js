@@ -2,6 +2,7 @@
 import Vue from 'vue';
 
 import {
+	Card,
 	Image,
 	Tabs,
 	TabPane,
@@ -18,6 +19,7 @@ import {
 	MessageBox,
 	Message,
 	Menu,
+	Submenu,
 	MenuItem,
 	Form,
 	FormItem,
@@ -35,6 +37,7 @@ import {
 	TimePicker,
 	Drawer,
 	Container,
+	Aside,
 	Main,
 	Header,
 	Tree,
@@ -84,6 +87,7 @@ Select.methods.handleOptionSelect = function(option, byClick) {
 	});
 };
 
+Vue.component(Card.name, Card);
 Vue.component(InputNumber.name, InputNumber);
 Vue.component(Autocomplete.name, Autocomplete);
 Vue.component(Upload.name, Upload);
@@ -99,6 +103,7 @@ Vue.component(CheckboxGroup.name, CheckboxGroup);
 Vue.component(CheckboxButton.name, CheckboxButton);
 Vue.component(Dialog.name, Dialog);
 Vue.component(Menu.name, Menu);
+Vue.component(Submenu.name, Submenu);
 Vue.component(MenuItem.name, MenuItem);
 Vue.component(Form.name, Form);
 Vue.component(FormItem.name, FormItem);
@@ -114,6 +119,7 @@ Vue.component(Pagination.name, Pagination);
 Vue.component(DatePicker.name, DatePicker);
 Vue.component(TimePicker.name, TimePicker);
 Vue.component(Container.name, Container);
+Vue.component(Aside.name, Aside);
 Vue.component(Main.name, Main);
 Vue.component(Header.name, Header);
 Vue.component(Tree.name, Tree);

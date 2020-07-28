@@ -2,6 +2,64 @@ import tcLocale from 'element-ui/lib/locale/lang/zh-TW';
 
 const tc = {
 	...tcLocale,
+	app: {
+		document: '幫助文檔',
+		qa: '客服',
+		version: '系統版本',
+		home: '官網',
+		signOut: '登出',
+		signIn: {
+			slogan: '像自來水一樣方便地使用您的數據',
+			signIn: '登入',
+			keepSignIn: '保持登入狀態',
+			email_placeholder: '請輸入郵箱',
+			password_placeholder: '請輸入郵箱',
+
+			email_require: '郵箱地址必填',
+			email_invalid: '請輸入有效郵箱地址',
+			password_invalid: '密碼至少5個字元',
+			account_waiting_approve: '您的賬戶還未通過管理員審核',
+			account_disabled: '您的賬戶已被管理員禁用',
+			permission_denied: '没有权限',
+			signInFail: '登入失敗'
+		},
+		menu: {
+			dashboard: '控制台',
+			dataSource: '資料來源',
+			connections: '連接清單',
+			connection: '新建連接',
+			dataFlows: '資料獲取',
+			dataGovernance: '數據治理',
+			metadataDefinition: '數據目錄',
+			dataQuality: '數據質量',
+			timeToLive: '生命週期管理',
+			dataMap: '數據地圖',
+			dataRules: '數據規則',
+			dictionary: '字典範本',
+			dataPublish: '數據發佈',
+			modules: 'API發佈',
+			dataExplorer: 'API數據瀏覽',
+			apiDocAndTest: 'API檔案及測試',
+			apiAnalysis: 'API統計分析',
+			applications: 'API用戶端',
+			apiServers: 'API服務器',
+			oldDataCollect: '資料獲取（舊版）',
+			dataCollect: '任務清單',
+			system: '系統管理',
+			tasks: '調度任務',
+			agentdownload: '代理下載',
+			clusterManagement: '集羣管理',
+			agents: '進程管理',
+			serversOversee: '運維',
+			users: '用戶管理',
+			journal: '用戶操作日誌',
+			roles: '角色管理',
+			settings: '系統設置',
+			favorite: '我的收藏',
+
+			delFavMenu: '删除收藏'
+		}
+	},
 	message: {
 		api: {
 			get: {
@@ -9,6 +67,7 @@ const tc = {
 				loading: '正在加載數據'
 			}
 		},
+		comfirm: '您確定要',
 		operationSuccuess: '操作成功',
 		modifyName: '修改名稱',
 		ok: '確定',

@@ -2,6 +2,64 @@ import enLocale from 'element-ui/lib/locale/lang/en';
 
 const en = {
 	...enLocale,
+	app: {
+		document: 'Documentation',
+		qa: 'Customer Service',
+		version: 'Version',
+		home: 'Home',
+		signOut: 'Sign out',
+		signIn: {
+			slogan: 'Use your data as easily as tap water.',
+			signIn: 'Sign in',
+			keepSignIn: 'Keep signed in',
+			email_placeholder: 'Enter your email',
+			password_placeholder: 'Enter your password',
+
+			email_require: 'E-mail is required.',
+			email_invalid: 'E-mail must be valid.',
+			password_invalid: 'Password at least 5 characters.',
+			account_waiting_approve: 'Your account is waiting administrator to approve.',
+			account_disabled: 'Your account is disabled by administrator.',
+			permission_denied: 'Permission denied.',
+			signInFail: 'Sign in failed.'
+		},
+		menu: {
+			dashboard: 'Dashboard',
+			dataSource: 'Data Source',
+			connections: 'Connections',
+			connection: 'Create Connection',
+			dataFlows: 'Data Collect',
+			dataGovernance: 'Data Governance',
+			metadataDefinition: 'Data Catalog',
+			dataQuality: 'Data Quality',
+			timeToLive: 'Time To Live',
+			dataMap: 'Data Lineage',
+			dataRules: 'Data Rules',
+			dictionary: 'Dictionary model',
+			dataPublish: 'Data Publish',
+			modules: 'API Management',
+			dataExplorer: 'API Data Explorer',
+			apiDocAndTest: 'API Doc&Test',
+			apiAnalysis: 'API Stats',
+			applications: 'API Clients',
+			apiServers: 'API Server',
+			oldDataCollect: 'Data Collect(Old)',
+			dataCollect: 'Jobs',
+			system: 'System',
+			tasks: 'Schedule Tasks',
+			agentdownload: 'Agent Download',
+			clusterManagement: 'Cluster management',
+			agents: 'Agents',
+			serversOversee: 'Servers Oversee',
+			users: 'User Management',
+			journal: 'User action log',
+			roles: 'Roles',
+			settings: 'Settings',
+			favorite: 'Favorite',
+
+			delFavMenu: 'Delete Favorite'
+		}
+	},
 	message: {
 		api: {
 			get: {
@@ -9,6 +67,7 @@ const en = {
 				loading: 'Loading data...'
 			}
 		},
+		comfirm: 'Are you sure you want to ',
 		operationSuccuess: 'Operation succuess.',
 		modifyName: 'Modify name',
 		ok: 'OK',

@@ -8,7 +8,7 @@ module.exports = {
 	dev: {
 		// Paths
 		assetsSubDirectory: './static',
-		assetsPublicPath: '/el/',
+		assetsPublicPath: '/',
 		proxyTable: {
 			'/api': {
 				target: 'http://backend:3030',
@@ -21,13 +21,16 @@ module.exports = {
 			'/ws': {
 				target: 'ws://backend:3030',
 				changeOrigin: false
+			},
+			'/old': {
+				target: 'http://localhost:8081/',
+				changeOrigin: false
 			}
 		},
-
+		host: '0.0.0.0',
 		// Various Dev Server settings
-		host: '0.0.0.0', // can be overwritten by process.env.HOST
-		port: 8081, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
-		autoOpenBrowser: false,
+		port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+		autoOpenBrowser: true,
 		errorOverlay: true,
 		notifyOnErrors: true,
 		poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
@@ -45,7 +48,7 @@ module.exports = {
 		 */
 
 		// https://webpack.js.org/configuration/devtool/#development
-		devtool: 'cheap-module-eval-source-map',
+		devtool: 'source-map',
 
 		// If you have problems debugging vue-files in devtools,
 		// set this to false - it *may* help

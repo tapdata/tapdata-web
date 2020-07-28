@@ -30,7 +30,6 @@ module.exports = {
 		filename: '[name].js',
 		publicPath: process.env.NODE_ENV === 'production' ? config.build.assetsPublicPath : config.dev.assetsPublicPath
 	},
-	plugins: [new MonacoWebpackPlugin()],
 	resolve: {
 		extensions: ['.js', '.vue', '.json'],
 		alias: {
@@ -91,6 +90,7 @@ module.exports = {
 			}
 		]
 	},
+	plugins: [new MonacoWebpackPlugin()],
 	node: {
 		// prevent webpack from injecting useless setImmediate polyfill because Vue
 		// source contains it (although only uses it if it's native).
