@@ -15,7 +15,7 @@
 				@close="handleCloseTag(item)"
 				>{{ item.value }}</el-tag
 			>
-			<span @click="handleClassify">设置分类</span>
+			<span @click="handleClassify" class="classify">设置分类</span>
 		</div>
 
 		<el-upload
@@ -144,6 +144,12 @@ export default {
 	a {
 		color: #48b6e2;
 	}
+}
+.classify {
+	display: inline-block;
+	color: #48b6e2;
+	font-size: 12px;
+	cursor: pointer;
 }
 </style>
 <style>
