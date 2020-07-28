@@ -10,25 +10,40 @@
 			<el-table :data="tableData" border class="dv-table" style="width: 100%">
 				<el-table-column prop="type" :label="$t('dataVerify.dataWay')" width="150">
 					<template slot-scope="scope">
-						<span :style="`color: ${colorMap[scope.row.type]};`">
+						<span>
 							{{ $t('dataVerify.' + scope.row.type) }}
 						</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="condition.value" :label="$t('dataVerify.range')" width="80"> </el-table-column>
+				<el-table-column
+					prop="condition.value"
+					:label="$t('dataVerify.range')"
+					width="100"
+					:formatter="formatterRange"
+				>
+				</el-table-column>
 				<el-table-column prop="source.tableName" :label="$t('dataVerify.source')">
 					<template slot-scope="scope">
-						<span v-if="scope.row.source.filter" class="dv-tag">SQL</span>
-						<span> {{ scope.row.source.tableName }} </span>
+						<el-tooltip class="item" effect="dark" content="SQL/MQL" placement="top-end">
+							<span>
+								<span v-if="scope.row.source.filter" class="dv-tag"></span>
+								<span> {{ scope.row.source.tableName }} </span>
+							</span>
+						</el-tooltip>
 					</template>
 				</el-table-column>
 				<el-table-column prop="target.tableName" :label="$t('dataVerify.target')">
 					<template slot-scope="scope">
-						<span v-if="scope.row.validateCode" class="dv-tagJS">JS</span>
-						<span> {{ scope.row.target.tableName }} </span>
+						<el-tooltip class="item" effect="dark" content="SQL/MQL" placement="top-end">
+							<span>
+								<span v-if="scope.row.validateCode" class="dv-tagJS"></span>
+								<span v-if="scope.row.target.filter" class="dv-tag"></span>
+								<span> {{ scope.row.target.tableName }} </span>
+							</span>
+						</el-tooltip>
 					</template>
 				</el-table-column>
-				<el-table-column width="60" :label="$t('dataVerify.operate')">
+				<el-table-column width="80" :label="$t('dataVerify.operate')">
 					<template slot-scope="scope">
 						<span class="el-icon-edit" @click="handleEdit(scope.$index)"></span>
 						<span class="el-icon-close" @click="handleDelete(scope.$index)"></span>
@@ -36,7 +51,13 @@
 				</el-table-column>
 			</el-table>
 		</div>
-		<el-button class="dv-btn" size="mini" icon="el-icon-plus" @click="handleShowDrawer"></el-button>
+		<el-button
+			class="dv-btn"
+			size="mini"
+			icon="el-icon-plus"
+			@click="handleShowDrawer"
+			:disabled="editIndex !== -1"
+		></el-button>
 		<div class="dv-btn-footer-wrapper">
 			<div class="dv-btn-footer-box">
 				<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleLoading">{{
@@ -63,27 +84,25 @@
 					<div class="dv-add-form-text">
 						{{ $t('dataVerify.condition') }}
 					</div>
-					<el-row :gutter="10">
+					<el-row :gutter="5">
 						<el-col :span="12">
 							<el-select size="mini" v-model="formData.condition.type" @change="changeConditionType">
 								<el-option value="rows" :label="$t('dataVerify.rows')"></el-option>
 								<el-option value="sampleRate" :label="$t('dataVerify.sampleRate')"></el-option>
 							</el-select>
 						</el-col>
-						<el-col :span="12">
+						<el-col :span="12" class="condition-value">
 							<el-input
+								@change="handleCondition"
 								size="mini"
+								type="number"
 								v-model="formData.condition.value"
-								v-if="formData.condition.type === 'rows'"
-							></el-input>
-							<el-input-number
-								size="mini"
-								v-model="formData.condition.value"
-								v-if="formData.condition.type === 'sampleRate'"
-								:min="1"
-								:max="100"
-								:controls="false"
-							></el-input-number>
+							>
+								<template slot="append" v-if="formData.condition.type === 'rows'">{{
+									$t('dataVerify.psc')
+								}}</template>
+								<template slot="append" v-if="formData.condition.type === 'sampleRate'">%</template>
+							</el-input>
 						</el-col>
 					</el-row>
 				</el-form-item>
@@ -93,7 +112,14 @@
 					</div>
 					<el-row>
 						<el-col :span="24">
-							<el-select size="mini" style="width: 100%" v-model="formData.sourceTageId">
+							<el-select
+								size="mini"
+								style="width: 100%"
+								v-model="formData.sourceTageId"
+								:placeholder="$t('dataVerify.sourceText')"
+								@input="handleForceUpdate"
+								@change="changeSourceTable"
+							>
 								<el-option
 									v-for="item in sourceList"
 									:label="item.tableName"
@@ -105,13 +131,38 @@
 						</el-col>
 					</el-row>
 					<el-row v-show="type !== 'advance'">
-						<el-checkbox v-model="checkedSource"></el-checkbox>
-						<span style="font-size: 12px">SQL/MQL</span>
-					</el-row>
-					<el-row v-show="checkedSource && type !== 'advance'">
-						<el-col :span="24">
-							<el-input type="textarea" v-model="formData.sourceFilter"></el-input>
-						</el-col>
+						<div v-if="opSource[0] && opSource[0].databaseType && opSource[0].databaseType === 'mongodb'">
+							<el-checkbox v-model="checkedSource"></el-checkbox>
+							<span>MQL</span>
+							<span class="JS-label displayInline">{{ $t('dataVerify.filterMQL') }}</span>
+							<div v-show="checkedSource">
+								<el-input
+									:rows="7"
+									type="textarea"
+									v-model="formData.sourceFilter"
+									@input="handleForceUpdate"
+									:placeholder="
+										type === 'hash' ? $t('dataVerify.exampleHashMQL') : $t('dataVerify.exampleMQL')
+									"
+								></el-input>
+							</div>
+						</div>
+						<div v-else>
+							<el-checkbox v-model="checkedSource"></el-checkbox>
+							<span>SQL</span>
+							<span class="JS-label displayInline">{{ $t('dataVerify.filterSQL') }}</span>
+							<div v-show="checkedSource">
+								<el-input
+									:rows="7"
+									type="textarea"
+									v-model="formData.sourceFilter"
+									@input="handleForceUpdate"
+									:placeholder="
+										type === 'hash' ? $t('dataVerify.exampleHashSQL') : $t('dataVerify.exampleSQL')
+									"
+								></el-input>
+							</div>
+						</div>
 					</el-row>
 				</el-form-item>
 				<el-form-item>
@@ -120,7 +171,14 @@
 					</div>
 					<el-row>
 						<el-col :span="24">
-							<el-select size="mini" style="width: 100%" v-model="formData.targetTageId">
+							<el-select
+								size="mini"
+								style="width: 100%"
+								v-model="formData.targetTageId"
+								@input="handleForceUpdate"
+								@change="changeTargetTable"
+								:placeholder="$t('dataVerify.targetText')"
+							>
 								<el-option
 									v-for="item in targetList"
 									:label="item.tableName"
@@ -132,13 +190,34 @@
 						</el-col>
 					</el-row>
 					<el-row v-show="type === 'row'">
-						<el-checkbox v-model="checkedTarget"></el-checkbox>
-						<span style="font-size: 12px">SQL/MQL</span>
-					</el-row>
-					<el-row v-show="checkedTarget && type === 'row'">
-						<el-col :span="24">
-							<el-input type="textarea" v-model="formData.targetFilter"></el-input>
-						</el-col>
+						<div v-if="opTarget[0] && opTarget[0].databaseType && opTarget[0].databaseType === 'mongodb'">
+							<el-checkbox v-model="checkedTarget"></el-checkbox>
+							<sapn>MQL</sapn>
+							<span class="JS-label displayInline">{{ $t('dataVerify.filterMQL') }}</span>
+							<div v-show="checkedTarget">
+								<el-input
+									:rows="7"
+									type="textarea"
+									v-model="formData.targetFilter"
+									@input="handleForceUpdate"
+									:placeholder="$t('dataVerify.exampleMQL')"
+								></el-input>
+							</div>
+						</div>
+						<div v-else>
+							<el-checkbox v-model="checkedTarget"></el-checkbox>
+							<span>SQL</span>
+							<span class="JS-label displayInline">{{ $t('dataVerify.filterSQL') }}</span>
+							<div v-show="checkedTarget">
+								<el-input
+									:rows="7"
+									type="textarea"
+									v-model="formData.targetFilter"
+									@input="handleForceUpdate"
+									:placeholder="$t('dataVerify.exampleSQL')"
+								></el-input>
+							</div>
+						</div>
 					</el-row>
 				</el-form-item>
 				<el-form-item>
@@ -146,8 +225,19 @@
 						JS
 					</div>
 					<el-row v-show="type === 'advance'">
+						<span class="JS-label displayInline">
+							function validate(sourceRow){
+						</span>
 						<el-col :span="24">
-							<el-input type="textarea" v-model="formData.validateCode"></el-input>
+							<el-input
+								type="textarea"
+								v-model="formData.validateCode"
+								:rows="18"
+								@input="handleForceUpdate"
+							></el-input>
+							<span class="JS-label displayInline">
+								}
+							</span>
 						</el-col>
 					</el-row>
 				</el-form-item>
@@ -156,7 +246,14 @@
 				<el-button size="mini" type="primary" :loading="testing" @click="handleAdd">
 					{{ $t('dataVerify.confirm') }}
 				</el-button>
-				<el-button size="mini" @click="disabledDrawer = false">{{ $t('dataForm.cancel') }}</el-button>
+				<el-button
+					size="mini"
+					@click="
+						disabledDrawer = false;
+						editIndex = -1;
+					"
+					>{{ $t('dataForm.cancel') }}</el-button
+				>
 			</span>
 		</Drawer>
 	</div>
@@ -204,6 +301,8 @@ export default {
 				advance: '#9889D8'
 			},
 			tableData: [],
+			opSource: [],
+			opTarget: [],
 			firstVerify: false
 		};
 	},
@@ -231,6 +330,8 @@ export default {
 							if (!res.data.validateStatus) {
 								this.firstVerify = true;
 							}
+							this.changeSourceTable();
+							this.changeTargetTable();
 							log('dataVerify.tableData', this.tableData);
 						}
 					}
@@ -283,15 +384,22 @@ export default {
 				this.$message.error('please select target SQL/MQL');
 				return;
 			}
+			if (!this.checkedTarget || this.formData.type === 'hash') {
+				this.checkedTarget = false;
+				this.formData.targetFilter = '';
+			}
+			if (!this.checkedSource) {
+				this.formData.sourceFilter = '';
+			}
 			log('edit_edit', this.editIndex);
 
 			if (this.editIndex !== -1) {
-				this.tableData.splice(this.editIndex, 1); // 是否是编辑 先删除后新增
+				this.tableData.splice(this.editIndex, 1); // 不是编辑 先删除后新增 -1非编辑模式
 			}
 			let opSource = this.sourceList.filter(item => item.stageId + item.tableName === this.formData.sourceTageId);
 			let opTarget = this.targetList.filter(item => item.stageId + item.tableName === this.formData.targetTageId);
-			if (opSource.length !== 0) opSource[0].filter = this.formData.sourceFilter;
-			if (opTarget.length !== 0) opTarget[0].filter = this.formData.targetFilter;
+			if (opSource.length !== 0 && opSource[0]) opSource[0]['filter'] = this.formData.sourceFilter;
+			if (opTarget.length !== 0 && opTarget[0]) opTarget[0]['filter'] = this.formData.targetFilter;
 
 			let add = {
 				type: this.type, // row: 行数 hash：哈希  advance：高级校验
@@ -363,6 +471,14 @@ export default {
 				}
 			});
 		},
+		handleCondition(value) {
+			if (this.formData.condition.type === 'sampleRate') {
+				if (value <= 0 || value > 100) {
+					this.formData.condition.value = 5;
+					this.$message.error('sampleRate 1~100');
+				}
+			}
+		},
 		handleEdit(index) {
 			this.disabledDrawer = false;
 			this.disabledDrawer = true;
@@ -379,6 +495,8 @@ export default {
 				this.checkedSource = true;
 			}
 			this.type = this.tableData[index].type;
+			this.changeSourceTable();
+			this.changeTargetTable();
 		},
 		getSourceList() {
 			dataFlows.getSourceList(this.id).then(res => {
@@ -402,6 +520,28 @@ export default {
 			} else {
 				this.formData.condition.value = 1000;
 			}
+		},
+		handleForceUpdate() {
+			this.$forceUpdate();
+		},
+		changeSourceTable() {
+			this.opSource = this.sourceList.filter(
+				item => item.stageId + item.tableName === this.formData.sourceTageId
+			);
+		},
+		changeTargetTable() {
+			this.opTarget = this.targetList.filter(
+				item => item.stageId + item.tableName === this.formData.targetTageId
+			);
+		},
+		formatterRange(row) {
+			if (row.condition.type === 'rows' && row.type !== 'row') {
+				return row.condition.value + this.$t('dataVerify.psc');
+			} else if (row.condition.type === 'sampleRate') {
+				return row.condition.value + '%';
+			} else if (row.condition.type === 'rows' && row.type === 'row') {
+				return this.$t('dataVerify.all');
+			}
 		}
 	}
 };
@@ -418,6 +558,7 @@ export default {
 }
 .data-verify {
 	position: relative;
+	font-family: 'Microsoft YaHei';
 }
 .dv-header {
 	line-height: 32px;
@@ -462,26 +603,22 @@ export default {
 	color: rgba(51, 51, 51, 1);
 }
 .dv-tag {
-	width: 36px;
-	height: 19px;
-	font-size: 12px;
-	line-height: 19px;
+	width: 8px;
+	height: 8px;
+	margin: 0 auto;
 	text-align: center;
-	color: #fff;
 	display: inline-block;
 	background: rgba(98, 165, 105, 1);
-	border-radius: 3px;
+	border-radius: 50%;
 }
 .dv-tagJS {
-	width: 36px;
-	height: 19px;
-	font-size: 12px;
-	line-height: 19px;
+	width: 8px;
+	height: 8px;
+	margin: 0 auto;
 	text-align: center;
-	color: #fff;
 	display: inline-block;
 	background: #48b6e2;
-	border-radius: 3px;
+	border-radius: 50%;
 }
 .back-btn-box {
 	width: 100%;
@@ -520,6 +657,17 @@ export default {
 }
 .back-btn-icon {
 	color: #fff;
+}
+.condition-value {
+	margin-top: 6px;
+}
+.JS-label {
+	color: #999;
+	font-size: 12px;
+	margin-top: 0px;
+}
+.displayInline {
+	display: inline-block;
 }
 </style>
 <style lang="less">

@@ -14,11 +14,11 @@
 						$t('dataFlow.button.viewConfig')
 					}}</el-button>
 				</el-col>
-				<!--				<el-col :span="4" style="text-align: right;">-->
-				<!--					<el-button class="e-button" size="mini" type="primary" @click="handleGoDataVerify">{{-->
-				<!--						$t('dataVerify.dataVerify')-->
-				<!--					}}</el-button>-->
-				<!--				</el-col>-->
+				<el-col :span="4" style="text-align: right;">
+					<el-button class="e-button" size="mini" type="primary" @click="handleGoDataVerify">{{
+						$t('dataVerify.dataVerify')
+					}}</el-button>
+				</el-col>
 			</el-form-item>
 		</el-form>
 		<div class="echartMain">
@@ -39,7 +39,11 @@
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
-						<span class="info-text">{{ $moment(flow.startTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+						<span class="info-text">{{ flow.startTime }}</span>
+					</div>
+					<div v-if="flow.finishTime" class="info-list">
+						<span class="info-label">{{ $t('dataFlow.finishTime') }}:</span>
+						<span class="info-text">{{ flow.finishTime }}</span>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
@@ -119,7 +123,7 @@ import shaftlessEchart from '../../components/shaftlessEchart';
 import factory from '../../api/factory';
 import { EditorEventType } from '../../editor/lib/events';
 const DataFlowInsights = factory('DataFlowInsights');
-// const dataFlows = factory('DataFlows');
+const dataFlows = factory('DataFlows');
 let intervalTime = 5000;
 
 export default {
@@ -419,6 +423,10 @@ export default {
 			handler(val) {
 				this.flow = val;
 				this.flow.createTime = val.createTime ? this.$moment(val.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
+				this.flow.startTime = val.startTime ? this.$moment(val.startTime).format('YYYY-MM-DD HH:mm:ss') : '--';
+				this.flow.finishTime = val.finishTime
+					? this.$moment(val.finishTime).format('YYYY-MM-DD HH:mm:ss')
+					: false;
 				this.flow.username = (val.user && val.user.email) || '';
 				this.flow.status = val.status;
 				if (this.flow.status === 'force stopping') {
@@ -853,26 +861,26 @@ export default {
 			//   };
 			//   appendData();
 			// }
-		}
+		},
 		// 跳转到数据校验页面
-		// handleGoDataVerify() {
-		// 	dataFlows
-		// 		.get([this.flow.id], {
-		// 			fields: ['validateBatchId', 'validateStatus', 'validateFailedMSG']
-		// 		})
-		// 		.then(res => {
-		// 			if (res.statusText === 'OK' || res.status === 200) {
-		// 				if (
-		// 					Object.keys(res.data).length === 0 ||
-		// 					(res.data.validateBatchId && res.data.validateBatchId === '')
-		// 				) {
-		// 					this.editor.showDataVerify();
-		// 				} else {
-		// 					this.editor.showResult();
-		// 				}
-		// 			}
-		// 		});
-		// }
+		handleGoDataVerify() {
+			dataFlows
+				.get([this.flow.id], {
+					fields: ['validateBatchId', 'validateStatus', 'validateFailedMSG']
+				})
+				.then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						if (
+							Object.keys(res.data).length === 0 ||
+							(res.data.validateBatchId && res.data.validateBatchId === '')
+						) {
+							this.editor.showDataVerify();
+						} else {
+							this.editor.showResult();
+						}
+					}
+				});
+		}
 	},
 
 	destroyed() {

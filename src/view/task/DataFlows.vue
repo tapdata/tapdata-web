@@ -475,9 +475,6 @@ export default {
 			window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
 		},
 		handleDetail(id, type) {
-			document.querySelectorAll('.el-tooltip__popper').forEach(it => {
-				it.outerHTML = '';
-			});
 			const h = this.$createElement;
 			if (type === 'edit') {
 				this.$msgbox({
@@ -507,11 +504,19 @@ export default {
 						query: { id: id }
 					});
 					setTimeout(() => {
+						document.querySelectorAll('.el-tooltip__popper').forEach(it => {
+							it.outerHTML = '';
+						});
 						window.windows.push(window.open(routeUrl.href, 'edit_' + id));
 						window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
 					}, 200);
 				});
 			} else {
+				setTimeout(() => {
+					document.querySelectorAll('.el-tooltip__popper').forEach(it => {
+						it.outerHTML = '';
+					});
+				}, 200);
 				let routeUrl = this.$router.resolve({
 					path: '/job',
 					query: { id: id, isMoniting: true }
@@ -672,6 +677,8 @@ export default {
 							children: true,
 							stats: true,
 							stages: true,
+							'stages.id': true,
+							'stages.name': true,
 							setting: true,
 							user_id: true,
 							listtags: true
@@ -683,8 +690,8 @@ export default {
 			await dataFlows.get(_params).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
+						this.handleData(res.data);
 						this.tableData = res.data;
-						this.handleData(this.tableData);
 					}
 				}
 				this.loading = false;
@@ -694,7 +701,7 @@ export default {
 		handleData(data) {
 			if (!data) return;
 
-			data.map(item => {
+			data.forEach(item => {
 				item.newStatus = ['running', 'scheduled'].includes(item.status) ? 'scheduled' : 'stopping';
 				item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
 				let statusMap = {};
@@ -707,7 +714,7 @@ export default {
 					item.children = [];
 					if (children) {
 						let finishedCount = 0;
-						children.map(k => {
+						children.forEach(k => {
 							let stage = '';
 							let node = {};
 							if (item.stats.stagesMetrics) {

@@ -8,12 +8,14 @@
 			>
 				<span>{{ verifylog[validateStatus] }}</span>
 				<span @click="GoBack" class="verify-backBtn">{{ $t('dataVerify.back') }}</span>
+				<span>{{ $t('dataVerify.verifyRunningInfo') }}</span>
 			</div>
 			<div v-if="validateStatus === 'validating'" class="verifyLog">
 				<span>{{ verifylog[validateStatus] }}</span>
 				<span class="verify-backBtn" @click="GoBack">
 					{{ $t('dataVerify.back') }}
 				</span>
+				<span>{{ $t('dataVerify.verifyRunningInfo') }}</span>
 				<span>{{ $t('dataVerify.or') }}</span>
 				<span class="verify-backBtn" @click="handleVerifyCancel">{{ $t('dataVerify.verifyStatusStop') }}</span>
 			</div>
@@ -45,15 +47,15 @@
 					{{ $t('dataVerify.overView') }}
 					<div class="dv-pre-right">
 						<span>{{ $t('dataVerify.time') }}: {{ overview.createTime }} </span>
-						<span> {{ $t('dataVerify.duration') }}: {{ overview.costTime }}</span>
+						<span>{{ $t('dataVerify.duration') }}: {{ overview.costTime }}</span>
 					</div>
 				</div>
 				<el-table border :data="validateStats" height="250" style="width: 100%">
 					<el-table-column prop="sourceTableName" :label="$t('dataVerify.source')" width="180">
 					</el-table-column>
-					<el-table-column prop="validateType" :label="$t('dataVerify.dataWay')" width="80">
+					<el-table-column prop="validateType" :label="$t('dataVerify.dataWay')" width="95">
 						<template slot-scope="scope">
-							<span :style="`color: ${colorMap[scope.row.validateType]};`">
+							<span>
 								{{ $t('dataVerify.' + scope.row.validateType) }}
 							</span>
 						</template>
@@ -61,15 +63,15 @@
 					<el-table-column prop="rows" :label="$t('dataVerify.range')"> </el-table-column>
 					<el-table-column prop="rowsDiffer" :label="$t('dataVerify.result')">
 						<template slot-scope="scope">
-							<span>
+							<span :class="{ error: scope.row.rowsDiffer !== 0 || scope.row.rowsMismatch !== 0 }">
 								{{ scope.row.validateType == 'row' ? scope.row.rowsDiffer : scope.row.rowsMismatch }}
 							</span>
 						</template>
 					</el-table-column>
 					<el-table-column prop="consistencyRate" :label="$t('dataVerify.accuracyRate')" width="80">
 						<template slot-scope="scope">
-							<span>
-								{{ scope.row.consistencyRate == '-1' ? '--' : scope.row.consistencyRate }}
+							<span :class="{ error: scope.row.consistencyRate != 100 }">
+								{{ scope.row.consistencyRate }}
 							</span>
 						</template>
 					</el-table-column>
@@ -79,7 +81,7 @@
 				<div class="dv-contrast-box">
 					<div class="dv-contrast-header">
 						<div class="dv-pre-right">
-							<span style="color: #F56C6C"> error :{{ count }}</span>
+							<span :class="{ error: count > 0 }"> error :{{ count }}</span>
 							<el-pagination
 								class="dv-result-pagination"
 								:pager-count="0"
@@ -110,7 +112,7 @@
 					<el-table border :data="failedRow" class="dv-result-fail-table" style="width: 100%">
 						<el-table-column prop="sourceTableData" :label="$t('dataVerify.source')"> </el-table-column>
 						<el-table-column prop="targetTableData" :label="$t('dataVerify.target')"> </el-table-column>
-						<el-table-column prop="message" label="MSQ"> </el-table-column>
+						<el-table-column prop="message" label="Message"> </el-table-column>
 					</el-table>
 				</div>
 			</div>
@@ -228,24 +230,19 @@ export default {
 					if (res.data) {
 						this.loading = false;
 						if (res.data[1]) {
-							this.overview = res.data[1];
+							this.overview = res.data[1].type === 'overview' ? res.data[1] : res.data[0];
 							this.overview.createTime = this.overview.createTime
 								? moment(this.overview.createTime).format('YYYY-MM-DD HH:mm:ss')
 								: '';
-							this.overview.consistencyRate =
-								this.overview.consistencyRate == -1 ? '--' : this.overview.consistencyRate;
 							this.overview.costTime = this.overview.costTime ? this.overview.costTime / 1000 + ' s' : '';
 						}
 						if (res.data[0]) {
-							this.validateStats = res.data[0].validateStats;
-							this.validateStats.sourceTableData = this.validateStats.sourceTableData
-								? JSON.parse(this.validateStats.sourceTableData)
-								: '';
-							this.validateStats.targetTableData = this.validateStats.targetTableData
-								? JSON.parse(this.validateStats.targetTableData)
-								: '';
+							this.validateStats =
+								res.data[0].type === 'tableOverview'
+									? res.data[0].validateStats
+									: res.data[1].validateStats;
 						}
-						log('dataVerify.result', res.data);
+						log('dataVerify.result', this.validateStats);
 					}
 				} else {
 					this.loading = false;
@@ -484,6 +481,9 @@ export default {
 .verify-backBtn {
 	cursor: pointer;
 	color: #5fa9ee;
+}
+.error {
+	color: orangered;
 }
 </style>
 <style lang="less">
