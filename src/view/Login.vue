@@ -2,7 +2,7 @@
 	<section class="page-sign-in">
 		<header>
 			<div class="logo">
-				<img src="http://photo.16pic.com/00/07/44/16pic_744551_b.jpg" />
+				<img src="static/icon/logo.png" />
 				<div class="switch-lang">
 					<span
 						v-for="(value, key) in languages"
@@ -142,7 +142,7 @@ export default {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			height: 40px;
+			height: 36px;
 			img {
 				display: block;
 				width: 144px;
