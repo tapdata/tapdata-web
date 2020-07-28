@@ -162,6 +162,7 @@ const cn = {
 		implementationModalities: '执行方式',
 		submitConfirmation: '提交确认',
 		SyncPoint: '同步节点',
+		syncType: '同步类型',
 		SyncInfo: {
 			localTZ: '当前时区传输时间：系统所在时区下，开始传输任务的时刻',
 			current: '当前时区时间：默认当前时间',
@@ -177,6 +178,9 @@ const cn = {
 		bulkExport: '批量导出',
 		bulkScheuled: '批量启动',
 		bulkStopping: '批量停止',
+		taskBulkFx: '函数',
+		taskBulkOperation: '批量操作',
+		taskBulkTag: '设置分类',
 		upload: '点击上传',
 		import: '任务导入',
 		uploadOK: '上传成功',

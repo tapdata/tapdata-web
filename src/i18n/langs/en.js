@@ -153,6 +153,7 @@ const en = {
 		implementationModalities: 'Execution method',
 		submitConfirmation: 'Submit Confirmation',
 		SyncPoint: 'Sync Node',
+		syncType: 'Sync type',
 		SyncInfo: {
 			localTZ: 'Local UTC CDC time: custom a point of  CDC time，in local time zone',
 			current: 'Local UTC：default local UTC time',
@@ -168,6 +169,9 @@ const en = {
 		bulkExport: 'Bulk Export',
 		bulkScheuled: 'Batch Start',
 		bulkStopping: 'Bulk Stop',
+		taskBulkFx: 'Function',
+		taskBulkOperation: 'Bulk Operation',
+		taskBulkTag: 'Bulk Tag',
 		upload: 'Click to upload',
 		import: 'Task Import',
 		uploadOK: 'Upload successful',

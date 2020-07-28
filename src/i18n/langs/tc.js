@@ -152,6 +152,7 @@ const tc = {
 		implementationModalities: '執行方式',
 		submitConfirmation: '提交確認',
 		SyncPoint: '同步節點',
+		syncType: '同步類型',
 		SyncInfo: {
 			localTZ: '當前時區傳輸時間：系統所在時區下，開始傳輸任務的時刻',
 			current: '當前時區時間：默認當前時間',
@@ -167,6 +168,9 @@ const tc = {
 		bulkExport: '批量導出',
 		bulkScheuled: '批量啟動',
 		bulkStopping: '批量停止',
+		taskBulkFx: '函数',
+		taskBulkOperation: '批量操作',
+		taskBulkTag: '设置分类',
 		upload: '點擊上傳',
 		import: '任務導入',
 		uploadOK: '上傳成功',
