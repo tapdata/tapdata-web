@@ -18,6 +18,9 @@
 		</header>
 		<main>
 			<div class="body">
+				<div class="carousel">
+					<img src="static/image/login.png" />
+				</div>
 				<el-card class="sign-in-panel">
 					<div class="title">{{ $t('app.signIn.signIn') }}</div>
 					<div class="error-tips" v-show="errorMessage">
