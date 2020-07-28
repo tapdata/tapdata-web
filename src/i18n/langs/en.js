@@ -11,7 +11,7 @@ const en = {
 		signIn: {
 			slogan: 'Use your data as easily as tap water.',
 			signIn: 'Sign in',
-			keepSignIn: 'Stay logged in',
+			keepSignIn: 'Keep signed in',
 			email_placeholder: 'Enter your email',
 			password_placeholder: 'Enter your password',
 
