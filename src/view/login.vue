@@ -81,6 +81,7 @@ export default {
 		async submit() {
 			let form = this.form;
 			let message = '';
+
 			if (!form.email || !form.email.trim()) {
 				message = this.$t('app.signIn.email_require');
 				// eslint-disable-next-line
