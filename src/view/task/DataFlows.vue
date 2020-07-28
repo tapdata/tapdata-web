@@ -735,7 +735,7 @@ export default {
 								}
 							}
 						};
-						ws.send(msg);
+						if (ws.ws.readyState == 1) ws.send(msg);
 					}
 				}
 				this.loading = false;

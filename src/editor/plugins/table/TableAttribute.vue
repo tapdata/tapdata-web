@@ -79,20 +79,18 @@
 					v-if="isSourceDataNode"
 				>
 					<div class="flex-block">
-						<el-switch
-							v-model="model.isFilter"
-							style="margin-right: 20px"
-							:active-value="$t('editor.cell.data_node.collection.form.filter.openFiflter')"
-							:inactive-value="$t('editor.cell.data_node.collection.form.filter.closeFiflter')"
-							@change="model.initialSyncOrder = 0"
-						></el-switch>
+						<el-switch v-model="model.isFilter" style="margin-right: 20px"></el-switch>
 					</div>
 				</el-form-item>
 
-				<el-tabs type="border-card">
-					<el-tab-pane :label="$t('editor.cell.data_node.collection.form.filter.fiflterSetting')">
-						<el-form-item>
-							<el-select v-model="model.fieldFilterType" @change="handleCurrentFieldFilterType">
+				<el-tabs type="border-card" v-if="model.isFilter">
+					<el-tab-pane>
+						<span slot="label"
+							><el-checkbox v-model="model.sqlFromCust" @change="setSqlFrom"></el-checkbox>
+							{{ $t('editor.cell.data_node.collection.form.filter.fiflterSetting') }}</span
+						>
+						<el-form-item :placeholder="$t('editor.cell.data_node.collection.form.filter.allField')">
+							<el-select v-model="model.custSql.fieldFilterType">
 								<el-option
 									v-for="item in filterTypeOptions"
 									:key="item.value"
@@ -102,15 +100,22 @@
 							</el-select>
 						</el-form-item>
 						<el-form-item
-							v-if="model.fieldFilterType !== 'keepAllFields'"
+							v-if="model.custSql.fieldFilterType !== 'keepAllFields'"
 							:placeholder="
-								model.fieldFilterType === 'retainedField'
+								model.custSql.fieldFilterType === 'retainedField'
 									? $t('editor.cell.data_node.collection.form.fieldFilter.placeholderKeep')
 									: $t('editor.cell.data_node.collection.form.fieldFilter.placeholderDelete')
 							"
 						>
-							<el-select v-model="model.fieldFilter" size="mini">
-								<el-option v-for="opt in options" :key="opt" :label="opt" :value="opt"></el-option>
+							<el-select
+								size="mini"
+								v-model="model.custSql.selectedFields"
+								multiple
+								filterable
+								default-first-option
+							>
+								<el-option v-for="opt in primaryKeyOptions" :key="opt" :label="opt" :value="opt">
+								</el-option>
 							</el-select>
 						</el-form-item>
 						<div class="fiflter">
@@ -119,7 +124,7 @@
 								<span slot="prepend">{{
 									$t('editor.cell.data_node.collection.form.filter.rowLimit')
 								}}</span>
-								<el-select v-model="model.dropTable" size="mini" class="e-select">
+								<el-select v-model="model.custSql.limitLines" size="mini" class="e-select">
 									<el-option
 										v-for="item in rowNumberList"
 										:key="item.value"
@@ -128,17 +133,24 @@
 									></el-option>
 								</el-select>
 							</div>
-							<el-row :gutter="12" class="e-row">
+							<el-row
+								v-for="cond in model.custSql.filterConds"
+								:key="cond.field"
+								:gutter="12"
+								class="e-row"
+							>
 								<el-col :span="8">
-									<el-select v-model="model.dropTable" multiple filterable size="mini">
+									<el-select v-model="cond.field" filterable size="mini">
 										<el-option
-											:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
-											:value="false"
+											v-for="item in model.custSql.custFields"
+											:key="item"
+											:label="item"
+											:value="item"
 										></el-option>
 									</el-select>
 								</el-col>
 								<el-col :span="5">
-									<el-select v-model="model.dropTable" size="mini">
+									<el-select v-model="cond.calcu" size="mini">
 										<el-option
 											v-for="item in calculationList"
 											:label="item"
@@ -149,28 +161,50 @@
 								</el-col>
 
 								<el-col :span="6">
-									<el-input type="text" v-model="model.dropTable" size="mini"></el-input>
+									<el-input type="text" v-model="cond.val" size="mini"></el-input>
 								</el-col>
 
 								<el-col :span="5">
 									<div class="btn">
-										<span class="iconfont icon-quxiao remove"></span>
-										<span class="iconfont icon-xinzeng2 remove">or</span>
+										<span
+											class="iconfont icon-quxiao remove"
+											@click="removeCustFilter(cond)"
+										></span>
+										<span
+											class="iconfont icon-xinzeng2 remove"
+											@click="
+												model.custSql.filterConds.push({
+													field: '',
+													calcu: '',
+													val: '',
+													condStr: ''
+												})
+											"
+											>or</span
+										>
 									</div>
 									<!-- <el-radio-group v-model="labelPosition" size="small">
 										<el-radio-button label="left">X</el-radio-button>
 										<el-radio-button label="right">+ or</el-radio-button>
 									</el-radio-group> -->
 								</el-col>
+								<div>{{ cond.condStr }}</div>
+							</el-row>
+							<el-row>
+								<div>{{ model.custSql.sql }}</div>
 							</el-row>
 						</div>
 					</el-tab-pane>
-					<el-tab-pane :label="$t('editor.cell.data_node.collection.form.filter.fiflterSetting')">
+					<el-tab-pane>
+						<span slot="label"
+							><el-checkbox v-model="model.sqlNotFromCust" @change="setSqlFrom('no')"></el-checkbox>
+							{{ $t('editor.cell.data_node.collection.form.filter.fiflterSetting') }}</span
+						>
 						<el-form-item prop="sql" :rules="rules">
 							<el-input
 								type="textarea"
 								rows="10"
-								v-model="model.sql"
+								v-model="model.editSql"
 								:placeholder="$t('editor.cell.data_node.table.form.custom_sql.placeholder')"
 								size="mini"
 							></el-input>
@@ -243,6 +277,12 @@ export default {
 				this.$emit('dataChanged', this.getData());
 			}
 		},
+		'model.custSql': {
+			deep: true,
+			handler() {
+				this.createCustSql();
+			}
+		},
 		'model.connectionId': {
 			immediate: true,
 			handler() {
@@ -279,6 +319,7 @@ export default {
 								.map(f => f.field_name)
 								.join(',');
 							self.primaryKeyOptions = fields.map(f => f.field_name);
+							self.model.custSql.custFields = fields.map(f => f.field_name);
 							if (primaryKeys) {
 								self.model.primaryKeys = primaryKeys;
 							} else {
@@ -355,16 +396,24 @@ export default {
 				databaseType: '',
 				tableName: '',
 				sql: '',
+				editSql: '',
+				isFilter: false,
+				sqlFromCust: true,
+				sqlNotFromCust: false,
+				custSql: {
+					fieldFilterType: 'keepAllFields',
+					limitLines: '',
+					selectedFields: [],
+					custFields: [],
+					filterConds: [{ field: '', calcu: '', val: '', condStr: '' }],
+					sql: 'sdsfsdfsf'
+				},
 				initialOffset: '',
 				dropTable: false,
 				type: 'table',
 				primaryKeys: '',
 				initialSyncOrder: 0,
-				enableInitialOrder: false,
-
-				fieldFilterType: 'keepAllFields',
-				fieldFilter: [],
-				selectSaveList: []
+				enableInitialOrder: false
 			},
 
 			mergedSchema: null,
@@ -391,14 +440,14 @@ export default {
 				},
 				{
 					label: this.$t('editor.cell.data_node.collection.form.filter.oneThousandRows'),
-					value: '1000'
+					value: 1000
 				},
 				{
 					label: this.$t('editor.cell.data_node.collection.form.filter.tenThousandRows'),
-					value: '10000'
+					value: 10000
 				}
 			],
-			calculationList: ['=', '!=', '>', '<', '>=', '<=', 'like']
+			calculationList: ['=', '<>', '>', '<', '>=', '<=', 'like']
 		};
 	},
 
@@ -411,7 +460,6 @@ export default {
 		seeMonitor() {
 			editor.goBackMontior();
 		},
-
 		async loadDataSource() {
 			this.databaseSelectConfig.loading = true;
 			let result = await connectionApi.get({
@@ -484,6 +532,49 @@ export default {
 					this.schemaSelectConfig.loading = false;
 				});
 		},
+		setSqlFrom(name) {
+			if (name == 'no') this.model.sqlFromCust = !this.model.sqlNotFromCust;
+			else this.model.sqlNotFromCust = !this.model.sqlFromCust;
+		},
+		removeCustFilter(cond) {
+			if (this.model.custSql.filterConds.length == 1) return;
+			this.model.custSql.filterConds.splice(this.model.custSql.filterConds.indexOf(cond), 1);
+		},
+		setCustFields() {
+			let custSql = this.model.custSql;
+			if (custSql.selectedFields.length > 0 && custSql.fieldFilterType == 'retainedField')
+				custSql.custFields = custSql.selectedFields;
+			else if (custSql.selectedFields.length > 0 && custSql.fieldFilterType == 'deleteField')
+				custSql.custFields = this.primaryKeyOptions.filter(it => !custSql.selectedFields.includes(it));
+		},
+		createCustSql() {
+			this.setCustFields();
+			let res = 'SELECT ',
+				custSql = this.model.custSql;
+			if (custSql.custFields.length != this.primaryKeyOptions.length) res += custSql.custFields.join(',');
+			else res += '* ';
+			res += ' FROM ' + this.model.tableName + ' ';
+			if (custSql.filterConds[0].field.length > 0 || custSql.limitLines) res += ' WHERE ';
+			for (let i = 0; i < custSql.filterConds.length; i++) {
+				const cond = custSql.filterConds[i];
+				if (cond.field.length > 0) {
+					if (i == 0) res += '(';
+					let quota = ['String'].includes(
+						this.mergedSchema.fields.find(it => it.field_name == cond.field).javaType
+					)
+						? '"'
+						: '';
+					res += cond.field + ' ' + cond.calcu + ' ' + quota + cond.val + quota;
+					if (i == custSql.filterConds.length - 2) res += ' OR ';
+					if (i == custSql.filterConds.length - 1) res += ')';
+				}
+			}
+			if (custSql.limitLines) {
+				if (res.indexOf('WHERE ') < res.length - 6) res += ' AND ';
+				res += ' ROWNUM < ' + custSql.limitLines;
+			}
+			this.model.custSql.sql = res;
+		},
 
 		handlerConnectionChange() {
 			this.model.tableName = '';
@@ -496,20 +587,6 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model = {
-				connectionId: '',
-				connectionName: '',
-				databaseType: '',
-				tableName: '',
-				tableId: '',
-				sql: '',
-				dropTable: false,
-				type: 'table',
-				primaryKeys: '',
-				initialOffset: '',
-				initialSyncOrder: 0,
-				enableInitialOrder: false
-			};
 			if (data) {
 				_.merge(this.model, data);
 				//老数据的兼容处理
@@ -531,6 +608,9 @@ export default {
 			editor = vueAdapter.editor;
 		},
 		getData() {
+			if (this.model.isFilter)
+				if (this.model.sqlFromCust) this.model.sql = this.model.custSql.sql;
+				else this.model.sql = this.model.editSql;
 			let result = _.cloneDeep(this.model);
 			result.name = result.tableName || 'Table';
 			if (this.isSourceDataNode) {
