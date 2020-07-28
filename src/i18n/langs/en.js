@@ -626,7 +626,8 @@ const en = {
 					validate: {
 						name: 'Node name cannot be empty',
 						source: 'Data source cannot be empty',
-						table: 'Data table cannot be empty'
+						table: 'Data table cannot be empty',
+						sameConnection: 'Cannot choose the same connection'
 					}
 				}
 			},

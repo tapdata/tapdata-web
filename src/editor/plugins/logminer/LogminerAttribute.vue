@@ -62,12 +62,7 @@
 					</el-select>
 				</el-form-item>
 			</el-col>
-			<el-row
-				:gutter="20"
-				class="loopFrom"
-				v-for="(item, index) in model.logCollectorSettings"
-				:key="item.connectionId"
-			>
+			<el-row :gutter="20" class="loopFrom" v-for="(item, index) in model.logCollectorSettings" :key="index">
 				<el-col :span="21" class="fromLoopBox">
 					<el-form-item
 						:label="$t('editor.cell.data_node.logminer.logSourceSetting')"
@@ -77,11 +72,11 @@
 						<el-select
 							v-model="item.connectionId"
 							:placeholder="$t('editor.cell.data_node.logminer.tableFilter.placeSletSource')"
-							@change="changeConnectionId(item.connectionId)"
+							@change="changeConnectionId(item)"
 						>
 							<el-option
-								v-for="item in connectionList"
-								:key="item.value"
+								v-for="(item, index) in connectionList"
+								:key="index"
 								:label="item.label"
 								:value="item.value"
 							>
@@ -164,6 +159,7 @@ export default {
 	data() {
 		return {
 			model: {
+				connectionId: '',
 				name: '',
 				logTtl: 0,
 				syncPoint: {},
@@ -231,7 +227,13 @@ export default {
 					this.model.syncPoint.timezone = '+' + -timeZone;
 				}
 			}
-			this.model.syncPoint.date = '';
+			if (this.model.syncPoint.type === 'current') {
+				this.model.syncPoint.date = '';
+			} else {
+				this.model.syncPoint.date = this.model.syncPoint.date
+					? this.model.syncPoint.date
+					: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+			}
 		},
 
 		/**改变表类型**/
@@ -240,13 +242,16 @@ export default {
 		},
 
 		/**改变连接**/
-		changeConnectionId(val) {
-			this.loadDataModels([val]);
+		changeConnectionId(data) {
+			this.loadDataModels([data.connectionId]);
+			let arr = [];
 			this.model.logCollectorSettings.forEach(item => {
-				if (item.connectionId === val) {
-					item.selectTables = [];
-				}
+				arr.push(item.connectionId);
 			});
+			if (new Set(arr).size !== arr.length) {
+				data.connectionId = '';
+				this.$message.error(this.$t('editor.cell.data_node.logminer.validate.sameConnection'));
+			}
 		},
 
 		/**获取表数据**/
@@ -353,11 +358,17 @@ export default {
 		},
 
 		setData(data) {
+			let timeZone = new Date().getTimezoneOffset() / 60;
+			if (timeZone > 0) {
+				timeZone = 0 - timeZone;
+			} else {
+				timeZone = '+' + -timeZone;
+			}
 			this.model = {
-				name: 'Orcle' + this.$t('editor.cell.data_node.logminer.name'),
+				name: 'Oracle' + this.$t('editor.cell.data_node.logminer.name'),
 				syncPoint: {
 					type: 'localTZ',
-					timezone: new Date().getTimezoneOffset() / 60,
+					timezone: timeZone,
 					date: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
 				},
 				logTtl: 3,
@@ -374,6 +385,13 @@ export default {
 			// let self = this;
 			if (data) {
 				_.merge(this.model, data);
+				if (this.model.syncPoint.type === 'current') {
+					this.model.syncPoint.date = '';
+				}
+
+				this.model.connectionId = this.model.logCollectorSettings[0].connectionId
+					? this.model.logCollectorSettings[0].connectionId
+					: '';
 				this.model.logCollectorSettings.map((item, index) => {
 					if (item.selectType === 'exclusionTable') {
 						item.selectTables = item.includeTablesList.filter(table => {
@@ -394,7 +412,12 @@ export default {
 
 		getData() {
 			let result = _.cloneDeep(this.model);
-			result.syncPoint.date = this.$moment(result.syncPoint.date).format('YYYY-MM-DD HH:mm:ss');
+			result.connectionId = result.logCollectorSettings[0].connectionId
+				? result.logCollectorSettings[0].connectionId
+				: '';
+			this.model.syncPoint.date = result.syncPoint.date
+				? this.$moment(result.syncPoint.date).format('YYYY-MM-DD HH:mm:ss')
+				: '';
 			return result;
 		}
 

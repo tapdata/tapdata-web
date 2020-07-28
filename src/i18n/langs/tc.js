@@ -619,7 +619,8 @@ const tc = {
 					validate: {
 						name: '節點名稱不能為空',
 						source: '數據源不能為空',
-						table: '數據表不能為空'
+						table: '數據表不能為空',
+						sameConnection: '不能選擇相同連接'
 					}
 				}
 			},
