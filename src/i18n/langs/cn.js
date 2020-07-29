@@ -22,7 +22,7 @@ const cn = {
 			signIn: '登录',
 			keepSignIn: '保持登录状态',
 			email_placeholder: '请输入邮箱',
-			password_placeholder: '请输入邮箱',
+			password_placeholder: '请输入密码',
 
 			email_require: '邮箱地址必填',
 			email_invalid: '请输入有效邮箱地址',
