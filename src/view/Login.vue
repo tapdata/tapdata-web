@@ -125,7 +125,7 @@ export default {
 				this.$router.replace({
 					name: 'dashboard'
 				});
-			} catch (error) {
+			} catch (e) {
 				this.errorMessage = this.$t('app.signIn.signInFail');
 				this.loading = false;
 			}

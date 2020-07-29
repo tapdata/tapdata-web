@@ -13,7 +13,7 @@ const tc = {
 			signIn: '登入',
 			keepSignIn: '保持登入狀態',
 			email_placeholder: '請輸入郵箱',
-			password_placeholder: '請輸入郵箱',
+			password_placeholder: '請輸入密碼',
 
 			email_require: '郵箱地址必填',
 			email_invalid: '請輸入有效郵箱地址',
