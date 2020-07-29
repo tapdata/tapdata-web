@@ -536,17 +536,17 @@ export default {
 					}, 200);
 				});
 			} else {
-				setTimeout(() => {
-					document.querySelectorAll('.el-tooltip__popper').forEach(it => {
-						it.outerHTML = '';
-					});
-				}, 200);
 				let routeUrl = this.$router.resolve({
 					path: '/job',
 					query: { id: id, isMoniting: true }
 				});
 				window.open(routeUrl.href, 'monitor_' + id);
 			}
+			setTimeout(() => {
+				document.querySelectorAll('.el-tooltip__popper').forEach(it => {
+					it.outerHTML = '';
+				});
+			}, 200);
 		},
 		handleImport() {
 			let routeUrl = this.$router.resolve({
@@ -636,7 +636,11 @@ export default {
 			this.loading = true;
 			this.$store.commit('dataFlows', this.formData);
 
-			let where = {};
+			let where = {
+				user_id: {
+					like: this.$cookie.get('user_id')
+				}
+			};
 			let order = 'createTime DESC';
 			if (this.order) {
 				order = this.order;
