@@ -24,7 +24,7 @@
 				</div>
 			</div>
 			<div class="panel">
-				<img src="/static/image/tapdateQR.png" class="code" />
+				<img src="static/image/tapdateQR.png" class="code" />
 			</div>
 		</main>
 	</el-card>
