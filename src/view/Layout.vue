@@ -267,7 +267,7 @@ export default {
 					});
 					break;
 				default:
-					this.$message.info('Coming soon!');
+					window.open('https://cloud.tapdata.net/agent/download.html', '_blank');
 					break;
 			}
 		},
@@ -449,6 +449,7 @@ export default {
 		}
 	}
 	.layout-main {
+		padding: 0;
 		background: #fff;
 	}
 }

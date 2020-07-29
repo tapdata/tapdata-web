@@ -1,304 +1,270 @@
 <template>
-	<div>
-		<el-col :span="3">
+	<section class="data-flow-wrap" v-loading="restLoading">
+		<div class="panel-left">
 			<metaData v-on:nodeClick="nodeClick"></metaData>
-		</el-col>
-		<el-col :span="21">
+		</div>
+		<div class="panel-main">
+			<div class="topbar">
+				<ul class="search-bar">
+					<li class="item">
+						<el-input
+							:placeholder="$t('dataFlow.searchPlaceholder')"
+							clearable
+							prefix-icon="el-icon-search"
+							v-model="formData.search"
+							size="mini"
+							@change="screenFn"
+						></el-input>
+					</li>
+					<li class="item">
+						<el-select
+							v-model="formData.status"
+							size="mini"
+							clearable
+							:placeholder="$t('dataFlow.taskStatusPlaceholder')"
+							style="width:160px"
+							@change="screenFn"
+						>
+							<el-option
+								v-for="item in options"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value"
+							></el-option>
+						</el-select>
+					</li>
+					<li class="item">
+						<el-select
+							v-model="formData.way"
+							size="mini"
+							clearable
+							:placeholder="$t('dataFlow.taskSettingPlaceholder')"
+							style="width:160px"
+							@change="screenFn"
+						>
+							<el-option
+								v-for="item in optionsKey"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value"
+							></el-option>
+						</el-select>
+					</li>
+					<li class="item">
+						<el-select
+							v-model="formData.executionStatus"
+							size="mini"
+							clearable
+							:placeholder="$t('dataFlow.executionStatus')"
+							style="width:160px"
+							@change="screenFn"
+						>
+							<el-option
+								v-for="opt in ['initializing', 'cdc', 'initialized']"
+								:key="opt"
+								:label="$t('dataFlow.status.' + opt)"
+								:value="opt"
+							></el-option>
+						</el-select>
+					</li>
+					<li class="item" v-if="checkedTag && checkedTag !== ''">
+						<el-tag size="small" closable @close="handleClose()">{{ checkedTag.value }}</el-tag>
+					</li>
+					<li class="item">
+						<el-button class="btn" size="mini" @click="handleClear">
+							<i class="iconfont icon-shuaxin1 back-btn-icon"></i>
+						</el-button>
+					</li>
+				</ul>
+				<div class="topbar-buttons">
+					<el-button size="mini" class="btn" @click="handleGoFuntion">
+						<i class="iconfont icon-hanshu back-btn-icon"></i>
+						<span> {{ $t('dataFlow.taskBulkFx') }}</span>
+					</el-button>
+					<el-button size="mini" class="btn" v-show="multipleSelection.length > 0" @click="handleClassify">
+						<i class="iconfont icon-biaoqian back-btn-icon"></i>
+						<span> {{ $t('dataFlow.taskBulkTag') }}</span>
+					</el-button>
+					<el-button size="mini" class="btn" @click="handleImport">
+						<i class="iconfont icon-daoru back-btn-icon"></i>
+						<span> {{ $t('dataFlow.bulkExport') }}</span>
+					</el-button>
+					<el-dropdown @command="handleCommand" v-show="multipleSelection.length > 0">
+						<el-button class="btn btn-dropdowm" size="mini">
+							<i class="iconfont icon-piliang back-btn-icon"></i>
+							<span> {{ $t('dataFlow.taskBulkOperation') }}</span>
+						</el-button>
+						<el-dropdown-menu slot="dropdown">
+							<el-dropdown-item command="a">{{ $t('dataFlow.bulkExport') }}</el-dropdown-item>
+							<el-dropdown-item command="b">{{ $t('dataFlow.bulkScheuled') }}</el-dropdown-item>
+							<el-dropdown-item command="c">{{ $t('dataFlow.bulkStopping') }}</el-dropdown-item>
+							<el-dropdown-item command="d">{{ $t('dataFlow.batchDelete') }}</el-dropdown-item>
+							<el-dropdown-item command="e">{{ $t('dataFlow.batchRest') }}</el-dropdown-item>
+						</el-dropdown-menu>
+					</el-dropdown>
+					<el-button class="btn btn-create" type="primary" size="mini" @click="create">
+						<i class="iconfont icon-jia add-btn-icon"></i>
+					</el-button>
+				</div>
+			</div>
 			<div class="task-list" v-loading="restLoading">
-				<div class="task-list-operating-area box-card">
-					<el-row :gutter="10">
-						<el-form label-width="100px" :data="formData" :inline="true" class="dataFlowsFlow">
-							<el-row>
-								<el-col :span="16">
-									<el-form-item>
-										<el-input
-											:placeholder="$t('dataFlow.searchPlaceholder')"
-											clearable
-											prefix-icon="el-icon-search"
-											v-model="formData.search"
-											size="mini"
-											@change="screenFn"
-										></el-input>
-									</el-form-item>
-									<el-form-item>
-										<el-select
-											v-model="formData.status"
-											size="mini"
-											clearable
-											:placeholder="$t('dataFlow.taskStatusPlaceholder')"
-											style="width:160px"
-											@change="screenFn"
-										>
-											<el-option
-												v-for="item in options"
-												:key="item.value"
-												:label="item.label"
-												:value="item.value"
-											></el-option>
-										</el-select>
-									</el-form-item>
-									<el-form-item>
-										<el-select
-											v-model="formData.way"
-											size="mini"
-											clearable
-											:placeholder="$t('dataFlow.taskSettingPlaceholder')"
-											style="width:160px"
-											@change="screenFn"
-										>
-											<el-option
-												v-for="item in optionsKey"
-												:key="item.value"
-												:label="item.label"
-												:value="item.value"
-											></el-option>
-										</el-select>
-									</el-form-item>
-									<el-form-item>
-										<el-select
-											v-model="formData.executionStatus"
-											size="mini"
-											clearable
-											:placeholder="$t('dataFlow.executionStatus')"
-											style="width:160px"
-											@change="screenFn"
-										>
-											<el-option
-												v-for="opt in ['initializing', 'cdc', 'initialized']"
-												:key="opt"
-												:label="$t('dataFlow.status.' + opt)"
-												:value="opt"
-											></el-option>
-										</el-select>
-									</el-form-item>
-									<el-form-item v-if="checkedTag && checkedTag !== ''">
-										<el-tag size="small" closable @close="handleClose()">{{
-											checkedTag.value
-										}}</el-tag>
-									</el-form-item>
-									<el-form-item>
-										<el-button class="back-btn-icon-box dv-btn-icon" @click="handleClear"
-											><i class="iconfont icon-shuaxin1 back-btn-icon"></i
-										></el-button>
-									</el-form-item>
-								</el-col>
-								<div class="task-list-menu-right">
-									<el-button class="back-btn-icon-box dv-btn-icon" @click="handleGoFuntion"
-										><i class="iconfont icon-hanshu back-btn-icon"></i
-										><span> {{ $t('dataFlow.taskBulkFx') }}</span></el-button
-									>
-									<el-button
-										class="back-btn-icon-box dv-btn-icon"
-										@click="handleClassify"
-										v-show="multipleSelection.length > 0"
-									>
-										<i class="iconfont icon-biaoqian back-btn-icon"></i
-										><span> {{ $t('dataFlow.taskBulkTag') }}</span></el-button
-									>
-									<el-button class="back-btn-icon-box dv-btn-icon" @click="handleImport"
-										><i class="iconfont icon-daoru back-btn-icon"></i
-										><span> {{ $t('dataFlow.bulkExport') }}</span></el-button
-									>
-									<el-dropdown @command="handleCommand" v-show="multipleSelection.length > 0">
-										<el-button class="back-btn-icon-box dv-btn-icon"
-											><i class="iconfont icon-piliang back-btn-icon"></i
-											><span> {{ $t('dataFlow.taskBulkOperation') }}</span></el-button
-										>
-										<el-dropdown-menu slot="dropdown">
-											<el-dropdown-item command="a">{{
-												$t('dataFlow.bulkExport')
-											}}</el-dropdown-item>
-											<el-dropdown-item command="b">{{
-												$t('dataFlow.bulkScheuled')
-											}}</el-dropdown-item>
-											<el-dropdown-item command="c">{{
-												$t('dataFlow.bulkStopping')
-											}}</el-dropdown-item>
-											<el-dropdown-item command="d">{{
-												$t('dataFlow.batchDelete')
-											}}</el-dropdown-item>
-											<el-dropdown-item command="e">{{
-												$t('dataFlow.batchRest')
-											}}</el-dropdown-item>
-										</el-dropdown-menu>
-									</el-dropdown>
-									<el-button class="add-btn-icon-box" @click="create"
-										><i class="iconfont icon-jia add-btn-icon"></i
-									></el-button>
-								</div>
-							</el-row>
-						</el-form>
-					</el-row>
-				</div>
-				<div class="task-list-main">
-					<div class="clear"></div>
-					<el-table
-						v-loading="loading"
-						:element-loading-text="$t('dataFlow.dataLoading')"
-						:data="tableData"
-						style="width: 99%;border: 1px solid #dedee4;"
-						class="dv-table"
-						:max-height="maxHeight"
-						row-key="id"
-						:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-						@sort-change="handleSortTable"
-						@selection-change="handleSelectionChange"
-						:default-sort="{ prop: flowProp, order: flowOrder }"
+				<el-table
+					v-loading="loading"
+					:element-loading-text="$t('dataFlow.dataLoading')"
+					:data="tableData"
+					height="100%"
+					style="border: 1px solid #dedee4;"
+					class="dv-table"
+					row-key="id"
+					:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+					@sort-change="handleSortTable"
+					@selection-change="handleSelectionChange"
+					:default-sort="{ prop: flowProp, order: flowOrder }"
+				>
+					<el-table-column type="selection" width="45" :selectable="handleSelectable"> </el-table-column>
+					<el-table-column
+						:label="$t('dataFlow.taskName') + '/' + $t('dataFlow.creatdor')"
+						:show-overflow-tooltip="true"
 					>
-						<el-table-column type="selection" width="45" :selectable="handleSelectable"> </el-table-column>
-						<el-table-column
-							:label="$t('dataFlow.taskName') + '/' + $t('dataFlow.creatdor')"
-							:show-overflow-tooltip="true"
-						>
-							<template slot-scope="scope">
-								<span>{{ scope.row.name }}</span>
-								<div style="margin-left: 20px;color:#ccc">
-									{{ scope.row.user ? scope.row.user.email : '' }}
-								</div>
-							</template>
-						</el-table-column>
-						<el-table-column prop="setting.sync_type" :label="$t('dataFlow.syncType')" width="120">
-						</el-table-column>
-						<el-table-column prop="status" sortable="custom" :label="$t('dataFlow.taskStatus')" width="180">
-							<template slot-scope="scope">
-								<div>
-									<span :style="`color: ${colorMap[scope.row.status]};`">
-										{{ scope.row.statusLabel }}
-									</span>
-									<span
-										style="color: #999"
-										v-if="
-											!scope.row.hasChildren &&
-												scope.row.statusList &&
-												scope.row.statusList.length
-										"
-									>
-										(
-										<span v-for="(key, index) in scope.row.statusList" :key="key">
-											{{ $t('dataFlow.status.' + key) }}
-											<span v-if="index < scope.row.statusList.length - 1">&nbsp;</span>
-										</span>
-										)
-									</span>
-								</div>
-							</template>
-						</el-table-column>
-						<el-table-column
-							prop="input"
-							sortable="input"
-							:label="
-								$t('dataFlow.totalInput') +
-									'/' +
-									$t('dataFlow.totalOutput') +
-									'/' +
-									$t('dataFlow.runningSpeed')
-							"
-							width="200"
-						>
-							<template slot-scope="scope">
+						<template slot-scope="scope">
+							<span>{{ scope.row.name }}</span>
+							<div style="margin-left: 20px;color:#ccc">
+								{{ scope.row.user ? scope.row.user.email : '' }}
+							</div>
+						</template>
+					</el-table-column>
+					<el-table-column prop="setting.sync_type" :label="$t('dataFlow.syncType')" width="120">
+					</el-table-column>
+					<el-table-column prop="status" sortable="custom" :label="$t('dataFlow.taskStatus')" width="180">
+						<template slot-scope="scope">
+							<div>
+								<span :style="`color: ${colorMap[scope.row.status]};`">
+									{{ scope.row.statusLabel }}
+								</span>
 								<span
-									>{{ scope.row.input }} / {{ scope.row.output }} /
-									{{ scope.row.transmissionTime }}</span
+									style="color: #999"
+									v-if="!scope.row.hasChildren && scope.row.statusList && scope.row.statusList.length"
 								>
-							</template>
-						</el-table-column>
-						<el-table-column
-							prop="listtags"
-							:label="$t('dataFlow.category')"
-							:formatter="listtagsFormatter"
-							width="120"
-						>
-						</el-table-column>
-						<el-table-column
-							prop="startTime"
-							:label="$t('dataFlow.creationTime')"
-							width="140"
-							sortable="custom"
-							:formatter="formatterStartTime"
-						></el-table-column>
-						<el-table-column :label="$t('dataFlow.taskSwitch')" width="70">
-							<template slot-scope="scope">
-								<div v-if="!scope.row.hasChildren">
-									<el-tooltip
-										class="item"
-										effect="dark"
-										:content="$t('dataFlow.draftNotStart')"
-										:manual="!['draft'].includes(scope.row.status)"
-										placement="top-start"
+									(
+									<span v-for="(key, index) in scope.row.statusList" :key="key">
+										{{ $t('dataFlow.status.' + key) }}
+										<span v-if="index < scope.row.statusList.length - 1">&nbsp;</span>
+									</span>
+									)
+								</span>
+							</div>
+						</template>
+					</el-table-column>
+					<el-table-column
+						prop="input"
+						sortable="input"
+						:label="
+							$t('dataFlow.totalInput') +
+								'/' +
+								$t('dataFlow.totalOutput') +
+								'/' +
+								$t('dataFlow.runningSpeed')
+						"
+						width="200"
+					>
+						<template slot-scope="scope">
+							<span
+								>{{ scope.row.input }} / {{ scope.row.output }} / {{ scope.row.transmissionTime }}</span
+							>
+						</template>
+					</el-table-column>
+					<el-table-column
+						prop="listtags"
+						:label="$t('dataFlow.category')"
+						:formatter="listtagsFormatter"
+						width="120"
+					>
+					</el-table-column>
+					<el-table-column
+						prop="startTime"
+						:label="$t('dataFlow.creationTime')"
+						width="140"
+						sortable="custom"
+						:formatter="formatterStartTime"
+					></el-table-column>
+					<el-table-column :label="$t('dataFlow.taskSwitch')" width="70">
+						<template slot-scope="scope">
+							<div v-if="!scope.row.hasChildren">
+								<el-tooltip
+									class="item"
+									effect="dark"
+									:content="$t('dataFlow.draftNotStart')"
+									:manual="!['draft'].includes(scope.row.status)"
+									placement="top-start"
+								>
+									<el-switch
+										v-model="scope.row.newStatus"
+										inactive-value="stopping"
+										active-value="scheduled"
+										:disabled="statusBtMap[scope.row.status].switch"
+										@change="
+											handleStatus(scope.row.id, scope.row.status, scope.row.newStatus, scope.row)
+										"
+									></el-switch>
+								</el-tooltip>
+							</div>
+						</template>
+					</el-table-column>
+					<el-table-column :label="$t('dataFlow.operate')" width="180">
+						<template slot-scope="scope">
+							<div v-if="!scope.row.hasChildren">
+								<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
+									<el-button type="text" @click="handleDetail(scope.row.id, 'detail')">
+										<i class="iconfont  task-list-icon icon-chaxun"></i>
+									</el-button>
+								</el-tooltip>
+								<el-tooltip class="item" :content="$t('dataFlow.edit')" placement="bottom">
+									<el-button
+										type="text"
+										:disabled="statusBtMap[scope.row.status].edit"
+										@click="handleDetail(scope.row.id, 'edit')"
 									>
-										<el-switch
-											v-model="scope.row.newStatus"
-											inactive-value="stopping"
-											active-value="scheduled"
-											:disabled="statusBtMap[scope.row.status].switch"
-											@change="
-												handleStatus(
-													scope.row.id,
-													scope.row.status,
-													scope.row.newStatus,
-													scope.row
-												)
-											"
-										></el-switch>
-									</el-tooltip>
-								</div>
-							</template>
-						</el-table-column>
-						<el-table-column :label="$t('dataFlow.operate')" width="180">
-							<template slot-scope="scope">
-								<div v-if="!scope.row.hasChildren">
-									<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
-										<el-button type="text" @click="handleDetail(scope.row.id, 'detail')">
-											<i class="iconfont  task-list-icon icon-chaxun"></i>
-										</el-button>
-									</el-tooltip>
-									<el-tooltip class="item" :content="$t('dataFlow.edit')" placement="bottom">
-										<el-button
-											type="text"
-											:disabled="statusBtMap[scope.row.status].edit"
-											@click="handleDetail(scope.row.id, 'edit')"
+										<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
+									</el-button>
+								</el-tooltip>
+								<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
+									<el-button
+										type="text"
+										:disabled="statusBtMap[scope.row.status].delete"
+										@click="handleDelete(scope.row.id)"
+									>
+										<i class="iconfont task-list-icon icon-shanchu"></i>
+									</el-button>
+								</el-tooltip>
+								<el-dropdown @command="handleRowCommand" class="item">
+									<el-button type="text"
+										><i class="iconfont icon-gengduo3  task-list-icon"></i
+									></el-button>
+									<el-dropdown-menu slot="dropdown">
+										<el-dropdown-item :command="'export' + scope.row.id">{{
+											$t('dataFlow.dataFlowExport')
+										}}</el-dropdown-item>
+										<el-dropdown-item :command="'copy' + scope.row.id">{{
+											$t('dataFlow.copy')
+										}}</el-dropdown-item>
+										<el-dropdown-item
+											:disabled="statusBtMap[scope.row.status].reset"
+											:command="'reset' + scope.row.id"
+											>{{ $t('dataFlow.button.reset') }}</el-dropdown-item
 										>
-											<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
-										</el-button>
-									</el-tooltip>
-									<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
-										<el-button
-											type="text"
-											:disabled="statusBtMap[scope.row.status].delete"
-											@click="handleDelete(scope.row.id)"
+										<el-dropdown-item
+											:command="'force_stopping' + scope.row.id"
+											:disabled="statusBtMap[scope.row.status]['force stopping']"
+											>{{ $t('dataFlow.status.force_stopping') }}</el-dropdown-item
 										>
-											<i class="iconfont task-list-icon icon-shanchu"></i>
-										</el-button>
-									</el-tooltip>
-									<el-dropdown @command="handleRowCommand" class="item">
-										<el-button type="text"
-											><i class="iconfont icon-gengduo3  task-list-icon"></i
-										></el-button>
-										<el-dropdown-menu slot="dropdown">
-											<el-dropdown-item :command="'export' + scope.row.id">{{
-												$t('dataFlow.dataFlowExport')
-											}}</el-dropdown-item>
-											<el-dropdown-item :command="'copy' + scope.row.id">{{
-												$t('dataFlow.copy')
-											}}</el-dropdown-item>
-											<el-dropdown-item
-												:disabled="statusBtMap[scope.row.status].reset"
-												:command="'reset' + scope.row.id"
-												>{{ $t('dataFlow.button.reset') }}</el-dropdown-item
-											>
-											<el-dropdown-item
-												:command="'force_stopping' + scope.row.id"
-												:disabled="statusBtMap[scope.row.status]['force stopping']"
-												>{{ $t('dataFlow.status.force_stopping') }}</el-dropdown-item
-											>
-										</el-dropdown-menu>
-									</el-dropdown>
-								</div>
-							</template>
-						</el-table-column>
-					</el-table>
-				</div>
+									</el-dropdown-menu>
+								</el-dropdown>
+							</div>
+						</template>
+					</el-table-column>
+				</el-table>
 				<el-pagination
+					class="pagination"
 					background
 					layout="prev, pager, next,sizes"
 					:page-sizes="[20, 30, 50, 100]"
@@ -309,7 +275,7 @@
 				>
 				</el-pagination>
 			</div>
-		</el-col>
+		</div>
 		<SelectClassify
 			ref="SelectClassify"
 			:dialogVisible="dialogVisible"
@@ -318,7 +284,7 @@
 			v-on:dialogVisible="handleDialogVisible"
 			v-on:operationsClassify="handleOperationClassify"
 		></SelectClassify>
-	</div>
+	</section>
 </template>
 
 <script>
@@ -447,7 +413,7 @@ export default {
 	},
 	computed: {
 		maxHeight: function() {
-			let height = document.body.clientHeight - 90 + 'px';
+			let height = document.body.clientHeight - 140 + 'px';
 			return height;
 		}
 	},
@@ -1136,47 +1102,71 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.data-flow-wrap {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	.panel-left {
+		width: 200px;
+		height: 100%;
+		box-sizing: border-box;
+	}
+	.panel-main {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		.topbar {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0 20px;
+			.btn {
+				padding: 7px;
+				background: #f5f5f5;
+				i.iconfont {
+					font-size: 12px;
+				}
+				&.btn-dropdowm {
+					margin-left: 10px;
+				}
+				&.btn-create {
+					margin-left: 10px;
+					background: #48b6e2;
+				}
+			}
+			.search-bar {
+				display: flex;
+				align-items: center;
+				height: 50px;
+				.item {
+					margin-right: 10px;
+				}
+			}
+		}
+		.pagination {
+			height: 40px;
+			line-height: 40px;
+		}
+	}
+}
 .task-list {
+	flex: 1;
+	overflow: hidden;
+	padding: 0 20px 20px 20px;
+	display: flex;
+	flex-direction: column;
 	font-size: 14px;
-	margin-left: 20px;
-	/*height: calc(100% - 48px);*/
+	.dv-table {
+		flex: 1;
+		overflow: hidden;
+	}
 	.el-button.is-disabled {
 		color: #c0c4cc;
 	}
 	.el-button--text {
 		color: #606266;
 	}
-}
-
-.task-list-operating-area {
-	border-radius: 3px;
-	transition: 0.2s;
-	padding-left: 5px;
-	margin-left: 0;
-
-	.el-input,
-	.el-select {
-		display: inline-block;
-		width: 240px;
-	}
-
-	.el-form-item {
-		margin-bottom: 4px;
-	}
-}
-.df-btn-box {
-	padding: 0;
-	width: 30px;
-	height: 28px;
-}
-.df-btn {
-	color: #999;
-	font-size: 15px;
-}
-.el-table .el-table__row .el-table__row--level .el-table__expand-icon {
-	width: 25px;
-	margin-left: -20px !important;
-	float: left !important;
 }
 
 .task-list-menu-cion {
@@ -1213,13 +1203,6 @@ export default {
 	border: 3px solid transparent !important;
 }
 
-.clear {
-	clear: both;
-}
-
-.item {
-	margin-left: 10px;
-}
 .task-list .el-pagination {
 	width: 100%;
 	padding-top: 10px;
@@ -1229,47 +1212,12 @@ export default {
 	overflow: hidden;
 	z-index: 999;
 }
-.back-btn-icon-box,
-.add-btn-icon-box {
-	width: auto;
-	min-width: 28px;
-	height: 28px;
-	display: inline-block;
-	border-radius: 4px;
-	line-height: 1;
-	white-space: nowrap;
-	cursor: pointer;
-	background: #48b6e2;
-	border: 0;
-	color: #666;
-	-webkit-appearance: none;
-	text-align: center;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-	outline: 0;
-	margin: 0;
-	-webkit-transition: 0.1s;
-	transition: 0.1s;
-	font-weight: normal;
-	padding: 0 10px;
-	font-size: 12px;
-}
-.dv-btn-icon {
-	background: #f5f5f5;
-	border: 1px solid #dcdfe6;
-}
-.back-btn-icon-box:hover {
-	background: #dedee4;
-}
 
 .back-btn-icon {
 	color: #666;
 }
 .add-btn-icon {
 	color: #fff;
-}
-.dataFlowsFlow {
-	margin-top: 10px;
 }
 </style>
 <style lang="less">
@@ -1286,19 +1234,10 @@ export default {
 		background: #fafafa;
 	}
 }
-.add-btn-icon-box .el-button:focus,
-.add-btn-icon-box .el-button:hover {
-	background-color: #48b6e2;
-}
 .dataFlowsFlow .el-form-item__content {
 	line-height: 0;
 }
 .dataflow-clickTip .el-message-box__status {
 	top: 25% !important;
-}
-.task-list .el-tag--small {
-	height: 28px;
-	padding: 0 8px;
-	line-height: 28px;
 }
 </style>
