@@ -326,6 +326,7 @@ export default class Editor extends BaseObject {
 			if (setting) {
 				let settingData = self.graph.getSettingData() || {};
 				if (editDisable) settingData.editDisable = editDisable;
+				else settingData.editDisable = false;
 				setting.setData(settingData);
 			}
 			rightTabPanel.select(setting);
