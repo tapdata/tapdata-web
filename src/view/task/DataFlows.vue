@@ -1116,11 +1116,15 @@ export default {
 		flex: 1;
 		display: flex;
 		flex-direction: column;
+		overflow: hidden;
 		.topbar {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			padding: 0 20px;
+			padding: 0 10px;
+			.btn + .btn {
+				margin-left: 5px;
+			}
 			.btn {
 				padding: 7px;
 				background: #f5f5f5;
@@ -1128,10 +1132,10 @@ export default {
 					font-size: 12px;
 				}
 				&.btn-dropdowm {
-					margin-left: 10px;
+					margin-left: 5px;
 				}
 				&.btn-create {
-					margin-left: 10px;
+					margin-left: 5px;
 					background: #48b6e2;
 				}
 			}
@@ -1153,7 +1157,7 @@ export default {
 .task-list {
 	flex: 1;
 	overflow: hidden;
-	padding: 0 20px 20px 20px;
+	padding: 0 10px 10px 10px;
 	display: flex;
 	flex-direction: column;
 	font-size: 14px;
