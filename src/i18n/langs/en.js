@@ -139,6 +139,7 @@ const en = {
 			statusError: 'Job status does not allow to do this operation.',
 			otherError: 'Operation failed, please try it again.'
 		},
+		changeName: 'Edit',
 		draftNotStart: 'Editting can‘t be started, enter edit page to start',
 		systemHint: 'System prompt',
 		systemText: 'The system detected that the following tasks were not saved， keep editing?',

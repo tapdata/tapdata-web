@@ -148,6 +148,7 @@ const cn = {
 			statusError: '任务状态不允许这种操作',
 			otherError: '操作失败, 请重试'
 		},
+		changeName: '改名',
 		draftNotStart: '编辑中不能启动，请进入编辑页面启动',
 		systemHint: '系统提示',
 		systemText: '系统检测出有如下任务上次操作后未保存，请问是否继续编辑',

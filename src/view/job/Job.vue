@@ -1,173 +1,137 @@
 <template>
 	<div class="editor-container" v-loading="loading">
-		<div class="action-buttons">
-			<template v-if="isEditable() && !isMoniting">
-				<div :class="['btnHover', 'headImg']" v-show="!isSaving" @click="draftSave" style="cursor: pointer;">
-					<span class="iconfont icon-yunduanshangchuan"></span>
-					<span class="text">{{ $t('dataFlow.button.save') }}</span>
-				</div>
-
-				<div class="headImg" v-show="isSaving" style="color: #48B6E2;">
-					<span class="el-icon-loading"></span>
-					<span class="text" style="color: #48B6E2;">{{ $t('dataFlow.button.saveing') }}</span>
-				</div>
-			</template>
-
-			<el-tooltip
-				class="job-head-title"
-				effect="dark"
-				:content="$t('dataFlow.button.stop_capture')"
-				placement="bottom"
-				v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
-			>
-				<div :class="['headImg', 'btnHover']" @click="stopCapture">
-					<span class="iconfont icon-zanting3"></span>
-				</div>
-			</el-tooltip>
-
-			<el-tooltip
-				class="job-head-title"
-				effect="dark"
-				:content="$t('dataFlow.button.capture')"
-				placement="bottom"
-				v-if="['running'].includes(status) && executeMode === 'normal'"
-			>
-				<div :class="['headImg', 'btnHover']" @click="capture">
-					<span class="iconfont icon-yulan1"></span>
-				</div>
-			</el-tooltip>
-
-			<el-tooltip
-				class="job-head-title"
-				effect="dark"
-				:content="$t('dataFlow.button.reloadSchema')"
-				placement="bottom"
-			>
-				<div
-					:class="['headImg', { btnHover: !statusBtMap[status].reloadSchema }]"
-					@click="reloadSchema"
-					:disabled="statusBtMap[status].reloadSchema"
+		<div class="action-buttons" style="display:flex;align-items: center;justify-content: space-between;">
+			<div class="flex-center">
+				<el-button
+					v-if="isEditable() && !isMoniting"
+					class="action-btn"
+					size="mini"
+					:loading="isSaving"
+					@click="draftSave"
 				>
-					<span class="iconfont icon-yunshuaxin"></span>
-				</div>
-			</el-tooltip>
+					<i class="iconfont icon-baocun"></i>
+					<span>{{ isSaving ? $t('dataFlow.button.saveing') : $t('dataFlow.button.save') }}</span>
+				</el-button>
 
-			<el-tooltip
-				class="job-head-title"
-				effect="dark"
-				:content="$t('dataFlow.button.preview')"
-				placement="bottom"
-				v-if="isEditable()"
-			>
-				<div
-					:class="['headImg', { btnHover: !statusBtMap[status].preview }]"
-					@click="preview"
-					:disabled="statusBtMap[status].preview"
-				>
-					<span class="iconfont icon-yulan1"></span>
-				</div>
-			</el-tooltip>
+				<el-autocomplete
+					v-if="!statusBtMap[status].finder"
+					class="inline-input searchNode"
+					id="searchNode"
+					v-model="state1"
+					size="mini"
+					:fetch-suggestions="querySearch"
+					placeholder="查找节点"
+					@select="handleSearchNode"
+					hide-loading
+					suffix-icon="el-icon-search"
+				></el-autocomplete>
 
-			<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.logs')" placement="bottom">
-				<div class="headImg btnHover" @click="showLogs" :disabled="statusBtMap[status].logs">
-					<span class="iconfont icon-rizhi1"></span>
-				</div>
-			</el-tooltip>
-			<el-autocomplete
-				v-if="!statusBtMap[status].finder"
-				class="inline-input searchNode"
-				id="searchNode"
-				v-model="state1"
-				size="mini"
-				:fetch-suggestions="querySearch"
-				placeholder="查找节点"
-				@select="handleSearchNode"
-				hide-loading
-				clearable
-				suffix-icon="el-icon-search"
-			></el-autocomplete>
-			<div
-				class="headImg round"
-				@click="showSetting"
-				:disabled="statusBtMap[status].setting"
-				:class="['headImg', { btnHover: !statusBtMap[status].setting }]"
-			>
-				<span class="iconfont icon-shezhi"></span>
-				<span class="text" v-if="sync_type === 'initial_sync+cdc'">{{
-					$t('dataFlow.initial_sync') + '+' + $t('dataFlow.cdc')
-				}}</span>
-				<span class="text" v-if="sync_type === 'initial_sync'">{{ $t('dataFlow.initial_sync') }}</span>
-				<span class="text" v-if="sync_type === 'cdc'">{{ $t('dataFlow.cdc') }}</span>
+				<el-button-group>
+					<el-button
+						v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
+						class="action-btn"
+						size="mini"
+						@click="stopCapture"
+					>
+						<i class="iconfont icon-zanting3"></i>
+						<span>{{ $t('dataFlow.button.stop_capture') }}</span>
+					</el-button>
+					<el-button
+						v-if="['running'].includes(status) && executeMode === 'normal'"
+						class="action-btn"
+						size="mini"
+						@click="capture"
+					>
+						<i class="iconfont icon-yulan1"></i>
+						<span>{{ $t('dataFlow.button.capture') }}</span>
+					</el-button>
+					<el-button
+						v-if="!statusBtMap[status].reloadSchema"
+						class="action-btn"
+						size="mini"
+						@click="reloadSchema"
+					>
+						<i class="iconfont icon-kujitongbucopy"></i>
+						<span>{{ $t('dataFlow.button.reloadSchema') }}</span>
+					</el-button>
+					<el-button
+						v-if="isEditable() && !statusBtMap[status].preview"
+						class="action-btn"
+						size="mini"
+						@click="preview"
+					>
+						<i class="iconfont icon-yulan1"></i>
+						<span>{{ $t('dataFlow.button.preview') }}</span>
+					</el-button>
+					<el-button v-if="!statusBtMap[status].logs" class="action-btn" size="mini" @click="showLogs">
+						<i class="iconfont icon-rizhi1"></i>
+						<span>{{ $t('dataFlow.button.logs') }}</span>
+					</el-button>
+				</el-button-group>
+
+				<el-button class="btn-setting" size="mini" :disabled="statusBtMap[status].setting" @click="showSetting">
+					<i class="iconfont icon-shezhi1"></i>
+					<span class="btn-setting-text">{{
+						{
+							'initial_sync+cdc': $t('dataFlow.initial_sync') + '+' + $t('dataFlow.cdc'),
+							initial_sync: $t('dataFlow.initial_sync'),
+							cdc: $t('dataFlow.cdc')
+						}[sync_type]
+					}}</span>
+				</el-button>
 			</div>
+			<div class="flex-center">
+				<el-tag
+					:type="
+						status === 'running'
+							? 'success'
+							: status === 'error'
+							? 'danger'
+							: status === 'paused'
+							? 'warning'
+							: 'info'
+					"
+					effect="plain"
+					size="mini"
+					style="margin-left: 30px;margin-right: 10px;border:none;"
+					>{{ $t('dataFlow.state') }}: {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}
+				</el-tag>
 
-			<el-tag
-				:type="
-					status === 'running'
-						? 'success'
-						: status === 'error'
-						? 'danger'
-						: status === 'paused'
-						? 'warning'
-						: 'info'
-				"
-				effect="plain"
-				size="small"
-				style="margin-left: 30px;border-radius: 20px;"
-				>{{ $t('dataFlow.state') }}: {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}
-			</el-tag>
-			<template>
-				<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.start')" placement="bottom">
-					<el-button
-						class="headImg borderStyle iconfont icon-yunhang1"
-						@click="start()"
-						:disabled="statusBtMap[status].start"
-					>
+				<el-button-group>
+					<el-button :disabled="statusBtMap[status].start" class="action-btn" size="mini" @click="start()">
+						<i class="mr-5 iconfont icon-yunhang1"></i>
+						<span>{{ $t('dataFlow.button.start') }}</span>
 					</el-button>
-				</el-tooltip>
-
-				<el-tooltip class="item" effect="dark" :content="$t('dataFlow.button.stop')" placement="bottom">
+					<el-button :disabled="statusBtMap[status].stop" class="action-btn" size="mini" @click="stop()">
+						<i class="mr-5 iconfont icon-zanting2"></i>
+						<span>{{ $t('dataFlow.button.stop') }}</span>
+					</el-button>
+					<el-button :disabled="statusBtMap[status].reset" class="action-btn" size="mini" @click="reset">
+						<i class="mr-5 iconfont icon-shuaxin3"></i>
+						<span>{{ $t('dataFlow.button.reset') }}</span>
+					</el-button>
 					<el-button
-						class="headImg borderStyle iconfont icon-zanting2"
-						@click="stop(false)"
-						:disabled="statusBtMap[status].stop"
-					></el-button>
-				</el-tooltip>
-
-				<el-tooltip
-					class="item"
-					effect="dark"
-					:content="$t('dataFlow.button.reset')"
-					:hide-after="1000"
-					placement="bottom"
-				>
-					<el-button
-						class="headImg borderStyle iconfont icon-shuaxin3"
-						@click="reset"
-						:disabled="statusBtMap[status].reset"
-					></el-button>
-				</el-tooltip>
-
-				<el-tooltip
-					class="job-head-title"
-					effect="dark"
-					:content="$t('dataFlow.button.force_stop')"
-					placement="bottom"
-				>
-					<el-button
-						class="headImg borderStyle iconfont icon-zanting3"
-						@click="stop(true)"
 						:disabled="statusBtMap[status].forceStop"
+						class="action-btn"
+						size="mini"
+						@click="stop(true)"
 					>
+						<i class="mr-5 iconfont icon-zanting3"></i>
+						<span>{{ $t('dataFlow.button.force_stop') }}</span>
 					</el-button>
-				</el-tooltip>
-				<el-tooltip class="item" effect="dark" :content="$t('dataFlow.edit')" placement="bottom">
-					<el-button
-						class="headImg borderStyle iconfont icon-ceshishenqing"
-						@click="setEditable(true)"
-						v-if="!statusBtMap[status].edit && !editable"
-					></el-button>
-				</el-tooltip>
-			</template>
+				</el-button-group>
+
+				<el-button
+					v-if="!statusBtMap[status].edit && !editable"
+					class="btn-edit"
+					size="mini"
+					type="primary"
+					@click="setEditable(true)"
+				>
+					<i class="mr-5 iconfont icon-piliang"></i>
+					<span>{{ $t('dataFlow.edit') }}</span>
+				</el-button>
+			</div>
 		</div>
 
 		<el-dialog
@@ -1321,6 +1285,80 @@ export default {
 </style>
 <style lang="less">
 @import '../../editor/style/editor';
+.flex-center {
+	display: flex;
+	align-items: center;
+}
+.mr-5 {
+	margin-right: 5px;
+}
+.action-btn,
+.btn-setting {
+	border: none;
+	background: rgba(238, 238, 238, 1);
+	color: #606266;
+	&.is-disabled {
+		background: rgba(238, 238, 238, 1);
+		&:hover {
+			background: rgba(238, 238, 238, 1);
+		}
+	}
+	&.is-disabled {
+		background: rgba(238, 238, 238, 1);
+		&:hover {
+			background: rgba(238, 238, 238, 1);
+		}
+	}
+	&:hover,
+	&:focus {
+		color: #606266;
+		background: rgba(225, 225, 225, 1);
+	}
+}
+.action-btn {
+	margin-right: 10px;
+	padding: 0 6px;
+	line-height: 26px;
+	height: 26px;
+	border-left: 1px solid #ddd;
+	&:first-child {
+		border: none;
+	}
+	.iconfont {
+		font-size: 12px;
+	}
+}
+.btn-setting {
+	padding: 0;
+	overflow: hidden;
+	&:hover {
+		.iconfont {
+			color: #606266;
+			background: #e1e1e1;
+		}
+	}
+	.iconfont {
+		display: inline-block;
+		text-align: center;
+		font-size: 12px;
+		line-height: 26px;
+		height: 26px;
+		width: 26px;
+		color: #606266;
+		background: rgba(225, 225, 225, 1);
+	}
+	.btn-setting-text {
+		display: inline-block;
+		padding: 0 6px;
+	}
+}
+.btn-edit {
+	padding: 6px;
+	.iconfont {
+		font-size: 12px;
+	}
+}
+
 .popperFixbtn {
 	width: 160px !important;
 	.btnList {
@@ -1407,9 +1445,16 @@ export default {
 	}
 }
 .searchNode {
+	.el-input {
+		display: block;
+	}
 	.el-input__inner {
-		border-radius: 20px;
-		height: 24px;
+		height: 26px;
+		background: rgba(238, 238, 238, 1);
+		color: rgba(170, 170, 170, 1);
+	}
+	.el-input--mini .el-input__icon {
+		line-height: 26px;
 	}
 	margin-right: 8px;
 }
