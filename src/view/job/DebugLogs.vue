@@ -20,6 +20,7 @@
 <script>
 // import $ from 'jquery';
 import factory from '../../api/factory';
+import ws from '../../api/ws';
 import LogBox from '@/components/LogBox';
 
 const logsModel = factory('logs');
@@ -46,10 +47,23 @@ export default {
 	},
 
 	mounted() {
-		this.loadNew();
-		this.timer = setInterval(() => {
-			this.loadNew();
-		}, 5000);
+		let msg = {
+				type: 'logs',
+				filter: {
+					where: { 'contextMap.dataFlowId': { eq: this.dataFlow.id } },
+					order: 'millis DESC',
+					limit: 100
+				}
+			},
+			self = this;
+		ws.on('logs', function(data) {
+			let dat = data.data;
+			if (dat && dat.length > 0) {
+				self.firstLogsId = dat[dat.length - 1].id;
+				self.$refs.log.add({ logs: dat, prepend: true });
+			}
+		});
+		if (ws.ws.readyState == 1) ws.send(msg);
 	},
 
 	methods: {
