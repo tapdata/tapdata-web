@@ -902,13 +902,14 @@ const cn = {
 		rows: '按行数校验',
 		sampleRate: '按百分比',
 		condition: '采样范围',
-		filterMQL: '请输入MQL语句',
-		filterSQL: '行数校验下仅支持 select count(*) 查询语句',
-		exampleSQL: '示例: select count(*)  from tablename_1 where field__2 = A;',
+		filter: '过滤',
+		exampleSQL:
+			'行数校验下仅支持 select count(*) 查询语句 示例: select count(*)  from tablename_1 where field__2 = A;',
 		exampleMQL: '示例: db.collection_1.count({ field_2:A })',
 		exampleHashSQL:
-			'请输入 SELECT 查询语句 哈希校验下SQL仅支持select查询语句, 不支持count/sum/avg/max等查询 示例: select field_1 from tablename_1 where field__2 > A；',
+			'哈希校验下SQL仅支持select查询语句, 不支持count/sum/avg/max等查询 示例: select field_1 from tablename_1 where field__2 > A；',
 		exampleHashMQL: '请输入MQL查询语句 示例: db.collection_1.find ({ field_2:A },{ field_1:1 })',
+		exampleJS: '请输入JS代码, 高级校验JS必须返回return值, 具体请查看示例',
 		verifyRunningInfo: '后台运行',
 		verifyStatusWaiting: '校验阶段1-3:数据校验排队中，请等待... 点击',
 		verifyStatusDraft: '校验阶段2-3:数据校验调度中，请等待... 点击',
