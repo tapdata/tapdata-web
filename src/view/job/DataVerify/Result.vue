@@ -81,7 +81,7 @@
 				<div class="dv-contrast-box">
 					<div class="dv-contrast-header">
 						<div class="dv-pre-right">
-							<span :class="{ error: count > 0 }"> error :{{ count }}</span>
+							<span :class="{ error: count > 0 }"> error : {{ count }}</span>
 							<el-pagination
 								class="dv-result-pagination"
 								:pager-count="0"
@@ -97,7 +97,7 @@
 							size="mini"
 							v-model="source.tableName"
 							class="dv-pre-right"
-							@change="getFailedRow"
+							@change="handleSearch"
 							clearable
 						>
 							<el-option
@@ -248,29 +248,15 @@ export default {
 					this.loading = false;
 				}
 			});
-			let whereCount = {
-				where: {
-					validateBatchId: this.validateBatchId,
-					dataFlowId: {
-						regexp: `^${this.id}$`
-					},
-					type: {
-						inq: ['failedRow']
-					}
-				}
-			};
-			ValidationResults.count(whereCount).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.count = res.data.count;
-						log('dataVerify.count', res.data.count);
-					}
-				}
-			});
+			this.getCount();
 		},
 		handleCurrentChange(cpage) {
 			this.currentPage = cpage;
+			this.getFailedRow();
+		},
+		handleSearch() {
 			this.getFailedRow(this.validateBatchId);
+			this.getCount();
 		},
 		getFailedRow() {
 			let whereFailedRow = {
@@ -296,6 +282,32 @@ export default {
 					if (res.data) {
 						this.failedRow = res.data;
 						log('dataVerify.error', res.data);
+					}
+				}
+			});
+		},
+		getCount() {
+			let whereCount = {
+				where: {
+					validateBatchId: this.validateBatchId,
+					dataFlowId: {
+						regexp: `^${this.id}$`
+					},
+					type: {
+						inq: ['failedRow']
+					}
+				},
+				limit: this.pageSize,
+				skip: (this.currentPage - 1) * this.pageSize
+			};
+			if (this.source.tableName && this.source.tableName !== '') {
+				whereCount.where['sourceStage.tableName'] = this.source.tableName;
+			}
+			ValidationResults.count(whereCount).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.count = res.data.count;
+						log('dataVerify.count', res.data.count);
 					}
 				}
 			});

@@ -69,21 +69,15 @@
 			</div>
 		</div>
 		<Drawer ref="drawer" :visible.sync="disabledDrawer" :title="$t('dataVerify.dataVerifySetting')">
-			<el-form class="dv-add-form" :model="formData">
-				<div class="dv-add-form-text">
-					{{ $t('dataVerify.dataWay') }}
-				</div>
-				<el-form-item>
+			<el-form class="dv-add-form" :model="formData" label-position="top">
+				<el-form-item :label="$t('dataVerify.dataWay')">
 					<el-radio-group v-model="type" size="mini" class="dv-radio" @change="changeType">
 						<el-radio border label="row" width="150px">{{ $t('dataVerify.row') }}</el-radio>
 						<el-radio border label="hash" width="150px">{{ $t('dataVerify.hash') }}</el-radio>
 						<el-radio border label="advance" width="150px">{{ $t('dataVerify.advance') }}</el-radio>
 					</el-radio-group>
 				</el-form-item>
-				<el-form-item v-show="type !== 'row'">
-					<div class="dv-add-form-text">
-						{{ $t('dataVerify.condition') }}
-					</div>
+				<el-form-item v-show="type !== 'row'" :label="$t('dataVerify.condition')">
 					<el-row :gutter="5">
 						<el-col :span="12">
 							<el-select size="mini" v-model="formData.condition.type" @change="changeConditionType">
@@ -106,10 +100,7 @@
 						</el-col>
 					</el-row>
 				</el-form-item>
-				<el-form-item>
-					<div class="dv-add-form-text">
-						{{ $t('dataVerify.source') }}
-					</div>
+				<el-form-item :label="$t('dataVerify.source')">
 					<el-row>
 						<el-col :span="24">
 							<el-select
@@ -133,8 +124,7 @@
 					<el-row v-show="type !== 'advance'">
 						<div v-if="opSource[0] && opSource[0].databaseType && opSource[0].databaseType === 'mongodb'">
 							<el-checkbox v-model="checkedSource"></el-checkbox>
-							<span>MQL</span>
-							<span class="JS-label displayInline">{{ $t('dataVerify.filterMQL') }}</span>
+							<span>MQL {{ $t('dataVerify.filter') }}</span>
 							<div v-show="checkedSource">
 								<el-input
 									:rows="7"
@@ -149,8 +139,7 @@
 						</div>
 						<div v-else>
 							<el-checkbox v-model="checkedSource"></el-checkbox>
-							<span>SQL</span>
-							<span class="JS-label displayInline">{{ $t('dataVerify.filterSQL') }}</span>
+							<span>SQL {{ $t('dataVerify.filter') }}</span>
 							<div v-show="checkedSource">
 								<el-input
 									:rows="7"
@@ -165,10 +154,7 @@
 						</div>
 					</el-row>
 				</el-form-item>
-				<el-form-item>
-					<div class="dv-add-form-text">
-						{{ $t('dataVerify.target') }}
-					</div>
+				<el-form-item :label="$t('dataVerify.target')">
 					<el-row>
 						<el-col :span="24">
 							<el-select
@@ -192,8 +178,7 @@
 					<el-row v-show="type === 'row'">
 						<div v-if="opTarget[0] && opTarget[0].databaseType && opTarget[0].databaseType === 'mongodb'">
 							<el-checkbox v-model="checkedTarget"></el-checkbox>
-							<sapn>MQL</sapn>
-							<span class="JS-label displayInline">{{ $t('dataVerify.filterMQL') }}</span>
+							<span>MQL {{ $t('dataVerify.filter') }}</span>
 							<div v-show="checkedTarget">
 								<el-input
 									:rows="7"
@@ -206,8 +191,7 @@
 						</div>
 						<div v-else>
 							<el-checkbox v-model="checkedTarget"></el-checkbox>
-							<span>SQL</span>
-							<span class="JS-label displayInline">{{ $t('dataVerify.filterSQL') }}</span>
+							<span>SQL {{ $t('dataVerify.filter') }}</span>
 							<div v-show="checkedTarget">
 								<el-input
 									:rows="7"
@@ -220,26 +204,45 @@
 						</div>
 					</el-row>
 				</el-form-item>
-				<el-form-item>
-					<div v-show="type === 'advance'" class="dv-add-form-text">
-						JS
-					</div>
-					<el-row v-show="type === 'advance'">
-						<span class="JS-label displayInline">
-							function validate(sourceRow){
-						</span>
-						<el-col :span="24">
-							<el-input
-								type="textarea"
-								v-model="formData.validateCode"
-								:rows="18"
-								@input="handleForceUpdate"
-							></el-input>
-							<span class="JS-label displayInline">
-								}
-							</span>
-						</el-col>
-					</el-row>
+				<el-form-item label="JS" v-show="type === 'advance'">
+					<span class="JS-label displayInline">
+						function validate(sourceRow){
+					</span>
+					<el-input
+						type="textarea"
+						v-model="formData.validateCode"
+						:rows="10"
+						@input="handleForceUpdate"
+						:placeholder="$t('dataVerify.exampleJS')"
+					></el-input>
+					<span class="JS-label displayInline">
+						}
+					</span>
+				</el-form-item>
+				<el-form-item v-show="type === 'advance'">
+					<el-col :span="24">
+						<span class="example-js">example:</span>
+						<span class="example-js">function validate(sourceRow) { </span>
+						<span class="example-js">var targetRow = target.executeQuery({</span>
+						<span class="example-js">sql: "select * from VALIDATE_TEST where ID = "+sourceRow.ID});</span>
+						<span class="example-js">var result="";</span>
+						<span class="example-js">var message="";</span>
+						<span class="example-js"
+							>if(JSONUtil.obj2Json(sourceRow) === JSONUtil.obj2Json(targetRow)){</span
+						>
+						<span class="example-js">result="passed";</span>
+						<span class="example-js">message="记录一致";</span>
+						<span class="example-js">} else {</span>
+						<span class="example-js">result="failed";</span>
+						<span class="example-js">message="记录不一致";</span>
+						<span class="example-js">}</span>
+						<span class="example-js">return {</span>
+						<span class="example-js">result: result,</span>
+						<span class="example-js">message: message,</span>
+						<span class="example-js">data: targetRow,</span>
+						<span class="example-js">};</span>
+						<span class="example-js">}</span>
+					</el-col>
 				</el-form-item>
 			</el-form>
 			<span slot="footer" class="dialog-footer">
@@ -420,10 +423,9 @@ export default {
 				validationSettings: this.tableData
 			};
 			log('data', data);
-
+			this.disabledDrawer = false;
 			dataFlows.patchId(this.id, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
-					this.disabledDrawer = false;
 					this.editIndex = -1;
 					this.getData();
 				}
@@ -509,6 +511,7 @@ export default {
 		},
 		GoBack() {
 			this.editor.showMonitor();
+			this.disabledDrawer = false;
 		},
 		showResult() {
 			this.disabledDrawer = false;
@@ -666,16 +669,30 @@ export default {
 	font-size: 12px;
 	margin-top: 0px;
 }
+.example-js {
+	display: block;
+	color: #999;
+	font-size: 12px;
+	line-height: 16px;
+}
 .displayInline {
 	display: inline-block;
+	line-height: 16px;
 }
 </style>
 <style lang="less">
 :focus {
 	outline: 0px;
 }
-.dv-add-form .el-form-item {
-	margin-bottom: 0;
+.dv-add-form {
+	.el-form-item {
+		margin-bottom: 10px;
+	}
+	.el-form-item__label {
+		line-height: 20px;
+		padding: 0;
+		font-size: 12px;
+	}
 }
 .dv-radio .el-radio {
 	color: #606266;
