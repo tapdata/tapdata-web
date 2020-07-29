@@ -199,7 +199,7 @@ const cn = {
 		allNode: '全部节点',
 		taskName: '任务名称',
 		creatdor: '创建人',
-		creationTime: '创建时间',
+		creationTime: '启动时间',
 		state: '状态',
 		executionTime: '本次执行时间',
 		finishTime: '本次结束时间',

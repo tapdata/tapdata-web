@@ -210,11 +210,11 @@
 						>
 						</el-table-column>
 						<el-table-column
-							prop="createTime"
+							prop="startTime"
 							:label="$t('dataFlow.creationTime')"
 							width="140"
 							sortable="custom"
-							:formatter="formatterTime"
+							:formatter="formatterStartTime"
 						></el-table-column>
 						<el-table-column :label="$t('dataFlow.taskSwitch')" width="70">
 							<template slot-scope="scope">
@@ -711,6 +711,8 @@ export default {
 							'stages.id': true,
 							'stages.name': true,
 							setting: true,
+							user_id: true,
+							startTime: true,
 							listtags: true
 						}
 					})
@@ -1042,6 +1044,10 @@ export default {
 		},
 		formatterTime(row) {
 			let time = row.createTime ? this.$moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
+			return time;
+		},
+		formatterStartTime(row) {
+			let time = row.startTime ? this.$moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '';
 			return time;
 		},
 		handleSortTable(column) {
