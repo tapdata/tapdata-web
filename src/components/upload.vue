@@ -66,7 +66,9 @@ export default {
 			':' +
 			window.location.port +
 			'/api/MetadataInstances/upload?upsert=' +
-			this.upsert;
+			this.upsert +
+			'&listtags=' +
+			JSON.stringify(this.tagList);
 	},
 
 	watch: {
@@ -81,8 +83,23 @@ export default {
 					window.location.port +
 					'/api/MetadataInstances/upload?upsert=' +
 					this.upsert +
-					'listtags=' +
-					this.tagList;
+					'&listtags=' +
+					JSON.stringify(this.tagList);
+			}
+		},
+		tagList: {
+			deep: true,
+			handler() {
+				this.action =
+					window.location.protocol +
+					'//' +
+					window.location.hostname +
+					':' +
+					window.location.port +
+					'/api/MetadataInstances/upload?upsert=' +
+					this.upsert +
+					'&listtags=' +
+					JSON.stringify(this.tagList);
 			}
 		}
 	},
