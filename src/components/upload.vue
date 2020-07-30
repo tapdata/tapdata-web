@@ -6,15 +6,9 @@
 			<el-radio v-model="upsert" :label="0">{{ $t('dataFlow.skipData') }}</el-radio>
 		</div>
 		<div class="dataflow-radio">
-			<el-tag
-				size="mini"
-				class="SelectClassify-tag"
-				closable
-				v-for="item in tagList"
-				v-bind:key="item.value"
-				@close="handleCloseTag(item)"
-				>{{ item.value }}</el-tag
-			>
+			<el-tag :key="tag" v-for="tag in tagList" :closable="true" @close="handleClose(tag)">
+				{{ tag.value }}<span style="cursor: pointer" @click="handleClose(tag)"> X </span>
+			</el-tag>
 			<span @click="handleClassify" class="classify">设置分类</span>
 		</div>
 
@@ -113,7 +107,7 @@ export default {
 		handleOperationClassify(listtags) {
 			this.tagList = listtags;
 		},
-		handleCloseTag(data) {
+		handleClose(data) {
 			this.tagList.map((k, index) => {
 				if (k.id === data.id) {
 					this.tagList.splice(index, 1);
