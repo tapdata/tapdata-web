@@ -597,6 +597,7 @@ export default {
 			localStorage.setItem('flowStatus', this.formData.status);
 			localStorage.setItem('flowWay', this.formData.way);
 			localStorage.setItem('flowExecutionStatus', this.formData.executionStatus);
+			this.currentPage = 1;
 			this.getData();
 		},
 		keyupEnter() {
