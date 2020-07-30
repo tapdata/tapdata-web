@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import SelectClassify from './SelectClassify';
+import SelectClassify from '../components/SelectClassify';
 export default {
 	components: { SelectClassify },
 	data() {
