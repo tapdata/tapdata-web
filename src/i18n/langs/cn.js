@@ -188,6 +188,7 @@ const cn = {
 		uploadError: '上传失败',
 		uploadInfo: '点击查看详情',
 		dataFlowExport: '导出',
+		bulkImport: '批量导入',
 		overWrite: '覆盖已有数据',
 		skipData: '跳过已有数据',
 		loadingError: '加载失败,请',

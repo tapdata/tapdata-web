@@ -167,6 +167,7 @@ const tc = {
 		batchDelete: '批量刪除',
 		batchRest: '批量重置',
 		bulkExport: '批量導出',
+		bulkImport: '批量導入',
 		bulkScheuled: '批量啟動',
 		bulkStopping: '批量停止',
 		taskBulkFx: '函数',

@@ -87,7 +87,7 @@
 					</el-button>
 					<el-button size="mini" class="btn" @click="handleImport">
 						<i class="iconfont icon-daoru back-btn-icon"></i>
-						<span> {{ $t('dataFlow.bulkExport') }}</span>
+						<span> {{ $t('dataFlow.bulkImport') }}</span>
 					</el-button>
 					<el-dropdown @command="handleCommand" v-show="multipleSelection.length > 0">
 						<el-button class="btn btn-dropdowm" size="mini">

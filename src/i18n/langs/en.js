@@ -168,6 +168,7 @@ const en = {
 		batchDelete: 'Batch Delete',
 		batchRest: 'Batch reset',
 		bulkExport: 'Bulk Export',
+		bulkImport: 'Bulk Import',
 		bulkScheuled: 'Batch Start',
 		bulkStopping: 'Bulk Stop',
 		taskBulkFx: 'Function',

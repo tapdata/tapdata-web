@@ -24,7 +24,7 @@ const router = new Router({
 			path: '/',
 			name: 'layout',
 			redirect: 'dashboard',
-			component: view('layout'),
+			component: view('Layout'),
 			children: [
 				{
 					path: '/dashboard',
