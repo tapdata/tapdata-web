@@ -2,6 +2,64 @@ import enLocale from 'element-ui/lib/locale/lang/en';
 
 const en = {
 	...enLocale,
+	app: {
+		document: 'Documentation',
+		qa: 'Customer Service',
+		version: 'Version',
+		home: 'Home',
+		signOut: 'Sign out',
+		signIn: {
+			slogan: 'Use your data as easily as tap water.',
+			signIn: 'Sign in',
+			keepSignIn: 'Keep signed in',
+			email_placeholder: 'Enter your email',
+			password_placeholder: 'Enter your password',
+
+			email_require: 'E-mail is required.',
+			email_invalid: 'E-mail must be valid.',
+			password_invalid: 'Password at least 5 characters.',
+			account_waiting_approve: 'Your account is waiting administrator to approve.',
+			account_disabled: 'Your account is disabled by administrator.',
+			permission_denied: 'Permission denied.',
+			signInFail: 'Sign in failed.'
+		},
+		menu: {
+			dashboard: 'Dashboard',
+			dataSource: 'Data Source',
+			connections: 'Connections',
+			connection: 'Create Connection',
+			dataFlows: 'Data Collect',
+			dataGovernance: 'Data Governance',
+			metadataDefinition: 'Data Catalog',
+			dataQuality: 'Data Quality',
+			timeToLive: 'Time To Live',
+			dataMap: 'Data Lineage',
+			dataRules: 'Data Rules',
+			dictionary: 'Dictionary model',
+			dataPublish: 'Data Publish',
+			modules: 'API Management',
+			dataExplorer: 'API Data Explorer',
+			apiDocAndTest: 'API Doc&Test',
+			apiAnalysis: 'API Stats',
+			applications: 'API Clients',
+			apiServers: 'API Server',
+			oldDataCollect: 'Data Collect(Old)',
+			dataCollect: 'Jobs',
+			system: 'System',
+			tasks: 'Schedule Tasks',
+			agentdownload: 'Agent Download',
+			clusterManagement: 'Cluster management',
+			agents: 'Agents',
+			serversOversee: 'Servers Oversee',
+			users: 'User Management',
+			journal: 'User action log',
+			roles: 'Roles',
+			settings: 'Settings',
+			favorite: 'Favorite',
+
+			delFavMenu: 'Delete Favorite'
+		}
+	},
 	message: {
 		api: {
 			get: {
@@ -9,6 +67,7 @@ const en = {
 				loading: 'Loading data...'
 			}
 		},
+		comfirm: 'Are you sure you want to ',
 		operationSuccuess: 'Operation succuess.',
 		modifyName: 'Modify name',
 		ok: 'OK',
@@ -80,6 +139,7 @@ const en = {
 			statusError: 'Job status does not allow to do this operation.',
 			otherError: 'Operation failed, please try it again.'
 		},
+		changeName: 'Edit',
 		draftNotStart: 'Editting can‘t be started, enter edit page to start',
 		systemHint: 'System prompt',
 		systemText: 'The system detected that the following tasks were not saved， keep editing?',
@@ -94,6 +154,7 @@ const en = {
 		implementationModalities: 'Execution method',
 		submitConfirmation: 'Submit Confirmation',
 		SyncPoint: 'Sync Node',
+		syncType: 'Sync type',
 		SyncInfo: {
 			localTZ: 'Local UTC CDC time: custom a point of  CDC time，in local time zone',
 			current: 'Local UTC：default local UTC time',
@@ -109,6 +170,9 @@ const en = {
 		bulkExport: 'Bulk Export',
 		bulkScheuled: 'Batch Start',
 		bulkStopping: 'Bulk Stop',
+		taskBulkFx: 'Function',
+		taskBulkOperation: 'Bulk Operation',
+		taskBulkTag: 'Bulk Tag',
 		upload: 'Click to upload',
 		import: 'Task Import',
 		uploadOK: 'Upload successful',
@@ -127,7 +191,7 @@ const en = {
 		allNode: 'All Nodes',
 		taskName: 'Flow Name',
 		creatdor: 'Creator',
-		creationTime: 'Create Time',
+		creationTime: 'Start Time',
 		state: 'State',
 		executionTime: 'Lapsed Time',
 		finishTime: 'finish Time',
@@ -288,7 +352,12 @@ const en = {
 		afterSubmission: 'the job should be',
 		runNomally: 'to make sure the job running correctly;',
 		editLayerTip: 'otherwise the job will be abnormal, continue？',
-		continueEditing: 'Still Edit'
+		continueEditing: 'Still Edit',
+		setting: {
+			distinctWriteType: 'Data write deduplication processing',
+			intellect: 'Intelligent de-rewrite',
+			compel: 'Force de-rewrite'
+		}
 	},
 	connection: {
 		status: {
@@ -562,7 +631,8 @@ const en = {
 					validate: {
 						name: 'Node name cannot be empty',
 						source: 'Data source cannot be empty',
-						table: 'Data table cannot be empty'
+						table: 'Data table cannot be empty',
+						sameConnection: 'Cannot choose the same connection'
 					}
 				}
 			},

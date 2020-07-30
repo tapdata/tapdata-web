@@ -20,14 +20,14 @@ export default class UI extends Component {
 		let editTitle = i18n.t('message.modifyName');
 		// let saveTitle = i18n.t('dataFlow.button.save');
 		let taskName = i18n.t('dataFlow.newTaksName');
+		let changeName = i18n.t('dataFlow.changeName');
 		// <i class='iconfont icon-baocun el-icon' id="submit" title="${saveTitle}" style="display: none;color:##48B6E2;cursor: pointer" ></i>
 		this.el = $(`<div class="editor">
 			<div class="e-header">
-				<div class="e-action-bar"><a class="e-action-back iconfont icon-biaotongbu"></a></div>
-				<div class="e-title">
+				<div class="e-title" style="margin-left: 10px">
 					<input value="${taskName}" class="ui-input" id="taskNameInput" type="text"  maxlength="150"/>
 				</div>
-				<i class='icon-tianxie iconfont el-icon' id="edit" title="${editTitle}" style="cursor: pointer"></i>
+				<span id="edit" title="${editTitle}" style="cursor: pointer;font-size:12px;color:#48b6e2;">${changeName}</span>
 
 				<div class="e-toolbar-container">
 					<div class="graph-toolbar"></div>
@@ -52,7 +52,7 @@ export default class UI extends Component {
 			var input = document.getElementById('taskNameInput');
 			input.setSelectionRange(0, -1);
 		});
-		this.el.find('i.icon-tianxie').on('click', function() {
+		this.el.find('#edit').on('click', function() {
 			$('#taskNameInput').focus();
 			// $('#edit').css('display', 'none');
 			// $('#submit').css('display', 'inline-block');
@@ -79,8 +79,10 @@ export default class UI extends Component {
 	setDisableName(disable) {
 		if (disable) {
 			this.el.find('.e-title #taskNameInput').attr('disabled', true);
+			this.el.find('#edit').hide();
 		} else {
 			this.el.find('.e-title #taskNameInput').attr('disabled', false);
+			this.el.find('#edit').show();
 		}
 	}
 

@@ -1,16 +1,16 @@
-import Vue from "vue";
-import locale from "element-ui/lib/locale";
-import VueI18n from "vue-i18n";
+import Vue from 'vue';
+import locale from 'element-ui/lib/locale';
+import VueI18n from 'vue-i18n';
 // import messages from './langs'
 
-import en from "./langs/en";
-import sc from "./langs/cn";
-import tc from "./langs/tc";
+import en from './langs/en';
+import sc from './langs/cn';
+import tc from './langs/tc';
 
 Vue.use(VueI18n);
 const i18n = new VueI18n({
 	// locale: localStorage.lang || 'en',
-	locale: localStorage.getItem("localize_lang") || "en",
+	locale: localStorage.getItem('tapdata_localize_lang') || 'en',
 	messages: {
 		sc, // 中文
 		en, // 英文
@@ -19,10 +19,10 @@ const i18n = new VueI18n({
 });
 
 if (module.hot) {
-	module.hot.accept(["./langs/en", "./langs/cn", "./langs/tc"], function() {
-		i18n.setLocaleMessage("en", require("./langs/en").default);
-		i18n.setLocaleMessage("cn", require("./langs/cn").default);
-		i18n.setLocaleMessage("tc", require("./langs/tc").default);
+	module.hot.accept(['./langs/en', './langs/cn', './langs/tc'], function() {
+		i18n.setLocaleMessage('en', require('./langs/en').default);
+		i18n.setLocaleMessage('cn', require('./langs/cn').default);
+		i18n.setLocaleMessage('tc', require('./langs/tc').default);
 		// app.$i18n.setLocaleMessage('en', require('./en').default)
 		// app.$i18n.setLocaleMessage('ja', require('./ja').default)
 	});

@@ -34,6 +34,18 @@
 			</el-row>
 			<el-row style="border-top: 1px solid #dedee4">
 				<el-form-item>
+					<div>{{ $t('dataFlow.setting.distinctWriteType') }}</div>
+					<el-select v-model="formData.distinctWriteType" size="mini" placeholder="请选择">
+						<el-option
+							v-for="item in dataWriteList"
+							:key="item.value"
+							:label="item.label"
+							:value="item.value"
+						>
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item>
 					<div>{{ $t('dataFlow.send_email') }}</div>
 					<el-checkbox-button border class="setBtn" v-model="formData.emailWaring.paused"
 						>{{ $t('dataFlow.stopped') }}
@@ -236,6 +248,16 @@ export default {
 				{
 					label: this.$t('dataFlow.SyncInfo.currentType'),
 					value: 'current'
+				}
+			],
+			dataWriteList: [
+				{
+					label: this.$t('dataFlow.setting.intellect'),
+					value: 'intellect'
+				},
+				{
+					label: this.$t('dataFlow.setting.compel'),
+					value: 'compel'
 				}
 			]
 		};

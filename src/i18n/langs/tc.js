@@ -2,6 +2,64 @@ import tcLocale from 'element-ui/lib/locale/lang/zh-TW';
 
 const tc = {
 	...tcLocale,
+	app: {
+		document: '幫助文檔',
+		qa: '客服',
+		version: '系統版本',
+		home: '官網',
+		signOut: '登出',
+		signIn: {
+			slogan: '像自來水一樣方便地使用您的數據',
+			signIn: '登入',
+			keepSignIn: '保持登入狀態',
+			email_placeholder: '請輸入郵箱',
+			password_placeholder: '請輸入密碼',
+
+			email_require: '郵箱地址必填',
+			email_invalid: '請輸入有效郵箱地址',
+			password_invalid: '密碼至少5個字元',
+			account_waiting_approve: '您的賬戶還未通過管理員審核',
+			account_disabled: '您的賬戶已被管理員禁用',
+			permission_denied: '没有权限',
+			signInFail: '登入失敗'
+		},
+		menu: {
+			dashboard: '控制台',
+			dataSource: '資料來源',
+			connections: '連接清單',
+			connection: '新建連接',
+			dataFlows: '資料獲取',
+			dataGovernance: '數據治理',
+			metadataDefinition: '數據目錄',
+			dataQuality: '數據質量',
+			timeToLive: '生命週期管理',
+			dataMap: '數據地圖',
+			dataRules: '數據規則',
+			dictionary: '字典範本',
+			dataPublish: '數據發佈',
+			modules: 'API發佈',
+			dataExplorer: 'API數據瀏覽',
+			apiDocAndTest: 'API檔案及測試',
+			apiAnalysis: 'API統計分析',
+			applications: 'API用戶端',
+			apiServers: 'API服務器',
+			oldDataCollect: '資料獲取（舊版）',
+			dataCollect: '任務清單',
+			system: '系統管理',
+			tasks: '調度任務',
+			agentdownload: '代理下載',
+			clusterManagement: '集羣管理',
+			agents: '進程管理',
+			serversOversee: '運維',
+			users: '用戶管理',
+			journal: '用戶操作日誌',
+			roles: '角色管理',
+			settings: '系統設置',
+			favorite: '我的收藏',
+
+			delFavMenu: '删除收藏'
+		}
+	},
 	message: {
 		api: {
 			get: {
@@ -9,6 +67,7 @@ const tc = {
 				loading: '正在加載數據'
 			}
 		},
+		comfirm: '您確定要',
 		operationSuccuess: '操作成功',
 		modifyName: '修改名稱',
 		ok: '確定',
@@ -79,6 +138,7 @@ const tc = {
 			statusError: '任務狀態不允許這種操作',
 			otherError: '操作失敗，請重試'
 		},
+		changeName: '改名',
 		draftNotStart: '編輯中不能啟動，請進入編輯頁面啟動',
 		systemHint: '系統提示',
 		systemText: '系統檢測出有如下任務上次操作後未保存，請問是否繼續編輯',
@@ -93,6 +153,7 @@ const tc = {
 		implementationModalities: '執行方式',
 		submitConfirmation: '提交確認',
 		SyncPoint: '同步節點',
+		syncType: '同步類型',
 		SyncInfo: {
 			localTZ: '當前時區傳輸時間：系統所在時區下，開始傳輸任務的時刻',
 			current: '當前時區時間：默認當前時間',
@@ -108,6 +169,9 @@ const tc = {
 		bulkExport: '批量導出',
 		bulkScheuled: '批量啟動',
 		bulkStopping: '批量停止',
+		taskBulkFx: '函数',
+		taskBulkOperation: '批量操作',
+		taskBulkTag: '设置分类',
 		upload: '點擊上傳',
 		import: '任務導入',
 		uploadOK: '上傳成功',
@@ -126,7 +190,7 @@ const tc = {
 		allNode: '全部節點',
 		taskName: '任務名稱',
 		creatdor: '創建人',
-		creationTime: '創建時間',
+		creationTime: '啟動時間',
 		state: '狀態',
 		executionTime: '本次執行時間',
 		finishTime: '本次結束時間',
@@ -285,7 +349,12 @@ const tc = {
 		afterSubmission: '提交後必須',
 		runNomally: '才能正常運行',
 		editLayerTip: ' 否則可能導致異常錯誤，請問您要繼續編輯嗎?',
-		continueEditing: '繼續編輯'
+		continueEditing: '繼續編輯',
+		setting: {
+			distinctWriteType: '數據寫入去重處理',
+			intellect: '智能去重寫入',
+			compel: '強制去重寫入'
+		}
 	},
 	connection: {
 		status: {
@@ -555,7 +624,8 @@ const tc = {
 					validate: {
 						name: '節點名稱不能為空',
 						source: '數據源不能為空',
-						table: '數據表不能為空'
+						table: '數據表不能為空',
+						sameConnection: '不能選擇相同連接'
 					}
 				}
 			},

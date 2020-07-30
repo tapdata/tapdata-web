@@ -11,7 +11,7 @@
 		</div>
 		<div class="metadata-header metadata-header-btns" v-show="!isActive">
 			<i class="iconfont icon-right-circle" @click="isActive = true"></i>
-			<el-input class="search" v-model="filterText">
+			<el-input class="search" size="mini" v-model="filterText">
 				<i slot="suffix" class="el-icon-search"></i>
 			</el-input>
 		</div>
@@ -264,10 +264,11 @@ export default {
 
 <style scoped lang="less">
 .metadata {
-	height: calc(100vh - 15px);
+	display: flex;
+	flex-direction: column;
+	height: 100%;
 	width: 100%;
 	user-select: none;
-	margin-top: 10px;
 	box-sizing: border-box;
 	border-right: 1px solid #dedee4;
 	border-bottom: 1px solid #dedee4;
@@ -297,7 +298,7 @@ export default {
 	.tree-block {
 		position: relative;
 		width: 100%;
-		height: 100%;
+		flex: 1;
 		overflow: auto;
 	}
 	.custom-tree-node {

@@ -26,6 +26,9 @@
 				v-bind:key="item.value"
 				>{{ item.value }}</el-tag
 			>
+			<el-button size="mini" @click="handleClearOldTag" round v-if="Object.keys(oldTagList).length > 0"
+				>Clear</el-button
+			>
 		</div>
 		<el-tree
 			node-key="id"
@@ -149,6 +152,9 @@ export default {
 			this.oldTagList = {};
 			this.$emit('dialogVisible', false);
 		},
+		handleClearOldTag() {
+			this.oldTagList = '';
+		},
 		handleCheckChange(data) {
 			this.oldTagList = {};
 			if (this.tagList.lengt > 0 && data.id === this.tagList[0].id) {
@@ -182,6 +188,10 @@ export default {
 			this.handleClose();
 		},
 		handleAdd() {
+			if (Object.keys(this.oldTagList).length !== 0) {
+				this.handleClose();
+				return;
+			}
 			if (this.tagList && this.tagList.length === 0) {
 				this.tagList = [];
 			}
