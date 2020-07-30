@@ -26,6 +26,7 @@ import {
 	Link,
 	Input,
 	Button,
+	ButtonGroup,
 	Select,
 	Table,
 	TableColumn,
@@ -108,6 +109,7 @@ Vue.component(Form.name, Form);
 Vue.component(FormItem.name, FormItem);
 Vue.component(Input.name, Input);
 Vue.component(Button.name, Button);
+Vue.component(ButtonGroup.name, ButtonGroup);
 Vue.component(Select.name, Select);
 Vue.component(Table.name, Table);
 Vue.component(TableColumn.name, TableColumn);

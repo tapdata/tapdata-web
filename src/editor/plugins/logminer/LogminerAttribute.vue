@@ -1,10 +1,10 @@
 <template>
 	<div class="logminer">
-		<!-- <div class="head-btns">
+		<div class="head-btns">
 			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 				{{ $t('dataFlow.button.viewMonitoring') }}
 			</el-button>
-		</div> -->
+		</div>
 
 		<el-form ref="model" :model="model" label-position="top" label-width="200px" :disabled="disabled">
 			<el-col :span="21" class="aggregateName">
@@ -152,7 +152,7 @@ import log from '../../../log';
 import factory from '../../../api/factory';
 let connectionApi = factory('connections');
 
-// let editorMonitor = null;
+let editorMonitor = null;
 let tempSchemas = [];
 export default {
 	name: 'Aggregate',
@@ -357,7 +357,7 @@ export default {
 			this.$forceUpdate();
 		},
 
-		setData(data) {
+		setData(data, cell, isSourceDataNode, vueAdapter) {
 			let timeZone = new Date().getTimezoneOffset() / 60;
 			if (timeZone > 0) {
 				timeZone = 0 - timeZone;
@@ -402,12 +402,7 @@ export default {
 				});
 			}
 
-			// self.model.logCollectorSettings.map(item => {
-			// 	// let exclusionTable = [];
-			// 	if (item.selectType === 'reservationTable') {
-			// 		item.selectTables = item.includeTables;
-			// 	}
-			// });
+			editorMonitor = vueAdapter.editor;
 		},
 
 		getData() {
@@ -419,15 +414,15 @@ export default {
 				? this.$moment(result.syncPoint.date).format('YYYY-MM-DD HH:mm:ss')
 				: '';
 			return result;
+		},
+
+		setDisabled(disabled) {
+			this.disabled = disabled;
+		},
+
+		seeMonitor() {
+			editorMonitor.goBackMontior();
 		}
-
-		// setDisabled(disabled) {
-		// 	this.disabled = disabled;
-		// },
-
-		// seeMonitor() {
-		// 	editorMonitor.goBackMontior();
-		// }
 	}
 };
 </script>
