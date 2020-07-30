@@ -364,7 +364,9 @@ const cn = {
 		setting: {
 			distinctWriteType: '数据写入去重处理',
 			intellect: '智能去重写入',
-			compel: '强制去重写入'
+			compel: '强制去重写入',
+			intellectTip: '智能去重写入：对目标已有数据进行智能检测，去重的同时能极大提升传输性能',
+			compelTip: '强制去重写入：对目标已有数据进行强制去重检测，严格保证精准度但传输性能较低'
 		}
 	},
 	connection: {
@@ -455,7 +457,9 @@ const cn = {
 							remove: '运行前删除已存在的数据'
 						},
 						initialSyncOrder: {
-							keep: '启用自定义初始化顺序'
+							keep: '启用自定义初始化顺序',
+							open: '开启',
+							close: '关闭'
 						},
 						filter: {
 							label: '过滤条件',

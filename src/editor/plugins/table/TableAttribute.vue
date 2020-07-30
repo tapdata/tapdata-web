@@ -61,6 +61,12 @@
 						<el-switch
 							v-model="model.enableInitialOrder"
 							style="margin-right: 20px"
+							inactive-color="#dcdfe6"
+							:active-text="
+								model.enableInitialOrder
+									? $t('editor.cell.data_node.collection.form.initialSyncOrder.open')
+									: $t('editor.cell.data_node.collection.form.initialSyncOrder.close')
+							"
 							@change="model.initialSyncOrder = 0"
 						></el-switch>
 						<el-input-number
@@ -79,7 +85,16 @@
 					v-if="isSourceDataNode"
 				>
 					<div class="flex-block">
-						<el-switch v-model="model.isFilter" style="margin-right: 20px"></el-switch>
+						<el-switch
+							v-model="model.isFilter"
+							inactive-color="#dcdfe6"
+							:active-text="
+								model.isFilter
+									? $t('editor.cell.data_node.collection.form.filter.openFiflter')
+									: $t('editor.cell.data_node.collection.form.filter.closeFiflter')
+							"
+							style="margin-right: 20px"
+						></el-switch>
 					</div>
 				</el-form-item>
 
@@ -190,7 +205,7 @@
 								</el-col>
 								<div>{{ cond.condStr }}</div>
 							</el-row>
-							<el-row>
+							<el-row class="selectSql">
 								<div>{{ model.custSql.sql }}</div>
 							</el-row>
 						</div>
@@ -638,10 +653,11 @@ export default {
 	}
 	.fiflter {
 		padding: 10px 12px;
+		font-size: 12px;
 		box-sizing: border-box;
 		border: 1px solid #dcdfe6;
 		.title {
-			font-size: 14px;
+			font-size: 12px;
 			padding-bottom: 10px;
 		}
 		.rowSlot {
@@ -694,6 +710,11 @@ export default {
 				}
 			}
 		}
+		.selectSql {
+			padding-top: 10px;
+			font-size: 12px;
+			color: #999;
+		}
 	}
 }
 </style>
@@ -702,7 +723,16 @@ export default {
 	.fiflter {
 		.e-select .el-input--mini .el-input__inner {
 			border: 0;
+			font-size: 12px !important;
 		}
+	}
+	.el-tabs__item,
+	.el-input__inner {
+		font-size: 12px !important;
+	}
+	.el-switch__label * {
+		font-size: 12px !important;
+		color: #999;
 	}
 }
 </style>
