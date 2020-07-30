@@ -213,7 +213,7 @@
 					<el-tab-pane>
 						<span slot="label"
 							><el-checkbox v-model="model.sqlNotFromCust" @change="setSqlFrom('no')"></el-checkbox>
-							{{ $t('editor.cell.data_node.collection.form.filter.fiflterSetting') }}</span
+							{{ $t('editor.cell.data_node.collection.form.filter.sqlFilter') }}</span
 						>
 						<el-form-item prop="sql" :rules="rules">
 							<el-input
