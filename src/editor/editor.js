@@ -266,7 +266,7 @@ export default class Editor extends BaseObject {
 		// }
 		// self.getRightSidebar().show();
 		self.initMonitor(dataFlow);
-		// self.showLogs(dataFlow);
+		self.showLogs(dataFlow);
 	}
 
 	/**
