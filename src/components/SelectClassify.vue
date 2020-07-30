@@ -73,7 +73,7 @@ export default {
 		},
 		oldTagList: {
 			required: true,
-			value: Object
+			value: Object || []
 		}
 	},
 	data() {

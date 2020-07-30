@@ -5,6 +5,19 @@
 			<el-radio v-model="upsert" :label="1">{{ $t('dataFlow.overWrite') }}</el-radio>
 			<el-radio v-model="upsert" :label="0">{{ $t('dataFlow.skipData') }}</el-radio>
 		</div>
+		<div class="dataflow-radio">
+			<el-tag
+				size="mini"
+				class="SelectClassify-tag"
+				closable
+				v-for="item in tagList"
+				v-bind:key="item.value"
+				@close="handleCloseTag(item)"
+				>{{ item.value }}</el-tag
+			>
+			<span @click="handleClassify" class="classify">设置分类</span>
+		</div>
+
 		<el-upload
 			class="upload-demo"
 			:action="action"
@@ -16,6 +29,14 @@
 		>
 			<el-button type="primary" plain size="small">{{ $t('dataFlow.upload') }}</el-button>
 		</el-upload>
+		<SelectClassify
+			ref="SelectClassify"
+			:dialogVisible="dialogVisible"
+			type="dataflow"
+			:oldTagList="tagList"
+			v-on:dialogVisible="handleDialogVisible"
+			v-on:operationsClassify="handleOperationClassify"
+		></SelectClassify>
 		<div v-show="status" class="tooltip">
 			{{ $t('dataFlow.uploadOK') }} ,<router-link to="/dataFlows"> {{ $t('dataFlow.uploadInfo') }}</router-link>
 		</div>
@@ -23,14 +44,18 @@
 </template>
 
 <script>
+import SelectClassify from './SelectClassify';
 export default {
+	components: { SelectClassify },
 	data() {
 		return {
 			fileList: [],
 			action: '',
 			upsert: 1,
 			accept: '.gz',
-			status: false
+			status: false,
+			tagList: [],
+			dialogVisible: false
 		};
 	},
 	created() {
@@ -41,7 +66,9 @@ export default {
 			':' +
 			window.location.port +
 			'/api/MetadataInstances/upload?upsert=' +
-			this.upsert;
+			this.upsert +
+			'&listtags=' +
+			JSON.stringify(this.tagList);
 	},
 
 	watch: {
@@ -55,11 +82,44 @@ export default {
 					':' +
 					window.location.port +
 					'/api/MetadataInstances/upload?upsert=' +
-					this.upsert;
+					this.upsert +
+					'&listtags=' +
+					JSON.stringify(this.tagList);
+			}
+		},
+		tagList: {
+			deep: true,
+			handler() {
+				this.action =
+					window.location.protocol +
+					'//' +
+					window.location.hostname +
+					':' +
+					window.location.port +
+					'/api/MetadataInstances/upload?upsert=' +
+					this.upsert +
+					'&listtags=' +
+					JSON.stringify(this.tagList);
 			}
 		}
 	},
 	methods: {
+		handleDialogVisible() {
+			this.dialogVisible = false;
+		},
+		handleClassify() {
+			this.dialogVisible = true;
+		},
+		handleOperationClassify(listtags) {
+			this.tagList = listtags;
+		},
+		handleCloseTag(data) {
+			this.tagList.map((k, index) => {
+				if (k.id === data.id) {
+					this.tagList.splice(index, 1);
+				}
+			});
+		},
 		handleSuccess() {
 			this.status = true;
 		},
@@ -101,6 +161,12 @@ export default {
 	a {
 		color: #48b6e2;
 	}
+}
+.classify {
+	display: inline-block;
+	color: #48b6e2;
+	font-size: 12px;
+	cursor: pointer;
 }
 </style>
 <style>
