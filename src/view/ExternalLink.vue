@@ -1,14 +1,10 @@
 <template>
-	<iframe :src="url" frameborder="0" style="height:100%; width: 100%;"></iframe>
+	<iframe src="/old/index.html#/dashboard" frameborder="0" style="height:100%; width: 100%;"></iframe>
 </template>
 
 <script>
+let count = 0;
 export default {
-	data() {
-		return {
-			url: ''
-		};
-	},
 	created() {
 		this.getUrl();
 		window.updateFavMenu = () => {
@@ -16,27 +12,26 @@ export default {
 		};
 	},
 	watch: {
-		'$route.meta.url'(url) {
-			this.getUrl(url);
+		'$route.meta.url'() {
+			this.getUrl();
 		}
 	},
 	methods: {
-		getUrl(url) {
-			let query = this.$route.query;
-			let queryStr = '';
-			if (query) {
-				queryStr = '?';
-				let arr = [];
-				for (let key in query) {
-					if (query.hasOwnProperty(key)) {
-						let value = query[key];
-						arr.push(key + '=' + value);
-					}
+		getUrl() {
+			let route = this.$route;
+			this.$nextTick(() => {
+				let router = window.frames[0].window.gRouter;
+				count += 1;
+				if (router) {
+					router.push({
+						name: route.name,
+						query: Object.assign(route.query, { isNext: count }),
+						params: route.params
+					});
+				} else {
+					setTimeout(this.getUrl, 500);
 				}
-				queryStr += arr.join('&');
-			}
-			url = url || this.$route.meta.url;
-			this.url = url + queryStr;
+			});
 		}
 	}
 };

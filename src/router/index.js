@@ -8,6 +8,211 @@ const view = path => () => import(`../view/${path}`);
 
 Vue.use(Router);
 
+const childRoutes = [
+	{
+		path: '/dashboard',
+		name: 'dashboard',
+		component: view('dashboard/Dashboard'),
+		meta: { requiresAuth: true, title: i18n.t('tap.home') }
+	},
+	{
+		path: '/connections',
+		name: 'connections',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/connections', title: i18n.t('tap.connection') }
+	},
+	{
+		path: '/connection',
+		name: 'connection',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/connection', title: i18n.t('tap.connectionEdtion') }
+	},
+	{
+		path: '/connection/:id',
+		name: 'editConnection',
+		component: view('ExternalLink'),
+		meta: { url: '/old/index.html#/connection', title: i18n.t('tap.connectionEdtion') }
+	},
+	{
+		path: '/metadataDefinition',
+		name: 'metadataDefinition',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/metadataDefinition', title: i18n.t('tap.dataCatalog') }
+	},
+	{
+		path: '/metadataInstances/:id',
+		name: 'metadataInstances',
+		component: view('ExternalLink'),
+		meta: { title: i18n.t('tap.metadataInstances') }
+	},
+	{
+		path: '/dataQuality',
+		name: 'dataQuality',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/dataQuality', title: i18n.t('tap.dataQuality') }
+	},
+	{
+		path: '/dataQuality/:id',
+		name: 'dataQualityDetail',
+		component: view('ExternalLink'),
+		meta: { title: i18n.t('tap.dataQuality') }
+	},
+	{
+		path: '/ttl',
+		name: 'timeToLive',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/ttl', title: i18n.t('tap.TimeToLive') }
+	},
+	{
+		path: '/dataRules',
+		name: 'dataRules',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/dataRules', title: i18n.t('tap.dataRules') }
+	},
+	{
+		path: '/dictionary',
+		name: 'dictionary',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/dictionary', title: i18n.t('tap.dictionary') }
+	},
+	{
+		path: '/modules',
+		name: 'modules',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/modules', title: i18n.t('tap.apiManagement') }
+	},
+	{
+		path: '/module/:id',
+		name: 'editModule',
+		component: view('ExternalLink')
+	},
+	{
+		path: '/dataExplorer',
+		name: 'dataExplorer',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/dataExplorer', title: i18n.t('tap.dataExplor') }
+	},
+	{
+		path: '/apiDocAndTest',
+		name: 'apiDocAndTest',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/apiDocAndTest', title: i18n.t('tap.docTest') }
+	},
+	{
+		path: '/apiAnalysis',
+		name: 'apiAnalysis',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/apiAnalysis', title: i18n.t('tap.apiStats') }
+	},
+	{
+		path: '/applications',
+		name: 'applications',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/applications', title: i18n.t('tap.apiClients') }
+	},
+	{
+		path: '/apiServers',
+		name: 'apiServers',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/apiServers', title: i18n.t('tap.apiSever') }
+	},
+	{
+		path: '/dataCollect',
+		name: 'dataCollect',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/dataCollect', title: i18n.t('tap.dataCollect') }
+	},
+	{
+		path: '/tasks',
+		name: 'tasks',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/tasks', title: i18n.t('tap.jobSchedule') }
+	},
+	{
+		path: '/agentdownload',
+		name: 'agentdownload',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/agentdownload', title: i18n.t('tap.agentdownload') }
+	},
+	{
+		path: '/agents',
+		name: 'agents',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/agents', title: i18n.t('tap.agentManagement') }
+	},
+	{
+		path: '/serversOversee',
+		name: 'serversOversee',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/serversOversee', title: i18n.t('tap.serversOversee') }
+	},
+	{
+		path: '/users',
+		name: 'users',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/users', title: i18n.t('tap.userManagement') }
+	},
+	{
+		path: '/journal',
+		name: 'journal',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/journal', title: i18n.t('tap.journal') }
+	},
+	{
+		path: '/roles',
+		name: 'roles',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/roles', title: i18n.t('tap.roleManagement') }
+	},
+	{
+		path: '/role',
+		name: 'role',
+		component: view('ExternalLink')
+	},
+	{
+		path: '/role/:id',
+		name: 'editRole',
+		component: view('ExternalLink')
+	},
+	{
+		path: '/settings',
+		name: 'settings',
+		component: view('ExternalLink'),
+		meta: { requiresAuth: true, url: '/old/index.html#/settings', title: i18n.t('tap.systemSettings') }
+	},
+	/*-----------------------------------------------------------------*/
+	{
+		path: '/clusterManagement',
+		name: 'clusterManagement',
+		component: view('clusterManagement/layout'),
+		meta: { requiresAuth: true, title: i18n.t('tap.clusterManagement') }
+	},
+	{
+		path: '/dataFlows',
+		name: 'dataFlows',
+		component: view('task/DataFlows'),
+		meta: { requiresAuth: true, title: i18n.t('tap.jobFlow') }
+	},
+	{
+		path: '/dataMap',
+		name: 'dataMap',
+		component: view('dataMap/DataMap'),
+		meta: { requiresAuth: true, title: i18n.t('tap.dataLineage') }
+	},
+	{
+		path: '/upload',
+		name: 'upload',
+		component: view('Upload'),
+		meta: { title: i18n.t('tap.upload') }
+	},
+	{
+		path: '/apiInfo',
+		name: 'apiInfo',
+		component: view('job/apiInfo'),
+		meta: { title: i18n.t('tap.apiInfo') }
+	}
+];
+
 const router = new Router({
 	routes: [
 		{
@@ -29,197 +234,7 @@ const router = new Router({
 			name: 'layout',
 			redirect: 'dashboard',
 			component: view('Layout'),
-			children: [
-				{
-					path: '/dashboard',
-					name: 'dashboard',
-					component: view('dashboard/Dashboard'),
-					meta: { requiresAuth: true, title: i18n.t('tap.home') }
-				},
-				{
-					path: '/connections',
-					name: 'connections',
-					component: view('ExternalLink'),
-					meta: {
-						requiresAuth: true,
-						url: '/old/index.html#/connections',
-						title: i18n.t('tap.connection')
-					}
-				},
-				{
-					path: '/connection',
-					name: 'connection',
-					component: view('ExternalLink'),
-					meta: {
-						requiresAuth: true,
-						url: '/old/index.html#/connection',
-						title: i18n.t('tap.connectionEdtion')
-					}
-				},
-				{
-					path: '/metadataDefinition',
-					name: 'metadataDefinition',
-					component: view('ExternalLink'),
-					meta: {
-						requiresAuth: true,
-						url: '/old/index.html#/metadataDefinition',
-						title: i18n.t('tap.dataCatalog')
-					}
-				},
-				{
-					path: '/dataQuality',
-					name: 'dataQuality',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/dataQuality', title: i18n.t('tap.dataQuality') }
-				},
-				{
-					path: '/ttl',
-					name: 'timeToLive',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/ttl', title: i18n.t('tap.TimeToLive') }
-				},
-				{
-					path: '/dataRules',
-					name: 'dataRules',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/dataRules', title: i18n.t('tap.dataRules') }
-				},
-				{
-					path: '/dictionary',
-					name: 'dictionary',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/dictionary', title: i18n.t('tap.dictionary') }
-				},
-				{
-					path: '/modules',
-					name: 'modules',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/modules', title: i18n.t('tap.apiManagement') }
-				},
-				{
-					path: '/dataExplorer',
-					name: 'dataExplorer',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/dataExplorer', title: i18n.t('tap.dataExplor') }
-				},
-				{
-					path: '/apiDocAndTest',
-					name: 'apiDocAndTest',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/apiDocAndTest', title: i18n.t('tap.docTest') }
-				},
-				{
-					path: '/apiAnalysis',
-					name: 'apiAnalysis',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/apiAnalysis', title: i18n.t('tap.apiStats') }
-				},
-				{
-					path: '/applications',
-					name: 'applications',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/applications', title: i18n.t('tap.apiClients') }
-				},
-				{
-					path: '/apiServers',
-					name: 'apiServers',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/apiServers', title: i18n.t('tap.apiSever') }
-				},
-				{
-					path: '/dataCollect',
-					name: 'dataCollect',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/dataCollect', title: i18n.t('tap.dataCollect') }
-				},
-				{
-					path: '/tasks',
-					name: 'tasks',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/tasks', title: i18n.t('tap.jobSchedule') }
-				},
-				{
-					path: '/agentdownload',
-					name: 'agentdownload',
-					component: view('ExternalLink'),
-					meta: {
-						requiresAuth: true,
-						url: '/old/index.html#/agentdownload',
-						title: i18n.t('tap.agentdownload')
-					}
-				},
-				{
-					path: '/agents',
-					name: 'agents',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/agents', title: i18n.t('tap.agentManagement') }
-				},
-				{
-					path: '/serversOversee',
-					name: 'serversOversee',
-					component: view('ExternalLink'),
-					meta: {
-						requiresAuth: true,
-						url: '/old/index.html#/serversOversee',
-						title: i18n.t('tap.serversOversee')
-					}
-				},
-				{
-					path: '/users',
-					name: 'users',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/users', title: i18n.t('tap.userManagement') }
-				},
-				{
-					path: '/journal',
-					name: 'journal',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/journal', title: i18n.t('tap.journal') }
-				},
-				{
-					path: '/roles',
-					name: 'roles',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/roles', title: i18n.t('tap.roleManagement') }
-				},
-				{
-					path: '/settings',
-					name: 'settings',
-					component: view('ExternalLink'),
-					meta: { requiresAuth: true, url: '/old/index.html#/settings', title: i18n.t('tap.systemSettings') }
-				},
-				/*-----------------------------------------------------------------*/
-				{
-					path: '/clusterManagement',
-					name: 'clusterManagement',
-					component: view('clusterManagement/layout'),
-					meta: { requiresAuth: true, title: i18n.t('tap.clusterManagement') }
-				},
-				{
-					path: '/dataFlows',
-					name: 'dataFlows',
-					component: view('task/DataFlows'),
-					meta: { requiresAuth: true, title: i18n.t('tap.jobFlow') }
-				},
-				{
-					path: '/dataMap',
-					name: 'dataMap',
-					component: view('dataMap/DataMap'),
-					meta: { requiresAuth: true, title: i18n.t('tap.dataLineage') }
-				},
-				{
-					path: '/upload',
-					name: 'upload',
-					component: view('Upload'),
-					meta: { title: i18n.t('tap.upload') }
-				},
-				{
-					path: '/apiInfo',
-					name: 'apiInfo',
-					component: view('job/apiInfo'),
-					meta: { title: i18n.t('tap.apiInfo') }
-				}
-			]
+			children: childRoutes
 		}
 	]
 });
@@ -305,3 +320,4 @@ router.beforeEach(async (to, from, next) => {
 });
 
 export default router;
+export { childRoutes };

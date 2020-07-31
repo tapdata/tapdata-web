@@ -181,6 +181,9 @@ export default {
 		this.$root.$on('updateMenu', () => {
 			this.getFavMenus();
 		});
+		window.iframeRouterChange = route => {
+			this.$router.push(route);
+		};
 	},
 	destroyed() {
 		this.$root.$off('updateMenu');

@@ -2,7 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
 import App from './App';
-import router from './router';
+import router, { childRoutes } from './router';
 import moment from 'moment'; // 时间格式化
 import store from './vuex'; // 引入全局数据控制
 import VueCookie from 'vue-cookie';
@@ -25,6 +25,7 @@ Vue.prototype.$moment = moment;
 Vue.prototype.$api = factory;
 
 window.VueCookie = VueCookie;
+window.ChildRoutes = childRoutes;
 
 // Vue.prototype.i18n = window.jQuery.i18n
 router.beforeEach((to, from, next) => {

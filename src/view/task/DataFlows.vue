@@ -616,9 +616,7 @@ export default {
 			this.$store.commit('dataFlows', this.formData);
 
 			let where = {
-				user_id: {
-					like: this.$cookie.get('user_id')
-				}
+				user_id: { regexp: `^${this.$cookie.get('user_id')}$` }
 			};
 			let order = 'createTime DESC';
 			if (this.order) {

@@ -193,12 +193,12 @@ const en = {
 		SyncPoint: 'Sync Node',
 		syncType: 'Sync type',
 		SyncInfo: {
-			localTZ: 'Local UTC CDC time: custom a point of  CDC time，in local time zone',
-			current: 'Local UTC：default local UTC time',
-			connTZ: 'Sever UTC CDC time: custom a point of  CDC time，in the time zone of a specific server',
-			localTZType: 'Local UTC CDC time',
-			currentType: 'Current time',
-			connTZType: 'Sever UTC CDC time'
+			localTZ: 'Local Timezone CDC Time: custom a point of  CDC time，in local time zone',
+			current: 'Current Time：Current DB Time',
+			connTZ: 'DB Timezone CDC Time: custom a point of  CDC time，in the time zone of a specific server',
+			localTZType: 'Local Timezone CDC Time',
+			currentType: 'Current Time',
+			connTZType: 'DB Timezone CDC Time'
 		},
 		Current: 'Current Time',
 		SyncTime: 'Sync Time',

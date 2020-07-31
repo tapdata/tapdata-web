@@ -14,7 +14,6 @@
 				</el-button>
 
 				<el-autocomplete
-					v-if="!statusBtMap[status].finder"
 					class="inline-input searchNode"
 					id="searchNode"
 					v-model="state1"
@@ -23,6 +22,7 @@
 					placeholder="查找节点"
 					@select="handleSearchNode"
 					hide-loading
+					clearable
 					suffix-icon="el-icon-search"
 				></el-autocomplete>
 
@@ -54,22 +54,17 @@
 						<i class="iconfont icon-kujitongbucopy"></i>
 						<span>{{ $t('dataFlow.button.reloadSchema') }}</span>
 					</el-button>
-					<el-button
-						v-if="isEditable() && !statusBtMap[status].preview"
-						class="action-btn"
-						size="mini"
-						@click="preview"
-					>
+					<el-button v-if="isEditable()" class="action-btn" size="mini" @click="preview">
 						<i class="iconfont icon-yulan1"></i>
 						<span>{{ $t('dataFlow.button.preview') }}</span>
 					</el-button>
-					<el-button v-if="!statusBtMap[status].logs" class="action-btn" size="mini" @click="showLogs">
+					<el-button class="action-btn" size="mini" @click="showLogs">
 						<i class="iconfont icon-rizhi1"></i>
 						<span>{{ $t('dataFlow.button.logs') }}</span>
 					</el-button>
 				</el-button-group>
 
-				<el-button class="btn-setting" size="mini" :disabled="statusBtMap[status].setting" @click="showSetting">
+				<el-button class="btn-setting" size="mini" @click="showSetting">
 					<i class="iconfont icon-shezhi1"></i>
 					<span class="btn-setting-text">{{
 						{
@@ -94,25 +89,46 @@
 					effect="plain"
 					size="mini"
 					style="margin-left: 30px;margin-right: 10px;border:none;"
-					>{{ $t('dataFlow.state') }}: {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}
+				>
+					<span
+						:style="{
+							color: status === 'scheduled' ? '#b0e58c' : status === 'stopping' ? '#fccd85' : ''
+						}"
+						>{{ $t('dataFlow.state') }}: {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}</span
+					>
 				</el-tag>
 
 				<el-button-group>
-					<el-button :disabled="statusBtMap[status].start" class="action-btn" size="mini" @click="start()">
+					<el-button
+						:disabled="statusBtMap[status].start"
+						class="action-btn btn-operatiton"
+						size="mini"
+						@click="start()"
+					>
 						<i class="mr-5 iconfont icon-yunhang1"></i>
 						<span>{{ $t('dataFlow.button.start') }}</span>
 					</el-button>
-					<el-button :disabled="statusBtMap[status].stop" class="action-btn" size="mini" @click="stop()">
+					<el-button
+						:disabled="statusBtMap[status].stop"
+						class="action-btn btn-operatiton"
+						size="mini"
+						@click="stop()"
+					>
 						<i class="mr-5 iconfont icon-zanting2"></i>
 						<span>{{ $t('dataFlow.button.stop') }}</span>
 					</el-button>
-					<el-button :disabled="statusBtMap[status].reset" class="action-btn" size="mini" @click="reset">
+					<el-button
+						:disabled="statusBtMap[status].reset"
+						class="action-btn btn-operatiton"
+						size="mini"
+						@click="reset"
+					>
 						<i class="mr-5 iconfont icon-shuaxin3"></i>
 						<span>{{ $t('dataFlow.button.reset') }}</span>
 					</el-button>
 					<el-button
 						:disabled="statusBtMap[status].forceStop"
-						class="action-btn"
+						class="action-btn btn-operatiton"
 						size="mini"
 						@click="stop(true)"
 					>
@@ -295,6 +311,10 @@ export default {
 			if (!self.statusBtMap[self.status].start) {
 				self.executeMode = 'normal';
 			}
+			delete self.dataFlow.validateBatchId;
+			delete self.dataFlow.validateStatus;
+			delete self.dataFlow.validationSettings;
+
 			Object.assign(self.dataFlow, dat);
 			self.editor.emit('dataFlow:updated', _.cloneDeep(dat));
 		});
@@ -1273,77 +1293,88 @@ export default {
 </style>
 <style lang="less">
 @import '../../editor/style/editor';
-.flex-center {
-	display: flex;
-	align-items: center;
-}
-.mr-5 {
-	margin-right: 5px;
-}
-.action-btn,
-.btn-setting {
-	border: none;
-	background: rgba(238, 238, 238, 1);
-	color: #606266;
-	&.is-disabled {
-		background: rgba(238, 238, 238, 1);
-		&:hover {
-			background: rgba(238, 238, 238, 1);
-		}
+.editor-container {
+	.flex-center {
+		display: flex;
+		align-items: center;
 	}
-	&.is-disabled {
-		background: rgba(238, 238, 238, 1);
-		&:hover {
-			background: rgba(238, 238, 238, 1);
-		}
+	.mr-5 {
+		margin-right: 5px;
 	}
-	&:hover,
-	&:focus {
+	.action-btn,
+	.btn-setting {
+		border: none;
+		background: #eee;
 		color: #606266;
+		&.is-disabled,
+		&.btn-operatiton.is-disabled {
+			background: #eee;
+			color: #bbb;
+			&:hover {
+				color: #bbb;
+				background: #eee;
+			}
+		}
+		&:hover,
+		&:focus {
+			color: #606266;
+			background: rgba(225, 225, 225, 1);
+		}
+	}
+	.btn-operatiton {
+		padding: 0 10;
 		background: rgba(225, 225, 225, 1);
 	}
-}
-.action-btn {
-	margin-right: 10px;
-	padding: 0 6px;
-	line-height: 26px;
-	height: 26px;
-	border-left: 1px solid #ddd;
-	&:first-child {
-		border: none;
-	}
-	.iconfont {
-		font-size: 12px;
-	}
-}
-.btn-setting {
-	padding: 0;
-	overflow: hidden;
-	&:hover {
-		.iconfont {
-			color: #606266;
-			background: #e1e1e1;
-		}
-	}
-	.iconfont {
-		display: inline-block;
-		text-align: center;
-		font-size: 12px;
+	.action-btn {
+		margin-right: 10px;
+		padding: 0 6px;
 		line-height: 26px;
 		height: 26px;
-		width: 26px;
-		color: #606266;
-		background: rgba(225, 225, 225, 1);
+		border-left: 1px solid #ddd;
+		z-index: 1;
+		&.btn-operatiton {
+			padding: 0 10px 0 6px;
+			background: rgba(225, 225, 225, 1);
+			&:hover {
+				background: #cfcfcf;
+			}
+		}
+		&:first-child {
+			border: none;
+		}
+		.iconfont {
+			font-size: 12px;
+		}
 	}
-	.btn-setting-text {
-		display: inline-block;
-		padding: 0 6px;
+	.btn-setting {
+		padding: 0;
+		overflow: hidden;
+		&:hover {
+			.iconfont {
+				color: #606266;
+				background: #e1e1e1;
+			}
+		}
+		.iconfont {
+			display: inline-block;
+			text-align: center;
+			font-size: 12px;
+			line-height: 26px;
+			height: 26px;
+			width: 26px;
+			color: #606266;
+			background: rgba(225, 225, 225, 1);
+		}
+		.btn-setting-text {
+			display: inline-block;
+			padding: 0 6px;
+		}
 	}
-}
-.btn-edit {
-	padding: 6px;
-	.iconfont {
-		font-size: 12px;
+	.btn-edit {
+		padding: 6px;
+		.iconfont {
+			font-size: 12px;
+		}
 	}
 }
 
@@ -1438,7 +1469,7 @@ export default {
 	}
 	.el-input__inner {
 		height: 26px;
-		background: rgba(238, 238, 238, 1);
+		background: #eee;
 		color: rgba(170, 170, 170, 1);
 	}
 	.el-input--mini .el-input__icon {

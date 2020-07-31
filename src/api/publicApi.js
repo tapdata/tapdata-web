@@ -1,11 +1,11 @@
-import axios from "axios";
-import Cookie from "tiny-cookie";
+import axios from 'axios';
+import Cookie from 'tiny-cookie';
 
 axios.interceptors.request.use(
 	function(config) {
-		let accessToken = Cookie.get("token");
-		if (~config.url.indexOf("?")) {
-			if (!~config.url.indexOf("access_token")) {
+		let accessToken = Cookie.get('token');
+		if (~config.url.indexOf('?')) {
+			if (!~config.url.indexOf('access_token')) {
 				config.url = `${config.url}&access_token=${accessToken}`;
 			}
 		} else {
@@ -24,7 +24,7 @@ export default class PublicAPI {
 	}
 
 	count(params) {
-		return axios.get(this.url + "/count", { params });
+		return axios.get(this.url + '/count', { params });
 	}
 
 	patch(params) {
@@ -32,7 +32,7 @@ export default class PublicAPI {
 	}
 
 	updateById(id, attributes) {
-		return axios.patch(this.url + "/" + id, attributes);
+		return axios.patch(this.url + '/' + id, attributes);
 	}
 
 	/**
@@ -42,16 +42,16 @@ export default class PublicAPI {
 	 * @return {Promise<AxiosResponse<T>>}
 	 */
 	update(where, attributes) {
-		if (typeof where === "object") where = JSON.stringify(where);
+		if (typeof where === 'object') where = JSON.stringify(where);
 
-		return axios.post(this.url + "/update?where=" + where, attributes);
+		return axios.post(this.url + '/update?where=' + where, attributes);
 	}
 
 	get(params, filter) {
 		if (Array.isArray(params)) {
-			filter = typeof filter === "object" ? JSON.stringify(filter) : filter;
-			let qs = filter ? "?filter=" + filter : "";
-			return axios.get(this.url + "/" + params.join("/") + qs);
+			filter = typeof filter === 'object' ? JSON.stringify(filter) : filter;
+			let qs = filter ? '?filter=' + filter : '';
+			return axios.get(this.url + '/' + params.join('/') + qs);
 		}
 		params = params || {};
 		return axios.get(this.url, { params });
@@ -67,6 +67,6 @@ export default class PublicAPI {
 
 	findOne(params) {
 		params = params || {};
-		return axios.get(this.url + "/findOne", { params });
+		return axios.get(this.url + '/findOne', { params });
 	}
 }

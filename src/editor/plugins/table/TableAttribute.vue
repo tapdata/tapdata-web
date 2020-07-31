@@ -346,12 +346,6 @@ export default {
 					});
 				}
 				this.taskData.tableName = this.model.tableName;
-				this.model.custFields.length = 0;
-				this.model.selectedFields.length = 0;
-				this.model.custSql.filterConds.length = 0;
-				this.model.custSql.filterConds.push({ field: '', calcu: '', val: '', condStr: '' });
-				this.model.custSql.limitLines = '';
-				this.model.cSql = '';
 			}
 		},
 		mergedSchema: {
@@ -394,6 +388,11 @@ export default {
 				placeholder: this.$t('editor.cell.data_node.table.form.table.placeholder'),
 				loading: false,
 				filterable: true,
+				on: {
+					change() {
+						self.handlerSchemaChange();
+					}
+				},
 				options: [],
 				allowCreate: true,
 				defaultFirstOption: true,
@@ -618,6 +617,14 @@ export default {
 					this.model.databaseType = list[i]['database_type'];
 				}
 			}
+		},
+		handlerSchemaChange() {
+			this.model.custFields.length = 0;
+			this.model.selectedFields.length = 0;
+			this.model.custSql.filterConds.length = 0;
+			this.model.custSql.filterConds.push({ field: '', calcu: '', val: '', condStr: '' });
+			this.model.custSql.limitLines = '';
+			this.model.cSql = '';
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
