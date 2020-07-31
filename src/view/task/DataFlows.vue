@@ -194,14 +194,17 @@
 									class="item"
 									effect="dark"
 									:content="$t('dataFlow.draftNotStart')"
-									:manual="!['draft'].includes(scope.row.status)"
+									:manual="!(['draft'].includes(scope.row.status) && scope.row.checked != true)"
 									placement="top-start"
 								>
 									<el-switch
 										v-model="scope.row.newStatus"
 										inactive-value="stopping"
 										active-value="scheduled"
-										:disabled="statusBtMap[scope.row.status].switch"
+										:disabled="
+											statusBtMap[scope.row.status].switch &&
+												!(scope.row.status == 'draft' && scope.row.checked == true)
+										"
 										@change="
 											handleStatus(scope.row.id, scope.row.status, scope.row.newStatus, scope.row)
 										"
