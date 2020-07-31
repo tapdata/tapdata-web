@@ -124,10 +124,11 @@
 						>
 							<el-select
 								size="mini"
-								v-model="model.custSql.selectedFields"
+								v-model="model.selectedFields"
 								multiple
 								filterable
 								default-first-option
+								@change="handleFilterChange()"
 							>
 								<el-option v-for="opt in primaryKeyOptions" :key="opt" :label="opt" :value="opt">
 								</el-option>
@@ -157,7 +158,7 @@
 								<el-col :span="8">
 									<el-select v-model="cond.field" filterable size="mini">
 										<el-option
-											v-for="item in model.custSql.custFields"
+											v-for="item in primaryKeyOptions"
 											:key="item"
 											:label="item"
 											:value="item"
@@ -206,7 +207,7 @@
 								<div>{{ cond.condStr }}</div>
 							</el-row>
 							<el-row class="selectSql">
-								<div>{{ model.custSql.sql }}</div>
+								<div>{{ model.cSql }}</div>
 							</el-row>
 						</div>
 					</el-tab-pane>
@@ -345,6 +346,12 @@ export default {
 					});
 				}
 				this.taskData.tableName = this.model.tableName;
+				this.model.custFields.length = 0;
+				this.model.selectedFields.length = 0;
+				this.model.custSql.filterConds.length = 0;
+				this.model.custSql.filterConds.push({ field: '', calcu: '', val: '', condStr: '' });
+				this.model.custSql.limitLines = '';
+				this.model.cSql = '';
 			}
 		},
 		mergedSchema: {
@@ -415,13 +422,13 @@ export default {
 				isFilter: false,
 				sqlFromCust: true,
 				sqlNotFromCust: false,
+				selectedFields: [],
+				custFields: [],
+				cSql: '',
 				custSql: {
 					fieldFilterType: 'keepAllFields',
 					limitLines: '',
-					selectedFields: [],
-					custFields: [],
-					filterConds: [{ field: '', calcu: '', val: '', condStr: '' }],
-					sql: 'sdsfsdfsf'
+					filterConds: [{ field: '', calcu: '', val: '', condStr: '' }]
 				},
 				initialOffset: '',
 				dropTable: false,
@@ -552,21 +559,32 @@ export default {
 			else this.model.sqlNotFromCust = !this.model.sqlFromCust;
 		},
 		removeCustFilter(cond) {
-			if (this.model.custSql.filterConds.length == 1) return;
+			if (this.model.custSql.filterConds.length == 1) {
+				this.model.custSql.filterConds[0] = Object.assign(this.model.custSql.filterConds[0], {
+					field: '',
+					calcu: '',
+					val: '',
+					condStr: ''
+				});
+				return;
+			}
 			this.model.custSql.filterConds.splice(this.model.custSql.filterConds.indexOf(cond), 1);
 		},
-		setCustFields() {
-			let custSql = this.model.custSql;
-			if (custSql.selectedFields.length > 0 && custSql.fieldFilterType == 'retainedField')
-				custSql.custFields = custSql.selectedFields;
-			else if (custSql.selectedFields.length > 0 && custSql.fieldFilterType == 'deleteField')
-				custSql.custFields = this.primaryKeyOptions.filter(it => !custSql.selectedFields.includes(it));
+		handleFilterChange() {
+			this.$nextTick(() => {
+				this.createCustSql();
+			});
 		},
 		createCustSql() {
-			this.setCustFields();
 			let res = 'SELECT ',
 				custSql = this.model.custSql;
-			if (custSql.custFields.length != this.primaryKeyOptions.length) res += custSql.custFields.join(',');
+			if (this.model.selectedFields.length > 0 && custSql.fieldFilterType == 'retainedField')
+				this.model.custFields = this.model.selectedFields;
+			else if (this.model.selectedFields.length > 0 && custSql.fieldFilterType == 'deleteField') {
+				this.model.custFields = this.primaryKeyOptions.filter(it => !this.model.selectedFields.includes(it));
+			}
+
+			if (this.model.custFields.length != this.primaryKeyOptions.length) res += this.model.custFields.join(',');
 			else res += '* ';
 			res += ' FROM ' + this.model.tableName + ' ';
 			if (custSql.filterConds[0].field.length > 0 || custSql.limitLines) res += ' WHERE ';
@@ -575,20 +593,21 @@ export default {
 				if (cond.field.length > 0) {
 					if (i == 0) res += '(';
 					let quota = ['String'].includes(
-						this.mergedSchema.fields.find(it => it.field_name == cond.field).javaType
-					)
-						? '"'
-						: '';
-					res += cond.field + ' ' + cond.calcu + ' ' + quota + cond.val + quota;
-					if (i == custSql.filterConds.length - 2) res += ' OR ';
+							this.mergedSchema.fields.find(it => it.field_name == cond.field).javaType
+						)
+							? "'"
+							: '',
+						percent = cond.calcu == 'like' ? '%' : '';
+					res += cond.field + ' ' + cond.calcu + ' ' + quota + percent + cond.val + percent + quota;
+					if (i <= custSql.filterConds.length - 2) res += ' OR ';
 					if (i == custSql.filterConds.length - 1) res += ')';
 				}
 			}
-			if (custSql.limitLines) {
+			if (custSql.limitLines && custSql.limitLines != 'all') {
 				if (res.indexOf('WHERE ') < res.length - 6) res += ' AND ';
 				res += ' ROWNUM < ' + custSql.limitLines;
 			}
-			this.model.custSql.sql = res;
+			this.model.cSql = res;
 		},
 
 		handlerConnectionChange() {
@@ -602,6 +621,30 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
+			_.merge(this.model, {
+				connectionId: '',
+				databaseType: '',
+				tableName: '',
+				sql: '',
+				editSql: '',
+				isFilter: false,
+				sqlFromCust: true,
+				sqlNotFromCust: false,
+				custSql: {
+					fieldFilterType: 'keepAllFields',
+					limitLines: '',
+					filterConds: [{ field: '', calcu: '', val: '', condStr: '' }],
+					sql: ''
+				},
+				initialOffset: '',
+				dropTable: false,
+				type: 'table',
+				primaryKeys: '',
+				initialSyncOrder: 0,
+				enableInitialOrder: false
+			});
+			this.model.selectedFields.length = 0;
+			this.model.custFields.length = 0;
 			if (data) {
 				_.merge(this.model, data);
 				//老数据的兼容处理
