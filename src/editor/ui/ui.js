@@ -26,8 +26,11 @@ export default class UI extends Component {
 			<div class="e-header">
 				<div class="e-title" style="margin-left: 10px">
 					<input value="${taskName}" class="ui-input" id="taskNameInput" type="text"  maxlength="150"/>
+					<div id="edit" title="${editTitle}"
+						style="cursor: pointer;font-size:12px;color:#48b6e2;position: absolute;top: 50%;right: 0;transform: translate(0, -50%);">
+							${changeName}
+					</div>
 				</div>
-				<span id="edit" title="${editTitle}" style="cursor: pointer;font-size:12px;color:#48b6e2;">${changeName}</span>
 
 				<div class="e-toolbar-container">
 					<div class="graph-toolbar"></div>

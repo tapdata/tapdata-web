@@ -292,6 +292,7 @@
 
 <script>
 import _ from 'lodash';
+import moment from 'moment';
 import factory from '../../api/factory';
 import ws from '../../api/ws';
 const dataFlows = factory('DataFlows');
@@ -765,8 +766,8 @@ export default {
 						} else {
 							let stg = stage[0];
 							let statusLabel = stg.status ? this.$t('dataFlow.status.' + stg.status) : '--';
-							let lag = `(${this.$t('dataFlow.lag')}${stg.replicationLag}s)`;
 							if (stg.status === 'cdc') {
+								let lag = `(${this.$t('dataFlow.lag')}${this.getLag(stg.replicationLag)})`;
 								statusLabel += lag;
 								statusMap.cdc = true;
 							}
@@ -803,6 +804,22 @@ export default {
 				item.transmissionTime = '--';
 			}
 			return item;
+		},
+		getLag(lag) {
+			let r = '0s';
+			if (lag) {
+				let m = moment.duration(lag, 'seconds');
+				if (m.days()) {
+					r = m.days() + 'd';
+				} else if (m.hours()) {
+					r = m.hours() + 'h';
+				} else if (m.minutes()) {
+					r = m.minutes() + 'm';
+				} else {
+					r = lag + 's';
+				}
+			}
+			return r;
 		},
 		getCount(where) {
 			where = {

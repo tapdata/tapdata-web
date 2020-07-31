@@ -200,7 +200,7 @@ export default {
 			if (result.status === 200) {
 				let user = result.data || {};
 				this.favMenus = user.favorites || [];
-				this.userName = user.username || '';
+				this.userName = user.email.split('@')[0] || '';
 			}
 		},
 		delFavMenu(idx) {
