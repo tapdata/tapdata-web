@@ -575,10 +575,7 @@ export default class Graph extends Component {
 	createInspector(cell) {
 		let that = this;
 		this.currentCell = cell;
-		clearTimeout(this.cellTimeout);
-		this.cellTimeout = setTimeout(() => {
-			that.vueAdapter.render(that.currentCell);
-		}, 300);
+		that.vueAdapter.render(that.currentCell);
 	}
 
 	initToolsAndInspector() {

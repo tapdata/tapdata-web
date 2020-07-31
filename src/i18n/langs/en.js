@@ -168,6 +168,7 @@ const en = {
 		batchDelete: 'Batch Delete',
 		batchRest: 'Batch reset',
 		bulkExport: 'Bulk Export',
+		bulkImport: 'Bulk Import',
 		bulkScheuled: 'Batch Start',
 		bulkStopping: 'Bulk Stop',
 		taskBulkFx: 'Function',
@@ -356,7 +357,11 @@ const en = {
 		setting: {
 			distinctWriteType: 'Data write deduplication processing',
 			intellect: 'Intelligent de-rewrite',
-			compel: 'Force de-rewrite'
+			compel: 'Force de-rewrite',
+			intellectTip:
+				"Intelligent deduplication: intelligent detection of the target's existing data, deduplication can greatly improve transmission performance",
+			compelTip:
+				"Forced deduplication: Perform mandatory deduplication detection on the target's existing data, strictly guarantee accuracy but low transmission performance"
 		}
 	},
 	connection: {
@@ -450,7 +455,9 @@ const en = {
 							remove: 'Remove exists data at before sync'
 						},
 						initialSyncOrder: {
-							keep: 'Enable custom initial sync order'
+							keep: 'Enable custom initial sync order',
+							open: 'Open',
+							close: 'Close'
 						},
 						filter: {
 							label: 'Filter conditions',

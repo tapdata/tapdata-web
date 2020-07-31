@@ -167,6 +167,7 @@ const tc = {
 		batchDelete: '批量刪除',
 		batchRest: '批量重置',
 		bulkExport: '批量導出',
+		bulkImport: '批量導入',
 		bulkScheuled: '批量啟動',
 		bulkStopping: '批量停止',
 		taskBulkFx: '函数',
@@ -353,7 +354,9 @@ const tc = {
 		setting: {
 			distinctWriteType: '數據寫入去重處理',
 			intellect: '智能去重寫入',
-			compel: '強制去重寫入'
+			compel: '強制去重寫入',
+			intellectTip: '智能去重寫入：對目標已有數據進行智能檢測，去重的同時能極大提升傳輸性能',
+			compelTip: '強制去重寫入：對目標已有數據進行強制去重檢測，嚴格保證精準度但傳輸性能較低'
 		}
 	},
 	connection: {
@@ -445,7 +448,9 @@ const tc = {
 							remove: '運行前刪除已存在的數據'
 						},
 						initialSyncOrder: {
-							keep: '啟用自定義初始化順序'
+							keep: '啟用自定義初始化順序',
+							open: '開啟',
+							close: '關閉'
 						},
 						filter: {
 							label: '過濾條件',

@@ -122,8 +122,7 @@ import echartsCompinent from '../../components/echartsCompinent';
 import shaftlessEchart from '../../components/shaftlessEchart';
 import factory from '../../api/factory';
 import { EditorEventType } from '../../editor/lib/events';
-//import ws from '../../api/ws';
-const DataFlowInsights = factory('DataFlowInsights');
+import ws from '../../api/ws';
 const dataFlows = factory('DataFlows');
 
 export default {
@@ -357,6 +356,7 @@ export default {
 			transfType: '',
 			replicateType: '',
 			dataOverviewType: '',
+
 			selectId: '',
 			timer: null, // 定时器
 			timer1: null, // 定时器
@@ -374,7 +374,6 @@ export default {
 			this.stageId = selectStage ? selectStage.id : 'all';
 		});
 		this.flow = this.dataFlow;
-		// this.getApiData();
 		this.screeningObj = {
 			title: this.$t('dataFlow.dataScreening'),
 			type: 'screening',
@@ -410,19 +409,12 @@ export default {
 			? this.$moment(this.dataFlow.createTime).format('YYYY-MM-DD HH:mm:ss')
 			: '';
 		this.flow.username = (this.dataFlow.user && this.dataFlow.user.email) || '';
-		//let that = this;
-
-		// ws.on('dataFlows',function(data){
-		// 	that.tableData = data.data;
-		// 	that.handleData(that.tableData);
-		// 	that.loading = false;
-		// });
-		// this.timer = setInterval(() => {
-		// 	this.getTwoRadio(this.dataOverviewAll, this.dataOverviewType);
-		// 	this.getSpeed(this.isThroughputAll, this.throughputTime);
-		// 	this.getTime(this.transfTime, this.transfType);
-		// 	this.getTime(this.replicateTime, this.replicateType);
-		// }, intervalTime);
+		let self = this;
+		ws.on('dataFlowInsight', function(data) {
+			self.storeData = data.statsData;
+			self.dataProcessing(data);
+		});
+		this.getApiData();
 	},
 
 	watch: {
@@ -450,16 +442,33 @@ export default {
 				} else {
 					this.selectFlow = 'stage_';
 				}
-				this.getSpeed(this.isThroughputAll, this.throughputTime);
-				this.getTwoRadio(this.dataOverviewAll, this.dataOverviewType);
-				this.getTime(this.transfTime, this.transfType);
-				this.getTime(this.replicateTime, this.replicateType);
+				this.getApiData();
 			},
 			deep: true
 		}
 	},
 
 	methods: {
+		getApiData() {
+			if (this.stageId === 'all') {
+				this.selectFlow = 'flow_';
+			} else {
+				this.selectFlow = 'stage_';
+			}
+
+			let msg = {
+				type: 'dataFlowInsight',
+				granularity: {
+					throughput: this.throughputTime,
+					trans_time: this.transfTime,
+					repl_lag: this.replicateTime,
+					data_overview: this.dataOverviewAll
+				},
+				dataFlowId: this.flow.id
+			};
+
+			if (ws.ws.readyState == 1) ws.send(msg);
+		},
 		getAllCellsNode(queryString) {
 			let dataCells = this.editor.getAllCells();
 			let dataCellName = [];
@@ -500,10 +509,6 @@ export default {
 		getSpeed(data, time) {
 			this.isThroughputAll = data;
 			this.throughputTime = time;
-			let params = {
-				statsType: 'throughput',
-				granularity: this.selectFlow + time
-			};
 			switch (time) {
 				case 'second':
 					this.intervalThroughputpop = 20000;
@@ -518,24 +523,18 @@ export default {
 					this.intervalThroughputpop = 86400000;
 					break;
 			}
-			this.getApiData(params, 'throughput', data);
+			this.getApiData();
 		},
 
 		// 获取返回的单位
 		getTwoRadio(data, type) {
 			this.dataOverviewType = type;
 			this.dataOverviewAll = data;
-
-			let params = {
-				statsType: 'data_overview',
-				granularity: data
-			};
-			this.getApiData(params, type, data);
+			this.getApiData();
 		},
 
 		// 获取返回的时间
 		getTime(data, type) {
-			let params;
 			if (type === 'transf') {
 				this.transfType = type;
 				this.transfTime = data;
@@ -553,10 +552,6 @@ export default {
 						this.intervalTransf = 86400000;
 						break;
 				}
-				params = {
-					statsType: 'trans_time',
-					granularity: this.selectFlow + data
-				};
 			} else if (type === 'replicate') {
 				switch (data) {
 					case 'second':
@@ -574,137 +569,86 @@ export default {
 				}
 				this.replicateType = type;
 				this.replicateTime = data;
-				params = {
-					statsType: 'repl_lag',
-					granularity: this.selectFlow + data
-				};
 			}
-			this.getApiData(params, type, data);
-		},
-
-		// 获取数据
-		async getApiData(params, type, ele) {
-			if (this.stageId === 'all') {
-				params['dataFlowId'] = this.flow.id;
-			} else {
-				params['dataFlowId'] = this.flow.id;
-				params['stageId'] = this.stageId;
-			}
-			if (type === this.inputOutputObj.type) {
-				this.inputOutputObj.loading = true;
-			} else if (type === this.transfObj.type) {
-				this.transfObj.loading = true;
-			} else if (type === this.replicateObj.type) {
-				this.replicateObj.loading = true;
-			}
-			await DataFlowInsights.runtimeMonitor(params)
-				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data && res.data.length > 0) {
-							if (res.data[0].statsData && res.data[0].statsData.length > 0) {
-								res.data[0].statsData.forEach(time => {
-									switch (res.data[0].granularity) {
-										case 'flow_second':
-										case 'stage_second':
-											time.t = time.t.substring(11, 19);
-											break;
-										case 'flow_minute':
-										case 'stage_minute':
-											time.t = time.t.substring(11, 16);
-											break;
-										case 'flow_hour':
-										case 'stage_hour':
-											time.t = time.t.substring(11, 16);
-											break;
-										case 'flow_day':
-										case 'stage_day':
-											time.t = time.t.substring(6, 10);
-									}
-								});
-							}
-							this.storeData = res.data[0].statsData;
-							this.dataProcessing(this.storeData, type, ele);
-						} else {
-							this.$message.error(this.$t('message.noData'));
-						}
-					}
-
-					if (type === this.inputOutputObj.type) {
-						this.inputOutputObj.loading = false;
-					} else if (type === this.transfObj.type) {
-						this.transfObj.loading = false;
-					} else if (type === this.replicateObj.type) {
-						this.replicateObj.loading = false;
-					}
-				})
-				.catch(() => {
-					if (type === this.inputOutputObj.type) {
-						this.inputOutputObj.loading = false;
-					} else if (type === this.transfObj.type) {
-						this.transfObj.loading = false;
-					} else if (type === this.replicateObj.type) {
-						this.replicateObj.loading = false;
-					}
-				});
+			this.getApiData();
 		},
 
 		// 数据处理
-		dataProcessing(data, type, ele) {
+		dataProcessing(data) {
 			let timeList = [],
+				ttimeList = [],
+				rttimeList = [],
 				inputSizeList = [],
 				outputSizeList = [],
 				inputCountList = [],
 				outputCountList = [],
-				dataList = [];
-
-			if (type === 'screening') {
-				let time = data.t;
-				let inputSize = data.inputSize;
-				let outputSize = data.outputSize;
-				let inputCount = data.inputCount;
-				let outputCount = data.outputCount;
-				if (ele === 'flow') {
-					this.flow.inputNumber = inputCount > 0 ? inputCount : 0;
-					this.flow.outputNumber = outputCount > 0 ? outputCount : 0;
-					this.getScreening(time, inputCount, outputCount);
-				} else if (ele === 'stage') {
-					this.flow.inputNumber = inputSize > 0 ? inputSize : 0;
-					this.flow.outputNumber = outputSize > 0 ? outputSize : 0;
-					this.getScreening(time, inputSize, outputSize);
-				}
-			} else if (type === 'throughput') {
-				data.forEach(item => {
-					timeList.push(item.t); // 时间
-					inputSizeList.push(item.inputSize);
-					outputSizeList.push(item.outputSize);
-					inputCountList.push(item.inputCount);
-					outputCountList.push(item.outputCount);
+				dataList = [],
+				tdataList = [];
+			function ptime(type) {
+				data.statsData[type].forEach(time => {
+					switch (data.granularity[type]) {
+						case 'second':
+							time.t = time.t.substring(11, 19);
+							break;
+						case 'minute':
+							time.t = time.t.substring(11, 16);
+							break;
+						case 'hour':
+							time.t = time.t.substring(11, 16);
+							break;
+						case 'day':
+							time.t = time.t.substring(6, 10);
+					}
 				});
-
-				if (ele === 'qps') {
-					this.dpx = 'QPS';
-					this.inputAverage = inputCountList[inputCountList.length - 1];
-					this.outputAverage = outputCountList[outputCountList.length - 1];
-					this.getThroughputEchart(timeList, inputCountList, outputCountList);
-				} else {
-					this.dpx = 'KB';
-					this.inputAverage = inputSizeList[inputSizeList.length - 1];
-					this.outputAverage = outputSizeList[outputSizeList.length - 1];
-					this.getThroughputEchart(timeList, inputSizeList, outputSizeList);
-				}
-			} else {
-				data.forEach(item => {
-					timeList.push(item.t); // 时间
-					dataList.push(item.d);
-				});
-				if (type === 'transf') {
-					this.currentTime = dataList[dataList.length - 1];
-					this.getTransTime(timeList, dataList);
-				} else if (type === 'replicate') {
-					this.ransfTime = dataList[dataList.length - 1];
-					this.getReplicateTime(timeList, dataList);
-				}
 			}
+			ptime('repl_lag');
+			ptime('trans_time');
+			ptime('throughput');
+			let time = data.statsData.data_overview.t;
+			let inputSize = data.statsData.data_overview.inputSize;
+			let outputSize = data.statsData.data_overview.outputSize;
+			let inputCount = data.statsData.data_overview.inputCount;
+			let outputCount = data.statsData.data_overview.outputCount;
+			if (this.dataOverviewAll === 'flow') {
+				this.flow.inputNumber = inputCount > 0 ? inputCount : 0;
+				this.flow.outputNumber = outputCount > 0 ? outputCount : 0;
+				this.getScreening(time, inputCount, outputCount);
+			} else if (this.dataOverviewAll === 'stage') {
+				this.flow.inputNumber = inputSize > 0 ? inputSize : 0;
+				this.flow.outputNumber = outputSize > 0 ? outputSize : 0;
+				this.getScreening(time, inputSize, outputSize);
+			}
+			data.statsData.throughput.forEach(item => {
+				timeList.push(item.t); // 时间
+				inputSizeList.push(item.inputSize);
+				outputSizeList.push(item.outputSize);
+				inputCountList.push(item.inputCount);
+				outputCountList.push(item.outputCount);
+			});
+
+			if (this.isThroughputAll === 'qps') {
+				this.dpx = 'QPS';
+				this.inputAverage = inputCountList[inputCountList.length - 1];
+				this.outputAverage = outputCountList[outputCountList.length - 1];
+				this.getThroughputEchart(timeList, inputCountList, outputCountList);
+			} else {
+				this.dpx = 'KB';
+				this.inputAverage = inputSizeList[inputSizeList.length - 1];
+				this.outputAverage = outputSizeList[outputSizeList.length - 1];
+				this.getThroughputEchart(timeList, inputSizeList, outputSizeList);
+			}
+			data.statsData.trans_time.forEach(item => {
+				ttimeList.push(item.t); // 时间
+				dataList.push(item.d);
+			});
+			this.currentTime = dataList[dataList.length - 1];
+			this.getTransTime(ttimeList, dataList);
+			data.statsData.repl_lag.forEach(item => {
+				rttimeList.push(item.t); // 时间
+				tdataList.push(item.d);
+			});
+			this.ransfTime = dataList[tdataList.length - 1];
+			this.getReplicateTime(rttimeList, tdataList);
 		},
 
 		getScreening(time, series1, series2) {
@@ -790,84 +734,16 @@ export default {
 			this.throughputData.xAxis.data = time;
 			this.throughputData.series[0].data = series1;
 			this.throughputData.series[1].data = series2;
-			// let self = this;
-			// if (this.throughputData.xAxis.data.length === 0) {
-			//   for (let i = 0; i < time.length; i++) {
-			//     this.throughputData.xAxis.data.push(time[i]);
-			//     this.throughputData.series[0].data.push(series1[i]);
-			//     this.throughputData.series[1].data.push(series2[i]);
-			//   }
-			// } else {
-
-			//   let interval = this.intervalThroughputpop / (time.length+1);
-			//   let appendData = function () {
-			//     let t = time.shift();
-			//     let s1 = series1.shift();
-			//     let s2 = series2.shift();
-			//     self.throughputData.xAxis.data.shift();
-			//     self.throughputData.xAxis.data.push(t);
-			//     self.throughputData.series[0].data.shift();
-			//     self.throughputData.series[0].data.push(s1);
-			//     self.throughputData.series[1].data.shift();
-			//     self.throughputData.series[1].data.push(s2);
-
-			//     if (time.length > 0)
-			//       setTimeout(appendData, interval);
-			//   };
-			//   appendData();
-			// }
 		},
 
 		getTransTime(time, series) {
 			this.transfData.xAxis.data = time;
 			this.transfData.series[0].data = series;
-			// let _this = this;
-			// if (this.transfData.xAxis.data.length === 0) {
-			//   for (let i = 0; i < time.length; i++) {
-			//     this.transfData.xAxis.data.push(time[i]);
-			//     this.transfData.series[0].data.push(series[i]);
-			//   }
-			// } else {
-			//   let interval = intervalTime / (time.length + 1);
-			//   let appendData = function () {
-			//     let t = time.shift();
-			//     let s = series.shift();
-			//     _this.transfData.xAxis.data.shift();
-			//     _this.transfData.xAxis.data.push(t);
-			//     _this.transfData.series[0].data.shift();
-			//     _this.transfData.series[0].data.push(s);
-			//
-			//     if (time.length > 0)
-			//       setTimeout(appendData, interval);
-			//   };
-			//   appendData();
-			// }
 		},
 
 		getReplicateTime(time, series) {
 			this.replicateData.xAxis.data = time;
 			this.replicateData.series[0].data = series;
-			// let _this = this;
-			// if (this.replicateData.xAxis.data.length === 0) {
-			//   for (let i = 0; i < time.length; i++) {
-			//     this.replicateData.xAxis.data.push(time[i]);
-			//     this.replicateData.series[0].data.push(series[i]);
-			//   }
-			// } else {
-			//   let interval = intervalTime / (time.length + 1);
-			//   let appendData = function () {
-			//     let t = time.shift();
-			//     let s = series.shift();
-			//     _this.replicateData.xAxis.data.shift();
-			//     _this.replicateData.xAxis.data.push(t);
-			//     _this.replicateData.series[0].data.shift();
-			//     _this.replicateData.series[0].data.push(s);
-			//
-			//     if (time.length > 0)
-			//       setTimeout(appendData, interval);
-			//   };
-			//   appendData();
-			// }
 		},
 		// 跳转到数据校验页面
 		handleGoDataVerify() {

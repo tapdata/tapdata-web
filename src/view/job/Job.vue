@@ -202,11 +202,11 @@ import editor from '../../editor/index';
 import breakText from '../../editor/breakText';
 import { statusBtMap } from '../../editor/states';
 import log from '../../log';
+import ws from '../../api/ws';
 import AddBtnTip from './addBtnTip';
 import { FORM_DATA_KEY, JOIN_TABLE_TPL } from '../../editor/constants';
 import { EditorEventType } from '../../editor/lib/events';
 import _ from 'lodash';
-// import ws, { EventName } from "../../api/ws";
 
 const dataFlowsApi = factory('DataFlows');
 let changeData = null;
@@ -286,6 +286,18 @@ export default {
 			return;
 		}
 		this.loadData();
+		ws.on('watch', function(data) {
+			let dat = data.data.fullDocument;
+			self.status = dat.status;
+
+			if (self.executeMode !== dat.executeMode) self.executeMode = dat.executeMode;
+
+			if (!self.statusBtMap[self.status].start) {
+				self.executeMode = 'normal';
+			}
+			Object.assign(self.dataFlow, dat);
+			self.editor.emit('dataFlow:updated', _.cloneDeep(dat));
+		});
 	},
 
 	methods: {
@@ -404,6 +416,31 @@ export default {
 
 			this.polling();
 			this.onGraphChanged();
+			if (this.dataFlowId) {
+				let msg = {
+					type: 'watch',
+					collection: 'DataFlows',
+					filter: {
+						where: { 'fullDocument._id': { $in: [this.dataFlowId] } }, //查询条件
+						fields: {
+							'fullDocument.id': true,
+							'fullDocument.name': true,
+							'fullDocument.status': true,
+							'fullDocument.executeMode': true,
+							'fullDocument.stopOnError': true,
+							'fullDocument.last_updated': true,
+							'fullDocument.createTime': true,
+							'fullDocument.children': true,
+							'fullDocument.stats': true,
+							'fullDocument.stages.id': true,
+							'fullDocument.stages.name': true,
+							'fullDocument.setting': true,
+							'fullDocument.listtags': true
+						}
+					}
+				};
+				if (ws.ws.readyState == 1) ws.send(msg);
+			}
 		},
 		onGraphChanged() {
 			let self = this;
@@ -509,55 +546,6 @@ export default {
 					self.$message.error(self.$t('message.api.get.error'));
 					self.loading = false;
 				});
-		},
-
-		/**
-		 * Polling task
-		 */
-		polling() {
-			let self = this;
-			if (self.dataFlowId) {
-				if (!self.statusBtMap[self.status].start) return;
-
-				dataFlowsApi
-					.get([self.dataFlowId], {
-						fields: [
-							'id',
-							'status',
-							'last_updated',
-							'createTime',
-							'executeMode',
-							'stopOnError',
-							'user_id',
-							'user',
-							'startTime',
-							'stats',
-							'pingTime',
-							'stopTime'
-						]
-					})
-					.then(result => {
-						if (result && result.data) {
-							self.status = result.data.status;
-
-							if (self.executeMode !== result.data.executeMode)
-								self.executeMode = result.data.executeMode;
-
-							if (self.timeoutId) clearTimeout(self.timeoutId);
-							self.timeoutId = setTimeout(self.polling.bind(self), 2000);
-
-							if (!self.statusBtMap[self.status].start) {
-								self.executeMode = 'normal';
-							}
-							Object.assign(self.dataFlow, result.data);
-							self.editor.emit('dataFlow:updated', _.cloneDeep(result.data));
-						}
-					})
-					.catch(err => {
-						log(err);
-						self.$message.error(self.$t('message.api.get.error'));
-					});
-			}
 		},
 
 		/**

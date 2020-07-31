@@ -34,7 +34,15 @@
 			</el-row>
 			<el-row style="border-top: 1px solid #dedee4">
 				<el-form-item>
-					<div>{{ $t('dataFlow.setting.distinctWriteType') }}</div>
+					<div>
+						{{ $t('dataFlow.setting.distinctWriteType') }}
+						<el-popover class="aggtip" placement="top-start" trigger="hover">
+							<div>{{ $t('dataFlow.setting.intellectTip') }}</div>
+							<div>{{ $t('dataFlow.setting.compelTip') }}</div>
+							<span class="icon iconfont icon-tishi1" slot="reference"></span>
+						</el-popover>
+					</div>
+
 					<el-select v-model="formData.distinctWriteType" size="mini" placeholder="请选择">
 						<el-option
 							v-for="item in dataWriteList"

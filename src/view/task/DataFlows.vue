@@ -87,7 +87,7 @@
 					</el-button>
 					<el-button size="mini" class="btn" @click="handleImport">
 						<i class="iconfont icon-daoru back-btn-icon"></i>
-						<span> {{ $t('dataFlow.bulkExport') }}</span>
+						<span> {{ $t('dataFlow.bulkImport') }}</span>
 					</el-button>
 					<el-dropdown @command="handleCommand" v-show="multipleSelection.length > 0">
 						<el-button class="btn btn-dropdowm" size="mini">
@@ -194,14 +194,17 @@
 									class="item"
 									effect="dark"
 									:content="$t('dataFlow.draftNotStart')"
-									:manual="!['draft'].includes(scope.row.status)"
+									:manual="!(['draft'].includes(scope.row.status) && scope.row.checked != true)"
 									placement="top-start"
 								>
 									<el-switch
 										v-model="scope.row.newStatus"
 										inactive-value="stopping"
 										active-value="scheduled"
-										:disabled="statusBtMap[scope.row.status].switch"
+										:disabled="
+											statusBtMap[scope.row.status].switch &&
+												!(scope.row.status == 'draft' && scope.row.checked == true)
+										"
 										@change="
 											handleStatus(scope.row.id, scope.row.status, scope.row.newStatus, scope.row)
 										"
@@ -511,17 +514,17 @@ export default {
 					}, 200);
 				});
 			} else {
-				setTimeout(() => {
-					document.querySelectorAll('.el-tooltip__popper').forEach(it => {
-						it.outerHTML = '';
-					});
-				}, 200);
 				let routeUrl = this.$router.resolve({
 					path: '/job',
 					query: { id: id, isMoniting: true }
 				});
 				window.open(routeUrl.href, 'monitor_' + id);
 			}
+			setTimeout(() => {
+				document.querySelectorAll('.el-tooltip__popper').forEach(it => {
+					it.outerHTML = '';
+				});
+			}, 200);
 		},
 		handleImport() {
 			let routeUrl = this.$router.resolve({
@@ -597,6 +600,7 @@ export default {
 			localStorage.setItem('flowStatus', this.formData.status);
 			localStorage.setItem('flowWay', this.formData.way);
 			localStorage.setItem('flowExecutionStatus', this.formData.executionStatus);
+			this.currentPage = 1;
 			this.getData();
 		},
 		keyupEnter() {
@@ -611,7 +615,11 @@ export default {
 			this.loading = true;
 			this.$store.commit('dataFlows', this.formData);
 
-			let where = {};
+			let where = {
+				user_id: {
+					like: this.$cookie.get('user_id')
+				}
+			};
 			let order = 'createTime DESC';
 			if (this.order) {
 				order = this.order;
@@ -673,6 +681,7 @@ export default {
 							createTime: true,
 							children: true,
 							stats: true,
+							checked: true,
 							stages: true,
 							'stages.id': true,
 							'stages.name': true,

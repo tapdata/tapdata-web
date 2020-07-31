@@ -206,18 +206,14 @@
 				</el-form-item>
 				<el-form-item label="JS" v-show="type === 'advance'">
 					<span class="JS-label displayInline">
-						function validate(sourceRow){
+						{{ $t('dataVerify.exampleJS') }}
 					</span>
 					<el-input
 						type="textarea"
 						v-model="formData.validateCode"
 						:rows="10"
 						@input="handleForceUpdate"
-						:placeholder="$t('dataVerify.exampleJS')"
 					></el-input>
-					<span class="JS-label displayInline">
-						}
-					</span>
 				</el-form-item>
 				<el-form-item v-show="type === 'advance'">
 					<el-col :span="24">
@@ -295,7 +291,7 @@ export default {
 				targetTageId: '',
 				sourceFilter: '',
 				targetFilter: '',
-				validateCode: ''
+				validateCode: 'function validate(sourceRow){}'
 			},
 			type: 'advance', // row: 行数 hash：哈希  advance：高级校验
 			colorMap: {
@@ -350,7 +346,8 @@ export default {
 					type: 'rows', // # rows：按行数参与校验，sampleRate：按采样率参与校验
 					// # type为rows时表示行数；type为sampleRate时，表示采样率，如：
 					value: '1000'
-				}
+				},
+				validateCode: 'function validate(sourceRow){}'
 			};
 			this.type = 'advance';
 			this.checkedSource = false;
