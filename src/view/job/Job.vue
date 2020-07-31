@@ -14,7 +14,6 @@
 				</el-button>
 
 				<el-autocomplete
-					v-if="!statusBtMap[status].finder"
 					class="inline-input searchNode"
 					id="searchNode"
 					v-model="state1"
@@ -23,6 +22,7 @@
 					placeholder="查找节点"
 					@select="handleSearchNode"
 					hide-loading
+					clearable
 					suffix-icon="el-icon-search"
 				></el-autocomplete>
 
