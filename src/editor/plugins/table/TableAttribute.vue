@@ -102,7 +102,7 @@
 					<el-tab-pane>
 						<span slot="label"
 							><el-checkbox v-model="model.sqlFromCust" @change="setSqlFrom"></el-checkbox>
-							{{ $t('editor.cell.data_node.collection.form.filter.fiflterSetting') }}</span
+							{{ $t('editor.cell.data_node.collection.form.filter.fieldFilter') }}</span
 						>
 						<el-form-item :placeholder="$t('editor.cell.data_node.collection.form.filter.allField')">
 							<el-select v-model="model.custSql.fieldFilterType">
