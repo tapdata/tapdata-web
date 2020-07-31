@@ -89,7 +89,13 @@
 					effect="plain"
 					size="mini"
 					style="margin-left: 30px;margin-right: 10px;border:none;"
-					>{{ $t('dataFlow.state') }}: {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}
+				>
+					<span
+						:style="{
+							color: status === 'scheduled' ? '#b0e58c' : status === 'stopping' ? '#fccd85' : ''
+						}"
+						>{{ $t('dataFlow.state') }}: {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}</span
+					>
 				</el-tag>
 
 				<el-button-group>
