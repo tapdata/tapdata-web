@@ -54,22 +54,17 @@
 						<i class="iconfont icon-kujitongbucopy"></i>
 						<span>{{ $t('dataFlow.button.reloadSchema') }}</span>
 					</el-button>
-					<el-button
-						v-if="isEditable() && !statusBtMap[status].preview"
-						class="action-btn"
-						size="mini"
-						@click="preview"
-					>
+					<el-button v-if="isEditable()" class="action-btn" size="mini" @click="preview">
 						<i class="iconfont icon-yulan1"></i>
 						<span>{{ $t('dataFlow.button.preview') }}</span>
 					</el-button>
-					<el-button v-if="!statusBtMap[status].logs" class="action-btn" size="mini" @click="showLogs">
+					<el-button class="action-btn" size="mini" @click="showLogs">
 						<i class="iconfont icon-rizhi1"></i>
 						<span>{{ $t('dataFlow.button.logs') }}</span>
 					</el-button>
 				</el-button-group>
 
-				<el-button class="btn-setting" size="mini" :disabled="statusBtMap[status].setting" @click="showSetting">
+				<el-button class="btn-setting" size="mini" @click="showSetting">
 					<i class="iconfont icon-shezhi1"></i>
 					<span class="btn-setting-text">{{
 						{
