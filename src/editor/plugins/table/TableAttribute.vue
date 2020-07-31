@@ -764,6 +764,10 @@ export default {
 			padding-top: 10px;
 			font-size: 12px;
 			color: #999;
+			overflow: hidden;
+			div {
+				width: 100%;
+			}
 		}
 	}
 }
