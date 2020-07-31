@@ -305,6 +305,10 @@ export default {
 			if (!self.statusBtMap[self.status].start) {
 				self.executeMode = 'normal';
 			}
+			delete self.dataFlow.validateBatchId;
+			delete self.dataFlow.validateStatus;
+			delete self.dataFlow.validationSettings;
+
 			Object.assign(self.dataFlow, dat);
 			self.editor.emit('dataFlow:updated', _.cloneDeep(dat));
 		});
