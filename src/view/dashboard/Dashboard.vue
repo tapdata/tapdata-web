@@ -6,11 +6,12 @@
 </template>
 
 <script>
-let v = 'VERSION';
+// let v = 'VERSION';
 export default {
 	data() {
 		return {
-			isNew: v !== 'DK'
+			// isNew: v !== 'DK',
+			isNew: false
 		};
 	}
 };
