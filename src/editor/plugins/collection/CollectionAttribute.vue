@@ -429,6 +429,9 @@ export default {
 			this.model.operations = [];
 			this.model.fieldFilter = '';
 			this.model.fieldFilterType = type;
+			this.$nextTick(() => {
+				this.$emit('schemaChange', _.cloneDeep(this.defaultSchema));
+			});
 		},
 		convertSchemaToTreeData,
 
