@@ -6,25 +6,74 @@
   "description": "Tapdata 线装小图标",
   "glyphs": [
     {
+      "icon_id": "414828",
+      "name": "编辑",
+      "font_class": "bianji2",
+      "unicode": "e6cf",
+      "unicode_decimal": 59087
+    },
+    {
+      "icon_id": "14210818",
+      "name": "收 藏",
+      "font_class": "shoucang",
+      "unicode": "e6c8",
+      "unicode_decimal": 59080
+    },
+    {
+      "icon_id": "16276473",
+      "name": "数据库s",
+      "font_class": "shujukus1",
+      "unicode": "e6cd",
+      "unicode_decimal": 59085
+    },
+    {
+      "icon_id": "16275815",
+      "name": "元数据",
+      "font_class": "yuanshuju1",
+      "unicode": "e6ce",
+      "unicode_decimal": 59086
+    },
+    {
+      "icon_id": "9988863",
+      "name": "API",
+      "font_class": "API11",
+      "unicode": "e78c",
+      "unicode_decimal": 59276
+    },
+    {
+      "icon_id": "12436340",
+      "name": "连接类型",
+      "font_class": "lianjieleixing",
+      "unicode": "e6cb",
+      "unicode_decimal": 59083
+    },
+    {
+      "icon_id": "12356676",
+      "name": "首 页",
+      "font_class": "shouye",
+      "unicode": "e6cc",
+      "unicode_decimal": 59084
+    },
+    {
+      "icon_id": "5251114",
+      "name": "大数据平台",
+      "font_class": "dashujupingtai",
+      "unicode": "e6c9",
+      "unicode_decimal": 59081
+    },
+    {
+      "icon_id": "12312593",
+      "name": "大数据",
+      "font_class": "dashuju",
+      "unicode": "e881",
+      "unicode_decimal": 59521
+    },
+    {
       "icon_id": "4521281",
       "name": "组织下辖",
       "font_class": "zuzhixiaxia",
       "unicode": "ebd8",
       "unicode_decimal": 60376
-    },
-    {
-      "icon_id": "4521283",
-      "name": "组织群组",
-      "font_class": "zuzhiqunzu",
-      "unicode": "ebd9",
-      "unicode_decimal": 60377
-    },
-    {
-      "icon_id": "13479227",
-      "name": "首页",
-      "font_class": "B",
-      "unicode": "e70a",
-      "unicode_decimal": 59146
     },
     {
       "icon_id": "12354496",
@@ -102,6 +151,13 @@
       "font_class": "rizhi2",
       "unicode": "e6c4",
       "unicode_decimal": 59076
+    },
+    {
+      "icon_id": "16270986",
+      "name": "上传",
+      "font_class": "shangchuan-copy",
+      "unicode": "ed23",
+      "unicode_decimal": 60707
     },
     {
       "icon_id": "11671983",
@@ -991,6 +1047,13 @@
       "font_class": "o-mongoDB",
       "unicode": "e65c",
       "unicode_decimal": 58972
+    },
+    {
+      "icon_id": "16266125",
+      "name": "link",
+      "font_class": "link1-copy",
+      "unicode": "ed22",
+      "unicode_decimal": 60706
     },
     {
       "icon_id": "13829460",

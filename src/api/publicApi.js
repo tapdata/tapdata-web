@@ -1,5 +1,7 @@
 import axios from 'axios';
 import Cookie from 'tiny-cookie';
+import { signOut } from '../util/util';
+import { Message } from 'element-ui';
 
 axios.interceptors.request.use(
 	function(config) {
@@ -15,6 +17,22 @@ axios.interceptors.request.use(
 	},
 	function(error) {
 		return Promise.reject(error);
+	}
+);
+
+axios.interceptors.response.use(
+	response => {
+		return response;
+	},
+	error => {
+		if (error.response.status === 401) {
+			signOut();
+			setTimeout(() => {
+				Message.error({
+					message: 'Login expired!'
+				});
+			}, 500);
+		}
 	}
 );
 

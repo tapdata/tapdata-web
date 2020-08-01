@@ -1,6 +1,9 @@
 <template>
 	<div class="editor-container" v-loading="loading">
-		<div class="action-buttons" style="display:flex;align-items: center;justify-content: space-between;">
+		<div
+			class="action-buttons"
+			style="display:flex;align-items: center;justify-content: space-between;padding-right: 10px;"
+		>
 			<div class="flex-center">
 				<el-button
 					v-if="isEditable() && !isMoniting"
@@ -144,7 +147,7 @@
 					type="primary"
 					@click="setEditable(true)"
 				>
-					<i class="mr-5 iconfont icon-piliang"></i>
+					<i class="mr-5 iconfont icon-bianji2"></i>
 					<span>{{ $t('dataFlow.edit') }}</span>
 				</el-button>
 			</div>
@@ -434,7 +437,6 @@ export default {
 			else this.setEditable(true);
 			if (this.executeMode !== 'normal') this.showCapture();
 
-			this.polling();
 			this.onGraphChanged();
 			if (this.dataFlowId) {
 				let msg = {
@@ -517,7 +519,6 @@ export default {
 									}
 								});
 							}
-							self.polling();
 						}
 					})
 					.finally(() => {
@@ -736,8 +737,6 @@ export default {
 							if (typeof cb === 'function') {
 								cb(null, dataFlow);
 							}
-
-							self.polling();
 
 							let stages = self.getStages();
 							dataFlowsApi
@@ -1371,7 +1370,7 @@ export default {
 		}
 	}
 	.btn-edit {
-		padding: 6px;
+		padding: 6px 10px;
 		.iconfont {
 			font-size: 12px;
 		}
