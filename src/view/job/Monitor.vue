@@ -459,9 +459,9 @@ export default {
 			let msg = {
 				type: 'dataFlowInsight',
 				granularity: {
-					throughput: this.throughputTime,
-					trans_time: this.transfTime,
-					repl_lag: this.replicateTime,
+					throughput: this.selectFlow + this.throughputTime,
+					trans_time: this.selectFlow + this.transfTime,
+					repl_lag: this.selectFlow + this.replicateTime,
 					data_overview: this.dataOverviewAll
 				},
 				dataFlowId: this.flow.id

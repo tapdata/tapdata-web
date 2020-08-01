@@ -706,6 +706,7 @@ export default {
 									'fullDocument.id': true,
 									'fullDocument.name': true,
 									'fullDocument.status': true,
+									'fullDocument.checked': true,
 									'fullDocument.executeMode': true,
 									'fullDocument.stopOnError': true,
 									'fullDocument.last_updated': true,
