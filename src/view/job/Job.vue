@@ -501,9 +501,12 @@ export default {
 			}
 
 			promise = dataFlowsApi.draft(data);
-			this.$message.success(self.$t('message.saveOK'));
+			//this.$message.success(self.$t('message.saveOK'));
 			if (promise) {
 				promise
+					.catch(() => {
+						self.$message.error(self.$t('message.saveFail'));
+					})
 					.then(result => {
 						if (result && result.data) {
 							let dataFlow = result.data;
@@ -520,6 +523,7 @@ export default {
 								});
 							}
 						}
+						self.$message.success(self.$t('message.saveOK'));
 					})
 					.finally(() => {
 						changeData = null;

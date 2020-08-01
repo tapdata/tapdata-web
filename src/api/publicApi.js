@@ -32,6 +32,8 @@ axios.interceptors.response.use(
 					message: 'Login expired!'
 				});
 			}, 500);
+		} else {
+			return Promise.reject(error);
 		}
 	}
 );
