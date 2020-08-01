@@ -71,6 +71,7 @@
 					>
 						<el-select
 							v-model="item.connectionId"
+							filterable
 							:placeholder="$t('editor.cell.data_node.logminer.tableFilter.placeSletSource')"
 							@change="changeConnectionId(item)"
 						>
