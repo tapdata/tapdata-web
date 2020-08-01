@@ -12,7 +12,7 @@ export default {
 		};
 	},
 	watch: {
-		'$route.meta.url'() {
+		$route() {
 			this.getUrl();
 		}
 	},
