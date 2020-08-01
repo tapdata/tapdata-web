@@ -38,7 +38,6 @@
 							class="input"
 							type="password"
 							:placeholder="$t('app.signIn.password_placeholder')"
-							autocomplete="new-password"
 							v-model="form.password"
 							@keyup.enter="submit"
 						/>
@@ -56,6 +55,7 @@
 </template>
 
 <script>
+import { setPermission } from '../util/util';
 const Languages = {
 	sc: '中文 (简)',
 	en: 'English',
@@ -113,6 +113,7 @@ export default {
 					this.errorMessage = this.$t('app.signIn.permission_denied');
 					return;
 				}
+				setPermission(data.permissions);
 				this.loading = true;
 				let user = await usersModel.getUserById(`/${data.userId}?access_token=${data.id}`);
 				this.loading = false;
@@ -138,9 +139,14 @@ export default {
 .page-sign-in {
 	background: #fafafa;
 	height: 100%;
+	overflow: auto;
+	box-sizing: border-box;
 	header {
 		padding: 70px 80px 0 80px;
+		margin: 0 auto;
 		user-select: none;
+		min-width: 1400px;
+		box-sizing: border-box;
 		.logo {
 			display: flex;
 			align-items: center;
@@ -184,17 +190,24 @@ export default {
 		}
 	}
 	main {
+		position: relative;
 		margin-top: 60px;
 		.body {
 			margin: 0 auto;
-			width: 1100px;
 			position: relative;
 			height: 600px;
+			width: 1400px;
+			box-sizing: border-box;
+			.carousel {
+				position: absolute;
+				top: 0;
+				left: 80px;
+			}
 		}
 		.sign-in-panel {
 			position: absolute;
 			top: 60px;
-			right: 0;
+			right: 80px;
 			padding: 25px 5px;
 			width: 400px;
 			.title {

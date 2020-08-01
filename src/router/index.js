@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import factor from '../api/factory';
 import i18n from '../i18n/i18n';
+import { setPermission, signOut } from '../util/util';
 import { Loading, Message } from 'element-ui';
 
 const view = path => () => import(`../view/${path}`);
@@ -262,25 +263,13 @@ router.beforeEach(async (to, from, next) => {
 				permissions = result.data.permissions || [];
 				if (permissions.length) {
 					//权限存在则存入缓存并继续向下走
-					let menus = [];
-					if (permissions) {
-						permissions.forEach(permission => {
-							if (permission.resources && permission.resources.length > 0) {
-								permission.resources.forEach(res => {
-									if (res.type === 'page') menus.push(res);
-								});
-							}
-						});
-					}
-					sessionStorage.setItem('tapdata_permissions', JSON.stringify(menus));
-					permissions = menus;
+					permissions = setPermission(permissions);
 				} else {
 					//权限列表为空，说明没有权限进入，执行sign out操作并跳转到登录页面
 					Message.error({
 						message: 'Permission denied'
 					});
-					this.$cookie.delete('token');
-					next('/login');
+					signOut();
 					return;
 				}
 			} else {

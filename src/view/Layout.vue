@@ -10,7 +10,7 @@
 					<i class="el-icon-plus"></i>
 					<span>新建</span>
 				</el-button> -->
-				<a class="btn" @click="command('download')"><i class="iconfont icon-import1"></i></a>
+				<a class="btn" @click="command('download')"><i class="iconfont icon-shangchuan-copy"></i></a>
 				<el-dropdown class="btn" placement="bottom" @command="command">
 					<i class="iconfont icon-bangzhu1-copy"></i>
 					<el-dropdown-menu slot="dropdown">
@@ -71,7 +71,7 @@
 					</template>
 					<el-submenu v-if="favMenus.length" index="favorite">
 						<template slot="title">
-							<i class="iconfont icon-tubiaozhizuomoban-"></i>
+							<i class="iconfont icon-shoucang"></i>
 							<span slot="title">{{ $t('app.menu.favorite') }}</span>
 						</template>
 						<el-menu-item
@@ -101,22 +101,23 @@
 
 <script>
 import CustomerService from '@/components/CustomerService';
+import { signOut } from '../util/util';
 const Languages = {
 	sc: '中文 (简)',
 	en: 'English',
 	tc: '中文 (繁)'
 };
 let menuSetting = [
-	{ name: 'dashboard', icon: 'shujukanban' },
+	{ name: 'dashboard', icon: 'shouye' },
 	{
 		name: 'dataSource',
-		icon: 'shenjing',
+		icon: 'shujukus1',
 		children: [{ name: 'connections' }, { name: 'connection' }]
 	},
-	{ name: 'dataFlows', icon: 'shejibiangeng' },
+	{ name: 'dataFlows', icon: 'chengbenguanlixitong' },
 	{
 		name: 'dataGovernance',
-		icon: 'guanxi',
+		icon: 'yuanshuju1',
 		children: [
 			{ name: 'metadataDefinition' },
 			{ name: 'dataQuality' },
@@ -128,7 +129,7 @@ let menuSetting = [
 	},
 	{
 		name: 'dataPublish',
-		icon: 'link-copy',
+		icon: 'API11',
 		children: [
 			{ name: 'modules' },
 			{ name: 'dataExplorer' },
@@ -275,15 +276,7 @@ export default {
 			}
 		},
 		signOut() {
-			this.$cookie.delete('email');
-			this.$cookie.delete('isAdmin');
-			this.$cookie.delete('login');
-			this.$cookie.delete('token');
-			this.$cookie.delete('user_id');
-			this.$cookie.delete('username');
-			this.$router.replace({
-				name: 'login'
-			});
+			signOut();
 		},
 		menuHandler(index) {
 			this.isCollapse = true;
@@ -397,7 +390,7 @@ export default {
 				width: 24px;
 				text-align: center;
 				color: rgba(51, 51, 51, 1);
-				font-size: 14px;
+				font-size: 18px;
 			}
 			overflow-y: auto;
 			user-select: none;

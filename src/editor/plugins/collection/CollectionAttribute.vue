@@ -135,7 +135,7 @@
 						v-model="model.filter"
 						type="textarea"
 						rows="5"
-						:placeholder="$t('editor.cell.data_node.collection.form.filter.placeholder')"
+						:placeholder="$t('editor.cell.data_node.collection.form.filter.placeholder.placeholder')"
 						size="mini"
 					></el-input>
 				</el-form-item>
@@ -429,6 +429,9 @@ export default {
 			this.model.operations = [];
 			this.model.fieldFilter = '';
 			this.model.fieldFilterType = type;
+			this.$nextTick(() => {
+				this.$emit('schemaChange', _.cloneDeep(this.defaultSchema));
+			});
 		},
 		convertSchemaToTreeData,
 

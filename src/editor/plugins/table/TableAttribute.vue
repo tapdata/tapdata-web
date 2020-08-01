@@ -98,7 +98,7 @@
 					</div>
 				</el-form-item>
 
-				<el-tabs type="border-card" v-if="model.isFilter">
+				<el-tabs type="border-card" v-if="model.isFilter" @tab-click="sqlTabChanged">
 					<el-tab-pane>
 						<span slot="label"
 							><el-checkbox v-model="model.sqlFromCust" @change="setSqlFrom"></el-checkbox>
@@ -557,6 +557,15 @@ export default {
 			if (name == 'no') this.model.sqlFromCust = !this.model.sqlNotFromCust;
 			else this.model.sqlNotFromCust = !this.model.sqlFromCust;
 		},
+		sqlTabChanged(tab) {
+			if (tab.index == '1') {
+				this.model.sqlFromCust = false;
+				this.model.sqlNotFromCust = true;
+			} else {
+				this.model.sqlFromCust = true;
+				this.model.sqlNotFromCust = false;
+			}
+		},
 		removeCustFilter(cond) {
 			if (this.model.custSql.filterConds.length == 1) {
 				this.model.custSql.filterConds[0] = Object.assign(this.model.custSql.filterConds[0], {
@@ -583,10 +592,12 @@ export default {
 				this.model.custFields = this.primaryKeyOptions.filter(it => !this.model.selectedFields.includes(it));
 			}
 
-			if (this.model.custFields.length != this.primaryKeyOptions.length) res += this.model.custFields.join(',');
+			if (this.model.custFields.length > 0 && this.model.custFields.length != this.primaryKeyOptions.length)
+				res += this.model.custFields.join(',');
 			else res += '* ';
 			res += ' FROM ' + this.model.tableName + ' ';
-			if (custSql.filterConds[0].field.length > 0 || custSql.limitLines) res += ' WHERE ';
+			if (custSql.filterConds[0].field.length > 0 || (custSql.limitLines && custSql.limitLines != 'all'))
+				res += ' WHERE ';
 			for (let i = 0; i < custSql.filterConds.length; i++) {
 				const cond = custSql.filterConds[i];
 				if (cond.field.length > 0) {

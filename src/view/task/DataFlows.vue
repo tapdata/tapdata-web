@@ -616,9 +616,8 @@ export default {
 			this.loading = true;
 			this.$store.commit('dataFlows', this.formData);
 
-			let where = {
-				user_id: { regexp: `^${this.$cookie.get('user_id')}$` }
-			};
+			let where = {};
+			if (!parseInt(this.$cookie.get('isAdmin'))) where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
 			let order = 'createTime DESC';
 			if (this.order) {
 				order = this.order;
@@ -900,9 +899,6 @@ export default {
 		},
 
 		handleStatus(id, oldStatus, status, dataItem) {
-			if (oldStatus === 'draft') {
-				return;
-			}
 			let data = {
 				status: status
 			};

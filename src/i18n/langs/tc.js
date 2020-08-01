@@ -46,6 +46,14 @@ const tc = {
 		version: '系統版本',
 		home: '官網',
 		signOut: '登出',
+		customerService: {
+			technicalSupport: '技術支持',
+			technicalSupportText: '在使用過程中，有任何問題，請在',
+			technicalSupportText1: '留言，（用戶支持的賬戶和密碼，與cloud.tapdata.net中的相同），我們會盡快答复。',
+			userSupport: '用戶支持',
+			otherDmands: '其他需求',
+			otherDmandsText: '其他需求，請掃描下方企業微信二維碼。'
+		},
 		signIn: {
 			slogan: '像自來水一樣方便地使用您的數據',
 			signIn: '登入',
