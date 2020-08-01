@@ -135,7 +135,7 @@
 						v-model="model.filter"
 						type="textarea"
 						rows="5"
-						:placeholder="$t('editor.cell.data_node.collection.form.filter.placeholder')"
+						:placeholder="$t('editor.cell.data_node.collection.form.filter.placeholder.placeholder')"
 						size="mini"
 					></el-input>
 				</el-form-item>
