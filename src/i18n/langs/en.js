@@ -45,6 +45,15 @@ const en = {
 		version: 'Version',
 		home: 'Home',
 		signOut: 'Sign out',
+		customerService: {
+			technicalSupport: 'User Support',
+			technicalSupportText: 'Any question, please submit to',
+			technicalSupportText1:
+				'The account and password of Support Forum is same as cloud.tapdata.net.We will response you as soon as possible.',
+			userSupport: 'Support Forum',
+			otherDmands: 'Other Requirements',
+			otherDmandsText: 'Any requirement, please contact us by scanning WeChat QR below.'
+		},
 		signIn: {
 			slogan: 'Use your data as easily as tap water.',
 			signIn: 'Sign in',

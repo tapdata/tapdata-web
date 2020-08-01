@@ -19,8 +19,6 @@
 				<div class="title">{{ $t('app.customerService.otherDmands') }}</div>
 				<div class="content">
 					<span>{{ $t('app.customerService.otherDmandsText') }}</span>
-					<a class="btn" @click="openCrisp">Crisp</a>
-					<span>{{ $t('app.customerService.otherDmandsText1') }}</span>
 				</div>
 			</div>
 			<div class="panel">
@@ -37,38 +35,13 @@ export default {
 		value: Boolean
 	},
 	methods: {
-		openCrisp() {
-			if (!window.$crisp.is('chat:opened')) {
-				window.$crisp.do('chat:show');
-				window.$crisp.do('chat:toggle');
-			} else {
-				window.$crisp.do('chat:hide');
-			}
-		},
 		close() {
 			this.$emit('input', false);
-			window.$crisp.do('chat:hide');
 		}
 	}
 };
 </script>
 <style>
-.crisp-client .crisp-1rjpbb7 .crisp-1rf4xdh .crisp-kquevr .crisp-x94m06 {
-	width: 45px !important;
-	height: 45px !important;
-}
-.crisp-client
-	.crisp-1rjpbb7[data-last-operator-face='false']
-	.crisp-1rf4xdh
-	.crisp-kquevr
-	.crisp-x94m06
-	.crisp-16qgsyi
-	.crisp-101bp3x[data-is-ongoing='false'] {
-	width: 28px !important;
-	height: 23px !important;
-	top: 12px !important;
-	left: 9px !important;
-}
 .customer-service-wrap .el-card__body {
 	padding: 0;
 }
