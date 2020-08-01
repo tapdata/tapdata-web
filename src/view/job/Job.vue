@@ -742,7 +742,9 @@ export default {
 							dataFlowsApi
 								.saveStage(stages)
 								.then(() => {})
-								.catch(() => {});
+								.catch(() => {
+									this.$message.error(self.$t('message.saveFail'));
+								});
 						} else {
 							if (typeof cb === 'function') {
 								cb(result, null);

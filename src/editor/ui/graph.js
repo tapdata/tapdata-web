@@ -504,47 +504,47 @@ export default class Graph extends Component {
 				});
 			}
 		};
-		if (elementView.model.attributes.form_data.disablChecker) {
-			halo.addHandle({ name: 'enableCell', position: 'ne', icon: 'static/editor/enable.png' });
-			halo.on('action:enableCell:pointerdown', function(evt) {
-				evt.stopPropagation();
-				elementView.model.attributes.form_data.disabled = false;
-				elementView.model.attributes.form_data.disablChecker = false;
-				elementView.model.attr('body/fill', '#fafafa');
-				let cells = self.graph
-					.getSuccessors(elementView.model)
-					.concat(self.graph.getPredecessors(elementView.model));
-				cells.forEach(cell => {
-					cell.attributes.form_data.disabled = false;
-					cell.attr('body/fill', '#fafafa');
-					self.graph.getConnectedLinks(cell).forEach(link => {
-						link.attr('line/stroke', '#8f8f8f');
-						link.attributes.form_data.disabled = false;
-					});
-				});
-				cells.forEach(cell => {
-					if (cell.attributes.form_data.disablChecker) {
-						self.graph.getConnectedLinks(cell).forEach(link => {
-							link.attr('line/stroke', 'blue');
-							link.attributes.form_data.disabled = true;
-						});
-						setDisabled(cell, true);
-						cell.attr('body/fill', 'grey');
-					}
-				});
-			});
-		} else if (!elementView.model.attributes.form_data.disabled) {
-			halo.addHandle({ name: 'disableCell', position: 'ne', icon: 'static/editor/disable.png' });
-			halo.on('action:disableCell:pointerdown', function(evt) {
-				evt.stopPropagation();
-				self.graph.getConnectedLinks(elementView.model).forEach(link => {
-					link.attr('line/stroke', 'blue');
-					link.attributes.form_data.disabled = true;
-				});
-				setDisabled(elementView.model, true);
-				elementView.model.attr('body/fill', 'grey');
-			});
-		}
+		// if (elementView.model.attributes.form_data.disablChecker) {
+		// 	halo.addHandle({ name: 'enableCell', position: 'ne', icon: 'static/editor/enable.png' });
+		// 	halo.on('action:enableCell:pointerdown', function(evt) {
+		// 		evt.stopPropagation();
+		// 		elementView.model.attributes.form_data.disabled = false;
+		// 		elementView.model.attributes.form_data.disablChecker = false;
+		// 		elementView.model.attr('body/fill', '#fafafa');
+		// 		let cells = self.graph
+		// 			.getSuccessors(elementView.model)
+		// 			.concat(self.graph.getPredecessors(elementView.model));
+		// 		cells.forEach(cell => {
+		// 			cell.attributes.form_data.disabled = false;
+		// 			cell.attr('body/fill', '#fafafa');
+		// 			self.graph.getConnectedLinks(cell).forEach(link => {
+		// 				link.attr('line/stroke', '#8f8f8f');
+		// 				link.attributes.form_data.disabled = false;
+		// 			});
+		// 		});
+		// 		cells.forEach(cell => {
+		// 			if (cell.attributes.form_data.disablChecker) {
+		// 				self.graph.getConnectedLinks(cell).forEach(link => {
+		// 					link.attr('line/stroke', 'blue');
+		// 					link.attributes.form_data.disabled = true;
+		// 				});
+		// 				setDisabled(cell, true);
+		// 				cell.attr('body/fill', 'grey');
+		// 			}
+		// 		});
+		// 	});
+		// } else if (!elementView.model.attributes.form_data.disabled) {
+		// 	halo.addHandle({ name: 'disableCell', position: 'ne', icon: 'static/editor/disable.png' });
+		// 	halo.on('action:disableCell:pointerdown', function(evt) {
+		// 		evt.stopPropagation();
+		// 		self.graph.getConnectedLinks(elementView.model).forEach(link => {
+		// 			link.attr('line/stroke', 'blue');
+		// 			link.attributes.form_data.disabled = true;
+		// 		});
+		// 		setDisabled(elementView.model, true);
+		// 		elementView.model.attr('body/fill', 'grey');
+		// 	});
+		// }
 		halo.render();
 	}
 
