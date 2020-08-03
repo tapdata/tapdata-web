@@ -46,6 +46,7 @@ const cn = {
 		version: '系统版本',
 		home: '官网',
 		signOut: '退出登录',
+		signOutMsg: '您确定要退出登录吗？',
 		customerService: {
 			technicalSupport: '技术支持',
 			technicalSupportText: '在使用过程中，有任何问题，请在',
