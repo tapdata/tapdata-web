@@ -77,7 +77,7 @@
 					</li>
 				</ul>
 				<div class="topbar-buttons">
-					<el-button size="mini" class="btn" @click="handleGoFuntion">
+					<el-button size="mini" class="btn" @click="handleGoFunction">
 						<i class="iconfont icon-hanshu back-btn-icon"></i>
 						<span> {{ $t('dataFlow.taskBulkFx') }}</span>
 					</el-button>
@@ -460,7 +460,7 @@ export default {
 				}
 			});
 		},
-		handleGoFuntion() {
+		handleGoFunction() {
 			top.location.href = '/#/JsFuncs';
 		},
 		getTempKeys() {
