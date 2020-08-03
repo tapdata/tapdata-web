@@ -278,6 +278,9 @@ export default {
 	},
 	mounted() {
 		let self = this;
+
+		document.title = self.$route.query.name || this.$t('dataflow.newTaksName');
+
 		// build editor
 		self.editor = editor({
 			container: $('.editor-container'),
