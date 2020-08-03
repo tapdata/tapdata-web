@@ -425,9 +425,7 @@ export default {
 		this.keyupEnter();
 		window.windows = [];
 		let self = this;
-		ws.on('watch', function(data) {
-			self.wsData.push(data.data.fullDocument);
-		});
+		ws.on('watch', this.wsWatch);
 		setInterval(() => {
 			self.wsData.forEach(dat => {
 				self.$set(
@@ -444,6 +442,9 @@ export default {
 			self.wsData.length = 0;
 		}, 3000);
 	},
+	beforeDestroy() {
+		ws.off('watch', this.wsWatch);
+	},
 	computed: {
 		maxHeight: function() {
 			let height = document.body.clientHeight - 140 + 'px';
@@ -451,6 +452,9 @@ export default {
 		}
 	},
 	methods: {
+		wsWatch(data) {
+			this.wsData.push(data.data.fullDocument);
+		},
 		handleDialogVisible() {
 			this.dialogVisible = false;
 		},
