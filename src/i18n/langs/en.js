@@ -45,6 +45,7 @@ const en = {
 		version: 'Version',
 		home: 'Home',
 		signOut: 'Sign out',
+		signOutMsg: 'Are you sure to sign out?',
 		customerService: {
 			technicalSupport: 'User Support',
 			technicalSupportText: 'Any question, please submit to',

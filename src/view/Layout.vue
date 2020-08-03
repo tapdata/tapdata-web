@@ -263,7 +263,9 @@ export default {
 					window.open('https://tapdata.net/', '_blank');
 					break;
 				case 'signOut':
-					this.signOut();
+					this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut')).then(() => {
+						this.signOut();
+					});
 					break;
 				case 'setting':
 					this.$router.push({
