@@ -586,7 +586,7 @@ export default {
 				tdataList = [];
 			function ptime(type) {
 				data.statsData[type].forEach(time => {
-					switch (data.granularity[type]) {
+					switch (data.granularity[type].split('_')[1]) {
 						case 'second':
 							time.t = time.t.substring(11, 19);
 							break;

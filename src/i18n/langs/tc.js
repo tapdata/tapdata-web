@@ -185,7 +185,7 @@ const tc = {
 			otherError: '操作失敗，請重試'
 		},
 		changeName: '改名',
-		draftNotStart: '編輯中不能啟動，請進入編輯頁面啟動',
+		draftNotStart: '任務配置未完成，無法啟動',
 		systemHint: '系統提示',
 		systemText: '系統檢測出有如下任務上次操作後未保存，請問是否繼續編輯',
 		stystemOpen: '打開',
