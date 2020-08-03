@@ -211,6 +211,12 @@ const childRoutes = [
 		name: 'apiInfo',
 		component: view('job/apiInfo'),
 		meta: { title: i18n.t('tap.apiInfo') }
+	},
+	{
+		path: '/jsFuncs',
+		name: 'jsFuncs',
+		component: view('ExternalLink'),
+		meta: { url: '/old/index.html#/jsFuncs' }
 	}
 ];
 
