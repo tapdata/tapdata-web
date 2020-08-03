@@ -46,6 +46,7 @@ const cn = {
 		version: '系统版本',
 		home: '官网',
 		signOut: '退出登录',
+		signOutMsg: '您确定要退出登录吗？',
 		customerService: {
 			technicalSupport: '技术支持',
 			technicalSupportText: '在使用过程中，有任何问题，请在',
@@ -225,6 +226,7 @@ const cn = {
 		uploadError: '上传失败',
 		uploadInfo: '点击查看详情',
 		dataFlowExport: '导出',
+		addTag: '添加标签',
 		bulkImport: '批量导入',
 		overWrite: '覆盖已有数据',
 		skipData: '跳过已有数据',

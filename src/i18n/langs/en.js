@@ -45,6 +45,7 @@ const en = {
 		version: 'Version',
 		home: 'Home',
 		signOut: 'Sign out',
+		signOutMsg: 'Are you sure to sign out?',
 		customerService: {
 			technicalSupport: 'User Support',
 			technicalSupportText: 'Any question, please submit to',
@@ -226,6 +227,7 @@ const en = {
 		uploadError: 'Upload failed',
 		uploadInfo: 'Click to view details',
 		dataFlowExport: 'Export',
+		addTag: 'Add tag',
 		overWrite: 'Overwrite existing data',
 		skipData: 'Skip existing data',
 		loadingError: 'Loading failed, please',
