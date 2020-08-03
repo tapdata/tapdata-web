@@ -226,6 +226,7 @@ const en = {
 		uploadError: 'Upload failed',
 		uploadInfo: 'Click to view details',
 		dataFlowExport: 'Export',
+		addTag: 'Add tag',
 		overWrite: 'Overwrite existing data',
 		skipData: 'Skip existing data',
 		loadingError: 'Loading failed, please',

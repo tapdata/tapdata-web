@@ -225,6 +225,7 @@ const tc = {
 		uploadError: '上傳失敗',
 		uploadInfo: '點擊查看詳情',
 		dataFlowExport: '導出',
+		addTag: '添加標籤',
 		overWrite: '覆蓋已有數據',
 		skipData: '跳過已有數據',
 		loadingError: '加載失敗,請',
