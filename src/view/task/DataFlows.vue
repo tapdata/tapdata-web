@@ -273,6 +273,7 @@
 					:page-sizes="[20, 30, 50, 100]"
 					:page-size="pagesize"
 					:total="totalNum"
+					:current-page.sync="currentPage"
 					@current-change="handleCurrentChange"
 					@size-change="handleSizeChange"
 				>
@@ -1064,6 +1065,7 @@ export default {
 			this.formData.way = '';
 			this.formData.executionStatus = '';
 			this.checkedTag = '';
+			this.currentPage = 1;
 			this.screenFn();
 		},
 		handleSelectionChange(val) {
