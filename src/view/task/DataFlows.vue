@@ -308,6 +308,7 @@ export default {
 			checkedTag: '',
 			listtags: [],
 			tagList: [],
+			wsData: [],
 			dialogVisible: false,
 			restLoading: false,
 			colorMap: {
@@ -403,18 +404,23 @@ export default {
 		window.windows = [];
 		let self = this;
 		ws.on('watch', function(data) {
-			let dat = data.data.fullDocument;
-			self.$set(
-				self.tableData,
-				self.tableData.findIndex(it => it.id == dat.id),
-				self.cookRecord(
-					_.merge(
-						self.tableData.find(it => it.id == dat.id),
-						dat
-					)
-				)
-			);
+			self.wsData.push(data.data.fullDocument);
 		});
+		setInterval(() => {
+			self.wsData.forEach(dat => {
+				self.$set(
+					self.tableData,
+					self.tableData.findIndex(it => it.id == dat.id),
+					self.cookRecord(
+						_.merge(
+							self.tableData.find(it => it.id == dat.id),
+							dat
+						)
+					)
+				);
+			});
+			self.wsData.length = 0;
+		}, 3000);
 	},
 	computed: {
 		maxHeight: function() {
