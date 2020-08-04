@@ -166,6 +166,7 @@ export const baseElementConfig = {
 			showSettings() {
 				return true;
 			},
+
 			setSchema(schema, updateSchema) {
 				this.set(SCHEMA_DATA_KEY, schema);
 
@@ -309,6 +310,37 @@ export const baseElementConfig = {
 			 */
 			allowSource() {
 				return false;
+			},
+			setDisabled(checked) {
+				let onewayIn = false,
+					onewayOut = false,
+					self = this;
+				if (self.graph.getConnectedLinks(this, { inbound: true }).length == 0) onewayIn = true;
+				if (self.graph.getConnectedLinks(this, { outbound: true }).length == 0) onewayOut = true;
+				self.graph.getConnectedLinks(this, { inbound: true }).forEach(link => {
+					if (!link.attributes.form_data.disabled) onewayIn = true;
+				});
+				self.graph.getConnectedLinks(this, { outbound: true }).forEach(link => {
+					if (!link.attributes.form_data.disabled) onewayOut = true;
+				});
+				if (!(onewayIn && onewayOut) || checked) {
+					this.attributes.form_data.disabled = true;
+					if (checked) this.attributes.form_data.disablChecker = true;
+					this.attr('body/fill', 'silver');
+					self.graph.getConnectedLinks(this, { inbound: true }).forEach(link => {
+						if (!!link.attributes.form_data.disabled && !checked) return;
+						link.attributes.form_data.disabled = true;
+						link.attr('line/stroke', 'blue');
+						self.setDisabled(link.getSourceCell());
+					});
+					self.graph.getConnectedLinks(this, { outbound: true }).forEach(link => {
+						if (!!link.attributes.form_data.disabled && !checked) return;
+						link.attributes.form_data.disabled = true;
+						link.attr('line/stroke', 'blue');
+						if (!link.getTargetCell().isDataNode()) self.setDisabled(link.getTargetCell());
+					});
+				}
+				if (checked) this.attr('body/fill', 'grey');
 			}
 		}
 

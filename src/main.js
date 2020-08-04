@@ -27,14 +27,12 @@ Vue.prototype.$api = factory;
 window.VueCookie = VueCookie;
 window.ChildRoutes = childRoutes;
 
-// Vue.prototype.i18n = window.jQuery.i18n
-router.beforeEach((to, from, next) => {
-	/* 路由发生变化修改页面title */
-	if (to.meta.title) {
-		document.title = to.meta.title;
-	}
-	next();
-});
+window._TAPDATA_OPTIONS_ = {
+	showLang: 'SHOW_LANGUAGE_OPTION',
+	logoUrl: require('../static/icon/logo.png'),
+	platform: 'DAAS'
+};
+document.title = 'Tapdata';
 
 window.App = new Vue({
 	el: '#app',

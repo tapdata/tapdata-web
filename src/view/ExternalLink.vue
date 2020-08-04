@@ -23,7 +23,7 @@ export default {
 				let router = window.frames[0].window.gRouter;
 				count += 1;
 				if (router) {
-					router.push({
+					router.replace({
 						name: route.name,
 						query: Object.assign(route.query, { isNext: count }),
 						params: route.params

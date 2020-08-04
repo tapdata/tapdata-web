@@ -957,6 +957,7 @@ const en = {
 		sampleRate: 'By percentage',
 		condition: 'Sampling range',
 		showResult: 'Show result',
+		filter: 'filter',
 		filterMQL: 'Please enter MQL query statement',
 		filterSQL: 'Row Verify only supports select count(*) query statements',
 		exampleSQL: 'e.g.: select count(*)  from tablename_1 where field__2 = A;',

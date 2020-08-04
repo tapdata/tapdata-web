@@ -34,10 +34,6 @@
 						<span class="info-text">{{ flow.username }}</span>
 					</div>
 					<div class="info-list">
-						<span class="info-label">{{ $t('dataFlow.creationTime') }}:</span>
-						<span class="info-text">{{ flow.createTime }}</span>
-					</div>
-					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
 						<span class="info-text">{{ flow.startTime }}</span>
 					</div>

@@ -6,11 +6,11 @@
 </template>
 
 <script>
-// let v = 'VERSION';
 export default {
 	data() {
 		return {
 			// isNew: v !== 'DK',
+			// isNew: window._TAPDATA_OPTIONS_.platform === 'DAAS'
 			isNew: false
 		};
 	}
