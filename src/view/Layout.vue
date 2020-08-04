@@ -1,15 +1,16 @@
 <template>
 	<el-container class="layout-container">
 		<CustomerService v-model="isShowCustomerService"></CustomerService>
+		<newDataFlow :dialogVisible="dialogVisible" v-on:dialogVisible="handleDialogVisible"></newDataFlow>
 		<el-header class="layout-header" height="48px">
 			<a class="logo" href="/">
 				<img :src="logoUrl" />
 			</a>
 			<div class="button-bar">
-				<!-- <el-button class="btn-create" type="primary" size="mini">
+				<el-button class="btn-create" type="primary" size="mini" @click="command('newDataFlow')">
 					<i class="el-icon-plus"></i>
 					<span>新建</span>
-				</el-button> -->
+				</el-button>
 				<a v-if="platform === 'DAAS'" class="btn" @click="command('download')"
 					><i class="iconfont icon-shangchuan-copy"></i
 				></a>
@@ -107,6 +108,7 @@
 
 <script>
 import CustomerService from '@/components/CustomerService';
+import newDataFlow from '@/components/newDataFlow';
 import { signOut } from '../util/util';
 const Languages = {
 	sc: '中文 (简)',
@@ -167,7 +169,7 @@ let menuSetting = [
 	}
 ];
 export default {
-	components: { CustomerService },
+	components: { CustomerService, newDataFlow },
 	data() {
 		return {
 			platform: window._TAPDATA_OPTIONS_.platform,
@@ -180,7 +182,7 @@ export default {
 			activeMenu: '',
 			favMenus: [],
 			userName: '',
-
+			dialogVisible: false,
 			isShowCustomerService: false
 		};
 	},
@@ -259,6 +261,9 @@ export default {
 		},
 		command(command) {
 			switch (command) {
+				case 'newDataFlow':
+					this.dialogVisible = true;
+					break;
 				case 'help':
 					window.open('https://docs.tapdata.io/', '_blank');
 					break;
@@ -305,6 +310,9 @@ export default {
 		changeLanguage(lang) {
 			localStorage.setItem('tapdata_localize_lang', lang);
 			location.reload();
+		},
+		handleDialogVisible() {
+			this.dialogVisible = false;
 		}
 	}
 };
