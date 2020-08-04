@@ -685,7 +685,7 @@ export default {
 		},
 		getData() {
 			if (this.model.isFilter)
-				if (this.model.sqlFromCust) this.model.sql = this.model.custSql.sql;
+				if (this.model.sqlFromCust) this.model.sql = this.model.cSql;
 				else this.model.sql = this.model.editSql;
 			let result = _.cloneDeep(this.model);
 			result.name = result.tableName || 'Table';
