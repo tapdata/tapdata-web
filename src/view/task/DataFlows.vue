@@ -274,9 +274,7 @@
 											:disabled="statusBtMap[scope.row.status]['force stopping']"
 											>{{ $t('dataFlow.status.force_stopping') }}</el-dropdown-item
 										>
-										<el-dropdown-item command="tag">{{
-											$t('dataFlow.dataFlowTag')
-										}}</el-dropdown-item>
+										<el-dropdown-item command="tag">{{ $t('dataFlow.addTag') }}</el-dropdown-item>
 									</el-dropdown-menu>
 								</el-dropdown>
 							</div>
@@ -467,7 +465,7 @@ export default {
 			this.dialogVisible = true;
 		},
 		handlerAddTag(listTags) {
-			this.tagList = listTags;
+			this.tagList = listTags || [];
 			this.dialogVisible = true;
 		},
 		handleSelectTag() {
