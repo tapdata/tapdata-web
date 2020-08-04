@@ -457,8 +457,8 @@ export default class Graph extends Component {
 	}
 
 	selectPrimaryElement(elementView) {
-		let element = elementView.model,
-			self = this;
+		let element = elementView.model;
+		//self = this;
 
 		if (element.get('freeTransform') !== false) {
 			new joint.ui.FreeTransform({
@@ -475,75 +475,23 @@ export default class Graph extends Component {
 			boxContent: false
 		});
 
-		let setDisabled = function(cell, checked) {
-			let onewayIn = false,
-				onewayOut = false;
-			if (self.graph.getConnectedLinks(cell, { inbound: true }).length == 0) onewayIn = true;
-			if (self.graph.getConnectedLinks(cell, { outbound: true }).length == 0) onewayOut = true;
-			self.graph.getConnectedLinks(cell, { inbound: true }).forEach(link => {
-				if (!link.attributes.form_data.disabled) onewayIn = true;
-			});
-			self.graph.getConnectedLinks(cell, { outbound: true }).forEach(link => {
-				if (!link.attributes.form_data.disabled) onewayOut = true;
-			});
-			if (!(onewayIn && onewayOut) || checked) {
-				cell.attributes.form_data.disabled = true;
-				if (checked) cell.attributes.form_data.disablChecker = true;
-				cell.attr('body/fill', 'silver');
-				self.graph.getConnectedLinks(cell, { inbound: true }).forEach(link => {
-					if (!!link.attributes.form_data.disabled && !checked) return;
-					link.attributes.form_data.disabled = true;
-					link.attr('line/stroke', 'blue');
-					setDisabled(link.getSourceCell());
-				});
-				self.graph.getConnectedLinks(cell, { outbound: true }).forEach(link => {
-					if (!!link.attributes.form_data.disabled && !checked) return;
-					link.attributes.form_data.disabled = true;
-					link.attr('line/stroke', 'blue');
-					if (!link.getTargetCell().isDataNode()) setDisabled(link.getTargetCell());
-				});
-			}
-		};
-		if (elementView.model.attributes.form_data.disablChecker) {
-			halo.addHandle({ name: 'enableCell', position: 'ne', icon: 'static/editor/enable.png' });
-			halo.on('action:enableCell:pointerdown', function(evt) {
-				evt.stopPropagation();
-				elementView.model.attributes.form_data.disabled = false;
-				elementView.model.attributes.form_data.disablChecker = false;
-				elementView.model.attr('body/fill', '#fafafa');
-				let cells = self.graph
-					.getSuccessors(elementView.model)
-					.concat(self.graph.getPredecessors(elementView.model));
-				cells.forEach(cell => {
-					cell.attributes.form_data.disabled = false;
-					cell.attr('body/fill', '#fafafa');
-					self.graph.getConnectedLinks(cell).forEach(link => {
-						link.attr('line/stroke', '#8f8f8f');
-						link.attributes.form_data.disabled = false;
-					});
-				});
-				cells.forEach(cell => {
-					if (cell.attributes.form_data.disablChecker) {
-						self.graph.getConnectedLinks(cell).forEach(link => {
-							link.attr('line/stroke', 'blue');
-							link.attributes.form_data.disabled = true;
-						});
-						setDisabled(cell, true);
-						cell.attr('body/fill', 'grey');
-					}
-				});
-			});
-		} else if (!elementView.model.getFormData().disabled) {
-			halo.addHandle({ name: 'disableCell', position: 'ne', icon: 'static/editor/disable.png' });
-			halo.on('action:disableCell:pointerdown', function(evt) {
-				evt.stopPropagation();
-				self.graph.getConnectedLinks(elementView.model).forEach(link => {
-					link.attr('line/stroke', 'blue');
-					link.attributes.form_data.disabled = true;
-				});
-				elementView.model.setDisabled(true);
-			});
-		}
+		// if (elementView.model.attributes.form_data.disablChecker) {
+		// 	halo.addHandle({ name: 'enableCell', position: 'ne', icon: 'static/editor/enable.png' });
+		// 	halo.on('action:enableCell:pointerdown', function(evt) {
+		// 		evt.stopPropagation();
+		// 		elementView.model.setEnabled();
+		// 	});
+		// } else if (!elementView.model.getFormData().disabled) {
+		// 	//halo.addHandle({ name: 'disableCell', position: 'se', icon: 'static/editor/disable.png' });
+		// 	// halo.on('action:disableCell:pointerdown', function(evt) {
+		// 	// 	evt.stopPropagation();
+		// 	// 	self.graph.getConnectedLinks(elementView.model).forEach(link => {
+		// 	// 		link.attr('line/stroke', 'blue');
+		// 	// 		link.attributes.form_data.disabled = true;
+		// 	// 	});
+		// 	// 	elementView.model.setDisabled(true);
+		// 	// });
+		// }
 		halo.render();
 	}
 
