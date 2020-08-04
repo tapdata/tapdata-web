@@ -1,7 +1,7 @@
-import {options} from "../../lib/rappid/config";
-import EsNodeAttribute from "./EsNodeAttribute";
-import {FORM_DATA_KEY} from "../../constants";
-import i18n from "../../../i18n/i18n";
+import { options } from '../../lib/rappid/config';
+import EsNodeAttribute from './EsNodeAttribute';
+import { FORM_DATA_KEY } from '../../constants';
+import i18n from '../../../i18n/i18n';
 
 export const esNodeConfig = {
 	type: 'app.ESNode',
@@ -10,22 +10,24 @@ export const esNodeConfig = {
 		defaultInstanceProperties: {
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/o-es.svg',
+					xlinkHref: 'static/editor/o-es.svg'
 				},
 				label: {
-					text: i18n.t('editor.cell.data_node.es.name'),
-        },
-        [FORM_DATA_KEY]: {
-          type: 'elasticsearch',
-          connectionId: ''
-        }
+					text: i18n.t('editor.cell.data_node.es.name')
+				}
+			},
+			[FORM_DATA_KEY]: {
+				type: 'elasticsearch',
+				connectionId: ''
 			}
 		},
 		prototypeProperties: {
-			portLabelMarkup: [{
-				tagName: 'text',
-				selector: 'portLabel',
-			}],
+			portLabelMarkup: [
+				{
+					tagName: 'text',
+					selector: 'portLabel'
+				}
+			],
 
 			isDataNode() {
 				return true;
@@ -36,7 +38,7 @@ export const esNodeConfig = {
 			 * @param targetCell
 			 * @return {boolean}
 			 */
-			allowTarget(targetCell) {
+			allowTarget() {
 				return false;
 			},
 
@@ -52,11 +54,10 @@ export const esNodeConfig = {
 			validate(data) {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
-				if (!data)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`);
+				if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`);
 				return true;
-			},
-		},
+			}
+		}
 	},
 
 	styleFormConfig: {
@@ -76,7 +77,7 @@ export const esNodeConfig = {
 						unit: 'px',
 						label: 'Font size',
 						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						when: { ne: { 'attrs/label/text': '' } },
 						index: 2
 					},
 					fontFamily: {
@@ -84,7 +85,7 @@ export const esNodeConfig = {
 						options: options.fontFamily,
 						label: 'Font family',
 						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						when: { ne: { 'attrs/label/text': '' } },
 						index: 3
 					},
 					fontWeight: {
@@ -92,7 +93,7 @@ export const esNodeConfig = {
 						options: options.fontWeight,
 						label: 'Font thickness',
 						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						when: { ne: { 'attrs/label/text': '' } },
 						index: 4
 					},
 					fill: {
@@ -100,7 +101,7 @@ export const esNodeConfig = {
 						options: options.colorPalette,
 						label: 'Fill',
 						group: 'text',
-						when: {ne: {'attrs/label/text': ''}},
+						when: { ne: { 'attrs/label/text': '' } },
 						index: 5
 					}
 				},
@@ -128,7 +129,7 @@ export const esNodeConfig = {
 						unit: 'px',
 						label: 'Outline thickness',
 						group: 'presentation',
-						when: {ne: {'attrs/body/stroke': 'transparent'}},
+						when: { ne: { 'attrs/body/stroke': 'transparent' } },
 						index: 3
 					},
 					strokeDasharray: {
@@ -138,8 +139,8 @@ export const esNodeConfig = {
 						group: 'presentation',
 						when: {
 							and: [
-								{ne: {'attrs/body/stroke': 'transparent'}},
-								{ne: {'attrs/body/strokeWidth': 0}}
+								{ ne: { 'attrs/body/stroke': 'transparent' } },
+								{ ne: { 'attrs/body/strokeWidth': 0 } }
 							]
 						},
 						index: 4
@@ -173,7 +174,7 @@ export const esNodeConfig = {
 		 */
 		//groupLabel: '',
 
-		size: {width: 5, height: 4},
+		size: { width: 5, height: 4 },
 		attrs: {
 			root: {
 				dataTooltip: i18n.t('editor.cell.data_node.file.tip'),
@@ -216,7 +217,6 @@ export const esNodeConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: EsNodeAttribute,
+		component: EsNodeAttribute
 	}
-
 };

@@ -661,8 +661,8 @@ export default {
 				initialSyncOrder: 0,
 				enableInitialOrder: false
 			});
-			this.model.selectedFields.length = 0;
-			this.model.custFields.length = 0;
+			if (this.model.selectedFields) this.model.selectedFields.length = 0;
+			if (this.model.custFields) this.model.custFields.length = 0;
 			if (data) {
 				_.merge(this.model, data);
 				//老数据的兼容处理

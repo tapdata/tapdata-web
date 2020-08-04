@@ -149,14 +149,14 @@ export default {
 		},
 		handleClose() {
 			this.tagList = [];
-			this.oldTagList = {};
+			this.oldTagList = [];
 			this.$emit('dialogVisible', false);
 		},
 		handleClearOldTag() {
 			this.oldTagList = '';
 		},
 		handleCheckChange(data) {
-			this.oldTagList = {};
+			this.oldTagList = [];
 			if (this.tagList.lengt > 0 && data.id === this.tagList[0].id) {
 				this.tagList = [];
 			} else {

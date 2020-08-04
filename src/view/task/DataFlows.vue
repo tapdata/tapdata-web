@@ -274,9 +274,7 @@
 											:disabled="statusBtMap[scope.row.status]['force stopping']"
 											>{{ $t('dataFlow.status.force_stopping') }}</el-dropdown-item
 										>
-										<el-dropdown-item command="tag">{{
-											$t('dataFlow.dataFlowTag')
-										}}</el-dropdown-item>
+										<el-dropdown-item command="tag">{{ $t('dataFlow.addTag') }}</el-dropdown-item>
 									</el-dropdown-menu>
 								</el-dropdown>
 							</div>
@@ -412,7 +410,8 @@ export default {
 				error: { switch: false, delete: false, edit: false, detail: false, forceStop: true, reset: false },
 				paused: { switch: false, delete: false, edit: false, detail: true, forceStop: true, reset: false },
 				'force stopping': { switch: true, delete: true, edit: true, detail: true, forceStop: true, reset: true }
-			}
+			},
+			dataFlowId: ''
 		};
 	},
 	created() {
@@ -466,8 +465,9 @@ export default {
 			this.tagList = this.handleSelectTag();
 			this.dialogVisible = true;
 		},
-		handlerAddTag(listTags) {
-			this.tagList = listTags;
+		handlerAddTag(id, listTags) {
+			this.dataFlowId = id;
+			this.tagList = listTags || [];
 			this.dialogVisible = true;
 		},
 		handleSelectTag() {
@@ -483,14 +483,22 @@ export default {
 		},
 		handleOperationClassify(listtags) {
 			let attributes = [];
-			this.multipleSelection.forEach(row => {
-				row.listtags = row.listtags || [];
+			if (this.multipleSelection.length === 0) {
 				let node = {
-					id: row.id,
+					id: this.dataFlowId,
 					listtags: listtags
 				};
 				attributes.push(node);
-			});
+			} else {
+				this.multipleSelection.forEach(row => {
+					row.listtags = row.listtags || [];
+					let node = {
+						id: row.id,
+						listtags: listtags
+					};
+					attributes.push(node);
+				});
+			}
 			dataFlows.patchAll({ attrs: attributes }).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					this.getData();
@@ -603,7 +611,7 @@ export default {
 			let id = node.id;
 			let where = {
 				_id: {
-					in: id
+					in: [id]
 				}
 			};
 			switch (command) {
@@ -614,7 +622,7 @@ export default {
 					this.handlerCopy(id);
 					break;
 				case 'tag':
-					this.handlerAddTag(node.listtags);
+					this.handlerAddTag(node.id, node.listtags);
 					break;
 				case 'reset':
 					this.handleReset(id);
@@ -758,7 +766,7 @@ export default {
 									'fullDocument.stats': true,
 									'fullDocument.stages.id': true,
 									'fullDocument.stages.name': true,
-									'fullDocument.setting': true,
+									//'fullDocument.setting': true,
 									'fullDocument.listtags': true
 								}
 							}
