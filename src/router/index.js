@@ -248,6 +248,9 @@ const router = new Router({
 
 let usersModel = factor('users');
 router.beforeEach(async (to, from, next) => {
+	if (to.meta.title && window._TAPDATA_OPTIONS_.platform === 'DAAS') {
+		document.title = to.meta.title;
+	}
 	let cookie = window.VueCookie;
 	let token = cookie.get('token');
 	if (token) {

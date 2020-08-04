@@ -3,15 +3,17 @@
 		<CustomerService v-model="isShowCustomerService"></CustomerService>
 		<el-header class="layout-header" height="48px">
 			<a class="logo" href="/">
-				<img src="static/icon/logo.png" />
+				<img :src="logoUrl" />
 			</a>
 			<div class="button-bar">
 				<!-- <el-button class="btn-create" type="primary" size="mini">
 					<i class="el-icon-plus"></i>
 					<span>新建</span>
 				</el-button> -->
-				<a class="btn" @click="command('download')"><i class="iconfont icon-shangchuan-copy"></i></a>
-				<el-dropdown class="btn" placement="bottom" @command="command">
+				<a v-if="platform === 'DAAS'" class="btn" @click="command('download')"
+					><i class="iconfont icon-shangchuan-copy"></i
+				></a>
+				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom" @command="command">
 					<i class="iconfont icon-bangzhu1-copy"></i>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="help">{{ $t('app.document') }}</el-dropdown-item>
@@ -19,8 +21,10 @@
 						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
 					</el-dropdown-menu>
 				</el-dropdown>
-				<a class="btn" @click="command('setting')"><i class="iconfont icon-shezhi1"></i></a>
-				<el-dropdown class="btn" placement="bottom" @command="changeLanguage">
+				<a class="btn" @click="command('setting')">
+					<i class="iconfont icon-shezhi1"></i>
+				</a>
+				<el-dropdown v-if="showLang !== 'false'" class="btn" placement="bottom" @command="changeLanguage">
 					<i
 						class="iconfont"
 						:class="{
@@ -43,7 +47,9 @@
 					</el-button>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="version">{{ $t('app.version') }}</el-dropdown-item>
-						<el-dropdown-item command="home">{{ $t('app.home') }}</el-dropdown-item>
+						<el-dropdown-item v-if="platform === 'DAAS'" command="home">
+							{{ $t('app.home') }}
+						</el-dropdown-item>
 						<el-dropdown-item command="signOut">{{ $t('app.signOut') }}</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
@@ -164,6 +170,9 @@ export default {
 	components: { CustomerService },
 	data() {
 		return {
+			platform: window._TAPDATA_OPTIONS_.platform,
+			logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
+			showLang: window._TAPDATA_OPTIONS_.showLang,
 			languages: Languages,
 			lang: localStorage.getItem('tapdata_localize_lang') || 'en',
 			isCollapse: false,
@@ -333,7 +342,6 @@ export default {
 		.logo {
 			margin-left: 8px;
 			display: block;
-			height: 14px;
 			width: 99px;
 			img {
 				display: block;

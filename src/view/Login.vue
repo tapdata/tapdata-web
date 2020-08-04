@@ -2,8 +2,9 @@
 	<section class="page-sign-in">
 		<header>
 			<div class="logo">
-				<img src="static/icon/logo.png" />
-				<div class="switch-lang">
+				<img :src="logoUrl" />
+				<div v-if="showLang === 'false'"></div>
+				<div class="switch-lang" v-else>
 					<span
 						v-for="(value, key) in languages"
 						:key="key"
@@ -17,9 +18,12 @@
 			<div class="slogan">{{ $t('app.signIn.slogan') }}</div>
 		</header>
 		<main>
-			<div class="body">
+			<div class="body" :class="{ dk: platform === 'DK' }">
+				<div class="dk-login-cover">
+					<img src="static/image/loginCover_dk.png" />
+				</div>
 				<div class="carousel">
-					<img src="static/image/login.png" />
+					<img src="static/image/loginCover.png" />
 				</div>
 				<el-card class="sign-in-panel">
 					<div class="title">{{ $t('app.signIn.signIn') }}</div>
@@ -31,12 +35,14 @@
 						<input
 							class="input"
 							type="email"
+							autocomplete="username"
 							:placeholder="$t('app.signIn.email_placeholder')"
 							v-model="form.email"
 						/>
 						<input
 							class="input"
 							type="password"
+							autocomplete="current-password"
 							:placeholder="$t('app.signIn.password_placeholder')"
 							v-model="form.password"
 							@keyup.enter="submit"
@@ -65,6 +71,9 @@ export default {
 	name: 'SignIn',
 	data() {
 		return {
+			logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
+			showLang: window._TAPDATA_OPTIONS_.showLang,
+			platform: window._TAPDATA_OPTIONS_.platform,
 			loading: false,
 			languages: Languages,
 			lang: localStorage.getItem('tapdata_localize_lang') || 'en',
@@ -151,11 +160,9 @@ export default {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			height: 36px;
 			img {
 				display: block;
 				width: 144px;
-				height: 16px;
 			}
 			.switch-lang {
 				color: #dedee4;
@@ -182,11 +189,31 @@ export default {
 			}
 		}
 		.slogan {
-			margin-top: 3px;
+			margin-top: 8px;
 			height: 15px;
 			line-height: 15px;
 			font-size: 14px;
 			color: rgba(153, 153, 153, 1);
+		}
+	}
+	main .body.dk {
+		display: flex;
+		justify-content: center;
+		height: 510px;
+		.carousel {
+			display: none;
+		}
+		.dk-login-cover {
+			display: block;
+			position: relative;
+			img {
+				display: block;
+			}
+		}
+		.sign-in-panel {
+			position: relative;
+			right: 0;
+			top: 0;
 		}
 	}
 	main {
@@ -198,6 +225,9 @@ export default {
 			height: 600px;
 			width: 1400px;
 			box-sizing: border-box;
+			.dk-login-cover {
+				display: none;
+			}
 			.carousel {
 				position: absolute;
 				top: 0;
