@@ -611,7 +611,7 @@ export default {
 			let id = node.id;
 			let where = {
 				_id: {
-					in: id
+					in: [id]
 				}
 			};
 			switch (command) {
