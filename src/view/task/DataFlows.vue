@@ -766,7 +766,7 @@ export default {
 									'fullDocument.stats': true,
 									'fullDocument.stages.id': true,
 									'fullDocument.stages.name': true,
-									'fullDocument.setting': true,
+									//'fullDocument.setting': true,
 									'fullDocument.listtags': true
 								}
 							}
