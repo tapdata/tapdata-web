@@ -948,6 +948,7 @@ const tc = {
 		rows: '按行數校驗',
 		sampleRate: '按百分比',
 		condition: '採樣範圍',
+		filter: '过滤',
 		filterMQL: '請輸入MQL語句',
 		filterSQL: '行數校驗下僅支持 select count(*) 查詢語句',
 		exampleSQL: '示例: select count(*) from tablename_1 where field__2 = A;',
