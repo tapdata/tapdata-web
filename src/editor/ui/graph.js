@@ -533,7 +533,7 @@ export default class Graph extends Component {
 					}
 				});
 			});
-		} else if (!elementView.model.attributes.form_data.disabled) {
+		} else if (!elementView.model.getFormData().disabled) {
 			halo.addHandle({ name: 'disableCell', position: 'ne', icon: 'static/editor/disable.png' });
 			halo.on('action:disableCell:pointerdown', function(evt) {
 				evt.stopPropagation();
@@ -541,8 +541,7 @@ export default class Graph extends Component {
 					link.attr('line/stroke', 'blue');
 					link.attributes.form_data.disabled = true;
 				});
-				setDisabled(elementView.model, true);
-				elementView.model.attr('body/fill', 'grey');
+				elementView.model.setDisabled(true);
 			});
 		}
 		halo.render();
