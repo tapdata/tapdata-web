@@ -550,7 +550,7 @@ export default {
 			} else {
 				let routeUrl = this.$router.resolve({
 					path: '/job',
-					query: { id: id, isMoniting: true }
+					query: { id: id, isMoniting: true, name: name }
 				});
 				window.open(routeUrl.href, 'monitor_' + id);
 			}
