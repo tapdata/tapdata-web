@@ -278,6 +278,9 @@ export default {
 	},
 	mounted() {
 		let self = this;
+
+		document.title = self.$route.query.name || this.$t('dataflow.newTaksName');
+
 		// build editor
 		self.editor = editor({
 			container: $('.editor-container'),
@@ -501,7 +504,6 @@ export default {
 			}
 
 			promise = dataFlowsApi.draft(data);
-			//this.$message.success(self.$t('message.saveOK'));
 			if (promise) {
 				promise
 					.catch(() => {

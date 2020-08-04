@@ -95,11 +95,15 @@
 							<span> {{ $t('dataFlow.taskBulkOperation') }}</span>
 						</el-button>
 						<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item command="a">{{ $t('dataFlow.bulkExport') }}</el-dropdown-item>
-							<el-dropdown-item command="b">{{ $t('dataFlow.bulkScheuled') }}</el-dropdown-item>
-							<el-dropdown-item command="c">{{ $t('dataFlow.bulkStopping') }}</el-dropdown-item>
-							<el-dropdown-item command="d">{{ $t('dataFlow.batchDelete') }}</el-dropdown-item>
-							<el-dropdown-item command="e">{{ $t('dataFlow.batchRest') }}</el-dropdown-item>
+							<el-dropdown-item command="bulkExport">{{ $t('dataFlow.bulkExport') }}</el-dropdown-item>
+							<el-dropdown-item command="bulkScheuled">{{
+								$t('dataFlow.bulkScheuled')
+							}}</el-dropdown-item>
+							<el-dropdown-item command="bulkStopping">{{
+								$t('dataFlow.bulkStopping')
+							}}</el-dropdown-item>
+							<el-dropdown-item command="batchDelete">{{ $t('dataFlow.batchDelete') }}</el-dropdown-item>
+							<el-dropdown-item command="batchRest">{{ $t('dataFlow.batchRest') }}</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 					<el-button class="btn btn-create" type="primary" size="mini" @click="create">
@@ -133,7 +137,16 @@
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column prop="setting.sync_type" :label="$t('dataFlow.syncType')" width="120">
+					<el-table-column :label="$t('dataFlow.syncType')" width="120">
+						<template slot-scope="scope">
+							<span>
+								{{
+									scope.row.setting && scope.row.setting.sync_type
+										? syncType[scope.row.setting.sync_type]
+										: ''
+								}}
+							</span>
+						</template>
 					</el-table-column>
 					<el-table-column prop="status" sortable="custom" :label="$t('dataFlow.taskStatus')" width="180">
 						<template slot-scope="scope">
@@ -217,7 +230,10 @@
 						<template slot-scope="scope">
 							<div v-if="!scope.row.hasChildren">
 								<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
-									<el-button type="text" @click="handleDetail(scope.row.id, 'detail')">
+									<el-button
+										type="text"
+										@click="handleDetail(scope.row.id, 'detail', scope.row.name)"
+									>
 										<i class="iconfont  task-list-icon icon-chaxun"></i>
 									</el-button>
 								</el-tooltip>
@@ -225,7 +241,7 @@
 									<el-button
 										type="text"
 										:disabled="statusBtMap[scope.row.status].edit"
-										@click="handleDetail(scope.row.id, 'edit')"
+										@click="handleDetail(scope.row.id, 'edit', scope.row.name)"
 									>
 										<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
 									</el-button>
@@ -239,27 +255,28 @@
 										<i class="iconfont task-list-icon icon-shanchu"></i>
 									</el-button>
 								</el-tooltip>
-								<el-dropdown @command="handleRowCommand" class="item">
+								<el-dropdown @command="handleRowCommand($event, scope.row)" class="item">
 									<el-button type="text"
 										><i class="iconfont icon-gengduo3  task-list-icon"></i
 									></el-button>
 									<el-dropdown-menu slot="dropdown">
-										<el-dropdown-item :command="'export' + scope.row.id">{{
+										<el-dropdown-item command="export">{{
 											$t('dataFlow.dataFlowExport')
 										}}</el-dropdown-item>
-										<el-dropdown-item :command="'copy' + scope.row.id">{{
-											$t('dataFlow.copy')
-										}}</el-dropdown-item>
+										<el-dropdown-item command="copy">{{ $t('dataFlow.copy') }}</el-dropdown-item>
 										<el-dropdown-item
 											:disabled="statusBtMap[scope.row.status].reset"
-											:command="'reset' + scope.row.id"
+											command="reset"
 											>{{ $t('dataFlow.button.reset') }}</el-dropdown-item
 										>
 										<el-dropdown-item
-											:command="'force_stopping' + scope.row.id"
+											command="force_stopping"
 											:disabled="statusBtMap[scope.row.status]['force stopping']"
 											>{{ $t('dataFlow.status.force_stopping') }}</el-dropdown-item
 										>
+										<el-dropdown-item command="tag">{{
+											$t('dataFlow.dataFlowTag')
+										}}</el-dropdown-item>
 									</el-dropdown-menu>
 								</el-dropdown>
 							</div>
@@ -328,6 +345,11 @@ export default {
 			currentPage: 1,
 			pagesize: localStorage.getItem('flowPagesize') * 1 || 20,
 			totalNum: 0,
+			syncType: {
+				initial_sync: this.$t('dataFlow.initial_sync'),
+				cdc: this.$t('dataFlow.cdc'),
+				'initial_sync+cdc': this.$t('dataFlow.initial_sync') + this.$t('dataFlow.cdc')
+			},
 			optionsKey: [
 				{
 					label: this.$t('dataFlow.initial_sync'),
@@ -403,9 +425,7 @@ export default {
 		this.keyupEnter();
 		window.windows = [];
 		let self = this;
-		ws.on('watch', function(data) {
-			self.wsData.push(data.data.fullDocument);
-		});
+		ws.on('watch', this.wsWatch);
 		setInterval(() => {
 			self.wsData.forEach(dat => {
 				self.$set(
@@ -422,6 +442,9 @@ export default {
 			self.wsData.length = 0;
 		}, 3000);
 	},
+	beforeDestroy() {
+		ws.off('watch', this.wsWatch);
+	},
 	computed: {
 		maxHeight: function() {
 			let height = document.body.clientHeight - 140 + 'px';
@@ -429,6 +452,9 @@ export default {
 		}
 	},
 	methods: {
+		wsWatch(data) {
+			this.wsData.push(data.data.fullDocument);
+		},
 		handleDialogVisible() {
 			this.dialogVisible = false;
 		},
@@ -438,6 +464,10 @@ export default {
 				return;
 			}
 			this.tagList = this.handleSelectTag();
+			this.dialogVisible = true;
+		},
+		handlerAddTag(listTags) {
+			this.tagList = listTags;
 			this.dialogVisible = true;
 		},
 		handleSelectTag() {
@@ -484,7 +514,7 @@ export default {
 			window.windows.push(window.open(routeUrl.href, '_blank'));
 			window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
 		},
-		handleDetail(id, type) {
+		handleDetail(id, type, name) {
 			const h = this.$createElement;
 			if (type === 'edit') {
 				this.$msgbox({
@@ -511,7 +541,7 @@ export default {
 				}).then(() => {
 					let routeUrl = this.$router.resolve({
 						path: '/job',
-						query: { id: id }
+						query: { id: id, name: name }
 					});
 					setTimeout(() => {
 						document.querySelectorAll('.el-tooltip__popper').forEach(it => {
@@ -541,15 +571,15 @@ export default {
 			window.open(routeUrl.href, '_blank');
 		},
 		handleCommand(command) {
-			if (command === 'a') {
+			if (command === 'bulkExport') {
 				this.handleDownload();
-			} else if (command === 'b') {
+			} else if (command === 'bulkScheuled') {
 				this.handleAllStatus('scheduled');
-			} else if (command === 'c') {
+			} else if (command === 'bulkStopping') {
 				this.handleAllStatus('stopping');
-			} else if (command === 'd') {
+			} else if (command === 'batchDelete') {
 				this.handleAllDelete();
-			} else if (command === 'e') {
+			} else if (command === 'batchRest') {
 				this.handleAllRest();
 			}
 		},
@@ -569,31 +599,37 @@ export default {
 			};
 			MetadataInstance.download(where);
 		},
-		handleRowCommand(command) {
-			if (command.indexOf('export') !== -1) {
-				let id = [];
-				id.push(command.replace('export', ''));
-				let where = {
-					_id: {
-						in: id
-					}
-				};
-				MetadataInstance.download(where);
-			} else if (command.indexOf('copy') !== -1) {
-				let id = command.replace('copy', '');
-				this.handlerCopy(id);
-			} else if (command.indexOf('reset') !== -1) {
-				let id = command.replace('reset', '');
-				this.handleReset(id);
-			} else if (command.indexOf('force_stopping') !== -1) {
-				this.$confirm(this.$t('message.forceStoppingMessage'), this.$t('dataFlow.importantReminder'), {
-					confirmButtonText: this.$t('dataFlow.button.force_stop'),
-					cancelButtonText: this.$t('message.cancel'),
-					type: 'warning'
-				}).then(() => {
-					let id = command.replace('force_stopping', '');
-					this.handleStatus(id, 'force stopping');
-				});
+		handleRowCommand(command, node) {
+			let id = node.id;
+			let where = {
+				_id: {
+					in: id
+				}
+			};
+			switch (command) {
+				case 'export':
+					MetadataInstance.download(where);
+					break;
+				case 'copy':
+					this.handlerCopy(id);
+					break;
+				case 'tag':
+					this.handlerAddTag(node.listtags);
+					break;
+				case 'reset':
+					this.handleReset(id);
+					break;
+				case 'force_stopping':
+					this.$confirm(this.$t('message.forceStoppingMessage'), this.$t('dataFlow.importantReminder'), {
+						confirmButtonText: this.$t('dataFlow.button.force_stop'),
+						cancelButtonText: this.$t('message.cancel'),
+						type: 'warning'
+					}).then(() => {
+						this.handleStatus(id, 'force stopping');
+					});
+					break;
+				default:
+					break;
 			}
 		},
 		handleSelectable(row) {
