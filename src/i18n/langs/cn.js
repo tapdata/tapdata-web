@@ -207,9 +207,9 @@ const cn = {
 			localTZ: '当前时区传输时间：系统所在时区下，开始传输任务的时刻',
 			current: '当前时区时间：默认当前时间',
 			connTZ: '数据库时区传输时间： 数据库所在时区下，开始传输任务的时刻',
-			localTZType: '当前时区传输时间',
-			currentType: '当前时区时间',
-			connTZType: '数据库时区传输时间'
+			localTZType: '用户浏览器时区',
+			currentType: '此刻',
+			connTZType: '数据库时区'
 		},
 		Current: '当前时间',
 		SyncTime: '同步时间',
@@ -325,7 +325,7 @@ const cn = {
 		edited: '当任务被编辑',
 		started: '当任务开启',
 		drop_target_before_start: '开启任务前是否删除目标表',
-		run_custom_sql: '重复运行自定义SQL',
+		run_custom_sql: '重复自定义SQL',
 		stop_on_error: '遇到错误停止',
 		need_to_create_Index: '自动创建索引',
 		is_schedule: '定期调度任务',

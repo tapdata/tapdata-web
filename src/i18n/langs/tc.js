@@ -206,9 +206,9 @@ const tc = {
 			localTZ: '當前時區傳輸時間：系統所在時區下，開始傳輸任務的時刻',
 			current: '當前時區時間：默認當前時間',
 			connTZ: '數據庫時區傳輸時間： 數據庫所在時區下，開始傳輸任務的時刻',
-			localTZType: '當前時區傳輸時間',
-			currentType: '當前時區時間',
-			connTZType: '數據庫時區傳輸時間'
+			localTZType: '用戶瀏覽器時區',
+			currentType: '此刻',
+			connTZType: '數據庫時區'
 		},
 		Current: '當前時間',
 		SyncTime: '同步時間',

@@ -152,16 +152,16 @@
 				<el-input-number v-model="formData.transformerConcurrency" :min="1" size="mini"></el-input-number>
 			</el-form-item>
 			<el-form-item :label="$t('dataFlow.SyncPoint')" v-show="formData.sync_type === 'cdc'" size="mini">
-				<div>
+				<div class="labelTxt">
 					{{ $t('dataFlow.cdcLabel') }}
-					<el-tooltip placement="right-end">
+					<!-- <el-tooltip placement="right-end">
 						<div slot="content">
 							<div>{{ $t('dataFlow.SyncInfo.current') }}</div>
 							<div>{{ $t('dataFlow.SyncInfo.localTZ') }}</div>
 							<div>{{ $t('dataFlow.SyncInfo.connTZ') }}</div>
 						</div>
 						<i class="e-primary el-icon-warning-outline"></i>
-					</el-tooltip>
+					</el-tooltip> -->
 				</div>
 				<el-row v-for="item in formData.syncPoints" :key="item.name" style="margin-top: 10px">
 					<!-- <el-col :span="8">
@@ -188,28 +188,6 @@
 					</el-col>
 				</el-row>
 			</el-form-item>
-			<el-row>
-				<el-col :span="12">
-					<el-form-item>
-						<div>{{ $t('dataFlow.send_email_when_replication') }}</div>
-						<el-input v-model="formData.notificationWindow" size="mini"></el-input>
-						<div>{{ $t('dataFlow.send_email_at_most_one_replication') }}</div>
-						<el-input v-model="formData.notificationInterval" size="mini"></el-input>
-					</el-form-item>
-					<!-- <el-form-item>
-						<div>{{ $t('dataFlow.read_cdc_interval') }}</div>
-						<el-input v-model="formData.readCdcInterval" size="mini">
-							<template slot="append">ms</template>
-						</el-input>
-					</el-form-item> -->
-					<!-- <el-form-item>
-						<div>{{ $t('dataFlow.read_batch_size') }}</div>
-						<el-input v-model="formData.readBatchSize" size="mini">
-							<template slot="append">row</template>
-						</el-input>
-					</el-form-item> -->
-				</el-col>
-			</el-row>
 		</el-form>
 	</div>
 </template>
@@ -483,6 +461,9 @@ export default {
 		padding: 20px;
 		box-sizing: border-box;
 		font-size: 12px;
+		.labelTxt {
+			font-size: 12px;
+		}
 	}
 	// height: calc(100vh - 50px);
 	// overflow: auto;
@@ -506,7 +487,7 @@ export default {
 		font-size: 12px;
 	}
 	.el-form-item {
-		margin-bottom: 10 px;
+		margin-bottom: 10px;
 		.el-form-item__content .el-input-group {
 			vertical-align: middle;
 		}
