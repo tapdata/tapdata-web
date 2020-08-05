@@ -837,8 +837,7 @@ export default {
 					if (err) {
 						this.$message.error(err.response.data);
 					} else {
-						self.setEditable(false);
-						self.editor.setData(data);
+						this.$message.success(self.$t('message.taskStart'));
 						self.$router.push({
 							path: '/job',
 							query: {
@@ -846,7 +845,7 @@ export default {
 								isMoniting: true
 							}
 						});
-						this.$message.success(self.$t('message.taskStart'));
+						location.reload();
 					}
 				});
 			}
