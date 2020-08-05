@@ -24,22 +24,39 @@
 				</el-table-column>
 				<el-table-column prop="source.tableName" :label="$t('dataVerify.source')">
 					<template slot-scope="scope">
-						<el-tooltip class="item" effect="dark" content="SQL/MQL" placement="top-end">
-							<span>
-								<span v-if="scope.row.source.filter" class="dv-tag"></span>
-								<span> {{ scope.row.source.tableName }} </span>
-							</span>
+						<el-tooltip
+							class="item"
+							effect="dark"
+							:content="scope.row.source.tableName + ' / ' + scope.row.source.databaseName"
+							placement="top-end"
+						>
+							<div>
+								<div style="color: #bbb">
+									{{ scope.row.source ? scope.row.source.databaseName : '' }}
+								</div>
+								<div>
+									{{ scope.row.source ? scope.row.source.tableName : '' }}
+								</div>
+							</div>
 						</el-tooltip>
 					</template>
 				</el-table-column>
 				<el-table-column prop="target.tableName" :label="$t('dataVerify.target')">
 					<template slot-scope="scope">
-						<el-tooltip class="item" effect="dark" content="SQL/MQL" placement="top-end">
-							<span>
-								<span v-if="scope.row.validateCode" class="dv-tagJS"></span>
-								<span v-if="scope.row.target.filter" class="dv-tag"></span>
-								<span> {{ scope.row.target.tableName }} </span>
-							</span>
+						<el-tooltip
+							class="item"
+							effect="dark"
+							:content="scope.row.target.tableName + ' / ' + scope.row.target.databaseName"
+							placement="top-end"
+						>
+							<div>
+								<div style="color: #bbb">
+									{{ scope.row.target ? scope.row.target.tableName : '' }}
+								</div>
+								<div>
+									{{ scope.row.target ? scope.row.target.databaseName : '' }}
+								</div>
+							</div>
 						</el-tooltip>
 					</template>
 				</el-table-column>
@@ -71,13 +88,13 @@
 		<Drawer ref="drawer" :visible.sync="disabledDrawer" :title="$t('dataVerify.dataVerifySetting')">
 			<el-form class="dv-add-form" :model="formData" label-position="top">
 				<el-form-item :label="$t('dataVerify.dataWay')">
-					<el-radio-group v-model="type" size="mini" class="dv-radio" @change="changeType">
+					<el-radio-group v-model="formData.type" size="mini" class="dv-radio" @change="changeType">
 						<el-radio border label="row" width="150px">{{ $t('dataVerify.row') }}</el-radio>
 						<el-radio border label="hash" width="150px">{{ $t('dataVerify.hash') }}</el-radio>
 						<el-radio border label="advance" width="150px">{{ $t('dataVerify.advance') }}</el-radio>
 					</el-radio-group>
 				</el-form-item>
-				<el-form-item v-show="type !== 'row'" :label="$t('dataVerify.condition')">
+				<el-form-item v-show="formData.type !== 'row'" :label="$t('dataVerify.condition')">
 					<el-row :gutter="5">
 						<el-col :span="12">
 							<el-select size="mini" v-model="formData.condition.type" @change="changeConditionType">
@@ -100,95 +117,133 @@
 						</el-col>
 					</el-row>
 				</el-form-item>
-				<el-form-item :label="$t('dataVerify.source')">
+				<el-form-item :label="$t('dataVerify.sourceDatabase')">
 					<el-select
 						size="mini"
 						style="width: 100%"
-						v-model="formData.sourceTageId"
+						v-model="formData.source.connectionId"
 						:placeholder="$t('dataVerify.sourceText')"
 						@input="handleForceUpdate"
 						@change="changeSourceTable"
 					>
 						<el-option
+							v-for="item in sourceDatabase"
+							:label="item.databaseName"
+							:value="item.connectionId"
+							v-bind:key="item.connectionId"
+						>
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item :label="$t('dataVerify.source')">
+					<el-select
+						size="mini"
+						style="width: 100%"
+						v-model="formData.source.stageId"
+						:placeholder="$t('dataVerify.sourceText')"
+						@input="handleForceUpdate"
+					>
+						<el-option
 							v-for="item in sourceList"
 							:label="item.tableName"
-							:value="item.stageId + item.tableName"
+							:value="item.stageId"
 							v-bind:key="item.stageId"
 						>
 						</el-option>
 					</el-select>
-					<el-row v-show="type !== 'advance'">
-						<div v-if="opSource[0] && opSource[0].databaseType && opSource[0].databaseType === 'mongodb'">
-							<el-checkbox v-model="checkedSource"></el-checkbox>
+					<el-row v-show="formData.type !== 'advance'">
+						<div v-if="formData.source.databaseType === 'mongodb'">
+							<el-checkbox v-model="formData.source.checkedSource"></el-checkbox>
 							<span>MQL {{ $t('dataVerify.filter') }}</span>
 							<div v-show="checkedSource">
 								<el-input
 									:rows="7"
 									type="textarea"
-									v-model="formData.sourceFilter"
+									v-model="formData.source.filter"
 									@input="handleForceUpdate"
 									:placeholder="
-										type === 'hash' ? $t('dataVerify.exampleHashMQL') : $t('dataVerify.exampleMQL')
+										formData.type === 'hash'
+											? $t('dataVerify.exampleHashMQL')
+											: $t('dataVerify.exampleMQL')
 									"
 								></el-input>
 							</div>
 						</div>
 						<div v-else>
-							<el-checkbox v-model="checkedSource"></el-checkbox>
+							<el-checkbox v-model="formData.source.checkedSource"></el-checkbox>
 							<span>SQL {{ $t('dataVerify.filter') }}</span>
-							<div v-show="checkedSource">
+							<div v-show="formData.source.checkedSource">
 								<el-input
 									:rows="7"
 									type="textarea"
-									v-model="formData.sourceFilter"
+									v-model="formData.source.filter"
 									@input="handleForceUpdate"
 									:placeholder="
-										type === 'hash' ? $t('dataVerify.exampleHashSQL') : $t('dataVerify.exampleSQL')
+										formData.type === 'hash'
+											? $t('dataVerify.exampleHashSQL')
+											: $t('dataVerify.exampleSQL')
 									"
 								></el-input>
 							</div>
 						</div>
 					</el-row>
 				</el-form-item>
-				<el-form-item :label="$t('dataVerify.target')">
+				<el-form-item :label="$t('dataVerify.targetDatabase')">
 					<el-select
 						size="mini"
 						style="width: 100%"
-						v-model="formData.targetTageId"
+						v-model="formData.target.connectionId"
 						@input="handleForceUpdate"
 						@change="changeTargetTable"
 						:placeholder="$t('dataVerify.targetText')"
 					>
 						<el-option
+							v-for="item in targetDatabase"
+							:label="item.databaseName"
+							:value="item.connectionId"
+							v-bind:key="item.connectionId"
+						>
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item :label="$t('dataVerify.target')">
+					<el-select
+						size="mini"
+						style="width: 100%"
+						v-model="formData.target.stageId"
+						:placeholder="$t('dataVerify.sourceText')"
+						@input="handleForceUpdate"
+					>
+						<el-option
 							v-for="item in targetList"
 							:label="item.tableName"
-							:value="item.stageId + item.tableName"
+							:value="item.stageId"
 							v-bind:key="item.stageId"
 						>
 						</el-option>
 					</el-select>
-					<el-row v-show="type === 'row'">
-						<div v-if="opTarget[0] && opTarget[0].databaseType && opTarget[0].databaseType === 'mongodb'">
-							<el-checkbox v-model="checkedTarget"></el-checkbox>
+					<el-row v-show="formData.type === 'row'">
+						<div v-if="formData.target.databaseType === 'mongodb'">
+							<el-checkbox v-model="formData.target.checkedTarget"></el-checkbox>
 							<span>MQL {{ $t('dataVerify.filter') }}</span>
-							<div v-show="checkedTarget">
+							<div v-show="formData.target.checkedTarget">
 								<el-input
 									:rows="7"
 									type="textarea"
-									v-model="formData.targetFilter"
+									v-model="formData.target.filter"
 									@input="handleForceUpdate"
 									:placeholder="$t('dataVerify.exampleMQL')"
 								></el-input>
 							</div>
 						</div>
 						<div v-else>
-							<el-checkbox v-model="checkedTarget"></el-checkbox>
+							<el-checkbox v-model="formData.target.checkedTarget"></el-checkbox>
 							<span>SQL {{ $t('dataVerify.filter') }}</span>
-							<div v-show="checkedTarget">
+							<div v-show="formData.target.checkedTarget">
 								<el-input
 									:rows="7"
 									type="textarea"
-									v-model="formData.targetFilter"
+									v-model="formData.target.filter"
 									@input="handleForceUpdate"
 									:placeholder="$t('dataVerify.exampleSQL')"
 								></el-input>
@@ -196,7 +251,7 @@
 						</div>
 					</el-row>
 				</el-form-item>
-				<el-form-item label="JS" v-show="type === 'advance'">
+				<el-form-item label="JS" v-show="formData.type === 'advance'">
 					<span class="JS-label displayInline">
 						{{ $t('dataVerify.exampleJS') }}
 					</span>
@@ -207,7 +262,7 @@
 						@input="handleForceUpdate"
 					></el-input>
 				</el-form-item>
-				<el-form-item v-show="type === 'advance'">
+				<el-form-item v-show="formData.type === 'advance'">
 					<div :span="24" class="example-js">
 						<span>example:</span>
 						<span>function validate(sourceRow) { </span>
@@ -251,7 +306,6 @@
 <script>
 import factory from '../../../api/factory';
 import log from '../../../log';
-import { EditorEventType } from '../../../editor/lib/events';
 import getUrlSearch from './getUrlSearch';
 const dataFlows = factory('DataFlows');
 import Drawer from '@/components/Drawer';
@@ -264,47 +318,49 @@ export default {
 		return {
 			id: '',
 			editIndex: -1,
-			widthDrawer: '',
 			disabledDrawer: false,
-			direction: 'rtl',
-			checkedSource: false,
-			checkedTarget: false,
 			sourceList: [],
 			targetList: [],
+			sourceDatabase: [],
+			targetDatabase: [],
 			formData: {
 				condition: {
 					type: 'rows', // # rows：按行数参与校验，sampleRate：按采样率参与校验
 					// # type为rows时表示行数；type为sampleRate时，表示采样率，如：
 					value: '1000'
 				},
-				sourceTageId: '',
-				targetTageId: '',
-				sourceFilter: '',
-				targetFilter: '',
-				validateCode: 'function validate(sourceRow){}'
+				source: {
+					connectionId: '',
+					databaseType: '',
+					stageId: '',
+					tableName: '',
+					filter: '',
+					checkedSource: false
+				},
+				target: {
+					connectionId: '',
+					databaseType: '',
+					stageId: '',
+					tableName: '',
+					filter: '',
+					checkedTarget: false
+				},
+				validateCode: 'function validate(sourceRow){}',
+				type: 'advance' // row: 行数 hash：哈希  advance：高级校验
 			},
-			type: 'advance', // row: 行数 hash：哈希  advance：高级校验
 			colorMap: {
 				row: '#48B6E2',
 				hash: '#62A569',
 				advance: '#9889D8'
 			},
 			tableData: [],
-			opSource: [],
-			opTarget: [],
 			firstVerify: false
 		};
 	},
 	created() {
 		this.id = getUrlSearch.getUrlSearch('id');
 		this.getData();
-		this.getSourceList();
-	},
-	mounted() {
-		let self = this;
-		this.$on(EditorEventType.RESIZE, width => {
-			self.widthDrawer = width;
-		});
+		this.getSourceList('conn');
 	},
 	methods: {
 		getData() {
@@ -319,8 +375,6 @@ export default {
 							if (!res.data.validateStatus) {
 								this.firstVerify = true;
 							}
-							this.changeSourceTable();
-							this.changeTargetTable();
 							log('dataVerify.tableData', this.tableData);
 						}
 					}
@@ -330,18 +384,6 @@ export default {
 			this.disabledDrawer = false;
 		},
 		handleShowDrawer() {
-			this.disabledDrawer = false;
-			this.formData = {
-				condition: {
-					type: 'rows', // # rows：按行数参与校验，sampleRate：按采样率参与校验
-					// # type为rows时表示行数；type为sampleRate时，表示采样率，如：
-					value: '1000'
-				},
-				validateCode: 'function validate(sourceRow){}'
-			};
-			this.type = 'advance';
-			this.checkedSource = false;
-			this.checkedTarget = false;
 			this.disabledDrawer = true;
 		},
 		changeType(type) {
@@ -350,70 +392,23 @@ export default {
 			}
 		},
 		handleAdd() {
-			if (
-				(this.formData.sourceFilter === '' || !this.formData.sourceFilter) &&
-				this.checkedSource &&
-				this.type !== 'advance'
-			) {
-				this.$message.error('please select source SQL/MQL');
-				return;
-			}
-			if (this.formData.sourceTageId === '' || !this.formData.sourceTageId) {
-				this.$message.error('please select source');
-				return;
-			}
-			if (this.formData.targetTageId === '' || !this.formData.targetTageId) {
-				this.$message.error('please select target');
-				return;
-			}
-			if (
-				(this.formData.targetFilter === '' || !this.formData.targetFilter) &&
-				this.checkedTarget &&
-				this.type === 'row'
-			) {
-				this.$message.error('please select target SQL/MQL');
-				return;
-			}
-			if (!this.checkedTarget || this.formData.type === 'hash') {
-				this.checkedTarget = false;
-				this.formData.targetFilter = '';
-			}
-			if (!this.checkedSource) {
-				this.formData.sourceFilter = '';
-			}
-			log('edit_edit', this.editIndex);
-
 			if (this.editIndex !== -1) {
 				this.tableData.splice(this.editIndex, 1); // 不是编辑 先删除后新增 -1非编辑模式
 			}
-			let opSource = this.sourceList.filter(item => item.stageId + item.tableName === this.formData.sourceTageId);
-			let opTarget = this.targetList.filter(item => item.stageId + item.tableName === this.formData.targetTageId);
-			if (opSource.length !== 0 && opSource[0]) opSource[0]['filter'] = this.formData.sourceFilter;
-			if (opTarget.length !== 0 && opTarget[0]) opTarget[0]['filter'] = this.formData.targetFilter;
 
-			let add = {
-				type: this.type, // row: 行数 hash：哈希  advance：高级校验
-				condition: this.formData.condition,
-				source: opSource[0],
-				target: opTarget[0],
-				validateCode: this.formData.validateCode
-			};
-
-			if (!this.tableData) {
-				this.tableData = [];
-				this.tableData.push(add); // 判断tabledata 是否存在
-			} else {
-				this.tableData.push(add);
-			}
-
+			this.tableData = this.tableData || [];
+			let source = this.sourceList.filter(item => item.stageId === this.formData.source.stageId);
+			if (source.length > 0) this.formData.source.tableName = source[0].tableName;
+			let target = this.targetList.filter(item => item.stageId === this.formData.target.stageId);
+			if (target.length > 0) this.formData.target.tableName = target[0].tableName;
+			this.tableData.push(this.formData);
 			let data = {
 				validationSettings: this.tableData
 			};
-			log('data', data);
 			this.disabledDrawer = false;
+			this.editIndex = -1;
 			dataFlows.patchId(this.id, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
-					this.editIndex = -1;
 					this.getData();
 				}
 			});
@@ -423,9 +418,7 @@ export default {
 				this.$message.info('please add data verify');
 				return;
 			}
-			if (this.disabledDrawer) {
-				this.disabledDrawer = false;
-			}
+			this.disabledDrawer = false;
 			let self = this;
 			// 状态修改为 waiting
 			let data = {
@@ -469,32 +462,11 @@ export default {
 			}
 		},
 		handleEdit(index) {
-			this.disabledDrawer = false;
-			this.disabledDrawer = true;
 			this.editIndex = index;
 			this.formData = this.tableData[index];
-			this.formData.sourceTageId = this.tableData[index].source.stageId + this.tableData[index].source.tableName;
-			this.formData.targetTageId = this.tableData[index].target.stageId + this.tableData[index].target.tableName;
-			if (this.tableData[index].target.filter) {
-				this.formData.targetFilter = this.tableData[index].target.filter;
-				this.checkedTarget = true;
-			}
-			if (this.tableData[index].source.filter) {
-				this.formData.sourceFilter = this.tableData[index].source.filter;
-				this.checkedSource = true;
-			}
-			this.type = this.tableData[index].type;
+			this.disabledDrawer = true;
 			this.changeSourceTable();
 			this.changeTargetTable();
-		},
-		getSourceList() {
-			dataFlows.getSourceList(this.id).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					this.sourceList = res.data.source;
-					this.targetList = res.data.target;
-					log('source.list', res.data);
-				}
-			});
 		},
 		GoBack() {
 			this.editor.showMonitor();
@@ -515,14 +487,38 @@ export default {
 			this.$forceUpdate();
 		},
 		changeSourceTable() {
-			this.opSource = this.sourceList.filter(
-				item => item.stageId + item.tableName === this.formData.sourceTageId
-			);
+			let type = 'table';
+			dataFlows.getSourceList(this.id, type, this.formData.source.connectionId).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					this.sourceList = res.data || [];
+				}
+			});
+			let source = this.sourceDatabase.filter(item => item.connectionId === this.formData.source.connectionId);
+			if (source.length > 0) {
+				this.formData.source.databaseType = source[0].databaseType;
+				this.formData.source.databaseName = source[0].databaseName;
+			}
 		},
 		changeTargetTable() {
-			this.opTarget = this.targetList.filter(
-				item => item.stageId + item.tableName === this.formData.targetTageId
-			);
+			let type = 'table';
+			dataFlows.getSourceList(this.id, type, this.formData.target.connectionId).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					this.targetList = res.data || [];
+				}
+			});
+			let opTarget = this.targetDatabase.filter(item => item.connectionId === this.formData.target.connectionId);
+			if (opTarget.length > 0) {
+				this.formData.target.databaseType = opTarget[0].databaseType;
+				this.formData.target.databaseName = opTarget[0].databaseName;
+			}
+		},
+		getSourceList(type) {
+			dataFlows.getSourceList(this.id, type).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					this.sourceDatabase = res.data.source || [];
+					this.targetDatabase = res.data.target || [];
+				}
+			});
 		},
 		formatterRange(row) {
 			if (row.condition.type === 'rows' && row.type !== 'row') {
