@@ -1,5 +1,5 @@
 <template>
-	<iframe src="/old/index.html#/" frameborder="0" style="height:100%; width: 100%;"></iframe>
+	<iframe src="/old/index.html#/" frameborder="0" style="height:100%; width: 100%;" @load="loadFrame"></iframe>
 </template>
 
 <script>
@@ -17,6 +17,11 @@ export default {
 		}
 	},
 	methods: {
+		loadFrame() {
+			if (!window.frames[0].window.location.href.includes('/old/')) {
+				window.location.reload();
+			}
+		},
 		getUrl() {
 			let route = this.$route;
 			this.$nextTick(() => {
