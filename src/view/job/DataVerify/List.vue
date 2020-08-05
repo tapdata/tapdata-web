@@ -101,26 +101,22 @@
 					</el-row>
 				</el-form-item>
 				<el-form-item :label="$t('dataVerify.source')">
-					<el-row>
-						<el-col :span="24">
-							<el-select
-								size="mini"
-								style="width: 100%"
-								v-model="formData.sourceTageId"
-								:placeholder="$t('dataVerify.sourceText')"
-								@input="handleForceUpdate"
-								@change="changeSourceTable"
-							>
-								<el-option
-									v-for="item in sourceList"
-									:label="item.tableName"
-									:value="item.stageId + item.tableName"
-									v-bind:key="item.stageId"
-								>
-								</el-option>
-							</el-select>
-						</el-col>
-					</el-row>
+					<el-select
+						size="mini"
+						style="width: 100%"
+						v-model="formData.sourceTageId"
+						:placeholder="$t('dataVerify.sourceText')"
+						@input="handleForceUpdate"
+						@change="changeSourceTable"
+					>
+						<el-option
+							v-for="item in sourceList"
+							:label="item.tableName"
+							:value="item.stageId + item.tableName"
+							v-bind:key="item.stageId"
+						>
+						</el-option>
+					</el-select>
 					<el-row v-show="type !== 'advance'">
 						<div v-if="opSource[0] && opSource[0].databaseType && opSource[0].databaseType === 'mongodb'">
 							<el-checkbox v-model="checkedSource"></el-checkbox>
@@ -155,26 +151,22 @@
 					</el-row>
 				</el-form-item>
 				<el-form-item :label="$t('dataVerify.target')">
-					<el-row>
-						<el-col :span="24">
-							<el-select
-								size="mini"
-								style="width: 100%"
-								v-model="formData.targetTageId"
-								@input="handleForceUpdate"
-								@change="changeTargetTable"
-								:placeholder="$t('dataVerify.targetText')"
-							>
-								<el-option
-									v-for="item in targetList"
-									:label="item.tableName"
-									:value="item.stageId + item.tableName"
-									v-bind:key="item.stageId"
-								>
-								</el-option>
-							</el-select>
-						</el-col>
-					</el-row>
+					<el-select
+						size="mini"
+						style="width: 100%"
+						v-model="formData.targetTageId"
+						@input="handleForceUpdate"
+						@change="changeTargetTable"
+						:placeholder="$t('dataVerify.targetText')"
+					>
+						<el-option
+							v-for="item in targetList"
+							:label="item.tableName"
+							:value="item.stageId + item.tableName"
+							v-bind:key="item.stageId"
+						>
+						</el-option>
+					</el-select>
 					<el-row v-show="type === 'row'">
 						<div v-if="opTarget[0] && opTarget[0].databaseType && opTarget[0].databaseType === 'mongodb'">
 							<el-checkbox v-model="checkedTarget"></el-checkbox>
@@ -216,29 +208,27 @@
 					></el-input>
 				</el-form-item>
 				<el-form-item v-show="type === 'advance'">
-					<el-col :span="24">
-						<span class="example-js">example:</span>
-						<span class="example-js">function validate(sourceRow) { </span>
-						<span class="example-js">var targetRow = target.executeQuery({</span>
-						<span class="example-js">sql: "select * from VALIDATE_TEST where ID = "+sourceRow.ID});</span>
-						<span class="example-js">var result="";</span>
-						<span class="example-js">var message="";</span>
-						<span class="example-js"
-							>if(JSONUtil.obj2Json(sourceRow) === JSONUtil.obj2Json(targetRow)){</span
-						>
-						<span class="example-js">result="passed";</span>
-						<span class="example-js">message="记录一致";</span>
-						<span class="example-js">} else {</span>
-						<span class="example-js">result="failed";</span>
-						<span class="example-js">message="记录不一致";</span>
-						<span class="example-js">}</span>
-						<span class="example-js">return {</span>
-						<span class="example-js">result: result,</span>
-						<span class="example-js">message: message,</span>
-						<span class="example-js">data: targetRow,</span>
-						<span class="example-js">};</span>
-						<span class="example-js">}</span>
-					</el-col>
+					<div :span="24" class="example-js">
+						<span>example:</span>
+						<span>function validate(sourceRow) { </span>
+						<span>var targetRow = target.executeQuery({</span>
+						<span>sql: "select * from VALIDATE_TEST where ID = "+sourceRow.ID});</span>
+						<span>var result="";</span>
+						<span>var message="";</span>
+						<span>if(JSONUtil.obj2Json(sourceRow) === JSONUtil.obj2Json(targetRow)){</span>
+						<span>result="passed";</span>
+						<span>message="记录一致";</span>
+						<span>} else {</span>
+						<span>result="failed";</span>
+						<span>message="记录不一致";</span>
+						<span>}</span>
+						<span>return {</span>
+						<span>result: result,</span>
+						<span>message: message,</span>
+						<span>data: targetRow,</span>
+						<span>};</span>
+						<span>}</span>
+					</div>
 				</el-form-item>
 			</el-form>
 			<span slot="footer" class="dialog-footer">
@@ -667,10 +657,12 @@ export default {
 	margin-top: 0px;
 }
 .example-js {
-	display: block;
-	color: #999;
-	font-size: 12px;
-	line-height: 16px;
+	span {
+		display: block;
+		color: #999;
+		font-size: 12px;
+		line-height: 16px;
+	}
 }
 .displayInline {
 	display: inline-block;
