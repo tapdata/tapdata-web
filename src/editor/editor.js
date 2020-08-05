@@ -266,7 +266,7 @@ export default class Editor extends BaseObject {
 		// }
 		// self.getRightSidebar().show();
 		self.initMonitor(dataFlow);
-		self.showLogs(dataFlow);
+		self.showLogs(dataFlow, true);
 	}
 
 	/**
@@ -338,7 +338,7 @@ export default class Editor extends BaseObject {
 	 * show logs panel
 	 * @param dataFlow
 	 */
-	showLogs(dataFlow) {
+	showLogs(dataFlow, isShow) {
 		let bottomTabPanel = this.getBottomTabPanel();
 		let logsPanel = bottomTabPanel.getChildByName('logsPanel');
 
@@ -356,7 +356,7 @@ export default class Editor extends BaseObject {
 			this.getBottomTabPanel().add(logsPanel);
 		}
 
-		if (this.getBottomSidebar().isShow() && logsPanel.selected) {
+		if (this.getBottomSidebar().isShow() && logsPanel.selected && !isShow) {
 			this.getBottomSidebar().hide();
 		} else {
 			this.getBottomTabPanel().select(logsPanel);
