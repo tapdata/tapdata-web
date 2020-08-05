@@ -72,9 +72,7 @@ const tc = {
 		},
 		menu: {
 			dashboard: '控制台',
-			dataSource: '数据源',
-			connections: '連接列表',
-			connection: '新建連接',
+			connections: '数据源',
 			dataFlows: '數據採集',
 			dataGovernance: '數據治理',
 			metadataDefinition: '數據目錄',

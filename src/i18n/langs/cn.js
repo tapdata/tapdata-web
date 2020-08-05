@@ -72,9 +72,7 @@ const cn = {
 		},
 		menu: {
 			dashboard: '控制台',
-			dataSource: '数据源',
-			connections: '连接列表',
-			connection: '新建连接',
+			connections: '数据源',
 			dataFlows: '数据采集',
 			dataGovernance: '数据治理',
 			metadataDefinition: '数据目录',

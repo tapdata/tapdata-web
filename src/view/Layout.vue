@@ -115,11 +115,7 @@ const Languages = {
 };
 let menuSetting = [
 	{ name: 'dashboard', icon: 'shouye' },
-	{
-		name: 'dataSource',
-		icon: 'shujukus1',
-		children: [{ name: 'connections' }, { name: 'connection' }]
-	},
+	{ name: 'connections', icon: 'shujukus1' },
 	{ name: 'dataFlows', icon: 'chengbenguanlixitong' },
 	{
 		name: 'dataGovernance',
