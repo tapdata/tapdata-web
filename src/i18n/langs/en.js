@@ -200,7 +200,8 @@ const en = {
 		submitOnly: 'Submit only',
 		implementationModalities: 'Execution method',
 		submitConfirmation: 'Submit Confirmation',
-		SyncPoint: 'Sync Node',
+		SyncPoint: 'Incremental acquisition time point',
+		cdcLabel: 'Data source: POSS SOURCE hkuatdb5 SYSAPP',
 		syncType: 'Sync type',
 		SyncInfo: {
 			localTZ: 'Local Timezone CDC Time: custom a point of  CDC time，in local time zone',
