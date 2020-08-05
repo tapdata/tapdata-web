@@ -278,7 +278,6 @@ export default {
 	},
 	mounted() {
 		let self = this;
-		document.title = self.$route.query.name || this.$t('dataflow.newTaksName');
 		// build editor
 		self.editor = editor({
 			container: $('.editor-container'),
@@ -337,6 +336,7 @@ export default {
 				this.onGraphChanged();
 				this.loading = false;
 				this.setEditable(true);
+				if (!this.dataFlow) window.title = this.$t('dataFlow.newTaksName');
 			}
 		},
 		/****
@@ -418,6 +418,7 @@ export default {
 			this.executeMode = dataFlow.executeMode;
 			this.sync_type = dataFlow.setting.sync_type;
 			this.dataFlow = dataFlow;
+			window.title = dataFlow.name;
 			// 管理端api创建任务来源以及editorData 数据丢失情况
 			if (!dataFlow.editorData && dataFlow.stages) {
 				// 1. 拿到创建所有的节点数据
@@ -837,8 +838,7 @@ export default {
 					if (err) {
 						this.$message.error(err.response.data);
 					} else {
-						self.setEditable(false);
-						self.editor.setData(data);
+						this.$message.success(self.$t('message.taskStart'));
 						self.$router.push({
 							path: '/job',
 							query: {
@@ -846,7 +846,7 @@ export default {
 								isMoniting: true
 							}
 						});
-						this.$message.success(self.$t('message.taskStart'));
+						location.reload();
 					}
 				});
 			}
@@ -1011,12 +1011,8 @@ export default {
 		 */
 		showSetting() {
 			log('Job.showSetting');
-			let name = '';
-			if (this.$route.query.name) {
-				name = this.$route.query.name;
-			}
 			if (this.$route.query.isMoniting == 'true') this.editor.showSetting(true);
-			else this.editor.showSetting(name);
+			else this.editor.showSetting();
 		},
 
 		/**

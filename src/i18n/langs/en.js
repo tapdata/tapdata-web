@@ -100,7 +100,7 @@ const en = {
 			serversOversee: 'Servers Oversee',
 			users: 'User Management',
 			journal: 'User action log',
-			roles: 'Roles',
+			roles: 'Role Management',
 			settings: 'Settings',
 			favorite: 'Favorite',
 
