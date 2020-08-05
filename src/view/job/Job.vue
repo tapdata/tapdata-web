@@ -1013,12 +1013,8 @@ export default {
 		 */
 		showSetting() {
 			log('Job.showSetting');
-			let name = '';
-			if (this.$route.query.name) {
-				name = this.$route.query.name;
-			}
 			if (this.$route.query.isMoniting == 'true') this.editor.showSetting(true);
-			else this.editor.showSetting(name);
+			else this.editor.showSetting();
 		},
 
 		/**
