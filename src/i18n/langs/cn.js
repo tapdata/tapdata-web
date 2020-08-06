@@ -240,6 +240,8 @@ const cn = {
 		current: '当前',
 		allNode: '全部节点',
 		taskName: '任务名称',
+		ownedUser: '所属用户',
+		ownedLibrary: '所属库',
 		creatdor: '创建人',
 		creationTime: '启动时间',
 		state: '状态',

@@ -24,7 +24,7 @@
 		<div class="echartMain">
 			<div class="echartlist">
 				<echart-head :data="screeningObj" @twoRadio="getTwoRadio"></echart-head>
-				<div class="info fl">
+				<!-- <div class="info fl">
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.taskName') }}:</span>
 						<span class="info-text" style="color: #48b6e2;">{{ flow.name }}</span>
@@ -39,6 +39,40 @@
 					</div>
 					<div v-if="flow.finishTime" class="info-list">
 						<span class="info-label">{{ $t('dataFlow.finishTime') }}:</span>
+						<span class="info-text">{{ flow.finishTime }}</span>
+					</div>
+					<div class="info-list">
+						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
+						<span class="info-text"> {{ flow.inputNumber }}</span>
+					</div>
+					<div class="info-list">
+						<span class="info-label">{{ $t('dataFlow.outputNumber') }}:</span>
+						<span class="info-text">{{ flow.outputNumber }}</span>
+					</div>
+				</div> -->
+				<div class="info fl">
+					<div class="info-list">
+						<span class="info-label">{{ $t('dataFlow.taskName') }}:</span>
+						<span class="info-text" style="color: #48b6e2;">{{ flow.name }}</span>
+					</div>
+					<div class="info-list">
+						<span class="info-label">{{ $t('dataFlow.ownedLibrary') }}:</span>
+						<span class="info-text">{{ flow.username }}</span>
+					</div>
+					<div class="info-list">
+						<span class="info-label">{{ $t('dataForm.form.host') }}:</span>
+						<span class="info-text">{{ flow.username }}</span>
+					</div>
+					<div class="info-list">
+						<span class="info-label">{{ $t('dataForm.form.databaseName') }}:</span>
+						<span class="info-text">{{ flow.startTime }}</span>
+					</div>
+					<div class="info-list">
+						<span class="info-label">{{ $t('dataFlow.ownedUser') }}:</span>
+						<span class="info-text">{{ flow.username }}</span>
+					</div>
+					<div v-if="flow.finishTime" class="info-list">
+						<span class="info-label">{{ $t('dataForm.form.databaseType') }}:</span>
 						<span class="info-text">{{ flow.finishTime }}</span>
 					</div>
 					<div class="info-list">

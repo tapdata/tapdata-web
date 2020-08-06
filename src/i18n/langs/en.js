@@ -241,6 +241,8 @@ const en = {
 		allNode: 'All Nodes',
 		taskName: 'Flow Name',
 		creatdor: 'Creator',
+		ownedUser: 'Owned User',
+		ownedLibrary: 'Owned Library',
 		creationTime: 'Start Time',
 		state: 'State',
 		executionTime: 'Lapsed Time',

@@ -240,6 +240,8 @@ const tc = {
 		allNode: '全部節點',
 		taskName: '任務名稱',
 		creatdor: '創建人',
+		ownedUser: '所屬用戶',
+		ownedLibrary: '所屬庫',
 		creationTime: '啟動時間',
 		state: '狀態',
 		executionTime: '本次執行時間',
