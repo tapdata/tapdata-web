@@ -142,9 +142,7 @@ export const baseElementConfig = {
 						verified = false;
 					}
 
-					// log(`${this.get("type")} validate form data`, formData, verified);
-
-					self.attr('body/stroke', verified ? '#2196F3' : '#ff0000');
+					if (formData && !formData.disabled) self.attr('body/stroke', verified ? '#2196F3' : '#ff0000');
 					if (formData && formData.name) {
 						let name = formData.name;
 						let isDataNode = typeof self.isDataNode === 'function' ? self.isDataNode() : false;
@@ -331,10 +329,6 @@ export const baseElementConfig = {
 					onewayOut = false,
 					self = this;
 				self.graph.startBatch('disable');
-				self.graph.getConnectedLinks(cell).forEach(link => {
-					link.attr('line/stroke', '#dedede');
-					link.attributes.form_data.disabled = true;
-				});
 				if (self.graph.getConnectedLinks(cell, { inbound: true }).length == 0) onewayIn = true;
 				if (self.graph.getConnectedLinks(cell, { outbound: true }).length == 0) onewayOut = true;
 				self.graph.getConnectedLinks(cell, { inbound: true }).forEach(link => {
@@ -392,22 +386,24 @@ export const baseElementConfig = {
 					cell.attr('body/fill', '#fafafa');
 					cell.attr('body/stroke', '#2196F3');
 					cell.attr('label/fill', '#333333');
+					cell.removePort('dis');
 					self.graph.getConnectedLinks(cell).forEach(link => {
 						link.attr('line/stroke', '#8f8f8f');
 						link.attributes.form_data.disabled = false;
 					});
 				});
+				self.graph.stopBatch('enble');
 				cells.forEach(cell => {
 					if (cell.attributes.form_data.disablChecker) {
 						self.graph.getConnectedLinks(cell).forEach(link => {
-							link.attr('line/stroke', 'blue');
+							link.attr('line/stroke', '#dedede');
 							link.attributes.form_data.disabled = true;
 						});
-						self.setDisabled(cell);
-						cell.attr('body/fill', 'grey');
+						self.graph.startBatch('enble');
+						self.setDisabled(cell, true);
+						self.graph.stopBatch('enble');
 					}
 				});
-				self.graph.stopBatch('enble');
 			}
 		}
 

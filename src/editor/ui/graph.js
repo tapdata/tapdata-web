@@ -490,6 +490,10 @@ export default class Graph extends Component {
 			);
 			halo.$el.find('button').click(() => {
 				event.stopPropagation();
+				this.graph.getConnectedLinks(elementView.model).forEach(link => {
+					link.attr('line/stroke', '#dedede');
+					link.attributes.form_data.disabled = true;
+				});
 				elementView.model.setDisabled(elementView.model, true);
 				event.target.outerHTML = '';
 			});
