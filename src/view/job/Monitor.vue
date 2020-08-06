@@ -24,7 +24,7 @@
 		<div class="echartMain">
 			<div class="echartlist">
 				<echart-head :data="screeningObj" @twoRadio="getTwoRadio"></echart-head>
-				<!-- <div class="info fl">
+				<div class="info fl" v-if="stageId === 'all'">
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.taskName') }}:</span>
 						<span class="info-text" style="color: #48b6e2;">{{ flow.name }}</span>
@@ -49,31 +49,31 @@
 						<span class="info-label">{{ $t('dataFlow.outputNumber') }}:</span>
 						<span class="info-text">{{ flow.outputNumber }}</span>
 					</div>
-				</div> -->
-				<div class="info fl">
+				</div>
+				<div class="info fl" v-else>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.taskName') }}:</span>
-						<span class="info-text" style="color: #48b6e2;">{{ flow.name }}</span>
+						<span class="info-text" style="color: #48b6e2;">{{ stage.nodeName }}</span>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.ownedLibrary') }}:</span>
-						<span class="info-text">{{ flow.username }}</span>
+						<span class="info-text">{{ stage.name }}</span>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataForm.form.host') }}:</span>
-						<span class="info-text">{{ flow.username }}</span>
+						<span class="info-text">{{ stage.database_host }}</span>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataForm.form.databaseName') }}:</span>
-						<span class="info-text">{{ flow.startTime }}</span>
+						<span class="info-text">{{ stage.database_name }}</span>
 					</div>
-					<div class="info-list">
+					<div class="info-list" v-if="stage.database_type !== 'mongodb'">
 						<span class="info-label">{{ $t('dataFlow.ownedUser') }}:</span>
-						<span class="info-text">{{ flow.username }}</span>
+						<span class="info-text">{{ stage.database_owner }}</span>
 					</div>
 					<div v-if="flow.finishTime" class="info-list">
 						<span class="info-label">{{ $t('dataForm.form.databaseType') }}:</span>
-						<span class="info-text">{{ flow.finishTime }}</span>
+						<span class="info-text">{{ stage.database_type }}</span>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
@@ -154,7 +154,7 @@ import factory from '../../api/factory';
 import { EditorEventType } from '../../editor/lib/events';
 import ws from '../../api/ws';
 const dataFlows = factory('DataFlows');
-
+const connectionApi = factory('connections');
 export default {
 	name: 'JobMonitor',
 	components: { echartHead, echartsCompinent, shaftlessEchart },
@@ -183,6 +183,14 @@ export default {
 				outputNumber: '',
 				stages: [],
 				id: ''
+			},
+			stage: {
+				nodeName: '',
+				database_host: '',
+				database_name: '',
+				database_owner: '', // 所属用户
+				database_type: '',
+				name: ''
 			},
 			throughputData: {
 				tooltip: {
@@ -401,7 +409,13 @@ export default {
 	mounted() {
 		this.sliderBar = this.editor.rightSidebar;
 		this.$on(EditorEventType.SELECTED_STAGE, selectStage => {
-			this.stageId = selectStage ? selectStage.id : 'all';
+			if (selectStage) {
+				this.stageId = selectStage.id;
+				this.getStageDataApi(selectStage.form_data.connectionId);
+				// console.log(selectStage);
+			} else {
+				this.stageId = 'all';
+			}
 		});
 		this.flow = this.dataFlow;
 		this.screeningObj = {
@@ -471,6 +485,7 @@ export default {
 					this.selectFlow = 'flow_';
 				} else {
 					this.selectFlow = 'stage_';
+					// this.getStageDataApi(val);
 				}
 				this.getApiData();
 			},
@@ -775,6 +790,16 @@ export default {
 			this.replicateData.xAxis.data = time;
 			this.replicateData.series[0].data = series;
 		},
+
+		// 获取stage的节点信息
+		getStageDataApi(id) {
+			connectionApi.customQuery([id]).then(res => {
+				if (res.data) {
+					this.stage = res.data;
+				}
+			});
+		},
+
 		// 跳转到数据校验页面
 		handleGoDataVerify() {
 			dataFlows
