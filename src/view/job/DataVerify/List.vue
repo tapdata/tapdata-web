@@ -159,7 +159,7 @@
 						<div v-if="formData.source.databaseType === 'mongodb'">
 							<el-checkbox v-model="formData.source.checkedSource"></el-checkbox>
 							<span>MQL {{ $t('dataVerify.filter') }}</span>
-							<div v-show="checkedSource">
+							<div v-show="formData.source.checkedSource">
 								<el-input
 									:rows="7"
 									type="textarea"
@@ -357,6 +357,7 @@ export default {
 				hash: '#62A569',
 				advance: '#9889D8'
 			},
+
 			tableData: [],
 			firstVerify: false
 		};
@@ -386,6 +387,31 @@ export default {
 		},
 		handleClose() {
 			this.disabledDrawer = false;
+			this.formData = {
+				condition: {
+					type: 'rows', // # rows：按行数参与校验，sampleRate：按采样率参与校验
+					// # type为rows时表示行数；type为sampleRate时，表示采样率，如：
+					value: '1000'
+				},
+				source: {
+					connectionId: '',
+					databaseType: '',
+					stageId: '',
+					tableName: '',
+					filter: '',
+					checkedSource: false
+				},
+				target: {
+					connectionId: '',
+					databaseType: '',
+					stageId: '',
+					tableName: '',
+					filter: '',
+					checkedTarget: false
+				},
+				validateCode: 'function validate(sourceRow){}',
+				type: 'advance' // row: 行数 hash：哈希  advance：高级校验
+			};
 		},
 		handleShowDrawer() {
 			this.disabledDrawer = true;
@@ -396,10 +422,42 @@ export default {
 			}
 		},
 		handleAdd() {
+			if (this.formData.source.connectionId === '' || !this.formData.source.connectionId) {
+				this.$message.error('please select source database');
+				return;
+			}
+			if (this.formData.source.stageId === '' || !this.formData.source.stageId) {
+				this.$message.error('please select source');
+				return;
+			}
+			if (this.formData.target.connectionId === '' || !this.formData.target.connectionId) {
+				this.$message.error('please select target database');
+				return;
+			}
+			if (this.formData.target.stageId === '' || !this.formData.target.stageId) {
+				this.$message.error('please select target');
+				return;
+			}
+			if (
+				(this.formData.source.filter === '' || !this.formData.source.filter) &&
+				this.formData.source.checkedSource &&
+				this.type !== 'advance'
+			) {
+				this.$message.error('please select source SQL/MQL');
+				return;
+			}
+			if (
+				(this.formData.target.filter === '' || !this.formData.target.filter) &&
+				this.formData.target.checkedTarget &&
+				this.type === 'row'
+			) {
+				this.$message.error('please select target SQL/MQL');
+				return;
+			}
+
 			if (this.editIndex !== -1) {
 				this.tableData.splice(this.editIndex, 1); // 不是编辑 先删除后新增 -1非编辑模式
 			}
-
 			this.tableData = this.tableData || [];
 			let source = this.sourceList.filter(item => item.stageId === this.formData.source.stageId);
 			if (source.length > 0) this.formData.source.tableName = source[0].tableName;
@@ -409,10 +467,10 @@ export default {
 			let data = {
 				validationSettings: this.tableData
 			};
-			this.disabledDrawer = false;
 			this.editIndex = -1;
 			dataFlows.patchId(this.id, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
+					this.handleClose();
 					this.getData();
 				}
 			});
@@ -444,7 +502,7 @@ export default {
 				this.$message.info('please add data verify');
 				return;
 			}
-			this.disabledDrawer = false;
+			this.handleClose();
 			let self = this;
 			// 状态修改为 waiting
 			let data = {
@@ -474,7 +532,7 @@ export default {
 			};
 			dataFlows.patchId(this.id, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
-					this.disabledDrawer = false;
+					this.handleClose();
 					this.getData();
 				}
 			});
@@ -496,10 +554,10 @@ export default {
 		},
 		GoBack() {
 			this.editor.showMonitor();
-			this.disabledDrawer = false;
+			this.handleClose();
 		},
 		showResult() {
-			this.disabledDrawer = false;
+			this.handleClose();
 			this.editor.showResult();
 		},
 		changeConditionType(type) {

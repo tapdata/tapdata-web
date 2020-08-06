@@ -931,6 +931,8 @@ const en = {
 		advance: 'Advance verify',
 		dataVerify: 'Data verify',
 		dataWay: 'Verify mode',
+		sourceDatabase: 'Source database',
+		targetDatabase: 'Target database',
 		range: 'Sampling',
 		source: 'Source',
 		target: 'Target',

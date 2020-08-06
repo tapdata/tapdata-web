@@ -922,6 +922,8 @@ const tc = {
 		hash: '哈希校驗',
 		advance: '高級校驗',
 		dataVerify: '數據校驗',
+		sourceDatabase: '数据源',
+		targetDatabase: '目标源',
 		dataWay: '校驗方式',
 		range: '採樣範圍',
 		source: '源表',

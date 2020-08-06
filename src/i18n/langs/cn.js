@@ -922,6 +922,8 @@ const cn = {
 		advance: '高级校验',
 		dataVerify: '数据校验',
 		dataWay: '校验方式',
+		sourceDatabase: '数据源',
+		targetDatabase: '目标源',
 		range: '采样范围',
 		source: '源表',
 		target: '目标表',
