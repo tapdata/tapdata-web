@@ -210,6 +210,8 @@ const en = {
 			otherError: 'Operation failed, please try it again.'
 		},
 		changeName: 'Edit',
+		Enable: 'Enable',
+		Disable: 'Disable',
 		draftNotStart: 'Configuration is not complete,  cannot be started',
 		systemHint: 'System prompt',
 		systemText: 'The system detected that the following tasks were not saved， keep editing?',

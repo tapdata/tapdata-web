@@ -209,6 +209,8 @@ const tc = {
 			otherError: '操作失敗，請重試'
 		},
 		changeName: '改名',
+		Enable: '啟用',
+		Disable: '禁用',
 		draftNotStart: '任務配置未完成，無法啟動',
 		systemHint: '系統提示',
 		systemText: '系統檢測出有如下任務上次操作後未保存，請問是否繼續編輯',

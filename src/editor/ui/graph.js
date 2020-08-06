@@ -17,6 +17,7 @@ import { DATA_FLOW_SETTING_DATA_KEY, FORM_DATA_KEY, SCHEMA_DATA_KEY, OUTPUT_SCHE
 import { isAcyclic } from 'graphlib/lib/alg';
 import { EditorEventType } from '../lib/events';
 import Tab from './tab';
+import i18n from '../../i18n/i18n';
 
 window.joint = joint;
 
@@ -477,7 +478,9 @@ export default class Graph extends Component {
 
 		if (elementView.model.attributes.form_data.disablChecker) {
 			halo.$el.append(
-				'<button class="handle" style="top: 40px; width:50px; height:18px; right: -10px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">Enable</button>'
+				'<button class="handle" style="top: 40px; width:53px; height:18px; right: -10px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">' +
+					i18n.t('dataFlow.Enable') +
+					'</button>'
 			);
 			halo.$el.find('button').click(() => {
 				event.stopPropagation();
@@ -486,7 +489,9 @@ export default class Graph extends Component {
 			});
 		} else if (!elementView.model.getFormData().disabled) {
 			halo.$el.append(
-				'<button class="handle" style="top: 40px; width:50px; height:18px; right: -10px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">Disable</button>'
+				'<button class="handle" style="top: 40px; width:53px; height:18px; right: -10px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">' +
+					i18n.t('dataFlow.Disable') +
+					'</button>'
 			);
 			halo.$el.find('button').click(() => {
 				event.stopPropagation();

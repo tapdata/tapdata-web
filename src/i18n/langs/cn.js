@@ -210,6 +210,8 @@ const cn = {
 			otherError: '操作失败, 请重试'
 		},
 		changeName: '改名',
+		Enable: '启用',
+		Disable: '禁用',
 		draftNotStart: '任务配置未完成，无法启动',
 		systemHint: '系统提示',
 		systemText: '系统检测出有如下任务上次操作后未保存，请问是否继续编辑',
