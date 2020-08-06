@@ -505,8 +505,12 @@ export default {
 			promise = dataFlowsApi.draft(data);
 			if (promise) {
 				promise
-					.catch(() => {
-						self.$message.error(self.$t('message.saveFail'));
+					.catch(e => {
+						if (e.response.data === 'duplication for names') {
+							self.$message.error(self.$t('message.exists_name'));
+						} else {
+							self.$message.error(self.$t('message.saveFail'));
+						}
 					})
 					.then(result => {
 						if (result && result.data) {
