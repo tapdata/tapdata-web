@@ -1,5 +1,5 @@
 <template>
-	<div class="primary-key-input">
+	<div class="multi-selection">
 		<el-select
 			size="mini"
 			:value="values"
@@ -8,13 +8,13 @@
 			allow-create
 			default-first-option
 			:placeholder="placeholder"
-			@remove-tag="$emit('removeTag', $event)"
+			@remove-tag="$emit('remove-tag', $event)"
 			@change="$emit('change', $event)"
 			@input="inputHandler"
 		>
 			<el-option v-for="opt in options.filter(i => !!i)" :key="opt" :label="opt" :value="opt"> </el-option>
 		</el-select>
-		<ClipButton :value="value"></ClipButton>
+		<ClipButton :value="value" v-if="showCopyBtn"></ClipButton>
 	</div>
 </template>
 
@@ -30,7 +30,11 @@ export default {
 			required: true
 		},
 		options: Array,
-		placeholder: String
+		placeholder: String,
+		showCopyBtn: {
+			type: Boolean,
+			default: true
+		}
 	},
 	computed: {
 		values() {
@@ -48,13 +52,13 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.primary-key-input {
+.multi-selection {
 	display: flex;
 	align-items: center;
 }
 </style>
 <style lang="less">
-.primary-key-input .el-select__input.is-mini {
+.multi-selection .el-select__input.is-mini {
 	height: 16px;
 }
 </style>

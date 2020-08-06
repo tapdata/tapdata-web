@@ -23,11 +23,11 @@
 					></el-input>
 				</el-form-item>
 				<el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.cacheKeys.label')">
-					<PrimaryKeyInput
+					<MultiSelection
 						v-model="model.cacheKeys"
 						:options="primaryKeyOptions"
 						:placeholder="$t('editor.cell.data_node.memCache.form.cacheKeys.placeholder')"
-					></PrimaryKeyInput>
+					></MultiSelection>
 				</el-form-item>
 				<el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.maxSize.label')">
 					<el-row :gutter="20">
@@ -126,14 +126,14 @@
 
 <script>
 // import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from "../../util/Schema";
-import PrimaryKeyInput from '../../../components/PrimaryKeyInput';
+import MultiSelection from '../../../components/MultiSelection';
 // import log from '../../../log';
 import _ from 'lodash';
 let editorMonitor = null;
 export default {
 	name: 'memCache',
 
-	components: { PrimaryKeyInput },
+	components: { MultiSelection },
 
 	data() {
 		return {
