@@ -180,6 +180,15 @@ const en = {
 		noRelatedTask: 'No related tasks'
 	},
 	dataFlow: {
+		databseProcessingHead: 'Data processing & SYNC',
+		databseMigrationHead: 'Database migration',
+		databseFreedomHead: 'Custom data SYNC',
+		databseProcessing:
+			'With the  guided mode to help novice users to quickly understand the table level data processing and SYNC. This function can not only realize table level INITAL and CDC transmission, but also focus on various processors (JS processing, field filtering, aggregation processing, row level filtering, etc.) for complex logical processing demands.',
+		databseMigration:
+			'With the guided mode to help novice users to quickly understand the operation method between databases. Database migration can quickly realize INITAL and CDC transmission between databases (include table filter and rename settings, etc). It is suitable for Database instance migration, upload to cloud/download from cloud, database splitting and expansion, disaster recovery or other business scenarios.',
+		databseFreedom:
+			'In the custom mode, user can freely use all the data nodes and processor nodes , set the task scheduling path and function configuration to solve various complex data processing scenarios and synchronization requirements',
 		multiError: {
 			allSelectionError: 'The status of selected job does not allow this operation.',
 			notFound: 'This job does not existed.',

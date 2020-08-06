@@ -12,8 +12,8 @@
 					<div class="content">
 						<i class="iconfont icon-qianyi1"></i>
 						<span>
-							<span class="tag">迁移功能</span>
-							旨在帮助用户快速地实现各种库级别数据源之间的数据全量和增量传输，适用于数据库迁移、上云、拆分扩容等业务场景。</span
+							<span class="tag">{{ $t('dataFlow.databseProcessingHead') }}</span>
+							{{ $t('dataFlow.databseProcessing') }}</span
 						>
 					</div>
 				</li>
@@ -21,8 +21,8 @@
 					<div class="content">
 						<i class="iconfont icon-kujitongbucopy"></i>
 						<span>
-							<span class="tag">同步功能</span>
-							旨在帮助用户实现多个表、文件等多种数据类型之间的数据处理与传输，满足用户对数据的分析、处理、灾备等方面的需求。</span
+							<span class="tag">{{ $t('dataFlow.databseMigrationHead') }}</span>
+							{{ $t('dataFlow.databseMigration') }}</span
 						>
 					</div>
 				</li>
@@ -32,8 +32,8 @@
 					<div class="content">
 						<i class="iconfont icon-custom"></i>
 						<span>
-							<span class="tag">自定义模式下</span>
-							用户可以根据需求使用全部的数据节点与全功能处理节点，自由设计任务编排路径。</span
+							<span class="tag">{{ $t('dataFlow.databseMigrationHead') }}</span>
+							{{ $t('dataFlow.databseFreedom') }}</span
 						>
 					</div>
 				</li>
