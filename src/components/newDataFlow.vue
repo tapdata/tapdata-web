@@ -2,7 +2,12 @@
 	<el-dialog title="新建" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
 		<div>
 			<ul class="item">
-				<li>
+				<li
+					@click="
+						dialogVisibleSetting = true;
+						dialogVisible = false;
+					"
+				>
 					<span class="model">场景模式</span>
 					<div class="content">
 						<i class="iconfont icon-qianyi1"></i>
