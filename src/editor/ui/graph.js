@@ -458,7 +458,6 @@ export default class Graph extends Component {
 
 	selectPrimaryElement(elementView) {
 		let element = elementView.model;
-		//self = this;
 
 		if (element.get('freeTransform') !== false) {
 			new joint.ui.FreeTransform({
@@ -474,25 +473,27 @@ export default class Graph extends Component {
 			handles: haloConfig.handles,
 			boxContent: false
 		});
-
-		// if (elementView.model.attributes.form_data.disablChecker) {
-		// 	halo.addHandle({ name: 'enableCell', position: 'ne', icon: 'static/editor/enable.png' });
-		// 	halo.on('action:enableCell:pointerdown', function(evt) {
-		// 		evt.stopPropagation();
-		// 		elementView.model.setEnabled();
-		// 	});
-		// } else if (!elementView.model.getFormData().disabled) {
-		// 	//halo.addHandle({ name: 'disableCell', position: 'se', icon: 'static/editor/disable.png' });
-		// 	// halo.on('action:disableCell:pointerdown', function(evt) {
-		// 	// 	evt.stopPropagation();
-		// 	// 	self.graph.getConnectedLinks(elementView.model).forEach(link => {
-		// 	// 		link.attr('line/stroke', 'blue');
-		// 	// 		link.attributes.form_data.disabled = true;
-		// 	// 	});
-		// 	// 	elementView.model.setDisabled(true);
-		// 	// });
-		// }
 		halo.render();
+
+		if (elementView.model.attributes.form_data.disablChecker) {
+			halo.$el.append(
+				'<button class="handle" style="top: 40px; width:50px; height:18px; right: -10px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">Enable</button>'
+			);
+			halo.$el.find('button').click(() => {
+				event.stopPropagation();
+				elementView.model.setEnabled(elementView.model);
+				event.target.outerHTML = '';
+			});
+		} else if (!elementView.model.getFormData().disabled) {
+			halo.$el.append(
+				'<button class="handle" style="top: 40px; width:50px; height:18px; right: -10px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">Disable</button>'
+			);
+			halo.$el.find('button').click(() => {
+				event.stopPropagation();
+				elementView.model.setDisabled(elementView.model, true);
+				event.target.outerHTML = '';
+			});
+		}
 	}
 
 	selectPrimaryLink(linkView) {

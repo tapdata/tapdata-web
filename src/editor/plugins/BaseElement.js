@@ -84,6 +84,21 @@ export const baseElementConfig = {
 					y: 0
 				}
 			},
+			ports: {
+				groups: {
+					greens: {
+						attrs: {
+							circle: {
+								fill: '#f56c6c',
+								stroke: 'red',
+								strokeWidth: 1,
+								r: 6
+							}
+						},
+						position: 'absolute'
+					}
+				}
+			},
 
 			[SCHEMA_DATA_KEY]: null,
 			[OUTPUT_SCHEMA_DATA_KEY]: null
@@ -311,36 +326,88 @@ export const baseElementConfig = {
 			allowSource() {
 				return false;
 			},
-			setDisabled(checked) {
+			setDisabled(cell, checked) {
 				let onewayIn = false,
 					onewayOut = false,
 					self = this;
-				if (self.graph.getConnectedLinks(this, { inbound: true }).length == 0) onewayIn = true;
-				if (self.graph.getConnectedLinks(this, { outbound: true }).length == 0) onewayOut = true;
-				self.graph.getConnectedLinks(this, { inbound: true }).forEach(link => {
+				self.graph.startBatch('disable');
+				self.graph.getConnectedLinks(cell).forEach(link => {
+					link.attr('line/stroke', '#dedede');
+					link.attributes.form_data.disabled = true;
+				});
+				if (self.graph.getConnectedLinks(cell, { inbound: true }).length == 0) onewayIn = true;
+				if (self.graph.getConnectedLinks(cell, { outbound: true }).length == 0) onewayOut = true;
+				self.graph.getConnectedLinks(cell, { inbound: true }).forEach(link => {
 					if (!link.attributes.form_data.disabled) onewayIn = true;
 				});
-				self.graph.getConnectedLinks(this, { outbound: true }).forEach(link => {
+				self.graph.getConnectedLinks(cell, { outbound: true }).forEach(link => {
 					if (!link.attributes.form_data.disabled) onewayOut = true;
 				});
 				if (!(onewayIn && onewayOut) || checked) {
-					this.attributes.form_data.disabled = true;
-					if (checked) this.attributes.form_data.disablChecker = true;
-					this.attr('body/fill', 'silver');
-					self.graph.getConnectedLinks(this, { inbound: true }).forEach(link => {
+					cell.attributes.form_data.disabled = true;
+					if (checked) cell.attributes.form_data.disablChecker = true;
+					cell.attr('body/fill', '#f1f1f1');
+					cell.attr('body/stroke', 'grey');
+					cell.attr('label/fill', '#ccc');
+					self.graph.getConnectedLinks(cell, { inbound: true }).forEach(link => {
 						if (!!link.attributes.form_data.disabled && !checked) return;
 						link.attributes.form_data.disabled = true;
-						link.attr('line/stroke', 'blue');
+						link.attr('line/stroke', '#dedede');
 						self.setDisabled(link.getSourceCell());
 					});
-					self.graph.getConnectedLinks(this, { outbound: true }).forEach(link => {
+					self.graph.getConnectedLinks(cell, { outbound: true }).forEach(link => {
 						if (!!link.attributes.form_data.disabled && !checked) return;
 						link.attributes.form_data.disabled = true;
-						link.attr('line/stroke', 'blue');
+						link.attr('line/stroke', '#dedede');
 						if (!link.getTargetCell().isDataNode()) self.setDisabled(link.getTargetCell());
 					});
 				}
-				if (checked) this.attr('body/fill', 'grey');
+				if (checked) {
+					cell.attr('body/fill', '#f1f1f1');
+					cell.attr('body/stroke', 'silver');
+					cell.attr('label/fill', '#ccc');
+					cell.addPort({
+						id: 'dis',
+						group: 'greens',
+						args: {
+							x: '97%',
+							y: '20%'
+						}
+					});
+				}
+				self.graph.stopBatch('disable');
+			},
+			setEnabled(cell) {
+				let self = this;
+				self.graph.startBatch('enble');
+				cell.attributes.form_data.disabled = false;
+				cell.attributes.form_data.disablChecker = false;
+				cell.attr('body/fill', '#fafafa');
+				cell.attr('body/stroke', '#2196F3');
+				cell.attr('label/fill', '#333333');
+				cell.removePort('dis');
+				let cells = self.graph.getSuccessors(cell).concat(self.graph.getPredecessors(cell));
+				cells.forEach(cell => {
+					cell.attributes.form_data.disabled = false;
+					cell.attr('body/fill', '#fafafa');
+					cell.attr('body/stroke', '#2196F3');
+					cell.attr('label/fill', '#333333');
+					self.graph.getConnectedLinks(cell).forEach(link => {
+						link.attr('line/stroke', '#8f8f8f');
+						link.attributes.form_data.disabled = false;
+					});
+				});
+				cells.forEach(cell => {
+					if (cell.attributes.form_data.disablChecker) {
+						self.graph.getConnectedLinks(cell).forEach(link => {
+							link.attr('line/stroke', 'blue');
+							link.attributes.form_data.disabled = true;
+						});
+						self.setDisabled(cell);
+						cell.attr('body/fill', 'grey');
+					}
+				});
+				self.graph.stopBatch('enble');
 			}
 		}
 
