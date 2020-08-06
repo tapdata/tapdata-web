@@ -6,6 +6,10 @@
 			></el-button>
 			<span class="back-btn-text">{{ $t('dataVerify.dataVerify') }}</span>
 		</div>
+		<div class="operation">
+			<span>{{ `条目：${this.tableData.length}` }}</span>
+			<span @click="handleClear" class="clear-btn">清空</span>
+		</div>
 		<div class="table-box">
 			<el-table :data="tableData" border class="dv-table" style="width: 100%">
 				<el-table-column prop="type" :label="$t('dataVerify.dataWay')" width="150">
@@ -413,6 +417,28 @@ export default {
 				}
 			});
 		},
+		handleClear() {
+			let data = {
+				validationSettings: []
+			};
+			this.deleteConfirm(() => {
+				dataFlows.patchId(this.id, data).then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						this.getData();
+						this.$message.success(this.$t('message.deleteOK'));
+					} else {
+						this.$message.info(this.$t('message.deleteFail'));
+					}
+				});
+			});
+		},
+		deleteConfirm(callback) {
+			this.$confirm(this.$t('message.deteleMessage'), this.$t('dataFlow.importantReminder'), {
+				confirmButtonText: this.$t('metaData.deleteNode'),
+				cancelButtonText: this.$t('message.cancel'),
+				type: 'warning'
+			}).then(callback);
+		},
 		handleLoading() {
 			if (this.tableData.length === 0) {
 				this.$message.info('please add data verify');
@@ -541,6 +567,23 @@ export default {
 	padding-left: 20px;
 	background: rgba(245, 245, 245, 1);
 	border: 1px solid rgba(222, 222, 228, 1);
+}
+.operation {
+	display: flex;
+	justify-content: flex-end;
+	span {
+		font-size: 12px;
+		line-height: 24px;
+		color: #aaa;
+	}
+	.clear-btn {
+		display: inline-block;
+		margin-left: 10px;
+		margin-right: 10px;
+		line-height: 24px;
+		color: #5fa9ee;
+		cursor: pointer;
+	}
 }
 .data-verify {
 	position: relative;
