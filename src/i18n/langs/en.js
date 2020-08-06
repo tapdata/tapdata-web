@@ -100,7 +100,7 @@ const en = {
 			serversOversee: 'Servers Oversee',
 			users: 'User Management',
 			journal: 'User action log',
-			roles: 'Roles',
+			roles: 'Role Management',
 			settings: 'Settings',
 			favorite: 'Favorite',
 
@@ -453,8 +453,8 @@ const en = {
 					Undo: 'Undo',
 					bulkRemoval: 'Bulk removal',
 					bulkRevocation: 'Bulk revocation',
-					queueCopied: 'Queue to be copied',
-					tableRemoved: 'Table removed',
+					queueCopied: 'Included Tables',
+					tableRemoved: 'Excluded Tables',
 					enterName: 'Please enter the name / field name to search'
 				},
 				collection: {

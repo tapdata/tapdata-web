@@ -46,11 +46,11 @@
 				</el-form-item>
 
 				<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
-					<PrimaryKeyInput
+					<MultiSelection
 						v-model="model.primaryKeys"
 						:options="primaryKeyOptions"
 						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
-					></PrimaryKeyInput>
+					></MultiSelection>
 				</el-form-item>
 				<el-form-item
 					required
@@ -263,7 +263,7 @@
 
 <script>
 import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
-import PrimaryKeyInput from '../../../components/PrimaryKeyInput';
+import MultiSelection from '../../../components/MultiSelection';
 import ClipButton from '@/components/ClipButton';
 import { convertSchemaToTreeData } from '../../util/Schema';
 import RelatedTasks from '../../../components/relatedTasks';
@@ -276,7 +276,7 @@ let editor = null;
 let tempSchemas = [];
 export default {
 	name: 'Table',
-	components: { Entity, DatabaseForm, PrimaryKeyInput, ClipButton, RelatedTasks },
+	components: { Entity, DatabaseForm, MultiSelection, ClipButton, RelatedTasks },
 	props: {
 		database_types: {
 			type: Array,
@@ -685,7 +685,7 @@ export default {
 		},
 		getData() {
 			if (this.model.isFilter)
-				if (this.model.sqlFromCust) this.model.sql = this.model.custSql.sql;
+				if (this.model.sqlFromCust) this.model.sql = this.model.cSql;
 				else this.model.sql = this.model.editSql;
 			let result = _.cloneDeep(this.model);
 			result.name = result.tableName || 'Table';

@@ -100,29 +100,17 @@
 						:prop="'logCollectorSettings.' + index + '.selectTables'"
 						required
 					>
-						<el-select
+						<MultiSelection
 							v-model="item.selectTables"
-							:value-key="item.connectionId"
-							multiple
-							@change="changeIncludeTables(item)"
-							@input="handleForceUpdate"
-							allow-create
-							filterable
-							default-first-option
+							:showCopyBtn="false"
+							:options="item.includeTablesList"
 							:placeholder="
 								item.selectType === 'reservationTable'
 									? $t('editor.cell.data_node.logminer.tableFilter.tableFilter')
 									: $t('editor.cell.data_node.logminer.tableFilter.placeholderDelete')
 							"
-						>
-							<el-option
-								v-for="childItem in item.includeTablesList"
-								:key="childItem"
-								:label="childItem"
-								:value="childItem"
-							>
-							</el-option>
-						</el-select>
+							@change="changeIncludeTables(item)"
+						></MultiSelection>
 					</el-form-item>
 				</el-col>
 				<el-col :span="2" class="right">
@@ -151,12 +139,17 @@
 import _ from 'lodash';
 import log from '../../../log';
 import factory from '../../../api/factory';
+import MultiSelection from '../../../components/MultiSelection';
+
 let connectionApi = factory('connections');
 
 let editorMonitor = null;
 let tempSchemas = [];
 export default {
 	name: 'Aggregate',
+	components: {
+		MultiSelection
+	},
 	data() {
 		return {
 			model: {

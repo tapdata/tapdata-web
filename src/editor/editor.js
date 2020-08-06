@@ -266,7 +266,7 @@ export default class Editor extends BaseObject {
 		// }
 		// self.getRightSidebar().show();
 		self.initMonitor(dataFlow);
-		self.showLogs(dataFlow);
+		self.showLogs(dataFlow, true);
 	}
 
 	/**
@@ -317,6 +317,10 @@ export default class Editor extends BaseObject {
 	 * @param name
 	 */
 	showSetting(editDisable) {
+		if (!this.getRightTabPanel().el.is(':hidden')) {
+			this.getRightSidebar().hide();
+			return;
+		}
 		this.getRightTabPanel().removeAll();
 		let self = this;
 		self.initSettings();
@@ -325,8 +329,7 @@ export default class Editor extends BaseObject {
 			let setting = rightTabPanel.getChildByName('setting');
 			if (setting) {
 				let settingData = self.graph.getSettingData() || {};
-				if (editDisable) settingData.editDisable = editDisable;
-				else settingData.editDisable = false;
+				settingData.editDisable = !!editDisable;
 				setting.setData(settingData);
 			}
 			rightTabPanel.select(setting);
@@ -338,7 +341,7 @@ export default class Editor extends BaseObject {
 	 * show logs panel
 	 * @param dataFlow
 	 */
-	showLogs(dataFlow) {
+	showLogs(dataFlow, isShow) {
 		let bottomTabPanel = this.getBottomTabPanel();
 		let logsPanel = bottomTabPanel.getChildByName('logsPanel');
 
@@ -356,7 +359,7 @@ export default class Editor extends BaseObject {
 			this.getBottomTabPanel().add(logsPanel);
 		}
 
-		if (this.getBottomSidebar().isShow() && logsPanel.selected) {
+		if (this.getBottomSidebar().isShow() && logsPanel.selected && !isShow) {
 			this.getBottomSidebar().hide();
 		} else {
 			this.getBottomTabPanel().select(logsPanel);

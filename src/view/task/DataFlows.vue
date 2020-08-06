@@ -549,7 +549,7 @@ export default {
 				}).then(() => {
 					let routeUrl = this.$router.resolve({
 						path: '/job',
-						query: { id: id, name: name }
+						query: { id: id }
 					});
 					setTimeout(() => {
 						document.querySelectorAll('.el-tooltip__popper').forEach(it => {
@@ -562,7 +562,7 @@ export default {
 			} else {
 				let routeUrl = this.$router.resolve({
 					path: '/job',
-					query: { id: id, isMoniting: true }
+					query: { id: id, isMoniting: true, name: name }
 				});
 				window.open(routeUrl.href, 'monitor_' + id);
 			}
@@ -611,7 +611,7 @@ export default {
 			let id = node.id;
 			let where = {
 				_id: {
-					in: id
+					in: [id]
 				}
 			};
 			switch (command) {

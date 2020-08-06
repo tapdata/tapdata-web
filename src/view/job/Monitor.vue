@@ -344,11 +344,11 @@ export default {
 			outputAverage: '', // 输出平均值
 			currentTime: '', // 当前耗时
 			ransfTime: '', // 传输耗时
-			throughputTime: '',
+			throughputTime: 'minute',
 			isThroughputAll: '',
 			dataOverviewAll: '',
-			transfTime: '',
-			replicateTime: '',
+			transfTime: 'minute',
+			replicateTime: 'minute',
 			transfType: '',
 			replicateType: '',
 			dataOverviewType: '',
@@ -462,6 +462,9 @@ export default {
 				},
 				dataFlowId: this.flow.id
 			};
+			if (this.stageId != 'all') {
+				msg['stageId'] = this.stageId;
+			}
 
 			if (ws.ws.readyState == 1) ws.send(msg);
 		},

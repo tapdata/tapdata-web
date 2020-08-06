@@ -246,6 +246,7 @@ export default {
 								expanded: true,
 								leaf: true,
 								meta_type: record.meta_type,
+								source: record.source || '',
 								database_type: record.source.database_type || '',
 								original_name: record.original_name || '',
 								fields: record.fields
