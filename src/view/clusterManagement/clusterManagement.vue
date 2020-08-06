@@ -5,7 +5,7 @@
 			<el-row class="fun-area" :gutter="10">
 				<el-col :span="12">
 					<div class="demo-input-suffix">
-						<span>{{ $t("message.sourchName") }}</span>
+						<span>{{ $t('message.sourchName') }}</span>
 						<el-input
 							:placeholder="$t('message.placeholderServer')"
 							clearable
@@ -13,7 +13,7 @@
 							v-model="sourch"
 						>
 						</el-input>
-						<el-button type="primary" @click="screenFn">{{ $t("message.filter") }}</el-button>
+						<el-button type="primary" @click="screenFn">{{ $t('message.filter') }}</el-button>
 					</div>
 				</el-col>
 				<el-col class="text-rf screen" :span="2" :offset="9"> </el-col>
@@ -32,7 +32,7 @@
 								</div>
 								<div class="fr" style="width: 40%;">
 									<el-button size="mini" class="fr addBtn" @click="addServeFn(item)">{{
-										$t("message.addServerMon")
+										$t('message.addServerMon')
 									}}</el-button>
 								</div>
 								<!--  -->
@@ -41,7 +41,7 @@
 								<el-row :gutter="20" class="data-list">
 									<el-col :span="8">
 										<span class="txt"
-											><i class="icon iconfont iconhoutai"></i>{{ $t("message.manageSys") }}</span
+											><i class="icon iconfont iconhoutai"></i>{{ $t('message.manageSys') }}</span
 										>
 									</el-col>
 									<el-col :span="4">
@@ -55,13 +55,13 @@
 												:type="item.management.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.management.status == 'stopped' ? false : true"
 												@click="startFn(item, item.management.status, 'management', 'start')"
-												>{{ $t("message.startUp") }}</el-button
+												>{{ $t('message.startUp') }}</el-button
 											>
 											<el-button
 												:type="item.management.status == 'running' ? 'danger' : 'info'"
 												:disabled="item.management.status == 'running' ? false : true"
 												@click="closeFn(item, item.management.status, 'management', 'stop')"
-												>{{ $t("message.close") }}</el-button
+												>{{ $t('message.close') }}</el-button
 											>
 											<el-button
 												type="text"
@@ -69,7 +69,7 @@
 												@click="
 													restartFn(item, item.management.status, 'management', 'restart')
 												"
-												>{{ $t("message.restart") }}</el-button
+												>{{ $t('message.restart') }}</el-button
 											>
 										</div>
 									</el-col>
@@ -77,7 +77,7 @@
 								<el-row :gutter="20" class="data-list">
 									<el-col :span="8">
 										<span class="txt"
-											><i class="icon iconfont icontongbu"></i>{{ $t("message.syncGover") }}</span
+											><i class="icon iconfont icontongbu"></i>{{ $t('message.syncGover') }}</span
 										>
 									</el-col>
 									<el-col :span="4">
@@ -91,19 +91,19 @@
 												:type="item.engine.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.engine.status == 'stopped' ? false : true"
 												@click="startFn(item, item.engine.status, 'engine')"
-												>{{ $t("message.startUp") }}</el-button
+												>{{ $t('message.startUp') }}</el-button
 											>
 											<el-button
 												:type="item.engine.status == 'running' ? 'danger' : 'info'"
 												:disabled="item.engine.status == 'running' ? false : true"
 												@click="closeFn(item, item.engine.status, 'engine')"
-												>{{ $t("message.close") }}</el-button
+												>{{ $t('message.close') }}</el-button
 											>
 											<el-button
 												type="text"
 												:disabled="item.engine.status == 'running' ? false : true"
 												@click="restartFn(item, item.engine.status, 'engine')"
-												>{{ $t("message.restart") }}</el-button
+												>{{ $t('message.restart') }}</el-button
 											>
 										</div>
 									</el-col>
@@ -123,19 +123,19 @@
 												:type="item.apiServer.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.apiServer.status == 'stopped' ? false : true"
 												@click="startFn(item, item.apiServer.status, 'apiServer')"
-												>{{ $t("message.startUp") }}</el-button
+												>{{ $t('message.startUp') }}</el-button
 											>
 											<el-button
 												:type="item.apiServer.status == 'running' ? 'danger' : 'info'"
 												:disabled="item.apiServer.status == 'running' ? false : true"
 												@click="closeFn(item, item.apiServer.status, 'apiServer')"
-												>{{ $t("message.close") }}</el-button
+												>{{ $t('message.close') }}</el-button
 											>
 											<el-button
 												type="text"
 												:disabled="item.apiServer.status == 'running' ? false : true"
 												@click="restartFn(item, item.apiServer.status, 'apiServer')"
-												>{{ $t("message.restart") }}</el-button
+												>{{ $t('message.restart') }}</el-button
 											>
 										</div>
 									</el-col>
@@ -157,10 +157,10 @@
 									<el-col :span="7" :offset="5">
 										<div class="btn fr">
 											<el-button type="text" @click="delServe(child, item.status)">{{
-												$t("message.delete")
+												$t('message.delete')
 											}}</el-button>
 											<el-button type="text" @click="editServe(child, item.status, item)">{{
-												$t("message.edit")
+												$t('message.edit')
 											}}</el-button>
 										</div>
 									</el-col>
@@ -185,9 +185,9 @@
 		>
 			<addServe :data="currentData" :editItem="editItem" ref="childRules"></addServe>
 			<div slot="footer" class="dialog-footer">
-				<el-button size="small" @click="closeDialogForm()">{{ $t("message.cancel") }}</el-button>
+				<el-button size="small" @click="closeDialogForm()">{{ $t('message.cancel') }}</el-button>
 				<el-button size="small" type="primary" @click="submitForm('ruleForm')">{{
-					$t("message.confirm")
+					$t('message.confirm')
 				}}</el-button>
 			</div>
 		</el-dialog>
@@ -195,24 +195,24 @@
 </template>
 <script>
 // import vueWaterfallEasy from 'vue-waterfall-easy';
-import addServe from "./component/addServe";
-import factory from "../../api/factory";
-const cluster = factory("cluster");
+import addServe from './component/addServe';
+import factory from '../../api/factory';
+const cluster = factory('cluster');
 export default {
-	name: "clusterManagement",
+	name: 'clusterManagement',
 	components: { addServe },
 	data() {
 		return {
 			waterfallData: [],
 			currentData: null,
 			dialogForm: false,
-			activeIndex: "1",
-			sourch: "",
-			serveStatus: "",
+			activeIndex: '1',
+			sourch: '',
+			serveStatus: '',
 			isStop: false,
-			engineState: "",
-			managementState: "",
-			apiServerState: "",
+			engineState: '',
+			managementState: '',
+			apiServerState: '',
 			list: [],
 			editItem: {}
 		};
@@ -227,42 +227,42 @@ export default {
 		async submitForm() {
 			let getFrom = this.$refs.childRules.ruleForm;
 			let status = this.$refs.childRules.data.status;
-			let flag = this.$refs["childRules"].validateForm();
-			if (status === "running") {
+			let flag = this.$refs['childRules'].validateForm();
+			if (status === 'running') {
 				if (flag) {
 					let data = {
 						uuid: this.currentData.uuid,
 						name: getFrom.name,
 						command: getFrom.command,
-						arguments: getFrom.arguments ? getFrom.arguments : ""
+						arguments: getFrom.arguments ? getFrom.arguments : ''
 					};
-					if (getFrom.id === "") {
+					if (getFrom.id === '') {
 						await cluster.addMonitor(data).then(res => {
-							if (res.statusText === "OK" || res.status === 200) {
+							if (res.statusText === 'OK' || res.status === 200) {
 								this.dialogForm = false;
 								this.getDataApi();
-								this.$message.success(this.$t("message.saveOK"));
+								this.$message.success(this.$t('message.saveOK'));
 							} else {
-								this.$message.error(this.$t("message.saveFail"));
+								this.$message.error(this.$t('message.saveFail'));
 							}
 							this.dialogForm = false;
 						});
 					} else {
 						data.id = getFrom.id;
 						await cluster.editMonitor(data).then(res => {
-							if (res.statusText === "OK" || res.status === 200) {
+							if (res.statusText === 'OK' || res.status === 200) {
 								this.dialogForm = false;
 								this.getDataApi();
-								this.$message.success(this.$t("message.saveOK"));
+								this.$message.success(this.$t('message.saveOK'));
 							} else {
-								this.$message.error(this.$t("message.saveFail"));
+								this.$message.error(this.$t('message.saveFail'));
 							}
 							this.dialogForm = false;
 						});
 					}
 				}
 			} else {
-				this.$message.error(this.$t("message.startupAfter_add"));
+				this.$message.error(this.$t('message.startupAfter_add'));
 			}
 		},
 		editServe(item, status, data) {
@@ -277,22 +277,22 @@ export default {
 				id: data.id
 			};
 
-			if (status === "running") {
-				this.$confirm(this.$t("message.deleteOrNot") + "?", {
-					confirmButtonText: this.$t("message.confirm"),
-					cancelButtonText: this.$t("message.cancle")
+			if (status === 'running') {
+				this.$confirm(this.$t('message.deleteOrNot') + '?', {
+					confirmButtonText: this.$t('message.confirm'),
+					cancelButtonText: this.$t('message.cancle')
 				}).then(() => {
 					cluster.removeMonitor(params).then(res => {
-						if (res.statusText === "OK" || res.status === 200) {
+						if (res.statusText === 'OK' || res.status === 200) {
 							this.getDataApi();
-							this.$message.success(this.$t("message.deleteOK"));
+							this.$message.success(this.$t('message.deleteOK'));
 						} else {
-							this.$message.error(this.$t("message.deleteFail"));
+							this.$message.error(this.$t('message.deleteFail'));
 						}
 					});
 				});
 			} else {
-				this.$message.error(this.$t("message.startupAfter_delete"));
+				this.$message.error(this.$t('message.startupAfter_delete'));
 			}
 		},
 		addServeFn(item) {
@@ -302,11 +302,11 @@ export default {
 		},
 		// 启动
 		startFn(item, status, server) {
-			if (status === "stopped") {
+			if (status === 'stopped') {
 				let data = {
 					uuid: item.uuid,
 					server: server,
-					operation: "start"
+					operation: 'start'
 				};
 				this.operationFn(data);
 			}
@@ -314,22 +314,22 @@ export default {
 		// 关闭
 		closeFn(item, status, server) {
 			let name;
-			if (server === "apiServer") {
-				name = "API SEVER";
-			} else if (server === "engine") {
-				name = this.$t("message.syncGover");
+			if (server === 'apiServer') {
+				name = 'API SEVER';
+			} else if (server === 'engine') {
+				name = this.$t('message.syncGover');
 			} else {
-				name = this.$t("message.manageSys");
+				name = this.$t('message.manageSys');
 			}
-			if (status === "running") {
+			if (status === 'running') {
 				let data = {
 					uuid: item.uuid,
 					server: server,
-					operation: "stop"
+					operation: 'stop'
 				};
-				this.$confirm(this.$t("message.confirm") + " " + name + " " + this.$t("message.closeSever"), {
-					confirmButtonText: this.$t("message.confirm"),
-					cancelButtonText: this.$t("message.cancle")
+				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.closeSever'), {
+					confirmButtonText: this.$t('message.confirm'),
+					cancelButtonText: this.$t('message.cancle')
 				}).then(() => {
 					this.operationFn(data);
 				});
@@ -337,22 +337,22 @@ export default {
 		},
 		restartFn(item, status, server) {
 			let name;
-			if (server === "apiServer") {
-				name = "API SEVER";
-			} else if (server === "engine") {
-				name = this.$t("message.syncGover");
+			if (server === 'apiServer') {
+				name = 'API SEVER';
+			} else if (server === 'engine') {
+				name = this.$t('message.syncGover');
 			} else {
-				name = this.$t("message.manageSys");
+				name = this.$t('message.manageSys');
 			}
-			if (status === "running") {
+			if (status === 'running') {
 				let data = {
 					uuid: item.uuid,
 					server: server,
-					operation: "restart"
+					operation: 'restart'
 				};
-				this.$confirm(this.$t("message.confirm") + " " + name + " " + this.$t("message.restartServer"), {
-					confirmButtonText: this.$t("message.confirm"),
-					cancelButtonText: this.$t("message.cancle")
+				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.restartServer'), {
+					confirmButtonText: this.$t('message.confirm'),
+					cancelButtonText: this.$t('message.cancle')
 				}).then(() => {
 					this.operationFn(data);
 				});
@@ -369,15 +369,15 @@ export default {
 		// 筛选
 		screenFn() {
 			let params = {
-				"filter[where][or][0][systemInfo.hostname][like]": this.sourch,
-				"filter[where][or][1][systemInfo.ip][like]": this.sourch
+				'filter[where][or][0][systemInfo.hostname][like]': this.sourch,
+				'filter[where][or][1][systemInfo.ip][like]': this.sourch
 			};
 			if (this.sourch) {
 				this.getDataApi(params);
 			} else {
 				this.getDataApi();
 			}
-			this.sourch = "";
+			this.sourch = '';
 		},
 
 		// 这是一个定时器
@@ -391,7 +391,7 @@ export default {
 		// 获取数据
 		getDataApi(params) {
 			cluster.get(params).then(res => {
-				if (res.statusText === "OK" || res.status === 200) {
+				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
 						this.list = res.data;
 						let [...waterfallData] = this.list;

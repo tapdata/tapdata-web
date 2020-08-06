@@ -105,6 +105,29 @@ const tc = {
 			favorite: '我的收藏',
 
 			delFavMenu: '删除收藏'
+		},
+		Home: {
+			all: '全部',
+			taskOverview: '任務概覽',
+			allTask: '全部任務',
+			transmissionOverview: '傳輸總覽',
+			transferTask: '傳輸任務',
+			wrongTask: '錯誤任務',
+			taskRanking: '任務傳輸排行',
+			serverProcess: '服務器與進程',
+			before: '前',
+			pcs: '條',
+			server: '服務器',
+			managementSide: '管理端',
+			taskTransfer: '任務傳輸',
+			apiService: 'API服務',
+			totalOutput: '總輸出',
+			totalInput: '總寫入',
+			bar: '條',
+			starting: '啟動中',
+			running: '運行中',
+			stopping: '關閉中',
+			stopped: '已關閉'
 		}
 	},
 	message: {

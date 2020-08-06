@@ -105,6 +105,29 @@ const cn = {
 			favorite: '我的收藏',
 
 			delFavMenu: '删除收藏'
+		},
+		Home: {
+			all: '全部',
+			taskOverview: '任务概览',
+			allTask: '全部任务',
+			transmissionOverview: '传输总览',
+			transferTask: '传输任务',
+			wrongTask: '错误任务',
+			taskRanking: '任务传输排行',
+			serverProcess: '服务器与进程',
+			before: '前',
+			pcs: '条',
+			server: '服务器',
+			managementSide: '管理端',
+			taskTransfer: '任务传输',
+			apiService: 'API服务',
+			totalOutput: '总输出',
+			totalInput: '总写入',
+			bar: '条',
+			starting: '启动中',
+			running: '运行中',
+			stopping: '关闭中',
+			stopped: '已关闭'
 		}
 	},
 	message: {
