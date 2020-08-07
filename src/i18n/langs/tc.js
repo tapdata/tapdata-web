@@ -200,6 +200,7 @@ const tc = {
 		noRelatedTask: '暫無相關任務'
 	},
 	dataFlow: {
+		updateModel: '更新模型',
 		multiError: {
 			allSelectionError: '選中的任務狀態不允許這種操作',
 			notFound: '此任務不存在',

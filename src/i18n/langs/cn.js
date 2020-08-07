@@ -201,6 +201,7 @@ const cn = {
 		noRelatedTask: '暂无相关任务'
 	},
 	dataFlow: {
+		updateModel: '更新模型',
 		multiError: {
 			allSelectionError: '选中的任务状态不允许这种操作',
 			notFound: '此任务不存在',

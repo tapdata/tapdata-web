@@ -201,6 +201,7 @@ const en = {
 		noRelatedTask: 'No related tasks'
 	},
 	dataFlow: {
+		updateModel: 'Update Model',
 		multiError: {
 			allSelectionError: 'The status of selected job does not allow this operation.',
 			notFound: 'This job does not existed.',

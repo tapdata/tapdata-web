@@ -141,7 +141,11 @@
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
+				<el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
+					$t('dataFlow.updateModel')
+				}}</el-button>
 				<entity
+					v-loading="schemaSelectConfig.loading"
 					:schema="convertSchemaToTreeData(defaultSchema)"
 					:editable="false"
 					:operations="model.operations"
@@ -560,6 +564,16 @@ export default {
 
 		seeMonitor() {
 			editorMonitor.goBackMontior();
+		},
+
+		// 更新模型
+		hanlderLoadSchema() {
+			this.loadDataModels(this.model.connectionId);
+			let schema = tempSchemas.filter(s => s.table_name === this.model.tableName);
+
+			this.$nextTick(() => {
+				this.$emit('schemaChange', _.cloneDeep(schema[0]));
+			});
 		}
 	}
 };

@@ -254,10 +254,13 @@
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
+				<el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
+					$t('dataFlow.updateModel')
+				}}</el-button>
 				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 			</div>
 		</div>
-		<relatedTasks :taskData="taskData" v-if="disabled"></relatedTasks>
+		<relatedTasks :taskData="taskData" v-if="disabled" v-loading="databaseSelectConfig.loading"></relatedTasks>
 	</div>
 </template>
 
@@ -696,6 +699,12 @@ export default {
 
 		setDisabled(disabled) {
 			this.disabled = disabled;
+		},
+
+		// 更新模型
+		hanlderLoadSchema() {
+			this.loadDataModels(this.model.connectionId);
+			this.handlerSchemaChange();
 		}
 	}
 };
