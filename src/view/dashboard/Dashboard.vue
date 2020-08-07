@@ -416,6 +416,7 @@ export default {
 				tableData: []
 			},
 			unitData: [],
+			kbData: [],
 			unitType: ''
 		};
 	},
@@ -478,6 +479,7 @@ export default {
 
 				self.dataScreening.series[0].data = [res.data.chart2[0].totalOutput, res.data.chart2[0].totalInput];
 				self.unitData = self.dataScreening.series[0].data;
+				this.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
 				self.transfer.tableData = res.data.chart3;
 			});
 		},
@@ -543,8 +545,8 @@ export default {
 		getUnit(type) {
 			this.unitType = type;
 			if (type === 'stage') {
-				if (this.unitData.length) {
-					this.dataScreening.series[0].data = this.unitData.map(item => {
+				if (this.kbData.length) {
+					this.dataScreening.series[0].data = this.kbData.map(item => {
 						return (Number(item) / 1024).toFixed(2);
 					});
 				}
