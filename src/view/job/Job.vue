@@ -1,5 +1,7 @@
 <template>
-	<div class="editor-container" v-loading="loading">
+	<div class="editor-container" v-loading="loading" style="position: relative;">
+		<!-- <simpleScene v-if="$route.query.isSimpleScene"></simpleScene> -->
+		<simpleScene></simpleScene>
 		<div
 			class="action-buttons"
 			style="display:flex;align-items: center;justify-content: space-between;padding-right: 10px;"
@@ -223,6 +225,7 @@ import { statusBtMap } from '../../editor/states';
 import log from '../../log';
 import ws from '../../api/ws';
 import AddBtnTip from './addBtnTip';
+import simpleScene from './SimpleScene';
 import { FORM_DATA_KEY, JOIN_TABLE_TPL } from '../../editor/constants';
 import { EditorEventType } from '../../editor/lib/events';
 import _ from 'lodash';
@@ -232,7 +235,7 @@ let changeData = null;
 export default {
 	name: 'Job',
 	dataFlow: null,
-	components: { AddBtnTip },
+	components: { AddBtnTip, simpleScene },
 	data() {
 		return {
 			dialogFormVisible: false,
