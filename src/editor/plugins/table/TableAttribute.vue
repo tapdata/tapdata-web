@@ -310,43 +310,7 @@ export default {
 		},
 		'model.tableName': {
 			immediate: true,
-			handler() {
-				let self = this;
-				if (tempSchemas.length > 0) {
-					let schemas = tempSchemas.filter(s => s.table_name === this.model.tableName);
-					if (schemas && schemas.length > 0) this.model.tableId = schemas[0].id;
-				}
-
-				if (this.model.tableId) {
-					let params = {
-						filter: JSON.stringify({
-							where: {
-								id: this.model.tableId,
-								is_deleted: false
-							}
-						})
-					};
-					self.loading = true;
-					MetadataInstances.schema(params).then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							let fields = res.data.records[0].schema.tables[0].fields;
-							let primaryKeys = fields
-								.filter(f => f.primary_key_position > 0)
-								.map(f => f.field_name)
-								.join(',');
-							self.primaryKeyOptions = fields.map(f => f.field_name);
-							self.model.custSql.custFields = fields.map(f => f.field_name);
-							if (primaryKeys) {
-								self.model.primaryKeys = primaryKeys;
-							} else {
-								self.model.primaryKeys = '';
-							}
-							self.$emit('schemaChange', _.cloneDeep(res.data.records[0].schema.tables[0]));
-						}
-					});
-				}
-				this.taskData.tableName = this.model.tableName;
-			}
+			handler() {}
 		},
 		mergedSchema: {
 			handler() {
@@ -636,6 +600,41 @@ export default {
 			this.model.custSql.filterConds.push({ field: '', calcu: '', val: '', condStr: '' });
 			this.model.custSql.limitLines = '';
 			this.model.cSql = '';
+			let self = this;
+			if (tempSchemas.length > 0) {
+				let schemas = tempSchemas.filter(s => s.table_name === this.model.tableName);
+				if (schemas && schemas.length > 0) this.model.tableId = schemas[0].id;
+			}
+
+			if (this.model.tableId) {
+				let params = {
+					filter: JSON.stringify({
+						where: {
+							id: this.model.tableId,
+							is_deleted: false
+						}
+					})
+				};
+				self.loading = true;
+				MetadataInstances.schema(params).then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						let fields = res.data.records[0].schema.tables[0].fields;
+						let primaryKeys = fields
+							.filter(f => f.primary_key_position > 0)
+							.map(f => f.field_name)
+							.join(',');
+						self.primaryKeyOptions = fields.map(f => f.field_name);
+						self.model.custSql.custFields = fields.map(f => f.field_name);
+						if (primaryKeys) {
+							self.model.primaryKeys = primaryKeys;
+						} else {
+							self.model.primaryKeys = '';
+						}
+						self.$emit('schemaChange', _.cloneDeep(res.data.records[0].schema.tables[0]));
+					}
+				});
+			}
+			this.taskData.tableName = this.model.tableName;
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
