@@ -278,7 +278,6 @@ export default {
 	},
 	mounted() {
 		let self = this;
-		document.title = self.$route.query.name || this.$t('dataflow.newTaksName');
 		// build editor
 		self.editor = editor({
 			container: $('.editor-container'),
@@ -337,6 +336,7 @@ export default {
 				this.onGraphChanged();
 				this.loading = false;
 				this.setEditable(true);
+				if (!this.dataFlow) window.title = this.$t('dataFlow.newTaksName');
 			}
 		},
 		/****
@@ -418,6 +418,7 @@ export default {
 			this.executeMode = dataFlow.executeMode;
 			this.sync_type = dataFlow.setting.sync_type;
 			this.dataFlow = dataFlow;
+			window.title = dataFlow.name;
 			// 管理端api创建任务来源以及editorData 数据丢失情况
 			if (!dataFlow.editorData && dataFlow.stages) {
 				// 1. 拿到创建所有的节点数据
@@ -504,8 +505,12 @@ export default {
 			promise = dataFlowsApi.draft(data);
 			if (promise) {
 				promise
-					.catch(() => {
-						self.$message.error(self.$t('message.saveFail'));
+					.catch(e => {
+						if (e.response.data === 'duplication for names') {
+							self.$message.error(self.$t('message.exists_name'));
+						} else {
+							self.$message.error(self.$t('message.saveFail'));
+						}
 					})
 					.then(result => {
 						if (result && result.data) {

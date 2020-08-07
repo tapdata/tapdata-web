@@ -549,7 +549,7 @@ export default {
 				}).then(() => {
 					let routeUrl = this.$router.resolve({
 						path: '/job',
-						query: { id: id, name: name }
+						query: { id: id }
 					});
 					setTimeout(() => {
 						document.querySelectorAll('.el-tooltip__popper').forEach(it => {

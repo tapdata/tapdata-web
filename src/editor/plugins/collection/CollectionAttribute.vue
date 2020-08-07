@@ -50,11 +50,11 @@
 				</el-form-item>
 
 				<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
-					<PrimaryKeyInput
+					<MultiSelection
 						v-model="model.primaryKeys"
 						:options="primaryKeyOptions"
 						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
-					></PrimaryKeyInput>
+					></MultiSelection>
 				</el-form-item>
 				<el-form-item>
 					<template slot="label">
@@ -82,7 +82,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item v-if="model.fieldFilterType !== 'keepAllFields'">
-					<PrimaryKeyInput
+					<MultiSelection
 						v-model="model.fieldFilter"
 						:options="primaryKeyOptions"
 						:placeholder="
@@ -91,7 +91,7 @@
 								: $t('editor.cell.data_node.collection.form.fieldFilter.placeholderDelete')
 						"
 						@change="handleFilterChange()"
-					></PrimaryKeyInput>
+					></MultiSelection>
 				</el-form-item>
 				<el-form-item
 					required
@@ -155,7 +155,7 @@
 
 <script>
 import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
-import PrimaryKeyInput from '../../../components/PrimaryKeyInput';
+import MultiSelection from '../../../components/MultiSelection';
 import RelatedTasks from '../../../components/relatedTasks';
 import ClipButton from '@/components/ClipButton';
 import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, uuid } from '../../util/Schema';
@@ -175,7 +175,7 @@ const DELETE_OPS_TPL = {
 };
 export default {
 	name: 'Collection',
-	components: { Entity, DatabaseForm, PrimaryKeyInput, ClipButton, RelatedTasks },
+	components: { Entity, DatabaseForm, MultiSelection, ClipButton, RelatedTasks },
 	props: {
 		database_types: {
 			type: Array,

@@ -317,6 +317,10 @@ export default class Editor extends BaseObject {
 	 * @param name
 	 */
 	showSetting(editDisable) {
+		if (!this.getRightTabPanel().el.is(':hidden')) {
+			this.getRightSidebar().hide();
+			return;
+		}
 		this.getRightTabPanel().removeAll();
 		let self = this;
 		self.initSettings();

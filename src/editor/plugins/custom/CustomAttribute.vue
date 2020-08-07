@@ -56,11 +56,11 @@
 					</div>
 				</el-form-item>
 				<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
-					<PrimaryKeyInput
+					<MultiSelection
 						v-model="model.primaryKeys"
 						:options="primaryKeyOptions"
 						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
-					></PrimaryKeyInput>
+					></MultiSelection>
 				</el-form-item>
 				<el-form-item
 					required
@@ -94,7 +94,7 @@
 <script>
 import _ from 'lodash';
 import factory from '../../../api/factory';
-import PrimaryKeyInput from '../../../components/PrimaryKeyInput';
+import MultiSelection from '../../../components/MultiSelection';
 import RelatedTasks from '../../../components/relatedTasks';
 import ClipButton from '@/components/ClipButton';
 import Entity from '../link/Entity';
@@ -104,7 +104,7 @@ let connectionApi = factory('connections');
 let editorMonitor = null;
 export default {
 	name: 'CustomNode',
-	components: { Entity, PrimaryKeyInput, ClipButton, RelatedTasks },
+	components: { Entity, MultiSelection, ClipButton, RelatedTasks },
 	props: {
 		connection_type: {
 			type: String,
