@@ -24,33 +24,7 @@
 		<div class="echartMain">
 			<div class="echartlist">
 				<echart-head :data="screeningObj" @twoRadio="getTwoRadio"></echart-head>
-				<div class="info fl" v-if="stageId === 'all'">
-					<div class="info-list">
-						<span class="info-label">{{ $t('dataFlow.taskName') }}:</span>
-						<span class="info-text" style="color: #48b6e2;">{{ flow.name }}</span>
-					</div>
-					<div class="info-list">
-						<span class="info-label">{{ $t('dataFlow.creatdor') }}:</span>
-						<span class="info-text">{{ flow.username }}</span>
-					</div>
-					<div class="info-list">
-						<span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
-						<span class="info-text">{{ flow.startTime }}</span>
-					</div>
-					<div v-if="flow.finishTime" class="info-list">
-						<span class="info-label">{{ $t('dataFlow.finishTime') }}:</span>
-						<span class="info-text">{{ flow.finishTime }}</span>
-					</div>
-					<div class="info-list">
-						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
-						<span class="info-text"> {{ flow.inputNumber }}</span>
-					</div>
-					<div class="info-list">
-						<span class="info-label">{{ $t('dataFlow.outputNumber') }}:</span>
-						<span class="info-text">{{ flow.outputNumber }}</span>
-					</div>
-				</div>
-				<div class="info fl" v-else>
+				<div class="info fl" v-if="this.stageType === 'table' || this.stageType === 'collection'">
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.taskName') }}:</span>
 						<span class="info-text" style="color: #48b6e2;">{{ stage.nodeName }}</span>
@@ -84,6 +58,33 @@
 						<span class="info-text">{{ flow.outputNumber }}</span>
 					</div>
 				</div>
+				<div class="info fl" v-else>
+					<div class="info-list">
+						<span class="info-label">{{ $t('dataFlow.taskName') }}:</span>
+						<span class="info-text" style="color: #48b6e2;">{{ flow.name }}</span>
+					</div>
+					<div class="info-list">
+						<span class="info-label">{{ $t('dataFlow.creatdor') }}:</span>
+						<span class="info-text">{{ flow.username }}</span>
+					</div>
+					<div class="info-list">
+						<span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
+						<span class="info-text">{{ $moment(flow.startTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+					</div>
+					<div v-if="flow.finishTime" class="info-list">
+						<span class="info-label">{{ $t('dataFlow.finishTime') }}:</span>
+						<span class="info-text">{{ $moment(flow.finishTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+					</div>
+					<div class="info-list">
+						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
+						<span class="info-text"> {{ flow.inputNumber }}</span>
+					</div>
+					<div class="info-list">
+						<span class="info-label">{{ $t('dataFlow.outputNumber') }}:</span>
+						<span class="info-text">{{ flow.outputNumber }}</span>
+					</div>
+				</div>
+
 				<shaftless-echart
 					:sliderBar="sliderBar"
 					class="fr echartMain"
@@ -155,6 +156,7 @@ import { EditorEventType } from '../../editor/lib/events';
 import ws from '../../api/ws';
 const dataFlows = factory('DataFlows');
 const connectionApi = factory('connections');
+let currentStageData = null;
 export default {
 	name: 'JobMonitor',
 	components: { echartHead, echartsCompinent, shaftlessEchart },
@@ -167,6 +169,7 @@ export default {
 
 	data() {
 		return {
+			stageType: '',
 			sliderBar: null,
 			dpx: 'QPS',
 			selectFlow: 'flow_', // 选中节点
@@ -412,7 +415,8 @@ export default {
 			if (selectStage) {
 				this.stageId = selectStage.id;
 				this.getStageDataApi(selectStage.form_data.connectionId);
-				// console.log(selectStage);
+				this.stage.nodeName = selectStage.form_data.name;
+				this.stageType = selectStage.type;
 			} else {
 				this.stageId = 'all';
 			}
@@ -480,12 +484,20 @@ export default {
 		},
 		stageId: {
 			handler(val) {
+				let cell = this.editor.getAllCells();
 				this.selectId = val;
 				if (val === 'all') {
 					this.selectFlow = 'flow_';
 				} else {
 					this.selectFlow = 'stage_';
-					// this.getStageDataApi(val);
+
+					cell.forEach(item => {
+						if (item.get('id') === val) {
+							currentStageData = item.getFormData();
+						}
+					});
+					this.stageType = currentStageData.type;
+					this.getStageDataApi(currentStageData.connectionId);
 				}
 				this.getApiData();
 			},
@@ -796,6 +808,7 @@ export default {
 			connectionApi.customQuery([id]).then(res => {
 				if (res.data) {
 					this.stage = res.data;
+					this.stage.nodeName = currentStageData.name;
 				}
 			});
 		},

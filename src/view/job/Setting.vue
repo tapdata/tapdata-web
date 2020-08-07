@@ -4,7 +4,7 @@
 			<el-button class="back-btn-icon-box" @click="GoBack"
 				><i class="iconfont icon-you2 back-btn-icon"></i
 			></el-button>
-			<span class="back-btn-text">{{ $t('dataVerify.dataVerify') }}</span>
+			<span class="back-btn-text">{{ $t('editor.ui.sidebar.setting') }}</span>
 		</head>
 		<!-- <div class="head-btns">
 			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
@@ -14,7 +14,7 @@
 		<el-form
 			class="e-form"
 			label-position="right"
-			label-width="100px"
+			label-width="150px"
 			:data="formData"
 			:disabled="disabled"
 			:rules="rules"
@@ -407,7 +407,6 @@ export default {
 
 		// 返回
 		GoBack() {
-			debugger;
 			if (!this.disabled) {
 				this.editor.showSetting(false);
 			} else {
