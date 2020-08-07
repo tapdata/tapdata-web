@@ -741,7 +741,14 @@ const tc = {
 						fieldType: '字段類型',
 						addField: '添加字段',
 						addEmbedField: '添加內嵌字段',
-						scriptDialogTitle: '設置字段腳本'
+						scriptDialogTitle: '設置字段腳本',
+						expression: '請輸入表達式',
+						example: '示例',
+						exampleRow1: 'var result = "a" + "b" // 字符串拼接, result的結果為 "ab"',
+						exampleRow2: 'var result = 1 + 2 // 數字計算, result 的結果為 3',
+						exampleRow3: 'var result = fn("1") // 調用自定義函數或內置函數, result的結果為 fn 函數的返回值',
+						exampleRow4:
+							'var result = record.isTrue ? true : false // 三元表達式, result的值根據判斷表達式（record.isTrue）的結果為 true 或 false'
 					}
 				},
 				script: {

@@ -740,7 +740,14 @@ const cn = {
 						fieldType: '字段类型',
 						addField: '添加字段',
 						addEmbedField: '添加内嵌字段',
-						scriptDialogTitle: '设置字段脚本'
+						scriptDialogTitle: '设置字段脚本',
+						expression: '请输入表达式',
+						example: '示例',
+						exampleRow1: 'var result = "a" + "b" // 字符串拼接, result的结果为 "ab"',
+						exampleRow2: 'var result = 1 + 2 // 数字计算, result 的结果为 3',
+						exampleRow3: 'var result = fn("1") // 调用自定义函数或内置函数, result的结果为 fn 函数的返回值',
+						exampleRow4:
+							'var result = record.isTrue ? true : false // 三元表达式, result的值根据判断表达式（record.isTrue）的结果为 true 或 false'
 					}
 				},
 				script: {

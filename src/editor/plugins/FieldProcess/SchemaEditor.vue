@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="fieldProcess">
 		<el-row class="operation-area">
 			<el-form :disabled="disabledMode">
 				<el-form-item>
@@ -219,17 +219,32 @@
 				"
 				:visible.sync="scriptDialog.open"
 				append-to-body
+				custom-class="scriptDialog"
 			>
 				<el-form>
 					<el-form-item>
-						<JsEditor
+						<el-input
+							:placeholder="$t('editor.cell.processor.field.form.expression')"
+							v-model="scriptDialog.script"
+							size="mini"
+						>
+							<template slot="prepend">var result = </template>
+						</el-input>
+						<!-- <JsEditor
 							v-if="scriptDialog.open"
 							:code.sync="scriptDialog.script"
 							:width.sync="jsEditorWidth"
-						></JsEditor>
+						></JsEditor> -->
 						<!--					<el-input type="textarea" v-model="scriptDialog.script" rows="10"></el-input>-->
 					</el-form-item>
 				</el-form>
+				<div class="example">
+					<div>{{ $t('editor.cell.processor.field.form.example') }}:</div>
+					<div>{{ $t('editor.cell.processor.field.form.exampleRow1') }}</div>
+					<div>{{ $t('editor.cell.processor.field.form.exampleRow2') }}</div>
+					<div>{{ $t('editor.cell.processor.field.form.exampleRow3') }}</div>
+					<div>{{ $t('editor.cell.processor.field.form.exampleRow4') }}</div>
+				</div>
 				<div slot="footer" class="dialog-footer">
 					<el-button @click="scriptDialog.open = false" size="mini">{{ $t('message.cancel') }}</el-button>
 					<el-button @click="scriptDialog.fn" type="primary" size="mini">{{
@@ -246,7 +261,7 @@ import $ from 'jquery';
 import log from '../../../log';
 import _ from 'lodash';
 import { uuid } from '../../util/Schema';
-import JsEditor from '../../../components/JsEditor';
+// import JsEditor from '../../../components/JsEditor';
 
 const REMOVE_OPS_TPL = {
 	id: '',
@@ -290,7 +305,7 @@ const SCRIPT_TPL = {
  */
 export default {
 	name: 'SchemaEditor',
-	components: { JsEditor },
+	// components: { JsEditor },
 	props: {
 		disabledMode: {
 			type: Boolean
@@ -1009,11 +1024,31 @@ export default {
 .operation-area .el-form-item {
 	margin-bottom: 0;
 }
+.example {
+	padding-left: 90px;
+	font-size: 12px;
+	color: #6999;
+}
 </style>
 <style lang="less">
-.schemaEditor {
-	.el-checkbox__inner {
-		margin-left: 10px;
+.fieldProcess {
+	.schemaEditor {
+		.el-checkbox__inner {
+			margin-left: 10px;
+		}
+	}
+
+	.el-input__inner {
+		font-size: 12px !important;
+	}
+}
+.scriptDialog {
+	.el-form-item {
+		margin-bottom: 10px;
+	}
+	.el-input-group__append,
+	.el-input-group__prepend {
+		padding: 0 12px !important;
 	}
 }
 </style>
