@@ -60,7 +60,7 @@
 								placement="top-end"
 							>
 								<div>
-									<div>{{ `[s] ${scope.row.sourceDatabaseName}` }}</div>
+									<div>{{ `[S] ${scope.row.sourceDatabaseName}` }}</div>
 									<div>{{ scope.row.sourceTableName }}</div>
 									<div style="color: #bbb">{{ `[T] ${scope.row.targetDatabaseName}` }}</div>
 									<div style="color: #bbb">{{ scope.row.targetTableName }}</div>
