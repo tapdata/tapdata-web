@@ -55,10 +55,10 @@
 						>
 							<div>
 								<div style="color: #bbb">
-									{{ scope.row.target ? scope.row.target.tableName : '' }}
+									{{ scope.row.target ? scope.row.target.databaseName : '' }}
 								</div>
 								<div>
-									{{ scope.row.target ? scope.row.target.databaseName : '' }}
+									{{ scope.row.target ? scope.row.target.tableName : '' }}
 								</div>
 							</div>
 						</el-tooltip>
