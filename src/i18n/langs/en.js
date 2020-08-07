@@ -72,9 +72,7 @@ const en = {
 		},
 		menu: {
 			dashboard: 'Dashboard',
-			dataSource: 'Data Source',
-			connections: 'Connections',
-			connection: 'Create Connection',
+			connections: 'Data Source',
 			dataFlows: 'Data Collect',
 			dataGovernance: 'Data Governance',
 			metadataDefinition: 'Data Catalog',
