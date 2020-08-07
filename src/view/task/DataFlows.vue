@@ -793,7 +793,9 @@ export default {
 				item.hasChildren = false;
 				item.input = item.stats.input ? item.stats.input.rows : '--';
 				item.output = item.stats.output ? item.stats.output.rows : '--';
-				item.transmissionTime = item.stats.transmissionTime ? item.stats.transmissionTime : '--';
+				item.transmissionTime = item.stats.transmissionTime
+					? ((item.input * 1000) / item.stats.transmissionTime).toFixed(0)
+					: '--';
 				let children = item.stages;
 				item.children = [];
 				if (children) {
