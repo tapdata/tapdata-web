@@ -1,6 +1,15 @@
 <template>
 	<div style="position:absolute; width:2400px; height:1200px; z-index:19999; opacity:0.5; background-color: gray;">
 		<div v-html="cellHtmls" style=""></div>
+		<div class="steps">
+			<el-button size="mini">上一步</el-button>
+			<el-steps :active="1" finish-status="success" simple class="el-step">
+				<el-step title="步骤 1"></el-step>
+				<el-step title="步骤 2"></el-step>
+				<el-step title="步骤 3"></el-step>
+			</el-steps>
+			<el-button size="mini">下一步</el-button>
+		</div>
 	</div>
 </template>
 <script>
@@ -38,3 +47,20 @@ export default {
 	methods: {}
 };
 </script>
+<style lang="less">
+.steps {
+	position: absolute;
+	background-color: gray;
+	top: 800px;
+	left: 300px;
+	display: flex;
+	justify-content: space-between;
+	.el-step {
+		width: 500px;
+		margin-left: 10px;
+	}
+	.el-button {
+		margin-left: 10px;
+	}
+}
+</style>
