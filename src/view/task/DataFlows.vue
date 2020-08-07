@@ -522,7 +522,7 @@ export default {
 			window.windows.push(window.open(routeUrl.href, '_blank'));
 			window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
 		},
-		handleDetail(id, type, name) {
+		handleDetail(id, type) {
 			const h = this.$createElement;
 			if (type === 'edit') {
 				this.$msgbox({
@@ -562,7 +562,7 @@ export default {
 			} else {
 				let routeUrl = this.$router.resolve({
 					path: '/job',
-					query: { id: id, isMoniting: true, name: name }
+					query: { id: id, isMoniting: true }
 				});
 				window.open(routeUrl.href, 'monitor_' + id);
 			}

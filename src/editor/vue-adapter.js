@@ -76,32 +76,17 @@ export class VueAdapter extends BaseObject {
 				let vueContainerDom = document.createElement('div');
 				settings.getContentEl().append(vueContainerDom);
 				self.vm.$mount(vueContainerDom);
-				self.vm.$on('dataChanged', data => {
-					self.setFormData(self.curcell, data);
-				});
-
-				self.vm.$on('schemaChange', schema => {
-					self.curcell.setSchema(schema);
-				});
-				self.vm.$on(EditorEventType.HIDE, () => {
-					self.vm.$off('dataChanged');
-				});
 				vueAdapter[name]._vm = self.vm;
 				vueAdapter[name]._panel = settings;
 			} else {
 				self.vm = vueAdapter[name]._vm;
+				self.vm.$off('dataChanged');
+				self.vm.$off('schemaChange');
 				Object.keys(self.vm._initData).forEach(key => {
 					self.vm[key] = self.vm._initData[key];
 				});
 				if (self.vm.$options.mounted) self.vm.$options.mounted[0].call(self.vm);
 				self.editor.getRightTabPanel().select(vueAdapter[name]._panel);
-				self.vm.$on('dataChanged', data => {
-					self.setFormData(self.curcell, data);
-				});
-
-				self.vm.$on('schemaChange', schema => {
-					self.curcell.setSchema(schema);
-				});
 				self.vm.$on(EditorEventType.HIDE, () => {
 					self.vm.$off('dataChanged');
 					self.vm.$off('schemaChange');
@@ -117,6 +102,12 @@ export class VueAdapter extends BaseObject {
 			self.editor.getRightSidebar().show();
 			if (typeof self.vm.setData === 'function') {
 				self.vm.setData(formData, cell, isSourceDataNode, self);
+				self.vm.$on('dataChanged', data => {
+					self.setFormData(self.curcell, data);
+				});
+				self.vm.$on('schemaChange', schema => {
+					self.curcell.setSchema(schema);
+				});
 			} else {
 				throw new Error(`Custom form component does not implement "${name}" method`);
 			}
