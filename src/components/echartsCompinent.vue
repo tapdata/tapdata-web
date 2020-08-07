@@ -4,12 +4,12 @@
 	</div>
 </template>
 <script>
-import Echarts from "../plugins/echarts";
-import { EditorEventType } from "../editor/lib/events";
+import Echarts from '../plugins/echarts';
+import { EditorEventType } from '../editor/lib/events';
 
 // import echarts from 'echarts'
 export default {
-	name: "EchartsCompinent",
+	name: 'EchartsCompinent',
 	props: {
 		sliderBar: {
 			type: Object
@@ -24,7 +24,7 @@ export default {
 	data() {
 		return {
 			myChart: null,
-			timer: ""
+			timer: ''
 		};
 	},
 	watch: {
@@ -39,11 +39,16 @@ export default {
 		let that = this;
 		this.$nextTick(() => {
 			that.loadEchart(that.echartsId, that.echartObj);
-			this.sliderBar.on(EditorEventType.RESIZE, width => {
-				this.myChart.resize()
-			})
+			if (this.sliderBar) {
+				this.sliderBar.on(EditorEventType.RESIZE, () => {
+					this.myChart.resize();
+				});
+			} else {
+				window.addEventListener('resize', () => {
+					this.myChart.resize();
+				});
+			}
 		});
-
 	},
 
 	methods: {
@@ -68,11 +73,11 @@ export default {
 				tooltip: {
 					trigger: configures.tooltip.trigger,
 					confine: true, // 是否将 tooltip 框限制在图表的区域内。  true为是
-					backgroundColor: "#fff",
-					borderColor: "#dedee4",
+					backgroundColor: '#fff',
+					borderColor: '#dedee4',
 					borderWidth: 1,
 					textStyle: {
-						color: "#333",
+						color: '#333',
 						fontSize: 12
 					},
 					axisPointer: {
@@ -107,7 +112,7 @@ export default {
 
 				// x轴的数据以及配置
 				xAxis: {
-					type: "category", // 坐标轴类型。具体参考官方文档
+					type: 'category', // 坐标轴类型。具体参考官方文档
 					boundaryGap: false, // 类目轴中 boundaryGap 可以配置为 true 和 false。默认为 true，这时候刻度只是作为分隔线，标签和数据点都会在两个刻度之间的带(band)中间。
 					data: configures.xAxis.data, // x轴的数据
 					show: true,
@@ -115,7 +120,7 @@ export default {
 					splitLine: {
 						show: true,
 						lineStyle: {
-							color: "#eee"
+							color: '#eee'
 						}
 					}, // 是否显示分隔线
 					grid: {
@@ -134,12 +139,12 @@ export default {
 						rotate: 0,
 						fontSize: 10,
 						textStyle: {
-							color: "#333" // 坐标的字体颜色
+							color: '#333' // 坐标的字体颜色
 						}
 					},
 					splitArea: {
 						areaStyle: {
-							color: "#f00"
+							color: '#f00'
 						}
 					},
 					nameTextStyle: {
@@ -148,7 +153,7 @@ export default {
 				},
 				// y轴的数据配置
 				yAxis: {
-					type: "value",
+					type: 'value',
 					min: 0,
 					axisTick: { show: false },
 					axisLine: {
@@ -160,17 +165,17 @@ export default {
 					splitLine: {
 						show: true,
 						lineStyle: {
-							color: "#eee"
+							color: '#eee'
 						}
 					}, // 是否显示分隔线
 					splitArea: {
 						areaStyle: {
-							color: ["rgba(250,250,250,0.3)", "rgba(200,200,200,0.3)"]
+							color: ['rgba(250,250,250,0.3)', 'rgba(200,200,200,0.3)']
 						}
 					},
 					axisLabel: {
 						textStyle: {
-							color: "#333" // 坐标的字体颜色
+							color: '#333' // 坐标的字体颜色
 						},
 						formatter: configures.yAxis.axisLabel.formatter
 					}

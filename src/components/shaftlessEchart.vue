@@ -38,9 +38,15 @@ export default {
 		// let publicCharts = that.echartOption(that.echartObj)
 		that.$nextTick(() => {
 			that.loadEchart(that.echartsId, that.echartObj);
-			this.sliderBar.on(EditorEventType.RESIZE, () => {
-				this.myChart.resize();
-			});
+			if (this.sliderBar) {
+				this.sliderBar.on(EditorEventType.RESIZE, () => {
+					this.myChart.resize();
+				});
+			} else {
+				window.addEventListener('resize', () => {
+					this.myChart.resize();
+				});
+			}
 		});
 	},
 
@@ -75,8 +81,8 @@ export default {
 						label: {
 							// backgroundColor: '#6a7985'
 						}
-					}
-					// formatter: configures.tooltip.formatter
+					},
+					formatter: configures.tooltip.formatter ? configures.tooltip.formatter : null
 				},
 				// 图例
 				legend: {
@@ -106,17 +112,14 @@ export default {
 					show: configures.xAxis.show,
 					axisTick: { show: false },
 					splitLine: configures.xAxis.splitLine,
-					axisLine: configures.xAxis.axisLine
+					axisLine: configures.xAxis.axisLine,
+					formatter: configures.xAxis.formatter ? configures.xAxis.formatter : null
+					// axisLabel: configures.xAxis.axisLabel ? configures.xAxis.axisLabel : null
 					// axisLine: {
 					//   lineStyle: {
 					//     color: this.echartsXYcolor
 					//   }
 					// },
-					// axisLabel: {
-					//   textStyle: {
-					//     // color: this.echartsXYcolor
-					//   }
-					// }
 				},
 				// y轴的数据配置
 				yAxis: {

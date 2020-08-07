@@ -103,6 +103,29 @@ const en = {
 			favorite: 'Favorite',
 
 			delFavMenu: 'Delete Favorite'
+		},
+		Home: {
+			all: 'All',
+			taskOverview: 'Task Overview',
+			allTask: 'All tasks',
+			transmissionOverview: 'Transmission Overview',
+			transferTask: 'Transfer Task',
+			wrongTask: 'Wrong Task',
+			taskRanking: 'Task Transfer Ranking',
+			serverProcess: 'Server and Process',
+			before: 'Front',
+			pcs: 'bar',
+			server: 'Server',
+			managementSide: 'Management Side',
+			taskTransfer: 'Task Transfer',
+			apiService: 'API Service',
+			totalOutput: 'Total Output',
+			totalInput: 'Total Input',
+			bar: 'PCS',
+			starting: 'Starting',
+			running: 'Running',
+			stopping: 'Closed',
+			stopped: 'closed'
 		}
 	},
 	message: {
@@ -185,6 +208,8 @@ const en = {
 			otherError: 'Operation failed, please try it again.'
 		},
 		changeName: 'Edit',
+		Enable: 'Enable',
+		Disable: 'Disable',
 		draftNotStart: 'Configuration is not complete,  cannot be started',
 		systemHint: 'System prompt',
 		systemText: 'The system detected that the following tasks were not saved， keep editing?',
