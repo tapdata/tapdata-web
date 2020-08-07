@@ -747,7 +747,15 @@ const en = {
 						fieldType: 'Field type',
 						addField: 'Add Field',
 						addEmbedField: 'Add Embed Field',
-						scriptDialogTitle: 'Set Script'
+						scriptDialogTitle: 'Set Script',
+						expression: 'Please enter an expression',
+						example: 'Example',
+						exampleRow1: 'var result = "a" + "b"  // String concatenation, the result of result is "ab"',
+						exampleRow2: 'var result = 1 + 2 // Digital calculation, the result of result is 3',
+						exampleRow3:
+							'var result = fn("1") // Call function, the result is the return value of the fn function.',
+						exampleRow4:
+							'var result = record.isTrue ? true : false // Ternary expression, The value of result is true or false based on the result of the judgment expression (record.isTrue)'
 					}
 				},
 				script: {
