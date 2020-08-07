@@ -52,6 +52,21 @@
 				</div>
 				<el-table border :data="validateStats" height="250" style="width: 100%">
 					<el-table-column prop="sourceTableName" :label="$t('dataVerify.source')" width="180">
+						<template slot-scope="scope">
+							<el-tooltip
+								class="item"
+								effect="dark"
+								:content="scope.row.sourceDatabaseName + ' / ' + scope.row.sourceTableName"
+								placement="top-end"
+							>
+								<div>
+									<div>{{ `[s] ${scope.row.sourceDatabaseName}` }}</div>
+									<div>{{ scope.row.sourceTableName }}</div>
+									<div style="color: #bbb">{{ `[T] ${scope.row.targetDatabaseName}` }}</div>
+									<div style="color: #bbb">{{ scope.row.targetTableName }}</div>
+								</div>
+							</el-tooltip>
+						</template>
 					</el-table-column>
 					<el-table-column prop="validateType" :label="$t('dataVerify.dataWay')" width="95">
 						<template slot-scope="scope">
@@ -110,8 +125,54 @@
 						</el-select>
 					</div>
 					<el-table border :data="failedRow" class="dv-result-fail-table" style="width: 100%">
-						<el-table-column prop="sourceTableData" :label="$t('dataVerify.source')"> </el-table-column>
-						<el-table-column prop="targetTableData" :label="$t('dataVerify.target')"> </el-table-column>
+						<el-table-column prop="sourceTableData" :label="$t('dataVerify.source')">
+							<template slot-scope="scope">
+								<el-tooltip
+									class="item"
+									effect="dark"
+									:content="
+										scope.row.sourceStage.databaseName + ' / ' + scope.row.sourceStage.tableName
+									"
+									placement="top-end"
+								>
+									<div>
+										<div style="color: #bbb">
+											{{ scope.row.sourceStage.databaseName }}
+										</div>
+										<div>
+											{{ scope.row.sourceStage.tableName }}
+										</div>
+										<div>
+											{{ scope.row.sourceTableData }}
+										</div>
+									</div>
+								</el-tooltip>
+							</template>
+						</el-table-column>
+						<el-table-column prop="targetTableData" :label="$t('dataVerify.target')">
+							<template slot-scope="scope">
+								<el-tooltip
+									class="item"
+									effect="dark"
+									:content="
+										scope.row.targetStage.databaseName + ' / ' + scope.row.targetStage.tableName
+									"
+									placement="top-end"
+								>
+									<div>
+										<div style="color: #bbb">
+											{{ scope.row.targetStage.databaseName }}
+										</div>
+										<div>
+											{{ scope.row.targetStage.tableName }}
+										</div>
+										<div>
+											{{ scope.row.targetTableData }}
+										</div>
+									</div>
+								</el-tooltip>
+							</template>
+						</el-table-column>
 						<el-table-column prop="message" label="Message"> </el-table-column>
 					</el-table>
 				</div>
@@ -380,7 +441,7 @@ export default {
 .dv-contrast-table {
 	margin-bottom: 10px;
 	box-shadow: 2px 2px 7px 0px rgba(0, 0, 0, 0.1);
-	min-height: 100px;
+	min-height: 300px;
 	margin-top: 10px;
 	font-size: 12px;
 	border: 1px solid rgba(220, 223, 230, 1);
