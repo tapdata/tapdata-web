@@ -501,6 +501,7 @@ export default {
 			}
 			dataFlows.patchAll({ attrs: attributes }).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
+					this.dataFlowId = '';
 					this.getData();
 				}
 			});

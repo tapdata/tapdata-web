@@ -255,14 +255,14 @@ export default {
 		];
 		let self = this;
 		self.$on(EditorEventType.RESIZE, () => {
-			self.$refs.mappingComp.$emit(EditorEventType.RESIZE);
+			self.$refs.mappingComp && self.$refs.mappingComp.$emit(EditorEventType.RESIZE);
 		});
 
 		this.$on(EditorEventType.HIDE, () => {
-			self.$refs.mappingComp.hide();
+			self.$refs.mappingComp && self.$refs.mappingComp.hide();
 		});
 		this.$on(EditorEventType.SHOW, () => {
-			self.$refs.mappingComp.show();
+			self.$refs.mappingComp && self.$refs.mappingComp.show();
 		});
 	},
 

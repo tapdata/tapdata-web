@@ -35,6 +35,11 @@ export class VueAdapter extends BaseObject {
 	 * @return {*}
 	 */
 	render(cell) {
+		// if (this.vm) {
+		// 	this.vm.$destroy();
+		// 	this.vm = null;
+		// }
+
 		if (!cell.showSettings || !cell.showSettings()) {
 			return null;
 		}
