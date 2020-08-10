@@ -439,6 +439,7 @@ export default class Graph extends Component {
 
 	selectPrimaryCell(cellView) {
 		let cell = cellView.model;
+
 		if (this.editable) {
 			if (cell.isElement()) {
 				this.selectCell(cell);
@@ -446,11 +447,21 @@ export default class Graph extends Component {
 			} else {
 				this.selectPrimaryLink(cellView);
 			}
+			if (this.selectedLink) {
+				this.selectedLink.attr('line/stroke', '#8f8f8f');
+				this.selectedLink = false;
+			}
 		} else {
 			if (cell.isElement()) {
 				this.selectCell(cell);
+			} else {
+				this.selectedLink = cell;
+				this.selectedLink.attr('line/stroke', '#2196F3');
+
+				this.selectPrimaryLink(cellView);
 			}
 		}
+
 		this.createInspector(cell);
 		if (cell.isElement()) {
 			this.emit(EditorEventType.SELECTED_STAGE, cell.toJSON());

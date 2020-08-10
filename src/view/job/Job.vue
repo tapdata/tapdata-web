@@ -93,6 +93,11 @@
 					size="mini"
 					style="margin-left: 30px;margin-right: 10px;border:none;"
 				>
+					<span class="spinner-box" v-if="status === 'stopping' || status === 'scheduled'">
+						<div class="spinner">
+							<i class="canvas_gif" :class="status === 'stopping' ? 'stopping_gif' : 'scheduled_gif'"></i>
+						</div>
+					</span>
 					<span
 						:style="{
 							color: status === 'scheduled' ? '#b0e58c' : status === 'stopping' ? '#fccd85' : ''
@@ -1294,6 +1299,48 @@ export default {
 	bottom: 30px;
 	left: 260px;
 	z-index: 99;
+}
+.spinner-box {
+	display: inline-block;
+	padding: 0 5px;
+	vertical-align: middle;
+	.spinner {
+		align-items: center;
+		background: #fff;
+		border-radius: 50%;
+		display: flex;
+		height: 15px;
+		justify-content: center;
+		// margin: 1em 1em 2em 1em;
+		width: 15px;
+	}
+	.canvas_gif {
+		animation: spinner 3s linear infinite;
+		// border: 1px solid transparent;
+
+		border-radius: 100%;
+		align-items: center;
+		height: 10px;
+		width: 10px;
+	}
+	.scheduled_gif {
+		border-top: 1px solid #67c23a;
+		border-right: 1px solid #67c23a;
+	}
+
+	.stopping_gif {
+		border-top: 1px solid rgb(241, 145, 73);
+		border-right: 1px solid rgb(241, 145, 73);
+	}
+}
+
+@keyframes spinner {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
 }
 </style>
 <style lang="less">
