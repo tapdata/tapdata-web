@@ -270,7 +270,7 @@ export default {
 				} else {
 					this.formData.run_custom_sql = false;
 				}
-				//this.$emit('dataChanged', this.getData());
+				this.$emit('dataChanged', this.getData());
 			}
 		}
 	},
