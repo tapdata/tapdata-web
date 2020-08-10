@@ -3,20 +3,20 @@
  * @date 3/4/20
  * @description
  */
-import _ from "lodash";
-import joint from "../../lib/rappid/rappid";
-import { options } from "../../lib/rappid/config";
-import LinkAttribute from "./LinkAttribute";
-import { FORM_DATA_KEY } from "../../constants";
-import log from "../../../log";
-import i18n from "../../../i18n/i18n";
+import _ from 'lodash';
+import joint from '../../lib/rappid/rappid';
+import { options } from '../../lib/rappid/config';
+import LinkAttribute from './LinkAttribute';
+import { FORM_DATA_KEY } from '../../constants';
+import log from '../../../log';
+import i18n from '../../../i18n/i18n';
 
 export const link = {
 	/**
 	 * the name of the subtype class.
 	 *
 	 */
-	type: "app.Link",
+	type: 'app.Link',
 
 	/**
 	 * define shape
@@ -27,7 +27,7 @@ export const link = {
 		/**
 		 * extends exists shape
 		 */
-		extends: "standard.Link",
+		extends: 'standard.Link',
 
 		/**
 		 * object that contains properties to be assigned to every constructed instance of the subtype.
@@ -56,28 +56,28 @@ export const link = {
 		 */
 		defaultInstanceProperties: {
 			router: {
-				name: "manhattan"
+				name: 'manhattan'
 				// name: 'normal',
 			},
 			connector: {
-				name: "rounded"
+				name: 'rounded'
 			},
 			labels: [],
 			attrs: {
 				line: {
-					stroke: "#8f8f8f",
-					strokeDasharray: "0",
+					stroke: '#8f8f8f',
+					strokeDasharray: '0',
 					strokeWidth: 2,
-					fill: "none",
+					fill: 'none',
 					sourceMarker: {
-						type: "path",
-						d: "M 0 0 0 0",
-						stroke: "none"
+						type: 'path',
+						d: 'M 0 0 0 0',
+						stroke: 'none'
 					},
 					targetMarker: {
-						type: "path",
-						d: "M 0 -5 -10 0 0 5 z",
-						stroke: "none"
+						type: 'path',
+						d: 'M 0 -5 -10 0 0 5 z',
+						stroke: 'none'
 					}
 				}
 			}
@@ -104,8 +104,8 @@ export const link = {
 			defaultLabel: {
 				attrs: {
 					rect: {
-						fill: "#ffffff",
-						stroke: "#8f8f8f",
+						fill: '#ffffff',
+						stroke: '#8f8f8f',
 						strokeWidth: 1,
 						refWidth: 10,
 						refHeight: 10,
@@ -116,10 +116,10 @@ export const link = {
 			},
 			initialize() {
 				let self = this;
-				self.on("change:" + FORM_DATA_KEY, () => {
+				self.on('change:' + FORM_DATA_KEY, () => {
 					let formData = self.getFormData();
 
-					log("Link.form_data.change", formData);
+					log('Link.form_data.change', formData);
 
 					if (formData && formData.label) {
 						self.labels([
@@ -152,7 +152,7 @@ export const link = {
 			},
 
 			getMarkerWidth: function(type) {
-				let d = type === "source" ? this.attr("line/sourceMarker/d") : this.attr("line/targetMarker/d");
+				let d = type === 'source' ? this.attr('line/sourceMarker/d') : this.attr('line/targetMarker/d');
 				return this.getDataWidth(d);
 			},
 
@@ -172,7 +172,7 @@ export const link = {
 					targetCell &&
 					targetCell.isDataNode &&
 					targetCell.isDataNode() &&
-					["app.Table", "app.Collection", "app.ESNode"].includes(targetCell.get("type"))
+					['app.Table', 'app.Collection', 'app.ESNode'].includes(targetCell.get('type'))
 				);
 			},
 
@@ -189,28 +189,28 @@ export const link = {
 
 				if (data && configJoinTable) {
 					let joinTable = data.joinTable;
-					if (!joinTable) throw new Error(`${i18n.t("editor.cell.validate.none_setting")}`);
+					if (!joinTable) throw new Error(`${i18n.t('editor.cell.validate.none_setting')}`);
 					/* if( !joinTable.tableName)
 						throw new Error('Table name cannot be empty.');
 					if( !joinTable.primaryKeys)
 						throw new Error(`Table ${joinTable.tableName} primary key cannot be empty.`); */
-					if (!joinTable.joinType) throw new Error("JoinType cannot be empty.");
+					if (!joinTable.joinType) throw new Error('JoinType cannot be empty.');
 
-					if (joinTable.joinType !== "append") {
+					if (joinTable.joinType !== 'append') {
 						if (!joinTable.joinKeys || joinTable.joinKeys.length === 0)
-							throw new Error(`${i18n.t("editor.cell.link.none_join_key")}`);
+							throw new Error(`${i18n.t('editor.cell.link.none_join_key')}`);
 						let errorJoinKeys = joinTable.joinKeys.filter(v => !v.source || !v.target);
 						if (errorJoinKeys && errorJoinKeys.length > 0) {
-							throw new Error(`${i18n.t("editor.cell.link.none_join_key")}`);
+							throw new Error(`${i18n.t('editor.cell.link.none_join_key')}`);
 						}
 					}
 					/* if( ['merge_embed', 'update'].includes(joinTable.joinType) ) {
 						if( !joinTable.joinPath )
 							throw new Error(`${i18n.t('editor.cell.link.none_join_path')}`);
 					} */
-					if (joinTable.joinType === "merge_embed") {
+					if (joinTable.joinType === 'merge_embed') {
 						if (!joinTable.arrayUniqueKey)
-							throw new Error(`${i18n.t("editor.cell.link.none_array_unique_key")}`);
+							throw new Error(`${i18n.t('editor.cell.link.none_array_unique_key')}`);
 					}
 				}
 				return true;
@@ -224,10 +224,10 @@ export const link = {
 				let markerWidth = linkView.model.getMarkerWidth(type);
 				opt = { offset: markerWidth, stroke: true };
 				// connection point for UML shapes lies on the root group containg all the shapes components
-				let modelType = view.model.get("type");
-				if (modelType.indexOf("uml") === 0) opt.selector = "root";
+				let modelType = view.model.get('type');
+				if (modelType.indexOf('uml') === 0) opt.selector = 'root';
 				// taking the border stroke-width into account
-				if (modelType === "standard.InscribedImage") opt.selector = "border";
+				if (modelType === 'standard.InscribedImage') opt.selector = 'border';
 				return joint.connectionPoints.boundary.call(this, line, view, magnet, opt, type, linkView);
 			}
 		}
@@ -243,82 +243,82 @@ export const link = {
 			attrs: {
 				label: {
 					text: {
-						type: "content-editable",
-						label: "Text",
-						group: "text",
+						type: 'content-editable',
+						label: 'Text',
+						group: 'text',
 						index: 1
 					},
 					fontSize: {
-						type: "range",
+						type: 'range',
 						min: 5,
 						max: 80,
-						unit: "px",
-						label: "Font size",
-						group: "text",
-						when: { ne: { "attrs/label/text": "" } },
+						unit: 'px',
+						label: 'Font size',
+						group: 'text',
+						when: { ne: { 'attrs/label/text': '' } },
 						index: 2
 					},
 					fontFamily: {
-						type: "select-box",
+						type: 'select-box',
 						options: options.fontFamily,
-						label: "Font family",
-						group: "text",
-						when: { ne: { "attrs/label/text": "" } },
+						label: 'Font family',
+						group: 'text',
+						when: { ne: { 'attrs/label/text': '' } },
 						index: 3
 					},
 					fontWeight: {
-						type: "select-box",
+						type: 'select-box',
 						options: options.fontWeight,
-						label: "Font thickness",
-						group: "text",
-						when: { ne: { "attrs/label/text": "" } },
+						label: 'Font thickness',
+						group: 'text',
+						when: { ne: { 'attrs/label/text': '' } },
 						index: 4
 					},
 					fill: {
-						type: "color-palette",
+						type: 'color-palette',
 						options: options.colorPalette,
-						label: "Fill",
-						group: "text",
-						when: { ne: { "attrs/label/text": "" } },
+						label: 'Fill',
+						group: 'text',
+						when: { ne: { 'attrs/label/text': '' } },
 						index: 5
 					}
 				},
 				body: {
 					fill: {
-						type: "color-palette",
+						type: 'color-palette',
 						options: options.colorPalette,
-						label: "Fill",
-						group: "presentation",
+						label: 'Fill',
+						group: 'presentation',
 						index: 1
 					},
 					stroke: {
-						type: "color-palette",
+						type: 'color-palette',
 						options: options.colorPalette,
-						label: "Outline",
-						group: "presentation",
+						label: 'Outline',
+						group: 'presentation',
 						index: 2
 					},
 					strokeWidth: {
-						type: "range",
+						type: 'range',
 						min: 0,
 						max: 30,
 						step: 1,
 						defaultValue: 1,
-						unit: "px",
-						label: "Outline thickness",
-						group: "presentation",
-						when: { ne: { "attrs/body/stroke": "transparent" } },
+						unit: 'px',
+						label: 'Outline thickness',
+						group: 'presentation',
+						when: { ne: { 'attrs/body/stroke': 'transparent' } },
 						index: 3
 					},
 					strokeDasharray: {
-						type: "select-box",
+						type: 'select-box',
 						options: options.strokeStyle,
-						label: "Outline style",
-						group: "presentation",
+						label: 'Outline style',
+						group: 'presentation',
 						when: {
 							and: [
-								{ ne: { "attrs/body/stroke": "transparent" } },
-								{ ne: { "attrs/body/strokeWidth": 0 } }
+								{ ne: { 'attrs/body/stroke': 'transparent' } },
+								{ ne: { 'attrs/body/strokeWidth': 0 } }
 							]
 						},
 						index: 4
@@ -328,11 +328,11 @@ export const link = {
 		},
 		groups: {
 			presentation: {
-				label: "Presentation",
+				label: 'Presentation',
 				index: 1
 			},
 			text: {
-				label: "Text",
+				label: 'Text',
 				index: 2
 			}
 		}

@@ -1015,8 +1015,8 @@ export default {
 		 */
 		showSetting() {
 			log('Job.showSetting');
-			if (this.$route.query.isMoniting == 'true') this.editor.showSetting(true);
-			else this.editor.showSetting();
+			if (this.$route.query.isMoniting == 'true') this.editor.showSetting(true, true);
+			else this.editor.showSetting(true, false);
 		},
 
 		/**

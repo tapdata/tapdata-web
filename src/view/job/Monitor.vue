@@ -10,7 +10,7 @@
 					</el-select>
 				</el-col>
 				<el-col :span="4" style="text-align: right;">
-					<el-button class="e-button" type="primary" @click="seeNodeData" :disabled="stageId === 'all'">{{
+					<el-button class="e-button" type="primary" @click="seeNodeData">{{
 						$t('dataFlow.button.viewConfig')
 					}}</el-button>
 				</el-col>
@@ -147,7 +147,6 @@
 	</div>
 </template>
 <script>
-// import $ from 'jquery';
 import echartHead from './components/echartHead';
 import echartsCompinent from '../../components/echartsCompinent';
 import shaftlessEchart from '../../components/shaftlessEchart';
@@ -488,6 +487,7 @@ export default {
 				this.selectId = val;
 				if (val === 'all') {
 					this.selectFlow = 'flow_';
+					this.stageType = '';
 				} else {
 					this.selectFlow = 'stage_';
 
@@ -561,7 +561,8 @@ export default {
 				this.editor.seeMonitor = false;
 				this.editor.graph.selectionPosition(selectCell);
 			} else {
-				this.$message.error(this.$t('dataFlow.selectNode'));
+				this.editor.showSetting(true, true);
+				// this.$message.error(this.$t('dataFlow.selectNode'));
 			}
 		},
 
@@ -901,11 +902,11 @@ export default {
 
 			.info {
 				width: 55%;
-				padding: 30px 10px 0 30px;
+				padding: 20px 10px 0 30px;
 				box-sizing: border-box;
 
 				.info-list {
-					padding-bottom: 14px;
+					padding-bottom: 10px;
 
 					.info-label {
 						display: inline-block;

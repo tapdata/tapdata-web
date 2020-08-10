@@ -62,12 +62,16 @@
 				</el-popover>
 			</el-form-item>
 			<el-form-item :label="$t('dataFlow.send_email')">
-				<el-checkbox-group v-model="formData.emailWaring">
+				<el-checkbox v-model="formData.emailWaring.paused">{{ $t('dataFlow.stopped') }}</el-checkbox>
+				<el-checkbox v-model="formData.emailWaring.error">{{ $t('dataFlow.error') }}</el-checkbox>
+				<el-checkbox v-model="formData.emailWaring.edited">{{ $t('dataFlow.edited') }}</el-checkbox>
+				<el-checkbox v-model="formData.emailWaring.started">{{ $t('dataFlow.started') }}</el-checkbox>
+				<!-- <el-checkbox-group v-model="formData.emailWaring">
 					<el-checkbox class="setBtn" label="paused">{{ $t('dataFlow.stopped') }} </el-checkbox>
 					<el-checkbox class="setBtn" label="error">{{ $t('dataFlow.error') }} </el-checkbox>
 					<el-checkbox class="setBtn" label="edited">{{ $t('dataFlow.edited') }} </el-checkbox>
 					<el-checkbox class="setBtn" label="started">{{ $t('dataFlow.started') }} </el-checkbox>
-				</el-checkbox-group>
+				</el-checkbox-group> -->
 			</el-form-item>
 			<el-form-item :label="$t('dataFlow.run_custom_sql')" v-show="formData.sync_type === 'initial_sync'">
 				<!-- 重复运行自定义SQL -->
@@ -408,8 +412,9 @@ export default {
 		// 返回
 		GoBack() {
 			if (!this.disabled) {
-				this.editor.showSetting(false);
+				this.editor.showSetting(false, this.disabled);
 			} else {
+				this.editor.showSetting(false, this.disabled);
 				this.editor.initMonitor();
 			}
 		}
