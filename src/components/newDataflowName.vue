@@ -1,11 +1,11 @@
 <template>
 	<el-dialog title="任务设置" :visible.sync="dialogVisibleSetting" width="40%" :before-close="handleClose">
-		<el-form label-width="200px" :model="form">
+		<el-form label-width="200px">
 			<el-form-item label="任务名称">
-				<el-input></el-input>
+				<el-input v-model="dataflow.name"></el-input>
 			</el-form-item>
 			<el-form-item :label="$t('dataFlow.sync_type')">
-				<el-radio-group v-model="form.sync_type" size="mini">
+				<el-radio-group v-model="dataflow.setting.sync_type" size="mini">
 					<el-radio-button label="initial_sync+cdc"
 						>{{ $t('dataFlow.initial_sync') + '+' + $t('dataFlow.cdc') }}
 					</el-radio-button>
@@ -14,13 +14,13 @@
 				</el-radio-group>
 			</el-form-item>
 			<el-form-item :label="$t('dataFlow.stop_on_error')">
-				<el-radio-group v-model="form.stopOnError" size="mini">
+				<el-radio-group v-model="dataflow.setting.stopOnError" size="mini">
 					<el-radio-button :label="true">{{ $t('dataFlow.yes') }}</el-radio-button>
 					<el-radio-button :label="false">{{ $t('dataFlow.no') }}</el-radio-button>
 				</el-radio-group>
 			</el-form-item>
 			<el-form-item :label="$t('dataFlow.need_to_create_Index')">
-				<el-radio-group v-model="form.needToCreateIndex" size="mini">
+				<el-radio-group v-model="dataflow.setting.needToCreateIndex" size="mini">
 					<el-radio-button :label="true">{{ $t('dataFlow.yes') }}</el-radio-button>
 					<el-radio-button :label="false">{{ $t('dataFlow.no') }}</el-radio-button>
 				</el-radio-group>
@@ -28,7 +28,7 @@
 		</el-form>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="handleClose">取 消</el-button>
-			<el-button type="primary" @click="handleClose">确 定</el-button>
+			<el-button type="primary" @click="save">确 定</el-button>
 		</span>
 	</el-dialog>
 </template>
@@ -37,25 +37,46 @@
 export default {
 	name: 'newDataFlow',
 	props: {
-		dialogVisible: {
+		dataflows: {
 			required: true,
-			value: Boolean
+			value: Object
+		}
+	},
+	watch: {
+		dataflow: {
+			handler() {
+				this.dataflows.name = this.dataflow.name;
+			},
+			deep: true
 		}
 	},
 	data() {
 		return {
-			dialogVisibleSetting: false,
-			form: {
-				sync_type: '',
-				stopOnError: '',
-				needToCreateIndex: ''
-			}
+			dataflow: {
+				name: '',
+				setting: {
+					sync_type: '',
+					stopOnError: '',
+					needToCreateIndex: ''
+				}
+			},
+			dialogVisibleSetting: true
 		};
+	},
+	mounted() {
+		this.dataflow.name = this.dataflows.name;
+		this.dataflow.setting = this.dataflows.setting;
 	},
 	methods: {
 		handleClose() {
 			this.dialogVisible = false;
 			this.$emit('dialogVisible', false);
+		},
+		save() {
+			this.dialogVisible = false;
+			this.$parent.editor.ui.setName(this.dataflows.name);
+			this.$parent.editor.graph.setSettingData(this.dataflow.setting);
+			this.$parent.start();
 		}
 	}
 };

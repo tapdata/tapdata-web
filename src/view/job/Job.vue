@@ -1,7 +1,8 @@
 <template>
 	<div class="editor-container" v-loading="loading" style="position: relative;">
 		<!-- <simpleScene v-if="$route.query.isSimpleScene"></simpleScene> -->
-		<simpleScene></simpleScene>
+		<simpleScene v-if="isSimple" ref="simpleScene"></simpleScene>
+		<newDataFlow v-if="newDataFlowV" :dataflows.sync="dataFlow"></newDataFlow>
 		<div
 			class="action-buttons"
 			style="display:flex;align-items: center;justify-content: space-between;padding-right: 10px;"
@@ -222,10 +223,12 @@ import factory from '../../api/factory';
 import editor from '../../editor/index';
 import breakText from '../../editor/breakText';
 import { statusBtMap } from '../../editor/states';
+import { db2db } from '../../editor/simpleSceneData';
 import log from '../../log';
 import ws from '../../api/ws';
 import AddBtnTip from './addBtnTip';
 import simpleScene from './SimpleScene';
+import newDataFlow from '@/components/newDataflowName';
 import { FORM_DATA_KEY, JOIN_TABLE_TPL } from '../../editor/constants';
 import { EditorEventType } from '../../editor/lib/events';
 import _ from 'lodash';
@@ -235,7 +238,7 @@ let changeData = null;
 export default {
 	name: 'Job',
 	dataFlow: null,
-	components: { AddBtnTip, simpleScene },
+	components: { AddBtnTip, simpleScene, newDataFlow },
 	data() {
 		return {
 			dialogFormVisible: false,
@@ -258,6 +261,8 @@ export default {
 			state1: '',
 			editable: false,
 			isMoniting: false,
+			isSimple: false,
+			newDataFlowV: false,
 			isSaving: false,
 			sync_type: 'initial_sync+cdc',
 			settingList: [
@@ -279,6 +284,9 @@ export default {
 			}
 		}
 	},
+	created() {
+		if (this.$route.query.isSimple == 'true') this.isSimple = true;
+	},
 	mounted() {
 		let self = this;
 		// build editor
@@ -288,6 +296,12 @@ export default {
 			scope: self
 		});
 		if (self.$route.query.isMoniting == 'true') self.isMoniting = true;
+		if (self.$route.query.isSimple == 'true') {
+			this.initData(db2db.data);
+			this.loading = false;
+			setTimeout(() => self.initSimple(), 1800);
+			return;
+		}
 		if (!window.tpdata)
 			Object.keys(localStorage).forEach(key => {
 				if (
@@ -414,6 +428,29 @@ export default {
 			this.tempDialogVisible = false;
 			this.loadData();
 		},
+		simpleRefresh() {
+			this.$refs.simpleScene.cellHtml = this.editor.graph.paper
+				.getMountedViews()
+				.map(ele => {
+					if (ele.model.isElement && ele.model.isElement()) return ele.$el[0].outerHTML;
+					else return '';
+				})
+				.join('');
+			this.$refs.simpleScene.renderCell();
+		},
+		simpleGoNext(step) {
+			if (step == 3) {
+				this.newDataFlowV = true;
+				return;
+			} else this.newDataFlowV = false;
+			this.editor.graph.selectCell(this.editor.graph.graph.getElements()[step - 1]);
+			this.simpleRefresh();
+		},
+		initSimple() {
+			this.simpleRefresh();
+			document.body.getElementsByClassName('e-sidebar-right')[0].style.zIndex = 2000;
+			this.editor.graph.selectCell(this.editor.graph.graph.getElements()[0]);
+		},
 		initData(data) {
 			let dataFlow = data;
 			this.dataFlowId = dataFlow.id;
@@ -470,6 +507,12 @@ export default {
 			}
 		},
 		onGraphChanged() {
+			if (this.isSimple) {
+				this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
+					this.simpleRefresh();
+				});
+				return;
+			}
 			let self = this;
 			this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
 				changeData = this.getDataFlowData(true);
@@ -853,7 +896,8 @@ export default {
 								isMoniting: true
 							}
 						});
-						location.reload();
+						this.location.reload();
+						this.$message.success(self.$t('message.taskStart'));
 					}
 				});
 			}
