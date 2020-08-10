@@ -144,9 +144,8 @@ let menuSetting = [
 		]
 	},
 	{
-		name: 'oldDataCollect',
-		icon: 'shujucaiji',
-		children: [{ name: 'dataCollect' }]
+		name: 'dataCollect',
+		icon: 'shujucaiji'
 	},
 	{
 		name: 'system',
