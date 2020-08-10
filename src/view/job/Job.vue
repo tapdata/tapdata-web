@@ -32,7 +32,7 @@
 					suffix-icon="el-icon-search"
 				></el-autocomplete>
 
-				<el-button-group>
+				<el-button-group class="action-btn-group">
 					<el-button
 						v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
 						class="action-btn"
@@ -109,7 +109,7 @@
 					>
 				</el-tag>
 
-				<el-button-group>
+				<el-button-group class="action-btn-group">
 					<el-button
 						:disabled="statusBtMap[status].start"
 						class="action-btn btn-operatiton"
@@ -1400,6 +1400,9 @@ export default {
 	.mr-5 {
 		margin-right: 5px;
 	}
+	.action-btn-group {
+		display: flex;
+	}
 	.action-btn,
 	.btn-setting {
 		border: none;
@@ -1447,7 +1450,6 @@ export default {
 	}
 	.btn-setting {
 		padding: 0;
-		overflow: hidden;
 		&:hover {
 			.iconfont {
 				color: #606266;
