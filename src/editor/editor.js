@@ -316,11 +316,12 @@ export default class Editor extends BaseObject {
 	 * show setting panel
 	 * @param name
 	 */
-	showSetting(editDisable) {
-		if (!this.getRightTabPanel().el.is(':hidden')) {
-			this.getRightSidebar().hide();
-			return;
-		}
+	showSetting(isShow, editDisable) {
+		// debugger;
+		// if (!this.getRightTabPanel().el.is(':hidden')) {
+		// 	this.getRightSidebar().hide();
+		// 	return;
+		// }
 		this.getRightTabPanel().removeAll();
 		let self = this;
 		self.initSettings();
@@ -333,7 +334,11 @@ export default class Editor extends BaseObject {
 				setting.setData(settingData);
 			}
 			rightTabPanel.select(setting);
-			self.getRightSidebar().show();
+			if (isShow) {
+				self.getRightSidebar().show();
+			} else {
+				self.getRightSidebar().hide();
+			}
 		}
 	}
 
