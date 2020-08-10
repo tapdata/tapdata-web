@@ -57,6 +57,7 @@
 
 <script>
 import factory from '../api/factory';
+import _ from 'lodash';
 
 const MetadataDefinitions = factory('MetadataDefinitions');
 
@@ -71,7 +72,7 @@ export default {
 			required: true,
 			value: String
 		},
-		oldTagList: {
+		tagLists: {
 			required: true,
 			value: Object || []
 		}
@@ -85,13 +86,15 @@ export default {
 				isLeaf: 'leaf'
 			},
 			treeData: [],
-			tagList: []
+			tagList: [],
+			oldTagList: []
 		};
 	},
 	watch: {
 		dialogVisible: {
 			handler() {
 				if (this.dialogVisible) {
+					this.oldTagList = _.cloneDeep(this.tagLists);
 					this.getData();
 				}
 			}

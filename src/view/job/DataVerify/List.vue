@@ -418,9 +418,9 @@ export default {
 				validationSettings: this.tableData
 			};
 			this.editIndex = -1;
+			this.handleClose();
 			dataFlows.patchId(this.id, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
-					this.handleClose();
 					this.getData();
 				}
 			});

@@ -299,7 +299,7 @@
 			ref="SelectClassify"
 			:dialogVisible="dialogVisible"
 			type="dataflow"
-			:oldTagList="tagList"
+			:tagLists="tagList"
 			v-on:dialogVisible="handleDialogVisible"
 			v-on:operationsClassify="handleOperationClassify"
 		></SelectClassify>
@@ -483,7 +483,7 @@ export default {
 		},
 		handleOperationClassify(listtags) {
 			let attributes = [];
-			if (this.multipleSelection.length === 0) {
+			if (this.dataFlowId) {
 				let node = {
 					id: this.dataFlowId,
 					listtags: listtags
@@ -765,9 +765,8 @@ export default {
 									'fullDocument.children': true,
 									'fullDocument.stats': true,
 									'fullDocument.stages.id': true,
-									'fullDocument.stages.name': true,
+									'fullDocument.stages.name': true
 									//'fullDocument.setting': true,
-									'fullDocument.listtags': true
 								}
 							}
 						};
