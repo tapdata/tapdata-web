@@ -2,12 +2,7 @@
 	<el-dialog title="新建" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
 		<div>
 			<ul class="item">
-				<li
-					@click="
-						dialogVisibleSetting = true;
-						dialogVisible = false;
-					"
-				>
+				<li @click="db2db">
 					<span class="model">场景模式</span>
 					<div class="content">
 						<i class="iconfont icon-qianyi1"></i>
@@ -59,6 +54,15 @@ export default {
 		handleClose() {
 			this.dialogVisible = false;
 			this.$emit('dialogVisible', false);
+		},
+		db2db() {
+			this.dialogVisibleSetting = true;
+			this.dialogVisible = false;
+			let routeUrl = this.$router.resolve({
+				path: '/job',
+				query: { isSimple: true }
+			});
+			window.open(routeUrl.href, '_blank');
 		}
 	}
 };
