@@ -487,6 +487,7 @@ export default {
 				this.selectId = val;
 				if (val === 'all') {
 					this.selectFlow = 'flow_';
+					this.stageType = '';
 				} else {
 					this.selectFlow = 'stage_';
 
@@ -901,11 +902,11 @@ export default {
 
 			.info {
 				width: 55%;
-				padding: 30px 10px 0 30px;
+				padding: 20px 10px 0 30px;
 				box-sizing: border-box;
 
 				.info-list {
-					padding-bottom: 14px;
+					padding-bottom: 10px;
 
 					.info-label {
 						display: inline-block;
