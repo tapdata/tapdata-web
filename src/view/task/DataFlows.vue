@@ -77,17 +77,9 @@
 					</li>
 				</ul>
 				<div class="topbar-buttons">
-					<el-button size="mini" class="btn" @click="handleGoFunction">
-						<i class="iconfont icon-hanshu back-btn-icon"></i>
-						<span> {{ $t('dataFlow.taskBulkFx') }}</span>
-					</el-button>
 					<el-button size="mini" class="btn" v-show="multipleSelection.length > 0" @click="handleClassify">
 						<i class="iconfont icon-biaoqian back-btn-icon"></i>
 						<span> {{ $t('dataFlow.taskBulkTag') }}</span>
-					</el-button>
-					<el-button size="mini" class="btn" @click="handleImport">
-						<i class="iconfont icon-daoru back-btn-icon"></i>
-						<span> {{ $t('dataFlow.bulkImport') }}</span>
 					</el-button>
 					<el-dropdown @command="handleCommand" v-show="multipleSelection.length > 0">
 						<el-button class="btn btn-dropdowm" size="mini">
@@ -106,6 +98,14 @@
 							<el-dropdown-item command="batchRest">{{ $t('dataFlow.batchRest') }}</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
+					<el-button size="mini" class="btn" @click="handleGoFunction">
+						<i class="iconfont icon-hanshu back-btn-icon"></i>
+						<span> {{ $t('dataFlow.taskBulkFx') }}</span>
+					</el-button>
+					<el-button size="mini" class="btn" @click="handleImport">
+						<i class="iconfont icon-daoru back-btn-icon"></i>
+						<span> {{ $t('dataFlow.bulkImport') }}</span>
+					</el-button>
 					<el-button class="btn btn-create" type="primary" size="mini" @click="create">
 						<i class="iconfont icon-jia add-btn-icon"></i>
 					</el-button>

@@ -11,8 +11,8 @@
 			<span @click="handleClear" class="clear-btn">清空</span>
 		</div>
 		<div class="table-box">
-			<el-table :data="tableData" border class="dv-table" style="width: 100%">
-				<el-table-column prop="type" :label="$t('dataVerify.dataWay')" width="150">
+			<el-table :data="tableData" border class="dv-table" v-loading="loading">
+				<el-table-column prop="type" :label="$t('dataVerify.dataWay')" width="80">
 					<template slot-scope="scope">
 						<span>
 							{{ $t('dataVerify.' + scope.row.type) }}
@@ -22,7 +22,7 @@
 				<el-table-column
 					prop="condition.value"
 					:label="$t('dataVerify.range')"
-					width="100"
+					width="80"
 					:formatter="formatterRange"
 				>
 				</el-table-column>
@@ -64,7 +64,7 @@
 						</el-tooltip>
 					</template>
 				</el-table-column>
-				<el-table-column width="80" :label="$t('dataVerify.operate')">
+				<el-table-column width="70" :label="$t('dataVerify.operate')">
 					<template slot-scope="scope">
 						<span class="el-icon-edit" @click="handleEdit(scope.$index)"></span>
 						<span class="el-icon-close" @click="handleDelete(scope.$index)"></span>
@@ -126,7 +126,7 @@
 						size="mini"
 						style="width: 100%"
 						v-model="formData.source.connectionId"
-						:placeholder="$t('dataVerify.sourceText')"
+						:placeholder="$t('dataVerify.sourceDatabaseText')"
 						@input="handleForceUpdate"
 						@change="changeSourceTable"
 					>
@@ -199,7 +199,7 @@
 						v-model="formData.target.connectionId"
 						@input="handleForceUpdate"
 						@change="changeTargetTable"
-						:placeholder="$t('dataVerify.targetText')"
+						:placeholder="$t('dataVerify.targetDatabaseText')"
 					>
 						<el-option
 							v-for="item in targetDatabase"
@@ -215,7 +215,7 @@
 						size="mini"
 						style="width: 100%"
 						v-model="formData.target.stageId"
-						:placeholder="$t('dataVerify.sourceText')"
+						:placeholder="$t('dataVerify.targetText')"
 						@input="handleForceUpdate"
 					>
 						<el-option
@@ -268,7 +268,7 @@
 				</el-form-item>
 				<el-form-item v-show="formData.type === 'advance'">
 					<div :span="24" class="example-js">
-						<span>example:</span>
+						<span>Example:</span>
 						<span>function validate(sourceRow) { </span>
 						<span>var targetRow = target.executeQuery({</span>
 						<span>sql: "select * from VALIDATE_TEST where ID = "+sourceRow.ID});</span>
@@ -310,9 +310,11 @@
 <script>
 import factory from '../../../api/factory';
 import log from '../../../log';
+import Drawer from '@/components/Drawer';
 import getUrlSearch from './getUrlSearch';
 const dataFlows = factory('DataFlows');
-import Drawer from '@/components/Drawer';
+import { DEFAULT_DATAVERIFY } from './constants';
+import _ from 'lodash';
 
 export default {
 	components: {
@@ -327,37 +329,13 @@ export default {
 			targetList: [],
 			sourceDatabase: [],
 			targetDatabase: [],
-			formData: {
-				condition: {
-					type: 'rows', // # rows：按行数参与校验，sampleRate：按采样率参与校验
-					// # type为rows时表示行数；type为sampleRate时，表示采样率，如：
-					value: '1000'
-				},
-				source: {
-					connectionId: '',
-					databaseType: '',
-					stageId: '',
-					tableName: '',
-					filter: '',
-					checkedSource: false
-				},
-				target: {
-					connectionId: '',
-					databaseType: '',
-					stageId: '',
-					tableName: '',
-					filter: '',
-					checkedTarget: false
-				},
-				validateCode: 'function validate(sourceRow){}',
-				type: 'advance' // row: 行数 hash：哈希  advance：高级校验
-			},
+			formData: _.cloneDeep(DEFAULT_DATAVERIFY),
 			colorMap: {
 				row: '#48B6E2',
 				hash: '#62A569',
 				advance: '#9889D8'
 			},
-
+			loading: true,
 			tableData: [],
 			firstVerify: false
 		};
@@ -375,6 +353,7 @@ export default {
 				})
 				.then(res => {
 					if (res.statusText === 'OK' || res.status === 200) {
+						this.loading = false;
 						if (res.data) {
 							this.tableData = res.data.validationSettings ? res.data.validationSettings : [];
 							if (!res.data.validateStatus) {
@@ -387,39 +366,10 @@ export default {
 		},
 		handleClose() {
 			this.disabledDrawer = false;
-			this.formData = {
-				condition: {
-					type: 'rows', // # rows：按行数参与校验，sampleRate：按采样率参与校验
-					// # type为rows时表示行数；type为sampleRate时，表示采样率，如：
-					value: '1000'
-				},
-				source: {
-					connectionId: '',
-					databaseType: '',
-					stageId: '',
-					tableName: '',
-					filter: '',
-					checkedSource: false
-				},
-				target: {
-					connectionId: '',
-					databaseType: '',
-					stageId: '',
-					tableName: '',
-					filter: '',
-					checkedTarget: false
-				},
-				validateCode: 'function validate(sourceRow){}',
-				type: 'advance' // row: 行数 hash：哈希  advance：高级校验
-			};
+			this.formData = _.cloneDeep(DEFAULT_DATAVERIFY);
 		},
 		handleShowDrawer() {
 			this.disabledDrawer = true;
-		},
-		changeType(type) {
-			if (type !== 'advance') {
-				this.formData.validateCode = '';
-			}
 		},
 		handleAdd() {
 			if (this.formData.source.connectionId === '' || !this.formData.source.connectionId) {
