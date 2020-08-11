@@ -891,7 +891,7 @@ export default {
 				this.loading = true;
 				self.doSave(data, (err, rest) => {
 					if (err) {
-						this.$message.error(err.response.data);
+						self.$message.error(err.response.data);
 					} else {
 						this.$message.success(self.$t('message.taskStart'));
 						self.$router.push({
@@ -901,8 +901,8 @@ export default {
 								isMoniting: true
 							}
 						});
-						this.location.reload();
-						this.$message.success(self.$t('message.taskStart'));
+						location.reload();
+						self.$message.success(self.$t('message.taskStart'));
 					}
 				});
 			}

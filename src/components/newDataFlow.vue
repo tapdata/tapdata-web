@@ -1,9 +1,9 @@
 <template>
-	<el-dialog title="新建" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+	<el-dialog :title="$t('dataFlow.createNew')" :visible.sync="dialogVisible" width="40%" :before-close="handleClose">
 		<div>
 			<ul class="item">
 				<li @click="db2db">
-					<span class="model">场景模式</span>
+					<span class="model">{{ $t('dataFlow.guidingMode') }}</span>
 					<div class="content">
 						<i class="iconfont icon-qianyi1"></i>
 						<span>
@@ -13,31 +13,17 @@
 					</div>
 				</li>
 				<li>
-					<div class="content">
-						<i class="iconfont icon-kujitongbucopy"></i>
-						<span>
-							<span class="tag">{{ $t('dataFlow.databseMigrationHead') }}</span>
-							{{ $t('dataFlow.databseMigration') }}</span
-						>
-					</div>
-				</li>
-				<div class="divider"></div>
-				<li>
-					<span class="model">高级模式</span>
+					<span class="model">{{ $t('dataFlow.advancedMode') }}</span>
 					<div class="content">
 						<i class="iconfont icon-custom"></i>
 						<span>
-							<span class="tag">{{ $t('dataFlow.databseMigrationHead') }}</span>
+							<span class="tag">{{ $t('dataFlow.databseFreedomHead') }}</span>
 							{{ $t('dataFlow.databseFreedom') }}</span
 						>
 					</div>
 				</li>
 			</ul>
 		</div>
-		<span slot="footer" class="dialog-footer">
-			<el-button @click="handleClose">取 消</el-button>
-			<el-button type="primary" @click="handleClose">确 定</el-button>
-		</span>
 	</el-dialog>
 </template>
 
@@ -56,13 +42,12 @@ export default {
 			this.$emit('dialogVisible', false);
 		},
 		db2db() {
-			this.dialogVisibleSetting = true;
-			this.dialogVisible = false;
 			let routeUrl = this.$router.resolve({
 				path: '/job',
 				query: { isSimple: true }
 			});
 			window.open(routeUrl.href, '_blank');
+			this.handleClose();
 		}
 	}
 };
@@ -72,21 +57,18 @@ export default {
 @color: #999999;
 .item {
 	display: flex;
-	justify-content: space-between;
+	justify-content: center;
 	padding: 0 20px;
+	font-size: 12px;
 	li {
-		width: 30%;
-	}
-	li:nth-child(2) {
-		margin-top: 30px;
-	}
-	.divider {
-		border-right: 1px solid #dedee4;
+		width: 50%;
+		margin-right: 10px;
 	}
 	.model {
 		display: block;
 		color: @color;
 		margin-bottom: 10px;
+		margin-left: 20px;
 	}
 	li {
 		.content {
@@ -94,6 +76,8 @@ export default {
 			justify-content: space-between;
 			cursor: pointer;
 			padding: 20px;
+			color: #999;
+			line-height: 24px;
 			.iconfont {
 				display: inline-block;
 				font-size: 36px;
