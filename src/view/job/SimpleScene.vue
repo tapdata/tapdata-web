@@ -3,8 +3,10 @@
 		style="position:absolute; width:3276px; height:1688px; left:-700px; top:-200px; z-index:1999; opacity:0.8; background-color: gray;"
 	>
 		<div v-html="cellHtmls" style=""></div>
-		<el-button>取消任务</el-button>
-		<el-button>转自由模式</el-button>
+		<div class="exit">
+			<el-button round size="mini" icon="el-icon-close">{{ $t('message.cancel') }}</el-button>
+			<el-button round size="mini" icon="iconfont icon-custom"> {{ $t('dataFlow.freedomMode') }}</el-button>
+		</div>
 		<div class="action-bar">
 			<div class="left-bar">
 				<span class="e-btn" @click="prevStep">
@@ -15,17 +17,17 @@
 				<el-radio-group v-model="activeStep">
 					<el-radio :label="1"
 						>STEP1 <br />
-						<span class="desc">设置源库</span></el-radio
+						<span class="desc">{{ $t('dataFlow.sourceSetting') }}</span></el-radio
 					>
 					<span class="space-line"></span>
 					<el-radio :label="2"
 						>STEP2 <br />
-						<span class="desc"> 设置目标库</span></el-radio
+						<span class="desc">{{ $t('dataFlow.targetSetting') }}</span></el-radio
 					>
 					<span class="space-line"></span>
 					<el-radio :label="3"
 						>STEP3 <br />
-						<span class="desc">任务设置</span></el-radio
+						<span class="desc">{{ $t('dataFlow.jobSetting') }}</span></el-radio
 					>
 				</el-radio-group>
 			</div>
@@ -72,7 +74,12 @@ export default {
 	}
 };
 </script>
-<style lang="less">
+<style lang="less" scoped>
+.exit {
+	position: absolute;
+	left: 800px;
+	top: 240px;
+}
 .action-bar {
 	position: absolute;
 	top: 850px;
@@ -124,6 +131,13 @@ export default {
 
 	.e-classification {
 		padding: 6px;
+	}
+}
+</style>
+<style lang="less">
+.action-bar {
+	.el-radio__input .el-radio__inner {
+		margin-bottom: -10px;
 	}
 }
 </style>
