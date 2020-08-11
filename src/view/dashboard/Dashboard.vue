@@ -512,10 +512,19 @@ export default {
 
 		// 点击任务名称跳转到任务
 		hanleName(data) {
-			let routeUrl = this.$router.resolve({
-				path: '/job',
-				query: { id: data.id }
-			});
+			let routeUrl = null;
+			if (data.status === 'running') {
+				routeUrl = this.$router.resolve({
+					path: '/job',
+					query: { id: data.id, isMoniting: true }
+				});
+			} else {
+				routeUrl = this.$router.resolve({
+					path: '/job',
+					query: { id: data.id }
+				});
+			}
+
 			setTimeout(() => {
 				document.querySelectorAll('.el-tooltip__popper').forEach(it => {
 					it.outerHTML = '';
