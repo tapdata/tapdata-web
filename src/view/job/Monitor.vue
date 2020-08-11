@@ -15,9 +15,14 @@
 					}}</el-button>
 				</el-col>
 				<el-col :span="4" style="float: right; text-align: right;">
-					<el-button class="e-button" size="mini" type="primary" @click="handleGoDataVerify">{{
-						$t('dataVerify.dataVerify')
-					}}</el-button>
+					<el-button
+						class="e-button"
+						size="mini"
+						type="primary"
+						@click="handleGoDataVerify"
+						:loading="loading"
+						>{{ $t('dataVerify.dataVerify') }}</el-button
+					>
 				</el-col>
 			</el-form-item>
 		</el-form>
@@ -173,6 +178,7 @@ export default {
 	data() {
 		return {
 			apiLoading: false,
+			loading: false,
 			stageType: '',
 			sliderBar: null,
 			dpx: 'QPS',
@@ -830,12 +836,14 @@ export default {
 
 		// 跳转到数据校验页面
 		handleGoDataVerify() {
+			this.loading = true;
 			dataFlows
 				.get([this.flow.id], {
 					fields: ['validateBatchId', 'validateStatus', 'validateFailedMSG']
 				})
 				.then(res => {
 					if (res.statusText === 'OK' || res.status === 200) {
+						this.loading = false;
 						if (
 							Object.keys(res.data).length === 0 ||
 							(res.data.validateBatchId && res.data.validateBatchId === '')
