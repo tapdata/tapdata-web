@@ -47,12 +47,12 @@ class WSClient extends EventEmitter {
 
 		let url = this.getUrl();
 
-		log('WSClient.connect', 'Connect to server: ' + url);
+		//log('WSClient.connect', 'Connect to server: ' + url);
 		try {
 			let token = self.getToken();
 			self.ws = new WebSocket(`${url}?access_token=${token}`);
 		} catch (e) {
-			log('WSClient.connect', 'Connect to server fail', e);
+			//log('WSClient.connect', 'Connect to server fail', e);
 			self.reconnect();
 			return;
 		}

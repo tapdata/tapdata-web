@@ -1,5 +1,7 @@
 <template>
-	<div style="position:absolute; width:3276px; height:1688px; z-index:1999; opacity:0.5; background-color: gray;">
+	<div
+		style="position:absolute; width:3276px; height:1688px; left:-700px; top:-200px; z-index:1999; opacity:0.8; background-color: gray;"
+	>
 		<div v-html="cellHtmls" style=""></div>
 		<div class="action-bar">
 			<div class="left-bar">
@@ -46,6 +48,8 @@ export default {
 		},
 		nextStep() {
 			if (this.activeStep == 3) return;
+			if (this.activeStep < 3 && !this.$parent.editor.graph.graph.getElements()[this.activeStep - 1].validate())
+				return;
 			this.activeStep++;
 			this.$parent.simpleGoNext(this.activeStep);
 		},
@@ -60,8 +64,8 @@ export default {
 <style lang="less">
 .action-bar {
 	position: absolute;
-	top: 800px;
-	left: -800px;
+	top: 850px;
+	left: -200px;
 	display: flex;
 	width: 100%;
 	flex-flow: row;
