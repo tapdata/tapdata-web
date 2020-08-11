@@ -184,13 +184,6 @@ export default {
 
 	methods: {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model = {
-				name: '',
-				cacheName: '',
-				cacheKeys: '',
-				maxSize: 50,
-				maxRows: 10000
-			};
 			if (data) {
 				_.merge(this.model, data);
 				this.setLimited(data.maxSize);

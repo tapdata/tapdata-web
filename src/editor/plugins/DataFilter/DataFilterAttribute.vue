@@ -182,12 +182,6 @@ export default {
 	},
 	methods: {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model = {
-				type: 'row_filter_processor',
-				name: 'Row Filter',
-				expression: '//code',
-				action: 'retain' // discard,retain
-			};
 			if (data) {
 				_.merge(this.model, data);
 			}

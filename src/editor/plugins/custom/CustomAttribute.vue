@@ -242,13 +242,6 @@ export default {
 	methods: {
 		convertSchemaToTreeData,
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model = {
-				connectionId: '',
-				type: 'custom_connection',
-				primaryKeys: '',
-				initialSyncOrder: 0,
-				enableInitialOrder: false
-			};
 			if (data) {
 				_.merge(this.model, data);
 			}

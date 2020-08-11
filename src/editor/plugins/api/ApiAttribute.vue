@@ -221,12 +221,6 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model = {
-				connectionId: '',
-				type: 'rest api',
-				tableName: '',
-				primaryKeys: ''
-			};
 			if (data) {
 				_.merge(this.model, data);
 			}

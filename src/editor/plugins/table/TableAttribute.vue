@@ -641,30 +641,6 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			_.merge(this.model, {
-				connectionId: '',
-				databaseType: '',
-				tableName: '',
-				sql: '',
-				editSql: '',
-				isFilter: false,
-				sqlFromCust: true,
-				sqlNotFromCust: false,
-				custSql: {
-					fieldFilterType: 'keepAllFields',
-					limitLines: '',
-					filterConds: [{ field: '', calcu: '', val: '', condStr: '' }],
-					sql: ''
-				},
-				initialOffset: '',
-				dropTable: false,
-				type: 'table',
-				primaryKeys: '',
-				initialSyncOrder: 0,
-				enableInitialOrder: false
-			});
-			if (this.model.selectedFields) this.model.selectedFields.length = 0;
-			if (this.model.custFields) this.model.custFields.length = 0;
 			if (data) {
 				_.merge(this.model, data);
 				//老数据的兼容处理

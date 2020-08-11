@@ -129,11 +129,6 @@ export default {
 
 	methods: {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model = {
-				name: 'JavaScript',
-				type: 'js_processor',
-				script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}'
-			};
 			if (data) {
 				_.merge(this.model, data);
 			}

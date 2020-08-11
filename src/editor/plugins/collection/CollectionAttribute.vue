@@ -506,21 +506,6 @@ export default {
 			}
 		},
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model = {
-				connectionId: '',
-				databaseType: '',
-				tableName: '',
-				dropTable: false,
-				type: 'collection',
-				primaryKeys: '',
-				filter: '',
-				fieldFilterType: 'keepAllFields',
-				fieldFilter: '',
-				initialSyncOrder: 0,
-				enableInitialOrder: false,
-				operations: []
-			};
-
 			if (data) {
 				_.merge(this.model, data);
 				//老数据的兼容处理

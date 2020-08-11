@@ -220,19 +220,6 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.form = {
-				name: '',
-				type: 'aggregation_processor',
-				aggregations: [
-					{
-						name: 'COUNT',
-						filterPredicate: '',
-						aggFunction: 'COUNT',
-						aggExpression: '',
-						groupByExpression: ''
-					}
-				]
-			};
 			if (data) {
 				_.merge(this.form, data);
 				this.form.aggregations.map((item, index) => {

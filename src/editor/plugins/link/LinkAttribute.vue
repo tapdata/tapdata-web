@@ -323,12 +323,6 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model = {
-				label: '',
-				joinTable: _.cloneDeep(JOIN_TABLE_TPL),
-				type: 'link'
-			};
-
 			if (data) {
 				_.merge(this.model, data);
 			}

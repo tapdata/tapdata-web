@@ -256,16 +256,6 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model = {
-				connectionId: '',
-				type: 'gridfs',
-				databaseType: '',
-				tableName: '',
-				isSource: true,
-				primaryKeys: '',
-				filter: '',
-				gridfsReadMode: ''
-			};
 			if (data) {
 				_.merge(this.model, data);
 			}

@@ -181,10 +181,6 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model = {
-				connectionId: '',
-				type: 'elasticsearch'
-			};
 			if (data) {
 				_.merge(this.model, data);
 			}

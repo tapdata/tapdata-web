@@ -231,12 +231,6 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model = {
-				connectionId: '',
-				type: 'dummy db',
-				tableName: '',
-				primaryKeys: ''
-			};
 			if (data) {
 				_.merge(this.model, data);
 			}
