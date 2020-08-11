@@ -239,8 +239,8 @@ const cn = {
 		submitOnly: '仅提交',
 		implementationModalities: '执行方式',
 		submitConfirmation: '提交确认',
-		SyncPoint: '增量采集时间点',
-		cdcLabel: '数据源: POSS SOURCE hkuatdb5 SYSAPP',
+		SyncPoint: '增量采集开始时刻',
+		cdcLabel: '数据源:',
 		syncType: '同步类型',
 		SyncInfo: {
 			localTZ: '当前时区传输时间：系统所在时区下，开始传输任务的时刻',
@@ -490,7 +490,7 @@ const cn = {
 					Undo: '撤销',
 					bulkRemoval: '批量移除',
 					bulkRevocation: '批量撤销',
-					queueCopied: '待复制队列',
+					queueCopied: '待迁移表',
 					tableRemoved: '已移除表',
 					enterName: '请输入名称/字段名进行搜索'
 				},

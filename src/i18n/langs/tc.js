@@ -238,8 +238,8 @@ const tc = {
 		submitOnly: '僅提交',
 		implementationModalities: '執行方式',
 		submitConfirmation: '提交確認',
-		SyncPoint: '增量採集時間點',
-		cdcLabel: '數據源: POSS SOURCE hkuatdb5 SYSAPP',
+		SyncPoint: '增量採集開始時刻',
+		cdcLabel: '數據源:',
 		syncType: '同步類型',
 		SyncInfo: {
 			localTZ: '當前時區傳輸時間：系統所在時區下，開始傳輸任務的時刻',
@@ -490,7 +490,7 @@ const tc = {
 					Undo: '撤銷',
 					bulkRemoval: '批量移除',
 					bulkRevocation: '批量撤銷',
-					queueCopied: '待複製隊列',
+					queueCopied: '待遷移表',
 					tableRemoved: '已移除表',
 					enterName: '請輸入名稱/字段名進行搜索'
 				},
@@ -499,7 +499,7 @@ const tc = {
 					tip: 'MongoDB 數據集',
 					defaultText: '數據集',
 
-					none_database: 's數據庫必填.',
+					none_database: '數據庫必填.',
 					none_collection: '數據集必填.',
 					none_pk: '主鍵必填.',
 
