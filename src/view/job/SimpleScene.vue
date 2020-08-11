@@ -1,14 +1,26 @@
 <template>
 	<div style="position:absolute; width:3276px; height:1688px; z-index:1999; opacity:0.5; background-color: gray;">
 		<div v-html="cellHtmls" style=""></div>
-		<div class="steps">
-			<el-button size="mini" @click="prevStep">上一步</el-button>
-			<el-steps :active="activeStep" finish-status="success" simple class="el-step">
-				<el-step title="步骤 1">1</el-step>
-				<el-step title="步骤 2">2</el-step>
-				<el-step title="步骤 3">3</el-step>
-			</el-steps>
-			<el-button size="mini" @click="nextStep">下一步</el-button>
+		<div class="action-bar">
+			<div class="left-bar">
+				<span class="e-btn" @click="prevStep">
+					{{ $t('dataFlow.previous') }}
+				</span>
+			</div>
+			<div class="center-bar">
+				<el-radio-group v-model="activeStep">
+					<el-radio :label="1">STEP1</el-radio>
+					<span class="space-line"></span>
+					<el-radio :label="2">STEP2</el-radio>
+					<span class="space-line"></span>
+					<el-radio :label="3">STEP3</el-radio>
+				</el-radio-group>
+			</div>
+			<div class="left-bar">
+				<span class="e-btn" @click="nextStep">
+					{{ $t('dataFlow.next') }}
+				</span>
+			</div>
 		</div>
 	</div>
 </template>
@@ -46,19 +58,53 @@ export default {
 };
 </script>
 <style lang="less">
-.steps {
+.action-bar {
 	position: absolute;
-	background-color: gray;
 	top: 800px;
-	left: 300px;
+	left: -800px;
 	display: flex;
-	justify-content: space-between;
-	.el-step {
-		width: 500px;
-		margin-left: 10px;
+	width: 100%;
+	flex-flow: row;
+	justify-content: center;
+	font-size: 12px;
+
+	& > div {
+		background: #fff;
+		margin-left: 30px;
+		/*padding: 12px 16px;*/
+
+		border-radius: 5px;
+		box-shadow: 0 0 3px 1px rgba(220, 220, 220, 0.9);
 	}
-	.el-button {
-		margin-left: 10px;
+	& > div:first-child {
+		margin-left: 0;
+	}
+
+	.e-btn {
+		cursor: pointer;
+		padding: 12px 16px;
+		display: inline-block;
+	}
+	.e-btn:first-child {
+		margin-left: 0;
+	}
+
+	.center-bar {
+		padding: 12px;
+		.el-radio {
+			margin-right: 10px;
+			margin-left: 10px;
+		}
+		.space-line {
+			margin-bottom: 3px;
+			display: inline-block;
+			width: 30px;
+			border: 1px solid #dddddd;
+		}
+	}
+
+	.e-classification {
+		padding: 6px;
 	}
 }
 </style>
