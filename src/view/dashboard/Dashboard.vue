@@ -166,6 +166,7 @@ import echartHead from './components/echartHead';
 import shaftlessEchart from '../../components/shaftlessEchart';
 import pieChart from '../../components/pieChart';
 import factory from '../../api/factory';
+import moment from 'moment';
 const cluster = factory('cluster');
 const DataFlows = factory('DataFlows');
 // const insights = factory('insights');
@@ -479,8 +480,9 @@ export default {
 
 				self.dataScreening.series[0].data = [res.data.chart2[0].totalOutput, res.data.chart2[0].totalInput];
 				self.unitData = self.dataScreening.series[0].data;
-				this.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
+				self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
 				self.transfer.tableData = res.data.chart3;
+				self.handleData(res.data.chart3);
 			});
 		},
 
@@ -562,6 +564,103 @@ export default {
 			} else {
 				this.dataScreening.series[0].data = this.unitData;
 			}
+		},
+
+		//
+		handleData(data) {
+			if (!data) return;
+			data.forEach(item => {
+				this.cookRecord(item);
+			});
+		},
+		cookRecord(item) {
+			item.newStatus = ['running', 'scheduled'].includes(item.status) ? 'scheduled' : 'stopping';
+			item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
+			let statusMap = {};
+			if (item.stats) {
+				item.hasChildren = false;
+				item.input = item.stats.input ? item.stats.input.rows : '--';
+				item.output = item.stats.output ? item.stats.output.rows : '--';
+				item.transmissionTime = item.stats.transmissionTime
+					? ((item.input * 1000) / item.stats.transmissionTime).toFixed(0)
+					: '--';
+				let children = item.stages;
+				item.children = [];
+				if (children) {
+					let finishedCount = 0;
+					children.forEach(k => {
+						let stage = '';
+						let node = {};
+						if (item.stats.stagesMetrics) {
+							stage = item.stats.stagesMetrics.filter(v => k.id === v.stageId);
+						}
+						if (!stage.length) {
+							node = {
+								id: item.id + k.id,
+								name: k.name,
+								input: '--',
+								output: '--',
+								transmissionTime: '--',
+								hasChildren: true,
+								statusLabel: '--'
+							};
+						} else {
+							let stg = stage[0];
+							let statusLabel = stg.status ? this.$t('dataFlow.status.' + stg.status) : '--';
+							if (stg.status === 'cdc') {
+								let lag = `(${this.$t('dataFlow.lag')}${this.getLag(stg.replicationLag)})`;
+								statusLabel += lag;
+								statusMap.cdc = true;
+							}
+							if (stg.status === 'initializing') {
+								statusMap.initializing = true;
+							}
+							if (stg.status === 'initialized') {
+								finishedCount += 1;
+							}
+							node = {
+								id: item.id + k.id,
+								name: k.name,
+								input: stg.input.rows,
+								output: stg.output.rows,
+								transmissionTime: stg.transmissionTime,
+								hasChildren: true,
+								statusLabel
+							};
+						}
+						item.children.push(node);
+					});
+					if (finishedCount && !statusMap.cdc && !statusMap.initializing) {
+						statusMap.initialized = true;
+					}
+					let statusList = [];
+					for (const key in statusMap) {
+						statusList.push(key);
+					}
+					item.statusList = statusList;
+				}
+			} else {
+				item.input = '--';
+				item.output = '--';
+				item.transmissionTime = '--';
+			}
+			return item;
+		},
+		getLag(lag) {
+			let r = '0s';
+			if (lag) {
+				let m = moment.duration(lag, 'seconds');
+				if (m.days()) {
+					r = m.days() + 'd';
+				} else if (m.hours()) {
+					r = m.hours() + 'h';
+				} else if (m.minutes()) {
+					r = m.minutes() + 'm';
+				} else {
+					r = lag + 's';
+				}
+			}
+			return r;
 		}
 	}
 };
