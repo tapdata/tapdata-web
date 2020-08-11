@@ -25,6 +25,9 @@
 					<el-radio-button :label="false">{{ $t('dataFlow.no') }}</el-radio-button>
 				</el-radio-group>
 			</el-form-item>
+			<el-form-item>
+				<div @click="showSetting">{{ $t('dataFlow.need_to_create_Index') }}</div>
+			</el-form-item>
 		</el-form>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="handleClose">取 消</el-button>
@@ -77,6 +80,9 @@ export default {
 			this.$parent.editor.ui.setName(this.dataflows.name);
 			this.$parent.editor.graph.setSettingData(this.dataflow.setting);
 			this.$parent.start();
+		},
+		showSetting() {
+			this.$parent.showSetting();
 		}
 	}
 };

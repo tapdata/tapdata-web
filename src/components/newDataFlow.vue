@@ -56,13 +56,12 @@ export default {
 			this.$emit('dialogVisible', false);
 		},
 		db2db() {
-			this.dialogVisibleSetting = true;
-			this.dialogVisible = false;
 			let routeUrl = this.$router.resolve({
 				path: '/job',
 				query: { isSimple: true }
 			});
 			window.open(routeUrl.href, '_blank');
+			this.handleClose();
 		}
 	}
 };
