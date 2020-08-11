@@ -987,7 +987,7 @@ export default {
 
 	.activename {
 		.el-input__inner {
-			color: tomato;
+			color: @color;
 		}
 	}
 
