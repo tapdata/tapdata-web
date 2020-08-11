@@ -1,6 +1,8 @@
 <template>
 	<div style="position:absolute; width:3276px; height:1688px; z-index:1999; opacity:0.5; background-color: gray;">
 		<div v-html="cellHtmls" style=""></div>
+		<el-button>取消任务</el-button>
+		<el-button>转自由模式</el-button>
 		<div class="action-bar">
 			<div class="left-bar">
 				<span class="e-btn" @click="prevStep">
@@ -9,11 +11,20 @@
 			</div>
 			<div class="center-bar">
 				<el-radio-group v-model="activeStep">
-					<el-radio :label="1">STEP1</el-radio>
+					<el-radio :label="1"
+						>STEP1 <br />
+						<span class="desc">设置源库</span></el-radio
+					>
 					<span class="space-line"></span>
-					<el-radio :label="2">STEP2</el-radio>
+					<el-radio :label="2"
+						>STEP2 <br />
+						<span class="desc"> 设置目标库</span></el-radio
+					>
 					<span class="space-line"></span>
-					<el-radio :label="3">STEP3</el-radio>
+					<el-radio :label="3"
+						>STEP3 <br />
+						<span class="desc">任务设置</span></el-radio
+					>
 				</el-radio-group>
 			</div>
 			<div class="left-bar">
@@ -82,7 +93,7 @@ export default {
 
 	.e-btn {
 		cursor: pointer;
-		padding: 12px 16px;
+		padding: 20px 16px;
 		display: inline-block;
 	}
 	.e-btn:first-child {
@@ -91,14 +102,18 @@ export default {
 
 	.center-bar {
 		padding: 12px;
+		font-size: 12px;
 		.el-radio {
 			margin-right: 10px;
 			margin-left: 10px;
+			.desc {
+				margin-left: 23px;
+			}
 		}
 		.space-line {
-			margin-bottom: 3px;
+			margin-bottom: 12px;
 			display: inline-block;
-			width: 30px;
+			width: 70px;
 			border: 1px solid #dddddd;
 		}
 	}
