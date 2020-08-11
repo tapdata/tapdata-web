@@ -33,10 +33,12 @@ export default {
 				`<!--z-index:3--><!--z-index:4--></g><g joint-selector="tools" class="joint-tools-layer"></g></g></svg></div>`;
 		},
 		nextStep() {
+			if (this.activeStep == 3) return;
 			this.activeStep++;
 			this.$parent.simpleGoNext(this.activeStep);
 		},
 		prevStep() {
+			if (this.activeStep == 1) return;
 			this.activeStep--;
 			this.$parent.simpleGoNext(this.activeStep);
 		}
