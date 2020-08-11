@@ -4,8 +4,10 @@
 	>
 		<div v-html="cellHtmls" style=""></div>
 		<div class="exit">
-			<el-button round size="mini" icon="el-icon-close">{{ $t('message.cancel') }}</el-button>
-			<el-button round size="mini" icon="iconfont icon-custom"> {{ $t('dataFlow.freedomMode') }}</el-button>
+			<el-button round size="mini" icon="el-icon-close" @click="toHome">{{ $t('message.cancel') }}</el-button>
+			<el-button round size="mini" icon="iconfont icon-custom" @click="goFree">
+				{{ $t('dataFlow.freedomMode') }}</el-button
+			>
 		</div>
 		<div class="action-bar">
 			<div class="left-bar">
@@ -13,7 +15,7 @@
 					{{ $t('dataFlow.previous') }}
 				</span>
 			</div>
-			<div class="center-bar">
+			<div class="center-bar" @click="skip">
 				<el-radio-group v-model="activeStep">
 					<el-radio :label="1"
 						>STEP1 <br />
@@ -32,7 +34,7 @@
 				</el-radio-group>
 			</div>
 			<div class="left-bar">
-				<span class="e-btn" @click="nextStep">
+				<span :class="activeValid ? 'e-btnv' : 'e-btn'" @click="nextStep">
 					{{ $t('dataFlow.next') }}
 				</span>
 			</div>
@@ -40,16 +42,22 @@
 	</div>
 </template>
 <script>
+import { db2db } from '../../editor/simpleSceneData';
+
 export default {
 	name: 'simpleScene',
 	data() {
 		return {
 			cellHtmls: '',
 			cellHtml: '',
+			activeValid: false,
 			activeStep: 1
 		};
 	},
 	methods: {
+		skip() {
+			event.preventDefault();
+		},
 		renderCell() {
 			this.cellHtmls =
 				`<div style="width: 3276px; height: 1688px;">
@@ -70,6 +78,16 @@ export default {
 			if (this.activeStep == 1) return;
 			this.activeStep--;
 			this.$parent.simpleGoNext(this.activeStep);
+		},
+		toHome() {
+			location.replace(location.origin + '/#/dashboard');
+		},
+		goFree() {
+			window.tpdata = db2db.data;
+			this.$router.go({
+				path: '/job',
+				query: {}
+			});
 		}
 	}
 };
@@ -101,7 +119,9 @@ export default {
 	& > div:first-child {
 		margin-left: 0;
 	}
-
+	.e-btnv {
+		color: green;
+	}
 	.e-btn {
 		cursor: pointer;
 		padding: 20px 16px;

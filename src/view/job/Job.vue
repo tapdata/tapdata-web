@@ -304,7 +304,7 @@ export default {
 		if (self.$route.query.isSimple == 'true') {
 			this.initData(db2db.data);
 			this.loading = false;
-			setTimeout(() => self.initSimple(), 1800);
+			setTimeout(() => self.initSimple(), 1100);
 			return;
 		}
 		if (!window.tpdata)
@@ -456,7 +456,6 @@ export default {
 				return;
 			} else this.newDataFlowV = false;
 			this.editor.graph.selectCell(this.editor.graph.graph.getElements()[step - 1]);
-			//this.simpleRefresh();
 		},
 		initSimple() {
 			this.editor.graph.isSimple = true;
