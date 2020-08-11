@@ -204,6 +204,9 @@ const en = {
 		databseProcessingHead: 'Data processing & SYNC',
 		databseMigrationHead: 'Database migration',
 		databseFreedomHead: 'Custom data SYNC',
+		createNew: 'Create new',
+		guidingMode: 'Guiding mode',
+		advancedMode: 'Advanced mode',
 		databseProcessing:
 			'With the  guided mode to help novice users to quickly understand the table level data processing and SYNC. This function can not only realize table level INITAL and CDC transmission, but also focus on various processors (JS processing, field filtering, aggregation processing, row level filtering, etc.) for complex logical processing demands.',
 		databseMigration:
