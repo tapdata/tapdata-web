@@ -141,7 +141,7 @@
 				</div>
 			</el-col>
 		</el-row>
-		<el-row :gutter="20" class="e-row">
+		<!-- <el-row :gutter="20" class="e-row">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="taskRankingObj" @getAllData="getAllData"></echart-head>
@@ -155,7 +155,7 @@
 					></shaftless-echart>
 				</div>
 			</el-col>
-		</el-row>
+		</el-row> -->
 	</section>
 	<iframe v-else src="/old/index.html#/dashboard" frameborder="0" style="height:100%; width: 100%;"></iframe>
 </template>
@@ -168,7 +168,7 @@ import pieChart from '../../components/pieChart';
 import factory from '../../api/factory';
 const cluster = factory('cluster');
 const DataFlows = factory('DataFlows');
-const insights = factory('insights');
+// const insights = factory('insights');
 // import echartsCompinent from '../../components/echartsCompinent';
 
 export default {
@@ -252,84 +252,84 @@ export default {
 				isHeader: false,
 				tableData: []
 			},
-			ranking: {
-				tooltip: {
-					show: false,
-					trigger: 'axis',
-					axisPointer: {
-						type: 'shadow'
-					},
-					formatter: '{b}<br/> {c}' + '(' + this.$t('app.Home.bar') + ')'
-					// formatter: function(params) {
-					// 	var res = '<div>' + params[0].name + '</div>' + '<div>' + params[0].value + '条</div>';
-					// 	return res;
-					// }
-				},
-				toolbox: {
-					show: true
-				},
-				legend: {
-					// data: [this.$('dataFlow.totalOutput'),this.$('dataFlow.totalInput')],
-				},
-				grid: {
-					containLabel: true,
-					bottom: '3%'
-				},
-				xAxis: {
-					type: 'category',
-					show: false,
-					axisLine: {
-						show: false,
-						lineStyle: {
-							color: '#ff00ff',
-							width: 0
-						}
-					},
-					data: [],
-					axisPointer: {
-						type: 'shadow'
-					}
-				},
-				yAxis: {
-					type: 'value',
-					min: 0,
-					axisLine: { show: false },
-					axisTick: { show: false },
-					splitLine: { show: false },
-					splitArea: { show: false },
-					axisLabel: {
-						formatter: function() {
-							return '';
-						}
-					}
-				},
-				series: [
-					{
-						type: 'bar',
-						data: [],
-						barWidth: '60%',
-						itemStyle: {
-							normal: {
-								color: '#90C3E6',
-								// color: function(params) {
-								// 	var colorList = ['#62a569', '#48b6e2'];
-								// 	return colorList[params.dataIndex];
-								// },
-								label: {
-									show: true,
-									verticalAlign: 'middle',
-									position: 'top',
-									distance: 10,
-									color: '#666',
-									formatter: function(val) {
-										return val.name.length > 6 ? val.name.slice(0, 6) + '...' : val.name;
-									}
-								}
-							}
-						}
-					}
-				]
-			},
+			// ranking: {
+			// 	tooltip: {
+			// 		show: false,
+			// 		trigger: 'axis',
+			// 		axisPointer: {
+			// 			type: 'shadow'
+			// 		},
+			// 		formatter: '{b}<br/> {c}' + '(' + this.$t('app.Home.bar') + ')'
+			// 		// formatter: function(params) {
+			// 		// 	var res = '<div>' + params[0].name + '</div>' + '<div>' + params[0].value + '条</div>';
+			// 		// 	return res;
+			// 		// }
+			// 	},
+			// 	toolbox: {
+			// 		show: true
+			// 	},
+			// 	legend: {
+			// 		// data: [this.$('dataFlow.totalOutput'),this.$('dataFlow.totalInput')],
+			// 	},
+			// 	grid: {
+			// 		containLabel: true,
+			// 		bottom: '3%'
+			// 	},
+			// 	xAxis: {
+			// 		type: 'category',
+			// 		show: false,
+			// 		axisLine: {
+			// 			show: false,
+			// 			lineStyle: {
+			// 				color: '#ff00ff',
+			// 				width: 0
+			// 			}
+			// 		},
+			// 		data: [],
+			// 		axisPointer: {
+			// 			type: 'shadow'
+			// 		}
+			// 	},
+			// 	yAxis: {
+			// 		type: 'value',
+			// 		min: 0,
+			// 		axisLine: { show: false },
+			// 		axisTick: { show: false },
+			// 		splitLine: { show: false },
+			// 		splitArea: { show: false },
+			// 		axisLabel: {
+			// 			formatter: function() {
+			// 				return '';
+			// 			}
+			// 		}
+			// 	},
+			// 	series: [
+			// 		{
+			// 			type: 'bar',
+			// 			data: [],
+			// 			barWidth: '60%',
+			// 			itemStyle: {
+			// 				normal: {
+			// 					color: '#90C3E6',
+			// 					// color: function(params) {
+			// 					// 	var colorList = ['#62a569', '#48b6e2'];
+			// 					// 	return colorList[params.dataIndex];
+			// 					// },
+			// 					label: {
+			// 						show: true,
+			// 						verticalAlign: 'middle',
+			// 						position: 'top',
+			// 						distance: 10,
+			// 						color: '#666',
+			// 						formatter: function(val) {
+			// 							return val.name.length > 6 ? val.name.slice(0, 6) + '...' : val.name;
+			// 						}
+			// 					}
+			// 				}
+			// 			}
+			// 		}
+			// 	]
+			// },
 			dataScreening: {
 				tooltip: {
 					show: false,
@@ -423,7 +423,7 @@ export default {
 	mounted() {
 		this.getClsterDataApi();
 		this.getDataFlowApi();
-		this.getRankingData();
+		// this.getRankingData();
 
 		this.jobObj = {
 			title: this.$t('app.Home.taskOverview'),
@@ -490,25 +490,25 @@ export default {
 			return time;
 		},
 
-		async getRankingData() {
-			let barData = (
-				await insights.get({
-					'filter[limit]': 10,
-					'filter[skip]': 0,
-					'filter[order]': 'data.total_records desc',
-					'filter[where][stats_name]': 'publish_stats',
-					'filter[where][stats_granularity]': 'daily'
-					// 'filter[where][and][0][stats_time]': moment().format('YYYYMMDD000000')
-					//'filter[where][and][1][stats_time][lte]': moment().format('YYYYMMDD000000')
-				})
-			).data;
-			if (barData.length) {
-				barData.forEach(item => {
-					this.ranking.xAxis.data.push(item.data.api_name);
-					this.ranking.series[0].data.push(item.data.total_records);
-				});
-			}
-		},
+		// async getRankingData() {
+		// 	let barData = (
+		// 		await insights.get({
+		// 			'filter[limit]': 10,
+		// 			'filter[skip]': 0,
+		// 			'filter[order]': 'data.total_records desc',
+		// 			'filter[where][stats_name]': 'publish_stats',
+		// 			'filter[where][stats_granularity]': 'daily'
+		// 			// 'filter[where][and][0][stats_time]': moment().format('YYYYMMDD000000')
+		// 			//'filter[where][and][1][stats_time][lte]': moment().format('YYYYMMDD000000')
+		// 		})
+		// 	).data;
+		// 	if (barData.length) {
+		// 		barData.forEach(item => {
+		// 			this.ranking.xAxis.data.push(item.data.api_name);
+		// 			this.ranking.series[0].data.push(item.data.total_records);
+		// 		});
+		// 	}
+		// },
 
 		// 点击任务名称跳转到任务
 		hanleName(data) {
@@ -560,6 +560,7 @@ export default {
 
 <style lang="less" scoped>
 .dashboard {
+	padding: 20px;
 	.e-row {
 		.e-col {
 			height: 320px;
