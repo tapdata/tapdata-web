@@ -106,12 +106,12 @@ class WSClient extends EventEmitter {
 	}
 
 	handlerClose() {
-		log('Disconnect server.');
+		//log("Disconnect server.");
 		this.reconnect();
 	}
 
-	handlerError(e) {
-		log('WSClient connection error', e.message);
+	handlerError() {
+		//log("WSClient connection error", e.message);
 	}
 
 	handlerMessage(e) {
@@ -119,7 +119,7 @@ class WSClient extends EventEmitter {
 		let msg = e.data;
 		let message = {};
 
-		// log("WSClient.receive message: " + msg);
+		//log("WSClient.receive message: " + msg);
 
 		if (typeof msg === 'string' && /^"?\{.*\}"?$/.test(msg)) {
 			try {
