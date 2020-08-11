@@ -1362,22 +1362,23 @@ export default {
 		width: 15px;
 	}
 	.canvas_gif {
-		animation: spinner 3s linear infinite;
+		animation: spinner 2s linear infinite;
 		// border: 1px solid transparent;
 
 		border-radius: 100%;
 		align-items: center;
-		height: 10px;
-		width: 10px;
+		height: 1em;
+		width: 1em;
 	}
 	.scheduled_gif {
-		border-top: 1px solid #67c23a;
-		border-right: 1px solid #67c23a;
+		border: 0.1em solid transparent;
+		border-top: 0.1em solid #67c23a;
+		border-right: 0.1em solid #67c23a;
 	}
 
 	.stopping_gif {
-		border-top: 1px solid rgb(241, 145, 73);
-		border-right: 1px solid rgb(241, 145, 73);
+		border-top: 0.1em solid rgb(241, 145, 73);
+		border-right: 0.1em solid rgb(241, 145, 73);
 	}
 }
 

@@ -24,7 +24,11 @@
 		<div class="echartMain">
 			<div class="echartlist">
 				<echart-head :data="screeningObj" @twoRadio="getTwoRadio"></echart-head>
-				<div class="info fl" v-if="this.stageType === 'table' || this.stageType === 'collection'">
+				<div
+					class="info fl"
+					v-if="this.stageType === 'table' || this.stageType === 'collection'"
+					v-loading="apiLoading"
+				>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.taskName') }}:</span>
 						<span class="info-text" style="color: #48b6e2;">{{ stage.nodeName }}</span>
@@ -168,6 +172,7 @@ export default {
 
 	data() {
 		return {
+			apiLoading: false,
 			stageType: '',
 			sliderBar: null,
 			dpx: 'QPS',
@@ -809,12 +814,18 @@ export default {
 
 		// 获取stage的节点信息
 		getStageDataApi(id) {
-			connectionApi.customQuery([id]).then(res => {
-				if (res.data) {
-					this.stage = res.data;
-					this.stage.nodeName = currentStageData.name;
-				}
-			});
+			this.apiLoading = true;
+			connectionApi
+				.customQuery([id])
+				.then(res => {
+					if (res.data) {
+						this.stage = res.data;
+						this.stage.nodeName = currentStageData.name;
+					}
+				})
+				.finally(() => {
+					this.apiLoading = false;
+				});
 		},
 
 		// 跳转到数据校验页面
