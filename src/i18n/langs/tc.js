@@ -204,9 +204,12 @@ const tc = {
 		databseMigrationHead: '數據處理同步',
 		databseFreedomHead: '自定義數據同步',
 		createNew: '新建',
-		guidingMode: '引导模式',
-		advancedMode: '高级模式',
-		advanceSetting: '更多高级设置',
+		guidingMode: '引導模式',
+		advancedMode: '高級模式',
+		advanceSetting: '更多高級設置',
+		execution: '開始執行',
+		previous: '上一步',
+		next: '下一步',
 		databseProcessing:
 			'以引導的模式幫助新手用戶快速了解資料庫之間的遷移。資料庫遷移能快速地實現資料庫之間(內置表批量過濾和改名等設置)的全量和增量傳輸，適用於實例遷移、上下雲、資料庫拆分擴容、災備等業務場景。',
 		databseMigration:

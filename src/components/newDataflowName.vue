@@ -36,8 +36,8 @@
 			</el-form-item>
 		</el-form>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="handleClose">{{ $t('message.cancel') }}</el-button>
-			<el-button type="primary" @click="save">{{ $t('message.confirm') }}</el-button>
+			<el-button @click="handleClose">{{ $t('dataFlow.previous') }}</el-button>
+			<el-button type="primary" @click="save">{{ $t('dataFlow.execution') }}</el-button>
 		</span>
 	</el-dialog>
 </template>
