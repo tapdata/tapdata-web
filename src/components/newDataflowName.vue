@@ -1,7 +1,13 @@
 <template>
-	<el-dialog title="任务设置" :visible.sync="dialogVisibleSetting" width="40%" :before-close="handleClose">
+	<el-dialog
+		class="sp-setting"
+		:title="$t('editor.ui.sidebar.setting')"
+		:visible.sync="dialogVisibleSetting"
+		width="40%"
+		:before-close="handleClose"
+	>
 		<el-form label-width="200px">
-			<el-form-item label="任务名称">
+			<el-form-item :label="$t('dataFlow.taskName')">
 				<el-input v-model="dataflow.name"></el-input>
 			</el-form-item>
 			<el-form-item :label="$t('dataFlow.sync_type')">
@@ -26,12 +32,12 @@
 				</el-radio-group>
 			</el-form-item>
 			<el-form-item>
-				<div @click="showSetting">{{ $t('dataFlow.need_to_create_Index') }}</div>
+				<div @click="showSetting" class="advance-setting">{{ $t('dataFlow.advanceSetting') }}</div>
 			</el-form-item>
 		</el-form>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="handleClose">取 消</el-button>
-			<el-button type="primary" @click="save">确 定</el-button>
+			<el-button @click="handleClose">{{ $t('message.cancel') }}</el-button>
+			<el-button type="primary" @click="save">{{ $t('message.confirm') }}</el-button>
 		</span>
 	</el-dialog>
 </template>
@@ -88,51 +94,18 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
-@color: #999999;
-.item {
-	display: flex;
-	justify-content: space-between;
-	padding: 0 20px;
-	li {
-		width: 30%;
+<style lang="less">
+.advance-setting {
+	color: #48b6e2;
+}
+.sp-setting {
+	font-size: 12px;
+	.el-input__inner {
+		height: 28px;
+		width: 300px;
 	}
-	li:nth-child(2) {
-		margin-top: 30px;
-	}
-	.divider {
-		border-right: 1px solid #dedee4;
-	}
-	.model {
-		display: block;
-		color: @color;
-		margin-bottom: 10px;
-	}
-	li {
-		.content {
-			display: flex;
-			justify-content: space-between;
-			cursor: pointer;
-			padding: 20px;
-			.iconfont {
-				display: inline-block;
-				font-size: 36px;
-				margin-right: 10px;
-			}
-			&:hover {
-				background: rgba(250, 250, 250, 1);
-				border: 1px solid rgba(222, 222, 228, 1);
-				box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.21);
-				border-radius: 5px;
-			}
-			.tag {
-				display: block;
-				font-size: 16px;
-				color: #48b6e2;
-				font-weight: 400;
-				margin-bottom: 10px;
-			}
-		}
+	.el-form-item {
+		margin-bottom: 0;
 	}
 }
 </style>

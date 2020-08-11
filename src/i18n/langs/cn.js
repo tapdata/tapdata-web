@@ -207,6 +207,7 @@ const cn = {
 		createNew: '新建',
 		guidingMode: '引导模式',
 		advancedMode: '高级模式',
+		advanceSetting: '更多高级设置',
 		databseProcessing:
 			'以引导的模式帮助新手用户快速了解数据库之间的迁移。数据库迁移能快速地实现数据库之间(内置表批量过滤和改名等设置)的全量和增量传输。',
 		databseMigration:
