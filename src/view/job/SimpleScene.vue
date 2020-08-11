@@ -1,6 +1,12 @@
 <template>
-	<div style="position:absolute; width:3276px; height:1688px; z-index:1999; opacity:0.5; background-color: gray;">
+	<div
+		style="position:absolute; width:3276px; height:1688px; left:-700px; top:-200px; z-index:1999; opacity:0.8; background-color: gray;"
+	>
 		<div v-html="cellHtmls" style=""></div>
+		<div class="exit">
+			<el-button round size="mini" icon="el-icon-close">{{ $t('message.cancel') }}</el-button>
+			<el-button round size="mini" icon="iconfont icon-custom"> {{ $t('dataFlow.freedomMode') }}</el-button>
+		</div>
 		<div class="action-bar">
 			<div class="left-bar">
 				<span class="e-btn" @click="prevStep">
@@ -9,11 +15,20 @@
 			</div>
 			<div class="center-bar">
 				<el-radio-group v-model="activeStep">
-					<el-radio :label="1">STEP1</el-radio>
+					<el-radio :label="1"
+						>STEP1 <br />
+						<span class="desc">{{ $t('dataFlow.sourceSetting') }}</span></el-radio
+					>
 					<span class="space-line"></span>
-					<el-radio :label="2">STEP2</el-radio>
+					<el-radio :label="2"
+						>STEP2 <br />
+						<span class="desc">{{ $t('dataFlow.targetSetting') }}</span></el-radio
+					>
 					<span class="space-line"></span>
-					<el-radio :label="3">STEP3</el-radio>
+					<el-radio :label="3"
+						>STEP3 <br />
+						<span class="desc">{{ $t('dataFlow.jobSetting') }}</span></el-radio
+					>
 				</el-radio-group>
 			</div>
 			<div class="left-bar">
@@ -46,6 +61,8 @@ export default {
 		},
 		nextStep() {
 			if (this.activeStep == 3) return;
+			if (this.activeStep < 3 && !this.$parent.editor.graph.graph.getElements()[this.activeStep - 1].validate())
+				return;
 			this.activeStep++;
 			this.$parent.simpleGoNext(this.activeStep);
 		},
@@ -57,11 +74,16 @@ export default {
 	}
 };
 </script>
-<style lang="less">
+<style lang="less" scoped>
+.exit {
+	position: absolute;
+	left: 800px;
+	top: 240px;
+}
 .action-bar {
 	position: absolute;
-	top: 800px;
-	left: -800px;
+	top: 850px;
+	left: -200px;
 	display: flex;
 	width: 100%;
 	flex-flow: row;
@@ -82,7 +104,7 @@ export default {
 
 	.e-btn {
 		cursor: pointer;
-		padding: 12px 16px;
+		padding: 20px 16px;
 		display: inline-block;
 	}
 	.e-btn:first-child {
@@ -91,20 +113,31 @@ export default {
 
 	.center-bar {
 		padding: 12px;
+		font-size: 12px;
 		.el-radio {
 			margin-right: 10px;
 			margin-left: 10px;
+			.desc {
+				margin-left: 23px;
+			}
 		}
 		.space-line {
-			margin-bottom: 3px;
+			margin-bottom: 12px;
 			display: inline-block;
-			width: 30px;
+			width: 70px;
 			border: 1px solid #dddddd;
 		}
 	}
 
 	.e-classification {
 		padding: 6px;
+	}
+}
+</style>
+<style lang="less">
+.action-bar {
+	.el-radio__input .el-radio__inner {
+		margin-bottom: -10px;
 	}
 }
 </style>

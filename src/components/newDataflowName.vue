@@ -79,7 +79,6 @@ export default {
 	methods: {
 		handleClose() {
 			this.dialogVisible = false;
-			this.$emit('dialogVisible', false);
 		},
 		save() {
 			this.dialogVisible = false;
@@ -88,6 +87,7 @@ export default {
 			this.$parent.start();
 		},
 		showSetting() {
+			this.dialogVisible = false;
 			this.$parent.showSetting();
 		}
 	}

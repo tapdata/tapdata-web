@@ -207,10 +207,14 @@ const en = {
 		createNew: 'Create new',
 		guidingMode: 'Guiding mode',
 		advancedMode: 'Advanced mode',
+		freedomMode: 'Freedom mode',
 		advanceSetting: 'More advanced setting',
 		execution: 'Execution',
 		previous: 'Previous',
 		next: 'Next',
+		sourceSetting: 'Source setting',
+		targetSetting: 'Target setting',
+		jobSetting: 'Job setting',
 		databseProcessing:
 			'With the  guided mode to help novice users to quickly understand the table level data processing and SYNC. This function can not only realize table level INITAL and CDC transmission, but also focus on various processors (JS processing, field filtering, aggregation processing, row level filtering, etc.) for complex logical processing demands.',
 		databseMigration:

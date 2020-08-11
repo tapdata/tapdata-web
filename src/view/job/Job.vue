@@ -434,14 +434,21 @@ export default {
 			this.loadData();
 		},
 		simpleRefresh() {
-			this.$refs.simpleScene.cellHtml = this.editor.graph.paper
+			let self = this;
+			self.editor.graph.paper.getMountedViews().forEach(ele => {
+				if (ele.$el) ele.$el.show();
+			});
+			self.$refs.simpleScene.cellHtml = self.editor.graph.paper
 				.getMountedViews()
 				.map(ele => {
 					if (ele.model.isElement && ele.model.isElement()) return ele.$el[0].outerHTML;
 					else return '';
 				})
 				.join('');
-			this.$refs.simpleScene.renderCell();
+			self.$refs.simpleScene.renderCell();
+			self.editor.graph.paper.getMountedViews().forEach(ele => {
+				if (ele.$el) ele.$el.hide();
+			});
 		},
 		simpleGoNext(step) {
 			if (step == 3) {
@@ -449,9 +456,10 @@ export default {
 				return;
 			} else this.newDataFlowV = false;
 			this.editor.graph.selectCell(this.editor.graph.graph.getElements()[step - 1]);
-			this.simpleRefresh();
+			//this.simpleRefresh();
 		},
 		initSimple() {
+			this.editor.graph.isSimple = true;
 			this.simpleRefresh();
 			document.body.getElementsByClassName('e-sidebar-right')[0].style.zIndex = 2000;
 			this.editor.graph.selectCell(this.editor.graph.graph.getElements()[0]);
