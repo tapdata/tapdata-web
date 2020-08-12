@@ -512,8 +512,6 @@ export default class Graph extends Component {
 	}
 
 	selectPrimaryLink(linkView) {
-		debugger;
-
 		let ns = joint.linkTools;
 		let toolsView = new joint.dia.ToolsView({
 			name: 'link-pointerdown',

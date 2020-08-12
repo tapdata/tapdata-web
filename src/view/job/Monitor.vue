@@ -31,7 +31,7 @@
 				<echart-head :data="screeningObj" @twoRadio="getTwoRadio"></echart-head>
 				<div
 					class="info fl"
-					v-if="this.stageType === 'table' || this.stageType === 'collection'"
+					v-if="stageType === 'table' || stageType === 'collection' || stageType === 'database'"
 					v-loading="apiLoading"
 				>
 					<div class="info-list">
