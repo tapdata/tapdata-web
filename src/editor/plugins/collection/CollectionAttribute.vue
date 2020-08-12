@@ -152,7 +152,6 @@
 				></entity>
 			</div>
 		</div>
-
 		<relatedTasks :taskData="taskData" v-if="disabled"></relatedTasks>
 	</div>
 </template>
@@ -555,6 +554,8 @@ export default {
 			if (this.isSourceDataNode) {
 				delete result.dropTable;
 			}
+			this.taskData.id = result.connectionId;
+			this.taskData.tableName = result.tableName;
 			return result;
 		},
 

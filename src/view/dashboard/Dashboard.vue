@@ -190,7 +190,8 @@ export default {
 				running: '#8DC47A',
 				paused: '#FDB01C',
 				draft: '#CCC',
-				error: '#F97066'
+				error: '#F97066',
+				stopping: '#48b6e2'
 			},
 			colorServeMap: {
 				starting: '#48B6E2',
@@ -217,7 +218,7 @@ export default {
 					bottom: '1%'
 				},
 
-				color: ['#8DC47A', '#FDB01C', '#F97066', '#CCC'],
+				color: ['#8DC47A', '#FDB01C', '#F97066', '#CCC', '#48b6e2'],
 				series: [
 					{
 						// name: this.$t('dataFlow.status.running'),
@@ -475,6 +476,13 @@ export default {
 				res.data.chart1.statusCount.forEach(element => {
 					self.taskList.unshift({ name: element._id, value: element.count });
 				});
+				self.taskList.map((item, index) => {
+					if (item.name === 'stopping' || item.name === 'scheduled') {
+						self.taskList.splice(index, 1);
+						self.taskList.push(item);
+					}
+				});
+
 				self.allTaskEchart.series[0].data = self.taskList;
 				self.total = res.data.chart1.totalDataFlows;
 
@@ -684,7 +692,7 @@ export default {
 		.info {
 			float: left;
 			width: 20%;
-			padding: 70px 20px;
+			padding: 115px 20px;
 			span {
 				display: block;
 				font-size: 14px;
@@ -700,7 +708,7 @@ export default {
 		.jobList {
 			float: left;
 			width: 20%;
-			padding: 70px 0;
+			padding: 115px 0;
 			li {
 				padding-bottom: 10px;
 				span {
@@ -714,7 +722,7 @@ export default {
 		.chart {
 			float: left;
 			width: 50%;
-			height: 260px;
+			height: 360px;
 		}
 		.charts-box {
 			height: calc(100% - 40px);
