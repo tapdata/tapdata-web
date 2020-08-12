@@ -249,7 +249,7 @@ export default {
 				]
 			},
 			transfer: {
-				height: 260,
+				height: 360,
 				isHeader: false,
 				tableData: []
 			},
@@ -412,7 +412,7 @@ export default {
 				]
 			},
 			serverProcess: {
-				height: 260,
+				height: 360,
 				isHeader: true,
 				tableData: []
 			},
@@ -532,7 +532,7 @@ export default {
 					it.outerHTML = '';
 				});
 				if (data.status === 'draft') {
-					window.windows.push(window.open(routeUrl.href, 'edit_' + data.id));
+					window.open(routeUrl.href, 'edit_' + data.id);
 				} else {
 					window.open(routeUrl.href, 'monitor_' + data.id);
 				}
@@ -671,10 +671,10 @@ export default {
 	padding: 20px;
 	.e-row {
 		.e-col {
-			height: 320px;
+			height: 420px;
 			border-radius: 3px;
 			.charts-list {
-				height: 300px;
+				height: 400px;
 				overflow: hidden;
 				box-sizing: border-box;
 				border: 1px solid #dcdfe6;
