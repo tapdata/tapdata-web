@@ -2,7 +2,7 @@
 	<div class="editor-container" v-loading="loading" style="position: relative;">
 		<!-- <simpleScene v-if="$route.query.isSimpleScene"></simpleScene> -->
 		<simpleScene v-if="isSimple" ref="simpleScene"></simpleScene>
-		<newDataFlow v-if="newDataFlowV" :dataflows.sync="dataFlow"></newDataFlow>
+		<newDataFlow v-if="newDataFlowV" :dataflows.sync="dataFlow" ref="newDataFlowV"></newDataFlow>
 		<div
 			class="action-buttons"
 			style="display:flex;align-items: center;justify-content: space-between;padding-right: 10px;"
@@ -307,6 +307,12 @@ export default {
 			setTimeout(() => self.initSimple(), 1100);
 			return;
 		}
+		if (window.name && window.name.length > 200) {
+			this.initData(JSON.parse(window.name));
+			window.name = '';
+			this.loading = false;
+			return;
+		}
 		if (!window.tpdata)
 			Object.keys(localStorage).forEach(key => {
 				if (
@@ -321,7 +327,7 @@ export default {
 			this.loading = false;
 			return;
 		}
-		if (!window.name.startsWith('monitor') && this.tempData.length > 0) {
+		if (!this.isMoniting && this.tempData.length > 0) {
 			self.loading = false;
 			this.tempDialogVisible = true;
 			return;
@@ -441,7 +447,7 @@ export default {
 			self.$refs.simpleScene.cellHtml = self.editor.graph.paper
 				.getMountedViews()
 				.map(ele => {
-					if (ele.model.isElement && ele.model.isElement()) return ele.$el[0].outerHTML;
+					if (ele.model.isElement) return ele.$el[0].outerHTML;
 					else return '';
 				})
 				.join('');
@@ -449,19 +455,33 @@ export default {
 			self.editor.graph.paper.getMountedViews().forEach(ele => {
 				if (ele.$el) ele.$el.hide();
 			});
+			try {
+				if (this.editor.graph.graph.getElements()[self.$refs.simpleScene.activeStep - 1].validate())
+					self.$refs.simpleScene.stepValid();
+			} catch (e) {
+				log(e.message);
+			}
 		},
 		simpleGoNext(step) {
+			let self = this;
 			if (step == 3) {
 				this.newDataFlowV = true;
+				this.$refs.newDataFlowV.dialogVisibleSetting = true;
 				return;
 			} else this.newDataFlowV = false;
 			this.editor.graph.selectCell(this.editor.graph.graph.getElements()[step - 1]);
+			setTimeout(() => {
+				self.simpleRefresh();
+			}, 10);
 		},
 		initSimple() {
+			let self = this;
 			this.editor.graph.isSimple = true;
-			this.simpleRefresh();
 			document.body.getElementsByClassName('e-sidebar-right')[0].style.zIndex = 2000;
 			this.editor.graph.selectCell(this.editor.graph.graph.getElements()[0]);
+			setTimeout(() => {
+				self.simpleRefresh();
+			}, 10);
 		},
 		initData(data) {
 			let dataFlow = data;

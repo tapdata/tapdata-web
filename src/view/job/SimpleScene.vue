@@ -1,49 +1,47 @@
 <template>
-	<div
-		style="position:absolute; width:3276px; height:1688px; left:-700px; top:-200px; z-index:1999; opacity:0.8; background-color: gray;"
-	>
-		<div v-html="cellHtmls" style=""></div>
-		<div class="exit">
-			<el-button round size="mini" icon="el-icon-close" @click="toHome">{{ $t('message.cancel') }}</el-button>
-			<el-button round size="mini" icon="iconfont icon-custom" @click="goFree">
-				{{ $t('dataFlow.freedomMode') }}</el-button
-			>
+	<div>
+		<div
+			style="position:absolute; width:3276px; height:1688px; left:-700px; top:-200px; z-index:1999; opacity:0.7; background-color: black;"
+		>
+			<div v-html="cellHtmls" style=""></div>
+			<div class="exit">
+				<el-button round size="mini" icon="el-icon-close" @click="toHome">{{ $t('message.cancel') }}</el-button>
+				<el-button round size="mini" @click="goFree"> {{ $t('dataFlow.freedomMode') }}</el-button>
+			</div>
 		</div>
 		<div class="action-bar">
 			<div class="left-bar">
-				<span class="e-btn" @click="prevStep">
+				<el-button class="e-btn" @click="prevStep">
 					{{ $t('dataFlow.previous') }}
-				</span>
+				</el-button>
 			</div>
 			<div class="center-bar" @click="skip">
-				<el-radio-group v-model="activeStep">
-					<el-radio :label="1"
+				<el-checkbox-group v-model="vsteps">
+					<el-checkbox label="1"
 						>STEP1 <br />
-						<span class="desc">{{ $t('dataFlow.sourceSetting') }}</span></el-radio
+						<span class="desc">{{ $t('dataFlow.sourceSetting') }}</span></el-checkbox
 					>
 					<span class="space-line"></span>
-					<el-radio :label="2"
+					<el-checkbox label="2"
 						>STEP2 <br />
-						<span class="desc">{{ $t('dataFlow.targetSetting') }}</span></el-radio
+						<span class="desc">{{ $t('dataFlow.targetSetting') }}</span></el-checkbox
 					>
 					<span class="space-line"></span>
-					<el-radio :label="3"
+					<el-checkbox label="3"
 						>STEP3 <br />
-						<span class="desc">{{ $t('dataFlow.jobSetting') }}</span></el-radio
+						<span class="desc">{{ $t('dataFlow.jobSetting') }}</span></el-checkbox
 					>
-				</el-radio-group>
+				</el-checkbox-group>
 			</div>
 			<div class="left-bar">
-				<span :class="activeValid ? 'e-btnv' : 'e-btn'" @click="nextStep">
+				<el-button :class="activeValid ? 'e-btnv' : 'e-btn'" @click="nextStep">
 					{{ $t('dataFlow.next') }}
-				</span>
+				</el-button>
 			</div>
 		</div>
 	</div>
 </template>
 <script>
-import { db2db } from '../../editor/simpleSceneData';
-
 export default {
 	name: 'simpleScene',
 	data() {
@@ -51,7 +49,9 @@ export default {
 			cellHtmls: '',
 			cellHtml: '',
 			activeValid: false,
-			activeStep: 1
+			activeStep: 1,
+			isSetting: false,
+			vsteps: ['1']
 		};
 	},
 	methods: {
@@ -68,10 +68,25 @@ export default {
 				`<!--z-index:3--><!--z-index:4--></g><g joint-selector="tools" class="joint-tools-layer"></g></g></svg></div>`;
 		},
 		nextStep() {
+			if (this.isSetting) {
+				this.$parent.editor.showSetting(false);
+				this.$parent.simpleGoNext(this.activeStep);
+			}
 			if (this.activeStep == 3) return;
-			if (this.activeStep < 3 && !this.$parent.editor.graph.graph.getElements()[this.activeStep - 1].validate())
+			try {
+				if (this.activeStep) this.$parent.editor.graph.graph.getElements()[this.activeStep - 1].validate();
+			} catch (e) {
+				this.$message.error(e.message);
 				return;
+			}
+			try {
+				if (this.activeStep < 2 && !this.$parent.editor.graph.graph.getElements()[this.activeStep].validate())
+					this.activeValid = true;
+			} catch (e) {
+				this.activeValid = false;
+			}
 			this.activeStep++;
+			if (!this.vsteps.includes(this.activeStep + '')) this.vsteps.push(this.activeStep + '');
 			this.$parent.simpleGoNext(this.activeStep);
 		},
 		prevStep() {
@@ -79,15 +94,22 @@ export default {
 			this.activeStep--;
 			this.$parent.simpleGoNext(this.activeStep);
 		},
+		stepValid() {
+			this.activeValid = true;
+		},
 		toHome() {
 			location.replace(location.origin + '/#/dashboard');
 		},
 		goFree() {
-			window.tpdata = db2db.data;
-			this.$router.go({
+			window.name = JSON.stringify(this.$parent.getDataFlowData(true));
+			this.$router.push({
 				path: '/job',
-				query: {}
+				query: { isSimple: false }
 			});
+			location.reload();
+		},
+		setSetting() {
+			this.isSetting = true;
 		}
 	}
 };
@@ -97,11 +119,13 @@ export default {
 	position: absolute;
 	left: 800px;
 	top: 240px;
+	color: #666;
 }
 .action-bar {
 	position: absolute;
-	top: 850px;
+	bottom: 80px;
 	left: -200px;
+	z-index: 2002;
 	display: flex;
 	width: 100%;
 	flex-flow: row;
@@ -114,16 +138,21 @@ export default {
 		/*padding: 12px 16px;*/
 
 		border-radius: 5px;
-		box-shadow: 0 0 3px 1px rgba(220, 220, 220, 0.9);
 	}
 	& > div:first-child {
 		margin-left: 0;
 	}
 	.e-btnv {
-		color: green;
+		background: #48b6e2;
+		color: #fff;
+		border-radius: 5px;
+		cursor: pointer;
+		padding: 20px 16px;
+		display: inline-block;
 	}
 	.e-btn {
 		cursor: pointer;
+		color: #aaa;
 		padding: 20px 16px;
 		display: inline-block;
 	}
@@ -134,7 +163,7 @@ export default {
 	.center-bar {
 		padding: 12px;
 		font-size: 12px;
-		.el-radio {
+		.el-checkbox {
 			margin-right: 10px;
 			margin-left: 10px;
 			.desc {
@@ -156,8 +185,12 @@ export default {
 </style>
 <style lang="less">
 .action-bar {
-	.el-radio__input .el-radio__inner {
+	.el-checkbox__input .el-checkbox__inner {
 		margin-bottom: -10px;
+	}
+	.el-button:focus,
+	.el-button:hover {
+		color: #666 !important;
 	}
 }
 </style>

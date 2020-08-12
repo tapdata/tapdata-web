@@ -1,5 +1,5 @@
 <template>
-	<div class="data-flow-setting">
+	<div class="data-flow-setting" style="background-color: white;">
 		<head class="head">
 			<el-button class="back-btn-icon-box" @click="GoBack"
 				><i class="iconfont icon-you2 back-btn-icon"></i

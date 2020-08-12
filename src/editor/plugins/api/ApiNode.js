@@ -14,11 +14,11 @@ export const ApiNodeConfig = {
 				},
 				label: {
 					text: i18n.t('editor.cell.data_node.api.name')
-				},
-				[FORM_DATA_KEY]: {
-					type: 'rest api',
-					connectionId: ''
 				}
+			},
+			[FORM_DATA_KEY]: {
+				type: 'rest api',
+				connectionId: ''
 			}
 		},
 		prototypeProperties: {

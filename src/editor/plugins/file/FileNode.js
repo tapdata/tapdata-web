@@ -14,11 +14,11 @@ export const fileNodeConfig = {
 				},
 				label: {
 					text: i18n.t('editor.cell.data_node.file.name')
-				},
-				[FORM_DATA_KEY]: {
-					type: 'file',
-					connectionId: ''
 				}
+			},
+			[FORM_DATA_KEY]: {
+				type: 'file',
+				connectionId: ''
 			}
 		},
 		prototypeProperties: {

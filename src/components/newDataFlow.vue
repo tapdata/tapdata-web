@@ -1,5 +1,5 @@
 <template>
-	<el-dialog :title="$t('dataFlow.createNew')" :visible.sync="dialogVisible" width="40%" :before-close="handleClose">
+	<el-dialog :title="$t('dataFlow.createNew')" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
 		<div>
 			<ul class="item">
 				<li @click="db2db">
@@ -12,7 +12,7 @@
 						>
 					</div>
 				</li>
-				<li>
+				<li @click="goNew">
 					<span class="model">{{ $t('dataFlow.advancedMode') }}</span>
 					<div class="content">
 						<i class="iconfont icon-custom"></i>
@@ -23,6 +23,7 @@
 					</div>
 				</li>
 			</ul>
+			<div style="clear: both"></div>
 		</div>
 	</el-dialog>
 </template>
@@ -48,6 +49,13 @@ export default {
 			});
 			window.open(routeUrl.href, '_blank');
 			this.handleClose();
+		},
+		goNew() {
+			let routeUrl = this.$router.resolve({
+				path: '/job'
+			});
+			window.open(routeUrl.href, '_blank');
+			this.handleClose();
 		}
 	}
 };
@@ -56,13 +64,13 @@ export default {
 <style scoped lang="less">
 @color: #999999;
 .item {
-	display: flex;
-	justify-content: center;
-	padding: 0 20px;
 	font-size: 12px;
 	li {
-		width: 50%;
-		margin-right: 10px;
+		float: left;
+		width: 44%;
+	}
+	li:first-child {
+		margin-right: 20px;
 	}
 	.model {
 		display: block;
@@ -78,16 +86,16 @@ export default {
 			padding: 20px;
 			color: #999;
 			line-height: 24px;
-			.iconfont {
-				display: inline-block;
-				font-size: 36px;
-				margin-right: 10px;
-			}
 			&:hover {
 				background: rgba(250, 250, 250, 1);
 				border: 1px solid rgba(222, 222, 228, 1);
 				box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.21);
 				border-radius: 5px;
+			}
+			.iconfont {
+				display: inline-block;
+				font-size: 36px;
+				margin-right: 10px;
 			}
 			.tag {
 				display: block;
@@ -98,5 +106,10 @@ export default {
 			}
 		}
 	}
+}
+</style>
+<style>
+.el-dialog__body {
+	min-height: 300px;
 }
 </style>

@@ -15,11 +15,11 @@ export const PublishApiConfig = {
 				},
 				label: {
 					text: i18n.t('editor.cell.data_node.api.publishName')
-				},
-				[FORM_DATA_KEY]: {
-					type: 'publishApi',
-					form: {}
 				}
+			},
+			[FORM_DATA_KEY]: {
+				type: 'publishApi',
+				form: {}
 			}
 		},
 		prototypeProperties: {

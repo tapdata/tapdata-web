@@ -83,14 +83,19 @@ export default {
 			this.$parent.$refs.simpleScene.activeStep = 2;
 		},
 		save() {
-			this.dialogVisibleSetting = false;
 			this.$parent.editor.ui.setName(this.dataflows.name);
 			this.$parent.editor.graph.setSettingData(this.dataflow.setting);
 			this.$parent.start();
 		},
 		showSetting() {
 			this.dialogVisibleSetting = false;
+			this.$parent.editor.ui.setName(this.dataflows.name);
+			this.$parent.editor.graph.setSettingData(this.dataflow.setting);
 			this.$parent.showSetting();
+			this.$parent.$refs.simpleScene.setSetting();
+			setTimeout(() => {
+				document.querySelector('.head').firstChild.style.display = 'none';
+			}, 10);
 		}
 	}
 };
@@ -99,15 +104,18 @@ export default {
 <style lang="less">
 .advance-setting {
 	color: #48b6e2;
+	cursor: pointer;
 }
 .sp-setting {
-	font-size: 12px;
 	.el-input__inner {
 		height: 28px;
 		width: 300px;
 	}
 	.el-form-item {
 		margin-bottom: 0;
+	}
+	.el-dialog__body {
+		font-size: 12px;
 	}
 }
 </style>
