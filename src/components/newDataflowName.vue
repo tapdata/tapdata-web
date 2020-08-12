@@ -83,7 +83,6 @@ export default {
 			this.$parent.$refs.simpleScene.activeStep = 2;
 		},
 		save() {
-			this.dialogVisibleSetting = false;
 			this.$parent.editor.ui.setName(this.dataflows.name);
 			this.$parent.editor.graph.setSettingData(this.dataflow.setting);
 			this.$parent.start();
