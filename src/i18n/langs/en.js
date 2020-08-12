@@ -207,7 +207,7 @@ const en = {
 		createNew: 'Create new',
 		guidingMode: 'Guiding mode',
 		advancedMode: 'Advanced mode',
-		freedomMode: 'Freedom mode',
+		freedomMode: 'Advanced mode',
 		advanceSetting: 'More advanced setting',
 		execution: 'Execution',
 		previous: 'Previous',

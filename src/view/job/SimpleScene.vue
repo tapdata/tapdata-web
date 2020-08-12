@@ -1,19 +1,19 @@
 <template>
-	<div
-		style="position:absolute; width:3276px; height:1688px; left:-700px; top:-200px; z-index:1999; opacity:0.7; background-color: black;"
-	>
-		<div v-html="cellHtmls" style=""></div>
-		<div class="exit">
-			<el-button round size="mini" icon="el-icon-close" @click="toHome">{{ $t('message.cancel') }}</el-button>
-			<el-button round size="mini" icon="iconfont icon-custom" @click="goFree">
-				{{ $t('dataFlow.freedomMode') }}</el-button
-			>
+	<div>
+		<div
+			style="position:absolute; width:3276px; height:1688px; left:-700px; top:-200px; z-index:1999; opacity:0.7; background-color: black;"
+		>
+			<div v-html="cellHtmls" style=""></div>
+			<div class="exit">
+				<el-button round size="mini" icon="el-icon-close" @click="toHome">{{ $t('message.cancel') }}</el-button>
+				<el-button round size="mini" @click="goFree"> {{ $t('dataFlow.freedomMode') }}</el-button>
+			</div>
 		</div>
 		<div class="action-bar">
 			<div class="left-bar">
-				<span class="e-btn" @click="prevStep">
+				<el-button class="e-btn" @click="prevStep">
 					{{ $t('dataFlow.previous') }}
-				</span>
+				</el-button>
 			</div>
 			<div class="center-bar" @click="skip">
 				<el-radio-group v-model="activeStep">
@@ -34,9 +34,9 @@
 				</el-radio-group>
 			</div>
 			<div class="left-bar">
-				<span :class="activeValid ? 'e-btnv' : 'e-btn'" @click="nextStep">
+				<el-button :class="activeValid ? 'e-btnv' : 'e-btn'" @click="nextStep">
 					{{ $t('dataFlow.next') }}
-				</span>
+				</el-button>
 			</div>
 		</div>
 	</div>
@@ -117,11 +117,13 @@ export default {
 	position: absolute;
 	left: 800px;
 	top: 240px;
+	color: #666;
 }
 .action-bar {
 	position: absolute;
-	top: 850px;
+	bottom: 80px;
 	left: -200px;
+	z-index: 2002;
 	display: flex;
 	width: 100%;
 	flex-flow: row;
@@ -134,19 +136,21 @@ export default {
 		/*padding: 12px 16px;*/
 
 		border-radius: 5px;
-		box-shadow: 0 0 3px 1px rgba(220, 220, 220, 0.9);
 	}
 	& > div:first-child {
 		margin-left: 0;
 	}
 	.e-btnv {
-		color: green;
+		background: #48b6e2;
+		color: #fff;
+		border-radius: 5px;
 		cursor: pointer;
 		padding: 20px 16px;
 		display: inline-block;
 	}
 	.e-btn {
 		cursor: pointer;
+		color: #aaa;
 		padding: 20px 16px;
 		display: inline-block;
 	}
@@ -181,6 +185,10 @@ export default {
 .action-bar {
 	.el-radio__input .el-radio__inner {
 		margin-bottom: -10px;
+	}
+	.el-button:focus,
+	.el-button:hover {
+		color: #666 !important;
 	}
 }
 </style>

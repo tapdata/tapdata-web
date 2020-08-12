@@ -206,7 +206,7 @@ const tc = {
 		createNew: '新建',
 		guidingMode: '引導模式',
 		advancedMode: '高級模式',
-		freedomMode: '自由模式',
+		freedomMode: '轉高級模式',
 		advanceSetting: '更多高級設置',
 		execution: '開始執行',
 		previous: '上一步',
