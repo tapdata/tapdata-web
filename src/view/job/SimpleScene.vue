@@ -16,22 +16,22 @@
 				</el-button>
 			</div>
 			<div class="center-bar" @click="skip">
-				<el-radio-group v-model="activeStep">
-					<el-radio :label="1"
+				<el-checkbox-group v-model="vsteps">
+					<el-checkbox label="1"
 						>STEP1 <br />
-						<span class="desc">{{ $t('dataFlow.sourceSetting') }}</span></el-radio
+						<span class="desc">{{ $t('dataFlow.sourceSetting') }}</span></el-checkbox
 					>
 					<span class="space-line"></span>
-					<el-radio :label="2"
+					<el-checkbox label="2"
 						>STEP2 <br />
-						<span class="desc">{{ $t('dataFlow.targetSetting') }}</span></el-radio
+						<span class="desc">{{ $t('dataFlow.targetSetting') }}</span></el-checkbox
 					>
 					<span class="space-line"></span>
-					<el-radio :label="3"
+					<el-checkbox label="3"
 						>STEP3 <br />
-						<span class="desc">{{ $t('dataFlow.jobSetting') }}</span></el-radio
+						<span class="desc">{{ $t('dataFlow.jobSetting') }}</span></el-checkbox
 					>
-				</el-radio-group>
+				</el-checkbox-group>
 			</div>
 			<div class="left-bar">
 				<el-button :class="activeValid ? 'e-btnv' : 'e-btn'" @click="nextStep">
@@ -50,7 +50,8 @@ export default {
 			cellHtml: '',
 			activeValid: false,
 			activeStep: 1,
-			isSetting: false
+			isSetting: false,
+			vsteps: ['1']
 		};
 	},
 	methods: {
@@ -85,6 +86,7 @@ export default {
 				this.activeValid = false;
 			}
 			this.activeStep++;
+			if (!this.vsteps.includes(this.activeStep + '')) this.vsteps.push(this.activeStep + '');
 			this.$parent.simpleGoNext(this.activeStep);
 		},
 		prevStep() {
@@ -161,7 +163,7 @@ export default {
 	.center-bar {
 		padding: 12px;
 		font-size: 12px;
-		.el-radio {
+		.el-checkbox {
 			margin-right: 10px;
 			margin-left: 10px;
 			.desc {
@@ -183,7 +185,7 @@ export default {
 </style>
 <style lang="less">
 .action-bar {
-	.el-radio__input .el-radio__inner {
+	.el-checkbox__input .el-checkbox__inner {
 		margin-bottom: -10px;
 	}
 	.el-button:focus,

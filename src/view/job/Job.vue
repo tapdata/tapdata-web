@@ -307,7 +307,7 @@ export default {
 			setTimeout(() => self.initSimple(), 1100);
 			return;
 		}
-		if (window.name) {
+		if (window.name && window.name.length > 200) {
 			this.initData(JSON.parse(window.name));
 			window.name = '';
 			this.loading = false;

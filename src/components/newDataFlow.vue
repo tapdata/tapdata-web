@@ -12,7 +12,7 @@
 						>
 					</div>
 				</li>
-				<li>
+				<li @click="goNew">
 					<span class="model">{{ $t('dataFlow.advancedMode') }}</span>
 					<div class="content">
 						<i class="iconfont icon-custom"></i>
@@ -46,6 +46,13 @@ export default {
 			let routeUrl = this.$router.resolve({
 				path: '/job',
 				query: { isSimple: true }
+			});
+			window.open(routeUrl.href, '_blank');
+			this.handleClose();
+		},
+		goNew() {
+			let routeUrl = this.$router.resolve({
+				path: '/job'
 			});
 			window.open(routeUrl.href, '_blank');
 			this.handleClose();
