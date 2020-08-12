@@ -95,7 +95,7 @@ export default {
 	position: absolute;
 	left: 0;
 	top: 0;
-	z-index: 1991;
+	z-index: 2003;
 	overflow: hidden;
 	height: 100%;
 

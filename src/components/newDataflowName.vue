@@ -78,16 +78,18 @@ export default {
 	},
 	methods: {
 		handleClose() {
-			this.dialogVisible = false;
+			this.dialogVisibleSetting = false;
+			this.$parent.simpleGoNext(2);
+			this.$parent.$refs.simpleScene.activeStep = 2;
 		},
 		save() {
-			this.dialogVisible = false;
+			this.dialogVisibleSetting = false;
 			this.$parent.editor.ui.setName(this.dataflows.name);
 			this.$parent.editor.graph.setSettingData(this.dataflow.setting);
 			this.$parent.start();
 		},
 		showSetting() {
-			this.dialogVisible = false;
+			this.dialogVisibleSetting = false;
 			this.$parent.showSetting();
 		}
 	}
