@@ -143,7 +143,6 @@
 						v-model="formData.source.connectionId"
 						:placeholder="$t('dataVerify.sourceDatabaseText')"
 						@input="handleForceUpdate"
-						@change="changeSourceTable"
 					>
 						<el-option
 							v-for="item in sourceDatabase"
@@ -213,7 +212,6 @@
 						style="width: 100%"
 						v-model="formData.target.connectionId"
 						@input="handleForceUpdate"
-						@change="changeTargetTable"
 						:placeholder="$t('dataVerify.targetDatabaseText')"
 					>
 						<el-option
@@ -354,6 +352,20 @@ export default {
 		this.getData();
 		this.getSourceList('conn');
 	},
+	watch: {
+		'formData.source.connectionId': {
+			immediate: true,
+			handler() {
+				this.changeSourceTable();
+			}
+		},
+		'formData.target.connectionId': {
+			immediate: true,
+			handler() {
+				this.changeTargetTable();
+			}
+		}
+	},
 	methods: {
 		getData() {
 			dataFlows
@@ -374,6 +386,7 @@ export default {
 				});
 		},
 		handleClose() {
+			this.getData();
 			this.disabledDrawer = false;
 			this.editIndex = -1;
 			this.formData = _.cloneDeep(DEFAULT_DATAVERIFY);
@@ -516,8 +529,6 @@ export default {
 			this.editIndex = index;
 			this.formData = this.tableData[index];
 			this.disabledDrawer = true;
-			this.changeSourceTable();
-			this.changeTargetTable();
 		},
 		GoBack() {
 			this.editor.showMonitor();
@@ -539,7 +550,8 @@ export default {
 		},
 		changeSourceTable() {
 			let type = 'table';
-			dataFlows.getSourceList(this.id, type, this.formData.source.connectionId).then(res => {
+			let sourceOrTarget = 'source';
+			dataFlows.getSourceList(this.id, type, this.formData.source.connectionId, sourceOrTarget).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					this.sourceList = res.data || [];
 				}
@@ -552,7 +564,8 @@ export default {
 		},
 		changeTargetTable() {
 			let type = 'table';
-			dataFlows.getSourceList(this.id, type, this.formData.target.connectionId).then(res => {
+			let sourceOrTarget = 'target';
+			dataFlows.getSourceList(this.id, type, this.formData.target.connectionId, sourceOrTarget).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					this.targetList = res.data || [];
 				}

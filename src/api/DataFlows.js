@@ -43,9 +43,11 @@ export default class DataFlows extends PublicAPI {
 		params = params || {};
 		return axios.get(this.url + '/' + id, { params });
 	}
-	getSourceList(id, type, connId) {
+	getSourceList(id, type, connId, sourceOrTarget) {
 		if (connId) {
-			return axios.get(`${this.url}/dataFlowTables?dataFlowId=${id}&type=${type}&connId=${connId}`);
+			return axios.get(
+				`${this.url}/dataFlowTables?dataFlowId=${id}&type=${type}&connId=${connId}&sourceOrTarget=${sourceOrTarget}`
+			);
 		} else {
 			return axios.get(`${this.url}/dataFlowTables?dataFlowId=${id}&type=${type}`);
 		}
