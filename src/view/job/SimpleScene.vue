@@ -1,6 +1,6 @@
 <template>
 	<div
-		style="position:absolute; width:3276px; height:1688px; left:-700px; top:-200px; z-index:1999; opacity:0.8; background-color: gray;"
+		style="position:absolute; width:3276px; height:1688px; left:-700px; top:-200px; z-index:1999; opacity:0.7; background-color: black;"
 	>
 		<div v-html="cellHtmls" style=""></div>
 		<div class="exit">
@@ -42,8 +42,6 @@
 	</div>
 </template>
 <script>
-import { db2db } from '../../editor/simpleSceneData';
-
 export default {
 	name: 'simpleScene',
 	data() {
@@ -51,7 +49,8 @@ export default {
 			cellHtmls: '',
 			cellHtml: '',
 			activeValid: false,
-			activeStep: 1
+			activeStep: 1,
+			isSetting: false
 		};
 	},
 	methods: {
@@ -68,9 +67,23 @@ export default {
 				`<!--z-index:3--><!--z-index:4--></g><g joint-selector="tools" class="joint-tools-layer"></g></g></svg></div>`;
 		},
 		nextStep() {
+			if (this.isSetting) {
+				this.$parent.editor.showSetting(false);
+				this.$parent.simpleGoNext(this.activeStep);
+			}
 			if (this.activeStep == 3) return;
-			if (this.activeStep < 3 && !this.$parent.editor.graph.graph.getElements()[this.activeStep - 1].validate())
+			try {
+				if (this.activeStep) this.$parent.editor.graph.graph.getElements()[this.activeStep - 1].validate();
+			} catch (e) {
+				this.$message.error(e.message);
 				return;
+			}
+			try {
+				if (this.activeStep < 2 && !this.$parent.editor.graph.graph.getElements()[this.activeStep].validate())
+					this.activeValid = true;
+			} catch (e) {
+				this.activeValid = false;
+			}
 			this.activeStep++;
 			this.$parent.simpleGoNext(this.activeStep);
 		},
@@ -79,15 +92,22 @@ export default {
 			this.activeStep--;
 			this.$parent.simpleGoNext(this.activeStep);
 		},
+		stepValid() {
+			this.activeValid = true;
+		},
 		toHome() {
 			location.replace(location.origin + '/#/dashboard');
 		},
 		goFree() {
-			window.tpdata = db2db.data;
-			this.$router.go({
+			window.name = JSON.stringify(this.$parent.getDataFlowData(true));
+			this.$router.push({
 				path: '/job',
-				query: {}
+				query: { isSimple: false }
 			});
+			location.reload();
+		},
+		setSetting() {
+			this.isSetting = true;
 		}
 	}
 };
@@ -121,6 +141,9 @@ export default {
 	}
 	.e-btnv {
 		color: green;
+		cursor: pointer;
+		padding: 20px 16px;
+		display: inline-block;
 	}
 	.e-btn {
 		cursor: pointer;

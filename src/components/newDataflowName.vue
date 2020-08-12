@@ -90,7 +90,13 @@ export default {
 		},
 		showSetting() {
 			this.dialogVisibleSetting = false;
+			this.$parent.editor.ui.setName(this.dataflows.name);
+			this.$parent.editor.graph.setSettingData(this.dataflow.setting);
 			this.$parent.showSetting();
+			this.$parent.$refs.simpleScene.setSetting();
+			setTimeout(() => {
+				document.querySelector('.head').firstChild.style.display = 'none';
+			}, 10);
 		}
 	}
 };
