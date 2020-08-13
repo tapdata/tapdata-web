@@ -162,6 +162,8 @@ export default {
 	}
 	.e-btn:first-child {
 		margin-left: 0;
+		width: 100%;
+		height: 100%;
 	}
 
 	.center-bar {
@@ -170,9 +172,6 @@ export default {
 		.el-checkbox {
 			margin-right: 10px;
 			margin-left: 10px;
-			.desc {
-				margin-left: 23px;
-			}
 		}
 		.space-line {
 			margin-bottom: 12px;
@@ -190,7 +189,7 @@ export default {
 <style lang="less">
 .action-bar {
 	.el-checkbox__input .el-checkbox__inner {
-		margin-bottom: -10px;
+		margin-bottom: 15px;
 	}
 	.el-button:focus,
 	.el-button:hover {
