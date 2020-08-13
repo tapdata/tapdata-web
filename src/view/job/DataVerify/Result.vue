@@ -124,7 +124,13 @@
 							</el-option>
 						</el-select>
 					</div>
-					<el-table border :data="failedRow" class="dv-result-fail-table" style="width: 100%">
+					<el-table
+						border
+						:data="failedRow"
+						class="dv-result-fail-table"
+						style="width: 100%"
+						:loading="failRowLoading"
+					>
 						<el-table-column prop="sourceTableData" :label="$t('dataVerify.source')">
 							<template slot-scope="scope">
 								<el-tooltip
@@ -139,7 +145,7 @@
 										<div style="color: #bbb">
 											{{ scope.row.sourceStage.databaseName }}
 										</div>
-										<div>
+										<div style="color: #bbb">
 											{{ scope.row.sourceStage.tableName }}
 										</div>
 										<div>
@@ -163,7 +169,7 @@
 										<div style="color: #bbb">
 											{{ scope.row.targetStage.databaseName }}
 										</div>
-										<div>
+										<div style="color: #bbb">
 											{{ scope.row.targetStage.tableName }}
 										</div>
 										<div>
@@ -193,22 +199,8 @@ export default {
 	data() {
 		return {
 			loading: true,
-			overview: {
-				id: '',
-				// overview校验结果总览，tableOverview：按表统计，failedRow: 校验失败的记录
-				type: '',
-				validateTime: '', // #执行校验时间
-				costTime: '', // #校验耗时
-				validateRows: '0', // #行数校验条数
-				validateHashRows: '0', // #哈希校验条数
-				validateJsRows: '0', // #高级校验条数
-				rowsDiffer: '--', // #总体行数差
-				rowsMismatch: '--', // #不匹配条数
-				consistencyRate: '--', // #一致率（0-100）
-				dataFlowId: '', // #该记录所属的dataFlow ID，
-				validateType: '',
-				source: ''
-			},
+			failRowLoading: false,
+			overview: {},
 			failedRow: [],
 			validateStats: [],
 			count: '',
@@ -338,12 +330,16 @@ export default {
 			if (this.source.tableName && this.source.tableName !== '') {
 				whereFailedRow.filter.where['sourceStage.tableName'] = this.source.tableName;
 			}
+			this.failRowLoading = true;
 			ValidationResults.get(whereFailedRow).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
+					this.failRowLoading = false;
 					if (res.data) {
 						this.failedRow = res.data;
 						log('dataVerify.error', res.data);
 					}
+				} else {
+					this.failRowLoading = false;
 				}
 			});
 		},

@@ -19,7 +19,9 @@ import factory from '../api/factory';
 const dataFlowApi = factory('DataFlows');
 export default {
 	props: {
-		taskData: Object
+		taskData: {
+			type: Object
+		}
 	},
 	data() {
 		return {
@@ -31,6 +33,15 @@ export default {
 		this.$nextTick(() => {
 			this.getTaskData();
 		});
+	},
+
+	watch: {
+		taskData: {
+			handler() {
+				this.getTaskData();
+			},
+			deep: true
+		}
 	},
 
 	methods: {

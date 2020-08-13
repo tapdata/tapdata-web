@@ -2,7 +2,7 @@
 	<div class="editor-container" v-loading="loading" style="position: relative;">
 		<!-- <simpleScene v-if="$route.query.isSimpleScene"></simpleScene> -->
 		<simpleScene v-if="isSimple" ref="simpleScene"></simpleScene>
-		<newDataFlow v-if="newDataFlowV" :dataflows.sync="dataFlow"></newDataFlow>
+		<newDataFlow v-if="newDataFlowV" :dataflows.sync="dataFlow" ref="newDataFlowV"></newDataFlow>
 		<div
 			class="action-buttons"
 			style="display:flex;align-items: center;justify-content: space-between;padding-right: 10px;"
@@ -304,7 +304,13 @@ export default {
 		if (self.$route.query.isSimple == 'true') {
 			this.initData(db2db.data);
 			this.loading = false;
-			setTimeout(() => self.initSimple(), 1800);
+			setTimeout(() => self.initSimple(), 1100);
+			return;
+		}
+		if (window.name && window.name.length > 200) {
+			this.initData(JSON.parse(window.name));
+			window.name = '';
+			this.loading = false;
 			return;
 		}
 		if (!window.tpdata)
@@ -321,7 +327,7 @@ export default {
 			this.loading = false;
 			return;
 		}
-		if (!window.name.startsWith('monitor') && this.tempData.length > 0) {
+		if (!this.isMoniting && this.tempData.length > 0) {
 			self.loading = false;
 			this.tempDialogVisible = true;
 			return;
@@ -434,27 +440,48 @@ export default {
 			this.loadData();
 		},
 		simpleRefresh() {
-			this.$refs.simpleScene.cellHtml = this.editor.graph.paper
+			let self = this;
+			self.editor.graph.paper.getMountedViews().forEach(ele => {
+				if (ele.$el) ele.$el.show();
+			});
+			self.$refs.simpleScene.cellHtml = self.editor.graph.paper
 				.getMountedViews()
 				.map(ele => {
-					if (ele.model.isElement && ele.model.isElement()) return ele.$el[0].outerHTML;
+					if (ele.model.isElement) return ele.$el[0].outerHTML;
 					else return '';
 				})
 				.join('');
-			this.$refs.simpleScene.renderCell();
+			self.$refs.simpleScene.renderCell();
+			self.editor.graph.paper.getMountedViews().forEach(ele => {
+				if (ele.$el) ele.$el.hide();
+			});
+			try {
+				if (this.editor.graph.graph.getElements()[self.$refs.simpleScene.activeStep - 1].validate())
+					self.$refs.simpleScene.stepValid();
+			} catch (e) {
+				log(e.message);
+			}
 		},
 		simpleGoNext(step) {
+			let self = this;
 			if (step == 3) {
 				this.newDataFlowV = true;
+				this.$refs.newDataFlowV.dialogVisibleSetting = true;
 				return;
 			} else this.newDataFlowV = false;
 			this.editor.graph.selectCell(this.editor.graph.graph.getElements()[step - 1]);
-			this.simpleRefresh();
+			setTimeout(() => {
+				self.simpleRefresh();
+			}, 10);
 		},
 		initSimple() {
-			this.simpleRefresh();
+			let self = this;
+			this.editor.graph.isSimple = true;
 			document.body.getElementsByClassName('e-sidebar-right')[0].style.zIndex = 2000;
 			this.editor.graph.selectCell(this.editor.graph.graph.getElements()[0]);
+			setTimeout(() => {
+				self.simpleRefresh();
+			}, 10);
 		},
 		initData(data) {
 			let dataFlow = data;
@@ -891,7 +918,7 @@ export default {
 				this.loading = true;
 				self.doSave(data, (err, rest) => {
 					if (err) {
-						this.$message.error(err.response.data);
+						self.$message.error(err.response.data);
 					} else {
 						this.$message.success(self.$t('message.taskStart'));
 						self.$router.push({
@@ -901,8 +928,8 @@ export default {
 								isMoniting: true
 							}
 						});
-						this.location.reload();
-						this.$message.success(self.$t('message.taskStart'));
+						location.reload();
+						self.$message.success(self.$t('message.taskStart'));
 					}
 				});
 			}
@@ -1362,22 +1389,23 @@ export default {
 		width: 15px;
 	}
 	.canvas_gif {
-		animation: spinner 3s linear infinite;
+		animation: spinner 2s linear infinite;
 		// border: 1px solid transparent;
 
 		border-radius: 100%;
 		align-items: center;
-		height: 10px;
-		width: 10px;
+		height: 1em;
+		width: 1em;
 	}
 	.scheduled_gif {
-		border-top: 1px solid #67c23a;
-		border-right: 1px solid #67c23a;
+		border: 0.1em solid transparent;
+		border-top: 0.1em solid #67c23a;
+		border-right: 0.1em solid #67c23a;
 	}
 
 	.stopping_gif {
-		border-top: 1px solid rgb(241, 145, 73);
-		border-right: 1px solid rgb(241, 145, 73);
+		border-top: 0.1em solid rgb(241, 145, 73);
+		border-right: 0.1em solid rgb(241, 145, 73);
 	}
 }
 

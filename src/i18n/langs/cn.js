@@ -203,9 +203,20 @@ const cn = {
 		updateModel: '更新模型',
 		databseProcessingHead: '数据库迁移',
 		databseMigrationHead: '数据处理同步',
-		databseFreedomHead: '自定义数据同步',
+		databseFreedomHead: '自定义同步任务',
+		createNew: '新建',
+		guidingMode: '引导模式',
+		advancedMode: '高级模式',
+		freedomMode: '转高级模式',
+		advanceSetting: '更多高级设置',
+		execution: '开始执行',
+		previous: '上一步',
+		next: '下一步',
+		sourceSetting: '设置源库',
+		targetSetting: '设置目标库',
+		jobSetting: '任务设置',
 		databseProcessing:
-			'以引导的模式帮助新手用户快速了解数据库之间的迁移。数据库迁移能快速地实现数据库之间(内置表批量过滤和改名等设置)的全量和增量传输，适用于实例迁移、上下云、数据库拆分扩容、灾备等业务场景。',
+			'以引导的模式帮助新手用户快速了解数据库之间的迁移。数据库迁移能快速地实现数据库之间(内置表批量过滤和改名等设置)的全量和增量传输。',
 		databseMigration:
 			'以引导的模式帮助新手用户快速了解表级的数据处理与同步，此功能除了能实现表级的全量或增量传输除功能外，更注重使用各种处理器(JS处理、字段过滤、聚合处理、行级过滤等)进行复杂的逻辑处理，以满足用户更高的数据处理需求',
 		databseFreedom:
@@ -232,8 +243,8 @@ const cn = {
 		submitOnly: '仅提交',
 		implementationModalities: '执行方式',
 		submitConfirmation: '提交确认',
-		SyncPoint: '增量采集时间点',
-		cdcLabel: '数据源: POSS SOURCE hkuatdb5 SYSAPP',
+		SyncPoint: '增量采集开始时刻',
+		cdcLabel: '数据源:',
 		syncType: '同步类型',
 		SyncInfo: {
 			localTZ: '当前时区传输时间：系统所在时区下，开始传输任务的时刻',
@@ -483,7 +494,7 @@ const cn = {
 					Undo: '撤销',
 					bulkRemoval: '批量移除',
 					bulkRevocation: '批量撤销',
-					queueCopied: '待复制队列',
+					queueCopied: '待迁移表',
 					tableRemoved: '已移除表',
 					enterName: '请输入名称/字段名进行搜索'
 				},

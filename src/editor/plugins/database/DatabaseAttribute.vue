@@ -339,7 +339,7 @@ export default {
 						}
 						this.tabs[0].list = inList;
 						this.tabs[1].list = outList;
-						this.$set('tabs', this.tabs);
+						this.$forceUpdate();
 
 						if (this.database_type !== 'mongodb') {
 							this.database_host = result.data.database_host;

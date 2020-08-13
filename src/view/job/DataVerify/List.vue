@@ -7,8 +7,8 @@
 			<span class="back-btn-text">{{ $t('dataVerify.dataVerify') }}</span>
 		</div>
 		<div class="operation">
-			<span>{{ `条目：${this.tableData.length}` }}</span>
-			<span @click="handleClear" class="clear-btn">清空</span>
+			<el-button type="text">{{ `total：${this.tableData.length}` }}</el-button>
+			<el-button type="text" @click="handleClear" class="clear-btn" :disabled="disabledDrawer">Clear</el-button>
 		</div>
 		<div class="table-box">
 			<el-table :data="tableData" border class="dv-table" v-loading="loading">
@@ -66,8 +66,18 @@
 				</el-table-column>
 				<el-table-column width="70" :label="$t('dataVerify.operate')">
 					<template slot-scope="scope">
-						<span class="el-icon-edit" @click="handleEdit(scope.$index)"></span>
-						<span class="el-icon-close" @click="handleDelete(scope.$index)"></span>
+						<el-button
+							type="text"
+							class="el-icon-edit"
+							@click="handleEdit(scope.$index)"
+							:disabled="disabledDrawer"
+						></el-button>
+						<el-button
+							type="text"
+							class="el-icon-close"
+							@click="handleDelete(scope.$index)"
+							:disabled="disabledDrawer"
+						></el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -81,9 +91,14 @@
 		></el-button>
 		<div class="dv-btn-footer-wrapper">
 			<div class="dv-btn-footer-box">
-				<el-button size="mini" class="dv-btn-footer" type="primary" @click="handleLoading">{{
-					$t('dataVerify.start')
-				}}</el-button>
+				<el-button
+					size="mini"
+					class="dv-btn-footer"
+					type="primary"
+					@click="handleLoading"
+					:loading="startLoading"
+					>{{ $t('dataVerify.start') }}</el-button
+				>
 				<el-button size="mini" class="dv-btn-footer" @click="showResult" :disabled="firstVerify">{{
 					$t('dataVerify.cancel')
 				}}</el-button>
@@ -128,7 +143,6 @@
 						v-model="formData.source.connectionId"
 						:placeholder="$t('dataVerify.sourceDatabaseText')"
 						@input="handleForceUpdate"
-						@change="changeSourceTable"
 					>
 						<el-option
 							v-for="item in sourceDatabase"
@@ -198,7 +212,6 @@
 						style="width: 100%"
 						v-model="formData.target.connectionId"
 						@input="handleForceUpdate"
-						@change="changeTargetTable"
 						:placeholder="$t('dataVerify.targetDatabaseText')"
 					>
 						<el-option
@@ -291,17 +304,10 @@
 				</el-form-item>
 			</el-form>
 			<span slot="footer" class="dialog-footer">
-				<el-button size="mini" type="primary" :loading="testing" @click="handleAdd">
+				<el-button size="mini" type="primary" @click="handleAdd">
 					{{ $t('dataVerify.confirm') }}
 				</el-button>
-				<el-button
-					size="mini"
-					@click="
-						disabledDrawer = false;
-						editIndex = -1;
-					"
-					>{{ $t('dataForm.cancel') }}</el-button
-				>
+				<el-button size="mini" @click="handleClose">{{ $t('dataForm.cancel') }}</el-button>
 			</span>
 		</Drawer>
 	</div>
@@ -325,6 +331,7 @@ export default {
 			id: '',
 			editIndex: -1,
 			disabledDrawer: false,
+			startLoading: false,
 			sourceList: [],
 			targetList: [],
 			sourceDatabase: [],
@@ -344,6 +351,20 @@ export default {
 		this.id = getUrlSearch.getUrlSearch('id');
 		this.getData();
 		this.getSourceList('conn');
+	},
+	watch: {
+		'formData.source.connectionId': {
+			immediate: true,
+			handler() {
+				this.changeSourceTable();
+			}
+		},
+		'formData.target.connectionId': {
+			immediate: true,
+			handler() {
+				this.changeTargetTable();
+			}
+		}
 	},
 	methods: {
 		getData() {
@@ -365,7 +386,9 @@ export default {
 				});
 		},
 		handleClose() {
+			this.getData();
 			this.disabledDrawer = false;
+			this.editIndex = -1;
 			this.formData = _.cloneDeep(DEFAULT_DATAVERIFY);
 		},
 		handleShowDrawer() {
@@ -460,6 +483,7 @@ export default {
 				validateBatchId: new Date().valueOf(),
 				lastValidateBatchId: ''
 			};
+			this.startLoading = true;
 			dataFlows
 				.get([this.id], {
 					fields: ['validateBatchId']
@@ -469,7 +493,8 @@ export default {
 						data.lastValidateBatchId = res.data.validateBatchId ? res.data.validateBatchId : '';
 						dataFlows.patchId(this.id, data).then(res => {
 							if (res.statusText === 'OK' || res.status === 200) {
-								self.editor.showResult(true);
+								this.startLoading = false;
+								self.editor.showResult();
 							}
 						});
 					}
@@ -480,11 +505,16 @@ export default {
 			let data = {
 				validationSettings: this.tableData
 			};
-			dataFlows.patchId(this.id, data).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					this.handleClose();
-					this.getData();
-				}
+			this.deleteConfirm(() => {
+				dataFlows.patchId(this.id, data).then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						this.handleClose();
+						this.getData();
+						this.$message.success(this.$t('message.deleteOK'));
+					} else {
+						this.$message.info(this.$t('message.deleteFail'));
+					}
+				});
 			});
 		},
 		handleCondition(value) {
@@ -499,8 +529,6 @@ export default {
 			this.editIndex = index;
 			this.formData = this.tableData[index];
 			this.disabledDrawer = true;
-			this.changeSourceTable();
-			this.changeTargetTable();
 		},
 		GoBack() {
 			this.editor.showMonitor();
@@ -522,7 +550,8 @@ export default {
 		},
 		changeSourceTable() {
 			let type = 'table';
-			dataFlows.getSourceList(this.id, type, this.formData.source.connectionId).then(res => {
+			let sourceOrTarget = 'source';
+			dataFlows.getSourceList(this.id, type, this.formData.source.connectionId, sourceOrTarget).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					this.sourceList = res.data || [];
 				}
@@ -535,7 +564,8 @@ export default {
 		},
 		changeTargetTable() {
 			let type = 'table';
-			dataFlows.getSourceList(this.id, type, this.formData.target.connectionId).then(res => {
+			let sourceOrTarget = 'target';
+			dataFlows.getSourceList(this.id, type, this.formData.target.connectionId, sourceOrTarget).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					this.targetList = res.data || [];
 				}
@@ -579,16 +609,14 @@ export default {
 .operation {
 	display: flex;
 	justify-content: flex-end;
-	span {
+	height: 28px;
+	.el-button {
 		font-size: 12px;
 		line-height: 24px;
 		color: #aaa;
 	}
 	.clear-btn {
-		display: inline-block;
-		margin-left: 10px;
 		margin-right: 10px;
-		line-height: 24px;
 		color: #5fa9ee;
 		cursor: pointer;
 	}

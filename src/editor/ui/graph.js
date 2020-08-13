@@ -474,7 +474,7 @@ export default class Graph extends Component {
 				allowOrthogonalResize: element.get('allowOrthogonalResize') !== false
 			}).render();
 		}
-
+		if (this.isSimple) return;
 		let halo = new joint.ui.Halo({
 			cellView: elementView,
 			handles: haloConfig.handles,
@@ -512,8 +512,6 @@ export default class Graph extends Component {
 	}
 
 	selectPrimaryLink(linkView) {
-		debugger;
-
 		let ns = joint.linkTools;
 		let toolsView = new joint.dia.ToolsView({
 			name: 'link-pointerdown',

@@ -47,12 +47,12 @@ class WSClient extends EventEmitter {
 
 		let url = this.getUrl();
 
-		log('WSClient.connect', 'Connect to server: ' + url);
+		//log('WSClient.connect', 'Connect to server: ' + url);
 		try {
 			let token = self.getToken();
 			self.ws = new WebSocket(`${url}?access_token=${token}`);
 		} catch (e) {
-			log('WSClient.connect', 'Connect to server fail', e);
+			//log('WSClient.connect', 'Connect to server fail', e);
 			self.reconnect();
 			return;
 		}
@@ -106,12 +106,12 @@ class WSClient extends EventEmitter {
 	}
 
 	handlerClose() {
-		log('Disconnect server.');
+		//log("Disconnect server.");
 		this.reconnect();
 	}
 
-	handlerError(e) {
-		log('WSClient connection error', e.message);
+	handlerError() {
+		//log("WSClient connection error", e.message);
 	}
 
 	handlerMessage(e) {
@@ -119,7 +119,7 @@ class WSClient extends EventEmitter {
 		let msg = e.data;
 		let message = {};
 
-		// log("WSClient.receive message: " + msg);
+		//log("WSClient.receive message: " + msg);
 
 		if (typeof msg === 'string' && /^"?\{.*\}"?$/.test(msg)) {
 			try {

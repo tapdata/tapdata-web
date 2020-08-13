@@ -15,18 +15,27 @@
 					}}</el-button>
 				</el-col>
 				<el-col :span="4" style="float: right; text-align: right;">
-					<el-button class="e-button" size="mini" type="primary" @click="handleGoDataVerify">{{
-						$t('dataVerify.dataVerify')
-					}}</el-button>
+					<el-button
+						class="e-button"
+						size="mini"
+						type="primary"
+						@click="handleGoDataVerify"
+						:loading="loading"
+						>{{ $t('dataVerify.dataVerify') }}</el-button
+					>
 				</el-col>
 			</el-form-item>
 		</el-form>
 		<div class="echartMain">
 			<div class="echartlist">
 				<echart-head :data="screeningObj" @twoRadio="getTwoRadio"></echart-head>
-				<div class="info fl" v-if="this.stageType === 'table' || this.stageType === 'collection'">
+				<div
+					class="info fl"
+					v-if="stageType === 'table' || stageType === 'collection' || stageType === 'database'"
+					v-loading="apiLoading"
+				>
 					<div class="info-list">
-						<span class="info-label">{{ $t('dataFlow.taskName') }}:</span>
+						<span class="info-label">{{ $t('dataFlow.nodeName') }}:</span>
 						<span class="info-text" style="color: #48b6e2;">{{ stage.nodeName }}</span>
 					</div>
 					<div class="info-list">
@@ -45,7 +54,7 @@
 						<span class="info-label">{{ $t('dataFlow.ownedUser') }}:</span>
 						<span class="info-text">{{ stage.database_owner }}</span>
 					</div>
-					<div v-if="flow.finishTime" class="info-list">
+					<div class="info-list">
 						<span class="info-label">{{ $t('dataForm.form.databaseType') }}:</span>
 						<span class="info-text">{{ stage.database_type }}</span>
 					</div>
@@ -168,6 +177,8 @@ export default {
 
 	data() {
 		return {
+			apiLoading: false,
+			loading: false,
 			stageType: '',
 			sliderBar: null,
 			dpx: 'QPS',
@@ -809,22 +820,30 @@ export default {
 
 		// 获取stage的节点信息
 		getStageDataApi(id) {
-			connectionApi.customQuery([id]).then(res => {
-				if (res.data) {
-					this.stage = res.data;
-					this.stage.nodeName = currentStageData.name;
-				}
-			});
+			this.apiLoading = true;
+			connectionApi
+				.customQuery([id])
+				.then(res => {
+					if (res.data) {
+						this.stage = res.data;
+						this.stage.nodeName = currentStageData.name;
+					}
+				})
+				.finally(() => {
+					this.apiLoading = false;
+				});
 		},
 
 		// 跳转到数据校验页面
 		handleGoDataVerify() {
+			this.loading = true;
 			dataFlows
 				.get([this.flow.id], {
 					fields: ['validateBatchId', 'validateStatus', 'validateFailedMSG']
 				})
 				.then(res => {
 					if (res.statusText === 'OK' || res.status === 200) {
+						this.loading = false;
 						if (
 							Object.keys(res.data).length === 0 ||
 							(res.data.validateBatchId && res.data.validateBatchId === '')

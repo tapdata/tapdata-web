@@ -1,5 +1,5 @@
 <template>
-	<div class="data-flow-setting">
+	<div class="data-flow-setting" style="background-color: white;">
 		<head class="head">
 			<el-button class="back-btn-icon-box" @click="GoBack"
 				><i class="iconfont icon-you2 back-btn-icon"></i
@@ -121,7 +121,7 @@
 				<!-- 自动处理DDL操作 -->
 				<el-switch
 					v-model="formData.isOpenAutoDDL"
-					:active-text="formData.increment ? $t('dataFlow.yes') : $t('dataFlow.no')"
+					:active-text="formData.isOpenAutoDDL ? $t('dataFlow.yes') : $t('dataFlow.no')"
 				></el-switch>
 			</el-form-item>
 			<el-form-item :label="$t('dataFlow.read_cdc_interval')">
@@ -158,6 +158,9 @@
 			<el-form-item :label="$t('dataFlow.SyncPoint')" v-show="formData.sync_type === 'cdc'" size="mini">
 				<div class="labelTxt">
 					{{ $t('dataFlow.cdcLabel') }}
+					<span v-for="item in formData.syncPoints" :key="item.name">
+						{{ item.name || item.connectionId }}
+					</span>
 					<!-- <el-tooltip placement="right-end">
 						<div slot="content">
 							<div>{{ $t('dataFlow.SyncInfo.current') }}</div>
@@ -168,7 +171,7 @@
 					</el-tooltip> -->
 				</div>
 				<el-row v-for="item in formData.syncPoints" :key="item.name" style="margin-top: 10px">
-					<!-- <el-col :span="8">
+					<!-- <el-col>
 						<div class="dataBase-name">
 							<el-tooltip :content="item.name || item.connectionId" placement="left-start">
 								<span>{{ item.name || item.connectionId }}</span>
