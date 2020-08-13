@@ -176,9 +176,9 @@ export default {
 	components: { echartHead, pieChart, shaftlessEchart },
 	data() {
 		return {
+			isNew: window._TAPDATA_OPTIONS_.platform === 'DAAS',
 			total: '',
 			taskList: [],
-			isNew: true,
 			jobObj: null,
 			screeningObj: null, // 传输总览
 			sliderBar: null,

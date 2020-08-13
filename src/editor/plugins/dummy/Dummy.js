@@ -16,11 +16,11 @@ export const DummyConfig = {
 
 				label: {
 					text: i18n.t('editor.cell.data_node.dummy.name')
-				},
-				[FORM_DATA_KEY]: {
-					type: 'dummy db',
-					connectionId: ''
 				}
+			},
+			[FORM_DATA_KEY]: {
+				type: 'dummy db',
+				connectionId: ''
 			}
 		},
 		prototypeProperties: {

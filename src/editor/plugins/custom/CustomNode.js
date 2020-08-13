@@ -14,11 +14,11 @@ export const customNodeConfig = {
 				},
 				label: {
 					text: i18n.t('editor.cell.data_node.custom.name')
-				},
-				[FORM_DATA_KEY]: {
-					type: 'custom_connection',
-					connectionId: ''
 				}
+			},
+			[FORM_DATA_KEY]: {
+				type: 'custom_connection',
+				connectionId: ''
 			}
 		},
 		prototypeProperties: {

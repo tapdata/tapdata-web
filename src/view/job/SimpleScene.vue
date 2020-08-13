@@ -11,7 +11,7 @@
 		</div>
 		<div class="action-bar">
 			<div class="left-bar">
-				<el-button class="e-btn" @click="prevStep">
+				<el-button :class="activeStep > 1 ? 'e-btnv' : 'e-btn'" @click="prevStep">
 					{{ $t('dataFlow.previous') }}
 				</el-button>
 			</div>
@@ -90,8 +90,12 @@ export default {
 			this.$parent.simpleGoNext(this.activeStep);
 		},
 		prevStep() {
+			if (this.isSetting) {
+				this.$parent.editor.showSetting(false);
+			}
 			if (this.activeStep == 1) return;
 			this.activeStep--;
+			if (this.activeStep == 2) this.$parent.simpleGoNext(1); //激活selection change事件
 			this.$parent.simpleGoNext(this.activeStep);
 		},
 		stepValid() {
