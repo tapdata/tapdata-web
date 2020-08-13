@@ -1,5 +1,5 @@
 <template>
-	<div class="data-verify">
+	<div class="data-verify" v-loading="loading">
 		<div class="back-btn-box">
 			<el-button class="back-btn-icon-box" @click="GoBack"
 				><i class="iconfont icon-you2 back-btn-icon"></i
@@ -11,7 +11,7 @@
 			<el-button type="text" @click="handleClear" class="clear-btn" :disabled="disabledDrawer">Clear</el-button>
 		</div>
 		<div class="table-box">
-			<el-table :data="tableData" border class="dv-table" v-loading="loading">
+			<el-table :data="tableData" border class="dv-table">
 				<el-table-column prop="type" :label="$t('dataVerify.dataWay')" width="80">
 					<template slot-scope="scope">
 						<span>
@@ -368,6 +368,7 @@ export default {
 	},
 	methods: {
 		getData() {
+			this.loading = true;
 			dataFlows
 				.get([this.id], {
 					fields: ['validationSettings', 'dataFlowId', 'validateStatus']
@@ -441,34 +442,42 @@ export default {
 				validationSettings: this.tableData
 			};
 			this.editIndex = -1;
-			this.handleClose();
+			this.disabledDrawer = false;
+			this.loading = true;
 			dataFlows.patchId(this.id, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
-					this.getData();
+					this.loading = false;
+					this.handleClose();
+				} else {
+					this.loading = false;
 				}
 			});
 		},
 		handleClear() {
-			let data = {
-				validationSettings: []
-			};
-			this.deleteConfirm(() => {
-				dataFlows.patchId(this.id, data).then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						this.getData();
-						this.$message.success(this.$t('message.deleteOK'));
-					} else {
-						this.$message.info(this.$t('message.deleteFail'));
-					}
-				});
-			});
-		},
-		deleteConfirm(callback) {
 			this.$confirm(this.$t('message.deteleMessage'), this.$t('dataFlow.importantReminder'), {
 				confirmButtonText: this.$t('metaData.deleteNode'),
 				cancelButtonText: this.$t('message.cancel'),
 				type: 'warning'
-			}).then(callback);
+			})
+				.then(() => {
+					let data = {
+						validationSettings: []
+					};
+					this.loading = true;
+					dataFlows.patchId(this.id, data).then(res => {
+						if (res.statusText === 'OK' || res.status === 200) {
+							this.loading = false;
+							this.getData();
+							this.$message.success(this.$t('message.deleteOK'));
+						} else {
+							this.loading = false;
+							this.$message.info(this.$t('message.deleteFail'));
+						}
+					});
+				})
+				.catch(() => {
+					this.getData();
+				});
 		},
 		handleLoading() {
 			if (this.tableData.length === 0) {
@@ -505,16 +514,16 @@ export default {
 			let data = {
 				validationSettings: this.tableData
 			};
-			this.deleteConfirm(() => {
-				dataFlows.patchId(this.id, data).then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						this.handleClose();
-						this.getData();
-						this.$message.success(this.$t('message.deleteOK'));
-					} else {
-						this.$message.info(this.$t('message.deleteFail'));
-					}
-				});
+			this.loading = true;
+			dataFlows.patchId(this.id, data).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					this.loading = false;
+					this.getData();
+					this.$message.success(this.$t('message.deleteOK'));
+				} else {
+					this.loading = false;
+					this.$message.info(this.$t('message.deleteFail'));
+				}
 			});
 		},
 		handleCondition(value) {
@@ -624,6 +633,7 @@ export default {
 .data-verify {
 	position: relative;
 	font-family: 'Microsoft YaHei';
+	height: 100%;
 }
 .dv-header {
 	line-height: 32px;
