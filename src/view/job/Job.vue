@@ -2,7 +2,7 @@
 	<div class="editor-container" v-loading="loading" style="position: relative;">
 		<!-- <simpleScene v-if="$route.query.isSimpleScene"></simpleScene> -->
 		<simpleScene v-if="isSimple" ref="simpleScene"></simpleScene>
-		<newDataFlow v-if="newDataFlowV" :dataflows.sync="dataFlow" ref="newDataFlowV"></newDataFlow>
+		<newDataFlow v-if="newDataFlowV" ref="newDataFlowV"></newDataFlow>
 		<div
 			class="action-buttons"
 			style="display:flex;align-items: center;justify-content: space-between;padding-right: 10px;"
@@ -466,7 +466,7 @@ export default {
 			let self = this;
 			if (step == 3) {
 				this.newDataFlowV = true;
-				this.$refs.newDataFlowV.dialogVisibleSetting = true;
+				if (this.$refs.newDataFlowV) this.$refs.newDataFlowV.dialogVisibleSetting = true;
 				return;
 			} else this.newDataFlowV = false;
 			this.editor.graph.selectCell(this.editor.graph.graph.getElements()[step - 1]);
