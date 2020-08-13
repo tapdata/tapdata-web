@@ -115,7 +115,7 @@ export default {
 	},
 	methods: {
 		initData(data) {
-			this.model = Object.assign(this.model, data);
+			this.model = Object.assign(this.model, data, { name: this.model.name });
 		},
 		show({ blackList, whiteList } = {}) {
 			this.testing = false;
