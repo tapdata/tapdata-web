@@ -52,8 +52,8 @@ export default class UI extends Component {
 			$('#taskNameInput').focus();
 			$('#edit').css('display', 'none');
 			$('#submit').css('display', 'inline-block');
-			var input = document.getElementById('taskNameInput');
-			input.setSelectionRange(0, -1);
+			// var input = document.getElementById('taskNameInput');
+			// input.setSelectionRange(0, -1);
 		});
 		this.el.find('#edit').on('click', function() {
 			$('#taskNameInput').focus();
