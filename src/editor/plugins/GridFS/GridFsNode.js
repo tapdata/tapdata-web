@@ -15,11 +15,11 @@ export const GridFSNodeConfig = {
 				},
 				label: {
 					text: i18n.t('editor.cell.data_node.gridfs.name')
-				},
-				[FORM_DATA_KEY]: {
-					type: 'gridfs',
-					connectionId: ''
 				}
+			},
+			[FORM_DATA_KEY]: {
+				type: 'gridfs',
+				connectionId: ''
 			}
 		},
 		prototypeProperties: {

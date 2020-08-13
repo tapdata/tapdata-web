@@ -45,18 +45,12 @@
 <script>
 export default {
 	name: 'newDataFlow',
-	props: {
-		dataflows: {
-			required: true,
-			value: Object
-		}
-	},
 	watch: {
-		dataflow: {
+		dialogVisibleSetting: {
 			handler() {
-				this.dataflows.name = this.dataflow.name;
-			},
-			deep: true
+				this.dataflow.name = this.$parent.dataFlow.name;
+				this.dataflow.setting = this.$parent.editor.graph.getSettingData() || this.$parent.dataFlow.setting;
+			}
 		}
 	},
 	data() {
@@ -73,23 +67,23 @@ export default {
 		};
 	},
 	mounted() {
-		this.dataflow.name = this.dataflows.name;
-		this.dataflow.setting = this.dataflows.setting;
+		this.dataflow.name = this.$parent.dataFlow.name;
+		this.dataflow.setting = this.$parent.editor.graph.getSettingData() || this.$parent.dataFlow.setting;
 	},
 	methods: {
 		handleClose() {
 			this.dialogVisibleSetting = false;
-			this.$parent.simpleGoNext(2);
 			this.$parent.$refs.simpleScene.activeStep = 2;
+			this.$parent.simpleGoNext(2);
 		},
 		save() {
-			this.$parent.editor.ui.setName(this.dataflows.name);
+			this.$parent.editor.ui.setName(this.dataflow.name);
 			this.$parent.editor.graph.setSettingData(this.dataflow.setting);
 			this.$parent.start();
 		},
 		showSetting() {
 			this.dialogVisibleSetting = false;
-			this.$parent.editor.ui.setName(this.dataflows.name);
+			this.$parent.editor.ui.setName(this.dataflow.name);
 			this.$parent.editor.graph.setSettingData(this.dataflow.setting);
 			this.$parent.showSetting();
 			this.$parent.$refs.simpleScene.setSetting();
