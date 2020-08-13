@@ -493,6 +493,9 @@ export default {
 	.el-switch__label span {
 		font-size: 12px;
 	}
+	.el-form-item__content {
+		line-height: 38px;
+	}
 	.el-form-item {
 		margin-bottom: 10px;
 		.el-form-item__content .el-input-group {
