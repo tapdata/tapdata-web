@@ -96,10 +96,22 @@
 					size="mini"
 					style="margin-left: 30px;margin-right: 10px;border:none;"
 				>
-					<span class="spinner-box" v-if="status === 'stopping' || status === 'scheduled'">
-						<div class="spinner">
-							<i class="canvas_gif" :class="status === 'stopping' ? 'stopping_gif' : 'scheduled_gif'"></i>
-						</div>
+					<span class="spinner-box">
+						<el-image
+							v-if="status === 'running'"
+							style="width: 15px; height: 15px;"
+							src="static/editor/running.svg"
+						></el-image>
+						<el-image
+							v-if="status === 'stopping'"
+							style="width: 15px; height: 15px;"
+							src="static/editor/stopping.svg"
+						></el-image>
+						<el-image
+							v-if="status === 'scheduled'"
+							style="width: 15px; height: 15px;"
+							src="static/editor/scheduled.svg"
+						></el-image>
 					</span>
 					<span
 						:style="{
