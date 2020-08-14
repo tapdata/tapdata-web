@@ -153,17 +153,19 @@ export default {
 		cursor: pointer;
 		padding: 20px 16px;
 		display: inline-block;
+		width: 100%;
+		height: 100%;
 	}
 	.e-btn {
 		cursor: pointer;
 		color: #aaa;
 		padding: 20px 16px;
 		display: inline-block;
+		width: 100%;
+		height: 100%;
 	}
 	.e-btn:first-child {
 		margin-left: 0;
-		width: 100%;
-		height: 100%;
 	}
 
 	.center-bar {
