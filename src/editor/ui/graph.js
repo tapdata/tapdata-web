@@ -18,6 +18,7 @@ import { isAcyclic } from 'graphlib/lib/alg';
 import { EditorEventType } from '../lib/events';
 import Tab from './tab';
 import i18n from '../../i18n/i18n';
+import { Message } from 'element-ui';
 
 window.joint = joint;
 
@@ -154,6 +155,14 @@ export default class Graph extends Component {
 		});
 		paper.on({
 			'link:connect': linkView => {
+				if (linkView.targetView.model.getFormData().disabled) {
+					linkView.model.disconnect();
+					linkView.hideTools();
+					Message.error({
+						message: i18n.t('dataFlow.DissedNoAction')
+					});
+					return;
+				}
 				log('Graph.link.connect', arguments);
 				let acyclic = self.isAcyclic();
 				if (acyclic) {
@@ -475,11 +484,20 @@ export default class Graph extends Component {
 			}).render();
 		}
 		if (this.isSimple) return;
-		let halo = new joint.ui.Halo({
-			cellView: elementView,
-			handles: haloConfig.handles,
-			boxContent: false
-		});
+		if (elementView.model.getFormData().disabled && !elementView.model.getFormData().disablChecker) return;
+		let halo;
+		if (elementView.model.getFormData().disablChecker)
+			halo = new joint.ui.Halo({
+				cellView: elementView,
+				handles: [],
+				boxContent: false
+			});
+		else
+			halo = new joint.ui.Halo({
+				cellView: elementView,
+				handles: haloConfig.handles,
+				boxContent: false
+			});
 		halo.render();
 
 		if (elementView.model.getFormData().disablChecker) {
@@ -512,6 +530,7 @@ export default class Graph extends Component {
 	}
 
 	selectPrimaryLink(linkView) {
+		if (linkView.model.getFormData().disabled) return;
 		let ns = joint.linkTools;
 		let toolsView = new joint.dia.ToolsView({
 			name: 'link-pointerdown',
@@ -557,8 +576,8 @@ export default class Graph extends Component {
 				},
 
 				'link:mouseenter': function(linkView) {
+					if (linkView.model.getFormData().disabled) return;
 					if (linkView.hasTools()) return;
-
 					if (!self.editable) return;
 
 					let ns = joint.linkTools;
@@ -696,6 +715,16 @@ export default class Graph extends Component {
 
 				'delete backspace': function(evt) {
 					evt.preventDefault();
+					let hasDised = false;
+					this.selection.collection.toArray().forEach(it => {
+						if (it.getFormData().disabled) hasDised = true;
+					});
+					if (hasDised) {
+						Message.error({
+							message: i18n.t('dataFlow.DissedNoAction')
+						});
+						return;
+					}
 					this.graph.removeCells(this.selection.collection.toArray());
 				},
 
