@@ -43,7 +43,7 @@ let statusBtMap = {
 	scheduled: {
 		start: true,
 		stop: true,
-		forceStop: false,
+		forceStop: true,
 		reset: true,
 		setting: true,
 		preview: true,
