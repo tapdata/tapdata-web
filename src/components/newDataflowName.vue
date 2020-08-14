@@ -74,6 +74,7 @@ export default {
 		handleClose() {
 			this.dialogVisibleSetting = false;
 			this.$parent.$refs.simpleScene.activeStep = 2;
+			this.$parent.simpleGoNext(1); //激活selection change事件
 			this.$parent.simpleGoNext(2);
 		},
 		save() {
