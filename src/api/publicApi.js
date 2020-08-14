@@ -26,7 +26,7 @@ axios.interceptors.response.use(
 	},
 	error => {
 		let rsp = error.response;
-		if (rsp.status === 401 && rsp.code === 'AUTHORIZATION_REQUIRED') {
+		if (rsp.status === 401 && rsp.data.error.code === 'AUTHORIZATION_REQUIRED') {
 			signOut();
 			setTimeout(() => {
 				Message.error({

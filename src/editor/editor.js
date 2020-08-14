@@ -316,29 +316,29 @@ export default class Editor extends BaseObject {
 	 * show setting panel
 	 * @param name
 	 */
-	showSetting(isShow, editDisable) {
+	showSetting(editDisable) {
 		// debugger;
 		// if (!this.getRightTabPanel().el.is(':hidden')) {
 		// 	this.getRightSidebar().hide();
 		// 	return;
 		// }
-		this.getRightTabPanel().removeAll();
 		let self = this;
-		self.initSettings();
 		let rightTabPanel = self.getRightTabPanel();
 		if (rightTabPanel) {
 			let setting = rightTabPanel.getChildByName('setting');
+			let rightBar = self.getRightSidebar();
 			if (setting) {
-				let settingData = self.graph.getSettingData() || {};
-				settingData.editDisable = !!editDisable;
-				setting.setData(settingData);
-			}
-			rightTabPanel.select(setting);
-			if (isShow) {
-				self.getRightSidebar().show();
+				rightBar[setting.selected && rightBar.isShow() ? 'hide' : 'show']();
 			} else {
-				self.getRightSidebar().hide();
+				self.initSettings();
+				setting = rightTabPanel.getChildByName('setting');
+				rightBar.show();
 			}
+
+			let settingData = self.graph.getSettingData() || {};
+			settingData.editDisable = !!editDisable;
+			setting.setData(settingData);
+			rightTabPanel.select(setting);
 		}
 	}
 

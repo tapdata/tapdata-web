@@ -5,17 +5,17 @@
 				<li @click="db2db">
 					<span class="model">{{ $t('dataFlow.guidingMode') }}</span>
 					<div class="content">
-						<i class="iconfont icon-qianyi1"></i>
+						<i class="iconfont icon-shujukuqianyi2"></i>
 						<span>
-							<span class="tag">{{ $t('dataFlow.databseProcessingHead') }}</span>
-							{{ $t('dataFlow.databseProcessing') }}</span
+							<span class="tag">{{ $t('dataFlow.databseMigrationHead') }}</span>
+							{{ $t('dataFlow.databseMigration') }}</span
 						>
 					</div>
 				</li>
 				<li @click="goNew">
 					<span class="model">{{ $t('dataFlow.advancedMode') }}</span>
 					<div class="content">
-						<i class="iconfont icon-custom"></i>
+						<i class="iconfont icon-renwubianpai2"></i>
 						<span>
 							<span class="tag">{{ $t('dataFlow.databseFreedomHead') }}</span>
 							{{ $t('dataFlow.databseFreedom') }}</span
@@ -67,7 +67,7 @@ export default {
 	font-size: 12px;
 	li {
 		float: left;
-		width: 44%;
+		width: 48%;
 	}
 	li:first-child {
 		margin-right: 20px;
@@ -94,8 +94,9 @@ export default {
 			}
 			.iconfont {
 				display: inline-block;
-				font-size: 36px;
+				font-size: 30px;
 				margin-right: 10px;
+				color: #48b6e2;
 			}
 			.tag {
 				display: block;
@@ -111,5 +112,6 @@ export default {
 <style>
 .el-dialog__body {
 	min-height: 300px;
+	padding: 30px 90px;
 }
 </style>

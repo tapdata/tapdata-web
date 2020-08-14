@@ -407,6 +407,9 @@ export default {
 			}
 			overflow-y: auto;
 			user-select: none;
+			.el-menu-item .el-tooltip {
+				outline: none;
+			}
 			&.el-menu--collapse {
 				width: 64px;
 			}

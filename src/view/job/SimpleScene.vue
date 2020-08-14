@@ -90,10 +90,8 @@ export default {
 			this.$parent.simpleGoNext(this.activeStep);
 		},
 		prevStep() {
-			if (this.isSetting) {
-				this.$parent.editor.showSetting(false);
-			}
 			if (this.activeStep == 1) return;
+			if (this.vsteps.includes(this.activeStep + '')) this.vsteps.pop();
 			this.activeStep--;
 			if (this.activeStep == 2) this.$parent.simpleGoNext(1); //激活selection change事件
 			this.$parent.simpleGoNext(this.activeStep);
@@ -153,12 +151,16 @@ export default {
 		cursor: pointer;
 		padding: 20px 16px;
 		display: inline-block;
+		width: 100%;
+		height: 100%;
 	}
 	.e-btn {
 		cursor: pointer;
 		color: #aaa;
 		padding: 20px 16px;
 		display: inline-block;
+		width: 100%;
+		height: 100%;
 	}
 	.e-btn:first-child {
 		margin-left: 0;
@@ -170,9 +172,6 @@ export default {
 		.el-checkbox {
 			margin-right: 10px;
 			margin-left: 10px;
-			.desc {
-				margin-left: 23px;
-			}
 		}
 		.space-line {
 			margin-bottom: 12px;
@@ -190,7 +189,7 @@ export default {
 <style lang="less">
 .action-bar {
 	.el-checkbox__input .el-checkbox__inner {
-		margin-bottom: -10px;
+		margin-bottom: 15px;
 	}
 	.el-button:focus,
 	.el-button:hover {
