@@ -572,7 +572,7 @@ export default {
 				this.editor.seeMonitor = false;
 				this.editor.graph.selectionPosition(selectCell);
 			} else {
-				this.editor.showSetting(true, true);
+				this.editor.showSetting(true);
 				// this.$message.error(this.$t('dataFlow.selectNode'));
 			}
 		},
