@@ -204,6 +204,7 @@ const tc = {
 		databseMigrationHead: '數據處理同步',
 		databseFreedomHead: '自定義數據同步',
 		createNew: '新建',
+		DissedNoAction: 'oops~ 被禁用的節點或連線不能被刪除、連入或連出',
 		guidingMode: '引導模式',
 		advancedMode: '高級模式',
 		freedomMode: '轉高級模式',
