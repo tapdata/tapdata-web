@@ -347,12 +347,14 @@ export const baseElementConfig = {
 						if (!!link.attributes.form_data.disabled && !checked) return;
 						link.attributes.form_data.disabled = true;
 						link.attr('line/stroke', '#dedede');
+						link.toBack();
 						self.setDisabled(link.getSourceCell());
 					});
 					self.graph.getConnectedLinks(cell, { outbound: true }).forEach(link => {
 						if (!!link.attributes.form_data.disabled && !checked) return;
 						link.attributes.form_data.disabled = true;
 						link.attr('line/stroke', '#dedede');
+						link.toBack();
 						if (!link.getTargetCell().isDataNode()) self.setDisabled(link.getTargetCell());
 					});
 				}
@@ -380,7 +382,10 @@ export const baseElementConfig = {
 				cell.attr('body/stroke', '#2196F3');
 				cell.attr('label/fill', '#333333');
 				cell.removePort('dis');
-				let cells = self.graph.getSuccessors(cell).concat(self.graph.getPredecessors(cell));
+				let cells = [];
+				self.graph.search(cell, cel => {
+					if (cel.cid) cells.push(cel);
+				});
 				cells.forEach(cell => {
 					cell.attributes.form_data.disabled = false;
 					cell.attr('body/fill', '#fafafa');
@@ -389,6 +394,7 @@ export const baseElementConfig = {
 					cell.removePort('dis');
 					self.graph.getConnectedLinks(cell).forEach(link => {
 						link.attr('line/stroke', '#8f8f8f');
+						link.toFront();
 						link.attributes.form_data.disabled = false;
 					});
 				});
@@ -397,6 +403,7 @@ export const baseElementConfig = {
 					if (cell.attributes.form_data.disablChecker) {
 						self.graph.getConnectedLinks(cell).forEach(link => {
 							link.attr('line/stroke', '#dedede');
+							link.toBack();
 							link.attributes.form_data.disabled = true;
 						});
 						self.graph.startBatch('enble');
