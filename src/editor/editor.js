@@ -332,6 +332,7 @@ export default class Editor extends BaseObject {
 			} else {
 				self.initSettings();
 				setting = rightTabPanel.getChildByName('setting');
+				rightBar.show();
 			}
 
 			let settingData = self.graph.getSettingData() || {};
