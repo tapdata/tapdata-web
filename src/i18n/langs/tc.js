@@ -209,6 +209,7 @@ const tc = {
 		advancedMode: '高級模式',
 		freedomMode: '轉高級模式',
 		advanceSetting: '更多高級設置',
+		closeSetting: '收起',
 		execution: '開始執行',
 		previous: '上一步',
 		next: '下一步',
