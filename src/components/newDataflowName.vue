@@ -1,40 +1,19 @@
 <template>
 	<el-dialog
 		class="sp-setting"
-		:title="$t('editor.ui.sidebar.setting')"
+		:title="'STEP3: ' + $t('editor.ui.sidebar.setting')"
 		:visible.sync="dialogVisibleSetting"
 		width="40%"
+		:close-on-click-modal="false"
+		:show-close="false"
 		:before-close="handleClose"
 	>
 		<el-form label-width="200px">
 			<el-form-item :label="$t('dataFlow.taskName')">
 				<el-input v-model="dataflow.name"></el-input>
 			</el-form-item>
-			<el-form-item :label="$t('dataFlow.sync_type')">
-				<el-radio-group v-model="dataflow.setting.sync_type" size="mini">
-					<el-radio-button label="initial_sync+cdc"
-						>{{ $t('dataFlow.initial_sync') + '+' + $t('dataFlow.cdc') }}
-					</el-radio-button>
-					<el-radio-button label="initial_sync">{{ $t('dataFlow.initial_sync') }}</el-radio-button>
-					<el-radio-button label="cdc">{{ $t('dataFlow.cdc') }}</el-radio-button>
-				</el-radio-group>
-			</el-form-item>
-			<el-form-item :label="$t('dataFlow.stop_on_error')">
-				<el-radio-group v-model="dataflow.setting.stopOnError" size="mini">
-					<el-radio-button :label="true">{{ $t('dataFlow.yes') }}</el-radio-button>
-					<el-radio-button :label="false">{{ $t('dataFlow.no') }}</el-radio-button>
-				</el-radio-group>
-			</el-form-item>
-			<el-form-item :label="$t('dataFlow.need_to_create_Index')">
-				<el-radio-group v-model="dataflow.setting.needToCreateIndex" size="mini">
-					<el-radio-button :label="true">{{ $t('dataFlow.yes') }}</el-radio-button>
-					<el-radio-button :label="false">{{ $t('dataFlow.no') }}</el-radio-button>
-				</el-radio-group>
-			</el-form-item>
-			<el-form-item>
-				<div @click="showSetting" class="advance-setting">{{ $t('dataFlow.advanceSetting') }}</div>
-			</el-form-item>
 		</el-form>
+		<setting ref="setting"></setting>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="handleClose">{{ $t('dataFlow.previous') }}</el-button>
 			<el-button type="primary" @click="save">{{ $t('dataFlow.execution') }}</el-button>
@@ -43,8 +22,11 @@
 </template>
 
 <script>
+import setting from '../view/job/Setting';
+
 export default {
 	name: 'newDataFlow',
+	components: { setting },
 	watch: {
 		dialogVisibleSetting: {
 			handler() {
@@ -67,30 +49,25 @@ export default {
 		};
 	},
 	mounted() {
-		this.dataflow.name = this.$parent.dataFlow.name;
+		this.dataflow.name = this.$parent.editor.ui.getName();
 		this.dataflow.setting = this.$parent.editor.graph.getSettingData() || this.$parent.dataFlow.setting;
+		this.$nextTick(() => {
+			this.$refs.setting.isSimple = true;
+			this.$refs.setting.editor = this.$parent.editor;
+			this.$refs.setting.setData(this.dataflow.setting);
+		});
 	},
 	methods: {
 		handleClose() {
 			this.dialogVisibleSetting = false;
-			this.$parent.$refs.simpleScene.activeStep = 2;
-			this.$parent.simpleGoNext(1); //激活selection change事件
-			this.$parent.simpleGoNext(2);
+			this.$parent.editor.ui.setName(this.dataflow.name);
+			this.$parent.editor.graph.setSettingData(this.$refs.setting.getData());
+			this.$parent.$refs.simpleScene.prevStep();
 		},
 		save() {
 			this.$parent.editor.ui.setName(this.dataflow.name);
-			this.$parent.editor.graph.setSettingData(this.dataflow.setting);
+			this.$parent.editor.graph.setSettingData(this.$refs.setting.getData());
 			this.$parent.start();
-		},
-		showSetting() {
-			this.dialogVisibleSetting = false;
-			this.$parent.editor.ui.setName(this.dataflow.name);
-			this.$parent.editor.graph.setSettingData(this.dataflow.setting);
-			this.$parent.showSetting();
-			this.$parent.$refs.simpleScene.setSetting();
-			setTimeout(() => {
-				document.querySelector('.head').firstChild.style.display = 'none';
-			}, 10);
 		}
 	}
 };

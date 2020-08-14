@@ -90,10 +90,8 @@ export default {
 			this.$parent.simpleGoNext(this.activeStep);
 		},
 		prevStep() {
-			if (this.isSetting) {
-				this.$parent.editor.showSetting(false);
-			}
 			if (this.activeStep == 1) return;
+			if (this.vsteps.includes(this.activeStep + '')) this.vsteps.pop();
 			this.activeStep--;
 			if (this.activeStep == 2) this.$parent.simpleGoNext(1); //激活selection change事件
 			this.$parent.simpleGoNext(this.activeStep);

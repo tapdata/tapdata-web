@@ -210,6 +210,7 @@ const cn = {
 		advancedMode: '高级模式',
 		freedomMode: '转高级模式',
 		advanceSetting: '更多高级设置',
+		closeSetting: '收起',
 		execution: '开始执行',
 		previous: '上一步',
 		next: '下一步',

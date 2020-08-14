@@ -210,6 +210,7 @@ const en = {
 		advancedMode: 'Advanced mode',
 		freedomMode: 'Advanced mode',
 		advanceSetting: 'More advanced setting',
+		closeSetting: 'fold up',
 		execution: 'Execution',
 		previous: 'Previous',
 		next: 'Next',
