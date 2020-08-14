@@ -205,7 +205,7 @@ const cn = {
 		databseMigrationHead: '数据处理同步',
 		databseFreedomHead: '自定义同步任务',
 		createNew: '新建',
-		DissedNoAction: '被禁用的节点或连线不能被删除、连入或连出',
+		DissedNoAction: 'oops~ 被禁用的节点或连线不能被删除、连入或连出',
 		guidingMode: '引导模式',
 		advancedMode: '高级模式',
 		freedomMode: '转高级模式',
