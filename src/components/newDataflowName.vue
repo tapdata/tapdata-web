@@ -8,7 +8,7 @@
 	>
 		<el-form label-width="200px">
 			<el-form-item :label="$t('dataFlow.taskName')">
-				<el-input v-model="dataflow.name"></el-input>
+				<el-input v-model="dataflow.name" maxlength="50" show-word-limit></el-input>
 			</el-form-item>
 			<el-form-item :label="$t('dataFlow.sync_type')">
 				<el-radio-group v-model="dataflow.setting.sync_type" size="mini">
@@ -63,6 +63,7 @@ export default {
 					needToCreateIndex: ''
 				}
 			},
+			loading: false,
 			dialogVisibleSetting: true
 		};
 	},
