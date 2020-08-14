@@ -415,9 +415,9 @@ export default {
 		// 返回
 		GoBack() {
 			if (!this.disabled) {
-				this.editor.showSetting(false, this.disabled);
+				this.editor.showSetting(this.disabled);
 			} else {
-				this.editor.showSetting(false, this.disabled);
+				this.editor.showSetting(this.disabled);
 				this.editor.initMonitor();
 			}
 		}
