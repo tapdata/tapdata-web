@@ -464,7 +464,9 @@ export default {
 
 			// 改名前查找同级中是否重名，若有则return且还原改动并提示
 			if (node && node.parent && node.parent.childNodes) {
-				let parentNode = node.parent.childNodes.filter(v => data.label === v.data.label);
+				let parentNode = node.parent.childNodes.filter(
+					v => data.label === v.data.label && data.id === v.data.id
+				);
 				if (parentNode && parentNode.length === 2) {
 					this.$message.error(data.label + this.$t('message.exists_name'));
 					data.label = nativeData.label;
@@ -520,6 +522,7 @@ export default {
 					}
 				}
 			}
+			debugger;
 			this.$emit('dataChanged', this.model);
 		},
 		handleDelete(node, data) {
