@@ -427,6 +427,12 @@ export default {
 				this.getStageDataApi(selectStage.form_data.connectionId);
 				this.stage.nodeName = selectStage.form_data.name;
 				this.stageType = selectStage.type;
+				if (this.editor.seeMonitor) {
+					this.editor.getRightSidebar().show();
+					let rightTabPanel = this.editor.getRightTabPanel();
+					let monitor = rightTabPanel.getChildByName('monitor');
+					rightTabPanel.select(monitor);
+				}
 			} else {
 				this.stageId = 'all';
 			}
@@ -571,10 +577,11 @@ export default {
 			if (this.stageId && this.stageId !== 'all') {
 				this.editor.seeMonitor = false;
 				this.editor.graph.selectionPosition(selectCell);
-			} else {
-				this.editor.showSetting(true);
-				// this.$message.error(this.$t('dataFlow.selectNode'));
 			}
+			// else {
+			// 	this.editor.showSetting(true);
+			// 	this.$message.error(this.$t('dataFlow.selectNode'));
+			// }
 		},
 
 		// 输入输出获取数据
