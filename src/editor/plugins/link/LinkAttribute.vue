@@ -288,26 +288,28 @@ export default {
 			if (type !== 'update' && type !== 'upsert') {
 				return;
 			}
-			let cell = self.cell;
-			let targetCell = cell.getTargetCell();
-			let fields = targetCell.attributes.outputSchema.fields || [];
-			const h = self.$createElement;
-			let messageArr = self.$t('editor.cell.link.repeatId.message').split('_id');
-			let msgNode = [];
-			messageArr.forEach((m, i) => {
-				msgNode.push(m);
-				if (i < messageArr.length - 1) {
-					msgNode.push(h('i', { class: 'color-primary' }, '_id'));
-				}
-			});
-			fields.forEach(field => {
-				if (field.fromDB && field.field_name === '_id' && field.fromDB.length > 2) {
-					self.$notify({
-						title: self.$t('editor.cell.link.repeatId.title'),
-						message: h('i', {}, msgNode),
-						duration: 0
-					});
-				}
+			self.$nextTick(() => {
+				let cell = self.cell;
+				let targetCell = cell.getTargetCell();
+				let fields = targetCell.attributes.outputSchema.fields || [];
+				const h = self.$createElement;
+				let messageArr = self.$t('editor.cell.link.repeatId.message').split('_id');
+				let msgNode = [];
+				messageArr.forEach((m, i) => {
+					msgNode.push(m);
+					if (i < messageArr.length - 1) {
+						msgNode.push(h('i', { class: 'color-primary' }, '_id'));
+					}
+				});
+				fields.forEach(field => {
+					if (field.fromDB && field.field_name === '_id' && field.fromDB.length > 2) {
+						self.$notify({
+							title: self.$t('editor.cell.link.repeatId.title'),
+							message: h('i', {}, msgNode),
+							duration: 0
+						});
+					}
+				});
 			});
 		},
 		supportEmbedArray() {
@@ -502,12 +504,12 @@ export default {
 		},
 
 		handlerJoinTypeChanged() {
-			this.checkRepeatId();
 			if (!this.model.joinTable.joinPath && ['merge_embed', 'update'].includes(this.model.joinTable.joinType)) {
 				this.model.joinTable.joinPath = this.model.joinTable.tableName;
 			}
 			this.$refs.mappingComp.$emit(EditorEventType.RESIZE);
 			this.model.joinTable.joinKeys = [{ source: '', target: '' }];
+			this.checkRepeatId();
 		},
 
 		setDisabled(disabled) {
