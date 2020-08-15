@@ -345,22 +345,7 @@ export default {
 			return;
 		}
 		this.loadData();
-		ws.on('watch', function(data) {
-			let dat = data.data.fullDocument;
-			self.status = dat.status;
-
-			if (self.executeMode !== dat.executeMode) self.executeMode = dat.executeMode;
-
-			if (!self.statusBtMap[self.status].start) {
-				self.executeMode = 'normal';
-			}
-			delete self.dataFlow.validateBatchId;
-			delete self.dataFlow.validateStatus;
-			delete self.dataFlow.validationSettings;
-
-			Object.assign(self.dataFlow, dat);
-			self.editor.emit('dataFlow:updated', _.cloneDeep(dat));
-		});
+		this.wsWatch();
 	},
 
 	methods: {
@@ -524,6 +509,9 @@ export default {
 			if (this.executeMode !== 'normal') this.showCapture();
 
 			this.onGraphChanged();
+			this.wsSend();
+		},
+		wsSend() {
 			if (this.dataFlowId) {
 				let msg = {
 					type: 'watch',
@@ -543,12 +531,32 @@ export default {
 							'fullDocument.stages.id': true,
 							'fullDocument.stages.name': true,
 							'fullDocument.setting': true,
+							'fullDocument.cdcLastTimes': true,
 							'fullDocument.listtags': true
 						}
 					}
 				};
 				if (ws.ws.readyState == 1) ws.send(msg);
 			}
+		},
+		wsWatch() {
+			let self = this;
+			ws.on('watch', function(data) {
+				let dat = data.data.fullDocument;
+				self.status = dat.status;
+
+				if (self.executeMode !== dat.executeMode) self.executeMode = dat.executeMode;
+
+				if (!self.statusBtMap[self.status].start) {
+					self.executeMode = 'normal';
+				}
+				delete self.dataFlow.validateBatchId;
+				delete self.dataFlow.validateStatus;
+				delete self.dataFlow.validationSettings;
+
+				Object.assign(self.dataFlow, dat);
+				self.editor.emit('dataFlow:updated', _.cloneDeep(dat));
+			});
 		},
 		onGraphChanged() {
 			if (this.isSimple) {
@@ -839,8 +847,9 @@ export default {
 												id: dataFlow.id
 											}
 										});
+										self.wsWatch();
+										self.wsSend();
 									}
-									location.reload();
 								})
 								.catch(() => {
 									this.$message.error(self.$t('message.saveFail'));

@@ -107,7 +107,7 @@
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.timePoint') }}:</span>
 						<div class="row-text">
-							<div v-for="(item, index) in flow.cdcLastTimes" :key="index">
+							<div v-for="(item, index) in cdcLastTimes" :key="index">
 								<span>{{ $t('dataFlow.sourceLibrary') }}: </span>
 								<span> {{ item.sourceConnectionName }} </span>
 								<ul class="cdcTarget">
@@ -452,7 +452,8 @@ export default {
 			timer3: null, // 定时器
 			intervalThroughputpop: 20000,
 			intervalTransf: 20000,
-			intervalReplicate: 20000
+			intervalReplicate: 20000,
+			cdcLastTimes: []
 		};
 	},
 
@@ -475,20 +476,6 @@ export default {
 			}
 		});
 		this.flow = this.dataFlow;
-		let cdcList = [];
-		this.flow.cdcLastTimes.forEach(item => {
-			let flag = cdcList.find(ele => ele.sourceConnectionId === item.sourceConnectionId);
-			if (!flag) {
-				cdcList.push({
-					sourceConnectionName: item.sourceConnectionName,
-					sourceConnectionId: item.sourceConnectionId,
-					targetList: [item]
-				});
-			} else {
-				flag.targetList.push(item);
-			}
-		});
-		this.flow.cdcLastTimes = cdcList || [];
 
 		this.taskDetailsObj = {
 			title: this.$t('dataFlow.taskDetail'),
@@ -543,16 +530,30 @@ export default {
 			handler(val) {
 				this.flow = val;
 				this.flow.createTime = val.createTime ? this.$moment(val.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
-				this.flow.startTime = val.startTime ? this.$moment(val.startTime).format('YYYY-MM-DD HH:mm:ss') : '--';
-				this.flow.finishTime = val.finishTime
-					? this.$moment(val.finishTime).format('YYYY-MM-DD HH:mm:ss')
-					: '--';
+				this.flow.startTime = val.startTime ? this.$moment(val.startTime).format('YYYY-MM-DD HH:mm:ss') : '';
+				this.flow.finishTime = val.finishTime ? this.$moment(val.finishTime).format('YYYY-MM-DD HH:mm:ss') : '';
 
 				this.flow.username = (val.user && val.user.email) || '';
 				this.flow.status = val.status;
 				if (this.flow.status === 'force stopping') {
 					this.flow.status = 'force_stopping';
 				}
+
+				let cdcList = [];
+				this.flow.cdcLastTimes &&
+					this.flow.cdcLastTimes.forEach(item => {
+						let flag = cdcList.find(ele => ele.sourceConnectionId === item.sourceConnectionId);
+						if (!flag) {
+							cdcList.push({
+								sourceConnectionName: item.sourceConnectionName,
+								sourceConnectionId: item.sourceConnectionId,
+								targetList: [item]
+							});
+						} else {
+							flag.targetList.push(item);
+						}
+					});
+				this.cdcLastTimes = cdcList || [];
 			},
 			deep: true
 		},
