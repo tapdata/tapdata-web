@@ -696,7 +696,7 @@ export default {
 		},
 		getData() {
 			if (this.model.isFilter)
-				if (this.filterType == 'field') this.model.sql = this.model.cSql;
+				if (this.model.filterType === 'field') this.model.sql = this.model.cSql;
 				else this.model.sql = this.model.editSql;
 			let result = _.cloneDeep(this.model);
 			result.name = result.tableName || 'Table';
