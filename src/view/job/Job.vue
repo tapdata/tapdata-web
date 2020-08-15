@@ -532,7 +532,9 @@ export default {
 							'fullDocument.stages.name': true,
 							'fullDocument.setting': true,
 							'fullDocument.cdcLastTimes': true,
-							'fullDocument.listtags': true
+							'fullDocument.listtags': true,
+							'fullDocument.finishTime': true,
+							'fullDocument.startTime': true
 						}
 					}
 				};
