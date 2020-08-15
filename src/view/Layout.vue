@@ -9,7 +9,7 @@
 			<div class="button-bar">
 				<el-button class="btn-create" type="primary" size="mini" @click="command('newDataFlow')">
 					<i class="el-icon-plus"></i>
-					<span>新建</span>
+					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
 				<a v-if="platform === 'DAAS'" class="btn" @click="command('download')"
 					><i class="iconfont icon-shangchuan-copy"></i

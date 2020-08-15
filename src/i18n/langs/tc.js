@@ -293,6 +293,8 @@ const tc = {
 		finishTime: '本次結束時間',
 		inputNumber: '本次輸入',
 		outputNumber: '本次輸出',
+		sourceLibrary: '源庫',
+		targetLibrary: '目標庫',
 		rowCount: '條數',
 		inputOutput: '輸入輸出統計',
 		transf: '傳輸耗時',

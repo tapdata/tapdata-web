@@ -292,6 +292,8 @@ const en = {
 		state: 'State',
 		executionTime: 'Lapsed Time',
 		finishTime: 'finish Time',
+		sourceLibrary: 'Source',
+		targetLibrary: 'Target',
 		inputNumber: 'Input Total',
 		outputNumber: 'Output Total',
 		rowCount: 'Records',
