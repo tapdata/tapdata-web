@@ -162,7 +162,7 @@ export default {
 			systemTimeZone: '',
 			formData: _.cloneDeep(DEFAULT_SETTING),
 			isSimple: false,
-			showMore: false,
+			showMore: true,
 
 			rules: {
 				cronExpression: [

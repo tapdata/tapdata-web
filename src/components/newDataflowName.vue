@@ -54,6 +54,7 @@ export default {
 		this.dataflow.setting = this.$parent.editor.graph.getSettingData() || this.$parent.dataFlow.setting;
 		this.$nextTick(() => {
 			this.$refs.setting.isSimple = true;
+			this.$refs.setting.isSimple = false;
 			this.$refs.setting.editor = this.$parent.editor;
 			this.$refs.setting.setData(this.dataflow.setting);
 		});
