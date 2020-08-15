@@ -46,7 +46,12 @@
 			</el-form-item>
 			<div v-show="showMore">
 				<el-form-item :label="$t('dataFlow.setting.distinctWriteType')">
-					<el-select v-model="formData.distinctWriteType" size="mini" placeholder="请选择">
+					<el-select
+						v-model="formData.distinctWriteType"
+						size="mini"
+						placeholder="请选择"
+						class="dataWrite-list"
+					>
 						<el-option
 							v-for="item in dataWriteList"
 							:key="item.value"
@@ -435,6 +440,9 @@ export default {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+}
+.dataWrite-list {
+	width: 230px;
 }
 </style>
 <style lang="less">
