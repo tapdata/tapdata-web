@@ -529,9 +529,9 @@ export default {
 		dataFlow: {
 			handler(val) {
 				this.flow = val;
-				// this.flow.createTime = val.createTime ? this.$moment(val.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
-				// this.flow.startTime = val.startTime ? this.$moment(val.startTime).format('YYYY-MM-DD HH:mm:ss') : '';
-				// this.flow.finishTime = val.finishTime ? this.$moment(val.finishTime).format('YYYY-MM-DD HH:mm:ss') : '';
+				this.flow.createTime = val.createTime ? this.$moment(val.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
+				this.flow.startTime = val.startTime ? this.$moment(val.startTime).format('YYYY-MM-DD HH:mm:ss') : '';
+				this.flow.finishTime = val.finishTime ? this.$moment(val.finishTime).format('YYYY-MM-DD HH:mm:ss') : '';
 
 				this.flow.username = (val.user && val.user.email) || '';
 				this.flow.status = val.status;
