@@ -10,7 +10,7 @@
 	>
 		<el-form label-width="150px">
 			<el-form-item :label="$t('dataFlow.taskName')">
-				<el-input v-model="dataflow.name" maxlength="50" show-word-limit></el-input>
+				<el-input v-model="dataflow.name" maxlength="50" show-word-limit class="task-name"></el-input>
 			</el-form-item>
 		</el-form>
 		<setting ref="setting"></setting>
@@ -83,11 +83,19 @@ export default {
 .sp-setting {
 	.el-input__inner {
 		height: 28px;
-		width: 300px;
 	}
 	.el-form-item {
 		font-size: 12px;
 		margin-bottom: 0;
+	}
+	.task-name {
+		width: 480px;
+	}
+	.el-form-item__label {
+		font-size: 12px;
+	}
+	.data-flow-setting .e-form {
+		padding: 0;
 	}
 }
 </style>
