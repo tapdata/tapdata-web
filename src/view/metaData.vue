@@ -123,6 +123,19 @@ export default {
 				}
 			});
 		},
+		getDataAll(cb) {
+			let params = {
+				filter: {}
+			};
+			MetadataDefinitions.get(params).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						//this.treeData = this.formatData(res.data);
+						cb && cb(res.data);
+					}
+				}
+			});
+		},
 		//格式化分类数据
 		formatData(items) {
 			if (items && items.length) {
@@ -250,7 +263,7 @@ export default {
 		},
 		checkName(value) {
 			return new Promise(resolve => {
-				this.getData(items => {
+				this.getDataAll(items => {
 					resolve(items.find(it => it.value === value));
 				});
 			});
