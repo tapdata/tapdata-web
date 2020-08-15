@@ -464,12 +464,13 @@ export default {
 				this.getStageDataApi(selectStage.form_data.connectionId);
 				this.stage.nodeName = selectStage.form_data.name;
 				this.stageType = selectStage.type;
+				let rightTabPanel = this.editor.getRightTabPanel();
+				let panel = rightTabPanel.getChildByName('nodeSettingPanel');
 				if (this.editor.seeMonitor) {
 					this.editor.getRightSidebar().show();
-					let rightTabPanel = this.editor.getRightTabPanel();
-					let monitor = rightTabPanel.getChildByName('monitor');
-					rightTabPanel.select(monitor);
+					panel = rightTabPanel.getChildByName('monitor');
 				}
+				rightTabPanel.select(panel);
 			} else {
 				this.stageId = 'all';
 			}
