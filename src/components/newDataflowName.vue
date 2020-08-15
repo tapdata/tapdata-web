@@ -8,7 +8,7 @@
 		:show-close="false"
 		:before-close="handleClose"
 	>
-		<el-form label-width="200px">
+		<el-form label-width="150px">
 			<el-form-item :label="$t('dataFlow.taskName')">
 				<el-input v-model="dataflow.name" maxlength="50" show-word-limit></el-input>
 			</el-form-item>
@@ -86,10 +86,8 @@ export default {
 		width: 300px;
 	}
 	.el-form-item {
-		margin-bottom: 0;
-	}
-	.el-dialog__body {
 		font-size: 12px;
+		margin-bottom: 0;
 	}
 }
 </style>
