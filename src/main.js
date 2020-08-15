@@ -42,3 +42,10 @@ window.App = new Vue({
 	components: { App },
 	template: '<App/>'
 });
+//解决浏览器tab切换时，element ui 组件tooltip气泡不消失的问题  #7752
+document.addEventListener('visibilitychange', () => {
+	setTimeout(() => {
+		let ele = document.querySelector(':focus');
+		ele && ele.blur();
+	}, 50);
+});

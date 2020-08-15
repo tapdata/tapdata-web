@@ -141,9 +141,9 @@
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
-				<el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
+				<!-- <el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
 					$t('dataFlow.updateModel')
-				}}</el-button>
+				}}</el-button> -->
 				<entity
 					v-loading="schemaSelectConfig.loading"
 					:schema="convertSchemaToTreeData(defaultSchema)"

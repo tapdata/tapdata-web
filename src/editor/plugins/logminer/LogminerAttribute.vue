@@ -165,7 +165,7 @@ export default {
 						connectionId: '',
 						selectType: '',
 						includeTables: [], // 保留表
-						selectTables: [], // 排除表
+						selectTables: '', // 排除表
 						includeTablesList: [] // 表数组
 					}
 				]
@@ -251,16 +251,17 @@ export default {
 		/**获取表数据**/
 		changeIncludeTables(data) {
 			let includeArr = [];
+			let selectTables = data.selectTables.split(',') || [];
 			if (data.selectType === 'exclusionTable') {
 				includeArr = data.includeTablesList.filter(item => {
-					return data.selectTables.indexOf(item) == -1;
+					return selectTables.indexOf(item) == -1;
 				});
 				data.includeTables = includeArr;
 			} else if (data.selectType === 'reservationTable') {
-				data.includeTables = data.selectTables;
+				data.includeTables = selectTables;
 			} else {
 				data.includeTables = data.includeTablesList;
-				data.selectTables = [];
+				data.selectTables = '';
 			}
 		},
 
@@ -332,7 +333,7 @@ export default {
 				connectionId: '',
 				selectType: 'allTables',
 				includeTables: [],
-				selectTables: [],
+				selectTables: '',
 				includeTablesList: []
 			};
 			this.model.logCollectorSettings.push(list);
@@ -371,7 +372,7 @@ export default {
 						connectionId: '',
 						selectType: 'allTables',
 						includeTables: [],
-						selectTables: [],
+						selectTables: '',
 						includeTablesList: []
 					}
 				]
@@ -388,9 +389,11 @@ export default {
 					: '';
 				this.model.logCollectorSettings.map((item, index) => {
 					if (item.selectType === 'exclusionTable') {
-						item.selectTables = item.includeTablesList.filter(table => {
-							return item.includeTables.indexOf(table) == -1;
-						});
+						item.selectTables = item.includeTablesList
+							.filter(table => {
+								return item.includeTables.indexOf(table) == -1;
+							})
+							.join(',');
 					}
 					this.$set(this.model.logCollectorSettings, index, item);
 				});

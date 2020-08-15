@@ -1,7 +1,9 @@
 /build/
 /config/
 /dist/
+/assets/
 /*.js
 /test/unit/coverage/
 /src/editor/lib/rappid/rappid.js
 /src/editor/lib/rappid/themes/style.default.css
+/src/assets/style/font/iconfont.css

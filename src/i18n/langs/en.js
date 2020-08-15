@@ -205,10 +205,12 @@ const en = {
 		databseMigrationHead: 'Database migration',
 		databseFreedomHead: 'Custom data SYNC',
 		createNew: 'Create new',
+		DissedNoAction: 'oops~ The banned node/Connecting line should not be deleted, connected in, or connected out',
 		guidingMode: 'Guiding mode',
 		advancedMode: 'Advanced mode',
 		freedomMode: 'Advanced mode',
 		advanceSetting: 'More advanced setting',
+		closeSetting: 'fold up',
 		execution: 'Execution',
 		previous: 'Previous',
 		next: 'Next',
@@ -218,7 +220,7 @@ const en = {
 		databseProcessing:
 			'With the  guided mode to help novice users to quickly understand the table level data processing and SYNC. This function can not only realize table level INITAL and CDC transmission, but also focus on various processors (JS processing, field filtering, aggregation processing, row level filtering, etc.) for complex logical processing demands.',
 		databseMigration:
-			'With the guided mode to help novice users to quickly understand the operation method between databases. Database migration can quickly realize INITAL and CDC transmission between databases (include table filter and rename settings, etc). It is suitable for Database instance migration, upload to cloud/download from cloud, database splitting and expansion, disaster recovery or other business scenarios.',
+			'With the guided mode to help novice users to quickly understand the operation method between databases. Database migration can quickly realize INITAL and CDC transmission between databases (include table filter and rename settings, etc).',
 		databseFreedom:
 			'In the custom mode, user can freely use all the data nodes and processor nodes , set the task scheduling path and function configuration to solve various complex data processing scenarios and synchronization requirements',
 		multiError: {
@@ -295,7 +297,9 @@ const en = {
 		rowCount: 'Records',
 		inputOutput: 'Throughput',
 		transf: 'Transmission Time',
-		dataScreening: 'Data Screening',
+		timePoint: 'CDC timepoint',
+		dataScreening: 'Statistics',
+		taskDetail: 'Task Details',
 		unit: 'Unit',
 		article: 'pcs',
 		secondUnit: 'second',

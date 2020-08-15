@@ -461,15 +461,10 @@ export default {
 		handleRename(node, data) {
 			log('SchemaEditor.handleRename', node, data);
 			let nativeData = this.getNativeData(this.originalSchema.fields, data.id); //查找初始schema
-
-			// 改名前查找同级中是否重名，若有则return且还原改动并提示
-			if (node && node.parent && node.parent.childNodes) {
-				let parentNode = node.parent.childNodes.filter(v => data.label === v.data.label);
-				if (parentNode && parentNode.length === 2) {
-					this.$message.error(data.label + this.$t('message.exists_name'));
-					data.label = nativeData.label;
-					return;
-				}
+			let existsName = this.handleExistsName(node, data);
+			if (existsName) {
+				data.label = nativeData.label;
+				return;
 			}
 			let createOps = this.model.operations.filter(v => v.id === data.id && v.op === 'CREATE');
 			if (createOps && createOps.length > 0) {
@@ -543,24 +538,24 @@ export default {
 				let self = this;
 
 				let fn = function(field) {
-					for (let i = 0; i < self.model.operations.length; i++) {
-						// 删除所有的rename的操作
-						let ops = self.model.operations[i];
-						if (ops.id === field.id && ops.op === 'RENAME') {
-							// let originalNode = self.getNativeData(self.originalSchema.fields, field.id);
-							// originalNode.label = field.label;
-							self.model.operations.splice(i, 1);
-						}
-					}
-					for (let i = 0; i < self.model.operations.length; i++) {
-						// 删除所有的类型改变的操作
-						let ops = self.model.operations[i];
-						if (ops.id === field.id && ops.op === 'CONVERT') {
-							// let originalNode = self.getNativeData(self.originalSchema.fields, field.id); // 替换原始数据 主要是操作子节点
-							// originalNode.type = field.type;
-							self.model.operations.splice(i, 1);
-						}
-					}
+					// for (let i = 0; i < self.model.operations.length; i++) {
+					// 	// 删除所有的rename的操作
+					// 	let ops = self.model.operations[i];
+					// 	if (ops.id === field.id && ops.op === 'RENAME') {
+					// 		// let originalNode = self.getNativeData(self.originalSchema.fields, field.id);
+					// 		// originalNode.label = field.label;
+					// 		self.model.operations.splice(i, 1);
+					// 	}
+					// }
+					// for (let i = 0; i < self.model.operations.length; i++) {
+					// 	// 删除所有的类型改变的操作
+					// 	let ops = self.model.operations[i];
+					// 	if (ops.id === field.id && ops.op === 'CONVERT') {
+					// 		// let originalNode = self.getNativeData(self.originalSchema.fields, field.id); // 替换原始数据 主要是操作子节点
+					// 		// originalNode.type = field.type;
+					// 		self.model.operations.splice(i, 1);
+					// 	}
+					// }
 
 					let ops = self.model.operations.filter(v => v.op === 'REMOVE' && v.id === field.id);
 
@@ -599,6 +594,19 @@ export default {
 					this.handleReset(node, node.data);
 				});
 			}
+		},
+		handleExistsName(node, data) {
+			// 改名前查找同级中是否重名，若有则return且还原改动并提示
+			let exist = false;
+			debugger;
+			if (node && node.parent && node.parent.childNodes) {
+				let parentNode = node.parent.childNodes.filter(v => data.label === v.data.label);
+				if (parentNode && parentNode.length === 2) {
+					this.$message.error(data.label + this.$t('message.exists_name'));
+					exist = true;
+				}
+			}
+			return exist;
 		},
 		handleAllDelete() {
 			let ids = this.$refs.tree.getCheckedNodes();
@@ -642,11 +650,13 @@ export default {
 		handleReset(node, data) {
 			log('SchemaEditor.handleReset', node, data);
 			let parentId = node.parent.data.id;
+			let dataLabel = _.cloneDeep(data.label);
 			let indexId = this.model.operations.filter(v => v.op === 'REMOVE' && v.id === parentId);
 			if (parentId && indexId.length !== 0) {
 				return;
 			}
 			let self = this;
+			let nativeData = self.getNativeData(self.originalSchema.fields, data.id);
 			let fn = function(node, data) {
 				for (let i = 0, length = node.childNodes.length; i < node.childNodes.length; i++) {
 					let childNode = node.childNodes[i];
@@ -655,8 +665,6 @@ export default {
 						i--;
 					}
 				}
-
-				let nativeData = self.getNativeData(self.originalSchema.fields, data.id);
 				for (let i = 0; i < self.model.operations.length; i++) {
 					if (self.model.operations[i].id === data.id) {
 						let ops = self.model.operations[i];
@@ -693,6 +701,10 @@ export default {
 				}
 			};
 			fn(node, data);
+			let existsName = this.handleExistsName(node, data);
+			if (existsName) {
+				data.label = dataLabel;
+			}
 			//删除 对应字段js脚本处理
 			if (this.model.scripts && this.model.scripts.length && this.model.scripts.length > 0) {
 				for (let i = 0; i < this.model.scripts.length; i++) {

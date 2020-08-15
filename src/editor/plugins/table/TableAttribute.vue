@@ -98,10 +98,12 @@
 					</div>
 				</el-form-item>
 
-				<el-tabs type="border-card" v-if="model.isFilter" @tab-click="sqlTabChanged">
+				<el-tabs type="border-card" v-if="model.isFilter">
+					<!-- @tab-click="sqlTabChanged" -->
 					<el-tab-pane>
-						<span slot="label"
-							><el-checkbox v-model="model.sqlFromCust" @change="setSqlFrom"></el-checkbox>
+						<span slot="label">
+							<!-- @change="setSqlFrom" -->
+							<!-- <el-checkbox v-model="model.sqlFromCust" disabled></el-checkbox> -->
 							{{ $t('editor.cell.data_node.collection.form.filter.fieldFilter') }}</span
 						>
 						<el-form-item :placeholder="$t('editor.cell.data_node.collection.form.filter.allField')">
@@ -212,8 +214,9 @@
 						</div>
 					</el-tab-pane>
 					<el-tab-pane>
-						<span slot="label"
-							><el-checkbox v-model="model.sqlNotFromCust" @change="setSqlFrom('no')"></el-checkbox>
+						<span slot="label">
+							<!-- @change="setSqlFrom('no')" -->
+							<!-- <el-checkbox v-model="model.sqlNotFromCust" disabled></el-checkbox> -->
 							{{ $t('editor.cell.data_node.collection.form.filter.sqlFilter') }}</span
 						>
 						<el-form-item prop="sql" :rules="rules">
@@ -254,9 +257,9 @@
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
-				<el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
+				<!-- <el-button class="fr" type="success" size="mini"  @click="hanlderLoadSchema">{{
 					$t('dataFlow.updateModel')
-				}}</el-button>
+				}}</el-button> -->
 				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 			</div>
 		</div>
@@ -520,19 +523,24 @@ export default {
 					this.schemaSelectConfig.loading = false;
 				});
 		},
-		setSqlFrom(name) {
-			if (name == 'no') this.model.sqlFromCust = !this.model.sqlNotFromCust;
-			else this.model.sqlNotFromCust = !this.model.sqlFromCust;
-		},
-		sqlTabChanged(tab) {
-			if (tab.index == '1') {
-				this.model.sqlFromCust = false;
-				this.model.sqlNotFromCust = true;
-			} else {
-				this.model.sqlFromCust = true;
-				this.model.sqlNotFromCust = false;
-			}
-		},
+		// setSqlFrom(name) {
+		// 	if (name == 'no') {
+		// 		this.model.sqlFromCust = true;
+		// 		this.model.sqlNotFromCust = false;
+		// 	} else {
+		// 		this.model.sqlFromCust = false;
+		// 		this.model.sqlNotFromCust = true;
+		// 	}
+		// },
+		// sqlTabChanged(tab) {
+		// if (tab.index == '1') {
+		// 	this.model.sqlFromCust = false;
+		// 	this.model.sqlNotFromCust = true;
+		// } else {
+		// 	this.model.sqlFromCust = true;
+		// 	this.model.sqlNotFromCust = false;
+		// }
+		// },
 		removeCustFilter(cond) {
 			if (this.model.custSql.filterConds.length == 1) {
 				this.model.custSql.filterConds[0] = Object.assign(this.model.custSql.filterConds[0], {

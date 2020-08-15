@@ -1,16 +1,11 @@
 <template>
 	<div class="data-flow-setting" style="background-color: white;">
-		<head class="head">
+		<head v-if="!isSimple" class="head">
 			<el-button class="back-btn-icon-box" @click="GoBack"
 				><i class="iconfont icon-you2 back-btn-icon"></i
 			></el-button>
 			<span class="back-btn-text">{{ $t('editor.ui.sidebar.setting') }}</span>
 		</head>
-		<!-- <div class="head-btns">
-			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-				{{ $t('dataFlow.button.viewMonitoring') }}
-			</el-button>
-		</div> -->
 		<el-form
 			class="e-form"
 			label-position="right"
@@ -28,62 +23,6 @@
 					<el-radio label="cdc">{{ $t('dataFlow.cdc') }}</el-radio>
 				</el-radio-group>
 			</el-form-item>
-			<!-- <el-row>
-				<el-col :span="12">
-					<el-form-item>
-						<div>{{ $t('dataFlow.mission') }}</div>
-						<el-input
-							v-model="formData.description"
-							type="textarea"
-							:autosize="{ minRows: 2, maxRows: 6 }"
-						></el-input>
-					</el-form-item>
-				</el-col>
-			</el-row> -->
-			<!-- style="border-top: 1px solid #dedee4" -->
-			<el-form-item :label="$t('dataFlow.setting.distinctWriteType')">
-				<!-- <div>
-					{{ $t('dataFlow.setting.distinctWriteType') }}
-					<el-popover class="aggtip" placement="top-start" trigger="hover">
-						<div>{{ $t('dataFlow.setting.intellectTip') }}</div>
-						<div>{{ $t('dataFlow.setting.compelTip') }}</div>
-						<span class="icon iconfont icon-tishi1" slot="reference"></span>
-					</el-popover>
-				</div> -->
-
-				<el-select v-model="formData.distinctWriteType" size="mini" placeholder="请选择">
-					<el-option v-for="item in dataWriteList" :key="item.value" :label="item.label" :value="item.value">
-					</el-option>
-				</el-select>
-				<el-popover class="aggtip" placement="top-start" trigger="hover">
-					<div>{{ $t('dataFlow.setting.intellectTip') }}</div>
-					<div>{{ $t('dataFlow.setting.compelTip') }}</div>
-					<span class="icon iconfont icon-tishi1" slot="reference"></span>
-				</el-popover>
-			</el-form-item>
-			<el-form-item :label="$t('dataFlow.send_email')">
-				<el-checkbox v-model="formData.emailWaring.paused">{{ $t('dataFlow.stopped') }}</el-checkbox>
-				<el-checkbox v-model="formData.emailWaring.error">{{ $t('dataFlow.error') }}</el-checkbox>
-				<el-checkbox v-model="formData.emailWaring.edited">{{ $t('dataFlow.edited') }}</el-checkbox>
-				<el-checkbox v-model="formData.emailWaring.started">{{ $t('dataFlow.started') }}</el-checkbox>
-				<!-- <el-checkbox-group v-model="formData.emailWaring">
-					<el-checkbox class="setBtn" label="paused">{{ $t('dataFlow.stopped') }} </el-checkbox>
-					<el-checkbox class="setBtn" label="error">{{ $t('dataFlow.error') }} </el-checkbox>
-					<el-checkbox class="setBtn" label="edited">{{ $t('dataFlow.edited') }} </el-checkbox>
-					<el-checkbox class="setBtn" label="started">{{ $t('dataFlow.started') }} </el-checkbox>
-				</el-checkbox-group> -->
-			</el-form-item>
-			<el-form-item :label="$t('dataFlow.run_custom_sql')" v-show="formData.sync_type === 'initial_sync'">
-				<!-- 重复运行自定义SQL -->
-				<el-switch
-					v-model="formData.increment"
-					:active-text="formData.increment ? $t('dataFlow.yes') : $t('dataFlow.no')"
-				></el-switch>
-				<!-- <el-radio-group v-model="formData.increment" size="mini">
-					<el-radio-button :label="true">{{ $t('dataFlow.yes') }}</el-radio-button>
-					<el-radio-button :label="false">{{ $t('dataFlow.no') }}</el-radio-button>
-				</el-radio-group> -->
-			</el-form-item>
 			<el-form-item :label="$t('dataFlow.stop_on_error')">
 				<!-- 遇到错误时停止同步 -->
 				<el-switch
@@ -98,25 +37,6 @@
 					:active-text="formData.needToCreateIndex ? $t('dataFlow.yes') : $t('dataFlow.no')"
 				></el-switch>
 			</el-form-item>
-			<el-form-item :label="$t('dataFlow.is_schedule')" v-show="formData.sync_type === 'initial_sync'">
-				<!-- 定期调度任务 -->
-				<el-switch
-					v-model="formData.isSchedule"
-					:active-text="formData.isSchedule ? $t('dataFlow.yes') : $t('dataFlow.no')"
-				></el-switch>
-			</el-form-item>
-			<el-form-item
-				v-show="formData.isSchedule === true && formData.sync_type === 'initial_sync'"
-				prop="cronExpression"
-			>
-				<!-- 定期调度任务 -->
-				<el-input
-					v-model="formData.cronExpression"
-					:placeholder="$t('dataFlow.cronExpression')"
-					size="mini"
-				></el-input>
-			</el-form-item>
-
 			<el-form-item :label="$t('dataFlow.isOpenAutoDDL')" v-show="formData.sync_type !== 'initial_sync'">
 				<!-- 自动处理DDL操作 -->
 				<el-switch
@@ -124,76 +44,105 @@
 					:active-text="formData.isOpenAutoDDL ? $t('dataFlow.yes') : $t('dataFlow.no')"
 				></el-switch>
 			</el-form-item>
-			<el-form-item :label="$t('dataFlow.read_cdc_interval')">
-				<!-- <div>{{ $t('dataFlow.read_cdc_interval') }}</div> -->
-				<el-input v-model="formData.readCdcInterval" size="mini">
-					<template slot="append">ms</template>
-				</el-input>
-			</el-form-item>
-			<el-form-item :label="$t('dataFlow.read_batch_size')">
-				<!-- <div>{{ $t('dataFlow.read_batch_size') }}</div> -->
-				<el-input v-model="formData.readBatchSize" size="mini">
-					<template slot="append">row</template>
-				</el-input>
-			</el-form-item>
-			<!-- 定期调度任务 -->
-			<!-- <el-form-item
-				v-show="formData.isSchedule === true && formData.sync_type === 'initial_sync'"
-				prop="cronExpression"
-			>
-				<div>{{ $t('dataFlow.cronExpression') }}</div>
-
-				<el-input v-model="formData.cronExpression" size="mini"></el-input>
-			</el-form-item> -->
-			<el-form-item :label="$t('dataFlow.processorConcurrency')">
-				<!-- <div>{{ $t('dataFlow.processorConcurrency') }}</div> -->
-				<!-- 处理器线程 -->
-				<el-input-number v-model="formData.processorConcurrency" :min="1" size="mini"></el-input-number>
-			</el-form-item>
-			<el-form-item :label="$t('dataFlow.transformerConcurrency')" v-show="formData.sync_type !== 'cdc'">
-				<!-- <div>{{ $t('dataFlow.transformerConcurrency') }}</div> -->
-				<!-- 目标写入线程 -->
-				<el-input-number v-model="formData.transformerConcurrency" :min="1" size="mini"></el-input-number>
-			</el-form-item>
-			<el-form-item :label="$t('dataFlow.SyncPoint')" v-show="formData.sync_type === 'cdc'" size="mini">
-				<div class="labelTxt">
-					{{ $t('dataFlow.cdcLabel') }}
-					<span v-for="item in formData.syncPoints" :key="item.name">
-						{{ item.name || item.connectionId }}
-					</span>
-					<!-- <el-tooltip placement="right-end">
-						<div slot="content">
-							<div>{{ $t('dataFlow.SyncInfo.current') }}</div>
-							<div>{{ $t('dataFlow.SyncInfo.localTZ') }}</div>
-							<div>{{ $t('dataFlow.SyncInfo.connTZ') }}</div>
-						</div>
-						<i class="e-primary el-icon-warning-outline"></i>
-					</el-tooltip> -->
+			<div v-show="showMore">
+				<el-form-item :label="$t('dataFlow.setting.distinctWriteType')">
+					<el-select v-model="formData.distinctWriteType" size="mini" placeholder="请选择">
+						<el-option
+							v-for="item in dataWriteList"
+							:key="item.value"
+							:label="item.label"
+							:value="item.value"
+						>
+						</el-option>
+					</el-select>
+					<el-popover class="aggtip" placement="top-start" trigger="hover">
+						<div>{{ $t('dataFlow.setting.intellectTip') }}</div>
+						<div>{{ $t('dataFlow.setting.compelTip') }}</div>
+						<span class="icon iconfont icon-tishi1" slot="reference"></span>
+					</el-popover>
+				</el-form-item>
+				<el-form-item :label="$t('dataFlow.send_email')">
+					<el-checkbox v-model="formData.emailWaring.paused">{{ $t('dataFlow.stopped') }}</el-checkbox>
+					<el-checkbox v-model="formData.emailWaring.error">{{ $t('dataFlow.error') }}</el-checkbox>
+					<el-checkbox v-model="formData.emailWaring.edited">{{ $t('dataFlow.edited') }}</el-checkbox>
+					<el-checkbox v-model="formData.emailWaring.started">{{ $t('dataFlow.started') }}</el-checkbox>
+				</el-form-item>
+				<el-form-item :label="$t('dataFlow.run_custom_sql')" v-show="formData.sync_type === 'initial_sync'">
+					<!-- 重复运行自定义SQL -->
+					<el-switch
+						v-model="formData.increment"
+						:active-text="formData.increment ? $t('dataFlow.yes') : $t('dataFlow.no')"
+					></el-switch>
+				</el-form-item>
+				<el-form-item :label="$t('dataFlow.is_schedule')" v-show="formData.sync_type === 'initial_sync'">
+					<!-- 定期调度任务 -->
+					<el-switch
+						v-model="formData.isSchedule"
+						:active-text="formData.isSchedule ? $t('dataFlow.yes') : $t('dataFlow.no')"
+					></el-switch>
+				</el-form-item>
+				<el-form-item
+					v-show="formData.isSchedule === true && formData.sync_type === 'initial_sync'"
+					prop="cronExpression"
+				>
+					<!-- 定期调度任务 -->
+					<el-input
+						v-model="formData.cronExpression"
+						:placeholder="$t('dataFlow.cronExpression')"
+						size="mini"
+					></el-input>
+				</el-form-item>
+				<el-form-item :label="$t('dataFlow.read_cdc_interval')">
+					<el-input v-model="formData.readCdcInterval" size="mini">
+						<template slot="append">ms</template>
+					</el-input>
+				</el-form-item>
+				<el-form-item :label="$t('dataFlow.read_batch_size')">
+					<el-input v-model="formData.readBatchSize" size="mini">
+						<template slot="append">row</template>
+					</el-input>
+				</el-form-item>
+				<el-form-item :label="$t('dataFlow.processorConcurrency')">
+					<!-- 处理器线程 -->
+					<el-input-number v-model="formData.processorConcurrency" :min="1" size="mini"></el-input-number>
+				</el-form-item>
+				<el-form-item :label="$t('dataFlow.transformerConcurrency')" v-show="formData.sync_type !== 'cdc'">
+					<!-- 目标写入线程 -->
+					<el-input-number v-model="formData.transformerConcurrency" :min="1" size="mini"></el-input-number>
+				</el-form-item>
+				<el-form-item :label="$t('dataFlow.SyncPoint')" v-show="formData.sync_type === 'cdc'" size="mini">
+					<div class="labelTxt">
+						{{ $t('dataFlow.cdcLabel') }}
+						<span v-for="item in formData.syncPoints" :key="item.name">
+							{{ item.name || item.connectionId }}
+						</span>
+					</div>
+					<el-row v-for="item in formData.syncPoints" :key="item.name" style="margin-top: 10px">
+						<el-col :span="12" style="margin-right: 10px">
+							<el-select v-model="item.type" placeholder="请选择">
+								<el-option v-for="op in options" :key="op.value" :label="op.label" :value="op.value">
+								</el-option>
+							</el-select>
+						</el-col>
+						<el-col :span="10" v-if="item.type !== 'current'">
+							<el-date-picker
+								format="yyyy-MM-dd HH:mm:ss"
+								style="width: 95%;"
+								v-model="item.date"
+								type="datetime"
+								:disabled="item.type === 'current'"
+							></el-date-picker>
+						</el-col>
+					</el-row>
+				</el-form-item>
+			</div>
+			<el-form-item v-if="isSimple">
+				<div v-if="!showMore" @click="showMore = true" class="advance-setting">
+					{{ $t('dataFlow.advanceSetting') }}
 				</div>
-				<el-row v-for="item in formData.syncPoints" :key="item.name" style="margin-top: 10px">
-					<!-- <el-col>
-						<div class="dataBase-name">
-							<el-tooltip :content="item.name || item.connectionId" placement="left-start">
-								<span>{{ item.name || item.connectionId }}</span>
-							</el-tooltip>
-						</div>
-					</el-col> -->
-					<el-col :span="12" style="margin-right: 10px">
-						<el-select v-model="item.type" placeholder="请选择">
-							<el-option v-for="op in options" :key="op.value" :label="op.label" :value="op.value">
-							</el-option>
-						</el-select>
-					</el-col>
-					<el-col :span="10" v-if="item.type !== 'current'">
-						<el-date-picker
-							format="yyyy-MM-dd HH:mm:ss"
-							style="width: 95%;"
-							v-model="item.date"
-							type="datetime"
-							:disabled="item.type === 'current'"
-						></el-date-picker>
-					</el-col>
-				</el-row>
+				<div v-if="showMore" @click="showMore = false" class="advance-setting">
+					{{ $t('dataFlow.closeSetting') }}
+				</div>
 			</el-form-item>
 		</el-form>
 	</div>
@@ -212,6 +161,9 @@ export default {
 			disabled: false,
 			systemTimeZone: '',
 			formData: _.cloneDeep(DEFAULT_SETTING),
+			isSimple: false,
+			showMore: true,
+
 			rules: {
 				cronExpression: [
 					{
@@ -415,9 +367,9 @@ export default {
 		// 返回
 		GoBack() {
 			if (!this.disabled) {
-				this.editor.showSetting(false, this.disabled);
+				this.editor.showSetting(this.disabled);
 			} else {
-				this.editor.showSetting(false, this.disabled);
+				this.editor.showSetting(this.disabled);
 				this.editor.initMonitor();
 			}
 		}
@@ -492,6 +444,9 @@ export default {
 	.el-radio__label,
 	.el-switch__label span {
 		font-size: 12px;
+	}
+	.el-form-item__content {
+		line-height: 38px;
 	}
 	.el-form-item {
 		margin-bottom: 10px;
