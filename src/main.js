@@ -27,11 +27,20 @@ Vue.prototype.$api = factory;
 window.VueCookie = VueCookie;
 window.ChildRoutes = childRoutes;
 
+window.openDebug = () => {
+	localStorage.setItem('tapdata_debug', 'true');
+};
+
+if (process.env.NODE_ENV === 'development') {
+	window.openDebug();
+}
+
 window._TAPDATA_OPTIONS_ = {
 	showLang: 'SHOW_LANGUAGE_OPTION',
 	logoUrl: require('../static/icon/logo.png'),
 	platform: 'DAAS'
 };
+
 document.title = 'Tapdata';
 
 window.App = new Vue({

@@ -5,5 +5,9 @@
  */
 let counter = 0;
 export default function() {
-	window["console"].error(++counter, ...arguments);
+	if (localStorage.getItem('tapdata_debug')) {
+		window['console'].groupCollapsed(++counter, ...arguments);
+		window['console'].trace();
+		window['console'].groupEnd();
+	}
 }
