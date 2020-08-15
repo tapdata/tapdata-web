@@ -824,15 +824,6 @@ export default {
 
 							self.dataFlow = dataFlow;
 
-							if (!self.$route.query || !self.$route.query.id) {
-								self.$router.push({
-									path: '/job',
-									query: {
-										id: dataFlow.id
-									}
-								});
-							}
-
 							if (typeof cb === 'function') {
 								cb(null, dataFlow);
 							}
@@ -840,7 +831,17 @@ export default {
 							let stages = self.getStages();
 							dataFlowsApi
 								.saveStage(stages)
-								.then(() => {})
+								.then(() => {
+									if (!self.$route.query || !self.$route.query.id) {
+										self.$router.push({
+											path: '/job',
+											query: {
+												id: dataFlow.id
+											}
+										});
+									}
+									location.reload();
+								})
 								.catch(() => {
 									this.$message.error(self.$t('message.saveFail'));
 								});
@@ -985,9 +986,6 @@ export default {
 			});
 		},
 
-		/**
-		 * preview button handler
-		 */
 		preview() {
 			let self = this,
 				data = this.getDataFlowData();

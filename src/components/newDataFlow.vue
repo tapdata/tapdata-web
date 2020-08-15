@@ -1,5 +1,11 @@
 <template>
-	<el-dialog :title="$t('dataFlow.createNew')" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+	<el-dialog
+		:title="$t('dataFlow.createNew')"
+		:visible.sync="dialogVisible"
+		width="60%"
+		:before-close="handleClose"
+		class="simple-scene"
+	>
 		<div>
 			<ul class="item">
 				<li @click="db2db">
@@ -109,9 +115,11 @@ export default {
 	}
 }
 </style>
-<style>
-.el-dialog__body {
-	min-height: 300px;
-	padding: 30px 90px;
+<style lang="less">
+.simple-scene {
+	.el-dialog__body {
+		min-height: 240px;
+		padding: 30px 90px;
+	}
 }
 </style>
