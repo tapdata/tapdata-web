@@ -1106,7 +1106,7 @@ export default {
 		 */
 		showSetting() {
 			log('Job.showSetting');
-			this.editor.showSetting(this.$route.query.isMoniting == 'true');
+			this.editor.showSetting(!this.editable);
 		},
 
 		/**
