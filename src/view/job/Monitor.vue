@@ -540,7 +540,7 @@ export default {
 				}
 
 				let cdcList = [];
-				this.flow.cdcLastTimes &&
+				if (this.flow.cdcLastTimes && this.flow.cdcLastTimes.length) {
 					this.flow.cdcLastTimes.forEach(item => {
 						let flag = cdcList.find(ele => ele.sourceConnectionId === item.sourceConnectionId);
 						if (!flag) {
@@ -553,6 +553,7 @@ export default {
 							flag.targetList.push(item);
 						}
 					});
+				}
 				this.cdcLastTimes = cdcList || [];
 			},
 			deep: true
