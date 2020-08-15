@@ -98,9 +98,9 @@
 					</div>
 				</el-form-item>
 
-				<el-tabs type="border-card" v-if="model.isFilter">
+				<el-tabs type="border-card" v-if="model.isFilter" v-model="model.filterType">
 					<!-- @tab-click="sqlTabChanged" -->
-					<el-tab-pane>
+					<el-tab-pane name="field">
 						<span slot="label">
 							<!-- @change="setSqlFrom" -->
 							<!-- <el-checkbox v-model="model.sqlFromCust" disabled></el-checkbox> -->
@@ -213,7 +213,7 @@
 							</el-row>
 						</div>
 					</el-tab-pane>
-					<el-tab-pane>
+					<el-tab-pane name="sql">
 						<span slot="label">
 							<!-- @change="setSqlFrom('no')" -->
 							<!-- <el-checkbox v-model="model.sqlNotFromCust" disabled></el-checkbox> -->
@@ -394,6 +394,7 @@ export default {
 				selectedFields: [],
 				custFields: [],
 				cSql: '',
+				filterType: 'field',
 				custSql: {
 					fieldFilterType: 'keepAllFields',
 					limitLines: '',
