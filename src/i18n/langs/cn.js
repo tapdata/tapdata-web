@@ -294,6 +294,8 @@ const cn = {
 		finishTime: '本次结束时间',
 		inputNumber: '本次输入',
 		outputNumber: '本次输出',
+		sourceLibrary: '源库',
+		targetLibrary: '目标库',
 		rowCount: '条数',
 		inputOutput: '输入输出统计',
 		transf: '传输耗时',

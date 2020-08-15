@@ -28,7 +28,7 @@
 		</el-form>
 		<div class="echartMain">
 			<div class="echartlist">
-				<echart-head :data="screeningObj" @twoRadio="getTwoRadio"></echart-head>
+				<echart-head :data="taskDetailsObj"></echart-head>
 				<div
 					class="info fl"
 					v-if="stageType === 'table' || stageType === 'collection' || stageType === 'database'"
@@ -36,15 +36,23 @@
 				>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.nodeName') }}:</span>
-						<span class="info-text" style="color: #48b6e2;">{{ stage.nodeName }}</span>
+						<el-tooltip :content="stage.nodeName" placement="bottom-start">
+							<!-- @click="handTableName(stage)" style="color: #48b6e2;cursor: pointer;" -->
+							<span class="info-text">{{ stage.nodeName }}</span>
+						</el-tooltip>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.ownedLibrary') }}:</span>
-						<span class="info-text">{{ stage.name }}</span>
+						<el-tooltip :content="stage.name" placement="bottom-start">
+							<!-- @click="handDatabaseName(stage)" -->
+							<span class="info-text">{{ stage.name }}</span>
+						</el-tooltip>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataForm.form.host') }}:</span>
-						<span class="info-text">{{ stage.database_host }}</span>
+						<el-tooltip :content="stage.database_host" placement="bottom-start">
+							<span class="row-text">{{ stage.database_host }}</span>
+						</el-tooltip>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataForm.form.databaseName') }}:</span>
@@ -58,23 +66,27 @@
 						<span class="info-label">{{ $t('dataForm.form.databaseType') }}:</span>
 						<span class="info-text">{{ stage.database_type }}</span>
 					</div>
-					<div class="info-list">
+					<!-- <div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
 						<span class="info-text"> {{ flow.inputNumber }}</span>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.outputNumber') }}:</span>
 						<span class="info-text">{{ flow.outputNumber }}</span>
-					</div>
+					</div> -->
 				</div>
 				<div class="info fl" v-else>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.taskName') }}:</span>
-						<span class="info-text" style="color: #48b6e2;">{{ flow.name }}</span>
+						<el-tooltip :content="flow.name" placement="bottom-start">
+							<span class="info-text" style="color: #48b6e2;">{{ flow.name }}</span>
+						</el-tooltip>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.creatdor') }}:</span>
-						<span class="info-text">{{ flow.username }}</span>
+						<el-tooltip :content="flow.name">
+							<span class="info-text">{{ flow.username }}</span>
+						</el-tooltip>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
@@ -92,8 +104,30 @@
 						<span class="info-label">{{ $t('dataFlow.outputNumber') }}:</span>
 						<span class="info-text">{{ flow.outputNumber }}</span>
 					</div>
+					<div class="info-list">
+						<span class="info-label">{{ $t('dataFlow.timePoint') }}:</span>
+						<div class="row-text">
+							<div v-for="(item, index) in flow.cdcLastTimes" :key="index">
+								<span>{{ $t('dataFlow.sourceLibrary') }}: </span>
+								<span> {{ item.sourceConnectionName }} </span>
+								<ul class="cdcTarget">
+									<li v-for="(childerItem, childerIndex) in item.targetList" :key="childerIndex">
+										<span class="cdcTime"
+											>{{ $moment(childerItem.cdcTime).format('YYYY-MM-DD HH:mm:ss') }}
+										</span>
+										<span
+											>{{ $t('dataFlow.targetLibrary') }}: {{ childerItem.targetConnectionName }}
+										</span>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
 				</div>
+			</div>
 
+			<div class="echartlist">
+				<echart-head :data="screeningObj" @twoRadio="getTwoRadio"></echart-head>
 				<shaftless-echart
 					:sliderBar="sliderBar"
 					class="fr echartMain"
@@ -177,6 +211,7 @@ export default {
 
 	data() {
 		return {
+			tooltipFlag: false,
 			apiLoading: false,
 			loading: false,
 			stageType: '',
@@ -195,7 +230,8 @@ export default {
 				inputNumber: '',
 				outputNumber: '',
 				stages: [],
-				id: ''
+				id: '',
+				cdcLastTimes: []
 			},
 			stage: {
 				nodeName: '',
@@ -389,6 +425,7 @@ export default {
 
 			dataScreening: null, // 数据总览的echart数据
 			screeningObj: null, // 数据总览的头
+			taskDetailsObj: null,
 
 			inputOutputObj: null,
 			transfObj: null,
@@ -438,6 +475,26 @@ export default {
 			}
 		});
 		this.flow = this.dataFlow;
+		let cdcList = [];
+		this.flow.cdcLastTimes.forEach(item => {
+			let flag = cdcList.find(ele => ele.sourceConnectionId === item.sourceConnectionId);
+			if (!flag) {
+				cdcList.push({
+					sourceConnectionName: item.sourceConnectionName,
+					sourceConnectionId: item.sourceConnectionId,
+					targetList: [item]
+				});
+			} else {
+				flag.targetList.push(item);
+			}
+		});
+		this.flow.cdcLastTimes = cdcList || [];
+
+		this.taskDetailsObj = {
+			title: this.$t('dataFlow.taskDetail'),
+			type: 'taskDetails'
+		};
+
 		this.screeningObj = {
 			title: this.$t('dataFlow.dataScreening'),
 			type: 'screening',
@@ -523,6 +580,17 @@ export default {
 	},
 
 	methods: {
+		// // 点击节点跳转到表
+		// handTableName(data) {
+		// 	top.location.href = '/#/metadataInstances/' + data.id;
+		// },
+
+		// // 跳转到所属库
+		// handDatabaseName(data) {
+		// 	debugger;
+		// 	top.location.href = '/#/metadataInstances/' + data.id;
+		// },
+
 		getApiData() {
 			if (this.stageId === 'all') {
 				this.selectFlow = 'flow_';
@@ -546,6 +614,7 @@ export default {
 
 			if (ws.ws.readyState == 1) ws.send(msg);
 		},
+		// 获取所有节点
 		getAllCellsNode(queryString) {
 			let dataCells = this.editor.getAllCells();
 			let dataCellName = [];
@@ -861,6 +930,20 @@ export default {
 						}
 					}
 				});
+		},
+
+		// tooltip的可控
+		visibilityChange(event) {
+			const ev = event.target;
+			const ev_height = ev.offsetHeight; // 文本的实际高度
+			const content_height = this.$refs.tlp.$el.parentNode.clientHeight; // 文本容器高度
+			if (content_height < ev_height) {
+				// 实际内容高度 > 文本高度 =》内容溢出
+				this.tooltipFlag = true; // NameIsIncludeWord ? true : !!false
+			} else {
+				// 否则为不溢出
+				this.tooltipFlag = false;
+			}
 		}
 	},
 
@@ -905,9 +988,9 @@ export default {
 			border: 1px solid #dcdfe6;
 			border-radius: 3px;
 			box-shadow: 1.414px 1.414px 5px rgba(0, 0, 0, 0.1);
-
+			overflow: hidden;
 			.echartMain {
-				width: 45% !important;
+				width: 100% !important;
 				height: calc(100% - 40px);
 			}
 
@@ -927,23 +1010,49 @@ export default {
 			}
 
 			.info {
-				width: 55%;
-				padding: 20px 10px 0 30px;
+				width: 100%;
+				height: calc(100% - 40px);
+				padding: 20px 10px 10px 30px;
 				box-sizing: border-box;
-
+				overflow: auto;
 				.info-list {
-					padding-bottom: 10px;
-
+					padding-bottom: 15px;
+					overflow: hidden;
 					.info-label {
+						float: left;
 						display: inline-block;
-						width: 86px;
+						width: 90px;
 						font-size: 12px;
 						color: #999;
 					}
 
-					.info-text {
+					.row-text {
+						float: left;
+						display: inline-block;
+						width: calc(100% - 95px);
 						font-size: 12px;
 						color: #333;
+					}
+
+					.cdcTarget {
+						padding: 5px 0;
+						color: #999;
+					}
+					.cdcTime {
+						padding-right: 15px;
+					}
+
+					.info-text {
+						float: left;
+						display: inline-block;
+						width: calc(100% - 95px);
+						height: 16px;
+						font-size: 12px;
+						color: #333;
+						white-space: nowrap;
+						text-overflow: ellipsis;
+						vertical-align: middle;
+						overflow: hidden;
 					}
 				}
 			}
