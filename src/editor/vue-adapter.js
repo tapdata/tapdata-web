@@ -37,9 +37,12 @@ export class VueAdapter extends BaseObject {
 	 */
 	render(cell) {
 		log('VueAdapter.render', cell);
-
 		if (this.vm) {
-			this.vm.$destroy();
+			try {
+				this.vm.$destroy();
+			} catch (error) {
+				window.console.error('VueAdapter VM Destroy Error', error);
+			}
 			this.vm = null;
 		}
 

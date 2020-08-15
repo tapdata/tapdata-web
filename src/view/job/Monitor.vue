@@ -477,18 +477,19 @@ export default {
 		});
 		this.flow = this.dataFlow;
 		let cdcList = [];
-		this.flow.cdcLastTimes.forEach(item => {
-			let flag = cdcList.find(ele => ele.sourceConnectionId === item.sourceConnectionId);
-			if (!flag) {
-				cdcList.push({
-					sourceConnectionName: item.sourceConnectionName,
-					sourceConnectionId: item.sourceConnectionId,
-					targetList: [item]
-				});
-			} else {
-				flag.targetList.push(item);
-			}
-		});
+		this.flow.cdcLastTimes &&
+			this.flow.cdcLastTimes.forEach(item => {
+				let flag = cdcList.find(ele => ele.sourceConnectionId === item.sourceConnectionId);
+				if (!flag) {
+					cdcList.push({
+						sourceConnectionName: item.sourceConnectionName,
+						sourceConnectionId: item.sourceConnectionId,
+						targetList: [item]
+					});
+				} else {
+					flag.targetList.push(item);
+				}
+			});
 		this.flow.cdcLastTimes = cdcList || [];
 
 		this.taskDetailsObj = {
