@@ -95,6 +95,22 @@ import _ from 'lodash';
 // import log from '../../../log';
 // import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
 let editorMonitor = null;
+let defaultForm = {
+	apiVersion: 'V1',
+	connection: '',
+	name: '',
+	description: '',
+	paths: {
+		path: '',
+		method: 'GET',
+		fields: [],
+		availableQueryField: [],
+		requiredQueryField: []
+	},
+	fields: [],
+	apiPath: '',
+	type: 'publishApi'
+};
 export default {
 	name: 'ReleaseApi',
 	data() {
@@ -106,22 +122,7 @@ export default {
 			],
 			groupList: [],
 			expressionList: [],
-			form: {
-				apiVersion: 'V1',
-				connection: '',
-				name: '',
-				description: '',
-				paths: {
-					path: '',
-					method: 'GET',
-					fields: [],
-					availableQueryField: [],
-					requiredQueryField: []
-				},
-				fields: [],
-				apiPath: '',
-				type: 'publishApi'
-			},
+			form: _.cloneDeep(defaultForm),
 			rules: {
 				name: [
 					{
@@ -131,7 +132,9 @@ export default {
 					},
 					{ pattern: /^[a-zA-Z$_][a-zA-Z\d_]*$/, message: this.$t('editor.cell.data_node.api.variable_name') }
 				]
-			}
+			},
+			// inputSchemas: [],
+			mergedSchema: {}
 		};
 	},
 
@@ -144,18 +147,16 @@ export default {
 		}
 	},
 
-	inputSchemas: [],
-	mergedSchema: {},
-
 	methods: {
 		// convertSchemaToTreeData,
 		setData(data, cell, isSourceDataNode, vueAdapter) {
+			this.form = _.cloneDeep(defaultForm);
 			if (data) {
 				_.merge(this.form, data);
 			}
 
 			// let fields = [];
-			this.inputSchemas = cell.getInputSchema();
+			// this.inputSchemas = cell.getInputSchema();
 			this.mergedSchema = cell.getOutputSchema();
 			let formDatas = cell.graph
 				.getConnectedLinks(cell, { inbound: true })
