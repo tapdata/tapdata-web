@@ -1019,20 +1019,19 @@ export default {
 				box-sizing: border-box;
 				overflow: auto;
 				.info-list {
+					display: flex;
 					padding-bottom: 15px;
 					overflow: hidden;
 					.info-label {
-						float: left;
-						display: inline-block;
+						display: block;
 						width: 90px;
 						font-size: 12px;
 						color: #999;
 					}
 
 					.row-text {
-						float: left;
-						display: inline-block;
-						width: calc(100% - 95px);
+						display: block;
+						max-width: calc(100% - 95px);
 						font-size: 12px;
 						color: #333;
 					}
@@ -1046,15 +1045,13 @@ export default {
 					}
 
 					.info-text {
-						float: left;
-						display: inline-block;
-						width: calc(100% - 95px);
+						display: block;
+						max-width: calc(100% - 95px);
 						height: 16px;
 						font-size: 12px;
 						color: #333;
 						white-space: nowrap;
 						text-overflow: ellipsis;
-						vertical-align: middle;
 						overflow: hidden;
 					}
 				}
