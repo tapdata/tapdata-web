@@ -11,9 +11,6 @@
 					<i class="el-icon-plus"></i>
 					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
-				<a class="btn" @click="command('notification')">
-					<i class="iconfont icon-lingdang"></i>
-				</a>
 				<a v-if="platform === 'DAAS'" class="btn" @click="command('download')"
 					><i class="iconfont icon-shangchuan-copy"></i
 				></a>
@@ -42,6 +39,13 @@
 						<el-dropdown-item v-for="(value, key) in languages" :key="key" :command="key">
 							{{ value }}
 						</el-dropdown-item>
+						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
+					</el-dropdown-menu>
+				</el-dropdown>
+				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom">
+					<i class="iconfont icon-lingdang" @click="command('notification')"></i>
+					<el-dropdown-menu slot="dropdown">
+						<DropdownNotification :dialogVisible="notificationVisible"></DropdownNotification>
 						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
 					</el-dropdown-menu>
 				</el-dropdown>
@@ -112,6 +116,8 @@
 <script>
 import CustomerService from '@/components/CustomerService';
 import newDataFlow from '@/components/newDataFlow';
+import DropdownNotification from './notification/DropdownNotification';
+
 import { signOut } from '../util/util';
 const Languages = {
 	sc: '中文 (简)',
@@ -167,7 +173,7 @@ let menuSetting = [
 	}
 ];
 export default {
-	components: { CustomerService, newDataFlow },
+	components: { CustomerService, newDataFlow, DropdownNotification },
 	data() {
 		return {
 			platform: window._TAPDATA_OPTIONS_.platform,
@@ -181,7 +187,8 @@ export default {
 			favMenus: [],
 			userName: '',
 			dialogVisible: false,
-			isShowCustomerService: false
+			isShowCustomerService: false,
+			notificationVisible: true
 		};
 	},
 	created() {
@@ -316,6 +323,9 @@ export default {
 		},
 		handleDialogVisible() {
 			this.dialogVisible = false;
+		},
+		handleNotificationVisible(type) {
+			this.notificationVisible = type;
 		}
 	}
 };

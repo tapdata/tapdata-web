@@ -1,30 +1,39 @@
 <template>
 	<div class="notification">
-		<div class="notification-head">
-			<h3>系统通知</h3>
-			<div>
-				<el-input class="search"></el-input>
-				<span>标记本页为已读</span>
-				<span>标记全部为已读</span>
-			</div>
-		</div>
 		<div class="notification-main">
 			<div class="notification-left-sidebar">
-				<h2>通知中心</h2>
+				<div class="title">通知中心</div>
 				<ul>
 					<li>
-						<i class="iconfont icon-icon-lingdang"></i>
+						<i class="iconfont icon-lingdang"></i>
 						<span>系统通知</span>
 					</li>
 				</ul>
 			</div>
 			<div class="notification-right-list">
+				<div class="notification-head">
+					<div class="title">系统通知</div>
+					<div class="operation">
+						<el-select v-model="search" placeholder="请选择消息类型" class="search" @change="getData()">
+							<el-option
+								v-for="item in options"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value"
+							>
+							</el-option>
+						</el-select>
+						<span @click="handleRead()">标记本页为已读</span>
+						<span @click="handleAllRead()">标记全部为已读</span>
+						<span>通知设置</span>
+					</div>
+				</div>
 				<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
 					<el-tab-pane label="全部通知" name="first"></el-tab-pane>
 					<el-tab-pane label="未读消息" name="second"></el-tab-pane>
 				</el-tabs>
 				<ul class="cuk-list clearfix cuk-list-type-block">
-					<li class="list-item" v-for="item in listData" :key="item.level">
+					<li class="list-item" v-for="item in listData" :key="item.level" @click="handleRead(item.id)">
 						<div class="list-item-content">
 							<div class="unread-1zPaAXtSu"></div>
 							<div class="list-item-desc">
@@ -44,29 +53,103 @@
 </template>
 
 <script>
+import factory from '../../api/factory';
+const notification = factory('notification');
+import * as moment from 'moment';
 export default {
 	name: 'list',
 	data() {
 		return {
-			listData: [
-				{
-					userName: '',
-					eamil: '',
-					level: 'error',
-					system: 'dataflow',
-					read: false,
-					time: '',
-					msg: '停止',
-					title: '',
-					serverName: '111111111111',
-					sourceId: ''
-				}
-			],
+			activeName: 'first',
+			listData: [],
+			read: '',
+			search: '',
+			wsData: [],
 			colorMap: {
 				error: 'orangered',
 				server: 'blue'
-			}
+			},
+			options: [
+				{
+					value: 'error',
+					label: 'error'
+				},
+				{
+					value: 'server',
+					label: 'server'
+				}
+			]
 		};
+	},
+	mounted() {
+		this.getData();
+	},
+	methods: {
+		getData() {
+			let where = {
+				filter: {
+					where: {
+						userId: { regexp: `^${this.$cookie.get('user_id')}$` }
+					}
+				}
+			};
+			if (!this.read) {
+				where.filter.where['read'] = false;
+			}
+			if (this.search || this.search !== '') {
+				where.filter.where['level'] = this.search;
+			}
+			notification.get(where).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.listData = res.data;
+
+						//格式化日期
+						if (this.listData && this.listData.length > 0) {
+							this.listData.map(item => {
+								item['time'] = item.time ? moment(item.time).format('YYYY-MM-DD HH:mm:ss') : '';
+							});
+						}
+					}
+				}
+			});
+		},
+		handleRead() {
+			let where = {
+				userId: this.$cookie.get('user_id'),
+				read: true
+			};
+			notification.patch(where).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.listData = res.data;
+					}
+				}
+			});
+		},
+		handleAllRead() {
+			let where = {
+				userId: { regexp: `^${this.$cookie.get('user_id')}$` }
+			};
+			let data = {
+				read: true
+			};
+			where = JSON.stringify(where);
+			data = JSON.stringify(data);
+			notification.readAll(where, data).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.listData = res.data;
+					}
+				}
+			});
+		},
+		handleClick(val) {
+			if (val !== 'first') {
+				this.read = false;
+			}
+			this.getData();
+		}
 	}
 };
 </script>
@@ -78,7 +161,19 @@ export default {
 .notification-head {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
+	font-size: 12px;
+	color: #48b6e2;
+	padding: 20px;
+	.title {
+		font-size: 18px;
+		font-weight: bold;
+		color: rgba(51, 51, 51, 1);
+		line-height: 34px;
+	}
 	.search {
+		margin-top: 10px;
+		margin-right: 10px;
 		width: 200px;
 	}
 }
@@ -90,9 +185,36 @@ export default {
 		background: rgba(250, 250, 250, 1);
 		border: 1px solid rgba(230, 230, 232, 1);
 		width: 20%;
+		.title {
+			width: 56px;
+			height: 14px;
+			font-size: 14px;
+			font-family: Microsoft YaHei;
+			font-weight: bold;
+			color: rgba(51, 51, 51, 1);
+			line-height: 34px;
+			margin: 30px 20px;
+		}
+		ul li {
+			height: 44px;
+			font-size: 14px;
+			font-weight: 400;
+			color: rgba(102, 102, 102, 1);
+			line-height: 44px;
+			background: rgba(238, 238, 238, 1);
+			padding-left: 20px;
+		}
 	}
 	.notification-right-list {
+		margin-left: 20px;
 		width: 80%;
+		.operation {
+			cursor: pointer;
+			span {
+				display: inline-block;
+				margin-left: 10px;
+			}
+		}
 		ul.cuk-list {
 			list-style: none;
 		}

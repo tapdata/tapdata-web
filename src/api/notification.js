@@ -4,9 +4,17 @@
  * @description
  */
 import PublicAPI from './publicApi';
+import axios from 'axios';
 
-export default class Notification extends PublicAPI {
+export default class notification extends PublicAPI {
 	constructor() {
-		super('/api/massage');
+		super('/api/Messages');
+	}
+	readAll(filter, update) {
+		return axios.request({
+			url: this.url + '/update?where=' + filter,
+			method: 'post',
+			data: update
+		});
 	}
 }
