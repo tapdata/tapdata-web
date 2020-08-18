@@ -191,6 +191,14 @@ export default {
 		window.iframeRouterChange = route => {
 			this.$router.push(route);
 		};
+		let self = this;
+		window.stateChange = (key, data) => {
+			self.$store.commit(key, data);
+		};
+
+		window.getFormLocal = data => {
+			return self.$store.state[data];
+		};
 	},
 	destroyed() {
 		this.$root.$off('updateMenu');
