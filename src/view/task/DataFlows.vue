@@ -400,12 +400,12 @@ export default {
 			],
 			multipleSelection: [],
 			formData: {
-				search: localStorage.getItem('flowSearch') || '',
+				search: '',
 				timeData: [],
-				status: localStorage.getItem('flowStatus') || '',
+				status: '',
 				person: '',
-				way: localStorage.getItem('flowWay') || '',
-				executionStatus: localStorage.getItem('flowExecutionStatus') || '',
+				way: '',
+				executionStatus: '',
 				classification: []
 			},
 			statusBtMap: {
@@ -421,11 +421,8 @@ export default {
 		};
 	},
 	created() {
-		if (localStorage.getItem('flowOrder') && localStorage.getItem('flowProp')) {
-			let prop = localStorage.getItem('flowOrder') === 'ascending' ? 'ASC' : 'DESC';
-			this.order = localStorage.getItem('flowProp') + ' ' + prop;
-		}
 		this.formData = this.$store.state.dataFlows;
+
 		this.screenFn();
 		this.keyupEnter();
 		window.windows = [];
@@ -655,10 +652,10 @@ export default {
 			}
 		},
 		screenFn() {
-			localStorage.setItem('flowSearch', this.formData.search);
-			localStorage.setItem('flowStatus', this.formData.status);
-			localStorage.setItem('flowWay', this.formData.way);
-			localStorage.setItem('flowExecutionStatus', this.formData.executionStatus);
+			// localStorage.setItem('flowSearch', this.formData.search);
+			// localStorage.setItem('flowStatus', this.formData.status);
+			// localStorage.setItem('flowWay', this.formData.way);
+			// localStorage.setItem('flowExecutionStatus', this.formData.executionStatus);
 			this.currentPage = 1;
 			this.getData();
 		},
