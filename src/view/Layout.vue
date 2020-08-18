@@ -11,6 +11,9 @@
 					<i class="el-icon-plus"></i>
 					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
+				<a class="btn" @click="command('notification')">
+					<i class="iconfont icon-lingdang"></i>
+				</a>
 				<a v-if="platform === 'DAAS'" class="btn" @click="command('download')"
 					><i class="iconfont icon-shangchuan-copy"></i
 				></a>
@@ -256,6 +259,11 @@ export default {
 		},
 		command(command) {
 			switch (command) {
+				case 'notification':
+					this.$router.push({
+						name: 'notification'
+					});
+					break;
 				case 'newDataFlow':
 					this.dialogVisible = true;
 					break;
