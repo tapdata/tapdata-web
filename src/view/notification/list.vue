@@ -35,7 +35,7 @@
 				<ul class="cuk-list clearfix cuk-list-type-block">
 					<li class="list-item" v-for="item in listData" :key="item.level" @click="handleRead(item.id)">
 						<div class="list-item-content">
-							<div class="unread-1zPaAXtSu"></div>
+							<div class="unread-1zPaAXtSu" v-show="item.read"></div>
 							<div class="list-item-desc">
 								<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
 								<span>{{ item.serverName }}</span>
@@ -116,13 +116,12 @@ export default {
 		},
 		handleRead() {
 			let where = {
-				userId: this.$cookie.get('user_id'),
 				read: true
 			};
 			notification.patch(where).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
-						this.listData = res.data;
+						this.getData();
 					}
 				}
 			});
@@ -139,7 +138,7 @@ export default {
 			notification.readAll(where, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
-						this.listData = res.data;
+						this.getData();
 					}
 				}
 			});
@@ -203,6 +202,7 @@ export default {
 			line-height: 44px;
 			background: rgba(238, 238, 238, 1);
 			padding-left: 20px;
+			cursor: pointer;
 		}
 	}
 	.notification-right-list {
@@ -235,6 +235,7 @@ export default {
 			position: relative;
 			background: #fff;
 			border-bottom: 1px solid #f5f7fa;
+			cursor: pointer;
 			.list-item-content {
 				position: relative;
 				height: 50px;
