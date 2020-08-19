@@ -50,7 +50,7 @@
 						></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item
+				<!-- <el-form-item
 					:label="$t('editor.cell.data_node.collection.form.pk.label')"
 					prop="primaryKeys"
 					:rules="rules"
@@ -61,7 +61,7 @@
 						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
 						size="mini"
 					></el-input>
-				</el-form-item>
+				</el-form-item> -->
 			</el-form>
 		</div>
 		<div class="e-entity-wrap" style="text-align: center;overflow:auto;">
@@ -98,13 +98,13 @@ export default {
 						message: this.$t('editor.cell.data_node.dummy.chooseDummyName')
 					}
 				],
-				primaryKeys: [
-					{
-						required: true,
-						trigger: 'blur',
-						message: this.$t('editor.cell.data_node.dummy.none_pk')
-					}
-				],
+				// primaryKeys: [
+				// 	{
+				// 		required: true,
+				// 		trigger: 'blur',
+				// 		message: this.$t('editor.cell.data_node.dummy.none_pk')
+				// 	}
+				// ],
 				tableName: [
 					{
 						required: true,
@@ -116,8 +116,8 @@ export default {
 			model: {
 				connectionId: '',
 				type: 'dummy db',
-				tableName: '',
-				primaryKeys: ''
+				tableName: ''
+				// primaryKeys: ''
 			},
 			schemas: [],
 			schemaLoading: false,
@@ -185,25 +185,25 @@ export default {
 				}
 				this.taskData.tableName = this.model.tableName;
 			}
-		},
-		mergedSchema: {
-			handler() {
-				if (
-					!this.model.primaryKeys &&
-					this.mergedSchema &&
-					this.mergedSchema.fields &&
-					this.mergedSchema.fields.length > 0
-				) {
-					let primaryKeys = this.mergedSchema.fields
-						.filter(f => f.primary_key_position > 0)
-						.map(f => f.field_name);
-					let unique = {};
-					primaryKeys.forEach(key => (unique[key] = 1));
-					primaryKeys = Object.keys(unique);
-					if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
-				}
-			}
 		}
+		// mergedSchema: {
+		// 	handler() {
+		// 		if (
+		// 			!this.model.primaryKeys &&
+		// 			this.mergedSchema &&
+		// 			this.mergedSchema.fields &&
+		// 			this.mergedSchema.fields.length > 0
+		// 		) {
+		// 			let primaryKeys = this.mergedSchema.fields
+		// 				.filter(f => f.primary_key_position > 0)
+		// 				.map(f => f.field_name);
+		// 			let unique = {};
+		// 			primaryKeys.forEach(key => (unique[key] = 1));
+		// 			primaryKeys = Object.keys(unique);
+		// 			if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
+		// 		}
+		// 	}
+		// }
 	},
 
 	methods: {
