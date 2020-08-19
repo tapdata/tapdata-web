@@ -110,25 +110,25 @@ export default {
 			handler() {
 				this.$emit('dataChanged', this.getData());
 			}
-		},
-		mergedSchema: {
-			handler() {
-				if (
-					!this.model.primaryKeys &&
-					this.mergedSchema &&
-					this.mergedSchema.fields &&
-					this.mergedSchema.fields.length > 0
-				) {
-					let primaryKeys = this.mergedSchema.fields
-						.filter(f => f.primary_key_position > 0)
-						.map(f => f.field_name);
-					let unique = {};
-					primaryKeys.forEach(key => (unique[key] = 1));
-					primaryKeys = Object.keys(unique);
-					if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
-				}
-			}
 		}
+		// mergedSchema: {
+		// 	handler() {
+		// 		if (
+		// 			!this.model.primaryKeys &&
+		// 			this.mergedSchema &&
+		// 			this.mergedSchema.fields &&
+		// 			this.mergedSchema.fields.length > 0
+		// 		) {
+		// 			let primaryKeys = this.mergedSchema.fields
+		// 				.filter(f => f.primary_key_position > 0)
+		// 				.map(f => f.field_name);
+		// 			let unique = {};
+		// 			primaryKeys.forEach(key => (unique[key] = 1));
+		// 			primaryKeys = Object.keys(unique);
+		// 			if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
+		// 		}
+		// 	}
+		// }
 	},
 
 	methods: {

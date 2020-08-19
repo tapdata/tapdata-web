@@ -18,7 +18,7 @@ export const FORM_DATA_KEY = 'form_data',
 				target: ''
 			}
 		],
-		primaryKeys: '',
+		// primaryKeys: '',
 		stageId: '',
 		isArray: false,
 		// fieldProcesses: [],
