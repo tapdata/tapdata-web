@@ -1181,6 +1181,17 @@ const en = {
 		deleteNode: 'Delete',
 		nodeName: 'Please enter classification',
 		deteleMessage: 'This operation will delete all subclasses existing in this category, whether to delete it'
+	},
+	notification: {
+		notice: 'Notice',
+		viewMore: 'View more',
+		setting: 'Setting',
+		allNotice: 'All notice',
+		unreadNotice: 'Unread notice',
+		maskRead: 'Mask read this page',
+		maskReadAll: 'Mask read all',
+		systemNotice: 'System notice',
+		noticeCenter: 'Setting center'
 	}
 };
 

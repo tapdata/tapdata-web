@@ -11,6 +11,13 @@
 					<i class="el-icon-plus"></i>
 					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
+				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom">
+					<i class="iconfont icon-lingdang" @click="command('notification')"></i>
+					<el-dropdown-menu slot="dropdown" placement="bottom-start">
+						<DropdownNotification :dialogVisible="notificationVisible"></DropdownNotification>
+						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
+					</el-dropdown-menu>
+				</el-dropdown>
 				<a v-if="platform === 'DAAS'" class="btn" @click="command('download')"
 					><i class="iconfont icon-shangchuan-copy"></i
 				></a>
@@ -39,13 +46,6 @@
 						<el-dropdown-item v-for="(value, key) in languages" :key="key" :command="key">
 							{{ value }}
 						</el-dropdown-item>
-						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
-					</el-dropdown-menu>
-				</el-dropdown>
-				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom">
-					<i class="iconfont icon-lingdang" @click="command('notification')"></i>
-					<el-dropdown-menu slot="dropdown">
-						<DropdownNotification :dialogVisible="notificationVisible"></DropdownNotification>
 						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
 					</el-dropdown-menu>
 				</el-dropdown>

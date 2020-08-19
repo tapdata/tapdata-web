@@ -1172,6 +1172,17 @@ const tc = {
 		deleteNode: '刪除',
 		nodeName: '請輸入分類名稱',
 		deteleMessage: '此操作會將該分類下存在的子類都刪除，是否刪除'
+	},
+	notification: {
+		notice: '消息通知',
+		viewMore: '查看全部',
+		setting: '通知設置',
+		allNotice: '全部通知',
+		unreadNotice: '未讀消息',
+		maskRead: '標記本頁為已讀',
+		maskReadAll: '標記全部為已讀',
+		systemNotice: '系统通知',
+		noticeCenter: '通知中心'
 	}
 };
 

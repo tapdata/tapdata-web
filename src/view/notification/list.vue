@@ -2,19 +2,25 @@
 	<div class="notification">
 		<div class="notification-main">
 			<div class="notification-left-sidebar">
-				<div class="title">通知中心</div>
+				<div class="title">{{ $t('notification.noticeCenter') }}</div>
 				<ul>
 					<li>
 						<i class="iconfont icon-lingdang"></i>
-						<span>系统通知</span>
+						<span>{{ $t('notification.systemNotice') }}</span>
 					</li>
 				</ul>
 			</div>
 			<div class="notification-right-list">
 				<div class="notification-head">
-					<div class="title">系统通知</div>
+					<div class="title">{{ $t('notification.systemNotice') }}</div>
 					<div class="operation">
-						<el-select v-model="search" placeholder="请选择消息类型" class="search" @change="getData()">
+						<el-select
+							v-model="search"
+							placeholder="请选择消息类型"
+							class="search"
+							@change="getData()"
+							size="mini"
+						>
 							<el-option
 								v-for="item in options"
 								:key="item.value"
@@ -23,14 +29,14 @@
 							>
 							</el-option>
 						</el-select>
-						<span @click="handleRead()">标记本页为已读</span>
-						<span @click="handleAllRead()">标记全部为已读</span>
-						<span>通知设置</span>
+						<span @click="handleRead()">{{ $t('notification.maskRead') }}</span>
+						<span @click="handleAllRead()">{{ $t('notification.maskReadAll') }}</span>
+						<!--						<span>通知设置</span>-->
 					</div>
 				</div>
 				<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-					<el-tab-pane label="全部通知" name="first"></el-tab-pane>
-					<el-tab-pane label="未读消息" name="second"></el-tab-pane>
+					<el-tab-pane :label="$t('notification.allNotice')" name="first"></el-tab-pane>
+					<el-tab-pane :label="$t('notification.unreadNotice')" name="second"></el-tab-pane>
 				</el-tabs>
 				<ul class="cuk-list clearfix cuk-list-type-block">
 					<li class="list-item" v-for="item in listData" :key="item.level" @click="handleRead(item.id)">
@@ -62,12 +68,13 @@ export default {
 		return {
 			activeName: 'first',
 			listData: [],
-			read: '',
+			read: false,
 			search: '',
 			wsData: [],
 			colorMap: {
-				error: 'orangered',
-				server: 'blue'
+				error: 'red',
+				warn: 'orangered',
+				info: 'blue'
 			},
 			options: [
 				{
@@ -75,8 +82,12 @@ export default {
 					label: 'error'
 				},
 				{
-					value: 'server',
-					label: 'server'
+					value: 'warn',
+					label: 'warn'
+				},
+				{
+					value: 'info',
+					label: 'info'
 				}
 			]
 		};
@@ -86,14 +97,15 @@ export default {
 	},
 	methods: {
 		getData() {
-			let where = {
+			let where = {};
+			where = {
 				filter: {
 					where: {
 						userId: { regexp: `^${this.$cookie.get('user_id')}$` }
 					}
 				}
 			};
-			if (!this.read) {
+			if (this.read) {
 				where.filter.where['read'] = false;
 			}
 			if (this.search || this.search !== '') {
@@ -114,11 +126,8 @@ export default {
 				}
 			});
 		},
-		handleRead() {
-			let where = {
-				read: true
-			};
-			notification.patch(where).then(res => {
+		handleRead(id) {
+			notification.patch({ read: true, id: id }).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
 						this.getData();
@@ -143,9 +152,11 @@ export default {
 				}
 			});
 		},
-		handleClick(val) {
-			if (val !== 'first') {
+		handleClick(tab) {
+			if (tab.name === 'first') {
 				this.read = false;
+			} else {
+				this.read = true;
 			}
 			this.getData();
 		}
@@ -156,6 +167,7 @@ export default {
 <style scoped lang="less">
 .notification {
 	height: 100%;
+	font-size: 12px;
 }
 .notification-head {
 	display: flex;
@@ -183,9 +195,8 @@ export default {
 	.notification-left-sidebar {
 		background: rgba(250, 250, 250, 1);
 		border: 1px solid rgba(230, 230, 232, 1);
-		width: 20%;
+		width: 250px;
 		.title {
-			width: 56px;
 			height: 14px;
 			font-size: 14px;
 			font-family: Microsoft YaHei;
@@ -196,7 +207,7 @@ export default {
 		}
 		ul li {
 			height: 44px;
-			font-size: 14px;
+			font-size: 12px;
 			font-weight: 400;
 			color: rgba(102, 102, 102, 1);
 			line-height: 44px;
@@ -207,7 +218,7 @@ export default {
 	}
 	.notification-right-list {
 		margin-left: 20px;
-		width: 80%;
+		width: 100%;
 		.operation {
 			cursor: pointer;
 			span {
@@ -271,6 +282,15 @@ export default {
 				font-size: 12px;
 			}
 		}
+	}
+}
+</style>
+<style lang="less">
+.notification {
+	.el-tabs__item {
+		height: 32px;
+		line-height: 32px;
+		font-size: 12px;
 	}
 }
 </style>

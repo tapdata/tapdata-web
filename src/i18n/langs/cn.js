@@ -1169,6 +1169,17 @@ const cn = {
 		deleteNode: '删除',
 		nodeName: '请输入分类名称',
 		deteleMessage: '此操作会将该分类下存在的子类都删除，是否删除'
+	},
+	notification: {
+		notice: '消息通知',
+		viewMore: '查看全部',
+		setting: '通知设置',
+		allNotice: '全部通知',
+		unreadNotice: '未读消息',
+		maskRead: '标记本页为已读',
+		maskReadAll: '标记全部为已读',
+		systemNotice: '系统通知',
+		noticeCenter: '通知中心'
 	}
 };
 

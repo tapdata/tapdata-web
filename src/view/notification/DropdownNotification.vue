@@ -1,8 +1,8 @@
 <template>
 	<ul class="cuk-list clearfix cuk-list-type-block">
 		<li class="item-head">
-			<span>消息通知</span>
-			<span>查看全部</span>
+			<span>{{ $t('notification.notice') }}</span>
+			<span>{{ $t('notification.viewMore') }}</span>
 		</li>
 		<li class="list-item">
 			<div class="list-item-content">
@@ -84,24 +84,23 @@ export default {
 
 <style scoped lang="less">
 .cuk-list {
-	width: 380px;
-	height: 781px;
-	background: rgba(250, 250, 250, 1);
+	width: 500px;
+	height: 100%;
 	.item-head {
 		display: flex;
 		justify-content: space-between;
 		font-size: 12px;
 		height: 40px;
 		line-height: 40px;
-		padding: 0 5px;
-		background: rgba(241, 241, 241, 1);
-		border: 1px solid rgba(222, 222, 228, 1);
+		padding: 0 20px;
+		/*background: rgba(241, 241, 241, 1);*/
+		/*border: 1px solid rgba(222, 222, 228, 1);*/
 	}
 	.list-item {
 		position: relative;
 		background: #fff;
 		border-bottom: 1px solid #f5f7fa;
-		padding-bottom: 10px;
+		padding: 0 20px 10px 20px;
 		.list-item-content {
 			position: relative;
 			height: 50px;
@@ -123,12 +122,15 @@ export default {
 		.list-item-desc {
 			color: #202d40;
 			position: absolute;
-			top: 0;
+			top: -5px;
 			left: 30px;
 			right: 120px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
+			span {
+				font-size: 12px;
+			}
 		}
 		.list-item-time {
 			margin: 20px;
