@@ -59,7 +59,7 @@ export const ApiNodeConfig = {
 				if (!data.connectionId)
 					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_database')}`);
 				if (!data.tableName) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_collection')}`);
-				if (!data.primaryKeys) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_pk')}`);
+				// if (!data.primaryKeys) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_pk')}`);
 
 				return true;
 			}

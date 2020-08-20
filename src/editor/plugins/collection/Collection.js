@@ -53,8 +53,8 @@ export const collectionConfig = {
 					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_database')}`);
 				if (!data.tableName)
 					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_collection')}`);
-				if (!data.primaryKeys)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_pk')}`);
+				// if (!data.primaryKeys)
+				// 	throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_pk')}`);
 				return true;
 			},
 			mergeOutputSchema(outputSchema) {

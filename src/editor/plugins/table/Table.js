@@ -27,8 +27,8 @@ export const tableConfig = {
 				tableName: '',
 				sql: '',
 				dropTable: false,
-				type: 'table',
-				primaryKeys: ''
+				type: 'table'
+				// primaryKeys: ''
 			}
 		},
 		prototypeProperties: {
@@ -53,7 +53,7 @@ export const tableConfig = {
 				if (!data.connectionId)
 					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_database')}`);
 				if (!data.tableName) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_table')}`);
-				if (!data.primaryKeys) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_pk')}`);
+				// if (!data.primaryKeys) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_pk')}`);
 				return true;
 			},
 
