@@ -1,11 +1,16 @@
 <template>
 	<section class="data-flow-wrap" v-loading="restLoading">
-		<div class="panel-left">
+		<div class="panel-left" v-if="panelFlag">
 			<metaData v-on:nodeClick="nodeClick"></metaData>
 		</div>
 		<div class="panel-main">
 			<div class="topbar">
+				<!-- <div class="panelBtn"></div> -->
 				<ul class="search-bar">
+					<li :class="[{ panelOpen: panelFlag }, 'item', 'panelBtn']" @click="panelFlag = !panelFlag">
+						<i class="iconfont icon-xiangshangzhanhang"></i>
+						<span>{{ panelFlag ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel') }}</span>
+					</li>
 					<li class="item">
 						<el-input
 							:placeholder="$t('dataFlow.searchPlaceholder')"
@@ -320,6 +325,7 @@ export default {
 	components: { metaData, SelectClassify },
 	data() {
 		return {
+			panelFlag: true,
 			checkedTag: '',
 			listtags: [],
 			tagList: [],
@@ -394,12 +400,12 @@ export default {
 			],
 			multipleSelection: [],
 			formData: {
-				search: localStorage.getItem('flowSearch') || '',
+				search: '',
 				timeData: [],
-				status: localStorage.getItem('flowStatus') || '',
+				status: '',
 				person: '',
-				way: localStorage.getItem('flowWay') || '',
-				executionStatus: localStorage.getItem('flowExecutionStatus') || '',
+				way: '',
+				executionStatus: '',
 				classification: []
 			},
 			statusBtMap: {
@@ -415,11 +421,8 @@ export default {
 		};
 	},
 	created() {
-		if (localStorage.getItem('flowOrder') && localStorage.getItem('flowProp')) {
-			let prop = localStorage.getItem('flowOrder') === 'ascending' ? 'ASC' : 'DESC';
-			this.order = localStorage.getItem('flowProp') + ' ' + prop;
-		}
 		this.formData = this.$store.state.dataFlows;
+
 		this.screenFn();
 		this.keyupEnter();
 		window.windows = [];
@@ -649,10 +652,10 @@ export default {
 			}
 		},
 		screenFn() {
-			localStorage.setItem('flowSearch', this.formData.search);
-			localStorage.setItem('flowStatus', this.formData.status);
-			localStorage.setItem('flowWay', this.formData.way);
-			localStorage.setItem('flowExecutionStatus', this.formData.executionStatus);
+			// localStorage.setItem('flowSearch', this.formData.search);
+			// localStorage.setItem('flowStatus', this.formData.status);
+			// localStorage.setItem('flowWay', this.formData.way);
+			// localStorage.setItem('flowExecutionStatus', this.formData.executionStatus);
 			this.currentPage = 1;
 			this.getData();
 		},
@@ -1197,6 +1200,27 @@ export default {
 			align-items: center;
 			justify-content: space-between;
 			padding: 0 10px;
+			.panelBtn {
+				padding: 5px 12px;
+				color: #666;
+				cursor: pointer;
+				font-size: 12px;
+				border: 1px solid #dcdfe6;
+				border-radius: 3px;
+				.iconfont {
+					display: inline-block;
+					font-size: 12px;
+					transform: rotate(00deg);
+				}
+			}
+			.panelOpen {
+				.iconfont {
+					transform: rotate(180deg) !important;
+				}
+			}
+			.panelBtn:hover {
+				color: #48b6e2;
+			}
 			.btn + .btn {
 				margin-left: 5px;
 			}

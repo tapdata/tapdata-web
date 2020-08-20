@@ -211,6 +211,7 @@ const cn = {
 		freedomMode: '转高级模式',
 		advanceSetting: '更多高级设置',
 		closeSetting: '收起',
+		openPanel: '展开',
 		execution: '开始执行',
 		previous: '上一步',
 		next: '下一步',

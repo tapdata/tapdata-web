@@ -210,6 +210,7 @@ const tc = {
 		freedomMode: '轉高級模式',
 		advanceSetting: '更多高級設置',
 		closeSetting: '收起',
+		openPanel: '展開',
 		execution: '開始執行',
 		previous: '上一步',
 		next: '下一步',

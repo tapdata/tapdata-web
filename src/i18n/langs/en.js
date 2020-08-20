@@ -211,6 +211,7 @@ const en = {
 		freedomMode: 'Advanced mode',
 		advanceSetting: 'More advanced setting',
 		closeSetting: 'fold up',
+		openPanel: 'Open',
 		execution: 'Execution',
 		previous: 'Previous',
 		next: 'Next',
