@@ -1161,7 +1161,14 @@ const en = {
 			portRange: 'Port should be between 1 ~ 65535',
 			noneSslKey: 'Private key is required.',
 			noneSslCA: 'Certificate Authority is required.'
-		}
+		},
+		createDatabase: 'Create new database',
+		copyDatabase: 'Copy name',
+		checkDatabase: 'Check property',
+		createTable: 'Create new table',
+		copyTable: 'Copy name',
+		createCollection: 'Create new collection',
+		copyCollection: 'Copy name'
 	},
 	formBuilder: {
 		noneText: ' is required.',
@@ -1182,6 +1189,12 @@ const en = {
 		deleteNode: 'Delete',
 		nodeName: 'Please enter classification',
 		deteleMessage: 'This operation will delete all subclasses existing in this category, whether to delete it'
+	},
+	dialog: {
+		createTable: 'Create new table',
+		placeholderTable: 'Enter new table name',
+		createCollection: ' Create new collection ',
+		placeholderCollection: 'Enter new collection name'
 	}
 };
 

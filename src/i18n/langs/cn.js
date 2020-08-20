@@ -161,7 +161,9 @@ const cn = {
 		nullContent: '不能为空',
 		saveOK: '保存成功',
 		saveFail: '保存失败',
-		copyFail: '复制失败',
+		createOK: '保存成功',
+		createFail: '创建失败',
+		copyFail: '创建失败',
 		copySuccess: '复制成功',
 		deleteOK: '删除成功',
 		deleteFail: '删除失败',
@@ -1149,7 +1151,14 @@ const cn = {
 			portRange: '端口号取值范围 1 ~ 65535',
 			noneSslKey: '客户端私钥不能为空',
 			noneSslCA: '证书颁发机构不能为空'
-		}
+		},
+		createDatabase: '新建数据库',
+		copyDatabase: '复制数据库名',
+		checkDatabase: '查看详情',
+		createTable: '创建新表',
+		copyTable: '复制表名',
+		createCollection: '创建新数据集',
+		copyCollection: '复制数据集'
 	},
 	formBuilder: {
 		noneText: '不能为空',
@@ -1170,6 +1179,12 @@ const cn = {
 		deleteNode: '删除',
 		nodeName: '请输入分类名称',
 		deteleMessage: '此操作会将该分类下存在的子类都删除，是否删除'
+	},
+	dialog: {
+		createTable: '创建新表',
+		placeholderTable: '请输入新表表名',
+		createCollection: '创建新数据集 ',
+		placeholderCollection: '请输入新的数据集名称'
 	}
 };
 
