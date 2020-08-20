@@ -486,7 +486,7 @@ export default {
 		this.screeningObj = {
 			title: this.$t('dataFlow.dataScreening'),
 			type: 'screening',
-			isScreeing: true
+			isScreeing: false
 		};
 
 		this.inputOutputObj = {
@@ -757,19 +757,14 @@ export default {
 			ptime('trans_time');
 			ptime('throughput');
 			let time = data.statsData.data_overview.t;
-			let inputSize = data.statsData.data_overview.inputSize;
-			let outputSize = data.statsData.data_overview.outputSize;
-			let inputCount = data.statsData.data_overview.inputCount;
-			let outputCount = data.statsData.data_overview.outputCount;
-			if (this.dataOverviewAll === 'flow') {
-				this.flow.inputNumber = inputCount > 0 ? inputCount : 0;
-				this.flow.outputNumber = outputCount > 0 ? outputCount : 0;
-				this.getScreening(time, inputCount, outputCount);
-			} else if (this.dataOverviewAll === 'stage') {
-				this.flow.inputNumber = inputSize > 0 ? inputSize : 0;
-				this.flow.outputNumber = outputSize > 0 ? outputSize : 0;
-				this.getScreening(time, inputSize, outputSize);
-			}
+			// let inputSize = data.statsData.data_overview.inputSize;
+			// let outputSize = data.statsData.data_overview.outputSize;
+			// let inputCount = data.statsData.data_overview.inputCount;
+			// let outputCount = data.statsData.data_overview.outputCount;
+
+			let statisticsData = [88, 123, 45, 788, 11];
+			this.getScreening(time, statisticsData);
+
 			data.statsData.throughput.forEach(item => {
 				timeList.push(item.t); // 时间
 				inputSizeList.push(item.inputSize);
@@ -803,7 +798,7 @@ export default {
 			this.getReplicateTime(rttimeList, tdataList);
 		},
 
-		getScreening(time, series1, series2) {
+		getScreening(time, seriesData) {
 			this.dataScreening = {
 				tooltip: {
 					show: false,
@@ -829,19 +824,28 @@ export default {
 				},
 				xAxis: {
 					type: 'category',
-					show: false,
+					show: true,
 					axisLine: {
 						show: false,
 						lineStyle: {
-							color: '#ff00ff',
+							color: '#666',
 							width: 0
 						}
 					},
-					data: [this.$t('dataFlow.outputNumber'), this.$t('dataFlow.inputNumber')],
+					data: [
+						this.$t('dataFlow.totalOutput'),
+						this.$t('dataFlow.totalInput'),
+						this.$t('dataFlow.totalInsert'),
+						this.$t('dataFlow.totalUpdate'),
+						this.$t('dataFlow.totalDelete')
+					],
 					axisPointer: {
 						type: 'shadow'
 					},
-					formatter: function() {}
+					nameTextStyle: {
+						verticalAlign: 'bottom',
+						color: '#F00'
+					}
 				},
 				yAxis: {
 					type: 'value',
@@ -859,21 +863,20 @@ export default {
 				series: [
 					{
 						type: 'bar',
-						data: [series2, series1],
-						barWidth: 70,
+						data: seriesData,
+						barWidth: '100%',
 						barGap: '-100%',
 						itemStyle: {
 							normal: {
 								color: function(params) {
-									var colorList = ['#62a569', '#48b6e2'];
+									var colorList = ['#7ba75d', '#48b6e2', '#d9742c', '#e6b451', '#e06c6c'];
 									return colorList[params.dataIndex];
 								},
 								label: {
 									show: true,
-									verticalAlign: 'middle',
+									// verticalAlign: 'middle',
 									position: 'top',
-									distance: 20,
-									formatter: '{b}\n{c}'
+									distance: 10
 								}
 							}
 						}
