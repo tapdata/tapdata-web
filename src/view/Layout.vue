@@ -13,6 +13,7 @@
 				</el-button>
 				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom">
 					<i class="iconfont icon-lingdang" @click="command('notification')"></i>
+					<span class="unread" v-show="unRead > 0">{{ unRead }}</span>
 					<el-dropdown-menu slot="dropdown" placement="bottom-start">
 						<DropdownNotification :dialogVisible="notificationVisible"></DropdownNotification>
 						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
@@ -119,6 +120,8 @@ import newDataFlow from '@/components/newDataFlow';
 import DropdownNotification from './notification/DropdownNotification';
 
 import { signOut } from '../util/util';
+import ws from '../api/ws';
+
 const Languages = {
 	sc: '中文 (简)',
 	en: 'English',
@@ -201,6 +204,21 @@ export default {
 		window.iframeRouterChange = route => {
 			this.$router.push(route);
 		};
+	},
+	mounted() {
+		let msg = {
+			type: 'notification',
+			userId: this.$cookie.get('user_id')
+		};
+		ws.on('notification', data => {
+			this.unRead = data.data ? data.data.length : 0;
+		});
+		let int = setInterval(() => {
+			if (ws.ws.readyState == 1) {
+				ws.send(msg);
+				clearInterval(int);
+			}
+		}, 2000);
 	},
 	destroyed() {
 		this.$root.$off('updateMenu');
@@ -330,6 +348,33 @@ export default {
 	}
 };
 </script>
+<style scoped>
+.unread {
+	width: 25px;
+	height: 17px;
+	display: inline-block;
+	line-height: 17px;
+	white-space: nowrap;
+	cursor: pointer;
+	background: red;
+	color: #fff;
+	-webkit-appearance: none;
+	text-align: center;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	outline: 0;
+	margin: 0;
+	-webkit-transition: 0.1s;
+	transition: 0.1s;
+	font-weight: 500;
+	padding: 0px 5px;
+	font-size: 12px;
+	border-radius: 4px;
+	float: right;
+	margin-top: 15px;
+	margin-right: 15px;
+}
+</style>
 
 <style lang="less">
 .btn-del-fav-menu {

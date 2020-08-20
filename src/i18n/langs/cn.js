@@ -1191,7 +1191,7 @@ const cn = {
 		startupFailed: '启动失败',
 		stopFailed: '停止失败',
 		encounterERRORSkipped: '运行中出现ERROR，跳过',
-		CDCLag: 'CDC滞后超时<%second%> 秒',
+		CDCLag: 'CDC滞后超时',
 		manageSeverRestartFailed: '管理端服务重启失败',
 		APISeverRestartFailed: 'API服务重启失败',
 		SYNCSeverRestartFailed: '同步治理服务重启失败',

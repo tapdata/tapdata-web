@@ -2,22 +2,30 @@
 	<ul class="cuk-list clearfix cuk-list-type-block">
 		<li class="item-head">
 			<span>{{ $t('notification.notice') }}</span>
-			<span class="item-head-text">{{ $t('notification.viewMore') }}</span>
+			<span class="item-head-text">
+				<router-link to="/notification">
+					<span style="color: #48B6E2">
+						{{ $t('notification.viewMore') }}
+					</span>
+				</router-link>
+			</span>
 		</li>
-		<li class="list-item" v-for="item in listData" :key="item.level" @click="handleRead(item.id)">
+		<li class="list-item" v-for="item in listData" :key="item.level">
 			<div class="list-item-content">
 				<div class="unread-1zPaAXtSu"></div>
 				<div class="list-item-desc">
 					<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
-					<span>{{ item.system === 'dataFlow' ? '任务' : '管理端' }}</span>
+					<span>{{
+						item.system === 'dataFlow' ? $t('notification.dataFlow') : $t('notification.manageSever')
+					}}</span>
 					<span>
-						<router-link to="/foo">
+						<router-link to="/notification">
 							<span style="color: #48B6E2">
 								{{ item.serverName }}
 							</span>
 						</router-link>
 					</span>
-					<span>{{ item.msg }}</span>
+					<span>{{ typeMap[item.msg] }}</span>
 				</div>
 				<div class="list-item-time">
 					<span>{{ item.time }}</span>
@@ -30,6 +38,7 @@
 <script>
 import ws from '../../api/ws';
 import * as moment from 'moment';
+import { TYPEMAP } from './tyepMap';
 
 export default {
 	name: 'notification',
@@ -41,25 +50,13 @@ export default {
 	},
 	data() {
 		return {
-			listData: [
-				{
-					userName: '',
-					email: '',
-					level: 'error',
-					system: 'dataFlow',
-					read: false,
-					time: '',
-					msg: '停止',
-					title: '',
-					serverName: '111111111111',
-					sourceId: ''
-				}
-			],
+			listData: [],
 			colorMap: {
 				error: 'red',
 				warn: 'orangered',
 				info: 'blue'
-			}
+			},
+			typeMap: TYPEMAP
 		};
 	},
 	mounted() {

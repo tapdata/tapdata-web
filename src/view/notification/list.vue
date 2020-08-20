@@ -7,6 +7,7 @@
 					<li>
 						<i class="iconfont icon-lingdang"></i>
 						<span>{{ $t('notification.systemNotice') }}</span>
+						<span class="unread" v-show="count > 0">{{ count }}</span>
 					</li>
 				</ul>
 			</div>
@@ -39,12 +40,16 @@
 					<el-tab-pane :label="$t('notification.unreadNotice')" name="second"></el-tab-pane>
 				</el-tabs>
 				<ul class="cuk-list clearfix cuk-list-type-block" v-loading="loading">
-					<li class="list-item" v-for="item in listData" :key="item.level" @click="handleRead(item.id)">
+					<li class="list-item" v-for="item in listData" :key="item.id" @click="handleRead(item.id)">
 						<div class="list-item-content">
-							<div class="unread-1zPaAXtSu" v-show="item.read"></div>
+							<div class="unread-1zPaAXtSu" v-show="!item.read"></div>
 							<div class="list-item-desc">
 								<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
-								<span>{{ item.system === 'dataFlow' ? '任务' : '管理端' }}</span>
+								<span>{{
+									item.system === 'dataFlow'
+										? $t('notification.dataFlow')
+										: $t('notification.manageSever')
+								}}</span>
 								<span>
 									<router-link to="/foo">
 										<span style="color: #48B6E2">
@@ -69,13 +74,15 @@
 import factory from '../../api/factory';
 const notification = factory('notification');
 import * as moment from 'moment';
+import { TYPEMAP } from './tyepMap';
+
 export default {
 	name: 'list',
 	data() {
 		return {
 			activeName: 'first',
 			listData: [],
-			read: true,
+			read: false,
 			loading: false,
 			search: '',
 			colorMap: {
@@ -97,43 +104,8 @@ export default {
 					label: 'info'
 				}
 			],
-			typeMap: {
-				started: this.$t('notification.started'),
-				paused: this.$t('notification.paused'),
-				edited: this.$t('notification.edited'),
-				deleted: this.$t('notification.deleted'),
-				abnormallyStopped: this.$t('notification.abnormallyStopped'),
-				stoppedByError: this.$t('notification.stoppedByError'),
-				startupFailed: this.$t('notification.startupFailed'),
-				stopFailed: this.$t('notification.startupFailed'),
-				encounterERRORSkipped: this.$t('notification.encounterERRORSkipped'),
-				CDCLag: this.$t('notification.CDCLag'),
-				manageSeverRestartFailed: this.$t('notification.manageSeverRestartFailed'),
-				APISeverRestartFailed: this.$t('notification.APISeverRestartFailed'),
-				SYNCSeverRestartFailed: this.$t('notification.SYNCSeverRestartFailed'),
-				connectionInterrupted: this.$t('notification.connectionInterrupted'),
-				manageSeverStartFailed: this.$t('notification.manageSeverStartFailed'),
-				APISeverStartFailed: this.$t('notification.APISeverStartFailed'),
-				SYNCSeverStartFailed: this.$t('notification.SYNCSeverStartFailed'),
-				manageSeverStopFailed: this.$t('notification.manageSeverStopFailed'),
-				APISeverStopFailed: this.$t('notification.APISeverStopFailed'),
-				SYNCSeverStopFailed: this.$t('notification.SYNCSeverStopFailed'),
-				APISeverAbnormallyStopped: this.$t('notification.APISeverAbnormallyStopped'),
-				SYNCSeverAbnormallyStopped: this.$t('notification.SYNCSeverAbnormallyStopped'),
-				manageSeverAbnormallyStopped: this.$t('notification.manageSeverAbnormallyStopped'),
-				manageSeverStartedSuccessfully: this.$t('notification.manageSeverStartedSuccessfully'),
-				APISeverStartedSuccessfully: this.$t('notification.APISeverStartedSuccessfully'),
-				SYNCSeverStartedSuccessfully: this.$t('notification.SYNCSeverStartedSuccessfully'),
-				manageSeverStoppedSuccessfully: this.$t('notification.manageSeverStoppedSuccessfully'),
-				APISeverStoppedSuccessfully: this.$t('notification.APISeverStoppedSuccessfully'),
-				SYNCSeverStoppedSuccessfully: this.$t('notification.SYNCSeverStoppedSuccessfully'),
-				manageSeverRestartedSuccessfully: this.$t('notification.manageSeverRestartedSuccessfully'),
-				APISeverRestartedSuccessfully: this.$t('notification.APISeverRestartedSuccessfully'),
-				SYNCSeverRestartedSuccessfully: this.$t('notification.SYNCSeverRestartedSuccessfully'),
-				newSeverCreatedSuccessfully: this.$t('notification.newSeverCreatedSuccessfully'),
-				newSeverDeletedSuccessfully: this.$t('notification.newSeverDeletedSuccessfully'),
-				databaseDDLChanged: this.$t('notification.databaseDDLChanged')
-			}
+			typeMap: TYPEMAP,
+			count: ''
 		};
 	},
 	mounted() {
@@ -149,8 +121,8 @@ export default {
 					}
 				}
 			};
-			if (!this.read) {
-				where.filter.where['read'] = true;
+			if (this.read) {
+				where.filter.where['read'] = false;
 			}
 			if (this.search || this.search !== '') {
 				where.filter.where['level'] = this.search;
@@ -171,6 +143,24 @@ export default {
 					}
 				} else {
 					this.loading = false;
+				}
+			});
+			this.getCount();
+		},
+		getCount() {
+			let where = {
+				where: {
+					userId: { regexp: `^${this.$cookie.get('user_id')}$` },
+					read: false
+				}
+			};
+			notification.count(where).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.count = res.data.count;
+					} else {
+						this.loading = false;
+					}
 				}
 			});
 		},
@@ -202,9 +192,9 @@ export default {
 		},
 		handleClick(tab) {
 			if (tab.name === 'first') {
-				this.read = true;
-			} else {
 				this.read = false;
+			} else {
+				this.read = true;
 			}
 			this.getData();
 		}
@@ -216,6 +206,31 @@ export default {
 .notification {
 	height: 100%;
 	font-size: 12px;
+	.unread {
+		width: 25px;
+		height: 17px;
+		display: inline-block;
+		line-height: 17px;
+		white-space: nowrap;
+		cursor: pointer;
+		background: red;
+		color: #fff;
+		-webkit-appearance: none;
+		text-align: center;
+		-webkit-box-sizing: border-box;
+		box-sizing: border-box;
+		outline: 0;
+		margin: 0;
+		-webkit-transition: 0.1s;
+		transition: 0.1s;
+		font-weight: 500;
+		padding: 0px 5px;
+		font-size: 12px;
+		border-radius: 4px;
+		float: right;
+		margin-top: 15px;
+		margin-right: 15px;
+	}
 }
 .notification-head {
 	display: flex;
