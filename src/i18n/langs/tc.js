@@ -1155,7 +1155,14 @@ const tc = {
 			portRange: '端口號取值範圍 1 ~ 65535',
 			noneSslKey: '用戶端私鑰不能為空',
 			noneSslCA: '證書頒發機构不能為空'
-		}
+		},
+		createDatabase: '新建數據庫',
+		copyDatabase: '複製數據庫名',
+		checkDatabase: '查看詳情',
+		createTable: '創建新表',
+		copyTable: '複製表名',
+		createCollection: '創建新數據集',
+		copyCollection: '複製數據集'
 	},
 	formBuilder: {
 		noneText: '不能為空',
@@ -1176,6 +1183,12 @@ const tc = {
 		deleteNode: '刪除',
 		nodeName: '請輸入分類名稱',
 		deteleMessage: '此操作會將該分類下存在的子類都刪除，是否刪除'
+	},
+	dialog: {
+		createTable: '創建新表',
+		placeholderTable: '請輸入新表表名',
+		createCollection: '創建新數據集 ',
+		placeholderCollection: '請輸入新的數據集名稱'
 	}
 };
 
