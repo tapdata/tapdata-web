@@ -4,31 +4,23 @@
 			<span>{{ $t('notification.notice') }}</span>
 			<span>{{ $t('notification.viewMore') }}</span>
 		</li>
-		<li class="list-item">
+		<li class="list-item" v-for="item in listData" :key="item.level" @click="handleRead(item.id)">
 			<div class="list-item-content">
 				<div class="unread-1zPaAXtSu"></div>
 				<div class="list-item-desc">
-					<span>error</span>
-					<span>任务</span>
-					<span>反反复复</span>
-					<span>ㄸ</span>
+					<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
+					<span>{{ item.system === 'dataFlow' ? '任务' : '管理端' }}</span>
+					<span>
+						<router-link to="/foo">
+							<span style="color: #48B6E2">
+								{{ item.serverName }}
+							</span>
+						</router-link>
+					</span>
+					<span>{{ item.msg }}</span>
 				</div>
 				<div class="list-item-time">
-					<span>2003/3/3</span>
-				</div>
-			</div>
-		</li>
-		<li class="list-item">
-			<div class="list-item-content">
-				<div class="unread-1zPaAXtSu"></div>
-				<div class="list-item-desc">
-					<span>error</span>
-					<span>任务</span>
-					<span>反反复复</span>
-					<span>ㄸ</span>
-				</div>
-				<div class="list-item-time">
-					<span>2003/3/3</span>
+					<span>{{ item.time }}</span>
 				</div>
 			</div>
 		</li>
@@ -37,6 +29,7 @@
 
 <script>
 import ws from '../../api/ws';
+import * as moment from 'moment';
 
 export default {
 	name: 'notification',
@@ -53,7 +46,7 @@ export default {
 					userName: '',
 					email: '',
 					level: 'error',
-					system: 'dataflow',
+					system: 'dataFlow',
 					read: false,
 					time: '',
 					msg: '停止',
@@ -61,16 +54,29 @@ export default {
 					serverName: '111111111111',
 					sourceId: ''
 				}
-			]
+			],
+			colorMap: {
+				error: 'red',
+				warn: 'orangered',
+				info: 'blue'
+			}
 		};
 	},
 	mounted() {
 		let msg = {
 			type: 'notification',
-			userId: ''
+			userId: this.$cookie.get('user_id')
 		};
 		ws.on('notification', data => {
-			this.listData.unshift(data.data);
+			//this.listData.unshift(data.data);
+			this.listData = data.data;
+
+			//格式化日期
+			if (this.listData && this.listData.length > 0) {
+				this.listData.map(item => {
+					item['time'] = item.time ? moment(item.time).format('YYYY-MM-DD HH:mm:ss') : '';
+				});
+			}
 		});
 		let int = setInterval(() => {
 			if (ws.ws.readyState == 1) {
