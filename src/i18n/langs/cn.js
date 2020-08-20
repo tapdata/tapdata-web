@@ -1180,6 +1180,8 @@ const cn = {
 		maskReadAll: '标记全部为已读',
 		systemNotice: '系统通知',
 		noticeCenter: '通知中心',
+		dataFlow: '任务',
+		manageSever: '管理端',
 		started: '已启动',
 		paused: '已暂停',
 		edited: '被编辑',

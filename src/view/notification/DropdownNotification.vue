@@ -2,7 +2,7 @@
 	<ul class="cuk-list clearfix cuk-list-type-block">
 		<li class="item-head">
 			<span>{{ $t('notification.notice') }}</span>
-			<span>{{ $t('notification.viewMore') }}</span>
+			<span class="item-head-text">{{ $t('notification.viewMore') }}</span>
 		</li>
 		<li class="list-item" v-for="item in listData" :key="item.level" @click="handleRead(item.id)">
 			<div class="list-item-content">
@@ -99,6 +99,10 @@ export default {
 		height: 40px;
 		line-height: 40px;
 		padding: 0 20px;
+		.item-head-text {
+			cursor: pointer;
+			color: #48b6e2;
+		}
 		/*background: rgba(241, 241, 241, 1);*/
 		/*border: 1px solid rgba(222, 222, 228, 1);*/
 	}

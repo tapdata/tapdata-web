@@ -1192,6 +1192,8 @@ const en = {
 		maskReadAll: 'Mask read all',
 		systemNotice: 'System notice',
 		noticeCenter: 'Setting center',
+		dataFlow: 'dataFlow',
+		manageSever: 'manageSever',
 		started: 'started',
 		paused: 'paused',
 		edited: 'edited',

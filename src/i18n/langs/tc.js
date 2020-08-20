@@ -1183,6 +1183,8 @@ const tc = {
 		maskReadAll: '標記全部為已讀',
 		systemNotice: '系统通知',
 		noticeCenter: '通知中心',
+		dataFlow: '任务',
+		manageSever: '管理端',
 		started: '已啟動',
 		paused: '已暫停',
 		edited: '被編輯',
