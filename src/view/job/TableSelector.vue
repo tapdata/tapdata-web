@@ -1,12 +1,38 @@
 <template>
 	<div class="box">
-		<div class="box-head">
-			<el-input class="search" v-model="filterText" clearable @change="handleSearchTree()" @clear="loadDataBase"
-				><i slot="prefix" class="el-input__icon el-icon-search"></i
-			></el-input>
-			<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
-			<i class="el-icon-refresh" v-if="!loading" @click="loadDataBase"></i>
-			<i class="el-icon-loading" v-if="loading"></i>
+		<!--		<div class="box-head">-->
+		<!--			<el-input class="search" v-model="filterText" clearable @change="handleSearchTree()" @clear="loadDataBase"-->
+		<!--				><i slot="prefix" class="el-input__icon el-icon-search"></i-->
+		<!--			></el-input>-->
+		<!--			<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>-->
+		<!--			<i class="el-icon-refresh" v-if="!loading" @click="loadDataBase"></i>-->
+		<!--			<i class="el-icon-loading" v-if="loading"></i>-->
+		<!--		</div>-->
+		<div class="box-head" v-show="isActive">
+			<div class="metadata-header-btns" style="width: 100%">
+				<i class="iconfont icon-fangdajing" @click="isActive = false"></i>
+				<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
+				<i class="el-icon-refresh" v-if="!loading" @click="loadDataBase"></i>
+				<i class="el-icon-loading" v-if="loading"></i>
+			</div>
+		</div>
+		<div class="box-head" v-show="!isActive">
+			<i class="iconfont icon-right-circle" @click="isActive = true"></i>
+			<el-input
+				style="width: 300px"
+				placeholder="请输入内容"
+				v-model="filterText"
+				class="input-with-select"
+				clearable
+				@change="handleSearchTree()"
+				@clear="loadDataBase"
+				size="mini"
+			>
+				<el-select v-model="filterText" slot="prepend" placeholder="请选择" size="mini">
+					<el-option label="DB" value="db"></el-option>
+					<el-option label="Table" value="table"></el-option>
+				</el-select>
+			</el-input>
 		</div>
 		<div class="treeBox" v-loading="loading" :element-loading-text="$t('dataFlow.dataLoading')">
 			<el-tree
@@ -71,6 +97,7 @@ export default {
 			filterText: '',
 			data: [],
 			default_expanded: false,
+			isActive: true,
 			props: {
 				children: 'children',
 				label: 'label',
@@ -465,6 +492,12 @@ export default {
 		-webkit-transition: all 0.3s;
 		transition: all 0.3s;
 		line-height: 40px;
+	}
+	.el-select .el-input {
+		width: 120px;
+	}
+	.input-with-select .el-input-group__prepend {
+		background-color: #fff;
 	}
 }
 .el-tree-node__expand-icon {
