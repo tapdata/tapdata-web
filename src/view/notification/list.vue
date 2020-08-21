@@ -262,7 +262,6 @@ export default {
 		.title {
 			height: 14px;
 			font-size: 14px;
-			font-family: Microsoft YaHei;
 			font-weight: bold;
 			color: rgba(51, 51, 51, 1);
 			line-height: 34px;
