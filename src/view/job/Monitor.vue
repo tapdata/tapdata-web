@@ -757,12 +757,14 @@ export default {
 			ptime('trans_time');
 			ptime('throughput');
 			let time = data.statsData.data_overview.t;
-			// let inputSize = data.statsData.data_overview.inputSize;
-			// let outputSize = data.statsData.data_overview.outputSize;
-			// let inputCount = data.statsData.data_overview.inputCount;
-			// let outputCount = data.statsData.data_overview.outputCount;
-
-			let statisticsData = [88, 123, 45, 788, 11];
+			let overView = data.statsData.data_overview;
+			let statisticsData = [
+				overView.outputCount,
+				overView.inputCount,
+				overView.insertCount,
+				overView.updateCount,
+				overView.deleteCount
+			];
 			this.getScreening(time, statisticsData);
 
 			data.statsData.throughput.forEach(item => {
