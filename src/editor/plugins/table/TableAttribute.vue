@@ -23,12 +23,43 @@
 				>
 					<div style="display:flex;">
 						<FbSelect v-model="model.connectionId" :config="databaseSelectConfig"></FbSelect>
-						<el-button
-							size="mini"
-							icon="el-icon-plus"
-							style="padding: 7px;margin-left: 7px"
-							@click="$refs.databaseForm.show({ blackList: ['mongodb'] })"
-						></el-button>
+						<el-tooltip
+							class="item"
+							effect="dark"
+							:content="$t('dataForm.createDatabase')"
+							placement="top-start"
+						>
+							<el-button
+								size="mini"
+								icon="el-icon-plus"
+								style="padding: 7px;margin-left: 7px"
+								@click="$refs.databaseForm.show({ blackList: ['mongodb'] })"
+							></el-button>
+						</el-tooltip>
+						<el-tooltip
+							class="item"
+							effect="dark"
+							:content="$t('dataForm.copyDatabase')"
+							placement="top-start"
+						>
+							<el-button size="mini" style="padding: 7px;margin-left: 7px">
+								<ClipButton :value="copyConnectionId"></ClipButton>
+							</el-button>
+						</el-tooltip>
+						<el-tooltip
+							class="item"
+							effect="dark"
+							:content="$t('dataForm.checkDatabase')"
+							placement="top-start"
+						>
+							<el-button
+								size="mini"
+								class="iconfont icon-dakai1"
+								style="padding: 7px;margin-left: 7px"
+								:disabled="!model.connectionId"
+								@click="handDatabase"
+							></el-button>
+						</el-tooltip>
 						<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
 					</div>
 				</el-form-item>
@@ -41,7 +72,43 @@
 				>
 					<div class="flex-block">
 						<FbSelect class="e-select" v-model="model.tableName" :config="schemaSelectConfig"></FbSelect>
-						<ClipButton :value="model.tableName"></ClipButton>
+						<el-tooltip
+							class="item"
+							effect="dark"
+							:content="$t('dataForm.createTable')"
+							placement="bottom-start"
+						>
+							<el-button
+								size="mini"
+								class="el-icon-plus"
+								style="padding: 7px;margin-left: 7px"
+								@click="addNewTable"
+							></el-button>
+						</el-tooltip>
+						<el-tooltip
+							class="item"
+							effect="dark"
+							:content="$t('dataForm.copyTable')"
+							placement="bottom-start"
+						>
+							<el-button size="mini" style="padding: 7px;margin-left: 7px">
+								<ClipButton :value="model.tableName"></ClipButton>
+							</el-button>
+						</el-tooltip>
+						<el-tooltip
+							class="item"
+							effect="dark"
+							:content="$t('dataForm.checkDatabase')"
+							placement="bottom-end"
+						>
+							<el-button
+								size="mini"
+								class="iconfont icon-dakai1"
+								style="padding: 7px;margin-left: 7px"
+								:disabled="!tableNameId"
+								@click="handTableName"
+							></el-button>
+						</el-tooltip>
 					</div>
 				</el-form-item>
 
@@ -263,6 +330,7 @@
 				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 			</div>
 		</div>
+		<CreateTable v-if="addtableFalg" :dialog="dialogData" @handleTable="getAddTableName"></CreateTable>
 		<relatedTasks :taskData="taskData" v-if="disabled" v-loading="databaseSelectConfig.loading"></relatedTasks>
 	</div>
 </template>
@@ -273,6 +341,7 @@ import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm
 import ClipButton from '@/components/ClipButton';
 import { convertSchemaToTreeData } from '../../util/Schema';
 import RelatedTasks from '../../../components/relatedTasks';
+import CreateTable from '../../../components/dialog/createTable';
 import Entity from '../link/Entity';
 import _ from 'lodash';
 import factory from '../../../api/factory';
@@ -282,7 +351,7 @@ let editor = null;
 let tempSchemas = [];
 export default {
 	name: 'Table',
-	components: { Entity, DatabaseForm, ClipButton, RelatedTasks },
+	components: { Entity, DatabaseForm, ClipButton, RelatedTasks, CreateTable },
 	props: {
 		database_types: {
 			type: Array,
@@ -308,15 +377,25 @@ export default {
 		'model.connectionId': {
 			immediate: true,
 			handler() {
+				this.loadDatabaseId(this.model.connectionId);
 				this.loadDataModels(this.model.connectionId);
 				if (this.model.connectionId) {
 					this.taskData.id = this.model.connectionId;
+					if (this.databaseSelectConfig.options.length) {
+						this.databaseSelectConfig.options.forEach(item => {
+							if (item.value === this.model.connectionId) {
+								this.copyConnectionId = item.name;
+							}
+						});
+					}
 				}
 			}
 		},
 		'model.tableName': {
 			immediate: true,
-			handler() {}
+			handler() {
+				this.tableIsLink();
+			}
 		},
 		mergedSchema: {
 			handler() {
@@ -335,6 +414,13 @@ export default {
 	data() {
 		let self = this;
 		return {
+			addtableFalg: false,
+			dialogData: null,
+			databaseData: [],
+			tableData: [],
+			copyConnectionId: '',
+			tableNameId: '',
+
 			taskData: {
 				id: '',
 				tableName: ''
@@ -364,8 +450,8 @@ export default {
 					}
 				},
 				options: [],
-				allowCreate: true,
-				defaultFirstOption: true,
+				allowCreate: false,
+				defaultFirstOption: false,
 				clearable: true
 			},
 
@@ -445,13 +531,103 @@ export default {
 
 	async mounted() {
 		await this.loadDataSource();
+		if (this.model.connectionId) {
+			this.taskData.id = this.model.connectionId;
+			if (this.databaseSelectConfig.options.length) {
+				this.databaseSelectConfig.options.forEach(item => {
+					if (item.value === this.model.connectionId) {
+						this.copyConnectionId = item.name;
+					}
+				});
+			}
+		}
+
+		// setTimeout(() => {
+		// 	this.tableIsLink();
+		// }, 500);
 	},
 
 	methods: {
 		convertSchemaToTreeData,
+		// 查看监控
 		seeMonitor() {
 			editor.goBackMontior();
 		},
+
+		// 获取新建表名称
+		getAddTableName(val) {
+			this.model.tableName = val;
+			this.tableIsLink();
+		},
+
+		// 新建表弹窗
+		addNewTable() {
+			this.addtableFalg = true;
+			this.dialogData = {
+				title: this.$t('dialog.createTable'),
+				placeholder: this.$t('dialog.placeholderTable'),
+				visible: this.addtableFalg,
+				newTable: ''
+			};
+		},
+
+		// 打开数据目录数据库
+		handDatabase() {
+			let href = '/#/metadataInstances/' + this.databaseData[0].id;
+			window.open(href);
+		},
+
+		// 跳转到数据目录当前表
+		handTableName() {
+			this.tableNameId = '';
+			this.tableIsLink();
+
+			if (this.tableNameId) {
+				let href = '/#/metadataInstances/' + this.tableNameId;
+				window.open(href);
+			}
+		},
+
+		// 判断表是否可以跳转
+		tableIsLink() {
+			this.tableNameId = '';
+			if (this.tableData.length) {
+				this.tableData.forEach(item => {
+					if (item.original_name === this.model.tableName) {
+						this.tableNameId = item.id;
+					}
+				});
+			}
+		},
+
+		// 获取数据库id
+		loadDatabaseId(connectionId) {
+			if (!connectionId) {
+				return;
+			}
+			let params = {
+				filter: JSON.stringify({
+					where: {
+						'source.id': connectionId,
+						meta_type: {
+							in: ['database'] //,
+						},
+						is_deleted: false
+					},
+					fields: {
+						id: true,
+						original_name: true
+					}
+				})
+			};
+
+			MetadataInstances.get(params).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					this.databaseData = res.data;
+				}
+			});
+		},
+
 		async loadDataSource() {
 			this.databaseSelectConfig.loading = true;
 			let result = await connectionApi.get({
@@ -507,6 +683,8 @@ export default {
 			MetadataInstances.get(params)
 				.then(res => {
 					if (res.statusText === 'OK' || res.status === 200) {
+						this.tableData = res.data;
+						this.tableIsLink();
 						let schemas = res.data.map(it => {
 							it.table_name = it.original_name;
 							return it;
@@ -656,13 +834,11 @@ export default {
 				if (data.initialSyncOrder > 0) {
 					this.model.enableInitialOrder = true;
 				}
+				this.tableIsLink();
 			}
 			tempSchemas.length = 0;
 			this.isSourceDataNode = isSourceDataNode;
 			this.loadDataModels(this.model.connectionId);
-			if (this.model.connectionId) {
-				this.taskData.id = this.model.connectionId;
-			}
 
 			this.mergedSchema = cell.getOutputSchema();
 			cell.on('change:outputSchema', () => {
@@ -681,6 +857,7 @@ export default {
 			}
 			this.taskData.id = result.connectionId;
 			this.taskData.tableName = result.tableName;
+
 			return result;
 		},
 

@@ -10,7 +10,7 @@ export default class Connections extends PublicAPI {
 	constructor() {
 		super('/api/Connections');
 	}
-	customQuery(id) {
-		return axios.get(`${this.url}/${id}` + '/customQuery');
+	customQuery(id, params) {
+		return axios.get(`${this.url}/${id}` + '/customQuery?tableName=' + params);
 	}
 }

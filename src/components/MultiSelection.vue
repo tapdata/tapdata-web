@@ -61,4 +61,7 @@ export default {
 .multi-selection .el-select__input.is-mini {
 	height: 16px;
 }
+.multi-selection .el-select {
+	padding-right: 8px;
+}
 </style>
