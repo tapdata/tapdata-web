@@ -458,9 +458,9 @@ export default {
 			}
 		}
 
-		setTimeout(() => {
-			this.tableIsLink();
-		}, 500);
+		// setTimeout(() => {
+		// 	this.tableIsLink();
+		// }, 500);
 	},
 
 	methods: {
@@ -664,6 +664,8 @@ export default {
 							label: item.table_name,
 							value: item.table_name
 						}));
+
+						this.tableIsLink();
 					}
 				})
 				.finally(() => {
@@ -705,6 +707,8 @@ export default {
 				if (data.connectionId) {
 					this.loadDataModels(data.connectionId);
 				}
+
+				this.tableIsLink();
 			}
 
 			this.isSourceDataNode = isSourceDataNode;

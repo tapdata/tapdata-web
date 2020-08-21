@@ -542,9 +542,9 @@ export default {
 			}
 		}
 
-		setTimeout(() => {
-			this.tableIsLink();
-		}, 500);
+		// setTimeout(() => {
+		// 	this.tableIsLink();
+		// }, 500);
 	},
 
 	methods: {
@@ -684,6 +684,7 @@ export default {
 				.then(res => {
 					if (res.statusText === 'OK' || res.status === 200) {
 						this.tableData = res.data;
+						this.tableIsLink();
 						let schemas = res.data.map(it => {
 							it.table_name = it.original_name;
 							return it;
@@ -857,6 +858,7 @@ export default {
 				if (data.initialSyncOrder > 0) {
 					this.model.enableInitialOrder = true;
 				}
+				this.tableIsLink();
 			}
 			tempSchemas.length = 0;
 			this.isSourceDataNode = isSourceDataNode;
