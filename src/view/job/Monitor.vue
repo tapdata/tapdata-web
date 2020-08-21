@@ -37,15 +37,23 @@
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.nodeName') }}:</span>
 						<el-tooltip :content="stage.nodeName" placement="bottom-start">
-							<!-- @click="handTableName(stage)" style="color: #48b6e2;cursor: pointer;" -->
-							<span class="info-text">{{ stage.nodeName }}</span>
+							<span
+								class="info-text"
+								@click="handTableName(stage)"
+								style="color: #48b6e2;cursor: pointer;"
+								>{{ stage.nodeName }}</span
+							>
 						</el-tooltip>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.ownedLibrary') }}:</span>
 						<el-tooltip :content="stage.name" placement="bottom-start">
-							<!-- @click="handDatabaseName(stage)" -->
-							<span class="info-text">{{ stage.name }}</span>
+							<span
+								class="info-text"
+								@click="handDatabaseName(stage)"
+								style="color: #48b6e2;cursor: pointer;"
+								>{{ stage.name }}</span
+							>
 						</el-tooltip>
 					</div>
 					<div class="info-list">
@@ -199,6 +207,7 @@ import ws from '../../api/ws';
 const dataFlows = factory('DataFlows');
 const connectionApi = factory('connections');
 let currentStageData = null;
+
 export default {
 	name: 'JobMonitor',
 	components: { echartHead, echartsCompinent, shaftlessEchart },
@@ -239,7 +248,9 @@ export default {
 				database_name: '',
 				database_owner: '', // 所属用户
 				database_type: '',
-				name: ''
+				name: '',
+				tableMetadataInstanceId: '',
+				connMetadataInstanceId: ''
 			},
 			throughputData: {
 				tooltip: {
@@ -453,7 +464,8 @@ export default {
 			intervalThroughputpop: 20000,
 			intervalTransf: 20000,
 			intervalReplicate: 20000,
-			cdcLastTimes: []
+			cdcLastTimes: [],
+			tableName: ''
 		};
 	},
 
@@ -462,7 +474,8 @@ export default {
 		this.$on(EditorEventType.SELECTED_STAGE, selectStage => {
 			if (selectStage) {
 				this.stageId = selectStage.id;
-				this.getStageDataApi(selectStage.form_data.connectionId);
+				this.getNodeName();
+				this.getStageDataApi(selectStage.form_data.connectionId, this.tableName);
 				this.stage.nodeName = selectStage.form_data.name;
 				this.stageType = selectStage.type;
 				if (this.editor.seeMonitor) {
@@ -560,6 +573,7 @@ export default {
 		},
 		stageId: {
 			handler(val) {
+				this.getNodeName();
 				let cell = this.editor.getAllCells();
 				this.selectId = val;
 				if (val === 'all') {
@@ -574,7 +588,7 @@ export default {
 						}
 					});
 					this.stageType = currentStageData.type;
-					this.getStageDataApi(currentStageData.connectionId);
+					this.getStageDataApi(currentStageData.connectionId, this.tableName);
 				}
 				this.getApiData();
 			},
@@ -583,17 +597,28 @@ export default {
 	},
 
 	methods: {
-		// // 点击节点跳转到表
-		// handTableName(data) {
-		// 	top.location.href = '/#/metadataInstances/' + data.id;
-		// },
+		// 点击节点跳转到表
+		handTableName(data) {
+			window.open('/#/metadataInstances/' + data.tableMetadataInstanceId);
+		},
 
-		// // 跳转到所属库
-		// handDatabaseName(data) {
-		// 	debugger;
-		// 	top.location.href = '/#/metadataInstances/' + data.id;
-		// },
+		// 跳转到所属库
+		handDatabaseName(data) {
+			window.open('/#/metadataInstances/' + data.connMetadataInstanceId);
+		},
 
+		// 获取节点名称
+		getNodeName() {
+			if (this.flow.stages && this.flow.stages.length) {
+				this.flow.stages.forEach(item => {
+					if (item.id === this.stageId) {
+						this.tableName = item.name;
+					}
+				});
+			}
+		},
+
+		// 获取节点类型（是否是全部节点）
 		getApiData() {
 			if (this.stageId === 'all') {
 				this.selectFlow = 'flow_';
@@ -617,6 +642,7 @@ export default {
 
 			if (ws.ws.readyState == 1) ws.send(msg);
 		},
+
 		// 获取所有节点
 		getAllCellsNode(queryString) {
 			let dataCells = this.editor.getAllCells();
@@ -898,10 +924,14 @@ export default {
 		},
 
 		// 获取stage的节点信息
-		getStageDataApi(id) {
+		getStageDataApi(id, tableName) {
 			this.apiLoading = true;
+			// let params = {
+			// 	tableName: tableName
+			// };
+			// debugger;
 			connectionApi
-				.customQuery([id])
+				.customQuery([id], tableName)
 				.then(res => {
 					if (res.data) {
 						this.stage = res.data;
