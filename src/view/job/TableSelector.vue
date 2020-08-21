@@ -16,19 +16,18 @@
 				<i class="el-icon-loading" v-if="loading"></i>
 			</div>
 		</div>
-		<div class="box-head" v-show="!isActive">
+		<div class="box-head-search" v-show="!isActive">
 			<i class="iconfont icon-right-circle" @click="isActive = true"></i>
 			<el-input
-				style="width: 300px"
 				placeholder="请输入内容"
 				v-model="filterText"
-				class="input-with-select"
+				style="width: 210px"
 				clearable
 				@change="handleSearchTree()"
 				@clear="loadDataBase"
 				size="mini"
 			>
-				<el-select v-model="filterText" slot="prepend" placeholder="请选择" size="mini">
+				<el-select v-model="filterText" slot="prepend" placeholder="请选择" size="mini" class="box-head-select">
 					<el-option label="DB" value="db"></el-option>
 					<el-option label="Table" value="table"></el-option>
 				</el-select>
@@ -397,7 +396,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .box {
 	width: 234px;
 }
@@ -412,11 +411,6 @@ export default {
 
 .el-checkbox-button .el-checkbox-button__inner {
 	padding: 6px 12px;
-}
-
-.search {
-	width: 77% !important;
-	margin-bottom: 10px;
 }
 
 .filter-icon {
@@ -439,11 +433,18 @@ export default {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+.box-head-search {
+	display: flex;
+	justify-content: space-around;
+	.box-head-select {
+		width: 52px;
+	}
+}
 .box-head {
 	background: #fff;
 	overflow: hidden;
-	width: 217px;
-	padding-left: 5px;
+	margin-top: 5px;
+	margin-left: 160px;
 }
 .ts-icon {
 	color: #333;
@@ -498,6 +499,29 @@ export default {
 	}
 	.input-with-select .el-input-group__prepend {
 		background-color: #fff;
+	}
+}
+.box-head-search {
+	.el-input-group__append,
+	.el-input-group__prepend {
+		padding: 0 18px;
+	}
+	.el-input__icon {
+		width: 12px;
+	}
+	.el-input--mini .el-input__inner {
+		height: 22px;
+		line-height: 28px;
+	}
+	.el-input--mini .el-input__icon {
+		line-height: 23px;
+	}
+
+	.el-input--suffix .el-input__inner {
+		padding-right: 11px;
+	}
+	.el-input__inner {
+		padding: 0 5px;
 	}
 }
 .el-tree-node__expand-icon {
