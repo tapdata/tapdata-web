@@ -51,7 +51,13 @@
 										: $t('notification.manageSever')
 								}}</span>
 								<span>
-									<router-link to="/foo">
+									<router-link
+										:to="
+											item.system === 'dataFlow'
+												? `/job?id=${item.id}&isMoniting=true`
+												: '/clusterManagement'
+										"
+									>
 										<span style="color: #48B6E2">
 											{{ item.serverName }}
 										</span>
