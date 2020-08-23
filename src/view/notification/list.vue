@@ -30,7 +30,7 @@
 							>
 							</el-option>
 						</el-select>
-						<span @click="handleRead()">{{ $t('notification.maskRead') }}</span>
+						<span @click="handlePageRead()">{{ $t('notification.maskRead') }}</span>
 						<span @click="handleAllRead()">{{ $t('notification.maskReadAll') }}</span>
 						<!--						<span>通知设置</span>-->
 					</div>
@@ -54,7 +54,7 @@
 									<router-link
 										:to="
 											item.system === 'dataFlow'
-												? `/job?id=${item.id}&isMoniting=true`
+												? `/job?id=${item.sourceId}&isMoniting=true`
 												: '/clusterManagement'
 										"
 									>
@@ -66,7 +66,7 @@
 								<span>{{ typeMap[item.msg] }}</span>
 							</div>
 							<div class="list-item-time">
-								<span>{{ item.time }}</span>
+								<span>{{ item.createTime }}</span>
 							</div>
 						</div>
 					</li>
@@ -140,6 +140,7 @@ export default {
 					where: {
 						userId: { regexp: `^${this.$cookie.get('user_id')}$` }
 					},
+					order: 'last_updated DESC',
 					limit: this.pagesize,
 					skip: (this.currentPage - 1) * this.pagesize
 				}
@@ -160,7 +161,9 @@ export default {
 						//格式化日期
 						if (this.listData && this.listData.length > 0) {
 							this.listData.map(item => {
-								item['time'] = item.time ? moment(item.time).format('YYYY-MM-DD HH:mm:ss') : '';
+								item['createTime'] = item.createTime
+									? moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+									: '';
 							});
 						}
 					}
@@ -205,6 +208,30 @@ export default {
 		},
 		handleRead(id) {
 			notification.patch({ read: true, id: id }).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.getData();
+					}
+				}
+			});
+		},
+		handlePageRead() {
+			let ids = [];
+			this.listData.map(item => {
+				ids.push(item.id);
+			});
+			let where = {
+				where: {
+					id: {
+						inq: ids
+					}
+				}
+			};
+			let data = {
+				read: true
+			};
+			where = JSON.stringify(where);
+			notification.upsertWithWhere(where, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
 						this.getData();

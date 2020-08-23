@@ -20,7 +20,13 @@
 							item.system === 'dataFlow' ? $t('notification.dataFlow') : $t('notification.manageSever')
 						}}</span>
 						<span>
-							<router-link to="/notification">
+							<router-link
+								:to="
+									item.system === 'dataFlow'
+										? `/job?id=${item.sourceId}&isMoniting=true`
+										: '/clusterManagement'
+								"
+							>
 								<span style="color: #48B6E2">
 									{{ item.serverName }}
 								</span>
@@ -29,7 +35,7 @@
 						<span>{{ typeMap[item.msg] }}</span>
 					</div>
 					<div class="list-item-time">
-						<span>{{ item.time }}</span>
+						<span>{{ item.createTime }}</span>
 					</div>
 				</div>
 			</li>
@@ -67,13 +73,15 @@ export default {
 			userId: this.$cookie.get('user_id')
 		};
 		ws.on('notification', data => {
-			//this.listData.unshift(data.data);
-			this.listData = data.data;
-
+			if (data.data && data.data.length > 0) {
+				data.data.map(item => {
+					this.listData.unshift(item);
+				});
+			}
 			//格式化日期
 			if (this.listData && this.listData.length > 0) {
 				this.listData.map(item => {
-					item['time'] = item.time ? moment(item.time).format('YYYY-MM-DD HH:mm:ss') : '';
+					item['createTime'] = item.createTime ? moment(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
 				});
 			}
 		});
