@@ -245,7 +245,6 @@ export default {
 				read: true
 			};
 			where = JSON.stringify(where);
-			data = JSON.stringify(data);
 			notification.readAll(where, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
