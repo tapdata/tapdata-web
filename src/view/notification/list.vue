@@ -255,6 +255,7 @@ export default {
 			});
 		},
 		handleClick(tab) {
+			this.currentPage = 1;
 			if (tab.name === 'first') {
 				this.read = false;
 			} else {
