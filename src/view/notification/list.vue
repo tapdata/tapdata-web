@@ -221,10 +221,8 @@ export default {
 				ids.push(item.id);
 			});
 			let where = {
-				where: {
-					id: {
-						inq: ids
-					}
+				id: {
+					inq: ids
 				}
 			};
 			let data = {
