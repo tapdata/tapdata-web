@@ -27,7 +27,13 @@
 				@clear="loadDataBase"
 				size="mini"
 			>
-				<el-select v-model="filterText" slot="prepend" placeholder="请选择" size="mini" class="box-head-select">
+				<el-select
+					v-model="databseType"
+					slot="prepend"
+					placeholder="请选择"
+					size="mini"
+					class="box-head-select"
+				>
 					<el-option label="DB" value="db"></el-option>
 					<el-option label="Table" value="table"></el-option>
 				</el-select>
@@ -94,6 +100,7 @@ export default {
 			loadingError: false,
 			count: 0,
 			filterText: '',
+			databseType: 'db',
 			data: [],
 			default_expanded: false,
 			isActive: true,
@@ -133,64 +140,103 @@ export default {
 			this.loadDataBase();
 		},
 		handleSearchTree() {
-			if (this.filterText === '') {
-				return;
+			if (this.filterText === '' || this.databseType === '') {
+				return; //tableConnection
 			}
 			let self = this;
-			let params = {
-				filter: JSON.stringify({
-					where: {
-						meta_type: {
-							in: ['database', 'directory', 'ftp', 'apiendpoint', 'table', 'collection']
-						},
-						original_name: {
-							like: self.filterText,
-							options: 'i'
-						},
-						'source.user_id': {
-							like: this.$cookie.get('user_id')
-						},
-						is_deleted: false
-					}
-					// order: 'original_name ASC'
-				})
-			};
-			self.loading = true;
-			MetadataInstances.get(params)
-				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							// self.data.splice(0, self.data.length);
-							self.data = [];
-							res.data.forEach(record => {
-								let node = {
-									id: record.id,
-									label: record.name || record.original_name,
-									meta_type: record.meta_type,
-									source: record.source || '',
-									database_type: record.source.database_type || '',
-									original_name: record.original_name || '',
-									fields: record.fields
-								};
-								if (['collection', 'table', 'mongo_view', 'view'].includes(record.meta_type)) {
-									node.leaf = true;
-								}
-								self.data.push(node);
-							});
+			if (self.databseType === 'db') {
+				let params = {
+					filter: JSON.stringify({
+						where: {
+							meta_type: {
+								in: ['database', 'directory', 'ftp', 'apiendpoint']
+							},
+							original_name: {
+								like: self.filterText,
+								options: 'i'
+							},
+							'source.user_id': {
+								like: this.$cookie.get('user_id')
+							},
+							is_deleted: false
 						}
-					}
-					self.loading = false;
-					self.loadingError = false;
-				})
-				.catch(() => {
-					self.loadingError = true;
-					this.$message.error('MetadataInstances error');
-					self.loading = false;
-				});
+					})
+				};
+				self.loading = true;
+				MetadataInstances.get(params)
+					.then(res => {
+						if (res.statusText === 'OK' || res.status === 200) {
+							if (res.data) {
+								// self.data.splice(0, self.data.length);
+								self.data = [];
+								res.data.forEach(record => {
+									let node = {
+										id: record.id,
+										label: record.name || record.original_name,
+										meta_type: record.meta_type,
+										source: record.source || '',
+										database_type: record.source.database_type || '',
+										original_name: record.original_name || '',
+										fields: record.fields
+									};
+									if (['collection', 'table', 'mongo_view', 'view'].includes(record.meta_type)) {
+										node.leaf = true;
+									}
+									self.data.push(node);
+								});
+							}
+						}
+						self.loading = false;
+						self.loadingError = false;
+					})
+					.catch(() => {
+						self.loadingError = true;
+						this.$message.error('MetadataInstances error');
+						self.loading = false;
+					});
+			} else {
+				let params = {
+					name: self.filterText,
+					userId: this.$cookie.get('user_id')
+				};
+				MetadataInstances.tableConnection(params)
+					.then(res => {
+						debugger;
+						if (res.statusText === 'OK' || res.status === 200) {
+							if (res.data) {
+								// self.data.splice(0, self.data.length);
+								self.data = [];
+								res.data.forEach(record => {
+									let node = {
+										id: record.id,
+										label: record.name || record.original_name,
+										meta_type: record.meta_type,
+										source: record.source || '',
+										database_type: record.source.database_type || '',
+										original_name: record.original_name || '',
+										fields: record.fields
+									};
+									if (['collection', 'table', 'mongo_view', 'view'].includes(record.meta_type)) {
+										node.leaf = true;
+									}
+									self.data.push(node);
+								});
+							}
+						}
+						self.loading = false;
+						self.loadingError = false;
+					})
+					.catch(() => {
+						self.loadingError = true;
+						this.$message.error('MetadataInstances error');
+						self.loading = false;
+					});
+			}
 		},
 		loadDataBase() {
 			let self = this;
 			this.filterText = '';
+			this.databseType = '';
 			let params = {
 				filter: JSON.stringify({
 					where: {
