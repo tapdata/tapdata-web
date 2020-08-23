@@ -1,6 +1,6 @@
 <template>
-	<ul class="cuk-list clearfix cuk-list-type-block">
-		<li class="item-head">
+	<div>
+		<div class="item-head">
 			<span>{{ $t('notification.notice') }}</span>
 			<span class="item-head-text">
 				<router-link to="/notification">
@@ -9,30 +9,32 @@
 					</span>
 				</router-link>
 			</span>
-		</li>
-		<li class="list-item" v-for="item in listData" :key="item.level">
-			<div class="list-item-content">
-				<div class="unread-1zPaAXtSu"></div>
-				<div class="list-item-desc">
-					<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
-					<span>{{
-						item.system === 'dataFlow' ? $t('notification.dataFlow') : $t('notification.manageSever')
-					}}</span>
-					<span>
-						<router-link to="/notification">
-							<span style="color: #48B6E2">
-								{{ item.serverName }}
-							</span>
-						</router-link>
-					</span>
-					<span>{{ typeMap[item.msg] }}</span>
+		</div>
+		<ul class="cuk-list clearfix cuk-list-type-block">
+			<li class="list-item" v-for="item in listData" :key="item.level">
+				<div class="list-item-content">
+					<div class="unread-1zPaAXtSu"></div>
+					<div class="list-item-desc">
+						<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
+						<span>{{
+							item.system === 'dataFlow' ? $t('notification.dataFlow') : $t('notification.manageSever')
+						}}</span>
+						<span>
+							<router-link to="/notification">
+								<span style="color: #48B6E2">
+									{{ item.serverName }}
+								</span>
+							</router-link>
+						</span>
+						<span>{{ typeMap[item.msg] }}</span>
+					</div>
+					<div class="list-item-time">
+						<span>{{ item.time }}</span>
+					</div>
 				</div>
-				<div class="list-item-time">
-					<span>{{ item.time }}</span>
-				</div>
-			</div>
-		</li>
-	</ul>
+			</li>
+		</ul>
+	</div>
 </template>
 
 <script>
@@ -86,23 +88,24 @@ export default {
 </script>
 
 <style scoped lang="less">
+.item-head {
+	display: flex;
+	justify-content: space-between;
+	font-size: 12px;
+	height: 40px;
+	line-height: 40px;
+	padding: 0 20px;
+	.item-head-text {
+		cursor: pointer;
+		color: #48b6e2;
+	}
+	/*background: rgba(241, 241, 241, 1);*/
+	/*border: 1px solid rgba(222, 222, 228, 1);*/
+}
 .cuk-list {
 	width: 500px;
-	height: 100%;
-	.item-head {
-		display: flex;
-		justify-content: space-between;
-		font-size: 12px;
-		height: 40px;
-		line-height: 40px;
-		padding: 0 20px;
-		.item-head-text {
-			cursor: pointer;
-			color: #48b6e2;
-		}
-		/*background: rgba(241, 241, 241, 1);*/
-		/*border: 1px solid rgba(222, 222, 228, 1);*/
-	}
+	height: 600px;
+	overflow: auto;
 	.list-item {
 		position: relative;
 		background: #fff;

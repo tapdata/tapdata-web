@@ -12,9 +12,10 @@
 					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
 				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom">
-					<el-badge :value="unRead" :max="99" class="item-badge" :hidden="unRead > 0">
+					<el-badge :value="unRead" :max="99" class="item-badge" v-show="unRead > 0">
 						<i class="iconfont icon-lingdang" @click="command('notification')"></i>
 					</el-badge>
+					<i class="iconfont icon-lingdang" @click="command('notification')" v-show="unRead === 0"></i>
 					<el-dropdown-menu slot="dropdown" placement="bottom-start">
 						<DropdownNotification :dialogVisible="notificationVisible"></DropdownNotification>
 						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
@@ -192,7 +193,8 @@ export default {
 			userName: '',
 			dialogVisible: false,
 			isShowCustomerService: false,
-			notificationVisible: true
+			notificationVisible: true,
+			unRead: 0
 		};
 	},
 	created() {

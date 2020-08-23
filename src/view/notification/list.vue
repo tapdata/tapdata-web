@@ -71,6 +71,18 @@
 						</div>
 					</li>
 				</ul>
+				<el-pagination
+					class="pagination"
+					background
+					layout="prev, pager, next,sizes"
+					:page-sizes="[20, 30, 50, 100]"
+					:page-size="pagesize"
+					:total="total"
+					:current-page.sync="currentPage"
+					@current-change="handleCurrentChange"
+					@size-change="handleSizeChange"
+				>
+				</el-pagination>
 			</div>
 		</div>
 	</div>
@@ -91,6 +103,9 @@ export default {
 			read: false,
 			loading: false,
 			search: '',
+			currentPage: 1,
+			pagesize: 20,
+			total: '',
 			colorMap: {
 				error: 'red',
 				warn: 'orangered',
@@ -124,7 +139,9 @@ export default {
 				filter: {
 					where: {
 						userId: { regexp: `^${this.$cookie.get('user_id')}$` }
-					}
+					},
+					limit: this.pagesize,
+					skip: (this.currentPage - 1) * this.pagesize
 				}
 			};
 			if (this.read) {
@@ -151,19 +168,35 @@ export default {
 					this.loading = false;
 				}
 			});
+			this.getCount(false);
 			this.getCount();
 		},
-		getCount() {
+		handleCurrentChange(cpage) {
+			this.currentPage = cpage;
+			this.getData();
+			this.getCount();
+		},
+		handleSizeChange(psize) {
+			this.pagesize = psize;
+			this.getData();
+		},
+		getCount(read) {
 			let where = {
 				where: {
-					userId: { regexp: `^${this.$cookie.get('user_id')}$` },
-					read: false
+					userId: { regexp: `^${this.$cookie.get('user_id')}$` }
 				}
 			};
+			if (read === false) {
+				where.where['read'] = false;
+			}
 			notification.count(where).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
-						this.count = res.data.count;
+						if (read === false) {
+							this.count = res.data.count;
+						} else {
+							this.total = res.data.count;
+						}
 					} else {
 						this.loading = false;
 					}
@@ -287,6 +320,10 @@ export default {
 	.notification-right-list {
 		margin-left: 20px;
 		width: 100%;
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
 		.operation {
 			cursor: pointer;
 			span {
@@ -296,6 +333,8 @@ export default {
 		}
 		ul.cuk-list {
 			list-style: none;
+			flex: 1;
+			overflow: auto;
 		}
 		.clearfix {
 			zoom: 1;
@@ -351,6 +390,10 @@ export default {
 			}
 		}
 	}
+}
+.pagination {
+	float: right;
+	margin-top: 10px;
 }
 </style>
 <style lang="less">
