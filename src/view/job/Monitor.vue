@@ -479,7 +479,7 @@ export default {
 				this.stageType = selectStage.type;
 				if (this.stageType === 'app.Database') {
 					this.getStageDataApi(currentStageData.connectionId, '');
-				} else {
+				} else if (this.stageType === 'app.Collection' || this.stageType === 'app.Table') {
 					this.getStageDataApi(currentStageData.connectionId, this.tableName);
 				}
 				let rightTabPanel = this.editor.getRightTabPanel();
@@ -595,7 +595,7 @@ export default {
 					this.stageType = currentStageData.type;
 					if (this.stageType === 'app.Database') {
 						this.getStageDataApi(currentStageData.connectionId, '');
-					} else {
+					} else if (this.stageType === 'app.Collection' || this.stageType === 'app.Table') {
 						this.getStageDataApi(currentStageData.connectionId, this.tableName);
 					}
 				}
