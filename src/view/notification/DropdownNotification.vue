@@ -76,6 +76,7 @@ export default {
 			if (data.data && data.data.length > 0) {
 				data.data.map(item => {
 					this.listData.unshift(item);
+					this.$emit('unread', this.listData.length);
 				});
 			}
 			//格式化日期

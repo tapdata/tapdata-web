@@ -17,7 +17,10 @@
 					</el-badge>
 					<i class="iconfont icon-lingdang" @click="command('notification')" v-show="unRead === 0"></i>
 					<el-dropdown-menu slot="dropdown" placement="bottom-start">
-						<DropdownNotification :dialogVisible="notificationVisible"></DropdownNotification>
+						<DropdownNotification
+							:dialogVisible="notificationVisible"
+							v-on:unread="handleUnread"
+						></DropdownNotification>
 						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
 					</el-dropdown-menu>
 				</el-dropdown>
@@ -122,7 +125,6 @@ import newDataFlow from '@/components/newDataFlow';
 import DropdownNotification from './notification/DropdownNotification';
 
 import { signOut } from '../util/util';
-import ws from '../api/ws';
 
 const Languages = {
 	sc: '中文 (简)',
@@ -207,21 +209,6 @@ export default {
 		window.iframeRouterChange = route => {
 			this.$router.push(route);
 		};
-	},
-	mounted() {
-		let msg = {
-			type: 'notification',
-			userId: this.$cookie.get('user_id')
-		};
-		ws.on('notification', data => {
-			this.unRead = data.data ? data.data.length : 0;
-		});
-		let int = setInterval(() => {
-			if (ws.ws.readyState == 1) {
-				ws.send(msg);
-				clearInterval(int);
-			}
-		}, 2000);
 	},
 	destroyed() {
 		this.$root.$off('updateMenu');
@@ -347,6 +334,9 @@ export default {
 		},
 		handleNotificationVisible(type) {
 			this.notificationVisible = type;
+		},
+		handleUnread(data) {
+			this.unRead = data;
 		}
 	}
 };
