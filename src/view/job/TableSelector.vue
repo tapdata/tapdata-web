@@ -1,23 +1,14 @@
 <template>
 	<div class="box">
-		<!--		<div class="box-head">-->
-		<!--			<el-input class="search" v-model="filterText" clearable @change="handleSearchTree()" @clear="loadDataBase"-->
-		<!--				><i slot="prefix" class="el-input__icon el-icon-search"></i-->
-		<!--			></el-input>-->
-		<!--			<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>-->
-		<!--			<i class="el-icon-refresh" v-if="!loading" @click="loadDataBase"></i>-->
-		<!--			<i class="el-icon-loading" v-if="loading"></i>-->
-		<!--		</div>-->
-		<div class="box-head" v-show="isActive">
+		<div class="box-head">
 			<div class="metadata-header-btns" style="width: 100%">
-				<i class="iconfont icon-fangdajing" @click="isActive = false"></i>
+				<i class="iconfont icon-fangdajing" @click="isActive = !isActive"></i>
 				<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
 				<i class="el-icon-refresh" v-if="!loading" @click="loadDataBase"></i>
 				<i class="el-icon-loading" v-if="loading"></i>
 			</div>
 		</div>
 		<div class="box-head-search" v-show="!isActive">
-			<i class="iconfont icon-right-circle" @click="isActive = true"></i>
 			<el-input
 				placeholder="请输入内容"
 				v-model="filterText"
@@ -27,13 +18,7 @@
 				@clear="loadDataBase"
 				size="mini"
 			>
-				<el-select
-					v-model="databseType"
-					slot="prepend"
-					placeholder="请选择"
-					size="mini"
-					class="box-head-select"
-				>
+				<el-select placeholder="搜表" v-model="databseType" slot="prepend" size="mini" class="box-head-select">
 					<el-option label="DB" value="db"></el-option>
 					<el-option label="Table" value="table"></el-option>
 				</el-select>
@@ -100,7 +85,7 @@ export default {
 			loadingError: false,
 			count: 0,
 			filterText: '',
-			databseType: 'db',
+			databseType: 'table',
 			data: [],
 			default_expanded: false,
 			isActive: true,
@@ -159,6 +144,18 @@ export default {
 								like: this.$cookie.get('user_id')
 							},
 							is_deleted: false
+						},
+						fields: {
+							id: true,
+							label: true,
+							meta_type: true,
+							original_name: true,
+							source: true,
+							'source._id': true,
+							'source.user_id': true,
+							'source.name': true,
+							'source.database_type': true,
+							'source.status': true
 						}
 					})
 				};
@@ -201,7 +198,6 @@ export default {
 				};
 				MetadataInstances.tableConnection(params)
 					.then(res => {
-						debugger;
 						if (res.statusText === 'OK' || res.status === 200) {
 							if (res.data) {
 								// self.data.splice(0, self.data.length);
@@ -236,7 +232,7 @@ export default {
 		loadDataBase() {
 			let self = this;
 			this.filterText = '';
-			this.databseType = '';
+			this.databseType = 'table';
 			let params = {
 				filter: JSON.stringify({
 					where: {
@@ -248,7 +244,19 @@ export default {
 							like: this.$cookie.get('user_id')
 						}
 					},
-					order: 'original_name ASC'
+					order: 'original_name ASC',
+					fields: {
+						id: true,
+						label: true,
+						meta_type: true,
+						original_name: true,
+						source: true,
+						'source._id': true,
+						'source.user_id': true,
+						'source.name': true,
+						'source.database_type': true,
+						'source.status': true
+					}
 				})
 			};
 			self.loading = true;
@@ -292,19 +300,38 @@ export default {
 			) {
 				return resolve([]);
 			}
-			let params = {
-				filter: JSON.stringify({
-					where: {
-						meta_type: {
-							in: ['collection', 'table', 'mongo_view', 'view']
-						},
-						databaseId: {
-							regexp: `^${node.key}$`
-						},
-						is_deleted: false
+			let filter = {
+				where: {
+					meta_type: {
+						inq: ['collection', 'table', 'mongo_view', 'view']
 					},
-					order: 'original_name ASC' || 'name ASC'
-				})
+					databaseId: {
+						regexp: `^${node.key}$`
+					},
+					is_deleted: false
+				},
+				fields: {
+					id: true,
+					label: true,
+					meta_type: true,
+					original_name: true,
+					source: true,
+					'source._id': true,
+					'source.user_id': true,
+					'source.name': true,
+					'source.database_type': true,
+					'source.status': true
+				},
+				order: 'original_name ASC' || 'name ASC'
+			};
+			if (this.databseType === 'table' && this.filterText !== '') {
+				filter.where['original_name'] = {
+					like: this.filterText,
+					options: 'i'
+				};
+			}
+			let params = {
+				filter: JSON.stringify(filter)
 			};
 			MetadataInstances.get(params).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
@@ -482,15 +509,22 @@ export default {
 .box-head-search {
 	display: flex;
 	justify-content: space-around;
+	margin-top: 8px;
+	font-size: 12px;
+	margin-left: -10px;
 	.box-head-select {
-		width: 52px;
+		width: 58px;
+		font-size: 12px;
 	}
 }
 .box-head {
-	background: #fff;
 	overflow: hidden;
 	margin-top: 5px;
 	margin-left: 160px;
+	position: absolute;
+	left: 0px;
+	z-index: 2006;
+	top: -29px;
 }
 .ts-icon {
 	color: #333;
