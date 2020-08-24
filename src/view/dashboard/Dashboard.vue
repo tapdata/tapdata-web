@@ -365,7 +365,13 @@ export default {
 							width: 0
 						}
 					},
-					data: [this.$t('app.Home.totalOutput'), this.$t('app.Home.totalInput')],
+					data: [
+						this.$t('dataFlow.totalOutput'),
+						this.$t('dataFlow.totalInput'),
+						this.$t('dataFlow.totalInsert'),
+						this.$t('dataFlow.totalUpdate'),
+						this.$t('dataFlow.totalDelete')
+					],
 					axisPointer: {
 						type: 'shadow'
 					},
@@ -392,12 +398,12 @@ export default {
 					{
 						type: 'bar',
 						data: [],
-						barWidth: 100,
+						barWidth: '100%',
 						barGap: '-100%',
 						itemStyle: {
 							normal: {
 								color: function(params) {
-									var colorList = ['#62a569', '#48b6e2'];
+									var colorList = ['#7ba75d', '#48b6e2', '#d9742c', '#e6b451', '#e06c6c'];
 									return colorList[params.dataIndex];
 								},
 								label: {
@@ -435,7 +441,7 @@ export default {
 		this.screeningObj = {
 			title: this.$t('app.Home.transmissionOverview'),
 			type: 'screening',
-			overviewFalg: true
+			overviewFalg: false
 		};
 		this.transferTaskObj = {
 			title: this.$t('app.Home.transferTask'),
@@ -486,7 +492,13 @@ export default {
 				self.allTaskEchart.series[0].data = self.taskList;
 				self.total = res.data.chart1.totalDataFlows;
 
-				self.dataScreening.series[0].data = [res.data.chart2[0].totalOutput, res.data.chart2[0].totalInput];
+				self.dataScreening.series[0].data = [
+					res.data.chart2[0].totalOutput,
+					res.data.chart2[0].totalInput,
+					res.data.chart2[0].insertCount,
+					res.data.chart2[0].updateCount,
+					res.data.chart2[0].deleteCount
+				];
 				self.unitData = self.dataScreening.series[0].data;
 				self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
 				self.transfer.tableData = res.data.chart3;
