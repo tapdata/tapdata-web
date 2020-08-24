@@ -475,9 +475,13 @@ export default {
 			if (selectStage) {
 				this.stageId = selectStage.id;
 				this.getNodeName();
-				this.getStageDataApi(selectStage.form_data.connectionId, this.tableName);
 				this.stage.nodeName = selectStage.form_data.name;
 				this.stageType = selectStage.type;
+				if (this.stageType === 'app.Database') {
+					this.getStageDataApi(currentStageData.connectionId, '');
+				} else {
+					this.getStageDataApi(currentStageData.connectionId, this.tableName);
+				}
 				let rightTabPanel = this.editor.getRightTabPanel();
 				let panel = rightTabPanel.getChildByName('nodeSettingPanel');
 				if (this.editor.seeMonitor) {
@@ -589,7 +593,11 @@ export default {
 						}
 					});
 					this.stageType = currentStageData.type;
-					this.getStageDataApi(currentStageData.connectionId, this.tableName);
+					if (this.stageType === 'app.Database') {
+						this.getStageDataApi(currentStageData.connectionId, '');
+					} else {
+						this.getStageDataApi(currentStageData.connectionId, this.tableName);
+					}
 				}
 				this.getApiData();
 			},
