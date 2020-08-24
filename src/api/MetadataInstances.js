@@ -24,4 +24,7 @@ export default class MetadataInstancesAPI extends PublicApi {
 	schema(params) {
 		return axios.get(this.url + '/schema', { params });
 	}
+	tableConnection(params) {
+		return axios.get(this.url + '/tableConnection', { params });
+	}
 }
