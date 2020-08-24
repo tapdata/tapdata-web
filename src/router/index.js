@@ -217,6 +217,11 @@ const childRoutes = [
 		name: 'jsFuncs',
 		component: view('ExternalLink'),
 		meta: { url: '/old/index.html#/jsFuncs' }
+	},
+	{
+		path: '/notification',
+		name: 'notification',
+		component: view('notification/list')
 	}
 ];
 

@@ -63,7 +63,12 @@ export default {
 				self.$refs.log.add({ logs: dat, prepend: true });
 			}
 		});
-		if (ws.ws.readyState == 1) ws.send(msg);
+		let int = setInterval(() => {
+			if (ws.ws.readyState == 1) {
+				ws.send(msg);
+				clearInterval(int);
+			}
+		}, 2000);
 	},
 
 	methods: {

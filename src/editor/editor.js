@@ -144,7 +144,7 @@ export default class Editor extends BaseObject {
 			hidden: true,
 			maxWidth: 800,
 			minWidth: 500,
-			width: 600
+			width: 718
 		});
 		ui.add(self.rightSidebar);
 

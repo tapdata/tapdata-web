@@ -538,7 +538,12 @@ export default {
 						}
 					}
 				};
-				if (ws.ws.readyState == 1) ws.send(msg);
+				let int = setInterval(() => {
+					if (ws.ws.readyState == 1) {
+						ws.send(msg);
+						clearInterval(int);
+					}
+				}, 2000);
 			}
 		},
 		wsWatch() {
@@ -811,6 +816,27 @@ export default {
 			});
 			return stages;
 		},
+		checkJoinTableStageId() {
+			let stages = this.getDataFlowData(true).stages;
+			let cells = this.editor.graph.graph.getCells();
+			let valid = true;
+			stages.forEach(stage => {
+				if (stage.joinTables)
+					stage.joinTables.forEach(jt => {
+						let finded = false;
+						cells.reduce((finded, cell) => {
+							if (cell.id == jt.id) finded = true;
+						});
+						try {
+							if (!finded) cells.filter(cell => cell.id == stage.id)[0].updateOutputSchema();
+						} catch (e) {
+							alert('jointables stageid chaeck failed===>>' + stage.id);
+							valid = false;
+						}
+					});
+			});
+			return valid;
+		},
 
 		/**
 		 * request server do save data flow
@@ -819,6 +845,7 @@ export default {
 		 */
 		doSave(data, cb) {
 			let self = this;
+			if (!this.checkJoinTableStageId()) return;
 			localStorage.removeItem(this.tempId);
 			const _doSave = function() {
 				let promise = data.id ? dataFlowsApi.patch(data) : dataFlowsApi.post(data);

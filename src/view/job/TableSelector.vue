@@ -1,12 +1,28 @@
 <template>
 	<div class="box">
 		<div class="box-head">
-			<el-input class="search" v-model="filterText" clearable @change="handleSearchTree()" @clear="loadDataBase"
-				><i slot="prefix" class="el-input__icon el-icon-search"></i
-			></el-input>
-			<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
-			<i class="el-icon-refresh" v-if="!loading" @click="loadDataBase"></i>
-			<i class="el-icon-loading" v-if="loading"></i>
+			<div class="metadata-header-btns" style="width: 100%">
+				<i class="iconfont icon-fangdajing" @click="isActive = !isActive"></i>
+				<i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
+				<i class="el-icon-refresh" v-if="!loading" @click="loadDataBase"></i>
+				<i class="el-icon-loading" v-if="loading"></i>
+			</div>
+		</div>
+		<div class="box-head-search" v-show="!isActive">
+			<el-input
+				placeholder="请输入内容"
+				v-model="filterText"
+				style="width: 210px"
+				clearable
+				@change="handleSearchTree()"
+				@clear="loadDataBase"
+				size="mini"
+			>
+				<el-select placeholder="搜表" v-model="databseType" slot="prepend" size="mini" class="box-head-select">
+					<el-option label="DB" value="db"></el-option>
+					<el-option label="Table" value="table"></el-option>
+				</el-select>
+			</el-input>
 		</div>
 		<div class="treeBox" v-loading="loading" :element-loading-text="$t('dataFlow.dataLoading')">
 			<el-tree
@@ -69,8 +85,10 @@ export default {
 			loadingError: false,
 			count: 0,
 			filterText: '',
+			databseType: 'table',
 			data: [],
 			default_expanded: false,
+			isActive: true,
 			props: {
 				children: 'children',
 				label: 'label',
@@ -107,64 +125,114 @@ export default {
 			this.loadDataBase();
 		},
 		handleSearchTree() {
-			if (this.filterText === '') {
-				return;
+			if (this.filterText === '' || this.databseType === '') {
+				return; //tableConnection
 			}
 			let self = this;
-			let params = {
-				filter: JSON.stringify({
-					where: {
-						meta_type: {
-							in: ['database', 'directory', 'ftp', 'apiendpoint', 'table', 'collection']
+			if (self.databseType === 'db') {
+				let params = {
+					filter: JSON.stringify({
+						where: {
+							meta_type: {
+								in: ['database', 'directory', 'ftp', 'apiendpoint']
+							},
+							original_name: {
+								like: self.filterText,
+								options: 'i'
+							},
+							'source.user_id': {
+								like: this.$cookie.get('user_id')
+							},
+							is_deleted: false
 						},
-						original_name: {
-							like: self.filterText,
-							options: 'i'
-						},
-						'source.user_id': {
-							like: this.$cookie.get('user_id')
-						},
-						is_deleted: false
-					}
-					// order: 'original_name ASC'
-				})
-			};
-			self.loading = true;
-			MetadataInstances.get(params)
-				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							// self.data.splice(0, self.data.length);
-							self.data = [];
-							res.data.forEach(record => {
-								let node = {
-									id: record.id,
-									label: record.name || record.original_name,
-									meta_type: record.meta_type,
-									source: record.source || '',
-									database_type: record.source.database_type || '',
-									original_name: record.original_name || '',
-									fields: record.fields
-								};
-								if (['collection', 'table', 'mongo_view', 'view'].includes(record.meta_type)) {
-									node.leaf = true;
-								}
-								self.data.push(node);
-							});
+						fields: {
+							id: true,
+							label: true,
+							meta_type: true,
+							original_name: true,
+							source: true,
+							'source._id': true,
+							'source.user_id': true,
+							'source.name': true,
+							'source.database_type': true,
+							'source.status': true
 						}
-					}
-					self.loading = false;
-					self.loadingError = false;
-				})
-				.catch(() => {
-					self.loadingError = true;
-					this.$message.error('MetadataInstances error');
-					self.loading = false;
-				});
+					})
+				};
+				self.loading = true;
+				MetadataInstances.get(params)
+					.then(res => {
+						if (res.statusText === 'OK' || res.status === 200) {
+							if (res.data) {
+								// self.data.splice(0, self.data.length);
+								self.data = [];
+								res.data.forEach(record => {
+									let node = {
+										id: record.id,
+										label: record.name || record.original_name,
+										meta_type: record.meta_type,
+										source: record.source || '',
+										database_type: record.source.database_type || '',
+										original_name: record.original_name || '',
+										fields: record.fields
+									};
+									if (['collection', 'table', 'mongo_view', 'view'].includes(record.meta_type)) {
+										node.leaf = true;
+									}
+									self.data.push(node);
+								});
+							}
+						}
+						self.loading = false;
+						self.loadingError = false;
+					})
+					.catch(() => {
+						self.loadingError = true;
+						this.$message.error('MetadataInstances error');
+						self.loading = false;
+					});
+			} else {
+				let params = {
+					name: self.filterText,
+					userId: this.$cookie.get('user_id')
+				};
+				MetadataInstances.tableConnection(params)
+					.then(res => {
+						if (res.statusText === 'OK' || res.status === 200) {
+							if (res.data) {
+								// self.data.splice(0, self.data.length);
+								self.data = [];
+								res.data.forEach(record => {
+									let node = {
+										id: record.id,
+										label: record.name || record.original_name,
+										meta_type: record.meta_type,
+										source: record.source || '',
+										database_type: record.source.database_type || '',
+										original_name: record.original_name || '',
+										fields: record.fields
+									};
+									if (['collection', 'table', 'mongo_view', 'view'].includes(record.meta_type)) {
+										node.leaf = true;
+									}
+									self.data.push(node);
+								});
+							}
+						}
+						self.loading = false;
+						self.loadingError = false;
+					})
+					.catch(() => {
+						self.loadingError = true;
+						this.$message.error('MetadataInstances error');
+						self.loading = false;
+					});
+			}
 		},
 		loadDataBase() {
 			let self = this;
 			this.filterText = '';
+			this.databseType = 'table';
 			let params = {
 				filter: JSON.stringify({
 					where: {
@@ -176,7 +244,19 @@ export default {
 							like: this.$cookie.get('user_id')
 						}
 					},
-					order: 'original_name ASC'
+					order: 'original_name ASC',
+					fields: {
+						id: true,
+						label: true,
+						meta_type: true,
+						original_name: true,
+						source: true,
+						'source._id': true,
+						'source.user_id': true,
+						'source.name': true,
+						'source.database_type': true,
+						'source.status': true
+					}
 				})
 			};
 			self.loading = true;
@@ -220,19 +300,38 @@ export default {
 			) {
 				return resolve([]);
 			}
-			let params = {
-				filter: JSON.stringify({
-					where: {
-						meta_type: {
-							in: ['collection', 'table', 'mongo_view', 'view']
-						},
-						databaseId: {
-							regexp: `^${node.key}$`
-						},
-						is_deleted: false
+			let filter = {
+				where: {
+					meta_type: {
+						inq: ['collection', 'table', 'mongo_view', 'view']
 					},
-					order: 'original_name ASC' || 'name ASC'
-				})
+					databaseId: {
+						regexp: `^${node.key}$`
+					},
+					is_deleted: false
+				},
+				fields: {
+					id: true,
+					label: true,
+					meta_type: true,
+					original_name: true,
+					source: true,
+					'source._id': true,
+					'source.user_id': true,
+					'source.name': true,
+					'source.database_type': true,
+					'source.status': true
+				},
+				order: 'original_name ASC' || 'name ASC'
+			};
+			if (this.databseType === 'table' && this.filterText !== '') {
+				filter.where['original_name'] = {
+					like: this.filterText,
+					options: 'i'
+				};
+			}
+			let params = {
+				filter: JSON.stringify(filter)
 			};
 			MetadataInstances.get(params).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
@@ -370,7 +469,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .box {
 	width: 234px;
 }
@@ -385,11 +484,6 @@ export default {
 
 .el-checkbox-button .el-checkbox-button__inner {
 	padding: 6px 12px;
-}
-
-.search {
-	width: 77% !important;
-	margin-bottom: 10px;
 }
 
 .filter-icon {
@@ -412,11 +506,25 @@ export default {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+.box-head-search {
+	display: flex;
+	justify-content: space-around;
+	margin-top: 8px;
+	font-size: 12px;
+	margin-left: -10px;
+	.box-head-select {
+		width: 58px;
+		font-size: 12px;
+	}
+}
 .box-head {
-	background: #fff;
 	overflow: hidden;
-	width: 217px;
-	padding-left: 5px;
+	margin-top: 5px;
+	margin-left: 160px;
+	position: absolute;
+	left: 0px;
+	z-index: 2006;
+	top: -29px;
 }
 .ts-icon {
 	color: #333;
@@ -465,6 +573,35 @@ export default {
 		-webkit-transition: all 0.3s;
 		transition: all 0.3s;
 		line-height: 40px;
+	}
+	.el-select .el-input {
+		width: 120px;
+	}
+	.input-with-select .el-input-group__prepend {
+		background-color: #fff;
+	}
+}
+.box-head-search {
+	.el-input-group__append,
+	.el-input-group__prepend {
+		padding: 0 18px;
+	}
+	.el-input__icon {
+		width: 12px;
+	}
+	.el-input--mini .el-input__inner {
+		height: 22px;
+		line-height: 28px;
+	}
+	.el-input--mini .el-input__icon {
+		line-height: 23px;
+	}
+
+	.el-input--suffix .el-input__inner {
+		padding-right: 11px;
+	}
+	.el-input__inner {
+		padding: 0 5px;
 	}
 }
 .el-tree-node__expand-icon {

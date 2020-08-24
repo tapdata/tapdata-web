@@ -11,6 +11,19 @@
 					<i class="el-icon-plus"></i>
 					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
+				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom">
+					<el-badge :value="unRead" :max="99" class="item-badge" v-show="unRead > 0">
+						<i class="iconfont icon-lingdang" @click="command('notification')"></i>
+					</el-badge>
+					<i class="iconfont icon-lingdang" @click="command('notification')" v-show="unRead === 0"></i>
+					<el-dropdown-menu slot="dropdown" placement="bottom-start">
+						<DropdownNotification
+							:dialogVisible="notificationVisible"
+							v-on:unread="handleUnread"
+						></DropdownNotification>
+						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
+					</el-dropdown-menu>
+				</el-dropdown>
 				<a v-if="platform === 'DAAS'" class="btn" @click="command('download')"
 					><i class="iconfont icon-shangchuan-copy"></i
 				></a>
@@ -109,7 +122,10 @@
 <script>
 import CustomerService from '@/components/CustomerService';
 import newDataFlow from '@/components/newDataFlow';
+import DropdownNotification from './notification/DropdownNotification';
+
 import { signOut } from '../util/util';
+
 const Languages = {
 	sc: '中文 (简)',
 	en: 'English',
@@ -164,7 +180,7 @@ let menuSetting = [
 	}
 ];
 export default {
-	components: { CustomerService, newDataFlow },
+	components: { CustomerService, newDataFlow, DropdownNotification },
 	data() {
 		return {
 			platform: window._TAPDATA_OPTIONS_.platform,
@@ -178,7 +194,9 @@ export default {
 			favMenus: [],
 			userName: '',
 			dialogVisible: false,
-			isShowCustomerService: false
+			isShowCustomerService: false,
+			notificationVisible: true,
+			unRead: 0
 		};
 	},
 	created() {
@@ -264,6 +282,11 @@ export default {
 		},
 		command(command) {
 			switch (command) {
+				case 'notification':
+					this.$router.push({
+						name: 'notification'
+					});
+					break;
 				case 'newDataFlow':
 					this.dialogVisible = true;
 					break;
@@ -316,10 +339,43 @@ export default {
 		},
 		handleDialogVisible() {
 			this.dialogVisible = false;
+		},
+		handleNotificationVisible(type) {
+			this.notificationVisible = type;
+		},
+		handleUnread(data) {
+			this.unRead = data;
 		}
 	}
 };
 </script>
+<style scoped>
+.unread {
+	width: 25px;
+	height: 17px;
+	display: inline-block;
+	line-height: 17px;
+	white-space: nowrap;
+	cursor: pointer;
+	background: red;
+	color: #fff;
+	-webkit-appearance: none;
+	text-align: center;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	outline: 0;
+	margin: 0;
+	-webkit-transition: 0.1s;
+	transition: 0.1s;
+	font-weight: 500;
+	padding: 0px 5px;
+	font-size: 12px;
+	border-radius: 4px;
+	float: right;
+	margin-top: 15px;
+	margin-right: 15px;
+}
+</style>
 
 <style lang="less">
 .btn-del-fav-menu {
@@ -466,6 +522,14 @@ export default {
 					transform: rotate(-180deg);
 				}
 			}
+		}
+	}
+	.item-badge {
+		.el-badge__content {
+			height: 15px;
+			line-height: 13px;
+			padding: 0 5px;
+			border: none;
 		}
 	}
 	.layout-main {
