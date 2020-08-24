@@ -428,7 +428,7 @@ export default {
 		window.windows = [];
 		let self = this;
 		ws.on('watch', this.wsWatch);
-		setInterval(() => {
+		this.inter = setInterval(() => {
 			self.wsData.forEach(dat => {
 				self.$set(
 					self.tableData,
@@ -446,6 +446,7 @@ export default {
 	},
 	beforeDestroy() {
 		ws.off('watch', this.wsWatch);
+		clearInterval(this.inter);
 	},
 	computed: {
 		maxHeight: function() {
@@ -774,7 +775,12 @@ export default {
 								}
 							}
 						};
-						if (ws.ws.readyState == 1) ws.send(msg);
+						let int = setInterval(() => {
+							if (ws.ws.readyState == 1) {
+								ws.send(msg);
+								clearInterval(int);
+							}
+						}, 2000);
 					}
 				}
 				this.loading = false;
