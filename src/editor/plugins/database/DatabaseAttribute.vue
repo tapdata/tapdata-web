@@ -247,13 +247,6 @@ export default {
 
 	methods: {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model = {
-				connectionId: '',
-				includeTables: [],
-				dropTable: false,
-				table_prefix: '',
-				table_suffix: ''
-			};
 			if (data) {
 				_.merge(this.model, data);
 			}

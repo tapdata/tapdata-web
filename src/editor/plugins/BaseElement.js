@@ -209,11 +209,11 @@ export const baseElementConfig = {
 							joinTable = joinTable ? _.cloneDeep(joinTable) : _.cloneDeep(JOIN_TABLE_TPL);
 
 							if (schema) {
-								let fields = schema.fields || [];
-								joinTable.primaryKeys = fields
-									.filter(f => f.primary_key_position > 0)
-									.map(f => f.field_name)
-									.join(',');
+								// let fields = schema.fields || [];
+								// joinTable.primaryKeys = fields
+								// 	.filter(f => f.primary_key_position > 0)
+								// 	.map(f => f.field_name)
+								// 	.join(',');
 								joinTable.tableName = schema && schema.table_name;
 								/* if( !joinTable.joinPath && ['merge_embed', 'update'].includes(joinTable.joinType)){
 										joinTable.joinPath = joinTable.tableName;

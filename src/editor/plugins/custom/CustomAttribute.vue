@@ -55,13 +55,13 @@
 						<ClipButton :value="model.tableName"></ClipButton>
 					</div>
 				</el-form-item>
-				<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
+				<!-- <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
 					<MultiSelection
 						v-model="model.primaryKeys"
 						:options="primaryKeyOptions"
 						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
 					></MultiSelection>
-				</el-form-item>
+				</el-form-item> -->
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
@@ -94,7 +94,7 @@
 <script>
 import _ from 'lodash';
 import factory from '../../../api/factory';
-import MultiSelection from '../../../components/MultiSelection';
+// import MultiSelection from '../../../components/MultiSelection';
 import RelatedTasks from '../../../components/relatedTasks';
 import ClipButton from '@/components/ClipButton';
 import Entity from '../link/Entity';
@@ -104,7 +104,7 @@ let connectionApi = factory('connections');
 let editorMonitor = null;
 export default {
 	name: 'CustomNode',
-	components: { Entity, MultiSelection, ClipButton, RelatedTasks },
+	components: { Entity, ClipButton, RelatedTasks },
 	props: {
 		connection_type: {
 			type: String,
@@ -134,8 +134,8 @@ export default {
 			model: {
 				connectionId: '',
 				tableName: '',
-				type: 'custom_connection',
-				primaryKeys: ''
+				type: 'custom_connection'
+				// primaryKeys: ''
 			},
 			mergedSchema: null,
 			primaryKeyOptions: []
@@ -204,21 +204,18 @@ export default {
 											}
 										]
 								  };
-						/* let fields = schema.fields || [];
-							let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
-							if( primaryKeys) this.model.primaryKeys = primaryKeys; */
 
 						let fields = schema.fields || [];
-						let primaryKeys = fields
-							.filter(f => f.primary_key_position > 0)
-							.map(f => f.field_name)
-							.join(',');
+						// let primaryKeys = fields
+						// 	.filter(f => f.primary_key_position > 0)
+						// 	.map(f => f.field_name)
+						// 	.join(',');
 						this.primaryKeyOptions = fields.map(f => f.field_name);
-						if (primaryKeys) {
-							this.model.primaryKeys = primaryKeys;
-						} else {
-							this.model.primaryKeys = '';
-						}
+						// if (primaryKeys) {
+						// 	this.model.primaryKeys = primaryKeys;
+						// } else {
+						// 	this.model.primaryKeys = '';
+						// }
 						this.$emit('schemaChange', _.cloneDeep(schema));
 					}
 				}
@@ -231,10 +228,10 @@ export default {
 				if (this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0) {
 					let fields = this.mergedSchema.fields;
 					this.primaryKeyOptions = fields.map(f => f.field_name);
-					if (!this.model.primaryKeys) {
-						let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
-						if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
-					}
+					// if (!this.model.primaryKeys) {
+					// 	let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
+					// 	if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
+					// }
 				}
 			}
 		}
@@ -242,13 +239,6 @@ export default {
 	methods: {
 		convertSchemaToTreeData,
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model = {
-				connectionId: '',
-				type: 'custom_connection',
-				primaryKeys: '',
-				initialSyncOrder: 0,
-				enableInitialOrder: false
-			};
 			if (data) {
 				_.merge(this.model, data);
 			}

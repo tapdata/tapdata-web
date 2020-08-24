@@ -112,13 +112,13 @@
 					</div>
 				</el-form-item>
 
-				<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
+				<!-- <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
 					<MultiSelection
 						v-model="model.primaryKeys"
 						:options="primaryKeyOptions"
 						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
 					></MultiSelection>
-				</el-form-item>
+				</el-form-item> -->
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
@@ -337,7 +337,7 @@
 
 <script>
 import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
-import MultiSelection from '../../../components/MultiSelection';
+// import MultiSelection from '../../../components/MultiSelection';
 import ClipButton from '@/components/ClipButton';
 import { convertSchemaToTreeData } from '../../util/Schema';
 import RelatedTasks from '../../../components/relatedTasks';
@@ -351,7 +351,7 @@ let editor = null;
 let tempSchemas = [];
 export default {
 	name: 'Table',
-	components: { Entity, DatabaseForm, MultiSelection, ClipButton, RelatedTasks, CreateTable },
+	components: { Entity, DatabaseForm, ClipButton, RelatedTasks, CreateTable },
 	props: {
 		database_types: {
 			type: Array,
@@ -402,10 +402,10 @@ export default {
 				if (this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0) {
 					let fields = this.mergedSchema.fields;
 					this.primaryKeyOptions = fields.map(f => f.field_name);
-					if (!this.model.primaryKeys) {
-						let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
-						if (primaryKeys.length > 0) this.model.primaryKeys = Array.from(new Set(primaryKeys)).join(',');
-					}
+					// if (!this.model.primaryKeys) {
+					// 	let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
+					// 	if (primaryKeys.length > 0) this.model.primaryKeys = Array.from(new Set(primaryKeys)).join(',');
+					// }
 				}
 			}
 		}
@@ -489,7 +489,7 @@ export default {
 				initialOffset: '',
 				dropTable: false,
 				type: 'table',
-				primaryKeys: '',
+				// primaryKeys: '',
 				initialSyncOrder: 0,
 				enableInitialOrder: false
 			},
@@ -809,17 +809,17 @@ export default {
 				MetadataInstances.schema(params).then(res => {
 					if (res.statusText === 'OK' || res.status === 200) {
 						let fields = res.data.records[0].schema.tables[0].fields;
-						let primaryKeys = fields
-							.filter(f => f.primary_key_position > 0)
-							.map(f => f.field_name)
-							.join(',');
+						// let primaryKeys = fields
+						// 	.filter(f => f.primary_key_position > 0)
+						// 	.map(f => f.field_name)
+						// 	.join(',');
 						self.primaryKeyOptions = fields.map(f => f.field_name);
 						self.model.custSql.custFields = fields.map(f => f.field_name);
-						if (primaryKeys) {
-							self.model.primaryKeys = primaryKeys;
-						} else {
-							self.model.primaryKeys = '';
-						}
+						// if (primaryKeys) {
+						// 	self.model.primaryKeys = primaryKeys;
+						// } else {
+						// 	self.model.primaryKeys = '';
+						// }
 						self.$emit('schemaChange', _.cloneDeep(res.data.records[0].schema.tables[0]));
 					}
 				});
@@ -828,30 +828,6 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			_.merge(this.model, {
-				connectionId: '',
-				databaseType: '',
-				tableName: '',
-				sql: '',
-				editSql: '',
-				isFilter: false,
-				sqlFromCust: true,
-				sqlNotFromCust: false,
-				custSql: {
-					fieldFilterType: 'keepAllFields',
-					limitLines: '',
-					filterConds: [{ field: '', calcu: '', val: '', condStr: '' }],
-					sql: ''
-				},
-				initialOffset: '',
-				dropTable: false,
-				type: 'table',
-				primaryKeys: '',
-				initialSyncOrder: 0,
-				enableInitialOrder: false
-			});
-			if (this.model.selectedFields) this.model.selectedFields.length = 0;
-			if (this.model.custFields) this.model.custFields.length = 0;
 			if (data) {
 				_.merge(this.model, data);
 				//老数据的兼容处理

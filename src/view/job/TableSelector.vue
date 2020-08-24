@@ -314,18 +314,18 @@ export default {
 					type: data.source.database_type
 				};
 			} else if (['table', 'view', 'collection', 'mongo_view'].includes(data.meta_type)) {
-				let primaryKeys = '';
+				// let primaryKeys = '';
 				if (data.fields) {
-					primaryKeys = data.fields
-						.filter(item => item.primary_key_position > 0)
-						.map(item => item.field_name)
-						.join(',');
+					// primaryKeys = data.fields
+					// 	.filter(item => item.primary_key_position > 0)
+					// 	.map(item => item.field_name)
+					// 	.join(',');
 
 					data.fields.forEach(
 						item => (item.original_field_name = item.original_field_name || item.field_name)
 					);
 				}
-				log('primaryKeys', primaryKeys);
+				// log('primaryKeys', primaryKeys);
 				formData = {
 					connectionId: data.source._id || data.source.id,
 					databaseType: data.database_type,
@@ -333,7 +333,7 @@ export default {
 					sql: '',
 					dropTable: false,
 					type: data.meta_type,
-					primaryKeys: primaryKeys,
+					// primaryKeys: primaryKeys,
 					name: data.label || data.original_name
 				};
 				schema = {

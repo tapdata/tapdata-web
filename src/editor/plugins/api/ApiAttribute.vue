@@ -51,13 +51,13 @@
 						></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" prop="primaryKeys" required>
+				<!-- <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" prop="primaryKeys" required>
 					<el-input
 						v-model="model.primaryKeys"
 						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
 						size="mini"
 					></el-input>
-				</el-form-item>
+				</el-form-item> -->
 			</el-form>
 		</div>
 		<div class="e-entity-wrap" style="text-align: center; overflow:auto;">
@@ -89,13 +89,13 @@ export default {
 						message: this.$t('editor.cell.data_node.api.chooseApiName')
 					}
 				],
-				primaryKeys: [
-					{
-						required: true,
-						trigger: 'blur',
-						message: this.$t('editor.cell.data_node.api.none_pk')
-					}
-				],
+				// primaryKeys: [
+				// 	{
+				// 		required: true,
+				// 		trigger: 'blur',
+				// 		message: this.$t('editor.cell.data_node.api.none_pk')
+				// 	}
+				// ],
 				tableName: [
 					{
 						required: true,
@@ -107,8 +107,8 @@ export default {
 			model: {
 				connectionId: '',
 				type: 'rest api',
-				tableName: '',
-				primaryKeys: ''
+				tableName: ''
+				// primaryKeys: ''
 			},
 			schemas: [],
 			schemasLoading: false,
@@ -174,25 +174,25 @@ export default {
 					}
 				}
 			}
-		},
-		mergedSchema: {
-			handler() {
-				if (
-					!this.model.primaryKeys &&
-					this.mergedSchema &&
-					this.mergedSchema.fields &&
-					this.mergedSchema.fields.length > 0
-				) {
-					let primaryKeys = this.mergedSchema.fields
-						.filter(f => f.primary_key_position > 0)
-						.map(f => f.field_name);
-					let unique = {};
-					primaryKeys.forEach(key => (unique[key] = 1));
-					primaryKeys = Object.keys(unique);
-					if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
-				}
-			}
 		}
+		// mergedSchema: {
+		// 	handler() {
+		// 		if (
+		// 			!this.model.primaryKeys &&
+		// 			this.mergedSchema &&
+		// 			this.mergedSchema.fields &&
+		// 			this.mergedSchema.fields.length > 0
+		// 		) {
+		// 			let primaryKeys = this.mergedSchema.fields
+		// 				.filter(f => f.primary_key_position > 0)
+		// 				.map(f => f.field_name);
+		// 			let unique = {};
+		// 			primaryKeys.forEach(key => (unique[key] = 1));
+		// 			primaryKeys = Object.keys(unique);
+		// 			if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
+		// 		}
+		// 	}
+		// }
 	},
 
 	methods: {
@@ -221,12 +221,6 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model = {
-				connectionId: '',
-				type: 'rest api',
-				tableName: '',
-				primaryKeys: ''
-			};
 			if (data) {
 				_.merge(this.model, data);
 			}

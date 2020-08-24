@@ -10,6 +10,13 @@
 				<el-form-item :label="$t('dataFlow.nodeName')" required>
 					<el-input v-model="form.name" maxlength="20" show-word-limit></el-input>
 				</el-form-item>
+				<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
+					<MultiSelection
+						v-model="form.primaryKeys"
+						:options="primaryKeyOptions"
+						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
+					></MultiSelection>
+				</el-form-item>
 			</el-col>
 			<el-row :gutter="20" class="loopFrom" v-for="(item, index) in form.aggregations" :key="index">
 				<el-col :span="21" class="fromLoopBox">
@@ -115,11 +122,13 @@
 import _ from 'lodash';
 import log from '../../../log';
 import { mergeJoinTablesToTargetSchema } from '../../util/Schema';
+import MultiSelection from '../../../components/MultiSelection';
 
 let counter = 0;
 let editorMonitor = null;
 export default {
 	name: 'Aggregate',
+	components: { MultiSelection },
 	data() {
 		return {
 			disabled: false,
@@ -143,8 +152,10 @@ export default {
 						aggExpression: '',
 						groupByExpression: ''
 					}
-				]
+				],
+				primaryKeys: ''
 			},
+			primaryKeyOptions: [],
 			aggaggExpression: '1',
 			countObj: {
 				AVG: 0,
@@ -220,19 +231,6 @@ export default {
 		},
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.form = {
-				name: '',
-				type: 'aggregation_processor',
-				aggregations: [
-					{
-						name: 'COUNT',
-						filterPredicate: '',
-						aggFunction: 'COUNT',
-						aggExpression: '',
-						groupByExpression: ''
-					}
-				]
-			};
 			if (data) {
 				_.merge(this.form, data);
 				this.form.aggregations.map((item, index) => {
@@ -242,6 +240,15 @@ export default {
 
 			let inputSchemas = cell.getInputSchema();
 			let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
+			//获取所有字段键选项，若主键为空，默认选中schema中的主键
+			if (schema && schema.fields) {
+				this.primaryKeyOptions = schema.fields.map(f => f.field_name);
+				if (!this.form.primaryKeys) {
+					let primaryKeys = schema.fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
+					if (primaryKeys.length > 0) this.form.primaryKeys = Array.from(new Set(primaryKeys)).join(',');
+				}
+			}
+
 			let object = {};
 			this.groupList = schema.fields ? schema.fields.sort((v1, v2) => (v1 > v2 ? 1 : v1 === v2 ? 0 : -1)) : [];
 			if (!!this.groupList && this.groupList.length > 0) {

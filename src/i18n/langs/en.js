@@ -314,6 +314,9 @@ const en = {
 		output: 'Output',
 		totalInput: 'Total Input',
 		totalOutput: 'Total Output',
+		totalInsert: 'Total Insert',
+		totalUpdate: 'Total Update',
+		totalDelete: 'Total Delete',
 		category: 'Category',
 		replicate: 'Replicate Lag',
 		throughputpop:

@@ -116,13 +116,13 @@
 					</div>
 				</el-form-item>
 
-				<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
+				<!-- <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
 					<MultiSelection
 						v-model="model.primaryKeys"
 						:options="primaryKeyOptions"
 						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
 					></MultiSelection>
-				</el-form-item>
+				</el-form-item> -->
 				<el-form-item>
 					<template slot="label">
 						{{ $t('editor.cell.data_node.collection.form.fieldFilterTip.label') }}
@@ -315,21 +315,18 @@ export default {
 											}
 										]
 								  };
-						/* let fields = schema.fields || [];
-							let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name).join(',');
-							if( primaryKeys) this.model.primaryKeys = primaryKeys; */
 
 						let fields = schema.fields || [];
-						let primaryKeys = fields
-							.filter(f => f.primary_key_position > 0)
-							.map(f => f.field_name)
-							.join(',');
+						// let primaryKeys = fields
+						// 	.filter(f => f.primary_key_position > 0)
+						// 	.map(f => f.field_name)
+						// 	.join(',');
 						this.primaryKeyOptions = fields.map(f => f.field_name);
-						if (primaryKeys) {
-							this.model.primaryKeys = primaryKeys;
-						} else {
-							this.model.primaryKeys = '';
-						}
+						// if (primaryKeys) {
+						// 	this.model.primaryKeys = primaryKeys;
+						// } else {
+						// 	this.model.primaryKeys = '';
+						// }
 						this.$emit('schemaChange', _.cloneDeep(schema));
 					}
 				}
@@ -343,10 +340,10 @@ export default {
 				if (this.defaultSchema && this.defaultSchema.fields && this.defaultSchema.fields.length > 0) {
 					let fields = this.defaultSchema.fields;
 					this.primaryKeyOptions = fields.map(f => f.field_name);
-					if (!this.model.primaryKeys) {
-						let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
-						if (primaryKeys.length > 0) this.model.primaryKeys = Array.from(new Set(primaryKeys)).join(',');
-					}
+					// if (!this.model.primaryKeys) {
+					// 	let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
+					// 	if (primaryKeys.length > 0) this.model.primaryKeys = Array.from(new Set(primaryKeys)).join(',');
+					// }
 				}
 			}
 		}
@@ -430,7 +427,7 @@ export default {
 				tableName: '',
 				dropTable: false,
 				type: 'collection',
-				primaryKeys: '',
+				// primaryKeys: '',
 				filter: '',
 				fieldFilterType: 'keepAllFields',
 				fieldFilter: '',
@@ -683,21 +680,6 @@ export default {
 			}
 		},
 		setData(data, cell, isSourceDataNode, vueAdapter) {
-			this.model = {
-				connectionId: '',
-				databaseType: '',
-				tableName: '',
-				dropTable: false,
-				type: 'collection',
-				primaryKeys: '',
-				filter: '',
-				fieldFilterType: 'keepAllFields',
-				fieldFilter: '',
-				initialSyncOrder: 0,
-				enableInitialOrder: false,
-				operations: []
-			};
-
 			if (data) {
 				_.merge(this.model, data);
 				//老数据的兼容处理
