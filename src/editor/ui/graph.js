@@ -93,7 +93,11 @@ export default class Graph extends Component {
 			drawGrid: false,
 			linkPinning: false,
 			// markAvailable: true,
-			defaultLink: new joint.shapes.app.Link(),
+			// new joint.shapes.app.Link()
+			defaultLink: function(cellView) {
+				if (cellView.model.get('type') === 'app.Database') return new joint.shapes.app.databaseLink();
+				else return new joint.shapes.app.Link();
+			},
 			defaultConnectionPoint: joint.shapes.app.Link.connectionPoint,
 			interactive: {
 				linkMove: false
