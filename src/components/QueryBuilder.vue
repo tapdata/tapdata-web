@@ -1,0 +1,420 @@
+<template>
+	<div>
+		<el-tabs type="border-card" @tab-click="sqlTabChanged">
+			<el-tab-pane>
+				<span slot="label"
+					><el-checkbox v-model="sqlFromCust" @change="setSqlFrom"></el-checkbox>
+					{{ $t('editor.cell.data_node.collection.form.filter.fieldFilter') }}</span
+				>
+				<el-form-item :placeholder="$t('editor.cell.data_node.collection.form.filter.allField')">
+					<el-select v-model="value.fieldFilterType">
+						<el-option
+							v-for="item in filterTypeOptions"
+							:key="item.value"
+							:label="item.label"
+							:value="item.value"
+						></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item
+					v-if="value.fieldFilterType !== 'keepAllFields'"
+					:placeholder="
+						value.fieldFilterType === 'retainedField'
+							? $t('editor.cell.data_node.collection.form.fieldFilter.placeholderKeep')
+							: $t('editor.cell.data_node.collection.form.fieldFilter.placeholderDelete')
+					"
+				>
+					<el-select
+						size="mini"
+						v-model="value.selectedFields"
+						multiple
+						filterable
+						default-first-option
+						@change="handleFilterChange()"
+					>
+						<el-option v-for="opt in primaryKeyOptions" :key="opt" :label="opt" :value="opt"> </el-option>
+					</el-select>
+				</el-form-item>
+				<div class="fiflter">
+					<div class="title">{{ $t('editor.cell.data_node.collection.form.filter.label') }}</div>
+					<div class="rowSlot">
+						<span slot="prepend">{{ $t('editor.cell.data_node.collection.form.filter.rowLimit') }}</span>
+						<el-select v-model="value.limitLines" size="mini" class="e-select">
+							<el-option
+								v-for="item in rowNumberList"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value"
+							></el-option>
+						</el-select>
+					</div>
+					<queryCond :primaryKeyOptions="primaryKeyOptions" v-model="value"></queryCond>
+					<el-row class="selectSql">
+						<div>{{ cSql }}</div>
+					</el-row>
+				</div>
+			</el-tab-pane>
+			<el-tab-pane>
+				<span slot="label"
+					><el-checkbox v-model="sqlNotFromCust" @change="setSqlFrom('no')"></el-checkbox>
+					{{ $t('editor.cell.data_node.collection.form.filter.sqlFilter') }}</span
+				>
+				<el-form-item prop="sql">
+					<el-input
+						type="textarea"
+						rows="10"
+						v-model="editSql"
+						:placeholder="$t('editor.cell.data_node.table.form.custom_sql.placeholder')"
+						size="mini"
+					></el-input>
+				</el-form-item>
+
+				<el-form-item :label="$t('editor.cell.data_node.table.form.initial_offset.label')">
+					<el-input
+						v-model="initialOffset"
+						:placeholder="$t('editor.cell.data_node.table.form.initial_offset.placeholder')"
+						size="mini"
+					></el-input>
+				</el-form-item>
+			</el-tab-pane>
+		</el-tabs>
+	</div>
+</template>
+
+<script>
+import queryCond from './QueryCond';
+
+export default {
+	components: { queryCond },
+	props: {
+		custFields: {
+			type: Array,
+			default() {
+				return [];
+			}
+		},
+		primaryKeyOptions: {
+			type: Array,
+			default() {
+				return [];
+			}
+		},
+		mergedSchema: {
+			type: Object,
+			default() {
+				return {};
+			}
+		},
+		value: {
+			type: Object,
+			default() {
+				return {};
+			}
+		},
+		initialOffset: {
+			type: String,
+			default() {
+				return '';
+			}
+		},
+		tableName: {
+			type: String,
+			default() {
+				return '';
+			}
+		}
+	},
+	data() {
+		return {
+			editSql: '',
+			isFilter: false,
+			sqlFromCust: true,
+			sqlNotFromCust: false,
+			cSql: '',
+			sqlWhere: '',
+			filterTypeOptions: [
+				{
+					label: this.$t('editor.cell.data_node.collection.form.filter.allField'),
+					value: 'keepAllFields'
+				},
+				{
+					label: this.$t('editor.cell.data_node.collection.form.fieldFilterType.retainedField'),
+					value: 'retainedField'
+				},
+				{
+					label: this.$t('editor.cell.data_node.collection.form.fieldFilterType.deleteField'),
+					value: 'deleteField'
+				}
+			],
+			rowNumberList: [
+				{
+					label: this.$t('editor.cell.data_node.collection.form.filter.allRows'),
+					value: 'all'
+				},
+				{
+					label: this.$t('editor.cell.data_node.collection.form.filter.oneThousandRows'),
+					value: 1000
+				},
+				{
+					label: this.$t('editor.cell.data_node.collection.form.filter.tenThousandRows'),
+					value: 10000
+				}
+			]
+		};
+	},
+	watch: {
+		value: {
+			deep: true,
+			handler() {
+				this.$emit('input', this.value);
+				this.sqlWhere = this.toSqlWhere(this.value.conditions);
+			}
+		}
+	},
+	methods: {
+		handleFilterChange() {
+			this.$nextTick(() => {
+				this.createCustSql();
+			});
+		},
+		createCustSql() {
+			let res = 'SELECT ',
+				custSql = this.value;
+			while (this.custFields.length > 0) this.custFields.pop();
+			if (this.value.selectedFields.length > 0 && custSql.fieldFilterType == 'retainedField')
+				this.value.selectedFields.forEach(it => this.custFields.push(it));
+			else if (this.value.selectedFields.length > 0 && custSql.fieldFilterType == 'deleteField') {
+				this.primaryKeyOptions
+					.filter(it => !this.value.selectedFields.includes(it))
+					.forEach(it => this.custFields.push(it));
+			}
+
+			if (this.custFields.length > 0 && this.custFields.length != this.primaryKeyOptions.length)
+				res += this.custFields.join(',');
+			else res += '* ';
+			res += ' FROM ' + this.tableName + ' ';
+			if ((this.sqlWhere && this.sqlWhere.length > 0) || (custSql.limitLines && custSql.limitLines != 'all'))
+				res += ' WHERE ';
+			res += this.sqlWhere;
+			if (custSql.limitLines && custSql.limitLines != 'all') {
+				if (res.indexOf('WHERE ') < res.length - 6) res += ' AND ';
+				res += ' ROWNUM < ' + custSql.limitLines;
+			}
+			this.cSql = res;
+		},
+		setSqlFrom(name) {
+			if (name == 'no') this.sqlFromCust = !this.sqlNotFromCust;
+			else this.sqlNotFromCust = !this.sqlFromCust;
+		},
+
+		setCondition(condition) {
+			let result = this.standard(condition) || [];
+
+			if (result.length === 1 && result[0].type === 'group') {
+				this.root = result[0];
+			} else {
+				this.root.conditions = result;
+			}
+			if (this.root.conditions.length === 0) {
+				this.root.conditions.push({
+					type: 'condition',
+					field: '',
+					command: '',
+					value: ''
+				});
+			}
+		},
+		toSqlWhere(conditions) {
+			if (!this.mergedSchema) return;
+			let res = '';
+			conditions.forEach(cond => {
+				if (cond.field || cond.type == 'group') {
+					if (cond.type == 'group')
+						res += ' ' + cond.operator + ' (' + this.toSqlWhere(cond.conditions) + ')';
+					else {
+						let quota = ['String'].includes(
+								this.mergedSchema.fields.find(it => it.field_name == cond.field).javaType
+							)
+								? "'"
+								: '',
+							percent = cond.calcu == 'like' ? '%' : '';
+						if (res.length > 1) res += ' ' + cond.operator + ' ';
+						res += cond.field + ' ' + cond.command + ' ' + quota + percent + cond.value + percent + quota;
+					}
+				}
+			});
+			return res;
+		},
+		flat(condition) {
+			if (condition && condition.type === 'group') {
+				if (condition.operator === 'and') {
+					let result = {};
+					condition.conditions.forEach(v => {
+						let _flat = this.flat(v);
+						if (_flat) {
+							result.and = result.and || [];
+							result.and.push(_flat);
+						}
+					});
+
+					return result;
+				} else if (condition.operator === 'or') {
+					let result = {
+						or: []
+					};
+					condition.conditions.forEach(v => {
+						let _flat = this.flat(v);
+						if (_flat) result.or.push(_flat);
+					});
+					return result;
+				}
+			} else if (condition.type === 'condition' && condition.field) {
+				if (condition.command === 'eq') {
+					return {
+						['' + condition.field + '']: condition.value
+					};
+				} else {
+					return {
+						['' + condition.field + '']: {
+							['' + condition.command + '']: condition.value
+						}
+					};
+				}
+			} else {
+				return null;
+			}
+		},
+
+		serializationToRestFilter(key, val) {
+			if (typeof val === 'object') {
+				if (Array.isArray(val)) {
+					let result = [];
+					for (let i = 0; i < val.length; i++)
+						result.push(this.serializationToRestFilter(`${key}[${i}]`, val[i]));
+					return result.join('&');
+				} else {
+					let result = [];
+					for (let name in val) {
+						if (name && val.hasOwnProperty(name)) {
+							let temp = this.serializationToRestFilter(`${key}[${name}]`, val[name]);
+							if (temp) result.push(temp);
+						}
+					}
+					return result.join('&');
+				}
+			} else {
+				return `${key}=${typeof val === 'string' ? val.trim() : val}`;
+			}
+		},
+		sqlTabChanged(tab) {
+			if (tab.index == '1') {
+				this.sqlFromCust = false;
+				this.sqlNotFromCust = true;
+			} else {
+				this.sqlFromCust = true;
+				this.sqlNotFromCust = false;
+			}
+		}
+	}
+};
+</script>
+
+<style lang="less" scoped>
+.e-table {
+	.e-entity-wrap {
+		flex: 1;
+		overflow: auto;
+	}
+	.flex-block {
+		display: flex;
+		align-items: center;
+	}
+	.fiflter {
+		padding: 10px 12px;
+		font-size: 12px;
+		box-sizing: border-box;
+		border: 1px solid #dcdfe6;
+		.title {
+			font-size: 12px;
+			padding-bottom: 10px;
+		}
+		.rowSlot {
+			display: inline-block;
+			margin-bottom: 12px;
+			border: 1px solid #dcdfe6;
+			border-radius: 4px;
+			box-sizing: border-box;
+			span {
+				float: left;
+				display: inline-block;
+				height: 28px;
+				width: 80px;
+				line-height: 28px;
+				text-align: center;
+				font-size: 12px;
+				background-color: #f5f7fa;
+			}
+			.e-select {
+				width: 160px;
+			}
+		}
+		.e-row {
+			padding-bottom: 5px;
+			.btn {
+				width: 84px;
+				height: 28px;
+				line-height: 27px;
+				border: 1px solid #dcdfe6;
+				border-radius: 4px;
+				box-sizing: border-box;
+				span {
+					float: left;
+					display: inline-block;
+					text-align: center;
+					color: #999;
+					font-size: 12px;
+					cursor: pointer;
+					box-sizing: border-box;
+				}
+				span:first-child {
+					width: 40px;
+				}
+				span:last-child {
+					width: 42px;
+					border-left: 1px solid #dcdfe6;
+				}
+				span:hover {
+					background-color: #ecf5ff;
+				}
+			}
+		}
+		.selectSql {
+			padding-top: 10px;
+			font-size: 12px;
+			color: #999;
+			overflow: hidden;
+			div {
+				width: 100%;
+			}
+		}
+	}
+}
+</style>
+<style lang="less">
+.e-table {
+	.fiflter {
+		.e-select .el-input--mini .el-input__inner {
+			border: 0;
+			font-size: 12px !important;
+		}
+	}
+	.el-tabs__item,
+	.el-input__inner {
+		font-size: 12px !important;
+	}
+	.el-switch__label * {
+		font-size: 12px !important;
+		color: #999;
+	}
+}
+</style>

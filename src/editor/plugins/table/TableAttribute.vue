@@ -98,146 +98,15 @@
 					</div>
 				</el-form-item>
 
-				<el-tabs type="border-card" v-if="model.isFilter" v-model="model.filterType">
-					<!-- @tab-click="sqlTabChanged" -->
-					<el-tab-pane name="field">
-						<span slot="label">
-							<!-- @change="setSqlFrom" -->
-							<!-- <el-checkbox v-model="model.sqlFromCust" disabled></el-checkbox> -->
-							{{ $t('editor.cell.data_node.collection.form.filter.fieldFilter') }}</span
-						>
-						<el-form-item :placeholder="$t('editor.cell.data_node.collection.form.filter.allField')">
-							<el-select v-model="model.custSql.fieldFilterType">
-								<el-option
-									v-for="item in filterTypeOptions"
-									:key="item.value"
-									:label="item.label"
-									:value="item.value"
-								></el-option>
-							</el-select>
-						</el-form-item>
-						<el-form-item
-							v-if="model.custSql.fieldFilterType !== 'keepAllFields'"
-							:placeholder="
-								model.custSql.fieldFilterType === 'retainedField'
-									? $t('editor.cell.data_node.collection.form.fieldFilter.placeholderKeep')
-									: $t('editor.cell.data_node.collection.form.fieldFilter.placeholderDelete')
-							"
-						>
-							<el-select
-								size="mini"
-								v-model="model.selectedFields"
-								multiple
-								filterable
-								default-first-option
-								@change="handleFilterChange()"
-							>
-								<el-option v-for="opt in primaryKeyOptions" :key="opt" :label="opt" :value="opt">
-								</el-option>
-							</el-select>
-						</el-form-item>
-						<div class="fiflter">
-							<div class="title">{{ $t('editor.cell.data_node.collection.form.filter.label') }}</div>
-							<div class="rowSlot">
-								<span slot="prepend">{{
-									$t('editor.cell.data_node.collection.form.filter.rowLimit')
-								}}</span>
-								<el-select v-model="model.custSql.limitLines" size="mini" class="e-select">
-									<el-option
-										v-for="item in rowNumberList"
-										:key="item.value"
-										:label="item.label"
-										:value="item.value"
-									></el-option>
-								</el-select>
-							</div>
-							<el-row
-								v-for="cond in model.custSql.filterConds"
-								:key="cond.field"
-								:gutter="12"
-								class="e-row"
-							>
-								<el-col :span="8">
-									<el-select v-model="cond.field" filterable size="mini">
-										<el-option
-											v-for="item in primaryKeyOptions"
-											:key="item"
-											:label="item"
-											:value="item"
-										></el-option>
-									</el-select>
-								</el-col>
-								<el-col :span="5">
-									<el-select v-model="cond.calcu" size="mini">
-										<el-option
-											v-for="item in calculationList"
-											:label="item"
-											:value="item"
-											:key="item"
-										></el-option>
-									</el-select>
-								</el-col>
-
-								<el-col :span="6">
-									<el-input type="text" v-model="cond.val" size="mini"></el-input>
-								</el-col>
-
-								<el-col :span="5">
-									<div class="btn">
-										<span
-											class="iconfont icon-quxiao remove"
-											@click="removeCustFilter(cond)"
-										></span>
-										<span
-											class="iconfont icon-xinzeng2 remove"
-											@click="
-												model.custSql.filterConds.push({
-													field: '',
-													calcu: '',
-													val: '',
-													condStr: ''
-												})
-											"
-											>or</span
-										>
-									</div>
-									<!-- <el-radio-group v-model="labelPosition" size="small">
-										<el-radio-button label="left">X</el-radio-button>
-										<el-radio-button label="right">+ or</el-radio-button>
-									</el-radio-group> -->
-								</el-col>
-								<div>{{ cond.condStr }}</div>
-							</el-row>
-							<el-row class="selectSql">
-								<div>{{ model.cSql }}</div>
-							</el-row>
-						</div>
-					</el-tab-pane>
-					<el-tab-pane name="sql">
-						<span slot="label">
-							<!-- @change="setSqlFrom('no')" -->
-							<!-- <el-checkbox v-model="model.sqlNotFromCust" disabled></el-checkbox> -->
-							{{ $t('editor.cell.data_node.collection.form.filter.sqlFilter') }}</span
-						>
-						<el-form-item prop="sql" :rules="rules">
-							<el-input
-								type="textarea"
-								rows="10"
-								v-model="model.editSql"
-								:placeholder="$t('editor.cell.data_node.table.form.custom_sql.placeholder')"
-								size="mini"
-							></el-input>
-						</el-form-item>
-
-						<el-form-item :label="$t('editor.cell.data_node.table.form.initial_offset.label')">
-							<el-input
-								v-model="model.initialOffset"
-								:placeholder="$t('editor.cell.data_node.table.form.initial_offset.placeholder')"
-								size="mini"
-							></el-input>
-						</el-form-item>
-					</el-tab-pane>
-				</el-tabs>
+				<queryBuilder
+					v-model="model.custSql"
+					v-bind:initialOffset.sync="model.initialOffset"
+					:primaryKeyOptions="primaryKeyOptions"
+					v-bind:selectedFields.sync="model.selectedFields"
+					v-bind:custFields.sync="model.custFields"
+					:tableName="model.tableName"
+					:mergedSchema="mergedSchema"
+				></queryBuilder>
 
 				<el-form-item
 					required
@@ -271,18 +140,19 @@
 import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
 import MultiSelection from '../../../components/MultiSelection';
 import ClipButton from '@/components/ClipButton';
+import queryBuilder from '@/components/QueryBuilder';
 import { convertSchemaToTreeData } from '../../util/Schema';
 import RelatedTasks from '../../../components/relatedTasks';
 import Entity from '../link/Entity';
 import _ from 'lodash';
 import factory from '../../../api/factory';
+
 let connectionApi = factory('connections');
 const MetadataInstances = factory('MetadataInstances');
-let editor = null;
 let tempSchemas = [];
 export default {
 	name: 'Table',
-	components: { Entity, DatabaseForm, MultiSelection, ClipButton, RelatedTasks },
+	components: { Entity, DatabaseForm, MultiSelection, ClipButton, RelatedTasks, queryBuilder },
 	props: {
 		database_types: {
 			type: Array,
@@ -297,12 +167,6 @@ export default {
 			deep: true,
 			handler() {
 				this.$emit('dataChanged', this.getData());
-			}
-		},
-		'model.custSql': {
-			deep: true,
-			handler() {
-				this.createCustSql();
 			}
 		},
 		'model.connectionId': {
@@ -368,7 +232,6 @@ export default {
 				defaultFirstOption: true,
 				clearable: true
 			},
-
 			disabled: false,
 			rules: {
 				connectionId: [
@@ -390,15 +253,14 @@ export default {
 				editSql: '',
 				isFilter: false,
 				sqlFromCust: true,
-				sqlNotFromCust: false,
-				selectedFields: [],
 				custFields: [],
 				cSql: '',
 				filterType: 'field',
 				custSql: {
+					selectedFields: [],
 					fieldFilterType: 'keepAllFields',
 					limitLines: '',
-					filterConds: [{ field: '', calcu: '', val: '', condStr: '' }]
+					conditions: [{ field: '', command: '', value: '', condStr: '' }]
 				},
 				initialOffset: '',
 				dropTable: false,
@@ -410,36 +272,7 @@ export default {
 
 			mergedSchema: null,
 
-			primaryKeyOptions: [],
-			filterTypeOptions: [
-				{
-					label: this.$t('editor.cell.data_node.collection.form.filter.allField'),
-					value: 'keepAllFields'
-				},
-				{
-					label: this.$t('editor.cell.data_node.collection.form.fieldFilterType.retainedField'),
-					value: 'retainedField'
-				},
-				{
-					label: this.$t('editor.cell.data_node.collection.form.fieldFilterType.deleteField'),
-					value: 'deleteField'
-				}
-			],
-			rowNumberList: [
-				{
-					label: this.$t('editor.cell.data_node.collection.form.filter.allRows'),
-					value: 'all'
-				},
-				{
-					label: this.$t('editor.cell.data_node.collection.form.filter.oneThousandRows'),
-					value: 1000
-				},
-				{
-					label: this.$t('editor.cell.data_node.collection.form.filter.tenThousandRows'),
-					value: 10000
-				}
-			],
-			calculationList: ['=', '<>', '>', '<', '>=', '<=', 'like']
+			primaryKeyOptions: []
 		};
 	},
 
@@ -449,9 +282,6 @@ export default {
 
 	methods: {
 		convertSchemaToTreeData,
-		seeMonitor() {
-			editor.goBackMontior();
-		},
 		async loadDataSource() {
 			this.databaseSelectConfig.loading = true;
 			let result = await connectionApi.get({
@@ -524,78 +354,6 @@ export default {
 					this.schemaSelectConfig.loading = false;
 				});
 		},
-		// setSqlFrom(name) {
-		// 	if (name == 'no') {
-		// 		this.model.sqlFromCust = true;
-		// 		this.model.sqlNotFromCust = false;
-		// 	} else {
-		// 		this.model.sqlFromCust = false;
-		// 		this.model.sqlNotFromCust = true;
-		// 	}
-		// },
-		// sqlTabChanged(tab) {
-		// if (tab.index == '1') {
-		// 	this.model.sqlFromCust = false;
-		// 	this.model.sqlNotFromCust = true;
-		// } else {
-		// 	this.model.sqlFromCust = true;
-		// 	this.model.sqlNotFromCust = false;
-		// }
-		// },
-		removeCustFilter(cond) {
-			if (this.model.custSql.filterConds.length == 1) {
-				this.model.custSql.filterConds[0] = Object.assign(this.model.custSql.filterConds[0], {
-					field: '',
-					calcu: '',
-					val: '',
-					condStr: ''
-				});
-				return;
-			}
-			this.model.custSql.filterConds.splice(this.model.custSql.filterConds.indexOf(cond), 1);
-		},
-		handleFilterChange() {
-			this.$nextTick(() => {
-				this.createCustSql();
-			});
-		},
-		createCustSql() {
-			let res = 'SELECT ',
-				custSql = this.model.custSql;
-			if (this.model.selectedFields.length > 0 && custSql.fieldFilterType == 'retainedField')
-				this.model.custFields = this.model.selectedFields;
-			else if (this.model.selectedFields.length > 0 && custSql.fieldFilterType == 'deleteField') {
-				this.model.custFields = this.primaryKeyOptions.filter(it => !this.model.selectedFields.includes(it));
-			}
-
-			if (this.model.custFields.length > 0 && this.model.custFields.length != this.primaryKeyOptions.length)
-				res += this.model.custFields.join(',');
-			else res += '* ';
-			res += ' FROM ' + this.model.tableName + ' ';
-			if (custSql.filterConds[0].field.length > 0 || (custSql.limitLines && custSql.limitLines != 'all'))
-				res += ' WHERE ';
-			for (let i = 0; i < custSql.filterConds.length; i++) {
-				const cond = custSql.filterConds[i];
-				if (cond.field.length > 0) {
-					if (i == 0) res += '(';
-					let quota = ['String'].includes(
-							this.mergedSchema.fields.find(it => it.field_name == cond.field).javaType
-						)
-							? "'"
-							: '',
-						percent = cond.calcu == 'like' ? '%' : '';
-					res += cond.field + ' ' + cond.calcu + ' ' + quota + percent + cond.val + percent + quota;
-					if (i <= custSql.filterConds.length - 2) res += ' OR ';
-					if (i == custSql.filterConds.length - 1) res += ')';
-				}
-			}
-			if (custSql.limitLines && custSql.limitLines != 'all') {
-				if (res.indexOf('WHERE ') < res.length - 6) res += ' AND ';
-				res += ' ROWNUM < ' + custSql.limitLines;
-			}
-			this.model.cSql = res;
-		},
-
 		handlerConnectionChange() {
 			this.model.tableName = '';
 			let list = this.databaseSelectConfig.options;
@@ -649,7 +407,7 @@ export default {
 			this.taskData.tableName = this.model.tableName;
 		},
 
-		setData(data, cell, isSourceDataNode, vueAdapter) {
+		setData(data, cell, isSourceDataNode) {
 			_.merge(this.model, {
 				connectionId: '',
 				databaseType: '',
@@ -672,8 +430,6 @@ export default {
 				initialSyncOrder: 0,
 				enableInitialOrder: false
 			});
-			if (this.model.selectedFields) this.model.selectedFields.length = 0;
-			if (this.model.custFields) this.model.custFields.length = 0;
 			if (data) {
 				_.merge(this.model, data);
 				//老数据的兼容处理
@@ -692,7 +448,6 @@ export default {
 			cell.on('change:outputSchema', () => {
 				this.mergedSchema = cell.getOutputSchema();
 			});
-			editor = vueAdapter.editor;
 		},
 		getData() {
 			if (this.model.isFilter)

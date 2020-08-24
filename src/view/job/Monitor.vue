@@ -615,7 +615,12 @@ export default {
 				msg['stageId'] = this.stageId;
 			}
 
-			if (ws.ws.readyState == 1) ws.send(msg);
+			let int = setInterval(() => {
+				if (ws.ws.readyState == 1) {
+					ws.send(msg);
+					clearInterval(int);
+				}
+			}, 2000);
 		},
 		// 获取所有节点
 		getAllCellsNode(queryString) {
