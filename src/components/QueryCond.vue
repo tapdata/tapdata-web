@@ -1,13 +1,14 @@
 <template>
 	<div style="" :class="color">
 		<div v-for="(cond, idx) in value.conditions" :key="idx">
+			<span>{{ cond.operator }}</span>
 			<queryCond
 				v-if="cond.type == 'group'"
 				:primaryKeyOptions="primaryKeyOptions"
 				v-model="value.conditions[idx]"
 			></queryCond>
-			<div v-if="cond.type != 'group'">
-				<el-col :span="8">
+			<div v-if="cond.type != 'group'" class="item">
+				<div>
 					<el-select v-model="cond.field" filterable size="mini">
 						<el-option
 							v-for="item in primaryKeyOptions"
@@ -16,14 +17,14 @@
 							:value="item"
 						></el-option>
 					</el-select>
-				</el-col>
-				<el-col :span="5">
+				</div>
+				<div>
 					<el-select v-model="cond.command" size="mini">
 						<el-option v-for="item in calculationList" :label="item" :value="item" :key="item"></el-option>
 					</el-select>
-				</el-col>
+				</div>
 
-				<el-col :span="6">
+				<div>
 					<el-input v-if="!cond.isDatetime" type="text" v-model="cond.value" size="mini"></el-input>
 					<el-date-picker
 						v-if="cond.isDatetime"
@@ -31,13 +32,13 @@
 						type="datetime"
 						placeholder="选择日期时间"
 					></el-date-picker>
-				</el-col>
+				</div>
 
-				<el-col :span="5">
-					<div class="btn" style="width: 90px;">
-						<span class="iconfont icon-quxiao remove" @click="removeChild(idx)"></span>
+				<div>
+					<div class="btn">
+						<span class="el-icon-close" @click="removeChild(idx)"></span>
 						<el-dropdown size="mini" @command="handleCommand">
-							<span class="el-dropdown-link">+<i class=""></i> </span>
+							<span class="el-dropdown-link el-icon-plus"></span>
 							<el-dropdown-menu slot="dropdown">
 								<el-dropdown-item command="and">+ and</el-dropdown-item>
 								<el-dropdown-item command="or">+ or</el-dropdown-item>
@@ -46,7 +47,7 @@
 							</el-dropdown-menu>
 						</el-dropdown>
 					</div>
-				</el-col>
+				</div>
 			</div>
 			<!-- <div>{{ cond.condStr }}</div> -->
 		</div>
@@ -165,6 +166,41 @@ export default {
 	}
 };
 </script>
+<style>
+.level2 {
+	border: 1px solid #dedee4;
+	padding-top: 5px;
+}
+</style>
+<style lang="less" scoped>
+.item {
+	display: flex;
+	justify-content: space-around;
+	justify-items: center;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	.btn {
+		height: 28px;
+		line-height: 46px;
+		text-align: center;
+		border: 1px solid #dcdfe6;
+		border-radius: 4px;
+		-webkit-box-sizing: border-box;
+		box-sizing: border-box;
+		display: flex;
+		padding-top: 8px;
+		span {
+			float: left;
+			display: inline-block;
+			text-align: center;
+			color: #999;
+			font-size: 12px;
+			cursor: pointer;
+			box-sizing: border-box;
+		}
+	}
+}
+</style>
 
 <style lang="less" scoped>
 .e-table {
@@ -207,33 +243,6 @@ export default {
 		}
 		.e-row {
 			padding-bottom: 5px;
-			.btn {
-				width: 84px;
-				height: 28px;
-				line-height: 27px;
-				border: 1px solid #dcdfe6;
-				border-radius: 4px;
-				box-sizing: border-box;
-				span {
-					float: left;
-					display: inline-block;
-					text-align: center;
-					color: #999;
-					font-size: 12px;
-					cursor: pointer;
-					box-sizing: border-box;
-				}
-				span:first-child {
-					width: 40px;
-				}
-				span:last-child {
-					width: 42px;
-					border-left: 1px solid #dcdfe6;
-				}
-				span:hover {
-					background-color: #ecf5ff;
-				}
-			}
 		}
 		.selectSql {
 			padding-top: 10px;
@@ -264,25 +273,25 @@ export default {
 		color: #999;
 	}
 }
-.level1 {
-	border-left-color: #00c7ff;
-}
-.level2 {
-	border-left-color: #a463f2;
-}
-.level3 {
-	border-left-color: #ffb700;
-}
-.level4 {
-	border-left-color: #818182;
-}
-.level5 {
-	border-left-color: #3ae698;
-}
-.level6 {
-	border-left-color: #000000;
-}
-.level7 {
-	border-left-color: #e7040f;
-}
+/*.level1 {*/
+/*	border-left-color: #00c7ff;*/
+/*}*/
+/*.level2 {*/
+/*	border-left-color: #a463f2;*/
+/*}*/
+/*.level3 {*/
+/*	border-left-color: #ffb700;*/
+/*}*/
+/*.level4 {*/
+/*	border-left-color: #818182;*/
+/*}*/
+/*.level5 {*/
+/*	border-left-color: #3ae698;*/
+/*}*/
+/*.level6 {*/
+/*	border-left-color: #000000;*/
+/*}*/
+/*.level7 {*/
+/*	border-left-color: #e7040f;*/
+/*}*/
 </style>
