@@ -123,7 +123,7 @@ export default {
 				},
 				// y轴的数据配置
 				yAxis: {
-					type: 'value',
+					type: configures.yAxis.type,
 					min: 0,
 					axisTick: { show: false },
 					axisLine: configures.yAxis.axisLine,
@@ -161,6 +161,7 @@ export default {
 					// }
 				],
 				animation: false,
+				radiusAxis: configures.radiusAxis,
 				// 图表的数据
 				series: configures.series // 由于数据的灵活度大，所以完全采用传入的方式
 			};

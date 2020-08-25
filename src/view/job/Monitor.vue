@@ -105,12 +105,12 @@
 						<span class="info-text">{{ $moment(flow.finishTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
 					</div>
 					<div class="info-list">
-						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
-						<span class="info-text"> {{ flow.inputNumber }}</span>
+						<span class="info-label">{{ $t('dataFlow.totalOutput') }}:</span>
+						<span class="info-text"> {{ flow.stats.output.rows }}</span>
 					</div>
 					<div class="info-list">
-						<span class="info-label">{{ $t('dataFlow.outputNumber') }}:</span>
-						<span class="info-text">{{ flow.outputNumber }}</span>
+						<span class="info-label">{{ $t('dataFlow.totalInput') }}:</span>
+						<span class="info-text">{{ flow.stats.input.rows }}</span>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.timePoint') }}:</span>
