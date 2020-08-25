@@ -418,6 +418,9 @@ export default {
 					}
 				]
 			},
+			radiusAxis: {
+				type: 'log'
+			},
 			serverProcess: {
 				height: 360,
 				isHeader: true,
@@ -495,9 +498,9 @@ export default {
 				self.dataScreening.series[0].data = [
 					res.data.chart2[0].totalOutput,
 					res.data.chart2[0].totalInput,
-					res.data.chart2[0].insertCount,
-					res.data.chart2[0].updateCount,
-					res.data.chart2[0].deleteCount
+					res.data.chart2[0].totalInsert,
+					res.data.chart2[0].totalUpdate,
+					res.data.chart2[0].totalDelete
 				];
 				self.unitData = self.dataScreening.series[0].data;
 				self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
