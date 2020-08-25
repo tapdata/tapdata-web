@@ -1,6 +1,6 @@
 <template>
-	<div style="border: 1px solid #aaaaaa; border-left-width: 3px;" :class="color">
-		<el-row v-for="(cond, idx) in value.conditions" :key="idx" :gutter="12" class="e-row">
+	<div style="" :class="color">
+		<div v-for="(cond, idx) in value.conditions" :key="idx">
 			<queryCond
 				v-if="cond.type == 'group'"
 				:primaryKeyOptions="primaryKeyOptions"
@@ -34,10 +34,10 @@
 				</el-col>
 
 				<el-col :span="5">
-					<div class="btn">
+					<div class="btn" style="width: 90px;">
 						<span class="iconfont icon-quxiao remove" @click="removeChild(idx)"></span>
 						<el-dropdown size="mini" @command="handleCommand">
-							<span class="el-dropdown-link"> +<i class="el-icon-arrow-down el-icon--right"></i> </span>
+							<span class="el-dropdown-link">+<i class=""></i> </span>
 							<el-dropdown-menu slot="dropdown">
 								<el-dropdown-item command="and">+ and</el-dropdown-item>
 								<el-dropdown-item command="or">+ or</el-dropdown-item>
@@ -49,7 +49,7 @@
 				</el-col>
 			</div>
 			<!-- <div>{{ cond.condStr }}</div> -->
-		</el-row>
+		</div>
 	</div>
 </template>
 
