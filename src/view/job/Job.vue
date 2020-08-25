@@ -361,7 +361,7 @@ export default {
 				this.onGraphChanged();
 				this.loading = false;
 				this.setEditable(true);
-				if (!this.dataFlow) window.title = this.$t('dataFlow.newTaksName');
+				if (!this.dataFlow) document.title = this.$t('dataFlow.newTaksName');
 			}
 		},
 		/****
@@ -487,7 +487,7 @@ export default {
 			this.executeMode = dataFlow.executeMode;
 			this.sync_type = dataFlow.setting.sync_type;
 			this.dataFlow = dataFlow;
-			window.title = dataFlow.name;
+			document.title = dataFlow.name;
 			// 管理端api创建任务来源以及editorData 数据丢失情况
 			if (!dataFlow.editorData && dataFlow.stages) {
 				// 1. 拿到创建所有的节点数据

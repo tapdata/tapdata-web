@@ -546,9 +546,9 @@ export default {
 		},
 		handlerSchemaChange() {
 			this.model.custFields.length = 0;
-			this.model.selectedFields.length = 0;
-			this.model.custSql.filterConds.length = 0;
-			this.model.custSql.filterConds.push({ field: '', calcu: '', val: '', condStr: '' });
+			this.model.custSql.selectedFields.length = 0;
+			this.model.custSql.conditions.length = 0;
+			this.model.custSql.conditions.push({ field: '', command: '', value: '', condStr: '' });
 			this.model.custSql.limitLines = '';
 			this.model.cSql = '';
 			let self = this;
