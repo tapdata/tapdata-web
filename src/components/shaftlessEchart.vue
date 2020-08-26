@@ -124,7 +124,6 @@ export default {
 				// y轴的数据配置
 				yAxis: {
 					type: configures.yAxis.type,
-					min: 0,
 					axisTick: { show: false },
 					axisLine: configures.yAxis.axisLine,
 					splitLine: configures.yAxis.splitLine,

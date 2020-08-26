@@ -145,7 +145,6 @@
 					v-if="dataScreening"
 					:echartsId="'dataScreeningId'"
 					style="width: 100%"
-					v-loading="apiLoading"
 				></shaftless-echart>
 			</div>
 
@@ -480,11 +479,11 @@ export default {
 				this.getNodeName();
 				this.stage.nodeName = selectStage.form_data.name;
 				this.stageType = selectStage.type;
-				if (this.stageType === 'app.Database') {
-					this.getStageDataApi(currentStageData.connectionId, '');
-				} else if (this.stageType === 'app.Collection' || this.stageType === 'app.Table') {
-					this.getStageDataApi(currentStageData.connectionId, this.tableName);
-				}
+				// if (this.stageType === 'app.Database') {
+				// 	this.getStageDataApi(currentStageData.connectionId, '');
+				// } else if (this.stageType === 'app.Collection' || this.stageType === 'app.Table') {
+				// 	this.getStageDataApi(currentStageData.connectionId, this.tableName);
+				// }
 				let rightTabPanel = this.editor.getRightTabPanel();
 				let panel = rightTabPanel.getChildByName('nodeSettingPanel');
 				if (this.editor.seeMonitor) {
@@ -596,9 +595,14 @@ export default {
 						}
 					});
 					this.stageType = currentStageData.type;
-					if (this.stageType === 'database') {
+					if (this.stageType === 'database' || this.stageType === 'app.Database') {
 						this.getStageDataApi(currentStageData.connectionId, '');
-					} else if (this.stageType === 'collection' || this.stageType === 'table') {
+					} else if (
+						this.stageType === 'collection' ||
+						this.stageType === 'table' ||
+						this.stageType === 'app.Collection' ||
+						this.stageType === 'app.Table'
+					) {
 						this.getStageDataApi(currentStageData.connectionId, this.tableName);
 					}
 				}
@@ -632,7 +636,6 @@ export default {
 
 		// 获取节点类型（是否是全部节点）
 		getApiData() {
-			this.apiLoading = true;
 			if (this.stageId === 'all') {
 				this.selectFlow = 'flow_';
 			} else {
@@ -652,14 +655,16 @@ export default {
 			if (this.stageId != 'all') {
 				msg['stageId'] = this.stageId;
 			}
-
-			let int = setInterval(() => {
-				if (ws.ws.readyState == 1) {
-					ws.send(msg);
-					clearInterval(int);
-				}
-				this.apiLoading = false;
-			}, 2000);
+			if (ws.ws.readyState != 1) {
+				let int = setInterval(() => {
+					if (ws.ws.readyState == 1) {
+						ws.send(msg);
+						clearInterval(int);
+					}
+				}, 2000);
+			} else {
+				ws.send(msg);
+			}
 		},
 
 		// 获取所有节点
@@ -894,8 +899,7 @@ export default {
 					}
 				},
 				yAxis: {
-					type: 'value',
-					min: 0,
+					type: 'log',
 					axisLine: { show: false },
 					axisTick: { show: false },
 					splitLine: { show: false },

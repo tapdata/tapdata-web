@@ -397,8 +397,8 @@ export default {
 				loading: false,
 				filterable: true,
 				options: [],
-				allowCreate: true,
-				defaultFirstOption: true,
+				allowCreate: false,
+				defaultFirstOption: false,
 				clearable: true
 			},
 

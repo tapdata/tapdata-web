@@ -382,8 +382,7 @@ export default {
 					}
 				},
 				yAxis: {
-					type: 'value',
-					min: 0,
+					type: 'log',
 					axisLine: { show: false },
 					axisTick: { show: false },
 					splitLine: { show: false },
