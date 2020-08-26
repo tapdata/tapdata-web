@@ -47,6 +47,8 @@
 import ws from '../../api/ws';
 import * as moment from 'moment';
 import { TYPEMAP } from './tyepMap';
+import factory from '../../api/factory';
+const notification = factory('notification');
 
 export default {
 	name: 'notification',
@@ -74,10 +76,8 @@ export default {
 		};
 		ws.on('notification', data => {
 			if (data.data && data.data.length > 0) {
-				data.data.map(item => {
-					this.listData.unshift(item);
-					this.$emit('unread', this.listData.length);
-				});
+				this.listData.unshift(...data.data);
+				this.getUnreadNum();
 			}
 			//格式化日期
 			if (this.listData && this.listData.length > 0) {
@@ -92,6 +92,23 @@ export default {
 				clearInterval(int);
 			}
 		}, 2000);
+	},
+	methods: {
+		getUnreadNum() {
+			let where = {
+				where: {
+					userId: { regexp: `^${this.$cookie.get('user_id')}$` },
+					read: false
+				}
+			};
+			notification.count(where).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.$emit('unread', res.data.count);
+					}
+				}
+			});
+		}
 	}
 };
 </script>

@@ -11,7 +11,7 @@
 					</li>
 				</ul>
 			</div>
-			<div class="notification-right-list">
+			<div class="notification-right-list" v-loading="loading">
 				<div class="notification-head">
 					<div class="title">{{ $t('notification.systemNotice') }}</div>
 					<div class="operation">
@@ -20,6 +20,7 @@
 							placeholder="请选择消息类型"
 							class="search"
 							@change="getData()"
+							clearable
 							size="mini"
 						>
 							<el-option
@@ -39,7 +40,7 @@
 					<el-tab-pane :label="$t('notification.allNotice')" name="first"></el-tab-pane>
 					<el-tab-pane :label="$t('notification.unreadNotice')" name="second"></el-tab-pane>
 				</el-tabs>
-				<ul class="cuk-list clearfix cuk-list-type-block" v-loading="loading">
+				<ul class="cuk-list clearfix cuk-list-type-block">
 					<li class="list-item" v-for="item in listData" :key="item.id" @click="handleRead(item.id)">
 						<div class="list-item-content">
 							<div class="unread-1zPaAXtSu" v-show="!item.read"></div>
@@ -74,7 +75,7 @@
 				<el-pagination
 					class="pagination"
 					background
-					layout="prev, pager, next,sizes"
+					layout="total,prev, pager, next,sizes"
 					:page-sizes="[20, 30, 50, 100]"
 					:page-size="pagesize"
 					:total="total"
@@ -100,7 +101,7 @@ export default {
 		return {
 			activeName: 'first',
 			listData: [],
-			read: false,
+			read: true,
 			loading: false,
 			search: '',
 			currentPage: 1,
@@ -114,15 +115,15 @@ export default {
 			options: [
 				{
 					value: 'error',
-					label: 'error'
+					label: 'ERROR'
 				},
 				{
 					value: 'warn',
-					label: 'warn'
+					label: 'WARN'
 				},
 				{
 					value: 'info',
-					label: 'info'
+					label: 'INFO'
 				}
 			],
 			typeMap: TYPEMAP,
@@ -131,6 +132,7 @@ export default {
 	},
 	mounted() {
 		this.getData();
+		this.getUnreadNum(); //未读消息数量
 	},
 	methods: {
 		getData() {
@@ -145,7 +147,7 @@ export default {
 					skip: (this.currentPage - 1) * this.pagesize
 				}
 			};
-			if (this.read) {
+			if (!this.read) {
 				where.filter.where['read'] = false;
 			}
 			if (this.search || this.search !== '') {
@@ -171,13 +173,11 @@ export default {
 					this.loading = false;
 				}
 			});
-			this.getCount(false);
-			this.getCount();
+			this.getCount(this.read);
 		},
 		handleCurrentChange(cpage) {
 			this.currentPage = cpage;
 			this.getData();
-			this.getCount();
 		},
 		handleSizeChange(psize) {
 			this.pagesize = psize;
@@ -195,13 +195,24 @@ export default {
 			notification.count(where).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
-						if (read === false) {
-							this.count = res.data.count;
-						} else {
-							this.total = res.data.count;
-						}
+						this.total = res.data.count;
 					} else {
 						this.loading = false;
+					}
+				}
+			});
+		},
+		getUnreadNum() {
+			let where = {
+				where: {
+					userId: { regexp: `^${this.$cookie.get('user_id')}$` },
+					read: false
+				}
+			};
+			notification.count(where).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.count = res.data.count;
 					}
 				}
 			});
@@ -210,6 +221,7 @@ export default {
 			notification.patch({ read: true, id: id }).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
+						this.getUnreadNum(); //未读消息数量
 						this.getData();
 					}
 				}
@@ -232,6 +244,8 @@ export default {
 			notification.upsertWithWhere(where, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
+						this.read = true;
+						this.getUnreadNum(); //未读消息数量
 						this.getData();
 					}
 				}
@@ -248,6 +262,8 @@ export default {
 			notification.readAll(where, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
+						this.read = true;
+						this.getUnreadNum(); //未读消息数量
 						this.getData();
 					}
 				}
@@ -256,9 +272,9 @@ export default {
 		handleClick(tab) {
 			this.currentPage = 1;
 			if (tab.name === 'first') {
-				this.read = false;
+				this.read = true; // 全部信息
 			} else {
-				this.read = true;
+				this.read = false; //未读
 			}
 			this.getData();
 		}
