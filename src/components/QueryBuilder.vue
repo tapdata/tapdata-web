@@ -1,11 +1,8 @@
 <template>
 	<div>
-		<el-tabs type="border-card" @tab-click="sqlTabChanged">
-			<el-tab-pane>
-				<span slot="label"
-					><el-checkbox v-model="sqlFromCust" @change="setSqlFrom"></el-checkbox>
-					{{ $t('editor.cell.data_node.collection.form.filter.fieldFilter') }}</span
-				>
+		<el-tabs type="border-card" v-model="value.filterType">
+			<el-tab-pane name="field">
+				<span slot="label"> {{ $t('editor.cell.data_node.collection.form.filter.fieldFilter') }}</span>
 				<el-form-item :placeholder="$t('editor.cell.data_node.collection.form.filter.allField')">
 					<el-select v-model="value.fieldFilterType">
 						<el-option
@@ -50,20 +47,17 @@
 					</div>
 					<queryCond :primaryKeyOptions="primaryKeyOptions" v-model="value"></queryCond>
 					<el-row class="selectSql">
-						<div>{{ cSql }}</div>
+						<div>{{ value.cSql }}</div>
 					</el-row>
 				</div>
 			</el-tab-pane>
 			<el-tab-pane>
-				<span slot="label"
-					><el-checkbox v-model="sqlNotFromCust" @change="setSqlFrom('no')"></el-checkbox>
-					{{ $t('editor.cell.data_node.collection.form.filter.sqlFilter') }}</span
-				>
+				<span slot="label"> {{ $t('editor.cell.data_node.collection.form.filter.sqlFilter') }}</span>
 				<el-form-item prop="sql">
 					<el-input
 						type="textarea"
 						rows="10"
-						v-model="editSql"
+						v-model="value.editSql"
 						:placeholder="$t('editor.cell.data_node.table.form.custom_sql.placeholder')"
 						size="mini"
 					></el-input>
@@ -117,6 +111,12 @@ export default {
 				return '';
 			}
 		},
+		databaseType: {
+			type: String,
+			default() {
+				return '';
+			}
+		},
 		tableName: {
 			type: String,
 			default() {
@@ -126,11 +126,9 @@ export default {
 	},
 	data() {
 		return {
-			editSql: '',
 			isFilter: false,
 			sqlFromCust: true,
 			sqlNotFromCust: false,
-			cSql: '',
 			sqlWhere: '',
 			filterTypeOptions: [
 				{
@@ -168,6 +166,7 @@ export default {
 			handler() {
 				this.$emit('input', this.value);
 				this.sqlWhere = this.toSqlWhere(this.value.conditions);
+				this.createCustSql();
 			}
 		}
 	},
@@ -197,10 +196,13 @@ export default {
 				res += ' WHERE ';
 			res += this.sqlWhere;
 			if (custSql.limitLines && custSql.limitLines != 'all') {
-				if (res.indexOf('WHERE ') < res.length - 6) res += ' AND ';
-				res += ' ROWNUM < ' + custSql.limitLines;
+				if (this.databaseType == 'mysql') res += ' limit ' + custSql.limitLines;
+				if (this.databaseType == 'oracle') {
+					if (res.indexOf('WHERE ') < res.length - 6) res += ' AND ';
+					res += ' ROWNUM < ' + custSql.limitLines;
+				}
 			}
-			this.cSql = res;
+			this.value.cSql = res;
 		},
 		setSqlFrom(name) {
 			if (name == 'no') this.sqlFromCust = !this.sqlNotFromCust;

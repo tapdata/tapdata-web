@@ -1,14 +1,16 @@
 <template>
 	<div style="" :class="color">
 		<div v-for="(cond, idx) in value.conditions" :key="idx">
-			<span>{{ cond.operator }}</span>
+			<span v-if="cond.type == 'group' ? cond.conditions.length > 0 : true">{{ cond.operator }}</span>
 			<queryCond
 				v-if="cond.type == 'group'"
 				:primaryKeyOptions="primaryKeyOptions"
 				v-model="value.conditions[idx]"
+				@remove="removeChild(idx)"
+				style="margin: 10px;"
 			></queryCond>
 			<div v-if="cond.type != 'group'" class="item">
-				<div>
+				<div class="field">
 					<el-select v-model="cond.field" filterable size="mini">
 						<el-option
 							v-for="item in primaryKeyOptions"
@@ -18,13 +20,13 @@
 						></el-option>
 					</el-select>
 				</div>
-				<div>
+				<div class="field">
 					<el-select v-model="cond.command" size="mini">
 						<el-option v-for="item in calculationList" :label="item" :value="item" :key="item"></el-option>
 					</el-select>
 				</div>
 
-				<div>
+				<div class="field">
 					<el-input v-if="!cond.isDatetime" type="text" v-model="cond.value" size="mini"></el-input>
 					<el-date-picker
 						v-if="cond.isDatetime"
@@ -34,9 +36,9 @@
 					></el-date-picker>
 				</div>
 
-				<div>
-					<div class="btn">
-						<span class="el-icon-close" @click="removeChild(idx)"></span>
+				<div class="field">
+					<div class="btn" style="width:52px;">
+						<span class="el-icon-close" @click="removeChild(idx)" style="width:24px;"></span>
 						<el-dropdown size="mini" @command="handleCommand">
 							<span class="el-dropdown-link el-icon-plus"></span>
 							<el-dropdown-menu slot="dropdown">
@@ -147,17 +149,16 @@ export default {
 			this.value.conditions.push(child);
 			this.$emit('input', this.value);
 		},
-		removeGroup() {
-			this.$emit('remove');
-		},
 		handleFilterChange() {
 			this.$nextTick(() => {
 				this.createCustSql();
 			});
 		},
 		removeChild(index) {
-			if (!this.value.fieldFilterType || this.value.conditions.length > 1) this.value.conditions.splice(index, 1);
-			else {
+			if (!this.value.fieldFilterType || this.value.conditions.length > 1) {
+				this.value.conditions.splice(index, 1);
+				if (this.value.conditions.length == 0) this.$emit('remove');
+			} else {
 				this.value.conditions[0].field = '';
 				this.value.conditions[0].command = '';
 				this.value.conditions[0].value = '';
@@ -177,8 +178,9 @@ export default {
 	display: flex;
 	justify-content: space-around;
 	justify-items: center;
-	margin-bottom: 10px;
-	margin-right: 10px;
+	margin-bottom: 6px;
+	margin-right: 6px;
+	margin-left: 5px;
 	.btn {
 		height: 28px;
 		line-height: 46px;
@@ -273,25 +275,7 @@ export default {
 		color: #999;
 	}
 }
-/*.level1 {*/
-/*	border-left-color: #00c7ff;*/
-/*}*/
-/*.level2 {*/
-/*	border-left-color: #a463f2;*/
-/*}*/
-/*.level3 {*/
-/*	border-left-color: #ffb700;*/
-/*}*/
-/*.level4 {*/
-/*	border-left-color: #818182;*/
-/*}*/
-/*.level5 {*/
-/*	border-left-color: #3ae698;*/
-/*}*/
-/*.level6 {*/
-/*	border-left-color: #000000;*/
-/*}*/
-/*.level7 {*/
-/*	border-left-color: #e7040f;*/
-/*}*/
+.field {
+	padding-right: 3px;
+}
 </style>

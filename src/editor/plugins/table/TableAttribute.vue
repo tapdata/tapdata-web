@@ -166,12 +166,14 @@
 				</el-form-item>
 
 				<queryBuilder
+					v-if="model.isFilter"
 					v-model="model.custSql"
 					v-bind:initialOffset.sync="model.initialOffset"
 					:primaryKeyOptions="primaryKeyOptions"
 					v-bind:selectedFields.sync="model.selectedFields"
 					v-bind:custFields.sync="model.custFields"
 					:tableName="model.tableName"
+					:databaseType="model.databaseType"
 					:mergedSchema="mergedSchema"
 				></queryBuilder>
 
@@ -336,16 +338,16 @@ export default {
 				databaseType: '',
 				tableName: '',
 				sql: '',
-				editSql: '',
 				isFilter: false,
 				sqlFromCust: true,
 				custFields: [],
-				cSql: '',
-				filterType: 'field',
 				custSql: {
+					filterType: 'field',
 					selectedFields: [],
 					fieldFilterType: 'keepAllFields',
 					limitLines: '',
+					cSql: '',
+					editSql: '',
 					conditions: [{ field: '', command: '', value: '', condStr: '' }]
 				},
 				initialOffset: '',
@@ -449,7 +451,8 @@ export default {
 					},
 					fields: {
 						id: true,
-						original_name: true
+						original_name: true,
+						database_type: true
 					}
 				})
 			};
@@ -484,6 +487,7 @@ export default {
 					return {
 						id: item.id,
 						name: item.name,
+						database_type: item.database_type,
 						label: `${item.name} (${item.status})`,
 						value: item.id
 					};
@@ -609,8 +613,8 @@ export default {
 		},
 		getData() {
 			if (this.model.isFilter)
-				if (this.model.filterType === 'field') this.model.sql = this.model.cSql;
-				else this.model.sql = this.model.editSql;
+				if (this.model.custSql.filterType === 'field') this.model.sql = this.model.custSql.cSql;
+				else this.model.sql = this.model.custSql.editSql;
 			let result = _.cloneDeep(this.model);
 			result.name = result.tableName || 'Table';
 			if (this.isSourceDataNode) {
