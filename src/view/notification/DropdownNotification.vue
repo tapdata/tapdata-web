@@ -103,7 +103,7 @@ export default {
 					read: false
 				}
 			};
-			if (this.$cookie.get('isAdmin') === 0) {
+			if (this.$cookie.get('isAdmin') == 0) {
 				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
 			notification.count(where).then(res => {

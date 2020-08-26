@@ -151,7 +151,7 @@ export default {
 			if (this.search || this.search !== '') {
 				where.filter.where['level'] = this.search;
 			}
-			if (this.$cookie.get('isAdmin') === 0) {
+			if (this.$cookie.get('isAdmin') == 0) {
 				where.filter.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
 			this.loading = true;
@@ -191,7 +191,7 @@ export default {
 			if (read === false) {
 				where.where['read'] = false;
 			}
-			if (this.$cookie.get('isAdmin') === 0) {
+			if (this.$cookie.get('isAdmin') == 0) {
 				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
 			notification.count(where).then(res => {
@@ -210,7 +210,7 @@ export default {
 					read: false
 				}
 			};
-			if (this.$cookie.get('isAdmin') === 0) {
+			if (this.$cookie.get('isAdmin') == 0) {
 				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
 			notification.count(where).then(res => {
