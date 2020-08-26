@@ -69,7 +69,7 @@ export default {
 			typeMap: TYPEMAP
 		};
 	},
-	mounted() {
+	created() {
 		let msg = {
 			type: 'notification',
 			userId: this.$cookie.get('user_id')
@@ -92,15 +92,20 @@ export default {
 				clearInterval(int);
 			}
 		}, 2000);
+		this.$root.$on('notificationUpdate', () => {
+			ws.send(msg);
+		});
 	},
 	methods: {
 		getUnreadNum() {
 			let where = {
 				where: {
-					userId: { regexp: `^${this.$cookie.get('user_id')}$` },
 					read: false
 				}
 			};
+			if (this.$cookie.get('isAdmin') == 0) {
+				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
+			}
 			notification.count(where).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
