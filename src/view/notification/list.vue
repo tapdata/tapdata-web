@@ -139,10 +139,8 @@ export default {
 			let where = {};
 			where = {
 				filter: {
-					where: {
-						userId: { regexp: `^${this.$cookie.get('user_id')}$` }
-					},
-					order: 'last_updated DESC',
+					where: {},
+					order: 'createTime DESC',
 					limit: this.pagesize,
 					skip: (this.currentPage - 1) * this.pagesize
 				}
@@ -152,6 +150,9 @@ export default {
 			}
 			if (this.search || this.search !== '') {
 				where.filter.where['level'] = this.search;
+			}
+			if (this.$cookie.get('isAdmin') === 0) {
+				where.filter.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
 			this.loading = true;
 			notification.get(where).then(res => {
@@ -185,12 +186,13 @@ export default {
 		},
 		getCount(read) {
 			let where = {
-				where: {
-					userId: { regexp: `^${this.$cookie.get('user_id')}$` }
-				}
+				where: {}
 			};
 			if (read === false) {
 				where.where['read'] = false;
+			}
+			if (this.$cookie.get('isAdmin') === 0) {
+				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
 			notification.count(where).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
@@ -205,10 +207,12 @@ export default {
 		getUnreadNum() {
 			let where = {
 				where: {
-					userId: { regexp: `^${this.$cookie.get('user_id')}$` },
 					read: false
 				}
 			};
+			if (this.$cookie.get('isAdmin') === 0) {
+				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
+			}
 			notification.count(where).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
@@ -223,6 +227,7 @@ export default {
 					if (res.data) {
 						this.getUnreadNum(); //未读消息数量
 						this.getData();
+						this.$root.$emit('notificationUpdate');
 					}
 				}
 			});
@@ -247,14 +252,16 @@ export default {
 						this.read = true;
 						this.getUnreadNum(); //未读消息数量
 						this.getData();
+						this.$root.$emit('notificationUpdate');
 					}
 				}
 			});
 		},
 		handleAllRead() {
-			let where = {
-				userId: { regexp: `^${this.$cookie.get('user_id')}$` }
-			};
+			let where = {};
+			if (this.$cookie.get('isAdmin') === 0) {
+				where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
+			}
 			let data = {
 				read: true
 			};
@@ -265,6 +272,7 @@ export default {
 						this.read = true;
 						this.getUnreadNum(); //未读消息数量
 						this.getData();
+						this.$root.$emit('notificationUpdate');
 					}
 				}
 			});
