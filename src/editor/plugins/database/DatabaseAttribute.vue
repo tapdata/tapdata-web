@@ -142,7 +142,6 @@ import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm
 
 let connections = factory('connections');
 let editorMonitor = null;
-let clear = false;
 
 export default {
 	name: 'Database',
@@ -191,7 +190,7 @@ export default {
 				filterable: true,
 				on: {
 					change() {
-						clear = true;
+						self.model.removeAllTables = false;
 						self.changeConnection();
 					}
 				},
@@ -210,6 +209,7 @@ export default {
 			model: {
 				connectionId: '',
 				includeTables: [],
+				removeAllTables: false,
 				dropTable: false,
 				table_prefix: '',
 				table_suffix: ''
@@ -309,47 +309,42 @@ export default {
 			if (!connectionId) {
 				return;
 			}
-			connections
-				.get([connectionId])
-				.then(result => {
-					if (result.data) {
-						let tables = (result.data.schema && result.data.schema.tables) || [];
-						tables = tables.sort((t1, t2) =>
-							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-						);
-						let modelIncludeTables = this.model.includeTables || [];
-						let inList = [];
-						let outList = [];
+			connections.get([connectionId]).then(result => {
+				if (result.data) {
+					let tables = (result.data.schema && result.data.schema.tables) || [];
+					tables = tables.sort((t1, t2) =>
+						t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
+					);
+					let modelIncludeTables = this.model.includeTables || [];
+					let inList = [];
+					let outList = [];
 
-						if (clear) {
-							inList = tables.map(item => {
-								item.checked = false;
-								return item;
-							});
-							this.model.includeTables = inList.map(t => t.table_name);
-						} else {
-							tables.forEach(t => {
-								t.checked = false;
-								if (modelIncludeTables.includes(t.table_name)) {
-									inList.push(t);
-								} else {
-									outList.push(t);
-								}
-							});
-						}
-						this.tabs[0].list = inList;
-						this.tabs[1].list = outList;
-						this.$forceUpdate();
-
-						if (this.database_type !== 'mongodb') {
-							this.database_host = result.data.database_host;
-							this.database_port = result.data.database_port;
-						}
+					if (!this.model.removeAllTables && !modelIncludeTables.length) {
+						inList = tables.map(item => {
+							item.checked = false;
+							return item;
+						});
+						this.model.includeTables = inList.map(t => t.table_name);
+					} else {
+						tables.forEach(t => {
+							t.checked = false;
+							if (modelIncludeTables.includes(t.table_name)) {
+								inList.push(t);
+							} else {
+								outList.push(t);
+							}
+						});
 					}
-				})
-				.finally(() => {
-					clear = false;
-				});
+					this.tabs[0].list = inList;
+					this.tabs[1].list = outList;
+					this.$forceUpdate();
+
+					if (this.database_type !== 'mongodb') {
+						this.database_host = result.data.database_host;
+						this.database_port = result.data.database_port;
+					}
+				}
+			});
 		},
 		getMongoDBData(connectionId) {
 			if (!connectionId) {
@@ -395,6 +390,9 @@ export default {
 			targetList.sort((t1, t2) => (t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1));
 
 			this.model.includeTables = inList.map(t => t.table_name);
+			if (!this.model.includeTables.length) {
+				this.model.removeAllTables = true;
+			}
 		},
 
 		moveAll() {
