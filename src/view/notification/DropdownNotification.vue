@@ -134,18 +134,19 @@ export default {
 	/*border: 1px solid rgba(222, 222, 228, 1);*/
 }
 .cuk-list {
-	width: 500px;
+	width: 360px;
 	height: 600px;
 	overflow: auto;
+	font-size: 12px;
 	.list-item {
 		position: relative;
 		background: #fff;
-		border-bottom: 1px solid #f5f7fa;
-		padding: 0 20px 10px 20px;
+		border-bottom: 1px solid #dedee4;
+		padding: 0 5px 5px 20px;
 		.list-item-content {
 			position: relative;
-			height: 50px;
-			line-height: 50px;
+			height: 40px;
+			line-height: 40px;
 			padding-left: 14px;
 			box-sizing: border-box;
 			overflow: hidden;
@@ -165,7 +166,7 @@ export default {
 			position: absolute;
 			top: -5px;
 			left: 30px;
-			right: 120px;
+			right: 20px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
@@ -174,8 +175,8 @@ export default {
 			}
 		}
 		.list-item-time {
-			margin: 20px;
-			color: #202d40;
+			margin: 15px 0 0 17px;
+			color: #aaa;
 			font-size: 12px;
 		}
 	}

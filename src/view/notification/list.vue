@@ -110,7 +110,7 @@ export default {
 			colorMap: {
 				error: 'red',
 				warn: 'orangered',
-				info: 'blue'
+				info: '#48b6e2'
 			},
 			options: [
 				{
@@ -291,6 +291,7 @@ export default {
 </script>
 
 <style scoped lang="less">
+@unreadColor: #ee5353;
 .notification {
 	height: 100%;
 	font-size: 12px;
@@ -301,7 +302,7 @@ export default {
 		line-height: 17px;
 		white-space: nowrap;
 		cursor: pointer;
-		background: red;
+		background: @unreadColor;
 		color: #fff;
 		-webkit-appearance: none;
 		text-align: center;
@@ -326,7 +327,7 @@ export default {
 	align-items: center;
 	font-size: 12px;
 	color: #48b6e2;
-	padding: 20px;
+	padding: 20px 20px 20px 0;
 	.title {
 		font-size: 18px;
 		font-weight: bold;
@@ -403,6 +404,7 @@ export default {
 			background: #fff;
 			border-bottom: 1px solid #f5f7fa;
 			cursor: pointer;
+			margin-right: 30px;
 			.list-item-content {
 				position: relative;
 				height: 50px;
@@ -418,7 +420,7 @@ export default {
 				left: 8px;
 				width: 6px;
 				height: 6px;
-				background: #f81d22;
+				background: @unreadColor;
 				border-radius: 50%;
 			}
 			.list-item-desc {
@@ -433,9 +435,11 @@ export default {
 			}
 			.list-item-time {
 				float: right;
-				margin: 0 20px;
 				color: #202d40;
 				font-size: 12px;
+			}
+			&:hover {
+				background: #fafafa;
 			}
 		}
 	}
