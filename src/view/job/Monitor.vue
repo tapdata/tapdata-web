@@ -106,11 +106,13 @@
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.totalOutput') }}:</span>
-						<span class="info-text"> {{ flow.stats.output.rows }}</span>
+						<span class="info-text">
+							{{ flow.stats && flow.stats.output ? flow.stats.output.rows : '' }}</span
+						>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.totalInput') }}:</span>
-						<span class="info-text">{{ flow.stats.input.rows }}</span>
+						<span class="info-text">{{ flow.stats && flow.stats.input ? flow.stats.input.rows : '' }}</span>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.timePoint') }}:</span>
@@ -143,6 +145,7 @@
 					v-if="dataScreening"
 					:echartsId="'dataScreeningId'"
 					style="width: 100%"
+					v-loading="apiLoading"
 				></shaftless-echart>
 			</div>
 
@@ -593,9 +596,9 @@ export default {
 						}
 					});
 					this.stageType = currentStageData.type;
-					if (this.stageType === 'app.Database') {
+					if (this.stageType === 'database') {
 						this.getStageDataApi(currentStageData.connectionId, '');
-					} else if (this.stageType === 'app.Collection' || this.stageType === 'app.Table') {
+					} else if (this.stageType === 'collection' || this.stageType === 'table') {
 						this.getStageDataApi(currentStageData.connectionId, this.tableName);
 					}
 				}
@@ -629,6 +632,7 @@ export default {
 
 		// 获取节点类型（是否是全部节点）
 		getApiData() {
+			this.apiLoading = true;
 			if (this.stageId === 'all') {
 				this.selectFlow = 'flow_';
 			} else {
@@ -654,6 +658,7 @@ export default {
 					ws.send(msg);
 					clearInterval(int);
 				}
+				this.apiLoading = false;
 			}, 2000);
 		},
 
