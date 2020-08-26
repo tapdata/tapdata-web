@@ -382,16 +382,10 @@ export default {
 					}
 				},
 				yAxis: {
-					type: 'log',
 					axisLine: { show: false },
 					axisTick: { show: false },
 					splitLine: { show: false },
-					splitArea: { show: false },
-					axisLabel: {
-						formatter: function() {
-							return '';
-						}
-					}
+					splitArea: { show: false }
 				},
 				series: [
 					{
@@ -399,6 +393,7 @@ export default {
 						data: [],
 						barWidth: '100%',
 						barGap: '-100%',
+						barMinHeight: 2,
 						itemStyle: {
 							normal: {
 								color: function(params) {
@@ -416,9 +411,6 @@ export default {
 						}
 					}
 				]
-			},
-			radiusAxis: {
-				type: 'log'
 			},
 			serverProcess: {
 				height: 360,

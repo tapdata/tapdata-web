@@ -478,7 +478,7 @@ export default {
 				this.stageId = selectStage.id;
 				this.getNodeName();
 				this.stage.nodeName = selectStage.form_data.name;
-				this.stageType = selectStage.type;
+				// this.stageType = selectStage.type;
 				// if (this.stageType === 'app.Database') {
 				// 	this.getStageDataApi(currentStageData.connectionId, '');
 				// } else if (this.stageType === 'app.Collection' || this.stageType === 'app.Table') {
@@ -595,14 +595,10 @@ export default {
 						}
 					});
 					this.stageType = currentStageData.type;
-					if (this.stageType === 'database' || this.stageType === 'app.Database') {
+
+					if (this.stageType === 'database') {
 						this.getStageDataApi(currentStageData.connectionId, '');
-					} else if (
-						this.stageType === 'collection' ||
-						this.stageType === 'table' ||
-						this.stageType === 'app.Collection' ||
-						this.stageType === 'app.Table'
-					) {
+					} else if (this.stageType === 'collection' || this.stageType === 'table') {
 						this.getStageDataApi(currentStageData.connectionId, this.tableName);
 					}
 				}
@@ -855,7 +851,7 @@ export default {
 					show: false,
 					trigger: 'none',
 					axisPointer: {
-						type: 'cross',
+						type: 'none',
 						crossStyle: {
 							color: '#999'
 						}
@@ -899,16 +895,10 @@ export default {
 					}
 				},
 				yAxis: {
-					type: 'log',
 					axisLine: { show: false },
 					axisTick: { show: false },
 					splitLine: { show: false },
-					splitArea: { show: false },
-					axisLabel: {
-						formatter: function() {
-							return '';
-						}
-					}
+					splitArea: { show: false }
 				},
 				series: [
 					{

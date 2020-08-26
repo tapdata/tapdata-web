@@ -1,15 +1,15 @@
 <template>
 	<section class="data-flow-wrap" v-loading="restLoading">
-		<div class="panel-left" v-if="panelFlag">
+		<div class="panel-left" v-if="formData.panelFlag">
 			<metaData v-on:nodeClick="nodeClick"></metaData>
 		</div>
 		<div class="panel-main">
 			<div class="topbar">
 				<!-- <div class="panelBtn"></div> -->
 				<ul class="search-bar">
-					<li :class="[{ panelOpen: panelFlag }, 'item', 'panelBtn']" @click="panelFlag = !panelFlag">
+					<li :class="[{ panelOpen: formData.panelFlag }, 'item', 'panelBtn']" @click="handlePanelFlag">
 						<i class="iconfont icon-xiangshangzhanhang"></i>
-						<span>{{ panelFlag ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel') }}</span>
+						<span>{{ formData.panelFlag ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel') }}</span>
 					</li>
 					<li class="item">
 						<el-input
@@ -325,7 +325,6 @@ export default {
 	components: { metaData, SelectClassify },
 	data() {
 		return {
-			panelFlag: true,
 			checkedTag: '',
 			listtags: [],
 			tagList: [],
@@ -406,7 +405,8 @@ export default {
 				person: '',
 				way: '',
 				executionStatus: '',
-				classification: []
+				classification: [],
+				panelFlag: true
 			},
 			statusBtMap: {
 				scheduled: { switch: true, delete: true, edit: true, detail: false, forceStop: true, reset: true },
@@ -455,6 +455,11 @@ export default {
 		}
 	},
 	methods: {
+		// 面板显示隐藏
+		handlePanelFlag() {
+			this.formData.panelFlag = !this.formData.panelFlag;
+			this.$store.commit('dataFlows', this.formData);
+		},
 		wsWatch(data) {
 			this.wsData.push(data.data.fullDocument);
 		},
@@ -670,6 +675,7 @@ export default {
 		},
 		async getData(params) {
 			this.loading = true;
+
 			this.$store.commit('dataFlows', this.formData);
 
 			let where = {};
