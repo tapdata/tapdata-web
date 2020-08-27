@@ -141,9 +141,9 @@
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
-				<!-- <el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
+				<el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
 					$t('dataFlow.updateModel')
-				}}</el-button> -->
+				}}</el-button>
 				<entity
 					v-loading="schemaSelectConfig.loading"
 					:schema="convertSchemaToTreeData(defaultSchema)"
@@ -164,6 +164,7 @@ import ClipButton from '@/components/ClipButton';
 import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, uuid } from '../../util/Schema';
 import Entity from '../link/Entity';
 import _ from 'lodash';
+import ws from '../../../api/ws';
 import factory from '../../../api/factory';
 let connectionApi = factory('connections');
 let editorMonitor = null;
@@ -554,12 +555,27 @@ export default {
 
 		// 更新模型
 		hanlderLoadSchema() {
-			this.loadDataModels(this.model.connectionId);
-			let schema = tempSchemas.filter(s => s.table_name === this.model.tableName);
+			let params = {
+				type: 'reloadSchema',
+				data: {
+					tables: [
+						{
+							connId: this.model.connectionId,
+							tableName: this.model.tableName,
+							userId: this.$cookie.get('user_id')
+						}
+					]
+				}
+			};
 
-			this.$nextTick(() => {
-				this.$emit('schemaChange', _.cloneDeep(schema[0]));
-			});
+			ws.send(params);
+			ws.on('reloadSchema', function() {});
+			// this.loadDataModels(this.model.connectionId);
+			// let schema = tempSchemas.filter(s => s.table_name === this.model.tableName);
+
+			// this.$nextTick(() => {
+			// 	this.$emit('schemaChange', _.cloneDeep(schema[0]));
+			// });
 		}
 	}
 };
