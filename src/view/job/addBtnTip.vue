@@ -3,6 +3,9 @@
 		<el-popover popper-class="popperFixbtn" placement="top" width="400" trigger="hover">
 			<div class="btnList">
 				<span>
+					{{ $t('dataFlow.button.save') }} <i>{{ isMac ? 'command+s' : 'ctrl+s' }}</i>
+				</span>
+				<span>
 					{{ $t('dataFlow.copy') }} <i>{{ isMac ? 'command+c' : 'ctrl+c' }}</i>
 				</span>
 				<span>
