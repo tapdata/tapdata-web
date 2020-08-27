@@ -33,7 +33,7 @@
 					<div class="e-col">
 						{{ $t('editor.cell.processor.field.form.fieldType') }}
 					</div>
-					<div class="e-col" v-show="!disabledMode">{{ $t('message.operator') }}</div>
+					<div class="e-col">{{ $t('message.operator') }}</div>
 				</div>
 				<el-main>
 					<el-tree
@@ -151,7 +151,6 @@
 								<span
 									class="e-field-action el-icon-plus"
 									@click="handleCreate('create_sibling', node, data)"
-									v-show="!disabledMode"
 								></span>
 								<el-dropdown-menu slot="dropdown">
 									<el-dropdown-item
@@ -169,18 +168,16 @@
 							</el-dropdown>
 
 							<el-button
-								v-show="!disabledMode"
 								type="text"
 								v-if="isRemove(data.id) || ['Array', 'Map'].includes(data.type)"
-								class=" e-field-action iconfont icon-script"
+								:class="[{ operWidth: disabledMode }, 'e-field-action', 'iconfont', 'icon-script']"
 								disabled
 							></el-button>
 							<span
 								v-else
-								class="e-field-action iconfont icon-script"
+								:class="[{ operWidth: disabledMode }, 'e-field-action', 'iconfont', 'icon-script']"
 								:style="isScript(data.id) ? 'color: #f98004;' : ''"
 								@click="handleScript(node, data)"
-								v-show="!disabledMode"
 							></span>
 
 							<el-button
@@ -193,8 +190,8 @@
 							<span
 								v-else
 								class="e-field-action iconfont icon-l-del"
-								v-show="!disabledMode"
 								@click="handleDelete(node, data)"
+								v-show="!disabledMode"
 							></span>
 							<span
 								v-show="!disabledMode"
@@ -837,6 +834,9 @@ export default {
 	span {
 		margin-right: 10px;
 	}
+}
+.operWidth {
+	width: 80px !important;
 }
 .e-schema-editor {
 	width: 100%;
