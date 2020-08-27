@@ -107,6 +107,13 @@ const store = new Vuex.Store({
 			rowsPerPage: '',
 			descending: '',
 			sortBy: ''
+		},
+		tasks: {
+			keyword: '',
+			selectedSeachType: '',
+			rowsPerPage: '',
+			descending: '',
+			sortBy: ''
 		}
 	},
 

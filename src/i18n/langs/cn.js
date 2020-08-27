@@ -752,7 +752,12 @@ const cn = {
 					new_aggregate: '添加聚合',
 					none_stage: '至少有一个聚合处理',
 					none_subprocessingName: '子处理名称不能为空',
-					name_notRepeated: '子处理名称不能重复'
+					name_notRepeated: '子处理名称不能重复',
+					returnExample: '返回示例',
+					school_name: 'school_name: "第一实验小学"',
+					idComment: '// "students_sum" 自定义的子处理名称，多个子处理名称不可重复',
+					countComment: '// COUNT为选择的函数, 132为函数值；如果函数是MAX, 则名称为MAX',
+					school_nameComment: '// 分组汇总的字段名，如果不填写则不显示'
 				},
 				field: {
 					name: '字段',

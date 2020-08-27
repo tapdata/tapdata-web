@@ -751,7 +751,12 @@ const tc = {
 					new_aggregate: '添加聚合',
 					none_stage: '至少有一个聚合处理',
 					none_subprocessingName: '子處理名稱不能為空',
-					name_notRepeated: '子處理名稱不能重複'
+					name_notRepeated: '子處理名稱不能重複',
+					returnExample: '返回示例',
+					school_name: 'school_name: "第一實驗小學"',
+					idComment: '// "students_sum" 自定義的子處理名稱，多個子處理名稱不可重複',
+					countComment: '// COUNT為選擇的函數, 132為函數值；如果函數是MAX, 則名稱為MAX',
+					school_nameComment: ' // 分組匯總的欄位名，如果不填寫則不顯示'
 				},
 				field: {
 					name: '字段',
