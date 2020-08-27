@@ -15,10 +15,16 @@
 				style="width: 210px"
 				clearable
 				@change="handleSearchTree()"
-				@clear="loadDataBase"
 				size="mini"
 			>
-				<el-select placeholder="搜表" v-model="databseType" slot="prepend" size="mini" class="box-head-select">
+				<el-select
+					placeholder="搜表"
+					v-model="databseType"
+					slot="prepend"
+					size="mini"
+					class="box-head-select"
+					@change="handleSearchTree()"
+				>
 					<el-option label="DB" value="db"></el-option>
 					<el-option label="Table" value="table"></el-option>
 				</el-select>
@@ -35,6 +41,7 @@
 				icon-class="ts-icon iconfont icon-hebing-copy "
 				:filter-node-method="filterNode"
 				ref="tree"
+				:default-expand-all="default_expanded"
 				class="ts-tree"
 			>
 				<span class="custom-tree-node" slot-scope="{ node, data }">
@@ -129,6 +136,7 @@ export default {
 				return; //tableConnection
 			}
 			let self = this;
+			this.default_expanded = true;
 			if (self.databseType === 'db') {
 				let params = {
 					filter: JSON.stringify({
@@ -196,6 +204,7 @@ export default {
 					name: self.filterText,
 					userId: this.$cookie.get('user_id')
 				};
+				self.loading = true;
 				MetadataInstances.tableConnection(params)
 					.then(res => {
 						if (res.statusText === 'OK' || res.status === 200) {
@@ -223,7 +232,6 @@ export default {
 						self.loadingError = false;
 					})
 					.catch(() => {
-						self.loadingError = true;
 						this.$message.error('MetadataInstances error');
 						self.loading = false;
 					});
