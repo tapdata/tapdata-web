@@ -257,9 +257,9 @@
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
-				<!-- <el-button class="fr" type="success" size="mini"  @click="hanlderLoadSchema">{{
+				<el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
 					$t('dataFlow.updateModel')
-				}}</el-button> -->
+				}}</el-button>
 				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 			</div>
 		</div>
@@ -275,6 +275,7 @@ import { convertSchemaToTreeData } from '../../util/Schema';
 import RelatedTasks from '../../../components/relatedTasks';
 import Entity from '../link/Entity';
 import _ from 'lodash';
+import ws from '../../../api/ws';
 import factory from '../../../api/factory';
 let connectionApi = factory('connections');
 const MetadataInstances = factory('MetadataInstances');
@@ -690,8 +691,21 @@ export default {
 
 		// 更新模型
 		hanlderLoadSchema() {
-			this.loadDataModels(this.model.connectionId);
-			this.handlerSchemaChange();
+			let params = {
+				type: 'reloadSchema',
+				data: {
+					tables: [
+						{
+							connId: this.model.connectionId,
+							tableName: this.model.tableName,
+							userId: this.$cookie.get('user_id')
+						}
+					]
+				}
+			};
+
+			ws.send(params);
+			ws.on('reloadSchema', function() {});
 		}
 	}
 };
