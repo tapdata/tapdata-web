@@ -346,6 +346,9 @@ export default {
 		}
 		this.loadData();
 		this.wsWatch();
+		this.editor.graph.on(EditorEventType.DRAFT_SAVE, () => {
+			this.draftSave();
+		});
 	},
 
 	methods: {
@@ -1415,12 +1418,6 @@ export default {
 };
 </script>
 <style scoped lang="less">
-.fixBtn {
-	position: fixed;
-	bottom: 30px;
-	left: 260px;
-	z-index: 99;
-}
 .spinner-box {
 	display: inline-block;
 	padding: 0 5px;
@@ -1554,25 +1551,6 @@ export default {
 	}
 }
 
-.popperFixbtn {
-	width: 160px !important;
-	.btnList {
-		width: 160px;
-		span {
-			display: block;
-			width: 100%;
-			padding: 5px 0;
-			color: #333;
-			font-size: 12px;
-			cursor: pointer;
-			i {
-				float: right;
-				color: #999;
-				font-size: 12px;
-			}
-		}
-	}
-}
 .systemHint {
 	.el-dialog__body {
 		overflow: hidden;
