@@ -883,7 +883,7 @@ const tc = {
 						placeholder: '请输入标签'
 					},
 					joinMethod: {
-						label: '插入方式',
+						label: '不匹配數據插入方式',
 						placeholder: '請選擇數據插入方式'
 					},
 					joinType: {

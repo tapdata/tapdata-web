@@ -884,7 +884,7 @@ const cn = {
 						placeholder: '请输入标签'
 					},
 					joinMethod: {
-						label: '插入方式',
+						label: '不匹配数据插入方式',
 						placeholder: '请选择数据插入方式'
 					},
 					joinType: {

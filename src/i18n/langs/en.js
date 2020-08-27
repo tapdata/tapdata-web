@@ -892,7 +892,7 @@ const en = {
 						placeholder: 'Please input label'
 					},
 					joinMethod: {
-						label: 'Insert Method',
+						label: 'Mismatched data insert model',
 						placeholder: 'Please select the data insertion method'
 					},
 					joinType: {
