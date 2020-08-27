@@ -108,9 +108,9 @@ export default {
 			pagesize: 20,
 			total: '',
 			colorMap: {
-				error: 'red',
-				warn: 'orangered',
-				info: '#48b6e2'
+				ERROR: 'red',
+				WARN: 'orangered',
+				INFO: '#48b6e2'
 			},
 			options: [
 				{
@@ -130,9 +130,13 @@ export default {
 			count: ''
 		};
 	},
-	mounted() {
+	created() {
 		this.getData();
 		this.getUnreadNum(); //未读消息数量
+		this.$root.$on('notificationUpdate', () => {
+			this.getUnreadNum(); //未读消息数量
+			this.getData();
+		});
 	},
 	methods: {
 		getData() {

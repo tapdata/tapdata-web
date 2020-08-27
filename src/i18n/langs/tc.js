@@ -1028,6 +1028,7 @@ const tc = {
 		exampleHashSQL:
 			'請輸入 SELECT 查詢語句 哈希校驗下SQL僅支持select查詢語句, 不支持count/sum/avg/max等查詢 示例: select field_1 from tablename_1 where field__2 > A；',
 		exampleHashMQL: '請輸入MQL查詢語句 示例: db.collection_1.find ({ field_2:A },{ field_1:1 })',
+		exampleJS: '请输入JS代码, 高级校验JS必须返回return值, 具体请查看示例',
 		showResult: '顯示數據校驗結果',
 		verifyRunningInfo: '後台運行',
 		verifyStatusWaiting: '校驗階段1-3:數據校驗排隊中，請等待... 點擊',

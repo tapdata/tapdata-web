@@ -11,7 +11,7 @@
 			</span>
 		</div>
 		<ul class="cuk-list clearfix cuk-list-type-block">
-			<li class="list-item" v-for="item in listData" :key="item.level">
+			<li class="list-item" v-for="item in listData" :key="item.level" @click="handleRead(item.id)">
 				<div class="list-item-content">
 					<div class="unread-1zPaAXtSu"></div>
 					<div class="list-item-desc">
@@ -71,9 +71,11 @@ export default {
 	},
 	created() {
 		let msg = {
-			type: 'notification',
-			userId: this.$cookie.get('user_id')
+			type: 'notification'
 		};
+		if (this.$cookie.get('isAdmin') == 0) {
+			msg['userId'] = this.$cookie.get('user_id');
+		}
 		ws.on('notification', data => {
 			if (data.data && data.data.length > 0) {
 				this.listData.unshift(...data.data);
@@ -113,6 +115,15 @@ export default {
 					}
 				}
 			});
+		},
+		handleRead(id) {
+			notification.patch({ read: true, id: id }).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.$root.$emit('notificationUpdate');
+					}
+				}
+			});
 		}
 	}
 };
@@ -143,6 +154,7 @@ export default {
 		background: #fff;
 		border-bottom: 1px solid #dedee4;
 		padding: 0 5px 5px 20px;
+		cursor: pointer;
 		.list-item-content {
 			position: relative;
 			height: 40px;

@@ -1029,6 +1029,7 @@ const en = {
 		errorComparison: 'Error comparison',
 		again: 'Check again',
 		rows: 'By amount of rows',
+		exampleJS: '请输入JS代码, 高级校验JS必须返回return值, 具体请查看示例',
 		sampleRate: 'By percentage',
 		condition: 'Sampling range',
 		showResult: 'Show result',
