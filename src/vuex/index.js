@@ -87,6 +87,26 @@ const store = new Vuex.Store({
 			rowsPerPage: '',
 			descending: '',
 			sortBy: ''
+		},
+		ttl: {
+			keyword: '',
+			selectedSeachType: '',
+			rowsPerPage: '',
+			descending: '',
+			sortBy: ''
+		},
+		dataRules: {
+			keyword: '',
+			selectedSeachType: '',
+			rowsPerPage: '',
+			descending: '',
+			sortBy: ''
+		},
+		dataCollect: {
+			keyword: '',
+			rowsPerPage: '',
+			descending: '',
+			sortBy: ''
 		}
 	},
 
