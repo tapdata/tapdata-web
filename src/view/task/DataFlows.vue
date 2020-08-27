@@ -422,6 +422,9 @@ export default {
 	},
 	created() {
 		this.formData = this.$store.state.dataFlows;
+		if (this.$route.query && this.$route.query.dataFlowStatus) {
+			this.formData.status = this.$route.query.dataFlowStatus;
+		}
 
 		this.screenFn();
 		this.keyupEnter();

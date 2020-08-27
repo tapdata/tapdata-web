@@ -115,6 +115,25 @@
 				<el-button @click="addRow">+ {{ $t('editor.cell.processor.aggregate.new_aggregate') }}</el-button>
 			</el-form-item>
 		</el-form>
+		<div class="example">
+			<h3>{{ $t('editor.cell.processor.aggregate.returnExample') }}</h3>
+			<ul class="example-box">
+				{
+				<li>
+					<span class="text">_id: "students_sum",</span>
+					<span class="comment">{{ $t('editor.cell.processor.aggregate.idComment') }}</span>
+				</li>
+				<li>
+					<span class="text">COUNT: 132,</span>
+					<span class="comment">{{ $t('editor.cell.processor.aggregate.countComment') }}</span>
+				</li>
+				<li>
+					<span class="text">{{ $t('editor.cell.processor.aggregate.school_name') }}</span>
+					<span class="comment">{{ $t('editor.cell.processor.aggregate.school_nameComment') }}</span>
+				</li>
+				}
+			</ul>
+		</div>
 	</div>
 </template>
 
@@ -311,6 +330,31 @@ export default {
 			font-weight: bold;
 			cursor: pointer;
 			border: 1px solid #dedee4;
+		}
+	}
+
+	.example {
+		h3 {
+			font-size: 12px;
+			color: #000;
+			font-weight: bold;
+		}
+		.example-box {
+			padding-top: 10px;
+			font-size: 12px;
+			color: #000;
+			li {
+				padding: 5px 0;
+				.text {
+					display: inline-block;
+					width: 160px;
+					padding-left: 10px;
+				}
+				.comment {
+					display: inline-block;
+					color: #aaa;
+				}
+			}
 		}
 	}
 }

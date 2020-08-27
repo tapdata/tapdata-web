@@ -757,7 +757,14 @@ const en = {
 					none_name: 'Sub-process name is required',
 					none_aggregation_expression: 'Target field is required.',
 					new_aggregate: 'Add new aggregate',
-					none_stage: 'Must have one aggregate'
+					none_stage: 'Must have one aggregate',
+					returnExample: 'Return example',
+					school_name: 'school_name: "Dorset"',
+					idComment:
+						'// "students_sum" is the Sub-process name, and the names between sub-processes cannot be repeated',
+					countComment:
+						'// COUNT is the Polymerization function and 132 is the value; if the function is MAX, it will show MAX here',
+					school_nameComment: '// Grouping summary field names, no display if dont filling out'
 				},
 				field: {
 					name: 'Field',
@@ -1022,6 +1029,7 @@ const en = {
 		errorComparison: 'Error comparison',
 		again: 'Check again',
 		rows: 'By amount of rows',
+		exampleJS: '请输入JS代码, 高级校验JS必须返回return值, 具体请查看示例',
 		sampleRate: 'By percentage',
 		condition: 'Sampling range',
 		showResult: 'Show result',

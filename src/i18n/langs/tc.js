@@ -751,7 +751,12 @@ const tc = {
 					new_aggregate: '添加聚合',
 					none_stage: '至少有一个聚合处理',
 					none_subprocessingName: '子處理名稱不能為空',
-					name_notRepeated: '子處理名稱不能重複'
+					name_notRepeated: '子處理名稱不能重複',
+					returnExample: '返回示例',
+					school_name: 'school_name: "第一實驗小學"',
+					idComment: '// "students_sum" 自定義的子處理名稱，多個子處理名稱不可重複',
+					countComment: '// COUNT為選擇的函數, 132為函數值；如果函數是MAX, 則名稱為MAX',
+					school_nameComment: ' // 分組匯總的欄位名，如果不填寫則不顯示'
 				},
 				field: {
 					name: '字段',
@@ -1023,6 +1028,7 @@ const tc = {
 		exampleHashSQL:
 			'請輸入 SELECT 查詢語句 哈希校驗下SQL僅支持select查詢語句, 不支持count/sum/avg/max等查詢 示例: select field_1 from tablename_1 where field__2 > A；',
 		exampleHashMQL: '請輸入MQL查詢語句 示例: db.collection_1.find ({ field_2:A },{ field_1:1 })',
+		exampleJS: '请输入JS代码, 高级校验JS必须返回return值, 具体请查看示例',
 		showResult: '顯示數據校驗結果',
 		verifyRunningInfo: '後台運行',
 		verifyStatusWaiting: '校驗階段1-3:數據校驗排隊中，請等待... 點擊',
