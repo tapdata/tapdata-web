@@ -10,9 +10,11 @@
 					</div>
 					<ul class="jobList">
 						<li v-for="task in taskList" :key="task.value">
-							<span :style="`color: ${colorMap[task.name]};`">{{
-								$t('dataFlow.status.' + task.name)
-							}}</span
+							<span
+								class="text"
+								:style="`color: ${colorMap[task.name]};`"
+								@click="handleStatus(task.name)"
+								>{{ $t('dataFlow.status.' + task.name) }}</span
 							><span>{{ task.value }}</span>
 						</li>
 						<!-- <li>
@@ -458,6 +460,16 @@ export default {
 		};
 	},
 	methods: {
+		// 点击运行状态跳转到任务列表
+		handleStatus(status) {
+			let routeUrl = this.$router.resolve({
+				path: '/dataFlows',
+				query: { dataFlowStatus: status }
+			});
+
+			window.open(routeUrl.href);
+		},
+
 		// 获取服务器与进程的数据
 		getClsterDataApi() {
 			cluster.get().then(res => {
@@ -722,6 +734,9 @@ export default {
 					width: 50px;
 					text-align: right;
 					font-size: 12px;
+				}
+				.text {
+					cursor: pointer;
 				}
 			}
 		}
