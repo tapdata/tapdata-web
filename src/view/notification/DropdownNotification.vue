@@ -122,6 +122,7 @@ export default {
 			notification.patch({ read: true, id: id }).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
+						this.listData = [];
 						this.$root.$emit('notificationUpdate');
 					}
 				}

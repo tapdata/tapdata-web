@@ -318,6 +318,7 @@ import factory from '../../api/factory';
 import ws from '../../api/ws';
 const dataFlows = factory('DataFlows');
 const MetadataInstance = factory('MetadataInstances');
+import { toRegExp } from '../../util/util';
 import metaData from '../metaData';
 import SelectClassify from '../../components/SelectClassify';
 
@@ -695,15 +696,16 @@ export default {
 					where['setting.sync_type'] = this.formData.way;
 				}
 				if (this.formData.search && this.formData.search !== '') {
+					let word = toRegExp(this.formData.search);
 					where.or = [
 						{
-							name: { regexp: this.formData.search, options: 'i' }
+							name: { like: word, options: 'i' }
 						},
 						{
-							'stages.name': { like: this.formData.search, options: 'i' }
+							'stages.name': { like: word, options: 'i' }
 						},
 						{
-							'stages.tableName': { like: this.formData.search, options: 'i' }
+							'stages.tableName': { like: word, options: 'i' }
 						}
 					];
 				}

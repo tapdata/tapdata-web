@@ -24,6 +24,7 @@
 					size="mini"
 					class="box-head-select"
 					@change="handleSearchTree()"
+					@keyup.enter="loadDataBase"
 				>
 					<el-option label="DB" value="db"></el-option>
 					<el-option label="Table" value="table"></el-option>
