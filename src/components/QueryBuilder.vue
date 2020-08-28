@@ -46,11 +46,30 @@
 						</el-select>
 					</div>
 					<el-row v-if="value.conditions.length == 0">
-						<el-button type="text" @click="addCond('cond')">+{{ $t('queryBuilder.addCond') }}</el-button>
-						<el-button type="text" @click="addCond('group')">+({{ $t('queryBuilder.addCond') }})</el-button>
+						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('cond')"
+							>+{{ $t('queryBuilder.addCond') }}</el-button
+						>
+						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('group')"
+							>+({{ $t('queryBuilder.addCond') }})</el-button
+						>
+					</el-row>
+					<el-row v-if="value.conditions.length > 0" style="padding-bottom: 10px;">
+						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('cond', 'and')"
+							>+ and</el-button
+						>
+						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('cond', 'or')"
+							>+ or</el-button
+						>
+						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('group', 'and')"
+							>+ and()</el-button
+						>
+						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('group', 'or')"
+							>+ or()</el-button
+						>
 					</el-row>
 					<queryCond
 						v-if="value.conditions.length > 0"
+						:level="0"
 						:primaryKeyOptions="primaryKeyOptions"
 						v-model="value"
 					></queryCond>
@@ -184,12 +203,12 @@ export default {
 				this.createCustSql();
 			});
 		},
-		addCond(type) {
+		addCond(type, op) {
 			let child = {};
 			if (type === 'group') {
 				child = {
 					type: 'group',
-					operator: '',
+					operator: op || '',
 					conditions: [
 						{
 							type: 'condition',
@@ -203,6 +222,7 @@ export default {
 				child = {
 					type: 'condition',
 					field: '',
+					operator: op || '',
 					command: '',
 					value: ''
 				};
