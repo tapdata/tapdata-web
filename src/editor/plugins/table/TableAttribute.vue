@@ -709,7 +709,6 @@ export default {
 				schema = [],
 				templeSchema = [];
 			ws.on('execute_load_schema_result', res => {
-				debugger;
 				if (res.status === 'SUCCESS' && res.result && res.result.length) {
 					templeSchema = res.result;
 				}
