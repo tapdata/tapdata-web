@@ -715,12 +715,13 @@ export default {
 				if (templeSchema && templeSchema.length) {
 					templeSchema.forEach(item => {
 						if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
-							schema = item.schema.fields.filter(s => s.table_name === this.model.tableName);
+							schema = item.schema;
 						}
 					});
 				}
 				self.$nextTick(() => {
 					self.$emit('schemaChange', _.cloneDeep(schema));
+					this.mergedSchema = schema;
 				});
 			});
 		}
