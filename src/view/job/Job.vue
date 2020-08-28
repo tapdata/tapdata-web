@@ -609,7 +609,7 @@ export default {
 					}
 				}
 			}
-
+			log('DataFlows Draft Save Params: ', data);
 			promise = dataFlowsApi.draft(data);
 			if (promise) {
 				promise
@@ -635,8 +635,9 @@ export default {
 									}
 								});
 							}
+							self.$message.success(self.$t('message.saveOK'));
 						}
-						self.$message.success(self.$t('message.saveOK'));
+						log('DataFlows Draft Save Response: ', result);
 					})
 					.finally(() => {
 						changeData = null;
