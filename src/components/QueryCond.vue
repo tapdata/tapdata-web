@@ -69,7 +69,7 @@ export default {
 		value: {
 			type: Object,
 			default() {
-				return { conditions: [{ field: '', command: '', value: '', condStr: '' }] };
+				return { conditions: [] };
 			}
 		},
 		level: {
@@ -155,14 +155,8 @@ export default {
 			});
 		},
 		removeChild(index) {
-			if (!this.value.fieldFilterType || this.value.conditions.length > 1) {
-				this.value.conditions.splice(index, 1);
-				if (this.value.conditions.length == 0) this.$emit('remove');
-			} else {
-				this.value.conditions[0].field = '';
-				this.value.conditions[0].command = '';
-				this.value.conditions[0].value = '';
-			}
+			this.value.conditions.splice(index, 1);
+			if (this.value.conditions.length == 0) this.$emit('remove');
 		}
 	}
 };

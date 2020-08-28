@@ -348,7 +348,7 @@ export default {
 					limitLines: '',
 					cSql: '',
 					editSql: '',
-					conditions: [{ field: '', command: '', value: '', condStr: '' }]
+					conditions: [] //[{ field: '', command: '', value: '', condStr: '' }]
 				},
 				initialOffset: '',
 				dropTable: false,
@@ -552,7 +552,6 @@ export default {
 			this.model.custFields.length = 0;
 			this.model.custSql.selectedFields.length = 0;
 			this.model.custSql.conditions.length = 0;
-			this.model.custSql.conditions.push({ field: '', command: '', value: '', condStr: '' });
 			this.model.custSql.limitLines = '';
 			this.model.cSql = '';
 			let self = this;

@@ -1241,6 +1241,9 @@ const cn = {
 		newSeverCreatedSuccessfully: '新服务监控被创建',
 		newSeverDeletedSuccessfully: '新服务监控被删除',
 		databaseDDLChanged: '监测到数据库DDL变化'
+	},
+	queryBuilder: {
+		addCond: '字段条件'
 	}
 };
 

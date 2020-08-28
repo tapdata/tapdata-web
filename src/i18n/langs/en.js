@@ -1254,6 +1254,9 @@ const en = {
 		placeholderTable: 'Enter new table name',
 		createCollection: ' Create new collection ',
 		placeholderCollection: 'Enter new collection name'
+	},
+	queryBuilder: {
+		addCond: 'field Cond'
 	}
 };
 

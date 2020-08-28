@@ -900,7 +900,7 @@ const tc = {
 						placeholder: '请输入关联后写入路径'
 					},
 					joinKeys: {
-						label: '关联条件',
+						label: '关联條件',
 						sourceField: '源字段',
 						targetField: '目标字段'
 					},
@@ -1243,6 +1243,9 @@ const tc = {
 		placeholderTable: '請輸入新表表名',
 		createCollection: '創建新數據集 ',
 		placeholderCollection: '請輸入新的數據集名稱'
+	},
+	queryBuilder: {
+		addCond: '字段條件'
 	}
 };
 

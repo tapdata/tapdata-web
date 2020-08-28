@@ -45,7 +45,15 @@
 							></el-option>
 						</el-select>
 					</div>
-					<queryCond :primaryKeyOptions="primaryKeyOptions" v-model="value"></queryCond>
+					<el-row v-if="value.conditions.length == 0">
+						<el-button type="text" @click="addCond('cond')">+{{ $t('queryBuilder.addCond') }}</el-button>
+						<el-button type="text" @click="addCond('group')">+({{ $t('queryBuilder.addCond') }})</el-button>
+					</el-row>
+					<queryCond
+						v-if="value.conditions.length > 0"
+						:primaryKeyOptions="primaryKeyOptions"
+						v-model="value"
+					></queryCond>
 					<el-row class="selectSql">
 						<div>{{ value.cSql }}</div>
 					</el-row>
@@ -176,9 +184,35 @@ export default {
 				this.createCustSql();
 			});
 		},
+		addCond(type) {
+			let child = {};
+			if (type === 'group') {
+				child = {
+					type: 'group',
+					operator: '',
+					conditions: [
+						{
+							type: 'condition',
+							field: '',
+							command: '=',
+							value: ''
+						}
+					]
+				};
+			} else {
+				child = {
+					type: 'condition',
+					field: '',
+					command: '',
+					value: ''
+				};
+			}
+			this.value.conditions.push(child);
+		},
 		createCustSql() {
 			let res = 'SELECT ',
 				custSql = this.value;
+			if (!this.sqlWhere) this.sqlWhere = '';
 			while (this.custFields.length > 0) this.custFields.pop();
 			if (this.value.selectedFields.length > 0 && custSql.fieldFilterType == 'retainedField')
 				this.value.selectedFields.forEach(it => this.custFields.push(it));
@@ -192,15 +226,21 @@ export default {
 				res += this.custFields.join(',');
 			else res += '* ';
 			res += ' FROM ' + this.tableName + ' ';
-			if ((this.sqlWhere && this.sqlWhere.length > 0) || (custSql.limitLines && custSql.limitLines != 'all'))
+			if (
+				(this.sqlWhere && this.sqlWhere.length > 0) ||
+				(custSql.limitLines && custSql.limitLines != 'all' && this.databaseType == 'oracle')
+			)
 				res += ' WHERE ';
 			res += this.sqlWhere;
 			if (custSql.limitLines && custSql.limitLines != 'all') {
 				if (this.databaseType == 'mysql') res += ' limit ' + custSql.limitLines;
+				if (this.databaseType == 'sqlserver')
+					res = res.replace('SELECT ', 'SELECT top ' + custSql.limitLines + ' ');
 				if (this.databaseType == 'oracle') {
 					if (res.indexOf('WHERE ') < res.length - 6) res += ' AND ';
 					res += ' ROWNUM < ' + custSql.limitLines;
 				}
+				if (this.databaseType == 'db2') res += '  fetch first ' + custSql.limitLines + ' rows only';
 			}
 			this.value.cSql = res;
 		},
