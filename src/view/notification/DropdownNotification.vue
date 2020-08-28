@@ -62,9 +62,9 @@ export default {
 		return {
 			listData: [],
 			colorMap: {
-				error: 'red',
-				warn: 'orangered',
-				info: 'blue'
+				ERROR: 'red',
+				WARN: 'orangered',
+				INFO: '#48b6e2'
 			},
 			typeMap: TYPEMAP
 		};
@@ -76,6 +76,7 @@ export default {
 		if (this.$cookie.get('isAdmin') == 0) {
 			msg['userId'] = this.$cookie.get('user_id');
 		}
+		this.getUnreadNum();
 		ws.on('notification', data => {
 			if (data.data && data.data.length > 0) {
 				this.listData.unshift(...data.data);
@@ -112,6 +113,7 @@ export default {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
 						this.$emit('unread', res.data.count);
+						//this.$root.$emit('notificationUpdate');
 					}
 				}
 			});

@@ -697,7 +697,7 @@ export default {
 				if (this.formData.search && this.formData.search !== '') {
 					where.or = [
 						{
-							name: { like: this.formData.search, options: 'i' }
+							name: { regexp: this.formData.search, options: 'i' }
 						},
 						{
 							'stages.name': { like: this.formData.search, options: 'i' }

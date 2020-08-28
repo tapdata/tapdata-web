@@ -344,6 +344,7 @@ export default {
 			this.notificationVisible = type;
 		},
 		handleUnread(data) {
+			this.unRead = '';
 			this.unRead = data;
 		}
 	}

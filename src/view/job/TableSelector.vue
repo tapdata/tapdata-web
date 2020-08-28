@@ -531,7 +531,7 @@ export default {
 	margin-left: 160px;
 	position: absolute;
 	left: 0px;
-	z-index: 2006;
+	z-index: 100;
 	top: -29px;
 }
 .ts-icon {
