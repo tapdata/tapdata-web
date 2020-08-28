@@ -60,7 +60,7 @@ export default {
 			let dat = data.data;
 			if (dat && dat.length > 0) {
 				self.$refs.log.add({ logs: dat, prepend: true });
-				if (this.firstLogsId.length == 0) this.firstLogsId = dat[dat.length - 1].id;
+				if (self.firstLogsId.length == 0) self.firstLogsId = dat[dat.length - 1].id;
 			}
 		});
 		let int = setInterval(() => {
