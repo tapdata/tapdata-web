@@ -705,7 +705,25 @@ export default {
 			};
 
 			ws.send(params);
-			ws.on('reloadSchema', function() {});
+			let self = this,
+				schema = [],
+				templeSchema = [];
+			ws.on('execute_load_schema_result', res => {
+				debugger;
+				if (res.status === 'SUCCESS' && res.result && res.result.length) {
+					templeSchema = res.result;
+				}
+				if (templeSchema && templeSchema.length) {
+					templeSchema.forEach(item => {
+						if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
+							schema = item.schema.fields.filter(s => s.table_name === this.model.tableName);
+						}
+					});
+				}
+				self.$nextTick(() => {
+					self.$emit('schemaChange', _.cloneDeep(schema));
+				});
+			});
 		}
 	}
 };
