@@ -21,6 +21,7 @@ const store = new Vuex.Store({
 	// 全局变量
 	state: {
 		dataFlows: {
+			panelFlag: true,
 			search: '',
 			timeData: [],
 			status: '',
