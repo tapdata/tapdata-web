@@ -15,6 +15,7 @@
 				style="width: 210px"
 				clearable
 				@change="handleSearchTree()"
+				v-on:keyup.13="loadDataBase()"
 				size="mini"
 			>
 				<el-select
@@ -24,7 +25,6 @@
 					size="mini"
 					class="box-head-select"
 					@change="handleSearchTree()"
-					@keyup.enter="loadDataBase"
 				>
 					<el-option label="DB" value="db"></el-option>
 					<el-option label="Table" value="table"></el-option>
@@ -139,34 +139,34 @@ export default {
 			let self = this;
 			this.default_expanded = true;
 			if (self.databseType === 'db') {
-				let params = {
-					filter: JSON.stringify({
-						where: {
-							meta_type: {
-								in: ['database', 'directory', 'ftp', 'apiendpoint']
-							},
-							original_name: {
-								like: self.filterText,
-								options: 'i'
-							},
-							'source.user_id': {
-								like: this.$cookie.get('user_id')
-							},
-							is_deleted: false
+				let filter = {
+					where: {
+						meta_type: {
+							in: ['database', 'directory', 'ftp', 'apiendpoint']
 						},
-						fields: {
-							id: true,
-							label: true,
-							meta_type: true,
-							original_name: true,
-							source: true,
-							'source._id': true,
-							'source.user_id': true,
-							'source.name': true,
-							'source.database_type': true,
-							'source.status': true
-						}
-					})
+						original_name: {
+							like: self.filterText,
+							options: 'i'
+						},
+						is_deleted: false
+					},
+					fields: {
+						id: true,
+						label: true,
+						meta_type: true,
+						original_name: true,
+						source: true,
+						'source._id': true,
+						'source.user_id': true,
+						'source.name': true,
+						'source.database_type': true,
+						'source.status': true
+					}
+				};
+				if (parseInt(this.$cookie.get('isAdmin') === 0))
+					filter.where['source.user_id'] = { like: this.$cookie.get('user_id') };
+				let params = {
+					filter: JSON.stringify(filter)
 				};
 				self.loading = true;
 				MetadataInstances.get(params)
@@ -202,9 +202,9 @@ export default {
 					});
 			} else {
 				let params = {
-					name: self.filterText,
-					userId: this.$cookie.get('user_id')
+					name: self.filterText
 				};
+				if (parseInt(this.$cookie.get('isAdmin') === 0)) params['source.user_id'] = this.$cookie.get('user_id');
 				self.loading = true;
 				MetadataInstances.tableConnection(params)
 					.then(res => {
@@ -239,34 +239,35 @@ export default {
 			}
 		},
 		loadDataBase() {
+			debugger;
 			let self = this;
 			this.filterText = '';
 			this.databseType = 'table';
-			let params = {
-				filter: JSON.stringify({
-					where: {
-						meta_type: {
-							in: ['database', 'directory', 'ftp', 'apiendpoint']
-						},
-						is_deleted: false,
-						'source.user_id': {
-							like: this.$cookie.get('user_id')
-						}
+			let filter = {
+				where: {
+					meta_type: {
+						in: ['database', 'directory', 'ftp', 'apiendpoint']
 					},
-					order: 'original_name ASC',
-					fields: {
-						id: true,
-						label: true,
-						meta_type: true,
-						original_name: true,
-						source: true,
-						'source._id': true,
-						'source.user_id': true,
-						'source.name': true,
-						'source.database_type': true,
-						'source.status': true
-					}
-				})
+					is_deleted: false
+				},
+				order: 'original_name ASC',
+				fields: {
+					id: true,
+					label: true,
+					meta_type: true,
+					original_name: true,
+					source: true,
+					'source._id': true,
+					'source.user_id': true,
+					'source.name': true,
+					'source.database_type': true,
+					'source.status': true
+				}
+			};
+			if (parseInt(this.$cookie.get('isAdmin') === 0))
+				filter.where['source.user_id'] = { like: this.$cookie.get('user_id') };
+			let params = {
+				filter: JSON.stringify(filter)
 			};
 			self.loading = true;
 			MetadataInstances.get(params)
