@@ -224,6 +224,7 @@
 							:placeholder="$t('editor.cell.processor.field.form.expression')"
 							v-model="scriptDialog.script"
 							size="mini"
+							:disabled="disabledMode"
 						>
 							<template slot="prepend">var result = </template>
 						</el-input>
