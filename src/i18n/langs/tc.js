@@ -200,8 +200,8 @@ const tc = {
 	},
 	dataFlow: {
 		updateModel: '更新模型',
-		databseProcessingHead: '資料庫遷移',
-		databseMigrationHead: '數據處理同步',
+		databseMigrationHead: '數據庫遷移',
+		databseProcessingHead: '數據處理同步',
 		databseFreedomHead: '自定義數據同步',
 		createNew: '新建',
 		DissedNoAction: 'oops~ 被禁用的節點或連線不能被刪除、連入或連出',
@@ -217,9 +217,9 @@ const tc = {
 		sourceSetting: '設置源庫',
 		targetSetting: '設置目標庫',
 		jobSetting: '任務設置',
-		databseProcessing:
-			'以引導的模式幫助新手用戶快速了解資料庫之間的遷移。資料庫遷移能快速地實現資料庫之間(內置表批量過濾和改名等設置)的全量和增量傳輸，適用於實例遷移、上下雲、資料庫拆分擴容、災備等業務場景。',
 		databseMigration:
+			'以引導的模式幫助新手用戶快速了解數據庫之間的遷移。數據庫遷移能快速地實現數據庫之間(內置表批量過濾和改名等設置)的全量和增量傳輸。',
+		databsenProcessing:
 			'以引導的模式幫助新手用戶快速了解表級的數據處理與同步，此功能除了能實現表級的全量或增量傳輸除功能外，更注重使用各種處理器(JS處理、欄位過濾、聚合處理、行級過濾等)進行複雜的邏輯處理，以滿足用戶更高的數據處理需求',
 		databseFreedom:
 			'自定義數據同步模式下，用戶可以根據需求自由地使用全部的數據節點與處理節點，自由的設置任務編排路徑與功能配置。此模式可滿足用戶各種複雜的數據處理的場景需求。',
