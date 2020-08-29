@@ -201,7 +201,7 @@ const en = {
 	},
 	dataFlow: {
 		updateModel: 'Update Model',
-		databseProcessingHead: 'Data processing & SYNC',
+		databseProcessingHead: 'Data Processing & Sync',
 		databseMigrationHead: 'Database Migration',
 		databseFreedomHead: 'Custom Data Sync',
 		createNew: 'Create new',

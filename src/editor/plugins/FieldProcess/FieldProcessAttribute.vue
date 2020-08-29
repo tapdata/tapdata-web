@@ -108,7 +108,7 @@ export default {
 	methods: {
 		convertSchemaToTreeData,
 
-		setData(data, cell, isSourceDataNode, vueAdapter) {
+		setData(data, cell, dataNodeInfo, vueAdapter) {
 			this.originalSchema = mergeJoinTablesToTargetSchema(null, cell.getInputSchema());
 			let schema = _.cloneDeep(this.originalSchema);
 

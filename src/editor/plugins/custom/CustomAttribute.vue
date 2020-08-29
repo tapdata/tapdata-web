@@ -238,10 +238,11 @@ export default {
 	},
 	methods: {
 		convertSchemaToTreeData,
-		setData(data, cell, isSourceDataNode, vueAdapter) {
+		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
 				_.merge(this.model, data);
 			}
+			this.isSourceDataNode = dataNodeInfo && dataNodeInfo.isSource;
 			this.mergedSchema = cell.getOutputSchema();
 			cell.on('change:outputSchema', () => {
 				this.mergedSchema = cell.getOutputSchema();
