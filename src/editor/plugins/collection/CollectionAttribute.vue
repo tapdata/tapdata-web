@@ -754,3 +754,10 @@ export default {
 	}
 }
 </style>
+<style lang="less">
+.e-collection {
+	.iconfont {
+		font-size: 12px;
+	}
+}
+</style>
