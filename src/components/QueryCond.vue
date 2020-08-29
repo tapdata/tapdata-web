@@ -1,13 +1,14 @@
 <template>
 	<div style="" :class="color">
 		<div v-for="(cond, idx) in value.conditions" :key="idx">
-			<span v-if="cond.type == 'group' ? cond.conditions.length > 0 : true">{{ cond.operator }}</span>
+			<span v-if="cond.type == 'group' && cond.conditions.length > 0 && cond.operator" class="cond-operator">{{
+				cond.operator
+			}}</span>
 			<queryCond
 				v-if="cond.type == 'group'"
 				:primaryKeyOptions="primaryKeyOptions"
 				v-model="value.conditions[idx]"
 				@remove="removeChild(idx)"
-				style="margin: 10px;"
 			></queryCond>
 			<div v-if="cond.type != 'group'" class="item">
 				<div class="field">
@@ -162,10 +163,16 @@ export default {
 	}
 };
 </script>
-<style>
+<style lang="less">
 .level2 {
 	border: 1px solid #dedee4;
-	padding-top: 5px;
+	padding: 5px;
+}
+.level1,
+.level2 {
+	div:last-child > .item {
+		margin-bottom: 0;
+	}
 }
 </style>
 <style lang="less" scoped>
@@ -174,8 +181,9 @@ export default {
 	justify-content: space-around;
 	justify-items: center;
 	margin-bottom: 6px;
-	margin-right: 6px;
-	margin-left: 5px;
+	.field + .field {
+		margin-left: 5px;
+	}
 	.btn {
 		height: 28px;
 		line-height: 46px;
@@ -250,6 +258,11 @@ export default {
 				width: 100%;
 			}
 		}
+	}
+	.cond-operator {
+		margin-left: 10px;
+		margin-bottom: 10px;
+		display: inline-block;
 	}
 }
 </style>
