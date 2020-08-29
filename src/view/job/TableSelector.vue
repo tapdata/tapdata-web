@@ -137,7 +137,7 @@ export default {
 			this.default_expanded = true;
 			if (this.filterText === '' || this.databseType === '') {
 				this.loadDataBase();
-			} else if (self.databseType === 'db') {
+			} else if (self.databseType === 'db' && this.filterText !== '') {
 				let filter = {
 					where: {
 						meta_type: {
@@ -199,7 +199,7 @@ export default {
 						this.$message.error('MetadataInstances error');
 						self.loading = false;
 					});
-			} else {
+			} else if (self.databseType === 'table' && this.filterText !== '') {
 				let params = {
 					name: self.filterText
 				};
@@ -239,8 +239,6 @@ export default {
 		},
 		loadDataBase() {
 			let self = this;
-			this.filterText = '';
-			this.databseType = 'table';
 			let filter = {
 				where: {
 					meta_type: {
