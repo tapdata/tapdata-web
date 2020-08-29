@@ -594,12 +594,12 @@ export default {
 		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
 				let conds;
-				if (data.custSql) {
+				if (data.custSql && data.custSql.conditions) {
 					conds = JSON.parse(JSON.stringify(data.custSql.conditions));
 					delete data.custSql.conditions;
 				}
 				_.merge(this.model, data);
-				if (data.custSql)
+				if (data.custSql && data.custSql.conditions)
 					conds.forEach(it => {
 						this.model.custSql.conditions.push(it);
 					});
