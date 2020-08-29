@@ -299,7 +299,8 @@ export default {
 							)
 								? "'"
 								: '',
-							percent = cond.calcu == 'like' ? '%' : '';
+							percent = cond.command == 'like' ? '%' : '';
+						if (quota == '' && percent == '%') quota = "'";
 						if (res.length > 1) res += ' ' + cond.operator + ' ';
 						res += cond.field + ' ' + cond.command + ' ' + quota + percent + cond.value + percent + quota;
 					}
