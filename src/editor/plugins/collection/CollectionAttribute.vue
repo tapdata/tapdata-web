@@ -570,7 +570,7 @@ export default {
 
 			if (ws.ws.readyState == 1) ws.send(params);
 			let self = this,
-				schema = [],
+				schema = null,
 				templeSchema = [];
 			ws.on('execute_load_schema_result', res => {
 				if (res.status === 'SUCCESS' && res.result && res.result.length) {
