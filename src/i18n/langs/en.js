@@ -202,9 +202,9 @@ const en = {
 	dataFlow: {
 		updateModel: 'Update Model',
 		databseProcessingHead: 'Data processing & SYNC',
-		databseMigrationHead: 'Database migration',
-		databseFreedomHead: 'Custom data SYNC',
-		createNew: 'Create new',
+		databseMigrationHead: 'Database Migration',
+		databseFreedomHead: 'Custom Data Sync',
+		createNew: 'Create New',
 		DissedNoAction: 'oops~ The banned node/Connecting line should not be deleted, connected in, or connected out',
 		guidingMode: 'Guiding mode',
 		advancedMode: 'Advanced mode',

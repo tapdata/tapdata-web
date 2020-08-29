@@ -15,7 +15,7 @@
 				style="width: 210px"
 				clearable
 				@change="handleSearchTree()"
-				@keyup.enter.native="loadDataBase"
+				@keyup.enter.native="handleSearchTree()"
 				size="mini"
 			>
 				<el-select
@@ -133,12 +133,11 @@ export default {
 			this.loadDataBase();
 		},
 		handleSearchTree() {
-			if (this.filterText === '' || this.databseType === '') {
-				return; //tableConnection
-			}
 			let self = this;
 			this.default_expanded = true;
-			if (self.databseType === 'db') {
+			if (this.filterText === '' || this.databseType === '') {
+				this.loadDataBase();
+			} else if (self.databseType === 'db') {
 				let filter = {
 					where: {
 						meta_type: {
@@ -163,7 +162,7 @@ export default {
 						'source.status': true
 					}
 				};
-				if (parseInt(this.$cookie.get('isAdmin') === 0))
+				if (this.$cookie.get('isAdmin') == 0)
 					filter.where['source.user_id'] = { like: this.$cookie.get('user_id') };
 				let params = {
 					filter: JSON.stringify(filter)
@@ -204,7 +203,7 @@ export default {
 				let params = {
 					name: self.filterText
 				};
-				if (parseInt(this.$cookie.get('isAdmin') === 0)) params['source.user_id'] = this.$cookie.get('user_id');
+				if (this.$cookie.get('isAdmin') == 0) params['userId'] = this.$cookie.get('user_id');
 				self.loading = true;
 				MetadataInstances.tableConnection(params)
 					.then(res => {
@@ -263,7 +262,7 @@ export default {
 					'source.status': true
 				}
 			};
-			if (parseInt(this.$cookie.get('isAdmin') === 0))
+			if (this.$cookie.get('isAdmin') == 0)
 				filter.where['source.user_id'] = { like: this.$cookie.get('user_id') };
 			let params = {
 				filter: JSON.stringify(filter)
