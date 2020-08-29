@@ -15,7 +15,7 @@
 				style="width: 210px"
 				clearable
 				@change="handleSearchTree()"
-				v-on:keyup.13="loadDataBase()"
+				@keyup.enter.native="loadDataBase"
 				size="mini"
 			>
 				<el-select
