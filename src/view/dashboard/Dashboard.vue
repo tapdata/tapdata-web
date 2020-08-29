@@ -395,7 +395,6 @@ export default {
 						data: [],
 						barWidth: '100%',
 						barGap: '-100%',
-						barMinHeight: 2,
 						itemStyle: {
 							normal: {
 								color: function(params) {
