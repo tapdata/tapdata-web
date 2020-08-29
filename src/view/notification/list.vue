@@ -226,11 +226,13 @@ export default {
 			});
 		},
 		handleRead(id) {
+			let read = this.read;
 			notification.patch({ read: true, id: id }).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
 						this.getUnreadNum(); //未读消息数量
 						this.getData();
+						this.read = read;
 						this.$root.$emit('notificationUpdate');
 					}
 				}
@@ -250,12 +252,14 @@ export default {
 				read: true
 			};
 			where = JSON.stringify(where);
+			let read = this.read;
 			notification.upsertWithWhere(where, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
 						this.read = true;
 						this.getUnreadNum(); //未读消息数量
 						this.getData();
+						this.read = read;
 						this.$root.$emit('notificationUpdate');
 					}
 				}
@@ -270,12 +274,14 @@ export default {
 				read: true
 			};
 			where = JSON.stringify(where);
+			let read = this.read;
 			notification.readAll(where, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
 						this.read = true;
 						this.getUnreadNum(); //未读消息数量
 						this.getData();
+						this.read = read;
 						this.$root.$emit('notificationUpdate');
 					}
 				}
