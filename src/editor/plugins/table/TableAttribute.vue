@@ -166,7 +166,7 @@
 				</el-form-item>
 
 				<queryBuilder
-					v-if="model.isFilter"
+					v-if="isSourceDataNode && model.isFilter"
 					v-model="model.custSql"
 					v-bind:initialOffset.sync="model.initialOffset"
 					:primaryKeyOptions="primaryKeyOptions"
@@ -348,7 +348,7 @@ export default {
 					limitLines: '',
 					cSql: '',
 					editSql: '',
-					conditions: [] //[{ field: '', command: '', value: '', condStr: '' }]
+					conditions: []
 				},
 				initialOffset: '',
 				dropTable: false,
@@ -593,8 +593,16 @@ export default {
 
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
+				let conds;
+				if (data.custSql) {
+					conds = JSON.parse(JSON.stringify(data.custSql.conditions));
+					delete data.custSql.conditions;
+				}
 				_.merge(this.model, data);
-				//老数据的兼容处理
+				if (data.custSql)
+					conds.forEach(it => {
+						this.model.custSql.conditions.push(it);
+					});
 				if (data.initialSyncOrder > 0) {
 					this.model.enableInitialOrder = true;
 				}
