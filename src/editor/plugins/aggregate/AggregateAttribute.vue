@@ -249,7 +249,7 @@ export default {
 			}
 		},
 
-		setData(data, cell, isSourceDataNode, vueAdapter) {
+		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
 				_.merge(this.form, data);
 				this.form.aggregations.map((item, index) => {

@@ -122,7 +122,7 @@
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
-					v-if="isSourceDataNode"
+					v-if="dataNodeInfo.isSource"
 				>
 					<div class="flex-block">
 						<el-switch
@@ -149,7 +149,7 @@
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.filter.fiflterSetting')"
-					v-if="isSourceDataNode"
+					v-if="dataNodeInfo.isSource"
 				>
 					<div class="flex-block">
 						<el-switch
@@ -166,7 +166,7 @@
 				</el-form-item>
 
 				<queryBuilder
-					v-if="isSourceDataNode && model.isFilter"
+					v-if="dataNodeInfo.isSource && model.isFilter"
 					v-model="model.custSql"
 					v-bind:initialOffset.sync="model.initialOffset"
 					:primaryKeyOptions="primaryKeyOptions"
@@ -180,7 +180,7 @@
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.dropTable.label')"
-					v-if="!isSourceDataNode"
+					v-if="dataNodeInfo.isTarget"
 				>
 					<el-select v-model="model.dropTable" size="mini">
 						<el-option
@@ -331,7 +331,7 @@ export default {
 				]
 			},
 
-			isSourceDataNode: false,
+			dataNodeInfo: {},
 
 			model: {
 				connectionId: '',
@@ -591,7 +591,7 @@ export default {
 			this.taskData.tableName = this.model.tableName;
 		},
 
-		setData(data, cell, isSourceDataNode, vueAdapter) {
+		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
 				let conds;
 				if (data.custSql) {
@@ -609,7 +609,8 @@ export default {
 				this.tableIsLink();
 			}
 			tempSchemas.length = 0;
-			this.isSourceDataNode = isSourceDataNode;
+			this.dataNodeInfo = dataNodeInfo || {};
+
 			this.loadDataModels(this.model.connectionId);
 
 			this.mergedSchema = cell.getOutputSchema();
@@ -624,7 +625,7 @@ export default {
 				else this.model.sql = this.model.custSql.editSql;
 			let result = _.cloneDeep(this.model);
 			result.name = result.tableName || 'Table';
-			if (this.isSourceDataNode) {
+			if (!this.dataNodeInfo.isTarget) {
 				delete result.dropTable;
 			}
 			this.taskData.id = result.connectionId;
