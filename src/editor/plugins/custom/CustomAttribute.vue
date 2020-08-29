@@ -242,7 +242,7 @@ export default {
 			if (data) {
 				_.merge(this.model, data);
 			}
-			this.isSourceDataNode = dataNodeInfo && dataNodeInfo.isSource;
+			this.isSourceDataNode = dataNodeInfo && (dataNodeInfo.isSource || !dataNodeInfo.isTarget);
 			this.mergedSchema = cell.getOutputSchema();
 			cell.on('change:outputSchema', () => {
 				this.mergedSchema = cell.getOutputSchema();

@@ -19,7 +19,7 @@
 					{{ $t('dataFlow.undo') }} <i>{{ isMac ? 'command+z' : 'ctrl+z' }}</i>
 				</span>
 				<span>
-					{{ $t('dataFlow.redo') }} <i>{{ isMac ? 'command+y' : 'ctrl+y' }}</i>
+					{{ $t('dataFlow.redo') }} <i>{{ isMac ? 'command+shift+z' : 'ctrl+y' }}</i>
 				</span>
 				<span>
 					{{ $t('dataFlow.selectAll') }} <i>{{ isMac ? 'command+a' : 'ctrl+a' }}</i>

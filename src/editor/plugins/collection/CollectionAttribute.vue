@@ -163,7 +163,7 @@
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
-					v-if="dataNodeInfo.isSource"
+					v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
 				>
 					<div class="flex-block">
 						<el-switch
@@ -197,7 +197,10 @@
 					</el-select>
 				</el-form-item>
 
-				<el-form-item :label="$t('editor.cell.data_node.collection.form.filter.label')">
+				<el-form-item
+					v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
+					:label="$t('editor.cell.data_node.collection.form.filter.label')"
+				>
 					<el-input
 						v-model="model.filter"
 						type="textarea"

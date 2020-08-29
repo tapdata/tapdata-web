@@ -122,7 +122,7 @@
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
-					v-if="dataNodeInfo.isSource"
+					v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
 				>
 					<div class="flex-block">
 						<el-switch
@@ -149,7 +149,7 @@
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.filter.fiflterSetting')"
-					v-if="dataNodeInfo.isSource"
+					v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
 				>
 					<div class="flex-block">
 						<el-switch
@@ -166,7 +166,7 @@
 				</el-form-item>
 
 				<queryBuilder
-					v-if="dataNodeInfo.isSource && model.isFilter"
+					v-if="(dataNodeInfo.isSource || !dataNodeInfo.isTarget) && model.isFilter"
 					v-model="model.custSql"
 					v-bind:initialOffset.sync="model.initialOffset"
 					:primaryKeyOptions="primaryKeyOptions"
