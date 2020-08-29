@@ -122,7 +122,7 @@
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
-					v-if="dataNodeInfo.isSource"
+					v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
 				>
 					<div class="flex-block">
 						<el-switch
@@ -149,7 +149,7 @@
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.filter.fiflterSetting')"
-					v-if="dataNodeInfo.isSource"
+					v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
 				>
 					<div class="flex-block">
 						<el-switch
@@ -166,7 +166,7 @@
 				</el-form-item>
 
 				<queryBuilder
-					v-if="dataNodeInfo.isSource && model.isFilter"
+					v-if="(dataNodeInfo.isSource || !dataNodeInfo.isTarget) && model.isFilter"
 					v-model="model.custSql"
 					v-bind:initialOffset.sync="model.initialOffset"
 					:primaryKeyOptions="primaryKeyOptions"
@@ -594,12 +594,12 @@ export default {
 		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
 				let conds;
-				if (data.custSql) {
+				if (data.custSql && data.custSql.conditions) {
 					conds = JSON.parse(JSON.stringify(data.custSql.conditions));
 					delete data.custSql.conditions;
 				}
 				_.merge(this.model, data);
-				if (data.custSql)
+				if (data.custSql && data.custSql.conditions)
 					conds.forEach(it => {
 						this.model.custSql.conditions.push(it);
 					});
