@@ -203,8 +203,8 @@ const cn = {
 	},
 	dataFlow: {
 		updateModel: '更新模型',
-		databseProcessingHead: '数据库迁移',
-		databseMigrationHead: '数据处理同步',
+		databseMigrationHead: '数据库迁移',
+		atabseProcessingHead: '数据处理同步',
 		databseFreedomHead: '自定义同步任务',
 		createNew: '新建',
 		DissedNoAction: 'oops~ 被禁用的节点或连线不能被删除、连入或连出',
@@ -220,9 +220,9 @@ const cn = {
 		sourceSetting: '设置源库',
 		targetSetting: '设置目标库',
 		jobSetting: '任务设置',
-		databseProcessing:
-			'以引导的模式帮助新手用户快速了解数据库之间的迁移。数据库迁移能快速地实现数据库之间(内置表批量过滤和改名等设置)的全量和增量传输。',
 		databseMigration:
+			'以引导的模式帮助新手用户快速了解数据库之间的迁移。数据库迁移能快速地实现数据库之间(内置表批量过滤和改名等设置)的全量和增量传输。',
+		databseProcessing:
 			'以引导的模式帮助新手用户快速了解表级的数据处理与同步，此功能除了能实现表级的全量或增量传输除功能外，更注重使用各种处理器(JS处理、字段过滤、聚合处理、行级过滤等)进行复杂的逻辑处理，以满足用户更高的数据处理需求',
 		databseFreedom:
 			'自定义数据同步模式下，用户可以根据需求自由地使用全部的数据节点与处理节点，自由的设置任务编排路径与功能配置。此模式可满足用户各种复杂的数据处理的场景需求。',

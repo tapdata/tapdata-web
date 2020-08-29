@@ -201,10 +201,10 @@ const en = {
 	},
 	dataFlow: {
 		updateModel: 'Update Model',
-		databseProcessingHead: 'Data processing & SYNC',
+		databseProcessingHead: 'Data Processing & Sync',
 		databseMigrationHead: 'Database Migration',
 		databseFreedomHead: 'Custom Data Sync',
-		createNew: 'Create New',
+		createNew: 'Create new',
 		DissedNoAction: 'oops~ The banned node/Connecting line should not be deleted, connected in, or connected out',
 		guidingMode: 'Guiding mode',
 		advancedMode: 'Advanced mode',
@@ -218,10 +218,10 @@ const en = {
 		sourceSetting: 'Source setting',
 		targetSetting: 'Target setting',
 		jobSetting: 'Job setting',
+		databseMigration:
+			'With the guided mode to help understanding the operation method of databases migration which can quickly realize INITAL and CDC transmission between databases (include table filter and rename settings, etc).',
 		databseProcessing:
 			'With the  guided mode to help novice users to quickly understand the table level data processing and SYNC. This function can not only realize table level INITAL and CDC transmission, but also focus on various processors (JS processing, field filtering, aggregation processing, row level filtering, etc.) for complex logical processing demands.',
-		databseMigration:
-			'With the guided mode to help novice users to quickly understand the operation method between databases. Database migration can quickly realize INITAL and CDC transmission between databases (include table filter and rename settings, etc).',
 		databseFreedom:
 			'In the custom mode, user can freely use all the data nodes and processor nodes , set the task scheduling path and function configuration to solve various complex data processing scenarios and synchronization requirements',
 		multiError: {
@@ -427,7 +427,7 @@ const en = {
 			save: 'Save',
 			saveDraft: 'Save Draft',
 			saveing: 'Saving',
-			reloadSchema: 'reloadSchema',
+			reloadSchema: 'Reload Schema',
 			debug: 'debug test',
 			quantitative: 'Quantitative',
 			increment: 'Increment'
@@ -907,7 +907,7 @@ const en = {
 						placeholder: 'Please select Data Write model'
 					},
 					joinPath: {
-						label: 'Target Path',
+						label: 'Target path',
 						placeholder: 'Please input target path'
 					},
 					joinKeys: {
@@ -916,7 +916,7 @@ const en = {
 						targetField: 'Target Field'
 					},
 					arrayUniqueKey: {
-						label: 'In Array Match Key',
+						label: 'Embedded array match key',
 						placeholder: 'Please enter in embed array match key '
 					}
 				},
