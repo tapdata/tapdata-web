@@ -239,7 +239,6 @@ export default {
 			}
 		},
 		loadDataBase() {
-			debugger;
 			let self = this;
 			this.filterText = '';
 			this.databseType = 'table';
