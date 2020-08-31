@@ -65,6 +65,7 @@
 									</router-link>
 								</span>
 								<span>{{ typeMap[item.msg] }}</span>
+								<span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
 							</div>
 							<div class="list-item-time">
 								<span>{{ item.createTime }}</span>
@@ -296,6 +297,22 @@ export default {
 				this.read = false; //未读
 			}
 			this.getData();
+		},
+		getLag(lag) {
+			let r = '0s';
+			if (lag) {
+				let m = moment.duration(lag, 'seconds');
+				if (m.days()) {
+					r = m.days() + 'd';
+				} else if (m.hours()) {
+					r = m.hours() + 'h';
+				} else if (m.minutes()) {
+					r = m.minutes() + 'm';
+				} else {
+					r = lag + 's';
+				}
+			}
+			return r;
 		}
 	}
 };
