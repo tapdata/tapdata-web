@@ -536,7 +536,8 @@ export default {
 			border: none;
 		}
 		.el-badge__content.is-fixed {
-			right: 5px;
+			right: 18px;
+			top: 3px;
 		}
 	}
 	.layout-main {

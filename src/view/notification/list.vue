@@ -198,6 +198,9 @@ export default {
 			if (this.$cookie.get('isAdmin') == 0) {
 				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
+			if (this.search || this.search !== '') {
+				where.where['level'] = this.search;
+			}
 			notification.count(where).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
@@ -304,7 +307,7 @@ export default {
 	height: 100%;
 	font-size: 12px;
 	.unread {
-		width: 25px;
+		min-width: 25px;
 		height: 17px;
 		display: inline-block;
 		line-height: 17px;
