@@ -608,6 +608,10 @@ const cn = {
 						initial_offset: {
 							label: '自定义SQL增量条件',
 							placeholder: '请输入自定义SQL增量条件'
+						},
+						maximum_transaction: {
+							label: '事务最大时长(小时)',
+							tip: '等待事务提交的时间(小时)。输入您期望事务需要的最长时间。默认为12小时'
 						}
 					}
 				},

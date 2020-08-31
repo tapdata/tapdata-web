@@ -606,6 +606,10 @@ const tc = {
 						initial_offset: {
 							label: '自定義SQL增量條件',
 							placeholder: '請輸入自定義SQL增量條件'
+						},
+						maximum_transaction: {
+							label: '事務最大時長(小時)',
+							tip: '等待事務提交的時間(小時)。輸入您期望事務需要的最長時間。默認為12小時'
 						}
 					}
 				},
