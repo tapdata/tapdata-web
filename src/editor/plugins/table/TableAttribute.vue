@@ -579,6 +579,11 @@ export default {
 						// 	.join(',');
 						self.primaryKeyOptions = fields.map(f => f.field_name);
 						self.model.custSql.custFields = fields.map(f => f.field_name);
+						self.model.custSql.conditions.length = 0;
+						self.model.custSql.fieldFilterType = 'keepAllFields';
+						self.model.custSql.cSql = '';
+						self.model.custSql.editSql = '';
+						self.model.custSql.selectedFields.length = 0;
 						// if (primaryKeys) {
 						// 	self.model.primaryKeys = primaryKeys;
 						// } else {

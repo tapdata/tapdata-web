@@ -293,7 +293,7 @@ export default {
 					if (cond.type == 'group')
 						res += ' ' + cond.operator + ' (' + this.toSqlWhere(cond.conditions) + ')';
 					else {
-						let quota = ['String'].includes(
+						let quota = ['String', 'Date'].includes(
 								this.mergedSchema.fields.find(it => it.field_name == cond.field).javaType
 							)
 								? "'"
