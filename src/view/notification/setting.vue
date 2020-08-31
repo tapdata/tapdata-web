@@ -14,11 +14,20 @@
 			<div class="notification-right-list" v-loading="loading">
 				<div class="notification-head">
 					<div class="title">{{ $t('notification.systemNotice') }}</div>
-					<div>
-						邮件通知为全局邮件通知设置，针对某个指定的设置（例如任务的专属设置）可以在其任务详情页进行专门的邮件通知设置，其优先级高于此处的全局邮件通知设置
-					</div>
 				</div>
-				<div></div>
+				<section>
+					邮件通知为全局邮件通知设置，针对某个指定的设置（例如任务的专属设置）可以在其任务详情页进行专门的邮件通知设置，其优先级高于此处的全局邮件通知设置
+				</section>
+				<section>
+					<span class="block"></span><span>通知运行通知</span>
+					<ul>
+						<li>
+							<span>{{ $t('notification.systemNotice') }}</span>
+							<el-checkbox v-model="checked1">系统通知</el-checkbox>
+							<el-checkbox v-model="checked1">邮件通知</el-checkbox>
+						</li>
+					</ul>
+				</section>
 			</div>
 		</div>
 	</div>
@@ -28,51 +37,16 @@
 import factory from '../../api/factory';
 const notification = factory('notification');
 import * as moment from 'moment';
-import { TYPEMAP } from './tyepMap';
+import { notificationMAP } from './tyepMap';
 
 export default {
 	name: 'list',
 	data() {
 		return {
-			activeName: 'first',
-			listData: [],
-			read: true,
-			loading: false,
-			search: '',
-			currentPage: 1,
-			pagesize: 20,
-			total: '',
-			colorMap: {
-				ERROR: 'red',
-				WARN: 'orangered',
-				INFO: '#48b6e2'
-			},
-			options: [
-				{
-					value: 'error',
-					label: 'ERROR'
-				},
-				{
-					value: 'warn',
-					label: 'WARN'
-				},
-				{
-					value: 'info',
-					label: 'INFO'
-				}
-			],
-			typeMap: TYPEMAP,
-			count: ''
+			notificationMAP: notificationMAP
 		};
 	},
-	created() {
-		this.getData();
-		this.getUnreadNum(); //未读消息数量
-		this.$root.$on('notificationUpdate', () => {
-			this.getUnreadNum(); //未读消息数量
-			this.getData();
-		});
-	},
+	created() {},
 	methods: {
 		getData() {
 			let where = {};
@@ -114,123 +88,6 @@ export default {
 				}
 			});
 			this.getCount(this.read);
-		},
-		handleCurrentChange(cpage) {
-			this.currentPage = cpage;
-			this.getData();
-		},
-		handleSizeChange(psize) {
-			this.pagesize = psize;
-			this.getData();
-		},
-		getCount(read) {
-			let where = {
-				where: {}
-			};
-			if (read === false) {
-				where.where['read'] = false;
-			}
-			if (this.$cookie.get('isAdmin') == 0) {
-				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
-			}
-			if (this.search || this.search !== '') {
-				where.where['level'] = this.search;
-			}
-			notification.count(where).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.total = res.data.count;
-					} else {
-						this.loading = false;
-					}
-				}
-			});
-		},
-		getUnreadNum() {
-			let where = {
-				where: {
-					read: false
-				}
-			};
-			if (this.$cookie.get('isAdmin') == 0) {
-				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
-			}
-			notification.count(where).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.count = res.data.count;
-					}
-				}
-			});
-		},
-		handleRead(id) {
-			let read = this.read;
-			notification.patch({ read: true, id: id }).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.getUnreadNum(); //未读消息数量
-						this.getData();
-						this.read = read;
-						this.$root.$emit('notificationUpdate');
-					}
-				}
-			});
-		},
-		handlePageRead() {
-			let ids = [];
-			this.listData.map(item => {
-				ids.push(item.id);
-			});
-			let where = {
-				id: {
-					inq: ids
-				}
-			};
-			let data = {
-				read: true
-			};
-			where = JSON.stringify(where);
-			let read = this.read;
-			notification.upsertWithWhere(where, data).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.getUnreadNum(); //未读消息数量
-						this.getData();
-						this.read = read;
-						this.$root.$emit('notificationUpdate');
-					}
-				}
-			});
-		},
-		handleAllRead() {
-			let where = {};
-			if (this.$cookie.get('isAdmin') === 0) {
-				where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
-			}
-			let data = {
-				read: true
-			};
-			where = JSON.stringify(where);
-			let read = this.read;
-			notification.readAll(where, data).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.getUnreadNum(); //未读消息数量
-						this.getData();
-						this.read = read;
-						this.$root.$emit('notificationUpdate');
-					}
-				}
-			});
-		},
-		handleClick(tab) {
-			this.currentPage = 1;
-			if (tab.name === 'first') {
-				this.read = true; // 全部信息
-			} else {
-				this.read = false; //未读
-			}
-			this.getData();
 		}
 	}
 };
