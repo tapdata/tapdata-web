@@ -33,7 +33,6 @@
 					</el-select>
 				</el-form-item>
 				<div class="fiflter">
-					<div class="title">{{ $t('editor.cell.data_node.collection.form.filter.label') }}</div>
 					<div class="rowSlot">
 						<span slot="prepend">{{ $t('editor.cell.data_node.collection.form.filter.rowLimit') }}</span>
 						<el-select v-model="value.limitLines" size="mini" class="e-select">
@@ -393,14 +392,8 @@ export default {
 		align-items: center;
 	}
 	.fiflter {
-		padding: 10px 12px;
 		font-size: 12px;
 		box-sizing: border-box;
-		border: 1px solid #dcdfe6;
-		.title {
-			font-size: 12px;
-			padding-bottom: 10px;
-		}
 		.rowSlot {
 			display: inline-block;
 			margin-bottom: 12px;
