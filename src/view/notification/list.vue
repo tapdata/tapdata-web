@@ -270,7 +270,7 @@ export default {
 		},
 		handleAllRead() {
 			let where = {};
-			if (this.$cookie.get('isAdmin') === 0) {
+			if (this.$cookie.get('isAdmin') == 0) {
 				where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
 			let data = {
