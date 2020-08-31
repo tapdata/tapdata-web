@@ -1211,7 +1211,7 @@ const tc = {
 		startupFailed: '啟動失敗',
 		stopFailed: '停止失敗',
 		encounterERRORSkipped: '運行中出現ERROR，跳過',
-		CDCLag: 'CDC滯後超時<%second%> 秒',
+		CDCLag: 'CDC滯後超時',
 		manageSeverRestartFailed: '管理端服務重啟失敗',
 		APISeverRestartFailed: 'API服務重啟失敗',
 		SYNCSeverRestartFailed: '同步治理服務重啟失敗',
