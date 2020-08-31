@@ -1,7 +1,7 @@
 <template>
 	<div style="" :class="color">
 		<div v-for="(cond, idx) in value.conditions" :key="idx">
-			<span v-if="cond.type == 'group' && cond.conditions.length > 0 && cond.operator" class="cond-operator">{{
+			<span v-if="cond.type == 'group' ? cond.conditions.length > 0 : true" class="cond-operator">{{
 				cond.operator
 			}}</span>
 			<queryCond
@@ -12,7 +12,7 @@
 			></queryCond>
 			<div v-if="cond.type != 'group'" class="item">
 				<div class="field">
-					<el-select v-model="cond.field" filterable size="mini">
+					<el-select v-model="cond.field" filterable size="mini" placeholder="select field">
 						<el-option
 							v-for="item in primaryKeyOptions"
 							:key="item"
@@ -22,13 +22,19 @@
 					</el-select>
 				</div>
 				<div class="field">
-					<el-select v-model="cond.command" size="mini">
+					<el-select v-model="cond.command" size="mini" placeholder="select op">
 						<el-option v-for="item in calculationList" :label="item" :value="item" :key="item"></el-option>
 					</el-select>
 				</div>
 
 				<div class="field">
-					<el-input v-if="!cond.isDatetime" type="text" v-model="cond.value" size="mini"></el-input>
+					<el-input
+						placeholder="enter value"
+						v-if="!cond.isDatetime"
+						type="text"
+						v-model="cond.value"
+						size="mini"
+					></el-input>
 					<el-date-picker
 						v-if="cond.isDatetime"
 						v-model="cond.value"
@@ -133,7 +139,7 @@ export default {
 						{
 							type: 'condition',
 							field: '',
-							command: '=',
+							command: '',
 							value: ''
 						}
 					]
@@ -167,6 +173,9 @@ export default {
 .level2 {
 	border: 1px solid #dedee4;
 	padding: 5px;
+}
+.level1 {
+	margin-top: -5px;
 }
 .level1,
 .level2 {
@@ -260,8 +269,7 @@ export default {
 		}
 	}
 	.cond-operator {
-		margin-left: 10px;
-		margin-bottom: 10px;
+		padding-bottom: 5px;
 		display: inline-block;
 	}
 }

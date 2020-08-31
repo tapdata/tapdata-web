@@ -213,7 +213,7 @@ export default {
 						{
 							type: 'condition',
 							field: '',
-							command: '=',
+							command: '',
 							value: ''
 						}
 					]
