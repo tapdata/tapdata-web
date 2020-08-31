@@ -567,7 +567,7 @@ const en = {
 							label: 'Filter conditions',
 							invalidJSON: 'Invalid JSON',
 							fiflterSetting: 'Filter settings',
-							fieldFilter: 'Field Filter',
+							fieldFilter: 'Visual mode',
 							openFiflter: 'Enable filtering',
 							closeFiflter: 'Close filtering',
 							sqlFilter: 'SQL Filter',
