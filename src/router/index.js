@@ -221,7 +221,8 @@ const childRoutes = [
 	{
 		path: '/notification',
 		name: 'notification',
-		component: view('notification/list')
+		component: view('notification/list'),
+		meta: { title: i18n.t('notification.systemNotice') }
 	}
 ];
 
