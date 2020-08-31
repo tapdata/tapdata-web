@@ -14,78 +14,11 @@
 			<div class="notification-right-list" v-loading="loading">
 				<div class="notification-head">
 					<div class="title">{{ $t('notification.systemNotice') }}</div>
-					<div class="operation">
-						<el-select
-							v-model="search"
-							placeholder="请选择消息类型"
-							class="search"
-							@change="getData()"
-							clearable
-							size="mini"
-						>
-							<el-option
-								v-for="item in options"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value"
-							>
-							</el-option>
-						</el-select>
-						<span @click="handlePageRead()">{{ $t('notification.maskRead') }}</span>
-						<span @click="handleAllRead()">{{ $t('notification.maskReadAll') }}</span>
-						<span>
-							<router-link to="/setting">通知设置</router-link>
-						</span>
+					<div>
+						邮件通知为全局邮件通知设置，针对某个指定的设置（例如任务的专属设置）可以在其任务详情页进行专门的邮件通知设置，其优先级高于此处的全局邮件通知设置
 					</div>
 				</div>
-				<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-					<el-tab-pane :label="$t('notification.allNotice')" name="first"></el-tab-pane>
-					<el-tab-pane :label="$t('notification.unreadNotice')" name="second"></el-tab-pane>
-				</el-tabs>
-				<ul class="cuk-list clearfix cuk-list-type-block">
-					<li class="list-item" v-for="item in listData" :key="item.id" @click="handleRead(item.id)">
-						<div class="list-item-content">
-							<div class="unread-1zPaAXtSu" v-show="!item.read"></div>
-							<div class="list-item-desc">
-								<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
-								<span>{{
-									item.system === 'dataFlow'
-										? $t('notification.dataFlow')
-										: $t('notification.manageSever')
-								}}</span>
-								<span>
-									<router-link
-										:to="
-											item.system === 'dataFlow'
-												? `/job?id=${item.sourceId}&isMoniting=true`
-												: '/clusterManagement'
-										"
-									>
-										<span style="color: #48B6E2">
-											{{ item.serverName }}
-										</span>
-									</router-link>
-								</span>
-								<span>{{ typeMap[item.msg] }}</span>
-							</div>
-							<div class="list-item-time">
-								<span>{{ item.createTime }}</span>
-							</div>
-						</div>
-					</li>
-				</ul>
-				<el-pagination
-					class="pagination"
-					background
-					layout="total,prev, pager, next,sizes"
-					:page-sizes="[20, 30, 50, 100]"
-					:page-size="pagesize"
-					:total="total"
-					:current-page.sync="currentPage"
-					@current-change="handleCurrentChange"
-					@size-change="handleSizeChange"
-				>
-				</el-pagination>
+				<div></div>
 			</div>
 		</div>
 	</div>
