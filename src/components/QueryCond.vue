@@ -1,9 +1,14 @@
 <template>
 	<div style="" :class="color">
 		<div v-for="(cond, idx) in value.conditions" :key="idx">
-			<span v-if="cond.type == 'group' ? cond.conditions.length > 0 : true" class="cond-operator">{{
-				cond.operator
-			}}</span>
+			<span
+				v-if="
+					(cond.type == 'group' && cond.conditions.length > 0 && cond.operator && cond.operator.length > 0) ||
+						(cond.type != 'group' && cond.operator && cond.operator.length > 0)
+				"
+				class="cond-operator"
+				>{{ cond.operator }}</span
+			>
 			<queryCond
 				v-if="cond.type == 'group'"
 				:primaryKeyOptions="primaryKeyOptions"
@@ -87,9 +92,6 @@ export default {
 		}
 	},
 	computed: {
-		operator() {
-			return this.value.operator;
-		},
 		conditions() {
 			return this.value.conditions;
 		},
@@ -175,7 +177,7 @@ export default {
 	padding: 5px;
 }
 .level1 {
-	margin-top: -5px;
+	margin-top: -1px;
 }
 .level1,
 .level2 {

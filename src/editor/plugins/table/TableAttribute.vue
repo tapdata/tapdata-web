@@ -599,7 +599,7 @@ export default {
 					delete data.custSql.conditions;
 				}
 				_.merge(this.model, data);
-				if (data.custSql && data.custSql.conditions)
+				if (this.model.custSql && this.model.custSql.conditions && conds && conds.length > 0)
 					conds.forEach(it => {
 						this.model.custSql.conditions.push(it);
 					});
