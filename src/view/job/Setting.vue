@@ -116,20 +116,18 @@
 					<el-input-number v-model="formData.transformerConcurrency" :min="1" size="mini"></el-input-number>
 				</el-form-item>
 				<el-form-item :label="$t('dataFlow.SyncPoint')" v-show="formData.sync_type === 'cdc'" size="mini">
-					<div class="labelTxt">
-						{{ $t('dataFlow.cdcLabel') }}
-						<span v-for="item in formData.syncPoints" :key="item.name">
+					<el-row v-for="item in formData.syncPoints" :key="item.name">
+						<div class="labelTxt">
+							{{ $t('dataFlow.cdcLabel') }}
 							{{ item.name || item.connectionId }}
-						</span>
-					</div>
-					<el-row v-for="item in formData.syncPoints" :key="item.name" style="margin-top: 10px">
-						<el-col :span="12" style="margin-right: 10px">
+						</div>
+						<el-col :span="8" style="margin-right: 10px">
 							<el-select v-model="item.type" placeholder="请选择">
 								<el-option v-for="op in options" :key="op.value" :label="op.label" :value="op.value">
 								</el-option>
 							</el-select>
 						</el-col>
-						<el-col :span="10" v-if="item.type !== 'current'">
+						<el-col :span="14" v-if="item.type !== 'current'">
 							<el-date-picker
 								format="yyyy-MM-dd HH:mm:ss"
 								style="width: 95%;"
@@ -426,6 +424,7 @@ export default {
 		box-sizing: border-box;
 		font-size: 12px;
 		.labelTxt {
+			line-height: 28px;
 			font-size: 12px;
 		}
 	}

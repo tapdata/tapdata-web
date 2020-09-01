@@ -37,15 +37,23 @@
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.nodeName') }}:</span>
 						<el-tooltip :content="stage.nodeName" placement="bottom-start">
-							<!-- @click="handTableName(stage)" style="color: #48b6e2;cursor: pointer;" -->
-							<span class="info-text">{{ stage.nodeName }}</span>
+							<span
+								class="info-text"
+								@click="handTableName(stage)"
+								style="color: #48b6e2;cursor: pointer;"
+								>{{ stage.nodeName }}</span
+							>
 						</el-tooltip>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.ownedLibrary') }}:</span>
 						<el-tooltip :content="stage.name" placement="bottom-start">
-							<!-- @click="handDatabaseName(stage)" -->
-							<span class="info-text">{{ stage.name }}</span>
+							<span
+								class="info-text"
+								@click="handDatabaseName(stage)"
+								style="color: #48b6e2;cursor: pointer;"
+								>{{ stage.name }}</span
+							>
 						</el-tooltip>
 					</div>
 					<div class="info-list">
@@ -97,12 +105,14 @@
 						<span class="info-text">{{ $moment(flow.finishTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
 					</div>
 					<div class="info-list">
-						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
-						<span class="info-text"> {{ flow.inputNumber }}</span>
+						<span class="info-label">{{ $t('dataFlow.totalOutput') }}:</span>
+						<span class="info-text">
+							{{ flow.stats && flow.stats.output ? flow.stats.output.rows : '' }}</span
+						>
 					</div>
 					<div class="info-list">
-						<span class="info-label">{{ $t('dataFlow.outputNumber') }}:</span>
-						<span class="info-text">{{ flow.outputNumber }}</span>
+						<span class="info-label">{{ $t('dataFlow.totalInput') }}:</span>
+						<span class="info-text">{{ flow.stats && flow.stats.input ? flow.stats.input.rows : '' }}</span>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.timePoint') }}:</span>
@@ -199,6 +209,7 @@ import ws from '../../api/ws';
 const dataFlows = factory('DataFlows');
 const connectionApi = factory('connections');
 let currentStageData = null;
+
 export default {
 	name: 'JobMonitor',
 	components: { echartHead, echartsCompinent, shaftlessEchart },
@@ -239,7 +250,9 @@ export default {
 				database_name: '',
 				database_owner: '', // 所属用户
 				database_type: '',
-				name: ''
+				name: '',
+				tableMetadataInstanceId: '',
+				connMetadataInstanceId: ''
 			},
 			throughputData: {
 				tooltip: {
@@ -453,7 +466,8 @@ export default {
 			intervalThroughputpop: 20000,
 			intervalTransf: 20000,
 			intervalReplicate: 20000,
-			cdcLastTimes: []
+			cdcLastTimes: [],
+			tableName: ''
 		};
 	},
 
@@ -462,9 +476,14 @@ export default {
 		this.$on(EditorEventType.SELECTED_STAGE, selectStage => {
 			if (selectStage) {
 				this.stageId = selectStage.id;
-				this.getStageDataApi(selectStage.form_data.connectionId);
+				this.getNodeName();
 				this.stage.nodeName = selectStage.form_data.name;
-				this.stageType = selectStage.type;
+				// this.stageType = selectStage.type;
+				// if (this.stageType === 'app.Database') {
+				// 	this.getStageDataApi(currentStageData.connectionId, '');
+				// } else if (this.stageType === 'app.Collection' || this.stageType === 'app.Table') {
+				// 	this.getStageDataApi(currentStageData.connectionId, this.tableName);
+				// }
 				let rightTabPanel = this.editor.getRightTabPanel();
 				let panel = rightTabPanel.getChildByName('nodeSettingPanel');
 				if (this.editor.seeMonitor) {
@@ -486,7 +505,7 @@ export default {
 		this.screeningObj = {
 			title: this.$t('dataFlow.dataScreening'),
 			type: 'screening',
-			isScreeing: true
+			isScreeing: false
 		};
 
 		this.inputOutputObj = {
@@ -561,6 +580,7 @@ export default {
 		},
 		stageId: {
 			handler(val) {
+				this.getNodeName();
 				let cell = this.editor.getAllCells();
 				this.selectId = val;
 				if (val === 'all') {
@@ -575,7 +595,12 @@ export default {
 						}
 					});
 					this.stageType = currentStageData.type;
-					this.getStageDataApi(currentStageData.connectionId);
+
+					if (this.stageType === 'database') {
+						this.getStageDataApi(currentStageData.connectionId, '');
+					} else if (this.stageType === 'collection' || this.stageType === 'table') {
+						this.getStageDataApi(currentStageData.connectionId, this.tableName);
+					}
 				}
 				this.getApiData();
 			},
@@ -584,17 +609,28 @@ export default {
 	},
 
 	methods: {
-		// // 点击节点跳转到表
-		// handTableName(data) {
-		// 	top.location.href = '/#/metadataInstances/' + data.id;
-		// },
+		// 点击节点跳转到表
+		handTableName(data) {
+			window.open('/#/metadataInstances/' + data.tableMetadataInstanceId);
+		},
 
-		// // 跳转到所属库
-		// handDatabaseName(data) {
-		// 	debugger;
-		// 	top.location.href = '/#/metadataInstances/' + data.id;
-		// },
+		// 跳转到所属库
+		handDatabaseName(data) {
+			window.open('/#/metadataInstances/' + data.connMetadataInstanceId);
+		},
 
+		// 获取节点名称
+		getNodeName() {
+			if (this.flow.stages && this.flow.stages.length) {
+				this.flow.stages.forEach(item => {
+					if (item.id === this.stageId) {
+						this.tableName = item.name;
+					}
+				});
+			}
+		},
+
+		// 获取节点类型（是否是全部节点）
 		getApiData() {
 			if (this.stageId === 'all') {
 				this.selectFlow = 'flow_';
@@ -615,9 +651,18 @@ export default {
 			if (this.stageId != 'all') {
 				msg['stageId'] = this.stageId;
 			}
-
-			if (ws.ws.readyState == 1) ws.send(msg);
+			if (ws.ws.readyState != 1) {
+				let int = setInterval(() => {
+					if (ws.ws.readyState == 1) {
+						ws.send(msg);
+						clearInterval(int);
+					}
+				}, 2000);
+			} else {
+				ws.send(msg);
+			}
 		},
+
 		// 获取所有节点
 		getAllCellsNode(queryString) {
 			let dataCells = this.editor.getAllCells();
@@ -757,19 +802,16 @@ export default {
 			ptime('trans_time');
 			ptime('throughput');
 			let time = data.statsData.data_overview.t;
-			let inputSize = data.statsData.data_overview.inputSize;
-			let outputSize = data.statsData.data_overview.outputSize;
-			let inputCount = data.statsData.data_overview.inputCount;
-			let outputCount = data.statsData.data_overview.outputCount;
-			if (this.dataOverviewAll === 'flow') {
-				this.flow.inputNumber = inputCount > 0 ? inputCount : 0;
-				this.flow.outputNumber = outputCount > 0 ? outputCount : 0;
-				this.getScreening(time, inputCount, outputCount);
-			} else if (this.dataOverviewAll === 'stage') {
-				this.flow.inputNumber = inputSize > 0 ? inputSize : 0;
-				this.flow.outputNumber = outputSize > 0 ? outputSize : 0;
-				this.getScreening(time, inputSize, outputSize);
-			}
+			let overView = data.statsData.data_overview;
+			let statisticsData = [
+				overView.outputCount,
+				overView.inputCount,
+				overView.insertCount,
+				overView.updateCount,
+				overView.deleteCount
+			];
+			this.getScreening(time, statisticsData);
+
 			data.statsData.throughput.forEach(item => {
 				timeList.push(item.t); // 时间
 				inputSizeList.push(item.inputSize);
@@ -803,13 +845,13 @@ export default {
 			this.getReplicateTime(rttimeList, tdataList);
 		},
 
-		getScreening(time, series1, series2) {
+		getScreening(time, seriesData) {
 			this.dataScreening = {
 				tooltip: {
 					show: false,
 					trigger: 'none',
 					axisPointer: {
-						type: 'cross',
+						type: 'none',
 						crossStyle: {
 							color: '#999'
 						}
@@ -829,51 +871,52 @@ export default {
 				},
 				xAxis: {
 					type: 'category',
-					show: false,
+					show: true,
 					axisLine: {
 						show: false,
 						lineStyle: {
-							color: '#ff00ff',
+							color: '#666',
 							width: 0
 						}
 					},
-					data: [this.$t('dataFlow.outputNumber'), this.$t('dataFlow.inputNumber')],
+					data: [
+						this.$t('dataFlow.totalOutput'),
+						this.$t('dataFlow.totalInput'),
+						this.$t('dataFlow.totalInsert'),
+						this.$t('dataFlow.totalUpdate'),
+						this.$t('dataFlow.totalDelete')
+					],
 					axisPointer: {
 						type: 'shadow'
 					},
-					formatter: function() {}
+					nameTextStyle: {
+						verticalAlign: 'bottom',
+						color: '#F00'
+					}
 				},
 				yAxis: {
-					type: 'value',
-					min: 0,
 					axisLine: { show: false },
 					axisTick: { show: false },
 					splitLine: { show: false },
-					splitArea: { show: false },
-					axisLabel: {
-						formatter: function() {
-							return '';
-						}
-					}
+					splitArea: { show: false }
 				},
 				series: [
 					{
 						type: 'bar',
-						data: [series2, series1],
-						barWidth: 70,
+						data: seriesData,
+						barWidth: '100%',
 						barGap: '-100%',
 						itemStyle: {
 							normal: {
 								color: function(params) {
-									var colorList = ['#62a569', '#48b6e2'];
+									var colorList = ['#7ba75d', '#48b6e2', '#d9742c', '#e6b451', '#e06c6c'];
 									return colorList[params.dataIndex];
 								},
 								label: {
 									show: true,
-									verticalAlign: 'middle',
+									// verticalAlign: 'middle',
 									position: 'top',
-									distance: 20,
-									formatter: '{b}\n{c}'
+									distance: 10
 								}
 							}
 						}
@@ -899,10 +942,14 @@ export default {
 		},
 
 		// 获取stage的节点信息
-		getStageDataApi(id) {
+		getStageDataApi(id, tableName) {
 			this.apiLoading = true;
+			// let params = {
+			// 	tableName: tableName
+			// };
+			// debugger;
 			connectionApi
-				.customQuery([id])
+				.customQuery([id], tableName)
 				.then(res => {
 					if (res.data) {
 						this.stage = res.data;

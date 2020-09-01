@@ -201,9 +201,9 @@ const en = {
 	},
 	dataFlow: {
 		updateModel: 'Update Model',
-		databseProcessingHead: 'Data processing & SYNC',
-		databseMigrationHead: 'Database migration',
-		databseFreedomHead: 'Custom data SYNC',
+		databseProcessingHead: 'Data Processing & Sync',
+		databseMigrationHead: 'Database Migration',
+		databseFreedomHead: 'Custom Data Sync',
 		createNew: 'Create new',
 		DissedNoAction: 'oops~ The banned node/Connecting line should not be deleted, connected in, or connected out',
 		guidingMode: 'Guiding mode',
@@ -218,10 +218,10 @@ const en = {
 		sourceSetting: 'Source setting',
 		targetSetting: 'Target setting',
 		jobSetting: 'Job setting',
+		databseMigration:
+			'With the guided mode to help understanding the operation method of databases migration which can quickly realize INITAL and CDC transmission between databases (include table filter and rename settings, etc).',
 		databseProcessing:
 			'With the  guided mode to help novice users to quickly understand the table level data processing and SYNC. This function can not only realize table level INITAL and CDC transmission, but also focus on various processors (JS processing, field filtering, aggregation processing, row level filtering, etc.) for complex logical processing demands.',
-		databseMigration:
-			'With the guided mode to help novice users to quickly understand the operation method between databases. Database migration can quickly realize INITAL and CDC transmission between databases (include table filter and rename settings, etc).',
 		databseFreedom:
 			'In the custom mode, user can freely use all the data nodes and processor nodes , set the task scheduling path and function configuration to solve various complex data processing scenarios and synchronization requirements',
 		multiError: {
@@ -312,8 +312,11 @@ const en = {
 		day: 'DAY',
 		input: 'Input',
 		output: 'Output',
-		totalInput: 'Total Input',
-		totalOutput: 'Total Output',
+		totalInput: 'Input',
+		totalOutput: 'Output',
+		totalInsert: 'Insert',
+		totalUpdate: 'Update',
+		totalDelete: 'Delete',
 		category: 'Category',
 		replicate: 'Replicate Lag',
 		throughputpop:
@@ -424,7 +427,7 @@ const en = {
 			save: 'Save',
 			saveDraft: 'Save Draft',
 			saveing: 'Saving',
-			reloadSchema: 'reloadSchema',
+			reloadSchema: 'Reload Schema',
 			debug: 'debug test',
 			quantitative: 'Quantitative',
 			increment: 'Increment'
@@ -564,7 +567,7 @@ const en = {
 							label: 'Filter conditions',
 							invalidJSON: 'Invalid JSON',
 							fiflterSetting: 'Filter settings',
-							fieldFilter: 'Field Filter',
+							fieldFilter: 'Visual mode',
 							openFiflter: 'Enable filtering',
 							closeFiflter: 'Close filtering',
 							sqlFilter: 'SQL Filter',
@@ -754,7 +757,14 @@ const en = {
 					none_name: 'Sub-process name is required',
 					none_aggregation_expression: 'Target field is required.',
 					new_aggregate: 'Add new aggregate',
-					none_stage: 'Must have one aggregate'
+					none_stage: 'Must have one aggregate',
+					returnExample: 'Return example',
+					school_name: 'school_name: "Dorset"',
+					idComment:
+						'// "students_sum" is the Sub-process name, and the names between sub-processes cannot be repeated',
+					countComment:
+						'// COUNT is the Polymerization function and 132 is the value; if the function is MAX, it will show MAX here',
+					school_nameComment: '// Grouping summary field names, no display if dont filling out'
 				},
 				field: {
 					name: 'Field',
@@ -889,7 +899,7 @@ const en = {
 						placeholder: 'Please input label'
 					},
 					joinMethod: {
-						label: 'Insert Method',
+						label: 'Mismatched data insert model',
 						placeholder: 'Please select the data insertion method'
 					},
 					joinType: {
@@ -897,7 +907,7 @@ const en = {
 						placeholder: 'Please select Data Write model'
 					},
 					joinPath: {
-						label: 'Target Path',
+						label: 'Target path',
 						placeholder: 'Please input target path'
 					},
 					joinKeys: {
@@ -906,7 +916,7 @@ const en = {
 						targetField: 'Target Field'
 					},
 					arrayUniqueKey: {
-						label: 'In Array Match Key',
+						label: 'Embedded array match key',
 						placeholder: 'Please enter in embed array match key '
 					}
 				},
@@ -1019,6 +1029,7 @@ const en = {
 		errorComparison: 'Error comparison',
 		again: 'Check again',
 		rows: 'By amount of rows',
+		exampleJS: '请输入JS代码, 高级校验JS必须返回return值, 具体请查看示例',
 		sampleRate: 'By percentage',
 		condition: 'Sampling range',
 		showResult: 'Show result',
@@ -1161,7 +1172,14 @@ const en = {
 			portRange: 'Port should be between 1 ~ 65535',
 			noneSslKey: 'Private key is required.',
 			noneSslCA: 'Certificate Authority is required.'
-		}
+		},
+		createDatabase: 'Create new database',
+		copyDatabase: 'Copy name',
+		checkDatabase: 'Check property',
+		createTable: 'Create new table',
+		copyTable: 'Copy name',
+		createCollection: 'Create new collection',
+		copyCollection: 'Copy name'
 	},
 	formBuilder: {
 		noneText: ' is required.',
@@ -1182,6 +1200,63 @@ const en = {
 		deleteNode: 'Delete',
 		nodeName: 'Please enter classification',
 		deteleMessage: 'This operation will delete all subclasses existing in this category, whether to delete it'
+	},
+	notification: {
+		notice: 'Notice',
+		viewMore: 'View more',
+		setting: 'Setting',
+		allNotice: 'All notice',
+		unreadNotice: 'Unread notice',
+		maskRead: 'Mask read this page',
+		maskReadAll: 'Mask read all',
+		systemNotice: 'System notice',
+		noticeCenter: 'Setting center',
+		dataFlow: 'dataFlow',
+		manageSever: 'manageSever',
+		started: 'started',
+		paused: 'paused',
+		edited: 'edited',
+		deleted: 'deleted',
+		abnormallyStopped: 'abnormally stopped',
+		stoppedByError: 'stopped by error',
+		startupFailed: 'startup failed',
+		stopFailed: 'stop failed',
+		encounterERRORSkipped: 'encounter ERROR, skipped',
+		CDCLag: 'CDC lag',
+		manageSeverRestartFailed: 'MANAGE SEVER restart failed',
+		APISeverRestartFailed: 'API SEVER restart failed',
+		SYNCSeverRestartFailed: 'SYNC SEVER restart failed\t',
+		connectionInterrupted: 'connection interrupted',
+		manageSeverStartFailed: 'MANAGE SEVER start failed',
+		APISeverStartFailed: 'API SEVER start failed',
+		SYNCSeverStartFailed: 'SYNC SEVER start failed',
+		manageSeverStopFailed: 'MANAGE SEVER stop failed',
+		APISeverStopFailed: 'API SEVER stop failed',
+		SYNCSeverStopFailed: 'SYNC SEVER stop failed',
+		APISeverAbnormallyStopped: 'API SEVER abnormally stopped',
+		SYNCSeverAbnormallyStopped: 'SYNC SEVER abnormally stopped',
+		manageSeverAbnormallyStopped: 'MANAGE SEVER abnormally stopped',
+		manageSeverStartedSuccessfully: 'MANAGE SEVER started successfully',
+		APISeverStartedSuccessfully: 'API SEVER started successfully',
+		SYNCSeverStartedSuccessfully: 'SYNC SEVER started successfully',
+		manageSeverStoppedSuccessfully: 'MANAGE SEVER stopped successfully',
+		APISeverStoppedSuccessfully: 'API SEVER stopped successfully',
+		SYNCSeverStoppedSuccessfully: 'SYNC SEVER stopped successfully',
+		manageSeverRestartedSuccessfully: 'MANAGE SEVER restarted successfully',
+		APISeverRestartedSuccessfully: 'API SEVER restarted successfully',
+		SYNCSeverRestartedSuccessfully: 'SYNC SEVER restarted successfully',
+		newSeverCreatedSuccessfully: 'NEW SEVER created successfully',
+		newSeverDeletedSuccessfully: 'NEW SEVER deleted successfully',
+		databaseDDLChanged: 'Database DDL changed'
+	},
+	dialog: {
+		createTable: 'Create new table',
+		placeholderTable: 'Enter new table name',
+		createCollection: ' Create new collection ',
+		placeholderCollection: 'Enter new collection name'
+	},
+	queryBuilder: {
+		addCond: 'field Cond'
 	}
 };
 

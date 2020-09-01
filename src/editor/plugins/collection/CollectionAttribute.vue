@@ -23,12 +23,43 @@
 				>
 					<div style="display:flex;">
 						<FbSelect v-model="model.connectionId" :config="databaseSelectConfig"></FbSelect>
-						<el-button
-							size="mini"
-							icon="el-icon-plus"
-							style="padding: 7px;margin-left: 7px"
-							@click="$refs.databaseForm.show({ whiteList: ['mongodb'] })"
-						></el-button>
+						<el-tooltip
+							class="item"
+							effect="dark"
+							:content="$t('dataForm.createDatabase')"
+							placement="top-start"
+						>
+							<el-button
+								size="mini"
+								icon="el-icon-plus"
+								style="padding: 7px;margin-left: 7px"
+								@click="$refs.databaseForm.show({ whiteList: ['mongodb'] })"
+							></el-button>
+						</el-tooltip>
+						<el-tooltip
+							class="item"
+							effect="dark"
+							:content="$t('dataForm.copyDatabase')"
+							placement="top-start"
+						>
+							<el-button size="mini" style="padding: 7px;margin-left: 7px">
+								<ClipButton :value="copyConnectionId"></ClipButton>
+							</el-button>
+						</el-tooltip>
+						<el-tooltip
+							class="item"
+							effect="dark"
+							:content="$t('dataForm.checkDatabase')"
+							placement="top-start"
+						>
+							<el-button
+								size="mini"
+								class="iconfont icon-dakai1"
+								style="padding: 7px;margin-left: 7px"
+								:disabled="!model.connectionId"
+								@click="handDatabase"
+							></el-button>
+						</el-tooltip>
 						<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
 					</div>
 				</el-form-item>
@@ -45,7 +76,43 @@
 							:config="schemaSelectConfig"
 							@change="handleFieldFilterType"
 						></FbSelect>
-						<ClipButton :value="model.tableName"></ClipButton>
+						<el-tooltip
+							class="item"
+							effect="dark"
+							:content="$t('dataForm.createCollection')"
+							placement="bottom-start"
+						>
+							<el-button
+								size="mini"
+								class="el-icon-plus"
+								style="padding: 7px;margin-left: 7px"
+								@click="addNewTable"
+							></el-button>
+						</el-tooltip>
+						<el-tooltip
+							class="item"
+							effect="dark"
+							:content="$t('dataForm.copyCollection')"
+							placement="bottom-start"
+						>
+							<el-button size="mini" style="padding: 7px;margin-left: 7px">
+								<ClipButton :value="model.tableName"></ClipButton>
+							</el-button>
+						</el-tooltip>
+						<el-tooltip
+							class="item"
+							effect="dark"
+							:content="$t('dataForm.checkDatabase')"
+							placement="bottom-end"
+						>
+							<el-button
+								size="mini"
+								class="iconfont icon-dakai1"
+								style="padding: 7px;margin-left: 7px"
+								:disabled="!tableNameId"
+								@click="handTableName"
+							></el-button>
+						</el-tooltip>
 					</div>
 				</el-form-item>
 
@@ -96,7 +163,7 @@
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
-					v-if="isSourceDataNode"
+					v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
 				>
 					<div class="flex-block">
 						<el-switch
@@ -116,7 +183,7 @@
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.dropTable.label')"
-					v-if="!isSourceDataNode"
+					v-if="dataNodeInfo.isTarget"
 				>
 					<el-select v-model="model.dropTable" size="mini" :disabled="logsFlag">
 						<el-option
@@ -130,7 +197,10 @@
 					</el-select>
 				</el-form-item>
 
-				<el-form-item :label="$t('editor.cell.data_node.collection.form.filter.label')">
+				<el-form-item
+					v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
+					:label="$t('editor.cell.data_node.collection.form.filter.label')"
+				>
 					<el-input
 						v-model="model.filter"
 						type="textarea"
@@ -152,6 +222,7 @@
 				></entity>
 			</div>
 		</div>
+		<CreateTable v-if="addtableFalg" :dialog="dialogData" @handleTable="getAddTableName"></CreateTable>
 		<relatedTasks :taskData="taskData" v-if="disabled"></relatedTasks>
 	</div>
 </template>
@@ -161,11 +232,13 @@ import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm
 import MultiSelection from '../../../components/MultiSelection';
 import RelatedTasks from '../../../components/relatedTasks';
 import ClipButton from '@/components/ClipButton';
+import CreateTable from '../../../components/dialog/createTable';
 import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, uuid } from '../../util/Schema';
 import Entity from '../link/Entity';
 import _ from 'lodash';
 import factory from '../../../api/factory';
 let connectionApi = factory('connections');
+const MetadataInstances = factory('MetadataInstances');
 let editorMonitor = null;
 let tempSchemas = [];
 const RETAINED_OPS_TPL = {
@@ -178,7 +251,7 @@ const DELETE_OPS_TPL = {
 };
 export default {
 	name: 'Collection',
-	components: { Entity, DatabaseForm, MultiSelection, ClipButton, RelatedTasks },
+	components: { Entity, DatabaseForm, MultiSelection, ClipButton, RelatedTasks, CreateTable },
 	props: {
 		database_types: {
 			type: Array,
@@ -198,9 +271,17 @@ export default {
 		'model.connectionId': {
 			immediate: true,
 			handler() {
+				this.loadDatabaseId(this.model.connectionId);
 				this.loadDataModels(this.model.connectionId);
 				if (this.model.connectionId) {
 					this.taskData.id = this.model.connectionId;
+					if (this.databaseSelectConfig.options.length) {
+						this.databaseSelectConfig.options.forEach(item => {
+							if (item.value === this.model.connectionId) {
+								this.copyConnectionId = item.name;
+							}
+						});
+					}
 				}
 			}
 		},
@@ -254,6 +335,7 @@ export default {
 				}
 
 				this.taskData.tableName = this.model.tableName;
+				this.tableIsLink();
 			}
 		},
 		defaultSchema: {
@@ -272,6 +354,13 @@ export default {
 	data() {
 		let self = this;
 		return {
+			addtableFalg: false,
+			dialogData: null,
+			databaseData: [],
+			tableData: [],
+			copyConnectionId: '',
+			tableNameId: '',
+
 			logsFlag: false,
 			taskData: {
 				id: '',
@@ -311,8 +400,8 @@ export default {
 				loading: false,
 				filterable: true,
 				options: [],
-				allowCreate: true,
-				defaultFirstOption: true,
+				allowCreate: false,
+				defaultFirstOption: false,
 				clearable: true
 			},
 
@@ -334,7 +423,7 @@ export default {
 				}
 			},
 
-			isSourceDataNode: false,
+			dataNodeInfo: {},
 			model: {
 				connectionId: '',
 				databaseType: '',
@@ -357,9 +446,98 @@ export default {
 
 	async mounted() {
 		await this.loadDataSource();
+
+		if (this.model.connectionId) {
+			this.taskData.id = this.model.connectionId;
+			if (this.databaseSelectConfig.options.length) {
+				this.databaseSelectConfig.options.forEach(item => {
+					if (item.value === this.model.connectionId) {
+						this.copyConnectionId = item.name;
+					}
+				});
+			}
+		}
+
+		// setTimeout(() => {
+		// 	this.tableIsLink();
+		// }, 500);
 	},
 
 	methods: {
+		// 新建表弹窗
+		addNewTable() {
+			this.addtableFalg = true;
+			this.dialogData = {
+				title: this.$t('dialog.createCollection'),
+				placeholder: this.$t('dialog.placeholderCollection'),
+				visible: this.addtableFalg,
+				newTable: ''
+			};
+		},
+
+		// 获取新建表名称
+		getAddTableName(val) {
+			this.model.tableName = val;
+			this.tableIsLink();
+		},
+
+		// 打开数据目录数据库
+		handDatabase() {
+			let href = '/#/metadataInstances/' + this.databaseData[0].id;
+			window.open(href);
+		},
+
+		// 跳转到数据目录当前表
+		handTableName() {
+			this.tableNameId = '';
+			this.tableIsLink();
+
+			if (this.tableNameId) {
+				let href = '/#/metadataInstances/' + this.tableNameId;
+				window.open(href);
+			}
+		},
+
+		// 判断表是否可以跳转
+		tableIsLink() {
+			this.tableNameId = '';
+			if (this.tableData.length) {
+				this.tableData.forEach(item => {
+					if (item.table_name === this.model.tableName) {
+						this.tableNameId = item.tableId;
+					}
+				});
+			}
+		},
+
+		// 获取数据库id
+		loadDatabaseId(connectionId) {
+			if (!connectionId) {
+				return;
+			}
+			let params = {
+				filter: JSON.stringify({
+					where: {
+						'source.id': connectionId,
+						meta_type: {
+							in: ['database'] //,
+						},
+						is_deleted: false
+					},
+					fields: {
+						id: true,
+						original_name: true
+					}
+				})
+			};
+
+			MetadataInstances.get(params).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					this.databaseData = res.data;
+				}
+			});
+		},
+
 		handleFilterChange() {
 			let fieldFilter = this.model.fieldFilter ? this.model.fieldFilter.split(',') : [];
 
@@ -477,6 +655,7 @@ export default {
 				.get([connectionId])
 				.then(result => {
 					if (result.data) {
+						this.tableData = result.data.schema.tables;
 						let schemas = (result.data.schema && result.data.schema.tables) || [];
 						tempSchemas = schemas.sort((t1, t2) =>
 							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
@@ -485,6 +664,8 @@ export default {
 							label: item.table_name,
 							value: item.table_name
 						}));
+
+						this.tableIsLink();
 					}
 				})
 				.finally(() => {
@@ -501,7 +682,7 @@ export default {
 				}
 			}
 		},
-		setData(data, cell, isSourceDataNode, vueAdapter) {
+		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
 				_.merge(this.model, data);
 				//老数据的兼容处理
@@ -511,9 +692,11 @@ export default {
 				if (data.connectionId) {
 					this.loadDataModels(data.connectionId);
 				}
+
+				this.tableIsLink();
 			}
 
-			this.isSourceDataNode = isSourceDataNode;
+			this.dataNodeInfo = dataNodeInfo || {};
 			this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema());
 			cell.on('change:outputSchema', () => {
 				this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema());
@@ -533,7 +716,7 @@ export default {
 		getData() {
 			let result = _.cloneDeep(this.model);
 			result.name = result.tableName || 'Collection';
-			if (this.isSourceDataNode) {
+			if (!this.dataNodeInfo.isTarget) {
 				delete result.dropTable;
 			}
 			this.taskData.id = result.connectionId;
@@ -571,6 +754,13 @@ export default {
 	.flex-block {
 		display: flex;
 		align-items: center;
+	}
+}
+</style>
+<style lang="less">
+.e-collection {
+	.iconfont {
+		font-size: 12px;
 	}
 }
 </style>

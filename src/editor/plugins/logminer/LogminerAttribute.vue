@@ -352,7 +352,7 @@ export default {
 			this.$forceUpdate();
 		},
 
-		setData(data, cell, isSourceDataNode, vueAdapter) {
+		setData(data, cell, dataNodeInfo, vueAdapter) {
 			let timeZone = new Date().getTimezoneOffset() / 60;
 			if (timeZone > 0) {
 				timeZone = 0 - timeZone;

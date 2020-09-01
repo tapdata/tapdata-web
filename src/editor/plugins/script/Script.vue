@@ -128,7 +128,7 @@ export default {
 	},
 
 	methods: {
-		setData(data, cell, isSourceDataNode, vueAdapter) {
+		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
 				_.merge(this.model, data);
 			}

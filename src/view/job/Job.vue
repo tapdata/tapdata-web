@@ -346,6 +346,9 @@ export default {
 		}
 		this.loadData();
 		this.wsWatch();
+		this.editor.graph.on(EditorEventType.DRAFT_SAVE, () => {
+			this.draftSave();
+		});
 	},
 
 	methods: {
@@ -361,7 +364,7 @@ export default {
 				this.onGraphChanged();
 				this.loading = false;
 				this.setEditable(true);
-				if (!this.dataFlow) window.title = this.$t('dataFlow.newTaksName');
+				if (!this.dataFlow) document.title = this.$t('dataFlow.newTaksName');
 			}
 		},
 		/****
@@ -487,7 +490,7 @@ export default {
 			this.executeMode = dataFlow.executeMode;
 			this.sync_type = dataFlow.setting.sync_type;
 			this.dataFlow = dataFlow;
-			window.title = dataFlow.name;
+			document.title = dataFlow.name;
 			// 管理端api创建任务来源以及editorData 数据丢失情况
 			if (!dataFlow.editorData && dataFlow.stages) {
 				// 1. 拿到创建所有的节点数据
@@ -538,7 +541,12 @@ export default {
 						}
 					}
 				};
-				if (ws.ws.readyState == 1) ws.send(msg);
+				let int = setInterval(() => {
+					if (ws.ws.readyState == 1) {
+						ws.send(msg);
+						clearInterval(int);
+					}
+				}, 2000);
 			}
 		},
 		wsWatch() {
@@ -601,7 +609,7 @@ export default {
 					}
 				}
 			}
-
+			log('DataFlows Draft Save Params: ', data);
 			promise = dataFlowsApi.draft(data);
 			if (promise) {
 				promise
@@ -627,8 +635,9 @@ export default {
 									}
 								});
 							}
+							self.$message.success(self.$t('message.saveOK'));
 						}
-						self.$message.success(self.$t('message.saveOK'));
+						log('DataFlows Draft Save Response: ', result);
 					})
 					.finally(() => {
 						changeData = null;
@@ -811,6 +820,27 @@ export default {
 			});
 			return stages;
 		},
+		checkJoinTableStageId() {
+			let stages = this.getDataFlowData(true).stages;
+			let cells = this.editor.graph.graph.getCells();
+			let valid = true;
+			stages.forEach(stage => {
+				if (stage.joinTables)
+					stage.joinTables.forEach(jt => {
+						let finded = false;
+						cells.reduce((finded, cell) => {
+							if (cell.id == jt.id) finded = true;
+						});
+						try {
+							if (!finded) cells.filter(cell => cell.id == stage.id)[0].updateOutputSchema();
+						} catch (e) {
+							alert('jointables stageid chaeck failed===>>' + stage.id);
+							valid = false;
+						}
+					});
+			});
+			return valid;
+		},
 
 		/**
 		 * request server do save data flow
@@ -819,6 +849,7 @@ export default {
 		 */
 		doSave(data, cb) {
 			let self = this;
+			if (!this.checkJoinTableStageId()) return;
 			localStorage.removeItem(this.tempId);
 			const _doSave = function() {
 				let promise = data.id ? dataFlowsApi.patch(data) : dataFlowsApi.post(data);
@@ -1388,12 +1419,6 @@ export default {
 };
 </script>
 <style scoped lang="less">
-.fixBtn {
-	position: fixed;
-	bottom: 30px;
-	left: 260px;
-	z-index: 99;
-}
 .spinner-box {
 	display: inline-block;
 	padding: 0 5px;
@@ -1527,25 +1552,6 @@ export default {
 	}
 }
 
-.popperFixbtn {
-	width: 160px !important;
-	.btnList {
-		width: 160px;
-		span {
-			display: block;
-			width: 100%;
-			padding: 5px 0;
-			color: #333;
-			font-size: 12px;
-			cursor: pointer;
-			i {
-				float: right;
-				color: #999;
-				font-size: 12px;
-			}
-		}
-	}
-}
 .systemHint {
 	.el-dialog__body {
 		overflow: hidden;

@@ -200,8 +200,8 @@ const tc = {
 	},
 	dataFlow: {
 		updateModel: '更新模型',
-		databseProcessingHead: '資料庫遷移',
-		databseMigrationHead: '數據處理同步',
+		databseMigrationHead: '數據庫遷移',
+		databseProcessingHead: '數據處理同步',
 		databseFreedomHead: '自定義數據同步',
 		createNew: '新建',
 		DissedNoAction: 'oops~ 被禁用的節點或連線不能被刪除、連入或連出',
@@ -217,9 +217,9 @@ const tc = {
 		sourceSetting: '設置源庫',
 		targetSetting: '設置目標庫',
 		jobSetting: '任務設置',
-		databseProcessing:
-			'以引導的模式幫助新手用戶快速了解資料庫之間的遷移。資料庫遷移能快速地實現資料庫之間(內置表批量過濾和改名等設置)的全量和增量傳輸，適用於實例遷移、上下雲、資料庫拆分擴容、災備等業務場景。',
 		databseMigration:
+			'以引導的模式幫助新手用戶快速了解數據庫之間的遷移。數據庫遷移能快速地實現數據庫之間(內置表批量過濾和改名等設置)的全量和增量傳輸。',
+		databsenProcessing:
 			'以引導的模式幫助新手用戶快速了解表級的數據處理與同步，此功能除了能實現表級的全量或增量傳輸除功能外，更注重使用各種處理器(JS處理、欄位過濾、聚合處理、行級過濾等)進行複雜的邏輯處理，以滿足用戶更高的數據處理需求',
 		databseFreedom:
 			'自定義數據同步模式下，用戶可以根據需求自由地使用全部的數據節點與處理節點，自由的設置任務編排路徑與功能配置。此模式可滿足用戶各種複雜的數據處理的場景需求。',
@@ -313,6 +313,9 @@ const tc = {
 		output: '輸出',
 		totalInput: '總輸入',
 		totalOutput: '總輸出',
+		totalInsert: '總插入',
+		totalUpdate: '總更新',
+		totalDelete: '總刪除',
 		category: '類別',
 		replicate: '數據同步差距',
 		throughputpop: '平均每秒源端數據採集的速度以及目標端寫入的速度，數值越大越好',
@@ -557,10 +560,10 @@ const tc = {
 							label: '過濾條件',
 							invalidJSON: '無效的JSON',
 							fiflterSetting: '過濾設置',
-							fieldFilter: '字段過濾',
+							fieldFilter: '智慧模式',
 							openFiflter: '開啟過濾',
 							closeFiflter: '關閉過濾',
-							sqlFilter: 'SQL過濾',
+							sqlFilter: 'SQL模式',
 							saveFields: '保留字段',
 							allField: '全部字段',
 							deleteField: '刪除字段',
@@ -748,7 +751,12 @@ const tc = {
 					new_aggregate: '添加聚合',
 					none_stage: '至少有一个聚合处理',
 					none_subprocessingName: '子處理名稱不能為空',
-					name_notRepeated: '子處理名稱不能重複'
+					name_notRepeated: '子處理名稱不能重複',
+					returnExample: '返回示例',
+					school_name: 'school_name: "第一實驗小學"',
+					idComment: '// "students_sum" 自定義的子處理名稱，多個子處理名稱不可重複',
+					countComment: '// COUNT為選擇的函數, 132為函數值；如果函數是MAX, 則名稱為MAX',
+					school_nameComment: ' // 分組匯總的欄位名，如果不填寫則不顯示'
 				},
 				field: {
 					name: '字段',
@@ -880,7 +888,7 @@ const tc = {
 						placeholder: '请输入标签'
 					},
 					joinMethod: {
-						label: '插入方式',
+						label: '不匹配數據插入方式',
 						placeholder: '請選擇數據插入方式'
 					},
 					joinType: {
@@ -892,7 +900,7 @@ const tc = {
 						placeholder: '请输入关联后写入路径'
 					},
 					joinKeys: {
-						label: '关联条件',
+						label: '关联條件',
 						sourceField: '源字段',
 						targetField: '目标字段'
 					},
@@ -1020,6 +1028,7 @@ const tc = {
 		exampleHashSQL:
 			'請輸入 SELECT 查詢語句 哈希校驗下SQL僅支持select查詢語句, 不支持count/sum/avg/max等查詢 示例: select field_1 from tablename_1 where field__2 > A；',
 		exampleHashMQL: '請輸入MQL查詢語句 示例: db.collection_1.find ({ field_2:A },{ field_1:1 })',
+		exampleJS: '请输入JS代码, 高级校验JS必须返回return值, 具体请查看示例',
 		showResult: '顯示數據校驗結果',
 		verifyRunningInfo: '後台運行',
 		verifyStatusWaiting: '校驗階段1-3:數據校驗排隊中，請等待... 點擊',
@@ -1152,7 +1161,14 @@ const tc = {
 			portRange: '端口號取值範圍 1 ~ 65535',
 			noneSslKey: '用戶端私鑰不能為空',
 			noneSslCA: '證書頒發機构不能為空'
-		}
+		},
+		createDatabase: '新建數據庫',
+		copyDatabase: '複製數據庫名',
+		checkDatabase: '查看詳情',
+		createTable: '創建新表',
+		copyTable: '複製表名',
+		createCollection: '創建新數據集',
+		copyCollection: '複製數據集'
 	},
 	formBuilder: {
 		noneText: '不能為空',
@@ -1173,6 +1189,63 @@ const tc = {
 		deleteNode: '刪除',
 		nodeName: '請輸入分類名稱',
 		deteleMessage: '此操作會將該分類下存在的子類都刪除，是否刪除'
+	},
+	notification: {
+		notice: '消息通知',
+		viewMore: '查看全部',
+		setting: '通知設置',
+		allNotice: '全部通知',
+		unreadNotice: '未讀消息',
+		maskRead: '標記本頁為已讀',
+		maskReadAll: '標記全部為已讀',
+		systemNotice: '系统通知',
+		noticeCenter: '通知中心',
+		dataFlow: '任务',
+		manageSever: '管理端',
+		started: '已啟動',
+		paused: '已暫停',
+		edited: '被編輯',
+		deleted: '被刪除',
+		abnormallyStopped: '意外停止',
+		stoppedByError: '出錯停止',
+		startupFailed: '啟動失敗',
+		stopFailed: '停止失敗',
+		encounterERRORSkipped: '運行中出現ERROR，跳過',
+		CDCLag: 'CDC滯後超時',
+		manageSeverRestartFailed: '管理端服務重啟失敗',
+		APISeverRestartFailed: 'API服務重啟失敗',
+		SYNCSeverRestartFailed: '同步治理服務重啟失敗',
+		connectionInterrupted: '斷開連接',
+		manageSeverStartFailed: '管理端服務啟動失敗',
+		APISeverStartFailed: 'API服務啟動失敗',
+		SYNCSeverStartFailed: '同步治理服務啟動失敗',
+		manageSeverStopFailed: '管理端服務停止失敗',
+		APISeverStopFailed: 'API服務停止失敗',
+		SYNCSeverStopFailed: '同步治理服務停止失敗',
+		APISeverAbnormallyStopped: 'API服務意外停止',
+		SYNCSeverAbnormallyStopped: '同步治理服務意外停止',
+		manageSeverAbnormallyStopped: '管理端服務意外停止',
+		manageSeverStartedSuccessfully: '管理端服務已啟動',
+		APISeverStartedSuccessfully: 'API服務已啟動',
+		SYNCSeverStartedSuccessfully: '同步治理服務已啟動',
+		manageSeverStoppedSuccessfully: '管理端服務已停止',
+		APISeverStoppedSuccessfully: 'API服務已停止',
+		SYNCSeverStoppedSuccessfully: '同步治理服務已停止',
+		manageSeverRestartedSuccessfully: '管理端服務已重啟',
+		APISeverRestartedSuccessfully: 'API服務已重啟',
+		SYNCSeverRestartedSuccessfully: '同步治理服務已重啟',
+		newSeverCreatedSuccessfully: '新服務監控被創建',
+		newSeverDeletedSuccessfully: '新服務監控被刪除',
+		databaseDDLChanged: '監測到數據庫DDL變化'
+	},
+	dialog: {
+		createTable: '創建新表',
+		placeholderTable: '請輸入新表表名',
+		createCollection: '創建新數據集 ',
+		placeholderCollection: '請輸入新的數據集名稱'
+	},
+	queryBuilder: {
+		addCond: '字段條件'
 	}
 };
 

@@ -19,3 +19,13 @@ export function signOut() {
 	cookie.delete('token');
 	window.location.href = '/#/login';
 }
+
+export function toRegExp(s) {
+	let arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-'];
+	let word = s;
+	for (let i = 0; i < arr.length; i++) {
+		let str = '\\' + arr[i];
+		word = word.replace(new RegExp(str, 'g'), '\\' + arr[i]);
+	}
+	return word;
+}

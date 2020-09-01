@@ -685,14 +685,26 @@ export default class Graph extends Component {
 
 	initKeyboardShortcuts() {
 		this.keyboard = new joint.ui.Keyboard();
-		this.keyboard.on(
+		let isMac = /macintosh|mac os x/i.test(navigator.userAgent);
+		let keyboardEvents = [
 			{
-				'ctrl+c': function() {
+				keystroke: isMac ? 'command+s' : 'ctrl+s',
+				on: function(evt) {
+					evt.preventDefault();
+					// Copy all selected elements and their associated links.
+					this.emit(EditorEventType.DRAFT_SAVE);
+				}
+			},
+			{
+				keystroke: isMac ? 'command+c' : 'ctrl+c',
+				on: function() {
 					// Copy all selected elements and their associated links.
 					this.clipboard.copyElements(this.selection.collection, this.graph);
-				},
-
-				'ctrl+v': function() {
+				}
+			},
+			{
+				keystroke: isMac ? 'command+v' : 'ctrl+v',
+				on: function() {
 					let pastedCells = this.clipboard.pasteCells(this.graph, {
 						translate: {
 							dx: 20,
@@ -708,13 +720,17 @@ export default class Graph extends Component {
 					// Make sure pasted elements get selected immediately. This makes the UX better as
 					// the user can immediately manipulate the pasted elements.
 					this.selection.collection.reset(elements);
-				},
-
-				'ctrl+x shift+delete': function() {
+				}
+			},
+			{
+				keystroke: isMac ? 'command+x' : 'ctrl+x',
+				on: function() {
 					this.clipboard.cutElements(this.selection.collection, this.graph);
-				},
-
-				'delete backspace': function(evt) {
+				}
+			},
+			{
+				keystroke: 'delete backspace',
+				on: function(evt) {
 					evt.preventDefault();
 					let hasDised = false;
 					this.selection.collection.toArray().forEach(it => {
@@ -727,48 +743,67 @@ export default class Graph extends Component {
 						return;
 					}
 					this.graph.removeCells(this.selection.collection.toArray());
-				},
-
-				'ctrl+z': function() {
+				}
+			},
+			{
+				keystroke: isMac ? 'command+z' : 'ctrl+z',
+				on: function() {
 					this.commandManager.undo();
 					this.selection.cancelSelection();
-				},
-
-				'ctrl+y': function() {
+				}
+			},
+			{
+				keystroke: isMac ? 'command+shift+z' : 'ctrl+z',
+				on: function() {
 					this.commandManager.redo();
 					this.selection.cancelSelection();
-				},
-
-				'ctrl+a': function() {
+				}
+			},
+			{
+				keystroke: isMac ? 'command+a' : 'ctrl+a',
+				on: function() {
 					this.selection.collection.reset(this.graph.getElements());
-				},
-
-				'ctrl+plus': function(evt) {
+				}
+			},
+			{
+				keystroke: isMac ? 'command+plus' : 'ctrl+plus',
+				on: function(evt) {
 					evt.preventDefault();
 					this.paperScroller.zoom(0.2, {
 						max: 5,
 						grid: 0.2
 					});
-				},
-
-				'ctrl+minus': function(evt) {
+				}
+			},
+			{
+				keystroke: isMac ? 'command+minus' : 'ctrl+minus',
+				on: function(evt) {
 					evt.preventDefault();
 					this.paperScroller.zoom(-0.2, {
 						min: 0.2,
 						grid: 0.2
 					});
-				},
-
-				'keydown:shift': function() {
-					this.paperScroller.setCursor('crosshair');
-				},
-
-				'keyup:shift': function() {
-					this.paperScroller.setCursor('grab');
 				}
 			},
-			this
-		);
+			{
+				keystroke: 'keydown:shift',
+				on: function() {
+					this.paperScroller.setCursor('crosshair');
+				}
+			},
+			{
+				keystroke: 'keyup:shift',
+				on: function() {
+					this.paperScroller.setCursor('grab');
+				}
+			}
+		];
+		let keyboardOption = {};
+		keyboardEvents.forEach(e => {
+			keyboardOption[e.keystroke] = e.on;
+		});
+
+		this.keyboard.on(keyboardOption, this);
 	}
 
 	initTooltips() {

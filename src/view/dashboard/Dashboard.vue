@@ -10,9 +10,11 @@
 					</div>
 					<ul class="jobList">
 						<li v-for="task in taskList" :key="task.value">
-							<span :style="`color: ${colorMap[task.name]};`">{{
-								$t('dataFlow.status.' + task.name)
-							}}</span
+							<span
+								class="text"
+								:style="`color: ${colorMap[task.name]};`"
+								@click="handleStatus(task.name)"
+								>{{ $t('dataFlow.status.' + task.name) }}</span
 							><span>{{ task.value }}</span>
 						</li>
 						<!-- <li>
@@ -365,7 +367,13 @@ export default {
 							width: 0
 						}
 					},
-					data: [this.$t('app.Home.totalOutput'), this.$t('app.Home.totalInput')],
+					data: [
+						this.$t('dataFlow.totalOutput'),
+						this.$t('dataFlow.totalInput'),
+						this.$t('dataFlow.totalInsert'),
+						this.$t('dataFlow.totalUpdate'),
+						this.$t('dataFlow.totalDelete')
+					],
 					axisPointer: {
 						type: 'shadow'
 					},
@@ -376,28 +384,21 @@ export default {
 					}
 				},
 				yAxis: {
-					type: 'value',
-					min: 0,
 					axisLine: { show: false },
 					axisTick: { show: false },
 					splitLine: { show: false },
-					splitArea: { show: false },
-					axisLabel: {
-						formatter: function() {
-							return '';
-						}
-					}
+					splitArea: { show: false }
 				},
 				series: [
 					{
 						type: 'bar',
 						data: [],
-						barWidth: 100,
+						barWidth: '100%',
 						barGap: '-100%',
 						itemStyle: {
 							normal: {
 								color: function(params) {
-									var colorList = ['#62a569', '#48b6e2'];
+									var colorList = ['#7ba75d', '#48b6e2', '#d9742c', '#e6b451', '#e06c6c'];
 									return colorList[params.dataIndex];
 								},
 								label: {
@@ -435,7 +436,7 @@ export default {
 		this.screeningObj = {
 			title: this.$t('app.Home.transmissionOverview'),
 			type: 'screening',
-			overviewFalg: true
+			overviewFalg: false
 		};
 		this.transferTaskObj = {
 			title: this.$t('app.Home.transferTask'),
@@ -458,6 +459,16 @@ export default {
 		};
 	},
 	methods: {
+		// 点击运行状态跳转到任务列表
+		handleStatus(status) {
+			let routeUrl = this.$router.resolve({
+				path: '/dataFlows',
+				query: { dataFlowStatus: status }
+			});
+
+			window.open(routeUrl.href);
+		},
+
 		// 获取服务器与进程的数据
 		getClsterDataApi() {
 			cluster.get().then(res => {
@@ -486,7 +497,13 @@ export default {
 				self.allTaskEchart.series[0].data = self.taskList;
 				self.total = res.data.chart1.totalDataFlows;
 
-				self.dataScreening.series[0].data = [res.data.chart2[0].totalOutput, res.data.chart2[0].totalInput];
+				self.dataScreening.series[0].data = [
+					res.data.chart2[0].totalOutput,
+					res.data.chart2[0].totalInput,
+					res.data.chart2[0].totalInsert,
+					res.data.chart2[0].totalUpdate,
+					res.data.chart2[0].totalDelete
+				];
 				self.unitData = self.dataScreening.series[0].data;
 				self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
 				self.transfer.tableData = res.data.chart3;
@@ -716,6 +733,9 @@ export default {
 					width: 50px;
 					text-align: right;
 					font-size: 12px;
+				}
+				.text {
+					cursor: pointer;
 				}
 			}
 		}
