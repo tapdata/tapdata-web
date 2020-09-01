@@ -614,6 +614,11 @@ const en = {
 						initial_offset: {
 							label: 'Custom SQL Offset',
 							placeholder: 'Please input you custom sql offset'
+						},
+						maximum_transaction: {
+							label: 'Maximum Transaction Length(Hours)',
+							tip:
+								'Time in hours to wait for commit for a transaction. Enter the longest period of time that you expect a transaction to require.Default is 12 hours'
 						}
 					}
 				},
