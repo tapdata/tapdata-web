@@ -7,7 +7,6 @@
 					<li>
 						<i class="iconfont icon-lingdang"></i>
 						<span>{{ $t('notification.systemNotice') }}</span>
-						<span class="unread" v-show="count > 0">{{ count }}</span>
 					</li>
 				</ul>
 			</div>
@@ -16,15 +15,64 @@
 					<div class="title">{{ $t('notification.systemNotice') }}</div>
 				</div>
 				<section>
-					邮件通知为全局邮件通知设置，针对某个指定的设置（例如任务的专属设置）可以在其任务详情页进行专门的邮件通知设置，其优先级高于此处的全局邮件通知设置
+					{{ $t('notification.tip') }}
 				</section>
-				<section>
-					<span class="block"></span><span>通知运行通知</span>
+				<section class="run-notification">
+					<span class="block"></span><span class="title">{{ $t('notification.jobOperationNotice') }}</span>
 					<ul>
-						<li>
-							<span>{{ $t('notification.systemNotice') }}</span>
-							<el-checkbox v-model="checked1">系统通知</el-checkbox>
-							<el-checkbox v-model="checked1">邮件通知</el-checkbox>
+						<li v-for="(item, index) in runNotification" :key="index">
+							<span class="label">{{ notificationMAP[item.label] }}</span>
+							<el-checkbox class="notice" v-model="item.notice">{{
+								$t('notification.systemSetting')
+							}}</el-checkbox>
+							<el-checkbox class="email" v-model="item.email">{{
+								$t('notification.emailNotice')
+							}}</el-checkbox>
+							<span class="sort-label" v-if="item.lagTime">{{ notificationMAP[item.lagTime] }}</span>
+							<span v-if="item.lagTimeInterval">
+								<el-input v-model="item.lagTimeInterval" class="item-input" size="mini"></el-input>
+							</span>
+							<span class="sort-label" v-if="item.noticeInterval">{{
+								notificationMAP[item.noticeInterval]
+							}}</span>
+							<span v-if="item.noticeIntervalInterval">
+								<el-input
+									v-model="item.noticeIntervalInterval"
+									class="item-input"
+									size="mini"
+								></el-input>
+							</span>
+							<span v-if="item.Interval">
+								<el-input v-model="item.Interval" class="item-input" size="mini"></el-input>
+							</span>
+						</li>
+					</ul>
+				</section>
+				<section class="run-notification">
+					<span class="block"></span><span class="title">{{ $t('notification.systemSetting') }}</span>
+					<ul>
+						<li v-for="(item, index) in systemNotification" :key="index">
+							<span class="label">{{ notificationMAP[item.label] }}</span>
+							<el-checkbox class="notice" v-model="item.notice">{{
+								$t('notification.systemSetting')
+							}}</el-checkbox>
+							<el-checkbox class="email" v-model="item.email">{{
+								$t('notification.emailNotice')
+							}}</el-checkbox>
+						</li>
+					</ul>
+				</section>
+				<section class="run-notification">
+					<span class="block"></span><span class="title">{{ $t('notification.agentNotice') }}</span>
+					<ul>
+						<li v-for="(item, index) in agentNotification" :key="index">
+							<span class="label">{{ notificationMAP[item.label] }}</span>
+							<el-checkbox class="notice" v-model="item.notice">{{
+								$t('notification.systemSetting')
+							}}</el-checkbox>
+							<el-checkbox class="email" v-model="item.email">{{
+								$t('notification.emailNotice')
+							}}</el-checkbox>
 						</li>
 					</ul>
 				</section>
@@ -43,10 +91,99 @@ export default {
 	name: 'list',
 	data() {
 		return {
-			notificationMAP: notificationMAP
+			notificationMAP: notificationMAP,
+			runNotification: [],
+			systemNotification: [],
+			agentNotification: []
 		};
 	},
-	created() {},
+	created() {
+		let data = {
+			runNotification: [
+				{
+					label: 'jobStarted',
+					notice: true,
+					email: false
+				},
+				{
+					label: 'jobPaused',
+					notice: true,
+					email: false
+				},
+				{
+					label: 'jobDeleted',
+					notice: true,
+					email: false
+				},
+				{
+					label: 'jobStateError',
+					notice: true,
+					email: false
+				},
+				{
+					label: 'jobEncounterError',
+					notice: true,
+					email: false
+				},
+				{
+					label: 'jobNoticeInterval',
+					notice: true,
+					email: false,
+					noticeInterval: 'noticeInterval',
+					Interval: 100,
+					util: 'second'
+				},
+				{
+					label: 'CDCLagTime',
+					notice: true,
+					email: false,
+					lagTime: 'lagTime',
+					lagTimeInterval: 100,
+					lagTimeUtil: 'second',
+					noticeInterval: 'noticeInterval',
+					noticeIntervalInterval: 100,
+					noticeIntervalUtil: 'second'
+				}
+			],
+			systemNotification: [
+				{
+					label: 'jobEncounterError',
+					notice: true,
+					email: false
+				}
+			],
+			agentNotification: [
+				{
+					label: 'serverDisconnected',
+					notice: true,
+					email: false
+				},
+				{
+					label: 'agentStarted',
+					notice: true,
+					email: false
+				},
+				{
+					label: 'agentStopped',
+					notice: true,
+					email: false
+				},
+				{
+					label: 'agentCreated',
+					notice: true,
+					email: false
+				},
+				{
+					label: 'agentDeleted',
+					notice: true,
+					email: false
+				}
+			]
+		};
+		this.runNotification = data.runNotification;
+		this.systemNotification = data.systemNotification;
+		this.agentNotification = data.agentNotification;
+	},
 	methods: {
 		getData() {
 			let where = {};
@@ -98,31 +235,6 @@ export default {
 .notification {
 	height: 100%;
 	font-size: 12px;
-	.unread {
-		min-width: 25px;
-		height: 17px;
-		display: inline-block;
-		line-height: 17px;
-		white-space: nowrap;
-		cursor: pointer;
-		background: @unreadColor;
-		color: #fff;
-		-webkit-appearance: none;
-		text-align: center;
-		-webkit-box-sizing: border-box;
-		box-sizing: border-box;
-		outline: 0;
-		margin: 0;
-		-webkit-transition: 0.1s;
-		transition: 0.1s;
-		font-weight: 500;
-		padding: 0px 5px;
-		font-size: 12px;
-		border-radius: 4px;
-		float: right;
-		margin-top: 15px;
-		margin-right: 15px;
-	}
 }
 .notification-head {
 	display: flex;
@@ -171,78 +283,44 @@ export default {
 		}
 	}
 	.notification-right-list {
-		margin-left: 20px;
 		width: 100%;
 		flex: 1;
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
-		.operation {
-			cursor: pointer;
-			span {
-				display: inline-block;
-				margin-left: 10px;
-			}
+		margin-left: 20px;
+		.block {
+			width: 11px;
+			height: 14px;
+			background: #48b6e2;
+			display: inline-block;
+			margin-right: 10px;
 		}
-		ul.cuk-list {
-			list-style: none;
-			flex: 1;
-			overflow: auto;
-		}
-		.clearfix {
-			zoom: 1;
-		}
-		.clearfix:after,
-		.clearfix:before {
-			content: ' ';
-			display: table;
-		}
-		[class*='cuk-'],
-		[class*='cuk-'] :after,
-		[class*='cuk-'] :before {
-			box-sizing: border-box;
-		}
-		.list-item {
-			position: relative;
-			background: #fff;
-			border-bottom: 1px solid #f5f7fa;
-			cursor: pointer;
-			margin-right: 30px;
-			.list-item-content {
-				position: relative;
-				height: 50px;
-				line-height: 50px;
-				padding-left: 14px;
-				box-sizing: border-box;
-				overflow: hidden;
-				display: block;
+		.run-notification {
+			margin-top: 15px;
+			.title {
+				font-size: 16px;
+				font-weight: bold;
+				color: #333333;
+				line-height: 32px;
 			}
-			.unread-1zPaAXtSu {
-				position: absolute;
-				top: 22px;
-				left: 8px;
-				width: 6px;
-				height: 6px;
-				background: @unreadColor;
-				border-radius: 50%;
+			ul {
+				margin-left: 20px;
 			}
-			.list-item-desc {
-				color: #202d40;
-				position: absolute;
-				top: 0;
-				left: 30px;
-				right: 120px;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-			}
-			.list-item-time {
-				float: right;
-				color: #202d40;
-				font-size: 12px;
-			}
-			&:hover {
-				background: #fafafa;
+			ul li {
+				margin-bottom: 10px;
+				.label {
+					display: inline-block;
+					width: 30%;
+				}
+				.sort-label {
+					display: inline-block;
+					width: 80px;
+					margin-left: 40px;
+				}
+				.item-input {
+					width: 140px;
+				}
 			}
 		}
 	}

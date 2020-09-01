@@ -1262,7 +1262,7 @@ const en = {
 		jobError: 'Job state error',
 		jobEncounterError: 'Job encounter error',
 		noticeInterval: 'Notice interval',
-		CDClagtime: 'CDC lag time',
+		CDCLagTime: 'CDC lag time',
 		lagTime: 'Lag-time',
 		DDL: 'Database DDL changes',
 		agentNotice: 'Agent notice',
