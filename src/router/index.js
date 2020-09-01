@@ -223,6 +223,12 @@ const childRoutes = [
 		name: 'notification',
 		component: view('notification/list'),
 		meta: { title: i18n.t('notification.systemNotice') }
+	},
+	{
+		path: '/dataVerification',
+		name: 'dataVerification',
+		component: view('dataVerification/List'),
+		meta: { title: i18n.t('notification.systemNotice') }
 	}
 ];
 
