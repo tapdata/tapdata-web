@@ -515,8 +515,8 @@ const en = {
 					source: 'Data source',
 					type: 'Database type',
 					databaseName: 'Database name',
-					account: 'Account',
-					attributionAccount: 'Attribution Account',
+					account: 'Database account',
+					attributionAccount: 'Attribution Account Name',
 					includeTable: 'include table'
 				},
 				collection: {

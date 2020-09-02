@@ -43,38 +43,38 @@
 			<div class="database-info">
 				<ul class="info-box">
 					<li>
-						<span class="label">{{ $t('editor.cell.data_node.database.source') }}</span>
-						<span class="text"></span>
+						<span class="label">{{ $t('editor.cell.data_node.database.source') }}:</span>
+						<span class="text">{{ databaseInfo.connection_type }}</span>
 					</li>
 					<li>
-						<span class="label">{{ $t('editor.cell.data_node.database.type') }}</span>
+						<span class="label">{{ $t('editor.cell.data_node.database.type') }}:</span>
 						<span class="text">{{ databaseInfo.database_type }}</span>
 					</li>
 					<li>
-						<span class="label">Host/Port</span>
-						<span class="text">{{ databaseInfo.database_host }}</span>
+						<span class="label">Host/Port:</span>
+						<span class="text">{{ databaseInfo.database_host }}:{{ databaseInfo.database_port }}</span>
 					</li>
 					<li>
-						<span class="label"> {{ $t('editor.cell.data_node.database.databaseName') }} </span>
-						<span class="text">{{ databaseInfo.database_type }}</span>
+						<span class="label"> {{ $t('editor.cell.data_node.database.databaseName') }}: </span>
+						<span class="text">{{ databaseInfo.database_name }}</span>
 					</li>
 					<li>
-						<span class="label"> {{ $t('editor.cell.data_node.database.account') }} </span>
-						<span class="text">{{ databaseInfo.database_type }}</span>
+						<span class="label"> {{ $t('editor.cell.data_node.database.account') }}: </span>
+						<span class="text">{{ databaseInfo.database_username }}</span>
 					</li>
 					<li>
-						<span class="label"> {{ $t('editor.cell.data_node.database.attributionAccount') }} </span>
-						<span class="text">{{ databaseInfo.database_type }}</span>
+						<span class="label"> {{ $t('editor.cell.data_node.database.attributionAccount') }}: </span>
+						<span class="text">{{ databaseInfo.database_owner }}</span>
 					</li>
 				</ul>
 
 				<div class="info-table">
 					<div class="head-text">
 						{{ $t('editor.cell.data_node.database.includeTable') }}
-						<span>{{ model.includeTables.length }}</span>
+						<span>{{ model.databaseTables.length }}</span>
 					</div>
 					<ul class="table-box" v-loading="tableLoading">
-						<li v-for="item in model.includeTables" :key="item.id" class="list">
+						<li v-for="item in model.databaseTables" :key="item.id" class="list">
 							<i class="iconfont icon-table2"></i>
 							<span class="tableName">{{ item }}</span>
 						</li>
@@ -142,16 +142,20 @@ export default {
 			},
 			model: {
 				connectionId: '',
-				includeTables: [],
+				databaseTables: [],
 				dropTable: false,
 				table_prefix: '',
 				table_suffix: ''
 			},
 			databaseInfo: {
+				connection_type: '',
 				database_type: '',
 				database_port: '',
 				database_host: '',
-				database_uri: ''
+				database_uri: '',
+				database_owner: '',
+				database_name: '',
+				database_username: ''
 			}
 		};
 	},
@@ -223,7 +227,7 @@ export default {
 		},
 
 		changeConnection() {
-			this.model.includeTables = [];
+			this.model.databaseTables = [];
 			this.lookupDatabaseType();
 		},
 
@@ -242,6 +246,7 @@ export default {
 		// 获取表名称
 		loadDataModels(connectionId) {
 			this.tableLoading = true;
+			let self = this;
 			if (!connectionId) {
 				return;
 			}
@@ -249,11 +254,12 @@ export default {
 				.get([connectionId])
 				.then(result => {
 					if (result.data) {
+						self.databaseInfo = result.data;
 						let tables = (result.data.schema && result.data.schema.tables) || [];
 						tables = tables.sort((t1, t2) =>
 							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
 						);
-						let modelIncludeTables = this.model.includeTables || [];
+						let modelIncludeTables = self.model.databaseTables || [];
 						let inList = [];
 						let outList = [];
 
@@ -262,7 +268,7 @@ export default {
 								item.checked = false;
 								return item;
 							});
-							this.model.includeTables = inList.map(t => t.table_name);
+							this.model.databaseTables = inList.map(t => t.table_name);
 						} else {
 							tables.forEach(t => {
 								t.checked = false;
@@ -273,15 +279,14 @@ export default {
 								}
 							});
 						}
-						this.tabs[0].list = inList;
-						this.tabs[1].list = outList;
-						this.$forceUpdate();
+						self.tabs[0].list = inList;
+						self.tabs[1].list = outList;
+						self.$forceUpdate();
 
 						// if (this.database_type !== 'mongodb') {
 						// 	this.database_host = result.data.database_host;
 						// 	this.database_port = result.data.database_port;
 						// }
-						this.databaseInfo = result.data;
 					}
 				})
 				.finally(() => {
@@ -437,14 +442,20 @@ export default {
 			color: #666;
 			border: 1px solid #dedee4;
 			li {
-				padding-bottom: 5px;
+				padding-bottom: 8px;
 			}
 			.label {
+				display: inline-block;
+				width: 100px;
+				text-align: right;
 				color: #999;
+			}
+			.text {
+				padding-left: 10px;
 			}
 		}
 		.info-table {
-			height: calc(100% - 160px);
+			height: calc(100% - 180px);
 			margin-top: 10px;
 			border: 1px solid #dedee4;
 			.head-text {

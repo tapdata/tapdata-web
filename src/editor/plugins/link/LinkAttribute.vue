@@ -349,6 +349,7 @@ export default {
 			if (data) {
 				_.merge(this.model, data);
 			}
+			debugger;
 			this.cell = cell;
 
 			this.configJoinTable = cell.configJoinTable && cell.configJoinTable();

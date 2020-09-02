@@ -511,9 +511,9 @@ const cn = {
 					enterName: '请输入名称/字段名进行搜索',
 					source: '数据源',
 					type: '数据库类型',
-					databaseName: '数据库名称',
-					account: '账号',
-					attributionAccount: '归属账号',
+					databaseName: '数据库名',
+					account: '数据库账号',
+					attributionAccount: '归属账号名',
 					includeTable: '包含表',
 					migrationObjece: '迁移对象',
 					chosen: '已选择',
@@ -936,7 +936,13 @@ const cn = {
 				migrationObjece: '迁移对象',
 				chosen: '已选择',
 				searchContent: '搜索内容',
-				mappingRelations: '映射关系'
+				mappingRelations: '映射关系',
+				addPrefix: '添加前缀',
+				addSuffix: '添加后缀',
+				prefixPlaceholder: '请输入前缀',
+				suffixPlaceholder: '请输入后缀',
+				batchRename: '批量改名设置',
+				tableNameExample: '表名示例'
 			}
 		},
 		ui: {

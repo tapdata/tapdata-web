@@ -509,9 +509,9 @@ const tc = {
 					enterName: '請輸入名稱/字段名進行搜索',
 					source: '數據源',
 					type: '數據庫類型',
-					databaseName: '數據庫名稱',
-					account: '賬號',
-					attributionAccount: '歸屬賬號',
+					databaseName: '數據庫名',
+					account: '數據庫賬號',
+					attributionAccount: '歸屬賬號名',
 					includeTable: '包含表'
 				},
 				collection: {
