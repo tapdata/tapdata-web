@@ -75,14 +75,19 @@ export default {
 
 	watch: {
 		schema(schema) {
+			this.tableMap = {};
 			if (schema && schema.fields && this.filterFields) {
-				let filterIds = this.filterFields.map(f => f[this.nodeKey]);
-				let allKeys = this.getCheckedKeys(schema.fields);
-				let checkedKeys = allKeys.filter(id => {
-					return !filterIds.includes(id);
+				let checkedKeys = [];
+				schema.fields.forEach(f => {
+					checkedKeys.push(f[this.nodeKey]);
 				});
-				this.$refs.tree.setCheckedKeys(checkedKeys, true);
-				this.defaultChecked = allKeys;
+				this.$refs.tree.setCheckedKeys(checkedKeys);
+				this.$nextTick(() => {
+					this.defaultChecked = this.$refs.tree.getCheckedKeys();
+					this.filterFields.forEach(f => {
+						this.$refs.tree.setChecked(f[this.nodeKey], false);
+					});
+				});
 			}
 			log('Entity Schema Change:', schema);
 		}
@@ -118,7 +123,8 @@ export default {
 			return ops && ops.length > 0;
 		},
 		checkHandler(data, checkedInfo) {
-			this.isIndeterminate = this.defaultChecked.length !== checkedInfo.checkedKeys.length;
+			this.isIndeterminate =
+				this.defaultChecked.length !== checkedInfo.checkedKeys.length && checkedInfo.checkedKeys.length;
 			this.isCheckAll = this.defaultChecked.length === checkedInfo.checkedKeys.length;
 			this.$emit('check', checkedInfo.checkedNodes.concat(checkedInfo.halfCheckedNodes));
 		},
