@@ -10,14 +10,14 @@
 					</li>
 				</ul>
 			</div>
-			<div class="notification-right-list" v-loading="loading">
+			<div class="notification-right-list">
 				<div class="notification-head">
 					<div class="title">{{ $t('notification.systemNotice') }}</div>
 				</div>
 				<section>
 					{{ $t('notification.tip') }}
 				</section>
-				<section class="run-notification">
+				<section class="run-notification" v-show="runNotification">
 					<span class="block"></span><span class="title">{{ $t('notification.jobOperationNotice') }}</span>
 					<ul>
 						<li v-for="(item, index) in runNotification" :key="index">
@@ -48,7 +48,7 @@
 						</li>
 					</ul>
 				</section>
-				<section class="run-notification">
+				<section class="run-notification" v-show="systemNotification">
 					<span class="block"></span><span class="title">{{ $t('notification.systemSetting') }}</span>
 					<ul>
 						<li v-for="(item, index) in systemNotification" :key="index">
@@ -62,7 +62,7 @@
 						</li>
 					</ul>
 				</section>
-				<section class="run-notification">
+				<section class="run-notification" v-show="agentNotification">
 					<span class="block"></span><span class="title">{{ $t('notification.agentNotice') }}</span>
 					<ul>
 						<li v-for="(item, index) in agentNotification" :key="index">
@@ -76,6 +76,14 @@
 						</li>
 					</ul>
 				</section>
+				<el-button
+					class="btn"
+					@click="submit"
+					size="mini"
+					type="primary"
+					:disabled="!runNotification && !systemNotification && !agentNotification"
+					>保存设置</el-button
+				>
 			</div>
 		</div>
 	</div>
@@ -83,8 +91,7 @@
 
 <script>
 import factory from '../../api/factory';
-const notification = factory('notification');
-import * as moment from 'moment';
+const Setting = factory('Setting');
 import { notificationMAP } from './tyepMap';
 
 export default {
@@ -98,133 +105,39 @@ export default {
 		};
 	},
 	created() {
-		let data = {
-			runNotification: [
-				{
-					label: 'jobStarted',
-					notice: true,
-					email: false
-				},
-				{
-					label: 'jobPaused',
-					notice: true,
-					email: false
-				},
-				{
-					label: 'jobDeleted',
-					notice: true,
-					email: false
-				},
-				{
-					label: 'jobStateError',
-					notice: true,
-					email: false
-				},
-				{
-					label: 'jobEncounterError',
-					notice: true,
-					email: false
-				},
-				{
-					label: 'jobNoticeInterval',
-					notice: true,
-					email: false,
-					noticeInterval: 'noticeInterval',
-					Interval: 100,
-					util: 'second'
-				},
-				{
-					label: 'CDCLagTime',
-					notice: true,
-					email: false,
-					lagTime: 'lagTime',
-					lagTimeInterval: 100,
-					lagTimeUtil: 'second',
-					noticeInterval: 'noticeInterval',
-					noticeIntervalInterval: 100,
-					noticeIntervalUtil: 'second'
-				}
-			],
-			systemNotification: [
-				{
-					label: 'jobEncounterError',
-					notice: true,
-					email: false
-				}
-			],
-			agentNotification: [
-				{
-					label: 'serverDisconnected',
-					notice: true,
-					email: false
-				},
-				{
-					label: 'agentStarted',
-					notice: true,
-					email: false
-				},
-				{
-					label: 'agentStopped',
-					notice: true,
-					email: false
-				},
-				{
-					label: 'agentCreated',
-					notice: true,
-					email: false
-				},
-				{
-					label: 'agentDeleted',
-					notice: true,
-					email: false
-				}
-			]
-		};
-		this.runNotification = data.runNotification;
-		this.systemNotification = data.systemNotification;
-		this.agentNotification = data.agentNotification;
+		this.getData();
 	},
 	methods: {
 		getData() {
-			let where = {};
-			where = {
-				filter: {
-					where: {},
-					order: 'createTime DESC',
-					limit: this.pagesize,
-					skip: (this.currentPage - 1) * this.pagesize
+			Setting.findOne().then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.runNotification = res.data.runNotification;
+						this.systemNotification = res.data.systemNotification;
+						this.agentNotification = res.data.agentNotification;
+					}
 				}
+			});
+		},
+		submit() {
+			let where = {};
+			let data = {
+				runNotification: this.runNotification,
+				systemNotification: this.systemNotification,
+				agentNotification: this.agentNotification
 			};
-			if (!this.read) {
-				where.filter.where['read'] = false;
-			}
-			if (this.search || this.search !== '') {
-				where.filter.where['level'] = this.search;
-			}
-			if (this.$cookie.get('isAdmin') == 0) {
-				where.filter.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
-			}
-			this.loading = true;
-			notification.get(where).then(res => {
+			Setting.update(where, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					this.loading = false;
 					if (res.data) {
-						this.listData = res.data;
-
-						//格式化日期
-						if (this.listData && this.listData.length > 0) {
-							this.listData.map(item => {
-								item['createTime'] = item.createTime
-									? moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-									: '';
-							});
-						}
+						this.runNotification = res.data.runNotification;
+						this.systemNotification = res.data.systemNotification;
+						this.agentNotification = res.data.agentNotification;
 					}
 				} else {
 					this.loading = false;
 				}
 			});
-			this.getCount(this.read);
 		}
 	}
 };
@@ -235,6 +148,10 @@ export default {
 .notification {
 	height: 100%;
 	font-size: 12px;
+}
+.btn {
+	width: 100px;
+	margin-top: 10px;
 }
 .notification-head {
 	display: flex;
