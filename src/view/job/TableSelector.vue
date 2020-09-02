@@ -15,10 +15,17 @@
 				style="width: 210px"
 				clearable
 				@change="handleSearchTree()"
-				@clear="loadDataBase"
+				@keyup.enter.native="handleSearchTree()"
 				size="mini"
 			>
-				<el-select placeholder="搜表" v-model="databseType" slot="prepend" size="mini" class="box-head-select">
+				<el-select
+					placeholder="搜表"
+					v-model="databseType"
+					slot="prepend"
+					size="mini"
+					class="box-head-select"
+					@change="handleSearchTree()"
+				>
 					<el-option label="DB" value="db"></el-option>
 					<el-option label="Table" value="table"></el-option>
 				</el-select>
@@ -35,6 +42,7 @@
 				icon-class="ts-icon iconfont icon-hebing-copy "
 				:filter-node-method="filterNode"
 				ref="tree"
+				:default-expand-all="default_expanded"
 				class="ts-tree"
 			>
 				<span class="custom-tree-node" slot-scope="{ node, data }">
@@ -125,39 +133,39 @@ export default {
 			this.loadDataBase();
 		},
 		handleSearchTree() {
-			if (this.filterText === '' || this.databseType === '') {
-				return; //tableConnection
-			}
 			let self = this;
-			if (self.databseType === 'db') {
-				let params = {
-					filter: JSON.stringify({
-						where: {
-							meta_type: {
-								in: ['database', 'directory', 'ftp', 'apiendpoint']
-							},
-							original_name: {
-								like: self.filterText,
-								options: 'i'
-							},
-							'source.user_id': {
-								like: this.$cookie.get('user_id')
-							},
-							is_deleted: false
+			this.default_expanded = true;
+			if (this.filterText === '' || this.databseType === '') {
+				this.loadDataBase();
+			} else if (self.databseType === 'db' && this.filterText !== '') {
+				let filter = {
+					where: {
+						meta_type: {
+							in: ['database', 'directory', 'ftp', 'apiendpoint']
 						},
-						fields: {
-							id: true,
-							label: true,
-							meta_type: true,
-							original_name: true,
-							source: true,
-							'source._id': true,
-							'source.user_id': true,
-							'source.name': true,
-							'source.database_type': true,
-							'source.status': true
-						}
-					})
+						original_name: {
+							like: self.filterText,
+							options: 'i'
+						},
+						is_deleted: false
+					},
+					fields: {
+						id: true,
+						label: true,
+						meta_type: true,
+						original_name: true,
+						source: true,
+						'source._id': true,
+						'source.user_id': true,
+						'source.name': true,
+						'source.database_type': true,
+						'source.status': true
+					}
+				};
+				if (this.$cookie.get('isAdmin') == 0)
+					filter.where['source.user_id'] = { like: this.$cookie.get('user_id') };
+				let params = {
+					filter: JSON.stringify(filter)
 				};
 				self.loading = true;
 				MetadataInstances.get(params)
@@ -191,11 +199,12 @@ export default {
 						this.$message.error('MetadataInstances error');
 						self.loading = false;
 					});
-			} else {
+			} else if (self.databseType === 'table' && this.filterText !== '') {
 				let params = {
-					name: self.filterText,
-					userId: this.$cookie.get('user_id')
+					name: self.filterText
 				};
+				if (this.$cookie.get('isAdmin') == 0) params['userId'] = this.$cookie.get('user_id');
+				self.loading = true;
 				MetadataInstances.tableConnection(params)
 					.then(res => {
 						if (res.statusText === 'OK' || res.status === 200) {
@@ -223,7 +232,6 @@ export default {
 						self.loadingError = false;
 					})
 					.catch(() => {
-						self.loadingError = true;
 						this.$message.error('MetadataInstances error');
 						self.loading = false;
 					});
@@ -231,33 +239,31 @@ export default {
 		},
 		loadDataBase() {
 			let self = this;
-			this.filterText = '';
-			this.databseType = 'table';
-			let params = {
-				filter: JSON.stringify({
-					where: {
-						meta_type: {
-							in: ['database', 'directory', 'ftp', 'apiendpoint']
-						},
-						is_deleted: false,
-						'source.user_id': {
-							like: this.$cookie.get('user_id')
-						}
+			let filter = {
+				where: {
+					meta_type: {
+						in: ['database', 'directory', 'ftp', 'apiendpoint']
 					},
-					order: 'original_name ASC',
-					fields: {
-						id: true,
-						label: true,
-						meta_type: true,
-						original_name: true,
-						source: true,
-						'source._id': true,
-						'source.user_id': true,
-						'source.name': true,
-						'source.database_type': true,
-						'source.status': true
-					}
-				})
+					is_deleted: false
+				},
+				order: 'original_name ASC',
+				fields: {
+					id: true,
+					label: true,
+					meta_type: true,
+					original_name: true,
+					source: true,
+					'source._id': true,
+					'source.user_id': true,
+					'source.name': true,
+					'source.database_type': true,
+					'source.status': true
+				}
+			};
+			if (this.$cookie.get('isAdmin') == 0)
+				filter.where['source.user_id'] = { like: this.$cookie.get('user_id') };
+			let params = {
+				filter: JSON.stringify(filter)
 			};
 			self.loading = true;
 			MetadataInstances.get(params)
@@ -523,7 +529,7 @@ export default {
 	margin-left: 160px;
 	position: absolute;
 	left: 0px;
-	z-index: 2006;
+	z-index: 100;
 	top: -29px;
 }
 .ts-icon {

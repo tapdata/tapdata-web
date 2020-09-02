@@ -10,9 +10,11 @@
 					</div>
 					<ul class="jobList">
 						<li v-for="task in taskList" :key="task.value">
-							<span :style="`color: ${colorMap[task.name]};`">{{
-								$t('dataFlow.status.' + task.name)
-							}}</span
+							<span
+								class="text"
+								:style="`color: ${colorMap[task.name]};`"
+								@click="handleStatus(task.name)"
+								>{{ $t('dataFlow.status.' + task.name) }}</span
 							><span>{{ task.value }}</span>
 						</li>
 						<!-- <li>
@@ -382,17 +384,10 @@ export default {
 					}
 				},
 				yAxis: {
-					type: 'value',
-					min: 0,
 					axisLine: { show: false },
 					axisTick: { show: false },
 					splitLine: { show: false },
-					splitArea: { show: false },
-					axisLabel: {
-						formatter: function() {
-							return '';
-						}
-					}
+					splitArea: { show: false }
 				},
 				series: [
 					{
@@ -464,6 +459,16 @@ export default {
 		};
 	},
 	methods: {
+		// 点击运行状态跳转到任务列表
+		handleStatus(status) {
+			let routeUrl = this.$router.resolve({
+				path: '/dataFlows',
+				query: { dataFlowStatus: status }
+			});
+
+			window.open(routeUrl.href);
+		},
+
 		// 获取服务器与进程的数据
 		getClsterDataApi() {
 			cluster.get().then(res => {
@@ -495,9 +500,9 @@ export default {
 				self.dataScreening.series[0].data = [
 					res.data.chart2[0].totalOutput,
 					res.data.chart2[0].totalInput,
-					res.data.chart2[0].insertCount,
-					res.data.chart2[0].updateCount,
-					res.data.chart2[0].deleteCount
+					res.data.chart2[0].totalInsert,
+					res.data.chart2[0].totalUpdate,
+					res.data.chart2[0].totalDelete
 				];
 				self.unitData = self.dataScreening.series[0].data;
 				self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
@@ -728,6 +733,9 @@ export default {
 					width: 50px;
 					text-align: right;
 					font-size: 12px;
+				}
+				.text {
+					cursor: pointer;
 				}
 			}
 		}

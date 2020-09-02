@@ -111,6 +111,24 @@
 						</el-tooltip>
 					</div>
 				</el-form-item>
+				<el-form-item
+					:label="$t('editor.cell.data_node.table.form.maximum_transaction.label')"
+					prop="maxTransactionLength"
+					v-if="model.databaseType === 'oracle' && dataNodeInfo.isSource === 1"
+				>
+					<div class="flex-block">
+						<el-input-number
+							v-model="model.maxTransactionLength"
+							controls-position="right"
+							:min="1"
+							:max="720"
+						></el-input-number>
+						<el-popover class="aggtip" placement="top-start" width="400" trigger="hover">
+							<span>{{ $t('editor.cell.data_node.table.form.maximum_transaction.tip') }}</span>
+							<span class="icon iconfont icon-tishi1" slot="reference"></span>
+						</el-popover>
+					</div>
+				</el-form-item>
 
 				<!-- <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
 					<MultiSelection
@@ -122,7 +140,7 @@
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
-					v-if="isSourceDataNode"
+					v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
 				>
 					<div class="flex-block">
 						<el-switch
@@ -149,7 +167,7 @@
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.filter.fiflterSetting')"
-					v-if="isSourceDataNode"
+					v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
 				>
 					<div class="flex-block">
 						<el-switch
@@ -166,19 +184,21 @@
 				</el-form-item>
 
 				<queryBuilder
+					v-if="(dataNodeInfo.isSource || !dataNodeInfo.isTarget) && model.isFilter"
 					v-model="model.custSql"
 					v-bind:initialOffset.sync="model.initialOffset"
 					:primaryKeyOptions="primaryKeyOptions"
 					v-bind:selectedFields.sync="model.selectedFields"
 					v-bind:custFields.sync="model.custFields"
 					:tableName="model.tableName"
+					:databaseType="model.databaseType"
 					:mergedSchema="mergedSchema"
 				></queryBuilder>
 
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.dropTable.label')"
-					v-if="!isSourceDataNode"
+					v-if="dataNodeInfo.isTarget"
 				>
 					<el-select v-model="model.dropTable" size="mini">
 						<el-option
@@ -329,24 +349,25 @@ export default {
 				]
 			},
 
-			isSourceDataNode: false,
+			dataNodeInfo: {},
 
 			model: {
 				connectionId: '',
 				databaseType: '',
 				tableName: '',
+				maxTransactionLength: 12,
 				sql: '',
-				editSql: '',
 				isFilter: false,
 				sqlFromCust: true,
 				custFields: [],
-				cSql: '',
-				filterType: 'field',
 				custSql: {
+					filterType: 'field',
 					selectedFields: [],
 					fieldFilterType: 'keepAllFields',
 					limitLines: '',
-					conditions: [{ field: '', command: '', value: '', condStr: '' }]
+					cSql: '',
+					editSql: '',
+					conditions: []
 				},
 				initialOffset: '',
 				dropTable: false,
@@ -449,7 +470,8 @@ export default {
 					},
 					fields: {
 						id: true,
-						original_name: true
+						original_name: true,
+						database_type: true
 					}
 				})
 			};
@@ -484,6 +506,7 @@ export default {
 					return {
 						id: item.id,
 						name: item.name,
+						database_type: item.database_type,
 						label: `${item.name} (${item.status})`,
 						value: item.id
 					};
@@ -546,9 +569,8 @@ export default {
 		},
 		handlerSchemaChange() {
 			this.model.custFields.length = 0;
-			this.model.selectedFields.length = 0;
-			this.model.custSql.filterConds.length = 0;
-			this.model.custSql.filterConds.push({ field: '', calcu: '', val: '', condStr: '' });
+			this.model.custSql.selectedFields.length = 0;
+			this.model.custSql.conditions.length = 0;
 			this.model.custSql.limitLines = '';
 			this.model.cSql = '';
 			let self = this;
@@ -576,6 +598,11 @@ export default {
 						// 	.join(',');
 						self.primaryKeyOptions = fields.map(f => f.field_name);
 						self.model.custSql.custFields = fields.map(f => f.field_name);
+						self.model.custSql.conditions.length = 0;
+						self.model.custSql.fieldFilterType = 'keepAllFields';
+						self.model.custSql.cSql = '';
+						self.model.custSql.editSql = '';
+						self.model.custSql.selectedFields.length = 0;
 						// if (primaryKeys) {
 						// 	self.model.primaryKeys = primaryKeys;
 						// } else {
@@ -588,17 +615,26 @@ export default {
 			this.taskData.tableName = this.model.tableName;
 		},
 
-		setData(data, cell, isSourceDataNode, vueAdapter) {
+		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
+				let conds;
+				if (data.custSql && data.custSql.conditions) {
+					conds = JSON.parse(JSON.stringify(data.custSql.conditions));
+					delete data.custSql.conditions;
+				}
 				_.merge(this.model, data);
-				//老数据的兼容处理
+				if (this.model.custSql && this.model.custSql.conditions && conds && conds.length > 0)
+					conds.forEach(it => {
+						this.model.custSql.conditions.push(it);
+					});
 				if (data.initialSyncOrder > 0) {
 					this.model.enableInitialOrder = true;
 				}
 				this.tableIsLink();
 			}
 			tempSchemas.length = 0;
-			this.isSourceDataNode = isSourceDataNode;
+			this.dataNodeInfo = dataNodeInfo || {};
+
 			this.loadDataModels(this.model.connectionId);
 
 			this.mergedSchema = cell.getOutputSchema();
@@ -609,11 +645,11 @@ export default {
 		},
 		getData() {
 			if (this.model.isFilter)
-				if (this.model.filterType === 'field') this.model.sql = this.model.cSql;
-				else this.model.sql = this.model.editSql;
+				if (this.model.custSql.filterType === 'field') this.model.sql = this.model.custSql.cSql;
+				else this.model.sql = this.model.custSql.editSql;
 			let result = _.cloneDeep(this.model);
 			result.name = result.tableName || 'Table';
-			if (this.isSourceDataNode) {
+			if (!this.dataNodeInfo.isTarget) {
 				delete result.dropTable;
 			}
 			this.taskData.id = result.connectionId;
@@ -714,6 +750,11 @@ export default {
 			}
 		}
 	}
+	.aggtip {
+		padding-left: 12px;
+		color: #999;
+		cursor: pointer;
+	}
 }
 </style>
 <style lang="less">
@@ -731,6 +772,13 @@ export default {
 	.el-switch__label * {
 		font-size: 12px !important;
 		color: #999;
+	}
+	.el-input-number {
+		line-height: 28px !important;
+	}
+	.el-input-number.is-controls-right .el-input-number__decrease,
+	.el-input-number.is-controls-right .el-input-number__increase {
+		line-height: 14px !important;
 	}
 }
 </style>

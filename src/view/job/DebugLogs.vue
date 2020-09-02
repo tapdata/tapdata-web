@@ -59,8 +59,8 @@ export default {
 		ws.on('logs', function(data) {
 			let dat = data.data;
 			if (dat && dat.length > 0) {
-				self.firstLogsId = dat[dat.length - 1].id;
 				self.$refs.log.add({ logs: dat, prepend: true });
+				if (self.firstLogsId.length == 0) self.firstLogsId = dat[dat.length - 1].id;
 			}
 		});
 		let int = setInterval(() => {

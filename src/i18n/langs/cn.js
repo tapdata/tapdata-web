@@ -203,8 +203,8 @@ const cn = {
 	},
 	dataFlow: {
 		updateModel: '更新模型',
-		databseProcessingHead: '数据库迁移',
-		databseMigrationHead: '数据处理同步',
+		databseMigrationHead: '数据库迁移',
+		atabseProcessingHead: '数据处理同步',
 		databseFreedomHead: '自定义同步任务',
 		createNew: '新建',
 		DissedNoAction: 'oops~ 被禁用的节点或连线不能被删除、连入或连出',
@@ -220,9 +220,9 @@ const cn = {
 		sourceSetting: '设置源库',
 		targetSetting: '设置目标库',
 		jobSetting: '任务设置',
-		databseProcessing:
-			'以引导的模式帮助新手用户快速了解数据库之间的迁移。数据库迁移能快速地实现数据库之间(内置表批量过滤和改名等设置)的全量和增量传输。',
 		databseMigration:
+			'以引导的模式帮助新手用户快速了解数据库之间的迁移。数据库迁移能快速地实现数据库之间(内置表批量过滤和改名等设置)的全量和增量传输。',
+		databseProcessing:
 			'以引导的模式帮助新手用户快速了解表级的数据处理与同步，此功能除了能实现表级的全量或增量传输除功能外，更注重使用各种处理器(JS处理、字段过滤、聚合处理、行级过滤等)进行复杂的逻辑处理，以满足用户更高的数据处理需求',
 		databseFreedom:
 			'自定义数据同步模式下，用户可以根据需求自由地使用全部的数据节点与处理节点，自由的设置任务编排路径与功能配置。此模式可满足用户各种复杂的数据处理的场景需求。',
@@ -571,10 +571,10 @@ const cn = {
 							label: '过滤条件',
 							invalidJSON: '无效的JSON',
 							fiflterSetting: '过滤设置',
-							fieldFilter: '字段过滤',
+							fieldFilter: '智能模式',
 							openFiflter: '开启过滤',
 							closeFiflter: '关闭过滤',
-							sqlFilter: 'SQL过滤',
+							sqlFilter: 'SQL模式',
 							saveFields: '保留字段',
 							allField: '全部字段',
 							deleteField: '删除字段',
@@ -617,6 +617,10 @@ const cn = {
 						initial_offset: {
 							label: '自定义SQL增量条件',
 							placeholder: '请输入自定义SQL增量条件'
+						},
+						maximum_transaction: {
+							label: '事务最大时长(小时)',
+							tip: '等待事务提交的时间(小时)。输入您期望事务需要的最长时间。默认为12小时'
 						}
 					}
 				},
@@ -761,7 +765,12 @@ const cn = {
 					new_aggregate: '添加聚合',
 					none_stage: '至少有一个聚合处理',
 					none_subprocessingName: '子处理名称不能为空',
-					name_notRepeated: '子处理名称不能重复'
+					name_notRepeated: '子处理名称不能重复',
+					returnExample: '返回示例',
+					school_name: 'school_name: "第一实验小学"',
+					idComment: '// "students_sum" 自定义的子处理名称，多个子处理名称不可重复',
+					countComment: '// COUNT为选择的函数, 132为函数值；如果函数是MAX, 则名称为MAX',
+					school_nameComment: '// 分组汇总的字段名，如果不填写则不显示'
 				},
 				field: {
 					name: '字段',
@@ -893,7 +902,7 @@ const cn = {
 						placeholder: '请输入标签'
 					},
 					joinMethod: {
-						label: '插入方式',
+						label: '不匹配数据插入方式',
 						placeholder: '请选择数据插入方式'
 					},
 					joinType: {
@@ -1262,6 +1271,9 @@ const cn = {
 		newSeverCreatedSuccessfully: '新服务监控被创建',
 		newSeverDeletedSuccessfully: '新服务监控被删除',
 		databaseDDLChanged: '监测到数据库DDL变化'
+	},
+	queryBuilder: {
+		addCond: '字段条件'
 	}
 };
 

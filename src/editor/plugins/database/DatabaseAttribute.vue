@@ -93,7 +93,6 @@ import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm
 let connections = factory('connections');
 let editorMonitor = null;
 let clear = false;
-
 export default {
 	name: 'Database',
 
@@ -124,7 +123,7 @@ export default {
 				filterable: true,
 				on: {
 					change() {
-						clear = true;
+						self.model.removeAllTables = false;
 						self.changeConnection();
 					}
 				},
@@ -185,12 +184,12 @@ export default {
 	},
 
 	methods: {
-		setData(data, cell, isSourceDataNode, vueAdapter) {
+		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
 				_.merge(this.model, data);
 			}
 
-			this.isSourceDataNode = isSourceDataNode;
+			this.isSourceDataNode = dataNodeInfo && !dataNodeInfo.isTarget;
 			editorMonitor = vueAdapter.editor;
 		},
 		async loadDataSource() {

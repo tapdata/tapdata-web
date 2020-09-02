@@ -149,7 +149,7 @@ export default {
 
 	methods: {
 		// convertSchemaToTreeData,
-		setData(data, cell, isSourceDataNode, vueAdapter) {
+		setData(data, cell, dataNodeInfo, vueAdapter) {
 			this.form = _.cloneDeep(defaultForm);
 			if (data) {
 				_.merge(this.form, data);

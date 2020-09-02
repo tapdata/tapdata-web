@@ -11,7 +11,7 @@
 					</li>
 				</ul>
 			</div>
-			<div class="notification-right-list">
+			<div class="notification-right-list" v-loading="loading">
 				<div class="notification-head">
 					<div class="title">{{ $t('notification.systemNotice') }}</div>
 					<div class="operation">
@@ -20,6 +20,7 @@
 							placeholder="请选择消息类型"
 							class="search"
 							@change="getData()"
+							clearable
 							size="mini"
 						>
 							<el-option
@@ -39,7 +40,7 @@
 					<el-tab-pane :label="$t('notification.allNotice')" name="first"></el-tab-pane>
 					<el-tab-pane :label="$t('notification.unreadNotice')" name="second"></el-tab-pane>
 				</el-tabs>
-				<ul class="cuk-list clearfix cuk-list-type-block" v-loading="loading">
+				<ul class="cuk-list clearfix cuk-list-type-block">
 					<li class="list-item" v-for="item in listData" :key="item.id" @click="handleRead(item.id)">
 						<div class="list-item-content">
 							<div class="unread-1zPaAXtSu" v-show="!item.read"></div>
@@ -64,6 +65,7 @@
 									</router-link>
 								</span>
 								<span>{{ typeMap[item.msg] }}</span>
+								<span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
 							</div>
 							<div class="list-item-time">
 								<span>{{ item.createTime }}</span>
@@ -74,7 +76,7 @@
 				<el-pagination
 					class="pagination"
 					background
-					layout="prev, pager, next,sizes"
+					layout="total,prev, pager, next,sizes"
 					:page-sizes="[20, 30, 50, 100]"
 					:page-size="pagesize"
 					:total="total"
@@ -100,56 +102,62 @@ export default {
 		return {
 			activeName: 'first',
 			listData: [],
-			read: false,
+			read: true,
 			loading: false,
 			search: '',
 			currentPage: 1,
 			pagesize: 20,
 			total: '',
 			colorMap: {
-				error: 'red',
-				warn: 'orangered',
-				info: 'blue'
+				ERROR: 'red',
+				WARN: 'orangered',
+				INFO: '#48b6e2'
 			},
 			options: [
 				{
 					value: 'error',
-					label: 'error'
+					label: 'ERROR'
 				},
 				{
 					value: 'warn',
-					label: 'warn'
+					label: 'WARN'
 				},
 				{
 					value: 'info',
-					label: 'info'
+					label: 'INFO'
 				}
 			],
 			typeMap: TYPEMAP,
 			count: ''
 		};
 	},
-	mounted() {
+	created() {
 		this.getData();
+		this.getUnreadNum(); //未读消息数量
+		this.$root.$on('notificationUpdate', () => {
+			this.getUnreadNum(); //未读消息数量
+			this.getData();
+		});
 	},
 	methods: {
 		getData() {
 			let where = {};
 			where = {
 				filter: {
-					where: {
-						userId: { regexp: `^${this.$cookie.get('user_id')}$` }
-					},
-					order: 'last_updated DESC',
+					where: {},
+					order: 'createTime DESC',
 					limit: this.pagesize,
 					skip: (this.currentPage - 1) * this.pagesize
 				}
 			};
-			if (this.read) {
+			if (!this.read) {
 				where.filter.where['read'] = false;
 			}
 			if (this.search || this.search !== '') {
 				where.filter.where['level'] = this.search;
+			}
+			if (this.$cookie.get('isAdmin') == 0) {
+				where.filter.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
 			this.loading = true;
 			notification.get(where).then(res => {
@@ -171,13 +179,11 @@ export default {
 					this.loading = false;
 				}
 			});
-			this.getCount(false);
-			this.getCount();
+			this.getCount(this.read);
 		},
 		handleCurrentChange(cpage) {
 			this.currentPage = cpage;
 			this.getData();
-			this.getCount();
 		},
 		handleSizeChange(psize) {
 			this.pagesize = psize;
@@ -185,32 +191,53 @@ export default {
 		},
 		getCount(read) {
 			let where = {
-				where: {
-					userId: { regexp: `^${this.$cookie.get('user_id')}$` }
-				}
+				where: {}
 			};
 			if (read === false) {
 				where.where['read'] = false;
 			}
+			if (this.$cookie.get('isAdmin') == 0) {
+				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
+			}
+			if (this.search || this.search !== '') {
+				where.where['level'] = this.search;
+			}
 			notification.count(where).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
-						if (read === false) {
-							this.count = res.data.count;
-						} else {
-							this.total = res.data.count;
-						}
+						this.total = res.data.count;
 					} else {
 						this.loading = false;
 					}
 				}
 			});
 		},
+		getUnreadNum() {
+			let where = {
+				where: {
+					read: false
+				}
+			};
+			if (this.$cookie.get('isAdmin') == 0) {
+				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
+			}
+			notification.count(where).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.count = res.data.count;
+					}
+				}
+			});
+		},
 		handleRead(id) {
+			let read = this.read;
 			notification.patch({ read: true, id: id }).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
+						this.getUnreadNum(); //未读消息数量
 						this.getData();
+						this.read = read;
+						this.$root.$emit('notificationUpdate');
 					}
 				}
 			});
@@ -229,26 +256,35 @@ export default {
 				read: true
 			};
 			where = JSON.stringify(where);
+			let read = this.read;
 			notification.upsertWithWhere(where, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
+						this.getUnreadNum(); //未读消息数量
 						this.getData();
+						this.read = read;
+						this.$root.$emit('notificationUpdate');
 					}
 				}
 			});
 		},
 		handleAllRead() {
-			let where = {
-				userId: { regexp: `^${this.$cookie.get('user_id')}$` }
-			};
+			let where = {};
+			if (this.$cookie.get('isAdmin') == 0) {
+				where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
+			}
 			let data = {
 				read: true
 			};
 			where = JSON.stringify(where);
+			let read = this.read;
 			notification.readAll(where, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
+						this.getUnreadNum(); //未读消息数量
 						this.getData();
+						this.read = read;
+						this.$root.$emit('notificationUpdate');
 					}
 				}
 			});
@@ -256,28 +292,45 @@ export default {
 		handleClick(tab) {
 			this.currentPage = 1;
 			if (tab.name === 'first') {
-				this.read = false;
+				this.read = true; // 全部信息
 			} else {
-				this.read = true;
+				this.read = false; //未读
 			}
 			this.getData();
+		},
+		getLag(lag) {
+			let r = '0s';
+			if (lag) {
+				let m = moment.duration(lag, 'seconds');
+				if (m.days()) {
+					r = m.days() + 'd';
+				} else if (m.hours()) {
+					r = m.hours() + 'h';
+				} else if (m.minutes()) {
+					r = m.minutes() + 'm';
+				} else {
+					r = lag + 's';
+				}
+			}
+			return r;
 		}
 	}
 };
 </script>
 
 <style scoped lang="less">
+@unreadColor: #ee5353;
 .notification {
 	height: 100%;
 	font-size: 12px;
 	.unread {
-		width: 25px;
+		min-width: 25px;
 		height: 17px;
 		display: inline-block;
 		line-height: 17px;
 		white-space: nowrap;
 		cursor: pointer;
-		background: red;
+		background: @unreadColor;
 		color: #fff;
 		-webkit-appearance: none;
 		text-align: center;
@@ -302,7 +355,7 @@ export default {
 	align-items: center;
 	font-size: 12px;
 	color: #48b6e2;
-	padding: 20px;
+	padding: 20px 20px 20px 0;
 	.title {
 		font-size: 18px;
 		font-weight: bold;
@@ -379,6 +432,7 @@ export default {
 			background: #fff;
 			border-bottom: 1px solid #f5f7fa;
 			cursor: pointer;
+			margin-right: 30px;
 			.list-item-content {
 				position: relative;
 				height: 50px;
@@ -394,7 +448,7 @@ export default {
 				left: 8px;
 				width: 6px;
 				height: 6px;
-				background: #f81d22;
+				background: @unreadColor;
 				border-radius: 50%;
 			}
 			.list-item-desc {
@@ -409,9 +463,11 @@ export default {
 			}
 			.list-item-time {
 				float: right;
-				margin: 0 20px;
 				color: #202d40;
 				font-size: 12px;
+			}
+			&:hover {
+				background: #fafafa;
 			}
 		}
 	}

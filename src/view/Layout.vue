@@ -344,6 +344,7 @@ export default {
 			this.notificationVisible = type;
 		},
 		handleUnread(data) {
+			this.unRead = '';
 			this.unRead = data;
 		}
 	}
@@ -400,6 +401,9 @@ export default {
 .layout-container {
 	height: 100%;
 	background: rgba(250, 250, 250, 1);
+	.iconfont {
+		font-size: 18px;
+	}
 	.layout-header {
 		display: flex;
 		align-items: center;
@@ -530,6 +534,10 @@ export default {
 			line-height: 13px;
 			padding: 0 5px;
 			border: none;
+		}
+		.el-badge__content.is-fixed {
+			right: 18px;
+			top: 3px;
 		}
 	}
 	.layout-main {

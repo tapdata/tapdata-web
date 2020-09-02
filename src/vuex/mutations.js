@@ -1,4 +1,20 @@
 const mutations = {
+	// 任务调度
+	tasks(state, payload) {
+		state.tasks = payload;
+	},
+	// 数据采集（旧版）
+	dataCollect(state, payload) {
+		state.dataCollect = payload;
+	},
+	// 数据规则
+	dataRules(state, payload) {
+		state.dataRules = payload;
+	},
+	// 生命周期
+	ttl(state, payload) {
+		state.ttl = payload;
+	},
 	// 数据质量
 	dataQuality(state, payload) {
 		state.dataQuality = payload;

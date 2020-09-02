@@ -105,12 +105,14 @@
 						<span class="info-text">{{ $moment(flow.finishTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
 					</div>
 					<div class="info-list">
-						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
-						<span class="info-text"> {{ flow.inputNumber }}</span>
+						<span class="info-label">{{ $t('dataFlow.totalOutput') }}:</span>
+						<span class="info-text">
+							{{ flow.stats && flow.stats.output ? flow.stats.output.rows : '' }}</span
+						>
 					</div>
 					<div class="info-list">
-						<span class="info-label">{{ $t('dataFlow.outputNumber') }}:</span>
-						<span class="info-text">{{ flow.outputNumber }}</span>
+						<span class="info-label">{{ $t('dataFlow.totalInput') }}:</span>
+						<span class="info-text">{{ flow.stats && flow.stats.input ? flow.stats.input.rows : '' }}</span>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.timePoint') }}:</span>
@@ -476,12 +478,12 @@ export default {
 				this.stageId = selectStage.id;
 				this.getNodeName();
 				this.stage.nodeName = selectStage.form_data.name;
-				this.stageType = selectStage.type;
-				if (this.stageType === 'app.Database') {
-					this.getStageDataApi(currentStageData.connectionId, '');
-				} else if (this.stageType === 'app.Collection' || this.stageType === 'app.Table') {
-					this.getStageDataApi(currentStageData.connectionId, this.tableName);
-				}
+				// this.stageType = selectStage.type;
+				// if (this.stageType === 'app.Database') {
+				// 	this.getStageDataApi(currentStageData.connectionId, '');
+				// } else if (this.stageType === 'app.Collection' || this.stageType === 'app.Table') {
+				// 	this.getStageDataApi(currentStageData.connectionId, this.tableName);
+				// }
 				let rightTabPanel = this.editor.getRightTabPanel();
 				let panel = rightTabPanel.getChildByName('nodeSettingPanel');
 				if (this.editor.seeMonitor) {
@@ -593,9 +595,10 @@ export default {
 						}
 					});
 					this.stageType = currentStageData.type;
-					if (this.stageType === 'app.Database') {
+
+					if (this.stageType === 'database') {
 						this.getStageDataApi(currentStageData.connectionId, '');
-					} else if (this.stageType === 'app.Collection' || this.stageType === 'app.Table') {
+					} else if (this.stageType === 'collection' || this.stageType === 'table') {
 						this.getStageDataApi(currentStageData.connectionId, this.tableName);
 					}
 				}
@@ -648,13 +651,16 @@ export default {
 			if (this.stageId != 'all') {
 				msg['stageId'] = this.stageId;
 			}
-
-			let int = setInterval(() => {
-				if (ws.ws.readyState == 1) {
-					ws.send(msg);
-					clearInterval(int);
-				}
-			}, 2000);
+			if (ws.ws.readyState != 1) {
+				let int = setInterval(() => {
+					if (ws.ws.readyState == 1) {
+						ws.send(msg);
+						clearInterval(int);
+					}
+				}, 2000);
+			} else {
+				ws.send(msg);
+			}
 		},
 
 		// 获取所有节点
@@ -845,7 +851,7 @@ export default {
 					show: false,
 					trigger: 'none',
 					axisPointer: {
-						type: 'cross',
+						type: 'none',
 						crossStyle: {
 							color: '#999'
 						}
@@ -889,17 +895,10 @@ export default {
 					}
 				},
 				yAxis: {
-					type: 'value',
-					min: 0,
 					axisLine: { show: false },
 					axisTick: { show: false },
 					splitLine: { show: false },
-					splitArea: { show: false },
-					axisLabel: {
-						formatter: function() {
-							return '';
-						}
-					}
+					splitArea: { show: false }
 				},
 				series: [
 					{

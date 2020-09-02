@@ -11,7 +11,7 @@
 			</span>
 		</div>
 		<ul class="cuk-list clearfix cuk-list-type-block">
-			<li class="list-item" v-for="item in listData" :key="item.level">
+			<li class="list-item" v-for="item in listData" :key="item.level" @click="handleRead(item.id)">
 				<div class="list-item-content">
 					<div class="unread-1zPaAXtSu"></div>
 					<div class="list-item-desc">
@@ -33,6 +33,7 @@
 							</router-link>
 						</span>
 						<span>{{ typeMap[item.msg] }}</span>
+						<span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
 					</div>
 					<div class="list-item-time">
 						<span>{{ item.createTime }}</span>
@@ -47,6 +48,8 @@
 import ws from '../../api/ws';
 import * as moment from 'moment';
 import { TYPEMAP } from './tyepMap';
+import factory from '../../api/factory';
+const notification = factory('notification');
 
 export default {
 	name: 'notification',
@@ -60,24 +63,25 @@ export default {
 		return {
 			listData: [],
 			colorMap: {
-				error: 'red',
-				warn: 'orangered',
-				info: 'blue'
+				ERROR: 'red',
+				WARN: 'orangered',
+				INFO: '#48b6e2'
 			},
 			typeMap: TYPEMAP
 		};
 	},
-	mounted() {
+	created() {
 		let msg = {
-			type: 'notification',
-			userId: this.$cookie.get('user_id')
+			type: 'notification'
 		};
+		if (this.$cookie.get('isAdmin') == 0) {
+			msg['userId'] = this.$cookie.get('user_id');
+		}
+		this.getUnreadNum();
 		ws.on('notification', data => {
 			if (data.data && data.data.length > 0) {
-				data.data.map(item => {
-					this.listData.unshift(item);
-					this.$emit('unread', this.listData.length);
-				});
+				this.listData.unshift(...data.data);
+				this.getUnreadNum();
 			}
 			//格式化日期
 			if (this.listData && this.listData.length > 0) {
@@ -92,6 +96,55 @@ export default {
 				clearInterval(int);
 			}
 		}, 2000);
+		this.$root.$on('notificationUpdate', () => {
+			ws.send(msg);
+		});
+	},
+	methods: {
+		getUnreadNum() {
+			let where = {
+				where: {
+					read: false
+				}
+			};
+			if (this.$cookie.get('isAdmin') == 0) {
+				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
+			}
+			notification.count(where).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.$emit('unread', res.data.count);
+						//this.$root.$emit('notificationUpdate');
+					}
+				}
+			});
+		},
+		handleRead(id) {
+			notification.patch({ read: true, id: id }).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.listData = [];
+						this.$root.$emit('notificationUpdate');
+					}
+				}
+			});
+		},
+		getLag(lag) {
+			let r = '0s';
+			if (lag) {
+				let m = moment.duration(lag, 'seconds');
+				if (m.days()) {
+					r = m.days() + 'd';
+				} else if (m.hours()) {
+					r = m.hours() + 'h';
+				} else if (m.minutes()) {
+					r = m.minutes() + 'm';
+				} else {
+					r = lag + 's';
+				}
+			}
+			return r;
+		}
 	}
 };
 </script>
@@ -112,18 +165,20 @@ export default {
 	/*border: 1px solid rgba(222, 222, 228, 1);*/
 }
 .cuk-list {
-	width: 500px;
+	width: 360px;
 	height: 600px;
 	overflow: auto;
+	font-size: 12px;
 	.list-item {
 		position: relative;
 		background: #fff;
-		border-bottom: 1px solid #f5f7fa;
-		padding: 0 20px 10px 20px;
+		border-bottom: 1px solid #dedee4;
+		padding: 0 5px 5px 20px;
+		cursor: pointer;
 		.list-item-content {
 			position: relative;
-			height: 50px;
-			line-height: 50px;
+			height: 40px;
+			line-height: 40px;
 			padding-left: 14px;
 			box-sizing: border-box;
 			overflow: hidden;
@@ -143,7 +198,7 @@ export default {
 			position: absolute;
 			top: -5px;
 			left: 30px;
-			right: 120px;
+			right: 20px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
@@ -152,8 +207,8 @@ export default {
 			}
 		}
 		.list-item-time {
-			margin: 20px;
-			color: #202d40;
+			margin: 15px 0 0 17px;
+			color: #aaa;
 			font-size: 12px;
 		}
 	}

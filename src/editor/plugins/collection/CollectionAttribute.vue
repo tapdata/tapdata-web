@@ -163,7 +163,7 @@
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
-					v-if="isSourceDataNode"
+					v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
 				>
 					<div class="flex-block">
 						<el-switch
@@ -183,7 +183,7 @@
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.dropTable.label')"
-					v-if="!isSourceDataNode"
+					v-if="dataNodeInfo.isTarget"
 				>
 					<el-select v-model="model.dropTable" size="mini" :disabled="logsFlag">
 						<el-option
@@ -197,7 +197,10 @@
 					</el-select>
 				</el-form-item>
 
-				<el-form-item :label="$t('editor.cell.data_node.collection.form.filter.label')">
+				<el-form-item
+					v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
+					:label="$t('editor.cell.data_node.collection.form.filter.label')"
+				>
 					<el-input
 						v-model="model.filter"
 						type="textarea"
@@ -397,8 +400,8 @@ export default {
 				loading: false,
 				filterable: true,
 				options: [],
-				allowCreate: true,
-				defaultFirstOption: true,
+				allowCreate: false,
+				defaultFirstOption: false,
 				clearable: true
 			},
 
@@ -420,7 +423,7 @@ export default {
 				}
 			},
 
-			isSourceDataNode: false,
+			dataNodeInfo: {},
 			model: {
 				connectionId: '',
 				databaseType: '',
@@ -679,7 +682,7 @@ export default {
 				}
 			}
 		},
-		setData(data, cell, isSourceDataNode, vueAdapter) {
+		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
 				_.merge(this.model, data);
 				//老数据的兼容处理
@@ -693,7 +696,7 @@ export default {
 				this.tableIsLink();
 			}
 
-			this.isSourceDataNode = isSourceDataNode;
+			this.dataNodeInfo = dataNodeInfo || {};
 			this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema());
 			cell.on('change:outputSchema', () => {
 				this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema());
@@ -713,7 +716,7 @@ export default {
 		getData() {
 			let result = _.cloneDeep(this.model);
 			result.name = result.tableName || 'Collection';
-			if (this.isSourceDataNode) {
+			if (!this.dataNodeInfo.isTarget) {
 				delete result.dropTable;
 			}
 			this.taskData.id = result.connectionId;
@@ -751,6 +754,13 @@ export default {
 	.flex-block {
 		display: flex;
 		align-items: center;
+	}
+}
+</style>
+<style lang="less">
+.e-collection {
+	.iconfont {
+		font-size: 12px;
 	}
 }
 </style>

@@ -1,11 +1,8 @@
 <template>
 	<div>
-		<el-tabs type="border-card" @tab-click="sqlTabChanged">
-			<el-tab-pane>
-				<span slot="label"
-					><el-checkbox v-model="sqlFromCust" @change="setSqlFrom"></el-checkbox>
-					{{ $t('editor.cell.data_node.collection.form.filter.fieldFilter') }}</span
-				>
+		<el-tabs type="border-card" v-model="value.filterType">
+			<el-tab-pane name="field">
+				<span slot="label"> {{ $t('editor.cell.data_node.collection.form.filter.fieldFilter') }}</span>
 				<el-form-item :placeholder="$t('editor.cell.data_node.collection.form.filter.allField')">
 					<el-select v-model="value.fieldFilterType">
 						<el-option
@@ -36,7 +33,6 @@
 					</el-select>
 				</el-form-item>
 				<div class="fiflter">
-					<div class="title">{{ $t('editor.cell.data_node.collection.form.filter.label') }}</div>
 					<div class="rowSlot">
 						<span slot="prepend">{{ $t('editor.cell.data_node.collection.form.filter.rowLimit') }}</span>
 						<el-select v-model="value.limitLines" size="mini" class="e-select">
@@ -48,22 +44,46 @@
 							></el-option>
 						</el-select>
 					</div>
-					<queryCond :primaryKeyOptions="primaryKeyOptions" v-model="value"></queryCond>
+					<el-row v-if="value.conditions.length == 0">
+						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('cond')"
+							>+{{ $t('queryBuilder.addCond') }}</el-button
+						>
+						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('group')"
+							>+({{ $t('queryBuilder.addCond') }})</el-button
+						>
+					</el-row>
+					<el-row v-if="value.conditions.length > 0" style="padding-bottom: 10px;">
+						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('cond', 'and')"
+							>+ and</el-button
+						>
+						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('cond', 'or')"
+							>+ or</el-button
+						>
+						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('group', 'and')"
+							>+ and()</el-button
+						>
+						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('group', 'or')"
+							>+ or()</el-button
+						>
+					</el-row>
+					<queryCond
+						v-if="value.conditions.length > 0"
+						:level="0"
+						:primaryKeyOptions="primaryKeyOptions"
+						v-model="value"
+					></queryCond>
 					<el-row class="selectSql">
-						<div>{{ cSql }}</div>
+						<div>{{ value.cSql }}</div>
 					</el-row>
 				</div>
 			</el-tab-pane>
 			<el-tab-pane>
-				<span slot="label"
-					><el-checkbox v-model="sqlNotFromCust" @change="setSqlFrom('no')"></el-checkbox>
-					{{ $t('editor.cell.data_node.collection.form.filter.sqlFilter') }}</span
-				>
+				<span slot="label"> {{ $t('editor.cell.data_node.collection.form.filter.sqlFilter') }}</span>
 				<el-form-item prop="sql">
 					<el-input
 						type="textarea"
 						rows="10"
-						v-model="editSql"
+						v-model="value.editSql"
 						:placeholder="$t('editor.cell.data_node.table.form.custom_sql.placeholder')"
 						size="mini"
 					></el-input>
@@ -117,6 +137,12 @@ export default {
 				return '';
 			}
 		},
+		databaseType: {
+			type: String,
+			default() {
+				return '';
+			}
+		},
 		tableName: {
 			type: String,
 			default() {
@@ -126,11 +152,9 @@ export default {
 	},
 	data() {
 		return {
-			editSql: '',
 			isFilter: false,
 			sqlFromCust: true,
 			sqlNotFromCust: false,
-			cSql: '',
 			sqlWhere: '',
 			filterTypeOptions: [
 				{
@@ -168,6 +192,7 @@ export default {
 			handler() {
 				this.$emit('input', this.value);
 				this.sqlWhere = this.toSqlWhere(this.value.conditions);
+				this.createCustSql();
 			}
 		}
 	},
@@ -177,9 +202,36 @@ export default {
 				this.createCustSql();
 			});
 		},
+		addCond(type, op) {
+			let child = {};
+			if (type === 'group') {
+				child = {
+					type: 'group',
+					operator: op || '',
+					conditions: [
+						{
+							type: 'condition',
+							field: '',
+							command: '',
+							value: ''
+						}
+					]
+				};
+			} else {
+				child = {
+					type: 'condition',
+					field: '',
+					operator: op || '',
+					command: '',
+					value: ''
+				};
+			}
+			this.value.conditions.push(child);
+		},
 		createCustSql() {
 			let res = 'SELECT ',
 				custSql = this.value;
+			if (!this.sqlWhere) this.sqlWhere = '';
 			while (this.custFields.length > 0) this.custFields.pop();
 			if (this.value.selectedFields.length > 0 && custSql.fieldFilterType == 'retainedField')
 				this.value.selectedFields.forEach(it => this.custFields.push(it));
@@ -193,14 +245,23 @@ export default {
 				res += this.custFields.join(',');
 			else res += '* ';
 			res += ' FROM ' + this.tableName + ' ';
-			if ((this.sqlWhere && this.sqlWhere.length > 0) || (custSql.limitLines && custSql.limitLines != 'all'))
+			if (
+				(this.sqlWhere && this.sqlWhere.length > 0) ||
+				(custSql.limitLines && custSql.limitLines != 'all' && this.databaseType == 'oracle')
+			)
 				res += ' WHERE ';
 			res += this.sqlWhere;
 			if (custSql.limitLines && custSql.limitLines != 'all') {
-				if (res.indexOf('WHERE ') < res.length - 6) res += ' AND ';
-				res += ' ROWNUM < ' + custSql.limitLines;
+				if (this.databaseType == 'mysql') res += ' limit ' + custSql.limitLines;
+				if (this.databaseType == 'sqlserver')
+					res = res.replace('SELECT ', 'SELECT top ' + custSql.limitLines + ' ');
+				if (this.databaseType == 'oracle') {
+					if (res.indexOf('WHERE ') < res.length - 6) res += ' AND ';
+					res += ' ROWNUM < ' + custSql.limitLines;
+				}
+				if (this.databaseType == 'db2') res += '  fetch first ' + custSql.limitLines + ' rows only';
 			}
-			this.cSql = res;
+			this.value.cSql = res;
 		},
 		setSqlFrom(name) {
 			if (name == 'no') this.sqlFromCust = !this.sqlNotFromCust;
@@ -232,12 +293,13 @@ export default {
 					if (cond.type == 'group')
 						res += ' ' + cond.operator + ' (' + this.toSqlWhere(cond.conditions) + ')';
 					else {
-						let quota = ['String'].includes(
+						let quota = ['String', 'Date'].includes(
 								this.mergedSchema.fields.find(it => it.field_name == cond.field).javaType
 							)
 								? "'"
 								: '',
-							percent = cond.calcu == 'like' ? '%' : '';
+							percent = cond.command == 'like' ? '%' : '';
+						if (quota == '' && percent == '%') quota = "'";
 						if (res.length > 1) res += ' ' + cond.operator + ' ';
 						res += cond.field + ' ' + cond.command + ' ' + quota + percent + cond.value + percent + quota;
 					}
@@ -330,14 +392,8 @@ export default {
 		align-items: center;
 	}
 	.fiflter {
-		padding: 10px 12px;
 		font-size: 12px;
 		box-sizing: border-box;
-		border: 1px solid #dcdfe6;
-		.title {
-			font-size: 12px;
-			padding-bottom: 10px;
-		}
 		.rowSlot {
 			display: inline-block;
 			margin-bottom: 12px;

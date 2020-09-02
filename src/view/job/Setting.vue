@@ -119,9 +119,7 @@
 					<el-row v-for="item in formData.syncPoints" :key="item.name">
 						<div class="labelTxt">
 							{{ $t('dataFlow.cdcLabel') }}
-							<span v-for="item in formData.syncPoints" :key="item.name">
-								{{ item.name || item.connectionId }}
-							</span>
+							{{ item.name || item.connectionId }}
 						</div>
 						<el-col :span="8" style="margin-right: 10px">
 							<el-select v-model="item.type" placeholder="请选择">

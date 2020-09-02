@@ -1,15 +1,15 @@
 <template>
 	<section class="data-flow-wrap" v-loading="restLoading">
-		<div class="panel-left" v-if="panelFlag">
+		<div class="panel-left" v-if="formData.panelFlag">
 			<metaData v-on:nodeClick="nodeClick"></metaData>
 		</div>
 		<div class="panel-main">
 			<div class="topbar">
 				<!-- <div class="panelBtn"></div> -->
 				<ul class="search-bar">
-					<li :class="[{ panelOpen: panelFlag }, 'item', 'panelBtn']" @click="panelFlag = !panelFlag">
+					<li :class="[{ panelOpen: formData.panelFlag }, 'item', 'panelBtn']" @click="handlePanelFlag">
 						<i class="iconfont icon-xiangshangzhanhang"></i>
-						<span>{{ panelFlag ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel') }}</span>
+						<span>{{ formData.panelFlag ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel') }}</span>
 					</li>
 					<li class="item">
 						<el-input
@@ -318,6 +318,7 @@ import factory from '../../api/factory';
 import ws from '../../api/ws';
 const dataFlows = factory('DataFlows');
 const MetadataInstance = factory('MetadataInstances');
+import { toRegExp } from '../../util/util';
 import metaData from '../metaData';
 import SelectClassify from '../../components/SelectClassify';
 
@@ -325,7 +326,6 @@ export default {
 	components: { metaData, SelectClassify },
 	data() {
 		return {
-			panelFlag: true,
 			checkedTag: '',
 			listtags: [],
 			tagList: [],
@@ -406,7 +406,8 @@ export default {
 				person: '',
 				way: '',
 				executionStatus: '',
-				classification: []
+				classification: [],
+				panelFlag: true
 			},
 			statusBtMap: {
 				scheduled: { switch: true, delete: true, edit: true, detail: false, forceStop: true, reset: true },
@@ -422,6 +423,9 @@ export default {
 	},
 	created() {
 		this.formData = this.$store.state.dataFlows;
+		if (this.$route.query && this.$route.query.dataFlowStatus) {
+			this.formData.status = this.$route.query.dataFlowStatus;
+		}
 
 		this.screenFn();
 		this.keyupEnter();
@@ -455,6 +459,11 @@ export default {
 		}
 	},
 	methods: {
+		// 面板显示隐藏
+		handlePanelFlag() {
+			this.formData.panelFlag = !this.formData.panelFlag;
+			this.$store.commit('dataFlows', this.formData);
+		},
 		wsWatch(data) {
 			this.wsData.push(data.data.fullDocument);
 		},
@@ -670,6 +679,7 @@ export default {
 		},
 		async getData(params) {
 			this.loading = true;
+
 			this.$store.commit('dataFlows', this.formData);
 
 			let where = {};
@@ -686,15 +696,16 @@ export default {
 					where['setting.sync_type'] = this.formData.way;
 				}
 				if (this.formData.search && this.formData.search !== '') {
+					let word = toRegExp(this.formData.search);
 					where.or = [
 						{
-							name: { like: this.formData.search, options: 'i' }
+							name: { like: word, options: 'i' }
 						},
 						{
-							'stages.name': { like: this.formData.search, options: 'i' }
+							'stages.name': { like: word, options: 'i' }
 						},
 						{
-							'stages.tableName': { like: this.formData.search, options: 'i' }
+							'stages.tableName': { like: word, options: 'i' }
 						}
 					];
 				}
