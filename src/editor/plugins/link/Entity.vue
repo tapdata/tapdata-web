@@ -39,11 +39,9 @@
 					<span class="node-icon">
 						<i class="icon-expand"></i>
 					</span>
-					<span class="pk" v-if="data.primary_key_position > 0">
-						<i class="el-icon-key"></i>
-					</span>
+					<img :src="getImgByType(data.type)" />
+					<img class="pk" v-if="data.primary_key_position > 0" src="../../../../static/image/PK.png" />
 					<span class="node-label">{{ node.label }}</span>
-					<span class="node-type">{{ data.type }}</span>
 				</div>
 			</el-tree>
 		</div>
@@ -99,11 +97,15 @@ export default {
 			isCheckAll: true,
 			isIndeterminate: false,
 			tableMap: {},
-			defaultChecked: []
+			defaultChecked: [],
+			typeMap: {}
 		};
 	},
 
 	methods: {
+		getImgByType(type) {
+			return require(`../../../../static/image/types/${type.toLowerCase()}.png`);
+		},
 		getCheckedKeys(fields) {
 			let ids = [];
 			fields.forEach(f => {
@@ -183,6 +185,9 @@ export default {
 		font-size: 12px;
 		color: #fff;
 	}
+	.el-tree-node__content {
+		height: 24px;
+	}
 	.el-tree-node:focus > .el-tree-node__content,
 	.el-tree-node__content:hover {
 		background: #fff !important;
@@ -213,6 +218,7 @@ export default {
 		font-size: 12px;
 		color: #666;
 		height: 100%;
+		overflow: hidden;
 		&.active-delete {
 			background: rgba(0, 0, 0, 0.2);
 		}
@@ -255,11 +261,13 @@ export default {
 			}
 		}
 		.pk {
-			font-size: 12px;
-			color: @color;
+			margin-left: 5px;
 		}
 		.node-label {
 			flex: 1;
+			overflow: hidden;
+			padding: 0 5px;
+			box-sizing: border-box;
 		}
 		.node-icon {
 			position: relative;
