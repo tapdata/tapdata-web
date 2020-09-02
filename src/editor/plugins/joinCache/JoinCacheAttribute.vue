@@ -25,14 +25,14 @@
 			</el-table>
 		</form-builder>
 		<div class="schema-mapping">
-			<Mapping ref="mappingComp"></Mapping>
+			<Mapping ref="mappingComp" :filterFields="model.removeFields" @check="checkHandler"></Mapping>
 		</div>
 	</section>
 </template>
 
 <script>
 import Mapping from '../link/Mapping';
-import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, mergeSchema } from '../../util/Schema';
+import { mergeJoinTablesToTargetSchema, mergeSchema } from '../../util/Schema';
 // import log from '../../../log';
 import _ from 'lodash';
 let editorMonitor = null;
@@ -51,6 +51,7 @@ export default {
 				joinSettings: [],
 				joinKey: '',
 				type: 'custom_processor',
+				removeFields: [],
 				scripts: ''
 			},
 			config: {
@@ -122,7 +123,6 @@ export default {
 	},
 	mounted() {},
 	methods: {
-		convertSchemaToTreeData,
 		getCacheList(editor) {
 			let cells = editor.getAllCells();
 			let cacheList = [];
@@ -152,9 +152,9 @@ export default {
 				}
 			});
 			this.sourceFields = sourceFields;
-			this.config.items.find(it => it.field === 'joinKey').options = fields.map(it => ({
-				label: it.field_name,
-				value: it.field_name
+			this.config.items.find(it => it.field === 'joinKey').options = sourceFields.map(it => ({
+				label: it,
+				value: it
 			}));
 			this.inputSchema = schema;
 		},
@@ -165,17 +165,37 @@ export default {
 					this.model.cacheId = '';
 					this.model.joinSettings = [];
 					this.model.joinKey = '';
+					this.model.removeFields = [];
 					return;
 				}
 				let cacheOutputSchema = cacheCell.cell.getInputSchema()[0].sourceSchema;
-				let joinPath = this.model.joinKey;
+				let joinPath = this.model.joinKey.trim();
 				let mergedTargetSchema = mergeSchema(_.cloneDeep(this.inputSchema), cacheOutputSchema, {
 					joinType: joinPath ? 'merge_embed' : 'upsert',
 					joinPath
 				});
+				if (this.model.removeFields.length && mergedTargetSchema && mergedTargetSchema.fields) {
+					let removeIds = this.model.removeFields.map(f => f.id);
+					mergedTargetSchema.fields = mergedTargetSchema.fields.filter(f => {
+						return !removeIds.includes(f.id);
+					});
+				}
 				this.$refs.mappingComp.setSchema(cacheOutputSchema, mergedTargetSchema);
 				this.$emit('schemaChange', _.cloneDeep(mergedTargetSchema));
 			}
+		},
+		checkHandler(checkedArr) {
+			let cacheCell = this.cacheMap[this.model.cacheId];
+			let cacheOutputSchema = cacheCell.cell.getInputSchema()[0].sourceSchema;
+			let checkedIds = checkedArr.map(it => it.id);
+			let removeFields = [];
+			cacheOutputSchema.fields.forEach(f => {
+				if (!checkedIds.includes(f.id) && f.field_name) {
+					removeFields.push(f);
+				}
+			});
+			this.model.removeFields = removeFields;
+			this.showMapping();
 		},
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			let schema = mergeJoinTablesToTargetSchema(null, cell.getInputSchema());
@@ -190,7 +210,7 @@ export default {
 			editorMonitor = vueAdapter.editor;
 		},
 		getScripts() {
-			let { cacheId, joinSettings, joinKey } = this.model;
+			let { cacheId, joinSettings, joinKey, removeFields } = this.model;
 			if (!cacheId || !joinSettings.length || joinSettings.some(it => !it.sourceKey)) {
 				return '';
 			}
@@ -198,15 +218,20 @@ export default {
 
 			let sourceFieldStr = joinSettings.map(it => 'record.' + it.sourceKey).join(',');
 
-			//MapUtils.removeKey(cachedRow, ${删除字段名1});
+			let removeFieldsStr = removeFields
+				.map(f => {
+					return `MapUtils.removeKey(cachedRow, '${f.field_name}');`;
+				})
+				.join('');
+			let joinPath = joinKey.trim();
 			let scripts = `
 				function customProcess(record) {
 					var isCdc = context.syncType == 'cdc';
-					var cachedRow = CacheService.getAndSetCache( ${cacheCell.name}, isCdc, ${sourceFieldStr} );
+					var cachedRow = CacheService.getAndSetCache( '${cacheCell.name}', isCdc, ${sourceFieldStr} );
 					if (cachedRow) {
-
-						if ('${joinKey}') {
-							record.put('${joinKey}', cachedRow);
+						${removeFieldsStr}
+						if ('${joinPath}') {
+							record.put('${joinPath}', cachedRow);
 						} else {
 							record.putAll(cachedRow);
 						}
@@ -239,6 +264,7 @@ export default {
 	flex-direction: column;
 	height: 100%;
 	padding: 10px;
+	box-sizing: border-box;
 	.source-key-selection {
 		width: 100%;
 		input.el-input__inner {
@@ -247,7 +273,8 @@ export default {
 	}
 	.schema-mapping {
 		flex: 1;
-		overflow-y: auto;
+		overflow: hidden;
+		margin-top: 10px;
 	}
 }
 </style>
