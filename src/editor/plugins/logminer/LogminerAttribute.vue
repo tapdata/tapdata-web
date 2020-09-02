@@ -62,25 +62,6 @@
 					</el-select>
 				</el-form-item>
 			</el-col>
-			<el-col :span="21" class="aggregateName">
-				<el-form-item
-					:label="$t('editor.cell.data_node.table.form.maximum_transaction.label')"
-					prop="maxTransactionLength"
-				>
-					<div class="flex-block">
-						<el-input-number
-							v-model="model.maxTransactionLength"
-							controls-position="right"
-							:min="1"
-							:max="720"
-						></el-input-number>
-						<el-popover class="aggtips" placement="top-start" width="400" trigger="hover">
-							<span>{{ $t('editor.cell.data_node.table.form.maximum_transaction.tip') }}</span>
-							<span class="icon iconfont icon-tishi1" slot="reference"></span>
-						</el-popover>
-					</div>
-				</el-form-item>
-			</el-col>
 			<el-row :gutter="20" class="loopFrom" v-for="(item, index) in model.logCollectorSettings" :key="index">
 				<el-col :span="21" class="fromLoopBox">
 					<el-form-item
@@ -175,7 +156,6 @@ export default {
 				connectionId: '',
 				name: '',
 				logTtl: 0,
-				maxTransactionLength: 12,
 				syncPoint: {},
 				// date: '',
 				// timezone: '',
@@ -387,7 +367,6 @@ export default {
 					date: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
 				},
 				logTtl: 3,
-				maxTransactionLength: 12,
 				logCollectorSettings: [
 					{
 						connectionId: '',
@@ -545,13 +524,6 @@ export default {
 	}
 	.btnClass .el-form-item__content {
 		line-height: 30px !important;
-	}
-	.el-input-number {
-		line-height: 28px !important;
-	}
-	.el-input-number.is-controls-right .el-input-number__decrease,
-	.el-input-number.is-controls-right .el-input-number__increase {
-		line-height: 14px !important;
 	}
 }
 </style>
