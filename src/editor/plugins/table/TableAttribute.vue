@@ -111,24 +111,6 @@
 						</el-tooltip>
 					</div>
 				</el-form-item>
-				<el-form-item
-					:label="$t('editor.cell.data_node.table.form.maximum_transaction.label')"
-					prop="maxTransactionLength"
-					v-if="model.databaseType === 'oracle' && dataNodeInfo.isSource === 1"
-				>
-					<div class="flex-block">
-						<el-input-number
-							v-model="model.maxTransactionLength"
-							controls-position="right"
-							:min="1"
-							:max="720"
-						></el-input-number>
-						<el-popover class="aggtip" placement="top-start" width="400" trigger="hover">
-							<span>{{ $t('editor.cell.data_node.table.form.maximum_transaction.tip') }}</span>
-							<span class="icon iconfont icon-tishi1" slot="reference"></span>
-						</el-popover>
-					</div>
-				</el-form-item>
 
 				<!-- <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
 					<MultiSelection
@@ -355,7 +337,6 @@ export default {
 				connectionId: '',
 				databaseType: '',
 				tableName: '',
-				maxTransactionLength: 12,
 				sql: '',
 				isFilter: false,
 				sqlFromCust: true,
@@ -745,11 +726,6 @@ export default {
 			}
 		}
 	}
-	.aggtip {
-		padding-left: 12px;
-		color: #999;
-		cursor: pointer;
-	}
 }
 </style>
 <style lang="less">
@@ -767,13 +743,6 @@ export default {
 	.el-switch__label * {
 		font-size: 12px !important;
 		color: #999;
-	}
-	.el-input-number {
-		line-height: 28px !important;
-	}
-	.el-input-number.is-controls-right .el-input-number__decrease,
-	.el-input-number.is-controls-right .el-input-number__increase {
-		line-height: 14px !important;
 	}
 }
 </style>
