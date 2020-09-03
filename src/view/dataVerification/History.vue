@@ -1,104 +1,6 @@
 <template>
 	<section class="data-flow-wrap" v-loading="restLoading">
-		<div class="panel-left" v-if="formData.panelFlag">
-			<metaData v-on:nodeClick="nodeClick"></metaData>
-		</div>
 		<div class="panel-main">
-			<div class="topbar">
-				<!-- <div class="panelBtn"></div> -->
-				<ul class="search-bar">
-					<li :class="[{ panelOpen: formData.panelFlag }, 'item', 'panelBtn']" @click="handlePanelFlag">
-						<i class="iconfont icon-xiangshangzhanhang"></i>
-						<span>{{ formData.panelFlag ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel') }}</span>
-					</li>
-					<li class="item">
-						<el-input
-							:placeholder="$t('dataFlow.searchPlaceholder')"
-							clearable
-							prefix-icon="el-icon-search"
-							v-model="formData.search"
-							size="mini"
-							@change="screenFn"
-						></el-input>
-					</li>
-					<li class="item">
-						<el-select
-							v-model="formData.status"
-							size="mini"
-							clearable
-							:placeholder="$t('dataFlow.taskStatusPlaceholder')"
-							style="width:160px"
-							@change="screenFn"
-						>
-							<el-option
-								v-for="item in options"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value"
-							></el-option>
-						</el-select>
-					</li>
-					<li class="item">
-						<el-select
-							v-model="formData.way"
-							size="mini"
-							clearable
-							:placeholder="$t('dataFlow.taskSettingPlaceholder')"
-							style="width:160px"
-							@change="screenFn"
-						>
-							<el-option
-								v-for="item in optionsKey"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value"
-							></el-option>
-						</el-select>
-					</li>
-					<li class="item">
-						<el-select
-							v-model="formData.executionStatus"
-							size="mini"
-							clearable
-							:placeholder="$t('dataFlow.executionStatus')"
-							style="width:160px"
-							@change="screenFn"
-						>
-							<el-option
-								v-for="opt in ['initializing', 'cdc', 'initialized']"
-								:key="opt"
-								:label="$t('dataFlow.status.' + opt)"
-								:value="opt"
-							></el-option>
-						</el-select>
-					</li>
-					<li class="item" v-if="checkedTag && checkedTag !== ''">
-						<el-tag size="small" closable @close="handleClose()">{{ checkedTag.value }}</el-tag>
-					</li>
-					<li class="item">
-						<el-button class="btn" size="mini" @click="handleClear">
-							<i class="iconfont icon-shuaxin1 back-btn-icon"></i>
-						</el-button>
-					</li>
-				</ul>
-				<div class="topbar-buttons">
-					<el-button size="mini" class="btn" @click="handleGoFunction">
-						<i class="iconfont icon-hanshu back-btn-icon"></i>
-						<span> {{ $t('dataFlow.taskBulkFx') }}</span>
-					</el-button>
-					<el-button size="mini" class="btn" @click="handleImport">
-						<i class="iconfont icon-daoru back-btn-icon"></i>
-						<span> {{ $t('dataFlow.bulkImport') }}</span>
-					</el-button>
-					<el-button class="btn btn-create" type="primary" size="mini" @click="create">
-						<i class="iconfont icon-jia add-btn-icon"></i>
-					</el-button>
-				</div>
-			</div>
-			<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-				<el-tab-pane :label="$t('notification.allNotice')" name="first"></el-tab-pane>
-				<el-tab-pane :label="$t('notification.unreadNotice')" name="second"></el-tab-pane>
-			</el-tabs>
 			<div class="task-list" v-loading="restLoading">
 				<el-table
 					v-loading="loading"
@@ -191,14 +93,12 @@
 				</el-pagination>
 			</div>
 		</div>
-		<SelectClassify
-			ref="SelectClassify"
-			:dialogVisible="dialogVisible"
-			type="dataflow"
-			:tagLists="tagList"
-			v-on:dialogVisible="handleDialogVisible"
-			v-on:operationsClassify="handleOperationClassify"
-		></SelectClassify>
+		<div>
+			<div>POSS_SOURCE UAT BATCH1</div>
+			<div class="error-band">
+				ERROR XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+			</div>
+		</div>
 	</section>
 </template>
 
@@ -210,11 +110,8 @@ import ws from '../../api/ws';
 const dataFlows = factory('DataFlows');
 const MetadataInstance = factory('MetadataInstances');
 import { toRegExp } from '../../util/util';
-import metaData from '../metaData';
-import SelectClassify from '../../components/SelectClassify';
 
 export default {
-	components: { metaData, SelectClassify },
 	data() {
 		return {
 			checkedTag: '',
@@ -359,67 +256,8 @@ export default {
 		wsWatch(data) {
 			this.wsData.push(data.data.fullDocument);
 		},
-		handleDialogVisible() {
-			this.dialogVisible = false;
-		},
-		handleClassify() {
-			if (this.multipleSelection.length === 0) {
-				this.$message.info('please select row data');
-				return;
-			}
-			this.tagList = this.handleSelectTag();
-			this.dialogVisible = true;
-		},
-		handlerAddTag(id, listTags) {
-			this.dataFlowId = id;
-			this.tagList = listTags || [];
-			this.dialogVisible = true;
-		},
-		handleSelectTag() {
-			let tagList = {};
-			this.multipleSelection.forEach(row => {
-				if (row.listtags && row.listtags.length > 0) {
-					tagList[row.listtags[0].id] = {
-						value: row.listtags[0].value
-					};
-				}
-			});
-			return tagList;
-		},
-		handleOperationClassify(listtags) {
-			let attributes = [];
-			if (this.dataFlowId) {
-				let node = {
-					id: this.dataFlowId,
-					listtags: listtags
-				};
-				attributes.push(node);
-			} else {
-				this.multipleSelection.forEach(row => {
-					row.listtags = row.listtags || [];
-					let node = {
-						id: row.id,
-						listtags: listtags
-					};
-					attributes.push(node);
-				});
-			}
-			dataFlows.patchAll({ attrs: attributes }).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					this.dataFlowId = '';
-					this.getData();
-				}
-			});
-		},
 		handleGoFunction() {
 			top.location.href = '/#/JsFuncs';
-		},
-		// 校验历史
-		handlesShowDrawer() {
-			let routeUrl = this.$router.resolve({
-				path: '/dataVerifyHistory'
-			});
-			window.open(routeUrl.href, '_blank');
 		},
 		getTempKeys() {
 			let tk = [];
@@ -1061,58 +899,6 @@ export default {
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
-		.topbar {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding: 0 10px;
-			.panelBtn {
-				padding: 5px 12px;
-				color: #666;
-				cursor: pointer;
-				font-size: 12px;
-				border: 1px solid #dcdfe6;
-				border-radius: 3px;
-				.iconfont {
-					display: inline-block;
-					font-size: 12px;
-					transform: rotate(00deg);
-				}
-			}
-			.panelOpen {
-				.iconfont {
-					transform: rotate(180deg) !important;
-				}
-			}
-			.panelBtn:hover {
-				color: #48b6e2;
-			}
-			.btn + .btn {
-				margin-left: 5px;
-			}
-			.btn {
-				padding: 7px;
-				background: #f5f5f5;
-				i.iconfont {
-					font-size: 12px;
-				}
-				&.btn-dropdowm {
-					margin-left: 5px;
-				}
-				&.btn-create {
-					margin-left: 5px;
-					background: #48b6e2;
-				}
-			}
-			.search-bar {
-				display: flex;
-				align-items: center;
-				height: 50px;
-				.item {
-					margin-right: 10px;
-				}
-			}
-		}
 		.pagination {
 			height: 40px;
 			line-height: 40px;
@@ -1126,30 +912,13 @@ export default {
 	display: flex;
 	flex-direction: column;
 	font-size: 14px;
-	.dv-table {
-		flex: 1;
-		overflow: hidden;
-	}
-	.el-button.is-disabled {
-		color: #c0c4cc;
-	}
-	.el-button--text {
-		color: #606266;
-	}
-	.row-result {
-		background: #f56c6c;
-		border-radius: 8px;
-		padding: 1px 5px;
-		i {
-			font-size: 12px;
-			color: #fff;
-		}
-		span {
-			color: #fff;
-			font-size: 11px;
-			text-align: center;
-		}
-	}
+}
+.error-band {
+	width: 800px;
+	height: 54px;
+	background: #fdf6ec;
+	color: #e6a23c;
+	border: 1px solid #f8e2c0;
 }
 
 .task-list-menu-cion {
@@ -1201,26 +970,5 @@ export default {
 }
 .add-btn-icon {
 	color: #fff;
-}
-</style>
-<style lang="less">
-.task-list .el-pagination .el-pagination__total {
-	float: left;
-}
-.task-list .el-form--inline .el-form-item {
-	margin-right: 4px;
-}
-.dv-table thead {
-	color: #333;
-	th {
-		padding: 5px 0;
-		background: #fafafa;
-	}
-}
-.dataFlowsFlow .el-form-item__content {
-	line-height: 0;
-}
-.dataflow-clickTip .el-message-box__status {
-	top: 25% !important;
 }
 </style>

@@ -6,6 +6,41 @@
   "description": "Tapdata 线装小图标",
   "glyphs": [
     {
+      "icon_id": "16261100",
+      "name": "对比图",
+      "font_class": "duibitu",
+      "unicode": "e6da",
+      "unicode_decimal": 59098
+    },
+    {
+      "icon_id": "16450665",
+      "name": "对比-s",
+      "font_class": "duibi-s",
+      "unicode": "e6db",
+      "unicode_decimal": 59099
+    },
+    {
+      "icon_id": "4710275",
+      "name": "错误",
+      "font_class": "cuowu",
+      "unicode": "e6d7",
+      "unicode_decimal": 59095
+    },
+    {
+      "icon_id": "7455634",
+      "name": "感叹号",
+      "font_class": "gantanhao2",
+      "unicode": "e6d8",
+      "unicode_decimal": 59096
+    },
+    {
+      "icon_id": "14440028",
+      "name": "正确",
+      "font_class": "zhengque",
+      "unicode": "e6d9",
+      "unicode_decimal": 59097
+    },
+    {
       "icon_id": "16552340",
       "name": "任务编排2",
       "font_class": "renwubianpai2",
