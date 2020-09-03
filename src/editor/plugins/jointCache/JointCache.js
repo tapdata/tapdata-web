@@ -1,11 +1,11 @@
 import { options } from '../../lib/rappid/config';
-import JoinCacheAttribute from './JoinCacheAttribute';
+import JointCacheAttribute from './JointCacheAttribute';
 import { FORM_DATA_KEY } from '../../constants';
 import log from '../../../log';
 import i18n from '../../../i18n/i18n';
 
-export const joinCacheConfig = {
-	type: 'app.JoinCache',
+export const jointCacheConfig = {
+	type: 'app.JointCache',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
@@ -23,7 +23,7 @@ export const joinCacheConfig = {
 					ry: 14
 				},
 				label: {
-					text: i18n.t('editor.cell.processor.joinCache.name')
+					text: i18n.t('editor.cell.processor.jointCache.name')
 				}
 			},
 			[FORM_DATA_KEY]: {
@@ -47,13 +47,14 @@ export const joinCacheConfig = {
 			validate: function(data) {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
-				log('JoinCache Formdata');
+				log('JointCache Formdata');
 				if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
-				if (!data.name) throw new Error(`${name}: ${i18n.t('editor.cell.processor.joinCache.form.name.none')}`);
+				if (!data.name)
+					throw new Error(`${name}: ${i18n.t('editor.cell.processor.jointCache.form.name.none')}`);
 				if (!data.cacheId)
-					throw new Error(`${name}: ${i18n.t('editor.cell.processor.joinCache.form.cacheId.none')}`);
+					throw new Error(`${name}: ${i18n.t('editor.cell.processor.jointCache.form.cacheId.none')}`);
 				if (!data.joinSettings.length || data.joinSettings.some(it => !it.sourceKey))
-					throw new Error(`${name}: ${i18n.t('editor.cell.processor.joinCache.form.joinSettings.none')}`);
+					throw new Error(`${name}: ${i18n.t('editor.cell.processor.jointCache.form.joinSettings.none')}`);
 				return true;
 			},
 
@@ -219,7 +220,7 @@ export const joinCacheConfig = {
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.processor.joinCache.name'),
+				text: i18n.t('editor.cell.processor.jointCache.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -239,6 +240,6 @@ export const joinCacheConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: JoinCacheAttribute
+		component: JointCacheAttribute
 	}
 };

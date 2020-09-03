@@ -872,10 +872,9 @@ const cn = {
 						}
 					}
 				},
-				joinCache: {
+				jointCache: {
 					name: '关联缓存',
 					tip: '关联缓存节点',
-					validata: {},
 					form: {
 						name: {
 							label: '节点名称',

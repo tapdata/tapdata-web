@@ -236,6 +236,7 @@ export default {
 				transform: translate(-50%, -50%);
 				border: 1px solid #ccc;
 				background: #fff;
+				box-sizing: border-box;
 				&::before,
 				&::after {
 					content: '';

@@ -870,6 +870,35 @@ const tc = {
 							group: '條件分組'
 						}
 					}
+				},
+				jointCache: {
+					name: '關聯緩存',
+					tip: '關聯緩存節點',
+					form: {
+						name: {
+							label: '節點名稱',
+							placeholder: '請輸入節點名稱',
+							none: '節點名稱必填'
+						},
+						cacheId: {
+							label: '對應緩存節點',
+							placeholder: '請選擇本任務內內存緩存節點',
+							none: '請選擇本任務內內存緩存節點'
+						},
+						joinSettings: {
+							label: '關聯設置',
+							cacheKey: '緩存表主鍵',
+							sourceKey: {
+								label: '源表關聯鍵',
+								placeholder: '請選擇關聯字段'
+							},
+							none: '請選擇關聯字段'
+						},
+						joinKey: {
+							label: '寫入路徑',
+							placeholder: '請選擇或創建寫入路徑字段'
+						}
+					}
 				}
 			},
 			link: {

@@ -8,15 +8,17 @@
 		<form-builder ref="form" v-model="model" :config="config">
 			<el-table border size="mini" slot="joinSettings" :data="model.joinSettings">
 				<el-table-column
-					:label="$t('editor.cell.processor.joinCache.form.joinSettings.cacheKey')"
+					:label="$t('editor.cell.processor.jointCache.form.joinSettings.cacheKey')"
 					prop="cacheKey"
 				></el-table-column>
-				<el-table-column :label="$t('editor.cell.processor.joinCache.form.joinSettings.sourceKey.label')">
+				<el-table-column :label="$t('editor.cell.processor.jointCache.form.joinSettings.sourceKey.label')">
 					<template slot-scope="scope">
 						<el-select
 							class="source-key-selection"
 							v-model="scope.row.sourceKey"
-							:placeholder="$t('editor.cell.processor.joinCache.form.joinSettings.sourceKey.placeholder')"
+							:placeholder="
+								$t('editor.cell.processor.jointCache.form.joinSettings.sourceKey.placeholder')
+							"
 						>
 							<el-option v-for="name in sourceFields" :key="name" :label="name" :value="name"></el-option>
 						</el-select>
@@ -37,7 +39,7 @@ import { mergeJoinTablesToTargetSchema, mergeSchema } from '../../util/Schema';
 import _ from 'lodash';
 let editorMonitor = null;
 export default {
-	name: 'JoinCache',
+	name: 'JointCache',
 	components: {
 		Mapping
 	},
@@ -59,15 +61,15 @@ export default {
 					{
 						type: 'input',
 						field: 'name',
-						label: this.$t('editor.cell.processor.joinCache.form.name.label'),
-						placeholder: this.$t('editor.cell.processor.joinCache.form.name.placeholder'),
+						label: this.$t('editor.cell.processor.jointCache.form.name.label'),
+						placeholder: this.$t('editor.cell.processor.jointCache.form.name.placeholder'),
 						required: true
 					},
 					{
 						type: 'select',
 						field: 'cacheId',
-						label: this.$t('editor.cell.processor.joinCache.form.cacheId.label'),
-						placeholder: this.$t('editor.cell.processor.joinCache.form.cacheId.placeholder'),
+						label: this.$t('editor.cell.processor.jointCache.form.cacheId.label'),
+						placeholder: this.$t('editor.cell.processor.jointCache.form.cacheId.placeholder'),
 						required: true,
 						options: [],
 						clearable: false,
@@ -86,16 +88,16 @@ export default {
 					},
 					{
 						type: 'slot',
-						label: this.$t('editor.cell.processor.joinCache.form.joinSettings.label'),
+						label: this.$t('editor.cell.processor.jointCache.form.joinSettings.label'),
 						required: true,
 						field: 'joinSettings',
 						slot: 'joinSettings'
 					},
 					{
 						type: 'select',
-						label: this.$t('editor.cell.processor.joinCache.form.joinKey.label'),
+						label: this.$t('editor.cell.processor.jointCache.form.joinKey.label'),
 						field: 'joinKey',
-						placeholder: this.$t('editor.cell.processor.joinCache.form.joinKey.placeholder'),
+						placeholder: this.$t('editor.cell.processor.jointCache.form.joinKey.placeholder'),
 						options: [],
 						filterable: true,
 						allowCreate: true,
