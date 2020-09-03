@@ -12,7 +12,7 @@ export const jointCacheConfig = {
 			size: { width: 120, height: 28 },
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/o-table-processor.svg',
+					xlinkHref: 'static/editor/o-jc.svg',
 					refWidth: '25%',
 					refHeight: '84%',
 					refX: '-8%',
@@ -213,7 +213,7 @@ export const jointCacheConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/table-processor.svg',
+				xlinkHref: 'static/editor/jc.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
