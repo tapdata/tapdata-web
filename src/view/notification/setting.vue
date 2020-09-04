@@ -30,20 +30,46 @@
 							}}</el-checkbox>
 							<span class="sort-label" v-if="item.lagTime">{{ notificationMAP[item.lagTime] }}</span>
 							<span v-if="item.lagTimeInterval">
-								<el-input v-model="item.lagTimeInterval" class="item-input" size="mini"></el-input>
+								<el-input v-model="item.lagTimeInterval" class="item-input" size="mini">
+									<el-select
+										v-model="item.lagTimeUtil"
+										slot="append"
+										placeholder="请选择"
+										class="input-with-select"
+									>
+										<el-option label="hour" value="hour"></el-option>
+										<el-option label="second" value="second"></el-option>
+									</el-select>
+								</el-input>
 							</span>
 							<span class="sort-label" v-if="item.noticeInterval">{{
 								notificationMAP[item.noticeInterval]
 							}}</span>
 							<span v-if="item.noticeIntervalInterval">
-								<el-input
-									v-model="item.noticeIntervalInterval"
-									class="item-input"
-									size="mini"
-								></el-input>
+								<el-input v-model="item.noticeIntervalInterval" class="item-input" size="mini">
+									<el-select
+										v-model="item.noticeIntervalUtil"
+										slot="append"
+										placeholder="请选择"
+										class="input-with-select"
+									>
+										<el-option label="hour" value="hour"></el-option>
+										<el-option label="second" value="second"></el-option>
+									</el-select>
+								</el-input>
 							</span>
 							<span v-if="item.Interval">
-								<el-input v-model="item.Interval" class="item-input" size="mini"></el-input>
+								<el-input v-model="item.Interval" class="item-input" size="mini">
+									<el-select
+										v-model="item.util"
+										slot="append"
+										placeholder="请选择"
+										class="input-with-select"
+									>
+										<el-option label="hour" value="hour"></el-option>
+										<el-option label="second" value="second"></el-option>
+									</el-select>
+								</el-input>
 							</span>
 						</li>
 					</ul>
@@ -109,31 +135,37 @@ export default {
 	},
 	methods: {
 		getData() {
-			Setting.findOne().then(res => {
+			let where = {
+				filter: {
+					where: {
+						id: '76'
+					}
+				}
+			};
+			Setting.findOne(where).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.runNotification = res.data.runNotification;
-						this.systemNotification = res.data.systemNotification;
-						this.agentNotification = res.data.agentNotification;
+					if (res.data.value) {
+						this.runNotification = res.data.value.runNotification;
+						this.systemNotification = res.data.value.systemNotification;
+						this.agentNotification = res.data.value.agentNotification;
 					}
 				}
 			});
 		},
 		submit() {
-			let where = {};
+			let where = {
+				id: '76'
+			};
 			let data = {
-				runNotification: this.runNotification,
-				systemNotification: this.systemNotification,
-				agentNotification: this.agentNotification
+				value: {
+					runNotification: this.runNotification,
+					systemNotification: this.systemNotification,
+					agentNotification: this.agentNotification
+				}
 			};
 			Setting.update(where, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					this.loading = false;
-					if (res.data) {
-						this.runNotification = res.data.runNotification;
-						this.systemNotification = res.data.systemNotification;
-						this.agentNotification = res.data.agentNotification;
-					}
 				} else {
 					this.loading = false;
 				}
@@ -238,6 +270,9 @@ export default {
 				.item-input {
 					width: 140px;
 				}
+			}
+			.input-with-select {
+				width: 80px;
 			}
 		}
 	}
