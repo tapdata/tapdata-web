@@ -511,7 +511,13 @@ const en = {
 					bulkRevocation: 'Bulk revocation',
 					queueCopied: 'Included Tables',
 					tableRemoved: 'Excluded Tables',
-					enterName: 'Please enter the name / field name to search'
+					enterName: 'Please enter the name / field name to search',
+					source: 'Data source',
+					type: 'Database type',
+					databaseName: 'Database name',
+					account: 'Database account',
+					attributionAccount: 'Attribution Account Name',
+					includeTable: 'include table'
 				},
 				collection: {
 					name: 'Collection',
@@ -936,7 +942,16 @@ const en = {
 					upsert: 'Match and Merge or Insert New',
 					update: 'Match and Merge',
 					merge_embed: 'Match then Embed as Array in target'
-				}
+				},
+				migrationSetting: 'Migration object settings',
+				dataProcessing: 'Existing data processing',
+				prefixAndSuffix: 'Add prefix and suffix',
+				keepExistingData: 'Keep existing data',
+				deleteExistingData: 'Delete existing data before running',
+				reduction: 'Reduction',
+				migrationObjece: 'Migration Object',
+				chosen: 'Selected',
+				searchContent: 'Search'
 			}
 		},
 		ui: {

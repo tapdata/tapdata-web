@@ -1,42 +1,182 @@
 <template>
-	<div class="e-link-wrap" @scroll="$refs.mappingComp.position()">
-		<div class="head-btns">
-			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-				{{ $t('dataFlow.button.viewMonitoring') }}
-			</el-button>
+	<div class="e-link-wrap nodeStyle" @scroll="$refs.mappingComp.position()">
+		<div class="nodeBody">
+			<div class="head-btns">
+				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+					{{ $t('dataFlow.button.viewMonitoring') }}
+				</el-button>
+			</div>
+			<el-form
+				:disabled="disabled"
+				class="e-form"
+				label-position="top"
+				label-width="160px"
+				:model="model"
+				ref="form"
+				action="javascript:void(0);"
+			>
+				<el-form-item :label="$t('editor.cell.link.form.label.label')">
+					<el-input
+						v-model="model.label"
+						:placeholder="$t('editor.cell.link.form.label.placeholder')"
+						size="mini"
+						maxlength="50"
+						show-word-limit
+					>
+					</el-input>
+				</el-form-item>
+			</el-form>
+
+			<el-form
+				:disabled="disabled"
+				class="e-form"
+				label-position="top"
+				label-width="160px"
+				:model="model"
+				ref="form"
+				v-show="configJoinTable"
+				action="javascript:void(0);"
+			>
+				<el-form-item :label="$t('editor.cell.link.form.joinType.label')" required>
+					<el-select
+						v-model="model.joinTable.joinType"
+						:placeholder="$t('editor.cell.link.form.joinType.placeholder')"
+						@change="handlerJoinTypeChanged"
+						size="mini"
+						:disabled="logsFlag"
+					>
+						<el-option
+							v-for="(item, idx) in writeModels"
+							:label="`${item.label}`"
+							:value="item.value"
+							v-bind:key="idx"
+						></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item
+					:label="$t('editor.cell.link.form.arrayUniqueKey.label')"
+					required
+					v-if="['merge_embed'].includes(model.joinTable.joinType)"
+				>
+					<div class="flex-block">
+						<el-input
+							v-model="model.joinTable.arrayUniqueKey"
+							:placeholder="$t('editor.cell.link.form.arrayUniqueKey.placeholder')"
+							size="mini"
+						></el-input>
+						<ClipButton :value="model.joinTable.arrayUniqueKey"></ClipButton>
+					</div>
+				</el-form-item>
+				<el-form-item
+					:label="$t('editor.cell.link.form.joinPath.label')"
+					v-if="supportEmbedArray() && ['upsert', 'update', 'merge_embed'].includes(model.joinTable.joinType)"
+				>
+					<div class="flex-block">
+						<el-input
+							v-model="model.joinTable.joinPath"
+							:placeholder="$t('editor.cell.link.form.joinPath.placeholder')"
+							size="mini"
+							@input="checkRepeatId()"
+						>
+						</el-input>
+						<ClipButton :value="model.joinTable.joinPath"></ClipButton>
+					</div>
+				</el-form-item>
+
+				<el-form-item
+					:label="$t('editor.cell.link.form.joinMethod.label')"
+					v-if="['merge_embed'].includes(model.joinTable.joinType)"
+				>
+					<el-select
+						v-model="model.joinTable.manyOneUpsert"
+						:placeholder="$t('editor.cell.link.form.joinMethod.placeholder')"
+						size="mini"
+					>
+						<el-option
+							v-for="(item, idx) in methodList"
+							:label="item.label"
+							:value="item.value"
+							:key="idx"
+						></el-option>
+					</el-select>
+				</el-form-item>
+
+				<el-form-item
+					:label="$t('editor.cell.link.form.joinKeys.label')"
+					required
+					v-if="!['append'].includes(model.joinTable.joinType)"
+				>
+					<table class="e-table">
+						<thead>
+							<tr>
+								<th>{{ $t('editor.cell.link.form.joinKeys.sourceField') }}</th>
+								<th>{{ $t('editor.cell.link.form.joinKeys.targetField') }}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="(item, idx) in model.joinTable.joinKeys" v-bind:key="idx">
+								<td>
+									<el-select v-model="item.source" filterable allow-create default-first-option>
+										<el-option
+											v-for="(item, idx) in sourceList"
+											:value="item.field_name"
+											:label="item.field_name"
+											v-bind:key="idx"
+										></el-option>
+									</el-select>
+								</td>
+								<td>
+									<el-select v-model="item.target" filterable allow-create default-first-option>
+										<el-option
+											v-for="(item, idx) in targetList"
+											:value="item.field_name"
+											:label="item.field_name"
+											v-bind:key="idx"
+										></el-option>
+									</el-select>
+									<div class="e-action-bar">
+										<el-button
+											v-if="model.joinTable.joinKeys.length > 1"
+											type="text"
+											class="el-icon-close"
+											size="mini"
+											@click="removeCondition(idx)"
+										></el-button>
+										<el-button
+											v-if="idx === model.joinTable.joinKeys.length - 1"
+											type="text"
+											class="el-icon-plus"
+											size="mini"
+											@click="addCondition"
+										></el-button>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</el-form-item>
+			</el-form>
 		</div>
+
+		<!--
 		<el-form
 			:disabled="disabled"
 			class="e-form"
-			label-position="right"
+			label-position="top"
 			label-width="160px"
 			:model="model"
 			ref="form"
 			action="javascript:void(0);"
 		>
 			<el-form-item :label="$t('editor.cell.link.form.label.label')">
-				<el-input
-					v-model="model.label"
-					:placeholder="$t('editor.cell.link.form.label.placeholder')"
-					size="mini"
-					maxlength="50"
-					show-word-limit
-				>
-				</el-input>
+				<el-select v-model="ruleForm.region" placeholder="请选择活动区域">
+					<el-option label="区域一" value="shanghai"></el-option>
+					<el-option label="区域二" value="beijing"></el-option>
+				</el-select>
 			</el-form-item>
-		</el-form>
+		</el-form> -->
 
-		<el-form
-			:disabled="disabled"
-			class="e-form"
-			label-position="right"
-			label-width="160px"
-			:model="model"
-			ref="form"
-			v-show="configJoinTable"
-			action="javascript:void(0);"
-		>
-			<!--<el-form-item label="Table name" required>
+		<!--<el-form-item label="Table name" required>
 				<el-input
 						v-model="model.joinTable.tableName"
 						placeholder="please enter table name"></el-input>
@@ -47,125 +187,6 @@
 						v-model="model.joinTable.primaryKeys"
 						placeholder="please enter primary key"></el-input>
 			</el-form-item>-->
-
-			<el-form-item :label="$t('editor.cell.link.form.joinType.label')" required>
-				<el-select
-					v-model="model.joinTable.joinType"
-					:placeholder="$t('editor.cell.link.form.joinType.placeholder')"
-					@change="handlerJoinTypeChanged"
-					size="mini"
-					:disabled="logsFlag"
-				>
-					<el-option
-						v-for="(item, idx) in writeModels"
-						:label="`${item.label}`"
-						:value="item.value"
-						v-bind:key="idx"
-					></el-option>
-				</el-select>
-			</el-form-item>
-			<el-form-item
-				:label="$t('editor.cell.link.form.arrayUniqueKey.label')"
-				required
-				v-if="['merge_embed'].includes(model.joinTable.joinType)"
-			>
-				<el-input
-					v-model="model.joinTable.arrayUniqueKey"
-					:placeholder="$t('editor.cell.link.form.arrayUniqueKey.placeholder')"
-					size="mini"
-				></el-input>
-				<ClipButton :value="model.joinTable.arrayUniqueKey"></ClipButton>
-			</el-form-item>
-			<el-form-item
-				:label="$t('editor.cell.link.form.joinPath.label')"
-				v-if="supportEmbedArray() && ['upsert', 'update', 'merge_embed'].includes(model.joinTable.joinType)"
-			>
-				<el-input
-					v-model="model.joinTable.joinPath"
-					:placeholder="$t('editor.cell.link.form.joinPath.placeholder')"
-					size="mini"
-					@input="checkRepeatId()"
-				>
-				</el-input>
-				<ClipButton :value="model.joinTable.joinPath"></ClipButton>
-			</el-form-item>
-
-			<el-form-item
-				:label="$t('editor.cell.link.form.joinMethod.label')"
-				v-if="['merge_embed'].includes(model.joinTable.joinType)"
-			>
-				<el-select
-					v-model="model.joinTable.manyOneUpsert"
-					:placeholder="$t('editor.cell.link.form.joinMethod.placeholder')"
-					size="mini"
-				>
-					<el-option
-						v-for="(item, idx) in methodList"
-						:label="item.label"
-						:value="item.value"
-						:key="idx"
-					></el-option>
-				</el-select>
-			</el-form-item>
-
-			<el-form-item
-				:label="$t('editor.cell.link.form.joinKeys.label')"
-				required
-				v-if="!['append'].includes(model.joinTable.joinType)"
-			>
-				<table class="e-table">
-					<thead>
-						<tr>
-							<th>{{ $t('editor.cell.link.form.joinKeys.sourceField') }}</th>
-							<th>{{ $t('editor.cell.link.form.joinKeys.targetField') }}</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr v-for="(item, idx) in model.joinTable.joinKeys" v-bind:key="idx">
-							<td>
-								<el-select v-model="item.source" filterable allow-create default-first-option>
-									<el-option
-										v-for="(item, idx) in sourceList"
-										:value="item.field_name"
-										:label="item.field_name"
-										v-bind:key="idx"
-									></el-option>
-								</el-select>
-								<!-- <input type="text" v-model="item.source"> -->
-							</td>
-							<td>
-								<el-select v-model="item.target" filterable allow-create default-first-option>
-									<el-option
-										v-for="(item, idx) in targetList"
-										:value="item.field_name"
-										:label="item.field_name"
-										v-bind:key="idx"
-									></el-option>
-								</el-select>
-								<!-- <input type="text" v-model="item.target"> -->
-								<div class="e-action-bar">
-									<el-button
-										v-if="model.joinTable.joinKeys.length > 1"
-										type="text"
-										class="el-icon-close"
-										size="mini"
-										@click="removeCondition(idx)"
-									></el-button>
-									<el-button
-										v-if="idx === model.joinTable.joinKeys.length - 1"
-										type="text"
-										class="el-icon-plus"
-										size="mini"
-										@click="addCondition"
-									></el-button>
-								</div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</el-form-item>
-		</el-form>
-
 		<div class="e-mapping-wrap" v-show="configJoinTable">
 			<Mapping ref="mappingComp"></Mapping>
 		</div>
@@ -328,6 +349,7 @@ export default {
 			if (data) {
 				_.merge(this.model, data);
 			}
+			debugger;
 			this.cell = cell;
 
 			this.configJoinTable = cell.configJoinTable && cell.configJoinTable();
@@ -537,13 +559,13 @@ export default {
 	padding: 10px;
 	box-sizing: border-box;
 	overflow: auto;
-	.e-form {
-		.el-input,
-		.el-select {
-			max-width: 400px;
-			width: 80%;
-		}
-	}
+	// .e-form {
+	// 	.el-input,
+	// 	.el-select {
+	// 		// max-width: 400px;
+	// 		// width: 80%;
+	// 	}
+	// }
 
 	.e-table {
 		display: inline-block;
@@ -590,6 +612,11 @@ export default {
 	.e-mapping-wrap {
 		flex: 1;
 		height: 50%;
+	}
+
+	.flex-block {
+		display: flex;
+		align-items: center;
 	}
 }
 </style>
