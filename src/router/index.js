@@ -217,6 +217,11 @@ const childRoutes = [
 		name: 'jsFuncs',
 		component: view('ExternalLink'),
 		meta: { url: '/old/index.html#/jsFuncs' }
+	},
+	{
+		path: '/tableFlows',
+		name: 'tableFlows',
+		component: view('task/TableFlows')
 	}
 ];
 
