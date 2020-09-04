@@ -146,8 +146,20 @@ class WSClient extends EventEmitter {
 	}
 
 	send(msg) {
+		// this.ready(() => {
 		msg = typeof msg === 'string' ? msg : JSON.stringify(msg);
 		this.ws.send(msg);
+		// });
+	}
+
+	ready(cb) {
+		if (this.ws.readyState == 1) {
+			cb && cb();
+		} else {
+			setTimeout(() => {
+				this.ready(cb);
+			}, 500);
+		}
 	}
 
 	sendPipe(msg, receiver) {
