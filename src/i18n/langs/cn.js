@@ -638,6 +638,13 @@ const cn = {
 					none_pk: '主键必填.',
 					dummy_isNull: 'Dummy不能为空'
 				},
+				redis: {
+					name: 'Redis',
+					tip: 'Redis节点',
+					chooseRedisName: '请选择Redis',
+					none_collection: '数据集必填.',
+					Redis_isNull: 'Dummy不能为空'
+				},
 				api: {
 					name: 'API',
 					tip: 'api节点',
