@@ -1,34 +1,40 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import createPersistedState from "vuex-persistedstate";
-import mutations from "./mutations";
-import actions from "./actions";
+import Vue from 'vue';
+import Vuex from 'vuex';
+import createPersistedState from 'vuex-persistedstate';
+import mutations from './mutations';
+import actions from './actions';
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
 	plugins: [
 		createPersistedState({
-			key: "tapdata",
-			storage: window.sessionStorage ||
-				window.localStorage || {
-					getItem: key => {},
-					setItem: (key, value) => {},
-					removeItem: (key, value) => {}
-				}
+			key: 'tapdata',
+			storage: window.localStorage || {
+				getItem: () => {},
+				setItem: () => {},
+				removeItem: () => {}
+			}
 		})
 	],
 
 	// 全局变量
 	state: {
+		tableFlows: {
+			flowId: '',
+			keyword: '',
+			status: '',
+			way: '',
+			executionStatus: ''
+		},
 		dataFlows: {
-			search: "",
+			search: '',
 			timeData: [],
-			status: "",
-			person: "",
+			status: '',
+			person: '',
 			classification: []
 		},
-		tableSelectorSearch: ""
+		tableSelectorSearch: ''
 	},
 
 	actions,

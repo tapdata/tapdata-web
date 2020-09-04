@@ -7,6 +7,9 @@ const mutations = {
 	},
 	tableSelector(state, payload) {
 		state.tableSelectorSearch = payload;
+	},
+	tableFlows(state, payload) {
+		state.tableFlows = payload;
 	}
 };
 export default mutations;
