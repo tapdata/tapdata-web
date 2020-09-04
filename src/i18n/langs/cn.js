@@ -508,7 +508,16 @@ const cn = {
 					bulkRevocation: '批量撤销',
 					queueCopied: '待迁移表',
 					tableRemoved: '已移除表',
-					enterName: '请输入名称/字段名进行搜索'
+					enterName: '请输入名称/字段名进行搜索',
+					source: '数据源',
+					type: '数据库类型',
+					databaseName: '数据库名',
+					account: '数据库账号',
+					attributionAccount: '归属账号名',
+					includeTable: '包含表',
+					migrationObjece: '迁移对象',
+					chosen: '已选择',
+					searchContent: '搜索內容'
 				},
 				collection: {
 					name: '数据集',
@@ -925,7 +934,24 @@ const cn = {
 					upsert: '更新已存在或插入新数据',
 					update: '更新写入',
 					merge_embed: '更新内嵌数组'
-				}
+				},
+
+				migrationSetting: '迁移对象设置',
+				dataProcessing: '已有数据处理',
+				prefixAndSuffix: '加前后缀',
+				keepExistingData: '保持已存在数据',
+				deleteExistingData: '运行前删除已存在数据',
+				reduction: '还原',
+				migrationObjece: '迁移对象',
+				chosen: '已选择',
+				searchContent: '搜索内容',
+				mappingRelations: '映射关系',
+				addPrefix: '添加前缀',
+				addSuffix: '添加后缀',
+				prefixPlaceholder: '请输入前缀',
+				suffixPlaceholder: '请输入后缀',
+				batchRename: '批量改名设置',
+				tableNameExample: '表名示例'
 			}
 		},
 		ui: {
