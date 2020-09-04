@@ -1,12 +1,16 @@
 <template>
-	<div class="dummy nodeStyle" :class="{ nodeHeight: disabled }">
+	<div class="esNode nodeStyle">
+		<head>
+			<span class="headIcon iconfont icon-you2" type="primary"></span>
+			<span class="txt">{{ $t('editor.nodeSettings') }}</span>
+		</head>
 		<div class="nodeBody">
 			<div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div>
-			<el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
+			<el-form class="e-form" label-position="top" :model="model" :disabled="disabled" ref="form">
 				<!-- <span class="addTxt">+新建文件</span> -->
 				<el-form-item
 					:label="$t('editor.cell.data_node.redis.name')"
@@ -18,7 +22,7 @@
 						:filterable="!databaseLoading"
 						:loading="databaseLoading"
 						v-model="model.connectionId"
-						:placeholder="$t('editor.cell.data_node.redis.chooseRedisName')"
+						:placeholder="$t('editor.cell.data_node.es.chooseESName')"
 					>
 						<el-option
 							v-for="(item, idx) in databases"
@@ -28,66 +32,34 @@
 						></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item
-					:label="$t('editor.cell.data_node.collection.form.collection.label')"
-					prop="tableName"
-					required
-				>
-					<el-select
-						v-model="model.tableName"
-						:filterable="!schemaLoading"
-						:loading="schemaLoading"
-						allow-create
-						default-first-option
-						clearable
-						:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
-						size="mini"
-					>
-						<el-option
-							v-for="(item, idx) in schemas"
-							:label="`${item.table_name}`"
-							:value="item.table_name"
-							v-bind:key="idx"
-						></el-option>
-					</el-select>
-				</el-form-item>
-				<!-- <el-form-item
-					:label="$t('editor.cell.data_node.collection.form.pk.label')"
-					prop="primaryKeys"
-					:rules="rules"
-					required
-				>
-					<el-input
-						v-model="model.primaryKeys"
-						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
-						size="mini"
-					></el-input>
-				</el-form-item> -->
 			</el-form>
+			<div class="e-entity-wrap" style="text-align: center;">
+				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
+			</div>
 		</div>
-		<div class="e-entity-wrap" style="text-align: center;overflow:auto;">
-			<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
-		</div>
-		<relatedTasks :taskData="taskData" v-if="disabled"></relatedTasks>
 	</div>
 </template>
 <script>
+import { convertSchemaToTreeData } from '../../util/Schema';
+import Entity from '../link/Entity';
 import _ from 'lodash';
 import factory from '../../../api/factory';
-import Entity from '../link/Entity';
-import RelatedTasks from '../../../components/relatedTasks';
-import { convertSchemaToTreeData } from '../../util/Schema';
 let connections = factory('connections');
 let editorMonitor = null;
 export default {
 	name: 'redis',
-	components: { Entity, RelatedTasks },
+	components: { Entity },
+	props: {
+		database_types: {
+			type: Array,
+			default: function() {
+				return ['elasticsearch'];
+			}
+		}
+	},
+
 	data() {
 		return {
-			taskData: {
-				id: '',
-				tableName: ''
-			},
 			disabled: false,
 			databases: [],
 			databaseLoading: false,
@@ -96,25 +68,14 @@ export default {
 					{
 						required: true,
 						trigger: 'blur',
-						message: this.$t('editor.cell.data_node.redis.chooseRedisName')
-					}
-				],
-				tableName: [
-					{
-						required: true,
-						trigger: 'blur',
-						message: this.$t('editor.cell.data_node.redis.none_collection')
+						message: this.$t('editor.cell.data_node.redis.chooseFileName')
 					}
 				]
 			},
 			model: {
 				connectionId: '',
-				type: 'redis',
-				tableName: ''
-				// primaryKeys: ''
+				type: 'redis'
 			},
-			schemas: [],
-			schemaLoading: false,
 			mergedSchema: null
 		};
 	},
@@ -149,67 +110,81 @@ export default {
 			handler() {
 				this.$emit('dataChanged', this.getData());
 			}
-		},
-		'model.connectionId': {
-			immediate: true,
-			handler() {
-				this.loadDataModels(this.model.connectionId);
-				if (this.model.connectionId) {
-					this.taskData.id = this.model.connectionId;
-				}
-			}
-		},
-		'model.tableName': {
-			immediate: true,
-			handler() {
-				if (this.schemas.length > 0) {
-					if (this.model.tableName) {
-						let schema = this.schemas.filter(s => s.table_name === this.model.tableName);
-						schema =
-							schema && schema.length > 0
-								? schema[0]
-								: {
-										table_name: this.model.tableName,
-										cdc_enabled: true,
-										meta_type: 'redis',
-										fields: []
-								  };
-						this.$emit('schemaChange', _.cloneDeep(schema));
-					}
-				}
-				this.taskData.tableName = this.model.tableName;
-			}
 		}
+		// mergedSchema: {
+		// 	handler() {
+		// 		if (
+		// 			!this.model.primaryKeys &&
+		// 			this.mergedSchema &&
+		// 			this.mergedSchema.fields &&
+		// 			this.mergedSchema.fields.length > 0
+		// 		) {
+		// 			let primaryKeys = this.mergedSchema.fields
+		// 				.filter(f => f.primary_key_position > 0)
+		// 				.map(f => f.field_name);
+		// 			let unique = {};
+		// 			primaryKeys.forEach(key => (unique[key] = 1));
+		// 			primaryKeys = Object.keys(unique);
+		// 			if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
+		// 		}
+		// 	}
+		// }
 	},
 
 	methods: {
 		convertSchemaToTreeData,
+
+		async loadDataSource() {
+			let result = await connections.get({
+				filter: JSON.stringify({
+					where: {
+						database_type: { in: this.database_types }
+					},
+					fields: {
+						name: 1,
+						id: 1,
+						database_type: 1,
+						connection_type: 1,
+						status: 1
+					}
+				})
+			});
+
+			if (result.data) {
+				this.databases = result.data;
+			}
+		},
+
 		loadDataModels(connectionId) {
 			if (!connectionId) {
 				return;
 			}
 			let self = this;
-			this.schemaLoading = true;
-			connections
-				.get([connectionId])
-				.then(result => {
-					if (result.data) {
-						let schemas = (result.data.schema && result.data.schema.tables) || [];
-						schemas = schemas.sort((t1, t2) =>
-							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-						);
-						self.schemas = schemas;
-					}
-				})
-				.finally(() => {
-					this.schemaLoading = false;
-				});
+			connections.get([connectionId]).then(result => {
+				if (result.data) {
+					let schemas = (result.data.schema && result.data.schema.tables) || [];
+					schemas = schemas.sort((t1, t2) =>
+						t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
+					);
+					self.schemas = schemas;
+				}
+			});
+		},
+
+		handlerConnectionChange() {
+			this.model.tableName = '';
+			for (let i = 0; i < this.databases.length; i++) {
+				if (this.model.connectionId === this.databases[i].id) {
+					this.model.databaseType = this.databases[i]['database_type'];
+				}
+			}
 		},
 
 		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
 				_.merge(this.model, data);
 			}
+
 			this.mergedSchema = cell.getOutputSchema();
 			cell.on('change:outputSchema', () => {
 				this.mergedSchema = cell.getOutputSchema();
@@ -239,10 +214,3 @@ export default {
 	}
 };
 </script>
-<style lang="less">
-.dummy {
-	.el-form-item {
-		margin-bottom: 10px;
-	}
-}
-</style>
