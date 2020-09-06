@@ -506,7 +506,13 @@ const tc = {
 					bulkRevocation: '批量撤銷',
 					queueCopied: '待遷移表',
 					tableRemoved: '已移除表',
-					enterName: '請輸入名稱/字段名進行搜索'
+					enterName: '請輸入名稱/字段名進行搜索',
+					source: '數據源',
+					type: '數據庫類型',
+					databaseName: '數據庫名',
+					account: '數據庫賬號',
+					attributionAccount: '歸屬賬號名',
+					includeTable: '包含表'
 				},
 				collection: {
 					name: '數據集',
@@ -606,6 +612,10 @@ const tc = {
 						initial_offset: {
 							label: '自定義SQL增量條件',
 							placeholder: '請輸入自定義SQL增量條件'
+						},
+						maximum_transaction: {
+							label: '事務最大時長(小時)',
+							tip: '等待事務提交的時間(小時)。輸入您期望事務需要的最長時間。默認為12小時'
 						}
 					}
 				},
@@ -949,7 +959,16 @@ const tc = {
 					upsert: '更新已存在或插入新數據',
 					update: '更新寫入',
 					merge_embed: '更新內嵌數組'
-				}
+				},
+				migrationSetting: '遷移對象設置',
+				dataProcessing: '已有數據處理',
+				prefixAndSuffix: '加前後綴',
+				keepExistingData: '保持已存在數據',
+				deleteExistingData: '運行前刪除已存在數據',
+				reduction: '還原',
+				migrationObjece: '遷移對象',
+				chosen: '已選擇',
+				searchContent: '搜索內容'
 			}
 		},
 		ui: {

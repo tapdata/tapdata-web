@@ -85,7 +85,7 @@
 						</el-select>
 					</el-form-item>
 					<el-form-item :prop="'logCollectorSettings.' + index + '.selectType'" required>
-						<el-select v-model="item.selectType" @change="changeTableType(item)">
+						<el-select v-model="item.selectType">
 							<el-option
 								v-for="item in tableTypeList"
 								:key="item.value"
@@ -461,6 +461,9 @@ export default {
 			padding-bottom: 5px;
 		}
 	}
+	.flex-block {
+		padding-bottom: 10px;
+	}
 }
 </style>
 <style lang="less">
@@ -469,6 +472,15 @@ export default {
 		position: absolute;
 		top: -34px;
 		left: 120px;
+		.iconfont {
+			display: inline-block;
+			color: #999;
+			cursor: pointer;
+			transform: rotate(-180deg);
+		}
+	}
+	.aggtips {
+		padding-left: 12px;
 		.iconfont {
 			display: inline-block;
 			color: #999;

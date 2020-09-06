@@ -211,9 +211,9 @@
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
-				<!-- <el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
+				<el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
 					$t('dataFlow.updateModel')
-				}}</el-button> -->
+				}}</el-button>
 				<entity
 					v-loading="schemaSelectConfig.loading"
 					:schema="convertSchemaToTreeData(defaultSchema)"
@@ -236,6 +236,7 @@ import CreateTable from '../../../components/dialog/createTable';
 import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, uuid } from '../../util/Schema';
 import Entity from '../link/Entity';
 import _ from 'lodash';
+import ws from '../../../api/ws';
 import factory from '../../../api/factory';
 let connectionApi = factory('connections');
 const MetadataInstances = factory('MetadataInstances');
@@ -734,11 +735,38 @@ export default {
 
 		// 更新模型
 		hanlderLoadSchema() {
-			this.loadDataModels(this.model.connectionId);
-			let schema = tempSchemas.filter(s => s.table_name === this.model.tableName);
+			let params = {
+				type: 'reloadSchema',
+				data: {
+					tables: [
+						{
+							connId: this.model.connectionId,
+							tableName: this.model.tableName,
+							userId: this.$cookie.get('user_id')
+						}
+					]
+				}
+			};
 
-			this.$nextTick(() => {
-				this.$emit('schemaChange', _.cloneDeep(schema[0]));
+			if (ws.ws.readyState == 1) ws.send(params);
+			let self = this,
+				schema = null,
+				templeSchema = [];
+			ws.on('execute_load_schema_result', res => {
+				if (res.status === 'SUCCESS' && res.result && res.result.length) {
+					templeSchema = res.result;
+				}
+				if (templeSchema && templeSchema.length) {
+					templeSchema.forEach(item => {
+						if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
+							schema = item.schema;
+						}
+					});
+				}
+				self.$nextTick(() => {
+					self.$emit('schemaChange', _.cloneDeep(schema));
+					this.defaultSchema = schema;
+				});
 			});
 		}
 	}

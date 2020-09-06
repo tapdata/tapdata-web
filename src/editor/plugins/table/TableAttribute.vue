@@ -195,9 +195,9 @@
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
-				<!-- <el-button class="fr" type="success" size="mini"  @click="hanlderLoadSchema">{{
+				<el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
 					$t('dataFlow.updateModel')
-				}}</el-button> -->
+				}}</el-button>
 				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 			</div>
 		</div>
@@ -215,6 +215,7 @@ import RelatedTasks from '../../../components/relatedTasks';
 import CreateTable from '../../../components/dialog/createTable';
 import Entity from '../link/Entity';
 import _ from 'lodash';
+import ws from '../../../api/ws';
 import factory from '../../../api/factory';
 
 let connectionApi = factory('connections');
@@ -645,8 +646,40 @@ export default {
 
 		// 更新模型
 		hanlderLoadSchema() {
-			this.loadDataModels(this.model.connectionId);
-			this.handlerSchemaChange();
+			let params = {
+				type: 'reloadSchema',
+				data: {
+					tables: [
+						{
+							connId: this.model.connectionId,
+							tableName: this.model.tableName,
+							userId: this.$cookie.get('user_id')
+						}
+					]
+				}
+			};
+
+			ws.send(params);
+			let self = this,
+				schema = null,
+				templeSchema = [];
+
+			ws.on('execute_load_schema_result', res => {
+				if (res.status === 'SUCCESS' && res.result && res.result.length) {
+					templeSchema = res.result;
+				}
+				if (templeSchema && templeSchema.length) {
+					templeSchema.forEach(item => {
+						if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
+							schema = item.schema;
+						}
+					});
+				}
+				self.$nextTick(() => {
+					self.$emit('schemaChange', _.cloneDeep(schema));
+					this.mergedSchema = schema;
+				});
+			});
 		}
 	}
 };
