@@ -3,13 +3,9 @@
 		<h1 class="title">新建校验</h1>
 		<el-form inline class="base-form" size="mini">
 			<el-form-item label="选择任务">
-				<el-select v-model="form.flowId" :loading="!flowOptions">
+				<el-select v-model="form.flowId" placeholder="选择任务" :loading="!flowOptions">
 					<el-option v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"></el-option>
 				</el-select>
-			</el-form-item>
-			<el-form-item>
-				<el-radio v-model="form.type" label="row">行数校验</el-radio>
-				<el-radio v-model="form.type" label="content">内容校验</el-radio>
 			</el-form-item>
 			<el-form-item style="float: right;">
 				<span style="color: #48B6E2;" v-show="form.active">已启用</span>
@@ -25,6 +21,11 @@
 			<ul class="condition-container">
 				<li class="condition-item" v-for="(item, index) in form.conditions" :key="index">
 					<div class="condition-setting">
+						<div class="setting-item">
+							<label class="item-label"></label>
+							<el-radio size="mini" v-model="item.mode" label="row_count">行数校验</el-radio>
+							<el-radio size="mini" v-model="item.mode" label="field">内容校验</el-radio>
+						</div>
 						<div class="setting-item">
 							<label class="item-label is-required">待校验表</label>
 							<div class="item-table">
@@ -63,6 +64,42 @@
 								</el-select>
 							</div>
 						</div>
+						<div class="setting-item" v-show="item.mode === 'feild'">
+							<label class="item-label is-required">索引字段</label>
+							<div class="item-table">
+								<el-select
+									class="table-selector"
+									size="mini"
+									v-model="item.sourceTable"
+									placeholder="请选索引或主键字段"
+									:loading="!tableList"
+								>
+									<el-option
+										v-for="table in tableList"
+										:key="table.id"
+										:label="table.name"
+										:value="table.id"
+									></el-option>
+								</el-select>
+							</div>
+							<span class="item-icon"></span>
+							<div class="item-table">
+								<el-select
+									class="table-selector"
+									size="mini"
+									v-model="item.targetTable"
+									placeholder="请选索引或主键字段"
+									:loading="!tableList"
+								>
+									<el-option
+										v-for="table in tableList"
+										:key="table.id"
+										:label="table.name"
+										:value="table.id"
+									></el-option>
+								</el-select>
+							</div>
+						</div>
 					</div>
 					<el-button-group class="setting-buttons">
 						<el-button size="mini" icon="el-icon-close" @click="removeItem(index)"></el-button>
@@ -82,6 +119,11 @@
 </template>
 
 <script>
+const TABLE_PARAMS = {
+	connectionId: '',
+	table: '',
+	sortColumn: ''
+};
 export default {
 	data() {
 		return {
@@ -112,8 +154,9 @@ export default {
 		},
 		addTable() {
 			this.form.conditions.push({
-				sourceTable: '',
-				targetTable: ''
+				source: Object.assign({}, TABLE_PARAMS),
+				target: Object.assign({}, TABLE_PARAMS),
+				fullMatch: true
 			});
 		},
 		removeItem(idx) {
@@ -166,17 +209,19 @@ export default {
 					.setting-item {
 						display: flex;
 						align-items: center;
+						padding: 5px 0;
 						.item-label {
 							padding: 0 10px;
 							width: 120px;
 							text-align: right;
 						}
 						.item-icon {
-							padding: 0 5px;
+							width: 20px;
+							text-align: center;
 						}
 						.item-table {
 							flex: 1;
-							.el-select {
+							.table-selector {
 								width: 100%;
 							}
 						}
