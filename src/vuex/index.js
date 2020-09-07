@@ -20,8 +20,14 @@ const store = new Vuex.Store({
 
 	// 全局变量
 	state: {
+		tableFlows: {
+			flowId: '',
+			keyword: '',
+			status: '',
+			way: '',
+			executionStatus: ''
+		},
 		dataFlows: {
-			panelFlag: true,
 			search: '',
 			timeData: [],
 			status: '',

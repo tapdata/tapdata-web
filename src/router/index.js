@@ -219,10 +219,9 @@ const childRoutes = [
 		meta: { url: '/old/index.html#/jsFuncs' }
 	},
 	{
-		path: '/notification',
-		name: 'notification',
-		component: view('notification/list'),
-		meta: { title: i18n.t('notification.systemNotice') }
+		path: '/tableFlows',
+		name: 'tableFlows',
+		component: view('task/TableFlows')
 	}
 ];
 
