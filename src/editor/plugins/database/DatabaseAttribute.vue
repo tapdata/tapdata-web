@@ -52,7 +52,9 @@
 					</li>
 					<li>
 						<span class="label">Host/Port:</span>
-						<span class="text">{{ databaseInfo.database_host }}:{{ databaseInfo.database_port }}</span>
+						<span class="text" v-if="databaseInfo.database_host"
+							>{{ databaseInfo.database_host }}:{{ databaseInfo.database_port }}</span
+						>
 					</li>
 					<li>
 						<span class="label"> {{ $t('editor.cell.data_node.database.databaseName') }}: </span>

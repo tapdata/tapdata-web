@@ -29,29 +29,16 @@
 					>
 					</el-input>
 				</el-form-item>
-			</el-form>
 
-			<el-form
-				:disabled="disabled"
-				class="e-form"
-				label-position="top"
-				label-width="160px"
-				:model="model"
-				ref="form"
-				action="javascript:void(0);"
-			>
-				<el-form-item :label="$t('editor.cell.link.dataProcessing')">
-					<el-select
-						v-model="model.dataProcessing"
-						:placeholder="$t('editor.cell.link.form.joinType.placeholder')"
-						size="mini"
-						:disabled="logsFlag"
-					>
+				<el-form-item required :label="$t('editor.cell.data_node.collection.form.dropTable.label')">
+					<el-select v-model="model.dropTable" size="mini">
 						<el-option
-							v-for="(item, idx) in dataProcessingList"
-							:label="`${item.label}`"
-							:value="item.value"
-							v-bind:key="idx"
+							:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
+							:value="false"
+						></el-option>
+						<el-option
+							:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
+							:value="true"
 						></el-option>
 					</el-select>
 				</el-form-item>
@@ -184,15 +171,11 @@ export default {
 			configJoinTable: false,
 			model: {
 				label: '',
-				dataProcessing: '1',
+				dropTable: false,
 				includeTables: [],
 				type: 'databaseLink',
 				sourceData: []
 			},
-			dataProcessingList: [
-				{ label: this.$t('editor.cell.link.keepExistingData'), value: '1' },
-				{ label: this.$t('editor.cell.link.deleteExistingData'), value: '2' }
-			],
 
 			titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')]
 		};
