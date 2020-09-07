@@ -145,9 +145,10 @@ export default {
 			Setting.findOne(where).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data.value) {
-						this.runNotification = res.data.value.runNotification;
-						this.systemNotification = res.data.value.systemNotification;
-						this.agentNotification = res.data.value.agentNotification;
+						let value = JSON.parse(res.data.value);
+						this.runNotification = value.runNotification;
+						this.systemNotification = value.systemNotification;
+						this.agentNotification = value.agentNotification;
 					}
 				}
 			});
@@ -157,11 +158,11 @@ export default {
 				id: '76'
 			};
 			let data = {
-				value: {
+				value: JSON.stringify({
 					runNotification: this.runNotification,
 					systemNotification: this.systemNotification,
 					agentNotification: this.agentNotification
-				}
+				})
 			};
 			Setting.update(where, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
