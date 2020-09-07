@@ -23,11 +23,7 @@ export const redisConfig = {
 			},
 			[FORM_DATA_KEY]: {
 				connectionId: '',
-				databaseType: '',
-				tableName: '',
-				sql: '',
-				dropTable: false,
-				type: 'table'
+				type: 'redis'
 				// primaryKeys: ''
 			}
 		},
@@ -46,14 +42,7 @@ export const redisConfig = {
 			 * @param data
 			 *
 			 */
-			validate: function(data) {
-				data = data || this.getFormData();
-				let name = this.attr('label/text');
-				if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
-				if (!data.connectionId)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_database')}`);
-				if (!data.tableName) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_table')}`);
-				// if (!data.primaryKeys) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_pk')}`);
+			validate: function() {
 				return true;
 			},
 
