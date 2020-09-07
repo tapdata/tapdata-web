@@ -1259,7 +1259,7 @@ const en = {
 		jobPaused: 'Job paused',
 		jobDeleted: 'Job deleted',
 		jobEdited: 'Job edited',
-		jobError: 'Job state error',
+		jobStateError: 'Job state error',
 		jobEncounterError: 'Job encounter error',
 		noticeInterval: 'Notice interval',
 		CDCLagTime: 'CDC lag time',

@@ -1247,7 +1247,7 @@ const tc = {
 		jobPaused: '任務被停止',
 		jobDeleted: '任務被刪除',
 		jobEdited: '任務被編輯',
-		jobError: '任務狀態error',
+		jobStateError: '任務狀態error',
 		jobEncounterError: '任務遇到錯誤',
 		noticeInterval: '發送間隔',
 		CDCLagTime: 'CDC滯後通知',

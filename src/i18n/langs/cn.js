@@ -1251,7 +1251,7 @@ const cn = {
 		jobPaused: '任务被停止',
 		jobDeleted: '任务被删除',
 		jobEdited: '任务被编辑',
-		jobError: '任务状态error',
+		jobStateError: '任务状态error',
 		jobEncounterError: '任务遇到错误',
 		noticeInterval: '发送间隔',
 		CDCLagTime: 'CDC滞后通知',
