@@ -19,7 +19,7 @@
 				ref="form"
 				action="javascript:void(0);"
 			>
-				<el-form-item :label="$t('editor.cell.link.form.label.label')">
+				<!-- <el-form-item :label="$t('editor.cell.link.form.label.label')">
 					<el-input
 						v-model="model.label"
 						:placeholder="$t('editor.cell.link.form.label.placeholder')"
@@ -28,17 +28,36 @@
 						show-word-limit
 					>
 					</el-input>
+				</el-form-item> -->
+
+				<el-form-item required :label="$t('editor.cell.link.copySourceDatabase')">
+					<el-checkbox-group v-model="model.selectSourceDatabase">
+						<el-checkbox label="table">Table</el-checkbox>
+						<el-checkbox label="view">View</el-checkbox>
+						<el-checkbox label="function">Function</el-checkbox>
+						<el-checkbox label="procedure">Procedure</el-checkbox>
+					</el-checkbox-group>
+				</el-form-item>
+
+				<el-form-item required :label="$t('editor.cell.link.existingSchema.label')">
+					<el-select v-model="model.keepSchema" size="mini">
+						<el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" :value="true"></el-option>
+						<el-option
+							:label="$t('editor.cell.link.existingSchema.removeSchema')"
+							:value="false"
+						></el-option>
+					</el-select>
 				</el-form-item>
 
 				<el-form-item required :label="$t('editor.cell.data_node.collection.form.dropTable.label')">
 					<el-select v-model="model.dropTable" size="mini">
 						<el-option
 							:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
-							:value="false"
+							:value="true"
 						></el-option>
 						<el-option
 							:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
-							:value="true"
+							:value="false"
 						></el-option>
 					</el-select>
 				</el-form-item>
@@ -58,12 +77,14 @@
 						:titles="titles"
 						:filter-method="filterMethod"
 						:filter-placeholder="$t('editor.cell.link.searchContent')"
-						v-model="model.includeTables"
+						v-model="model.selectSourceArr"
 						:data="model.sourceData"
 						@right-check-change="handleSelectTable"
 					>
 						<span class="box" slot-scope="{ option }">
-							<span class="text">{{ option.label }}</span>
+							<span class="text" :style="{ active: option.label !== option.value }">{{
+								option.label
+							}}</span>
 							<span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
 							}}</span>
@@ -78,12 +99,12 @@
 			custom-class="databaseLinkDialog"
 			:close-on-click-modal="false"
 		>
-			<el-form :model="form">
+			<el-form :model="model">
 				<el-row :gutter="80" class="e-row">
 					<el-col :span="12">
 						<el-form-item :label="$t('editor.cell.link.prefixPlaceholder')">
 							<el-input
-								v-model="form.prefix"
+								v-model="model.table_prefix"
 								@input="handlePrefix"
 								autocomplete="off"
 								:placeholder="$t('editor.cell.link.prefixPlaceholder')"
@@ -93,7 +114,7 @@
 					<el-col :span="12">
 						<el-form-item :label="$t('editor.cell.link.suffixPlaceholder')">
 							<el-input
-								v-model="form.suffix"
+								v-model="model.table_suffix"
 								@input="handleSuffix"
 								autocomplete="off"
 								:placeholder="$t('editor.cell.link.suffixPlaceholder')"
@@ -141,20 +162,10 @@ export default {
 	name: 'databaseLink',
 
 	data() {
-		// const generateData = () => {
-		// 	const data = [];
-		// 	const cities = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都'];
-		// 	const pinyin = ['shanghai', 'beijing', 'guangzhou', 'shenzhen', 'nanjing', 'xian', 'chengdu'];
-		// 	cities.forEach((city, index) => {
-		// 		data.push({
-		// 			label: city,
-		// 			key: index,
-		// 			pinyin: pinyin[index]
-		// 		});
-		// 	});
-		// 	return data;
-		// };
 		return {
+			active: {
+				color: '#48b6e2'
+			},
 			currentName: null,
 			databaseName: '',
 			modifyNameDialog: false,
@@ -163,18 +174,18 @@ export default {
 			logsFlag: false,
 			exampleName: 'tableName',
 
-			form: {
-				prefix: '',
-				suffix: ''
-			},
-
 			configJoinTable: false,
 			model: {
-				label: '',
-				dropTable: false,
+				// label: '',
+				table_prefix: '',
+				table_suffix: '',
+				keepSchema: true,
+				dropTable: true,
 				includeTables: [],
 				type: 'databaseLink',
-				sourceData: []
+				sourceData: [],
+				selectSourceArr: [],
+				selectSourceDatabase: []
 			},
 
 			titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')]
@@ -225,8 +236,17 @@ export default {
 		},
 
 		getData() {
-			let data = JSON.parse(JSON.stringify(this.model));
-			return data;
+			let result = JSON.parse(JSON.stringify(this.model));
+			let includeTables = [];
+			for (let i = 0; i < this.model.sourceData.length; i++) {
+				for (let j = 0; j < this.model.selectSourceArr.length; j++) {
+					if (this.model.sourceData[i].label === this.model.selectSourceArr[j]) {
+						includeTables.push(this.model.sourceData[i].value);
+					}
+				}
+			}
+			result.includeTables = includeTables;
+			return result;
 		},
 
 		// 关闭当前页
@@ -254,12 +274,12 @@ export default {
 		confirmName() {
 			let self = this;
 			for (let i = 0; i < this.model.sourceData.length; i++) {
-				for (let j = 0; j < self.model.includeTables.length; j++) {
+				for (let j = 0; j < self.model.selectSourceArr.length; j++) {
 					if (
-						this.model.sourceData[i].label === self.model.includeTables[j] &&
+						this.model.sourceData[i].label === self.model.selectSourceArr[j] &&
 						this.model.sourceData[i].label === self.currentName.label
 					) {
-						this.model.sourceData[i].label = self.model.includeTables[j] = this.model.sourceData[i].key =
+						this.model.sourceData[i].label = self.model.selectSourceArr[j] = this.model.sourceData[i].key =
 							self.databaseName;
 						this.model.sourceData[i].key = this.model.sourceData[i].label;
 					}
@@ -288,7 +308,7 @@ export default {
 		handlePrefix(val) {
 			this.exampleName = 'tableName';
 			if (val) {
-				this.exampleName = val + this.exampleName + this.form.suffix;
+				this.exampleName = val + this.exampleName + this.model.table_suffix;
 			}
 		},
 
@@ -296,7 +316,7 @@ export default {
 		handleSuffix(val) {
 			this.exampleName = 'tableName';
 			if (val) {
-				this.exampleName = this.form.prefix + this.exampleName + val;
+				this.exampleName = this.model.table_prefix + this.exampleName + val;
 			}
 		},
 
@@ -309,15 +329,16 @@ export default {
 				for (let j = 0; j < selectKeepArr.length; j++) {
 					if (this.model.sourceData[i].label === selectKeepArr[j]) {
 						this.model.sourceData[i].label =
-							this.form.prefix + this.model.sourceData[i].label + this.form.suffix;
+							this.model.table_prefix + this.model.sourceData[i].value + this.model.table_suffix;
 						this.model.sourceData[i].key = this.model.sourceData[i].label;
 					}
 				}
 			}
-			for (let j = 0; j < this.model.includeTables.length; j++) {
+			for (let j = 0; j < this.model.selectSourceArr.length; j++) {
 				for (let i = 0; i < selectKeepArr.length; i++) {
-					if (this.model.includeTables[j] === selectKeepArr[i]) {
-						this.model.includeTables[j] = this.form.prefix + this.model.includeTables[j] + this.form.suffix;
+					if (this.model.selectSourceArr[j] === selectKeepArr[i]) {
+						this.model.selectSourceArr[j] =
+							this.model.table_prefix + this.model.selectSourceArr[j] + this.model.table_suffix;
 					}
 				}
 			}
@@ -328,40 +349,19 @@ export default {
 			if (this.model.sourceData.length) {
 				for (let i = 0; i < this.model.sourceData.length; i++) {
 					for (let j = 0; j < selectKeepArr.length; j++) {
-						for (let k = 0; k < this.model.includeTables.length; k++) {
+						for (let k = 0; k < this.model.selectSourceArr.length; k++) {
 							if (
 								this.model.sourceData[i].label === selectKeepArr[j] &&
-								this.model.sourceData[i].label === this.model.includeTables[k]
+								this.model.sourceData[i].label === this.model.selectSourceArr[k]
 							) {
 								this.model.sourceData[i].label = this.model.sourceData[i].value;
 								this.model.sourceData[i].key = this.model.sourceData[i].label;
-								this.model.includeTables[k] = this.model.sourceData[i].value;
+								this.model.selectSourceArr[k] = this.model.sourceData[i].value;
 							}
 						}
 					}
 				}
 			}
-		}
-	},
-
-	// 合并schema
-	renderSchema() {
-		if (this.cell) {
-			let sourceCell = this.cell.getSourceCell(),
-				targetCell = this.cell.getTargetCell(),
-				sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null;
-
-			let mergedTargetSchema =
-				targetCell && typeof targetCell.getOutputSchema === 'function' ? targetCell.getOutputSchema() : null; // mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
-
-			let targetSchemaFields = (mergedTargetSchema && mergedTargetSchema.fields) || [];
-			let targetJoinFields = targetSchemaFields.filter(
-				field => field.field_name === this.model.joinTable.joinPath
-			);
-			let isArray = targetJoinFields && targetJoinFields.length > 0 && targetJoinFields[0].javaType === 'Array';
-			if (this.model.joinTable.isArray !== isArray) this.model.joinTable.isArray = isArray;
-			this.$refs.mappingComp.setSchema(sourceSchema, mergedTargetSchema);
-			log('databaseLink.renderSchema', sourceSchema, mergedTargetSchema);
 		}
 	},
 

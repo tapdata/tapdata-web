@@ -935,6 +935,11 @@ const cn = {
 					update: '更新写入',
 					merge_embed: '更新内嵌数组'
 				},
+				existingSchema: {
+					label: '已存在schema的处理',
+					keepSchema: '保持已存在的schema',
+					removeSchema: '删除原有的schema'
+				},
 
 				migrationSetting: '迁移对象设置',
 				dataProcessing: '已有数据处理',
@@ -951,7 +956,8 @@ const cn = {
 				prefixPlaceholder: '请输入前缀',
 				suffixPlaceholder: '请输入后缀',
 				batchRename: '批量改名设置',
-				tableNameExample: '表名示例'
+				tableNameExample: '表名示例',
+				copySourceDatabase: '复制源库结构'
 			}
 		},
 		ui: {

@@ -931,6 +931,11 @@ const tc = {
 					update: '更新寫入',
 					merge_embed: '更新內嵌數組'
 				},
+				existingSchema: {
+					label: '已存在schema的處理',
+					keepSchema: '保持已存在的schema',
+					removeSchema: '刪除原有的schema'
+				},
 				migrationSetting: '遷移對象設置',
 				dataProcessing: '已有數據處理',
 				prefixAndSuffix: '加前後綴',
@@ -939,7 +944,15 @@ const tc = {
 				reduction: '還原',
 				migrationObjece: '遷移對象',
 				chosen: '已選擇',
-				searchContent: '搜索內容'
+				searchContent: '搜索內容',
+				mappingRelations: '映射關係',
+				addPrefix: '添加前綴',
+				addSuffix: '添加後綴',
+				prefixPlaceholder: '請輸入前綴',
+				suffixPlaceholder: '請輸入後綴',
+				batchRename: '批量改名設置',
+				tableNameExample: '表名示例',
+				copySourceDatabase: '複製源庫結構'
 			}
 		},
 		ui: {
