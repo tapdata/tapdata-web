@@ -115,6 +115,12 @@ const store = new Vuex.Store({
 			rowsPerPage: '',
 			descending: '',
 			sortBy: ''
+		},
+		dataVerification: {
+			keyword: '',
+			compareMethod: '',
+			mode: '',
+			active: ''
 		}
 	},
 

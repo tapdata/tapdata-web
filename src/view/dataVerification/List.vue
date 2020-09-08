@@ -1,1057 +1,227 @@
 <template>
-	<section class="data-flow-wrap" v-loading="restLoading">
-		<div class="panel-left" v-if="formData.panelFlag">
-			<metaData v-on:nodeClick="nodeClick"></metaData>
+	<section class="data-verify-wrap">
+		<div class="panel-slider" v-show="isClassShow">
+			<MetaData @nodeClick="classClickHandler"></MetaData>
 		</div>
 		<div class="panel-main">
 			<div class="topbar">
-				<!-- <div class="panelBtn"></div> -->
 				<ul class="search-bar">
-					<li :class="[{ panelOpen: formData.panelFlag }, 'item', 'panelBtn']" @click="handlePanelFlag">
-						<i class="iconfont icon-xiangshangzhanhang"></i>
-						<span>{{ formData.panelFlag ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel') }}</span>
+					<li class="search-item">
+						<el-button
+							class="btn-class-collapse"
+							size="mini"
+							:class="{ 'is-open': isClassShow }"
+							@click="isClassShow = !isClassShow"
+						>
+							<i class="iconfont icon-xiangshangzhanhang"></i>
+							<span>{{ isClassShow ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel') }}</span>
+						</el-button>
 					</li>
-					<li class="item">
+					<li class="search-item">
 						<el-input
-							:placeholder="$t('dataFlow.searchPlaceholder')"
+							v-model="searchParams.keyword"
+							size="mini"
 							clearable
 							prefix-icon="el-icon-search"
-							v-model="formData.search"
-							size="mini"
-							@change="screenFn"
+							placeholder="任务名称/节点名"
+							@input="keyup()"
 						></el-input>
 					</li>
-					<li class="item">
+					<li class="search-item">
 						<el-select
-							v-model="formData.status"
+							v-model="searchParams.compareMethod"
 							size="mini"
-							clearable
-							:placeholder="$t('dataFlow.taskStatusPlaceholder')"
-							style="width:160px"
-							@change="screenFn"
+							placeholder="校验类型"
+							@input="search(1)"
 						>
-							<el-option
-								v-for="item in options"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value"
-							></el-option>
+							<el-option label="行数校验" value="row_count"></el-option>
+							<el-option label="内容校验" value="field"></el-option>
 						</el-select>
 					</li>
-					<li class="item">
+					<li class="search-item">
 						<el-select
-							v-model="formData.way"
+							v-model="searchParams.mode"
 							size="mini"
-							clearable
-							:placeholder="$t('dataFlow.taskSettingPlaceholder')"
-							style="width:160px"
-							@change="screenFn"
+							placeholder="单词/重复校验"
+							@input="search(1)"
 						>
-							<el-option
-								v-for="item in optionsKey"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value"
-							></el-option>
+							<el-option label="单词校验" value="manual"></el-option>
+							<el-option label="重复校验" value="cron"></el-option>
 						</el-select>
 					</li>
-					<li class="item">
+					<li class="search-item">
 						<el-select
-							v-model="formData.executionStatus"
+							v-model="searchParams.active"
 							size="mini"
-							clearable
-							:placeholder="$t('dataFlow.executionStatus')"
-							style="width:160px"
-							@change="screenFn"
+							placeholder="校验激活状态"
+							@input="search(1)"
 						>
-							<el-option
-								v-for="opt in ['initializing', 'cdc', 'initialized']"
-								:key="opt"
-								:label="$t('dataFlow.status.' + opt)"
-								:value="opt"
-							></el-option>
+							<el-option label="已启用" value="1"></el-option>
+							<el-option label="已禁用" value="2"></el-option>
 						</el-select>
 					</li>
-					<li class="item" v-if="checkedTag && checkedTag !== ''">
-						<el-tag size="small" closable @close="handleClose()">{{ checkedTag.value }}</el-tag>
-					</li>
-					<li class="item">
-						<el-button class="btn" size="mini" @click="handleClear">
-							<i class="iconfont icon-shuaxin1 back-btn-icon"></i>
+					<li class="search-item">
+						<el-button size="mini" @click="reset">
+							<i class="iconfont icon-shuaxin1"></i>
 						</el-button>
 					</li>
 				</ul>
 				<div class="topbar-buttons">
-					<el-button size="mini" class="btn" @click="handleGoFunction">
-						<i class="iconfont icon-hanshu back-btn-icon"></i>
-						<span> {{ $t('dataFlow.taskBulkFx') }}</span>
+					<el-button size="mini" v-show="selections.length">
+						<i class="iconfont icon-piliang"></i>
+						<span>批量校验</span>
 					</el-button>
-					<el-button size="mini" class="btn" @click="handleImport">
-						<i class="iconfont icon-daoru back-btn-icon"></i>
-						<span> {{ $t('dataFlow.bulkImport') }}</span>
+					<el-button size="mini">
+						<i class="iconfont icon-shezhi1"></i>
+						<span>校验设置</span>
 					</el-button>
-					<el-button class="btn btn-create" type="primary" size="mini" @click="create">
+					<el-button type="primary" size="mini" @click="create">
 						<i class="iconfont icon-jia add-btn-icon"></i>
 					</el-button>
 				</div>
 			</div>
-			<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-				<el-tab-pane :label="$t('notification.allNotice')" name="first"></el-tab-pane>
-				<el-tab-pane :label="$t('notification.unreadNotice')" name="second"></el-tab-pane>
-			</el-tabs>
-			<div class="task-list" v-loading="restLoading">
+			<div class="table-wrap">
 				<el-table
+					style="border: 1px solid #dedee4;"
 					v-loading="loading"
-					:element-loading-text="$t('dataFlow.dataLoading')"
-					:data="tableData"
-					height="100%"
-					style="border: 1px solid #dedee4;border-top: none;"
-					class="dv-table"
-					row-key="id"
-					:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-					@sort-change="handleSortTable"
-					@selection-change="handleSelectionChange"
-					:default-sort="{ prop: flowProp, order: flowOrder }"
+					:data="page.data"
+					@sort-change="sortHandler"
+					@selection-change="selectHandler"
 				>
-					<el-table-column type="selection" width="45" :selectable="handleSelectable"> </el-table-column>
-					<el-table-column :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
+					<el-table-column type="selection" width="44" align="center"></el-table-column>
+					<el-table-column label="任务名称">
 						<template slot-scope="scope">
-							<span>{{ scope.row.name }}</span>
-							<div style="margin-left: 20px;color:#ccc">
-								{{ scope.row.user ? scope.row.user.email : '' }}
-							</div>
+							{{ scope.row.name }}
 						</template>
 					</el-table-column>
-					<el-table-column label="源/目标行数" width="120">
-						<template>
-							<span>
-								源表:33333
-							</span>
-							<div style="color:#ccc">
-								目标:66666
-							</div>
+					<el-table-column label="源/目标行数">
+						<template slot-scope="scope">
+							<div>源表: {{ scope.row.name }}</div>
+							<div>目标: {{ scope.row.name }}</div>
 						</template>
 					</el-table-column>
-					<el-table-column prop="status" sortable="custom" label="校验结果" width="180">
+					<el-table-column label="校验结果">
 						<template slot-scope="scope">
-							<div>
-								<span :style="`color: ${colorMap[scope.row.status]};`" class="row-result">
-									<i class="iconfont icon-cuowu"></i>
-									<span>{{ scope.row.statusLabel }}</span>
-								</span>
-							</div>
+							<span> 行数差异 {{ scope.row.name }} </span>
 						</template>
 					</el-table-column>
-					<el-table-column prop="status" sortable="custom" label="执行状态" width="180">
+					<el-table-column label="执行状态">
 						<template slot-scope="scope">
-							<div>
-								<span :style="`color: ${colorMap[scope.row.status]};`">
-									{{ scope.row.statusLabel }}
-								</span>
-							</div>
+							<span> {{ scope.row.name }} </span>
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('dataFlow.operate')" width="180">
+					<el-table-column label="校验时间" sortable="custom">
 						<template slot-scope="scope">
-							<div v-if="!scope.row.hasChildren">
-								<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
-									<el-button type="text" @click="handlesShowDrawer">
-										<i class="iconfont  task-list-icon icon-chaxun"></i>
-									</el-button>
-								</el-tooltip>
-								<el-tooltip class="item" :content="$t('dataFlow.edit')" placement="bottom">
-									<el-button type="text" :disabled="statusBtMap[scope.row.status].edit">
-										<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
-									</el-button>
-								</el-tooltip>
-								<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
-									<el-button
-										type="text"
-										:disabled="statusBtMap[scope.row.status].delete"
-										@click="handleDelete(scope.row.id)"
-									>
-										<i class="iconfont task-list-icon icon-shanchu"></i>
-									</el-button>
-								</el-tooltip>
-							</div>
+							<span> {{ scope.row.name }} </span>
+						</template>
+					</el-table-column>
+					<el-table-column label="操作">
+						<template slot-scope="scope">
+							<span> {{ scope.row.name }} </span>
 						</template>
 					</el-table-column>
 				</el-table>
 				<el-pagination
-					class="pagination"
 					background
-					layout="prev, pager, next,sizes"
-					:page-sizes="[20, 30, 50, 100]"
-					:page-size="pagesize"
-					:total="totalNum"
-					:current-page.sync="currentPage"
-					@current-change="handleCurrentChange"
-					@size-change="handleSizeChange"
+					class="pagination"
+					:current-page.sync="page.current"
+					:page-sizes="[10, 20, 50, 100]"
+					:page-size.sync="page.size"
+					layout="total, sizes, prev, pager, next, jumper"
+					:total="page.total"
+					@size-change="search(1)"
+					@current-change="search"
 				>
 				</el-pagination>
 			</div>
 		</div>
-		<SelectClassify
-			ref="SelectClassify"
-			:dialogVisible="dialogVisible"
-			type="dataflow"
-			:tagLists="tagList"
-			v-on:dialogVisible="handleDialogVisible"
-			v-on:operationsClassify="handleOperationClassify"
-		></SelectClassify>
 	</section>
 </template>
 
 <script>
-import _ from 'lodash';
-import moment from 'moment';
-import factory from '../../api/factory';
-import ws from '../../api/ws';
-const dataFlows = factory('DataFlows');
-const MetadataInstance = factory('MetadataInstances');
-import { toRegExp } from '../../util/util';
+/* eslint-disable */
 import metaData from '../metaData';
-import SelectClassify from '../../components/SelectClassify';
-
+import { toRegExp } from '../../util/util';
+let timeout = null;
 export default {
-	components: { metaData, SelectClassify },
+	components: {
+		MetaData: metaData
+	},
 	data() {
 		return {
-			checkedTag: '',
-			listtags: [],
-			tagList: [],
-			wsData: [],
-			dialogVisible: false,
-			restLoading: false,
-			disabledDrawer: false,
-			colorMap: {
-				running: '#67C23A',
-				paused: '#F19149',
-				draft: '#F56C6C',
-				scheduled: '#cccccc',
-				stopping: '#F19149',
-				error: '#f53724'
+			isClassShow: true,
+			loading: true,
+			searchParams: this.$store.state.dataVerification,
+			page: {
+				data: null,
+				current: 1,
+				size: 10,
+				total: 0,
+				sortBy: '',
+				order: ''
 			},
-			loading: false,
-			order: '',
-			flowProp: localStorage.getItem('flowProp') || 'createTime',
-			flowOrder: localStorage.getItem('flowOrder') || 'descending',
-			tableData: [],
-			newData: [],
-			currentPage: 1,
-			pagesize: localStorage.getItem('flowPagesize') * 1 || 20,
-			totalNum: 0,
-			syncType: {
-				initial_sync: this.$t('dataFlow.initial_sync'),
-				cdc: this.$t('dataFlow.cdc'),
-				'initial_sync+cdc': this.$t('dataFlow.initial_sync') + this.$t('dataFlow.cdc')
-			},
-			optionsKey: [
-				{
-					label: this.$t('dataFlow.initial_sync'),
-					value: 'initial_sync'
-				},
-				{
-					label: this.$t('dataFlow.cdc'),
-					value: 'cdc'
-				},
-				{
-					label: this.$t('dataFlow.initial_sync') + this.$t('dataFlow.cdc'),
-					value: 'initial_sync+cdc'
-				}
-			],
-			options: [
-				{
-					label: this.$t('dataFlow.status.running'),
-					value: 'running'
-				},
-				{
-					label: this.$t('dataFlow.status.paused'),
-					value: 'paused'
-				},
-				{
-					label: this.$t('dataFlow.status.error'),
-					value: 'error'
-				},
-				{
-					label: this.$t('dataFlow.status.draft'),
-					value: 'draft'
-				},
-				{
-					label: this.$t('dataFlow.status.scheduled'),
-					value: 'scheduled'
-				},
-				{
-					label: this.$t('dataFlow.status.stopping'),
-					value: 'stopping'
-				},
-				{
-					label: this.$t('dataFlow.status.force_stopping'),
-					value: 'force stopping'
-				}
-			],
-			multipleSelection: [],
-			formData: {
-				search: '',
-				timeData: [],
-				status: '',
-				person: '',
-				way: '',
-				executionStatus: '',
-				classification: [],
-				panelFlag: true
-			},
-			statusBtMap: {
-				scheduled: { switch: true, delete: true, edit: true, detail: false, forceStop: true, reset: true },
-				draft: { switch: true, delete: false, edit: false, detail: true, forceStop: true, reset: true },
-				running: { switch: false, delete: true, edit: true, detail: false, forceStop: true, reset: true },
-				stopping: { switch: true, delete: true, edit: true, detail: false, forceStop: false, reset: true },
-				error: { switch: false, delete: false, edit: false, detail: false, forceStop: true, reset: false },
-				paused: { switch: false, delete: false, edit: false, detail: true, forceStop: true, reset: false },
-				'force stopping': { switch: true, delete: true, edit: true, detail: true, forceStop: true, reset: true }
-			},
-			dataFlowId: ''
+			selections: []
 		};
 	},
 	created() {
-		this.formData = this.$store.state.dataFlows;
-		if (this.$route.query && this.$route.query.dataFlowStatus) {
-			this.formData.status = this.$route.query.dataFlowStatus;
-		}
-
-		this.screenFn();
-		this.keyupEnter();
-		window.windows = [];
-		let self = this;
-		ws.on('watch', this.wsWatch);
-		this.inter = setInterval(() => {
-			self.wsData.forEach(dat => {
-				self.$set(
-					self.tableData,
-					self.tableData.findIndex(it => it.id == dat.id),
-					self.cookRecord(
-						_.merge(
-							self.tableData.find(it => it.id == dat.id),
-							dat
-						)
-					)
-				);
-			});
-			self.wsData.length = 0;
-		}, 3000);
-	},
-	beforeDestroy() {
-		ws.off('watch', this.wsWatch);
-		clearInterval(this.inter);
-	},
-	computed: {
-		maxHeight: function() {
-			let height = document.body.clientHeight - 140 + 'px';
-			return height;
-		}
+		this.search(1);
 	},
 	methods: {
-		// 面板显示隐藏
-		handlePanelFlag() {
-			this.formData.panelFlag = !this.formData.panelFlag;
-			this.$store.commit('dataFlows', this.formData);
-		},
-		wsWatch(data) {
-			this.wsData.push(data.data.fullDocument);
-		},
-		handleDialogVisible() {
-			this.dialogVisible = false;
-		},
-		handleClassify() {
-			if (this.multipleSelection.length === 0) {
-				this.$message.info('please select row data');
-				return;
+		keyup() {
+			if (timeout) {
+				window.clearTimeout(timeout);
 			}
-			this.tagList = this.handleSelectTag();
-			this.dialogVisible = true;
+			timeout = setTimeout(() => {
+				this.search(1);
+				timeout = null;
+			}, 800);
 		},
-		handlerAddTag(id, listTags) {
-			this.dataFlowId = id;
-			this.tagList = listTags || [];
-			this.dialogVisible = true;
+		selectHandler(val) {
+			this.selections = val;
 		},
-		handleSelectTag() {
-			let tagList = {};
-			this.multipleSelection.forEach(row => {
-				if (row.listtags && row.listtags.length > 0) {
-					tagList[row.listtags[0].id] = {
-						value: row.listtags[0].value
-					};
-				}
-			});
-			return tagList;
+		sortHandler({ prop, order }) {
+			this.page.sortBy = prop;
+			this.page.order = order;
+			this.search(1);
 		},
-		handleOperationClassify(listtags) {
-			let attributes = [];
-			if (this.dataFlowId) {
-				let node = {
-					id: this.dataFlowId,
-					listtags: listtags
-				};
-				attributes.push(node);
-			} else {
-				this.multipleSelection.forEach(row => {
-					row.listtags = row.listtags || [];
-					let node = {
-						id: row.id,
-						listtags: listtags
-					};
-					attributes.push(node);
-				});
-			}
-			dataFlows.patchAll({ attrs: attributes }).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					this.dataFlowId = '';
-					this.getData();
-				}
-			});
-		},
-		handleGoFunction() {
-			top.location.href = '/#/JsFuncs';
-		},
-		// 校验历史
-		handlesShowDrawer() {
-			let routeUrl = this.$router.resolve({
-				path: '/dataVerifyHistory'
-			});
-			window.open(routeUrl.href, '_blank');
-		},
-		getTempKeys() {
-			let tk = [];
-			window.windows.forEach(it => {
-				if (it.parent != null && it.tempKey) tk.push(it.tempKey);
-			});
-			return tk;
-		},
-		create() {
-			let routeUrl = this.$router.resolve({
-				path: '/job'
-			});
-			window.windows.push(window.open(routeUrl.href, '_blank'));
-			window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
-		},
-		handleImport() {
-			let routeUrl = this.$router.resolve({
-				path: '/upload'
-			});
-			window.open(routeUrl.href, '_blank');
-		},
-		handleCommand(command) {
-			if (command === 'bulkExport') {
-				this.handleDownload();
-			} else if (command === 'bulkScheuled') {
-				this.handleAllStatus('scheduled');
-			} else if (command === 'bulkStopping') {
-				this.handleAllStatus('stopping');
-			} else if (command === 'batchDelete') {
-				this.handleAllDelete();
-			} else if (command === 'batchRest') {
-				this.handleAllRest();
-			}
-		},
-		handleDownload() {
-			if (this.multipleSelection.length === 0) {
-				this.$message.info('please select row data');
-				return;
-			}
-			let multipleSelection = [];
-			this.multipleSelection.map(item => {
-				multipleSelection.push(item.id);
-			});
-			let where = {
-				_id: {
-					in: multipleSelection
-				}
-			};
-			MetadataInstance.download(where);
-		},
-		handleRowCommand(command, node) {
-			let id = node.id;
-			let where = {
-				_id: {
-					in: [id]
-				}
-			};
-			switch (command) {
-				case 'export':
-					MetadataInstance.download(where);
-					break;
-				case 'copy':
-					this.handlerCopy(id);
-					break;
-				case 'tag':
-					this.handlerAddTag(node.id, node.listtags);
-					break;
-				case 'reset':
-					this.handleReset(id);
-					break;
-				case 'force_stopping':
-					this.$confirm(this.$t('message.forceStoppingMessage'), this.$t('dataFlow.importantReminder'), {
-						confirmButtonText: this.$t('dataFlow.button.force_stop'),
-						cancelButtonText: this.$t('message.cancel'),
-						type: 'warning'
-					}).then(() => {
-						this.handleStatus(id, 'force stopping');
-					});
-					break;
-				default:
-					break;
-			}
-		},
-		handleSelectable(row) {
-			if (row.hasChildren) {
-				return false;
-			} else {
-				return true;
-			}
-		},
-		screenFn() {
-			// localStorage.setItem('flowSearch', this.formData.search);
-			// localStorage.setItem('flowStatus', this.formData.status);
-			// localStorage.setItem('flowWay', this.formData.way);
-			// localStorage.setItem('flowExecutionStatus', this.formData.executionStatus);
-			this.currentPage = 1;
-			this.getData();
-		},
-		keyupEnter() {
-			document.onkeydown = e => {
-				// let body = document.getElementsByTagName('body')[0];
-				if (e.keyCode === 13) {
-					this.getData();
-				}
-			};
-		},
-		async getData(params) {
+		search(pageNum) {
+			this.searchParamsChange();
 			this.loading = true;
-
-			this.$store.commit('dataFlows', this.formData);
-
-			let where = {};
-			if (!parseInt(this.$cookie.get('isAdmin'))) where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
-			let order = 'createTime DESC';
-			if (this.order) {
-				order = this.order;
-			}
-			if (this.formData) {
-				if (this.formData.status && this.formData.status !== '') {
-					where.status = this.formData.status;
-				}
-				if (this.formData.way && this.formData.way !== '') {
-					where['setting.sync_type'] = this.formData.way;
-				}
-				if (this.formData.search && this.formData.search !== '') {
-					let word = toRegExp(this.formData.search);
-					where.or = [
-						{
-							name: { like: word, options: 'i' }
-						},
-						{
-							'stages.name': { like: word, options: 'i' }
-						},
-						{
-							'stages.tableName': { like: word, options: 'i' }
-						}
-					];
-				}
-				if (this.formData.executionStatus) {
-					where['stats.stagesMetrics.status'] = this.formData.executionStatus;
-				}
-				if (this.formData.timeData && this.formData.timeData.length !== 0) {
-					let dates = _.cloneDeep(this.formData.timeData);
-					if (dates[1]) {
-						dates[1] = new Date(dates[1]);
-						dates[1].setHours(dates[1].getHours() + 24);
-					}
-					where.createTime = {
-						between: dates
-					};
-				}
-			}
-			if (this.checkedTag && this.checkedTag !== '') {
-				where['listtags.id'] = {
-					in: [this.checkedTag.id]
-				};
-			}
-			let _params = Object.assign(
-				{
-					filter: JSON.stringify({
-						where: where,
-						order: order,
-						limit: this.pagesize,
-						skip: (this.currentPage - 1) * this.pagesize,
-						fields: {
-							id: true,
-							name: true,
-							status: true,
-							executeMode: true,
-							category: true,
-							stopOnError: true,
-							last_updated: true,
-							createTime: true,
-							children: true,
-							stats: true,
-							checked: true,
-							stages: true,
-							'stages.id': true,
-							'stages.name': true,
-							setting: true,
-							user_id: true,
-							startTime: true,
-							listtags: true
-						}
-					})
-				},
-				params
-			);
-			await dataFlows.get(_params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.handleData(res.data);
-						this.tableData = res.data;
-						let msg = {
-							type: 'watch',
-							collection: 'DataFlows',
-							filter: {
-								where: { 'fullDocument._id': { $in: this.tableData.map(it => it.id) } }, //查询条件
-								fields: {
-									'fullDocument.id': true,
-									'fullDocument.name': true,
-									'fullDocument.status': true,
-									'fullDocument.checked': true,
-									'fullDocument.executeMode': true,
-									'fullDocument.stopOnError': true,
-									'fullDocument.last_updated': true,
-									'fullDocument.createTime': true,
-									'fullDocument.children': true,
-									'fullDocument.stats': true,
-									'fullDocument.stages.id': true,
-									'fullDocument.stages.name': true
-									//'fullDocument.setting': true,
-								}
-							}
-						};
-						let int = setInterval(() => {
-							if (ws.ws.readyState == 1) {
-								ws.send(msg);
-								clearInterval(int);
-							}
-						}, 2000);
-					}
-				}
+			let { current, size, sortBy, order } = this.page;
+			let { keyword } = this.searchParams;
+			let currentPage = pageNum || current + 1;
+			setTimeout(() => {
+				this.page.data = [{}];
+				this.page.current = currentPage;
+				this.page.total = 232;
 				this.loading = false;
-			});
-
-			this.getCount(where);
+			}, 1000);
 		},
-		handleData(data) {
-			if (!data) return;
-			data.forEach(item => {
-				this.cookRecord(item);
-			});
-		},
-		cookRecord(item) {
-			item.newStatus = ['running', 'scheduled'].includes(item.status) ? 'scheduled' : 'stopping';
-			item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
-			let statusMap = {};
-			if (item.stats) {
-				item.hasChildren = false;
-				item.input = item.stats.input ? item.stats.input.rows : '--';
-				item.output = item.stats.output ? item.stats.output.rows : '--';
-				item.transmissionTime = item.stats.transmissionTime
-					? ((item.input * 1000) / item.stats.transmissionTime).toFixed(0)
-					: '--';
-				let children = item.stages;
-				item.children = [];
-				if (children) {
-					let finishedCount = 0;
-					children.forEach(k => {
-						let stage = '';
-						let node = {};
-						if (item.stats.stagesMetrics) {
-							stage = item.stats.stagesMetrics.filter(v => k.id === v.stageId);
-						}
-						if (!stage.length) {
-							node = {
-								id: item.id + k.id,
-								name: k.name,
-								input: '--',
-								output: '--',
-								transmissionTime: '--',
-								hasChildren: true,
-								statusLabel: '--'
-							};
-						} else {
-							let stg = stage[0];
-							let statusLabel = stg.status ? this.$t('dataFlow.status.' + stg.status) : '--';
-							if (stg.status === 'cdc') {
-								let lag = `(${this.$t('dataFlow.lag')}${this.getLag(stg.replicationLag)})`;
-								statusLabel += lag;
-								statusMap.cdc = true;
-							}
-							if (stg.status === 'initializing') {
-								statusMap.initializing = true;
-							}
-							if (stg.status === 'initialized') {
-								finishedCount += 1;
-							}
-							node = {
-								id: item.id + k.id,
-								name: k.name,
-								input: stg.input.rows,
-								output: stg.output.rows,
-								transmissionTime: stg.transmissionTime,
-								hasChildren: true,
-								statusLabel
-							};
-						}
-						item.children.push(node);
-					});
-					if (finishedCount && !statusMap.cdc && !statusMap.initializing) {
-						statusMap.initialized = true;
-					}
-					let statusList = [];
-					for (const key in statusMap) {
-						statusList.push(key);
-					}
-					item.statusList = statusList;
-				}
-			} else {
-				item.input = '--';
-				item.output = '--';
-				item.transmissionTime = '--';
-			}
-			return item;
-		},
-		getLag(lag) {
-			let r = '0s';
-			if (lag) {
-				let m = moment.duration(lag, 'seconds');
-				if (m.days()) {
-					r = m.days() + 'd';
-				} else if (m.hours()) {
-					r = m.hours() + 'h';
-				} else if (m.minutes()) {
-					r = m.minutes() + 'm';
-				} else {
-					r = lag + 's';
-				}
-			}
-			return r;
-		},
-		getCount(where) {
-			where = {
-				where: where
+		reset() {
+			this.searchParams = {
+				keyword: '',
+				compareMethod: '',
+				mode: '',
+				active: ''
 			};
-			dataFlows.count(where).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.totalNum = res.data.count;
-					}
-				}
-			});
+			this.search(1);
 		},
-
-		deleteConfirm(callback) {
-			this.$confirm(this.$t('message.deteleMessage'), this.$t('dataFlow.importantReminder'), {
-				confirmButtonText: this.$t('metaData.deleteNode'),
-				cancelButtonText: this.$t('message.cancel'),
-				type: 'warning'
-			}).then(callback);
+		searchParamsChange() {
+			this.$store.commit('dataVerification', this.searchParams);
 		},
-
-		handleAllDelete() {
-			if (this.multipleSelection.length === 0) {
-				this.$message.info('please select row data');
-				return;
-			}
-			let multipleSelection = this.multipleSelection.map(item => item.id);
-
-			let where = {
-				_id: {
-					inq: multipleSelection
-				}
-			};
-			this.deleteConfirm(() => {
-				dataFlows.deleteAll(where).then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						this.getData();
-						this.responseHandler(res.data, this.$t('message.deleteOK'));
-					} else {
-						this.$message.info(this.$t('message.deleteFail'));
-					}
-				});
-			});
-		},
-		listtagsFormatter(row) {
-			let value = '';
-			if (row.listtags && row.listtags.length !== 0) {
-				value = row.listtags[row.listtags.length - 1].value;
-			}
-			return value;
-		},
-		handleDelete(id) {
-			this.deleteConfirm(() => {
-				dataFlows.delete(id).then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						this.getData();
-						this.$message.success(this.$t('message.deleteOK'));
-					} else {
-						this.$message.info(this.$t('message.deleteFail'));
-					}
-				});
-			});
-		},
-
-		statusConfirm(callback, data) {
-			let initFalg =
-				(data && data.setting && data.setting.sync_type === 'cdc') || data.length === 0 ? true : false;
-			this.$confirm(
-				initFalg ? this.$t('message.stopMessage') : this.$t('message.stopInitial_syncMessage'),
-				this.$t('dataFlow.importantReminder'),
-				{
-					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancel'),
-					type: 'warning'
-				}
-			).then(callback);
-		},
-
-		handleStatus(id, oldStatus, status, dataItem) {
-			let data = {
-				status: status
-			};
-			if (status === 'stopping') {
-				this.statusConfirm(() => {
-					this.getStatus(id, data);
-				}, dataItem);
-			} else {
-				this.getStatus(id, data);
-			}
-		},
-
-		async getStatus(id, data) {
-			await dataFlows.updateById(id, data).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					this.getData();
-					this.$t('message.operationSuccuess');
-				}
-			});
-		},
-
-		handleAllStatus(status) {
-			if (this.multipleSelection.length === 0) {
-				this.$message.info('please select row data');
-				return;
-			}
-			let multipleSelection = this.multipleSelection.map(item => item.id);
-			let initData = []; // 设置初始化类型数据
-
-			if (status === 'stopping') {
-				//全部停止
-				this.multipleSelection.map(item => {
-					this.tableData.map(row => {
-						if (row.id === item.id && row.status === 'running' && row.setting.sync_type !== 'cdc') {
-							initData.push(row);
-						}
-					});
-				});
-			}
-
-			let where = {
-				_id: {
-					in: multipleSelection
-				}
-			};
-			let attributes = {
-				status: status
-			};
-
-			let request = () => {
-				dataFlows.update(where, attributes).then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						this.getData();
-						this.responseHandler(res.data, this.$t('message.operationSuccuess'));
-					}
-				});
-			};
-
-			if (status === 'stopping') {
-				this.statusConfirm(() => {
-					request();
-				}, initData);
-			} else {
-				request();
-			}
-		},
-		handleReset(id) {
-			this.restConfirm(() => {
-				this.restLoading = true;
-				dataFlows
-					.reset(id)
-					.then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							this.getData();
-							this.$message.success(this.$t('message.resetOk'));
-						} else {
-							this.$message.info(this.$t('message.cancleReset'));
-						}
-					})
-					.finally(() => {
-						this.restLoading = false;
-					});
-			});
-		},
-
-		restConfirm(callback) {
-			this.$confirm(this.$t('message.resetMessage'), this.$t('dataFlow.importantReminder'), {
-				confirmButtonText: this.$t('dataFlow.button.reset'),
-				cancelButtonText: this.$t('message.cancel'),
-				type: 'warning'
-			}).then(callback);
-		},
-
-		handleAllRest() {
-			if (this.multipleSelection.length === 0) {
-				this.$message.info('please select row data');
-				return;
-			}
-			let multipleSelection = this.multipleSelection.map(item => item.id);
-
-			let where = multipleSelection;
-			this.restConfirm(() => {
-				this.restLoading = true;
-				dataFlows
-					.resetAll(where)
-					.then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							this.getData();
-							this.responseHandler(res.data, this.$t('message.resetOk'));
-						} else {
-							this.$message.info(this.$t('message.cancleReset'));
-						}
-					})
-					.finally(() => {
-						this.restLoading = false;
-					});
-			});
-		},
-		handlerCopy(id) {
-			let self = this;
-			dataFlows.copy(id).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					self.getData();
-					this.$message.success(this.$t('message.copySuccess'));
-				} else {
-					this.$message.error(this.$t('message.copyFail'));
-				}
-			});
-		},
-		formatterTime(row) {
-			let time = row.createTime ? this.$moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
-			return time;
-		},
-		formatterStartTime(row) {
-			let time = row.startTime ? this.$moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '';
-			return time;
-		},
-		handleSortTable(column) {
-			let currentOrder = column.order === 'ascending' ? 'ASC' : 'DESC';
-			let mapping = {
-				status: 'status',
-				last_updated: 'last_updated',
-				createTime: 'createTime',
-				input: 'stats.input.rows',
-				output: 'stats.output.rows',
-				transmissionTime: 'stats.transmissionTime'
-			};
-			this.order = mapping[column.prop] + ' ' + currentOrder;
-
-			localStorage.setItem('flowOrder', column.order);
-			localStorage.setItem('flowProp', column.prop);
-
-			if (localStorage.getItem('flowOrder') && localStorage.getItem('flowProp')) {
-				let prop = localStorage.getItem('flowOrder') === 'ascending' ? 'ASC' : 'DESC';
-				this.order = localStorage.getItem('flowProp') + ' ' + prop;
-			}
-			this.getData();
-		},
-		handleClear() {
-			this.formData.search = '';
-			this.formData.status = '';
-			this.formData.way = '';
-			this.formData.executionStatus = '';
-			this.checkedTag = '';
-			this.currentPage = 1;
-			this.screenFn();
-		},
-		handleSelectionChange(val) {
-			this.multipleSelection = val;
-		},
-		handleCurrentChange(cpage) {
-			this.currentPage = cpage;
-			this.getData();
-		},
-		handleSizeChange(psize) {
-			this.pagesize = psize;
-			localStorage.setItem('flowPagesize', psize);
-			this.getData();
-		},
-		nodeClick(data) {
-			if (data) {
-				this.checkedTag = {
-					id: data.id,
-					value: data.value
-				};
-				this.getData();
-			}
-		},
-		handleClose() {
-			this.checkedTag = '';
-			this.getData();
-		},
-		responseHandler(data, msg) {
-			let failList = data.fail || [];
-			if (failList.length) {
-				let msgMapping = {
-					5: this.$t('dataFlow.multiError.notFound'),
-					6: this.$t('dataFlow.multiError.statusError'),
-					7: this.$t('dataFlow.multiError.otherError'),
-					8: this.$t('dataFlow.multiError.statusError')
-				};
-				let nameMapping = {};
-				this.tableData.forEach(item => {
-					nameMapping[item.id] = item.name;
-				});
-				this.$message.warning({
-					dangerouslyUseHTMLString: true,
-					message: failList
-						.map(item => {
-							return `<div style="line-height: 24px;"><span style="color: #409EFF">${
-								nameMapping[item.id]
-							}</span> : <span style="color: #F56C6C">${msgMapping[item.code]}</span></div>`;
-						})
-						.join('')
-				});
-			} else if (msg) {
-				this.$message.success(msg);
-			}
+		classClickHandler(node) {
+			this.search(1);
 		}
 	}
 };
 </script>
 
 <style lang="less" scoped>
-.data-flow-wrap {
+.data-verify-wrap {
 	display: flex;
-	width: 100%;
 	height: 100%;
 	overflow: hidden;
-	.panel-left {
+	.panel-slider {
 		width: 200px;
 		height: 100%;
 		box-sizing: border-box;
@@ -1066,161 +236,43 @@ export default {
 			align-items: center;
 			justify-content: space-between;
 			padding: 0 10px;
-			.panelBtn {
-				padding: 5px 12px;
-				color: #666;
-				cursor: pointer;
+			.iconfont {
 				font-size: 12px;
-				border: 1px solid #dcdfe6;
-				border-radius: 3px;
-				.iconfont {
-					display: inline-block;
-					font-size: 12px;
-					transform: rotate(00deg);
-				}
 			}
-			.panelOpen {
-				.iconfont {
-					transform: rotate(180deg) !important;
-				}
-			}
-			.panelBtn:hover {
-				color: #48b6e2;
-			}
-			.btn + .btn {
-				margin-left: 5px;
-			}
-			.btn {
+			.el-button {
 				padding: 7px;
-				background: #f5f5f5;
-				i.iconfont {
-					font-size: 12px;
-				}
-				&.btn-dropdowm {
-					margin-left: 5px;
-				}
-				&.btn-create {
-					margin-left: 5px;
-					background: #48b6e2;
-				}
+			}
+			.el-button + .el-button {
+				margin-left: 5px;
 			}
 			.search-bar {
 				display: flex;
 				align-items: center;
 				height: 50px;
-				.item {
+				.search-item {
 					margin-right: 10px;
+				}
+				.btn-class-collapse {
+					.iconfont {
+						display: inline-block;
+						transform: rotate(0deg);
+					}
+					&.is-open .iconfont {
+						transform: rotate(180deg);
+					}
 				}
 			}
 		}
-		.pagination {
-			height: 40px;
-			line-height: 40px;
+		.table-wrap {
+			margin: 0 10px;
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			.pagination {
+				padding: 20px 0;
+				text-align: right;
+			}
 		}
 	}
-}
-.task-list {
-	flex: 1;
-	overflow: hidden;
-	padding: 0 10px 10px 10px;
-	display: flex;
-	flex-direction: column;
-	font-size: 14px;
-	.dv-table {
-		flex: 1;
-		overflow: hidden;
-	}
-	.el-button.is-disabled {
-		color: #c0c4cc;
-	}
-	.el-button--text {
-		color: #606266;
-	}
-	.row-result {
-		background: #f56c6c;
-		border-radius: 8px;
-		padding: 1px 5px;
-		i {
-			font-size: 12px;
-			color: #fff;
-		}
-		span {
-			color: #fff;
-			font-size: 11px;
-			text-align: center;
-		}
-	}
-}
-
-.task-list-menu-cion {
-	font-size: 20px;
-}
-
-.task-list-menu {
-	margin-bottom: 10px;
-}
-
-.task-list-icon {
-	font-size: 18px;
-}
-.delete-icon {
-	color: #606266 !important;
-}
-
-.task-list-time-picker {
-	width: 240px;
-}
-
-.task-list-menu-left {
-	float: left;
-}
-
-.task-list-menu-right {
-	float: right;
-	margin-right: 20px;
-	/*margin-top: 10px;*/
-	margin-bottom: 10px;
-}
-
-.el-table .sort-caret {
-	border: 3px solid transparent !important;
-}
-
-.task-list .el-pagination {
-	width: 100%;
-	padding-top: 10px;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-	text-align: right;
-	overflow: hidden;
-	z-index: 999;
-}
-
-.back-btn-icon {
-	color: #666;
-}
-.add-btn-icon {
-	color: #fff;
-}
-</style>
-<style lang="less">
-.task-list .el-pagination .el-pagination__total {
-	float: left;
-}
-.task-list .el-form--inline .el-form-item {
-	margin-right: 4px;
-}
-.dv-table thead {
-	color: #333;
-	th {
-		padding: 5px 0;
-		background: #fafafa;
-	}
-}
-.dataFlowsFlow .el-form-item__content {
-	line-height: 0;
-}
-.dataflow-clickTip .el-message-box__status {
-	top: 25% !important;
 }
 </style>
