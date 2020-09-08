@@ -240,6 +240,12 @@ const childRoutes = [
 		name: 'dataVerifyHistory',
 		component: view('dataVerification/History'),
 		meta: { title: i18n.t('notification.systemNotice') }
+	},
+	{
+		path: '/dataVerifySetting',
+		name: 'dataVerifySetting',
+		component: view('dataVerification/setting'),
+		meta: { title: i18n.t('dataVerify.setting.title') }
 	}
 ];
 

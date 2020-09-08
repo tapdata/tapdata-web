@@ -1055,7 +1055,20 @@ const en = {
 		verifyStatusCompleted: 'Verification result loading , please wait for a while',
 		or: 'or',
 		psc: 'pcs',
-		all: 'All'
+		all: 'All',
+		setting: {
+			title: 'Verify default settings',
+			text:
+				'The verification setting is the global verification setting, the priority of the advanced setting in the created verification task is higher than the setting here. ',
+			keepTimeLabel: 'Retention time of verification historical results and detailed information',
+			errorSaveSumLable: 'Check out the limit of the number of error messages saved for each table',
+			errorDifferenceResult: 'The error tolerance of the difference data allowed by the verification result',
+			lineNumberFrequency: 'Line number verification interval frequency',
+			lineNumVerfyDuration: 'Line number verification duration',
+			intervalFrequency: 'Content verification interval frequency',
+			verifyDuration: 'Content verification duration',
+			verifyStartTime: 'Content verification start execution time'
+		}
 	},
 	dataMap: {
 		source: 'SOURCE',

@@ -1042,7 +1042,20 @@ const cn = {
 		verifyStatusCompleted: '数据校验结果加载中',
 		or: '或',
 		psc: '条',
-		all: '全部'
+		all: '全部',
+
+		setting: {
+			title: '校验默认设置',
+			text: '校验设置为全局的校验设置，创建的校验任务里的高级设置的优先级高于此处的设置。',
+			keepTimeLabel: '校验历史结果和详情信息保留时间',
+			errorSaveSumLable: '校验出每张表的错误信息保存数量限制',
+			errorDifferenceResult: '校验结果允许的差异数据容错量',
+			lineNumberFrequency: '行数校验间隔频率',
+			lineNumVerfyDuration: '行数校验持续时间',
+			intervalFrequency: '内容校验间隔频率',
+			verifyDuration: '内容校验持续时间',
+			verifyStartTime: '内容校验开始执行时间'
+		}
 	},
 	dataMap: {
 		source: '来源',

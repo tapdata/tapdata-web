@@ -1043,7 +1043,19 @@ const tc = {
 		verifyStatusCompleted: '數據校驗結果加載中',
 		or: '或',
 		psc: '條',
-		all: '全部'
+		all: '全部',
+		setting: {
+			title: '校驗默認設置',
+			text: '校驗設置為全局的校驗設置，創建的校驗任務裡的高級設置的優先級高於此處的設置。 ',
+			keepTimeLabel: '校驗歷史結果和詳情信息保留時間',
+			errorSaveSumLable: '校驗出每張表的錯誤信息保存數量限制',
+			errorDifferenceResult: '校驗結果允許的差異數據容錯量',
+			lineNumberFrequency: '行數校驗間隔頻率',
+			lineNumVerfyDuration: '行數校驗持續時間',
+			intervalFrequency: '內容校驗間隔頻率',
+			verifyDuration: '內容校驗持續時間',
+			verifyStartTime: '內容校驗開始執行時間'
+		}
 	},
 	dataMap: {
 		source: '來源',
