@@ -344,6 +344,27 @@ export default {
 		}
 	},
 
+	// 合并schema
+	renderSchema() {
+		if (this.cell) {
+			let sourceCell = this.cell.getSourceCell(),
+				targetCell = this.cell.getTargetCell(),
+				sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null;
+
+			let mergedTargetSchema =
+				targetCell && typeof targetCell.getOutputSchema === 'function' ? targetCell.getOutputSchema() : null; // mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
+
+			let targetSchemaFields = (mergedTargetSchema && mergedTargetSchema.fields) || [];
+			let targetJoinFields = targetSchemaFields.filter(
+				field => field.field_name === this.model.joinTable.joinPath
+			);
+			let isArray = targetJoinFields && targetJoinFields.length > 0 && targetJoinFields[0].javaType === 'Array';
+			if (this.model.joinTable.isArray !== isArray) this.model.joinTable.isArray = isArray;
+			this.$refs.mappingComp.setSchema(sourceSchema, mergedTargetSchema);
+			log('databaseLink.renderSchema', sourceSchema, mergedTargetSchema);
+		}
+	},
+
 	destroyed() {
 		log('Link.destroyed');
 		if (this.unwatch) this.unwatch();
