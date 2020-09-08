@@ -53,11 +53,11 @@
 					<el-select v-model="model.dropTable" size="mini">
 						<el-option
 							:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
-							:value="true"
+							:value="false"
 						></el-option>
 						<el-option
 							:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
-							:value="false"
+							:value="true"
 						></el-option>
 					</el-select>
 				</el-form-item>
@@ -179,7 +179,7 @@ export default {
 				table_prefix: '',
 				table_suffix: '',
 				keepSchema: true,
-				dropTable: true,
+				dropTable: false,
 				includeTables: [],
 				type: 'databaseLink',
 				sourceData: [],
