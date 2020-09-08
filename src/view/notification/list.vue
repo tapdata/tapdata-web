@@ -34,7 +34,9 @@
 						<span @click="handlePageRead()">{{ $t('notification.maskRead') }}</span>
 						<span @click="handleAllRead()">{{ $t('notification.maskReadAll') }}</span>
 						<span>
-							<router-link to="/setting">通知设置</router-link>
+							<router-link to="/setting"
+								><span style="color: #48B6E2">{{ $t('notification.setting') }}</span></router-link
+							>
 						</span>
 					</div>
 				</div>

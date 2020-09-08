@@ -1,15 +1,7 @@
 <template>
 	<div class="notification">
 		<div class="notification-main">
-			<div class="notification-left-sidebar">
-				<div class="title">{{ $t('notification.noticeCenter') }}</div>
-				<ul>
-					<li>
-						<i class="iconfont icon-lingdang"></i>
-						<span>{{ $t('notification.systemNotice') }}</span>
-					</li>
-				</ul>
-			</div>
+			<subNav></subNav>
 			<div class="notification-right-list">
 				<div class="notification-head">
 					<div class="title">{{ $t('notification.systemNotice') }}</div>
@@ -17,7 +9,7 @@
 				<section>
 					{{ $t('notification.tip') }}
 				</section>
-				<section class="run-notification" v-show="runNotification">
+				<section class="run-notification" v-show="runNotification && runNotification.length > 0">
 					<span class="block"></span><span class="title">{{ $t('notification.jobOperationNotice') }}</span>
 					<ul>
 						<li v-for="(item, index) in runNotification" :key="index">
@@ -74,7 +66,7 @@
 						</li>
 					</ul>
 				</section>
-				<section class="run-notification" v-show="systemNotification">
+				<section class="run-notification" v-show="systemNotification && systemNotification.length > 0">
 					<span class="block"></span><span class="title">{{ $t('notification.systemSetting') }}</span>
 					<ul>
 						<li v-for="(item, index) in systemNotification" :key="index">
@@ -88,7 +80,7 @@
 						</li>
 					</ul>
 				</section>
-				<section class="run-notification" v-show="agentNotification">
+				<section class="run-notification" v-show="agentNotification && agentNotification.length > 0">
 					<span class="block"></span><span class="title">{{ $t('notification.agentNotice') }}</span>
 					<ul>
 						<li v-for="(item, index) in agentNotification" :key="index">
@@ -119,9 +111,11 @@
 import factory from '../../api/factory';
 const Setting = factory('Setting');
 import { notificationMAP } from './tyepMap';
+import subNav from './subNav';
 
 export default {
 	name: 'list',
+	components: { subNav },
 	data() {
 		return {
 			notificationMAP: notificationMAP,
