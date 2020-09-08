@@ -219,13 +219,15 @@ export default {
 				if (data.sourceData && data.sourceData.length) {
 					this.model.sourceData = data.sourceData;
 				} else {
-					sourceTable.forEach(table => {
-						this.model.sourceData.push({
-							label: table,
-							key: table,
-							value: table
+					if (sourceTable && sourceTable.length) {
+						sourceTable.forEach(table => {
+							this.model.sourceData.push({
+								label: table,
+								key: table,
+								value: table
+							});
 						});
-					});
+					}
 				}
 			}
 			editorMonitor = vueAdapter.editor;
