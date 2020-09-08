@@ -79,15 +79,14 @@
 						:filter-placeholder="$t('editor.cell.link.searchContent')"
 						v-model="model.selectSourceArr"
 						:data="model.sourceData"
-						@right-check-change="handleSelectTable"
 					>
 						<span class="box" slot-scope="{ option }">
 							<span class="text" :style="{ active: option.label !== option.value }">{{
 								option.label
 							}}</span>
-							<span class="nameStyle" @click="handleChageTransfer(option)">{{
+							<!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
-							}}</span>
+							}}</span> -->
 						</span>
 					</el-transfer>
 				</div>
@@ -129,7 +128,7 @@
 				<el-button type="primary" @click="confirm">{{ $t('dataVerify.confirm') }}</el-button>
 			</div>
 		</el-dialog>
-		<el-dialog
+		<!-- <el-dialog
 			:title="$t('message.modifyName')"
 			:visible.sync="modifyNameDialog"
 			custom-class="modifyNameDialog"
@@ -149,7 +148,7 @@
 				<el-button @click="modifyNameDialog = false">{{ $t('dataVerify.cancel') }}</el-button>
 				<el-button type="primary" @click="confirmName">{{ $t('dataVerify.confirm') }}</el-button>
 			</div>
-		</el-dialog>
+		</el-dialog> -->
 	</div>
 </template>
 
@@ -157,7 +156,7 @@
 import _ from 'lodash';
 import log from '../../../log';
 let editorMonitor = null;
-let selectKeepArr = [];
+// let selectKeepArr = [];
 export default {
 	name: 'databaseLink',
 
@@ -271,23 +270,23 @@ export default {
 		},
 
 		// 修改名称弹窗返回
-		confirmName() {
-			let self = this;
-			for (let i = 0; i < this.model.sourceData.length; i++) {
-				for (let j = 0; j < self.model.selectSourceArr.length; j++) {
-					if (
-						this.model.sourceData[i].label === self.model.selectSourceArr[j] &&
-						this.model.sourceData[i].label === self.currentName.label
-					) {
-						this.model.sourceData[i].label = self.model.selectSourceArr[j] = this.model.sourceData[i].key =
-							self.databaseName;
-						this.model.sourceData[i].key = this.model.sourceData[i].label;
-					}
-				}
-			}
+		// confirmName() {
+		// 	let self = this;
+		// 	for (let i = 0; i < this.model.sourceData.length; i++) {
+		// 		for (let j = 0; j < self.model.selectSourceArr.length; j++) {
+		// 			if (
+		// 				this.model.sourceData[i].label === self.model.selectSourceArr[j] &&
+		// 				this.model.sourceData[i].label === self.currentName.label
+		// 			) {
+		// 				this.model.sourceData[i].label = self.model.selectSourceArr[j] = this.model.sourceData[i].key =
+		// 					self.databaseName;
+		// 				this.model.sourceData[i].key = this.model.sourceData[i].label;
+		// 			}
+		// 		}
+		// 	}
 
-			this.modifyNameDialog = false;
-		},
+		// 	this.modifyNameDialog = false;
+		// },
 
 		// 穿梭框搜索
 		filterMethod(query, item) {
@@ -295,9 +294,9 @@ export default {
 		},
 
 		// 已选择的表
-		handleSelectTable(data) {
-			selectKeepArr = data;
-		},
+		// handleSelectTable(data) {
+		// 	selectKeepArr = data;
+		// },
 
 		// 添加前后缀弹窗开关
 		handDialog() {
@@ -323,24 +322,24 @@ export default {
 		// 弹窗确认
 		confirm() {
 			this.dialogVisible = false;
-			this.handleSelectTable(selectKeepArr);
+			// this.handleSelectTable(selectKeepArr);
 
 			for (let i = 0; i < this.model.sourceData.length; i++) {
-				for (let j = 0; j < selectKeepArr.length; j++) {
-					if (this.model.sourceData[i].label === selectKeepArr[j]) {
-						this.model.sourceData[i].label =
-							this.model.table_prefix + this.model.sourceData[i].value + this.model.table_suffix;
-						this.model.sourceData[i].key = this.model.sourceData[i].label;
-					}
-				}
+				// for (let j = 0; j < selectKeepArr.length; j++) {
+				// 	if (this.model.sourceData[i].label === selectKeepArr[j]) {
+				this.model.sourceData[i].label =
+					this.model.table_prefix + this.model.sourceData[i].value + this.model.table_suffix;
+				this.model.sourceData[i].key = this.model.sourceData[i].label;
+				// }
+				// }
 			}
 			for (let j = 0; j < this.model.selectSourceArr.length; j++) {
-				for (let i = 0; i < selectKeepArr.length; i++) {
-					if (this.model.selectSourceArr[j] === selectKeepArr[i]) {
-						this.model.selectSourceArr[j] =
-							this.model.table_prefix + this.model.selectSourceArr[j] + this.model.table_suffix;
-					}
-				}
+				// for (let i = 0; i < selectKeepArr.length; i++) {
+				// if (this.model.selectSourceArr[j] === selectKeepArr[i]) {
+				this.model.selectSourceArr[j] =
+					this.model.table_prefix + this.model.selectSourceArr[j] + this.model.table_suffix;
+				// }
+				// }
 			}
 		},
 
@@ -348,17 +347,17 @@ export default {
 		handleReduction() {
 			if (this.model.sourceData.length) {
 				for (let i = 0; i < this.model.sourceData.length; i++) {
-					for (let j = 0; j < selectKeepArr.length; j++) {
-						for (let k = 0; k < this.model.selectSourceArr.length; k++) {
-							if (
-								this.model.sourceData[i].label === selectKeepArr[j] &&
-								this.model.sourceData[i].label === this.model.selectSourceArr[k]
-							) {
-								this.model.sourceData[i].label = this.model.sourceData[i].value;
-								this.model.sourceData[i].key = this.model.sourceData[i].label;
-								this.model.selectSourceArr[k] = this.model.sourceData[i].value;
-							}
+					// for (let j = 0; j < selectKeepArr.length; j++) {
+					for (let k = 0; k < this.model.selectSourceArr.length; k++) {
+						if (
+							// this.model.sourceData[i].label === selectKeepArr[j] &&
+							this.model.sourceData[i].label === this.model.selectSourceArr[k]
+						) {
+							this.model.sourceData[i].label = this.model.sourceData[i].value;
+							this.model.sourceData[i].key = this.model.sourceData[i].label;
+							this.model.selectSourceArr[k] = this.model.sourceData[i].value;
 						}
+						// 	}
 					}
 				}
 			}

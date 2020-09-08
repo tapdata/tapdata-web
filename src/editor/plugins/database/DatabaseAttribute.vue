@@ -195,11 +195,23 @@ export default {
 			if (data) {
 				_.merge(this.model, data);
 			}
-			let linkFormData = cell.graph
-				.getConnectedLinks(cell, {
+			let linkFormData = null;
+			if (
+				cell.graph.getConnectedLinks(cell, {
 					inbound: true
-				})[0]
-				.getFormData();
+				}).length &&
+				cell.graph
+					.getConnectedLinks(cell, {
+						inbound: true
+					})[0]
+					.getFormData()
+			) {
+				linkFormData = cell.graph
+					.getConnectedLinks(cell, {
+						inbound: true
+					})[0]
+					.getFormData();
+			}
 			if (linkFormData) {
 				this.model.dropTable = linkFormData.dropTable;
 				this.model.table_prefix = linkFormData.table_prefix;
