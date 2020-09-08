@@ -219,6 +219,12 @@ const childRoutes = [
 		meta: { url: '/old/index.html#/jsFuncs' }
 	},
 	{
+		path: '/setting',
+		name: 'setting',
+		component: view('notification/setting'),
+		meta: { title: i18n.t('tap.apiInfo') }
+	},
+	{
 		path: '/notification',
 		name: 'notification',
 		component: view('notification/list'),
