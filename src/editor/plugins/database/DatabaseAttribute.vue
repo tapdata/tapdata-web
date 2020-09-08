@@ -196,21 +196,11 @@ export default {
 				_.merge(this.model, data);
 			}
 			let linkFormData = null;
-			if (
-				cell.graph.getConnectedLinks(cell, {
-					inbound: true
-				}).length &&
-				cell.graph
-					.getConnectedLinks(cell, {
-						inbound: true
-					})[0]
-					.getFormData()
-			) {
-				linkFormData = cell.graph
-					.getConnectedLinks(cell, {
-						inbound: true
-					})[0]
-					.getFormData();
+			let cells = cell.graph.getConnectedLinks(cell, {
+				inbound: true
+			});
+			if (cells.length && cells[0].getFormData()) {
+				linkFormData = cells[0].getFormData();
 			}
 
 			if (linkFormData) {
@@ -218,7 +208,6 @@ export default {
 				this.model.table_prefix = linkFormData.table_prefix;
 				this.model.table_suffix = linkFormData.table_suffix;
 				this.model.keepSchema = linkFormData.keepSchema;
-				this.model.includeTables = linkFormData.includeTables;
 				this.model.syncObjects = [];
 				if (linkFormData.selectSourceDatabase) {
 					Object.keys(linkFormData.selectSourceDatabase).forEach(key => {

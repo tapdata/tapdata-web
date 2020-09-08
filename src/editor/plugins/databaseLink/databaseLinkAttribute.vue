@@ -179,7 +179,6 @@ export default {
 				table_suffix: '',
 				keepSchema: true,
 				dropTable: false,
-				includeTables: [],
 				type: 'databaseLink',
 				sourceData: [],
 				selectSourceArr: [],
