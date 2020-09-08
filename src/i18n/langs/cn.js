@@ -642,8 +642,7 @@ const cn = {
 					name: 'Redis',
 					tip: 'Redis节点',
 					chooseRedisName: '请选择Redis',
-					none_collection: '数据集必填.',
-					Redis_isNull: 'Dummy不能为空'
+					Redis_isNull: 'Redis不能为空'
 				},
 				api: {
 					name: 'API',

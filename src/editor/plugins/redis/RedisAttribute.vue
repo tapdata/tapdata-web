@@ -22,7 +22,7 @@
 						:filterable="!databaseLoading"
 						:loading="databaseLoading"
 						v-model="model.connectionId"
-						:placeholder="$t('editor.cell.data_node.es.chooseESName')"
+						:placeholder="$t('editor.cell.data_node.es.chooseRedisName')"
 					>
 						<el-option
 							v-for="(item, idx) in databases"
@@ -31,6 +31,16 @@
 							v-bind:key="idx"
 						></el-option>
 					</el-select>
+				</el-form-item>
+				<el-form-item :label="$t('editor.cell.data_node.redis.name')">
+					<MultiSelection
+						v-model="model.redisKey"
+						:options="redisKeyOptions"
+						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
+					></MultiSelection>
+				</el-form-item>
+				<el-form-item :label="$t('editor.cell.data_node.redis.name')">
+					<el-input v-model="model.redisKeyPrefix"></el-input>
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
@@ -46,9 +56,10 @@ import _ from 'lodash';
 import factory from '../../../api/factory';
 let connections = factory('connections');
 let editorMonitor = null;
+import MultiSelection from '../../../components/MultiSelection';
 export default {
 	name: 'redis',
-	components: { Entity },
+	components: { Entity, MultiSelection },
 	props: {
 		database_types: {
 			type: Array,
@@ -74,8 +85,11 @@ export default {
 			},
 			model: {
 				connectionId: '',
+				redisKey: '',
+				redisKeyPrefix: '',
 				type: 'redis'
 			},
+			redisKeyOptions: [],
 			mergedSchema: null
 		};
 	},
@@ -110,25 +124,16 @@ export default {
 			handler() {
 				this.$emit('dataChanged', this.getData());
 			}
+		},
+		mergedSchema: {
+			handler() {
+				if (this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0) {
+					let fields = this.mergedSchema.fields;
+					this.model.redisKey = [];
+					this.redisKeyOptions = fields.map(f => f.field_name);
+				}
+			}
 		}
-		// mergedSchema: {
-		// 	handler() {
-		// 		if (
-		// 			!this.model.primaryKeys &&
-		// 			this.mergedSchema &&
-		// 			this.mergedSchema.fields &&
-		// 			this.mergedSchema.fields.length > 0
-		// 		) {
-		// 			let primaryKeys = this.mergedSchema.fields
-		// 				.filter(f => f.primary_key_position > 0)
-		// 				.map(f => f.field_name);
-		// 			let unique = {};
-		// 			primaryKeys.forEach(key => (unique[key] = 1));
-		// 			primaryKeys = Object.keys(unique);
-		// 			if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
-		// 		}
-		// 	}
-		// }
 	},
 
 	methods: {
@@ -189,6 +194,12 @@ export default {
 			cell.on('change:outputSchema', () => {
 				this.mergedSchema = cell.getOutputSchema();
 			});
+			this.sourceList =
+				this.mergedSchema && this.mergedSchema.fields
+					? this.mergedSchema.fields.sort((v1, v2) =>
+							v1.field_name > v2.field_name ? 1 : v1.field_name === v2.field_name ? 0 : -1
+					  )
+					: [];
 
 			editorMonitor = vueAdapter.editor;
 		},
