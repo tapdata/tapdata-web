@@ -1,6 +1,9 @@
 <template>
 	<section class="data-flow-wrap" v-loading="restLoading">
 		<div class="panel-main">
+			<div class="tip">校验历史</div>
+			<div class="title">POSS_SOURCE UAT BATCH1</div>
+			<div class="text">内容校验 ( 重复执行 )</div>
 			<div class="task-list" v-loading="restLoading">
 				<el-table
 					v-loading="loading"
@@ -93,792 +96,53 @@
 				</el-pagination>
 			</div>
 		</div>
-		<div>
-			<div>POSS_SOURCE UAT BATCH1</div>
+		<div class="panel-main">
+			<div class="tip">校验详情</div>
+			<el-table :data="tableData" border style="width: 100%">
+				<el-table-column prop="date" label="日期" width="180"> </el-table-column>
+				<el-table-column prop="name" label="姓名" width="180"> </el-table-column>
+				<el-table-column prop="address" label="地址"> </el-table-column>
+			</el-table>
 			<div class="error-band">
-				ERROR XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+				<i class="iconfont icon-warning-circle"></i>
+				<span>ERROR XXXXXXXXXXXXXXXXXXXXXXXXXXXX</span>
 			</div>
+			<el-table :data="tableData" border style="width: 100%">
+				<el-table-column prop="date" label="日期" width="180"> </el-table-column>
+				<el-table-column prop="name" label="姓名" width="180"> </el-table-column>
+				<el-table-column prop="address" label="地址"> </el-table-column>
+			</el-table>
 		</div>
 	</section>
 </template>
 
 <script>
-import _ from 'lodash';
-import moment from 'moment';
-import factory from '../../api/factory';
-import ws from '../../api/ws';
-const dataFlows = factory('DataFlows');
-const MetadataInstance = factory('MetadataInstances');
-import { toRegExp } from '../../util/util';
-
 export default {
 	data() {
 		return {
-			checkedTag: '',
-			listtags: [],
-			tagList: [],
-			wsData: [],
-			dialogVisible: false,
-			restLoading: false,
-			disabledDrawer: false,
-			colorMap: {
-				running: '#67C23A',
-				paused: '#F19149',
-				draft: '#F56C6C',
-				scheduled: '#cccccc',
-				stopping: '#F19149',
-				error: '#f53724'
-			},
-			loading: false,
-			order: '',
-			flowProp: localStorage.getItem('flowProp') || 'createTime',
-			flowOrder: localStorage.getItem('flowOrder') || 'descending',
-			tableData: [],
-			newData: [],
-			currentPage: 1,
-			pagesize: localStorage.getItem('flowPagesize') * 1 || 20,
-			totalNum: 0,
-			syncType: {
-				initial_sync: this.$t('dataFlow.initial_sync'),
-				cdc: this.$t('dataFlow.cdc'),
-				'initial_sync+cdc': this.$t('dataFlow.initial_sync') + this.$t('dataFlow.cdc')
-			},
-			optionsKey: [
+			tableData: [
 				{
-					label: this.$t('dataFlow.initial_sync'),
-					value: 'initial_sync'
+					date: '2016-05-02',
+					name: '王小虎',
+					address: '上海市普陀区金沙江路 1518 弄'
 				},
 				{
-					label: this.$t('dataFlow.cdc'),
-					value: 'cdc'
+					date: '2016-05-04',
+					name: '王小虎',
+					address: '上海市普陀区金沙江路 1517 弄'
 				},
 				{
-					label: this.$t('dataFlow.initial_sync') + this.$t('dataFlow.cdc'),
-					value: 'initial_sync+cdc'
+					date: '2016-05-01',
+					name: '王小虎',
+					address: '上海市普陀区金沙江路 1519 弄'
+				},
+				{
+					date: '2016-05-03',
+					name: '王小虎',
+					address: '上海市普陀区金沙江路 1516 弄'
 				}
-			],
-			options: [
-				{
-					label: this.$t('dataFlow.status.running'),
-					value: 'running'
-				},
-				{
-					label: this.$t('dataFlow.status.paused'),
-					value: 'paused'
-				},
-				{
-					label: this.$t('dataFlow.status.error'),
-					value: 'error'
-				},
-				{
-					label: this.$t('dataFlow.status.draft'),
-					value: 'draft'
-				},
-				{
-					label: this.$t('dataFlow.status.scheduled'),
-					value: 'scheduled'
-				},
-				{
-					label: this.$t('dataFlow.status.stopping'),
-					value: 'stopping'
-				},
-				{
-					label: this.$t('dataFlow.status.force_stopping'),
-					value: 'force stopping'
-				}
-			],
-			multipleSelection: [],
-			formData: {
-				search: '',
-				timeData: [],
-				status: '',
-				person: '',
-				way: '',
-				executionStatus: '',
-				classification: [],
-				panelFlag: true
-			},
-			statusBtMap: {
-				scheduled: { switch: true, delete: true, edit: true, detail: false, forceStop: true, reset: true },
-				draft: { switch: true, delete: false, edit: false, detail: true, forceStop: true, reset: true },
-				running: { switch: false, delete: true, edit: true, detail: false, forceStop: true, reset: true },
-				stopping: { switch: true, delete: true, edit: true, detail: false, forceStop: false, reset: true },
-				error: { switch: false, delete: false, edit: false, detail: false, forceStop: true, reset: false },
-				paused: { switch: false, delete: false, edit: false, detail: true, forceStop: true, reset: false },
-				'force stopping': { switch: true, delete: true, edit: true, detail: true, forceStop: true, reset: true }
-			},
-			dataFlowId: ''
+			]
 		};
-	},
-	created() {
-		this.formData = this.$store.state.dataFlows;
-		if (this.$route.query && this.$route.query.dataFlowStatus) {
-			this.formData.status = this.$route.query.dataFlowStatus;
-		}
-
-		this.screenFn();
-		this.keyupEnter();
-		window.windows = [];
-		let self = this;
-		ws.on('watch', this.wsWatch);
-		this.inter = setInterval(() => {
-			self.wsData.forEach(dat => {
-				self.$set(
-					self.tableData,
-					self.tableData.findIndex(it => it.id == dat.id),
-					self.cookRecord(
-						_.merge(
-							self.tableData.find(it => it.id == dat.id),
-							dat
-						)
-					)
-				);
-			});
-			self.wsData.length = 0;
-		}, 3000);
-	},
-	beforeDestroy() {
-		ws.off('watch', this.wsWatch);
-		clearInterval(this.inter);
-	},
-	computed: {
-		maxHeight: function() {
-			let height = document.body.clientHeight - 140 + 'px';
-			return height;
-		}
-	},
-	methods: {
-		// 面板显示隐藏
-		handlePanelFlag() {
-			this.formData.panelFlag = !this.formData.panelFlag;
-			this.$store.commit('dataFlows', this.formData);
-		},
-		wsWatch(data) {
-			this.wsData.push(data.data.fullDocument);
-		},
-		handleGoFunction() {
-			top.location.href = '/#/JsFuncs';
-		},
-		getTempKeys() {
-			let tk = [];
-			window.windows.forEach(it => {
-				if (it.parent != null && it.tempKey) tk.push(it.tempKey);
-			});
-			return tk;
-		},
-		create() {
-			let routeUrl = this.$router.resolve({
-				path: '/job'
-			});
-			window.windows.push(window.open(routeUrl.href, '_blank'));
-			window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
-		},
-		handleImport() {
-			let routeUrl = this.$router.resolve({
-				path: '/upload'
-			});
-			window.open(routeUrl.href, '_blank');
-		},
-		handleCommand(command) {
-			if (command === 'bulkExport') {
-				this.handleDownload();
-			} else if (command === 'bulkScheuled') {
-				this.handleAllStatus('scheduled');
-			} else if (command === 'bulkStopping') {
-				this.handleAllStatus('stopping');
-			} else if (command === 'batchDelete') {
-				this.handleAllDelete();
-			} else if (command === 'batchRest') {
-				this.handleAllRest();
-			}
-		},
-		handleDownload() {
-			if (this.multipleSelection.length === 0) {
-				this.$message.info('please select row data');
-				return;
-			}
-			let multipleSelection = [];
-			this.multipleSelection.map(item => {
-				multipleSelection.push(item.id);
-			});
-			let where = {
-				_id: {
-					in: multipleSelection
-				}
-			};
-			MetadataInstance.download(where);
-		},
-		handleRowCommand(command, node) {
-			let id = node.id;
-			let where = {
-				_id: {
-					in: [id]
-				}
-			};
-			switch (command) {
-				case 'export':
-					MetadataInstance.download(where);
-					break;
-				case 'copy':
-					this.handlerCopy(id);
-					break;
-				case 'tag':
-					this.handlerAddTag(node.id, node.listtags);
-					break;
-				case 'reset':
-					this.handleReset(id);
-					break;
-				case 'force_stopping':
-					this.$confirm(this.$t('message.forceStoppingMessage'), this.$t('dataFlow.importantReminder'), {
-						confirmButtonText: this.$t('dataFlow.button.force_stop'),
-						cancelButtonText: this.$t('message.cancel'),
-						type: 'warning'
-					}).then(() => {
-						this.handleStatus(id, 'force stopping');
-					});
-					break;
-				default:
-					break;
-			}
-		},
-		handleSelectable(row) {
-			if (row.hasChildren) {
-				return false;
-			} else {
-				return true;
-			}
-		},
-		screenFn() {
-			// localStorage.setItem('flowSearch', this.formData.search);
-			// localStorage.setItem('flowStatus', this.formData.status);
-			// localStorage.setItem('flowWay', this.formData.way);
-			// localStorage.setItem('flowExecutionStatus', this.formData.executionStatus);
-			this.currentPage = 1;
-			this.getData();
-		},
-		keyupEnter() {
-			document.onkeydown = e => {
-				// let body = document.getElementsByTagName('body')[0];
-				if (e.keyCode === 13) {
-					this.getData();
-				}
-			};
-		},
-		async getData(params) {
-			this.loading = true;
-
-			this.$store.commit('dataFlows', this.formData);
-
-			let where = {};
-			if (!parseInt(this.$cookie.get('isAdmin'))) where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
-			let order = 'createTime DESC';
-			if (this.order) {
-				order = this.order;
-			}
-			if (this.formData) {
-				if (this.formData.status && this.formData.status !== '') {
-					where.status = this.formData.status;
-				}
-				if (this.formData.way && this.formData.way !== '') {
-					where['setting.sync_type'] = this.formData.way;
-				}
-				if (this.formData.search && this.formData.search !== '') {
-					let word = toRegExp(this.formData.search);
-					where.or = [
-						{
-							name: { like: word, options: 'i' }
-						},
-						{
-							'stages.name': { like: word, options: 'i' }
-						},
-						{
-							'stages.tableName': { like: word, options: 'i' }
-						}
-					];
-				}
-				if (this.formData.executionStatus) {
-					where['stats.stagesMetrics.status'] = this.formData.executionStatus;
-				}
-				if (this.formData.timeData && this.formData.timeData.length !== 0) {
-					let dates = _.cloneDeep(this.formData.timeData);
-					if (dates[1]) {
-						dates[1] = new Date(dates[1]);
-						dates[1].setHours(dates[1].getHours() + 24);
-					}
-					where.createTime = {
-						between: dates
-					};
-				}
-			}
-			if (this.checkedTag && this.checkedTag !== '') {
-				where['listtags.id'] = {
-					in: [this.checkedTag.id]
-				};
-			}
-			let _params = Object.assign(
-				{
-					filter: JSON.stringify({
-						where: where,
-						order: order,
-						limit: this.pagesize,
-						skip: (this.currentPage - 1) * this.pagesize,
-						fields: {
-							id: true,
-							name: true,
-							status: true,
-							executeMode: true,
-							category: true,
-							stopOnError: true,
-							last_updated: true,
-							createTime: true,
-							children: true,
-							stats: true,
-							checked: true,
-							stages: true,
-							'stages.id': true,
-							'stages.name': true,
-							setting: true,
-							user_id: true,
-							startTime: true,
-							listtags: true
-						}
-					})
-				},
-				params
-			);
-			await dataFlows.get(_params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.handleData(res.data);
-						this.tableData = res.data;
-						let msg = {
-							type: 'watch',
-							collection: 'DataFlows',
-							filter: {
-								where: { 'fullDocument._id': { $in: this.tableData.map(it => it.id) } }, //查询条件
-								fields: {
-									'fullDocument.id': true,
-									'fullDocument.name': true,
-									'fullDocument.status': true,
-									'fullDocument.checked': true,
-									'fullDocument.executeMode': true,
-									'fullDocument.stopOnError': true,
-									'fullDocument.last_updated': true,
-									'fullDocument.createTime': true,
-									'fullDocument.children': true,
-									'fullDocument.stats': true,
-									'fullDocument.stages.id': true,
-									'fullDocument.stages.name': true
-									//'fullDocument.setting': true,
-								}
-							}
-						};
-						let int = setInterval(() => {
-							if (ws.ws.readyState == 1) {
-								ws.send(msg);
-								clearInterval(int);
-							}
-						}, 2000);
-					}
-				}
-				this.loading = false;
-			});
-
-			this.getCount(where);
-		},
-		handleData(data) {
-			if (!data) return;
-			data.forEach(item => {
-				this.cookRecord(item);
-			});
-		},
-		cookRecord(item) {
-			item.newStatus = ['running', 'scheduled'].includes(item.status) ? 'scheduled' : 'stopping';
-			item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
-			let statusMap = {};
-			if (item.stats) {
-				item.hasChildren = false;
-				item.input = item.stats.input ? item.stats.input.rows : '--';
-				item.output = item.stats.output ? item.stats.output.rows : '--';
-				item.transmissionTime = item.stats.transmissionTime
-					? ((item.input * 1000) / item.stats.transmissionTime).toFixed(0)
-					: '--';
-				let children = item.stages;
-				item.children = [];
-				if (children) {
-					let finishedCount = 0;
-					children.forEach(k => {
-						let stage = '';
-						let node = {};
-						if (item.stats.stagesMetrics) {
-							stage = item.stats.stagesMetrics.filter(v => k.id === v.stageId);
-						}
-						if (!stage.length) {
-							node = {
-								id: item.id + k.id,
-								name: k.name,
-								input: '--',
-								output: '--',
-								transmissionTime: '--',
-								hasChildren: true,
-								statusLabel: '--'
-							};
-						} else {
-							let stg = stage[0];
-							let statusLabel = stg.status ? this.$t('dataFlow.status.' + stg.status) : '--';
-							if (stg.status === 'cdc') {
-								let lag = `(${this.$t('dataFlow.lag')}${this.getLag(stg.replicationLag)})`;
-								statusLabel += lag;
-								statusMap.cdc = true;
-							}
-							if (stg.status === 'initializing') {
-								statusMap.initializing = true;
-							}
-							if (stg.status === 'initialized') {
-								finishedCount += 1;
-							}
-							node = {
-								id: item.id + k.id,
-								name: k.name,
-								input: stg.input.rows,
-								output: stg.output.rows,
-								transmissionTime: stg.transmissionTime,
-								hasChildren: true,
-								statusLabel
-							};
-						}
-						item.children.push(node);
-					});
-					if (finishedCount && !statusMap.cdc && !statusMap.initializing) {
-						statusMap.initialized = true;
-					}
-					let statusList = [];
-					for (const key in statusMap) {
-						statusList.push(key);
-					}
-					item.statusList = statusList;
-				}
-			} else {
-				item.input = '--';
-				item.output = '--';
-				item.transmissionTime = '--';
-			}
-			return item;
-		},
-		getLag(lag) {
-			let r = '0s';
-			if (lag) {
-				let m = moment.duration(lag, 'seconds');
-				if (m.days()) {
-					r = m.days() + 'd';
-				} else if (m.hours()) {
-					r = m.hours() + 'h';
-				} else if (m.minutes()) {
-					r = m.minutes() + 'm';
-				} else {
-					r = lag + 's';
-				}
-			}
-			return r;
-		},
-		getCount(where) {
-			where = {
-				where: where
-			};
-			dataFlows.count(where).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.totalNum = res.data.count;
-					}
-				}
-			});
-		},
-
-		deleteConfirm(callback) {
-			this.$confirm(this.$t('message.deteleMessage'), this.$t('dataFlow.importantReminder'), {
-				confirmButtonText: this.$t('metaData.deleteNode'),
-				cancelButtonText: this.$t('message.cancel'),
-				type: 'warning'
-			}).then(callback);
-		},
-
-		handleAllDelete() {
-			if (this.multipleSelection.length === 0) {
-				this.$message.info('please select row data');
-				return;
-			}
-			let multipleSelection = this.multipleSelection.map(item => item.id);
-
-			let where = {
-				_id: {
-					inq: multipleSelection
-				}
-			};
-			this.deleteConfirm(() => {
-				dataFlows.deleteAll(where).then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						this.getData();
-						this.responseHandler(res.data, this.$t('message.deleteOK'));
-					} else {
-						this.$message.info(this.$t('message.deleteFail'));
-					}
-				});
-			});
-		},
-		listtagsFormatter(row) {
-			let value = '';
-			if (row.listtags && row.listtags.length !== 0) {
-				value = row.listtags[row.listtags.length - 1].value;
-			}
-			return value;
-		},
-		handleDelete(id) {
-			this.deleteConfirm(() => {
-				dataFlows.delete(id).then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						this.getData();
-						this.$message.success(this.$t('message.deleteOK'));
-					} else {
-						this.$message.info(this.$t('message.deleteFail'));
-					}
-				});
-			});
-		},
-
-		statusConfirm(callback, data) {
-			let initFalg =
-				(data && data.setting && data.setting.sync_type === 'cdc') || data.length === 0 ? true : false;
-			this.$confirm(
-				initFalg ? this.$t('message.stopMessage') : this.$t('message.stopInitial_syncMessage'),
-				this.$t('dataFlow.importantReminder'),
-				{
-					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancel'),
-					type: 'warning'
-				}
-			).then(callback);
-		},
-
-		handleStatus(id, oldStatus, status, dataItem) {
-			let data = {
-				status: status
-			};
-			if (status === 'stopping') {
-				this.statusConfirm(() => {
-					this.getStatus(id, data);
-				}, dataItem);
-			} else {
-				this.getStatus(id, data);
-			}
-		},
-
-		async getStatus(id, data) {
-			await dataFlows.updateById(id, data).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					this.getData();
-					this.$t('message.operationSuccuess');
-				}
-			});
-		},
-
-		handleAllStatus(status) {
-			if (this.multipleSelection.length === 0) {
-				this.$message.info('please select row data');
-				return;
-			}
-			let multipleSelection = this.multipleSelection.map(item => item.id);
-			let initData = []; // 设置初始化类型数据
-
-			if (status === 'stopping') {
-				//全部停止
-				this.multipleSelection.map(item => {
-					this.tableData.map(row => {
-						if (row.id === item.id && row.status === 'running' && row.setting.sync_type !== 'cdc') {
-							initData.push(row);
-						}
-					});
-				});
-			}
-
-			let where = {
-				_id: {
-					in: multipleSelection
-				}
-			};
-			let attributes = {
-				status: status
-			};
-
-			let request = () => {
-				dataFlows.update(where, attributes).then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						this.getData();
-						this.responseHandler(res.data, this.$t('message.operationSuccuess'));
-					}
-				});
-			};
-
-			if (status === 'stopping') {
-				this.statusConfirm(() => {
-					request();
-				}, initData);
-			} else {
-				request();
-			}
-		},
-		handleReset(id) {
-			this.restConfirm(() => {
-				this.restLoading = true;
-				dataFlows
-					.reset(id)
-					.then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							this.getData();
-							this.$message.success(this.$t('message.resetOk'));
-						} else {
-							this.$message.info(this.$t('message.cancleReset'));
-						}
-					})
-					.finally(() => {
-						this.restLoading = false;
-					});
-			});
-		},
-
-		restConfirm(callback) {
-			this.$confirm(this.$t('message.resetMessage'), this.$t('dataFlow.importantReminder'), {
-				confirmButtonText: this.$t('dataFlow.button.reset'),
-				cancelButtonText: this.$t('message.cancel'),
-				type: 'warning'
-			}).then(callback);
-		},
-
-		handleAllRest() {
-			if (this.multipleSelection.length === 0) {
-				this.$message.info('please select row data');
-				return;
-			}
-			let multipleSelection = this.multipleSelection.map(item => item.id);
-
-			let where = multipleSelection;
-			this.restConfirm(() => {
-				this.restLoading = true;
-				dataFlows
-					.resetAll(where)
-					.then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							this.getData();
-							this.responseHandler(res.data, this.$t('message.resetOk'));
-						} else {
-							this.$message.info(this.$t('message.cancleReset'));
-						}
-					})
-					.finally(() => {
-						this.restLoading = false;
-					});
-			});
-		},
-		handlerCopy(id) {
-			let self = this;
-			dataFlows.copy(id).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					self.getData();
-					this.$message.success(this.$t('message.copySuccess'));
-				} else {
-					this.$message.error(this.$t('message.copyFail'));
-				}
-			});
-		},
-		formatterTime(row) {
-			let time = row.createTime ? this.$moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
-			return time;
-		},
-		formatterStartTime(row) {
-			let time = row.startTime ? this.$moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '';
-			return time;
-		},
-		handleSortTable(column) {
-			let currentOrder = column.order === 'ascending' ? 'ASC' : 'DESC';
-			let mapping = {
-				status: 'status',
-				last_updated: 'last_updated',
-				createTime: 'createTime',
-				input: 'stats.input.rows',
-				output: 'stats.output.rows',
-				transmissionTime: 'stats.transmissionTime'
-			};
-			this.order = mapping[column.prop] + ' ' + currentOrder;
-
-			localStorage.setItem('flowOrder', column.order);
-			localStorage.setItem('flowProp', column.prop);
-
-			if (localStorage.getItem('flowOrder') && localStorage.getItem('flowProp')) {
-				let prop = localStorage.getItem('flowOrder') === 'ascending' ? 'ASC' : 'DESC';
-				this.order = localStorage.getItem('flowProp') + ' ' + prop;
-			}
-			this.getData();
-		},
-		handleClear() {
-			this.formData.search = '';
-			this.formData.status = '';
-			this.formData.way = '';
-			this.formData.executionStatus = '';
-			this.checkedTag = '';
-			this.currentPage = 1;
-			this.screenFn();
-		},
-		handleSelectionChange(val) {
-			this.multipleSelection = val;
-		},
-		handleCurrentChange(cpage) {
-			this.currentPage = cpage;
-			this.getData();
-		},
-		handleSizeChange(psize) {
-			this.pagesize = psize;
-			localStorage.setItem('flowPagesize', psize);
-			this.getData();
-		},
-		nodeClick(data) {
-			if (data) {
-				this.checkedTag = {
-					id: data.id,
-					value: data.value
-				};
-				this.getData();
-			}
-		},
-		handleClose() {
-			this.checkedTag = '';
-			this.getData();
-		},
-		responseHandler(data, msg) {
-			let failList = data.fail || [];
-			if (failList.length) {
-				let msgMapping = {
-					5: this.$t('dataFlow.multiError.notFound'),
-					6: this.$t('dataFlow.multiError.statusError'),
-					7: this.$t('dataFlow.multiError.otherError'),
-					8: this.$t('dataFlow.multiError.statusError')
-				};
-				let nameMapping = {};
-				this.tableData.forEach(item => {
-					nameMapping[item.id] = item.name;
-				});
-				this.$message.warning({
-					dangerouslyUseHTMLString: true,
-					message: failList
-						.map(item => {
-							return `<div style="line-height: 24px;"><span style="color: #409EFF">${
-								nameMapping[item.id]
-							}</span> : <span style="color: #F56C6C">${msgMapping[item.code]}</span></div>`;
-						})
-						.join('')
-				});
-			} else if (msg) {
-				this.$message.success(msg);
-			}
-		}
 	}
 };
 </script>
@@ -889,6 +153,18 @@ export default {
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
+	.title {
+		height: 15px;
+		font-size: 14px;
+		font-weight: bold;
+		color: #48b6e2;
+	}
+	.text {
+		height: 13px;
+		font-size: 12px;
+		font-weight: 400;
+		color: #666666;
+	}
 	.panel-left {
 		width: 200px;
 		height: 100%;
@@ -899,6 +175,11 @@ export default {
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
+		.tip {
+			height: 30px;
+			background: #f5f5f5;
+			border: 1px solid #dedee4;
+		}
 		.pagination {
 			height: 40px;
 			line-height: 40px;
@@ -914,11 +195,12 @@ export default {
 	font-size: 14px;
 }
 .error-band {
-	width: 800px;
 	height: 54px;
 	background: #fdf6ec;
 	color: #e6a23c;
 	border: 1px solid #f8e2c0;
+	margin: 10px 0;
+	padding: 10px;
 }
 
 .task-list-menu-cion {
