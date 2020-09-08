@@ -1049,7 +1049,7 @@ export default {
 							this.getData();
 							this.$message.success(this.$t('message.resetOk'));
 						} else {
-							this.$message.info(this.$t('message.cancleReset'));
+							this.$message.info(this.$t('message.cancelReset'));
 						}
 					})
 					.finally(() => {
@@ -1083,7 +1083,7 @@ export default {
 							this.getData();
 							this.responseHandler(res.data, this.$t('message.resetOk'));
 						} else {
-							this.$message.info(this.$t('message.cancleReset'));
+							this.$message.info(this.$t('message.cancelReset'));
 						}
 					})
 					.finally(() => {
