@@ -40,21 +40,24 @@
 				</el-form-item>
 			</el-form>
 
-			<div class="database-info">
+			<div class="database-info" v-if="model.connectionId">
 				<ul class="info-box">
-					<li>
+					<!-- <li>
 						<span class="label">{{ $t('editor.cell.data_node.database.source') }}:</span>
 						<span class="text">{{ databaseInfo.connection_type }}</span>
-					</li>
+					</li> -->
 					<li>
 						<span class="label">{{ $t('editor.cell.data_node.database.type') }}:</span>
 						<span class="text">{{ databaseInfo.database_type }}</span>
 					</li>
 					<li>
 						<span class="label">Host/Port:</span>
-						<span class="text" v-if="databaseInfo.database_host"
-							>{{ databaseInfo.database_host }}:{{ databaseInfo.database_port }}</span
-						>
+						<span class="text" v-if="databaseInfo.database_host">
+							<span>{{ databaseInfo.database_host }}</span>
+							<span v-if="databaseInfo.database_type !== 'mongodb'"
+								>:{{ databaseInfo.database_port }}</span
+							>
+						</span>
 					</li>
 					<li>
 						<span class="label"> {{ $t('editor.cell.data_node.database.databaseName') }}: </span>
@@ -64,13 +67,13 @@
 						<span class="label"> {{ $t('editor.cell.data_node.database.account') }}: </span>
 						<span class="text">{{ databaseInfo.database_username }}</span>
 					</li>
-					<li>
+					<li v-if="databaseInfo.database_owner">
 						<span class="label"> {{ $t('editor.cell.data_node.database.attributionAccount') }}: </span>
 						<span class="text">{{ databaseInfo.database_owner }}</span>
 					</li>
 				</ul>
 
-				<div class="info-table">
+				<div class="info-table" v-if="model.connectionId">
 					<div class="head-text">
 						{{ $t('editor.cell.data_node.database.includeTable') }}
 						<span>{{ model.databaseTables.length }}</span>
@@ -94,7 +97,6 @@ import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm
 
 let connections = factory('connections');
 let editorMonitor = null;
-let clear = false;
 export default {
 	name: 'Database',
 
@@ -117,6 +119,7 @@ export default {
 			activeName: '0',
 
 			isSourceDataNode: false,
+			firstRound: true,
 
 			databaseSelectConfig: {
 				size: 'mini',
@@ -190,6 +193,19 @@ export default {
 			if (data) {
 				_.merge(this.model, data);
 			}
+			let links = cell.graph.getConnectedLinks(cell, {
+				inbound: true
+			});
+			let sourceSchema = [];
+			links.forEach(item => {
+				sourceSchema.push(...item.getFormData().includeTables);
+			});
+
+			if (sourceSchema && sourceSchema.length) {
+				this.model.databaseTables = this.model.databaseTables.concat(sourceSchema);
+			}
+
+			this.model.databaseTables = [...new Set(this.model.databaseTables)];
 
 			this.isSourceDataNode = dataNodeInfo && !dataNodeInfo.isTarget;
 			editorMonitor = vueAdapter.editor;
@@ -213,12 +229,13 @@ export default {
 			});
 
 			this.databaseSelectConfig.loading = false;
+			let self = this;
 			if (result.data) {
 				this.databaseSelectConfig.options = result.data.map(item => {
 					return {
 						id: item.id,
 						name: item.name,
-						label: `${item.name} (${this.$t('connection.status.' + item.status) || item.status})`,
+						label: `${item.name} (${self.$t('connection.status.' + item.status) || item.status})`,
 						value: item.id
 					};
 				});
@@ -260,38 +277,16 @@ export default {
 						tables = tables.sort((t1, t2) =>
 							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
 						);
-						let modelIncludeTables = self.model.databaseTables || [];
-						let inList = [];
-						let outList = [];
-
-						if (clear) {
-							inList = tables.map(item => {
-								item.checked = false;
-								return item;
-							});
-							this.model.databaseTables = inList.map(t => t.table_name);
-						} else {
-							tables.forEach(t => {
-								t.checked = false;
-								if (modelIncludeTables.includes(t.table_name)) {
-									inList.push(t);
-								} else {
-									outList.push(t);
-								}
+						if (!(this.firstRound && this.model.databaseTables.length > 0)) {
+							this.model.databaseTables = tables.map(item => {
+								return item.table_name;
 							});
 						}
-						self.tabs[0].list = inList;
-						self.tabs[1].list = outList;
+						this.firstRound = false;
 						self.$forceUpdate();
-
-						// if (this.database_type !== 'mongodb') {
-						// 	this.database_host = result.data.database_host;
-						// 	this.database_port = result.data.database_port;
-						// }
 					}
 				})
 				.finally(() => {
-					clear = false;
 					this.tableLoading = false;
 				});
 		},
@@ -302,8 +297,8 @@ export default {
 			connections.customQuery([connectionId]).then(result => {
 				if (result.data) {
 					this.loadDataModels([connectionId]);
-					this.database_host = result.data.database_host;
-					this.database_port = result.data.database_port;
+					// this.database_host = result.data.database_host;
+					// this.database_port = result.data.database_port;
 				}
 			});
 		},
@@ -360,6 +355,7 @@ export default {
 					result.name = database[0].name;
 				}
 			}
+
 			return result;
 		},
 
