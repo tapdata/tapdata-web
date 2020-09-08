@@ -31,12 +31,16 @@
 				</el-form-item> -->
 
 				<el-form-item required :label="$t('editor.cell.link.copySourceDatabase')">
-					<el-checkbox-group v-model="model.selectSourceDatabase">
+					<el-checkbox v-model="model.selectSourceDatabase.table">Table</el-checkbox>
+					<el-checkbox v-model="model.selectSourceDatabase.view">View</el-checkbox>
+					<el-checkbox v-model="model.selectSourceDatabase.function">Function</el-checkbox>
+					<el-checkbox v-model="model.selectSourceDatabase.procedure">Procedure</el-checkbox>
+					<!-- <el-checkbox-group v-model="model.selectSourceDatabase">
 						<el-checkbox label="table">Table</el-checkbox>
 						<el-checkbox label="view">View</el-checkbox>
 						<el-checkbox label="function">Function</el-checkbox>
 						<el-checkbox label="procedure">Procedure</el-checkbox>
-					</el-checkbox-group>
+					</el-checkbox-group> -->
 				</el-form-item>
 
 				<el-form-item required :label="$t('editor.cell.link.existingSchema.label')">
@@ -81,9 +85,7 @@
 						:data="model.sourceData"
 					>
 						<span class="box" slot-scope="{ option }">
-							<span class="text" :style="{ active: option.label !== option.value }">{{
-								option.label
-							}}</span>
+							<span :class="[{ active: option.label !== option.value }, 'text']">{{ option.label }}</span>
 							<!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
 							}}</span> -->
@@ -155,7 +157,6 @@
 <script>
 import _ from 'lodash';
 import log from '../../../log';
-// import { DATABASE_LINK_DATA } from '../../constants';
 let editorMonitor = null;
 // let selectKeepArr = [];
 export default {
@@ -163,9 +164,6 @@ export default {
 
 	data() {
 		return {
-			active: {
-				color: '#48b6e2'
-			},
 			currentName: null,
 			databaseName: '',
 			modifyNameDialog: false,
@@ -185,7 +183,14 @@ export default {
 				type: 'databaseLink',
 				sourceData: [],
 				selectSourceArr: [],
-				selectSourceDatabase: []
+				selectSourceDatabase: {
+					table: true,
+					view: false,
+					function: false,
+					procedure: false
+				}
+
+				// selectSourceDatabase: ['table']
 			},
 
 			titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')]
@@ -209,6 +214,7 @@ export default {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
 				_.merge(this.model, data);
+				// this.model.selectSourceDatabase = data.selectSourceDatabase;
 			}
 			this.cell = cell;
 			this.model.sourceData = [];
@@ -217,7 +223,7 @@ export default {
 					// targetCell = this.cell.getTargetCell(),
 					sourceTable = sourceCell ? sourceCell.getFormData().databaseTables : [];
 
-				if (data.sourceData && data.sourceData.length) {
+				if (data && data.sourceData && data.sourceData.length) {
 					this.model.sourceData = data.sourceData;
 				} else {
 					if (sourceTable && sourceTable.length) {
@@ -328,22 +334,24 @@ export default {
 			// this.handleSelectTable(selectKeepArr);
 
 			for (let i = 0; i < this.model.sourceData.length; i++) {
-				// for (let j = 0; j < selectKeepArr.length; j++) {
-				// 	if (this.model.sourceData[i].label === selectKeepArr[j]) {
-				this.model.sourceData[i].label =
-					this.model.table_prefix + this.model.sourceData[i].value + this.model.table_suffix;
-				this.model.sourceData[i].key = this.model.sourceData[i].label;
-				// }
-				// }
+				for (let j = 0; j < this.model.selectSourceArr.length; j++) {
+					if (this.model.sourceData[i].label === this.model.selectSourceArr[j]) {
+						this.model.sourceData[i].label =
+							this.model.table_prefix + this.model.sourceData[i].value + this.model.table_suffix;
+						this.model.sourceData[i].key = this.model.sourceData[i].label;
+
+						this.model.selectSourceArr[j] = this.model.sourceData[i].label;
+					}
+				}
 			}
-			for (let j = 0; j < this.model.selectSourceArr.length; j++) {
-				// for (let i = 0; i < selectKeepArr.length; i++) {
-				// if (this.model.selectSourceArr[j] === selectKeepArr[i]) {
-				this.model.selectSourceArr[j] =
-					this.model.table_prefix + this.model.selectSourceArr[j] + this.model.table_suffix;
-				// }
-				// }
-			}
+			// for (let j = 0; j < this.model.selectSourceArr.length; j++) {
+			// 	// for (let i = 0; i < selectKeepArr.length; i++) {
+			// 	// if (this.model.selectSourceArr[j] === selectKeepArr[i]) {
+			// 	this.model.selectSourceArr[j] =
+			// 		this.model.table_prefix + this.model.selectSourceArr[j] + this.model.table_suffix;
+			// 	// }
+			// 	// }
+			// }
 		},
 
 		// 还原
@@ -434,6 +442,9 @@ export default {
 					.el-transfer-panel__item .el-checkbox__label:hover {
 						.box .nameStyle {
 							display: block;
+						}
+						.active {
+							color: rgb(253, 176, 28) !important;
 						}
 					}
 				}

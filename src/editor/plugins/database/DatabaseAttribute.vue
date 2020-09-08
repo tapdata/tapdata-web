@@ -151,8 +151,7 @@ export default {
 				table_prefix: '',
 				table_suffix: '',
 				keepSchema: true,
-				syncObjects: [],
-				includeTables: ['CAR_CUSTOMER']
+				syncObjects: []
 			},
 			databaseInfo: {
 				connection_type: '',
@@ -213,18 +212,22 @@ export default {
 					})[0]
 					.getFormData();
 			}
+
 			if (linkFormData) {
 				this.model.dropTable = linkFormData.dropTable;
 				this.model.table_prefix = linkFormData.table_prefix;
 				this.model.table_suffix = linkFormData.table_suffix;
 				this.model.keepSchema = linkFormData.keepSchema;
 				this.model.includeTables = linkFormData.includeTables;
-				if (linkFormData.selectSourceDatabase && linkFormData.selectSourceDatabase.length) {
-					linkFormData.selectSourceDatabase.forEach(item => {
-						this.model.syncObjects.push({
-							type: item,
-							objectNames: item === 'table' ? linkFormData.includeTables : []
-						});
+				this.model.syncObjects = [];
+				if (linkFormData.selectSourceDatabase) {
+					Object.keys(linkFormData.selectSourceDatabase).forEach(key => {
+						if (linkFormData.selectSourceDatabase[key]) {
+							this.model.syncObjects.push({
+								type: key,
+								objectNames: key === 'table' ? linkFormData.includeTables : []
+							});
+						}
 					});
 				}
 			}
