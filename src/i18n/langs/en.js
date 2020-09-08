@@ -943,6 +943,11 @@ const en = {
 					update: 'Match and Merge',
 					merge_embed: 'Match then Embed as Array in target'
 				},
+				existingSchema: {
+					label: 'Processing of existing schema',
+					keepSchema: 'Keep the existing schema',
+					removeSchema: 'Remove the original schema'
+				},
 				migrationSetting: 'Migration object settings',
 				dataProcessing: 'Existing data processing',
 				prefixAndSuffix: 'Add prefix and suffix',
@@ -951,7 +956,15 @@ const en = {
 				reduction: 'Reduction',
 				migrationObjece: 'Migration Object',
 				chosen: 'Selected',
-				searchContent: 'Search'
+				searchContent: 'Search',
+				mappingRelations: 'Mapping relations',
+				addPrefix: 'Add prefix',
+				addSuffix: 'Add suffix',
+				prefixPlaceholder: 'Please enter the prefix',
+				suffixPlaceholder: 'Please enter the suffix',
+				batchRename: 'Batch rename settings',
+				tableNameExample: 'Table name example',
+				copySourceDatabase: 'Source database copy structure'
 			}
 		},
 		ui: {

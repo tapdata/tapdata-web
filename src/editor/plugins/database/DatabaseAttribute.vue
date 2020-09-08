@@ -149,7 +149,9 @@ export default {
 				databaseTables: [],
 				dropTable: false,
 				table_prefix: '',
-				table_suffix: ''
+				table_suffix: '',
+				keepSchema: true,
+				syncObjects: []
 			},
 			databaseInfo: {
 				connection_type: '',
@@ -193,19 +195,25 @@ export default {
 			if (data) {
 				_.merge(this.model, data);
 			}
-			let links = cell.graph.getConnectedLinks(cell, {
-				inbound: true
-			});
-			let sourceSchema = [];
-			links.forEach(item => {
-				sourceSchema.push(...item.getFormData().includeTables);
-			});
-
-			if (sourceSchema && sourceSchema.length) {
-				this.model.databaseTables = this.model.databaseTables.concat(sourceSchema);
+			let linkFormData = cell.graph
+				.getConnectedLinks(cell, {
+					inbound: true
+				})[0]
+				.getFormData();
+			if (linkFormData) {
+				this.model.dropTable = linkFormData.dropTable;
+				this.model.table_prefix = linkFormData.table_prefix;
+				this.model.table_suffix = linkFormData.table_suffix;
+				this.model.keepSchema = linkFormData.keepSchema;
+				if (linkFormData.selectSourceDatabase && linkFormData.selectSourceDatabase.length) {
+					linkFormData.selectSourceDatabase.forEach(item => {
+						this.model.syncObjects.push({
+							type: item,
+							objectNames: item === 'table' ? linkFormData.includeTables : []
+						});
+					});
+				}
 			}
-
-			this.model.databaseTables = [...new Set(this.model.databaseTables)];
 
 			this.isSourceDataNode = dataNodeInfo && !dataNodeInfo.isTarget;
 			editorMonitor = vueAdapter.editor;
