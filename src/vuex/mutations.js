@@ -55,6 +55,9 @@ const mutations = {
 	},
 	tableSelector(state, payload) {
 		state.tableSelectorSearch = payload;
+	},
+	dataVerification(state, payload) {
+		state.dataVerification = payload;
 	}
 };
 export default mutations;

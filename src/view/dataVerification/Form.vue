@@ -17,13 +17,13 @@
 					<div class="panel-container" style="padding: 10px 20px;">
 						<div class="setting-item">
 							<label class="item-label">校验类型</label>
-							<el-radio-group v-model="form.func" style="margin-left: 10px;">
+							<el-radio-group v-model="form.compare_method" style="margin-left: 10px;">
 								<el-radio label="row_count">行数校验</el-radio>
 								<el-radio label="field">内容校验</el-radio>
 							</el-radio-group>
 						</div>
 						<div class="setting-item">
-							<label class="item-label">选择任务</label>
+							<label class="item-label is-required">选择任务</label>
 							<el-select
 								class="item-select"
 								size="mini"
@@ -48,7 +48,7 @@
 						</div>
 						<div class="setting-item" v-show="form.mode === 'cron'">
 							<label class="item-label">校验间隔</label>
-							<el-input class="item-input" size="mini" v-model="form.interval">
+							<el-input class="item-input" size="mini" v-model="form.timing.intervals">
 								<template slot="append">分钟</template>
 							</el-input>
 						</div>
@@ -130,7 +130,7 @@
 										></el-option>
 									</el-select>
 								</div>
-								<div class="setting-item" v-show="form.func === 'field'">
+								<div class="setting-item" v-show="form.compare_method === 'field'">
 									<label class="item-label is-required">索引字段</label>
 									<el-select
 										class="item-select"
@@ -196,9 +196,13 @@ export default {
 			form: {
 				flowId: '',
 				mode: 'manual',
-				func: 'row_count',
+				compare_method: 'row_count',
+				timing: {
+					intervals: 24 * 60,
+					intervals_unit: 'minute'
+				},
+				limit: {},
 				timeType: 'now',
-				interval: 24 * 60,
 				duration: 30,
 				errorSaveNum: 100,
 				active: true,
