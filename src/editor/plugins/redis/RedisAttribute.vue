@@ -67,7 +67,7 @@ export default {
 		database_types: {
 			type: Array,
 			default: function() {
-				return ['elasticsearch'];
+				return ['redis'];
 			}
 		}
 	},
