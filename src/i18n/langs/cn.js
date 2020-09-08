@@ -642,7 +642,11 @@ const cn = {
 					name: 'Redis',
 					tip: 'Redis节点',
 					chooseRedisName: '请选择Redis',
-					Redis_isNull: 'Redis不能为空'
+					Redis_isNull: 'Redis不能为空',
+					prefixKey: '缓存键前缀',
+					prefixKey_placeholder: '请输入缓存键前缀',
+					cacheKey: '设置缓存键 ',
+					cacheKey_placeholder: '请输入缓存键前缀 '
 				},
 				api: {
 					name: 'API',

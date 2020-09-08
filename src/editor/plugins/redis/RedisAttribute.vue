@@ -22,7 +22,7 @@
 						:filterable="!databaseLoading"
 						:loading="databaseLoading"
 						v-model="model.connectionId"
-						:placeholder="$t('editor.cell.data_node.es.chooseRedisName')"
+						:placeholder="$t('editor.cell.data_node.redis.chooseRedisName')"
 					>
 						<el-option
 							v-for="(item, idx) in databases"
@@ -32,15 +32,18 @@
 						></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item :label="$t('editor.cell.data_node.redis.name')">
+				<el-form-item :label="$t('editor.cell.data_node.redis.cacheKey')">
 					<MultiSelection
 						v-model="model.redisKey"
 						:options="redisKeyOptions"
-						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
+						:placeholder="$t('editor.cell.data_node.redis.cacheKey_placeholder')"
 					></MultiSelection>
 				</el-form-item>
-				<el-form-item :label="$t('editor.cell.data_node.redis.name')">
-					<el-input v-model="model.redisKeyPrefix"></el-input>
+				<el-form-item :label="$t('editor.cell.data_node.redis.prefixKey')">
+					<el-input
+						v-model="model.redisKeyPrefix"
+						:placeholder="$t('editor.cell.data_node.redis.prefixKey_placeholder')"
+					></el-input>
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
