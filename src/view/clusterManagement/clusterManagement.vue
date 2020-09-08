@@ -110,7 +110,7 @@
 								</el-row>
 								<el-row :gutter="20" class="data-list">
 									<el-col :span="8">
-										<span class="txt"><i class="icon iconfont iconAPI"></i>API SEVER</span>
+										<span class="txt"><i class="icon iconfont iconAPI"></i>API server</span>
 									</el-col>
 									<el-col :span="4">
 										<span :class="item.apiServer.status == 'stopped' ? 'red' : 'green'">{{
