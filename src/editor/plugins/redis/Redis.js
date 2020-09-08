@@ -42,7 +42,13 @@ export const redisConfig = {
 			 * @param data
 			 *
 			 */
-			validate: function() {
+			validate: function(data) {
+				data = data || this.getFormData();
+				let name = this.attr('label/text');
+				if (!data.connectionId)
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.redis.Redis_isNull')}`);
+				if (!data.redisKey)
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.redis.cacheKey_placeholder')}`);
 				return true;
 			},
 

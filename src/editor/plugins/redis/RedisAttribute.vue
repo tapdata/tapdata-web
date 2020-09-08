@@ -32,7 +32,12 @@
 						></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item :label="$t('editor.cell.data_node.redis.cacheKey')">
+				<el-form-item
+					:label="$t('editor.cell.data_node.redis.cacheKey')"
+					prop="redisKey"
+					:rules="rules"
+					required
+				>
 					<MultiSelection
 						v-model="model.redisKey"
 						:options="redisKeyOptions"
@@ -82,7 +87,14 @@ export default {
 					{
 						required: true,
 						trigger: 'blur',
-						message: this.$t('editor.cell.data_node.redis.chooseFileName')
+						message: this.$t('editor.cell.data_node.redis.Redis_isNull')
+					}
+				],
+				redisKey: [
+					{
+						required: true,
+						trigger: 'blur',
+						message: this.$t('editor.cell.data_node.redis.prefixKey_placeholder')
 					}
 				]
 			},
