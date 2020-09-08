@@ -151,7 +151,8 @@ export default {
 				table_prefix: '',
 				table_suffix: '',
 				keepSchema: true,
-				syncObjects: []
+				syncObjects: [],
+				includeTables: ['CAR_CUSTOMER']
 			},
 			databaseInfo: {
 				connection_type: '',
@@ -217,6 +218,7 @@ export default {
 				this.model.table_prefix = linkFormData.table_prefix;
 				this.model.table_suffix = linkFormData.table_suffix;
 				this.model.keepSchema = linkFormData.keepSchema;
+				this.model.includeTables = linkFormData.includeTables;
 				if (linkFormData.selectSourceDatabase && linkFormData.selectSourceDatabase.length) {
 					linkFormData.selectSourceDatabase.forEach(item => {
 						this.model.syncObjects.push({

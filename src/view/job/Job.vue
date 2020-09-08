@@ -725,7 +725,7 @@ export default {
 			let edgeCells = {};
 			let nodeCells = {};
 			cells.forEach(cell => {
-				if (cell.type === 'app.Link') edgeCells[cell.id] = cell;
+				if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') edgeCells[cell.id] = cell;
 				else nodeCells[cell.id] = cell;
 			});
 
@@ -751,7 +751,6 @@ export default {
 					editorData: JSON.stringify(graphData)
 				}
 			);
-
 			let stages = {};
 			Object.values(nodeCells).forEach(cell => {
 				let stage = (stages[cell.id] = Object.assign(
@@ -785,7 +784,7 @@ export default {
 				}
 			});
 			Object.values(edgeCells).forEach(cell => {
-				if (cell.type === 'app.Link') {
+				if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
 					let sourceId = cell.source.id;
 					let targetId = cell.target.id;
 					if (sourceId && stages[sourceId]) stages[sourceId].outputLanes.push(targetId);
@@ -939,7 +938,7 @@ export default {
 		save() {
 			let self = this,
 				data = this.getDataFlowData();
-
+			debugger;
 			if (data) {
 				if (data.id) delete data.status;
 
@@ -1221,6 +1220,10 @@ export default {
 				java_processor: 'app.FieldProcess'
 			};
 			if (data) {
+				let stageMap = {};
+				data.forEach(item => {
+					stageMap[item.id] = item;
+				});
 				data.map(v => {
 					let formData = _.cloneDeep(v);
 					delete formData.inputLanes;
@@ -1310,8 +1313,15 @@ export default {
 					if (v.outputLanes) {
 						v.outputLanes = v.outputLanes.filter(d => d);
 						v.outputLanes.map(k => {
+							let type = 'app.Link';
+							if (v.type === 'database' && stageMap[k].type === 'database') {
+								type = 'app.databaseLink';
+							} else {
+								type = 'app.Link';
+							}
+
 							let node = {
-								type: 'app.Link',
+								type: type,
 								source: {
 									id: v.id
 								},

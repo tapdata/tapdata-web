@@ -24,6 +24,16 @@ export const FORM_DATA_KEY = 'form_data',
 		// fieldProcesses: [],
 		arrayUniqueKey: ''
 	},
+	DATABASE_LINK_DATA = {
+		table_prefix: '',
+		table_suffix: '',
+		keepSchema: true,
+		dropTable: false,
+		includeTables: [],
+		sourceData: [],
+		selectSourceArr: [],
+		selectSourceDatabase: []
+	},
 	DEFAULT_SETTING = {
 		sync_type: 'initial_sync+cdc',
 		readBatchSize: 1000,
