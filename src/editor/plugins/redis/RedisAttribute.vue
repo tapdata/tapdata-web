@@ -148,10 +148,7 @@ export default {
 					let redisKey = [];
 					if (this.model.redisKey) {
 						this.model.redisKey = this.model.redisKey.split(','); //转化为数组
-						this.model.redisKey.map(item => {
-							let sameKey = this.redisKeyOptions.filter(f => f === item);
-							redisKey.push(sameKey[0]);
-						});
+						redisKey = this.model.redisKey.filter(it => this.redisKeyOptions.includes(it));
 					}
 					if (redisKey.length > 0) {
 						redisKey = redisKey.join(',');
