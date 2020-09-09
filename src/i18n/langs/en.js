@@ -189,7 +189,7 @@ const en = {
 		stopInitial_syncMessage:
 			'Pausing job while it is in the initial sync stage may cause it to run from the beginning, are you sure you want to pause?',
 		stopMessage: 'Are you sure to pause the mission?',
-		cancleReset: 'cancel reset',
+		cancelReset: 'cancel reset',
 		resetOk: 'Reset success',
 		resetFailed: 'Reset Failed',
 		notRest: 'Please select the correct data to reset',
@@ -1022,7 +1022,11 @@ const en = {
 				fullscreen: {
 					tip: 'Toggle Fullscreen Mode'
 				}
-			}
+			},
+			nodeLoadSchemaDiaLog:
+				'If the data source is updated, this operation will update the model of this node. Do you want to continue?',
+			allNodeLoadSchemaDiaLog:
+				'If the data source is updated, this operation will update the model of each node. Do you want to continue?'
 		},
 		preview: {
 			stage: 'Stage',

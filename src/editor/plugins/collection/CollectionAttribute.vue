@@ -224,6 +224,19 @@
 		</div>
 		<CreateTable v-if="addtableFalg" :dialog="dialogData" @handleTable="getAddTableName"></CreateTable>
 		<relatedTasks :taskData="taskData" v-if="disabled"></relatedTasks>
+		<el-dialog
+			:title="$t('message.prompt')"
+			:visible.sync="dialogVisible"
+			:close-on-click-modal="false"
+			width="30%"
+			:before-close="handleClose"
+		>
+			<span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="dialogVisible = false">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -362,6 +375,7 @@ export default {
 			copyConnectionId: '',
 			tableNameId: '',
 
+			dialogVisible: false,
 			logsFlag: false,
 			taskData: {
 				id: '',
@@ -733,8 +747,13 @@ export default {
 			editorMonitor.goBackMontior();
 		},
 
-		// 更新模型
+		// 更新模型点击弹窗
 		hanlderLoadSchema() {
+			this.dialogVisible = true;
+		},
+
+		// 确定更新模型弹窗
+		confirmDialog() {
 			let params = {
 				type: 'reloadSchema',
 				data: {
@@ -768,6 +787,7 @@ export default {
 					this.defaultSchema = schema;
 				});
 			});
+			this.dialogVisible = false;
 		}
 	}
 };

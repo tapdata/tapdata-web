@@ -153,7 +153,6 @@ const cn = {
 		syncGover: '同步治理',
 		screen: '屏幕',
 		delete: '删除',
-		cancle: '取 消',
 		cancel: '取 消',
 		confirm: '确 定',
 		placeholderMonServer: '请输入监控的服务名称',
@@ -191,7 +190,7 @@ const cn = {
 		forceStoppingMessage: '强制停止将立即中断数据传输，是否继续执行?',
 		stopInitial_syncMessage: '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?',
 		stopMessage: '确定要暂停任务吗?',
-		cancleReset: '已取消重置',
+		cancelReset: '已取消重置',
 		resetOk: '重置成功',
 		resetFailed: '重置失败',
 		notRest: '请选择正确的数据进行重置',
@@ -1015,7 +1014,9 @@ const cn = {
 				fullscreen: {
 					tip: '切换全屏'
 				}
-			}
+			},
+			nodeLoadSchemaDiaLog: '如果数据源有更新，此操作会更此节点的模型，是否继续?',
+			allNodeLoadSchemaDiaLog: '如果数据源有更新，此操作会更新各节点的模型，是否继续?'
 		},
 		preview: {
 			stage: '节点',

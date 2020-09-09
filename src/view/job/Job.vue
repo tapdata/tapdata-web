@@ -230,6 +230,18 @@
 				<el-button size="mini" @click="loadData">{{ $t('dataFlow.stystemLgnoreAll') }}</el-button>
 			</div>
 		</el-dialog>
+		<el-dialog
+			:title="$t('message.prompt')"
+			:visible.sync="reloadSchemaDialog"
+			:close-on-click-modal="false"
+			width="30%"
+		>
+			<span>{{ $t('editor.ui.allNodeLoadSchemaDiaLog') }}</span>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="reloadSchemaDialog = false">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="confirmReloadSchemaDialog">{{ $t('message.confirm') }}</el-button>
+			</span>
+		</el-dialog>
 		<AddBtnTip v-if="isEditable()"></AddBtnTip>
 	</div>
 </template>
@@ -258,6 +270,7 @@ export default {
 	components: { AddBtnTip, simpleScene, newDataFlow },
 	data() {
 		return {
+			reloadSchemaDialog: false,
 			dialogFormVisible: false,
 			form: {
 				taskName: '',
@@ -1166,7 +1179,15 @@ export default {
 		 * reload shcema
 		 */
 		reloadSchema() {
+			this.reloadSchemaDialog = true;
+		},
+		/**
+		 * confirm dialog reload shcema
+		 */
+
+		confirmReloadSchemaDialog() {
 			this.editor.reloadSchema();
+			this.reloadSchemaDialog = false;
 		},
 
 		/**

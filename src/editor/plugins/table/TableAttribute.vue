@@ -203,6 +203,19 @@
 		</div>
 		<CreateTable v-if="addtableFalg" :dialog="dialogData" @handleTable="getAddTableName"></CreateTable>
 		<relatedTasks :taskData="taskData" v-if="disabled" v-loading="databaseSelectConfig.loading"></relatedTasks>
+		<el-dialog
+			:title="$t('message.prompt')"
+			:visible.sync="dialogVisible"
+			:close-on-click-modal="false"
+			width="30%"
+			:before-close="handleClose"
+		>
+			<span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="dialogVisible = false">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -288,6 +301,7 @@ export default {
 			copyConnectionId: '',
 			tableNameId: '',
 
+			dialogVisible: false,
 			taskData: {
 				id: '',
 				tableName: ''
@@ -646,6 +660,11 @@ export default {
 
 		// 更新模型
 		hanlderLoadSchema() {
+			this.dialogVisible = true;
+		},
+
+		// 确定更新模型弹窗
+		confirmDialog() {
 			let params = {
 				type: 'reloadSchema',
 				data: {
@@ -680,6 +699,7 @@ export default {
 					this.mergedSchema = schema;
 				});
 			});
+			this.dialogVisible = false;
 		}
 	}
 };

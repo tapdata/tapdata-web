@@ -188,7 +188,7 @@ const tc = {
 		forceStoppingMessage: '強制停止將立即中斷數據傳輸，是否繼續執行?',
 		stopInitial_syncMessage: '初始化類型的任務暫停後如果再次啟動，任務會從頭開始同步，確定暫停？',
 		stopMessage: '確定要暫停任務嗎?',
-		cancleReset: '已取消重置',
+		cancelReset: '已取消重置',
 		resetOk: '重置成功',
 		resetFailed: '重置失敗',
 		notRest: '請選擇正確的數據進行重置',
@@ -1010,7 +1010,9 @@ const tc = {
 				fullscreen: {
 					tip: '切換全屏'
 				}
-			}
+			},
+			nodeLoadSchemaDiaLog: '如果數據源有更新，此操作會更此例程的模型，是否繼續？',
+			allNodeLoadSchemaDiaLog: '如果數據源有更新，此操作會更新各例程的模型，是否繼續？'
 		},
 		preview: {
 			stage: '節點',
