@@ -1,7 +1,13 @@
 <template>
 	<div>
 		<div class="item-head">
-			<span>{{ $t('notification.notice') }}</span>
+			<span>
+				<router-link to="/setting">
+					<span style="color: #48B6E2">
+						{{ $t('notification.setting') }}
+					</span>
+				</router-link>
+			</span>
 			<span class="item-head-text">
 				<router-link to="/notification">
 					<span style="color: #48B6E2">
