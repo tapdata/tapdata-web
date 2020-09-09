@@ -118,7 +118,7 @@ const store = new Vuex.Store({
 		},
 		dataVerification: {
 			keyword: '',
-			compareMethod: '',
+			inspectMethod: '',
 			mode: '',
 			active: ''
 		}

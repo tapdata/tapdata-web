@@ -17,7 +17,7 @@
 					<div class="panel-container" style="padding: 10px 20px;">
 						<div class="setting-item">
 							<label class="item-label">校验类型</label>
-							<el-radio-group v-model="form.compare_method" style="margin-left: 10px;">
+							<el-radio-group v-model="form.inspectMethod" style="margin-left: 10px;">
 								<el-radio label="row_count">行数校验</el-radio>
 								<el-radio label="field">内容校验</el-radio>
 							</el-radio-group>
@@ -130,7 +130,7 @@
 										></el-option>
 									</el-select>
 								</div>
-								<div class="setting-item" v-show="form.compare_method === 'field'">
+								<div class="setting-item" v-show="form.inspectMethod === 'field'">
 									<label class="item-label is-required">索引字段</label>
 									<el-select
 										class="item-select"
@@ -196,10 +196,10 @@ export default {
 			form: {
 				flowId: '',
 				mode: 'manual',
-				compare_method: 'row_count',
+				inspectMethod: 'row_count',
 				timing: {
 					intervals: 24 * 60,
-					intervals_unit: 'minute'
+					intervalsUnit: 'minute'
 				},
 				limit: {},
 				timeType: 'now',
