@@ -2,15 +2,14 @@
 	<section class="data-flow-wrap" v-loading="restLoading">
 		<div class="panel-main">
 			<div class="tip">校验历史</div>
-			<div class="title">POSS_SOURCE UAT BATCH1</div>
-			<div class="text">内容校验 ( 重复执行 )</div>
-			<div class="task-list" v-loading="restLoading">
+			<div class="main main-border">
+				<div class="title">POSS_SOURCE UAT BATCH1</div>
+				<div class="text">内容校验 ( 重复执行 )</div>
 				<el-table
 					v-loading="loading"
 					:element-loading-text="$t('dataFlow.dataLoading')"
 					:data="tableData"
 					height="100%"
-					style="border: 1px solid #dedee4;border-top: none;"
 					class="dv-table"
 					row-key="id"
 					:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
@@ -82,36 +81,50 @@
 						</template>
 					</el-table-column>
 				</el-table>
-				<el-pagination
-					class="pagination"
-					background
-					layout="prev, pager, next,sizes"
-					:page-sizes="[20, 30, 50, 100]"
-					:page-size="pagesize"
-					:total="totalNum"
-					:current-page.sync="currentPage"
-					@current-change="handleCurrentChange"
-					@size-change="handleSizeChange"
-				>
-				</el-pagination>
 			</div>
+			<el-pagination
+				class="pagination"
+				background
+				layout="prev, pager, next,sizes"
+				:page-sizes="[20, 30, 50, 100]"
+				:page-size="pagesize"
+				:total="totalNum"
+				:current-page.sync="currentPage"
+				@current-change="handleCurrentChange"
+				@size-change="handleSizeChange"
+			>
+			</el-pagination>
 		</div>
 		<div class="panel-main">
-			<div class="tip">校验详情</div>
-			<el-table :data="tableData" border style="width: 100%">
-				<el-table-column prop="date" label="日期" width="180"> </el-table-column>
-				<el-table-column prop="name" label="姓名" width="180"> </el-table-column>
-				<el-table-column prop="address" label="地址"> </el-table-column>
-			</el-table>
-			<div class="error-band">
-				<i class="iconfont icon-warning-circle"></i>
-				<span>ERROR XXXXXXXXXXXXXXXXXXXXXXXXXXXX</span>
+			<div class="tip">校验历史</div>
+			<div class="main">
+				<el-table :data="tableData" border>
+					<el-table-column prop="date" label="日期" width="180"> </el-table-column>
+					<el-table-column prop="name" label="姓名" width="180"> </el-table-column>
+					<el-table-column prop="address" label="地址"> </el-table-column>
+				</el-table>
+				<div class="error-band">
+					<i class="iconfont icon-warning-circle"></i>
+					<span>ERROR XXXXXXXXXXXXXXXXXXXXXXXXXXXX</span>
+				</div>
+				<el-table :data="tableData" border>
+					<el-table-column prop="date" label="日期" width="180"> </el-table-column>
+					<el-table-column prop="name" label="姓名" width="180"> </el-table-column>
+					<el-table-column prop="address" label="地址"> </el-table-column>
+				</el-table>
 			</div>
-			<el-table :data="tableData" border style="width: 100%">
-				<el-table-column prop="date" label="日期" width="180"> </el-table-column>
-				<el-table-column prop="name" label="姓名" width="180"> </el-table-column>
-				<el-table-column prop="address" label="地址"> </el-table-column>
-			</el-table>
+			<el-pagination
+				class="pagination"
+				background
+				layout="prev, pager, next,sizes"
+				:page-sizes="[20, 30, 50, 100]"
+				:page-size="pagesize"
+				:total="totalNum"
+				:current-page.sync="currentPage"
+				@current-change="handleCurrentChange"
+				@size-change="handleSizeChange"
+			>
+			</el-pagination>
 		</div>
 	</section>
 </template>
@@ -153,23 +166,6 @@ export default {
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
-	.title {
-		height: 15px;
-		font-size: 14px;
-		font-weight: bold;
-		color: #48b6e2;
-	}
-	.text {
-		height: 13px;
-		font-size: 12px;
-		font-weight: 400;
-		color: #666666;
-	}
-	.panel-left {
-		width: 200px;
-		height: 100%;
-		box-sizing: border-box;
-	}
 	.panel-main {
 		flex: 1;
 		display: flex;
@@ -180,77 +176,26 @@ export default {
 			background: #f5f5f5;
 			border: 1px solid #dedee4;
 		}
+		.main {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+			.dv-table {
+				padding: 10px;
+			}
+			.error-band {
+			}
+		}
+		.main-border {
+			border-right: 1px solid #dedee4;
+		}
 		.pagination {
 			height: 40px;
 			line-height: 40px;
+			border-top: 1px solid #dedee4;
+			border-right: 1px solid #dedee4;
 		}
 	}
-}
-.task-list {
-	flex: 1;
-	overflow: hidden;
-	padding: 0 10px 10px 10px;
-	display: flex;
-	flex-direction: column;
-	font-size: 14px;
-}
-.error-band {
-	height: 54px;
-	background: #fdf6ec;
-	color: #e6a23c;
-	border: 1px solid #f8e2c0;
-	margin: 10px 0;
-	padding: 10px;
-}
-
-.task-list-menu-cion {
-	font-size: 20px;
-}
-
-.task-list-menu {
-	margin-bottom: 10px;
-}
-
-.task-list-icon {
-	font-size: 18px;
-}
-.delete-icon {
-	color: #606266 !important;
-}
-
-.task-list-time-picker {
-	width: 240px;
-}
-
-.task-list-menu-left {
-	float: left;
-}
-
-.task-list-menu-right {
-	float: right;
-	margin-right: 20px;
-	/*margin-top: 10px;*/
-	margin-bottom: 10px;
-}
-
-.el-table .sort-caret {
-	border: 3px solid transparent !important;
-}
-
-.task-list .el-pagination {
-	width: 100%;
-	padding-top: 10px;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-	text-align: right;
-	overflow: hidden;
-	z-index: 999;
-}
-
-.back-btn-icon {
-	color: #666;
-}
-.add-btn-icon {
-	color: #fff;
 }
 </style>
