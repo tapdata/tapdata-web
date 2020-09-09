@@ -12,6 +12,7 @@
 					height="100%"
 					class="dv-table"
 					row-key="id"
+					border
 					:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
 					@sort-change="handleSortTable"
 					@selection-change="handleSelectionChange"
@@ -96,9 +97,9 @@
 			</el-pagination>
 		</div>
 		<div class="panel-main">
-			<div class="tip">校验历史</div>
+			<div class="tip">校验详情</div>
 			<div class="main">
-				<el-table :data="tableData" border>
+				<el-table :data="tableData" border class="dv-table">
 					<el-table-column prop="date" label="日期" width="180"> </el-table-column>
 					<el-table-column prop="name" label="姓名" width="180"> </el-table-column>
 					<el-table-column prop="address" label="地址"> </el-table-column>
@@ -107,7 +108,7 @@
 					<i class="iconfont icon-warning-circle"></i>
 					<span>ERROR XXXXXXXXXXXXXXXXXXXXXXXXXXXX</span>
 				</div>
-				<el-table :data="tableData" border>
+				<el-table :data="tableData" border class="dv-table">
 					<el-table-column prop="date" label="日期" width="180"> </el-table-column>
 					<el-table-column prop="name" label="姓名" width="180"> </el-table-column>
 					<el-table-column prop="address" label="地址"> </el-table-column>
@@ -130,6 +131,8 @@
 </template>
 
 <script>
+import factory from '../../api/factory';
+const dataVerify = factory('dataVerify');
 export default {
 	data() {
 		return {
@@ -156,11 +159,28 @@ export default {
 				}
 			]
 		};
+	},
+	created() {
+		this.getData();
+	},
+	methods: {
+		getData() {
+			dataVerify.get().then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.listData = res.data;
+					}
+				} else {
+					this.loading = false;
+				}
+			});
+		}
 	}
 };
 </script>
 
 <style lang="less" scoped>
+@margin: 10px;
 .data-flow-wrap {
 	display: flex;
 	width: 100%;
@@ -173,8 +193,11 @@ export default {
 		overflow: hidden;
 		.tip {
 			height: 30px;
+			font-size: 12px;
 			background: #f5f5f5;
 			border: 1px solid #dedee4;
+			padding-left: @margin;
+			line-height: 30px;
 		}
 		.main {
 			flex: 1;
@@ -182,19 +205,36 @@ export default {
 			flex-direction: column;
 			overflow: hidden;
 			.dv-table {
-				padding: 10px;
+				margin: @margin;
+				width: 97.5%;
 			}
 			.error-band {
+				background: #fdf6ec;
+				border: 1px solid #f8e2c0;
+				color: #e6a23c;
+				margin: @margin;
+				padding-left: @margin;
+			}
+			.title {
+				font-weight: bold;
+				color: #48b6e2;
+				padding-left: @margin;
+				margin: 20px 0 0 0;
+			}
+			.text {
+				color: #666;
+				font-size: 12px;
+				margin-top: @margin;
+				padding-left: @margin;
 			}
 		}
 		.main-border {
 			border-right: 1px solid #dedee4;
 		}
 		.pagination {
-			height: 40px;
-			line-height: 40px;
 			border-top: 1px solid #dedee4;
 			border-right: 1px solid #dedee4;
+			padding: 10px 5px;
 		}
 	}
 }
