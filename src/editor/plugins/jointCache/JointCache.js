@@ -28,7 +28,7 @@ export const jointCacheConfig = {
 			},
 			[FORM_DATA_KEY]: {
 				type: 'custom_processor',
-				scripts: ''
+				script: ''
 			}
 		},
 		prototypeProperties: {

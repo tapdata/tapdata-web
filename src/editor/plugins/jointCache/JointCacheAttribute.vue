@@ -54,7 +54,7 @@ export default {
 				joinKey: '',
 				type: 'custom_processor',
 				removeFields: [],
-				scripts: ''
+				script: ''
 			},
 			config: {
 				items: [
@@ -211,7 +211,7 @@ export default {
 
 			editorMonitor = vueAdapter.editor;
 		},
-		getScripts() {
+		getScript() {
 			let { cacheId, joinSettings, joinKey, removeFields } = this.model;
 			if (!cacheId || !joinSettings.length || joinSettings.some(it => !it.sourceKey)) {
 				return '';
@@ -226,8 +226,8 @@ export default {
 				})
 				.join('');
 			let joinPath = joinKey.trim();
-			let scripts = `
-				function customProcess(record) {
+			let script = `
+				function process(record) {
 					var isCdc = context.syncType == 'cdc';
 					var cachedRow = CacheService.getAndSetCache( '${cacheCell.name}', isCdc, ${sourceFieldStr} );
 					if (cachedRow) {
@@ -242,10 +242,10 @@ export default {
 					return record;
 				}
 			`;
-			return scripts;
+			return script;
 		},
 		getData() {
-			this.model.scripts = this.getScripts();
+			this.model.script = this.getScript();
 			return _.cloneDeep(this.model);
 		},
 
