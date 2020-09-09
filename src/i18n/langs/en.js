@@ -948,7 +948,7 @@ const en = {
 					keepSchema: 'Keep the existing schema',
 					removeSchema: 'Remove the original schema'
 				},
-				migrationSetting: 'Migration object settings',
+				migrationSetting: 'Copy settings',
 				dataProcessing: 'Existing data processing',
 				prefixAndSuffix: 'Add prefix and suffix',
 				keepExistingData: 'Keep existing data',

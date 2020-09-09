@@ -935,12 +935,13 @@ const cn = {
 					merge_embed: '更新内嵌数组'
 				},
 				existingSchema: {
-					label: '已存在schema的处理',
-					keepSchema: '保持已存在的schema',
-					removeSchema: '删除原有的schema'
+					label: '已存在的结构和数据的处理',
+					keepSchema: '保留已存在的结构和数据',
+					keepExistedData: '保留已存在的结构，删除数据',
+					removeSchema: '删除原有的结构和数据'
 				},
 
-				migrationSetting: '迁移对象设置',
+				migrationSetting: '复制对象设置',
 				dataProcessing: '已有数据处理',
 				prefixAndSuffix: '加前后缀',
 				keepExistingData: '保持已存在数据',

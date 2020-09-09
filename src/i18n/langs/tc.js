@@ -936,7 +936,7 @@ const tc = {
 					keepSchema: '保持已存在的schema',
 					removeSchema: '刪除原有的schema'
 				},
-				migrationSetting: '遷移對象設置',
+				migrationSetting: '複製對象設置',
 				dataProcessing: '已有數據處理',
 				prefixAndSuffix: '加前後綴',
 				keepExistingData: '保持已存在數據',
