@@ -259,6 +259,10 @@ const router = new Router({
 });
 
 let usersModel = factor('users');
+router.afterEach((to, from, next) => {
+	Loading.service({ fullscreen: true }).close();
+	next();
+});
 router.beforeEach(async (to, from, next) => {
 	if (to.meta.title && window._TAPDATA_OPTIONS_.platform === 'DAAS') {
 		document.title = to.meta.title;
