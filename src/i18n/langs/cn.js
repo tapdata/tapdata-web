@@ -646,6 +646,16 @@ const cn = {
 					none_pk: '主键必填.',
 					dummy_isNull: 'Dummy不能为空'
 				},
+				redis: {
+					name: 'Redis',
+					tip: 'Redis节点',
+					chooseRedisName: '请选择Redis',
+					Redis_isNull: 'Redis不能为空',
+					prefixKey: '缓存键前缀',
+					prefixKey_placeholder: '请输入缓存键前缀',
+					cacheKey: '设置缓存键 ',
+					cacheKey_placeholder: '请输入缓存键'
+				},
 				api: {
 					name: 'API',
 					tip: 'api节点',
@@ -881,6 +891,35 @@ const cn = {
 							or: '或',
 							regexp: '正则表达式',
 							group: '条件分组'
+						}
+					}
+				},
+				jointCache: {
+					name: '关联缓存',
+					tip: '关联缓存节点',
+					form: {
+						name: {
+							label: '节点名称',
+							placeholder: '请输入节点名称',
+							none: '节点名称必填'
+						},
+						cacheId: {
+							label: '对应缓存节点',
+							placeholder: '请选择本任务内内存缓存节点',
+							none: '请选择本任务内内存缓存节点'
+						},
+						joinSettings: {
+							label: '关联设置',
+							cacheKey: '缓存表主键',
+							sourceKey: {
+								label: '源表关联键',
+								placeholder: '请选择关联字段'
+							},
+							none: '请选择关联字段'
+						},
+						joinKey: {
+							label: '写入路径',
+							placeholder: '请选择或创建写入路径字段'
 						}
 					}
 				}

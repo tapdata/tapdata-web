@@ -64,6 +64,7 @@ export default {
 		display: flex;
 	}
 	.fb-radio-option {
+		max-width: 50%;
 		flex: 1;
 		margin-right: 10px;
 		&:last-child {

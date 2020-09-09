@@ -4,29 +4,27 @@
  * @description
  */
 import { options } from '../../lib/rappid/config';
-import CollectionAttribute from './CollectionAttribute';
-import { FORM_DATA_KEY } from '../../constants';
 import i18n from '../../../i18n/i18n';
-import log from '../../../log';
+import { FORM_DATA_KEY } from '../../constants';
+import RedisAttribute from './RedisAttribute';
 
-export const collectionConfig = {
-	type: 'app.Collection',
+export const redisConfig = {
+	type: 'app.Redis',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/o-collection.svg'
+					xlinkHref: 'static/editor/o-redis.svg'
 				},
 				label: {
-					text: i18n.t('editor.cell.data_node.collection.name')
+					text: i18n.t('editor.cell.data_node.redis.name')
 				}
 			},
 			[FORM_DATA_KEY]: {
 				connectionId: '',
-				name: '',
-				freeTransform: false,
-				type: 'collection'
+				type: 'redis'
+				// primaryKeys: ''
 			}
 		},
 		prototypeProperties: {
@@ -39,7 +37,6 @@ export const collectionConfig = {
 			isDataNode() {
 				return true;
 			},
-
 			/**
 			 * validate user-filled data
 			 * @param data
@@ -48,63 +45,11 @@ export const collectionConfig = {
 			validate: function(data) {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
-				if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
 				if (!data.connectionId)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_database')}`);
-				if (!data.tableName)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_collection')}`);
-				// if (!data.primaryKeys)
-				// 	throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_pk')}`);
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.redis.Redis_isNull')}`);
+				if (!data.redisKey)
+					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.redis.cacheKey_placeholder')}`);
 				return true;
-			},
-			mergeOutputSchema(outputSchema) {
-				let data = this.getFormData();
-				log('collection.mergeOutputSchema', data, outputSchema);
-				if (!outputSchema || !data) return outputSchema;
-				let fieldFilter = data.fieldFilter ? data.fieldFilter.split(',') : [];
-				if (fieldFilter.length === 0) return outputSchema;
-				let defaultFields = outputSchema.fields;
-				let newSchema = data.fieldFilterType === 'retainedField' ? [] : defaultFields;
-				fieldFilter.forEach(filedName => {
-					let index = defaultFields.findIndex(f => filedName === f.field_name);
-					if (index >= 0) {
-						let field = defaultFields[index];
-						if (data.fieldFilterType === 'retainedField') {
-							newSchema.push(field);
-							this.checkParent(defaultFields, field, newSchema);
-						} else if (data.fieldFilterType === 'deleteField') {
-							newSchema.splice(index, 1);
-							this.checkChildren(fieldFilter, newSchema, field);
-						}
-					}
-				});
-				outputSchema.fields = newSchema;
-				log('collection.mergeOutputSchema', outputSchema);
-				return outputSchema;
-			},
-
-			checkParent(fields, field, schema) {
-				if (field.parent && !schema.find(f => f.field_name === field.parent)) {
-					let parentField = fields.find(f => f.field_name === field.parent);
-					schema.push(parentField);
-					this.checkParent(fields, parentField, schema);
-				}
-			},
-
-			checkChildren(filter, schema, field) {
-				let childrenFields = schema.filter(f => f.parent === field.field_name);
-				if (childrenFields && childrenFields.length) {
-					childrenFields.forEach(cf => {
-						if (!filter.includes(cf.field_name)) {
-							let index = schema.findIndex(f => f.field_name === cf.field_name);
-							if (index >= 0) {
-								let childField = schema[index];
-								schema.splice(index, 1);
-								this.checkChildren(filter, schema, childField);
-							}
-						}
-					});
-				}
 			},
 
 			/**
@@ -112,8 +57,8 @@ export const collectionConfig = {
 			 * @param targetCell
 			 * @return {boolean}
 			 */
-			allowTarget(targetCell) {
-				return !['app.Database'].includes(targetCell.get('type'));
+			allowTarget() {
+				return false;
 			},
 
 			/**
@@ -122,7 +67,7 @@ export const collectionConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-				return !['app.Database'].includes(sourceCell.get('type'));
+				return ['app.Table', 'app.Collection'].includes(sourceCell.get('type'));
 			}
 		}
 		// staticProperties: {}
@@ -245,7 +190,7 @@ export const collectionConfig = {
 		size: { width: 5, height: 4 },
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.data_node.collection.tip'),
+				dataTooltip: i18n.t('editor.cell.data_node.redis.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -258,14 +203,14 @@ export const collectionConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/collection2.svg',
+				xlinkHref: 'static/editor/redis.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.data_node.collection.name'),
+				text: i18n.t('editor.cell.data_node.redis.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -285,6 +230,6 @@ export const collectionConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: CollectionAttribute
+		component: RedisAttribute
 	}
 };

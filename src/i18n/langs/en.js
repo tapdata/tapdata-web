@@ -651,6 +651,16 @@ const en = {
 					none_pk: 'Primary key is required.',
 					dummy_isNull: 'Dummy cannot be empty'
 				},
+				redis: {
+					name: 'Redis',
+					tip: 'Redis Node',
+					chooseRedisName: 'Please select Redis',
+					Redis_isNull: 'Redis cannot be empty',
+					prefixKey: 'Cache key prefix',
+					prefixKey_placeholder: 'Please enter the cache key prefix',
+					cacheKey: 'Select cache key',
+					cacheKey_placeholder: 'Select source table field as cache key'
+				},
 				api: {
 					name: 'API',
 					tip: 'api node',
@@ -890,6 +900,35 @@ const en = {
 							or: 'Or',
 							regexp: 'Regular expression',
 							group: 'Conditional grouping'
+						}
+					}
+				},
+				jointCache: {
+					name: 'Joint Cache',
+					tip: 'Joint Cache Node',
+					form: {
+						name: {
+							label: 'Node name',
+							placeholder: 'Please input you node name.',
+							none: 'Node name is required.'
+						},
+						cacheId: {
+							label: 'Joint cache node',
+							placeholder: 'Choose joint cache node in this job.',
+							none: 'Choose joint cache node in this job.'
+						},
+						joinSettings: {
+							label: 'Joint setting',
+							cacheKey: 'Cache node primary key',
+							sourceKey: {
+								label: 'Source joint field',
+								placeholder: 'Choose joint field.'
+							},
+							none: 'Choose joint field.'
+						},
+						joinKey: {
+							label: 'Cache model joint target path',
+							placeholder: 'Enter or create target path field.'
 						}
 					}
 				}

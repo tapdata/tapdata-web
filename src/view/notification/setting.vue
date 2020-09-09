@@ -15,14 +15,22 @@
 						<li v-for="(item, index) in runNotification" :key="index">
 							<span class="label">{{ notificationMAP[item.label] }}</span>
 							<el-checkbox class="notice" v-model="item.notice">{{
-								$t('notification.systemSetting')
+								$t('notification.systemNotice')
 							}}</el-checkbox>
 							<el-checkbox class="email" v-model="item.email">{{
 								$t('notification.emailNotice')
 							}}</el-checkbox>
-							<span class="sort-label" v-if="item.lagTime">{{ notificationMAP[item.lagTime] }}</span>
-							<span v-if="item.lagTimeInterval">
-								<el-input v-model="item.lagTimeInterval" class="item-input" size="mini">
+							<span class="sort-label" v-if="item.lagTime && item.email">{{
+								notificationMAP[item.lagTime]
+							}}</span>
+							<span v-if="item.lagTimeInterval && item.email">
+								<el-input
+									v-model="item.lagTimeInterval"
+									class="item-input"
+									size="mini"
+									onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+									onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+								>
 									<el-select
 										v-model="item.lagTimeUtil"
 										slot="append"
@@ -34,11 +42,17 @@
 									</el-select>
 								</el-input>
 							</span>
-							<span class="sort-label" v-if="item.noticeInterval">{{
+							<span class="sort-label" v-if="item.noticeInterval && item.email">{{
 								notificationMAP[item.noticeInterval]
 							}}</span>
-							<span v-if="item.noticeIntervalInterval">
-								<el-input v-model="item.noticeIntervalInterval" class="item-input" size="mini">
+							<span v-if="item.noticeIntervalInterval && item.email">
+								<el-input
+									v-model="item.noticeIntervalInterval"
+									class="item-input"
+									size="mini"
+									onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+									onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+								>
 									<el-select
 										v-model="item.noticeIntervalUtil"
 										slot="append"
@@ -50,7 +64,7 @@
 									</el-select>
 								</el-input>
 							</span>
-							<span v-if="item.Interval">
+							<span v-if="item.Interval && item.email">
 								<el-input v-model="item.Interval" class="item-input" size="mini">
 									<el-select
 										v-model="item.util"
@@ -72,7 +86,7 @@
 						<li v-for="(item, index) in systemNotification" :key="index">
 							<span class="label">{{ notificationMAP[item.label] }}</span>
 							<el-checkbox class="notice" v-model="item.notice">{{
-								$t('notification.systemSetting')
+								$t('notification.systemNotice')
 							}}</el-checkbox>
 							<el-checkbox class="email" v-model="item.email">{{
 								$t('notification.emailNotice')
@@ -86,7 +100,7 @@
 						<li v-for="(item, index) in agentNotification" :key="index">
 							<span class="label">{{ notificationMAP[item.label] }}</span>
 							<el-checkbox class="notice" v-model="item.notice">{{
-								$t('notification.systemSetting')
+								$t('notification.systemNotice')
 							}}</el-checkbox>
 							<el-checkbox class="email" v-model="item.email">{{
 								$t('notification.emailNotice')
@@ -161,6 +175,7 @@ export default {
 			Setting.update(where, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					this.loading = false;
+					this.$message.success('submit OK');
 				} else {
 					this.loading = false;
 				}
@@ -259,15 +274,15 @@ export default {
 				}
 				.sort-label {
 					display: inline-block;
-					width: 80px;
+					width: 100px;
 					margin-left: 40px;
 				}
 				.item-input {
-					width: 140px;
+					width: 200px;
 				}
 			}
 			.input-with-select {
-				width: 80px;
+				width: 90px;
 			}
 		}
 	}

@@ -4,7 +4,7 @@ export default {
 	name: 'FbSelect',
 	mixins: [mixins],
 	props: {
-		value: [String, Number],
+		value: [String, Number, Array],
 		config: {
 			require: true,
 			type: Object
@@ -39,14 +39,15 @@ export default {
 						placeholder: config.placeholder,
 						size: config.size,
 						filterable: config.filterable,
-						filterMethod: this.filterMethod,
+						filterMethod: config.filterable ? this.filterMethod : null,
 						allowCreate: config.allowCreate,
 						defaultFirstOption: config.defaultFirstOption,
-						clearable: config.clearable
+						clearable: config.clearable,
+						multiple: config.multiple
 					},
-					on: Object.assign(this.on, config.on, {
+					on: Object.assign(this.on, {
 						'visible-change'(value) {
-							if (value) {
+							if (value && config.filterable) {
 								self.filterMethod('');
 							}
 						}
@@ -99,6 +100,9 @@ export default {
 .fb-select {
 	position: relative;
 	width: 100%;
+	.el-select {
+		display: block;
+	}
 	.fb-select-mask {
 		position: absolute;
 		top: 0;
