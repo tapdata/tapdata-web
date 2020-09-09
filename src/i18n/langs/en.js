@@ -651,6 +651,16 @@ const en = {
 					none_pk: 'Primary key is required.',
 					dummy_isNull: 'Dummy cannot be empty'
 				},
+				redis: {
+					name: 'Redis',
+					tip: 'Redis Node',
+					chooseRedisName: 'Please select Redis',
+					Redis_isNull: 'Redis cannot be empty',
+					prefixKey: 'Cache key prefix',
+					prefixKey_placeholder: 'Please enter the cache key prefix',
+					cacheKey: 'Select cache key',
+					cacheKey_placeholder: 'Select source table field as cache key'
+				},
 				api: {
 					name: 'API',
 					tip: 'api node',
