@@ -175,6 +175,7 @@ export default {
 			Setting.update(where, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					this.loading = false;
+					this.$message.success('submit OK');
 				} else {
 					this.loading = false;
 				}
