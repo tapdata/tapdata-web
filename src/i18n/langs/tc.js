@@ -665,6 +665,16 @@ const tc = {
 					publishApi_path: 'API路徑不為空',
 					variable_name: '只能包含字母，數字，下劃線和美元符號，和數字不能開頭'
 				},
+				redis: {
+					name: 'Redis',
+					tip: 'Redis節點',
+					chooseRedisName: '請選擇Redis',
+					Redis_isNull: 'Redis不能為空',
+					prefixKey: '緩存鍵前綴',
+					prefixKey_placeholder: '請輸入緩存鍵前綴',
+					cacheKey: '設置緩存鍵 ',
+					cacheKey_placeholder: '請輸入緩存鍵前綴 '
+				},
 				es: {
 					name: 'ES',
 					tip: 'Elastic search節點',
