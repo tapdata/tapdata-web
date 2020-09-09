@@ -205,10 +205,6 @@ export default {
 		}
 	},
 
-	created() {
-		// this.renderSchema();
-	},
-
 	methods: {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
@@ -236,6 +232,7 @@ export default {
 					}
 				}
 			}
+
 			editorMonitor = vueAdapter.editor;
 			this.configJoinTable = cell.configJoinTable && cell.configJoinTable();
 
@@ -244,6 +241,7 @@ export default {
 
 		getData() {
 			let result = JSON.parse(JSON.stringify(this.model));
+
 			let includeTables = [];
 			for (let i = 0; i < this.model.sourceData.length; i++) {
 				for (let j = 0; j < this.model.selectSourceArr.length; j++) {
@@ -252,7 +250,35 @@ export default {
 					}
 				}
 			}
-			result.includeTables = includeTables;
+
+			if (this.cell) {
+				// let linkFormData = null;
+				let targetCell = this.cell.getTargetCell();
+				let targetFormData = targetCell.getFormData();
+				debugger;
+				// if (targetCell.length && targetCell[0].getFormData()) {
+				// 	linkFormData = targetCell[0].getFormData();
+				// }
+
+				if (targetFormData) {
+					targetFormData.dropTable = this.model.dropTable;
+					targetFormData.table_prefix = this.model.table_prefix;
+					targetFormData.table_suffix = this.model.table_suffix;
+					targetFormData.keepSchema = this.model.keepSchema;
+					targetFormData.syncObjects = [];
+					if (this.model.selectSourceDatabase) {
+						Object.keys(this.model.selectSourceDatabase).forEach(key => {
+							if (this.model.selectSourceDatabase[key]) {
+								targetFormData.syncObjects.push({
+									type: key,
+									objectNames: key === 'table' ? includeTables : []
+								});
+							}
+						});
+					}
+				}
+			}
+
 			return result;
 		},
 
