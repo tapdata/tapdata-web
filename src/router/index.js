@@ -222,7 +222,7 @@ const childRoutes = [
 		path: '/setting',
 		name: 'setting',
 		component: view('notification/setting'),
-		meta: { title: i18n.t('tap.apiInfo') }
+		meta: { title: i18n.t('notification.setting') }
 	},
 	{
 		path: '/notification',
