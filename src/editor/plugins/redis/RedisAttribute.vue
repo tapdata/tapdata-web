@@ -144,8 +144,21 @@ export default {
 			handler() {
 				if (this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0) {
 					let fields = this.mergedSchema.fields;
-					this.model.redisKey = [];
 					this.redisKeyOptions = fields.map(f => f.field_name);
+					let redisKey = [];
+					if (this.model.redisKey) {
+						this.model.redisKey = this.model.redisKey.split(','); //转化为数组
+						this.model.redisKey.map(item => {
+							let sameKey = this.redisKeyOptions.filter(f => f === item);
+							redisKey.push(sameKey[0]);
+						});
+					}
+					if (redisKey.length > 0) {
+						redisKey = redisKey.join(',');
+						this.model.redisKey = redisKey;
+					} else {
+						this.model.redisKey = '';
+					}
 				}
 			}
 		}
