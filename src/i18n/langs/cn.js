@@ -654,7 +654,7 @@ const cn = {
 					prefixKey: '缓存键前缀',
 					prefixKey_placeholder: '请输入缓存键前缀',
 					cacheKey: '设置缓存键 ',
-					cacheKey_placeholder: '请输入缓存键前缀 '
+					cacheKey_placeholder: '请输入缓存键'
 				},
 				api: {
 					name: 'API',
