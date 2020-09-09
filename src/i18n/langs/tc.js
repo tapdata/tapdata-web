@@ -188,7 +188,7 @@ const tc = {
 		forceStoppingMessage: '強制停止將立即中斷數據傳輸，是否繼續執行?',
 		stopInitial_syncMessage: '初始化類型的任務暫停後如果再次啟動，任務會從頭開始同步，確定暫停？',
 		stopMessage: '確定要暫停任務嗎?',
-		cancleReset: '已取消重置',
+		cancelReset: '已取消重置',
 		resetOk: '重置成功',
 		resetFailed: '重置失敗',
 		notRest: '請選擇正確的數據進行重置',
@@ -665,6 +665,16 @@ const tc = {
 					publishApi_path: 'API路徑不為空',
 					variable_name: '只能包含字母，數字，下劃線和美元符號，和數字不能開頭'
 				},
+				redis: {
+					name: 'Redis',
+					tip: 'Redis節點',
+					chooseRedisName: '請選擇Redis',
+					Redis_isNull: 'Redis不能為空',
+					prefixKey: '緩存鍵前綴',
+					prefixKey_placeholder: '請輸入緩存鍵前綴',
+					cacheKey: '設置緩存鍵 ',
+					cacheKey_placeholder: '請輸入緩存鍵前綴 '
+				},
 				es: {
 					name: 'ES',
 					tip: 'Elastic search節點',
@@ -960,6 +970,11 @@ const tc = {
 					update: '更新寫入',
 					merge_embed: '更新內嵌數組'
 				},
+				existingSchema: {
+					label: '已存在schema的處理',
+					keepSchema: '保持已存在的schema',
+					removeSchema: '刪除原有的schema'
+				},
 				migrationSetting: '遷移對象設置',
 				dataProcessing: '已有數據處理',
 				prefixAndSuffix: '加前後綴',
@@ -968,7 +983,15 @@ const tc = {
 				reduction: '還原',
 				migrationObjece: '遷移對象',
 				chosen: '已選擇',
-				searchContent: '搜索內容'
+				searchContent: '搜索內容',
+				mappingRelations: '映射關係',
+				addPrefix: '添加前綴',
+				addSuffix: '添加後綴',
+				prefixPlaceholder: '請輸入前綴',
+				suffixPlaceholder: '請輸入後綴',
+				batchRename: '批量改名設置',
+				tableNameExample: '表名示例',
+				copySourceDatabase: '複製源庫結構'
 			}
 		},
 		ui: {
@@ -1026,7 +1049,9 @@ const tc = {
 				fullscreen: {
 					tip: '切換全屏'
 				}
-			}
+			},
+			nodeLoadSchemaDiaLog: '如果數據源有更新，此操作會更此例程的模型，是否繼續？',
+			allNodeLoadSchemaDiaLog: '如果數據源有更新，此操作會更新各例程的模型，是否繼續？'
 		},
 		preview: {
 			stage: '節點',
@@ -1284,7 +1309,32 @@ const tc = {
 		SYNCSeverRestartedSuccessfully: '同步治理服務已重啟',
 		newSeverCreatedSuccessfully: '新服務監控被創建',
 		newSeverDeletedSuccessfully: '新服務監控被刪除',
-		databaseDDLChanged: '監測到數據庫DDL變化'
+		databaseDDLChanged: '監測到數據庫DDL變化',
+		settingCenter: '設置中心',
+		systemSetting: '系統設置',
+		noticeSetting: '通知設置',
+		tip: '此處通知設置為系統全局通知的設置，任務編排頁的通知設置的其優先級高於此處的全局通知設置',
+		jobOperationNotice: '任務運行通知',
+		emailNotice: '郵件通知',
+		jobStarted: '任務被啟動',
+		jobPaused: '任務被停止',
+		jobDeleted: '任務被刪除',
+		jobEdited: '任務被編輯',
+		jobStateError: '任務狀態error',
+		jobEncounterError: '任務遇到錯誤',
+		noticeInterval: '發送間隔',
+		CDCLagTime: 'CDC滯後通知',
+		lagTime: '滯後時間',
+		DDL: '數據庫DDL變化',
+		agentNotice: 'Agent通知',
+		serverDisconnected: '服務器斷開連接',
+		agentAbnormallyStopped: 'Agent服務意外停止',
+		agentStarted: 'Agent服務被啟動',
+		agentStopped: 'Agent服務被停止',
+		agentFailed: 'Agent服務啟動失敗',
+		agentStop: 'Agent服務停止失敗',
+		agentCreated: 'Agent被創建',
+		agentDeleted: 'Agent被刪除'
 	},
 	dialog: {
 		createTable: '創建新表',

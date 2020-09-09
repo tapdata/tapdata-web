@@ -219,6 +219,12 @@ const childRoutes = [
 		meta: { url: '/old/index.html#/jsFuncs' }
 	},
 	{
+		path: '/setting',
+		name: 'setting',
+		component: view('notification/setting'),
+		meta: { title: i18n.t('notification.setting') }
+	},
+	{
 		path: '/notification',
 		name: 'notification',
 		component: view('notification/list'),
@@ -253,6 +259,10 @@ const router = new Router({
 });
 
 let usersModel = factor('users');
+router.afterEach((to, from, next) => {
+	Loading.service({ fullscreen: true }).close();
+	next();
+});
 router.beforeEach(async (to, from, next) => {
 	if (to.meta.title && window._TAPDATA_OPTIONS_.platform === 'DAAS') {
 		document.title = to.meta.title;

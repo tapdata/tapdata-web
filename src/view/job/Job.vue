@@ -230,6 +230,18 @@
 				<el-button size="mini" @click="loadData">{{ $t('dataFlow.stystemLgnoreAll') }}</el-button>
 			</div>
 		</el-dialog>
+		<el-dialog
+			:title="$t('message.prompt')"
+			:visible.sync="reloadSchemaDialog"
+			:close-on-click-modal="false"
+			width="30%"
+		>
+			<span>{{ $t('editor.ui.allNodeLoadSchemaDiaLog') }}</span>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="reloadSchemaDialog = false">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="confirmReloadSchemaDialog">{{ $t('message.confirm') }}</el-button>
+			</span>
+		</el-dialog>
 		<AddBtnTip v-if="isEditable()"></AddBtnTip>
 	</div>
 </template>
@@ -258,6 +270,7 @@ export default {
 	components: { AddBtnTip, simpleScene, newDataFlow },
 	data() {
 		return {
+			reloadSchemaDialog: false,
 			dialogFormVisible: false,
 			form: {
 				taskName: '',
@@ -725,7 +738,7 @@ export default {
 			let edgeCells = {};
 			let nodeCells = {};
 			cells.forEach(cell => {
-				if (cell.type === 'app.Link') edgeCells[cell.id] = cell;
+				if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') edgeCells[cell.id] = cell;
 				else nodeCells[cell.id] = cell;
 			});
 
@@ -751,7 +764,6 @@ export default {
 					editorData: JSON.stringify(graphData)
 				}
 			);
-
 			let stages = {};
 			Object.values(nodeCells).forEach(cell => {
 				let stage = (stages[cell.id] = Object.assign(
@@ -773,7 +785,7 @@ export default {
 						readCdcInterval: 500,
 						readBatchSize: 1000
 					});
-				} else if (['app.Table', 'app.Collection', 'app.ESNode'].includes(cell.type)) {
+				} else if (['app.Table', 'app.Collection', 'app.ESNode', 'app.Redis'].includes(cell.type)) {
 					postData.mappingTemplate = 'custom';
 
 					Object.assign(stage, {
@@ -785,7 +797,7 @@ export default {
 				}
 			});
 			Object.values(edgeCells).forEach(cell => {
-				if (cell.type === 'app.Link') {
+				if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
 					let sourceId = cell.source.id;
 					let targetId = cell.target.id;
 					if (sourceId && stages[sourceId]) stages[sourceId].outputLanes.push(targetId);
@@ -939,7 +951,7 @@ export default {
 		save() {
 			let self = this,
 				data = this.getDataFlowData();
-
+			debugger;
 			if (data) {
 				if (data.id) delete data.status;
 
@@ -1167,7 +1179,15 @@ export default {
 		 * reload shcema
 		 */
 		reloadSchema() {
+			this.reloadSchemaDialog = true;
+		},
+		/**
+		 * confirm dialog reload shcema
+		 */
+
+		confirmReloadSchemaDialog() {
 			this.editor.reloadSchema();
+			this.reloadSchemaDialog = false;
 		},
 
 		/**
@@ -1221,6 +1241,10 @@ export default {
 				java_processor: 'app.FieldProcess'
 			};
 			if (data) {
+				let stageMap = {};
+				data.forEach(item => {
+					stageMap[item.id] = item;
+				});
 				data.map(v => {
 					let formData = _.cloneDeep(v);
 					delete formData.inputLanes;
@@ -1310,8 +1334,15 @@ export default {
 					if (v.outputLanes) {
 						v.outputLanes = v.outputLanes.filter(d => d);
 						v.outputLanes.map(k => {
+							let type = 'app.Link';
+							if (v.type === 'database' && stageMap[k].type === 'database') {
+								type = 'app.databaseLink';
+							} else {
+								type = 'app.Link';
+							}
+
 							let node = {
-								type: 'app.Link',
+								type: type,
 								source: {
 									id: v.id
 								},

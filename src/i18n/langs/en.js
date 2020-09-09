@@ -189,7 +189,7 @@ const en = {
 		stopInitial_syncMessage:
 			'Pausing job while it is in the initial sync stage may cause it to run from the beginning, are you sure you want to pause?',
 		stopMessage: 'Are you sure to pause the mission?',
-		cancleReset: 'cancel reset',
+		cancelReset: 'cancel reset',
 		resetOk: 'Reset success',
 		resetFailed: 'Reset Failed',
 		notRest: 'Please select the correct data to reset',
@@ -651,6 +651,16 @@ const en = {
 					none_pk: 'Primary key is required.',
 					dummy_isNull: 'Dummy cannot be empty'
 				},
+				redis: {
+					name: 'Redis',
+					tip: 'Redis Node',
+					chooseRedisName: 'Please select Redis',
+					Redis_isNull: 'Redis cannot be empty',
+					prefixKey: 'Cache key prefix',
+					prefixKey_placeholder: 'Please enter the cache key prefix',
+					cacheKey: 'Select cache key',
+					cacheKey_placeholder: 'Select source table field as cache key'
+				},
 				api: {
 					name: 'API',
 					tip: 'api node',
@@ -972,6 +982,11 @@ const en = {
 					update: 'Match and Merge',
 					merge_embed: 'Match then Embed as Array in target'
 				},
+				existingSchema: {
+					label: 'Processing of existing schema',
+					keepSchema: 'Keep the existing schema',
+					removeSchema: 'Remove the original schema'
+				},
 				migrationSetting: 'Migration object settings',
 				dataProcessing: 'Existing data processing',
 				prefixAndSuffix: 'Add prefix and suffix',
@@ -980,7 +995,15 @@ const en = {
 				reduction: 'Reduction',
 				migrationObjece: 'Migration Object',
 				chosen: 'Selected',
-				searchContent: 'Search'
+				searchContent: 'Search',
+				mappingRelations: 'Mapping relations',
+				addPrefix: 'Add prefix',
+				addSuffix: 'Add suffix',
+				prefixPlaceholder: 'Please enter the prefix',
+				suffixPlaceholder: 'Please enter the suffix',
+				batchRename: 'Batch rename settings',
+				tableNameExample: 'Table name example',
+				copySourceDatabase: 'Source database copy structure'
 			}
 		},
 		ui: {
@@ -1038,7 +1061,11 @@ const en = {
 				fullscreen: {
 					tip: 'Toggle Fullscreen Mode'
 				}
-			}
+			},
+			nodeLoadSchemaDiaLog:
+				'If the data source is updated, this operation will update the model of this node. Do you want to continue?',
+			allNodeLoadSchemaDiaLog:
+				'If the data source is updated, this operation will update the model of each node. Do you want to continue?'
 		},
 		preview: {
 			stage: 'Stage',
@@ -1296,7 +1323,33 @@ const en = {
 		SYNCSeverRestartedSuccessfully: 'SYNC SEVER restarted successfully',
 		newSeverCreatedSuccessfully: 'NEW SEVER created successfully',
 		newSeverDeletedSuccessfully: 'NEW SEVER deleted successfully',
-		databaseDDLChanged: 'Database DDL changed'
+		databaseDDLChanged: 'Database DDL changed',
+		settingCenter: 'Setting center',
+		systemSetting: 'System setting',
+		noticeSetting: 'Notice setting',
+		tip:
+			'The notice setting here is the system global notification setting. The priority of the notification setting of Data flow job page is higher than the global notification setting here',
+		jobOperationNotice: 'Job operation notice',
+		emailNotice: ' Email notice',
+		jobStarted: 'Job started',
+		jobPaused: 'Job paused',
+		jobDeleted: 'Job deleted',
+		jobEdited: 'Job edited',
+		jobStateError: 'Job state error',
+		jobEncounterError: 'Job encounter error',
+		noticeInterval: 'Notice interval',
+		CDCLagTime: 'CDC lag time',
+		lagTime: 'Lag-time',
+		DDL: 'Database DDL changes',
+		agentNotice: 'Agent notice',
+		serverDisconnected: 'Server disconnected',
+		agentAbnormallyStopped: 'Agent sever abnormally stopped',
+		agentStarted: 'Agent started',
+		agentStopped: 'Agent stopped',
+		agentFailed: 'Agent start failed',
+		agentStop: 'Agent stop failed',
+		agentCreated: 'Agent created',
+		agentDeleted: 'Agent deleted'
 	},
 	dialog: {
 		createTable: 'Create new table',

@@ -109,7 +109,6 @@ export default {
 			try {
 				let usersModel = this.$api('users');
 				let { data } = await usersModel.login(this.form);
-				this.loading = false;
 				if (data.textStatus === 'WAITING_APPROVE') {
 					this.errorMessage = this.$t('app.signIn.account_waiting_approve');
 					return;
@@ -123,9 +122,7 @@ export default {
 					return;
 				}
 				setPermission(data.permissions);
-				this.loading = true;
 				let user = await usersModel.getUserById(`/${data.userId}?access_token=${data.id}`);
-				this.loading = false;
 				this.$cookie.set('email', this.form.email);
 				this.$cookie.set('username', user.data.username);
 				this.$cookie.set('login', 1);

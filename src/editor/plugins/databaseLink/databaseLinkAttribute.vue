@@ -19,7 +19,7 @@
 				ref="form"
 				action="javascript:void(0);"
 			>
-				<el-form-item :label="$t('editor.cell.link.form.label.label')">
+				<!-- <el-form-item :label="$t('editor.cell.link.form.label.label')">
 					<el-input
 						v-model="model.label"
 						:placeholder="$t('editor.cell.link.form.label.placeholder')"
@@ -28,30 +28,40 @@
 						show-word-limit
 					>
 					</el-input>
-				</el-form-item>
-			</el-form>
+				</el-form-item> -->
 
-			<el-form
-				:disabled="disabled"
-				class="e-form"
-				label-position="top"
-				label-width="160px"
-				:model="model"
-				ref="form"
-				action="javascript:void(0);"
-			>
-				<el-form-item :label="$t('editor.cell.link.dataProcessing')">
-					<el-select
-						v-model="model.dataProcessing"
-						:placeholder="$t('editor.cell.link.form.joinType.placeholder')"
-						size="mini"
-						:disabled="logsFlag"
-					>
+				<el-form-item required :label="$t('editor.cell.link.copySourceDatabase')">
+					<el-checkbox v-model="model.selectSourceDatabase.table">Table</el-checkbox>
+					<el-checkbox v-model="model.selectSourceDatabase.view">View</el-checkbox>
+					<el-checkbox v-model="model.selectSourceDatabase.function">Function</el-checkbox>
+					<el-checkbox v-model="model.selectSourceDatabase.procedure">Procedure</el-checkbox>
+					<!-- <el-checkbox-group v-model="model.selectSourceDatabase">
+						<el-checkbox label="table">Table</el-checkbox>
+						<el-checkbox label="view">View</el-checkbox>
+						<el-checkbox label="function">Function</el-checkbox>
+						<el-checkbox label="procedure">Procedure</el-checkbox>
+					</el-checkbox-group> -->
+				</el-form-item>
+
+				<el-form-item required :label="$t('editor.cell.link.existingSchema.label')">
+					<el-select v-model="model.keepSchema" size="mini">
+						<el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" :value="true"></el-option>
 						<el-option
-							v-for="(item, idx) in dataProcessingList"
-							:label="`${item.label}`"
-							:value="item.value"
-							v-bind:key="idx"
+							:label="$t('editor.cell.link.existingSchema.removeSchema')"
+							:value="false"
+						></el-option>
+					</el-select>
+				</el-form-item>
+
+				<el-form-item required :label="$t('editor.cell.data_node.collection.form.dropTable.label')">
+					<el-select v-model="model.dropTable" size="mini">
+						<el-option
+							:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
+							:value="false"
+						></el-option>
+						<el-option
+							:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
+							:value="true"
 						></el-option>
 					</el-select>
 				</el-form-item>
@@ -71,15 +81,14 @@
 						:titles="titles"
 						:filter-method="filterMethod"
 						:filter-placeholder="$t('editor.cell.link.searchContent')"
-						v-model="model.includeTables"
+						v-model="model.selectSourceArr"
 						:data="model.sourceData"
-						@right-check-change="handleSelectTable"
 					>
 						<span class="box" slot-scope="{ option }">
-							<span class="text">{{ option.label }}</span>
-							<span class="nameStyle" @click="handleChageTransfer(option)">{{
+							<span :class="[{ active: option.label !== option.value }, 'text']">{{ option.label }}</span>
+							<!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
-							}}</span>
+							}}</span> -->
 						</span>
 					</el-transfer>
 				</div>
@@ -91,12 +100,12 @@
 			custom-class="databaseLinkDialog"
 			:close-on-click-modal="false"
 		>
-			<el-form :model="form">
+			<el-form :model="model">
 				<el-row :gutter="80" class="e-row">
 					<el-col :span="12">
 						<el-form-item :label="$t('editor.cell.link.prefixPlaceholder')">
 							<el-input
-								v-model="form.prefix"
+								v-model="model.table_prefix"
 								@input="handlePrefix"
 								autocomplete="off"
 								:placeholder="$t('editor.cell.link.prefixPlaceholder')"
@@ -106,7 +115,7 @@
 					<el-col :span="12">
 						<el-form-item :label="$t('editor.cell.link.suffixPlaceholder')">
 							<el-input
-								v-model="form.suffix"
+								v-model="model.table_suffix"
 								@input="handleSuffix"
 								autocomplete="off"
 								:placeholder="$t('editor.cell.link.suffixPlaceholder')"
@@ -121,7 +130,7 @@
 				<el-button type="primary" @click="confirm">{{ $t('dataVerify.confirm') }}</el-button>
 			</div>
 		</el-dialog>
-		<el-dialog
+		<!-- <el-dialog
 			:title="$t('message.modifyName')"
 			:visible.sync="modifyNameDialog"
 			custom-class="modifyNameDialog"
@@ -141,7 +150,7 @@
 				<el-button @click="modifyNameDialog = false">{{ $t('dataVerify.cancel') }}</el-button>
 				<el-button type="primary" @click="confirmName">{{ $t('dataVerify.confirm') }}</el-button>
 			</div>
-		</el-dialog>
+		</el-dialog> -->
 	</div>
 </template>
 
@@ -149,24 +158,11 @@
 import _ from 'lodash';
 import log from '../../../log';
 let editorMonitor = null;
-let selectKeepArr = [];
+// let selectKeepArr = [];
 export default {
 	name: 'databaseLink',
 
 	data() {
-		// const generateData = () => {
-		// 	const data = [];
-		// 	const cities = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都'];
-		// 	const pinyin = ['shanghai', 'beijing', 'guangzhou', 'shenzhen', 'nanjing', 'xian', 'chengdu'];
-		// 	cities.forEach((city, index) => {
-		// 		data.push({
-		// 			label: city,
-		// 			key: index,
-		// 			pinyin: pinyin[index]
-		// 		});
-		// 	});
-		// 	return data;
-		// };
 		return {
 			currentName: null,
 			databaseName: '',
@@ -176,23 +172,25 @@ export default {
 			logsFlag: false,
 			exampleName: 'tableName',
 
-			form: {
-				prefix: '',
-				suffix: ''
-			},
-
 			configJoinTable: false,
 			model: {
-				label: '',
-				dataProcessing: '1',
-				includeTables: [],
+				// label: '',
+				table_prefix: '',
+				table_suffix: '',
+				keepSchema: true,
+				dropTable: false,
 				type: 'databaseLink',
-				sourceData: []
+				sourceData: [],
+				selectSourceArr: [],
+				selectSourceDatabase: {
+					table: true,
+					view: false,
+					function: false,
+					procedure: false
+				}
+
+				// selectSourceDatabase: ['table']
 			},
-			dataProcessingList: [
-				{ label: this.$t('editor.cell.link.keepExistingData'), value: '1' },
-				{ label: this.$t('editor.cell.link.deleteExistingData'), value: '2' }
-			],
 
 			titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')]
 		};
@@ -207,14 +205,11 @@ export default {
 		}
 	},
 
-	created() {
-		// this.renderSchema();
-	},
-
 	methods: {
 		setData(data, cell, isSourceDataNode, vueAdapter) {
 			if (data) {
 				_.merge(this.model, data);
+				// this.model.selectSourceDatabase = data.selectSourceDatabase;
 			}
 			this.cell = cell;
 			this.model.sourceData = [];
@@ -223,18 +218,21 @@ export default {
 					// targetCell = this.cell.getTargetCell(),
 					sourceTable = sourceCell ? sourceCell.getFormData().databaseTables : [];
 
-				if (data.sourceData && data.sourceData.length) {
+				if (data && data.sourceData && data.sourceData.length) {
 					this.model.sourceData = data.sourceData;
 				} else {
-					sourceTable.forEach(table => {
-						this.model.sourceData.push({
-							label: table,
-							key: table,
-							value: table
+					if (sourceTable && sourceTable.length) {
+						sourceTable.forEach(table => {
+							this.model.sourceData.push({
+								label: table,
+								key: table,
+								value: table
+							});
 						});
-					});
+					}
 				}
 			}
+
 			editorMonitor = vueAdapter.editor;
 			this.configJoinTable = cell.configJoinTable && cell.configJoinTable();
 
@@ -242,8 +240,46 @@ export default {
 		},
 
 		getData() {
-			let data = JSON.parse(JSON.stringify(this.model));
-			return data;
+			let result = JSON.parse(JSON.stringify(this.model));
+
+			let includeTables = [];
+			for (let i = 0; i < this.model.sourceData.length; i++) {
+				for (let j = 0; j < this.model.selectSourceArr.length; j++) {
+					if (this.model.sourceData[i].label === this.model.selectSourceArr[j]) {
+						includeTables.push(this.model.sourceData[i].value);
+					}
+				}
+			}
+
+			if (this.cell) {
+				// let linkFormData = null;
+				let targetCell = this.cell.getTargetCell();
+				let targetFormData = targetCell.getFormData();
+				debugger;
+				// if (targetCell.length && targetCell[0].getFormData()) {
+				// 	linkFormData = targetCell[0].getFormData();
+				// }
+
+				if (targetFormData) {
+					targetFormData.dropTable = this.model.dropTable;
+					targetFormData.table_prefix = this.model.table_prefix;
+					targetFormData.table_suffix = this.model.table_suffix;
+					targetFormData.keepSchema = this.model.keepSchema;
+					targetFormData.syncObjects = [];
+					if (this.model.selectSourceDatabase) {
+						Object.keys(this.model.selectSourceDatabase).forEach(key => {
+							if (this.model.selectSourceDatabase[key]) {
+								targetFormData.syncObjects.push({
+									type: key,
+									objectNames: key === 'table' ? includeTables : []
+								});
+							}
+						});
+					}
+				}
+			}
+
+			return result;
 		},
 
 		// 关闭当前页
@@ -268,23 +304,23 @@ export default {
 		},
 
 		// 修改名称弹窗返回
-		confirmName() {
-			let self = this;
-			for (let i = 0; i < this.model.sourceData.length; i++) {
-				for (let j = 0; j < self.model.includeTables.length; j++) {
-					if (
-						this.model.sourceData[i].label === self.model.includeTables[j] &&
-						this.model.sourceData[i].label === self.currentName.label
-					) {
-						this.model.sourceData[i].label = self.model.includeTables[j] = this.model.sourceData[i].key =
-							self.databaseName;
-						this.model.sourceData[i].key = this.model.sourceData[i].label;
-					}
-				}
-			}
+		// confirmName() {
+		// 	let self = this;
+		// 	for (let i = 0; i < this.model.sourceData.length; i++) {
+		// 		for (let j = 0; j < self.model.selectSourceArr.length; j++) {
+		// 			if (
+		// 				this.model.sourceData[i].label === self.model.selectSourceArr[j] &&
+		// 				this.model.sourceData[i].label === self.currentName.label
+		// 			) {
+		// 				this.model.sourceData[i].label = self.model.selectSourceArr[j] = this.model.sourceData[i].key =
+		// 					self.databaseName;
+		// 				this.model.sourceData[i].key = this.model.sourceData[i].label;
+		// 			}
+		// 		}
+		// 	}
 
-			this.modifyNameDialog = false;
-		},
+		// 	this.modifyNameDialog = false;
+		// },
 
 		// 穿梭框搜索
 		filterMethod(query, item) {
@@ -292,9 +328,9 @@ export default {
 		},
 
 		// 已选择的表
-		handleSelectTable(data) {
-			selectKeepArr = data;
-		},
+		// handleSelectTable(data) {
+		// 	selectKeepArr = data;
+		// },
 
 		// 添加前后缀弹窗开关
 		handDialog() {
@@ -305,7 +341,7 @@ export default {
 		handlePrefix(val) {
 			this.exampleName = 'tableName';
 			if (val) {
-				this.exampleName = val + this.exampleName + this.form.suffix;
+				this.exampleName = val + this.exampleName + this.model.table_suffix;
 			}
 		},
 
@@ -313,48 +349,51 @@ export default {
 		handleSuffix(val) {
 			this.exampleName = 'tableName';
 			if (val) {
-				this.exampleName = this.form.prefix + this.exampleName + val;
+				this.exampleName = this.model.table_prefix + this.exampleName + val;
 			}
 		},
 
 		// 弹窗确认
 		confirm() {
 			this.dialogVisible = false;
-			this.handleSelectTable(selectKeepArr);
+			// this.handleSelectTable(selectKeepArr);
 
 			for (let i = 0; i < this.model.sourceData.length; i++) {
-				for (let j = 0; j < selectKeepArr.length; j++) {
-					if (this.model.sourceData[i].label === selectKeepArr[j]) {
+				for (let j = 0; j < this.model.selectSourceArr.length; j++) {
+					if (this.model.sourceData[i].label === this.model.selectSourceArr[j]) {
 						this.model.sourceData[i].label =
-							this.form.prefix + this.model.sourceData[i].label + this.form.suffix;
+							this.model.table_prefix + this.model.sourceData[i].value + this.model.table_suffix;
 						this.model.sourceData[i].key = this.model.sourceData[i].label;
+
+						this.model.selectSourceArr[j] = this.model.sourceData[i].label;
 					}
 				}
 			}
-			for (let j = 0; j < this.model.includeTables.length; j++) {
-				for (let i = 0; i < selectKeepArr.length; i++) {
-					if (this.model.includeTables[j] === selectKeepArr[i]) {
-						this.model.includeTables[j] = this.form.prefix + this.model.includeTables[j] + this.form.suffix;
-					}
-				}
-			}
+			// for (let j = 0; j < this.model.selectSourceArr.length; j++) {
+			// 	// for (let i = 0; i < selectKeepArr.length; i++) {
+			// 	// if (this.model.selectSourceArr[j] === selectKeepArr[i]) {
+			// 	this.model.selectSourceArr[j] =
+			// 		this.model.table_prefix + this.model.selectSourceArr[j] + this.model.table_suffix;
+			// 	// }
+			// 	// }
+			// }
 		},
 
 		// 还原
 		handleReduction() {
 			if (this.model.sourceData.length) {
 				for (let i = 0; i < this.model.sourceData.length; i++) {
-					for (let j = 0; j < selectKeepArr.length; j++) {
-						for (let k = 0; k < this.model.includeTables.length; k++) {
-							if (
-								this.model.sourceData[i].label === selectKeepArr[j] &&
-								this.model.sourceData[i].label === this.model.includeTables[k]
-							) {
-								this.model.sourceData[i].label = this.model.sourceData[i].value;
-								this.model.sourceData[i].key = this.model.sourceData[i].label;
-								this.model.includeTables[k] = this.model.sourceData[i].value;
-							}
+					// for (let j = 0; j < selectKeepArr.length; j++) {
+					for (let k = 0; k < this.model.selectSourceArr.length; k++) {
+						if (
+							// this.model.sourceData[i].label === selectKeepArr[j] &&
+							this.model.sourceData[i].label === this.model.selectSourceArr[k]
+						) {
+							this.model.sourceData[i].label = this.model.sourceData[i].value;
+							this.model.sourceData[i].key = this.model.sourceData[i].label;
+							this.model.selectSourceArr[k] = this.model.sourceData[i].value;
 						}
+						// 	}
 					}
 				}
 			}
@@ -428,6 +467,9 @@ export default {
 					.el-transfer-panel__item .el-checkbox__label:hover {
 						.box .nameStyle {
 							display: block;
+						}
+						.active {
+							color: rgb(253, 176, 28) !important;
 						}
 					}
 				}
