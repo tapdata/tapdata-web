@@ -986,7 +986,7 @@ const cn = {
 				keepExistingData: '保持已存在数据',
 				deleteExistingData: '运行前删除已存在数据',
 				reduction: '还原',
-				migrationObjece: '迁移对象',
+				migrationObjece: '待复制表',
 				chosen: '已选择',
 				searchContent: '搜索内容',
 				mappingRelations: '映射关系',

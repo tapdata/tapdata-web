@@ -971,9 +971,10 @@ const tc = {
 					merge_embed: '更新內嵌數組'
 				},
 				existingSchema: {
-					label: '已存在schema的處理',
-					keepSchema: '保持已存在的schema',
-					removeSchema: '刪除原有的schema'
+					label: '已存在的結構和數據的處理',
+					keepSchema: '保留已存在的結構和數據',
+					keepExistedData: '保留已存在的結構，刪除數據',
+					removeSchema: '刪除原有的結構和數據'
 				},
 				migrationSetting: '複製對象設置',
 				dataProcessing: '已有數據處理',
@@ -981,7 +982,7 @@ const tc = {
 				keepExistingData: '保持已存在數據',
 				deleteExistingData: '運行前刪除已存在數據',
 				reduction: '還原',
-				migrationObjece: '遷移對象',
+				migrationObjece: '待複製表',
 				chosen: '已選擇',
 				searchContent: '搜索內容',
 				mappingRelations: '映射關係',

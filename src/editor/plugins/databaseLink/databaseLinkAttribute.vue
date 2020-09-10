@@ -44,15 +44,18 @@
 				</el-form-item>
 
 				<el-form-item :label="$t('editor.cell.link.existingSchema.label')">
-					<el-select v-model="model.keepSchema" size="mini">
-						<el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" :value="true"></el-option>
+					<el-select v-model="model.dropType" size="mini">
+						<el-option
+							:label="$t('editor.cell.link.existingSchema.keepSchema')"
+							value="no_drop"
+						></el-option>
 						<el-option
 							:label="$t('editor.cell.link.existingSchema.keepExistedData')"
-							:value="2"
+							value="drop_data"
 						></el-option>
 						<el-option
 							:label="$t('editor.cell.link.existingSchema.removeSchema')"
-							:value="false"
+							value="drop_schema"
 						></el-option>
 					</el-select>
 				</el-form-item>
@@ -74,6 +77,8 @@
 						:filter-placeholder="$t('editor.cell.link.searchContent')"
 						v-model="model.selectSourceArr"
 						:data="model.sourceData"
+						@change="handleChangeTransfer"
+						@right-check-change="handleSelectTable"
 					>
 						<span class="box" slot-scope="{ option }">
 							<span :class="[{ active: option.label !== option.value }, 'text']">{{ option.label }}</span>
@@ -149,7 +154,7 @@
 import _ from 'lodash';
 import log from '../../../log';
 let editorMonitor = null;
-// let selectKeepArr = [];
+let selectKeepArr = [];
 export default {
 	name: 'databaseLink',
 
@@ -168,8 +173,7 @@ export default {
 				// label: '',
 				table_prefix: '',
 				table_suffix: '',
-				keepSchema: true,
-				dropTable: false,
+				dropType: 'no_drop',
 				type: 'databaseLink',
 				sourceData: [],
 				selectSourceArr: [],
@@ -248,10 +252,9 @@ export default {
 				// }
 
 				if (targetFormData) {
-					targetFormData.dropTable = this.model.dropTable;
+					targetFormData.dropType = this.model.dropType;
 					targetFormData.table_prefix = this.model.table_prefix;
 					targetFormData.table_suffix = this.model.table_suffix;
-					targetFormData.keepSchema = this.model.keepSchema;
 					targetFormData.syncObjects = [];
 					if (this.model.selectSourceDatabase) {
 						Object.keys(this.model.selectSourceDatabase).forEach(key => {
@@ -290,6 +293,17 @@ export default {
 			this.currentName = data;
 		},
 
+		// 穿梭框值改变的时候
+		handleChangeTransfer() {
+			this.model.sourceData.forEach(el => {
+				if (selectKeepArr.length && selectKeepArr.includes(el.label)) {
+					el.label = el.key = el.value;
+				}
+			});
+		},
+
+		//
+
 		// 修改名称弹窗返回
 		// confirmName() {
 		// 	let self = this;
@@ -315,9 +329,9 @@ export default {
 		},
 
 		// 已选择的表
-		// handleSelectTable(data) {
-		// 	selectKeepArr = data;
-		// },
+		handleSelectTable(data) {
+			selectKeepArr = data;
+		},
 
 		// 添加前后缀弹窗开关
 		handDialog() {

@@ -983,9 +983,10 @@ const en = {
 					merge_embed: 'Match then Embed as Array in target'
 				},
 				existingSchema: {
-					label: 'Processing of existing schema',
-					keepSchema: 'Keep the existing schema',
-					removeSchema: 'Remove the original schema'
+					label: 'Processing of existed schema and data',
+					keepSchema: 'Keep existed schema and data',
+					keepExistedData: 'Keep existed schema and remove data',
+					removeSchema: 'Remove existed schema and data'
 				},
 				migrationSetting: 'Copy settings',
 				dataProcessing: 'Existing data processing',
