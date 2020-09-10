@@ -86,7 +86,6 @@
 						<el-form-item :label="$t('editor.cell.link.prefixPlaceholder')">
 							<el-input
 								v-model="model.table_prefix"
-								@input="handlePrefix"
 								autocomplete="off"
 								:placeholder="$t('editor.cell.link.prefixPlaceholder')"
 							></el-input>
@@ -96,7 +95,6 @@
 						<el-form-item :label="$t('editor.cell.link.suffixPlaceholder')">
 							<el-input
 								v-model="model.table_suffix"
-								@input="handleSuffix"
 								autocomplete="off"
 								:placeholder="$t('editor.cell.link.suffixPlaceholder')"
 							></el-input>
@@ -104,7 +102,10 @@
 					</el-col>
 				</el-row>
 			</el-form>
-			<div class="text">{{ $t('editor.cell.link.tableNameExample') }}: {{ exampleName }}</div>
+			<div class="text">
+				{{ $t('editor.cell.link.tableNameExample') }}: {{ model.table_prefix }}{{ exampleName
+				}}{{ model.table_suffix }}
+			</div>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="dialogVisible = false">{{ $t('dataVerify.cancel') }}</el-button>
 				<el-button type="primary" @click="confirm">{{ $t('dataVerify.confirm') }}</el-button>
@@ -288,22 +289,6 @@ export default {
 		// 添加前后缀弹窗开关
 		handDialog() {
 			this.dialogVisible = true;
-		},
-
-		// 前缀输入框改变
-		handlePrefix(val) {
-			this.exampleName = 'tableName';
-			if (val) {
-				this.exampleName = val + this.exampleName + this.model.table_suffix;
-			}
-		},
-
-		// 后缀输入改变
-		handleSuffix(val) {
-			this.exampleName = 'tableName';
-			if (val) {
-				this.exampleName = this.model.table_prefix + this.exampleName + val;
-			}
 		},
 
 		// 弹窗确认
