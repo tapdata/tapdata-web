@@ -30,7 +30,7 @@
 					</el-input>
 				</el-form-item> -->
 
-				<el-form-item required :label="$t('editor.cell.link.copySourceDatabase')">
+				<el-form-item :label="$t('editor.cell.link.copySourceDatabase')">
 					<el-checkbox v-model="model.selectSourceDatabase.table">Table</el-checkbox>
 					<el-checkbox v-model="model.selectSourceDatabase.view">View</el-checkbox>
 					<el-checkbox v-model="model.selectSourceDatabase.function">Function</el-checkbox>
@@ -43,25 +43,16 @@
 					</el-checkbox-group> -->
 				</el-form-item>
 
-				<el-form-item required :label="$t('editor.cell.link.existingSchema.label')">
+				<el-form-item :label="$t('editor.cell.link.existingSchema.label')">
 					<el-select v-model="model.keepSchema" size="mini">
 						<el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" :value="true"></el-option>
 						<el-option
+							:label="$t('editor.cell.link.existingSchema.keepExistedData')"
+							:value="2"
+						></el-option>
+						<el-option
 							:label="$t('editor.cell.link.existingSchema.removeSchema')"
 							:value="false"
-						></el-option>
-					</el-select>
-				</el-form-item>
-
-				<el-form-item required :label="$t('editor.cell.data_node.collection.form.dropTable.label')">
-					<el-select v-model="model.dropTable" size="mini">
-						<el-option
-							:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
-							:value="false"
-						></el-option>
-						<el-option
-							:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
-							:value="true"
 						></el-option>
 					</el-select>
 				</el-form-item>
@@ -218,19 +209,16 @@ export default {
 					// targetCell = this.cell.getTargetCell(),
 					sourceTable = sourceCell ? sourceCell.getFormData().databaseTables : [];
 
-				if (data && data.sourceData && data.sourceData.length) {
-					this.model.sourceData = data.sourceData;
-				} else {
-					if (sourceTable && sourceTable.length) {
-						sourceTable.forEach(table => {
-							this.model.sourceData.push({
-								label: table,
-								key: table,
-								value: table
-							});
+				if (sourceTable && sourceTable.length) {
+					sourceTable.forEach(table => {
+						this.model.sourceData.push({
+							label: table,
+							key: table,
+							value: table
 						});
-					}
+					});
 				}
+				// }
 			}
 
 			editorMonitor = vueAdapter.editor;
@@ -255,7 +243,6 @@ export default {
 				// let linkFormData = null;
 				let targetCell = this.cell.getTargetCell();
 				let targetFormData = targetCell.getFormData();
-				debugger;
 				// if (targetCell.length && targetCell[0].getFormData()) {
 				// 	linkFormData = targetCell[0].getFormData();
 				// }
@@ -381,6 +368,8 @@ export default {
 
 		// 还原
 		handleReduction() {
+			this.model.table_suffix = '';
+			this.model.table_prefix = '';
 			if (this.model.sourceData.length) {
 				for (let i = 0; i < this.model.sourceData.length; i++) {
 					// for (let j = 0; j < selectKeepArr.length; j++) {
@@ -419,6 +408,7 @@ export default {
 		display: block;
 	}
 	.database-tableBox {
+		padding-top: 10px;
 		height: 630px;
 		.box-text {
 			display: flex;
@@ -426,6 +416,9 @@ export default {
 			justify-content: space-between;
 			font-size: 12px;
 			color: #333;
+			h3 {
+				color: #606266;
+			}
 			.box-btn {
 				color: #48b6e2;
 				cursor: pointer;
@@ -438,11 +431,13 @@ export default {
 .database-link {
 	.database-tableBox {
 		.el-checkbox__label {
+			height: 30px;
 			font-size: 12px !important;
 			padding-right: 6px;
 		}
 		.el-transfer {
 			.el-transfer-panel {
+				width: 300px;
 				.el-transfer-panel__body {
 					.box {
 						display: inline-block;
@@ -461,6 +456,27 @@ export default {
 						}
 					}
 				}
+				.el-transfer-panel__header {
+					height: 28px;
+					line-height: 28px;
+					background: #f5f5f5;
+					.el-checkbox {
+						line-height: 28px;
+					}
+				}
+				.el-transfer-panel__filter {
+					margin: 10px;
+					.el-input__inner {
+						border-radius: 3px;
+					}
+				}
+				.el-transfer__button {
+					border-radius: 3px;
+				}
+				.el-transfer__button.is-disabled,
+				.el-transfer__button.is-disabled:hover {
+					background-color: #f5f5f5;
+				}
 			}
 			.el-transfer-panel:nth-child(3) {
 				.el-transfer-panel__body {
@@ -473,6 +489,9 @@ export default {
 						}
 					}
 				}
+			}
+			.el-transfer__buttons {
+				padding: 0 20px;
 			}
 		}
 		.el-transfer-panel__item:hover {

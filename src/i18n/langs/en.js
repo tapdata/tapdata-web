@@ -903,6 +903,35 @@ const en = {
 							group: 'Conditional grouping'
 						}
 					}
+				},
+				jointCache: {
+					name: 'Joint Cache',
+					tip: 'Joint Cache Node',
+					form: {
+						name: {
+							label: 'Node name',
+							placeholder: 'Please input you node name.',
+							none: 'Node name is required.'
+						},
+						cacheId: {
+							label: 'Joint cache node',
+							placeholder: 'Choose joint cache node in this job.',
+							none: 'Choose joint cache node in this job.'
+						},
+						joinSettings: {
+							label: 'Joint setting',
+							cacheKey: 'Cache node primary key',
+							sourceKey: {
+								label: 'Source joint field',
+								placeholder: 'Choose joint field.'
+							},
+							none: 'Choose joint field.'
+						},
+						joinKey: {
+							label: 'Cache model joint target path',
+							placeholder: 'Enter or create target path field.'
+						}
+					}
 				}
 			},
 			link: {
@@ -959,7 +988,7 @@ const en = {
 					keepSchema: 'Keep the existing schema',
 					removeSchema: 'Remove the original schema'
 				},
-				migrationSetting: 'Migration object settings',
+				migrationSetting: 'Copy settings',
 				dataProcessing: 'Existing data processing',
 				prefixAndSuffix: 'Add prefix and suffix',
 				keepExistingData: 'Keep existing data',

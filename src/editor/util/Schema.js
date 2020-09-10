@@ -6,11 +6,11 @@
 import _ from 'lodash';
 import log from '../../log';
 const allColorList = [
-	'#990066',
-	'#FFCC00',
-	'#CC0033',
-	'#006699',
-	'#009999',
+	'#409EFF',
+	'#67C23A',
+	'#E6A23C',
+	'#F56C6C',
+	'#909399',
 	'#FF9933',
 	'#FFCCCC',
 	'#FF6600',
@@ -76,7 +76,7 @@ export const /**
 							}`.replace(/\./g, '_'),
 						label: jsonPathForFieldName[jsonPathForFieldName.length - 1],
 						type: field.javaType || field.java_type,
-						color: getColor(field.table_name),
+						color: getColor(field.tableId || field.table_name),
 						primary_key_position: field.primary_key_position,
 						table_name: field.table_name || 'table',
 						original_field_name: field.field_name
@@ -90,13 +90,19 @@ export const /**
 					}
 				}
 			}
-			let re = function(field) {
+			let re = function(field, count) {
 				if (field && field.children) {
-					field.children = Object.values(field.children);
-					field.children.forEach(re);
+					count++;
+					field.children = Object.values(field.children).map(it => {
+						it.level = count;
+						return it;
+					});
+					field.children.forEach(it => {
+						re(it, count);
+					});
 				}
 			};
-			re(root);
+			re(root, 0);
 
 			let sort = function(node) {
 				if (node.children && node.children.length > 0) {

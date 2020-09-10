@@ -1,32 +1,34 @@
-/**
- * @author lg<lirufei0808@gmail.com>
- * @date 3/5/20
- * @description
- */
 import { options } from '../../lib/rappid/config';
-import CollectionAttribute from './CollectionAttribute';
+import JointCacheAttribute from './JointCacheAttribute';
 import { FORM_DATA_KEY } from '../../constants';
-import i18n from '../../../i18n/i18n';
 import log from '../../../log';
+import i18n from '../../../i18n/i18n';
 
-export const collectionConfig = {
-	type: 'app.Collection',
+export const jointCacheConfig = {
+	type: 'app.JointCache',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
+			size: { width: 120, height: 28 },
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/o-collection.svg'
+					xlinkHref: 'static/editor/o-jc.svg',
+					refWidth: '25%',
+					refHeight: '84%',
+					refX: '-8%',
+					refY: '-28%'
+				},
+				body: {
+					rx: 14,
+					ry: 14
 				},
 				label: {
-					text: i18n.t('editor.cell.data_node.collection.name')
+					text: i18n.t('editor.cell.processor.jointCache.name')
 				}
 			},
 			[FORM_DATA_KEY]: {
-				connectionId: '',
-				name: '',
-				freeTransform: false,
-				type: 'collection'
+				type: 'custom_processor',
+				script: ''
 			}
 		},
 		prototypeProperties: {
@@ -36,75 +38,28 @@ export const collectionConfig = {
 					selector: 'portLabel'
 				}
 			],
-			isDataNode() {
-				return true;
+			initialize() {
+				this.on('change:' + FORM_DATA_KEY, () => {
+					this.updateOutputSchema();
+				});
 			},
 
-			/**
-			 * validate user-filled data
-			 * @param data
-			 *
-			 */
 			validate: function(data) {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
+				log('JointCache Formdata');
 				if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
-				if (!data.connectionId)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_database')}`);
-				if (!data.tableName)
-					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_collection')}`);
-				// if (!data.primaryKeys)
-				// 	throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_pk')}`);
+				if (!data.name)
+					throw new Error(`${name}: ${i18n.t('editor.cell.processor.jointCache.form.name.none')}`);
+				if (!data.cacheId)
+					throw new Error(`${name}: ${i18n.t('editor.cell.processor.jointCache.form.cacheId.none')}`);
+				if (!data.joinSettings.length || data.joinSettings.some(it => !it.sourceKey))
+					throw new Error(`${name}: ${i18n.t('editor.cell.processor.jointCache.form.joinSettings.none')}`);
 				return true;
 			},
-			mergeOutputSchema(outputSchema) {
-				let data = this.getFormData();
-				log('collection.mergeOutputSchema', data, outputSchema);
-				if (!outputSchema || !data) return outputSchema;
-				let fieldFilter = data.fieldFilter ? data.fieldFilter.split(',') : [];
-				if (fieldFilter.length === 0) return outputSchema;
-				let defaultFields = outputSchema.fields;
-				let newSchema = data.fieldFilterType === 'retainedField' ? [] : defaultFields;
-				fieldFilter.forEach(filedName => {
-					let index = defaultFields.findIndex(f => filedName === f.field_name);
-					if (index >= 0) {
-						let field = defaultFields[index];
-						if (data.fieldFilterType === 'retainedField') {
-							newSchema.push(field);
-							this.checkParent(defaultFields, field, newSchema);
-						} else if (data.fieldFilterType === 'deleteField') {
-							newSchema.splice(index, 1);
-							this.checkChildren(fieldFilter, newSchema, field);
-						}
-					}
-				});
-				outputSchema.fields = newSchema;
-				log('collection.mergeOutputSchema', outputSchema);
-				return outputSchema;
-			},
 
-			checkParent(fields, field, schema) {
-				if (field.parent && !schema.find(f => f.field_name === field.parent)) {
-					let parentField = fields.find(f => f.field_name === field.parent);
-					schema.push(parentField);
-					this.checkParent(fields, parentField, schema);
-				}
-			},
-
-			checkChildren(filter, schema, field) {
-				let childrenFields = schema.filter(f => f.parent === field.field_name);
-				if (childrenFields && childrenFields.length) {
-					childrenFields.forEach(cf => {
-						if (!filter.includes(cf.field_name)) {
-							let index = schema.findIndex(f => f.field_name === cf.field_name);
-							if (index >= 0) {
-								let childField = schema[index];
-								schema.splice(index, 1);
-								this.checkChildren(filter, schema, childField);
-							}
-						}
-					});
-				}
+			isProcess() {
+				return true;
 			},
 
 			/**
@@ -234,9 +189,9 @@ export const collectionConfig = {
 	 */
 	stencil: {
 		/**
-		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：process；标准图形：standard
+		 * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：processor；标准图形：standard
 		 */
-		group: 'data',
+		group: 'processor',
 		/**
 		 * 界面显示的分组名称
 		 */
@@ -245,7 +200,7 @@ export const collectionConfig = {
 		size: { width: 5, height: 4 },
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.data_node.collection.tip'),
+				dataTooltip: i18n.t('editor.cell.processor.field.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -258,14 +213,14 @@ export const collectionConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/collection2.svg',
+				xlinkHref: 'static/editor/jc.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.data_node.collection.name'),
+				text: i18n.t('editor.cell.processor.jointCache.name'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -285,6 +240,6 @@ export const collectionConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: CollectionAttribute
+		component: JointCacheAttribute
 	}
 };

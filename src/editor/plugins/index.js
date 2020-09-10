@@ -24,3 +24,4 @@ export * from './publishApi/publishApi';
 export * from './logminer/logminer';
 export * from './databaseLink/databaseLink';
 export * from './redis/Redis';
+export * from './jointCache/JointCache';
