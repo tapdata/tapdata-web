@@ -65,7 +65,9 @@
 						@right-check-change="handleSelectTable"
 					>
 						<span class="box" slot-scope="{ option }">
-							<span :class="[{ active: option.label !== option.key }, 'text']">{{ option.label }}</span>
+							<span class="text" :class="[{ active: option.label !== option.key }, 'text']">{{
+								option.label
+							}}</span>
 							<!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
 							}}</span> -->
@@ -274,6 +276,7 @@ export default {
 					el.label = el.key;
 				}
 			});
+			this.preFixSuffixData();
 		},
 
 		// 穿梭框搜索
