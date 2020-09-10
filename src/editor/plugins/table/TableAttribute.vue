@@ -208,7 +208,6 @@
 			:visible.sync="dialogVisible"
 			:close-on-click-modal="false"
 			width="30%"
-			:before-close="handleClose"
 		>
 			<span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
 			<span slot="footer" class="dialog-footer">

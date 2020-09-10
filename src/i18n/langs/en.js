@@ -666,6 +666,7 @@ const en = {
 					tip: 'api node',
 					chooseApiName: 'Please select API',
 					none_collection: 'Collection is required.',
+					none_database: 'Database is required.',
 					none_pk: 'Primary key is required.',
 					api_isNull: 'API cannot be empty',
 					dataApiName: 'Data publishing API name',
