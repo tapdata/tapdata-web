@@ -127,8 +127,8 @@ export default {
 			for (let i = 0; i < tableNames.length; i++) {
 				let tableName = tableNames[i];
 				let table = tables[tableName];
-				let sourceEl = self.$refs.sourceEntity.getOutPort();
-				let targetEl = self.$refs.targetEntity.getInPort(table);
+				let sourceEl = self.$refs.sourceEntity ? self.$refs.sourceEntity.getOutPort() : null;
+				let targetEl = self.$refs.targetEntity ? self.$refs.targetEntity.getInPort(table) : null;
 
 				if (sourceEl && targetEl && self.isConnected(sourceEl) && self.isConnected(targetEl)) {
 					let line = new LeaderLine({
