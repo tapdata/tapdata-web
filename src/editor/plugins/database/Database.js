@@ -116,7 +116,12 @@ export const databaseConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-				return ['app.Database'].includes(targetCell.get('type'));
+				return (
+					['app.Database'].includes(targetCell.get('type')) &&
+					targetCell.graph.getConnectedLinks(this, {
+						inbound: true
+					}).length < 1
+				);
 			},
 
 			/**

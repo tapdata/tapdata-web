@@ -126,6 +126,8 @@
 							<el-input
 								v-model="model.table_prefix"
 								autocomplete="off"
+								maxlength="20"
+								show-word-limit
 								:placeholder="$t('editor.cell.link.prefixPlaceholder')"
 							></el-input>
 						</el-form-item>
@@ -135,6 +137,8 @@
 							<el-input
 								v-model="model.table_suffix"
 								autocomplete="off"
+								maxlength="20"
+								show-word-limit
 								:placeholder="$t('editor.cell.link.suffixPlaceholder')"
 							></el-input>
 						</el-form-item>
@@ -287,25 +291,27 @@ export default {
 			if (this.cell) {
 				// let linkFormData = null;
 				let targetCell = this.cell.getTargetCell();
-				let targetFormData = targetCell.getFormData();
-				// if (targetCell.length && targetCell[0].getFormData()) {
-				// 	linkFormData = targetCell[0].getFormData();
-				// }
+				if (targetCell && targetCell.getFormData()) {
+					let targetFormData = targetCell.getFormData();
+					// if (targetCell.length && targetCell[0].getFormData()) {
+					// 	linkFormData = targetCell[0].getFormData();
+					// }
 
-				if (targetFormData) {
-					targetFormData.dropType = this.model.dropType;
-					targetFormData.table_prefix = this.model.table_prefix;
-					targetFormData.table_suffix = this.model.table_suffix;
-					targetFormData.syncObjects = [];
-					if (this.model.selectSourceDatabase) {
-						Object.keys(this.model.selectSourceDatabase).forEach(key => {
-							if (this.model.selectSourceDatabase[key]) {
-								targetFormData.syncObjects.push({
-									type: key,
-									objectNames: key === 'table' ? this.model.selectSourceArr : []
-								});
-							}
-						});
+					if (targetFormData) {
+						targetFormData.dropType = this.model.dropType;
+						targetFormData.table_prefix = this.model.table_prefix;
+						targetFormData.table_suffix = this.model.table_suffix;
+						targetFormData.syncObjects = [];
+						if (this.model.selectSourceDatabase) {
+							Object.keys(this.model.selectSourceDatabase).forEach(key => {
+								if (this.model.selectSourceDatabase[key]) {
+									targetFormData.syncObjects.push({
+										type: key,
+										objectNames: key === 'table' ? this.model.selectSourceArr : []
+									});
+								}
+							});
+						}
 					}
 				}
 			}
@@ -410,11 +416,11 @@ export default {
 
 		// 获取表名称
 		loadDataModels(connectionId) {
-			this.transferLoading = true;
 			let self = this;
 			if (!connectionId) {
 				return;
 			}
+			this.transferLoading = true;
 			connections
 				.customQuery([connectionId], { schema: true })
 				.then(result => {
@@ -481,6 +487,10 @@ export default {
 .database-link {
 	.head {
 		display: block;
+	}
+	.nodeBody {
+		height: calc(100% - 30px);
+		overflow: hidden;
 	}
 	.database-tableBox {
 		padding-top: 10px;
@@ -579,11 +589,12 @@ export default {
 		}
 		.transfer,
 		.el-transfer,
-		.el-transfer-panel {
+		.el-transfer-panel,
+		.el-transfer-panel__body {
 			height: 100% !important;
 		}
 		.el-checkbox-group {
-			height: 594px;
+			height: 565px;
 		}
 		.el-transfer-panel__item {
 			width: 100%;

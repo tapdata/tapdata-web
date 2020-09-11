@@ -971,6 +971,8 @@ export default {
 		 */
 		start() {
 			let self = this,
+				// syncObjects = [],
+				// stageTypeFalg = false,
 				data = this.getDataFlowData();
 
 			if (data) {
@@ -980,6 +982,14 @@ export default {
 				if (this.form.taskName) {
 					data.name = this.form.taskName;
 				}
+				// if (data && data.stages && data.stages.length) {
+				// 	stageTypeFalg = data.stages.indexOf(stage => stage.type === 'database');
+				// 	data.stages.forEach(item => {
+				// 		if ((item.type = 'database' && item.syncObjects && item.syncObjects.length)) {
+				// 			syncObjects = item.syncObjects;
+				// 		}
+				// 	});
+				// }
 
 				data.status = 'scheduled';
 				data.executeMode = 'normal';
