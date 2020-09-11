@@ -839,6 +839,7 @@ export default {
 			stages.forEach(stage => {
 				if (stage.joinTables)
 					stage.joinTables.forEach(jt => {
+						if (!jt || !jt.id) return;
 						let finded = false;
 						cells.reduce((finded, cell) => {
 							if (cell.id == jt.id) finded = true;
