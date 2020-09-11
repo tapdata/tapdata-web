@@ -115,14 +115,6 @@
 						</el-tooltip>
 					</div>
 				</el-form-item>
-
-				<!-- <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
-					<MultiSelection
-						v-model="model.primaryKeys"
-						:options="primaryKeyOptions"
-						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
-					></MultiSelection>
-				</el-form-item> -->
 				<el-form-item>
 					<template slot="label">
 						{{ $t('editor.cell.data_node.collection.form.fieldFilterTip.label') }}
@@ -160,6 +152,7 @@
 						@change="handleFilterChange()"
 					></MultiSelection>
 				</el-form-item>
+
 				<el-form-item
 					required
 					:label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
@@ -198,17 +191,34 @@
 				</el-form-item>
 
 				<el-form-item
+					required
+					:label="$t('editor.cell.data_node.collection.form.filter.fiflterSetting')"
 					v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
-					:label="$t('editor.cell.data_node.collection.form.filter.label')"
 				>
-					<el-input
-						v-model="model.filter"
-						type="textarea"
-						rows="5"
-						:placeholder="$t('editor.cell.data_node.collection.form.filter.placeholder.placeholder')"
-						size="mini"
-					></el-input>
+					<div class="flex-block">
+						<el-switch
+							v-model="model.isFilter"
+							inactive-color="#dcdfe6"
+							:active-text="
+								model.isFilter
+									? $t('editor.cell.data_node.collection.form.filter.openFiflter')
+									: $t('editor.cell.data_node.collection.form.filter.closeFiflter')
+							"
+							style="margin-right: 20px"
+						></el-switch>
+					</div>
 				</el-form-item>
+				<queryBuilder
+					v-if="(dataNodeInfo.isSource || !dataNodeInfo.isTarget) && model.isFilter"
+					v-model="model.custSql"
+					v-bind:initialOffset.sync="model.initialOffset"
+					:primaryKeyOptions="primaryKeyOptions"
+					v-bind:selectedFields.sync="model.selectedFields"
+					v-bind:custFields.sync="model.custFields"
+					:tableName="model.tableName"
+					:databaseType="model.databaseType"
+					:mergedSchema="defaultSchema"
+				></queryBuilder>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
 				<!-- <el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
@@ -232,6 +242,7 @@ import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm
 import MultiSelection from '../../../components/MultiSelection';
 import RelatedTasks from '../../../components/relatedTasks';
 import ClipButton from '@/components/ClipButton';
+import queryBuilder from '@/components/QueryBuilder';
 import CreateTable from '../../../components/dialog/createTable';
 import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, uuid } from '../../util/Schema';
 import Entity from '../link/Entity';
@@ -251,7 +262,7 @@ const DELETE_OPS_TPL = {
 };
 export default {
 	name: 'Collection',
-	components: { Entity, DatabaseForm, MultiSelection, ClipButton, RelatedTasks, CreateTable },
+	components: { Entity, DatabaseForm, MultiSelection, ClipButton, RelatedTasks, CreateTable, queryBuilder },
 	props: {
 		database_types: {
 			type: Array,
@@ -422,15 +433,27 @@ export default {
 					}
 				}
 			},
-
 			dataNodeInfo: {},
 			model: {
 				connectionId: '',
-				databaseType: '',
+				databaseType: 'mongodb',
 				tableName: '',
 				dropTable: false,
 				type: 'collection',
 				// primaryKeys: '',
+				isFilter: false,
+				sqlFromCust: true,
+				custSql: {
+					filterType: 'field',
+					noFieldFilter: true,
+					noLineLimit: true,
+					selectedFields: [],
+					fieldFilterType: 'keepAllFields',
+					limitLines: '',
+					cSql: '',
+					editSql: '',
+					conditions: []
+				},
 				filter: '',
 				fieldFilterType: 'keepAllFields',
 				fieldFilter: '',
@@ -457,10 +480,6 @@ export default {
 				});
 			}
 		}
-
-		// setTimeout(() => {
-		// 	this.tableIsLink();
-		// }, 500);
 	},
 
 	methods: {
@@ -672,15 +691,8 @@ export default {
 					this.schemaSelectConfig.loading = false;
 				});
 		},
-
 		handlerConnectionChange() {
 			this.model.tableName = '';
-			let list = this.databaseSelectConfig.options;
-			for (let i = 0; i < list.length; i++) {
-				if (this.model.connectionId === list[i].id) {
-					this.model.databaseType = list[i]['database_type'];
-				}
-			}
 		},
 		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
@@ -715,6 +727,9 @@ export default {
 		},
 		getData() {
 			let result = _.cloneDeep(this.model);
+			if (this.model.isFilter)
+				if (this.model.custSql.filterType === 'field') this.model.filter = this.model.custSql.cSql;
+				else this.model.filter = this.model.custSql.editSql;
 			result.name = result.tableName || 'Collection';
 			if (!this.dataNodeInfo.isTarget) {
 				delete result.dropTable;

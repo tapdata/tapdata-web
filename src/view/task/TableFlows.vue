@@ -1,54 +1,67 @@
 <template>
 	<el-container class="table-flows-wrap">
+		<div class="panel-left" v-if="formData.panelFlag">
+			<metaData v-on:nodeClick="nodeClick"></metaData>
+		</div>
 		<el-container>
 			<el-header height="auto" style="padding-top: 20px;">
 				<el-form class="search-bar" size="mini" :inline="true" :model="searchParams">
+					<el-form-item>
+						<i class="iconfont icon-xiangshangzhanhang"></i>
+						<span>{{ formData.panelFlag ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel') }}</span>
+					</el-form-item>
 					<el-form-item>
 						<el-input
 							clearable
 							style="width: 300px;"
 							v-model="searchParams.keyword"
-							placeholder="请输入表名"
-							@input="keyup()"
+							:placeholder="$t('dataFlow.searchPlaceholder')"
+							@change="screenFn"
 						></el-input>
 					</el-form-item>
 					<el-form-item>
 						<el-select
-							v-model="searchParams.flowId"
-							placeholder="选择任务"
-							:loading="!flowOptions"
-							@input="search(1)"
+							v-model="formData.status"
+							size="mini"
+							clearable
+							:placeholder="$t('dataFlow.taskStatusPlaceholder')"
+							style="width:160px"
+							@change="screenFn"
 						>
 							<el-option
-								v-for="opt in flowOptions"
-								:key="opt.id"
-								:label="opt.name"
-								:value="opt.id"
+								v-for="item in options"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value"
 							></el-option>
 						</el-select>
 					</el-form-item>
 					<el-form-item>
-						<el-select v-model="searchParams.status" placeholder="任务状态" @input="search(1)">
+						<el-select
+							v-model="formData.way"
+							size="mini"
+							clearable
+							:placeholder="$t('dataFlow.taskSettingPlaceholder')"
+							style="width:160px"
+							@change="screenFn"
+						>
 							<el-option
-								v-for="opt in statusOptions"
-								:key="opt"
-								:value="opt"
-								:label="$t('dataFlow.status.' + opt)"
+								v-for="item in optionsKey"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value"
 							></el-option>
 						</el-select>
 					</el-form-item>
 					<el-form-item>
-						<el-select v-model="searchParams.way" placeholder="同步类型" @input="search(1)">
-							<el-option
-								v-for="opt in syncOtions"
-								:key="opt.value"
-								:value="opt.value"
-								:label="opt.label"
-							></el-option>
-						</el-select>
-					</el-form-item>
-					<el-form-item>
-						<el-select v-model="searchParams.executionStatus" placeholder="阶段" @input="search(1)">
+						<el-select
+							v-model="formData.executionStatus"
+							size="mini"
+							clearable
+							:placeholder="$t('dataFlow.executionStatus')"
+							style="width:160px"
+							@change="screenFn"
+						>
 							<el-option
 								v-for="opt in ['initializing', 'cdc', 'initialized']"
 								:key="opt"
@@ -84,10 +97,12 @@
 						<el-table-column sortable="custom" label="源表/目标表">
 							<template slot-scope="scope">
 								<div class="table-item">
-									<div class="table-source">[S] {{ scope.row.name }}</div>
-									<div class="from-db">MYSQL</div>
-									<div class="table-target">[T] TARGET_HKEDV</div>
-									<div class="from-db">ORACAL</div>
+									<div class="table-source">[S] {{ scope.row.stages.name }}</div>
+									<div class="from-db">{{ scope.row.databaseName }}</div>
+									<div v-for="item in scope.row.outf" :key="item.name">
+										<div class="table-target">[T] {{ item.name }}</div>
+										<div class="from-db">{{ item.databaseName }}</div>
+									</div>
 								</div>
 							</template>
 						</el-table-column>
@@ -95,17 +110,18 @@
 							<template slot-scope="scope">
 								<div class="table-item">
 									<div>{{ scope.row.name }}</div>
-									<div class="dark-color">2020-02-21 12:22:33</div>
+									<div class="dark-color">{{ scope.row.startTime }}</div>
 								</div>
 							</template>
 						</el-table-column>
 						<el-table-column sortable="custom" label="状态" width="120">
 							<template slot-scope="scope">
 								<img
+									v-if="scope.row.status == 'running'"
 									style="width: 12px;height: 15px;vertical-align: middle;"
 									src="../../../static/editor/running-blue.svg"
 								/>
-								<span class="primary-color" v-show="scope.row.name">运行中</span>
+								<span class="primary-color" v-show="scope.row.name">{{ scope.row.statusLabel }}</span>
 							</template>
 						</el-table-column>
 						<el-table-column sortable="custom" label="阶段" width="120">
@@ -195,16 +211,33 @@
 				</el-pagination>
 			</el-main>
 		</el-container>
+		<SelectClassify
+			ref="SelectClassify"
+			:dialogVisible="dialogVisible"
+			type="dataflow"
+			:tagLists="tagList"
+			v-on:dialogVisible="handleDialogVisible"
+			v-on:operationsClassify="handleOperationClassify"
+		></SelectClassify>
 	</el-container>
 </template>
 
 <script>
-let timeout = null;
+import factory from '../../api/factory';
+import ws from '../../api/ws';
+import metaData from '../metaData';
+import SelectClassify from '../../components/SelectClassify';
+
+const dataFlows = factory('DataFlows');
+
 export default {
 	name: 'TableFlows',
+	components: { metaData, SelectClassify },
 	data() {
 		return {
 			loading: true,
+			dialogVisible: false,
+			tagList: [],
 			searchParams: this.$store.state.tableFlows,
 			page: {
 				data: null,
@@ -214,7 +247,6 @@ export default {
 				sortBy: '',
 				order: ''
 			},
-			flowOptions: null,
 			statusOptions: ['running', 'paused', 'error', 'draft', 'scheduled', 'stopping', 'force_stopping'],
 			syncOtions: [
 				{
@@ -230,22 +262,123 @@ export default {
 					value: 'initial_sync+cdc'
 				}
 			],
-			selections: []
+			selections: [],
+			formData: {
+				search: '',
+				status: '',
+				person: '',
+				way: '',
+				executionStatus: '',
+				classification: [],
+				panelFlag: true
+			},
+			optionsKey: [
+				{
+					label: this.$t('dataFlow.initial_sync'),
+					value: 'initial_sync'
+				},
+				{
+					label: this.$t('dataFlow.cdc'),
+					value: 'cdc'
+				},
+				{
+					label: this.$t('dataFlow.initial_sync') + this.$t('dataFlow.cdc'),
+					value: 'initial_sync+cdc'
+				}
+			],
+			options: [
+				{
+					label: this.$t('dataFlow.status.running'),
+					value: 'running'
+				},
+				{
+					label: this.$t('dataFlow.status.paused'),
+					value: 'paused'
+				},
+				{
+					label: this.$t('dataFlow.status.error'),
+					value: 'error'
+				},
+				{
+					label: this.$t('dataFlow.status.draft'),
+					value: 'draft'
+				},
+				{
+					label: this.$t('dataFlow.status.scheduled'),
+					value: 'scheduled'
+				},
+				{
+					label: this.$t('dataFlow.status.stopping'),
+					value: 'stopping'
+				},
+				{
+					label: this.$t('dataFlow.status.force_stopping'),
+					value: 'force stopping'
+				}
+			]
 		};
 	},
 	created() {
 		this.getFlowOptions();
 		this.search(1);
+		this.getData();
 	},
 	methods: {
-		keyup() {
-			if (timeout) {
-				window.clearTimeout(timeout);
+		handlePanelFlag() {
+			this.formData.panelFlag = !this.formData.panelFlag;
+			this.$store.commit('dataFlows', this.formData);
+		},
+		handleDialogVisible() {
+			this.dialogVisible = false;
+		},
+		handleClassify() {
+			if (this.multipleSelection.length === 0) {
+				this.$message.info('please select row data');
+				return;
 			}
-			timeout = setTimeout(() => {
-				this.search(1);
-				timeout = null;
-			}, 800);
+			this.tagList = this.handleSelectTag();
+			this.dialogVisible = true;
+		},
+		handlerAddTag(id, listTags) {
+			this.dataFlowId = id;
+			this.tagList = listTags || [];
+			this.dialogVisible = true;
+		},
+		handleSelectTag() {
+			let tagList = {};
+			this.multipleSelection.forEach(row => {
+				if (row.listtags && row.listtags.length > 0) {
+					tagList[row.listtags[0].id] = {
+						value: row.listtags[0].value
+					};
+				}
+			});
+			return tagList;
+		},
+		handleOperationClassify(listtags) {
+			let attributes = [];
+			if (this.dataFlowId) {
+				let node = {
+					id: this.dataFlowId,
+					listtags: listtags
+				};
+				attributes.push(node);
+			} else {
+				this.multipleSelection.forEach(row => {
+					row.listtags = row.listtags || [];
+					let node = {
+						id: row.id,
+						listtags: listtags
+					};
+					attributes.push(node);
+				});
+			}
+			dataFlows.patchAll({ attrs: attributes }).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					this.dataFlowId = '';
+					this.getData();
+				}
+			});
 		},
 		rowClassHandler({ rowIndex }) {
 			return `table-row-${rowIndex}`;
@@ -277,53 +410,6 @@ export default {
 				this.flowOptions = list;
 			}, 2000);
 		},
-		search(pageNum) {
-			this.searchParamsChange();
-			this.loading = true;
-			// let { current, size, sortBy, order } = this.page;
-			// let { keyword, flowId } = this.searchParams;
-			// let currentPage = pageNum || current + 1;
-			// let where = {};
-
-			// let filter = {
-			// 	limit: size,
-			// 	skip: (currentPage - 1) * size,
-			// 	where
-			// };
-			// if (sortBy && order) {
-			// 	filter.order = `${sortBy} ${order === 'descending' ? 'desc' : 'asc'}`;
-			// }
-			// Promise.all([
-			// 	this.$api('MetadataInstances').count({ where }),
-			// 	this.$api('MetadataInstances').get({ filter })
-			// ])
-			// 	.then(([resCount, resGet]) => {
-			// 		this.page.data = resGet.data;
-			// 		this.page.current = currentPage;
-			// 		this.page.total = resCount.data.count;
-			// 		this.$nextTick(() => {
-			// 			this.renderRowBg(resGet.data);
-			// 		});
-			// 	})
-			// 	.finally(() => {
-			// 		this.loading = false;
-			// 	});
-			setTimeout(() => {
-				this.loading = false;
-				let list = [
-					{ name: 'SOURCE_IM_DEPT_INDEX', num: 20, in: 12333, out: 32222 },
-					{ name: 'SOURCE_IM_DEPT_INDEX', num: 50, in: 12333, out: 32222 },
-					{ name: 'SOURCE_IM_DEPT_INDEX', num: 30, in: 12333, out: 32222 },
-					{ name: 'SOURCE_IM_DEPT_INDEX', num: 80, in: 12333, out: 32222 }
-				];
-				this.page.data = list;
-				this.page.current = pageNum || 1;
-				this.page.total = 4;
-				this.$nextTick(() => {
-					this.renderRowBg(list);
-				});
-			}, 2000);
-		},
 		reset() {
 			this.searchParams = {
 				flowId: '',
@@ -336,6 +422,114 @@ export default {
 		},
 		searchParamsChange() {
 			this.$store.commit('tableFlows', this.searchParams);
+		},
+		nodeClick(data) {
+			if (data) {
+				this.checkedTag = {
+					id: data.id,
+					value: data.value
+				};
+				this.getData();
+			}
+		},
+		screenFn() {
+			this.currentPage = 1;
+			this.getData();
+		},
+		keyupEnter() {
+			document.onkeydown = e => {
+				if (e.keyCode === 13) {
+					this.getData();
+				}
+			};
+		},
+		async getData() {
+			this.loading = true;
+
+			this.$store.commit('tableFlows', this.formData);
+
+			let where = {};
+			if (!parseInt(this.$cookie.get('isAdmin'))) where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
+			let order = 'createTime DESC';
+			if (this.order) {
+				order = this.order;
+			}
+			if (this.formData) {
+				if (this.formData.status && this.formData.status !== '') where.status = this.formData.status;
+				if (this.formData.way && this.formData.way !== '') where['setting.sync_type'] = this.formData.way;
+				if (this.formData.search && this.formData.search !== '') where.name = this.formData.search;
+				if (this.formData.executionStatus) where['stats.stagesMetrics.status'] = this.formData.executionStatus;
+			}
+			if (this.checkedTag && this.checkedTag !== '') {
+				where['listtags.id'] = {
+					in: [this.checkedTag.id]
+				};
+			}
+			let _params = Object.assign({}, where, {
+				order: order,
+				limit: this.pagesize,
+				skip: (this.currentPage - 1) * this.pagesize
+			});
+
+			_params = { name: 'e', skip: 0, limit: 20 };
+			await dataFlows.tableFlow(_params).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.handleData(res.data);
+						this.page.data = res.data;
+						let msg = {
+							type: 'watch',
+							collection: 'DataFlows',
+							filter: {
+								where: { 'fullDocument._id': { $in: this.page.data.map(it => it.id) } }, //查询条件
+								fields: {
+									'fullDocument.id': true,
+									'fullDocument.name': true,
+									'fullDocument.status': true,
+									'fullDocument.checked': true,
+									'fullDocument.executeMode': true,
+									'fullDocument.stopOnError': true,
+									'fullDocument.last_updated': true,
+									'fullDocument.createTime': true,
+									'fullDocument.children': true,
+									'fullDocument.stats': true,
+									'fullDocument.stages.id': true,
+									'fullDocument.stages.name': true
+								}
+							}
+						};
+						let int = setInterval(() => {
+							if (ws.ws.readyState == 1) {
+								ws.send(msg);
+								clearInterval(int);
+							}
+						}, 2000);
+					}
+				}
+				this.loading = false;
+			});
+		},
+		handleData(data) {
+			if (!data) return;
+			data.forEach(item => {
+				this.cookRecord(item);
+			});
+		},
+		cookRecord(item) {
+			if (item.startTime) item.startTime = this.$moment(item.startTime).format('YYYY-MM-DD HH:mm:ss');
+			item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
+			if (item.input || item.output) {
+				item.input = item.input ? item.input.rows : '--';
+				item.output = item.output ? item.output.rows : '--';
+				item.transmissionTime = item.transmissionTime
+					? ((item.input * 1000) / item.transmissionTime).toFixed(0)
+					: '--';
+			} else {
+				item.input = '--';
+				item.output = '--';
+				item.transmissionTime = '--';
+			}
+			return item;
 		}
 	}
 };

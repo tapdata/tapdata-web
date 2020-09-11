@@ -3,7 +3,10 @@
 		<el-tabs type="border-card" v-model="value.filterType">
 			<el-tab-pane name="field">
 				<span slot="label"> {{ $t('editor.cell.data_node.collection.form.filter.fieldFilter') }}</span>
-				<el-form-item :placeholder="$t('editor.cell.data_node.collection.form.filter.allField')">
+				<el-form-item
+					v-if="!value.noFieldFilter"
+					:placeholder="$t('editor.cell.data_node.collection.form.filter.allField')"
+				>
 					<el-select v-model="value.fieldFilterType">
 						<el-option
 							v-for="item in filterTypeOptions"
@@ -33,7 +36,7 @@
 					</el-select>
 				</el-form-item>
 				<div class="fiflter">
-					<div class="rowSlot">
+					<div v-if="!value.noLineLimit" class="rowSlot">
 						<span slot="prepend">{{ $t('editor.cell.data_node.collection.form.filter.rowLimit') }}</span>
 						<el-select v-model="value.limitLines" size="mini" class="e-select">
 							<el-option
@@ -104,6 +107,10 @@
 <script>
 import queryCond from './QueryCond';
 
+//index as id
+'=', '<>', '>', '<', '>=', '<=', 'like';
+const mongoCommand = ['eq', 'neq', 'gt', 'lt', 'gte', 'lte', 'like'];
+const calculationList = ['=', '<>', '>', '<', '>=', '<=', 'like'];
 export default {
 	components: { queryCond },
 	props: {
@@ -191,8 +198,12 @@ export default {
 			deep: true,
 			handler() {
 				this.$emit('input', this.value);
-				this.sqlWhere = this.toSqlWhere(this.value.conditions);
-				this.createCustSql();
+				if (this.databaseType != 'mongodb') {
+					this.sqlWhere = this.toSqlWhere(this.value.conditions);
+					this.createCustSql();
+				} else {
+					this.createMongoFilter();
+				}
 			}
 		}
 	},
@@ -307,6 +318,11 @@ export default {
 			});
 			return res;
 		},
+		createMongoFilter() {
+			let cSql = '';
+			cSql += JSON.stringify(this.flat({ type: 'group', operator: 'and', conditions: this.value.conditions }));
+			this.value.cSql = cSql;
+		},
 		flat(condition) {
 			if (condition && condition.type === 'group') {
 				if (condition.operator === 'and') {
@@ -314,19 +330,19 @@ export default {
 					condition.conditions.forEach(v => {
 						let _flat = this.flat(v);
 						if (_flat) {
-							result.and = result.and || [];
-							result.and.push(_flat);
+							result.$and = result.and || [];
+							result.$and.push(_flat);
 						}
 					});
 
 					return result;
 				} else if (condition.operator === 'or') {
 					let result = {
-						or: []
+						$or: []
 					};
 					condition.conditions.forEach(v => {
 						let _flat = this.flat(v);
-						if (_flat) result.or.push(_flat);
+						if (_flat) result.$or.push(_flat);
 					});
 					return result;
 				}
@@ -338,7 +354,7 @@ export default {
 				} else {
 					return {
 						['' + condition.field + '']: {
-							['' + condition.command + '']: condition.value
+							['$' + mongoCommand[calculationList.indexOf(condition.command)] + '']: condition.value
 						}
 					};
 				}

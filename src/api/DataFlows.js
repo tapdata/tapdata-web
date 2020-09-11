@@ -68,4 +68,7 @@ export default class DataFlows extends PublicAPI {
 	relatedDataFlows(params) {
 		return axios.get(this.url + '/relatedDataFlows', { params });
 	}
+	tableFlow(params) {
+		return axios.get(this.url + '/tableFlow', { params });
+	}
 }
