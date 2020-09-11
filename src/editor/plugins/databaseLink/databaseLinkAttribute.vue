@@ -218,6 +218,7 @@ export default {
 						procedure: false
 					};
 				}
+
 				this.loadDataModels(connectionId);
 			}
 
@@ -365,7 +366,7 @@ export default {
 			if (!connectionId) {
 				return;
 			}
-			connections.get([connectionId]).then(result => {
+			connections.customQuery([connectionId], { schema: true }).then(result => {
 				if (result.statusText === 'OK' || (result.status === 200 && result.data)) {
 					self.databaseInfo = result.data;
 					let tables = (result.data.schema && result.data.schema.tables) || [];
