@@ -48,7 +48,7 @@
 				</el-form-item>
 			</el-form>
 
-			<div class="database-tableBox">
+			<div class="database-tableBox" v-loading="transferLoading">
 				<div class="box-text">
 					<h3>{{ $t('editor.cell.link.migrationSetting') }}</h3>
 					<div class="box-btn">
@@ -61,7 +61,6 @@
 						filterable
 						:titles="titles"
 						:filter-method="filterMethod"
-						:loading="transferLoading"
 						:filter-placeholder="$t('editor.cell.link.searchContent')"
 						v-model="model.selectSourceArr"
 						:data="sourceData"
@@ -219,7 +218,16 @@ export default {
 					};
 				}
 
-				this.loadDataModels(connectionId);
+				if (this.disabled) {
+					this.sourceData = sourceCell.getFormData().databaseTables.map(table => ({
+						label: table.table_name,
+						key: table.table_name,
+						// value: table.table_name,
+						disabled: this.disabled
+					}));
+				} else {
+					this.loadDataModels(connectionId);
+				}
 			}
 
 			editorMonitor = vueAdapter.editor;
@@ -366,28 +374,33 @@ export default {
 			if (!connectionId) {
 				return;
 			}
-			connections.customQuery([connectionId], { schema: true }).then(result => {
-				if (result.statusText === 'OK' || (result.status === 200 && result.data)) {
-					self.databaseInfo = result.data;
-					let tables = (result.data.schema && result.data.schema.tables) || [];
-					tables = tables.sort((t1, t2) =>
-						t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-					);
+			connections
+				.customQuery([connectionId], { schema: true })
+				.then(result => {
+					if (result.statusText === 'OK' || (result.status === 200 && result.data)) {
+						self.databaseInfo = result.data;
+						let tables = (result.data.schema && result.data.schema.tables) || [];
+						tables = tables.sort((t1, t2) =>
+							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
+						);
 
-					if (tables && tables.length) {
-						this.sourceData = tables.map(table => ({
-							label: table.table_name,
-							key: table.table_name,
-							// value: table.table_name,
-							disabled: this.disabled
-						}));
-						if (this.sourceData.length) {
-							this.preFixSuffixData();
+						if (tables && tables.length) {
+							this.sourceData = tables.map(table => ({
+								label: table.table_name,
+								key: table.table_name,
+								// value: table.table_name,
+								disabled: this.disabled
+							}));
+							if (this.sourceData.length) {
+								this.preFixSuffixData();
+							}
 						}
+						self.$forceUpdate();
 					}
-					self.$forceUpdate();
-				}
-			});
+				})
+				.finally(() => {
+					this.transferLoading = false;
+				});
 		}
 
 		// 修改名称弹窗返回
