@@ -195,12 +195,12 @@ export default {
 			if (data) {
 				_.merge(this.model, data);
 			}
-
 			this.cell = cell;
 
 			this.isSourceDataNode = dataNodeInfo && !dataNodeInfo.isTarget;
 			editorMonitor = vueAdapter.editor;
 		},
+
 		async loadDataSource() {
 			this.databaseSelectConfig.loading = true;
 			let result = await connections.get({
@@ -238,6 +238,25 @@ export default {
 		changeConnection() {
 			this.model.databaseTables = [];
 			this.lookupDatabaseType();
+
+			this.cell.graph.getConnectedLinks(this.cell, { outbound: true }).forEach(link => {
+				let orignData = link.getFormData();
+				if (orignData) {
+					orignData.selectSourceDatabase = {
+						table: true,
+						view: false,
+						function: false,
+						procedure: false
+					};
+					orignData.table_prefix = '';
+					orignData.table_suffix = '';
+					orignData.dropType = 'no_drop';
+					orignData.table_prefix = '';
+					orignData.selectSourceArr = [];
+				}
+
+				link.setFormData(orignData);
+			});
 		},
 
 		lookupDatabaseType() {

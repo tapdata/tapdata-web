@@ -63,8 +63,14 @@
 							</el-form-item>
 						</el-col>
 					</el-row>
-					<el-form-item required :label="$t('dataFlow.aggName')" :prop="'aggregations.' + index + '.name'">
-						<el-popover
+					<el-form-item required :prop="'aggregations.' + index + '.name'">
+						<div class="e-label">
+							<label class="el-form-item__label">{{ $t('dataFlow.aggName') }}</label>
+							<el-popover class="aggtip" width="400" trigger="hover" :content="$t('dataFlow.nameTip')">
+								<span class="icon iconfont icon-tishi1" slot="reference"></span>
+							</el-popover>
+						</div>
+						<!-- <el-popover
 							class="aggtip"
 							placement="top-start"
 							width="200"
@@ -72,7 +78,7 @@
 							:content="$t('dataFlow.nameTip')"
 						>
 							<span class="icon iconfont icon-tishi1" slot="reference"></span>
-						</el-popover>
+						</el-popover> -->
 						<el-input v-model="item.name"></el-input>
 					</el-form-item>
 					<el-form-item
@@ -361,17 +367,27 @@ export default {
 </style>
 <style lang="less">
 .aggregate {
-	.aggtip {
-		position: absolute;
-		top: -34px;
-		left: 120px;
-		.iconfont {
-			display: inline-block;
-			color: #999;
-			cursor: pointer;
-			transform: rotate(-180deg);
+	.e-label {
+		&::before {
+			content: '*';
+			color: #f56c6c;
+			vertical-align: sub;
+			margin-right: 4px;
+		}
+		.aggtip {
+			vertical-align: middle;
+			// position: absolute;
+			// top: -34px;
+			// left: 120px;
+			.iconfont {
+				display: inline-block;
+				color: #999;
+				cursor: pointer;
+				transform: rotate(-180deg);
+			}
 		}
 	}
+
 	.el-form--label-top .el-form-item__label {
 		padding: 0;
 		line-height: 26px;

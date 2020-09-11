@@ -230,7 +230,7 @@ const en = {
 			statusError: 'Job status does not allow to do this operation.',
 			otherError: 'Operation failed, please try it again.'
 		},
-		changeName: 'Edit',
+		changeName: 'Rename',
 		Enable: 'Enable',
 		Disable: 'Disable',
 		draftNotStart: 'Configuration is not complete,  cannot be started',
@@ -989,13 +989,13 @@ const en = {
 					keepExistedData: 'Keep existed schema and remove data',
 					removeSchema: 'Remove existed schema and data'
 				},
-				migrationSetting: 'Copy settings',
+				migrationSetting: 'Tables to be copied selection',
 				dataProcessing: 'Existing data processing',
 				prefixAndSuffix: 'Add prefix and suffix',
 				keepExistingData: 'Keep existing data',
 				deleteExistingData: 'Delete existing data before running',
 				reduction: 'Reduction',
-				migrationObjece: 'Migration Object',
+				migrationObjece: 'Source tables',
 				chosen: 'Selected',
 				searchContent: 'Search',
 				mappingRelations: 'Mapping relations',
@@ -1005,7 +1005,10 @@ const en = {
 				suffixPlaceholder: 'Please enter the suffix',
 				batchRename: 'Batch rename settings',
 				tableNameExample: 'Table name example',
-				copySourceDatabase: 'Source database copy structure'
+				copySourceDatabase: 'Source database schema to be copied',
+				tableTip: 'Table does not support foreign key copy',
+				viewTip: 'Copy view does not support table rename, if check this box rename function will be disabled',
+				formTip: 'The function of copy view, function, procedure only support MySQL to MySQL'
 			}
 		},
 		ui: {

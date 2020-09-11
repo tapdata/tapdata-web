@@ -19,9 +19,31 @@
 				ref="form"
 				action="javascript:void(0);"
 			>
-				<el-form-item :label="$t('editor.cell.link.copySourceDatabase')">
-					<el-checkbox v-model="model.selectSourceDatabase.table" disabled>Table</el-checkbox>
-					<el-checkbox v-model="model.selectSourceDatabase.view" :disabled="mysqlDisable">View</el-checkbox>
+				<el-form-item>
+					<div class="e-label">
+						<label class="el-form-item__label">{{ $t('editor.cell.link.copySourceDatabase') }}</label>
+						<el-popover class="aggtip" placement="top-start" width="400" trigger="hover">
+							<span>{{ $t('editor.cell.link.formTip') }}</span>
+							<span class="icon iconfont icon-tishi1" slot="reference"></span>
+						</el-popover>
+					</div>
+
+					<el-checkbox v-model="model.selectSourceDatabase.table" disabled
+						>Table
+						<el-popover placement="top-start" width="400" trigger="hover">
+							<span>{{ $t('editor.cell.link.tableTip') }}</span>
+							<span class="icon iconfont icon-tishi1" slot="reference"></span>
+						</el-popover>
+					</el-checkbox>
+
+					<el-checkbox v-model="model.selectSourceDatabase.view" :disabled="mysqlDisable" @change="changeView"
+						>View
+						<el-popover placement="top-start" width="400" trigger="hover">
+							<span>{{ $t('editor.cell.link.viewTip') }}</span>
+							<span class="icon iconfont icon-tishi1" slot="reference"></span>
+						</el-popover>
+					</el-checkbox>
+
 					<el-checkbox v-model="model.selectSourceDatabase.function" :disabled="mysqlDisable"
 						>Function</el-checkbox
 					>
@@ -52,8 +74,20 @@
 				<div class="box-text">
 					<h3>{{ $t('editor.cell.link.migrationSetting') }}</h3>
 					<div class="box-btn">
-						<span @click="handDialog">{{ $t('editor.cell.link.prefixAndSuffix') }}</span>
-						<span @click="handleReduction">{{ $t('editor.cell.link.reduction') }}</span>
+						<el-button
+							class="e-button"
+							size="mini"
+							:disabled="model.selectSourceDatabase.view"
+							@click="handDialog"
+							>{{ $t('dataFlow.changeName') }}</el-button
+						>
+						<el-button
+							size="mini"
+							class="e-button"
+							:disabled="disabled || model.selectSourceDatabase.view"
+							@click="handleReduction"
+							>{{ $t('editor.cell.link.reduction') }}</el-button
+						>
 					</div>
 				</div>
 				<div class="transfer">
@@ -199,6 +233,7 @@ export default {
 				// this.model.selectSourceDatabase = data.selectSourceDatabase;
 			}
 			this.cell = cell;
+
 			if (cell.getSourceCell()) {
 				let sourceCell = this.cell.getSourceCell(),
 					targetCell = this.cell.getTargetCell(),
@@ -208,6 +243,7 @@ export default {
 							? targetCell.getFormData().database_type
 							: '',
 					connectionId = sourceCell.getFormData().connectionId;
+
 				this.mysqlDisable = sourceDatabaseType === 'mysql' && targetDatabaseType === 'mysql' ? false : true;
 				if (this.mysqlDisable) {
 					this.model.selectSourceDatabase = {
@@ -275,6 +311,14 @@ export default {
 			}
 
 			return result;
+		},
+
+		// 改变view
+		changeView(val) {
+			debugger;
+			if (val) {
+				this.handleReduction();
+			}
 		},
 
 		// 关闭当前页
@@ -345,23 +389,21 @@ export default {
 
 		// 还原
 		handleReduction() {
-			if (!this.disabled) {
-				this.model.table_suffix = '';
-				this.model.table_prefix = '';
-				if (this.sourceData.length) {
-					for (let i = 0; i < this.sourceData.length; i++) {
-						// for (let j = 0; j < selectKeepArr.length; j++) {
-						for (let k = 0; k < this.model.selectSourceArr.length; k++) {
-							if (
-								// this.sourceData[i].label === selectKeepArr[j] &&
-								this.sourceData[i].key === this.model.selectSourceArr[k]
-							) {
-								this.sourceData[i].label = this.sourceData[i].key;
-								// this.sourceData[i].key = this.sourceData[i].label;
-								// this.model.selectSourceArr[k] = this.sourceData[i].value;
-							}
-							// 	}
+			this.model.table_suffix = '';
+			this.model.table_prefix = '';
+			if (this.sourceData.length) {
+				for (let i = 0; i < this.sourceData.length; i++) {
+					// for (let j = 0; j < selectKeepArr.length; j++) {
+					for (let k = 0; k < this.model.selectSourceArr.length; k++) {
+						if (
+							// this.sourceData[i].label === selectKeepArr[j] &&
+							this.sourceData[i].key === this.model.selectSourceArr[k]
+						) {
+							this.sourceData[i].label = this.sourceData[i].key;
+							// this.sourceData[i].key = this.sourceData[i].label;
+							// this.model.selectSourceArr[k] = this.sourceData[i].value;
 						}
+						// 	}
 					}
 				}
 			}
@@ -424,7 +466,7 @@ export default {
 	},
 
 	destroyed() {
-		log('Link.destroyed');
+		log('DatabaseLink.destroyed');
 		if (this.unwatch) this.unwatch();
 		if (this.targetCell) {
 			this.targetCell.off('change:outputSchema', this.renderSchema, this);
@@ -456,6 +498,11 @@ export default {
 			.box-btn {
 				color: #48b6e2;
 				cursor: pointer;
+				.e-button {
+					padding: 4px 10px;
+					color: #666;
+					background-color: #f5f5f5;
+				}
 			}
 		}
 	}
@@ -543,6 +590,15 @@ export default {
 			width: 100%;
 			margin-right: 10px !important;
 			box-sizing: border-box;
+		}
+	}
+	.aggtip {
+		vertical-align: middle;
+		.iconfont {
+			display: inline-block;
+			color: #999;
+			cursor: pointer;
+			transform: rotate(-180deg);
 		}
 	}
 }

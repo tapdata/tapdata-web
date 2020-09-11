@@ -993,7 +993,10 @@ const tc = {
 				suffixPlaceholder: '請輸入後綴',
 				batchRename: '批量改名設置',
 				tableNameExample: '表名示例',
-				copySourceDatabase: '複製源庫結構'
+				copySourceDatabase: '複製源庫結構類型',
+				tableTip: 'Table暫不支持外鍵複製',
+				viewTip: '複製view暫不支持表改名，勾選此項下方表改名功能會被禁用',
+				formTip: 'View、function、procedure的複制功能僅支持MySQL到MySQL的場景'
 			}
 		},
 		ui: {

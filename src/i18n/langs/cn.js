@@ -997,7 +997,10 @@ const cn = {
 				suffixPlaceholder: '请输入后缀',
 				batchRename: '批量改名设置',
 				tableNameExample: '表名示例',
-				copySourceDatabase: '复制源库结构'
+				copySourceDatabase: '复制源库结构类型',
+				tableTip: 'Table暂不支持外键复制',
+				viewTip: '复制view暂不支持表改名，勾选此项下方表改名功能会被禁用',
+				formTip: 'View、function、procedure的复制功能仅支持MySQL到MySQL的场景'
 			}
 		},
 		ui: {
