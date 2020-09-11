@@ -210,7 +210,7 @@ const en = {
 		advancedMode: 'Advanced mode',
 		freedomMode: 'Advanced mode',
 		advanceSetting: 'More advanced setting',
-		closeSetting: 'fold up',
+		closeSetting: 'Fold up',
 		openPanel: 'Open',
 		execution: 'Execution',
 		previous: 'Previous',
@@ -338,7 +338,7 @@ const en = {
 		},
 		lag: 'lag',
 		executionStatus: 'Execution status',
-		searchPlaceholder: 'Task Name / Node Name / Library Table Name',
+		searchPlaceholder: 'Task name / Node name / Library table name',
 		dataRange: 'Date range',
 		startTime: 'Start time',
 		endTime: 'End time',
@@ -622,7 +622,7 @@ const en = {
 							placeholder: 'Please input you custom sql offset'
 						},
 						maximum_transaction: {
-							label: 'Maximum Transaction Length(Hours)',
+							label: 'Max Transaction Length',
 							tip:
 								'Time in hours to wait for commit for a transaction. Enter the longest period of time that you expect a transaction to require.Default is 12 hours'
 						}

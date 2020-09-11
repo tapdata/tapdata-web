@@ -145,6 +145,7 @@ export default {
 				]
 			},
 			model: {
+				database_type: '',
 				connectionId: '',
 				databaseTables: [],
 				table_prefix: '',
@@ -259,10 +260,11 @@ export default {
 				return;
 			}
 			connections
-				.get([connectionId])
+				.customQuery([connectionId], { schema: true })
 				.then(result => {
 					if (result.data) {
 						self.databaseInfo = result.data;
+						self.model.database_type = self.databaseInfo.database_type;
 						let tables = (result.data.schema && result.data.schema.tables) || [];
 						tables = tables.sort((t1, t2) =>
 							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1

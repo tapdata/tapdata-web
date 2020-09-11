@@ -20,10 +20,14 @@
 				action="javascript:void(0);"
 			>
 				<el-form-item :label="$t('editor.cell.link.copySourceDatabase')">
-					<el-checkbox v-model="model.selectSourceDatabase.table">Table</el-checkbox>
-					<el-checkbox v-model="model.selectSourceDatabase.view">View</el-checkbox>
-					<el-checkbox v-model="model.selectSourceDatabase.function">Function</el-checkbox>
-					<el-checkbox v-model="model.selectSourceDatabase.procedure">Procedure</el-checkbox>
+					<el-checkbox v-model="model.selectSourceDatabase.table" disabled>Table</el-checkbox>
+					<el-checkbox v-model="model.selectSourceDatabase.view" :disabled="mysqlDisable">View</el-checkbox>
+					<el-checkbox v-model="model.selectSourceDatabase.function" :disabled="mysqlDisable"
+						>Function</el-checkbox
+					>
+					<el-checkbox v-model="model.selectSourceDatabase.procedure" :disabled="mysqlDisable"
+						>Procedure</el-checkbox
+					>
 				</el-form-item>
 
 				<el-form-item :label="$t('editor.cell.link.existingSchema.label')">
@@ -149,6 +153,7 @@ export default {
 
 	data() {
 		return {
+			mysqlDisable: false,
 			transferLoading: false,
 			currentName: null,
 			databaseName: '',
@@ -197,7 +202,22 @@ export default {
 			this.cell = cell;
 			if (cell.getSourceCell()) {
 				let sourceCell = this.cell.getSourceCell(),
+					targetCell = this.cell.getTargetCell(),
+					sourceDatabaseType = sourceCell.getFormData().database_type,
+					targetDatabaseType =
+						targetCell && targetCell.getFormData().database_type
+							? targetCell.getFormData().database_type
+							: '',
 					connectionId = sourceCell.getFormData().connectionId;
+				this.mysqlDisable = sourceDatabaseType === 'mysql' && targetDatabaseType === 'mysql' ? false : true;
+				if (this.mysqlDisable) {
+					this.model.selectSourceDatabase = {
+						table: true,
+						view: false,
+						function: false,
+						procedure: false
+					};
+				}
 				this.loadDataModels(connectionId);
 			}
 
@@ -237,7 +257,7 @@ export default {
 							if (this.model.selectSourceDatabase[key]) {
 								targetFormData.syncObjects.push({
 									type: key,
-									objectNames: key === 'table' ? includeTables : []
+									objectNames: key === 'table' ? this.model.selectSourceArr : []
 								});
 							}
 						});
