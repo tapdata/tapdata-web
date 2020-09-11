@@ -952,7 +952,6 @@ export default {
 		save() {
 			let self = this,
 				data = this.getDataFlowData();
-			debugger;
 			if (data) {
 				if (data.id) delete data.status;
 
