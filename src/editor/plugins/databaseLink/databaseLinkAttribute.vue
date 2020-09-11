@@ -315,7 +315,6 @@ export default {
 
 		// 改变view
 		changeView(val) {
-			debugger;
 			if (val) {
 				this.handleReduction();
 			}
