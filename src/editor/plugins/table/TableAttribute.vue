@@ -195,9 +195,14 @@
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
-				<el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
-					$t('dataFlow.updateModel')
-				}}</el-button>
+				<el-button
+					class="fr"
+					type="success"
+					style="background: #4aaf47; border-color: #4aaf47;"
+					size="mini"
+					@click="hanlderLoadSchema"
+					>{{ $t('dataFlow.updateModel') }}</el-button
+				>
 				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 			</div>
 		</div>
