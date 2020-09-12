@@ -785,7 +785,7 @@ export default {
 						readCdcInterval: 500,
 						readBatchSize: 1000
 					});
-				} else if (['app.Table', 'app.Collection', 'app.ESNode', 'app.Redis'].includes(cell.type)) {
+				} else if (['app.Table', 'app.Collection', 'app.ESNode'].includes(cell.type)) {
 					postData.mappingTemplate = 'custom';
 
 					Object.assign(stage, {
