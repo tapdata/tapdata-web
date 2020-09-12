@@ -1,8 +1,5 @@
 <template>
 	<section class="data-verify-wrap">
-		<div class="panel-slider" v-show="isClassShow">
-			<MetaData @nodeClick="classClickHandler"></MetaData>
-		</div>
 		<div class="panel-main">
 			<div class="topbar">
 				<ul class="search-bar">
@@ -102,22 +99,22 @@
 					</el-table-column>
 					<el-table-column label="校验结果">
 						<template slot-scope="scope">
-							<span> 行数差异 {{ scope.row.errorMsg }} </span>
+							<span> 行数差异 {{ scope.row.name }} </span>
 						</template>
 					</el-table-column>
 					<el-table-column label="执行状态">
 						<template slot-scope="scope">
-							<span> {{ scope.row.status }} </span>
+							<span> {{ scope.row.name }} </span>
 						</template>
 					</el-table-column>
 					<el-table-column label="校验时间" sortable="custom">
 						<template slot-scope="scope">
-							<span> {{ scope.row.time }} </span>
+							<span> {{ scope.row.name }} </span>
 						</template>
 					</el-table-column>
 					<el-table-column label="操作">
 						<template slot-scope="scope">
-							<i class="el-icon-alarm-clock" @click="GoTableInfo(scope.row.id)"></i>
+							<span> {{ scope.row.name }} </span>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -140,15 +137,8 @@
 
 <script>
 /* eslint-disable */
-
-import metaData from '../metaData';
-import factory from '../../api/factory';
-const Inspect = factory('inspect');
 let timeout = null;
 export default {
-	components: {
-		MetaData: metaData
-	},
 	data() {
 		return {
 			isClassShow: true,
@@ -186,91 +176,18 @@ export default {
 			this.page.order = order;
 			this.search(1);
 		},
-		create() {},
 		search(pageNum) {
 			this.searchParamsChange();
 			this.loading = true;
 			let { current, size, sortBy, order } = this.page;
 			let { keyword } = this.searchParams;
 			let currentPage = pageNum || current + 1;
-			Inspect.get().then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					this.loading = false;
-					this.page.data = res.data;
-				}
-			})
-			// setTimeout(() => {
-			// 	this.page.data = [
-			// 		{
-			// 			//_id: ObjectId(),
-			// 			name: '校验任务名称',
-			// 			status: 'pause/scheduling/running/error/done', // 任务状态
-			// 			errorMsg: '', // 状态为 error 时有效
-			// 			mode: 'manual/cron', // 运行方式，手工执行，定时调度执行
-			// 			inspectMethod: 'row_count/field', // 校验方法，row_count: 行数校验；field：字段校验
-			// 			timing: {
-			// 				intervals: 1, // 间隔时间
-			// 				intervalsUnit: 'second', // 单位：second、minute、hour、day、week、month
-			// 				start: '2020-09-01 12:12:00', // 开始时间，设置以后每次触发的执行时间，例如：intervals=1，intervals_unit=minute，start= 2020-09-01 12:12:00 表示：2020-09-01 12:12:00开始，每隔一分钟执行一次
-			// 				end: '2020-09-01 12:00:00' //设置重复到什么时间结束，为 null 是表示永不结束
-			// 			}, // 定时调度表达式，mode = cron 时，需要配置
-			// 			limit: {
-			// 				keep: 1000, // 差异保存条数
-			// 				fullMatchKeep: 100, // 行比对差异信息保存条数
-			// 				action: 'stop/continue' // 达到差异限制后，继续执行还是停止校验，默认停止校验
-			// 			},
-			// 			tasks: [
-			// 				{
-			// 					// 源和目标，可以是关系型数据库，也可以是非关系型数据库
-			// 					taskId: '1', // 子任务id，可以objectid/uuid/数字，任务内唯一
-			// 					fullMatch: false, // 是否执行行匹配
-			//
-			// 					// 自定义行数据比对脚本， null - 使用默认实现
-			// 					// 自定义样例：function(sourceRecord, targetRecord){ return true; }
-			// 					compareFn: null,
-			// 					// 样例：function(inspect_result){ return true; }
-			// 					confirmFn: null, // 用户可以自定义通过条件
-			// 					source: {
-			// 						connectionId: '', // 连接ID
-			// 						table: 'IV_JW_MATRL', // 不能带 owner，默认使用connection的owner
-			// 						sortColumn: 'INVNT_ID', // 必填，提示使用索引字段
-			// 						direction: 'ASC', // 固定值 ASC，后端强制ASC
-			// 						columns: [
-			// 							// 必须带有排序字段，前端可以做限制，后端要自动适配
-			// 							'INVNT_ID',
-			// 							'...' // 需要校验比对的列名称，必填，顺序与目标字段一致
-			// 						],
-			// 						limit: null, // 取多少行数据，默认全部
-			// 						skip: null, // 跳过多少行数据
-			// 						where: '' // sql 查询条件，直接拼接到sql中
-			// 						// 默认为 null，用户可以选择使用自定义 sql，但必须包含排序字段
-			// 						// "sql": null, // 与上面几个配置互斥 暂时不支持自定义
-			// 					},
-			// 					target: {
-			// 						connectionId: '', // 连接ID
-			// 						table: 'FDM_cnWarehouseJeweIryMaterial',
-			// 						sortColumn: 'INVNT_ID', // 必填，提示使用索引字段
-			// 						columns: [
-			// 							// 必须带有排序字段，前端可以做限制，后端要自动适配
-			// 							'INVNT_ID',
-			// 							'...' // 需要校验比对的列名称，必填，顺序与目标字段一致
-			// 						],
-			// 						where: 'json string', // MongoDB where 查询条件
-			// 						limit: null, // 取多少行数据，默认全部
-			// 						skip: null // 跳过多少行数据
-			// 					}
-			// 				}
-			// 			],
-			// 			createUid: '',
-			// 			createDate: '',
-			// 			updateDate: '',
-			// 			updateUid: ''
-			// 		}
-			// 	];
-			// 	this.page.current = currentPage;
-			// 	this.page.total = 232;
-			// 	this.loading = false;
-			// }, 1000);
+			setTimeout(() => {
+				this.page.data = [];
+				this.page.current = currentPage;
+				this.page.total = 232;
+				this.loading = false;
+			}, 1000);
 		},
 		reset() {
 			this.searchParams = {
@@ -286,12 +203,6 @@ export default {
 		},
 		classClickHandler(node) {
 			this.search(1);
-		},
-		GoTableInfo(id){
-			let routeUrl = this.$router.resolve({
-				path: '/dataVerifyTable'
-			});
-			window.open(routeUrl.href, '_blank');
 		}
 	}
 };
