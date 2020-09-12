@@ -167,15 +167,16 @@ export default {
 			let source = convertSchemaToTreeData(sourceSchema);
 			let target = convertSchemaToTreeData(targetSchema);
 
-			target.fields.sort((a, b) => {
-				if (a.table_name !== source.name) {
-					return b.table_name === source.name ? 1 : 0;
-				}
-				if (b.table_name !== source.name) {
-					return a.table_name === source.name ? -1 : 0;
-				}
-				return 0;
-			});
+			if (target.fields && target.fields.length)
+				target.fields.sort((a, b) => {
+					if (a.table_name !== source.name) {
+						return b.table_name === source.name ? 1 : 0;
+					}
+					if (b.table_name !== source.name) {
+						return a.table_name === source.name ? -1 : 0;
+					}
+					return 0;
+				});
 
 			this.targetSchema = _.cloneDeep(target);
 			this.sourceSchema = _.cloneDeep(source);

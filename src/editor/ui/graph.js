@@ -113,7 +113,7 @@ export default class Graph extends Component {
 						rx: 17,
 						ry: 17,
 						attrs: {
-							'stroke-width': 2,
+							'stroke-width': 3,
 							stroke: '#00bcd4'
 						}
 					}
@@ -535,6 +535,7 @@ export default class Graph extends Component {
 	}
 
 	selectPrimaryLink(linkView) {
+		if (this.isSimple) return;
 		if (linkView.model.getFormData().disabled) return;
 		let ns = joint.linkTools;
 		let toolsView = new joint.dia.ToolsView({

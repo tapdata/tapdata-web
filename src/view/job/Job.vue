@@ -469,7 +469,7 @@ export default {
 				if (ele.$el) ele.$el.hide();
 			});
 			try {
-				if (this.editor.graph.graph.getElements()[self.$refs.simpleScene.activeStep - 1].validate())
+				if (this.editor.graph.graph.getCells()[self.$refs.simpleScene.activeStep - 1].validate())
 					self.$refs.simpleScene.stepValid();
 			} catch (e) {
 				log(e.message);
@@ -477,12 +477,12 @@ export default {
 		},
 		simpleGoNext(step) {
 			let self = this;
-			if (step == 3) {
+			if (step == 4) {
 				this.newDataFlowV = true;
 				if (this.$refs.newDataFlowV) this.$refs.newDataFlowV.dialogVisibleSetting = true;
 				return;
 			} else this.newDataFlowV = false;
-			this.editor.graph.selectCell(this.editor.graph.graph.getElements()[step - 1]);
+			this.editor.graph.selectCell(this.editor.graph.graph.getCells()[step - 1]);
 			setTimeout(() => {
 				self.simpleRefresh();
 			}, 10);
@@ -491,7 +491,7 @@ export default {
 			let self = this;
 			this.editor.graph.isSimple = true;
 			document.body.getElementsByClassName('e-sidebar-right')[0].style.zIndex = 2000;
-			this.editor.graph.selectCell(this.editor.graph.graph.getElements()[0]);
+			this.editor.graph.selectCell(this.editor.graph.graph.getCells()[0]);
 			setTimeout(() => {
 				self.simpleRefresh();
 			}, 10);
