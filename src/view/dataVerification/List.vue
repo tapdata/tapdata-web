@@ -117,7 +117,12 @@
 					</el-table-column>
 					<el-table-column label="操作">
 						<template slot-scope="scope">
-							<span> {{ scope.row.name }} </span>
+							<el-button
+								type="text"
+								size="mini"
+								@click="GoTableInfo(scope.row.id)"
+								class="el-icon-alarm-clock"
+							></el-button>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -225,7 +230,10 @@ export default {
 		},
 		GoTableInfo(id) {
 			let routeUrl = this.$router.resolve({
-				path: '/dataVerifyTable'
+				path: '/dataVerifyResult',
+				query:{
+					'id':id
+				}
 			});
 			window.open(routeUrl.href, '_blank');
 		}
