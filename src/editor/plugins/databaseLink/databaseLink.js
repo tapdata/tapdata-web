@@ -9,7 +9,7 @@ import { options } from '../../lib/rappid/config';
 import databaseLinkAttribute from './databaseLinkAttribute';
 import { FORM_DATA_KEY } from '../../constants';
 import log from '../../../log';
-// import i18n from '../../../i18n/i18n';
+import i18n from '../../../i18n/i18n';
 
 export const databaseLink = {
 	/**
@@ -183,14 +183,12 @@ export const databaseLink = {
 			 */
 			validate: function(data) {
 				data = data || this.getFormData();
-				log(`Link.validate`, data);
-
+				log(`databaseLink.validate`, data);
 				// let configJoinTable = this.configJoinTable();
 
-				// if (data && configJoinTable) {
-				// 	let joinTable = data.joinTable;
-				// 	if (!joinTable) throw new Error(`${i18n.t('editor.cell.validate.none_setting')}`);
-				// }
+				if (data && data.selectSourceArr.length) {
+					if (!data.selectSourceArr.length) throw new Error(`${i18n.t('editor.cell.link.chooseATableTip')}`);
+				}
 				return true;
 			}
 		},

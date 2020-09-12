@@ -996,7 +996,8 @@ const tc = {
 				copySourceDatabase: '複製源庫結構類型',
 				tableTip: 'Table暫不支持外鍵複製',
 				viewTip: '複製view暫不支持表改名，勾選此項下方表改名功能會被禁用',
-				formTip: 'View、function、procedure的複制功能僅支持MySQL到MySQL的場景'
+				formTip: 'View、function、procedure的複制功能僅支持MySQL到MySQL的場景',
+				chooseATableTip: '至少選擇一個待複製表'
 			}
 		},
 		ui: {

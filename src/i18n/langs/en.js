@@ -1008,7 +1008,8 @@ const en = {
 				copySourceDatabase: 'Source database schema to be copied',
 				tableTip: 'Table does not support foreign key copy',
 				viewTip: 'Copy view does not support table rename, if check this box rename function will be disabled',
-				formTip: 'The function of copy view, function, procedure only support MySQL to MySQL'
+				formTip: 'The function of copy view, function, procedure only support MySQL to MySQL',
+				chooseATableTip: 'At least select one object to be copied'
 			}
 		},
 		ui: {

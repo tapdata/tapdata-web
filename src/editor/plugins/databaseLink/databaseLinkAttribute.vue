@@ -68,50 +68,49 @@
 						></el-option>
 					</el-select>
 				</el-form-item>
-			</el-form>
-
-			<div class="database-tableBox" v-loading="transferLoading">
-				<div class="box-text">
-					<h3>{{ $t('editor.cell.link.migrationSetting') }}</h3>
-					<div class="box-btn">
-						<el-button
-							class="e-button"
-							size="mini"
-							:disabled="model.selectSourceDatabase.view"
-							@click="handDialog"
-							>{{ $t('dataFlow.changeName') }}</el-button
-						>
-						<el-button
-							size="mini"
-							class="e-button"
-							:disabled="disabled || model.selectSourceDatabase.view"
-							@click="handleReduction"
-							>{{ $t('editor.cell.link.reduction') }}</el-button
-						>
+				<div class="database-tableBox" v-loading="transferLoading">
+					<div class="box-text">
+						<h3>{{ $t('editor.cell.link.migrationSetting') }}</h3>
+						<div class="box-btn">
+							<el-button
+								class="e-button"
+								size="mini"
+								:disabled="model.selectSourceDatabase.view"
+								@click="handDialog"
+								>{{ $t('dataFlow.changeName') }}</el-button
+							>
+							<el-button
+								size="mini"
+								class="e-button"
+								:disabled="disabled || model.selectSourceDatabase.view"
+								@click="handleReduction"
+								>{{ $t('editor.cell.link.reduction') }}</el-button
+							>
+						</div>
 					</div>
-				</div>
-				<div class="transfer">
-					<el-transfer
-						filterable
-						:titles="titles"
-						:filter-method="filterMethod"
-						:filter-placeholder="$t('editor.cell.link.searchContent')"
-						v-model="model.selectSourceArr"
-						:data="sourceData"
-						@change="handleChangeTransfer"
-						@right-check-change="handleSelectTable"
-					>
-						<span class="box" slot-scope="{ option }">
-							<span class="text" :class="[{ active: option.label !== option.key }, 'text']">{{
-								option.label
-							}}</span>
-							<!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
+					<div class="transfer">
+						<el-transfer
+							filterable
+							:titles="titles"
+							:filter-method="filterMethod"
+							:filter-placeholder="$t('editor.cell.link.searchContent')"
+							v-model="model.selectSourceArr"
+							:data="sourceData"
+							@change="handleChangeTransfer"
+							@right-check-change="handleSelectTable"
+						>
+							<span class="box" slot-scope="{ option }">
+								<span class="text" :class="[{ active: option.label !== option.key }, 'text']">{{
+									option.label
+								}}</span>
+								<!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
 							}}</span> -->
-						</span>
-					</el-transfer>
+							</span>
+						</el-transfer>
+					</div>
 				</div>
-			</div>
+			</el-form>
 		</div>
 		<el-dialog
 			:title="$t('editor.cell.link.batchRename')"
