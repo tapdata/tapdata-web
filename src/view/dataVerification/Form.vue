@@ -5,31 +5,33 @@
 				<h1 class="title">
 					<span>新建校验</span>
 					<div style="font-size: 12px;">
-						<span style="color: #48B6E2;" v-show="form.active">已启用</span>
-						<span style="color: #9a9a9a;" v-show="!form.active">已禁止</span>
-						<el-switch size="mini" v-model="form.active"></el-switch>
+						<span style="color: #48B6E2;" v-show="form.enabled">已启用</span>
+						<span style="color: #9a9a9a;" v-show="!form.enabled">已禁止</span>
+						<el-switch size="mini" v-model="form.enabled"></el-switch>
 					</div>
 				</h1>
 				<div class="form-panel">
 					<div class="panel-label">
 						<span>基本设置</span>
 					</div>
-					<div class="panel-container" style="padding: 10px 20px;">
-						<div class="setting-item">
-							<label class="item-label">校验类型</label>
-							<el-radio-group v-model="form.inspectMethod" style="margin-left: 10px;">
-								<el-radio label="row_count">行数校验</el-radio>
-								<el-radio label="field">内容校验</el-radio>
-							</el-radio-group>
-						</div>
-						<div class="setting-item">
+					<el-form
+						inline-message
+						ref="baseForm"
+						:model="form"
+						:rules="rules"
+						class="panel-container"
+						style="padding: 10px 20px;"
+					>
+						<el-form-item class="setting-item" prop="flowId">
 							<label class="item-label is-required">选择任务</label>
 							<el-select
+								filterable
 								class="item-select"
 								size="mini"
 								v-model="form.flowId"
 								placeholder="选择任务"
 								:loading="!flowOptions"
+								@input="flowChangeHandler"
 							>
 								<el-option
 									v-for="opt in flowOptions"
@@ -38,128 +40,131 @@
 									:value="opt.id"
 								></el-option>
 							</el-select>
-						</div>
-						<div class="setting-item">
+						</el-form-item>
+						<el-form-item class="setting-item">
+							<label class="item-label">校验类型</label>
+							<el-radio-group v-model="form.inspectMethod" style="margin-left: 10px;">
+								<el-radio label="row_count">行数校验</el-radio>
+								<el-radio label="field">内容校验</el-radio>
+							</el-radio-group>
+						</el-form-item>
+						<el-form-item class="setting-item" prop="name">
+							<label class="item-label is-required">校验任务名称</label>
+							<el-input class="item-input" size="mini" v-model="form.name"></el-input>
+						</el-form-item>
+						<el-form-item class="setting-item">
 							<label class="item-label">校验频次</label>
 							<el-radio-group v-model="form.mode" style="margin-left: 10px;">
-								<el-radio label="manual">单词校验</el-radio>
+								<el-radio label="manual">单次校验</el-radio>
 								<el-radio label="cron">重复校验</el-radio>
 							</el-radio-group>
-						</div>
-						<div class="setting-item" v-show="form.mode === 'cron'">
-							<label class="item-label">校验间隔</label>
-							<el-input class="item-input" size="mini" v-model="form.timing.intervals">
-								<template slot="append">分钟</template>
-							</el-input>
-						</div>
-						<div class="setting-item" v-show="form.mode === 'cron'">
-							<label class="item-label">持续时间</label>
-							<el-input class="item-input" size="mini" v-model="form.duration">
-								<template slot="append">天</template>
-							</el-input>
-						</div>
-						<div class="setting-item">
-							<label class="item-label">开始时间</label>
-							<el-select class="item-select" size="mini" v-model="form.timeType">
-								<el-option value="now" label="此刻"></el-option>
-								<el-option value="future" label="指定时间"></el-option>
-							</el-select>
-						</div>
-						<div class="setting-item" v-show="form.timeType === 'future'">
-							<label class="item-label"></label>
+						</el-form-item>
+						<el-form-item class="setting-item" prop="timing.start" v-show="form.mode === 'cron'">
+							<label class="item-label">起止时间</label>
 							<el-date-picker
+								class="item-select"
 								size="mini"
-								class="item-time-picker"
-								v-model="form.time"
-								type="datetime"
-								placeholder="选择日期时间"
+								:value="[form.timing.start, form.timing.end]"
+								type="datetimerange"
+								:picker-options="pickerOptions"
+								range-separator="至"
+								start-placeholder="开始日期"
+								end-placeholder="结束日期"
+								align="right"
+								value-format="yyyy-MM-dd HH:mm:ss"
+								@input="timingChangeHandler"
 							>
 							</el-date-picker>
-						</div>
-						<div class="setting-item">
+						</el-form-item>
+						<el-form-item class="setting-item" prop="timing.intervals" v-show="form.mode === 'cron'">
+							<label class="item-label">校验间隔</label>
+							<el-input class="item-input" size="mini" v-model="form.timing.intervals">
+								<template slot="append">
+									<el-select style="width: 100px;" size="mini" v-model="form.timing.intervalsUnit">
+										<el-option
+											v-for="unit in timeUnitOptions"
+											:key="unit"
+											:label="unit"
+											:value="unit"
+										></el-option>
+									</el-select>
+								</template>
+							</el-input>
+						</el-form-item>
+						<el-form-item class="setting-item">
 							<label class="item-label">错误信息保存条数</label>
-							<el-select class="item-select" size="mini" v-model="form.errorSaveNum">
+							<el-select class="item-select" size="mini" v-model="form.limit.keep">
 								<el-option :value="100" label="100条"></el-option>
 								<el-option :value="1000" label="1000条"></el-option>
 								<el-option :value="10000" label="10000条"></el-option>
 							</el-select>
-						</div>
-					</div>
+						</el-form-item>
+					</el-form>
 				</div>
-				<div class="form-panel">
+				<div class="form-panel" v-if="flowStages">
 					<div class="panel-label">
 						<span>校验条件</span>
 						<el-button style="height:24px;line-height: 24px;padding: 0 10px;" size="mini" @click="clear">
 							清空
 						</el-button>
 					</div>
-					<ul class="panel-container">
+					<ul class="panel-container" v-loading="!flowStages.length">
 						<li class="condition-item" v-for="(item, index) in form.conditions" :key="index">
 							<div class="condition-setting">
 								<div class="setting-item">
 									<label class="item-label is-required">待校验表</label>
-									<el-select
+									<el-cascader
 										class="item-select"
 										size="mini"
 										v-model="item.sourceTable"
-										placeholder="请选择源表"
-										:loading="!tableList"
-									>
-										<el-option
-											v-for="table in tableList"
-											:key="table.id"
-											:label="table.name"
-											:value="table.id"
-										></el-option>
-									</el-select>
+										:options="sourceTree"
+										@input="tableChangeHandler(item, 'source')"
+									></el-cascader>
 									<span class="item-icon">
 										<i class="el-icon-right"></i>
 									</span>
-									<el-select
+									<el-cascader
 										class="item-select"
 										size="mini"
 										v-model="item.targetTable"
-										placeholder="请选择目标表"
-										:loading="!tableList"
-									>
-										<el-option
-											v-for="table in tableList"
-											:key="table.id"
-											:label="table.name"
-											:value="table.id"
-										></el-option>
-									</el-select>
+										:options="targetTree"
+										@input="tableChangeHandler(item, 'target')"
+									></el-cascader>
 								</div>
 								<div class="setting-item" v-show="form.inspectMethod === 'field'">
 									<label class="item-label is-required">索引字段</label>
 									<el-select
+										filterable
 										class="item-select"
 										size="mini"
-										v-model="item.sourceTable"
+										v-model="item.source.sortColumn"
 										placeholder="请选索引或主键字段"
-										:loading="!tableList"
 									>
 										<el-option
-											v-for="table in tableList"
-											:key="table.id"
-											:label="table.name"
-											:value="table.id"
-										></el-option>
+											v-for="field in item.source.fields"
+											:key="field.field_name"
+											:value="field.field_name"
+										>
+											<span>{{ field.field_name }}</span>
+											<span style="color:#F56C6C;" v-if="field.primary_key_position > 0">PK</span>
+										</el-option>
 									</el-select>
 									<span class="item-icon"></span>
 									<el-select
+										filterable
 										class="item-select"
 										size="mini"
-										v-model="item.targetTable"
+										v-model="item.target.sortColumn"
 										placeholder="请选索引或主键字段"
-										:loading="!tableList"
 									>
 										<el-option
-											v-for="table in tableList"
-											:key="table.id"
-											:label="table.name"
-											:value="table.id"
-										></el-option>
+											v-for="field in item.source.fields"
+											:key="field.field_name"
+											:value="field.field_name"
+										>
+											<span>{{ field.field_name }}</span>
+											<span style="color:#F56C6C;" v-if="field.primary_key_position > 0">PK</span>
+										</el-option>
 									</el-select>
 								</div>
 							</div>
@@ -172,9 +177,9 @@
 						</li>
 					</ul>
 				</div>
-				<div style="margin-top: 10px;">
+				<div style="margin-top: 10px;" v-if="flowStages">
 					<el-button size="mini" icon="el-icon-plus" @click="addTable()">添加表</el-button>
-					<el-button size="mini" icon="el-icon-plus">自动添加</el-button>
+					<el-button size="mini" icon="el-icon-plus" @click="autoAddTable()">自动添加</el-button>
 				</div>
 			</div>
 		</div>
@@ -188,44 +193,362 @@
 const TABLE_PARAMS = {
 	connectionId: '',
 	table: '',
-	sortColumn: ''
+	sortColumn: '',
+	fields: []
 };
 export default {
 	data() {
+		let self = this;
+		let requiredValidator = (msg, isCheckMode) => {
+			return (rule, value, callback) => {
+				let valid = isCheckMode ? self.form.mode === 'cron' : true;
+				if (valid && !value) {
+					callback(new Error(msg));
+				} else {
+					callback();
+				}
+			};
+		};
 		return {
+			timeUnitOptions: ['second', 'minute', 'hour', 'day', 'week', 'month'],
+			pickerTimes: [],
+			pickerOptions: {
+				shortcuts: [
+					{
+						text: '最近一周',
+						onClick(picker) {
+							const end = new Date();
+							const start = new Date();
+							start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+							picker.$emit('pick', [start, end]);
+						}
+					},
+					{
+						text: '最近一个月',
+						onClick(picker) {
+							const end = new Date();
+							const start = new Date();
+							start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+							picker.$emit('pick', [start, end]);
+						}
+					},
+					{
+						text: '最近三个月',
+						onClick(picker) {
+							const end = new Date();
+							const start = new Date();
+							start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+							picker.$emit('pick', [start, end]);
+						}
+					}
+				]
+			},
 			form: {
 				flowId: '',
+				name: '',
 				mode: 'manual',
 				inspectMethod: 'row_count',
 				timing: {
 					intervals: 24 * 60,
-					intervalsUnit: 'minute'
+					intervalsUnit: 'minute',
+					start: '',
+					end: ''
 				},
-				limit: {},
-				timeType: 'now',
-				duration: 30,
-				errorSaveNum: 100,
-				active: true,
+				limit: {
+					keep: 100
+				},
+				enabled: true,
 				conditions: []
 			},
-			tableList: null,
+			rules: {
+				flowId: [
+					{
+						validator: requiredValidator('请选择任务')
+					}
+				],
+				name: [
+					{
+						validator: requiredValidator('请输入校验任务名称')
+					}
+				],
+				'timing.start': [
+					{
+						validator: requiredValidator('请选择起止时间', true)
+					}
+				],
+				'timing.intervals': [
+					{
+						validator: requiredValidator('请输入校验间隔', true)
+					}
+				]
+			},
+			sourceTree: [],
+			targetTree: [],
+			stageMap: {},
+			flowStages: null,
+			sourceFields: [],
+			targetFields: [],
 			flowOptions: null
 		};
 	},
 	created() {
 		this.getFlowOptions();
-		this.getTableList();
 	},
 	methods: {
+		//获取dataflow数据
 		getFlowOptions() {
-			setTimeout(() => {
-				this.flowOptions = [];
-			}, 1000);
+			this.$api('DataFlows')
+				.get({
+					filter: JSON.stringify({
+						where: {
+							status: {
+								inq: ['running', 'paused']
+							}
+						},
+						fields: {
+							id: true,
+							name: true,
+							stages: true
+						}
+					})
+				})
+				.then(res => {
+					this.flowOptions = res.data || [];
+				});
 		},
-		getTableList() {
-			setTimeout(() => {
-				this.tableList = [];
-			}, 1000);
+		//dataflow改变时
+		flowChangeHandler() {
+			this.form.conditions = [];
+			this.sourceTree = [];
+			this.targetTree = [];
+			let flow = this.flowOptions.find(item => item.id === this.form.flowId);
+			this.form.name = flow.name;
+			this.$api('DataFlows')
+				.findOne({
+					filter: JSON.stringify({
+						where: {
+							id: this.form.flowId
+						},
+						fields: {
+							id: true,
+							name: true,
+							stages: true,
+							mappingTemplate: true
+						}
+					})
+				})
+				.then(res => {
+					let flowData = res.data;
+					this.flowStages = [];
+					if (flowData.mappingTemplate === 'cluster-clone') {
+						this.dealDBFlow(flowData);
+					} else {
+						this.dealCustomFlow(flowData);
+					}
+				});
+		},
+		//处理db克隆的情况
+		dealDBFlow(flowData) {
+			let dbStages = flowData.stages.filter(stg => ['database'].includes(stg.type));
+			let connectionIds = dbStages.map(stg => stg.connectionId);
+			if (connectionIds.length) {
+				this.$api('MetadataInstances')
+					.get({
+						filter: JSON.stringify({
+							where: {
+								is_deleted: false,
+								meta_type: {
+									inq: ['table', 'collection']
+								},
+								'source.id': {
+									inq: Array.from(new Set(connectionIds))
+								}
+							},
+							fields: {
+								id: true,
+								name: true,
+								original_name: true,
+								source: true,
+								'source.id': true,
+								'source.name': true,
+								fields: true
+							}
+						})
+					})
+					.then(res => {
+						let tables = res.data || [];
+						dbStages.forEach(stage => {
+							if (stage.outputLanes.length) {
+								let targetDBStage = dbStages.find(stg => stg.id === stage.outputLanes[0]);
+								this.getTreeForDBFlow('source', tables, stage, targetDBStage);
+							}
+							if (stage.inputLanes.length) {
+								this.getTreeForDBFlow('target', tables, stage);
+							}
+						});
+					});
+			}
+		},
+		//处理普通表同步的情况
+		dealCustomFlow(flowData) {
+			this.getStageMap(flowData.stages);
+			let flowStages = flowData.stages.filter(stg => ['table', 'collection'].includes(stg.type));
+			this.flowStages = flowStages;
+			let connectionIds = [];
+			let tableNames = [];
+			flowStages.forEach(stg => {
+				connectionIds.push(stg.connectionId);
+				tableNames.push(stg.tableName);
+			});
+			if (connectionIds.length) {
+				this.$api('MetadataInstances')
+					.get({
+						filter: JSON.stringify({
+							where: {
+								is_deleted: false,
+								meta_type: {
+									inq: ['table', 'collection']
+								},
+								'source.id': {
+									inq: Array.from(new Set(connectionIds))
+								},
+								original_name: {
+									inq: Array.from(new Set(tableNames))
+								}
+							},
+							fields: {
+								id: true,
+								name: true,
+								original_name: true,
+								source: true,
+								'source.id': true,
+								'source.name': true,
+								fields: true
+							}
+						})
+					})
+					.then(res => {
+						let tables = res.data || [];
+						flowStages.forEach(stg => {
+							let table = tables.find(
+								tb => tb.source.id === stg.connectionId && tb.original_name === stg.tableName
+							);
+							if (table) {
+								stg.connectionName = table.source.name;
+								stg.fields = table.fields;
+								if (stg.outputLanes.length) {
+									this.getTree('source', stg);
+								}
+								if (stg.inputLanes.length) {
+									this.getTree('target', stg);
+								}
+							}
+						});
+					});
+			}
+		},
+		//获取源表和目标表数据
+		getTree(type, stage) {
+			let tree = this[type + 'Tree'];
+			let parent = tree.find(c => c.value === stage.connectionId);
+			if (!parent) {
+				parent = {
+					label: stage.connectionName,
+					value: stage.connectionId,
+					children: []
+				};
+				tree.push(parent);
+			}
+			parent.children.push({
+				label: stage.tableName,
+				value: stage.tableName
+			});
+		},
+		getTreeForDBFlow(type, tables, stage, targetStage) {
+			let includeTables = tables.filter(tb => tb.source.id === stage.connectionId);
+			let parent = {
+				label: includeTables[0].source.name,
+				value: stage.connectionId,
+				children: []
+			};
+			includeTables.forEach(table => {
+				parent.children.push({
+					label: table.original_name,
+					value: table.original_name
+				});
+				let outputLanes = targetStage
+					? [targetStage.connectionId + stage.table_prefix + table.original_name + stage.table_suffix]
+					: null;
+				let key = stage.connectionId + table.original_name;
+				if (targetStage) {
+					this.stageMap[key] = outputLanes;
+				}
+				this.flowStages.push({
+					id: key,
+					connectionId: table.source.id,
+					fields: table.fields,
+					tableName: table.original_name,
+					outputLanes
+				});
+			});
+			this[type + 'Tree'].push(parent);
+		},
+		//获取表的连线关系
+		getStageMap(stages) {
+			let checkOutputLanes = lanes => {
+				let result = [];
+				lanes.forEach(stgId => {
+					let targetStg = stages.find(it => it.id === stgId);
+					if (targetStg.outputLanes.length && !['table', 'collection'].includes(targetStg.type)) {
+						result.push(...checkOutputLanes(targetStg.outputLanes));
+					} else {
+						result.push(stgId);
+					}
+				});
+				return result;
+			};
+			let map = {};
+			stages.forEach(stg => {
+				if (stg.outputLanes.length && ['table', 'collection'].includes(stg.type)) {
+					map[stg.id] = checkOutputLanes(stg.outputLanes);
+				}
+			});
+			this.stageMap = map;
+		},
+		//根据表的连线关系自动添加校验条件
+		autoAddTable() {
+			this.form.conditions = [];
+			let stages = this.flowStages;
+			let map = this.stageMap;
+			stages.forEach(stg => {
+				let lanes = map[stg.id];
+				if (lanes) {
+					lanes.forEach(id => {
+						let targetStage = stages.find(it => it.id === id);
+						this.form.conditions.push({
+							source: this.setTable(stg),
+							target: this.setTable(targetStage),
+							sourceTable: [stg.connectionId, stg.tableName],
+							targetTable: [targetStage.connectionId, targetStage.tableName]
+						});
+					});
+				}
+			});
+		},
+		setTable(stage) {
+			let sortColumn = '';
+			if (stage.fields && stage.fields.length) {
+				let pkField = stage.fields.find(f => f.primary_key_position > 0);
+				if (pkField) {
+					sortColumn = pkField.field_name;
+				}
+			}
+			return {
+				connectionId: stage.connectionId,
+				table: stage.tableName,
+				sortColumn,
+				fields: stage.fields
+			};
 		},
 		addTable() {
 			this.form.conditions.push({
@@ -239,9 +562,54 @@ export default {
 		clear() {
 			this.form.conditions = [];
 		},
+		timingChangeHandler(times) {
+			this.form.timing.start = times[0];
+			this.form.timing.end = times[1];
+		},
+		tableChangeHandler(item, type) {
+			let values = item[type + 'Table'];
+			this.flowStages.forEach(stg => {
+				if (values && values.length && stg.connectionId === values[0] && stg.tableName === values[1]) {
+					item[type] = this.setTable(stg);
+				}
+			});
+		},
 		nextStep() {
-			debugger;
-			// console.log(this.form);
+			this.$refs.baseForm.validate(valid => {
+				if (valid) {
+					let conditions = this.form.conditions;
+					let index = 0;
+					if (!conditions.length) {
+						return this.$message.error('请添加校验条件');
+					}
+					if (
+						conditions.some((c, i) => {
+							index = i + 1;
+							return !c.source.table || !c.target.table;
+						})
+					) {
+						return this.$message.error('第' + index + '条校验条件中源表或目标表未选择');
+					}
+					index = 0;
+					if (
+						this.form.mode === 'cron' &&
+						conditions.some((c, i) => {
+							index = i + 1;
+							return !c.source.sortColumn || !c.target.sortColumn;
+						})
+					) {
+						return this.$message.error('第' + index + '条校验条件中源表或目标表的索引字段未选择');
+					}
+
+					this.$api('Inspects')
+						.post(this.form)
+						.then(res => {
+							if (res.data) {
+								this.$router.back();
+							}
+						});
+				}
+			});
 		}
 	}
 };
@@ -269,7 +637,7 @@ export default {
 			margin: 0 auto;
 			padding: 15px 30px;
 			box-sizing: border-box;
-			max-width: 1000px;
+			width: 100%;
 		}
 	}
 	.title {
@@ -311,6 +679,12 @@ export default {
 				display: flex;
 				align-items: center;
 				padding: 5px 0;
+				margin-bottom: 0;
+				.el-form-item__content {
+					display: flex;
+					align-items: center;
+					line-height: 1;
+				}
 				.is-required::before {
 					content: '*';
 					color: #f56c6c;
@@ -328,7 +702,7 @@ export default {
 				.item-time-picker,
 				.item-input,
 				.item-select {
-					width: 300px;
+					width: 600px;
 				}
 			}
 			.setting-buttons {
