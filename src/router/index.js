@@ -242,9 +242,9 @@ const childRoutes = [
 		meta: { title: i18n.t('notification.systemNotice') }
 	},
 	{
-		path: '/dataVerifyTable',
-		name: 'dataVerifyTable',
-		component: view('dataVerification/Table'),
+		path: '/dataVerifyResult',
+		name: 'dataVerifyResult',
+		component: view('dataVerification/Result'),
 		meta: { title: i18n.t('notification.systemNotice') }
 	},
 	{
