@@ -560,6 +560,7 @@ export default {
 		changeSourceTable() {
 			let type = 'table';
 			let sourceOrTarget = 'source';
+			this.id = this.id || getUrlSearch.getUrlSearch('id');
 			dataFlows.getSourceList(this.id, type, this.formData.source.connectionId, sourceOrTarget).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					this.sourceList = res.data || [];
@@ -574,6 +575,7 @@ export default {
 		changeTargetTable() {
 			let type = 'table';
 			let sourceOrTarget = 'target';
+			this.id = this.id || getUrlSearch.getUrlSearch('id');
 			dataFlows.getSourceList(this.id, type, this.formData.target.connectionId, sourceOrTarget).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					this.targetList = res.data || [];

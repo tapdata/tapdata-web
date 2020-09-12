@@ -31,6 +31,10 @@
 						>STEP3 <br />
 						<span class="desc">{{ $t('dataFlow.jobSetting') }}</span></el-checkbox
 					>
+					<el-checkbox label="4"
+						>STEP4 <br />
+						<span class="desc">{{ $t('dataFlow.jobSetting') }}</span></el-checkbox
+					>
 				</el-checkbox-group>
 			</div>
 			<div class="left-bar">
@@ -50,6 +54,7 @@ export default {
 			cellHtml: '',
 			activeValid: false,
 			activeStep: 1,
+			maxStep: 4,
 			isSetting: false,
 			vsteps: ['1']
 		};
@@ -72,15 +77,15 @@ export default {
 				this.$parent.editor.showSetting(false);
 				this.$parent.simpleGoNext(this.activeStep);
 			}
-			if (this.activeStep == 3) return;
+			if (this.activeStep == this.maxStep) return;
 			try {
-				if (this.activeStep) this.$parent.editor.graph.graph.getElements()[this.activeStep - 1].validate();
+				if (this.activeStep) this.$parent.editor.graph.graph.getCells()[this.activeStep - 1].validate();
 			} catch (e) {
 				this.$message.error(e.message);
 				return;
 			}
 			try {
-				if (this.activeStep < 2 && !this.$parent.editor.graph.graph.getElements()[this.activeStep].validate())
+				if (this.activeStep < 2 && !this.$parent.editor.graph.graph.getCells()[this.activeStep].validate())
 					this.activeValid = true;
 			} catch (e) {
 				this.activeValid = false;
@@ -93,7 +98,7 @@ export default {
 			if (this.activeStep == 1) return;
 			if (this.vsteps.includes(this.activeStep + '')) this.vsteps.pop();
 			this.activeStep--;
-			if (this.activeStep == 2) this.$parent.simpleGoNext(1); //激活selection change事件
+			if (this.activeStep == 2 || this.activeStep == 3) this.$parent.simpleGoNext(this.activeStep - 1); //激活selection change事件
 			this.$parent.simpleGoNext(this.activeStep);
 		},
 		stepValid() {
