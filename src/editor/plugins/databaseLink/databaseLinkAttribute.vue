@@ -256,17 +256,7 @@ export default {
 						procedure: false
 					};
 				}
-
-				if (this.disabled) {
-					this.sourceData = sourceCell.getFormData().databaseTables.map(table => ({
-						label: table.table_name,
-						key: table.table_name,
-						// value: table.table_name,
-						disabled: this.disabled
-					}));
-				} else {
-					this.loadDataModels(connectionId);
-				}
+				this.loadDataModels(connectionId);
 			}
 
 			editorMonitor = vueAdapter.editor;

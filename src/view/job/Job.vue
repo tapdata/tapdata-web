@@ -970,8 +970,6 @@ export default {
 		 */
 		start() {
 			let self = this,
-				// syncObjects = [],
-				// stageTypeFalg = false,
 				data = this.getDataFlowData();
 
 			if (data) {
@@ -981,14 +979,28 @@ export default {
 				if (this.form.taskName) {
 					data.name = this.form.taskName;
 				}
-				// if (data && data.stages && data.stages.length) {
-				// 	stageTypeFalg = data.stages.indexOf(stage => stage.type === 'database');
-				// 	data.stages.forEach(item => {
-				// 		if ((item.type = 'database' && item.syncObjects && item.syncObjects.length)) {
-				// 			syncObjects = item.syncObjects;
-				// 		}
-				// 	});
-				// }
+
+				// 数据库节点连线至少保留一张表开始
+				let objectNamesList = [],
+					stageTypeFalg = false;
+				if (data && data.stages && data.stages.length) {
+					stageTypeFalg = data.stages.every(stage => stage.type === 'database');
+					if (stageTypeFalg) {
+						data.stages.forEach(item => {
+							if (item.syncObjects && item.syncObjects.length) {
+								item.syncObjects.forEach(childItem => {
+									if (childItem.objectNames && childItem.objectNames.length) {
+										objectNamesList = childItem.objectNames;
+									}
+								});
+							}
+						});
+					}
+				}
+				if (stageTypeFalg && objectNamesList.length === 0) {
+					self.$message.error(self.$t('editor.cell.link.chooseATableTip'));
+					return;
+				}
 
 				data.status = 'scheduled';
 				data.executeMode = 'normal';

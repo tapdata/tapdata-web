@@ -76,10 +76,10 @@
 				<div class="info-table" v-if="model.connectionId">
 					<div class="head-text">
 						{{ $t('editor.cell.data_node.database.includeTable') }}
-						<span>{{ model.databaseTables.length }}</span>
+						<span>{{ databaseTables.length }}</span>
 					</div>
 					<ul class="table-box" v-loading="tableLoading">
-						<li v-for="item in model.databaseTables" :key="item.id" class="list">
+						<li v-for="item in databaseTables" :key="item.id" class="list">
 							<i class="iconfont icon-table2"></i>
 							<span class="tableName">{{ item }}</span>
 						</li>
@@ -117,6 +117,7 @@ export default {
 			tableLoading: false,
 			disabled: false,
 			activeName: '0',
+			databaseTables: [],
 
 			isSourceDataNode: false,
 			firstRound: true,
@@ -147,7 +148,6 @@ export default {
 			model: {
 				database_type: '',
 				connectionId: '',
-				databaseTables: [],
 				table_prefix: '',
 				table_suffix: '',
 				dropType: 'no_drop',
@@ -236,7 +236,7 @@ export default {
 		},
 
 		changeConnection() {
-			this.model.databaseTables = [];
+			this.databaseTables = [];
 			this.lookupDatabaseType();
 
 			this.cell.graph.getConnectedLinks(this.cell, { outbound: true }).forEach(link => {
@@ -288,8 +288,8 @@ export default {
 						tables = tables.sort((t1, t2) =>
 							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
 						);
-						if (!(this.firstRound && this.model.databaseTables.length > 0)) {
-							this.model.databaseTables = tables.map(item => {
+						if (!(this.firstRound && this.databaseTables.length > 0)) {
+							this.databaseTables = tables.map(item => {
 								return item.table_name;
 							});
 						}
