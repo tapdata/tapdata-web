@@ -102,22 +102,22 @@
 					</el-table-column>
 					<el-table-column label="校验结果">
 						<template slot-scope="scope">
-							<span> 行数差异 {{ scope.row.errorMsg }} </span>
+							<span> 行数差异 {{ scope.row.name }} </span>
 						</template>
 					</el-table-column>
 					<el-table-column label="执行状态">
 						<template slot-scope="scope">
-							<span> {{ scope.row.status }} </span>
+							<span> {{ scope.row.name }} </span>
 						</template>
 					</el-table-column>
 					<el-table-column label="校验时间" sortable="custom">
 						<template slot-scope="scope">
-							<span> {{ scope.row.time }} </span>
+							<span> {{ scope.row.name }} </span>
 						</template>
 					</el-table-column>
 					<el-table-column label="操作">
 						<template slot-scope="scope">
-							<i class="el-icon-alarm-clock" @click="GoTableInfo(scope.row.id)"></i>
+							<span> {{ scope.row.name }} </span>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -142,8 +142,7 @@
 /* eslint-disable */
 
 import metaData from '../metaData';
-import factory from '../../api/factory';
-const Inspect = factory('inspect');
+import { toRegExp } from '../../util/util';
 let timeout = null;
 export default {
 	components: {
