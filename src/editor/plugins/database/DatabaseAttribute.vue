@@ -196,7 +196,6 @@ export default {
 				_.merge(this.model, data);
 			}
 			this.cell = cell;
-
 			this.isSourceDataNode = dataNodeInfo && !dataNodeInfo.isTarget;
 			editorMonitor = vueAdapter.editor;
 		},
@@ -293,6 +292,8 @@ export default {
 								return item.table_name;
 							});
 						}
+
+						this.handleIncludeTable();
 						this.firstRound = false;
 						self.$forceUpdate();
 					}
@@ -300,6 +301,22 @@ export default {
 				.finally(() => {
 					this.tableLoading = false;
 				});
+		},
+		// 获取保留表数据
+		handleIncludeTable() {
+			this.cell.graph.getConnectedLinks(this.cell, { inbound: true }).forEach(link => {
+				let orignData = link.getFormData();
+				let includeTable = [],
+					databaseTables = [];
+				if (orignData) {
+					includeTable = orignData.selectSourceArr.map(item => {
+						return orignData.table_prefix + item + orignData.table_suffix;
+					});
+
+					databaseTables = this.databaseTables.concat(includeTable);
+					this.databaseTables = [...new Set(databaseTables)];
+				}
+			});
 		},
 		getMongoDBData(connectionId) {
 			if (!connectionId) {
