@@ -12,7 +12,6 @@
 					class="dv-table"
 					border
 				>
-					<el-table-column type="selection"> </el-table-column>
 					<el-table-column label="源表">
 						<template slot-scope="scope">
 							<span>{{ scope.row.source ? scope.row.source.table : '' }}</span>
@@ -25,14 +24,14 @@
 						<template slot-scope="scope">
 							<span>{{ scope.row.target ? scope.row.target.table : '' }}</span>
 							<div style="color:#ccc">
-								{{ scope.row.target.target ? scope.row.target.connectionName : '' }}
+								{{ scope.row.target ? scope.row.target.connectionName : '' }}
 							</div>
 						</template>
 					</el-table-column>
 					<el-table-column label="源/目标行数">
 						<template slot-scope="scope">
-							<span>{{ scope.row.source_total ? scope.row.target.source_total : '' }}</span>
-							<div style="color:#ccc">
+							<span>{{ scope.row.source_total ? scope.row.source_total : '' }}</span>
+							<div>
 								{{ scope.row.target_total ? scope.row.target_total : '' }}
 							</div>
 						</template>
@@ -46,17 +45,9 @@
 					</el-table-column>
 					<el-table-column prop="status" label="校验结果">
 						<template slot-scope="scope">
-							<div>
-								<span :style="`color: ${colorMap[scope.row.status]};`" class="row-result">
-									<i class="iconfont icon-cuowu"></i>
-									<span>{{
-										scope.row.source_only + scope.row.target_only + scope.row.row_failed
-									}}</span>
-								</span>
-							</div>
+							<span>{{ scope.row.source_only + scope.row.target_only + scope.row.row_failed }}</span>
 						</template>
 					</el-table-column>
-					<el-table-column prop="status" label="操作"></el-table-column>
 					<el-table-column :label="$t('dataFlow.operate')">
 						<template slot-scope="scope">
 							<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
@@ -84,7 +75,7 @@
 		<div class="panel-main">
 			<div class="tip">校验详情</div>
 			<div class="main">
-				<el-table border class="dv-table">
+				<el-table border class="dv-table" :data="inspectReuslt">
 					<el-table-column prop="date" label="日期" width="180"> </el-table-column>
 					<el-table-column prop="name" label="姓名" width="180"> </el-table-column>
 					<el-table-column prop="address" label="地址"> </el-table-column>
@@ -120,7 +111,11 @@ export default {
 	data() {
 		return {
 			tableData: [],
-			loading: false
+			inspectReuslt: [],
+			loading: false,
+			colorMap: {
+				running: '#ee5353'
+			}
 		};
 	},
 	created() {
@@ -128,12 +123,13 @@ export default {
 		this.getData(this.id);
 	},
 	methods: {
-		getData(id) {
+		getData() {
 			this.loading = true;
 			let where = {
 				filter: {
 					where: {
-						inspect_id: id
+						id: '5f5d7f3c9edc7f1190b7d657',
+						inspect_id: '5f5d7c939edc7f1190b7d656'
 					},
 					order: 'createTime DESC',
 					limit: this.pagesize,
@@ -146,7 +142,34 @@ export default {
 					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data) {
 							this.loading = false;
-							this.tableData = res.data.stats;
+							this.tableData = res.data[0].stats;
+							if (this.tableData.length > 0) {
+								this.changeInspectResult(this.tableData[0].taskId);
+							}
+						}
+					} else {
+						this.loading = false;
+					}
+				});
+		},
+		changeInspectResult(taskId) {
+			let where = {
+				filter: {
+					where: {
+						taskId: taskId,
+						inspect_id: '5f5d7c939edc7f1190b7d656'
+					},
+					order: 'createTime DESC',
+					limit: this.pagesize,
+					skip: (this.currentPage - 1) * this.pagesize
+				}
+			};
+			this.$api('InspectDetails')
+				.get(where)
+				.then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						if (res.data) {
+							this.inspectReuslt = res.data;
 						}
 					} else {
 						this.loading = false;
@@ -185,6 +208,11 @@ export default {
 			.dv-table {
 				margin: @margin;
 				width: 97.5%;
+			}
+			.row-result {
+				color: #fff;
+				border-radius: 10px;
+				background-color: #ee5353;
 			}
 			.error-band {
 				background: #fdf6ec;
