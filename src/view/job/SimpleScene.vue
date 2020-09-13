@@ -89,6 +89,7 @@ export default {
 			} catch (e) {
 				this.activeValid = false;
 			}
+
 			this.activeStep++;
 			if (!this.vsteps.includes(this.activeStep + '')) this.vsteps.push(this.activeStep + '');
 			this.$parent.simpleGoNext(this.activeStep);
@@ -144,11 +145,12 @@ export default {
 	height: 80px;
 	line-height: 80px;
 	flex-flow: row;
-	justify-content: center;
+	// justify-content: center;
 	font-size: 12px;
 	background-color: #fff;
 	h1 {
 		width: 15%;
+		padding-left: 20px;
 		font-size: 14px;
 		color: #333;
 	}
