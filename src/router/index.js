@@ -225,6 +225,11 @@ const childRoutes = [
 		meta: { title: i18n.t('notification.systemNotice') }
 	},
 	{
+		path: '/dataVerification/:id/edit',
+		name: 'dataVerificationEdit',
+		component: view('dataVerification/Form')
+	},
+	{
 		path: '/dataVerification/create',
 		name: 'dataVerificationCreate',
 		component: view('dataVerification/Form')

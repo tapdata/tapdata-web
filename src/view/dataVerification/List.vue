@@ -216,7 +216,7 @@
 								class="btn-icon el-icon-setting"
 								type="text"
 								size="mini"
-								@click="$router.push('dataVerification/create')"
+								@click="$router.push('dataVerification/' + scope.row.id + '/edit')"
 							></el-button>
 							<el-button
 								class="btn-icon el-icon-delete"

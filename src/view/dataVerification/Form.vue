@@ -3,7 +3,7 @@
 		<div class="form-container">
 			<div class="form-body">
 				<h1 class="title">
-					<span>新建校验</span>
+					<span>{{ $route.params.id ? '编辑校验' : '新建校验' }}</span>
 					<div style="font-size: 12px;">
 						<span style="color: #48B6E2;" v-show="form.enabled">已启用</span>
 						<span style="color: #9a9a9a;" v-show="!form.enabled">已禁止</span>
@@ -141,10 +141,10 @@
 									>
 										<el-option
 											v-for="field in item.source.fields"
-											:key="field.original_field_name"
-											:value="field.original_field_name"
+											:key="field.original_field_name || field.field_name"
+											:value="field.original_field_name || field.field_name"
 										>
-											<span>{{ field.original_field_name }}</span>
+											<span>{{ field.original_field_name || field.field_name }}</span>
 											<span style="color:#F56C6C;" v-if="field.primary_key_position > 0">PK</span>
 										</el-option>
 									</el-select>
@@ -157,11 +157,11 @@
 										placeholder="请选索引或主键字段"
 									>
 										<el-option
-											v-for="field in item.source.fields"
-											:key="field.original_field_name"
-											:value="field.original_field_name"
+											v-for="field in item.target.fields"
+											:key="field.original_field_name || field.field_name"
+											:value="field.original_field_name || field.field_name"
 										>
-											<span>{{ field.original_field_name }}</span>
+											<span>{{ field.original_field_name || field.field_name }}</span>
 											<span style="color:#F56C6C;" v-if="field.primary_key_position > 0">PK</span>
 										</el-option>
 									</el-select>
@@ -277,6 +277,31 @@ export default {
 		this.getFlowOptions();
 	},
 	methods: {
+		//获取表单数据
+		getData(id) {
+			if (id) {
+				this.$api('Inspects')
+					.findOne({
+						filter: JSON.stringify({
+							where: {
+								id: id
+							}
+						})
+					})
+					.then(res => {
+						let data = res.data;
+						if (data) {
+							data.tasks = data.tasks.map(t => {
+								t.sourceTable = [t.source.connectionId, t.source.table];
+								t.targetTable = [t.target.connectionId, t.target.table];
+								return t;
+							});
+							this.form = data;
+							this.getFlowStages();
+						}
+					});
+			}
+		},
 		//获取dataflow数据
 		getFlowOptions() {
 			this.$api('DataFlows')
@@ -296,6 +321,7 @@ export default {
 				})
 				.then(res => {
 					this.flowOptions = res.data || [];
+					this.getData(this.$route.params.id);
 				});
 		},
 		//dataflow改变时
@@ -303,8 +329,11 @@ export default {
 			this.form.tasks = [];
 			this.sourceTree = [];
 			this.targetTree = [];
+			this.getFlowStages();
+		},
+		getFlowStages() {
 			let flow = this.flowOptions.find(item => item.id === this.form.flowId);
-			this.form.name = flow.name;
+			this.form.name = this.form.name || flow.name;
 			this.form.listtags = flow.listtags || [];
 			this.$api('DataFlows')
 				.findOne({
@@ -507,7 +536,7 @@ export default {
 			if (stage.fields && stage.fields.length) {
 				let pkField = stage.fields.find(f => f.primary_key_position > 0);
 				if (pkField) {
-					sortColumn = pkField.original_field_name;
+					sortColumn = pkField.original_field_name || pkField.field_name;
 				}
 			}
 			return {
@@ -569,7 +598,7 @@ export default {
 						return this.$message.error('第' + index + '条校验条件中源表或目标表的索引字段未选择');
 					}
 					this.$api('Inspects')
-						.post(
+						[this.form.id ? 'patch' : 'post'](
 							Object.assign({}, this.form, {
 								fullMatchKeep: this.form.keep,
 								status: this.form.mode === 'manual' ? 'scheduling' : 'pause',
