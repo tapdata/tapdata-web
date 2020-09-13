@@ -1260,7 +1260,8 @@ export default {
 				aggregation_processor: 'app.Aggregate',
 				js_processor: 'app.Script',
 				row_filter_processor: 'app.DataFilter',
-				java_processor: 'app.FieldProcess'
+				java_processor: 'app.FieldProcess',
+				redis: 'app.Redis'
 			};
 			if (data) {
 				let stageMap = {};
@@ -1290,7 +1291,10 @@ export default {
 							angle: 0
 						};
 						cells.push(node);
-					} else if (v.type && ['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api'].includes(v.type)) {
+					} else if (
+						v.type &&
+						['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'redis'].includes(v.type)
+					) {
 						let node = {
 							type: mapping[v.type],
 							id: v.id,
