@@ -217,7 +217,9 @@ const en = {
 		next: 'Next',
 		sourceSetting: 'Source setting',
 		targetSetting: 'Target setting',
-		jobSetting: 'Job setting',
+		advancedetting: 'Advanced settings',
+		simpleSceneTitle: 'Create a database replication task',
+		sourceLibrarySetting: 'Source library structure and object settings',
 		databseMigration:
 			'With the guided mode to help understanding the operation method of databases migration which can quickly realize INITAL and CDC transmission between databases (include table filter and rename settings, etc).',
 		databseProcessing:

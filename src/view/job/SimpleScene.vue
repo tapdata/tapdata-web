@@ -6,6 +6,7 @@
 			<div v-html="cellHtmls" style=""></div>
 		</div>
 		<div class="action-bar">
+			<h1>{{ $t('dataFlow.simpleSceneTitle') }}</h1>
 			<div class="center-bar" @click="skip">
 				<el-checkbox-group v-model="vsteps">
 					<el-checkbox label="1">
@@ -20,12 +21,12 @@
 					<span class="space-line"></span>
 					<el-checkbox label="3">
 						<i class="stepNum">3</i>
-						<span class="desc">{{ $t('dataFlow.jobSetting') }}</span></el-checkbox
+						<span class="desc">{{ $t('dataFlow.sourceLibrarySetting') }}</span></el-checkbox
 					>
 					<span class="space-line"></span>
 					<el-checkbox label="4">
 						<i class="stepNum">4</i>
-						<span class="desc">{{ $t('dataFlow.jobSetting') }}</span></el-checkbox
+						<span class="desc">{{ $t('dataFlow.advancedetting') }}</span></el-checkbox
 					>
 				</el-checkbox-group>
 			</div>
@@ -146,6 +147,11 @@ export default {
 	justify-content: center;
 	font-size: 12px;
 	background-color: #fff;
+	h1 {
+		width: 15%;
+		font-size: 14px;
+		color: #333;
+	}
 	& > div {
 		background: #fff;
 		margin-left: 30px;
@@ -158,11 +164,14 @@ export default {
 	}
 
 	.center-bar {
-		// padding: 12px;
+		width: 70%;
+		text-align: center;
 		font-size: 12px;
+		box-sizing: border-box;
 		.el-checkbox {
 			margin-right: 10px;
 			margin-left: 10px;
+			color: #999;
 		}
 		.space-line {
 			margin-bottom: 4px;

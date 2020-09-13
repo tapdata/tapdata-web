@@ -499,7 +499,8 @@ export default {
 	}
 	.database-tableBox {
 		padding-top: 10px;
-		height: 630px;
+		height: 640px;
+		box-sizing: border-box;
 		.box-text {
 			display: flex;
 			padding-bottom: 10px;
@@ -531,6 +532,7 @@ export default {
 			padding-right: 6px;
 		}
 		.el-transfer {
+			height: 100%;
 			.el-transfer-panel {
 				width: 300px;
 				.el-transfer-panel__body {
@@ -556,7 +558,9 @@ export default {
 					line-height: 28px;
 					background: #f5f5f5;
 					.el-checkbox {
+						height: 28px;
 						line-height: 28px;
+						overflow: hidden;
 					}
 				}
 				.el-transfer-panel__filter {
@@ -592,14 +596,20 @@ export default {
 		.el-transfer-panel__item:hover {
 			color: #666 !important;
 		}
-		.transfer,
+		.transfer {
+			height: calc(100% - 32px) !important;
+		}
 		.el-transfer,
-		.el-transfer-panel,
-		.el-transfer-panel__body {
+		.el-transfer-panel {
 			height: 100% !important;
 		}
+		.el-transfer-panel__body {
+			height: calc(100% - 38px) !important;
+		}
 		.el-checkbox-group {
-			height: 550px;
+			height: calc(100% - 32px);
+			padding-bottom: 5px;
+			box-sizing: border-box;
 		}
 		.el-transfer-panel__item {
 			width: 100%;

@@ -216,7 +216,9 @@ const tc = {
 		next: '下一步',
 		sourceSetting: '設置源庫',
 		targetSetting: '設置目標庫',
-		jobSetting: '任務設置',
+		advancedetting: '高級設置',
+		simpleSceneTitle: '創建數據庫複製任務',
+		sourceLibrarySetting: '源庫結構與對象設置',
 		databseMigration:
 			'以引導的模式幫助新手用戶快速了解數據庫之間的遷移。數據庫遷移能快速地實現數據庫之間(內置表批量過濾和改名等設置)的全量和增量傳輸。',
 		databsenProcessing:

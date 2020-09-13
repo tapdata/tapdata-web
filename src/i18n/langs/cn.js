@@ -218,7 +218,9 @@ const cn = {
 		next: '下一步',
 		sourceSetting: '设置源库',
 		targetSetting: '设置目标库',
-		jobSetting: '任务设置',
+		advancedetting: '高级设置',
+		simpleSceneTitle: '创建数据库复制任务',
+		sourceLibrarySetting: '源库结构与对象设置',
 		databseMigration:
 			'以引导的模式帮助新手用户快速了解数据库之间的迁移。数据库迁移能快速地实现数据库之间(内置表批量过滤和改名等设置)的全量和增量传输。',
 		databseProcessing:
