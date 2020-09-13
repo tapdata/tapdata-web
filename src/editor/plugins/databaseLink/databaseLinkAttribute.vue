@@ -278,13 +278,9 @@ export default {
 			}
 
 			if (this.cell) {
-				// let linkFormData = null;
 				let targetCell = this.cell.getTargetCell();
 				if (targetCell && targetCell.getFormData()) {
 					let targetFormData = targetCell.getFormData();
-					// if (targetCell.length && targetCell[0].getFormData()) {
-					// 	linkFormData = targetCell[0].getFormData();
-					// }
 
 					if (targetFormData) {
 						targetFormData.dropType = this.model.dropType;
@@ -583,7 +579,7 @@ export default {
 			height: 100% !important;
 		}
 		.el-checkbox-group {
-			height: 565px;
+			height: 550px;
 		}
 		.el-transfer-panel__item {
 			width: 100%;

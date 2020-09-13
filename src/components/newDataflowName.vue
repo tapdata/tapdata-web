@@ -1,7 +1,7 @@
 <template>
 	<el-dialog
 		class="sp-setting"
-		:title="'STEP3: ' + $t('editor.ui.sidebar.setting')"
+		:title="'STEP4: ' + $t('editor.ui.sidebar.setting')"
 		:visible.sync="dialogVisibleSetting"
 		width="40%"
 		:close-on-click-modal="false"

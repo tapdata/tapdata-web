@@ -4,44 +4,41 @@
 			style="position:absolute; width:3276px; height:1688px; left:-700px; top:-200px; z-index:1999; opacity:0.7; background-color: black;"
 		>
 			<div v-html="cellHtmls" style=""></div>
-			<div class="exit">
-				<el-button round size="mini" icon="el-icon-close" @click="toHome">{{ $t('message.cancel') }}</el-button>
-				<el-button round size="mini" @click="goFree"> {{ $t('dataFlow.freedomMode') }}</el-button>
-			</div>
 		</div>
 		<div class="action-bar">
-			<div class="left-bar">
-				<el-button :class="activeStep > 1 ? 'e-btnv' : 'e-btn'" @click="prevStep">
-					{{ $t('dataFlow.previous') }}
-				</el-button>
-			</div>
 			<div class="center-bar" @click="skip">
 				<el-checkbox-group v-model="vsteps">
-					<el-checkbox label="1"
-						>STEP1 <br />
+					<el-checkbox label="1">
+						<i class="stepNum">1</i>
 						<span class="desc">{{ $t('dataFlow.sourceSetting') }}</span></el-checkbox
 					>
 					<span class="space-line"></span>
-					<el-checkbox label="2"
-						>STEP2 <br />
+					<el-checkbox label="2">
+						<i class="stepNum">2</i>
 						<span class="desc">{{ $t('dataFlow.targetSetting') }}</span></el-checkbox
 					>
 					<span class="space-line"></span>
-					<el-checkbox label="3"
-						>STEP3 <br />
+					<el-checkbox label="3">
+						<i class="stepNum">3</i>
 						<span class="desc">{{ $t('dataFlow.jobSetting') }}</span></el-checkbox
 					>
-					<el-checkbox label="4"
-						>STEP4 <br />
+					<span class="space-line"></span>
+					<el-checkbox label="4">
+						<i class="stepNum">4</i>
 						<span class="desc">{{ $t('dataFlow.jobSetting') }}</span></el-checkbox
 					>
 				</el-checkbox-group>
 			</div>
-			<div class="left-bar">
-				<el-button :class="activeValid ? 'e-btnv' : 'e-btn'" @click="nextStep">
-					{{ $t('dataFlow.next') }}
-				</el-button>
-			</div>
+		</div>
+		<div class="exit">
+			<el-button size="mini" @click="toHome">{{ $t('message.cancel') }}</el-button>
+			<el-button size="mini" @click="goFree"> {{ $t('dataFlow.freedomMode') }}</el-button>
+			<el-button size="mini" :class="activeStep > 1 ? 'e-btnv' : 'e-btn'" @click="prevStep">
+				{{ $t('dataFlow.previous') }}
+			</el-button>
+			<el-button size="mini" :class="activeValid ? 'e-btnv' : 'e-btn'" @click="nextStep">
+				{{ $t('dataFlow.next') }}
+			</el-button>
 		</div>
 	</div>
 </template>
@@ -57,6 +54,7 @@ export default {
 			maxStep: 4,
 			isSetting: false,
 			vsteps: ['1']
+			// vsteps: '2'
 		};
 	},
 	methods: {
@@ -124,21 +122,30 @@ export default {
 <style lang="less" scoped>
 .exit {
 	position: absolute;
-	left: 800px;
-	top: 240px;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 54px;
+	padding: 0 50px;
+	line-height: 54px;
+	text-align: right;
+	background-color: #fff;
 	color: #666;
+	box-sizing: border-box;
+	border-top: 1px solid #ddd;
+	z-index: 2002;
 }
 .action-bar {
 	position: absolute;
-	bottom: 80px;
-	left: -200px;
 	z-index: 2002;
 	display: flex;
 	width: 100%;
+	height: 80px;
+	line-height: 80px;
 	flex-flow: row;
 	justify-content: center;
 	font-size: 12px;
-
+	background-color: #fff;
 	& > div {
 		background: #fff;
 		margin-left: 30px;
@@ -149,40 +156,27 @@ export default {
 	& > div:first-child {
 		margin-left: 0;
 	}
-	.e-btnv {
-		background: #48b6e2;
-		color: #fff;
-		border-radius: 5px;
-		cursor: pointer;
-		padding: 20px 16px;
-		display: inline-block;
-		width: 100%;
-		height: 100%;
-	}
-	.e-btn {
-		cursor: pointer;
-		color: #aaa;
-		padding: 20px 16px;
-		display: inline-block;
-		width: 100%;
-		height: 100%;
-	}
-	.e-btn:first-child {
-		margin-left: 0;
-	}
 
 	.center-bar {
-		padding: 12px;
+		// padding: 12px;
 		font-size: 12px;
 		.el-checkbox {
 			margin-right: 10px;
 			margin-left: 10px;
 		}
 		.space-line {
-			margin-bottom: 12px;
+			margin-bottom: 4px;
 			display: inline-block;
 			width: 70px;
 			border: 1px solid #dddddd;
+		}
+		.stepNum {
+			display: inline-block;
+			width: 26px;
+			height: 26px;
+			text-align: center;
+			border: 1px solid #dddddd;
+			border-radius: 50%;
 		}
 	}
 
@@ -194,11 +188,42 @@ export default {
 <style lang="less">
 .action-bar {
 	.el-checkbox__input .el-checkbox__inner {
-		margin-bottom: 15px;
+		// margin-bottom: 15px;
+		display: none;
 	}
+	.center-bar {
+		.el-checkbox__label {
+			line-height: 26px;
+		}
+
+		.el-checkbox.is-checked {
+			cursor: auto;
+			.el-checkbox__label {
+				.stepNum {
+					color: #fff;
+					background-color: #48b6e2;
+					border: 1px solid #48b6e2;
+				}
+			}
+		}
+	}
+
 	.el-button:focus,
 	.el-button:hover {
 		color: #666 !important;
+	}
+}
+.exit {
+	.e-btnv {
+		background: #48b6e2;
+		color: #fff;
+		border-radius: 5px;
+	}
+	.e-btn {
+		color: #aaa;
+	}
+	.e-btn:first-child {
+		margin-left: 0;
 	}
 }
 </style>
