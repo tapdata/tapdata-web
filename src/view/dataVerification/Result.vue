@@ -1,79 +1,60 @@
 <template>
-	<section class="data-flow-wrap" v-loading="restLoading">
+	<section class="data-flow-wrap" v-loading="loading">
 		<div class="panel-main">
 			<div class="tip">校验历史</div>
 			<div class="main main-border">
 				<div class="title">POSS_SOURCE UAT BATCH1</div>
 				<div class="text">内容校验 ( 重复执行 )</div>
 				<el-table
-					v-loading="loading"
 					:element-loading-text="$t('dataFlow.dataLoading')"
 					:data="tableData"
 					height="100%"
 					class="dv-table"
 					border
 				>
-					<el-table-column type="selection" width="45" :selectable="handleSelectable"> </el-table-column>
-					<el-table-column :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
+					<el-table-column label="源表">
 						<template slot-scope="scope">
-							<span>{{ scope.row.name }}</span>
-							<div style="margin-left: 20px;color:#ccc">
-								{{ scope.row.user ? scope.row.user.email : '' }}
-							</div>
-						</template>
-					</el-table-column>
-					<el-table-column label="源/目标行数" width="120">
-						<template>
-							<span>
-								源表:33333
-							</span>
+							<span>{{ scope.row.source ? scope.row.source.table : '' }}</span>
 							<div style="color:#ccc">
-								目标:66666
+								{{ scope.row.source ? scope.row.source.connectionName : '' }}
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column prop="status" sortable="custom" label="校验结果" width="180">
+					<el-table-column label="目标表">
+						<template slot-scope="scope">
+							<span>{{ scope.row.target ? scope.row.target.table : '' }}</span>
+							<div style="color:#ccc">
+								{{ scope.row.target ? scope.row.target.connectionName : '' }}
+							</div>
+						</template>
+					</el-table-column>
+					<el-table-column label="源/目标行数">
+						<template slot-scope="scope">
+							<span>{{ scope.row.source_total ? scope.row.source_total : '' }}</span>
+							<div>
+								{{ scope.row.target_total ? scope.row.target_total : '' }}
+							</div>
+						</template>
+					</el-table-column>
+					<el-table-column prop="progress" label="校验进度">
 						<template slot-scope="scope">
 							<div>
-								<span :style="`color: ${colorMap[scope.row.status]};`" class="row-result">
-									<i class="iconfont icon-cuowu"></i>
-									<span>{{ scope.row.statusLabel }}</span>
-								</span>
+								<span>{{ `${scope.row.progress * 100}%` }}</span>
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column prop="status" sortable="custom" label="执行状态" width="180">
+					<el-table-column prop="status" label="校验结果">
 						<template slot-scope="scope">
-							<div>
-								<span :style="`color: ${colorMap[scope.row.status]};`">
-									{{ scope.row.statusLabel }}
-								</span>
-							</div>
+							<span>{{ scope.row.source_only + scope.row.target_only + scope.row.row_failed }}</span>
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('dataFlow.operate')" width="180">
+					<el-table-column :label="$t('dataFlow.operate')">
 						<template slot-scope="scope">
-							<div v-if="!scope.row.hasChildren">
-								<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
-									<el-button type="text" @click="handlesShowDrawer">
-										<i class="iconfont  task-list-icon icon-chaxun"></i>
-									</el-button>
-								</el-tooltip>
-								<el-tooltip class="item" :content="$t('dataFlow.edit')" placement="bottom">
-									<el-button type="text" :disabled="statusBtMap[scope.row.status].edit">
-										<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
-									</el-button>
-								</el-tooltip>
-								<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
-									<el-button
-										type="text"
-										:disabled="statusBtMap[scope.row.status].delete"
-										@click="handleDelete(scope.row.id)"
-									>
-										<i class="iconfont task-list-icon icon-shanchu"></i>
-									</el-button>
-								</el-tooltip>
-							</div>
+							<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
+								<el-button type="text" @click="handlesShowDrawer(scope.row.taskId)">
+									<i class="iconfont  task-list-icon icon-chaxun"></i>
+								</el-button>
+							</el-tooltip>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -94,7 +75,7 @@
 		<div class="panel-main">
 			<div class="tip">校验详情</div>
 			<div class="main">
-				<el-table :data="tableData" border class="dv-table">
+				<el-table border class="dv-table" :data="inspectReuslt">
 					<el-table-column prop="date" label="日期" width="180"> </el-table-column>
 					<el-table-column prop="name" label="姓名" width="180"> </el-table-column>
 					<el-table-column prop="address" label="地址"> </el-table-column>
@@ -103,7 +84,7 @@
 					<i class="iconfont icon-warning-circle"></i>
 					<span>ERROR XXXXXXXXXXXXXXXXXXXXXXXXXXXX</span>
 				</div>
-				<el-table :data="tableData" border class="dv-table">
+				<el-table border class="dv-table">
 					<el-table-column prop="date" label="日期" width="180"> </el-table-column>
 					<el-table-column prop="name" label="姓名" width="180"> </el-table-column>
 					<el-table-column prop="address" label="地址"> </el-table-column>
@@ -126,49 +107,74 @@
 </template>
 
 <script>
-import factory from '../../api/factory';
-const dataVerify = factory('dataVerify');
 export default {
 	data() {
 		return {
-			tableData: [
-				{
-					date: '2016-05-02',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				},
-				{
-					date: '2016-05-04',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1517 弄'
-				},
-				{
-					date: '2016-05-01',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1519 弄'
-				},
-				{
-					date: '2016-05-03',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1516 弄'
-				}
-			]
+			tableData: [],
+			inspectReuslt: [],
+			loading: false,
+			colorMap: {
+				running: '#ee5353'
+			}
 		};
 	},
 	created() {
-		this.getData();
+		this.id = this.$route.query.id;
+		this.getData(this.id);
 	},
 	methods: {
 		getData() {
-			dataVerify.get().then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.listData = res.data;
-					}
-				} else {
-					this.loading = false;
+			this.loading = true;
+			let where = {
+				filter: {
+					where: {
+						id: '5f5d7f3c9edc7f1190b7d657',
+						inspect_id: '5f5d7c939edc7f1190b7d656'
+					},
+					order: 'createTime DESC',
+					limit: this.pagesize,
+					skip: (this.currentPage - 1) * this.pagesize
 				}
-			});
+			};
+			this.$api('InspectResults')
+				.get(where)
+				.then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						if (res.data) {
+							this.loading = false;
+							this.tableData = res.data[0].stats;
+							if (this.tableData.length > 0) {
+								this.changeInspectResult(this.tableData[0].taskId);
+							}
+						}
+					} else {
+						this.loading = false;
+					}
+				});
+		},
+		changeInspectResult(taskId) {
+			let where = {
+				filter: {
+					where: {
+						taskId: taskId,
+						inspect_id: '5f5d7c939edc7f1190b7d656'
+					},
+					order: 'createTime DESC',
+					limit: this.pagesize,
+					skip: (this.currentPage - 1) * this.pagesize
+				}
+			};
+			this.$api('InspectDetails')
+				.get(where)
+				.then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						if (res.data) {
+							this.inspectReuslt = res.data;
+						}
+					} else {
+						this.loading = false;
+					}
+				});
 		}
 	}
 };
@@ -202,6 +208,11 @@ export default {
 			.dv-table {
 				margin: @margin;
 				width: 97.5%;
+			}
+			.row-result {
+				color: #fff;
+				border-radius: 10px;
+				background-color: #ee5353;
 			}
 			.error-band {
 				background: #fdf6ec;

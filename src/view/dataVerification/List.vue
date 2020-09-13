@@ -325,8 +325,10 @@ export default {
 		},
 		toTableInfo(id) {
 			let routeUrl = this.$router.resolve({
-				path: '/dataVerifyTable',
-				query: id
+				path: '/dataVerifyResult',
+				query: {
+					id: id
+				}
 			});
 			window.open(routeUrl.href, '_blank');
 		},
