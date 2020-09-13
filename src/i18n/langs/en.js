@@ -73,7 +73,12 @@ const en = {
 		menu: {
 			dashboard: 'Dashboard',
 			connections: 'Data Source',
-			dataFlows: 'Data Collect',
+			dataSynchronization: 'Data synchronization',
+			allDataFlows: 'All tasks',
+			runningDataFlows: 'Running task',
+			stopDataFlows: 'Stopped task',
+			errorDataFlows: 'Error task',
+			editDataFlows: 'Editing task',
 			dataGovernance: 'Data Governance',
 			metadataDefinition: 'Data Catalog',
 			dataQuality: 'Data Quality',
@@ -986,10 +991,10 @@ const en = {
 					merge_embed: 'Match then Embed as Array in target'
 				},
 				existingSchema: {
-					label: 'Processing of existed schema and data',
-					keepSchema: 'Keep existed schema and data',
-					keepExistedData: 'Keep existed schema and remove data',
-					removeSchema: 'Remove existed schema and data'
+					label: 'When schema and/or data already exist in target database',
+					keepSchema: 'Retain schema and data in target database',
+					keepExistedData: 'Retain schema, but remove data in target database',
+					removeSchema: 'Drop schema and data in target database'
 				},
 				migrationSetting: 'Tables to be copied selection',
 				dataProcessing: 'Existing data processing',

@@ -73,7 +73,12 @@ const tc = {
 		menu: {
 			dashboard: '控制台',
 			connections: '数据源',
-			dataFlows: '數據採集',
+			dataSynchronization: '數據同步',
+			allDataFlows: '全部任務',
+			runningDataFlows: '運行中任務',
+			stopDataFlows: '已停止任務',
+			errorDataFlows: '出錯任務',
+			editDataFlows: '編輯中任務',
 			dataGovernance: '數據治理',
 			metadataDefinition: '數據目錄',
 			dataQuality: '數據質量',
@@ -974,10 +979,10 @@ const tc = {
 					merge_embed: '更新內嵌數組'
 				},
 				existingSchema: {
-					label: '已存在的結構和數據的處理',
-					keepSchema: '保留已存在的結構和數據',
-					keepExistedData: '保留已存在的結構，刪除數據',
-					removeSchema: '刪除原有的結構和數據'
+					label: '對目標端已存在的結構和數據的處理',
+					keepSchema: '保持目標端已存在的結構和數據',
+					keepExistedData: ' 保持目標端已存在的結構，僅刪除數據',
+					removeSchema: ' 刪除目標端已存在的結構和數據'
 				},
 				migrationSetting: '複製對象設置',
 				dataProcessing: '已有數據處理',

@@ -73,7 +73,12 @@ const cn = {
 		menu: {
 			dashboard: '控制台',
 			connections: '数据源',
-			dataFlows: '数据采集',
+			dataSynchronization: '数据同步',
+			allDataFlows: '全部任务',
+			runningDataFlows: '运行中任务',
+			stopDataFlows: '已停止任务',
+			errorDataFlows: '出错任务',
+			editDataFlows: '编辑中任务',
 			dataGovernance: '数据治理',
 			metadataDefinition: '数据目录',
 			dataQuality: '数据质量',
@@ -977,10 +982,10 @@ const cn = {
 					merge_embed: '更新内嵌数组'
 				},
 				existingSchema: {
-					label: '已存在的结构和数据的处理',
-					keepSchema: '保留已存在的结构和数据',
-					keepExistedData: '保留已存在的结构，删除数据',
-					removeSchema: '删除原有的结构和数据'
+					label: '对目标端已存在的结构和数据的处理',
+					keepSchema: '保持目标端已存在的结构和数据',
+					keepExistedData: ' 保持目标端已存在的结构，仅删除数据',
+					removeSchema: ' 删除目标端已存在的结构和数据'
 				},
 
 				migrationSetting: '复制对象设置',
