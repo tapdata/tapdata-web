@@ -74,6 +74,7 @@ const tc = {
 			dashboard: '控制台',
 			connections: '数据源',
 			dataSynchronization: '數據同步',
+			dataFlows: '數據採集',
 			allDataFlows: '全部任務',
 			runningDataFlows: '運行中任務',
 			stopDataFlows: '已停止任務',

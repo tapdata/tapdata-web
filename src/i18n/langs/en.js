@@ -74,6 +74,7 @@ const en = {
 			dashboard: 'Dashboard',
 			connections: 'Data Source',
 			dataSynchronization: 'Data synchronization',
+			dataFlows: 'Data Collect',
 			allDataFlows: 'All tasks',
 			runningDataFlows: 'Running task',
 			stopDataFlows: 'Stopped task',

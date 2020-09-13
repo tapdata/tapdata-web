@@ -74,6 +74,7 @@ const cn = {
 			dashboard: '控制台',
 			connections: '数据源',
 			dataSynchronization: '数据同步',
+			dataFlows: '数据采集',
 			allDataFlows: '全部任务',
 			runningDataFlows: '运行中任务',
 			stopDataFlows: '已停止任务',
