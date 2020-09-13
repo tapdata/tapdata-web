@@ -1007,7 +1007,11 @@ export default {
 				this.loading = true;
 				self.doSave(data, (err, rest) => {
 					if (err) {
-						self.$message.error(err.response.data);
+						if (err.response.data === 'Loading data source schema') {
+							self.$message.error(self.$t('message.loadingSchema'));
+						} else {
+							self.$message.error(err.response.data);
+						}
 					} else {
 						this.$message.success(self.$t('message.taskStart'));
 						self.$router.push({

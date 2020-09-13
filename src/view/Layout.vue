@@ -156,11 +156,11 @@ let menuSetting = [
 		name: 'dataSync',
 		icon: 'chengbenguanlixitong',
 		children: [
-			{ name: 'dataFlows', alias: 'dataFlowsAll', query: '?status=' },
-			{ name: 'dataFlows', alias: 'dataFlowsRunning', query: '?status=running' },
-			{ name: 'dataFlows', alias: 'dataFlowsPaused', query: '?status=paused' },
-			{ name: 'dataFlows', alias: 'dataFlowsError', query: '?status=error' },
-			{ name: 'dataFlows', alias: 'dataFlowsDraft', query: '?status=draft' }
+			{ name: 'dataFlows', alias: 'dataFlowsAll' },
+			{ name: 'dataFlows', alias: 'dataFlowsRunning', query: '?dataFlowStatus=running' },
+			{ name: 'dataFlows', alias: 'dataFlowsPaused', query: '?dataFlowStatus=paused' },
+			{ name: 'dataFlows', alias: 'dataFlowsError', query: '?dataFlowStatus=error' },
+			{ name: 'dataFlows', alias: 'dataFlowsDraft', query: '?dataFlowStatus=draft' }
 		]
 	},
 	{

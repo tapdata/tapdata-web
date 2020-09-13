@@ -73,13 +73,13 @@ const cn = {
 		menu: {
 			dashboard: '控制台',
 			connections: '数据源',
-			dataSynchronization: '数据同步',
+			dataSync: '数据同步',
 			dataFlows: '数据采集',
-			allDataFlows: '全部任务',
-			runningDataFlows: '运行中任务',
-			stopDataFlows: '已停止任务',
-			errorDataFlows: '出错任务',
-			editDataFlows: '编辑中任务',
+			dataFlowsAll: '全部任务',
+			dataFlowsRunning: '运行中任务',
+			dataFlowsError: '出错任务',
+			dataFlowsPaused: '已暂停任务',
+			dataFlowsDraft: '编辑中任务',
 			dataGovernance: '数据治理',
 			metadataDefinition: '数据目录',
 			dataQuality: '数据质量',
@@ -204,7 +204,8 @@ const cn = {
 		edit: '修改',
 		clickRelatedTasks: '点击查看相关任务',
 		currentTaskOpen: '当前任务已打开',
-		noRelatedTask: '暂无相关任务'
+		noRelatedTask: '暂无相关任务',
+		loadingSchema: '源库schema尚未加载完成，暂时无法启动'
 	},
 	dataFlow: {
 		updateModel: '更新模型',

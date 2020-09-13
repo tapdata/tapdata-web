@@ -73,13 +73,13 @@ const en = {
 		menu: {
 			dashboard: 'Dashboard',
 			connections: 'Data Source',
-			dataSynchronization: 'Data synchronization',
+			dataSync: 'Data synchronization',
 			dataFlows: 'Data Collect',
-			allDataFlows: 'All tasks',
-			runningDataFlows: 'Running task',
-			stopDataFlows: 'Stopped task',
-			errorDataFlows: 'Error task',
-			editDataFlows: 'Editing task',
+			dataFlowsAll: 'All tasks',
+			dataFlowsRunning: 'Running',
+			dataFlowsError: 'Error',
+			dataFlowsPaused: 'Paused',
+			dataFlowsDraft: 'Draft',
 			dataGovernance: 'Data Governance',
 			metadataDefinition: 'Data Catalog',
 			dataQuality: 'Data Quality',
@@ -203,7 +203,8 @@ const en = {
 		edit: 'Edit',
 		clickRelatedTasks: 'Click to view related tasks',
 		currentTaskOpen: 'The current task has been opened',
-		noRelatedTask: 'No related tasks'
+		noRelatedTask: 'No related tasks',
+		loadingSchema: 'Schema of source database has not finished loading yet, please wait'
 	},
 	dataFlow: {
 		updateModel: 'Update Model',

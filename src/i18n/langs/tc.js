@@ -73,13 +73,13 @@ const tc = {
 		menu: {
 			dashboard: '控制台',
 			connections: '数据源',
-			dataSynchronization: '數據同步',
+			dataSync: '數據同步',
 			dataFlows: '數據採集',
-			allDataFlows: '全部任務',
-			runningDataFlows: '運行中任務',
-			stopDataFlows: '已停止任務',
-			errorDataFlows: '出錯任務',
-			editDataFlows: '編輯中任務',
+			dataFlowsAll: '全部任務',
+			dataFlowsRunning: '運行中任務',
+			dataFlowsError: '出錯任務',
+			dataFlowsPaused: '已暫停任務',
+			dataFlowsDraft: '編輯中任務',
 			dataGovernance: '數據治理',
 			metadataDefinition: '數據目錄',
 			dataQuality: '數據質量',
@@ -202,8 +202,10 @@ const tc = {
 		edit: '修改',
 		clickRelatedTasks: '點擊查看相關任務',
 		currentTaskOpen: '當前任務已打開',
-		noRelatedTask: '暫無相關任務'
+		noRelatedTask: '暫無相關任務',
+		loadingSchema: '源庫schema尚未加載完成，暫時無法啟動'
 	},
+
 	dataFlow: {
 		updateModel: '更新模型',
 		databseMigrationHead: '數據庫遷移',

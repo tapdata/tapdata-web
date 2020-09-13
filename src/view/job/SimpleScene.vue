@@ -34,7 +34,7 @@
 		<div class="exit">
 			<el-button size="mini" @click="toHome">{{ $t('message.cancel') }}</el-button>
 			<el-button size="mini" @click="goFree"> {{ $t('dataFlow.freedomMode') }}</el-button>
-			<el-button size="mini" :class="activeStep > 1 ? 'e-btnv' : 'e-btn'" @click="prevStep">
+			<el-button size="mini" @click="prevStep">
 				{{ $t('dataFlow.previous') }}
 			</el-button>
 			<el-button size="mini" :class="activeValid ? 'e-btnv' : 'e-btn'" @click="nextStep">
