@@ -256,6 +256,26 @@ export default {
 						procedure: false
 					};
 				}
+				// 获取目标节点的数据显示右侧选择表
+				if (targetCell && this.model.selectSourceArr.length === 0) {
+					let targetFormData = targetCell.getFormData();
+					let selectTargetType = [];
+					this.model.table_prefix = targetFormData.table_prefix;
+					this.model.table_suffix = targetFormData.table_suffix;
+					if (targetFormData.syncObjects && targetFormData.syncObjects.length) {
+						targetFormData.syncObjects.forEach(item => {
+							selectTargetType.push(item.type);
+							if (item.type === 'table') {
+								this.model.selectSourceArr = item.objectNames;
+							}
+						});
+					}
+					if (selectTargetType.length) {
+						Object.keys(this.model.selectSourceDatabase).forEach(key => {
+							this.model.selectSourceDatabase[key] = selectTargetType.includes(key);
+						});
+					}
+				}
 				this.loadDataModels(connectionId);
 			}
 

@@ -253,7 +253,6 @@ export default {
 					orignData.table_prefix = '';
 					orignData.selectSourceArr = [];
 				}
-
 				link.setFormData(orignData);
 			});
 		},
