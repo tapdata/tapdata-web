@@ -23,7 +23,7 @@
 							size="mini"
 							clearable
 							prefix-icon="el-icon-search"
-							placeholder="任务名称/节点名"
+							placeholder="任务名称"
 							@input="keyup()"
 						></el-input>
 					</li>
@@ -60,6 +60,18 @@
 							<el-option label="已禁用" value="2"></el-option>
 						</el-select>
 					</li>
+					<li class="search-item" v-if="searchParams.tag">
+						<el-tag
+							size="small"
+							closable
+							@close="
+								searchParams.tag = null;
+								search(1);
+							"
+						>
+							{{ searchParams.tag.value }}
+						</el-tag>
+					</li>
 					<li class="search-item">
 						<el-button size="mini" @click="reset">
 							<i class="iconfont icon-shuaxin1"></i>
@@ -75,14 +87,14 @@
 						<i class="iconfont icon-shezhi1"></i>
 						<span>校验设置</span>
 					</el-button>
-					<el-button type="primary" size="mini" @click="create">
+					<el-button type="primary" size="mini" @click="$router.push('dataVerification/create')">
 						<i class="iconfont icon-jia add-btn-icon"></i>
 					</el-button>
 				</div>
 			</div>
 			<div class="table-wrap">
 				<el-table
-					style="border: 1px solid #dedee4;"
+					style="border: 1px solid #dedee4;border-bottom: none;"
 					v-loading="loading"
 					:data="page.data"
 					@sort-change="sortHandler"
@@ -91,33 +103,106 @@
 					<el-table-column type="selection" width="44" align="center"></el-table-column>
 					<el-table-column label="任务名称">
 						<template slot-scope="scope">
-							{{ scope.row.name }}
+							<div>{{ scope.row.name }}</div>
+							<div style="color: #aaa;">
+								<span>{{ scope.row.inspectMethod }} ( {{ scope.row.mode }} ) </span>
+								<span v-if="!scope.row.enabled" style="color:#f56c6c;">&nbsp;Disabled</span>
+							</div>
 						</template>
 					</el-table-column>
-					<el-table-column label="源/目标行数">
+					<el-table-column label="源总行数" align="center" width="200">
 						<template slot-scope="scope">
-							<div>源表: {{ scope.row.name }}</div>
-							<div>目标: {{ scope.row.name }}</div>
+							{{ scope.row.InspectResult ? scope.row.InspectResult.source_total : '-' }}
 						</template>
 					</el-table-column>
-					<el-table-column label="校验结果">
+					<el-table-column label="目标总行数" align="center" width="200">
 						<template slot-scope="scope">
-							<span> 行数差异 {{ scope.row.name }} </span>
+							{{ scope.row.InspectResult ? scope.row.InspectResult.target_total : '-' }}
 						</template>
 					</el-table-column>
-					<el-table-column label="执行状态">
+					<el-table-column label="校验结果" width="180">
 						<template slot-scope="scope">
-							<span> {{ scope.row.name }} </span>
+							<div class="inspect-result" v-if="scope.row.InspectResult">
+								<div
+									v-if="
+										scope.row.InspectResult.target_total - scope.row.InspectResult.source_total != 0
+									"
+								>
+									<span
+										class="error"
+										v-if="
+											scope.row.InspectResult.target_total -
+												scope.row.InspectResult.source_total !=
+												0
+										"
+									>
+										<i class="el-icon-error"></i>
+										<span>
+											行数差异
+											{{
+												scope.row.InspectResult.target_total -
+													scope.row.InspectResult.source_total
+											}}
+										</span>
+									</span>
+								</div>
+								<div v-if="scope.row.difference_number">
+									<span class="error" v-if="scope.row.difference_number">
+										<i class="el-icon-error"></i>
+										<span>
+											内容差异
+											{{ scope.row.difference_number }}
+										</span>
+									</span>
+								</div>
+								<span class="success" v-if="!scope.row.result === 'passed'">
+									<i class="el-icon-success"></i>
+									<span>一致</span>
+								</span>
+							</div>
 						</template>
 					</el-table-column>
-					<el-table-column label="校验时间" sortable="custom">
+					<el-table-column label="执行状态" align="center" width="140">
 						<template slot-scope="scope">
-							<span> {{ scope.row.name }} </span>
+							<span>{{ scope.row.status }}</span>
+							<span v-if="scope.row.InspectResult && scope.row.status === 'running'">
+								({{ scope.row.InspectResult.progress * 100 }}%)
+							</span>
 						</template>
 					</el-table-column>
-					<el-table-column label="操作">
+					<el-table-column label="校验时间" prop="timing.start" sortable="custom" align="center" width="180">
 						<template slot-scope="scope">
-							<span> {{ scope.row.name }} </span>
+							<span>
+								{{
+									scope.row.InspectResult &&
+										$moment(scope.row.InspectResult.createTime).format('YYYY-MM-DD HH:mm:ss')
+								}}
+							</span>
+						</template>
+					</el-table-column>
+					<el-table-column label="操作" align="center" width="160">
+						<template slot-scope="scope">
+							<i
+								v-if="!['running', 'scheduling'].includes(scope.row.status)"
+								class="btn-icon iconfont icon-bofang"
+								@click="run(scope.row.id)"
+							></i>
+							<i
+								v-if="['running', 'scheduling'].includes(scope.row.status)"
+								class="btn-icon el-icon-loading"
+							></i>
+							<i
+								class="btn-icon iconfont icon-chaxun"
+								:class="{ disabled: !scope.row.InspectResult }"
+								@click="scope.row.InspectResult && $router.push('dataVerification/create')"
+							></i>
+							<i
+								class="btn-icon el-icon-time"
+								:class="{ disabled: !scope.row.InspectResult }"
+								@click="scope.row.InspectResult && $router.push('dataVerification/create')"
+							></i>
+							<i class="btn-icon el-icon-setting" @click="$router.push('dataVerification/create')"></i>
+							<i class="btn-icon el-icon-delete" @click="remove(scope.row.id)"></i>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -139,7 +224,6 @@
 </template>
 
 <script>
-/* eslint-disable */
 import metaData from '../metaData';
 import { toRegExp } from '../../util/util';
 let timeout = null;
@@ -155,9 +239,9 @@ export default {
 			page: {
 				data: null,
 				current: 1,
-				size: 10,
+				size: 20,
 				total: 0,
-				sortBy: '',
+				sortBy: 'last_updated',
 				order: ''
 			},
 			selections: []
@@ -184,36 +268,51 @@ export default {
 			this.page.order = order;
 			this.search(1);
 		},
-		create() {},
 		search(pageNum) {
 			this.searchParamsChange();
 			this.loading = true;
 			let { current, size, sortBy, order } = this.page;
-			let { keyword } = this.searchParams;
+			let { keyword, inspectMethod, mode, enabled, tag } = this.searchParams;
 			let currentPage = pageNum || current + 1;
+			let where = {};
+			inspectMethod && (where.inspectMethod = inspectMethod);
+			mode && (where.mode = mode);
+			enabled && (where.enabled = enabled);
+			tag && (where['listtags.id'] = { in: [tag.id] });
+			if (keyword && keyword.trim()) {
+				where.name = toRegExp(keyword);
+			}
 			let filter = {
 				order: sortBy + ' ' + (order === 'ascending' ? 'ASC' : 'DESC'),
-				limit: this.pagesize,
-				skip: (this.currentPage - 1) * this.pagesize,
-				where: {
-					name: toRegExp(keyword)
-				}
+				limit: size,
+				skip: (currentPage - 1) * size,
+				where
 			};
-			this.$api('Inspects')
-				.get()
-				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						this.loading = false;
-						this.page.data = res.data;
+			Promise.all([
+				this.$api('Inspects').count(where),
+				this.$api('Inspects').get({
+					filter: JSON.stringify(filter)
+				})
+			])
+				.then(([countRes, res]) => {
+					if (res.data) {
+						let list = res.data || [];
+						this.page.data = list;
+						this.page.current = currentPage;
+						this.page.total = countRes.data.count;
 					}
+				})
+				.finally(() => {
+					this.loading = false;
 				});
 		},
 		reset() {
 			this.searchParams = {
 				keyword: '',
-				compareMethod: '',
+				inspectMethod: '',
 				mode: '',
-				active: ''
+				enabled: '',
+				tag: null
 			};
 			this.search(1);
 		},
@@ -221,13 +320,39 @@ export default {
 			this.$store.commit('dataVerification', this.searchParams);
 		},
 		classClickHandler(node) {
+			this.searchParams.tag = node;
 			this.search(1);
 		},
-		GoTableInfo(id) {
+		toTableInfo(id) {
 			let routeUrl = this.$router.resolve({
-				path: '/dataVerifyTable'
+				path: '/dataVerifyTable',
+				query: id
 			});
 			window.open(routeUrl.href, '_blank');
+		},
+		run(id) {
+			this.$api('Inspects')
+				.patch({ id, status: 'scheduling' })
+				.then(() => {
+					let { data, current } = this.page;
+					this.$message.success(this.$t('message.deleteOK'));
+					this.search(data.length === 1 ? current - 1 : current);
+				});
+		},
+		remove(id) {
+			this.$confirm(this.$t('message.deteleMessage'), this.$t('dataFlow.importantReminder'), {
+				confirmButtonText: this.$t('metaData.deleteNode'),
+				cancelButtonText: this.$t('message.cancel'),
+				type: 'warning'
+			}).then(() => {
+				this.$api('Inspects')
+					.delete(id)
+					.then(() => {
+						let { data, current } = this.page;
+						this.$message.success(this.$t('message.deleteOK'));
+						this.search(data.length === 1 ? current - 1 : current);
+					});
+			});
 		}
 	}
 };
@@ -285,6 +410,36 @@ export default {
 			flex: 1;
 			display: flex;
 			flex-direction: column;
+			.btn-icon {
+				font-size: 16px;
+				cursor: pointer;
+				&.disabled {
+					color: #ccc;
+					cursor: unset;
+				}
+				&.el-icon-loading {
+					cursor: unset;
+				}
+				& + .btn-icon {
+					margin-left: 10px;
+				}
+			}
+			.inspect-result {
+				.error,
+				.success {
+					padding: 0 8px 0 5px;
+					display: inline-block;
+					line-height: 20px;
+					color: #fff;
+					border-radius: 20px;
+				}
+				.error {
+					background: #f56c6c;
+				}
+				.success {
+					background: #70ae48;
+				}
+			}
 			.pagination {
 				padding: 20px 0;
 				text-align: right;

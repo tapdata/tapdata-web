@@ -66,7 +66,6 @@
 								size="mini"
 								:value="[form.timing.start, form.timing.end]"
 								type="datetimerange"
-								:picker-options="pickerOptions"
 								range-separator="至"
 								start-placeholder="开始日期"
 								end-placeholder="结束日期"
@@ -109,7 +108,7 @@
 						</el-button>
 					</div>
 					<ul class="panel-container" v-loading="!flowStages.length">
-						<li class="condition-item" v-for="(item, index) in form.conditions" :key="index">
+						<li class="condition-item" v-for="(item, index) in form.tasks" :key="index">
 							<div class="condition-setting">
 								<div class="setting-item">
 									<label class="item-label is-required">待校验表</label>
@@ -142,10 +141,10 @@
 									>
 										<el-option
 											v-for="field in item.source.fields"
-											:key="field.field_name"
-											:value="field.field_name"
+											:key="field.original_field_name"
+											:value="field.original_field_name"
 										>
-											<span>{{ field.field_name }}</span>
+											<span>{{ field.original_field_name }}</span>
 											<span style="color:#F56C6C;" v-if="field.primary_key_position > 0">PK</span>
 										</el-option>
 									</el-select>
@@ -159,10 +158,10 @@
 									>
 										<el-option
 											v-for="field in item.source.fields"
-											:key="field.field_name"
-											:value="field.field_name"
+											:key="field.original_field_name"
+											:value="field.original_field_name"
 										>
-											<span>{{ field.field_name }}</span>
+											<span>{{ field.original_field_name }}</span>
 											<span style="color:#F56C6C;" v-if="field.primary_key_position > 0">PK</span>
 										</el-option>
 									</el-select>
@@ -172,7 +171,7 @@
 								<el-button size="mini" icon="el-icon-close" @click="removeItem(index)"></el-button>
 							</el-button-group>
 						</li>
-						<li style="color: #ccc;" v-show="!form.conditions.length">
+						<li style="color: #ccc;" v-show="!form.tasks.length">
 							点下方按钮添加校验表
 						</li>
 					</ul>
@@ -196,6 +195,19 @@ const TABLE_PARAMS = {
 	sortColumn: '',
 	fields: []
 };
+const META_INSTANCE_FIELDS = {
+	id: true,
+	name: true,
+	original_name: true,
+	source: true,
+	'source.id': true,
+	'source.name': true,
+	fields: true,
+	'fields.id': true,
+	'fields.field_name': true,
+	'fields.primary_key_position': true,
+	'fields.original_field_name': true
+};
 export default {
 	data() {
 		let self = this;
@@ -212,37 +224,6 @@ export default {
 		return {
 			timeUnitOptions: ['second', 'minute', 'hour', 'day', 'week', 'month'],
 			pickerTimes: [],
-			pickerOptions: {
-				shortcuts: [
-					{
-						text: '最近一周',
-						onClick(picker) {
-							const end = new Date();
-							const start = new Date();
-							start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-							picker.$emit('pick', [start, end]);
-						}
-					},
-					{
-						text: '最近一个月',
-						onClick(picker) {
-							const end = new Date();
-							const start = new Date();
-							start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-							picker.$emit('pick', [start, end]);
-						}
-					},
-					{
-						text: '最近三个月',
-						onClick(picker) {
-							const end = new Date();
-							const start = new Date();
-							start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-							picker.$emit('pick', [start, end]);
-						}
-					}
-				]
-			},
 			form: {
 				flowId: '',
 				name: '',
@@ -258,7 +239,8 @@ export default {
 					keep: 100
 				},
 				enabled: true,
-				conditions: []
+				tasks: [],
+				listtags: []
 			},
 			rules: {
 				flowId: [
@@ -308,7 +290,7 @@ export default {
 						fields: {
 							id: true,
 							name: true,
-							stages: true
+							listtags: true
 						}
 					})
 				})
@@ -318,11 +300,12 @@ export default {
 		},
 		//dataflow改变时
 		flowChangeHandler() {
-			this.form.conditions = [];
+			this.form.tasks = [];
 			this.sourceTree = [];
 			this.targetTree = [];
 			let flow = this.flowOptions.find(item => item.id === this.form.flowId);
 			this.form.name = flow.name;
+			this.form.listtags = flow.listtags || [];
 			this.$api('DataFlows')
 				.findOne({
 					filter: JSON.stringify({
@@ -364,15 +347,7 @@ export default {
 									inq: Array.from(new Set(connectionIds))
 								}
 							},
-							fields: {
-								id: true,
-								name: true,
-								original_name: true,
-								source: true,
-								'source.id': true,
-								'source.name': true,
-								fields: true
-							}
+							fields: META_INSTANCE_FIELDS
 						})
 					})
 					.then(res => {
@@ -416,15 +391,7 @@ export default {
 									inq: Array.from(new Set(tableNames))
 								}
 							},
-							fields: {
-								id: true,
-								name: true,
-								original_name: true,
-								source: true,
-								'source.id': true,
-								'source.name': true,
-								fields: true
-							}
+							fields: META_INSTANCE_FIELDS
 						})
 					})
 					.then(res => {
@@ -517,7 +484,7 @@ export default {
 		},
 		//根据表的连线关系自动添加校验条件
 		autoAddTable() {
-			this.form.conditions = [];
+			this.form.tasks = [];
 			let stages = this.flowStages;
 			let map = this.stageMap;
 			stages.forEach(stg => {
@@ -525,7 +492,7 @@ export default {
 				if (lanes) {
 					lanes.forEach(id => {
 						let targetStage = stages.find(it => it.id === id);
-						this.form.conditions.push({
+						this.form.tasks.push({
 							source: this.setTable(stg),
 							target: this.setTable(targetStage),
 							sourceTable: [stg.connectionId, stg.tableName],
@@ -540,27 +507,28 @@ export default {
 			if (stage.fields && stage.fields.length) {
 				let pkField = stage.fields.find(f => f.primary_key_position > 0);
 				if (pkField) {
-					sortColumn = pkField.field_name;
+					sortColumn = pkField.original_field_name;
 				}
 			}
 			return {
 				connectionId: stage.connectionId,
+				connectionName: stage.connectionName,
 				table: stage.tableName,
 				sortColumn,
 				fields: stage.fields
 			};
 		},
 		addTable() {
-			this.form.conditions.push({
+			this.form.tasks.push({
 				source: Object.assign({}, TABLE_PARAMS),
 				target: Object.assign({}, TABLE_PARAMS)
 			});
 		},
 		removeItem(idx) {
-			this.form.conditions.splice(idx, 1);
+			this.form.tasks.splice(idx, 1);
 		},
 		clear() {
-			this.form.conditions = [];
+			this.form.tasks = [];
 		},
 		timingChangeHandler(times) {
 			this.form.timing.start = times[0];
@@ -577,13 +545,13 @@ export default {
 		nextStep() {
 			this.$refs.baseForm.validate(valid => {
 				if (valid) {
-					let conditions = this.form.conditions;
+					let tasks = this.form.tasks;
 					let index = 0;
-					if (!conditions.length) {
+					if (!tasks.length) {
 						return this.$message.error('请添加校验条件');
 					}
 					if (
-						conditions.some((c, i) => {
+						tasks.some((c, i) => {
 							index = i + 1;
 							return !c.source.table || !c.target.table;
 						})
@@ -593,19 +561,34 @@ export default {
 					index = 0;
 					if (
 						this.form.mode === 'cron' &&
-						conditions.some((c, i) => {
+						tasks.some((c, i) => {
 							index = i + 1;
 							return !c.source.sortColumn || !c.target.sortColumn;
 						})
 					) {
 						return this.$message.error('第' + index + '条校验条件中源表或目标表的索引字段未选择');
 					}
-
 					this.$api('Inspects')
-						.post(this.form)
+						.post(
+							Object.assign({}, this.form, {
+								fullMatchKeep: this.form.keep,
+								status: this.form.mode === 'manual' ? 'scheduling' : 'pause',
+								tasks: this.form.tasks.map(({ source, target }) => {
+									return {
+										source,
+										target
+									};
+								})
+							})
+						)
 						.then(res => {
 							if (res.data) {
 								this.$router.back();
+							}
+						})
+						.catch(err => {
+							if (err.response.data === 'duplication for names') {
+								this.$message.error(this.$t('message.exists_name'));
 							}
 						});
 				}
