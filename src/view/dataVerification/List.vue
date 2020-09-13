@@ -180,29 +180,50 @@
 							</span>
 						</template>
 					</el-table-column>
-					<el-table-column label="操作" align="center" width="160">
+					<el-table-column label="操作" align="center" width="180">
 						<template slot-scope="scope">
-							<i
+							<el-button
 								v-if="!['running', 'scheduling'].includes(scope.row.status)"
-								class="btn-icon iconfont icon-bofang"
-								@click="run(scope.row.id)"
-							></i>
+								class="btn-icon"
+								type="text"
+								size="mini"
+								@click="startTask(scope.row.id)"
+							>
+								<i class="btn-icon iconfont icon-bofang"></i>
+							</el-button>
 							<i
 								v-if="['running', 'scheduling'].includes(scope.row.status)"
 								class="btn-icon el-icon-loading"
+								style="color:#48B6E2;"
 							></i>
-							<i
-								class="btn-icon iconfont icon-chaxun"
-								:class="{ disabled: !scope.row.InspectResult }"
-								@click="scope.row.InspectResult && $router.push('dataVerification/create')"
-							></i>
-							<i
+							<el-button
+								class="btn-icon"
+								type="text"
+								size="mini"
+								:disabled="!scope.row.InspectResult"
+								@click="toTableInfo(scope.row.id, scope.row.id.InspectResult.id)"
+							>
+								<i class="btn-icon iconfont icon-chaxun"></i>
+							</el-button>
+							<el-button
 								class="btn-icon el-icon-time"
-								:class="{ disabled: !scope.row.InspectResult }"
-								@click="scope.row.InspectResult && $router.push('dataVerification/create')"
-							></i>
-							<i class="btn-icon el-icon-setting" @click="$router.push('dataVerification/create')"></i>
-							<i class="btn-icon el-icon-delete" @click="remove(scope.row.id)"></i>
+								type="text"
+								size="mini"
+								:disabled="!scope.row.InspectResult"
+								@click="$router.push('dataVerification/create')"
+							></el-button>
+							<el-button
+								class="btn-icon el-icon-setting"
+								type="text"
+								size="mini"
+								@click="$router.push('dataVerification/create')"
+							></el-button>
+							<el-button
+								class="btn-icon el-icon-delete"
+								type="text"
+								size="mini"
+								@click="remove(scope.row.id)"
+							></el-button>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -260,8 +281,8 @@ export default {
 				timeout = null;
 			}, 800);
 		},
-		selectHandler(val) {
-			this.selections = val;
+		selectHandler(arr) {
+			this.selections = arr.map(item => item.id);
 		},
 		sortHandler({ prop, order }) {
 			this.page.sortBy = prop;
@@ -323,22 +344,30 @@ export default {
 			this.searchParams.tag = node;
 			this.search(1);
 		},
-		toTableInfo(id) {
+		toTableInfo(id, resultId) {
 			let routeUrl = this.$router.resolve({
 				path: '/dataVerifyResult',
 				query: {
-					id: id
+					id: resultId,
+					inspectId: id
 				}
 			});
 			window.open(routeUrl.href, '_blank');
 		},
-		run(id) {
+		startTask(id) {
+			let selections = id ? [id] : this.selections;
 			this.$api('Inspects')
-				.patch({ id, status: 'scheduling' })
+				.update(
+					{
+						id: {
+							inq: selections
+						}
+					},
+					{ status: 'scheduling' }
+				)
 				.then(() => {
-					let { data, current } = this.page;
-					this.$message.success(this.$t('message.deleteOK'));
-					this.search(data.length === 1 ? current - 1 : current);
+					this.$message.success('任务启动成功');
+					this.search(this.page.current);
 				});
 		},
 		remove(id) {
@@ -414,16 +443,8 @@ export default {
 			flex-direction: column;
 			.btn-icon {
 				font-size: 16px;
-				cursor: pointer;
-				&.disabled {
-					color: #ccc;
-					cursor: unset;
-				}
-				&.el-icon-loading {
-					cursor: unset;
-				}
 				& + .btn-icon {
-					margin-left: 10px;
+					margin-left: 5px;
 				}
 			}
 			.inspect-result {
