@@ -1,120 +1,32 @@
 <template>
 	<section class="data-verify-wrap">
 		<div class="panel-main">
-			<div class="topbar">
-				<ul class="search-bar">
-					<li class="search-item">
-						<el-button
-							class="btn-class-collapse"
-							size="mini"
-							:class="{ 'is-open': isClassShow }"
-							@click="isClassShow = !isClassShow"
-						>
-							<i class="iconfont icon-xiangshangzhanhang"></i>
-							<span>{{ isClassShow ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel') }}</span>
-						</el-button>
-					</li>
-					<li class="search-item">
-						<el-input
-							v-model="searchParams.keyword"
-							size="mini"
-							clearable
-							prefix-icon="el-icon-search"
-							placeholder="任务名称/节点名"
-							@input="keyup()"
-						></el-input>
-					</li>
-					<li class="search-item">
-						<el-select
-							v-model="searchParams.compareMethod"
-							size="mini"
-							placeholder="校验类型"
-							@input="search(1)"
-						>
-							<el-option label="行数校验" value="row_count"></el-option>
-							<el-option label="内容校验" value="field"></el-option>
-						</el-select>
-					</li>
-					<li class="search-item">
-						<el-select
-							v-model="searchParams.mode"
-							size="mini"
-							placeholder="单词/重复校验"
-							@input="search(1)"
-						>
-							<el-option label="单词校验" value="manual"></el-option>
-							<el-option label="重复校验" value="cron"></el-option>
-						</el-select>
-					</li>
-					<li class="search-item">
-						<el-select
-							v-model="searchParams.active"
-							size="mini"
-							placeholder="校验激活状态"
-							@input="search(1)"
-						>
-							<el-option label="已启用" value="1"></el-option>
-							<el-option label="已禁用" value="2"></el-option>
-						</el-select>
-					</li>
-					<li class="search-item">
-						<el-button size="mini" @click="reset">
-							<i class="iconfont icon-shuaxin1"></i>
-						</el-button>
-					</li>
-				</ul>
-				<div class="topbar-buttons">
-					<el-button size="mini" v-show="selections.length">
-						<i class="iconfont icon-piliang"></i>
-						<span>批量校验</span>
-					</el-button>
-					<el-button size="mini">
-						<i class="iconfont icon-shezhi1"></i>
-						<span>校验设置</span>
-					</el-button>
-					<el-button type="primary" size="mini" @click="create">
-						<i class="iconfont icon-jia add-btn-icon"></i>
-					</el-button>
-				</div>
-			</div>
 			<div class="table-wrap">
 				<el-table
-					style="border: 1px solid #dedee4;"
-					v-loading="loading"
+					:element-loading-text="$t('dataFlow.dataLoading')"
 					:data="page.data"
-					@sort-change="sortHandler"
-					@selection-change="selectHandler"
+					height="100%"
+					class="dv-table"
+					border
 				>
-					<el-table-column type="selection" width="44" align="center"></el-table-column>
-					<el-table-column label="任务名称">
+					<el-table-column label="校验时间" prop="createTime"></el-table-column>
+					<el-table-column label="源表行数" prop="source_total"></el-table-column>
+					<el-table-column label="目标行数" prop="target_total"></el-table-column>
+					<el-table-column prop="progress" label="校验进度" width="80px">
 						<template slot-scope="scope">
-							{{ scope.row.name }}
+							<div>
+								<span>{{ `${scope.row.progress * 100}%` }}</span>
+							</div>
 						</template>
 					</el-table-column>
-					<el-table-column label="源/目标行数">
+					<el-table-column label="校验状态" prop="status"></el-table-column>
+					<el-table-column :label="$t('dataFlow.operate')" width="60px">
 						<template slot-scope="scope">
-							<div>源表: {{ scope.row.name }}</div>
-							<div>目标: {{ scope.row.name }}</div>
-						</template>
-					</el-table-column>
-					<el-table-column label="校验结果">
-						<template slot-scope="scope">
-							<span> 行数差异 {{ scope.row.name }} </span>
-						</template>
-					</el-table-column>
-					<el-table-column label="执行状态">
-						<template slot-scope="scope">
-							<span> {{ scope.row.name }} </span>
-						</template>
-					</el-table-column>
-					<el-table-column label="校验时间" sortable="custom">
-						<template slot-scope="scope">
-							<span> {{ scope.row.name }} </span>
-						</template>
-					</el-table-column>
-					<el-table-column label="操作">
-						<template slot-scope="scope">
-							<span> {{ scope.row.name }} </span>
+							<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
+								<el-button type="text" @click="changeInspectResult(scope.row.taskId)">
+									<i class="iconfont  task-list-icon icon-chaxun"></i>
+								</el-button>
+							</el-tooltip>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -182,12 +94,28 @@ export default {
 			let { current, size, sortBy, order } = this.page;
 			let { keyword } = this.searchParams;
 			let currentPage = pageNum || current + 1;
-			setTimeout(() => {
-				this.page.data = [];
-				this.page.current = currentPage;
-				this.page.total = 232;
-				this.loading = false;
-			}, 1000);
+			let where = {
+				filter: {
+					where: {
+						inspect_id: '5f5d7c939edc7f1190b7d656'
+					},
+					order: 'createTime DESC',
+					limit: this.pagesize,
+					skip: (this.currentPage - 1) * this.pagesize
+				}
+			};
+			this.$api('InspectResults')
+				.get(where)
+				.then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						if (res.data) {
+							this.loading = false;
+							this.page.data = res.data;
+						}
+					} else {
+						this.loading = false;
+					}
+				});
 		},
 		reset() {
 			this.searchParams = {

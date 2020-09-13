@@ -36,7 +36,7 @@
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column prop="progress" label="校验进度">
+					<el-table-column prop="progress" label="校验进度" width="80px">
 						<template slot-scope="scope">
 							<div>
 								<span>{{ `${scope.row.progress * 100}%` }}</span>
@@ -45,13 +45,16 @@
 					</el-table-column>
 					<el-table-column prop="status" label="校验结果">
 						<template slot-scope="scope">
-							<span>{{ scope.row.source_only + scope.row.target_only + scope.row.row_failed }}</span>
+							<span>{{ `行数差: ${scope.row.target_total + scope.row.source_total}` }}</span>
+							<div>
+								{{ `内容差: ${scope.row.source_only + scope.row.target_only + scope.row.row_failed}` }}
+							</div>
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('dataFlow.operate')">
+					<el-table-column :label="$t('dataFlow.operate')" width="60px">
 						<template slot-scope="scope">
 							<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
-								<el-button type="text" @click="handlesShowDrawer(scope.row.taskId)">
+								<el-button type="text" @click="changeInspectResult(scope.row.taskId)">
 									<i class="iconfont  task-list-icon icon-chaxun"></i>
 								</el-button>
 							</el-tooltip>
@@ -75,20 +78,51 @@
 		<div class="panel-main">
 			<div class="tip">校验详情</div>
 			<div class="main">
-				<el-table border class="dv-table" :data="inspectReuslt">
-					<el-table-column prop="date" label="日期" width="180"> </el-table-column>
-					<el-table-column prop="name" label="姓名" width="180"> </el-table-column>
-					<el-table-column prop="address" label="地址"> </el-table-column>
-				</el-table>
-				<div class="error-band">
+				<ul class="inspect-result">
+					<li>
+						<span>
+							{{ `源表: ${resultData[0].source.table} / ${resultData[0].source.connectionName}` }}
+						</span>
+						<span style="color: #ccc">
+							{{ `( 行数: ${resultData[0].source_total} )` }}
+						</span>
+					</li>
+					<li>
+						<span>
+							{{ `目标表: ${resultData[0].target.table} / ${resultData[0].target.connectionName}` }}
+						</span>
+						<span style="color: #ccc">
+							{{ `( 行数: ${resultData[0].target_total} )` }}
+						</span>
+					</li>
+					<li>
+						<span>{{ `校验结果: ${resultData[0].result}` }}</span>
+						<span>{{ `行数差异: ${resultData[0].target_total - resultData[0].source_total}` }}</span>
+						<span>{{
+							`内容差异: ${resultData[0].source_only +
+								resultData[0].target_only +
+								resultData[0].row_failed}`
+						}}</span>
+					</li>
+				</ul>
+				<div class="error-band" v-if="resultData[0].status === 'error'">
 					<i class="iconfont icon-warning-circle"></i>
-					<span>ERROR XXXXXXXXXXXXXXXXXXXXXXXXXXXX</span>
+					<span>{{ resultData[0].errorMsg }}</span>
 				</div>
-				<el-table border class="dv-table">
-					<el-table-column prop="date" label="日期" width="180"> </el-table-column>
-					<el-table-column prop="name" label="姓名" width="180"> </el-table-column>
-					<el-table-column prop="address" label="地址"> </el-table-column>
-				</el-table>
+				<div v-for="item in inspectResult" :key="item.id" class="inspect-details">
+					<ul class="father-table">
+						<li>源表字段名</li>
+						<li>值</li>
+						<li>目标字段名</li>
+						<li>值</li>
+					</ul>
+					<ul class="sub-table" v-for="detail in item.details" :key="detail.id">
+						<li>{{ detail.source.type }}</li>
+						<li>{{ detail.source.value }}</li>
+						<li>{{ detail.target.type }}</li>
+						<li>{{ detail.target.value }}</li>
+					</ul>
+				</div>
 			</div>
 			<el-pagination
 				class="pagination"
@@ -111,7 +145,8 @@ export default {
 	data() {
 		return {
 			tableData: [],
-			inspectReuslt: [],
+			inspectResult: [],
+			resultData: [],
 			loading: false,
 			colorMap: {
 				running: '#ee5353'
@@ -153,6 +188,7 @@ export default {
 				});
 		},
 		changeInspectResult(taskId) {
+			this.resultData = this.tableData.filter(item => item.taskId === taskId);
 			let where = {
 				filter: {
 					where: {
@@ -169,7 +205,7 @@ export default {
 				.then(res => {
 					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data) {
-							this.inspectReuslt = res.data;
+							this.inspectResult = res.data;
 						}
 					} else {
 						this.loading = false;
@@ -220,6 +256,8 @@ export default {
 				color: #e6a23c;
 				margin: @margin;
 				padding-left: @margin;
+				line-height: 36px;
+				font-size: 12px;
 			}
 			.title {
 				font-weight: bold;
@@ -232,6 +270,54 @@ export default {
 				font-size: 12px;
 				margin-top: @margin;
 				padding-left: @margin;
+			}
+			.inspect-result {
+				font-size: 12px;
+				margin: @margin;
+				li {
+					margin-top: 10px;
+				}
+			}
+			.inspect-details {
+				margin: 0 10px;
+				li {
+					min-width: 0;
+					font-size: 12px;
+					box-sizing: border-box;
+					text-overflow: ellipsis;
+					vertical-align: middle;
+					position: relative;
+					text-align: left;
+					padding: 3px 10px;
+				}
+				.father-table {
+					display: flex;
+					li {
+						flex: 1;
+						background-color: #f5f5f5;
+						border-left: 1px solid #dedee4;
+						border-top: 1px solid #dedee4;
+					}
+					li:last-child {
+						border-right: 1px solid #dedee4;
+					}
+				}
+				.sub-table {
+					display: flex;
+					li {
+						flex: 1;
+						border-left: 1px solid #dedee4;
+						border-bottom: 1px solid #dedee4;
+						border-top: 1px solid #dedee4;
+					}
+					li:last-child {
+						border-right: 1px solid #dedee4;
+					}
+				}
+			}
+			.inspect-details:last-child {
+				margin-bottom: 10px;
+				margin-top: 10px;
 			}
 		}
 		.main-border {
