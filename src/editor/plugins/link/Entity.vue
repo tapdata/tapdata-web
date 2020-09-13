@@ -168,7 +168,7 @@ export default {
 </script>
 
 <style lang="less">
-@color: #48b6e2;
+@color: #4aaf47;
 
 .e-entity {
 	margin: 0 auto;
@@ -180,7 +180,8 @@ export default {
 	overflow: hidden;
 	box-sizing: border-box;
 	.header {
-		padding: 6px;
+		height: 24px;
+		padding-top: 4px;
 		background: @color;
 		font-size: 12px;
 		color: #fff;

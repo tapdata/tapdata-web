@@ -17,7 +17,7 @@
 			</span>
 		</div>
 		<ul class="cuk-list clearfix cuk-list-type-block">
-			<li class="list-item" v-for="item in listData" :key="item.level" @click="handleRead(item.id)">
+			<li class="list-item" v-for="item in listData" :key="item.id" @click="handleRead(item.id)">
 				<div class="list-item-content">
 					<div class="unread-1zPaAXtSu"></div>
 					<div class="list-item-desc">
