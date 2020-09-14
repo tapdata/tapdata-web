@@ -84,7 +84,7 @@ export default {
 				return;
 			}
 			try {
-				if (this.activeStep < 2 && !this.$parent.editor.graph.graph.getCells()[this.activeStep].validate())
+				if (this.activeStep < 3 && !this.$parent.editor.graph.graph.getCells()[this.activeStep].validate())
 					this.activeValid = true;
 			} catch (e) {
 				this.activeValid = false;
