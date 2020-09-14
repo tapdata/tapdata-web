@@ -70,7 +70,7 @@
 				</el-form-item>
 				<div class="database-tableBox" v-loading="transferLoading">
 					<div class="box-text">
-						<h3>{{ $t('editor.cell.link.migrationSetting') }}</h3>
+						<h3>{{ $t('editor.cell.link.migrationSetting') }}<i style="color:red"> *</i></h3>
 						<div class="box-btn">
 							<el-button
 								class="e-button"
