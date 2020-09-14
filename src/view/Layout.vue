@@ -38,8 +38,8 @@
 				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom" @command="command">
 					<i class="iconfont icon-shezhi1"></i>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item command="setting">{{ $t('app.menu.settings') }}</el-dropdown-item>
-						<el-dropdown-item command="notification">{{ $t('notification.setting') }}</el-dropdown-item>
+						<el-dropdown-item command="settings">{{ $t('app.menu.settings') }}</el-dropdown-item>
+						<el-dropdown-item command="setting">{{ $t('notification.setting') }}</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
 				<el-dropdown v-if="showLang !== 'false'" class="btn" placement="bottom" @command="changeLanguage">
@@ -312,6 +312,11 @@ export default {
 			switch (command) {
 				case 'notification':
 					this.$router.push({
+						name: 'notification'
+					});
+					break;
+				case 'setting':
+					this.$router.push({
 						name: 'setting'
 					});
 					break;
@@ -335,7 +340,7 @@ export default {
 						this.signOut();
 					});
 					break;
-				case 'setting':
+				case 'settings':
 					this.$router.push({
 						name: 'settings'
 					});
