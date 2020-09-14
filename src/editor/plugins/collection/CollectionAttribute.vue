@@ -515,7 +515,7 @@ export default {
 		// 判断表是否可以跳转
 		tableIsLink() {
 			this.tableNameId = '';
-			if (this.tableData.length) {
+			if (this.tableData && this.tableData.length) {
 				this.tableData.forEach(item => {
 					if (item.table_name === this.model.tableName) {
 						this.tableNameId = item.tableId;

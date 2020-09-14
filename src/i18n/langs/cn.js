@@ -130,7 +130,8 @@ const cn = {
 			starting: '启动中',
 			running: '运行中',
 			stopping: '关闭中',
-			stopped: '已关闭'
+			stopped: '已关闭',
+			restarting: '重启中'
 		}
 	},
 	message: {
