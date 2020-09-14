@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="e-qb">
 		<el-tabs type="border-card" v-model="value.filterType">
 			<el-tab-pane name="field">
 				<span slot="label"> {{ $t('editor.cell.data_node.collection.form.filter.fieldFilter') }}</span>
@@ -326,20 +326,14 @@ export default {
 		flat(condition) {
 			if (condition && condition.type === 'group') {
 				if (condition.operator === 'and') {
-					let result = {};
+					let result = { $and: [] };
 					condition.conditions.forEach(v => {
 						let _flat = this.flat(v);
-						if (_flat) {
-							result.$and = result.and || [];
-							result.$and.push(_flat);
-						}
+						if (_flat) result.$and.push(_flat);
 					});
-
 					return result;
 				} else if (condition.operator === 'or') {
-					let result = {
-						$or: []
-					};
+					let result = { $or: [] };
 					condition.conditions.forEach(v => {
 						let _flat = this.flat(v);
 						if (_flat) result.$or.push(_flat);
@@ -398,7 +392,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.e-table {
+.e-qb {
 	.e-entity-wrap {
 		flex: 1;
 		overflow: auto;
@@ -473,7 +467,7 @@ export default {
 }
 </style>
 <style lang="less">
-.e-table {
+.e-qb {
 	.fiflter {
 		.e-select .el-input--mini .el-input__inner {
 			border: 0;
