@@ -1,5 +1,5 @@
 <template>
-	<div class="notification">
+	<div class="notification" v-loading="loading">
 		<div class="notification-main">
 			<subNav></subNav>
 			<div class="notification-right-list">
@@ -117,7 +117,7 @@
 					@click="submit"
 					size="mini"
 					type="primary"
-					:disabled="!runNotification && !systemNotification && !agentNotification"
+					:disabled="!runNotification || !systemNotification || !agentNotification"
 					>保存设置</el-button
 				>
 			</div>
@@ -139,7 +139,8 @@ export default {
 			notificationMAP: notificationMAP,
 			runNotification: [],
 			systemNotification: [],
-			agentNotification: []
+			agentNotification: [],
+			loading: false
 		};
 	},
 	created() {
@@ -154,16 +155,21 @@ export default {
 					}
 				}
 			};
-			Setting.findOne(where).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data.value) {
-						let value = JSON.parse(res.data.value);
-						this.runNotification = value.runNotification;
-						this.systemNotification = value.systemNotification;
-						this.agentNotification = value.agentNotification;
+			this.loading = true;
+			Setting.findOne(where)
+				.then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						if (res.data.value) {
+							let value = JSON.parse(res.data.value);
+							this.runNotification = value.runNotification;
+							this.systemNotification = value.systemNotification;
+							this.agentNotification = value.agentNotification;
+						}
 					}
-				}
-			});
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		submit() {
 			let where = {
