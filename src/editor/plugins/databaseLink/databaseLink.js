@@ -185,7 +185,7 @@ export const databaseLink = {
 				data = data || this.getFormData();
 				log(`databaseLink.validate`, data);
 				// let configJoinTable = this.configJoinTable();
-				if (data && data.selectSourceArr.length) {
+				if (data && data.selectSourceArr) {
 					if (!data.selectSourceArr.length) throw new Error(`${i18n.t('editor.cell.link.chooseATableTip')}`);
 				}
 				return true;

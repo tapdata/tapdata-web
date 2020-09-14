@@ -1,5 +1,5 @@
 <template>
-	<div class="notification">
+	<div class="notification" v-loading="loading">
 		<div class="notification-main">
 			<subNav></subNav>
 			<div class="notification-right-list">
@@ -20,10 +20,8 @@
 							<el-checkbox class="email" v-model="item.email">{{
 								$t('notification.emailNotice')
 							}}</el-checkbox>
-							<span class="sort-label" v-if="item.lagTime && item.email">{{
-								notificationMAP[item.lagTime]
-							}}</span>
-							<span v-if="item.lagTimeInterval && item.email">
+							<span class="sort-label" v-if="item.lagTime">{{ notificationMAP[item.lagTime] }}</span>
+							<span v-if="item.label === 'CDCLagTime'">
 								<el-input
 									v-model="item.lagTimeInterval"
 									class="item-input"
@@ -45,7 +43,7 @@
 							<span class="sort-label" v-if="item.noticeInterval && item.email">{{
 								notificationMAP[item.noticeInterval]
 							}}</span>
-							<span v-if="item.noticeIntervalInterval && item.email">
+							<span v-if="item.label === 'CDCLagTime' && item.email">
 								<el-input
 									v-model="item.noticeIntervalInterval"
 									class="item-input"
@@ -64,8 +62,14 @@
 									</el-select>
 								</el-input>
 							</span>
-							<span v-if="item.Interval && item.email">
-								<el-input v-model="item.Interval" class="item-input" size="mini">
+							<span v-if="item.label === 'jobEncounterError' && item.email">
+								<el-input
+									v-model="item.Interval"
+									class="item-input"
+									size="mini"
+									onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+									onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+								>
 									<el-select
 										v-model="item.util"
 										slot="append"
@@ -113,7 +117,7 @@
 					@click="submit"
 					size="mini"
 					type="primary"
-					:disabled="!runNotification && !systemNotification && !agentNotification"
+					:disabled="!runNotification || !systemNotification || !agentNotification"
 					>保存设置</el-button
 				>
 			</div>
@@ -135,7 +139,8 @@ export default {
 			notificationMAP: notificationMAP,
 			runNotification: [],
 			systemNotification: [],
-			agentNotification: []
+			agentNotification: [],
+			loading: false
 		};
 	},
 	created() {
@@ -150,16 +155,21 @@ export default {
 					}
 				}
 			};
-			Setting.findOne(where).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data.value) {
-						let value = JSON.parse(res.data.value);
-						this.runNotification = value.runNotification;
-						this.systemNotification = value.systemNotification;
-						this.agentNotification = value.agentNotification;
+			this.loading = true;
+			Setting.findOne(where)
+				.then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						if (res.data.value) {
+							let value = JSON.parse(res.data.value);
+							this.runNotification = value.runNotification;
+							this.systemNotification = value.systemNotification;
+							this.agentNotification = value.agentNotification;
+						}
 					}
-				}
-			});
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		submit() {
 			let where = {

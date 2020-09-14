@@ -157,15 +157,15 @@
 					<el-select
 						size="mini"
 						style="width: 100%"
-						v-model="formData.source.stageId"
+						v-model="formData.source.id"
 						:placeholder="$t('dataVerify.sourceText')"
 						@input="handleForceUpdate"
 					>
 						<el-option
 							v-for="item in sourceList"
 							:label="item.tableName"
-							:value="item.stageId"
-							v-bind:key="item.stageId"
+							:value="item.id"
+							v-bind:key="item.id"
 						>
 						</el-option>
 					</el-select>
@@ -227,15 +227,15 @@
 					<el-select
 						size="mini"
 						style="width: 100%"
-						v-model="formData.target.stageId"
+						v-model="formData.target.id"
 						:placeholder="$t('dataVerify.targetText')"
 						@input="handleForceUpdate"
 					>
 						<el-option
 							v-for="item in targetList"
 							:label="item.tableName"
-							:value="item.stageId"
-							v-bind:key="item.stageId"
+							:value="item.id"
+							v-bind:key="item.id"
 						>
 						</el-option>
 					</el-select>
@@ -400,7 +400,7 @@ export default {
 				this.$message.error('please select source database');
 				return;
 			}
-			if (this.formData.source.stageId === '' || !this.formData.source.stageId) {
+			if (this.formData.source.id === '' || !this.formData.source.id) {
 				this.$message.error('please select source');
 				return;
 			}
@@ -408,7 +408,7 @@ export default {
 				this.$message.error('please select target database');
 				return;
 			}
-			if (this.formData.target.stageId === '' || !this.formData.target.stageId) {
+			if (this.formData.target.id === '' || !this.formData.target.id) {
 				this.$message.error('please select target');
 				return;
 			}
@@ -433,10 +433,16 @@ export default {
 				this.tableData.splice(this.editIndex, 1); // 不是编辑 先删除后新增 -1非编辑模式
 			}
 			this.tableData = this.tableData || [];
-			let source = this.sourceList.filter(item => item.stageId === this.formData.source.stageId);
-			if (source.length > 0) this.formData.source.tableName = source[0].tableName;
-			let target = this.targetList.filter(item => item.stageId === this.formData.target.stageId);
-			if (target.length > 0) this.formData.target.tableName = target[0].tableName;
+			let source = this.sourceList.filter(item => item.id === this.formData.source.id);
+			if (source.length > 0) {
+				this.formData.source.tableName = source[0].tableName;
+				this.formData.source.stageId = source[0].stageId;
+			}
+			let target = this.targetList.filter(item => item.id === this.formData.target.id);
+			if (target.length > 0) {
+				this.formData.target.tableName = target[0].tableName;
+				this.formData.target.stageId = target[0].stageId;
+			}
 			this.tableData.push(this.formData);
 			let data = {
 				validationSettings: this.tableData
