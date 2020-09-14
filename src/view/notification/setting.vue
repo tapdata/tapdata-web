@@ -20,10 +20,8 @@
 							<el-checkbox class="email" v-model="item.email">{{
 								$t('notification.emailNotice')
 							}}</el-checkbox>
-							<span class="sort-label" v-if="item.lagTime && item.email">{{
-								notificationMAP[item.lagTime]
-							}}</span>
-							<span v-if="item.lagTimeInterval && item.email">
+							<span class="sort-label" v-if="item.lagTime">{{ notificationMAP[item.lagTime] }}</span>
+							<span v-if="item.label === 'CDCLagTime'">
 								<el-input
 									v-model="item.lagTimeInterval"
 									class="item-input"
@@ -45,7 +43,7 @@
 							<span class="sort-label" v-if="item.noticeInterval && item.email">{{
 								notificationMAP[item.noticeInterval]
 							}}</span>
-							<span v-if="item.noticeIntervalInterval && item.email">
+							<span v-if="item.label === 'CDCLagTime' && item.email">
 								<el-input
 									v-model="item.noticeIntervalInterval"
 									class="item-input"
@@ -64,8 +62,14 @@
 									</el-select>
 								</el-input>
 							</span>
-							<span v-if="item.Interval && item.email">
-								<el-input v-model="item.Interval" class="item-input" size="mini">
+							<span v-if="item.label === 'jobEncounterError' && item.email">
+								<el-input
+									v-model="item.Interval"
+									class="item-input"
+									size="mini"
+									onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+									onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+								>
 									<el-select
 										v-model="item.util"
 										slot="append"
