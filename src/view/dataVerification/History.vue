@@ -1,15 +1,13 @@
 <template>
-	<section class="data-verify-wrap">
+	<section class="data-verify-history-wrap" v-loading="loading">
 		<div class="panel-main">
 			<div class="table-wrap">
-				<el-table
-					:element-loading-text="$t('dataFlow.dataLoading')"
-					:data="page.data"
-					height="100%"
-					class="dv-table"
-					border
-				>
-					<el-table-column label="校验时间" prop="createTime"></el-table-column>
+				<el-table :data="page.data" height="100%" class="dv-table" border>
+					<el-table-column label="校验时间" prop="createTime">
+						<template slot-scope="scope">
+							{{ $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss') }}
+						</template>
+					</el-table-column>
 					<el-table-column label="源表行数" prop="source_total"></el-table-column>
 					<el-table-column label="目标行数" prop="target_total"></el-table-column>
 					<el-table-column prop="progress" label="校验进度" width="80px">
@@ -48,14 +46,10 @@
 </template>
 
 <script>
-/* eslint-disable */
-let timeout = null;
 export default {
 	data() {
 		return {
-			isClassShow: true,
 			loading: true,
-			searchParams: this.$store.state.dataVerification,
 			page: {
 				data: null,
 				current: 1,
@@ -71,28 +65,9 @@ export default {
 		this.search(1);
 	},
 	methods: {
-		keyup() {
-			if (timeout) {
-				window.clearTimeout(timeout);
-			}
-			timeout = setTimeout(() => {
-				this.search(1);
-				timeout = null;
-			}, 800);
-		},
-		selectHandler(val) {
-			this.selections = val;
-		},
-		sortHandler({ prop, order }) {
-			this.page.sortBy = prop;
-			this.page.order = order;
-			this.search(1);
-		},
 		search(pageNum) {
-			this.searchParamsChange();
 			this.loading = true;
-			let { current, size, sortBy, order } = this.page;
-			let { keyword } = this.searchParams;
+			let { current, size } = this.page;
 			let currentPage = pageNum || current + 1;
 			let where = {
 				filter: {
@@ -100,44 +75,27 @@ export default {
 						inspect_id: '5f5d7c939edc7f1190b7d656'
 					},
 					order: 'createTime DESC',
-					limit: this.pagesize,
-					skip: (this.currentPage - 1) * this.pagesize
+					limit: size,
+					skip: (currentPage - 1) * size
 				}
 			};
 			this.$api('InspectResults')
 				.get(where)
 				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							this.loading = false;
-							this.page.data = res.data;
-						}
-					} else {
-						this.loading = false;
+					if (res.data) {
+						this.page.data = res.data;
 					}
+				})
+				.finally(() => {
+					this.loading = false;
 				});
-		},
-		reset() {
-			this.searchParams = {
-				keyword: '',
-				compareMethod: '',
-				mode: '',
-				active: ''
-			};
-			this.search(1);
-		},
-		searchParamsChange() {
-			this.$store.commit('dataVerification', this.searchParams);
-		},
-		classClickHandler(node) {
-			this.search(1);
 		}
 	}
 };
 </script>
 
 <style lang="less" scoped>
-.data-verify-wrap {
+.data-verify-history-wrap {
 	display: flex;
 	height: 100%;
 	overflow: hidden;
@@ -151,38 +109,6 @@ export default {
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
-		.topbar {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding: 0 10px;
-			.iconfont {
-				font-size: 12px;
-			}
-			.el-button {
-				padding: 7px;
-			}
-			.el-button + .el-button {
-				margin-left: 5px;
-			}
-			.search-bar {
-				display: flex;
-				align-items: center;
-				height: 50px;
-				.search-item {
-					margin-right: 10px;
-				}
-				.btn-class-collapse {
-					.iconfont {
-						display: inline-block;
-						transform: rotate(0deg);
-					}
-					&.is-open .iconfont {
-						transform: rotate(180deg);
-					}
-				}
-			}
-		}
 		.table-wrap {
 			margin: 0 10px;
 			flex: 1;
