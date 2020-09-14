@@ -412,6 +412,13 @@ export default {
 		getAddTableName(val) {
 			this.model.tableName = val;
 			this.tableIsLink();
+			this.mergedSchema = null;
+			let schema = {
+				meta_type: 'table',
+				table_name: this.model.tableName,
+				fields: []
+			};
+			this.$emit('schemaChange', _.cloneDeep(schema));
 		},
 
 		// 新建表弹窗

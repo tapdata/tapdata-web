@@ -39,7 +39,10 @@
 					<span class="node-icon">
 						<i class="icon-expand"></i>
 					</span>
-					<img :src="getImgByType(data.type)" />
+					<template v-if="data.type">
+						<img :src="getImgByType(data.type)" />
+					</template>
+
 					<img class="pk" v-if="data.primary_key_position > 0" src="../../../../static/image/PK.png" />
 					<span class="node-label">{{ node.label }}</span>
 				</div>

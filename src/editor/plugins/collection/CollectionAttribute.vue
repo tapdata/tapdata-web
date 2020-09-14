@@ -493,6 +493,31 @@ export default {
 		getAddTableName(val) {
 			this.model.tableName = val;
 			this.tableIsLink();
+			this.defaultSchema = null;
+			let schema = {
+				table_name: this.model.tableName,
+				cdc_enabled: true,
+				meta_type: 'collection',
+				fields: [
+					{
+						autoincrement: false,
+						columnSize: 0,
+						dataType: 7,
+						data_type: 'OBJECT_ID',
+						field_name: '_id',
+						id: uuid(),
+						is_nullable: true,
+						javaType: 'String',
+						key: 'PRI',
+						original_field_name: '_id',
+						precision: 0,
+						primary_key_position: 1,
+						scale: 0,
+						table_name: this.model.tableName
+					}
+				]
+			};
+			this.$emit('schemaChange', _.cloneDeep(schema));
 		},
 
 		// 打开数据目录数据库
