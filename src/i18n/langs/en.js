@@ -204,10 +204,13 @@ const en = {
 		clickRelatedTasks: 'Click to view related tasks',
 		currentTaskOpen: 'The current task has been opened',
 		noRelatedTask: 'No related tasks',
-		loadingSchema: 'Schema of source database has not finished loading yet, please wait'
+		loadingSchema: 'Schema of source database has not finished loading yet, please wait',
+		reloadSchemaSuccess: 'Model update successfully',
+		reloadSchemaError: 'Model update failed'
 	},
 	dataFlow: {
-		updateModel: 'Update Model',
+		updateModel: 'Reload model',
+		loadingText: 'Loading...',
 		databseProcessingHead: 'Data Processing & Sync',
 		databseMigrationHead: 'Database Migration',
 		databseFreedomHead: 'Custom Data Sync',

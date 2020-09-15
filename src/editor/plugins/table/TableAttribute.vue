@@ -198,11 +198,15 @@
 				<el-button
 					class="fr"
 					type="success"
+					:disabled="!model.connectionId && !model.tableName"
 					style="background: #4aaf47; border-color: #4aaf47;"
 					size="mini"
 					@click="hanlderLoadSchema"
-					>{{ $t('dataFlow.updateModel') }}</el-button
 				>
+					<i class="el-icon-loading" v-if="reloadModelLoading"></i>
+					<span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
+					<span v-else>{{ $t('dataFlow.updateModel') }}</span>
+				</el-button>
 				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 			</div>
 		</div>
@@ -224,16 +228,16 @@
 </template>
 
 <script>
-import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
+import DatabaseForm from '@/view/job/components/DatabaseForm/DatabaseForm';
 import ClipButton from '@/components/ClipButton';
 import queryBuilder from '@/components/QueryBuilder';
 import { convertSchemaToTreeData } from '../../util/Schema';
-import RelatedTasks from '../../../components/relatedTasks';
-import CreateTable from '../../../components/dialog/createTable';
+import RelatedTasks from '@/components/relatedTasks';
+import CreateTable from '@/components/dialog/createTable';
 import Entity from '../link/Entity';
 import _ from 'lodash';
-import ws from '../../../api/ws';
-import factory from '../../../api/factory';
+import ws from '@/api/ws';
+import factory from '@/api/factory';
 
 let connectionApi = factory('connections');
 const MetadataInstances = factory('MetadataInstances');
@@ -298,6 +302,7 @@ export default {
 	data() {
 		let self = this;
 		return {
+			reloadModelLoading: false,
 			addtableFalg: false,
 			dialogData: null,
 			databaseData: [],
@@ -676,6 +681,7 @@ export default {
 
 		// 确定更新模型弹窗
 		confirmDialog() {
+			this.reloadModelLoading = true;
 			let params = {
 				type: 'reloadSchema',
 				data: {
@@ -697,6 +703,9 @@ export default {
 			ws.on('execute_load_schema_result', res => {
 				if (res.status === 'SUCCESS' && res.result && res.result.length) {
 					templeSchema = res.result;
+					self.$message(this.$t('message.reloadSchemaSuccess'));
+				} else {
+					self.$message(this.$t('message.reloadSchemaError'));
 				}
 				if (templeSchema && templeSchema.length) {
 					templeSchema.forEach(item => {
@@ -709,6 +718,7 @@ export default {
 					self.$emit('schemaChange', _.cloneDeep(schema));
 					this.mergedSchema = schema;
 				});
+				this.reloadModelLoading = false;
 			});
 			this.dialogVisible = false;
 		}

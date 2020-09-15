@@ -211,9 +211,17 @@
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
-				<el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
-					$t('dataFlow.updateModel')
-				}}</el-button>
+				<el-button
+					class="fr"
+					type="success"
+					size="mini"
+					:disabled="!model.connectionId && !model.tableName"
+					@click="hanlderLoadSchema"
+				>
+					<i class="el-icon-loading" v-if="reloadModelLoading"></i>
+					<span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
+					<span v-else>{{ $t('dataFlow.updateModel') }}</span>
+				</el-button>
 				<entity
 					v-loading="schemaSelectConfig.loading"
 					:schema="convertSchemaToTreeData(defaultSchema)"
@@ -778,6 +786,7 @@ export default {
 
 		// 确定更新模型弹窗
 		confirmDialog() {
+			this.reloadModelLoading = true;
 			let params = {
 				type: 'reloadSchema',
 				data: {
@@ -810,6 +819,7 @@ export default {
 					self.$emit('schemaChange', _.cloneDeep(schema));
 					this.defaultSchema = schema;
 				});
+				this.reloadModelLoading = false;
 			});
 			this.dialogVisible = false;
 		}
