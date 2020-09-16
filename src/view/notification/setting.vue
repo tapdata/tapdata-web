@@ -129,7 +129,7 @@
 import factory from '../../api/factory';
 const Setting = factory('Setting');
 import { notificationMAP } from './tyepMap';
-import subNav from './subNav';
+import subNav from '../../components/subNav';
 
 export default {
 	name: 'list',
