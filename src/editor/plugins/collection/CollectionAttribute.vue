@@ -808,7 +808,12 @@ export default {
 			ws.on('execute_load_schema_result', res => {
 				if (res.status === 'SUCCESS' && res.result && res.result.length) {
 					templeSchema = res.result;
+					this.reloadModelLoading = false;
+					self.$message(this.$t('message.reloadSchemaSuccess'));
+				} else {
+					self.$message(this.$t('message.reloadSchemaError'));
 				}
+				this.reloadModelLoading = false;
 				if (templeSchema && templeSchema.length) {
 					templeSchema.forEach(item => {
 						if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
@@ -820,7 +825,6 @@ export default {
 					self.$emit('schemaChange', _.cloneDeep(schema));
 					this.defaultSchema = schema;
 				});
-				this.reloadModelLoading = false;
 			});
 			this.dialogVisible = false;
 		}
