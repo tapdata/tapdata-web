@@ -167,7 +167,7 @@ export default {
 			let source = convertSchemaToTreeData(sourceSchema);
 			let target = convertSchemaToTreeData(targetSchema);
 
-			if (target.fields && target.fields.length)
+			if (source && source.fields && source.fields.length && target.fields && target.fields.length)
 				target.fields.sort((a, b) => {
 					if (a.table_name !== source.name) {
 						return b.table_name === source.name ? 1 : 0;

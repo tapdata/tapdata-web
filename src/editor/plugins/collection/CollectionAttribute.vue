@@ -375,6 +375,7 @@ export default {
 	data() {
 		let self = this;
 		return {
+			reloadModelLoading: false,
 			addtableFalg: false,
 			dialogData: null,
 			databaseData: [],
