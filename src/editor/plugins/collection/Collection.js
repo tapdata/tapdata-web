@@ -92,7 +92,6 @@ export const collectionConfig = {
 			},
 
 			checkChildren(filter, schema, field) {
-				debugger;
 				let childrenFields = schema.filter(f => f.parent === field.field_name);
 				if (childrenFields && childrenFields.length) {
 					childrenFields.forEach(cf => {

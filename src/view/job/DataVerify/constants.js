@@ -15,7 +15,8 @@ export const DEFAULT_DATAVERIFY = {
 		stageId: '',
 		tableName: '',
 		filter: '',
-		checkedSource: false
+		checkedSource: false,
+		id: ''
 	},
 	target: {
 		connectionId: '',
@@ -23,7 +24,8 @@ export const DEFAULT_DATAVERIFY = {
 		stageId: '',
 		tableName: '',
 		filter: '',
-		checkedTarget: false
+		checkedTarget: false,
+		id: ''
 	},
 	validateCode: 'function validate(sourceRow){}',
 	type: 'advance' // row: 行数 hash：哈希  advance：高级校验

@@ -35,9 +35,13 @@
 						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
 					</el-dropdown-menu>
 				</el-dropdown>
-				<a class="btn" @click="command('setting')">
+				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom" @command="command">
 					<i class="iconfont icon-shezhi1"></i>
-				</a>
+					<el-dropdown-menu slot="dropdown">
+						<el-dropdown-item command="setting">{{ $t('app.menu.settings') }}</el-dropdown-item>
+						<el-dropdown-item command="notification">{{ $t('notification.setting') }}</el-dropdown-item>
+					</el-dropdown-menu>
+				</el-dropdown>
 				<el-dropdown v-if="showLang !== 'false'" class="btn" placement="bottom" @command="changeLanguage">
 					<i
 						class="iconfont"
@@ -73,18 +77,32 @@
 			<el-aside class="layout-aside" width="auto">
 				<el-menu class="menu" :default-active="activeMenu" :collapse="isCollapse" @select="menuHandler($event)">
 					<template v-for="menu in menus">
-						<el-submenu v-if="menu.children && !menu.hidden" :key="menu.name" :index="menu.name">
+						<el-submenu
+							v-if="menu.children && !menu.hidden"
+							:key="menu.alias || menu.name"
+							:index="menu.name"
+						>
 							<template slot="title">
 								<i :class="`iconfont icon-${menu.icon}`"></i>
 								<span slot="title">{{ menu.label }}</span>
 							</template>
 							<template v-for="cMenu in menu.children">
-								<el-menu-item :key="cMenu.name" :index="cMenu.path" :route="cMenu" v-if="!cMenu.hidden">
+								<el-menu-item
+									:key="cMenu.alias || cMenu.name"
+									:index="cMenu.path + (cMenu.query || '')"
+									:route="cMenu"
+									v-if="!cMenu.hidden"
+								>
 									<div class="submenu-item">{{ cMenu.label }}</div>
 								</el-menu-item>
 							</template>
 						</el-submenu>
-						<el-menu-item v-else-if="!menu.hidden" :key="menu.name" :index="menu.path" :route="menu">
+						<el-menu-item
+							v-else-if="!menu.hidden"
+							:key="menu.alias || menu.name"
+							:index="menu.path + (menu.query || '')"
+							:route="menu"
+						>
 							<i :class="`iconfont icon-${menu.icon}`"></i>
 							<span slot="title">{{ menu.label }}</span>
 						</el-menu-item>
@@ -134,7 +152,17 @@ const Languages = {
 let menuSetting = [
 	{ name: 'dashboard', icon: 'shouye' },
 	{ name: 'connections', icon: 'shujukus1' },
-	{ name: 'dataFlows', icon: 'chengbenguanlixitong' },
+	{
+		name: 'dataSync',
+		icon: 'chengbenguanlixitong',
+		children: [
+			{ name: 'dataFlows', alias: 'dataFlowsAll' },
+			{ name: 'dataFlows', alias: 'dataFlowsRunning', query: '?dataFlowStatus=running' },
+			{ name: 'dataFlows', alias: 'dataFlowsPaused', query: '?dataFlowStatus=paused' },
+			{ name: 'dataFlows', alias: 'dataFlowsError', query: '?dataFlowStatus=error' },
+			{ name: 'dataFlows', alias: 'dataFlowsDraft', query: '?dataFlowStatus=draft' }
+		]
+	},
 	{
 		name: 'dataGovernance',
 		icon: 'yuanshuju1',
@@ -200,7 +228,7 @@ export default {
 		};
 	},
 	created() {
-		this.activeMenu = this.$route.path;
+		this.activeMenu = this.$route.fullPath;
 		this.getMenus();
 		this.getFavMenus();
 		this.$root.$on('updateMenu', () => {
@@ -263,7 +291,7 @@ export default {
 				return items.map(item => {
 					let router = routerMap[item.name];
 					let menu = Object.assign({}, item, router);
-					menu.label = this.$t('app.menu.' + menu.name);
+					menu.label = this.$t('app.menu.' + (item.alias || menu.name));
 
 					let matched = permissions.some(p => p.name === menu.name || p.path === menu.path);
 
@@ -284,7 +312,7 @@ export default {
 			switch (command) {
 				case 'notification':
 					this.$router.push({
-						name: 'notification'
+						name: 'setting'
 					});
 					break;
 				case 'newDataFlow':

@@ -1,6 +1,6 @@
 <template>
 	<div class="database nodeStyle">
-		<head>
+		<head class="head">
 			<span class="headIcon iconfont icon-you2" type="primary"></span>
 			<span class="txt">{{ $t('editor.nodeSettings') }}</span>
 		</head>
@@ -33,104 +33,59 @@
 							icon="el-icon-plus"
 							style="padding: 7px;margin-left: 7px"
 							@click="$refs.databaseForm.show()"
-						></el-button>
+							>{{ $t('dataFlow.createNew') }}</el-button
+						>
 						<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
 					</div>
 				</el-form-item>
-
-				<el-form-item
-					required
-					:label="$t('editor.cell.data_node.collection.form.dropTable.label')"
-					v-if="!isSourceDataNode"
-				>
-					<el-select v-model="model.dropTable" size="mini">
-						<el-option
-							:label="$t('editor.cell.data_node.collection.form.dropTable.keep')"
-							:value="false"
-						></el-option>
-						<el-option
-							:label="$t('editor.cell.data_node.collection.form.dropTable.remove')"
-							:value="true"
-						></el-option>
-					</el-select>
-				</el-form-item>
-
-				<div class="databaseInfo">
-					<span v-show="database_type">{{ database_type }}</span>
-					<span v-show="database_host">{{ database_host }}</span>
-					<span v-show="database_port">{{ database_port }}</span>
-				</div>
 			</el-form>
-		</div>
-		<div class="table-block">
-			<div v-for="(pane, index) in tabs" :key="index" class="check-all" v-show="activeName == index && !disabled">
-				<el-checkbox v-model="pane.checkAll" @input="checkAll"></el-checkbox>
-				<span @click="moveAll()">{{ pane.checkAllLabel }}</span>
-			</div>
-			<el-tabs class="e-tabs" v-model="activeName">
-				<el-tab-pane
-					class="tab-pane"
-					v-for="(pane, index) in tabs"
-					:key="index"
-					:name="index + ''"
-					:label="pane.label + '(' + filterTables[index].length + ')'"
-				>
-					<div class="search">
-						<el-input
-							:disabled="disabled"
-							:placeholder="$t('editor.cell.data_node.database.enterName')"
-							prefix-icon="el-icon-search"
-							clearable
-							v-model="pane.keyword"
-							@input="
-								tabs[activeName].checkAll = false;
-								checkAll();
-							"
-						>
-						</el-input>
+
+			<div class="database-info" v-if="model.connectionId">
+				<ul class="info-box">
+					<!-- <li>
+						<span class="label">{{ $t('editor.cell.data_node.database.source') }}:</span>
+						<span class="text">{{ databaseInfo.connection_type }}</span>
+					</li> -->
+					<li>
+						<span class="label">{{ $t('editor.cell.data_node.database.type') }}:</span>
+						<span class="text">{{ databaseInfo.database_type }}</span>
+					</li>
+					<li>
+						<span class="label">Host/Port:</span>
+						<span class="text" v-if="databaseInfo.database_host">
+							<span>{{ databaseInfo.database_host }}</span>
+							<span v-if="databaseInfo.database_type !== 'mongodb'"
+								>:{{ databaseInfo.database_port }}</span
+							>
+						</span>
+					</li>
+					<li>
+						<span class="label"> {{ $t('editor.cell.data_node.database.databaseName') }}: </span>
+						<span class="text">{{ databaseInfo.database_name }}</span>
+					</li>
+					<li>
+						<span class="label"> {{ $t('editor.cell.data_node.database.account') }}: </span>
+						<span class="text">{{ databaseInfo.database_username }}</span>
+					</li>
+					<li v-if="databaseInfo.database_owner">
+						<span class="label"> {{ $t('editor.cell.data_node.database.attributionAccount') }}: </span>
+						<span class="text">{{ databaseInfo.database_owner }}</span>
+					</li>
+				</ul>
+
+				<div class="info-table" v-if="model.connectionId">
+					<div class="head-text">
+						{{ $t('editor.cell.data_node.database.includeTable') }}
+						<span>{{ databaseTables.length }}</span>
 					</div>
-					<el-row class="table-preffix-box" :gutter="10" v-if="index === 0">
-						<el-col style="width: 50%">
-							<el-input
-								clearable
-								:disabled="disabled"
-								v-model="model.table_prefix"
-								:placeholder="$t('editor.cell.data_node.database.tablePrefix')"
-							></el-input>
-						</el-col>
-						<el-col style="width: 50%">
-							<el-input
-								:disabled="disabled"
-								clearable
-								v-model="model.table_suffix"
-								:placeholder="$t('editor.cell.data_node.database.tableSuffix')"
-							></el-input>
-						</el-col>
-					</el-row>
-					<el-row
-						class="list"
-						v-for="item in filterTables[index]"
-						:class="{ active: item.checked }"
-						:key="item.id"
-						:gutter="20"
-					>
-						<el-col :span="1">
-							<el-checkbox
-								v-model="item.checked"
-								:disabled="disabled"
-								@input="tabs[activeName].checkAll = false"
-							></el-checkbox>
-						</el-col>
-						<el-col :span="17" style="padding-left:20px;">
+					<ul class="table-box" v-loading="tableLoading">
+						<li v-for="item in databaseTables" :key="item.id" class="list">
 							<i class="iconfont icon-table2"></i>
-							<span class="tableName">{{ item.table_name }}</span>
-						</el-col>
-						<el-col :span="5" class="text-center" v-if="!disabled">
-							<el-button type="text" @click="move([item])">{{ pane.buttonLabel }}</el-button>
-						</el-col>
-					</el-row>
-				</el-tab-pane>
-			</el-tabs>
+							<span class="tableName">{{ item }}</span>
+						</li>
+					</ul>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -142,7 +97,6 @@ import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm
 
 let connections = factory('connections');
 let editorMonitor = null;
-
 export default {
 	name: 'Database',
 
@@ -160,28 +114,13 @@ export default {
 	data() {
 		let self = this;
 		return {
+			tableLoading: false,
 			disabled: false,
 			activeName: '0',
-			tabs: [
-				{
-					list: [],
-					checkAll: false,
-					keyword: '',
-					label: this.$t('editor.cell.data_node.database.queueCopied'),
-					checkAllLabel: this.$t('editor.cell.data_node.database.bulkRemoval'),
-					buttonLabel: this.$t('editor.cell.data_node.database.remove')
-				},
-				{
-					list: [],
-					checkAll: false,
-					keyword: '',
-					label: this.$t('editor.cell.data_node.database.tableRemoved'),
-					checkAllLabel: this.$t('editor.cell.data_node.database.bulkRevocation'),
-					buttonLabel: this.$t('editor.cell.data_node.database.Undo')
-				}
-			],
+			databaseTables: [],
 
 			isSourceDataNode: false,
+			firstRound: true,
 
 			databaseSelectConfig: {
 				size: 'mini',
@@ -207,30 +146,36 @@ export default {
 				]
 			},
 			model: {
+				database_type: '',
 				connectionId: '',
-				includeTables: [],
-				removeAllTables: false,
-				dropTable: false,
 				table_prefix: '',
-				table_suffix: ''
+				table_suffix: '',
+				dropType: 'no_drop',
+				syncObjects: []
 			},
-			database_type: '',
-			database_port: '',
-			database_host: '',
-			database_uri: ''
+			databaseInfo: {
+				connection_type: '',
+				database_type: '',
+				database_port: '',
+				database_host: '',
+				database_uri: '',
+				database_owner: '',
+				database_name: '',
+				database_username: ''
+			}
 		};
 	},
 
-	computed: {
-		filterTables() {
-			let pane_0 = this.tabs[0];
-			let pane_1 = this.tabs[1];
-			return {
-				0: this.filter(pane_0.list, pane_0.keyword),
-				1: this.filter(pane_1.list, pane_1.keyword)
-			};
-		}
-	},
+	// computed: {
+	// 	filterTables() {
+	// 		let pane_0 = this.tabs[0];
+	// 		let pane_1 = this.tabs[1];
+	// 		return {
+	// 			0: this.filter(pane_0.list, pane_0.keyword),
+	// 			1: this.filter(pane_1.list, pane_1.keyword)
+	// 		};
+	// 	}
+	// },
 
 	mounted() {
 		this.loadDataSource();
@@ -250,10 +195,11 @@ export default {
 			if (data) {
 				_.merge(this.model, data);
 			}
-
+			this.cell = cell;
 			this.isSourceDataNode = dataNodeInfo && !dataNodeInfo.isTarget;
 			editorMonitor = vueAdapter.editor;
 		},
+
 		async loadDataSource() {
 			this.databaseSelectConfig.loading = true;
 			let result = await connections.get({
@@ -273,12 +219,13 @@ export default {
 			});
 
 			this.databaseSelectConfig.loading = false;
+			let self = this;
 			if (result.data) {
 				this.databaseSelectConfig.options = result.data.map(item => {
 					return {
 						id: item.id,
 						name: item.name,
-						label: `${item.name} (${this.$t('connection.status.' + item.status) || item.status})`,
+						label: `${item.name} (${self.$t('connection.status.' + item.status) || item.status})`,
 						value: item.id
 					};
 				});
@@ -288,8 +235,26 @@ export default {
 		},
 
 		changeConnection() {
-			this.model.includeTables = [];
+			this.databaseTables = [];
 			this.lookupDatabaseType();
+
+			this.cell.graph.getConnectedLinks(this.cell, { outbound: true }).forEach(link => {
+				let orignData = link.getFormData();
+				if (orignData) {
+					orignData.selectSourceDatabase = {
+						table: true,
+						view: false,
+						function: false,
+						procedure: false
+					};
+					orignData.table_prefix = '';
+					orignData.table_suffix = '';
+					orignData.dropType = 'no_drop';
+					orignData.table_prefix = '';
+					orignData.selectSourceArr = [];
+				}
+				link.setFormData(orignData);
+			});
 		},
 
 		lookupDatabaseType() {
@@ -306,43 +271,49 @@ export default {
 		},
 		// 获取表名称
 		loadDataModels(connectionId) {
+			this.tableLoading = true;
+			let self = this;
 			if (!connectionId) {
 				return;
 			}
-			connections.get([connectionId]).then(result => {
-				if (result.data) {
-					let tables = (result.data.schema && result.data.schema.tables) || [];
-					tables = tables.sort((t1, t2) =>
-						t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-					);
-					let modelIncludeTables = this.model.includeTables || [];
-					let inList = [];
-					let outList = [];
+			connections
+				.customQuery([connectionId], { schema: true })
+				.then(result => {
+					if (result.data) {
+						self.databaseInfo = result.data;
+						self.model.database_type = self.databaseInfo.database_type;
+						let tables = (result.data.schema && result.data.schema.tables) || [];
+						tables = tables.sort((t1, t2) =>
+							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
+						);
+						if (!(this.firstRound && this.databaseTables.length > 0)) {
+							this.databaseTables = tables.map(item => {
+								return item.table_name;
+							});
+						}
 
-					if (!this.model.removeAllTables && !modelIncludeTables.length) {
-						inList = tables.map(item => {
-							item.checked = false;
-							return item;
-						});
-						this.model.includeTables = inList.map(t => t.table_name);
-					} else {
-						tables.forEach(t => {
-							t.checked = false;
-							if (modelIncludeTables.includes(t.table_name)) {
-								inList.push(t);
-							} else {
-								outList.push(t);
-							}
-						});
+						this.handleIncludeTable();
+						this.firstRound = false;
+						self.$forceUpdate();
 					}
-					this.tabs[0].list = inList;
-					this.tabs[1].list = outList;
-					this.$forceUpdate();
+				})
+				.finally(() => {
+					this.tableLoading = false;
+				});
+		},
+		// 获取保留表数据
+		handleIncludeTable() {
+			this.cell.graph.getConnectedLinks(this.cell, { inbound: true }).forEach(link => {
+				let orignData = link.getFormData();
+				let includeTable = [],
+					databaseTables = [];
+				if (orignData) {
+					includeTable = orignData.selectSourceArr.map(item => {
+						return orignData.table_prefix + item + orignData.table_suffix;
+					});
 
-					if (this.database_type !== 'mongodb') {
-						this.database_host = result.data.database_host;
-						this.database_port = result.data.database_port;
-					}
+					databaseTables = this.databaseTables.concat(includeTable);
+					this.databaseTables = [...new Set(databaseTables)];
 				}
 			});
 		},
@@ -353,8 +324,8 @@ export default {
 			connections.customQuery([connectionId]).then(result => {
 				if (result.data) {
 					this.loadDataModels([connectionId]);
-					this.database_host = result.data.database_host;
-					this.database_port = result.data.database_port;
+					// this.database_host = result.data.database_host;
+					// this.database_port = result.data.database_port;
 				}
 			});
 		},
@@ -362,43 +333,40 @@ export default {
 			let reg = new RegExp(keyword, 'ig');
 			return keyword ? list.filter(t => t.table_name.match(reg)) : list;
 		},
-		checkAll() {
-			let pane = this.tabs[this.activeName];
-			let checkAll = pane.checkAll;
-			let filterList = this.filterTables[this.activeName];
-			filterList.map(item => {
-				item.checked = checkAll;
-			});
-		},
+		// checkAll() {
+		// 	let pane = this.tabs[this.activeName];
+		// 	let checkAll = pane.checkAll;
+		// 	let filterList = this.filterTables[this.activeName];
+		// 	filterList.map(item => {
+		// 		item.checked = checkAll;
+		// 	});
+		// },
 
-		move(list) {
-			this.tabs[this.activeName].checkAll = false;
-			let inList = this.tabs[0].list;
-			let outList = this.tabs[1].list;
-			let sourceList = this.activeName === '0' ? inList : outList;
-			let targetList = this.activeName === '0' ? outList : inList;
+		// move(list) {
+		// 	this.tabs[this.activeName].checkAll = false;
+		// 	let inList = this.tabs[0].list;
+		// 	let outList = this.tabs[1].list;
+		// 	let sourceList = this.activeName === '0' ? inList : outList;
+		// 	let targetList = this.activeName === '0' ? outList : inList;
 
-			list.forEach(item => {
-				item.checked = false;
+		// 	list.forEach(item => {
+		// 		item.checked = false;
 
-				let tableIndex = sourceList.findIndex(table => table.table_name === item.table_name);
-				sourceList.splice(tableIndex, 1);
+		// 		let tableIndex = sourceList.findIndex(table => table.table_name === item.table_name);
+		// 		sourceList.splice(tableIndex, 1);
 
-				targetList.push(item);
-			});
+		// 		targetList.push(item);
+		// 	});
 
-			targetList.sort((t1, t2) => (t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1));
+		// 	targetList.sort((t1, t2) => (t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1));
 
-			this.model.includeTables = inList.map(t => t.table_name);
-			if (!this.model.includeTables.length) {
-				this.model.removeAllTables = true;
-			}
-		},
+		// 	this.model.includeTables = inList.map(t => t.table_name);
+		// },
 
-		moveAll() {
-			let list = this.filterTables[this.activeName];
-			this.move(list.filter(t => t.checked));
-		},
+		// moveAll() {
+		// 	let list = this.filterTables[this.activeName];
+		// 	this.move(list.filter(t => t.checked));
+		// },
 
 		getData() {
 			let result = _.cloneDeep(this.model);
@@ -414,6 +382,7 @@ export default {
 					result.name = database[0].name;
 				}
 			}
+
 			return result;
 		},
 
@@ -434,50 +403,101 @@ export default {
 		margin-bottom: 14px;
 	}
 
-	.table-block {
-		position: relative;
-		height: calc(100% - 165px);
+	// .search {
+	// 	width: 100%;
+	// 	padding: 0 25px 10px;
+	// 	box-sizing: border-box;
+	// 	// overflow: hidden;
+	// 	.el-input,
+	// 	.el-input__inner,
+	// 	.el-input__icon {
+	// 		height: 30px;
+	// 		line-height: 30px;
+	// 		font-size: 12px;
+	// 	}
+	// }
+	// .table-preffix-box {
+	// 	width: 100%;
+	// 	padding: 0 13px 0 25px;
+	// 	box-sizing: border-box;
+	// 	// overflow: hidden;
+	// 	.el-input,
+	// 	.el-input__inner,
+	// 	.el-input__icon {
+	// 		height: 30px;
+	// 		line-height: 30px;
+	// 		font-size: 12px;
+	// 	}
+	// }
+	// .databaseInfo {
+	// 	span {
+	// 		display: inline-block;
+	// 		overflow: hidden;
+	// 		margin: 5px 20px 0 0;
+	// 		padding: 5px 10px;
+	// 		font-size: 12px;
+	// 		color: #666;
+	// 		text-overflow: ellipsis;
+	// 		background: #eee;
+	// 		border-radius: 10px;
+	// 	}
+	// }
+}
+</style>
+<style scoped lang="less">
+.database {
+	.head {
+		display: block;
+	}
 
-		.check-all {
-			position: absolute;
-			right: 25px;
-			line-height: 36px;
-			z-index: 2;
+	.nodeBody {
+		height: 100%;
+		box-sizing: border-box;
+		overflow: hidden;
+	}
+
+	.database-info {
+		height: calc(100% - 61px);
+		.info-box {
+			padding: 10px 20px;
+			box-sizing: border-box;
+			overflow: hidden;
 			font-size: 12px;
-
-			span {
-				padding-left: 3px;
-				cursor: pointer;
+			color: #666;
+			border: 1px solid #dedee4;
+			li {
+				padding-bottom: 8px;
 			}
-
-			span:hover {
-				color: #48b6e2;
+			.label {
+				display: inline-block;
+				width: 100px;
+				text-align: right;
+				color: #999;
+			}
+			.text {
+				padding-left: 10px;
 			}
 		}
-
-		.el-tabs {
-			height: 100%;
-			.el-tabs__nav {
-				margin: 0 25px;
-
-				.el-tabs__item {
-					font-size: 12px;
+		.info-table {
+			height: calc(100% - 180px);
+			margin-top: 10px;
+			border: 1px solid #dedee4;
+			.head-text {
+				height: 28px;
+				padding: 0 10px;
+				line-height: 28px;
+				font-size: 12px;
+				color: #333;
+				border-bottom: 1px solid #dedee4;
+				background-color: #f5f5f5;
+				span {
+					color: #999;
 				}
-
-				.el-tabs__active-bar {
-					height: 4px;
-				}
 			}
-
-			.el-tabs__content {
-				height: calc(100% - 55px);
+			.table-box {
+				height: calc(100% - 29px);
+				overflow-y: auto;
 			}
-
-			.el-tab-pane {
-				height: 100%;
-				overflow: auto;
-			}
-
 			.list {
 				width: 100%;
 				height: 36px;
@@ -486,33 +506,13 @@ export default {
 				padding: 0 15px;
 				font-size: 12px;
 				overflow: hidden;
-
+				box-sizing: border-box;
 				.iconfont {
 					color: #4aaf47;
 				}
-
-				.el-button--text {
-					font-size: 12px;
-					opacity: 0;
-					visibility: hidden;
-				}
-
-				.text-right {
-					text-align: right;
-				}
-
-				.text-center {
-					text-align: center;
-				}
-
-				.el-checkbox {
-					opacity: 0;
-					visibility: hidden;
-				}
 			}
 
-			.list:hover,
-			.active {
+			.list:hover {
 				.tableName {
 					color: #48b6e2;
 				}
@@ -529,46 +529,6 @@ export default {
 					visibility: visible;
 				}
 			}
-		}
-	}
-
-	.search {
-		width: 100%;
-		padding: 0 25px 10px;
-		box-sizing: border-box;
-		// overflow: hidden;
-		.el-input,
-		.el-input__inner,
-		.el-input__icon {
-			height: 30px;
-			line-height: 30px;
-			font-size: 12px;
-		}
-	}
-	.table-preffix-box {
-		width: 100%;
-		padding: 0 13px 0 25px;
-		box-sizing: border-box;
-		// overflow: hidden;
-		.el-input,
-		.el-input__inner,
-		.el-input__icon {
-			height: 30px;
-			line-height: 30px;
-			font-size: 12px;
-		}
-	}
-	.databaseInfo {
-		span {
-			display: inline-block;
-			overflow: hidden;
-			margin: 5px 20px 0 0;
-			padding: 5px 10px;
-			font-size: 12px;
-			color: #666;
-			text-overflow: ellipsis;
-			background: #eee;
-			border-radius: 10px;
 		}
 	}
 }

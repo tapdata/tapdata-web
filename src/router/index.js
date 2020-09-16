@@ -222,6 +222,18 @@ const childRoutes = [
 		path: '/tableFlows',
 		name: 'tableFlows',
 		component: view('task/TableFlows')
+	},
+	{
+		path: '/setting',
+		name: 'setting',
+		component: view('notification/setting'),
+		meta: { title: i18n.t('notification.setting') }
+	},
+	{
+		path: '/notification',
+		name: 'notification',
+		component: view('notification/list'),
+		meta: { title: i18n.t('notification.systemNotice') }
 	}
 ];
 
@@ -252,6 +264,9 @@ const router = new Router({
 });
 
 let usersModel = factor('users');
+router.afterEach(() => {
+	Loading.service({ fullscreen: true }).close();
+});
 router.beforeEach(async (to, from, next) => {
 	if (to.meta.title && window._TAPDATA_OPTIONS_.platform === 'DAAS') {
 		document.title = to.meta.title;

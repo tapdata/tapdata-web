@@ -52,7 +52,7 @@ export default {
 				show: true,
 				type: 'input',
 				field: 'field',
-				label: 'label',
+				label: '',
 				domType: 'text',
 				required: false,
 				clearable: true,
@@ -79,7 +79,7 @@ export default {
 			model: this.value
 		});
 		let formItems = this.config.items || [];
-		let ele = h(
+		let el = h(
 			'ElForm',
 			{
 				class: 'e-form-builder-container',
@@ -95,7 +95,7 @@ export default {
 			})
 		);
 		if (this.show) {
-			return ele;
+			return el;
 		}
 		return '';
 	},
@@ -110,6 +110,7 @@ export default {
 			let self = this;
 			let config = Object.assign({}, this.defaultFormItemConfig, itemConfig);
 			let rules = config.rules || [];
+			//改变必填项的默认提示
 			if (config.required && !rules.find(r => r.required)) {
 				rules.push({
 					required: true,
@@ -138,67 +139,73 @@ export default {
 					}
 				},
 				[
-					h(
-						'div',
-						{
-							class: { 'e-form-builder-item-label': true },
-							slot: 'label'
-						},
-						[
-							labelSlot || h('div', { class: { 'is-required': required } }, [config.label]),
-							config.tips &&
-								h(
-									'ElPopover',
-									{
-										style: { 'vertical-align': 'middle' },
-										props: {
-											trigger: 'hover',
-											placement: 'top'
-										}
-									},
-									[
-										h('div', {
-											domProps: {
-												innerHTML: config.tips.content || config.tips
-											}
-										}),
+					!config.label && !labelSlot
+						? null
+						: h(
+								'div',
+								{
+									class: { 'e-form-builder-item-label': true },
+									slot: 'label'
+								},
+								[
+									labelSlot || h('div', { class: { 'is-required': required } }, [config.label]),
+									config.tips &&
 										h(
-											'span',
+											'ElPopover',
 											{
-												class: 'color-warning',
-												slot: 'reference'
+												style: { 'vertical-align': 'middle' },
+												props: {
+													trigger: 'hover',
+													placement: 'top'
+												}
 											},
 											[
-												h('i', {
-													class: 'el-icon-warning-outline e-form-builder-item-tips'
+												h('div', {
+													domProps: {
+														innerHTML: config.tips.content || config.tips
+													}
 												}),
-												config.tips.label
+												h(
+													'span',
+													{
+														class: 'color-warning',
+														slot: 'reference'
+													},
+													[
+														h('i', {
+															class: 'el-icon-warning-outline e-form-builder-item-tips'
+														}),
+														config.tips.label
+													]
+												)
 											]
 										)
-									]
-								)
-						]
-					),
+								]
+						  ),
 					h('div', { class: { 'fb-item-group': true } }, [
 						prependSlot ? h('div', { class: { 'fb-form-item-prepend-slot': true } }, [prependSlot]) : null,
-						h(ele[config.type], {
-							props: {
-								value: self.value[config.field],
-								config: config
-							},
-							on: {
-								input(val) {
-									if (self.value[config.field] === undefined) {
-										throw new Error(`The field "${config.field}" of the model is not defined!`);
+						config.type === 'slot'
+							? this.$slots[config.slot]
+							: h(ele[config.type], {
+									props: {
+										value: self.value[config.field],
+										config: config
+									},
+									on: {
+										input(val) {
+											if (self.value[config.field] === undefined) {
+												throw new Error(
+													`The field "${config.field}" of the model is not defined!`
+												);
+											}
+											self.value[config.field] = val;
+											config.on.input && config.on.input(val);
+										},
+										change(...args) {
+											config.on.change && config.on.change(...args);
+										}
 									}
-									self.value[config.field] = val;
-									config.on.input && config.on.input(val);
-								},
-								change(...args) {
-									config.on.change && config.on.change(...args);
-								}
-							}
-						}),
+							  }),
 						appendSlot ? h('div', { class: { 'fb-form-item-append-slot': true } }, [appendSlot]) : null
 					])
 				]

@@ -73,7 +73,13 @@ const en = {
 		menu: {
 			dashboard: 'Dashboard',
 			connections: 'Data Source',
+			dataSync: 'Data synchronization',
 			dataFlows: 'Data Collect',
+			dataFlowsAll: 'All tasks',
+			dataFlowsRunning: 'Running',
+			dataFlowsError: 'Error',
+			dataFlowsPaused: 'Paused',
+			dataFlowsDraft: 'Draft',
 			dataGovernance: 'Data Governance',
 			metadataDefinition: 'Data Catalog',
 			dataQuality: 'Data Quality',
@@ -189,7 +195,7 @@ const en = {
 		stopInitial_syncMessage:
 			'Pausing job while it is in the initial sync stage may cause it to run from the beginning, are you sure you want to pause?',
 		stopMessage: 'Are you sure to pause the mission?',
-		cancleReset: 'cancel reset',
+		cancelReset: 'cancel reset',
 		resetOk: 'Reset success',
 		resetFailed: 'Reset Failed',
 		notRest: 'Please select the correct data to reset',
@@ -197,7 +203,8 @@ const en = {
 		edit: 'Edit',
 		clickRelatedTasks: 'Click to view related tasks',
 		currentTaskOpen: 'The current task has been opened',
-		noRelatedTask: 'No related tasks'
+		noRelatedTask: 'No related tasks',
+		loadingSchema: 'Schema of source database has not finished loading yet, please wait'
 	},
 	dataFlow: {
 		updateModel: 'Update Model',
@@ -207,17 +214,19 @@ const en = {
 		createNew: 'Create new',
 		DissedNoAction: 'oops~ The banned node/Connecting line should not be deleted, connected in, or connected out',
 		guidingMode: 'Guiding mode',
-		advancedMode: 'Advanced mode',
-		freedomMode: 'Advanced mode',
+		advancedMode: 'Free mode',
+		freedomMode: 'Free mode',
 		advanceSetting: 'More advanced setting',
-		closeSetting: 'fold up',
+		closeSetting: 'Fold up',
 		openPanel: 'Open',
 		execution: 'Execution',
 		previous: 'Previous',
 		next: 'Next',
 		sourceSetting: 'Source setting',
 		targetSetting: 'Target setting',
-		jobSetting: 'Job setting',
+		advancedetting: 'Advanced settings',
+		simpleSceneTitle: 'Create a database replication task',
+		sourceLibrarySetting: 'Source library structure and object settings',
 		databseMigration:
 			'With the guided mode to help understanding the operation method of databases migration which can quickly realize INITAL and CDC transmission between databases (include table filter and rename settings, etc).',
 		databseProcessing:
@@ -230,7 +239,7 @@ const en = {
 			statusError: 'Job status does not allow to do this operation.',
 			otherError: 'Operation failed, please try it again.'
 		},
-		changeName: 'Edit',
+		changeName: 'Rename',
 		Enable: 'Enable',
 		Disable: 'Disable',
 		draftNotStart: 'Configuration is not complete,  cannot be started',
@@ -338,7 +347,7 @@ const en = {
 		},
 		lag: 'lag',
 		executionStatus: 'Execution status',
-		searchPlaceholder: 'Task Name / Node Name / Library Table Name',
+		searchPlaceholder: 'Task name / Node name / Library table name',
 		dataRange: 'Date range',
 		startTime: 'Start time',
 		endTime: 'End time',
@@ -511,7 +520,13 @@ const en = {
 					bulkRevocation: 'Bulk revocation',
 					queueCopied: 'Included Tables',
 					tableRemoved: 'Excluded Tables',
-					enterName: 'Please enter the name / field name to search'
+					enterName: 'Please enter the name / field name to search',
+					source: 'Data source',
+					type: 'Database type',
+					databaseName: 'Database name',
+					account: 'Database account',
+					attributionAccount: 'Attribution Account Name',
+					includeTable: 'include table'
 				},
 				collection: {
 					name: 'Collection',
@@ -616,7 +631,7 @@ const en = {
 							placeholder: 'Please input you custom sql offset'
 						},
 						maximum_transaction: {
-							label: 'Maximum Transaction Length(Hours)',
+							label: 'Max Transaction Length',
 							tip:
 								'Time in hours to wait for commit for a transaction. Enter the longest period of time that you expect a transaction to require.Default is 12 hours'
 						}
@@ -645,11 +660,22 @@ const en = {
 					none_pk: 'Primary key is required.',
 					dummy_isNull: 'Dummy cannot be empty'
 				},
+				redis: {
+					name: 'Redis',
+					tip: 'Redis Node',
+					chooseRedisName: 'Please select Redis',
+					Redis_isNull: 'Redis cannot be empty',
+					prefixKey: 'Cache key prefix',
+					prefixKey_placeholder: 'Please enter the cache key prefix',
+					cacheKey: 'Select cache key',
+					cacheKey_placeholder: 'Select source table field as cache key'
+				},
 				api: {
 					name: 'API',
 					tip: 'api node',
 					chooseApiName: 'Please select API',
 					none_collection: 'Collection is required.',
+					none_database: 'Database is required.',
 					none_pk: 'Primary key is required.',
 					api_isNull: 'API cannot be empty',
 					dataApiName: 'Data publishing API name',
@@ -886,6 +912,35 @@ const en = {
 							group: 'Conditional grouping'
 						}
 					}
+				},
+				jointCache: {
+					name: 'Joint Cache',
+					tip: 'Joint Cache Node',
+					form: {
+						name: {
+							label: 'Node name',
+							placeholder: 'Please input you node name.',
+							none: 'Node name is required.'
+						},
+						cacheId: {
+							label: 'Joint cache node',
+							placeholder: 'Choose joint cache node in this job.',
+							none: 'Choose joint cache node in this job.'
+						},
+						joinSettings: {
+							label: 'Joint setting',
+							cacheKey: 'Cache node primary key',
+							sourceKey: {
+								label: 'Source joint field',
+								placeholder: 'Choose joint field.'
+							},
+							none: 'Choose joint field.'
+						},
+						joinKey: {
+							label: 'Cache model joint target path',
+							placeholder: 'Enter or create target path field.'
+						}
+					}
 				}
 			},
 			link: {
@@ -936,7 +991,34 @@ const en = {
 					upsert: 'Match and Merge or Insert New',
 					update: 'Match and Merge',
 					merge_embed: 'Match then Embed as Array in target'
-				}
+				},
+				existingSchema: {
+					label: 'When schema and/or data already exist in target database',
+					keepSchema: 'Retain schema and data in target database',
+					keepExistedData: 'Retain schema, but remove data in target database',
+					removeSchema: 'Drop schema and data in target database'
+				},
+				migrationSetting: 'Tables to be copied selection',
+				dataProcessing: 'Existing data processing',
+				prefixAndSuffix: 'Add prefix and suffix',
+				keepExistingData: 'Keep existing data',
+				deleteExistingData: 'Delete existing data before running',
+				reduction: 'Reduction',
+				migrationObjece: 'Source tables',
+				chosen: 'Selected',
+				searchContent: 'Search',
+				mappingRelations: 'Mapping relations',
+				addPrefix: 'Add prefix',
+				addSuffix: 'Add suffix',
+				prefixPlaceholder: 'Please enter the prefix',
+				suffixPlaceholder: 'Please enter the suffix',
+				batchRename: 'Batch rename settings',
+				tableNameExample: 'Table name example',
+				copySourceDatabase: 'Source database schema to be copied',
+				tableTip: 'Table does not support foreign key copy',
+				viewTip: 'Copy view does not support table rename, if check this box rename function will be disabled',
+				formTip: 'The function of copy view, function, procedure only support MySQL to MySQL',
+				chooseATableTip: 'At least select one object to be copied'
 			}
 		},
 		ui: {
@@ -994,7 +1076,11 @@ const en = {
 				fullscreen: {
 					tip: 'Toggle Fullscreen Mode'
 				}
-			}
+			},
+			nodeLoadSchemaDiaLog:
+				'If the data source is updated, this operation will update the model of this node. Do you want to continue?',
+			allNodeLoadSchemaDiaLog:
+				'If the data source is updated, this operation will update the model of each node. Do you want to continue?'
 		},
 		preview: {
 			stage: 'Stage',
@@ -1252,7 +1338,33 @@ const en = {
 		SYNCSeverRestartedSuccessfully: 'SYNC SEVER restarted successfully',
 		newSeverCreatedSuccessfully: 'NEW SEVER created successfully',
 		newSeverDeletedSuccessfully: 'NEW SEVER deleted successfully',
-		databaseDDLChanged: 'Database DDL changed'
+		databaseDDLChanged: 'Database DDL changed',
+		settingCenter: 'Setting center',
+		systemSetting: 'System setting',
+		noticeSetting: 'Notice setting',
+		tip:
+			'The notice setting here is the system global notification setting. The priority of the notification setting of Data flow job page is higher than the global notification setting here',
+		jobOperationNotice: 'Job operation notice',
+		emailNotice: ' Email notice',
+		jobStarted: 'Job started',
+		jobPaused: 'Job paused',
+		jobDeleted: 'Job deleted',
+		jobEdited: 'Job edited',
+		jobStateError: 'Job state error',
+		jobEncounterError: 'Job encounter error',
+		noticeInterval: 'Notice interval',
+		CDCLagTime: 'CDC lag time',
+		lagTime: 'Lag-time',
+		DDL: 'Database DDL changes',
+		agentNotice: 'Agent notice',
+		serverDisconnected: 'Server disconnected',
+		agentAbnormallyStopped: 'Agent sever abnormally stopped',
+		agentStarted: 'Agent started',
+		agentStopped: 'Agent stopped',
+		agentFailed: 'Agent start failed',
+		agentStop: 'Agent stop failed',
+		agentCreated: 'Agent created',
+		agentDeleted: 'Agent deleted'
 	},
 	dialog: {
 		createTable: 'Create new table',

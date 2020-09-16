@@ -230,6 +230,18 @@
 				<el-button size="mini" @click="loadData">{{ $t('dataFlow.stystemLgnoreAll') }}</el-button>
 			</div>
 		</el-dialog>
+		<el-dialog
+			:title="$t('message.prompt')"
+			:visible.sync="reloadSchemaDialog"
+			:close-on-click-modal="false"
+			width="30%"
+		>
+			<span>{{ $t('editor.ui.allNodeLoadSchemaDiaLog') }}</span>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="reloadSchemaDialog = false">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="confirmReloadSchemaDialog">{{ $t('message.confirm') }}</el-button>
+			</span>
+		</el-dialog>
 		<AddBtnTip v-if="isEditable()"></AddBtnTip>
 	</div>
 </template>
@@ -258,6 +270,7 @@ export default {
 	components: { AddBtnTip, simpleScene, newDataFlow },
 	data() {
 		return {
+			reloadSchemaDialog: false,
 			dialogFormVisible: false,
 			form: {
 				taskName: '',
@@ -456,7 +469,7 @@ export default {
 				if (ele.$el) ele.$el.hide();
 			});
 			try {
-				if (this.editor.graph.graph.getElements()[self.$refs.simpleScene.activeStep - 1].validate())
+				if (this.editor.graph.graph.getCells()[self.$refs.simpleScene.activeStep - 1].validate())
 					self.$refs.simpleScene.stepValid();
 			} catch (e) {
 				log(e.message);
@@ -464,12 +477,12 @@ export default {
 		},
 		simpleGoNext(step) {
 			let self = this;
-			if (step == 3) {
+			if (step == 4) {
 				this.newDataFlowV = true;
 				if (this.$refs.newDataFlowV) this.$refs.newDataFlowV.dialogVisibleSetting = true;
 				return;
 			} else this.newDataFlowV = false;
-			this.editor.graph.selectCell(this.editor.graph.graph.getElements()[step - 1]);
+			this.editor.graph.selectCell(this.editor.graph.graph.getCells()[step - 1]);
 			setTimeout(() => {
 				self.simpleRefresh();
 			}, 10);
@@ -478,7 +491,7 @@ export default {
 			let self = this;
 			this.editor.graph.isSimple = true;
 			document.body.getElementsByClassName('e-sidebar-right')[0].style.zIndex = 2000;
-			this.editor.graph.selectCell(this.editor.graph.graph.getElements()[0]);
+			this.editor.graph.selectCell(this.editor.graph.graph.getCells()[0]);
 			setTimeout(() => {
 				self.simpleRefresh();
 			}, 10);
@@ -725,7 +738,7 @@ export default {
 			let edgeCells = {};
 			let nodeCells = {};
 			cells.forEach(cell => {
-				if (cell.type === 'app.Link') edgeCells[cell.id] = cell;
+				if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') edgeCells[cell.id] = cell;
 				else nodeCells[cell.id] = cell;
 			});
 
@@ -751,7 +764,6 @@ export default {
 					editorData: JSON.stringify(graphData)
 				}
 			);
-
 			let stages = {};
 			Object.values(nodeCells).forEach(cell => {
 				let stage = (stages[cell.id] = Object.assign(
@@ -785,7 +797,7 @@ export default {
 				}
 			});
 			Object.values(edgeCells).forEach(cell => {
-				if (cell.type === 'app.Link') {
+				if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
 					let sourceId = cell.source.id;
 					let targetId = cell.target.id;
 					if (sourceId && stages[sourceId]) stages[sourceId].outputLanes.push(targetId);
@@ -827,6 +839,7 @@ export default {
 			stages.forEach(stage => {
 				if (stage.joinTables)
 					stage.joinTables.forEach(jt => {
+						if (!jt || !jt.id) return;
 						let finded = false;
 						cells.reduce((finded, cell) => {
 							if (cell.id == jt.id) finded = true;
@@ -939,7 +952,6 @@ export default {
 		save() {
 			let self = this,
 				data = this.getDataFlowData();
-
 			if (data) {
 				if (data.id) delete data.status;
 
@@ -968,12 +980,38 @@ export default {
 					data.name = this.form.taskName;
 				}
 
+				// 数据库节点连线至少保留一张表开始
+				let objectNamesList = [],
+					stageTypeFalg = false;
+				if (data && data.stages && data.stages.length) {
+					stageTypeFalg = data.stages.every(stage => stage.type === 'database');
+					if (stageTypeFalg) {
+						data.stages.forEach(item => {
+							if (item.syncObjects && item.syncObjects.length) {
+								item.syncObjects.forEach(childItem => {
+									if (childItem.objectNames && childItem.objectNames.length) {
+										objectNamesList = childItem.objectNames;
+									}
+								});
+							}
+						});
+					}
+				}
+				if (stageTypeFalg && objectNamesList.length === 0) {
+					self.$message.error(self.$t('editor.cell.link.chooseATableTip'));
+					return;
+				}
+
 				data.status = 'scheduled';
 				data.executeMode = 'normal';
 				this.loading = true;
 				self.doSave(data, (err, rest) => {
 					if (err) {
-						self.$message.error(err.response.data);
+						if (err.response.data === 'Loading data source schema') {
+							self.$message.error(self.$t('message.loadingSchema'));
+						} else {
+							self.$message.error(err.response.data);
+						}
 					} else {
 						this.$message.success(self.$t('message.taskStart'));
 						self.$router.push({
@@ -1167,7 +1205,15 @@ export default {
 		 * reload shcema
 		 */
 		reloadSchema() {
+			this.reloadSchemaDialog = true;
+		},
+		/**
+		 * confirm dialog reload shcema
+		 */
+
+		confirmReloadSchemaDialog() {
 			this.editor.reloadSchema();
+			this.reloadSchemaDialog = false;
 		},
 
 		/**
@@ -1218,9 +1264,14 @@ export default {
 				aggregation_processor: 'app.Aggregate',
 				js_processor: 'app.Script',
 				row_filter_processor: 'app.DataFilter',
-				java_processor: 'app.FieldProcess'
+				java_processor: 'app.FieldProcess',
+				redis: 'app.Redis'
 			};
 			if (data) {
+				let stageMap = {};
+				data.forEach(item => {
+					stageMap[item.id] = item;
+				});
 				data.map(v => {
 					let formData = _.cloneDeep(v);
 					delete formData.inputLanes;
@@ -1244,7 +1295,10 @@ export default {
 							angle: 0
 						};
 						cells.push(node);
-					} else if (v.type && ['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api'].includes(v.type)) {
+					} else if (
+						v.type &&
+						['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'redis'].includes(v.type)
+					) {
 						let node = {
 							type: mapping[v.type],
 							id: v.id,
@@ -1310,8 +1364,15 @@ export default {
 					if (v.outputLanes) {
 						v.outputLanes = v.outputLanes.filter(d => d);
 						v.outputLanes.map(k => {
+							let type = 'app.Link';
+							if (v.type === 'database' && stageMap[k].type === 'database') {
+								type = 'app.databaseLink';
+							} else {
+								type = 'app.Link';
+							}
+
 							let node = {
-								type: 'app.Link',
+								type: type,
 								source: {
 									id: v.id
 								},

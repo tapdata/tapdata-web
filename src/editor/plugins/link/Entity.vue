@@ -1,76 +1,58 @@
 <template>
-	<div class="e-entity" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom">
-		<el-container>
-			<el-header height="20">
-				{{ schema ? schema.name : '' }}
-			</el-header>
-			<el-main>
-				<el-tree
-					:data="schema ? schema.fields : []"
-					:node-key="nodeKey"
-					default-expand-all
-					:expand-on-click-node="false"
-					@node-drag-start="handleDragStart"
-					@node-drag-enter="handleDragEnter"
-					@node-drag-leave="handleDragLeave"
-					@node-drag-over="handleDragOver"
-					@node-drag-end="handleDragEnd"
-					@node-drop="handleDrop"
-					:draggable="editable"
-					:allow-drop="allowDrop"
-					:allow-drag="allowDrag"
-					icon-class="icon-none"
-					@node-expand="handlerNodeExpand"
-					@node-collapse="handlerNodeCollapse"
-					ref="tree"
+	<div class="e-entity" ref="entityDom">
+		<div class="header e-port e-port-out" v-if="schema" ref="outPort">
+			<el-checkbox
+				v-if="filterFields"
+				v-model="isCheckAll"
+				:indeterminate="isIndeterminate"
+				@change="handleCheckAllChange"
+			></el-checkbox>
+			<span style="margin-left: 5px;">{{ schema.name }}</span>
+		</div>
+		<div class="main">
+			<el-tree
+				ref="tree"
+				default-expand-all
+				icon-class="icon-none"
+				:indent="0"
+				:data="schema ? schema.fields : []"
+				:node-key="nodeKey"
+				:show-checkbox="!!filterFields"
+				@node-expand="handlerNodeExpand"
+				@node-collapse="handlerNodeCollapse"
+				@check="checkHandler"
+			>
+				<div
+					class="tree-node"
+					:style="{
+						color: data.color
+					}"
+					:class="{
+						'has-children': data.children && data.children.length,
+						'active-delete': isRemove(data.id),
+						'active-retained': isRetained(data.id)
+					}"
+					slot-scope="{ node, data }"
 				>
-					<span
-						class="custom-tree-node"
-						slot-scope="{ node, data }"
-						:class="{ activeDelete: isRemove(data.id), activeRetained: isRetained(data.id) }"
-					>
-						<span class="e-triangle" :style="`border-bottom-color: ${data.color || '#ffffff'};`"></span>
-						<span class="e-port e-port-in" :data-id="getId(data)" :data-table="getTableName(data)"></span>
-						<span class="e-pk">{{ data.primary_key_position > 0 ? 'PK' : '' }}</span>
-						<span class="e-label">{{ node.label }}</span>
-						<span class="e-data-type">{{ data.type }}</span>
-						<el-dropdown
-							v-if="editable"
-							size="mini"
-							@command="
-								command => {
-									handlerCommand(command, data, node);
-								}
-							"
-						>
-							<span class="el-dropdown-link">
-								<i class="el-icon-more el-icon--right"></i>
-							</span>
-							<el-dropdown-menu slot="dropdown">
-								<el-dropdown-item command="rename">Rename</el-dropdown-item>
-								<el-dropdown-item command="delete">Delete</el-dropdown-item>
-								<el-dropdown-item command="change_type" divided>Modified data type</el-dropdown-item>
-							</el-dropdown-menu>
-						</el-dropdown>
-						<span class="e-port e-port-out" :data-id="getId(data)" :data-table="getTableName(data)"></span>
+					<span class="e-port e-port-in" style="position: absolute;left: 0" :ref="getInportRef(data)"></span>
+					<span class="parent-node-icon" v-for="l in data.level - 1" :key="l"></span>
+					<span class="node-icon">
+						<i class="icon-expand"></i>
 					</span>
-				</el-tree>
-			</el-main>
-		</el-container>
+					<img :src="getImgByType(data.type)" />
+					<img class="pk" v-if="data.primary_key_position > 0" src="../../../../static/image/PK.png" />
+					<span class="node-label">{{ node.label }}</span>
+				</div>
+			</el-tree>
+		</div>
 	</div>
 </template>
 
 <script>
-import $ from 'jquery';
 import log from '../../../log';
-
 export default {
 	name: 'Entity',
 	props: {
-		width: {
-			type: Number,
-			default: 0
-		},
 		schema: {
 			required: true,
 			value: [Object, Array, null, undefined]
@@ -79,33 +61,61 @@ export default {
 			type: String,
 			default: 'id'
 		},
-		editable: {
-			type: Boolean,
-			default: false
-		},
 		tableNameKey: {
 			type: String,
 			default: 'table_name'
 		},
+		filterFields: Array,
 		operations: {
 			type: Array
 		}
 	},
 
 	watch: {
-		schema: {
-			handler() {
-				log('Entity.schema.change', this.schema);
+		schema(schema) {
+			this.tableMap = {};
+			if (schema && schema.fields && this.filterFields) {
+				let checkedKeys = [];
+				schema.fields.forEach(f => {
+					checkedKeys.push(f[this.nodeKey]);
+				});
+				this.$refs.tree.setCheckedKeys(checkedKeys);
+				this.$nextTick(() => {
+					this.defaultChecked = this.$refs.tree.getCheckedKeys();
+					this.filterFields.forEach(f => {
+						this.$refs.tree.setChecked(f[this.nodeKey], false);
+					});
+				});
 			}
-		},
-		operations: {
-			handler() {
-				log('Entity.schema.change', this.operations);
-			}
+			log('Entity Schema Change:', schema);
 		}
 	},
 
+	data() {
+		return {
+			editable: true,
+			isCheckAll: true,
+			isIndeterminate: false,
+			tableMap: {},
+			defaultChecked: [],
+			typeMap: {}
+		};
+	},
+
 	methods: {
+		getImgByType(type) {
+			return require(`../../../../static/image/types/${type.toLowerCase()}.png`);
+		},
+		getCheckedKeys(fields) {
+			let ids = [];
+			fields.forEach(f => {
+				ids.push(f[this.nodeKey]);
+				if (f.children) {
+					ids.push(...this.getCheckedKeys(f.children));
+				}
+			});
+			return ids;
+		},
 		isRemove(id) {
 			let ops = this.operations ? this.operations.filter(v => v.id === id && v.op === 'DELETE') : [];
 			return ops && ops.length > 0;
@@ -114,34 +124,19 @@ export default {
 			let ops = this.operations ? this.operations.filter(v => v.id === id && v.op === 'RETAINED') : [];
 			return ops && ops.length > 0;
 		},
-		getId(node) {
-			return node[this.nodeKey];
+		checkHandler(data, checkedInfo) {
+			this.isIndeterminate =
+				this.defaultChecked.length !== checkedInfo.checkedKeys.length && checkedInfo.checkedKeys.length;
+			this.isCheckAll = this.defaultChecked.length === checkedInfo.checkedKeys.length;
+			this.$emit('check', checkedInfo.checkedNodes.concat(checkedInfo.halfCheckedNodes));
 		},
-		getTableName(node) {
-			let tableName = node[this.tableNameKey];
-			if (tableName) tableName = tableName.replace(/[\\.,]/g, '_');
-			return tableName;
-		},
-
-		getOutPortByField(node) {
-			if (!node) return null;
-			let id = this.getId(node);
-			return $(this.$refs.entityDom).find(`.e-port-out[data-id=${id}]`)[0];
-		},
-		getInPortByField(node) {
-			if (!node) return null;
-			let id = this.getId(node);
-			return $(this.$refs.entityDom).find(`.e-port-in[data-id=${id}]`)[0];
-		},
-		getOutPortByTable(table) {
-			if (!table) return null;
-			let tableName = this.getTableName(table);
-			return $(this.$refs.entityDom).find(`.e-port-out[data-table=${tableName}]`)[0];
-		},
-		getInPortByTable(table) {
-			if (!table) return null;
-			let tableName = this.getTableName(table);
-			return $(this.$refs.entityDom).find(`.e-port-in[data-table=${tableName}]`)[0];
+		handleCheckAllChange(val) {
+			let checkKeys = val ? this.defaultChecked : [];
+			this.$refs.tree.setCheckedKeys(checkKeys);
+			this.isIndeterminate = false;
+			this.$nextTick(() => {
+				this.$emit('check', this.$refs.tree.getCheckedNodes());
+			});
 		},
 		handlerNodeExpand(data) {
 			this.$emit('expand', data);
@@ -149,170 +144,154 @@ export default {
 		handlerNodeCollapse(data) {
 			this.$emit('collapse', data);
 		},
-		handleDragStart() {},
-		handleDragEnter() {},
-		handleDragLeave() {},
-		handleDragOver() {},
-		handleDragEnd() {},
-		handleDrop(draggingNode) {
-			this.$emit('drop', draggingNode);
+		getTableName(node) {
+			let tableName = node[this.tableNameKey];
+			if (tableName) tableName = tableName.replace(/[\\.,]/g, '_');
+			return tableName;
 		},
-		allowDrop(draggingNode, dropNode, type) {
-			return type !== 'inner';
+		getInportRef(data) {
+			let tableName = this.getTableName(data);
+			let count = this.tableMap[tableName] || 0;
+			count += 1;
+			this.tableMap[tableName] = count;
+			return tableName + '_' + count;
 		},
-		allowDrag(draggingNode) {
-			return (
-				draggingNode.data &&
-				draggingNode.data.children &&
-				draggingNode.data.children.length > 0 &&
-				(!draggingNode.parent ||
-					(draggingNode.parent &&
-						draggingNode.parent.data &&
-						draggingNode.parent.data.table_name !== draggingNode.data.table_name))
-			);
+		getOutPort() {
+			return this.$refs.outPort;
 		},
-		handlerCommand(command, data, node) {
-			if (command === 'rename') {
-				this.$prompt('Input new name', 'Rename', {
-					inputValue: data.label
-				}).then(res => {
-					data.label = res.value;
-				});
-			} else if (command === 'delete') {
-				this.$refs.tree.remove(node);
-			} else if (command === 'change_type') {
-				this.$message({
-					message: 'Modified data type is not implemented',
-					type: 'warning'
-				});
-			}
+		getInPort(table) {
+			let tableName = this.getTableName(table);
+			return this.$refs[tableName + '_' + 1];
 		}
 	}
 };
 </script>
 
-<style lang="less" scoped>
-@color: #71c179;
+<style lang="less">
+@color: #4aaf47;
 
 .e-entity {
+	margin: 0 auto;
 	width: 100%;
-	border: 1px solid @color;
-	display: inline-block;
 	max-width: 300px;
+	border: 1px solid @color;
 	text-align: left;
-	margin-bottom: 10px;
-	.el-header {
-		line-height: 23px;
+	border-radius: 3px;
+	overflow: hidden;
+	box-sizing: border-box;
+	.header {
+		height: 24px;
+		padding-top: 4px;
 		background: @color;
-		color: #ffffff;
-		font-weight: bold;
+		font-size: 12px;
+		color: #fff;
 	}
-
-	.el-main {
-		padding: 0;
+	.el-tree-node__content {
+		height: 24px;
 	}
-	.activeDelete {
-		background: #dedee4;
+	.el-tree-node:focus > .el-tree-node__content,
+	.el-tree-node__content:hover {
+		background: #fff !important;
 	}
-	.activeRetained {
-		background: #b4f18d;
+	.el-tree > .el-tree-node:nth-last-child(2) > .el-tree-node__content > .tree-node > .node-icon::before,
+	.el-tree-node:last-child > .el-tree-node__content > .tree-node > .node-icon::before {
+		border: none;
+		border-top: 1px solid #e1e1e1;
+		left: -1px;
+		height: 50%;
+		background: #fff;
 	}
-	.custom-tree-node {
-		flex: 1;
-
+	.el-tree > .is-expanded:nth-last-child(2) > .el-tree-node__content > .has-children > .node-icon::before,
+	.is-expanded:last-child > .el-tree-node__content > .has-children > .node-icon::before {
+		border: none;
+		border-bottom: 1px solid #e1e1e1;
+		left: 0;
+		height: 0;
+	}
+	.is-expanded > .el-tree-node__content > .tree-node.has-children .icon-expand::before {
+		transform: translate(-50%, -50%) rotate(0);
+	}
+	.tree-node {
 		display: flex;
-		justify-content: start;
 		align-items: center;
-		flex-direction: row;
-
-		line-height: 25px;
-		font-size: 11px;
-
-		.e-port {
-			width: 10px;
-			height: 10px;
-			/*background: #31d0c6;*/
-			position: relative;
+		flex: 1;
+		padding: 0 5px;
+		font-size: 12px;
+		color: #666;
+		height: 100%;
+		overflow: hidden;
+		&.active-delete {
+			background: rgba(0, 0, 0, 0.2);
 		}
-
-		.e-port-in {
-			left: -11px;
+		&.active-retained {
+			background: #b4f18d;
 		}
-
-		/*.e-port-out{
+		&.has-children {
+			.icon-expand {
 				position: absolute;
-				right: 0;
-			}*/
-
-		.e-label {
-			flex: 1;
-			input {
-				color: #606266;
-				outline: none;
-				border: none;
-				background: transparent;
-				line-height: 20px;
-				height: 25px;
-				&:focus {
-					background: #ffffaa;
+				display: block;
+				width: 12px;
+				height: 12px;
+				top: 50%;
+				left: 0;
+				transform: translate(-50%, -50%);
+				border: 1px solid #ccc;
+				background: #fff;
+				box-sizing: border-box;
+				&::before,
+				&::after {
+					content: '';
+					position: absolute;
+					width: 6px;
+					height: 2px;
+					background: #ccc;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+					transition: transform 0.3s ease 0s;
+				}
+				&::before {
+					transform: translate(-50%, -50%) rotate(90deg);
+				}
+				&:hover {
+					border: 1px solid @color;
+					&::before,
+					&::after {
+						background: @color;
+					}
 				}
 			}
 		}
-
-		.e-triangle {
-			width: 0;
-			height: 0;
-			border-right: 5px solid transparent;
-			border-left: 5px solid transparent;
-			border-bottom: 5px solid transparent;
-
-			-webkit-transform: rotate(-45deg);
-			-moz-transform: rotate(-45deg);
-			-ms-transform: rotate(-45deg);
-			-o-transform: rotate(-45deg);
-			transform: rotate(-45deg);
-
+		.pk {
+			margin-left: 5px;
+		}
+		.node-label {
+			flex: 1;
+			overflow: hidden;
+			padding: 0 5px;
+			box-sizing: border-box;
+		}
+		.node-icon {
 			position: relative;
-			left: -3px;
-			top: -11px;
+			margin-right: 15px;
+			height: 100%;
+			line-height: 1;
+			border-left: 1px solid #e1e1e1;
+			&::before {
+				display: block;
+				content: '';
+				width: 10px;
+				border-bottom: 1px solid #e1e1e1;
+				position: absolute;
+				top: 50%;
+			}
 		}
-
-		.e-data-type {
-			font-size: 0.9em;
-		}
-
-		.el-icon-more {
-			-webkit-transform: rotate(90deg);
-			-moz-transform: rotate(90deg);
-			-ms-transform: rotate(90deg);
-			-o-transform: rotate(90deg);
-			transform: rotate(90deg);
-		}
-
-		.e-pk {
-			font-size: 9px;
-			font-weight: bold;
-			color: #ffa000;
-			position: relative;
-			left: -14px;
-			display: inline-block;
-			width: 5px;
+		.parent-node-icon {
+			margin-right: 15px;
+			height: 100%;
+			line-height: 1;
+			border-left: 1px solid #e1e1e1;
 		}
 	}
-}
-</style>
-<style lang="less">
-@color: #71c179;
-.e-entity .el-main .el-tree .el-tree-node {
-	border-bottom: 1px solid @color;
-	&:last-child {
-		border-bottom: none;
-	}
-	&:first-child {
-		border-top: 1px solid @color;
-	}
-}
-.e-entity .el-main .el-tree .el-tree-node .icon-none {
-	display: none;
 }
 </style>

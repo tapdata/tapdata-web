@@ -73,7 +73,13 @@ const cn = {
 		menu: {
 			dashboard: '控制台',
 			connections: '数据源',
+			dataSync: '数据同步',
 			dataFlows: '数据采集',
+			dataFlowsAll: '全部任务',
+			dataFlowsRunning: '运行中任务',
+			dataFlowsError: '出错任务',
+			dataFlowsPaused: '已暂停任务',
+			dataFlowsDraft: '编辑中任务',
 			dataGovernance: '数据治理',
 			metadataDefinition: '数据目录',
 			dataQuality: '数据质量',
@@ -153,7 +159,6 @@ const cn = {
 		syncGover: '同步治理',
 		screen: '屏幕',
 		delete: '删除',
-		cancle: '取 消',
 		cancel: '取 消',
 		confirm: '确 定',
 		placeholderMonServer: '请输入监控的服务名称',
@@ -191,7 +196,7 @@ const cn = {
 		forceStoppingMessage: '强制停止将立即中断数据传输，是否继续执行?',
 		stopInitial_syncMessage: '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?',
 		stopMessage: '确定要暂停任务吗?',
-		cancleReset: '已取消重置',
+		cancelReset: '已取消重置',
 		resetOk: '重置成功',
 		resetFailed: '重置失败',
 		notRest: '请选择正确的数据进行重置',
@@ -199,7 +204,8 @@ const cn = {
 		edit: '修改',
 		clickRelatedTasks: '点击查看相关任务',
 		currentTaskOpen: '当前任务已打开',
-		noRelatedTask: '暂无相关任务'
+		noRelatedTask: '暂无相关任务',
+		loadingSchema: '源库schema尚未加载完成，暂时无法启动'
 	},
 	dataFlow: {
 		updateModel: '更新模型',
@@ -209,8 +215,8 @@ const cn = {
 		createNew: '新建',
 		DissedNoAction: 'oops~ 被禁用的节点或连线不能被删除、连入或连出',
 		guidingMode: '引导模式',
-		advancedMode: '高级模式',
-		freedomMode: '转高级模式',
+		advancedMode: '自由模式',
+		freedomMode: '转自由模式',
 		advanceSetting: '更多高级设置',
 		closeSetting: '收起',
 		openPanel: '展开',
@@ -219,7 +225,9 @@ const cn = {
 		next: '下一步',
 		sourceSetting: '设置源库',
 		targetSetting: '设置目标库',
-		jobSetting: '任务设置',
+		advancedetting: '高级设置',
+		simpleSceneTitle: '创建数据库复制任务',
+		sourceLibrarySetting: '源库结构与对象设置',
 		databseMigration:
 			'以引导的模式帮助新手用户快速了解数据库之间的迁移。数据库迁移能快速地实现数据库之间(内置表批量过滤和改名等设置)的全量和增量传输。',
 		databseProcessing:
@@ -508,7 +516,16 @@ const cn = {
 					bulkRevocation: '批量撤销',
 					queueCopied: '待迁移表',
 					tableRemoved: '已移除表',
-					enterName: '请输入名称/字段名进行搜索'
+					enterName: '请输入名称/字段名进行搜索',
+					source: '数据源',
+					type: '数据库类型',
+					databaseName: '数据库名',
+					account: '数据库账号',
+					attributionAccount: '归属账号名',
+					includeTable: '包含表',
+					migrationObjece: '迁移对象',
+					chosen: '已选择',
+					searchContent: '搜索內容'
 				},
 				collection: {
 					name: '数据集',
@@ -638,11 +655,22 @@ const cn = {
 					none_pk: '主键必填.',
 					dummy_isNull: 'Dummy不能为空'
 				},
+				redis: {
+					name: 'Redis',
+					tip: 'Redis节点',
+					chooseRedisName: '请选择Redis',
+					Redis_isNull: 'Redis不能为空',
+					prefixKey: '缓存键前缀',
+					prefixKey_placeholder: '请输入缓存键前缀',
+					cacheKey: '设置缓存键 ',
+					cacheKey_placeholder: '请输入缓存键'
+				},
 				api: {
 					name: 'API',
 					tip: 'api节点',
 					chooseApiName: '请选择API',
 					none_collection: '数据集必填.',
+					none_database: '数据库必填.',
 					none_pk: '主键必填.',
 					api_isNull: 'API不能为空',
 					dataApiName: '数据发布API名称',
@@ -875,6 +903,35 @@ const cn = {
 							group: '条件分组'
 						}
 					}
+				},
+				jointCache: {
+					name: '关联缓存',
+					tip: '关联缓存节点',
+					form: {
+						name: {
+							label: '节点名称',
+							placeholder: '请输入节点名称',
+							none: '节点名称必填'
+						},
+						cacheId: {
+							label: '对应缓存节点',
+							placeholder: '请选择本任务内内存缓存节点',
+							none: '请选择本任务内内存缓存节点'
+						},
+						joinSettings: {
+							label: '关联设置',
+							cacheKey: '缓存表主键',
+							sourceKey: {
+								label: '源表关联键',
+								placeholder: '请选择关联字段'
+							},
+							none: '请选择关联字段'
+						},
+						joinKey: {
+							label: '写入路径',
+							placeholder: '请选择或创建写入路径字段'
+						}
+					}
 				}
 			},
 			link: {
@@ -925,7 +982,35 @@ const cn = {
 					upsert: '更新已存在或插入新数据',
 					update: '更新写入',
 					merge_embed: '更新内嵌数组'
-				}
+				},
+				existingSchema: {
+					label: '对目标端已存在的结构和数据的处理',
+					keepSchema: '保持目标端已存在的结构和数据',
+					keepExistedData: ' 保持目标端已存在的结构，仅删除数据',
+					removeSchema: ' 删除目标端已存在的结构和数据'
+				},
+
+				migrationSetting: '复制对象设置',
+				dataProcessing: '已有数据处理',
+				prefixAndSuffix: '加前后缀',
+				keepExistingData: '保持已存在数据',
+				deleteExistingData: '运行前删除已存在数据',
+				reduction: '还原',
+				migrationObjece: '待复制表',
+				chosen: '已选择',
+				searchContent: '搜索内容',
+				mappingRelations: '映射关系',
+				addPrefix: '添加前缀',
+				addSuffix: '添加后缀',
+				prefixPlaceholder: '请输入前缀',
+				suffixPlaceholder: '请输入后缀',
+				batchRename: '批量改名设置',
+				tableNameExample: '表名示例',
+				copySourceDatabase: '复制源库结构类型',
+				tableTip: 'Table暂不支持外键复制',
+				viewTip: '复制view暂不支持表改名，勾选此项下方表改名功能会被禁用',
+				formTip: 'View、function、procedure的复制功能仅支持MySQL到MySQL的场景',
+				chooseATableTip: '至少选择一个待复制表'
 			}
 		},
 		ui: {
@@ -983,7 +1068,9 @@ const cn = {
 				fullscreen: {
 					tip: '切换全屏'
 				}
-			}
+			},
+			nodeLoadSchemaDiaLog: '如果数据源有更新，此操作会更此节点的模型，是否继续?',
+			allNodeLoadSchemaDiaLog: '如果数据源有更新，此操作会更新各节点的模型，是否继续?'
 		},
 		preview: {
 			stage: '节点',
@@ -1244,7 +1331,32 @@ const cn = {
 		SYNCSeverRestartedSuccessfully: '同步治理服务已重启',
 		newSeverCreatedSuccessfully: '新服务监控被创建',
 		newSeverDeletedSuccessfully: '新服务监控被删除',
-		databaseDDLChanged: '监测到数据库DDL变化'
+		databaseDDLChanged: '监测到数据库DDL变化',
+		settingCenter: '设置中心',
+		systemSetting: '系统设置',
+		noticeSetting: '通知设置',
+		tip: '此处通知设置为系统全局通知的设置，任务编排页的通知设置的其优先级高于此处的全局通知设置',
+		jobOperationNotice: '任务运行通知',
+		emailNotice: '邮件通知',
+		jobStarted: '任务被启动',
+		jobPaused: '任务被停止',
+		jobDeleted: '任务被删除',
+		jobEdited: '任务被编辑',
+		jobStateError: '任务状态error',
+		jobEncounterError: '任务遇到错误',
+		noticeInterval: '发送间隔',
+		CDCLagTime: 'CDC滞后通知',
+		lagTime: '滞后时间',
+		DDL: '数据库DDL变化',
+		agentNotice: 'Agent通知',
+		serverDisconnected: '服务器断开连接',
+		agentAbnormallyStopped: 'Agent服务意外停止',
+		agentStarted: 'Agent服务被启动',
+		agentStopped: 'Agent服务被停止',
+		agentFailed: 'Agent服务启动失败',
+		agentStop: 'Agent服务停止失败',
+		agentCreated: 'Agent被创建',
+		agentDeleted: 'Agent被删除'
 	},
 	queryBuilder: {
 		addCond: '字段条件'

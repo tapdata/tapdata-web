@@ -11,6 +11,10 @@ export default class Connections extends PublicAPI {
 		super('/api/Connections');
 	}
 	customQuery(id, params) {
-		return axios.get(`${this.url}/${id}` + '/customQuery?tableName=' + params);
+		let url = `${this.url}/${id}` + '/customQuery?';
+		for (let item in params) {
+			url += item + '=' + params[item] + '&';
+		}
+		return axios.get(url);
 	}
 }
