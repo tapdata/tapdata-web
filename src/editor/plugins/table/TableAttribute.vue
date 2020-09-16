@@ -111,24 +111,6 @@
 						</el-tooltip>
 					</div>
 				</el-form-item>
-				<el-form-item
-					:label="$t('editor.cell.data_node.table.form.maximum_transaction.label')"
-					prop="maxTransactionLength"
-					v-if="model.databaseType === 'oracle' && dataNodeInfo.isSource === 1"
-				>
-					<div class="flex-block">
-						<el-input-number
-							v-model="model.maxTransactionLength"
-							controls-position="right"
-							:min="1"
-							:max="720"
-						></el-input-number>
-						<el-popover class="aggtip" placement="top-start" width="400" trigger="hover">
-							<span>{{ $t('editor.cell.data_node.table.form.maximum_transaction.tip') }}</span>
-							<span class="icon iconfont icon-tishi1" slot="reference"></span>
-						</el-popover>
-					</div>
-				</el-form-item>
 
 				<!-- <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
 					<MultiSelection
@@ -213,27 +195,49 @@
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
-				<!-- <el-button class="fr" type="success" size="mini"  @click="hanlderLoadSchema">{{
-					$t('dataFlow.updateModel')
-				}}</el-button> -->
+				<el-button
+					class="fr"
+					type="success"
+					:disabled="!model.connectionId && !model.tableName"
+					style="background: #4aaf47; border-color: #4aaf47;"
+					size="mini"
+					@click="hanlderLoadSchema"
+				>
+					<i class="el-icon-loading" v-if="reloadModelLoading"></i>
+					<span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
+					<span v-else>{{ $t('dataFlow.updateModel') }}</span>
+				</el-button>
 				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 			</div>
 		</div>
 		<CreateTable v-if="addtableFalg" :dialog="dialogData" @handleTable="getAddTableName"></CreateTable>
 		<relatedTasks :taskData="taskData" v-if="disabled" v-loading="databaseSelectConfig.loading"></relatedTasks>
+		<el-dialog
+			:title="$t('message.prompt')"
+			:visible.sync="dialogVisible"
+			:close-on-click-modal="false"
+			width="30%"
+		>
+			<span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="dialogVisible = false">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 
 <script>
-import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
+import DatabaseForm from '@/view/job/components/DatabaseForm/DatabaseForm';
 import ClipButton from '@/components/ClipButton';
 import queryBuilder from '@/components/QueryBuilder';
 import { convertSchemaToTreeData } from '../../util/Schema';
-import RelatedTasks from '../../../components/relatedTasks';
-import CreateTable from '../../../components/dialog/createTable';
+import RelatedTasks from '@/components/relatedTasks';
+import CreateTable from '@/components/dialog/createTable';
 import Entity from '../link/Entity';
 import _ from 'lodash';
-import factory from '../../../api/factory';
+import ws from '@/api/ws';
+import factory from '@/api/factory';
 
 let connectionApi = factory('connections');
 const MetadataInstances = factory('MetadataInstances');
@@ -298,6 +302,7 @@ export default {
 	data() {
 		let self = this;
 		return {
+			reloadModelLoading: false,
 			addtableFalg: false,
 			dialogData: null,
 			databaseData: [],
@@ -305,6 +310,7 @@ export default {
 			copyConnectionId: '',
 			tableNameId: '',
 
+			dialogVisible: false,
 			taskData: {
 				id: '',
 				tableName: ''
@@ -355,7 +361,6 @@ export default {
 				connectionId: '',
 				databaseType: '',
 				tableName: '',
-				maxTransactionLength: 12,
 				sql: '',
 				isFilter: false,
 				sqlFromCust: true,
@@ -412,6 +417,13 @@ export default {
 		getAddTableName(val) {
 			this.model.tableName = val;
 			this.tableIsLink();
+			this.mergedSchema = null;
+			let schema = {
+				meta_type: 'table',
+				table_name: this.model.tableName,
+				fields: []
+			};
+			this.$emit('schemaChange', _.cloneDeep(schema));
 		},
 
 		// 新建表弹窗
@@ -664,8 +676,52 @@ export default {
 
 		// 更新模型
 		hanlderLoadSchema() {
-			this.loadDataModels(this.model.connectionId);
-			this.handlerSchemaChange();
+			this.dialogVisible = true;
+		},
+
+		// 确定更新模型弹窗
+		confirmDialog() {
+			this.reloadModelLoading = true;
+			let params = {
+				type: 'reloadSchema',
+				data: {
+					tables: [
+						{
+							connId: this.model.connectionId,
+							tableName: this.model.tableName,
+							userId: this.$cookie.get('user_id')
+						}
+					]
+				}
+			};
+
+			ws.send(params);
+			let self = this,
+				schema = null,
+				templeSchema = [];
+
+			ws.on('execute_load_schema_result', res => {
+				if (res.status === 'SUCCESS' && res.result && res.result.length) {
+					templeSchema = res.result;
+					this.reloadModelLoading = false;
+					self.$message(this.$t('message.reloadSchemaSuccess'));
+				} else {
+					self.$message(this.$t('message.reloadSchemaError'));
+				}
+				this.reloadModelLoading = false;
+				if (templeSchema && templeSchema.length) {
+					templeSchema.forEach(item => {
+						if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
+							schema = item.schema;
+						}
+					});
+				}
+				self.$nextTick(() => {
+					self.$emit('schemaChange', _.cloneDeep(schema));
+					this.mergedSchema = schema;
+				});
+			});
+			this.dialogVisible = false;
 		}
 	}
 };
@@ -750,11 +806,6 @@ export default {
 			}
 		}
 	}
-	.aggtip {
-		padding-left: 12px;
-		color: #999;
-		cursor: pointer;
-	}
 }
 </style>
 <style lang="less">
@@ -772,13 +823,6 @@ export default {
 	.el-switch__label * {
 		font-size: 12px !important;
 		color: #999;
-	}
-	.el-input-number {
-		line-height: 28px !important;
-	}
-	.el-input-number.is-controls-right .el-input-number__decrease,
-	.el-input-number.is-controls-right .el-input-number__increase {
-		line-height: 14px !important;
 	}
 }
 </style>

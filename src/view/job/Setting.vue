@@ -138,6 +138,20 @@
 						</el-col>
 					</el-row>
 				</el-form-item>
+				<el-form-item
+					:label="$t('editor.cell.data_node.table.form.maximum_transaction.label')"
+					prop="maxTransactionLength"
+				>
+					<div class="flex-block">
+						<el-input v-model="formData.maxTransactionLength" :min="1" :max="720" size="mini">
+							<template slot="append">Hours</template>
+						</el-input>
+						<el-popover class="aggtip" placement="top-start" width="400" trigger="hover">
+							<span>{{ $t('editor.cell.data_node.table.form.maximum_transaction.tip') }}</span>
+							<span class="icon iconfont icon-tishi1" slot="reference"></span>
+						</el-popover>
+					</div>
+				</el-form-item>
 			</div>
 			<el-form-item v-if="isSimple">
 				<div v-if="!showMore" @click="showMore = true" class="advance-setting">

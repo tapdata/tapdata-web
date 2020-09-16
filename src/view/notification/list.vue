@@ -33,7 +33,11 @@
 						</el-select>
 						<span @click="handlePageRead()">{{ $t('notification.maskRead') }}</span>
 						<span @click="handleAllRead()">{{ $t('notification.maskReadAll') }}</span>
-						<!--						<span>通知设置</span>-->
+						<span>
+							<router-link to="/setting"
+								><span style="color: #48B6E2">{{ $t('notification.setting') }}</span></router-link
+							>
+						</span>
 					</div>
 				</div>
 				<el-tabs v-model="activeName" type="card" @tab-click="handleClick">

@@ -423,9 +423,7 @@ export default {
 	},
 	created() {
 		this.formData = this.$store.state.dataFlows;
-		if (this.$route.query && this.$route.query.dataFlowStatus) {
-			this.formData.status = this.$route.query.dataFlowStatus;
-		}
+		this.formData.status = this.$route.query ? this.$route.query.dataFlowStatus : '';
 
 		this.screenFn();
 		this.keyupEnter();
@@ -451,6 +449,12 @@ export default {
 	beforeDestroy() {
 		ws.off('watch', this.wsWatch);
 		clearInterval(this.inter);
+	},
+	watch: {
+		'$route.query'(query) {
+			this.formData.status = query.dataFlowStatus;
+			this.getData();
+		}
 	},
 	computed: {
 		maxHeight: function() {
@@ -1049,7 +1053,7 @@ export default {
 							this.getData();
 							this.$message.success(this.$t('message.resetOk'));
 						} else {
-							this.$message.info(this.$t('message.cancleReset'));
+							this.$message.info(this.$t('message.cancelReset'));
 						}
 					})
 					.finally(() => {
@@ -1083,7 +1087,7 @@ export default {
 							this.getData();
 							this.responseHandler(res.data, this.$t('message.resetOk'));
 						} else {
-							this.$message.info(this.$t('message.cancleReset'));
+							this.$message.info(this.$t('message.cancelReset'));
 						}
 					})
 					.finally(() => {

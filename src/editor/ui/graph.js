@@ -93,7 +93,11 @@ export default class Graph extends Component {
 			drawGrid: false,
 			linkPinning: false,
 			// markAvailable: true,
-			defaultLink: new joint.shapes.app.Link(),
+			// new joint.shapes.app.Link()
+			defaultLink: function(cellView) {
+				if (cellView.model.get('type') === 'app.Database') return new joint.shapes.app.databaseLink();
+				else return new joint.shapes.app.Link();
+			},
 			defaultConnectionPoint: joint.shapes.app.Link.connectionPoint,
 			interactive: {
 				linkMove: false
@@ -109,7 +113,7 @@ export default class Graph extends Component {
 						rx: 17,
 						ry: 17,
 						attrs: {
-							'stroke-width': 2,
+							'stroke-width': 3,
 							stroke: '#00bcd4'
 						}
 					}
@@ -531,6 +535,7 @@ export default class Graph extends Component {
 	}
 
 	selectPrimaryLink(linkView) {
+		if (this.isSimple) return;
 		if (linkView.model.getFormData().disabled) return;
 		let ns = joint.linkTools;
 		let toolsView = new joint.dia.ToolsView({

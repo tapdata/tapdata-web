@@ -1,7 +1,13 @@
 <template>
 	<div>
 		<div class="item-head">
-			<span>{{ $t('notification.notice') }}</span>
+			<span>
+				<router-link to="/setting">
+					<span style="color: #48B6E2">
+						{{ $t('notification.setting') }}
+					</span>
+				</router-link>
+			</span>
 			<span class="item-head-text">
 				<router-link to="/notification">
 					<span style="color: #48B6E2">
@@ -11,7 +17,7 @@
 			</span>
 		</div>
 		<ul class="cuk-list clearfix cuk-list-type-block">
-			<li class="list-item" v-for="item in listData" :key="item.level" @click="handleRead(item.id)">
+			<li class="list-item" v-for="item in listData" :key="item.id" @click="handleRead(item.id)">
 				<div class="list-item-content">
 					<div class="unread-1zPaAXtSu"></div>
 					<div class="list-item-desc">

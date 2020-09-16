@@ -9,7 +9,7 @@
 						<span class="number">{{ total }}</span>
 					</div>
 					<ul class="jobList">
-						<li v-for="task in taskList" :key="task.value">
+						<li v-for="task in taskList" :key="task.name">
 							<span
 								class="text"
 								:style="`color: ${colorMap[task.name]};`"
