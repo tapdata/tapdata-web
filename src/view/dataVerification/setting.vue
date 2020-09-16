@@ -7,19 +7,19 @@
 
 		<el-form class="e-form" label-position="top" :data="formData">
 			<el-form-item :label="$t('dataVerify.setting.keepTimeLabel')">
-				<el-select v-model="formData.distinctWriteType" size="mini" class="dataWrite-list">
+				<el-select v-model="formData.retentionTime" size="mini" class="dataWrite-list">
 					<el-option v-for="item in dataWriteList" :key="item.value" :label="item.label" :value="item.value">
 					</el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item :label="$t('dataVerify.setting.errorSaveSumLable')">
-				<el-select v-model="formData.distinctWriteType" size="mini" class="dataWrite-list">
+				<el-select v-model="formData.reservedQuantityPerTable" size="mini" class="dataWrite-list">
 					<el-option v-for="item in dataWriteList" :key="item.value" :label="item.label" :value="item.value">
 					</el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item :label="$t('dataVerify.setting.errorDifferenceResult')">
-				<el-select v-model="formData.distinctWriteType" size="mini" class="dataWrite-list">
+				<el-select v-model="formData.differenceTolerant" size="mini" class="dataWrite-list">
 					<el-option v-for="item in dataWriteList" :key="item.value" :label="item.label" :value="item.value">
 					</el-option>
 				</el-select>
@@ -27,11 +27,11 @@
 			<el-form-item :label="$t('dataVerify.setting.lineNumberFrequency')">
 				<el-input
 					placeholder="请输入内容"
-					v-model="formData.distinctWriteType"
+					v-model="formData.rowInspectFrequency"
 					class="input-with-select"
 					size="mini"
 				>
-					<el-select v-model="formData.distinctWriteType" slot="append" placeholder="请选择">
+					<el-select v-model="formData.rowInspectUtil" slot="append" placeholder="请选择">
 						<el-option label="餐厅名" value="1"></el-option>
 						<el-option label="订单号" value="2"></el-option>
 						<el-option label="用户电话" value="3"></el-option>
@@ -41,11 +41,11 @@
 			<el-form-item :label="$t('dataVerify.setting.lineNumVerfyDuration')">
 				<el-input
 					placeholder="请输入内容"
-					v-model="formData.distinctWriteType"
+					v-model="formData.rowInspectContinuedTime"
 					class="input-with-select"
 					size="mini"
 				>
-					<el-select v-model="formData.distinctWriteType" slot="append" placeholder="请选择">
+					<el-select v-model="formData.rowInspectContinuedUtil" slot="append" placeholder="请选择">
 						<el-option label="餐厅名" value="1"></el-option>
 						<el-option label="订单号" value="2"></el-option>
 						<el-option label="用户电话" value="3"></el-option>
@@ -55,11 +55,11 @@
 			<el-form-item :label="$t('dataVerify.setting.intervalFrequency')">
 				<el-input
 					placeholder="请输入内容"
-					v-model="formData.distinctWriteType"
+					v-model="formData.contentInspectFrequency"
 					class="input-with-select"
 					size="mini"
 				>
-					<el-select v-model="formData.distinctWriteType" slot="append" placeholder="请选择">
+					<el-select v-model="formData.contentInspectUtil" slot="append" placeholder="请选择">
 						<el-option label="餐厅名" value="1"></el-option>
 						<el-option label="订单号" value="2"></el-option>
 						<el-option label="用户电话" value="3"></el-option>
@@ -69,11 +69,11 @@
 			<el-form-item :label="$t('dataVerify.setting.verifyDuration')">
 				<el-input
 					placeholder="请输入内容"
-					v-model="formData.distinctWriteType"
+					v-model="formData.contentInspectContinuedTime"
 					class="input-with-select"
 					size="mini"
 				>
-					<el-select v-model="formData.distinctWriteType" slot="append" placeholder="请选择">
+					<el-select v-model="formData.contentInspectContinuedUtil" slot="append" placeholder="请选择">
 						<el-option label="餐厅名" value="1"></el-option>
 						<el-option label="订单号" value="2"></el-option>
 						<el-option label="用户电话" value="3"></el-option>
@@ -81,12 +81,13 @@
 				</el-input>
 			</el-form-item>
 			<el-form-item :label="$t('dataVerify.setting.verifyStartTime')">
-				<el-select v-model="formData.distinctWriteType" size="mini" class="dataWrite-list">
+				<el-select v-model="formData.contentInspectStartTime" size="mini" class="dataWrite-list">
 					<el-option v-for="item in dataWriteList" :key="item.value" :label="item.label" :value="item.value">
 					</el-option>
 				</el-select>
 			</el-form-item>
 		</el-form>
+		<el-button size="mini" type="primary">保存</el-button>
 	</div>
 </template>
 <script>
@@ -95,7 +96,21 @@ export default {
 
 	data() {
 		return {
-			formData: {}
+			formData: {},
+			dataWriteList: [
+				{
+					label: '1个月',
+					value: '1'
+				},
+				{
+					label: '3个月',
+					value: '3'
+				},
+				{
+					label: '6个月',
+					value: '6'
+				}
+			]
 		};
 	}
 };
