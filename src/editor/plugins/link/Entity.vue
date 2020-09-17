@@ -40,9 +40,10 @@
 						<i class="icon-expand"></i>
 					</span>
 					<template v-if="data.type">
-						<img :src="getImgByType(data.type)" />
+						<el-tooltip class="item" effect="dark" :content="data.type" placement="left">
+							<img :src="getImgByType(data.type)" />
+						</el-tooltip>
 					</template>
-
 					<img class="pk" v-if="data.primary_key_position > 0" src="../../../../static/image/PK.png" />
 					<span class="node-label">{{ node.label }}</span>
 				</div>
