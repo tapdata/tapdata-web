@@ -704,9 +704,9 @@ export default {
 				if (res.status === 'SUCCESS' && res.result && res.result.length) {
 					templeSchema = res.result;
 					this.reloadModelLoading = false;
-					self.$message(this.$t('message.reloadSchemaSuccess'));
+					self.$message.success(this.$t('message.reloadSchemaSuccess'));
 				} else {
-					self.$message(this.$t('message.reloadSchemaError'));
+					self.$message.error(this.$t('message.reloadSchemaError'));
 				}
 				this.reloadModelLoading = false;
 				if (templeSchema && templeSchema.length) {
