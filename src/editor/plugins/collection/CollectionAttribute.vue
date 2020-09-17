@@ -702,7 +702,7 @@ export default {
 			connectionApi
 				.get([connectionId])
 				.then(result => {
-					if (result.data) {
+					if (result.data && result.data.schema && result.data.schema.tables) {
 						this.tableData = result.data.schema.tables;
 						let schemas = (result.data.schema && result.data.schema.tables) || [];
 						tempSchemas = schemas.sort((t1, t2) =>
