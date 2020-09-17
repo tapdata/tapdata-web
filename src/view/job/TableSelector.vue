@@ -155,6 +155,7 @@ export default {
 						meta_type: true,
 						original_name: true,
 						source: true,
+						fields: true,
 						'source._id': true,
 						'source.user_id': true,
 						'source.name': true,
@@ -322,6 +323,7 @@ export default {
 					meta_type: true,
 					original_name: true,
 					source: true,
+					fields: true,
 					'source._id': true,
 					'source.user_id': true,
 					'source.name': true,
@@ -466,7 +468,6 @@ export default {
 			} else {
 				cell = this.editor.graph.createCell(mapping[data.meta_type], formData, schema);
 			}
-
 			let coordinates = this.editor.graph.getClientOffset();
 			cell.position(coordinates.x + 400, coordinates.y + this.count + 160);
 			this.editor.graph.addCell(cell);
