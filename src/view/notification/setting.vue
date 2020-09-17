@@ -118,7 +118,7 @@
 					size="mini"
 					type="primary"
 					:disabled="!runNotification || !systemNotification || !agentNotification"
-					>保存设置</el-button
+					>{{ $t('dataForm.submit') }}</el-button
 				>
 			</div>
 		</div>
@@ -182,6 +182,9 @@ export default {
 					agentNotification: this.agentNotification
 				})
 			};
+			if (!data) {
+				return;
+			}
 			Setting.update(where, data).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					this.loading = false;

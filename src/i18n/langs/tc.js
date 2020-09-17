@@ -1142,7 +1142,8 @@ const tc = {
 			lineNumVerfyDuration: '行數校驗持續時間',
 			intervalFrequency: '內容校驗間隔頻率',
 			verifyDuration: '內容校驗持續時間',
-			verifyStartTime: '內容校驗開始執行時間'
+			verifyStartTime: '內容校驗開始執行時間',
+			verifySetting: '校验設置'
 		}
 	},
 	dataMap: {

@@ -1145,7 +1145,8 @@ const cn = {
 			lineNumVerfyDuration: '行数校验持续时间',
 			intervalFrequency: '内容校验间隔频率',
 			verifyDuration: '内容校验持续时间',
-			verifyStartTime: '内容校验开始执行时间'
+			verifyStartTime: '内容校验开始执行时间',
+			verifySetting: '校验设置'
 		}
 	},
 	dataMap: {

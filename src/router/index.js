@@ -219,7 +219,7 @@ const childRoutes = [
 		meta: { url: '/old/index.html#/jsFuncs' }
 	},
 	{
-		path: '/setting',
+		path: '/notification/setting',
 		name: 'setting',
 		component: view('notification/setting'),
 		meta: { title: i18n.t('notification.setting') }

@@ -40,6 +40,9 @@
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="settings">{{ $t('app.menu.settings') }}</el-dropdown-item>
 						<el-dropdown-item command="setting">{{ $t('notification.setting') }}</el-dropdown-item>
+						<el-dropdown-item command="verifySetting">{{
+							$t('dataVerify.setting.verifySetting')
+						}}</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
 				<el-dropdown v-if="showLang !== 'false'" class="btn" placement="bottom" @command="changeLanguage">
@@ -317,7 +320,12 @@ export default {
 					break;
 				case 'setting':
 					this.$router.push({
-						name: 'setting'
+						path: '/notification/setting'
+					});
+					break;
+				case 'verifySetting':
+					this.$router.push({
+						path: '/dataVerification/setting'
 					});
 					break;
 				case 'newDataFlow':

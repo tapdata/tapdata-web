@@ -20,25 +20,18 @@
 				</el-form-item>
 				<el-form-item :label="$t('dataVerify.setting.errorSaveSumLable')">
 					<el-select v-model="formData.reservedQuantityPerTable" size="mini" class="dataWrite-list">
-						<el-option
-							v-for="item in dataWriteList"
-							:key="item.value"
-							:label="item.label"
-							:value="item.value"
-						>
-						</el-option>
+						<el-option label="100" value="100"></el-option>
+						<el-option label="1000" value="1000"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item :label="$t('dataVerify.setting.errorDifferenceResult')">
-					<el-select v-model="formData.differenceTolerant" size="mini" class="dataWrite-list">
-						<el-option
-							v-for="item in dataWriteList"
-							:key="item.value"
-							:label="item.label"
-							:value="item.value"
-						>
-						</el-option>
-					</el-select>
+					<el-input
+						v-model="formData.differenceTolerant"
+						class="input-with-select"
+						size="mini"
+						onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+					>
+					</el-input>
 				</el-form-item>
 				<el-form-item :label="$t('dataVerify.setting.lineNumberFrequency')">
 					<el-input
@@ -80,6 +73,7 @@
 						onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
 					>
 						<el-select v-model="formData.contentInspectUtil" slot="append" placeholder="请选择">
+							<el-option label="minute" value="minute"></el-option>
 							<el-option label="hour" value="hour"></el-option>
 							<el-option label="second" value="day"></el-option>
 						</el-select>
@@ -112,7 +106,9 @@
 					</el-select>
 				</el-form-item>
 			</el-form>
-			<el-button size="mini" type="primary" @click="submit" style="width: 80px">保存</el-button>
+			<el-button size="mini" type="primary" @click="submit" style="width: 80px">{{
+				$t('dataForm.submit')
+			}}</el-button>
 		</div>
 	</div>
 </template>
@@ -266,6 +262,9 @@ export default {
 				});
 		},
 		submit() {
+			if (!this.formData) {
+				return;
+			}
 			let where = {
 				id: '82'
 			};

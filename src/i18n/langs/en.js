@@ -1156,7 +1156,8 @@ const en = {
 			lineNumVerfyDuration: 'Line number verification duration',
 			intervalFrequency: 'Content verification interval frequency',
 			verifyDuration: 'Content verification duration',
-			verifyStartTime: 'Content verification start execution time'
+			verifyStartTime: 'Content verification start execution time',
+			verifySetting: 'Verify setting'
 		}
 	},
 	dataMap: {
