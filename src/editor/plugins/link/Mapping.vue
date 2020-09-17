@@ -1,7 +1,12 @@
 <template>
-	<div class="e-mapping" ref="mappingContainer">
+	<div class="e-mapping" ref="mappingContainer" @scroll="position">
 		<div class="e-source" ref="sourceContainer">
-			<Entity ref="sourceEntity" :schema="sourceSchema"></Entity>
+			<Entity
+				ref="sourceEntity"
+				:schema="sourceSchema"
+				:filterFields="filterFields"
+				@check="$emit('check', $event)"
+			></Entity>
 		</div>
 		<div class="e-space"></div>
 		<div class="e-target" ref="targetContainer">
@@ -21,7 +26,9 @@ export default {
 	name: 'Mapping',
 	components: { Entity },
 
-	props: {},
+	props: {
+		filterFields: Array
+	},
 
 	data() {
 		let data = {
@@ -120,8 +127,8 @@ export default {
 			for (let i = 0; i < tableNames.length; i++) {
 				let tableName = tableNames[i];
 				let table = tables[tableName];
-				let sourceEl = self.$refs.sourceEntity.getOutPortByTable(table);
-				let targetEl = self.$refs.targetEntity.getInPortByTable(table);
+				let sourceEl = self.$refs.sourceEntity ? self.$refs.sourceEntity.getOutPort() : null;
+				let targetEl = self.$refs.targetEntity ? self.$refs.targetEntity.getInPort(table) : null;
 
 				if (sourceEl && targetEl && self.isConnected(sourceEl) && self.isConnected(targetEl)) {
 					let line = new LeaderLine({
@@ -160,11 +167,22 @@ export default {
 			let source = convertSchemaToTreeData(sourceSchema);
 			let target = convertSchemaToTreeData(targetSchema);
 
+			if (target.fields && target.fields.length)
+				target.fields.sort((a, b) => {
+					if (a.table_name !== source.name) {
+						return b.table_name === source.name ? 1 : 0;
+					}
+					if (b.table_name !== source.name) {
+						return a.table_name === source.name ? -1 : 0;
+					}
+					return 0;
+				});
+
 			this.targetSchema = _.cloneDeep(target);
 			this.sourceSchema = _.cloneDeep(source);
 			if (source && source.fields) {
 				source.fields.forEach(field => {
-					if (!this.tables[field.table_name]) {
+					if (!this.tables[field.table_name] && source.name === field.table_name) {
 						this.tables[field.table_name] = {
 							color: field.color,
 							table_name: field.table_name
@@ -194,9 +212,8 @@ export default {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
-	align-items: center;
 	height: 100%;
-
+	overflow-y: auto;
 	.e-space {
 		max-width: 60px;
 		width: 10%;
@@ -204,15 +221,6 @@ export default {
 	.e-source,
 	.e-target {
 		flex: 1;
-		height: 100%;
-
-		display: flex;
-		flex-direction: column;
-		justify-content: start;
-		align-items: center;
-
-		overflow: auto;
-		padding: 2px;
 	}
 }
 </style>

@@ -15,30 +15,30 @@ let db2db = {
 		emailWaring: { edited: true, started: false, error: true, paused: false },
 		stages: [
 			{
-				id: '9a74f52e-9d98-4fa4-94f4-fac4210862d9',
+				id: 'dbafb160-4793-4bd5-aba3-188eb049ecfa',
 				inputLanes: [],
-				outputLanes: ['9ec112e9-f93e-4edc-bff1-330294016890'],
+				outputLanes: ['34455d62-177d-4410-a115-9d053a84ec80'],
 				distance: 1,
 				connectionId: '',
 				includeTables: [],
 				dropTable: false,
-				table_prefix: '',
-				table_suffix: '',
 				type: 'database',
 				readCdcInterval: 500,
 				readBatchSize: 1000
 			},
 			{
-				id: '9ec112e9-f93e-4edc-bff1-330294016890',
-				inputLanes: ['9a74f52e-9d98-4fa4-94f4-fac4210862d9'],
+				id: '34455d62-177d-4410-a115-9d053a84ec80',
+				inputLanes: ['dbafb160-4793-4bd5-aba3-188eb049ecfa'],
 				outputLanes: [],
 				distance: 0,
 				connectionId: '',
 				includeTables: [],
 				dropTable: false,
+				type: 'database',
+				dropType: 'no_drop',
 				table_prefix: '',
 				table_suffix: '',
-				type: 'database',
+				syncObjects: [{ type: 'table', objectNames: [] }],
 				readCdcInterval: 500,
 				readBatchSize: 1000
 			}
@@ -49,6 +49,7 @@ let db2db = {
 			notificationWindow: 0,
 			notificationInterval: 300,
 			readCdcInterval: 500,
+			maxTransactionLength: 12,
 			description: '',
 			distinctWriteType: 'intellect',
 			drop_target: false,
@@ -65,7 +66,7 @@ let db2db = {
 			transformerConcurrency: 8
 		},
 		editorData:
-			'{"cells":[{"type":"app.Database","form_data":{"connectionId":"","includeTables":[],"dropTable":false,"table_prefix":"","table_suffix":"","type":"database"},"freeTransform":false,"size":{"width":160,"height":36},"ports":{"groups":{"greens":{"attrs":{"circle":{"fill":"#f56c6c","stroke":"red","strokeWidth":1,"r":6}},"position":"absolute"}}},"schema":null,"outputSchema":null,"position":{"x":-370,"y":120},"angle":0,"id":"9a74f52e-9d98-4fa4-94f4-fac4210862d9","z":1,"attrs":{"body":{"stroke":"#ff0000"}}},{"type":"app.Database","form_data":{"connectionId":"","includeTables":[],"dropTable":false,"table_prefix":"","table_suffix":"","type":"database"},"freeTransform":false,"size":{"width":160,"height":36},"ports":{"groups":{"greens":{"attrs":{"circle":{"fill":"#f56c6c","stroke":"red","strokeWidth":1,"r":6}},"position":"absolute"}}},"schema":null,"outputSchema":{"meta_type":"table"},"position":{"x":-92,"y":120},"angle":0,"id":"9ec112e9-f93e-4edc-bff1-330294016890","z":2,"attrs":{"body":{"stroke":"#ff0000"}}},{"type":"app.Link","router":{"name":"manhattan"},"connector":{"name":"rounded"},"labels":[],"source":{"id":"9a74f52e-9d98-4fa4-94f4-fac4210862d9"},"target":{"id":"9ec112e9-f93e-4edc-bff1-330294016890"},"id":"802dbe9d-3d09-4a05-b749-1fafb2730998","z":3,"form_data":{"label":"","type":"link"},"attrs":{}}]}'
+			'{"cells":[{"type":"app.Database","form_data":{"connectionId":"","includeTables":[],"dropTable":false,"type":"database"},"freeTransform":false,"size":{"width":160,"height":36},"ports":{"groups":{"greens":{"attrs":{"circle":{"fill":"#f56c6c","stroke":"red","strokeWidth":1,"r":6}},"position":"absolute"}}},"schema":null,"outputSchema":null,"position":{"x":-370,"y":120},"angle":0,"id":"dbafb160-4793-4bd5-aba3-188eb049ecfa","z":1,"attrs":{"body":{"stroke":"#ff0000"}}},{"type":"app.Database","form_data":{"connectionId":"","includeTables":[],"dropTable":false,"type":"database","dropType":"no_drop","table_prefix":"","table_suffix":"","syncObjects":[{"type":"table","objectNames":[]}]},"freeTransform":false,"size":{"width":160,"height":36},"ports":{"groups":{"greens":{"attrs":{"circle":{"fill":"#f56c6c","stroke":"red","strokeWidth":1,"r":6}},"position":"absolute"}}},"schema":null,"outputSchema":{"meta_type":"table"},"position":{"x":-92,"y":120},"angle":0,"id":"34455d62-177d-4410-a115-9d053a84ec80","z":2,"attrs":{"body":{"stroke":"#ff0000"}}},{"type":"app.databaseLink","router":{"name":"manhattan"},"connector":{"name":"rounded"},"labels":[],"source":{"id":"dbafb160-4793-4bd5-aba3-188eb049ecfa"},"target":{"id":"34455d62-177d-4410-a115-9d053a84ec80"},"id":"2219b10a-6958-47bb-9a63-77712d75c476","z":3,"form_data":{"table_prefix":"","table_suffix":"","dropType":"no_drop","type":"databaseLink","selectSourceArr":[],"selectSourceDatabase":{"table":true,"view":false,"function":false,"procedure":false},"joinTable":{"tableName":"","joinType":"upsert","joinPath":"","manyOneUpsert":false,"joinKeys":[{"source":"","target":""}],"stageId":"dbafb160-4793-4bd5-aba3-188eb049ecfa","isArray":false,"arrayUniqueKey":""}},"attrs":{}}]}'
 	}
 };
 

@@ -55,6 +55,7 @@ import {
 	Alert,
 	Steps,
 	Step,
+	Transfer,
 	Badge
 } from 'element-ui';
 //重写ElementUI Select组件多选时的触发函数，去掉去重的处理
@@ -141,6 +142,7 @@ Vue.component(Cascader.name, Cascader);
 Vue.component(Alert.name, Alert);
 Vue.component(Steps.name, Steps);
 Vue.component(Step.name, Step);
+Vue.component(Transfer.name, Transfer);
 Vue.component(Badge.name, Badge);
 Vue.use(Loading.directive);
 /***提示只显示一次**/
@@ -185,3 +187,4 @@ Vue.prototype.$alert = MessageBox.alert;
 Vue.prototype.$message = new DoneMessage();
 Vue.prototype.$msgbox = MessageBox;
 Vue.prototype.$notify = Notification;
+Loading.service({ fullscreen: true });

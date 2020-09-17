@@ -944,12 +944,10 @@ export default {
 		// 获取stage的节点信息
 		getStageDataApi(id, tableName) {
 			this.apiLoading = true;
-			// let params = {
-			// 	tableName: tableName
-			// };
+
 			// debugger;
 			connectionApi
-				.customQuery([id], tableName)
+				.customQuery([id], { tableName: tableName })
 				.then(res => {
 					if (res.data) {
 						this.stage = res.data;

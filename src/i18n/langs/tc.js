@@ -73,7 +73,13 @@ const tc = {
 		menu: {
 			dashboard: '控制台',
 			connections: '数据源',
+			dataSync: '數據同步',
 			dataFlows: '數據採集',
+			dataFlowsAll: '全部任務',
+			dataFlowsRunning: '運行中任務',
+			dataFlowsError: '出錯任務',
+			dataFlowsPaused: '已暫停任務',
+			dataFlowsDraft: '編輯中任務',
 			dataGovernance: '數據治理',
 			metadataDefinition: '數據目錄',
 			dataQuality: '數據質量',
@@ -188,7 +194,7 @@ const tc = {
 		forceStoppingMessage: '強制停止將立即中斷數據傳輸，是否繼續執行?',
 		stopInitial_syncMessage: '初始化類型的任務暫停後如果再次啟動，任務會從頭開始同步，確定暫停？',
 		stopMessage: '確定要暫停任務嗎?',
-		cancleReset: '已取消重置',
+		cancelReset: '已取消重置',
 		resetOk: '重置成功',
 		resetFailed: '重置失敗',
 		notRest: '請選擇正確的數據進行重置',
@@ -196,8 +202,10 @@ const tc = {
 		edit: '修改',
 		clickRelatedTasks: '點擊查看相關任務',
 		currentTaskOpen: '當前任務已打開',
-		noRelatedTask: '暫無相關任務'
+		noRelatedTask: '暫無相關任務',
+		loadingSchema: '源庫schema尚未加載完成，暫時無法啟動'
 	},
+
 	dataFlow: {
 		updateModel: '更新模型',
 		databseMigrationHead: '數據庫遷移',
@@ -206,8 +214,8 @@ const tc = {
 		createNew: '新建',
 		DissedNoAction: 'oops~ 被禁用的節點或連線不能被刪除、連入或連出',
 		guidingMode: '引導模式',
-		advancedMode: '高級模式',
-		freedomMode: '轉高級模式',
+		advancedMode: '自由模式',
+		freedomMode: '轉自由模式',
 		advanceSetting: '更多高級設置',
 		closeSetting: '收起',
 		openPanel: '展開',
@@ -216,7 +224,9 @@ const tc = {
 		next: '下一步',
 		sourceSetting: '設置源庫',
 		targetSetting: '設置目標庫',
-		jobSetting: '任務設置',
+		advancedetting: '高級設置',
+		simpleSceneTitle: '創建數據庫複製任務',
+		sourceLibrarySetting: '源庫結構與對象設置',
 		databseMigration:
 			'以引導的模式幫助新手用戶快速了解數據庫之間的遷移。數據庫遷移能快速地實現數據庫之間(內置表批量過濾和改名等設置)的全量和增量傳輸。',
 		databsenProcessing:
@@ -506,7 +516,13 @@ const tc = {
 					bulkRevocation: '批量撤銷',
 					queueCopied: '待遷移表',
 					tableRemoved: '已移除表',
-					enterName: '請輸入名稱/字段名進行搜索'
+					enterName: '請輸入名稱/字段名進行搜索',
+					source: '數據源',
+					type: '數據庫類型',
+					databaseName: '數據庫名',
+					account: '數據庫賬號',
+					attributionAccount: '歸屬賬號名',
+					includeTable: '包含表'
 				},
 				collection: {
 					name: '數據集',
@@ -560,10 +576,10 @@ const tc = {
 							label: '過濾條件',
 							invalidJSON: '無效的JSON',
 							fiflterSetting: '過濾設置',
-							fieldFilter: '字段過濾',
+							fieldFilter: '智慧模式',
 							openFiflter: '開啟過濾',
 							closeFiflter: '關閉過濾',
-							sqlFilter: 'SQL過濾',
+							sqlFilter: 'SQL模式',
 							saveFields: '保留字段',
 							allField: '全部字段',
 							deleteField: '刪除字段',
@@ -642,6 +658,7 @@ const tc = {
 					chooseApiName: '請選擇API',
 					api_isNull: 'API不能為空',
 					none_collection: '數據集必填.',
+					none_database: '數據庫必填.',
 					none_pk: '主鍵必填.',
 					dataApiName: '數據發布API名稱',
 					description: '描述',
@@ -658,6 +675,16 @@ const tc = {
 					availableQueries: '可用查詢',
 					publishApi_path: 'API路徑不為空',
 					variable_name: '只能包含字母，數字，下劃線和美元符號，和數字不能開頭'
+				},
+				redis: {
+					name: 'Redis',
+					tip: 'Redis節點',
+					chooseRedisName: '請選擇Redis',
+					Redis_isNull: 'Redis不能為空',
+					prefixKey: '緩存鍵前綴',
+					prefixKey_placeholder: '請輸入緩存鍵前綴',
+					cacheKey: '設置緩存鍵 ',
+					cacheKey_placeholder: '請輸入緩存鍵前綴 '
 				},
 				es: {
 					name: 'ES',
@@ -874,6 +901,35 @@ const tc = {
 							group: '條件分組'
 						}
 					}
+				},
+				jointCache: {
+					name: '關聯緩存',
+					tip: '關聯緩存節點',
+					form: {
+						name: {
+							label: '節點名稱',
+							placeholder: '請輸入節點名稱',
+							none: '節點名稱必填'
+						},
+						cacheId: {
+							label: '對應緩存節點',
+							placeholder: '請選擇本任務內內存緩存節點',
+							none: '請選擇本任務內內存緩存節點'
+						},
+						joinSettings: {
+							label: '關聯設置',
+							cacheKey: '緩存表主鍵',
+							sourceKey: {
+								label: '源表關聯鍵',
+								placeholder: '請選擇關聯字段'
+							},
+							none: '請選擇關聯字段'
+						},
+						joinKey: {
+							label: '寫入路徑',
+							placeholder: '請選擇或創建寫入路徑字段'
+						}
+					}
 				}
 			},
 			link: {
@@ -924,7 +980,34 @@ const tc = {
 					upsert: '更新已存在或插入新數據',
 					update: '更新寫入',
 					merge_embed: '更新內嵌數組'
-				}
+				},
+				existingSchema: {
+					label: '對目標端已存在的結構和數據的處理',
+					keepSchema: '保持目標端已存在的結構和數據',
+					keepExistedData: ' 保持目標端已存在的結構，僅刪除數據',
+					removeSchema: ' 刪除目標端已存在的結構和數據'
+				},
+				migrationSetting: '複製對象設置',
+				dataProcessing: '已有數據處理',
+				prefixAndSuffix: '加前後綴',
+				keepExistingData: '保持已存在數據',
+				deleteExistingData: '運行前刪除已存在數據',
+				reduction: '還原',
+				migrationObjece: '待複製表',
+				chosen: '已選擇',
+				searchContent: '搜索內容',
+				mappingRelations: '映射關係',
+				addPrefix: '添加前綴',
+				addSuffix: '添加後綴',
+				prefixPlaceholder: '請輸入前綴',
+				suffixPlaceholder: '請輸入後綴',
+				batchRename: '批量改名設置',
+				tableNameExample: '表名示例',
+				copySourceDatabase: '複製源庫結構類型',
+				tableTip: 'Table暫不支持外鍵複製',
+				viewTip: '複製view暫不支持表改名，勾選此項下方表改名功能會被禁用',
+				formTip: 'View、function、procedure的複制功能僅支持MySQL到MySQL的場景',
+				chooseATableTip: '至少選擇一個待複製表'
 			}
 		},
 		ui: {
@@ -982,7 +1065,9 @@ const tc = {
 				fullscreen: {
 					tip: '切換全屏'
 				}
-			}
+			},
+			nodeLoadSchemaDiaLog: '如果數據源有更新，此操作會更此例程的模型，是否繼續？',
+			allNodeLoadSchemaDiaLog: '如果數據源有更新，此操作會更新各例程的模型，是否繼續？'
 		},
 		preview: {
 			stage: '節點',
@@ -1215,7 +1300,7 @@ const tc = {
 		startupFailed: '啟動失敗',
 		stopFailed: '停止失敗',
 		encounterERRORSkipped: '運行中出現ERROR，跳過',
-		CDCLag: 'CDC滯後超時<%second%> 秒',
+		CDCLag: 'CDC滯後超時',
 		manageSeverRestartFailed: '管理端服務重啟失敗',
 		APISeverRestartFailed: 'API服務重啟失敗',
 		SYNCSeverRestartFailed: '同步治理服務重啟失敗',
@@ -1240,7 +1325,32 @@ const tc = {
 		SYNCSeverRestartedSuccessfully: '同步治理服務已重啟',
 		newSeverCreatedSuccessfully: '新服務監控被創建',
 		newSeverDeletedSuccessfully: '新服務監控被刪除',
-		databaseDDLChanged: '監測到數據庫DDL變化'
+		databaseDDLChanged: '監測到數據庫DDL變化',
+		settingCenter: '設置中心',
+		systemSetting: '系統設置',
+		noticeSetting: '通知設置',
+		tip: '此處通知設置為系統全局通知的設置，任務編排頁的通知設置的其優先級高於此處的全局通知設置',
+		jobOperationNotice: '任務運行通知',
+		emailNotice: '郵件通知',
+		jobStarted: '任務被啟動',
+		jobPaused: '任務被停止',
+		jobDeleted: '任務被刪除',
+		jobEdited: '任務被編輯',
+		jobStateError: '任務狀態error',
+		jobEncounterError: '任務遇到錯誤',
+		noticeInterval: '發送間隔',
+		CDCLagTime: 'CDC滯後通知',
+		lagTime: '滯後時間',
+		DDL: '數據庫DDL變化',
+		agentNotice: 'Agent通知',
+		serverDisconnected: '服務器斷開連接',
+		agentAbnormallyStopped: 'Agent服務意外停止',
+		agentStarted: 'Agent服務被啟動',
+		agentStopped: 'Agent服務被停止',
+		agentFailed: 'Agent服務啟動失敗',
+		agentStop: 'Agent服務停止失敗',
+		agentCreated: 'Agent被創建',
+		agentDeleted: 'Agent被刪除'
 	},
 	dialog: {
 		createTable: '創建新表',

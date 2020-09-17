@@ -211,9 +211,9 @@
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
-				<!-- <el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
+				<el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
 					$t('dataFlow.updateModel')
-				}}</el-button> -->
+				}}</el-button>
 				<entity
 					v-loading="schemaSelectConfig.loading"
 					:schema="convertSchemaToTreeData(defaultSchema)"
@@ -224,6 +224,18 @@
 		</div>
 		<CreateTable v-if="addtableFalg" :dialog="dialogData" @handleTable="getAddTableName"></CreateTable>
 		<relatedTasks :taskData="taskData" v-if="disabled"></relatedTasks>
+		<el-dialog
+			:title="$t('message.prompt')"
+			:visible.sync="dialogVisible"
+			:close-on-click-modal="false"
+			width="30%"
+		>
+			<span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="dialogVisible = false">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -236,6 +248,7 @@ import CreateTable from '../../../components/dialog/createTable';
 import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, uuid } from '../../util/Schema';
 import Entity from '../link/Entity';
 import _ from 'lodash';
+import ws from '../../../api/ws';
 import factory from '../../../api/factory';
 let connectionApi = factory('connections');
 const MetadataInstances = factory('MetadataInstances');
@@ -361,6 +374,7 @@ export default {
 			copyConnectionId: '',
 			tableNameId: '',
 
+			dialogVisible: false,
 			logsFlag: false,
 			taskData: {
 				id: '',
@@ -479,6 +493,31 @@ export default {
 		getAddTableName(val) {
 			this.model.tableName = val;
 			this.tableIsLink();
+			this.defaultSchema = null;
+			let schema = {
+				table_name: this.model.tableName,
+				cdc_enabled: true,
+				meta_type: 'collection',
+				fields: [
+					{
+						autoincrement: false,
+						columnSize: 0,
+						dataType: 7,
+						data_type: 'OBJECT_ID',
+						field_name: '_id',
+						id: uuid(),
+						is_nullable: true,
+						javaType: 'String',
+						key: 'PRI',
+						original_field_name: '_id',
+						precision: 0,
+						primary_key_position: 1,
+						scale: 0,
+						table_name: this.model.tableName
+					}
+				]
+			};
+			this.$emit('schemaChange', _.cloneDeep(schema));
 		},
 
 		// 打开数据目录数据库
@@ -501,7 +540,7 @@ export default {
 		// 判断表是否可以跳转
 		tableIsLink() {
 			this.tableNameId = '';
-			if (this.tableData.length) {
+			if (this.tableData && this.tableData.length) {
 				this.tableData.forEach(item => {
 					if (item.table_name === this.model.tableName) {
 						this.tableNameId = item.tableId;
@@ -732,14 +771,47 @@ export default {
 			editorMonitor.goBackMontior();
 		},
 
-		// 更新模型
+		// 更新模型点击弹窗
 		hanlderLoadSchema() {
-			this.loadDataModels(this.model.connectionId);
-			let schema = tempSchemas.filter(s => s.table_name === this.model.tableName);
+			this.dialogVisible = true;
+		},
 
-			this.$nextTick(() => {
-				this.$emit('schemaChange', _.cloneDeep(schema[0]));
+		// 确定更新模型弹窗
+		confirmDialog() {
+			let params = {
+				type: 'reloadSchema',
+				data: {
+					tables: [
+						{
+							connId: this.model.connectionId,
+							tableName: this.model.tableName,
+							userId: this.$cookie.get('user_id')
+						}
+					]
+				}
+			};
+
+			if (ws.ws.readyState == 1) ws.send(params);
+			let self = this,
+				schema = null,
+				templeSchema = [];
+			ws.on('execute_load_schema_result', res => {
+				if (res.status === 'SUCCESS' && res.result && res.result.length) {
+					templeSchema = res.result;
+				}
+				if (templeSchema && templeSchema.length) {
+					templeSchema.forEach(item => {
+						if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
+							schema = item.schema;
+						}
+					});
+				}
+				self.$nextTick(() => {
+					self.$emit('schemaChange', _.cloneDeep(schema));
+					this.defaultSchema = schema;
+				});
 			});
+			this.dialogVisible = false;
 		}
 	}
 };

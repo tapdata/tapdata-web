@@ -42,3 +42,21 @@ export const TYPEMAP = {
 	newSeverDeletedSuccessfully: i18n.t('notification.newSeverDeletedSuccessfully'),
 	databaseDDLChanged: i18n.t('notification.databaseDDLChanged')
 };
+
+export const notificationMAP = {
+	jobStarted: i18n.t('notification.jobStarted'),
+	jobPaused: i18n.t('notification.jobPaused'),
+	jobDeleted: i18n.t('notification.jobDeleted'),
+	jobStateError: i18n.t('notification.jobStateError'),
+	jobEncounterError: i18n.t('notification.jobEncounterError'),
+	jobNoticeInterval: i18n.t('notification.jobNoticeInterval'),
+	CDCLagTime: i18n.t('notification.CDCLagTime'),
+	lagTime: i18n.t('notification.lagTime'),
+	DDL: i18n.t('notification.DDL'),
+	noticeInterval: i18n.t('notification.noticeInterval'),
+	serverDisconnected: i18n.t('notification.serverDisconnected'),
+	agentStarted: i18n.t('notification.agentStarted'),
+	agentStopped: i18n.t('notification.agentStopped'),
+	agentCreated: i18n.t('notification.agentCreated'),
+	agentDeleted: i18n.t('notification.agentDeleted')
+};

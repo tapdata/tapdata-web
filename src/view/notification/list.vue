@@ -33,7 +33,11 @@
 						</el-select>
 						<span @click="handlePageRead()">{{ $t('notification.maskRead') }}</span>
 						<span @click="handleAllRead()">{{ $t('notification.maskReadAll') }}</span>
-						<!--						<span>通知设置</span>-->
+						<span>
+							<router-link to="/setting"
+								><span style="color: #48B6E2">{{ $t('notification.setting') }}</span></router-link
+							>
+						</span>
 					</div>
 				</div>
 				<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
@@ -65,6 +69,7 @@
 									</router-link>
 								</span>
 								<span>{{ typeMap[item.msg] }}</span>
+								<span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
 							</div>
 							<div class="list-item-time">
 								<span>{{ item.createTime }}</span>
@@ -198,6 +203,9 @@ export default {
 			if (this.$cookie.get('isAdmin') == 0) {
 				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
+			if (this.search || this.search !== '') {
+				where.where['level'] = this.search;
+			}
 			notification.count(where).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
@@ -266,7 +274,7 @@ export default {
 		},
 		handleAllRead() {
 			let where = {};
-			if (this.$cookie.get('isAdmin') === 0) {
+			if (this.$cookie.get('isAdmin') == 0) {
 				where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
 			let data = {
@@ -293,6 +301,22 @@ export default {
 				this.read = false; //未读
 			}
 			this.getData();
+		},
+		getLag(lag) {
+			let r = '0s';
+			if (lag) {
+				let m = moment.duration(lag, 'seconds');
+				if (m.days()) {
+					r = m.days() + 'd';
+				} else if (m.hours()) {
+					r = m.hours() + 'h';
+				} else if (m.minutes()) {
+					r = m.minutes() + 'm';
+				} else {
+					r = lag + 's';
+				}
+			}
+			return r;
 		}
 	}
 };
@@ -304,7 +328,7 @@ export default {
 	height: 100%;
 	font-size: 12px;
 	.unread {
-		width: 25px;
+		min-width: 25px;
 		height: 17px;
 		display: inline-block;
 		line-height: 17px;

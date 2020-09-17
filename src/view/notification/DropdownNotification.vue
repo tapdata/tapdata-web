@@ -1,7 +1,13 @@
 <template>
 	<div>
 		<div class="item-head">
-			<span>{{ $t('notification.notice') }}</span>
+			<span>
+				<router-link to="/setting">
+					<span style="color: #48B6E2">
+						{{ $t('notification.setting') }}
+					</span>
+				</router-link>
+			</span>
 			<span class="item-head-text">
 				<router-link to="/notification">
 					<span style="color: #48B6E2">
@@ -11,7 +17,7 @@
 			</span>
 		</div>
 		<ul class="cuk-list clearfix cuk-list-type-block">
-			<li class="list-item" v-for="item in listData" :key="item.level" @click="handleRead(item.id)">
+			<li class="list-item" v-for="item in listData" :key="item.id" @click="handleRead(item.id)">
 				<div class="list-item-content">
 					<div class="unread-1zPaAXtSu"></div>
 					<div class="list-item-desc">
@@ -33,6 +39,7 @@
 							</router-link>
 						</span>
 						<span>{{ typeMap[item.msg] }}</span>
+						<span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
 					</div>
 					<div class="list-item-time">
 						<span>{{ item.createTime }}</span>
@@ -127,6 +134,22 @@ export default {
 					}
 				}
 			});
+		},
+		getLag(lag) {
+			let r = '0s';
+			if (lag) {
+				let m = moment.duration(lag, 'seconds');
+				if (m.days()) {
+					r = m.days() + 'd';
+				} else if (m.hours()) {
+					r = m.hours() + 'h';
+				} else if (m.minutes()) {
+					r = m.minutes() + 'm';
+				} else {
+					r = lag + 's';
+				}
+			}
+			return r;
 		}
 	}
 };

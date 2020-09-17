@@ -300,7 +300,7 @@ export default {
 				return resolve([]);
 			}
 			if (
-				['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection'].includes(
+				['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection', 'redis'].includes(
 					node.data.source.database_type
 				)
 			) {
@@ -397,7 +397,7 @@ export default {
 			if (data.meta_type === 'database') {
 				if (
 					data.source.database_type &&
-					['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection'].includes(
+					['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection', 'redis'].includes(
 						data.source.database_type
 					)
 				) {
@@ -454,7 +454,7 @@ export default {
 			if (['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)) {
 				if (
 					data.source.database_type &&
-					['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection'].includes(
+					['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection', 'redis'].includes(
 						data.source.database_type
 					)
 				) {

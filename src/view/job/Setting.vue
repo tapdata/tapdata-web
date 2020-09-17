@@ -143,12 +143,9 @@
 					prop="maxTransactionLength"
 				>
 					<div class="flex-block">
-						<el-input-number
-							v-model="formData.maxTransactionLength"
-							:min="1"
-							:max="720"
-							size="mini"
-						></el-input-number>
+						<el-input v-model="formData.maxTransactionLength" :min="1" :max="720" size="mini">
+							<template slot="append">Hours</template>
+						</el-input>
 						<el-popover class="aggtip" placement="top-start" width="400" trigger="hover">
 							<span>{{ $t('editor.cell.data_node.table.form.maximum_transaction.tip') }}</span>
 							<span class="icon iconfont icon-tishi1" slot="reference"></span>

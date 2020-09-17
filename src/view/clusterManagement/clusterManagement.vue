@@ -110,7 +110,7 @@
 								</el-row>
 								<el-row :gutter="20" class="data-list">
 									<el-col :span="8">
-										<span class="txt"><i class="icon iconfont iconAPI"></i>API SEVER</span>
+										<span class="txt"><i class="icon iconfont iconAPI"></i>API server</span>
 									</el-col>
 									<el-col :span="4">
 										<span :class="item.apiServer.status == 'stopped' ? 'red' : 'green'">{{
@@ -280,7 +280,7 @@ export default {
 			if (status === 'running') {
 				this.$confirm(this.$t('message.deleteOrNot') + '?', {
 					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancle')
+					cancelButtonText: this.$t('message.cancel')
 				}).then(() => {
 					cluster.removeMonitor(params).then(res => {
 						if (res.statusText === 'OK' || res.status === 200) {
@@ -329,7 +329,7 @@ export default {
 				};
 				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.closeSever'), {
 					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancle')
+					cancelButtonText: this.$t('message.cancel')
 				}).then(() => {
 					this.operationFn(data);
 				});
@@ -352,7 +352,7 @@ export default {
 				};
 				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.restartServer'), {
 					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancle')
+					cancelButtonText: this.$t('message.cancel')
 				}).then(() => {
 					this.operationFn(data);
 				});
