@@ -41,7 +41,7 @@
 					</span>
 					<template v-if="data.type">
 						<el-tooltip class="item" effect="dark" :content="data.type" placement="left">
-							<img :src="getImgByType(data.type)" />
+							<img :src="getImgByType(data.type) || getImgByType('Default')" />
 						</el-tooltip>
 					</template>
 					<img class="pk" v-if="data.primary_key_position > 0" src="../../../../static/image/PK.png" />
