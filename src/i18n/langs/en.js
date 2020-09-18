@@ -104,9 +104,8 @@ const en = {
 			users: 'User Management',
 			journal: 'User action log',
 			roles: 'Role Management',
-			settings: 'Settings',
+			settings: 'System settings',
 			favorite: 'Favorite',
-
 			delFavMenu: 'Delete Favorite'
 		},
 		Home: {
@@ -1298,7 +1297,7 @@ const en = {
 	notification: {
 		notice: 'Notice',
 		viewMore: 'View more',
-		setting: 'Setting',
+		setting: 'Notice settings',
 		allNotice: 'All notice',
 		unreadNotice: 'Unread notice',
 		maskRead: 'Mask read this page',
