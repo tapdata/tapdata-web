@@ -14,73 +14,108 @@ const childRoutes = [
 		path: '/dashboard',
 		name: 'dashboard',
 		component: view('dashboard/Dashboard'),
-		meta: { requiresAuth: true, title: i18n.t('tap.home') }
+		meta: { requiresAuth: true, title: i18n.t('tap.home'), isCollapse: false }
 	},
 	{
 		path: '/connections',
 		name: 'connections',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/connections', title: i18n.t('tap.connection') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/connections',
+			title: i18n.t('tap.connection'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/connection',
 		name: 'connection',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/connection', title: i18n.t('tap.connectionEdtion') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/connection',
+			title: i18n.t('tap.connectionEdtion'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/connection/:id',
 		name: 'editConnection',
 		component: view('ExternalLink'),
-		meta: { url: '/old/index.html#/connection', title: i18n.t('tap.connectionEdtion') }
+		meta: { url: '/old/index.html#/connection', title: i18n.t('tap.connectionEdtion'), isCollapse: true }
 	},
 	{
 		path: '/metadataDefinition',
 		name: 'metadataDefinition',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/metadataDefinition', title: i18n.t('tap.dataCatalog') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/metadataDefinition',
+			title: i18n.t('tap.dataCatalog'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/metadataInstances/:id',
 		name: 'metadataInstances',
 		component: view('ExternalLink'),
-		meta: { title: i18n.t('tap.metadataInstances') }
+		meta: { title: i18n.t('tap.metadataInstances'), isCollapse: true }
 	},
 	{
 		path: '/dataQuality',
 		name: 'dataQuality',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/dataQuality', title: i18n.t('tap.dataQuality') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/dataQuality',
+			title: i18n.t('tap.dataQuality'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/dataQuality/:id',
 		name: 'dataQualityDetail',
 		component: view('ExternalLink'),
-		meta: { title: i18n.t('tap.dataQuality') }
+		meta: { title: i18n.t('tap.dataQuality'), isCollapse: true }
 	},
 	{
 		path: '/ttl',
 		name: 'timeToLive',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/ttl', title: i18n.t('tap.TimeToLive') }
+		meta: { requiresAuth: true, url: '/old/index.html#/ttl', title: i18n.t('tap.TimeToLive'), isCollapse: false }
 	},
 	{
 		path: '/dataRules',
 		name: 'dataRules',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/dataRules', title: i18n.t('tap.dataRules') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/dataRules',
+			title: i18n.t('tap.dataRules'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/dictionary',
 		name: 'dictionary',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/dictionary', title: i18n.t('tap.dictionary') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/dictionary',
+			title: i18n.t('tap.dictionary'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/modules',
 		name: 'modules',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/modules', title: i18n.t('tap.apiManagement') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/modules',
+			title: i18n.t('tap.apiManagement'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/module/:id',
@@ -91,79 +126,134 @@ const childRoutes = [
 		path: '/dataExplorer',
 		name: 'dataExplorer',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/dataExplorer', title: i18n.t('tap.dataExplor') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/dataExplorer',
+			title: i18n.t('tap.dataExplor'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/apiDocAndTest',
 		name: 'apiDocAndTest',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/apiDocAndTest', title: i18n.t('tap.docTest') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/apiDocAndTest',
+			title: i18n.t('tap.docTest'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/apiAnalysis',
 		name: 'apiAnalysis',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/apiAnalysis', title: i18n.t('tap.apiStats') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/apiAnalysis',
+			title: i18n.t('tap.apiStats'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/applications',
 		name: 'applications',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/applications', title: i18n.t('tap.apiClients') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/applications',
+			title: i18n.t('tap.apiClients'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/apiServers',
 		name: 'apiServers',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/apiServers', title: i18n.t('tap.apiSever') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/apiServers',
+			title: i18n.t('tap.apiSever'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/dataCollect',
 		name: 'dataCollect',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/dataCollect', title: i18n.t('tap.dataCollect') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/dataCollect',
+			title: i18n.t('tap.dataCollect'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/tasks',
 		name: 'tasks',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/tasks', title: i18n.t('tap.jobSchedule') }
+		meta: { requiresAuth: true, url: '/old/index.html#/tasks', title: i18n.t('tap.jobSchedule'), isCollapse: false }
 	},
 	{
 		path: '/agentdownload',
 		name: 'agentdownload',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/agentdownload', title: i18n.t('tap.agentdownload') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/agentdownload',
+			title: i18n.t('tap.agentdownload'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/agents',
 		name: 'agents',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/agents', title: i18n.t('tap.agentManagement') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/agents',
+			title: i18n.t('tap.agentManagement'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/serversOversee',
 		name: 'serversOversee',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/serversOversee', title: i18n.t('tap.serversOversee') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/serversOversee',
+			title: i18n.t('tap.serversOversee'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/users',
 		name: 'users',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/users', title: i18n.t('tap.userManagement') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/users',
+			title: i18n.t('tap.userManagement'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/journal',
 		name: 'journal',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/journal', title: i18n.t('tap.journal') }
+		meta: { requiresAuth: true, url: '/old/index.html#/journal', title: i18n.t('tap.journal'), isCollapse: false }
 	},
 	{
 		path: '/roles',
 		name: 'roles',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/roles', title: i18n.t('tap.roleManagement') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/roles',
+			title: i18n.t('tap.roleManagement'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/role',
@@ -179,56 +269,61 @@ const childRoutes = [
 		path: '/settings',
 		name: 'settings',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/settings', title: i18n.t('tap.systemSettings') }
+		meta: {
+			requiresAuth: true,
+			url: '/old/index.html#/settings',
+			title: i18n.t('tap.systemSettings'),
+			isCollapse: false
+		}
 	},
 	/*-----------------------------------------------------------------*/
 	{
 		path: '/clusterManagement',
 		name: 'clusterManagement',
 		component: view('clusterManagement/layout'),
-		meta: { requiresAuth: true, title: i18n.t('tap.clusterManagement') }
+		meta: { requiresAuth: true, title: i18n.t('tap.clusterManagement'), isCollapse: false }
 	},
 	{
 		path: '/dataFlows',
 		name: 'dataFlows',
 		component: view('task/DataFlows'),
-		meta: { requiresAuth: true, title: i18n.t('tap.jobFlow') }
+		meta: { requiresAuth: true, title: i18n.t('tap.jobFlow'), isCollapse: true }
 	},
 	{
 		path: '/dataMap',
 		name: 'dataMap',
 		component: view('dataMap/DataMap'),
-		meta: { requiresAuth: true, title: i18n.t('tap.dataLineage') }
+		meta: { requiresAuth: true, title: i18n.t('tap.dataLineage'), isCollapse: false }
 	},
 	{
 		path: '/upload',
 		name: 'upload',
 		component: view('Upload'),
-		meta: { title: i18n.t('tap.upload') }
+		meta: { title: i18n.t('tap.upload'), isCollapse: false }
 	},
 	{
 		path: '/apiInfo',
 		name: 'apiInfo',
 		component: view('job/apiInfo'),
-		meta: { title: i18n.t('tap.apiInfo') }
+		meta: { title: i18n.t('tap.apiInfo'), isCollapse: false }
 	},
 	{
 		path: '/jsFuncs',
 		name: 'jsFuncs',
 		component: view('ExternalLink'),
-		meta: { url: '/old/index.html#/jsFuncs' }
+		meta: { url: '/old/index.html#/jsFuncs', isCollapse: false }
 	},
 	{
 		path: '/setting',
 		name: 'setting',
 		component: view('notification/setting'),
-		meta: { title: i18n.t('notification.setting') }
+		meta: { title: i18n.t('notification.setting'), isCollapse: true }
 	},
 	{
 		path: '/notification',
 		name: 'notification',
 		component: view('notification/list'),
-		meta: { title: i18n.t('notification.systemNotice') }
+		meta: { title: i18n.t('notification.systemNotice'), isCollapse: true }
 	}
 ];
 

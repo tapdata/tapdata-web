@@ -252,6 +252,11 @@ export default {
 	watch: {
 		'$route.name'() {
 			this.activeMenu = this.$route.path;
+		},
+		$route() {
+			if (this.$route.meta) {
+				this.isCollapse = this.$route.meta.isCollapse;
+			}
 		}
 	},
 	methods: {
