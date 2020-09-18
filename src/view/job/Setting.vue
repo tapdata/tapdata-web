@@ -171,6 +171,7 @@ import _ from 'lodash';
 import * as moment from 'moment';
 import factory from '../../api/factory';
 const connections = factory('connections');
+const Setting = factory('Setting');
 export default {
 	name: 'Setting.vue',
 	data() {
@@ -232,7 +233,9 @@ export default {
 			this.systemTimeZone = '+' + -timeZone;
 		}
 	},
-
+	created() {
+		this.getGlobalSetting();
+	},
 	watch: {
 		formData: {
 			deep: true,
@@ -389,6 +392,31 @@ export default {
 				this.editor.showSetting(this.disabled);
 				this.editor.initMonitor();
 			}
+		},
+		getGlobalSetting() {
+			let where = {
+				filter: {
+					where: {
+						id: '76'
+					}
+				}
+			};
+			this.loading = true;
+			Setting.findOne(where)
+				.then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						if (res.data.value) {
+							let value = JSON.parse(res.data.value);
+							let runNotification = value.runNotification;
+							this.formData.emailWaring.paused = runNotification[1].email || false;
+							this.formData.emailWaring.error = runNotification[3].email || false;
+							this.formData.emailWaring.started = runNotification[0].email || false;
+						}
+					}
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		}
 	}
 };
