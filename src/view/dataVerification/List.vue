@@ -29,7 +29,7 @@
 					</li>
 					<li class="search-item">
 						<el-select
-							v-model="searchParams.compareMethod"
+							v-model="searchParams.inspectMethod"
 							size="mini"
 							placeholder="校验类型"
 							@input="search(1)"
@@ -201,7 +201,7 @@
 								type="text"
 								size="mini"
 								:disabled="!scope.row.InspectResult"
-								@click="toTableInfo(scope.row.id, scope.row.id.InspectResult.id)"
+								@click="toTableInfo(scope.row.id, scope.row.InspectResult.id)"
 							>
 								<i class="btn-icon iconfont icon-chaxun"></i>
 							</el-button>
