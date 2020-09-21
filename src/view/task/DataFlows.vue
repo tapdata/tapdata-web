@@ -4,6 +4,10 @@
 			<metaData v-on:nodeClick="nodeClick"></metaData>
 		</div>
 		<div class="panel-main">
+			<el-tabs v-model="activeName" type="card" @tab-click="handleTabClick">
+				<el-tab-pane label="任务视图" name="dataFlow"></el-tab-pane>
+				<el-tab-pane label="表视图" name="tableFlow"></el-tab-pane>
+			</el-tabs>
 			<div class="topbar">
 				<!-- <div class="panelBtn"></div> -->
 				<ul class="search-bar">
@@ -327,6 +331,7 @@ export default {
 	data() {
 		return {
 			checkedTag: '',
+			activeName: 'dataFlow',
 			listtags: [],
 			tagList: [],
 			wsData: [],
@@ -1194,6 +1199,13 @@ export default {
 				});
 			} else if (msg) {
 				this.$message.success(msg);
+			}
+		},
+		handleTabClick(val) {
+			if (val.name === 'tableFlow') {
+				this.$router.push({
+					name: 'tableFlows'
+				});
 			}
 		}
 	}

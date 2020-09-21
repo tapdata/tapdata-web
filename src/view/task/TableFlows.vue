@@ -1,28 +1,26 @@
 <template>
 	<div style="height: 100%;">
-		<div style=" border-bottom: 1px solid #e2e2e7;text-align:center">
-			<div style="border-top: 2px solid gray; float:left; width:180px; height: 40px; background-color:#f5f5f5; ">
-				<span style="position: relative; top:20%;">任务视图</span>
-			</div>
-			<div
-				style="border-top: 2px solid #48b6e2; border-left: 1px solid #e2e2e7;  border-right: 1px solid #e2e2e7;float:left; width:180px; height: 40px;"
-			>
-				<span style="position: relative; top:20%;">表视图</span>
-			</div>
-			<div style="clear:both;"></div>
-		</div>
 		<el-container class="table-flows-wrap">
 			<div class="panel-left" v-if="formData.panelFlag">
 				<metaData v-on:nodeClick="nodeClick"></metaData>
 			</div>
 			<el-container>
-				<el-header height="auto" style="padding-top: 20px;">
+				<el-tabs v-model="activeName" type="card" @tab-click="handleTabClick">
+					<el-tab-pane label="任务视图" name="dataFlow"></el-tab-pane>
+					<el-tab-pane label="表视图" name="tableFlow"></el-tab-pane>
+				</el-tabs>
+				<el-header height="auto">
 					<el-form class="search-bar" size="mini" :inline="true">
 						<el-form-item>
-							<i class="iconfont icon-xiangshangzhanhang"></i>
-							<span>{{
-								formData.panelFlag ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel')
-							}}</span>
+							<div
+								:class="[{ panelOpen: formData.panelFlag }, 'item', 'panelBtn']"
+								@click="handlePanelFlag"
+							>
+								<i class="iconfont icon-xiangshangzhanhang"></i>
+								<span>{{
+									formData.panelFlag ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel')
+								}}</span>
+							</div>
 						</el-form-item>
 						<el-form-item>
 							<el-input
@@ -143,7 +141,9 @@
 							<el-table-column sortable="custom" label="阶段" width="120">
 								<template slot-scope="scope">
 									<span>
-										初始化中 (<span class="dark-color">{{ scope.row.num }}%</span>)
+										初始化中 (<span class="dark-color"
+											>{{ scope.row.num ? scope.row.num : 0 }}%</span
+										>)
 									</span>
 								</template>
 							</el-table-column>
@@ -238,6 +238,7 @@ export default {
 			loading: true,
 			dialogVisible: false,
 			tagList: [],
+			activeName: 'tableFlow',
 			searchParams: this.$store.state.tableFlows,
 			page: {
 				data: null,
@@ -326,7 +327,7 @@ export default {
 	methods: {
 		handlePanelFlag() {
 			this.formData.panelFlag = !this.formData.panelFlag;
-			this.$store.commit('dataFlows', this.formData);
+			debugger;
 		},
 		handleDialogVisible() {
 			this.dialogVisible = false;
@@ -528,6 +529,13 @@ export default {
 				item.transmissionTime = '--';
 			}
 			return item;
+		},
+		handleTabClick(val) {
+			if (val.name === 'dataFlow') {
+				this.$router.push({
+					name: 'dataFlows'
+				});
+			}
 		}
 	}
 };
@@ -550,6 +558,27 @@ export default {
 		height: 100%;
 		display: flex;
 		align-items: center;
+		.panelBtn {
+			padding: 0 12px;
+			color: #666;
+			cursor: pointer;
+			font-size: 12px;
+			border: 1px solid #dcdfe6;
+			border-radius: 3px;
+			.iconfont {
+				display: inline-block;
+				font-size: 12px;
+				transform: rotate(00deg);
+			}
+		}
+		.panelOpen {
+			.iconfont {
+				transform: rotate(180deg) !important;
+			}
+		}
+		.panelBtn:hover {
+			color: #48b6e2;
+		}
 		.el-form-item {
 			margin-bottom: 0;
 		}
@@ -596,5 +625,12 @@ export default {
 			text-align: right;
 		}
 	}
+}
+</style>
+<style lang="less">
+.el-tabs__item {
+	height: 29px;
+	line-height: 25px;
+	font-size: 12px;
 }
 </style>
