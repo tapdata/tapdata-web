@@ -82,12 +82,14 @@
 								></el-option>
 							</el-select>
 						</el-form-item>
-
+						<el-form-item class="item" v-if="checkedTag && checkedTag !== ''">
+							<el-tag size="small" closable @close="handleClose()">{{ checkedTag.value }}</el-tag>
+						</el-form-item>
 						<el-form-item>
 							<el-button style="padding: 7px;" icon="el-icon-refresh-right" @click="reset()"></el-button>
 						</el-form-item>
 						<el-form-item style="margin-right: 0;flex:1;text-align:right;">
-							<el-button>
+							<el-button @click="rowCheckAll">
 								<i class="iconfont icon-jiekoufuwu"></i>
 								<span>批量校验</span>
 							</el-button>
@@ -118,7 +120,7 @@
 									</div>
 								</template>
 							</el-table-column>
-							<el-table-column label="所在任务/执行时间" width="150" align="center">
+							<el-table-column label="所在任务/执行时间" width="250" align="center">
 								<template slot-scope="scope">
 									<div class="table-item">
 										<div>{{ scope.row.name }}</div>
@@ -141,8 +143,8 @@
 							<el-table-column sortable="custom" label="阶段" width="120">
 								<template slot-scope="scope">
 									<span>
-										初始化中 (<span class="dark-color"
-											>{{ scope.row.num ? scope.row.num : 0 }}%</span
+										{{ scope.row.cdcStatusStr }} (<span class="dark-color"
+											>{{ scope.row.ratio }}%</span
 										>)
 									</span>
 								</template>
@@ -152,45 +154,32 @@
 									<div class="table-item">
 										<div>
 											<span class="dark-color">[输出]</span>&nbsp;
-											<span>{{ scope.row.out }}</span>
+											<span>{{ scope.row.output }}</span>
 										</div>
 										<div>
 											<span class="dark-color">[输入]</span>&nbsp;
-											<span>{scope.row.in}}</span>
+											<span>{{ scope.row.input }}</span>
 										</div>
 									</div>
 								</template>
 							</el-table-column>
 							<el-table-column sortable="custom" label="速度(条/s)" width="120" align="center">
 								<template slot-scope="scope">
-									<span>{{ scope.row.out }}</span>
+									<span>{{ scope.row.speed }}</span>
 								</template>
 							</el-table-column>
-							<el-table-column lsortable="custom" label="行数对比" width="150" align="center">
+							<el-table-column lsortable="custom" label="行数" width="150" align="center">
 								<template slot-scope="scope">
-									<div class="table-item">
-										<div>{{ scope.row.in }}/{{ scope.row.out }}</div>
-										<div class="dark-color">2020-02-21 12:22:33</div>
-									</div>
-								</template>
-							</el-table-column>
-							<el-table-column sortable="custom" label="传输状况" width="120" align="center">
-								<template slot-scope="scope">
-									<div v-if="scope.row.out < 1000">
-										<el-tag size="mini" type="success">Normal</el-tag>
-									</div>
-									<div>
-										<el-tag size="mini" type="warning">Warning</el-tag>
-									</div>
-									<div>
-										<el-tag size="mini" type="danger">Error</el-tag>
+									<div class="table-target">[S] {{ scope.row.output }}</div>
+									<div v-for="item in scope.row.outf" :key="item.name">
+										<div :class="{ red: scope.row.red }">[T] {{ item.input.rows }}</div>
 									</div>
 								</template>
 							</el-table-column>
 							<el-table-column width="120" align="center">
-								<template>
-									<el-link size="mini" type="primary">行数检查</el-link><br />
-									<el-link size="mini" type="primary">忽略异常</el-link>
+								<template slot-scope="scope">
+									<el-link size="mini" type="primary" @click="rowCheck(scope.row)">行数检查</el-link
+									><br />
 								</template>
 							</el-table-column>
 						</el-table>
@@ -222,7 +211,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import factory from '../../api/factory';
 import ws from '../../api/ws';
 import metaData from '../metaData';
@@ -320,14 +308,12 @@ export default {
 		};
 	},
 	created() {
-		axios.get('/api/web/users/gateway/userInfo4Web');
 		this.getFlowOptions();
 		this.getData();
 	},
 	methods: {
 		handlePanelFlag() {
 			this.formData.panelFlag = !this.formData.panelFlag;
-			debugger;
 		},
 		handleDialogVisible() {
 			this.dialogVisible = false;
@@ -355,6 +341,10 @@ export default {
 				}
 			});
 			return tagList;
+		},
+		handleClose() {
+			this.checkedTag = '';
+			this.getData();
 		},
 		handleOperationClassify(listtags) {
 			let attributes = [];
@@ -444,25 +434,29 @@ export default {
 				}
 			};
 		},
+		rowCheck(item) {
+			if (item.input != item.output) this.$set(item, 'red', true);
+		},
+		rowCheckAll() {
+			this.page.data.forEach(it => this.rowCheck(it));
+		},
 		async getData(pageNum) {
 			this.loading = true;
 			this.$store.commit('tableFlows', this.formData);
 			let { current, size, sortBy, order } = this.page;
 			//let { keyword, flowId } = this.searchParams;
-			let currentPage = pageNum || current + 1;
+			let currentPage = pageNum || current;
 			let where = {};
 
 			if (!parseInt(this.$cookie.get('isAdmin'))) where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
 			if (this.formData) {
 				if (this.formData.status && this.formData.status !== '') where.status = this.formData.status;
 				if (this.formData.way && this.formData.way !== '') where['setting.sync_type'] = this.formData.way;
-				if (this.formData.search && this.formData.search !== '') where.name = this.formData.search;
-				if (this.formData.executionStatus) where['stats.stagesMetrics.status'] = this.formData.executionStatus;
+				if (this.formData.keyword && this.formData.keyword !== '') where.name = this.formData.keyword;
+				if (this.formData.executionStatus) where['cdcStatus'] = this.formData.executionStatus;
 			}
 			if (this.checkedTag && this.checkedTag !== '') {
-				where['listtags.id'] = {
-					in: [this.checkedTag.id]
-				};
+				where['listtags'] = [this.checkedTag.id];
 			}
 			let _params = Object.assign({}, where, {
 				order: order === 'descending' ? 'DESC' : 'ASC',
@@ -474,8 +468,9 @@ export default {
 			await dataFlows.tableFlow(_params).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
-						this.handleData(res.data);
-						this.page.data = res.data;
+						this.handleData(res.data.datas);
+						this.page.data = res.data.datas;
+						this.page.total = res.data.count;
 						let msg = {
 							type: 'watch',
 							collection: 'DataFlows',
@@ -517,16 +512,26 @@ export default {
 		cookRecord(item) {
 			if (item.startTime) item.startTime = this.$moment(item.startTime).format('YYYY-MM-DD HH:mm:ss');
 			item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
-			if (item.input || item.output) {
-				item.input = item.input ? item.input.rows : '--';
-				item.output = item.output ? item.output.rows : '--';
-				item.transmissionTime = item.transmissionTime
-					? ((item.input * 1000) / item.transmissionTime).toFixed(0)
-					: '--';
-			} else {
-				item.input = '--';
-				item.output = '--';
-				item.transmissionTime = '--';
+			if (item.stages.statsStatus) item.cdcStatusStr = this.$t('dataFlow.status.' + item.stages.statsStatus);
+			if (item.stages.output) item.output = item.stages.output.rows;
+			else item.output = '--';
+			if (item.outf && item.outf.length) {
+				item.input = 0;
+				item.outf.forEach(it => {
+					item.input += it.input.rows;
+					if (item.stages.transmissionTime == 0 && it.transmissionTime > 0)
+						item.stages.transmissionTime = it.transmissionTime;
+				});
+			} else item.input = '--';
+			if (typeof item.output == 'number' && item.stages.transmissionTime > 0)
+				item.speed = ((item.output * 1000) / item.stages.transmissionTime).toFixed(0);
+			else item.speed = '--';
+			if (item.totalCount) {
+				if (item.totalCount.findWhere({ stageId: item.stages.stageId }))
+					item.ratio = (
+						(item.output / item.totalCount.findWhere({ stageId: item.stages.stageId }).dataCount) *
+						100
+					).toFixed(0);
 			}
 			return item;
 		},
@@ -632,5 +637,8 @@ export default {
 	height: 29px;
 	line-height: 25px;
 	font-size: 12px;
+}
+.red {
+	color: red;
 }
 </style>
