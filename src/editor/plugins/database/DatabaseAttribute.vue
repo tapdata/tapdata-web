@@ -307,7 +307,7 @@ export default {
 				let orignData = link.getFormData();
 				let includeTable = [],
 					databaseTables = [];
-				if (orignData) {
+				if (orignData && orignData.selectSourceArr && orignData.selectSourceArr.length) {
 					includeTable = orignData.selectSourceArr.map(item => {
 						return orignData.table_prefix + item + orignData.table_suffix;
 					});

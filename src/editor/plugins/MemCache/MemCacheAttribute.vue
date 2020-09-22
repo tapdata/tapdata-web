@@ -98,12 +98,14 @@
 					<label>{{ $t('editor.cell.data_node.memCache.applicationCode') }}:</label>
 					<div class="code">
 						<span class="color-primary">var</span> cachedRow = CacheService.getCache(
-						<span class="color-danger">"{{ model.cacheName || 'cachename' }}"</span>
+						<span class="color-danger">'{{ model.cacheName || 'cachename' }}'</span>
 						<template v-if="!model.cacheKeys || !model.cacheKeys.length">
-							<span class="bold">record</span>.<span class="color-danger">category_code</span>
+							,<span class="bold">record</span>.<span class="color-danger">category_code</span>
 						</template>
 						<span v-for="key in model.cacheKeys.split(',')" :key="key">
-							, <span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
+							<template v-if="key">
+								, <span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
+							</template>
 						</span>
 						);<br />
 						<span class="bold">record</span>.category_name = cachedRow.category_name;<br />
@@ -111,10 +113,12 @@
 					<span>OR</span>
 					<div class="code">
 						<span class="bold">record</span>.category_name = CacheService.getCacheItem(
-						<span class="color-danger">"{{ model.cacheName || 'cachename' }}"</span>,
-						<span>'category_name'</span>, defaultValue,
+						<span class="color-danger">'{{ model.cacheName || 'cachename' }}'</span>,
+						<span>'category_name'</span>, defaultValue
 						<span v-for="key in model.cacheKeys.split(',')" :key="key">
-							, <span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
+							<template v-if="key">
+								,<span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
+							</template>
 						</span>
 						);
 					</div>

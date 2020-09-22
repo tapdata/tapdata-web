@@ -203,11 +203,14 @@ const tc = {
 		clickRelatedTasks: '點擊查看相關任務',
 		currentTaskOpen: '當前任務已打開',
 		noRelatedTask: '暫無相關任務',
-		loadingSchema: '源庫schema尚未加載完成，暫時無法啟動'
+		loadingSchema: '源庫schema尚未加載完成，暫時無法啟動',
+		reloadSchemaSuccess: '模型更新成功',
+		reloadSchemaError: '模型更新失敗'
 	},
 
 	dataFlow: {
 		updateModel: '更新模型',
+		loadingText: '加載中',
 		databseMigrationHead: '數據庫遷移',
 		databseProcessingHead: '數據處理同步',
 		databseFreedomHead: '自定義數據同步',

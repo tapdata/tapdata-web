@@ -263,6 +263,7 @@ import { EditorEventType } from '../../editor/lib/events';
 import _ from 'lodash';
 
 const dataFlowsApi = factory('DataFlows');
+const Setting = factory('Setting');
 let changeData = null;
 export default {
 	name: 'Job',
@@ -1184,7 +1185,30 @@ export default {
 		 */
 		showSetting() {
 			log('Job.showSetting');
-			this.editor.showSetting(!this.editable);
+			this.getGlobalSetting();
+		},
+		async getGlobalSetting() {
+			let where = {
+				filter: {
+					where: {
+						id: '76'
+					}
+				}
+			};
+			this.loading = true;
+			Setting.findOne(where)
+				.then(res => {
+					if (res.statusText === 'OK' || res.status === 200) {
+						if (res.data.value) {
+							let value = JSON.parse(res.data.value);
+							let runNotification = value.runNotification;
+							this.editor.showSetting(!this.editable, runNotification);
+						}
+					}
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 
 		/**

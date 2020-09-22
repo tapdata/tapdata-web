@@ -221,9 +221,17 @@
 				></queryBuilder>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
-				<el-button class="fr" type="success" size="mini" @click="hanlderLoadSchema">{{
-					$t('dataFlow.updateModel')
-				}}</el-button>
+				<el-button
+					class="fr"
+					type="success"
+					size="mini"
+					:disabled="!model.connectionId && !model.tableName"
+					@click="hanlderLoadSchema"
+				>
+					<i class="el-icon-loading" v-if="reloadModelLoading"></i>
+					<span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
+					<span v-else>{{ $t('dataFlow.updateModel') }}</span>
+				</el-button>
 				<entity
 					v-loading="schemaSelectConfig.loading"
 					:schema="convertSchemaToTreeData(defaultSchema)"
@@ -378,6 +386,7 @@ export default {
 	data() {
 		let self = this;
 		return {
+			reloadModelLoading: false,
 			addtableFalg: false,
 			dialogData: null,
 			databaseData: [],
@@ -512,6 +521,31 @@ export default {
 		getAddTableName(val) {
 			this.model.tableName = val;
 			this.tableIsLink();
+			this.defaultSchema = null;
+			let schema = {
+				table_name: this.model.tableName,
+				cdc_enabled: true,
+				meta_type: 'collection',
+				fields: [
+					{
+						autoincrement: false,
+						columnSize: 0,
+						dataType: 7,
+						data_type: 'OBJECT_ID',
+						field_name: '_id',
+						id: uuid(),
+						is_nullable: true,
+						javaType: 'String',
+						key: 'PRI',
+						original_field_name: '_id',
+						precision: 0,
+						primary_key_position: 1,
+						scale: 0,
+						table_name: this.model.tableName
+					}
+				]
+			};
+			this.$emit('schemaChange', _.cloneDeep(schema));
 		},
 
 		// 打开数据目录数据库
@@ -534,7 +568,7 @@ export default {
 		// 判断表是否可以跳转
 		tableIsLink() {
 			this.tableNameId = '';
-			if (this.tableData.length) {
+			if (this.tableData && this.tableData.length) {
 				this.tableData.forEach(item => {
 					if (item.table_name === this.model.tableName) {
 						this.tableNameId = item.tableId;
@@ -687,7 +721,7 @@ export default {
 			connectionApi
 				.get([connectionId])
 				.then(result => {
-					if (result.data) {
+					if (result.data && result.data.schema && result.data.schema.tables) {
 						this.tableData = result.data.schema.tables;
 						let schemas = (result.data.schema && result.data.schema.tables) || [];
 						tempSchemas = schemas.sort((t1, t2) =>
@@ -768,6 +802,7 @@ export default {
 
 		// 确定更新模型弹窗
 		confirmDialog() {
+			this.reloadModelLoading = true;
 			let params = {
 				type: 'reloadSchema',
 				data: {
@@ -788,7 +823,12 @@ export default {
 			ws.on('execute_load_schema_result', res => {
 				if (res.status === 'SUCCESS' && res.result && res.result.length) {
 					templeSchema = res.result;
+					this.reloadModelLoading = false;
+					self.$message.success(this.$t('message.reloadSchemaSuccess'));
+				} else {
+					self.$message.error(this.$t('message.reloadSchemaError'));
 				}
+				this.reloadModelLoading = false;
 				if (templeSchema && templeSchema.length) {
 					templeSchema.forEach(item => {
 						if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {

@@ -130,7 +130,8 @@ const cn = {
 			starting: '启动中',
 			running: '运行中',
 			stopping: '关闭中',
-			stopped: '已关闭'
+			stopped: '已关闭',
+			restarting: '重启中'
 		}
 	},
 	message: {
@@ -205,10 +206,13 @@ const cn = {
 		clickRelatedTasks: '点击查看相关任务',
 		currentTaskOpen: '当前任务已打开',
 		noRelatedTask: '暂无相关任务',
-		loadingSchema: '源库schema尚未加载完成，暂时无法启动'
+		loadingSchema: '源库schema尚未加载完成，暂时无法启动',
+		reloadSchemaSuccess: '模型更新成功',
+		reloadSchemaError: '模型更新失败'
 	},
 	dataFlow: {
 		updateModel: '更新模型',
+		loadingText: '加载中',
 		databseMigrationHead: '数据库迁移',
 		atabseProcessingHead: '数据处理同步',
 		databseFreedomHead: '自定义同步任务',

@@ -155,6 +155,7 @@ export default {
 						meta_type: true,
 						original_name: true,
 						source: true,
+						fields: true,
 						'source._id': true,
 						'source.user_id': true,
 						'source.name': true,
@@ -300,7 +301,7 @@ export default {
 				return resolve([]);
 			}
 			if (
-				['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection'].includes(
+				['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection', 'redis'].includes(
 					node.data.source.database_type
 				)
 			) {
@@ -322,6 +323,7 @@ export default {
 					meta_type: true,
 					original_name: true,
 					source: true,
+					fields: true,
 					'source._id': true,
 					'source.user_id': true,
 					'source.name': true,
@@ -397,7 +399,7 @@ export default {
 			if (data.meta_type === 'database') {
 				if (
 					data.source.database_type &&
-					['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection'].includes(
+					['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection', 'redis'].includes(
 						data.source.database_type
 					)
 				) {
@@ -454,7 +456,7 @@ export default {
 			if (['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)) {
 				if (
 					data.source.database_type &&
-					['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection'].includes(
+					['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection', 'redis'].includes(
 						data.source.database_type
 					)
 				) {
@@ -466,7 +468,6 @@ export default {
 			} else {
 				cell = this.editor.graph.createCell(mapping[data.meta_type], formData, schema);
 			}
-
 			let coordinates = this.editor.graph.getClientOffset();
 			cell.position(coordinates.x + 400, coordinates.y + this.count + 160);
 			this.editor.graph.addCell(cell);
