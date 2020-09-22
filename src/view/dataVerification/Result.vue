@@ -4,7 +4,8 @@
 			<div class="tip">校验历史</div>
 			<div class="main main-border">
 				<div class="title">POSS_SOURCE UAT BATCH1</div>
-				<div class="text">内容校验 ( 重复执行 )</div>
+				<div class="text" v-if="type === 'row_count'">行数校验</div>
+				<div class="text" v-else>内容校验 ( 重复执行 )</div>
 				<el-table
 					:element-loading-text="$t('dataFlow.dataLoading')"
 					:data="tableData"
@@ -22,17 +23,17 @@
 					</el-table-column>
 					<el-table-column label="目标表">
 						<template slot-scope="scope">
-							<span>{{ scope.row.target ? scope.row.target.table : '' }}</span>
+							<span>{{ scope.row.target ? scope.row.target.table : 0 }}</span>
 							<div style="color:#ccc">
-								{{ scope.row.target ? scope.row.target.connectionName : '' }}
+								{{ scope.row.target ? scope.row.target.connectionName : 0 }}
 							</div>
 						</template>
 					</el-table-column>
 					<el-table-column label="源/目标行数">
 						<template slot-scope="scope">
-							<span>{{ scope.row.source_total ? scope.row.source_total : '' }}</span>
+							<span>{{ scope.row.source_total ? scope.row.source_total : 0 }}</span>
 							<div>
-								{{ scope.row.target_total ? scope.row.target_total : '' }}
+								{{ scope.row.target_total ? scope.row.target_total : 0 }}
 							</div>
 						</template>
 					</el-table-column>
@@ -51,9 +52,9 @@
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('dataFlow.operate')" width="60px">
+					<el-table-column :label="$t('dataFlow.operate')" width="60px" v-if="type !== 'row_count'">
 						<template slot-scope="scope">
-							<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
+							<el-tooltip class="item" placement="bottom">
 								<el-button type="text" @click="changeInspectResult(scope.row.taskId)">
 									<i class="iconfont  task-list-icon icon-chaxun"></i>
 								</el-button>
@@ -75,7 +76,7 @@
 			>
 			</el-pagination>
 		</div>
-		<div class="panel-main">
+		<div class="panel-main" v-if="type !== 'row_count'">
 			<div class="tip">校验详情</div>
 			<div class="main">
 				<ul class="inspect-result">
@@ -145,6 +146,9 @@ export default {
 	data() {
 		return {
 			tableData: [],
+			id: '',
+			inspect_id: '',
+			type: '',
 			inspectResult: [],
 			resultData: [],
 			loading: false,
@@ -155,16 +159,18 @@ export default {
 	},
 	created() {
 		this.id = this.$route.query.id;
-		this.getData(this.id);
+		this.inspect_id = this.$route.query.inspect_id;
+		this.type = this.$route.query.type;
+		this.getData(this.id, this.inspect_id);
 	},
 	methods: {
-		getData() {
+		getData(id, inspect_id) {
 			this.loading = true;
 			let where = {
 				filter: {
 					where: {
-						id: '5f5d7f3c9edc7f1190b7d657',
-						inspect_id: '5f5d7c939edc7f1190b7d656'
+						id: id,
+						inspect_id: inspect_id
 					},
 					order: 'createTime DESC',
 					limit: this.pagesize,

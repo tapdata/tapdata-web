@@ -21,7 +21,7 @@
 					<el-table-column :label="$t('dataFlow.operate')" width="60px">
 						<template slot-scope="scope">
 							<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
-								<el-button type="text" @click="changeInspectResult(scope.row.taskId)">
+								<el-button type="text" @click="changeInspectResult(scope.row.id, scope.row.inspect_id)">
 									<i class="iconfont  task-list-icon icon-chaxun"></i>
 								</el-button>
 							</el-tooltip>
@@ -50,6 +50,8 @@ export default {
 	data() {
 		return {
 			loading: true,
+			type: '',
+			inspect_id: '',
 			page: {
 				data: null,
 				current: 1,
@@ -62,6 +64,8 @@ export default {
 		};
 	},
 	created() {
+		this.type = this.$route.query.type;
+		this.inspect_id = this.$route.query.inspect_id;
 		this.search(1);
 	},
 	methods: {
@@ -72,7 +76,7 @@ export default {
 			let where = {
 				filter: {
 					where: {
-						inspect_id: '5f5d7c939edc7f1190b7d656'
+						inspect_id: this.inspect_id
 					},
 					order: 'createTime DESC',
 					limit: size,
@@ -89,6 +93,17 @@ export default {
 				.finally(() => {
 					this.loading = false;
 				});
+		},
+		changeInspectResult(id, inspect_id) {
+			let routeUrl = this.$router.resolve({
+				path: '/dataVerifyResult',
+				query: {
+					id: id,
+					inspectId: inspect_id,
+					type: this.type
+				}
+			});
+			window.open(routeUrl.href, '_blank');
 		}
 	}
 };
@@ -109,6 +124,7 @@ export default {
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
+		margin-top: 20px;
 		.table-wrap {
 			margin: 0 10px;
 			flex: 1;

@@ -201,7 +201,7 @@
 								type="text"
 								size="mini"
 								:disabled="!scope.row.InspectResult"
-								@click="toTableInfo(scope.row.id, scope.row.InspectResult.id)"
+								@click="toTableInfo(scope.row.id, scope.row.InspectResult.id, scope.row.inspectMethod)"
 							>
 								<i class="btn-icon iconfont icon-chaxun"></i>
 							</el-button>
@@ -210,7 +210,7 @@
 								type="text"
 								size="mini"
 								:disabled="!scope.row.InspectResult"
-								@click="$router.push('dataVerification/create')"
+								@click="toTableHistory(scope.row.InspectResult.id, scope.row.inspectMethod)"
 							></el-button>
 							<el-button
 								class="btn-icon el-icon-setting"
@@ -344,11 +344,22 @@ export default {
 			this.searchParams.tag = node;
 			this.search(1);
 		},
-		toTableInfo(id, resultId) {
+		toTableInfo(id, resultId, type) {
 			let routeUrl = this.$router.resolve({
 				path: '/dataVerifyResult',
 				query: {
 					id: resultId,
+					inspectId: id,
+					type: type
+				}
+			});
+			window.open(routeUrl.href, '_blank');
+		},
+		toTableHistory(id, type) {
+			let routeUrl = this.$router.resolve({
+				path: '/dataVerifyHistory',
+				query: {
+					type: type,
 					inspectId: id
 				}
 			});
