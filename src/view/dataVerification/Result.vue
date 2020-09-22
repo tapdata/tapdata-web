@@ -3,7 +3,7 @@
 		<div class="panel-main">
 			<div class="tip">校验历史</div>
 			<div class="main main-border">
-				<div class="title">POSS_SOURCE UAT BATCH1</div>
+				<div class="title">{{ name }}</div>
 				<div class="text" v-if="type === 'row_count'">行数校验</div>
 				<div class="text" v-else>内容校验 ( 重复执行 )</div>
 				<el-table
@@ -47,7 +47,7 @@
 					<el-table-column prop="status" label="校验结果">
 						<template slot-scope="scope">
 							<span>{{ `行数差: ${scope.row.target_total + scope.row.source_total}` }}</span>
-							<div>
+							<div v-if="type !== 'row_count'">
 								{{ `内容差: ${scope.row.source_only + scope.row.target_only + scope.row.row_failed}` }}
 							</div>
 						</template>
@@ -55,7 +55,7 @@
 					<el-table-column :label="$t('dataFlow.operate')" width="60px" v-if="type !== 'row_count'">
 						<template slot-scope="scope">
 							<el-tooltip class="item" placement="bottom">
-								<el-button type="text" @click="changeInspectResult(scope.row.taskId)">
+								<el-button type="text" @click="changeInspectResult(1, scope.row.taskId)">
 									<i class="iconfont  task-list-icon icon-chaxun"></i>
 								</el-button>
 							</el-tooltip>
@@ -68,11 +68,11 @@
 				background
 				layout="prev, pager, next,sizes"
 				:page-sizes="[20, 30, 50, 100]"
-				:page-size="pagesize"
-				:total="totalNum"
-				:current-page.sync="currentPage"
-				@current-change="handleCurrentChange"
-				@size-change="handleSizeChange"
+				:page-size="tablePageSize"
+				:total="tableTotal"
+				:current-page.sync="tableCurrentPage"
+				@current-change="getData"
+				@size-change="getData(1)"
 			>
 			</el-pagination>
 		</div>
@@ -130,11 +130,11 @@
 				background
 				layout="prev, pager, next,sizes"
 				:page-sizes="[20, 30, 50, 100]"
-				:page-size="pagesize"
-				:total="totalNum"
-				:current-page.sync="currentPage"
-				@current-change="handleCurrentChange"
-				@size-change="handleSizeChange"
+				:page-size="inspectPageSize"
+				:total="inspectTotal"
+				:current-page.sync="inspectResultCurrentPage"
+				@current-change="changeInspectResult(inspectResultCurrentPage, taskId)"
+				@size-change="changeInspectResult(1)"
 			>
 			</el-pagination>
 		</div>
@@ -147,11 +147,19 @@ export default {
 		return {
 			tableData: [],
 			id: '',
+			taskId: '',
 			inspect_id: '',
 			type: '',
+			name: '',
 			inspectResult: [],
 			resultData: [],
 			loading: false,
+			tableCurrentPage: 1,
+			inspectResultCurrentPage: 1,
+			tableTotal: 1,
+			inspectTotal: 1,
+			inspectPageSize: 20,
+			tablePageSize: 20,
 			colorMap: {
 				running: '#ee5353'
 			}
@@ -161,61 +169,71 @@ export default {
 		this.id = this.$route.query.id;
 		this.inspect_id = this.$route.query.inspect_id;
 		this.type = this.$route.query.type;
-		this.getData(this.id, this.inspect_id);
+		this.name = this.$route.query.name;
+		this.getData(1, this.id, this.inspect_id);
 	},
 	methods: {
-		getData(id, inspect_id) {
+		getData(pageNum, id, inspect_id) {
 			this.loading = true;
+			let currentPage = pageNum || this.tableCurrentPage + 1;
 			let where = {
-				filter: {
-					where: {
-						id: id,
-						inspect_id: inspect_id
-					},
-					order: 'createTime DESC',
-					limit: this.pagesize,
-					skip: (this.currentPage - 1) * this.pagesize
-				}
+				where: {
+					id: id,
+					inspect_id: inspect_id
+				},
+				order: 'createTime DESC',
+				limit: this.tablePageSize,
+				skip: (currentPage - 1) * this.tablePageSize
 			};
-			this.$api('InspectResults')
-				.get(where)
-				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							this.loading = false;
-							this.tableData = res.data[0].stats;
-							if (this.tableData.length > 0) {
-								this.changeInspectResult(this.tableData[0].taskId);
-							}
-						}
-					} else {
+			Promise.all([
+				this.$api('InspectResults').count(where),
+				this.$api('InspectResults').get({
+					filter: JSON.stringify(where)
+				})
+			])
+				.then(([countRes, res]) => {
+					if (res.data) {
 						this.loading = false;
+						this.tableData = res.data[0].stats;
+						if (this.tableData.length > 0) {
+							this.changeInspectResult(1, this.tableData[0].taskId);
+						}
+						this.tableCurrentPage = currentPage;
+						this.tableTotal = countRes.data.count;
 					}
+				})
+				.finally(() => {
+					this.loading = false;
 				});
 		},
-		changeInspectResult(taskId) {
+		changeInspectResult(pageNum, taskId) {
+			this.taskId = taskId;
+			let currentPage = pageNum || this.tableCurrentPage + 1;
 			this.resultData = this.tableData.filter(item => item.taskId === taskId);
 			let where = {
-				filter: {
-					where: {
-						taskId: taskId,
-						inspect_id: '5f5d7c939edc7f1190b7d656'
-					},
-					order: 'createTime DESC',
-					limit: this.pagesize,
-					skip: (this.currentPage - 1) * this.pagesize
-				}
+				where: {
+					taskId: taskId,
+					inspect_id: this.inspect_id
+				},
+				order: 'createTime DESC',
+				limit: this.inspectPageSize,
+				skip: (currentPage - 1) * this.inspectPageSize
 			};
-			this.$api('InspectDetails')
-				.get(where)
-				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							this.inspectResult = res.data;
-						}
-					} else {
-						this.loading = false;
+			Promise.all([
+				this.$api('InspectDetails').count(where),
+				this.$api('InspectResults').get({
+					filter: JSON.stringify(where)
+				})
+			])
+				.then(([countRes, res]) => {
+					if (res.data) {
+						this.inspectResult = res.data;
+						this.inspectResultCurrentPage = currentPage;
+						this.inspectTotal = countRes.data.count;
 					}
+				})
+				.finally(() => {
+					this.loading = false;
 				});
 		}
 	}

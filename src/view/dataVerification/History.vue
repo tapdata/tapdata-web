@@ -1,6 +1,8 @@
 <template>
 	<section class="data-verify-history-wrap" v-loading="loading">
 		<div class="panel-main">
+			<div class="tip">校验历史</div>
+			<div class="title">{{ name }}</div>
 			<div class="table-wrap">
 				<el-table :data="page.data" height="100%" class="dv-table" border>
 					<el-table-column label="校验时间" prop="createTime">
@@ -14,6 +16,37 @@
 						<template slot-scope="scope">
 							<div>
 								<span>{{ `${scope.row.progress * 100}%` }}</span>
+							</div>
+						</template>
+					</el-table-column>
+					<el-table-column label="校验结果" width="180">
+						<template slot-scope="scope">
+							<div class="inspect-result">
+								<div v-if="scope.row.stats[0].target_total - scope.row.stats[0].source_total != 0">
+									<span
+										class="error"
+										v-if="scope.row.stats[0].target_total - scope.row.stats[0].source_total != 0"
+									>
+										<i class="el-icon-error"></i>
+										<span>
+											行数差异
+											{{ scope.row.stats[0].target_total - scope.row.stats[0].source_total }}
+										</span>
+									</span>
+								</div>
+								<div v-if="scope.row.difference_number && scope.row.inspectMethod === 'field'">
+									<span class="error" v-if="scope.row.difference_number">
+										<i class="el-icon-error"></i>
+										<span>
+											内容差异
+											{{ scope.row.difference_number }}
+										</span>
+									</span>
+								</div>
+								<span class="success" v-if="!scope.row.result === 'passed'">
+									<i class="el-icon-success"></i>
+									<span>一致</span>
+								</span>
 							</div>
 						</template>
 					</el-table-column>
@@ -52,6 +85,7 @@ export default {
 			loading: true,
 			type: '',
 			inspect_id: '',
+			name: '',
 			page: {
 				data: null,
 				current: 1,
@@ -66,6 +100,7 @@ export default {
 	created() {
 		this.type = this.$route.query.type;
 		this.inspect_id = this.$route.query.inspect_id;
+		this.name = this.$route.query.name;
 		this.search(1);
 	},
 	methods: {
@@ -74,20 +109,24 @@ export default {
 			let { current, size } = this.page;
 			let currentPage = pageNum || current + 1;
 			let where = {
-				filter: {
-					where: {
-						inspect_id: this.inspect_id
-					},
-					order: 'createTime DESC',
-					limit: size,
-					skip: (currentPage - 1) * size
-				}
+				where: {
+					inspect_id: this.inspect_id
+				},
+				order: 'createTime DESC',
+				limit: size,
+				skip: (currentPage - 1) * size
 			};
-			this.$api('InspectResults')
-				.get(where)
-				.then(res => {
+			Promise.all([
+				this.$api('InspectResults').count(where),
+				this.$api('InspectResults').get({
+					filter: JSON.stringify(where)
+				})
+			])
+				.then(([countRes, res]) => {
 					if (res.data) {
 						this.page.data = res.data;
+						this.page.current = currentPage;
+						this.page.total = countRes.data.count;
 					}
 				})
 				.finally(() => {
@@ -100,7 +139,8 @@ export default {
 				query: {
 					id: id,
 					inspectId: inspect_id,
-					type: this.type
+					type: this.type,
+					name: this.name
 				}
 			});
 			window.open(routeUrl.href, '_blank');
@@ -110,6 +150,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@margin: 10px;
 .data-verify-history-wrap {
 	display: flex;
 	height: 100%;
@@ -124,12 +165,41 @@ export default {
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
-		margin-top: 20px;
+		.tip {
+			height: 30px;
+			font-size: 12px;
+			background: #f5f5f5;
+			border: 1px solid #dedee4;
+			padding-left: @margin;
+			line-height: 30px;
+		}
+		.title {
+			font-weight: bold;
+			color: #48b6e2;
+			padding-left: @margin;
+			margin: 10px 0;
+		}
 		.table-wrap {
 			margin: 0 10px;
 			flex: 1;
 			display: flex;
 			flex-direction: column;
+			.inspect-result {
+				.error,
+				.success {
+					padding: 0 8px 0 5px;
+					display: inline-block;
+					line-height: 20px;
+					color: #fff;
+					border-radius: 20px;
+				}
+				.error {
+					background: #f56c6c;
+				}
+				.success {
+					background: #70ae48;
+				}
+			}
 			.pagination {
 				padding: 20px 0;
 				text-align: right;

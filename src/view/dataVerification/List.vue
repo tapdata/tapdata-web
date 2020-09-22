@@ -146,7 +146,7 @@
 										</span>
 									</span>
 								</div>
-								<div v-if="scope.row.difference_number">
+								<div v-if="scope.row.difference_number && scope.row.inspectMethod === 'field'">
 									<span class="error" v-if="scope.row.difference_number">
 										<i class="el-icon-error"></i>
 										<span>
@@ -201,7 +201,14 @@
 								type="text"
 								size="mini"
 								:disabled="!scope.row.InspectResult"
-								@click="toTableInfo(scope.row.id, scope.row.InspectResult.id, scope.row.inspectMethod)"
+								@click="
+									toTableInfo(
+										scope.row.id,
+										scope.row.InspectResult.id,
+										scope.row.inspectMethod,
+										scope.row.name
+									)
+								"
 							>
 								<i class="btn-icon iconfont icon-chaxun"></i>
 							</el-button>
@@ -210,7 +217,9 @@
 								type="text"
 								size="mini"
 								:disabled="!scope.row.InspectResult"
-								@click="toTableHistory(scope.row.InspectResult.id, scope.row.inspectMethod)"
+								@click="
+									toTableHistory(scope.row.InspectResult.id, scope.row.inspectMethod, scope.row.name)
+								"
 							></el-button>
 							<el-button
 								class="btn-icon el-icon-setting"
@@ -344,23 +353,25 @@ export default {
 			this.searchParams.tag = node;
 			this.search(1);
 		},
-		toTableInfo(id, resultId, type) {
+		toTableInfo(id, resultId, type, name) {
 			let routeUrl = this.$router.resolve({
 				path: '/dataVerifyResult',
 				query: {
 					id: resultId,
 					inspectId: id,
-					type: type
+					type: type,
+					name: name
 				}
 			});
 			window.open(routeUrl.href, '_blank');
 		},
-		toTableHistory(id, type) {
+		toTableHistory(id, type, name) {
 			let routeUrl = this.$router.resolve({
 				path: '/dataVerifyHistory',
 				query: {
 					type: type,
-					inspectId: id
+					inspectId: id,
+					name: name
 				}
 			});
 			window.open(routeUrl.href, '_blank');
