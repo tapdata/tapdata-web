@@ -44,6 +44,17 @@
 					:active-text="formData.isOpenAutoDDL ? $t('dataFlow.yes') : $t('dataFlow.no')"
 				></el-switch>
 			</el-form-item>
+			<el-form-item :label="$t('dataFlow.cdcDataProcess')" v-show="formData.sync_type !== 'initial_sync'">
+				<el-select v-model="formData.isSerialMode" size="mini" placeholder="请选择" class="dataWrite-list">
+					<el-option :label="$t('dataFlow.batch')" :value="false"> </el-option>
+					<el-option :label="$t('dataFlow.onebyone')" :value="true"> </el-option>
+				</el-select>
+				<el-popover class="aggtip" placement="top-start" trigger="hover">
+					<div>{{ $t('dataFlow.setting.batchTip') }}</div>
+					<div>{{ $t('dataFlow.setting.onebyoneTip') }}</div>
+					<span class="icon iconfont icon-tishi1" slot="reference"></span>
+				</el-popover>
+			</el-form-item>
 			<div v-show="showMore">
 				<el-form-item :label="$t('dataFlow.setting.distinctWriteType')">
 					<el-select
@@ -175,6 +186,7 @@ export default {
 	name: 'Setting.vue',
 	data() {
 		return {
+			resource: '',
 			disabled: false,
 			systemTimeZone: '',
 			formData: _.cloneDeep(DEFAULT_SETTING),

@@ -408,6 +408,9 @@ const cn = {
 		send_email_at_most_one_replication: '超过多少秒取消发送',
 		read_cdc_interval: '增量同步间隔',
 		read_batch_size: '每次读取数量',
+		cdcDataProcess: '增量数据处理机制',
+		batch: '批量',
+		onebyone: '逐条',
 		mission: '描述',
 		yes: '是',
 		no: '否',
@@ -475,7 +478,9 @@ const cn = {
 			intellect: '智能去重写入',
 			compel: '强制去重写入',
 			intellectTip: '智能去重写入：对目标已有数据进行智能检测，去重的同时能极大提升传输性能',
-			compelTip: '强制去重写入：对目标已有数据进行强制去重检测，严格保证精准度但传输性能较低'
+			compelTip: '强制去重写入：对目标已有数据进行强制去重检测，严格保证精准度但传输性能较低',
+			batchTip: '批量：对监测到的增量数据进行批量传输处理，性能较高',
+			onebyoneTip: '逐行：对监测到的增量数据进行逐条处理，性能较差'
 		}
 	},
 	connection: {

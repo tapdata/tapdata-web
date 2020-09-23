@@ -406,6 +406,9 @@ const tc = {
 		send_email_at_most_one_replication: '超過多少秒取消發送',
 		read_cdc_interval: '增量同步間隔',
 		read_batch_size: '每次讀取數量',
+		cdcDataProcess: '增量數據處理機制',
+		batch: '批量',
+		onebyone: '逐條',
 		mission: '描述',
 		yes: 'yes',
 		no: 'no',
@@ -473,7 +476,9 @@ const tc = {
 			intellect: '智能去重寫入',
 			compel: '強制去重寫入',
 			intellectTip: '智能去重寫入：對目標已有數據進行智能檢測，去重的同時能極大提升傳輸性能',
-			compelTip: '強制去重寫入：對目標已有數據進行強制去重檢測，嚴格保證精準度但傳輸性能較低'
+			compelTip: '強制去重寫入：對目標已有數據進行強制去重檢測，嚴格保證精準度但傳輸性能較低',
+			batchTip: '批量：對監測到的增量數據進行批量傳輸處理，性能較高',
+			onebyoneTip: '逐行：對監測到的增量數據進行逐條處理，性能較差'
 		}
 	},
 	connection: {

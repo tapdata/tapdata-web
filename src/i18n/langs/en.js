@@ -406,6 +406,9 @@ const en = {
 		send_email_at_most_one_replication: 'Cancel sending in more than seconds',
 		read_cdc_interval: ' CDC interval',
 		read_batch_size: 'Read-amount/time',
+		cdcDataProcess: 'CDC data process',
+		batch: 'Batch',
+		onebyone: 'One by one',
 		mission: 'Description',
 		yes: 'yes',
 		no: 'no',
@@ -476,7 +479,9 @@ const en = {
 			intellectTip:
 				"Intelligent deduplication: intelligent detection of the target's existing data, deduplication can greatly improve transmission performance",
 			compelTip:
-				"Forced deduplication: Perform mandatory deduplication detection on the target's existing data, strictly guarantee accuracy but low transmission performance"
+				"Forced deduplication: Perform mandatory deduplication detection on the target's existing data, strictly guarantee accuracy but low transmission performance",
+			batchTip: 'Batch: batch transfer processing of monitored incremental data, with high performance',
+			onebyoneTip: 'Line by line: Process the monitored incremental data one by one, with poor performance'
 		}
 	},
 	connection: {
