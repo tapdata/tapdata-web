@@ -3,13 +3,13 @@ import Vuex from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
 import mutations from './mutations';
 import actions from './actions';
-
+import cookie from 'vue-cookies';
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
 	plugins: [
 		createPersistedState({
-			key: 'tapdata',
+			key: 'tapdata' + [cookie.get('user_id')],
 			storage: window.localStorage || {
 				getItem: () => {},
 				setItem: () => {},
