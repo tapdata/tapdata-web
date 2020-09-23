@@ -120,7 +120,7 @@
 							<li>值</li>
 						</ul>
 						<ul class="sub-table" v-for="detail in item.details" :key="detail.id">
-							<li>{{ detail.type }}</li>
+							<li>{{ detail.type === 'uniqueField' ? '唯一字段差异' : '其他字段差异' }}</li>
 							<li>{{ detail.source.key }}</li>
 							<li>{{ detail.source.value }}</li>
 							<li>{{ detail.target.key }}</li>
@@ -212,7 +212,7 @@ export default {
 		},
 		changeInspectResult(pageNum, taskId) {
 			this.taskId = taskId;
-			let currentPage = pageNum || this.tableCurrentPage + 1;
+			let currentPage = pageNum || this.inspectResultCurrentPage + 1;
 			this.resultData = this.tableData.filter(item => item.taskId === taskId);
 			let where = {
 				where: {
