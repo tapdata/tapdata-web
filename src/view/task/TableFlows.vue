@@ -108,7 +108,7 @@
 							@selection-change="selectHandler"
 						>
 							<el-table-column type="selection" width="44" align="center"></el-table-column>
-							<el-table-column sortable="custom" label="源表/目标表">
+							<el-table-column sortable="custom" label="源表/目标表" prop="stages.name">
 								<template slot-scope="scope">
 									<div class="table-item">
 										<div class="table-source">[S] {{ scope.row.stages.name }}</div>
@@ -120,7 +120,13 @@
 									</div>
 								</template>
 							</el-table-column>
-							<el-table-column label="所在任务/执行时间" width="250" align="center">
+							<el-table-column
+								sortable="custom"
+								prop="name"
+								label="所在任务/执行时间"
+								width="250"
+								align="center"
+							>
 								<template slot-scope="scope">
 									<div class="table-item">
 										<div>{{ scope.row.name }}</div>
@@ -128,7 +134,7 @@
 									</div>
 								</template>
 							</el-table-column>
-							<el-table-column sortable="custom" label="状态" width="120">
+							<el-table-column sortable="custom" prop="status" label="状态" width="120">
 								<template slot-scope="scope">
 									<img
 										v-if="scope.row.status == 'running'"
@@ -140,7 +146,7 @@
 									}}</span>
 								</template>
 							</el-table-column>
-							<el-table-column sortable="custom" label="阶段" width="120">
+							<el-table-column label="阶段" width="120">
 								<template slot-scope="scope">
 									<span>
 										{{ scope.row.cdcStatusStr }} (<span class="dark-color"
@@ -163,16 +169,19 @@
 									</div>
 								</template>
 							</el-table-column>
-							<el-table-column sortable="custom" label="速度(条/s)" width="120" align="center">
+							<el-table-column label="速度(条/s)" width="120" align="center">
 								<template slot-scope="scope">
 									<span>{{ scope.row.speed }}</span>
 								</template>
 							</el-table-column>
-							<el-table-column lsortable="custom" label="行数" width="150" align="center">
+							<el-table-column label="行数" width="150" align="center">
 								<template slot-scope="scope">
-									<div class="table-target">[S] {{ scope.row.output }}</div>
-									<div v-for="item in scope.row.outf" :key="item.name">
-										<div :class="{ red: scope.row.red }">[T] {{ item.input.rows }}</div>
+									<i class="el-icon-loading" v-show="scope.row.noshow"></i>
+									<div v-show="!scope.row.noshow">
+										<div class="table-target">[S] {{ scope.row.output }}</div>
+										<div v-show="!scope.row.noshow" v-for="item in scope.row.outf" :key="item.name">
+											<div :class="{ red: scope.row.red }">[T] {{ item.input.rows }}</div>
+										</div>
 									</div>
 								</template>
 							</el-table-column>
@@ -233,8 +242,8 @@ export default {
 				current: 1,
 				size: 10,
 				total: 0,
-				sortBy: '',
-				order: ''
+				sortBy: 'name',
+				order: 'ASC'
 			},
 			statusOptions: ['running', 'paused', 'error', 'draft', 'scheduled', 'stopping', 'force_stopping'],
 			syncOtions: [
@@ -253,7 +262,7 @@ export default {
 			],
 			selections: [],
 			formData: {
-				search: '',
+				keyword: '',
 				status: '',
 				person: '',
 				way: '',
@@ -374,20 +383,13 @@ export default {
 		rowClassHandler({ rowIndex }) {
 			return `table-row-${rowIndex}`;
 		},
-		renderRowBg(list) {
-			list.forEach((item, index) => {
-				let el = document.querySelector('.table-row-' + index);
-				let len = Math.floor(el.clientWidth * (item.num / 100));
-				el.style.boxShadow = `${len}px 0 0 0 #f5f5f5 inset`;
-			});
-		},
 		selectHandler(val) {
 			this.selections = val;
 		},
 		sortHandler({ prop, order }) {
 			this.page.sortBy = prop;
 			this.page.order = order;
-			this.search(1);
+			this.getData(1);
 		},
 		getFlowOptions() {
 			setTimeout(() => {
@@ -409,7 +411,7 @@ export default {
 				way: '',
 				executionStatus: ''
 			};
-			this.search(1);
+			this.getData(1);
 		},
 		searchParamsChange() {
 			this.$store.commit('tableFlows', this.searchParams);
@@ -435,7 +437,12 @@ export default {
 			};
 		},
 		rowCheck(item) {
-			if (item.input != item.output) this.$set(item, 'red', true);
+			this.$set(item, 'noshow', true);
+			if (item.input != item.output) {
+				this.$set(item, 'red', true);
+			}
+			let that = this;
+			setTimeout(() => that.$set(item, 'noshow', false), 1500);
 		},
 		rowCheckAll() {
 			this.page.data.forEach(it => this.rowCheck(it));
@@ -518,6 +525,7 @@ export default {
 			if (item.outf && item.outf.length) {
 				item.input = 0;
 				item.outf.forEach(it => {
+					if (!it.input) it.input = { rows: 0 };
 					item.input += it.input.rows;
 					if (item.stages.transmissionTime == 0 && it.transmissionTime > 0)
 						item.stages.transmissionTime = it.transmissionTime;
