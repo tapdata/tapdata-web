@@ -110,19 +110,23 @@
 					<i class="iconfont icon-warning-circle"></i>
 					<span>{{ resultData[0].errorMsg }}</span>
 				</div>
-				<div v-for="item in inspectResult" :key="item.id" class="inspect-details">
-					<ul class="father-table">
-						<li>源表字段名</li>
-						<li>值</li>
-						<li>目标字段名</li>
-						<li>值</li>
-					</ul>
-					<ul class="sub-table" v-for="detail in item.details" :key="detail.id">
-						<li>{{ detail.source.type }}</li>
-						<li>{{ detail.source.value }}</li>
-						<li>{{ detail.target.type }}</li>
-						<li>{{ detail.target.value }}</li>
-					</ul>
+				<div class="inspect-result-box">
+					<div v-for="item in inspectResult" :key="item.id" class="inspect-details">
+						<ul class="father-table">
+							<li>差异类型</li>
+							<li>源表字段名</li>
+							<li>值</li>
+							<li>目标字段名</li>
+							<li>值</li>
+						</ul>
+						<ul class="sub-table" v-for="detail in item.details" :key="detail.id">
+							<li>{{ detail.type }}</li>
+							<li>{{ detail.source.key }}</li>
+							<li>{{ detail.source.value }}</li>
+							<li>{{ detail.target.key }}</li>
+							<li>{{ detail.target.value }}</li>
+						</ul>
+					</div>
 				</div>
 			</div>
 			<el-pagination
@@ -227,6 +231,43 @@ export default {
 			])
 				.then(([countRes, res]) => {
 					if (res.data) {
+						let data = res.data || [];
+						if (data.length > 0) {
+							data.map(item => {
+								let source = item.source || {};
+								let target = item.target || {};
+								let sourceKeys = Object.keys(source);
+								let targetKeys = Object.keys(target);
+								let key = Array.from(new Set([...sourceKeys, ...targetKeys])); //找出所有的key的并集
+								key.forEach(i => {
+									let sourceValue = '';
+									let targetValue = '';
+									if (i.includes(sourceKeys)) {
+										sourceValue = source[i];
+									} else {
+										sourceValue = '';
+									}
+									if (i.includes(targetKeys)) {
+										targetValue = target[i];
+									} else {
+										targetValue = '';
+									}
+									let node = {
+										type: item.type,
+										source: {
+											key: i,
+											value: sourceValue
+										},
+										target: {
+											key: i,
+											value: targetValue
+										}
+									};
+									item['details'] = [];
+									item['details'].push(node);
+								});
+							});
+						}
 						this.inspectResult = res.data;
 						this.inspectResultCurrentPage = currentPage;
 						this.inspectTotal = countRes.data.count;
@@ -302,46 +343,49 @@ export default {
 					margin-top: 10px;
 				}
 			}
-			.inspect-details {
-				margin: 0 10px;
-				li {
-					min-width: 0;
-					font-size: 12px;
-					box-sizing: border-box;
-					text-overflow: ellipsis;
-					vertical-align: middle;
-					position: relative;
-					text-align: left;
-					padding: 3px 10px;
-				}
-				.father-table {
-					display: flex;
+			.inspect-result-box {
+				overflow: auto;
+				.inspect-details {
+					margin: 0 10px;
 					li {
-						flex: 1;
-						background-color: #f5f5f5;
-						border-left: 1px solid #dedee4;
-						border-top: 1px solid #dedee4;
+						min-width: 0;
+						font-size: 12px;
+						box-sizing: border-box;
+						text-overflow: ellipsis;
+						vertical-align: middle;
+						position: relative;
+						text-align: left;
+						padding: 3px 10px;
 					}
-					li:last-child {
-						border-right: 1px solid #dedee4;
+					.father-table {
+						display: flex;
+						li {
+							flex: 1;
+							background-color: #f5f5f5;
+							border-left: 1px solid #dedee4;
+							border-top: 1px solid #dedee4;
+						}
+						li:last-child {
+							border-right: 1px solid #dedee4;
+						}
+					}
+					.sub-table {
+						display: flex;
+						li {
+							flex: 1;
+							border-left: 1px solid #dedee4;
+							border-bottom: 1px solid #dedee4;
+							border-top: 1px solid #dedee4;
+						}
+						li:last-child {
+							border-right: 1px solid #dedee4;
+						}
 					}
 				}
-				.sub-table {
-					display: flex;
-					li {
-						flex: 1;
-						border-left: 1px solid #dedee4;
-						border-bottom: 1px solid #dedee4;
-						border-top: 1px solid #dedee4;
-					}
-					li:last-child {
-						border-right: 1px solid #dedee4;
-					}
+				.inspect-details:last-child {
+					margin-bottom: 10px;
+					margin-top: 10px;
 				}
-			}
-			.inspect-details:last-child {
-				margin-bottom: 10px;
-				margin-top: 10px;
 			}
 		}
 		.main-border {
