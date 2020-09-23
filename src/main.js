@@ -58,3 +58,25 @@ document.addEventListener('visibilitychange', () => {
 		ele && ele.blur();
 	}, 50);
 });
+
+Object.defineProperty(Array.prototype, 'findWhere', {
+	value: function(attrs) {
+		let keys = Object.keys(attrs),
+			length = keys.length;
+		for (let idx = 0; idx < this.length; idx++) {
+			let object = this[idx];
+			if (object == null) continue;
+			let obj = Object(object),
+				finded = true;
+			for (let i = 0; i < length; i++) {
+				let key = keys[i];
+				if (attrs[key] !== obj[key] || !(key in obj)) {
+					finded = false;
+					break;
+				}
+			}
+			if (finded) return object;
+		}
+		return null;
+	}
+});

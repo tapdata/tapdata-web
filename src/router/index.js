@@ -314,6 +314,11 @@ const childRoutes = [
 		meta: { url: '/old/index.html#/jsFuncs', isCollapse: false }
 	},
 	{
+		path: '/tableFlows',
+		name: 'tableFlows',
+		component: view('task/TableFlows')
+	},
+	{
 		path: '/setting',
 		name: 'setting',
 		component: view('notification/setting'),
