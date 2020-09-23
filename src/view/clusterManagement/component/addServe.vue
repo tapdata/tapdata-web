@@ -31,7 +31,7 @@
 </template>
 <script>
 export default {
-	name: "AddServe",
+	name: 'AddServe',
 	props: {
 		data: Object,
 		editItem: Object
@@ -39,11 +39,11 @@ export default {
 	data() {
 		return {
 			ruleForm: {
-				id: this.editItem.id ? this.editItem.id : "",
-				uuid: this.editItem.uuid ? this.editItem.uuid : "",
-				name: this.editItem.name ? this.editItem.name : "",
-				command: this.editItem.command ? this.editItem.command : "",
-				arguments: this.editItem.arguments || this.editItem.arguments !== null ? this.editItem.arguments : ""
+				id: this.editItem.id ? this.editItem.id : '',
+				uuid: this.editItem.uuid ? this.editItem.uuid : '',
+				name: this.editItem.name ? this.editItem.name : '',
+				command: this.editItem.command ? this.editItem.command : '',
+				arguments: this.editItem.arguments || this.editItem.arguments !== null ? this.editItem.arguments : ''
 			},
 			rules: {}
 		};
@@ -61,7 +61,7 @@ export default {
 		// 子组件校验，传递到父组件
 		validateForm() {
 			let flag = null;
-			this.$refs["ruleForm"].validate(valid => {
+			this.$refs['ruleForm'].validate(valid => {
 				if (valid) {
 					flag = true;
 				} else {

@@ -270,12 +270,14 @@ export default {
 							}
 						});
 					}
+
 					if (selectTargetType.length) {
 						Object.keys(this.model.selectSourceDatabase).forEach(key => {
 							this.model.selectSourceDatabase[key] = selectTargetType.includes(key);
 						});
 					}
 				}
+
 				this.loadDataModels(connectionId);
 			}
 
@@ -385,6 +387,18 @@ export default {
 
 		// 添加前后缀数据处理
 		preFixSuffixData() {
+			if (this.sourceData.length && this.model.selectSourceArr.length) {
+				let selectSourceArr = [];
+				this.model.selectSourceArr = Array.from(new Set(this.model.selectSourceArr));
+				this.sourceData.forEach(sourceName => {
+					this.model.selectSourceArr.map(k => {
+						if (k == sourceName.key) {
+							selectSourceArr.push(k);
+						}
+					});
+				});
+				this.model.selectSourceArr = selectSourceArr;
+			}
 			if (this.sourceData && this.sourceData.length && this.model.selectSourceArr.length) {
 				for (let i = 0; i < this.sourceData.length; i++) {
 					for (let j = 0; j < this.model.selectSourceArr.length; j++) {

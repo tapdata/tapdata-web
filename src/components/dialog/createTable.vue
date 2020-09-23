@@ -23,6 +23,27 @@ export default {
 			default: null
 		}
 	},
+	data() {
+		return {
+			rules: {
+				connectionId: [{ required: true, trigger: 'blur', message: `Please select database` }],
+				filter: {
+					type: 'string',
+					message: this.$t('editor.cell.data_node.collection.form.filter.invalidJSON'),
+					validator: (rule, value) => {
+						if (value) {
+							try {
+								JSON.parse(value);
+								return true;
+							} catch (e) {
+								return false;
+							}
+						}
+					}
+				}
+			}
+		};
+	},
 	methods: {
 		confirm() {
 			this.dialog.visible = false;
