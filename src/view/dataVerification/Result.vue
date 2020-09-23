@@ -66,7 +66,7 @@
 			<el-pagination
 				class="pagination"
 				background
-				layout="prev, pager, next,sizes"
+				layout="total,prev, pager, next,sizes"
 				:page-sizes="[20, 30, 50, 100]"
 				:page-size="tablePageSize"
 				:total="tableTotal"
@@ -132,7 +132,7 @@
 			<el-pagination
 				class="pagination"
 				background
-				layout="prev, pager, next,sizes"
+				layout="total,prev, pager, next,sizes"
 				:page-sizes="[20, 30, 50, 100]"
 				:page-size="inspectPageSize"
 				:total="inspectTotal"
@@ -162,7 +162,7 @@ export default {
 			inspectResultCurrentPage: 1,
 			tableTotal: 1,
 			inspectTotal: 1,
-			inspectPageSize: 20,
+			inspectPageSize: 30,
 			tablePageSize: 20,
 			colorMap: {
 				running: '#ee5353'
@@ -171,7 +171,7 @@ export default {
 	},
 	created() {
 		this.id = this.$route.query.id;
-		this.inspect_id = this.$route.query.inspect_id;
+		this.inspect_id = this.$route.query.inspectId;
 		this.type = this.$route.query.type;
 		this.name = this.$route.query.name;
 		this.getData(1, this.id, this.inspect_id);
@@ -183,7 +183,7 @@ export default {
 			let where = {
 				where: {
 					id: id,
-					inspect_id: inspect_id
+					inspect_id: { regexp: `^${inspect_id}$` }
 				},
 				order: 'createTime DESC',
 				limit: this.tablePageSize,
@@ -217,7 +217,7 @@ export default {
 			let where = {
 				where: {
 					taskId: taskId,
-					inspect_id: this.inspect_id
+					inspect_id: { regexp: `^${this.inspect_id}$` }
 				},
 				order: 'createTime DESC',
 				limit: this.inspectPageSize,
