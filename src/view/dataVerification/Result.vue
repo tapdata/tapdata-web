@@ -221,7 +221,7 @@ export default {
 			};
 			Promise.all([
 				this.$api('InspectDetails').count(where),
-				this.$api('InspectResults').get({
+				this.$api('InspectDetails').get({
 					filter: JSON.stringify(where)
 				})
 			])
