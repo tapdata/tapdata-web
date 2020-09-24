@@ -43,6 +43,7 @@
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="screeningObj" @getUnit="getUnit"></echart-head>
+					<div class="unit">{{ $t('dataFlow.unit') }}:{{ $t('dataFlow.rowCount') }}</div>
 					<shaftless-echart
 						class="charts-box"
 						:sliderBar="sliderBar"
@@ -704,6 +705,12 @@ export default {
 				box-sizing: border-box;
 				border: 1px solid #dcdfe6;
 				box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
+			}
+			.unit {
+				float: right;
+				padding: 10px 20px;
+				font-size: 12px;
+				color: #666;
 			}
 		}
 		.info {
