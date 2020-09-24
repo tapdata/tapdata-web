@@ -1,11 +1,11 @@
 <template>
 	<section class="data-flow-wrap" v-loading="loading">
 		<div class="panel-main">
-			<div class="tip">校验历史</div>
+			<div class="tip">{{ $t('dataVerification.verifyHistory') }}</div>
 			<div class="main main-border">
 				<div class="title">{{ name }}</div>
-				<div class="text" v-if="type === 'row_count'">行数校验</div>
-				<div class="text" v-else>内容校验 ( 重复执行 )</div>
+				<div class="text" v-if="type === 'row_count'">{{ $t('dataVerification.rowVerify') }}</div>
+				<div class="text" v-else>{{ $t('dataVerification.contentVerify') }}</div>
 				<el-table
 					:element-loading-text="$t('dataFlow.dataLoading')"
 					:data="tableData"
@@ -13,7 +13,7 @@
 					class="dv-table"
 					border
 				>
-					<el-table-column label="源表">
+					<el-table-column :label="$t('dataVerification.sourceTable')">
 						<template slot-scope="scope">
 							<span>{{ scope.row.source ? scope.row.source.table : '' }}</span>
 							<div style="color:#ccc">
@@ -21,7 +21,7 @@
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column label="目标表">
+					<el-table-column :label="$t('dataVerification.targetTable')">
 						<template slot-scope="scope">
 							<span>{{ scope.row.target ? scope.row.target.table : 0 }}</span>
 							<div style="color:#ccc">
@@ -29,7 +29,7 @@
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column label="源/目标行数">
+					<el-table-column :label="$t('dataVerification.sourceRows')">
 						<template slot-scope="scope">
 							<span>{{ scope.row.source_total ? scope.row.source_total : 0 }}</span>
 							<div>
@@ -40,15 +40,25 @@
 					<el-table-column prop="progress" label="校验进度" width="80px">
 						<template slot-scope="scope">
 							<div>
-								<span>{{ `${scope.row.progress * 100}%` }}</span>
+								<span>{{ `${(Math.round(scope.row.progress * 1000) / 1000) * 100}%` }}</span>
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column prop="status" label="校验结果">
+					<el-table-column prop="status" :label="$t('dataVerification.verifyResult')">
 						<template slot-scope="scope">
-							<span>{{ `行数差: ${Math.abs(scope.row.target_total - scope.row.source_total)}` }}</span>
+							<span>{{
+								$t('dataVerification.rowConsistent') +
+									' : ' +
+									Math.abs(scope.row.target_total - scope.row.source_total)
+							}}</span>
 							<div v-if="type !== 'row_count'">
-								{{ `内容差: ${scope.row.source_only + scope.row.target_only + scope.row.row_failed}` }}
+								{{
+									$t('dataVerification.contConsistent') +
+										' : ' +
+										scope.row.source_only +
+										scope.row.target_only +
+										scope.row.row_failed
+								}}
 							</div>
 						</template>
 					</el-table-column>
@@ -75,32 +85,50 @@
 			</el-pagination>
 		</div>
 		<div class="panel-main" v-if="type !== 'row_count'">
-			<div class="tip">校验详情</div>
+			<div class="tip">{{ $t('dataVerification.verifyDetail') }}</div>
 			<div class="main">
-				<ul class="inspect-result">
+				<ul class="inspect-result" v-if="resultData && resultData[0]">
 					<li>
 						<span>
-							{{ `源表: ${resultData[0].source.table} / ${resultData[0].source.connectionName}` }}
+							{{
+								$t('dataVerification.sourceTable') +
+									':' +
+									resultData[0].source.table +
+									'/' +
+									resultData[0].source.connectionName
+							}}
 						</span>
 						<span style="color: #ccc">
-							{{ `( 行数: ${resultData[0].source_total} )` }}
+							{{ `( Row: ${resultData[0].source_total} )` }}
 						</span>
 					</li>
 					<li>
 						<span>
-							{{ `目标表: ${resultData[0].target.table} / ${resultData[0].target.connectionName}` }}
+							{{
+								$t('dataVerification.targetTable') +
+									':' +
+									resultData[0].target.table +
+									'/' +
+									resultData[0].target.connectionName
+							}}
 						</span>
 						<span style="color: #ccc">
-							{{ `( 行数: ${resultData[0].target_total} )` }}
+							{{ `( Row: ${resultData[0].target_total} )` }}
 						</span>
 					</li>
 					<li>
-						<span>{{ `校验结果: ${resultData[0].result}` }}</span>
-						<span>{{ `行数差异: ${resultData[0].target_total - resultData[0].source_total}` }}</span>
+						<span>{{ $t('dataVerification.verifyResult') + ':' + resultData[0].result }}</span>
 						<span>{{
-							`内容差异: ${resultData[0].source_only +
+							$t('dataVerification.rowConsistent') +
+								' : ' +
+								Math.abs(resultData[0].target_total - resultData[0].source_total)
+						}}</span>
+						<span>{{
+							$t('dataVerification.contConsistent') +
+								':' +
+								resultData[0].source_only +
 								resultData[0].target_only +
-								resultData[0].row_failed}`
+								resultData[0].row_failed
 						}}</span>
 					</li>
 				</ul>
@@ -111,11 +139,11 @@
 				<div class="inspect-result-box">
 					<div v-for="item in inspectResult" :key="item.id" class="inspect-details">
 						<ul class="father-table">
-							<li>差异类型</li>
-							<li>源表字段名</li>
-							<li>值</li>
-							<li>目标字段名</li>
-							<li>值</li>
+							<li>{{ $t('dataVerification.inconsistentType') }}</li>
+							<li>{{ $t('dataVerification.sourceFieldName') }}</li>
+							<li>{{ $t('dataVerification.Value') }}</li>
+							<li>{{ $t('dataVerification.targetFieldName') }}</li>
+							<li>{{ $t('dataVerification.Value') }}</li>
 						</ul>
 						<ul class="sub-table" v-for="detail in item.details" :key="detail.id">
 							<li>{{ detail.type === 'uniqueField' ? '唯一字段差异' : '其他字段差异' }}</li>

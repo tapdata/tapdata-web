@@ -23,7 +23,7 @@
 							size="mini"
 							clearable
 							prefix-icon="el-icon-search"
-							placeholder="任务名称"
+							:placeholder="$t('dataVerification.verifyJobName')"
 							@input="keyup()"
 						></el-input>
 					</li>
@@ -31,7 +31,7 @@
 						<el-select
 							v-model="searchParams.inspectMethod"
 							size="mini"
-							placeholder="校验类型"
+							:placeholder="$t('dataVerification.verifyType')"
 							@input="search(1)"
 						>
 							<el-option label="行数校验" value="row_count"></el-option>
@@ -42,11 +42,11 @@
 						<el-select
 							v-model="searchParams.mode"
 							size="mini"
-							placeholder="单词/重复校验"
+							:placeholder="$t('dataVerification.singleRepeatingVerify')"
 							@input="search(1)"
 						>
-							<el-option label="单次校验" value="manual"></el-option>
-							<el-option label="重复校验" value="cron"></el-option>
+							<el-option :label="$t('dataVerification.singleVerify')" value="manual"></el-option>
+							<el-option :label="$t('dataVerification.repeatingVerify')" value="cron"></el-option>
 						</el-select>
 					</li>
 					<li class="search-item">
@@ -81,11 +81,11 @@
 				<div class="topbar-buttons">
 					<el-button size="mini" v-show="selections.length">
 						<i class="iconfont icon-piliang"></i>
-						<span>批量校验</span>
+						<span>{{ $t('dataVerification.batchVerify') }}</span>
 					</el-button>
 					<el-button size="mini" @click="$router.push('dataVerification/setting')">
 						<i class="iconfont icon-shezhi1"></i>
-						<span>校验设置</span>
+						<span>{{ $t('dataVerification.verifySetting') }}</span>
 					</el-button>
 					<el-button type="primary" size="mini" @click="$router.push('dataVerification/create')">
 						<i class="iconfont icon-jia add-btn-icon"></i>
@@ -101,7 +101,7 @@
 					@selection-change="selectHandler"
 				>
 					<el-table-column type="selection" width="44" align="center"></el-table-column>
-					<el-table-column label="任务名称">
+					<el-table-column :label="$t('dataVerification.verifyJobName')">
 						<template slot-scope="scope">
 							<div>{{ scope.row.name }}</div>
 							<div style="color: #aaa;">
@@ -110,17 +110,17 @@
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column label="源总行数" align="center" width="200">
+					<el-table-column :label="$t('dataVerification.sourceTotalRows')" align="center" width="200">
 						<template slot-scope="scope">
 							{{ scope.row.InspectResult ? scope.row.InspectResult.source_total : '-' }}
 						</template>
 					</el-table-column>
-					<el-table-column label="目标总行数" align="center" width="200">
+					<el-table-column :label="$t('dataVerification.targetTotalRows')" align="center" width="200">
 						<template slot-scope="scope">
 							{{ scope.row.InspectResult ? scope.row.InspectResult.target_total : '-' }}
 						</template>
 					</el-table-column>
-					<el-table-column label="校验结果" width="180">
+					<el-table-column :label="$t('dataVerification.verifyResult')" width="180">
 						<template slot-scope="scope">
 							<div class="inspect-result" v-if="scope.row.InspectResult">
 								<div
@@ -138,7 +138,7 @@
 									>
 										<i class="el-icon-error"></i>
 										<span>
-											行数差异
+											{{ $t('dataVerification.rowConsistent') }}
 											{{
 												scope.row.InspectResult.target_total -
 													scope.row.InspectResult.source_total
@@ -150,27 +150,33 @@
 									<span class="error" v-if="scope.row.difference_number">
 										<i class="el-icon-error"></i>
 										<span>
-											内容差异
+											{{ $t('dataVerification.contConsistent') }}
 											{{ scope.row.difference_number }}
 										</span>
 									</span>
 								</div>
 								<span class="success" v-if="!scope.row.result === 'passed'">
 									<i class="el-icon-success"></i>
-									<span>一致</span>
+									<span>{{ $t('dataVerification.consistent') }}</span>
 								</span>
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column label="执行状态" align="center" width="140">
+					<el-table-column :label="$t('dataVerification.verifyStatus')" align="center" width="140">
 						<template slot-scope="scope">
 							<span>{{ scope.row.status }}</span>
 							<span v-if="scope.row.InspectResult && scope.row.status === 'running'">
-								({{ scope.row.InspectResult.progress * 100 }}%)
+								{{ `(${(Math.round(scope.row.InspectResult * 1000) / 1000) * 100}%)` }}
 							</span>
 						</template>
 					</el-table-column>
-					<el-table-column label="校验时间" prop="timing.start" sortable="custom" align="center" width="180">
+					<el-table-column
+						:label="$t('dataVerification.verifyTime')"
+						prop="timing.start"
+						sortable="custom"
+						align="center"
+						width="180"
+					>
 						<template slot-scope="scope">
 							<span>
 								{{
@@ -180,7 +186,7 @@
 							</span>
 						</template>
 					</el-table-column>
-					<el-table-column label="操作" align="center" width="180">
+					<el-table-column :label="$t('dataVerification.operation')" align="center" width="180">
 						<template slot-scope="scope">
 							<el-button
 								v-if="!['running', 'scheduling'].includes(scope.row.status)"

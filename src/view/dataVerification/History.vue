@@ -1,25 +1,31 @@
 <template>
 	<section class="data-verify-history-wrap" v-loading="loading">
 		<div class="panel-main">
-			<div class="tip">校验历史</div>
+			<div class="tip">{{ $t('dataVerification.verifyHistory') }}</div>
 			<div class="title">{{ name }}</div>
 			<div class="table-wrap">
 				<el-table :data="page.data" height="100%" class="dv-table" border>
-					<el-table-column label="校验时间" prop="createTime">
+					<el-table-column :label="$t('dataVerification.verifyTime')" prop="createTime">
 						<template slot-scope="scope">
 							{{ $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss') }}
 						</template>
 					</el-table-column>
-					<el-table-column label="源表行数" prop="source_total"></el-table-column>
-					<el-table-column label="目标行数" prop="target_total"></el-table-column>
+					<el-table-column
+						:label="$t('dataVerification.sourceTotalRows')"
+						prop="source_total"
+					></el-table-column>
+					<el-table-column
+						:label="$t('dataVerification.targetTotalRows')"
+						prop="target_total"
+					></el-table-column>
 					<el-table-column prop="progress" label="校验进度" width="80px">
 						<template slot-scope="scope">
 							<div>
-								<span>{{ `${scope.row.progress * 100}%` }}</span>
+								<span>{{ `${(Math.round(scope.row.progress * 1000) / 1000) * 100}%` }}</span>
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column label="校验结果" width="180">
+					<el-table-column :label="$t('dataVerification.verifyResult')" width="180">
 						<template slot-scope="scope">
 							<div class="inspect-result">
 								<div v-if="scope.row.stats[0].target_total - scope.row.stats[0].source_total != 0">
@@ -29,7 +35,7 @@
 									>
 										<i class="el-icon-error"></i>
 										<span>
-											行数差异
+											{{ $t('dataVerification.rowConsistent') }}
 											{{ scope.row.stats[0].target_total - scope.row.stats[0].source_total }}
 										</span>
 									</span>
@@ -38,19 +44,19 @@
 									<span class="error" v-if="scope.row.difference_number">
 										<i class="el-icon-error"></i>
 										<span>
-											内容差异
+											{{ $t('dataVerification.contConsistent') }}
 											{{ scope.row.difference_number }}
 										</span>
 									</span>
 								</div>
 								<span class="success" v-if="!scope.row.result === 'passed'">
 									<i class="el-icon-success"></i>
-									<span>一致</span>
+									<span>{{ $t('dataVerification.consistent') }}</span>
 								</span>
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column label="校验状态" prop="status"></el-table-column>
+					<el-table-column :label="$t('dataVerification.verifyStatus')" prop="status"></el-table-column>
 					<el-table-column :label="$t('dataFlow.operate')" width="60px">
 						<template slot-scope="scope">
 							<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">

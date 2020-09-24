@@ -1401,7 +1401,19 @@ const cn = {
 		toBeVerified: '待校验',
 		verifying: '校验中',
 		verifyFinished: '校验完成',
-		verifyJobExpired: '校验任务结束'
+		verifyJobExpired: '校验任务结束',
+		executeVerifyInstantly: '执行校验',
+		deleteVerifyJob: '删除',
+		verifySetting: '校验设置',
+		batchVerify: '批量校验',
+		verifyJobName: '校验任务名',
+		verifyType: '校验类型',
+		singleRepeatingVerify: '单次/重复校验',
+		rowAndContConsistent: '行数和内容差异',
+		sourceFieldName: '源表字段名',
+		targetFieldName: '目标字段名',
+		Value: '值',
+		inconsistentType: '差异类型'
 	},
 	queryBuilder: {
 		addCond: '字段条件'
