@@ -106,7 +106,7 @@ const cn = {
 			roles: '角色管理',
 			settings: '系统设置',
 			favorite: '我的收藏',
-
+			dataVerification: '数据校验',
 			delFavMenu: '删除收藏'
 		},
 		Home: {

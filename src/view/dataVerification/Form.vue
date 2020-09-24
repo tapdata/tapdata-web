@@ -71,7 +71,7 @@
 								end-placeholder="结束日期"
 								align="right"
 								:default-time="['00:00:00', '23:59:59']"
-								value-format="yyyy-MM-dd HH:mm:ss"
+								value-format="timestamp"
 								@input="timingChangeHandler"
 							>
 							</el-date-picker>
@@ -233,8 +233,8 @@ export default {
 				timing: {
 					intervals: 24 * 60,
 					intervalsUnit: 'minute',
-					start: '',
-					end: ''
+					start: new Date().getTime(),
+					end: new Date().getTime() + 24 * 60 * 60 * 1000
 				},
 				limit: {
 					keep: 100
@@ -602,7 +602,7 @@ export default {
 						[this.form.id ? 'patch' : 'post'](
 							Object.assign({}, this.form, {
 								fullMatchKeep: this.form.keep,
-								status: this.form.mode === 'manual' ? 'scheduling' : 'pause',
+								status: this.form.mode === 'manual' ? 'scheduling' : 'waiting',
 								tasks: this.form.tasks.map(({ source, target }) => {
 									return {
 										source,

@@ -163,7 +163,8 @@ let menuSetting = [
 			{ name: 'dataFlows', alias: 'dataFlowsRunning', query: '?dataFlowStatus=running' },
 			{ name: 'dataFlows', alias: 'dataFlowsPaused', query: '?dataFlowStatus=paused' },
 			{ name: 'dataFlows', alias: 'dataFlowsError', query: '?dataFlowStatus=error' },
-			{ name: 'dataFlows', alias: 'dataFlowsDraft', query: '?dataFlowStatus=draft' }
+			{ name: 'dataFlows', alias: 'dataFlowsDraft', query: '?dataFlowStatus=draft' },
+			{ name: 'dataVerification' }
 		]
 	},
 	{

@@ -46,7 +46,7 @@
 					</el-table-column>
 					<el-table-column prop="status" label="校验结果">
 						<template slot-scope="scope">
-							<span>{{ `行数差: ${scope.row.target_total + scope.row.source_total}` }}</span>
+							<span>{{ `行数差: ${Math.abs(scope.row.target_total - scope.row.source_total)}` }}</span>
 							<div v-if="type !== 'row_count'">
 								{{ `内容差: ${scope.row.source_only + scope.row.target_only + scope.row.row_failed}` }}
 							</div>
