@@ -1175,6 +1175,11 @@ export default {
 								self.$message.error(self.$t('message.resetFailed'));
 							}
 						})
+						.catch(err => {
+							if (err && err.response.status === 500) {
+								self.$message.error(self.$t('message.resetFailed'));
+							}
+						})
 						.finally(() => {
 							this.loading = false;
 						});
