@@ -407,8 +407,8 @@ const en = {
 		read_cdc_interval: ' CDC interval',
 		read_batch_size: 'Read-amount/time',
 		cdcDataProcess: 'CDC data process',
-		batch: 'Batch',
-		onebyone: 'One by one',
+		batch: 'Batch process',
+		onebyone: 'Row by row process',
 		mission: 'Description',
 		yes: 'yes',
 		no: 'no',
@@ -480,8 +480,8 @@ const en = {
 				"Intelligent deduplication: intelligent detection of the target's existing data, deduplication can greatly improve transmission performance",
 			compelTip:
 				"Forced deduplication: Perform mandatory deduplication detection on the target's existing data, strictly guarantee accuracy but low transmission performance",
-			batchTip: 'Batch: batch transfer processing of monitored incremental data, with high performance',
-			onebyoneTip: 'Line by line: Process the monitored incremental data one by one, with poor performance'
+			batchTip: 'Batch:  Batch rocessing and transmission of CDC data with high performance.',
+			onebyoneTip: 'Row by row: Processing and transmission of CDC data row by row'
 		}
 	},
 	connection: {
@@ -1375,9 +1375,13 @@ const en = {
 	},
 	dialog: {
 		createTable: 'Create new table',
-		placeholderTable: 'Enter new table name',
+		placeholderTable: 'Only support English, numbers, underscores, and start with an English letter',
 		createCollection: ' Create new collection ',
-		placeholderCollection: 'Enter new collection name'
+		placeholderCollection: 'Only support English, numbers, underscores, and start with an English letter',
+		tableValidateTip:
+			'Table name can contain only English letters, numbers, or the underscore character，and only begin with letter.',
+		collectionValidateTip:
+			'Collection name can contain only English letters, numbers, or the underscore character，and only begin with letter'
 	},
 	queryBuilder: {
 		addCond: 'field Cond'

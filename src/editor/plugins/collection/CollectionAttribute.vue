@@ -510,10 +510,10 @@ export default {
 		addNewTable() {
 			this.addtableFalg = true;
 			this.dialogData = {
+				type: 'collection',
 				title: this.$t('dialog.createCollection'),
 				placeholder: this.$t('dialog.placeholderCollection'),
-				visible: this.addtableFalg,
-				newTable: ''
+				visible: this.addtableFalg
 			};
 		},
 

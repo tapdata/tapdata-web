@@ -1362,9 +1362,11 @@ const tc = {
 	},
 	dialog: {
 		createTable: '創建新表',
-		placeholderTable: '請輸入新表表名',
+		placeholderTable: '僅支持英文、數字、下劃線，並以,英文字母開頭',
 		createCollection: '創建新數據集 ',
-		placeholderCollection: '請輸入新的數據集名稱'
+		placeholderCollection: '僅支持英文、數字、下劃線，並以,英文字母開頭',
+		tableValidateTip: '新建表名稱僅支持英文、數字、下劃線，並以英文字母開頭',
+		collectionValidateTip: '新建數據集名稱僅支持英文、數字、下劃線，並以英文字母開頭'
 	},
 	queryBuilder: {
 		addCond: '字段條件'

@@ -1290,9 +1290,11 @@ const cn = {
 	},
 	dialog: {
 		createTable: '创建新表',
-		placeholderTable: '请输入新表表名',
+		placeholderTable: '仅支持英文、数字、下划线，并以,英文字母开头',
 		createCollection: '创建新数据集 ',
-		placeholderCollection: '请输入新的数据集名称'
+		placeholderCollection: '仅支持英文、数字、下划线，并以,英文字母开头',
+		tableValidateTip: '新建表名称仅支持英文、数字、下划线，并以英文字母开头',
+		collectionValidateTip: '新建数据集名称仅支持英文、数字、下划线，并以英文字母开头'
 	},
 	notification: {
 		notice: '消息通知',

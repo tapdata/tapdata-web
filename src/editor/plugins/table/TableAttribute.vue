@@ -430,10 +430,10 @@ export default {
 		addNewTable() {
 			this.addtableFalg = true;
 			this.dialogData = {
+				type: 'table',
 				title: this.$t('dialog.createTable'),
 				placeholder: this.$t('dialog.placeholderTable'),
-				visible: this.addtableFalg,
-				newTable: ''
+				visible: this.addtableFalg
 			};
 		},
 
