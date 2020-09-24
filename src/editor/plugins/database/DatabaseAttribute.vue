@@ -241,7 +241,6 @@ export default {
 			this.cell.graph.getConnectedLinks(this.cell, { outbound: true }).forEach(link => {
 				let orignData = link.getFormData();
 				if (orignData) {
-					debugger;
 					orignData.selectSourceDatabase = {
 						table: true,
 						view: false,

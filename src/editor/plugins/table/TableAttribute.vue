@@ -625,6 +625,15 @@ export default {
 				});
 			}
 			this.taskData.tableName = this.model.tableName;
+
+			// 切换清空连线关联条件的值
+			this.cell.graph.getConnectedLinks(this.cell, { outbound: true }).forEach(link => {
+				let orignData = link.getFormData();
+				if (orignData) {
+					orignData.joinTable.joinKeys = [];
+				}
+				link.setFormData(orignData);
+			});
 		},
 
 		setData(data, cell, dataNodeInfo, vueAdapter) {
@@ -644,6 +653,7 @@ export default {
 				}
 				this.tableIsLink();
 			}
+			this.cell = cell;
 			tempSchemas.length = 0;
 			this.dataNodeInfo = dataNodeInfo || {};
 
