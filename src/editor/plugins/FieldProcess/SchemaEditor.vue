@@ -217,6 +217,7 @@
 				:visible.sync="scriptDialog.open"
 				append-to-body
 				custom-class="scriptDialog"
+				:close-on-click-modal="false"
 			>
 				<el-form>
 					<el-form-item>

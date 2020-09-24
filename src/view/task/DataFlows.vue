@@ -654,7 +654,8 @@ export default {
 					this.$confirm(this.$t('message.forceStoppingMessage'), this.$t('dataFlow.importantReminder'), {
 						confirmButtonText: this.$t('dataFlow.button.force_stop'),
 						cancelButtonText: this.$t('message.cancel'),
-						type: 'warning'
+						type: 'warning',
+						closeOnClickModal: false
 					}).then(() => {
 						this.handleStatus(id, 'force stopping');
 					});
@@ -920,7 +921,8 @@ export default {
 			this.$confirm(this.$t('message.deteleMessage'), this.$t('dataFlow.importantReminder'), {
 				confirmButtonText: this.$t('metaData.deleteNode'),
 				cancelButtonText: this.$t('message.cancel'),
-				type: 'warning'
+				type: 'warning',
+				closeOnClickModal: false
 			}).then(callback);
 		},
 
@@ -976,7 +978,8 @@ export default {
 				{
 					confirmButtonText: this.$t('message.confirm'),
 					cancelButtonText: this.$t('message.cancel'),
-					type: 'warning'
+					type: 'warning',
+					closeOnClickModal: false
 				}
 			).then(callback);
 		},
@@ -1071,7 +1074,8 @@ export default {
 			this.$confirm(this.$t('message.resetMessage'), this.$t('dataFlow.importantReminder'), {
 				confirmButtonText: this.$t('dataFlow.button.reset'),
 				cancelButtonText: this.$t('message.cancel'),
-				type: 'warning'
+				type: 'warning',
+				closeOnClickModal: false
 			}).then(callback);
 		},
 

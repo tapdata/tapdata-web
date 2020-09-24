@@ -463,7 +463,8 @@ export default {
 			this.$confirm(this.$t('message.deteleMessage'), this.$t('dataFlow.importantReminder'), {
 				confirmButtonText: this.$t('metaData.deleteNode'),
 				cancelButtonText: this.$t('message.cancel'),
-				type: 'warning'
+				type: 'warning',
+				closeOnClickModal: false
 			})
 				.then(() => {
 					let data = {

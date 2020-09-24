@@ -1053,7 +1053,8 @@ export default {
 					confirmButtonText:
 						forceStop === true ? self.$t('dataFlow.button.force_stop') : self.$t('message.confirm'),
 					cancelButtonText: self.$t('message.cancel'),
-					type: 'warning'
+					type: 'warning',
+					closeOnClickModal: false
 				}
 			).then(() => {
 				self.doSave(data, err => {
@@ -1161,6 +1162,7 @@ export default {
 				self.$confirm(self.$t('message.resetMessage'), self.$t('dataFlow.importantReminder'), {
 					confirmButtonText: self.$t('dataFlow.button.reset'),
 					cancelButtonText: self.$t('message.cancel'),
+					closeOnClickModal: false,
 					type: 'warning'
 				}).then(() => {
 					this.loading = true;

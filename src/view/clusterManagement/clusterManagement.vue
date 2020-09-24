@@ -180,6 +180,7 @@
 			:visible.sync="dialogForm"
 			:append-to-body="true"
 			:lock-scroll="false"
+			:close-on-click-modal="false"
 			width="600px"
 			@close="closeDialogForm()"
 		>
@@ -329,7 +330,8 @@ export default {
 				};
 				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.closeSever'), {
 					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancel')
+					cancelButtonText: this.$t('message.cancel'),
+					closeOnClickModal: false
 				}).then(() => {
 					this.operationFn(data);
 				});
@@ -352,7 +354,8 @@ export default {
 				};
 				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.restartServer'), {
 					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancel')
+					cancelButtonText: this.$t('message.cancel'),
+					closeOnClickModal: false
 				}).then(() => {
 					this.operationFn(data);
 				});

@@ -5,6 +5,7 @@
 		width="600px"
 		class="SelectClassify-dialog"
 		:before-close="handleClose"
+		:close-on-click-modal="false"
 	>
 		<div>
 			<el-tag

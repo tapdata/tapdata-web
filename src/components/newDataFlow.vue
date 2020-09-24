@@ -4,6 +4,7 @@
 		:visible.sync="dialogVisible"
 		width="60%"
 		:before-close="handleClose"
+		:close-on-click-modal="false"
 		class="simple-scene"
 	>
 		<div>
