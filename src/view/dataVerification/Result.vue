@@ -54,11 +54,9 @@
 					</el-table-column>
 					<el-table-column :label="$t('dataFlow.operate')" width="60px" v-if="type !== 'row_count'">
 						<template slot-scope="scope">
-							<el-tooltip class="item" placement="bottom">
-								<el-button type="text" @click="changeInspectResult(1, scope.row.taskId)">
-									<i class="iconfont  task-list-icon icon-chaxun"></i>
-								</el-button>
-							</el-tooltip>
+							<el-button type="text" @click="changeInspectResult(1, scope.row.taskId)">
+								<i class="iconfont  task-list-icon icon-chaxun"></i>
+							</el-button>
 						</template>
 					</el-table-column>
 				</el-table>

@@ -261,7 +261,7 @@ const childRoutes = [
 	{
 		path: '/dataVerification/setting',
 		name: 'dataVerifySetting',
-		component: view('dataVerification/Setting'),
+		component: view('dataVerification/setting'),
 		meta: { title: i18n.t('dataVerify.setting.title') }
 	}
 ];

@@ -1376,6 +1376,33 @@ const cn = {
 		agentCreated: 'Agent被创建',
 		agentDeleted: 'Agent被删除'
 	},
+	dataVerification: {
+		verifyDetail: '校验详情',
+		sourceTable: '源表',
+		targetTable: '目标表',
+		sourceRows: '源/目标表行数',
+		verifyResult: '校验结果',
+		rowConsistent: '行数差异',
+		contConsistent: '内容差异',
+		verifyHistory: '校验历史',
+		tableDetail: '表明细',
+		configuration: '查看配置',
+		verifyName: '校验任务',
+		sourceTotalRows: '源总行数',
+		targetTotalRows: '目标总行数',
+		verifyStatus: '校验状态',
+		verifyTime: '校验时间',
+		operation: '操作',
+		rowVerify: '行数校验',
+		contentVerify: '内容校验',
+		singleVerify: '单次校验',
+		repeatingVerify: '重复校验',
+		consistent: '一致',
+		toBeVerified: '待校验',
+		verifying: '校验中',
+		verifyFinished: '校验完成',
+		verifyJobExpired: '校验任务结束'
+	},
 	queryBuilder: {
 		addCond: '字段条件'
 	}

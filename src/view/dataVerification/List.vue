@@ -45,7 +45,7 @@
 							placeholder="单词/重复校验"
 							@input="search(1)"
 						>
-							<el-option label="单词校验" value="manual"></el-option>
+							<el-option label="单次校验" value="manual"></el-option>
 							<el-option label="重复校验" value="cron"></el-option>
 						</el-select>
 					</li>
@@ -83,7 +83,7 @@
 						<i class="iconfont icon-piliang"></i>
 						<span>批量校验</span>
 					</el-button>
-					<el-button size="mini">
+					<el-button size="mini" @click="$router.push('dataVerification/setting')">
 						<i class="iconfont icon-shezhi1"></i>
 						<span>校验设置</span>
 					</el-button>
@@ -217,9 +217,7 @@
 								type="text"
 								size="mini"
 								:disabled="!scope.row.InspectResult"
-								@click="
-									toTableHistory(scope.row.InspectResult.id, scope.row.inspectMethod, scope.row.name)
-								"
+								@click="toTableHistory(scope.row.id, scope.row.inspectMethod, scope.row.name)"
 							></el-button>
 							<el-button
 								class="btn-icon el-icon-setting"

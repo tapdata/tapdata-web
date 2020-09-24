@@ -99,7 +99,7 @@ export default {
 	},
 	created() {
 		this.type = this.$route.query.type;
-		this.inspect_id = this.$route.query.inspect_id;
+		this.inspect_id = this.$route.query.inspectId;
 		this.name = this.$route.query.name;
 		this.search(1);
 	},
@@ -110,7 +110,7 @@ export default {
 			let currentPage = pageNum || current + 1;
 			let where = {
 				where: {
-					inspect_id: this.inspect_id
+					inspect_id: { regexp: `^${this.inspect_id}$` }
 				},
 				order: 'createTime DESC',
 				limit: size,
