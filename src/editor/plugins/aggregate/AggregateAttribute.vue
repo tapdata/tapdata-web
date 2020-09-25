@@ -379,18 +379,12 @@ export default {
 			vertical-align: sub;
 			margin-right: 4px;
 		}
-		.aggtip {
+		.iconfont {
+			display: inline-block;
+			color: #999;
+			cursor: pointer;
 			vertical-align: middle;
-			word-break: keep-all !important;
-			// position: absolute;
-			// top: -34px;
-			// left: 120px;
-			.iconfont {
-				display: inline-block;
-				color: #999;
-				cursor: pointer;
-				transform: rotate(-180deg);
-			}
+			transform: rotate(-180deg);
 		}
 	}
 
