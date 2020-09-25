@@ -1444,7 +1444,16 @@ const cn = {
 		error: 'error',
 		done: '校验结束',
 		running: '校验中',
-		verifyProgress: '校验进度'
+		verifyProgress: '校验进度',
+		tasksTime: '请选择起止时间',
+		tasksDataFlow: '请选择任务',
+		tasksJobName: '请输入校验任务名称',
+		tasksVerifyCondition: '请添加校验条件',
+		tasksVerifyInterval: '请输入校验间隔',
+		lackSource: '条校验条件中源表或目标表未选择',
+		lackIndex: '条校验条件中源表或目标表的索引字段未选择',
+		tasksAmount: '条校验条件中源表与目标表的索引字段个数不相等',
+		nubmer: '第 '
 	},
 	queryBuilder: {
 		addCond: '字段条件'

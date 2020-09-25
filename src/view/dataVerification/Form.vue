@@ -139,13 +139,14 @@
 							{{ $t('dataVerification.clear') }}
 						</el-button>
 					</div>
-					<ul class="panel-container" v-loading="!flowStages.length">
+					<ul class="panel-container" v-loading="!flowStages.length" id="data-verification-form">
 						<li class="condition-item" v-for="(item, index) in form.tasks" :key="index">
 							<div class="condition-setting">
 								<div class="setting-item">
 									<label class="item-label is-required">{{ $t('dataVerification.table') }}</label>
 									<el-cascader
 										class="item-select"
+										:class="{ red: !item.sourceTable }"
 										size="mini"
 										v-model="item.sourceTable"
 										:options="sourceTree"
@@ -157,6 +158,7 @@
 									<el-cascader
 										class="item-select"
 										size="mini"
+										:class="{ red: !item.targetTable }"
 										v-model="item.targetTable"
 										:options="targetTree"
 										@input="tableChangeHandler(item, 'target')"
@@ -169,11 +171,13 @@
 									<MultiSelection
 										v-model="item.source.sortColumn"
 										:options="item.source.fields"
+										:class="{ red: !item.source.sortColumn }"
 										:placeholder="$t('dataVerification.ChoosePKField')"
 									></MultiSelection>
 									<span class="item-icon"></span>
 									<MultiSelection
 										v-model="item.target.sortColumn"
+										:class="{ red: !item.target.sortColumn }"
 										:options="item.target.fields"
 										:placeholder="$t('dataVerification.ChoosePKField')"
 									></MultiSelection>
@@ -263,22 +267,22 @@ export default {
 			rules: {
 				flowId: [
 					{
-						validator: requiredValidator('请选择任务')
+						validator: requiredValidator(this.$t('dataVerification.tasksDataFlow'))
 					}
 				],
 				name: [
 					{
-						validator: requiredValidator('请输入校验任务名称')
+						validator: requiredValidator(this.$t('dataVerification.tasksJobName'))
 					}
 				],
 				'timing.start': [
 					{
-						validator: requiredValidator('请选择起止时间', true)
+						validator: requiredValidator(this.$t('dataVerification.tasksTime'), true)
 					}
 				],
 				'timing.intervals': [
 					{
-						validator: requiredValidator('请输入校验间隔', true)
+						validator: requiredValidator(this.$t('dataVerification.tasksVerifyInterval'), true)
 					}
 				]
 			},
@@ -582,6 +586,7 @@ export default {
 			this.form.timing.end = times[1];
 		},
 		tableChangeHandler(item, type) {
+			debugger;
 			let values = item[type + 'Table'];
 			this.flowStages.forEach(stg => {
 				if (values && values.length && stg.connectionId === values[0] && stg.tableName === values[1]) {
@@ -595,7 +600,7 @@ export default {
 					let tasks = this.form.tasks;
 					let index = 0;
 					if (!tasks.length) {
-						return this.$message.error('请添加校验条件');
+						return this.$message.error(this.$t('dataVerification.tasksVerifyCondition'));
 					}
 					if (
 						tasks.some((c, i) => {
@@ -603,7 +608,13 @@ export default {
 							return !c.source.table || !c.target.table;
 						})
 					) {
-						return this.$message.error('第' + index + '条校验条件中源表或目标表未选择');
+						document
+							.getElementById('data-verification-form')
+							.childNodes[index - 1].querySelector('input')
+							.focus();
+						return this.$message.error(
+							this.$t('dataVerification.nubmer') + index + this.$t('dataVerification.lackSource')
+						);
 					}
 					index = 0;
 					if (
@@ -613,7 +624,13 @@ export default {
 							return !c.source.sortColumn || !c.target.sortColumn;
 						})
 					) {
-						return this.$message.error('第' + index + '条校验条件中源表或目标表的索引字段未选择');
+						document
+							.getElementById('data-verification-form')
+							.childNodes[index - 1].querySelector('input')
+							.focus();
+						return this.$message.error(
+							this.$t('dataVerification.nubmer') + index + this.$t('dataVerification.lackIndex')
+						);
 					}
 					index = 0;
 					if (
@@ -623,7 +640,13 @@ export default {
 							return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length;
 						})
 					) {
-						return this.$message.error('第' + index + '条校验条件中源表与目标表的索引字段个数不相等');
+						document
+							.getElementById('data-verification-form')
+							.childNodes[index - 1].querySelector('input')
+							.focus();
+						return this.$message.error(
+							this.$t('dataVerification.nubmer') + index + this.$t('dataVerification.tasksAmount')
+						);
 					}
 					if (this.form.inspectMethod === 'jointField') {
 						tasks.forEach(item => {
@@ -664,8 +687,14 @@ export default {
 	}
 };
 </script>
-
 <style lang="less">
+.red .el-input__inner {
+	border: none;
+	border: 1px solid #ee5353;
+	border-radius: 4px;
+}
+</style>
+<style lang="less" scoped>
 .data-verification-form {
 	position: relative;
 	height: 100%;

@@ -1455,12 +1455,21 @@ const en = {
 			'Table field value verify mode which will verify all fields of source and target tables row by row can find out the differences of all fields, but has a slow speed.',
 		jointFieldTip:
 			'Joint fields value verify mode only compares the joint field value of source and target tables，faster than table field value verify mode .',
-		waiting: 'waiting',
+		waiting: 'To be verified',
 		scheduling: 'scheduling',
 		error: 'error',
-		done: 'done',
+		done: 'Verify finished',
 		running: 'running',
-		verifyProgress: 'Verify Progress'
+		verifyProgress: 'Verify Progress',
+		tasksTime: 'please set start and stop time',
+		tasksDataFlow: 'Please choose data flow job',
+		tasksJobName: 'please enter verify job name',
+		tasksVerifyCondition: 'Please set verify condition',
+		tasksVerifyInterval: 'Please choose data verify interval',
+		lackSource: ' lack source or target table in verify condition',
+		lackIndex: ' lack index field of source or target table in verify condition',
+		tasksAmount: ' The amount of index field of source table does not equal to target table in verify condition',
+		nubmer: 'No. '
 	},
 	queryBuilder: {
 		addCond: 'Field Cond'

@@ -1441,7 +1441,16 @@ const tc = {
 		error: 'error',
 		done: '校驗結束',
 		running: '校驗中',
-		verifyProgress: '校验进度'
+		verifyProgress: '校验进度',
+		tasksTime: '請選擇起止時間',
+		tasksDataFlow: '請選擇任務',
+		tasksJobName: '請輸入校驗任務名稱',
+		tasksVerifyCondition: '請添加校驗條件',
+		tasksVerifyInterval: '請輸入校驗間隔',
+		lackSource: '條校驗條件中源表或目標表未選擇',
+		lackIndex: '條校驗條件中源表或目標表的索引字段未選擇',
+		tasksAmount: '條校驗條件中源表與目標表的索引字段個數不相等',
+		nubmer: '第'
 	},
 	queryBuilder: {
 		addCond: '字段條件'

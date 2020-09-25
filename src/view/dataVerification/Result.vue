@@ -52,7 +52,7 @@
 					</el-table-column>
 					<el-table-column prop="status" :label="$t('dataVerification.verifyResult')">
 						<template slot-scope="scope">
-							<span>{{
+							<span v-if="scope.row.target_total - scope.row.source_total != 0">{{
 								$t('dataVerification.rowConsistent') +
 									' : ' +
 									Math.abs(scope.row.target_total - scope.row.source_total)
@@ -65,6 +65,9 @@
 										Number(scope.row.row_failed)
 								}}
 							</div>
+							<span class="success" v-if="scope.row.target_total - scope.row.source_total === 0">
+								<span>{{ $t('dataVerification.consistent') }}</span>
+							</span>
 						</template>
 					</el-table-column>
 					<el-table-column :label="$t('dataFlow.operate')" width="60px" v-if="type !== 'row_count'">
