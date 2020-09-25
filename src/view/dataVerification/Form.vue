@@ -3,16 +3,16 @@
 		<div class="form-container">
 			<div class="form-body">
 				<h1 class="title">
-					<span>{{ $route.params.id ? '编辑校验' : '新建校验' }}</span>
+					<span>{{ $route.params.id ? $t('dataVerification.edit') : $t('dataVerification.newVerify') }}</span>
 					<div style="font-size: 12px;">
-						<span style="color: #48B6E2;" v-show="form.enabled">已启用</span>
-						<span style="color: #9a9a9a;" v-show="!form.enabled">已禁止</span>
+						<span style="color: #48B6E2;" v-show="form.enabled">{{ $t('dataVerification.enable') }}</span>
+						<span style="color: #9a9a9a;" v-show="!form.enabled">{{ $t('dataVerification.disable') }}</span>
 						<el-switch size="mini" v-model="form.enabled"></el-switch>
 					</div>
 				</h1>
 				<div class="form-panel">
 					<div class="panel-label">
-						<span>基本设置</span>
+						<span>{{ $t('dataVerification.BasicSettings') }}</span>
 					</div>
 					<el-form
 						inline-message
@@ -23,13 +23,13 @@
 						style="padding: 10px 20px;"
 					>
 						<el-form-item class="setting-item" prop="flowId">
-							<label class="item-label is-required">选择任务</label>
+							<label class="item-label is-required">{{ $t('dataVerification.chooseJob') }}</label>
 							<el-select
 								filterable
 								class="item-select"
 								size="mini"
 								v-model="form.flowId"
-								placeholder="选择任务"
+								:placeholder="$t('dataVerification.chooseJob')"
 								:loading="!flowOptions"
 								@input="flowChangeHandler"
 							>
@@ -42,33 +42,33 @@
 							</el-select>
 						</el-form-item>
 						<el-form-item class="setting-item">
-							<label class="item-label">校验类型</label>
+							<label class="item-label">{{ $t('dataVerification.verifyType') }}</label>
 							<el-radio-group v-model="form.inspectMethod" style="margin-left: 10px;">
-								<el-radio label="row_count">行数校验</el-radio>
-								<el-radio label="field">内容校验</el-radio>
+								<el-radio label="row_count">{{ $t('dataVerification.rowVerify') }}</el-radio>
+								<el-radio label="field">{{ $t('dataVerification.contentVerify') }}</el-radio>
 							</el-radio-group>
 						</el-form-item>
 						<el-form-item class="setting-item" prop="name">
-							<label class="item-label is-required">校验任务名称</label>
+							<label class="item-label is-required">{{ $t('dataVerification.verifyJobName') }}</label>
 							<el-input class="item-input" size="mini" v-model="form.name"></el-input>
 						</el-form-item>
 						<el-form-item class="setting-item">
-							<label class="item-label">校验频次</label>
+							<label class="item-label">{{ $t('dataVerification.frequency') }}</label>
 							<el-radio-group v-model="form.mode" style="margin-left: 10px;">
-								<el-radio label="manual">单次校验</el-radio>
-								<el-radio label="cron">重复校验</el-radio>
+								<el-radio label="manual">{{ $t('dataVerification.singleVerify') }}</el-radio>
+								<el-radio label="cron">{{ $t('dataVerification.repeatingVerify') }}</el-radio>
 							</el-radio-group>
 						</el-form-item>
 						<el-form-item class="setting-item" prop="timing.start" v-show="form.mode === 'cron'">
-							<label class="item-label">起止时间</label>
+							<label class="item-label">{{ $t('dataVerification.startAndStopTime') }}</label>
 							<el-date-picker
 								class="item-select"
 								size="mini"
 								:value="[form.timing.start, form.timing.end]"
 								type="datetimerange"
-								range-separator="至"
-								start-placeholder="开始日期"
-								end-placeholder="结束日期"
+								range-separator="-"
+								:start-placeholder="$t('dataVerification.startTime')"
+								:end-placeholder="$t('dataVerification.LastTime')"
 								align="right"
 								:default-time="['00:00:00', '23:59:59']"
 								value-format="timestamp"
@@ -77,7 +77,7 @@
 							</el-date-picker>
 						</el-form-item>
 						<el-form-item class="setting-item" prop="timing.intervals" v-show="form.mode === 'cron'">
-							<label class="item-label">校验间隔</label>
+							<label class="item-label">{{ $t('dataVerification.verifyInterval') }}</label>
 							<el-input class="item-input" size="mini" v-model="form.timing.intervals">
 								<template slot="append">
 									<el-select style="width: 100px;" size="mini" v-model="form.timing.intervalsUnit">
@@ -92,27 +92,27 @@
 							</el-input>
 						</el-form-item>
 						<el-form-item class="setting-item">
-							<label class="item-label">错误信息保存条数</label>
+							<label class="item-label">{{ $t('dataVerification.inconsistent') }}</label>
 							<el-select class="item-select" size="mini" v-model="form.limit.keep">
-								<el-option :value="100" label="100条"></el-option>
-								<el-option :value="1000" label="1000条"></el-option>
-								<el-option :value="10000" label="10000条"></el-option>
+								<el-option :value="100" label="100(rows)"></el-option>
+								<el-option :value="1000" label="1000(rows)"></el-option>
+								<el-option :value="10000" label="10000(rows)"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-form>
 				</div>
 				<div class="form-panel" v-if="flowStages">
 					<div class="panel-label">
-						<span>校验条件</span>
+						<span>{{ $t('dataVerification.verifyCondition') }}</span>
 						<el-button style="height:24px;line-height: 24px;padding: 0 10px;" size="mini" @click="clear">
-							清空
+							{{ $t('dataVerification.clear') }}
 						</el-button>
 					</div>
 					<ul class="panel-container" v-loading="!flowStages.length">
 						<li class="condition-item" v-for="(item, index) in form.tasks" :key="index">
 							<div class="condition-setting">
 								<div class="setting-item">
-									<label class="item-label is-required">待校验表</label>
+									<label class="item-label is-required">{{ $t('dataVerification.table') }}</label>
 									<el-cascader
 										class="item-select"
 										size="mini"
@@ -132,13 +132,15 @@
 									></el-cascader>
 								</div>
 								<div class="setting-item" v-show="form.inspectMethod === 'field'">
-									<label class="item-label is-required">索引字段</label>
+									<label class="item-label is-required">{{
+										$t('dataVerification.indexField')
+									}}</label>
 									<el-select
 										filterable
 										class="item-select"
 										size="mini"
 										v-model="item.source.sortColumn"
-										placeholder="请选索引或主键字段"
+										:placeholder="$t('dataVerification.ChoosePKField')"
 									>
 										<el-option
 											v-for="field in item.source.fields"
@@ -155,7 +157,7 @@
 										class="item-select"
 										size="mini"
 										v-model="item.target.sortColumn"
-										placeholder="请选索引或主键字段"
+										:placeholder="$t('dataVerification.ChoosePKField')"
 									>
 										<el-option
 											v-for="field in item.target.fields"
@@ -173,18 +175,22 @@
 							</el-button-group>
 						</li>
 						<li style="color: #ccc;" v-show="!form.tasks.length">
-							点下方按钮添加校验表
+							{{ $t('dataVerification.clickVerified') }}
 						</li>
 					</ul>
 				</div>
 				<div style="margin-top: 10px;" v-if="flowStages">
-					<el-button size="mini" icon="el-icon-plus" @click="addTable()">添加表</el-button>
-					<el-button size="mini" icon="el-icon-plus" @click="autoAddTable()">自动添加</el-button>
+					<el-button size="mini" icon="el-icon-plus" @click="addTable()">{{
+						$t('dataVerification.addTable')
+					}}</el-button>
+					<el-button size="mini" icon="el-icon-plus" @click="autoAddTable()">{{
+						$t('dataVerification.automaticallyAdd')
+					}}</el-button>
 				</div>
 			</div>
 		</div>
 		<div class="footer">
-			<el-button type="primary" size="mini" @click="nextStep()">下一步</el-button>
+			<el-button type="primary" size="mini" @click="nextStep()">{{ $t('dataVerification.next') }}</el-button>
 		</div>
 	</section>
 </template>

@@ -106,7 +106,7 @@ const tc = {
 			roles: '角色管理',
 			settings: '系統設置',
 			favorite: '我的收藏',
-
+			dataVerification: '数据校验',
 			delFavMenu: '删除收藏'
 		},
 		Home: {
@@ -1411,7 +1411,27 @@ const tc = {
 		sourceFieldName: '源表字段名',
 		targetFieldName: '目標字段名',
 		Value: '值',
-		inconsistentType: '差異類型'
+		inconsistentType: '差異類型',
+		chooseJob: '選擇任務',
+		frequency: '校驗頻次',
+		startTime: '開始時間',
+		LastTime: '結束時間',
+		verifyInterval: '校驗間隔',
+		inconsistent: '錯誤數據保存條數',
+		table: '待校驗表',
+		addTable: '添加表',
+		automaticallyAdd: '自動添加',
+		next: '下一步',
+		enable: '已啟用',
+		disable: '已禁止',
+		newVerify: '新建校驗',
+		edit: '編輯校驗',
+		clickVerified: '點下方按鈕添加校驗表',
+		ChoosePKField: '請選索引或主鍵字段',
+		indexField: '索引字段',
+		BasicSettings: '基本設置',
+		verifyCondition: '校驗條件',
+		clear: '清空'
 	},
 	queryBuilder: {
 		addCond: '字段條件'

@@ -106,7 +106,7 @@ const en = {
 			roles: 'Role Management',
 			settings: 'Settings',
 			favorite: 'Favorite',
-
+			dataVerification: 'Data Verification',
 			delFavMenu: 'Delete Favorite'
 		},
 		Home: {
@@ -1426,7 +1426,27 @@ const en = {
 		sourceFieldName: 'Source Field Name',
 		targetFieldName: 'Target Field Name',
 		Value: 'value',
-		inconsistentType: 'Inconsistent Type'
+		inconsistentType: 'Inconsistent Type',
+		chooseJob: 'Choose job',
+		frequency: 'Frequency',
+		startTime: ' Start time',
+		LastTime: 'Stop time',
+		verifyInterval: 'Verify interval',
+		inconsistent: 'Inconsistent data to be saved',
+		table: 'Table',
+		addTable: 'Add table',
+		automaticallyAdd: 'Automatically add',
+		next: 'Next',
+		enable: 'Enable',
+		disable: 'Disable',
+		newVerify: 'New Verify',
+		edit: 'Edit',
+		clickVerified: 'Click the bottons below to add tables to be verified',
+		ChoosePKField: 'Choose index /PK field',
+		indexField: 'Index field',
+		BasicSettings: 'Basic Settings',
+		verifyCondition: 'Verify Conditions',
+		clear: 'Clear'
 	},
 	queryBuilder: {
 		addCond: 'field Cond'

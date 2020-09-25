@@ -34,8 +34,8 @@
 							:placeholder="$t('dataVerification.verifyType')"
 							@input="search(1)"
 						>
-							<el-option label="行数校验" value="row_count"></el-option>
-							<el-option label="内容校验" value="field"></el-option>
+							<el-option :label="$t('dataVerification.rowVerify')" value="row_count"></el-option>
+							<el-option :label="$t('dataVerification.contentVerify')" value="field"></el-option>
 						</el-select>
 					</li>
 					<li class="search-item">
@@ -53,11 +53,11 @@
 						<el-select
 							v-model="searchParams.active"
 							size="mini"
-							placeholder="校验激活状态"
+							:placeholder="$t('dataVerification.verifyStatus')"
 							@input="search(1)"
 						>
-							<el-option label="已启用" value="1"></el-option>
-							<el-option label="已禁用" value="2"></el-option>
+							<el-option :label="$t('dataVerification.enable')" value="1"></el-option>
+							<el-option :label="$t('dataVerification.disable')" value="2"></el-option>
 						</el-select>
 					</li>
 					<li class="search-item" v-if="searchParams.tag">
