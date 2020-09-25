@@ -308,7 +308,7 @@ const en = {
 		targetLibrary: 'Target',
 		inputNumber: 'Input Total',
 		outputNumber: 'Output Total',
-		rowCount: 'Records',
+		rowCount: 'Row',
 		inputOutput: 'Throughput',
 		transf: 'Transmission Time',
 		timePoint: 'CDC timepoint',

@@ -708,9 +708,9 @@ export default {
 			}
 			.unit {
 				float: right;
-				padding: 10px 20px;
+				padding: 12px;
 				font-size: 12px;
-				color: #666;
+				color: #999;
 			}
 		}
 		.info {
