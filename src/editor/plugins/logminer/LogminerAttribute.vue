@@ -20,9 +20,9 @@
 						</el-tooltip> -->
 						<el-popover class="aggtip" placement="top-start" width="400" trigger="hover">
 							<ul>
-								<li>{{ $t('dataFlow.SyncInfo.localTZ') }}</li>
-								<li>{{ $t('dataFlow.SyncInfo.connTZ') }}</li>
-								<li>{{ $t('dataFlow.SyncInfo.current') }}</li>
+								<li style="word-break: keep-all;">{{ $t('dataFlow.SyncInfo.localTZ') }}</li>
+								<li style="word-break: keep-all;">{{ $t('dataFlow.SyncInfo.connTZ') }}</li>
+								<li style="word-break: keep-all;">{{ $t('dataFlow.SyncInfo.current') }}</li>
 							</ul>
 							<span class="icon iconfont icon-tishi1" slot="reference"></span>
 						</el-popover>

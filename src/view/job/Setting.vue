@@ -49,7 +49,7 @@
 					<el-option :label="$t('dataFlow.batch')" :value="false"> </el-option>
 					<el-option :label="$t('dataFlow.onebyone')" :value="true"> </el-option>
 				</el-select>
-				<el-popover class="aggtip" placement="top-start" trigger="hover">
+				<el-popover popper-class="setting-popper" placement="top-start" width="600" trigger="hover">
 					<div>{{ $t('dataFlow.setting.batchTip') }}</div>
 					<div>{{ $t('dataFlow.setting.onebyoneTip') }}</div>
 					<span class="icon iconfont icon-tishi1" slot="reference"></span>
@@ -71,7 +71,7 @@
 						>
 						</el-option>
 					</el-select>
-					<el-popover class="aggtip" placement="top-start" trigger="hover">
+					<el-popover popper-class="setting-popper" placement="top-start" width="600" trigger="hover">
 						<div>{{ $t('dataFlow.setting.intellectTip') }}</div>
 						<div>{{ $t('dataFlow.setting.compelTip') }}</div>
 						<span class="icon iconfont icon-tishi1" slot="reference"></span>
@@ -157,7 +157,7 @@
 						<el-input v-model="formData.maxTransactionLength" :min="1" :max="720" size="mini">
 							<template slot="append">Hours</template>
 						</el-input>
-						<el-popover class="aggtip" placement="top-start" width="400" trigger="hover">
+						<el-popover popper-class="setting-popper" placement="top-start" width="600" trigger="hover">
 							<span>{{ $t('editor.cell.data_node.table.form.maximum_transaction.tip') }}</span>
 							<span class="icon iconfont icon-tishi1" slot="reference"></span>
 						</el-popover>
@@ -499,6 +499,13 @@ export default {
 		padding: 6px 10px;
 		border-left: 1px solid #dcdfe6;
 		margin: -2px;
+	}
+}
+.setting-popper {
+	span,
+	div,
+	p {
+		word-break: keep-all;
 	}
 }
 </style>

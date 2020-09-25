@@ -25,7 +25,8 @@
 						<FbSelect v-model="model.connectionId" :config="databaseSelectConfig"></FbSelect>
 						<el-tooltip
 							class="item"
-							effect="dark"
+							popper-class="collection-tooltip"
+							effect="light"
 							:content="$t('dataForm.createDatabase')"
 							placement="top-start"
 						>
@@ -38,7 +39,8 @@
 						</el-tooltip>
 						<el-tooltip
 							class="item"
-							effect="dark"
+							popper-class="collection-tooltip"
+							effect="light"
 							:content="$t('dataForm.copyDatabase')"
 							placement="top-start"
 						>
@@ -48,7 +50,8 @@
 						</el-tooltip>
 						<el-tooltip
 							class="item"
-							effect="dark"
+							effect="light"
+							popper-class="collection-tooltip"
 							:content="$t('dataForm.checkDatabase')"
 							placement="top-start"
 						>
@@ -78,9 +81,9 @@
 						></FbSelect>
 						<el-tooltip
 							class="item"
-							effect="dark"
+							popper-class="collection-tooltip"
+							effect="light"
 							:content="$t('dataForm.createCollection')"
-							placement="bottom-start"
 						>
 							<el-button
 								size="mini"
@@ -91,9 +94,9 @@
 						</el-tooltip>
 						<el-tooltip
 							class="item"
-							effect="dark"
+							popper-class="collection-tooltip"
+							effect="light"
 							:content="$t('dataForm.copyCollection')"
-							placement="bottom-start"
 						>
 							<el-button size="mini" style="padding: 7px;margin-left: 7px">
 								<ClipButton :value="model.tableName"></ClipButton>
@@ -101,9 +104,9 @@
 						</el-tooltip>
 						<el-tooltip
 							class="item"
-							effect="dark"
+							popper-class="collection-tooltip"
+							effect="light"
 							:content="$t('dataForm.checkDatabase')"
-							placement="bottom-end"
 						>
 							<el-button
 								size="mini"
@@ -118,15 +121,17 @@
 				<el-form-item>
 					<template slot="label">
 						{{ $t('editor.cell.data_node.collection.form.fieldFilterTip.label') }}
-						<el-tooltip placement="right-end">
+						<el-tooltip effect="light" popper-class="collection-tooltip">
 							<div slot="content">
-								<div>
+								<div style="word-break: keep-all;">
 									{{ $t('editor.cell.data_node.collection.form.fieldFilterTip.keepAllFields') }}
 								</div>
-								<div>
+								<div style="word-break: keep-all;">
 									{{ $t('editor.cell.data_node.collection.form.fieldFilterTip.retainedField') }}
 								</div>
-								<div>{{ $t('editor.cell.data_node.collection.form.fieldFilterTip.deleteField') }}</div>
+								<div style="word-break: keep-all;">
+									{{ $t('editor.cell.data_node.collection.form.fieldFilterTip.deleteField') }}
+								</div>
 							</div>
 							<i class="e-primary el-icon-warning-outline"></i>
 						</el-tooltip>
@@ -864,5 +869,9 @@ export default {
 	.iconfont {
 		font-size: 12px;
 	}
+}
+.collection-tooltip.is-light {
+	border: 1px solid #ebeef5 !important;
+	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 </style>

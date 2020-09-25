@@ -25,7 +25,8 @@
 						<FbSelect v-model="model.connectionId" :config="databaseSelectConfig"></FbSelect>
 						<el-tooltip
 							class="item"
-							effect="dark"
+							effect="light"
+							popper-class="table-tooltip"
 							:content="$t('dataForm.createDatabase')"
 							placement="top-start"
 						>
@@ -38,7 +39,8 @@
 						</el-tooltip>
 						<el-tooltip
 							class="item"
-							effect="dark"
+							effect="light"
+							popper-class="table-tooltip"
 							:content="$t('dataForm.copyDatabase')"
 							placement="top-start"
 						>
@@ -48,7 +50,8 @@
 						</el-tooltip>
 						<el-tooltip
 							class="item"
-							effect="dark"
+							effect="light"
+							popper-class="table-tooltip"
 							:content="$t('dataForm.checkDatabase')"
 							placement="top-start"
 						>
@@ -74,7 +77,8 @@
 						<FbSelect class="e-select" v-model="model.tableName" :config="schemaSelectConfig"></FbSelect>
 						<el-tooltip
 							class="item"
-							effect="dark"
+							effect="light"
+							popper-class="table-tooltip"
 							:content="$t('dataForm.createTable')"
 							placement="bottom-start"
 						>
@@ -87,7 +91,8 @@
 						</el-tooltip>
 						<el-tooltip
 							class="item"
-							effect="dark"
+							effect="light"
+							popper-class="table-tooltip"
 							:content="$t('dataForm.copyTable')"
 							placement="bottom-start"
 						>
@@ -97,7 +102,8 @@
 						</el-tooltip>
 						<el-tooltip
 							class="item"
-							effect="dark"
+							effect="light"
+							popper-class="table-tooltip"
 							:content="$t('dataForm.checkDatabase')"
 							placement="bottom-end"
 						>
@@ -834,5 +840,9 @@ export default {
 		font-size: 12px !important;
 		color: #999;
 	}
+}
+.table-tooltip {
+	border: 1px solid #ebeef5 !important;
+	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 </style>

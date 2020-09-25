@@ -480,7 +480,7 @@ const en = {
 				"Intelligent deduplication: intelligent detection of the target's existing data, deduplication can greatly improve transmission performance",
 			compelTip:
 				"Forced deduplication: Perform mandatory deduplication detection on the target's existing data, strictly guarantee accuracy but low transmission performance",
-			batchTip: 'Batch:  Batch rocessing and transmission of CDC data with high performance.',
+			batchTip: 'Batch:  Batch processing and transmission of CDC data with high performance.',
 			onebyoneTip: 'Row by row: Processing and transmission of CDC data row by row'
 		}
 	},

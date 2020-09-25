@@ -1724,18 +1724,18 @@ export default {
 	}
 	margin-right: 8px;
 }
-.el-tooltip__popper.is-dark {
-	background-color: #d3d3d3 !important;
-	color: #333 !important;
-	font-size: 16px;
-}
+// .el-tooltip__popper.is-dark {
+// 	background-color: #d3d3d3 !important;
+// 	color: #333 !important;
+// 	font-size: 16px;
+// }
 // 控制主题颜色
 
-.el-tooltip__popper[x-placement^='bottom'] .popper__arrow::after {
-	border-bottom-color: #d3d3d3 !important;
-}
+// .el-tooltip__popper[x-placement^='bottom'] .popper__arrow::after {
+// 	border-bottom-color: #d3d3d3 !important;
+// }
 
-.el-tooltip__popper[x-placement^='bottom'] .popper__arrow {
-	border-bottom-color: #d3d3d3 !important;
-}
+// .el-tooltip__popper[x-placement^='bottom'] .popper__arrow {
+// 	border-bottom-color: #d3d3d3 !important;
+// }
 </style>

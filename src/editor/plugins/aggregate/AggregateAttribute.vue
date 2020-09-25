@@ -66,7 +66,12 @@
 					<el-form-item required :prop="'aggregations.' + index + '.name'">
 						<div class="e-label">
 							<label class="el-form-item__label">{{ $t('dataFlow.aggName') }}</label>
-							<el-popover class="aggtip" width="400" trigger="hover" :content="$t('dataFlow.nameTip')">
+							<el-popover
+								popper-class="aggtip"
+								width="600"
+								trigger="hover"
+								:content="$t('dataFlow.nameTip')"
+							>
 								<span class="icon iconfont icon-tishi1" slot="reference"></span>
 							</el-popover>
 						</div>
@@ -376,6 +381,7 @@ export default {
 		}
 		.aggtip {
 			vertical-align: middle;
+			word-break: keep-all !important;
 			// position: absolute;
 			// top: -34px;
 			// left: 120px;
@@ -425,5 +431,9 @@ export default {
 	.btnClass .el-form-item__content {
 		line-height: 30px !important;
 	}
+}
+.aggtip {
+	vertical-align: middle;
+	word-break: keep-all !important;
 }
 </style>
