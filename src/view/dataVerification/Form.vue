@@ -20,6 +20,7 @@
 						:model="form"
 						:rules="rules"
 						class="panel-container"
+						label-position="right"
 						style="padding: 10px 20px;"
 					>
 						<el-form-item class="setting-item" prop="flowId">
@@ -688,14 +689,12 @@ export default {
 };
 </script>
 <style lang="less">
-.red .el-input__inner {
-	border: none;
-	border: 1px solid #ee5353;
-	border-radius: 4px;
-}
-</style>
-<style lang="less" scoped>
 .data-verification-form {
+	.red .el-input__inner {
+		border: none;
+		border: 1px solid #ee5353;
+		border-radius: 4px;
+	}
 	position: relative;
 	height: 100%;
 	overflow: hidden;
