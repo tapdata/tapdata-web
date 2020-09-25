@@ -1438,7 +1438,13 @@ const cn = {
 		clear: '清空',
 		fastCountTip: '快速count仅对源表和目标表的行数进行count校验，速度极快，但是不会展示差异的具体字段内容。',
 		contentVerifyTip: '全表字段值校验会对源表和目标表的全部字段进行逐行校验，能查出所有字段的差异，但是速度慢。',
-		jointFieldTip: '关联键校验只对源表和目标表的关联字段的值进行比对校验，速度快于全表字段值校验模式.'
+		jointFieldTip: '关联键校验只对源表和目标表的关联字段的值进行比对校验，速度快于全表字段值校验模式.',
+		waiting: '待校验',
+		scheduling: '校验启动中',
+		error: 'error',
+		done: '校验结束',
+		running: '校验中',
+		verifyProgress: '校验进度'
 	},
 	queryBuilder: {
 		addCond: '字段条件'

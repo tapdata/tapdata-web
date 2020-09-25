@@ -18,10 +18,16 @@
 						:label="$t('dataVerification.targetTotalRows')"
 						prop="target_total"
 					></el-table-column>
-					<el-table-column prop="progress" label="校验进度" width="80px">
+					<el-table-column prop="progress" :label="$t('dataVerification.verifyProgress')" width="80px">
 						<template slot-scope="scope">
 							<div>
-								<span>{{ `${(Math.round(scope.row.progress * 1000) / 1000) * 100}%` }}</span>
+								<span>{{
+									`${
+										(Math.round(scope.row.progress * 1000) / 1000) * 100
+											? (Math.round(scope.row.progress * 1000) / 1000) * 100
+											: 0
+									}%`
+								}}</span>
 							</div>
 						</template>
 					</el-table-column>

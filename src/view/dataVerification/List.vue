@@ -163,7 +163,13 @@
 										</span>
 									</span>
 								</div>
-								<span class="success" v-if="!scope.row.result === 'passed'">
+								<span
+									class="success"
+									v-if="
+										scope.row.InspectResult.target_total - scope.row.InspectResult.source_total ===
+											0 && scope.row.difference_number === 0
+									"
+								>
 									<i class="el-icon-success"></i>
 									<span>{{ $t('dataVerification.consistent') }}</span>
 								</span>
@@ -172,9 +178,9 @@
 					</el-table-column>
 					<el-table-column :label="$t('dataVerification.verifyStatus')" align="center" width="140">
 						<template slot-scope="scope">
-							<span>{{ scope.row.status }}</span>
+							<span>{{ statusMap[scope.row.status] }}</span>
 							<span v-if="scope.row.InspectResult && scope.row.status === 'running'">
-								{{ `(${(Math.round(scope.row.InspectResult * 1000) / 1000) * 100}%)` }}
+								{{ `(${(Math.round(scope.row.InspectResult.progress * 1000) / 1000) * 100}%)` }}
 							</span>
 						</template>
 					</el-table-column>
@@ -290,6 +296,13 @@ export default {
 				row_count: this.$t('dataVerification.rowVerify'),
 				field: this.$t('dataVerification.contentVerify'),
 				jointField: this.$t('dataVerification.jointVerify')
+			},
+			statusMap: {
+				waiting: this.$t('dataVerification.waiting'),
+				scheduling: this.$t('dataVerification.scheduling'),
+				error: this.$t('dataVerification.error'),
+				done: this.$t('dataVerification.done'),
+				running: this.$t('dataVerification.running')
 			},
 			selections: []
 		};

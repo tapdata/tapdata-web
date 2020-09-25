@@ -1,7 +1,7 @@
 <template>
 	<section class="data-flow-wrap" v-loading="loading">
 		<div class="panel-main">
-			<div class="tip">{{ $t('dataVerification.verifyHistory') }}</div>
+			<div class="tip">{{ $t('dataVerification.tableDetail') }}</div>
 			<div class="main main-border">
 				<div class="title">{{ name }}</div>
 				<div class="text" v-if="type === 'row_count'">{{ $t('dataVerification.rowVerify') }}</div>
@@ -37,10 +37,16 @@
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column prop="progress" label="校验进度" width="80px">
+					<el-table-column prop="progress" :label="$t('dataVerification.verifyProgress')" width="80px">
 						<template slot-scope="scope">
 							<div>
-								<span>{{ `${(Math.round(scope.row.progress * 1000) / 1000) * 100}%` }}</span>
+								<span>{{
+									`${
+										(Math.round(scope.row.progress * 1000) / 1000) * 100
+											? (Math.round(scope.row.progress * 1000) / 1000) * 100
+											: 0
+									} %`
+								}}</span>
 							</div>
 						</template>
 					</el-table-column>
@@ -52,12 +58,11 @@
 									Math.abs(scope.row.target_total - scope.row.source_total)
 							}}</span>
 							<div v-if="type !== 'row_count'">
+								{{ $t('dataVerification.contConsistent') + ' : ' }}
 								{{
-									$t('dataVerification.contConsistent') +
-										' : ' +
-										scope.row.source_only +
-										scope.row.target_only +
-										scope.row.row_failed
+									Number(scope.row.source_only) +
+										Number(scope.row.target_only) +
+										Number(scope.row.row_failed)
 								}}
 							</div>
 						</template>
@@ -148,9 +153,13 @@
 						<ul class="sub-table" v-for="detail in item.details" :key="detail.id">
 							<li>{{ detail.type === 'uniqueField' ? '唯一字段差异' : '其他字段差异' }}</li>
 							<li>{{ detail.source.key }}</li>
-							<li>{{ detail.source.value }}</li>
+							<li :class="{ red: detail.source.value !== detail.target.value }">
+								{{ detail.source.value }}
+							</li>
 							<li>{{ detail.target.key }}</li>
-							<li>{{ detail.target.value }}</li>
+							<li :class="{ red: detail.source.value !== detail.target.value }">
+								{{ detail.target.value }}
+							</li>
 						</ul>
 					</div>
 				</div>
@@ -273,7 +282,7 @@ export default {
 									} else {
 										sourceValue = '';
 									}
-									if (i.includes(targetKeys)) {
+									if (targetKeys.filter(v => i === v)) {
 										targetValue = target[i];
 									} else {
 										targetValue = '';
@@ -289,7 +298,7 @@ export default {
 											value: targetValue
 										}
 									};
-									item['details'] = [];
+									item['details'] = item['details'] || [];
 									item['details'].push(node);
 								});
 							});
@@ -371,6 +380,9 @@ export default {
 			}
 			.inspect-result-box {
 				overflow: auto;
+				.red {
+					color: #ee5353;
+				}
 				.inspect-details {
 					margin: 0 10px;
 					li {
@@ -382,6 +394,7 @@ export default {
 						position: relative;
 						text-align: left;
 						padding: 3px 10px;
+						word-wrap: break-word;
 					}
 					.father-table {
 						display: flex;
@@ -408,7 +421,7 @@ export default {
 						}
 					}
 				}
-				.inspect-details:last-child {
+				.inspect-details {
 					margin-bottom: 10px;
 					margin-top: 10px;
 				}

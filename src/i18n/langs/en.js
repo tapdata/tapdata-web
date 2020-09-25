@@ -1395,8 +1395,8 @@ const en = {
 		targetTable: 'Target Table',
 		sourceRows: 'Source/target table rows',
 		verifyResult: 'Verify Result',
-		rowConsistent: 'Fast count',
-		contConsistent: 'Table field value verify',
+		rowConsistent: 'Count diff',
+		contConsistent: 'Value diff',
 		jointVerify: 'Joint field value verify',
 		verifyHistory: 'Verify History',
 		tableDetail: ' Table detail',
@@ -1454,10 +1454,16 @@ const en = {
 		contentVerifyTip:
 			'Table field value verify mode which will verify all fields of source and target tables row by row can find out the differences of all fields, but has a slow speed.',
 		jointFieldTip:
-			'Joint fields value verify mode only compares the joint field value of source and target tables，faster than table field value verify mode .'
+			'Joint fields value verify mode only compares the joint field value of source and target tables，faster than table field value verify mode .',
+		waiting: 'waiting',
+		scheduling: 'scheduling',
+		error: 'error',
+		done: 'done',
+		running: 'running',
+		verifyProgress: 'Verify Progress'
 	},
 	queryBuilder: {
-		addCond: 'field Cond'
+		addCond: 'Field Cond'
 	}
 };
 

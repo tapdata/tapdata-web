@@ -1435,7 +1435,13 @@ const tc = {
 		clear: '清空',
 		fastCountTip: '快速count僅對源表和目標表的行數進行count校驗，速度極快，但是不會展示差異的具體字段內容。 ',
 		contentVerifyTip: '全表字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。 ',
-		jointFieldTip: '關聯鍵校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式.'
+		jointFieldTip: '關聯鍵校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式.',
+		waiting: '待校驗',
+		scheduling: '校驗啟動中',
+		error: 'error',
+		done: '校驗結束',
+		running: '校驗中',
+		verifyProgress: '校验进度'
 	},
 	queryBuilder: {
 		addCond: '字段條件'
