@@ -43,7 +43,7 @@ export default {
 			rules: {
 				newTable: [
 					{
-						pattern: /^[a-zA-Z][0-9a-zA-Z_]*$/,
+						pattern: /^[a-zA-Z][0-9a-zA-Z_\.\-]*$/, //eslint-disable-line
 						trigger: 'blur',
 						message:
 							this.dialog.type === 'table'
