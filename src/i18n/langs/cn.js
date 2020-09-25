@@ -1382,8 +1382,8 @@ const cn = {
 		targetTable: '目标表',
 		sourceRows: '源/目标表行数',
 		verifyResult: '校验结果',
-		rowConsistent: '行数差异',
-		contConsistent: '内容差异',
+		rowConsistent: 'Count差',
+		contConsistent: '表数据差',
 		verifyHistory: '校验历史',
 		tableDetail: '表明细',
 		configuration: '查看配置',
@@ -1393,8 +1393,9 @@ const cn = {
 		verifyStatus: '校验状态',
 		verifyTime: '校验时间',
 		operation: '操作',
-		rowVerify: '行数校验',
-		contentVerify: '内容校验',
+		rowVerify: '快速count校验',
+		contentVerify: '表全字段值校验',
+		jointVerify: '关联字段值校验',
 		singleVerify: '单次校验',
 		repeatingVerify: '重复校验',
 		consistent: '一致',
@@ -1434,7 +1435,10 @@ const cn = {
 		indexField: '索引字段',
 		BasicSettings: '基本设置',
 		verifyCondition: '校验条件',
-		clear: '清空'
+		clear: '清空',
+		fastCountTip: '快速count仅对源表和目标表的行数进行count校验，速度极快，但是不会展示差异的具体字段内容。',
+		contentVerifyTip: '全表字段值校验会对源表和目标表的全部字段进行逐行校验，能查出所有字段的差异，但是速度慢。',
+		jointFieldTip: '关联键校验只对源表和目标表的关联字段的值进行比对校验，速度快于全表字段值校验模式.'
 	},
 	queryBuilder: {
 		addCond: '字段条件'

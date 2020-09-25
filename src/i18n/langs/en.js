@@ -1395,8 +1395,9 @@ const en = {
 		targetTable: 'Target Table',
 		sourceRows: 'Source/target table rows',
 		verifyResult: 'Verify Result',
-		rowConsistent: 'Row-consistent',
-		contConsistent: 'Cont-consistent',
+		rowConsistent: 'Fast count',
+		contConsistent: 'Table field value verify',
+		jointVerify: 'Joint field value verify',
 		verifyHistory: 'Verify History',
 		tableDetail: ' Table detail',
 		configuration: 'Configuration',
@@ -1431,6 +1432,7 @@ const en = {
 		frequency: 'Frequency',
 		startTime: ' Start time',
 		LastTime: 'Stop time',
+		startAndStopTime: 'Start and stop time',
 		verifyInterval: 'Verify interval',
 		inconsistent: 'Inconsistent data to be saved',
 		table: 'Table',
@@ -1446,7 +1448,13 @@ const en = {
 		indexField: 'Index field',
 		BasicSettings: 'Basic Settings',
 		verifyCondition: 'Verify Conditions',
-		clear: 'Clear'
+		clear: 'Clear',
+		fastCountTip:
+			'Fast count mode which only verify the number of rows of source and target tables has a extremely fast speed but does not show the differential field values.',
+		contentVerifyTip:
+			'Table field value verify mode which will verify all fields of source and target tables row by row can find out the differences of all fields, but has a slow speed.',
+		jointFieldTip:
+			'Joint fields value verify mode only compares the joint field value of source and target tables，faster than table field value verify mode .'
 	},
 	queryBuilder: {
 		addCond: 'field Cond'

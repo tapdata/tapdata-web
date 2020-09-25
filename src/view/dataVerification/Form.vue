@@ -44,8 +44,39 @@
 						<el-form-item class="setting-item">
 							<label class="item-label">{{ $t('dataVerification.verifyType') }}</label>
 							<el-radio-group v-model="form.inspectMethod" style="margin-left: 10px;">
-								<el-radio label="row_count">{{ $t('dataVerification.rowVerify') }}</el-radio>
-								<el-radio label="field">{{ $t('dataVerification.contentVerify') }}</el-radio>
+								<el-radio label="row_count">
+									{{ $t('dataVerification.rowVerify') }}
+									<el-tooltip
+										class="item"
+										effect="dark"
+										:content="$t('dataVerification.fastCountTip')"
+										placement="top"
+									>
+										<i class="el-icon-warning-outline"></i>
+									</el-tooltip>
+								</el-radio>
+								<el-radio label="field">
+									{{ $t('dataVerification.contentVerify') }}
+									<el-tooltip
+										class="item"
+										effect="dark"
+										:content="$t('dataVerification.contentVerifyTip')"
+										placement="top"
+									>
+										<i class="el-icon-warning-outline"></i>
+									</el-tooltip>
+								</el-radio>
+								<el-radio label="jointField">
+									{{ $t('dataVerification.jointVerify') }}
+									<el-tooltip
+										class="item"
+										effect="dark"
+										:content="$t('dataVerification.jointFieldTip')"
+										placement="top"
+									>
+										<i class="el-icon-warning-outline"></i>
+									</el-tooltip>
+								</el-radio>
 							</el-radio-group>
 						</el-form-item>
 						<el-form-item class="setting-item" prop="name">
@@ -54,10 +85,10 @@
 						</el-form-item>
 						<el-form-item class="setting-item">
 							<label class="item-label">{{ $t('dataVerification.frequency') }}</label>
-							<el-radio-group v-model="form.mode" style="margin-left: 10px;">
-								<el-radio label="manual">{{ $t('dataVerification.singleVerify') }}</el-radio>
-								<el-radio label="cron">{{ $t('dataVerification.repeatingVerify') }}</el-radio>
-							</el-radio-group>
+							<el-select class="item-select" v-model="form.mode" size="mini" placeholder="请选择">
+								<el-option :label="$t('dataVerification.singleVerify')" value="manual"></el-option>
+								<el-option :label="$t('dataVerification.repeatingVerify')" value="cron"></el-option>
+							</el-select>
 						</el-form-item>
 						<el-form-item class="setting-item" prop="timing.start" v-show="form.mode === 'cron'">
 							<label class="item-label">{{ $t('dataVerification.startAndStopTime') }}</label>
@@ -131,43 +162,21 @@
 										@input="tableChangeHandler(item, 'target')"
 									></el-cascader>
 								</div>
-								<div class="setting-item" v-show="form.inspectMethod === 'field'">
+								<div class="setting-item" v-show="form.inspectMethod !== 'row_count'">
 									<label class="item-label is-required">{{
 										$t('dataVerification.indexField')
 									}}</label>
-									<el-select
-										filterable
-										class="item-select"
-										size="mini"
+									<MultiSelection
 										v-model="item.source.sortColumn"
+										:options="item.source.fields"
 										:placeholder="$t('dataVerification.ChoosePKField')"
-									>
-										<el-option
-											v-for="field in item.source.fields"
-											:key="field.original_field_name || field.field_name"
-											:value="field.original_field_name || field.field_name"
-										>
-											<span>{{ field.original_field_name || field.field_name }}</span>
-											<span style="color:#F56C6C;" v-if="field.primary_key_position > 0">PK</span>
-										</el-option>
-									</el-select>
+									></MultiSelection>
 									<span class="item-icon"></span>
-									<el-select
-										filterable
-										class="item-select"
-										size="mini"
+									<MultiSelection
 										v-model="item.target.sortColumn"
+										:options="item.target.fields"
 										:placeholder="$t('dataVerification.ChoosePKField')"
-									>
-										<el-option
-											v-for="field in item.target.fields"
-											:key="field.original_field_name || field.field_name"
-											:value="field.original_field_name || field.field_name"
-										>
-											<span>{{ field.original_field_name || field.field_name }}</span>
-											<span style="color:#F56C6C;" v-if="field.primary_key_position > 0">PK</span>
-										</el-option>
-									</el-select>
+									></MultiSelection>
 								</div>
 							</div>
 							<el-button-group class="setting-buttons">
@@ -215,7 +224,9 @@ const META_INSTANCE_FIELDS = {
 	'fields.primary_key_position': true,
 	'fields.original_field_name': true
 };
+import MultiSelection from './MultiSelection.vue';
 export default {
+	components: { MultiSelection },
 	data() {
 		let self = this;
 		let requiredValidator = (msg, isCheckMode) => {
@@ -596,7 +607,7 @@ export default {
 					}
 					index = 0;
 					if (
-						this.form.mode === 'cron' &&
+						this.form.inspectMethod !== 'row_count' &&
 						tasks.some((c, i) => {
 							index = i + 1;
 							return !c.source.sortColumn || !c.target.sortColumn;
@@ -604,15 +615,35 @@ export default {
 					) {
 						return this.$message.error('第' + index + '条校验条件中源表或目标表的索引字段未选择');
 					}
+					index = 0;
+					if (
+						this.form.inspectMethod !== 'row_count' &&
+						tasks.some((c, i) => {
+							index = i + 1;
+							return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length;
+						})
+					) {
+						return this.$message.error('第' + index + '条校验条件中源表与目标表的索引字段个数不相等');
+					}
+					if (this.form.inspectMethod === 'jointField') {
+						tasks.forEach(item => {
+							item['fullMatch'] = true;
+						});
+					} else {
+						tasks.forEach(item => {
+							item['fullMatch'] = false;
+						});
+					}
 					this.$api('Inspects')
 						[this.form.id ? 'patch' : 'post'](
 							Object.assign({}, this.form, {
 								fullMatchKeep: this.form.keep,
 								status: this.form.mode === 'manual' ? 'scheduling' : 'waiting',
-								tasks: this.form.tasks.map(({ source, target }) => {
+								tasks: this.form.tasks.map(({ source, target, fullMatch }) => {
 									return {
 										source,
-										target
+										target,
+										fullMatch
 									};
 								})
 							})

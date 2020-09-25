@@ -1391,8 +1391,9 @@ const tc = {
 		verifyStatus: '校驗狀態',
 		verifyTime: '校驗時間',
 		operation: '操作',
-		rowVerify: '行數校驗',
-		contentVerify: '內容校驗',
+		rowVerify: '快速count校驗',
+		contentVerify: '表全字段值校驗',
+		jointVerify: '關聯字段值校驗',
 		singleVerify: '單次校驗',
 		repeatingVerify: '重複校驗',
 		consistent: '一致',
@@ -1431,7 +1432,10 @@ const tc = {
 		indexField: '索引字段',
 		BasicSettings: '基本設置',
 		verifyCondition: '校驗條件',
-		clear: '清空'
+		clear: '清空',
+		fastCountTip: '快速count僅對源表和目標表的行數進行count校驗，速度極快，但是不會展示差異的具體字段內容。 ',
+		contentVerifyTip: '全表字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。 ',
+		jointFieldTip: '關聯鍵校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式.'
 	},
 	queryBuilder: {
 		addCond: '字段條件'

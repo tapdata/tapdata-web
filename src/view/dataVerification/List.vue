@@ -105,7 +105,15 @@
 						<template slot-scope="scope">
 							<div>{{ scope.row.name }}</div>
 							<div style="color: #aaa;">
-								<span>{{ scope.row.inspectMethod }} ( {{ scope.row.mode }} ) </span>
+								<span
+									>{{ inspectMethod[scope.row.inspectMethod] }} (
+									{{
+										scope.row.mode === 'manual'
+											? $t('dataVerification.singleVerify')
+											: $t('dataVerification.repeatingVerify')
+									}}
+									)
+								</span>
 								<span v-if="!scope.row.enabled" style="color:#f56c6c;">&nbsp;Disabled</span>
 							</div>
 						</template>
@@ -277,6 +285,11 @@ export default {
 				total: 0,
 				sortBy: 'last_updated',
 				order: ''
+			},
+			inspectMethod: {
+				row_count: this.$t('dataVerification.rowVerify'),
+				field: this.$t('dataVerification.contentVerify'),
+				jointField: this.$t('dataVerification.jointVerify')
 			},
 			selections: []
 		};
