@@ -166,6 +166,7 @@ const en = {
 		saveOK: 'Saved successfully',
 		saveFail: 'Save failed',
 		copyFail: 'Copy failed',
+		stopFail: 'stop failed',
 		copySuccess: 'Copy successfully',
 		deleteOK: 'Successfully deleted',
 		deleteFail: 'Failed to delete',
@@ -357,8 +358,8 @@ const en = {
 		separator: 'to',
 		dataPlaceholder: 'Select time range',
 		taskStatus: 'Status',
-		taskStatusPlaceholder: 'Please select task status',
-		taskSettingPlaceholder: 'Please select Sync type',
+		taskStatusPlaceholder: 'Select task status',
+		taskSettingPlaceholder: 'Select Sync type',
 		updateTime: 'Update time',
 		runningSpeed: 'Running speed',
 		taskSwitch: 'Switch',
@@ -1388,6 +1389,22 @@ const en = {
 	},
 	queryBuilder: {
 		addCond: 'field Cond'
+	},
+	tableFlow: {
+		task_view: 'Data Flow View',
+		table_view: 'Table View',
+		source_target_table: 'Source/Target Table',
+		task_execution_time: 'Job/Execution Time',
+		status_text: 'Status',
+		stage: 'Stage',
+		output_input: 'Output/Input (rows)',
+		speed: 'Speed (QPS)',
+		rows: 'Rows',
+		opear: 'Operation',
+		output: 'Output',
+		input: 'Input',
+		row_count_check: 'Rows Count',
+		batch_verification: 'Batch verification'
 	}
 };
 

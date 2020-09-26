@@ -170,6 +170,7 @@ const tc = {
 		copySuccess: '複製成功',
 		deleteOK: '刪除成功',
 		deleteFail: '刪除失敗',
+		stopFail: '停止失敗',
 		taskStart: '任務啟動中',
 		selectTime: '選擇時間',
 		selectDate: '選擇日期',
@@ -1372,6 +1373,22 @@ const tc = {
 	},
 	queryBuilder: {
 		addCond: '字段條件'
+	},
+	tableFlow: {
+		task_view: '任務視圖',
+		table_view: '表視圖',
+		source_target_table: '源表/目標表',
+		task_execution_time: '所在任務/執行時間',
+		status_text: '狀態',
+		stage: '階段',
+		output_input: '輸出/輸入(條)',
+		speed: '速度(條/s)',
+		rows: '行數',
+		opear: '操作',
+		output: '輸出',
+		input: '輸入',
+		row_count_check: '行數檢查',
+		batch_verification: '批量校驗'
 	}
 };
 

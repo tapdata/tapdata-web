@@ -173,6 +173,7 @@ const cn = {
 		copySuccess: '复制成功',
 		deleteOK: '删除成功',
 		deleteFail: '删除失败',
+		stopFail: '停止失败',
 		taskStart: '任务启动中',
 		selectTime: '选择时间',
 		selectDate: '选择日期',
@@ -1373,6 +1374,22 @@ const cn = {
 	},
 	queryBuilder: {
 		addCond: '字段条件'
+	},
+	tableFlow: {
+		task_view: '任务视图',
+		table_view: '表视图',
+		source_target_table: '源表/目标表',
+		task_execution_time: '所在任务/执行时间',
+		status_text: '状态',
+		stage: '阶段',
+		output_input: '输出/输入(条)',
+		speed: '速度(条/s)',
+		rows: '行数',
+		opear: '操作',
+		output: '输出',
+		input: '输入',
+		row_count_check: '行数检查',
+		batch_verification: '批量校验'
 	}
 };
 
