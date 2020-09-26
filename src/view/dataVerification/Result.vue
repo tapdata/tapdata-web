@@ -170,7 +170,13 @@
 							<li>{{ $t('dataVerification.Value') }}</li>
 						</ul>
 						<ul class="sub-table" v-for="detail in item.details" :key="detail.id">
-							<li>{{ detail.type === 'uniqueField' ? '唯一字段差异' : '其他字段差异' }}</li>
+							<li>
+								{{
+									detail.type === 'uniqueField'
+										? $t('dataVerification.uniqueField')
+										: $t('dataVerification.otherField')
+								}}
+							</li>
 							<li>{{ detail.source.key }}</li>
 							<li :class="{ red: detail.source.value !== detail.target.value }">
 								{{ detail.source.value }}

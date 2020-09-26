@@ -1470,7 +1470,9 @@ const en = {
 		tasksVerifyInterval: 'Please choose data verify interval',
 		lackSource: 'Lack source or target table in verify condition',
 		lackIndex: 'Lack index field of source or target table in verify condition',
-		tasksAmount: 'The amount of index field of source table does not equal to target table in verify condition'
+		tasksAmount: 'The amount of index field of source table does not equal to target table in verify condition',
+		uniqueField: 'Unique field inconsistent ',
+		otherField: 'Other field inconsistent'
 	},
 	queryBuilder: {
 		addCond: 'Field Cond'

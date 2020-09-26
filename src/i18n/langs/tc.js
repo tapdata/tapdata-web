@@ -1451,7 +1451,9 @@ const tc = {
 		tasksVerifyInterval: '請輸入校驗間隔',
 		lackSource: '校驗條件中源表或目標表未選擇',
 		lackIndex: '校驗條件中源表或目標表的索引字段未選擇',
-		tasksAmount: '校驗條件中源表與目標表的索引字段個數不相等'
+		tasksAmount: '校驗條件中源表與目標表的索引字段個數不相等',
+		uniqueField: '唯一字段差異',
+		otherField: '其他字段差異'
 	},
 	queryBuilder: {
 		addCond: '字段條件'
