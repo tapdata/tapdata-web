@@ -209,6 +209,7 @@ const tc = {
 	},
 
 	dataFlow: {
+		searchNode: '查找節點',
 		updateModel: '更新模型',
 		loadingText: '加載中',
 		databseMigrationHead: '數據庫遷移',
@@ -1362,11 +1363,12 @@ const tc = {
 	},
 	dialog: {
 		createTable: '創建新表',
-		placeholderTable: '僅支持英文、數字、下劃線，並以,英文字母開頭',
+		placeholderTable: '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許system開頭',
 		createCollection: '創建新數據集 ',
-		placeholderCollection: '僅支持英文、數字、下劃線，並以,英文字母開頭',
-		tableValidateTip: '新建表名稱僅支持英文、數字、下劃線，並以英文字母開頭',
-		collectionValidateTip: '新建數據集名稱僅支持英文、數字、下劃線，並以英文字母開頭'
+		placeholderCollection: '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許system開頭',
+		tableValidateTip: '新建表名稱僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許system開頭',
+		collectionValidateTip:
+			'新建數據集名稱僅支持英文、數字、下劃線下劃線、點、減號，並以英文字母開頭，不允許system開頭'
 	},
 	queryBuilder: {
 		addCond: '字段條件'

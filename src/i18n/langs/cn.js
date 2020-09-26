@@ -211,6 +211,7 @@ const cn = {
 		reloadSchemaError: '模型更新失败'
 	},
 	dataFlow: {
+		searchNode: '查找节点',
 		updateModel: '更新模型',
 		loadingText: '加载中',
 		databseMigrationHead: '数据库迁移',
@@ -1290,11 +1291,12 @@ const cn = {
 	},
 	dialog: {
 		createTable: '创建新表',
-		placeholderTable: '仅支持英文、数字、下划线，并以,英文字母开头',
+		placeholderTable: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许system开头',
 		createCollection: '创建新数据集 ',
-		placeholderCollection: '仅支持英文、数字、下划线，并以,英文字母开头',
-		tableValidateTip: '新建表名称仅支持英文、数字、下划线，并以英文字母开头',
-		collectionValidateTip: '新建数据集名称仅支持英文、数字、下划线，并以英文字母开头'
+		placeholderCollection: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许system开头',
+		tableValidateTip: '新建表名称仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许system开头',
+		collectionValidateTip:
+			'新建数据集名称仅支持英文、数字、下划线下划线、点、减号，并以英文字母开头，不允许system开头'
 	},
 	notification: {
 		notice: '消息通知',

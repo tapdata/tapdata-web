@@ -75,9 +75,14 @@ export default {
 		},
 		confirm() {
 			let flag = this.validateForm();
+			let first = this.ruleForm.newTable.split('.')[0] == 'system' ? true : false;
 			if (flag) {
-				this.dialog.visible = false;
-				this.$emit('handleTable', this.ruleForm.newTable);
+				if (this.dialog.type === 'collection' && first) {
+					this.$message.error(this.$t('dialog.collectionValidateTip'));
+				} else {
+					this.dialog.visible = false;
+					this.$emit('handleTable', this.ruleForm.newTable);
+				}
 			}
 		}
 	}

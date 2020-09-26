@@ -13,7 +13,7 @@
 			<el-form class="e-form" label-position="top" :model="model" :disabled="disabled" ref="form">
 				<!-- <span class="addTxt">+新建文件</span> -->
 				<el-form-item
-					:label="$t('editor.cell.data_node.redis.name')"
+					:label="$t('editor.choose') + ' ' + $t('editor.cell.data_node.redis.name')"
 					prop="connectionId"
 					:rules="rules"
 					required

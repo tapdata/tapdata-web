@@ -265,7 +265,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	padding: 10px;
+	padding: 20px;
 	box-sizing: border-box;
 	.source-key-selection {
 		width: 100%;

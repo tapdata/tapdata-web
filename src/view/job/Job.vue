@@ -25,7 +25,7 @@
 					v-model="state1"
 					size="mini"
 					:fetch-suggestions="querySearch"
-					placeholder="查找节点"
+					:placeholder="$t('dataFlow.searchNode')"
 					@select="handleSearchNode"
 					hide-loading
 					clearable

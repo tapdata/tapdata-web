@@ -56,7 +56,7 @@ const en = {
 			otherDmandsText: 'Any requirement, please contact us by scanning WeChat QR below.'
 		},
 		signIn: {
-			slogan: 'Use your data as easily as tap water.',
+			slogan: 'Use your data, as easy as water from tap',
 			signIn: 'Sign in',
 			keepSignIn: 'Keep signed in',
 			email_placeholder: 'Enter your email',
@@ -208,7 +208,8 @@ const en = {
 		reloadSchemaError: 'Model update failed'
 	},
 	dataFlow: {
-		updateModel: 'Reload model',
+		searchNode: 'Search Node',
+		updateModel: 'Reload Model',
 		loadingText: 'Loading...',
 		databseProcessingHead: 'Data Processing & Sync',
 		databseMigrationHead: 'Database Migration',
@@ -259,7 +260,7 @@ const en = {
 		submitConfirmation: 'Submit Confirmation',
 		SyncPoint: 'CDC start timepoint',
 		cdcLabel: 'Data source:',
-		syncType: 'Sync type',
+		syncType: 'Sync Type',
 		SyncInfo: {
 			localTZ: 'Local Timezone CDC Time: custom a point of  CDC time，in local time zone',
 			current: 'Current Time：Current DB Time',
@@ -415,7 +416,7 @@ const en = {
 		cronExpression: 'Please enter cron expression',
 		selectGrpupFiled: 'Please select a grouping field',
 		selectTargetField: 'Please select the target field',
-		aggName: 'Sub-process name',
+		aggName: 'Sub-process Name',
 		nodeName: 'Node Name',
 		aggFunction: 'Polymerization',
 		aggExpression: 'Target',
@@ -492,7 +493,7 @@ const en = {
 		}
 	},
 	editor: {
-		nodeSettings: 'Node settings',
+		nodeSettings: 'Node Settings',
 		choose: 'Select',
 		newTxt: 'New',
 
@@ -529,11 +530,11 @@ const en = {
 					tableRemoved: 'Excluded Tables',
 					enterName: 'Please enter the name / field name to search',
 					source: 'Data source',
-					type: 'Database type',
-					databaseName: 'Database name',
-					account: 'Database account',
-					attributionAccount: 'Attribution Account Name',
-					includeTable: 'include table'
+					type: 'Database Type',
+					databaseName: 'Database Name',
+					account: 'Database Account',
+					attributionAccount: 'Database Owner',
+					includeTable: 'Include Table'
 				},
 				collection: {
 					name: 'Collection',
@@ -554,7 +555,7 @@ const en = {
 							placeholder: 'Please select collection'
 						},
 						pk: {
-							label: 'Primary key',
+							label: 'Primary Key',
 							placeholder: 'Please enter primary key'
 						},
 						fieldFilterType: {
@@ -589,7 +590,7 @@ const en = {
 							label: 'Filter conditions',
 							invalidJSON: 'Invalid JSON',
 							fiflterSetting: 'Filter settings',
-							fieldFilter: 'Visual mode',
+							fieldFilter: 'Visual Mode',
 							openFiflter: 'Enable filtering',
 							closeFiflter: 'Close filtering',
 							sqlFilter: 'SQL Filter',
@@ -648,7 +649,7 @@ const en = {
 					name: 'File',
 					tip: 'File node',
 					none_fileName: 'The file name cannot be empty',
-					configurationFile: 'Configuration file',
+					configurationFile: 'Configuration File',
 					chooseFileName: 'Please select a file name'
 				},
 				gridfs: {
@@ -811,7 +812,7 @@ const en = {
 
 					form: {
 						name: {
-							label: 'Node name',
+							label: 'Node Name',
 							placeholder: 'Please input you node name'
 						},
 						description: {
@@ -866,8 +867,8 @@ const en = {
 
 					form: {
 						name: {
-							label: 'Node name',
-							placeholder: '请输入节点名称'
+							label: 'Node Name',
+							placeholder: 'Please enter the node name'
 						},
 						type: {
 							label: 'Script Type',
@@ -888,7 +889,7 @@ const en = {
 					},
 					form: {
 						name: {
-							label: 'Node name',
+							label: 'Node Name',
 							placeholder: 'Please enter the node name'
 						},
 						expression: {
@@ -925,7 +926,7 @@ const en = {
 					tip: 'Joint Cache Node',
 					form: {
 						name: {
-							label: 'Node name',
+							label: 'Node Name',
 							placeholder: 'Please input you node name.',
 							none: 'Node name is required.'
 						},
@@ -1014,7 +1015,7 @@ const en = {
 				migrationObjece: 'Source tables',
 				chosen: 'Selected',
 				searchContent: 'Search',
-				mappingRelations: 'Mapping relations',
+				mappingRelations: 'Mapping Relations',
 				addPrefix: 'Add prefix',
 				addSuffix: 'Add suffix',
 				prefixPlaceholder: 'Please enter the prefix',
@@ -1274,7 +1275,7 @@ const en = {
 		createDatabase: 'Create new database',
 		copyDatabase: 'Copy name',
 		checkDatabase: 'Check property',
-		createTable: 'Create new table',
+		createTable: 'Create New Table',
 		copyTable: 'Copy name',
 		createCollection: 'Create new collection',
 		copyCollection: 'Copy name'
@@ -1374,14 +1375,16 @@ const en = {
 		agentDeleted: 'Agent deleted'
 	},
 	dialog: {
-		createTable: 'Create new table',
-		placeholderTable: 'Only support English, numbers, underscores, and start with an English letter',
-		createCollection: ' Create new collection ',
-		placeholderCollection: 'Only support English, numbers, underscores, and start with an English letter',
+		createTable: 'Create New Table',
+		placeholderTable:
+			'Only supports English, numbers, underscores, minus signs, dots, and starts with English letter',
+		createCollection: ' Create New Collection ',
+		placeholderCollection:
+			'Only support English, numbers, underscores, minus signs, dots, and starts with English letter, and cannot start with "system"',
 		tableValidateTip:
-			'Table name can contain only English letters, numbers, or the underscore character，and only begin with letter.',
+			'Table name can contain only English letters, numbers, underscores, minus signs, dots, and starts with English letter',
 		collectionValidateTip:
-			'Collection name can contain only English letters, numbers, or the underscore character，and only begin with letter'
+			'Collection name can contain only English letters, numbers, underscores, minus signs, dots, and starts with English letter, and cannot start with "system"'
 	},
 	queryBuilder: {
 		addCond: 'field Cond'
