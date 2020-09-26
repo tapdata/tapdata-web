@@ -682,8 +682,7 @@ export default {
 </script>
 <style lang="less">
 .data-verification-form {
-	.red,
-	.selected-color .el-input__inner {
+	.red .el-input__inner {
 		border: none;
 		border: 1px solid #ee5353;
 		border-radius: 4px;
