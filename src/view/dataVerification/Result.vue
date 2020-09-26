@@ -14,6 +14,9 @@
 				<el-table
 					:element-loading-text="$t('dataFlow.dataLoading')"
 					:data="tableData"
+					highlight-current-row
+					@current-change="handleCurrentChange"
+					ref="singleTable"
 					height="100%"
 					class="dv-table"
 					border
@@ -57,20 +60,27 @@
 					</el-table-column>
 					<el-table-column prop="status" :label="$t('dataVerification.verifyResult')">
 						<template slot-scope="scope">
-							<span v-if="scope.row.target_total - scope.row.source_total != 0">{{
+							<span v-if="scope.row.target_total - scope.row.source_total !== 0">{{
 								$t('dataVerification.rowConsistent') +
 									' : ' +
 									Math.abs(scope.row.target_total - scope.row.source_total)
 							}}</span>
-							<div v-if="type !== 'row_count'">
+							<div
+								v-if="
+									scope.row.source_only + scope.row.target_only + scope.row.row_failed !== 0 &&
+										type !== 'row_count'
+								"
+							>
 								{{ $t('dataVerification.contConsistent') + ' : ' }}
-								{{
-									Number(scope.row.source_only) +
-										Number(scope.row.target_only) +
-										Number(scope.row.row_failed)
-								}}
+								{{ scope.row.source_only + scope.row.target_only + scope.row.row_failed }}
 							</div>
-							<span class="success" v-if="scope.row.target_total - scope.row.source_total === 0">
+							<span
+								class="success"
+								v-if="
+									scope.row.target_total - scope.row.source_total === 0 &&
+										scope.row.source_only + scope.row.target_only + scope.row.row_failed === 0
+								"
+							>
 								<span>{{ $t('dataVerification.consistent') }}</span>
 							</span>
 						</template>
@@ -210,7 +220,8 @@ export default {
 			tablePageSize: 20,
 			colorMap: {
 				running: '#ee5353'
-			}
+			},
+			currentRow: null
 		};
 	},
 	created() {
@@ -219,6 +230,13 @@ export default {
 		this.type = this.$route.query.type;
 		this.name = this.$route.query.name;
 		this.getData(1, this.id, this.inspect_id);
+	},
+	watch: {
+		tableData: function() {
+			this.$nextTick(function() {
+				this.$refs.singleTable.setCurrentRow(this.tableData[0]);
+			});
+		}
 	},
 	methods: {
 		getData(pageNum, id, inspect_id) {
@@ -248,11 +266,18 @@ export default {
 						}
 						this.tableCurrentPage = currentPage;
 						this.tableTotal = countRes.data.count;
+						this.setCurrent(this.tableData[0] || null);
 					}
 				})
 				.finally(() => {
 					this.loading = false;
 				});
+		},
+		setCurrent(row) {
+			this.$refs.singleTable.setCurrentRow(row);
+		},
+		handleCurrentChange(val) {
+			this.currentRow = val;
 		},
 		changeInspectResult(pageNum, taskId) {
 			this.taskId = taskId;
@@ -261,7 +286,8 @@ export default {
 			let where = {
 				where: {
 					taskId: taskId,
-					inspect_id: { regexp: `^${this.inspect_id}$` }
+					inspect_id: { regexp: `^${this.inspect_id}$` },
+					inspectResultId: { regexp: `^${this.id}$` }
 				},
 				order: 'createTime DESC',
 				limit: this.inspectPageSize,
@@ -286,7 +312,7 @@ export default {
 								key.forEach(i => {
 									let sourceValue = '';
 									let targetValue = '';
-									if (i.includes(sourceKeys)) {
+									if (sourceKeys.filter(v => i === v)) {
 										sourceValue = source[i];
 									} else {
 										sourceValue = '';

@@ -214,7 +214,7 @@ const en = {
 		databseProcessingHead: 'Data Processing & Sync',
 		databseMigrationHead: 'Database Migration',
 		databseFreedomHead: 'Custom Data Sync',
-		createNew: 'Create new',
+		createNew: 'Create New',
 		DissedNoAction: 'oops~ The banned node/Connecting line should not be deleted, connected in, or connected out',
 		guidingMode: 'Guiding mode',
 		advancedMode: 'Free mode',

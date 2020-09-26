@@ -133,14 +133,15 @@
 							<div class="inspect-result" v-if="scope.row.InspectResult">
 								<div
 									v-if="
-										scope.row.InspectResult.target_total - scope.row.InspectResult.source_total != 0
+										scope.row.InspectResult.target_total - scope.row.InspectResult.source_total !==
+											0
 									"
 								>
 									<span
 										class="error"
 										v-if="
 											scope.row.InspectResult.target_total -
-												scope.row.InspectResult.source_total !=
+												scope.row.InspectResult.source_total !==
 												0
 										"
 									>
@@ -148,13 +149,17 @@
 										<span>
 											{{ $t('dataVerification.rowConsistent') }}
 											{{
-												scope.row.InspectResult.target_total -
-													scope.row.InspectResult.source_total
+												Math.abs(
+													scope.row.InspectResult.target_total -
+														scope.row.InspectResult.source_total
+												)
 											}}
 										</span>
 									</span>
 								</div>
-								<div v-if="scope.row.difference_number && scope.row.inspectMethod === 'field'">
+								<div
+									v-if="scope.row.difference_number !== 0 && scope.row.inspectMethod !== 'row_count'"
+								>
 									<span class="error" v-if="scope.row.difference_number">
 										<i class="el-icon-error"></i>
 										<span>

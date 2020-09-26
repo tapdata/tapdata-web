@@ -643,11 +643,11 @@ export default {
 					}
 					if (this.form.inspectMethod === 'jointField') {
 						tasks.forEach(item => {
-							item['fullMatch'] = true;
+							item['fullMatch'] = false;
 						});
 					} else {
 						tasks.forEach(item => {
-							item['fullMatch'] = false;
+							item['fullMatch'] = true;
 						});
 					}
 					this.$api('Inspects')
