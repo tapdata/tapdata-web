@@ -174,6 +174,7 @@
 										:options="item.source.fields"
 										:class="{ red: !item.source.sortColumn }"
 										:placeholder="$t('dataVerification.ChoosePKField')"
+										:id="'itemSource' + index"
 									></MultiSelection>
 									<span class="item-icon"></span>
 									<MultiSelection
@@ -636,10 +637,9 @@ export default {
 							return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length;
 						})
 					) {
-						document
-							.getElementById('data-verification-form')
-							.childNodes[index - 1].querySelector('input')
-							.focus();
+						let item = document.getElementById('itemSource' + (index - 1));
+						item.querySelector('input').focus();
+						return this.$message.error(this.$t('dataVerification.tasksAmount'));
 					}
 					if (this.form.inspectMethod === 'jointField') {
 						tasks.forEach(item => {

@@ -130,7 +130,10 @@
 					</el-table-column>
 					<el-table-column :label="$t('dataVerification.verifyResult')" width="180">
 						<template slot-scope="scope">
-							<div class="inspect-result" v-if="scope.row.InspectResult">
+							<div
+								class="inspect-result"
+								v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)"
+							>
 								<div
 									v-if="
 										scope.row.InspectResult.target_total - scope.row.InspectResult.source_total !==
@@ -199,8 +202,9 @@
 						<template slot-scope="scope">
 							<span>
 								{{
-									scope.row.InspectResult &&
-										$moment(scope.row.InspectResult.createTime).format('YYYY-MM-DD HH:mm:ss')
+									scope.row.lastStartTime
+										? $moment(scope.row.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
+										: ''
 								}}
 							</span>
 						</template>
