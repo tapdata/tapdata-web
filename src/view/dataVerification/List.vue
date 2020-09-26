@@ -23,7 +23,7 @@
 							size="mini"
 							clearable
 							prefix-icon="el-icon-search"
-							:placeholder="$t('dataVerification.verifyJobName')"
+							:placeholder="$t('dataVerification.verifyjobname')"
 							@input="keyup()"
 						></el-input>
 					</li>
@@ -53,7 +53,7 @@
 						<el-select
 							v-model="searchParams.active"
 							size="mini"
-							:placeholder="$t('dataVerification.verifyStatus')"
+							:placeholder="$t('dataVerification.verifystatus')"
 							@input="search(1)"
 						>
 							<el-option :label="$t('dataVerification.enable')" value="1"></el-option>
@@ -83,10 +83,10 @@
 						<i class="iconfont icon-piliang"></i>
 						<span>{{ $t('dataVerification.batchVerify') }}</span>
 					</el-button>
-					<el-button size="mini" @click="$router.push('dataVerification/setting')">
-						<i class="iconfont icon-shezhi1"></i>
-						<span>{{ $t('dataVerification.verifySetting') }}</span>
-					</el-button>
+					<!--					<el-button size="mini" @click="$router.push('dataVerification/setting')">-->
+					<!--						<i class="iconfont icon-shezhi1"></i>-->
+					<!--						<span>{{ $t('dataVerification.verifySetting') }}</span>-->
+					<!--					</el-button>-->
 					<el-button type="primary" size="mini" @click="$router.push('dataVerification/create')">
 						<i class="iconfont icon-jia add-btn-icon"></i>
 					</el-button>

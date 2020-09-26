@@ -1391,6 +1391,7 @@ const cn = {
 		sourceTotalRows: '源总行数',
 		targetTotalRows: '目标总行数',
 		verifyStatus: '校验状态',
+		verifystatus: '校验状态',
 		verifyTime: '校验时间',
 		operation: '操作',
 		rowVerify: '快速count校验',
@@ -1408,6 +1409,7 @@ const cn = {
 		verifySetting: '校验设置',
 		batchVerify: '批量校验',
 		verifyJobName: '校验任务名',
+		verifyjobname: '校验任务名',
 		verifyType: '校验类型',
 		singleRepeatingVerify: '单次/重复校验',
 		rowAndContConsistent: '行数和内容差异',
@@ -1441,7 +1443,7 @@ const cn = {
 		jointFieldTip: '关联键校验只对源表和目标表的关联字段的值进行比对校验，速度快于全表字段值校验模式.',
 		waiting: '待校验',
 		scheduling: '校验启动中',
-		error: 'error',
+		error: 'Error',
 		done: '校验结束',
 		running: '校验中',
 		verifyProgress: '校验进度',
@@ -1450,10 +1452,9 @@ const cn = {
 		tasksJobName: '请输入校验任务名称',
 		tasksVerifyCondition: '请添加校验条件',
 		tasksVerifyInterval: '请输入校验间隔',
-		lackSource: '条校验条件中源表或目标表未选择',
-		lackIndex: '条校验条件中源表或目标表的索引字段未选择',
-		tasksAmount: '条校验条件中源表与目标表的索引字段个数不相等',
-		nubmer: '第 '
+		lackSource: '校验条件中源表或目标表未选择',
+		lackIndex: '校验条件中源表或目标表的索引字段未选择',
+		tasksAmount: '校验条件中源表与目标表的索引字段个数不相等'
 	},
 	queryBuilder: {
 		addCond: '字段条件'

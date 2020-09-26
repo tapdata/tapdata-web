@@ -7,7 +7,7 @@
 			filterable
 			allow-create
 			default-first-option
-			class="item-select"
+			class="item-select select-flied"
 			:placeholder="placeholder"
 			@remove-tag="$emit('remove-tag', $event)"
 			@change="$emit('change', $event)"

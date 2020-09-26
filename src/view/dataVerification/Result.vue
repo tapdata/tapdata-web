@@ -5,7 +5,12 @@
 			<div class="main main-border">
 				<div class="title">{{ name }}</div>
 				<div class="text" v-if="type === 'row_count'">{{ $t('dataVerification.rowVerify') }}</div>
-				<div class="text" v-else>{{ $t('dataVerification.contentVerify') }}</div>
+				<div class="text" v-if="type === 'field'">{{ $t('dataVerification.contentVerify') }}</div>
+				<div class="text" v-if="type === 'jointField'">{{ $t('dataVerification.jointVerify') }}</div>
+				<div class="error-band" v-if="resultData && resultData[0].status === 'error'">
+					<i class="iconfont icon-warning-circle"></i>
+					<span>{{ resultData[0].errorMsg }}</span>
+				</div>
 				<el-table
 					:element-loading-text="$t('dataFlow.dataLoading')"
 					:data="tableData"
@@ -100,9 +105,9 @@
 						<span>
 							{{
 								$t('dataVerification.sourceTable') +
-									':' +
+									' : ' +
 									resultData[0].source.table +
-									'/' +
+									' / ' +
 									resultData[0].source.connectionName
 							}}
 						</span>
@@ -114,9 +119,9 @@
 						<span>
 							{{
 								$t('dataVerification.targetTable') +
-									':' +
+									' : ' +
 									resultData[0].target.table +
-									'/' +
+									' / ' +
 									resultData[0].target.connectionName
 							}}
 						</span>
@@ -125,22 +130,23 @@
 						</span>
 					</li>
 					<li>
-						<span>{{ $t('dataVerification.verifyResult') + ':' + resultData[0].result }}</span>
+						<span>{{ $t('dataVerification.verifyResult') + ' : ' + resultData[0].result }}</span>
+					</li>
+					<li>
 						<span>{{
 							$t('dataVerification.rowConsistent') +
 								' : ' +
 								Math.abs(resultData[0].target_total - resultData[0].source_total)
 						}}</span>
+					</li>
+					<li>
+						<span>{{ $t('dataVerification.contConsistent') + ' : ' }}</span>
 						<span>{{
-							$t('dataVerification.contConsistent') +
-								':' +
-								resultData[0].source_only +
-								resultData[0].target_only +
-								resultData[0].row_failed
+							resultData[0].source_only + resultData[0].target_only + resultData[0].row_failed
 						}}</span>
 					</li>
 				</ul>
-				<div class="error-band" v-if="resultData[0].status === 'error'">
+				<div class="error-band" v-if="resultData && resultData[0].status === 'error'">
 					<i class="iconfont icon-warning-circle"></i>
 					<span>{{ resultData[0].errorMsg }}</span>
 				</div>

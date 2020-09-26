@@ -40,9 +40,9 @@
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="settings">{{ $t('app.menu.settings') }}</el-dropdown-item>
 						<el-dropdown-item command="setting">{{ $t('notification.setting') }}</el-dropdown-item>
-						<el-dropdown-item command="verifySetting">{{
-							$t('dataVerify.setting.verifySetting')
-						}}</el-dropdown-item>
+						<!--						<el-dropdown-item command="verifySetting">{{-->
+						<!--							$t('dataVerify.setting.verifySetting')-->
+						<!--						}}</el-dropdown-item>-->
 					</el-dropdown-menu>
 				</el-dropdown>
 				<el-dropdown v-if="showLang !== 'false'" class="btn" placement="bottom" @command="changeLanguage">

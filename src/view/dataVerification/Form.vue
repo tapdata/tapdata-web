@@ -587,7 +587,6 @@ export default {
 			this.form.timing.end = times[1];
 		},
 		tableChangeHandler(item, type) {
-			debugger;
 			let values = item[type + 'Table'];
 			this.flowStages.forEach(stg => {
 				if (values && values.length && stg.connectionId === values[0] && stg.tableName === values[1]) {
@@ -613,9 +612,7 @@ export default {
 							.getElementById('data-verification-form')
 							.childNodes[index - 1].querySelector('input')
 							.focus();
-						return this.$message.error(
-							this.$t('dataVerification.nubmer') + index + this.$t('dataVerification.lackSource')
-						);
+						return this.$message.error(this.$t('dataVerification.lackSource'));
 					}
 					index = 0;
 					if (
@@ -629,9 +626,7 @@ export default {
 							.getElementById('data-verification-form')
 							.childNodes[index - 1].querySelector('input')
 							.focus();
-						return this.$message.error(
-							this.$t('dataVerification.nubmer') + index + this.$t('dataVerification.lackIndex')
-						);
+						return this.$message.error(this.$t('dataVerification.lackIndex'));
 					}
 					index = 0;
 					if (
@@ -645,9 +640,6 @@ export default {
 							.getElementById('data-verification-form')
 							.childNodes[index - 1].querySelector('input')
 							.focus();
-						return this.$message.error(
-							this.$t('dataVerification.nubmer') + index + this.$t('dataVerification.tasksAmount')
-						);
 					}
 					if (this.form.inspectMethod === 'jointField') {
 						tasks.forEach(item => {
@@ -690,7 +682,8 @@ export default {
 </script>
 <style lang="less">
 .data-verification-form {
-	.red .el-input__inner {
+	.red,
+	.selected-color .el-input__inner {
 		border: none;
 		border: 1px solid #ee5353;
 		border-radius: 4px;
