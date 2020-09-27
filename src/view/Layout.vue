@@ -40,6 +40,9 @@
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="settings">{{ $t('app.menu.settings') }}</el-dropdown-item>
 						<el-dropdown-item command="setting">{{ $t('notification.setting') }}</el-dropdown-item>
+						<!--						<el-dropdown-item command="verifySetting">{{-->
+						<!--							$t('dataVerify.setting.verifySetting')-->
+						<!--						}}</el-dropdown-item>-->
 					</el-dropdown-menu>
 				</el-dropdown>
 				<el-dropdown v-if="showLang !== 'false'" class="btn" placement="bottom" @command="changeLanguage">
@@ -160,7 +163,8 @@ let menuSetting = [
 			{ name: 'dataFlows', alias: 'dataFlowsRunning', query: '?dataFlowStatus=running' },
 			{ name: 'dataFlows', alias: 'dataFlowsPaused', query: '?dataFlowStatus=paused' },
 			{ name: 'dataFlows', alias: 'dataFlowsError', query: '?dataFlowStatus=error' },
-			{ name: 'dataFlows', alias: 'dataFlowsDraft', query: '?dataFlowStatus=draft' }
+			{ name: 'dataFlows', alias: 'dataFlowsDraft', query: '?dataFlowStatus=draft' },
+			{ name: 'dataVerification' }
 		]
 	},
 	{
@@ -322,7 +326,12 @@ export default {
 					break;
 				case 'setting':
 					this.$router.push({
-						name: 'setting'
+						path: '/notification/setting'
+					});
+					break;
+				case 'verifySetting':
+					this.$router.push({
+						path: '/dataVerification/setting'
 					});
 					break;
 				case 'newDataFlow':

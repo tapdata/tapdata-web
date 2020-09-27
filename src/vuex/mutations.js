@@ -58,6 +58,9 @@ const mutations = {
 	},
 	tableFlows(state, payload) {
 		state.tableFlows = payload;
+	},
+	dataVerification(state, payload) {
+		state.dataVerification = payload;
 	}
 };
 export default mutations;
