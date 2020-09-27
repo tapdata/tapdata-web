@@ -5,8 +5,8 @@
 		</div>
 		<div class="panel-main">
 			<el-tabs v-model="activeName" type="card" @tab-click="handleTabClick">
-				<el-tab-pane label="任务视图" name="dataFlow"></el-tab-pane>
-				<el-tab-pane label="表视图" name="tableFlow"></el-tab-pane>
+				<el-tab-pane :label="$t('tableFlow.task_view')" name="dataFlow"></el-tab-pane>
+				<el-tab-pane :label="$t('tableFlow.table_view')" name="tableFlow"></el-tab-pane>
 			</el-tabs>
 			<div class="topbar">
 				<!-- <div class="panelBtn"></div> -->

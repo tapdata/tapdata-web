@@ -319,7 +319,7 @@ const childRoutes = [
 		component: view('task/TableFlows')
 	},
 	{
-		path: '/setting',
+		path: '/notification/setting',
 		name: 'setting',
 		component: view('notification/setting'),
 		meta: { title: i18n.t('notification.setting'), isCollapse: true }
@@ -329,6 +329,40 @@ const childRoutes = [
 		name: 'notification',
 		component: view('notification/list'),
 		meta: { title: i18n.t('notification.systemNotice'), isCollapse: true }
+	},
+	{
+		path: '/dataVerification/:id/edit',
+		name: 'dataVerificationEdit',
+		component: view('dataVerification/Form')
+	},
+	{
+		path: '/dataVerification/create',
+		name: 'dataVerificationCreate',
+		component: view('dataVerification/Form')
+	},
+	{
+		path: '/dataVerification',
+		name: 'dataVerification',
+		component: view('dataVerification/List'),
+		meta: { title: i18n.t('notification.systemNotice') }
+	},
+	{
+		path: '/dataVerifyHistory',
+		name: 'dataVerifyHistory',
+		component: view('dataVerification/History'),
+		meta: { title: i18n.t('notification.systemNotice') }
+	},
+	{
+		path: '/dataVerifyResult',
+		name: 'dataVerifyResult',
+		component: view('dataVerification/Result'),
+		meta: { title: i18n.t('notification.systemNotice') }
+	},
+	{
+		path: '/dataVerification/setting',
+		name: 'dataVerifySetting',
+		component: view('dataVerification/setting'),
+		meta: { title: i18n.t('dataVerify.setting.title') }
 	}
 ];
 

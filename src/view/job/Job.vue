@@ -1056,16 +1056,17 @@ export default {
 					type: 'warning',
 					closeOnClickModal: false
 				}
-			).then(() => {
-				self.doSave(data, err => {
-					if (err) {
-						this.$message.error(self.$t('message.saveFail'));
-					} else {
-						// self.$message.success('Stop success');
-						//self.setEditable(true);
-					}
+			)
+				.then(() => {
+					self.doSave(data, err => {
+						if (err) {
+							this.$message.error(self.$t('message.stopFail'));
+						}
+					});
+				})
+				.catch(() => {
+					this.$message.error(self.$t('message.stopFail'));
 				});
-			});
 		},
 
 		preview() {

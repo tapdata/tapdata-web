@@ -52,9 +52,13 @@ export default {
 	},
 	mounted() {
 		let eBodyEl = document.body.getElementsByClassName('e-body')[0];
-		this.clientWidth = eBodyEl.clientWidth;
-		eBodyEl.appendChild(this.$el);
-		this.resize();
+		if (eBodyEl) {
+			this.clientWidth = eBodyEl.clientWidth;
+			eBodyEl.appendChild(this.$el);
+			this.resize();
+		} else {
+			this.clientWidth = '800px';
+		}
 	},
 	destroyed() {
 		if (this.$el && this.$el.parentNode) {
