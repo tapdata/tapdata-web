@@ -12,7 +12,7 @@
 			</div>
 			<el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
 				<!-- <span class="addTxt">+新建文件</span> -->
-				<el-form-item :label="$t('editor.choose') + 'Custom'" prop="connectionId" :rules="rules" required>
+				<el-form-item :label="$t('editor.choose') + ' Custom'" prop="connectionId" :rules="rules" required>
 					<el-select
 						:filterable="!databaseLoading"
 						:loading="databaseLoading"

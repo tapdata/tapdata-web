@@ -25,7 +25,7 @@
 					v-model="state1"
 					size="mini"
 					:fetch-suggestions="querySearch"
-					placeholder="查找节点"
+					:placeholder="$t('dataFlow.searchNode')"
 					@select="handleSearchNode"
 					hide-loading
 					clearable
@@ -1056,16 +1056,17 @@ export default {
 					type: 'warning',
 					closeOnClickModal: false
 				}
-			).then(() => {
-				self.doSave(data, err => {
-					if (err) {
-						this.$message.error(self.$t('message.saveFail'));
-					} else {
-						// self.$message.success('Stop success');
-						//self.setEditable(true);
-					}
+			)
+				.then(() => {
+					self.doSave(data, err => {
+						if (err) {
+							this.$message.error(self.$t('message.stopFail'));
+						}
+					});
+				})
+				.catch(() => {
+					this.$message.error(self.$t('message.stopFail'));
 				});
-			});
 		},
 
 		preview() {

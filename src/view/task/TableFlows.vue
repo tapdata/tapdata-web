@@ -1,13 +1,13 @@
 <template>
-	<div style="height: 100%;">
+	<div style="height: 100%;" class="table-flows">
 		<el-container class="table-flows-wrap">
 			<div class="panel-left" v-if="formData.panelFlag">
 				<metaData v-on:nodeClick="nodeClick"></metaData>
 			</div>
-			<el-container>
-				<el-tabs v-model="activeName" type="card" @tab-click="handleTabClick">
-					<el-tab-pane label="任务视图" name="dataFlow"></el-tab-pane>
-					<el-tab-pane label="表视图" name="tableFlow"></el-tab-pane>
+			<el-container class="table-flows-main">
+				<el-tabs v-model="activeName" type="card" class="tab-card" @tab-click="handleTabClick">
+					<el-tab-pane :label="$t('tableFlow.task_view')" name="dataFlow"></el-tab-pane>
+					<el-tab-pane :label="$t('tableFlow.table_view')" name="tableFlow"></el-tab-pane>
 				</el-tabs>
 				<el-header height="auto">
 					<el-form class="search-bar" size="mini" :inline="true">
@@ -91,7 +91,7 @@
 						<el-form-item style="margin-right: 0;flex:1;text-align:right;">
 							<el-button @click="rowCheckAll">
 								<i class="iconfont icon-jiekoufuwu"></i>
-								<span>批量校验</span>
+								<span>{{ $t('tableFlow.batch_verification') }}</span>
 							</el-button>
 						</el-form-item>
 					</el-form>
@@ -103,12 +103,17 @@
 							height="100%"
 							style="width: 100%"
 							v-loading="loading"
+							class="tableFlows-table"
 							:row-class-name="rowClassHandler"
 							@sort-change="sortHandler"
 							@selection-change="selectHandler"
 						>
 							<el-table-column type="selection" width="44" align="center"></el-table-column>
-							<el-table-column sortable="custom" label="源表/目标表" prop="stages.name">
+							<el-table-column
+								sortable="custom"
+								:label="$t('tableFlow.source_target_table')"
+								prop="stages.name"
+							>
 								<template slot-scope="scope">
 									<div class="table-item">
 										<div class="table-source">[S] {{ scope.row.stages.name }}</div>
@@ -123,7 +128,7 @@
 							<el-table-column
 								sortable="custom"
 								prop="name"
-								label="所在任务/执行时间"
+								:label="$t('tableFlow.task_execution_time')"
 								width="250"
 								align="center"
 							>
@@ -134,19 +139,27 @@
 									</div>
 								</template>
 							</el-table-column>
-							<el-table-column sortable="custom" prop="status" label="状态" width="120">
+							<el-table-column
+								sortable="custom"
+								prop="status"
+								:label="$t('tableFlow.status_text')"
+								width="120"
+							>
 								<template slot-scope="scope">
 									<img
 										v-if="scope.row.status == 'running'"
 										style="width: 12px;height: 15px;vertical-align: middle;"
 										src="../../../static/editor/running-blue.svg"
 									/>
-									<span class="primary-color" v-show="scope.row.name">{{
-										scope.row.statusLabel
-									}}</span>
+									<span
+										class="primary-color"
+										:style="`color: ${colorMap[scope.row.status]};`"
+										v-show="scope.row.name"
+										>{{ scope.row.statusLabel }}</span
+									>
 								</template>
 							</el-table-column>
-							<el-table-column label="阶段" width="120">
+							<el-table-column :label="$t('tableFlow.stage')" width="120">
 								<template slot-scope="scope">
 									<span>
 										{{ scope.row.cdcStatusStr }} (<span class="dark-color"
@@ -155,26 +168,26 @@
 									</span>
 								</template>
 							</el-table-column>
-							<el-table-column label="输出/输入" width="120">
+							<el-table-column :label="$t('tableFlow.output_input')" width="120">
 								<template slot-scope="scope">
 									<div class="table-item">
 										<div>
-											<span class="dark-color">[输出]</span>&nbsp;
+											<span class="dark-color">[{{ $t('tableFlow.output') }}]</span>&nbsp;
 											<span>{{ scope.row.output }}</span>
 										</div>
 										<div>
-											<span class="dark-color">[输入]</span>&nbsp;
+											<span class="dark-color">[{{ $t('tableFlow.input') }}]</span>&nbsp;
 											<span>{{ scope.row.input }}</span>
 										</div>
 									</div>
 								</template>
 							</el-table-column>
-							<el-table-column label="速度(条/s)" width="120" align="center">
+							<el-table-column :label="$t('tableFlow.speed')" width="120" align="center">
 								<template slot-scope="scope">
 									<span>{{ scope.row.speed }}</span>
 								</template>
 							</el-table-column>
-							<el-table-column label="行数" width="150" align="center">
+							<el-table-column :label="$t('tableFlow.rows')" width="150" align="center">
 								<template slot-scope="scope">
 									<i class="el-icon-loading" v-show="scope.row.noshow"></i>
 									<div v-show="!scope.row.noshow">
@@ -185,9 +198,11 @@
 									</div>
 								</template>
 							</el-table-column>
-							<el-table-column width="120" align="center">
+							<el-table-column width="120" align="center" :label="$t('tableFlow.opear')">
 								<template slot-scope="scope">
-									<el-link size="mini" type="primary" @click="rowCheck(scope.row)">行数检查</el-link
+									<el-link size="mini" type="primary" @click="rowCheck(scope.row)">{{
+										$t('tableFlow.row_count_check')
+									}}</el-link
 									><br />
 								</template>
 							</el-table-column>
@@ -199,7 +214,7 @@
 						:current-page.sync="page.current"
 						:page-sizes="[10, 20, 50, 100]"
 						:page-size.sync="page.size"
-						layout="total, sizes, prev, pager, next, jumper"
+						layout="prev, pager, next,sizes"
 						:total="page.total"
 						@size-change="getData(1)"
 						@current-change="getData"
@@ -244,6 +259,14 @@ export default {
 				total: 0,
 				sortBy: 'name',
 				order: 'ASC'
+			},
+			colorMap: {
+				running: '#67C23A',
+				paused: '#F19149',
+				draft: '#F56C6C',
+				scheduled: '#cccccc',
+				stopping: '#F19149',
+				error: '#f53724'
 			},
 			statusOptions: ['running', 'paused', 'error', 'draft', 'scheduled', 'stopping', 'force_stopping'],
 			syncOtions: [
@@ -404,13 +427,11 @@ export default {
 			}, 2000);
 		},
 		reset() {
-			this.searchParams = {
-				flowId: '',
-				keyword: '',
-				status: '',
-				way: '',
-				executionStatus: ''
-			};
+			this.formData.keyword = '';
+			this.formData.status = '';
+			this.formData.person = '';
+			this.formData.way = '';
+			this.formData.executionStatus = '';
 			this.getData(1);
 		},
 		searchParamsChange() {
@@ -561,92 +582,109 @@ export default {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.table-flows-wrap {
-	height: 100%;
-	overflow: hidden;
-	.iconfont {
-		font-size: 14px;
-	}
-	.search-bar {
+.table-flows {
+	.table-flows-wrap {
 		height: 100%;
-		display: flex;
-		align-items: center;
-		.panelBtn {
-			padding: 0 12px;
-			color: #666;
-			cursor: pointer;
-			font-size: 12px;
-			border: 1px solid #dcdfe6;
-			border-radius: 3px;
-			.iconfont {
-				display: inline-block;
+		overflow: hidden;
+		.iconfont {
+			font-size: 14px;
+		}
+		.search-bar {
+			height: 100%;
+			display: flex;
+			align-items: center;
+			.panelBtn {
+				padding: 0 12px;
+				color: #666;
+				cursor: pointer;
 				font-size: 12px;
-				transform: rotate(00deg);
+				border: 1px solid #dcdfe6;
+				border-radius: 3px;
+				.iconfont {
+					display: inline-block;
+					font-size: 12px;
+					transform: rotate(00deg);
+				}
+			}
+			.panelOpen {
+				.iconfont {
+					transform: rotate(180deg) !important;
+				}
+			}
+			.panelBtn:hover {
+				color: #48b6e2;
+			}
+			.el-form-item {
+				margin-bottom: 0;
 			}
 		}
-		.panelOpen {
-			.iconfont {
-				transform: rotate(180deg) !important;
-			}
-		}
-		.panelBtn:hover {
-			color: #48b6e2;
-		}
-		.el-form-item {
-			margin-bottom: 0;
-		}
-	}
-	.main {
-		display: flex;
-		flex-direction: column;
-		.table {
-			flex: 1;
-			overflow: hidden;
-			.table-item {
-				line-height: 18px;
-				.ellipsis;
-				div {
+		.main {
+			display: flex;
+			flex-direction: column;
+			padding-bottom: 0;
+			.table {
+				flex: 1;
+				overflow: hidden;
+				.table-item {
+					line-height: 18px;
 					.ellipsis;
+					div {
+						.ellipsis;
+					}
+					.table-source {
+						color: @primaryColor;
+					}
+					.from-db {
+						padding-left: 20px;
+						color: @darkColor;
+					}
 				}
-				.table-source {
-					color: @primaryColor;
-				}
-				.from-db {
-					padding-left: 20px;
+				.dark-color {
 					color: @darkColor;
 				}
-			}
-			.dark-color {
-				color: @darkColor;
-			}
-			.primary-color {
-				color: @primaryColor;
-			}
-			.el-button {
-				padding: 5px;
-				cursor: pointer;
-				&:hover {
-					color: #48b6e2;
+				.primary-color {
+					color: @primaryColor;
+				}
+				.el-button {
+					padding: 5px;
+					cursor: pointer;
+					&:hover {
+						color: #48b6e2;
+					}
+				}
+				.el-button + .el-button {
+					margin-left: 5px;
 				}
 			}
-			.el-button + .el-button {
-				margin-left: 5px;
+			.pagination {
+				padding: 20px 0;
+				text-align: right;
 			}
-		}
-		.pagination {
-			padding: 20px 0;
-			text-align: right;
 		}
 	}
 }
 </style>
 <style lang="less">
-.el-tabs__item {
-	height: 29px;
-	line-height: 25px;
-	font-size: 12px;
-}
-.red {
-	color: red;
+.table-flows {
+	// .el-tabs__item {
+	// 	height: 29px;
+	// 	line-height: 25px;
+	// 	font-size: 12px;
+	// }
+	.red {
+		color: red;
+	}
+	.table-flows-main {
+		.tableFlows-table {
+			border: 1px solid #dedee4;
+			thead {
+				color: #333;
+				th {
+					padding: 5px 0;
+					background: #fafafa;
+				}
+			}
+		}
+	}
 }
 </style>

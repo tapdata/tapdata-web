@@ -173,6 +173,7 @@ const cn = {
 		copySuccess: '复制成功',
 		deleteOK: '删除成功',
 		deleteFail: '删除失败',
+		stopFail: '停止失败',
 		taskStart: '任务启动中',
 		selectTime: '选择时间',
 		selectDate: '选择日期',
@@ -211,6 +212,7 @@ const cn = {
 		reloadSchemaError: '模型更新失败'
 	},
 	dataFlow: {
+		searchNode: '查找节点',
 		updateModel: '更新模型',
 		loadingText: '加载中',
 		databseMigrationHead: '数据库迁移',
@@ -1304,11 +1306,12 @@ const cn = {
 	},
 	dialog: {
 		createTable: '创建新表',
-		placeholderTable: '仅支持英文、数字、下划线，并以,英文字母开头',
+		placeholderTable: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许system开头',
 		createCollection: '创建新数据集 ',
-		placeholderCollection: '仅支持英文、数字、下划线，并以,英文字母开头',
-		tableValidateTip: '新建表名称仅支持英文、数字、下划线，并以英文字母开头',
-		collectionValidateTip: '新建数据集名称仅支持英文、数字、下划线，并以英文字母开头'
+		placeholderCollection: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许system开头',
+		tableValidateTip: '新建表名称仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许system开头',
+		collectionValidateTip:
+			'新建数据集名称仅支持英文、数字、下划线下划线、点、减号，并以英文字母开头，不允许system开头'
 	},
 	notification: {
 		notice: '消息通知',
@@ -1467,6 +1470,22 @@ const cn = {
 	},
 	queryBuilder: {
 		addCond: '字段条件'
+	},
+	tableFlow: {
+		task_view: '任务视图',
+		table_view: '表视图',
+		source_target_table: '源表/目标表',
+		task_execution_time: '所在任务/执行时间',
+		status_text: '状态',
+		stage: '阶段',
+		output_input: '输出/输入(条)',
+		speed: '速度(条/s)',
+		rows: '行数',
+		opear: '操作',
+		output: '输出',
+		input: '输入',
+		row_count_check: '行数检查',
+		batch_verification: '批量校验'
 	}
 };
 
