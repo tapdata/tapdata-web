@@ -94,7 +94,8 @@
 
 				<el-form-item :label="$t('editor.cell.data_node.table.form.initial_offset.label')">
 					<el-input
-						v-model="initialOffset"
+						:value="initialOffset"
+						@input="$emit('update:initialOffset', $event)"
 						:placeholder="$t('editor.cell.data_node.table.form.initial_offset.placeholder')"
 						size="mini"
 					></el-input>
