@@ -188,7 +188,7 @@
 						<template slot-scope="scope">
 							<span>{{ statusMap[scope.row.status] }}</span>
 							<span v-if="scope.row.InspectResult && scope.row.status === 'running'">
-								{{ `(${(Math.round(scope.row.InspectResult.progress * 1000) / 1000) * 100}%)` }}
+								{{ `(${Math.round(scope.row.InspectResult.progress * 100)}%)` }}
 							</span>
 						</template>
 					</el-table-column>
@@ -424,7 +424,7 @@ export default {
 							inq: selections
 						}
 					},
-					{ status: 'scheduling' }
+					{ status: 'scheduling', ping_time: 0}
 				)
 				.then(() => {
 					this.$message.success('任务启动成功');
