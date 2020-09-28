@@ -26,7 +26,7 @@
 						<el-tooltip
 							class="item"
 							effect="light"
-							popper-class="table-tooltip"
+							popper-class="table-tooltips"
 							:content="$t('dataForm.createDatabase')"
 							placement="top-start"
 						>
@@ -40,7 +40,7 @@
 						<el-tooltip
 							class="item"
 							effect="light"
-							popper-class="table-tooltip"
+							popper-class="table-tooltips"
 							:content="$t('dataForm.copyDatabase')"
 							placement="top-start"
 						>
@@ -51,7 +51,7 @@
 						<el-tooltip
 							class="item"
 							effect="light"
-							popper-class="table-tooltip"
+							popper-class="table-tooltips"
 							:content="$t('dataForm.checkDatabase')"
 							placement="top-start"
 						>
@@ -78,7 +78,7 @@
 						<el-tooltip
 							class="item"
 							effect="light"
-							popper-class="table-tooltip"
+							popper-class=""
 							:content="$t('dataForm.createTable')"
 							placement="bottom-start"
 						>
@@ -92,7 +92,7 @@
 						<el-tooltip
 							class="item"
 							effect="light"
-							popper-class="table-tooltip"
+							popper-class="table-tooltips"
 							:content="$t('dataForm.copyTable')"
 							placement="bottom-start"
 						>
@@ -103,7 +103,7 @@
 						<el-tooltip
 							class="item"
 							effect="light"
-							popper-class="table-tooltip"
+							popper-class="table-tooltips"
 							:content="$t('dataForm.checkDatabase')"
 							placement="bottom-end"
 						>
@@ -841,7 +841,7 @@ export default {
 		color: #999;
 	}
 }
-.table-tooltip {
+.table-tooltips {
 	border: 1px solid #ebeef5 !important;
 	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
