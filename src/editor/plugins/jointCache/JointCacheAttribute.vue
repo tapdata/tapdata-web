@@ -94,14 +94,10 @@ export default {
 						slot: 'joinSettings'
 					},
 					{
-						type: 'select',
+						type: 'input',
 						label: this.$t('editor.cell.processor.jointCache.form.joinKey.label'),
 						field: 'joinKey',
 						placeholder: this.$t('editor.cell.processor.jointCache.form.joinKey.placeholder'),
-						options: [],
-						filterable: true,
-						allowCreate: true,
-						defaultFirstOption: true,
 						on: {
 							change() {
 								self.showMapping();
@@ -154,10 +150,6 @@ export default {
 				}
 			});
 			this.sourceFields = sourceFields;
-			this.config.items.find(it => it.field === 'joinKey').options = sourceFields.map(it => ({
-				label: it,
-				value: it
-			}));
 			this.inputSchema = schema;
 		},
 		showMapping() {
@@ -204,6 +196,11 @@ export default {
 			if (data) {
 				_.merge(this.model, data);
 				this.$set(this.model, 'joinSettings', data.joinSettings);
+			}
+
+			//如果源表的类型是关系型表，则不允许填写写入路径，无法内嵌字段
+			if (schema.meta_type === 'table') {
+				this.config.items.find(it => it.field === 'joinKey').show = false;
 			}
 
 			this.getCacheList(vueAdapter.editor);
