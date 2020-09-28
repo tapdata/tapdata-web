@@ -1,7 +1,7 @@
 <template>
 	<section class="data-flow-wrap" v-loading="restLoading">
 		<div class="panel-left" v-if="formData.panelFlag">
-			<metaData v-on:nodeClick="nodeClick"></metaData>
+			<metaData v-on:nodeClick="nodeClick" @nodeDataChange="nodeDataChange"></metaData>
 		</div>
 		<div class="panel-main">
 			<el-tabs v-model="activeName" type="card" @tab-click="handleTabClick">
@@ -1171,8 +1171,15 @@ export default {
 					id: data.id,
 					value: data.value
 				};
-				this.getData();
 			}
+			this.getData();
+		},
+		nodeDataChange(list) {
+			let tag = list.find(item => item.id === this.checkedTag.id);
+			if (tag) {
+				this.checkedTag.value = tag.value;
+			}
+			this.getData();
 		},
 		handleClose() {
 			this.checkedTag = '';

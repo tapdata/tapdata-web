@@ -234,7 +234,9 @@ export default {
 					let self = this;
 					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data) {
-							self.getData();
+							self.getData(data => {
+								self.$emit('nodeDataChange', data);
+							});
 							self.hideDialog();
 						}
 					}
