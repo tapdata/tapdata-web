@@ -32,7 +32,10 @@
 						</template>
 					</el-table-column>
 					<el-table-column :label="$t('dataVerification.verifyResult')" width="180">
-						<template slot-scope="scope">
+						<template
+							slot-scope="scope"
+							v-if="scope.row && scope.row.stats && scope.row.stats[0] && scope.row.status !== 'error'"
+						>
 							<div class="inspect-result">
 								<div v-if="scope.row.stats[0].target_total - scope.row.stats[0].source_total !== 0">
 									<span

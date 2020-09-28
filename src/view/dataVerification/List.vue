@@ -36,6 +36,7 @@
 						>
 							<el-option :label="$t('dataVerification.rowVerify')" value="row_count"></el-option>
 							<el-option :label="$t('dataVerification.contentVerify')" value="field"></el-option>
+							<el-option :label="$t('dataVerification.jointVerify')" value="jointField"></el-option>
 						</el-select>
 					</li>
 					<li class="search-item">
@@ -51,13 +52,13 @@
 					</li>
 					<li class="search-item">
 						<el-select
-							v-model="searchParams.active"
+							v-model="searchParams.enabled"
 							size="mini"
 							:placeholder="$t('dataVerification.verifystatus')"
 							@input="search(1)"
 						>
-							<el-option :label="$t('dataVerification.enable')" value="1"></el-option>
-							<el-option :label="$t('dataVerification.disable')" value="2"></el-option>
+							<el-option :label="$t('dataVerification.enable')" :value="1"></el-option>
+							<el-option :label="$t('dataVerification.disable')" :value="2"></el-option>
 						</el-select>
 					</li>
 					<li class="search-item" v-if="searchParams.tag">
@@ -346,7 +347,13 @@ export default {
 			let where = {};
 			inspectMethod && (where.inspectMethod = inspectMethod);
 			mode && (where.mode = mode);
-			enabled && (where.enabled = enabled);
+			if (enabled) {
+				if (enabled == 1) {
+					where.enabled = true;
+				} else {
+					where.enabled = false;
+				}
+			}
 			tag && (where['listtags.id'] = { in: [tag.id] });
 			if (keyword && keyword.trim()) {
 				where.name = toRegExp(keyword);
@@ -424,7 +431,7 @@ export default {
 							inq: selections
 						}
 					},
-					{ status: 'scheduling', ping_time: 0}
+					{ status: 'scheduling', ping_time: 0 }
 				)
 				.then(() => {
 					this.$message.success('任务启动成功');

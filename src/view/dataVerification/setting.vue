@@ -115,7 +115,7 @@
 <script>
 import factory from '../../api/factory';
 const Setting = factory('Setting');
-import subNav from '../../components/subNav';
+import subNav from '@/components/subNav';
 export default {
 	name: 'verifySetting',
 	components: { subNav },

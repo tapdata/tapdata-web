@@ -1,5 +1,5 @@
 <template>
-	<div class="multi-selection">
+	<div class="multi-selection-data-verify">
 		<el-select
 			size="mini"
 			:value="values"
@@ -52,16 +52,16 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.multi-selection {
+.multi-selection-data-verify {
 	display: flex;
 	align-items: center;
 }
 </style>
 <style lang="less">
-.multi-selection .el-select__input.is-mini {
+.multi-selection-data-verify .el-select__input.is-mini {
 	height: 16px;
 }
-.multi-selection {
+.multi-selection-data-verify {
 	.item-select {
 		width: 600px;
 	}

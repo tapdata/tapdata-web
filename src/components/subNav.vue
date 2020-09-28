@@ -13,10 +13,10 @@
 				<i class="iconfont icon-lingdang"></i>
 				<span slot="title">{{ $t('notification.setting') }}</span>
 			</el-menu-item>
-			<el-menu-item index="/dataVerification/setting" route="/dataVerification/setting">
-				<i class="iconfont icon-duibi-s"></i>
-				<span slot="title">{{ $t('dataVerify.setting.verifySetting') }}</span>
-			</el-menu-item>
+			<!--			<el-menu-item index="/dataVerification/setting" route="/dataVerification/setting">-->
+			<!--				<i class="iconfont icon-duibi-s"></i>-->
+			<!--				<span slot="title">{{ $t('dataVerify.setting.verifySetting') }}</span>-->
+			<!--			</el-menu-item>-->
 		</el-menu>
 	</div>
 </template>
