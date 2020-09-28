@@ -328,14 +328,16 @@ export default {
 		},
 		//获取dataflow数据
 		getFlowOptions() {
+			let where = {
+				status: {
+					inq: ['running', 'paused']
+				}
+			};
+			if (!parseInt(this.$cookie.get('isAdmin'))) where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
 			this.$api('DataFlows')
 				.get({
 					filter: JSON.stringify({
-						where: {
-							status: {
-								inq: ['running', 'paused']
-							}
-						},
+						where: where,
 						fields: {
 							id: true,
 							name: true,
@@ -773,6 +775,9 @@ export default {
 				.item-input,
 				.item-select {
 					width: 600px;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
 				}
 			}
 			.setting-buttons {

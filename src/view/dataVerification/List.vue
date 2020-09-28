@@ -36,6 +36,7 @@
 						>
 							<el-option :label="$t('dataVerification.rowVerify')" value="row_count"></el-option>
 							<el-option :label="$t('dataVerification.contentVerify')" value="field"></el-option>
+							<el-option :label="$t('dataVerification.jointVerify')" value="jointField"></el-option>
 						</el-select>
 					</li>
 					<li class="search-item">
@@ -424,7 +425,7 @@ export default {
 							inq: selections
 						}
 					},
-					{ status: 'scheduling', ping_time: 0}
+					{ status: 'scheduling', ping_time: 0 }
 				)
 				.then(() => {
 					this.$message.success('任务启动成功');
