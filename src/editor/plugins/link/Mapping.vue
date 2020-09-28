@@ -191,7 +191,7 @@ export default {
 				});
 			}
 
-			if (this.tables) {
+			if (this.tables && !this.lines.length) {
 				this.$nextTick(() => {
 					this.createLine(this.tables);
 				});

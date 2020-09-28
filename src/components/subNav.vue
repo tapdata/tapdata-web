@@ -7,11 +7,16 @@
 			background-color="#fafafa"
 			text-color="#666"
 			active-text-color="#666"
+			router
 		>
-			<el-menu-item index="1">
+			<el-menu-item index="/notification/setting" route="notification/setting">
 				<i class="iconfont icon-lingdang"></i>
 				<span slot="title">{{ $t('notification.setting') }}</span>
 			</el-menu-item>
+			<!--			<el-menu-item index="/dataVerification/setting" route="/dataVerification/setting">-->
+			<!--				<i class="iconfont icon-duibi-s"></i>-->
+			<!--				<span slot="title">{{ $t('dataVerify.setting.verifySetting') }}</span>-->
+			<!--			</el-menu-item>-->
 		</el-menu>
 	</div>
 </template>

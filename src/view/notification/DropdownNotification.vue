@@ -2,7 +2,7 @@
 	<div>
 		<div class="item-head">
 			<span>
-				<router-link to="/setting">
+				<router-link to="/notification/setting">
 					<span style="color: #48B6E2">
 						{{ $t('notification.setting') }}
 					</span>

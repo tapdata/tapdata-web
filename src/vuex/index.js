@@ -121,6 +121,13 @@ const store = new Vuex.Store({
 			rowsPerPage: '',
 			descending: '',
 			sortBy: ''
+		},
+		dataVerification: {
+			keyword: '',
+			inspectMethod: '',
+			mode: '',
+			enabled: '',
+			tag: null
 		}
 	},
 
