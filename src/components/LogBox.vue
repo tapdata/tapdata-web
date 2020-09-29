@@ -1,7 +1,6 @@
 <template>
 	<div class="log-box">
 		<ul class="log-box-container" v-show="count" ref="logContainer"></ul>
-
 		<div v-show="!count" class="noData">
 			<div class="imageBox">
 				<el-image style="width: 200px; height: 200px" src="static/image/noData.svg"></el-image>
@@ -48,7 +47,16 @@ export default {
 				if (keyword && text.indexOf(keyword) >= 0) {
 					return text.split(keyword).join(`<span class="keyword">${keyword}</span>`);
 				}
-				return text;
+				return text
+					? text.replace(/[<">']/g, reg => {
+							return {
+								'<': '&lt;',
+								'"': '&quot;',
+								'>': '&gt;',
+								"'": '&#39;'
+							}[reg];
+					  })
+					: '';
 			};
 
 			let date = item.date ? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : '';
@@ -63,7 +71,7 @@ export default {
 				`<span>${date}</span>&nbsp;` +
 				`<span>[${markKeyword(item.threadName)}]</span>&nbsp;` +
 				`<span>${markKeyword(item.loggerName)}</span>&nbsp;-&nbsp;` +
-				`<span>${markKeyword(item.message)}</span>` +
+				`<span>${markKeyword(item.massage)}</span>` +
 				`</li>`
 			);
 		},
