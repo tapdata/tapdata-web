@@ -195,9 +195,6 @@ export default {
 			if (data) {
 				_.merge(this.model, data);
 			}
-			cell.on('change:outputSchema', () => {
-				debugger;
-			});
 			this.cell = cell;
 			this.isSourceDataNode = dataNodeInfo && !dataNodeInfo.isTarget;
 			editorMonitor = vueAdapter.editor;
