@@ -110,7 +110,13 @@
 						</el-form-item>
 						<el-form-item class="setting-item" prop="timing.intervals" v-show="form.mode === 'cron'">
 							<label class="item-label">{{ $t('dataVerification.verifyInterval') }}</label>
-							<el-input class="item-input" size="mini" v-model="form.timing.intervals">
+							<el-input
+								class="item-input"
+								size="mini"
+								v-model="form.timing.intervals"
+								onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+								onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+							>
 								<template slot="append">
 									<el-select style="width: 100px;" size="mini" v-model="form.timing.intervalsUnit">
 										<el-option
@@ -358,9 +364,6 @@ export default {
 			this.getFlowStages();
 		},
 		getFlowStages() {
-			let flow = this.flowOptions.find(item => item.id === this.form.flowId);
-			this.form.name = this.form.name || flow.name;
-			this.form.listtags = flow.listtags || [];
 			this.$api('DataFlows')
 				.findOne({
 					filter: JSON.stringify({
@@ -384,6 +387,9 @@ export default {
 						this.dealCustomFlow(flowData);
 					}
 				});
+			let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {};
+			this.form.name = this.form.name || flow.name;
+			this.form.listtags = flow.listtags || [];
 		},
 		//处理db克隆的情况
 		dealDBFlow(flowData) {
@@ -540,7 +546,7 @@ export default {
 		//根据表的连线关系自动添加校验条件
 		autoAddTable() {
 			this.form.tasks = [];
-			let stages = this.flowStages;
+			let stages = this.flowStages.filter(Boolean);
 			let map = this.stageMap;
 			stages.forEach(stg => {
 				let lanes = map[stg.id];
@@ -548,10 +554,13 @@ export default {
 					lanes.forEach(id => {
 						let targetStage = stages.find(it => it.id === id);
 						this.form.tasks.push({
-							source: this.setTable(stg),
-							target: this.setTable(targetStage),
+							source: stg ? this.setTable(stg) : '',
+							target: targetStage ? this.setTable(targetStage) : '',
 							sourceTable: [stg.connectionId, stg.tableName],
-							targetTable: [targetStage.connectionId, targetStage.tableName]
+							targetTable: [
+								targetStage ? targetStage.connectionId : '',
+								targetStage ? targetStage.tableName : ''
+							]
 						});
 					});
 				}
@@ -559,7 +568,7 @@ export default {
 		},
 		setTable(stage) {
 			let sortColumn = '';
-			if (stage.fields && stage.fields.length) {
+			if (stage && stage.fields && stage.fields.length) {
 				let pkField = stage.fields.find(f => f.primary_key_position > 0);
 				if (pkField) {
 					sortColumn = pkField.original_field_name || pkField.field_name;
@@ -683,6 +692,9 @@ export default {
 };
 </script>
 <style lang="less">
+.el-select-dropdown__item {
+	max-width: 600px;
+}
 .data-verification-form {
 	.red .el-input__inner {
 		border: none;

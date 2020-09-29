@@ -236,7 +236,6 @@
 
 <script>
 import factory from '../../api/factory';
-import ws from '../../api/ws';
 import metaData from '../metaData';
 import SelectClassify from '../../components/SelectClassify';
 
@@ -342,6 +341,10 @@ export default {
 	created() {
 		this.getFlowOptions();
 		this.getData();
+		let self = this;
+		this.setInterval(() => {
+			self.getData();
+		}, 3000);
 	},
 	methods: {
 		handlePanelFlag() {
@@ -472,7 +475,6 @@ export default {
 			this.loading = true;
 			this.$store.commit('tableFlows', this.formData);
 			let { current, size, sortBy, order } = this.page;
-			//let { keyword, flowId } = this.searchParams;
 			let currentPage = pageNum || current;
 			let where = {};
 
@@ -492,40 +494,12 @@ export default {
 				limit: size,
 				skip: (currentPage - 1) * size
 			});
-
 			await dataFlows.tableFlow(_params).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
 						this.handleData(res.data.datas);
 						this.page.data = res.data.datas;
 						this.page.total = res.data.count;
-						let msg = {
-							type: 'watch',
-							collection: 'DataFlows',
-							filter: {
-								where: { 'fullDocument._id': { $in: this.page.data.map(it => it.id) } }, //查询条件
-								fields: {
-									'fullDocument.id': true,
-									'fullDocument.name': true,
-									'fullDocument.status': true,
-									'fullDocument.checked': true,
-									'fullDocument.executeMode': true,
-									'fullDocument.stopOnError': true,
-									'fullDocument.last_updated': true,
-									'fullDocument.createTime': true,
-									'fullDocument.children': true,
-									'fullDocument.stats': true,
-									'fullDocument.stages.id': true,
-									'fullDocument.stages.name': true
-								}
-							}
-						};
-						let int = setInterval(() => {
-							if (ws.ws.readyState == 1) {
-								ws.send(msg);
-								clearInterval(int);
-							}
-						}, 2000);
 					}
 				}
 				this.loading = false;
@@ -542,7 +516,7 @@ export default {
 			item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
 			if (item.stages.statsStatus) item.cdcStatusStr = this.$t('dataFlow.status.' + item.stages.statsStatus);
 			if (item.stages.output) item.output = item.stages.output.rows;
-			else item.output = '--';
+			else item.output = '0';
 			if (item.outf && item.outf.length) {
 				item.input = 0;
 				item.outf.forEach(it => {
@@ -551,10 +525,10 @@ export default {
 					if (item.stages.transmissionTime == 0 && it.transmissionTime > 0)
 						item.stages.transmissionTime = it.transmissionTime;
 				});
-			} else item.input = '--';
+			} else item.input = '0';
 			if (typeof item.output == 'number' && item.stages.transmissionTime > 0)
 				item.speed = ((item.output * 1000) / item.stages.transmissionTime).toFixed(0);
-			else item.speed = '--';
+			else item.speed = '0';
 			if (item.totalCount) {
 				if (item.totalCount.findWhere({ stageId: item.stages.stageId }))
 					item.ratio = (

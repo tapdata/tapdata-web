@@ -7,7 +7,10 @@
 				<div class="text" v-if="type === 'row_count'">{{ $t('dataVerification.rowVerify') }}</div>
 				<div class="text" v-if="type === 'field'">{{ $t('dataVerification.contentVerify') }}</div>
 				<div class="text" v-if="type === 'jointField'">{{ $t('dataVerification.jointVerify') }}</div>
-				<div class="error-band" v-if="resultData && resultData[0].status === 'error'">
+				<div
+					class="error-band"
+					v-if="resultData && resultData[0] && resultData[0].status === 'error' && type === 'row_count'"
+				>
 					<i class="iconfont icon-warning-circle"></i>
 					<span>{{ resultData[0].errorMsg }}</span>
 				</div>
@@ -59,7 +62,7 @@
 						</template>
 					</el-table-column>
 					<el-table-column prop="status" :label="$t('dataVerification.verifyResult')">
-						<template slot-scope="scope">
+						<template slot-scope="scope" v-if="scope.row.status !== 'error'">
 							<span v-if="scope.row.target_total - scope.row.source_total !== 0">{{
 								$t('dataVerification.rowConsistent') +
 									' : ' +
@@ -77,8 +80,9 @@
 							<span
 								class="success"
 								v-if="
-									scope.row.target_total - scope.row.source_total === 0 &&
-										scope.row.source_only + scope.row.target_only + scope.row.row_failed === 0
+									(scope.row.target_total - scope.row.source_total === 0 &&
+										scope.row.source_only + scope.row.target_only + scope.row.row_failed === 0) ||
+										(type === 'row_count' && scope.row.target_total - scope.row.source_total === 0)
 								"
 							>
 								<span>{{ $t('dataVerification.consistent') }}</span>
@@ -239,9 +243,11 @@ export default {
 	},
 	watch: {
 		tableData: function() {
-			this.$nextTick(function() {
-				this.$refs.singleTable.setCurrentRow(this.tableData[0]);
-			});
+			if (this.type === 'row_count') {
+				this.$nextTick(function() {
+					this.$refs.singleTable.setCurrentRow(this.tableData[0]);
+				});
+			}
 		}
 	},
 	methods: {

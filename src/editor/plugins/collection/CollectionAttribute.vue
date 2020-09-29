@@ -367,6 +367,12 @@ export default {
 						// } else {
 						// 	this.model.primaryKeys = '';
 						// }
+						this.model.custSql.custFields = fields.map(f => f.field_name);
+						this.model.custSql.conditions.length = 0;
+						this.model.custSql.fieldFilterType = 'keepAllFields';
+						this.model.custSql.cSql = '';
+						this.model.custSql.editSql = '';
+						this.model.custSql.selectedFields.length = 0;
 						this.$emit('schemaChange', _.cloneDeep(schema));
 					}
 				}
@@ -749,7 +755,16 @@ export default {
 		},
 		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
+				let conds;
+				if (data.custSql && data.custSql.conditions) {
+					conds = JSON.parse(JSON.stringify(data.custSql.conditions));
+					delete data.custSql.conditions;
+				}
 				_.merge(this.model, data);
+				if (this.model.custSql && this.model.custSql.conditions && conds && conds.length > 0)
+					conds.forEach(it => {
+						this.model.custSql.conditions.push(it);
+					});
 				//老数据的兼容处理
 				if (data.initialSyncOrder > 0) {
 					this.model.enableInitialOrder = true;
@@ -780,9 +795,10 @@ export default {
 		},
 		getData() {
 			let result = _.cloneDeep(this.model);
-			if (this.model.isFilter)
+			if (this.model.isFilter) {
 				if (this.model.custSql.filterType === 'field') this.model.filter = this.model.custSql.cSql;
 				else this.model.filter = this.model.custSql.editSql;
+			} else this.model.filter = '';
 			result.name = result.tableName || 'Collection';
 			if (!this.dataNodeInfo.isTarget) {
 				delete result.dropTable;

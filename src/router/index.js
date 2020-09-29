@@ -316,7 +316,8 @@ const childRoutes = [
 	{
 		path: '/tableFlows',
 		name: 'tableFlows',
-		component: view('task/TableFlows')
+		component: view('task/TableFlows'),
+		meta: { isCollapse: true }
 	},
 	{
 		path: '/notification/setting',
@@ -333,7 +334,8 @@ const childRoutes = [
 	{
 		path: '/dataVerification/:id/edit',
 		name: 'dataVerificationEdit',
-		component: view('dataVerification/Form')
+		component: view('dataVerification/Form'),
+		meta: { title: i18n.t('notification.systemNotice'), isCollapse: true }
 	},
 	{
 		path: '/dataVerification/create',
@@ -344,25 +346,24 @@ const childRoutes = [
 		path: '/dataVerification',
 		name: 'dataVerification',
 		component: view('dataVerification/List'),
-		meta: { title: i18n.t('notification.systemNotice') }
+		meta: { title: i18n.t('app.menu.dataVerification'), isCollapse: true }
 	},
 	{
 		path: '/dataVerifyHistory',
 		name: 'dataVerifyHistory',
 		component: view('dataVerification/History'),
-		meta: { title: i18n.t('notification.systemNotice') }
+		meta: { title: i18n.t('dataVerification.verifyHistory'), isCollapse: true }
 	},
 	{
 		path: '/dataVerifyResult',
 		name: 'dataVerifyResult',
 		component: view('dataVerification/Result'),
-		meta: { title: i18n.t('notification.systemNotice') }
+		meta: { title: i18n.t('dataVerification.verifyResult'), isCollapse: true }
 	},
 	{
 		path: '/dataVerification/setting',
 		name: 'dataVerifySetting',
-		component: view('dataVerification/setting'),
-		meta: { title: i18n.t('dataVerify.setting.title') }
+		component: view('dataVerification/setting')
 	}
 ];
 
