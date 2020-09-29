@@ -1,12 +1,12 @@
 <template>
 	<section class="data-verify-wrap">
-		<div class="panel-slider" v-show="isClassShow">
+		<!-- <div class="panel-slider" v-show="isClassShow">
 			<MetaData @nodeClick="classClickHandler"></MetaData>
-		</div>
+		</div> -->
 		<div class="panel-main">
 			<div class="topbar">
 				<ul class="search-bar">
-					<li class="search-item">
+					<!-- <li class="search-item">
 						<el-button
 							class="btn-class-collapse"
 							size="mini"
@@ -16,7 +16,7 @@
 							<i class="iconfont icon-xiangshangzhanhang"></i>
 							<span>{{ isClassShow ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel') }}</span>
 						</el-button>
-					</li>
+					</li> -->
 					<li class="search-item">
 						<el-input
 							v-model="searchParams.keyword"
@@ -61,7 +61,7 @@
 							<el-option :label="$t('dataVerification.disable')" :value="2"></el-option>
 						</el-select>
 					</li>
-					<li class="search-item" v-if="searchParams.tag">
+					<!-- <li class="search-item" v-if="searchParams.tag">
 						<el-tag
 							size="small"
 							closable
@@ -72,7 +72,7 @@
 						>
 							{{ searchParams.tag.value }}
 						</el-tag>
-					</li>
+					</li> -->
 					<li class="search-item">
 						<el-button size="mini" @click="reset">
 							<i class="iconfont icon-shuaxin1"></i>
@@ -284,16 +284,16 @@
 </template>
 
 <script>
-import metaData from '../metaData';
+// import metaData from '../metaData';
 import { toRegExp } from '../../util/util';
 let timeout = null;
 export default {
-	components: {
-		MetaData: metaData
-	},
+	// components: {
+	// 	MetaData: metaData
+	// },
 	data() {
 		return {
-			isClassShow: true,
+			// isClassShow: true,
 			loading: true,
 			searchParams: this.$store.state.dataVerification,
 			page: {
@@ -357,7 +357,7 @@ export default {
 				this.loading = true;
 			}
 			let { current, size, sortBy, order } = this.page;
-			let { keyword, inspectMethod, mode, enabled, tag } = this.searchParams;
+			let { keyword, inspectMethod, mode, enabled } = this.searchParams;
 			let currentPage = pageNum || current + 1;
 			let where = {};
 			inspectMethod && (where.inspectMethod = inspectMethod);
@@ -369,7 +369,6 @@ export default {
 					where.enabled = false;
 				}
 			}
-			tag && (where['listtags.id'] = { in: [tag.id] });
 			if (keyword && keyword.trim()) {
 				where.name = { like: toRegExp(keyword), options: 'i' };
 			}
@@ -402,18 +401,17 @@ export default {
 				keyword: '',
 				inspectMethod: '',
 				mode: '',
-				enabled: '',
-				tag: null
+				enabled: ''
 			};
 			this.search(1);
 		},
 		searchParamsChange() {
 			this.$store.commit('dataVerification', this.searchParams);
 		},
-		classClickHandler(node) {
-			this.searchParams.tag = node;
-			this.search(1);
-		},
+		// classClickHandler(node) {
+		// 	this.searchParams.tag = node;
+		// 	this.search(1);
+		// },
 		toTableInfo(id, resultId, type, name) {
 			let routeUrl = this.$router.resolve({
 				path: '/dataVerifyResult',

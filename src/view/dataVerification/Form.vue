@@ -269,8 +269,7 @@ export default {
 					keep: 100
 				},
 				enabled: true,
-				tasks: [],
-				listtags: []
+				tasks: []
 			},
 			rules: {
 				flowId: [
@@ -346,8 +345,7 @@ export default {
 						where: where,
 						fields: {
 							id: true,
-							name: true,
-							listtags: true
+							name: true
 						}
 					})
 				})
@@ -389,7 +387,6 @@ export default {
 				});
 			let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {};
 			this.form.name = this.form.name || flow.name;
-			this.form.listtags = flow.listtags || [];
 		},
 		//处理db克隆的情况
 		dealDBFlow(flowData) {
