@@ -32,12 +32,12 @@
 			</div>
 		</div>
 		<div class="exit">
-			<el-button size="mini" @click="toHome">{{ $t('message.cancel') }}</el-button>
-			<el-button size="mini" @click="goFree"> {{ $t('dataFlow.freedomMode') }}</el-button>
-			<el-button size="mini" @click="prevStep">
+			<el-button @click="toHome">{{ $t('message.cancel') }}</el-button>
+			<el-button @click="goFree"> {{ $t('dataFlow.freedomMode') }}</el-button>
+			<el-button @click="prevStep">
 				{{ $t('dataFlow.previous') }}
 			</el-button>
-			<el-button size="mini" :class="activeValid ? 'e-btnv' : 'e-btn'" @click="nextStep">
+			<el-button :class="activeValid ? 'e-btnv' : 'e-btn'" @click="nextStep">
 				{{ $t('dataFlow.next') }}
 			</el-button>
 		</div>
@@ -225,6 +225,10 @@ export default {
 	}
 }
 .exit {
+	.el-button {
+		padding: 12px 30px;
+	}
+
 	.e-btnv {
 		background: #48b6e2;
 		color: #fff;
