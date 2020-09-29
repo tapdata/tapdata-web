@@ -103,7 +103,7 @@
 					@sort-change="sortHandler"
 					@selection-change="selectHandler"
 				>
-					<el-table-column type="selection" width="44" align="center"></el-table-column>
+					<!--					<el-table-column type="selection" width="44" align="center"></el-table-column>-->
 					<el-table-column :label="$t('dataVerification.verifyJobName')">
 						<template slot-scope="scope">
 							<div>{{ scope.row.name }}</div>
@@ -323,8 +323,8 @@ export default {
 	created() {
 		this.search(1);
 		this.timer = setInterval(() => {
-			this.search(1, 1);
-		}, 2000);
+			this.search(this.page.current, 1);
+		}, 10000);
 	},
 	destroyed() {
 		// 清除定时器
