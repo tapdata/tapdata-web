@@ -177,7 +177,7 @@ export const esNodeConfig = {
 		size: { width: 5, height: 4 },
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.data_node.file.tip'),
+				dataTooltip: i18n.t('editor.cell.data_node.es.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},

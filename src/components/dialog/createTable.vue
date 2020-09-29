@@ -14,14 +14,14 @@
 						:placeholder="dialog.placeholder"
 						maxlength="50"
 						show-word-limit
-						@keydown="handleInput"
+						@keyup.enter.native="confirm"
 					></el-input>
 				</el-form-item>
 			</el-form>
 
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="closeDialogForm">{{ $t('dataVerify.cancel') }}</el-button>
-				<el-button type="primary" @click="confirm">{{ $t('dataVerify.confirm') }}</el-button>
+				<el-button type="primary" @click="confirm" @>{{ $t('dataVerify.confirm') }}</el-button>
 			</span>
 		</el-dialog>
 	</div>
@@ -73,9 +73,6 @@ export default {
 				}
 			});
 			return flag;
-		},
-		handleInput() {
-			this.confirm();
 		},
 		confirm() {
 			let flag = this.validateForm();

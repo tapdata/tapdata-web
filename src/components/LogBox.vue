@@ -47,16 +47,7 @@ export default {
 				if (keyword && text.indexOf(keyword) >= 0) {
 					return text.split(keyword).join(`<span class="keyword">${keyword}</span>`);
 				}
-				return text
-					? text.replace(/[<">']/g, reg => {
-							return {
-								'<': '&lt;',
-								'"': '&quot;',
-								'>': '&gt;',
-								"'": '&#39;'
-							}[reg];
-					  })
-					: '';
+				return text;
 			};
 
 			let date = item.date ? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : '';
@@ -65,13 +56,23 @@ export default {
 				ERROR: 'redActive',
 				WARN: 'color-warning'
 			};
+			let log_message = markKeyword(item.message)
+				? markKeyword(item.message).replace(/[<">']/g, reg => {
+						return {
+							'<': '&lt;',
+							'"': '&quot;',
+							'>': '&gt;',
+							"'": '&#39;'
+						}[reg];
+				  })
+				: '';
 			return (
 				`<li class="log-box-item">` +
 				`[<span class="level ${colorMap[item.level] || ''}">${item.level}</span>] &nbsp;` +
 				`<span>${date}</span>&nbsp;` +
 				`<span>[${markKeyword(item.threadName)}]</span>&nbsp;` +
 				`<span>${markKeyword(item.loggerName)}</span>&nbsp;-&nbsp;` +
-				`<span>${markKeyword(item.massage)}</span>` +
+				`<span>${log_message}</span>` +
 				`</li>`
 			);
 		},

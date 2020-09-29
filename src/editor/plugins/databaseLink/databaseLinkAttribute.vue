@@ -100,9 +100,12 @@
 							@right-check-change="handleSelectTable"
 						>
 							<span class="box" slot-scope="{ option }">
-								<span class="text" :class="[{ active: option.label !== option.key }, 'text']">{{
-									option.label
-								}}</span>
+								<span
+									class="text"
+									:title="option.label"
+									:class="[{ active: option.label !== option.key }, 'text']"
+									>{{ option.label }}</span
+								>
 								<!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
 							}}</span> -->
@@ -561,7 +564,7 @@ export default {
 							padding-left: 10px;
 						}
 						.text {
-							width: 119px;
+							width: 230px;
 							display: inline-block;
 							overflow: hidden;
 							text-overflow: ellipsis;

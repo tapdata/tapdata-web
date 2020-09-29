@@ -177,7 +177,7 @@ export const customNodeConfig = {
 		size: { width: 5, height: 3 },
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.data_node.file.tip'),
+				dataTooltip: i18n.t('editor.cell.data_node.custom.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
