@@ -342,14 +342,27 @@ export default {
 					return result;
 				}
 			} else if (condition.type === 'condition' && condition.field) {
+				let val = condition.value;
+				if (
+					!['String', 'Date'].includes(
+						this.mergedSchema.fields.find(it => it.field_name == condition.field).javaType
+					)
+				)
+					val = parseFloat(val);
 				if (condition.command === 'eq') {
 					return {
-						['' + condition.field + '']: condition.value
+						['' + condition.field + '']: val
+					};
+				} else if (condition.command === 'like') {
+					return {
+						['' + condition.field + '']: {
+							['$regex']: val
+						}
 					};
 				} else {
 					return {
 						['' + condition.field + '']: {
-							['$' + mongoCommand[calculationList.indexOf(condition.command)] + '']: condition.value
+							['$' + mongoCommand[calculationList.indexOf(condition.command)] + '']: val
 						}
 					};
 				}
