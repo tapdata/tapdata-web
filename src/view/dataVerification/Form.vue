@@ -4,7 +4,7 @@
 			<div class="form-body">
 				<h1 class="title">
 					<span>{{ $route.params.id ? $t('dataVerification.edit') : $t('dataVerification.newVerify') }}</span>
-					<div style="font-size: 12px;">
+					<div style="font-size: 12px;" v-show="form.mode === 'cron'">
 						<span style="color: #48B6E2;" v-show="form.enabled">{{ $t('dataVerification.enable') }}</span>
 						<span style="color: #9a9a9a;" v-show="!form.enabled">{{ $t('dataVerification.disable') }}</span>
 						<el-switch size="mini" v-model="form.enabled"></el-switch>

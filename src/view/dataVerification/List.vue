@@ -102,6 +102,7 @@
 					height="100%"
 					@sort-change="sortHandler"
 					@selection-change="selectHandler"
+					align="left"
 				>
 					<!--					<el-table-column type="selection" width="44" align="center"></el-table-column>-->
 					<el-table-column :label="$t('dataVerification.verifyJobName')">
@@ -187,7 +188,13 @@
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('dataVerification.verifyStatus')" align="center" width="140">
+					<el-table-column
+						:label="$t('dataVerification.verifyStatus')"
+						align="center"
+						width="140"
+						sortable="custom"
+						prop="status"
+					>
 						<template slot-scope="scope">
 							<span>{{ statusMap[scope.row.status] }}</span>
 							<span v-if="scope.row.InspectResult && scope.row.status === 'running'">

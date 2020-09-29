@@ -243,7 +243,7 @@ export default {
 	},
 	watch: {
 		tableData: function() {
-			if (this.type === 'row_count') {
+			if (this.type !== 'row_count') {
 				this.$nextTick(function() {
 					this.$refs.singleTable.setCurrentRow(this.tableData[0]);
 				});

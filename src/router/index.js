@@ -335,12 +335,13 @@ const childRoutes = [
 		path: '/dataVerification/:id/edit',
 		name: 'dataVerificationEdit',
 		component: view('dataVerification/Form'),
-		meta: { title: i18n.t('notification.systemNotice'), isCollapse: true }
+		meta: { title: i18n.t('app.menu.dataVerification'), isCollapse: true }
 	},
 	{
 		path: '/dataVerification/create',
 		name: 'dataVerificationCreate',
-		component: view('dataVerification/Form')
+		component: view('dataVerification/Form'),
+		meta: { title: i18n.t('app.menu.dataVerification'), isCollapse: true }
 	},
 	{
 		path: '/dataVerification',
