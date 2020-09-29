@@ -4,7 +4,7 @@
 			<div class="form-body">
 				<h1 class="title">
 					<span>{{ $route.params.id ? $t('dataVerification.edit') : $t('dataVerification.newVerify') }}</span>
-					<div style="font-size: 12px;">
+					<div style="font-size: 12px;" v-show="form.mode === 'cron'">
 						<span style="color: #48B6E2;" v-show="form.enabled">{{ $t('dataVerification.enable') }}</span>
 						<span style="color: #9a9a9a;" v-show="!form.enabled">{{ $t('dataVerification.disable') }}</span>
 						<el-switch size="mini" v-model="form.enabled"></el-switch>
@@ -211,6 +211,7 @@
 			</div>
 		</div>
 		<div class="footer">
+			<el-button size="mini" @click="goBack()">{{ $t('dataVerification.back') }}</el-button>
 			<el-button type="primary" size="mini" @click="nextStep()">{{ $t('dataVerification.next') }}</el-button>
 		</div>
 	</section>
@@ -335,7 +336,7 @@ export default {
 		getFlowOptions() {
 			let where = {
 				status: {
-					inq: ['running', 'paused']
+					inq: ['running', 'paused', 'error']
 				}
 			};
 			if (!parseInt(this.$cookie.get('isAdmin'))) where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
@@ -623,6 +624,9 @@ export default {
 					item[type] = this.setTable(stg);
 				}
 			});
+		},
+		goBack() {
+			this.$router.push('/dataVerification');
 		},
 		nextStep() {
 			this.$refs.baseForm.validate(valid => {

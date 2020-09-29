@@ -1,7 +1,6 @@
 <template>
 	<div class="log-box">
 		<ul class="log-box-container" v-show="count" ref="logContainer"></ul>
-
 		<div v-show="!count" class="noData">
 			<div class="imageBox">
 				<el-image style="width: 200px; height: 200px" src="static/image/noData.svg"></el-image>
@@ -57,13 +56,23 @@ export default {
 				ERROR: 'redActive',
 				WARN: 'color-warning'
 			};
+			let log_message = markKeyword(item.message)
+				? markKeyword(item.message).replace(/[<">']/g, reg => {
+						return {
+							'<': '&lt;',
+							'"': '&quot;',
+							'>': '&gt;',
+							"'": '&#39;'
+						}[reg];
+				  })
+				: '';
 			return (
 				`<li class="log-box-item">` +
 				`[<span class="level ${colorMap[item.level] || ''}">${item.level}</span>] &nbsp;` +
 				`<span>${date}</span>&nbsp;` +
 				`<span>[${markKeyword(item.threadName)}]</span>&nbsp;` +
 				`<span>${markKeyword(item.loggerName)}</span>&nbsp;-&nbsp;` +
-				`<span>${markKeyword(item.message)}</span>` +
+				`<span>${log_message}</span>` +
 				`</li>`
 			);
 		},
