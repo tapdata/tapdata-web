@@ -15,11 +15,11 @@
 		>
 			<el-option
 				v-for="opt in options.filter(i => !!i)"
-				:key="opt.original_field_name || opt.field_name"
-				:label="opt.original_field_name || opt.field_name"
-				:value="opt.original_field_name || opt.field_name"
+				:key="opt.field_name"
+				:label="opt.field_name"
+				:value="opt.field_name"
 			>
-				<span>{{ opt.original_field_name || opt.field_name }}</span>
+				<span>{{ opt.field_name }}</span>
 				<span style="color:#F56C6C;" v-if="opt.primary_key_position > 0">PK</span>
 			</el-option>
 		</el-select>

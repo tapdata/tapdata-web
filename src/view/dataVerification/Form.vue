@@ -234,8 +234,7 @@ const META_INSTANCE_FIELDS = {
 	fields: true,
 	'fields.id': true,
 	'fields.field_name': true,
-	'fields.primary_key_position': true,
-	'fields.original_field_name': true
+	'fields.primary_key_position': true
 };
 import MultiSelection from './MultiSelection.vue';
 export default {
@@ -298,8 +297,6 @@ export default {
 			targetTree: [],
 			stageMap: {},
 			flowStages: null,
-			sourceFields: [],
-			targetFields: [],
 			flowOptions: null
 		};
 	},
@@ -590,7 +587,7 @@ export default {
 			if (stage && stage.fields && stage.fields.length) {
 				let pkField = stage.fields.find(f => f.primary_key_position > 0);
 				if (pkField) {
-					sortColumn = pkField.original_field_name || pkField.field_name;
+					sortColumn = pkField.field_name;
 				}
 			}
 			return {
