@@ -98,6 +98,8 @@
 					style="border: 1px solid #dedee4;border-bottom: none;"
 					v-loading="loading"
 					:data="page.data"
+					class="dv-table"
+					height="100%"
 					@sort-change="sortHandler"
 					@selection-change="selectHandler"
 				>
@@ -299,7 +301,7 @@ export default {
 				current: 1,
 				size: 20,
 				total: 0,
-				sortBy: 'last_updated',
+				sortBy: 'createTime',
 				order: ''
 			},
 			inspectMethod: {
@@ -356,7 +358,7 @@ export default {
 			}
 			tag && (where['listtags.id'] = { in: [tag.id] });
 			if (keyword && keyword.trim()) {
-				where.name = toRegExp(keyword);
+				where.name = { like: toRegExp(keyword), options: 'i' };
 			}
 			let filter = {
 				order: sortBy + ' ' + (order === 'ascending' ? 'ASC' : 'DESC'),
@@ -509,6 +511,12 @@ export default {
 			flex: 1;
 			display: flex;
 			flex-direction: column;
+			overflow: hidden;
+			font-size: 14px;
+			.dv-table {
+				flex: 1;
+				overflow: hidden;
+			}
 			.btn-icon {
 				font-size: 16px;
 				& + .btn-icon {

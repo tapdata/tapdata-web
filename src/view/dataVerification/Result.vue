@@ -114,7 +114,7 @@
 		<div class="panel-main" v-if="type !== 'row_count'">
 			<div class="tip">{{ $t('dataVerification.verifyDetail') }}</div>
 			<div class="main">
-				<ul class="inspect-result" v-if="resultData && resultData[0]">
+				<ul class="inspect-result" v-if="resultData && resultData[0] && resultData[0].status">
 					<li>
 						<span>
 							{{
