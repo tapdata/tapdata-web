@@ -204,7 +204,7 @@
 					</el-table-column>
 					<el-table-column
 						:label="$t('dataVerification.verifyTime')"
-						prop="timing.start"
+						prop="lastStartTime"
 						sortable="custom"
 						align="center"
 						width="180"
@@ -289,7 +289,7 @@
 									class="btn-icon el-icon-setting"
 									type="text"
 									size="mini"
-									@click="$router.push('dataVerification/' + scope.row.id + '/edit')"
+									@click="goEdit(scope.row.id, scope.row.flowId)"
 								></el-button>
 							</el-tooltip>
 							<el-tooltip
@@ -507,6 +507,21 @@ export default {
 						this.search(data.length === 1 ? current - 1 : current);
 					});
 			});
+		},
+		goEdit(id, flowId) {
+			this.$api('DataFlows')
+				.get([flowId])
+				.then(res => {
+					if (['running', 'paused', 'error'].includes(res.data.status)) {
+						this.$router.push('dataVerification/' + id + '/edit');
+					} else {
+						this.$message.info(
+							this.$t('dataVerification.checkStatusPre') +
+								res.data.status +
+								this.$t('dataVerification.checkStatusSuffix')
+						);
+					}
+				});
 		}
 	}
 };

@@ -316,7 +316,7 @@ export default class Editor extends BaseObject {
 	 * show setting panel
 	 * @param name
 	 */
-	showSetting(editDisable, settingGlobal) {
+	showSetting(editDisable, settingGlobal, id) {
 		// debugger;
 		// if (!this.getRightTabPanel().el.is(':hidden')) {
 		// 	this.getRightSidebar().hide();
@@ -337,7 +337,7 @@ export default class Editor extends BaseObject {
 
 			let settingData = self.graph.getSettingData() || {};
 			settingData.editDisable = !!editDisable;
-			if (!settingData.emailWaring) {
+			if (!id) {
 				settingData['emailWaring'] = {
 					paused: settingGlobal[1].email || false,
 					error: settingGlobal[3].email || false,

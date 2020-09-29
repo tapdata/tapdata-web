@@ -198,7 +198,7 @@
 				background
 				layout="total,prev, pager, next,sizes"
 				:page-sizes="[20, 30, 50, 100]"
-				:page-size="inspectPageSize"
+				:page-size.sync="inspectPageSize"
 				:total="inspectTotal"
 				:current-page.sync="inspectResultCurrentPage"
 				@current-change="changeInspectResult(inspectResultCurrentPage, taskId)"
@@ -274,6 +274,7 @@ export default {
 						this.loading = false;
 						this.tableData = res.data[0].stats;
 						if (this.tableData.length > 0) {
+							this.taskId = this.tableData[0].taskId;
 							this.changeInspectResult(1, this.tableData[0].taskId);
 						}
 						this.tableCurrentPage = currentPage;
@@ -292,12 +293,14 @@ export default {
 			this.currentRow = val;
 		},
 		changeInspectResult(pageNum, taskId) {
-			this.taskId = taskId;
+			if (taskId) {
+				this.taskId = taskId;
+			}
 			let currentPage = pageNum || this.inspectResultCurrentPage + 1;
-			this.resultData = this.tableData.filter(item => item.taskId === taskId);
+			this.resultData = this.tableData.filter(item => item.taskId === this.taskId);
 			let where = {
 				where: {
-					taskId: taskId,
+					taskId: this.taskId,
 					inspect_id: { regexp: `^${this.inspect_id}$` },
 					inspectResultId: { regexp: `^${this.id}$` }
 				},

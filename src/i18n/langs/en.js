@@ -1491,7 +1491,9 @@ const en = {
 		historyTip: 'History',
 		detailTip: 'Detail',
 		configurationTip: 'Configuration',
-		deleteTip: 'Delete'
+		deleteTip: 'Delete',
+		checkStatusPre: 'The job status is ',
+		checkStatusSuffix: ' , cannot modify configuration'
 	},
 	queryBuilder: {
 		addCond: 'field Cond'

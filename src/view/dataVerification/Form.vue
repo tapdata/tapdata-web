@@ -680,6 +680,10 @@ export default {
 							item['fullMatch'] = true;
 						});
 					}
+					if (this.form && this.form.createTime && this.form.last_updated) {
+						delete this.form.createTime;
+						delete this.form.last_updated;
+					}
 					this.$api('Inspects')
 						[this.form.id ? 'patch' : 'post'](
 							Object.assign({}, this.form, {
