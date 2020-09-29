@@ -3,9 +3,13 @@
  * @date 3/11/20
  * @description
  */
-import PublicApi from "./publicApi";
+import PublicApi from './publicApi';
+import axios from 'axios';
 export default class MetadataDefinitionsAPI extends PublicApi {
 	constructor() {
-		super("/api/MetadataDefinitions");
+		super('/api/MetadataDefinitions');
+	}
+	changeById(params) {
+		return axios.patch(`${this.url}/${params.id}`, params);
 	}
 }

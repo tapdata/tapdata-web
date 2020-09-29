@@ -223,12 +223,11 @@ export default {
 				value
 			};
 			if (config.type === 'edit') {
-				method = 'patch';
+				method = 'changeById';
 				params.id = id;
 			} else if (id) {
 				params.parent_id = id;
 			}
-
 			MetadataDefinitions[method](params)
 				.then(res => {
 					let self = this;
