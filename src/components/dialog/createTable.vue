@@ -7,13 +7,14 @@
 			@close="closeDialogForm"
 			width="30%"
 		>
-			<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
+			<el-form :model="ruleForm" :rules="rules" ref="ruleForm" @submit.native.prevent>
 				<el-form-item prop="newTable">
 					<el-input
 						v-model="ruleForm.newTable"
 						:placeholder="dialog.placeholder"
 						maxlength="50"
 						show-word-limit
+						@keydown="handleInput"
 					></el-input>
 				</el-form-item>
 			</el-form>
@@ -72,6 +73,9 @@ export default {
 				}
 			});
 			return flag;
+		},
+		handleInput() {
+			this.confirm();
 		},
 		confirm() {
 			let flag = this.validateForm();

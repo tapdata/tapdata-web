@@ -1022,9 +1022,9 @@ export default {
 								isMoniting: true
 							}
 						});
-						location.reload();
 						self.$message.success(self.$t('message.taskStart'));
 					}
+					location.reload();
 				});
 			}
 			this.loading = false;
