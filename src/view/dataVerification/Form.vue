@@ -211,6 +211,7 @@
 			</div>
 		</div>
 		<div class="footer">
+			<el-button size="mini" @click="goBack()">{{ $t('dataVerification.back') }}</el-button>
 			<el-button type="primary" size="mini" @click="nextStep()">{{ $t('dataVerification.next') }}</el-button>
 		</div>
 	</section>
@@ -269,8 +270,7 @@ export default {
 					keep: 100
 				},
 				enabled: true,
-				tasks: [],
-				listtags: []
+				tasks: []
 			},
 			rules: {
 				flowId: [
@@ -336,7 +336,7 @@ export default {
 		getFlowOptions() {
 			let where = {
 				status: {
-					inq: ['running', 'paused']
+					inq: ['running', 'paused', 'error']
 				}
 			};
 			if (!parseInt(this.$cookie.get('isAdmin'))) where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
@@ -346,8 +346,7 @@ export default {
 						where: where,
 						fields: {
 							id: true,
-							name: true,
-							listtags: true
+							name: true
 						}
 					})
 				})
@@ -389,7 +388,6 @@ export default {
 				});
 			let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {};
 			this.form.name = this.form.name || flow.name;
-			this.form.listtags = flow.listtags || [];
 		},
 		//处理db克隆的情况
 		dealDBFlow(flowData) {
@@ -487,10 +485,12 @@ export default {
 				};
 				tree.push(parent);
 			}
-			parent.children.push({
-				label: stage.tableName,
-				value: stage.tableName
-			});
+			if (parent.children.every(t => t.value !== stage.tableName)) {
+				parent.children.push({
+					label: stage.tableName,
+					value: stage.tableName
+				});
+			}
 		},
 		getTreeForDBFlow(type, tables, stage, targetStage) {
 			let includeTables = tables.filter(tb => tb.source.id === stage.connectionId);
@@ -605,6 +605,9 @@ export default {
 					item[type] = this.setTable(stg);
 				}
 			});
+		},
+		goBack() {
+			this.$router.push('/dataVerification');
 		},
 		nextStep() {
 			this.$refs.baseForm.validate(valid => {

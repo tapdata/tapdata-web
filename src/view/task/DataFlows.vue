@@ -470,7 +470,7 @@ export default {
 	methods: {
 		// 面板显示隐藏
 		handlePanelFlag() {
-			this.formData.panelFlag = !this.formData.panelFlag;
+			this.$set(this.formData, 'panelFlag', !this.formData.panelFlag);
 			this.$store.commit('dataFlows', this.formData);
 		},
 		wsWatch(data) {

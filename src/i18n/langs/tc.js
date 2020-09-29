@@ -1463,7 +1463,13 @@ const tc = {
 		lackIndex: '校驗條件中源表或目標表的索引字段未選擇',
 		tasksAmount: '校驗條件中源表與目標表的索引字段個數不相等',
 		uniqueField: '唯一字段差異',
-		otherField: '其他字段差異'
+		otherField: '其他字段差異',
+		back: '返回',
+		executeVerifyTip: '執行校驗',
+		historyTip: '校驗歷史',
+		detailTip: '校驗詳情',
+		configurationTip: '校驗配置',
+		deleteTip: '刪除'
 	},
 	queryBuilder: {
 		addCond: '字段條件'

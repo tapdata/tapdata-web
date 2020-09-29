@@ -1,12 +1,12 @@
 <template>
 	<section class="data-verify-wrap">
-		<div class="panel-slider" v-show="isClassShow">
+		<!-- <div class="panel-slider" v-show="isClassShow">
 			<MetaData @nodeClick="classClickHandler"></MetaData>
-		</div>
+		</div> -->
 		<div class="panel-main">
 			<div class="topbar">
 				<ul class="search-bar">
-					<li class="search-item">
+					<!-- <li class="search-item">
 						<el-button
 							class="btn-class-collapse"
 							size="mini"
@@ -16,7 +16,7 @@
 							<i class="iconfont icon-xiangshangzhanhang"></i>
 							<span>{{ isClassShow ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel') }}</span>
 						</el-button>
-					</li>
+					</li> -->
 					<li class="search-item">
 						<el-input
 							v-model="searchParams.keyword"
@@ -61,7 +61,7 @@
 							<el-option :label="$t('dataVerification.disable')" :value="2"></el-option>
 						</el-select>
 					</li>
-					<li class="search-item" v-if="searchParams.tag">
+					<!-- <li class="search-item" v-if="searchParams.tag">
 						<el-tag
 							size="small"
 							closable
@@ -72,7 +72,7 @@
 						>
 							{{ searchParams.tag.value }}
 						</el-tag>
-					</li>
+					</li> -->
 					<li class="search-item">
 						<el-button size="mini" @click="reset">
 							<i class="iconfont icon-shuaxin1"></i>
@@ -98,10 +98,12 @@
 					style="border: 1px solid #dedee4;border-bottom: none;"
 					v-loading="loading"
 					:data="page.data"
+					class="dv-table"
+					height="100%"
 					@sort-change="sortHandler"
 					@selection-change="selectHandler"
 				>
-					<el-table-column type="selection" width="44" align="center"></el-table-column>
+					<!--					<el-table-column type="selection" width="44" align="center"></el-table-column>-->
 					<el-table-column :label="$t('dataVerification.verifyJobName')">
 						<template slot-scope="scope">
 							<div>{{ scope.row.name }}</div>
@@ -212,55 +214,90 @@
 					</el-table-column>
 					<el-table-column :label="$t('dataVerification.operation')" align="center" width="180">
 						<template slot-scope="scope">
-							<el-button
-								v-if="!['running', 'scheduling'].includes(scope.row.status)"
-								class="btn-icon"
-								type="text"
-								size="mini"
-								@click="startTask(scope.row.id)"
+							<el-tooltip
+								class="item"
+								effect="dark"
+								:content="$t('dataVerification.executeVerifyTip')"
+								placement="bottom"
 							>
-								<i class="btn-icon iconfont icon-bofang"></i>
-							</el-button>
+								<el-button
+									v-if="!['running', 'scheduling'].includes(scope.row.status)"
+									class="btn-icon"
+									type="text"
+									size="mini"
+									@click="startTask(scope.row.id)"
+								>
+									<i class="btn-icon iconfont icon-bofang"></i>
+								</el-button>
+							</el-tooltip>
 							<i
 								v-if="['running', 'scheduling'].includes(scope.row.status)"
 								class="btn-icon el-icon-loading"
 								style="color:#48B6E2;"
 							></i>
-							<el-button
-								class="btn-icon"
-								type="text"
-								size="mini"
-								:disabled="!scope.row.InspectResult"
-								@click="
-									toTableInfo(
-										scope.row.id,
-										scope.row.InspectResult.id,
-										scope.row.inspectMethod,
-										scope.row.name
-									)
-								"
+							<el-tooltip
+								class="item"
+								effect="dark"
+								:content="$t('dataVerification.detailTip')"
+								placement="bottom"
 							>
-								<i class="btn-icon iconfont icon-chaxun"></i>
-							</el-button>
-							<el-button
-								class="btn-icon el-icon-time"
-								type="text"
-								size="mini"
-								:disabled="!scope.row.InspectResult"
-								@click="toTableHistory(scope.row.id, scope.row.inspectMethod, scope.row.name)"
-							></el-button>
-							<el-button
-								class="btn-icon el-icon-setting"
-								type="text"
-								size="mini"
-								@click="$router.push('dataVerification/' + scope.row.id + '/edit')"
-							></el-button>
-							<el-button
-								class="btn-icon el-icon-delete"
-								type="text"
-								size="mini"
-								@click="remove(scope.row.id)"
-							></el-button>
+								<el-button
+									class="btn-icon"
+									type="text"
+									size="mini"
+									:disabled="!scope.row.InspectResult"
+									@click="
+										toTableInfo(
+											scope.row.id,
+											scope.row.InspectResult.id,
+											scope.row.inspectMethod,
+											scope.row.name
+										)
+									"
+								>
+									<i class="btn-icon iconfont icon-chaxun"></i>
+								</el-button>
+							</el-tooltip>
+							<el-tooltip
+								class="item"
+								effect="dark"
+								:content="$t('dataVerification.historyTip')"
+								placement="bottom"
+							>
+								<el-button
+									class="btn-icon el-icon-time"
+									type="text"
+									size="mini"
+									:disabled="!scope.row.InspectResult"
+									@click="toTableHistory(scope.row.id, scope.row.inspectMethod, scope.row.name)"
+								></el-button>
+							</el-tooltip>
+							<el-tooltip
+								class="item"
+								effect="dark"
+								:content="$t('dataVerification.configurationTip')"
+								placement="bottom"
+							>
+								<el-button
+									class="btn-icon el-icon-setting"
+									type="text"
+									size="mini"
+									@click="$router.push('dataVerification/' + scope.row.id + '/edit')"
+								></el-button>
+							</el-tooltip>
+							<el-tooltip
+								class="item"
+								effect="dark"
+								:content="$t('dataVerification.deleteTip')"
+								placement="bottom"
+							>
+								<el-button
+									class="btn-icon el-icon-delete"
+									type="text"
+									size="mini"
+									@click="remove(scope.row.id)"
+								></el-button>
+							</el-tooltip>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -282,16 +319,16 @@
 </template>
 
 <script>
-import metaData from '../metaData';
+// import metaData from '../metaData';
 import { toRegExp } from '../../util/util';
 let timeout = null;
 export default {
-	components: {
-		MetaData: metaData
-	},
+	// components: {
+	// 	MetaData: metaData
+	// },
 	data() {
 		return {
-			isClassShow: true,
+			// isClassShow: true,
 			loading: true,
 			searchParams: this.$store.state.dataVerification,
 			page: {
@@ -299,7 +336,7 @@ export default {
 				current: 1,
 				size: 20,
 				total: 0,
-				sortBy: 'last_updated',
+				sortBy: 'createTime',
 				order: ''
 			},
 			inspectMethod: {
@@ -314,11 +351,20 @@ export default {
 				done: this.$t('dataVerification.done'),
 				running: this.$t('dataVerification.running')
 			},
-			selections: []
+			selections: [],
+			timer: ''
 		};
 	},
 	created() {
 		this.search(1);
+		this.timer = setInterval(() => {
+			this.search(this.page.current, 1);
+		}, 10000);
+	},
+	destroyed() {
+		// 清除定时器
+		clearInterval(this.timer);
+		this.timer = null;
 	},
 	methods: {
 		keyup() {
@@ -338,11 +384,15 @@ export default {
 			this.page.order = order;
 			this.search(1);
 		},
-		search(pageNum) {
+		search(pageNum, loading) {
 			this.searchParamsChange();
-			this.loading = true;
+			if (loading == 1) {
+				this.loading = false;
+			} else {
+				this.loading = true;
+			}
 			let { current, size, sortBy, order } = this.page;
-			let { keyword, inspectMethod, mode, enabled, tag } = this.searchParams;
+			let { keyword, inspectMethod, mode, enabled } = this.searchParams;
 			let currentPage = pageNum || current + 1;
 			let where = {};
 			inspectMethod && (where.inspectMethod = inspectMethod);
@@ -354,9 +404,8 @@ export default {
 					where.enabled = false;
 				}
 			}
-			tag && (where['listtags.id'] = { in: [tag.id] });
 			if (keyword && keyword.trim()) {
-				where.name = toRegExp(keyword);
+				where.name = { like: toRegExp(keyword), options: 'i' };
 			}
 			let filter = {
 				order: sortBy + ' ' + (order === 'ascending' ? 'ASC' : 'DESC'),
@@ -387,18 +436,17 @@ export default {
 				keyword: '',
 				inspectMethod: '',
 				mode: '',
-				enabled: '',
-				tag: null
+				enabled: ''
 			};
 			this.search(1);
 		},
 		searchParamsChange() {
 			this.$store.commit('dataVerification', this.searchParams);
 		},
-		classClickHandler(node) {
-			this.searchParams.tag = node;
-			this.search(1);
-		},
+		// classClickHandler(node) {
+		// 	this.searchParams.tag = node;
+		// 	this.search(1);
+		// },
 		toTableInfo(id, resultId, type, name) {
 			let routeUrl = this.$router.resolve({
 				path: '/dataVerifyResult',
@@ -509,6 +557,12 @@ export default {
 			flex: 1;
 			display: flex;
 			flex-direction: column;
+			overflow: hidden;
+			font-size: 14px;
+			.dv-table {
+				flex: 1;
+				overflow: hidden;
+			}
 			.btn-icon {
 				font-size: 16px;
 				& + .btn-icon {
