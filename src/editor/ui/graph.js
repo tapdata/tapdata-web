@@ -434,6 +434,11 @@ export default class Graph extends Component {
 		let paper = this.paper;
 		let selection = this.selection;
 		let collection = selection.collection;
+		if (this.selectedLink) {
+			this.selectedLink.model.attr('line/stroke', '#8f8f8f');
+			this.selectedLink = false;
+		}
+
 		paper.removeTools();
 		joint.ui.Halo.clear(paper);
 		joint.ui.FreeTransform.clear(paper);
@@ -452,10 +457,6 @@ export default class Graph extends Component {
 
 	selectPrimaryCell(cellView) {
 		let cell = cellView.model;
-		if (this.selectedLink) {
-			this.selectedLinkattr('line/stroke', '#8f8f8f');
-			this.selectedLink = false;
-		}
 		if (this.editable) {
 			if (cell.isElement()) {
 				this.selectCell(cell);
@@ -535,6 +536,9 @@ export default class Graph extends Component {
 	}
 
 	selectPrimaryLink(linkView) {
+		this.selectedLink = linkView;
+		if (this.selectedLink.model) this.selectedLink.model.attr('line/stroke', '#00bcd4');
+
 		if (this.isSimple) return;
 		if (linkView.model.getFormData().disabled) return;
 		let ns = joint.linkTools;
