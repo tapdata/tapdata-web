@@ -98,10 +98,12 @@
 					style="border: 1px solid #dedee4;border-bottom: none;"
 					v-loading="loading"
 					:data="page.data"
+					class="dv-table"
+					height="100%"
 					@sort-change="sortHandler"
 					@selection-change="selectHandler"
 				>
-					<el-table-column type="selection" width="44" align="center"></el-table-column>
+					<!--					<el-table-column type="selection" width="44" align="center"></el-table-column>-->
 					<el-table-column :label="$t('dataVerification.verifyJobName')">
 						<template slot-scope="scope">
 							<div>{{ scope.row.name }}</div>
@@ -299,7 +301,7 @@ export default {
 				current: 1,
 				size: 20,
 				total: 0,
-				sortBy: 'last_updated',
+				sortBy: 'createTime',
 				order: ''
 			},
 			inspectMethod: {
@@ -314,11 +316,20 @@ export default {
 				done: this.$t('dataVerification.done'),
 				running: this.$t('dataVerification.running')
 			},
-			selections: []
+			selections: [],
+			timer: ''
 		};
 	},
 	created() {
 		this.search(1);
+		this.timer = setInterval(() => {
+			this.search(this.page.current, 1);
+		}, 10000);
+	},
+	destroyed() {
+		// 清除定时器
+		clearInterval(this.timer);
+		this.timer = null;
 	},
 	methods: {
 		keyup() {
@@ -338,9 +349,13 @@ export default {
 			this.page.order = order;
 			this.search(1);
 		},
-		search(pageNum) {
+		search(pageNum, loading) {
 			this.searchParamsChange();
-			this.loading = true;
+			if (loading == 1) {
+				this.loading = false;
+			} else {
+				this.loading = true;
+			}
 			let { current, size, sortBy, order } = this.page;
 			let { keyword, inspectMethod, mode, enabled, tag } = this.searchParams;
 			let currentPage = pageNum || current + 1;
@@ -356,7 +371,7 @@ export default {
 			}
 			tag && (where['listtags.id'] = { in: [tag.id] });
 			if (keyword && keyword.trim()) {
-				where.name = toRegExp(keyword);
+				where.name = { like: toRegExp(keyword), options: 'i' };
 			}
 			let filter = {
 				order: sortBy + ' ' + (order === 'ascending' ? 'ASC' : 'DESC'),
@@ -509,6 +524,12 @@ export default {
 			flex: 1;
 			display: flex;
 			flex-direction: column;
+			overflow: hidden;
+			font-size: 14px;
+			.dv-table {
+				flex: 1;
+				overflow: hidden;
+			}
 			.btn-icon {
 				font-size: 16px;
 				& + .btn-icon {
