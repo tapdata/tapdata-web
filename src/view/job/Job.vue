@@ -1210,7 +1210,7 @@ export default {
 						if (res.data.value) {
 							let value = JSON.parse(res.data.value);
 							let runNotification = value.runNotification;
-							this.editor.showSetting(!this.editable, runNotification);
+							this.editor.showSetting(!this.editable, runNotification, this.$route.query.id);
 						}
 					}
 				})

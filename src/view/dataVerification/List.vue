@@ -204,7 +204,7 @@
 					</el-table-column>
 					<el-table-column
 						:label="$t('dataVerification.verifyTime')"
-						prop="timing.start"
+						prop="lastStartTime"
 						sortable="custom"
 						align="center"
 						width="180"
@@ -515,7 +515,11 @@ export default {
 					if (['running', 'paused', 'error'].includes(res.data.status)) {
 						this.$router.push('dataVerification/' + id + '/edit');
 					} else {
-						this.$message.info('任务不是在running，error，paused 状态下不允许编辑');
+						this.$message.info(
+							this.$t('dataVerification.checkStatusPre') +
+								res.data.status +
+								this.$t('dataVerification.checkStatusSuffix')
+						);
 					}
 				});
 		}

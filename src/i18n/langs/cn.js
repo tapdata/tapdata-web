@@ -1472,7 +1472,9 @@ const cn = {
 		historyTip: '校验历史',
 		detailTip: '校验详情',
 		configurationTip: '校验配置',
-		deleteTip: '删除'
+		deleteTip: '删除',
+		checkStatusPre: '此任務處於 ',
+		checkStatusSuffix: '狀態，無法配置校驗設置'
 	},
 	queryBuilder: {
 		addCond: '字段条件'
