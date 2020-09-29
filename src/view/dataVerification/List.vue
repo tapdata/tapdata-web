@@ -214,55 +214,90 @@
 					</el-table-column>
 					<el-table-column :label="$t('dataVerification.operation')" align="center" width="180">
 						<template slot-scope="scope">
-							<el-button
-								v-if="!['running', 'scheduling'].includes(scope.row.status)"
-								class="btn-icon"
-								type="text"
-								size="mini"
-								@click="startTask(scope.row.id)"
+							<el-tooltip
+								class="item"
+								effect="dark"
+								:content="$t('dataVerification.executeVerifyTip')"
+								placement="bottom"
 							>
-								<i class="btn-icon iconfont icon-bofang"></i>
-							</el-button>
+								<el-button
+									v-if="!['running', 'scheduling'].includes(scope.row.status)"
+									class="btn-icon"
+									type="text"
+									size="mini"
+									@click="startTask(scope.row.id)"
+								>
+									<i class="btn-icon iconfont icon-bofang"></i>
+								</el-button>
+							</el-tooltip>
 							<i
 								v-if="['running', 'scheduling'].includes(scope.row.status)"
 								class="btn-icon el-icon-loading"
 								style="color:#48B6E2;"
 							></i>
-							<el-button
-								class="btn-icon"
-								type="text"
-								size="mini"
-								:disabled="!scope.row.InspectResult"
-								@click="
-									toTableInfo(
-										scope.row.id,
-										scope.row.InspectResult.id,
-										scope.row.inspectMethod,
-										scope.row.name
-									)
-								"
+							<el-tooltip
+								class="item"
+								effect="dark"
+								:content="$t('dataVerification.detailTip')"
+								placement="bottom"
 							>
-								<i class="btn-icon iconfont icon-chaxun"></i>
-							</el-button>
-							<el-button
-								class="btn-icon el-icon-time"
-								type="text"
-								size="mini"
-								:disabled="!scope.row.InspectResult"
-								@click="toTableHistory(scope.row.id, scope.row.inspectMethod, scope.row.name)"
-							></el-button>
-							<el-button
-								class="btn-icon el-icon-setting"
-								type="text"
-								size="mini"
-								@click="$router.push('dataVerification/' + scope.row.id + '/edit')"
-							></el-button>
-							<el-button
-								class="btn-icon el-icon-delete"
-								type="text"
-								size="mini"
-								@click="remove(scope.row.id)"
-							></el-button>
+								<el-button
+									class="btn-icon"
+									type="text"
+									size="mini"
+									:disabled="!scope.row.InspectResult"
+									@click="
+										toTableInfo(
+											scope.row.id,
+											scope.row.InspectResult.id,
+											scope.row.inspectMethod,
+											scope.row.name
+										)
+									"
+								>
+									<i class="btn-icon iconfont icon-chaxun"></i>
+								</el-button>
+							</el-tooltip>
+							<el-tooltip
+								class="item"
+								effect="dark"
+								:content="$t('dataVerification.historyTip')"
+								placement="bottom"
+							>
+								<el-button
+									class="btn-icon el-icon-time"
+									type="text"
+									size="mini"
+									:disabled="!scope.row.InspectResult"
+									@click="toTableHistory(scope.row.id, scope.row.inspectMethod, scope.row.name)"
+								></el-button>
+							</el-tooltip>
+							<el-tooltip
+								class="item"
+								effect="dark"
+								:content="$t('dataVerification.configurationTip')"
+								placement="bottom"
+							>
+								<el-button
+									class="btn-icon el-icon-setting"
+									type="text"
+									size="mini"
+									@click="$router.push('dataVerification/' + scope.row.id + '/edit')"
+								></el-button>
+							</el-tooltip>
+							<el-tooltip
+								class="item"
+								effect="dark"
+								:content="$t('dataVerification.deleteTip')"
+								placement="bottom"
+							>
+								<el-button
+									class="btn-icon el-icon-delete"
+									type="text"
+									size="mini"
+									@click="remove(scope.row.id)"
+								></el-button>
+							</el-tooltip>
 						</template>
 					</el-table-column>
 				</el-table>

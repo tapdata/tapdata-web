@@ -1466,7 +1466,13 @@ const cn = {
 		lackIndex: '校验条件中源表或目标表的索引字段未选择',
 		tasksAmount: '校验条件中源表与目标表的索引字段个数不相等',
 		uniqueField: '唯一字段差异',
-		otherField: '其他字段差异'
+		otherField: '其他字段差异',
+		back: '返回',
+		executeVerifyTip: '执行校验',
+		historyTip: '校验历史',
+		detailTip: '校验详情',
+		configurationTip: '校验配置',
+		deleteTip: '删除'
 	},
 	queryBuilder: {
 		addCond: '字段条件'
