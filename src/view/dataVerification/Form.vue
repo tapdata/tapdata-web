@@ -487,10 +487,12 @@ export default {
 				};
 				tree.push(parent);
 			}
-			parent.children.push({
-				label: stage.tableName,
-				value: stage.tableName
-			});
+			if (parent.children.every(t => t.value !== stage.tableName)) {
+				parent.children.push({
+					label: stage.tableName,
+					value: stage.tableName
+				});
+			}
 		},
 		getTreeForDBFlow(type, tables, stage, targetStage) {
 			let includeTables = tables.filter(tb => tb.source.id === stage.connectionId);
