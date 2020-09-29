@@ -316,11 +316,20 @@ export default {
 				done: this.$t('dataVerification.done'),
 				running: this.$t('dataVerification.running')
 			},
-			selections: []
+			selections: [],
+			timer: ''
 		};
 	},
 	created() {
 		this.search(1);
+		this.timer = setInterval(() => {
+			this.search(1, 1);
+		}, 2000);
+	},
+	destroyed() {
+		// 清除定时器
+		clearInterval(this.timer);
+		this.timer = null;
 	},
 	methods: {
 		keyup() {
@@ -340,9 +349,13 @@ export default {
 			this.page.order = order;
 			this.search(1);
 		},
-		search(pageNum) {
+		search(pageNum, loading) {
 			this.searchParamsChange();
-			this.loading = true;
+			if (loading == 1) {
+				this.loading = false;
+			} else {
+				this.loading = true;
+			}
 			let { current, size, sortBy, order } = this.page;
 			let { keyword, inspectMethod, mode, enabled, tag } = this.searchParams;
 			let currentPage = pageNum || current + 1;
