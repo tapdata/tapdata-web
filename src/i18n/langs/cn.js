@@ -1473,8 +1473,8 @@ const cn = {
 		detailTip: '校验详情',
 		configurationTip: '校验配置',
 		deleteTip: '删除',
-		checkStatusPre: '此任務處於 ',
-		checkStatusSuffix: '狀態，無法配置校驗設置'
+		checkStatusPre: '此任务处于 ',
+		checkStatusSuffix: '状态，无法配置校验设置'
 	},
 	queryBuilder: {
 		addCond: '字段条件'

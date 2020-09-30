@@ -71,7 +71,8 @@
 							<div
 								v-if="
 									scope.row.source_only + scope.row.target_only + scope.row.row_failed !== 0 &&
-										type !== 'row_count'
+										scope.row.inspect &&
+										scope.row.inspect.inspectMethod !== 'row_count'
 								"
 							>
 								{{ $t('dataVerification.contConsistent') + ' : ' }}
