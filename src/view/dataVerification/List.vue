@@ -276,7 +276,7 @@
 									type="text"
 									size="mini"
 									:disabled="!scope.row.InspectResult"
-									@click="toTableHistory(scope.row.id, scope.row.inspectMethod, scope.row.name)"
+									@click="toTableHistory(scope.row.id)"
 								></el-button>
 							</el-tooltip>
 							<el-tooltip
@@ -466,13 +466,11 @@ export default {
 			});
 			window.open(routeUrl.href, '_blank');
 		},
-		toTableHistory(id, type, name) {
+		toTableHistory(id) {
 			let routeUrl = this.$router.resolve({
 				path: '/dataVerifyHistory',
 				query: {
-					type: type,
-					inspectId: id,
-					name: name
+					inspectId: id
 				}
 			});
 			window.open(routeUrl.href, '_blank');

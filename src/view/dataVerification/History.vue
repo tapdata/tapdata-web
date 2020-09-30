@@ -31,6 +31,11 @@
 							</div>
 						</template>
 					</el-table-column>
+					<el-table-column :label="$t('dataVerification.verifytype')" prop="inspect.inspectMethod">
+						<template slot-scope="scope">
+							<span>{{ inspectMethod[scope.row.inspect ? scope.row.inspect.inspectMethod : ''] }}</span>
+						</template>
+					</el-table-column>
 					<el-table-column :label="$t('dataVerification.verifyResult')" width="180">
 						<template slot-scope="scope" v-if="scope.row.status !== 'error'">
 							<div class="inspect-result">
@@ -115,13 +120,16 @@ export default {
 				sortBy: '',
 				order: ''
 			},
-			selections: []
+			selections: [],
+			inspectMethod: {
+				row_count: this.$t('dataVerification.rowVerify'),
+				field: this.$t('dataVerification.contentVerify'),
+				jointField: this.$t('dataVerification.jointVerify')
+			}
 		};
 	},
 	created() {
-		this.type = this.$route.query.type;
 		this.inspect_id = this.$route.query.inspectId;
-		this.name = this.$route.query.name;
 		this.search(1);
 	},
 	methods: {
@@ -159,9 +167,7 @@ export default {
 				path: '/dataVerifyResult',
 				query: {
 					id: id,
-					inspectId: inspect_id,
-					type: this.type,
-					name: this.name
+					inspectId: inspect_id
 				}
 			});
 			window.open(routeUrl.href, '_blank');

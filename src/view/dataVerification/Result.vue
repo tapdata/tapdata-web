@@ -238,8 +238,6 @@ export default {
 	created() {
 		this.id = this.$route.query.id;
 		this.inspect_id = this.$route.query.inspectId;
-		this.type = this.$route.query.type;
-		this.name = this.$route.query.name;
 		this.getData(1, this.id, this.inspect_id);
 	},
 	watch: {
@@ -273,6 +271,8 @@ export default {
 				.then(([countRes, res]) => {
 					if (res.data) {
 						this.loading = false;
+						this.type = res.data[0].inspect ? res.data[0].inspect.inspectMethod : '';
+						this.name = res.data[0].inspect ? res.data[0].inspect.name : '';
 						this.tableData = res.data[0].stats;
 						if (this.tableData.length > 0) {
 							this.taskId = this.tableData[0].taskId;
