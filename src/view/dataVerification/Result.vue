@@ -71,8 +71,7 @@
 							<div
 								v-if="
 									scope.row.source_only + scope.row.target_only + scope.row.row_failed !== 0 &&
-										scope.row.inspect &&
-										scope.row.inspect.inspectMethod !== 'row_count'
+										type !== 'row_count'
 								"
 							>
 								{{ $t('dataVerification.contConsistent') + ' : ' }}
@@ -81,8 +80,9 @@
 							<span
 								class="success"
 								v-if="
-									(scope.row.target_total - scope.row.source_total === 0 &&
-										scope.row.source_only + scope.row.target_only + scope.row.row_failed === 0) ||
+									(type !== 'row_count' &&
+										scope.row.source_only + scope.row.target_only + scope.row.row_failed === 0 &&
+										scope.row.target_total - scope.row.source_total === 0) ||
 										(type === 'row_count' && scope.row.target_total - scope.row.source_total === 0)
 								"
 							>
@@ -104,7 +104,7 @@
 				background
 				layout="total,prev, pager, next,sizes"
 				:page-sizes="[20, 30, 50, 100]"
-				:page-size="tablePageSize"
+				:page-size.sync="tablePageSize"
 				:total="tableTotal"
 				:current-page.sync="tableCurrentPage"
 				@current-change="getData"

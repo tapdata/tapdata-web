@@ -66,8 +66,13 @@
 								<span
 									class="success"
 									v-if="
-										scope.row.difference_number === 0 &&
-											scope.row.target_total - scope.row.source_total === 0
+										(scope.row.inspect &&
+											scope.row.inspect.inspectMethod !== 'row_count' &&
+											scope.row.difference_number === 0 &&
+											scope.row.target_total - scope.row.source_total === 0) ||
+											(scope.row.inspect &&
+												scope.row.inspect.inspectMethod === 'row_count' &&
+												scope.row.target_total - scope.row.source_total === 0)
 									"
 								>
 									<i class="el-icon-success"></i>
