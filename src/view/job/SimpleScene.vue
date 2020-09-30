@@ -130,7 +130,7 @@ export default {
 	height: 54px;
 	padding: 0 50px;
 	line-height: 54px;
-	text-align: right;
+	text-align: center;
 	background-color: #fff;
 	color: #666;
 	box-sizing: border-box;

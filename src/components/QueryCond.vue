@@ -12,6 +12,7 @@
 			<queryCond
 				v-if="cond.type == 'group'"
 				:primaryKeyOptions="primaryKeyOptions"
+				:databaseType="databaseType"
 				v-model="value.conditions[idx]"
 				@remove="removeChild(idx)"
 			></queryCond>
@@ -54,8 +55,11 @@
 						<el-dropdown size="mini" @command="handleCommand">
 							<span class="el-dropdown-link el-icon-plus"></span>
 							<el-dropdown-menu slot="dropdown">
-								<el-dropdown-item command="and">+ and</el-dropdown-item>
-								<el-dropdown-item command="or">+ or</el-dropdown-item>
+								<el-dropdown-item v-if="databaseType != 'mongodb'" command="and"
+									>+ and</el-dropdown-item
+								>
+								<el-dropdown-item v-if="databaseType != 'mongodb'" command="or">+ or</el-dropdown-item>
+								<el-dropdown-item v-if="databaseType == 'mongodb'" command="cond"> + </el-dropdown-item>
 								<el-dropdown-item command="andQ">+ and()</el-dropdown-item>
 								<el-dropdown-item command="orQ">+ or()</el-dropdown-item>
 							</el-dropdown-menu>
@@ -83,6 +87,9 @@ export default {
 			default() {
 				return { conditions: [] };
 			}
+		},
+		databaseType: {
+			type: String
 		},
 		level: {
 			type: Number,
@@ -126,6 +133,7 @@ export default {
 	},
 	methods: {
 		handleCommand(command) {
+			if (command == 'cond') this.addChild('condition', '');
 			if (command == 'andQ') this.addChild('group', 'and');
 			if (command == 'and') this.addChild('condition', 'and');
 			if (command == 'orQ') this.addChild('group', 'or');
