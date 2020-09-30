@@ -404,10 +404,13 @@ export default {
 				background: #fdf6ec;
 				border: 1px solid #f8e2c0;
 				color: #e6a23c;
-				margin: @margin;
-				padding-left: @margin;
-				line-height: 36px;
+				margin: 10px;
+				line-height: 20px;
+				max-height: 160px;
+				text-overflow: ellipsis;
+				overflow-y: scroll;
 				font-size: 12px;
+				padding: 8px;
 			}
 			.title {
 				font-weight: bold;
