@@ -504,35 +504,42 @@ export default {
 				}
 				return tb.source.id === stage.connectionId && flag;
 			});
+
 			let parent = {
 				label: includeTables[0].source.name,
 				value: stage.connectionId,
 				children: []
 			};
+			let index = this[type + 'Tree'].findIndex(it => it.value === stage.connectionId);
+			if (index >= 0) {
+				parent = this[type + 'Tree'].splice(index, 1)[0];
+			}
 			includeTables.forEach(table => {
-				parent.children.push({
-					label: table.original_name,
-					value: table.original_name
-				});
-				let outputLanes = targetStage
-					? [
-							targetStage.connectionId +
-								targetStage.table_prefix +
-								table.original_name +
-								targetStage.table_suffix
-					  ]
-					: null;
-				let key = stage.connectionId + table.original_name;
-				if (targetStage) {
-					this.stageMap[key] = outputLanes;
+				if (!parent.children.find(child => child.value === table.original_name)) {
+					parent.children.push({
+						label: table.original_name,
+						value: table.original_name
+					});
+					let outputLanes = targetStage
+						? [
+								targetStage.connectionId +
+									targetStage.table_prefix +
+									table.original_name +
+									targetStage.table_suffix
+						  ]
+						: null;
+					let key = stage.connectionId + table.original_name;
+					if (targetStage) {
+						this.stageMap[key] = outputLanes;
+					}
+					this.flowStages.push({
+						id: key,
+						connectionId: table.source.id,
+						fields: table.fields,
+						tableName: table.original_name,
+						outputLanes
+					});
 				}
-				this.flowStages.push({
-					id: key,
-					connectionId: table.source.id,
-					fields: table.fields,
-					tableName: table.original_name,
-					outputLanes
-				});
 			});
 			this[type + 'Tree'].push(parent);
 		},
@@ -563,24 +570,23 @@ export default {
 			this.form.tasks = [];
 			let stages = this.flowStages;
 			let map = this.stageMap;
-			stages.forEach(stg => {
-				let lanes = map[stg.id];
-				if (lanes) {
-					lanes.forEach(id => {
-						let targetStage = stages.find(it => it.id === id);
-						let task = {
-							source: this.setTable(stg),
-							target: Object.assign({}, TABLE_PARAMS),
-							sourceTable: [stg.connectionId, stg.tableName]
-						};
-						if (targetStage) {
-							task.target = this.setTable(targetStage);
-							task.targetTable = [targetStage.connectionId, targetStage.tableName];
-						}
-						this.form.tasks.push(task);
-					});
-				}
-			});
+			for (const key in map) {
+				const lanes = map[key];
+				let stg = stages.find(stg => stg.id === key);
+				lanes.forEach(id => {
+					let targetStage = stages.find(it => it.id === id);
+					let task = {
+						source: this.setTable(stg),
+						target: Object.assign({}, TABLE_PARAMS),
+						sourceTable: [stg.connectionId, stg.tableName]
+					};
+					if (targetStage) {
+						task.target = this.setTable(targetStage);
+						task.targetTable = [targetStage.connectionId, targetStage.tableName];
+					}
+					this.form.tasks.push(task);
+				});
+			}
 		},
 		setTable(stage) {
 			let sortColumn = '';
