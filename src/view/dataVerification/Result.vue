@@ -7,12 +7,9 @@
 				<div class="text" v-if="type === 'row_count'">{{ $t('dataVerification.rowVerify') }}</div>
 				<div class="text" v-if="type === 'field'">{{ $t('dataVerification.contentVerify') }}</div>
 				<div class="text" v-if="type === 'jointField'">{{ $t('dataVerification.jointVerify') }}</div>
-				<div
-					class="error-band"
-					v-if="resultData && resultData[0] && resultData[0].status === 'error' && type === 'row_count'"
-				>
+				<div class="error-band" style="width: 96.5%;" v-if="errorMsg && type === 'row_count'">
 					<i class="iconfont icon-warning-circle"></i>
-					<span>{{ resultData[0].errorMsg }}</span>
+					<span>{{ errorMsg }}</span>
 				</div>
 				<el-table
 					:element-loading-text="$t('dataFlow.dataLoading')"
@@ -99,18 +96,18 @@
 					</el-table-column>
 				</el-table>
 			</div>
-			<el-pagination
-				class="pagination"
-				background
-				layout="total,prev, pager, next,sizes"
-				:page-sizes="[20, 30, 50, 100]"
-				:page-size.sync="tablePageSize"
-				:total="tableTotal"
-				:current-page.sync="tableCurrentPage"
-				@current-change="getData"
-				@size-change="getData(1)"
-			>
-			</el-pagination>
+			<!--			<el-pagination-->
+			<!--				class="pagination"-->
+			<!--				background-->
+			<!--				layout="total,prev, pager, next,sizes"-->
+			<!--				:page-sizes="[20, 30, 50, 100]"-->
+			<!--				:page-size.sync="tablePageSize"-->
+			<!--				:total="tableTotal"-->
+			<!--				:current-page.sync="tableCurrentPage"-->
+			<!--				@current-change="getData"-->
+			<!--				@size-change="getData(1)"-->
+			<!--			>-->
+			<!--			</el-pagination>-->
 		</div>
 		<div class="panel-main" v-if="type !== 'row_count'">
 			<div class="tip">{{ $t('dataVerification.verifyDetail') }}</div>
@@ -161,7 +158,7 @@
 						}}</span>
 					</li>
 				</ul>
-				<div class="error-band" v-if="resultData && resultData[0].status === 'error'">
+				<div class="error-band" v-if="resultData && resultData[0] && resultData[0].status === 'error'">
 					<i class="iconfont icon-warning-circle"></i>
 					<span>{{ resultData[0].errorMsg }}</span>
 				</div>
@@ -232,7 +229,8 @@ export default {
 			colorMap: {
 				running: '#ee5353'
 			},
-			currentRow: null
+			currentRow: null,
+			errorMsg: ''
 		};
 	},
 	created() {
@@ -276,6 +274,7 @@ export default {
 						this.tableData = res.data[0].stats;
 						if (this.tableData.length > 0) {
 							this.taskId = this.tableData[0].taskId;
+							this.errorMsg = res.data[0].status === 'error' ? res.data[0].errorMsg : undefined;
 							this.changeInspectResult(1, this.tableData[0].taskId);
 						}
 						this.tableCurrentPage = currentPage;

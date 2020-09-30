@@ -317,6 +317,9 @@ export default {
 	},
 	created() {
 		if (this.$route.query.isSimple == 'true') this.isSimple = true;
+		if (!this.$route.query.id) {
+			this.getGlobalSetting();
+		}
 	},
 	mounted() {
 		let self = this;
@@ -1193,9 +1196,9 @@ export default {
 		 */
 		showSetting() {
 			log('Job.showSetting');
-			this.getGlobalSetting();
+			this.editor.showSetting(!this.editable);
 		},
-		async getGlobalSetting() {
+		getGlobalSetting() {
 			let where = {
 				filter: {
 					where: {
@@ -1209,8 +1212,7 @@ export default {
 					if (res.statusText === 'OK' || res.status === 200) {
 						if (res.data.value) {
 							let value = JSON.parse(res.data.value);
-							let runNotification = value.runNotification;
-							this.editor.showSetting(!this.editable, runNotification, this.$route.query.id);
+							this.editor.setSettingData(value.runNotification);
 						}
 					}
 				})
