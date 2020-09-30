@@ -491,11 +491,19 @@ export default {
 		},
 		getTreeForDBFlow(type, tables, stage, targetStage) {
 			let includeTableNames = [];
-			if (targetStage && targetStage.syncObjects) {
-				let obj = targetStage.syncObjects.find(obj => obj.type === 'table');
+			let getTableNames = (objects, prefix = '', suffix = '') => {
+				let obj = objects.find(obj => obj.type === 'table');
 				if (obj) {
-					includeTableNames = obj.objectNames;
+					includeTableNames = obj.objectNames.map(tName => {
+						return prefix + tName + suffix;
+					});
 				}
+			};
+			if (targetStage && targetStage.syncObjects) {
+				getTableNames(targetStage.syncObjects);
+			}
+			if (!targetStage && stage.syncObjects) {
+				getTableNames(stage.syncObjects, stage.table_prefix, stage.table_suffix);
 			}
 			let includeTables = tables.filter(tb => {
 				let flag = true;
