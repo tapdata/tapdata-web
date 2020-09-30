@@ -70,12 +70,7 @@
 						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('cond', 'and')"
 							>+ and</el-button
 						>
-						<el-button
-							v-if="databaseType != 'mongodb'"
-							plain
-							class="el-button--small"
-							style="height: 28px;"
-							@click="addCond('cond', 'or')"
+						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('cond', 'or')"
 							>+ or</el-button
 						>
 						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('group', 'and')"
@@ -88,6 +83,7 @@
 					<queryCond
 						v-if="value.conditions.length > 0"
 						:level="0"
+						:databaseType="databaseType"
 						:primaryKeyOptions="primaryKeyOptions"
 						v-model="value"
 					></queryCond>
