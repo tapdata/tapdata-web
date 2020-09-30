@@ -4,10 +4,10 @@
 			<metaData v-on:nodeClick="nodeClick" @nodeDataChange="nodeDataChange"></metaData>
 		</div>
 		<div class="panel-main">
-			<el-tabs v-model="activeName" type="card" @tab-click="handleTabClick">
+			<!-- <el-tabs v-model="activeName" type="card" @tab-click="handleTabClick">
 				<el-tab-pane :label="$t('tableFlow.task_view')" name="dataFlow"></el-tab-pane>
 				<el-tab-pane :label="$t('tableFlow.table_view')" name="tableFlow"></el-tab-pane>
-			</el-tabs>
+			</el-tabs> -->
 			<div class="topbar">
 				<!-- <div class="panelBtn"></div> -->
 				<ul class="search-bar">

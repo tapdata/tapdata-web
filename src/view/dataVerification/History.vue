@@ -32,29 +32,23 @@
 						</template>
 					</el-table-column>
 					<el-table-column :label="$t('dataVerification.verifyResult')" width="180">
-						<template
-							slot-scope="scope"
-							v-if="scope.row && scope.row.stats && scope.row.stats[0] && scope.row.status !== 'error'"
-						>
+						<template slot-scope="scope" v-if="scope.row.status !== 'error'">
 							<div class="inspect-result">
-								<div v-if="scope.row.stats[0].target_total - scope.row.stats[0].source_total !== 0">
-									<span
-										class="error"
-										v-if="scope.row.stats[0].target_total - scope.row.stats[0].source_total !== 0"
-									>
+								<div v-if="scope.row.target_total - scope.row.source_total !== 0">
+									<span class="error" v-if="scope.row.target_total - scope.row.source_total !== 0">
 										<i class="el-icon-error"></i>
 										<span>
 											{{ $t('dataVerification.rowConsistent') }}
-											{{
-												Math.abs(
-													scope.row.stats[0].target_total - scope.row.stats[0].source_total
-												)
-											}}
+											{{ Math.abs(scope.row.target_total - scope.row.source_total) }}
 										</span>
 									</span>
 								</div>
 								<div
-									v-if="scope.row.difference_number !== 0 && scope.row.inspectMethod !== 'row_count'"
+									v-if="
+										scope.row.difference_number !== 0 &&
+											scope.row.inspect &&
+											scope.row.inspect.inspectMethod !== 'row_count'
+									"
 								>
 									<span class="error" v-if="scope.row.difference_number">
 										<i class="el-icon-error"></i>
@@ -68,7 +62,7 @@
 									class="success"
 									v-if="
 										scope.row.difference_number === 0 &&
-											scope.row.stats[0].target_total - scope.row.stats[0].source_total === 0
+											scope.row.target_total - scope.row.source_total === 0
 									"
 								>
 									<i class="el-icon-success"></i>

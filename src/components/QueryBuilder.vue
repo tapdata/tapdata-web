@@ -47,7 +47,15 @@
 							></el-option>
 						</el-select>
 					</div>
-					<el-row v-if="value.conditions.length == 0">
+					<el-row v-if="databaseType == 'mongodb' && value.conditions.length == 0">
+						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('group', 'and')"
+							>+ and()</el-button
+						>
+						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('group', 'or')"
+							>+ or()</el-button
+						>
+					</el-row>
+					<el-row v-if="databaseType != 'mongodb' && value.conditions.length == 0">
 						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('cond')"
 							>+{{ $t('queryBuilder.addCond') }}</el-button
 						>
@@ -55,11 +63,19 @@
 							>+({{ $t('queryBuilder.addCond') }})</el-button
 						>
 					</el-row>
-					<el-row v-if="value.conditions.length > 0" style="padding-bottom: 10px;">
+					<el-row
+						v-if="databaseType != 'mongodb' && value.conditions.length > 0"
+						style="padding-bottom: 10px;"
+					>
 						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('cond', 'and')"
 							>+ and</el-button
 						>
-						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('cond', 'or')"
+						<el-button
+							v-if="databaseType != 'mongodb'"
+							plain
+							class="el-button--small"
+							style="height: 28px;"
+							@click="addCond('cond', 'or')"
 							>+ or</el-button
 						>
 						<el-button plain class="el-button--small" style="height: 28px;" @click="addCond('group', 'and')"
@@ -321,7 +337,7 @@ export default {
 		},
 		createMongoFilter() {
 			let cSql = '';
-			cSql += JSON.stringify(this.flat({ type: 'group', operator: 'and', conditions: this.value.conditions }));
+			cSql += JSON.stringify(this.flat(this.value.conditions[0]));
 			this.value.cSql = cSql;
 		},
 		flat(condition) {

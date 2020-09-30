@@ -212,7 +212,7 @@
 		</div>
 		<div class="footer">
 			<el-button size="mini" @click="goBack()">{{ $t('dataVerification.back') }}</el-button>
-			<el-button type="primary" size="mini" @click="nextStep()">{{ $t('dataVerification.next') }}</el-button>
+			<el-button type="primary" size="mini" @click="nextStep()">{{ $t('app.save') }}</el-button>
 		</div>
 	</section>
 </template>
@@ -234,8 +234,7 @@ const META_INSTANCE_FIELDS = {
 	fields: true,
 	'fields.id': true,
 	'fields.field_name': true,
-	'fields.primary_key_position': true,
-	'fields.original_field_name': true
+	'fields.primary_key_position': true
 };
 import MultiSelection from './MultiSelection.vue';
 export default {
@@ -298,8 +297,6 @@ export default {
 			targetTree: [],
 			stageMap: {},
 			flowStages: null,
-			sourceFields: [],
-			targetFields: [],
 			flowOptions: null
 		};
 	},
@@ -493,7 +490,20 @@ export default {
 			}
 		},
 		getTreeForDBFlow(type, tables, stage, targetStage) {
-			let includeTables = tables.filter(tb => tb.source.id === stage.connectionId);
+			let includeTableNames = [];
+			if (targetStage && targetStage.syncObjects) {
+				let obj = targetStage.syncObjects.find(obj => obj.type === 'table');
+				if (obj) {
+					includeTableNames = obj.objectNames;
+				}
+			}
+			let includeTables = tables.filter(tb => {
+				let flag = true;
+				if (includeTableNames.length) {
+					flag = includeTableNames.includes(tb.original_name);
+				}
+				return tb.source.id === stage.connectionId && flag;
+			});
 			let parent = {
 				label: includeTables[0].source.name,
 				value: stage.connectionId,
@@ -505,7 +515,12 @@ export default {
 					value: table.original_name
 				});
 				let outputLanes = targetStage
-					? [targetStage.connectionId + stage.table_prefix + table.original_name + stage.table_suffix]
+					? [
+							targetStage.connectionId +
+								targetStage.table_prefix +
+								table.original_name +
+								targetStage.table_suffix
+					  ]
 					: null;
 				let key = stage.connectionId + table.original_name;
 				if (targetStage) {
@@ -546,22 +561,23 @@ export default {
 		//根据表的连线关系自动添加校验条件
 		autoAddTable() {
 			this.form.tasks = [];
-			let stages = this.flowStages.filter(Boolean);
+			let stages = this.flowStages;
 			let map = this.stageMap;
 			stages.forEach(stg => {
 				let lanes = map[stg.id];
 				if (lanes) {
 					lanes.forEach(id => {
 						let targetStage = stages.find(it => it.id === id);
-						this.form.tasks.push({
-							source: stg ? this.setTable(stg) : '',
-							target: targetStage ? this.setTable(targetStage) : '',
-							sourceTable: [stg.connectionId, stg.tableName],
-							targetTable: [
-								targetStage ? targetStage.connectionId : '',
-								targetStage ? targetStage.tableName : ''
-							]
-						});
+						let task = {
+							source: this.setTable(stg),
+							target: Object.assign({}, TABLE_PARAMS),
+							sourceTable: [stg.connectionId, stg.tableName]
+						};
+						if (targetStage) {
+							task.target = this.setTable(targetStage);
+							task.targetTable = [targetStage.connectionId, targetStage.tableName];
+						}
+						this.form.tasks.push(task);
 					});
 				}
 			});
@@ -571,7 +587,7 @@ export default {
 			if (stage && stage.fields && stage.fields.length) {
 				let pkField = stage.fields.find(f => f.primary_key_position > 0);
 				if (pkField) {
-					sortColumn = pkField.original_field_name || pkField.field_name;
+					sortColumn = pkField.field_name;
 				}
 			}
 			return {
@@ -663,6 +679,10 @@ export default {
 						tasks.forEach(item => {
 							item['fullMatch'] = true;
 						});
+					}
+					if (this.form && this.form.createTime && this.form.last_updated) {
+						delete this.form.createTime;
+						delete this.form.last_updated;
 					}
 					this.$api('Inspects')
 						[this.form.id ? 'patch' : 'post'](
