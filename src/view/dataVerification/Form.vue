@@ -43,7 +43,7 @@
 							</el-select>
 						</el-form-item>
 						<el-form-item class="setting-item">
-							<label class="item-label">{{ $t('dataVerification.verifyType') }}</label>
+							<label class="item-label">{{ $t('dataVerification.verifytype') }}</label>
 							<el-radio-group v-model="form.inspectMethod" style="margin-left: 10px;">
 								<el-radio label="row_count">
 									{{ $t('dataVerification.rowVerify') }}

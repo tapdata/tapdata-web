@@ -1422,6 +1422,7 @@ const cn = {
 		verifyJobName: '校验任务名',
 		verifyjobname: '校验任务名',
 		verifyType: '校验类型',
+		verifytype: '校验类型',
 		singleRepeatingVerify: '单次/重复校验',
 		rowAndContConsistent: '行数和内容差异',
 		sourceFieldName: '源表字段名',

@@ -1420,6 +1420,7 @@ const tc = {
 		verifyJobName: '校驗任務名',
 		verifyjobname: '校驗任務名',
 		verifyType: '校驗類型',
+		verifytype: '校驗類型',
 		singleRepeatingVerify: '單次/重複校驗',
 		rowAndContConsistent: '行數和內容差異',
 		sourceFieldName: '源表字段名',
