@@ -47,6 +47,7 @@ const tc = {
 		home: '官網',
 		signOut: '登出',
 		signOutMsg: '您確定要登出嗎？',
+		save: '保存',
 		customerService: {
 			technicalSupport: '技術支持',
 			technicalSupportText: '在使用過程中，有任何問題，請在',
@@ -1434,7 +1435,6 @@ const tc = {
 		table: '待校驗表',
 		addTable: '添加表',
 		automaticallyAdd: '自動添加',
-		next: '下一步',
 		enable: '已啟用',
 		disable: '已禁止',
 		newVerify: '新建校驗',

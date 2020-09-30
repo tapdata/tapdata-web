@@ -212,7 +212,7 @@
 		</div>
 		<div class="footer">
 			<el-button size="mini" @click="goBack()">{{ $t('dataVerification.back') }}</el-button>
-			<el-button type="primary" size="mini" @click="nextStep()">{{ $t('dataVerification.next') }}</el-button>
+			<el-button type="primary" size="mini" @click="nextStep()">{{ $t('app.save') }}</el-button>
 		</div>
 	</section>
 </template>
