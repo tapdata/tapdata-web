@@ -166,14 +166,9 @@ export default {
 			this.value.conditions.push(child);
 			this.$emit('input', this.value);
 		},
-		handleFilterChange() {
-			this.$nextTick(() => {
-				this.createCustSql();
-			});
-		},
 		removeChild(index) {
 			this.value.conditions.splice(index, 1);
-			if (this.value.conditions.length > 0) this.value.conditions[0].operator = '';
+			//if (this.value.conditions.length > 0) this.value.conditions[0].operator = '';
 			if (this.value.conditions.length == 0) this.$emit('remove');
 		}
 	}
