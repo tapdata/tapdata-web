@@ -47,6 +47,7 @@ const cn = {
 		home: '官网',
 		signOut: '退出登录',
 		signOutMsg: '您确定要退出登录吗？',
+		save: '保存',
 		customerService: {
 			technicalSupport: '技术支持',
 			technicalSupportText: '在使用过程中，有任何问题，请在',
@@ -1437,7 +1438,6 @@ const cn = {
 		table: '待校验表',
 		addTable: '添加表',
 		automaticallyAdd: '自动添加',
-		next: '下一步',
 		enable: '已启用',
 		disable: '已禁止',
 		newVerify: '新建校验',

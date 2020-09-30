@@ -46,6 +46,7 @@ const en = {
 		home: 'Home',
 		signOut: 'Sign out',
 		signOutMsg: 'Are you sure to sign out?',
+		save: 'Save',
 		customerService: {
 			technicalSupport: 'User Support',
 			technicalSupportText: 'Any question, please submit to',
@@ -1453,7 +1454,6 @@ const en = {
 		table: 'Table',
 		addTable: 'Add table',
 		automaticallyAdd: 'Automatically add',
-		next: 'Next',
 		enable: 'Enable',
 		disable: 'Disable',
 		newVerify: 'New Verify',
