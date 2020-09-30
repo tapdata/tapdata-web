@@ -350,6 +350,7 @@ export default {
 				_.merge(this.model, data);
 			}
 			this.cell = cell;
+			this.model.joinTable.joinKeys = [];
 
 			this.configJoinTable = cell.configJoinTable && cell.configJoinTable();
 
