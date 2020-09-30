@@ -337,6 +337,7 @@ export default {
 			this.value.cSql = cSql;
 		},
 		flat(condition) {
+			if (!condition) return '';
 			if (condition && condition.type === 'group') {
 				if (condition.operator === 'and') {
 					let result = { $and: [] };
