@@ -205,6 +205,7 @@ export const baseElementConfig = {
 							let formData = cell.getFormData() || {};
 							let joinTable = formData ? formData.joinTable : null;
 							let schema = sourceCell.getOutputSchema();
+							let sourceCellFormData = sourceCell.getFormData();
 
 							joinTable = joinTable ? _.cloneDeep(joinTable) : _.cloneDeep(JOIN_TABLE_TPL);
 
@@ -214,6 +215,12 @@ export const baseElementConfig = {
 								// 	.filter(f => f.primary_key_position > 0)
 								// 	.map(f => f.field_name)
 								// 	.join(',');
+								if (
+									schema.table_name !== joinTable.tableName ||
+									sourceCellFormData.connectionId !== joinTable.connectionId
+								) {
+									joinTable = _.cloneDeep(JOIN_TABLE_TPL);
+								}
 								joinTable.tableName = schema && schema.table_name;
 								/* if( !joinTable.joinPath && ['merge_embed', 'update'].includes(joinTable.joinType)){
 										joinTable.joinPath = joinTable.tableName;
@@ -222,6 +229,7 @@ export const baseElementConfig = {
 							let parentDataNodes =
 								typeof sourceCell.getFirstDataNode === 'function' ? sourceCell.getFirstDataNode() : [];
 							joinTable.stageId = parentDataNodes.length > 0 ? parentDataNodes[0].id : '';
+							joinTable.connectionId = sourceCellFormData.connectionId;
 
 							formData.joinTable = _.cloneDeep(joinTable);
 							cell.set(FORM_DATA_KEY, formData);

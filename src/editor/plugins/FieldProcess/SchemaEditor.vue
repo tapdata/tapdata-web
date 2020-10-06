@@ -597,7 +597,6 @@ export default {
 		handleExistsName(node, data) {
 			// 改名前查找同级中是否重名，若有则return且还原改动并提示
 			let exist = false;
-			debugger;
 			if (node && node.parent && node.parent.childNodes) {
 				let parentNode = node.parent.childNodes.filter(v => data.label === v.data.label);
 				if (parentNode && parentNode.length === 2) {
