@@ -769,6 +769,10 @@ export default {
 				if (data.initialSyncOrder > 0) {
 					this.model.enableInitialOrder = true;
 				}
+				if (data.filter && (!this.model.custSql.conditions || this.model.custSql.conditions.length == 0)) {
+					this.model.custSql.editSql = data.filter;
+					this.model.custSql.filterType = '';
+				}
 				if (data.connectionId) {
 					this.loadDataModels(data.connectionId);
 				}
