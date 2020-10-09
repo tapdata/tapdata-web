@@ -409,9 +409,8 @@ export default {
 						// );
 						// let comparedPKs = mergePKs || [];
 
-						let initialAssociationPKs = this.model.joinTable.joinKeys;
 						if (sourcePKs && sourcePKs.length > 0) {
-							initialAssociationPKs = sourcePKs.map(field => {
+							joinKeys = sourcePKs.map(field => {
 								let source = field.field_name;
 								let target = '';
 								if (mergeFields && mergeFields.length) {
@@ -426,7 +425,6 @@ export default {
 								};
 							});
 						}
-						this.model.joinTable.joinKeys = initialAssociationPKs;
 					}
 				}
 				// 日志挖掘
@@ -434,6 +432,10 @@ export default {
 				if (this.logsFlag) {
 					this.model.joinTable.joinType = 'append';
 				}
+
+				joinKeys.forEach((item, index) => {
+					this.$set(this.model.joinTable.joinKeys, index, item);
+				});
 			}
 
 			this.$emit(EditorEventType.RESIZE);
