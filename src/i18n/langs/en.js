@@ -192,7 +192,8 @@ const en = {
 		noData: 'NO DATA ',
 		prompt: 'Prompt',
 		resetMessage: 'This will cause the job to be rerun from the beginning, continue?',
-		deteleMessage: 'This will permanently delete the job, continue? ',
+		deteleMessage: 'This will permanently delete the job',
+		deteleJobMessage: 'This will permanently delete the choosed jobs ?',
 		forceStoppingMessage: 'This will interrupt the data transfer immediately, continue?',
 		stopInitial_syncMessage:
 			'Pausing job while it is in the initial sync stage may cause it to run from the beginning, are you sure you want to pause?',

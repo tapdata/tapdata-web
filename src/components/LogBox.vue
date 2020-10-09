@@ -43,8 +43,18 @@ export default {
 	methods: {
 		formatLog(item) {
 			let keyword = this.keyword;
+			let log_message = item.message
+				? item.message.replace(/[<">']/g, reg => {
+						return {
+							'<': '&lt;',
+							'"': '&quot;',
+							'>': '&gt;',
+							"'": '&#39;'
+						}[reg];
+				  })
+				: '';
 			let markKeyword = function(text) {
-				if (keyword && text.indexOf(keyword) >= 0) {
+				if (keyword && text.indexOf(keyword) !== -1) {
 					return text.split(keyword).join(`<span class="keyword">${keyword}</span>`);
 				}
 				return text;
@@ -56,23 +66,15 @@ export default {
 				ERROR: 'redActive',
 				WARN: 'color-warning'
 			};
-			let log_message = markKeyword(item.message)
-				? markKeyword(item.message).replace(/[<">']/g, reg => {
-						return {
-							'<': '&lt;',
-							'"': '&quot;',
-							'>': '&gt;',
-							"'": '&#39;'
-						}[reg];
-				  })
-				: '';
+
 			return (
 				`<li class="log-box-item">` +
 				`[<span class="level ${colorMap[item.level] || ''}">${item.level}</span>] &nbsp;` +
 				`<span>${date}</span>&nbsp;` +
 				`<span>[${markKeyword(item.threadName)}]</span>&nbsp;` +
 				`<span>${markKeyword(item.loggerName)}</span>&nbsp;-&nbsp;` +
-				`<span>${log_message}</span>` +
+				// `<span>${markKeyword(item.message)}</span>` +
+				`<span>${markKeyword(log_message)}</span>` +
 				`</li>`
 			);
 		},

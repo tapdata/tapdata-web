@@ -259,7 +259,7 @@
 									<el-button
 										type="text"
 										:disabled="statusBtMap[scope.row.status].delete"
-										@click="handleDelete(scope.row.id)"
+										@click="handleDelete(scope.row)"
 									>
 										<i class="iconfont task-list-icon icon-shanchu"></i>
 									</el-button>
@@ -312,6 +312,21 @@
 			v-on:dialogVisible="handleDialogVisible"
 			v-on:operationsClassify="handleOperationClassify"
 		></SelectClassify>
+		<el-dialog
+			:title="this.$t('dataFlow.importantReminder')"
+			:close-on-click-modal="false"
+			:visible.sync="deleteDialogVisible"
+			width="30%"
+		>
+			<p>
+				{{ $t('message.deteleMessage') }}
+				<span @click="delLinkDataflow" style="color:#48B6E2;cursor: pointer"> {{ deleteObj.name }}</span> ?
+			</p>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="deleteDialogVisible = false">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="confirmDleteFlow">{{ $t('metaData.deleteNode') }}</el-button>
+			</span>
+		</el-dialog>
 	</section>
 </template>
 
@@ -330,6 +345,7 @@ export default {
 	components: { metaData, SelectClassify },
 	data() {
 		return {
+			deleteDialogVisible: false,
 			checkedTag: '',
 			activeName: 'dataFlow',
 			listtags: [],
@@ -423,7 +439,11 @@ export default {
 				paused: { switch: false, delete: false, edit: false, detail: true, forceStop: true, reset: false },
 				'force stopping': { switch: true, delete: true, edit: true, detail: true, forceStop: true, reset: true }
 			},
-			dataFlowId: ''
+			dataFlowId: '',
+			deleteObj: {
+				name: '',
+				id: ''
+			}
 		};
 	},
 	created() {
@@ -918,7 +938,7 @@ export default {
 		},
 
 		deleteConfirm(callback) {
-			this.$confirm(this.$t('message.deteleMessage'), this.$t('dataFlow.importantReminder'), {
+			this.$confirm(this.$t('message.deteleJobMessage'), this.$t('dataFlow.importantReminder'), {
 				confirmButtonText: this.$t('metaData.deleteNode'),
 				cancelButtonText: this.$t('message.cancel'),
 				type: 'warning',
@@ -947,8 +967,9 @@ export default {
 						this.$message.info(this.$t('message.deleteFail'));
 					}
 				});
-			});
+			}, '');
 		},
+
 		listtagsFormatter(row) {
 			let value = '';
 			if (row.listtags && row.listtags.length !== 0) {
@@ -956,17 +977,36 @@ export default {
 			}
 			return value;
 		},
-		handleDelete(id) {
-			this.deleteConfirm(() => {
-				dataFlows.delete(id).then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						this.getData();
-						this.$message.success(this.$t('message.deleteOK'));
-					} else {
-						this.$message.info(this.$t('message.deleteFail'));
-					}
-				});
+		handleDelete(data) {
+			this.deleteDialogVisible = true;
+			this.deleteObj = data;
+			// this.deleteConfirm(() => {
+			// 	dataFlows.delete(data.id).then(res => {
+			// 		if (res.statusText === 'OK' || res.status === 200) {
+			// 			this.getData();
+			// 			this.$message.success(this.$t('message.deleteOK'));
+			// 		} else {
+			// 			this.$message.info(this.$t('message.deleteFail'));
+			// 		}
+			// 	});
+			// }, data.name);
+		},
+
+		// 删除任务编排
+		confirmDleteFlow() {
+			dataFlows.delete(this.deleteObj.id).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					this.getData();
+					this.$message.success(this.$t('message.deleteOK'));
+				} else {
+					this.$message.info(this.$t('message.deleteFail'));
+				}
 			});
+			this.deleteDialogVisible = false;
+		},
+
+		delLinkDataflow() {
+			window.open('/#/job?id=' + this.deleteObj.id, '_blank');
 		},
 
 		statusConfirm(callback, data) {
