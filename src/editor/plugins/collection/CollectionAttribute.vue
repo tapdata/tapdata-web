@@ -777,7 +777,6 @@ export default {
 					this.model.isFilter = true;
 				} else if (this.model.custSql.conditions && this.model.custSql.conditions.length > 0) {
 					this.model.custSql.filterType = 'field';
-					this.model.isFilter = true;
 				}
 				if (data.connectionId) {
 					this.loadDataModels(data.connectionId);
