@@ -771,11 +771,7 @@ export default {
 				if (data.initialSyncOrder > 0) {
 					this.model.enableInitialOrder = true;
 				}
-				if (
-					data.filter &&
-					(!this.model.custSql.conditions || this.model.custSql.conditions.length == 0) &&
-					!['sql', 'field'].includes(this.model.custSql.filterType)
-				) {
+				if (data.filter && !data.hasOwnProperty('isFilter')) {
 					this.model.custSql.editSql = data.filter;
 					this.model.custSql.filterType = 'sql';
 					this.model.isFilter = true;
