@@ -23,8 +23,8 @@
 							<div>
 								<span>{{
 									`${
-										(Math.round(scope.row.progress * 1000) / 1000) * 100
-											? (Math.round(scope.row.progress * 1000) / 1000) * 100
+										Math.round(scope.row.progress * 10000) / 100
+											? Math.round(scope.row.progress * 10000) / 100
 											: 0
 									}%`
 								}}</span>
@@ -37,7 +37,7 @@
 						</template>
 					</el-table-column>
 					<el-table-column :label="$t('dataVerification.verifyResult')" width="180">
-						<template slot-scope="scope" v-if="scope.row.status !== 'error'">
+						<template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
 							<div class="inspect-result">
 								<div v-if="scope.row.target_total - scope.row.source_total !== 0">
 									<span class="error" v-if="scope.row.target_total - scope.row.source_total !== 0">

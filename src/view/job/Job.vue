@@ -742,8 +742,12 @@ export default {
 			let edgeCells = {};
 			let nodeCells = {};
 			cells.forEach(cell => {
-				if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') edgeCells[cell.id] = cell;
-				else nodeCells[cell.id] = cell;
+				if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
+					if (cell.attrs.line && cell.attrs.line.stroke) {
+						cell.attrs.line.stroke = '#8f8f8f'; // 鼠标未失去焦点就保存，针对link选中状态改为默认
+					}
+					edgeCells[cell.id] = cell;
+				} else nodeCells[cell.id] = cell;
 			});
 
 			let postData = Object.assign(

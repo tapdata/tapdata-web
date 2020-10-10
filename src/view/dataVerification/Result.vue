@@ -50,16 +50,16 @@
 							<div>
 								<span>{{
 									`${
-										(Math.round(scope.row.progress * 1000) / 1000) * 100
-											? (Math.round(scope.row.progress * 1000) / 1000) * 100
+										Math.round(scope.row.progress * 10000) / 100
+											? Math.round(scope.row.progress * 10000) / 100
 											: 0
-									} %`
+									}%`
 								}}</span>
 							</div>
 						</template>
 					</el-table-column>
 					<el-table-column prop="status" :label="$t('dataVerification.verifyResult')">
-						<template slot-scope="scope" v-if="scope.row.status !== 'error'">
+						<template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
 							<span v-if="scope.row.target_total - scope.row.source_total !== 0">{{
 								$t('dataVerification.rowConsistent') +
 									' : ' +
