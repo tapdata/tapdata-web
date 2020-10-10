@@ -478,7 +478,7 @@ export default {
 				isFilter: false,
 				sqlFromCust: true,
 				custSql: {
-					filterType: 'field',
+					filterType: 'field', //sql
 					noFieldFilter: true,
 					noLineLimit: true,
 					selectedFields: [],
@@ -766,12 +766,14 @@ export default {
 						this.model.custSql.conditions.push(it);
 					});
 				//老数据的兼容处理
+				this.model.databaseType = 'mongodb';
 				if (data.initialSyncOrder > 0) {
 					this.model.enableInitialOrder = true;
 				}
 				if (data.filter && (!this.model.custSql.conditions || this.model.custSql.conditions.length == 0)) {
 					this.model.custSql.editSql = data.filter;
-					this.model.custSql.filterType = '';
+					this.model.custSql.filterType = 'sql';
+					this.model.isFilter = true;
 				}
 				if (data.connectionId) {
 					this.loadDataModels(data.connectionId);

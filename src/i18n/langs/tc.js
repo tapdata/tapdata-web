@@ -592,6 +592,7 @@ const tc = {
 							openFiflter: '開啟過濾',
 							closeFiflter: '關閉過濾',
 							sqlFilter: 'SQL模式',
+							mqlFilter: 'MQL模式',
 							saveFields: '保留字段',
 							allField: '全部字段',
 							deleteField: '刪除字段',

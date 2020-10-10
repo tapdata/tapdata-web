@@ -92,8 +92,13 @@
 					</el-row>
 				</div>
 			</el-tab-pane>
-			<el-tab-pane>
-				<span slot="label"> {{ $t('editor.cell.data_node.collection.form.filter.sqlFilter') }}</span>
+			<el-tab-pane name="sql">
+				<span v-if="databaseType != 'mongodb'" slot="label">
+					{{ $t('editor.cell.data_node.collection.form.filter.sqlFilter') }}</span
+				>
+				<span v-if="databaseType == 'mongodb'" slot="label">
+					{{ $t('editor.cell.data_node.collection.form.filter.mqlFilter') }}</span
+				>
 				<el-form-item prop="sql">
 					<el-input
 						type="textarea"

@@ -596,6 +596,7 @@ const cn = {
 							openFiflter: '开启过滤',
 							closeFiflter: '关闭过滤',
 							sqlFilter: 'SQL模式',
+							mqlFilter: 'MQL模式',
 							saveFields: '保留字段',
 							allField: '全部字段',
 							deleteField: '删除字段',

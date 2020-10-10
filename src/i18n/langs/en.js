@@ -598,6 +598,7 @@ const en = {
 							openFiflter: 'Enable filtering',
 							closeFiflter: 'Close filtering',
 							sqlFilter: 'SQL Filter',
+							mqlFilter: 'MQL Filter',
 							saveFields: 'Reserved fields',
 							allField: 'All fields',
 							deleteField: 'Delete field',
