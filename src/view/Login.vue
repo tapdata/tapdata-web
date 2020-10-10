@@ -62,6 +62,9 @@
 
 <script>
 import { setPermission } from '../util/util';
+import crypto from 'crypto';
+import CryptoJS from 'crypto-js';
+
 const Languages = {
 	sc: '中文 (简)',
 	en: 'English',
@@ -108,6 +111,15 @@ export default {
 			this.loading = true;
 			try {
 				let usersModel = this.$api('users');
+				//登陆密码加密
+				this.form['stime'] = new Date().getTime();
+				this.form.password = CryptoJS.RC4.encrypt(this.form.password, 'Gotapd8').toString();
+				let Str = this.form.email + this.form.password + this.form.stime + 'Gotapd8';
+				this.form['sign'] = crypto
+					.createHash('sha1')
+					.update(Str)
+					.digest('hex')
+					.toUpperCase();
 				let { data } = await usersModel.login(this.form);
 				if (data.textStatus === 'WAITING_APPROVE') {
 					this.errorMessage = this.$t('app.signIn.account_waiting_approve');
