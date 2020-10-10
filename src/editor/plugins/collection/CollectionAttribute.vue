@@ -221,6 +221,7 @@
 					v-bind:selectedFields.sync="model.selectedFields"
 					v-bind:custFields.sync="model.custFields"
 					:tableName="model.tableName"
+					:disabled="disabled"
 					:databaseType="model.databaseType"
 					:mergedSchema="defaultSchema"
 				></queryBuilder>
@@ -773,6 +774,9 @@ export default {
 				if (data.filter && (!this.model.custSql.conditions || this.model.custSql.conditions.length == 0)) {
 					this.model.custSql.editSql = data.filter;
 					this.model.custSql.filterType = 'sql';
+					this.model.isFilter = true;
+				} else if (this.model.custSql.conditions && this.model.custSql.conditions.length > 0) {
+					this.model.custSql.filterType = 'field';
 					this.model.isFilter = true;
 				}
 				if (data.connectionId) {

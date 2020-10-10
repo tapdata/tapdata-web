@@ -1,7 +1,7 @@
 <template>
 	<div class="e-qb">
 		<el-tabs type="border-card" v-model="value.filterType">
-			<el-tab-pane name="field">
+			<el-tab-pane name="field" disabled="disabled">
 				<span slot="label"> {{ $t('editor.cell.data_node.collection.form.filter.fieldFilter') }}</span>
 				<el-form-item
 					v-if="!value.noFieldFilter"
@@ -92,7 +92,7 @@
 					</el-row>
 				</div>
 			</el-tab-pane>
-			<el-tab-pane name="sql">
+			<el-tab-pane name="sql" disabled="disabled">
 				<span v-if="databaseType != 'mongodb'" slot="label">
 					{{ $t('editor.cell.data_node.collection.form.filter.sqlFilter') }}</span
 				>
@@ -172,6 +172,12 @@ export default {
 			type: String,
 			default() {
 				return '';
+			}
+		},
+		disabled: {
+			type: Boolean,
+			default() {
+				return false;
 			}
 		}
 	},

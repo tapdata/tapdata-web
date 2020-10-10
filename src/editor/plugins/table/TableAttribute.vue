@@ -179,6 +179,7 @@
 					v-bind:selectedFields.sync="model.selectedFields"
 					v-bind:custFields.sync="model.custFields"
 					:tableName="model.tableName"
+					:disabled="disabled"
 					:databaseType="model.databaseType"
 					:mergedSchema="mergedSchema"
 				></queryBuilder>
