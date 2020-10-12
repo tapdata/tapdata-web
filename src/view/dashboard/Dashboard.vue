@@ -58,6 +58,29 @@
 		<el-row :gutter="20" class="e-row">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
+					<echart-head :data="taskStatusObj" @getUnit="getUnit"></echart-head>
+					<ul class="status-box">
+						<li>
+							<p>{{ $t('app.Home.initialization') }}</p>
+							<div>8</div>
+						</li>
+						<li>
+							<p>{{ $t('app.Home.loadingFinished') }}</p>
+							<div>8</div>
+						</li>
+						<li>
+							<p>{{ $t('app.Home.incremental') }}</p>
+							<div>8</div>
+						</li>
+						<li>
+							<p>{{ $t('app.Home.incrementalLag') }}</p>
+							<div>8</div>
+						</li>
+					</ul>
+				</div>
+			</el-col>
+			<el-col :span="12" class="e-col">
+				<div class="charts-list">
 					<echart-head :data="transferTaskObj" @getAllData="getAllData"></echart-head>
 					<el-table
 						:data="transfer.tableData"
@@ -111,6 +134,8 @@
 					</el-table>
 				</div>
 			</el-col>
+		</el-row>
+		<el-row :gutter="20" class="e-row">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="serverProcessObj" @getAllData="getAllData"></echart-head>
@@ -189,6 +214,7 @@ export default {
 			wrongTaskObj: null, //错误任务
 			taskRankingObj: null, // 任务传输排行
 			serverProcessObj: null, //服务器与进程
+			taskStatusObj: null, // 任务状态统计
 			colorMap: {
 				running: '#8DC47A',
 				paused: '#FDB01C',
@@ -437,6 +463,11 @@ export default {
 		this.screeningObj = {
 			title: this.$t('app.Home.transmissionOverview'),
 			type: 'screening',
+			overviewFalg: false
+		};
+		this.taskStatusObj = {
+			title: this.$t('app.Home.taskStatusStatistics'),
+			type: 'taskStatus',
 			overviewFalg: false
 		};
 		this.transferTaskObj = {
@@ -705,6 +736,29 @@ export default {
 				box-sizing: border-box;
 				border: 1px solid #dcdfe6;
 				box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
+				.status-box {
+					display: flex;
+					flex: auto;
+					height: 100%;
+					align-items: center;
+					justify-content: center;
+					li {
+						display: inline-block;
+						padding: 0 30px;
+						text-align: center;
+						p {
+							display: block;
+							font-size: 14px;
+							color: #666;
+							text-align: center;
+						}
+						div {
+							padding-top: 30px;
+							font-size: 60px;
+							color: #48b6e2;
+						}
+					}
+				}
 			}
 			.unit {
 				float: right;

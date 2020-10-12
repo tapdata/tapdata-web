@@ -119,6 +119,7 @@ const tc = {
 			wrongTask: '錯誤任務',
 			taskRanking: '任務傳輸排行',
 			serverProcess: '服務器與進程',
+			taskStatusStatistics: '任務狀態統計',
 			before: '前',
 			pcs: '條',
 			server: '服務器',
@@ -131,7 +132,11 @@ const tc = {
 			starting: '啟動中',
 			running: '運行中',
 			stopping: '關閉中',
-			stopped: '已關閉'
+			stopped: '已關閉',
+			initialization: '初始化',
+			loadingFinished: '初始化完成',
+			incremental: '增量中',
+			incrementalLag: '增量滯後'
 		}
 	},
 	message: {

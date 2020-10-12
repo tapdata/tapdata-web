@@ -119,6 +119,7 @@ const en = {
 			wrongTask: 'Wrong Task',
 			taskRanking: 'Task Transfer Ranking',
 			serverProcess: 'Server and Process',
+			taskStatusStatistics: 'Task Status Statistics',
 			before: 'Front',
 			pcs: 'bar',
 			server: 'Server',
@@ -131,7 +132,11 @@ const en = {
 			starting: 'Starting',
 			running: 'Running',
 			stopping: 'Closed',
-			stopped: 'closed'
+			stopped: 'closed',
+			initialization: 'Initializing',
+			loadingFinished: 'Initialization completed',
+			incremental: 'CDC',
+			incrementalLag: 'Incremental Lag'
 		}
 	},
 	message: {

@@ -119,6 +119,7 @@ const cn = {
 			wrongTask: '错误任务',
 			taskRanking: '任务传输排行',
 			serverProcess: '服务器与进程',
+			taskStatusStatistics: '任务状态统计',
 			before: '前',
 			pcs: '条',
 			server: '服务器',
@@ -132,7 +133,11 @@ const cn = {
 			running: '运行中',
 			stopping: '关闭中',
 			stopped: '已关闭',
-			restarting: '重启中'
+			restarting: '重启中',
+			initialization: '初始化',
+			loadingFinished: '初始化完成',
+			incremental: '增量中',
+			incrementalLag: '增量滞后'
 		}
 	},
 	message: {
