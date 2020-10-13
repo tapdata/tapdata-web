@@ -7,23 +7,29 @@ import _ from 'lodash';
 import log from '../../log';
 const allColorList = [
 	'#409EFF',
-	'#67C23A',
-	'#E6A23C',
-	'#F56C6C',
-	'#909399',
-	'#FF9933',
-	'#FFCCCC',
-	'#FF6600',
-	'#303F9F',
-	'#795548',
-	'#99CCFF',
-	'#FFFFCC',
-	'#0099CC',
-	'#009966',
-	'#CC9999',
-	'#99CCFF',
-	'#333300',
-	'#33CC33'
+	'#3q55dc',
+	'#e6a23c',
+	'#f56c6c',
+	'#70ad47',
+	'#8c754d',
+	'#42d23f',
+	'#ce5ed8',
+	'#666',
+	'#bb9a4c'
+	// '#67C23A',
+	// '#E6A23C',
+	// '#F56C6C',
+	// '#909399',
+	// '#FF9933',
+	// '#FF6600',
+	// '#303F9F',
+	// '#795548',
+	// '#99CCFF',
+	// '#0099CC',
+	// '#009966',
+	// '#CC9999',
+	// '#333300',
+	// '#33CC33'
 ];
 const tableColors = {};
 const getColor = function(tableName) {
