@@ -205,8 +205,7 @@
 				<el-button
 					class="fr"
 					type="success"
-					:disabled="!model.connectionId && !model.tableName"
-					style="background: #4aaf47; border-color: #4aaf47;"
+					v-if="model.connectionId && model.tableName"
 					size="mini"
 					@click="hanlderLoadSchema"
 				>

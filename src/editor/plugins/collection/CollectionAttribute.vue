@@ -231,7 +231,7 @@
 					class="fr"
 					type="success"
 					size="mini"
-					:disabled="!model.connectionId && !model.tableName"
+					v-if="model.connectionId && model.tableName"
 					@click="hanlderLoadSchema"
 				>
 					<i class="el-icon-loading" v-if="reloadModelLoading"></i>

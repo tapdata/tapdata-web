@@ -84,10 +84,33 @@
 				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
+				<el-button
+					class="fr"
+					type="success"
+					size="mini"
+					v-if="model.connectionId && model.tableName"
+					@click="hanlderLoadSchema"
+				>
+					<i class="el-icon-loading" v-if="reloadModelLoading"></i>
+					<span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
+					<span v-else>{{ $t('dataFlow.updateModel') }}</span>
+				</el-button>
 				<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 			</div>
 		</div>
 		<relatedTasks :taskData="taskData" v-if="disabled"></relatedTasks>
+		<el-dialog
+			:title="$t('message.prompt')"
+			:visible.sync="dialogVisible"
+			:close-on-click-modal="false"
+			width="30%"
+		>
+			<span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="dialogVisible = false">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -98,6 +121,7 @@ import factory from '../../../api/factory';
 import RelatedTasks from '../../../components/relatedTasks';
 import ClipButton from '@/components/ClipButton';
 import Entity from '../link/Entity';
+import ws from '../../../api/ws';
 import { convertSchemaToTreeData, uuid } from '../../util/Schema';
 
 let connectionApi = factory('connections');
@@ -117,6 +141,8 @@ export default {
 				id: '',
 				tableName: ''
 			},
+			reloadModelLoading: false,
+			dialogVisible: false,
 			schemas: [],
 			disabled: false,
 			isSourceDataNode: true,
@@ -293,6 +319,55 @@ export default {
 		},
 		seeMonitor() {
 			editorMonitor.goBackMontior();
+		},
+
+		// 更新模型点击弹窗
+		hanlderLoadSchema() {
+			this.dialogVisible = true;
+		},
+
+		// 确定更新模型弹窗
+		confirmDialog() {
+			this.reloadModelLoading = true;
+			let params = {
+				type: 'reloadSchema',
+				data: {
+					tables: [
+						{
+							connId: this.model.connectionId,
+							tableName: this.model.tableName,
+							userId: this.$cookie.get('user_id')
+						}
+					]
+				}
+			};
+
+			if (ws.ws.readyState == 1) ws.send(params);
+			let self = this,
+				schema = null,
+				templeSchema = [];
+			ws.on('execute_load_schema_result', res => {
+				if (res.status === 'SUCCESS' && res.result && res.result.length) {
+					templeSchema = res.result;
+					this.reloadModelLoading = false;
+					self.$message.success(this.$t('message.reloadSchemaSuccess'));
+				} else {
+					self.$message.error(this.$t('message.reloadSchemaError'));
+				}
+				this.reloadModelLoading = false;
+				if (templeSchema && templeSchema.length) {
+					templeSchema.forEach(item => {
+						if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
+							schema = item.schema;
+						}
+					});
+				}
+				self.$nextTick(() => {
+					self.$emit('schemaChange', _.cloneDeep(schema));
+					this.mergedSchema = schema;
+				});
+			});
+			this.dialogVisible = false;
 		}
 	}
 };
