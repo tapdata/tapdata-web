@@ -365,6 +365,11 @@ const childRoutes = [
 		path: '/dataVerification/setting',
 		name: 'dataVerifySetting',
 		component: view('dataVerification/setting')
+	},
+	{
+		path: '/downAgent/agentDown',
+		name: 'agentDown',
+		component: view('agentDown/agentDown')
 	}
 ];
 
