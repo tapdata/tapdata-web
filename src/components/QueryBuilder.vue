@@ -127,7 +127,7 @@ import queryCond from './QueryCond';
 
 //index as id
 '=', '<>', '>', '<', '>=', '<=', 'like';
-const mongoCommand = ['eq', 'neq', 'gt', 'lt', 'gte', 'lte', 'like'];
+const mongoCommand = ['eq', 'ne', 'gt', 'lt', 'gte', 'lte', 'like'];
 const calculationList = ['=', '<>', '>', '<', '>=', '<=', 'like'];
 export default {
 	components: { queryCond },

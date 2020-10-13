@@ -771,13 +771,16 @@ export default {
 				if (data.initialSyncOrder > 0) {
 					this.model.enableInitialOrder = true;
 				}
-				if (data.filter && (!this.model.custSql.conditions || this.model.custSql.conditions.length == 0)) {
+				if (data.filter && !data.hasOwnProperty('isFilter')) {
 					this.model.custSql.editSql = data.filter;
 					this.model.custSql.filterType = 'sql';
 					this.model.isFilter = true;
-				} else if (this.model.custSql.conditions && this.model.custSql.conditions.length > 0) {
+				} else if (
+					this.model.custSql.conditions &&
+					this.model.custSql.conditions.length > 0 &&
+					!['sql', 'field'].includes(this.model.custSql.filterType)
+				) {
 					this.model.custSql.filterType = 'field';
-					this.model.isFilter = true;
 				}
 				if (data.connectionId) {
 					this.loadDataModels(data.connectionId);
@@ -804,11 +807,12 @@ export default {
 			// let sourceType = '';
 		},
 		getData() {
-			let result = _.cloneDeep(this.model);
 			if (this.model.isFilter) {
 				if (this.model.custSql.filterType === 'field') this.model.filter = this.model.custSql.cSql;
 				else this.model.filter = this.model.custSql.editSql;
 			} else this.model.filter = '';
+
+			let result = _.cloneDeep(this.model);
 			result.name = result.tableName || 'Collection';
 			if (!this.dataNodeInfo.isTarget) {
 				delete result.dropTable;

@@ -9,21 +9,21 @@
 						</el-option>
 					</el-select>
 				</el-col>
-				<el-col :span="4" style="text-align: right;">
+				<el-col :span="8" style="text-align: right;">
 					<el-button class="e-button" type="primary" v-if="stageId !== 'all'" @click="seeNodeData">{{
 						$t('dataFlow.button.viewConfig')
 					}}</el-button>
 				</el-col>
-				<el-col :span="4" style="float: right; text-align: right;">
-					<el-button
-						class="e-button"
-						size="mini"
-						type="primary"
-						@click="handleGoDataVerify"
-						:loading="loading"
-						>{{ $t('dataVerify.dataVerify') }}</el-button
-					>
-				</el-col>
+				<!--				<el-col :span="4" style="float: right; text-align: right;">-->
+				<!--					<el-button-->
+				<!--						class="e-button"-->
+				<!--						size="mini"-->
+				<!--						type="primary"-->
+				<!--						@click="handleGoDataVerify"-->
+				<!--						:loading="loading"-->
+				<!--						>{{ $t('dataVerify.dataVerify') }}</el-button-->
+				<!--					>-->
+				<!--				</el-col>-->
 			</el-form-item>
 		</el-form>
 		<div class="echartMain">
