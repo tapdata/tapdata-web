@@ -60,21 +60,9 @@
 				<div class="charts-list">
 					<echart-head :data="taskStatusObj" @getUnit="getUnit"></echart-head>
 					<ul class="status-box">
-						<li>
-							<p>{{ $t('app.Home.initialization') }}</p>
-							<div>8</div>
-						</li>
-						<li>
-							<p>{{ $t('app.Home.loadingFinished') }}</p>
-							<div>8</div>
-						</li>
-						<li>
-							<p>{{ $t('app.Home.incremental') }}</p>
-							<div>8</div>
-						</li>
-						<li>
-							<p>{{ $t('app.Home.incrementalLag') }}</p>
-							<div>8</div>
+						<li v-for="item in taskStatusStatistics" :key="item.value">
+							<p>{{ item.name }}</p>
+							<div @click="jumpTask(item.value)">{{ taskStatusList[item.value] }}</div>
 						</li>
 					</ul>
 				</div>
@@ -215,6 +203,18 @@ export default {
 			taskRankingObj: null, // 任务传输排行
 			serverProcessObj: null, //服务器与进程
 			taskStatusObj: null, // 任务状态统计
+			taskStatusList: {
+				Lag: 0,
+				cdc: 0,
+				initialized: 0,
+				initializing: 0
+			},
+			taskStatusStatistics: [
+				{ name: this.$t('app.Home.initialization'), value: 'initializing' },
+				{ name: this.$t('app.Home.loadingFinished'), value: 'initialized' },
+				{ name: this.$t('app.Home.incremental'), value: 'cdc' },
+				{ name: this.$t('app.Home.incrementalLag'), value: 'Lag' }
+			],
 			colorMap: {
 				running: '#8DC47A',
 				paused: '#FDB01C',
@@ -491,6 +491,16 @@ export default {
 		};
 	},
 	methods: {
+		// 跳转任务状态统计
+		jumpTask(val) {
+			let routeUrl = this.$router.resolve({
+				path: '/dataFlows',
+				query: { executionStatus: val }
+			});
+
+			window.open(routeUrl.href);
+		},
+
 		// 点击运行状态跳转到任务列表
 		handleStatus(status) {
 			let routeUrl = this.$router.resolve({
@@ -539,6 +549,7 @@ export default {
 				self.unitData = self.dataScreening.series[0].data;
 				self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
 				self.transfer.tableData = res.data.chart3;
+				self.taskStatusList = res.data.chart4;
 				self.handleData(res.data.chart3);
 			});
 		},
@@ -751,11 +762,13 @@ export default {
 							font-size: 14px;
 							color: #666;
 							text-align: center;
+							user-select: none;
 						}
 						div {
 							padding-top: 30px;
 							font-size: 60px;
 							color: #48b6e2;
+							cursor: pointer;
 						}
 					}
 				}
