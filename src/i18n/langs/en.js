@@ -355,7 +355,8 @@ const en = {
 			force_stopping: 'Force Stopping',
 			cdc: 'CDC',
 			initializing: 'Initializing',
-			initialized: 'Initialized'
+			initialized: 'Initialized',
+			lag: 'Lag'
 		},
 		lag: 'lag',
 		executionStatus: 'Execution status',

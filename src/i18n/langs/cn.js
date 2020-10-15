@@ -356,7 +356,8 @@ const cn = {
 			force_stopping: '强制停止',
 			cdc: '增量中',
 			initializing: '初始化中',
-			initialized: '初始化完成'
+			initialized: '初始化完成',
+			lag: '增量滞后'
 		},
 		lag: '滞后',
 		executionStatus: '执行状态',

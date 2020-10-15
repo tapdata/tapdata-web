@@ -69,7 +69,7 @@
 							@change="screenFn"
 						>
 							<el-option
-								v-for="opt in ['initializing', 'cdc', 'initialized']"
+								v-for="opt in ['initializing', 'cdc', 'initialized', 'lag']"
 								:key="opt"
 								:label="$t('dataFlow.status.' + opt)"
 								:value="opt"

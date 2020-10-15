@@ -354,7 +354,8 @@ const tc = {
 			force_stopping: '強制停止',
 			cdc: '增量中',
 			initializing: '初始化中',
-			initialized: '初始化完成'
+			initialized: '初始化完成',
+			lag: '增量滯後'
 		},
 		lag: '滯後',
 		executionStatus: '執行狀態',
