@@ -27,6 +27,8 @@
     "alertifyjs": "^1.13.1",
     "axios": "^0.19.2",
     "backbone": "^1.4.0",
+    "crypto": "^1.0.1",
+    "crypto-js": "^4.0.0",
     "dagre": "^0.8.5",
     "echarts": "^4.6.0",
     "element-ui": "^2.13.0",
