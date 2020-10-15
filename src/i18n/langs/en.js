@@ -1403,7 +1403,38 @@ const en = {
 		tableValidateTip:
 			'Table name can contain only English letters, numbers, underscores, minus signs, dots, and starts with English letter',
 		collectionValidateTip:
-			'Collection name can contain only English letters, numbers, underscores, minus signs, dots, and starts with English letter, and cannot start with "system"'
+			'Collection name can contain only English letters, numbers, underscores, minus signs, dots, and starts with English letter, and cannot start with "system"',
+		downAgent: {
+			headTitle: 'Agent download and installation',
+			headInterpretation:
+				'Tapdata DFS Cloud Edition requires an agent to be installed locally to ensure the normal operation of the database connection and transmission service',
+			downloadInstall: 'Download and install',
+			text:
+				'Use the following command to download and start directly on the machine where the agent is installed',
+			copy: 'Copy the command line',
+			refresh: 'Refresh',
+			downloadInstallInstructions: 'Download installation instructions',
+			linuxInstructionsText1:
+				'· Use the above command directly on the Linux machine where the agent is installed',
+			linuxInstructionsText2:
+				'· Automatically download and start the installation package after executing the command (including agent package 64M and Java package 160M)',
+			linuxInstructionsText3:
+				'· This page will no longer pop up when the task is executed after the Agent is installed successfully',
+			waitingInstall: 'Waiting for installation',
+			agentNum: 'Number of current Agent installations',
+			downLoadAgent: 'Download Agent',
+			windowsText:
+				'Download to the machine to be installed, execute copy the following command to install in the directory where the downloaded file is stored',
+			windowsInstructionsText1:
+				'· Click "Download Agent" to download the Agent to the machine in the windows environment',
+			windowsInstructionsText2:
+				'· After downloading, copy the above command and execute the installation on the machine where the Agent is downloaded',
+			windowsInstructionsText3:
+				'Execute the copy command to install in the directory where the downloaded file is stored',
+			windowsInstructionsText4: '· Automatically install and start the Agent after executing the command',
+			windowsInstructionsText5:
+				'· After the Agent is successfully installed and started, this page will no longer pop up when the task is executed.'
+		}
 	},
 	dataVerification: {
 		verifyDetail: 'Verify Detail',

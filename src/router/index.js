@@ -367,9 +367,9 @@ const childRoutes = [
 		component: view('dataVerification/setting')
 	},
 	{
-		path: '/downAgent/agentDown',
+		path: '/agentDown',
 		name: 'agentDown',
-		component: view('agentDown/agentDown')
+		component: view('downAgent/agentDown')
 	}
 ];
 

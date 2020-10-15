@@ -1314,7 +1314,28 @@ const cn = {
 		placeholderCollection: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许system开头',
 		tableValidateTip: '新建表名称仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许system开头',
 		collectionValidateTip:
-			'新建数据集名称仅支持英文、数字、下划线下划线、点、减号，并以英文字母开头，不允许system开头'
+			'新建数据集名称仅支持英文、数字、下划线下划线、点、减号，并以英文字母开头，不允许system开头',
+		downAgent: {
+			headTitle: 'Agent下载与安装',
+			headInterpretation: 'Tapdata DFS云版需要在本地安装agent以确保连接数据库和传输服务正常运行',
+			downloadInstall: '下载安装',
+			text: '直接在安装agent的机器上使用以下命令下载并启动',
+			copy: '复制命令行',
+			refresh: '刷新',
+			downloadInstallInstructions: '下载安装说明',
+			linuxInstructionsText1: '· 直接在安装agent的Linux机器上使用上述命令进行',
+			linuxInstructionsText2: '· 执行命令后自动下载并启动安装包（包含agent包 64M 和Java程序包160M）',
+			linuxInstructionsText3: '· Agent安装启动成功后执行任务将不再弹出此页面',
+			waitingInstall: '等待安装',
+			agentNum: '当前Agent安装数',
+			downLoadAgent: '下载Agent',
+			windowsText: '下载到待安装的机器上，在存放下载文件的目录下执行复制下述命令进行安装',
+			windowsInstructionsText1: '· 点击“下载Agent”下载Agent至windows环境的机器',
+			windowsInstructionsText2: '· 下载后复制上述命令在下载Agent的机器上执行安装',
+			windowsInstructionsText3: '· 在存放下载文件的目录下执行复制命令进行安装',
+			windowsInstructionsText4: '· 执行命令后自动安装并启动Agent',
+			windowsInstructionsText5: '· Agent安装启动成功后执行任务将不再弹出此页面'
+		}
 	},
 	notification: {
 		notice: '消息通知',
