@@ -108,7 +108,10 @@ const cn = {
 			settings: '系统设置',
 			favorite: '我的收藏',
 			dataVerification: '数据校验',
-			delFavMenu: '删除收藏'
+			delFavMenu: '删除收藏',
+			license: 'License信息',
+			licenseBefore: '提醒：License剩余 ',
+			licenseAfter: ' 天到期'
 		},
 		Home: {
 			all: '全部',
