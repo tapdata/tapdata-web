@@ -64,6 +64,7 @@
 import { setPermission } from '../util/util';
 import crypto from 'crypto';
 import CryptoJS from 'crypto-js';
+import _ from 'lodash';
 
 const Languages = {
 	sc: '中文 (简)',
@@ -95,6 +96,7 @@ export default {
 		},
 		async submit() {
 			let form = this.form;
+			let oldPassword = _.clone(this.form.password);
 			let message = '';
 			if (!form.email || !form.email.trim()) {
 				message = this.$t('app.signIn.email_require');
@@ -111,8 +113,11 @@ export default {
 			this.loading = true;
 			try {
 				let usersModel = this.$api('users');
+				let timeStamp = this.$api('TimeStamp');
 				//登陆密码加密
-				this.form['stime'] = new Date().getTime();
+				await timeStamp.get().then(res => {
+					this.form['stime'] = res.data || new Date().getTime();
+				});
 				this.form.password = CryptoJS.RC4.encrypt(this.form.password, 'Gotapd8').toString();
 				let Str = this.form.email + this.form.password + this.form.stime + 'Gotapd8';
 				this.form['sign'] = crypto
@@ -150,6 +155,7 @@ export default {
 			} catch (e) {
 				this.errorMessage = this.$t('app.signIn.signInFail');
 				this.loading = false;
+				this.form.password = oldPassword;
 			}
 		}
 	}
