@@ -1322,6 +1322,7 @@ const cn = {
 			text: '直接在安装agent的机器上使用以下命令下载并启动',
 			copy: '复制命令行',
 			refresh: '刷新',
+			copied: '已复制',
 			downloadInstallInstructions: '下载安装说明',
 			linuxInstructionsText1: '· 直接在安装agent的Linux机器上使用上述命令进行',
 			linuxInstructionsText2: '· 执行命令后自动下载并启动安装包（包含agent包 64M 和Java程序包160M）',
@@ -1334,7 +1335,16 @@ const cn = {
 			windowsInstructionsText2: '· 下载后复制上述命令在下载Agent的机器上执行安装',
 			windowsInstructionsText3: '· 在存放下载文件的目录下执行复制命令进行安装',
 			windowsInstructionsText4: '· 执行命令后自动安装并启动Agent',
-			windowsInstructionsText5: '· Agent安装启动成功后执行任务将不再弹出此页面'
+			windowsInstructionsText5: '· Agent安装启动成功后执行任务将不再弹出此页面',
+			noAgent: '您尚未安装Agent,无法执行传输任务，请',
+			clickDownLoad: '点击下载安装',
+			dfsSuccessText: 'DFS Agent 安装成功，',
+			dfsSuccessText1: '或点击',
+			dfsSuccessText2: '创建数据传输任务，体验Tapdata DFS急速数据传输功能',
+			dfsSuccessText3: 'DFS Agent 安装成功，任务',
+			dfsSuccessText4: '已启动执行',
+			creatTask: '新建任务',
+			clickView: '点击查看'
 		}
 	},
 	notification: {

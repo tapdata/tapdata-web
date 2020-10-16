@@ -1,6 +1,6 @@
 <template>
 	<div class="agentDown">
-		<el-dialog :visible.sync="dialogVisible" width="70%">
+		<el-dialog :visible.sync="dialogVisible" :close-on-click-modal="false" @close="closeDownAgent" width="70%">
 			<template slot="title">
 				<div class="header">
 					<h1>{{ $t('dialog.downAgent.headTitle') }}</h1>
@@ -16,7 +16,7 @@
 				<div class="down-type">
 					<div
 						v-for="down in downType"
-						:key="down"
+						:key="down.value"
 						:class="{ active: downLoadType === down.value }"
 						@click="chooseDownLoadType(down.value)"
 					>
@@ -28,17 +28,39 @@
 				</div>
 				<div class="prompt">
 					<span v-if="downLoadType === 'Linux'">{{ $t('dialog.downAgent.text') }}</span>
-					<div v-else>
-						<span class="operaKey">{{ $t('dialog.downAgent.downLoadAgent') }}</span>
+					<div v-else @click="handleDownLoad">
+						<span class="operaKey">
+							<i class="iconfont icon-xiazai clickIcont"></i>
+							{{ $t('dialog.downAgent.downLoadAgent') }}</span
+						>
 						<span>{{ $t('dialog.downAgent.windowsText') }}</span>
 					</div>
-					<span class="operaKey">{{ $t('dialog.downAgent.copy') }}</span>
-					<span class="operaKey">{{ $t('dialog.downAgent.refresh') }}</span>
+
+					<el-tooltip
+						placement="top"
+						manual
+						:content="$t('dialog.downAgent.copied')"
+						popper-class="copy-tooltip"
+						:value="showTooltip"
+					>
+						<span
+							class="operaKey"
+							v-clipboard:copy="downLoadType === 'Linux' ? LinuxLink : windowLink"
+							v-clipboard:success="onCopy"
+							@mouseleave="showTooltip = false"
+						>
+							<i class="iconfont icon-fuzhi1 clickIcont"></i>{{ $t('dialog.downAgent.copy') }}
+						</span>
+					</el-tooltip>
+					<span class="operaKey" @click="handleRefresh">
+						<i class="iconfont icon-shuaxin3 clickIcont"></i>
+						{{ $t('dialog.downAgent.refresh') }}
+					</span>
 				</div>
 
 				<div class="copy-down-link">
-					wget "https://demo.tapdata.net/static/tapdata" && chmod +x tapdata && ./tapdata start backend token
-					ci5fQUoDL95lZKUKdDwMupJeAAxN 3Vn10yLF8pF6wjQReCrYhNTEvcEV8dLmsmOE 5e6ca61a708029ab07f98390
+					<span v-if="downLoadType === 'Linux'">{{ LinuxLink }}</span>
+					<span v-else>{{ windowLink }}</span>
 				</div>
 
 				<div class="title">
@@ -62,10 +84,23 @@
 				<el-button size="mini">{{ $t('dialog.downAgent.waitingInstall') }}</el-button>
 			</span>
 		</el-dialog>
-		<!-- <head>
-			<h1>Agent下载与安装</h1>
-			<span>Tapdata DFS云版需要在本地安装agent以确保连接数据库和传输服务正常运行</span>
-		</head> -->
+
+		<el-dialog :visible.sync="installSuccessDialog" :close-on-click-modal="false" width="40%">
+			<div class="success-main">
+				<p>
+					<i class="el-icon-success"></i>
+					{{ $t('dialog.downAgent.headInterpretation') }}
+					<span>{{ $t('dialog.downAgent.clickView') }}</span>
+				</p>
+				<p>
+					{{ $t('dialog.downAgent.dfsSuccessText1') }}
+					<span> {{ $t('dialog.downAgent.creatTask') }}, </span>{{ $t('dialog.downAgent.dfsSuccessText2') }}
+				</p>
+			</div>
+			<span slot="footer" class="dialog-footer">
+				<el-button type="primary" size="mini">{{ $t('dialog.downAgent.waitingInstall') }}</el-button>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 <script>
@@ -73,17 +108,52 @@ export default {
 	name: 'agentDown',
 	data() {
 		return {
-			dialogVisible: true,
-			downLoadType: 'windows',
+			dialogVisible: false,
+			downLoadType: '',
+			showTooltip: false,
+			installSuccessDialog: true,
+			windowLink: '',
+			LinuxLink: '',
 			downType: [
 				{ name: 'Windows (64b it)', value: 'windows' },
 				{ name: 'Linux (64 bit)', value: 'Linux' }
 			]
 		};
 	},
+	mounted() {
+		this.handleRefresh();
+	},
 	methods: {
+		// 选择下载安装类型
 		chooseDownLoadType(val) {
 			this.downLoadType = val;
+		},
+
+		// windows下载
+		handleDownLoad() {
+			window.location = 'https://demo.tapdata.net/static/tapdata.exe';
+		},
+
+		// 复制命令行
+		onCopy() {
+			this.showTooltip = true;
+		},
+
+		// 刷新
+		handleRefresh() {
+			this.windowLink =
+				'tapdata start backend token ' + this.$cookie.get('token') + ' ' + this.$cookie.get('user_id');
+			this.LinuxLink =
+				'wget "https://demo.tapdata.net/static/tapdata" && chmod +x tapdata && ./tapdata start backend token ' +
+				this.$cookie.get('token') +
+				' ' +
+				this.$cookie.get('user_id');
+		},
+
+		// 关闭agent弹窗回调
+		closeDownAgent() {
+			// this.$router.push({ path: '/dashboard' });
+			location.reload();
 		}
 	}
 };
@@ -112,8 +182,13 @@ export default {
 				display: inline-block;
 				width: 6px;
 				height: 13px;
+				vertical-align: middle;
 				background-color: #48b6e2;
 				border-radius: 1px;
+			}
+			span {
+				display: inline-block;
+				vertical-align: middle;
 			}
 			.downLoadText {
 				color: #9a9a9a;
@@ -162,11 +237,15 @@ export default {
 			font-size: 12px;
 			color: #666;
 			.operaKey {
+				padding: 0 10px;
 				color: #48b6e2;
 				cursor: pointer;
 			}
 			div {
 				display: inline-block;
+			}
+			.clickIcont {
+				font-size: 14px;
 			}
 		}
 		.copy-down-link {
@@ -187,6 +266,16 @@ export default {
 		}
 		.dialog-footer {
 			text-align: center;
+		}
+	}
+
+	.success-main {
+		padding: 0 50px;
+		font-size: 12px;
+		color: #666;
+		i {
+			display: inline-block;
+			font-size: 16px;
 		}
 	}
 }

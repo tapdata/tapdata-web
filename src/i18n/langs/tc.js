@@ -1393,6 +1393,7 @@ const tc = {
 			text: '直接在安裝agent的機器上使用以下命令下載並啟動',
 			copy: '複製命令行',
 			refresh: '刷新',
+			copied: '已復制',
 			downloadInstallInstructions: '下載安裝說明',
 			linuxInstructionsText1: '· 直接在安裝agent的Linux機器上使用上述命令進行',
 			linuxInstructionsText2: '· 執行命令後自動下載並啟動安裝包（包含agent包 64M 和Java程序包160M）',
@@ -1405,7 +1406,9 @@ const tc = {
 			windowsInstructionsText2: '· 下載後復制上述命令在下載Agent的機器上執行安裝',
 			windowsInstructionsText3: '· 在存放下載文件的目錄下執行複制命令進行安裝',
 			windowsInstructionsText4: '· 執行命令後自動安裝並啟動Agent',
-			windowsInstructionsText5: '· Agent安裝啟動成功後執行任務將不再彈出此頁面'
+			windowsInstructionsText5: '· Agent安裝啟動成功後執行任務將不再彈出此頁面',
+			noAgent: '您尚未安裝Agent,無法執行傳輸任務，請',
+			clickDownLoad: '點擊下載安裝'
 		}
 	},
 	dataVerification: {

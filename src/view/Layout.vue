@@ -1,5 +1,11 @@
 <template>
 	<el-container class="layout-container">
+		<div class="agentNot" v-if="agentTipFalg">
+			<i class="el-icon-warning"></i>
+			{{ $t('dialog.downAgent.noAgent')
+			}}<span @click="downLoadInstall">{{ $t('dialog.downAgent.clickDownLoad') }}</span>
+			<i class="el-icon-close close" @click="handleCloseAgentTip"></i>
+		</div>
 		<CustomerService v-model="isShowCustomerService"></CustomerService>
 		<newDataFlow :dialogVisible="dialogVisible" v-on:dialogVisible="handleDialogVisible"></newDataFlow>
 		<el-header class="layout-header" height="48px">
@@ -137,6 +143,8 @@
 				<router-view />
 			</el-main>
 		</el-container>
+
+		<DownAgent v-if="downLoadAgetntdialog"></DownAgent>
 	</el-container>
 </template>
 
@@ -144,8 +152,10 @@
 import CustomerService from '@/components/CustomerService';
 import newDataFlow from '@/components/newDataFlow';
 import DropdownNotification from './notification/DropdownNotification';
-
+import DownAgent from './downAgent/agentDown';
 import { signOut } from '../util/util';
+import factory from '@/api/factory';
+const cluster = factory('cluster');
 
 const Languages = {
 	sc: '中文 (简)',
@@ -212,7 +222,7 @@ let menuSetting = [
 	}
 ];
 export default {
-	components: { CustomerService, newDataFlow, DropdownNotification },
+	components: { CustomerService, newDataFlow, DropdownNotification, DownAgent },
 	data() {
 		return {
 			platform: window._TAPDATA_OPTIONS_.platform,
@@ -228,7 +238,11 @@ export default {
 			dialogVisible: false,
 			isShowCustomerService: false,
 			notificationVisible: true,
-			unRead: 0
+			unRead: 0,
+			downLoadAgetntdialog: false,
+			agentTipFalg: true,
+			timer: '',
+			isDownLoadFalg: false
 		};
 	},
 	created() {
@@ -249,6 +263,16 @@ export default {
 		window.getFormLocal = data => {
 			return self.$store.state[data];
 		};
+
+		this.getDataApi();
+		if (!this.isDownLoadFalg) {
+			self.timer = setInterval(() => {
+				self.getDataApi();
+				if (this.isDownLoadFalg) {
+					clearInterval(self.timer);
+				}
+			}, 500);
+		}
 	},
 	destroyed() {
 		this.$root.$off('updateMenu');
@@ -360,7 +384,8 @@ export default {
 					});
 					break;
 				default:
-					window.open('https://cloud.tapdata.net/agent/download.html', '_blank');
+					this.downLoadAgetntdialog = true;
+					// window.open('https://cloud.tapdata.net/agent/download.html', '_blank');
 					break;
 			}
 		},
@@ -393,11 +418,33 @@ export default {
 		handleUnread(data) {
 			this.unRead = '';
 			this.unRead = data;
+		},
+
+		// 下载安装Agent
+		downLoadInstall() {
+			this.downLoadAgetntdialog = true;
+		},
+
+		// 关闭下载安装Agent提示
+		handleCloseAgentTip() {
+			this.agentTipFalg = false;
+		},
+
+		// 获取Agent是否安装
+		getDataApi(params) {
+			cluster.get(params).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						this.isDownLoadFalg = true;
+						this.agentTipFalg = false;
+					}
+				}
+			});
 		}
 	}
 };
 </script>
-<style scoped>
+<style scoped lang="less">
 .unread {
 	width: 25px;
 	height: 17px;
@@ -422,6 +469,31 @@ export default {
 	float: right;
 	margin-top: 15px;
 	margin-right: 15px;
+}
+.layout-container {
+	overflow: hidden;
+	.agentNot {
+		width: calc(100% - 10px);
+		height: 30px;
+		margin: 5px;
+		line-height: 30px;
+		box-sizing: border-box;
+		font-size: 12px;
+		text-align: center;
+		color: #ec8205;
+		user-select: none;
+		border: 1px solid #ec8205;
+		background-color: rgb(255, 233, 207);
+		span {
+			color: #48b6e2;
+			cursor: pointer;
+		}
+		.close {
+			float: right;
+			padding: 8px 20px 0;
+			cursor: pointer;
+		}
+	}
 }
 </style>
 

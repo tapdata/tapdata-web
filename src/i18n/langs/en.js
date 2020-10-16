@@ -1412,6 +1412,7 @@ const en = {
 			text:
 				'Use the following command to download and start directly on the machine where the agent is installed',
 			copy: 'Copy the command line',
+			copied: 'copied',
 			refresh: 'Refresh',
 			downloadInstallInstructions: 'Download installation instructions',
 			linuxInstructionsText1:
@@ -1433,7 +1434,9 @@ const en = {
 				'Execute the copy command to install in the directory where the downloaded file is stored',
 			windowsInstructionsText4: '· Automatically install and start the Agent after executing the command',
 			windowsInstructionsText5:
-				'· After the Agent is successfully installed and started, this page will no longer pop up when the task is executed.'
+				'· After the Agent is successfully installed and started, this page will no longer pop up when the task is executed.',
+			noAgent: 'You have not installed the Agent and cannot perform the transfer task, please',
+			clickDownLoad: 'Click to download and install'
 		}
 	},
 	dataVerification: {
