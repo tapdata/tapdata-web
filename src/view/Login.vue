@@ -115,7 +115,6 @@ export default {
 				let usersModel = this.$api('users');
 				let timeStamp = this.$api('TimeStamp');
 				//登陆密码加密
-				// this.form['stime'] = new Date().getTime();
 				await timeStamp.get().then(res => {
 					this.form['stime'] = res.data || new Date().getTime();
 				});
