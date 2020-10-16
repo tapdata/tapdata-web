@@ -241,7 +241,7 @@
 								<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
 									<el-button
 										type="text"
-										@click="handleDetail(scope.row.id, 'detail', scope.row.name)"
+										@click="handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate)"
 									>
 										<i class="iconfont  task-list-icon icon-chaxun"></i>
 									</el-button>
@@ -250,7 +250,7 @@
 									<el-button
 										type="text"
 										:disabled="statusBtMap[scope.row.status].edit"
-										@click="handleDetail(scope.row.id, 'edit', scope.row.name)"
+										@click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)"
 									>
 										<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
 									</el-button>
@@ -565,7 +565,7 @@ export default {
 			window.windows.push(window.open(routeUrl.href, '_blank'));
 			window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
 		},
-		handleDetail(id, type) {
+		handleDetail(id, type, mappingTemplate) {
 			const h = this.$createElement;
 			if (type === 'edit') {
 				this.$msgbox({
@@ -592,7 +592,7 @@ export default {
 				}).then(() => {
 					let routeUrl = this.$router.resolve({
 						path: '/job',
-						query: { id: id }
+						query: { id: id, mapping: mappingTemplate }
 					});
 					setTimeout(() => {
 						document.querySelectorAll('.el-tooltip__popper').forEach(it => {
@@ -783,7 +783,8 @@ export default {
 							setting: true,
 							user_id: true,
 							startTime: true,
-							listtags: true
+							listtags: true,
+							mappingTemplate: true
 						}
 					})
 				},

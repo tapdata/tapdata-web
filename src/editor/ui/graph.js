@@ -19,6 +19,7 @@ import { EditorEventType } from '../lib/events';
 import Tab from './tab';
 import i18n from '../../i18n/i18n';
 import { Message } from 'element-ui';
+import { getUrlSearch } from '../../util/util';
 
 window.joint = joint;
 
@@ -350,7 +351,17 @@ export default class Graph extends Component {
 
 		let stencilPanel = this.editor.getLeftSidebar().getChildByName('stencil');
 		stencilPanel.getContentEl().append(stencil.el);
-		stencil.render().load(stencilConfig.shapes);
+		let cells = stencilConfig.shapes; //通过mappingTemplate 将节点分为两大类
+		let mappingTemplate = getUrlSearch('mapping');
+		if (mappingTemplate === 'cluster-clone') {
+			cells['data'] = cells['data'].filter(cell =>
+				['app.Database', 'app.FileNode', 'app.GridFSNode'].includes(cell.type)
+			);
+			cells['processor'] = [];
+		} else if (mappingTemplate === 'custom') {
+			cells['data'] = cells['data'].filter(cell => !['app.Database', 'app.FileNode'].includes(cell.type));
+		}
+		stencil.render().load(cells);
 	}
 
 	createCell(cellType, formData, schema) {
