@@ -25,8 +25,3 @@ export * from './publishApi/publishApi';
 export * from './logminer/logminer';
 export * from './databaseLink/databaseLink';
 export * from './jointCache/JointCache';
-export * from './postgresql/postgresql';
-export * from './Mysql/Mysql';
-export * from './oracle/oracle';
-export * from './mongo/mongo';
-export * from './db2/db2';

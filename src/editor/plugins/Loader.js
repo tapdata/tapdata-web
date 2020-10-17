@@ -3,29 +3,29 @@
  * @date 3/4/20
  * @description
  */
-import _ from "lodash";
-import { stencilConfig, inspectorConfig } from "../lib/rappid/config";
-import { vueAdapter } from "../vue-adapter";
-import joint from "../lib/rappid/rappid";
-import * as plugins from "./index";
+import _ from 'lodash';
+import { stencilConfig, inspectorConfig } from '../lib/rappid/config';
+import { vueAdapter } from '../vue-adapter';
+import joint from '../lib/rappid/rappid';
+import * as plugins from './index';
+import { FORM_DATA_KEY } from '../constants';
 
 export const loadPlugins = function() {
 	const defineShape = (type, shape) => {
 		if (!shape) {
 			return;
 		}
-
 		let shapeType = type;
 
 		let parentObj = _.get(joint.shapes, shape.extends);
 
-		if (parentObj && parentObj.define && typeof parentObj.define === "function") {
+		if (parentObj && parentObj.define && typeof parentObj.define === 'function') {
 			let args = [shapeType];
 			if (shape.defaultInstanceProperties) args.push(shape.defaultInstanceProperties);
 			if (shape.prototypeProperties) {
 				args.push(shape.prototypeProperties);
 				let initialize = shape.prototypeProperties.initialize;
-				if (typeof initialize === "function") {
+				if (typeof initialize === 'function') {
 					shape.prototypeProperties.initialize = function() {
 						parentObj.prototype.initialize.apply(this, arguments);
 						initialize.apply(this, arguments);
@@ -41,7 +41,7 @@ export const loadPlugins = function() {
 		if (!config) return;
 		inspectorConfig[type] = config;
 	};
-	const addStencil = (type, stencil) => {
+	const addStencil = (type, stencil, formData) => {
 		if (!stencil) return;
 		let group = stencil.group;
 		if (!stencilConfig.groups[group]) {
@@ -64,14 +64,29 @@ export const loadPlugins = function() {
 			stencil.attrs.label.text = joint.util.breakText(
 				stencil.attrs.label.text,
 				{ width: 60, height: 40 },
-				{ "font-size": 12 },
+				{ 'font-size': 12 },
 				{ ellipsis: true }
 			);
 		}
 
+		if (formData) {
+			stencil[FORM_DATA_KEY] = formData;
+		}
+		if (!stencil[FORM_DATA_KEY]) {
+			stencil[FORM_DATA_KEY] = {};
+		}
+
 		let replace = false;
 		for (let i = 0; i < stencilConfig.shapes[group].length; i++) {
-			if (stencilConfig.shapes[group][i].type === type) {
+			if (stencilConfig.shapes[group][i].type === type && type !== 'app.Database') {
+				stencilConfig.shapes[group][i] = stencil;
+				replace = true;
+				break;
+			}
+			if (
+				type === 'app.Database' &&
+				stencilConfig.shapes[group][i][FORM_DATA_KEY].databaseType === formData.databaseType
+			) {
 				stencilConfig.shapes[group][i] = stencil;
 				replace = true;
 				break;
@@ -87,7 +102,7 @@ export const loadPlugins = function() {
 	};
 
 	Object.keys(plugins).forEach(name => {
-		if (name !== "loadPlugins" && typeof plugins[name] === "object") {
+		if (name !== 'loadPlugins' && typeof plugins[name] === 'object') {
 			let plugin = _.cloneDeep(plugins[name]);
 
 			if (plugin.shape && !plugin.shape.extends) {
@@ -102,8 +117,51 @@ export const loadPlugins = function() {
 
 			defineShape(type, plugin.shape);
 			addInspector(type, plugin.styleFormConfig);
-			addStencil(type, plugin.stencil);
 			addSettingForm(type, plugin.settingFormConfig);
+
+			if (type === 'app.Database') {
+				let addData = {
+					mysql: {
+						type: 'mysql',
+						shapeImage: 'static/editor/mysql.svg',
+						stencilImage: 'static/editor/mysql.svg'
+					},
+					oracle: {
+						type: 'oracle',
+						shapeImage: 'static/editor/ora2.svg',
+						stencilImage: 'static/editor/ora2.svg'
+					},
+					db2: {
+						type: 'db2',
+						shapeImage: 'static/editor/DB2.svg',
+						stencilImage: 'static/editor/DB2.svg'
+					},
+					mongo: {
+						type: 'mongodb',
+						shapeImage: 'static/editor/mongo.svg',
+						stencilImage: 'static/editor/mongo.svg'
+					},
+					pg: {
+						type: 'postgres',
+						shapeImage: 'static/editor/o-pg.svg',
+						stencilImage: 'static/editor/pg.svg'
+					}
+				};
+				Object.keys(addData).forEach(database => {
+					let cell = _.cloneDeep(addData[database]);
+					let plugin = _.cloneDeep(plugins[name]);
+					plugin.stencil['group'] = 'data';
+					plugin.stencil['subType'] = cell.type;
+					plugin.stencil['attrs']['image']['xlinkHref'] = cell.stencilImage;
+
+					addStencil(type, plugin.stencil, {
+						databaseType: cell.type,
+						shapeImage: cell.shapeImage
+					});
+				});
+			} else {
+				addStencil(type, plugin.stencil);
+			}
 		}
 	});
 };

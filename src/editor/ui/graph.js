@@ -342,7 +342,12 @@ export default class Graph extends Component {
 			// Remove tooltip definition from clone
 			dragStartClone: function(cell) {
 				if (cell.get('type').startsWith('app.')) {
-					return self.createCell(cell.get('type'));
+					let newCell = self.createCell(cell.get('type'));
+					if (cell.get('type') === 'app.Database') {
+						newCell.setFormData(cell.getFormData());
+						newCell.attr('image/xlinkHref', newCell.getFormData().shapeImage);
+					}
+					return newCell;
 				} else {
 					return cell.clone().removeAttr('root/dataTooltip');
 				}
