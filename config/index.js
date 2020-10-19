@@ -11,15 +11,15 @@ module.exports = {
 		assetsPublicPath: '/',
 		proxyTable: {
 			'/api': {
-				target: 'http://test3.tapdata.net:3030/',
+				target: 'http://backend:3030/',
 				changeOrigin: false
 			},
 			'/oauth': {
-				target: 'http://test3.tapdata.net:3030/',
+				target: 'http://backend:3030/',
 				changeOrigin: false
 			},
 			'/ws': {
-				target: 'ws://test3.tapdata.net:3030',
+				target: 'ws://backend:3030',
 				changeOrigin: false
 			},
 			'/old': {
