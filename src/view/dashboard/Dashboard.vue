@@ -62,7 +62,12 @@
 					<ul class="status-box">
 						<li v-for="item in taskStatusStatistics" :key="item.value">
 							<p>{{ item.name }}</p>
-							<div @click="jumpTask(item.value)">{{ taskStatusList[item.value] }}</div>
+							<div
+								@click="jumpTask(item.value)"
+								:class="{ lagColor: item.value === 'Lag' && taskStatusList[item.value] > 0 }"
+							>
+								{{ taskStatusList[item.value] }}
+							</div>
 						</li>
 					</ul>
 				</div>
@@ -769,6 +774,9 @@ export default {
 							font-size: 60px;
 							color: #48b6e2;
 							cursor: pointer;
+						}
+						.lagColor {
+							color: #e6a23c;
 						}
 					}
 				}
