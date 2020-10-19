@@ -108,7 +108,10 @@ const en = {
 			settings: 'System settings',
 			favorite: 'Favorite',
 			dataVerification: 'Data Verification',
-			delFavMenu: 'Delete Favorite'
+			delFavMenu: 'Delete Favorite',
+			license: 'License info',
+			licenseBefore: 'Info: License remaining ',
+			licenseAfter: ' days'
 		},
 		Home: {
 			all: 'All',
