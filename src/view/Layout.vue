@@ -13,6 +13,9 @@
 				<img :src="logoUrl" />
 			</a>
 			<div class="button-bar">
+				<span class="expire-msg" v-if="licenseExpireAble">
+					{{ $t('app.menu.licenseBefore') + licenseExpire + $t('app.menu.licenseAfter') }}
+				</span>
 				<el-button class="btn-create" type="primary" size="mini" @click="command('newDataFlow')">
 					<i class="el-icon-plus"></i>
 					<span>{{ $t('dataFlow.createNew') }}</span>
@@ -74,6 +77,7 @@
 					</el-button>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="version">{{ $t('app.version') }}</el-dropdown-item>
+						<el-dropdown-item command="license">{{ $t('app.menu.license') }}</el-dropdown-item>
 						<el-dropdown-item v-if="platform === 'DAAS'" command="home">
 							{{ $t('app.home') }}
 						</el-dropdown-item>
@@ -250,7 +254,9 @@ export default {
 			agentTipFalg: true,
 			timer: '',
 			downLoadNum: undefined,
-			lastDataNum: 0
+			lastDataNum: 0,
+			licenseExpire: '',
+			licenseExpireAble: true
 		};
 	},
 	created() {
@@ -281,6 +287,7 @@ export default {
 				}
 			}, 5000);
 		}
+		this.getLicense();
 	},
 	destroyed() {
 		this.$root.$off('updateMenu');
@@ -377,6 +384,11 @@ export default {
 					break;
 				case 'version':
 					this.$message.info('DAAS_BUILD_NUMBER');
+					break;
+				case 'license':
+					this.$message.info(
+						this.$t('app.menu.licenseBefore') + this.licenseExpire + this.$t('app.menu.licenseAfter')
+					);
 					break;
 				case 'home':
 					window.open('https://tapdata.net/', '_blank');
@@ -477,6 +489,20 @@ export default {
 		// 刷新agent
 		handleRefreAgent() {
 			this.getDataApi();
+		},
+
+		getLicense() {
+			this.$api('Licenses')
+				.get()
+				.then(res => {
+					let expires_on = res.data.expires_on || '';
+					let endTime = expires_on - new Date().getTime();
+					expires_on = parseInt(endTime / 1000 / 60 / 60 / 24); //相差天数
+					if (expires_on <= 90) {
+						this.licenseExpireAble = true;
+					}
+					this.licenseExpire = expires_on;
+				});
 		}
 	}
 };
@@ -699,6 +725,11 @@ export default {
 	.layout-main {
 		padding: 0;
 		background: #fff;
+	}
+	.expire-msg {
+		display: inline-block;
+		color: #fff;
+		margin-right: 10px;
 	}
 }
 </style>

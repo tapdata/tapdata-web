@@ -108,7 +108,10 @@ const en = {
 			settings: 'System settings',
 			favorite: 'Favorite',
 			dataVerification: 'Data Verification',
-			delFavMenu: 'Delete Favorite'
+			delFavMenu: 'Delete Favorite',
+			license: 'License info',
+			licenseBefore: 'Info: License remaining ',
+			licenseAfter: ' days'
 		},
 		Home: {
 			all: 'All',
@@ -219,7 +222,7 @@ const en = {
 		databseMigrationHead: 'Database Migration',
 		databseFreedomHead: 'Custom Data Sync',
 		createNew: 'Create New',
-		DissedNoAction: 'oops~ The banned node/Connecting line should not be deleted, connected in, or connected out',
+		DissedNoAction: 'oops~ The banned node/Connecting line can not be deleted and connected',
 		guidingMode: 'Guiding mode',
 		advancedMode: 'Free mode',
 		freedomMode: 'Free mode',
