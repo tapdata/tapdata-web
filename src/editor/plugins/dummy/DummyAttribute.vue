@@ -65,7 +65,7 @@
 			</el-form>
 		</div>
 		<div class="e-entity-wrap" style="text-align: center;overflow:auto;">
-			<el-button
+			<!-- <el-button
 				class="fr"
 				type="success"
 				v-if="model.connectionId && model.tableName"
@@ -75,7 +75,7 @@
 				<i class="el-icon-loading" v-if="reloadModelLoading"></i>
 				<span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
 				<span v-else>{{ $t('dataFlow.updateModel') }}</span>
-			</el-button>
+			</el-button> -->
 			<entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
 		</div>
 		<relatedTasks :taskData="taskData" v-if="disabled"></relatedTasks>
