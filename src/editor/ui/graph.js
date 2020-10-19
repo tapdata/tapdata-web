@@ -362,7 +362,6 @@ export default class Graph extends Component {
 			cells['data'] = cells['data'].filter(cell =>
 				['app.Database', 'app.FileNode', 'app.GridFSNode'].includes(cell.type)
 			);
-			cells['processor'] = [];
 		} else if (mappingTemplate === 'custom') {
 			cells['data'] = cells['data'].filter(cell => !['app.Database', 'app.FileNode'].includes(cell.type));
 		}

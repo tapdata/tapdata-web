@@ -75,6 +75,7 @@ const en = {
 			dashboard: 'Dashboard',
 			connections: 'Data Source',
 			dataSync: 'Data synchronization',
+			dataTransmission: 'Data Transmission',
 			dataFlows: 'Data Collect',
 			dataFlowsAll: 'All tasks',
 			dataFlowsRunning: 'Running',
@@ -108,7 +109,9 @@ const en = {
 			settings: 'System settings',
 			favorite: 'Favorite',
 			dataVerification: 'Data Verification',
-			delFavMenu: 'Delete Favorite'
+			delFavMenu: 'Delete Favorite',
+			dataFlowsClusterClone: 'Data Sync',
+			dataFlowsCustom: 'Database Migration'
 		},
 		Home: {
 			all: 'All',
@@ -212,6 +215,8 @@ const en = {
 		reloadSchemaError: 'Model update failed'
 	},
 	dataFlow: {
+		clusterClone: 'Database Migration',
+		custom: 'Data Sync',
 		searchNode: 'Search Node',
 		updateModel: 'Reload Model',
 		loadingText: 'Loading...',

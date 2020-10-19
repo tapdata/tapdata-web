@@ -46,7 +46,7 @@
 				class="ts-tree"
 			>
 				<span class="custom-tree-node" slot-scope="{ node, data }">
-					<span @dblclick="handleGraph(data)">
+					<span>
 						<span
 							v-if="data.meta_type !== 'database'"
 							:class="`iconfont filter-icon-table ${mapping[data.meta_type]}`"
@@ -63,7 +63,10 @@
 						></span>
 						<span class="table-label">
 							<el-tooltip class="table-tooltip" effect="dark" :content="node.label" placement="right">
-								<span>{{ node.label }}</span>
+								<div>
+									<span v-if="data.meta_type === 'database'">{{ node.label }}</span>
+									<span @dblclick="handleGraph(data)">{{ node.label }}</span>
+								</div>
 							</el-tooltip>
 						</span>
 					</span>

@@ -75,6 +75,7 @@ const cn = {
 			dashboard: '控制台',
 			connections: '数据源',
 			dataSync: '数据同步',
+			dataTransmission: '数据传输',
 			dataFlows: '数据采集',
 			dataFlowsAll: '全部任务',
 			dataFlowsRunning: '运行中任务',
@@ -108,7 +109,9 @@ const cn = {
 			settings: '系统设置',
 			favorite: '我的收藏',
 			dataVerification: '数据校验',
-			delFavMenu: '删除收藏'
+			delFavMenu: '删除收藏',
+			dataFlowsCustom: '数据同步',
+			dataFlowsClusterClone: '数据库迁移'
 		},
 		Home: {
 			all: '全部',
@@ -214,6 +217,8 @@ const cn = {
 		reloadSchemaError: '模型更新失败'
 	},
 	dataFlow: {
+		clusterClone: '数据库迁移',
+		custom: '数据同步',
 		searchNode: '查找节点',
 		updateModel: '更新模型',
 		loadingText: '加载中',

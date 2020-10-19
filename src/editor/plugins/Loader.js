@@ -123,22 +123,22 @@ export const loadPlugins = function() {
 				let addData = {
 					mysql: {
 						type: 'mysql',
-						shapeImage: 'static/editor/mysql.svg',
+						shapeImage: 'static/editor/o-mysql.svg',
 						stencilImage: 'static/editor/mysql.svg'
 					},
 					oracle: {
 						type: 'oracle',
-						shapeImage: 'static/editor/ora2.svg',
-						stencilImage: 'static/editor/ora2.svg'
+						shapeImage: 'static/editor/o-ora.svg',
+						stencilImage: 'static/editor/ora.svg'
 					},
 					db2: {
 						type: 'db2',
-						shapeImage: 'static/editor/DB2.svg',
+						shapeImage: 'static/editor/o-db2.svg',
 						stencilImage: 'static/editor/DB2.svg'
 					},
 					mongo: {
 						type: 'mongodb',
-						shapeImage: 'static/editor/mongo.svg',
+						shapeImage: 'static/editor/o-mongo.svg',
 						stencilImage: 'static/editor/mongo.svg'
 					},
 					pg: {

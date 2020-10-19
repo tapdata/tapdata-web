@@ -156,14 +156,11 @@ let menuSetting = [
 	{ name: 'dashboard', icon: 'shouye' },
 	{ name: 'connections', icon: 'shujukus1' },
 	{
-		name: 'dataSync',
+		name: 'dataTransmission',
 		icon: 'chengbenguanlixitong',
 		children: [
-			{ name: 'dataFlows', alias: 'dataFlowsAll' },
-			{ name: 'dataFlows', alias: 'dataFlowsRunning', query: '?dataFlowStatus=running' },
-			{ name: 'dataFlows', alias: 'dataFlowsPaused', query: '?dataFlowStatus=paused' },
-			{ name: 'dataFlows', alias: 'dataFlowsError', query: '?dataFlowStatus=error' },
-			{ name: 'dataFlows', alias: 'dataFlowsDraft', query: '?dataFlowStatus=draft' },
+			{ name: 'dataFlows', alias: 'dataFlowsClusterClone', query: '?mapping=cluster-clone' },
+			{ name: 'dataFlows', alias: 'dataFlowsCustom', query: '?mapping=custom' },
 			{ name: 'dataVerification' }
 		]
 	},

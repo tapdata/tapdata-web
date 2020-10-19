@@ -4,6 +4,9 @@
 			<metaData v-on:nodeClick="nodeClick" @nodeDataChange="nodeDataChange"></metaData>
 		</div>
 		<div class="panel-main">
+			<div class="mappingTemplate">
+				{{ formData.mappingTemplate === 'custom' ? $t('dataFlow.custom') : $t('dataFlow.clusterClone') }}
+			</div>
 			<!-- <el-tabs v-model="activeName" type="card" @tab-click="handleTabClick">
 				<el-tab-pane :label="$t('tableFlow.task_view')" name="dataFlow"></el-tab-pane>
 				<el-tab-pane :label="$t('tableFlow.table_view')" name="tableFlow"></el-tab-pane>
@@ -428,7 +431,8 @@ export default {
 				way: '',
 				executionStatus: '',
 				classification: [],
-				panelFlag: true
+				panelFlag: true,
+				mappingTemplate: ''
 			},
 			statusBtMap: {
 				scheduled: { switch: true, delete: true, edit: true, detail: false, forceStop: true, reset: true },
@@ -448,7 +452,7 @@ export default {
 	},
 	created() {
 		this.formData = this.$store.state.dataFlows;
-		this.formData.status = this.$route.query ? this.$route.query.dataFlowStatus : '';
+		this.formData.mappingTemplate = this.$route.query ? this.$route.query.mapping : '';
 
 		this.screenFn();
 		this.keyupEnter();
@@ -477,7 +481,7 @@ export default {
 	},
 	watch: {
 		'$route.query'(query) {
-			this.formData.status = query.dataFlowStatus;
+			this.formData.mappingTemplate = query.mapping;
 			this.getData();
 		}
 	},
@@ -560,7 +564,8 @@ export default {
 		},
 		create() {
 			let routeUrl = this.$router.resolve({
-				path: '/job'
+				path: '/job',
+				query: { mapping: this.formData.mappingTemplate }
 			});
 			window.windows.push(window.open(routeUrl.href, '_blank'));
 			window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
@@ -605,7 +610,7 @@ export default {
 			} else {
 				let routeUrl = this.$router.resolve({
 					path: '/job',
-					query: { id: id, isMoniting: true }
+					query: { id: id, isMoniting: true, mapping: mappingTemplate }
 				});
 				window.open(routeUrl.href, 'monitor_' + id);
 			}
@@ -721,6 +726,9 @@ export default {
 			if (this.formData) {
 				if (this.formData.status && this.formData.status !== '') {
 					where.status = this.formData.status;
+				}
+				if (this.formData.mappingTemplate && this.formData.mappingTemplate !== '') {
+					where.mappingTemplate = this.formData.mappingTemplate;
 				}
 				if (this.formData.way && this.formData.way !== '') {
 					where['setting.sync_type'] = this.formData.way;
@@ -1406,6 +1414,13 @@ export default {
 }
 .add-btn-icon {
 	color: #fff;
+}
+.mappingTemplate {
+	margin-left: 10px;
+	margin-top: 5px;
+	font-size: 14px;
+	font-weight: bold;
+	color: #333;
 }
 </style>
 <style lang="less">

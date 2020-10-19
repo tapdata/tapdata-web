@@ -6,6 +6,111 @@
   "description": "Tapdata 线装小图标",
   "glyphs": [
     {
+      "icon_id": "17617090",
+      "name": "pg",
+      "font_class": "pg1",
+      "unicode": "e6e9",
+      "unicode_decimal": 59113
+    },
+    {
+      "icon_id": "17616454",
+      "name": "mongo",
+      "font_class": "mongo",
+      "unicode": "e6e3",
+      "unicode_decimal": 59107
+    },
+    {
+      "icon_id": "17616456",
+      "name": "mysql",
+      "font_class": "mysql1",
+      "unicode": "e6e4",
+      "unicode_decimal": 59108
+    },
+    {
+      "icon_id": "17616461",
+      "name": "DB2",
+      "font_class": "DB2",
+      "unicode": "e6e6",
+      "unicode_decimal": 59110
+    },
+    {
+      "icon_id": "17616758",
+      "name": "ora",
+      "font_class": "ora",
+      "unicode": "e6e7",
+      "unicode_decimal": 59111
+    },
+    {
+      "icon_id": "17616859",
+      "name": "ora2",
+      "font_class": "ora2",
+      "unicode": "e6e8",
+      "unicode_decimal": 59112
+    },
+    {
+      "icon_id": "3758823",
+      "name": "历史",
+      "font_class": "lishi",
+      "unicode": "e6df",
+      "unicode_decimal": 59103
+    },
+    {
+      "icon_id": "3993657",
+      "name": "历史",
+      "font_class": "lishi1",
+      "unicode": "e6e0",
+      "unicode_decimal": 59104
+    },
+    {
+      "icon_id": "5161031",
+      "name": "还原",
+      "font_class": "huanyuan",
+      "unicode": "e6e1",
+      "unicode_decimal": 59105
+    },
+    {
+      "icon_id": "16211683",
+      "name": "还原",
+      "font_class": "huanyuan1",
+      "unicode": "e6e2",
+      "unicode_decimal": 59106
+    },
+    {
+      "icon_id": "9257048",
+      "name": "右",
+      "font_class": "you21",
+      "unicode": "e865",
+      "unicode_decimal": 59493
+    },
+    {
+      "icon_id": "16963845",
+      "name": "JC",
+      "font_class": "JC",
+      "unicode": "e6dc",
+      "unicode_decimal": 59100
+    },
+    {
+      "icon_id": "16963899",
+      "name": "o-jc",
+      "font_class": "o-jc",
+      "unicode": "e6dd",
+      "unicode_decimal": 59101
+    },
+    {
+      "icon_id": "16963923",
+      "name": "o-redis",
+      "font_class": "o-redis",
+      "unicode": "e6de",
+      "unicode_decimal": 59102
+    },
+    {
+      "icon_id": "11543553",
+      "name": "云数据库Redis",
+      "font_class": "redisshujuku-",
+      "unicode": "e86d",
+      "unicode_decimal": 59501
+    },
+    {
       "icon_id": "16261100",
       "name": "对比图",
       "font_class": "duibitu",
