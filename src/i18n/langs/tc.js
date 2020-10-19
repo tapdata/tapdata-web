@@ -108,7 +108,10 @@ const tc = {
 			settings: '系統設置',
 			favorite: '我的收藏',
 			dataVerification: '数据校验',
-			delFavMenu: '删除收藏'
+			delFavMenu: '删除收藏',
+			license: 'License信息',
+			licenseBefore: '提醒：License剩餘 ',
+			licenseAfter: ' 天到期'
 		},
 		Home: {
 			all: '全部',
@@ -1085,7 +1088,7 @@ const tc = {
 					tip: '切換全屏'
 				}
 			},
-			nodeLoadSchemaDiaLog: '如果數據源有更新，此操作會更此例程的模型，是否繼續？',
+			nodeLoadSchemaDiaLog: '如果數據源有更新，此操作會更新此例程的模型，是否繼續？',
 			allNodeLoadSchemaDiaLog: '如果數據源有更新，此操作會更新各例程的模型，是否繼續？'
 		},
 		preview: {
@@ -1391,7 +1394,39 @@ const tc = {
 		placeholderCollection: '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許system開頭',
 		tableValidateTip: '新建表名稱僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許system開頭',
 		collectionValidateTip:
-			'新建數據集名稱僅支持英文、數字、下劃線下劃線、點、減號，並以英文字母開頭，不允許system開頭'
+			'新建數據集名稱僅支持英文、數字、下劃線下劃線、點、減號，並以英文字母開頭，不允許system開頭',
+		downAgent: {
+			headTitle: 'Agent下載與安裝',
+			headInterpretation: 'Tapdata DFS雲版需要在本地安裝agent以確保連接數據庫和傳輸服務正常運行',
+			downloadInstall: '下載安裝',
+			text: '直接在安裝agent的機器上使用以下命令下載並啟動',
+			copy: '複製命令行',
+			refresh: '刷新',
+			copied: '已復制',
+			downloadInstallInstructions: '下載安裝說明',
+			linuxInstructionsText1: '· 直接在安裝agent的Linux機器上使用上述命令進行',
+			linuxInstructionsText2: '· 執行命令後自動下載並啟動安裝包（包含agent包 64M 和Java程序包160M）',
+			linuxInstructionsText3: '· Agent安裝啟動成功後執行任務將不再彈出此頁面',
+			waitingInstall: '等待安裝',
+			agentNum: '當前Agent安裝數',
+			downLoadAgent: '下載Agent',
+			windowsText: '下載到待安裝的機器上，在存放下載文件的目錄下執行複制下述命令進行安裝',
+			windowsInstructionsText1: '· 點擊“下載Agent”下載Agent至windows環境的機器',
+			windowsInstructionsText2: '· 下載後復制上述命令在下載Agent的機器上執行安裝',
+			windowsInstructionsText3: '· 在存放下載文件的目錄下執行複制命令進行安裝',
+			windowsInstructionsText4: '· 執行命令後自動安裝並啟動Agent',
+			windowsInstructionsText5: '· Agent安裝啟動成功後執行任務將不再彈出此頁面',
+			noAgent: '您尚未安裝Agent,無法執行傳輸任務，請',
+			clickDownLoad: '點擊下載安裝',
+			dfsSuccessText: 'DFS代理安裝成功，',
+			dfsSuccessText1: '或點擊',
+			dfsSuccessText2: '創建數據傳輸任務，體驗Tapdata DFS急速數據傳輸功能',
+			dfsSuccessText3: 'DFS代理安裝成功，任務',
+			dfsSuccessText4: '已啟動執行',
+			creatTask: '新建任務',
+			clickView: '點擊查看',
+			ok: '好的'
+		}
 	},
 	dataVerification: {
 		verifyDetail: '校驗詳情',

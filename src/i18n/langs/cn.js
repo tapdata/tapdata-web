@@ -108,7 +108,10 @@ const cn = {
 			settings: '系统设置',
 			favorite: '我的收藏',
 			dataVerification: '数据校验',
-			delFavMenu: '删除收藏'
+			delFavMenu: '删除收藏',
+			license: 'License信息',
+			licenseBefore: '提醒：License剩余 ',
+			licenseAfter: ' 天到期'
 		},
 		Home: {
 			all: '全部',
@@ -1089,7 +1092,7 @@ const cn = {
 					tip: '切换全屏'
 				}
 			},
-			nodeLoadSchemaDiaLog: '如果数据源有更新，此操作会更此节点的模型，是否继续?',
+			nodeLoadSchemaDiaLog: '如果数据源有更新，此操作会更新此节点的模型，是否继续?',
 			allNodeLoadSchemaDiaLog: '如果数据源有更新，此操作会更新各节点的模型，是否继续?'
 		},
 		preview: {
@@ -1320,7 +1323,39 @@ const cn = {
 		placeholderCollection: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许system开头',
 		tableValidateTip: '新建表名称仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许system开头',
 		collectionValidateTip:
-			'新建数据集名称仅支持英文、数字、下划线下划线、点、减号，并以英文字母开头，不允许system开头'
+			'新建数据集名称仅支持英文、数字、下划线下划线、点、减号，并以英文字母开头，不允许system开头',
+		downAgent: {
+			headTitle: 'Agent下载与安装',
+			headInterpretation: 'Tapdata DFS云版需要在本地安装agent以确保连接数据库和传输服务正常运行',
+			downloadInstall: '下载安装',
+			text: '直接在安装agent的机器上使用以下命令下载并启动',
+			copy: '复制命令行',
+			refresh: '刷新',
+			copied: '已复制',
+			downloadInstallInstructions: '下载安装说明',
+			linuxInstructionsText1: '· 直接在安装agent的Linux机器上使用上述命令进行',
+			linuxInstructionsText2: '· 执行命令后自动下载并启动安装包（包含agent包 64M 和Java程序包160M）',
+			linuxInstructionsText3: '· Agent安装启动成功后执行任务将不再弹出此页面',
+			waitingInstall: '等待安装',
+			agentNum: '当前Agent安装数',
+			downLoadAgent: '下载Agent',
+			windowsText: '下载到待安装的机器上，在存放下载文件的目录下执行复制下述命令进行安装',
+			windowsInstructionsText1: '· 点击“下载Agent”下载Agent至windows环境的机器',
+			windowsInstructionsText2: '· 下载后复制上述命令在下载Agent的机器上执行安装',
+			windowsInstructionsText3: '· 在存放下载文件的目录下执行复制命令进行安装',
+			windowsInstructionsText4: '· 执行命令后自动安装并启动Agent',
+			windowsInstructionsText5: '· Agent安装启动成功后执行任务将不再弹出此页面',
+			noAgent: '您尚未安装Agent,无法执行传输任务，请',
+			clickDownLoad: '点击下载安装',
+			dfsSuccessText: 'DFS Agent 安装成功，',
+			dfsSuccessText1: '或点击',
+			dfsSuccessText2: '创建数据传输任务，体验Tapdata DFS急速数据传输功能',
+			dfsSuccessText3: 'DFS Agent 安装成功，任务',
+			dfsSuccessText4: '已启动执行',
+			creatTask: '新建任务',
+			clickView: '点击查看',
+			ok: '好的'
+		}
 	},
 	notification: {
 		notice: '消息通知',

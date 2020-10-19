@@ -327,6 +327,14 @@
 				<el-button type="primary" @click="confirmDleteFlow">{{ $t('metaData.deleteNode') }}</el-button>
 			</span>
 		</el-dialog>
+		<DownAgent
+			v-if="downLoadAgetntdialog"
+			:downLoadNum="downLoadNum"
+			type="taskRunning"
+			:lastDataNum="lastDataNum"
+			@closeAgentDialog="closeAgentDialog"
+			@refreAgent="handleRefreAgent"
+		></DownAgent>
 	</section>
 </template>
 
@@ -337,14 +345,25 @@ import factory from '../../api/factory';
 import ws from '../../api/ws';
 const dataFlows = factory('DataFlows');
 const MetadataInstance = factory('MetadataInstances');
+const cluster = factory('cluster');
 import { toRegExp } from '../../util/util';
 import metaData from '../metaData';
 import SelectClassify from '../../components/SelectClassify';
+import DownAgent from '../downAgent/agentDown';
 
 export default {
-	components: { metaData, SelectClassify },
+	components: { metaData, SelectClassify, DownAgent },
 	data() {
 		return {
+			downLoadAgetntdialog: false, //判断是否安装agent
+			downLoadNum: undefined,
+			lastDataNum: 0,
+			agentObj: {
+				id: '',
+				oldStatus: '',
+				status: '',
+				dataItem: null
+			},
 			deleteDialogVisible: false,
 			checkedTag: '',
 			activeName: 'dataFlow',
@@ -472,6 +491,16 @@ export default {
 			});
 			self.wsData.length = 0;
 		}, 3000);
+
+		this.getDataApi();
+		if (!this.downLoadNum) {
+			self.timer = setInterval(() => {
+				self.getDataApi();
+				if (this.downLoadNum) {
+					clearInterval(self.timer);
+				}
+			}, 500);
+		}
 	},
 	beforeDestroy() {
 		ws.off('watch', this.wsWatch);
@@ -490,6 +519,43 @@ export default {
 		}
 	},
 	methods: {
+		// 获取Agent是否安装
+		getDataApi() {
+			let params = [];
+			if (this.$cookie.get('isAdmin') == 0) {
+				params['filter[where][systemInfo.username][inq]'] = [
+					this.$cookie.get('user_id'),
+					this.$cookie.get('username')
+				];
+			} else {
+				params = null;
+			}
+			cluster.get(params).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						if (!this.downLoadNum) {
+							this.downLoadNum = res.data.length;
+							this.lastDataNum = 0;
+						}
+						if (this.downLoadNum < res.data.length) {
+							this.lastDataNum = this.downLoadNum;
+							this.downLoadNum = res.data.length;
+						}
+					}
+				}
+			});
+		},
+
+		closeAgentDialog() {
+			this.handleStatus(this.agentObj.id, this.agentObj.oldStatus, this.agentObj.status, this.agentObj.dataItem);
+			this.downLoadAgetntdialog = false;
+		},
+
+		// 刷新agent
+		handleRefreAgent() {
+			this.getDataApi();
+		},
+
 		// 面板显示隐藏
 		handlePanelFlag() {
 			this.$set(this.formData, 'panelFlag', !this.formData.panelFlag);
@@ -1026,10 +1092,20 @@ export default {
 			).then(callback);
 		},
 
+		// 运行开关
 		handleStatus(id, oldStatus, status, dataItem) {
 			let data = {
 				status: status
 			};
+			this.agentObj.id = id;
+			this.agentObj.oldStatus = oldStatus;
+			this.agentObj.status = status;
+			this.agentObj.dataItem = dataItem;
+			if (!this.downLoadNum) {
+				this.downLoadAgetntdialog = true;
+				return;
+			}
+
 			if (status === 'stopping') {
 				this.statusConfirm(() => {
 					this.getStatus(id, data);
