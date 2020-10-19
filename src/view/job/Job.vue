@@ -243,6 +243,14 @@
 			</span>
 		</el-dialog>
 		<AddBtnTip v-if="isEditable()"></AddBtnTip>
+		<DownAgent
+			v-if="downLoadAgetntdialog"
+			:downLoadNum="downLoadNum"
+			type="taskRunning"
+			:lastDataNum="lastDataNum"
+			@closeAgentDialog="closeAgentDialog"
+			@refreAgent="handleRefreAgent"
+		></DownAgent>
 	</div>
 </template>
 
@@ -258,19 +266,24 @@ import ws from '../../api/ws';
 import AddBtnTip from './addBtnTip';
 import simpleScene from './SimpleScene';
 import newDataFlow from '@/components/newDataflowName';
+import DownAgent from '../downAgent/agentDown';
 import { FORM_DATA_KEY, JOIN_TABLE_TPL } from '../../editor/constants';
 import { EditorEventType } from '../../editor/lib/events';
 import _ from 'lodash';
 
 const dataFlowsApi = factory('DataFlows');
 const Setting = factory('Setting');
+const cluster = factory('cluster');
 let changeData = null;
 export default {
 	name: 'Job',
 	dataFlow: null,
-	components: { AddBtnTip, simpleScene, newDataFlow },
+	components: { AddBtnTip, simpleScene, newDataFlow, DownAgent },
 	data() {
 		return {
+			downLoadAgetntdialog: false, //判断是否安装agent
+			downLoadNum: undefined,
+			lastDataNum: 0,
 			reloadSchemaDialog: false,
 			dialogFormVisible: false,
 			form: {
@@ -319,6 +332,17 @@ export default {
 		if (this.$route.query.isSimple == 'true') this.isSimple = true;
 		if (!this.$route.query.id) {
 			this.getGlobalSetting();
+		}
+
+		let self = this;
+		this.getDataApi();
+		if (!this.downLoadNum) {
+			self.timer = setInterval(() => {
+				self.getDataApi();
+				if (this.downLoadNum) {
+					clearInterval(self.timer);
+				}
+			}, 500);
 		}
 	},
 	mounted() {
@@ -369,6 +393,47 @@ export default {
 	},
 
 	methods: {
+		// 获取Agent是否安装
+		getDataApi() {
+			let params = [];
+			if (this.$cookie.get('isAdmin') == 0) {
+				params['filter[where][systemInfo.username][inq]'] = [
+					this.$cookie.get('user_id'),
+					this.$cookie.get('username')
+				];
+			} else {
+				params = null;
+			}
+			cluster.get(params).then(res => {
+				if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
+						if (!this.downLoadNum) {
+							this.downLoadNum = res.data.length;
+							this.lastDataNum = 0;
+						}
+						if (this.downLoadNum < res.data.length) {
+							this.lastDataNum = this.downLoadNum;
+							this.downLoadNum = res.data.length;
+						}
+					}
+				}
+			});
+		},
+
+		closeAgentDialog() {
+			this.start();
+			this.downLoadAgetntdialog = false;
+		},
+
+		// 刷新agent
+		handleRefreAgent() {
+			this.getDataApi();
+		},
+		// // 关闭agent弹窗回调
+		// closeDownAgent() {
+		// 	this.$emit('closeAgentDialog');
+		// },
+
 		isEditable() {
 			return ['draft', 'error', 'paused'].includes(this.status);
 		},
@@ -979,6 +1044,11 @@ export default {
 		start() {
 			let self = this,
 				data = this.getDataFlowData();
+
+			if (!this.downLoadNum) {
+				this.downLoadAgetntdialog = true;
+				return;
+			}
 
 			if (data) {
 				if (data.id) {

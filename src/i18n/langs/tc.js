@@ -1079,7 +1079,7 @@ const tc = {
 					tip: '切換全屏'
 				}
 			},
-			nodeLoadSchemaDiaLog: '如果數據源有更新，此操作會更此例程的模型，是否繼續？',
+			nodeLoadSchemaDiaLog: '如果數據源有更新，此操作會更新此例程的模型，是否繼續？',
 			allNodeLoadSchemaDiaLog: '如果數據源有更新，此操作會更新各例程的模型，是否繼續？'
 		},
 		preview: {
@@ -1408,7 +1408,15 @@ const tc = {
 			windowsInstructionsText4: '· 執行命令後自動安裝並啟動Agent',
 			windowsInstructionsText5: '· Agent安裝啟動成功後執行任務將不再彈出此頁面',
 			noAgent: '您尚未安裝Agent,無法執行傳輸任務，請',
-			clickDownLoad: '點擊下載安裝'
+			clickDownLoad: '點擊下載安裝',
+			dfsSuccessText: 'DFS代理安裝成功，',
+			dfsSuccessText1: '或點擊',
+			dfsSuccessText2: '創建數據傳輸任務，體驗Tapdata DFS急速數據傳輸功能',
+			dfsSuccessText3: 'DFS代理安裝成功，任務',
+			dfsSuccessText4: '已啟動執行',
+			creatTask: '新建任務',
+			clickView: '點擊查看',
+			ok: '好的'
 		}
 	},
 	dataVerification: {

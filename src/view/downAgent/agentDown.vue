@@ -11,7 +11,9 @@
 				<div class="title">
 					<i class="iconLable"></i>
 					<span>{{ $t('dialog.downAgent.downloadInstall') }}</span>
-					<span class="downLoadText">( {{ $t('dialog.downAgent.agentNum') }}: <i>0</i> )</span>
+					<span class="downLoadText"
+						>( {{ $t('dialog.downAgent.agentNum') }}: <i>{{ downLoadNum }}</i> )</span
+					>
 				</div>
 				<div class="down-type">
 					<div
@@ -52,10 +54,6 @@
 							<i class="iconfont icon-fuzhi1 clickIcont"></i>{{ $t('dialog.downAgent.copy') }}
 						</span>
 					</el-tooltip>
-					<span class="operaKey" @click="handleRefresh">
-						<i class="iconfont icon-shuaxin3 clickIcont"></i>
-						{{ $t('dialog.downAgent.refresh') }}
-					</span>
 				</div>
 
 				<div class="copy-down-link">
@@ -81,24 +79,70 @@
 				</ul>
 			</section>
 			<span slot="footer" class="dialog-footer">
-				<el-button size="mini">{{ $t('dialog.downAgent.waitingInstall') }}</el-button>
+				<el-button type="primary" size="mini" @click="handleRefresh">
+					<i class="el-icon-loading" v-if="refreshLoading"></i>
+					{{ $t('dialog.downAgent.refresh') }}</el-button
+				>
+				<el-button size="mini" class="install">{{ $t('dialog.downAgent.waitingInstall') }} ...</el-button>
 			</span>
 		</el-dialog>
 
 		<el-dialog :visible.sync="installSuccessDialog" :close-on-click-modal="false" width="40%">
 			<div class="success-main">
+				<i class="el-icon-success"></i>
 				<p>
-					<i class="el-icon-success"></i>
-					{{ $t('dialog.downAgent.headInterpretation') }}
-					<span>{{ $t('dialog.downAgent.clickView') }}</span>
+					{{ $t('dialog.downAgent.dfsSuccessText') }}
+					<span class="active" @click="handlepageJump">{{ $t('dialog.downAgent.clickView') }}</span>
 				</p>
-				<p>
+				<!-- <p>
 					{{ $t('dialog.downAgent.dfsSuccessText1') }}
-					<span> {{ $t('dialog.downAgent.creatTask') }}, </span>{{ $t('dialog.downAgent.dfsSuccessText2') }}
-				</p>
+					<span class="active"> {{ $t('dialog.downAgent.creatTask') }}, </span
+					>{{ $t('dialog.downAgent.dfsSuccessText2') }}
+				</p> -->
 			</div>
 			<span slot="footer" class="dialog-footer">
-				<el-button type="primary" size="mini">{{ $t('dialog.downAgent.waitingInstall') }}</el-button>
+				<!-- <span class="operaKey" @click="handleRefresh">
+					<i class="iconfont icon-shuaxin3 clickIcont" v-if="refreshLoading"></i>
+					<i class="el-icon-loading" v-else></i>
+					{{ $t('dialog.downAgent.refresh') }}
+				</span> -->
+				<el-button
+					class="e-button"
+					type="primary"
+					size="mini"
+					@click="
+						installSuccessDialog = false;
+						dialogVisible = false;
+					"
+					>{{ $t('dialog.downAgent.ok') }}</el-button
+				>
+			</span>
+		</el-dialog>
+
+		<el-dialog :visible.sync="startUpTaskDialog" :close-on-click-modal="false" width="40%">
+			<div class="success-main">
+				<i class="el-icon-success"></i>
+				<p>
+					{{ $t('dialog.downAgent.dfsSuccessText3') }}{{ $t('dialog.downAgent.dfsSuccessText4') }}
+					<!-- <span class="active">{{ $t('dialog.downAgent.clickView') }}</span> -->
+				</p>
+				<!-- <p>
+					{{ $t('dialog.downAgent.dfsSuccessText1') }}
+					<span class="active"> {{ $t('dialog.downAgent.creatTask') }}, </span
+					>{{ $t('dialog.downAgent.dfsSuccessText2') }}
+				</p> -->
+			</div>
+			<span slot="footer" class="dialog-footer">
+				<el-button
+					class="e-button"
+					type="primary"
+					size="mini"
+					@click="
+						startUpTaskDialog = false;
+						dialogVisible = false;
+					"
+					>{{ $t('dialog.downAgent.ok') }}</el-button
+				>
 			</span>
 		</el-dialog>
 	</div>
@@ -106,14 +150,27 @@
 <script>
 export default {
 	name: 'agentDown',
+	props: {
+		downLoadNum: {
+			type: Number
+		},
+		lastDataNum: {
+			type: Number
+		},
+		type: {
+			type: String
+		}
+	},
 	data() {
 		return {
-			dialogVisible: false,
-			downLoadType: '',
+			dialogVisible: true,
+			downLoadType: 'windows',
 			showTooltip: false,
-			installSuccessDialog: true,
+			installSuccessDialog: false,
+			startUpTaskDialog: false,
 			windowLink: '',
 			LinuxLink: '',
+			refreshLoading: false,
 			downType: [
 				{ name: 'Windows (64b it)', value: 'windows' },
 				{ name: 'Linux (64 bit)', value: 'Linux' }
@@ -121,8 +178,28 @@ export default {
 		};
 	},
 	mounted() {
-		this.handleRefresh();
+		this.windowLink =
+			'tapdata start backend token ' + this.$cookie.get('token') + ' ' + this.$cookie.get('user_id');
+		this.LinuxLink =
+			'wget "https://demo.tapdata.net/static/tapdata" && chmod +x tapdata && ./tapdata start backend token ' +
+			this.$cookie.get('token') +
+			' ' +
+			this.$cookie.get('user_id');
 	},
+
+	watch: {
+		downLoadNum(num) {
+			if (this.lastDataNum < num) {
+				if (this.type === 'dashboard') {
+					this.installSuccessDialog = true;
+				} else {
+					this.startUpTaskDialog = true;
+				}
+				this.refreshLoading = false;
+			}
+		}
+	},
+
 	methods: {
 		// 选择下载安装类型
 		chooseDownLoadType(val) {
@@ -141,27 +218,30 @@ export default {
 
 		// 刷新
 		handleRefresh() {
-			this.windowLink =
-				'tapdata start backend token ' + this.$cookie.get('token') + ' ' + this.$cookie.get('user_id');
-			this.LinuxLink =
-				'wget "https://demo.tapdata.net/static/tapdata" && chmod +x tapdata && ./tapdata start backend token ' +
-				this.$cookie.get('token') +
-				' ' +
-				this.$cookie.get('user_id');
+			this.refreshLoading = true;
+			this.$emit('refreAgent');
 		},
 
 		// 关闭agent弹窗回调
 		closeDownAgent() {
-			// this.$router.push({ path: '/dashboard' });
-			location.reload();
+			this.$emit('closeAgentDialog');
+		},
+
+		// 页面跳转
+		handlepageJump() {
+			this.$router.push({
+				name: 'clusterManagement'
+			});
+			this.dialogVisible = false;
+			this.installSuccessDialog = false;
 		}
 	}
 };
 </script>
 <style scoped lang="less">
 .agentDown {
-	width: 100%;
-	height: 100%;
+	// width: 100%;
+	// height: 100%;
 	.header {
 		user-select: none;
 		h1 {
@@ -274,8 +354,25 @@ export default {
 		font-size: 12px;
 		color: #666;
 		i {
+			float: left;
 			display: inline-block;
-			font-size: 16px;
+			padding-top: 4px;
+			font-size: 18px;
+			color: rgb(141, 196, 122);
+		}
+		p {
+			padding: 5px 30px;
+		}
+
+		.active {
+			color: #48b6e2;
+			cursor: pointer;
+		}
+		.dialog-footer {
+			text-align: center;
+			.install {
+				user-select: none;
+			}
 		}
 	}
 }
@@ -284,6 +381,9 @@ export default {
 .agentDown {
 	.el-dialog__footer {
 		text-align: center;
+		.e-button {
+			padding: 7px 30px !important;
+		}
 	}
 }
 </style>

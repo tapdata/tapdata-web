@@ -1083,7 +1083,7 @@ const cn = {
 					tip: '切换全屏'
 				}
 			},
-			nodeLoadSchemaDiaLog: '如果数据源有更新，此操作会更此节点的模型，是否继续?',
+			nodeLoadSchemaDiaLog: '如果数据源有更新，此操作会更新此节点的模型，是否继续?',
 			allNodeLoadSchemaDiaLog: '如果数据源有更新，此操作会更新各节点的模型，是否继续?'
 		},
 		preview: {
@@ -1344,7 +1344,8 @@ const cn = {
 			dfsSuccessText3: 'DFS Agent 安装成功，任务',
 			dfsSuccessText4: '已启动执行',
 			creatTask: '新建任务',
-			clickView: '点击查看'
+			clickView: '点击查看',
+			ok: '好的'
 		}
 	},
 	notification: {

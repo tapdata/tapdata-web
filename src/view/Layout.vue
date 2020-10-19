@@ -144,7 +144,14 @@
 			</el-main>
 		</el-container>
 
-		<DownAgent v-if="downLoadAgetntdialog"></DownAgent>
+		<DownAgent
+			v-if="downLoadAgetntdialog"
+			:downLoadNum="downLoadNum"
+			type="dashboard"
+			:lastDataNum="lastDataNum"
+			@closeAgentDialog="closeAgentDialog"
+			@refreAgent="handleRefreAgent"
+		></DownAgent>
 	</el-container>
 </template>
 
@@ -242,7 +249,8 @@ export default {
 			downLoadAgetntdialog: false,
 			agentTipFalg: true,
 			timer: '',
-			isDownLoadFalg: false
+			downLoadNum: undefined,
+			lastDataNum: 0
 		};
 	},
 	created() {
@@ -265,13 +273,13 @@ export default {
 		};
 
 		this.getDataApi();
-		if (!this.isDownLoadFalg) {
+		if (!this.downLoadNum) {
 			self.timer = setInterval(() => {
 				self.getDataApi();
-				if (this.isDownLoadFalg) {
+				if (this.downLoadNum) {
 					clearInterval(self.timer);
 				}
-			}, 500);
+			}, 5000);
 		}
 	},
 	destroyed() {
@@ -431,15 +439,44 @@ export default {
 		},
 
 		// 获取Agent是否安装
-		getDataApi(params) {
+		getDataApi() {
+			let params = [];
+			if (this.$cookie.get('isAdmin') == 0) {
+				params['filter[where][systemInfo.username][inq]'] = [
+					this.$cookie.get('user_id'),
+					this.$cookie.get('username')
+				];
+			} else {
+				params = null;
+			}
 			cluster.get(params).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
-						this.isDownLoadFalg = true;
-						this.agentTipFalg = false;
+						if (!this.downLoadNum) {
+							this.downLoadNum = res.data.length;
+							this.lastDataNum = 0;
+						}
+						if (this.downLoadNum < res.data.length) {
+							this.lastDataNum = this.downLoadNum;
+							this.downLoadNum = res.data.length;
+						}
+						// this.lastDataNum = res.data.length;
+						if (res.data.length) {
+							this.agentTipFalg = false;
+						}
 					}
 				}
 			});
+		},
+
+		// 关闭agent下载弹窗返回参数
+		closeAgentDialog() {
+			this.downLoadAgetntdialog = false;
+		},
+
+		// 刷新agent
+		handleRefreAgent() {
+			this.getDataApi();
 		}
 	}
 };

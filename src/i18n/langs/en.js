@@ -1436,7 +1436,15 @@ const en = {
 			windowsInstructionsText5:
 				'· After the Agent is successfully installed and started, this page will no longer pop up when the task is executed.',
 			noAgent: 'You have not installed the Agent and cannot perform the transfer task, please',
-			clickDownLoad: 'Click to download and install'
+			clickDownLoad: 'Click to download and install',
+			dfsSuccessText: 'DFS Agent installed successfully,',
+			dfsSuccessText1: 'Or click',
+			dfsSuccessText2: 'Create a data transfer task and experience the Tapdata DFS rapid data transfer function',
+			dfsSuccessText3: 'DFS Agent installed successfully, task',
+			dfsSuccessText4: 'Execution started',
+			creatTask: 'New task',
+			clickView: 'Click to view',
+			ok: 'OK'
 		}
 	},
 	dataVerification: {
