@@ -137,7 +137,7 @@ const cn = {
 			stopping: '关闭中',
 			stopped: '已关闭',
 			restarting: '重启中',
-			initialization: '初始化',
+			initialization: '初始化中',
 			loadingFinished: '初始化完成',
 			incremental: '增量中',
 			incrementalLag: '增量滞后'

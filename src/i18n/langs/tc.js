@@ -136,7 +136,7 @@ const tc = {
 			running: '運行中',
 			stopping: '關閉中',
 			stopped: '已關閉',
-			initialization: '初始化',
+			initialization: '初始化中',
 			loadingFinished: '初始化完成',
 			incremental: '增量中',
 			incrementalLag: '增量滯後'

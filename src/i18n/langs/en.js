@@ -139,7 +139,7 @@ const en = {
 			initialization: 'Initializing',
 			loadingFinished: 'Initialization completed',
 			incremental: 'CDC',
-			incrementalLag: 'Incremental Lag'
+			incrementalLag: 'CDC Lag'
 		}
 	},
 	message: {
