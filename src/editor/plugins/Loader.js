@@ -122,27 +122,32 @@ export const loadPlugins = function() {
 			if (type === 'app.Database') {
 				let addData = {
 					mysql: {
+						name: 'MySQL',
 						type: 'mysql',
 						shapeImage: 'static/editor/o-mysql.svg',
 						stencilImage: 'static/editor/mysql.svg'
 					},
 					oracle: {
 						type: 'oracle',
+						name: 'Oracle',
 						shapeImage: 'static/editor/o-ora.svg',
-						stencilImage: 'static/editor/ora.svg'
+						stencilImage: 'static/editor/ora2.svg'
 					},
 					db2: {
 						type: 'db2',
+						name: 'DB2',
 						shapeImage: 'static/editor/o-db2.svg',
 						stencilImage: 'static/editor/DB2.svg'
 					},
 					mongo: {
 						type: 'mongodb',
+						name: 'MongoDB',
 						shapeImage: 'static/editor/o-mongo.svg',
 						stencilImage: 'static/editor/mongo.svg'
 					},
 					pg: {
 						type: 'postgres',
+						name: 'Postgres',
 						shapeImage: 'static/editor/o-pg.svg',
 						stencilImage: 'static/editor/pg.svg'
 					}
@@ -153,6 +158,7 @@ export const loadPlugins = function() {
 					plugin.stencil['group'] = 'data';
 					plugin.stencil['subType'] = cell.type;
 					plugin.stencil['attrs']['image']['xlinkHref'] = cell.stencilImage;
+					plugin.stencil['attrs']['label']['text'] = cell.name;
 
 					addStencil(type, plugin.stencil, {
 						databaseType: cell.type,

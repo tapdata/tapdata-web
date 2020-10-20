@@ -204,7 +204,9 @@ export default {
 			let result = await connections.get({
 				filter: JSON.stringify({
 					where: {
-						database_type: { in: [this.model.databaseType] }
+						database_type: this.model.databaseType
+							? { in: [this.model.databaseType] }
+							: { nin: ['file', 'dummy', 'gridfs', 'rest api'] }
 					},
 					fields: {
 						name: 1,
@@ -216,7 +218,6 @@ export default {
 					order: 'name ASC'
 				})
 			});
-
 			this.databaseSelectConfig.loading = false;
 			let self = this;
 			if (result.data) {

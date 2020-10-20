@@ -3,7 +3,7 @@
 		<div class="treeBox" v-loading="loading" :element-loading-text="$t('dataFlow.dataLoading')">
 			<ul v-for="item in data" :key="item.id">
 				<li @dblclick="handleGraph(item)">
-					<span :class="`iconfont ${mapping[item.source.database_type]}`"></span>
+					<span :class="`iconfont ${mapping[item.source.database_type]} ${item.source.database_type}`"></span>
 					<el-tooltip class="table-tooltip" effect="dark" :content="item.label" placement="right">
 						<span style="margin-left: 10px">{{ item.label }}</span>
 					</el-tooltip>
@@ -219,6 +219,21 @@ export default {
 .table-tooltip {
 	display: inline-block;
 	width: 180px;
+}
+.mysql {
+	color: #4a94c6;
+}
+.oracle {
+	color: #da4136;
+}
+.db2 {
+	color: #2bc1e8;
+}
+.pg {
+	color: #2f638f;
+}
+.mongo {
+	color: #85c47c;
 }
 </style>
 <style scoped>
