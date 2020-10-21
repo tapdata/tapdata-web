@@ -527,14 +527,15 @@ export default {
 	methods: {
 		// 获取Agent是否安装
 		getDataApi() {
-			let params = [];
-			if (this.$cookie.get('isAdmin') == 0) {
-				params['filter[where][systemInfo.username][inq]'] = [
-					this.$cookie.get('user_id'),
-					this.$cookie.get('username')
-				];
-			} else {
-				params = null;
+			let params = null;
+			if (!parseInt(this.$cookie.get('isAdmin'))) {
+				params = {
+					where: {
+						'systemInfo.username': {
+							inq: [this.$cookie.get('user_id'), this.$cookie.get('username')]
+						}
+					}
+				};
 			}
 			cluster.get(params).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
