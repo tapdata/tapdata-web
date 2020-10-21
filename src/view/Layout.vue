@@ -152,10 +152,10 @@
 			v-if="downLoadAgetntdialog"
 			:downLoadNum="downLoadNum"
 			type="dashboard"
-			:lastDataNum="lastDataNum"
+			:lastDataNum="firstNum"
 			@closeAgentDialog="closeAgentDialog"
-			@refreAgent="handleRefreAgent"
 		></DownAgent>
+		<!-- @refreAgent="handleRefreAgent" -->
 	</el-container>
 </template>
 
@@ -251,10 +251,10 @@ export default {
 			notificationVisible: true,
 			unRead: 0,
 			downLoadAgetntdialog: false,
-			agentTipFalg: true,
+			agentTipFalg: false,
 			timer: '',
-			downLoadNum: undefined,
-			lastDataNum: 0,
+			downLoadNum: 0,
+			firstNum: undefined,
 			licenseExpire: '',
 			licenseExpireAble: true
 		};
@@ -464,17 +464,17 @@ export default {
 			cluster.get(params).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
-						if (!this.downLoadNum) {
-							this.downLoadNum = res.data.length;
-							this.lastDataNum = 0;
+						if (!this.firstNum) {
+							this.firstNum = res.data.length || 0;
+							this.downLoadNum = 0;
 						}
-						if (this.downLoadNum < res.data.length) {
-							this.lastDataNum = this.downLoadNum;
+						if (this.firstNum) {
 							this.downLoadNum = res.data.length;
 						}
-						// this.lastDataNum = res.data.length;
-						if (res.data.length) {
+						if (res.data.length > 0) {
 							this.agentTipFalg = false;
+						} else {
+							this.agentTipFalg = true;
 						}
 					}
 				}
@@ -486,10 +486,10 @@ export default {
 			this.downLoadAgetntdialog = false;
 		},
 
-		// 刷新agent
-		handleRefreAgent() {
-			this.getDataApi();
-		},
+		// // 刷新agent
+		// handleRefreAgent() {
+		// 	this.getDataApi();
+		// },
 
 		getLicense() {
 			this.$api('Licenses')

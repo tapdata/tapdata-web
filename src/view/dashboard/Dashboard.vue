@@ -3,7 +3,52 @@
 		<el-row :gutter="20" class="e-row">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
-					<echart-head :data="jobObj" @getAllData="getAllData"></echart-head>
+					<echart-head :data="syncJobObj" @getAllData="getAllData"></echart-head>
+					<div class="info fl">
+						<span>{{ $t('app.Home.allTask') }}</span>
+						<span class="number">{{ total }}</span>
+					</div>
+					<ul class="jobList">
+						<li v-for="task in taskList" :key="task.name">
+							<span
+								class="text"
+								:style="`color: ${colorMap[task.name]};`"
+								@click="handleStatus(task.name)"
+								>{{ $t('dataFlow.status.' + task.name) }}</span
+							><span>{{ task.value }}</span>
+						</li>
+					</ul>
+					<div class="chart">
+						<pieChart
+							:echartObj="allsyncJobsEchart"
+							v-if="allTaskEchart"
+							echartsId="allsyncJobId"
+							style="width: 100%"
+						></pieChart>
+					</div>
+				</div>
+			</el-col>
+			<el-col :span="12" class="e-col">
+				<div class="charts-list">
+					<echart-head :data="syncJobStatusObj" @getUnit="getUnit"></echart-head>
+					<ul class="status-box">
+						<li v-for="item in taskStatusStatistics" :key="item.value">
+							<p>{{ item.name }}</p>
+							<div
+								@click="jumpTask(item.value)"
+								:class="{ lagColor: item.value === 'Lag' && taskStatusList[item.value] > 0 }"
+							>
+								{{ taskStatusList[item.value] }}
+							</div>
+						</li>
+					</ul>
+				</div>
+			</el-col>
+		</el-row>
+		<el-row :gutter="20" class="e-row">
+			<el-col :span="12" class="e-col">
+				<div class="charts-list">
+					<echart-head :data="migrationJobObj" @getAllData="getAllData"></echart-head>
 					<div class="info fl">
 						<span>{{ $t('app.Home.allTask') }}</span>
 						<span class="number">{{ total }}</span>
@@ -32,14 +77,32 @@
 					</ul>
 					<div class="chart">
 						<pieChart
-							:echartObj="allTaskEchart"
+							:echartObj="allMigrationJobsEchart"
 							v-if="allTaskEchart"
-							echartsId="allTaskId"
+							echartsId="allMigrationJobId"
 							style="width: 100%"
 						></pieChart>
 					</div>
 				</div>
 			</el-col>
+			<el-col :span="12" class="e-col">
+				<div class="charts-list">
+					<echart-head :data="migrationJobStatusObj" @getUnit="getUnit"></echart-head>
+					<ul class="status-box">
+						<li v-for="item in taskStatusStatistics" :key="item.value">
+							<p>{{ item.name }}</p>
+							<div
+								@click="jumpTask(item.value)"
+								:class="{ lagColor: item.value === 'Lag' && taskStatusList[item.value] > 0 }"
+							>
+								{{ taskStatusList[item.value] }}
+							</div>
+						</li>
+					</ul>
+				</div>
+			</el-col>
+		</el-row>
+		<el-row :gutter="20" class="e-row">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="screeningObj" @getUnit="getUnit"></echart-head>
@@ -52,24 +115,6 @@
 						:echartsId="'dataScreeningId'"
 						style="width: 100%"
 					></shaftless-echart>
-				</div>
-			</el-col>
-		</el-row>
-		<el-row :gutter="20" class="e-row">
-			<el-col :span="12" class="e-col">
-				<div class="charts-list">
-					<echart-head :data="taskStatusObj" @getUnit="getUnit"></echart-head>
-					<ul class="status-box">
-						<li v-for="item in taskStatusStatistics" :key="item.value">
-							<p>{{ item.name }}</p>
-							<div
-								@click="jumpTask(item.value)"
-								:class="{ lagColor: item.value === 'Lag' && taskStatusList[item.value] > 0 }"
-							>
-								{{ taskStatusList[item.value] }}
-							</div>
-						</li>
-					</ul>
 				</div>
 			</el-col>
 			<el-col :span="12" class="e-col">
@@ -288,84 +333,12 @@ export default {
 				isHeader: false,
 				tableData: []
 			},
-			// ranking: {
-			// 	tooltip: {
-			// 		show: false,
-			// 		trigger: 'axis',
-			// 		axisPointer: {
-			// 			type: 'shadow'
-			// 		},
-			// 		formatter: '{b}<br/> {c}' + '(' + this.$t('app.Home.bar') + ')'
-			// 		// formatter: function(params) {
-			// 		// 	var res = '<div>' + params[0].name + '</div>' + '<div>' + params[0].value + '条</div>';
-			// 		// 	return res;
-			// 		// }
-			// 	},
-			// 	toolbox: {
-			// 		show: true
-			// 	},
-			// 	legend: {
-			// 		// data: [this.$('dataFlow.totalOutput'),this.$('dataFlow.totalInput')],
-			// 	},
-			// 	grid: {
-			// 		containLabel: true,
-			// 		bottom: '3%'
-			// 	},
-			// 	xAxis: {
-			// 		type: 'category',
-			// 		show: false,
-			// 		axisLine: {
-			// 			show: false,
-			// 			lineStyle: {
-			// 				color: '#ff00ff',
-			// 				width: 0
-			// 			}
-			// 		},
-			// 		data: [],
-			// 		axisPointer: {
-			// 			type: 'shadow'
-			// 		}
-			// 	},
-			// 	yAxis: {
-			// 		type: 'value',
-			// 		min: 0,
-			// 		axisLine: { show: false },
-			// 		axisTick: { show: false },
-			// 		splitLine: { show: false },
-			// 		splitArea: { show: false },
-			// 		axisLabel: {
-			// 			formatter: function() {
-			// 				return '';
-			// 			}
-			// 		}
-			// 	},
-			// 	series: [
-			// 		{
-			// 			type: 'bar',
-			// 			data: [],
-			// 			barWidth: '60%',
-			// 			itemStyle: {
-			// 				normal: {
-			// 					color: '#90C3E6',
-			// 					// color: function(params) {
-			// 					// 	var colorList = ['#62a569', '#48b6e2'];
-			// 					// 	return colorList[params.dataIndex];
-			// 					// },
-			// 					label: {
-			// 						show: true,
-			// 						verticalAlign: 'middle',
-			// 						position: 'top',
-			// 						distance: 10,
-			// 						color: '#666',
-			// 						formatter: function(val) {
-			// 							return val.name.length > 6 ? val.name.slice(0, 6) + '...' : val.name;
-			// 						}
-			// 					}
-			// 				}
-			// 			}
-			// 		}
-			// 	]
-			// },
+			syncJobObj: null,
+			migrationJobObj: null,
+			syncJobStatusObj: null,
+			migrationJobStatusObj: null,
+			allsyncJobsEchart: null,
+			allMigrationJobsEchart: null,
 			dataScreening: {
 				tooltip: {
 					show: false,
@@ -460,10 +433,25 @@ export default {
 		this.getDataFlowApi();
 		// this.getRankingData();
 
-		this.jobObj = {
-			title: this.$t('app.Home.taskOverview'),
+		this.syncJobObj = {
+			title: this.$t('app.Home.syncJobsOverview'),
 			type: 'job',
 			allFalg: true
+		};
+		this.migrationJobObj = {
+			title: this.$t('app.Home.migrationJobsOverview'),
+			type: 'migrationJobs',
+			allFalg: true
+		};
+		this.syncJobStatusObj = {
+			title: this.$t('app.Home.syncJobsStatus'),
+			type: 'syncJobsStatus',
+			allFalg: false
+		};
+		this.migrationJobStatusObj = {
+			title: this.$t('app.Home.migrationJobsStatus'),
+			type: 'migrationJobsStatus',
+			allFalg: false
 		};
 		this.screeningObj = {
 			title: this.$t('app.Home.transmissionOverview'),
@@ -494,6 +482,9 @@ export default {
 			type: 'serverProcess',
 			allFalg: true
 		};
+
+		this.allsyncJobsEchart = this.allTaskEchart;
+		this.allMigrationJobsEchart = this.allTaskEchart;
 	},
 	methods: {
 		// 跳转任务状态统计
@@ -541,7 +532,8 @@ export default {
 					}
 				});
 
-				self.allTaskEchart.series[0].data = self.taskList;
+				self.allsyncJobsEchart.series[0].data = self.taskList;
+				self.allMigrationJobsEchart.series[0].data = self.taskList;
 				self.total = res.data.chart1.totalDataFlows;
 
 				self.dataScreening.series[0].data = [

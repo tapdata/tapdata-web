@@ -115,14 +115,16 @@ const cn = {
 		},
 		Home: {
 			all: '全部',
-			taskOverview: '任务概览',
+			syncJobsOverview: '同步任务概览',
+			migrationJobsOverview: '迁移任务概览',
 			allTask: '全部任务',
 			transmissionOverview: '传输总览',
 			transferTask: '传输任务',
 			wrongTask: '错误任务',
 			taskRanking: '任务传输排行',
 			serverProcess: '服务器与进程',
-			taskStatusStatistics: '任务状态统计',
+			syncJobsStatus: '同步任务状态',
+			migrationJobsStatus: '迁移任务状态',
 			before: '前',
 			pcs: '条',
 			server: '服务器',
@@ -360,7 +362,7 @@ const cn = {
 			cdc: '增量中',
 			initializing: '初始化中',
 			initialized: '初始化完成',
-			lag: '增量滞后'
+			Lag: '增量滞后'
 		},
 		lag: '滞后',
 		executionStatus: '执行状态',

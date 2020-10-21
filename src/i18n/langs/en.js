@@ -115,14 +115,16 @@ const en = {
 		},
 		Home: {
 			all: 'All',
-			taskOverview: 'Task Overview',
+			syncJobsOverview: 'Sync Jobs Overview',
+			migrationJobsOverview: 'Migration Jobs Overview',
 			allTask: 'All tasks',
 			transmissionOverview: 'Transmission Overview',
 			transferTask: 'Transfer Task',
 			wrongTask: 'Wrong Task',
 			taskRanking: 'Task Transfer Ranking',
 			serverProcess: 'Server and Process',
-			taskStatusStatistics: 'Task Status Statistics',
+			syncJobsStatus: 'Sync Jobs Status',
+			migrationJobsStatus: 'Migration Jobs Status',
 			before: 'Front',
 			pcs: 'bar',
 			server: 'Server',
@@ -359,7 +361,7 @@ const en = {
 			cdc: 'CDC',
 			initializing: 'Initializing',
 			initialized: 'Initialized',
-			lag: 'Lag'
+			Lag: 'Lag'
 		},
 		lag: 'lag',
 		executionStatus: 'Execution status',

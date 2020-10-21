@@ -1,6 +1,6 @@
 <template>
 	<div class="agentDown">
-		<el-dialog :visible.sync="dialogVisible" :close-on-click-modal="false" @close="closeDownAgent" width="70%">
+		<el-dialog :visible.sync="dialogVisible" :close-on-click-modal="false" @close="closeDownAgent" width="60%">
 			<template slot="title">
 				<div class="header">
 					<h1>{{ $t('dialog.downAgent.headTitle') }}</h1>
@@ -79,11 +79,14 @@
 				</ul>
 			</section>
 			<span slot="footer" class="dialog-footer">
-				<el-button type="primary" size="mini" @click="handleRefresh">
+				<!-- <el-button type="primary" size="mini" @click="handleRefresh">
 					<i class="el-icon-loading" v-if="refreshLoading"></i>
 					{{ $t('dialog.downAgent.refresh') }}</el-button
-				>
-				<el-button size="mini" class="install">{{ $t('dialog.downAgent.waitingInstall') }} ...</el-button>
+				> -->
+				<el-button size="mini" class="install">
+					{{ $t('dialog.downAgent.waitingInstall') }}
+					<el-image style="width: 32px; height: 15px;" src="static/editor/wating.svg"></el-image>
+				</el-button>
 			</span>
 		</el-dialog>
 
@@ -216,11 +219,11 @@ export default {
 			this.showTooltip = true;
 		},
 
-		// 刷新
-		handleRefresh() {
-			this.refreshLoading = true;
-			this.$emit('refreAgent');
-		},
+		// // 刷新
+		// handleRefresh() {
+		// 	this.refreshLoading = true;
+		// 	this.$emit('refreAgent');
+		// },
 
 		// 关闭agent弹窗回调
 		closeDownAgent() {
