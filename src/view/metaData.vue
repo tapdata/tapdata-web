@@ -114,6 +114,9 @@ export default {
 					}
 				}
 			};
+			if (!parseInt(this.$cookie.get('isAdmin'))) {
+				params['filter[where][user_id][regexp]'] = this.$cookie.get('user_id');
+			}
 			MetadataDefinitions.get(params).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
