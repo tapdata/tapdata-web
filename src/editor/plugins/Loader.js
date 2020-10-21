@@ -133,23 +133,41 @@ export const loadPlugins = function() {
 						shapeImage: 'static/editor/o-ora.svg',
 						stencilImage: 'static/editor/ora2.svg'
 					},
-					db2: {
-						type: 'db2',
-						name: 'DB2',
-						shapeImage: 'static/editor/o-db2.svg',
-						stencilImage: 'static/editor/DB2.svg'
-					},
 					mongo: {
 						type: 'mongodb',
 						name: 'MongoDB',
 						shapeImage: 'static/editor/o-mongo.svg',
 						stencilImage: 'static/editor/mongo.svg'
 					},
+					db2: {
+						type: 'db2',
+						name: 'DB2',
+						shapeImage: 'static/editor/o-db2.svg',
+						stencilImage: 'static/editor/DB2.svg'
+					},
 					pg: {
 						type: 'postgres',
 						name: 'Postgres',
 						shapeImage: 'static/editor/o-pg.svg',
 						stencilImage: 'static/editor/pg.svg'
+					},
+					sqlserver: {
+						type: 'sqlserver',
+						name: 'SQL Server',
+						shapeImage: 'static/editor/o-sqlserver.svg',
+						stencilImage: 'static/editor/sqlserver.svg'
+					},
+					gbase: {
+						type: 'gbase-8s',
+						name: 'GBase 8s',
+						shapeImage: 'static/editor/o-gbase.svg',
+						stencilImage: 'static/editor/gbase.svg'
+					},
+					sybase: {
+						type: 'sybase ase',
+						name: 'Sybase ASE',
+						shapeImage: 'static/editor/o-sybase.svg',
+						stencilImage: 'static/editor/sybase.svg'
 					}
 				};
 				Object.keys(addData).forEach(database => {
@@ -159,10 +177,12 @@ export const loadPlugins = function() {
 					plugin.stencil['subType'] = cell.type;
 					plugin.stencil['attrs']['image']['xlinkHref'] = cell.stencilImage;
 					plugin.stencil['attrs']['label']['text'] = cell.name;
+					plugin.stencil['attrs']['root']['dataTooltip'] = cell.name;
 
 					addStencil(type, plugin.stencil, {
 						databaseType: cell.type,
-						shapeImage: cell.shapeImage
+						shapeImage: cell.shapeImage,
+						name: cell.name
 					});
 				});
 			} else {

@@ -6,18 +6,109 @@
   "description": "Tapdata 线装小图标",
   "glyphs": [
     {
+      "icon_id": "17780636",
+      "name": "gbase",
+      "font_class": "gbase",
+      "unicode": "e6eb",
+      "unicode_decimal": 59115
+    },
+    {
+      "icon_id": "17780637",
+      "name": "mongo",
+      "font_class": "mongo1",
+      "unicode": "e6ec",
+      "unicode_decimal": 59116
+    },
+    {
+      "icon_id": "17780638",
+      "name": "o-mongo",
+      "font_class": "o-mongo",
+      "unicode": "e6ed",
+      "unicode_decimal": 59117
+    },
+    {
+      "icon_id": "17780639",
+      "name": "o-gbase",
+      "font_class": "o-gbase",
+      "unicode": "e6ee",
+      "unicode_decimal": 59118
+    },
+    {
+      "icon_id": "17780640",
+      "name": "o-mysql",
+      "font_class": "o-mysql",
+      "unicode": "e6ef",
+      "unicode_decimal": 59119
+    },
+    {
+      "icon_id": "17780641",
+      "name": "o-db2",
+      "font_class": "o-db2",
+      "unicode": "e6f0",
+      "unicode_decimal": 59120
+    },
+    {
+      "icon_id": "17780642",
+      "name": "o-ora",
+      "font_class": "o-ora",
+      "unicode": "e6f1",
+      "unicode_decimal": 59121
+    },
+    {
+      "icon_id": "17780643",
+      "name": "o-pg",
+      "font_class": "o-pg",
+      "unicode": "e6f3",
+      "unicode_decimal": 59123
+    },
+    {
+      "icon_id": "17780646",
+      "name": "ora3",
+      "font_class": "ora3",
+      "unicode": "e6f6",
+      "unicode_decimal": 59126
+    },
+    {
+      "icon_id": "17780647",
+      "name": "o-sqlserver",
+      "font_class": "o-sqlserver",
+      "unicode": "e6f7",
+      "unicode_decimal": 59127
+    },
+    {
+      "icon_id": "17780648",
+      "name": "sybase",
+      "font_class": "sybase",
+      "unicode": "e6f8",
+      "unicode_decimal": 59128
+    },
+    {
+      "icon_id": "17780649",
+      "name": "o-sybase",
+      "font_class": "o-sybase",
+      "unicode": "e6f9",
+      "unicode_decimal": 59129
+    },
+    {
+      "icon_id": "17780650",
+      "name": "sqlserver",
+      "font_class": "sqlserver",
+      "unicode": "e6fa",
+      "unicode_decimal": 59130
+    },
+    {
+      "icon_id": "6644400",
+      "name": "个人中心",
+      "font_class": "gerenzhongxin",
+      "unicode": "e6e5",
+      "unicode_decimal": 59109
+    },
+    {
       "icon_id": "17617090",
       "name": "pg",
       "font_class": "pg1",
       "unicode": "e6e9",
       "unicode_decimal": 59113
-    },
-    {
-      "icon_id": "17616454",
-      "name": "mongo",
-      "font_class": "mongo",
-      "unicode": "e6e3",
-      "unicode_decimal": 59107
     },
     {
       "icon_id": "17616456",
@@ -32,20 +123,6 @@
       "font_class": "DB2",
       "unicode": "e6e6",
       "unicode_decimal": 59110
-    },
-    {
-      "icon_id": "17616758",
-      "name": "ora",
-      "font_class": "ora",
-      "unicode": "e6e7",
-      "unicode_decimal": 59111
-    },
-    {
-      "icon_id": "17616859",
-      "name": "ora2",
-      "font_class": "ora2",
-      "unicode": "e6e8",
-      "unicode_decimal": 59112
     },
     {
       "icon_id": "3758823",

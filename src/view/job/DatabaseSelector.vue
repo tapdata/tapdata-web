@@ -1,11 +1,13 @@
 <template>
 	<div class="box">
 		<div class="treeBox" v-loading="loading" :element-loading-text="$t('dataFlow.dataLoading')">
-			<ul v-for="item in data" :key="item.id">
-				<li @dblclick="handleGraph(item)">
-					<span :class="`iconfont ${mapping[item.source.database_type]} ${item.source.database_type}`"></span>
+			<ul>
+				<li @dblclick="handleGraph(item)" v-for="item in data" :key="item.id">
+					<span
+						:class="`iconfont icon ${mapping[item.source.database_type]} ${item.source.database_type}`"
+					></span>
 					<el-tooltip class="table-tooltip" effect="dark" :content="item.label" placement="right">
-						<span style="margin-left: 10px">{{ item.label }}</span>
+						<span class="text">{{ item.label }}</span>
 					</el-tooltip>
 				</li>
 			</ul>
@@ -42,10 +44,14 @@ export default {
 			},
 			mapping: {
 				mysql: 'icon-mysql1',
-				oracle: 'icon-ora',
+				oracle: 'icon-ora3',
 				db2: 'icon-DB2',
-				mongo: 'icon-mongo',
-				pg: 'icon-pg1'
+				mongodb: 'icon-mongo1',
+				postgres: 'icon-pg1',
+				gridfs: 'icon-gridfs2',
+				sqlserver: 'icon-sqlserver',
+				'gbase-8s': 'icon-gbase',
+				'sybase ase': 'icon-sybase'
 			},
 			loading: false
 		};
@@ -71,7 +77,7 @@ export default {
 						in: ['database', 'ftp']
 					},
 					'source.database_type': {
-						in: ['mysql', 'mongo', 'db2', 'oracle', 'pg']
+						in: ['mysql', 'mongodb', 'db2', 'oracle', 'postgres', 'gridfs', 'file']
 					},
 					is_deleted: false
 				},
@@ -128,7 +134,9 @@ export default {
 		handleGraph(data) {
 			log('tableSelect handleGraph', data);
 			let mapping = {
-				database: 'app.Database'
+				database: 'app.Database',
+				gridfs: 'app.GridFSNode',
+				file: 'app.FileNode'
 			};
 
 			let formData = {};
@@ -169,8 +177,11 @@ export default {
 				mysql: 'static/editor/o-mysql.svg',
 				oracle: 'static/editor/o-ora.svg',
 				db2: 'static/editor/o-db2.svg',
-				mongo: 'static/editor/o-mongo.svg',
-				pg: 'static/editor/o-pg.svg'
+				mongodb: 'static/editor/o-mongo.svg',
+				postgres: 'static/editor/o-pg.svg',
+				sqlserver: 'static/editor/o-sqlserver.svg',
+				'gbase-8s': 'static/editor/o-gbase.svg',
+				'sybase ase': 'static/editor/o-sybase.svg'
 			};
 			let coordinates = this.editor.graph.getClientOffset();
 			cell.position(coordinates.x + 400, coordinates.y + this.count + 160);
@@ -192,17 +203,40 @@ export default {
 			-webkit-box-align: center;
 			-ms-flex-align: center;
 			align-items: center;
-			height: 26px;
 			cursor: pointer;
-			width: 180px;
 			overflow: hidden;
 			color: #606266;
 			text-overflow: ellipsis;
 			font-size: 12px;
-			margin-left: 10px;
-		}
-		&:hover {
-			background-color: #f5f7fa;
+			width: 210px;
+			height: 40px;
+			background: #fff;
+			box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.11);
+			border-radius: 3px;
+			margin-left: 9px;
+			margin-right: 15px;
+			margin-top: 7px;
+			padding-right: 2px;
+			.icon {
+				width: 24px;
+				height: 24px;
+				background: #fff;
+				border: 1px solid #eee;
+				border-radius: 3px;
+				text-align: center;
+				line-height: 24px;
+				margin-left: 6px;
+			}
+			.text {
+				display: inline-block;
+				margin-left: 10px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+			&:hover {
+				box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+			}
 		}
 	}
 }
@@ -229,11 +263,37 @@ export default {
 .db2 {
 	color: #2bc1e8;
 }
-.pg {
+.postgres {
 	color: #2f638f;
 }
-.mongo {
+.mongodb {
 	color: #85c47c;
+}
+.gridfs {
+	color: #4aaf47;
+}
+.sqlserver {
+	color: #2f638f;
+}
+.gbase-8s {
+	color: #85c47c;
+}
+.sybase ase {
+	color: #4aaf47;
+}
+.noData {
+	height: calc(100% - 60px);
+	padding-top: 9%;
+	color: #999;
+	font-size: 12px;
+	background-color: #fff;
+	div {
+		text-align: center;
+	}
+	.clickLoad {
+		cursor: pointer;
+		color: #48b6e2;
+	}
 }
 </style>
 <style scoped>

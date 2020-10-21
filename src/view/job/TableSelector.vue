@@ -65,7 +65,7 @@
 							<el-tooltip class="table-tooltip" effect="dark" :content="node.label" placement="right">
 								<div>
 									<span v-if="data.meta_type === 'database'">{{ node.label }}</span>
-									<span @dblclick="handleGraph(data)">{{ node.label }}</span>
+									<span v-else @dblclick="handleGraph(data)">{{ node.label }}</span>
 								</div>
 							</el-tooltip>
 						</span>

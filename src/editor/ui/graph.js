@@ -346,6 +346,7 @@ export default class Graph extends Component {
 					if (cell.get('type') === 'app.Database') {
 						newCell.setFormData(cell.getFormData());
 						newCell.attr('image/xlinkHref', newCell.getFormData().shapeImage);
+						newCell.attr('label/text', newCell.getFormData().name);
 					}
 					return newCell;
 				} else {
