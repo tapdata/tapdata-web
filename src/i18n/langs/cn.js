@@ -645,7 +645,8 @@ const cn = {
 						},
 						custom_sql: {
 							label: '自定义SQL',
-							placeholder: '请输入自定义SQL'
+							placeholder: '请输入自定义SQL',
+							mplaceholder: '请输入自定义MQL'
 						},
 						initial_offset: {
 							label: '自定义SQL增量条件',

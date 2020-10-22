@@ -256,7 +256,8 @@ export default {
 			downLoadNum: 0,
 			firstNum: undefined,
 			licenseExpire: '',
-			licenseExpireAble: true
+			licenseExpireAble: true,
+			licenseExpireDate: ''
 		};
 	},
 	created() {
@@ -387,7 +388,7 @@ export default {
 					break;
 				case 'license':
 					this.$message.info(
-						this.$t('app.menu.licenseBefore') + this.licenseExpire + this.$t('app.menu.licenseAfter')
+						this.$t('app.menu.licenseBefore') + this.licenseExpireDate + this.$t('app.menu.licenseAfter')
 					);
 					break;
 				case 'home':
@@ -498,11 +499,12 @@ export default {
 				.then(res => {
 					let expires_on = res.data.expires_on || '';
 					let endTime = expires_on - new Date().getTime();
-					expires_on = parseInt(endTime / 1000 / 60 / 60 / 24); //相差天数
-					if (expires_on <= 90) {
+					endTime = parseInt(endTime / 1000 / 60 / 60 / 24); //相差天数
+					if (endTime <= 90) {
 						this.licenseExpireAble = true;
 					}
-					this.licenseExpire = expires_on;
+					this.licenseExpire = endTime;
+					this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss');
 				});
 		}
 	}

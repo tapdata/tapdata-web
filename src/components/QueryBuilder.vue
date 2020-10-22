@@ -104,12 +104,19 @@
 						type="textarea"
 						rows="10"
 						v-model="value.editSql"
-						:placeholder="$t('editor.cell.data_node.table.form.custom_sql.placeholder')"
+						:placeholder="
+							databaseType == 'mongodb'
+								? $t('editor.cell.data_node.table.form.custom_sql.mplaceholder')
+								: $t('editor.cell.data_node.table.form.custom_sql.placeholder')
+						"
 						size="mini"
 					></el-input>
 				</el-form-item>
 
-				<el-form-item :label="$t('editor.cell.data_node.table.form.initial_offset.label')">
+				<el-form-item
+					v-if="databaseType != 'mongodb'"
+					:label="$t('editor.cell.data_node.table.form.initial_offset.label')"
+				>
 					<el-input
 						:value="initialOffset"
 						@input="$emit('update:initialOffset', $event)"
