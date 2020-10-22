@@ -13,7 +13,7 @@
 							<span
 								class="text"
 								:style="`color: ${colorMap[task.name]};`"
-								@click="handleStatus(task.name)"
+								@click="handleSncyStatus(task.name)"
 								>{{ $t('dataFlow.status.' + task.name) }}</span
 							><span>{{ task.value }}</span>
 						</li>
@@ -21,7 +21,7 @@
 					<div class="chart">
 						<pieChart
 							:echartObj="allsyncJobsEchart"
-							v-if="allTaskEchart"
+							v-if="allsyncJobsEchart"
 							echartsId="allsyncJobId"
 							style="width: 100%"
 						></pieChart>
@@ -35,10 +35,10 @@
 						<li v-for="item in taskStatusStatistics" :key="item.value">
 							<p>{{ item.name }}</p>
 							<div
-								@click="jumpTask(item.value)"
-								:class="{ lagColor: item.value === 'Lag' && taskStatusList[item.value] > 0 }"
+								@click="jumpSyncTask(item.value)"
+								:class="{ lagColor: item.value === 'Lag' && syncJobStatusList[item.value] > 0 }"
 							>
-								{{ taskStatusList[item.value] }}
+								{{ syncJobStatusList[item.value] }}
 							</div>
 						</li>
 					</ul>
@@ -58,7 +58,7 @@
 							<span
 								class="text"
 								:style="`color: ${colorMap[task.name]};`"
-								@click="handleStatus(task.name)"
+								@click="handleMigrationStatus(task.name)"
 								>{{ $t('dataFlow.status.' + task.name) }}</span
 							><span>{{ task.value }}</span>
 						</li>
@@ -78,7 +78,7 @@
 					<div class="chart">
 						<pieChart
 							:echartObj="allMigrationJobsEchart"
-							v-if="allTaskEchart"
+							v-if="allMigrationJobsEchart"
 							echartsId="allMigrationJobId"
 							style="width: 100%"
 						></pieChart>
@@ -92,10 +92,10 @@
 						<li v-for="item in taskStatusStatistics" :key="item.value">
 							<p>{{ item.name }}</p>
 							<div
-								@click="jumpTask(item.value)"
-								:class="{ lagColor: item.value === 'Lag' && taskStatusList[item.value] > 0 }"
+								@click="jumpMigrationTask(item.value)"
+								:class="{ lagColor: item.value === 'Lag' && migrationJobStatusList[item.value] > 0 }"
 							>
-								{{ taskStatusList[item.value] }}
+								{{ migrationJobStatusList[item.value] }}
 							</div>
 						</li>
 					</ul>
@@ -253,7 +253,13 @@ export default {
 			taskRankingObj: null, // 任务传输排行
 			serverProcessObj: null, //服务器与进程
 			taskStatusObj: null, // 任务状态统计
-			taskStatusList: {
+			syncJobStatusList: {
+				Lag: 0,
+				cdc: 0,
+				initialized: 0,
+				initializing: 0
+			},
+			migrationJobStatusList: {
 				Lag: 0,
 				cdc: 0,
 				initialized: 0,
@@ -435,7 +441,7 @@ export default {
 
 		this.syncJobObj = {
 			title: this.$t('app.Home.syncJobsOverview'),
-			type: 'job',
+			type: 'syncJobs',
 			allFalg: true
 		};
 		this.migrationJobObj = {
@@ -488,22 +494,41 @@ export default {
 	},
 	methods: {
 		// 跳转任务状态统计
-		jumpTask(val) {
+		jumpSyncTask(val) {
 			let routeUrl = this.$router.resolve({
-				path: '/dataFlows',
+				path: 'dataFlows?mapping=custom',
 				query: { executionStatus: val }
 			});
 
 			window.open(routeUrl.href);
 		},
 
-		// 点击运行状态跳转到任务列表
-		handleStatus(status) {
+		// 跳转任务状态统计
+		jumpMigrationTask(val) {
 			let routeUrl = this.$router.resolve({
-				path: '/dataFlows',
+				path: 'dataFlows?mapping=cluster-clone',
+				query: { executionStatus: val }
+			});
+
+			window.open(routeUrl.href);
+		},
+
+		// 点击同步运行状态跳转到任务列表
+		handleSncyStatus(status) {
+			let routeUrl = this.$router.resolve({
+				path: '/dataFlows?mapping=custom',
 				query: { dataFlowStatus: status }
 			});
 
+			window.open(routeUrl.href);
+		},
+
+		// 点击迁移运行状态跳转到任务列表
+		handleMigrationStatus(status) {
+			let routeUrl = this.$router.resolve({
+				path: '/dataFlows?mapping=cluster-clone',
+				query: { dataFlowStatus: status }
+			});
 			window.open(routeUrl.href);
 		},
 
@@ -547,7 +572,8 @@ export default {
 				self.unitData = self.dataScreening.series[0].data;
 				self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
 				self.transfer.tableData = res.data.chart3;
-				self.taskStatusList = res.data.chart4;
+				self.syncJobStatusList = res.data.chart4;
+				self.migrationJobStatusList = res.data.chart4;
 				self.handleData(res.data.chart3);
 			});
 		},
@@ -607,14 +633,22 @@ export default {
 
 		// 点击全部
 		getAllData(data) {
-			if (data.type !== 'serverProcess') {
-				this.$router.push({
-					path: '/dataFlows'
-				});
-			} else {
-				this.$router.push({
-					path: '/clusterManagement'
-				});
+			switch (data.type) {
+				case 'serverProcess':
+					this.$router.push({
+						path: '/clusterManagement'
+					});
+					break;
+				case 'syncJobs':
+					this.$router.push({
+						path: '/dataFlows?mapping=custom'
+					});
+					break;
+				case 'migrationJobs':
+					this.$router.push({
+						path: '/dataFlows?mapping=cluster-clone'
+					});
+					break;
 			}
 		},
 
