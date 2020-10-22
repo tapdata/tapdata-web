@@ -151,7 +151,8 @@ export default {
 				table_prefix: '',
 				table_suffix: '',
 				dropType: 'no_drop',
-				syncObjects: []
+				syncObjects: [],
+				type: 'postgres'
 			},
 			databaseInfo: {
 				connection_type: '',
@@ -177,10 +178,6 @@ export default {
 	// 	}
 	// },
 
-	mounted() {
-		this.loadDataSource();
-	},
-
 	watch: {
 		model: {
 			deep: true,
@@ -198,6 +195,8 @@ export default {
 			this.cell = cell;
 			this.isSourceDataNode = dataNodeInfo && !dataNodeInfo.isTarget;
 			editorMonitor = vueAdapter.editor;
+
+			this.loadDataSource();
 		},
 
 		async loadDataSource() {
@@ -205,7 +204,9 @@ export default {
 			let result = await connections.get({
 				filter: JSON.stringify({
 					where: {
-						database_type: { nin: ['file', 'dummy', 'gridfs', 'rest api'] }
+						database_type: this.model.databaseType
+							? { in: [this.model.databaseType] }
+							: { nin: ['file', 'dummy', 'gridfs', 'rest api'] }
 					},
 					fields: {
 						name: 1,
@@ -217,7 +218,6 @@ export default {
 					order: 'name ASC'
 				})
 			});
-
 			this.databaseSelectConfig.loading = false;
 			let self = this;
 			if (result.data) {

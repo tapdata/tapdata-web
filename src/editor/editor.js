@@ -20,11 +20,13 @@ import DVResult from '../view/job/DataVerify/Result';
 import log from '../log';
 import Panel from './ui/panel';
 import TableSelector from '../view/job/TableSelector';
+import DatabaseSelector from '../view/job/DatabaseSelector';
 import { DEFAULT_SETTING } from './constants';
 import { EditorEventType } from './lib/events';
 import i18n from '../i18n/i18n';
 
 import factory from '../api/factory';
+
 const connections = factory('connections');
 
 export default class Editor extends BaseObject {
@@ -171,23 +173,40 @@ export default class Editor extends BaseObject {
 			editor: self,
 			container: self.ui.getGraphContainer()
 		});
-		let treeVueComponent = new VueComponent({
-			name: 'treeVueComponent',
-			editor: this,
-			component: TableSelector
-		});
+		this.initSettings();
+	}
 
+	setSelector(type) {
+		let leftSidebar = this.getLeftSidebar();
 		leftSidebar
 			.getContentEl()
 			.find('[data-name=tableSelector] .elements>*')
 			.remove();
-		leftSidebar
-			.getContentEl()
-			.find('[data-name=tableSelector] .elements')
-			.prepend(treeVueComponent.getContentEl());
-		//treePanel.add(treeVueComponent);
-
-		this.initSettings();
+		if (type === 'cluster-clone') {
+			let databaseVueComponent = new VueComponent({
+				name: 'databaseVueComponent',
+				editor: this,
+				component: DatabaseSelector
+			});
+			leftSidebar
+				.getContentEl()
+				.find('[data-name=tableSelector] .elements')
+				.prepend(databaseVueComponent.getContentEl());
+			leftSidebar
+				.getContentEl()
+				.find('[data-name=processor]')
+				.remove();
+		} else {
+			let tableVueComponent = new VueComponent({
+				name: 'tableVueComponent',
+				editor: this,
+				component: TableSelector
+			});
+			leftSidebar
+				.getContentEl()
+				.find('[data-name=tableSelector] .elements')
+				.prepend(tableVueComponent.getContentEl());
+		}
 	}
 
 	/**

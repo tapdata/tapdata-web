@@ -317,6 +317,7 @@ export default {
 				{ type: 'cdc', name: this.$t('dataFlow.cdc') }
 			],
 			flowDataName: '',
+			mappingTemplate: '',
 			statusBtMap
 		};
 	},
@@ -332,6 +333,7 @@ export default {
 		if (!this.$route.query.id) {
 			this.getGlobalSetting();
 		}
+		this.mappingTemplate = this.$route.query.mapping;
 
 		let self = this;
 		this.getDataApi();
@@ -447,6 +449,7 @@ export default {
 				this.setEditable(true);
 				if (!this.dataFlow) document.title = this.$t('dataFlow.newTaksName');
 			}
+			this.setSelector(this.$route.query.mapping);
 		},
 		/****
 		 * Auto save
@@ -497,7 +500,7 @@ export default {
 			if (tdata.id != this.$route.query.id) {
 				let routeUrl = this.$router.resolve({
 					path: '/job',
-					query: { id: tdata.id }
+					query: { id: tdata.id, mapping: this.mappingTemplate }
 				});
 				window.opener.windows.push(window.open(routeUrl.href, '_blank'));
 				window.opener.windows[window.opener.windows.length - 1].tpdata = tdata;
@@ -712,7 +715,8 @@ export default {
 								self.$router.push({
 									path: '/job',
 									query: {
-										id: dataFlow.id
+										id: dataFlow.id,
+										mapping: this.mappingTemplate
 									}
 								});
 							}
@@ -962,7 +966,8 @@ export default {
 										self.$router.push({
 											path: '/job',
 											query: {
-												id: dataFlow.id
+												id: dataFlow.id,
+												mapping: this.mappingTemplate
 											}
 										});
 										self.wsWatch();
@@ -1095,7 +1100,8 @@ export default {
 							path: '/job',
 							query: {
 								id: rest.id,
-								isMoniting: true
+								isMoniting: true,
+								mapping: this.mappingTemplate
 							}
 						});
 						self.$message.success(self.$t('message.taskStart'));
@@ -1334,7 +1340,8 @@ export default {
 				this.$router.push({
 					path: '/job',
 					query: {
-						id: this.dataFlow.id
+						id: this.dataFlow.id,
+						mapping: this.mappingTemplate
 					}
 				});
 				location.reload();
@@ -1345,6 +1352,13 @@ export default {
 			} else {
 				//this.$message.error(this.$t('message.save_before_running'));
 			}
+		},
+
+		setSelector(type) {
+			if (!type) {
+				type = 'custom';
+			}
+			this.editor.setSelector(type);
 		},
 
 		/**

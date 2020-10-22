@@ -11,11 +11,11 @@ module.exports = {
 		assetsPublicPath: '/',
 		proxyTable: {
 			'/api': {
-				target: 'http://backend:3030',
+				target: 'http://backend:3030/',
 				changeOrigin: false
 			},
 			'/oauth': {
-				target: 'http://backend:3030',
+				target: 'http://backend:3030/',
 				changeOrigin: false
 			},
 			'/ws': {

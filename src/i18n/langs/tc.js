@@ -75,6 +75,7 @@ const tc = {
 			dashboard: '控制台',
 			connections: '数据源',
 			dataSync: '數據同步',
+			dataTransmission: '數據傳輸',
 			dataFlows: '數據採集',
 			dataFlowsAll: '全部任務',
 			dataFlowsRunning: '運行中任務',
@@ -111,7 +112,9 @@ const tc = {
 			delFavMenu: '删除收藏',
 			license: 'License信息',
 			licenseBefore: '提醒：License剩餘 ',
-			licenseAfter: ' 天到期'
+			licenseAfter: ' 天到期',
+			dataFlowsCustom: '數據同步',
+			dataFlowsClusterClone: '數據庫遷移'
 		},
 		Home: {
 			all: '全部',
@@ -222,6 +225,8 @@ const tc = {
 	},
 
 	dataFlow: {
+		clusterClone: '數據庫遷移',
+		custom: '數據同步',
 		searchNode: '查找節點',
 		updateModel: '更新模型',
 		loadingText: '加載中',
