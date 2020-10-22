@@ -367,16 +367,18 @@ export default {
 			this.loading = false;
 			return;
 		}
-		if (!window.tpdata)
+		if (!window.tpdata) {
 			Object.keys(localStorage).forEach(key => {
+				let mapping = key.split('$$$')[3] || '';
 				if (
 					key.startsWith('tapdata.dataflow.$$$') &&
 					window.tempKeys &&
+					mapping === this.$route.query.mapping &&
 					!window.tempKeys.includes(parseInt(key.split('$$$')[1]))
 				)
 					this.tempData.push(key);
 			});
-		else {
+		} else {
 			this.initData(window.tpdata);
 			this.loading = false;
 			return;
@@ -465,10 +467,11 @@ export default {
 							this.tempKey = parseInt(key.split('$$$')[1]) + 1;
 				});
 			}
-			if (!this.tempId) this.tempId = 'tapdata.dataflow.$$$' + this.tempKey + '$$$' + data.name;
+			if (!this.tempId)
+				this.tempId = 'tapdata.dataflow.$$$' + this.tempKey + '$$$' + data.name + '$$$' + data.mappingTemplate;
 			else {
 				localStorage.removeItem(this.tempId);
-				this.tempId = 'tapdata.dataflow.$$$' + this.tempKey + '$$$' + data.name;
+				this.tempId = 'tapdata.dataflow.$$$' + this.tempKey + '$$$' + data.name + '$$$' + data.mappingTemplate;
 			}
 			try {
 				localStorage.setItem(this.tempId, JSON.stringify(data));
@@ -500,7 +503,7 @@ export default {
 			if (tdata.id != this.$route.query.id) {
 				let routeUrl = this.$router.resolve({
 					path: '/job',
-					query: { id: tdata.id, mapping: this.mappingTemplate }
+					query: { id: tdata.id, mapping: tdata.mappingTemplate }
 				});
 				window.opener.windows.push(window.open(routeUrl.href, '_blank'));
 				window.opener.windows[window.opener.windows.length - 1].tpdata = tdata;
@@ -516,10 +519,17 @@ export default {
 			}
 		},
 		delAllTempData() {
-			Object.keys(localStorage).forEach(key => {
-				if (key.startsWith('tapdata.dataflow.$$$')) localStorage.removeItem(key);
+			// Object.keys(localStorage).forEach(key => {
+			// 	if (key.startsWith('tapdata.dataflow.$$$')) localStorage.removeItem(key);
+			// });
+			if (!this.tempData || this.tempData.length === 0) return;
+			this.tempData.forEach((key, index) => {
+				if (key.mappingTemplate === this.mappingTemplate) {
+					this.tempData.splice(index, 1);
+					localStorage.removeItem(key);
+				}
 			});
-			this.tempData.length == 0;
+			this.tempData.length = 0;
 			this.tempDialogVisible = false;
 			this.loadData();
 		},

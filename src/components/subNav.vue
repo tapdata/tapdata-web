@@ -1,23 +1,12 @@
 <template>
 	<div class="notification-left-sidebar">
 		<div class="title">{{ $t('notification.noticeCenter') }}</div>
-		<el-menu
-			default-active="1"
-			class="el-menu-vertical-demo"
-			background-color="#fafafa"
-			text-color="#666"
-			active-text-color="#666"
-			router
-		>
-			<el-menu-item index="/notification/setting" route="notification/setting">
+		<ul>
+			<li>
 				<i class="iconfont icon-lingdang"></i>
 				<span slot="title">{{ $t('notification.setting') }}</span>
-			</el-menu-item>
-			<!--			<el-menu-item index="/dataVerification/setting" route="/dataVerification/setting">-->
-			<!--				<i class="iconfont icon-duibi-s"></i>-->
-			<!--				<span slot="title">{{ $t('dataVerify.setting.verifySetting') }}</span>-->
-			<!--			</el-menu-item>-->
-		</el-menu>
+			</li>
+		</ul>
 	</div>
 </template>
 
@@ -39,6 +28,18 @@ export default {
 		color: rgba(51, 51, 51, 1);
 		line-height: 34px;
 		margin: 30px 20px;
+	}
+	ul {
+		li {
+			height: 44px;
+			line-height: 44px;
+			padding-left: 20px;
+			background: #eeeeee;
+			cursor: pointer;
+		}
+		&:hover {
+			background: #eeeeee;
+		}
 	}
 }
 </style>
