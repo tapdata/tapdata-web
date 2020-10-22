@@ -283,7 +283,7 @@
 										>
 										<el-dropdown-item
 											command="force_stopping"
-											:disabled="statusBtMap[scope.row.status]['force stopping']"
+											:disabled="statusBtMap[scope.row.status].forceStop"
 											>{{ $t('dataFlow.status.force_stopping') }}</el-dropdown-item
 										>
 										<el-dropdown-item command="tag">{{ $t('dataFlow.addTag') }}</el-dropdown-item>
