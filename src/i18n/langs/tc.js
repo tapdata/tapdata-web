@@ -641,7 +641,8 @@ const tc = {
 						},
 						custom_sql: {
 							label: '自定義SQL',
-							placeholder: '請輸入自定義SQL'
+							placeholder: '請輸入自定義SQL',
+							mplaceholder: '請輸入自定義MQL'
 						},
 						initial_offset: {
 							label: '自定義SQL增量條件',
