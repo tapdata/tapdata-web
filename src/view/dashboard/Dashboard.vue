@@ -3,51 +3,6 @@
 		<el-row :gutter="20" class="e-row">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
-					<echart-head :data="syncJobObj" @getAllData="getAllData"></echart-head>
-					<div class="info fl">
-						<span>{{ $t('app.Home.allTask') }}</span>
-						<span class="number">{{ total }}</span>
-					</div>
-					<ul class="jobList">
-						<li v-for="task in taskList" :key="task.name">
-							<span
-								class="text"
-								:style="`color: ${colorMap[task.name]};`"
-								@click="handleSncyStatus(task.name)"
-								>{{ $t('dataFlow.status.' + task.name) }}</span
-							><span>{{ task.value }}</span>
-						</li>
-					</ul>
-					<div class="chart">
-						<pieChart
-							:echartObj="allsyncJobsEchart"
-							v-if="allsyncJobsEchart"
-							echartsId="allsyncJobId"
-							style="width: 100%"
-						></pieChart>
-					</div>
-				</div>
-			</el-col>
-			<el-col :span="12" class="e-col">
-				<div class="charts-list">
-					<echart-head :data="syncJobStatusObj" @getUnit="getUnit"></echart-head>
-					<ul class="status-box">
-						<li v-for="item in taskStatusStatistics" :key="item.value">
-							<p>{{ item.name }}</p>
-							<div
-								@click="jumpSyncTask(item.value)"
-								:class="{ lagColor: item.value === 'Lag' && syncJobStatusList[item.value] > 0 }"
-							>
-								{{ syncJobStatusList[item.value] }}
-							</div>
-						</li>
-					</ul>
-				</div>
-			</el-col>
-		</el-row>
-		<el-row :gutter="20" class="e-row">
-			<el-col :span="12" class="e-col">
-				<div class="charts-list">
 					<echart-head :data="migrationJobObj" @getAllData="getAllData"></echart-head>
 					<div class="info fl">
 						<span>{{ $t('app.Home.allTask') }}</span>
@@ -102,6 +57,52 @@
 				</div>
 			</el-col>
 		</el-row>
+		<el-row :gutter="20" class="e-row">
+			<el-col :span="12" class="e-col">
+				<div class="charts-list">
+					<echart-head :data="syncJobObj" @getAllData="getAllData"></echart-head>
+					<div class="info fl">
+						<span>{{ $t('app.Home.allTask') }}</span>
+						<span class="number">{{ total }}</span>
+					</div>
+					<ul class="jobList">
+						<li v-for="task in taskList" :key="task.name">
+							<span
+								class="text"
+								:style="`color: ${colorMap[task.name]};`"
+								@click="handleSncyStatus(task.name)"
+								>{{ $t('dataFlow.status.' + task.name) }}</span
+							><span>{{ task.value }}</span>
+						</li>
+					</ul>
+					<div class="chart">
+						<pieChart
+							:echartObj="allsyncJobsEchart"
+							v-if="allsyncJobsEchart"
+							echartsId="allsyncJobId"
+							style="width: 100%"
+						></pieChart>
+					</div>
+				</div>
+			</el-col>
+			<el-col :span="12" class="e-col">
+				<div class="charts-list">
+					<echart-head :data="syncJobStatusObj" @getUnit="getUnit"></echart-head>
+					<ul class="status-box">
+						<li v-for="item in taskStatusStatistics" :key="item.value">
+							<p>{{ item.name }}</p>
+							<div
+								@click="jumpSyncTask(item.value)"
+								:class="{ lagColor: item.value === 'Lag' && syncJobStatusList[item.value] > 0 }"
+							>
+								{{ syncJobStatusList[item.value] }}
+							</div>
+						</li>
+					</ul>
+				</div>
+			</el-col>
+		</el-row>
+
 		<el-row :gutter="20" class="e-row">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
