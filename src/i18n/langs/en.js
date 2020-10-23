@@ -201,6 +201,7 @@ const en = {
 		logs: 'Log',
 		closeSever: 'Close service',
 		restartServer: 'Restart service',
+		startServer: 'Start service',
 		deleteOrNot: 'Delete or not',
 		startupAfter_delete: 'Please delete after startup',
 		startupAfter_add: 'Please add after startup',

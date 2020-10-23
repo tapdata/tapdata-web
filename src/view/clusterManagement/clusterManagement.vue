@@ -311,7 +311,13 @@ export default {
 					server: server,
 					operation: 'start'
 				};
-				this.operationFn(data);
+				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.restartServer'), {
+					confirmButtonText: this.$t('message.confirm'),
+					cancelButtonText: this.$t('message.cancel'),
+					closeOnClickModal: false
+				}).then(() => {
+					this.operationFn(data);
+				});
 			}
 		},
 		// 关闭
@@ -330,7 +336,7 @@ export default {
 					server: server,
 					operation: 'stop'
 				};
-				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.closeSever'), {
+				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.startServer'), {
 					confirmButtonText: this.$t('message.confirm'),
 					cancelButtonText: this.$t('message.cancel'),
 					closeOnClickModal: false
