@@ -113,6 +113,7 @@ const tc = {
 			license: 'License信息',
 			licenseBefore: '提醒：License剩餘 ',
 			licenseAfter: ' 天到期',
+			licenseAfterOneDay: ' 天到期',
 			licenseDate: 'License到期時間',
 			dataFlowsCustom: '數據同步',
 			dataFlowsClusterClone: '數據庫遷移'

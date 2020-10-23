@@ -113,6 +113,7 @@ const cn = {
 			license: 'License信息',
 			licenseBefore: '提醒：License剩余 ',
 			licenseAfter: ' 天到期',
+			licenseAfterOneDay: ' 天到期',
 			licenseDate: 'license到期时间',
 			dataFlowsCustom: '数据同步',
 			dataFlowsClusterClone: '数据库迁移'
