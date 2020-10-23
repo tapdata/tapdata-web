@@ -120,6 +120,38 @@
 			</el-col>
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
+					<echart-head :data="serverProcessObj" @getAllData="getAllData"></echart-head>
+					<!-- <elTables :tableObj="serverProcess"></elTables> -->
+					<el-table :data="serverProcess.tableData" :height="transfer.height" style="width: 100%">
+						<!-- <template v-if="tableObj.isHeader"> -->
+						<el-table-column prop="systemInfo.ip" :label="$t('app.Home.server')"> </el-table-column>
+						<el-table-column prop="management.status" :label="$t('app.Home.managementSide')">
+							<template slot-scope="scope">
+								<span :style="`color: ${colorServeMap[scope.row.management.status]};`">
+									{{ $t('app.Home.' + scope.row.management.status) }}
+								</span>
+							</template>
+						</el-table-column>
+						<el-table-column prop="engine.status" :label="$t('app.Home.taskTransfer')">
+							<template slot-scope="scope">
+								<span :style="`color: ${colorServeMap[scope.row.engine.status]};`">{{
+									$t('app.Home.' + scope.row.engine.status)
+								}}</span>
+							</template>
+						</el-table-column>
+						<el-table-column prop="apiServer.status" :label="$t('app.Home.apiService')">
+							<template slot-scope="scope">
+								<span :style="`color: ${colorServeMap[scope.row.apiServer.status]};`">{{
+									$t('app.Home.' + scope.row.apiServer.status)
+								}}</span>
+							</template>
+						</el-table-column>
+						<!-- </template> -->
+					</el-table>
+				</div>
+			</el-col>
+			<!-- <el-col :span="12" class="e-col">
+				<div class="charts-list">
 					<echart-head :data="transferTaskObj" @getAllData="getAllData"></echart-head>
 					<el-table
 						:data="transfer.tableData"
@@ -127,7 +159,6 @@
 						:show-header="transfer.isHeader"
 						style="width: 100%"
 					>
-						<!-- <template v-if="tableObj.isHeader"> -->
 						<el-table-column prop="name">
 							<template slot-scope="scope">
 								<span class="taskNameStyle" @click="hanleName(scope.row)">{{ scope.row.name }}</span>
@@ -169,45 +200,11 @@
 							</template>
 						</el-table-column>
 						<el-table-column prop="createTime" :formatter="formatterTime"></el-table-column>
-						<!-- </template> -->
 					</el-table>
 				</div>
-			</el-col>
+			</el-col> -->
 		</el-row>
-		<el-row :gutter="20" class="e-row">
-			<el-col :span="12" class="e-col">
-				<div class="charts-list">
-					<echart-head :data="serverProcessObj" @getAllData="getAllData"></echart-head>
-					<!-- <elTables :tableObj="serverProcess"></elTables> -->
-					<el-table :data="serverProcess.tableData" :height="transfer.height" style="width: 100%">
-						<!-- <template v-if="tableObj.isHeader"> -->
-						<el-table-column prop="systemInfo.ip" :label="$t('app.Home.server')"> </el-table-column>
-						<el-table-column prop="management.status" :label="$t('app.Home.managementSide')">
-							<template slot-scope="scope">
-								<span :style="`color: ${colorServeMap[scope.row.management.status]};`">
-									{{ $t('app.Home.' + scope.row.management.status) }}
-								</span>
-							</template>
-						</el-table-column>
-						<el-table-column prop="engine.status" :label="$t('app.Home.taskTransfer')">
-							<template slot-scope="scope">
-								<span :style="`color: ${colorServeMap[scope.row.engine.status]};`">{{
-									$t('app.Home.' + scope.row.engine.status)
-								}}</span>
-							</template>
-						</el-table-column>
-						<el-table-column prop="apiServer.status" :label="$t('app.Home.apiService')">
-							<template slot-scope="scope">
-								<span :style="`color: ${colorServeMap[scope.row.apiServer.status]};`">{{
-									$t('app.Home.' + scope.row.apiServer.status)
-								}}</span>
-							</template>
-						</el-table-column>
-						<!-- </template> -->
-					</el-table>
-				</div>
-			</el-col>
-		</el-row>
+
 		<!-- <el-row :gutter="20" class="e-row">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
@@ -593,7 +590,7 @@ export default {
 				self.migrationJobStatusList = res.data.chart4;
 				self.syncJobStatusList = res.data.chart6;
 
-				self.handleData(res.data.chart3);
+				// self.handleData(res.data.chart3);
 			});
 		},
 
@@ -604,21 +601,19 @@ export default {
 			dataItem.statusCount.forEach(element => {
 				statusItem.unshift({ name: element._id, value: element.count });
 			});
-			statusItem.map((item, index) => {
+			statusItem.filter((item, index) => {
 				if (item.name === 'stopping' || item.name === 'scheduled') {
 					statusItem.splice(index, 1);
-					statusItem.push(item);
 				}
 			});
-
 			return statusItem;
 		},
 
 		// 表格数据格式
-		formatterTime(row) {
-			let time = row.createTime ? this.$moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
-			return time;
-		},
+		// formatterTime(row) {
+		// 	let time = row.createTime ? this.$moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
+		// 	return time;
+		// },
 
 		// async getRankingData() {
 		// 	let barData = (
@@ -641,31 +636,31 @@ export default {
 		// },
 
 		// 点击任务名称跳转到任务
-		hanleName(data) {
-			let routeUrl = null;
-			if (data.status === 'running') {
-				routeUrl = this.$router.resolve({
-					path: '/job',
-					query: { id: data.id, isMoniting: true }
-				});
-			} else {
-				routeUrl = this.$router.resolve({
-					path: '/job',
-					query: { id: data.id }
-				});
-			}
+		// hanleName(data) {
+		// 	let routeUrl = null;
+		// 	if (data.status === 'running') {
+		// 		routeUrl = this.$router.resolve({
+		// 			path: '/job',
+		// 			query: { id: data.id, isMoniting: true }
+		// 		});
+		// 	} else {
+		// 		routeUrl = this.$router.resolve({
+		// 			path: '/job',
+		// 			query: { id: data.id }
+		// 		});
+		// 	}
 
-			setTimeout(() => {
-				document.querySelectorAll('.el-tooltip__popper').forEach(it => {
-					it.outerHTML = '';
-				});
-				if (data.status === 'draft') {
-					window.open(routeUrl.href, 'edit_' + data.id);
-				} else {
-					window.open(routeUrl.href, 'monitor_' + data.id);
-				}
-			}, 200);
-		},
+		// 	setTimeout(() => {
+		// 		document.querySelectorAll('.el-tooltip__popper').forEach(it => {
+		// 			it.outerHTML = '';
+		// 		});
+		// 		if (data.status === 'draft') {
+		// 			window.open(routeUrl.href, 'edit_' + data.id);
+		// 		} else {
+		// 			window.open(routeUrl.href, 'monitor_' + data.id);
+		// 		}
+		// 	}, 200);
+		// },
 
 		// 点击全部
 		getAllData(data) {
@@ -703,85 +698,86 @@ export default {
 		},
 
 		//
-		handleData(data) {
-			if (!data) return;
-			data.forEach(item => {
-				this.cookRecord(item);
-			});
-		},
-		cookRecord(item) {
-			item.newStatus = ['running', 'scheduled'].includes(item.status) ? 'scheduled' : 'stopping';
-			item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
-			let statusMap = {};
-			if (item.stats) {
-				item.hasChildren = false;
-				item.input = item.stats.input ? item.stats.input.rows : '--';
-				item.output = item.stats.output ? item.stats.output.rows : '--';
-				item.transmissionTime = item.stats.transmissionTime
-					? ((item.input * 1000) / item.stats.transmissionTime).toFixed(0)
-					: '--';
-				let children = item.stages;
-				item.children = [];
-				if (children) {
-					let finishedCount = 0;
-					children.forEach(k => {
-						let stage = '';
-						let node = {};
-						if (item.stats.stagesMetrics) {
-							stage = item.stats.stagesMetrics.filter(v => k.id === v.stageId);
-						}
-						if (!stage.length) {
-							node = {
-								id: item.id + k.id,
-								name: k.name,
-								input: '--',
-								output: '--',
-								transmissionTime: '--',
-								hasChildren: true,
-								statusLabel: '--'
-							};
-						} else {
-							let stg = stage[0];
-							let statusLabel = stg.status ? this.$t('dataFlow.status.' + stg.status) : '--';
-							if (stg.status === 'cdc') {
-								let lag = `(${this.$t('dataFlow.lag')}${this.getLag(stg.replicationLag)})`;
-								statusLabel += lag;
-								statusMap.cdc = true;
-							}
-							if (stg.status === 'initializing') {
-								statusMap.initializing = true;
-							}
-							if (stg.status === 'initialized') {
-								finishedCount += 1;
-							}
-							node = {
-								id: item.id + k.id,
-								name: k.name,
-								input: stg.input.rows,
-								output: stg.output.rows,
-								transmissionTime: stg.transmissionTime,
-								hasChildren: true,
-								statusLabel
-							};
-						}
-						item.children.push(node);
-					});
-					if (finishedCount && !statusMap.cdc && !statusMap.initializing) {
-						statusMap.initialized = true;
-					}
-					let statusList = [];
-					for (const key in statusMap) {
-						statusList.push(key);
-					}
-					item.statusList = statusList;
-				}
-			} else {
-				item.input = '--';
-				item.output = '--';
-				item.transmissionTime = '--';
-			}
-			return item;
-		},
+		// handleData(data) {
+		// 	if (!data) return;
+		// 	data.forEach(item => {
+		// 		this.cookRecord(item);
+		// 	});
+		// },
+		// cookRecord(item) {
+		// 	item.newStatus = ['running', 'scheduled'].includes(item.status) ? 'scheduled' : 'stopping';
+		// 	item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
+		// 	let statusMap = {};
+		// 	if (item.stats) {
+		// 		item.hasChildren = false;
+		// 		item.input = item.stats.input ? item.stats.input.rows : '--';
+		// 		item.output = item.stats.output ? item.stats.output.rows : '--';
+		// 		item.transmissionTime = item.stats.transmissionTime
+		// 			? ((item.input * 1000) / item.stats.transmissionTime).toFixed(0)
+		// 			: '--';
+		// 		let children = item.stages;
+		// 		item.children = [];
+		// 		if (children) {
+		// 			let finishedCount = 0;
+		// 			children.forEach(k => {
+		// 				let stage = '';
+		// 				let node = {};
+		// 				if (item.stats.stagesMetrics) {
+		// 					stage = item.stats.stagesMetrics.filter(v => k.id === v.stageId);
+		// 				}
+		// 				if (!stage.length) {
+		// 					node = {
+		// 						id: item.id + k.id,
+		// 						name: k.name,
+		// 						input: '--',
+		// 						output: '--',
+		// 						transmissionTime: '--',
+		// 						hasChildren: true,
+		// 						statusLabel: '--'
+		// 					};
+		// 				} else {
+		// 					let stg = stage[0];
+		// 					let statusLabel = stg.status ? this.$t('dataFlow.status.' + stg.status) : '--';
+		// 					if (stg.status === 'cdc') {
+		// 						let lag = `(${this.$t('dataFlow.lag')}${this.getLag(stg.replicationLag)})`;
+		// 						statusLabel += lag;
+		// 						statusMap.cdc = true;
+		// 					}
+		// 					if (stg.status === 'initializing') {
+		// 						statusMap.initializing = true;
+		// 					}
+		// 					if (stg.status === 'initialized') {
+		// 						finishedCount += 1;
+		// 					}
+		// 					node = {
+		// 						id: item.id + k.id,
+		// 						name: k.name,
+		// 						input: stg.input.rows,
+		// 						output: stg.output.rows,
+		// 						transmissionTime: stg.transmissionTime,
+		// 						hasChildren: true,
+		// 						statusLabel
+		// 					};
+		// 				}
+		// 				item.children.push(node);
+		// 			});
+		// 			if (finishedCount && !statusMap.cdc && !statusMap.initializing) {
+		// 				statusMap.initialized = true;
+		// 			}
+		// 			let statusList = [];
+		// 			for (const key in statusMap) {
+		// 				statusList.push(key);
+		// 			}
+		// 			item.statusList = statusList;
+		// 		}
+		// 	} else {
+		// 		item.input = '--';
+		// 		item.output = '--';
+		// 		item.transmissionTime = '--';
+		// 	}
+		// 	return item;
+		// },
+
 		getLag(lag) {
 			let r = '0s';
 			if (lag) {
