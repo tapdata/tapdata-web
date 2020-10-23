@@ -528,12 +528,12 @@ export default {
 			// });
 			if (!this.tempData || this.tempData.length === 0) return;
 			this.tempData.forEach((key, index) => {
-				if (key.mappingTemplate === this.mappingTemplate) {
+				let mapping = key.split('$$$')[3] || '';
+				if (mapping === this.mappingTemplate) {
 					this.tempData.splice(index, 1);
 					localStorage.removeItem(key);
 				}
 			});
-			this.tempData.length = 0;
 			this.tempDialogVisible = false;
 			this.loadData();
 		},

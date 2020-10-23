@@ -14,7 +14,12 @@
 			</a>
 			<div class="button-bar">
 				<span class="expire-msg" v-if="licenseExpireAble">
-					{{ $t('app.menu.licenseBefore') + licenseExpire + $t('app.menu.licenseAfter') }}
+					<span v-if="licenseExpire <= 1">{{
+						$t('app.menu.licenseBefore') + licenseExpire + $t('app.menu.licenseAfterOneDay')
+					}}</span>
+					<span v-if="licenseExpire > 1">{{
+						$t('app.menu.licenseBefore') + licenseExpire + $t('app.menu.licenseAfter')
+					}}</span>
 				</span>
 				<el-button class="btn-create" type="primary" size="mini" @click="command('newDataFlow')">
 					<i class="el-icon-plus"></i>
