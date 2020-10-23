@@ -371,12 +371,8 @@ export default {
 		},
 		// 筛选
 		screenFn() {
-			let params = {
-				'filter[where][or][0][systemInfo.hostname][like]': this.sourch,
-				'filter[where][or][1][systemInfo.ip][like]': this.sourch
-			};
 			if (this.sourch) {
-				this.getDataApi(params);
+				this.getDataApi();
 			} else {
 				this.getDataApi();
 			}
@@ -392,7 +388,15 @@ export default {
 		},
 
 		// 获取数据
-		getDataApi(params) {
+		getDataApi() {
+			let params = {};
+			if (this.sourch) {
+				params['filter[where][or][0][systemInfo.hostname][like]'] = this.sourch;
+				params['filter[where][or][1][systemInfo.ip][like]'] = this.sourch;
+			}
+			if (!parseInt(this.$cookie.get('isAdmin'))) {
+				params['filter[where][user_id][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+			}
 			cluster.get(params).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {

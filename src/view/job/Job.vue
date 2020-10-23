@@ -401,9 +401,11 @@ export default {
 			let params = null;
 			if (!parseInt(this.$cookie.get('isAdmin'))) {
 				params = {
-					where: {
-						'systemInfo.username': {
-							inq: [this.$cookie.get('user_id'), this.$cookie.get('username')]
+					filter: {
+						where: {
+							'systemInfo.username': {
+								inq: [this.$cookie.get('user_id'), this.$cookie.get('username')]
+							}
 						}
 					}
 				};
