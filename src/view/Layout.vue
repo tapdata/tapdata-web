@@ -77,7 +77,9 @@
 					</el-button>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="version">{{ $t('app.version') }}</el-dropdown-item>
-						<el-dropdown-item command="license">{{ $t('app.menu.license') }}</el-dropdown-item>
+						<el-dropdown-item command="license" v-if="licenseExpireAble">{{
+							$t('app.menu.license')
+						}}</el-dropdown-item>
 						<el-dropdown-item v-if="platform === 'DAAS'" command="home">
 							{{ $t('app.home') }}
 						</el-dropdown-item>
@@ -253,7 +255,7 @@ export default {
 			downLoadNum: 0,
 			firstNum: undefined,
 			licenseExpire: '',
-			licenseExpireAble: true,
+			licenseExpireAble: false,
 			licenseExpireDate: ''
 		};
 	},
@@ -506,7 +508,7 @@ export default {
 					let expires_on = res.data.expires_on || '';
 					let endTime = expires_on - stime;
 					endTime = parseInt(endTime / 1000 / 60 / 60 / 24); //相差天数
-					if (endTime <= 90) {
+					if (endTime <= 90 && this.$cookie.get('isAdmin') != 0) {
 						this.licenseExpireAble = true;
 					}
 					this.licenseExpire = endTime;
