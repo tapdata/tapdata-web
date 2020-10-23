@@ -221,6 +221,8 @@ export default {
 	created() {
 		this.timer();
 		this.getDataApi();
+
+		this.buildProfile = this.$store.state.buildProfile;
 	},
 
 	methods: {
@@ -309,7 +311,13 @@ export default {
 					server: server,
 					operation: 'start'
 				};
-				this.operationFn(data);
+				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.restartServer'), {
+					confirmButtonText: this.$t('message.confirm'),
+					cancelButtonText: this.$t('message.cancel'),
+					closeOnClickModal: false
+				}).then(() => {
+					this.operationFn(data);
+				});
 			}
 		},
 		// 关闭
@@ -328,7 +336,7 @@ export default {
 					server: server,
 					operation: 'stop'
 				};
-				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.closeSever'), {
+				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.startServer'), {
 					confirmButtonText: this.$t('message.confirm'),
 					cancelButtonText: this.$t('message.cancel'),
 					closeOnClickModal: false
@@ -394,7 +402,7 @@ export default {
 				params['filter[where][or][0][systemInfo.hostname][like]'] = this.sourch;
 				params['filter[where][or][1][systemInfo.ip][like]'] = this.sourch;
 			}
-			if (!parseInt(this.$cookie.get('isAdmin'))) {
+			if (this.buildProfile && this.buildProfile === ' CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
 				params['filter[where][user_id][regexp]'] = `^${this.$cookie.get('user_id')}$`;
 			}
 			cluster.get(params).then(res => {

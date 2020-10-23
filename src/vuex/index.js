@@ -20,6 +20,7 @@ const store = new Vuex.Store({
 
 	// 全局变量
 	state: {
+		buildProfile: '',
 		tableFlows: {
 			flowId: '',
 			keyword: '',

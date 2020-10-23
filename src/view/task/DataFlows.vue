@@ -503,6 +503,8 @@ export default {
 			self.wsData.length = 0;
 		}, 3000);
 
+		this.buildProfile = this.$store.state.buildProfile;
+
 		this.getDataApi();
 		if (!this.downLoadNum) {
 			self.timer = setInterval(() => {
@@ -533,7 +535,7 @@ export default {
 		// 获取Agent是否安装
 		getDataApi() {
 			let params = null;
-			if (!parseInt(this.$cookie.get('isAdmin'))) {
+			if (this.buildProfile && this.buildProfile === ' CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
 				params = {
 					filter: {
 						where: {
@@ -563,7 +565,6 @@ export default {
 			this.handleStatus(this.agentObj.id, this.agentObj.oldStatus, this.agentObj.status, this.agentObj.dataItem);
 			this.downLoadAgetntdialog = false;
 		},
-
 		// // 刷新agent
 		// handleRefreAgent() {
 		// 	this.getDataApi();

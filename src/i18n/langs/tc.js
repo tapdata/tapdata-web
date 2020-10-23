@@ -201,6 +201,7 @@ const tc = {
 		logs: '日誌信息',
 		closeSever: '關閉服務',
 		restartServer: '重啓服務',
+		startServer: '啟動服務',
 		deleteOrNot: '是否刪除',
 		startupAfter_delete: '請啟動後刪除',
 		startupAfter_add: '請啟動後添加',

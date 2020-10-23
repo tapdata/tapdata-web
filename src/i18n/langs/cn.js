@@ -204,6 +204,7 @@ const cn = {
 		logs: '日志信息',
 		closeSever: '关闭服务',
 		restartServer: '重启服务',
+		startServer: '启动服务',
 		deleteOrNot: '是否删除',
 		startupAfter_delete: '请启动后删除',
 		startupAfter_add: '请启动后添加',
