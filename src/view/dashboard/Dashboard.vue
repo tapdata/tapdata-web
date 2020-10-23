@@ -590,8 +590,9 @@ export default {
 				self.unitData = self.dataScreening.series[0].data;
 				self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
 				self.transfer.tableData = res.data.chart3;
-				self.syncJobStatusList = res.data.chart4;
-				self.migrationJobStatusList = res.data.chart6;
+				self.migrationJobStatusList = res.data.chart4;
+				self.syncJobStatusList = res.data.chart6;
+
 				self.handleData(res.data.chart3);
 			});
 		},

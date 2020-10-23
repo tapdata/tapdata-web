@@ -221,6 +221,8 @@ export default {
 	created() {
 		this.timer();
 		this.getDataApi();
+
+		this.buildProfile = this.$store.state.buildProfile;
 	},
 
 	methods: {
@@ -394,7 +396,7 @@ export default {
 				params['filter[where][or][0][systemInfo.hostname][like]'] = this.sourch;
 				params['filter[where][or][1][systemInfo.ip][like]'] = this.sourch;
 			}
-			if (!parseInt(this.$cookie.get('isAdmin'))) {
+			if (this.buildProfile && this.buildProfile === ' CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
 				params['filter[where][user_id][regexp]'] = `^${this.$cookie.get('user_id')}$`;
 			}
 			cluster.get(params).then(res => {

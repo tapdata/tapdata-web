@@ -335,6 +335,8 @@ export default {
 		}
 		this.mappingTemplate = this.$route.query.mapping;
 
+		this.buildProfile = this.$store.state.buildProfile;
+
 		let self = this;
 		this.getDataApi();
 		if (!this.downLoadNum) {
@@ -399,7 +401,7 @@ export default {
 		// 获取Agent是否安装
 		getDataApi() {
 			let params = null;
-			if (!parseInt(this.$cookie.get('isAdmin'))) {
+			if (this.buildProfile && this.buildProfile === ' CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
 				params = {
 					filter: {
 						where: {

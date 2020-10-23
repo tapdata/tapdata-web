@@ -1,4 +1,9 @@
 const mutations = {
+	// 企业版和云版存储
+	buildProfile(state, payload) {
+		state.buildProfile = payload;
+	},
+
 	// 任务调度
 	tasks(state, payload) {
 		state.tasks = payload;
