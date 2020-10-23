@@ -654,6 +654,11 @@ export default {
 					conds.forEach(it => {
 						this.model.custSql.conditions.push(it);
 					});
+				if (data.sql && !data.hasOwnProperty('isFilter')) {
+					this.model.custSql.editSql = data.sql;
+					this.model.custSql.filterType = 'sql';
+					this.model.isFilter = true;
+				}
 				if (data.initialSyncOrder > 0) {
 					this.model.enableInitialOrder = true;
 				}
