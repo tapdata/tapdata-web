@@ -384,9 +384,7 @@ export default {
 					this.$message.info('DAAS_BUILD_NUMBER');
 					break;
 				case 'license':
-					this.$message.info(
-						this.$t('app.menu.licenseBefore') + this.licenseExpireDate + this.$t('app.menu.licenseAfter')
-					);
+					this.$message.info(this.$t('app.menu.licenseDate') + ': ' + this.licenseExpireDate);
 					break;
 				case 'home':
 					window.open('https://tapdata.net/', '_blank');
@@ -490,12 +488,23 @@ export default {
 		// 	this.getDataApi();
 		// },
 
-		getLicense() {
+		async getLicense() {
+			let timeStamp = this.$api('TimeStamp');
+			let stime = '';
+			await timeStamp.get().then(res => {
+				stime = res.data || new Date().getTime();
+			});
+			let filter = {};
+			if (this.$cookie.get('isAdmin') == 0)
+				filter['where']['source.user_id'] = { like: this.$cookie.get('user_id') };
+			let params = {
+				filter: JSON.stringify(filter)
+			};
 			this.$api('Licenses')
-				.get()
+				.get(params)
 				.then(res => {
 					let expires_on = res.data.expires_on || '';
-					let endTime = expires_on - new Date().getTime();
+					let endTime = expires_on - stime;
 					endTime = parseInt(endTime / 1000 / 60 / 60 / 24); //相差天数
 					if (endTime <= 90) {
 						this.licenseExpireAble = true;

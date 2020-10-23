@@ -113,6 +113,7 @@ const en = {
 			license: 'License info',
 			licenseBefore: 'Info: License remaining ',
 			licenseAfter: ' days',
+			licenseDate: 'License expiration time',
 			dataFlowsClusterClone: 'Data Sync',
 			dataFlowsCustom: 'Database Migration'
 		},

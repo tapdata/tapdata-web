@@ -77,7 +77,18 @@ export default {
 						in: ['database', 'ftp']
 					},
 					'source.database_type': {
-						in: ['mysql', 'mongodb', 'db2', 'oracle', 'postgres', 'gridfs', 'file']
+						in: [
+							'mysql',
+							'mongodb',
+							'db2',
+							'oracle',
+							'postgres',
+							'gridfs',
+							'file',
+							'sqlserver',
+							'gbase-8s',
+							'sybase ase'
+						]
 					},
 					is_deleted: false
 				},
@@ -195,6 +206,7 @@ export default {
 <style scoped lang="less">
 .box {
 	width: 234px;
+	background: #fafafa;
 	ul {
 		li {
 			display: -webkit-box;
