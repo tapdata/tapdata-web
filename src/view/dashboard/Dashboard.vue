@@ -6,15 +6,17 @@
 					<echart-head :data="migrationJobObj" @getAllData="getAllData"></echart-head>
 					<div class="info fl">
 						<span>{{ $t('app.Home.allTask') }}</span>
-						<span class="number">{{ total }}</span>
+						<span class="number">{{ migrationTotal }}</span>
 					</div>
 					<ul class="jobList">
-						<li v-for="task in taskList" :key="task.name">
-							<span
-								class="text"
-								:style="`color: ${colorMap[task.name]};`"
-								@click="handleMigrationStatus(task.name)"
-								>{{ $t('dataFlow.status.' + task.name) }}</span
+						<li
+							v-for="task in migrationTaskList"
+							:key="task.name"
+							@click="handleMigrationStatus(task.name)"
+						>
+							<span class="text" :style="`color: ${colorMap[task.name]};`">{{
+								$t('dataFlow.status.' + task.name)
+							}}</span
 							><span>{{ task.value }}</span>
 						</li>
 						<!-- <li>
@@ -63,15 +65,13 @@
 					<echart-head :data="syncJobObj" @getAllData="getAllData"></echart-head>
 					<div class="info fl">
 						<span>{{ $t('app.Home.allTask') }}</span>
-						<span class="number">{{ total }}</span>
+						<span class="number">{{ syncTotal }}</span>
 					</div>
 					<ul class="jobList">
-						<li v-for="task in taskList" :key="task.name">
-							<span
-								class="text"
-								:style="`color: ${colorMap[task.name]};`"
-								@click="handleSncyStatus(task.name)"
-								>{{ $t('dataFlow.status.' + task.name) }}</span
+						<li v-for="task in syncTaskList" :key="task.name" @click="handleSncyStatus(task.name)">
+							<span class="text" :style="`color: ${colorMap[task.name]};`">{{
+								$t('dataFlow.status.' + task.name)
+							}}</span
 							><span>{{ task.value }}</span>
 						</li>
 					</ul>
@@ -244,8 +244,10 @@ export default {
 	data() {
 		return {
 			isNew: window._TAPDATA_OPTIONS_.platform === 'DAAS',
-			total: '',
-			taskList: [],
+			migrationTotal: '',
+			syncTotal: '',
+			migrationTaskList: [],
+			syncTaskList: [],
 			jobObj: null,
 			screeningObj: null, // 传输总览
 			sliderBar: null,
@@ -490,8 +492,8 @@ export default {
 			allFalg: true
 		};
 
-		this.allsyncJobsEchart = this.allTaskEchart;
-		this.allMigrationJobsEchart = this.allTaskEchart;
+		this.allsyncJobsEchart = JSON.parse(JSON.stringify(this.allTaskEchart));
+		this.allMigrationJobsEchart = JSON.parse(JSON.stringify(this.allTaskEchart));
 	},
 	methods: {
 		// 跳转任务状态统计
@@ -547,21 +549,36 @@ export default {
 		// 获取dataflows数据
 		getDataFlowApi() {
 			let self = this;
-			DataFlows.chart().then(res => {
-				res.data.chart1.statusCount.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1));
-				res.data.chart1.statusCount.forEach(element => {
-					self.taskList.unshift({ name: element._id, value: element.count });
-				});
-				self.taskList.map((item, index) => {
-					if (item.name === 'stopping' || item.name === 'scheduled') {
-						self.taskList.splice(index, 1);
-						self.taskList.push(item);
+			let params = {};
+			if (!parseInt(this.$cookie.get('isAdmin'))) {
+				params = {
+					filter: {
+						where: {
+							user_id: {
+								regexp: `^${this.$cookie.get('user_id')}$`
+							}
+						}
 					}
-				});
+				};
+			}
+			DataFlows.chart(params).then(res => {
+				// res.data.chart1.statusCount.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1));
+				// res.data.chart1.statusCount.forEach(element => {
+				// 	self.taskList.unshift({ name: element._id, value: element.count });
+				// });
+				// self.taskList.map((item, index) => {
+				// 	if (item.name === 'stopping' || item.name === 'scheduled') {
+				// 		self.taskList.splice(index, 1);
+				// 		self.taskList.push(item);
+				// 	}
+				// });
+				self.migrationTaskList = self.handleDataProcessing(res.data.chart1);
+				self.syncTaskList = self.handleDataProcessing(res.data.chart5);
 
-				self.allsyncJobsEchart.series[0].data = self.taskList;
-				self.allMigrationJobsEchart.series[0].data = self.taskList;
-				self.total = res.data.chart1.totalDataFlows;
+				self.allsyncJobsEchart.series[0].data = self.syncTaskList;
+				self.allMigrationJobsEchart.series[0].data = self.migrationTaskList;
+				self.syncTotal = res.data.chart5.totalDataFlows;
+				self.migrationTotal = res.data.chart1.totalDataFlows;
 
 				self.dataScreening.series[0].data = [
 					res.data.chart2[0].totalOutput,
@@ -574,9 +591,26 @@ export default {
 				self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
 				self.transfer.tableData = res.data.chart3;
 				self.syncJobStatusList = res.data.chart4;
-				self.migrationJobStatusList = res.data.chart4;
+				self.migrationJobStatusList = res.data.chart6;
 				self.handleData(res.data.chart3);
 			});
+		},
+
+		// 数据处理
+		handleDataProcessing(dataItem) {
+			let statusItem = [];
+			dataItem.statusCount.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1));
+			dataItem.statusCount.forEach(element => {
+				statusItem.unshift({ name: element._id, value: element.count });
+			});
+			statusItem.map((item, index) => {
+				if (item.name === 'stopping' || item.name === 'scheduled') {
+					statusItem.splice(index, 1);
+					statusItem.push(item);
+				}
+			});
+
+			return statusItem;
 		},
 
 		// 表格数据格式
@@ -783,7 +817,7 @@ export default {
 				.status-box {
 					display: flex;
 					flex: auto;
-					height: 100%;
+					height: calc(100% - 40px);
 					align-items: center;
 					justify-content: center;
 					li {
@@ -838,14 +872,12 @@ export default {
 			padding: 115px 0;
 			li {
 				padding-bottom: 10px;
+				cursor: pointer;
 				span {
 					display: inline-block;
 					width: 50px;
 					text-align: right;
 					font-size: 12px;
-				}
-				.text {
-					cursor: pointer;
 				}
 			}
 		}
