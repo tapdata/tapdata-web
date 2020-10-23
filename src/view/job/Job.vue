@@ -525,7 +525,8 @@ export default {
 			// 	if (key.startsWith('tapdata.dataflow.$$$')) localStorage.removeItem(key);
 			// });
 			if (!this.tempData || this.tempData.length === 0) return;
-			this.tempData.forEach((key, index) => {
+			let oldData = _.cloneDeep(this.tempData);
+			oldData.forEach((key, index) => {
 				let mapping = key.split('$$$')[3] || '';
 				if (mapping === this.mappingTemplate) {
 					this.tempData.splice(index, 1);

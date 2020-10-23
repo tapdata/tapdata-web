@@ -503,9 +503,11 @@ export default {
 			await timeStamp.get().then(res => {
 				stime = res.data || new Date().getTime();
 			});
-			let filter = {};
+			let filter = {
+				where: {}
+			};
 			if (this.$cookie.get('isAdmin') == 0)
-				filter['where']['source.user_id'] = { like: this.$cookie.get('user_id') };
+				filter.where['source.user_id'] = { like: this.$cookie.get('user_id') };
 			let params = {
 				filter: JSON.stringify(filter)
 			};
