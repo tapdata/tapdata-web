@@ -115,8 +115,8 @@ const en = {
 			licenseAfter: ' days',
 			licenseDate: 'License expiration time',
 			licenseAfterOneDay: ' day',
-			dataFlowsClusterClone: 'Data Sync',
-			dataFlowsCustom: 'Database Migration'
+			dataFlowsClusterClone: 'Database Migration',
+			dataFlowsCustom: 'Data Sync'
 		},
 		Home: {
 			all: 'All',
