@@ -725,7 +725,6 @@ export default {
 				if (res.status === 'SUCCESS' && res.result && res.result.length) {
 					templeSchema = res.result;
 					this.reloadModelLoading = false;
-					self.$message.success(this.$t('message.reloadSchemaSuccess'));
 				} else {
 					self.$message.error(this.$t('message.reloadSchemaError'));
 				}
@@ -738,8 +737,13 @@ export default {
 					});
 				}
 				self.$nextTick(() => {
-					self.$emit('schemaChange', _.cloneDeep(schema));
-					this.mergedSchema = schema;
+					if (schema) {
+						self.$emit('schemaChange', _.cloneDeep(schema));
+						this.mergedSchema = schema;
+						self.$message.success(this.$t('message.reloadSchemaSuccess'));
+					} else {
+						self.$message.error(this.$t('message.reloadSchemaError'));
+					}
 				});
 			});
 			this.dialogVisible = false;

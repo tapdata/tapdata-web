@@ -859,7 +859,6 @@ export default {
 				if (res.status === 'SUCCESS' && res.result && res.result.length) {
 					templeSchema = res.result;
 					this.reloadModelLoading = false;
-					self.$message.success(this.$t('message.reloadSchemaSuccess'));
 				} else {
 					self.$message.error(this.$t('message.reloadSchemaError'));
 				}
@@ -870,12 +869,15 @@ export default {
 							schema = item.schema;
 						}
 					});
-				} else {
-					schema.table_name = this.model.tableName;
 				}
 				self.$nextTick(() => {
-					self.$emit('schemaChange', _.cloneDeep(schema));
-					this.defaultSchema = schema;
+					if (schema) {
+						self.$emit('schemaChange', _.cloneDeep(schema));
+						self.defaultSchema = schema;
+						self.$message.success(this.$t('message.reloadSchemaSuccess'));
+					} else {
+						self.$message.error(this.$t('message.reloadSchemaError'));
+					}
 				});
 			});
 			this.dialogVisible = false;

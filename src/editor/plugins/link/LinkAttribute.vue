@@ -349,7 +349,6 @@ export default {
 			if (data) {
 				_.merge(this.model, data);
 			}
-			debugger;
 			this.cell = cell;
 			// this.model.joinTable.joinKeys = [];
 

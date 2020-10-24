@@ -464,8 +464,7 @@ export default {
 		// 获取Agent是否安装
 		getDataApi() {
 			let params = null;
-			if (this.buildProfile && this.buildProfile === 'DAAS' && !parseInt(this.$cookie.get('isAdmin'))) {
-				debugger;
+			if (this.buildProfile && this.buildProfile === 'CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
 				params = {
 					filter: {
 						where: {
