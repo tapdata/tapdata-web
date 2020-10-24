@@ -220,9 +220,11 @@ export default {
 	},
 	created() {
 		this.timer();
-		this.getDataApi();
 
 		this.buildProfile = this.$store.state.buildProfile;
+		if (this.buildProfile) {
+			this.getDataApi();
+		}
 	},
 
 	methods: {
