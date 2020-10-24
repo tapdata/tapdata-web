@@ -741,8 +741,6 @@ export default {
 						self.$emit('schemaChange', _.cloneDeep(schema));
 						this.mergedSchema = schema;
 						self.$message.success(this.$t('message.reloadSchemaSuccess'));
-					} else {
-						self.$message.error(this.$t('message.reloadSchemaError'));
 					}
 				});
 			});

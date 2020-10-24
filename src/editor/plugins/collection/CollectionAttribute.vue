@@ -875,8 +875,6 @@ export default {
 						self.$emit('schemaChange', _.cloneDeep(schema));
 						self.defaultSchema = schema;
 						self.$message.success(this.$t('message.reloadSchemaSuccess'));
-					} else {
-						self.$message.error(this.$t('message.reloadSchemaError'));
 					}
 				});
 			});

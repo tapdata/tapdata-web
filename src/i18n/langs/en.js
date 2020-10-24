@@ -1427,32 +1427,24 @@ const en = {
 		downAgent: {
 			headTitle: 'Agent download and installation',
 			headInterpretation:
-				'Tapdata DFS Cloud Edition requires an agent to be installed locally to ensure the normal operation of the database connection and transmission service',
+				'Tapdata DFS Cloud have to install agent at local server to ensure databases connection and transmission services normally',
 			downloadInstall: 'Download and install',
-			text:
-				'Use the following command to download and start directly on the machine where the agent is installed',
-			copy: 'Copy the command line',
+			text: ' Copy and execute the following command to download and install agent on Linux server',
+			copy: 'Copy command',
 			copied: 'copied',
 			refresh: 'Refresh',
 			downloadInstallInstructions: 'Download installation instructions',
-			linuxInstructionsText1:
-				'· Use the above command directly on the Linux machine where the agent is installed',
-			linuxInstructionsText2:
-				'· Automatically download and start the installation package after executing the command (including agent package 64M and Java package 160M)',
-			linuxInstructionsText3:
-				'· This page will no longer pop up when the task is executed after the Agent is installed successfully',
-			waitingInstall: 'Waiting for installation',
-			agentNum: 'Number of current Agent installations',
+			linuxInstructionsText1: '· Copy and execute the command to download and install agent on Linux server',
+			linuxInstructionsText2: '· Agent will be downloaded and  started up automatically after executing commands',
+			linuxInstructionsText3: '·  The installation process includes agent package (64M) and java package (160M）',
+			waitingInstall: 'Waiting installation',
+			agentNum: 'Agents installed',
 			downLoadAgent: 'Download Agent',
-			windowsText:
-				'Download to the machine to be installed, execute copy the following command to install in the directory where the downloaded file is stored',
-			windowsInstructionsText1:
-				'· Click "Download Agent" to download the Agent to the machine in the windows environment',
+			windowsText: 'Download to the server，and copy the following command at the storage path to install',
+			windowsInstructionsText1: '· Click "Download Agent" to download agent to windows environment server',
 			windowsInstructionsText2:
-				'· After downloading, copy the above command and execute the installation on the machine where the Agent is downloaded',
-			windowsInstructionsText3:
-				'Execute the copy command to install in the directory where the downloaded file is stored',
-			windowsInstructionsText4: '· Automatically install and start the Agent after executing the command',
+				'·  Copy and execution command statement above after download at storage path to install agent',
+			windowsInstructionsText3: '· After executing commands, the agent will install and run  automatically',
 			windowsInstructionsText5:
 				'· After the Agent is successfully installed and started, this page will no longer pop up when the task is executed.',
 			noAgent: 'You have not installed the Agent and cannot perform the transfer task, please',
@@ -1462,7 +1454,7 @@ const en = {
 			dfsSuccessText2: 'Create a data transfer task and experience the Tapdata DFS rapid data transfer function',
 			dfsSuccessText3: 'DFS Agent installed successfully, task',
 			dfsSuccessText4: 'Execution started',
-			creatTask: 'New task',
+			creatTask: 'Creat task',
 			clickView: 'Click to view',
 			ok: 'OK'
 		}

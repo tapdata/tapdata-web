@@ -74,7 +74,6 @@
 					<li>{{ $t('dialog.downAgent.windowsInstructionsText1') }}</li>
 					<li>{{ $t('dialog.downAgent.windowsInstructionsText2') }}</li>
 					<li>{{ $t('dialog.downAgent.windowsInstructionsText3') }}</li>
-					<li>{{ $t('dialog.downAgent.windowsInstructionsText4') }}</li>
 					<li>{{ $t('dialog.downAgent.windowsInstructionsText5') }}</li>
 				</ul>
 			</section>
