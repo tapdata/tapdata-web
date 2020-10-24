@@ -403,7 +403,7 @@ export default {
 		// 获取Agent是否安装
 		getDataApi() {
 			let params = null;
-			if (this.buildProfile && this.buildProfile === ' CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
+			if (this.buildProfile && this.buildProfile === 'CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
 				params = {
 					filter: {
 						where: {
@@ -1066,7 +1066,7 @@ export default {
 			let self = this,
 				data = this.getDataFlowData();
 
-			if (this.buildProfile === ' CLOUD' && !this.downLoadNum) {
+			if (this.buildProfile === 'CLOUD' && !this.downLoadNum) {
 				this.downLoadAgetntdialog = true;
 				return;
 			}

@@ -1,6 +1,6 @@
 <template>
 	<el-container class="layout-container">
-		<div class="agentNot" v-if="agentTipFalg && this.buildProfile === ' CLOUD'">
+		<div class="agentNot" v-if="agentTipFalg && this.buildProfile === 'CLOUD'">
 			<i class="el-icon-warning"></i>
 			{{ $t('dialog.downAgent.noAgent')
 			}}<span @click="downLoadInstall">{{ $t('dialog.downAgent.clickDownLoad') }}</span>
@@ -38,7 +38,7 @@
 						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
 					</el-dropdown-menu>
 				</el-dropdown>
-				<a v-if="platform === 'DAAS' && this.buildProfile === ' CLOUD'" class="btn" @click="command('download')"
+				<a v-if="platform === 'DAAS' && this.buildProfile === 'CLOUD'" class="btn" @click="command('download')"
 					><i class="iconfont icon-shangchuan-copy"></i
 				></a>
 				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom" @command="command">
@@ -287,7 +287,7 @@ export default {
 
 		this.buildProfile = this.$store.state.buildProfile;
 
-		if (this.buildProfile && this.buildProfile === ' CLOUD') {
+		if (this.buildProfile && this.buildProfile === 'CLOUD') {
 			this.getDataApi();
 			if (!this.downLoadNum) {
 				self.timer = setInterval(() => {
@@ -464,7 +464,8 @@ export default {
 		// 获取Agent是否安装
 		getDataApi() {
 			let params = null;
-			if (this.buildProfile && this.buildProfile === 'CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
+			if (this.buildProfile && this.buildProfile === 'DAAS' && !parseInt(this.$cookie.get('isAdmin'))) {
+				debugger;
 				params = {
 					filter: {
 						where: {

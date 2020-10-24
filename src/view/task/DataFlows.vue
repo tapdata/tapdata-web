@@ -537,7 +537,7 @@ export default {
 		// 获取Agent是否安装
 		getDataApi() {
 			let params = null;
-			if (this.buildProfile && this.buildProfile === ' CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
+			if (this.buildProfile && this.buildProfile === 'CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
 				params = {
 					filter: {
 						where: {
@@ -1122,7 +1122,7 @@ export default {
 			this.agentObj.oldStatus = oldStatus;
 			this.agentObj.status = status;
 			this.agentObj.dataItem = dataItem;
-			if (this.buildProfile === ' CLOUD' && !this.downLoadNum) {
+			if (this.buildProfile === 'CLOUD' && !this.downLoadNum) {
 				this.downLoadAgetntdialog = true;
 				return;
 			}
