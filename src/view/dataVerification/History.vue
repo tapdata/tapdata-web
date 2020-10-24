@@ -84,7 +84,7 @@
 					<el-table-column :label="$t('dataVerification.verifyStatus')" prop="status"></el-table-column>
 					<el-table-column :label="$t('dataFlow.operate')" width="60px">
 						<template slot-scope="scope">
-							<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
+							<el-tooltip class="item" :content="$t('dataVerification.verifyDetail')" placement="bottom">
 								<el-button type="text" @click="changeInspectResult(scope.row.id, scope.row.inspect_id)">
 									<i class="iconfont  task-list-icon icon-chaxun"></i>
 								</el-button>
