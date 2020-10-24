@@ -464,7 +464,7 @@ export default {
 		// 获取Agent是否安装
 		getDataApi() {
 			let params = null;
-			if (this.buildProfile && this.buildProfile === ' CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
+			if (this.buildProfile && this.buildProfile === 'CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
 				params = {
 					filter: {
 						where: {

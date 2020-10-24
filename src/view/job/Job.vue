@@ -338,7 +338,7 @@ export default {
 		this.buildProfile = this.$store.state.buildProfile;
 
 		let self = this;
-		if (this.buildProfile && this.buildProfile === ' CLOUD') {
+		if (this.buildProfile && this.buildProfile === 'CLOUD') {
 			this.getDataApi();
 			if (!this.downLoadNum) {
 				self.timer = setInterval(() => {
