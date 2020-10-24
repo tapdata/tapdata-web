@@ -613,6 +613,7 @@ export default {
 			if (this.executeMode !== 'normal') this.showCapture();
 
 			this.onGraphChanged();
+			this.setSelector(this.$route.query.mapping);
 			this.wsSend();
 		},
 		wsSend() {
