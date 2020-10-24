@@ -25,7 +25,7 @@
 					<i class="el-icon-plus"></i>
 					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
-				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom">
+				<el-dropdown v-if="platform === 'CLOUD'" class="btn" placement="bottom">
 					<el-badge :value="unRead" :max="99" class="item-badge" v-show="unRead > 0">
 						<i class="iconfont icon-lingdang" @click="command('notification')"></i>
 					</el-badge>
