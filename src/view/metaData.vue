@@ -108,8 +108,8 @@ export default {
 	methods: {
 		getData(cb) {
 			let params = {
-				'filter[where][or][0][item_type]': this.type,
-				'filter[where][user_id][regexp]': `^${this.$cookie.get('user_id')}$`
+				'filter[where][or][0][item_type]': this.type
+				// 'filter[where][user_id][regexp]': `^${this.$cookie.get('user_id')}$`
 			};
 			MetadataDefinitions.get(params).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {

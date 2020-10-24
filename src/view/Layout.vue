@@ -1,6 +1,6 @@
 <template>
 	<el-container class="layout-container">
-		<div class="agentNot" v-if="agentTipFalg">
+		<div class="agentNot" v-if="agentTipFalg && this.buildProfile === ' CLOUD'">
 			<i class="el-icon-warning"></i>
 			{{ $t('dialog.downAgent.noAgent')
 			}}<span @click="downLoadInstall">{{ $t('dialog.downAgent.clickDownLoad') }}</span>
@@ -38,7 +38,7 @@
 						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
 					</el-dropdown-menu>
 				</el-dropdown>
-				<a v-if="platform === 'DAAS'" class="btn" @click="command('download')"
+				<a v-if="platform === 'DAAS' && this.buildProfile === ' CLOUD'" class="btn" @click="command('download')"
 					><i class="iconfont icon-shangchuan-copy"></i
 				></a>
 				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom" @command="command">
@@ -287,14 +287,16 @@ export default {
 
 		this.buildProfile = this.$store.state.buildProfile;
 
-		this.getDataApi();
-		if (!this.downLoadNum) {
-			self.timer = setInterval(() => {
-				self.getDataApi();
-				if (this.downLoadNum) {
-					clearInterval(self.timer);
-				}
-			}, 5000);
+		if (this.buildProfile && this.buildProfile === ' CLOUD') {
+			this.getDataApi();
+			if (!this.downLoadNum) {
+				self.timer = setInterval(() => {
+					self.getDataApi();
+					if (this.downLoadNum) {
+						clearInterval(self.timer);
+					}
+				}, 5000);
+			}
 		}
 
 		this.getLicense();

@@ -349,6 +349,7 @@ export default {
 			if (data) {
 				_.merge(this.model, data);
 			}
+			debugger;
 			this.cell = cell;
 			// this.model.joinTable.joinKeys = [];
 
@@ -540,7 +541,6 @@ export default {
 	},
 
 	destroyed() {
-		log('Link.destroyed');
 		if (this.unwatch) this.unwatch();
 		if (this.targetCell) {
 			this.targetCell.off('change:outputSchema', this.renderSchema, this);
@@ -548,6 +548,7 @@ export default {
 		delete this.unwatch;
 		delete this.cell;
 		delete this.targetCell;
+		log('Link.destroyed dddd', this.model.joinTable);
 	}
 };
 </script>

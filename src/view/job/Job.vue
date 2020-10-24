@@ -338,14 +338,16 @@ export default {
 		this.buildProfile = this.$store.state.buildProfile;
 
 		let self = this;
-		this.getDataApi();
-		if (!this.downLoadNum) {
-			self.timer = setInterval(() => {
-				self.getDataApi();
-				if (this.downLoadNum) {
-					clearInterval(self.timer);
-				}
-			}, 5000);
+		if (this.buildProfile && this.buildProfile === ' CLOUD') {
+			this.getDataApi();
+			if (!this.downLoadNum) {
+				self.timer = setInterval(() => {
+					self.getDataApi();
+					if (this.downLoadNum) {
+						clearInterval(self.timer);
+					}
+				}, 5000);
+			}
 		}
 	},
 	mounted() {
@@ -1063,7 +1065,7 @@ export default {
 			let self = this,
 				data = this.getDataFlowData();
 
-			if (!this.downLoadNum) {
+			if (this.buildProfile === ' CLOUD' && !this.downLoadNum) {
 				this.downLoadAgetntdialog = true;
 				return;
 			}

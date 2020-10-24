@@ -870,6 +870,8 @@ export default {
 							schema = item.schema;
 						}
 					});
+				} else {
+					schema.table_name = this.model.tableName;
 				}
 				self.$nextTick(() => {
 					self.$emit('schemaChange', _.cloneDeep(schema));
