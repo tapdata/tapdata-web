@@ -92,10 +92,14 @@ export default {
 	font-size: 12px;
 	li {
 		float: left;
-		width: 48%;
+		width: 32%;
 	}
 	li:first-child {
 		margin-right: 20px;
+		border-right: 1px solid #dedee4;
+	}
+	li:last-child {
+		margin-top: 25px;
 	}
 	.model {
 		display: block;
@@ -111,6 +115,7 @@ export default {
 			padding: 20px;
 			color: #999;
 			line-height: 24px;
+			margin-right: 15px;
 			&:hover {
 				background: rgba(250, 250, 250, 1);
 				border: 1px solid rgba(222, 222, 228, 1);
