@@ -1,6 +1,6 @@
 <template>
 	<el-dialog
-		title="批量分类操作"
+		:title="$t('dataFlow.batchSortOperation')"
 		:visible.sync="dialogVisible"
 		width="600px"
 		class="SelectClassify-dialog"
@@ -50,8 +50,8 @@
 			</span>
 		</el-tree>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="handleCancel" size="mini">取消</el-button>
-			<el-button type="primary" @click="handleAdd" size="mini">保存修改</el-button>
+			<el-button @click="handleCancel" size="mini">{{ $t('dataForm.cancel') }}</el-button>
+			<el-button type="primary" @click="handleAdd" size="mini">{{ $t('dataForm.submit') }}</el-button>
 		</span>
 	</el-dialog>
 </template>

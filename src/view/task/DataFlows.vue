@@ -585,7 +585,7 @@ export default {
 		},
 		handleClassify() {
 			if (this.multipleSelection.length === 0) {
-				this.$message.info('please select row data');
+				this.$message.info(this.$t('dataFlow.selectRowdata'));
 				return;
 			}
 			this.tagList = this.handleSelectTag();

@@ -230,6 +230,8 @@ const cn = {
 		reloadSchemaError: '模型更新失败'
 	},
 	dataFlow: {
+		batchSortOperation: '批量分类操作',
+		selectRowdata: '请选择行数据',
 		clusterClone: '数据库迁移',
 		custom: '数据同步',
 		searchNode: '查找节点',

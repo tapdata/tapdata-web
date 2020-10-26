@@ -228,6 +228,8 @@ const tc = {
 	},
 
 	dataFlow: {
+		batchSortOperation: '批量分類操作',
+		selectRowdata: '請選擇行數據',
 		clusterClone: '數據庫遷移',
 		custom: '數據同步',
 		searchNode: '查找節點',

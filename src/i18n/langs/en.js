@@ -228,6 +228,8 @@ const en = {
 		reloadSchemaError: 'Model update failed'
 	},
 	dataFlow: {
+		batchSortOperation: 'Batch sort operation',
+		selectRowdata: 'Please select row data',
 		clusterClone: 'Database Migration',
 		custom: 'Data Sync',
 		searchNode: 'Search Node',
