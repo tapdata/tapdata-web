@@ -206,7 +206,7 @@ export default {
 					where: {
 						database_type: this.model.databaseType
 							? { in: [this.model.databaseType] }
-							: { nin: ['file', 'dummy', 'gridfs', 'rest api'] }
+							: { nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection'] }
 					},
 					fields: {
 						name: 1,
