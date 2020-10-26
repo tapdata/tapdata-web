@@ -215,7 +215,7 @@ export default {
 						connection_type: 1,
 						status: 1
 					},
-					order: ['name ASC', 'status ASC']
+					order: ['status DESC', 'name ASC']
 				})
 			});
 			this.databaseSelectConfig.loading = false;
@@ -229,6 +229,7 @@ export default {
 						value: item.id
 					};
 				});
+
 				this.lookupDatabaseType();
 			}
 		},
