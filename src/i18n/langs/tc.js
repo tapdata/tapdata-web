@@ -235,14 +235,15 @@ const tc = {
 		searchNode: '查找節點',
 		updateModel: '更新模型',
 		loadingText: '加載中',
-		databseMigrationHead: '數據庫遷移',
+		databseMigrationHead: '數據庫遷移 -  新手引導模式',
+		dataMigrationHead: '數據同步',
 		databseProcessingHead: '數據處理同步',
-		databseFreedomHead: '自定義數據同步',
+		databseFreedomHead: '數據庫遷移',
 		createNew: '新建',
 		DissedNoAction: 'oops~ 被禁用的節點或連線不能被刪除、連入或連出',
 		guidingMode: '引導模式',
-		advancedMode: '自由模式',
-		freedomMode: '轉自由模式',
+		advancedMode: '標準模式',
+		freedomMode: '轉標準模式',
 		advanceSetting: '更多高級設置',
 		closeSetting: '收起',
 		openPanel: '展開',
@@ -255,11 +256,13 @@ const tc = {
 		simpleSceneTitle: '創建數據庫複製任務',
 		sourceLibrarySetting: '源庫結構與對象設置',
 		databseMigration:
-			'以引導的模式幫助新手用戶快速了解數據庫之間的遷移。數據庫遷移能快速地實現數據庫之間(內置表批量過濾和改名等設置)的全量和增量傳輸。',
+			'以引導的模式幫助新手用戶快速了解數據庫之間的遷移。數據庫遷移能快速地實現數據庫之間(內置表批量過濾和改名等設置)的結構、全量和增量遷移',
 		databsenProcessing:
-			'以引導的模式幫助新手用戶快速了解表級的數據處理與同步，此功能除了能實現表級的全量或增量傳輸除功能外，更注重使用各種處理器(JS處理、欄位過濾、聚合處理、行級過濾等)進行複雜的邏輯處理，以滿足用戶更高的數據處理需求',
+			'以引導的模式幫助新手用戶快速了解表級的數據處理與同步，此功能除了能實現表級的全量或增量傳輸除功能外，更註重使用各種處理器(JS處理、字段過濾、聚合處理、行級過濾等)進行復雜的邏輯處理，以滿足用戶更高的數據處理需求',
 		databseFreedom:
-			'自定義數據同步模式下，用戶可以根據需求自由地使用全部的數據節點與處理節點，自由的設置任務編排路徑與功能配置。此模式可滿足用戶各種複雜的數據處理的場景需求。',
+			'數據遷移功能可幫助用戶在壹個任務內輕松實現多個同構或異構數據庫、文件之間的結構遷移、初始化遷移、或增量遷移等功能。',
+		dataFreedom:
+			'數據同布聚焦在表級別的數據處理與傳輸，可實現多表合並、數據拆分、關聯映射、字段增減合並、內容過濾、聚合處理、JS處理等功能的實時數據同步。',
 		multiError: {
 			allSelectionError: '選中的任務狀態不允許這種操作',
 			notFound: '此任務不存在',

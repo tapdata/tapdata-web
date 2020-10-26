@@ -237,14 +237,15 @@ const cn = {
 		searchNode: '查找节点',
 		updateModel: '更新模型',
 		loadingText: '加载中',
-		databseMigrationHead: '数据库迁移',
+		databseMigrationHead: '数据库迁移 -  新手引导模式',
+		dataMigrationHead: '数据同步',
 		atabseProcessingHead: '数据处理同步',
-		databseFreedomHead: '自定义同步任务',
+		databseFreedomHead: '数据库迁移',
 		createNew: '新建',
 		DissedNoAction: 'oops~ 被禁用的节点或连线不能被删除、连入或连出',
 		guidingMode: '引导模式',
-		advancedMode: '自由模式',
-		freedomMode: '转自由模式',
+		advancedMode: '标准模式',
+		freedomMode: '转标准模式',
 		advanceSetting: '更多高级设置',
 		closeSetting: '收起',
 		openPanel: '展开',
@@ -257,11 +258,13 @@ const cn = {
 		simpleSceneTitle: '创建数据库复制任务',
 		sourceLibrarySetting: '源库结构与对象设置',
 		databseMigration:
-			'以引导的模式帮助新手用户快速了解数据库之间的迁移。数据库迁移能快速地实现数据库之间(内置表批量过滤和改名等设置)的全量和增量传输。',
+			'以引导的模式帮助新手用户快速了解数据库之间的迁移。数据库迁移能快速地实现数据库之间(内置表批量过滤和改名等设置)的结构、全量和增量迁移',
 		databseProcessing:
 			'以引导的模式帮助新手用户快速了解表级的数据处理与同步，此功能除了能实现表级的全量或增量传输除功能外，更注重使用各种处理器(JS处理、字段过滤、聚合处理、行级过滤等)进行复杂的逻辑处理，以满足用户更高的数据处理需求',
 		databseFreedom:
-			'自定义数据同步模式下，用户可以根据需求自由地使用全部的数据节点与处理节点，自由的设置任务编排路径与功能配置。此模式可满足用户各种复杂的数据处理的场景需求。',
+			'数据迁移功能可帮助用户在一个任务内轻松实现多个同构或异构数据库、文件之间的结构迁移、初始化迁移、或增量迁移等功能。',
+		dataFreedom:
+			'数据同布聚焦在表级别的数据处理与传输，可实现多表合并、数据拆分、关联映射、字段增减合并、内容过滤、聚合处理、JS处理等功能的实时数据同步。',
 		multiError: {
 			allSelectionError: '选中的任务状态不允许这种操作',
 			notFound: '此任务不存在',

@@ -22,10 +22,19 @@
 				<li @click="goNew">
 					<span class="model">{{ $t('dataFlow.advancedMode') }}</span>
 					<div class="content">
-						<i class="iconfont icon-renwubianpai2"></i>
+						<i class="iconfont icon-shujukuqianyi2"></i>
 						<span>
 							<span class="tag">{{ $t('dataFlow.databseFreedomHead') }}</span>
 							{{ $t('dataFlow.databseFreedom') }}</span
+						>
+					</div>
+				</li>
+				<li @click="goNewCust">
+					<div class="content">
+						<i class="iconfont icon-renwubianpai2"></i>
+						<span>
+							<span class="tag">{{ $t('dataFlow.dataMigrationHead') }}</span>
+							{{ $t('dataFlow.dataFreedom') }}</span
 						>
 					</div>
 				</li>
@@ -52,14 +61,23 @@ export default {
 		db2db() {
 			let routeUrl = this.$router.resolve({
 				path: '/job',
-				query: { isSimple: true }
+				query: { isSimple: true, mapping: 'cluster-clone' }
 			});
 			window.open(routeUrl.href, '_blank');
 			this.handleClose();
 		},
 		goNew() {
 			let routeUrl = this.$router.resolve({
-				path: '/job'
+				path: '/job',
+				query: { mapping: 'cluster-clone' }
+			});
+			window.open(routeUrl.href, '_blank');
+			this.handleClose();
+		},
+		goNewCust() {
+			let routeUrl = this.$router.resolve({
+				path: '/job',
+				query: { mapping: 'custom' }
 			});
 			window.open(routeUrl.href, '_blank');
 			this.handleClose();

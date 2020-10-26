@@ -111,7 +111,7 @@ export default {
 			window.name = JSON.stringify(this.$parent.getDataFlowData(true));
 			this.$router.push({
 				path: '/job',
-				query: { isSimple: false }
+				query: { mapping: 'cluster-clone' }
 			});
 			location.reload();
 		},

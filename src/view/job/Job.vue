@@ -361,6 +361,7 @@ export default {
 		if (self.$route.query.isMoniting == 'true') self.isMoniting = true;
 		if (self.$route.query.isSimple == 'true') {
 			this.initData(db2db.data);
+			this.mappingTemplate = 'cluster-clone';
 			this.loading = false;
 			setTimeout(() => self.initSimple(), 1100);
 			return;
