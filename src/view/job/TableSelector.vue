@@ -144,7 +144,7 @@ export default {
 				let filter = {
 					where: {
 						meta_type: {
-							in: ['database', 'directory', 'ftp', 'apiendpoint']
+							in: ['database', 'apiendpoint']
 						},
 						original_name: {
 							like: self.filterText,
@@ -246,7 +246,10 @@ export default {
 			let filter = {
 				where: {
 					meta_type: {
-						in: ['database', 'directory', 'ftp', 'apiendpoint']
+						in: ['database', 'apiendpoint']
+					},
+					'source.database_type': {
+						nin: ['gridfs']
 					},
 					is_deleted: false
 				},

@@ -237,12 +237,13 @@ const en = {
 		loadingText: 'Loading...',
 		databseProcessingHead: 'Data Processing & Sync',
 		databseMigrationHead: 'Database Migration',
+		dataMigrationHead: 'Data Sync',
 		databseFreedomHead: 'Custom Data Sync',
 		createNew: 'Create New',
 		DissedNoAction: 'oops~ The banned node/Connecting line can not be deleted and connected',
 		guidingMode: 'Guiding mode',
-		advancedMode: 'Free mode',
-		freedomMode: 'Free mode',
+		advancedMode: 'Standard mode',
+		freedomMode: 'Standard mode',
 		advanceSetting: 'More advanced setting',
 		closeSetting: 'Fold up',
 		openPanel: 'Open',
@@ -255,11 +256,13 @@ const en = {
 		simpleSceneTitle: 'Create a database replication task',
 		sourceLibrarySetting: 'Source library structure and object settings',
 		databseMigration:
-			'With the guided mode to help understanding the operation method of databases migration which can quickly realize INITAL and CDC transmission between databases (include table filter and rename settings, etc).',
+			'With the guided mode to help understanding the operation method of databases migration which can quickly realize structure , inital, and CDC migration between databases.',
 		databseProcessing:
 			'With the  guided mode to help novice users to quickly understand the table level data processing and SYNC. This function can not only realize table level INITAL and CDC transmission, but also focus on various processors (JS processing, field filtering, aggregation processing, row level filtering, etc.) for complex logical processing demands.',
 		databseFreedom:
-			'In the custom mode, user can freely use all the data nodes and processor nodes , set the task scheduling path and function configuration to solve various complex data processing scenarios and synchronization requirements',
+			'Database migration can help users  to achieve structure,  inital, and CDC migration of multiple homogeneous or heterogeneous databases in one job. ',
+		dataFreedom:
+			'Data sync focuses on data processing (such as table merging, data splitting, joint mapping, field processing, content filtering, aggregation processing, JS processing ,etc )and sync of table-level real-time data sync.',
 		multiError: {
 			allSelectionError: 'The status of selected job does not allow this operation.',
 			notFound: 'This job does not existed.',
