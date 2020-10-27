@@ -633,6 +633,13 @@ const cn = {
 								enterContent: '请输入条件内容',
 								placeholder: '过滤条件(Mongo Query Filter Document)'
 							}
+						},
+						aggregation: {
+							aggregationText: '聚合设置',
+							disabled: '已禁用',
+							enabled: '已启用',
+							preview: '预览',
+							previewSampleData: '采样数据预览'
 						}
 					}
 				},

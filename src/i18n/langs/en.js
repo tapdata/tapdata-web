@@ -635,6 +635,13 @@ const en = {
 								enterContent: 'Please enter the content of the conditions',
 								placeholder: 'Filter Condition (Mongo Query Filter Document)'
 							}
+						},
+						aggregation: {
+							aggregationText: 'Aggregation Settings',
+							disabled: 'Disabled',
+							enabled: 'Enabled',
+							preview: 'Preview',
+							previewSampleData: 'Preview of sample data'
 						}
 					}
 				},

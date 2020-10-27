@@ -213,6 +213,21 @@
 						></el-switch>
 					</div>
 				</el-form-item>
+				<el-form-item required :label="$t('editor.cell.data_node.collection.form.aggregation.aggregationText')">
+					<div class="flex-block">
+						<el-switch
+							v-model="model.aggregation"
+							inactive-color="#dcdfe6"
+							@change="handleAggregation"
+							:active-text="
+								model.aggregation
+									? $t('editor.cell.data_node.collection.form.aggregation.enabled')
+									: $t('editor.cell.data_node.collection.form.aggregation.disabled')
+							"
+							style="margin-right: 20px"
+						></el-switch>
+					</div>
+				</el-form-item>
 				<queryBuilder
 					v-if="(dataNodeInfo.isSource || !dataNodeInfo.isTarget) && model.isFilter"
 					v-model="model.custSql"
@@ -260,6 +275,23 @@
 				<el-button type="primary" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
 			</span>
 		</el-dialog>
+		<el-dialog :visible.sync="aggregationDialog" :close-on-click-modal="false" width="70%">
+			<div slot="title">
+				{{ $t('message.prompt') }}
+				<span>Learn more</span>
+			</div>
+			<AggregationDialog></AggregationDialog>
+			<span slot="footer" class="dialog-footer">
+				<!-- <el-button
+					@click="
+						dialogVisible = false;
+						aggregationDialog = false;
+					"
+					>{{ $t('message.cancel') }}</el-button
+				> -->
+				<el-button type="primary" @click="aggregationSave">{{ $t('message.confirm') }}</el-button>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -269,7 +301,8 @@ import MultiSelection from '../../../components/MultiSelection';
 import RelatedTasks from '../../../components/relatedTasks';
 import ClipButton from '@/components/ClipButton';
 import queryBuilder from '@/components/QueryBuilder';
-import CreateTable from '../../../components/dialog/createTable';
+import CreateTable from '@/components/dialog/createTable';
+import AggregationDialog from './aggregationDialog';
 import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, uuid } from '../../util/Schema';
 import Entity from '../link/Entity';
 import _ from 'lodash';
@@ -289,7 +322,16 @@ const DELETE_OPS_TPL = {
 };
 export default {
 	name: 'Collection',
-	components: { Entity, DatabaseForm, MultiSelection, ClipButton, RelatedTasks, CreateTable, queryBuilder },
+	components: {
+		Entity,
+		DatabaseForm,
+		MultiSelection,
+		ClipButton,
+		RelatedTasks,
+		CreateTable,
+		queryBuilder,
+		AggregationDialog
+	},
 	props: {
 		database_types: {
 			type: Array,
@@ -398,6 +440,7 @@ export default {
 	data() {
 		let self = this;
 		return {
+			aggregationDialog: false,
 			reloadModelLoading: false,
 			addtableFalg: false,
 			dialogData: null,
@@ -494,7 +537,8 @@ export default {
 				fieldFilter: '',
 				initialSyncOrder: 0,
 				enableInitialOrder: false,
-				operations: []
+				operations: [],
+				aggregation: false
 			},
 			primaryKeyOptions: [],
 			fieldFilterOptions: [],
@@ -830,6 +874,15 @@ export default {
 			editorMonitor.goBackMontior();
 		},
 
+		//  聚合处理弹窗开启设置
+		handleAggregation(val) {
+			if (val) {
+				this.aggregationDialog = true;
+			} else {
+				this.aggregationDialog = false;
+			}
+		},
+
 		// 更新模型点击弹窗
 		hanlderLoadSchema() {
 			this.dialogVisible = true;
@@ -900,6 +953,11 @@ export default {
 .e-collection {
 	.iconfont {
 		font-size: 12px;
+	}
+	.el-switch__label {
+		font-size: 12px !important;
+		color: #666 !important;
+		font-weight: normal !important;
 	}
 }
 .collection-tooltip.is-light {

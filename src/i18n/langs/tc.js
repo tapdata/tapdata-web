@@ -629,6 +629,13 @@ const tc = {
 								enterContent: '請輸入條件內容',
 								placeholder: '過濾條件(Mongo Query Filter Document)'
 							}
+						},
+						aggregation: {
+							aggregationText: '聚合設置',
+							disabled: '已禁用',
+							enabled: '已啟用',
+							preview: '預覽',
+							previewSampleData: '採樣數據預覽'
 						}
 					}
 				},
