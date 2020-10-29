@@ -277,7 +277,7 @@
 		</el-dialog>
 		<el-dialog :visible.sync="aggregationDialog" :close-on-click-modal="false" width="70%">
 			<div slot="title">
-				{{ $t('message.prompt') }}
+				{{ $t('editor.cell.data_node.collection.form.aggregation.aggregationText') }}
 				<span>Learn more</span>
 			</div>
 			<AggregationDialog></AggregationDialog>
@@ -538,7 +538,8 @@ export default {
 				initialSyncOrder: 0,
 				enableInitialOrder: false,
 				operations: [],
-				aggregation: false
+				aggregation: false,
+				aggregationFunc: ''
 			},
 			primaryKeyOptions: [],
 			fieldFilterOptions: [],
