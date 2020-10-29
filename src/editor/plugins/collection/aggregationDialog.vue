@@ -7,28 +7,26 @@
 					$t('editor.cell.data_node.collection.form.aggregation.preview')
 				}}</el-button>
 			</div>
-			<JsEditor :code.sync="script" ref="jsEditor" :width.sync="width" v-if="!disabled"></JsEditor>
+			[<JsEditor :code.sync="script" ref="jsEditor" :width.sync="width" v-if="!disabled"></JsEditor>]
 		</div>
 		<div class="preview">
 			<div class="title">{{ $t('editor.cell.data_node.collection.form.aggregation.previewSampleData') }}</div>
 			<div class="preview-box">
-				<div class="preview-main">
-					<!-- <el-input
+				<!-- <el-input
 						class="e-textarea"
 						type="textarea"
 						v-for="item in previewData"
 						:key="item"
 						v-model="item.script"
 					></el-input> -->
-					<div class="return-data">
-						<!-- <span class="error">
+				<div class="return-data">
+					<!-- <span class="error">
 							<p>{{ errorMessage }}</p>
 						</span> -->
-						<span class="add">
-							<p>{{ $t('editor.cell.data_node.collection.form.aggregation.addTextTip') }}</p>
-							<p>{{ $t('editor.cell.data_node.collection.form.aggregation.addTextTip1') }}</p>
-						</span>
-					</div>
+					<span class="add">
+						<p>{{ $t('editor.cell.data_node.collection.form.aggregation.addTextTip') }}</p>
+						<p>{{ $t('editor.cell.data_node.collection.form.aggregation.addTextTip1') }}</p>
+					</span>
 				</div>
 			</div>
 		</div>
@@ -74,6 +72,7 @@ export default {
 	flex-wrap: nowrap;
 	& > div {
 		width: 100%;
+		color: #333;
 		border: 1px solid #dedee4;
 		.title {
 			width: 100%;
@@ -102,29 +101,27 @@ export default {
 		height: 100%;
 		margin-left: 20px;
 		.preview-box {
-			.preview-main {
-				width: 100%;
-				height: 100%;
-				display: flex;
-				flex-direction: row;
-				overflow: auto;
-				padding: 20px;
-				box-sizing: border-box;
-				.e-textarea {
-					width: 260px;
-					height: 400px;
-					margin-right: 10px;
+			width: 100%;
+			height: 100%;
+			display: flex;
+			flex-direction: row;
+			overflow: auto;
+			padding: 20px;
+			box-sizing: border-box;
+			.e-textarea {
+				width: 260px;
+				height: 410px;
+				margin-right: 10px;
+			}
+			.return-data {
+				height: 410px;
+				.error {
+					font-size: 12px;
+					color: #f56c6c;
 				}
-				.return-data {
-					height: 400px;
-					.error {
-						font-size: 12px;
-						color: #f56c6c;
-					}
-					.add {
-						font-size: 12px;
-						color: #666;
-					}
+				.add {
+					font-size: 12px;
+					color: #666;
 				}
 			}
 		}
@@ -140,11 +137,14 @@ export default {
 	.margin-view-overlays,
 	.view-lines {
 		width: 100% !important;
-		height: 450px !important;
+		height: 410px !important;
+	}
+	.monaco {
+		border: 0 !important;
 	}
 	.monaco-editor {
 		width: 100% !important;
-		height: 448px !important;
+		height: 410px !important;
 	}
 	.el-textarea__inner {
 		width: 260px;
