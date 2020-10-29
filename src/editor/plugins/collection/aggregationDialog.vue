@@ -3,7 +3,7 @@
 		<div class="pipeline">
 			<div class="title">
 				Pipeline
-				<el-button type="primary" size="mini">{{
+				<el-button type="primary" size="mini" class="pipeline-button">{{
 					$t('editor.cell.data_node.collection.form.aggregation.preview')
 				}}</el-button>
 			</div>
@@ -13,13 +13,22 @@
 			<div class="title">{{ $t('editor.cell.data_node.collection.form.aggregation.previewSampleData') }}</div>
 			<div class="preview-box">
 				<div class="preview-main">
-					<el-input
+					<!-- <el-input
 						class="e-textarea"
 						type="textarea"
 						v-for="item in previewData"
 						:key="item"
 						v-model="item.script"
-					></el-input>
+					></el-input> -->
+					<div class="return-data">
+						<!-- <span class="error">
+							<p>{{ errorMessage }}</p>
+						</span> -->
+						<span class="add">
+							<p>{{ $t('editor.cell.data_node.collection.form.aggregation.addTextTip') }}</p>
+							<p>{{ $t('editor.cell.data_node.collection.form.aggregation.addTextTip1') }}</p>
+						</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -31,6 +40,11 @@ export default {
 	name: 'collectionAggregation',
 	components: {
 		JsEditor
+	},
+	props: {
+		scriptVal: {
+			type: String
+		}
 	},
 	data() {
 		return {
@@ -44,8 +58,12 @@ export default {
 				{ script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}' },
 				{ script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}' }
 			],
-			script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}'
+			errorMessage: 'adfasdfadfadsfasdf adsfasdf asd'
 		};
+	},
+
+	created() {
+		this.script = this.scriptVal;
 	}
 };
 </script>
@@ -72,6 +90,12 @@ export default {
 	.pipeline {
 		width: 400px;
 		height: 478px;
+		.pipeline-button {
+			float: right;
+			height: 20px;
+			margin-top: 4px;
+			padding: 0 10px;
+		}
 	}
 	.preview {
 		width: calc(100% - 420px);
@@ -90,6 +114,17 @@ export default {
 					width: 260px;
 					height: 400px;
 					margin-right: 10px;
+				}
+				.return-data {
+					height: 400px;
+					.error {
+						font-size: 12px;
+						color: #f56c6c;
+					}
+					.add {
+						font-size: 12px;
+						color: #666;
+					}
 				}
 			}
 		}

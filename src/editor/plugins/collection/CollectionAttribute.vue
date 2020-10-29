@@ -145,6 +145,45 @@
 						></el-option>
 					</el-select>
 				</el-form-item>
+				<el-form-item required :label="$t('editor.cell.data_node.collection.form.aggregation.aggregationText')">
+					<div class="flex-block">
+						<el-switch
+							v-model="model.aggregation"
+							inactive-color="#dcdfe6"
+							@change="handleAggregation"
+							:active-text="
+								model.aggregation
+									? $t('editor.cell.data_node.collection.form.aggregation.enabled')
+									: $t('editor.cell.data_node.collection.form.aggregation.disabled')
+							"
+							style="margin-right: 20px"
+						></el-switch>
+					</div>
+				</el-form-item>
+				<el-form-item v-if="model.aggregationFunc" class="aggregation-item">
+					<div class="flex-block">
+						<div class="head">Pipeline</div>
+						<el-input
+							class="e-textarea"
+							type="textarea"
+							disabled
+							v-model="model.aggregationFunc"
+						></el-input>
+					</div>
+					<el-tooltip
+						class="item"
+						popper-class="collection-tooltip"
+						effect="light"
+						:content="$t('dataFlow.edit')"
+					>
+						<el-button
+							size="mini"
+							class="iconfont icon-bianji edit"
+							style="padding: 7px;margin-left: 7px"
+							@click="aggregationDialog = true"
+						></el-button>
+					</el-tooltip>
+				</el-form-item>
 				<el-form-item v-if="model.fieldFilterType !== 'keepAllFields'">
 					<MultiSelection
 						v-model="model.fieldFilter"
@@ -213,21 +252,7 @@
 						></el-switch>
 					</div>
 				</el-form-item>
-				<el-form-item required :label="$t('editor.cell.data_node.collection.form.aggregation.aggregationText')">
-					<div class="flex-block">
-						<el-switch
-							v-model="model.aggregation"
-							inactive-color="#dcdfe6"
-							@change="handleAggregation"
-							:active-text="
-								model.aggregation
-									? $t('editor.cell.data_node.collection.form.aggregation.enabled')
-									: $t('editor.cell.data_node.collection.form.aggregation.disabled')
-							"
-							style="margin-right: 20px"
-						></el-switch>
-					</div>
-				</el-form-item>
+
 				<queryBuilder
 					v-if="(dataNodeInfo.isSource || !dataNodeInfo.isTarget) && model.isFilter"
 					v-model="model.custSql"
@@ -271,16 +296,26 @@
 		>
 			<span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="dialogVisible = false">{{ $t('message.cancel') }}</el-button>
-				<el-button type="primary" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
+				<el-button @click="dialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" size="mini" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
 			</span>
 		</el-dialog>
-		<el-dialog :visible.sync="aggregationDialog" :close-on-click-modal="false" width="70%">
+
+		<el-dialog
+			:visible.sync="aggregationDialog"
+			custom-class="collAggreDialog"
+			:close-on-click-modal="false"
+			width="70%"
+		>
 			<div slot="title">
-				{{ $t('editor.cell.data_node.collection.form.aggregation.aggregationText') }}
-				<span>Learn more</span>
+				<span class="text">{{ $t('editor.cell.data_node.collection.form.aggregation.aggregationText') }}</span>
+				<span @click="handleLearnMore" class="more">Learn more</span>
 			</div>
-			<AggregationDialog></AggregationDialog>
+			<AggregationDialog
+				v-if="aggregationDialog"
+				:scriptVal="model.aggregationFunc"
+				ref="aggregationChild"
+			></AggregationDialog>
 			<span slot="footer" class="dialog-footer">
 				<!-- <el-button
 					@click="
@@ -289,7 +324,7 @@
 					"
 					>{{ $t('message.cancel') }}</el-button
 				> -->
-				<el-button type="primary" @click="aggregationSave">{{ $t('message.confirm') }}</el-button>
+				<el-button type="primary" size="mini" @click="aggregationSave">{{ $t('message.confirm') }}</el-button>
 			</span>
 		</el-dialog>
 	</div>
@@ -933,6 +968,18 @@ export default {
 				});
 			});
 			this.dialogVisible = false;
+		},
+
+		// 点击aggregation弹窗跳转页面
+		handleLearnMore() {
+			let href = 'https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/';
+			window.open(href);
+		},
+
+		// 保存aggregation设置
+		aggregationSave() {
+			this.aggregationDialog = false;
+			this.model.aggregationFunc = this.$refs.aggregationChild.script;
 		}
 	}
 };
@@ -960,9 +1007,61 @@ export default {
 		color: #666 !important;
 		font-weight: normal !important;
 	}
+	.aggregation-item {
+		.el-form-item__content {
+			display: flex;
+			flex-direction: row;
+			align-items: flex-start;
+			align-content: flex-start;
+		}
+		.flex-block {
+			display: block;
+			width: 90%;
+			.head {
+				width: 100%;
+				height: 28px;
+				padding-left: 12px;
+				line-height: 27px;
+				color: #333;
+				font-size: 12px;
+				border: 1px solid #dedee4;
+				border-bottom: 0;
+				box-sizing: border-box;
+				background-color: #f5f5f5;
+			}
+			.e-textarea {
+				.el-textarea__inner {
+					min-height: 240px !important;
+				}
+			}
+		}
+
+		.edit {
+			display: inline-block;
+			padding-left: 20px;
+			cursor: pointer;
+		}
+	}
 }
 .collection-tooltip.is-light {
 	border: 1px solid #ebeef5 !important;
 	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+.collAggreDialog {
+	.el-dialog__body {
+		padding: 20px 30px 10px;
+	}
+	.el-dialog__footer {
+		padding: 10px 30px 20px;
+	}
+	.text {
+		user-select: none;
+	}
+	.more {
+		padding-left: 20px;
+		font-size: 12px;
+		color: #48b6e2;
+		cursor: pointer;
+	}
 }
 </style>

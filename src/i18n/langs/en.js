@@ -644,7 +644,10 @@ const en = {
 							disabled: 'Disabled',
 							enabled: 'Enabled',
 							preview: 'Preview',
-							previewSampleData: 'Preview of sample data'
+							previewSampleData: 'Preview of sample data',
+							addTextTip: 'No preview sample data',
+							addTextTip1:
+								'Please enter the MongoDB aggregation code, and then click "Preview" to preview the sample data here'
 						}
 					}
 				},
