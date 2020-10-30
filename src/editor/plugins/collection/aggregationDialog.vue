@@ -3,7 +3,7 @@
 		<div class="pipeline">
 			<div class="title">
 				Pipeline
-				<el-button type="primary" size="mini" class="pipeline-button">{{
+				<el-button type="primary" size="mini" class="pipeline-button" @click="handlePreview">{{
 					$t('editor.cell.data_node.collection.form.aggregation.preview')
 				}}</el-button>
 			</div>
@@ -34,6 +34,7 @@
 </template>
 <script>
 import JsEditor from '@/components/JsEditor';
+import ws from '@/api/ws';
 export default {
 	name: 'collectionAggregation',
 	components: {
@@ -42,6 +43,9 @@ export default {
 	props: {
 		scriptVal: {
 			type: String
+		},
+		modelData: {
+			type: Object
 		}
 	},
 	data() {
@@ -62,6 +66,35 @@ export default {
 
 	created() {
 		this.script = this.scriptVal;
+	},
+
+	methods: {
+		handlePreview() {
+			let params = {
+				type: 'collectionAggregation',
+				data: {
+					tables: [
+						{
+							connId: this.modelData.connectionId,
+							tableName: this.modelData.tableName,
+							aggregationFunc: this.script,
+							userId: this.$cookie.get('user_id')
+						}
+					]
+				}
+			};
+			if (ws.ws.readyState == 1) ws.send(params);
+			// let templeSchema = null,
+			// 	schema = null;
+			// ws.on('aggregation_schema_result', res => {
+			// 	if (res.status === 'SUCCESS' && res.result && res.result.length) {
+			// 		templeSchema = res.result;
+			// 	}
+			// 	if (templeSchema) {
+
+			// 	}
+			// });
+		}
 	}
 };
 </script>

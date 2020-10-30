@@ -313,6 +313,7 @@
 			</div>
 			<AggregationDialog
 				v-if="aggregationDialog"
+				:modelData="model"
 				:scriptVal="model.aggregationFunc"
 				ref="aggregationChild"
 			></AggregationDialog>
