@@ -12,18 +12,21 @@
 		<div class="preview">
 			<div class="title">{{ $t('editor.cell.data_node.collection.form.aggregation.previewSampleData') }}</div>
 			<div class="preview-box">
-				<!-- <el-input
+				<template v-if="returnFalg == 'success'">
+					<el-input
 						class="e-textarea"
 						type="textarea"
 						v-for="item in previewData"
 						:key="item"
 						v-model="item.script"
-					></el-input> -->
+					></el-input>
+				</template>
+
 				<div class="return-data">
-					<!-- <span class="error">
-							<p>{{ errorMessage }}</p>
-						</span> -->
-					<span class="add">
+					<span class="error" v-if="returnFalg == 'error'">
+						<p>{{ errorMessage }}</p>
+					</span>
+					<span class="add" v-if="returnFalg == 'add'">
 						<p>{{ $t('editor.cell.data_node.collection.form.aggregation.addTextTip') }}</p>
 						<p>{{ $t('editor.cell.data_node.collection.form.aggregation.addTextTip1') }}</p>
 					</span>
@@ -60,7 +63,8 @@ export default {
 				{ script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}' },
 				{ script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}' }
 			],
-			errorMessage: 'adfasdfadfadsfasdf adsfasdf asd'
+			errorMessage: '',
+			returnFalg: 'add'
 		};
 	},
 
@@ -69,31 +73,30 @@ export default {
 	},
 
 	methods: {
+		// 预览
 		handlePreview() {
 			let params = {
-				type: 'collectionAggregation',
+				type: 'aggregatePreview',
 				data: {
-					tables: [
-						{
-							connId: this.modelData.connectionId,
-							tableName: this.modelData.tableName,
-							aggregationFunc: this.script,
-							userId: this.$cookie.get('user_id')
-						}
-					]
+					connectionId: this.modelData.connectionId,
+					tableName: this.modelData.tableName,
+					pipeline: this.script
 				}
 			};
 			if (ws.ws.readyState == 1) ws.send(params);
 			// let templeSchema = null,
 			// 	schema = null;
-			// ws.on('aggregation_schema_result', res => {
-			// 	if (res.status === 'SUCCESS' && res.result && res.result.length) {
-			// 		templeSchema = res.result;
-			// 	}
-			// 	if (templeSchema) {
+			ws.on('aggregatePreview_result', res => {
+				if (res.status === 'SUCCESS' && res.result && res.result.previewResult.length) {
+					this.returnFalg = 'success';
+					this.previewData = res.result.previewResult;
 
-			// 	}
-			// });
+					// templeSchema = res.result.relateDataBaseTable;
+				} else {
+					this.errorMessage = res.error;
+					this.returnFalg = 'error';
+				}
+			});
 		}
 	}
 };
