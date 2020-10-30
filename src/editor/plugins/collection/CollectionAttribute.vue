@@ -147,27 +147,35 @@
 				</el-form-item>
 				<el-form-item required :label="$t('editor.cell.data_node.collection.form.aggregation.aggregationText')">
 					<div class="flex-block">
-						<el-switch
-							v-model="model.aggregation"
-							inactive-color="#dcdfe6"
-							@change="handleAggregation"
-							:active-text="
-								model.aggregation
-									? $t('editor.cell.data_node.collection.form.aggregation.enabled')
-									: $t('editor.cell.data_node.collection.form.aggregation.disabled')
-							"
-							style="margin-right: 20px"
-						></el-switch>
+						<el-tooltip
+							class="item"
+							popper-class="collection-tooltip"
+							effect="light"
+							:content="$t('editor.cell.data_node.collection.form.aggregation.filterAggreTip')"
+							v-model="aggregateTooltip"
+						>
+							<el-switch
+								v-model="model.collectionAggregate"
+								inactive-color="#dcdfe6"
+								@change="handleAggregation"
+								:active-text="
+									model.collectionAggregate
+										? $t('editor.cell.data_node.collection.form.aggregation.enabled')
+										: $t('editor.cell.data_node.collection.form.aggregation.disabled')
+								"
+								style="margin-right: 20px"
+							></el-switch>
+						</el-tooltip>
 					</div>
 				</el-form-item>
-				<el-form-item v-if="model.aggregationFunc" class="aggregation-item">
+				<el-form-item v-if="model.collectionAggrPipeline && model.collectionAggregate" class="aggregation-item">
 					<div class="flex-block">
 						<div class="head">Pipeline</div>
 						<el-input
 							class="e-textarea"
 							type="textarea"
 							disabled
-							v-model="model.aggregationFunc"
+							v-model="model.collectionAggrPipeline"
 						></el-input>
 					</div>
 					<el-tooltip
@@ -240,16 +248,24 @@
 					v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
 				>
 					<div class="flex-block">
-						<el-switch
-							v-model="model.isFilter"
-							inactive-color="#dcdfe6"
-							:active-text="
-								model.isFilter
-									? $t('editor.cell.data_node.collection.form.filter.openFiflter')
-									: $t('editor.cell.data_node.collection.form.filter.closeFiflter')
-							"
-							style="margin-right: 20px"
-						></el-switch>
+						<el-tooltip
+							class="item"
+							popper-class="collection-tooltip"
+							effect="light"
+							:content="$t('editor.cell.data_node.collection.form.aggregation.filterAggreTip')"
+							v-model="filterTooltip"
+						>
+							<el-switch
+								v-model="model.isFilter"
+								inactive-color="#dcdfe6"
+								:active-text="
+									model.isFilter
+										? $t('editor.cell.data_node.collection.form.filter.openFiflter')
+										: $t('editor.cell.data_node.collection.form.filter.closeFiflter')
+								"
+								style="margin-right: 20px"
+							></el-switch>
+						</el-tooltip>
 					</div>
 				</el-form-item>
 
@@ -314,18 +330,12 @@
 			<AggregationDialog
 				v-if="aggregationDialog"
 				:modelData="model"
-				:scriptVal="model.aggregationFunc"
+				:scriptVal="model.collectionAggrPipeline"
 				ref="aggregationChild"
+				@backAggregateResult="backAggregateResult"
 			></AggregationDialog>
 			<span slot="footer" class="dialog-footer">
-				<!-- <el-button
-					@click="
-						dialogVisible = false;
-						aggregationDialog = false;
-					"
-					>{{ $t('message.cancel') }}</el-button
-				> -->
-				<el-button type="primary" size="mini" @click="aggregationSave">{{ $t('message.confirm') }}</el-button>
+				<el-button type="primary" size="mini" @click="aggregationSave">{{ $t('app.save') }}</el-button>
 			</span>
 		</el-dialog>
 	</div>
@@ -574,12 +584,15 @@ export default {
 				initialSyncOrder: 0,
 				enableInitialOrder: false,
 				operations: [],
-				aggregation: false,
-				aggregationFunc: ''
+				collectionAggregate: false,
+				collectionAggrPipeline: ''
 			},
 			primaryKeyOptions: [],
 			fieldFilterOptions: [],
-			defaultSchema: null
+			defaultSchema: null,
+			aggregationStatus: '',
+			aggregateTooltip: false,
+			filterTooltip: false
 		};
 	},
 
@@ -918,6 +931,10 @@ export default {
 			} else {
 				this.aggregationDialog = false;
 			}
+			if (this.model.isFilter) {
+				this.aggregateTooltip = true;
+				this.model.collectionAggregate = false;
+			}
 		},
 
 		// 更新模型点击弹窗
@@ -977,10 +994,27 @@ export default {
 			window.open(href);
 		},
 
+		// 获取aggregation数据
+		backAggregateResult(pipeline, status, schema) {
+			this.model.collectionAggrPipeline = pipeline;
+			if (status || schema) {
+				this.aggregationStatus = status;
+				this.defaultSchema = schema;
+				this.$emit('schemaChange', _.cloneDeep(schema));
+			}
+		},
+
 		// 保存aggregation设置
 		aggregationSave() {
-			this.aggregationDialog = false;
-			this.model.aggregationFunc = this.$refs.aggregationChild.script;
+			this.$refs.aggregationChild.handlePreview();
+
+			setTimeout(() => {
+				if (this.aggregationStatus) {
+					if (this.aggregationStatus !== 'error') {
+						this.aggregationDialog = false;
+					}
+				}
+			}, 500);
 		}
 	}
 };

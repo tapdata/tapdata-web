@@ -640,7 +640,9 @@ const tc = {
 							preview: '預覽',
 							previewSampleData: '採樣數據預覽',
 							addTextTip: '沒有預覽樣本數據',
-							addTextTip1: '請輸入MongoDB聚合代碼，然後重定向“預覽”以在此處預覽樣本數據'
+							addTextTip1: '請輸入MongoDB聚合代碼，然後重定向“預覽”以在此處預覽樣本數據',
+							filterAggreTip:
+								'聚合設置與過濾設置不可同時開啟，如果需要使用聚合設置功能，請關閉下方過濾設置開關'
 						}
 					}
 				},

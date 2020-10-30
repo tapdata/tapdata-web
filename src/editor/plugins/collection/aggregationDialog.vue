@@ -7,19 +7,16 @@
 					$t('editor.cell.data_node.collection.form.aggregation.preview')
 				}}</el-button>
 			</div>
-			[<JsEditor :code.sync="script" ref="jsEditor" :width.sync="width" v-if="!disabled"></JsEditor>]
+			[ <el-input class="e-textarea" type="textarea" v-model="script"></el-input>]
+			<!-- [<JsEditor :code.sync="script" ref="jsEditor" :width.sync="width" v-if="!disabled"></JsEditor>] -->
 		</div>
 		<div class="preview">
 			<div class="title">{{ $t('editor.cell.data_node.collection.form.aggregation.previewSampleData') }}</div>
 			<div class="preview-box">
 				<template v-if="returnFalg == 'success'">
-					<el-input
-						class="e-textarea"
-						type="textarea"
-						v-for="item in previewData"
-						:key="item"
-						v-model="item.script"
-					></el-input>
+					<div class="json-box" v-for="(item, index) in previewData" :key="index">
+						<pre>{{ JSON.stringify(item, null, 2) }}</pre>
+					</div>
 				</template>
 
 				<div class="return-data">
@@ -36,13 +33,9 @@
 	</div>
 </template>
 <script>
-import JsEditor from '@/components/JsEditor';
 import ws from '@/api/ws';
 export default {
 	name: 'collectionAggregation',
-	components: {
-		JsEditor
-	},
 	props: {
 		scriptVal: {
 			type: String
@@ -55,47 +48,58 @@ export default {
 		return {
 			disabled: false,
 			width: '500',
-			previewData: [
-				{ script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}' },
-				{ script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}' },
-				{ script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}' },
-				{ script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}' },
-				{ script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}' },
-				{ script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}' }
-			],
+			previewData: [],
 			errorMessage: '',
-			returnFalg: 'add'
+			returnFalg: 'add',
+			script: ''
 		};
 	},
 
 	created() {
-		this.script = this.scriptVal;
+		this.script = this.scriptVal == '[]' ? '' : this.scriptVal;
+		// if (this.script) {
+		// 	this.handlePreview();
+		// }
 	},
 
 	methods: {
 		// 预览
 		handlePreview() {
+			let script = this.script;
+			if (!this.script.startsWith('[')) {
+				script = '[' + script;
+			}
+			if (!this.script.endsWith(']')) {
+				script = script + ']';
+			}
+
 			let params = {
 				type: 'aggregatePreview',
 				data: {
 					connectionId: this.modelData.connectionId,
 					tableName: this.modelData.tableName,
-					pipeline: this.script
+					pipeline: script
 				}
 			};
 			if (ws.ws.readyState == 1) ws.send(params);
-			// let templeSchema = null,
-			// 	schema = null;
-			ws.on('aggregatePreview_result', res => {
-				if (res.status === 'SUCCESS' && res.result && res.result.previewResult.length) {
-					this.returnFalg = 'success';
-					this.previewData = res.result.previewResult;
 
-					// templeSchema = res.result.relateDataBaseTable;
-				} else {
-					this.errorMessage = res.error;
-					this.returnFalg = 'error';
+			let self = this,
+				templeSchema = null;
+			ws.on('aggregatePreviewResult', res => {
+				if (res.status === 'SUCCESS' && !!res.result) {
+					if (res.result.previewResult && res.result.previewResult.length) {
+						self.previewData = res.result.previewResult;
+					}
+					if (res.result.relateDataBaseTable) {
+						templeSchema = res.result.relateDataBaseTable;
+					}
+
+					self.returnFalg = 'success';
+				} else if (res.status === 'ERROR') {
+					self.errorMessage = res.error;
+					self.returnFalg = 'error';
 				}
+				this.$emit('backAggregateResult', script, self.returnFalg, templeSchema);
 			});
 		}
 	}
@@ -134,20 +138,26 @@ export default {
 	}
 	.preview {
 		width: calc(100% - 420px);
-		height: 100%;
+		height: 478px;
 		margin-left: 20px;
 		.preview-box {
 			width: 100%;
-			height: 100%;
+			height: calc(100% - 28px);
 			display: flex;
 			flex-direction: row;
 			overflow: auto;
 			padding: 20px;
 			box-sizing: border-box;
-			.e-textarea {
+			.json-box {
 				width: 260px;
-				height: 410px;
+				height: 100%;
 				margin-right: 10px;
+				box-sizing: border-box;
+				border: 1px solid #dedee4;
+				pre {
+					width: 260px;
+					white-space: pre-wrap;
+				}
 			}
 			.return-data {
 				height: 410px;
@@ -183,8 +193,9 @@ export default {
 		height: 410px !important;
 	}
 	.el-textarea__inner {
-		width: 260px;
-		height: 100%;
+		width: 100%;
+		height: 400px;
+		border: 0;
 		font-size: 12px;
 	}
 }
