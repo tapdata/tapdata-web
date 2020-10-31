@@ -7,8 +7,8 @@
 					$t('editor.cell.data_node.collection.form.aggregation.preview')
 				}}</el-button>
 			</div>
-			[ <el-input class="e-textarea" type="textarea" v-model="script"></el-input>]
-			<!-- [<JsEditor :code.sync="script" ref="jsEditor" :width.sync="width" v-if="!disabled"></JsEditor>] -->
+			<!-- [ <el-input class="e-textarea" type="textarea" v-model="script"></el-input>] -->
+			[<JsonEditor :code.sync="script" ref="jsEditor" :width.sync="width" v-if="!disabled"></JsonEditor>]
 		</div>
 		<div class="preview">
 			<div class="title">{{ $t('editor.cell.data_node.collection.form.aggregation.previewSampleData') }}</div>
@@ -34,8 +34,10 @@
 </template>
 <script>
 import ws from '@/api/ws';
+import JsonEditor from '@/components/jsonEditor';
 export default {
 	name: 'collectionAggregation',
+	components: { JsonEditor },
 	props: {
 		scriptVal: {
 			type: String
@@ -180,13 +182,13 @@ export default {
 	.margin,
 	.monaco-editor,
 	.monaco-scrollable-element,
-	.margin-view-overlays,
 	.view-lines {
 		width: 100% !important;
-		height: 410px !important;
+		// height: 410px !important;
 	}
 	.monaco {
 		border: 0 !important;
+		height: 410px !important;
 	}
 	.monaco-editor {
 		width: 100% !important;

@@ -149,15 +149,16 @@
 					<div class="flex-block">
 						<el-tooltip
 							class="item"
+							placement="top-start"
 							popper-class="collection-tooltip"
 							effect="light"
 							:content="$t('editor.cell.data_node.collection.form.aggregation.filterAggreTip')"
-							v-model="aggregateTooltip"
 						>
 							<el-switch
 								v-model="model.collectionAggregate"
 								inactive-color="#dcdfe6"
 								@change="handleAggregation"
+								:disabled="!sync_typeFalg || model.isFilter"
 								:active-text="
 									model.collectionAggregate
 										? $t('editor.cell.data_node.collection.form.aggregation.enabled')
@@ -252,11 +253,13 @@
 							class="item"
 							popper-class="collection-tooltip"
 							effect="light"
+							placement="top-start"
 							:content="$t('editor.cell.data_node.collection.form.aggregation.filterAggreTip')"
 							v-model="filterTooltip"
 						>
 							<el-switch
 								v-model="model.isFilter"
+								:disabled="model.collectionAggregate"
 								inactive-color="#dcdfe6"
 								:active-text="
 									model.isFilter
@@ -322,6 +325,7 @@
 			custom-class="collAggreDialog"
 			:close-on-click-modal="false"
 			width="70%"
+			@close="closeAggregationDialog"
 		>
 			<div slot="title">
 				<span class="text">{{ $t('editor.cell.data_node.collection.form.aggregation.aggregationText') }}</span>
@@ -591,8 +595,8 @@ export default {
 			fieldFilterOptions: [],
 			defaultSchema: null,
 			aggregationStatus: '',
-			aggregateTooltip: false,
-			filterTooltip: false
+			filterTooltip: false,
+			sync_typeFalg: false
 		};
 	},
 
@@ -889,6 +893,8 @@ export default {
 				this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema());
 			});
 			editorMonitor = vueAdapter.editor;
+			let settingData = vueAdapter.editor.getData().settingData;
+			this.sync_typeFalg = settingData.sync_type === 'initial_sync' ? true : false;
 
 			let getCellData = vueAdapter.editor.graph.graph.getCells();
 
@@ -926,13 +932,13 @@ export default {
 
 		//  聚合处理弹窗开启设置
 		handleAggregation(val) {
-			if (val) {
+			if (val && !this.model.isFilter) {
 				this.aggregationDialog = true;
 			} else {
+				this.model.collectionAggrPipeline = '';
 				this.aggregationDialog = false;
 			}
 			if (this.model.isFilter) {
-				this.aggregateTooltip = true;
 				this.model.collectionAggregate = false;
 			}
 		},
@@ -1001,6 +1007,13 @@ export default {
 				this.aggregationStatus = status;
 				this.defaultSchema = schema;
 				this.$emit('schemaChange', _.cloneDeep(schema));
+			}
+		},
+
+		// 关闭aggregation弹窗(聚合没有内容关闭设置开关)
+		closeAggregationDialog() {
+			if (!this.model.collectionAggrPipeline) {
+				this.model.collectionAggregate = false;
 			}
 		},
 
