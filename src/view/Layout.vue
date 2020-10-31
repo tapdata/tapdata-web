@@ -25,7 +25,7 @@
 					<i class="el-icon-plus"></i>
 					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
-				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom">
+				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom" v-readonlybtn="'BTN_AUTHS'">
 					<el-badge :value="unRead" :max="99" class="item-badge" v-show="unRead > 0">
 						<i class="iconfont icon-lingdang" @click="command('notification')"></i>
 					</el-badge>
@@ -53,7 +53,9 @@
 					<i class="iconfont icon-shezhi1"></i>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="settings">{{ $t('app.menu.settings') }}</el-dropdown-item>
-						<el-dropdown-item command="setting">{{ $t('notification.setting') }}</el-dropdown-item>
+						<el-dropdown-item command="setting" v-readonlybtn="'BTN_AUTHS'">{{
+							$t('notification.setting')
+						}}</el-dropdown-item>
 						<!--						<el-dropdown-item command="verifySetting">{{-->
 						<!--							$t('dataVerify.setting.verifySetting')-->
 						<!--						}}</el-dropdown-item>-->

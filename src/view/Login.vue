@@ -149,6 +149,7 @@ export default {
 				this.$router.replace({
 					name: 'dashboard'
 				});
+				localStorage.setItem('BTN_AUTHS', 'BTN_AUTHS');
 				setTimeout(() => {
 					location.reload();
 				}, 1);

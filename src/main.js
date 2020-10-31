@@ -13,8 +13,8 @@ import factory from './api/factory';
 
 import './plugins/element.js';
 import './theme/index.css';
-
 import './components/form-builder';
+import './plugins/directive';
 
 Vue.config.productionTip = false;
 Vue.use(VueCookie);
@@ -30,6 +30,7 @@ window.ChildRoutes = childRoutes;
 window.openDebug = () => {
 	localStorage.setItem('tapdata_debug', 'true');
 };
+
 //因线上存在偶现bug，默认开启
 // if (process.env.NODE_ENV === 'development') {
 window.openDebug();
