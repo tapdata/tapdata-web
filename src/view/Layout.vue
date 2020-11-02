@@ -21,7 +21,13 @@
 						$t('app.menu.licenseBefore') + licenseExpire + $t('app.menu.licenseAfter')
 					}}</span>
 				</span>
-				<el-button class="btn-create" type="primary" size="mini" @click="command('newDataFlow')">
+				<el-button
+					class="btn-create"
+					type="primary"
+					size="mini"
+					v-readonlybtn="'BTN_AUTHS'"
+					@click="command('newDataFlow')"
+				>
 					<i class="el-icon-plus"></i>
 					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
@@ -141,7 +147,11 @@
 						>
 							<div class="submenu-item">
 								<span>{{ menu.meta.title }}</span>
-								<span class="btn-del-fav-menu" @click.stop="delFavMenu(index)">
+								<span
+									class="btn-del-fav-menu"
+									v-readonlybtn="'BTN_AUTHS'"
+									@click.stop="delFavMenu(index)"
+								>
 									<i class="el-icon-remove"></i>
 								</span>
 							</div>

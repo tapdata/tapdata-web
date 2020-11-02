@@ -150,6 +150,7 @@ export default {
 					name: 'dashboard'
 				});
 				localStorage.setItem('BTN_AUTHS', 'BTN_AUTHS');
+				localStorage.setItem('INPUT_DISABLE', 'INPUT_DISABLE');
 				setTimeout(() => {
 					location.reload();
 				}, 1);

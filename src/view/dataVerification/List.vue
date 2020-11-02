@@ -88,7 +88,12 @@
 					<!--						<i class="iconfont icon-shezhi1"></i>-->
 					<!--						<span>{{ $t('dataVerification.verifySetting') }}</span>-->
 					<!--					</el-button>-->
-					<el-button type="primary" size="mini" @click="$router.push('dataVerification/create')">
+					<el-button
+						type="primary"
+						size="mini"
+						v-readonlybtn="'BTN_AUTHS'"
+						@click="$router.push('dataVerification/create')"
+					>
 						<i class="iconfont icon-jia add-btn-icon"></i>
 					</el-button>
 				</div>
@@ -222,6 +227,7 @@
 					<el-table-column :label="$t('dataVerification.operation')" align="center" width="180">
 						<template slot-scope="scope">
 							<el-tooltip
+								v-readonlybtn="'BTN_AUTHS'"
 								class="item"
 								effect="dark"
 								:content="$t('dataVerification.executeVerifyTip')"
@@ -280,6 +286,7 @@
 								></el-button>
 							</el-tooltip>
 							<el-tooltip
+								v-readonlybtn="'BTN_AUTHS'"
 								class="item"
 								effect="dark"
 								:content="$t('dataVerification.configurationTip')"
@@ -293,6 +300,7 @@
 								></el-button>
 							</el-tooltip>
 							<el-tooltip
+								v-readonlybtn="'BTN_AUTHS'"
 								class="item"
 								effect="dark"
 								:content="$t('dataVerification.deleteTip')"

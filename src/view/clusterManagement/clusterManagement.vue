@@ -30,7 +30,7 @@
 									<div class="uuid">{{ item.systemInfo.uuid }}</div>
 									<span>{{ item.systemInfo.ip }}</span>
 								</div>
-								<div class="fr" style="width: 40%;">
+								<div class="fr" style="width: 40%;" v-readonlybtn="'BTN_AUTHS'">
 									<el-button size="mini" class="fr addBtn" @click="addServeFn(item)">{{
 										$t('message.addServerMon')
 									}}</el-button>
@@ -50,7 +50,7 @@
 										}}</span>
 									</el-col>
 									<el-col :span="12">
-										<div class="btn fr">
+										<div class="btn fr" v-readonlybtn="'BTN_AUTHS'">
 											<el-button
 												:type="item.management.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.management.status == 'stopped' ? false : true"
@@ -86,7 +86,7 @@
 										}}</span>
 									</el-col>
 									<el-col :span="12">
-										<div class="btn fr">
+										<div class="btn fr" v-readonlybtn="'BTN_AUTHS'">
 											<el-button
 												:type="item.engine.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.engine.status == 'stopped' ? false : true"
@@ -118,7 +118,7 @@
 										}}</span>
 									</el-col>
 									<el-col :span="12">
-										<div class="btn fr">
+										<div class="btn fr" v-readonlybtn="'BTN_AUTHS'">
 											<el-button
 												:type="item.apiServer.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.apiServer.status == 'stopped' ? false : true"
@@ -154,7 +154,7 @@
 											child.status
 										}}</span>
 									</el-col>
-									<el-col :span="7" :offset="5">
+									<el-col :span="7" :offset="5" v-readonlybtn="'BTN_AUTHS'">
 										<div class="btn fr">
 											<el-button type="text" @click="delServe(child, item.status)">{{
 												$t('message.delete')

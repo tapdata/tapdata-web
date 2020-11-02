@@ -38,11 +38,13 @@
 						class="action-btn"
 						size="mini"
 						@click="stopCapture"
+						v-readonlybtn="'BTN_AUTHS'"
 					>
 						<i class="iconfont icon-zanting3"></i>
 						<span>{{ $t('dataFlow.button.stop_capture') }}</span>
 					</el-button>
 					<el-button
+						v-readonlybtn="'BTN_AUTHS'"
 						v-if="['running'].includes(status) && executeMode === 'normal'"
 						class="action-btn"
 						size="mini"
@@ -52,6 +54,7 @@
 						<span>{{ $t('dataFlow.button.capture') }}</span>
 					</el-button>
 					<el-button
+						v-readonlybtn="'BTN_AUTHS'"
 						v-if="!statusBtMap[status].reloadSchema"
 						class="action-btn"
 						size="mini"
@@ -60,7 +63,13 @@
 						<i class="iconfont icon-kujitongbucopy"></i>
 						<span>{{ $t('dataFlow.button.reloadSchema') }}</span>
 					</el-button>
-					<el-button v-if="isEditable()" class="action-btn" size="mini" @click="preview">
+					<el-button
+						v-readonlybtn="'BTN_AUTHS'"
+						v-if="isEditable()"
+						class="action-btn"
+						size="mini"
+						@click="preview"
+					>
 						<i class="iconfont icon-yulan1"></i>
 						<span>{{ $t('dataFlow.button.preview') }}</span>
 					</el-button>
@@ -161,6 +170,7 @@
 				</el-button-group>
 
 				<el-button
+					v-readonlybtn="'BTN_AUTHS'"
 					v-if="!statusBtMap[status].edit && !editable"
 					class="btn-edit"
 					size="mini"

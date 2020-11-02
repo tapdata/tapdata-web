@@ -225,19 +225,23 @@
 					:databaseType="model.databaseType"
 					:mergedSchema="defaultSchema"
 				></queryBuilder>
+				<el-form-item>
+					<div class="flex-block fr">
+						<el-button
+							class="fr"
+							type="success"
+							size="mini"
+							v-if="model.connectionId && model.tableName"
+							@click="hanlderLoadSchema"
+						>
+							<i class="el-icon-loading" v-if="reloadModelLoading"></i>
+							<span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
+							<span v-else>{{ $t('dataFlow.updateModel') }}</span>
+						</el-button>
+					</div>
+				</el-form-item>
 			</el-form>
 			<div class="e-entity-wrap" style="text-align: center;">
-				<el-button
-					class="fr"
-					type="success"
-					size="mini"
-					v-if="model.connectionId && model.tableName"
-					@click="hanlderLoadSchema"
-				>
-					<i class="el-icon-loading" v-if="reloadModelLoading"></i>
-					<span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
-					<span v-else>{{ $t('dataFlow.updateModel') }}</span>
-				</el-button>
 				<entity
 					v-loading="schemaSelectConfig.loading"
 					:schema="convertSchemaToTreeData(defaultSchema)"
