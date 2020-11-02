@@ -1356,6 +1356,8 @@ const en = {
 		noticeCenter: 'Setting center',
 		dataFlow: 'dataFlow',
 		manageSever: 'manageSever',
+		noticeType: 'Choose notice type',
+		noticeLevel: 'Choose notice level',
 		started: 'started',
 		paused: 'paused',
 		edited: 'edited',

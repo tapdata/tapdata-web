@@ -17,7 +17,7 @@
 					<div class="operation">
 						<el-select
 							v-model="search"
-							placeholder="请选择消息类型"
+							:placeholder="$t('notification.noticeLevel')"
 							class="search"
 							@change="getData()"
 							clearable
@@ -25,6 +25,22 @@
 						>
 							<el-option
 								v-for="item in options"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value"
+							>
+							</el-option>
+						</el-select>
+						<el-select
+							v-model="msg"
+							:placeholder="$t('notification.noticeType')"
+							class="search"
+							@change="getData()"
+							clearable
+							size="mini"
+						>
+							<el-option
+								v-for="item in msgOptions"
 								:key="item.value"
 								:label="item.label"
 								:value="item.value"
@@ -46,7 +62,29 @@
 				</el-tabs>
 				<ul class="cuk-list clearfix cuk-list-type-block">
 					<li class="list-item" v-for="item in listData" :key="item.id" @click="handleRead(item.id)">
-						<div class="list-item-content">
+						<div class="list-item-content" v-if="item.msg === 'JobDDL'">
+							<div class="unread-1zPaAXtSu" v-show="!item.read"></div>
+							<div class="list-item-desc">
+								<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
+								<span>{{
+									item.system === 'dataFlow'
+										? $t('notification.dataFlow')
+										: $t('notification.manageSever')
+								}}</span>
+								<span style="color: #48B6E2">
+									{{ `${item.jobName},` }}
+								</span>
+								<span>
+									{{
+										`Source ${item.source},Target ${item.target},Notification DDLs:No.${item.xid} Scn: ${item.scn} At: ${item.timestamp}, DDL sql: ${item.sql}`
+									}}
+								</span>
+							</div>
+							<div class="list-item-time">
+								<span>{{ item.createTime }}</span>
+							</div>
+						</div>
+						<div class="list-item-content" v-else>
 							<div class="unread-1zPaAXtSu" v-show="!item.read"></div>
 							<div class="list-item-desc">
 								<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
@@ -109,6 +147,7 @@ export default {
 			read: true,
 			loading: false,
 			search: '',
+			msg: '',
 			currentPage: 1,
 			pagesize: 20,
 			total: '',
@@ -129,6 +168,52 @@ export default {
 				{
 					value: 'info',
 					label: 'INFO'
+				}
+			],
+			msgOptions: [
+				{
+					value: 'jobDeleted',
+					label: this.$t('notification.jobDeleted')
+				},
+				{
+					value: 'jobPaused',
+					label: this.$t('notification.jobPaused')
+				},
+				{
+					value: 'jobStateError',
+					label: this.$t('notification.jobStateError')
+				},
+				{
+					value: 'jobEncounterError',
+					label: this.$t('notification.jobEncounterError')
+				},
+				{
+					value: 'CDCLag',
+					label: this.$t('notification.CDCLag')
+				},
+				{
+					value: 'serverDisconnected',
+					label: this.$t('notification.serverDisconnected')
+				},
+				{
+					value: 'agentAbnormallyStopped',
+					label: this.$t('notification.agentAbnormallyStopped')
+				},
+				{
+					value: 'agentStarted',
+					label: this.$t('notification.agentStarted')
+				},
+				{
+					value: 'agentStopped',
+					label: this.$t('notification.agentStopped')
+				},
+				{
+					value: 'agentCreated',
+					label: this.$t('notification.agentCreated')
+				},
+				{
+					value: 'agentDeleted',
+					label: this.$t('notification.agentDeleted')
 				}
 			],
 			typeMap: TYPEMAP,
@@ -160,6 +245,9 @@ export default {
 			if (this.search || this.search !== '') {
 				where.filter.where['level'] = this.search;
 			}
+			if (this.msg || this.msg !== '') {
+				where.filter.where['msg'] = this.msg;
+			}
 			if (this.$cookie.get('isAdmin') == 0) {
 				where.filter.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
@@ -175,6 +263,9 @@ export default {
 							this.listData.map(item => {
 								item['createTime'] = item.createTime
 									? moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+									: '';
+								item['timestamp'] = item.timestamp
+									? moment(item.timestamp).format('YYYY-MM-DD HH:mm:ss')
 									: '';
 							});
 						}
@@ -205,6 +296,9 @@ export default {
 			}
 			if (this.search || this.search !== '') {
 				where.where['level'] = this.search;
+			}
+			if (this.msg || this.msg !== '') {
+				where.where['msg'] = this.msg;
 			}
 			notification.count(where).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {

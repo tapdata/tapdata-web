@@ -1383,6 +1383,8 @@ const cn = {
 		systemNotice: '系统通知',
 		noticeCenter: '通知中心',
 		dataFlow: '任务',
+		noticeType: '请选择消息类型',
+		noticeLevel: '请选择消息级别',
 		manageSever: '管理端',
 		started: '已启动',
 		paused: '已暂停',

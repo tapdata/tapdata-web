@@ -1342,6 +1342,8 @@ const tc = {
 		noticeCenter: '通知中心',
 		dataFlow: '任务',
 		manageSever: '管理端',
+		noticeType: '請選擇消息類型',
+		noticeLevel: '請選擇消息級別',
 		started: '已啟動',
 		paused: '已暫停',
 		edited: '被編輯',
