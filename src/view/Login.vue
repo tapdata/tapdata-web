@@ -149,8 +149,12 @@ export default {
 				this.$router.replace({
 					name: 'dashboard'
 				});
-				localStorage.setItem('BTN_AUTHS', 'BTN_AUTHS');
-				localStorage.setItem('INPUT_DISABLE', 'INPUT_DISABLE');
+				if (user.data.username.read_only) {
+					localStorage.setItem('BTN_AUTHS', 'BTN_AUTHS');
+				} else {
+					localStorage.setItem('BTN_AUTHS', '');
+				}
+
 				setTimeout(() => {
 					location.reload();
 				}, 1);
