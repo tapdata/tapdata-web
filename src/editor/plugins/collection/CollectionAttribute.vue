@@ -1006,7 +1006,6 @@ export default {
 			if (status || schema) {
 				this.aggregationStatus = status;
 				this.defaultSchema = schema;
-				this.$emit('schemaChange', _.cloneDeep(schema));
 			}
 		},
 
@@ -1025,6 +1024,7 @@ export default {
 				if (this.aggregationStatus) {
 					if (this.aggregationStatus !== 'error') {
 						this.aggregationDialog = false;
+						this.$emit('schemaChange', _.cloneDeep(this.defaultSchema));
 					}
 				}
 			}, 500);

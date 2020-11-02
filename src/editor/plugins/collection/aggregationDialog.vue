@@ -14,9 +14,16 @@
 			<div class="title">{{ $t('editor.cell.data_node.collection.form.aggregation.previewSampleData') }}</div>
 			<div class="preview-box">
 				<template v-if="returnFalg == 'success'">
-					<div class="json-box" v-for="(item, index) in previewData" :key="index">
-						<pre>{{ JSON.stringify(item, null, 2) }}</pre>
-					</div>
+					<template v-if="previewData.length">
+						<div class="json-box" v-for="(item, index) in previewData" :key="index">
+							<pre>{{ JSON.stringify(item, null, 2) }}</pre>
+						</div>
+					</template>
+					<template v-else>
+						<div class="json-box">
+							[]
+						</div>
+					</template>
 				</template>
 
 				<div class="return-data">
@@ -59,50 +66,41 @@ export default {
 
 	created() {
 		this.script = this.scriptVal == '[]' ? '[]' : this.scriptVal;
-		// if (this.script) {
-		// 	this.handlePreview();
-		// }
+
+		let self = this,
+			templeSchema = null;
+		ws.on('aggregatePreviewResult', res => {
+			if (res.status === 'SUCCESS' && !!res.result) {
+				if (res.result.previewResult && res.result.previewResult.length) {
+					self.previewData = res.result.previewResult;
+				} else {
+					self.previewData = [];
+				}
+				if (res.result.relateDataBaseTable) {
+					templeSchema = res.result.relateDataBaseTable;
+				}
+
+				self.returnFalg = 'success';
+			} else if (res.status === 'ERROR') {
+				self.errorMessage = res.error;
+				self.returnFalg = 'error';
+			}
+			this.$emit('backAggregateResult', this.script, self.returnFalg, templeSchema);
+		});
 	},
 
 	methods: {
 		// 预览
 		handlePreview() {
-			let script = this.script;
-			if (!this.script.startsWith('[')) {
-				script = '[' + script;
-			}
-			if (!this.script.endsWith(']')) {
-				script = script + ']';
-			}
-
 			let params = {
 				type: 'aggregatePreview',
 				data: {
 					connectionId: this.modelData.connectionId,
 					tableName: this.modelData.tableName,
-					pipeline: script
+					pipeline: this.script || '[]'
 				}
 			};
 			if (ws.ws.readyState == 1) ws.send(params);
-
-			let self = this,
-				templeSchema = null;
-			ws.on('aggregatePreviewResult', res => {
-				if (res.status === 'SUCCESS' && !!res.result) {
-					if (res.result.previewResult && res.result.previewResult.length) {
-						self.previewData = res.result.previewResult;
-					}
-					if (res.result.relateDataBaseTable) {
-						templeSchema = res.result.relateDataBaseTable;
-					}
-
-					self.returnFalg = 'success';
-				} else if (res.status === 'ERROR') {
-					self.errorMessage = res.error;
-					self.returnFalg = 'error';
-				}
-				this.$emit('backAggregateResult', script, self.returnFalg, templeSchema);
-			});
 		}
 	}
 };
