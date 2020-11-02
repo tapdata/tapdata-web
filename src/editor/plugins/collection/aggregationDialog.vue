@@ -8,7 +8,7 @@
 				}}</el-button>
 			</div>
 			<!-- [ <el-input class="e-textarea" type="textarea" v-model="script"></el-input>] -->
-			[<JsonEditor :code.sync="script" ref="jsEditor" :width.sync="width" v-if="!disabled"></JsonEditor>]
+			<JsonEditor :code.sync="script" ref="jsEditor" :width.sync="width" v-if="!disabled"></JsonEditor>
 		</div>
 		<div class="preview">
 			<div class="title">{{ $t('editor.cell.data_node.collection.form.aggregation.previewSampleData') }}</div>
@@ -53,12 +53,12 @@ export default {
 			previewData: [],
 			errorMessage: '',
 			returnFalg: 'add',
-			script: ''
+			script: '[]'
 		};
 	},
 
 	created() {
-		this.script = this.scriptVal == '[]' ? '' : this.scriptVal;
+		this.script = this.scriptVal == '[]' ? '[]' : this.scriptVal;
 		// if (this.script) {
 		// 	this.handlePreview();
 		// }
@@ -188,11 +188,11 @@ export default {
 	}
 	.monaco {
 		border: 0 !important;
-		height: 410px !important;
+		height: 450px !important;
 	}
 	.monaco-editor {
 		width: 100% !important;
-		height: 410px !important;
+		height: 450px !important;
 	}
 	.el-textarea__inner {
 		width: 100%;
