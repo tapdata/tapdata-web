@@ -3,7 +3,7 @@
 		<div class="metadata-header" v-show="isActive">
 			<span>{{ $t('metaData.title') }}</span>
 			<div class="metadata-header-btns">
-				<i class="iconfont icon-icon_tianjia" @click="showDialog()"></i>
+				<i class="iconfont icon-icon_tianjia" v-readonlybtn="'BTN_AUTHS'" @click="showDialog()"></i>
 				<i class="iconfont icon-fangdajing" @click="isActive = false"></i>
 				<i class="iconfont icon-sync" @click="getData"></i>
 				<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
@@ -30,7 +30,12 @@
 				<span class="custom-tree-node" slot-scope="{ node, data }">
 					<span class="iconfont icon-Folder-closed icon-folder"></span>
 					<span class="table-label" @click="handleChecked(data)">{{ data.value }}</span>
-					<el-dropdown class="btn-menu" size="mini" @command="handleRowCommand($event, node)">
+					<el-dropdown
+						class="btn-menu"
+						size="mini"
+						@command="handleRowCommand($event, node)"
+						v-readonlybtn="'BTN_AUTHS'"
+					>
 						<el-button type="text"><i class="iconfont icon-gengduo3  task-list-icon"></i></el-button>
 						<el-dropdown-menu slot="dropdown">
 							<el-dropdown-item command="add">{{ $t('metaData.addChildernNode') }}</el-dropdown-item>

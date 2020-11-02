@@ -89,11 +89,21 @@
 					</li>
 				</ul>
 				<div class="topbar-buttons">
-					<el-button size="mini" class="btn" v-show="multipleSelection.length > 0" @click="handleClassify">
+					<el-button
+						v-readonlybtn="'BTN_AUTHS'"
+						size="mini"
+						class="btn"
+						v-show="multipleSelection.length > 0"
+						@click="handleClassify"
+					>
 						<i class="iconfont icon-biaoqian back-btn-icon"></i>
 						<span> {{ $t('dataFlow.taskBulkTag') }}</span>
 					</el-button>
-					<el-dropdown @command="handleCommand" v-show="multipleSelection.length > 0">
+					<el-dropdown
+						v-readonlybtn="'BTN_AUTHS'"
+						@command="handleCommand"
+						v-show="multipleSelection.length > 0"
+					>
 						<el-button class="btn btn-dropdowm" size="mini">
 							<i class="iconfont icon-piliang back-btn-icon"></i>
 							<span> {{ $t('dataFlow.taskBulkOperation') }}</span>
@@ -110,15 +120,21 @@
 							<el-dropdown-item command="batchRest">{{ $t('dataFlow.batchRest') }}</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
-					<el-button size="mini" class="btn" @click="handleGoFunction">
+					<el-button v-readonlybtn="'BTN_AUTHS'" size="mini" class="btn" @click="handleGoFunction">
 						<i class="iconfont icon-hanshu back-btn-icon"></i>
 						<span> {{ $t('dataFlow.taskBulkFx') }}</span>
 					</el-button>
-					<el-button size="mini" class="btn" @click="handleImport">
+					<el-button v-readonlybtn="'BTN_AUTHS'" size="mini" class="btn" @click="handleImport">
 						<i class="iconfont icon-daoru back-btn-icon"></i>
 						<span> {{ $t('dataFlow.bulkImport') }}</span>
 					</el-button>
-					<el-button class="btn btn-create" type="primary" size="mini" @click="create">
+					<el-button
+						v-readonlybtn="'BTN_AUTHS'"
+						class="btn btn-create"
+						type="primary"
+						size="mini"
+						@click="create"
+					>
 						<i class="iconfont icon-jia add-btn-icon"></i>
 					</el-button>
 				</div>
@@ -214,7 +230,7 @@
 					></el-table-column>
 					<el-table-column :label="$t('dataFlow.taskSwitch')" width="70">
 						<template slot-scope="scope">
-							<div v-if="!scope.row.hasChildren">
+							<div v-if="!scope.row.hasChildren" v-readonlybtn="'BTN_AUTHS'">
 								<el-tooltip
 									class="item"
 									effect="dark"
@@ -249,7 +265,12 @@
 										<i class="iconfont  task-list-icon icon-chaxun"></i>
 									</el-button>
 								</el-tooltip>
-								<el-tooltip class="item" :content="$t('dataFlow.edit')" placement="bottom">
+								<el-tooltip
+									class="item"
+									v-readonlybtn="'BTN_AUTHS'"
+									:content="$t('dataFlow.edit')"
+									placement="bottom"
+								>
 									<el-button
 										type="text"
 										:disabled="statusBtMap[scope.row.status].edit"
@@ -258,7 +279,12 @@
 										<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
 									</el-button>
 								</el-tooltip>
-								<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
+								<el-tooltip
+									class="item"
+									v-readonlybtn="'BTN_AUTHS'"
+									:content="$t('message.delete')"
+									placement="bottom"
+								>
 									<el-button
 										type="text"
 										:disabled="statusBtMap[scope.row.status].delete"
@@ -267,7 +293,11 @@
 										<i class="iconfont task-list-icon icon-shanchu"></i>
 									</el-button>
 								</el-tooltip>
-								<el-dropdown @command="handleRowCommand($event, scope.row)" class="item">
+								<el-dropdown
+									v-readonlybtn="'BTN_AUTHS'"
+									@command="handleRowCommand($event, scope.row)"
+									class="item"
+								>
 									<el-button type="text"
 										><i class="iconfont icon-gengduo3  task-list-icon"></i
 									></el-button>

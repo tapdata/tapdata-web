@@ -121,7 +121,7 @@
 					>
 				</el-tag>
 
-				<el-button-group class="action-btn-group">
+				<el-button-group class="action-btn-group" v-readonlybtn="'BTN_AUTHS'">
 					<el-button
 						:disabled="statusBtMap[status].start"
 						class="action-btn btn-operatiton"
