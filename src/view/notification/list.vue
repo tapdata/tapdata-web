@@ -69,7 +69,7 @@
 								<span>{{ systemMap[item.system] }}</span>
 								<router-link :to="`/dataFlows?mapping=` + item.mappingTemplate">
 									<span style="color: #48B6E2">
-										{{ `${item.serverName},` }}
+										{{ `${item.serverName} , ` }}
 									</span>
 								</router-link>
 								<span>
