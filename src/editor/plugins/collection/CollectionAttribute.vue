@@ -145,6 +145,54 @@
 						></el-option>
 					</el-select>
 				</el-form-item>
+				<el-form-item required :label="$t('editor.cell.data_node.collection.form.aggregation.aggregationText')">
+					<div class="flex-block">
+						<el-tooltip
+							class="item"
+							placement="top-start"
+							popper-class="collection-tooltip"
+							effect="light"
+							:content="$t('editor.cell.data_node.collection.form.aggregation.filterAggreTip')"
+						>
+							<el-switch
+								v-model="model.collectionAggregate"
+								inactive-color="#dcdfe6"
+								@change="handleAggregation"
+								:disabled="!sync_typeFalg || model.isFilter"
+								:active-text="
+									model.collectionAggregate
+										? $t('editor.cell.data_node.collection.form.aggregation.enabled')
+										: $t('editor.cell.data_node.collection.form.aggregation.disabled')
+								"
+								style="margin-right: 20px"
+							></el-switch>
+						</el-tooltip>
+					</div>
+				</el-form-item>
+				<el-form-item v-if="model.collectionAggrPipeline && model.collectionAggregate" class="aggregation-item">
+					<div class="flex-block">
+						<div class="head">Pipeline</div>
+						<el-input
+							class="e-textarea"
+							type="textarea"
+							disabled
+							v-model="model.collectionAggrPipeline"
+						></el-input>
+					</div>
+					<el-tooltip
+						class="item"
+						popper-class="collection-tooltip"
+						effect="light"
+						:content="$t('dataFlow.edit')"
+					>
+						<el-button
+							size="mini"
+							class="iconfont icon-bianji edit"
+							style="padding: 7px;margin-left: 7px"
+							@click="aggregationDialog = true"
+						></el-button>
+					</el-tooltip>
+				</el-form-item>
 				<el-form-item v-if="model.fieldFilterType !== 'keepAllFields'">
 					<MultiSelection
 						v-model="model.fieldFilter"
@@ -201,18 +249,29 @@
 					v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
 				>
 					<div class="flex-block">
-						<el-switch
-							v-model="model.isFilter"
-							inactive-color="#dcdfe6"
-							:active-text="
-								model.isFilter
-									? $t('editor.cell.data_node.collection.form.filter.openFiflter')
-									: $t('editor.cell.data_node.collection.form.filter.closeFiflter')
-							"
-							style="margin-right: 20px"
-						></el-switch>
+						<el-tooltip
+							class="item"
+							popper-class="collection-tooltip"
+							effect="light"
+							placement="top-start"
+							:content="$t('editor.cell.data_node.collection.form.aggregation.filterAggreTip')"
+							v-model="filterTooltip"
+						>
+							<el-switch
+								v-model="model.isFilter"
+								:disabled="model.collectionAggregate"
+								inactive-color="#dcdfe6"
+								:active-text="
+									model.isFilter
+										? $t('editor.cell.data_node.collection.form.filter.openFiflter')
+										: $t('editor.cell.data_node.collection.form.filter.closeFiflter')
+								"
+								style="margin-right: 20px"
+							></el-switch>
+						</el-tooltip>
 					</div>
 				</el-form-item>
+
 				<queryBuilder
 					v-if="(dataNodeInfo.isSource || !dataNodeInfo.isTarget) && model.isFilter"
 					v-model="model.custSql"
@@ -260,8 +319,31 @@
 		>
 			<span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="dialogVisible = false">{{ $t('message.cancel') }}</el-button>
-				<el-button type="primary" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
+				<el-button @click="dialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" size="mini" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
+			</span>
+		</el-dialog>
+
+		<el-dialog
+			:visible.sync="aggregationDialog"
+			custom-class="collAggreDialog"
+			:close-on-click-modal="false"
+			width="70%"
+			@close="closeAggregationDialog"
+		>
+			<div slot="title">
+				<span class="text">{{ $t('editor.cell.data_node.collection.form.aggregation.aggregationText') }}</span>
+				<span @click="handleLearnMore" class="more">Learn more</span>
+			</div>
+			<AggregationDialog
+				v-if="aggregationDialog"
+				:modelData="model"
+				:scriptVal="model.collectionAggrPipeline"
+				ref="aggregationChild"
+				@backAggregateResult="backAggregateResult"
+			></AggregationDialog>
+			<span slot="footer" class="dialog-footer">
+				<el-button type="primary" size="mini" @click="aggregationSave">{{ $t('app.save') }}</el-button>
 			</span>
 		</el-dialog>
 	</div>
@@ -273,7 +355,8 @@ import MultiSelection from '../../../components/MultiSelection';
 import RelatedTasks from '../../../components/relatedTasks';
 import ClipButton from '@/components/ClipButton';
 import queryBuilder from '@/components/QueryBuilder';
-import CreateTable from '../../../components/dialog/createTable';
+import CreateTable from '@/components/dialog/createTable';
+import AggregationDialog from './aggregationDialog';
 import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, uuid } from '../../util/Schema';
 import Entity from '../link/Entity';
 import _ from 'lodash';
@@ -293,7 +376,16 @@ const DELETE_OPS_TPL = {
 };
 export default {
 	name: 'Collection',
-	components: { Entity, DatabaseForm, MultiSelection, ClipButton, RelatedTasks, CreateTable, queryBuilder },
+	components: {
+		Entity,
+		DatabaseForm,
+		MultiSelection,
+		ClipButton,
+		RelatedTasks,
+		CreateTable,
+		queryBuilder,
+		AggregationDialog
+	},
 	props: {
 		database_types: {
 			type: Array,
@@ -402,6 +494,7 @@ export default {
 	data() {
 		let self = this;
 		return {
+			aggregationDialog: false,
 			reloadModelLoading: false,
 			addtableFalg: false,
 			dialogData: null,
@@ -498,11 +591,16 @@ export default {
 				fieldFilter: '',
 				initialSyncOrder: 0,
 				enableInitialOrder: false,
-				operations: []
+				operations: [],
+				collectionAggregate: false,
+				collectionAggrPipeline: ''
 			},
 			primaryKeyOptions: [],
 			fieldFilterOptions: [],
-			defaultSchema: null
+			defaultSchema: null,
+			aggregationStatus: '',
+			filterTooltip: false,
+			sync_typeFalg: false
 		};
 	},
 
@@ -799,6 +897,8 @@ export default {
 				this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema());
 			});
 			editorMonitor = vueAdapter.editor;
+			let settingData = vueAdapter.editor.getData().settingData;
+			this.sync_typeFalg = settingData.sync_type === 'initial_sync' ? true : false;
 
 			let getCellData = vueAdapter.editor.graph.graph.getCells();
 
@@ -832,6 +932,19 @@ export default {
 
 		seeMonitor() {
 			editorMonitor.goBackMontior();
+		},
+
+		//  聚合处理弹窗开启设置
+		handleAggregation(val) {
+			if (val && !this.model.isFilter) {
+				this.aggregationDialog = true;
+			} else {
+				this.model.collectionAggrPipeline = '';
+				this.aggregationDialog = false;
+			}
+			if (this.model.isFilter) {
+				this.model.collectionAggregate = false;
+			}
 		},
 
 		// 更新模型点击弹窗
@@ -883,6 +996,42 @@ export default {
 				});
 			});
 			this.dialogVisible = false;
+		},
+
+		// 点击aggregation弹窗跳转页面
+		handleLearnMore() {
+			let href = 'https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/';
+			window.open(href);
+		},
+
+		// 获取aggregation数据
+		backAggregateResult(pipeline, status, schema) {
+			this.model.collectionAggrPipeline = pipeline;
+			if (status || schema) {
+				this.aggregationStatus = status;
+				this.defaultSchema = schema;
+			}
+		},
+
+		// 关闭aggregation弹窗(聚合没有内容关闭设置开关)
+		closeAggregationDialog() {
+			if (!this.model.collectionAggrPipeline) {
+				this.model.collectionAggregate = false;
+			}
+		},
+
+		// 保存aggregation设置
+		aggregationSave() {
+			this.$refs.aggregationChild.handlePreview();
+
+			setTimeout(() => {
+				if (this.aggregationStatus) {
+					if (this.aggregationStatus !== 'error') {
+						this.aggregationDialog = false;
+						this.$emit('schemaChange', _.cloneDeep(this.defaultSchema));
+					}
+				}
+			}, 500);
 		}
 	}
 };
@@ -905,9 +1054,66 @@ export default {
 	.iconfont {
 		font-size: 12px;
 	}
+	.el-switch__label {
+		font-size: 12px !important;
+		color: #666 !important;
+		font-weight: normal !important;
+	}
+	.aggregation-item {
+		.el-form-item__content {
+			display: flex;
+			flex-direction: row;
+			align-items: flex-start;
+			align-content: flex-start;
+		}
+		.flex-block {
+			display: block;
+			width: 90%;
+			.head {
+				width: 100%;
+				height: 28px;
+				padding-left: 12px;
+				line-height: 27px;
+				color: #333;
+				font-size: 12px;
+				border: 1px solid #dedee4;
+				border-bottom: 0;
+				box-sizing: border-box;
+				background-color: #f5f5f5;
+			}
+			.e-textarea {
+				.el-textarea__inner {
+					min-height: 240px !important;
+				}
+			}
+		}
+
+		.edit {
+			display: inline-block;
+			padding-left: 20px;
+			cursor: pointer;
+		}
+	}
 }
 .collection-tooltip.is-light {
 	border: 1px solid #ebeef5 !important;
 	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+.collAggreDialog {
+	.el-dialog__body {
+		padding: 20px 30px 10px;
+	}
+	.el-dialog__footer {
+		padding: 10px 30px 20px;
+	}
+	.text {
+		user-select: none;
+	}
+	.more {
+		padding-left: 20px;
+		font-size: 12px;
+		color: #48b6e2;
+		cursor: pointer;
+	}
 }
 </style>

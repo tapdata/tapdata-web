@@ -636,6 +636,17 @@ const cn = {
 								enterContent: '请输入条件内容',
 								placeholder: '过滤条件(Mongo Query Filter Document)'
 							}
+						},
+						aggregation: {
+							aggregationText: '聚合设置',
+							disabled: '已禁用',
+							enabled: '已启用',
+							preview: '预览',
+							previewSampleData: '采样数据预览',
+							addTextTip: '没有预览样本数据',
+							addTextTip1: '请输入MongoDB聚合代码，然后单击“预览”以在此处预览样本数据',
+							filterAggreTip:
+								'聚合设置与过滤设置不可同时开启，如果需要使用聚合设置功能，请关闭下方过滤设置开关'
 						}
 					}
 				},

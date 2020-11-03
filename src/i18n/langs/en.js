@@ -638,6 +638,18 @@ const en = {
 								enterContent: 'Please enter the content of the conditions',
 								placeholder: 'Filter Condition (Mongo Query Filter Document)'
 							}
+						},
+						aggregation: {
+							aggregationText: 'Aggregation Settings',
+							disabled: 'Disabled',
+							enabled: 'Enabled',
+							preview: 'Preview',
+							previewSampleData: 'Preview of sample data',
+							addTextTip: 'No preview sample data',
+							addTextTip1:
+								'Please enter the MongoDB aggregation code, and then click "Preview" to preview the sample data here',
+							filterAggreTip:
+								'Aggregation settings and filtering settings cannot be enabled at same time.  To use aggregation settings, please disable the filter settings below.'
 						}
 					}
 				},

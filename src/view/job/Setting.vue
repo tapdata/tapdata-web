@@ -16,11 +16,11 @@
 		>
 			<el-form-item :label="$t('dataFlow.sync_type')">
 				<el-radio-group v-model="formData.sync_type" size="mini" @change="changeSyncType">
-					<el-radio label="initial_sync+cdc"
+					<el-radio label="initial_sync+cdc" :disabled="sync_typeFalg"
 						>{{ $t('dataFlow.initial_sync') + '+' + $t('dataFlow.cdc') }}
 					</el-radio>
 					<el-radio label="initial_sync">{{ $t('dataFlow.initial_sync') }}</el-radio>
-					<el-radio label="cdc">{{ $t('dataFlow.cdc') }}</el-radio>
+					<el-radio label="cdc" :disabled="sync_typeFalg">{{ $t('dataFlow.cdc') }}</el-radio>
 				</el-radio-group>
 			</el-form-item>
 			<el-form-item :label="$t('dataFlow.stop_on_error')">
@@ -192,7 +192,7 @@ export default {
 			formData: _.cloneDeep(DEFAULT_SETTING),
 			isSimple: false,
 			showMore: true,
-
+			sync_typeFalg: false,
 			rules: {
 				cronExpression: [
 					{
@@ -268,6 +268,8 @@ export default {
 			if (map) {
 				this.formData.syncPoints = Object.values(map);
 			}
+
+			this.getAllAggregate();
 		},
 		getData() {
 			let result = _.cloneDeep(this.formData);
@@ -340,6 +342,20 @@ export default {
 					.filter(v => !!v);
 			}
 		},
+		// 获取节点里面有聚合设置的值
+		getAllAggregate() {
+			let dataCells = this.editor.getAllCells();
+			if (dataCells && dataCells.length > 0) {
+				dataCells.forEach(cell => {
+					let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null;
+					if (formData.collectionAggregate) {
+						this.sync_typeFalg = true;
+						this.formData.sync_type = 'initial_sync';
+					}
+				});
+			}
+		},
+
 		async getAllConnectionName(connectionIds) {
 			let result = await connections.get({
 				filter: JSON.stringify({
