@@ -148,15 +148,13 @@ export default {
 				this.$cookie.set('token', data.id);
 				this.$cookie.set('isAdmin', parseInt(user.data.role) || 0);
 				this.$cookie.set('user_id', data.userId);
-				this.$router.replace({
-					name: 'dashboard'
-				});
 
 				let roleMapping = {
 					filter: {
 						where: { principalType: 'USER', principalId: data.userId }
 					}
 				};
+
 				let rolesMappingresulte = await roleMappingsModel.get(roleMapping);
 
 				let roleId = [];
@@ -168,28 +166,30 @@ export default {
 
 				// 角色权限
 				let roleparmas = {
-					where: {
-						id: {
-							inq: roleId
+					filter: {
+						where: {
+							id: {
+								inq: roleId
+							},
+							read_only: true
 						}
 					}
 				};
 
 				let rolesresulte = await rolesModel.get(roleparmas);
 				if (rolesresulte.data && rolesresulte.data.length) {
-					let readOnlyFalg = rolesresulte.data.some(find => find.read_only == true);
-					if (readOnlyFalg) {
-						localStorage.setItem('BTN_AUTHS', 'BTN_AUTHS');
-					} else {
-						localStorage.setItem('BTN_AUTHS', '');
-					}
+					localStorage.setItem('BTN_AUTHS', 'BTN_AUTHS');
 				} else {
 					localStorage.setItem('BTN_AUTHS', '');
 				}
 
-				setTimeout(() => {
-					location.reload();
-				}, 1);
+				this.$router.replace({
+					name: 'dashboard'
+				});
+
+				// setTimeout(() => {
+				// 	location.reload();
+				// }, 1);
 			} catch (e) {
 				this.errorMessage = this.$t('app.signIn.signInFail');
 				this.loading = false;
