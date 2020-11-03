@@ -1427,7 +1427,11 @@ const en = {
 		inspectCount: 'Verify job count difference',
 		inspectValue: ' Verify job field value difference',
 		inspectDelete: ' Verify job was deleted',
-		inspectError: 'Verify job error'
+		inspectError: 'Verify job error',
+		ddlDeal: 'DDL',
+		sourceName: 'Source Name',
+		databaseName: 'Database Name',
+		schemaName: 'Schema Name'
 	},
 	dialog: {
 		createTable: 'Create New Table',

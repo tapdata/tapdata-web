@@ -1454,7 +1454,11 @@ const cn = {
 		inspectCount: '校验任务count差异',
 		inspectValue: '校验任务count差异',
 		inspectDelete: '校验任务被删除',
-		inspectError: '校验任务运行error'
+		inspectError: '校验任务运行error',
+		ddlDeal: 'DDL处理',
+		sourceName: '源连接',
+		databaseName: '数据库名',
+		schemaName: '模型名'
 	},
 	dataVerification: {
 		verifyDetail: '校验详情',

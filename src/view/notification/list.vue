@@ -67,14 +67,25 @@
 							<div class="list-item-desc">
 								<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
 								<span>{{ systemMap[item.system] }}</span>
-								<span style="color: #48B6E2">
-									{{ `${item.jobName},` }}
-								</span>
+								<router-link :to="`/dataFlows?mapping=` + item.mappingTemplate">
+									<span style="color: #48B6E2">
+										{{ `${item.serverName},` }}
+									</span>
+								</router-link>
 								<span>
 									{{
-										`Source ${item.source},Target ${item.target},Notification DDLs:No.${item.xid} Scn: ${item.scn} At: ${item.timestamp}, DDL sql: ${item.sql}`
+										`${$t('notification.sourceName')} : ${item.sourceName} , ${$t(
+											'notification.databaseName'
+										)} : ${item.databaseName} , ${$t('notification.schemaName')} : ${
+											item.schemaName
+										} ,`
 									}}
 								</span>
+								<el-tooltip :content="item.sql" placement="top">
+									<span>
+										{{ `DDL SQL : ${item.sql}` }}
+									</span>
+								</el-tooltip>
 							</div>
 							<div class="list-item-time">
 								<span>{{ item.createTime }}</span>
@@ -141,7 +152,8 @@ export default {
 			systemMap: {
 				dataFlow: this.$t('notification.dataFlow'),
 				agent: this.$t('notification.manageSever'),
-				inspect: this.$t('notification.inspect')
+				inspect: this.$t('notification.inspect'),
+				JobDDL: this.$t('notification.ddlDeal')
 			},
 			options: [
 				{
@@ -179,7 +191,7 @@ export default {
 					label: this.$t('notification.CDCLag')
 				},
 				{
-					value: 'databaseDDLChanged',
+					value: 'JobDDL',
 					label: this.$t('notification.DDL')
 				},
 				{
@@ -250,9 +262,6 @@ export default {
 							this.listData.map(item => {
 								item['createTime'] = item.createTime
 									? moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-									: '';
-								item['timestamp'] = item.timestamp
-									? moment(item.timestamp).format('YYYY-MM-DD HH:mm:ss')
 									: '';
 							});
 						}

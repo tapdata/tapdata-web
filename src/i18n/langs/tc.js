@@ -1412,7 +1412,11 @@ const tc = {
 		inspectCount: '校驗任務count差異',
 		inspectValue: '校驗任務count差異',
 		inspectDelete: '校驗任務被刪除',
-		inspectError: '校驗任務運行error'
+		inspectError: '校驗任務運行error',
+		ddlDeal: 'DDL處理',
+		sourceName: '源連接',
+		databaseName: '數據庫名',
+		schemaName: '模型名'
 	},
 	dialog: {
 		createTable: '創建新表',
