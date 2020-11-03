@@ -1344,6 +1344,7 @@ const tc = {
 		manageSever: '管理端',
 		noticeType: '請選擇消息類型',
 		noticeLevel: '請選擇消息級別',
+		inspect: '校验任务',
 		started: '已啟動',
 		paused: '已暫停',
 		edited: '被編輯',
@@ -1379,6 +1380,10 @@ const tc = {
 		newSeverCreatedSuccessfully: '新服務監控被創建',
 		newSeverDeletedSuccessfully: '新服務監控被刪除',
 		databaseDDLChanged: '監測到數據庫DDL變化',
+		inspectVerifyJobCount: 'Count有差異',
+		inspectVerifyJobValue: '內容有差異',
+		inspectVerifyJobDelete: '被刪除',
+		inspectVerifyJobError: '運行error',
 		settingCenter: '設置中心',
 		systemSetting: '系統設置',
 		noticeSetting: '通知設置',
@@ -1403,7 +1408,11 @@ const tc = {
 		agentFailed: 'Agent服務啟動失敗',
 		agentStop: 'Agent服務停止失敗',
 		agentCreated: 'Agent被創建',
-		agentDeleted: 'Agent被刪除'
+		agentDeleted: 'Agent被刪除',
+		inspectCount: '校驗任務count差異',
+		inspectValue: '校驗任務count差異',
+		inspectDelete: '校驗任務被刪除',
+		inspectError: '校驗任務運行error'
 	},
 	dialog: {
 		createTable: '創建新表',

@@ -1356,6 +1356,7 @@ const en = {
 		noticeCenter: 'Setting center',
 		dataFlow: 'dataFlow',
 		manageSever: 'manageSever',
+		inspect: 'Verify job',
 		noticeType: 'Choose notice type',
 		noticeLevel: 'Choose notice level',
 		started: 'started',
@@ -1393,6 +1394,10 @@ const en = {
 		newSeverCreatedSuccessfully: 'NEW SEVER created successfully',
 		newSeverDeletedSuccessfully: 'NEW SEVER deleted successfully',
 		databaseDDLChanged: 'Database DDL changed',
+		inspectVerifyJobCount: 'count difference',
+		inspectVerifyJobValue: 'field value difference',
+		inspectVerifyJobDelete: 'was deleted',
+		inspectVerifyJobError: 'error',
 		settingCenter: 'Setting center',
 		systemSetting: 'System setting',
 		noticeSetting: 'Notice setting',
@@ -1418,7 +1423,11 @@ const en = {
 		agentFailed: 'Agent start failed',
 		agentStop: 'Agent stop failed',
 		agentCreated: 'Agent created',
-		agentDeleted: 'Agent deleted'
+		agentDeleted: 'Agent deleted',
+		inspectCount: 'Verify job count difference',
+		inspectValue: ' Verify job field value difference',
+		inspectDelete: ' Verify job was deleted',
+		inspectError: 'Verify job error'
 	},
 	dialog: {
 		createTable: 'Create New Table',

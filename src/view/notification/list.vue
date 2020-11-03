@@ -66,11 +66,7 @@
 							<div class="unread-1zPaAXtSu" v-show="!item.read"></div>
 							<div class="list-item-desc">
 								<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
-								<span>{{
-									item.system === 'dataFlow'
-										? $t('notification.dataFlow')
-										: $t('notification.manageSever')
-								}}</span>
+								<span>{{ systemMap[item.system] }}</span>
 								<span style="color: #48B6E2">
 									{{ `${item.jobName},` }}
 								</span>
@@ -88,23 +84,9 @@
 							<div class="unread-1zPaAXtSu" v-show="!item.read"></div>
 							<div class="list-item-desc">
 								<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
-								<span>{{
-									item.system === 'dataFlow'
-										? $t('notification.dataFlow')
-										: $t('notification.manageSever')
-								}}</span>
-								<span>
-									<router-link
-										:to="
-											item.system === 'dataFlow'
-												? `/job?id=${item.sourceId}&isMoniting=true`
-												: '/clusterManagement'
-										"
-									>
-										<span style="color: #48B6E2">
-											{{ item.serverName }}
-										</span>
-									</router-link>
+								<span>{{ systemMap[item.system] }}</span>
+								<span style="color: #48B6E2" @click="handleGo(item)">
+									{{ item.serverName }}
 								</span>
 								<span>{{ typeMap[item.msg] }}</span>
 								<span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
@@ -156,6 +138,11 @@ export default {
 				WARN: 'orangered',
 				INFO: '#48b6e2'
 			},
+			systemMap: {
+				dataFlow: this.$t('notification.dataFlow'),
+				agent: this.$t('notification.manageSever'),
+				inspect: this.$t('notification.inspect')
+			},
 			options: [
 				{
 					value: 'error',
@@ -172,15 +159,15 @@ export default {
 			],
 			msgOptions: [
 				{
-					value: 'jobDeleted',
+					value: 'deleted',
 					label: this.$t('notification.jobDeleted')
 				},
 				{
-					value: 'jobPaused',
+					value: 'paused',
 					label: this.$t('notification.jobPaused')
 				},
 				{
-					value: 'jobStateError',
+					value: 'stoppedByError',
 					label: this.$t('notification.jobStateError')
 				},
 				{
@@ -192,27 +179,27 @@ export default {
 					label: this.$t('notification.CDCLag')
 				},
 				{
-					value: 'serverDisconnected',
+					value: 'databaseDDLChanged',
+					label: this.$t('notification.DDL')
+				},
+				{
+					value: 'connectionInterrupted',
 					label: this.$t('notification.serverDisconnected')
 				},
 				{
-					value: 'agentAbnormallyStopped',
-					label: this.$t('notification.agentAbnormallyStopped')
-				},
-				{
-					value: 'agentStarted',
+					value: 'manageSeverStartedSuccessfully',
 					label: this.$t('notification.agentStarted')
 				},
 				{
-					value: 'agentStopped',
+					value: 'manageSeverStoppedSuccessfully',
 					label: this.$t('notification.agentStopped')
 				},
 				{
-					value: 'agentCreated',
+					value: 'newSeverCreatedSuccessfully',
 					label: this.$t('notification.agentCreated')
 				},
 				{
-					value: 'agentDeleted',
+					value: 'newSeverDeletedSuccessfully',
 					label: this.$t('notification.agentDeleted')
 				}
 			],
@@ -411,6 +398,36 @@ export default {
 				}
 			}
 			return r;
+		},
+		handleGo(item) {
+			switch (item.system) {
+				case 'dataFlow':
+					this.$router.push({
+						name: 'job',
+						query: {
+							id: item.sourceId,
+							isMoniting: true,
+							mappingTemplate: item.mappingTemplate
+						}
+					});
+					break;
+				case 'inspect':
+					this.$router.push({
+						name: 'dataVerifyResult',
+						query: {
+							id: item.sourceId,
+							inspectId: item.inspectId,
+							type: item.type,
+							name: item.name
+						}
+					});
+					break;
+				case 'agent':
+					this.$router.push({
+						name: 'clusterManagement'
+					});
+					break;
+			}
 		}
 	}
 };

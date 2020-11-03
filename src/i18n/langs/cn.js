@@ -1386,6 +1386,7 @@ const cn = {
 		noticeType: '请选择消息类型',
 		noticeLevel: '请选择消息级别',
 		manageSever: '管理端',
+		inspect: '校验任务',
 		started: '已启动',
 		paused: '已暂停',
 		edited: '被编辑',
@@ -1421,6 +1422,10 @@ const cn = {
 		newSeverCreatedSuccessfully: '新服务监控被创建',
 		newSeverDeletedSuccessfully: '新服务监控被删除',
 		databaseDDLChanged: '监测到数据库DDL变化',
+		inspectVerifyJobCount: 'Count有差异',
+		inspectVerifyJobValue: '内容有差异',
+		inspectVerifyJobDelete: '被删除',
+		inspectVerifyJobError: '运行error',
 		settingCenter: '设置中心',
 		systemSetting: '系统设置',
 		noticeSetting: '通知设置',
@@ -1445,7 +1450,11 @@ const cn = {
 		agentFailed: 'Agent服务启动失败',
 		agentStop: 'Agent服务停止失败',
 		agentCreated: 'Agent被创建',
-		agentDeleted: 'Agent被删除'
+		agentDeleted: 'Agent被删除',
+		inspectCount: '校验任务count差异',
+		inspectValue: '校验任务count差异',
+		inspectDelete: '校验任务被删除',
+		inspectError: '校验任务运行error'
 	},
 	dataVerification: {
 		verifyDetail: '校验详情',
