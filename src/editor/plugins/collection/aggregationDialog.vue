@@ -156,7 +156,6 @@ export default {
 				margin-right: 10px;
 				box-sizing: border-box;
 				border: 1px solid #dedee4;
-				overflow: auto;
 				// pre {
 				// 	width: 260px;
 				// 	padding: 10px;
@@ -204,8 +203,14 @@ export default {
 		border: 0;
 		font-size: 12px;
 	}
-	.jv-container .jv-code {
-		padding: 10px !important;
+	.jv-container {
+		height: 100%;
+		overflow-y: auto;
+		.jv-code {
+			width: 360px !important;
+			padding: 10px !important;
+			overflow: auto;
+		}
 	}
 }
 </style>
