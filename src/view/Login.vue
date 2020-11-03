@@ -114,6 +114,8 @@ export default {
 			try {
 				let usersModel = this.$api('users');
 				let timeStamp = this.$api('TimeStamp');
+				let rolesModel = this.$api('role');
+				let roleMappingsModel = this.$api('roleMapping');
 				//登陆密码加密
 				await timeStamp.get().then(res => {
 					this.form['stime'] = res.data || new Date().getTime();
@@ -149,8 +151,38 @@ export default {
 				this.$router.replace({
 					name: 'dashboard'
 				});
-				if (user.data.username.read_only) {
-					localStorage.setItem('BTN_AUTHS', 'BTN_AUTHS');
+
+				let roleMapping = {
+					filter: {
+						where: { principalType: 'USER', principalId: data.userId }
+					}
+				};
+				let rolesMappingresulte = await roleMappingsModel.get(roleMapping);
+
+				let roleId = [];
+				if (rolesMappingresulte.data && rolesMappingresulte.data.length) {
+					rolesMappingresulte.data.forEach(item => {
+						roleId.push(item.roleId);
+					});
+				}
+
+				// 角色权限
+				let roleparmas = {
+					where: {
+						id: {
+							inq: roleId
+						}
+					}
+				};
+
+				let rolesresulte = await rolesModel.get(roleparmas);
+				if (rolesresulte.data && rolesresulte.data.length) {
+					let readOnlyFalg = rolesresulte.data.some(find => find.read_only == true);
+					if (readOnlyFalg) {
+						localStorage.setItem('BTN_AUTHS', 'BTN_AUTHS');
+					} else {
+						localStorage.setItem('BTN_AUTHS', '');
+					}
 				} else {
 					localStorage.setItem('BTN_AUTHS', '');
 				}
