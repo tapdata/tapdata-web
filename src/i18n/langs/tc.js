@@ -1410,7 +1410,7 @@ const tc = {
 		agentCreated: 'Agent被創建',
 		agentDeleted: 'Agent被刪除',
 		inspectCount: '校驗任務count差異',
-		inspectValue: '校驗任務count差異',
+		inspectValue: '校驗任務内容差異',
 		inspectDelete: '校驗任務被刪除',
 		inspectError: '校驗任務運行error',
 		ddlDeal: 'DDL處理',

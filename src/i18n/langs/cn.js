@@ -1452,7 +1452,7 @@ const cn = {
 		agentCreated: 'Agent被创建',
 		agentDeleted: 'Agent被删除',
 		inspectCount: '校验任务count差异',
-		inspectValue: '校验任务count差异',
+		inspectValue: '校验任务内容差异',
 		inspectDelete: '校验任务被删除',
 		inspectError: '校验任务运行error',
 		ddlDeal: 'DDL处理',
