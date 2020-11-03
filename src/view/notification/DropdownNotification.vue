@@ -18,25 +18,40 @@
 		</div>
 		<ul class="cuk-list clearfix cuk-list-type-block">
 			<li class="list-item" v-for="item in listData" :key="item.id" @click="handleRead(item.id)">
-				<div class="list-item-content">
+				<div class="list-item-content" v-if="item.msg === 'JobDDL'">
+					<div class="unread-1zPaAXtSu" v-show="!item.read"></div>
+					<div class="list-item-desc">
+						<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
+						<span>{{ systemMap[item.system] }}</span>
+						<router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate">
+							<span style="color: #48B6E2">
+								{{ `${item.serverName} , ` }}
+							</span>
+						</router-link>
+						<span>
+							{{
+								`${$t('notification.sourceName')} : ${item.sourceName} , ${$t(
+									'notification.databaseName'
+								)} : ${item.databaseName} , ${$t('notification.schemaName')} : ${item.schemaName} ,`
+							}}
+						</span>
+						<el-tooltip :content="item.sql" placement="top">
+							<span>
+								{{ `DDL SQL : ${item.sql}` }}
+							</span>
+						</el-tooltip>
+					</div>
+					<div class="list-item-time">
+						<span>{{ item.createTime }}</span>
+					</div>
+				</div>
+				<div class="list-item-content" v-else>
 					<div class="unread-1zPaAXtSu"></div>
 					<div class="list-item-desc">
 						<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
-						<span>{{
-							item.system === 'dataFlow' ? $t('notification.dataFlow') : $t('notification.manageSever')
-						}}</span>
-						<span>
-							<router-link
-								:to="
-									item.system === 'dataFlow'
-										? `/job?id=${item.sourceId}&isMoniting=true`
-										: '/clusterManagement'
-								"
-							>
-								<span style="color: #48B6E2">
-									{{ item.serverName }}
-								</span>
-							</router-link>
+						<span>{{ systemMap[item.system] }}</span>
+						<span style="color: #48B6E2" @click="handleGo(item)">
+							{{ item.serverName }}
 						</span>
 						<span>{{ typeMap[item.msg] }}</span>
 						<span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
@@ -73,7 +88,13 @@ export default {
 				WARN: 'orangered',
 				INFO: '#48b6e2'
 			},
-			typeMap: TYPEMAP
+			typeMap: TYPEMAP,
+			systemMap: {
+				dataFlow: this.$t('notification.dataFlow'),
+				agent: this.$t('notification.manageSever'),
+				inspect: this.$t('notification.inspect'),
+				JobDDL: this.$t('notification.ddlDeal')
+			}
 		};
 	},
 	created() {
@@ -150,6 +171,38 @@ export default {
 				}
 			}
 			return r;
+		},
+		handleGo(item) {
+			switch (item.system) {
+				case 'dataFlow':
+					this.$router.push({
+						name: 'job',
+						query: {
+							id: item.sourceId,
+							isMoniting: true,
+							mappingTemplate: item.mappingTemplate
+						}
+					});
+					break;
+				case 'inspect':
+					if (item.msg !== 'inspectDelete') {
+						this.$router.push({
+							name: 'dataVerifyResult',
+							query: {
+								id: item.sourceId,
+								inspectId: item.inspectId,
+								type: item.type,
+								name: item.serveName
+							}
+						});
+					}
+					break;
+				case 'agent':
+					this.$router.push({
+						name: 'clusterManagement'
+					});
+					break;
+			}
 		}
 	}
 };
