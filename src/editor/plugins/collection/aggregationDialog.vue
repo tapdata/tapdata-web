@@ -16,7 +16,8 @@
 				<template v-if="returnFalg == 'success'">
 					<template v-if="previewData.length">
 						<div class="json-box" v-for="(item, index) in previewData" :key="index">
-							<pre>{{ JSON.stringify(item, null, 2) }}</pre>
+							<!-- <pre>{{ JSON.stringify(item, null, 2) }}</pre> -->
+							<Jsonviewer :value="item"></Jsonviewer>
 						</div>
 					</template>
 					<template v-else>
@@ -42,9 +43,10 @@
 <script>
 import ws from '@/api/ws';
 import JsonEditor from '@/components/jsonEditor';
+import Jsonviewer from 'vue-json-viewer';
 export default {
 	name: 'collectionAggregation',
-	components: { JsonEditor },
+	components: { JsonEditor, Jsonviewer },
 	props: {
 		scriptVal: {
 			type: String
@@ -149,15 +151,19 @@ export default {
 			padding: 20px;
 			box-sizing: border-box;
 			.json-box {
-				width: 260px;
+				width: 360px;
 				height: 100%;
 				margin-right: 10px;
 				box-sizing: border-box;
 				border: 1px solid #dedee4;
-				pre {
-					width: 260px;
-					white-space: pre-wrap;
-				}
+				overflow: auto;
+				// pre {
+				// 	width: 260px;
+				// 	padding: 10px;
+				// 	overflow: auto;
+				// 	box-sizing: border-box;
+				// 	white-space: pre-wrap;
+				// }
 			}
 			.return-data {
 				height: 410px;
@@ -197,6 +203,9 @@ export default {
 		height: 400px;
 		border: 0;
 		font-size: 12px;
+	}
+	.jv-container .jv-code {
+		padding: 10px !important;
 	}
 }
 </style>
