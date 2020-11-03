@@ -67,7 +67,9 @@
 							<div class="list-item-desc">
 								<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
 								<span>{{ systemMap[item.system] }}</span>
-								<router-link :to="`/dataFlows?mapping=` + item.mappingTemplate">
+								<router-link
+									:to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate"
+								>
 									<span style="color: #48B6E2">
 										{{ `${item.serverName} , ` }}
 									</span>
@@ -421,15 +423,17 @@ export default {
 					});
 					break;
 				case 'inspect':
-					this.$router.push({
-						name: 'dataVerifyResult',
-						query: {
-							id: item.sourceId,
-							inspectId: item.inspectId,
-							type: item.type,
-							name: item.name
-						}
-					});
+					if (item.msg !== 'inspectDelete') {
+						this.$router.push({
+							name: 'dataVerifyResult',
+							query: {
+								id: item.sourceId,
+								inspectId: item.inspectId,
+								type: item.type,
+								name: item.serveName
+							}
+						});
+					}
 					break;
 				case 'agent':
 					this.$router.push({
