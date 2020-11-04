@@ -441,7 +441,7 @@ export default {
 				// log('primaryKeys', primaryKeys);
 				formData = {
 					connectionId: data.source._id || data.source.id,
-					databaseType: data.database_type,
+					database_type: data.database_type,
 					tableName: data.original_name,
 					sql: '',
 					dropTable: false,

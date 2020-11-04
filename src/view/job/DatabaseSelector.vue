@@ -163,7 +163,7 @@ export default {
 					formData = {
 						connectionId: data.source._id,
 						name: data.source.name || data.label,
-						databaseType: data.source.database_type
+						database_type: data.source.database_type
 					};
 				}
 			} else if (data.meta_type === 'ftp') {

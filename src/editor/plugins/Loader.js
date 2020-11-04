@@ -85,7 +85,7 @@ export const loadPlugins = function() {
 			}
 			if (
 				type === 'app.Database' &&
-				stencilConfig.shapes[group][i][FORM_DATA_KEY].databaseType === formData.databaseType
+				stencilConfig.shapes[group][i][FORM_DATA_KEY].database_type === formData.database_type
 			) {
 				stencilConfig.shapes[group][i] = stencil;
 				replace = true;
@@ -180,7 +180,7 @@ export const loadPlugins = function() {
 					plugin.stencil['attrs']['root']['dataTooltip'] = cell.name;
 
 					addStencil(type, plugin.stencil, {
-						databaseType: cell.type,
+						database_type: cell.type,
 						shapeImage: cell.shapeImage,
 						name: cell.name
 					});

@@ -201,11 +201,12 @@ export default {
 
 		async loadDataSource() {
 			this.databaseSelectConfig.loading = true;
+			let database_type = this.model.database_type || this.model.databaseType;
 			let result = await connections.get({
 				filter: JSON.stringify({
 					where: {
-						database_type: this.model.databaseType
-							? { in: [this.model.databaseType] }
+						database_type: database_type
+							? { in: [database_type] }
 							: { nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection'] }
 					},
 					fields: {
