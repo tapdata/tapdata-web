@@ -40,7 +40,11 @@ export const TYPEMAP = {
 	SYNCSeverRestartedSuccessfully: i18n.t('notification.SYNCSeverRestartedSuccessfully'),
 	newSeverCreatedSuccessfully: i18n.t('notification.newSeverCreatedSuccessfully'),
 	newSeverDeletedSuccessfully: i18n.t('notification.newSeverDeletedSuccessfully'),
-	databaseDDLChanged: i18n.t('notification.databaseDDLChanged')
+	databaseDDLChanged: i18n.t('notification.databaseDDLChanged'),
+	inspectCount: i18n.t('notification.inspectVerifyJobCount'),
+	inspectValue: i18n.t('notification.inspectVerifyJobValue'),
+	inspectDelete: i18n.t('notification.inspectVerifyJobDelete'),
+	inspectError: i18n.t('notification.inspectVerifyJobError')
 };
 
 export const notificationMAP = {
@@ -58,5 +62,8 @@ export const notificationMAP = {
 	agentStarted: i18n.t('notification.agentStarted'),
 	agentStopped: i18n.t('notification.agentStopped'),
 	agentCreated: i18n.t('notification.agentCreated'),
-	agentDeleted: i18n.t('notification.agentDeleted')
+	inspectCount: i18n.t('notification.inspectCount'),
+	inspectValue: i18n.t('notification.inspectValue'),
+	inspectDelete: i18n.t('notification.inspectDelete'),
+	inspectError: i18n.t('notification.inspectError')
 };

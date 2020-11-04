@@ -17,7 +17,7 @@
 					<div class="operation">
 						<el-select
 							v-model="search"
-							placeholder="请选择消息类型"
+							:placeholder="$t('notification.noticeLevel')"
 							class="search"
 							@change="getData()"
 							clearable
@@ -25,6 +25,22 @@
 						>
 							<el-option
 								v-for="item in options"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value"
+							>
+							</el-option>
+						</el-select>
+						<el-select
+							v-model="msg"
+							:placeholder="$t('notification.noticeType')"
+							class="search"
+							@change="getData()"
+							clearable
+							size="mini"
+						>
+							<el-option
+								v-for="item in msgOptions"
 								:key="item.value"
 								:label="item.label"
 								:value="item.value"
@@ -46,27 +62,44 @@
 				</el-tabs>
 				<ul class="cuk-list clearfix cuk-list-type-block">
 					<li class="list-item" v-for="item in listData" :key="item.id" @click="handleRead(item.id)">
-						<div class="list-item-content">
+						<div class="list-item-content" v-if="item.msg === 'JobDDL'">
 							<div class="unread-1zPaAXtSu" v-show="!item.read"></div>
 							<div class="list-item-desc">
 								<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
-								<span>{{
-									item.system === 'dataFlow'
-										? $t('notification.dataFlow')
-										: $t('notification.manageSever')
-								}}</span>
+								<span>{{ systemMap[item.system] }}</span>
+								<router-link
+									:to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate"
+								>
+									<span style="color: #48B6E2">
+										{{ `${item.serverName} , ` }}
+									</span>
+								</router-link>
 								<span>
-									<router-link
-										:to="
-											item.system === 'dataFlow'
-												? `/job?id=${item.sourceId}&isMoniting=true`
-												: '/clusterManagement'
-										"
-									>
-										<span style="color: #48B6E2">
-											{{ item.serverName }}
-										</span>
-									</router-link>
+									{{
+										`${$t('notification.sourceName')} : ${item.sourceName} , ${$t(
+											'notification.databaseName'
+										)} : ${item.databaseName} , ${$t('notification.schemaName')} : ${
+											item.schemaName
+										} ,`
+									}}
+								</span>
+								<el-tooltip :content="item.sql" placement="top">
+									<span>
+										{{ `DDL SQL : ${item.sql}` }}
+									</span>
+								</el-tooltip>
+							</div>
+							<div class="list-item-time">
+								<span>{{ item.createTime }}</span>
+							</div>
+						</div>
+						<div class="list-item-content" v-else>
+							<div class="unread-1zPaAXtSu" v-show="!item.read"></div>
+							<div class="list-item-desc">
+								<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
+								<span>{{ systemMap[item.system] }}</span>
+								<span style="color: #48B6E2" @click="handleGo(item)">
+									{{ item.serverName }}
 								</span>
 								<span>{{ typeMap[item.msg] }}</span>
 								<span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
@@ -109,6 +142,7 @@ export default {
 			read: true,
 			loading: false,
 			search: '',
+			msg: '',
 			currentPage: 1,
 			pagesize: 20,
 			total: '',
@@ -116,6 +150,12 @@ export default {
 				ERROR: 'red',
 				WARN: 'orangered',
 				INFO: '#48b6e2'
+			},
+			systemMap: {
+				dataFlow: this.$t('notification.dataFlow'),
+				agent: this.$t('notification.manageSever'),
+				inspect: this.$t('notification.inspect'),
+				JobDDL: this.$t('notification.ddlDeal')
 			},
 			options: [
 				{
@@ -129,6 +169,52 @@ export default {
 				{
 					value: 'info',
 					label: 'INFO'
+				}
+			],
+			msgOptions: [
+				{
+					value: 'deleted',
+					label: this.$t('notification.jobDeleted')
+				},
+				{
+					value: 'paused',
+					label: this.$t('notification.jobPaused')
+				},
+				{
+					value: 'stoppedByError',
+					label: this.$t('notification.jobStateError')
+				},
+				{
+					value: 'jobEncounterError',
+					label: this.$t('notification.jobEncounterError')
+				},
+				{
+					value: 'CDCLag',
+					label: this.$t('notification.CDCLag')
+				},
+				{
+					value: 'JobDDL',
+					label: this.$t('notification.DDL')
+				},
+				{
+					value: 'connectionInterrupted',
+					label: this.$t('notification.serverDisconnected')
+				},
+				{
+					value: 'manageSeverStartedSuccessfully',
+					label: this.$t('notification.agentStarted')
+				},
+				{
+					value: 'manageSeverStoppedSuccessfully',
+					label: this.$t('notification.agentStopped')
+				},
+				{
+					value: 'newSeverCreatedSuccessfully',
+					label: this.$t('notification.agentCreated')
+				},
+				{
+					value: 'newSeverDeletedSuccessfully',
+					label: this.$t('notification.agentDeleted')
 				}
 			],
 			typeMap: TYPEMAP,
@@ -159,6 +245,9 @@ export default {
 			}
 			if (this.search || this.search !== '') {
 				where.filter.where['level'] = this.search;
+			}
+			if (this.msg || this.msg !== '') {
+				where.filter.where['msg'] = this.msg;
 			}
 			if (this.$cookie.get('isAdmin') == 0) {
 				where.filter.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
@@ -205,6 +294,9 @@ export default {
 			}
 			if (this.search || this.search !== '') {
 				where.where['level'] = this.search;
+			}
+			if (this.msg || this.msg !== '') {
+				where.where['msg'] = this.msg;
 			}
 			notification.count(where).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {
@@ -317,6 +409,38 @@ export default {
 				}
 			}
 			return r;
+		},
+		handleGo(item) {
+			switch (item.system) {
+				case 'dataFlow':
+					this.$router.push({
+						name: 'job',
+						query: {
+							id: item.sourceId,
+							isMoniting: true,
+							mappingTemplate: item.mappingTemplate
+						}
+					});
+					break;
+				case 'inspect':
+					if (item.msg !== 'inspectDelete') {
+						this.$router.push({
+							name: 'dataVerifyResult',
+							query: {
+								id: item.sourceId,
+								inspectId: item.inspectId,
+								type: item.type,
+								name: item.serveName
+							}
+						});
+					}
+					break;
+				case 'agent':
+					this.$router.push({
+						name: 'clusterManagement'
+					});
+					break;
+			}
 		}
 	}
 };
