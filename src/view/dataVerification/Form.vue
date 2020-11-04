@@ -703,6 +703,7 @@ export default {
 							Object.assign({}, this.form, {
 								fullMatchKeep: this.form.keep,
 								status: this.form.mode === 'manual' ? 'scheduling' : 'waiting',
+								ping_time: 0,
 								tasks: this.form.tasks.map(({ source, target, fullMatch }) => {
 									return {
 										source,

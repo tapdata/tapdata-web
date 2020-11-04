@@ -27,13 +27,16 @@
 			ref="SelectClassify"
 			:dialogVisible="dialogVisible"
 			type="dataflow"
-			:oldTagList="tagList"
+			:tagLists="tagList"
 			v-on:dialogVisible="handleDialogVisible"
 			v-on:operationsClassify="handleOperationClassify"
 		></SelectClassify>
 		<div v-show="status" class="tooltip">
-			{{ $t('dataFlow.uploadOK') }} ,<router-link to="/dataFlows"> {{ $t('dataFlow.uploadInfo') }}</router-link>
+			{{ $t('dataFlow.uploadOK') }}
 		</div>
+		<!--		<div v-show="status" class="tooltip">-->
+		<!--			{{ $t('dataFlow.uploadOK') }} ,<router-link :to="`/dataFlows?mapping=${mappingTemplate}`"> {{ $t('dataFlow.uploadInfo') }}</router-link>-->
+		<!--		</div>-->
 	</div>
 </template>
 
@@ -49,7 +52,8 @@ export default {
 			accept: '.gz',
 			status: false,
 			tagList: [],
-			dialogVisible: false
+			dialogVisible: false,
+			mappingTemplate: 'cluster-clone'
 		};
 	},
 	created() {

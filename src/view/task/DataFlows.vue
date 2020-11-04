@@ -1128,7 +1128,7 @@ export default {
 			window.open('/#/job?id=' + this.deleteObj.id, '_blank');
 		},
 
-		statusConfirm(callback, data) {
+		statusConfirm(callback, handleCatch, data) {
 			let initFalg =
 				(data && data.setting && data.setting.sync_type === 'cdc') || data.length === 0 ? true : false;
 			this.$confirm(
@@ -1140,7 +1140,9 @@ export default {
 					type: 'warning',
 					closeOnClickModal: false
 				}
-			).then(callback);
+			)
+				.then(callback)
+				.catch(handleCatch);
 		},
 
 		// 运行开关
@@ -1158,9 +1160,18 @@ export default {
 			}
 
 			if (status === 'stopping') {
-				this.statusConfirm(() => {
-					this.getStatus(id, data);
-				}, dataItem);
+				this.statusConfirm(
+					() => {
+						this.getStatus(id, data);
+					},
+					() => {
+						let data = {
+							status: oldStatus
+						};
+						this.getStatus(id, data);
+					},
+					dataItem
+				);
 			} else {
 				this.getStatus(id, data);
 			}
