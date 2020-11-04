@@ -418,7 +418,7 @@ export default {
 						query: {
 							id: item.sourceId,
 							isMoniting: true,
-							mappingTemplate: item.mappingTemplate
+							mapping: item.mappingTemplate
 						}
 					});
 					break;
