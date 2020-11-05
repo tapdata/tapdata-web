@@ -510,7 +510,8 @@ const en = {
 			compelTip:
 				"Forced deduplication: Perform mandatory deduplication detection on the target's existing data, strictly guarantee accuracy but low transmission performance",
 			batchTip: 'Batch:  Batch processing and transmission of CDC data with high performance.',
-			onebyoneTip: 'Row by row: Processing and transmission of CDC data row by row'
+			onebyoneTip: 'Row by row: Processing and transmission of CDC data row by row',
+			sync_type_tip: 'Transmission type can be changed after disable aggregation settings of collection node: '
 		}
 	},
 	connection: {

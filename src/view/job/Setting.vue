@@ -22,6 +22,11 @@
 					<el-radio label="initial_sync">{{ $t('dataFlow.initial_sync') }}</el-radio>
 					<el-radio label="cdc" :disabled="sync_typeFalg">{{ $t('dataFlow.cdc') }}</el-radio>
 				</el-radio-group>
+				<el-popover popper-class="setting-popper" placement="top-start" width="600" trigger="hover">
+					<div>{{ $t('dataFlow.setting.sync_type_tip') }}</div>
+					<div>{{ conncetionStage }}</div>
+					<span class="icon iconfont icon-tishi1" slot="reference"></span>
+				</el-popover>
 			</el-form-item>
 			<el-form-item :label="$t('dataFlow.stop_on_error')">
 				<!-- 遇到错误时停止同步 -->
@@ -186,6 +191,7 @@ export default {
 	name: 'Setting.vue',
 	data() {
 		return {
+			conncetionStage: [],
 			resource: '',
 			disabled: false,
 			systemTimeZone: '',
@@ -347,13 +353,16 @@ export default {
 		getAllAggregate() {
 			let dataCells = this.editor.getAllCells();
 			if (dataCells && dataCells.length > 0) {
+				let connectionName = [];
 				dataCells.forEach(cell => {
 					let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null;
 					if (formData.collectionAggregate) {
+						connectionName.push(formData.tableName);
 						this.sync_typeFalg = true;
 						this.formData.sync_type = 'initial_sync';
 					}
 				});
+				this.conncetionStage = connectionName.toString();
 			}
 		},
 
