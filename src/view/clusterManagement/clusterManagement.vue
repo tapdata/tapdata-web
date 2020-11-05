@@ -405,7 +405,7 @@ export default {
 				params['filter[where][or][1][systemInfo.ip][like]'] = this.sourch;
 			}
 			if (this.buildProfile && this.buildProfile === 'CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
-				params['filter[where][user_id][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+				params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
 			}
 			cluster.get(params).then(res => {
 				if (res.statusText === 'OK' || res.status === 200) {

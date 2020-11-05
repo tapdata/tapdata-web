@@ -62,7 +62,7 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="4" class="center">
-					<el-button type="primary" @click="screenFn">{{ $t("message.filter") }}</el-button>
+					<el-button type="primary" @click="screenFn">{{ $t('message.filter') }}</el-button>
 				</el-col>
 			</el-form>
 		</el-row>
@@ -121,9 +121,9 @@
 	</div>
 </template>
 <script>
-import factory from "../../api/factory";
-const logs = factory("logs");
-const cluster = factory("cluster");
+import factory from '../../api/factory';
+const logs = factory('logs');
+const cluster = factory('cluster');
 export default {
 	data() {
 		return {
@@ -134,21 +134,21 @@ export default {
 			form: {
 				startDate: null,
 				closeDate: null,
-				level: "",
-				serverType: "",
-				ip: ""
+				level: '',
+				serverType: '',
+				ip: ''
 			},
 			tableData: [],
 			levelList: [
-				{ lable: "INFO", value: "INFO" },
-				{ lable: "WARN", value: "WARN" },
-				{ lable: "ERROR", value: "ERROR" }
+				{ lable: 'INFO', value: 'INFO' },
+				{ lable: 'WARN', value: 'WARN' },
+				{ lable: 'ERROR', value: 'ERROR' }
 			],
 			serverTypeList: [
-				{ lable: "engine", value: "engine" },
-				{ lable: "management", value: "management" },
-				{ lable: "apiServer", value: "apiServer" },
-				{ lable: "tapdataAgent", value: "tapdataAgent" }
+				{ lable: 'engine', value: 'engine' },
+				{ lable: 'management', value: 'management' },
+				{ lable: 'apiServer', value: 'apiServer' },
+				{ lable: 'tapdataAgent', value: 'tapdataAgent' }
 			],
 			ipList: [],
 			pickerStartDate: {
@@ -167,12 +167,16 @@ export default {
 	},
 
 	mounted() {
+		this.buildProfile = this.$store.state.buildProfile;
 		let params = {
-			"filter[limit]": this.pagesize,
-			"filter[skip]": (this.currpage - 1) * this.pagesize,
-			"filter[order]": "last_updated DESC",
-			"filter[where][loggerName]": "tapdataAgent"
+			'filter[limit]': this.pagesize,
+			'filter[skip]': (this.currpage - 1) * this.pagesize,
+			'filter[order]': 'last_updated DESC',
+			'filter[where][loggerName]': 'tapdataAgent'
 		};
+		if (this.buildProfile && this.buildProfile === 'CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
+			params['filter[where][username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+		}
 		setTimeout(() => this.getDataApi(params), 1000);
 		this.getIpFn();
 	},
@@ -181,7 +185,7 @@ export default {
 		getIpFn() {
 			// let api = 'http://52.82.13.216:3031/api/clusterStates'
 			cluster.get().then(res => {
-				if (res.statusText === "OK" || res.status === 200) {
+				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
 						res.data.forEach(item => {
 							this.ipList.push({ value: item.systemInfo.ip });
@@ -193,16 +197,19 @@ export default {
 		// 筛选
 		screenFn() {
 			let params = {
-				"filter[where][date][lt]": this.form.closeDate,
-				"filter[where][date][gt]": this.form.startDate,
-				"filter[where][level]": this.form.level,
-				"filter[where][threadName]": this.form.serverType,
-				"filter[where][ip]": this.form.ip,
-				"filter[where][loggerName]": "tapdataAgent",
-				"filter[limit]": this.pagesize,
-				"filter[skip]": this.currpage,
-				"filter[order]": "last_updated DESC"
+				'filter[where][date][lt]': this.form.closeDate,
+				'filter[where][date][gt]': this.form.startDate,
+				'filter[where][level]': this.form.level,
+				'filter[where][threadName]': this.form.serverType,
+				'filter[where][ip]': this.form.ip,
+				'filter[where][loggerName]': 'tapdataAgent',
+				'filter[limit]': this.pagesize,
+				'filter[skip]': this.currpage,
+				'filter[order]': 'last_updated DESC'
 			};
+			if (this.buildProfile && this.buildProfile === 'CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
+				params['filter[where][username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+			}
 			let obj = {};
 			for (let i in params) {
 				if (params[i]) {
@@ -212,27 +219,27 @@ export default {
 			this.getDataApi(obj);
 
 			this.form = {
-				closeDate: "",
-				startDate: "",
-				level: "",
-				serverType: "",
-				ip: ""
+				closeDate: '',
+				startDate: '',
+				level: '',
+				serverType: '',
+				ip: ''
 			};
 		},
 		// 获取数据
 		async getDataApi(params) {
 			logs.get(params).then(res => {
-				if (res.statusText === "OK" || res.status === 200) {
+				if (res.statusText === 'OK' || res.status === 200) {
 					if (res.data) {
 						this.tableData = res.data;
 					}
 				}
 			});
 			let where = {
-				"where[loggerName]": "tapdataAgent"
+				'where[loggerName]': 'tapdataAgent'
 			};
 			let result = await logs.count(where);
-			if (result.statusText === "OK") {
+			if (result.statusText === 'OK') {
 				this.totalNum = result.data.count;
 			}
 
@@ -243,25 +250,31 @@ export default {
 		handleCurrentChange(cpage) {
 			this.currpage = cpage;
 			let params = {
-				"filter[order]": "last_updated DESC",
-				"filter[limit]": this.pagesize,
-				"filter[skip]": (cpage - 1) * this.pagesize,
-				"filter[where][loggerName]": "tapdataAgent"
+				'filter[order]': 'last_updated DESC',
+				'filter[limit]': this.pagesize,
+				'filter[skip]': (cpage - 1) * this.pagesize,
+				'filter[where][loggerName]': 'tapdataAgent'
 			};
+			if (this.buildProfile && this.buildProfile === 'CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
+				params['filter[where][username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+			}
 			this.getDataApi(params);
 		},
 		handleSizeChange(psize) {
 			this.pagesize = psize;
 			let params = {
-				"filter[order]": "last_updated DESC",
-				"filter[limit]": psize,
-				"filter[skip]": (this.currpage - 1) * psize,
-				"filter[where][loggerName]": "tapdataAgent"
+				'filter[order]': 'last_updated DESC',
+				'filter[limit]': psize,
+				'filter[skip]': (this.currpage - 1) * psize,
+				'filter[where][loggerName]': 'tapdataAgent'
 			};
+			if (this.buildProfile && this.buildProfile === 'CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
+				params['filter[where][username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+			}
 			this.getDataApi(params);
 		},
 
-		dateFormat(row, column, cellValue, index) {
+		dateFormat(row, column) {
 			const daterc = row[column.property];
 			if (daterc != null) {
 				const dateMat = new Date(daterc);
@@ -273,16 +286,16 @@ export default {
 				const ss = dateMat.getSeconds();
 				const timeFormat =
 					year +
-					"-" +
-					(month < 10 ? "0" + month : month) +
-					"-" +
-					(day < 10 ? "0" + day : day) +
-					" " +
-					(hh < 10 ? "0" + hh : hh) +
-					":" +
-					(mm < 10 ? "0" + mm : mm) +
-					":" +
-					(ss < 10 ? "0" + ss : ss);
+					'-' +
+					(month < 10 ? '0' + month : month) +
+					'-' +
+					(day < 10 ? '0' + day : day) +
+					' ' +
+					(hh < 10 ? '0' + hh : hh) +
+					':' +
+					(mm < 10 ? '0' + mm : mm) +
+					':' +
+					(ss < 10 ? '0' + ss : ss);
 				return timeFormat;
 			}
 		}
