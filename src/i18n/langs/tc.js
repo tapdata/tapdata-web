@@ -1364,7 +1364,7 @@ const tc = {
 		stoppedByError: '出錯停止',
 		startupFailed: '啟動失敗',
 		stopFailed: '停止失敗',
-		encounterERRORSkipped: '運行中出現ERROR，跳過',
+		encounterERRORSkipped: '運行中跳過一個ERROR',
 		CDCLag: 'CDC滯後超時',
 		manageSeverRestartFailed: '管理端服務重啟失敗',
 		APISeverRestartFailed: 'API服務重啟失敗',
