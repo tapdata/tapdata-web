@@ -316,6 +316,9 @@ export default {
 		rowClick(row) {
 			this.changeInspectResult(1, row.taskId);
 		},
+		GoBack() {
+			this.$router.push('/dataVerification');
+		},
 		changeInspectResult(pageNum, taskId) {
 			if (taskId) {
 				this.taskId = taskId;

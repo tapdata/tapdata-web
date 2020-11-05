@@ -175,6 +175,9 @@ export default {
 		rowClick(row) {
 			this.changeInspectResult(row.id, row.inspect_id);
 		},
+		GoBack() {
+			this.$router.push('/dataVerification');
+		},
 		changeInspectResult(id, inspect_id) {
 			let routeUrl = this.$router.resolve({
 				path: '/dataVerifyResult',

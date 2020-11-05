@@ -1555,6 +1555,7 @@ const cn = {
 		otherField: '其他字段差异',
 		back: '返回',
 		startVerify: '正在执行校验',
+		deleteMessage: '删除校验任务将无法恢复, 确定删除',
 		executeVerifyTip: '执行校验',
 		addVerifyTip: '新建校验任务',
 		historyTip: '校验历史',

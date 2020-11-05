@@ -1552,6 +1552,7 @@ const tc = {
 		otherField: '其他字段差異',
 		back: '返回',
 		startVerify: '正在執行校驗',
+		deleteMessage: '刪除校驗任務將無法恢復, 確定刪除',
 		executeVerifyTip: '執行校驗',
 		addVerifyTip: '新建校驗任務',
 		historyTip: '校驗歷史',

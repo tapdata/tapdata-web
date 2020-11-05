@@ -318,7 +318,7 @@
 									class="btn-icon el-icon-delete"
 									type="text"
 									size="mini"
-									@click="remove(scope.row.id)"
+									@click="remove(scope.row.name, scope.row.id)"
 								></el-button>
 							</el-tooltip>
 						</template>
@@ -507,12 +507,16 @@ export default {
 					this.search(this.page.current);
 				});
 		},
-		remove(id) {
-			this.$confirm(this.$t('message.deteleMessage'), this.$t('dataFlow.importantReminder'), {
-				confirmButtonText: this.$t('metaData.deleteNode'),
-				cancelButtonText: this.$t('message.cancel'),
-				type: 'warning'
-			}).then(() => {
+		remove(name, id) {
+			this.$confirm(
+				`${this.$t('dataVerification.deleteMessage')} ${name}?`,
+				this.$t('dataFlow.importantReminder'),
+				{
+					confirmButtonText: this.$t('metaData.deleteNode'),
+					cancelButtonText: this.$t('message.cancel'),
+					type: 'warning'
+				}
+			).then(() => {
 				this.$api('Inspects')
 					.delete(id)
 					.then(() => {
