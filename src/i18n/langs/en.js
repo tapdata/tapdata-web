@@ -510,7 +510,8 @@ const en = {
 			compelTip:
 				"Forced deduplication: Perform mandatory deduplication detection on the target's existing data, strictly guarantee accuracy but low transmission performance",
 			batchTip: 'Batch:  Batch processing and transmission of CDC data with high performance.',
-			onebyoneTip: 'Row by row: Processing and transmission of CDC data row by row'
+			onebyoneTip: 'Row by row: Processing and transmission of CDC data row by row',
+			sync_type_tip: 'Transmission type can be changed after disable aggregation settings of collection node: '
 		}
 	},
 	connection: {
@@ -649,7 +650,8 @@ const en = {
 							addTextTip1:
 								'Please enter the MongoDB aggregation code, and then click "Preview" to preview the sample data here',
 							filterAggreTip:
-								'Aggregation settings and filtering settings cannot be enabled at same time.  To use aggregation settings, please disable the filter settings below.'
+								'Aggregation settings and filtering settings cannot be enabled at same time.',
+							seetingAggreTip: 'This function only available under initial job'
 						}
 					}
 				},

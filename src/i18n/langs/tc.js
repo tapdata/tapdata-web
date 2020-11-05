@@ -506,7 +506,8 @@ const tc = {
 			intellectTip: '智能去重寫入：對目標已有數據進行智能檢測，去重的同時能極大提升傳輸性能',
 			compelTip: '強制去重寫入：對目標已有數據進行強制去重檢測，嚴格保證精準度但傳輸性能較低',
 			batchTip: '批量：對監測到的增量數據進行批量傳輸處理，性能較高',
-			onebyoneTip: '逐行：對監測到的增量數據進行逐條處理，性能較差'
+			onebyoneTip: '逐行：對監測到的增量數據進行逐條處理，性能較差',
+			sync_type_tip: '關閉數據集節點的聚合設置才能修改傳輸類型，已開啟節點:'
 		}
 	},
 	connection: {
@@ -641,8 +642,8 @@ const tc = {
 							previewSampleData: '採樣數據預覽',
 							addTextTip: '沒有預覽樣本數據',
 							addTextTip1: '請輸入MongoDB聚合代碼，然後重定向“預覽”以在此處預覽樣本數據',
-							filterAggreTip:
-								'聚合設置與過濾設置不可同時開啟，如果需要使用聚合設置功能，請關閉下方過濾設置開關'
+							filterAggreTip: '聚合設置與過濾設置不可同時開啟',
+							seetingAggreTip: '此功能僅在初始化任務下可用'
 						}
 					}
 				},
