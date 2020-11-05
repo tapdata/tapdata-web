@@ -625,6 +625,7 @@ export default {
 
 			this.onGraphChanged();
 			this.setSelector(this.$route.query.mapping);
+			this.editor.graph.setSettingData(dataFlow.setting);
 			this.wsSend();
 		},
 		wsSend() {
@@ -814,7 +815,6 @@ export default {
 					return;
 				}
 			}
-
 			let editorData = this.editor.getData();
 			let graphData = editorData.graphData;
 			let settingData = editorData.settingData;
