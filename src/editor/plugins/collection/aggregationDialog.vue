@@ -3,9 +3,10 @@
 		<div class="pipeline">
 			<div class="title">
 				Pipeline
-				<el-button type="primary" size="mini" class="pipeline-button" @click="handlePreview">{{
-					$t('editor.cell.data_node.collection.form.aggregation.preview')
-				}}</el-button>
+				<el-button type="primary" size="mini" class="pipeline-button" @click="handlePreview">
+					<i class="el-icon-loading" v-if="loading"></i>
+					{{ $t('editor.cell.data_node.collection.form.aggregation.preview') }}</el-button
+				>
 			</div>
 			<!-- [ <el-input class="e-textarea" type="textarea" v-model="script"></el-input>] -->
 			<JsonEditor :code.sync="script" ref="jsEditor" :width.sync="width" v-if="!disabled"></JsonEditor>
@@ -29,7 +30,7 @@
 
 				<div class="return-data">
 					<span class="error" v-if="returnFalg == 'error'">
-						<p>{{ errorMessage }}</p>
+						<pre>{{ errorMessage }}</pre>
 					</span>
 					<span class="add" v-if="returnFalg == 'add'">
 						<p>{{ $t('editor.cell.data_node.collection.form.aggregation.addTextTip') }}</p>
@@ -57,6 +58,7 @@ export default {
 	},
 	data() {
 		return {
+			loading: false,
 			disabled: false,
 			width: '500',
 			previewData: [],
@@ -87,6 +89,7 @@ export default {
 				self.errorMessage = res.error;
 				self.returnFalg = 'error';
 			}
+			this.loading = false;
 			this.$emit('backAggregateResult', this.script, self.returnFalg, templeSchema);
 		});
 	},
@@ -103,6 +106,7 @@ export default {
 				}
 			};
 			if (ws.ws.readyState == 1) ws.send(params);
+			this.loading = true;
 		}
 	}
 };
@@ -169,6 +173,11 @@ export default {
 				.error {
 					font-size: 12px;
 					color: #f56c6c;
+					pre {
+						word-wrap: break-word;
+						white-space: pre-wrap;
+						text-align: justify;
+					}
 				}
 				.add {
 					font-size: 12px;

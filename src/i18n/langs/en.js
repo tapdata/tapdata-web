@@ -649,7 +649,8 @@ const en = {
 							addTextTip1:
 								'Please enter the MongoDB aggregation code, and then click "Preview" to preview the sample data here',
 							filterAggreTip:
-								'Aggregation settings and filtering settings cannot be enabled at same time.  To use aggregation settings, please disable the filter settings below.'
+								'Aggregation settings and filtering settings cannot be enabled at same time.',
+							seetingAggreTip: 'This function only available under initial job'
 						}
 					}
 				},
