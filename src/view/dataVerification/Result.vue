@@ -1,7 +1,12 @@
 <template>
 	<section class="data-flow-wrap" v-loading="loading">
 		<div class="panel-main">
-			<div class="tip">{{ $t('dataVerification.tableDetail') }}</div>
+			<div class="tip">
+				<el-button class="back-btn-icon-box" @click="GoBack"
+					><i class="iconfont icon-left-circle back-btn-icon"></i
+				></el-button>
+				{{ $t('dataVerification.tableDetail') }}
+			</div>
 			<div class="main main-border">
 				<div class="title">{{ name }}</div>
 				<div class="text" v-if="type === 'row_count'">{{ $t('dataVerification.rowVerify') }}</div>
@@ -16,6 +21,7 @@
 					:data="tableData"
 					highlight-current-row
 					@current-change="handleCurrentChange"
+					@row-click="rowClick"
 					ref="singleTable"
 					height="100%"
 					class="dv-table"
@@ -60,31 +66,46 @@
 					</el-table-column>
 					<el-table-column prop="status" :label="$t('dataVerification.verifyResult')">
 						<template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
-							<span v-if="scope.row.target_total - scope.row.source_total !== 0">{{
-								$t('dataVerification.rowConsistent') +
-									' : ' +
-									Math.abs(scope.row.target_total - scope.row.source_total)
-							}}</span>
-							<div
-								v-if="
-									scope.row.source_only + scope.row.target_only + scope.row.row_failed !== 0 &&
-										type !== 'row_count'
-								"
-							>
-								{{ $t('dataVerification.contConsistent') + ' : ' }}
-								{{ scope.row.source_only + scope.row.target_only + scope.row.row_failed }}
+							<div class="inspect-result-status">
+								<div>
+									<span class="error" v-if="scope.row.target_total - scope.row.source_total !== 0">
+										<i class="el-icon-error"></i>
+										<span>{{
+											$t('dataVerification.rowConsistent') +
+												' : ' +
+												Math.abs(scope.row.target_total - scope.row.source_total)
+										}}</span>
+									</span>
+								</div>
+								<div
+									v-if="
+										scope.row.source_only + scope.row.target_only + scope.row.row_failed !== 0 &&
+											type !== 'row_count'
+									"
+								>
+									<span class="error">
+										<i class="el-icon-error"></i>
+										<span>
+											{{ $t('dataVerification.contConsistent') + ' : ' }}
+											{{ scope.row.source_only + scope.row.target_only + scope.row.row_failed }}
+										</span>
+									</span>
+								</div>
+								<span
+									class="success"
+									v-if="
+										(type !== 'row_count' &&
+											scope.row.source_only + scope.row.target_only + scope.row.row_failed ===
+												0 &&
+											scope.row.target_total - scope.row.source_total === 0) ||
+											(type === 'row_count' &&
+												scope.row.target_total - scope.row.source_total === 0)
+									"
+								>
+									<i class="el-icon-success"></i>
+									<span>{{ $t('dataVerification.consistent') }}</span>
+								</span>
 							</div>
-							<span
-								class="success"
-								v-if="
-									(type !== 'row_count' &&
-										scope.row.source_only + scope.row.target_only + scope.row.row_failed === 0 &&
-										scope.row.target_total - scope.row.source_total === 0) ||
-										(type === 'row_count' && scope.row.target_total - scope.row.source_total === 0)
-								"
-							>
-								<span>{{ $t('dataVerification.consistent') }}</span>
-							</span>
 						</template>
 					</el-table-column>
 					<el-table-column :label="$t('dataFlow.operate')" width="60px" v-if="type !== 'row_count'">
@@ -110,7 +131,7 @@
 			<!--			</el-pagination>-->
 		</div>
 		<div class="panel-main" v-if="type !== 'row_count'">
-			<div class="tip">{{ $t('dataVerification.verifyDetail') }}</div>
+			<div class="tip" style="padding-left: 10px">{{ $t('dataVerification.verifyDetail') }}</div>
 			<div class="main">
 				<ul class="inspect-result" v-if="resultData && resultData[0] && resultData[0].status">
 					<li>
@@ -292,6 +313,12 @@ export default {
 		handleCurrentChange(val) {
 			this.currentRow = val;
 		},
+		rowClick(row) {
+			this.changeInspectResult(1, row.taskId);
+		},
+		GoBack() {
+			this.$router.push('/dataVerification');
+		},
 		changeInspectResult(pageNum, taskId) {
 			if (taskId) {
 				this.taskId = taskId;
@@ -383,7 +410,6 @@ export default {
 			font-size: 12px;
 			background: #f5f5f5;
 			border: 1px solid #dedee4;
-			padding-left: @margin;
 			line-height: 30px;
 		}
 		.main {
@@ -429,6 +455,22 @@ export default {
 				margin: @margin;
 				li {
 					margin-top: 10px;
+				}
+			}
+			.inspect-result-status {
+				.error,
+				.success {
+					padding: 0 8px 0 5px;
+					display: inline-block;
+					line-height: 20px;
+					color: #fff;
+					border-radius: 20px;
+				}
+				.error {
+					background: #f56c6c;
+				}
+				.success {
+					background: #70ae48;
 				}
 			}
 			.inspect-result-box {
@@ -487,6 +529,31 @@ export default {
 			border-top: 1px solid #dedee4;
 			border-right: 1px solid #dedee4;
 			padding: 10px 5px;
+		}
+		.back-btn-icon-box {
+			width: 30px;
+			height: 30px;
+			display: inline-block;
+			border-radius: 0;
+			line-height: 1;
+			white-space: nowrap;
+			cursor: pointer;
+			background: #48b6e2;
+			border: 0;
+			-webkit-appearance: none;
+			text-align: center;
+			-webkit-box-sizing: border-box;
+			box-sizing: border-box;
+			outline: 0;
+			margin: 0;
+			-webkit-transition: 0.1s;
+			transition: 0.1s;
+			font-weight: normal;
+			padding: 0;
+			font-size: 14px;
+		}
+		.back-btn-icon-box:hover {
+			background: #6dc5e8;
 		}
 	}
 }
