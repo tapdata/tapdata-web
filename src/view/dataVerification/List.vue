@@ -88,14 +88,22 @@
 					<!--						<i class="iconfont icon-shezhi1"></i>-->
 					<!--						<span>{{ $t('dataVerification.verifySetting') }}</span>-->
 					<!--					</el-button>-->
-					<el-button
-						type="primary"
-						size="mini"
+					<el-tooltip
 						v-readonlybtn="'BTN_AUTHS'"
-						@click="$router.push('dataVerification/create')"
+						class="item"
+						effect="dark"
+						:content="$t('dataVerification.addVerifyTip')"
+						placement="bottom"
 					>
-						<i class="iconfont icon-jia add-btn-icon"></i>
-					</el-button>
+						<el-button
+							type="primary"
+							size="mini"
+							v-readonlybtn="'BTN_AUTHS'"
+							@click="$router.push('dataVerification/create')"
+						>
+							<i class="iconfont icon-jia add-btn-icon"></i>
+						</el-button>
+					</el-tooltip>
 				</div>
 			</div>
 			<div class="table-wrap">
@@ -495,7 +503,7 @@ export default {
 					{ status: 'scheduling', ping_time: 0 }
 				)
 				.then(() => {
-					this.$message.success('任务启动成功');
+					this.$message.success(this.$t('dataVerification.startVerify'));
 					this.search(this.page.current);
 				});
 		},

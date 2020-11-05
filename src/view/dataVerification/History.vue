@@ -1,10 +1,15 @@
 <template>
 	<section class="data-verify-history-wrap" v-loading="loading">
 		<div class="panel-main">
-			<div class="tip">{{ $t('dataVerification.verifyHistory') }}</div>
+			<div class="tip">
+				<el-button class="back-btn-icon-box" @click="GoBack"
+					><i class="iconfont icon-left-circle back-btn-icon"></i
+				></el-button>
+				{{ $t('dataVerification.verifyHistory') }}
+			</div>
 			<div class="title">{{ name }}</div>
 			<div class="table-wrap">
-				<el-table :data="page.data" height="100%" class="dv-table" border>
+				<el-table :data="page.data" height="100%" class="dv-table" border @row-click="rowClick">
 					<el-table-column :label="$t('dataVerification.verifyTime')" prop="createTime">
 						<template slot-scope="scope">
 							{{ $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss') }}
@@ -167,6 +172,9 @@ export default {
 					this.loading = false;
 				});
 		},
+		rowClick(row) {
+			this.changeInspectResult(row.id, row.inspect_id);
+		},
 		changeInspectResult(id, inspect_id) {
 			let routeUrl = this.$router.resolve({
 				path: '/dataVerifyResult',
@@ -208,7 +216,6 @@ export default {
 		.title {
 			font-weight: bold;
 			color: #48b6e2;
-			padding-left: @margin;
 			margin: 10px 0;
 		}
 		.table-wrap {
@@ -236,6 +243,31 @@ export default {
 				padding: 20px 0;
 				text-align: right;
 			}
+		}
+		.back-btn-icon-box {
+			width: 30px;
+			height: 30px;
+			display: inline-block;
+			border-radius: 0;
+			line-height: 1;
+			white-space: nowrap;
+			cursor: pointer;
+			background: #48b6e2;
+			border: 0;
+			-webkit-appearance: none;
+			text-align: center;
+			-webkit-box-sizing: border-box;
+			box-sizing: border-box;
+			outline: 0;
+			margin: 0;
+			-webkit-transition: 0.1s;
+			transition: 0.1s;
+			font-weight: normal;
+			padding: 0;
+			font-size: 14px;
+		}
+		.back-btn-icon-box:hover {
+			background: #6dc5e8;
 		}
 	}
 }
