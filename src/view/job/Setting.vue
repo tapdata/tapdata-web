@@ -25,7 +25,7 @@
 				<el-popover popper-class="setting-popper" placement="top-start" width="600" trigger="hover">
 					<div>{{ $t('dataFlow.setting.sync_type_tip') }}</div>
 					<div>{{ conncetionStage }}</div>
-					<span class="icon iconfont icon-tishi1" slot="reference"></span>
+					<span class="icon iconfont icon-tishi1 icontip" slot="reference"></span>
 				</el-popover>
 			</el-form-item>
 			<el-form-item :label="$t('dataFlow.stop_on_error')">
@@ -478,6 +478,9 @@ export default {
 			line-height: 28px;
 			font-size: 12px;
 		}
+	}
+	.icontip {
+		padding-left: 20px;
 	}
 	// height: calc(100vh - 50px);
 	// overflow: auto;
