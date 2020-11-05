@@ -1406,7 +1406,7 @@ const cn = {
 		stoppedByError: '出错停止',
 		startupFailed: '启动失败',
 		stopFailed: '停止失败',
-		encounterERRORSkipped: '运行中出现ERROR，跳过',
+		encounterERRORSkipped: '运行中跳过一个ERROR',
 		CDCLag: 'CDC滞后超时',
 		manageSeverRestartFailed: '管理端服务重启失败',
 		APISeverRestartFailed: 'API服务重启失败',

@@ -1379,7 +1379,7 @@ const en = {
 		stoppedByError: 'stopped by error',
 		startupFailed: 'startup failed',
 		stopFailed: 'stop failed',
-		encounterERRORSkipped: 'encounter ERROR, skipped',
+		encounterERRORSkipped: 'skip an ERROR',
 		CDCLag: 'CDC lag',
 		manageSeverRestartFailed: 'MANAGE SEVER restart failed',
 		APISeverRestartFailed: 'API SEVER restart failed',

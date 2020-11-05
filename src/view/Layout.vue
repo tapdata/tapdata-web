@@ -13,7 +13,7 @@
 				<img :src="logoUrl" />
 			</a>
 			<div class="button-bar">
-				<span class="expire-msg" v-if="licenseExpireAble">
+				<span class="expire-msg" v-if="licenseExpireAble && platform !== 'DK'">
 					<span v-if="licenseExpire <= 1">{{
 						$t('app.menu.licenseBefore') + licenseExpire + $t('app.menu.licenseAfterOneDay')
 					}}</span>
