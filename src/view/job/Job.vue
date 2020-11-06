@@ -1134,8 +1134,8 @@ export default {
 							}
 						});
 						self.$message.success(self.$t('message.taskStart'));
+						location.reload();
 					}
-					location.reload();
 				});
 			}
 			this.loading = false;
