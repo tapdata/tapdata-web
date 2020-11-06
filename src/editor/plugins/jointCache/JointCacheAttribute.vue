@@ -131,7 +131,7 @@ export default {
 					let formData = attr.form_data;
 					cacheList.push({ label: formData.name, value: attr.id });
 					map[attr.id] = {
-						fields: attr.outputSchema.fields || [],
+						fields: attr.outputSchema ? attr.outputSchema.fields : [],
 						cacheKeys: formData.cacheKeys,
 						cell: cell,
 						name: formData.name

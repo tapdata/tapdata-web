@@ -90,9 +90,7 @@
 					</el-button>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="version">{{ $t('app.version') }}</el-dropdown-item>
-						<el-dropdown-item command="license" v-if="licenseExpireAble">{{
-							$t('app.menu.license')
-						}}</el-dropdown-item>
+						<el-dropdown-item command="license">{{ $t('app.menu.license') }}</el-dropdown-item>
 						<el-dropdown-item v-if="platform === 'DAAS'" command="home">
 							{{ $t('app.home') }}
 						</el-dropdown-item>
