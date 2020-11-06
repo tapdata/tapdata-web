@@ -970,46 +970,74 @@ export default {
 		// 确定更新模型弹窗
 		confirmDialog() {
 			this.reloadModelLoading = true;
-			let params = {
-				type: 'reloadSchema',
-				data: {
-					tables: [
-						{
-							connId: this.model.connectionId,
-							tableName: this.model.tableName,
-							userId: this.$cookie.get('user_id')
-						}
-					]
-				}
-			};
 
-			if (ws.ws.readyState == 1) ws.send(params);
-			let self = this,
-				schema = null,
-				templeSchema = [];
-			ws.on('execute_load_schema_result', res => {
-				if (res.status === 'SUCCESS' && res.result && res.result.length) {
-					templeSchema = res.result;
+			if (this.model.collectionAggregate && !!this.model.collectionAggrPipeline) {
+				let params = {
+					type: 'aggregatePreview',
+					data: {
+						connectionId: this.model.connectionId,
+						tableName: this.model.tableName,
+						pipeline: this.model.collectionAggrPipeline || '[]'
+					}
+				};
+				if (ws.ws.readyState == 1) ws.send(params);
+
+				ws.on('aggregatePreviewResult', res => {
+					let templeSchema = null;
+					if (res.status === 'SUCCESS' && !!res.result) {
+						if (res.result.relateDataBaseTable) {
+							templeSchema = res.result.relateDataBaseTable;
+						}
+						this.defaultSchema = templeSchema;
+						this.$emit('schemaChange', _.cloneDeep(templeSchema));
+					} else {
+						self.$message.error(this.$t('message.reloadSchemaError'));
+					}
 					this.reloadModelLoading = false;
-				} else {
-					self.$message.error(this.$t('message.reloadSchemaError'));
-				}
-				this.reloadModelLoading = false;
-				if (templeSchema && templeSchema.length) {
-					templeSchema.forEach(item => {
-						if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
-							schema = item.schema;
+				});
+			} else {
+				let params = {
+					type: 'reloadSchema',
+					data: {
+						tables: [
+							{
+								connId: this.model.connectionId,
+								tableName: this.model.tableName,
+								userId: this.$cookie.get('user_id')
+							}
+						]
+					}
+				};
+
+				if (ws.ws.readyState == 1) ws.send(params);
+				let self = this,
+					schema = null,
+					templeSchema = [];
+				ws.on('execute_load_schema_result', res => {
+					if (res.status === 'SUCCESS' && res.result && res.result.length) {
+						templeSchema = res.result;
+						this.reloadModelLoading = false;
+					} else {
+						self.$message.error(this.$t('message.reloadSchemaError'));
+					}
+					this.reloadModelLoading = false;
+					if (templeSchema && templeSchema.length) {
+						templeSchema.forEach(item => {
+							if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
+								schema = item.schema;
+							}
+						});
+					}
+					self.$nextTick(() => {
+						if (schema) {
+							self.$emit('schemaChange', _.cloneDeep(schema));
+							self.defaultSchema = schema;
+							self.$message.success(this.$t('message.reloadSchemaSuccess'));
 						}
 					});
-				}
-				self.$nextTick(() => {
-					if (schema) {
-						self.$emit('schemaChange', _.cloneDeep(schema));
-						self.defaultSchema = schema;
-						self.$message.success(this.$t('message.reloadSchemaSuccess'));
-					}
 				});
-			});
+			}
+
 			this.dialogVisible = false;
 		},
 
