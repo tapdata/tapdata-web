@@ -1579,7 +1579,7 @@ const en = {
 		otherField: 'Other field inconsistent',
 		back: 'Back',
 		startVerify: 'Executing verify',
-		deleteMessage: 'This will permanently delete the choosed verify jobs',
+		deleteMessage: 'This will permanently delete the choosed verify job',
 		executeVerifyTip: 'Execute verify',
 		addVerifyTip: 'Create new verify job ',
 		historyTip: 'History',
