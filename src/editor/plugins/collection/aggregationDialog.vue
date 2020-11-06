@@ -15,7 +15,7 @@
 				<div class="title">
 					Pipeline
 					<el-button type="primary" size="mini" class="pipeline-button" @click="handlePreview">
-						<i class="el-icon-loading" v-if="loading"></i
+						<i class="el-icon-loading" v-if="previewLoading"></i
 						>{{ $t('editor.cell.data_node.collection.form.aggregation.preview') }}</el-button
 					>
 				</div>
@@ -52,8 +52,8 @@
 			</div>
 		</div>
 		<span slot="footer" class="dialog-footer">
-			<el-button type="primary" size="mini" :disabled="returnFalg == 'error'" @click="aggregationSave">
-				<i class="el-icon-loading" v-if="loading"></i>{{ $t('app.save') }}</el-button
+			<el-button type="primary" size="mini" :disabled="returnFalg == 'error' || !script" @click="aggregationSave">
+				<i class="el-icon-loading" v-if="saveLoading"></i>{{ $t('app.save') }}</el-button
 			>
 		</span>
 	</el-dialog>
@@ -83,7 +83,8 @@ export default {
 			script: '[]',
 			clickStatus: '',
 			templeSchema: null,
-			loading: false
+			previewLoading: false,
+			saveLoading: false
 		};
 	},
 
@@ -116,7 +117,8 @@ export default {
 				self.errorMessage = res.error;
 				self.returnFalg = 'error';
 			}
-			this.loading = false;
+			this.previewLoading = false;
+			this.saveLoading = false;
 		});
 	},
 
@@ -138,7 +140,7 @@ export default {
 				}
 			};
 			this.clickStatus = 'preview';
-			this.loading = true;
+			this.previewLoading = true;
 			if (ws.ws.readyState == 1) ws.send(params);
 		},
 
@@ -162,7 +164,7 @@ export default {
 				}
 			};
 			this.clickStatus = 'save';
-			this.loading = true;
+			this.saveLoading = true;
 			if (ws.ws.readyState == 1) ws.send(params);
 		}
 	}
