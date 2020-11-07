@@ -394,7 +394,8 @@ export default {
 
 			mergedSchema: null,
 
-			primaryKeyOptions: []
+			primaryKeyOptions: [],
+			loadSchema: null
 		};
 	},
 
@@ -630,6 +631,7 @@ export default {
 						// } else {
 						// 	self.model.primaryKeys = '';
 						// }
+						this.loadSchema = res.data.records[0].schema.tables[0];
 						self.$emit('schemaChange', _.cloneDeep(res.data.records[0].schema.tables[0]));
 					}
 				});
@@ -674,7 +676,13 @@ export default {
 
 			this.loadDataModels(this.model.connectionId);
 
-			this.mergedSchema = cell.getOutputSchema();
+			let ouputSchema = cell.getOutputSchema();
+			if (this.model.connectionId && this.model.tableName && !ouputSchema) {
+				this.handlerSchemaChange();
+			} else {
+				this.mergedSchema = ouputSchema;
+			}
+
 			cell.on('change:outputSchema', () => {
 				this.mergedSchema = cell.getOutputSchema();
 			});
