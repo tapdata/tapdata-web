@@ -1130,7 +1130,9 @@ export default {
 
 		statusConfirm(callback, handleCatch, data) {
 			let initFalg =
-				(data && data.setting && data.setting.sync_type === 'cdc') || data.length === 0 ? true : false;
+				(data && data.setting && data.setting.sync_type === 'cdc') || (data && data.length === 0)
+					? true
+					: false;
 			this.$confirm(
 				initFalg ? this.$t('message.stopMessage') : this.$t('message.stopInitial_syncMessage'),
 				this.$t('dataFlow.importantReminder'),
