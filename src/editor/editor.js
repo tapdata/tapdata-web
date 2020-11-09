@@ -506,7 +506,11 @@ export default class Editor extends BaseObject {
 		let dat = JSON.parse(dataFlow.editorData);
 		dat.cells.forEach(cell => {
 			//处理不是从面板拖过来的场景
-			if (cell.form_data.database_type && !cell.attrs.image)
+			if (
+				(cell.form_data && cell.form_data.database_type) ||
+				(cell.form_data && cell.form_data.databaseType && !cell.attrs.image)
+			) {
+				let dataType = cell.form_data.databaseType || cell.form_data.database_type;
 				cell.attrs.image = {
 					mysql: { xlinkHref: 'static/editor/o-mysql.svg' },
 					oracle: { xlinkHref: 'static/editor/o-ora.svg' },
@@ -516,7 +520,8 @@ export default class Editor extends BaseObject {
 					sqlserver: { xlinkHref: 'static/editor/o-sqlserver.svg' },
 					gbase: { xlinkHref: 'static/editor/o-gbase.svg' },
 					sybase: { xlinkHref: 'static/editor/o-sybase.svg' }
-				}[cell.form_data.database_type];
+				}[dataType];
+			}
 		});
 		this.graph.loadData(dat);
 		this.ui.setName(dataFlow.name);
