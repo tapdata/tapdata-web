@@ -447,6 +447,7 @@ const cn = {
 		selectTargetField: '请选择目标字段',
 		aggName: '子处理名称',
 		nodeName: '节点名称',
+		nodeType: '节点类型',
 		aggFunction: '聚合函数',
 		aggExpression: '作用目标',
 		filterPredicate: '过滤器',

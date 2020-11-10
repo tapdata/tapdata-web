@@ -445,6 +445,7 @@ const tc = {
 		selectTargetField: '請選擇目標字段',
 		aggName: '子處理名稱',
 		nodeName: '節點名稱',
+		nodeType: '節點類型',
 		aggFunction: '聚合函數',
 		aggExpression: '作用目標',
 		filterPredicate: '過濾器',

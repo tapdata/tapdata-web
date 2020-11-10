@@ -446,6 +446,7 @@ const en = {
 		selectTargetField: 'Please select the target field',
 		aggName: 'Sub-process Name',
 		nodeName: 'Node Name',
+		nodeType: 'Node Type',
 		aggFunction: 'Polymerization',
 		aggExpression: 'Target',
 		filterPredicate: 'Filter Predicate',
