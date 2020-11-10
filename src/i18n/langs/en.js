@@ -342,6 +342,7 @@ const en = {
 		timePoint: 'CDC timepoint',
 		dataScreening: 'Statistics',
 		taskDetail: 'Task Details',
+		nodeDetail: 'Node Details',
 		unit: 'Unit',
 		article: 'pcs',
 		secondUnit: 'second',

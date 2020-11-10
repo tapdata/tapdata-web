@@ -28,7 +28,13 @@
 		</el-form>
 		<div class="echartMain">
 			<div class="echartlist">
-				<echart-head :data="taskDetailsObj"></echart-head>
+				<echart-head
+					:data="
+						stageType && !['table', 'collection', 'database'].includes(stageType)
+							? nodeDetailsObj
+							: taskDetailsObj
+					"
+				></echart-head>
 				<div
 					class="info fl"
 					v-if="['table', 'collection', 'database'].includes(stageType)"
@@ -470,6 +476,7 @@ export default {
 			dataScreening: null, // 数据总览的echart数据
 			screeningObj: null, // 数据总览的头
 			taskDetailsObj: null,
+			nodeDetail: null,
 
 			inputOutputObj: null,
 			transfObj: null,
@@ -527,6 +534,11 @@ export default {
 			}
 		});
 		this.flow = this.dataFlow;
+
+		this.nodeDetailsObj = {
+			title: this.$t('dataFlow.nodeDetail'),
+			type: 'nodeDetails'
+		};
 
 		this.taskDetailsObj = {
 			title: this.$t('dataFlow.taskDetail'),
