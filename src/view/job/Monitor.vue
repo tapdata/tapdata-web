@@ -28,13 +28,7 @@
 		</el-form>
 		<div class="echartMain">
 			<div class="echartlist">
-				<echart-head
-					:data="
-						stageType && !['table', 'collection', 'database'].includes(stageType)
-							? nodeDetailsObj
-							: taskDetailsObj
-					"
-				></echart-head>
+				<echart-head :data="stageType ? nodeDetailsObj : taskDetailsObj"></echart-head>
 				<div
 					class="info fl"
 					v-if="['table', 'collection', 'database'].includes(stageType)"

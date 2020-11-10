@@ -340,7 +340,7 @@ const tc = {
 		inputOutput: '輸入輸出統計',
 		transf: '傳輸耗時',
 		taskDetail: '任務詳情',
-		nodeDetail: '節點詳情',
+		nodeDetail: '節點信息',
 		dataScreening: '數據統計',
 		timePoint: '增量所處時間點',
 		unit: '單位',

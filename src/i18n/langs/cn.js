@@ -342,7 +342,7 @@ const cn = {
 		inputOutput: '输入输出统计',
 		transf: '传输耗时',
 		taskDetail: '任务详情',
-		nodeDetail: '节点说明',
+		nodeDetail: '节点信息',
 		timePoint: '增量所处时间点',
 		dataScreening: '数据统计',
 		unit: '单位',
