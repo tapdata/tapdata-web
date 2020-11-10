@@ -117,9 +117,8 @@ export default {
 				let rolesModel = this.$api('role');
 				let roleMappingsModel = this.$api('roleMapping');
 				//登陆密码加密
-				await timeStamp.get().then(res => {
-					this.form['stime'] = res.data || new Date().getTime();
-				});
+				let timeStampData = await timeStamp.get();
+				this.form['stime'] = timeStampData.data;
 				this.form.password = CryptoJS.RC4.encrypt(this.form.password, 'Gotapd8').toString();
 				let Str = this.form.email + this.form.password + this.form.stime + 'Gotapd8';
 				this.form['sign'] = crypto
@@ -128,6 +127,11 @@ export default {
 					.digest('hex')
 					.toUpperCase();
 				let { data } = await usersModel.login(this.form);
+				if (!data.permissions) {
+					this.loading = false;
+					this.form.password = oldPassword;
+					return;
+				}
 				if (data.textStatus === 'WAITING_APPROVE') {
 					this.errorMessage = this.$t('app.signIn.account_waiting_approve');
 					return;
@@ -191,7 +195,7 @@ export default {
 					location.reload();
 				}, 500);
 			} catch (e) {
-				this.errorMessage = this.$t('app.signIn.signInFail');
+				//this.errorMessage = this.$t('app.signIn.signInFail');
 				this.loading = false;
 				this.form.password = oldPassword;
 			}
