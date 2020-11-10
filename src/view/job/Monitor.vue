@@ -28,10 +28,10 @@
 		</el-form>
 		<div class="echartMain">
 			<div class="echartlist">
-				<echart-head :data="taskDetailsObj"></echart-head>
+				<echart-head :data="stageType ? nodeDetailsObj : taskDetailsObj"></echart-head>
 				<div
 					class="info fl"
-					v-if="stageType === 'table' || stageType === 'collection' || stageType === 'database'"
+					v-if="['table', 'collection', 'database'].includes(stageType)"
 					v-loading="apiLoading"
 				>
 					<div class="info-list">
@@ -82,6 +82,20 @@
 						<span class="info-label">{{ $t('dataFlow.outputNumber') }}:</span>
 						<span class="info-text">{{ flow.outputNumber }}</span>
 					</div> -->
+				</div>
+				<div class="info fl" v-else-if="stageType">
+					<div class="info-list">
+						<span class="info-label">{{ $t('dataFlow.nodeName') }}:</span>
+						<el-tooltip :content="stage.nodeName" placement="bottom-start">
+							<span class="info-text">{{ stage.nodeName }}</span>
+						</el-tooltip>
+					</div>
+					<div class="info-list">
+						<span class="info-label">{{ $t('dataFlow.nodeType') }}:</span>
+						<el-tooltip :content="stageType" placement="bottom-start">
+							<span class="info-text">{{ typeMapping[stageType] }}</span>
+						</el-tooltip>
+					</div>
 				</div>
 				<div class="info fl" v-else>
 					<div class="info-list">
@@ -232,6 +246,23 @@ export default {
 			speed: '',
 			time: '',
 			stageId: 'all',
+			typeMapping: {
+				field_processor: this.$t('editor.cell.processor.field.defaultText'),
+				aggregation_processor: this.$t('editor.cell.processor.aggregate.tip'),
+				custom_connection: this.$t('editor.cell.data_node.custom.tip'),
+				elasticsearch: this.$t('editor.cell.data_node.es.tip'),
+				row_filter_processor: this.$t('editor.cell.processor.dataFilter.name'),
+				file: this.$t('editor.cell.data_node.file.tip'),
+				gridfs: this.$t('editor.cell.data_node.gridfs.tip'),
+				custom_processor: this.$t('editor.cell.processor.jointCache.tip'),
+				log_collect: this.$t('editor.cell.data_node.logminer.tip'),
+				mem_cache: this.$t('editor.cell.data_node.memCache.tip'),
+				publishApi: this.$t('editor.cell.data_node.api.tip'),
+				redis: this.$t('editor.cell.data_node.redis.tip'),
+				js_processor: this.$t('editor.cell.processor.script.tip'),
+				'dummy db': this.$t('editor.cell.data_node.dummy.tip'),
+				'rest api': this.$t('editor.cell.data_node.api.tip')
+			},
 			flow: {
 				name: '',
 				username: '',
@@ -439,6 +470,7 @@ export default {
 			dataScreening: null, // 数据总览的echart数据
 			screeningObj: null, // 数据总览的头
 			taskDetailsObj: null,
+			nodeDetail: null,
 
 			inputOutputObj: null,
 			transfObj: null,
@@ -496,6 +528,11 @@ export default {
 			}
 		});
 		this.flow = this.dataFlow;
+
+		this.nodeDetailsObj = {
+			title: this.$t('dataFlow.nodeDetail'),
+			type: 'nodeDetails'
+		};
 
 		this.taskDetailsObj = {
 			title: this.$t('dataFlow.taskDetail'),
