@@ -38,13 +38,15 @@ const cn = {
 		userEdition: 'Tapdata-编辑用户',
 		roleManagement: 'Tapdata-角色管理',
 		roleEdition: 'Tapdata-编辑角色  ',
-		systemSettings: 'Tapdata-系统设置'
+		systemSettings: 'Tapdata-系统设置',
+		account: 'Tapdata-个人设置'
 	},
 	app: {
 		document: '帮助文档',
 		qa: '客服',
 		version: '系统版本',
 		home: '官网',
+		account: '个人设置',
 		signOut: '退出登录',
 		signOutMsg: '您确定要退出登录吗？',
 		save: '保存',

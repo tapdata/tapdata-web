@@ -38,11 +38,13 @@ const tc = {
 		userEdition: 'Tapdata-編輯用戶',
 		roleManagement: 'Tapdata-角色管理',
 		roleEdition: 'Tapdata-編輯角色 ',
-		systemSettings: 'Tapdata-系統設置'
+		systemSettings: 'Tapdata-系統設置',
+		account: 'Tapdata-個人設置'
 	},
 	app: {
 		document: '幫助文檔',
 		qa: '客服',
+		account: '個人設置',
 		version: '系統版本',
 		home: '官網',
 		signOut: '登出',

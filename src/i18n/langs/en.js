@@ -37,11 +37,13 @@ const en = {
 		userEdition: 'Tapdata-UserEdition',
 		roleManagement: 'Tapdata-RoleManagement',
 		roleEdition: 'Tapdata-RoleEdition ',
-		systemSettings: 'Tapdata-SystemSettings'
+		systemSettings: 'Tapdata-SystemSettings',
+		account: 'Tapdata-Account'
 	},
 	app: {
 		document: 'Documentation',
 		qa: 'Customer Service',
+		account: 'Account',
 		version: 'Version',
 		home: 'Home',
 		signOut: 'Sign out',

@@ -370,6 +370,12 @@ const childRoutes = [
 		path: '/agentDown',
 		name: 'agentDown',
 		component: view('downAgent/agentDown')
+	},
+	{
+		path: '/account',
+		name: 'account',
+		component: view('personalSettings'),
+		meta: { title: i18n.t('tap.account'), isCollapse: true }
 	}
 ];
 
