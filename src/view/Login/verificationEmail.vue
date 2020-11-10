@@ -1,37 +1,22 @@
 <template>
 	<section class="page-registry_email">
 		<Header></Header>
-		<!-- <header>
-			<div class="logo">
-				<img :src="logoUrl" />
-				<div v-if="showLang === 'false'"></div>
-				<div class="switch-lang" v-else>
-					<span
-						v-for="(value, key) in languages"
-						:key="key"
-						:class="{ bold: key === lang }"
-						@click="langChange(key)"
-					>
-						{{ value }}
-					</span>
-				</div>
-			</div>
-			<div class="slogan">{{ $t('app.signIn.slogan') }}</div>
-		</header> -->
 		<main>
 			<div class="email-main">
 				<div class="image iconfont icon-fasongyoujian"></div>
 				<div class="text">
 					<p>
-						账号注册确认邮件已发送至 <i>{{ email }}</i>
+						{{ $t('app.signIn.confirmationEmail') }}
+						<i>{{ email }}</i>
 					</p>
-					<p>请登录邮箱点击链接进行确认~</p>
+					<p>{{ $t('app.signIn.mailbox') }}</p>
 					<div>
-						没有收到邮件？点击<span @click="send"
-							>重新发送 <i v-if="time > 0">({{ time }})</i></span
+						{{ $t('app.signIn.receiveEmail') }}
+						<span @click="send"
+							>{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }})</i>,</span
 						>
-						或点击
-						<span @click="backLogin">登录</span>
+						{{ $t('app.signIn.orClick') }}
+						<span @click="backLogin">{{ $t('app.signIn.signIn') }}</span>
 					</div>
 				</div>
 			</div>
@@ -40,37 +25,23 @@
 </template>
 
 <script>
-// import crypto from 'crypto';
-// import CryptoJS from 'crypto-js';
-// import _ from 'lodash';
 import Header from './component/header';
 
-// const Languages = {
-// 	sc: '中文 (简)',
-// 	en: 'English',
-// 	tc: '中文 (繁)'
-// };
 export default {
 	name: 'SignIn',
 	components: { Header },
 	data() {
 		return {
-			// logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
-			// showLang: window._TAPDATA_OPTIONS_.showLang,
 			platform: window._TAPDATA_OPTIONS_.platform,
 			loading: false,
-			// languages: Languages,
-			// lang: localStorage.getItem('tapdata_localize_lang') || 'en',
 			flag: false,
-			email: this.$route.query.email ? this.$route.query.email : '',
+			email: this.$route.params.email ? this.$route.params.email : '',
+			password: this.$route.params.password ? this.$route.params.password : '',
 			timer: null,
 			time: 0
 		};
 	},
-	// created() {
-	// 	// this.email =
-	// 	console.log(this.$route);
-	// },
+
 	methods: {
 		langChange(lang) {
 			localStorage.setItem('tapdata_localize_lang', lang);
@@ -78,10 +49,12 @@ export default {
 		},
 
 		// 重新发送
-		send() {
+		async send() {
 			const TIME_COUNT = 60;
 			if (!this.timer) {
 				this.time = TIME_COUNT;
+				let usersModel = this.$api('users');
+				await usersModel.post({ email: this.email, password: this.password });
 				this.timer = setInterval(() => {
 					if (this.time > 0 && this.time <= TIME_COUNT) {
 						this.time--;

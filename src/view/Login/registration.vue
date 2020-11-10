@@ -13,7 +13,6 @@
 						<el-form-item>
 							<el-input
 								v-model="form.email"
-								autocomplete="username"
 								type="email"
 								:placeholder="$t('app.signIn.email_placeholder')"
 							></el-input>
@@ -21,8 +20,7 @@
 						<el-form-item>
 							<el-input
 								v-model="form.password"
-								autocomplete="current-password"
-								:type="[flag ? 'password' : 'text']"
+								:type="passwordType"
 								:placeholder="$t('app.signIn.password_placeholder')"
 								@keyup.enter="submit"
 							>
@@ -31,15 +29,19 @@
 									:class="[flag ? 'icon-closeeye' : 'icon-openeye', 'iconfont']"
 									style="margin-top:8px;font-size:18px;cursor: pointer;"
 									autocomplete="auto"
-									@click="flag = !flag"
+									@click="passwordTypeChange"
 								/>
 							</el-input>
 						</el-form-item>
+						<el-checkbox class="keep-sign-in" v-model="keepSignIn">
+							<span>{{ $t('app.signIn.registry_tip') }}</span
+							>{{ $t('app.signIn.userPplicy') }}
+						</el-checkbox>
 						<el-button
 							class="btn-sign-in"
 							type="primary"
 							size="medium"
-							:disabled="!this.keepSignIn"
+							:disabled="!keepSignIn"
 							:loading="loading"
 							@click="submit"
 						>
@@ -88,24 +90,22 @@ export default {
 	components: { Header },
 	data() {
 		return {
-			// logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
-			// showLang: window._TAPDATA_OPTIONS_.showLang,
 			platform: window._TAPDATA_OPTIONS_.platform,
 			loading: false,
-			// languages: Languages,
-			// lang: localStorage.getItem('tapdata_localize_lang') || 'en',
 			form: {
-				email: '',
-				password: ''
+				email: '862083107@qq.com',
+				password: '111111'
 			},
 			errorMessage: '',
+			keepSignIn: true,
+			passwordType: 'password',
 			flag: false
 		};
 	},
 	methods: {
-		langChange(lang) {
-			localStorage.setItem('tapdata_localize_lang', lang);
-			location.reload();
+		passwordTypeChange() {
+			this.flag = !this.flag;
+			this.passwordType = this.flag ? 'password' : 'text';
 		},
 		async submit() {
 			let form = this.form;
@@ -126,11 +126,12 @@ export default {
 				this.$t('app.signIn.userPplicy_message');
 				return;
 			}
+
 			this.loading = true;
 			try {
 				let usersModel = this.$api('users');
 				// let timeStamp = this.$api('TimeStamp');
-				let settingsModel = this.$api('Setting');
+				// let settingsModel = this.$api('Setting');
 				//登陆密码加密
 				// await timeStamp.get().then(res => {
 				// 	this.form['stime'] = res.data || new Date().getTime();
@@ -147,29 +148,28 @@ export default {
 					this.errorMessage = data.textStatus;
 					return;
 				}
-				debugger;
 
 				this.$cookie.set('user_id', data.id);
 
-				settingsModel.getRegistryPolicy().then(function(result) {
-					if (result && result.data && result.data.code && result.data.code === 'ENABLE_SELF_SIGNUP') {
-						this.errorMessage = this.$t('Registry.registry_sucess');
-					}
+				// settingsModel.getRegistryPolicy().then(function(result) {
+				// 	if (result && result.data && result.data.code && result.data.code === 'ENABLE_SELF_SIGNUP') {
+				// 		this.errorMessage = this.$t('Registry.registry_sucess');
+				// 	}
 
-					if (result && result.data && result.data.code && result.data.code === 'ENABLE_SIGNUP') {
-						this.errorMessage = this.$t('Registry.registry_sucess_wait_approval');
-					}
-					this.color = 'success';
-				});
-				let email = form.email;
+				// 	if (result && result.data && result.data.code && result.data.code === 'ENABLE_SIGNUP') {
+				// 		this.errorMessage = this.$t('Registry.registry_sucess_wait_approval');
+				// 	}
+				// 	this.color = 'success';
+				// });
+				let email = form.email,
+					password = form.password;
 				setTimeout(() => {
 					this.$router.push({
 						name: 'verificationEmail',
-						query: { first: 1, email: email }
+						params: { password: password, email: email }
 					});
 				}, 5000);
 			} catch (e) {
-				debugger;
 				if (e.response.data.error.message.indexOf('Email already exists')) {
 					this.errorMessage = this.$t('Registry.email_existed');
 				} else {

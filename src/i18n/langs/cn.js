@@ -88,7 +88,12 @@ const cn = {
 			newpassword_placeholder: '请设置新密码',
 			rememberPasswords: '想起密码?',
 			Registration: '注册账号',
-			forgetPassword: '忘记密码?'
+			forgetPassword: '忘记密码?',
+			confirmationEmail: '账号注册确认邮件已发送至',
+			mailbox: '请登录邮箱后点击连接进行确认~',
+			receiveEmail: '没有收到邮件？点击',
+			resend: '重新发送',
+			orClick: '或点击'
 		},
 		menu: {
 			dashboard: '控制台',
