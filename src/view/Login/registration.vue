@@ -1,0 +1,358 @@
+<template>
+	<section class="page-registry">
+		<Header></Header>
+		<main>
+			<div class="body" :class="{ dk: platform === 'DK' }">
+				<el-card class="sign-in-panel">
+					<div class="title">{{ $t('app.signIn.registry') }}</div>
+					<div class="error-tips" v-show="errorMessage">
+						<i class="el-icon-warning-outline"></i>
+						{{ errorMessage }}
+					</div>
+					<el-form ref="form" :model="form">
+						<el-form-item>
+							<el-input
+								v-model="form.email"
+								autocomplete="username"
+								type="email"
+								:placeholder="$t('app.signIn.email_placeholder')"
+							></el-input>
+						</el-form-item>
+						<el-form-item>
+							<el-input
+								v-model="form.password"
+								autocomplete="current-password"
+								:type="[flag ? 'password' : 'text']"
+								:placeholder="$t('app.signIn.password_placeholder')"
+								@keyup.enter="submit"
+							>
+								<i
+									slot="suffix"
+									:class="[flag ? 'icon-closeeye' : 'icon-openeye', 'iconfont']"
+									style="margin-top:8px;font-size:18px;cursor: pointer;"
+									autocomplete="auto"
+									@click="flag = !flag"
+								/>
+							</el-input>
+						</el-form-item>
+						<el-button
+							class="btn-sign-in"
+							type="primary"
+							size="medium"
+							:disabled="!this.keepSignIn"
+							:loading="loading"
+							@click="submit"
+						>
+							{{ $t('app.signIn.nextStep') }}
+						</el-button>
+					</el-form>
+					<!-- <form>
+						<input
+							class="input"
+							type="email"
+							autocomplete="username"
+							:placeholder="$t('app.signIn.email_placeholder')"
+							v-model="form.email"
+						/>
+						<input
+							class="input"
+							autocomplete="current-password"
+							:placeholder="$t('app.signIn.password_placeholder')"
+							v-model="form.password"
+						/>
+					</form> -->
+
+					<div class="back-login">
+						{{ $t('app.signIn.haveAccpunt') }}
+						<span @click="backLogin">{{ $t('app.signIn.backLogin') }}</span>
+					</div>
+				</el-card>
+			</div>
+		</main>
+	</section>
+</template>
+
+<script>
+// import crypto from 'crypto';
+// import CryptoJS from 'crypto-js';
+import Header from './component/header';
+// import _ from 'lodash';
+
+// const Languages = {
+// 	sc: '中文 (简)',
+// 	en: 'English',
+// 	tc: '中文 (繁)'
+// };
+export default {
+	name: 'SignIn',
+	components: { Header },
+	data() {
+		return {
+			// logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
+			// showLang: window._TAPDATA_OPTIONS_.showLang,
+			platform: window._TAPDATA_OPTIONS_.platform,
+			loading: false,
+			// languages: Languages,
+			// lang: localStorage.getItem('tapdata_localize_lang') || 'en',
+			form: {
+				email: '',
+				password: ''
+			},
+			errorMessage: '',
+			flag: false
+		};
+	},
+	methods: {
+		langChange(lang) {
+			localStorage.setItem('tapdata_localize_lang', lang);
+			location.reload();
+		},
+		async submit() {
+			let form = this.form;
+			let message = '';
+			if (!form.email || !form.email.trim()) {
+				message = this.$t('app.signIn.email_require');
+				// eslint-disable-next-line
+			} else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)) {
+				message = this.$t('app.signIn.email_invalid');
+			} else if (!form.password || form.password.length < 5) {
+				message = this.$t('app.signIn.password_invalid');
+			}
+			if (message) {
+				this.errorMessage = message;
+				return;
+			}
+			if (!this.keepSignIn) {
+				this.$t('app.signIn.userPplicy_message');
+				return;
+			}
+			this.loading = true;
+			try {
+				let usersModel = this.$api('users');
+				// let timeStamp = this.$api('TimeStamp');
+				let settingsModel = this.$api('Setting');
+				//登陆密码加密
+				// await timeStamp.get().then(res => {
+				// 	this.form['stime'] = res.data || new Date().getTime();
+				// });
+				// this.form.password = CryptoJS.RC4.encrypt(this.form.password, 'Gotapd8').toString();
+				// let Str = this.form.email + this.form.password + this.form.stime + 'Gotapd8';
+				// this.form['sign'] = crypto
+				// 	.createHash('sha1')
+				// 	.update(Str)
+				// 	.digest('hex')
+				// 	.toUpperCase();
+				let { data } = await usersModel.post(this.form);
+				if (data.textStatus === 'DISABLE_SIGNUP') {
+					this.errorMessage = data.textStatus;
+					return;
+				}
+				debugger;
+
+				this.$cookie.set('user_id', data.id);
+
+				settingsModel.getRegistryPolicy().then(function(result) {
+					if (result && result.data && result.data.code && result.data.code === 'ENABLE_SELF_SIGNUP') {
+						this.errorMessage = this.$t('Registry.registry_sucess');
+					}
+
+					if (result && result.data && result.data.code && result.data.code === 'ENABLE_SIGNUP') {
+						this.errorMessage = this.$t('Registry.registry_sucess_wait_approval');
+					}
+					this.color = 'success';
+				});
+				let email = form.email;
+				setTimeout(() => {
+					this.$router.push({
+						name: 'verificationEmail',
+						query: { first: 1, email: email }
+					});
+				}, 5000);
+			} catch (e) {
+				debugger;
+				if (e.response.data.error.message.indexOf('Email already exists')) {
+					this.errorMessage = this.$t('Registry.email_existed');
+				} else {
+					this.errorMessage = `${e.response.data.error.message}`;
+				}
+				this.loading = false;
+			}
+		},
+
+		// 跳转登录
+		backLogin() {
+			this.$router.push({
+				path: '/login'
+			});
+		}
+	}
+};
+</script>
+
+<style lang="less" scoped>
+.page-registry {
+	background: #fafafa;
+	height: 100%;
+	overflow: auto;
+	box-sizing: border-box;
+	header {
+		padding: 70px 80px 0 80px;
+		margin: 0 auto;
+		user-select: none;
+		min-width: 1400px;
+		box-sizing: border-box;
+		.logo {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			img {
+				display: block;
+				width: 144px;
+			}
+			.switch-lang {
+				color: #dedee4;
+				font-size: 16px;
+				span {
+					display: inline-block;
+					padding: 0 10px;
+					border-left: 1px solid #333333;
+					box-sizing: border-box;
+					height: 18px;
+					line-height: 18px;
+					cursor: pointer;
+					&:first-child {
+						border: none;
+					}
+					&:hover {
+						color: #333;
+					}
+				}
+				.bold {
+					color: #333333;
+					font-weight: 500;
+				}
+			}
+		}
+		.slogan {
+			margin-top: 8px;
+			height: 15px;
+			line-height: 15px;
+			font-size: 14px;
+			color: rgba(153, 153, 153, 1);
+		}
+	}
+	main .body.dk {
+		display: flex;
+		justify-content: center;
+		height: 510px;
+		.carousel {
+			display: none;
+		}
+		.dk-login-cover {
+			display: block;
+			position: relative;
+			img {
+				display: block;
+			}
+		}
+		.sign-in-panel {
+			position: relative;
+			right: 0;
+			top: 0;
+		}
+	}
+	main {
+		position: relative;
+		margin-top: 60px;
+		.body {
+			margin: 0 auto;
+			position: relative;
+			height: 600px;
+			width: 1400px;
+			box-sizing: border-box;
+			.dk-login-cover {
+				display: none;
+			}
+			.carousel {
+				position: absolute;
+				top: 0;
+				left: 80px;
+			}
+		}
+		.sign-in-panel {
+			position: absolute;
+			top: 60px;
+			left: 0;
+			right: 0;
+			width: 400px;
+			margin: auto;
+			padding: 25px 5px;
+
+			.title {
+				margin-bottom: 30px;
+				font-size: 26px;
+				font-weight: 500;
+				color: rgba(51, 51, 51, 1);
+			}
+			.error-tips {
+				margin-bottom: 22px;
+				padding: 0 15px;
+				height: 42px;
+				line-height: 42px;
+				background: rgba(254, 240, 240, 1);
+				border: 1px solid rgba(245, 108, 108, 0.44);
+				border-radius: 3px;
+				font-size: 14px;
+				color: rgba(245, 108, 108, 1);
+			}
+			// form {
+			// 	border-radius: 4px;
+			// 	overflow: hidden;
+			// 	border: 1px solid #dedee4;
+			// 	.input {
+			// 		display: block;
+			// 		padding: 15px;
+			// 		width: 100%;
+			// 		height: 44px;
+			// 		color: #606266;
+			// 		line-height: 44px;
+			// 		border-radius: 0;
+			// 		box-sizing: border-box;
+			// 		border: none;
+			// 		outline: none;
+			// 		font-size: 14px;
+			// 		font-family: inherit;
+			// 		&:last-child {
+			// 			border-top: 1px solid #dedee4;
+			// 		}
+			// 		&::placeholder {
+			// 			font-size: 14px;
+			// 			color: rgba(204, 204, 204, 1);
+			// 		}
+			// 	}
+			// }
+			.keep-sign-in {
+				margin-top: 15px;
+				font-size: 14px;
+				color: rgba(153, 153, 153, 1);
+			}
+			.btn-sign-in {
+				display: block;
+				width: 100%;
+				margin-top: 40px;
+			}
+			.back-login {
+				padding-top: 20px;
+				font-size: 12px;
+				text-align: right;
+				color: #666;
+				user-select: none;
+				span {
+					color: #48b6e2;
+					cursor: pointer;
+				}
+			}
+		}
+	}
+}
+</style>

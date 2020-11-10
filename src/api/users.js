@@ -13,10 +13,19 @@ export default class DataFlows extends PublicAPI {
 	login(params) {
 		return axios.post(this.url + '/login', params);
 	}
+	post(params) {
+		return axios.post(this.url, params);
+	}
 	getUserById(params) {
 		return axios.get(this.url + params);
 	}
 	getPermissions(params) {
 		return axios.get(this.url + params);
+	}
+	resetPassword(params) {
+		return axios.post(this.url + '/reset-password', params);
+	}
+	checktoken() {
+		return axios.get(this.url + '/checktoken');
 	}
 }

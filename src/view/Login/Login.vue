@@ -1,6 +1,7 @@
 <template>
 	<section class="page-sign-in">
-		<header>
+		<Header></Header>
+		<!-- <header>
 			<div class="logo">
 				<img :src="logoUrl" />
 				<div v-if="showLang === 'false'"></div>
@@ -16,7 +17,7 @@
 				</div>
 			</div>
 			<div class="slogan">{{ $t('app.signIn.slogan') }}</div>
-		</header>
+		</header> -->
 		<main>
 			<div class="body" :class="{ dk: platform === 'DK' }">
 				<div class="dk-login-cover">
@@ -26,7 +27,10 @@
 					<img src="static/image/loginCover.png" />
 				</div>
 				<el-card class="sign-in-panel">
-					<div class="title">{{ $t('app.signIn.signIn') }}</div>
+					<div class="title">
+						{{ $t('app.signIn.signIn') }}
+						<span @click="registry">{{ $t('app.signIn.Registration') }}</span>
+					</div>
 					<div class="error-tips" v-show="errorMessage">
 						<i class="el-icon-warning-outline"></i>
 						{{ errorMessage }}
@@ -54,6 +58,8 @@
 					<el-button class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
 						{{ $t('app.signIn.signIn') }}
 					</el-button>
+
+					<div class="remember" @click="forgetPassword">{{ $t('app.signIn.forgetPassword') }}</div>
 				</el-card>
 			</div>
 		</main>
@@ -61,9 +67,10 @@
 </template>
 
 <script>
-import { setPermission } from '../util/util';
+import { setPermission } from '@/util/util';
 import crypto from 'crypto';
 import CryptoJS from 'crypto-js';
+import Header from './component/header';
 import _ from 'lodash';
 
 const Languages = {
@@ -73,6 +80,7 @@ const Languages = {
 };
 export default {
 	name: 'SignIn',
+	components: { Header },
 	data() {
 		return {
 			logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
@@ -195,6 +203,20 @@ export default {
 				this.loading = false;
 				this.form.password = oldPassword;
 			}
+		},
+		// 注册账号
+		registry() {
+			this.$router.push({
+				name: 'registry'
+			});
+			// this.$router.push({ name: 'verificationEmail' }).catch(err => {
+			// 	console.log('all good', err);
+			// });
+		},
+
+		// 忘记密码
+		forgetPassword() {
+			this.$router.push({ name: 'passwordReset' });
 		}
 	}
 };
@@ -206,52 +228,7 @@ export default {
 	height: 100%;
 	overflow: auto;
 	box-sizing: border-box;
-	header {
-		padding: 70px 80px 0 80px;
-		margin: 0 auto;
-		user-select: none;
-		min-width: 1400px;
-		box-sizing: border-box;
-		.logo {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			img {
-				display: block;
-				width: 144px;
-			}
-			.switch-lang {
-				color: #dedee4;
-				font-size: 16px;
-				span {
-					display: inline-block;
-					padding: 0 10px;
-					border-left: 1px solid #333333;
-					box-sizing: border-box;
-					height: 18px;
-					line-height: 18px;
-					cursor: pointer;
-					&:first-child {
-						border: none;
-					}
-					&:hover {
-						color: #333;
-					}
-				}
-				.bold {
-					color: #333333;
-					font-weight: 500;
-				}
-			}
-		}
-		.slogan {
-			margin-top: 8px;
-			height: 15px;
-			line-height: 15px;
-			font-size: 14px;
-			color: rgba(153, 153, 153, 1);
-		}
-	}
+
 	main .body.dk {
 		display: flex;
 		justify-content: center;
@@ -301,6 +278,14 @@ export default {
 				font-size: 26px;
 				font-weight: 500;
 				color: rgba(51, 51, 51, 1);
+				span {
+					float: right;
+					padding-top: 16px;
+					font-size: 12px;
+					text-align: right;
+					color: #48b6e2;
+					cursor: pointer;
+				}
 			}
 			.error-tips {
 				margin-bottom: 22px;
@@ -348,6 +333,12 @@ export default {
 				display: block;
 				width: 100%;
 				margin-top: 50px;
+			}
+			.remember {
+				padding-top: 16px;
+				font-size: 12px;
+				color: #48b6e2;
+				cursor: pointer;
 			}
 		}
 	}

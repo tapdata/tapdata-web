@@ -4,6 +4,7 @@ const tc = {
 	...tcLocale,
 	tap: {
 		login: 'Tapdata-登錄',
+		registry: 'Tapdata-註冊',
 		home: 'Tapdata-首頁',
 		connection: 'Tapdata-數據源 ',
 		connectionEdtion: 'Tapdata-編輯數據源',

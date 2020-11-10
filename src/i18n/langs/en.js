@@ -4,6 +4,7 @@ const en = {
 	...enLocale,
 	tap: {
 		login: 'Tapdata-Login',
+		registry: 'Tapdata-registry',
 		home: 'Tapdata-Home',
 		connection: 'Tapdata-Connection ',
 		connectionEdtion: 'Tapdata-ConnectionEdtion',
