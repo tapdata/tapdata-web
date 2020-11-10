@@ -3,17 +3,8 @@ import Cookie from 'tiny-cookie';
 import { signOut } from '../util/util';
 import { Message } from 'element-ui';
 
-let pending = []; //声明一个数组用于存储每个ajax请求的取消函数和ajax标识
+let pending = {}; //声明一个数组用于存储每个ajax请求的取消函数和ajax标识
 let CancelToken = axios.CancelToken;
-let removePending = config => {
-	for (let p in pending) {
-		if (pending[p].u === config.url + '&' + config.method) {
-			//当前请求在数组中存在时执行函数体
-			pending[p].f(); //执行取消操作
-			pending.splice(p, 1); //把这条记录从数组中移除
-		}
-	}
-};
 
 axios.interceptors.request.use(
 	function(config) {
@@ -25,11 +16,16 @@ axios.interceptors.request.use(
 		} else {
 			config.url = `${config.url}?access_token=${accessToken}`;
 		}
-		removePending(config); //在一个ajax发送前执行一下取消操作
+		let key = config.url + '&' + config.method;
+		let cancelFunc = null;
 		config.cancelToken = new CancelToken(c => {
-			// 这里的ajax标识我是用请求地址&请求方式拼接的字符串，当然你可以选择其他的一些方式
-			pending.push({ u: config.url + '&' + config.method, f: c });
+			cancelFunc = c;
 		});
+		if (pending[key]) {
+			cancelFunc();
+		} else {
+			pending[key];
+		}
 		return config;
 	},
 	function(error) {
@@ -39,35 +35,39 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
 	response => {
-		removePending(response); //在一个ajax响应后再执行一下取消操作，把已经完成的请求从pending中移除
-		let data = response.data || {};
-		if (response.status === 200 || response.status === 304) {
-			switch (data.code) {
-				case '110500':
-					Message.error({
-						message: data.msg
-					});
-					break;
-				case '110400':
-					Message.error({
-						message: '404，资源不存在'
-					});
-					break;
-				case '110401':
-					signOut();
-					setTimeout(() => {
+		let key = response.config.url + '&' + response.config.method;
+		delete pending[key];
+		let data = response.data;
+		if (response.statusText === 'OK') {
+			if (data.code === 'ok') {
+				return {
+					data: data.data,
+					response: response
+				};
+			} else {
+				switch (data.code) {
+					case '110500':
 						Message.error({
 							message: data.msg
 						});
-					}, 500);
-					break;
+						break;
+					case '110400':
+						Message.error({
+							message: '404，资源不存在'
+						});
+						break;
+					case '110401':
+						signOut();
+						setTimeout(() => {
+							Message.error({
+								message: data.msg
+							});
+						}, 500);
+						break;
+				}
+				return response;
 			}
 		}
-		data.data['status'] = 200;
-		return {
-			data: data.data,
-			response: response
-		};
 	},
 	error => {
 		let rsp = error.response;
