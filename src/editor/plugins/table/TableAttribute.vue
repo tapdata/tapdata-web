@@ -500,9 +500,7 @@ export default {
 			};
 
 			MetadataInstances.get(params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					this.databaseData = res.data;
-				}
+				this.databaseData = res.data;
 			});
 		},
 
@@ -561,21 +559,19 @@ export default {
 			self.loading = true;
 			MetadataInstances.get(params)
 				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						this.tableData = res.data;
-						this.tableIsLink();
-						let schemas = res.data.map(it => {
-							it.table_name = it.original_name;
-							return it;
-						});
-						tempSchemas = schemas.sort((t1, t2) =>
-							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-						);
-						self.schemaSelectConfig.options = tempSchemas.map(item => ({
-							label: item.table_name,
-							value: item.table_name
-						}));
-					}
+					this.tableData = res.data;
+					this.tableIsLink();
+					let schemas = res.data.map(it => {
+						it.table_name = it.original_name;
+						return it;
+					});
+					tempSchemas = schemas.sort((t1, t2) =>
+						t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
+					);
+					self.schemaSelectConfig.options = tempSchemas.map(item => ({
+						label: item.table_name,
+						value: item.table_name
+					}));
 				})
 				.finally(() => {
 					this.schemaSelectConfig.loading = false;
@@ -613,7 +609,7 @@ export default {
 				};
 				self.loading = true;
 				MetadataInstances.schema(params).then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data) {
 						let fields = res.data.records[0].schema.tables[0].fields;
 						// let primaryKeys = fields
 						// 	.filter(f => f.primary_key_position > 0)

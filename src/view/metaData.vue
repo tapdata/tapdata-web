@@ -117,11 +117,9 @@ export default {
 				// 'filter[where][user_id][regexp]': `^${this.$cookie.get('user_id')}$`
 			};
 			MetadataDefinitions.get(params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.treeData = this.formatData(res.data);
-						cb && cb(res.data);
-					}
+				if (res.data) {
+					this.treeData = this.formatData(res.data);
+					cb && cb(res.data);
 				}
 			});
 		},
@@ -130,11 +128,9 @@ export default {
 				filter: {}
 			};
 			MetadataDefinitions.get(params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						//this.treeData = this.formatData(res.data);
-						cb && cb(res.data);
-					}
+				if (res.data) {
+					//this.treeData = this.formatData(res.data);
+					cb && cb(res.data);
 				}
 			});
 		},
@@ -233,13 +229,11 @@ export default {
 			MetadataDefinitions[method](params)
 				.then(res => {
 					let self = this;
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							self.getData(data => {
-								self.$emit('nodeDataChange', data);
-							});
-							self.hideDialog();
-						}
+					if (res.data) {
+						self.getData(data => {
+							self.$emit('nodeDataChange', data);
+						});
+						self.hideDialog();
 					}
 				})
 				.catch(e => {
@@ -253,16 +247,14 @@ export default {
 				type: 'warning',
 				closeOnClickModal: false
 			}).then(() => {
-				MetadataDefinitions.delete(id).then(res => {
-					let self = this;
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							self.getData();
-						}
-					} else {
+				MetadataDefinitions.delete(id)
+					.then(() => {
+						let self = this;
+						self.getData();
+					})
+					.catch(() => {
 						this.$message.info(this.$t('message.deleteFail'));
-					}
-				});
+					});
 			});
 		},
 		checkName(value) {

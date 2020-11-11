@@ -111,11 +111,9 @@ export default {
 				}
 			};
 			MetadataDefinitions.get(params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.treeData = this.formatData(res.data);
-						cb && cb(res.data);
-					}
+				if (res.data) {
+					this.treeData = this.formatData(res.data);
+					cb && cb(res.data);
 				}
 			});
 		},

@@ -222,23 +222,21 @@ export default {
 					filter: JSON.stringify(filter)
 				})
 					.then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							if (res.data) {
-								self.data.splice(0, self.data.length);
-								let children = [];
-								res.data.forEach(record => {
-									children.push({
-										id: record.id,
-										parent_id: record.parent_id,
-										label: record.value,
-										meta_type: record.item_type
-									});
+						if (res.data) {
+							self.data.splice(0, self.data.length);
+							let children = [];
+							res.data.forEach(record => {
+								children.push({
+									id: record.id,
+									parent_id: record.parent_id,
+									label: record.value,
+									meta_type: record.item_type
 								});
-								resolve(children);
-							}
+							});
+							resolve(children);
 						}
 					})
-					.catch(e => {
+					.catch(() => {
 						this.$message.error('MetadataInstances error');
 					});
 			} else {
@@ -249,24 +247,22 @@ export default {
 					filter: JSON.stringify(filter)
 				})
 					.then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							if (res.data) {
-								self.data.splice(0, self.data.length);
-								let children = [];
-								res.data.forEach(record => {
-									children.push({
-										id: record.id,
-										parent_id: record.parent_id,
-										label: record.value,
-										meta_type: record.item_type,
-										leaf: true
-									});
+						if (res.data) {
+							self.data.splice(0, self.data.length);
+							let children = [];
+							res.data.forEach(record => {
+								children.push({
+									id: record.id,
+									parent_id: record.parent_id,
+									label: record.value,
+									meta_type: record.item_type,
+									leaf: true
 								});
-								resolve(children);
-							}
+							});
+							resolve(children);
 						}
 					})
-					.catch(e => {
+					.catch(() => {
 						this.$message.error('MetadataInstances error');
 					});
 			}
@@ -307,13 +303,11 @@ export default {
 			MetadataInstances.get(params)
 				.then(res => {
 					let self = this;
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							self.listdata = res.data;
-						}
+					if (res.data) {
+						self.listdata = res.data;
 					}
 				})
-				.catch(e => {
+				.catch(() => {
 					this.$message.error('MetadataInstances error');
 				});
 		},
@@ -346,14 +340,12 @@ export default {
 			MetadataInstances.get(params)
 				.then(res => {
 					let self = this;
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							self.listdata = res.data;
-						}
+					if (res.data) {
+						self.listdata = res.data;
 					}
 					log('listdata', self.listdata);
 				})
-				.catch(e => {
+				.catch(() => {
 					this.$message.error('MetadataInstances error');
 				});
 		},
@@ -370,14 +362,12 @@ export default {
 			MetadataInstances.get(params)
 				.then(res => {
 					let self = this;
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							self.listdata = res.data;
-						}
+					if (res.data) {
+						self.listdata = res.data;
 					}
 					log('listdata', self.listdata);
 				})
-				.catch(e => {
+				.catch(() => {
 					this.$message.error('MetadataInstances error');
 				});
 		},

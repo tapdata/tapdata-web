@@ -239,10 +239,8 @@ export default {
 				id: this.apiId,
 				tablename: this.apiData.basePath
 			};
-			modules['patch'](module).then(res => {
-				if (res.statusText === 'OK') {
-					this.$message.success(this.$t('apiInfo.apiPublishSuccess'));
-				}
+			modules['patch'](module).then(() => {
+				this.$message.success(this.$t('apiInfo.apiPublishSuccess'));
 			});
 		},
 		async unpublish() {
@@ -251,10 +249,8 @@ export default {
 				id: this.apiId,
 				tablename: this.apiData.basePath
 			};
-			modules['patch'](module).then(res => {
-				if (res.statusText === 'OK') {
-					this.$message.success(this.$t('apiInfo.apiUnpublishSuccess'));
-				}
+			modules['patch'](module).then(() => {
+				this.$message.success(this.$t('apiInfo.apiUnpublishSuccess'));
 			});
 		},
 		async getApiData() {

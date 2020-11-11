@@ -35,25 +35,23 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
 	response => {
-		let key = response.config.url + '&' + response.config.method;
-		delete pending[key];
-		let data = response.data;
-		if (response.statusText === 'OK') {
+		return new Promise((resolve, reject) => {
+			let key = response.config.url + '&' + response.config.method;
+			delete pending[key];
+			let data = response.data;
 			if (data.code === 'ok') {
-				return {
-					data: data.data,
+				return resolve({
+					data: data.data || data || {},
 					response: response
-				};
+				});
 			} else {
 				switch (data.code) {
 					case '110500':
-						Message.error({
-							message: data.msg
-						});
+						reject(response);
 						break;
 					case '110400':
 						Message.error({
-							message: '404，资源不存在'
+							message: '资源不存在'
 						});
 						break;
 					case '110401':
@@ -64,10 +62,11 @@ axios.interceptors.response.use(
 							});
 						}, 500);
 						break;
+					default:
+						reject(response);
 				}
-				return response;
 			}
-		}
+		});
 	},
 	error => {
 		let rsp = error.response;

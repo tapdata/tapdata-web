@@ -242,28 +242,34 @@ export default {
 						arguments: getFrom.arguments ? getFrom.arguments : ''
 					};
 					if (getFrom.id === '') {
-						await cluster.addMonitor(data).then(res => {
-							if (res.statusText === 'OK' || res.status === 200) {
+						await cluster
+							.addMonitor(data)
+							.then(() => {
 								this.dialogForm = false;
 								this.getDataApi();
 								this.$message.success(this.$t('message.saveOK'));
-							} else {
+							})
+							.catch(() => {
 								this.$message.error(this.$t('message.saveFail'));
-							}
-							this.dialogForm = false;
-						});
+							})
+							.finally(() => {
+								this.dialogForm = false;
+							});
 					} else {
 						data.id = getFrom.id;
-						await cluster.editMonitor(data).then(res => {
-							if (res.statusText === 'OK' || res.status === 200) {
+						await cluster
+							.editMonitor(data)
+							.then(() => {
 								this.dialogForm = false;
 								this.getDataApi();
 								this.$message.success(this.$t('message.saveOK'));
-							} else {
+							})
+							.catch(() => {
 								this.$message.error(this.$t('message.saveFail'));
-							}
-							this.dialogForm = false;
-						});
+							})
+							.finally(() => {
+								this.dialogForm = false;
+							});
 					}
 				}
 			} else {
@@ -287,14 +293,15 @@ export default {
 					confirmButtonText: this.$t('message.confirm'),
 					cancelButtonText: this.$t('message.cancel')
 				}).then(() => {
-					cluster.removeMonitor(params).then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
+					cluster
+						.removeMonitor(params)
+						.then(() => {
 							this.getDataApi();
 							this.$message.success(this.$t('message.deleteOK'));
-						} else {
+						})
+						.catch(() => {
 							this.$message.error(this.$t('message.deleteFail'));
-						}
-					});
+						});
 				});
 			} else {
 				this.$message.error(this.$t('message.startupAfter_delete'));
@@ -408,24 +415,21 @@ export default {
 				params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
 			}
 			cluster.get(params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.list = res.data;
-						let [...waterfallData] = this.list;
-						let [...newWaterfallData] = [[], []];
-						waterfallData.forEach((item, index) => {
-							if (index % 2) {
-								newWaterfallData[1].push(item);
-							} else {
-								newWaterfallData[0].push(item);
-							}
-						});
-						this.waterfallData = newWaterfallData;
-					}
+				if (res.data) {
+					this.list = res.data;
+					let [...waterfallData] = this.list;
+					let [...newWaterfallData] = [[], []];
+					waterfallData.forEach((item, index) => {
+						if (index % 2) {
+							newWaterfallData[1].push(item);
+						} else {
+							newWaterfallData[0].push(item);
+						}
+					});
+					this.waterfallData = newWaterfallData;
 				}
 			});
 		},
-
 		// 关闭弹窗并且清空验证
 		closeDialogForm() {
 			this.dialogForm = false;

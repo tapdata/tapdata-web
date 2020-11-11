@@ -120,26 +120,23 @@ export default {
 			this.loading = true;
 			await DataFlowsDebugs.getTables(params)
 				.then(res => {
-					if (res.status === 200 && res.statusText === 'OK') {
-						if (res.data && res.data.data.length > 0) {
-							this.nodeList = res.data.data ? res.data.data : [];
-							if (!this.selectTableName && this.nodeList.length > 0) {
-								this.selectTableName = this.nodeList[0];
-							} else {
-								this.selectTableName = '';
-							}
-							if (!this.nodeList.includes(this.selectTableName)) {
-								this.selectTableName = this.nodeList[0];
-							}
+					if (res.data && res.data.data.length > 0) {
+						this.nodeList = res.data.data ? res.data.data : [];
+						if (!this.selectTableName && this.nodeList.length > 0) {
+							this.selectTableName = this.nodeList[0];
 						} else {
 							this.selectTableName = '';
-							this.nodeList = [];
 						}
+						if (!this.nodeList.includes(this.selectTableName)) {
+							this.selectTableName = this.nodeList[0];
+						}
+					} else {
+						this.selectTableName = '';
+						this.nodeList = [];
 					}
-					this.loading = false;
 					this.getDataTableApi();
 				})
-				.catch(() => {
+				.finally(() => {
 					this.loading = false;
 				});
 		},
@@ -157,43 +154,39 @@ export default {
 			this.isloading = true;
 			await DataFlowsDebugs.get(params)
 				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						// this.nodeList = Object.keys(res.data);   // 获取下拉项
-						if (res.data && res.data.length > 0) {
-							// for(let i in res.data) {  // 获取选择后对应的表格数据
-							//   if(this.selectTableName === i) {
-							//     tableList = res.data[i];
-							//   }
-							// }
-							// res.data.forEach(item => {
-							// 	delete item.id;
-							// 	delete item.__tapd8;
-							// 	item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
-							// });
-							let datas = res.data.map(item => {
-								return item.masterData;
-							});
-							let headerList = [];
+					// this.nodeList = Object.keys(res.data);   // 获取下拉项
+					if (res.data && res.data.length > 0) {
+						// for(let i in res.data) {  // 获取选择后对应的表格数据
+						//   if(this.selectTableName === i) {
+						//     tableList = res.data[i];
+						//   }
+						// }
+						// res.data.forEach(item => {
+						// 	delete item.id;
+						// 	delete item.__tapd8;
+						// 	item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
+						// });
+						let datas = res.data.map(item => {
+							return item.masterData;
+						});
+						let headerList = [];
 
-							datas.forEach(item => {
-								// 获取表头
-								Object.keys(item).forEach(key => {
-									if (!headerList.includes(key)) {
-										headerList.push(key);
-									}
-								});
+						datas.forEach(item => {
+							// 获取表头
+							Object.keys(item).forEach(key => {
+								if (!headerList.includes(key)) {
+									headerList.push(key);
+								}
 							});
-							headerList.sort();
-							this.headers = headerList;
-							this.itemList = datas;
-						} else {
-							this.itemList = [];
-						}
+						});
+						headerList.sort();
+						this.headers = headerList;
+						this.itemList = datas;
+					} else {
+						this.itemList = [];
 					}
-					this.loading = false;
-					this.isloading = false;
 				})
-				.catch(() => {
+				.finally(() => {
 					this.loading = false;
 					this.isloading = false;
 				});

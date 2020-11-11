@@ -447,7 +447,7 @@ export default {
 			connections
 				.customQuery([connectionId], { schema: true })
 				.then(result => {
-					if (result.statusText === 'OK' || (result.status === 200 && result.data)) {
+					if (result.data) {
 						self.databaseInfo = result.data;
 						let tables = (result.data.schema && result.data.schema.tables) || [];
 						tables = tables.sort((t1, t2) =>

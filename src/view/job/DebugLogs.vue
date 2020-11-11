@@ -146,23 +146,20 @@ export default {
 			logsModel
 				.get({ filter })
 				.then(res => {
-					self.loading = false;
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data && res.data.length > 0) {
-							if (reset || prepend || !this.lastLogsId) {
-								this.lastLogsId = res.data[0].id;
-							}
-							if (reset || !prepend || !this.firstLogsId) {
-								this.firstLogsId = res.data[res.data.length - 1].id;
-							}
-
-							this.$refs.log.add({ logs: res.data, prepend, reset });
-						} else if (this.search && reset) {
-							this.$message.info(this.$t('editor.noResult'));
+					if (res.data && res.data.length > 0) {
+						if (reset || prepend || !this.lastLogsId) {
+							this.lastLogsId = res.data[0].id;
 						}
+						if (reset || !prepend || !this.firstLogsId) {
+							this.firstLogsId = res.data[res.data.length - 1].id;
+						}
+
+						this.$refs.log.add({ logs: res.data, prepend, reset });
+					} else if (this.search && reset) {
+						this.$message.info(this.$t('editor.noResult'));
 					}
 				})
-				.catch(() => {
+				.finally(() => {
 					self.loading = false;
 				});
 		}

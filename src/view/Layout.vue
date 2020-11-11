@@ -486,20 +486,18 @@ export default {
 				};
 			}
 			cluster.get(params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						if (!this.firstNum) {
-							this.firstNum = res.data.length || 0;
-							this.downLoadNum = 0;
-						}
-						if (this.firstNum) {
-							this.downLoadNum = res.data.length;
-						}
-						if (res.data.length > 0) {
-							this.agentTipFalg = false;
-						} else {
-							this.agentTipFalg = true;
-						}
+				if (res.data) {
+					if (!this.firstNum) {
+						this.firstNum = res.data.length || 0;
+						this.downLoadNum = 0;
+					}
+					if (this.firstNum) {
+						this.downLoadNum = res.data.length;
+					}
+					if (res.data.length > 0) {
+						this.agentTipFalg = false;
+					} else {
+						this.agentTipFalg = true;
 					}
 				}
 			});
@@ -515,10 +513,8 @@ export default {
 				}
 			};
 			Setting.findOne(where).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data.value) {
-						this.$store.commit('buildProfile', res.data.value);
-					}
+				if (res.data.value) {
+					this.$store.commit('buildProfile', res.data.value);
 				}
 			});
 		},

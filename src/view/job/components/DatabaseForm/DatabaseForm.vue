@@ -257,11 +257,9 @@ export default {
 					}
 					connectionsModel[this.model.id ? 'patch' : 'post'](params)
 						.then(res => {
-							if (res.statusText === 'OK') {
-								let id = res.data.id;
-								this.model.id = id;
-								this.test(id);
-							}
+							let id = res.data.id;
+							this.model.id = id;
+							this.test(id);
 						})
 						.catch(err => {
 							if (err && err.response.status === 500) {

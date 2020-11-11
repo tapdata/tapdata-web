@@ -138,21 +138,17 @@ export default {
 				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
 			notification.count(where).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.$emit('unread', res.data.count);
-						//this.$root.$emit('notificationUpdate');
-					}
+				if (res.data) {
+					this.$emit('unread', res.data.count);
+					//this.$root.$emit('notificationUpdate');
 				}
 			});
 		},
 		handleRead(id) {
 			notification.patch({ read: true, id: id }).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.listData = [];
-						this.$root.$emit('notificationUpdate');
-					}
+				if (res.data) {
+					this.listData = [];
+					this.$root.$emit('notificationUpdate');
 				}
 			});
 		},

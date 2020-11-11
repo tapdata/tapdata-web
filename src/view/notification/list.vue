@@ -253,12 +253,11 @@ export default {
 				where.filter.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
 			this.loading = true;
-			notification.get(where).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					this.loading = false;
+			notification
+				.get(where)
+				.then(res => {
 					if (res.data) {
 						this.listData = res.data;
-
 						//格式化日期
 						if (this.listData && this.listData.length > 0) {
 							this.listData.map(item => {
@@ -268,10 +267,10 @@ export default {
 							});
 						}
 					}
-				} else {
+				})
+				.finally(() => {
 					this.loading = false;
-				}
-			});
+				});
 			this.getCount(this.read);
 		},
 		handleCurrentChange(cpage) {
@@ -298,15 +297,16 @@ export default {
 			if (this.msg || this.msg !== '') {
 				where.where['msg'] = this.msg;
 			}
-			notification.count(where).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
+			notification
+				.count(where)
+				.then(res => {
 					if (res.data) {
 						this.total = res.data.count;
-					} else {
-						this.loading = false;
 					}
-				}
-			});
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		getUnreadNum() {
 			let where = {
@@ -318,23 +318,19 @@ export default {
 				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
 			notification.count(where).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.count = res.data.count;
-					}
+				if (res.data) {
+					this.count = res.data.count;
 				}
 			});
 		},
 		handleRead(id) {
 			let read = this.read;
 			notification.patch({ read: true, id: id }).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.getUnreadNum(); //未读消息数量
-						this.getData();
-						this.read = read;
-						this.$root.$emit('notificationUpdate');
-					}
+				if (res.data) {
+					this.getUnreadNum(); //未读消息数量
+					this.getData();
+					this.read = read;
+					this.$root.$emit('notificationUpdate');
 				}
 			});
 		},
@@ -354,13 +350,11 @@ export default {
 			where = JSON.stringify(where);
 			let read = this.read;
 			notification.upsertWithWhere(where, data).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.getUnreadNum(); //未读消息数量
-						this.getData();
-						this.read = read;
-						this.$root.$emit('notificationUpdate');
-					}
+				if (res.data) {
+					this.getUnreadNum(); //未读消息数量
+					this.getData();
+					this.read = read;
+					this.$root.$emit('notificationUpdate');
 				}
 			});
 		},
@@ -375,13 +369,11 @@ export default {
 			where = JSON.stringify(where);
 			let read = this.read;
 			notification.readAll(where, data).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.getUnreadNum(); //未读消息数量
-						this.getData();
-						this.read = read;
-						this.$root.$emit('notificationUpdate');
-					}
+				if (res.data) {
+					this.getUnreadNum(); //未读消息数量
+					this.getData();
+					this.read = read;
+					this.$root.$emit('notificationUpdate');
 				}
 			});
 		},

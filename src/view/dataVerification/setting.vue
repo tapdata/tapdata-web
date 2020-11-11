@@ -251,10 +251,8 @@ export default {
 			this.loading = true;
 			Setting.findOne(where)
 				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data.value) {
-							this.formData = JSON.parse(res.data.value);
-						}
+					if (res.data.value) {
+						this.formData = JSON.parse(res.data.value);
 					}
 				})
 				.finally(() => {
@@ -271,14 +269,13 @@ export default {
 			let data = {
 				value: JSON.stringify(this.formData)
 			};
-			Setting.update(where, data).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					this.loading = false;
+			Setting.update(where, data)
+				.then(() => {
 					this.$message.success('submit OK');
-				} else {
+				})
+				.finally(() => {
 					this.loading = false;
-				}
-			});
+				});
 		}
 	}
 };
