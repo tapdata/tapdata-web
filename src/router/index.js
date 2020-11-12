@@ -374,7 +374,7 @@ const childRoutes = [
 	{
 		path: '/account',
 		name: 'account',
-		component: view('personalSettings'),
+		component: view('setting/account'),
 		meta: { title: i18n.t('tap.account'), isCollapse: true }
 	}
 ];

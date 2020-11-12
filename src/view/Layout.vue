@@ -384,7 +384,8 @@ export default {
 			switch (command) {
 				case 'account':
 					this.$router.push({
-						name: 'account'
+						name: 'account',
+						params: { type: 'account' }
 					});
 					break;
 				case 'notification':
@@ -394,7 +395,8 @@ export default {
 					break;
 				case 'setting':
 					this.$router.push({
-						path: '/notification/setting'
+						path: '/notification/setting',
+						params: { type: 'notification' }
 					});
 					break;
 				case 'verifySetting':

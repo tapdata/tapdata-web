@@ -1,10 +1,15 @@
 <template>
 	<div class="notification-left-sidebar">
-		<div class="title">{{ $t('notification.noticeCenter') }}</div>
+		<div class="title">{{ $t('account.systemSetting') }}</div>
 		<ul>
-			<li>
-				<i class="iconfont icon-lingdang"></i>
-				<span slot="title">{{ $t('notification.setting') }}</span>
+			<li
+				v-for="item in settingList"
+				:key="item.icon"
+				@click="changeName(item)"
+				:class="isActive === item.key ? 'active' : ''"
+			>
+				<i :class="['iconfont', item.icon]"></i>
+				<span slot="title">{{ item.name }}</span>
 			</li>
 		</ul>
 	</div>
@@ -12,7 +17,42 @@
 
 <script>
 export default {
-	name: 'subNav.vue'
+	name: 'subNav.vue',
+	data() {
+		return {
+			settingList: [
+				{ icon: 'icon-shezhi1', name: this.$t('account.setCenter'), key: 'setting' },
+				{ icon: 'icon-lingdang', name: this.$t('notification.setting'), key: 'notification' },
+				{ icon: 'icon-gerenzhongxin', name: this.$t('account.accountSettings'), key: 'account' }
+			],
+			isActive: 'notification'
+		};
+	},
+	mounted() {
+		this.isActive = this.$route.params && this.$route.params.type ? this.$route.params.type : 'notification';
+	},
+	methods: {
+		changeName(data) {
+			this.isActive = data.key;
+			switch (data.key) {
+				case 'setting':
+					this.$router.push({
+						name: 'settings'
+					});
+					break;
+				case 'notification':
+					this.$router.push({
+						path: '/notification/setting'
+					});
+					break;
+				case 'account':
+					this.$router.push({
+						name: 'account'
+					});
+					break;
+			}
+		}
+	}
 };
 </script>
 
@@ -34,12 +74,17 @@ export default {
 			height: 44px;
 			line-height: 44px;
 			padding-left: 20px;
-			background: #eeeeee;
 			cursor: pointer;
+			i {
+				color: #666;
+			}
 		}
-		&:hover {
+		.active {
 			background: #eeeeee;
 		}
+		// &:hover {
+		// 	background: #eeeeee;
+		// }
 	}
 }
 </style>

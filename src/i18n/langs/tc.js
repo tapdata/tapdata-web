@@ -1582,6 +1582,31 @@ const tc = {
 		input: '輸入',
 		row_count_check: '行數檢查',
 		batch_verification: '批量校驗'
+	},
+	account: {
+		accountSettings: '個人設置 ',
+		setCenter: '設置中心',
+		systemSetting: '系統設置',
+		noticeSetting: '通知設置',
+		email: '郵箱',
+		userName: '用戶名',
+		password: '密碼',
+		accessCode: '訪問碼',
+		changePassword: '修改密碼',
+		currentPassword: '請輸入當前密碼',
+		newPassword: '請輸入新密碼',
+		confirmPassword: '再次確認密碼',
+		changeEmail: '修改郵箱',
+		enterMailbox: '請輸入郵箱',
+		enterNewMailbox: '請輸入新郵箱',
+		changeUsername: '修改用戶名',
+		newUsername: '請輸入新的用戶名',
+		sendEmail: '發送驗證郵件',
+		samePawTip: '新密碼不能與原密碼相同!',
+		newPawInconsistent: '與新密碼不一致!',
+		pawSaveSuccess: '密碼保存成功',
+		currerPawErrorTip: '當前密碼錯誤，請輸入正確的密碼',
+		nameModifySuccess: '名稱修改成功'
 	}
 };
 

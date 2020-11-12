@@ -1585,6 +1585,31 @@ const cn = {
 		input: '输入',
 		row_count_check: '行数检查',
 		batch_verification: '批量校验'
+	},
+	account: {
+		accountSettings: '个人设置 ',
+		setCenter: '设置中心',
+		systemSetting: '系统设置',
+		noticeSetting: '通知设置',
+		email: '邮箱',
+		userName: '用户名',
+		password: '密码',
+		accessCode: '访问码',
+		changePassword: '修改密码',
+		currentPassword: '请输入当前密码',
+		newPassword: '请输入新密码',
+		confirmPassword: '再次确认密码',
+		changeEmail: '修改邮箱',
+		enterMailbox: '请输入邮箱',
+		enterNewMailbox: '请输入新邮箱',
+		changeUsername: '修改用户名',
+		newUsername: '请输入新的用户名',
+		sendEmail: '发送验证邮件',
+		samePawTip: '新密码不能与原密码相同!',
+		newPawInconsistent: '与新密码不一致!',
+		pawSaveSuccess: '密码保存成功',
+		currerPawErrorTip: '当前密码错误，请输入正确的密码',
+		nameModifySuccess: '名称修改成功'
 	}
 };
 
