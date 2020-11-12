@@ -145,7 +145,7 @@ export default {
 			msg: '',
 			currentPage: 1,
 			pagesize: 20,
-			total: '',
+			total: 0,
 			colorMap: {
 				ERROR: 'red',
 				WARN: 'orangered',
