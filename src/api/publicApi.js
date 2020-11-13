@@ -47,7 +47,12 @@ axios.interceptors.response.use(
 			} else {
 				switch (data.code) {
 					case '110500':
-						reject(response);
+						reject({
+							response: {
+								status: 500,
+								data: data.msg
+							}
+						});
 						break;
 					case '110400':
 						Message.error({
