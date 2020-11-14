@@ -62,7 +62,7 @@
 						/>
 					</el-input>
 				</el-form-item>
-				<el-form-item prop="confirmPassword">
+				<el-form-item prop="comfirmPassword">
 					<el-input
 						v-model="pwd.comfirmPassword"
 						:type="comfirmPasswordType"
@@ -287,6 +287,12 @@ export default {
 							if (res.statusText === 'OK' || res.status === 204) {
 								this.$message.success(this.$t('account.pawSaveSuccess'));
 								this.passwordDialogFalg = false;
+								let cookie = window.VueCookie;
+								cookie.delete('token');
+								cookie.delete('user_id');
+								setTimeout(() => {
+									location.reload();
+								}, 500);
 							}
 						})
 						.catch(e => {
