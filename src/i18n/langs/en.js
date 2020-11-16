@@ -57,6 +57,7 @@ const en = {
 			otherDmands: 'Other Requirements',
 			otherDmandsText: 'Any requirement, please contact us by scanning WeChat QR below.'
 		},
+
 		signIn: {
 			slogan: 'Use your data, as easy as water from tap',
 			signIn: 'Sign in',
@@ -70,7 +71,41 @@ const en = {
 			account_waiting_approve: 'Your account is waiting administrator to approve.',
 			account_disabled: 'Your account is disabled by administrator.',
 			permission_denied: 'Permission denied.',
-			signInFail: 'Sign in failed.'
+			signInFail: 'Sign in failed.',
+			registry: 'Registration',
+			registry_tip: 'I agree with',
+			userPplicy: 'user policy',
+			nextStep: 'Next',
+			haveAccpunt: 'Remember account?',
+			backLogin: 'Back to login',
+
+			email_existed: 'Email address has been registered',
+			userPplicy_message: 'Please tick "agree with user policy"',
+			modifyPassword: 'Modify password',
+			newPasswordTip:
+				'Enter your registered mailbox and new password, and we will send you confirmation email and click link to reset password',
+			newpassword_placeholder: 'Please set a new password',
+			rememberPasswords: 'Remember passwords?',
+			Registration: 'Register an account',
+			forgetPassword: 'Forget password?',
+			confirmationEmail: 'Registration confirmation email has been sent to',
+			mailbox: 'Please log in to the mailbox and click the link to confirm~',
+			receiveEmail: "Didn't receive email? Click",
+			resend: 'Resend',
+			orClick: ', or click',
+			account: 'Account',
+			accountSuccess: 'has been successfully registered~',
+			clickBtn: 'Click the button below to enjoy the journey of data transmission',
+			goLogin: 'Go login',
+			connectionFailed: 'registration confirmation link is invalid',
+			resetConnectionFailed: 'reset password confirmation link is invalid',
+			clickText: 'Click',
+			confirmEmail: 'confirmation email, or restart',
+			registered: 'Registered',
+			resetAccountSuccess: 'The password has been reset successfully~',
+			passwordResetText: 'Reset password email has been sent to',
+			notMailbox: 'oops~This mailbox has not been registered yet',
+			hasMailbox: 'oops~This mailbox has already been registered'
 		},
 		menu: {
 			dashboard: 'Dashboard',

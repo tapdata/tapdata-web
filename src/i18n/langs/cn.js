@@ -80,9 +80,8 @@ const cn = {
 			nextStep: '下一步',
 			haveAccpunt: '已有账号?',
 			backLogin: '返回登录',
+
 			email_existed: 'Email 地址已被註冊',
-			registry_sucess: '登录前请检查你的邮件并点击验证链接，将在5秒后转跳到登录页面。',
-			registry_sucess_wait_approval: '登录前等待管理员审批，将在5秒后转跳到登录页面。',
 			userPplicy_message: '请选择用户政策',
 			modifyPassword: '修改密码',
 			newPasswordTip: '输入您注册的邮箱和新密码，我们将向您发送用于重置密码的链接',
@@ -94,7 +93,7 @@ const cn = {
 			mailbox: '请登录邮箱后点击链接进行确认~',
 			receiveEmail: '没有收到邮件？点击',
 			resend: '重新发送',
-			orClick: '或点击',
+			orClick: ',或点击',
 			account: '账号',
 			accountSuccess: '已注册成功~',
 			clickBtn: '点击下方按钮开启数据传输之旅吧',
@@ -105,7 +104,9 @@ const cn = {
 			confirmEmail: '确认邮件，或重新',
 			registered: '注册',
 			resetAccountSuccess: '的密码已重置成功~',
-			passwordResetText: '重置密码确认邮件已发送至'
+			passwordResetText: '重置密码确认邮件已发送至',
+			notMailbox: 'oops~此邮箱尚未注册',
+			hasMailbox: 'oops~此邮箱已经被注册了'
 		},
 		menu: {
 			dashboard: '控制台',

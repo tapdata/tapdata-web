@@ -400,17 +400,9 @@ const router = new Router({
 			}
 		},
 		{
-			path: '/registySuccess',
-			name: 'registySuccess',
-			component: view('Login/registySuccess'),
-			meta: {
-				title: i18n.t('tap.registry')
-			}
-		},
-		{
-			path: '/registyFailed',
-			name: 'registyFailed',
-			component: view('Login/registyFailed'),
+			path: '/registyResult',
+			name: 'registyResult',
+			component: view('Login/registyResult'),
 			meta: {
 				title: i18n.t('tap.registry')
 			}
@@ -505,11 +497,7 @@ router.beforeEach(async (to, from, next) => {
 			});
 		}
 	} else {
-		if (
-			['login', 'registry', 'passwordReset', 'verificationEmail', 'registySuccess', 'registyFailed'].includes(
-				to.name
-			)
-		) {
+		if (['login', 'registry', 'passwordReset', 'verificationEmail', 'registyResult'].includes(to.name)) {
 			next();
 		} else {
 			next('/login');

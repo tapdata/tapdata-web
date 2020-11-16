@@ -37,10 +37,14 @@ export default {
 			loading: false,
 			flag: false,
 			email: this.$route.params.email ? this.$route.params.email : '',
-			password: this.$route.params.password ? this.$route.params.password : '',
+			password: '',
 			timer: null,
 			time: 0
 		};
+	},
+
+	created() {
+		this.password = this.$route.params.password ? this.$route.params.password : '';
 	},
 
 	methods: {

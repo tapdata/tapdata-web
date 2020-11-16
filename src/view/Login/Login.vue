@@ -84,7 +84,7 @@ export default {
 	components: { Header },
 	data() {
 		return {
-			logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
+			logoUrl: window.location.href,
 			showLang: window._TAPDATA_OPTIONS_.showLang,
 			platform: window._TAPDATA_OPTIONS_.platform,
 			loading: false,

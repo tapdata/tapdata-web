@@ -112,8 +112,9 @@ export default {
 			platform: window._TAPDATA_OPTIONS_.platform,
 			loading: false,
 			form: {
-				email: '862083107@qq.com',
-				password: '111111'
+				email: '',
+				password: '',
+				location_origin: window.location.host
 			},
 			errorMessage: '',
 			keepSignIn: true,
@@ -194,7 +195,7 @@ export default {
 				}, 5000);
 			} catch (e) {
 				if (e.response.data.error.message.indexOf('Email already exists')) {
-					this.errorMessage = this.$t('Registry.email_existed');
+					this.errorMessage = this.$t('app.signIn.email_existed');
 				} else {
 					this.errorMessage = `${e.response.data.error.message}`;
 				}

@@ -38,18 +38,7 @@
 								/>
 							</el-input>
 						</el-form-item>
-						<el-checkbox class="keep-sign-in" v-model="keepSignIn">
-							<span>{{ $t('app.signIn.registry_tip') }}</span
-							>{{ $t('app.signIn.userPplicy') }}
-						</el-checkbox>
-						<el-button
-							class="btn-sign-in"
-							type="primary"
-							size="medium"
-							:disabled="!this.keepSignIn"
-							:loading="loading"
-							@click="submit"
-						>
+						<el-button class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
 							{{ $t('app.signIn.nextStep') }}
 						</el-button>
 					</el-form>
@@ -76,10 +65,10 @@ export default {
 			platform: window._TAPDATA_OPTIONS_.platform,
 			loading: false,
 			form: {
-				email: '862083107@qq.com',
-				newPassword: ''
+				email: '',
+				newPassword: '',
+				location_origin: window.location.host
 			},
-			keepSignIn: true,
 			errorMessage: '',
 			flag: false
 		};
@@ -118,27 +107,20 @@ export default {
 				return;
 			}
 			this.loading = true;
-			debugger;
 			try {
-				let { data } = await usersModel.reset(this.form);
+				await usersModel.reset(this.form);
 				// debugger;
 
 				setTimeout(() => {
 					this.$router.push({
 						name: 'verificationEmail',
-						query: { first: 1, email: data.email }
+						params: { first: 1, email: this.form.email }
 					});
 				}, 5000);
 			} catch (e) {
-				debugger;
 				if (e.response.data.error) {
-					this.message = `${e.response.data.error.statusCode} ${e.response.data.error.message}`;
-					this.alert = true;
-					return;
-				} else {
-					if (e.response.status !== 200) {
-						this.message = this.i18n.map['Common.' + e.response.data.code];
-						this.alert = true;
+					if (e.response.data.error.message === '找不到电子邮件') {
+						this.errorMessage = this.$t('app.signIn.notMailbox');
 					}
 				}
 			}
