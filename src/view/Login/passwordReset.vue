@@ -23,7 +23,7 @@
 						</el-form-item>
 						<el-form-item>
 							<el-input
-								v-model="form.password"
+								v-model="form.newPassword"
 								autocomplete="current-password"
 								:type="[flag ? 'password' : 'text']"
 								:placeholder="$t('app.signIn.newpassword_placeholder')"
@@ -65,8 +65,8 @@
 
 <script>
 import Header from './component/header';
-// import factory from '@/api/factory';
-// const usersModel = factory('users');
+import factory from '@/api/factory';
+const usersModel = factory('users');
 
 export default {
 	name: 'SignIn',
@@ -76,8 +76,8 @@ export default {
 			platform: window._TAPDATA_OPTIONS_.platform,
 			loading: false,
 			form: {
-				email: '',
-				password: ''
+				email: '862083107@qq.com',
+				newPassword: ''
 			},
 			keepSignIn: true,
 			errorMessage: '',
@@ -110,7 +110,7 @@ export default {
 				// eslint-disable-next-line
 			} else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)) {
 				message = this.$t('app.signIn.email_invalid');
-			} else if (!form.password || form.password.length < 5) {
+			} else if (!form.newPassword || form.newPassword.length < 5) {
 				message = this.$t('app.signIn.password_invalid');
 			}
 			if (message) {
@@ -120,16 +120,15 @@ export default {
 			this.loading = true;
 			debugger;
 			try {
-				// let { data } = await usersModel.resetPassword(this.form);
+				let { data } = await usersModel.reset(this.form);
+				// debugger;
 
-				debugger;
-
-				// setTimeout(() => {
-				// 	this.$router.push({
-				// 		name: 'verificationEmail',
-				// 		query: { first: 1, email: data.email }
-				// 	});
-				// }, 5000);
+				setTimeout(() => {
+					this.$router.push({
+						name: 'verificationEmail',
+						query: { first: 1, email: data.email }
+					});
+				}, 5000);
 			} catch (e) {
 				debugger;
 				if (e.response.data.error) {

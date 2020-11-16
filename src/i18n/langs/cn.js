@@ -68,6 +68,7 @@ const cn = {
 
 			email_require: '邮箱地址必填',
 			email_invalid: '请输入有效邮箱地址',
+			email_null: '邮箱不能为空',
 			password_invalid: '密码至少5个字符',
 			account_waiting_approve: '您的账户还未通过管理员审核',
 			account_disabled: '您的账户已被管理员禁用',
@@ -90,10 +91,21 @@ const cn = {
 			Registration: '注册账号',
 			forgetPassword: '忘记密码?',
 			confirmationEmail: '账号注册确认邮件已发送至',
-			mailbox: '请登录邮箱后点击连接进行确认~',
+			mailbox: '请登录邮箱后点击链接进行确认~',
 			receiveEmail: '没有收到邮件？点击',
 			resend: '重新发送',
-			orClick: '或点击'
+			orClick: '或点击',
+			account: '账号',
+			accountSuccess: '已注册成功~',
+			clickBtn: '点击下方按钮开启数据传输之旅吧',
+			goLogin: '去登陆',
+			connectionFailed: '注册确认链接失败',
+			resetConnectionFailed: '重置密码确认链接已失效',
+			clickText: '点击',
+			confirmEmail: '确认邮件，或重新',
+			registered: '注册',
+			resetAccountSuccess: '的密码已重置成功~',
+			passwordResetText: '重置密码确认邮件已发送至'
 		},
 		menu: {
 			dashboard: '控制台',

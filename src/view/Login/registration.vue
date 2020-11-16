@@ -9,15 +9,15 @@
 						<i class="el-icon-warning-outline"></i>
 						{{ errorMessage }}
 					</div>
-					<el-form ref="form" :model="form">
-						<el-form-item>
+					<el-form ref="form" :model="form" :rules="rules">
+						<el-form-item prop="email">
 							<el-input
 								v-model="form.email"
 								type="email"
 								:placeholder="$t('app.signIn.email_placeholder')"
 							></el-input>
 						</el-form-item>
-						<el-form-item>
+						<el-form-item prop="password">
 							<el-input
 								v-model="form.password"
 								:type="passwordType"
@@ -89,6 +89,25 @@ export default {
 	name: 'SignIn',
 	components: { Header },
 	data() {
+		var userEmail = (rule, value, callback) => {
+			// eslint-disable-next-line
+			const mailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+			if (!value) {
+				return callback(new Error(this.$t('app.signIn.email_null')));
+			}
+			setTimeout(() => {
+				if (mailReg.test(value)) {
+					callback();
+				} else {
+					callback(new Error(this.$t('app.signIn.email_invalid')));
+				}
+			}, 100);
+		};
+		var validatePass = (rule, value, callback) => {
+			if (!value || value.length < 5) {
+				callback(new Error(this.$t('app.signIn.password_invalid')));
+			}
+		};
 		return {
 			platform: window._TAPDATA_OPTIONS_.platform,
 			loading: false,
@@ -99,7 +118,11 @@ export default {
 			errorMessage: '',
 			keepSignIn: true,
 			passwordType: 'password',
-			flag: false
+			flag: false,
+			rules: {
+				email: [{ validator: userEmail, trigger: 'blur' }],
+				password: [{ validator: validatePass, trigger: 'blur' }]
+			}
 		};
 	},
 	methods: {

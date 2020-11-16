@@ -1,23 +1,27 @@
 <template>
-	<section class="page-registry_email">
+	<section class="page-registry_status">
 		<Header></Header>
 		<main>
 			<div class="email-main">
 				<div class="image iconfont icon-fasongyoujian"></div>
 				<div class="text">
 					<p>
-						{{ type === 'reset' ? $t('app.signIn.passwordResetText') : $t('app.signIn.confirmationEmail') }}
+						{{ $t('app.signIn.account') }}
 						<i>{{ email }}</i>
+						{{ type === 'reset' ? $t('app.signIn.resetAccountSuccess') : $t('app.signIn.accountSuccess') }}
 					</p>
-					<p>{{ $t('app.signIn.mailbox') }}</p>
-					<div>
+					<p>{{ $t('app.signIn.clickBtn') }}</p>
+					<el-button class="btn" type="primary" size="mini" @click="goLogin">{{
+						$t('app.signIn.goLogin')
+					}}</el-button>
+					<!-- <div>
 						{{ $t('app.signIn.receiveEmail') }}
 						<span @click="send"
 							>{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }})</i>,</span
 						>
 						{{ $t('app.signIn.orClick') }}
 						<span @click="backLogin">{{ $t('app.signIn.signIn') }}</span>
-					</div>
+					</div> -->
 				</div>
 			</div>
 		</main>
@@ -49,27 +53,8 @@ export default {
 			location.reload();
 		},
 
-		// 重新发送
-		async send() {
-			const TIME_COUNT = 60;
-			if (!this.timer) {
-				this.time = TIME_COUNT;
-				let usersModel = this.$api('users');
-				await usersModel.post({ email: this.email, password: this.password });
-				this.timer = setInterval(() => {
-					if (this.time > 0 && this.time <= TIME_COUNT) {
-						this.time--;
-					} else {
-						this.time = 0;
-						clearInterval(this.timer);
-						this.timer = null;
-					}
-				}, 1000);
-			}
-		},
-
-		// 邮件跳转登录
-		backLogin() {
+		// 去登录
+		goLogin() {
 			this.$router.push({
 				path: '/login'
 			});
@@ -79,57 +64,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.page-registry_email {
+.page-registry_status {
 	background: #fafafa;
 	height: 100%;
 	overflow: auto;
 	box-sizing: border-box;
-	header {
-		padding: 70px 80px 0 80px;
-		margin: 0 auto;
-		user-select: none;
-		min-width: 1400px;
-		box-sizing: border-box;
-		.logo {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			img {
-				display: block;
-				width: 144px;
-			}
-			.switch-lang {
-				color: #dedee4;
-				font-size: 16px;
-				span {
-					display: inline-block;
-					padding: 0 10px;
-					border-left: 1px solid #333333;
-					box-sizing: border-box;
-					height: 18px;
-					line-height: 18px;
-					cursor: pointer;
-					&:first-child {
-						border: none;
-					}
-					&:hover {
-						color: #333;
-					}
-				}
-				.bold {
-					color: #333333;
-					font-weight: 500;
-				}
-			}
-		}
-		.slogan {
-			margin-top: 8px;
-			height: 15px;
-			line-height: 15px;
-			font-size: 14px;
-			color: rgba(153, 153, 153, 1);
-		}
-	}
 
 	main {
 		position: relative;
@@ -149,7 +88,9 @@ export default {
 			.text {
 				font-size: 14px;
 				color: #666;
+				text-align: center;
 				p {
+					text-align: left;
 					user-select: none;
 					padding-bottom: 6px;
 					i {
@@ -164,6 +105,9 @@ export default {
 							color: #666;
 						}
 					}
+				}
+				.btn {
+					margin-top: 60px;
 				}
 			}
 		}

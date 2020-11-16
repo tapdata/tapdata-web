@@ -28,4 +28,7 @@ export default class DataFlows extends PublicAPI {
 	checktoken() {
 		return axios.get(this.url + '/checktoken');
 	}
+	reset(params) {
+		return axios.post(this.url + '/reset', params);
+	}
 }

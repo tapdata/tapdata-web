@@ -30,6 +30,7 @@
 					<div class="title">
 						{{ $t('app.signIn.signIn') }}
 						<span @click="registry">{{ $t('app.signIn.Registration') }}</span>
+						<!-- v-if="platform === 'CLOUD'" -->
 					</div>
 					<div class="error-tips" v-show="errorMessage">
 						<i class="el-icon-warning-outline"></i>
