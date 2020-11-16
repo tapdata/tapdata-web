@@ -59,7 +59,11 @@ export default {
 			if (!this.timer) {
 				this.time = TIME_COUNT;
 				let usersModel = this.$api('users');
-				await usersModel.post({ email: this.email, password: this.password });
+				await usersModel.post({
+					email: this.email,
+					password: this.password,
+					location_origin: window.location.origin
+				});
 				this.timer = setInterval(() => {
 					if (this.time > 0 && this.time <= TIME_COUNT) {
 						this.time--;

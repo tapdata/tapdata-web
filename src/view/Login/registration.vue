@@ -34,7 +34,7 @@
 							</el-input>
 						</el-form-item>
 						<el-checkbox class="keep-sign-in" v-model="keepSignIn">
-							<span>{{ $t('app.signIn.registry_tip') }}</span
+							<span style="color: #666;">{{ $t('app.signIn.registry_tip') }}</span
 							>{{ $t('app.signIn.userPplicy') }}
 						</el-checkbox>
 						<el-button
@@ -114,7 +114,8 @@ export default {
 			form: {
 				email: '',
 				password: '',
-				location_origin: window.location.host
+				emailVerified: true,
+				role: 0
 			},
 			errorMessage: '',
 			keepSignIn: true,
@@ -174,6 +175,7 @@ export default {
 				}
 
 				this.$cookie.set('user_id', data.id);
+				this.$cookie.set('location_origin', window.location.origin);
 
 				// settingsModel.getRegistryPolicy().then(function(result) {
 				// 	if (result && result.data && result.data.code && result.data.code === 'ENABLE_SELF_SIGNUP') {
