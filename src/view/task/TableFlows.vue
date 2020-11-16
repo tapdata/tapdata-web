@@ -399,11 +399,9 @@ export default {
 					attributes.push(node);
 				});
 			}
-			dataFlows.patchAll({ attrs: attributes }).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					this.dataFlowId = '';
-					this.getData();
-				}
+			dataFlows.patchAll({ attrs: attributes }).then(() => {
+				this.dataFlowId = '';
+				this.getData();
 			});
 		},
 		rowClassHandler({ rowIndex }) {
@@ -494,16 +492,18 @@ export default {
 				limit: size,
 				skip: (currentPage - 1) * size
 			});
-			await dataFlows.tableFlow(_params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
+			await dataFlows
+				.tableFlow(_params)
+				.then(res => {
 					if (res.data) {
 						this.handleData(res.data.datas);
 						this.page.data = res.data.datas;
 						this.page.total = res.data.count;
 					}
-				}
-				this.loading = false;
-			});
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		handleData(data) {
 			if (!data) return;

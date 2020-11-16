@@ -41,6 +41,13 @@ const cn = {
 		systemSettings: 'Tapdata-系统设置',
 		account: 'Tapdata-个人设置'
 	},
+	errorCode: {
+		networkUnconnected: '网络未连接',
+		serverAbnormal: '服务器异常',
+		requested: '请求的资源不存在',
+		unauthorized: '未授权',
+		parameters: '参数不正确'
+	},
 	app: {
 		document: '帮助文档',
 		qa: '客服',

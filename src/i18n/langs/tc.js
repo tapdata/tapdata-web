@@ -41,6 +41,13 @@ const tc = {
 		systemSettings: 'Tapdata-系統設置',
 		account: 'Tapdata-個人設置'
 	},
+	errorCode: {
+		networkUnconnected: '網絡未連接',
+		serverAbnormal: '服務器异常',
+		requested: '請求的資源不存在',
+		unauthorized: '未授權',
+		parameters: '參數不正確'
+	},
 	app: {
 		document: '幫助文檔',
 		qa: '客服',

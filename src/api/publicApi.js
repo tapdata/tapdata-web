@@ -2,6 +2,10 @@ import axios from 'axios';
 import Cookie from 'tiny-cookie';
 import { signOut } from '../util/util';
 import { Message } from 'element-ui';
+import i18n from '../i18n/i18n';
+
+let pending = {}; //声明一个数组用于存储每个ajax请求的取消函数和ajax标识
+let CancelToken = axios.CancelToken;
 
 axios.interceptors.request.use(
 	function(config) {
@@ -13,6 +17,16 @@ axios.interceptors.request.use(
 		} else {
 			config.url = `${config.url}?access_token=${accessToken}`;
 		}
+		let key = config.url + '&' + config.method;
+		let cancelFunc = null;
+		config.cancelToken = new CancelToken(c => {
+			cancelFunc = c;
+		});
+		if (pending[key]) {
+			cancelFunc();
+		} else {
+			pending[key];
+		}
 		return config;
 	},
 	function(error) {
@@ -22,17 +36,89 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
 	response => {
-		return response;
+		return new Promise((resolve, reject) => {
+			let key = response.config.url + '&' + response.config.method;
+			delete pending[key];
+			let data = response.data;
+			if (data.code === 'ok') {
+				return resolve({
+					data: data.data || data || {},
+					response: response
+				});
+			} else {
+				switch (data.code) {
+					case '110500':
+						reject({
+							response: {
+								status: 500,
+								data: data.msg
+							}
+						});
+						break;
+					case '110400':
+						Message.error({
+							message: i18n.t('errorCode.requested')
+						});
+						break;
+					case '110401':
+						signOut();
+						setTimeout(() => {
+							Message.error({
+								message: data.msg
+							});
+						}, 500);
+						break;
+					default:
+						reject(response);
+				}
+			}
+		});
 	},
 	error => {
 		let rsp = error.response;
-		if (rsp.status === 401 && rsp.data.error.code === 'AUTHORIZATION_REQUIRED') {
-			signOut();
+		if (rsp) {
+			switch (rsp.status) {
+				// 用户无权限访问接口
+				case 401:
+					signOut();
+					setTimeout(() => {
+						Message.error({
+							message: i18n.t('errorCode.unauthorized')
+						});
+					}, 500);
+					break;
+				// 请求的资源不存在
+				case 404:
+					// 处理404
+					Message.error({
+						message: i18n.t('errorCode.requested')
+					});
+					break;
+				// 服务器500错误
+				case 504:
+					Message.error({
+						message: i18n.t('errorCode.serverAbnormal')
+					});
+					break;
+				case 500:
+					Message.error({
+						message: i18n.t('errorCode.serverAbnormal')
+					});
+					break;
+			}
+		} else if (
+			error.code === 'ECONNABORTED' ||
+			error.message === 'Network Error' ||
+			(error.message && error.message.includes('timeout')) ||
+			!window.navigator.onLine
+		) {
 			setTimeout(() => {
 				Message.error({
-					message: 'Login expired!'
+					message: i18n.t('errorCode.networkUnconnected')
 				});
-			}, 500);
+			}, 100);
+		} else if (!error.message) {
+			return;
 		} else {
 			return Promise.reject(error);
 		}

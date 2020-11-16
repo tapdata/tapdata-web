@@ -430,7 +430,7 @@ router.beforeEach(async (to, from, next) => {
 			let token = cookie.get('token');
 			let result = await usersModel.getPermissions(`/${userId}/permissions?access_token=${token}`);
 			loading.close();
-			if (result.statusText === 'OK' && result.data) {
+			if (result && result.data) {
 				permissions = result.data.permissions || [];
 				if (permissions.length) {
 					//权限存在则存入缓存并继续向下走
@@ -445,7 +445,7 @@ router.beforeEach(async (to, from, next) => {
 				}
 			} else {
 				Message.error({
-					message: result.statusText
+					message: 'Permission denied'
 				});
 				return;
 			}

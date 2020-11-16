@@ -1004,16 +1004,14 @@ export default {
 					fields: ['validateBatchId', 'validateStatus', 'validateFailedMSG']
 				})
 				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						this.loading = false;
-						if (
-							Object.keys(res.data).length === 0 ||
-							(res.data.validateBatchId && res.data.validateBatchId === '')
-						) {
-							this.editor.showDataVerify();
-						} else {
-							this.editor.showResult();
-						}
+					this.loading = false;
+					if (
+						Object.keys(res.data).length === 0 ||
+						(res.data.validateBatchId && res.data.validateBatchId === '')
+					) {
+						this.editor.showDataVerify();
+					} else {
+						this.editor.showResult();
 					}
 				});
 		},

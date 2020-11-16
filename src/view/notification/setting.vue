@@ -158,13 +158,11 @@ export default {
 			this.loading = true;
 			Setting.findOne(where)
 				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data.value) {
-							let value = JSON.parse(res.data.value);
-							this.runNotification = value.runNotification;
-							this.systemNotification = value.systemNotification;
-							this.agentNotification = value.agentNotification;
-						}
+					if (res.data.value) {
+						let value = JSON.parse(res.data.value);
+						this.runNotification = value.runNotification;
+						this.systemNotification = value.systemNotification;
+						this.agentNotification = value.agentNotification;
 					}
 				})
 				.finally(() => {
@@ -185,14 +183,13 @@ export default {
 			if (!data) {
 				return;
 			}
-			Setting.update(where, data).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					this.loading = false;
+			Setting.update(where, data)
+				.then(() => {
 					this.$message.success('submit OK');
-				} else {
+				})
+				.finally(() => {
 					this.loading = false;
-				}
-			});
+				});
 		}
 	}
 };

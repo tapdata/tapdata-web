@@ -715,9 +715,7 @@ export default {
 			};
 
 			MetadataInstances.get(params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					this.databaseData = res.data;
-				}
+				this.databaseData = res.data;
 			});
 		},
 

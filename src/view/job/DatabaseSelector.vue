@@ -114,27 +114,26 @@ export default {
 			self.loading = true;
 			MetadataInstances.get(params)
 				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							// self.data.splice(0, self.data.length);
-							self.data = [];
-							res.data.forEach(record => {
-								self.data.push({
-									id: record.id,
-									label: record.name || record.original_name,
-									meta_type: record.meta_type,
-									source: record.source || ''
-								});
+					if (res.data) {
+						// self.data.splice(0, self.data.length);
+						self.data = [];
+						res.data.forEach(record => {
+							self.data.push({
+								id: record.id,
+								label: record.name || record.original_name,
+								meta_type: record.meta_type,
+								source: record.source || ''
 							});
-							log('TableSelector.loadDataBase', self.data);
-						}
+						});
+						log('TableSelector.loadDataBase', self.data);
 					}
-					self.loading = false;
 					self.loadingError = false;
 				})
 				.catch(() => {
 					self.loadingError = true;
 					this.$message.error('MetadataInstances error');
+				})
+				.finally(() => {
 					self.loading = false;
 				});
 		},

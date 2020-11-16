@@ -426,15 +426,13 @@ export default {
 				};
 			}
 			cluster.get(params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						if (!this.firstNum) {
-							this.firstNum = res.data.length || 0;
-							this.downLoadNum = 0;
-						}
-						if (this.firstNum) {
-							this.downLoadNum = res.data.length;
-						}
+				if (res.data) {
+					if (!this.firstNum) {
+						this.firstNum = res.data.length || 0;
+						this.downLoadNum = 0;
+					}
+					if (this.firstNum) {
+						this.downLoadNum = res.data.length;
 					}
 				}
 			});
@@ -1280,12 +1278,8 @@ export default {
 					this.loading = true;
 					dataFlowsApi
 						.reset(data.id)
-						.then(res => {
-							if (res.statusText === 'OK' || res.status === 200) {
-								self.$message.success(self.$t('message.resetOk'));
-							} else {
-								self.$message.error(self.$t('message.resetFailed'));
-							}
+						.then(() => {
+							self.$message.success(self.$t('message.resetOk'));
 						})
 						.catch(err => {
 							if (err && err.response.status === 500) {
@@ -1317,11 +1311,9 @@ export default {
 			this.loading = true;
 			Setting.findOne(where)
 				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data.value) {
-							let value = JSON.parse(res.data.value);
-							this.editor.setSettingData(value.runNotification);
-						}
+					if (res.data.value) {
+						let value = JSON.parse(res.data.value);
+						this.editor.setSettingData(value.runNotification);
 					}
 				})
 				.finally(() => {

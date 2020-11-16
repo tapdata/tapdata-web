@@ -40,6 +40,13 @@ const en = {
 		systemSettings: 'Tapdata-SystemSettings',
 		account: 'Tapdata-Account'
 	},
+	errorCode: {
+		networkUnconnected: 'Network unconnected',
+		serverAbnormal: 'Server abnormal',
+		requested: 'The resource you requested not existed',
+		unauthorized: 'Unauthorized',
+		parameters: 'Incorrect input parameters'
+	},
 	app: {
 		document: 'Documentation',
 		qa: 'Customer Service',

@@ -174,33 +174,32 @@ export default {
 				self.loading = true;
 				MetadataInstances.get(params)
 					.then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							if (res.data) {
-								// self.data.splice(0, self.data.length);
-								self.data = [];
-								res.data.forEach(record => {
-									let node = {
-										id: record.id,
-										label: record.name || record.original_name,
-										meta_type: record.meta_type,
-										source: record.source || '',
-										database_type: record.source.database_type || '',
-										original_name: record.original_name || '',
-										fields: record.fields
-									};
-									if (['collection', 'table', 'mongo_view', 'view'].includes(record.meta_type)) {
-										node.leaf = true;
-									}
-									self.data.push(node);
-								});
-							}
+						if (res.data) {
+							// self.data.splice(0, self.data.length);
+							self.data = [];
+							res.data.forEach(record => {
+								let node = {
+									id: record.id,
+									label: record.name || record.original_name,
+									meta_type: record.meta_type,
+									source: record.source || '',
+									database_type: record.source.database_type || '',
+									original_name: record.original_name || '',
+									fields: record.fields
+								};
+								if (['collection', 'table', 'mongo_view', 'view'].includes(record.meta_type)) {
+									node.leaf = true;
+								}
+								self.data.push(node);
+							});
 						}
-						self.loading = false;
 						self.loadingError = false;
 					})
 					.catch(() => {
 						self.loadingError = true;
 						this.$message.error('MetadataInstances error');
+					})
+					.finally(() => {
 						self.loading = false;
 					});
 			} else if (self.databseType === 'table' && this.filterText !== '') {
@@ -211,32 +210,31 @@ export default {
 				self.loading = true;
 				MetadataInstances.tableConnection(params)
 					.then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							if (res.data) {
-								// self.data.splice(0, self.data.length);
-								self.data = [];
-								res.data.forEach(record => {
-									let node = {
-										id: record.id,
-										label: record.name || record.original_name,
-										meta_type: record.meta_type,
-										source: record.source || '',
-										database_type: record.source.database_type || '',
-										original_name: record.original_name || '',
-										fields: record.fields
-									};
-									if (['collection', 'table', 'mongo_view', 'view'].includes(record.meta_type)) {
-										node.leaf = true;
-									}
-									self.data.push(node);
-								});
-							}
+						if (res.data) {
+							// self.data.splice(0, self.data.length);
+							self.data = [];
+							res.data.forEach(record => {
+								let node = {
+									id: record.id,
+									label: record.name || record.original_name,
+									meta_type: record.meta_type,
+									source: record.source || '',
+									database_type: record.source.database_type || '',
+									original_name: record.original_name || '',
+									fields: record.fields
+								};
+								if (['collection', 'table', 'mongo_view', 'view'].includes(record.meta_type)) {
+									node.leaf = true;
+								}
+								self.data.push(node);
+							});
 						}
-						self.loading = false;
 						self.loadingError = false;
 					})
 					.catch(() => {
 						this.$message.error('MetadataInstances error');
+					})
+					.finally(() => {
 						self.loading = false;
 					});
 			}
@@ -275,27 +273,26 @@ export default {
 			self.loading = true;
 			MetadataInstances.get(params)
 				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							// self.data.splice(0, self.data.length);
-							self.data = [];
-							res.data.forEach(record => {
-								self.data.push({
-									id: record.id,
-									label: record.name || record.original_name,
-									meta_type: record.meta_type,
-									source: record.source || ''
-								});
+					if (res.data) {
+						// self.data.splice(0, self.data.length);
+						self.data = [];
+						res.data.forEach(record => {
+							self.data.push({
+								id: record.id,
+								label: record.name || record.original_name,
+								meta_type: record.meta_type,
+								source: record.source || ''
 							});
-							log('TableSelector.loadDataBase', self.data);
-						}
+						});
+						log('TableSelector.loadDataBase', self.data);
 					}
-					self.loading = false;
 					self.loadingError = false;
 				})
 				.catch(() => {
 					self.loadingError = true;
 					this.$message.error('MetadataInstances error');
+				})
+				.finally(() => {
 					self.loading = false;
 				});
 		},
@@ -348,27 +345,25 @@ export default {
 				filter: JSON.stringify(filter)
 			};
 			MetadataInstances.get(params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						let childNodes = [];
-						res.data.forEach(record => {
-							childNodes.push({
-								id: record.id,
-								_id: record.source._id,
-								label: record.original_name,
-								expanded: true,
-								leaf: true,
-								meta_type: record.meta_type,
-								source: record.source || '',
-								database_type: record.source.database_type || '',
-								original_name: record.original_name || '',
-								fields: record.fields
-							});
+				if (res.data) {
+					let childNodes = [];
+					res.data.forEach(record => {
+						childNodes.push({
+							id: record.id,
+							_id: record.source._id,
+							label: record.original_name,
+							expanded: true,
+							leaf: true,
+							meta_type: record.meta_type,
+							source: record.source || '',
+							database_type: record.source.database_type || '',
+							original_name: record.original_name || '',
+							fields: record.fields
 						});
-						childNodes.filter(node => node.original_name !== '');
-						resolve(childNodes);
-						log('childNodes', childNodes);
-					}
+					});
+					childNodes.filter(node => node.original_name !== '');
+					resolve(childNodes);
+					log('childNodes', childNodes);
 				}
 			});
 		},

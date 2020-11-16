@@ -185,12 +185,10 @@ export default {
 		getIpFn() {
 			// let api = 'http://52.82.13.216:3031/api/clusterStates'
 			cluster.get().then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						res.data.forEach(item => {
-							this.ipList.push({ value: item.systemInfo.ip });
-						});
-					}
+				if (res.data) {
+					res.data.forEach(item => {
+						this.ipList.push({ value: item.systemInfo.ip });
+					});
 				}
 			});
 		},
@@ -229,19 +227,15 @@ export default {
 		// 获取数据
 		async getDataApi(params) {
 			logs.get(params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.tableData = res.data;
-					}
+				if (res.data) {
+					this.tableData = res.data;
 				}
 			});
 			let where = {
 				'where[loggerName]': 'tapdataAgent'
 			};
 			let result = await logs.count(where);
-			if (result.statusText === 'OK') {
-				this.totalNum = result.data.count;
-			}
+			this.totalNum = result.data.count;
 
 			// 获取表格高度
 			let contentHeight = this.$refs.contentHeight.offsetHeight; // 100

@@ -326,7 +326,7 @@
 				<el-pagination
 					class="pagination"
 					background
-					layout="prev, pager, next,sizes"
+					layout="prev, pager, next,sizes,total"
 					:page-sizes="[20, 30, 50, 100]"
 					:page-size="pagesize"
 					:total="totalNum"
@@ -579,15 +579,13 @@ export default {
 				};
 			}
 			cluster.get(params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						if (!this.firstNum) {
-							this.firstNum = res.data.length || 0;
-							this.downLoadNum = 0;
-						}
-						if (this.firstNum) {
-							this.downLoadNum = res.data.length;
-						}
+				if (res.data) {
+					if (!this.firstNum) {
+						this.firstNum = res.data.length || 0;
+						this.downLoadNum = 0;
+					}
+					if (this.firstNum) {
+						this.downLoadNum = res.data.length;
 					}
 				}
 			});
@@ -655,11 +653,9 @@ export default {
 					attributes.push(node);
 				});
 			}
-			dataFlows.patchAll({ attrs: attributes }).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					this.dataFlowId = '';
-					this.getData();
-				}
+			dataFlows.patchAll({ attrs: attributes }).then(() => {
+				this.dataFlowId = '';
+				this.getData();
 			});
 		},
 		handleGoFunction() {
@@ -908,8 +904,9 @@ export default {
 				},
 				params
 			);
-			await dataFlows.get(_params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
+			await dataFlows
+				.get(_params)
+				.then(res => {
 					if (res.data) {
 						this.handleData(res.data);
 						this.tableData = res.data;
@@ -942,10 +939,10 @@ export default {
 							}
 						}, 2000);
 					}
-				}
-				this.loading = false;
-			});
-
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 			this.getCount(where);
 		},
 		handleData(data) {
@@ -1048,10 +1045,8 @@ export default {
 				where: where
 			};
 			dataFlows.count(where).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.totalNum = res.data.count;
-					}
+				if (res.data) {
+					this.totalNum = res.data.count;
 				}
 			});
 		},
@@ -1079,10 +1074,10 @@ export default {
 			};
 			this.deleteConfirm(() => {
 				dataFlows.deleteAll(where).then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
+					if (res.data && res.data.success) {
 						this.getData();
 						this.responseHandler(res.data, this.$t('message.deleteOK'));
-					} else {
+					} else if (res.data && res.data.fail) {
 						this.$message.info(this.$t('message.deleteFail'));
 					}
 				});
@@ -1114,11 +1109,9 @@ export default {
 		// 删除任务编排
 		confirmDleteFlow() {
 			dataFlows.delete(this.deleteObj.id).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
+				if (res.data && res.data.count === 1) {
 					this.getData();
 					this.$message.success(this.$t('message.deleteOK'));
-				} else {
-					this.$message.info(this.$t('message.deleteFail'));
 				}
 			});
 			this.deleteDialogVisible = false;
@@ -1180,11 +1173,9 @@ export default {
 		},
 
 		async getStatus(id, data) {
-			await dataFlows.updateById(id, data).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					this.getData();
-					this.$t('message.operationSuccuess');
-				}
+			await dataFlows.updateById(id, data).then(() => {
+				this.getData();
+				this.$message.success(this.$t('message.operationSuccuess'));
 			});
 		},
 
@@ -1218,10 +1209,8 @@ export default {
 
 			let request = () => {
 				dataFlows.update(where, attributes).then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						this.getData();
-						this.responseHandler(res.data, this.$t('message.operationSuccuess'));
-					}
+					this.getData();
+					this.responseHandler(res.data, this.$t('message.operationSuccuess'));
 				});
 			};
 
@@ -1238,13 +1227,12 @@ export default {
 				this.restLoading = true;
 				dataFlows
 					.reset(id)
-					.then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							this.getData();
-							this.$message.success(this.$t('message.resetOk'));
-						} else {
-							this.$message.info(this.$t('message.cancelReset'));
-						}
+					.then(() => {
+						this.getData();
+						this.$message.success(this.$t('message.resetOk'));
+					})
+					.catch(() => {
+						this.$message.info(this.$t('message.cancelReset'));
 					})
 					.finally(() => {
 						this.restLoading = false;
@@ -1274,12 +1262,11 @@ export default {
 				dataFlows
 					.resetAll(where)
 					.then(res => {
-						if (res.statusText === 'OK' || res.status === 200) {
-							this.getData();
-							this.responseHandler(res.data, this.$t('message.resetOk'));
-						} else {
-							this.$message.info(this.$t('message.cancelReset'));
-						}
+						this.getData();
+						this.responseHandler(res.data, this.$t('message.resetOk'));
+					})
+					.catch(() => {
+						this.$message.info(this.$t('message.cancelReset'));
 					})
 					.finally(() => {
 						this.restLoading = false;
@@ -1288,14 +1275,15 @@ export default {
 		},
 		handlerCopy(id) {
 			let self = this;
-			dataFlows.copy(id).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
+			dataFlows
+				.copy(id)
+				.then(() => {
 					self.getData();
 					this.$message.success(this.$t('message.copySuccess'));
-				} else {
-					this.$message.error(this.$t('message.copyFail'));
-				}
-			});
+				})
+				.catch(() => {
+					this.$message.info(this.$t('message.copyFail'));
+				});
 		},
 		formatterTime(row) {
 			let time = row.createTime ? this.$moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '';

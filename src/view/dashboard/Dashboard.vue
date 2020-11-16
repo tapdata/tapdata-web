@@ -535,10 +535,8 @@ export default {
 		// 获取服务器与进程的数据
 		getClsterDataApi() {
 			cluster.get().then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.serverProcess.tableData = res.data;
-					}
+				if (res.data) {
+					this.serverProcess.tableData = res.data;
 				}
 			});
 		},

@@ -330,7 +330,7 @@ export default {
 		async getFavMenus() {
 			let userId = this.$cookie.get('user_id');
 			let result = await this.$api('users').get([userId]);
-			if (result.status === 200) {
+			if (result.data) {
 				let user = result.data || {};
 				this.favMenus = user.favorites || [];
 				this.userName = user.email.split('@')[0] || '';
@@ -494,20 +494,18 @@ export default {
 				};
 			}
 			cluster.get(params).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						if (!this.firstNum) {
-							this.firstNum = res.data.length || 0;
-							this.downLoadNum = 0;
-						}
-						if (this.firstNum) {
-							this.downLoadNum = res.data.length;
-						}
-						if (res.data.length > 0) {
-							this.agentTipFalg = false;
-						} else {
-							this.agentTipFalg = true;
-						}
+				if (res.data) {
+					if (!this.firstNum) {
+						this.firstNum = res.data.length || 0;
+						this.downLoadNum = 0;
+					}
+					if (this.firstNum) {
+						this.downLoadNum = res.data.length;
+					}
+					if (res.data.length > 0) {
+						this.agentTipFalg = false;
+					} else {
+						this.agentTipFalg = true;
 					}
 				}
 			});
@@ -523,10 +521,8 @@ export default {
 				}
 			};
 			Setting.findOne(where).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data.value) {
-						this.$store.commit('buildProfile', res.data.value);
-					}
+				if (res.data.value) {
+					this.$store.commit('buildProfile', res.data.value);
 				}
 			});
 		},
