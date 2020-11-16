@@ -553,9 +553,9 @@ export default {
 					let expires_on = res.data.expires_on || '';
 					let endTime = expires_on - stime;
 					endTime = parseInt(endTime / 1000 / 60 / 60 / 24); //相差天数
-					if (endTime <= 90 && this.$cookie.get('isAdmin') != 0) {
-						this.licenseExpireAble = true;
-					}
+					// if (endTime <= 90 && this.$cookie.get('isAdmin') != 0) {
+					// 	this.licenseExpireAble = true;
+					// }
 					this.licenseExpire = endTime;
 					this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss');
 				});

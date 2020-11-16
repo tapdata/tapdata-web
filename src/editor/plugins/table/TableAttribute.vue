@@ -373,7 +373,6 @@ export default {
 				tableName: '',
 				sql: '',
 				isFilter: false,
-				sqlFromCust: true,
 				custFields: [],
 				custSql: {
 					filterType: 'field',
@@ -660,7 +659,7 @@ export default {
 					conds.forEach(it => {
 						this.model.custSql.conditions.push(it);
 					});
-				if (data.sql && !data.hasOwnProperty('isFilter')) {
+				if (data.sql && (!data.hasOwnProperty('isFilter') || data.hasOwnProperty('sqlNotFromCust'))) {
 					this.model.custSql.editSql = data.sql;
 					this.model.custSql.filterType = 'sql';
 					this.model.isFilter = true;
