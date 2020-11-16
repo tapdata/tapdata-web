@@ -37,11 +37,13 @@ const en = {
 		userEdition: 'Tapdata-UserEdition',
 		roleManagement: 'Tapdata-RoleManagement',
 		roleEdition: 'Tapdata-RoleEdition ',
-		systemSettings: 'Tapdata-SystemSettings'
+		systemSettings: 'Tapdata-SystemSettings',
+		account: 'Tapdata-Account'
 	},
 	app: {
 		document: 'Documentation',
 		qa: 'Customer Service',
+		account: 'Account',
 		version: 'Version',
 		home: 'Home',
 		signOut: 'Sign out',
@@ -1609,6 +1611,31 @@ const en = {
 		input: 'Input',
 		row_count_check: 'Rows Count',
 		batch_verification: 'Batch verification'
+	},
+	account: {
+		accountSettings: 'Account settings',
+		setCenter: 'Settings Center',
+		systemSetting: 'System Settings',
+		noticeSetting: 'Notice Settings',
+		email: 'Email',
+		userName: 'User name',
+		password: 'Password',
+		accessCode: 'Access Code',
+		changePassword: ' Change Password',
+		currentPassword: 'Please enter the current password',
+		newPassword: 'Please enter the new password',
+		confirmPassword: 'Confirm password again',
+		changeEmail: 'Change Email',
+		enterMailbox: 'Please enter mailbox',
+		enterNewMailbox: 'Please enter the new mailbox',
+		changeUsername: 'Change User name',
+		newUsername: 'Please enter a new username',
+		sendEmail: 'Sent verify email',
+		samePawTip: 'The new password cannot be the same as the original password!',
+		newPawInconsistent: 'Inconsistent with the new password!',
+		pawSaveSuccess: 'Password saved successfully',
+		currerPawErrorTip: 'The current password is incorrect, please enter the correct password',
+		nameModifySuccess: 'Name modified successfully'
 	}
 };
 

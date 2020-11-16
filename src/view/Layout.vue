@@ -89,6 +89,7 @@
 						{{ userName }}<i class="el-icon-caret-bottom el-icon--right"></i>
 					</el-button>
 					<el-dropdown-menu slot="dropdown">
+						<el-dropdown-item command="account">{{ $t('app.account') }}</el-dropdown-item>
 						<el-dropdown-item command="version">{{ $t('app.version') }}</el-dropdown-item>
 						<el-dropdown-item command="license">{{ $t('app.menu.license') }}</el-dropdown-item>
 						<el-dropdown-item v-if="platform === 'DAAS'" command="home">
@@ -381,6 +382,12 @@ export default {
 		},
 		command(command) {
 			switch (command) {
+				case 'account':
+					this.$router.push({
+						name: 'account',
+						params: { type: 'account' }
+					});
+					break;
 				case 'notification':
 					this.$router.push({
 						name: 'notification'
@@ -388,7 +395,8 @@ export default {
 					break;
 				case 'setting':
 					this.$router.push({
-						path: '/notification/setting'
+						path: '/notification/setting',
+						params: { type: 'notification' }
 					});
 					break;
 				case 'verifySetting':
