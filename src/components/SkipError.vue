@@ -76,6 +76,8 @@ export default {
 					data.push(this.errorEvents[item]);
 				});
 				this.checkedData = data;
+			} else {
+				this.checkedData = [];
 			}
 			this.$emit('operationsSkipError', this.checkedData);
 			this.handleClose();
