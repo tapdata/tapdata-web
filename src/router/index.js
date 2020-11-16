@@ -194,17 +194,17 @@ const childRoutes = [
 		component: view('ExternalLink'),
 		meta: { requiresAuth: true, url: '/old/index.html#/tasks', title: i18n.t('tap.jobSchedule'), isCollapse: false }
 	},
-	{
-		path: '/agentdownload',
-		name: 'agentdownload',
-		component: view('ExternalLink'),
-		meta: {
-			requiresAuth: true,
-			url: '/old/index.html#/agentdownload',
-			title: i18n.t('tap.agentdownload'),
-			isCollapse: false
-		}
-	},
+	// {
+	// 	path: '/agentdownload',
+	// 	name: 'agentdownload',
+	// 	component: view('ExternalLink'),
+	// 	meta: {
+	// 		requiresAuth: true,
+	// 		url: '/old/index.html#/agentdownload',
+	// 		title: i18n.t('tap.agentdownload'),
+	// 		isCollapse: false
+	// 	}
+	// },
 	{
 		path: '/agents',
 		name: 'agents',
