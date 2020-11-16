@@ -512,6 +512,14 @@ const cn = {
 			batchTip: '批量：对监测到的增量数据进行批量传输处理，性能较高',
 			onebyoneTip: '逐行：对监测到的增量数据进行逐条处理，性能较差',
 			sync_type_tip: '关闭数据集节点的聚合设置才能修改传输类型，已开启节点:'
+		},
+		skipError: {
+			skipErrorSettings: '跳过错误设置',
+			tip: '请勾选则要跳过的错误，这些错误将在本次启动后再次遇到时将会被跳过一次。',
+			attention: '注意：若导致错误的脏数据未被处理，跳过错误可能导致这条脏数据被丢弃。',
+			startJob: '启动任务',
+			cancel: '取消',
+			taskName: '任务名'
 		}
 	},
 	connection: {

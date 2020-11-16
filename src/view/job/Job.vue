@@ -260,6 +260,14 @@
 			:lastDataNum="firstNum"
 			@closeAgentDialog="closeAgentDialog"
 		></DownAgent>
+		<SkipError
+			ref="SelectClassify"
+			:dialogVisible="dialogVisibleSkipError"
+			:errorEvents="errorEvents"
+			:taskName="taskName"
+			v-on:dialogVisible="handleSkipErrorVisible"
+			v-on:operationsSkipError="handleOperationSkipError"
+		></SkipError>
 	</div>
 </template>
 
@@ -279,6 +287,7 @@ import DownAgent from '../downAgent/agentDown';
 import { FORM_DATA_KEY, JOIN_TABLE_TPL } from '../../editor/constants';
 import { EditorEventType } from '../../editor/lib/events';
 import _ from 'lodash';
+import SkipError from '../../components/SkipError';
 
 const dataFlowsApi = factory('DataFlows');
 const Setting = factory('Setting');
@@ -287,7 +296,7 @@ let changeData = null;
 export default {
 	name: 'Job',
 	dataFlow: null,
-	components: { AddBtnTip, simpleScene, newDataFlow, DownAgent },
+	components: { AddBtnTip, simpleScene, newDataFlow, DownAgent, SkipError },
 	data() {
 		return {
 			downLoadAgetntdialog: false, //判断是否安装agent
@@ -328,6 +337,10 @@ export default {
 			],
 			flowDataName: '',
 			mappingTemplate: '',
+			dialogVisibleSkipError: false,
+			errorEvents: [],
+			currentStatus: '',
+			taskName: '',
 			statusBtMap
 		};
 	},
@@ -651,7 +664,8 @@ export default {
 							'fullDocument.cdcLastTimes': true,
 							'fullDocument.listtags': true,
 							'fullDocument.finishTime': true,
-							'fullDocument.startTime': true
+							'fullDocument.startTime': true,
+							'fullDocument.errorEvents': true
 						}
 					}
 				};
@@ -1070,19 +1084,42 @@ export default {
 				});
 			}
 		},
-
+		//kipError
+		handleSkipErrorVisible() {
+			this.dialogVisibleSkipError = false;
+		},
+		handleOperationSkipError(val) {
+			this.currentStatus['errorEvents'] = val;
+			this.doSaveStartDataFlow(this.currentStatus);
+		},
 		/**
 		 * start button handler
 		 */
 		start() {
-			let self = this,
-				data = this.getDataFlowData();
-
+			let data = this.getDataFlowData();
 			if (this.buildProfile === 'CLOUD' && !this.downLoadNum) {
 				this.downLoadAgetntdialog = true;
 				return;
 			}
-
+			if (data) {
+				if (
+					data.status === 'error' &&
+					data.setting.stopOnError &&
+					this.dataFlow.errorEvents &&
+					this.dataFlow.errorEvents.length > 0
+				) {
+					this.dialogVisibleSkipError = true;
+					this.errorEvents = this.dataFlow.errorEvents;
+					this.taskName = data.name;
+					this.currentStatus = data;
+				} else {
+					this.doSaveStartDataFlow(data);
+				}
+			}
+		},
+		//保存逻辑启动
+		doSaveStartDataFlow(data) {
+			let self = this;
 			if (data) {
 				if (data.id) {
 					data.id = data.id;
@@ -1090,7 +1127,6 @@ export default {
 				if (this.form.taskName) {
 					data.name = this.form.taskName;
 				}
-
 				// 数据库节点连线至少保留一张表开始
 				let objectNamesList = [],
 					stageTypeFalg = false;
@@ -1141,7 +1177,6 @@ export default {
 			this.loading = false;
 			this.dialogFormVisible = false;
 		},
-
 		/**
 		 * stop button handler
 		 * @param forceStop

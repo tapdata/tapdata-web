@@ -510,6 +510,14 @@ const tc = {
 			batchTip: '批量：對監測到的增量數據進行批量傳輸處理，性能較高',
 			onebyoneTip: '逐行：對監測到的增量數據進行逐條處理，性能較差',
 			sync_type_tip: '關閉數據集節點的聚合設置才能修改傳輸類型，已開啟節點:'
+		},
+		skipError: {
+			skipErrorSettings: '跳過錯誤設定',
+			tip: '請勾選則要跳過的錯誤，這些錯誤將在本次啟動後再次遇到時將會被跳過一次。',
+			attention: '注意：若導致錯誤的髒數據未被處理，跳過錯誤可能導致這條髒數據被丟棄。',
+			startJob: '啟動任務',
+			cancel: '取消',
+			taskName: '任务名'
 		}
 	},
 	connection: {

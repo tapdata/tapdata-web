@@ -367,6 +367,14 @@
 			:lastDataNum="firstNum"
 			@closeAgentDialog="closeAgentDialog"
 		></DownAgent>
+		<SkipError
+			ref="SelectClassify"
+			:dialogVisible="dialogVisibleSkipError"
+			:errorEvents="errorEvents"
+			:taskName="taskName"
+			v-on:dialogVisible="handleSkipErrorVisible"
+			v-on:operationsSkipError="handleOperationSkipError"
+		></SkipError>
 	</section>
 </template>
 
@@ -381,10 +389,11 @@ const cluster = factory('cluster');
 import { toRegExp } from '../../util/util';
 import metaData from '../metaData';
 import SelectClassify from '../../components/SelectClassify';
+import SkipError from '../../components/SkipError';
 import DownAgent from '../downAgent/agentDown';
 
 export default {
-	components: { metaData, SelectClassify, DownAgent },
+	components: { metaData, SelectClassify, DownAgent, SkipError },
 	data() {
 		return {
 			downLoadAgetntdialog: false, //判断是否安装agent
@@ -502,7 +511,12 @@ export default {
 			deleteObj: {
 				name: '',
 				id: ''
-			}
+			},
+			dialogVisibleSkipError: false,
+			errorEvents: [],
+			currentStatus: '',
+			currentId: '',
+			taskName: ''
 		};
 	},
 	created() {
@@ -661,6 +675,14 @@ export default {
 					this.getData();
 				}
 			});
+		},
+		//kipError
+		handleSkipErrorVisible() {
+			this.dialogVisibleSkipError = false;
+		},
+		handleOperationSkipError(val) {
+			this.currentStatus['errorEvents'] = val;
+			this.getStatus(this.currentId, this.currentStatus);
 		},
 		handleGoFunction() {
 			top.location.href = '/#/JsFuncs';
@@ -1174,6 +1196,17 @@ export default {
 					},
 					dataItem
 				);
+			} else if (
+				oldStatus === 'error' &&
+				dataItem.setting.stopOnError &&
+				dataItem.errorEvents &&
+				dataItem.errorEvents.length > 0
+			) {
+				this.dialogVisibleSkipError = true;
+				this.taskName = dataItem.name;
+				this.errorEvents = dataItem.errorEvents;
+				this.currentStatus = data;
+				this.currentId = id;
 			} else {
 				this.getStatus(id, data);
 			}

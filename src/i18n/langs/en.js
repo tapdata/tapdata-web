@@ -514,6 +514,15 @@ const en = {
 			batchTip: 'Batch:  Batch processing and transmission of CDC data with high performance.',
 			onebyoneTip: 'Row by row: Processing and transmission of CDC data row by row',
 			sync_type_tip: 'Transmission type can be changed after disable aggregation settings of collection node: '
+		},
+		skipError: {
+			skipErrorSettings: 'Skip error settings',
+			tip: 'Select errors that you wanna skip will be skipped once after this startup. ',
+			attention:
+				'Attention: If the dirty data caused error not be processed, skipping error operation may cause this dirty data to be discarded',
+			startJob: ' Skip above errors, start job',
+			cancel: 'Cancel',
+			taskName: 'Task name'
 		}
 	},
 	connection: {
