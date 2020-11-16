@@ -93,7 +93,7 @@ const cn = {
 			mailbox: '请登录邮箱后点击链接进行确认~',
 			receiveEmail: '没有收到邮件？点击',
 			resend: '重新发送',
-			orClick: ',或点击',
+			orClick: '或点击',
 			account: '账号',
 			accountSuccess: '已注册成功~',
 			clickBtn: '点击下方按钮开启数据传输之旅吧',

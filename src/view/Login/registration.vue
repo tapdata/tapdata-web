@@ -113,7 +113,7 @@ export default {
 			loading: false,
 			form: {
 				email: '',
-				password: '',
+				password: '862083107@qq.com',
 				emailVerified: true,
 				role: 0
 			},
@@ -168,15 +168,13 @@ export default {
 				// 	.update(Str)
 				// 	.digest('hex')
 				// 	.toUpperCase();
+				this.$cookie.set('user_id', data.id);
+				this.$cookie.set('location_origin', window.location.origin);
 				let { data } = await usersModel.post(this.form);
 				if (data.textStatus === 'DISABLE_SIGNUP') {
 					this.errorMessage = data.textStatus;
 					return;
 				}
-
-				this.$cookie.set('user_id', data.id);
-				this.$cookie.set('location_origin', window.location.origin);
-
 				// settingsModel.getRegistryPolicy().then(function(result) {
 				// 	if (result && result.data && result.data.code && result.data.code === 'ENABLE_SELF_SIGNUP') {
 				// 		this.errorMessage = this.$t('Registry.registry_sucess');

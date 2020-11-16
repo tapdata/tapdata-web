@@ -92,7 +92,7 @@ const en = {
 			mailbox: 'Please log in to the mailbox and click the link to confirm~',
 			receiveEmail: "Didn't receive email? Click",
 			resend: 'Resend',
-			orClick: ', or click',
+			orClick: 'or click',
 			account: 'Account',
 			accountSuccess: 'has been successfully registered~',
 			clickBtn: 'Click the button below to enjoy the journey of data transmission',
