@@ -1378,6 +1378,7 @@ const en = {
 		maskRead: 'Mask read this page',
 		maskReadAll: 'Mask read all',
 		systemNotice: 'System notice',
+		userNotice: 'Account Operation',
 		noticeCenter: 'Setting center',
 		dataFlow: 'dataFlow',
 		manageSever: 'manageSever',
@@ -1456,7 +1457,29 @@ const en = {
 		ddlDeal: 'DDL',
 		sourceName: 'Source Name',
 		databaseName: 'Database Name',
-		schemaName: 'Schema Name'
+		schemaName: 'Schema Name',
+		placeholder: {
+			user: 'Choose operator',
+			keyword: 'search by datasource/job name'
+		},
+		account: 'Account ',
+		operation: {
+			create: ' created ',
+			update: ' updated ',
+			delete: ' deleted ',
+			start: ' started ',
+			stop: ' stopped ',
+			forceStop: ' force stopped ',
+			reset: ' reset ',
+			copy: ' copied ',
+			upload: ' exported ',
+			download: ' downloaded '
+		},
+		modular: {
+			connection: ' connection ',
+			dataflow: ' data flow job ',
+			inspect: ' verity job '
+		}
 	},
 	dialog: {
 		createTable: 'Create New Table',
