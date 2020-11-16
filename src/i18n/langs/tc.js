@@ -1362,6 +1362,7 @@ const tc = {
 		maskRead: '標記本頁為已讀',
 		maskReadAll: '標記全部為已讀',
 		systemNotice: '系统通知',
+		userNotice: '用戶操作',
 		noticeCenter: '通知中心',
 		dataFlow: '任務',
 		manageSever: '管理端',
@@ -1439,7 +1440,29 @@ const tc = {
 		ddlDeal: 'DDL處理',
 		sourceName: '源連接',
 		databaseName: '數據庫名',
-		schemaName: '模型名'
+		schemaName: '模型名',
+		placeholder: {
+			user: '請選擇操作人',
+			keyword: '按數據源/任務名搜索'
+		},
+		account: '用戶',
+		operation: {
+			create: '創建了',
+			update: '更新了',
+			delete: '刪除了',
+			start: '啟動了',
+			stop: '停止了',
+			forceStop: '強制停止了',
+			reset: '重置了',
+			copy: '複製了',
+			upload: '導出了',
+			download: '下載了'
+		},
+		modular: {
+			connection: '數據源',
+			dataflow: '數據傳輸任務',
+			inspect: '校驗任務'
+		}
 	},
 	dialog: {
 		createTable: '創建新表',

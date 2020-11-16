@@ -328,7 +328,7 @@ const childRoutes = [
 	{
 		path: '/notification',
 		name: 'notification',
-		component: view('notification/list'),
+		component: view('notification/Center'),
 		meta: { title: i18n.t('notification.systemNotice'), isCollapse: true }
 	},
 	{

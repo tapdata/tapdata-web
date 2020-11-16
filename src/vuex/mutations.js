@@ -66,6 +66,9 @@ const mutations = {
 	},
 	dataVerification(state, payload) {
 		state.dataVerification = payload;
+	},
+	notification(state, payload) {
+		state.notification = payload;
 	}
 };
 export default mutations;
