@@ -109,11 +109,12 @@ export default {
 			}
 		};
 		return {
+			// originUrl: window.location.origin,
 			platform: window._TAPDATA_OPTIONS_.platform,
 			loading: false,
 			form: {
 				email: '',
-				password: '862083107@qq.com',
+				password: '',
 				emailVerified: true,
 				role: 0
 			},
@@ -154,37 +155,17 @@ export default {
 
 			this.loading = true;
 			try {
+				debugger;
 				let usersModel = this.$api('users');
-				// let timeStamp = this.$api('TimeStamp');
-				// let settingsModel = this.$api('Setting');
-				//登陆密码加密
-				// await timeStamp.get().then(res => {
-				// 	this.form['stime'] = res.data || new Date().getTime();
-				// });
-				// this.form.password = CryptoJS.RC4.encrypt(this.form.password, 'Gotapd8').toString();
-				// let Str = this.form.email + this.form.password + this.form.stime + 'Gotapd8';
-				// this.form['sign'] = crypto
-				// 	.createHash('sha1')
-				// 	.update(Str)
-				// 	.digest('hex')
-				// 	.toUpperCase();
-				this.$cookie.set('user_id', data.id);
+
 				this.$cookie.set('location_origin', window.location.origin);
+
 				let { data } = await usersModel.post(this.form);
 				if (data.textStatus === 'DISABLE_SIGNUP') {
 					this.errorMessage = data.textStatus;
 					return;
 				}
-				// settingsModel.getRegistryPolicy().then(function(result) {
-				// 	if (result && result.data && result.data.code && result.data.code === 'ENABLE_SELF_SIGNUP') {
-				// 		this.errorMessage = this.$t('Registry.registry_sucess');
-				// 	}
-
-				// 	if (result && result.data && result.data.code && result.data.code === 'ENABLE_SIGNUP') {
-				// 		this.errorMessage = this.$t('Registry.registry_sucess_wait_approval');
-				// 	}
-				// 	this.color = 'success';
-				// });
+				this.$cookie.set('user_id', data.id);
 				let email = form.email,
 					password = form.password;
 				setTimeout(() => {
@@ -194,11 +175,14 @@ export default {
 					});
 				}, 5000);
 			} catch (e) {
-				if (e.response.data.error.message.indexOf('Email already exists')) {
-					this.errorMessage = this.$t('app.signIn.email_existed');
-				} else {
-					this.errorMessage = `${e.response.data.error.message}`;
+				if (e.response && e.response.data) {
+					if (e.response.data.error.message.indexOf('Email already exists')) {
+						this.errorMessage = this.$t('app.signIn.email_existed');
+					} else {
+						this.errorMessage = `${e.response.data.error.message}`;
+					}
 				}
+
 				this.loading = false;
 			}
 		},
