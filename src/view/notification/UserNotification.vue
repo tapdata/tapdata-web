@@ -131,20 +131,16 @@ export default {
 			UserLogs.count({
 				where
 			}).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					if (res.data) {
-						this.page.total = res.data.count;
-					}
+				if (res.data) {
+					this.page.total = res.data.count;
 				}
 			});
 			UserLogs.get({
 				filter: JSON.stringify(filter)
 			})
 				.then(res => {
-					if (res.statusText === 'OK') {
-						this.page.index = current;
-						this.list = res.data || [];
-					}
+					this.page.index = current;
+					this.list = res.data || [];
 				})
 				.finally(() => {
 					this.loading = false;

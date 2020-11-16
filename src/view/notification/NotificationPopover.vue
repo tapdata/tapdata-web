@@ -181,12 +181,10 @@ export default {
 			this.$api('notification')
 				.count(where)
 				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							this.$store.commit('notification', {
-								unRead: res.data.count
-							});
-						}
+					if (res.data) {
+						this.$store.commit('notification', {
+							unRead: res.data.count
+						});
 					}
 				});
 		},
@@ -194,11 +192,9 @@ export default {
 			this.$api('notification')
 				.patch({ read: true, id: id })
 				.then(res => {
-					if (res.statusText === 'OK' || res.status === 200) {
-						if (res.data) {
-							this.listData = [];
-							this.$root.$emit('notificationUpdate');
-						}
+					if (res.data) {
+						this.listData = [];
+						this.$root.$emit('notificationUpdate');
 					}
 				});
 		},
@@ -270,9 +266,7 @@ export default {
 					filter: JSON.stringify(filter)
 				})
 				.then(res => {
-					if (res.statusText === 'OK') {
-						this.userOperations = res.data || [];
-					}
+					this.userOperations = res.data || [];
 				})
 				.finally(() => {
 					this.loading = false;
