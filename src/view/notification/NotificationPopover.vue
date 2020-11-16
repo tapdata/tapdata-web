@@ -81,6 +81,14 @@
 				</ul>
 			</el-tab-pane>
 			<el-tab-pane class="tab-item" label="用户操作" name="user" v-loading="loading">
+				<div class="item-head">
+					<span></span>
+					<router-link to="/notification?type=user">
+						<span style="color: #48B6E2">
+							{{ $t('notification.viewMore') }}
+						</span>
+					</router-link>
+				</div>
 				<ul class="notification-list">
 					<li class="notification-item" v-for="record in userOperations" :key="record.id">
 						<UserOperation :record="record"></UserOperation>
@@ -263,21 +271,7 @@ export default {
 				})
 				.then(res => {
 					if (res.statusText === 'OK') {
-						this.userOperations = [
-							{ createTime: new Date() },
-							{ createTime: new Date() },
-							{ createTime: new Date() },
-							{ createTime: new Date() },
-							{ createTime: new Date() },
-							{ createTime: new Date() },
-							{ createTime: new Date() },
-							{ createTime: new Date() },
-							{ createTime: new Date() },
-							{ createTime: new Date() },
-							{ createTime: new Date() },
-							{ createTime: new Date() }
-						];
-						// this.userOperations = res.data || [];
+						this.userOperations = res.data || [];
 					}
 				})
 				.finally(() => {

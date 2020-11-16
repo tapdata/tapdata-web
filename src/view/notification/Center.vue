@@ -38,9 +38,22 @@ export default {
 	computed: mapState({
 		unRead: state => state.notification.unRead
 	}),
+	watch: {
+		$route(route) {
+			this.activePanel = route.query.type || 'system';
+		}
+	},
+	created() {
+		this.activePanel = this.$route.query.type || 'system';
+	},
 	methods: {
 		selectPanel(name) {
-			this.activePanel = name;
+			this.$router.replace({
+				name: 'notification',
+				query: {
+					type: name
+				}
+			});
 		}
 	}
 };
