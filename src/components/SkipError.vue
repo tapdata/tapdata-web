@@ -13,8 +13,8 @@
 				}}</el-checkbox></span
 			>
 			<el-checkbox-group v-model="checkedData" @change="handleCheckedDataChange" class="list-box">
-				<li v-for="item in errorEvents" :key="item.jobId">
-					<el-checkbox :label="item.jobId">
+				<li v-for="(item, index) in errorEvents" :key="item.index">
+					<el-checkbox :label="index">
 						<div class="error-content">
 							<span class="error-msg"><span style="color: red">[ERROR]</span> {{ item.message }}</span>
 						</div>
@@ -57,8 +57,8 @@ export default {
 	},
 	methods: {
 		handleCheckAllChange(val) {
-			let ids = this.errorEvents.map(item => {
-				return item.jobId;
+			let ids = this.errorEvents.map((item, index) => {
+				return index;
 			});
 			this.checkedData = val ? ids : [];
 			this.isIndeterminate = false;
@@ -71,7 +71,10 @@ export default {
 		},
 		skipErrorData() {
 			if (this.checkedData.length > 0) {
-				let data = this.errorEvents.filter(item => this.checkedData.includes(item.jobId));
+				let data = [];
+				this.checkedData.forEach(item => {
+					data.push(this.errorEvents[item]);
+				});
 				this.checkedData = data;
 			}
 			this.$emit('operationsSkipError', this.checkedData);
