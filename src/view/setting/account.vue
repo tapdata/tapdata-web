@@ -229,7 +229,7 @@ export default {
 				}
 			};
 			let result = await usersModel.get(parmas);
-			if (result.statusText === 'OK' || result.status === 200) {
+			if (result.data) {
 				this.infoList.forEach(item => {
 					Object.keys(result.data[0]).forEach(key => {
 						if (item.key === key) {
@@ -265,11 +265,9 @@ export default {
 				id: this.$cookie.get('user_id'),
 				usename: this.userName
 			};
-			usersModel.patch(parmas).then(res => {
-				if (res.statusText === 'OK' || res.status === 200) {
-					this.$message.success(this.$t('account.nameModifySuccess'));
-					this.usernameDialogFalg = false;
-				}
+			usersModel.patch(parmas).then(() => {
+				this.$message.success(this.$t('account.nameModifySuccess'));
+				this.usernameDialogFalg = false;
 			});
 		},
 
@@ -283,17 +281,15 @@ export default {
 				if (valid) {
 					usersModel
 						.changePassword(parmas)
-						.then(res => {
-							if (res.statusText === 'OK' || res.status === 204) {
-								this.$message.success(this.$t('account.pawSaveSuccess'));
-								this.passwordDialogFalg = false;
-								let cookie = window.VueCookie;
-								cookie.delete('token');
-								cookie.delete('user_id');
-								setTimeout(() => {
-									location.reload();
-								}, 500);
-							}
+						.then(() => {
+							this.$message.success(this.$t('account.pawSaveSuccess'));
+							this.passwordDialogFalg = false;
+							let cookie = window.VueCookie;
+							cookie.delete('token');
+							cookie.delete('user_id');
+							setTimeout(() => {
+								location.reload();
+							}, 500);
 						})
 						.catch(e => {
 							if (
