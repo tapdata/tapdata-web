@@ -143,7 +143,7 @@ export default {
 				setPermission(data.permissions);
 				let user = await usersModel.getUserById(`/${data.userId}?access_token=${data.id}`);
 				this.$cookie.set('email', this.form.email);
-				this.$cookie.set('username', user.data.username);
+				this.$cookie.set('username', user.data.username || '');
 				this.$cookie.set('login', 1);
 				this.$cookie.set('token', data.id);
 				this.$cookie.set('isAdmin', parseInt(user.data.role) || 0);
