@@ -2,6 +2,7 @@ import axios from 'axios';
 import Cookie from 'tiny-cookie';
 import { signOut } from '../util/util';
 import { Message } from 'element-ui';
+import i18n from '../i18n/i18n';
 
 let pending = {}; //声明一个数组用于存储每个ajax请求的取消函数和ajax标识
 let CancelToken = axios.CancelToken;
@@ -56,7 +57,7 @@ axios.interceptors.response.use(
 						break;
 					case '110400':
 						Message.error({
-							message: '资源不存在'
+							message: i18n.t('errorCode.requested')
 						});
 						break;
 					case '110401':
@@ -82,7 +83,7 @@ axios.interceptors.response.use(
 					signOut();
 					setTimeout(() => {
 						Message.error({
-							message: '登录失效'
+							message: i18n.t('errorCode.unauthorized')
 						});
 					}, 500);
 					break;
@@ -90,18 +91,18 @@ axios.interceptors.response.use(
 				case 404:
 					// 处理404
 					Message.error({
-						message: '请求的资源不存在'
+						message: i18n.t('errorCode.requested')
 					});
 					break;
 				// 服务器500错误
 				case 504:
 					Message.error({
-						message: '服务器异常'
+						message: i18n.t('errorCode.serverAbnormal')
 					});
 					break;
 				case 500:
 					Message.error({
-						message: '服务器异常'
+						message: i18n.t('errorCode.serverAbnormal')
 					});
 					break;
 			}
@@ -113,7 +114,7 @@ axios.interceptors.response.use(
 		) {
 			setTimeout(() => {
 				Message.error({
-					message: '网络未连接'
+					message: i18n.t('errorCode.networkUnconnected')
 				});
 			}, 100);
 		} else if (!error.message) {
