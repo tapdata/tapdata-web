@@ -329,7 +329,7 @@ export default {
 		async getFavMenus() {
 			let userId = this.$cookie.get('user_id');
 			let result = await this.$api('users').get([userId]);
-			if (result.status === 200) {
+			if (result.data) {
 				let user = result.data || {};
 				this.favMenus = user.favorites || [];
 				this.userName = user.email.split('@')[0] || '';
