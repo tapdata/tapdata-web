@@ -31,19 +31,7 @@
 					<i class="el-icon-plus"></i>
 					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
-				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom" v-readonlybtn="'BTN_AUTHS'">
-					<el-badge :value="unRead" :max="99" class="item-badge" v-show="unRead > 0">
-						<i class="iconfont icon-lingdang" @click="command('notification')"></i>
-					</el-badge>
-					<i class="iconfont icon-lingdang" @click="command('notification')" v-show="unRead === 0"></i>
-					<el-dropdown-menu slot="dropdown" placement="bottom-start">
-						<DropdownNotification
-							:dialogVisible="notificationVisible"
-							v-on:unread="handleUnread"
-						></DropdownNotification>
-						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
-					</el-dropdown-menu>
-				</el-dropdown>
+				<NotificationPopover v-if="platform === 'DAAS'" v-readonlybtn="'BTN_AUTHS'"></NotificationPopover>
 				<a v-if="platform === 'DAAS' && this.buildProfile === 'CLOUD'" class="btn" @click="command('download')"
 					><i class="iconfont icon-shangchuan-copy"></i
 				></a>
@@ -181,7 +169,7 @@
 <script>
 import CustomerService from '@/components/CustomerService';
 import newDataFlow from '@/components/newDataFlow';
-import DropdownNotification from './notification/DropdownNotification';
+import NotificationPopover from './notification/NotificationPopover';
 import DownAgent from './downAgent/agentDown';
 import { signOut } from '../util/util';
 import factory from '@/api/factory';
@@ -250,7 +238,7 @@ let menuSetting = [
 	}
 ];
 export default {
-	components: { CustomerService, newDataFlow, DropdownNotification, DownAgent },
+	components: { CustomerService, newDataFlow, NotificationPopover, DownAgent },
 	data() {
 		return {
 			platform: window._TAPDATA_OPTIONS_.platform,
@@ -265,8 +253,6 @@ export default {
 			userName: '',
 			dialogVisible: false,
 			isShowCustomerService: false,
-			notificationVisible: true,
-			unRead: 0,
 			downLoadAgetntdialog: false,
 			agentTipFalg: false,
 			timer: '',
@@ -383,11 +369,6 @@ export default {
 		},
 		command(command) {
 			switch (command) {
-				case 'notification':
-					this.$router.push({
-						name: 'notification'
-					});
-					break;
 				case 'setting':
 					this.$router.push({
 						path: '/notification/setting'
@@ -454,13 +435,6 @@ export default {
 		},
 		handleDialogVisible() {
 			this.dialogVisible = false;
-		},
-		handleNotificationVisible(type) {
-			this.notificationVisible = type;
-		},
-		handleUnread(data) {
-			this.unRead = '';
-			this.unRead = data;
 		},
 
 		// 下载安装Agent
@@ -566,31 +540,6 @@ export default {
 };
 </script>
 <style scoped lang="less">
-.unread {
-	width: 25px;
-	height: 17px;
-	display: inline-block;
-	line-height: 17px;
-	white-space: nowrap;
-	cursor: pointer;
-	background: red;
-	color: #fff;
-	-webkit-appearance: none;
-	text-align: center;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-	outline: 0;
-	margin: 0;
-	-webkit-transition: 0.1s;
-	transition: 0.1s;
-	font-weight: 500;
-	padding: 0px 5px;
-	font-size: 12px;
-	border-radius: 4px;
-	float: right;
-	margin-top: 15px;
-	margin-right: 15px;
-}
 .layout-container {
 	overflow: hidden;
 	.agentNot {

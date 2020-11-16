@@ -1393,6 +1393,7 @@ const cn = {
 		maskRead: '标记本页为已读',
 		maskReadAll: '标记全部为已读',
 		systemNotice: '系统通知',
+		userNotice: '用户操作',
 		noticeCenter: '通知中心',
 		dataFlow: '任务',
 		noticeType: '请选择消息类型',
@@ -1470,7 +1471,29 @@ const cn = {
 		ddlDeal: 'DDL处理',
 		sourceName: '源连接',
 		databaseName: '数据库名',
-		schemaName: '模型名'
+		schemaName: '模型名',
+		placeholder: {
+			user: '请选择操作人',
+			keyword: '按数据源/任务名搜索'
+		},
+		account: '用户',
+		operation: {
+			create: '创建了',
+			update: '更新了',
+			delete: '删除了',
+			start: '启动了',
+			stop: '停止了',
+			forceStop: '强制停止了',
+			reset: '重置了',
+			copy: '复制了',
+			upload: '导出了',
+			download: '下载了'
+		},
+		modular: {
+			connection: '数据源',
+			dataflow: '数据传输任务',
+			inspect: '校验任务'
+		}
 	},
 	dataVerification: {
 		verifyDetail: '校验详情',
