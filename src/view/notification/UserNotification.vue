@@ -86,12 +86,12 @@ export default {
 		};
 	},
 	created() {
-		this.getData();
 		if (this.isAdmin) {
 			this.getUsers();
 		} else {
 			this.search.userId = this.$cookie.get('user_id');
 		}
+		this.getData();
 	},
 	methods: {
 		getUsers() {
@@ -119,7 +119,9 @@ export default {
 				];
 			}
 			if (userId) {
-				where.user_id = userId;
+				where.user_id = {
+					like: userId
+				};
 			}
 			let filter = {
 				order: 'createTime DESC',

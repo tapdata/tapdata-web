@@ -261,6 +261,11 @@ export default {
 					type: 'userOperation'
 				}
 			};
+			if (!parseInt(this.$cookie.get('isAdmin'))) {
+				filter.where.user_id = {
+					like: this.$cookie.get('user_id')
+				};
+			}
 			this.$api('UserLogs')
 				.get({
 					filter: JSON.stringify(filter)
