@@ -112,16 +112,16 @@ export default {
 			if (keyword && keyword.trim()) {
 				where.parameter1 = { like: toRegExp(keyword), options: 'i' };
 			}
-			if (range && range.length) {
-				where.and = [
-					{ createTime: { gte: range[0].toISOString() } },
-					{ createTime: { lte: range[1].toISOString() } }
-				];
-			}
 			if (userId) {
 				where.user_id = {
 					like: userId
 				};
+			}
+			if (range && range.length) {
+				where.and = [
+					{ last_updated: { gte: range[0].toISOString() } },
+					{ last_updated: { lte: range[1].toISOString() } }
+				];
 			}
 			let filter = {
 				order: 'createTime DESC',
