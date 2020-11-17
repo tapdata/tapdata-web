@@ -194,17 +194,17 @@ const childRoutes = [
 		component: view('ExternalLink'),
 		meta: { requiresAuth: true, url: '/old/index.html#/tasks', title: i18n.t('tap.jobSchedule'), isCollapse: false }
 	},
-	{
-		path: '/agentdownload',
-		name: 'agentdownload',
-		component: view('ExternalLink'),
-		meta: {
-			requiresAuth: true,
-			url: '/old/index.html#/agentdownload',
-			title: i18n.t('tap.agentdownload'),
-			isCollapse: false
-		}
-	},
+	// {
+	// 	path: '/agentdownload',
+	// 	name: 'agentdownload',
+	// 	component: view('ExternalLink'),
+	// 	meta: {
+	// 		requiresAuth: true,
+	// 		url: '/old/index.html#/agentdownload',
+	// 		title: i18n.t('tap.agentdownload'),
+	// 		isCollapse: false
+	// 	}
+	// },
 	{
 		path: '/agents',
 		name: 'agents',
@@ -384,9 +384,41 @@ const router = new Router({
 		{
 			path: '/login',
 			name: 'login',
-			component: view('Login'),
+			component: view('Login/Login'),
 			meta: {
 				title: i18n.t('tap.login')
+			}
+		},
+		{
+			path: '/registry',
+			name: 'registry',
+			component: view('Login/registration'),
+			meta: {
+				title: i18n.t('tap.registry')
+			}
+		},
+		{
+			path: '/verificationEmail',
+			name: 'verificationEmail',
+			component: view('Login/verificationEmail'),
+			meta: {
+				title: i18n.t('tap.verificationEmail')
+			}
+		},
+		{
+			path: '/registyResult',
+			name: 'registyResult',
+			component: view('Login/registyResult'),
+			meta: {
+				title: i18n.t('tap.registry')
+			}
+		},
+		{
+			path: '/passwordReset',
+			name: 'passwordReset',
+			component: view('Login/passwordReset'),
+			meta: {
+				title: i18n.t('tap.passwordReset')
 			}
 		},
 		{
@@ -471,7 +503,7 @@ router.beforeEach(async (to, from, next) => {
 			});
 		}
 	} else {
-		if (to.name === 'login') {
+		if (['login', 'registry', 'passwordReset', 'verificationEmail', 'registyResult'].includes(to.name)) {
 			next();
 		} else {
 			next('/login');

@@ -6,6 +6,62 @@
   "description": "Tapdata 线装小图标",
   "glyphs": [
     {
+      "icon_id": "4108854",
+      "name": "监控",
+      "font_class": "jiankong",
+      "unicode": "e8ed",
+      "unicode_decimal": 59629
+    },
+    {
+      "icon_id": "10230341",
+      "name": "祝贺",
+      "font_class": "zhuhe",
+      "unicode": "e6f5",
+      "unicode_decimal": 59125
+    },
+    {
+      "icon_id": "13814965",
+      "name": "查询 (1)",
+      "font_class": "chaxun1",
+      "unicode": "e6fb",
+      "unicode_decimal": 59131
+    },
+    {
+      "icon_id": "3859398",
+      "name": "定时设置",
+      "font_class": "dingshishezhi",
+      "unicode": "e6f4",
+      "unicode_decimal": 59124
+    },
+    {
+      "icon_id": "9231512",
+      "name": "历史",
+      "font_class": "lishi2",
+      "unicode": "e6ea",
+      "unicode_decimal": 59114
+    },
+    {
+      "icon_id": "10051461",
+      "name": "当前时区",
+      "font_class": "dangqianshiqu",
+      "unicode": "e6e8",
+      "unicode_decimal": 59112
+    },
+    {
+      "icon_id": "2543852",
+      "name": "时区ICON",
+      "font_class": "shiquICON",
+      "unicode": "e6e3",
+      "unicode_decimal": 59107
+    },
+    {
+      "icon_id": "7911941",
+      "name": "代码",
+      "font_class": "daima",
+      "unicode": "e6e7",
+      "unicode_decimal": 59111
+    },
+    {
       "icon_id": "17780636",
       "name": "gbase",
       "font_class": "gbase",

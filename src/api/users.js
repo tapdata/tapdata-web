@@ -13,6 +13,9 @@ export default class users extends PublicAPI {
 	login(params) {
 		return axios.post(this.url + '/login', params);
 	}
+	post(params) {
+		return axios.post(this.url, params);
+	}
 	getUserById(params) {
 		return axios.get(this.url + params);
 	}
@@ -30,5 +33,21 @@ export default class users extends PublicAPI {
 
 	patch(params) {
 		return axios.patch(`${this.url}/${params.id}`, params);
+	}
+
+	resetPassword(params) {
+		return axios.post(this.url + '/reset-password', params);
+	}
+
+	checktoken() {
+		return axios.get(this.url + '/checktoken');
+	}
+
+	newResetPassword(token) {
+		return axios.post(this.url + '/newResetPassword?access_token=' + token);
+	}
+
+	confirm(id, token) {
+		return axios.get(`${this.url} + /confirm?uid=${id}&token=${token}`);
 	}
 }
