@@ -4,9 +4,14 @@
  * @description
  */
 import PublicAPI from './publicApi';
+import axios from 'axios';
 
 export default class notification extends PublicAPI {
 	constructor() {
 		super('/api/Settings');
+	}
+
+	getRegistryPolicy() {
+		return axios.get(`${this.url}/getRegistryPolicy`);
 	}
 }

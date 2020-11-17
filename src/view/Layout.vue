@@ -225,7 +225,7 @@ let menuSetting = [
 		icon: 'jiekoufuwu',
 		children: [
 			{ name: 'tasks' },
-			{ name: 'agentdownload' },
+			// { name: 'agentdownload' },
 			{ name: 'clusterManagement' },
 			{ name: 'agents' },
 			{ name: 'serversOversee' },

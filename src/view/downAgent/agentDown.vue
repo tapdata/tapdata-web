@@ -183,7 +183,7 @@ export default {
 		this.windowLink =
 			'tapdata start backend token ' + this.$cookie.get('token') + ' ' + this.$cookie.get('user_id');
 		this.LinuxLink =
-			'wget "https://demo.tapdata.net/static/tapdata" && chmod +x tapdata && ./tapdata start backend token ' +
+			'wget "http://resource.tapdata.net/package/feagent/tapdata" && chmod +x tapdata && ./tapdata start backend token ' +
 			this.$cookie.get('token') +
 			' ' +
 			this.$cookie.get('user_id');
@@ -210,7 +210,7 @@ export default {
 
 		// windows下载
 		handleDownLoad() {
-			window.location = 'https://demo.tapdata.net/static/tapdata.exe';
+			window.location = 'http://resource.tapdata.net/package/feagent/tapdata.exe';
 		},
 
 		// 复制命令行
