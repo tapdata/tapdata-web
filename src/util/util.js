@@ -19,6 +19,10 @@ export function signOut() {
 	sessionStorage.removeItem('BTN_AUTHS');
 	cookie.delete('token');
 	cookie.delete('user_id');
+	cookie.delete('login');
+	cookie.delete('isAdmin');
+	cookie.delete('email');
+	cookie.delete('username');
 	window.location.href = '/#/login';
 }
 
