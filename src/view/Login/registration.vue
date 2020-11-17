@@ -4,7 +4,7 @@
 		<main>
 			<div class="body" :class="{ dk: platform === 'DK' }">
 				<el-card class="sign-in-panel">
-					<div class="title">{{ $t('app.signIn.registry') }}</div>
+					<div class="title" v-if="platform === 'CLOUD'">{{ $t('app.signIn.registry') }}</div>
 					<div class="error-tips" v-show="errorMessage">
 						<i class="el-icon-warning-outline"></i>
 						{{ errorMessage }}
@@ -34,8 +34,9 @@
 							</el-input>
 						</el-form-item>
 						<el-checkbox class="keep-sign-in" v-model="keepSignIn">
-							<span style="color: #666;">{{ $t('app.signIn.registry_tip') }}</span
-							>{{ $t('app.signIn.userPplicy') }}
+							<span style="color:#999"
+								>{{ $t('app.signIn.registry_tip') }} <i>{{ $t('app.signIn.userPplicy') }}</i></span
+							>
 						</el-checkbox>
 						<el-button
 							class="btn-sign-in"
@@ -48,21 +49,6 @@
 							{{ $t('app.signIn.nextStep') }}
 						</el-button>
 					</el-form>
-					<!-- <form>
-						<input
-							class="input"
-							type="email"
-							autocomplete="username"
-							:placeholder="$t('app.signIn.email_placeholder')"
-							v-model="form.email"
-						/>
-						<input
-							class="input"
-							autocomplete="current-password"
-							:placeholder="$t('app.signIn.password_placeholder')"
-							v-model="form.password"
-						/>
-					</form> -->
 
 					<div class="back-login">
 						{{ $t('app.signIn.haveAccpunt') }}
@@ -128,6 +114,7 @@ export default {
 			}
 		};
 	},
+
 	methods: {
 		passwordTypeChange() {
 			this.flag = !this.flag;
@@ -155,7 +142,6 @@ export default {
 
 			this.loading = true;
 			try {
-				debugger;
 				let usersModel = this.$api('users');
 
 				this.$cookie.set('location_origin', window.location.origin);
@@ -166,12 +152,10 @@ export default {
 					return;
 				}
 				this.$cookie.set('user_id', data.id);
-				let email = form.email,
-					password = form.password;
 				setTimeout(() => {
 					this.$router.push({
 						name: 'verificationEmail',
-						params: { password: password, email: email }
+						params: { data: this.form }
 					});
 				}, 5000);
 			} catch (e) {
@@ -340,7 +324,6 @@ export default {
 			// 	}
 			// }
 			.keep-sign-in {
-				margin-top: 15px;
 				font-size: 14px;
 				color: rgba(153, 153, 153, 1);
 			}

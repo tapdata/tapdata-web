@@ -10,36 +10,35 @@
 							{{ $t('app.signIn.account') }}
 							<i>{{ email }}</i>
 							{{
-								type === 'reset'
-									? $t('app.signIn.resetAccountSuccess')
-									: $t('app.signIn.accountSuccess')
+								type === 'registy'
+									? $t('app.signIn.accountSuccess')
+									: $t('app.signIn.resetAccountSuccess')
 							}}
 						</p>
-						<p>{{ $t('app.signIn.clickBtn') }}</p>
+						<p v-if="type === 'registy'">{{ $t('app.signIn.clickBtn') }}</p>
+						<p v-else>{{ $t('app.signIn.resetClickBtn') }}</p>
+
 						<el-button class="btn" type="primary" size="mini" @click="goLogin">{{
 							$t('app.signIn.goLogin')
 						}}</el-button>
 					</div>
 				</template>
+
 				<template v-if="result === 'error'">
 					<div class="image iconfont icon-cuowu errorIcon"></div>
 					<div class="text">
 						<p>
 							{{ $t('app.signIn.account') }}<i>{{ email }}</i
 							>{{
-								type === 'reset'
-									? $t('app.signIn.resetConnectionFailed')
-									: $t('app.signIn.connectionFailed')
+								type === 'registy'
+									? $t('app.signIn.connectionFailed')
+									: $t('app.signIn.resetConnectionFailed')
 							}}
 						</p>
-						<div style="font-size: 12px;">
-							{{ $t('app.signIn.clickText')
-							}}<span @click="send"
-								>{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }})，</i></span
-							>
+						<div style="font-size: 18px;">
 							{{ $t('app.signIn.confirmEmail')
 							}}<span @click="backRegisty">{{
-								type === 'reset' ? $t('app.signIn.modifyPassword') : $t('app.signIn.registered')
+								type === 'registy' ? $t('app.signIn.registered') : $t('app.signIn.modifyPassword')
 							}}</span>
 						</div>
 					</div>
@@ -59,32 +58,67 @@ export default {
 	components: { Header },
 	data() {
 		return {
-			type: 'reset',
+			type: 'registy',
 			platform: window._TAPDATA_OPTIONS_.platform,
 			loading: false,
 			flag: false,
-			email: this.$route.params.email ? this.$route.params.email : '',
-			password: this.$route.params.password ? this.$route.params.password : '',
+			email: '',
 			timer: null,
 			time: 0,
-			result: ''
+			result: '',
+			queryData: null
 		};
+	},
+	created() {
+		if (this.$route.query) {
+			this.queryData = this.$route.query;
+			this.type = this.$route.query.type ? this.$route.query.type : '';
+			this.email = this.queryData.email;
+		}
+
+		if (this.type === 'registy') {
+			if (this.queryData.uid && this.queryData.token) {
+				this.getRegistydata(this.queryData.uid, this.queryData.token);
+			}
+		} else {
+			if (this.queryData.access_token) {
+				this.getResetdata();
+			}
+		}
 	},
 
 	methods: {
-		getRerurndata() {
-			usersModel.newResetPassword().then(res => {
-				if (res.statusText === 'OK' || res.status === 204) {
-					this.result = 'success';
-				} else {
+		getResetdata() {
+			usersModel
+				.newResetPassword(this.queryData.access_token)
+				.then(res => {
+					if (res) {
+						this.result = 'success';
+					}
+				})
+				.catch(() => {
 					this.result = 'error';
-				}
-			});
+				});
 		},
 
-		langChange(lang) {
-			localStorage.setItem('tapdata_localize_lang', lang);
-			location.reload();
+		getRegistydata(uid, token) {
+			usersModel
+				.confirm(uid, token)
+				.then(res => {
+					if (res) {
+						this.result = 'success';
+					}
+				})
+				.catch(() => {
+					this.result = 'error';
+				});
+		},
+
+		// 去注册
+		backRegisty() {
+			this.$router.push({
+				name: 'registry'
+			});
 		},
 
 		// 去登录
@@ -110,7 +144,7 @@ export default {
 		.email-main {
 			display: flex;
 			flex-direction: row;
-			width: 600px;
+			width: 500px;
 			height: 150px;
 			margin: 0 auto;
 			text-align: left;
@@ -128,6 +162,7 @@ export default {
 				color: #666;
 				text-align: center;
 				p {
+					font-size: 18px;
 					text-align: left;
 					user-select: none;
 					padding-bottom: 6px;
@@ -136,6 +171,7 @@ export default {
 					}
 				}
 				div {
+					text-align: left;
 					span {
 						color: #48b6e2;
 						cursor: pointer;

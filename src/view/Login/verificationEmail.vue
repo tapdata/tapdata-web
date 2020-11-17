@@ -12,9 +12,13 @@
 					<p>{{ $t('app.signIn.mailbox') }}</p>
 					<div>
 						{{ $t('app.signIn.receiveEmail') }}
-						<span @click="send"
-							>{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }})</i>,</span
+						<span @click="resetSend" v-if="type === 'reset'"
+							>{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }})</i></span
 						>
+						<span @click="send" v-else
+							>{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }})</i></span
+						>,
+
 						{{ $t('app.signIn.orClick') }}
 						<span @click="backLogin">{{ $t('app.signIn.signIn') }}</span>
 					</div>
@@ -26,6 +30,8 @@
 
 <script>
 import Header from './component/header';
+import factory from '@/api/factory';
+const usersModel = factory('users');
 
 export default {
 	name: 'SignIn',
@@ -36,15 +42,20 @@ export default {
 			platform: window._TAPDATA_OPTIONS_.platform,
 			loading: false,
 			flag: false,
-			email: this.$route.params.email ? this.$route.params.email : '',
+			email: '',
 			password: '',
 			timer: null,
-			time: 0
+			time: 0,
+			form: null
 		};
 	},
 
 	created() {
-		this.password = this.$route.params.password ? this.$route.params.password : '';
+		if (this.$route.params) {
+			this.form = this.$route.params.data;
+			this.email = this.form.email;
+			this.type = this.$route.params.type ? this.$route.params.type : '';
+		}
 	},
 
 	methods: {
@@ -57,13 +68,46 @@ export default {
 		async send() {
 			const TIME_COUNT = 60;
 			if (!this.timer) {
+				try {
+					this.time = TIME_COUNT;
+					this.$cookie.set('location_origin', window.location.origin);
+					let result = await usersModel.post({
+						email: this.email,
+						password: this.password
+					});
+					if (result) {
+						this.timer = setInterval(() => {
+							if (this.time > 0 && this.time <= TIME_COUNT) {
+								this.time--;
+							} else {
+								this.time = 0;
+								clearInterval(this.timer);
+								this.timer = null;
+							}
+						}, 1000);
+					}
+				} catch (e) {
+					if (e.response && e.response.data) {
+						if (e.response.data.error.message.indexOf('Email already exists')) {
+							this.$message.error(this.$t('app.signIn.email_existed'));
+						} else {
+							this.$message.error(`${e.response.data.error.message}`);
+						}
+					}
+					clearInterval(this.timer);
+					this.timer = null;
+					this.loading = false;
+				}
+			}
+		},
+
+		// 重置密码重新发送
+		async resetSend() {
+			const TIME_COUNT = 60;
+			if (!this.timer) {
 				this.time = TIME_COUNT;
-				let usersModel = this.$api('users');
-				await usersModel.post({
-					email: this.email,
-					password: this.password,
-					location_origin: window.location.origin
-				});
+				this.$cookie.set('location_origin', window.location.origin);
+				await usersModel.reset(this.form);
 				this.timer = setInterval(() => {
 					if (this.time > 0 && this.time <= TIME_COUNT) {
 						this.time--;
@@ -82,6 +126,11 @@ export default {
 				path: '/login'
 			});
 		}
+	},
+
+	destroyed() {
+		clearInterval(this.timer);
+		this.timer = null;
 	}
 };
 </script>
@@ -145,7 +194,7 @@ export default {
 		.email-main {
 			display: flex;
 			flex-direction: row;
-			width: 600px;
+			width: 500px;
 			height: 150px;
 			margin: 0 auto;
 			text-align: left;
@@ -158,6 +207,7 @@ export default {
 				font-size: 14px;
 				color: #666;
 				p {
+					font-size: 18px;
 					user-select: none;
 					padding-bottom: 6px;
 					i {
@@ -165,6 +215,7 @@ export default {
 					}
 				}
 				div {
+					padding-top: 20px;
 					span {
 						color: #48b6e2;
 						cursor: pointer;

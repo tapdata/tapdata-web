@@ -25,7 +25,7 @@
 							<el-input
 								v-model="form.newPassword"
 								autocomplete="current-password"
-								:type="[flag ? 'password' : 'text']"
+								:type="passwordType"
 								:placeholder="$t('app.signIn.newpassword_placeholder')"
 								@keyup.enter="submit"
 							>
@@ -34,7 +34,7 @@
 									:class="[flag ? 'icon-closeeye' : 'icon-openeye', 'iconfont']"
 									style="margin-top:8px;font-size:18px;cursor: pointer;"
 									autocomplete="auto"
-									@click="flag = !flag"
+									@click="passwordTypeChange"
 								/>
 							</el-input>
 						</el-form-item>
@@ -67,30 +67,19 @@ export default {
 			form: {
 				email: '',
 				newPassword: '',
-				location_origin: window.location.host
+				location_origin: window.location.origin
 			},
 			errorMessage: '',
-			flag: false
+			flag: false,
+			passwordType: 'password'
 		};
 	},
-	async mounted() {
-		// let result = await usersModel.checktoken(this.$route.query.access_token);
-		// if (result.data.tokens && result.data.tokens.length > 0) {
-		// 	let createdDate = result.data.tokens[0].created;
-		// 	let created = new moment(createdDate);
-		// 	if (created.add(30, 'minutes').diff(new moment()) < 0) {
-		// 		this.expired = true;
-		// 	}
-		// }
-		// if (this.expired) {
-		// 	this.notifyFunc('Forget password link was already expired');
-		// 	let ptr = setTimeout(() => {
-		// 		this.$router.push({ path: '/' });
-		// 		clearTimeout(ptr);
-		// 	}, 3000);
-		// }
-	},
+
 	methods: {
+		passwordTypeChange() {
+			this.flag = !this.flag;
+			this.passwordType = this.flag ? 'password' : 'text';
+		},
 		async submit() {
 			let form = this.form;
 			let message = '';
@@ -109,18 +98,19 @@ export default {
 			this.loading = true;
 			try {
 				await usersModel.reset(this.form);
-				// debugger;
 
 				setTimeout(() => {
 					this.$router.push({
 						name: 'verificationEmail',
-						params: { first: 1, email: this.form.email }
+						params: { first: 1, data: this.form, type: 'reset' }
 					});
 				}, 5000);
 			} catch (e) {
 				if (e.response.data.error) {
 					if (e.response.data.error.message === '找不到电子邮件') {
 						this.errorMessage = this.$t('app.signIn.notMailbox');
+					} else if (e.response.data.error.message === '尚未验证电子邮件') {
+						this.errorMessage = this.$t('app.signIn.email_invalid');
 					}
 				}
 			}

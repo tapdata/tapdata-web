@@ -32,7 +32,11 @@ export default class DataFlows extends PublicAPI {
 		return axios.post(this.url + '/reset', params);
 	}
 
-	newResetPassword() {
-		return axios.post(this.url + '/newResetPassword');
+	newResetPassword(token) {
+		return axios.post(this.url + '/newResetPassword?access_token=' + token);
+	}
+
+	confirm(id, token) {
+		return axios.get(`${this.url} + /confirm?uid=${id}&token=${token}`);
 	}
 }
