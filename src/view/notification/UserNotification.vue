@@ -119,8 +119,8 @@ export default {
 			}
 			if (range && range.length) {
 				where.and = [
-					{ last_updated: { gte: range[0].toISOString() } },
-					{ last_updated: { lte: range[1].toISOString() } }
+					{ createTime: { gte: range[0].toISOString() } },
+					{ createTime: { lte: range[1].toISOString() } }
 				];
 			}
 			let filter = {
