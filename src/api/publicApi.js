@@ -52,7 +52,7 @@ axios.interceptors.response.use(
 							response: {
 								code: '110500',
 								status: 500,
-								data: data.msg
+								msg: data.msg
 							}
 						});
 						break;
@@ -61,7 +61,7 @@ axios.interceptors.response.use(
 							response: {
 								code: '110400',
 								status: 500,
-								data: data.msg
+								msg: data.msg
 							}
 						});
 						break;

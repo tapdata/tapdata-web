@@ -562,11 +562,11 @@ const en = {
 			sync_type_tip: 'Transmission type can be changed after disable aggregation settings of collection node: '
 		},
 		skipError: {
-			skipErrorSettings: 'Skip error settings',
-			tip: 'Select errors that you wanna skip will be skipped once after this startup. ',
-			attention:
-				'Attention: If the dirty data caused error not be processed, skipping error operation may cause this dirty data to be discarded',
-			startJob: ' Skip above errors, start job',
+			skipErrorSettings: 'Data Processing Error Handling',
+			tip:
+				'There were data processing errors detected in the job, please make sure these errors have been addressed. If you would like to skip these errors, please check them and click the "Skip Errors" button.  ',
+			attention: 'WARNING: If you chose to skip the errors, the relevant data may be discarded. ',
+			startJob: 'Do not skip, continue to start',
 			cancel: 'Cancel',
 			taskName: 'Task name'
 		}
