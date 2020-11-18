@@ -9,7 +9,7 @@
 						<i class="el-icon-warning-outline"></i>
 						{{ errorMessage }}
 					</div>
-					<el-form ref="form" :model="form" :rules="rules">
+					<el-form ref="form" :model="form">
 						<el-form-item prop="email">
 							<el-input
 								v-model="form.email"
@@ -75,25 +75,25 @@ export default {
 	name: 'SignIn',
 	components: { Header },
 	data() {
-		var userEmail = (rule, value, callback) => {
-			// eslint-disable-next-line
-			const mailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-			if (!value) {
-				return callback(new Error(this.$t('app.signIn.email_null')));
-			}
-			setTimeout(() => {
-				if (mailReg.test(value)) {
-					callback();
-				} else {
-					callback(new Error(this.$t('app.signIn.email_invalid')));
-				}
-			}, 100);
-		};
-		var validatePass = (rule, value, callback) => {
-			if (!value || value.length < 5) {
-				callback(new Error(this.$t('app.signIn.password_invalid')));
-			}
-		};
+		// var userEmail = (rule, value, callback) => {
+		// 	// eslint-disable-next-line
+		// 	const mailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+		// 	if (!value) {
+		// 		return callback(new Error(this.$t('app.signIn.email_null')));
+		// 	}
+		// 	setTimeout(() => {
+		// 		if (mailReg.test(value)) {
+		// 			callback();
+		// 		} else {
+		// 			callback(new Error(this.$t('app.signIn.email_invalid')));
+		// 		}
+		// 	}, 100);
+		// };
+		// var validatePass = (rule, value, callback) => {
+		// 	if (!value || value.length < 5) {
+		// 		callback(new Error(this.$t('app.signIn.password_invalid')));
+		// 	}
+		// };
 		return {
 			// originUrl: window.location.origin,
 			platform: window._TAPDATA_OPTIONS_.platform,
@@ -107,11 +107,11 @@ export default {
 			errorMessage: '',
 			keepSignIn: true,
 			passwordType: 'password',
-			flag: false,
-			rules: {
-				email: [{ validator: userEmail, trigger: 'blur' }],
-				password: [{ validator: validatePass, trigger: 'blur' }]
-			}
+			flag: false
+			// rules: {
+			// 	email: [{ validator: userEmail, trigger: 'blur' }],
+			// 	password: [{ validator: validatePass, trigger: 'blur' }]
+			// }
 		};
 	},
 
@@ -159,17 +159,16 @@ export default {
 					});
 				}, 5000);
 			} catch (e) {
-				if (e.response && e.response.data) {
-					if (e.response.data.error.message.indexOf('Email already exists')) {
+				if (e.response && e.response.msg) {
+					if (e.response.msg.indexOf('Email already exists')) {
 						this.errorMessage = this.$t('app.signIn.email_existed');
 					} else {
 						this.errorMessage = `${e.response.data.error.message}`;
 					}
 				}
-
+			} finally {
 				this.loading = false;
 			}
-			this.loading = false;
 		},
 
 		// 跳转登录

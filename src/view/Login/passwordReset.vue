@@ -106,15 +106,16 @@ export default {
 					});
 				}, 5000);
 			} catch (e) {
-				if (e.response.data.error) {
-					if (e.response.data.error.message === '找不到电子邮件') {
+				if (e.response.msg) {
+					if (e.response.msg === '找不到电子邮件') {
 						this.errorMessage = this.$t('app.signIn.notMailbox');
-					} else if (e.response.data.error.message === '尚未验证电子邮件') {
+					} else if (e.response.msg === '尚未验证电子邮件') {
 						this.errorMessage = this.$t('app.signIn.email_invalid');
 					}
 				}
+			} finally {
+				this.loading = false;
 			}
-			this.loading = false;
 		},
 
 		// 跳转登录

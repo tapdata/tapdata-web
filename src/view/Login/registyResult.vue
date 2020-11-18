@@ -1,5 +1,5 @@
 <template>
-	<section class="page-registry_status">
+	<section class="page-registry_status" v-loading="loading">
 		<Header></Header>
 		<main>
 			<div class="email-main">
@@ -89,6 +89,7 @@ export default {
 
 	methods: {
 		getResetdata() {
+			this.loading = true;
 			usersModel
 				.newResetPassword(this.queryData.access_token)
 				.then(res => {
@@ -98,10 +99,14 @@ export default {
 				})
 				.catch(() => {
 					this.result = 'error';
+				})
+				.finally(() => {
+					this.loading = false;
 				});
 		},
 
 		getRegistydata(uid, token) {
+			this.loading = true;
 			usersModel
 				.confirm(uid, token)
 				.then(res => {
@@ -111,6 +116,9 @@ export default {
 				})
 				.catch(() => {
 					this.result = 'error';
+				})
+				.finally(() => {
+					this.loading = false;
 				});
 		},
 

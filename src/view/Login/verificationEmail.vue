@@ -1,5 +1,5 @@
 <template>
-	<section class="page-registry_email">
+	<section class="page-registry_email" v-loading="loading">
 		<Header></Header>
 		<main>
 			<div class="email-main">
@@ -39,8 +39,8 @@ export default {
 	data() {
 		return {
 			type: 'reset',
-			platform: window._TAPDATA_OPTIONS_.platform,
 			loading: false,
+			platform: window._TAPDATA_OPTIONS_.platform,
 			flag: false,
 			email: '',
 			password: '',
@@ -67,6 +67,7 @@ export default {
 		// 重新发送
 		async send() {
 			const TIME_COUNT = 60;
+			this.loading = true;
 			if (!this.timer) {
 				try {
 					this.time = TIME_COUNT;
@@ -87,11 +88,11 @@ export default {
 						}, 1000);
 					}
 				} catch (e) {
-					if (e.response && e.response.data) {
-						if (e.response.data.error.message.indexOf('Email already exists')) {
+					if (e.response && e.response.msg) {
+						if (e.response.msg.indexOf('Email already exists')) {
 							this.$message.error(this.$t('app.signIn.email_existed'));
 						} else {
-							this.$message.error(`${e.response.data.error.message}`);
+							this.$message.error(`${e.response.msg}`);
 						}
 					}
 					clearInterval(this.timer);
@@ -99,11 +100,13 @@ export default {
 					this.loading = false;
 				}
 			}
+			this.loading = false;
 		},
 
 		// 重置密码重新发送
 		async resetSend() {
 			const TIME_COUNT = 60;
+			this.loading = true;
 			if (!this.timer) {
 				this.time = TIME_COUNT;
 				this.$cookie.set('location_origin', window.location.origin);
@@ -118,6 +121,7 @@ export default {
 					}
 				}, 1000);
 			}
+			this.loading = false;
 		},
 
 		// 邮件跳转登录
