@@ -370,14 +370,12 @@ export default {
 			switch (command) {
 				case 'account':
 					this.$router.push({
-						name: 'account',
-						params: { type: 'account' }
+						name: 'settingCenter'
 					});
 					break;
 				case 'setting':
 					this.$router.push({
-						path: '/notification/setting',
-						params: { type: 'notification' }
+						name: 'notificationSetting'
 					});
 					break;
 				case 'verifySetting':

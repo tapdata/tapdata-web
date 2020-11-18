@@ -319,18 +319,7 @@ const childRoutes = [
 		component: view('task/TableFlows'),
 		meta: { isCollapse: true }
 	},
-	{
-		path: '/notification/setting',
-		name: 'setting',
-		component: view('notification/setting'),
-		meta: { title: i18n.t('notification.setting'), isCollapse: true }
-	},
-	{
-		path: '/notification',
-		name: 'notification',
-		component: view('notification/Center'),
-		meta: { title: i18n.t('notification.systemNotice'), isCollapse: true }
-	},
+
 	{
 		path: '/dataVerification/:id/edit',
 		name: 'dataVerificationEdit',
@@ -372,10 +361,31 @@ const childRoutes = [
 		component: view('downAgent/agentDown')
 	},
 	{
-		path: '/account',
-		name: 'account',
-		component: view('setting/account'),
-		meta: { title: i18n.t('tap.account'), isCollapse: true }
+		path: '/notification',
+		name: 'notification',
+		component: view('notification/Center'),
+		meta: { title: i18n.t('notification.systemNotice'), isCollapse: true }
+	},
+	{
+		path: '/settingCenter',
+		name: 'settingCenter',
+		redirect: 'settingCenter/accountSetting',
+		component: view('setting/SettingCenter'),
+		meta: { title: i18n.t('tap.settingCenter'), isCollapse: true },
+		children: [
+			{
+				path: 'accountSetting',
+				name: 'accountSetting',
+				component: view('setting/AccountSetting'),
+				meta: { title: i18n.t('tap.account'), isCollapse: true }
+			},
+			{
+				path: 'notificationSetting',
+				name: 'notificationSetting',
+				component: view('setting/NotificationSetting'),
+				meta: { title: i18n.t('notification.setting'), isCollapse: true }
+			}
+		]
 	}
 ];
 

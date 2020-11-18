@@ -1,6 +1,6 @@
 <template>
 	<div class="notification-left-sidebar">
-		<div class="title">{{ $t('account.systemSetting') }}</div>
+		<div class="title">{{ $t('account.setCenter') }}</div>
 		<ul>
 			<li
 				v-for="item in settingList"
@@ -21,7 +21,7 @@ export default {
 	data() {
 		return {
 			settingList: [
-				{ icon: 'icon-shezhi1', name: this.$t('account.setCenter'), key: 'setting' },
+				{ icon: 'icon-shezhi1', name: this.$t('account.systemSetting'), key: 'setting' },
 				{ icon: 'icon-lingdang', name: this.$t('notification.setting'), key: 'notification' },
 				{ icon: 'icon-gerenzhongxin', name: this.$t('account.accountSettings'), key: 'account' }
 			],

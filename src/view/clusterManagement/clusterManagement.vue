@@ -215,11 +215,16 @@ export default {
 			managementState: '',
 			apiServerState: '',
 			list: [],
-			editItem: {}
+			editItem: {},
+			timer: null
 		};
 	},
 	created() {
-		this.timer();
+		// 这是一个定时器
+		let that = this;
+		this.timer = setInterval(() => {
+			that.getDataApi();
+		}, 5000);
 
 		this.buildProfile = this.$store.state.buildProfile;
 		if (this.buildProfile) {
@@ -396,14 +401,6 @@ export default {
 			this.sourch = '';
 		},
 
-		// 这是一个定时器
-		timer() {
-			let that = this;
-			return setInterval(() => {
-				that.getDataApi();
-			}, 5000);
-		},
-
 		// 获取数据
 		getDataApi() {
 			let params = {};
@@ -435,6 +432,11 @@ export default {
 			this.dialogForm = false;
 			this.$refs.childRules.closeDialogForm();
 		}
+	},
+
+	destroyed() {
+		clearInterval(this.timer);
+		this.timer = null;
 	}
 };
 </script>

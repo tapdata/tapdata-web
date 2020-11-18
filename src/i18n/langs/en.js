@@ -1711,7 +1711,8 @@ const en = {
 		newPawInconsistent: 'Inconsistent with the new password!',
 		pawSaveSuccess: 'Password saved successfully',
 		currerPawErrorTip: 'The current password is incorrect, please enter the correct password',
-		nameModifySuccess: 'Name modified successfully'
+		nameModifySuccess: 'Name modified successfully',
+		passwordNotCN: 'Only alphanumeric characters and hyphens are allowed in password'
 	}
 };
 

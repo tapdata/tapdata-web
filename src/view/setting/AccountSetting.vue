@@ -1,25 +1,22 @@
 <template>
-	<div class="settingCenter">
-		<div class="setting-main">
-			<subNav></subNav>
-			<div class="setting-right">
-				<div class="title">{{ $t('account.accountSettings') }}</div>
-				<ul class="content">
-					<li v-for="item in infoList" :key="item.key">
-						<span class="label">{{ item.label }}</span>
-						<span class="text"> {{ item.value }} </span>
-						<i
-							:class="[
-								'iconfont',
-								item.icon,
-								rotateFlag && item.key == 'accesscode' ? 'rotateActive' : 'backActive'
-							]"
-							@click="handleChange(item.key)"
-							v-if="item.key !== 'email'"
-						></i>
-					</li>
-				</ul>
-			</div>
+	<div class="account" v-loading="loading">
+		<div class="setting-right">
+			<div class="title">{{ $t('account.accountSettings') }}</div>
+			<ul class="content">
+				<li v-for="item in infoList" :key="item.key">
+					<span class="label">{{ item.label }}</span>
+					<span class="text"> {{ item.value }} </span>
+					<i
+						:class="[
+							'iconfont',
+							item.icon,
+							rotateFlag && item.key == 'accesscode' ? 'rotateActive' : 'backActive'
+						]"
+						@click="handleChange(item.key)"
+						v-if="item.key !== 'email'"
+					></i>
+				</li>
+			</ul>
 		</div>
 		<!-- 修改密码 -->
 		<el-dialog
@@ -96,6 +93,7 @@
 						v-model="form.newEmail"
 						:placeholder="$t('account.enterMailbox')"
 						autocomplete="off"
+						min
 					></el-input>
 				</el-form-item>
 				<el-form-item>
@@ -112,7 +110,7 @@
 		</el-dialog>
 		<!-- 用户名称 -->
 		<el-dialog
-			:title="$t('account.changeEmail')"
+			:title="$t('account.changeUsername')"
 			:visible.sync="usernameDialogFalg"
 			:close-on-click-modal="false"
 			width="600px"
@@ -131,17 +129,25 @@
 
 <script>
 import factory from '@/api/factory';
-import subNav from '@/components/subNav';
 const usersModel = factory('users');
 
 export default {
 	name: 'list',
-	components: { subNav },
 	data() {
 		//此处即表单发送之前验证  验证新密码与原密码
+
 		let validateNewPassword = (rule, value, callback) => {
 			if (value === this.pwd.oldPassword) {
 				callback(new Error(this.$t('account.samePawTip')));
+			} else {
+				callback();
+			}
+		};
+		// 是否是中文
+		let validateisCN = (rule, value, callback) => {
+			const mailReg = /[\u4E00-\u9FA5]/;
+			if (mailReg.test(value)) {
+				callback(new Error(this.$t('account.passwordNotCN')));
 			} else {
 				callback();
 			}
@@ -155,6 +161,7 @@ export default {
 			}
 		};
 		return {
+			loading: false,
 			form: {
 				newEmail: '',
 				password: ''
@@ -188,16 +195,34 @@ export default {
 						required: true,
 						message: this.$t('account.currentPassword'),
 						trigger: 'blur'
+					},
+					{
+						min: 5,
+						message: this.$t('app.signIn.password_invalid'),
+						trigger: 'blur'
+					},
+					{
+						validator: validateisCN,
+						trigger: 'blur'
 					}
 				],
 				newPassword: [
 					{
 						required: true,
-						message: this.$t('account.newPassword'),
-						trigger: 'blur'
+						trigger: 'blur',
+						message: this.$t('account.newPassword')
 					},
 					{
 						validator: validateNewPassword,
+						trigger: 'blur'
+					},
+					{
+						min: 5,
+						message: this.$t('app.signIn.password_invalid'),
+						trigger: 'blur'
+					},
+					{
+						validator: validateisCN,
 						trigger: 'blur'
 					}
 				],
@@ -221,6 +246,7 @@ export default {
 	methods: {
 		// 获取当前信息
 		async handleGetData() {
+			this.loading = true;
 			let parmas = {
 				filter: {
 					where: {
@@ -238,6 +264,7 @@ export default {
 					});
 				});
 			}
+			this.loading = false;
 		},
 
 		// 编辑修改
@@ -263,11 +290,12 @@ export default {
 		confirm() {
 			let parmas = {
 				id: this.$cookie.get('user_id'),
-				usename: this.userName
+				username: this.userName
 			};
 			usersModel.patch(parmas).then(() => {
 				this.$message.success(this.$t('account.nameModifySuccess'));
 				this.usernameDialogFalg = false;
+				this.handleGetData();
 			});
 		},
 
@@ -281,7 +309,10 @@ export default {
 				if (valid) {
 					usersModel
 						.changePassword(parmas)
-						.then(() => {
+						.then(res => {
+							if (res.msg === 'Invalid current password') {
+								this.$message.error(this.$t('account.currerPawErrorTip'));
+							}
 							this.$message.success(this.$t('account.pawSaveSuccess'));
 							this.passwordDialogFalg = false;
 							let cookie = window.VueCookie;
@@ -292,12 +323,7 @@ export default {
 							}, 500);
 						})
 						.catch(e => {
-							if (
-								e.response &&
-								e.response.data &&
-								e.response.data.error &&
-								e.response.data.error.message == 'Invalid current password'
-							) {
+							if (e.response && e.response.msg === 'Invalid current password') {
 								this.$message.error(this.$t('account.currerPawErrorTip'));
 							}
 						});
@@ -331,49 +357,47 @@ export default {
 
 <style scoped lang="less">
 @unreadColor: #ee5353;
-.settingCenter {
-	height: 100%;
-	font-size: 12px;
-	.setting-main {
-		display: flex;
-		justify-content: space-between;
-		height: 100%;
-		.setting-right {
-			width: 100%;
-			flex: 1;
+// .settingCenter {
+// 	height: 100%;
+// 	font-size: 12px;
+// 	.setting-main {
+// 		display: flex;
+// 		justify-content: space-between;
+// 		height: 100%;
+.account {
+	width: 100%;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	margin: 30px 0 0 20px;
+	.title {
+		padding-bottom: 30px;
+		font-size: 18px;
+		color: #333;
+		font-weight: bold;
+	}
+	.content {
+		width: 600px;
+		padding-left: 30px;
+		li {
 			display: flex;
-			flex-direction: column;
-			overflow: hidden;
-			margin: 30px 0 0 20px;
-			.title {
-				padding-bottom: 30px;
-				font-size: 18px;
-				color: #333;
-				font-weight: bold;
+			padding: 20px 0;
+			.label {
+				width: 80px;
 			}
-			.content {
-				width: 600px;
-				padding-left: 30px;
-				li {
-					display: flex;
-					padding: 20px 0;
-					.label {
-						width: 80px;
-					}
-					.text {
-						width: 400px;
-					}
-					i {
-						cursor: pointer;
-					}
-					.rotateActive {
-						transform: rotate(-360deg);
-						transition: all 1s;
-					}
-					.backActive {
-						transition: all 1s;
-					}
-				}
+			.text {
+				width: 400px;
+			}
+			i {
+				cursor: pointer;
+			}
+			.rotateActive {
+				transform: rotate(-360deg);
+				transition: all 1s;
+			}
+			.backActive {
+				transition: all 1s;
 			}
 		}
 	}

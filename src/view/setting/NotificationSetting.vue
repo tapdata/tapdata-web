@@ -1,7 +1,6 @@
 <template>
 	<div class="notification" v-loading="loading">
 		<div class="notification-main">
-			<subNav></subNav>
 			<div class="notification-right-list">
 				<div class="notification-head">
 					<div class="title">{{ $t('notification.systemNotice') }}</div>
@@ -128,12 +127,10 @@
 <script>
 import factory from '../../api/factory';
 const Setting = factory('Setting');
-import { notificationMAP } from './tyepMap';
-import subNav from '../../components/subNav';
+import { notificationMAP } from '../notification/tyepMap';
 
 export default {
 	name: 'list',
-	components: { subNav },
 	data() {
 		return {
 			notificationMAP: notificationMAP,

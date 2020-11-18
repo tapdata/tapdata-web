@@ -42,7 +42,8 @@ const cn = {
 		roleManagement: 'Tapdata-角色管理',
 		roleEdition: 'Tapdata-编辑角色  ',
 		systemSettings: 'Tapdata-系统设置',
-		account: 'Tapdata-个人设置'
+		account: 'Tapdata-个人设置',
+		settingCenter: 'Tapdata-设置中心'
 	},
 	errorCode: {
 		networkUnconnected: '网络未连接',
@@ -1407,8 +1408,7 @@ const cn = {
 		createCollection: '创建新数据集 ',
 		placeholderCollection: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许system开头',
 		tableValidateTip: '新建表名称仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许system开头',
-		collectionValidateTip:
-			'新建数据集名称仅支持英文、数字、下划线下划线、点、减号，并以英文字母开头，不允许system开头',
+		collectionValidateTip: '新建数据集名称仅支持我，并以英文字母开头，不允许system开头',
 		downAgent: {
 			headTitle: 'Agent下载与安装',
 			headInterpretation: 'Tapdata DFS云版需要在本地安装agent以确保连接数据库和传输服务正常运行',
@@ -1687,7 +1687,8 @@ const cn = {
 		newPawInconsistent: '与新密码不一致!',
 		pawSaveSuccess: '密码保存成功',
 		currerPawErrorTip: '当前密码错误，请输入正确的密码',
-		nameModifySuccess: '名称修改成功'
+		nameModifySuccess: '名称修改成功',
+		passwordNotCN: '密码仅允许英文、数字和英文标点符号'
 	}
 };
 

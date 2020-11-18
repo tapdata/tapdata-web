@@ -1684,7 +1684,8 @@ const tc = {
 		newPawInconsistent: '與新密碼不一致!',
 		pawSaveSuccess: '密碼保存成功',
 		currerPawErrorTip: '當前密碼錯誤，請輸入正確的密碼',
-		nameModifySuccess: '名稱修改成功'
+		nameModifySuccess: '名稱修改成功',
+		passwordNotCN: '密碼僅允許英文、數字和英文標點符號'
 	}
 };
 
