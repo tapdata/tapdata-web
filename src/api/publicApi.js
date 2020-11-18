@@ -50,6 +50,7 @@ axios.interceptors.response.use(
 					case '110500':
 						reject({
 							response: {
+								code: '110500',
 								status: 500,
 								data: data.msg
 							}
@@ -58,6 +59,7 @@ axios.interceptors.response.use(
 					case '110400':
 						reject({
 							response: {
+								code: '110400',
 								status: 500,
 								data: data.msg
 							}
