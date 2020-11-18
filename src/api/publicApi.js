@@ -56,8 +56,11 @@ axios.interceptors.response.use(
 						});
 						break;
 					case '110400':
-						Message.error({
-							message: i18n.t('errorCode.requested')
+						reject({
+							response: {
+								status: 500,
+								data: data.msg
+							}
 						});
 						break;
 					case '110401':
