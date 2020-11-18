@@ -47,7 +47,8 @@ const tc = {
 		serverAbnormal: '服務器异常',
 		requested: '請求的資源不存在',
 		unauthorized: '未授權',
-		parameters: '參數不正確'
+		parameters: '參數不正確',
+		timeout: '請求超时'
 	},
 	app: {
 		document: '幫助文檔',

@@ -50,7 +50,8 @@ const cn = {
 		serverAbnormal: '服务器异常',
 		requested: '请求的资源不存在',
 		unauthorized: '未授权',
-		parameters: '参数不正确'
+		parameters: '参数不正确',
+		timeout: '请求超时'
 	},
 	app: {
 		document: '帮助文档',
