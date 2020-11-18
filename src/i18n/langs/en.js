@@ -46,7 +46,8 @@ const en = {
 		serverAbnormal: 'Server abnormal',
 		requested: 'The resource you requested not existed',
 		unauthorized: 'Unauthorized',
-		parameters: 'Incorrect input parameters'
+		parameters: 'Incorrect input parameters',
+		timeout: 'Request time out'
 	},
 	app: {
 		document: 'Documentation',
