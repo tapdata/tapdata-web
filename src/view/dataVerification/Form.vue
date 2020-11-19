@@ -719,7 +719,7 @@ export default {
 							}
 						})
 						.catch(err => {
-							if (err.response.data === 'duplication for names') {
+							if (err.response.msg === 'duplication for names') {
 								this.$message.error(this.$t('message.exists_name'));
 							}
 						});
