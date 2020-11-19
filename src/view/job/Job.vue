@@ -867,7 +867,7 @@ export default {
 					executeMode: this.executeMode || 'normal',
 					category: '数据库克隆',
 					stopOnError: false,
-					mappingTemplate: 'cluster-clone',
+					mappingTemplate: this.mappingTemplate,
 					emailWaring: {
 						edited: true,
 						started: false,
@@ -1093,7 +1093,10 @@ export default {
 		/**
 		 * start button handler
 		 */
-		start() {
+		async start() {
+			if (this.$route.query && this.$route.query.id) {
+				await this.loadDataFlow(this.$route.query.id);
+			}
 			let data = this.getDataFlowData();
 			if (this.buildProfile === 'CLOUD' && !this.downLoadNum) {
 				this.downLoadAgetntdialog = true;
