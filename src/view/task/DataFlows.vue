@@ -846,7 +846,8 @@ export default {
 			this.$store.commit('dataFlows', this.formData);
 
 			let where = {};
-			if (!parseInt(this.$cookie.get('isAdmin'))) where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
+			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
 			let order = 'createTime DESC';
 			if (this.order) {
 				order = this.order;

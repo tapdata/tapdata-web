@@ -336,7 +336,8 @@ export default {
 					inq: ['running', 'paused', 'error']
 				}
 			};
-			if (!parseInt(this.$cookie.get('isAdmin'))) where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
+			if (!parseInt(this.$cookie.get('isAdmin') && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'))
+				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
 			this.$api('DataFlows')
 				.get({
 					filter: JSON.stringify({

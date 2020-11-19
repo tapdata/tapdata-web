@@ -174,7 +174,11 @@ export default {
 			'filter[order]': 'last_updated DESC',
 			'filter[where][loggerName]': 'tapdataAgent'
 		};
-		if (this.buildProfile && this.buildProfile === 'CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
+		if (
+			this.buildProfile &&
+			this.buildProfile === 'CLOUD' &&
+			!parseInt(this.$cookie.get('isAdmin') && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+		) {
 			params['filter[where][username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
 		}
 		setTimeout(() => this.getDataApi(params), 1000);
@@ -205,7 +209,11 @@ export default {
 				'filter[skip]': this.currpage,
 				'filter[order]': 'last_updated DESC'
 			};
-			if (this.buildProfile && this.buildProfile === 'CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
+			if (
+				this.buildProfile &&
+				this.buildProfile === 'CLOUD' &&
+				!parseInt(this.$cookie.get('isAdmin') && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+			) {
 				params['filter[where][username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
 			}
 			let obj = {};
@@ -262,7 +270,11 @@ export default {
 				'filter[skip]': (this.currpage - 1) * psize,
 				'filter[where][loggerName]': 'tapdataAgent'
 			};
-			if (this.buildProfile && this.buildProfile === 'CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
+			if (
+				this.buildProfile &&
+				this.buildProfile === 'CLOUD' &&
+				!parseInt(this.$cookie.get('isAdmin') && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+			) {
 				params['filter[where][username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
 			}
 			this.getDataApi(params);

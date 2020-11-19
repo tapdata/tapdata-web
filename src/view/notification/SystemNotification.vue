@@ -219,7 +219,7 @@ export default {
 			if (this.msg || this.msg !== '') {
 				where.filter.where['msg'] = this.msg;
 			}
-			if (this.$cookie.get('isAdmin') == 0) {
+			if (this.$cookie.get('isAdmin') == 0 && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
 				where.filter.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
 			this.loading = true;
@@ -258,7 +258,7 @@ export default {
 			if (read === false) {
 				where.where['read'] = false;
 			}
-			if (this.$cookie.get('isAdmin') == 0) {
+			if (this.$cookie.get('isAdmin') == 0 && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
 				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
 			if (this.search || this.search !== '') {
@@ -284,7 +284,7 @@ export default {
 					read: false
 				}
 			};
-			if (this.$cookie.get('isAdmin') == 0) {
+			if (this.$cookie.get('isAdmin') == 0 && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
 				where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
 			notification.count(where).then(res => {
@@ -330,7 +330,7 @@ export default {
 		},
 		handleAllRead() {
 			let where = {};
-			if (this.$cookie.get('isAdmin') == 0) {
+			if (this.$cookie.get('isAdmin') == 0 && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
 				where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
 			}
 			let data = {

@@ -545,7 +545,7 @@ export default {
 		getDataFlowApi() {
 			let self = this;
 			let params = {};
-			if (!parseInt(this.$cookie.get('isAdmin'))) {
+			if (!parseInt(this.$cookie.get('isAdmin') && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')) {
 				params = {
 					filter: {
 						where: {
