@@ -261,7 +261,7 @@ export default {
 					type: 'userOperation'
 				}
 			};
-			if (!parseInt(this.$cookie.get('isAdmin') && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')) {
+			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
 				filter.where.user_id = {
 					like: this.$cookie.get('user_id')
 				};
