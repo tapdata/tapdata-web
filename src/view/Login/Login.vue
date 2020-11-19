@@ -29,8 +29,8 @@
 				<el-card class="sign-in-panel">
 					<div class="title">
 						{{ $t('app.signIn.signIn') }}
-						<!--  -->
-						<span @click="registry" v-if="platform === 'CLOUD'">{{ $t('app.signIn.Registration') }}</span>
+						<!--v-if="platform === 'CLOUD'"  -->
+						<span @click="registry">{{ $t('app.signIn.Registration') }}</span>
 					</div>
 					<div class="error-tips" v-show="errorMessage">
 						<i class="el-icon-warning-outline"></i>
@@ -60,7 +60,9 @@
 						{{ $t('app.signIn.signIn') }}
 					</el-button>
 
-					<div class="remember" @click="forgetPassword">{{ $t('app.signIn.forgetPassword') }}</div>
+					<div class="remember">
+						<span @click="forgetPassword">{{ $t('app.signIn.forgetPassword') }}</span>
+					</div>
 				</el-card>
 			</div>
 		</main>
@@ -204,7 +206,7 @@ export default {
 					location.reload();
 				}, 500);
 			} catch (e) {
-				//this.errorMessage = this.$t('app.signIn.signInFail');
+				this.errorMessage = this.$t('app.signIn.signInFail');
 				this.loading = false;
 				this.form.password = oldPassword;
 			}
@@ -343,7 +345,9 @@ export default {
 				padding-top: 16px;
 				font-size: 12px;
 				color: #48b6e2;
-				cursor: pointer;
+				span {
+					cursor: pointer;
+				}
 			}
 		}
 	}

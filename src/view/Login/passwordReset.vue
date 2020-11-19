@@ -31,7 +31,7 @@
 							>
 								<i
 									slot="suffix"
-									:class="[flag ? 'icon-closeeye' : 'icon-openeye', 'iconfont']"
+									:class="[flag ? 'icon-openeye' : 'icon-closeeye', 'iconfont']"
 									style="margin-top:8px;font-size:18px;cursor: pointer;"
 									autocomplete="auto"
 									@click="passwordTypeChange"
@@ -78,7 +78,7 @@ export default {
 	methods: {
 		passwordTypeChange() {
 			this.flag = !this.flag;
-			this.passwordType = this.flag ? 'password' : 'text';
+			this.passwordType = this.flag ? 'text' : 'password';
 		},
 		async submit() {
 			let form = this.form;
@@ -90,6 +90,9 @@ export default {
 				message = this.$t('app.signIn.email_invalid');
 			} else if (!form.newPassword || form.newPassword.length < 5) {
 				message = this.$t('app.signIn.password_invalid');
+				// eslint-disable-next-line
+			} else if (/[\s\u4E00-\u9FA5]/.test(form.newPassword)) {
+				message = this.$t('account.passwordNotCN');
 			}
 			if (message) {
 				this.errorMessage = message;
@@ -104,7 +107,7 @@ export default {
 						name: 'verificationEmail',
 						params: { first: 1, data: this.form, type: 'reset' }
 					});
-				}, 5000);
+				}, 500);
 			} catch (e) {
 				if (e.response.msg) {
 					if (e.response.msg === '找不到电子邮件') {

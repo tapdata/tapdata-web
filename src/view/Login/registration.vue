@@ -130,6 +130,11 @@ export default {
 				message = this.$t('app.signIn.email_invalid');
 			} else if (!form.password || form.password.length < 5) {
 				message = this.$t('app.signIn.password_invalid');
+				// eslint-disable-next-line
+			} else if (/[\s\u4E00-\u9FA5]/.test(form.password)) {
+				message = this.$t('account.passwordNotCN');
+			} else {
+				message = '';
 			}
 			if (message) {
 				this.errorMessage = message;
@@ -152,12 +157,11 @@ export default {
 					return;
 				}
 				this.$cookie.set('user_id', data.id);
-				setTimeout(() => {
-					this.$router.push({
-						name: 'verificationEmail',
-						params: { data: this.form }
-					});
-				}, 5000);
+				debugger;
+				this.$router.push({
+					name: 'verificationEmail',
+					params: { data: this.form }
+				});
 			} catch (e) {
 				if (e.response && e.response.msg) {
 					if (e.response.msg.indexOf('Email already exists')) {

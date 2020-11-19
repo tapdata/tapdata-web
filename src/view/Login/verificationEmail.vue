@@ -12,10 +12,10 @@
 					<p>{{ $t('app.signIn.mailbox') }}</p>
 					<div>
 						{{ $t('app.signIn.receiveEmail') }}
-						<span @click="resetSend" v-if="type === 'reset'"
+						<span @click="resetSend" :class="{ noClick: time > 0 }" v-if="type === 'reset'"
 							>{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }})</i></span
 						>
-						<span @click="send" v-else
+						<span @click="send" :class="{ noClick: time > 0 }" v-else
 							>{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }})</i></span
 						>,
 
@@ -72,9 +72,8 @@ export default {
 				try {
 					this.time = TIME_COUNT;
 					this.$cookie.set('location_origin', window.location.origin);
-					let result = await usersModel.post({
-						email: this.email,
-						password: this.password
+					let result = await usersModel.sendVerifyEmail({
+						email: this.email
 					});
 					if (result) {
 						this.timer = setInterval(() => {
@@ -226,6 +225,9 @@ export default {
 						i {
 							color: #666;
 						}
+					}
+					.noClick {
+						user-select: none;
 					}
 				}
 			}

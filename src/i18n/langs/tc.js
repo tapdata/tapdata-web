@@ -1687,7 +1687,10 @@ const tc = {
 		pawSaveSuccess: '密碼保存成功',
 		currerPawErrorTip: '當前密碼錯誤，請輸入正確的密碼',
 		nameModifySuccess: '名稱修改成功',
-		passwordNotCN: '密碼僅允許英文、數字和英文標點符號'
+		passwordNotCN: '密碼僅允許英文、數字和英文標點符號',
+		user_null: '用戶名不能為空',
+		has_username: '用戶名已存在',
+		editFail: '用戶名修改失敗'
 	}
 };
 

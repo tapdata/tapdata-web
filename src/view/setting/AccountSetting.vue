@@ -117,7 +117,13 @@
 		>
 			<el-form class="form">
 				<el-form-item>
-					<el-input v-model="userName" :placeholder="$t('account.newUsername')" autocomplete="off"></el-input>
+					<el-input
+						v-model="userName"
+						:placeholder="$t('account.newUsername')"
+						maxlength="100"
+						show-word-limit
+						autocomplete="off"
+					></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -145,8 +151,8 @@ export default {
 		};
 		// 是否是中文
 		let validateisCN = (rule, value, callback) => {
-			const mailReg = /[\u4E00-\u9FA5]/;
-			if (mailReg.test(value)) {
+			const passwordReg = /[\s\u4E00-\u9FA5]/;
+			if (passwordReg.test(value)) {
 				callback(new Error(this.$t('account.passwordNotCN')));
 			} else {
 				callback();
@@ -292,11 +298,26 @@ export default {
 				id: this.$cookie.get('user_id'),
 				username: this.userName
 			};
-			usersModel.patch(parmas).then(() => {
-				this.$message.success(this.$t('account.nameModifySuccess'));
-				this.usernameDialogFalg = false;
-				this.handleGetData();
-			});
+			if (this.userName) {
+				usersModel
+					.patch(parmas)
+					.then(() => {
+						this.$message.success(this.$t('account.nameModifySuccess'));
+						this.usernameDialogFalg = false;
+						this.handleGetData();
+					})
+					.catch(e => {
+						if (e.response && e.response.msg) {
+							if (e.response.msg.indexOf('User already exists')) {
+								this.$message.error(this.$t('account.has_username'));
+							} else {
+								this.$message.error(this.$t('account.editFail'));
+							}
+						}
+					});
+			} else {
+				this.$message.error(this.$t('account.user_null'));
+			}
 		},
 
 		// 保存密码

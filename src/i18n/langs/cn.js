@@ -1690,7 +1690,10 @@ const cn = {
 		pawSaveSuccess: '密码保存成功',
 		currerPawErrorTip: '当前密码错误，请输入正确的密码',
 		nameModifySuccess: '名称修改成功',
-		passwordNotCN: '密码仅允许英文、数字和英文标点符号'
+		passwordNotCN: '密码仅允许英文、数字和英文标点符号',
+		user_null: '用户名不能为空',
+		has_username: '用户名已存在',
+		editFail: '用户名修改失败'
 	}
 };
 

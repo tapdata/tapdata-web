@@ -1713,7 +1713,10 @@ const en = {
 		pawSaveSuccess: 'Password saved successfully',
 		currerPawErrorTip: 'The current password is incorrect, please enter the correct password',
 		nameModifySuccess: 'Name modified successfully',
-		passwordNotCN: 'Only alphanumeric characters and hyphens are allowed in password'
+		passwordNotCN: 'Only alphanumeric characters and hyphens are allowed in password',
+		user_null: "That username's been taken",
+		has_username: 'Username already exists',
+		editFail: 'User name modification failed'
 	}
 };
 
