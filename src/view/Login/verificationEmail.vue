@@ -67,7 +67,7 @@ export default {
 		// 重新发送
 		async send() {
 			const TIME_COUNT = 60;
-			this.loading = true;
+			// this.loading = true;
 			if (!this.timer) {
 				try {
 					this.time = TIME_COUNT;
@@ -96,16 +96,16 @@ export default {
 					}
 					clearInterval(this.timer);
 					this.timer = null;
-					this.loading = false;
+					// this.loading = false;
 				}
 			}
-			this.loading = false;
+			// this.loading = false;
 		},
 
 		// 重置密码重新发送
 		async resetSend() {
 			const TIME_COUNT = 60;
-			this.loading = true;
+			// this.loading = true;
 			if (!this.timer) {
 				this.time = TIME_COUNT;
 				this.$cookie.set('location_origin', window.location.origin);
@@ -120,7 +120,7 @@ export default {
 					}
 				}, 1000);
 			}
-			this.loading = false;
+			// this.loading = false;
 		},
 
 		// 邮件跳转登录
@@ -227,7 +227,7 @@ export default {
 						}
 					}
 					.noClick {
-						user-select: none;
+						cursor: default;
 					}
 				}
 			}

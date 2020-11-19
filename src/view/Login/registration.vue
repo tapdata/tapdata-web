@@ -157,7 +157,6 @@ export default {
 					return;
 				}
 				this.$cookie.set('user_id', data.id);
-				debugger;
 				this.$router.push({
 					name: 'verificationEmail',
 					params: { data: this.form }

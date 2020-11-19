@@ -48,7 +48,7 @@ export default class users extends PublicAPI {
 	}
 
 	confirm(id, token) {
-		return axios.get(`${this.url} + /confirm?uid=${id}&token=${token}`);
+		return axios.get(`${this.url}/confirm?uid=${id}&token=${token}`);
 	}
 
 	sendVerifyEmail(params) {

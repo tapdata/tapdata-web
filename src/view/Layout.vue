@@ -291,6 +291,7 @@ export default {
 					self.getDataApi();
 					if (this.downLoadNum) {
 						clearInterval(self.timer);
+						this.timer = null;
 					}
 				}, 5000);
 			}
@@ -301,6 +302,8 @@ export default {
 	},
 	destroyed() {
 		this.$root.$off('updateMenu');
+		clearInterval(this.timer);
+		this.timer = null;
 	},
 	watch: {
 		'$route.name'() {
