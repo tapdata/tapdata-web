@@ -112,17 +112,13 @@ axios.interceptors.response.use(
 					break;
 			}
 		} else if (error.code === 'ECONNABORTED' || error.message === 'Network Error' || !window.navigator.onLine) {
-			setTimeout(() => {
-				Message.error({
-					message: i18n.t('errorCode.networkUnconnected')
-				});
-			}, 100);
+			Message.error({
+				message: i18n.t('errorCode.networkUnconnected')
+			});
 		} else if (error.message && error.message.includes('timeout')) {
-			setTimeout(() => {
-				Message.error({
-					message: i18n.t('errorCode.timeout')
-				});
-			}, 100);
+			Message.error({
+				message: i18n.t('errorCode.timeout')
+			});
 		} else if (!error.message) {
 			return;
 		} else {

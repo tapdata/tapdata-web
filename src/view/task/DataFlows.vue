@@ -1164,9 +1164,12 @@ export default {
 
 		// 运行开关
 		handleStatus(id, oldStatus, status, dataItem) {
-			let data = {
-				status: status
-			};
+			let data = {};
+			if (oldStatus === 'force stopping') {
+				data['status'] = oldStatus;
+			} else {
+				data['status'] = status;
+			}
 			this.agentObj.id = id;
 			this.agentObj.oldStatus = oldStatus;
 			this.agentObj.status = status;
