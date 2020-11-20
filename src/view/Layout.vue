@@ -297,7 +297,6 @@ export default {
 		}
 
 		this.getLicense();
-		this.handleDaas();
 	},
 	destroyed() {
 		this.$root.$off('updateMenu');
