@@ -29,8 +29,8 @@
 				<el-card class="sign-in-panel">
 					<div class="title">
 						{{ $t('app.signIn.signIn') }}
-						<!--v-if="platform === 'CLOUD'"  -->
-						<span @click="registry">{{ $t('app.signIn.Registration') }}</span>
+						<!--  -->
+						<span @click="registry" v-if="platform === 'CLOUD'">{{ $t('app.signIn.Registration') }}</span>
 					</div>
 					<div class="error-tips" v-show="errorMessage">
 						<i class="el-icon-warning-outline"></i>
