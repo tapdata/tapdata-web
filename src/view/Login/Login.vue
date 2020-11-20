@@ -244,8 +244,8 @@ export default {
 				}
 			};
 			Setting.get(where).then(res => {
-				if (res.data.value) {
-					this.$store.commit('buildProfile', res.data.value);
+				if (res.data && res.data.length) {
+					this.$store.commit('buildProfile', res.data[0].value);
 				}
 			});
 		}
