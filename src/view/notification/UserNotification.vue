@@ -53,7 +53,7 @@
 			background
 			layout="prev, pager, next,sizes"
 			:page-sizes="[20, 30, 50, 100]"
-			:page-size="page.size"
+			:page-size.sync="page.size"
 			:total="page.total"
 			:current-page.sync="page.index"
 			@current-change="getData"
