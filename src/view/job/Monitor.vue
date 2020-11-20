@@ -219,6 +219,7 @@ import echartsCompinent from '../../components/echartsCompinent';
 import shaftlessEchart from '../../components/shaftlessEchart';
 import factory from '../../api/factory';
 import { EditorEventType } from '../../editor/lib/events';
+import i18n from '@/i18n/i18n';
 import ws from '../../api/ws';
 const dataFlows = factory('DataFlows');
 const connectionApi = factory('connections');
@@ -468,14 +469,15 @@ export default {
 			},
 
 			dataScreening: null, // 数据总览的echart数据
-			screeningObj: null, // 数据总览的头
-			taskDetailsObj: null,
+			screeningObj: {}, // 数据总览的头
+			nodeDetailsObj: {},
+			taskDetailsObj: {},
+			replicateObj: {},
+			inputOutputObj: {},
+			transfObj: {},
 			nodeDetail: null,
-
-			inputOutputObj: null,
-			transfObj: null,
 			storeData: null,
-			replicateObj: null,
+
 			throughput_time: [],
 			inputAverage: '', // 输入平均值
 			outputAverage: '', // 输出平均值
@@ -531,17 +533,20 @@ export default {
 
 		this.nodeDetailsObj = {
 			title: this.$t('dataFlow.nodeDetail'),
-			type: 'nodeDetails'
+			type: 'nodeDetails',
+			isSpeed: false
 		};
 
 		this.taskDetailsObj = {
 			title: this.$t('dataFlow.taskDetail'),
-			type: 'taskDetails'
+			type: 'taskDetails',
+			isSpeed: false
 		};
 
 		this.screeningObj = {
 			title: this.$t('dataFlow.dataScreening'),
 			type: 'screening',
+			isSpeed: false,
 			isScreeing: false
 		};
 
@@ -559,6 +564,7 @@ export default {
 			title: this.$t('dataFlow.transf'),
 			type: 'transf',
 			isIput: true,
+			isSpeed: false,
 			loading: false,
 			tip: this.$t('dataFlow.transtime_pop')
 		};
@@ -567,6 +573,7 @@ export default {
 			title: this.$t('dataFlow.replicate'),
 			type: 'replicate',
 			isIput: true,
+			isSpeed: false,
 			loading: false,
 			tip: this.$t('dataFlow.replicate_pop')
 		};
@@ -917,11 +924,11 @@ export default {
 						}
 					},
 					data: [
-						this.$t('dataFlow.totalOutput'),
-						this.$t('dataFlow.totalInput'),
-						this.$t('dataFlow.totalInsert'),
-						this.$t('dataFlow.totalUpdate'),
-						this.$t('dataFlow.totalDelete')
+						i18n.t('dataFlow.totalOutput'),
+						i18n.t('dataFlow.totalInput'),
+						i18n.t('dataFlow.totalInsert'),
+						i18n.t('dataFlow.totalUpdate'),
+						i18n.t('dataFlow.totalDelete')
 					],
 					axisPointer: {
 						type: 'shadow'

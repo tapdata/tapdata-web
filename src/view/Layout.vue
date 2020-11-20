@@ -281,7 +281,7 @@ export default {
 			return self.$store.state[data];
 		};
 
-		this.buildProfile = this.$store.state.buildProfile;
+		this.buildProfile = localStorage.getItem('buildProfile');
 
 		if (this.buildProfile && this.buildProfile === 'CLOUD') {
 			this.getDataApi();

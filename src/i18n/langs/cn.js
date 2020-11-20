@@ -92,7 +92,7 @@ const cn = {
 			haveAccpunt: '已有账号?',
 			backLogin: '返回登录',
 
-			email_existed: 'Email 地址已被註冊',
+			email_existed: 'Email 地址已被注册',
 			userPplicy_message: '请选择用户政策',
 			modifyPassword: '修改密码',
 			newPasswordTip: '输入您注册的邮箱和新密码，我们将向您发送用于重置密码的链接',
