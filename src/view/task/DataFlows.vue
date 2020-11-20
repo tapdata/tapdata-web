@@ -1181,7 +1181,7 @@ export default {
 			if (oldStatus === 'error') {
 				errorEvents = await dataFlows.get([id]);
 			}
-			errorEvents = errorEvents.data || {};
+			errorEvents = errorEvents ? errorEvents.data : {};
 			if (oldStatus === 'force stopping') {
 				data['status'] = oldStatus;
 			} else {
