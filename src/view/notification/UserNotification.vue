@@ -33,9 +33,12 @@
 					:placeholder="$t('notification.placeholder.user')"
 					@change="getData(1)"
 				>
-					<el-option v-for="user in userOptions" :key="user.id" :value="user.id">
-						{{ user.username }}
-					</el-option>
+					<el-option
+						v-for="user in userOptions"
+						:key="user.id"
+						:value="user.id"
+						:label="user.username"
+					></el-option>
 				</el-select>
 			</div>
 		</div>
