@@ -1550,7 +1550,10 @@ const tc = {
 			creatTask: '新建任務',
 			clickView: '點擊查看',
 			ok: '好的'
-		}
+		},
+		library: '此庫',
+		sameTable: '以下表存在重名：',
+		repeatTip: '點擊數據庫名對重名的表在數據目錄頁面進行處理，以確保此庫下表名的唯一性'
 	},
 	dataVerification: {
 		verifyDetail: '校驗詳情',

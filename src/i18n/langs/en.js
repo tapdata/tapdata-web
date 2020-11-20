@@ -1572,7 +1572,11 @@ const en = {
 			creatTask: 'Create new',
 			clickView: 'Click view detail',
 			ok: 'OK'
-		}
+		},
+		library: 'The database',
+		sameTable: 'has duplicate name tables: ',
+		repeatTip:
+			'click database name above to process the tables on the data catalog page to ensure the uniqueness of the table name under this database'
 	},
 	dataVerification: {
 		verifyDetail: 'Verify Detail',

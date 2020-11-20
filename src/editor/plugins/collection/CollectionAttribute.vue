@@ -340,6 +340,24 @@
 			@backAggregateResult="backAggregateResult"
 			@closeAggregationDialog="closeAggregationDialog"
 		></AggregationDialog>
+
+		<el-dialog
+			:visible.sync="repeatTableDiao"
+			custom-class="repeatDialog"
+			:close-on-click-modal="false"
+			width="30%"
+		>
+			<div class="dialogMain">
+				<div class="head">
+					{{ $t('dialog.library') }}
+					(<span class="databaseColor" @click="handDatabase">{{ copyConnectionId }}</span
+					>){{ $t('dialog.sameTable') }}
+				</div>
+
+				<div v-for="item in repeatTable" :key="item">{{ item }}</div>
+				<p>{{ $t('dialog.repeatTip') }}</p>
+			</div>
+		</el-dialog>
 	</div>
 </template>
 
@@ -600,7 +618,9 @@ export default {
 			filterTooltip: true,
 			sync_typeFalg: false,
 			loading: false,
-			collectionAggregateTip: true
+			collectionAggregateTip: true,
+			repeatTableDiao: false,
+			repeatTable: []
 		};
 	},
 
@@ -841,10 +861,26 @@ export default {
 						tempSchemas = schemas.sort((t1, t2) =>
 							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
 						);
-						self.schemaSelectConfig.options = tempSchemas.map(item => ({
+						let tableList = tempSchemas.map(item => ({
 							label: item.table_name,
 							value: item.table_name
 						}));
+
+						// 相同表名提示
+						let hash = {};
+						this.repeatTable = [];
+						self.schemaSelectConfig.options = [];
+						tableList.forEach(item => {
+							if (hash[item.value]) {
+								this.repeatTable.push(item.value);
+							} else {
+								self.schemaSelectConfig.options.push(item);
+								hash[item.value] = 1;
+							}
+						});
+						if (this.repeatTable.length > 0) {
+							this.repeatTableDiao = true;
+						}
 
 						this.tableIsLink();
 					}
@@ -1117,6 +1153,20 @@ export default {
 			display: inline-block;
 			padding-left: 20px;
 			cursor: pointer;
+		}
+	}
+	.repeatDialog {
+		.dialogMain {
+			.head {
+				padding-bottom: 10px;
+				.databaseColor {
+					color: #48b6e2;
+					cursor: pointer;
+				}
+			}
+			p {
+				padding-top: 10px;
+			}
 		}
 	}
 }

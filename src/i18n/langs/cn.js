@@ -1441,7 +1441,10 @@ const cn = {
 			creatTask: '新建任务',
 			clickView: '点击查看',
 			ok: '好的'
-		}
+		},
+		library: '此库',
+		sameTable: '以下表存在重名：',
+		repeatTip: '点击数据库名对重名的表在数据目录页面进行处理，以确保此库下表名的唯一性'
 	},
 	notification: {
 		notice: '消息通知',
