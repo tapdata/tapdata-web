@@ -6,6 +6,41 @@
   "description": "Tapdata 线装小图标",
   "glyphs": [
     {
+      "icon_id": "12448864",
+      "name": "历史记录",
+      "font_class": "lishijilu",
+      "unicode": "e6fe",
+      "unicode_decimal": 59134
+    },
+    {
+      "icon_id": "3743341",
+      "name": "权限",
+      "font_class": "quanxian",
+      "unicode": "e6fc",
+      "unicode_decimal": 59132
+    },
+    {
+      "icon_id": "14399451",
+      "name": "锁",
+      "font_class": "suo",
+      "unicode": "e6fd",
+      "unicode_decimal": 59133
+    },
+    {
+      "icon_id": "17249494",
+      "name": "权限",
+      "font_class": "quanxian1",
+      "unicode": "e700",
+      "unicode_decimal": 59136
+    },
+    {
+      "icon_id": "18122836",
+      "name": "权限",
+      "font_class": "quanxian2",
+      "unicode": "e701",
+      "unicode_decimal": 59137
+    },
+    {
       "icon_id": "4108854",
       "name": "监控",
       "font_class": "jiankong",

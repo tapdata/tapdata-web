@@ -9,7 +9,7 @@
 					<span class="unread" v-show="unRead > 0">{{ unRead }}</span>
 				</li>
 				<li :class="{ active: activePanel === 'user' }" @click="selectPanel('user')">
-					<i class="iconfont icon-lingdang"></i>
+					<i class="iconfont icon-lishijilu"></i>
 					<span class="content">{{ $t('notification.userNotice') }}</span>
 				</li>
 			</ul>

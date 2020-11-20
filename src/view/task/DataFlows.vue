@@ -950,8 +950,9 @@ export default {
 									'fullDocument.children': true,
 									'fullDocument.stats': true,
 									'fullDocument.stages.id': true,
-									'fullDocument.stages.name': true
-									//'fullDocument.setting': true,
+									'fullDocument.stages.name': true,
+									'fullDocument.errorEvents': true,
+									'fullDocument.setting.stopOnError': true
 								}
 							}
 						};
