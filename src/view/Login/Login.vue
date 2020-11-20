@@ -245,7 +245,7 @@ export default {
 			};
 			Setting.get(where).then(res => {
 				if (res.data && res.data.length) {
-					this.$store.commit('buildProfile', res.data[0].value);
+					localStorage.setItem('buildProfile', res.data[0].value);
 				}
 			});
 		}

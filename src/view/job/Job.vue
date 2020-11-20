@@ -358,7 +358,7 @@ export default {
 		}
 		this.mappingTemplate = this.$route.query.mapping;
 
-		this.buildProfile = this.$store.state.buildProfile;
+		this.buildProfile = localStorage.getItem('buildProfile');
 
 		let self = this;
 		if (this.buildProfile && this.buildProfile === 'CLOUD') {
