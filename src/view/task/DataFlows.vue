@@ -515,6 +515,7 @@ export default {
 			dialogVisibleSkipError: false,
 			errorEvents: [],
 			currentStatus: '',
+			oldStatus: '',
 			currentId: '',
 			taskName: ''
 		};
@@ -675,6 +676,11 @@ export default {
 		//kipError
 		handleSkipErrorVisible() {
 			this.dialogVisibleSkipError = false;
+			let data = {
+				status: this.oldStatus
+			};
+			dataFlows.updateById(this.currentId, data);
+			this.getData();
 		},
 		handleOperationSkipError(val) {
 			this.currentStatus['errorEvents'] = val;
@@ -951,8 +957,7 @@ export default {
 									'fullDocument.stats': true,
 									'fullDocument.stages.id': true,
 									'fullDocument.stages.name': true,
-									'fullDocument.errorEvents': true,
-									'fullDocument.setting.stopOnError': true
+									'fullDocument.errorEvents': true
 								}
 							}
 						};
@@ -1165,8 +1170,13 @@ export default {
 		},
 
 		// 运行开关
-		handleStatus(id, oldStatus, status, dataItem) {
+		async handleStatus(id, oldStatus, status, dataItem) {
 			let data = {};
+			let errorEvents;
+			if (oldStatus === 'error') {
+				errorEvents = await dataFlows.get([id]);
+			}
+			errorEvents = errorEvents.data || {};
 			if (oldStatus === 'force stopping') {
 				data['status'] = oldStatus;
 			} else {
@@ -1202,8 +1212,9 @@ export default {
 			) {
 				this.dialogVisibleSkipError = true;
 				this.taskName = dataItem.name;
-				this.errorEvents = dataItem.errorEvents;
+				this.errorEvents = errorEvents.errorEvents;
 				this.currentStatus = data;
+				this.oldStatus = oldStatus;
 				this.currentId = id;
 			} else {
 				this.getStatus(id, data);

@@ -684,7 +684,6 @@ export default {
 			ws.on('watch', function(data) {
 				let dat = data.data.fullDocument;
 				self.status = dat.status;
-				self.dataFlow.errorEvents = dat.errorEvents;
 
 				if (self.executeMode !== dat.executeMode) self.executeMode = dat.executeMode;
 
@@ -1099,6 +1098,11 @@ export default {
 		 * start button handler
 		 */
 		async start() {
+			let errorEvent;
+			if (this.$route.query && this.$route.query.id && this.status === 'error') {
+				errorEvent = await dataFlowsApi.get([this.$route.query.id]);
+			}
+			errorEvent = errorEvent.data || {};
 			let data = this.getDataFlowData();
 			if (this.buildProfile === 'CLOUD' && !this.downLoadNum) {
 				this.downLoadAgetntdialog = true;
@@ -1107,12 +1111,12 @@ export default {
 			if (data) {
 				if (
 					this.status === 'error' &&
-					data.setting.stopOnError &&
-					this.dataFlow.errorEvents &&
-					this.dataFlow.errorEvents.length > 0
+					errorEvent.setting.stopOnError &&
+					errorEvent.errorEvents &&
+					errorEvent.errorEvents.length > 0
 				) {
 					this.dialogVisibleSkipError = true;
-					this.errorEvents = this.dataFlow.errorEvents;
+					this.errorEvents = errorEvent.errorEvents;
 					this.taskName = data.name;
 					this.currentStatus = data;
 				} else {
