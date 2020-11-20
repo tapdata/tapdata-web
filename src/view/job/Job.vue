@@ -1102,7 +1102,7 @@ export default {
 			if (this.$route.query && this.$route.query.id && this.status === 'error') {
 				errorEvent = await dataFlowsApi.get([this.$route.query.id]);
 			}
-			errorEvent = errorEvent.data || {};
+			errorEvent = errorEvent ? errorEvent.data : {};
 			let data = this.getDataFlowData();
 			if (this.buildProfile === 'CLOUD' && !this.downLoadNum) {
 				this.downLoadAgetntdialog = true;

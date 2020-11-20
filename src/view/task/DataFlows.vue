@@ -674,8 +674,13 @@ export default {
 			});
 		},
 		//kipError
-		handleSkipErrorVisible() {
+		handleSkipErrorVisible(visible, data) {
+			if (data === 'cancelError') {
+				this.handleCancelSkipError();
+			}
 			this.dialogVisibleSkipError = false;
+		},
+		handleCancelSkipError() {
 			let data = {
 				status: this.oldStatus
 			};
