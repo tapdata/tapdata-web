@@ -91,7 +91,7 @@ const en = {
 
 			email_existed: 'Email address has been registered',
 			userPplicy_message: 'Please tick "agree with user policy"',
-			modifyPassword: 'Modify password',
+			modifyPassword: 'Reset password',
 			newPasswordTip:
 				'Enter your registered mailbox and new password, and we will send you confirmation email and click link to reset password',
 			newpassword_placeholder: 'Please set a new password',
