@@ -43,7 +43,7 @@
 										{{ `${item.serverName} , ` }}
 									</span>
 								</router-link>
-								<span>
+								<span class="list-item-platform">
 									{{
 										`${$t('notification.sourceName')} : ${item.sourceName} , ${$t(
 											'notification.databaseName'
@@ -354,6 +354,9 @@ export default {
 					span {
 						font-size: 12px;
 					}
+				}
+				.list-item-platform {
+					color: #666;
 				}
 				.list-item-time {
 					margin: 15px 0 0 17px;

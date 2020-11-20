@@ -684,6 +684,7 @@ export default {
 			ws.on('watch', function(data) {
 				let dat = data.data.fullDocument;
 				self.status = dat.status;
+				self.dataFlow.errorEvents = dat.errorEvents;
 
 				if (self.executeMode !== dat.executeMode) self.executeMode = dat.executeMode;
 
@@ -1098,9 +1099,6 @@ export default {
 		 * start button handler
 		 */
 		async start() {
-			if (this.$route.query && this.$route.query.id) {
-				await this.loadDataFlow(this.$route.query.id);
-			}
 			let data = this.getDataFlowData();
 			if (this.buildProfile === 'CLOUD' && !this.downLoadNum) {
 				this.downLoadAgetntdialog = true;
@@ -1108,7 +1106,7 @@ export default {
 			}
 			if (data) {
 				if (
-					data.status === 'error' &&
+					this.status === 'error' &&
 					data.setting.stopOnError &&
 					this.dataFlow.errorEvents &&
 					this.dataFlow.errorEvents.length > 0
