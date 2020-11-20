@@ -80,10 +80,13 @@ export default {
 				this.checkedData = [];
 			}
 			this.$emit('operationsSkipError', this.checkedData);
-			this.handleClose();
+			this.handleClose('skipError');
 		},
-		handleClose() {
-			this.$emit('dialogVisible', false);
+		handleClose(data) {
+			if (data !== 'skipError') {
+				data = 'cancelError';
+			}
+			this.$emit('dialogVisible', false, data);
 		}
 	}
 };

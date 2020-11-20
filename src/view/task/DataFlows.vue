@@ -674,8 +674,13 @@ export default {
 			});
 		},
 		//kipError
-		handleSkipErrorVisible() {
+		handleSkipErrorVisible(visible, data) {
+			if (data === 'cancelError') {
+				this.handleCancelSkipError();
+			}
 			this.dialogVisibleSkipError = false;
+		},
+		handleCancelSkipError() {
 			let data = {
 				status: this.oldStatus
 			};
@@ -1176,7 +1181,7 @@ export default {
 			if (oldStatus === 'error') {
 				errorEvents = await dataFlows.get([id]);
 			}
-			errorEvents = errorEvents.data || {};
+			errorEvents = errorEvents ? errorEvents.data : {};
 			if (oldStatus === 'force stopping') {
 				data['status'] = oldStatus;
 			} else {
