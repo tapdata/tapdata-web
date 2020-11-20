@@ -29,5 +29,6 @@ export default {
 <style scoped lang="less">
 .user-operation-wrap {
 	display: inline-block;
+	color: #666;
 }
 </style>

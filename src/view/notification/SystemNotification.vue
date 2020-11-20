@@ -486,7 +486,7 @@ export default {
 			border-radius: 50%;
 		}
 		.list-item-desc {
-			color: #202d40;
+			color: #666;
 			position: absolute;
 			top: 0;
 			left: 30px;

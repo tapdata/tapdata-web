@@ -5,7 +5,7 @@
 				<div class="notification-head">
 					<div class="title">{{ $t('notification.systemNotice') }}</div>
 				</div>
-				<section>
+				<section style="color: #999">
 					{{ $t('notification.tip') }}
 				</section>
 				<section class="run-notification" v-show="runNotification && runNotification.length > 0">
@@ -269,20 +269,24 @@ export default {
 				font-weight: bold;
 				color: #333333;
 				line-height: 32px;
+				margin-bottom: 20px;
 			}
 			ul {
 				margin-left: 20px;
+				margin-top: 20px;
 			}
 			ul li {
-				margin-bottom: 10px;
+				margin-bottom: 20px;
 				.label {
 					display: inline-block;
 					width: 30%;
+					color: #666;
 				}
 				.sort-label {
 					display: inline-block;
 					width: 100px;
 					margin-left: 40px;
+					color: #666;
 				}
 				.item-input {
 					width: 200px;

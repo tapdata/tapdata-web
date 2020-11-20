@@ -200,7 +200,7 @@ export default {
 			font-size: 12px;
 			color: #202d40;
 			.item-time {
-				color: #202d40;
+				color: #999;
 			}
 		}
 	}

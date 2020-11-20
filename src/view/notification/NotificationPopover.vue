@@ -1,5 +1,5 @@
 <template>
-	<el-popover placement="bottom" trigger="hover" @show="activeTab = 'system'">
+	<el-popover placement="bottom" trigger="click" @show="activeTab = 'system'">
 		<div class="btn" slot="reference" @click="toCenter()">
 			<el-badge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
 				<i class="iconfont icon-lingdang"></i>
@@ -343,7 +343,7 @@ export default {
 					border-radius: 50%;
 				}
 				.list-item-desc {
-					color: #202d40;
+					color: #666;
 					position: absolute;
 					top: -5px;
 					left: 30px;
