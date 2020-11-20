@@ -173,7 +173,6 @@ import DownAgent from './downAgent/agentDown';
 import { signOut } from '../util/util';
 import factory from '@/api/factory';
 const cluster = factory('cluster');
-const Setting = factory('Setting');
 
 const Languages = {
 	sc: '中文 (简)',
@@ -485,23 +484,6 @@ export default {
 				}
 			});
 		},
-
-		// 获取是否是企业版
-		handleDaas() {
-			let where = {
-				filter: {
-					where: {
-						id: '33'
-					}
-				}
-			};
-			Setting.findOne(where).then(res => {
-				if (res.data.value) {
-					this.$store.commit('buildProfile', res.data.value);
-				}
-			});
-		},
-
 		// 关闭agent下载弹窗返回参数
 		closeAgentDialog() {
 			this.downLoadAgetntdialog = false;

@@ -30,7 +30,9 @@
 					<div class="title">
 						{{ $t('app.signIn.signIn') }}
 						<!--  -->
-						<span @click="registry" v-if="platform === 'CLOUD'">{{ $t('app.signIn.Registration') }}</span>
+						<span @click="registry" v-if="buildProfile === 'CLOUD'">{{
+							$t('app.signIn.Registration')
+						}}</span>
 					</div>
 					<div class="error-tips" v-show="errorMessage">
 						<i class="el-icon-warning-outline"></i>
@@ -97,8 +99,13 @@ export default {
 				password: ''
 			},
 			keepSignIn: true,
-			errorMessage: ''
+			errorMessage: '',
+			buildProfile: ''
 		};
+	},
+	created() {
+		this.handleDaas();
+		this.buildProfile = this.$store.state.buildProfile;
 	},
 	methods: {
 		langChange(lang) {
@@ -224,6 +231,23 @@ export default {
 		// 忘记密码
 		forgetPassword() {
 			this.$router.push({ name: 'passwordReset' });
+		},
+
+		// 获取是否是企业版
+		handleDaas() {
+			const Setting = this.$api('Setting');
+			let where = {
+				filter: {
+					where: {
+						id: '33'
+					}
+				}
+			};
+			Setting.get(where).then(res => {
+				if (res.data.value) {
+					this.$store.commit('buildProfile', res.data.value);
+				}
+			});
 		}
 	}
 };
