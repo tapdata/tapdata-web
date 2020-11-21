@@ -4,7 +4,9 @@ const en = {
 	...enLocale,
 	tap: {
 		login: 'Tapdata-Login',
-		registry: 'Tapdata-registry',
+		registry: 'Tapdata-register',
+		verificationEmail: 'Tapdata-Email verification',
+		passwordReset: 'Tapdata-Modify Password',
 		home: 'Tapdata-Home',
 		connection: 'Tapdata-Connection ',
 		connectionEdtion: 'Tapdata-ConnectionEdtion',
@@ -39,7 +41,8 @@ const en = {
 		roleManagement: 'Tapdata-RoleManagement',
 		roleEdition: 'Tapdata-RoleEdition ',
 		systemSettings: 'Tapdata-SystemSettings',
-		account: 'Tapdata-Account'
+		account: 'Tapdata-Account',
+		settingCenter: 'Tapdata-Setting Center'
 	},
 	errorCode: {
 		networkUnconnected: 'Network unconnected',

@@ -460,7 +460,7 @@ export default {
 					filter: {
 						where: {
 							'systemInfo.username': {
-								inq: [this.$cookie.get('user_id'), this.$cookie.get('username')]
+								in: [this.$cookie.get('user_id'), this.$cookie.get('username')]
 							}
 						}
 					}

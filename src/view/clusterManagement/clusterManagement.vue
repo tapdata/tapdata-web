@@ -226,7 +226,7 @@ export default {
 			that.getDataApi();
 		}, 5000);
 
-		this.buildProfile = this.$store.state.buildProfile;
+		this.buildProfile = localStorage.getItem('buildProfile');
 		if (this.buildProfile) {
 			this.getDataApi();
 		}

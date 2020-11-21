@@ -548,7 +548,7 @@ export default {
 			self.wsData.length = 0;
 		}, 3000);
 
-		this.buildProfile = this.$store.state.buildProfile;
+		this.buildProfile = localStorage.getItem('buildProfile');
 
 		if (this.buildProfile && this.buildProfile === 'CLOUD') {
 			this.getDataApi();
