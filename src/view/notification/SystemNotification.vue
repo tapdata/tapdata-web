@@ -497,7 +497,7 @@ export default {
 		}
 		.list-item-time {
 			float: right;
-			color: #202d40;
+			color: #666;
 			font-size: 12px;
 		}
 		&:hover {

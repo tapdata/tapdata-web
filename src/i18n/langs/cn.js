@@ -1538,23 +1538,23 @@ const cn = {
 			user: '请选择操作人',
 			keyword: '按数据源/任务名搜索'
 		},
-		account: '用户',
+		account: '用户 ',
 		operation: {
-			create: '创建了',
-			update: '更新了',
-			delete: '删除了',
-			start: '启动了',
-			stop: '停止了',
-			forceStop: '强制停止了',
-			reset: '重置了',
-			copy: '复制了',
-			upload: '导出了',
-			download: '下载了'
+			create: ' 创建了 ',
+			update: ' 更新了 ',
+			delete: ' 删除了 ',
+			start: ' 启动了 ',
+			stop: ' 停止了 ',
+			forceStop: ' 强制停止了 ',
+			reset: ' 重置了 ',
+			copy: ' 复制了 ',
+			upload: ' 导出了 ',
+			download: ' 下载了 '
 		},
 		modular: {
-			connection: '数据源',
-			dataflow: '数据传输任务',
-			inspect: '校验任务'
+			connection: '数据源 ',
+			dataflow: '数据传输任务 ',
+			inspect: '校验任务 '
 		}
 	},
 	dataVerification: {

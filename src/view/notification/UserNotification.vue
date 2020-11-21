@@ -18,7 +18,7 @@
 					size="mini"
 					v-model="search.range"
 					type="datetimerange"
-					range-separator="至"
+					range-separator="-"
 					:start-placeholder="$t('dataFlow.startTime')"
 					:end-placeholder="$t('dataFlow.endTime')"
 					@change="getData(1)"
@@ -191,7 +191,6 @@ export default {
 		overflow: auto;
 		padding-right: 20px;
 		.item {
-			padding-left: 20px;
 			display: flex;
 			justify-content: space-between;
 			align-items: center;

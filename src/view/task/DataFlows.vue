@@ -888,7 +888,11 @@ export default {
 					];
 				}
 				if (this.formData.executionStatus) {
-					where['stats.stagesMetrics.status'] = this.formData.executionStatus;
+					if (this.formData.executionStatus === 'Lag') {
+						where['stats.stagesMetrics.replicationLag'] = 'Lag';
+					} else {
+						where['stats.stagesMetrics.status'] = this.formData.executionStatus;
+					}
 				}
 				if (this.formData.timeData && this.formData.timeData.length !== 0) {
 					let dates = _.cloneDeep(this.formData.timeData);
