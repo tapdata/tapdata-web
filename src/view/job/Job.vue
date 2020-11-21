@@ -1343,6 +1343,7 @@ export default {
 		showSetting() {
 			log('Job.showSetting');
 			this.editor.showSetting(!this.editable);
+			this.editor.graph.selectCell([]);
 		},
 		getGlobalSetting() {
 			let where = {
