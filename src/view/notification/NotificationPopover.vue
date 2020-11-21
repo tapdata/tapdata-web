@@ -15,7 +15,7 @@
 			<el-tab-pane class="tab-item" :label="$t('notification.systemNotice')" name="system">
 				<div class="item-head">
 					<span>
-						<router-link to="/notification/setting">
+						<router-link to="settingCenter/notificationSetting">
 							<span>
 								{{ $t('notification.setting') }}
 							</span>

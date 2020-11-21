@@ -889,7 +889,22 @@ export default {
 				}
 				if (this.formData.executionStatus) {
 					if (this.formData.executionStatus === 'Lag') {
-						where['stats.stagesMetrics.replicationLag'] = 'Lag';
+						where['stats.stagesMetrics.replicationLag'] = {
+							gt: 0
+						};
+					} else if (this.formData.executionStatus === 'initialized') {
+						where.and = [
+							{
+								'stats.stagesMetrics.status': {
+									inq: ['initialized']
+								}
+							},
+							{
+								'stats.stagesMetrics.status': {
+									nin: ['cdc', 'initializing']
+								}
+							}
+						];
 					} else {
 						where['stats.stagesMetrics.status'] = this.formData.executionStatus;
 					}
