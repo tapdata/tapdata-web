@@ -1,5 +1,5 @@
 <template>
-	<el-popover placement="bottom" trigger="click" @show="activeTab = 'system'">
+	<el-popover placement="bottom" trigger="hover" @show="activeTab = 'system'">
 		<div class="btn" slot="reference" @click="toCenter()">
 			<el-badge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
 				<i class="iconfont icon-lingdang"></i>
@@ -135,19 +135,6 @@ export default {
 	}),
 	created() {
 		this.init();
-		debugger;
-		let node = {
-			createTime: '2021-10-09T16:00:03.069Z',
-			id: '6161bc83b7d93d01da3ae4ab',
-			level: 'ERROR',
-			msg: 'connectionInterrupted',
-			serverName: '10.9.35.81',
-			sourceId: '72d1323d-c8c1-472d-be4a-447b755fca46',
-			system: 'agent'
-		};
-		for (let i = 1; i < 50; i++) {
-			this.listData.push(node);
-		}
 	},
 	methods: {
 		init() {
