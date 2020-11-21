@@ -104,6 +104,9 @@ export default {
 	border: 1px solid #dedee4;
 	vertical-align: bottom;
 	font-size: 12px;
+	max-height: 500px;
+	overflow-y: auto;
+	overflow-x: hidden;
 	li {
 		margin-top: 10px;
 		margin-left: 10px;
