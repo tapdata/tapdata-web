@@ -411,7 +411,8 @@ export default {
 			if (
 				this.buildProfile &&
 				this.buildProfile === 'CLOUD' &&
-				!parseInt(this.$cookie.get('isAdmin') && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+				!parseInt(this.$cookie.get('isAdmin')) &&
+				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
 			) {
 				params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
 			}
