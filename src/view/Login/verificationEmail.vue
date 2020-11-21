@@ -13,10 +13,10 @@
 					<div>
 						{{ $t('app.signIn.receiveEmail') }}
 						<span @click="resetSend" :class="{ noClick: time > 0 }" v-if="type === 'reset'"
-							>{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }})</i></span
+							>{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }}s)</i></span
 						>
 						<span @click="send" :class="{ noClick: time > 0 }" v-else
-							>{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }})</i></span
+							>{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }}s)</i></span
 						>,
 
 						{{ $t('app.signIn.orClick') }}
@@ -72,20 +72,19 @@ export default {
 				try {
 					this.time = TIME_COUNT;
 					this.$cookie.set('location_origin', window.location.origin);
-					let result = await usersModel.sendVerifyEmail({
+
+					this.timer = setInterval(() => {
+						if (this.time > 0 && this.time <= TIME_COUNT) {
+							this.time--;
+						} else {
+							this.time = 0;
+							clearInterval(this.timer);
+							this.timer = null;
+						}
+					}, 1000);
+					await usersModel.sendVerifyEmail({
 						email: this.email
 					});
-					if (result) {
-						this.timer = setInterval(() => {
-							if (this.time > 0 && this.time <= TIME_COUNT) {
-								this.time--;
-							} else {
-								this.time = 0;
-								clearInterval(this.timer);
-								this.timer = null;
-							}
-						}, 1000);
-					}
 				} catch (e) {
 					if (e.response && e.response.msg) {
 						if (e.response.msg.indexOf('Email already exists')) {
@@ -109,7 +108,6 @@ export default {
 			if (!this.timer) {
 				this.time = TIME_COUNT;
 				this.$cookie.set('location_origin', window.location.origin);
-				await usersModel.reset(this.form);
 				this.timer = setInterval(() => {
 					if (this.time > 0 && this.time <= TIME_COUNT) {
 						this.time--;
@@ -119,8 +117,8 @@ export default {
 						this.timer = null;
 					}
 				}, 1000);
+				await usersModel.reset(this.form);
 			}
-			// this.loading = false;
 		},
 
 		// 邮件跳转登录

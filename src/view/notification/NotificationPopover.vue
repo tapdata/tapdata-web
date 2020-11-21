@@ -15,7 +15,7 @@
 			<el-tab-pane class="tab-item" :label="$t('notification.systemNotice')" name="system">
 				<div class="item-head">
 					<span>
-						<router-link to="/notification/setting">
+						<router-link to="settingCenter/notificationSetting">
 							<span>
 								{{ $t('notification.setting') }}
 							</span>
@@ -324,7 +324,7 @@ export default {
 			display: inline-block;
 			cursor: pointer;
 			color: #666;
-			padding-right: 20px;
+			padding-right: 35px;
 			padding-left: 10px;
 		}
 		.item-text {
@@ -338,16 +338,16 @@ export default {
 	}
 	.tab-item {
 		.cuk-list {
-			height: 400px;
+			height: 362px;
 			overflow-y: auto;
 			font-size: 12px;
+			margin-bottom: 39px;
 			.list-item {
 				position: relative;
 				background: #fff;
 				border-bottom: 1px solid #dedee4;
-				padding: 0 5px 5px 20px;
+				padding: 0 5px 5px 0;
 				cursor: pointer;
-				margin-bottom: 39px;
 				.list-item-content {
 					position: relative;
 					height: 40px;

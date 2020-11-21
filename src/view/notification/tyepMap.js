@@ -53,7 +53,6 @@ export const notificationMAP = {
 	jobDeleted: i18n.t('notification.jobDeleted'),
 	jobStateError: i18n.t('notification.jobStateError'),
 	jobEncounterError: i18n.t('notification.jobEncounterError'),
-	jobNoticeInterval: i18n.t('notification.jobNoticeInterval'),
 	CDCLagTime: i18n.t('notification.CDCLagTime'),
 	lagTime: i18n.t('notification.lagTime'),
 	DDL: i18n.t('notification.DDL'),

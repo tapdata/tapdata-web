@@ -464,11 +464,11 @@ export default {
 			type: 'screening',
 			overviewFalg: false
 		};
-		this.taskStatusObj = {
-			title: this.$t('app.Home.taskStatusStatistics'),
-			type: 'taskStatus',
-			overviewFalg: false
-		};
+		// this.taskStatusObj = {
+		// 	title: this.$t('app.Home.taskStatusStatistics'),
+		// 	type: 'taskStatus',
+		// 	overviewFalg: false
+		// };
 		this.transferTaskObj = {
 			title: this.$t('app.Home.transferTask'),
 			type: 'transferTask',
@@ -544,19 +544,20 @@ export default {
 		// 获取dataflows数据
 		getDataFlowApi() {
 			let self = this;
-			let params = {};
+			let id = '';
 			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-				params = {
-					filter: {
-						where: {
-							user_id: {
-								regexp: `^${this.$cookie.get('user_id')}$`
-							}
-						}
-					}
-				};
+				id = this.$cookie.get('user_id');
+				// params = {
+				// 	filter: {
+				// 		where: {
+				// 			user_id: {
+				// 				regexp: `^${this.$cookie.get('user_id')}$`
+				// 			}
+				// 		}
+				// 	}
+				// };
 			}
-			DataFlows.chart(params).then(res => {
+			DataFlows.chart(id).then(res => {
 				// res.data.chart1.statusCount.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1));
 				// res.data.chart1.statusCount.forEach(element => {
 				// 	self.taskList.unshift({ name: element._id, value: element.count });
