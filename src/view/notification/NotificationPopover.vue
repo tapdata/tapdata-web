@@ -12,18 +12,18 @@
 			type="border-card"
 			@tab-click="tabHandler"
 		>
-			<el-tab-pane class="tab-item" label="系统通知" name="system">
+			<el-tab-pane class="tab-item" :label="$t('notification.systemNotice')" name="system">
 				<div class="item-head">
 					<span>
 						<router-link to="/notification/setting">
-							<span style="color: #48B6E2">
+							<span>
 								{{ $t('notification.setting') }}
 							</span>
 						</router-link>
 					</span>
 					<span class="item-head-text">
 						<router-link to="/notification">
-							<span style="color: #48B6E2">
+							<span>
 								{{ $t('notification.viewMore') }}
 							</span>
 						</router-link>
@@ -80,11 +80,11 @@
 					</li>
 				</ul>
 			</el-tab-pane>
-			<el-tab-pane class="tab-item" label="用户操作" name="user" v-loading="loading">
+			<el-tab-pane class="tab-item" :label="$t('notification.userNotice')" name="user" v-loading="loading">
 				<div class="item-head">
 					<span></span>
 					<router-link to="/notification?type=user">
-						<span style="color: #48B6E2">
+						<span class="item-text">
 							{{ $t('notification.viewMore') }}
 						</span>
 					</router-link>
@@ -291,32 +291,55 @@ export default {
 	.el-tabs__content {
 		padding: 0;
 	}
+	.tab-item {
+		margin-bottom: 1px;
+	}
 }
 </style>
 <style lang="less" scoped>
 .notification-popover-wrap {
 	margin: -15px;
-	height: 400px;
-	width: 400px;
+	height: 440px;
+	width: 440px;
 	overflow: hidden;
-	.tab-item {
-		.item-head {
-			display: flex;
-			justify-content: space-between;
-			font-size: 12px;
-			height: 40px;
-			line-height: 40px;
-			padding: 0 20px;
-			.item-head-text {
-				cursor: pointer;
-				color: #48b6e2;
-			}
-			/*background: rgba(241, 241, 241, 1);*/
-			/*border: 1px solid rgba(222, 222, 228, 1);*/
+	position: relative;
+	.item-head {
+		position: absolute;
+		bottom: 0;
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		-webkit-box-pack: justify;
+		-ms-flex-pack: justify;
+		justify-content: space-between;
+		font-size: 12px;
+		height: 40px;
+		line-height: 40px;
+		padding: 0 25px;
+		width: 100%;
+		margin-left: -20px;
+		background: #f1f1f1;
+		border: 1px solid #dedee4;
+		.item-head-text {
+			display: inline-block;
+			cursor: pointer;
+			color: #666;
+			padding-right: 20px;
+			padding-left: 10px;
 		}
+		.item-text {
+			display: inline-block;
+			cursor: pointer;
+			color: #666;
+			padding-right: 20px;
+		}
+		background: rgba(241, 241, 241, 1);
+		border: 1px solid rgba(222, 222, 228, 1);
+	}
+	.tab-item {
 		.cuk-list {
-			height: 360px;
-			overflow: auto;
+			height: 400px;
+			overflow-y: auto;
 			font-size: 12px;
 			.list-item {
 				position: relative;
@@ -324,6 +347,7 @@ export default {
 				border-bottom: 1px solid #dedee4;
 				padding: 0 5px 5px 20px;
 				cursor: pointer;
+				margin-bottom: 39px;
 				.list-item-content {
 					position: relative;
 					height: 40px;
@@ -366,13 +390,15 @@ export default {
 			}
 		}
 		.notification-list {
-			padding: 10px 0;
-			height: 360px;
-			overflow: auto;
+			height: 362px;
+			overflow-y: auto;
 			box-sizing: border-box;
+			margin-bottom: 39px;
 			.notification-item {
 				padding: 5px 20px 4px 20px;
 				border-bottom: 1px solid #dedee4;
+				font-size: 12px;
+				color: #666;
 				&:last-child {
 					border: none;
 				}

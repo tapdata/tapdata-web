@@ -162,6 +162,7 @@ export default {
 		 * @param targetSchema
 		 */
 		setSchema(sourceSchema, targetSchema) {
+			this.removeLine();
 			log('Mapping.setSchema', sourceSchema, targetSchema);
 
 			let source = convertSchemaToTreeData(sourceSchema);
@@ -196,13 +197,17 @@ export default {
 					this.createLine(this.tables);
 				});
 			}
+		},
+		removeLine() {
+			if (this.lines && this.lines.length > 0) {
+				this.lines.forEach(line => line.remove());
+			}
+			this.lines = [];
 		}
 	},
 
 	destroyed() {
-		if (this.lines && this.lines.length > 0) {
-			this.lines.forEach(line => line.remove());
-		}
+		this.removeLine();
 	}
 };
 </script>
