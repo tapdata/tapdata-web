@@ -23,6 +23,7 @@ export function signOut() {
 	cookie.delete('isAdmin');
 	cookie.delete('email');
 	cookie.delete('username');
+	cookie.delete('isReadonly');
 	window.location.href = '/#/login';
 }
 

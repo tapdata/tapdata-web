@@ -158,11 +158,9 @@ export default {
 				}
 				this.$cookie.set('user_id', data.id);
 				this.$router.push({
-					name: 'verificationEmail'
-					// params: { data: this.form }
+					name: 'verificationEmail',
+					params: { data: this.form }
 				});
-				sessionStorage.setItem('userEmail', this.form.email);
-				sessionStorage.setItem('userPassword', this.form.password);
 			} catch (e) {
 				if (e.response && e.response.msg) {
 					if (e.response.msg.indexOf('Email already exists')) {

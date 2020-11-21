@@ -454,17 +454,14 @@ export default {
 
 		// 获取Agent是否安装
 		getDataApi() {
-			let params = null;
-			if (this.buildProfile && this.buildProfile === 'CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
-				params = {
-					filter: {
-						where: {
-							'systemInfo.username': {
-								in: [this.$cookie.get('user_id'), this.$cookie.get('username')]
-							}
-						}
-					}
-				};
+			let params = {};
+			if (
+				this.buildProfile &&
+				this.buildProfile === 'CLOUD' &&
+				!parseInt(this.$cookie.get('isAdmin')) &&
+				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
+			) {
+				params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
 			}
 			cluster.get(params).then(res => {
 				if (res.data) {

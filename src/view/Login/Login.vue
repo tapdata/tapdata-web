@@ -195,10 +195,11 @@ export default {
 						}
 					}
 				};
-
+				// TODO 暂时方案,当有只读角色时,就只能查看,不能做其他人任何操作
 				let rolesresulte = await rolesModel.get(roleparmas);
 				if (rolesresulte.data && rolesresulte.data.length) {
 					localStorage.setItem('BTN_AUTHS', 'BTN_AUTHS');
+					this.$cookie.set('isReadonly', 'true');
 				} else {
 					localStorage.setItem('BTN_AUTHS', '');
 				}
