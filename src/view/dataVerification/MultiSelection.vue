@@ -15,7 +15,7 @@
 		>
 			<el-option
 				v-for="opt in options.filter(i => !!i)"
-				:key="opt.field_name"
+				:key="opt.id + opt.field_name"
 				:label="opt.field_name"
 				:value="opt.field_name"
 			>
