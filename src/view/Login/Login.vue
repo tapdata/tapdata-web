@@ -29,7 +29,6 @@
 				<el-card class="sign-in-panel">
 					<div class="title">
 						{{ $t('app.signIn.signIn') }}
-						<!--  -->
 						<span @click="registry" v-if="buildProfile === 'CLOUD'">{{
 							$t('app.signIn.Registration')
 						}}</span>
@@ -105,7 +104,6 @@ export default {
 	},
 	created() {
 		this.handleDaas();
-		this.buildProfile = this.$store.state.buildProfile;
 	},
 	methods: {
 		langChange(lang) {
@@ -245,6 +243,7 @@ export default {
 			};
 			Setting.get(where).then(res => {
 				if (res.data && res.data.length) {
+					this.buildProfile = res.data[0].value;
 					localStorage.setItem('buildProfile', res.data[0].value);
 				}
 			});

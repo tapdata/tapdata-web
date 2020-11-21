@@ -5,6 +5,8 @@ const tc = {
 	tap: {
 		login: 'Tapdata-登錄',
 		registry: 'Tapdata-註冊',
+		verificationEmail: 'Tapdata-郵箱驗證',
+		passwordReset: 'Tapdata-修改密碼',
 		home: 'Tapdata-首頁',
 		connection: 'Tapdata-數據源 ',
 		connectionEdtion: 'Tapdata-編輯數據源',
@@ -40,7 +42,8 @@ const tc = {
 		roleManagement: 'Tapdata-角色管理',
 		roleEdition: 'Tapdata-編輯角色 ',
 		systemSettings: 'Tapdata-系統設置',
-		account: 'Tapdata-個人設置'
+		account: 'Tapdata-個人設置',
+		settingCenter: 'Tapdata-設置中心'
 	},
 	errorCode: {
 		networkUnconnected: '網絡未連接',
