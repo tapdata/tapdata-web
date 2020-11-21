@@ -162,6 +162,7 @@ export default {
 </style>
 <style lang="less" scoped>
 .user-notification {
+	padding-left: 20px;
 	display: flex;
 	flex-direction: column;
 	height: 100%;
@@ -190,7 +191,6 @@ export default {
 		overflow: auto;
 		padding-right: 20px;
 		.item {
-			padding-left: 20px;
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
