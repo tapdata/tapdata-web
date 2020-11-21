@@ -1215,9 +1215,9 @@ export default {
 				);
 			} else if (
 				oldStatus === 'error' &&
-				dataItem.setting.stopOnError &&
-				dataItem.errorEvents &&
-				dataItem.errorEvents.length > 0
+				errorEvents.setting.stopOnError &&
+				errorEvents.errorEvents &&
+				errorEvents.errorEvents.length > 0
 			) {
 				this.dialogVisibleSkipError = true;
 				this.taskName = dataItem.name;
