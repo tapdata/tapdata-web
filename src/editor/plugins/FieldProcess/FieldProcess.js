@@ -53,10 +53,47 @@ export const fieldProcessConfig = {
 				let data = this.getFormData();
 				log('FieldProcess.mergeOutputSchema', data, outputSchema);
 				if (!outputSchema || !data) return outputSchema;
-
+				let fieldOriginalNames = outputSchema.fields.map(field => field.field_name);
+				for (let i = 0; i < data.operations.length; i++) {
+					let index = data.operations[i].field.lastIndexOf('.');
+					let parentNode = '';
+					if (index !== -1) {
+						parentNode = data.operations[i].field.substr(0, index);
+					}
+					if (
+						data.operations[i].op === 'CREATE' &&
+						!fieldOriginalNames.includes(parentNode) &&
+						index !== -1
+					) {
+						data.operations.splice(i, 1);
+						i--;
+						continue;
+					}
+				}
 				data.operations.map(item => {
-					if (item.op === 'CREATE') {
-						let triggerFieldId = item.triggerFieldId;
+					let targetIndex = outputSchema.fields.findIndex(n => n.original_field_name === item.field);
+					if (targetIndex === -1 && item.op !== 'CREATE') {
+						// data.operations.splice(index,1); //删除找不到id的数据
+						return;
+					}
+					if (item.op === 'CONVERT') {
+						outputSchema.fields[targetIndex].javaType = item.operand;
+					} else if (item.op === 'REMOVE') {
+						if (applyRemoveOperation !== false) outputSchema.fields.splice(targetIndex, 1);
+					} else if (item.op === 'RENAME') {
+						const name = outputSchema.fields[targetIndex].field_name;
+						let newName = name.split('.');
+						newName[newName.length - 1] = item.operand;
+						const newNameStr = newName.join('.');
+						outputSchema.fields[targetIndex].field_name = newNameStr;
+
+						// change children field name
+						outputSchema.fields.forEach(field => {
+							if (field.field_name.startsWith(name + '.')) {
+								field.field_name = newNameStr + field.field_name.substring(name.length);
+							}
+						});
+					} else if (item.op === 'CREATE') {
 						let newField = {
 							id: item.id,
 							field_name: item.field || item.field_name,
@@ -70,44 +107,7 @@ export const fieldProcessConfig = {
 							columnSize: 0,
 							autoincrement: false
 						};
-						if (triggerFieldId) {
-							let triggerFieldIndex = outputSchema.fields.findIndex(f => f.id === triggerFieldId);
-							outputSchema.fields.splice(triggerFieldIndex + 1, 0, newField);
-						} else outputSchema.fields.push(newField);
-					}
-				});
-
-				data.operations.map(item => {
-					let targetIndex = outputSchema.fields.findIndex(n => n.id === item.id);
-					if (targetIndex === -1) {
-						// data.operations.splice(index,1); //删除找不到id的数据
-						return;
-					}
-					if (item.op === 'CONVERT') {
-						outputSchema.fields[targetIndex].javaType = item.operand;
-					} else if (item.op === 'REMOVE') {
-						if (applyRemoveOperation !== false) outputSchema.fields.splice(targetIndex, 1);
-					}
-				});
-				data.operations.map(item => {
-					let targetIndex = outputSchema.fields.findIndex(n => n.id === item.id);
-					if (targetIndex === -1) {
-						// data.operations.splice(index,1); //删除找不到id的数据
-						return;
-					}
-					if (item.op === 'RENAME') {
-						const name = outputSchema.fields[targetIndex].field_name;
-						let newName = name.split('.');
-						newName[newName.length - 1] = item.operand;
-						const newNameStr = newName.join('.');
-						outputSchema.fields[targetIndex].field_name = newNameStr;
-
-						// change children field name
-						outputSchema.fields.forEach(field => {
-							if (field.field_name.startsWith(name + '.')) {
-								field.field_name = newNameStr + field.field_name.substring(name.length);
-							}
-						});
+						outputSchema.fields.push(newField);
 					}
 				});
 				log('FieldProcess.mergeOutputSchema', outputSchema);
