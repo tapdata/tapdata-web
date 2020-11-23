@@ -33,7 +33,7 @@
 				<div class="schema-editor-wrap schema-editor-container-left">
 					<schema-editor
 						ref="entity"
-						:originalSchema="convertSchemaToTreeData(originalSchema)"
+						:originalSchema="convertSchemaToTreeData(model.originalSchema)"
 						:schema="convertSchemaToTreeData(schema)"
 						:editable="true"
 						:disabledMode="disabled"
@@ -46,7 +46,7 @@
 
 <script>
 import SchemaEditor from './SchemaEditor';
-import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, uuid } from '../../util/Schema';
+import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from '../../util/Schema';
 import log from '../../../log';
 import _ from 'lodash';
 let editorMonitor = null;
@@ -73,10 +73,9 @@ export default {
 				scripts: [],
 				description: '',
 				name: 'Field Process',
-				type: 'field_processor'
+				type: 'field_processor',
+				originalSchema: ''
 			},
-
-			originalSchema: null,
 			schema: null
 		};
 	},
@@ -93,72 +92,12 @@ export default {
 		convertSchemaToTreeData,
 
 		setData(data, cell, dataNodeInfo, vueAdapter) {
-			this.originalSchema = mergeJoinTablesToTargetSchema(null, cell.getInputSchema());
-			let schema = _.cloneDeep(this.originalSchema);
 			if (data) {
 				//模型改变 数据的兼容处理
-				if (schema && schema.fields) {
-					let fieldOriginalNames = schema.fields.map(field => field.field_name);
-					data.operations = data.operations || [];
-					for (let i = 0; i < data.operations.length; i++) {
-						let index = data.operations[i].field.lastIndexOf('.');
-						let parentNode = '';
-						if (index !== -1) {
-							parentNode = data.operations[i].field.substr(0, index);
-						}
-						if (
-							data.operations[i].op === 'CREATE' &&
-							fieldOriginalNames.includes(data.operations[i].field)
-						) {
-							data.operations.splice(i, 1);
-							i--;
-							continue;
-						}
-						if (
-							data.operations[i].op === 'CREATE' &&
-							!fieldOriginalNames.includes(parentNode) &&
-							index !== -1
-						) {
-							data.operations.splice(i, 1);
-							i--;
-							continue;
-						}
-						if (
-							['REMOVE', 'CONVERT'].includes(data.operations[i].op) &&
-							!fieldOriginalNames.includes(data.operations[i].field)
-						) {
-							data.operations.splice(i, 1);
-							i--;
-							continue;
-						}
-
-						if (
-							data.operations[i].op === 'RENAME' &&
-							!fieldOriginalNames.includes(data.operations[i].field)
-						) {
-							let fieldId = uuid();
-							data.operations[i].field = data.operations[i].operand;
-							data.operations[i].op = 'CREATE';
-							data.operations[i].id = fieldId;
-							data.operations[i]['action'] = 'create_sibling';
-							data.operations[i]['triggerFieldId'] = data.operations[i].id;
-							data.operations[i]['level'] = 0;
-							data.operations[i]['javaType'] = data.operations[i].type;
-							i--;
-							continue;
-						}
-					}
-					data.scripts = data.scripts || [];
-					for (let i = 0; i < data.scripts.length; i++) {
-						if (data.scripts[i].op === 'js' && !fieldOriginalNames.includes(data.scripts[i].field)) {
-							data.scripts.splice(i, 1);
-							i--;
-						}
-					}
-				}
 				Object.keys(data).forEach(key => (this.model[key] = data[key]));
 			}
-
+			this.model.originalSchema = mergeJoinTablesToTargetSchema(null, cell.getInputSchema());
+			let schema = _.cloneDeep(this.model.originalSchema);
 			// apply operations to schema
 			if (this.model.operations && schema && schema.fields) {
 				this.$refs.entity.setOperations(_.cloneDeep(this.model.operations));
@@ -166,7 +105,12 @@ export default {
 
 				this.schema = cell.mergeOutputSchema(schema, false);
 
-				log('FieldProcess.setData.applyOperations', this.originalSchema, this.schema, this.model.operations);
+				log(
+					'FieldProcess.setData.applyOperations',
+					this.model.originalSchema,
+					this.schema,
+					this.model.operations
+				);
 			}
 			editorMonitor = vueAdapter.editor;
 		},

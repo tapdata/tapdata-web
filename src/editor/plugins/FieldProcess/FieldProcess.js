@@ -134,6 +134,32 @@ export const fieldProcessConfig = {
 			 */
 			allowSource(sourceCell) {
 				return !['app.Database'].includes(sourceCell.get('type'));
+			},
+			/**
+			 * validate user-filled data
+			 * @param data
+			 *
+			 */
+			validate: function(data) {
+				data = data || this.getFormData();
+				let name = this.attr('label/text');
+				if (!data) throw new Error(`${name}: 无效字段处理器}`);
+				let operation = data.operations || [];
+				let originalSchema = data.originalSchema || {};
+				let fieldOriginalNames = originalSchema.fields.map(field => field.field_name);
+				let fieldOriginalIds = originalSchema.fields.map(field => field.id);
+				if (operation.length > 0) {
+					//data.operation 字段名相同但是id不匹配的字段验证 跟当前schema进行比较operation.id
+					for (let i = 0; i < operation.length; i++) {
+						if (
+							!fieldOriginalIds.includes(operation[i].id) &&
+							!fieldOriginalNames.includes(operation[i].field)
+						) {
+							throw new Error(`${name}: 字段处理器中有不匹配的id字段 请先处理}`);
+						}
+					}
+				}
+				return true;
 			}
 		}
 		// staticProperties: {}
