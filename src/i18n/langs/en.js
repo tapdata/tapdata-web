@@ -180,6 +180,7 @@ const en = {
 			serverProcess: 'Server and Process',
 			syncJobsStatus: 'Sync Jobs Status',
 			migrationJobsStatus: 'Migration Jobs Status',
+			dataValidationTitle: 'Data Validation',
 			before: 'Front',
 			pcs: 'bar',
 			server: 'Server',
@@ -196,7 +197,11 @@ const en = {
 			initialization: 'Initializing',
 			loadingFinished: 'Initialization completed',
 			incremental: 'CDC',
-			incrementalLag: 'CDC Lag'
+			incrementalLag: 'CDC Lag',
+			allValid: 'All verification tasks',
+			checkSame: 'Check the same',
+			countDifference: 'Count difference',
+			contentDifference: 'Content difference'
 		}
 	},
 	message: {

@@ -181,6 +181,7 @@ const tc = {
 			serverProcess: '服務器與進程',
 			syncJobsStatus: '同步任務狀態',
 			migrationJobsStatus: '遷移任務狀態',
+			dataValidationTitle: '數據驗證',
 			before: '前',
 			pcs: '條',
 			server: '服務器',
@@ -197,7 +198,11 @@ const tc = {
 			initialization: '初始化中',
 			loadingFinished: '初始化完成',
 			incremental: '增量中',
-			incrementalLag: '增量滯後'
+			incrementalLag: '增量滯後',
+			allValid: '全部校驗任務',
+			checkSame: '校驗一致',
+			countDifference: 'Count差異',
+			contentDifference: '內容差異'
 		}
 	},
 	message: {

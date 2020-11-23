@@ -179,6 +179,7 @@ const cn = {
 			serverProcess: '服务器与进程',
 			syncJobsStatus: '同步任务状态',
 			migrationJobsStatus: '迁移任务状态',
+			dataValidationTitle: '数据校验',
 			before: '前',
 			pcs: '条',
 			server: '服务器',
@@ -196,7 +197,11 @@ const cn = {
 			initialization: '初始化中',
 			loadingFinished: '初始化完成',
 			incremental: '增量中',
-			incrementalLag: '增量滞后'
+			incrementalLag: '增量滞后',
+			allValid: '全部校验任务',
+			checkSame: '校验一致',
+			countDifference: 'Count差异',
+			contentDifference: '内容差异'
 		}
 	},
 	message: {

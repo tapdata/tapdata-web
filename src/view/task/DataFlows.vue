@@ -265,6 +265,7 @@
 										<i class="iconfont  task-list-icon icon-chaxun"></i>
 									</el-button>
 								</el-tooltip>
+
 								<el-tooltip
 									class="item"
 									v-readonlybtn="'BTN_AUTHS'"
@@ -277,6 +278,20 @@
 										@click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)"
 									>
 										<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
+									</el-button>
+								</el-tooltip>
+								<el-tooltip
+									class="item"
+									v-readonlybtn="'BTN_AUTHS'"
+									:content="$t('dataFlow.edit')"
+									placement="bottom"
+								>
+									<el-button
+										type="text"
+										:disabled="statusBtMap[scope.row.status].edit"
+										@click="handleTaskscheduling(scope.row.id, scope.row)"
+									>
+										<i class="iconfont  task-list-icon  icon-lishi"></i>
 									</el-button>
 								</el-tooltip>
 								<el-tooltip
@@ -302,6 +317,9 @@
 										><i class="iconfont icon-gengduo3  task-list-icon"></i
 									></el-button>
 									<el-dropdown-menu slot="dropdown">
+										<el-dropdown-item command="dataVerify">{{
+											$t('dataVerify.dataVerify')
+										}}</el-dropdown-item>
 										<el-dropdown-item command="export">{{
 											$t('dataFlow.dataFlowExport')
 										}}</el-dropdown-item>
@@ -375,6 +393,18 @@
 			v-on:dialogVisible="handleSkipErrorVisible"
 			v-on:operationsSkipError="handleOperationSkipError"
 		></SkipError>
+		<el-dialog
+			:title="this.$t('dataFlow.importantReminder')"
+			:close-on-click-modal="false"
+			:visible.sync="taskSettingsDialog"
+			width="30%"
+		>
+			<el-form :model="form">
+				<el-form-item label="活动名称">
+					<div></div>
+				</el-form-item>
+			</el-form>
+		</el-dialog>
 	</section>
 </template>
 
@@ -396,6 +426,7 @@ export default {
 	components: { metaData, SelectClassify, DownAgent, SkipError },
 	data() {
 		return {
+			taskSettingsDialog: false, //任务调度设置弹窗开关
 			downLoadAgetntdialog: false, //判断是否安装agent
 			downLoadNum: 0,
 			firstNum: undefined,
@@ -756,6 +787,9 @@ export default {
 				});
 			}, 200);
 		},
+		// 任务调度设置
+		handleTaskscheduling() {},
+
 		handleImport() {
 			let routeUrl = this.$router.resolve({
 				path: '/upload'
@@ -798,7 +832,11 @@ export default {
 					in: [id]
 				}
 			};
+
 			switch (command) {
+				case 'dataVerify':
+					this.$router.push({ name: 'dataVerification', query: { name: node.name } });
+					break;
 				case 'export':
 					MetadataInstance.download(where);
 					break;

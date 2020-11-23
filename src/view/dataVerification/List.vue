@@ -383,12 +383,12 @@ export default {
 		this.timer = setInterval(() => {
 			this.search(this.page.current, 1);
 		}, 10000);
+
+		if (this.$route && this.$route.query) {
+			this.searchParams.keyword = this.$route.query.name;
+		}
 	},
-	destroyed() {
-		// 清除定时器
-		clearInterval(this.timer);
-		this.timer = null;
-	},
+
 	methods: {
 		keyup() {
 			if (timeout) {
@@ -541,6 +541,12 @@ export default {
 					}
 				});
 		}
+	},
+
+	destroyed() {
+		// 清除定时器
+		clearInterval(this.timer);
+		this.timer = null;
 	}
 };
 </script>
