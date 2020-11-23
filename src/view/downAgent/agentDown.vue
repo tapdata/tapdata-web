@@ -183,16 +183,15 @@ export default {
 		let version = 'DAAS_BUILD_NUMBER';
 		this.windowLink =
 			'tapdata start backend downloadUrl ' +
-			`http://resource.tapdata.net/package/feagent/${version}/ token` +
+			`http://resource.tapdata.net/package/feagent/${version}/ token ` +
 			this.$cookie.get('token') +
 			' ' +
 			this.$cookie.get('user_id');
 		this.LinuxLink =
-			'wget' +
+			'wget "' +
 			`http://resource.tapdata.net/package/feagent/${version}/tapdata` +
-			'&& chmod +x tapdata && ./tapdata start backend downloadUrl' +
-			`http://resource.tapdata.net/package/feagent/${version}/` +
-			'token ' +
+			'" && chmod +x tapdata && ./tapdata start backend downloadUrl ' +
+			`http://resource.tapdata.net/package/feagent/${version}/ token ` +
 			this.$cookie.get('token') +
 			' ' +
 			this.$cookie.get('user_id');
