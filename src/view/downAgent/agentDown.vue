@@ -180,10 +180,19 @@ export default {
 		};
 	},
 	mounted() {
+		let version = 'DAAS_BUILD_NUMBER';
 		this.windowLink =
-			'tapdata start backend token ' + this.$cookie.get('token') + ' ' + this.$cookie.get('user_id');
+			'tapdata start backend downloadUrl ' +
+			`http://resource.tapdata.net/package/feagent/${version}/ token` +
+			this.$cookie.get('token') +
+			' ' +
+			this.$cookie.get('user_id');
 		this.LinuxLink =
-			'wget "http://resource.tapdata.net/package/feagent/tapdata" && chmod +x tapdata && ./tapdata start backend token ' +
+			'wget' +
+			`http://resource.tapdata.net/package/feagent/${version}/tapdata` +
+			'&& chmod +x tapdata && ./tapdata start backend downloadUrl' +
+			`http://resource.tapdata.net/package/feagent/${version}/` +
+			'token ' +
 			this.$cookie.get('token') +
 			' ' +
 			this.$cookie.get('user_id');
@@ -210,7 +219,8 @@ export default {
 
 		// windows下载
 		handleDownLoad() {
-			window.location = 'http://resource.tapdata.net/package/feagent/tapdata.exe';
+			let version = 'DAAS_BUILD_NUMBER';
+			window.location = `http://resource.tapdata.net/package/feagent/${version}/tapdata.exe`;
 		},
 
 		// 复制命令行
