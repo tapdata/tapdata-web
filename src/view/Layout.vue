@@ -203,9 +203,14 @@ let menuSetting = [
 		name: 'dataTransmission',
 		icon: 'chengbenguanlixitong',
 		children: [
-			{ name: 'dataFlows', alias: 'dataFlowsClusterClone', query: '?mapping=cluster-clone' },
-			{ name: 'dataFlows', alias: 'dataFlowsCustom', query: '?mapping=custom' },
-			{ name: 'dataVerification' }
+			{
+				name: 'dataFlows',
+				icon: 'shujukuqianyi2',
+				alias: 'dataFlowsClusterClone',
+				query: '?mapping=cluster-clone'
+			},
+			{ name: 'dataFlows', icon: 'xinxitongbu', alias: 'dataFlowsCustom', query: '?mapping=custom' },
+			{ name: 'dataVerification', icon: 'hechabidui' }
 		]
 	},
 	{
@@ -232,10 +237,7 @@ let menuSetting = [
 			{ name: 'apiServers' }
 		]
 	},
-	{
-		name: 'dataCollect',
-		icon: 'shujucaiji'
-	},
+	{ name: 'dataCollect', icon: 'shujucaiji' },
 	{
 		name: 'system',
 		icon: 'jiekoufuwu',
@@ -378,6 +380,12 @@ export default {
 					return menu;
 				});
 			};
+			if (window.getSettingByKey('USE_CLOUD_MENU')) {
+				let part1 = menuSetting.splice(0, 2);
+				let menu = menuSetting.splice(0, 1)[0];
+				let part2 = menuSetting;
+				menuSetting = part1.concat(menu.children, part2);
+			}
 			this.menus = formatMenu(menuSetting);
 		},
 		command(command) {
