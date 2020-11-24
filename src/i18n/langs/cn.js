@@ -916,8 +916,13 @@ const cn = {
 							label: '描述',
 							placeholder: '请输入节点描述'
 						},
-						toUpperCase: '转大写',
-						toLowerCase: '转小写',
+						errorOperationTipBefore: '字段处理操作与源模型发生冲突',
+						errorOperationTipAfter: '点击此处进行处理',
+						errorOperationDrop:
+							'检测到以下处理操作与源模型发生冲突，请点击丢弃冲突操作按钮丢弃全部有冲突的操作，以保证任务正常运行',
+						errorOperationDelBtn: '丢弃冲突操作',
+						errorList: '错误列表',
+						rightList: '正确列表',
 						delete: '删除',
 						fieldName: '字段名称',
 						fieldType: '字段类型',

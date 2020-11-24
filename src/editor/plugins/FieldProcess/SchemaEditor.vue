@@ -1,6 +1,11 @@
 <template>
 	<div class="fieldProcess">
-		<div @click="disabledChangeField = true" class="changeBtn">修改对比</div>
+		<div v-show="showErrorOperationTip" class="error-operation-tip">
+			{{ $t('editor.cell.processor.field.form.errorOperationTipBefore')
+			}}<span style="color: #ee5353;cursor: pointer" @click="openErrorList">{{
+				$t('editor.cell.processor.field.form.errorOperationTipAfter')
+			}}</span>
+		</div>
 		<div class="clear"></div>
 		<div class="header-row">
 			<div class="field">
@@ -20,6 +25,7 @@
 				<el-button type="text" class="btn" size="mini" @click="handleAllReset">
 					<img src="../../../../static/image/return.png" alt="" />
 				</el-button>
+				<el-button type="text" class="iconfont icon-lishi2 btn" size="mini" @click="openErrorList"> </el-button>
 			</div>
 		</div>
 		<div class="clear"></div>
@@ -218,7 +224,51 @@
 				</div>
 			</el-dialog>
 			<el-dialog title="修改对比" :visible.sync="disabledChangeField" append-to-body custom-class="scriptDialog">
-				<div>Operation</div>
+				<div v-if="errorOperation.length > 0">
+					<div>{{ $t('editor.cell.processor.field.form.errorOperationDrop') }}</div>
+					<div>
+						<span>{{ $t('editor.cell.processor.field.form.errorList') }}</span>
+						<el-button size="mini" @click="delErrorOperation">{{
+							$t('editor.cell.processor.field.form.errorOperationDelBtn')
+						}}</el-button>
+					</div>
+					<ul class="changeList">
+						<li>
+							<span class="index">#</span>
+							<span class="item">原始字段/类型</span>
+							<span class="op">操作</span>
+							<span class="item">修改后</span>
+						</li>
+						<li v-for="(item, index) in errorOperation" :key="item.id">
+							<span class="index">{{ index + 1 }}</span>
+							<span v-if="item.op === 'RENAME'">
+								<span class="item">{{ `${item.field} (${item.type})` }}</span>
+								<span class="op">{{ item.op }}</span>
+								<span class="item"
+									><span class="active">{{ item.operand }}</span>
+									<span>{{ `(${item.type})` }}</span></span
+								>
+							</span>
+							<span v-if="item.op === 'REMOVE'">
+								<span class="item">{{ `${item.field} (${item.type})` }}</span>
+								<span class="op">{{ item.op }}</span>
+							</span>
+							<span v-if="item.op === 'CREATE'">
+								<span class="item"></span>
+								<span class="op">{{ item.op }}</span>
+								<span class="item active">{{ `${item.field} (${item.javaType})` }}</span>
+							</span>
+							<span v-if="item.op === 'CONVERT'">
+								<span class="item">{{ `${item.field} (${item.originalDataType})` }}</span>
+								<span class="op">{{ item.op }}</span>
+								<span class="item"
+									>{{ item.field }} <span class="active">{{ `(${item.operand})` }}</span></span
+								>
+							</span>
+						</li>
+					</ul>
+				</div>
+				<div style="margin-top: 20px">{{ $t('editor.cell.processor.field.form.rightList') }}</div>
 				<ul class="changeList">
 					<li>
 						<span class="index">#</span>
@@ -226,10 +276,10 @@
 						<span class="op">操作</span>
 						<span class="item">修改后</span>
 					</li>
-					<li v-if="model.operations && model.operations.length === 0">
+					<li v-if="rightOperation.length === 0">
 						暂无修改操作
 					</li>
-					<li v-for="(item, index) in model.operations" :key="item.id" v-else>
+					<li v-for="(item, index) in rightOperation" :key="item.id" v-else>
 						<span class="index">{{ index + 1 }}</span>
 						<span v-if="item.op === 'RENAME'">
 							<span class="item">{{ `${item.field} (${item.type})` }}</span>
@@ -256,19 +306,7 @@
 							>
 						</span>
 					</li>
-				</ul>
-				<div style="margin-top: 20px">JS</div>
-				<ul class="changeList">
-					<li>
-						<span class="index">#</span>
-						<span class="item">原始字段/类型</span>
-						<span class="op">操作</span>
-						<span class="item">JS</span>
-					</li>
-					<li v-if="model.scripts && model.scripts.length === 0">
-						暂无修改操作
-					</li>
-					<li v-for="(item, index) in model.scripts" :key="item.id" v-else>
+					<li v-for="(item, index) in model.scripts" :key="item.id">
 						<span class="index">{{ index + 1 }}</span>
 						<span class="item">{{ `${item.field} (${item.type})` }}</span>
 						<span class="op">{{ item.scriptType }}</span>
@@ -285,7 +323,6 @@ import $ from 'jquery';
 import log from '../../../log';
 import _ from 'lodash';
 import { uuid } from '../../util/Schema';
-// import JsEditor from '../../../components/JsEditor';
 
 const REMOVE_OPS_TPL = {
 	id: '',
@@ -369,10 +406,18 @@ export default {
 				operations: [],
 				scripts: []
 			},
+			errorOperation: [],
+			rightOperation: [],
 			disabledChangeField: false,
+			showErrorOperationTip: false,
 			jsEditorWidth: '500',
 			checkAll: false
 		};
+	},
+	mounted() {
+		setTimeout(() => {
+			this.getErrorOperation();
+		}, 100);
 	},
 	methods: {
 		setOperations(operations) {
@@ -416,6 +461,37 @@ export default {
 			if (!node) return null;
 			let id = this.getId(node);
 			return $(this.$refs.entityDom).find(`.e-port-in[data-id=${id}]`)[0];
+		},
+		getErrorOperation() {
+			this.errorOperation = [];
+			this.rightOperation = [];
+			this.model.operations.map(item => {
+				let targetIndex = this.originalSchema.fields.findIndex(n => n.id === item.id);
+				if (targetIndex === -1) {
+					this.errorOperation.push(item);
+				} else {
+					this.rightOperation.push(item);
+				}
+			});
+			if (this.errorOperation.length > 0) {
+				this.showErrorOperationTip = true;
+			}
+		},
+		delErrorOperation() {
+			for (let i = 0; i < this.model.operations.length; i++) {
+				let targetOp = this.originalSchema.fields.filter(n => n.id === this.model.operations[i].id);
+				if (targetOp.length === 0) {
+					this.model.operations.splice(i, 1);
+					i--;
+				}
+			}
+			this.$emit('dataChanged', this.model);
+			this.errorOperation = [];
+			this.showErrorOperationTip = false;
+		},
+		openErrorList() {
+			this.getErrorOperation();
+			this.disabledChangeField = true;
 		},
 		getNativeData(fields, id) {
 			let field = null;
@@ -468,7 +544,13 @@ export default {
 		},
 		handleRename(node, data) {
 			log('SchemaEditor.handleRename', node, data);
+			//该字段若是已被删除 不可再重命名
 			let nativeData = this.getNativeData(this.originalSchema.fields, data.id); //查找初始schema
+			let removes = this.model.operations.filter(v => v.id === data.id && v.op === 'REMOVE');
+			if (removes.length > 0) {
+				data.label = nativeData.label;
+				return;
+			}
 			let existsName = this.handleExistsName(node, data);
 			if (existsName) {
 				data.label = nativeData.label;
@@ -546,6 +628,22 @@ export default {
 				let originalField = this.getNativeData(this.originalSchema.fields, data.id);
 				let self = this;
 				let fn = function(field) {
+					for (let i = 0; i < self.model.operations.length; i++) {
+						// 删除所有的rename的操作
+						let ops = self.model.operations[i];
+						if (ops.id === field.id && ops.op === 'RENAME') {
+							data.label = originalField.label;
+							self.model.operations.splice(i, 1);
+						}
+					}
+					for (let i = 0; i < self.model.operations.length; i++) {
+						// 删除所有的类型改变的操作
+						let ops = self.model.operations[i];
+						if (ops.id === field.id && ops.op === 'CONVERT') {
+							data.type = originalField.type;
+							self.model.operations.splice(i, 1);
+						}
+					}
 					let ops = self.model.operations.filter(v => v.op === 'REMOVE' && v.id === field.id);
 					let op;
 					if (ops.length === 0) {
@@ -832,6 +930,11 @@ export default {
 	span {
 		margin-right: 10px;
 	}
+}
+.error-operation-tip {
+	color: #ccc;
+	font-size: 12px;
+	margin-bottom: 10px;
 }
 .operWidth {
 	width: 80px !important;

@@ -53,25 +53,8 @@ export const fieldProcessConfig = {
 				let data = this.getFormData();
 				log('FieldProcess.mergeOutputSchema', data, outputSchema);
 				if (!outputSchema || !data) return outputSchema;
-				let fieldOriginalNames = outputSchema.fields.map(field => field.field_name);
-				for (let i = 0; i < data.operations.length; i++) {
-					let index = data.operations[i].field.lastIndexOf('.');
-					let parentNode = '';
-					if (index !== -1) {
-						parentNode = data.operations[i].field.substr(0, index);
-					}
-					if (
-						data.operations[i].op === 'CREATE' &&
-						!fieldOriginalNames.includes(parentNode) &&
-						index !== -1
-					) {
-						data.operations.splice(i, 1);
-						i--;
-						continue;
-					}
-				}
 				data.operations.map(item => {
-					let targetIndex = outputSchema.fields.findIndex(n => n.original_field_name === item.field);
+					let targetIndex = outputSchema.fields.findIndex(n => n.id === item.id);
 					if (targetIndex === -1 && item.op !== 'CREATE') {
 						// data.operations.splice(index,1); //删除找不到id的数据
 						return;
@@ -94,6 +77,7 @@ export const fieldProcessConfig = {
 							}
 						});
 					} else if (item.op === 'CREATE') {
+						let triggerFieldId = item.triggerFieldId;
 						let newField = {
 							id: item.id,
 							field_name: item.field || item.field_name,
@@ -107,7 +91,10 @@ export const fieldProcessConfig = {
 							columnSize: 0,
 							autoincrement: false
 						};
-						outputSchema.fields.push(newField);
+						if (triggerFieldId) {
+							let triggerFieldIndex = outputSchema.fields.findIndex(f => f.id === triggerFieldId);
+							outputSchema.fields.splice(triggerFieldIndex + 1, 0, newField);
+						} else outputSchema.fields.push(newField);
 					}
 				});
 				log('FieldProcess.mergeOutputSchema', outputSchema);
@@ -155,7 +142,7 @@ export const fieldProcessConfig = {
 							!fieldOriginalIds.includes(operation[i].id) &&
 							!fieldOriginalNames.includes(operation[i].field)
 						) {
-							throw new Error(`${name}: 字段处理器中有不匹配的id字段 请先处理}`);
+							throw new Error(`${name}: 字段处理节点检测到冲突待处理}`);
 						}
 					}
 				}
