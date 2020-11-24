@@ -291,7 +291,7 @@
 										:disabled="statusBtMap[scope.row.status].edit"
 										@click="handleTaskscheduling(scope.row.id, scope.row)"
 									>
-										<i class="iconfont  task-list-icon  icon-lishi"></i>
+										<i class="iconfont  task-list-icon  icon-lishi2"></i>
 									</el-button>
 								</el-tooltip>
 								<el-tooltip
@@ -364,7 +364,7 @@
 			v-on:operationsClassify="handleOperationClassify"
 		></SelectClassify>
 		<el-dialog
-			:title="this.$t('dataFlow.importantReminder')"
+			:title="$t('dataFlow.importantReminder')"
 			:close-on-click-modal="false"
 			:visible.sync="deleteDialogVisible"
 			width="30%"
@@ -394,16 +394,41 @@
 			v-on:operationsSkipError="handleOperationSkipError"
 		></SkipError>
 		<el-dialog
-			:title="this.$t('dataFlow.importantReminder')"
+			:title="$t('dialog.jobSchedule.jobSecheduleSetting')"
 			:close-on-click-modal="false"
 			:visible.sync="taskSettingsDialog"
-			width="30%"
+			custom-class="jobSeceduleDialog"
+			width="50%"
 		>
-			<el-form :model="form">
-				<el-form-item label="活动名称">
-					<div></div>
+			<el-form :model="form" label-width="100px">
+				<el-form-item :label="$t('dialog.jobSchedule.job')">
+					<div>333333</div>
+				</el-form-item>
+				<el-form-item :label="$t('dialog.jobSchedule.sync')">
+					<el-switch v-model="form.syncFalg"> </el-switch>
+				</el-form-item>
+				<el-form-item :label="$t('dialog.jobSchedule.expression')" v-if="form.syncFalg">
+					<el-input v-model="form.expression" :placeholder="$t('dialog.jobSchedule.expressionPlaceholder')">
+					</el-input>
 				</el-form-item>
 			</el-form>
+			<div v-if="form.syncFalg" class="text">
+				<p>{{ $t('dialog.jobSchedule.explanation') }}</p>
+				<p>{{ $t('dialog.jobSchedule.grammar') }}</p>
+				<ul>
+					<li v-for="item in timeTextArr" :key="item">
+						<p>{{ $t('dialog.jobSchedule.' + item) }}</p>
+						<span>*</span>
+					</li>
+				</ul>
+				<p>{{ $t('dialog.jobSchedule.example') }}</p>
+				<p>**/1***?* // {{ $t('dialog.jobSchedule.runMinute') }}</p>
+				<p>002**?* // {{ $t('dialog.jobSchedule.runDay') }}</p>
+			</div>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="taskSettingsDialog = false">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="saveTaskSetting">{{ $t('app.save') }}</el-button>
+			</span>
 		</el-dialog>
 	</section>
 </template>
@@ -548,7 +573,12 @@ export default {
 			currentStatus: '',
 			oldStatus: '',
 			currentId: '',
-			taskName: ''
+			taskName: '',
+			form: {
+				syncFalg: false,
+				expression: ''
+			},
+			timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
 		};
 	},
 	created() {
@@ -788,7 +818,9 @@ export default {
 			}, 200);
 		},
 		// 任务调度设置
-		handleTaskscheduling() {},
+		handleTaskscheduling() {
+			this.taskSettingsDialog = true;
+		},
 
 		handleImport() {
 			let routeUrl = this.$router.resolve({
@@ -1671,5 +1703,22 @@ export default {
 }
 .dataflow-clickTip .el-message-box__status {
 	top: 25% !important;
+}
+.data-flow-wrap {
+	.jobSeceduleDialog {
+		.text {
+			padding-left: 100px;
+			line-height: 28px;
+			color: #999;
+			ul {
+				display: flex;
+				flex-direction: row;
+				text-align: center;
+				li {
+					padding-right: 20px;
+				}
+			}
+		}
+	}
 }
 </style>

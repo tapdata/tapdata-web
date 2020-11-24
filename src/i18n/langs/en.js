@@ -1584,7 +1584,28 @@ const en = {
 		library: 'The database',
 		sameTable: 'has duplicate name tables: ',
 		repeatTip:
-			'click database name above to process the tables on the data catalog page to ensure the uniqueness of the table name under this database'
+			'click database name above to process the tables on the data catalog page to ensure the uniqueness of the table name under this database',
+		jobSchedule: {
+			jobSecheduleSetting: 'Job schedule settings',
+			job: 'Job:',
+			sync: 'Sync:',
+			expression: 'Expression:',
+			expressionPlaceholder: 'Please enter cron expression',
+			explanation: 'You can set cron expression to schedule tasks at fixed time, date, or interval',
+			grammar: 'Grammar:',
+			second: 'second',
+			minute: 'minute',
+			hour: 'hour',
+			day: 'day',
+			month: 'month',
+			week: 'week',
+			year: 'year',
+			example: 'Example:',
+			runMinute: 'Run every minute',
+			runDay: "Run at 2 o'clock every day",
+			jobSchedule: 'Job schedule settings',
+			jobSchedule_tip: 'Job schedule settings - available only for initial job'
+		}
 	},
 	dataVerification: {
 		verifyDetail: 'Verify Detail',

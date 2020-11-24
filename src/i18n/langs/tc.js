@@ -1561,7 +1561,28 @@ const tc = {
 		},
 		library: '此庫',
 		sameTable: '以下表存在重名：',
-		repeatTip: '點擊數據庫名對重名的表在數據目錄頁面進行處理，以確保此庫下表名的唯一性'
+		repeatTip: '點擊數據庫名對重名的表在數據目錄頁面進行處理，以確保此庫下表名的唯一性',
+		jobSchedule: {
+			jobSecheduleSetting: '任務調度設置',
+			job: '任務：',
+			sync: '任務調度：',
+			expression: '表達式：',
+			expressionPlaceholder: '請輸入corn表達式',
+			explanation: '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務',
+			grammar: '語法:',
+			second: '秒',
+			minute: '分鐘',
+			hour: '小時',
+			day: '日',
+			month: '月',
+			week: '星期',
+			year: '年',
+			example: '例子:',
+			runMinute: '每分鐘運行一次',
+			runDay: '每天2點運行',
+			jobSchedule: '調度任務設置',
+			jobSchedule_tip: '調度任務設置-僅對初始化任務可用 '
+		}
 	},
 	dataVerification: {
 		verifyDetail: '校驗詳情',

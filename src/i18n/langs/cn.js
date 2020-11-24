@@ -1449,7 +1449,29 @@ const cn = {
 		},
 		library: '此库',
 		sameTable: '以下表存在重名：',
-		repeatTip: '点击数据库名对重名的表在数据目录页面进行处理，以确保此库下表名的唯一性'
+		repeatTip: '点击数据库名对重名的表在数据目录页面进行处理，以确保此库下表名的唯一性',
+
+		jobSchedule: {
+			jobSecheduleSetting: '任务调度设置',
+			job: '任务：',
+			sync: '任务调度：',
+			expression: '表达式：',
+			expressionPlaceholder: '请输入corn表达式',
+			explanation: '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务',
+			grammar: '语法:',
+			second: '秒',
+			minute: '分钟',
+			hour: '小时',
+			day: '日',
+			month: '月',
+			week: '星期',
+			year: '年',
+			example: '例子:',
+			runMinute: '每分钟运行一次',
+			runDay: '每天2点运行',
+			jobSchedule: '调度任务设置',
+			jobSchedule_tip: '调度任务设置-仅对初始化任务可用 '
+		}
 	},
 	notification: {
 		notice: '消息通知',
