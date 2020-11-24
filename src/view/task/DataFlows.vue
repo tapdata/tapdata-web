@@ -548,9 +548,7 @@ export default {
 			self.wsData.length = 0;
 		}, 3000);
 
-		this.buildProfile = localStorage.getItem('buildProfile');
-
-		if (this.buildProfile && this.buildProfile === 'CLOUD') {
+		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
 			this.getDataApi();
 			if (!this.downLoadNum) {
 				self.timer = setInterval(() => {
@@ -583,8 +581,7 @@ export default {
 		getDataApi() {
 			let params = {};
 			if (
-				this.buildProfile &&
-				this.buildProfile === 'CLOUD' &&
+				this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
 				!parseInt(this.$cookie.get('isAdmin')) &&
 				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
 			) {
@@ -1207,7 +1204,7 @@ export default {
 			this.agentObj.oldStatus = oldStatus;
 			this.agentObj.status = status;
 			this.agentObj.dataItem = dataItem;
-			if (this.buildProfile === 'CLOUD' && !this.downLoadNum) {
+			if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') && !this.downLoadNum) {
 				this.downLoadAgetntdialog = true;
 				return;
 			}

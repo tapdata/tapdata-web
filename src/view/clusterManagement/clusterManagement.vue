@@ -226,8 +226,7 @@ export default {
 			that.getDataApi();
 		}, 5000);
 
-		this.buildProfile = localStorage.getItem('buildProfile');
-		if (this.buildProfile) {
+		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
 			this.getDataApi();
 		}
 	},
@@ -408,9 +407,9 @@ export default {
 				params['filter[where][or][0][systemInfo.hostname][like]'] = this.sourch;
 				params['filter[where][or][1][systemInfo.ip][like]'] = this.sourch;
 			}
+			// 是否能看到所有集群
 			if (
-				this.buildProfile &&
-				this.buildProfile === 'CLOUD' &&
+				this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
 				!parseInt(this.$cookie.get('isAdmin')) &&
 				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
 			) {

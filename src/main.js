@@ -23,6 +23,7 @@ Vue.use(VueClipboard);
 
 Vue.prototype.$moment = moment;
 Vue.prototype.$api = factory;
+Vue.prototype.$window = window;
 
 window.VueCookie = VueCookie;
 window.ChildRoutes = childRoutes;
@@ -37,21 +38,51 @@ window.openDebug();
 // }
 
 window._TAPDATA_OPTIONS_ = {
-	showLang: 'SHOW_LANGUAGE_OPTION',
-	logoUrl: require('../static/icon/logo.png'),
-	platform: 'DAAS'
+	logoUrl: require('../static/icon/logo.png')
 };
 
-document.title = 'Tapdata';
+let init = settings => {
+	window.getSettingByKey = key => {
+		let setting = settings.find(it => it.key === key) || {};
+		return setting.value;
+	};
+	let lang = localStorage.getItem('tapdata_localize_lang');
+	if (!lang) {
+		lang = window.getSettingByKey('DEFAULT_LANGUAGE');
+		localStorage.setItem('tapdata_localize_lang', lang || 'en');
+	}
+	i18n.locale = lang;
+	window.App = new Vue({
+		el: '#app',
+		router,
+		store,
+		i18n,
+		components: { App },
+		template: '<App/>'
+	});
+};
+//获取全局项目设置（OEM信息）
+let settingsStr = localStorage.getItem('TAPDATA_SETTINGS');
+if (settingsStr) {
+	let settings = JSON.parse(settingsStr);
+	init(settings);
+} else {
+	factory('Setting')
+		.get({
+			filter: {
+				where: {
+					category: 'Frontend'
+				}
+			}
+		})
+		.then(({ data }) => {
+			if (data && data.length) {
+				localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(data));
+			}
+			init(data || []);
+		});
+}
 
-window.App = new Vue({
-	el: '#app',
-	router,
-	store,
-	i18n,
-	components: { App },
-	template: '<App/>'
-});
 //解决浏览器tab切换时，element ui 组件tooltip气泡不消失的问题  #7752
 document.addEventListener('visibilitychange', () => {
 	setTimeout(() => {

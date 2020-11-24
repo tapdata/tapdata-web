@@ -2,7 +2,7 @@
 	<section class="page-registry">
 		<Header></Header>
 		<main>
-			<div class="body" :class="{ dk: platform === 'DK' }">
+			<div class="body">
 				<el-card class="sign-in-panel">
 					<div class="title">{{ $t('app.signIn.modifyPassword') }}</div>
 					<div class="tip">
@@ -62,7 +62,6 @@ export default {
 	components: { Header },
 	data() {
 		return {
-			platform: window._TAPDATA_OPTIONS_.platform,
 			loading: false,
 			form: {
 				email: '',
@@ -137,26 +136,6 @@ export default {
 	height: 100%;
 	overflow: auto;
 	box-sizing: border-box;
-	main .body.dk {
-		display: flex;
-		justify-content: center;
-		height: 510px;
-		.carousel {
-			display: none;
-		}
-		.dk-login-cover {
-			display: block;
-			position: relative;
-			img {
-				display: block;
-			}
-		}
-		.sign-in-panel {
-			position: relative;
-			right: 0;
-			top: 0;
-		}
-	}
 	main {
 		position: relative;
 		margin-top: 60px;
@@ -166,9 +145,6 @@ export default {
 			height: 600px;
 			width: 1400px;
 			box-sizing: border-box;
-			.dk-login-cover {
-				display: none;
-			}
 			.carousel {
 				position: absolute;
 				top: 0;

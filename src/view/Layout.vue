@@ -1,6 +1,6 @@
 <template>
 	<el-container class="layout-container">
-		<div class="agentNot" v-if="agentTipFalg && this.buildProfile === 'CLOUD'">
+		<div class="agentNot" v-if="agentTipFalg && $window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')">
 			<i class="el-icon-warning"></i>
 			{{ $t('dialog.downAgent.noAgent')
 			}}<span @click="downLoadInstall">{{ $t('dialog.downAgent.clickDownLoad') }}</span>
@@ -13,7 +13,7 @@
 				<img :src="logoUrl" />
 			</a>
 			<div class="button-bar">
-				<span class="expire-msg" v-if="licenseExpireAble && platform !== 'DK'">
+				<span class="expire-msg" v-if="$window.getSettingByKey('SHOW_LICENSE')">
 					<span v-if="licenseExpire <= 1">{{
 						$t('app.menu.licenseBefore') + licenseExpire + $t('app.menu.licenseAfterOneDay')
 					}}</span>
@@ -31,11 +31,19 @@
 					<i class="el-icon-plus"></i>
 					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
-				<NotificationPopover v-if="platform === 'DAAS'" v-readonlybtn="'BTN_AUTHS'"></NotificationPopover>
-				<a v-if="platform === 'DAAS' && this.buildProfile === 'CLOUD'" class="btn" @click="command('download')"
+				<NotificationPopover
+					v-if="$window.getSettingByKey('SHOW_NOTIFICATION')"
+					v-readonlybtn="'BTN_AUTHS'"
+				></NotificationPopover>
+				<a v-if="$window.getSettingByKey('SHOW_DOWNLOAD')" class="btn" @click="command('download')"
 					><i class="iconfont icon-shangchuan-copy"></i
 				></a>
-				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom" @command="command">
+				<el-dropdown
+					v-if="$window.getSettingByKey('SHOW_QA_AND_HELP')"
+					class="btn"
+					placement="bottom"
+					@command="command"
+				>
 					<i class="iconfont icon-bangzhu1-copy"></i>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="help">{{ $t('app.document') }}</el-dropdown-item>
@@ -43,7 +51,12 @@
 						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
 					</el-dropdown-menu>
 				</el-dropdown>
-				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom" @command="command">
+				<el-dropdown
+					v-if="$window.getSettingByKey('SHOW_SETTING_BUTTON')"
+					class="btn"
+					placement="bottom"
+					@command="command"
+				>
 					<i class="iconfont icon-shezhi1"></i>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="settings">{{ $t('app.menu.settings') }}</el-dropdown-item>
@@ -55,7 +68,12 @@
 						<!--						}}</el-dropdown-item>-->
 					</el-dropdown-menu>
 				</el-dropdown>
-				<el-dropdown v-if="showLang !== 'false'" class="btn" placement="bottom" @command="changeLanguage">
+				<el-dropdown
+					v-if="$window.getSettingByKey('SHOW_LANGUAGE')"
+					class="btn"
+					placement="bottom"
+					@command="changeLanguage"
+				>
 					<i
 						class="iconfont"
 						:class="{
@@ -80,7 +98,7 @@
 						<el-dropdown-item command="account">{{ $t('app.account') }}</el-dropdown-item>
 						<el-dropdown-item command="version">{{ $t('app.version') }}</el-dropdown-item>
 						<el-dropdown-item command="license">{{ $t('app.menu.license') }}</el-dropdown-item>
-						<el-dropdown-item v-if="platform === 'DAAS'" command="home">
+						<el-dropdown-item v-if="$window.getSettingByKey('SHOW_HOME_BUTTON')" command="home">
 							{{ $t('app.home') }}
 						</el-dropdown-item>
 						<el-dropdown-item command="signOut">{{ $t('app.signOut') }}</el-dropdown-item>
@@ -161,7 +179,6 @@
 			:lastDataNum="firstNum"
 			@closeAgentDialog="closeAgentDialog"
 		></DownAgent>
-		<!-- @refreAgent="handleRefreAgent" -->
 	</el-container>
 </template>
 
@@ -239,9 +256,7 @@ export default {
 	components: { CustomerService, newDataFlow, NotificationPopover, DownAgent },
 	data() {
 		return {
-			platform: window._TAPDATA_OPTIONS_.platform,
 			logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
-			showLang: window._TAPDATA_OPTIONS_.showLang,
 			languages: Languages,
 			lang: localStorage.getItem('tapdata_localize_lang') || 'en',
 			isCollapse: false,
@@ -258,8 +273,7 @@ export default {
 			firstNum: undefined,
 			licenseExpire: '',
 			licenseExpireAble: false,
-			licenseExpireDate: '',
-			buildProfile: ''
+			licenseExpireDate: ''
 		};
 	},
 	created() {
@@ -281,9 +295,8 @@ export default {
 			return self.$store.state[data];
 		};
 
-		this.buildProfile = localStorage.getItem('buildProfile');
-
-		if (this.buildProfile && this.buildProfile === 'CLOUD') {
+		// 是否允许下载agent
+		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
 			this.getDataApi();
 			if (!this.downLoadNum) {
 				self.timer = setInterval(() => {
@@ -455,12 +468,7 @@ export default {
 		// 获取Agent是否安装
 		getDataApi() {
 			let params = {};
-			if (
-				this.buildProfile &&
-				this.buildProfile === 'CLOUD' &&
-				!parseInt(this.$cookie.get('isAdmin')) &&
-				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
-			) {
+			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
 				params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
 			}
 			cluster.get(params).then(res => {
@@ -484,11 +492,6 @@ export default {
 		closeAgentDialog() {
 			this.downLoadAgetntdialog = false;
 		},
-
-		// // 刷新agent
-		// handleRefreAgent() {
-		// 	this.getDataApi();
-		// },
 
 		async getLicense() {
 			let timeStamp = this.$api('TimeStamp');
