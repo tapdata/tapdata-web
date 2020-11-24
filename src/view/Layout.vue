@@ -205,12 +205,12 @@ let menuSetting = [
 		children: [
 			{
 				name: 'dataFlows',
-				icon: 'shujukuqianyi2',
+				icon: 'shujukuqianyi1',
 				alias: 'dataFlowsClusterClone',
 				query: '?mapping=cluster-clone'
 			},
-			{ name: 'dataFlows', icon: 'xinxitongbu', alias: 'dataFlowsCustom', query: '?mapping=custom' },
-			{ name: 'dataVerification', icon: 'hechabidui' }
+			{ name: 'dataFlows', icon: 'shujutongbu', alias: 'dataFlowsCustom', query: '?mapping=custom' },
+			{ name: 'dataVerification', icon: 'hechabidui-copy' }
 		]
 	},
 	{
