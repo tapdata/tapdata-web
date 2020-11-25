@@ -28,16 +28,15 @@
 								:indeterminate="item.isIndeterminate"
 								v-model="item.checkAll"
 							>
-								{{ item.title }}
+								{{ item.description }}
 							</el-checkbox>
-							<span v-if="item.second" v-cloak>{{ item.title }}</span>
 						</div>
 						<div class="right h40">
 							<el-checkbox-group
 								v-model="item.checkedCities"
 								@change="handleOneCheckedCitiesChange(item)"
 							>
-								<el-checkbox v-for="m in item.list" :label="m.id" :key="m.id" v-cloak>
+								<el-checkbox v-for="m in item.children" :label="m.id" :key="m.id" v-cloak>
 									{{ m.name }}
 								</el-checkbox>
 								<el-popover
@@ -95,24 +94,25 @@ export default {
 			rules: [],
 			dataList: [
 				{
-					title: '概况',
+					description: '数据校验',
+					code: 'dataVer',
 					id: '0',
 					checkedCities: [],
-					list: [
+					children: [
 						{
 							name: '浏览',
-							id: '10001'
+							code: 'dataVer_preview'
 						},
 						{
 							name: '修改',
-							id: '11111'
+							code: 'dataVer_modify'
 						}
 					]
 				},
 				{
-					title: '会员管理',
+					description: '角色管理',
 					id: '1',
-					list: [
+					children: [
 						{
 							name: '新增',
 							id: '10002'
@@ -125,10 +125,10 @@ export default {
 					checkedCities: []
 				},
 				{
-					title: '会员列表',
+					description: '任务编排',
 					id: '2',
 					checkedCities: [],
-					list: [
+					children: [
 						{
 							name: '新增',
 							id: '10004'
@@ -144,9 +144,9 @@ export default {
 					]
 				},
 				{
-					title: '菜单管理',
+					description: '设置管理',
 					id: '3',
-					list: [
+					children: [
 						{
 							name: '新增',
 							id: '10007'
@@ -213,7 +213,7 @@ export default {
 
 		.vertical-line {
 			position: absolute;
-			left: 30%;
+			left: 25%;
 			top: 0;
 			width: 1px;
 			height: 100%;
@@ -222,7 +222,7 @@ export default {
 
 		.left {
 			float: left;
-			width: 30%;
+			width: 25%;
 			padding-left: 10px;
 			user-select: none;
 			cursor: pointer;
@@ -234,7 +234,7 @@ export default {
 		}
 
 		.right {
-			width: 70%;
+			width: 75%;
 			float: left;
 			padding-left: 10px;
 			box-sizing: border-box;
