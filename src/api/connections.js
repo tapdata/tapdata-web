@@ -17,4 +17,7 @@ export default class Connections extends PublicAPI {
 		}
 		return axios.get(url);
 	}
+	copy(id, params) {
+		return axios.post(this.url + '/' + id + '/copy', params);
+	}
 }

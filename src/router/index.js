@@ -19,10 +19,9 @@ const childRoutes = [
 	{
 		path: '/connections',
 		name: 'connections',
-		component: view('ExternalLink'),
+		component: view('connections/List'),
 		meta: {
 			requiresAuth: true,
-			url: '/old/index.html#/connections',
 			title: i18n.t('tap.connection'),
 			isCollapse: false
 		}

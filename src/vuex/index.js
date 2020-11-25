@@ -82,7 +82,8 @@ const store = new Vuex.Store({
 			selectedSeachType: '',
 			rowsPerPage: '',
 			descending: '',
-			sortBy: ''
+			sortBy: '',
+			panelFlag: true
 		},
 		metadataDefinition: {
 			selectedMetaType: '',
