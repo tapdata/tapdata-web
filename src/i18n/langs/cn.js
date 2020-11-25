@@ -1697,6 +1697,14 @@ const cn = {
 		user_null: '用户名不能为空',
 		has_username: '用户名已存在',
 		editFail: '用户名修改失败'
+	},
+	role: {
+		addroleTitle: '角色新增',
+		editroleTitle: '角色编辑',
+		roleName: '角色名称',
+		roleDesc: '角色描述',
+		defaultRole: '默认角色',
+		rolePermission: '角色权限'
 	}
 };
 
