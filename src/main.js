@@ -76,24 +76,25 @@ if (settingsStr) {
 			}
 		})
 		.then(({ data }) => {
-			// data = [
-			// 	//前端相关
-			// 	// { category: 'Frontend', key: 'PRODUCT_TITLE', value: 'Tapdata' },
-			// 	// { category: 'Frontend', key: 'PRODUCT_LOGO', value: 'logo.svg' },
-			// 	{ category: 'Frontend', key: 'SHOW_LANGUAGE', value: 1 },
-			// 	{ category: 'Frontend', key: 'DEFAULT_LANGUAGE', value: 'en' },
-			// 	{ category: 'Frontend', key: 'SHOW_REGISTER', value: 1 },
-			// 	{ category: 'Frontend', key: 'SHOW_OLD_PAGE', value: 1 },
-			// 	{ category: 'Frontend', key: 'SHOW_PAGE_TITLE', value: 1 },
-			// 	{ category: 'Frontend', key: 'SHOW_LICENSE', value: 1 },
-			// 	{ category: 'Frontend', key: 'SHOW_NOTIFICATION', value: 1 },
-			// 	{ category: 'Frontend', key: 'SHOW_DOWNLOAD', value: 1 },
-			// 	{ category: 'Frontend', key: 'SHOW_QA_AND_HELP', value: 1 },
-			// 	{ category: 'Frontend', key: 'SHOW_SETTING_BUTTON', value: 1 },
-			// 	{ category: 'Frontend', key: 'SHOW_HOME_BUTTON', value: 1 },
-			// 	{ category: 'Frontend', key: 'ALLOW_DOWNLOAD_AGENT', value: 1 },
-			// 	{ category: 'Frontend', key: 'USE_CLOUD_MENU', value: 1 }
-			// ];
+			data = [
+				//前端相关
+				// { category: 'Frontend', key: 'PRODUCT_TITLE', value: 'Tapdata' },
+				// { category: 'Frontend', key: 'PRODUCT_LOGO', value: 'logo.svg' },
+				{ category: 'Frontend', key: 'SHOW_LANGUAGE', value: 1 },
+				{ category: 'Frontend', key: 'DEFAULT_LANGUAGE', value: 'en' },
+				{ category: 'Frontend', key: 'SHOW_REGISTER', value: 1 },
+				{ category: 'Frontend', key: 'SHOW_OLD_PAGE', value: 1 },
+				{ category: 'Frontend', key: 'SHOW_PAGE_TITLE', value: 1 },
+				{ category: 'Frontend', key: 'SHOW_LICENSE', value: 1 },
+				{ category: 'Frontend', key: 'SHOW_NOTIFICATION', value: 1 },
+				{ category: 'Frontend', key: 'SHOW_DOWNLOAD', value: 1 },
+				{ category: 'Frontend', key: 'SHOW_QA_AND_HELP', value: 1 },
+				{ category: 'Frontend', key: 'SHOW_SETTING_BUTTON', value: 1 },
+				{ category: 'Frontend', key: 'SHOW_HOME_BUTTON', value: 1 },
+				{ category: 'Frontend', key: 'ALLOW_DOWNLOAD_AGENT', value: 1 },
+				{ category: 'Frontend', key: 'USE_CLOUD_MENU', value: 1 },
+				{ category: 'Frontend', key: 'SHOW_DK_VERSION', value: 1 }
+			];
 			if (data && data.length) {
 				localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(data));
 			}

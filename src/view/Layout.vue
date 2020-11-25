@@ -415,7 +415,14 @@ export default {
 					this.isShowCustomerService = !this.isShowCustomerService;
 					break;
 				case 'version':
-					this.$message.info('DAAS_BUILD_NUMBER');
+					if (window.getSettingByKey('SHOW_DK_VERSION')) {
+						this.$message.info({
+							dangerouslyUseHTMLString: true,
+							message: 'DK_VERSION_1</br>DK_VERSION_2'
+						});
+					} else {
+						this.$message.info('DAAS_BUILD_NUMBER');
+					}
 					break;
 				case 'license':
 					this.$message.info(this.$t('app.menu.licenseDate') + ': ' + this.licenseExpireDate);
