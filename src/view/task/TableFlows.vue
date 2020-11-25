@@ -2,7 +2,7 @@
 	<div style="height: 100%;" class="table-flows">
 		<el-container class="table-flows-wrap">
 			<div class="panel-left" v-if="formData.panelFlag">
-				<metaData v-on:nodeClick="nodeClick"></metaData>
+				<Classification ref="classification" @nodeChecked="nodeChecked"></Classification>
 			</div>
 			<el-container class="table-flows-main">
 				<el-tabs v-model="activeName" type="card" class="tab-card" @tab-click="handleTabClick">
@@ -81,9 +81,6 @@
 									:value="opt"
 								></el-option>
 							</el-select>
-						</el-form-item>
-						<el-form-item class="item" v-if="checkedTag && checkedTag !== ''">
-							<el-tag size="small" closable @close="handleClose()">{{ checkedTag.value }}</el-tag>
 						</el-form-item>
 						<el-form-item>
 							<el-button style="padding: 7px;" icon="el-icon-refresh-right" @click="reset()"></el-button>
@@ -236,19 +233,20 @@
 
 <script>
 import factory from '../../api/factory';
-import metaData from '../metaData';
+import Classification from '@/components/Classification';
 import SelectClassify from '../../components/SelectClassify';
 
 const dataFlows = factory('DataFlows');
 
 export default {
 	name: 'TableFlows',
-	components: { metaData, SelectClassify },
+	components: { Classification, SelectClassify },
 	data() {
 		return {
 			loading: true,
 			dialogVisible: false,
 			tagList: [],
+			checkedTags: [],
 			activeName: 'tableFlow',
 			searchParams: this.$store.state.tableFlows,
 			page: {
@@ -377,10 +375,6 @@ export default {
 			});
 			return tagList;
 		},
-		handleClose() {
-			this.checkedTag = '';
-			this.getData();
-		},
 		handleOperationClassify(listtags) {
 			let attributes = [];
 			if (this.dataFlowId) {
@@ -433,19 +427,15 @@ export default {
 			this.formData.person = '';
 			this.formData.way = '';
 			this.formData.executionStatus = '';
+			this.$refs.classification.clear();
 			this.getData(1);
 		},
 		searchParamsChange() {
 			this.$store.commit('tableFlows', this.searchParams);
 		},
-		nodeClick(data) {
-			if (data) {
-				this.checkedTag = {
-					id: data.id,
-					value: data.value
-				};
-				this.getData();
-			}
+		nodeChecked(checkedTags) {
+			this.checkedTags = checkedTags;
+			this.getData();
 		},
 		screenFn() {
 			this.page.current = 1;
@@ -485,8 +475,10 @@ export default {
 				if (this.formData.keyword && this.formData.keyword !== '') where.name = this.formData.keyword;
 				if (this.formData.executionStatus) where['cdcStatus'] = this.formData.executionStatus;
 			}
-			if (this.checkedTag && this.checkedTag !== '') {
-				where['listtags'] = [this.checkedTag.id];
+			if (this.checkedTags && this.checkedTags.length) {
+				where['listtags.id'] = {
+					in: this.checkedTags
+				};
 			}
 			let _params = Object.assign({}, where, {
 				order: order === 'descending' ? 'DESC' : 'ASC',

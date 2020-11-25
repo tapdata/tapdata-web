@@ -1,7 +1,7 @@
 <template>
 	<section class="data-flow-wrap" v-loading="restLoading">
 		<div class="panel-left" v-if="formData.panelFlag">
-			<metaData v-on:nodeClick="nodeClick" @nodeDataChange="nodeDataChange"></metaData>
+			<Classification ref="classification" @nodeChecked="nodeChecked"></Classification>
 		</div>
 		<div class="panel-main">
 			<div class="mappingTemplate">
@@ -78,9 +78,6 @@
 								:value="opt"
 							></el-option>
 						</el-select>
-					</li>
-					<li class="item" v-if="checkedTag && checkedTag !== ''">
-						<el-tag size="small" closable @close="handleClose()">{{ checkedTag.value }}</el-tag>
 					</li>
 					<li class="item">
 						<el-button class="btn" size="mini" @click="handleClear">
@@ -387,13 +384,13 @@ const dataFlows = factory('DataFlows');
 const MetadataInstance = factory('MetadataInstances');
 const cluster = factory('cluster');
 import { toRegExp } from '../../util/util';
-import metaData from '../metaData';
+import Classification from '@/components/Classification';
 import SelectClassify from '../../components/SelectClassify';
 import SkipError from '../../components/SkipError';
 import DownAgent from '../downAgent/agentDown';
 
 export default {
-	components: { metaData, SelectClassify, DownAgent, SkipError },
+	components: { Classification, SelectClassify, DownAgent, SkipError },
 	data() {
 		return {
 			downLoadAgetntdialog: false, //判断是否安装agent
@@ -406,7 +403,7 @@ export default {
 				dataItem: null
 			},
 			deleteDialogVisible: false,
-			checkedTag: '',
+			checkedTags: [],
 			activeName: 'dataFlow',
 			listtags: [],
 			tagList: [],
@@ -917,9 +914,9 @@ export default {
 					};
 				}
 			}
-			if (this.checkedTag && this.checkedTag !== '') {
+			if (this.checkedTags && this.checkedTags.length) {
 				where['listtags.id'] = {
-					in: [this.checkedTag.id]
+					in: this.checkedTags
 				};
 			}
 			let _params = Object.assign(
@@ -1389,7 +1386,7 @@ export default {
 			this.formData.status = '';
 			this.formData.way = '';
 			this.formData.executionStatus = '';
-			this.checkedTag = '';
+			this.$refs.classification.clear();
 			this.currentPage = 1;
 			this.screenFn();
 		},
@@ -1405,24 +1402,8 @@ export default {
 			localStorage.setItem('flowPagesize', psize);
 			this.getData();
 		},
-		nodeClick(data) {
-			if (data) {
-				this.checkedTag = {
-					id: data.id,
-					value: data.value
-				};
-			}
-			this.getData();
-		},
-		nodeDataChange(list) {
-			let tag = list.find(item => item.id === this.checkedTag.id);
-			if (tag) {
-				this.checkedTag.value = tag.value;
-			}
-			this.getData();
-		},
-		handleClose() {
-			this.checkedTag = '';
+		nodeChecked(checkedTags) {
+			this.checkedTags = checkedTags;
 			this.getData();
 		},
 		responseHandler(data, msg) {
