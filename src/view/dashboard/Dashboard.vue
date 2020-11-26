@@ -125,10 +125,14 @@
 						<li v-for="item in validList" :key="item.value">
 							<p>{{ item.name }}</p>
 							<div
-								@click="jumpSyncTask(item.value)"
-								:class="{ lagColor: item.value === 'Lag' && syncJobStatusList[item.value] > 0 }"
+								@click="jumpCheck(item.value)"
+								:class="{
+									redColor:
+										(item.value === 'valueDiff' && verifySummaryData[item.value] > 0) ||
+										(item.value === 'countDiff' && verifySummaryData[item.value] > 0)
+								}"
 							>
-								{{ syncJobStatusList[item.value] }}
+								{{ verifySummaryData[item.value] }}
 							</div>
 						</li>
 					</ul>
@@ -278,6 +282,13 @@ export default {
 				initialized: 0,
 				initializing: 0
 			},
+			verifySummaryData: {
+				total: 0,
+				passed: 0,
+				valueDiff: 0,
+				error: 0,
+				countDiff: 0
+			},
 			taskStatusStatistics: [
 				{ name: this.$t('app.Home.initialization'), value: 'initializing' },
 				{ name: this.$t('app.Home.loadingFinished'), value: 'initialized' },
@@ -285,10 +296,10 @@ export default {
 				{ name: this.$t('app.Home.incrementalLag'), value: 'Lag' }
 			],
 			validList: [
-				{ name: this.$t('app.Home.allValid'), value: 'all' },
-				{ name: this.$t('app.Home.checkSame'), value: 'checkSame' },
-				{ name: this.$t('app.Home.countDifference'), value: 'count' },
-				{ name: this.$t('app.Home.contentDifference'), value: 'content' },
+				{ name: this.$t('app.Home.allValid'), value: 'total' },
+				{ name: this.$t('app.Home.checkSame'), value: 'passed' },
+				{ name: this.$t('app.Home.countDifference'), value: 'countDiff' },
+				{ name: this.$t('app.Home.contentDifference'), value: 'valueDiff' },
 				{ name: 'ERROR', value: 'error' }
 			],
 			colorMap: {
@@ -519,6 +530,15 @@ export default {
 		this.allMigrationJobsEchart = JSON.parse(JSON.stringify(this.allTaskEchart));
 	},
 	methods: {
+		// 跳转数据校验
+		jumpCheck(val) {
+			let routeUrl = this.$router.resolve({
+				path: 'dataVerification',
+				query: { executionStatus: val }
+			});
+
+			window.open(routeUrl.href);
+		},
 		// 跳转任务状态统计
 		jumpSyncTask(val) {
 			let routeUrl = this.$router.resolve({
@@ -614,6 +634,7 @@ export default {
 				self.transfer.tableData = res.data.chart3;
 				self.migrationJobStatusList = res.data.chart4;
 				self.syncJobStatusList = res.data.chart6;
+				self.verifySummaryData = res.data.chart7;
 
 				// self.handleData(res.data.chart3);
 			});
@@ -861,6 +882,9 @@ export default {
 						}
 						.lagColor {
 							color: #e6a23c;
+						}
+						.redColor {
+							color: #ff4a47;
 						}
 					}
 				}

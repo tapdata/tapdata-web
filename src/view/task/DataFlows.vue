@@ -90,7 +90,7 @@
 				</ul>
 				<div class="topbar-buttons">
 					<el-button
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="'add'"
 						size="mini"
 						class="btn"
 						v-show="multipleSelection.length > 0"
@@ -400,19 +400,22 @@
 			custom-class="jobSeceduleDialog"
 			width="50%"
 		>
-			<el-form :model="form" label-width="100px">
+			<el-form :model="formSchedule" label-width="100px">
 				<el-form-item :label="$t('dialog.jobSchedule.job')">
-					<div>333333</div>
+					<div>{{ formSchedule.name }}</div>
 				</el-form-item>
 				<el-form-item :label="$t('dialog.jobSchedule.sync')">
-					<el-switch v-model="form.syncFalg"> </el-switch>
+					<el-switch v-model="formSchedule.isSchedule"> </el-switch>
 				</el-form-item>
-				<el-form-item :label="$t('dialog.jobSchedule.expression')" v-if="form.syncFalg">
-					<el-input v-model="form.expression" :placeholder="$t('dialog.jobSchedule.expressionPlaceholder')">
+				<el-form-item :label="$t('dialog.jobSchedule.expression')" v-if="formSchedule.isSchedule">
+					<el-input
+						v-model="formSchedule.cronExpression"
+						:placeholder="$t('dialog.jobSchedule.expressionPlaceholder')"
+					>
 					</el-input>
 				</el-form-item>
 			</el-form>
-			<div v-if="form.syncFalg" class="text">
+			<div v-if="formSchedule.isSchedule" class="text">
 				<p>{{ $t('dialog.jobSchedule.explanation') }}</p>
 				<p>{{ $t('dialog.jobSchedule.grammar') }}</p>
 				<ul>
@@ -574,9 +577,11 @@ export default {
 			oldStatus: '',
 			currentId: '',
 			taskName: '',
-			form: {
-				syncFalg: false,
-				expression: ''
+			formSchedule: {
+				name: '',
+				isSchedule: false,
+				cronExpression: '',
+				taskData: null
 			},
 			timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
 		};
@@ -816,10 +821,6 @@ export default {
 					it.outerHTML = '';
 				});
 			}, 200);
-		},
-		// 任务调度设置
-		handleTaskscheduling() {
-			this.taskSettingsDialog = true;
 		},
 
 		handleImport() {
@@ -1528,6 +1529,35 @@ export default {
 					name: 'tableFlows'
 				});
 			}
+		},
+
+		// 任务调度设置
+		handleTaskscheduling(id, data) {
+			this.taskSettingsDialog = true;
+			this.formSchedule.name = data.name;
+			this.formSchedule.isSchedule = data.setting.isSchedule;
+			this.formSchedule.cronExpression = data.setting.cronExpression;
+			this.formSchedule.taskData = data;
+		},
+
+		// 任务调度设置保存
+		saveTaskSetting() {
+			let data = this.formSchedule.taskData;
+			data.setting.isSchedule = this.formSchedule.isSchedule;
+			data.setting.cronExpression = this.formSchedule.cronExpression;
+			dataFlows
+				.draft(data)
+				.then(result => {
+					if (result && result.data) {
+						this.$message.success(this.$t('message.saveOK'));
+					}
+				})
+				.catch(() => {
+					this.$message.error(this.$t('message.saveFail'));
+				})
+				.finally(() => {
+					this.taskSettingsDialog = false;
+				});
 		}
 	}
 };
