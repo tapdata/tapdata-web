@@ -614,29 +614,29 @@ export default {
 				// 		self.taskList.push(item);
 				// 	}
 				// });
-				self.migrationTaskList = self.handleDataProcessing(res.data.chart1);
-				self.syncTaskList = self.handleDataProcessing(res.data.chart5);
+				if (res && res.data) {
+					self.migrationTaskList = self.handleDataProcessing(res.data.chart1);
+					self.syncTaskList = self.handleDataProcessing(res.data.chart5);
 
-				self.allsyncJobsEchart.series[0].data = self.syncTaskList;
-				self.allMigrationJobsEchart.series[0].data = self.migrationTaskList;
-				self.syncTotal = res.data.chart5.totalDataFlows;
-				self.migrationTotal = res.data.chart1.totalDataFlows;
+					self.allsyncJobsEchart.series[0].data = self.syncTaskList;
+					self.allMigrationJobsEchart.series[0].data = self.migrationTaskList;
+					self.syncTotal = res.data.chart5.totalDataFlows;
+					self.migrationTotal = res.data.chart1.totalDataFlows;
 
-				self.dataScreening.series[0].data = [
-					res.data.chart2[0].totalOutput,
-					res.data.chart2[0].totalInput,
-					res.data.chart2[0].totalInsert,
-					res.data.chart2[0].totalUpdate,
-					res.data.chart2[0].totalDelete
-				];
-				self.unitData = self.dataScreening.series[0].data;
-				self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
-				self.transfer.tableData = res.data.chart3;
-				self.migrationJobStatusList = res.data.chart4;
-				self.syncJobStatusList = res.data.chart6;
-				self.verifySummaryData = res.data.chart7;
-
-				// self.handleData(res.data.chart3);
+					self.dataScreening.series[0].data = [
+						res.data.chart2[0].totalOutput,
+						res.data.chart2[0].totalInput,
+						res.data.chart2[0].totalInsert,
+						res.data.chart2[0].totalUpdate,
+						res.data.chart2[0].totalDelete
+					];
+					self.unitData = self.dataScreening.series[0].data;
+					self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
+					self.transfer.tableData = res.data.chart3;
+					self.migrationJobStatusList = res.data.chart4;
+					self.syncJobStatusList = res.data.chart6;
+					self.verifySummaryData = res.data.chart7;
+				}
 			});
 		},
 

@@ -306,12 +306,12 @@ export default {
 	watch: {
 		'$route.name'() {
 			this.activeMenu = this.$route.path;
-		},
-		$route() {
-			if (this.$route.meta) {
-				this.isCollapse = this.$route.meta.isCollapse;
-			}
 		}
+		// $route() {
+		// 	if (this.$route.meta) {
+		// 		this.isCollapse = this.$route.meta.isCollapse;
+		// 	}
+		// }
 	},
 	methods: {
 		async getFavMenus() {
@@ -422,7 +422,7 @@ export default {
 			signOut();
 		},
 		menuHandler(index) {
-			this.isCollapse = true;
+			// this.isCollapse = true;
 			if (index.includes('#favorite_')) {
 				let i = index.split('#favorite_')[1];
 				let router = this.favMenus[i];

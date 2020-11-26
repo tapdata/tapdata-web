@@ -287,7 +287,7 @@ const childRoutes = [
 		path: '/dataFlows',
 		name: 'dataFlows',
 		component: view('task/DataFlows'),
-		meta: { requiresAuth: true, title: i18n.t('tap.jobFlow'), isCollapse: true }
+		meta: { requiresAuth: true, title: i18n.t('tap.jobFlow'), isCollapse: false }
 	},
 	{
 		path: '/dataMap',
