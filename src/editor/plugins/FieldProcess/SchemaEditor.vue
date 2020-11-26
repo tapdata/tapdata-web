@@ -25,7 +25,13 @@
 				<el-button type="text" class="btn" size="mini" @click="handleAllReset">
 					<img src="../../../../static/image/return.png" alt="" />
 				</el-button>
-				<el-button type="text" class="iconfont icon-lishi2 btn" size="mini" @click="openErrorList"> </el-button>
+				<el-button
+					type="text"
+					class="iconfont icon-lishi2 btn"
+					size="mini"
+					@click="openErrorList"
+					:disabled="errorOperation.length === 0"
+				></el-button>
 			</div>
 		</div>
 		<div class="clear"></div>
@@ -226,18 +232,22 @@
 			<el-dialog title="修改对比" :visible.sync="disabledChangeField" append-to-body custom-class="scriptDialog">
 				<div v-if="errorOperation.length > 0">
 					<div>{{ $t('editor.cell.processor.field.form.errorOperationDrop') }}</div>
-					<div>
-						<span>{{ $t('editor.cell.processor.field.form.errorList') }}</span>
+					<div style="float: right;margin-bottom: 10px">
 						<el-button size="mini" @click="delErrorOperation">{{
 							$t('editor.cell.processor.field.form.errorOperationDelBtn')
 						}}</el-button>
+						<el-button size="mini" @click="keepErrorOperation">{{
+							$t('editor.cell.processor.field.form.errorOperationDelBtn')
+						}}</el-button>
 					</div>
+					<div style="clear: both"></div>
 					<ul class="changeList">
 						<li>
 							<span class="index">#</span>
 							<span class="item">原始字段/类型</span>
-							<span class="op">操作</span>
-							<span class="item">修改后</span>
+							<span class="op">process</span>
+							<span class="item">result</span>
+							<span class="item">Operation</span>
 						</li>
 						<li v-for="(item, index) in errorOperation" :key="item.id">
 							<span class="index">{{ index + 1 }}</span>
@@ -248,15 +258,34 @@
 									><span class="active">{{ item.operand }}</span>
 									<span>{{ `(${item.type})` }}</span></span
 								>
+								<span>
+									<el-radio-group v-model="item.keep">
+										<el-radio :label="false">删除</el-radio>
+										<el-radio :label="true" v-if="[2, 3].includes(item.isType)">保留</el-radio>
+									</el-radio-group>
+								</span>
 							</span>
 							<span v-if="item.op === 'REMOVE'">
 								<span class="item">{{ `${item.field} (${item.type})` }}</span>
 								<span class="op">{{ item.op }}</span>
+								<span class="item"></span>
+								<span>
+									<el-radio-group v-model="item.keep">
+										<el-radio :label="false">删除</el-radio>
+										<el-radio :label="true" v-if="[2, 3].includes(item.isType)">保留</el-radio>
+									</el-radio-group>
+								</span>
 							</span>
 							<span v-if="item.op === 'CREATE'">
 								<span class="item"></span>
 								<span class="op">{{ item.op }}</span>
 								<span class="item active">{{ `${item.field} (${item.javaType})` }}</span>
+								<span>
+									<el-radio-group v-model="item.keep">
+										<el-radio :label="false">删除</el-radio>
+										<el-radio :label="true" v-if="[2, 3].includes(item.isType)">保留</el-radio>
+									</el-radio-group>
+								</span>
 							</span>
 							<span v-if="item.op === 'CONVERT'">
 								<span class="item">{{ `${item.field} (${item.originalDataType})` }}</span>
@@ -264,55 +293,19 @@
 								<span class="item"
 									>{{ item.field }} <span class="active">{{ `(${item.operand})` }}</span></span
 								>
+								<span>
+									<el-radio-group v-model="item.keep">
+										<el-radio :label="false">删除</el-radio>
+										<el-radio :label="true" v-if="[2, 3].includes(item.isType)">保留</el-radio>
+									</el-radio-group>
+								</span>
 							</span>
 						</li>
 					</ul>
 				</div>
-				<div style="margin-top: 20px">{{ $t('editor.cell.processor.field.form.rightList') }}</div>
-				<ul class="changeList">
-					<li>
-						<span class="index">#</span>
-						<span class="item">原始字段/类型</span>
-						<span class="op">操作</span>
-						<span class="item">修改后</span>
-					</li>
-					<li v-if="rightOperation.length === 0">
-						暂无修改操作
-					</li>
-					<li v-for="(item, index) in rightOperation" :key="item.id" v-else>
-						<span class="index">{{ index + 1 }}</span>
-						<span v-if="item.op === 'RENAME'">
-							<span class="item">{{ `${item.field} (${item.type})` }}</span>
-							<span class="op">{{ item.op }}</span>
-							<span class="item"
-								><span class="active">{{ item.operand }}</span>
-								<span>{{ `(${item.type})` }}</span></span
-							>
-						</span>
-						<span v-if="item.op === 'REMOVE'">
-							<span class="item">{{ `${item.field} (${item.type})` }}</span>
-							<span class="op">{{ item.op }}</span>
-						</span>
-						<span v-if="item.op === 'CREATE'">
-							<span class="item"></span>
-							<span class="op">{{ item.op }}</span>
-							<span class="item active">{{ `${item.field} (${item.javaType})` }}</span>
-						</span>
-						<span v-if="item.op === 'CONVERT'">
-							<span class="item">{{ `${item.field} (${item.originalDataType})` }}</span>
-							<span class="op">{{ item.op }}</span>
-							<span class="item"
-								>{{ item.field }} <span class="active">{{ `(${item.operand})` }}</span></span
-							>
-						</span>
-					</li>
-					<li v-for="(item, index) in model.scripts" :key="item.id">
-						<span class="index">{{ index + 1 }}</span>
-						<span class="item">{{ `${item.field} (${item.type})` }}</span>
-						<span class="op">{{ item.scriptType }}</span>
-						<span class="item active">{{ `${item.script}` }}</span>
-					</li>
-				</ul>
+				<span slot="footer" class="dialog-footer">
+					<el-button type="primary" @click="saveErrorOperation">{{ $t('metaData.deleteNode') }}</el-button>
+				</span>
 			</el-dialog>
 		</div>
 	</div>
@@ -407,11 +400,14 @@ export default {
 				scripts: []
 			},
 			errorOperation: [],
-			rightOperation: [],
 			disabledChangeField: false,
 			showErrorOperationTip: false,
 			jsEditorWidth: '500',
-			checkAll: false
+			checkAll: false,
+			fieldOriginalNames: [],
+			fieldOriginalIsDeleted: [],
+			fieldOriginal: [],
+			fieldOriginalIds: []
 		};
 	},
 	mounted() {
@@ -464,29 +460,79 @@ export default {
 		},
 		getErrorOperation() {
 			this.errorOperation = [];
-			this.rightOperation = [];
-			this.model.operations.map(item => {
-				let targetIndex = this.originalSchema.fields.findIndex(n => n.id === item.id);
-				if (targetIndex === -1) {
-					this.errorOperation.push(item);
-				} else {
-					this.rightOperation.push(item);
+			let map = {};
+			this.fieldOriginalNames = this.originalSchema.fields.map(field => field.original_field_name);
+			this.fieldOriginalIds = this.originalSchema.fields.map(field => field.id);
+			this.fieldOriginal = this.originalSchema.fields.map(s => (map[s.original_field_name] = s.id));
+
+			//查找是否有被删除的字段且operation有操作
+			this.fieldOriginalIsDeleted = this.originalSchema.fields.filter(field => field.isDeleted).map(n => n.id);
+			this.model.operations.forEach(item => {
+				//id name 都不匹配且该字段 isType 1表示只有删除操作 2表示name匹配 3表示该字段被标记为删除
+				let node = {
+					id: item.id,
+					color: item.color,
+					field: item.field,
+					isType: 1,
+					keep: false,
+					label: item.label,
+					op: item.op,
+					operand: item.operand,
+					originalDataType: item.originalDataType,
+					primary_key_position: item.primary_key_position,
+					table_name: item.table_name,
+					type: item.type
+				};
+				if (!this.fieldOriginalIds.includes(item.id) && !this.fieldOriginalNames.includes(item.field)) {
+					node.isType = 1;
+					node.keep = false;
+					this.errorOperation.push(node);
+				} else if (!this.fieldOriginalIds.includes(item.id) && this.fieldOriginalNames.includes(item.field)) {
+					node.isType = 2;
+					node.keep = true;
+					this.errorOperation.push(node);
+				} else if (this.fieldOriginalIsDeleted.includes(item.id)) {
+					node.isType = 3;
+					node.keep = true;
+					this.errorOperation.push(node);
 				}
 			});
 			if (this.errorOperation.length > 0) {
 				this.showErrorOperationTip = true;
 			}
 		},
+		keepErrorOperation() {
+			if (this.errorOperation.length === 0) return;
+			this.errorOperation.forEach(item => {
+				if (item.isKeep) {
+					item.keep = true;
+				} else {
+					item.keep = false;
+				}
+			});
+		},
 		delErrorOperation() {
-			for (let i = 0; i < this.model.operations.length; i++) {
-				let targetOp = this.originalSchema.fields.filter(n => n.id === this.model.operations[i].id);
-				if (targetOp.length === 0) {
-					this.model.operations.splice(i, 1);
+			if (this.errorOperation.length === 0) return;
+			this.errorOperation.forEach(item => {
+				item.keep = false;
+			});
+		},
+		saveErrorOperation() {
+			for (let i = 0; i < this.errorOperation.length; i++) {
+				let targetId = this.model.operations.findIndex(n => n.id === this.errorOperation[i].id);
+				if (this.errorOperation[i].isType === 1 && targetId > -1) {
+					this.model.operations.splice(targetId, 1);
+					i--;
+				} else if (this.errorOperation[i].isType === 2) {
+					let id = this.fieldOriginal[this.errorOperation[i].field_name];
+					this.model.operations[targetId].id = id;
+					i--;
+				} else if (this.errorOperation[i].isType === 3) {
+					this.model.operations[targetId]['keep'] = true;
 					i--;
 				}
 			}
 			this.$emit('dataChanged', this.model);
-			this.errorOperation = [];
 			this.showErrorOperationTip = false;
 		},
 		openErrorList() {
@@ -502,7 +548,6 @@ export default {
 				for (let i = 0; i < fields.length; i++) {
 					let f = fields[i];
 					if (f.id === id) {
-						//名字或者id 满足其一即可
 						field = f;
 						break;
 					} else if (f.children) {
