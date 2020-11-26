@@ -50,7 +50,7 @@
 				</span>
 			</el-tree>
 		</div>
-		<el-dialog size="mini" :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+		<el-dialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
 			<span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
 			<el-input
 				size="mini"
