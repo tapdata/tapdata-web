@@ -428,6 +428,7 @@ export default {
 			this.formData.way = '';
 			this.formData.executionStatus = '';
 			this.$refs.classification.clear();
+			this.checkedTags = [];
 			this.getData(1);
 		},
 		searchParamsChange() {
