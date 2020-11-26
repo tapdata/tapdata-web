@@ -868,7 +868,7 @@ export default {
 
 			switch (command) {
 				case 'dataVerify':
-					this.$router.push({ name: 'dataVerification', query: { name: node.name } });
+					this.$router.push({ name: 'dataVerification', query: { name: node.name, id: node.id } });
 					break;
 				case 'export':
 					MetadataInstance.download(where);
@@ -1028,7 +1028,7 @@ export default {
 			await dataFlows
 				.get(_params)
 				.then(res => {
-					if (res.data) {
+					if (res && res.data) {
 						this.handleData(res.data);
 						this.tableData = res.data;
 						let msg = {

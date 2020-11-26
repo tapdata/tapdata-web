@@ -429,6 +429,9 @@ export default {
 			}
 			if (keyword && keyword.trim()) {
 				where.name = { like: toRegExp(keyword), options: 'i' };
+				if (this.$route.query.id) {
+					where.flowId = { regexp: `^${this.$route.query.id}$` };
+				}
 			}
 			let filter = {
 				order: sortBy + ' ' + (order === 'ascending' ? 'ASC' : 'DESC'),
