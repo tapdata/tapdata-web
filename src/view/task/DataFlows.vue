@@ -1451,7 +1451,7 @@ export default {
 	height: 100%;
 	overflow: hidden;
 	.panel-left {
-		width: 200px;
+		width: 250px;
 		height: 100%;
 		box-sizing: border-box;
 	}

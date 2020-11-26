@@ -551,6 +551,9 @@ export default {
 	text-overflow: ellipsis;
 }
 .table-flows {
+	.panel-left {
+		width: 250px;
+	}
 	.table-flows-wrap {
 		height: 100%;
 		overflow: hidden;
