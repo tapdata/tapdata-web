@@ -102,7 +102,7 @@
 								:content="$t('message.delete')"
 								placement="bottom"
 							>
-								<el-button type="text" @click="handleDelete(scope.row)">
+								<el-button type="text" @click="remove(scope.row)">
 									<i class="iconfont task-list-icon icon-shanchu"></i>
 								</el-button>
 							</el-tooltip>
@@ -253,10 +253,44 @@ export default {
 				)
 				.then(res => {
 					if (res && res.data) {
-						this.search(1);
-						this.$message.error(this.$t('message.deleteFail'));
+						this.search(this.page.current);
+						this.$message.success('保存成功');
 					}
 				});
+		},
+		remove(data) {
+			let config = {
+				title: this.$t('message.deteleJobMessage'),
+				Message: this.$t('message.deteleJobMessage'),
+				confirmButtonText: this.$t('dataFlow.button.reset'),
+				cancelButtonText: this.$t('message.cancel'),
+				name: data.name,
+				id: data.id
+			};
+			this.confirm(
+				() => {
+					this.$api('connections')
+						.deleteConnection(data.id, data.name)
+						.then(() => {
+							this.$message.success('删除成功');
+							this.search(this.page.current);
+						});
+				},
+				() => {
+					this.$message.error('删除失败');
+				},
+				config
+			);
+		},
+		confirm(callback, catchCallback, config) {
+			this.$confirm(config.title + config.name, config.title, {
+				confirmButtonText: config.confirmButtonText,
+				cancelButtonText: config.cancelButtonText,
+				type: 'warning',
+				closeOnClickModal: false
+			})
+				.then(callback)
+				.catch(catchCallback);
 		},
 		searchParamsChange() {
 			this.$store.commit('connections', this.searchParams);

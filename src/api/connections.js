@@ -20,4 +20,7 @@ export default class Connections extends PublicAPI {
 	copy(id, params) {
 		return axios.post(this.url + '/' + id + '/copy', params);
 	}
+	deleteConnection(id, name) {
+		return axios.delete(`${this.url}/${id}?name=${name}`);
+	}
 }
