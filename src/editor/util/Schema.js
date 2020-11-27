@@ -85,7 +85,7 @@ export const /**
 						color: getColor(field.tableId || field.table_name),
 						primary_key_position: field.primary_key_position,
 						table_name: field.table_name || 'table',
-						original_field_name: field.field_name
+						original_field_name: field.original_field_name || field.field_name
 					};
 					let path = 'children.' + jsonPathForFieldName.join('.children.');
 					let partField = _.get(root, path);

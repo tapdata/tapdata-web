@@ -62,7 +62,9 @@ export const fieldProcessConfig = {
 					if (item.op === 'CONVERT') {
 						outputSchema.fields[targetIndex].javaType = item.operand;
 					} else if (item.op === 'REMOVE') {
-						if (applyRemoveOperation !== false) outputSchema.fields.splice(targetIndex, 1);
+						if (applyRemoveOperation !== false) {
+							outputSchema.fields.splice(targetIndex, 1);
+						}
 					} else if (item.op === 'RENAME') {
 						const name = outputSchema.fields[targetIndex].field_name;
 						let newName = name.split('.');

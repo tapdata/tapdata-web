@@ -33,6 +33,7 @@
 				<div class="schema-editor-wrap schema-editor-container-left">
 					<schema-editor
 						ref="entity"
+						:originalSchemaFiled="model.originalSchema"
 						:originalSchema="convertSchemaToTreeData(model.originalSchema)"
 						:schema="convertSchemaToTreeData(schema)"
 						:editable="true"
@@ -99,38 +100,20 @@ export default {
 			}
 			this.model.originalSchema = mergeJoinTablesToTargetSchema(null, cell.getInputSchema());
 			let schema = _.cloneDeep(this.model.originalSchema);
-			// let testFiled = {
-			// 	autoincrement: false,
-			// 	columnPosition: 12,
-			// 	columnSize: 40,
-			// 	dataType: 12,
-			// 	data_type: "VARCHAR2",
-			// 	field_name: "fannieTest",
-			// 	id: "5fa22f48459ce7baf31f5d57",
-			// 	is_nullable: true,
-			// 	javaType: "String",
-			// 	original_field_name: "ZIP",
-			// 	precision: 0,
-			// 	primary_key_position: 0,
-			// 	scale: 0,
-			// 	table_name: "CUSTOMER",
-			// 	isDeleted: true,
-			// }
-			// this.model.originalSchema.fields.push(testFiled)
-			//查找是否有被删除的字段且operation有操作
-			let fieldOriginalIsDeleted = this.model.originalSchema.fields
-				.filter(field => field.isDeleted)
-				.map(n => n.id);
-			let temporary = _.cloneDeep(this.model.operations);
-			if (temporary.length > 0) {
-				for (let i = 0; i < temporary.length; i++) {
-					if (fieldOriginalIsDeleted.includes(temporary[i].id) && !temporary[i]['keep']) {
-						temporary.splice(i, 1);
+			// apply operations to schema
+			if (this.model.originalSchema && schema && schema.fields) {
+				//查找是否有被删除的字段且operation有操作
+				let fieldOriginalIsDeleted = this.model.originalSchema.fields
+					.filter(field => field.isDeleted)
+					.map(n => n.id);
+				let temporary = _.cloneDeep(this.model.operations);
+				if (temporary.length > 0) {
+					for (let i = 0; i < temporary.length; i++) {
+						if (fieldOriginalIsDeleted.includes(temporary[i].id) && !temporary[i]['keep']) {
+							temporary.splice(i, 1);
+						}
 					}
 				}
-			}
-			// apply operations to schema
-			if (schema && schema.fields) {
 				this.$refs.entity.setOperations(_.cloneDeep(temporary));
 				this.$refs.entity.setScripts(_.cloneDeep(this.model.scripts));
 
