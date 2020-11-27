@@ -85,7 +85,8 @@ export const /**
 						color: getColor(field.tableId || field.table_name),
 						primary_key_position: field.primary_key_position,
 						table_name: field.table_name || 'table',
-						original_field_name: field.original_field_name || field.field_name
+						original_field_name: field.original_field_name || field.field_name,
+						is_deleted: field.is_deleted
 					};
 					let path = 'children.' + jsonPathForFieldName.join('.children.');
 					let partField = _.get(root, path);
@@ -135,7 +136,6 @@ export const /**
  */
 export const mergeSchema = function(targetSchema, sourceSchema, mergeOpts) {
 	log('Schema.mergeSchema', arguments);
-
 	if (!sourceSchema || !sourceSchema.table_name || !sourceSchema.fields || sourceSchema.fields.length === 0)
 		return targetSchema;
 

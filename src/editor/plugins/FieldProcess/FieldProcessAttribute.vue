@@ -50,6 +50,7 @@ import SchemaEditor from './SchemaEditor';
 import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from '../../util/Schema';
 import log from '../../../log';
 import _ from 'lodash';
+import { handleOperation } from './util';
 let editorMonitor = null;
 export default {
 	name: 'FieldProcess',
@@ -92,7 +93,6 @@ export default {
 
 	methods: {
 		convertSchemaToTreeData,
-
 		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
 				//模型改变 数据的兼容处理
@@ -103,17 +103,8 @@ export default {
 			// apply operations to schema
 			if (this.model.originalSchema && schema && schema.fields) {
 				//查找是否有被删除的字段且operation有操作
-				let fieldOriginalIsDeleted = this.model.originalSchema.fields
-					.filter(field => field.isDeleted)
-					.map(n => n.id);
-				let temporary = _.cloneDeep(this.model.operations);
-				if (temporary.length > 0) {
-					for (let i = 0; i < temporary.length; i++) {
-						if (fieldOriginalIsDeleted.includes(temporary[i].id) && !temporary[i]['keep']) {
-							temporary.splice(i, 1);
-						}
-					}
-				}
+				let temporary = handleOperation(this.model.originalSchema.fields, _.cloneDeep(this.model.operations));
+				this.$refs.entity.setOriginalOperations(this.model.operations);
 				this.$refs.entity.setOperations(_.cloneDeep(temporary));
 				this.$refs.entity.setScripts(_.cloneDeep(this.model.scripts));
 

@@ -8,6 +8,8 @@ import FieldProcessAttribute from './FieldProcessAttribute';
 import { FORM_DATA_KEY } from '../../constants';
 import log from '../../../log';
 import i18n from '../../../i18n/i18n';
+import { handleOperation, isValidate } from './util';
+import _ from 'lodash';
 
 export const fieldProcessConfig = {
 	type: 'app.FieldProcess',
@@ -53,7 +55,10 @@ export const fieldProcessConfig = {
 				let data = this.getFormData();
 				log('FieldProcess.mergeOutputSchema', data, outputSchema);
 				if (!outputSchema || !data) return outputSchema;
-				data.operations.map(item => {
+
+				//查找是否有被删除的字段且operation有操作
+				let temporary = handleOperation(outputSchema.fields, _.cloneDeep(data.operations));
+				temporary.map(item => {
 					let targetIndex = outputSchema.fields.findIndex(n => n.id === item.id);
 					if (targetIndex === -1 && item.op !== 'CREATE') {
 						// data.operations.splice(index,1); //删除找不到id的数据
@@ -133,21 +138,8 @@ export const fieldProcessConfig = {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
 				if (!data) throw new Error(`${name}: 无效字段处理器}`);
-				let operation = data.operations || [];
-				let originalSchema = data.originalSchema || {};
-				let fieldOriginalIds = originalSchema.fields.map(field => field.id);
-				let fieldOriginalIsDeleted = originalSchema.fields.filter(field => field.isDeleted).map(n => n.id);
-				if (operation.length > 0) {
-					//data.operation id不匹配的字段验证 跟当前schema进行比较operation.id
-					for (let i = 0; i < operation.length; i++) {
-						if (
-							!fieldOriginalIds.includes(operation[i].id) ||
-							fieldOriginalIsDeleted.includes(operation[i].id)
-						) {
-							throw new Error(`${name}: 字段处理节点检测到冲突待处理}`);
-						}
-					}
-				}
+				let validate = isValidate(data.operations, data.originalSchema).isValidate;
+				if (!validate) throw new Error(`${name}: 字段处理节点检测到冲突待处理`);
 				return true;
 			}
 		}

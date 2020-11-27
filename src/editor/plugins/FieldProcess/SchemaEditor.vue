@@ -261,7 +261,7 @@
 								<span>
 									<el-radio-group v-model="item.keep">
 										<el-radio :label="false">删除</el-radio>
-										<el-radio :label="true" v-if="![1].includes(item.isType)">保留</el-radio>
+										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">保留</el-radio>
 									</el-radio-group>
 								</span>
 							</span>
@@ -272,7 +272,7 @@
 								<span>
 									<el-radio-group v-model="item.keep">
 										<el-radio :label="false">删除</el-radio>
-										<el-radio :label="true" v-if="![1].includes(item.isType)">保留</el-radio>
+										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">保留</el-radio>
 									</el-radio-group>
 								</span>
 							</span>
@@ -283,7 +283,7 @@
 								<span>
 									<el-radio-group v-model="item.keep">
 										<el-radio :label="false">删除</el-radio>
-										<el-radio :label="true" v-if="![1].includes(item.isType)">保留</el-radio>
+										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">保留</el-radio>
 									</el-radio-group>
 								</span>
 							</span>
@@ -296,7 +296,7 @@
 								<span>
 									<el-radio-group v-model="item.keep">
 										<el-radio :label="false">删除</el-radio>
-										<el-radio :label="true" v-if="![1].includes(item.isType)">保留</el-radio>
+										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">保留</el-radio>
 									</el-radio-group>
 								</span>
 							</span>
@@ -316,6 +316,7 @@ import $ from 'jquery';
 import log from '../../../log';
 import _ from 'lodash';
 import { uuid } from '../../util/Schema';
+import { isValidate } from './util';
 
 const REMOVE_OPS_TPL = {
 	id: '',
@@ -409,15 +410,16 @@ export default {
 			jsEditorWidth: '500',
 			checkAll: false,
 			fieldOriginalNames: [],
-			fieldOriginalIsDeleted: [],
-			fieldOriginal: {},
-			fieldOriginalIds: []
+			fieldIsDeleted: [],
+			fieldsNamesMap: {},
+			fieldOriginalIds: [],
+			originalOperations: []
 		};
 	},
 	mounted() {
 		setTimeout(() => {
 			this.getErrorOperation();
-		}, 1000);
+		}, 100);
 	},
 	methods: {
 		setOperations(operations) {
@@ -426,6 +428,9 @@ export default {
 		setScripts(scripts) {
 			this.model.scripts = scripts;
 			this.checkAll = false;
+		},
+		setOriginalOperations(operations) {
+			this.originalOperations = operations;
 		},
 		isRemove(id) {
 			let ops = this.model.operations.filter(v => v.id === id && v.op === 'REMOVE');
@@ -466,66 +471,7 @@ export default {
 			if (!this.originalSchemaFiled || !this.originalSchemaFiled.fields) {
 				return;
 			}
-			this.errorOperation = [];
-			this.fieldOriginalNames = this.originalSchemaFiled.fields.map(field => field.field_name);
-			this.fieldOriginalIds = this.originalSchemaFiled.fields.map(field => field.id);
-			this.originalSchemaFiled.fields.map(s => (this.fieldOriginal[s.field_name] = s.id));
-			//查找是否有被删除的字段且operation有操作
-			this.fieldOriginalIsDeleted = this.originalSchemaFiled.fields
-				.filter(field => field.isDeleted)
-				.map(n => n.id);
-			this.model.operations.forEach(item => {
-				// isType 1表示id name 都不匹配 2表示name匹配 3表示该字段被标记为删除且id匹配 4 新建字段处理
-				let node = {
-					id: item.id,
-					color: item.color,
-					field: item.field,
-					isType: 1,
-					keep: false,
-					label: item.label,
-					op: item.op,
-					operand: item.operand,
-					originalDataType: item.originalDataType || item.type,
-					primary_key_position: item.primary_key_position,
-					table_name: item.table_name,
-					type: item.type
-				};
-				if (item.op === 'CREATE' && !this.fieldOriginalIds.includes(item.triggerFieldId)) {
-					let newFiled = {
-						id: item.id,
-						isType: 4,
-						keep: true,
-						action: item.action,
-						op: item.op,
-						field: item.field,
-						javaType: item.javaType,
-						level: item.level,
-						tableName: item.tableName,
-						triggerFieldId: item.triggerFieldId
-					};
-					this.errorOperation.push(newFiled);
-				} else if (
-					!this.fieldOriginalIds.includes(item.id) &&
-					!this.fieldOriginalNames.includes(item.field) &&
-					item.op !== 'CREATE'
-				) {
-					node.isType = 1;
-					node.keep = false;
-					this.errorOperation.push(node);
-				} else if (
-					!this.fieldOriginalIds.includes(item.id) &&
-					this.fieldOriginalNames.includes(item.field) &&
-					item.op !== 'CREATE'
-				) {
-					node.isType = 2;
-					node.keep = true;
-					this.errorOperation.push(node);
-				} else if (this.fieldOriginalIsDeleted.includes(item.id)) {
-					node.isType = 3;
-					node.keep = true;
-					this.errorOperation.push(node);
-				}
-			});
+			this.errorOperation = isValidate(this.originalOperations, this.originalSchemaFiled).errorList;
 			if (this.errorOperation.length > 0) {
 				this.showErrorOperationTip = true;
 			} else {
@@ -551,12 +497,12 @@ export default {
 		saveErrorOperation() {
 			for (let i = 0; i < this.errorOperation.length; i++) {
 				let targetId = this.model.operations.findIndex(n => n.id === this.errorOperation[i].id);
-				if (this.errorOperation[i].isType === 1 && targetId > -1) {
+				if ([1, 4].includes(this.errorOperation[i].isType) && targetId > -1) {
 					this.model.operations.splice(targetId, 1);
 					i--;
 					continue;
 				} else if (this.errorOperation[i].isType === 2 && targetId > -1) {
-					let id = this.fieldOriginal[this.errorOperation[i].field];
+					let id = this.fieldsNamesMap[this.errorOperation[i].field];
 					if (id) {
 						this.model.operations[targetId].id = id;
 					}
@@ -569,6 +515,7 @@ export default {
 				}
 			}
 			this.$emit('dataChanged', this.model);
+			this.originalOperations = this.model.operations;
 			this.disabledChangeField = false;
 			this.getErrorOperation();
 		},
