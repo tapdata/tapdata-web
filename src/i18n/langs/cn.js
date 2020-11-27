@@ -508,6 +508,7 @@ const cn = {
 		filterPredicate: '过滤器',
 		groupByExpression: '分组字段',
 		aggregation: '聚合处理',
+		aggregatePrompt: '提示：使用聚合处理节点后，此任务停止后再次启动，任务将会重置',
 		nameTip: '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
 		enterFilterTable: '请输入过滤表内容',
 		button: {

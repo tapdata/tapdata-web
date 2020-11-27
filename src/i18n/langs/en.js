@@ -509,6 +509,7 @@ const en = {
 		groupByExpression: 'Group Field',
 		aggregation: 'Aggregation',
 		enterFilterTable: 'Please enter the filter table content',
+		aggregatePrompt: 'Warn：Using the aggregation processor node, the job will be reset when excutes restart',
 		nameTip:
 			'Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ',
 		button: {

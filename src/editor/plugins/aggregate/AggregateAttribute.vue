@@ -4,6 +4,7 @@
 			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 				{{ $t('dataFlow.button.viewMonitoring') }}
 			</el-button>
+			<p>{{ $t('dataFlow.aggregatePrompt') }}</p>
 		</div>
 		<el-form ref="form" :model="form" label-position="top" label-width="200px" :disabled="disabled">
 			<el-col :span="21" class="aggregateName">
@@ -372,6 +373,14 @@ export default {
 </style>
 <style lang="less">
 .aggregate {
+	.head-btns {
+		p {
+			padding: 20px 0;
+			color: rgb(241, 145, 73);
+			font-size: 12px;
+			text-align: left;
+		}
+	}
 	.e-label {
 		&::before {
 			content: '*';
