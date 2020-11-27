@@ -13,7 +13,7 @@
 				<img :src="logoUrl" />
 			</a>
 			<div class="button-bar">
-				<span class="expire-msg" v-if="$window.getSettingByKey('SHOW_LICENSE')">
+				<span class="expire-msg" v-if="licenseExpireVisible">
 					<span v-if="licenseExpire <= 1">{{
 						$t('app.menu.licenseBefore') + licenseExpire + $t('app.menu.licenseAfterOneDay')
 					}}</span>
@@ -274,6 +274,7 @@ export default {
 			downLoadNum: 0,
 			firstNum: undefined,
 			licenseExpire: '',
+			lecenseExpireVisible: false,
 			licenseExpireDate: ''
 		};
 	},
@@ -527,7 +528,8 @@ export default {
 					let expires_on = res.data.expires_on || '';
 					let endTime = expires_on - stime;
 					endTime = parseInt(endTime / 1000 / 60 / 60 / 24); //相差天数
-
+					let showDay = window.getSettingByKey('showLicenceNotice') || 0;
+					this.licenseExpireVisible = Number(showDay) > endTime;
 					this.licenseExpire = endTime;
 					this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss');
 				});

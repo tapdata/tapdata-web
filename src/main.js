@@ -68,13 +68,7 @@ if (settingsStr) {
 	init(settings);
 } else {
 	factory('Setting')
-		.get({
-			filter: {
-				where: {
-					category: 'Frontend'
-				}
-			}
-		})
+		.get()
 		.then(({ data }) => {
 			// data = [
 			// 	//前端相关
