@@ -133,6 +133,7 @@
 import MultiSelection from '../../../components/MultiSelection';
 // import log from '../../../log';
 import _ from 'lodash';
+import { removeDeleted } from '../../util/Schema';
 let editorMonitor = null;
 export default {
 	name: 'memCache',
@@ -200,6 +201,9 @@ export default {
 					this.model.name = this.model.cacheName = schema.tableName;
 				}
 				let fields = schema.sourceSchema.fields || [];
+				if (fields) {
+					fields = removeDeleted(fields);
+				}
 				this.primaryKeyOptions = fields.map(f => f.field_name);
 				if (!cacheKeys) {
 					let primaryKeys = fields

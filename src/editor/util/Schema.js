@@ -265,6 +265,17 @@ export const mergeJoinTablesToTargetSchema = function(targetSchema, joinTables) 
 
 	return mergedTargetSchema;
 };
+export const removeDeleted = function(fields) {
+	if (fields && fields.length > 0) {
+		for (let i = 0; i < fields.length; i++) {
+			if (fields[i].is_deleted) {
+				fields.splice(i, 1);
+				i--;
+			}
+		}
+	}
+	return fields;
+};
 export const uuid = function() {
 	// credit: http://stackoverflow.com/posts/2117523/revisions
 

@@ -151,7 +151,7 @@
 <script>
 import _ from 'lodash';
 import log from '../../../log';
-import { mergeJoinTablesToTargetSchema } from '../../util/Schema';
+import { mergeJoinTablesToTargetSchema, removeDeleted } from '../../util/Schema';
 import MultiSelection from '../../../components/MultiSelection';
 
 let counter = 0;
@@ -272,6 +272,8 @@ export default {
 			let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
 			//获取所有字段键选项，若主键为空，默认选中schema中的主键
 			if (schema && schema.fields) {
+				//过滤被删除的字段
+				schema.fields = removeDeleted(schema.fields);
 				this.primaryKeyOptions = schema.fields.map(f => f.field_name);
 				if (!this.form.primaryKeys) {
 					let primaryKeys = schema.fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);

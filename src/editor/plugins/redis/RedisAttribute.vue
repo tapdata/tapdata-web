@@ -58,7 +58,7 @@
 	</div>
 </template>
 <script>
-import { convertSchemaToTreeData } from '../../util/Schema';
+import { convertSchemaToTreeData, removeDeleted } from '../../util/Schema';
 import Entity from '../link/Entity';
 import _ from 'lodash';
 import factory from '../../../api/factory';
@@ -144,6 +144,9 @@ export default {
 			handler() {
 				if (this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0) {
 					let fields = this.mergedSchema.fields;
+					if (fields) {
+						fields = removeDeleted(fields);
+					}
 					this.redisKeyOptions = fields.map(f => f.field_name);
 					let redisKey = [];
 					if (this.model.redisKey) {
