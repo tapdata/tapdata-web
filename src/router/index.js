@@ -287,7 +287,7 @@ const childRoutes = [
 		path: '/dataFlows',
 		name: 'dataFlows',
 		component: view('task/DataFlows'),
-		meta: { requiresAuth: true, title: i18n.t('tap.jobFlow'), isCollapse: true }
+		meta: { requiresAuth: true, title: i18n.t('tap.jobFlow'), isCollapse: false }
 	},
 	{
 		path: '/dataMap',
@@ -402,7 +402,7 @@ const router = new Router({
 		{
 			path: '/registry',
 			name: 'registry',
-			component: view('Login/registration'),
+			component: view('Login/Registration'),
 			meta: {
 				title: i18n.t('tap.registry')
 			}
@@ -410,7 +410,7 @@ const router = new Router({
 		{
 			path: '/verificationEmail',
 			name: 'verificationEmail',
-			component: view('Login/verificationEmail'),
+			component: view('Login/VerificationEmail'),
 			meta: {
 				title: i18n.t('tap.verificationEmail')
 			}
@@ -418,7 +418,7 @@ const router = new Router({
 		{
 			path: '/registyResult',
 			name: 'registyResult',
-			component: view('Login/registyResult'),
+			component: view('Login/RegistyResult'),
 			meta: {
 				title: i18n.t('tap.registry')
 			}
@@ -426,7 +426,7 @@ const router = new Router({
 		{
 			path: '/passwordReset',
 			name: 'passwordReset',
-			component: view('Login/passwordReset'),
+			component: view('Login/PasswordReset'),
 			meta: {
 				title: i18n.t('tap.passwordReset')
 			}

@@ -179,6 +179,7 @@ const cn = {
 			serverProcess: '服务器与进程',
 			syncJobsStatus: '同步任务状态',
 			migrationJobsStatus: '迁移任务状态',
+			dataValidationTitle: '数据校验',
 			before: '前',
 			pcs: '条',
 			server: '服务器',
@@ -196,7 +197,11 @@ const cn = {
 			initialization: '初始化中',
 			loadingFinished: '初始化完成',
 			incremental: '增量中',
-			incrementalLag: '增量滞后'
+			incrementalLag: '增量滞后',
+			allValid: '全部校验任务',
+			checkSame: '校验一致',
+			countDifference: 'Count差异',
+			contentDifference: '内容差异'
 		}
 	},
 	message: {
@@ -503,6 +508,7 @@ const cn = {
 		filterPredicate: '过滤器',
 		groupByExpression: '分组字段',
 		aggregation: '聚合处理',
+		aggregatePrompt: '提示：使用聚合处理节点后，此任务停止后再次启动，任务将会重置',
 		nameTip: '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
 		enterFilterTable: '请输入过滤表内容',
 		button: {
@@ -1444,7 +1450,29 @@ const cn = {
 		},
 		library: '此库',
 		sameTable: '以下表存在重名：',
-		repeatTip: '点击数据库名对重名的表在数据目录页面进行处理，以确保此库下表名的唯一性'
+		repeatTip: '点击数据库名对重名的表在数据目录页面进行处理，以确保此库下表名的唯一性',
+
+		jobSchedule: {
+			jobSecheduleSetting: '任务调度设置',
+			job: '任务：',
+			sync: '任务调度：',
+			expression: '表达式：',
+			expressionPlaceholder: '请输入corn表达式',
+			explanation: '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务',
+			grammar: '语法:',
+			second: '秒',
+			minute: '分钟',
+			hour: '小时',
+			day: '日',
+			month: '月',
+			week: '星期',
+			year: '年',
+			example: '例子:',
+			runMinute: '每分钟运行一次',
+			runDay: '每天2点运行',
+			jobSchedule: '调度任务设置',
+			jobSchedule_tip: '调度任务设置-仅对初始化任务可用 '
+		}
 	},
 	notification: {
 		notice: '消息通知',

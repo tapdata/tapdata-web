@@ -120,34 +120,22 @@
 			</el-col>
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
-					<echart-head :data="serverProcessObj" @getAllData="getAllData"></echart-head>
-					<!-- <elTables :tableObj="serverProcess"></elTables> -->
-					<el-table :data="serverProcess.tableData" :height="transfer.height" style="width: 100%">
-						<!-- <template v-if="tableObj.isHeader"> -->
-						<el-table-column prop="systemInfo.ip" :label="$t('app.Home.server')"> </el-table-column>
-						<el-table-column prop="management.status" :label="$t('app.Home.managementSide')">
-							<template slot-scope="scope">
-								<span :style="`color: ${colorServeMap[scope.row.management.status]};`">
-									{{ $t('app.Home.' + scope.row.management.status) }}
-								</span>
-							</template>
-						</el-table-column>
-						<el-table-column prop="engine.status" :label="$t('app.Home.taskTransfer')">
-							<template slot-scope="scope">
-								<span :style="`color: ${colorServeMap[scope.row.engine.status]};`">{{
-									$t('app.Home.' + scope.row.engine.status)
-								}}</span>
-							</template>
-						</el-table-column>
-						<el-table-column prop="apiServer.status" :label="$t('app.Home.apiService')">
-							<template slot-scope="scope">
-								<span :style="`color: ${colorServeMap[scope.row.apiServer.status]};`">{{
-									$t('app.Home.' + scope.row.apiServer.status)
-								}}</span>
-							</template>
-						</el-table-column>
-						<!-- </template> -->
-					</el-table>
+					<echart-head :data="dataValidationObj" @getUnit="getUnit"></echart-head>
+					<ul class="status-box">
+						<li v-for="item in validList" :key="item.value">
+							<p>{{ item.name }}</p>
+							<div
+								@click="jumpCheck(item.value)"
+								:class="{
+									redColor:
+										(item.value === 'valueDiff' && verifySummaryData[item.value] > 0) ||
+										(item.value === 'countDiff' && verifySummaryData[item.value] > 0)
+								}"
+							>
+								{{ verifySummaryData[item.value] }}
+							</div>
+						</li>
+					</ul>
 				</div>
 			</el-col>
 			<!-- <el-col :span="12" class="e-col">
@@ -205,8 +193,37 @@
 			</el-col> -->
 		</el-row>
 
-		<!-- <el-row :gutter="20" class="e-row">
+		<el-row :gutter="20" class="e-row">
 			<el-col :span="12" class="e-col">
+				<div class="charts-list">
+					<echart-head :data="serverProcessObj" @getAllData="getAllData"></echart-head>
+					<el-table :data="serverProcess.tableData" :height="transfer.height" style="width: 100%">
+						<el-table-column prop="systemInfo.ip" :label="$t('app.Home.server')"> </el-table-column>
+						<el-table-column prop="management.status" :label="$t('app.Home.managementSide')">
+							<template slot-scope="scope">
+								<span :style="`color: ${colorServeMap[scope.row.management.status]};`">
+									{{ $t('app.Home.' + scope.row.management.status) }}
+								</span>
+							</template>
+						</el-table-column>
+						<el-table-column prop="engine.status" :label="$t('app.Home.taskTransfer')">
+							<template slot-scope="scope">
+								<span :style="`color: ${colorServeMap[scope.row.engine.status]};`">{{
+									$t('app.Home.' + scope.row.engine.status)
+								}}</span>
+							</template>
+						</el-table-column>
+						<el-table-column prop="apiServer.status" :label="$t('app.Home.apiService')">
+							<template slot-scope="scope">
+								<span :style="`color: ${colorServeMap[scope.row.apiServer.status]};`">{{
+									$t('app.Home.' + scope.row.apiServer.status)
+								}}</span>
+							</template>
+						</el-table-column>
+					</el-table>
+				</div>
+			</el-col>
+			<!-- <el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="taskRankingObj" @getAllData="getAllData"></echart-head>
 					<shaftless-echart
@@ -218,8 +235,8 @@
 						style="width: 100%"
 					></shaftless-echart>
 				</div>
-			</el-col>
-		</el-row> -->
+			</el-col> -->
+		</el-row>
 	</section>
 	<iframe v-else src="/old/index.html#/dashboard" frameborder="0" style="height:100%; width: 100%;"></iframe>
 </template>
@@ -246,12 +263,12 @@ export default {
 			migrationTaskList: [],
 			syncTaskList: [],
 			jobObj: null,
-			screeningObj: null, // 传输总览
+			screeningObj: {}, // 传输总览
 			sliderBar: null,
-			transferTaskObj: null, // 传输任务
+			transferTaskObj: {}, // 传输任务
 			wrongTaskObj: null, //错误任务
-			taskRankingObj: null, // 任务传输排行
-			serverProcessObj: null, //服务器与进程
+			taskRankingObj: {}, // 任务传输排行
+			serverProcessObj: {}, //服务器与进程
 			taskStatusObj: null, // 任务状态统计
 			syncJobStatusList: {
 				Lag: 0,
@@ -265,11 +282,25 @@ export default {
 				initialized: 0,
 				initializing: 0
 			},
+			verifySummaryData: {
+				total: 0,
+				passed: 0,
+				valueDiff: 0,
+				error: 0,
+				countDiff: 0
+			},
 			taskStatusStatistics: [
 				{ name: this.$t('app.Home.initialization'), value: 'initializing' },
 				{ name: this.$t('app.Home.loadingFinished'), value: 'initialized' },
 				{ name: this.$t('app.Home.incremental'), value: 'cdc' },
 				{ name: this.$t('app.Home.incrementalLag'), value: 'Lag' }
+			],
+			validList: [
+				{ name: this.$t('app.Home.allValid'), value: 'total' },
+				{ name: this.$t('app.Home.checkSame'), value: 'passed' },
+				{ name: this.$t('app.Home.countDifference'), value: 'countDiff' },
+				{ name: this.$t('app.Home.contentDifference'), value: 'valueDiff' },
+				{ name: 'ERROR', value: 'error' }
 			],
 			colorMap: {
 				running: '#8DC47A',
@@ -339,10 +370,11 @@ export default {
 				isHeader: false,
 				tableData: []
 			},
-			syncJobObj: null,
-			migrationJobObj: null,
-			syncJobStatusObj: null,
-			migrationJobStatusObj: null,
+			syncJobObj: {},
+			migrationJobObj: {},
+			syncJobStatusObj: {},
+			migrationJobStatusObj: {},
+			dataValidationObj: {}, //数据校验
 			allsyncJobsEchart: null,
 			allMigrationJobsEchart: null,
 			dataScreening: {
@@ -464,6 +496,11 @@ export default {
 			type: 'screening',
 			overviewFalg: false
 		};
+		this.dataValidationObj = {
+			title: this.$t('app.Home.dataValidationTitle'),
+			type: 'dataValidation',
+			allFalg: false
+		};
 		// this.taskStatusObj = {
 		// 	title: this.$t('app.Home.taskStatusStatistics'),
 		// 	type: 'taskStatus',
@@ -493,6 +530,15 @@ export default {
 		this.allMigrationJobsEchart = JSON.parse(JSON.stringify(this.allTaskEchart));
 	},
 	methods: {
+		// 跳转数据校验
+		jumpCheck(val) {
+			let routeUrl = this.$router.resolve({
+				path: 'dataVerification',
+				query: { executionStatus: val }
+			});
+
+			window.open(routeUrl.href);
+		},
 		// 跳转任务状态统计
 		jumpSyncTask(val) {
 			let routeUrl = this.$router.resolve({
@@ -568,28 +614,29 @@ export default {
 				// 		self.taskList.push(item);
 				// 	}
 				// });
-				self.migrationTaskList = self.handleDataProcessing(res.data.chart1);
-				self.syncTaskList = self.handleDataProcessing(res.data.chart5);
+				if (res && res.data) {
+					self.migrationTaskList = self.handleDataProcessing(res.data.chart1);
+					self.syncTaskList = self.handleDataProcessing(res.data.chart5);
 
-				self.allsyncJobsEchart.series[0].data = self.syncTaskList;
-				self.allMigrationJobsEchart.series[0].data = self.migrationTaskList;
-				self.syncTotal = res.data.chart5.totalDataFlows;
-				self.migrationTotal = res.data.chart1.totalDataFlows;
+					self.allsyncJobsEchart.series[0].data = self.syncTaskList;
+					self.allMigrationJobsEchart.series[0].data = self.migrationTaskList;
+					self.syncTotal = res.data.chart5.totalDataFlows;
+					self.migrationTotal = res.data.chart1.totalDataFlows;
 
-				self.dataScreening.series[0].data = [
-					res.data.chart2[0].totalOutput,
-					res.data.chart2[0].totalInput,
-					res.data.chart2[0].totalInsert,
-					res.data.chart2[0].totalUpdate,
-					res.data.chart2[0].totalDelete
-				];
-				self.unitData = self.dataScreening.series[0].data;
-				self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
-				self.transfer.tableData = res.data.chart3;
-				self.migrationJobStatusList = res.data.chart4;
-				self.syncJobStatusList = res.data.chart6;
-
-				// self.handleData(res.data.chart3);
+					self.dataScreening.series[0].data = [
+						res.data.chart2[0].totalOutput,
+						res.data.chart2[0].totalInput,
+						res.data.chart2[0].totalInsert,
+						res.data.chart2[0].totalUpdate,
+						res.data.chart2[0].totalDelete
+					];
+					self.unitData = self.dataScreening.series[0].data;
+					self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
+					self.transfer.tableData = res.data.chart3;
+					self.migrationJobStatusList = res.data.chart4;
+					self.syncJobStatusList = res.data.chart6;
+					self.verifySummaryData = res.data.chart7;
+				}
 			});
 		},
 
@@ -802,10 +849,10 @@ export default {
 	padding: 20px;
 	.e-row {
 		.e-col {
-			height: 420px;
+			height: 340px;
 			border-radius: 3px;
 			.charts-list {
-				height: 400px;
+				height: 320px;
 				overflow: hidden;
 				box-sizing: border-box;
 				border: 1px solid #dcdfe6;
@@ -836,6 +883,9 @@ export default {
 						.lagColor {
 							color: #e6a23c;
 						}
+						.redColor {
+							color: #ff4a47;
+						}
 					}
 				}
 			}
@@ -849,7 +899,7 @@ export default {
 		.info {
 			float: left;
 			width: 20%;
-			padding: 115px 20px;
+			padding: 75px 20px;
 			span {
 				display: block;
 				font-size: 14px;
@@ -865,7 +915,7 @@ export default {
 		.jobList {
 			float: left;
 			width: 20%;
-			padding: 115px 0;
+			padding: 78px 0;
 			li {
 				padding-bottom: 10px;
 				cursor: pointer;
@@ -880,7 +930,7 @@ export default {
 		.chart {
 			float: left;
 			width: 50%;
-			height: 360px;
+			height: 300px;
 		}
 		.charts-box {
 			height: calc(100% - 40px);

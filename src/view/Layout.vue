@@ -306,18 +306,18 @@ export default {
 	watch: {
 		'$route.name'() {
 			this.activeMenu = this.$route.path;
-		},
-		$route() {
-			if (this.$route.meta) {
-				this.isCollapse = this.$route.meta.isCollapse;
-			}
 		}
+		// $route() {
+		// 	if (this.$route.meta) {
+		// 		this.isCollapse = this.$route.meta.isCollapse;
+		// 	}
+		// }
 	},
 	methods: {
 		async getFavMenus() {
 			let userId = this.$cookie.get('user_id');
 			let result = await this.$api('users').get([userId]);
-			if (result.data) {
+			if (result && result.data) {
 				let user = result.data || {};
 				this.favMenus = user.favorites || [];
 				this.userName = user.email.split('@')[0] || '';
@@ -422,7 +422,7 @@ export default {
 			signOut();
 		},
 		menuHandler(index) {
-			this.isCollapse = true;
+			// this.isCollapse = true;
 			if (index.includes('#favorite_')) {
 				let i = index.split('#favorite_')[1];
 				let router = this.favMenus[i];
@@ -494,7 +494,9 @@ export default {
 			let timeStamp = this.$api('TimeStamp');
 			let stime = '';
 			await timeStamp.get().then(res => {
-				stime = res.data || new Date().getTime();
+				if (res) {
+					stime = res.data || new Date().getTime();
+				}
 			});
 			let filter = {
 				where: {}
@@ -507,14 +509,16 @@ export default {
 			this.$api('Licenses')
 				.get(params)
 				.then(res => {
-					let expires_on = res.data.expires_on || '';
-					let endTime = expires_on - stime;
-					endTime = parseInt(endTime / 1000 / 60 / 60 / 24); //相差天数
-					// if (endTime <= 90 && this.$cookie.get('isAdmin') != 0) {
-					// 	this.licenseExpireAble = true;
-					// }
-					this.licenseExpire = endTime;
-					this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss');
+					if (res) {
+						let expires_on = res.data.expires_on || '';
+						let endTime = expires_on - stime;
+						endTime = parseInt(endTime / 1000 / 60 / 60 / 24); //相差天数
+						// if (endTime <= 90 && this.$cookie.get('isAdmin') != 0) {
+						// 	this.licenseExpireAble = true;
+						// }
+						this.licenseExpire = endTime;
+						this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss');
+					}
 				});
 		}
 	}
