@@ -18,44 +18,61 @@
 			</el-form-item>
 			<el-form-item :label="$t('role.rolePermission')" class="role-tableBox">
 				<ul class="role-table col-xs-offset-2 col-md-offset-1 col-sm-offset-2">
-					<!-- <li class="header">
-						<div class="left">菜单列表</div>
-						<div class="right">功能权限</div>
-					</li> -->
-					<div class="vertical-line"></div>
+					<!-- <div class="vertical-line"></div> -->
 					<li v-for="item in dataList" :key="item.id">
-						<div class="left h40">
-							<el-checkbox
-								@click.native="handleOneCheckAll($event, item)"
-								v-cloak
-								v-if="!item.parentId"
-								:indeterminate="item.isIndeterminate"
-								:label="item.name"
-								v-model="item.checkAll"
-							>
-								{{ item.description }}
+						<div class="left">
+							<el-checkbox @change="handleOneCheckAll($event, item)" v-cloak v-model="item.checkAll">
+								{{ $t('role.roleNavName.' + item.name) }} {{ item && item.checkAll }}
 							</el-checkbox>
 						</div>
-						<div class="right h40">
-							<el-checkbox-group
+						<div class="center" v-if="item.children && item.children.length && !item.children[0].isNav">
+							<el-checkbox
+								v-for="second in item.children"
+								:key="second.id"
+								v-model="second.checkAll"
+								@change="handleCheckChange(item, second)"
+								v-cloak
+							>
+								{{ $t('role.roleNavName.' + second.name) }}
+							</el-checkbox>
+							<!-- <el-checkbox-group
 								v-model="item.checkedCities"
 								@change="handleOneCheckedCitiesChange(item)"
 							>
-								<el-checkbox v-for="m in item.children" :label="m.name" :key="m.id" v-cloak>
-									{{ m.description }}
-									<el-popover
-										popper-class="aggtip"
-										width="600"
-										trigger="hover"
-										:content="$t('dataFlow.nameTip')"
-									>
-										<span class="icon iconfont icon-bangzhu5" slot="reference"></span>
-									</el-popover>
-								</el-checkbox>
-							</el-checkbox-group>
+								<el-checkbox v-for="m in item.children" :label="m.id" :key="m.id" v-cloak>
+									{{ m.description }}</el-checkbox
+								>
+							</el-checkbox-group> -->
 						</div>
-						<div class="line"></div>
-						<!-- <ul v-show="item.second && !item.folded">
+						<!-- <div class="line"></div> -->
+						<ul class="right" v-if="item.children && item.children.length && item.children[0].isNav">
+							<li v-for="second in item.children" :key="second.id">
+								<div class="left">
+									<el-checkbox
+										v-model="second.checkAll"
+										@change="handleCheckAllChange($event, item, second)"
+										v-cloak
+									>
+										{{ $t('role.roleNavName.' + second.name) }}
+									</el-checkbox>
+								</div>
+								<div class="right check">
+									<el-checkbox-group
+										v-model="second.checkedCities"
+										@change="handleCheckedCitiesChange(item, second)"
+										v-cloak
+									>
+										<el-checkbox v-for="p in second.children" :label="p.name" :key="p.name" v-cloak>
+											{{ $t('role.roleNavName.' + p.name) }}
+										</el-checkbox>
+									</el-checkbox-group>
+								</div>
+							</li>
+						</ul>
+					</li>
+				</ul>
+
+				<!-- <ul v-show="item.second && !item.folded">
 					<li class="h40" v-for="(second, cur) in item.second" :key="second.id">
 						<div class="left">
 							<el-checkbox
@@ -79,11 +96,9 @@
 						<div class="line"></div>
 					</li>
 				</ul> -->
-					</li>
-				</ul>
 			</el-form-item>
 			<el-form-item class="btn">
-				<el-button @click="submitForm('ruleForm')">{{ $t('dataVerify.back') }}</el-button>
+				<el-button @click="back">{{ $t('dataVerify.back') }}</el-button>
 				<el-button type="primary" @click="saveSubmit('ruleForm')">{{ $t('app.save') }}</el-button>
 			</el-form-item>
 		</el-form>
@@ -92,7 +107,6 @@
 
 <script>
 import factory from '@/api/factory';
-const usersModel = factory('users');
 const rolesModel = factory('role');
 const roleMappingModel = factory('roleMapping');
 export default {
@@ -104,68 +118,18 @@ export default {
 				description: '',
 				register_user_default: false
 			},
-			dataList: [
-				{
-					description: '数据校验',
-					name: 'Data Publish',
-					code: 'dataVer',
-					need_permission: true,
-					id: '0'
-				},
-				{ parentId: '0', id: '01', description: '浏览', code: 'dataVer_preview' },
-				{
-					parentId: '0',
-					id: '02',
-					description: '修改',
-					need_permission: true,
-					name: 'Data Explorer',
-					code: 'dataVer_modify'
-				},
-				{
-					description: '角色管理',
-					id: '1'
-				},
-				{ parentId: '1', id: '11', description: '浏览', code: 'dataVer_preview' },
-				{
-					parentId: '1',
-					id: '12',
-					description: '修改',
-					code: 'dataVer_modify'
-				},
-				{
-					description: '任务编排',
-					id: '2'
-				},
-				{
-					description: '新增',
-					id: '10004',
-					parentId: '2'
-				},
-				{
-					description: '修改',
-					id: '10005',
-					parentId: '2'
-				},
-				{
-					description: '删除',
-					id: '1006',
-					parentId: '2'
-				},
-				{
-					description: '设置管理',
-					id: '3'
-				}
-			],
+			dataList: [],
 			rolemappings: [],
 			roleusers: [],
-			selectRole: []
+			selectRole: [],
+			permissionList: []
 		};
 	},
 
 	created() {
-		this.title = this.$route.query.id ? this.$t('role.editroleTitle') : this.$t('role.addroleTitle');
+		this.title = this.$route.params.id ? this.$t('role.editroleTitle') : this.$t('role.addroleTitle');
 		this.getPermission();
-		if (this.$route.query.id) {
+		if (this.$route.params.id) {
 			this.getUserDataApi();
 		}
 	},
@@ -180,9 +144,9 @@ export default {
 					}
 				}
 			};
-			usersModel.get(params).then(res => {
-				if (res && res.data) {
-					this.form = res.data;
+			rolesModel.get(params).then(res => {
+				if (res && res.data && res.data.length) {
+					this.form = res.data[0];
 				}
 			});
 
@@ -193,74 +157,236 @@ export default {
 							this.roleusers.push(item.principalId);
 						}
 						if (item.principalType === 'PERMISSION') {
-							let selected = this.items.filter(v => v.name === item.principalId);
+							let selected = this.permissionList.filter(v => v.name === item.principalId);
 							if (selected && selected.length > 0) {
 								selected[0].self_only = item.self_only;
-								this.selectRole.push(selected[0]);
+								this.selectRole.push(selected[0].name);
 							}
 						}
 					});
 					this.rolemappings = res.data;
+					this.dataList.filter(item => {
+						if (this.selectRole && this.selectRole.length) {
+							this.$set(item, 'checkAll', this.selectRole.includes(item.name));
+							if (item.children && item.children.length) {
+								item.children.filter(childItem => {
+									this.$set(childItem, 'checkAll', this.selectRole.includes(item.name));
+									if (childItem.children && childItem.children.length)
+										childItem.children.filter(check => {
+											if (this.selectRole.includes(check.name))
+												childItem.checkedCities.push(check.name);
+										});
+								});
+							}
+						}
+					});
 				}
 			});
 		},
 
 		// 获取权限信息
 		getPermission() {
-			let branchArr = [];
-			this.dataList.filter(father => {
-				branchArr = this.dataList.filter(child => father.id == child.parentId);
-				branchArr.length > 0 ? (father.children = branchArr) : [];
-			});
-			let authorityArr = [];
-			this.dataList.forEach(item => {
-				this.$set(item, 'checkedCities', []);
-				if (!item.parentId) {
-					authorityArr.push(item);
-				}
-			});
-			this.dataList = authorityArr;
-
-			// this.$api('Permissions')
-			// 	.get({})
-			// 	.then(res => {
-			// 		if (res) {
-			// 			if (res.data && res.data.length) {
-			// 				res.data.forEach(item => {
-			// 					if (item.id === item.parentId) {
-			// 						this.dataList.children.push(item);
-			// 					} else {
-			// 						this.dataList.push(item);
-			// 					}
-			// 				});
-			// 			}
-			// 		}
-			// 	});
+			let self = this;
+			self.$api('Permissions')
+				.get({})
+				.then(res => {
+					if (res) {
+						if (res.data && res.data.length) {
+							self.permissionList = res.data;
+							var obj = {};
+							res.data.map(item => {
+								obj[item.name] = item;
+							});
+							var newArr = [];
+							for (var i = 0; i < res.data.length; i++) {
+								if (!res.data[i].isHidden) {
+									var item = res.data[i];
+									var parent = obj[item.parentId];
+									if (parent) {
+										if (parent.children) {
+											parent.children.push(item);
+										} else {
+											parent.children = [];
+											parent.children.push(item);
+										}
+										self.$set(parent, 'checkedCities', []);
+										self.$set(parent, 'isNav', true);
+									} else {
+										newArr.push(item);
+									}
+								}
+							}
+							this.dataList = newArr;
+						}
+					}
+				});
 		},
-		// 点击菜单
-		handleOneCheckedCitiesChange(item) {
-			let checkedCount = item.checkedCities.length;
-			if (typeof item.isIndeterminate === 'undefined') {
-				this.$set(item, 'isIndeterminate', false);
+		// // 点击菜单
+		// handleOneCheckedChange(item) {
+		// 	let checkedCount = item.checkedCities.length;
+		// 	if (typeof item.isIndeterminate === 'undefined') {
+		// 		this.$set(item, 'isIndeterminate', false);
+		// 	}
+		// 	if (item.isIndeterminate) {
+		// 		item.isIndeterminate = false;
+		// 	}
+		// 	item.isIndeterminate = checkedCount > 0 && checkedCount < item.children.length;
+		// 	item.checkAll = checkedCount === item.children.length;
+		// },
+		// 选择获取全部数据(第一级)
+		handleOneCheckAll(event, item) {
+			if (typeof item.checkAll === 'undefined') {
+				this.$set(item, 'checkAll', true);
 			}
+			if (item.isIndeterminate) {
+				item.isIndeterminate = false;
+			}
+			for (let i = 0; i < item.children.length; i++) {
+				if (item.checkAll) {
+					item.children[i].checkAll = true;
+				} else {
+					item.children[i].checkAll = false;
+				}
+				if (item.children[i].children && item.children[i].children.length) {
+					for (let k = 0; k < item.children[i].children.length; k++) {
+						if (item.children[i].checkAll) {
+							item.children[i].checkedCities.push(item.children[i].children[k].name);
+						} else {
+							item.children[i].checkedCities = [];
+						}
+					}
+				}
+			}
+		},
+
+		// 二级菜单选择(有三级菜单)
+		handleCheckAllChange(event, item, second) {
+			let arr = [];
+			if (second.children && second.children.length) {
+				for (let a = 0; a < second.children.length; a++) {
+					arr.push(second.children[a].name);
+				}
+			}
+
+			if (typeof second.checkedCities === 'undefined') {
+				this.$set(second, 'checkedCities', arr);
+			}
+			second.checkedCities = event ? arr : [];
+			if (typeof second.checkAll === 'undefined') {
+				this.$set(second, 'checkAll', true);
+			}
+			// if (typeof second.isIndeterminate === 'undefined') {
+			// 	this.$set(second, 'isIndeterminate', true);
+			// }
+
+			let checkedCount = item.children.filter(el => {
+				return el.checkAll;
+			});
+			// item.isIndeterminate = checkedCount.length > 0 && checkedCount.length < item.children.length;
+			item.checkAll = checkedCount.length === item.children.length;
+
+			// for (let a = 0; a < item.children.length; a++) {
+			// 	if (!item.children[a].checkAll) {
+			// 		item.isIndeterminate = true;
+			// 		// for (let a = 0; a < item.children.length; a++) {
+			// 		// 	if (item.children[a].checkAll) {
+			// 		// 		break;
+			// 		// 	} else {
+			// 		// 		item.isIndeterminate = false;
+			// 		// 		item.checkAll = false;
+			// 		// 	}
+			// 		// }
+			// 		break;
+			// 	} else {
+			// 		item.isIndeterminate = false;
+			// 		item.checkAll = false;
+			// 	}
+			// }
+		},
+
+		// 没有三级菜单
+		handleCheckChange(item, second) {
+			let checkedCount = item.children.filter(el => {
+				return el.checkAll;
+			});
+			// if (typeof item.isIndeterminate === 'undefined') {
+			// 	this.$set(item, 'isIndeterminate', false);
+			// }
 			if (typeof item.checkAll === 'undefined') {
 				this.$set(item, 'checkAll', false);
 			}
-			item.isIndeterminate = checkedCount > 0 && checkedCount < item.children.length;
-			item.checkAll = checkedCount === item.children.length;
-		},
-		// 选择获取全部数据
-		handleOneCheckAll(event, item) {
-			let arr = [];
-			for (let i = 0; i < item.children.length; i++) {
-				arr.push(item.children[i].id);
+			if (typeof second.checkAll === 'undefined') {
+				this.$set(second, 'checkAll', true);
 			}
-			debugger;
-			item.checkedCities = event.target.checked ? arr : [];
+			// item.isIndeterminate = checkedCount.length > 0 && checkedCount.length < item.children.length;
+			item.checkAll = checkedCount.length === item.children.length;
+		},
+
+		// // 点击所有
+		// checkSecondAll(item) {
+		// 	if (typeof item.firstCheckAll === 'undefined') {
+		// 		this.$set(item, 'firstCheckAll', true);
+		// 	}
+		// 	for (let a = 0; a < item.children.length; a++) {
+		// 		this.checkItemAll(item.firstCheckAll, item.children[a]);
+		// 	}
+		// 	item.isIndeterminate = false;
+		// },
+
+		// checkItemAll(flag, item) {
+		// 	let arr = [];
+		// 	for (let a = 0; a < item.children.length; a++) {
+		// 		arr.push(item.children[a].id);
+		// 	}
+		// 	if (typeof item.checkedCities === 'undefined') {
+		// 		this.$set(item, 'checkedCities', arr);
+		// 	}
+		// 	item.checkedCities = flag ? arr : [];
+		// 	item.checkAll = flag;
+		// },
+		// 单选
+		handleCheckedCitiesChange(item, second) {
+			let checkedCount = second.checkedCities.length;
+			if (typeof second.checkAll === 'undefined') {
+				this.$set(second, 'checkAll', false);
+			}
+			// if (typeof second.isIndeterminate === 'undefined') {
+			// 	this.$set(second, 'isIndeterminate', true);
+			// }
+			if (typeof item.isIndeterminate === 'undefined') {
+				this.$set(item, 'isIndeterminate', true);
+			}
+			// second.isIndeterminate = checkedCount > 0 && checkedCount < second.children.length;
+			second.checkAll = checkedCount === second.children.length;
+			// if (checkedCount === 0) {
+			// 	second.isIndeterminate = true;
+			// }
+			// for (let a = 0; a < second.children.length; a++) {
+			// 	if (!second.children[a].checkAll) {
+			// 		second.isIndeterminate = true;
+			// 		for (let b = 0; b < item.children.length; b++) {
+			// 			if (item.children[b].checkedCities.length > 0) {
+			// 				break;
+			// 			} else {
+			// 				item.isIndeterminate = false;
+			// 				item.firstCheckAll = false;
+			// 			}
+			// 		}
+			// 		break;
+			// 	} else {
+			// 		item.isIndeterminate = false;
+			// 		item.firstCheckAll = true;
+			// 	}
+			// }
 		},
 
 		// 保存
 		saveSubmit() {
+			let self = this;
+			const validated = this.$refs.form.validate();
+			if (!validated) {
+				return false;
+			}
 			const record = {
 				user_id: this.$cookie.get('user_id'),
 				name: this.form.name,
@@ -274,49 +400,83 @@ export default {
 				record.id = roleId;
 			}
 
-			rolesModel[method](record).then(res => {
-				if (res && res.data) {
-					this.$message.success(this.$t('message.saveOK'));
+			// 获取选中数据
+			let arr = [],
+				sendChild = [],
+				childrenArr = [];
 
-					let rolemappings = this.rolemappings.filter(rolemapping => {
-						if (rolemapping.principalType === 'USER') {
-							return this.roleusers.indexOf(rolemapping.principalId) < 0;
-						} else if (rolemapping.principalType === 'PERMISSION') {
-							return true;
-						} else {
-							return true;
+			for (let i = 0; i < self.dataList.length; i++) {
+				if (self.dataList[i].checkAll) {
+					arr.push(self.dataList[i].name);
+					if (self.dataList[i].children && self.dataList[i].children.length)
+						for (let k = 0; k < self.dataList[i].children.length; k++) {
+							if (self.dataList[i].children[k].checkAll) {
+								sendChild.push(self.dataList[i].children[k].name);
+								childrenArr = childrenArr.concat(self.dataList[i].children[k].checkedCities);
+							}
 						}
-					});
+				}
+			}
+			let saveRoleArr = [...arr, ...sendChild, ...childrenArr];
 
-					rolemappings.forEach(rolemapping => {
-						roleMappingModel.delete(rolemapping.id);
-					});
+			rolesModel[method](record)
+				.then(res => {
+					if (res && res.data) {
+						this.$message.success(this.$t('message.saveOK'));
+						let rolemappings = this.rolemappings.filter(rolemapping => {
+							if (rolemapping.principalType === 'PERMISSION') {
+								return true;
+							}
+						});
 
-					let newRoleMappings = [];
-					this.roleusers.forEach(roleuser => {
-						let newUser = this.rolemappings.filter(rolemapping => rolemapping.principalId === roleuser);
-						if (newUser.length === 0) {
+						rolemappings.forEach(rolemapping => {
+							roleMappingModel.delete(rolemapping.id);
+						});
+
+						let newRoleMappings = [];
+						// this.roleusers.forEach(roleuser => {
+						// 	let newUser = this.rolemappings.filter(rolemapping => rolemapping.principalId === roleuser);
+						// 	if (newUser.length === 0) {
+						// 		newRoleMappings.push({
+						// 			principalType: 'USER',
+						// 			principalId: roleuser,
+						// 			roleId: res.data.id
+						// 		});
+						// 	}
+						// });
+						// newRoleMappings = {
+						// 	principalType: 'PERMISSION',
+						// 	principalId: saveRoleArr,
+						// 	roleId: res.data.id
+						// };
+
+						saveRoleArr.forEach(selectPermission => {
 							newRoleMappings.push({
-								principalType: 'USER',
-								principalId: roleuser,
+								principalType: 'PERMISSION',
+								principalId: selectPermission,
 								roleId: res.data.id
 							});
-						}
-					});
-					this.selected.forEach(selectPermission => {
-						newRoleMappings.push({
-							principalType: 'PERMISSION',
-							principalId: selectPermission.name,
-							roleId: res.data.id,
-							self_only: selectPermission.self_only
 						});
-					});
 
-					newRoleMappings.forEach(rolemapping => {
-						roleMappingModel.post(rolemapping);
-					});
-				}
-			});
+						// newRoleMappings.forEach(rolemapping => {
+						roleMappingModel.post(newRoleMappings);
+						// });
+					}
+				})
+				.catch(e => {
+					if (e.response && e.response.msg) {
+						if (e.response.msg.indexOf('already exists')) {
+							this.errorMessage = this.$t('app.signIn.email_existed');
+						} else {
+							this.errorMessage = `${e.response.data.error.message}`;
+						}
+					}
+				});
+		},
+
+		// 返回
+		back() {
+			this.$router.push({ name: 'roles' });
 		}
 	}
 };
@@ -340,8 +500,8 @@ export default {
 			height: 540px;
 			.role-table {
 				position: relative;
+				height: 520px;
 				border: 1px solid #e0e0e0;
-				border-bottom: none;
 				overflow: auto;
 				// .header {
 				// 	height: 40px;
@@ -350,23 +510,43 @@ export default {
 				// 	border-bottom: 1px solid #e7e7e7;
 				// 	background: #f8f8f9;
 				// }
+				li {
+					min-height: 39px;
+					overflow: hidden;
+					border-bottom: 1px solid #e7e7e7;
+				}
 
 				.vertical-line {
 					position: absolute;
-					left: 25%;
+					left: 20%;
 					top: 0;
 					width: 1px;
 					height: 100%;
 					background: #ddd;
 				}
 
+				.center-line {
+					left: 40%;
+				}
+
 				.left {
 					float: left;
-					width: 25%;
+					width: 20%;
 					padding-left: 10px;
 					user-select: none;
 					cursor: pointer;
 					box-sizing: border-box;
+				}
+
+				.center {
+					float: left;
+					width: 80%;
+					padding-left: 10px;
+					user-select: none;
+					cursor: pointer;
+					text-align: left;
+					box-sizing: border-box;
+					border-left: 1px solid #e7e7e7;
 				}
 
 				.one {
@@ -374,10 +554,26 @@ export default {
 				}
 
 				.right {
-					width: 75%;
-					float: left;
-					padding-left: 10px;
+					width: 80%;
+					float: right;
+					// padding-left: 10px;
 					box-sizing: border-box;
+					border-left: 1px solid #e7e7e7;
+					.rightRow {
+						line-height: 39px;
+						border-bottom: 1px solid #e7e7e7;
+					}
+					.check {
+						padding-left: 10px;
+						border-left: 1px solid #e7e7e7;
+					}
+					.left {
+						width: 20%;
+						border-right: 0;
+					}
+					li:last-child {
+						border-bottom: 0;
+					}
 				}
 
 				.item-icon {
@@ -394,6 +590,11 @@ export default {
 				.h40 {
 					height: 39px;
 					line-height: 39px;
+				}
+				.authority {
+					float: right;
+					width: 60%;
+					border-left: 1px solid #e7e7e7;
 				}
 			}
 		}

@@ -31,7 +31,7 @@
 					<i class="el-icon-plus"></i>
 					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
-				<NotificationPopover v-if="platform === 'DAAS'" v-readonlybtn="'BTN_AUTHS'"></NotificationPopover>
+				<NotificationPopover v-if="platform === 'DAAS'" v-readonlybtn="'home_notice'"></NotificationPopover>
 				<a v-if="platform === 'DAAS' && this.buildProfile === 'CLOUD'" class="btn" @click="command('download')"
 					><i class="iconfont icon-shangchuan-copy"></i
 				></a>

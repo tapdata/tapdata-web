@@ -1697,6 +1697,14 @@ const tc = {
 		user_null: '用戶名不能為空',
 		has_username: '用戶名已存在',
 		editFail: '用戶名修改失敗'
+	},
+	role: {
+		addroleTitle: '角色新增',
+		editroleTitle: '角色編輯',
+		roleName: '角色名稱',
+		roleDesc: '角色描述',
+		defaultRole: '默認角色',
+		rolePermission: '角色權限'
 	}
 };
 
