@@ -264,6 +264,8 @@ const tc = {
 		forceStoppingMessage: '強制停止將立即中斷數據傳輸，是否繼續執行?',
 		stopInitial_syncMessage: '初始化類型的任務暫停後如果再次啟動，任務會從頭開始同步，確定暫停？',
 		stopMessage: '確定要暫停任務嗎?',
+		stopAggregation_message: '任務XXX中含有聚合處理節點，任務停止後再次啟動，任務會先進行重置，確定停止？',
+		startAggregation_message: '任務XXX中含有聚合處理節點，任務啟動後會先進行重置，確定啟動？',
 		cancelReset: '已取消重置',
 		resetOk: '重置成功',
 		resetFailed: '重置失敗',

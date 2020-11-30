@@ -365,10 +365,11 @@
 			@closeAgentDialog="closeAgentDialog"
 		></DownAgent>
 		<SkipError
+			v-if="selectedJob.dataItem"
 			ref="SelectClassify"
 			:dialogVisible="dialogVisibleSkipError"
 			:errorEvents="errorEvents"
-			:taskName="taskName"
+			:taskName="selectedJob.dataItem.name"
 			v-on:dialogVisible="handleSkipErrorVisible"
 			v-on:operationsSkipError="handleOperationSkipError"
 		></SkipError>
@@ -396,7 +397,7 @@ export default {
 			downLoadAgetntdialog: false, //判断是否安装agent
 			downLoadNum: 0,
 			firstNum: undefined,
-			agentObj: {
+			selectedJob: {
 				id: '',
 				oldStatus: '',
 				status: '',
@@ -511,10 +512,13 @@ export default {
 			},
 			dialogVisibleSkipError: false,
 			errorEvents: [],
-			currentStatus: '',
-			oldStatus: '',
-			currentId: '',
-			taskName: ''
+			formSchedule: {
+				name: '',
+				isSchedule: false,
+				cronExpression: '',
+				taskData: null
+			},
+			timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
 		};
 	},
 	created() {
@@ -601,7 +605,14 @@ export default {
 		},
 
 		closeAgentDialog() {
-			this.handleStatus(this.agentObj.id, this.agentObj.oldStatus, this.agentObj.status, this.agentObj.dataItem);
+			if (this.selectedJob.id) {
+				this.handleStatus(
+					this.selectedJob.id,
+					this.selectedJob.oldStatus,
+					this.selectedJob.status,
+					this.selectedJob.dataItem
+				);
+			}
 			this.downLoadAgetntdialog = false;
 		},
 		// // 刷新agent
@@ -676,14 +687,13 @@ export default {
 		},
 		handleCancelSkipError() {
 			let data = {
-				status: this.oldStatus
+				status: this.selectedJob.oldStatus
 			};
-			dataFlows.updateById(this.currentId, data);
+			dataFlows.updateById(this.selectedJob.id, data);
 			this.getData();
 		},
-		handleOperationSkipError(val) {
-			this.currentStatus['errorEvents'] = val;
-			this.getStatus(this.currentId, this.currentStatus);
+		handleOperationSkipError(errorEvents) {
+			this.startJob(errorEvents);
 		},
 		handleGoFunction() {
 			top.location.href = '/#/JsFuncs';
@@ -941,6 +951,7 @@ export default {
 							stages: true,
 							'stages.id': true,
 							'stages.name': true,
+							'stages.type': true,
 							setting: true,
 							user_id: true,
 							startTime: true,
@@ -1169,44 +1180,81 @@ export default {
 		},
 
 		statusConfirm(callback, handleCatch, data) {
-			let initFalg =
-				(data && data.setting && data.setting.sync_type === 'cdc') || (data && data.length === 0)
-					? true
-					: false;
-			this.$confirm(
-				initFalg ? this.$t('message.stopMessage') : this.$t('message.stopInitial_syncMessage'),
-				this.$t('dataFlow.importantReminder'),
-				{
-					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancel'),
-					type: 'warning',
-					closeOnClickModal: false
-				}
-			)
+			let message = this.$t('message.stopMessage');
+			if (data && data.stages && data.stages.find(s => s.type === 'aggregation_processor')) {
+				message = this.$t('message.stopAggregation_message').replace('XXX', data.name);
+			}
+			if (data && data.setting && data.setting.sync_type !== 'cdc') {
+				message = this.$t('message.stopInitial_syncMessage');
+			}
+			this.$confirm(message, this.$t('dataFlow.importantReminder'), {
+				confirmButtonText: this.$t('message.confirm'),
+				cancelButtonText: this.$t('message.cancel'),
+				type: 'warning',
+				closeOnClickModal: false
+			})
 				.then(callback)
 				.catch(handleCatch);
 		},
 
+		async startJob(errorEvents) {
+			let { id, oldStatus, dataItem, status } = this.selectedJob;
+			//判断若任务因错误停止，弹出错误列表
+			if (!errorEvents && oldStatus === 'error') {
+				let errorEvents = await dataFlows.get([id]);
+				errorEvents = errorEvents ? errorEvents.data : {};
+				if (errorEvents.setting.stopOnError && errorEvents.errorEvents && errorEvents.errorEvents.length > 0) {
+					this.dialogVisibleSkipError = true;
+					this.errorEvents = errorEvents.errorEvents;
+					return;
+				}
+			}
+			let data = { status };
+			//errorEvents为启动时过滤的错误
+			if (errorEvents) {
+				data.errorEvents = errorEvents;
+			}
+			//启动任务时判断任务内是否存在聚合处理器，若存在，则弹框提示
+			if (dataItem && dataItem.stages && dataItem.stages.find(s => s.type === 'aggregation_processor')) {
+				this.$confirm(
+					this.$t('message.startAggregation_message').replace('XXX', dataItem.name),
+					this.$t('dataFlow.importantReminder'),
+					{
+						confirmButtonText: this.$t('message.confirm'),
+						cancelButtonText: this.$t('message.cancel'),
+						type: 'warning',
+						closeOnClickModal: false
+					}
+				)
+					.then(() => {
+						//若任务内存在聚合处理器，启动前先重置
+						dataFlows.reset(id).then(() => {
+							this.getStatus(id, data);
+						});
+					})
+					.catch(() => {
+						this.getData();
+					});
+			} else {
+				this.getStatus(id, data);
+			}
+		},
+
 		// 运行开关
 		async handleStatus(id, oldStatus, status, dataItem) {
-			let data = {};
-			let errorEvents;
-			if (oldStatus === 'error') {
-				errorEvents = await dataFlows.get([id]);
+			this.selectedJob.id = id;
+			this.selectedJob.oldStatus = oldStatus;
+			this.selectedJob.status = status;
+			this.selectedJob.dataItem = dataItem;
+			if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') && !this.downLoadNum) {
+				this.downLoadAgetntdialog = true;
+				return;
 			}
-			errorEvents = errorEvents ? errorEvents.data : {};
+			let data = {};
 			if (oldStatus === 'force stopping') {
 				data['status'] = oldStatus;
 			} else {
 				data['status'] = status;
-			}
-			this.agentObj.id = id;
-			this.agentObj.oldStatus = oldStatus;
-			this.agentObj.status = status;
-			this.agentObj.dataItem = dataItem;
-			if (this.buildProfile === 'CLOUD' && !this.downLoadNum) {
-				this.downLoadAgetntdialog = true;
-				return;
 			}
 
 			if (status === 'stopping') {
@@ -1215,27 +1263,12 @@ export default {
 						this.getStatus(id, data);
 					},
 					() => {
-						let data = {
-							status: oldStatus
-						};
-						this.getStatus(id, data);
+						this.getData();
 					},
 					dataItem
 				);
-			} else if (
-				oldStatus === 'error' &&
-				errorEvents.setting.stopOnError &&
-				errorEvents.errorEvents &&
-				errorEvents.errorEvents.length > 0
-			) {
-				this.dialogVisibleSkipError = true;
-				this.taskName = dataItem.name;
-				this.errorEvents = errorEvents.errorEvents;
-				this.currentStatus = data;
-				this.oldStatus = oldStatus;
-				this.currentId = id;
 			} else {
-				this.getStatus(id, data);
+				this.startJob();
 			}
 		},
 
@@ -1282,9 +1315,15 @@ export default {
 			};
 
 			if (status === 'stopping') {
-				this.statusConfirm(() => {
-					request();
-				}, initData);
+				this.statusConfirm(
+					() => {
+						request();
+					},
+					() => {
+						this.getData();
+					},
+					initData
+				);
 			} else {
 				request();
 			}

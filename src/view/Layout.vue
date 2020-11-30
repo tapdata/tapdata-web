@@ -257,9 +257,8 @@ export default {
 			downLoadNum: 0,
 			firstNum: undefined,
 			licenseExpire: '',
-			licenseExpireAble: false,
-			licenseExpireDate: '',
-			buildProfile: ''
+			licenseExpireVisible: false,
+			licenseExpireDate: ''
 		};
 	},
 	created() {

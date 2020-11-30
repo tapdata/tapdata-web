@@ -265,6 +265,8 @@ const cn = {
 		forceStoppingMessage: '强制停止将立即中断数据传输，是否继续执行?',
 		stopInitial_syncMessage: '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?',
 		stopMessage: '确定要暂停任务吗?',
+		stopAggregation_message: '任务XXX中含有聚合处理节点，任务停止后再次启动，任务会先进行重置，确定停止？',
+		startAggregation_message: '任务XXX中含有聚合处理节点，任务启动后会先进行重置，确定启动？',
 		cancelReset: '已取消重置',
 		resetOk: '重置成功',
 		resetFailed: '重置失败',

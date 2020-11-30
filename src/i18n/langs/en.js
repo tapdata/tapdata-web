@@ -264,6 +264,10 @@ const en = {
 		stopInitial_syncMessage:
 			'Pausing job while it is in the initial sync stage may cause it to run from the beginning, are you sure you want to pause?',
 		stopMessage: 'Are you sure to pause the mission?',
+		stopAggregation_message:
+			'Job XXX includes aggregation processor node, job will be reset when excutes restart，still excute pause?',
+		startAggregation_message:
+			'Job XXX includes aggregation processor node, job will be reset when excutes start job，still excute start?',
 		cancelReset: 'cancel reset',
 		resetOk: 'Reset success',
 		resetFailed: 'Reset Failed',

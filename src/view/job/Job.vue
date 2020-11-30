@@ -1091,16 +1091,16 @@ export default {
 		 * start button handler
 		 */
 		async start() {
+			if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') && !this.downLoadNum) {
+				this.downLoadAgetntdialog = true;
+				return;
+			}
 			let errorEvent;
 			if (this.$route.query && this.$route.query.id && this.status === 'error') {
 				errorEvent = await dataFlowsApi.get([this.$route.query.id]);
 			}
 			errorEvent = errorEvent ? errorEvent.data : {};
 			let data = this.getDataFlowData();
-			if (this.buildProfile === 'CLOUD' && !this.downLoadNum) {
-				this.downLoadAgetntdialog = true;
-				return;
-			}
 			if (data) {
 				if (
 					this.status === 'error' &&
@@ -1149,32 +1149,51 @@ export default {
 					return;
 				}
 
-				data.status = 'scheduled';
-				data.executeMode = 'normal';
-				this.loading = true;
-				self.doSave(data, (err, rest) => {
-					if (err) {
-						if (err.response.data === 'Loading data source schema') {
-							self.$message.error(self.$t('message.loadingSchema'));
-						} else {
-							self.$message.error(err.response.data);
-						}
-					} else {
-						this.$message.success(self.$t('message.taskStart'));
-						self.$router.push({
-							path: '/job',
-							query: {
-								id: rest.id,
-								isMoniting: true,
-								mapping: this.mappingTemplate
+				let start = () => {
+					data.status = 'scheduled';
+					data.executeMode = 'normal';
+					self.doSave(data, (err, rest) => {
+						if (err) {
+							if (err.response.data === 'Loading data source schema') {
+								self.$message.error(self.$t('message.loadingSchema'));
+							} else {
+								self.$message.error(err.response.data);
 							}
+						} else {
+							this.$message.success(self.$t('message.taskStart'));
+							self.$router.push({
+								path: '/job',
+								query: {
+									id: rest.id,
+									isMoniting: true,
+									mapping: this.mappingTemplate
+								}
+							});
+							self.$message.success(self.$t('message.taskStart'));
+							location.reload();
+						}
+					});
+				};
+				if (data.id && self.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
+					this.$confirm(
+						this.$t('message.startAggregation_message').replace('XXX', data.name),
+						this.$t('dataFlow.importantReminder'),
+						{
+							confirmButtonText: this.$t('message.confirm'),
+							cancelButtonText: this.$t('message.cancel'),
+							type: 'warning',
+							closeOnClickModal: false
+						}
+					).then(() => {
+						//若任务内存在聚合处理器，启动前先重置
+						dataFlowsApi.reset(data.id).then(() => {
+							start();
 						});
-						self.$message.success(self.$t('message.taskStart'));
-						location.reload();
-					}
-				});
+					});
+				} else {
+					start();
+				}
 			}
-			this.loading = false;
 			this.dialogFormVisible = false;
 		},
 		/**
@@ -1191,7 +1210,9 @@ export default {
 			self.$confirm(
 				forceStop === true
 					? self.$t('message.forceStoppingMessage')
-					: this.sync_type === 'cdc'
+					: self.dataFlow.stages.find(s => s.type === 'aggregation_processor')
+					? self.$t('message.stopAggregation_message').replace('XXX', self.dataFlow.name)
+					: self.sync_type === 'cdc'
 					? self.$t('message.stopMessage')
 					: self.$t('message.stopInitial_syncMessage'),
 				self.$t('dataFlow.importantReminder'),
