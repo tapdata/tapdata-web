@@ -283,12 +283,12 @@
 								<el-tooltip
 									class="item"
 									v-readonlybtn="'BTN_AUTHS'"
-									:content="$t('dataFlow.edit')"
+									:content="$t('dialog.jobSchedule.jobSecheduleSetting')"
 									placement="bottom"
 								>
 									<el-button
 										type="text"
-										:disabled="statusBtMap[scope.row.status].edit"
+										:disabled="scope.row.setting.sync_type !== 'initial_sync'"
 										@click="handleTaskscheduling(scope.row.id, scope.row)"
 									>
 										<i class="iconfont  task-list-icon  icon-lishi2"></i>
@@ -1013,8 +1013,8 @@ export default {
 							stats: true,
 							checked: true,
 							stages: true,
-							'stages.id': true,
-							'stages.name': true,
+							// 'stages.id': true,
+							// 'stages.name': true,
 							setting: true,
 							user_id: true,
 							startTime: true,
