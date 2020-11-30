@@ -1,5 +1,5 @@
 <template>
-	<section class="dashboard" v-if="isNew">
+	<section class="dashboard" v-if="!$window.getSettingByKey('SHOW_OLD_PAGE')">
 		<el-row :gutter="20" class="e-row">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
@@ -257,7 +257,6 @@ export default {
 	components: { echartHead, pieChart, shaftlessEchart },
 	data() {
 		return {
-			isNew: window._TAPDATA_OPTIONS_.platform === 'DAAS',
 			migrationTotal: '',
 			syncTotal: '',
 			migrationTaskList: [],

@@ -358,10 +358,9 @@ export default {
 		}
 		this.mappingTemplate = this.$route.query.mapping;
 
-		this.buildProfile = localStorage.getItem('buildProfile');
-
+		// 是否允许下载agent
 		let self = this;
-		if (this.buildProfile && this.buildProfile === 'CLOUD') {
+		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
 			this.getDataApi();
 			if (!this.downLoadNum) {
 				self.timer = setInterval(() => {
@@ -428,8 +427,7 @@ export default {
 		getDataApi() {
 			let params = {};
 			if (
-				this.buildProfile &&
-				this.buildProfile === 'CLOUD' &&
+				this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
 				!parseInt(this.$cookie.get('isAdmin')) &&
 				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
 			) {
@@ -1097,7 +1095,7 @@ export default {
 			}
 			errorEvent = errorEvent ? errorEvent.data : {};
 			let data = this.getDataFlowData();
-			if (this.buildProfile === 'CLOUD' && !this.downLoadNum) {
+			if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') && !this.downLoadNum) {
 				this.downLoadAgetntdialog = true;
 				return;
 			}

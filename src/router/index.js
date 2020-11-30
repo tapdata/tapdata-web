@@ -452,7 +452,7 @@ router.afterEach(() => {
 	Loading.service({ fullscreen: true }).close();
 });
 router.beforeEach(async (to, from, next) => {
-	if (to.meta.title && window._TAPDATA_OPTIONS_.platform === 'DAAS') {
+	if (to.meta.title && window.getSettingByKey('SHOW_PAGE_TITLE')) {
 		document.title = to.meta.title;
 	}
 	let cookie = window.VueCookie;
