@@ -139,7 +139,8 @@ export const fieldProcessConfig = {
 				let name = this.attr('label/text');
 				if (!data) throw new Error(`${name}: 无效字段处理器}`);
 				let validate = isValidate(data.operations, data.originalSchema).isValidate;
-				if (!validate) throw new Error(`${name}: 字段处理节点检测到冲突待处理`);
+				if (!validate)
+					throw new Error(`${name}:${i18n.t('editor.cell.processor.field.form.errorOperationSaveTip')}`);
 				return true;
 			}
 		}

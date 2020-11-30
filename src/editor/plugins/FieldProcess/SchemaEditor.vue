@@ -2,7 +2,7 @@
 	<div class="fieldProcess">
 		<div v-show="showErrorOperationTip" class="error-operation-tip">
 			{{ $t('editor.cell.processor.field.form.errorOperationTipBefore')
-			}}<span style="color: #ee5353;cursor: pointer" @click="openErrorList">{{
+			}}<span style="color: #48b6e2;;cursor: pointer" @click="openErrorList">{{
 				$t('editor.cell.processor.field.form.errorOperationTipAfter')
 			}}</span>
 		</div>
@@ -229,50 +229,65 @@
 					}}</el-button>
 				</div>
 			</el-dialog>
-			<el-dialog title="修改对比" :visible.sync="disabledChangeField" append-to-body custom-class="scriptDialog">
+			<el-dialog
+				title="Field Modification Conflict Process"
+				:visible.sync="disabledChangeField"
+				append-to-body
+				custom-class="scriptDialog"
+				width="60%"
+			>
 				<div v-if="errorOperation.length > 0">
-					<div>{{ $t('editor.cell.processor.field.form.errorOperationDrop') }}</div>
-					<div style="float: right;margin-bottom: 10px">
+					<div class="tip">{{ $t('editor.cell.processor.field.form.errorOperationDrop') }}</div>
+					<div class="tip">{{ $t('editor.cell.processor.field.form.errorOperationDesc') }}</div>
+					<div style="float: right;margin-bottom: 10px;margin-top: 10px">
 						<el-button size="mini" @click="delErrorOperation">{{
 							$t('editor.cell.processor.field.form.errorOperationDelBtn')
 						}}</el-button>
 						<el-button size="mini" @click="keepErrorOperation">{{
-							$t('editor.cell.processor.field.form.errorOperationDelBtn')
+							$t('editor.cell.processor.field.form.errorOperationKeepBtn')
 						}}</el-button>
 					</div>
 					<div style="clear: both"></div>
 					<ul class="changeList">
 						<li>
 							<span class="index">#</span>
-							<span class="item">原始字段/类型</span>
-							<span class="op">process</span>
-							<span class="item">result</span>
-							<span class="item">Operation</span>
+							<span class="item">{{ $t('editor.cell.processor.field.form.originalField') }}</span>
+							<span class="op">{{ $t('editor.cell.processor.field.form.process') }}</span>
+							<span class="item">{{ $t('editor.cell.processor.field.form.result') }}</span>
+							<span class="op">{{ $t('editor.cell.processor.field.form.operation') }}</span>
 						</li>
 						<li v-for="(item, index) in errorOperation" :key="item.id">
 							<span class="index">{{ index + 1 }}</span>
 							<span v-if="item.op === 'RENAME'">
-								<span class="item">{{ `${item.field} (${item.type})` }}</span>
+								<span class="item">{{ item.field }} {{ item.type ? `(${item.type})` : '' }}</span>
 								<span class="op">{{ item.op }}</span>
 								<span class="item"
 									><span class="active">{{ item.operand }}</span>
-									<span>{{ `(${item.type})` }}</span></span
+									<span>{{ item.type ? `(${item.type})` : '' }}</span></span
 								>
 								<span>
 									<el-radio-group v-model="item.keep">
-										<el-radio :label="false">删除</el-radio>
-										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">保留</el-radio>
+										<el-radio :label="false">{{
+											$t('editor.cell.processor.field.form.delete')
+										}}</el-radio>
+										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">{{
+											$t('editor.cell.processor.field.form.keep')
+										}}</el-radio>
 									</el-radio-group>
 								</span>
 							</span>
 							<span v-if="item.op === 'REMOVE'">
-								<span class="item">{{ `${item.field} (${item.type})` }}</span>
+								<span class="item">{{ item.field }} {{ item.type ? `(${item.type})` : '' }}</span>
 								<span class="op">{{ item.op }}</span>
 								<span class="item"></span>
 								<span>
 									<el-radio-group v-model="item.keep">
-										<el-radio :label="false">删除</el-radio>
-										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">保留</el-radio>
+										<el-radio :label="false">{{
+											$t('editor.cell.processor.field.form.delete')
+										}}</el-radio>
+										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">{{
+											$t('editor.cell.processor.field.form.keep')
+										}}</el-radio>
 									</el-radio-group>
 								</span>
 							</span>
@@ -282,8 +297,12 @@
 								<span class="item active">{{ `${item.field} (${item.javaType})` }}</span>
 								<span>
 									<el-radio-group v-model="item.keep">
-										<el-radio :label="false">删除</el-radio>
-										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">保留</el-radio>
+										<el-radio :label="false">{{
+											$t('editor.cell.processor.field.form.delete')
+										}}</el-radio>
+										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">{{
+											$t('editor.cell.processor.field.form.keep')
+										}}</el-radio>
 									</el-radio-group>
 								</span>
 							</span>
@@ -295,8 +314,29 @@
 								>
 								<span>
 									<el-radio-group v-model="item.keep">
-										<el-radio :label="false">删除</el-radio>
-										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">保留</el-radio>
+										<el-radio :label="false">{{
+											$t('editor.cell.processor.field.form.delete')
+										}}</el-radio>
+										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">{{
+											$t('editor.cell.processor.field.form.keep')
+										}}</el-radio>
+									</el-radio-group>
+								</span>
+							</span>
+							<span v-if="item.scriptType === 'js'">
+								<span class="item">{{ item.field }} {{ item.type ? `(${item.type})` : '' }}</span>
+								<span class="op">{{ item.scriptType }}</span>
+								<span class="item"
+									><span class="js">{{ item.script }}</span></span
+								>
+								<span>
+									<el-radio-group v-model="item.keep">
+										<el-radio :label="false">{{
+											$t('editor.cell.processor.field.form.delete')
+										}}</el-radio>
+										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">{{
+											$t('editor.cell.processor.field.form.keep')
+										}}</el-radio>
 									</el-radio-group>
 								</span>
 							</span>
@@ -304,7 +344,9 @@
 					</ul>
 				</div>
 				<span slot="footer" class="dialog-footer">
-					<el-button type="primary" @click="saveErrorOperation">{{ $t('metaData.deleteNode') }}</el-button>
+					<el-button type="primary" @click="saveErrorOperation" size="mini">{{
+						$t('editor.cell.processor.field.form.save')
+					}}</el-button>
 				</span>
 			</el-dialog>
 		</div>
@@ -472,6 +514,8 @@ export default {
 				return;
 			}
 			this.errorOperation = isValidate(this.originalOperations, this.originalSchemaFiled).errorList;
+			let script = isValidate(this.model.scripts, this.originalSchemaFiled).errorList;
+			this.errorOperation = [...this.errorOperation, ...script];
 			if (this.errorOperation.length > 0) {
 				this.showErrorOperationTip = true;
 			} else {
@@ -501,15 +545,29 @@ export default {
 					this.model.operations.splice(targetId, 1);
 					i--;
 					continue;
-				} else if (this.errorOperation[i].isType === 2 && targetId > -1) {
+				} else if (this.errorOperation[i].isType === 2 && targetId > -1 && this.errorOperation[i].keep) {
 					let id = this.fieldsNamesMap[this.errorOperation[i].field];
 					if (id) {
-						this.model.operations[targetId].id = id;
+						this.model.operations[targetId]['keep'] = true; //将operations 标记为true
+						this.model.operations[targetId].id = id; //将id与最新模型id 保持一致
 					}
 					i--;
 					continue;
-				} else if (this.errorOperation[i].isType === 3 && targetId > -1) {
+				} else if (this.errorOperation[i].isType === 3 && targetId > -1 && this.errorOperation[i].keep) {
 					this.model.operations[targetId]['keep'] = true;
+					i--;
+					continue;
+				} else if (this.errorOperation[i].isType === 5 && targetId > -1 && this.errorOperation[i].keep) {
+					let id = this.fieldsNamesMap[this.errorOperation[i].field];
+					if (id) {
+						this.model.scripts[targetId]['keep'] = true; //将operations 标记为true
+						this.model.scripts[targetId].id = id; //将id与最新模型id 保持一致
+					}
+					i--;
+					continue;
+				} else {
+					this.model.operations.splice(targetId, 1);
+					this.model.scripts.splice(targetId, 1);
 					i--;
 					continue;
 				}
@@ -961,7 +1019,7 @@ export default {
 	}
 }
 .error-operation-tip {
-	color: #ccc;
+	color: #ee5353;
 	font-size: 12px;
 	margin-bottom: 10px;
 }
@@ -1080,6 +1138,10 @@ export default {
 		}
 	}
 }
+.tip {
+	font-size: 12px;
+	color: #999;
+}
 .changeList {
 	max-height: 400px;
 	overflow: auto;
@@ -1099,7 +1161,8 @@ export default {
 	}
 	.item {
 		display: inline-block;
-		width: 240px;
+		width: 34%;
+		font-size: 12px;
 	}
 	.op {
 		display: inline-block;
@@ -1107,6 +1170,14 @@ export default {
 	}
 	.active {
 		color: #48b6e2;
+	}
+	.js {
+		display: inline-block;
+		overflow: hidden;
+		word-break: initial;
+		text-overflow: ellipsis;
+		height: 20px;
+		width: 100%;
 	}
 }
 .changeBtn {

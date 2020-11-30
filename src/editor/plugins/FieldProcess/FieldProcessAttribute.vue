@@ -21,13 +21,6 @@
 						:placeholder="$t('editor.cell.processor.field.form.name.placeholder')"
 					></el-input>
 				</el-form-item>
-				<!--				<el-form-item :label="$t('editor.cell.processor.field.form.description.label')">-->
-				<!--					<el-input-->
-				<!--						type="textarea"-->
-				<!--						v-model="model.keep"-->
-				<!--						:placeholder="$t('editor.cell.processor.field.form.description.placeholder')"-->
-				<!--					></el-input>-->
-				<!--				</el-form-item>-->
 			</el-form>
 			<div class="schema-editor-container">
 				<div class="schema-editor-wrap schema-editor-container-left">

@@ -68,23 +68,10 @@ export const isValidate = function(operations, schema) {
 		let fieldDeleted = fieldIsDeleted(originalSchema.fields);
 		let fieldOriginalNames = getFieldsNames(originalSchema.fields);
 		for (let i = 0; i < operation.length; i++) {
-			// isType 1表示id name 都不匹配 2表示name匹配 3表示该字段被标记为删除且id匹配 4 新建字段处理
-			let node = {
-				id: operation[i].id,
-				color: operation[i].color,
-				field: operation[i].field,
-				isType: 1,
-				keep: false,
-				label: operation[i].label,
-				op: operation[i].op,
-				operand: operation[i].operand,
-				originalDataType: operation[i].originalDataType || operation[i].type,
-				primary_key_position: operation[i].primary_key_position,
-				table_name: operation[i].table_name,
-				type: operation[i].type
-			};
-			if (operation[i].op === 'CREATE' && !fieldOriginalIds.includes(operation[i].triggerFieldId)) {
-				let newFiled = {
+			// isType 1表示id name 都不匹配 2表示name匹配 3表示该字段被标记为删除且id匹配 4 新建字段处理 5 脚本处理
+			let node = {};
+			if (operation[i].op === 'CREATE') {
+				node = {
 					id: operation[i].id,
 					isType: 4,
 					keep: false,
@@ -96,7 +83,39 @@ export const isValidate = function(operations, schema) {
 					tableName: operation[i].tableName,
 					triggerFieldId: operation[i].triggerFieldId
 				};
-				errorList.push(newFiled);
+			} else {
+				node = {
+					id: operation[i].id,
+					color: operation[i].color,
+					field: operation[i].field,
+					isType: 1,
+					keep: false,
+					label: operation[i].label,
+					op: operation[i].op,
+					operand: operation[i].operand,
+					originalDataType: operation[i].originalDataType || operation[i].type,
+					primary_key_position: operation[i].primary_key_position,
+					table_name: operation[i].table_name,
+					type: operation[i].type
+				};
+			}
+			if (operation[i].scriptType === 'js') {
+				node = {
+					isType: 5,
+					keep: true,
+					color: operation[i].color,
+					field: operation[i].field,
+					id: operation[i].id,
+					label: operation[i].label,
+					primary_key_position: operation[i].primary_key_position,
+					script: operation[i].script,
+					scriptType: operation[i].scriptType,
+					tableName: operation[i].tableName,
+					type: operation[i].type
+				};
+			}
+			if (operation[i].op === 'CREATE' && !fieldOriginalIds.includes(operation[i].triggerFieldId)) {
+				errorList.push(node);
 				isValidate = false;
 			} else if (
 				!fieldOriginalIds.includes(operation[i].id) &&
