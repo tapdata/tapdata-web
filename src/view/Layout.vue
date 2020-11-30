@@ -1,6 +1,6 @@
 <template>
 	<el-container class="layout-container">
-		<div class="agentNot" v-if="agentTipFalg && this.buildProfile === 'CLOUD'">
+		<div class="agentNot" v-if="agentTipFalg && $window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')">
 			<i class="el-icon-warning"></i>
 			{{ $t('dialog.downAgent.noAgent')
 			}}<span @click="downLoadInstall">{{ $t('dialog.downAgent.clickDownLoad') }}</span>
@@ -13,7 +13,7 @@
 				<img :src="logoUrl" />
 			</a>
 			<div class="button-bar">
-				<span class="expire-msg" v-if="licenseExpireAble && platform !== 'DK'">
+				<span class="expire-msg" v-if="licenseExpireVisible">
 					<span v-if="licenseExpire <= 1">{{
 						$t('app.menu.licenseBefore') + licenseExpire + $t('app.menu.licenseAfterOneDay')
 					}}</span>
@@ -31,11 +31,19 @@
 					<i class="el-icon-plus"></i>
 					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
-				<NotificationPopover v-if="platform === 'DAAS'" v-readonlybtn="'BTN_AUTHS'"></NotificationPopover>
-				<a v-if="platform === 'DAAS' && this.buildProfile === 'CLOUD'" class="btn" @click="command('download')"
+				<NotificationPopover
+					v-if="$window.getSettingByKey('SHOW_NOTIFICATION')"
+					v-readonlybtn="'BTN_AUTHS'"
+				></NotificationPopover>
+				<a v-if="$window.getSettingByKey('SHOW_DOWNLOAD')" class="btn" @click="command('download')"
 					><i class="iconfont icon-shangchuan-copy"></i
 				></a>
-				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom" @command="command">
+				<el-dropdown
+					v-if="$window.getSettingByKey('SHOW_QA_AND_HELP')"
+					class="btn"
+					placement="bottom"
+					@command="command"
+				>
 					<i class="iconfont icon-bangzhu1-copy"></i>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="help">{{ $t('app.document') }}</el-dropdown-item>
@@ -43,7 +51,12 @@
 						<!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
 					</el-dropdown-menu>
 				</el-dropdown>
-				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom" @command="command">
+				<el-dropdown
+					v-if="$window.getSettingByKey('SHOW_SETTING_BUTTON')"
+					class="btn"
+					placement="bottom"
+					@command="command"
+				>
 					<i class="iconfont icon-shezhi1"></i>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="settings">{{ $t('app.menu.settings') }}</el-dropdown-item>
@@ -55,7 +68,12 @@
 						<!--						}}</el-dropdown-item>-->
 					</el-dropdown-menu>
 				</el-dropdown>
-				<el-dropdown v-if="showLang !== 'false'" class="btn" placement="bottom" @command="changeLanguage">
+				<el-dropdown
+					v-if="$window.getSettingByKey('SHOW_LANGUAGE')"
+					class="btn"
+					placement="bottom"
+					@command="changeLanguage"
+				>
 					<i
 						class="iconfont"
 						:class="{
@@ -80,7 +98,7 @@
 						<el-dropdown-item command="account">{{ $t('app.account') }}</el-dropdown-item>
 						<el-dropdown-item command="version">{{ $t('app.version') }}</el-dropdown-item>
 						<el-dropdown-item command="license">{{ $t('app.menu.license') }}</el-dropdown-item>
-						<el-dropdown-item v-if="platform === 'DAAS'" command="home">
+						<el-dropdown-item v-if="$window.getSettingByKey('SHOW_HOME_BUTTON')" command="home">
 							{{ $t('app.home') }}
 						</el-dropdown-item>
 						<el-dropdown-item command="signOut">{{ $t('app.signOut') }}</el-dropdown-item>
@@ -161,7 +179,6 @@
 			:lastDataNum="firstNum"
 			@closeAgentDialog="closeAgentDialog"
 		></DownAgent>
-		<!-- @refreAgent="handleRefreAgent" -->
 	</el-container>
 </template>
 
@@ -186,9 +203,14 @@ let menuSetting = [
 		name: 'dataTransmission',
 		icon: 'chengbenguanlixitong',
 		children: [
-			{ name: 'dataFlows', alias: 'dataFlowsClusterClone', query: '?mapping=cluster-clone' },
-			{ name: 'dataFlows', alias: 'dataFlowsCustom', query: '?mapping=custom' },
-			{ name: 'dataVerification' }
+			{
+				name: 'dataFlows',
+				icon: 'shujukuqianyi1',
+				alias: 'dataFlowsClusterClone',
+				query: '?mapping=cluster-clone'
+			},
+			{ name: 'dataFlows', icon: 'shujutongbu', alias: 'dataFlowsCustom', query: '?mapping=custom' },
+			{ name: 'dataVerification', icon: 'hechabidui-copy' }
 		]
 	},
 	{
@@ -215,10 +237,7 @@ let menuSetting = [
 			{ name: 'apiServers' }
 		]
 	},
-	{
-		name: 'dataCollect',
-		icon: 'shujucaiji'
-	},
+	{ name: 'dataCollect', icon: 'shujucaiji' },
 	{
 		name: 'system',
 		icon: 'jiekoufuwu',
@@ -239,9 +258,7 @@ export default {
 	components: { CustomerService, newDataFlow, NotificationPopover, DownAgent },
 	data() {
 		return {
-			platform: window._TAPDATA_OPTIONS_.platform,
 			logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
-			showLang: window._TAPDATA_OPTIONS_.showLang,
 			languages: Languages,
 			lang: localStorage.getItem('tapdata_localize_lang') || 'en',
 			isCollapse: false,
@@ -280,9 +297,8 @@ export default {
 			return self.$store.state[data];
 		};
 
-		this.buildProfile = localStorage.getItem('buildProfile');
-
-		if (this.buildProfile && this.buildProfile === 'CLOUD') {
+		// 是否允许下载agent
+		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
 			this.getDataApi();
 			if (!this.downLoadNum) {
 				self.timer = setInterval(() => {
@@ -305,18 +321,18 @@ export default {
 	watch: {
 		'$route.name'() {
 			this.activeMenu = this.$route.path;
-		},
-		$route() {
-			if (this.$route.meta) {
-				this.isCollapse = this.$route.meta.isCollapse;
-			}
 		}
+		// $route() {
+		// 	if (this.$route.meta) {
+		// 		this.isCollapse = this.$route.meta.isCollapse;
+		// 	}
+		// }
 	},
 	methods: {
 		async getFavMenus() {
 			let userId = this.$cookie.get('user_id');
 			let result = await this.$api('users').get([userId]);
-			if (result.data) {
+			if (result && result.data) {
 				let user = result.data || {};
 				this.favMenus = user.favorites || [];
 				this.userName = user.email.split('@')[0] || '';
@@ -364,6 +380,12 @@ export default {
 					return menu;
 				});
 			};
+			if (window.getSettingByKey('USE_CLOUD_MENU')) {
+				let part1 = menuSetting.splice(0, 2);
+				let menu = menuSetting.splice(0, 1)[0];
+				let part2 = menuSetting;
+				menuSetting = part1.concat(menu.children, part2);
+			}
 			this.menus = formatMenu(menuSetting);
 		},
 		command(command) {
@@ -393,7 +415,14 @@ export default {
 					this.isShowCustomerService = !this.isShowCustomerService;
 					break;
 				case 'version':
-					this.$message.info('DAAS_BUILD_NUMBER');
+					if (window.getSettingByKey('SHOW_DK_VERSION')) {
+						this.$message.info({
+							dangerouslyUseHTMLString: true,
+							message: 'DK_VERSION_1</br>DK_VERSION_2'
+						});
+					} else {
+						this.$message.info('DAAS_BUILD_NUMBER');
+					}
 					break;
 				case 'license':
 					this.$message.info(this.$t('app.menu.licenseDate') + ': ' + this.licenseExpireDate);
@@ -421,7 +450,7 @@ export default {
 			signOut();
 		},
 		menuHandler(index) {
-			this.isCollapse = true;
+			// this.isCollapse = true;
 			if (index.includes('#favorite_')) {
 				let i = index.split('#favorite_')[1];
 				let router = this.favMenus[i];
@@ -454,12 +483,7 @@ export default {
 		// 获取Agent是否安装
 		getDataApi() {
 			let params = {};
-			if (
-				this.buildProfile &&
-				this.buildProfile === 'CLOUD' &&
-				!parseInt(this.$cookie.get('isAdmin')) &&
-				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
-			) {
+			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
 				params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
 			}
 			cluster.get(params).then(res => {
@@ -484,16 +508,13 @@ export default {
 			this.downLoadAgetntdialog = false;
 		},
 
-		// // 刷新agent
-		// handleRefreAgent() {
-		// 	this.getDataApi();
-		// },
-
 		async getLicense() {
 			let timeStamp = this.$api('TimeStamp');
 			let stime = '';
 			await timeStamp.get().then(res => {
-				stime = res.data || new Date().getTime();
+				if (res) {
+					stime = res.data || new Date().getTime();
+				}
 			});
 			let filter = {
 				where: {}
@@ -506,14 +527,15 @@ export default {
 			this.$api('Licenses')
 				.get(params)
 				.then(res => {
-					let expires_on = res.data.expires_on || '';
-					let endTime = expires_on - stime;
-					endTime = parseInt(endTime / 1000 / 60 / 60 / 24); //相差天数
-					// if (endTime <= 90 && this.$cookie.get('isAdmin') != 0) {
-					// 	this.licenseExpireAble = true;
-					// }
-					this.licenseExpire = endTime;
-					this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss');
+					if (res) {
+						let expires_on = res.data.expires_on || '';
+						let endTime = expires_on - stime;
+						endTime = parseInt(endTime / 1000 / 60 / 60 / 24); //相差天数
+						let showDay = window.getSettingByKey('showLicenceNotice') || 0;
+						this.licenseExpireVisible = Number(showDay) > endTime;
+						this.licenseExpire = endTime;
+						this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss');
+					}
 				});
 		}
 	}

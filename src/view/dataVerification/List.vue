@@ -383,12 +383,12 @@ export default {
 		this.timer = setInterval(() => {
 			this.search(this.page.current, 1);
 		}, 10000);
+
+		if (this.$route && this.$route.query) {
+			this.searchParams.keyword = this.$route.query.name;
+		}
 	},
-	destroyed() {
-		// 清除定时器
-		clearInterval(this.timer);
-		this.timer = null;
-	},
+
 	methods: {
 		keyup() {
 			if (timeout) {
@@ -429,6 +429,9 @@ export default {
 			}
 			if (keyword && keyword.trim()) {
 				where.name = { like: toRegExp(keyword), options: 'i' };
+				if (this.$route.query.id) {
+					where.flowId = { regexp: `^${this.$route.query.id}$` };
+				}
 			}
 			let filter = {
 				order: sortBy + ' ' + (order === 'ascending' ? 'ASC' : 'DESC'),
@@ -541,6 +544,12 @@ export default {
 					}
 				});
 		}
+	},
+
+	destroyed() {
+		// 清除定时器
+		clearInterval(this.timer);
+		this.timer = null;
 	}
 };
 </script>

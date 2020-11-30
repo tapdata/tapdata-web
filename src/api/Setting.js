@@ -6,7 +6,7 @@
 import PublicAPI from './publicApi';
 import axios from 'axios';
 
-export default class notification extends PublicAPI {
+export default class Settings extends PublicAPI {
 	constructor() {
 		super('/api/Settings');
 	}

@@ -181,6 +181,7 @@ const tc = {
 			serverProcess: '服務器與進程',
 			syncJobsStatus: '同步任務狀態',
 			migrationJobsStatus: '遷移任務狀態',
+			dataValidationTitle: '數據驗證',
 			before: '前',
 			pcs: '條',
 			server: '服務器',
@@ -197,7 +198,11 @@ const tc = {
 			initialization: '初始化中',
 			loadingFinished: '初始化完成',
 			incremental: '增量中',
-			incrementalLag: '增量滯後'
+			incrementalLag: '增量滯後',
+			allValid: '全部校驗任務',
+			checkSame: '校驗一致',
+			countDifference: 'Count差異',
+			contentDifference: '內容差異'
 		}
 	},
 	message: {
@@ -506,6 +511,7 @@ const tc = {
 		groupByExpression: '分組字段',
 		aggregation: '聚合處理',
 		enterFilterTable: '請輸入過濾表內容',
+		aggregatePrompt: '提示：使用聚合處理節點後，此任務停止後再次啟動，任務將會重置',
 		nameTip: '後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ',
 		button: {
 			submit: '提交執行',
@@ -917,7 +923,19 @@ const tc = {
 							label: '描述',
 							placeholder: '請輸入節點描述'
 						},
+						errorOperationSaveTip: '字段處理節點檢測到衝突待處理',
+						errorOperationTipBefore: '字段處理操作與源模型發生衝突',
+						errorOperationTipAfter: '點擊此處進行處理',
+						errorOperationDrop:
+							'檢測到以下處理操作與源模型發生衝突，請點擊丟棄衝突操作按鈕丟棄全部有衝突的操作，以保證任務正常運行',
+						errorOperationDelBtn: '丟棄全部',
+						errorOperationKeepBtn: '批量保留',
 						toUpperCase: '轉大寫',
+						save: '保存',
+						originalField: '原始字段/類型',
+						process: '處理方式',
+						result: '結果',
+						operation: '操作',
 						delete: '删除',
 						toLowerCase: '轉小寫',
 						fieldName: '字段名稱',
@@ -1558,7 +1576,28 @@ const tc = {
 		},
 		library: '此庫',
 		sameTable: '以下表存在重名：',
-		repeatTip: '點擊數據庫名對重名的表在數據目錄頁面進行處理，以確保此庫下表名的唯一性'
+		repeatTip: '點擊數據庫名對重名的表在數據目錄頁面進行處理，以確保此庫下表名的唯一性',
+		jobSchedule: {
+			jobSecheduleSetting: '任務調度設置',
+			job: '任務：',
+			sync: '任務調度：',
+			expression: '表達式：',
+			expressionPlaceholder: '請輸入corn表達式',
+			explanation: '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務',
+			grammar: '語法:',
+			second: '秒',
+			minute: '分鐘',
+			hour: '小時',
+			day: '日',
+			month: '月',
+			week: '星期',
+			year: '年',
+			example: '例子:',
+			runMinute: '每分鐘運行一次',
+			runDay: '每天2點運行',
+			jobSchedule: '調度任務設置',
+			jobSchedule_tip: '調度任務設置-僅對初始化任務可用 '
+		}
 	},
 	dataVerification: {
 		verifyDetail: '校驗詳情',

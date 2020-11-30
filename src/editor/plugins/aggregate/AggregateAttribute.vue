@@ -4,6 +4,7 @@
 			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 				{{ $t('dataFlow.button.viewMonitoring') }}
 			</el-button>
+			<p>{{ $t('dataFlow.aggregatePrompt') }}</p>
 		</div>
 		<el-form ref="form" :model="form" label-position="top" label-width="200px" :disabled="disabled">
 			<el-col :span="21" class="aggregateName">
@@ -151,7 +152,7 @@
 <script>
 import _ from 'lodash';
 import log from '../../../log';
-import { mergeJoinTablesToTargetSchema } from '../../util/Schema';
+import { mergeJoinTablesToTargetSchema, removeDeleted } from '../../util/Schema';
 import MultiSelection from '../../../components/MultiSelection';
 
 let counter = 0;
@@ -272,6 +273,8 @@ export default {
 			let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
 			//获取所有字段键选项，若主键为空，默认选中schema中的主键
 			if (schema && schema.fields) {
+				//过滤被删除的字段
+				schema.fields = removeDeleted(schema.fields);
 				this.primaryKeyOptions = schema.fields.map(f => f.field_name);
 				if (!this.form.primaryKeys) {
 					let primaryKeys = schema.fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
@@ -372,6 +375,14 @@ export default {
 </style>
 <style lang="less">
 .aggregate {
+	.head-btns {
+		p {
+			padding: 20px 0;
+			color: rgb(241, 145, 73);
+			font-size: 12px;
+			text-align: left;
+		}
+	}
 	.e-label {
 		&::before {
 			content: '*';

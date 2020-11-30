@@ -87,7 +87,7 @@
 				</ul>
 				<div class="topbar-buttons">
 					<el-button
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="'add'"
 						size="mini"
 						class="btn"
 						v-show="multipleSelection.length > 0"
@@ -262,6 +262,7 @@
 										<i class="iconfont  task-list-icon icon-chaxun"></i>
 									</el-button>
 								</el-tooltip>
+
 								<el-tooltip
 									class="item"
 									v-readonlybtn="'BTN_AUTHS'"
@@ -274,6 +275,20 @@
 										@click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)"
 									>
 										<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
+									</el-button>
+								</el-tooltip>
+								<el-tooltip
+									class="item"
+									v-readonlybtn="'BTN_AUTHS'"
+									:content="$t('dialog.jobSchedule.jobSecheduleSetting')"
+									placement="bottom"
+								>
+									<el-button
+										type="text"
+										:disabled="scope.row.setting.sync_type !== 'initial_sync'"
+										@click="handleTaskscheduling(scope.row.id, scope.row)"
+									>
+										<i class="iconfont  task-list-icon  icon-lishi2"></i>
 									</el-button>
 								</el-tooltip>
 								<el-tooltip
@@ -299,6 +314,9 @@
 										><i class="iconfont icon-gengduo3  task-list-icon"></i
 									></el-button>
 									<el-dropdown-menu slot="dropdown">
+										<el-dropdown-item command="dataVerify">{{
+											$t('dataVerify.dataVerify')
+										}}</el-dropdown-item>
 										<el-dropdown-item command="export">{{
 											$t('dataFlow.dataFlowExport')
 										}}</el-dropdown-item>
@@ -343,7 +361,7 @@
 			v-on:operationsClassify="handleOperationClassify"
 		></SelectClassify>
 		<el-dialog
-			:title="this.$t('dataFlow.importantReminder')"
+			:title="$t('dataFlow.importantReminder')"
 			:close-on-click-modal="false"
 			:visible.sync="deleteDialogVisible"
 			width="30%"
@@ -373,6 +391,46 @@
 			v-on:dialogVisible="handleSkipErrorVisible"
 			v-on:operationsSkipError="handleOperationSkipError"
 		></SkipError>
+		<el-dialog
+			:title="$t('dialog.jobSchedule.jobSecheduleSetting')"
+			:close-on-click-modal="false"
+			:visible.sync="taskSettingsDialog"
+			custom-class="jobSeceduleDialog"
+			width="50%"
+		>
+			<el-form :model="formSchedule" label-width="100px">
+				<el-form-item :label="$t('dialog.jobSchedule.job')">
+					<div>{{ formSchedule.name }}</div>
+				</el-form-item>
+				<el-form-item :label="$t('dialog.jobSchedule.sync')">
+					<el-switch v-model="formSchedule.isSchedule"> </el-switch>
+				</el-form-item>
+				<el-form-item :label="$t('dialog.jobSchedule.expression')" v-if="formSchedule.isSchedule">
+					<el-input
+						v-model="formSchedule.cronExpression"
+						:placeholder="$t('dialog.jobSchedule.expressionPlaceholder')"
+					>
+					</el-input>
+				</el-form-item>
+			</el-form>
+			<div v-if="formSchedule.isSchedule" class="text">
+				<p>{{ $t('dialog.jobSchedule.explanation') }}</p>
+				<p>{{ $t('dialog.jobSchedule.grammar') }}</p>
+				<ul>
+					<li v-for="item in timeTextArr" :key="item">
+						<p>{{ $t('dialog.jobSchedule.' + item) }}</p>
+						<span>*</span>
+					</li>
+				</ul>
+				<p>{{ $t('dialog.jobSchedule.example') }}</p>
+				<p>**/1***?* // {{ $t('dialog.jobSchedule.runMinute') }}</p>
+				<p>002**?* // {{ $t('dialog.jobSchedule.runDay') }}</p>
+			</div>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="taskSettingsDialog = false">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="saveTaskSetting">{{ $t('app.save') }}</el-button>
+			</span>
+		</el-dialog>
 	</section>
 </template>
 
@@ -394,6 +452,7 @@ export default {
 	components: { Classification, SelectClassify, DownAgent, SkipError },
 	data() {
 		return {
+			taskSettingsDialog: false, //任务调度设置弹窗开关
 			downLoadAgetntdialog: false, //判断是否安装agent
 			downLoadNum: 0,
 			firstNum: undefined,
@@ -549,9 +608,7 @@ export default {
 			self.wsData.length = 0;
 		}, 3000);
 
-		this.buildProfile = localStorage.getItem('buildProfile');
-
-		if (this.buildProfile && this.buildProfile === 'CLOUD') {
+		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
 			this.getDataApi();
 			if (!this.downLoadNum) {
 				self.timer = setInterval(() => {
@@ -584,8 +641,7 @@ export default {
 		getDataApi() {
 			let params = {};
 			if (
-				this.buildProfile &&
-				this.buildProfile === 'CLOUD' &&
+				this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
 				!parseInt(this.$cookie.get('isAdmin')) &&
 				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
 			) {
@@ -763,6 +819,7 @@ export default {
 				});
 			}, 200);
 		},
+
 		handleImport() {
 			let routeUrl = this.$router.resolve({
 				path: '/upload'
@@ -805,7 +862,11 @@ export default {
 					in: [id]
 				}
 			};
+
 			switch (command) {
+				case 'dataVerify':
+					this.$router.push({ name: 'dataVerification', query: { name: node.name, id: node.id } });
+					break;
 				case 'export':
 					MetadataInstance.download(where);
 					break;
@@ -965,7 +1026,7 @@ export default {
 			await dataFlows
 				.get(_params)
 				.then(res => {
-					if (res.data) {
+					if (res && res.data) {
 						this.handleData(res.data);
 						this.tableData = res.data;
 						let msg = {
@@ -1479,6 +1540,35 @@ export default {
 					name: 'tableFlows'
 				});
 			}
+		},
+
+		// 任务调度设置
+		handleTaskscheduling(id, data) {
+			this.taskSettingsDialog = true;
+			this.formSchedule.name = data.name;
+			this.formSchedule.isSchedule = data.setting.isSchedule;
+			this.formSchedule.cronExpression = data.setting.cronExpression;
+			this.formSchedule.taskData = data;
+		},
+
+		// 任务调度设置保存
+		saveTaskSetting() {
+			let data = this.formSchedule.taskData;
+			data.setting.isSchedule = this.formSchedule.isSchedule;
+			data.setting.cronExpression = this.formSchedule.cronExpression;
+			dataFlows
+				.draft(data)
+				.then(result => {
+					if (result && result.data) {
+						this.$message.success(this.$t('message.saveOK'));
+					}
+				})
+				.catch(() => {
+					this.$message.error(this.$t('message.saveFail'));
+				})
+				.finally(() => {
+					this.taskSettingsDialog = false;
+				});
 		}
 	}
 };
@@ -1654,5 +1744,22 @@ export default {
 }
 .dataflow-clickTip .el-message-box__status {
 	top: 25% !important;
+}
+.data-flow-wrap {
+	.jobSeceduleDialog {
+		.text {
+			padding-left: 100px;
+			line-height: 28px;
+			color: #999;
+			ul {
+				display: flex;
+				flex-direction: row;
+				text-align: center;
+				li {
+					padding-right: 20px;
+				}
+			}
+		}
+	}
 }
 </style>

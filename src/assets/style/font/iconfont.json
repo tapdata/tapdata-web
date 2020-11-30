@@ -6,6 +6,62 @@
   "description": "Tapdata 线装小图标",
   "glyphs": [
     {
+      "icon_id": "18427297",
+      "name": "数据库迁移3",
+      "font_class": "shujukuqianyi31",
+      "unicode": "e70b",
+      "unicode_decimal": 59147
+    },
+    {
+      "icon_id": "18427300",
+      "name": "数据同步3",
+      "font_class": "shujutongbu31",
+      "unicode": "e70c",
+      "unicode_decimal": 59148
+    },
+    {
+      "icon_id": "18427015",
+      "name": "数据同步",
+      "font_class": "shujutongbu4",
+      "unicode": "e703",
+      "unicode_decimal": 59139
+    },
+    {
+      "icon_id": "18427016",
+      "name": "数据库迁移",
+      "font_class": "shujukuqianyi3",
+      "unicode": "e70a",
+      "unicode_decimal": 59146
+    },
+    {
+      "icon_id": "18424125",
+      "name": "数据库迁移",
+      "font_class": "shujukuqianyi1",
+      "unicode": "e704",
+      "unicode_decimal": 59140
+    },
+    {
+      "icon_id": "18424126",
+      "name": "数据同步",
+      "font_class": "shujutongbu",
+      "unicode": "e705",
+      "unicode_decimal": 59141
+    },
+    {
+      "icon_id": "13216368",
+      "name": "收 藏 ",
+      "font_class": "shoucang-copy",
+      "unicode": "e6ff",
+      "unicode_decimal": 59135
+    },
+    {
+      "icon_id": "16917722",
+      "name": "过滤",
+      "font_class": "guolv",
+      "unicode": "e702",
+      "unicode_decimal": 59138
+    },
+    {
       "icon_id": "12448864",
       "name": "历史记录",
       "font_class": "lishijilu",
@@ -228,13 +284,6 @@
       "font_class": "lishi1",
       "unicode": "e6e0",
       "unicode_decimal": 59104
-    },
-    {
-      "icon_id": "5161031",
-      "name": "还原",
-      "font_class": "huanyuan",
-      "unicode": "e6e1",
-      "unicode_decimal": 59105
     },
     {
       "icon_id": "16211683",
@@ -1224,11 +1273,11 @@
       "unicode_decimal": 59082
     },
     {
-      "icon_id": "12126936",
+      "icon_id": "18421661",
       "name": "核查比对",
-      "font_class": "hechabidui",
-      "unicode": "e66c",
-      "unicode_decimal": 58988
+      "font_class": "hechabidui-copy",
+      "unicode": "ed24",
+      "unicode_decimal": 60708
     },
     {
       "icon_id": "7641601",

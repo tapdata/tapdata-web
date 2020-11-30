@@ -3,8 +3,7 @@
 		<header>
 			<div class="logo">
 				<img :src="logoUrl" />
-				<div v-if="showLang === 'false'"></div>
-				<div class="switch-lang" v-else>
+				<div class="switch-lang" v-if="$window.getSettingByKey('SHOW_LANGUAGE')">
 					<span
 						v-for="(value, key) in languages"
 						:key="key"
@@ -30,15 +29,14 @@ export default {
 	data() {
 		return {
 			logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
-			showLang: window._TAPDATA_OPTIONS_.showLang,
 			languages: Languages,
-			lang: localStorage.getItem('tapdata_localize_lang') || 'en'
+			lang: localStorage.getItem('tapdata_localize_lang')
 		};
 	},
 	methods: {
 		langChange(lang) {
 			localStorage.setItem('tapdata_localize_lang', lang);
-			location.reload();
+			this.$i18n.locale = lang;
 		}
 	}
 };

@@ -90,6 +90,7 @@
 
 <script>
 import _ from 'lodash';
+import { removeDeleted } from '../../util/Schema';
 // import {uuid} from "../../util/Schema";
 // import { convertSchemaToTreeData } from "../../util/Schema";
 // import log from '../../../log';
@@ -163,6 +164,8 @@ export default {
 				.map(link => link.getSourceCell().getFormData());
 			// let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
 			if (this.mergedSchema && this.mergedSchema.fields) {
+				//过滤被删除的字段
+				this.mergedSchema.fields = removeDeleted(this.mergedSchema.fields);
 				this.mergedSchema.fields.forEach(field => {
 					this.$set(field, 'required', false);
 					this.$set(field, 'query', false);
