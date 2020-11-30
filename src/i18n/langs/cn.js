@@ -922,8 +922,21 @@ const cn = {
 							label: '描述',
 							placeholder: '请输入节点描述'
 						},
-						toUpperCase: '转大写',
-						toLowerCase: '转小写',
+						errorOperationSaveTip: '字段处理节点检测到冲突待处理',
+						errorOperationTipBefore: '字段处理操作与源模型发生冲突',
+						errorOperationTipAfter: ' 点击处理',
+						errorOperationDrop:
+							'检测到以下处理操作与源模型有冲突，请对以下字段选择处理方式。丢弃/保留: 丢弃/保留对此字段的处理',
+						errorOperationDesc:
+							'点击"丢弃全部"会将全部字段选中"丢弃"操作；点击"批量保留"会将全部字段选中"保留"操作，无"保留"操作的字段仍会被选中"丢弃"',
+						errorOperationDelBtn: '丢弃全部',
+						errorOperationKeepBtn: '批量保留',
+						save: '保存',
+						originalField: '原始字段/类型',
+						process: '处理方式',
+						result: '结果',
+						operation: '操作',
+						keep: '保留',
 						delete: '删除',
 						fieldName: '字段名称',
 						fieldType: '字段类型',

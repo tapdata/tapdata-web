@@ -85,7 +85,8 @@ export const /**
 						color: getColor(field.tableId || field.table_name),
 						primary_key_position: field.primary_key_position,
 						table_name: field.table_name || 'table',
-						original_field_name: field.field_name
+						original_field_name: field.original_field_name || field.field_name,
+						is_deleted: field.is_deleted
 					};
 					let path = 'children.' + jsonPathForFieldName.join('.children.');
 					let partField = _.get(root, path);
@@ -135,7 +136,6 @@ export const /**
  */
 export const mergeSchema = function(targetSchema, sourceSchema, mergeOpts) {
 	log('Schema.mergeSchema', arguments);
-
 	if (!sourceSchema || !sourceSchema.table_name || !sourceSchema.fields || sourceSchema.fields.length === 0)
 		return targetSchema;
 
@@ -264,6 +264,17 @@ export const mergeJoinTablesToTargetSchema = function(targetSchema, joinTables) 
 	log('Schema.mergeJoinTablesToTargetSchema', ...arguments, mergedTargetSchema);
 
 	return mergedTargetSchema;
+};
+export const removeDeleted = function(fields) {
+	if (fields && fields.length > 0) {
+		for (let i = 0; i < fields.length; i++) {
+			if (fields[i].is_deleted) {
+				fields.splice(i, 1);
+				i--;
+			}
+		}
+	}
+	return fields;
 };
 export const uuid = function() {
 	// credit: http://stackoverflow.com/posts/2117523/revisions

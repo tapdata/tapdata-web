@@ -34,7 +34,7 @@
 
 <script>
 import Mapping from '../link/Mapping';
-import { mergeJoinTablesToTargetSchema, mergeSchema } from '../../util/Schema';
+import { mergeJoinTablesToTargetSchema, mergeSchema, removeDeleted } from '../../util/Schema';
 // import log from '../../../log';
 import _ from 'lodash';
 let editorMonitor = null;
@@ -168,6 +168,10 @@ export default {
 					joinType: joinPath ? 'merge_embed' : 'upsert',
 					joinPath
 				});
+				//过滤删除的字段
+				if (mergedTargetSchema && mergedTargetSchema.fields) {
+					mergedTargetSchema.fields = removeDeleted(mergedTargetSchema.fields);
+				}
 				if (this.model.removeFields.length && mergedTargetSchema && mergedTargetSchema.fields) {
 					let removeIds = this.model.removeFields.map(f => f.id);
 					mergedTargetSchema.fields = mergedTargetSchema.fields.filter(f => {
