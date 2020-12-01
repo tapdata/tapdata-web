@@ -99,21 +99,6 @@ export const isValidate = function(operations, schema) {
 					type: operation[i].type
 				};
 			}
-			if (operation[i].scriptType === 'js') {
-				node = {
-					isType: 5,
-					keep: true,
-					color: operation[i].color,
-					field: operation[i].field,
-					id: operation[i].id,
-					label: operation[i].label,
-					primary_key_position: operation[i].primary_key_position,
-					script: operation[i].script,
-					scriptType: operation[i].scriptType,
-					tableName: operation[i].tableName,
-					type: operation[i].type
-				};
-			}
 			if (operation[i].op === 'CREATE' && !fieldOriginalIds.includes(operation[i].triggerFieldId)) {
 				errorList.push(node);
 				isValidate = false;
@@ -147,4 +132,32 @@ export const isValidate = function(operations, schema) {
 		isValidate: isValidate,
 		errorList: errorList
 	};
+};
+export const isScript = function(operations, scripts) {
+	let fieldIds = [];
+	let errorList = [];
+	if (operations) {
+		fieldIds = operations.map(field => field.id);
+	}
+	if (scripts) {
+		for (let i = 0; i < scripts.length; i++) {
+			if (!fieldIds.includes(scripts[i].id)) {
+				let node = {
+					isType: 5,
+					keep: false,
+					color: scripts[i].color,
+					field: scripts[i].field,
+					id: scripts[i].id,
+					label: scripts[i].label,
+					primary_key_position: scripts[i].primary_key_position,
+					script: scripts[i].script,
+					scriptType: scripts[i].scriptType,
+					tableName: scripts[i].tableName,
+					type: scripts[i].type
+				};
+				errorList.push(node);
+			}
+		}
+	}
+	return errorList;
 };
