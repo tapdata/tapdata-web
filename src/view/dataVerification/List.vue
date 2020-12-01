@@ -428,9 +428,9 @@ export default {
 				}
 			}
 			if (keyword && keyword.trim()) {
-				where.name = { like: toRegExp(keyword), options: 'i' };
+				where.or[0].name = { like: toRegExp(keyword), options: 'i' };
 				if (this.$route.query.id) {
-					where.flowId = { regexp: `^${this.$route.query.id}$` };
+					where.or[1].flowId = { regexp: `^${this.$route.query.id}$` };
 				}
 			}
 			let filter = {
