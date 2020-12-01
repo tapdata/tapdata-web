@@ -13,16 +13,16 @@
 			</div>
 			<div class="field field-text">{{ $t('editor.cell.processor.field.form.fieldName') }}</div>
 			<div class="btnBox">
-				<el-button size="mini" type="text" class="btn" @click="handleAllToUpperCase()">
+				<el-button size="mini" type="text" class="btn" @click="handleAllToUpperCase()" :disabled="disabledMode">
 					<img src="../../../../static/image/upper.png" alt="" />
 				</el-button>
-				<el-button size="mini" type="text" class="btn" @click="handleAllToLowerCase()">
+				<el-button size="mini" type="text" class="btn" @click="handleAllToLowerCase()" :disabled="disabledMode">
 					<img src="../../../../static/image/lower.png" alt="" />
 				</el-button>
-				<el-button size="mini" type="text" class="btn" @click="handleAllDelete">
+				<el-button size="mini" type="text" class="btn" @click="handleAllDelete" :disabled="disabledMode">
 					<img src="../../../../static/image/del.png" alt="" />
 				</el-button>
-				<el-button type="text" class="btn" size="mini" @click="handleAllReset">
+				<el-button type="text" class="btn" size="mini" @click="handleAllReset" :disabled="disabledMode">
 					<img src="../../../../static/image/return.png" alt="" />
 				</el-button>
 				<el-button
@@ -30,7 +30,7 @@
 					class="iconfont icon-lishi2 btn"
 					size="mini"
 					@click="openErrorList"
-					:disabled="errorOperation.length === 0"
+					:disabled="errorOperation.length === 0 || disabledMode"
 				></el-button>
 			</div>
 		</div>
@@ -60,7 +60,7 @@
 									v-model="data.label"
 									@blur="handleRename(node, data)"
 									@change="handleRename(node, data)"
-									:disabled="isRemove(data.id)"
+									:disabled="isRemove(data.id) || disabledMode"
 								></el-input>
 							</span>
 							<el-select
@@ -358,7 +358,7 @@ import $ from 'jquery';
 import log from '../../../log';
 import _ from 'lodash';
 import { uuid } from '../../util/Schema';
-import { isValidate } from './util';
+import { isValidate, isScript } from './util';
 
 const REMOVE_OPS_TPL = {
 	id: '',
@@ -510,13 +510,14 @@ export default {
 			return $(this.$refs.entityDom).find(`.e-port-in[data-id=${id}]`)[0];
 		},
 		getErrorOperation() {
+			debugger;
 			if (!this.originalSchemaFiled || !this.originalSchemaFiled.fields) {
 				return;
 			}
-			this.errorOperation = isValidate(this.originalOperations, this.originalSchemaFiled).errorList;
-			let script = isValidate(this.model.scripts, this.originalSchemaFiled).errorList;
+			this.errorOperation = isValidate(this.originalOperations, this.originalSchemaFiled).errorList || [];
+			let script = isScript(this.model.scripts, this.originalSchemaFiled).errorList || [];
 			this.errorOperation = [...this.errorOperation, ...script];
-			if (this.errorOperation.length > 0) {
+			if (this.errorOperation.length > 0 && !this.disabledMode) {
 				this.showErrorOperationTip = true;
 			} else {
 				this.showErrorOperationTip = false;
@@ -525,7 +526,7 @@ export default {
 		keepErrorOperation() {
 			if (this.errorOperation.length === 0) return;
 			this.errorOperation.forEach(item => {
-				if (item.isKeep) {
+				if (![1, 4].includes(item.isType)) {
 					item.keep = true;
 				} else {
 					item.keep = false;
