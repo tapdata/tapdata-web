@@ -274,7 +274,7 @@ export default {
 			downLoadNum: 0,
 			firstNum: undefined,
 			licenseExpire: '',
-			lecenseExpireVisible: false,
+			licenseExpireVisible: false,
 			licenseExpireDate: ''
 		};
 	},

@@ -84,7 +84,7 @@ const cn = {
 			account_waiting_approve: '您的账户还未通过管理员审核',
 			account_disabled: '您的账户已被管理员禁用',
 			permission_denied: '没有权限',
-			signInFail: '登录失败',
+			signInFail: '账户或密码错误',
 			registry: '账号注册',
 			registry_tip: '我已同意',
 			userPplicy: '用户政策',

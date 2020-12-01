@@ -84,7 +84,7 @@ const tc = {
 			account_waiting_approve: '您的賬戶還未通過管理員審核',
 			account_disabled: '您的賬戶已被管理員禁用',
 			permission_denied: '沒有權限',
-			signInFail: '登錄失敗',
+			signInFail: '帳戶或密碼錯誤',
 
 			registry: '賬號註冊',
 			registry_tip: '我已同意',

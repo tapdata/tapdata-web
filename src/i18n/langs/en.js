@@ -84,7 +84,7 @@ const en = {
 			account_waiting_approve: 'Your account is waiting administrator to approve.',
 			account_disabled: 'Your account is disabled by administrator.',
 			permission_denied: 'Permission denied.',
-			signInFail: 'Sign in failed.',
+			signInFail: "The email and password didn't work.",
 			registry: 'Registration',
 			registry_tip: 'I agree with',
 			userPplicy: ' user policy',
