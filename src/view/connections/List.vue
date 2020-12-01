@@ -73,7 +73,7 @@
 								placement="bottom"
 							>
 								<el-button type="text" @click="reload(scope.row)">
-									<i class="iconfont  task-list-icon  icon-shuaxin"></i>
+									<i class="iconfont  task-list-icon  icon-kujitongbucopy"></i>
 								</el-button>
 							</el-tooltip>
 							<el-tooltip
@@ -83,7 +83,7 @@
 								placement="bottom"
 							>
 								<el-button type="text" @click="edit(scope.row.id)">
-									<i class="iconfont task-list-icon icon-bianji"></i>
+									<i class="iconfont task-list-icon icon-ceshishenqing"></i>
 								</el-button>
 							</el-tooltip>
 							<el-tooltip
@@ -93,7 +93,7 @@
 								placement="bottom"
 							>
 								<el-button type="text" @click="copy(scope.row)">
-									<i class="iconfont task-list-icon icon-fuzhi"></i>
+									<i class="iconfont task-list-icon icon-fuzhi1"></i>
 								</el-button>
 							</el-tooltip>
 							<el-tooltip
