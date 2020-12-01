@@ -269,6 +269,10 @@ const en = {
 		stopInitial_syncMessage:
 			'Pausing job while it is in the initial sync stage may cause it to run from the beginning, are you sure you want to pause?',
 		stopMessage: 'Are you sure to pause the mission?',
+		stopAggregation_message:
+			'Job XXX includes aggregation processor node, job will be reset when excutes restart，still excute pause?',
+		startAggregation_message:
+			'Job XXX includes aggregation processor node, job will be reset when excutes start job，still excute start?',
 		cancelReset: 'cancel reset',
 		resetOk: 'Reset success',
 		resetFailed: 'Reset Failed',
@@ -914,7 +918,12 @@ const en = {
 						'// "students_sum" is the Sub-process name, and the names between sub-processes cannot be repeated',
 					countComment:
 						'// COUNT is the Polymerization function and 132 is the value; if the function is MAX, it will show MAX here',
-					school_nameComment: '// Grouping summary field names, no display if dont filling out'
+					school_nameComment: '// Grouping summary field names, no display if dont filling out',
+					aggregateSizeLabel: 'Number of cached aggregation result',
+					aggregateSizeTips:
+						'Put in the range of cached aggregation result, the excess data will be stored in target database',
+					allAggregateSize: 'All data write in cache',
+					customAggregateSize: 'Custom the cache range'
 				},
 				field: {
 					name: 'Field',

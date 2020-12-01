@@ -269,6 +269,8 @@ const tc = {
 		forceStoppingMessage: '強制停止將立即中斷數據傳輸，是否繼續執行?',
 		stopInitial_syncMessage: '初始化類型的任務暫停後如果再次啟動，任務會從頭開始同步，確定暫停？',
 		stopMessage: '確定要暫停任務嗎?',
+		stopAggregation_message: '任務XXX中含有聚合處理節點，任務停止後再次啟動，任務會先進行重置，確定停止？',
+		startAggregation_message: '任務XXX中含有聚合處理節點，任務啟動後會先進行重置，確定啟動？',
 		cancelReset: '已取消重置',
 		resetOk: '重置成功',
 		resetFailed: '重置失敗',
@@ -905,7 +907,11 @@ const tc = {
 					school_name: 'school_name: "第一實驗小學"',
 					idComment: '// "students_sum" 自定義的子處理名稱，多個子處理名稱不可重複',
 					countComment: '// COUNT為選擇的函數, 132為函數值；如果函數是MAX, 則名稱為MAX',
-					school_nameComment: ' // 分組匯總的欄位名，如果不填寫則不顯示'
+					school_nameComment: ' // 分組匯總的欄位名，如果不填寫則不顯示',
+					aggregateSizeLabel: '聚合結果緩存條數',
+					aggregateSizeTips: '聚合結果在設置的條數範圍內存在緩存里，超出的數據會被存入目標庫',
+					allAggregateSize: '全部存入緩存',
+					customAggregateSize: '自定義緩存條數'
 				},
 				field: {
 					name: '字段',
