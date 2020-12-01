@@ -1,6 +1,6 @@
 <template>
 	<section class="data-flow-wrap" v-loading="restLoading">
-		<div class="panel-left" v-if="formData.panelFlag">
+		<div class="panel-left" v-show="formData.panelFlag">
 			<Classification ref="classification" @nodeChecked="nodeChecked"></Classification>
 		</div>
 		<div class="panel-main">
