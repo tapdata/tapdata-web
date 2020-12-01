@@ -1152,10 +1152,10 @@ export default {
 				this.loading = true;
 				self.doSave(data, (err, rest) => {
 					if (err) {
-						if (err.response.data === 'Loading data source schema') {
+						if (err.response.msg === 'Error: Loading data source schema') {
 							self.$message.error(self.$t('message.loadingSchema'));
 						} else {
-							self.$message.error(err.response.data);
+							self.$message.error(err.response.msg);
 						}
 					} else {
 						this.$message.success(self.$t('message.taskStart'));
