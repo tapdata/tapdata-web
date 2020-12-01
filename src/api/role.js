@@ -26,4 +26,8 @@ export default class Roles extends PublicAPI {
 			return axios.delete(`${this.url}/${id}?name=${name}`);
 		}
 	}
+
+	principals(id) {
+		return axios.delete(`${this.url}/${id}/principals`);
+	}
 }

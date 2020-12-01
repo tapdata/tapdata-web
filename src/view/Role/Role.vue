@@ -22,13 +22,14 @@
 					<li v-for="item in dataList" :key="item.id">
 						<div class="left">
 							<el-checkbox @change="handleOneCheckAll($event, item)" v-cloak v-model="item.checkAll">
-								{{ $t('role.roleNavName.' + item.name) }} {{ item && item.checkAll }}
+								{{ $t('role.roleNavName.' + item.name) }}
 							</el-checkbox>
 						</div>
 						<div class="center" v-if="item.children && item.children.length && !item.children[0].isNav">
 							<el-checkbox
 								v-for="second in item.children"
 								:key="second.id"
+								:disabled="!item.checkAll"
 								v-model="second.checkAll"
 								@change="handleCheckChange(item, second)"
 								v-cloak
@@ -50,6 +51,7 @@
 								<div class="left">
 									<el-checkbox
 										v-model="second.checkAll"
+										:disabled="!item.checkAll"
 										@change="handleCheckAllChange($event, item, second)"
 										v-cloak
 									>
@@ -62,7 +64,13 @@
 										@change="handleCheckedCitiesChange(item, second)"
 										v-cloak
 									>
-										<el-checkbox v-for="p in second.children" :label="p.name" :key="p.name" v-cloak>
+										<el-checkbox
+											v-for="p in second.children"
+											:label="p.name"
+											:key="p.name"
+											:disabled="!second.checkAll"
+											v-cloak
+										>
 											{{ $t('role.roleNavName.' + p.name) }}
 										</el-checkbox>
 									</el-checkbox-group>
@@ -279,11 +287,11 @@ export default {
 			// 	this.$set(second, 'isIndeterminate', true);
 			// }
 
-			let checkedCount = item.children.filter(el => {
-				return el.checkAll;
-			});
+			// let checkedCount = item.children.filter(el => {
+			// 	return el.checkAll;
+			// });
 			// item.isIndeterminate = checkedCount.length > 0 && checkedCount.length < item.children.length;
-			item.checkAll = checkedCount.length === item.children.length;
+			// item.checkAll = checkedCount.length === item.children.length;
 
 			// for (let a = 0; a < item.children.length; a++) {
 			// 	if (!item.children[a].checkAll) {
@@ -306,9 +314,9 @@ export default {
 
 		// 没有三级菜单
 		handleCheckChange(item, second) {
-			let checkedCount = item.children.filter(el => {
-				return el.checkAll;
-			});
+			// let checkedCount = item.children.filter(el => {
+			// 	return el.checkAll;
+			// });
 			// if (typeof item.isIndeterminate === 'undefined') {
 			// 	this.$set(item, 'isIndeterminate', false);
 			// }
@@ -319,7 +327,7 @@ export default {
 				this.$set(second, 'checkAll', true);
 			}
 			// item.isIndeterminate = checkedCount.length > 0 && checkedCount.length < item.children.length;
-			item.checkAll = checkedCount.length === item.children.length;
+			// item.checkAll = checkedCount.length === item.children.length;
 		},
 
 		// // 点击所有
@@ -423,15 +431,16 @@ export default {
 				.then(res => {
 					if (res && res.data) {
 						this.$message.success(this.$t('message.saveOK'));
-						let rolemappings = this.rolemappings.filter(rolemapping => {
-							if (rolemapping.principalType === 'PERMISSION') {
-								return true;
-							}
-						});
-
-						rolemappings.forEach(rolemapping => {
-							roleMappingModel.delete(rolemapping.id);
-						});
+						// let rolemappings = this.rolemappings.filter(rolemapping => {
+						// 	if (rolemapping.principalType === 'PERMISSION') {
+						// 		return true;
+						// 	}
+						// });
+						// let rolemappingId = [];
+						// rolemappings.forEach(rolemapping => {
+						// 	rolemappingId.push(rolemapping.id);
+						// });
+						rolesModel.principals(roleId);
 
 						let newRoleMappings = [];
 						// this.roleusers.forEach(roleuser => {
@@ -451,11 +460,12 @@ export default {
 						// };
 
 						saveRoleArr.forEach(selectPermission => {
-							newRoleMappings.push({
-								principalType: 'PERMISSION',
-								principalId: selectPermission,
-								roleId: res.data.id
-							});
+							if (selectPermission)
+								newRoleMappings.push({
+									principalType: 'PERMISSION',
+									principalId: selectPermission,
+									roleId: res.data.id
+								});
 						});
 
 						// newRoleMappings.forEach(rolemapping => {

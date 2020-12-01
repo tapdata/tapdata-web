@@ -46,8 +46,10 @@
 				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom" @command="command">
 					<i class="iconfont icon-shezhi1"></i>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item command="settings">{{ $t('app.menu.settings') }}</el-dropdown-item>
-						<el-dropdown-item command="setting" v-readonlybtn="'BTN_AUTHS'">{{
+						<el-dropdown-item command="settings" v-readonlybtn="'system_notice'">{{
+							$t('app.menu.settings')
+						}}</el-dropdown-item>
+						<el-dropdown-item command="setting" v-readonlybtn="'home_notice_settings'">{{
 							$t('notification.setting')
 						}}</el-dropdown-item>
 						<!--						<el-dropdown-item command="verifySetting">{{-->

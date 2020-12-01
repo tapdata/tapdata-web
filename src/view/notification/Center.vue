@@ -8,7 +8,11 @@
 					<span class="content">{{ $t('notification.systemNotice') }}</span>
 					<span class="unread" v-show="unRead > 0">{{ unRead }}</span>
 				</li>
-				<li :class="{ active: activePanel === 'user' }" @click="selectPanel('user')">
+				<li
+					:class="{ active: activePanel === 'user' }"
+					@click="selectPanel('user')"
+					v-readonlybtn="'home_operation_history'"
+				>
 					<i class="iconfont icon-lishijilu"></i>
 					<span class="content">{{ $t('notification.userNotice') }}</span>
 				</li>
