@@ -358,7 +358,7 @@ import $ from 'jquery';
 import log from '../../../log';
 import _ from 'lodash';
 import { uuid } from '../../util/Schema';
-import { isValidate, isScript } from './util';
+import { isValidate, isScript, fieldsNamesMap } from './util';
 
 const REMOVE_OPS_TPL = {
 	id: '',
@@ -453,7 +453,7 @@ export default {
 			checkAll: false,
 			fieldOriginalNames: [],
 			fieldIsDeleted: [],
-			fieldsNamesMap: {},
+			fieldNameMap: {},
 			fieldOriginalIds: [],
 			originalOperations: []
 		};
@@ -510,12 +510,12 @@ export default {
 			return $(this.$refs.entityDom).find(`.e-port-in[data-id=${id}]`)[0];
 		},
 		getErrorOperation() {
-			debugger;
 			if (!this.originalSchemaFiled || !this.originalSchemaFiled.fields) {
 				return;
 			}
 			this.errorOperation = isValidate(this.originalOperations, this.originalSchemaFiled).errorList || [];
 			let script = isScript(this.model.scripts, this.originalSchemaFiled).errorList || [];
+			this.fieldNameMap = fieldsNamesMap(this.originalSchemaFiled.fields);
 			this.errorOperation = [...this.errorOperation, ...script];
 			if (this.errorOperation.length > 0 && !this.disabledMode) {
 				this.showErrorOperationTip = true;
@@ -544,33 +544,23 @@ export default {
 				let targetId = this.model.operations.findIndex(n => n.id === this.errorOperation[i].id);
 				if ([1, 4].includes(this.errorOperation[i].isType) && targetId > -1) {
 					this.model.operations.splice(targetId, 1);
-					i--;
-					continue;
 				} else if (this.errorOperation[i].isType === 2 && targetId > -1 && this.errorOperation[i].keep) {
-					let id = this.fieldsNamesMap[this.errorOperation[i].field];
+					let id = this.fieldNameMap[this.errorOperation[i].field];
 					if (id) {
 						this.model.operations[targetId]['keep'] = true; //将operations 标记为true
 						this.model.operations[targetId].id = id; //将id与最新模型id 保持一致
 					}
-					i--;
-					continue;
 				} else if (this.errorOperation[i].isType === 3 && targetId > -1 && this.errorOperation[i].keep) {
 					this.model.operations[targetId]['keep'] = true;
-					i--;
-					continue;
 				} else if (this.errorOperation[i].isType === 5 && targetId > -1 && this.errorOperation[i].keep) {
-					let id = this.fieldsNamesMap[this.errorOperation[i].field];
+					let id = this.fieldNameMap[this.errorOperation[i].field];
 					if (id) {
 						this.model.scripts[targetId]['keep'] = true; //将operations 标记为true
 						this.model.scripts[targetId].id = id; //将id与最新模型id 保持一致
 					}
-					i--;
-					continue;
 				} else {
 					this.model.operations.splice(targetId, 1);
 					this.model.scripts.splice(targetId, 1);
-					i--;
-					continue;
 				}
 			}
 			this.$emit('dataChanged', this.model);

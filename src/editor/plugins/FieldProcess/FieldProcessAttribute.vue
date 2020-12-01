@@ -92,6 +92,11 @@ export default {
 				Object.keys(data).forEach(key => (this.model[key] = data[key]));
 			}
 			this.model.originalSchema = mergeJoinTablesToTargetSchema(null, cell.getInputSchema());
+			cell.on('change:outputSchema', () => {
+				this.model.originalSchema = mergeJoinTablesToTargetSchema(null, cell.getInputSchema());
+				let schema = _.cloneDeep(this.model.originalSchema);
+				this.schema = cell.mergeOutputSchema(schema, false);
+			});
 			let schema = _.cloneDeep(this.model.originalSchema);
 			// apply operations to schema
 			if (this.model.originalSchema && schema && schema.fields) {
@@ -102,7 +107,6 @@ export default {
 				this.$refs.entity.setScripts(_.cloneDeep(this.model.scripts));
 
 				this.schema = cell.mergeOutputSchema(schema, false);
-
 				log(
 					'FieldProcess.setData.applyOperations',
 					this.model.originalSchema,

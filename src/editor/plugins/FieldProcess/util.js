@@ -35,6 +35,14 @@ export const fieldIsDeleted = function(fields) {
 	return fieldIsDeleted;
 };
 
+export const fieldNameIndex = function(name) {
+	let fieldNameIndex = '';
+	if (name) {
+		fieldNameIndex = name.indexOf('.');
+	}
+	return fieldNameIndex;
+};
+
 export const handleOperation = function(fields, operations) {
 	//查找是否有被删除的字段且operation有操作
 	let fieldOriginalIds = getFieldsIds(fields);
@@ -42,11 +50,16 @@ export const handleOperation = function(fields, operations) {
 	let temporary = operations;
 	if (temporary.length > 0) {
 		for (let i = 0; i < temporary.length; i++) {
+			let indexOf = fieldNameIndex(temporary[i].field) || -1;
 			if (fieldOriginalIsDeleted.includes(temporary[i].id) && !temporary[i]['keep']) {
 				temporary.splice(i, 1);
 				i--;
 				continue;
-			} else if (temporary[i].op === 'CREATE' && !fieldOriginalIds.includes(temporary[i].triggerFieldId)) {
+			} else if (
+				temporary[i].op === 'CREATE' &&
+				!fieldOriginalIds.includes(temporary[i].triggerFieldId) &&
+				indexOf > -1
+			) {
 				temporary.splice(i, 1);
 				i--;
 				continue;
@@ -69,6 +82,7 @@ export const isValidate = function(operations, schema) {
 		let fieldOriginalNames = getFieldsNames(originalSchema.fields);
 		for (let i = 0; i < operation.length; i++) {
 			// isType 1表示id name 都不匹配 2表示name匹配 3表示该字段被标记为删除且id匹配 4 新建字段处理 5 脚本处理
+			let indexOf = fieldNameIndex(operation[i].field) || -1;
 			let node = {};
 			if (operation[i].op === 'CREATE') {
 				node = {
@@ -99,7 +113,11 @@ export const isValidate = function(operations, schema) {
 					type: operation[i].type
 				};
 			}
-			if (operation[i].op === 'CREATE' && !fieldOriginalIds.includes(operation[i].triggerFieldId)) {
+			if (
+				operation[i].op === 'CREATE' &&
+				!fieldOriginalIds.includes(operation[i].triggerFieldId) &&
+				indexOf > -1
+			) {
 				errorList.push(node);
 				isValidate = false;
 			} else if (
