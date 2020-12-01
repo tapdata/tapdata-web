@@ -6,7 +6,14 @@
 			</el-button>
 			<p>{{ $t('dataFlow.aggregatePrompt') }}</p>
 		</div>
-		<el-form ref="form" :model="form" label-position="top" label-width="200px" :disabled="disabled">
+		<el-form
+			style="overflow: hidden;"
+			ref="form"
+			:model="form"
+			label-position="top"
+			label-width="200px"
+			:disabled="disabled"
+		>
 			<el-col :span="21" class="aggregateName">
 				<el-form-item :label="$t('dataFlow.nodeName')" required>
 					<el-input v-model="form.name" maxlength="20" show-word-limit></el-input>
@@ -18,65 +25,119 @@
 						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
 					></MultiSelection>
 				</el-form-item>
+				<el-form-item required>
+					<span slot="label">
+						<span>{{ $t('editor.cell.processor.aggregate.aggregateSizeLabel') }}</span>
+						<el-tooltip
+							effect="dark"
+							:content="$t('editor.cell.processor.aggregate.aggregateSizeTips')"
+							placement="top"
+						>
+							<span class="icon iconfont icon-tishi1" style="vertical-align: bottom;"></span>
+						</el-tooltip>
+					</span>
+					<div style="display:flex;align-items: center;">
+						<el-select
+							style="width: 200px"
+							:value="form.aggCacheMaxSize !== -1 ? 'custom' : 'all'"
+							@input="
+								v => {
+									form.aggCacheMaxSize = v === 'all' ? -1 : 100000;
+								}
+							"
+						>
+							<el-option
+								:label="$t('editor.cell.processor.aggregate.allAggregateSize')"
+								value="all"
+							></el-option>
+							<el-option
+								:label="$t('editor.cell.processor.aggregate.customAggregateSize')"
+								value="custom"
+							></el-option>
+						</el-select>
+						<el-input
+							style="flex: 1;margin-left: 10px;margin-bottom: -1px;"
+							:type="form.aggCacheMaxSize === -1 ? 'text' : 'number'"
+							:disabled="form.aggCacheMaxSize === -1"
+							:value="form.aggCacheMaxSize === -1 ? '-' : form.aggCacheMaxSize"
+							@input="
+								v => {
+									form.aggCacheMaxSize = !v || v == 0 ? 1 : v;
+								}
+							"
+						>
+							<template slot="append">
+								{{ $t('editor.cell.data_node.memCache.form.maxRows.unit') }}
+							</template>
+						</el-input>
+					</div>
+				</el-form-item>
 			</el-col>
-			<el-row :gutter="20" class="loopFrom" v-for="(item, index) in form.aggregations" :key="index">
-				<el-col :span="21" class="fromLoopBox">
-					<el-row :gutter="10">
-						<el-col :span="6">
-							<el-form-item
-								:label="$t('dataFlow.aggFunction')"
-								:prop="'aggregations.' + index + '.aggFunction'"
-								required
-							>
-								<el-select v-model="item.aggFunction" @change="changeAggFunction(item, index)">
-									<el-option
-										v-for="item in selectList"
-										:key="item.value"
-										:label="item.label"
-										:value="item.value"
-									>
-									</el-option>
-								</el-select>
-							</el-form-item>
-						</el-col>
-						<el-col :span="18">
-							<el-form-item
-								:label="$t('dataFlow.aggExpression')"
-								:prop="'aggregations.' + index + '.aggExpression'"
-								:required="item.aggFunction !== 'COUNT'"
-							>
-								<el-select
-									v-model="item.aggExpression"
-									filterable
-									allow-create
-									default-first-option
-									:placeholder="$t('dataFlow.selectTargetField')"
-									:disabled="item.aggFunction === 'COUNT'"
+			<el-col style="padding: 0 10px;">
+				<el-row
+					type="flex"
+					:gutter="20"
+					class="loopFrom"
+					v-for="(item, index) in form.aggregations"
+					:key="index"
+				>
+					<el-col :span="21" class="fromLoopBox">
+						<el-row :gutter="10">
+							<el-col :span="6">
+								<el-form-item
+									:label="$t('dataFlow.aggFunction')"
+									:prop="'aggregations.' + index + '.aggFunction'"
+									required
 								>
-									<el-option
-										v-for="item in expressionList"
-										:key="item.field_name"
-										:label="item.field_name"
-										:value="item.field_name"
+									<el-select v-model="item.aggFunction" @change="changeAggFunction(item, index)">
+										<el-option
+											v-for="item in selectList"
+											:key="item.value"
+											:label="item.label"
+											:value="item.value"
+										>
+										</el-option>
+									</el-select>
+								</el-form-item>
+							</el-col>
+							<el-col :span="18">
+								<el-form-item
+									:label="$t('dataFlow.aggExpression')"
+									:prop="'aggregations.' + index + '.aggExpression'"
+									:required="item.aggFunction !== 'COUNT'"
+								>
+									<el-select
+										v-model="item.aggExpression"
+										filterable
+										allow-create
+										default-first-option
+										:placeholder="$t('dataFlow.selectTargetField')"
+										:disabled="item.aggFunction === 'COUNT'"
 									>
-									</el-option>
-								</el-select>
-							</el-form-item>
-						</el-col>
-					</el-row>
-					<el-form-item required :prop="'aggregations.' + index + '.name'">
-						<div class="e-label">
-							<label class="el-form-item__label">{{ $t('dataFlow.aggName') }}</label>
-							<el-popover
-								popper-class="aggtip"
-								width="600"
-								trigger="hover"
-								:content="$t('dataFlow.nameTip')"
-							>
-								<span class="icon iconfont icon-tishi1" slot="reference"></span>
-							</el-popover>
-						</div>
-						<!-- <el-popover
+										<el-option
+											v-for="item in expressionList"
+											:key="item.field_name"
+											:label="item.field_name"
+											:value="item.field_name"
+										>
+										</el-option>
+									</el-select>
+								</el-form-item>
+							</el-col>
+						</el-row>
+						<el-form-item required :prop="'aggregations.' + index + '.name'">
+							<div class="e-label">
+								<label class="el-form-item__label">{{ $t('dataFlow.aggName') }}</label>
+								<el-popover
+									popper-class="aggtip"
+									width="600"
+									trigger="hover"
+									:content="$t('dataFlow.nameTip')"
+								>
+									<span class="icon iconfont icon-tishi1" slot="reference"></span>
+								</el-popover>
+							</div>
+							<!-- <el-popover
 							class="aggtip"
 							placement="top-start"
 							width="200"
@@ -85,47 +146,50 @@
 						>
 							<span class="icon iconfont icon-tishi1" slot="reference"></span>
 						</el-popover> -->
-						<el-input v-model="item.name"></el-input>
-					</el-form-item>
-					<el-form-item
-						:label="$t('dataFlow.filterPredicate')"
-						:prop="'aggregations.' + index + '.filterPredicate'"
-					>
-						<el-input
-							type="textarea"
-							v-model="item.filterPredicate"
-							:placeholder="$t('dataFlow.enterFilterTable')"
-						></el-input>
-					</el-form-item>
-					<el-form-item
-						:label="$t('dataFlow.groupByExpression')"
-						:prop="'aggregations.' + index + '.groupByExpression'"
-					>
-						<el-select
-							v-model="item.groupByExpression"
-							:placeholder="$t('dataFlow.selectGrpupFiled')"
-							multiple
-							filterable
-							allow-create
-							default-first-option
+							<el-input v-model="item.name"></el-input>
+						</el-form-item>
+						<el-form-item
+							:label="$t('dataFlow.filterPredicate')"
+							:prop="'aggregations.' + index + '.filterPredicate'"
 						>
-							<el-option
-								v-for="item in groupList"
-								:key="item.field_name"
-								:label="item.field_name"
-								:value="item.field_name"
+							<el-input
+								type="textarea"
+								v-model="item.filterPredicate"
+								:placeholder="$t('dataFlow.enterFilterTable')"
+							></el-input>
+						</el-form-item>
+						<el-form-item
+							:label="$t('dataFlow.groupByExpression')"
+							:prop="'aggregations.' + index + '.groupByExpression'"
+						>
+							<el-select
+								v-model="item.groupByExpression"
+								:placeholder="$t('dataFlow.selectGrpupFiled')"
+								multiple
+								filterable
+								allow-create
+								default-first-option
 							>
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col :span="2" class="right">
-					<span @click="removeRow(item, index)" class="iconfont icon-quxiao remove"></span>
-				</el-col>
-			</el-row>
-			<el-form-item class="btnClass">
-				<el-button @click="addRow">+ {{ $t('editor.cell.processor.aggregate.new_aggregate') }}</el-button>
-			</el-form-item>
+								<el-option
+									v-for="item in groupList"
+									:key="item.field_name"
+									:label="item.field_name"
+									:value="item.field_name"
+								>
+								</el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="2" class="right">
+						<span @click="removeRow(item, index)" class="iconfont icon-quxiao remove"></span>
+					</el-col>
+				</el-row>
+			</el-col>
+			<el-col>
+				<el-form-item class="btnClass">
+					<el-button @click="addRow">+ {{ $t('editor.cell.processor.aggregate.new_aggregate') }}</el-button>
+				</el-form-item>
+			</el-col>
 		</el-form>
 		<div class="example">
 			<h3>{{ $t('editor.cell.processor.aggregate.returnExample') }}</h3>
@@ -184,7 +248,8 @@ export default {
 						groupByExpression: ''
 					}
 				],
-				primaryKeys: ''
+				primaryKeys: '',
+				aggCacheMaxSize: 100000
 			},
 			primaryKeyOptions: [],
 			aggaggExpression: '1',
@@ -330,7 +395,7 @@ export default {
 	background-color: #fafafa;
 
 	.loopFrom {
-		margin: 0 !important;
+		width: 100%;
 
 		.fromLoopBox {
 			padding: 10px;

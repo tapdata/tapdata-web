@@ -918,7 +918,12 @@ const en = {
 						'// "students_sum" is the Sub-process name, and the names between sub-processes cannot be repeated',
 					countComment:
 						'// COUNT is the Polymerization function and 132 is the value; if the function is MAX, it will show MAX here',
-					school_nameComment: '// Grouping summary field names, no display if dont filling out'
+					school_nameComment: '// Grouping summary field names, no display if dont filling out',
+					aggregateSizeLabel: 'Number of cached aggregation result',
+					aggregateSizeTips:
+						'Put in the range of cached aggregation result, the excess data will be stored in target database',
+					allAggregateSize: 'All data write in cache',
+					customAggregateSize: 'Custom the cache range'
 				},
 				field: {
 					name: 'Field',
