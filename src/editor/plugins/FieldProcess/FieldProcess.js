@@ -8,7 +8,7 @@ import FieldProcessAttribute from './FieldProcessAttribute';
 import { FORM_DATA_KEY } from '../../constants';
 import log from '../../../log';
 import i18n from '../../../i18n/i18n';
-import { handleOperation, isValidate } from './util';
+import { handleOperation, isValidate, getUrlSearch } from './util';
 import _ from 'lodash';
 
 export const fieldProcessConfig = {
@@ -54,7 +54,7 @@ export const fieldProcessConfig = {
 			mergeOutputSchema(outputSchema, applyRemoveOperation = true) {
 				let data = this.getFormData();
 				log('FieldProcess.mergeOutputSchema', data, outputSchema);
-				if (!outputSchema || !data) return outputSchema;
+				if (!outputSchema || !data || !outputSchema.fields) return outputSchema;
 
 				//查找是否有被删除的字段且operation有操作
 				let temporary = handleOperation(outputSchema.fields, _.cloneDeep(data.operations));
@@ -135,11 +135,17 @@ export const fieldProcessConfig = {
 			 *
 			 */
 			validate: function(data) {
+				let originalData = data;
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
-				if (!data) throw new Error(`${name}: 无效字段处理器}`);
+				if (!data)
+					throw new Error(`${name}:${i18n.t('editor.cell.processor.field.form.errorOperationSaveTip')}`);
+				let isMoniting = getUrlSearch('isMoniting') || false;
+				if (!originalData || !originalData.originalSchema) {
+					data.originalSchema = [];
+				}
 				let validate = isValidate(data.operations, data.originalSchema).isValidate;
-				if (!validate)
+				if (!validate && !isMoniting)
 					throw new Error(`${name}:${i18n.t('editor.cell.processor.field.form.errorOperationSaveTip')}`);
 				return true;
 			}

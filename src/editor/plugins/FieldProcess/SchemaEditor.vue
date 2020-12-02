@@ -901,7 +901,13 @@ export default {
 		 */
 		handleCreate(action, node, data) {
 			log('SchemaEditor.handleCreate', action, node, data);
-
+			if (node && node.parent && node.parent.childNodes) {
+				let parentNode = node.parent.childNodes.filter(v => v.data.label === 'newFieldName');
+				if (parentNode && parentNode.length > 0) {
+					this.$message.error('newFieldName ' + this.$t('message.exists_name'));
+					return;
+				}
+			}
 			let parentFieldName = '';
 			let level = node.level;
 			if (action === 'create_sibling') {
