@@ -163,9 +163,9 @@ export default {
 			} catch (e) {
 				if (e.response && e.response.msg) {
 					if (e.response.msg.indexOf('Email already exists')) {
-						this.errorMessage = this.$t('app.signIn.email_existed');
+						this.message.error(this.$t('role.alreadyExists'));
 					} else {
-						this.errorMessage = `${e.response.data.error.message}`;
+						this.message.error(e.response.data.error.message);
 					}
 				}
 			} finally {

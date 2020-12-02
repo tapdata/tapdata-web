@@ -12,7 +12,12 @@
 			type="border-card"
 			@tab-click="tabHandler"
 		>
-			<el-tab-pane class="tab-item" :label="$t('notification.systemNotice')" name="system">
+			<el-tab-pane
+				class="tab-item"
+				:label="$t('notification.systemNotice')"
+				name="system"
+				v-readonlybtn="'home_notice_settings'"
+			>
 				<div class="item-head">
 					<span>
 						<router-link to="/settingCenter/notificationSetting">
@@ -80,7 +85,13 @@
 					</li>
 				</ul>
 			</el-tab-pane>
-			<el-tab-pane class="tab-item" :label="$t('notification.userNotice')" name="user" v-loading="loading">
+			<el-tab-pane
+				class="tab-item"
+				:label="$t('notification.userNotice')"
+				name="user"
+				v-loading="loading"
+				v-readonlybtn="'home_operation_history'"
+			>
 				<div class="item-head">
 					<span></span>
 					<router-link to="/notification?type=user">

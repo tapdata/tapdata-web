@@ -21,19 +21,13 @@
 						$t('app.menu.licenseBefore') + licenseExpire + $t('app.menu.licenseAfter')
 					}}</span>
 				</span>
-				<el-button
-					class="btn-create"
-					type="primary"
-					size="mini"
-					v-readonlybtn="'BTN_AUTHS'"
-					@click="command('newDataFlow')"
-				>
+				<el-button class="btn-create" type="primary" size="mini" @click="command('newDataFlow')">
 					<i class="el-icon-plus"></i>
 					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
 				<NotificationPopover
 					v-if="$window.getSettingByKey('SHOW_NOTIFICATION')"
-					v-readonlybtn="'BTN_AUTHS'"
+					v-readonlybtn="'home_notice'"
 				></NotificationPopover>
 				<a v-if="$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')" class="btn" @click="command('download')"
 					><i class="iconfont icon-shangchuan-copy"></i
@@ -59,8 +53,10 @@
 				>
 					<i class="iconfont icon-shezhi1"></i>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item command="settings">{{ $t('app.menu.settings') }}</el-dropdown-item>
-						<el-dropdown-item command="setting" v-readonlybtn="'BTN_AUTHS'">{{
+						<el-dropdown-item command="settings" v-readonlybtn="'system_settings'">{{
+							$t('app.menu.settings')
+						}}</el-dropdown-item>
+						<el-dropdown-item command="setting" v-readonlybtn="'home_notice_settings'">{{
 							$t('notification.setting')
 						}}</el-dropdown-item>
 						<!--						<el-dropdown-item command="verifySetting">{{-->

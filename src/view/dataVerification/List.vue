@@ -60,13 +60,13 @@
 						</el-tag>
 					</li> -->
 					<li class="search-item">
-						<el-button size="mini" @click="reset">
+						<el-button size="mini" @click="reset" v-readonlybtn="'verify_job_execution'">
 							<i class="iconfont icon-shuaxin1"></i>
 						</el-button>
 					</li>
 				</ul>
 				<div class="topbar-buttons">
-					<el-button size="mini" v-show="selections.length">
+					<el-button size="mini" v-show="selections.length" v-readonlybtn="'verify_job_execution'">
 						<i class="iconfont icon-piliang"></i>
 						<span>{{ $t('dataVerification.batchVerify') }}</span>
 					</el-button>
@@ -75,7 +75,6 @@
 					<!--						<span>{{ $t('dataVerification.verifySetting') }}</span>-->
 					<!--					</el-button>-->
 					<el-tooltip
-						v-readonlybtn="'BTN_AUTHS'"
 						class="item"
 						effect="dark"
 						:content="$t('dataVerification.addVerifyTip')"
@@ -84,7 +83,7 @@
 						<el-button
 							type="primary"
 							size="mini"
-							v-readonlybtn="'BTN_AUTHS'"
+							v-readonlybtn="'verify_job_creation'"
 							@click="$router.push('dataVerification/create')"
 						>
 							<i class="iconfont icon-jia add-btn-icon"></i>
@@ -221,7 +220,6 @@
 					<el-table-column :label="$t('dataVerification.operation')" align="center" width="180">
 						<template slot-scope="scope">
 							<el-tooltip
-								v-readonlybtn="'BTN_AUTHS'"
 								class="item"
 								effect="dark"
 								:content="$t('dataVerification.executeVerifyTip')"
@@ -232,6 +230,7 @@
 									class="btn-icon"
 									type="text"
 									size="mini"
+									v-readonlybtn="'verify_job_execution'"
 									@click="startTask(scope.row.id)"
 								>
 									<i class="btn-icon iconfont icon-bofang"></i>
@@ -280,7 +279,6 @@
 								></el-button>
 							</el-tooltip>
 							<el-tooltip
-								v-readonlybtn="'BTN_AUTHS'"
 								class="item"
 								effect="dark"
 								:content="$t('dataVerification.configurationTip')"
@@ -290,11 +288,11 @@
 									class="btn-icon el-icon-setting"
 									type="text"
 									size="mini"
+									v-readonlybtn="'verify_job_edition'"
 									@click="goEdit(scope.row.id, scope.row.flowId)"
 								></el-button>
 							</el-tooltip>
 							<el-tooltip
-								v-readonlybtn="'BTN_AUTHS'"
 								class="item"
 								effect="dark"
 								:content="$t('dataVerification.deleteTip')"
@@ -304,6 +302,7 @@
 									class="btn-icon el-icon-delete"
 									type="text"
 									size="mini"
+									v-readonlybtn="'verify_job_delete '"
 									@click="remove(scope.row.name, scope.row.id)"
 								></el-button>
 							</el-tooltip>

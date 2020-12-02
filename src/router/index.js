@@ -258,12 +258,14 @@ const childRoutes = [
 	{
 		path: '/role',
 		name: 'role',
-		component: view('ExternalLink')
+		component: view('Role/Role')
+		// component: view('ExternalLink')
 	},
 	{
 		path: '/role/:id',
 		name: 'editRole',
-		component: view('ExternalLink')
+		component: view('Role/Role')
+		// component: view('ExternalLink')
 	},
 	{
 		path: '/settings',

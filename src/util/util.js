@@ -4,7 +4,8 @@ export function setPermission(list) {
 		list.forEach(permission => {
 			if (permission.resources && permission.resources.length > 0) {
 				permission.resources.forEach(res => {
-					if (res.type === 'page') permissions.push(res);
+					// if (res.type === 'page')
+					permissions.push(res);
 				});
 			}
 		});
