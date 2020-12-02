@@ -1,5 +1,5 @@
 <template>
-	<div class="roles">
+	<div class="roles" v-loading="loading">
 		<h1>{{ title }}</h1>
 		<el-form ref="form" :model="form" label-width="140px" class="e-form">
 			<el-form-item
@@ -107,7 +107,9 @@
 			</el-form-item>
 			<el-form-item class="btn">
 				<el-button @click="back">{{ $t('dataVerify.back') }}</el-button>
-				<el-button type="primary" @click="saveSubmit('ruleForm')">{{ $t('app.save') }}</el-button>
+				<el-button type="primary" :loading="saveloading" @click="saveSubmit('ruleForm')">{{
+					$t('app.save')
+				}}</el-button>
 			</el-form-item>
 		</el-form>
 	</div>
@@ -120,6 +122,8 @@ const roleMappingModel = factory('roleMapping');
 export default {
 	data() {
 		return {
+			loading: false,
+			saveloading: false,
 			title: '',
 			form: {
 				name: '',
@@ -145,6 +149,7 @@ export default {
 	methods: {
 		//  获取用户信息
 		getUserDataApi() {
+			this.loading = true;
 			let params = {
 				filter: {
 					where: {
@@ -158,38 +163,43 @@ export default {
 				}
 			});
 
-			roleMappingModel.get({ 'filter[where][roleId]': this.$route.params.id }).then(res => {
-				if (res && res.data && res.data.length) {
-					res.data.forEach(item => {
-						if (item.principalType === 'USER') {
-							this.roleusers.push(item.principalId);
-						}
-						if (item.principalType === 'PERMISSION') {
-							let selected = this.permissionList.filter(v => v.name === item.principalId);
-							if (selected && selected.length > 0) {
-								selected[0].self_only = item.self_only;
-								this.selectRole.push(selected[0].name);
+			roleMappingModel
+				.get({ 'filter[where][roleId]': this.$route.params.id })
+				.then(res => {
+					if (res && res.data && res.data.length) {
+						res.data.forEach(item => {
+							if (item.principalType === 'USER') {
+								this.roleusers.push(item.principalId);
 							}
-						}
-					});
-					this.rolemappings = res.data;
-					this.dataList.filter(item => {
-						if (this.selectRole && this.selectRole.length) {
-							this.$set(item, 'checkAll', this.selectRole.includes(item.name));
-							if (item.children && item.children.length) {
-								item.children.filter(childItem => {
-									this.$set(childItem, 'checkAll', this.selectRole.includes(item.name));
-									if (childItem.children && childItem.children.length)
-										childItem.children.filter(check => {
-											if (this.selectRole.includes(check.name))
-												childItem.checkedCities.push(check.name);
-										});
-								});
+							if (item.principalType === 'PERMISSION') {
+								let selected = this.permissionList.filter(v => v.name === item.principalId);
+								if (selected && selected.length > 0) {
+									selected[0].self_only = item.self_only;
+									this.selectRole.push(selected[0].name);
+								}
 							}
-						}
-					});
-				}
-			});
+						});
+						this.rolemappings = res.data;
+						this.dataList.filter(item => {
+							if (this.selectRole && this.selectRole.length) {
+								this.$set(item, 'checkAll', this.selectRole.includes(item.name));
+								if (item.children && item.children.length) {
+									item.children.filter(childItem => {
+										this.$set(childItem, 'checkAll', this.selectRole.includes(childItem.name));
+										if (childItem.children && childItem.children.length)
+											childItem.children.filter(check => {
+												if (this.selectRole.includes(check.name))
+													childItem.checkedCities.push(check.name);
+											});
+									});
+								}
+							}
+						});
+					}
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 
 		// 获取权限信息
@@ -249,18 +259,20 @@ export default {
 			if (item.isIndeterminate) {
 				item.isIndeterminate = false;
 			}
-			for (let i = 0; i < item.children.length; i++) {
-				if (item.checkAll) {
-					item.children[i].checkAll = true;
-				} else {
-					item.children[i].checkAll = false;
-				}
-				if (item.children[i].children && item.children[i].children.length) {
-					for (let k = 0; k < item.children[i].children.length; k++) {
-						if (item.children[i].checkAll) {
-							item.children[i].checkedCities.push(item.children[i].children[k].name);
-						} else {
-							item.children[i].checkedCities = [];
+			if (item.children && item.children.length) {
+				for (let i = 0; i < item.children.length; i++) {
+					if (item.checkAll) {
+						item.children[i].checkAll = true;
+					} else {
+						item.children[i].checkAll = false;
+					}
+					if (item.children[i].children && item.children[i].children.length) {
+						for (let k = 0; k < item.children[i].children.length; k++) {
+							if (item.children[i].checkAll) {
+								item.children[i].checkedCities.push(item.children[i].children[k].name);
+							} else {
+								item.children[i].checkedCities = [];
+							}
 						}
 					}
 				}
@@ -354,7 +366,7 @@ export default {
 		// },
 		// 单选
 		handleCheckedCitiesChange(item, second) {
-			let checkedCount = second.checkedCities.length;
+			// let checkedCount = second.checkedCities.length;
 			if (typeof second.checkAll === 'undefined') {
 				this.$set(second, 'checkAll', false);
 			}
@@ -365,7 +377,7 @@ export default {
 				this.$set(item, 'isIndeterminate', true);
 			}
 			// second.isIndeterminate = checkedCount > 0 && checkedCount < second.children.length;
-			second.checkAll = checkedCount === second.children.length;
+			// second.checkAll = checkedCount === second.children.length;
 			// if (checkedCount === 0) {
 			// 	second.isIndeterminate = true;
 			// }
@@ -391,6 +403,7 @@ export default {
 		// 保存
 		saveSubmit() {
 			let self = this;
+			self.saveloading = true;
 			const validated = this.$refs.form.validate();
 			if (!validated) {
 				return false;
@@ -430,7 +443,6 @@ export default {
 			rolesModel[method](record)
 				.then(res => {
 					if (res && res.data) {
-						this.$message.success(this.$t('message.saveOK'));
 						// let rolemappings = this.rolemappings.filter(rolemapping => {
 						// 	if (rolemapping.principalType === 'PERMISSION') {
 						// 		return true;
@@ -440,24 +452,8 @@ export default {
 						// rolemappings.forEach(rolemapping => {
 						// 	rolemappingId.push(rolemapping.id);
 						// });
-						this.$api('usersModel').deletePermissionRoleMapping(roleId);
-
+						self.$api('users').deletePermissionRoleMapping(res.data.id);
 						let newRoleMappings = [];
-						// this.roleusers.forEach(roleuser => {
-						// 	let newUser = this.rolemappings.filter(rolemapping => rolemapping.principalId === roleuser);
-						// 	if (newUser.length === 0) {
-						// 		newRoleMappings.push({
-						// 			principalType: 'USER',
-						// 			principalId: roleuser,
-						// 			roleId: res.data.id
-						// 		});
-						// 	}
-						// });
-						// newRoleMappings = {
-						// 	principalType: 'PERMISSION',
-						// 	principalId: saveRoleArr,
-						// 	roleId: res.data.id
-						// };
 
 						saveRoleArr.forEach(selectPermission => {
 							if (selectPermission)
@@ -467,10 +463,8 @@ export default {
 									roleId: res.data.id
 								});
 						});
-
-						// newRoleMappings.forEach(rolemapping => {
 						roleMappingModel.post(newRoleMappings);
-						// });
+						this.$message.success(this.$t('message.saveOK'));
 					}
 				})
 				.catch(e => {
@@ -481,6 +475,9 @@ export default {
 							this.errorMessage = `${e.response.data.error.message}`;
 						}
 					}
+				})
+				.finally(() => {
+					self.saveloading = false;
 				});
 		},
 
