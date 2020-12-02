@@ -1751,6 +1751,7 @@ const tc = {
 		roleDesc: '角色描述',
 		defaultRole: '默認角色',
 		rolePermission: '角色權限',
+		alreadyExists: '角色名稱重複',
 		roleNavName: {
 			Dashboard: '控制台(首頁)',
 			system_notice: '消息通知',

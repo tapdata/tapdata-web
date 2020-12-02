@@ -470,7 +470,7 @@ export default {
 				.catch(e => {
 					if (e.response && e.response.msg) {
 						if (e.response.msg.indexOf('already exists')) {
-							this.$message.error(this.$t('app.signIn.email_existed'));
+							this.$message.error(this.$t('role.alreadyExists'));
 						} else {
 							this.$message.error(`${e.response.msg}`);
 						}

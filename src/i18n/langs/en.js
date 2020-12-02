@@ -1784,6 +1784,7 @@ const en = {
 		roleDesc: 'Role description',
 		defaultRole: 'default role',
 		rolePermission: 'role permission',
+		alreadyExists: 'Duplicate role name',
 		roleNavName: {
 			Dashboard: 'Dashboard',
 			system_notice: 'system notice',
