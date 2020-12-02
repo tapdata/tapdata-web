@@ -301,7 +301,7 @@
 										><i class="iconfont icon-gengduo3  task-list-icon"></i
 									></el-button>
 									<el-dropdown-menu slot="dropdown">
-										<el-dropdown-item command="dataVerify" v-readonlybtn="authority.export">{{
+										<el-dropdown-item command="dataVerify" v-readonlybtn="'Data_verify'">{{
 											$t('dataVerify.dataVerify')
 										}}</el-dropdown-item>
 										<el-dropdown-item command="export">{{
