@@ -9,7 +9,7 @@
 	>
 		<div>
 			<ul class="item">
-				<li @click="db2db">
+				<li @click="db2db" v-readonlybtn="'migration_job_creation'">
 					<span class="model">{{ $t('dataFlow.guidingMode') }}</span>
 					<div class="content">
 						<i class="iconfont icon-shujukuqianyi2"></i>
@@ -19,7 +19,7 @@
 						>
 					</div>
 				</li>
-				<li @click="goNew">
+				<li @click="goNew" v-readonlybtn="'migration_job_creation'">
 					<span class="model">{{ $t('dataFlow.advancedMode') }}</span>
 					<div class="content">
 						<i class="iconfont icon-shujukuqianyi2"></i>
@@ -29,7 +29,7 @@
 						>
 					</div>
 				</li>
-				<li @click="goNewCust">
+				<li @click="goNewCust" v-readonlybtn="'SYNC_job_creation'">
 					<div class="content">
 						<i class="iconfont icon-renwubianpai2"></i>
 						<span>

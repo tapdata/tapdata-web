@@ -1,7 +1,11 @@
 <template>
 	<section class="data-flow-wrap" v-loading="restLoading">
 		<div class="panel-left" v-if="formData.panelFlag">
-			<metaData v-on:nodeClick="nodeClick" @nodeDataChange="nodeDataChange"></metaData>
+			<metaData
+				v-on:nodeClick="nodeClick"
+				:authority="authority.classifyModule"
+				@nodeDataChange="nodeDataChange"
+			></metaData>
 		</div>
 		<div class="panel-main">
 			<div class="mappingTemplate">
@@ -532,7 +536,8 @@ export default {
 				export: '',
 				switch: '',
 				delete: '',
-				edit: ''
+				edit: '',
+				classifyModule: ''
 			}
 		};
 	},
@@ -588,7 +593,8 @@ export default {
 				export: 'SYNC_job_export',
 				switch: 'SYNC_job_operation',
 				delete: 'SYNC_job_delete',
-				edit: 'SYNC_job_edition'
+				edit: 'SYNC_job_edition',
+				classifyModule: 'SYNC_category_management'
 			};
 		} else {
 			this.authority = {
@@ -600,7 +606,8 @@ export default {
 				export: 'migration_job_export ',
 				switch: 'migration_job_operation',
 				delete: 'migration_job_delete',
-				edit: 'migration_job_edition'
+				edit: 'migration_job_edition',
+				classifyModule: 'migration_category_management'
 			};
 		}
 	},

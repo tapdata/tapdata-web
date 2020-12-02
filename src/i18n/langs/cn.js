@@ -1755,7 +1755,7 @@ const cn = {
 			migration_job_operation: '迁移任务操作',
 			migration_job_import: '迁移任务导入',
 			migration_job_export: '迁移任务导出',
-			migration_Function_management: '迁移任务导出',
+			migration_Function_management: '函数管理',
 			Data_SYNC: '数据同步',
 			SYNC_category_management: '同步任务分类管理',
 			SYNC_category_application: '同步任务分类应用',
@@ -1819,7 +1819,8 @@ const cn = {
 			role_edition: '编辑角色',
 			role_delete: '删除角色',
 			system_settings: '系统设置',
-			system_settings_modification: '修改设置'
+			system_settings_modification: '修改设置',
+			create_new_table_in_SYNC: '任务中创建表'
 		}
 	}
 };

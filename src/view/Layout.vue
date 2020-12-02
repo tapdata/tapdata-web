@@ -21,13 +21,7 @@
 						$t('app.menu.licenseBefore') + licenseExpire + $t('app.menu.licenseAfter')
 					}}</span>
 				</span>
-				<el-button
-					class="btn-create"
-					type="primary"
-					size="mini"
-					v-readonlybtn="'BTN_AUTHS'"
-					@click="command('newDataFlow')"
-				>
+				<el-button class="btn-create" type="primary" size="mini" @click="command('newDataFlow')">
 					<i class="el-icon-plus"></i>
 					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>

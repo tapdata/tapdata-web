@@ -34,6 +34,7 @@
 								size="mini"
 								icon="el-icon-plus"
 								style="padding: 7px;margin-left: 7px"
+								v-readonlybtn="'datasource_creation'"
 								@click="$refs.databaseForm.show({ blackList: ['mongodb'] })"
 							></el-button>
 						</el-tooltip>
@@ -86,6 +87,7 @@
 								size="mini"
 								class="el-icon-plus"
 								style="padding: 7px;margin-left: 7px"
+								v-readonlybtn="'create_new_table_in_SYNC'"
 								@click="addNewTable"
 							></el-button>
 						</el-tooltip>

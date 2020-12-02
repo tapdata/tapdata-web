@@ -59,7 +59,7 @@
 				</div>
 			</el-col>
 		</el-row>
-		<el-row :gutter="20" class="e-row">
+		<el-row :gutter="20" class="e-row" v-readonlybtn="'Data_SYNC'">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="syncJobObj" @getAllData="getAllData"></echart-head>
