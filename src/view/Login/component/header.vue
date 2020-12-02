@@ -37,6 +37,7 @@ export default {
 		langChange(lang) {
 			localStorage.setItem('tapdata_localize_lang', lang);
 			this.$i18n.locale = lang;
+			this.lang = lang;
 		}
 	}
 };
