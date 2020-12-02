@@ -282,6 +282,20 @@
 										<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
 									</el-button>
 								</el-tooltip>
+								<el-tooltip
+									class="item"
+									:content="$t('dialog.jobSchedule.jobSecheduleSetting')"
+									placement="bottom"
+								>
+									<el-button
+										type="text"
+										:disabled="scope.row.setting.sync_type !== 'initial_sync'"
+										v-readonlybtn="authority.edit"
+										@click="handleTaskscheduling(scope.row.id, scope.row)"
+									>
+										<i class="iconfont  task-list-icon  icon-lishi2"></i>
+									</el-button>
+								</el-tooltip>
 								<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
 									<el-button
 										type="text"
@@ -416,8 +430,8 @@
 					</li>
 				</ul>
 				<p>{{ $t('dialog.jobSchedule.example') }}</p>
-				<p>**/1***?* // {{ $t('dialog.jobSchedule.runMinute') }}</p>
-				<p>002**?* // {{ $t('dialog.jobSchedule.runDay') }}</p>
+				<p>* */1 * * * ? * // {{ $t('dialog.jobSchedule.runMinute') }}</p>
+				<p>0 0 2 * * ? * // {{ $t('dialog.jobSchedule.runDay') }}</p>
 			</div>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="taskSettingsDialog = false">{{ $t('message.cancel') }}</el-button>
@@ -582,6 +596,7 @@ export default {
 				classifyModule: ''
 			},
 			formSchedule: {
+				id: '',
 				name: '',
 				isSchedule: false,
 				cronExpression: '',
@@ -1048,9 +1063,6 @@ export default {
 							stats: true,
 							checked: true,
 							stages: true,
-							'stages.id': true,
-							'stages.name': true,
-							'stages.type': true,
 							setting: true,
 							user_id: true,
 							startTime: true,
@@ -1583,6 +1595,7 @@ export default {
 		// 任务调度设置
 		handleTaskscheduling(id, data) {
 			this.taskSettingsDialog = true;
+			this.formSchedule.id = id;
 			this.formSchedule.name = data.name;
 			this.formSchedule.isSchedule = data.setting.isSchedule;
 			this.formSchedule.cronExpression = data.setting.cronExpression;
@@ -1595,7 +1608,7 @@ export default {
 			data.setting.isSchedule = this.formSchedule.isSchedule;
 			data.setting.cronExpression = this.formSchedule.cronExpression;
 			dataFlows
-				.draft(data)
+				.patchId(this.formSchedule.id, data)
 				.then(result => {
 					if (result && result.data) {
 						this.$message.success(this.$t('message.saveOK'));
