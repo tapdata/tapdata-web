@@ -410,10 +410,20 @@ export default {
 				}
 			}
 			if (keyword && keyword.trim()) {
-				where.or[0].name = { like: toRegExp(keyword), options: 'i' };
-				if (this.$route.query.id) {
-					where.or[1].flowId = { regexp: `^${this.$route.query.id}$` };
-				}
+				where['or'] = [
+					{
+						name: {
+							like: toRegExp(keyword),
+							options: 'i'
+						}
+					},
+					{
+						dataFlowName: {
+							like: toRegExp(keyword),
+							options: 'i'
+						}
+					}
+				];
 			}
 			let filter = {
 				order: sortBy + ' ' + (order === 'ascending' ? 'ASC' : 'DESC'),
