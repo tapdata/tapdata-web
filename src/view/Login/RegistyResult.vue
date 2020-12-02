@@ -59,7 +59,6 @@ export default {
 	data() {
 		return {
 			type: 'registy',
-			platform: window._TAPDATA_OPTIONS_.platform,
 			loading: false,
 			flag: false,
 			email: '',

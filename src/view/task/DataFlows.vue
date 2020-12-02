@@ -1,11 +1,11 @@
 <template>
 	<section class="data-flow-wrap" v-loading="restLoading">
-		<div class="panel-left" v-if="formData.panelFlag">
-			<metaData
-				v-on:nodeClick="nodeClick"
+		<div class="panel-left" v-show="formData.panelFlag">
+			<Classification
+				ref="classification"
 				:authority="authority.classifyModule"
-				@nodeDataChange="nodeDataChange"
-			></metaData>
+				@nodeChecked="nodeChecked"
+			></Classification>
 		</div>
 		<div class="panel-main">
 			<div class="mappingTemplate">
@@ -82,9 +82,6 @@
 								:value="opt"
 							></el-option>
 						</el-select>
-					</li>
-					<li class="item" v-if="checkedTag && checkedTag !== ''">
-						<el-tag size="small" closable @close="handleClose()">{{ checkedTag.value }}</el-tag>
 					</li>
 					<li class="item">
 						<el-button class="btn" size="mini" @click="handleClear">
@@ -304,7 +301,10 @@
 										><i class="iconfont icon-gengduo3  task-list-icon"></i
 									></el-button>
 									<el-dropdown-menu slot="dropdown">
-										<el-dropdown-item command="export" v-readonlybtn="authority.export">{{
+										<el-dropdown-item command="dataVerify" v-readonlybtn="authority.export">{{
+											$t('dataVerify.dataVerify')
+										}}</el-dropdown-item>
+										<el-dropdown-item command="export">{{
 											$t('dataFlow.dataFlowExport')
 										}}</el-dropdown-item>
 										<el-dropdown-item command="copy" v-readonlybtn="authority.create">{{
@@ -354,7 +354,7 @@
 			v-on:operationsClassify="handleOperationClassify"
 		></SelectClassify>
 		<el-dialog
-			:title="this.$t('dataFlow.importantReminder')"
+			:title="$t('dataFlow.importantReminder')"
 			:close-on-click-modal="false"
 			:visible.sync="deleteDialogVisible"
 			width="30%"
@@ -376,13 +376,54 @@
 			@closeAgentDialog="closeAgentDialog"
 		></DownAgent>
 		<SkipError
+			v-if="selectedJob.dataItem"
 			ref="SelectClassify"
 			:dialogVisible="dialogVisibleSkipError"
 			:errorEvents="errorEvents"
-			:taskName="taskName"
+			:taskName="selectedJob.dataItem.name"
 			v-on:dialogVisible="handleSkipErrorVisible"
 			v-on:operationsSkipError="handleOperationSkipError"
 		></SkipError>
+		<el-dialog
+			:title="$t('dialog.jobSchedule.jobSecheduleSetting')"
+			:close-on-click-modal="false"
+			:visible.sync="taskSettingsDialog"
+			custom-class="jobSeceduleDialog"
+			width="50%"
+		>
+			<el-form :model="formSchedule" label-width="100px">
+				<el-form-item :label="$t('dialog.jobSchedule.job')">
+					<div>{{ formSchedule.name }}</div>
+				</el-form-item>
+				<el-form-item :label="$t('dialog.jobSchedule.sync')">
+					<el-switch v-model="formSchedule.isSchedule"> </el-switch>
+				</el-form-item>
+				<el-form-item :label="$t('dialog.jobSchedule.expression')" v-if="formSchedule.isSchedule">
+					<el-input
+						v-model="formSchedule.cronExpression"
+						:placeholder="$t('dialog.jobSchedule.expressionPlaceholder')"
+					>
+					</el-input>
+				</el-form-item>
+			</el-form>
+			<div v-if="formSchedule.isSchedule" class="text">
+				<p>{{ $t('dialog.jobSchedule.explanation') }}</p>
+				<p>{{ $t('dialog.jobSchedule.grammar') }}</p>
+				<ul>
+					<li v-for="item in timeTextArr" :key="item">
+						<p>{{ $t('dialog.jobSchedule.' + item) }}</p>
+						<span>*</span>
+					</li>
+				</ul>
+				<p>{{ $t('dialog.jobSchedule.example') }}</p>
+				<p>**/1***?* // {{ $t('dialog.jobSchedule.runMinute') }}</p>
+				<p>002**?* // {{ $t('dialog.jobSchedule.runDay') }}</p>
+			</div>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="taskSettingsDialog = false">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="saveTaskSetting">{{ $t('app.save') }}</el-button>
+			</span>
+		</el-dialog>
 	</section>
 </template>
 
@@ -395,26 +436,27 @@ const dataFlows = factory('DataFlows');
 const MetadataInstance = factory('MetadataInstances');
 const cluster = factory('cluster');
 import { toRegExp } from '../../util/util';
-import metaData from '../metaData';
+import Classification from '@/components/Classification';
 import SelectClassify from '../../components/SelectClassify';
 import SkipError from '../../components/SkipError';
 import DownAgent from '../downAgent/agentDown';
 
 export default {
-	components: { metaData, SelectClassify, DownAgent, SkipError },
+	components: { Classification, SelectClassify, DownAgent, SkipError },
 	data() {
 		return {
+			taskSettingsDialog: false, //任务调度设置弹窗开关
 			downLoadAgetntdialog: false, //判断是否安装agent
 			downLoadNum: 0,
 			firstNum: undefined,
-			agentObj: {
+			selectedJob: {
 				id: '',
 				oldStatus: '',
 				status: '',
 				dataItem: null
 			},
 			deleteDialogVisible: false,
-			checkedTag: '',
+			checkedTags: [],
 			activeName: 'dataFlow',
 			listtags: [],
 			tagList: [],
@@ -538,7 +580,14 @@ export default {
 				delete: '',
 				edit: '',
 				classifyModule: ''
-			}
+			},
+			formSchedule: {
+				name: '',
+				isSchedule: false,
+				cronExpression: '',
+				taskData: null
+			},
+			timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
 		};
 	},
 	created() {
@@ -569,9 +618,7 @@ export default {
 			self.wsData.length = 0;
 		}, 3000);
 
-		this.buildProfile = localStorage.getItem('buildProfile');
-
-		if (this.buildProfile && this.buildProfile === 'CLOUD') {
+		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
 			this.getDataApi();
 			if (!this.downLoadNum) {
 				self.timer = setInterval(() => {
@@ -632,8 +679,7 @@ export default {
 		getDataApi() {
 			let params = {};
 			if (
-				this.buildProfile &&
-				this.buildProfile === 'CLOUD' &&
+				this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
 				!parseInt(this.$cookie.get('isAdmin')) &&
 				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
 			) {
@@ -653,7 +699,14 @@ export default {
 		},
 
 		closeAgentDialog() {
-			this.handleStatus(this.agentObj.id, this.agentObj.oldStatus, this.agentObj.status, this.agentObj.dataItem);
+			if (this.selectedJob.id) {
+				this.handleStatus(
+					this.selectedJob.id,
+					this.selectedJob.oldStatus,
+					this.selectedJob.status,
+					this.selectedJob.dataItem
+				);
+			}
 			this.downLoadAgetntdialog = false;
 		},
 		// // 刷新agent
@@ -728,14 +781,13 @@ export default {
 		},
 		handleCancelSkipError() {
 			let data = {
-				status: this.oldStatus
+				status: this.selectedJob.oldStatus
 			};
-			dataFlows.updateById(this.currentId, data);
+			dataFlows.updateById(this.selectedJob.id, data);
 			this.getData();
 		},
-		handleOperationSkipError(val) {
-			this.currentStatus['errorEvents'] = val;
-			this.getStatus(this.currentId, this.currentStatus);
+		handleOperationSkipError(errorEvents) {
+			this.startJob(errorEvents);
 		},
 		handleGoFunction() {
 			top.location.href = '/#/JsFuncs';
@@ -805,6 +857,7 @@ export default {
 				});
 			}, 200);
 		},
+
 		handleImport() {
 			let routeUrl = this.$router.resolve({
 				path: '/upload'
@@ -847,7 +900,11 @@ export default {
 					in: [id]
 				}
 			};
+
 			switch (command) {
+				case 'dataVerify':
+					this.$router.push({ name: 'dataVerification', query: { name: node.name, id: node.id } });
+					break;
 				case 'export':
 					MetadataInstance.download(where);
 					break;
@@ -966,9 +1023,9 @@ export default {
 					};
 				}
 			}
-			if (this.checkedTag && this.checkedTag !== '') {
+			if (this.checkedTags && this.checkedTags.length) {
 				where['listtags.id'] = {
-					in: [this.checkedTag.id]
+					in: this.checkedTags
 				};
 			}
 			let _params = Object.assign(
@@ -993,6 +1050,7 @@ export default {
 							stages: true,
 							'stages.id': true,
 							'stages.name': true,
+							'stages.type': true,
 							setting: true,
 							user_id: true,
 							startTime: true,
@@ -1006,7 +1064,7 @@ export default {
 			await dataFlows
 				.get(_params)
 				.then(res => {
-					if (res.data) {
+					if (res && res.data) {
 						this.handleData(res.data);
 						this.tableData = res.data;
 						let msg = {
@@ -1221,44 +1279,81 @@ export default {
 		},
 
 		statusConfirm(callback, handleCatch, data) {
-			let initFalg =
-				(data && data.setting && data.setting.sync_type === 'cdc') || (data && data.length === 0)
-					? true
-					: false;
-			this.$confirm(
-				initFalg ? this.$t('message.stopMessage') : this.$t('message.stopInitial_syncMessage'),
-				this.$t('dataFlow.importantReminder'),
-				{
-					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancel'),
-					type: 'warning',
-					closeOnClickModal: false
-				}
-			)
+			let message = this.$t('message.stopMessage');
+			if (data && data.stages && data.stages.find(s => s.type === 'aggregation_processor')) {
+				message = this.$t('message.stopAggregation_message').replace('XXX', data.name);
+			}
+			if (data && data.setting && data.setting.sync_type !== 'cdc') {
+				message = this.$t('message.stopInitial_syncMessage');
+			}
+			this.$confirm(message, this.$t('dataFlow.importantReminder'), {
+				confirmButtonText: this.$t('message.confirm'),
+				cancelButtonText: this.$t('message.cancel'),
+				type: 'warning',
+				closeOnClickModal: false
+			})
 				.then(callback)
 				.catch(handleCatch);
 		},
 
+		async startJob(errorEvents) {
+			let { id, oldStatus, dataItem, status } = this.selectedJob;
+			//判断若任务因错误停止，弹出错误列表
+			if (!errorEvents && oldStatus === 'error') {
+				let errorEvents = await dataFlows.get([id]);
+				errorEvents = errorEvents ? errorEvents.data : {};
+				if (errorEvents.setting.stopOnError && errorEvents.errorEvents && errorEvents.errorEvents.length > 0) {
+					this.dialogVisibleSkipError = true;
+					this.errorEvents = errorEvents.errorEvents;
+					return;
+				}
+			}
+			let data = { status };
+			//errorEvents为启动时过滤的错误
+			if (errorEvents) {
+				data.errorEvents = errorEvents;
+			}
+			//启动任务时判断任务内是否存在聚合处理器，若存在，则弹框提示
+			if (dataItem && dataItem.stages && dataItem.stages.find(s => s.type === 'aggregation_processor')) {
+				this.$confirm(
+					this.$t('message.startAggregation_message').replace('XXX', dataItem.name),
+					this.$t('dataFlow.importantReminder'),
+					{
+						confirmButtonText: this.$t('message.confirm'),
+						cancelButtonText: this.$t('message.cancel'),
+						type: 'warning',
+						closeOnClickModal: false
+					}
+				)
+					.then(() => {
+						//若任务内存在聚合处理器，启动前先重置
+						dataFlows.reset(id).then(() => {
+							this.getStatus(id, data);
+						});
+					})
+					.catch(() => {
+						this.getData();
+					});
+			} else {
+				this.getStatus(id, data);
+			}
+		},
+
 		// 运行开关
 		async handleStatus(id, oldStatus, status, dataItem) {
-			let data = {};
-			let errorEvents;
-			if (oldStatus === 'error') {
-				errorEvents = await dataFlows.get([id]);
+			this.selectedJob.id = id;
+			this.selectedJob.oldStatus = oldStatus;
+			this.selectedJob.status = status;
+			this.selectedJob.dataItem = dataItem;
+			if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') && !this.downLoadNum) {
+				this.downLoadAgetntdialog = true;
+				return;
 			}
-			errorEvents = errorEvents ? errorEvents.data : {};
+			let data = {};
 			if (oldStatus === 'force stopping') {
 				data['status'] = oldStatus;
 			} else {
 				data['status'] = status;
-			}
-			this.agentObj.id = id;
-			this.agentObj.oldStatus = oldStatus;
-			this.agentObj.status = status;
-			this.agentObj.dataItem = dataItem;
-			if (this.buildProfile === 'CLOUD' && !this.downLoadNum) {
-				this.downLoadAgetntdialog = true;
-				return;
 			}
 
 			if (status === 'stopping') {
@@ -1267,27 +1362,12 @@ export default {
 						this.getStatus(id, data);
 					},
 					() => {
-						let data = {
-							status: oldStatus
-						};
-						this.getStatus(id, data);
+						this.getData();
 					},
 					dataItem
 				);
-			} else if (
-				oldStatus === 'error' &&
-				errorEvents.setting.stopOnError &&
-				errorEvents.errorEvents &&
-				errorEvents.errorEvents.length > 0
-			) {
-				this.dialogVisibleSkipError = true;
-				this.taskName = dataItem.name;
-				this.errorEvents = errorEvents.errorEvents;
-				this.currentStatus = data;
-				this.oldStatus = oldStatus;
-				this.currentId = id;
 			} else {
-				this.getStatus(id, data);
+				this.startJob();
 			}
 		},
 
@@ -1334,9 +1414,15 @@ export default {
 			};
 
 			if (status === 'stopping') {
-				this.statusConfirm(() => {
-					request();
-				}, initData);
+				this.statusConfirm(
+					() => {
+						request();
+					},
+					() => {
+						this.getData();
+					},
+					initData
+				);
 			} else {
 				request();
 			}
@@ -1438,7 +1524,8 @@ export default {
 			this.formData.status = '';
 			this.formData.way = '';
 			this.formData.executionStatus = '';
-			this.checkedTag = '';
+			this.$refs.classification.clear();
+			this.checkedTags = [];
 			this.currentPage = 1;
 			this.screenFn();
 		},
@@ -1454,24 +1541,8 @@ export default {
 			localStorage.setItem('flowPagesize', psize);
 			this.getData();
 		},
-		nodeClick(data) {
-			if (data) {
-				this.checkedTag = {
-					id: data.id,
-					value: data.value
-				};
-			}
-			this.getData();
-		},
-		nodeDataChange(list) {
-			let tag = list.find(item => item.id === this.checkedTag.id);
-			if (tag) {
-				this.checkedTag.value = tag.value;
-			}
-			this.getData();
-		},
-		handleClose() {
-			this.checkedTag = '';
+		nodeChecked(checkedTags) {
+			this.checkedTags = checkedTags;
 			this.getData();
 		},
 		responseHandler(data, msg) {
@@ -1507,6 +1578,35 @@ export default {
 					name: 'tableFlows'
 				});
 			}
+		},
+
+		// 任务调度设置
+		handleTaskscheduling(id, data) {
+			this.taskSettingsDialog = true;
+			this.formSchedule.name = data.name;
+			this.formSchedule.isSchedule = data.setting.isSchedule;
+			this.formSchedule.cronExpression = data.setting.cronExpression;
+			this.formSchedule.taskData = data;
+		},
+
+		// 任务调度设置保存
+		saveTaskSetting() {
+			let data = this.formSchedule.taskData;
+			data.setting.isSchedule = this.formSchedule.isSchedule;
+			data.setting.cronExpression = this.formSchedule.cronExpression;
+			dataFlows
+				.draft(data)
+				.then(result => {
+					if (result && result.data) {
+						this.$message.success(this.$t('message.saveOK'));
+					}
+				})
+				.catch(() => {
+					this.$message.error(this.$t('message.saveFail'));
+				})
+				.finally(() => {
+					this.taskSettingsDialog = false;
+				});
 		}
 	}
 };
@@ -1519,7 +1619,7 @@ export default {
 	height: 100%;
 	overflow: hidden;
 	.panel-left {
-		width: 200px;
+		width: 250px;
 		height: 100%;
 		box-sizing: border-box;
 	}
@@ -1682,5 +1782,22 @@ export default {
 }
 .dataflow-clickTip .el-message-box__status {
 	top: 25% !important;
+}
+.data-flow-wrap {
+	.jobSeceduleDialog {
+		.text {
+			padding-left: 100px;
+			line-height: 28px;
+			color: #999;
+			ul {
+				display: flex;
+				flex-direction: row;
+				text-align: center;
+				li {
+					padding-right: 20px;
+				}
+			}
+		}
+	}
 }
 </style>

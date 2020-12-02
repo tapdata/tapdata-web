@@ -8,6 +8,8 @@ import FieldProcessAttribute from './FieldProcessAttribute';
 import { FORM_DATA_KEY } from '../../constants';
 import log from '../../../log';
 import i18n from '../../../i18n/i18n';
+import { handleOperation, isValidate } from './util';
+import _ from 'lodash';
 
 export const fieldProcessConfig = {
 	type: 'app.FieldProcess',
@@ -54,8 +56,34 @@ export const fieldProcessConfig = {
 				log('FieldProcess.mergeOutputSchema', data, outputSchema);
 				if (!outputSchema || !data) return outputSchema;
 
-				data.operations.map(item => {
-					if (item.op === 'CREATE') {
+				//查找是否有被删除的字段且operation有操作
+				let temporary = handleOperation(outputSchema.fields, _.cloneDeep(data.operations));
+				temporary.map(item => {
+					let targetIndex = outputSchema.fields.findIndex(n => n.id === item.id);
+					if (targetIndex === -1 && item.op !== 'CREATE') {
+						// data.operations.splice(index,1); //删除找不到id的数据
+						return;
+					}
+					if (item.op === 'CONVERT') {
+						outputSchema.fields[targetIndex].javaType = item.operand;
+					} else if (item.op === 'REMOVE') {
+						if (applyRemoveOperation !== false) {
+							outputSchema.fields.splice(targetIndex, 1);
+						}
+					} else if (item.op === 'RENAME') {
+						const name = outputSchema.fields[targetIndex].field_name;
+						let newName = name.split('.');
+						newName[newName.length - 1] = item.operand;
+						const newNameStr = newName.join('.');
+						outputSchema.fields[targetIndex].field_name = newNameStr;
+
+						// change children field name
+						outputSchema.fields.forEach(field => {
+							if (field.field_name.startsWith(name + '.')) {
+								field.field_name = newNameStr + field.field_name.substring(name.length);
+							}
+						});
+					} else if (item.op === 'CREATE') {
 						let triggerFieldId = item.triggerFieldId;
 						let newField = {
 							id: item.id,
@@ -74,40 +102,6 @@ export const fieldProcessConfig = {
 							let triggerFieldIndex = outputSchema.fields.findIndex(f => f.id === triggerFieldId);
 							outputSchema.fields.splice(triggerFieldIndex + 1, 0, newField);
 						} else outputSchema.fields.push(newField);
-					}
-				});
-
-				data.operations.map(item => {
-					let targetIndex = outputSchema.fields.findIndex(n => n.id === item.id);
-					if (targetIndex === -1) {
-						// data.operations.splice(index,1); //删除找不到id的数据
-						return;
-					}
-					if (item.op === 'CONVERT') {
-						outputSchema.fields[targetIndex].javaType = item.operand;
-					} else if (item.op === 'REMOVE') {
-						if (applyRemoveOperation !== false) outputSchema.fields.splice(targetIndex, 1);
-					}
-				});
-				data.operations.map(item => {
-					let targetIndex = outputSchema.fields.findIndex(n => n.id === item.id);
-					if (targetIndex === -1) {
-						// data.operations.splice(index,1); //删除找不到id的数据
-						return;
-					}
-					if (item.op === 'RENAME') {
-						const name = outputSchema.fields[targetIndex].field_name;
-						let newName = name.split('.');
-						newName[newName.length - 1] = item.operand;
-						const newNameStr = newName.join('.');
-						outputSchema.fields[targetIndex].field_name = newNameStr;
-
-						// change children field name
-						outputSchema.fields.forEach(field => {
-							if (field.field_name.startsWith(name + '.')) {
-								field.field_name = newNameStr + field.field_name.substring(name.length);
-							}
-						});
 					}
 				});
 				log('FieldProcess.mergeOutputSchema', outputSchema);
@@ -134,6 +128,20 @@ export const fieldProcessConfig = {
 			 */
 			allowSource(sourceCell) {
 				return !['app.Database'].includes(sourceCell.get('type'));
+			},
+			/**
+			 * validate user-filled data
+			 * @param data
+			 *
+			 */
+			validate: function(data) {
+				data = data || this.getFormData();
+				let name = this.attr('label/text');
+				if (!data) throw new Error(`${name}: 无效字段处理器}`);
+				let validate = isValidate(data.operations, data.originalSchema).isValidate;
+				if (!validate)
+					throw new Error(`${name}:${i18n.t('editor.cell.processor.field.form.errorOperationSaveTip')}`);
+				return true;
 			}
 		}
 		// staticProperties: {}

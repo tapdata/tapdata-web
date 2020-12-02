@@ -371,7 +371,7 @@ import ClipButton from '@/components/ClipButton';
 import queryBuilder from '@/components/QueryBuilder';
 import CreateTable from '@/components/dialog/createTable';
 import AggregationDialog from './aggregationDialog';
-import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, uuid } from '../../util/Schema';
+import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, removeDeleted, uuid } from '../../util/Schema';
 import Entity from '../link/Entity';
 import _ from 'lodash';
 import ws from '../../../api/ws';
@@ -468,6 +468,10 @@ export default {
 								  };
 
 						let fields = schema.fields || [];
+						//过滤被删除的字段
+						if (fields) {
+							fields = removeDeleted(fields);
+						}
 						// let primaryKeys = fields
 						// 	.filter(f => f.primary_key_position > 0)
 						// 	.map(f => f.field_name)
@@ -499,6 +503,10 @@ export default {
 			handler() {
 				if (this.defaultSchema && this.defaultSchema.fields && this.defaultSchema.fields.length > 0) {
 					let fields = this.defaultSchema.fields;
+					//过滤被删除的字段
+					if (fields) {
+						fields = removeDeleted(fields);
+					}
 					this.primaryKeyOptions = fields.map(f => f.field_name);
 					// if (!this.model.primaryKeys) {
 					// 	let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);

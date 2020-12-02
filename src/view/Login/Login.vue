@@ -1,25 +1,8 @@
 <template>
 	<section class="page-sign-in">
 		<Header></Header>
-		<!-- <header>
-			<div class="logo">
-				<img :src="logoUrl" />
-				<div v-if="showLang === 'false'"></div>
-				<div class="switch-lang" v-else>
-					<span
-						v-for="(value, key) in languages"
-						:key="key"
-						:class="{ bold: key === lang }"
-						@click="langChange(key)"
-					>
-						{{ value }}
-					</span>
-				</div>
-			</div>
-			<div class="slogan">{{ $t('app.signIn.slogan') }}</div>
-		</header> -->
 		<main>
-			<div class="body" :class="{ dk: platform === 'DK' }">
+			<div class="body" :class="{ dk: $window.getSettingByKey('SHOW_OLD_PAGE') }">
 				<div class="dk-login-cover">
 					<img src="static/image/loginCover_dk.png" />
 				</div>
@@ -29,7 +12,7 @@
 				<el-card class="sign-in-panel">
 					<div class="title">
 						{{ $t('app.signIn.signIn') }}
-						<span @click="registry" v-if="buildProfile === 'CLOUD'">{{
+						<span @click="registry" v-if="$window.getSettingByKey('SHOW_REGISTER')">{{
 							$t('app.signIn.Registration')
 						}}</span>
 					</div>
@@ -77,39 +60,21 @@ import CryptoJS from 'crypto-js';
 import Header from './component/header';
 import _ from 'lodash';
 
-const Languages = {
-	sc: '中文 (简)',
-	en: 'English',
-	tc: '中文 (繁)'
-};
 export default {
 	name: 'SignIn',
 	components: { Header },
 	data() {
 		return {
-			logoUrl: window.location.href,
-			showLang: window._TAPDATA_OPTIONS_.showLang,
-			platform: window._TAPDATA_OPTIONS_.platform,
 			loading: false,
-			languages: Languages,
-			lang: localStorage.getItem('tapdata_localize_lang') || 'en',
 			form: {
 				email: '',
 				password: ''
 			},
 			keepSignIn: true,
-			errorMessage: '',
-			buildProfile: ''
+			errorMessage: ''
 		};
 	},
-	created() {
-		this.handleDaas();
-	},
 	methods: {
-		langChange(lang) {
-			localStorage.setItem('tapdata_localize_lang', lang);
-			location.reload();
-		},
 		async submit() {
 			let form = this.form;
 			let oldPassword = _.clone(this.form.password);
@@ -230,24 +195,6 @@ export default {
 		// 忘记密码
 		forgetPassword() {
 			this.$router.push({ name: 'passwordReset' });
-		},
-
-		// 获取是否是企业版
-		handleDaas() {
-			const Setting = this.$api('Setting');
-			let where = {
-				filter: {
-					where: {
-						id: '33'
-					}
-				}
-			};
-			Setting.get(where).then(res => {
-				if (res.data && res.data.length) {
-					this.buildProfile = res.data[0].value;
-					localStorage.setItem('buildProfile', res.data[0].value);
-				}
-			});
 		}
 	}
 };

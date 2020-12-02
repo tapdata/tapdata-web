@@ -35,7 +35,7 @@
 					</span>
 				</div>
 				<ul class="cuk-list clearfix cuk-list-type-block">
-					<li class="list-item" v-for="item in listData" :key="item.id" @click="handleRead(item.id)">
+					<li class="list-item" v-for="(item, index) in listData" :key="index" @click="handleRead(item.id)">
 						<div class="list-item-content" v-if="item.msg === 'JobDDL'">
 							<div class="unread-1zPaAXtSu" v-show="!item.read"></div>
 							<div class="list-item-desc">

@@ -84,7 +84,7 @@ const tc = {
 			account_waiting_approve: '您的賬戶還未通過管理員審核',
 			account_disabled: '您的賬戶已被管理員禁用',
 			permission_denied: '沒有權限',
-			signInFail: '登錄失敗',
+			signInFail: '帳戶或密碼錯誤',
 
 			registry: '賬號註冊',
 			registry_tip: '我已同意',
@@ -181,6 +181,7 @@ const tc = {
 			serverProcess: '服務器與進程',
 			syncJobsStatus: '同步任務狀態',
 			migrationJobsStatus: '遷移任務狀態',
+			dataValidationTitle: '數據驗證',
 			before: '前',
 			pcs: '條',
 			server: '服務器',
@@ -197,7 +198,11 @@ const tc = {
 			initialization: '初始化中',
 			loadingFinished: '初始化完成',
 			incremental: '增量中',
-			incrementalLag: '增量滯後'
+			incrementalLag: '增量滯後',
+			allValid: '全部校驗任務',
+			checkSame: '校驗一致',
+			countDifference: 'Count差異',
+			contentDifference: '內容差異'
 		}
 	},
 	message: {
@@ -264,6 +269,8 @@ const tc = {
 		forceStoppingMessage: '強制停止將立即中斷數據傳輸，是否繼續執行?',
 		stopInitial_syncMessage: '初始化類型的任務暫停後如果再次啟動，任務會從頭開始同步，確定暫停？',
 		stopMessage: '確定要暫停任務嗎?',
+		stopAggregation_message: '任務XXX中含有聚合處理節點，任務停止後再次啟動，任務會先進行重置，確定停止？',
+		startAggregation_message: '任務XXX中含有聚合處理節點，任務啟動後會先進行重置，確定啟動？',
 		cancelReset: '已取消重置',
 		resetOk: '重置成功',
 		resetFailed: '重置失敗',
@@ -292,6 +299,7 @@ const tc = {
 		databseFreedomHead: '數據庫遷移',
 		createNew: '新建',
 		DissedNoAction: 'oops~ 被禁用的節點或連線不能被刪除、連入或連出',
+		notCopy: '被禁用的節點不能被複製',
 		guidingMode: '引導模式',
 		advancedMode: '標準模式',
 		freedomMode: '轉標準模式',
@@ -504,6 +512,7 @@ const tc = {
 		groupByExpression: '分組字段',
 		aggregation: '聚合處理',
 		enterFilterTable: '請輸入過濾表內容',
+		aggregatePrompt: '提示：使用聚合處理節點後，此任務停止後再次啟動，任務將會重置',
 		nameTip: '後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ',
 		button: {
 			submit: '提交執行',
@@ -899,7 +908,11 @@ const tc = {
 					school_name: 'school_name: "第一實驗小學"',
 					idComment: '// "students_sum" 自定義的子處理名稱，多個子處理名稱不可重複',
 					countComment: '// COUNT為選擇的函數, 132為函數值；如果函數是MAX, 則名稱為MAX',
-					school_nameComment: ' // 分組匯總的欄位名，如果不填寫則不顯示'
+					school_nameComment: ' // 分組匯總的欄位名，如果不填寫則不顯示',
+					aggregateSizeLabel: '聚合結果緩存條數',
+					aggregateSizeTips: '聚合結果在設置的條數範圍內存在緩存里，超出的數據會被存入目標庫',
+					allAggregateSize: '全部存入緩存',
+					customAggregateSize: '自定義緩存條數'
 				},
 				field: {
 					name: '字段',
@@ -915,7 +928,19 @@ const tc = {
 							label: '描述',
 							placeholder: '請輸入節點描述'
 						},
+						errorOperationSaveTip: '字段處理節點檢測到衝突待處理',
+						errorOperationTipBefore: '字段處理操作與源模型發生衝突',
+						errorOperationTipAfter: '點擊此處進行處理',
+						errorOperationDrop:
+							'檢測到以下處理操作與源模型發生衝突，請點擊丟棄衝突操作按鈕丟棄全部有衝突的操作，以保證任務正常運行',
+						errorOperationDelBtn: '丟棄全部',
+						errorOperationKeepBtn: '批量保留',
 						toUpperCase: '轉大寫',
+						save: '保存',
+						originalField: '原始字段/類型',
+						process: '處理方式',
+						result: '結果',
+						operation: '操作',
 						delete: '删除',
 						toLowerCase: '轉小寫',
 						fieldName: '字段名稱',
@@ -1556,7 +1581,28 @@ const tc = {
 		},
 		library: '此庫',
 		sameTable: '以下表存在重名：',
-		repeatTip: '點擊數據庫名對重名的表在數據目錄頁面進行處理，以確保此庫下表名的唯一性'
+		repeatTip: '點擊數據庫名對重名的表在數據目錄頁面進行處理，以確保此庫下表名的唯一性',
+		jobSchedule: {
+			jobSecheduleSetting: '任務調度設置',
+			job: '任務：',
+			sync: '任務調度：',
+			expression: '表達式：',
+			expressionPlaceholder: '請輸入corn表達式',
+			explanation: '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務',
+			grammar: '語法:',
+			second: '秒',
+			minute: '分鐘',
+			hour: '小時',
+			day: '日',
+			month: '月',
+			week: '星期',
+			year: '年',
+			example: '例子:',
+			runMinute: '每分鐘運行一次',
+			runDay: '每天2點運行',
+			jobSchedule: '調度任務設置',
+			jobSchedule_tip: '調度任務設置-僅對初始化任務可用 '
+		}
 	},
 	dataVerification: {
 		verifyDetail: '校驗詳情',

@@ -63,16 +63,14 @@ export default function(vm) {
 			{
 				type: 'input',
 				field: 'database_username',
-				label: vm.$t('dataForm.form.userName'),
-				required: true
+				label: vm.$t('dataForm.form.userName')
 			},
 			{
 				type: 'input',
 				field: 'plain_password',
 				label: vm.$t('dataForm.form.password'),
 				domType: 'password',
-				showPassword: true,
-				required: true
+				showPassword: true
 			},
 			{
 				type: 'input',

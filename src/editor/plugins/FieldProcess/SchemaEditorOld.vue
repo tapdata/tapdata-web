@@ -1,42 +1,40 @@
 <template>
 	<div class="fieldProcess">
-		<div v-show="showErrorOperationTip" class="error-operation-tip">
-			{{ $t('editor.cell.processor.field.form.errorOperationTipBefore')
-			}}<span style="color: #48b6e2;;cursor: pointer" @click="openErrorList">{{
-				$t('editor.cell.processor.field.form.errorOperationTipAfter')
-			}}</span>
-		</div>
-		<div class="clear"></div>
-		<div class="header-row">
-			<div class="field">
-				<el-checkbox v-model="checkAll" @change="handleCheckAllChange"></el-checkbox>
-			</div>
-			<div class="field field-text">{{ $t('editor.cell.processor.field.form.fieldName') }}</div>
-			<div class="btnBox">
-				<el-button size="mini" type="text" class="btn" @click="handleAllToUpperCase()" :disabled="disabledMode">
-					<img src="../../../../static/image/upper.png" alt="" />
-				</el-button>
-				<el-button size="mini" type="text" class="btn" @click="handleAllToLowerCase()" :disabled="disabledMode">
-					<img src="../../../../static/image/lower.png" alt="" />
-				</el-button>
-				<el-button size="mini" type="text" class="btn" @click="handleAllDelete" :disabled="disabledMode">
-					<img src="../../../../static/image/del.png" alt="" />
-				</el-button>
-				<el-button type="text" class="btn" size="mini" @click="handleAllReset" :disabled="disabledMode">
-					<img src="../../../../static/image/return.png" alt="" />
-				</el-button>
-				<el-button
-					type="text"
-					class="iconfont icon-lishi2 btn"
-					size="mini"
-					@click="openErrorList"
-					:disabled="errorOperation.length === 0 || disabledMode"
-				></el-button>
-			</div>
-		</div>
-		<div class="clear"></div>
+		<el-row class="operation-area">
+			<el-form :disabled="disabledMode">
+				<el-form-item>
+					<el-button type="text" @click="handleAllDelete">{{
+						$t('editor.cell.processor.field.form.delete')
+					}}</el-button>
+					<el-button type="text" @click="handleAllReset">{{ $t('dataFlow.reset') }}</el-button>
+					<el-button type="text" @click="handleAllToUpperCase()">{{
+						$t('editor.cell.processor.field.form.toUpperCase')
+					}}</el-button>
+					<el-button type="text" @click="handleAllToLowerCase()">{{
+						$t('editor.cell.processor.field.form.toLowerCase')
+					}}</el-button>
+				</el-form-item>
+			</el-form>
+		</el-row>
 		<div class="e-schema-editor" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom">
 			<el-container>
+				<el-header height="20">
+					<!--{{schema ? schema.name : ''}}-->
+				</el-header>
+				<div class="header-row">
+					<div class="e-col">
+						<el-checkbox v-model="checkAll" @change="handleCheckAllChange" style="color: #fff">{{
+							$t('dataFlow.selectAll')
+						}}</el-checkbox>
+					</div>
+					<div class="e-col">
+						{{ $t('editor.cell.processor.field.form.fieldName') }}
+					</div>
+					<div class="e-col">
+						{{ $t('editor.cell.processor.field.form.fieldType') }}
+					</div>
+					<div class="e-col">{{ $t('message.operator') }}</div>
+				</div>
 				<el-main>
 					<el-tree
 						:data="schema ? schema.fields : []"
@@ -49,20 +47,38 @@
 						class="schemaEditor"
 					>
 						<span class="custom-tree-node" slot-scope="{ node, data }">
+							<!--            <span-->
+							<!--              class="e-triangle"-->
+							<!--              :style="`border-bottom-color: ${data.color || '#ddd'};`"-->
+							<!--            ></span>-->
+
 							<span class="e-port e-port-in" :data-id="getId(data)"></span>
+
+							<!--<span class="e-label" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 ">-->
+							<!--<span class="e-pk">{{ data.primary_key_position > 0 ? 'PK' : '' }}</span>-->
+							<!--<el-input v-model="data.label" :disabled="true"></el-input>-->
+							<!--</span>-->
+
+							<!--<span class="e-label" v-else :class="{ activename: isRename(data.id) }" >-->
 							<span
 								class="e-label"
 								:class="{
-									activename: isRename(data.id) || isCreate(data.id, data.label)
+									activename: isRename(data.id) || isCreate(data.id)
 								}"
 							>
 								<el-input
 									v-model="data.label"
 									@blur="handleRename(node, data)"
 									@change="handleRename(node, data)"
-									:disabled="isRemove(data.id) || disabledMode"
+									:disabled="isRemove(data.id)"
 								></el-input>
 							</span>
+
+							<!--<el-select v-model="data.type" v-if="originalSchema.type ==='collection' && data.primary_key_position > 0 " class="e-select"  :disabled="true" >-->
+							<!--<el-option value="String" label="String"></el-option>-->
+							<!--</el-select>-->
+
+							<!--<el-select v-model="data.type" v-else  class="e-select" :class="{ activedatatype: isConvertDataType(data.id) }" :disabled="isRemove(data.id)" @change="handleDataType(node,data)">-->
 							<el-select
 								v-model="data.type"
 								class="e-select"
@@ -213,6 +229,12 @@
 						>
 							<template slot="prepend">var result = </template>
 						</el-input>
+						<!-- <JsEditor
+							v-if="scriptDialog.open"
+							:code.sync="scriptDialog.script"
+							:width.sync="jsEditorWidth"
+						></JsEditor> -->
+						<!--					<el-input type="textarea" v-model="scriptDialog.script" rows="10"></el-input>-->
 					</el-form-item>
 				</el-form>
 				<div class="example">
@@ -229,126 +251,6 @@
 					}}</el-button>
 				</div>
 			</el-dialog>
-			<el-dialog
-				title="Field Modification Conflict Process"
-				:visible.sync="disabledChangeField"
-				append-to-body
-				custom-class="scriptDialog"
-				width="60%"
-			>
-				<div v-if="errorOperation.length > 0">
-					<div class="tip">{{ $t('editor.cell.processor.field.form.errorOperationDrop') }}</div>
-					<div class="tip">{{ $t('editor.cell.processor.field.form.errorOperationDesc') }}</div>
-					<div style="float: right;margin-bottom: 10px;margin-top: 10px">
-						<el-button size="mini" @click="delErrorOperation">{{
-							$t('editor.cell.processor.field.form.errorOperationDelBtn')
-						}}</el-button>
-						<el-button size="mini" @click="keepErrorOperation">{{
-							$t('editor.cell.processor.field.form.errorOperationKeepBtn')
-						}}</el-button>
-					</div>
-					<div style="clear: both"></div>
-					<ul class="changeList">
-						<li>
-							<span class="index">#</span>
-							<span class="item">{{ $t('editor.cell.processor.field.form.originalField') }}</span>
-							<span class="op">{{ $t('editor.cell.processor.field.form.process') }}</span>
-							<span class="item">{{ $t('editor.cell.processor.field.form.result') }}</span>
-							<span class="op">{{ $t('editor.cell.processor.field.form.operation') }}</span>
-						</li>
-						<li v-for="(item, index) in errorOperation" :key="item.id">
-							<span class="index">{{ index + 1 }}</span>
-							<span v-if="item.op === 'RENAME'">
-								<span class="item">{{ item.field }} {{ item.type ? `(${item.type})` : '' }}</span>
-								<span class="op">{{ item.op }}</span>
-								<span class="item"
-									><span class="active">{{ item.operand }}</span>
-									<span>{{ item.type ? `(${item.type})` : '' }}</span></span
-								>
-								<span>
-									<el-radio-group v-model="item.keep">
-										<el-radio :label="false">{{
-											$t('editor.cell.processor.field.form.delete')
-										}}</el-radio>
-										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">{{
-											$t('editor.cell.processor.field.form.keep')
-										}}</el-radio>
-									</el-radio-group>
-								</span>
-							</span>
-							<span v-if="item.op === 'REMOVE'">
-								<span class="item">{{ item.field }} {{ item.type ? `(${item.type})` : '' }}</span>
-								<span class="op">{{ item.op }}</span>
-								<span class="item"></span>
-								<span>
-									<el-radio-group v-model="item.keep">
-										<el-radio :label="false">{{
-											$t('editor.cell.processor.field.form.delete')
-										}}</el-radio>
-										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">{{
-											$t('editor.cell.processor.field.form.keep')
-										}}</el-radio>
-									</el-radio-group>
-								</span>
-							</span>
-							<span v-if="item.op === 'CREATE'">
-								<span class="item"></span>
-								<span class="op">{{ item.op }}</span>
-								<span class="item active">{{ `${item.field} (${item.javaType})` }}</span>
-								<span>
-									<el-radio-group v-model="item.keep">
-										<el-radio :label="false">{{
-											$t('editor.cell.processor.field.form.delete')
-										}}</el-radio>
-										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">{{
-											$t('editor.cell.processor.field.form.keep')
-										}}</el-radio>
-									</el-radio-group>
-								</span>
-							</span>
-							<span v-if="item.op === 'CONVERT'">
-								<span class="item">{{ `${item.field} (${item.originalDataType})` }}</span>
-								<span class="op">{{ item.op }}</span>
-								<span class="item"
-									>{{ item.field }} <span class="active">{{ `(${item.operand})` }}</span></span
-								>
-								<span>
-									<el-radio-group v-model="item.keep">
-										<el-radio :label="false">{{
-											$t('editor.cell.processor.field.form.delete')
-										}}</el-radio>
-										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">{{
-											$t('editor.cell.processor.field.form.keep')
-										}}</el-radio>
-									</el-radio-group>
-								</span>
-							</span>
-							<span v-if="item.scriptType === 'js'">
-								<span class="item">{{ item.field }} {{ item.type ? `(${item.type})` : '' }}</span>
-								<span class="op">{{ item.scriptType }}</span>
-								<span class="item"
-									><span class="js">{{ item.script }}</span></span
-								>
-								<span>
-									<el-radio-group v-model="item.keep">
-										<el-radio :label="false">{{
-											$t('editor.cell.processor.field.form.delete')
-										}}</el-radio>
-										<el-radio :label="true" v-if="![1, 4].includes(item.isType)">{{
-											$t('editor.cell.processor.field.form.keep')
-										}}</el-radio>
-									</el-radio-group>
-								</span>
-							</span>
-						</li>
-					</ul>
-				</div>
-				<span slot="footer" class="dialog-footer">
-					<el-button type="primary" @click="saveErrorOperation" size="mini">{{
-						$t('editor.cell.processor.field.form.save')
-					}}</el-button>
-				</span>
-			</el-dialog>
 		</div>
 	</div>
 </template>
@@ -358,7 +260,7 @@ import $ from 'jquery';
 import log from '../../../log';
 import _ from 'lodash';
 import { uuid } from '../../util/Schema';
-import { isValidate, isScript, fieldsNamesMap } from './util';
+// import JsEditor from '../../../components/JsEditor';
 
 const REMOVE_OPS_TPL = {
 	id: '',
@@ -419,10 +321,6 @@ export default {
 			required: true,
 			value: [Object, Array, null, undefined]
 		},
-		originalSchemaFiled: {
-			required: true,
-			value: [Object, Array, null, undefined]
-		},
 		nodeKey: {
 			type: String,
 			default: 'id'
@@ -446,22 +344,9 @@ export default {
 				operations: [],
 				scripts: []
 			},
-			errorOperation: [],
-			disabledChangeField: false,
-			showErrorOperationTip: false,
 			jsEditorWidth: '500',
-			checkAll: false,
-			fieldOriginalNames: [],
-			fieldIsDeleted: [],
-			fieldNameMap: {},
-			fieldOriginalIds: [],
-			originalOperations: []
+			checkAll: false
 		};
-	},
-	mounted() {
-		setTimeout(() => {
-			this.getErrorOperation();
-		}, 100);
 	},
 	methods: {
 		setOperations(operations) {
@@ -470,9 +355,6 @@ export default {
 		setScripts(scripts) {
 			this.model.scripts = scripts;
 			this.checkAll = false;
-		},
-		setOriginalOperations(operations) {
-			this.originalOperations = operations;
 		},
 		isRemove(id) {
 			let ops = this.model.operations.filter(v => v.id === id && v.op === 'REMOVE');
@@ -509,69 +391,26 @@ export default {
 			let id = this.getId(node);
 			return $(this.$refs.entityDom).find(`.e-port-in[data-id=${id}]`)[0];
 		},
-		getErrorOperation() {
-			if (!this.originalSchemaFiled || !this.originalSchemaFiled.fields) {
-				return;
-			}
-			this.errorOperation = isValidate(this.originalOperations, this.originalSchemaFiled).errorList || [];
-			let script = isScript(this.model.scripts, this.originalSchemaFiled).errorList || [];
-			this.fieldNameMap = fieldsNamesMap(this.originalSchemaFiled.fields);
-			this.errorOperation = [...this.errorOperation, ...script];
-			if (this.errorOperation.length > 0 && !this.disabledMode) {
-				this.showErrorOperationTip = true;
-			} else {
-				this.showErrorOperationTip = false;
-			}
-		},
-		keepErrorOperation() {
-			if (this.errorOperation.length === 0) return;
-			this.errorOperation.forEach(item => {
-				if (![1, 4].includes(item.isType)) {
-					item.keep = true;
-				} else {
-					item.keep = false;
-				}
-			});
-		},
-		delErrorOperation() {
-			if (this.errorOperation.length === 0) return;
-			this.errorOperation.forEach(item => {
-				item.keep = false;
-			});
-		},
-		saveErrorOperation() {
-			for (let i = 0; i < this.errorOperation.length; i++) {
-				let targetId = this.model.operations.findIndex(n => n.id === this.errorOperation[i].id);
-				if ([1, 4].includes(this.errorOperation[i].isType) && targetId > -1) {
-					this.model.operations.splice(targetId, 1);
-				} else if (this.errorOperation[i].isType === 2 && targetId > -1 && this.errorOperation[i].keep) {
-					let id = this.fieldNameMap[this.errorOperation[i].field];
-					if (id) {
-						this.model.operations[targetId]['keep'] = true; //将operations 标记为true
-						this.model.operations[targetId].id = id; //将id与最新模型id 保持一致
-					}
-				} else if (this.errorOperation[i].isType === 3 && targetId > -1 && this.errorOperation[i].keep) {
-					this.model.operations[targetId]['keep'] = true;
-				} else if (this.errorOperation[i].isType === 5 && targetId > -1 && this.errorOperation[i].keep) {
-					let id = this.fieldNameMap[this.errorOperation[i].field];
-					if (id) {
-						this.model.scripts[targetId]['keep'] = true; //将operations 标记为true
-						this.model.scripts[targetId].id = id; //将id与最新模型id 保持一致
-					}
-				} else {
-					this.model.operations.splice(targetId, 1);
-					this.model.scripts.splice(targetId, 1);
-				}
-			}
-			this.$emit('dataChanged', this.model);
-			this.originalOperations = this.model.operations;
-			this.disabledChangeField = false;
-			this.getErrorOperation();
-		},
-		openErrorList() {
-			this.getErrorOperation();
-			this.disabledChangeField = true;
-		},
+		// handlerNodeExpand(data, node, ev) {
+		// 	this.$emit("expand", data);
+		// },
+		// handlerNodeCollapse(data, node, ev) {
+		// 	this.$emit("collapse", data);
+		// },
+		// handleDragStart(node, ev) {},
+		// handleDragEnter(draggingNode, dropNode, ev) {},
+		// handleDragLeave(draggingNode, dropNode, ev) {},
+		// handleDragOver(draggingNode, dropNode, ev) {},
+		// handleDragEnd(draggingNode, dropNode, dropType, ev) {},
+		// handleDrop(draggingNode, dropNode, dropType, ev) {
+		// 	this.$emit("drop", draggingNode);
+		// },
+		// allowDrop(draggingNode, dropNode, type) {
+		// 	return type !== "inner";
+		// },
+		// allowDrag(draggingNode) {
+		// 	return draggingNode.data.children && draggingNode.data.children.length > 0;
+		// },
 		getNativeData(fields, id) {
 			let field = null;
 			let fn = function(fields) {
@@ -606,29 +445,21 @@ export default {
 						id: data.id,
 						field: nativeData.original_field_name,
 						operand: data.type,
-						originalDataType: nativeData.type,
-						table_name: data.table_name,
-						type: data.type,
-						primary_key_position: data.primary_key_position,
-						color: data.color,
-						label: data.label
+						originalDataType: nativeData.type
 					});
 					this.model.operations.push(op);
 				} else {
 					op = ops[0];
 				}
+				op.id = data.id;
+				op.operand = data.type;
 			}
+
 			this.$emit('dataChanged', this.model);
 		},
 		handleRename(node, data) {
 			log('SchemaEditor.handleRename', node, data);
-			//该字段若是已被删除 不可再重命名
 			let nativeData = this.getNativeData(this.originalSchema.fields, data.id); //查找初始schema
-			let removes = this.model.operations.filter(v => v.id === data.id && v.op === 'REMOVE');
-			if (removes.length > 0) {
-				data.label = nativeData.label;
-				return;
-			}
 			let existsName = this.handleExistsName(node, data);
 			if (existsName) {
 				data.label = nativeData.label;
@@ -649,22 +480,21 @@ export default {
 					nativeData,
 					this.model.operations
 				);
-				let ops = this.model.operations.filter(v => v.id === data.id && v.op === 'RENAME');
+				let ops = this.model.operations.filter(v => v.id === nativeData.id && v.op === 'RENAME');
 				let op;
 				if (ops.length === 0) {
 					op = Object.assign(_.cloneDeep(RENAME_OPS_TPL), {
 						id: data.id,
 						field: nativeData.original_field_name,
-						operand: data.label,
-						table_name: data.table_name,
-						type: data.type,
-						primary_key_position: data.primary_key_position,
-						color: data.color,
-						label: data.label
+						operand: data.label
 					});
 					this.model.operations.push(op);
 				} else {
-					op = ops[0];
+					Object.assign(ops[0], {
+						// id: data.id,
+						// field: nativeData.label,
+						operand: data.label
+					});
 				}
 				//删除 相同字段名称
 				if (this.model.scripts && this.model.operations.length && this.model.operations.length > 0) {
@@ -705,35 +535,35 @@ export default {
 			} else {
 				let originalField = this.getNativeData(this.originalSchema.fields, data.id);
 				let self = this;
+
 				let fn = function(field) {
-					for (let i = 0; i < self.model.operations.length; i++) {
-						// 删除所有的rename的操作
-						let ops = self.model.operations[i];
-						if (ops.id === field.id && ops.op === 'RENAME') {
-							data.label = originalField.label;
-							self.model.operations.splice(i, 1);
-						}
-					}
-					for (let i = 0; i < self.model.operations.length; i++) {
-						// 删除所有的类型改变的操作
-						let ops = self.model.operations[i];
-						if (ops.id === field.id && ops.op === 'CONVERT') {
-							data.type = originalField.type;
-							self.model.operations.splice(i, 1);
-						}
-					}
+					// for (let i = 0; i < self.model.operations.length; i++) {
+					// 	// 删除所有的rename的操作
+					// 	let ops = self.model.operations[i];
+					// 	if (ops.id === field.id && ops.op === 'RENAME') {
+					// 		// let originalNode = self.getNativeData(self.originalSchema.fields, field.id);
+					// 		// originalNode.label = field.label;
+					// 		self.model.operations.splice(i, 1);
+					// 	}
+					// }
+					// for (let i = 0; i < self.model.operations.length; i++) {
+					// 	// 删除所有的类型改变的操作
+					// 	let ops = self.model.operations[i];
+					// 	if (ops.id === field.id && ops.op === 'CONVERT') {
+					// 		// let originalNode = self.getNativeData(self.originalSchema.fields, field.id); // 替换原始数据 主要是操作子节点
+					// 		// originalNode.type = field.type;
+					// 		self.model.operations.splice(i, 1);
+					// 	}
+					// }
+
 					let ops = self.model.operations.filter(v => v.op === 'REMOVE' && v.id === field.id);
+
 					let op;
 					if (ops.length === 0) {
 						op = Object.assign(_.cloneDeep(REMOVE_OPS_TPL), {
 							id: field.id,
-							field: field.original_field_name,
-							operand: true,
-							table_name: field.table_name,
-							type: field.type,
-							primary_key_position: field.primary_key_position,
-							color: field.color,
-							label: field.label
+							field: originalField.original_field_name,
+							operand: true
 						});
 						self.model.operations.push(op);
 					}
@@ -824,8 +654,8 @@ export default {
 				return;
 			}
 			let self = this;
+			let nativeData = self.getNativeData(self.originalSchema.fields, data.id);
 			let fn = function(node, data) {
-				let nativeData = self.getNativeData(self.originalSchema.fields, data.id);
 				for (let i = 0, length = node.childNodes.length; i < node.childNodes.length; i++) {
 					let childNode = node.childNodes[i];
 					fn(childNode, childNode.data);
@@ -847,13 +677,13 @@ export default {
 						if (ops.op === 'CREATE') {
 							self.model.operations.splice(i, 1);
 							i--;
+							/* node.childNodes.forEach((childNode) => {
+									fn(childNode, childNode.data);
+								}); */
 							self.$refs.tree.remove(node);
+							// break;
 						}
 						if (ops.op === 'RENAME') {
-							let existsName = self.handleExistsName(node, data);
-							if (existsName) {
-								return;
-							}
 							if (nativeData) node.data.label = nativeData.label;
 							self.model.operations.splice(i, 1);
 							i--;
@@ -917,6 +747,7 @@ export default {
 				tableName: data.table_name,
 				javaType: 'String',
 				id: fieldId,
+
 				action: action,
 				triggerFieldId: node.data.id,
 				level: level - 1
@@ -965,10 +796,6 @@ export default {
 				script = _.cloneDeep(SCRIPT_TPL);
 				Object.assign(script, {
 					field: fieldName,
-					type: data.type,
-					primary_key_position: data.primary_key_position,
-					color: data.color,
-					label: data.label,
 					tableName,
 					id
 				});
@@ -1009,53 +836,24 @@ export default {
 		margin-right: 10px;
 	}
 }
-.error-operation-tip {
-	color: #ee5353;
-	font-size: 12px;
-	margin-bottom: 10px;
-}
 .operWidth {
 	width: 80px !important;
 }
-.header-row {
-	height: 30px;
-	line-height: 30px;
-	font-size: 12px;
-	background: #0ab300;
-	border-radius: 4px;
-	margin-bottom: 10px;
-	.btnBox {
-		color: #fff;
-		float: right;
-		margin-right: 10px;
-	}
-	.field {
-		color: #fff;
-		float: left;
-		margin-left: 10px;
-	}
-	.field-text {
-		margin-left: 25px;
-	}
-	.btn {
-		width: 24px;
-		padding: 5px;
-		color: #fff;
-		font-weight: bold;
-		& {
-			background: #0ab300;
-		}
-	}
-}
-.clear {
-	clear: both;
-}
 .e-schema-editor {
+	width: 100%;
 	border: 1px solid @color;
 	display: inline-block;
+	/*max-width: 600px;
+		min-width: 400px;*/
 	margin-bottom: 20px;
 	box-sizing: border-box;
-	width: 100%;
+	.el-header {
+		line-height: 23px;
+		background: @color;
+		color: #ffffff;
+		font-weight: bold;
+	}
+
 	.el-main {
 		padding: 0;
 		overflow: hidden;
@@ -1129,60 +927,9 @@ export default {
 		}
 	}
 }
-.tip {
-	font-size: 12px;
-	color: #999;
-}
-.changeList {
-	max-height: 400px;
-	overflow: auto;
-	li {
-		border-bottom: 1px solid #dedee4;
-		height: 30px;
-		line-height: 30px;
-		font-size: 12px;
-	}
-	li:first-child {
-		background: #f1f1f1;
-	}
-	.index {
-		display: inline-block;
-		width: 40px;
-		padding-left: 10px;
-	}
-	.item {
-		display: inline-block;
-		width: 34%;
-		font-size: 12px;
-	}
-	.op {
-		display: inline-block;
-		width: 100px;
-	}
-	.active {
-		color: #48b6e2;
-	}
-	.js {
-		display: inline-block;
-		overflow: hidden;
-		word-break: initial;
-		text-overflow: ellipsis;
-		height: 20px;
-		width: 100%;
-	}
-}
-.changeBtn {
-	float: right;
-	font-size: 12px;
-	cursor: pointer;
-	margin-bottom: 10px;
-	&：hover {
-		color: #48b6e2;
-	}
-}
 </style>
 <style lang="less">
-@color: #48b6e2; //更改颜色
+@color: #f98004; //更改颜色
 @colorBorder: #71c179;
 .e-schema-editor {
 	font-size: 11px;
@@ -1191,6 +938,23 @@ export default {
 	}
 	.el-checkbox__label {
 		font-size: 11px;
+	}
+}
+
+.header-row {
+	display: flex;
+	background-color: @colorBorder;
+	color: #fff;
+	line-height: 30px;
+
+	.e-col {
+		width: 100px;
+		text-align: center;
+	}
+	.e-col:first-child {
+		padding-left: 10px;
+		flex: 1;
+		text-align: left;
 	}
 }
 
@@ -1226,7 +990,6 @@ export default {
 		border: none;
 		background-color: transparent;
 		font-size: 11px;
-		padding: 0 5px;
 	}
 
 	.activedatatype {
