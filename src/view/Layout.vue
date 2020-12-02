@@ -35,7 +35,7 @@
 					v-if="$window.getSettingByKey('SHOW_NOTIFICATION')"
 					v-readonlybtn="'BTN_AUTHS'"
 				></NotificationPopover>
-				<a v-if="$window.getSettingByKey('SHOW_DOWNLOAD')" class="btn" @click="command('download')"
+				<a v-if="$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')" class="btn" @click="command('download')"
 					><i class="iconfont icon-shangchuan-copy"></i
 				></a>
 				<el-dropdown

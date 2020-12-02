@@ -81,7 +81,6 @@ if (settingsStr) {
 			// 	{ category: 'Frontend', key: 'SHOW_PAGE_TITLE', value: 1 },
 			// 	{ category: 'Frontend', key: 'SHOW_LICENSE', value: 1 },
 			// 	{ category: 'Frontend', key: 'SHOW_NOTIFICATION', value: 1 },
-			// 	{ category: 'Frontend', key: 'SHOW_DOWNLOAD', value: 1 },
 			// 	{ category: 'Frontend', key: 'SHOW_QA_AND_HELP', value: 1 },
 			// 	{ category: 'Frontend', key: 'SHOW_SETTING_BUTTON', value: 1 },
 			// 	{ category: 'Frontend', key: 'SHOW_HOME_BUTTON', value: 1 },
