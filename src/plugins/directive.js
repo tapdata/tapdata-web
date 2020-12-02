@@ -25,14 +25,15 @@ export function hasPermissionByCode(code) {
 	} else if (Object.prototype.toString.call(code) === '[object Array]') {
 		_codes = code;
 	}
-	for (let i = 0; i < permissions.length; i++) {
-		let permission = permissions[i];
-		if (permission.type === 'button') {
-			let res = permission.filter(resource => _codes.indexOf(resource.code) !== -1);
-			if (res && res.length > 0) {
-				return true;
-			}
-		}
+	// for (let i = 0; i < permissions.length; i++) {
+	// 	let permission = permissions[i];
+	// 	if (permission.type === 'button') {
+
+	// 	}
+	// }
+	let res = permissions.filter(resource => _codes.indexOf(resource.code) !== -1);
+	if (res && res.length > 0) {
+		return true;
 	}
 	return false;
 }

@@ -440,7 +440,7 @@ export default {
 						// rolemappings.forEach(rolemapping => {
 						// 	rolemappingId.push(rolemapping.id);
 						// });
-						rolesModel.principals(roleId);
+						this.$api('usersModel').deletePermissionRoleMapping(roleId);
 
 						let newRoleMappings = [];
 						// this.roleusers.forEach(roleuser => {

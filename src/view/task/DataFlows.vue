@@ -90,7 +90,7 @@
 				</ul>
 				<div class="topbar-buttons">
 					<el-button
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="authority.classify"
 						size="mini"
 						class="btn"
 						v-show="multipleSelection.length > 0"
@@ -100,7 +100,7 @@
 						<span> {{ $t('dataFlow.taskBulkTag') }}</span>
 					</el-button>
 					<el-dropdown
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="authority.operation"
 						@command="handleCommand"
 						v-show="multipleSelection.length > 0"
 					>
@@ -109,27 +109,33 @@
 							<span> {{ $t('dataFlow.taskBulkOperation') }}</span>
 						</el-button>
 						<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item command="bulkExport">{{ $t('dataFlow.bulkExport') }}</el-dropdown-item>
-							<el-dropdown-item command="bulkScheuled">{{
+							<el-dropdown-item command="bulkExport" v-readonlybtn="authority.export">{{
+								$t('dataFlow.bulkExport')
+							}}</el-dropdown-item>
+							<el-dropdown-item command="bulkScheuled" v-readonlybtn="authority.switch">{{
 								$t('dataFlow.bulkScheuled')
 							}}</el-dropdown-item>
-							<el-dropdown-item command="bulkStopping">{{
+							<el-dropdown-item command="bulkStopping" v-readonlybtn="authority.switch">{{
 								$t('dataFlow.bulkStopping')
 							}}</el-dropdown-item>
-							<el-dropdown-item command="batchDelete">{{ $t('dataFlow.batchDelete') }}</el-dropdown-item>
-							<el-dropdown-item command="batchRest">{{ $t('dataFlow.batchRest') }}</el-dropdown-item>
+							<el-dropdown-item command="batchDelete" v-readonlybtn="authority.delete">{{
+								$t('dataFlow.batchDelete')
+							}}</el-dropdown-item>
+							<el-dropdown-item command="batchRest" v-readonlybtn="authority.switch">{{
+								$t('dataFlow.batchRest')
+							}}</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
-					<el-button v-readonlybtn="'BTN_AUTHS'" size="mini" class="btn" @click="handleGoFunction">
+					<el-button v-readonlybtn="authority.function" size="mini" class="btn" @click="handleGoFunction">
 						<i class="iconfont icon-hanshu back-btn-icon"></i>
 						<span> {{ $t('dataFlow.taskBulkFx') }}</span>
 					</el-button>
-					<el-button v-readonlybtn="'BTN_AUTHS'" size="mini" class="btn" @click="handleImport">
+					<el-button v-readonlybtn="authority.import" size="mini" class="btn" @click="handleImport">
 						<i class="iconfont icon-daoru back-btn-icon"></i>
 						<span> {{ $t('dataFlow.bulkImport') }}</span>
 					</el-button>
 					<el-button
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="authority.create"
 						class="btn btn-create"
 						type="primary"
 						size="mini"
@@ -230,7 +236,7 @@
 					></el-table-column>
 					<el-table-column :label="$t('dataFlow.taskSwitch')" width="70">
 						<template slot-scope="scope">
-							<div v-if="!scope.row.hasChildren" v-readonlybtn="'BTN_AUTHS'">
+							<div v-if="!scope.row.hasChildren" v-readonlybtn="authority.operation">
 								<el-tooltip
 									class="item"
 									effect="dark"
@@ -265,36 +271,28 @@
 										<i class="iconfont  task-list-icon icon-chaxun"></i>
 									</el-button>
 								</el-tooltip>
-								<el-tooltip
-									class="item"
-									v-readonlybtn="'BTN_AUTHS'"
-									:content="$t('dataFlow.edit')"
-									placement="bottom"
-								>
+								<el-tooltip class="item" :content="$t('dataFlow.edit')" placement="bottom">
 									<el-button
 										type="text"
 										:disabled="statusBtMap[scope.row.status].edit"
 										@click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)"
+										v-readonlybtn="authority.edit"
 									>
 										<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
 									</el-button>
 								</el-tooltip>
-								<el-tooltip
-									class="item"
-									v-readonlybtn="'BTN_AUTHS'"
-									:content="$t('message.delete')"
-									placement="bottom"
-								>
+								<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
 									<el-button
 										type="text"
 										:disabled="statusBtMap[scope.row.status].delete"
 										@click="handleDelete(scope.row)"
+										v-readonlybtn="authority.delete"
 									>
 										<i class="iconfont task-list-icon icon-shanchu"></i>
 									</el-button>
 								</el-tooltip>
 								<el-dropdown
-									v-readonlybtn="'BTN_AUTHS'"
+									v-readonlybtn="authority.operation"
 									@command="handleRowCommand($event, scope.row)"
 									class="item"
 								>
@@ -302,21 +300,27 @@
 										><i class="iconfont icon-gengduo3  task-list-icon"></i
 									></el-button>
 									<el-dropdown-menu slot="dropdown">
-										<el-dropdown-item command="export">{{
+										<el-dropdown-item command="export" v-readonlybtn="authority.export">{{
 											$t('dataFlow.dataFlowExport')
 										}}</el-dropdown-item>
-										<el-dropdown-item command="copy">{{ $t('dataFlow.copy') }}</el-dropdown-item>
+										<el-dropdown-item command="copy" v-readonlybtn="authority.create">{{
+											$t('dataFlow.copy')
+										}}</el-dropdown-item>
 										<el-dropdown-item
 											:disabled="statusBtMap[scope.row.status].reset"
 											command="reset"
+											v-readonlybtn="authority.operation"
 											>{{ $t('dataFlow.button.reset') }}</el-dropdown-item
 										>
 										<el-dropdown-item
 											command="force_stopping"
 											:disabled="statusBtMap[scope.row.status].forceStop"
+											v-readonlybtn="authority.operation"
 											>{{ $t('dataFlow.status.force_stopping') }}</el-dropdown-item
 										>
-										<el-dropdown-item command="tag">{{ $t('dataFlow.addTag') }}</el-dropdown-item>
+										<el-dropdown-item command="tag" v-readonlybtn="authority.classify">{{
+											$t('dataFlow.addTag')
+										}}</el-dropdown-item>
 									</el-dropdown-menu>
 								</el-dropdown>
 							</div>
@@ -517,7 +521,19 @@ export default {
 			currentStatus: '',
 			oldStatus: '',
 			currentId: '',
-			taskName: ''
+			taskName: '',
+			// 权限控制
+			authority: {
+				classify: '',
+				operation: '',
+				function: '',
+				import: '',
+				create: '',
+				export: '',
+				switch: '',
+				delete: '',
+				edit: ''
+			}
 		};
 	},
 	created() {
@@ -560,6 +576,32 @@ export default {
 					}
 				}, 5000);
 			}
+		}
+
+		if (this.formData.mappingTemplate === 'custom') {
+			this.authority = {
+				classify: 'SYNC_category_application',
+				operation: 'SYNC_job_operation',
+				function: 'SYNC_Function_management',
+				import: 'SYNC_job_import ',
+				create: 'SYNC_job_creation',
+				export: 'SYNC_job_export',
+				switch: 'SYNC_job_operation',
+				delete: 'SYNC_job_delete',
+				edit: 'SYNC_job_edition'
+			};
+		} else {
+			this.authority = {
+				classify: 'migration_category_application',
+				operation: 'migration_job_operation',
+				function: 'migration_Function_management',
+				import: 'migration_job_import ',
+				create: 'migration_job_creation',
+				export: 'migration_job_export ',
+				switch: 'migration_job_operation',
+				delete: 'migration_job_delete',
+				edit: 'migration_job_edition'
+			};
 		}
 	},
 	beforeDestroy() {

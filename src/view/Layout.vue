@@ -46,7 +46,7 @@
 				<el-dropdown v-if="platform === 'DAAS'" class="btn" placement="bottom" @command="command">
 					<i class="iconfont icon-shezhi1"></i>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item command="settings" v-readonlybtn="'system_notice'">{{
+						<el-dropdown-item command="settings" v-readonlybtn="'system_settings'">{{
 							$t('app.menu.settings')
 						}}</el-dropdown-item>
 						<el-dropdown-item command="setting" v-readonlybtn="'home_notice_settings'">{{

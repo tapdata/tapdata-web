@@ -38,13 +38,13 @@
 						class="action-btn"
 						size="mini"
 						@click="stopCapture"
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="authority.buttionOpration"
 					>
 						<i class="iconfont icon-zanting3"></i>
 						<span>{{ $t('dataFlow.button.stop_capture') }}</span>
 					</el-button>
 					<el-button
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="authority.buttionOpration"
 						v-if="['running'].includes(status) && executeMode === 'normal'"
 						class="action-btn"
 						size="mini"
@@ -54,7 +54,7 @@
 						<span>{{ $t('dataFlow.button.capture') }}</span>
 					</el-button>
 					<el-button
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="authority.buttionOpration"
 						v-if="!statusBtMap[status].reloadSchema"
 						class="action-btn"
 						size="mini"
@@ -64,7 +64,7 @@
 						<span>{{ $t('dataFlow.button.reloadSchema') }}</span>
 					</el-button>
 					<el-button
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="authority.buttionOpration"
 						v-if="isEditable()"
 						class="action-btn"
 						size="mini"
@@ -130,7 +130,7 @@
 					>
 				</el-tag>
 
-				<el-button-group class="action-btn-group" v-readonlybtn="'BTN_AUTHS'">
+				<el-button-group class="action-btn-group" v-readonlybtn="authority.buttionOpration">
 					<el-button
 						:disabled="statusBtMap[status].start"
 						class="action-btn btn-operatiton"
@@ -170,7 +170,7 @@
 				</el-button-group>
 
 				<el-button
-					v-readonlybtn="'BTN_AUTHS'"
+					v-readonlybtn="authority.edit"
 					v-if="!statusBtMap[status].edit && !editable"
 					class="btn-edit"
 					size="mini"
@@ -341,6 +341,12 @@ export default {
 			errorEvents: [],
 			currentStatus: '',
 			taskName: '',
+			// 权限控制
+			authority: {
+				buttionOpration: '',
+				edit: ''
+			},
+
 			statusBtMap
 		};
 	},
@@ -357,6 +363,18 @@ export default {
 			this.getGlobalSetting();
 		}
 		this.mappingTemplate = this.$route.query.mapping;
+
+		if (this.mappingTemplate === 'custom') {
+			this.authority = {
+				buttionOpration: 'SYNC_job_operation',
+				edit: 'SYNC_job_edition'
+			};
+		} else {
+			this.authority = {
+				buttionOpration: 'migration_job_operation',
+				edit: 'SYNC_job_edition'
+			};
+		}
 
 		this.buildProfile = localStorage.getItem('buildProfile');
 

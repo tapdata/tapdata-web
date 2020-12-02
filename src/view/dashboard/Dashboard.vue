@@ -1,6 +1,6 @@
 <template>
 	<section class="dashboard" v-if="isNew">
-		<el-row :gutter="20" class="e-row">
+		<el-row :gutter="20" class="e-row" v-readonlybtn="'database_migration'">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="migrationJobObj" @getAllData="getAllData"></echart-head>
