@@ -1,22 +1,8 @@
 <template>
 	<section class="data-verify-wrap">
-		<!-- <div class="panel-slider" v-show="isClassShow">
-			<MetaData @nodeClick="classClickHandler"></MetaData>
-		</div> -->
 		<div class="panel-main">
 			<div class="topbar">
 				<ul class="search-bar">
-					<!-- <li class="search-item">
-						<el-button
-							class="btn-class-collapse"
-							size="mini"
-							:class="{ 'is-open': isClassShow }"
-							@click="isClassShow = !isClassShow"
-						>
-							<i class="iconfont icon-xiangshangzhanhang"></i>
-							<span>{{ isClassShow ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel') }}</span>
-						</el-button>
-					</li> -->
 					<li class="search-item">
 						<el-input
 							v-model="searchParams.keyword"
@@ -342,13 +328,9 @@
 </template>
 
 <script>
-// import metaData from '../metaData';
 import { toRegExp } from '../../util/util';
 let timeout = null;
 export default {
-	// components: {
-	// 	MetaData: metaData
-	// },
 	data() {
 		return {
 			// isClassShow: true,

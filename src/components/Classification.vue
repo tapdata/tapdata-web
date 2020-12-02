@@ -119,12 +119,15 @@ export default {
 		},
 		checkHandler(data, { checkedKeys }) {
 			let checked = checkedKeys.includes(data.id);
-			let children = data.children;
-			if (children && children.length) {
-				children.forEach(node => {
-					this.$refs.tree.setChecked(node, checked, true);
-				});
-			}
+			let setChecked = arr => {
+				if (arr && arr.length) {
+					arr.forEach(node => {
+						this.$refs.tree.setChecked(node, checked, true);
+						setChecked(node.children);
+					});
+				}
+			};
+			setChecked(data.children);
 			this.emitCheckedNodes();
 		},
 		nodeClickHandler(data, node) {
