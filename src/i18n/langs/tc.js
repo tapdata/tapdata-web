@@ -299,6 +299,7 @@ const tc = {
 		databseFreedomHead: '數據庫遷移',
 		createNew: '新建',
 		DissedNoAction: 'oops~ 被禁用的節點或連線不能被刪除、連入或連出',
+		notCopy: '被禁用的節點不能被複製',
 		guidingMode: '引導模式',
 		advancedMode: '標準模式',
 		freedomMode: '轉標準模式',

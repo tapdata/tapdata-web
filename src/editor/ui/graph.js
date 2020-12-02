@@ -724,7 +724,22 @@ export default class Graph extends Component {
 				keystroke: isMac ? 'command+c' : 'ctrl+c',
 				on: function() {
 					// Copy all selected elements and their associated links.
-					this.clipboard.copyElements(this.selection.collection, this.graph);
+					try {
+						if (this.selection.collection && this.selection.collection.models) {
+							let models = this.selection.collection.models || [];
+							models.map(cell => {
+								let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null;
+								if (formData.disabled) {
+									throw new Error(i18n.t('dataFlow.notCopy'));
+								}
+							});
+							this.clipboard.copyElements(this.selection.collection, this.graph);
+						}
+					} catch (e) {
+						Message.error({
+							message: e.message
+						});
+					}
 				}
 			},
 			{

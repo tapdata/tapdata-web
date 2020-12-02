@@ -299,6 +299,7 @@ const cn = {
 		databseFreedomHead: '数据库迁移',
 		createNew: '新建',
 		DissedNoAction: 'oops~ 被禁用的节点或连线不能被删除、连入或连出',
+		notCopy: '被禁用的节点不能被复制',
 		guidingMode: '引导模式',
 		advancedMode: '标准模式',
 		freedomMode: '转标准模式',

@@ -300,6 +300,7 @@ const en = {
 		databseFreedomHead: 'Custom Data Sync',
 		createNew: 'Create New',
 		DissedNoAction: 'oops~ The banned node/Connecting line can not be deleted and connected',
+		notCopy: 'The banned node cannot be copied ',
 		guidingMode: 'Guiding mode',
 		advancedMode: 'Standard mode',
 		freedomMode: 'Standard mode',
