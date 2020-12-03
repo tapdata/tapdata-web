@@ -25,10 +25,7 @@
 					<i class="el-icon-plus"></i>
 					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
-				<NotificationPopover
-					v-if="$window.getSettingByKey('SHOW_NOTIFICATION')"
-					v-readonlybtn="'home_notice'"
-				></NotificationPopover>
+				<NotificationPopover v-if="$window.getSettingByKey('SHOW_NOTIFICATION')"></NotificationPopover>
 				<a v-if="$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')" class="btn" @click="command('download')"
 					><i class="iconfont icon-shangchuan-copy"></i
 				></a>
@@ -47,6 +44,7 @@
 				</el-dropdown>
 				<el-dropdown
 					v-if="$window.getSettingByKey('SHOW_SETTING_BUTTON')"
+					v-readonlybtn="'home_notice'"
 					class="btn"
 					placement="bottom"
 					@command="command"
@@ -148,11 +146,8 @@
 						>
 							<div class="submenu-item">
 								<span>{{ menu.meta.title }}</span>
-								<span
-									class="btn-del-fav-menu"
-									v-readonlybtn="'BTN_AUTHS'"
-									@click.stop="delFavMenu(index)"
-								>
+								<!-- v-readonlybtn="'BTN_AUTHS'" -->
+								<span class="btn-del-fav-menu" @click.stop="delFavMenu(index)">
 									<i class="el-icon-remove"></i>
 								</span>
 							</div>

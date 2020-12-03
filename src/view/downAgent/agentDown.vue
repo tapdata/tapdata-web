@@ -174,7 +174,7 @@ export default {
 			LinuxLink: '',
 			refreshLoading: false,
 			downType: [
-				{ name: 'Windows (64b it)', value: 'windows' },
+				{ name: 'Windows (64 bit)', value: 'windows' },
 				{ name: 'Linux (64 bit)', value: 'Linux' }
 			]
 		};
