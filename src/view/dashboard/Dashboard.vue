@@ -1,5 +1,5 @@
 <template>
-	<section class="dashboard" v-if="!$window.getSettingByKey('SHOW_OLD_PAGE')">
+	<section class="dashboard" v-if="!$window.getSettingByKey('SHOW_OLD_PAGE')" v-loading="loading">
 		<el-row :gutter="20" class="e-row" v-readonlybtn="'database_migration'">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
@@ -257,6 +257,7 @@ export default {
 	components: { echartHead, pieChart, shaftlessEchart },
 	data() {
 		return {
+			loading: false,
 			migrationTotal: '',
 			syncTotal: '',
 			migrationTaskList: [],
@@ -590,6 +591,7 @@ export default {
 		getDataFlowApi() {
 			let self = this;
 			let id = '';
+			self.loading = true;
 			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
 				id = this.$cookie.get('user_id');
 				// params = {
@@ -602,41 +604,45 @@ export default {
 				// 	}
 				// };
 			}
-			DataFlows.chart(id).then(res => {
-				// res.data.chart1.statusCount.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1));
-				// res.data.chart1.statusCount.forEach(element => {
-				// 	self.taskList.unshift({ name: element._id, value: element.count });
-				// });
-				// self.taskList.map((item, index) => {
-				// 	if (item.name === 'stopping' || item.name === 'scheduled') {
-				// 		self.taskList.splice(index, 1);
-				// 		self.taskList.push(item);
-				// 	}
-				// });
-				if (res && res.data) {
-					self.migrationTaskList = self.handleDataProcessing(res.data.chart1);
-					self.syncTaskList = self.handleDataProcessing(res.data.chart5);
+			DataFlows.chart(id)
+				.then(res => {
+					// res.data.chart1.statusCount.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1));
+					// res.data.chart1.statusCount.forEach(element => {
+					// 	self.taskList.unshift({ name: element._id, value: element.count });
+					// });
+					// self.taskList.map((item, index) => {
+					// 	if (item.name === 'stopping' || item.name === 'scheduled') {
+					// 		self.taskList.splice(index, 1);
+					// 		self.taskList.push(item);
+					// 	}
+					// });
+					if (res && res.data) {
+						self.migrationTaskList = self.handleDataProcessing(res.data.chart1);
+						self.syncTaskList = self.handleDataProcessing(res.data.chart5);
 
-					self.allsyncJobsEchart.series[0].data = self.syncTaskList;
-					self.allMigrationJobsEchart.series[0].data = self.migrationTaskList;
-					self.syncTotal = res.data.chart5.totalDataFlows;
-					self.migrationTotal = res.data.chart1.totalDataFlows;
+						self.allsyncJobsEchart.series[0].data = self.syncTaskList;
+						self.allMigrationJobsEchart.series[0].data = self.migrationTaskList;
+						self.syncTotal = res.data.chart5.totalDataFlows;
+						self.migrationTotal = res.data.chart1.totalDataFlows;
 
-					self.dataScreening.series[0].data = [
-						res.data.chart2[0].totalOutput,
-						res.data.chart2[0].totalInput,
-						res.data.chart2[0].totalInsert,
-						res.data.chart2[0].totalUpdate,
-						res.data.chart2[0].totalDelete
-					];
-					self.unitData = self.dataScreening.series[0].data;
-					self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
-					self.transfer.tableData = res.data.chart3;
-					self.migrationJobStatusList = res.data.chart4;
-					self.syncJobStatusList = res.data.chart6;
-					self.verifySummaryData = res.data.chart7;
-				}
-			});
+						self.dataScreening.series[0].data = [
+							res.data.chart2[0].totalOutput,
+							res.data.chart2[0].totalInput,
+							res.data.chart2[0].totalInsert,
+							res.data.chart2[0].totalUpdate,
+							res.data.chart2[0].totalDelete
+						];
+						self.unitData = self.dataScreening.series[0].data;
+						self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize];
+						self.transfer.tableData = res.data.chart3;
+						self.migrationJobStatusList = res.data.chart4;
+						self.syncJobStatusList = res.data.chart6;
+						self.verifySummaryData = res.data.chart7;
+					}
+				})
+				.finally(() => {
+					self.loading = false;
+				});
 		},
 
 		// 数据处理

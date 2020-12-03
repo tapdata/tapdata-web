@@ -173,9 +173,9 @@ export default {
 					name: 'dashboard'
 				});
 
-				// setTimeout(() => {
-				// 	location.reload();
-				// }, 500);
+				setTimeout(() => {
+					location.reload();
+				}, 500);
 			} catch (e) {
 				this.errorMessage = this.$t('app.signIn.signInFail');
 				this.loading = false;

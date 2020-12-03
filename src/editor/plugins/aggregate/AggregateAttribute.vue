@@ -28,11 +28,10 @@
 				<el-form-item required>
 					<span slot="label">
 						<span>{{ $t('editor.cell.processor.aggregate.aggregateSizeLabel') }}</span>
-						<el-tooltip
-							effect="dark"
-							:content="$t('editor.cell.processor.aggregate.aggregateSizeTips')"
-							placement="top"
-						>
+						<el-tooltip effect="dark" placement="top">
+							<div style="max-width: 300px" slot="content">
+								{{ $t('editor.cell.processor.aggregate.aggregateSizeTips') }}
+							</div>
 							<span class="icon iconfont icon-tishi1" style="vertical-align: bottom;"></span>
 						</el-tooltip>
 					</span>
@@ -126,16 +125,12 @@
 							</el-col>
 						</el-row>
 						<el-form-item required :prop="'aggregations.' + index + '.name'">
-							<div class="e-label">
+							<div class="e-label" slot="label">
 								<label class="el-form-item__label">{{ $t('dataFlow.aggName') }}</label>
-								<el-popover
-									popper-class="aggtip"
-									width="600"
-									trigger="hover"
-									:content="$t('dataFlow.nameTip')"
-								>
-									<span class="icon iconfont icon-tishi1" slot="reference"></span>
-								</el-popover>
+								<el-tooltip effect="dark" placement="top">
+									<div style="max-width: 300px" slot="content">{{ $t('dataFlow.nameTip') }}</div>
+									<span class="icon iconfont icon-tishi1"></span>
+								</el-tooltip>
 							</div>
 							<!-- <el-popover
 							class="aggtip"
@@ -153,6 +148,7 @@
 							:prop="'aggregations.' + index + '.filterPredicate'"
 						>
 							<el-input
+								style="margin: 5px 0;"
 								type="textarea"
 								v-model="item.filterPredicate"
 								:placeholder="$t('dataFlow.enterFilterTable')"
@@ -449,14 +445,8 @@ export default {
 		}
 	}
 	.e-label {
-		&::before {
-			content: '*';
-			color: #f56c6c;
-			vertical-align: sub;
-			margin-right: 4px;
-		}
+		display: inline-block;
 		.iconfont {
-			display: inline-block;
 			color: #999;
 			cursor: pointer;
 			vertical-align: middle;
@@ -501,9 +491,5 @@ export default {
 	.btnClass .el-form-item__content {
 		line-height: 30px !important;
 	}
-}
-.aggtip {
-	vertical-align: middle;
-	word-break: keep-all !important;
 }
 </style>

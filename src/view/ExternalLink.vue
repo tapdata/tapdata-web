@@ -30,16 +30,19 @@ export default {
 		getUrl() {
 			let route = this.$route;
 			this.$nextTick(() => {
-				let router = window.frames[0].window.gRouter;
-				count += 1;
-				if (router) {
-					router.replace({
-						name: route.name,
-						query: Object.assign(route.query, { isNext: count }),
-						params: route.params
-					});
-				} else {
-					setTimeout(this.getUrl, 500);
+				let frame = window.frames[0];
+				if (frame) {
+					let router = frame.window.gRouter;
+					count += 1;
+					if (router) {
+						router.replace({
+							name: route.name,
+							query: Object.assign(route.query, { isNext: count }),
+							params: route.params
+						});
+					} else {
+						setTimeout(this.getUrl, 500);
+					}
 				}
 			});
 		}

@@ -910,7 +910,7 @@ const tc = {
 					countComment: '// COUNT為選擇的函數, 132為函數值；如果函數是MAX, 則名稱為MAX',
 					school_nameComment: ' // 分組匯總的欄位名，如果不填寫則不顯示',
 					aggregateSizeLabel: '聚合結果緩存條數',
-					aggregateSizeTips: '聚合結果在設置的條數範圍內存在緩存里，超出的數據會被存入目標庫',
+					aggregateSizeTips: '聚合結果在設置的條數範圍內存在緩存里，超出的數據會被存入目標庫。',
 					allAggregateSize: '全部存入緩存',
 					customAggregateSize: '自定義緩存條數'
 				},

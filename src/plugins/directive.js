@@ -1,9 +1,10 @@
 import Vue from 'vue';
 Vue.directive('readonlybtn', {
-	inserted: function(el, binding) {
+	inserted: function(el, binding, vnode) {
 		const code = binding.value;
 		if (!Vue.prototype.$has(code)) {
-			el.parentNode.removeChild(el);
+			el.remove();
+			vnode.child && vnode.child.$destroy();
 		}
 	}
 });

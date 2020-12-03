@@ -21,33 +21,29 @@
 					<!-- <div class="vertical-line"></div> -->
 					<li v-for="item in dataList" :key="item.id">
 						<div class="left">
-							<el-checkbox @change="handleOneCheckAll($event, item)" v-cloak v-model="item.checkAll">
+							<el-checkbox
+								@change="handleOneCheckAll($event, item)"
+								v-cloak
+								v-model="item.checkAll"
+								:disabled="item.name === 'Dashboard'"
+							>
 								{{ $t('role.roleNavName.' + item.name) }}
 							</el-checkbox>
 						</div>
 						<div class="center" v-if="item.children && item.children.length && !item.children[0].isNav">
 							<el-checkbox
 								v-for="second in item.children"
-								:key="second.id"
+								:key="second.name"
 								:disabled="!item.checkAll"
 								v-model="second.checkAll"
-								@change="handleCheckChange(item, second)"
+								@change="handleCheckChange($event, item, second)"
 								v-cloak
 							>
 								{{ $t('role.roleNavName.' + second.name) }}
 							</el-checkbox>
-							<!-- <el-checkbox-group
-								v-model="item.checkedCities"
-								@change="handleOneCheckedCitiesChange(item)"
-							>
-								<el-checkbox v-for="m in item.children" :label="m.id" :key="m.id" v-cloak>
-									{{ m.description }}</el-checkbox
-								>
-							</el-checkbox-group> -->
 						</div>
-						<!-- <div class="line"></div> -->
 						<ul class="right" v-if="item.children && item.children.length && item.children[0].isNav">
-							<li v-for="second in item.children" :key="second.id">
+							<li v-for="second in item.children" :key="second.name">
 								<div class="left">
 									<el-checkbox
 										v-model="second.checkAll"
@@ -79,31 +75,6 @@
 						</ul>
 					</li>
 				</ul>
-
-				<!-- <ul v-show="item.second && !item.folded">
-					<li class="h40" v-for="(second, cur) in item.second" :key="second.id">
-						<div class="left">
-							<el-checkbox
-								v-model="second.checkAll"
-								@change="handleCheckAllChange($event, item, second)"
-								v-cloak
-							>
-								{{ second.title }}
-							</el-checkbox>
-						</div>
-						<div class="right">
-							<el-checkbox-group
-								v-model="second.checkedCities"
-								@change="handleCheckedCitiesChange(item, second)"
-							>
-								<el-checkbox v-for="p in second.list" :label="p.id" :key="p.id" v-cloak>
-									{{ p.name }}
-								</el-checkbox>
-							</el-checkbox-group>
-						</div>
-						<div class="line"></div>
-					</li>
-				</ul> -->
 			</el-form-item>
 			<el-form-item class="btn">
 				<el-button @click="back">{{ $t('dataVerify.back') }}</el-button>
@@ -205,6 +176,7 @@ export default {
 		// 获取权限信息
 		getPermission() {
 			let self = this;
+			this.loading = true;
 			self.$api('Permissions')
 				.get({})
 				.then(res => {
@@ -220,7 +192,13 @@ export default {
 								if (!res.data[i].isHidden) {
 									var item = res.data[i];
 									var parent = obj[item.parentId];
+									if (item.name === 'Dashboard') {
+										self.$set(item, 'checkAll', true);
+									}
 									if (parent) {
+										if (item.parentId === 'Dashboard') {
+											self.$set(item, 'checkAll', true);
+										}
 										if (parent.children) {
 											parent.children.push(item);
 										} else {
@@ -237,34 +215,24 @@ export default {
 							this.dataList = newArr;
 						}
 					}
+				})
+				.finally(() => {
+					this.loading = false;
 				});
 		},
-		// // 点击菜单
-		// handleOneCheckedChange(item) {
-		// 	let checkedCount = item.checkedCities.length;
-		// 	if (typeof item.isIndeterminate === 'undefined') {
-		// 		this.$set(item, 'isIndeterminate', false);
-		// 	}
-		// 	if (item.isIndeterminate) {
-		// 		item.isIndeterminate = false;
-		// 	}
-		// 	item.isIndeterminate = checkedCount > 0 && checkedCount < item.children.length;
-		// 	item.checkAll = checkedCount === item.children.length;
-		// },
+
 		// 选择获取全部数据(第一级)
 		handleOneCheckAll(event, item) {
 			if (typeof item.checkAll === 'undefined') {
 				this.$set(item, 'checkAll', true);
 			}
-			if (item.isIndeterminate) {
-				item.isIndeterminate = false;
-			}
 			if (item.children && item.children.length) {
 				for (let i = 0; i < item.children.length; i++) {
 					if (item.checkAll) {
-						item.children[i].checkAll = true;
+						this.$set(item.children[i], 'checkAll', true);
 					} else {
-						item.children[i].checkAll = false;
+						this.$set(item.children[i], 'checkAll', false);
+						// item.children[i].checkAll = false;
 					}
 					if (item.children[i].children && item.children[i].children.length) {
 						for (let k = 0; k < item.children[i].children.length; k++) {
@@ -277,6 +245,19 @@ export default {
 					}
 				}
 			}
+		},
+
+		// 没有三级菜单
+		handleCheckChange(event, item, second) {
+			if (typeof item.checkAll === 'undefined') {
+				this.$set(item, 'checkAll', false);
+			}
+			if (typeof second.checkAll === 'undefined') {
+				this.$set(second, 'checkAll', true);
+			}
+
+			// item.isIndeterminate = checkedCount.length > 0 && checkedCount.length < item.children.length;
+			// item.checkAll = checkedCount.length === item.children.length;
 		},
 
 		// 二级菜单选择(有三级菜单)
@@ -322,24 +303,6 @@ export default {
 			// 		item.checkAll = false;
 			// 	}
 			// }
-		},
-
-		// 没有三级菜单
-		handleCheckChange(item, second) {
-			// let checkedCount = item.children.filter(el => {
-			// 	return el.checkAll;
-			// });
-			// if (typeof item.isIndeterminate === 'undefined') {
-			// 	this.$set(item, 'isIndeterminate', false);
-			// }
-			if (typeof item.checkAll === 'undefined') {
-				this.$set(item, 'checkAll', false);
-			}
-			if (typeof second.checkAll === 'undefined') {
-				this.$set(second, 'checkAll', true);
-			}
-			// item.isIndeterminate = checkedCount.length > 0 && checkedCount.length < item.children.length;
-			// item.checkAll = checkedCount.length === item.children.length;
 		},
 
 		// // 点击所有
