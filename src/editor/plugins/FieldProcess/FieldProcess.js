@@ -10,6 +10,7 @@ import log from '../../../log';
 import i18n from '../../../i18n/i18n';
 import { handleOperation, isValidate, getUrlSearch } from './util';
 import _ from 'lodash';
+import { mergeJoinTablesToTargetSchema } from '../../util/Schema';
 
 export const fieldProcessConfig = {
 	type: 'app.FieldProcess',
@@ -135,16 +136,19 @@ export const fieldProcessConfig = {
 			 *
 			 */
 			validate: function(data) {
-				let originalData = data;
+				let origin;
+				if (!data) {
+					origin = mergeJoinTablesToTargetSchema(null, this.getInputSchema()) || [];
+				}
 				data = data || this.getFormData();
+				if (!origin) {
+					origin = data.originalSchema;
+				}
 				let name = this.attr('label/text');
 				if (!data)
 					throw new Error(`${name}:${i18n.t('editor.cell.processor.field.form.errorOperationSaveTip')}`);
 				let isMoniting = getUrlSearch('isMoniting') || false;
-				if (!originalData || !originalData.originalSchema) {
-					data.originalSchema = [];
-				}
-				let validate = isValidate(data.operations, data.originalSchema).isValidate;
+				let validate = isValidate(data.operations, origin).isValidate;
 				if (!validate && !isMoniting)
 					throw new Error(`${name}:${i18n.t('editor.cell.processor.field.form.errorOperationSaveTip')}`);
 				return true;

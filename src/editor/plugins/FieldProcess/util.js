@@ -58,8 +58,8 @@ export const handleOperation = function(fields, operations) {
 				continue;
 			} else if (
 				temporary[i].op === 'CREATE' &&
-				(!fieldOriginalNames.includes(temporary[i].field) ||
-					!fieldOriginalIds.includes(temporary[i].triggerFieldId && indexOf > -1))
+				(fieldOriginalNames.includes(temporary[i].field) ||
+					(!fieldOriginalIds.includes(temporary[i].triggerFieldId) && indexOf > -1))
 			) {
 				temporary.splice(i, 1);
 				i--;
@@ -116,8 +116,8 @@ export const isValidate = function(operations, schema) {
 			}
 			if (
 				operation[i].op === 'CREATE' &&
-				(!fieldOriginalNames.includes(operation[i].field) ||
-					!fieldOriginalIds.includes(operation[i].triggerFieldId && indexOf > -1))
+				(fieldOriginalNames.includes(operation[i].field) ||
+					(!fieldOriginalIds.includes(operation[i].triggerFieldId) && indexOf > -1))
 			) {
 				errorList.push(node);
 				isValidate = false;
