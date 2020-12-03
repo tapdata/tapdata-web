@@ -922,7 +922,7 @@ const en = {
 					school_nameComment: '// Grouping summary field names, no display if dont filling out',
 					aggregateSizeLabel: 'Number of cached aggregation result',
 					aggregateSizeTips:
-						'Put in the range of cached aggregation result, the excess data will be stored in target database',
+						'Put in the range of cached aggregation result, the excess data will be stored in target database.',
 					allAggregateSize: 'All data write in cache',
 					customAggregateSize: 'Custom the cache range'
 				},

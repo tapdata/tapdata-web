@@ -911,7 +911,7 @@ const cn = {
 					countComment: '// COUNT为选择的函数, 132为函数值；如果函数是MAX, 则名称为MAX',
 					school_nameComment: '// 分组汇总的字段名，如果不填写则不显示',
 					aggregateSizeLabel: '聚合结果缓存条数',
-					aggregateSizeTips: '聚合结果在设置的条数范围内存在缓存里，超出的数据会被存入目标库',
+					aggregateSizeTips: '聚合结果在设置的条数范围内存在缓存里，超出的数据会被存入目标库。',
 					allAggregateSize: '全部存入缓存',
 					customAggregateSize: '自定义缓存条数'
 				},
