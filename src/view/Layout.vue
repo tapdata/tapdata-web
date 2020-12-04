@@ -183,7 +183,7 @@ import CustomerService from '@/components/CustomerService';
 import newDataFlow from '@/components/newDataFlow';
 import NotificationPopover from './notification/NotificationPopover';
 import DownAgent from './downAgent/agentDown';
-import { setPermission, signOut } from '../util/util';
+import { signOut } from '../util/util';
 import factory from '@/api/factory';
 const cluster = factory('cluster');
 
@@ -304,7 +304,7 @@ export default {
 		window.getFormLocal = data => {
 			return self.$store.state[data];
 		};
-		this.handleGetPermissions();
+		// this.handleGetPermissions();
 
 		// 是否允许下载agent
 		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
@@ -348,15 +348,15 @@ export default {
 			}
 		},
 		// 刷新获取权限
-		async handleGetPermissions() {
-			// 获取当前用户权限
-			let userId = this.$cookie.get('user_id');
-			let token = this.$cookie.get('token');
-			let result = await this.$api('users').getPermissions(`/${userId}/permissions?access_token=${token}`);
-			if (result && result.data && result.data.permissions && result.data.permissions.length) {
-				setPermission(result.data.permissions);
-			}
-		},
+		// async handleGetPermissions() {
+		// 	// 获取当前用户权限
+		// 	let userId = this.$cookie.get('user_id');
+		// 	let token = this.$cookie.get('token');
+		// 	let result = await this.$api('users').getPermissions(`/${userId}/permissions?access_token=${token}`);
+		// 	if (result && result.data && result.data.permissions && result.data.permissions.length) {
+		// 		setPermission(result.data.permissions);
+		// 	}
+		// },
 		delFavMenu(idx) {
 			this.$confirm(
 				this.$t('message.comfirm') + this.$t('app.menu.delFavMenu'),

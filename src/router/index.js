@@ -324,7 +324,6 @@ const childRoutes = [
 	{
 		path: '/dataFlows',
 		name: 'dataFlows',
-		code: 'data_transmission',
 		component: view('task/DataFlows'),
 		meta: {
 			code: 'Data_SYNC',
@@ -348,7 +347,7 @@ const childRoutes = [
 		component: view('Upload'),
 		meta: {
 			title: i18n.t('tap.upload'),
-			code: 'SYNC_job_import ',
+			code: 'SYNC_job_import',
 			isCollapse: false
 		}
 	},
