@@ -344,6 +344,7 @@
 		></AggregationDialog>
 
 		<el-dialog
+			append-to-body
 			:visible.sync="repeatTableDiao"
 			custom-class="repeatDialog"
 			:close-on-click-modal="false"
@@ -356,7 +357,7 @@
 					>){{ $t('dialog.sameTable') }}
 				</div>
 
-				<div v-for="item in repeatTable" :key="item">{{ item }}</div>
+				<div v-for="(item, index) in repeatTable" :key="index">{{ item }}</div>
 				<p>{{ $t('dialog.repeatTip') }}</p>
 			</div>
 		</el-dialog>
