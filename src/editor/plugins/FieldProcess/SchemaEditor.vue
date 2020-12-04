@@ -558,9 +558,6 @@ export default {
 						this.model.scripts[targetId]['keep'] = true; //将operations 标记为true
 						this.model.scripts[targetId].id = id; //将id与最新模型id 保持一致
 					}
-				} else {
-					this.model.operations.splice(targetId, 1);
-					this.model.scripts.splice(targetId, 1);
 				}
 			}
 			this.$emit('dataChanged', this.model);
