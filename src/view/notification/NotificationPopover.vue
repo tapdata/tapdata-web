@@ -85,13 +85,7 @@
 					</li>
 				</ul>
 			</el-tab-pane>
-			<el-tab-pane
-				class="tab-item"
-				:label="$t('notification.userNotice')"
-				name="user"
-				v-loading="loading"
-				v-readonlybtn="'home_operation_history'"
-			>
+			<el-tab-pane class="tab-item" :label="$t('notification.userNotice')" name="user" v-loading="loading">
 				<div class="item-head">
 					<span></span>
 					<router-link to="/notification?type=user">
