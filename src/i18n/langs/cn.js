@@ -1840,7 +1840,9 @@ const cn = {
 			role_delete: '删除角色',
 			system_settings: '系统设置',
 			system_settings_modification: '修改设置',
-			create_new_table_in_SYNC: '任务中创建表'
+			create_new_table_in_SYNC: '任务中创建表',
+			servers_oversee: '运维',
+			dictionary: '字典模板'
 		}
 	}
 };

@@ -21,7 +21,13 @@
 						$t('app.menu.licenseBefore') + licenseExpire + $t('app.menu.licenseAfter')
 					}}</span>
 				</span>
-				<el-button class="btn-create" type="primary" size="mini" @click="command('newDataFlow')">
+				<el-button
+					class="btn-create"
+					type="primary"
+					size="mini"
+					v-readonlybtn="'SYNC_job_creation'"
+					@click="command('newDataFlow')"
+				>
 					<i class="el-icon-plus"></i>
 					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
@@ -43,8 +49,7 @@
 					</el-dropdown-menu>
 				</el-dropdown>
 				<el-dropdown
-					v-if="$window.getSettingByKey('SHOW_SETTING_BUTTON')"
-					v-readonlybtn="'home_notice'"
+					v-if="$window.getSettingByKey('SHOW_SETTING_BUTTON') && settingVisibility"
 					class="btn"
 					placement="bottom"
 					@command="command"
@@ -178,7 +183,7 @@ import CustomerService from '@/components/CustomerService';
 import newDataFlow from '@/components/newDataFlow';
 import NotificationPopover from './notification/NotificationPopover';
 import DownAgent from './downAgent/agentDown';
-import { signOut } from '../util/util';
+import { setPermission, signOut } from '../util/util';
 import factory from '@/api/factory';
 const cluster = factory('cluster');
 
@@ -188,60 +193,71 @@ const Languages = {
 	tc: '中文 (繁)'
 };
 let menuSetting = [
-	{ name: 'dashboard', icon: 'shouye' },
-	{ name: 'connections', icon: 'shujukus1' },
+	{ name: 'dashboard', icon: 'shouye', code: 'home' },
+	{ name: 'connections', icon: 'shujukus1', code: 'datasource' },
 	{
 		name: 'dataTransmission',
 		icon: 'chengbenguanlixitong',
+		code: 'data_transmission',
 		children: [
 			{
 				name: 'dataFlows',
 				icon: 'shujukuqianyi1',
+				code: 'database_migration',
 				alias: 'dataFlowsClusterClone',
 				query: '?mapping=cluster-clone'
 			},
-			{ name: 'dataFlows', icon: 'shujutongbu', alias: 'dataFlowsCustom', query: '?mapping=custom' },
-			{ name: 'dataVerification', icon: 'hechabidui-copy' }
+			{
+				name: 'dataFlows',
+				icon: 'shujutongbu',
+				code: 'Data_SYNC',
+				alias: 'dataFlowsCustom',
+				query: '?mapping=custom'
+			},
+			{ name: 'dataVerification', icon: 'hechabidui-copy', code: 'Data_verify' }
 		]
 	},
 	{
 		name: 'dataGovernance',
 		icon: 'yuanshuju1',
+		code: 'data_government',
 		children: [
-			{ name: 'metadataDefinition' },
-			{ name: 'dataQuality' },
-			{ name: 'timeToLive' },
-			{ name: 'dataMap' },
-			{ name: 'dataRules' },
-			{ name: 'dictionary' }
+			{ name: 'metadataDefinition', code: 'data_catalog ' },
+			{ name: 'dataQuality', code: 'data_quality' },
+			{ name: 'timeToLive', code: 'time_to_live' },
+			{ name: 'dataMap', code: 'data_government' },
+			{ name: 'dataRules', code: 'data_rules' },
+			{ name: 'dictionary', code: 'dictionary' }
 		]
 	},
 	{
 		name: 'dataPublish',
 		icon: 'API11',
+		code: 'data_publish',
 		children: [
-			{ name: 'modules' },
-			{ name: 'dataExplorer' },
-			{ name: 'apiDocAndTest' },
-			{ name: 'apiAnalysis' },
-			{ name: 'applications' },
-			{ name: 'apiServers' }
+			{ name: 'modules', code: 'API_management' },
+			{ name: 'dataExplorer', code: 'API_data_explorer' },
+			{ name: 'apiDocAndTest', code: 'API_doc_test' },
+			{ name: 'apiAnalysis', code: 'API_stats' },
+			{ name: 'applications', code: 'API_clients' },
+			{ name: 'apiServers', code: 'API_server' }
 		]
 	},
-	{ name: 'dataCollect', icon: 'shujucaiji' },
+	{ name: 'dataCollect', icon: 'shujucaiji', code: 'data_collect' },
 	{
 		name: 'system',
 		icon: 'jiekoufuwu',
+		code: 'system_management',
 		children: [
-			{ name: 'tasks' },
+			{ name: 'tasks', code: 'schedule_jobs' },
 			// { name: 'agentdownload' },
-			{ name: 'clusterManagement' },
-			{ name: 'agents' },
-			{ name: 'serversOversee' },
-			{ name: 'users' },
-			{ name: 'journal' },
-			{ name: 'roles' },
-			{ name: 'settings' }
+			{ name: 'clusterManagement', code: 'Cluster_management' },
+			{ name: 'agents', code: 'agents' },
+			{ name: 'serversOversee', code: 'serversOversee' },
+			{ name: 'users', code: 'user_management' },
+			{ name: 'journal', code: 'role_management' },
+			{ name: 'roles', code: 'role_management' },
+			{ name: 'settings', code: 'system_settings' }
 		]
 	}
 ];
@@ -253,6 +269,7 @@ export default {
 			languages: Languages,
 			lang: localStorage.getItem('tapdata_localize_lang') || 'en',
 			isCollapse: false,
+			settingVisibility: this.$has('home_notice_settings') || this.$has('system_settings'),
 			menus: [],
 			activeMenu: '',
 			favMenus: [],
@@ -287,6 +304,7 @@ export default {
 		window.getFormLocal = data => {
 			return self.$store.state[data];
 		};
+		this.handleGetPermissions();
 
 		// 是否允许下载agent
 		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
@@ -329,6 +347,16 @@ export default {
 				this.userName = user.email.split('@')[0] || '';
 			}
 		},
+		// 刷新获取权限
+		async handleGetPermissions() {
+			// 获取当前用户权限
+			let userId = this.$cookie.get('user_id');
+			let token = this.$cookie.get('token');
+			let result = await this.$api('users').getPermissions(`/${userId}/permissions?access_token=${token}`);
+			if (result && result.data && result.data.permissions && result.data.permissions.length) {
+				setPermission(result.data.permissions);
+			}
+		},
 		delFavMenu(idx) {
 			this.$confirm(
 				this.$t('message.comfirm') + this.$t('app.menu.delFavMenu'),
@@ -357,8 +385,7 @@ export default {
 					let router = routerMap[item.name];
 					let menu = Object.assign({}, item, router);
 					menu.label = this.$t('app.menu.' + (item.alias || menu.name));
-
-					let matched = permissions.some(p => p.name === menu.name || p.path === menu.path);
+					let matched = permissions.some(p => p.code === menu.code);
 
 					if (menu.children) {
 						menu.children = formatMenu(menu.children);

@@ -27,7 +27,7 @@
 				</el-select>
 				<span @click="handlePageRead()">{{ $t('notification.maskRead') }}</span>
 				<span @click="handleAllRead()">{{ $t('notification.maskReadAll') }}</span>
-				<span>
+				<span v-readonlybtn="'home_notice_settings'">
 					<router-link to="/settingCenter/notificationSetting"
 						><span style="color: #48B6E2">{{ $t('notification.setting') }}</span></router-link
 					>

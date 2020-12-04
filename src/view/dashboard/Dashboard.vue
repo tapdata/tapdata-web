@@ -104,7 +104,7 @@
 		</el-row>
 
 		<el-row :gutter="20" class="e-row">
-			<el-col :span="12" class="e-col">
+			<el-col :span="12" class="e-col" v-readonlybtn="'data_transmission'">
 				<div class="charts-list">
 					<echart-head :data="screeningObj" @getUnit="getUnit"></echart-head>
 					<div class="unit">{{ $t('dataFlow.unit') }}:{{ $t('dataFlow.rowCount') }}</div>
@@ -118,7 +118,7 @@
 					></shaftless-echart>
 				</div>
 			</el-col>
-			<el-col :span="12" class="e-col">
+			<el-col :span="12" class="e-col" v-readonlybtn="'Data_verify'">
 				<div class="charts-list">
 					<echart-head :data="dataValidationObj" @getUnit="getUnit"></echart-head>
 					<ul class="status-box">
@@ -193,7 +193,7 @@
 			</el-col> -->
 		</el-row>
 
-		<el-row :gutter="20" class="e-row">
+		<el-row :gutter="20" class="e-row" v-readonlybtn="'Cluster_management'">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="serverProcessObj" @getAllData="getAllData"></echart-head>

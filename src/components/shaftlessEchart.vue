@@ -44,7 +44,9 @@ export default {
 				});
 			} else {
 				window.addEventListener('resize', () => {
-					this.myChart.resize();
+					if (that.myChart) {
+						that.myChart.resize();
+					}
 				});
 			}
 		});
@@ -54,15 +56,18 @@ export default {
 		loadEchart(id, data) {
 			let _this = this;
 			setTimeout(function() {
-				_this.myChart = Echarts.init(document.getElementById(id));
-				_this.myChart.clear(); // 清空再重绘
-				// _this.myChart.setOption(data)
-				// let myChart = Echarts.init(this.refs.echarts);
-				let publicCharts = _this.echartOption(data);
-				_this.myChart.setOption(publicCharts);
-				// window.addEventListener("resize", () => {
-				// 	_this.myChart.resize();
-				// });
+				let dom = document.getElementById(id);
+				if (dom) {
+					_this.myChart = Echarts.init(dom);
+					_this.myChart.clear(); // 清空再重绘
+					// _this.myChart.setOption(data)
+					// let myChart = Echarts.init(this.refs.echarts);
+					let publicCharts = _this.echartOption(data);
+					_this.myChart.setOption(publicCharts);
+					// window.addEventListener("resize", () => {
+					// 	_this.myChart.resize();
+					// });
+				}
 			}, 0);
 		},
 		echartOption(configures) {

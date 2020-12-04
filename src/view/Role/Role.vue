@@ -427,6 +427,7 @@ export default {
 								});
 						});
 						roleMappingModel.post(newRoleMappings);
+
 						this.$message.success(this.$t('message.saveOK'));
 					}
 				})

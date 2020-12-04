@@ -1838,7 +1838,9 @@ const tc = {
 			role_delete: '刪除角色',
 			system_settings: '系統設置',
 			system_settings_modification: '修改設置',
-			create_new_table_in_SYNC: '任務中創建表'
+			create_new_table_in_SYNC: '任務中創建表',
+			servers_oversee: '運維',
+			dictionary: '字典模板'
 		}
 	}
 };

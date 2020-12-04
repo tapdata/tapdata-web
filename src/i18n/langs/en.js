@@ -1871,7 +1871,9 @@ const en = {
 			role_delete: 'role deleting',
 			system_settings: 'system settings',
 			system_settings_modification: 'system settings modification',
-			create_new_table_in_SYNC: 'create new table/collection in SYNC job'
+			create_new_table_in_SYNC: 'create new table/collection in SYNC job',
+			servers_oversee: 'servers oversee',
+			dictionary: 'dictionary'
 		}
 	}
 };
