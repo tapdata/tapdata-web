@@ -14,14 +14,14 @@ const childRoutes = [
 		path: '/dashboard',
 		name: 'dashboard',
 		component: view('dashboard/Dashboard'),
-		meta: { requiresAuth: true, title: i18n.t('tap.home'), isCollapse: false }
+		meta: { code: 'home', title: i18n.t('tap.home'), isCollapse: false }
 	},
 	{
 		path: '/connections',
 		name: 'connections',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'datasource',
 			url: '/old/index.html#/connections',
 			title: i18n.t('tap.connection'),
 			isCollapse: false
@@ -32,7 +32,7 @@ const childRoutes = [
 		name: 'connection',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'datasource_creation',
 			url: '/old/index.html#/connection',
 			title: i18n.t('tap.connectionEdtion'),
 			isCollapse: false
@@ -42,14 +42,19 @@ const childRoutes = [
 		path: '/connection/:id',
 		name: 'editConnection',
 		component: view('ExternalLink'),
-		meta: { url: '/old/index.html#/connection', title: i18n.t('tap.connectionEdtion'), isCollapse: true }
+		meta: {
+			code: 'datasource_creation',
+			url: '/old/index.html#/connection',
+			title: i18n.t('tap.connectionEdtion'),
+			isCollapse: true
+		}
 	},
 	{
 		path: '/metadataDefinition',
 		name: 'metadataDefinition',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'data_catalog',
 			url: '/old/index.html#/metadataDefinition',
 			title: i18n.t('tap.dataCatalog'),
 			isCollapse: false
@@ -59,14 +64,18 @@ const childRoutes = [
 		path: '/metadataInstances/:id',
 		name: 'metadataInstances',
 		component: view('ExternalLink'),
-		meta: { title: i18n.t('tap.metadataInstances'), isCollapse: true }
+		meta: {
+			code: 'data_catalog_edition',
+			title: i18n.t('tap.metadataInstances'),
+			isCollapse: true
+		}
 	},
 	{
 		path: '/dataQuality',
 		name: 'dataQuality',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'data_quality ',
 			url: '/old/index.html#/dataQuality',
 			title: i18n.t('tap.dataQuality'),
 			isCollapse: false
@@ -76,20 +85,25 @@ const childRoutes = [
 		path: '/dataQuality/:id',
 		name: 'dataQualityDetail',
 		component: view('ExternalLink'),
-		meta: { title: i18n.t('tap.dataQuality'), isCollapse: true }
+		meta: { code: 'data_quality_edition', title: i18n.t('tap.dataQuality'), isCollapse: true }
 	},
 	{
 		path: '/ttl',
 		name: 'timeToLive',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/ttl', title: i18n.t('tap.TimeToLive'), isCollapse: false }
+		meta: {
+			code: 'time_to_live',
+			url: '/old/index.html#/ttl',
+			title: i18n.t('tap.TimeToLive'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/dataRules',
 		name: 'dataRules',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'data_rules',
 			url: '/old/index.html#/dataRules',
 			title: i18n.t('tap.dataRules'),
 			isCollapse: false
@@ -100,7 +114,7 @@ const childRoutes = [
 		name: 'dictionary',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'dictionary',
 			url: '/old/index.html#/dictionary',
 			title: i18n.t('tap.dictionary'),
 			isCollapse: false
@@ -111,7 +125,7 @@ const childRoutes = [
 		name: 'modules',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'API_management',
 			url: '/old/index.html#/modules',
 			title: i18n.t('tap.apiManagement'),
 			isCollapse: false
@@ -120,14 +134,17 @@ const childRoutes = [
 	{
 		path: '/module/:id',
 		name: 'editModule',
-		component: view('ExternalLink')
+		component: view('ExternalLink'),
+		meta: {
+			code: 'API_edition'
+		}
 	},
 	{
 		path: '/dataExplorer',
 		name: 'dataExplorer',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'API_data_explorer',
 			url: '/old/index.html#/dataExplorer',
 			title: i18n.t('tap.dataExplor'),
 			isCollapse: false
@@ -138,7 +155,7 @@ const childRoutes = [
 		name: 'apiDocAndTest',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'API_doc_test',
 			url: '/old/index.html#/apiDocAndTest',
 			title: i18n.t('tap.docTest'),
 			isCollapse: false
@@ -149,7 +166,7 @@ const childRoutes = [
 		name: 'apiAnalysis',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'API_stats',
 			url: '/old/index.html#/apiAnalysis',
 			title: i18n.t('tap.apiStats'),
 			isCollapse: false
@@ -160,7 +177,7 @@ const childRoutes = [
 		name: 'applications',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'API_clients',
 			url: '/old/index.html#/applications',
 			title: i18n.t('tap.apiClients'),
 			isCollapse: false
@@ -171,7 +188,7 @@ const childRoutes = [
 		name: 'apiServers',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'API_server',
 			url: '/old/index.html#/apiServers',
 			title: i18n.t('tap.apiSever'),
 			isCollapse: false
@@ -182,7 +199,6 @@ const childRoutes = [
 		name: 'dataCollect',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
 			url: '/old/index.html#/dataCollect',
 			title: i18n.t('tap.dataCollect'),
 			isCollapse: false
@@ -192,7 +208,12 @@ const childRoutes = [
 		path: '/tasks',
 		name: 'tasks',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/tasks', title: i18n.t('tap.jobSchedule'), isCollapse: false }
+		meta: {
+			code: 'schedule_jobs',
+			url: '/old/index.html#/tasks',
+			title: i18n.t('tap.jobSchedule'),
+			isCollapse: false
+		}
 	},
 	// {
 	// 	path: '/agentdownload',
@@ -210,7 +231,7 @@ const childRoutes = [
 		name: 'agents',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'agents',
 			url: '/old/index.html#/agents',
 			title: i18n.t('tap.agentManagement'),
 			isCollapse: false
@@ -221,7 +242,7 @@ const childRoutes = [
 		name: 'serversOversee',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'servers_oversee',
 			url: '/old/index.html#/serversOversee',
 			title: i18n.t('tap.serversOversee'),
 			isCollapse: false
@@ -232,7 +253,7 @@ const childRoutes = [
 		name: 'users',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'user_management',
 			url: '/old/index.html#/users',
 			title: i18n.t('tap.userManagement'),
 			isCollapse: false
@@ -242,14 +263,19 @@ const childRoutes = [
 		path: '/journal',
 		name: 'journal',
 		component: view('ExternalLink'),
-		meta: { requiresAuth: true, url: '/old/index.html#/journal', title: i18n.t('tap.journal'), isCollapse: false }
+		meta: {
+			code: 'user_management',
+			url: '/old/index.html#/journal',
+			title: i18n.t('tap.journal'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/roles',
 		name: 'roles',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'role_management',
 			url: '/old/index.html#/roles',
 			title: i18n.t('tap.roleManagement'),
 			isCollapse: false
@@ -258,13 +284,19 @@ const childRoutes = [
 	{
 		path: '/role',
 		name: 'role',
-		component: view('Role/Role')
+		component: view('Role/Role'),
+		meta: {
+			code: 'role_creation'
+		}
 		// component: view('ExternalLink')
 	},
 	{
 		path: '/role/:id',
 		name: 'editRole',
-		component: view('Role/Role')
+		component: view('Role/Role'),
+		meta: {
+			code: 'role_edition'
+		}
 		// component: view('ExternalLink')
 	},
 	{
@@ -272,7 +304,7 @@ const childRoutes = [
 		name: 'settings',
 		component: view('ExternalLink'),
 		meta: {
-			requiresAuth: true,
+			code: 'system_settings',
 			url: '/old/index.html#/settings',
 			title: i18n.t('tap.systemSettings'),
 			isCollapse: false
@@ -283,25 +315,41 @@ const childRoutes = [
 		path: '/clusterManagement',
 		name: 'clusterManagement',
 		component: view('clusterManagement/layout'),
-		meta: { requiresAuth: true, title: i18n.t('tap.clusterManagement'), isCollapse: false }
+		meta: {
+			code: 'Cluster_management',
+			title: i18n.t('tap.clusterManagement'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/dataFlows',
 		name: 'dataFlows',
 		component: view('task/DataFlows'),
-		meta: { requiresAuth: true, title: i18n.t('tap.jobFlow'), isCollapse: false }
+		meta: {
+			code: 'Data_SYNC',
+			title: i18n.t('tap.jobFlow'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/dataMap',
 		name: 'dataMap',
 		component: view('dataMap/DataMap'),
-		meta: { requiresAuth: true, title: i18n.t('tap.dataLineage'), isCollapse: false }
+		meta: {
+			code: 'data_lineage',
+			title: i18n.t('tap.dataLineage'),
+			isCollapse: false
+		}
 	},
 	{
 		path: '/upload',
 		name: 'upload',
 		component: view('Upload'),
-		meta: { title: i18n.t('tap.upload'), isCollapse: false }
+		meta: {
+			title: i18n.t('tap.upload'),
+			code: 'SYNC_job_import',
+			isCollapse: false
+		}
 	},
 	{
 		path: '/apiInfo',
@@ -313,7 +361,11 @@ const childRoutes = [
 		path: '/jsFuncs',
 		name: 'jsFuncs',
 		component: view('ExternalLink'),
-		meta: { url: '/old/index.html#/jsFuncs', isCollapse: false }
+		meta: {
+			url: '/old/index.html#/jsFuncs',
+			isCollapse: false,
+			code: 'data_collect'
+		}
 	},
 	{
 		path: '/tableFlows',
@@ -326,36 +378,59 @@ const childRoutes = [
 		path: '/dataVerification/:id/edit',
 		name: 'dataVerificationEdit',
 		component: view('dataVerification/Form'),
-		meta: { title: i18n.t('app.menu.dataVerification'), isCollapse: true }
+		meta: {
+			title: i18n.t('app.menu.dataVerification'),
+			isCollapse: true,
+			code: 'verify_job_edition'
+		}
 	},
 	{
 		path: '/dataVerification/create',
 		name: 'dataVerificationCreate',
 		component: view('dataVerification/Form'),
-		meta: { title: i18n.t('app.menu.dataVerification'), isCollapse: true }
+		meta: {
+			title: i18n.t('app.menu.dataVerification'),
+			isCollapse: true,
+			code: 'verify_job_creation'
+		}
 	},
 	{
 		path: '/dataVerification',
 		name: 'dataVerification',
 		component: view('dataVerification/List'),
-		meta: { title: i18n.t('app.menu.dataVerification'), isCollapse: true }
+		meta: {
+			title: i18n.t('app.menu.dataVerification'),
+			isCollapse: true,
+			code: 'Data_verify'
+		}
 	},
 	{
 		path: '/dataVerifyHistory',
 		name: 'dataVerifyHistory',
 		component: view('dataVerification/History'),
-		meta: { title: i18n.t('dataVerification.verifyHistory'), isCollapse: true }
+		meta: {
+			title: i18n.t('dataVerification.verifyHistory'),
+			isCollapse: true,
+			code: 'Data_verify'
+		}
 	},
 	{
 		path: '/dataVerifyResult',
 		name: 'dataVerifyResult',
 		component: view('dataVerification/Result'),
-		meta: { title: i18n.t('dataVerification.verifyResult'), isCollapse: true }
+		meta: {
+			title: i18n.t('dataVerification.verifyResult'),
+			isCollapse: true,
+			code: 'Data_verify'
+		}
 	},
 	{
 		path: '/dataVerification/setting',
 		name: 'dataVerifySetting',
-		component: view('dataVerification/setting')
+		component: view('dataVerification/setting'),
+		meta: {
+			code: 'Data_verify'
+		}
 	},
 	{
 		path: '/agentDown',
@@ -366,14 +441,21 @@ const childRoutes = [
 		path: '/notification',
 		name: 'notification',
 		component: view('notification/Center'),
-		meta: { title: i18n.t('notification.systemNotice'), isCollapse: true }
+		meta: {
+			title: i18n.t('notification.systemNotice'),
+			isCollapse: true,
+			code: 'system_notice'
+		}
 	},
 	{
 		path: '/settingCenter',
 		name: 'settingCenter',
 		redirect: 'settingCenter/accountSetting',
 		component: view('setting/SettingCenter'),
-		meta: { title: i18n.t('tap.settingCenter'), isCollapse: true },
+		meta: {
+			title: i18n.t('tap.settingCenter'),
+			isCollapse: true
+		},
 		children: [
 			{
 				path: 'accountSetting',
@@ -437,7 +519,7 @@ const router = new Router({
 			path: '/job',
 			name: 'job',
 			component: view('job/Job'),
-			meta: { requiresAuth: true, title: i18n.t('tap.jobFlow') }
+			meta: { code: 'Data_SYNC', title: i18n.t('tap.jobFlow') }
 		},
 		{
 			path: '/',
@@ -453,6 +535,7 @@ let usersModel = factor('users');
 router.afterEach(() => {
 	Loading.service({ fullscreen: true }).close();
 });
+let permissions = null;
 router.beforeEach(async (to, from, next) => {
 	if (to.meta.title && window.getSettingByKey('SHOW_PAGE_TITLE')) {
 		document.title = to.meta.title;
@@ -461,7 +544,7 @@ router.beforeEach(async (to, from, next) => {
 	let token = cookie.get('token');
 	if (token) {
 		//若token存在，获取权限
-		let permissions = sessionStorage.getItem('tapdata_permissions');
+		// let permissions = sessionStorage.getItem('tapdata_permissions');
 		if (!permissions) {
 			//无权限，说明是首次进入页面，重新请求后台获取
 			let loading = Loading.service({
@@ -482,26 +565,28 @@ router.beforeEach(async (to, from, next) => {
 				} else {
 					//权限列表为空，说明没有权限进入，执行sign out操作并跳转到登录页面
 					Message.error({
-						message: 'Permission denied'
+						message: i18n.t('app.signIn.permission_denied')
 					});
 					signOut();
 					return;
 				}
 			} else {
 				Message.error({
-					message: 'Permission denied'
+					message: i18n.t('app.signIn.permission_denied')
 				});
 				return;
 			}
 		} else {
 			//若缓存中有权限值，则格式化成json后继续向下走
-			permissions = JSON.parse(permissions);
+			if (typeof permissions === 'string') {
+				permissions = JSON.parse(permissions);
+			}
 		}
 
 		//判断当前路由的页面是否有权限，无权限则不跳转，有权限则执行跳转
 		let matched = true;
-		if (to.meta.requiresAuth) {
-			matched = permissions.some(p => p.name === to.name || p.path === to.path);
+		if (to.meta.code) {
+			matched = permissions.some(p => p.code === to.meta.code);
 		}
 		if (matched) {
 			if (to.name === 'login') {
@@ -511,7 +596,7 @@ router.beforeEach(async (to, from, next) => {
 			}
 		} else {
 			Message.error({
-				message: 'Permission denied'
+				message: i18n.t('app.signIn.permission_denied')
 			});
 		}
 	} else {

@@ -154,7 +154,7 @@
 											child.status
 										}}</span>
 									</el-col>
-									<el-col :span="7" :offset="5" v-readonlybtn="'BTN_AUTHS'">
+									<el-col :span="7" :offset="5" v-readonlybtn="'Cluster_operation'">
 										<div class="btn fr">
 											<el-button type="text" @click="delServe(child, item.status)">{{
 												$t('message.delete')

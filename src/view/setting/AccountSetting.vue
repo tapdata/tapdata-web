@@ -12,7 +12,6 @@
 							item.icon,
 							rotateFlag && item.key == 'accesscode' ? 'rotateActive' : 'backActive'
 						]"
-						v-readonlybtn="'BTN_AUTHS'"
 						v-if="item.key !== 'email'"
 						@click="handleChange(item.key)"
 					></i>

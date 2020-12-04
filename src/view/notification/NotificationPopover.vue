@@ -16,10 +16,10 @@
 				class="tab-item"
 				:label="$t('notification.systemNotice')"
 				name="system"
-				v-readonlybtn="'home_notice_settings'"
+				v-readonlybtn="'home_notice'"
 			>
 				<div class="item-head">
-					<span>
+					<span v-readonlybtn="'home_notice_settings'">
 						<router-link to="/settingCenter/notificationSetting">
 							<span>
 								{{ $t('notification.setting') }}
