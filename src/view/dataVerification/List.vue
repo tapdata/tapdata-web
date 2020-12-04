@@ -302,7 +302,7 @@
 									class="btn-icon el-icon-delete"
 									type="text"
 									size="mini"
-									v-readonlybtn="'verify_job_delete '"
+									v-readonlybtn="'verify_job_delete'"
 									@click="remove(scope.row.name, scope.row.id)"
 								></el-button>
 							</el-tooltip>
