@@ -757,6 +757,7 @@ export default {
 		},
 		handleAllReset() {
 			let ids = this.$refs.tree.getCheckedNodes();
+			this.checkAll = false;
 			if (ids && ids.length > 0) {
 				ids.map(id => {
 					let node = this.$refs.tree.getNode(id);
@@ -778,6 +779,7 @@ export default {
 		},
 		handleAllDelete() {
 			let ids = this.$refs.tree.getCheckedNodes();
+			this.checkAll = false;
 			if (ids && ids.length > 0) {
 				ids.map(id => {
 					let node = this.$refs.tree.getNode(id);
@@ -790,6 +792,7 @@ export default {
 		},
 		handleAllToUpperCase() {
 			let ids = this.$refs.tree.getCheckedNodes();
+			this.checkAll = false;
 			if (ids && ids.length > 0) {
 				ids.map(id => {
 					let node = this.$refs.tree.getNode(id);
@@ -800,6 +803,7 @@ export default {
 		},
 		handleAllToLowerCase() {
 			let ids = this.$refs.tree.getCheckedNodes();
+			this.checkAll = false;
 			if (ids && ids.length > 0) {
 				ids.map(id => {
 					let node = this.$refs.tree.getNode(id);
