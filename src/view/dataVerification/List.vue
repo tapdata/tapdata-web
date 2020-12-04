@@ -360,14 +360,13 @@ export default {
 		};
 	},
 	created() {
+		if (this.$route && this.$route.query) {
+			this.searchParams.keyword = this.$route.query.name;
+		}
 		this.search(1);
 		this.timer = setInterval(() => {
 			this.search(this.page.current, 1);
 		}, 10000);
-
-		if (this.$route && this.$route.query) {
-			this.searchParams.keyword = this.$route.query.name;
-		}
 	},
 
 	methods: {
