@@ -203,7 +203,7 @@ let menuSetting = [
 			{
 				name: 'dataFlows',
 				icon: 'shujukuqianyi1',
-				code: 'database_migration',
+				code: 'Data_SYNC',
 				alias: 'dataFlowsClusterClone',
 				query: '?mapping=cluster-clone'
 			},
@@ -222,7 +222,7 @@ let menuSetting = [
 		icon: 'yuanshuju1',
 		code: 'data_government',
 		children: [
-			{ name: 'metadataDefinition', code: 'data_catalog ' },
+			{ name: 'metadataDefinition', code: 'data_catalog' },
 			{ name: 'dataQuality', code: 'data_quality' },
 			{ name: 'timeToLive', code: 'time_to_live' },
 			{ name: 'dataMap', code: 'data_government' },
@@ -255,7 +255,7 @@ let menuSetting = [
 			{ name: 'agents', code: 'agents' },
 			{ name: 'serversOversee', code: 'serversOversee' },
 			{ name: 'users', code: 'user_management' },
-			{ name: 'journal', code: 'role_management' },
+			{ name: 'journal', code: 'user_management' },
 			{ name: 'roles', code: 'role_management' },
 			{ name: 'settings', code: 'system_settings' }
 		]

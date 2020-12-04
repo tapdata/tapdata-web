@@ -264,7 +264,7 @@ const childRoutes = [
 		name: 'journal',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'journal',
+			code: 'user_management',
 			url: '/old/index.html#/journal',
 			title: i18n.t('tap.journal'),
 			isCollapse: false
@@ -535,6 +535,7 @@ let usersModel = factor('users');
 router.afterEach(() => {
 	Loading.service({ fullscreen: true }).close();
 });
+let permissions = null;
 router.beforeEach(async (to, from, next) => {
 	if (to.meta.title && window.getSettingByKey('SHOW_PAGE_TITLE')) {
 		document.title = to.meta.title;
@@ -543,7 +544,7 @@ router.beforeEach(async (to, from, next) => {
 	let token = cookie.get('token');
 	if (token) {
 		//若token存在，获取权限
-		let permissions = sessionStorage.getItem('tapdata_permissions');
+		// let permissions = sessionStorage.getItem('tapdata_permissions');
 		if (!permissions) {
 			//无权限，说明是首次进入页面，重新请求后台获取
 			let loading = Loading.service({
@@ -577,7 +578,9 @@ router.beforeEach(async (to, from, next) => {
 			}
 		} else {
 			//若缓存中有权限值，则格式化成json后继续向下走
-			permissions = JSON.parse(permissions);
+			if (typeof permissions === 'string') {
+				permissions = JSON.parse(permissions);
+			}
 		}
 
 		//判断当前路由的页面是否有权限，无权限则不跳转，有权限则执行跳转
