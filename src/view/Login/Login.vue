@@ -175,7 +175,7 @@ export default {
 
 				setTimeout(() => {
 					location.reload();
-				}, 500);
+				}, 0);
 			} catch (e) {
 				this.errorMessage = this.$t('app.signIn.signInFail');
 				this.loading = false;
