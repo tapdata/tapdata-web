@@ -264,7 +264,7 @@ const childRoutes = [
 		name: 'journal',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'agents',
+			code: 'journal',
 			url: '/old/index.html#/journal',
 			title: i18n.t('tap.journal'),
 			isCollapse: false
@@ -327,7 +327,7 @@ const childRoutes = [
 		code: 'data_transmission',
 		component: view('task/DataFlows'),
 		meta: {
-			code: 'agents',
+			code: 'Data_SYNC',
 			title: i18n.t('tap.jobFlow'),
 			isCollapse: false
 		}
@@ -337,7 +337,7 @@ const childRoutes = [
 		name: 'dataMap',
 		component: view('dataMap/DataMap'),
 		meta: {
-			code: 'agents',
+			code: 'data_lineage',
 			title: i18n.t('tap.dataLineage'),
 			isCollapse: false
 		}
@@ -584,6 +584,7 @@ router.beforeEach(async (to, from, next) => {
 		//判断当前路由的页面是否有权限，无权限则不跳转，有权限则执行跳转
 		let matched = true;
 		if (to.meta.code) {
+			debugger;
 			matched = permissions.some(p => p.code === to.meta.code);
 		}
 		if (matched) {
