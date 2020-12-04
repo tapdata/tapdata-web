@@ -6,6 +6,9 @@
 				$t('editor.cell.processor.field.form.errorOperationTipAfter')
 			}}</span>
 		</div>
+		<div v-show="showUndefined" class="error-operation-tip">
+			{{ $t('editor.cell.processor.field.form.errorUndefined') }}
+		</div>
 		<div class="clear"></div>
 		<div class="header-row">
 			<div class="field">
@@ -407,6 +410,9 @@ export default {
 		disabledMode: {
 			type: Boolean
 		},
+		showUndefined: {
+			type: Boolean
+		},
 		width: {
 			type: Number,
 			default: 0
@@ -512,6 +518,9 @@ export default {
 		getErrorOperation() {
 			if (!this.originalSchemaFiled || !this.originalSchemaFiled.fields) {
 				return;
+			}
+			if (this.showUndefined) {
+				this.disabledMode = true;
 			}
 			this.errorOperation = isValidate(this.originalOperations, this.originalSchemaFiled).errorList || [];
 			let script = isScript(this.model.scripts, this.originalSchemaFiled).errorList || [];

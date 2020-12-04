@@ -940,6 +940,8 @@ const en = {
 							label: 'Description',
 							placeholder: 'Please input you node description'
 						},
+						errorUndefined:
+							'The model of the source node has changed, so that the field processor does not work, please click the UPDATE MODEL button in the configuration panel of the upper node to handle this issue',
 						errorOperationSaveTip: 'The field processor node has conflict to be handled',
 						errorOperationTipBefore: 'Conflict between field processing operation and source model',
 						errorOperationTipAfter: ' click to handle',

@@ -31,6 +31,7 @@
 						:schema="convertSchemaToTreeData(schema)"
 						:editable="true"
 						:disabledMode="disabled"
+						:showUndefined="showUndefined"
 					></schema-editor>
 				</div>
 			</div>
@@ -43,7 +44,7 @@ import SchemaEditor from './SchemaEditor';
 import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from '../../util/Schema';
 import log from '../../../log';
 import _ from 'lodash';
-import { handleOperation } from './util';
+import { getFieldsIds, handleOperation, getUrlSearch } from './util';
 let editorMonitor = null;
 export default {
 	name: 'FieldProcess',
@@ -61,6 +62,7 @@ export default {
 	data() {
 		return {
 			disabled: false,
+			showUndefined: false,
 			databases: [],
 
 			model: {
@@ -98,6 +100,18 @@ export default {
 				this.schema = cell.mergeOutputSchema(schema, false);
 			});
 			let schema = _.cloneDeep(this.model.originalSchema);
+			let isMoniting = getUrlSearch('isMoniting') || false;
+			if (!isMoniting) {
+				let ids = getFieldsIds(schema.fields) || [];
+				//先检车schema是否无ID属性
+				if (ids || ids.length > 0) {
+					ids.forEach(id => {
+						if (!id) {
+							this.showUndefined = true;
+						}
+					});
+				}
+			}
 			// apply operations to schema
 			if (this.model.originalSchema && schema && schema.fields) {
 				//查找是否有被删除的字段且operation有操作
