@@ -18,13 +18,6 @@
 				<el-form-item :label="$t('dataFlow.nodeName')" required>
 					<el-input v-model="form.name" maxlength="20" show-word-limit></el-input>
 				</el-form-item>
-				<el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
-					<MultiSelection
-						v-model="form.primaryKeys"
-						:options="primaryKeyOptions"
-						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
-					></MultiSelection>
-				</el-form-item>
 				<el-form-item required>
 					<span slot="label">
 						<span>{{ $t('editor.cell.processor.aggregate.aggregateSizeLabel') }}</span>
@@ -213,13 +206,11 @@
 import _ from 'lodash';
 import log from '../../../log';
 import { mergeJoinTablesToTargetSchema, removeDeleted } from '../../util/Schema';
-import MultiSelection from '../../../components/MultiSelection';
 
 let counter = 0;
 let editorMonitor = null;
 export default {
 	name: 'Aggregate',
-	components: { MultiSelection },
 	data() {
 		return {
 			disabled: false,
@@ -244,10 +235,8 @@ export default {
 						groupByExpression: ''
 					}
 				],
-				primaryKeys: '',
 				aggCacheMaxSize: 100000
 			},
-			primaryKeyOptions: [],
 			aggaggExpression: '1',
 			countObj: {
 				AVG: 0,
@@ -336,11 +325,6 @@ export default {
 			if (schema && schema.fields) {
 				//过滤被删除的字段
 				schema.fields = removeDeleted(schema.fields);
-				this.primaryKeyOptions = schema.fields.map(f => f.field_name);
-				if (!this.form.primaryKeys) {
-					let primaryKeys = schema.fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
-					if (primaryKeys.length > 0) this.form.primaryKeys = Array.from(new Set(primaryKeys)).join(',');
-				}
 			}
 
 			let object = {};
