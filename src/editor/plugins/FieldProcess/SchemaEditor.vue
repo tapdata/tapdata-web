@@ -613,6 +613,9 @@ export default {
 					this.model.operations.push(op);
 				} else {
 					op = ops[0];
+					op.type = data.type;
+					op.operand = data.type;
+					op.originalDataType = nativeData.type;
 				}
 			}
 			this.$emit('dataChanged', this.model);
