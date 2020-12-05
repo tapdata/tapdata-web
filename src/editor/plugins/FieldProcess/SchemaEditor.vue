@@ -631,8 +631,13 @@ export default {
 		},
 		handleRename(node, data) {
 			log('SchemaEditor.handleRename', node, data);
-			//该字段若是已被删除 不可再重命名
 			let nativeData = this.getNativeData(this.originalSchema.fields, data.id); //查找初始schema
+			//该字段若是已被删除 不可再重命名
+			if (!data || data.label === '') {
+				data.label = nativeData.label;
+				this.$message.error(this.$t('message.exists_name'));
+				return;
+			}
 			let removes = this.model.operations.filter(v => v.id === data.id && v.op === 'REMOVE');
 			if (removes.length > 0) {
 				data.label = nativeData.label;
@@ -650,6 +655,15 @@ export default {
 				let fieldNames = (op.field || op.field_name).split('.');
 				fieldNames[level] = data.label;
 				op.field = fieldNames.join('.');
+				//同步对js 改名操作
+				if (this.model.scripts && this.model.scripts.length && this.model.scripts.length > 0) {
+					for (let i = 0; i < this.model.scripts.length; i++) {
+						if (op.id === this.model.scripts[i].id) {
+							this.model.scripts[i].field = op.field;
+							this.model.scripts[i].label = op.field;
+						}
+					}
+				}
 			} else {
 				log(
 					'Entity1.handlerRename(node,data,nativeData,operations)',
@@ -839,12 +853,9 @@ export default {
 			let self = this;
 			let fn = function(node, data) {
 				let nativeData = self.getNativeData(self.originalSchema.fields, data.id);
-				for (let i = 0, length = node.childNodes.length; i < node.childNodes.length; i++) {
+				for (let i = 0; i < node.childNodes.length; i++) {
 					let childNode = node.childNodes[i];
 					fn(childNode, childNode.data);
-					if (node.childNodes.length !== length) {
-						i--;
-					}
 				}
 				for (let i = 0; i < self.model.operations.length; i++) {
 					if (self.model.operations[i].id === data.id) {
@@ -852,15 +863,13 @@ export default {
 						if (ops.op === 'REMOVE') {
 							self.model.operations.splice(i, 1);
 							i--;
-							/* node.childNodes.forEach((childNode) => {
-									fn(childNode, childNode.data);
-								}); */
-							// break;
+							continue;
 						}
 						if (ops.op === 'CREATE') {
 							self.model.operations.splice(i, 1);
 							i--;
 							self.$refs.tree.remove(node);
+							continue;
 						}
 						if (ops.op === 'RENAME') {
 							let existsName = self.handleExistsName(node, data);
@@ -870,13 +879,13 @@ export default {
 							if (nativeData) node.data.label = nativeData.label;
 							self.model.operations.splice(i, 1);
 							i--;
-							// break;
+							continue;
 						}
 						if (ops.op === 'CONVERT') {
 							if (nativeData) node.data.type = nativeData.type;
 							self.model.operations.splice(i, 1);
 							i--;
-							// break;
+							continue;
 						}
 					}
 				}
