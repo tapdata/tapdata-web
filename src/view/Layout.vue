@@ -528,34 +528,28 @@ export default {
 		},
 
 		async getLicense() {
-			let timeStamp = this.$api('TimeStamp');
-			let stime = '';
-			await timeStamp.get().then(res => {
-				if (res) {
-					stime = res.data || new Date().getTime();
-				}
-			});
-			let filter = {
-				where: {}
-			};
-			if (this.$cookie.get('isAdmin') == 0)
-				filter.where['source.user_id'] = { like: this.$cookie.get('user_id') };
-			let params = {
-				filter: JSON.stringify(filter)
-			};
-			this.$api('Licenses')
-				.get(params)
-				.then(res => {
+			if (this.$cookie.get('isAdmin') == 1) {
+				let timeStamp = this.$api('TimeStamp');
+				let stime = '';
+				await timeStamp.get().then(res => {
 					if (res) {
-						let expires_on = res.data.expires_on || '';
-						let endTime = expires_on - stime;
-						endTime = parseInt(endTime / 1000 / 60 / 60 / 24); //相差天数
-						let showDay = window.getSettingByKey('showLicenceNotice') || 0;
-						this.licenseExpireVisible = Number(showDay) > endTime;
-						this.licenseExpire = endTime;
-						this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss');
+						stime = res.data || new Date().getTime();
 					}
 				});
+				this.$api('Licenses')
+					.get()
+					.then(res => {
+						if (res) {
+							let expires_on = res.data.expires_on || '';
+							let endTime = expires_on - stime;
+							endTime = parseInt(endTime / 1000 / 60 / 60 / 24); //相差天数
+							let showDay = window.getSettingByKey('SHOW_LICENSE') || 0;
+							this.licenseExpireVisible = Number(showDay) > endTime;
+							this.licenseExpire = endTime;
+							this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss');
+						}
+					});
+			}
 		}
 	}
 };
