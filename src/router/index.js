@@ -537,6 +537,13 @@ router.afterEach(() => {
 });
 let permissions = null;
 router.beforeEach(async (to, from, next) => {
+	if (!to.matched.length) {
+		Message.error({
+			message: 'Page not found!'
+		});
+		next(false);
+		return;
+	}
 	if (to.meta.title && window.getSettingByKey('SHOW_PAGE_TITLE')) {
 		document.title = to.meta.title;
 	}
@@ -576,11 +583,6 @@ router.beforeEach(async (to, from, next) => {
 				});
 				return;
 			}
-		} else {
-			//若缓存中有权限值，则格式化成json后继续向下走
-			if (typeof permissions === 'string') {
-				permissions = JSON.parse(permissions);
-			}
 		}
 
 		//判断当前路由的页面是否有权限，无权限则不跳转，有权限则执行跳转
@@ -598,6 +600,7 @@ router.beforeEach(async (to, from, next) => {
 			Message.error({
 				message: i18n.t('app.signIn.permission_denied')
 			});
+			next(false);
 		}
 	} else {
 		if (['login', 'registry', 'passwordReset', 'verificationEmail', 'registyResult'].includes(to.name)) {
