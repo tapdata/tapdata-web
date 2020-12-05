@@ -271,17 +271,16 @@ const childRoutes = [
 			isCollapse: false
 		}
 	},
-	{
-		path: '/journal',
-		name: 'journal',
-		component: view('ExternalLink'),
-		meta: {
-			code: 'user_management',
-			url: '/old/index.html#/journal',
-			title: i18n.t('tap.journal'),
-			isCollapse: false
-		}
-	},
+	// {
+	// 	path: '/journal',
+	// 	name: 'journal',
+	// 	component: view('ExternalLink'),
+	// 	meta: {
+	// 		url: '/old/index.html#/journal',
+	// 		title: i18n.t('tap.journal'),
+	// 		isCollapse: false
+	// 	}
+	// },
 	{
 		path: '/roles',
 		name: 'roles',
@@ -455,8 +454,7 @@ const childRoutes = [
 		component: view('notification/Center'),
 		meta: {
 			title: i18n.t('notification.systemNotice'),
-			isCollapse: true,
-			code: 'home_notice'
+			isCollapse: true
 		}
 	},
 	{
