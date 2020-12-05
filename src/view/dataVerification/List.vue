@@ -60,7 +60,7 @@
 						</el-tag>
 					</li> -->
 					<li class="search-item">
-						<el-button size="mini" @click="reset" v-readonlybtn="'verify_job_execution'">
+						<el-button size="mini" @click="reset">
 							<i class="iconfont icon-shuaxin1"></i>
 						</el-button>
 					</li>

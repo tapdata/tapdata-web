@@ -12,12 +12,7 @@
 			type="border-card"
 			@tab-click="tabHandler"
 		>
-			<el-tab-pane
-				class="tab-item"
-				:label="$t('notification.systemNotice')"
-				name="system"
-				v-readonlybtn="'home_notice'"
-			>
+			<el-tab-pane class="tab-item" :label="$t('notification.systemNotice')" name="system">
 				<div class="tab-item-container">
 					<ul class="tab-list cuk-list">
 						<li

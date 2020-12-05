@@ -3,7 +3,7 @@
 		<div class="panel-left" v-show="formData.panelFlag">
 			<Classification
 				ref="classification"
-				:authority="'SYNC_category_application'"
+				:authority="'SYNC_category_management'"
 				@nodeChecked="nodeChecked"
 			></Classification>
 		</div>
@@ -323,7 +323,7 @@
 										<el-dropdown-item command="dataVerify" v-readonlybtn="'Data_verify'">{{
 											$t('dataVerify.dataVerify')
 										}}</el-dropdown-item>
-										<el-dropdown-item command="export">{{
+										<el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
 											$t('dataFlow.dataFlowExport')
 										}}</el-dropdown-item>
 										<el-dropdown-item command="copy" v-readonlybtn="'SYNC_job_creation'">{{

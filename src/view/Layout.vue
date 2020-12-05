@@ -225,7 +225,7 @@ let menuSetting = [
 			{ name: 'metadataDefinition', code: 'data_catalog' },
 			{ name: 'dataQuality', code: 'data_quality' },
 			{ name: 'timeToLive', code: 'time_to_live' },
-			{ name: 'dataMap', code: 'data_government' },
+			{ name: 'dataMap', code: 'data_lineage' },
 			{ name: 'dataRules', code: 'data_rules' },
 			{ name: 'dictionary', code: 'dictionary' }
 		]

@@ -75,7 +75,7 @@ const childRoutes = [
 		name: 'dataQuality',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'data_quality ',
+			code: 'data_quality',
 			url: '/old/index.html#/dataQuality',
 			title: i18n.t('tap.dataQuality'),
 			isCollapse: false

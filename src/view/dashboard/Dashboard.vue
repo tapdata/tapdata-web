@@ -1,6 +1,6 @@
 <template>
 	<section class="dashboard" v-if="!$window.getSettingByKey('SHOW_OLD_PAGE')" v-loading="loading">
-		<el-row :gutter="20" class="e-row" v-readonlybtn="'database_migration'">
+		<el-row :gutter="20" class="e-row" v-readonlybtn="'Data_SYNC'">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="migrationJobObj" @getAllData="getAllData"></echart-head>
