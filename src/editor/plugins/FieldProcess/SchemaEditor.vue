@@ -914,20 +914,23 @@ export default {
 		 */
 		handleCreate(action, node, data) {
 			log('SchemaEditor.handleCreate', action, node, data);
-			if (node && node.parent && node.parent.childNodes) {
+			let parentFieldName = '';
+			let level = node.level;
+			if (action === 'create_sibling') {
+				parentFieldName = this.getParentFieldName(node.parent);
 				let parentNode = node.parent.childNodes.filter(v => v.data.label === 'newFieldName');
 				if (parentNode && parentNode.length > 0) {
 					this.$message.error('newFieldName ' + this.$t('message.exists_name'));
 					return;
 				}
-			}
-			let parentFieldName = '';
-			let level = node.level;
-			if (action === 'create_sibling') {
-				parentFieldName = this.getParentFieldName(node.parent);
 			} else if (action === 'create_child') {
 				parentFieldName = this.getParentFieldName(node);
 				level++;
+				let parentNode = node.childNodes.filter(v => v.data.label === 'newFieldName');
+				if (parentNode && parentNode.length > 0) {
+					this.$message.error('newFieldName ' + this.$t('message.exists_name'));
+					return;
+				}
 			}
 
 			let fieldId = uuid();
