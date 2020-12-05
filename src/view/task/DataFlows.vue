@@ -315,7 +315,7 @@
 									</el-button>
 								</el-tooltip>
 								<el-dropdown
-									v-readonlybtn="'SYNC_job_operation'"
+									v-show="authorityMore"
 									@command="handleRowCommand($event, scope.row)"
 									class="item"
 								>
@@ -467,6 +467,12 @@ export default {
 	components: { Classification, SelectClassify, DownAgent, SkipError },
 	data() {
 		return {
+			authorityMore:
+				this.$has('SYNC_job_export') ||
+				this.$has('Data_verify') ||
+				this.$has('SYNC_job_creation') ||
+				this.$has('SYNC_job_operation') ||
+				this.$has('SYNC_category_application'),
 			taskSettingsDialog: false, //任务调度设置弹窗开关
 			downLoadAgetntdialog: false, //判断是否安装agent
 			downLoadNum: 0,
@@ -598,6 +604,8 @@ export default {
 				cronExpression: '',
 				taskData: null
 			},
+			moreAuthority:
+				this.$has('SYNC_job_export') || this.$has('SYNC_job_operation') || this.$has('SYNC_job_delete'),
 			timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
 		};
 	},

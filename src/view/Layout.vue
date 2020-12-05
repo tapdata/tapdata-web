@@ -256,7 +256,7 @@ let menuSetting = [
 			{ name: 'agents', code: 'agents' },
 			{ name: 'serversOversee', code: 'servers_oversee' },
 			{ name: 'users', code: 'user_management' },
-			{ name: 'journal', code: 'user_management' },
+			// { name: 'journal', code: 'user_management' },
 			{ name: 'roles', code: 'role_management' },
 			{ name: 'settings', code: 'system_settings' }
 		]

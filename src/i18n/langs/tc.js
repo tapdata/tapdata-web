@@ -168,7 +168,8 @@ const tc = {
 			licenseAfterOneDay: ' 天到期',
 			licenseDate: 'License到期時間',
 			dataFlowsCustom: '數據同步',
-			dataFlowsClusterClone: '數據庫遷移'
+			dataFlowsClusterClone: '數據庫遷移',
+			topology: '網絡拓撲'
 		},
 		Home: {
 			all: '全部',

@@ -167,7 +167,8 @@ const en = {
 			licenseDate: 'License expiration time',
 			licenseAfterOneDay: ' day',
 			dataFlowsClusterClone: 'Database Migration',
-			dataFlowsCustom: 'Data Sync'
+			dataFlowsCustom: 'Data Sync',
+			topology: 'Topology'
 		},
 		Home: {
 			all: 'All',

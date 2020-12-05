@@ -166,7 +166,8 @@ const cn = {
 			licenseAfterOneDay: ' 天到期',
 			licenseDate: 'license到期时间',
 			dataFlowsCustom: '数据同步',
-			dataFlowsClusterClone: '数据库迁移'
+			dataFlowsClusterClone: '数据库迁移',
+			topology: '网络拓扑'
 		},
 		Home: {
 			all: '全部',
