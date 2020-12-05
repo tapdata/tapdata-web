@@ -779,12 +779,14 @@ export default {
 			this.$emit('dataChanged', this.model);
 		},
 		handleAllReset() {
-			let ids = this.$refs.tree.getCheckedNodes();
+			let ids = this.$refs.tree.getCheckedNodes(false, true);
 			this.checkAll = false;
 			if (ids && ids.length > 0) {
 				ids.map(id => {
 					let node = this.$refs.tree.getNode(id);
-					this.handleReset(node, node.data);
+					if (node) {
+						this.handleReset(node, node.data);
+					}
 				});
 			}
 		},
