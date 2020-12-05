@@ -95,6 +95,7 @@ export default {
 		return {
 			loading: false,
 			saveloading: false,
+			permissLoading: false,
 			title: '',
 			form: {
 				name: '',
@@ -120,7 +121,6 @@ export default {
 	methods: {
 		//  获取用户信息
 		getUserDataApi() {
-			this.loading = true;
 			let params = {
 				filter: {
 					where: {
@@ -133,7 +133,11 @@ export default {
 					this.form = res.data[0];
 				}
 			});
+		},
 
+		// 获取用户权限数据
+		getMappingData(mappingData) {
+			this.loading = true;
 			roleMappingModel
 				.get({ 'filter[where][roleId]': this.$route.params.id })
 				.then(res => {
@@ -151,21 +155,22 @@ export default {
 							}
 						});
 						this.rolemappings = res.data;
-						this.dataList.filter(item => {
-							if (this.selectRole && this.selectRole.length) {
-								this.$set(item, 'checkAll', this.selectRole.includes(item.name));
-								if (item.children && item.children.length) {
-									item.children.filter(childItem => {
-										this.$set(childItem, 'checkAll', this.selectRole.includes(childItem.name));
-										if (childItem.children && childItem.children.length)
-											childItem.children.filter(check => {
-												if (this.selectRole.includes(check.name))
-													childItem.checkedCities.push(check.name);
-											});
-									});
+						if (mappingData.length)
+							mappingData.filter(item => {
+								if (this.selectRole && this.selectRole.length) {
+									this.$set(item, 'checkAll', this.selectRole.includes(item.name));
+									if (item.children && item.children.length) {
+										item.children.filter(childItem => {
+											this.$set(childItem, 'checkAll', this.selectRole.includes(childItem.name));
+											if (childItem.children && childItem.children.length)
+												childItem.children.filter(check => {
+													if (this.selectRole.includes(check.name))
+														childItem.checkedCities.push(check.name);
+												});
+										});
+									}
 								}
-							}
-						});
+							});
 					}
 				})
 				.finally(() => {
@@ -176,7 +181,7 @@ export default {
 		// 获取权限信息
 		getPermission() {
 			let self = this;
-			this.loading = true;
+			this.permissLoading = true;
 			self.$api('Permissions')
 				.get({})
 				.then(res => {
@@ -213,11 +218,12 @@ export default {
 								}
 							}
 							this.dataList = newArr;
+							this.getMappingData(this.dataList);
 						}
 					}
 				})
 				.finally(() => {
-					this.loading = false;
+					this.permissLoading = false;
 				});
 		},
 
