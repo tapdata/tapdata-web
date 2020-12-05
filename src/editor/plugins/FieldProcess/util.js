@@ -10,6 +10,13 @@ export const getFieldsIds = function(fields) {
 	}
 	return fieldIds;
 };
+export const getOperationIds = function(operation) {
+	let fieldIds = [];
+	if (operation) {
+		fieldIds = operation.map(field => field.id);
+	}
+	return fieldIds;
+};
 
 export const getFieldsNames = function(fields) {
 	let fieldNames = [];
@@ -48,6 +55,7 @@ export const handleOperation = function(fields, operations) {
 	let fieldOriginalIds = getFieldsIds(fields);
 	let fieldOriginalIsDeleted = fieldIsDeleted(fields);
 	let fieldOriginalNames = getFieldsNames(fields);
+	let operationIds = getOperationIds(operations);
 	let temporary = operations;
 	if (temporary.length > 0) {
 		for (let i = 0; i < temporary.length; i++) {
@@ -59,7 +67,9 @@ export const handleOperation = function(fields, operations) {
 			} else if (
 				temporary[i].op === 'CREATE' &&
 				(fieldOriginalNames.includes(temporary[i].field) ||
-					(!fieldOriginalIds.includes(temporary[i].triggerFieldId) && indexOf > -1))
+					(!fieldOriginalIds.includes(temporary[i].triggerFieldId) &&
+						indexOf > -1 &&
+						!operationIds.includes(temporary[i].triggerFieldId)))
 			) {
 				temporary.splice(i, 1);
 				i--;
@@ -81,6 +91,7 @@ export const isValidate = function(operations, schema) {
 		let fieldOriginalIds = getFieldsIds(originalSchema.fields);
 		let fieldDeleted = fieldIsDeleted(originalSchema.fields);
 		let fieldOriginalNames = getFieldsNames(originalSchema.fields);
+		let operationIds = getOperationIds(operation);
 		for (let i = 0; i < operation.length; i++) {
 			// isType 1表示id name 都不匹配 2表示name匹配 3表示该字段被标记为删除且id匹配 4 新建字段处理 5 脚本处理
 			let indexOf = fieldNameIndex(operation[i].field) || -1;
@@ -117,7 +128,9 @@ export const isValidate = function(operations, schema) {
 			if (
 				operation[i].op === 'CREATE' &&
 				(fieldOriginalNames.includes(operation[i].field) ||
-					(!fieldOriginalIds.includes(operation[i].triggerFieldId) && indexOf > -1))
+					(!fieldOriginalIds.includes(operation[i].triggerFieldId) &&
+						indexOf > -1 &&
+						!operationIds.includes(operation[i].triggerFieldId)))
 			) {
 				errorList.push(node);
 				isValidate = false;

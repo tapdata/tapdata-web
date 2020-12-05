@@ -218,6 +218,7 @@ const cn = {
 		modifyName: '修改名称',
 		ok: '确定',
 		exists_name: '名称已存在',
+		nullName: '字段名称不能为空',
 		search: '搜索',
 		serviceCluMange: '服务集群管理',
 		statusLog: '状态日志',

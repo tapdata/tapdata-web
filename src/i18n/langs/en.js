@@ -218,6 +218,7 @@ const en = {
 		modifyName: 'Modify name',
 		ok: 'OK',
 		exists_name: 'Name already exists',
+		nullName: 'Field name can not be empty',
 		search: 'search',
 		serviceCluMange: 'Service cluster management',
 		statusLog: 'Status log',

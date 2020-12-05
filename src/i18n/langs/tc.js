@@ -219,6 +219,7 @@ const tc = {
 		modifyName: '修改名稱',
 		ok: '確定',
 		exists_name: '名稱已存在',
+		nullName: '字段名稱不能为空',
 		search: '搜索',
 		serviceCluMange: '服務集群管理',
 		statusLog: '狀態日誌',
