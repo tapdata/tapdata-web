@@ -227,6 +227,7 @@ let menuSetting = [
 			{ name: 'timeToLive', code: 'time_to_live' },
 			{ name: 'dataMap', code: 'data_lineage' },
 			{ name: 'dataRules', code: 'data_rules' },
+			{ name: 'topology', code: 'topology' },
 			{ name: 'dictionary', code: 'dictionary' }
 		]
 	},
@@ -253,7 +254,7 @@ let menuSetting = [
 			// { name: 'agentdownload' },
 			{ name: 'clusterManagement', code: 'Cluster_management' },
 			{ name: 'agents', code: 'agents' },
-			{ name: 'serversOversee', code: 'serversOversee' },
+			{ name: 'serversOversee', code: 'servers_oversee' },
 			{ name: 'users', code: 'user_management' },
 			{ name: 'journal', code: 'user_management' },
 			{ name: 'roles', code: 'role_management' },

@@ -110,6 +110,17 @@ const childRoutes = [
 		}
 	},
 	{
+		path: '/topology',
+		name: 'topology',
+		component: view('ExternalLink'),
+		meta: {
+			code: 'topology',
+			url: '/old/index.html#/topology',
+			title: i18n.t('tap.topology'),
+			isCollapse: false
+		}
+	},
+	{
 		path: '/dictionary',
 		name: 'dictionary',
 		component: view('ExternalLink'),
