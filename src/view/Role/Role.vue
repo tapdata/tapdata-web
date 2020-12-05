@@ -372,7 +372,6 @@ export default {
 				return false;
 			}
 			const record = {
-				user_id: this.$cookie.get('user_id'),
 				name: this.form.name,
 				description: this.form.description,
 				register_user_default: this.form.register_user_default
@@ -382,6 +381,8 @@ export default {
 
 			if (roleId) {
 				record.id = roleId;
+			} else {
+				record.user_id = this.$cookie.get('user_id');
 			}
 
 			// 获取选中数据

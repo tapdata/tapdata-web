@@ -27,6 +27,7 @@ const cn = {
 		apiSever: 'Tapdata-服务器管理',
 		dictionary: 'Tapdata-字典模板',
 		serversOversee: 'Tapdata-运维',
+		topology: 'Tapdata-网络拓扑',
 		journal: 'Tapdata-用户操作日志',
 		dataMap: 'Tapdata-数据地图',
 		apiInfo: 'Tapdata-api详情',
@@ -1835,7 +1836,14 @@ const cn = {
 			system_settings_modification: '修改设置',
 			create_new_table_in_SYNC: '任务中创建表',
 			servers_oversee: '运维',
-			dictionary: '字典模板'
+			dictionary: '字典模板管理',
+			Topology: '网络拓扑',
+			meta_data_deleting: '元数据删除',
+			API_data_explorer_deleting: 'API数据浏览删除',
+			API_data_explorer_tagging: 'API数据浏览加标签',
+			API_data_time_zone_editing: 'API数据更改时区',
+			API_data_creation: 'API数据新增',
+			API_data_download: 'API数据下载'
 		}
 	}
 };

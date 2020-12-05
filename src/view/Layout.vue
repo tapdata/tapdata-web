@@ -227,6 +227,7 @@ let menuSetting = [
 			{ name: 'timeToLive', code: 'time_to_live' },
 			{ name: 'dataMap', code: 'data_lineage' },
 			{ name: 'dataRules', code: 'data_rules' },
+			{ name: 'topology', code: 'topology' },
 			{ name: 'dictionary', code: 'dictionary' }
 		]
 	},
@@ -237,13 +238,13 @@ let menuSetting = [
 		children: [
 			{ name: 'modules', code: 'API_management' },
 			{ name: 'dataExplorer', code: 'API_data_explorer' },
-			{ name: 'apiDocAndTest', code: 'API_doc_test' },
+			{ name: 'apiDocAndTest', code: 'API_doc_&_test' },
 			{ name: 'apiAnalysis', code: 'API_stats' },
 			{ name: 'applications', code: 'API_clients' },
 			{ name: 'apiServers', code: 'API_server' }
 		]
 	},
-	{ name: 'dataCollect', icon: 'shujucaiji', code: 'data_collect' },
+	{ name: 'dataCollect', icon: 'shujucaiji', code: 'data_collect(old)' },
 	{
 		name: 'system',
 		icon: 'jiekoufuwu',
@@ -253,7 +254,7 @@ let menuSetting = [
 			// { name: 'agentdownload' },
 			{ name: 'clusterManagement', code: 'Cluster_management' },
 			{ name: 'agents', code: 'agents' },
-			{ name: 'serversOversee', code: 'serversOversee' },
+			{ name: 'serversOversee', code: 'servers_oversee' },
 			{ name: 'users', code: 'user_management' },
 			{ name: 'journal', code: 'user_management' },
 			{ name: 'roles', code: 'role_management' },

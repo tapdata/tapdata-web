@@ -26,6 +26,7 @@ const en = {
 		apiClients: 'Tapdata-APIClients ',
 		apiSever: 'Tapdata-APISever',
 		dictionary: 'Tapdata-Dictionary',
+		topology: 'Tapdata-Topology',
 		serversOversee: 'Tapdata-ServersOversee',
 		journal: 'Tapdata-Journal',
 		apiInfo: 'Tapdata-APIInfo',
@@ -1866,7 +1867,14 @@ const en = {
 			system_settings_modification: 'system settings modification',
 			create_new_table_in_SYNC: 'create new table/collection in SYNC job',
 			servers_oversee: 'servers oversee',
-			dictionary: 'dictionary'
+			dictionary: 'dictionary',
+			Topology: 'Topology',
+			meta_data_deleting: 'Metadata delete',
+			API_data_explorer_deleting: 'API data explorer deleting',
+			API_data_explorer_tagging: 'API data explorer tagging',
+			API_data_time_zone_editing: 'API data time zone editing',
+			API_data_creation: 'API data creation',
+			API_data_download: 'API data download'
 		}
 	}
 };

@@ -26,6 +26,7 @@ const tc = {
 		apiClients: 'Tapdata-API客戶端管理 ',
 		apiSever: 'Tapdata-服務器管理',
 		dictionary: 'Tapdata-字典模板',
+		topology: 'Tapdata-網絡拓撲',
 		serversOversee: 'Tapdata-運維',
 		journal: 'Tapdata-用戶操作日誌',
 		dataMap: 'Tapdata-數據地圖',
@@ -1833,7 +1834,14 @@ const tc = {
 			system_settings_modification: '修改設置',
 			create_new_table_in_SYNC: '任務中創建表',
 			servers_oversee: '運維',
-			dictionary: '字典模板'
+			dictionary: '字典模板',
+			Topology: '網絡拓撲',
+			meta_data_deleting: '元數據刪除',
+			API_data_explorer_deleting: 'API數據瀏覽刪除',
+			API_data_explorer_tagging: 'API數據瀏覽加標籤',
+			API_data_time_zone_editing: 'API數據更改時區',
+			API_data_creation: 'API數據新增',
+			API_data_download: 'API數據下載'
 		}
 	}
 };

@@ -110,6 +110,17 @@ const childRoutes = [
 		}
 	},
 	{
+		path: '/topology',
+		name: 'topology',
+		component: view('ExternalLink'),
+		meta: {
+			code: 'topology',
+			url: '/old/index.html#/topology',
+			title: i18n.t('tap.topology'),
+			isCollapse: false
+		}
+	},
+	{
 		path: '/dictionary',
 		name: 'dictionary',
 		component: view('ExternalLink'),
@@ -155,7 +166,7 @@ const childRoutes = [
 		name: 'apiDocAndTest',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'API_doc_test',
+			code: 'API_doc_&_test',
 			url: '/old/index.html#/apiDocAndTest',
 			title: i18n.t('tap.docTest'),
 			isCollapse: false
@@ -201,6 +212,7 @@ const childRoutes = [
 		meta: {
 			url: '/old/index.html#/dataCollect',
 			title: i18n.t('tap.dataCollect'),
+			code: 'data_collect(old)',
 			isCollapse: false
 		}
 	},
