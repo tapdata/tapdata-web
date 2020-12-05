@@ -294,7 +294,10 @@
 								>
 									<el-button
 										type="text"
-										:disabled="scope.row.setting.sync_type !== 'initial_sync'"
+										:disabled="
+											scope.row.setting.sync_type !== 'initial_sync' &&
+												scope.row.status === 'running'
+										"
 										v-readonlybtn="'SYNC_job_edition'"
 										@click="handleTaskscheduling(scope.row.id, scope.row)"
 									>

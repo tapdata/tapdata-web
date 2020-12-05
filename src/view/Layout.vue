@@ -237,13 +237,13 @@ let menuSetting = [
 		children: [
 			{ name: 'modules', code: 'API_management' },
 			{ name: 'dataExplorer', code: 'API_data_explorer' },
-			{ name: 'apiDocAndTest', code: 'API_doc_test' },
+			{ name: 'apiDocAndTest', code: 'API_doc_&_test' },
 			{ name: 'apiAnalysis', code: 'API_stats' },
 			{ name: 'applications', code: 'API_clients' },
 			{ name: 'apiServers', code: 'API_server' }
 		]
 	},
-	{ name: 'dataCollect', icon: 'shujucaiji', code: 'data_collect' },
+	{ name: 'dataCollect', icon: 'shujucaiji', code: 'data_collect(old)' },
 	{
 		name: 'system',
 		icon: 'jiekoufuwu',
