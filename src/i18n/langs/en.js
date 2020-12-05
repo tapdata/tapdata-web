@@ -1598,7 +1598,7 @@ const en = {
 			windowsInstructionsText3: '· After executing commands, the agent will install and run  automatically',
 			windowsInstructionsText5:
 				'· After the Agent is successfully installed and started, this page will no longer pop up when the task is executed.',
-			noAgent: 'You have not installed Agent yet, and cannot execute the transmission jobs. Please',
+			noAgent: 'You have not installed Agent yet, and cannot execute the transmission jobs. Please ',
 			clickDownLoad: ' Click to download and install',
 			dfsSuccessText: 'DFS Agent installed successfully,',
 			dfsSuccessText1: 'Or click',

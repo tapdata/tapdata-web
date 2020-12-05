@@ -444,7 +444,7 @@ const childRoutes = [
 		meta: {
 			title: i18n.t('notification.systemNotice'),
 			isCollapse: true,
-			code: 'system_notice'
+			code: 'home_notice'
 		}
 	},
 	{
