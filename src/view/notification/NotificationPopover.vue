@@ -18,88 +18,97 @@
 				name="system"
 				v-readonlybtn="'home_notice'"
 			>
-				<div class="item-head">
-					<span v-readonlybtn="'home_notice_settings'">
-						<router-link to="/settingCenter/notificationSetting">
-							<span>
-								{{ $t('notification.setting') }}
-							</span>
-						</router-link>
-					</span>
-					<span class="item-head-text">
-						<router-link to="/notification">
-							<span>
+				<div class="tab-item-container">
+					<ul class="tab-list cuk-list">
+						<li
+							class="list-item"
+							v-for="(item, index) in listData"
+							:key="index"
+							@click="handleRead(item.id)"
+						>
+							<div class="list-item-content" v-if="item.msg === 'JobDDL'">
+								<div class="unread-1zPaAXtSu" v-show="!item.read"></div>
+								<div class="list-item-desc">
+									<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
+									<span>{{ systemMap[item.system] }}</span>
+									<router-link
+										:to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate"
+									>
+										<span style="color: #48B6E2">
+											{{ `${item.serverName} , ` }}
+										</span>
+									</router-link>
+									<span class="list-item-platform">
+										{{
+											`${$t('notification.sourceName')} : ${item.sourceName} , ${$t(
+												'notification.databaseName'
+											)} : ${item.databaseName} , ${$t('notification.schemaName')} : ${
+												item.schemaName
+											} ,`
+										}}
+									</span>
+									<el-tooltip :content="item.sql" placement="top">
+										<span>
+											{{ `DDL SQL : ${item.sql}` }}
+										</span>
+									</el-tooltip>
+								</div>
+								<div class="list-item-time">
+									<span>{{ item.createTime }}</span>
+								</div>
+							</div>
+							<div class="list-item-content" v-else>
+								<div class="unread-1zPaAXtSu"></div>
+								<div class="list-item-desc">
+									<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
+									<span>{{ systemMap[item.system] }}</span>
+									<span style="color: #48B6E2" @click="handleGo(item)">
+										{{ item.serverName }}
+									</span>
+									<span>{{ typeMap[item.msg] }}</span>
+									<span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
+								</div>
+								<div class="list-item-time">
+									<span>{{ item.createTime }}</span>
+								</div>
+							</div>
+						</li>
+					</ul>
+					<div class="notice-footer">
+						<span v-readonlybtn="'home_notice_settings'">
+							<router-link to="/settingCenter/notificationSetting">
+								<span>
+									{{ $t('notification.setting') }}
+								</span>
+							</router-link>
+						</span>
+						<span class="notice-footer-text">
+							<router-link to="/notification">
+								<span>
+									{{ $t('notification.viewMore') }}
+								</span>
+							</router-link>
+						</span>
+					</div>
+				</div>
+			</el-tab-pane>
+			<el-tab-pane class="tab-item" :label="$t('notification.userNotice')" name="user" v-loading="loading">
+				<div class="tab-item-container">
+					<ul class="tab-list notification-list">
+						<li class="notification-item" v-for="record in userOperations" :key="record.id">
+							<UserOperation :record="record"></UserOperation>
+							<div class="item-time">{{ $moment(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
+						</li>
+					</ul>
+					<div class="notice-footer">
+						<span></span>
+						<router-link to="/notification?type=user">
+							<span class="more-text">
 								{{ $t('notification.viewMore') }}
 							</span>
 						</router-link>
-					</span>
+					</div>
 				</div>
-				<ul class="cuk-list clearfix cuk-list-type-block">
-					<li class="list-item" v-for="(item, index) in listData" :key="index" @click="handleRead(item.id)">
-						<div class="list-item-content" v-if="item.msg === 'JobDDL'">
-							<div class="unread-1zPaAXtSu" v-show="!item.read"></div>
-							<div class="list-item-desc">
-								<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
-								<span>{{ systemMap[item.system] }}</span>
-								<router-link
-									:to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate"
-								>
-									<span style="color: #48B6E2">
-										{{ `${item.serverName} , ` }}
-									</span>
-								</router-link>
-								<span class="list-item-platform">
-									{{
-										`${$t('notification.sourceName')} : ${item.sourceName} , ${$t(
-											'notification.databaseName'
-										)} : ${item.databaseName} , ${$t('notification.schemaName')} : ${
-											item.schemaName
-										} ,`
-									}}
-								</span>
-								<el-tooltip :content="item.sql" placement="top">
-									<span>
-										{{ `DDL SQL : ${item.sql}` }}
-									</span>
-								</el-tooltip>
-							</div>
-							<div class="list-item-time">
-								<span>{{ item.createTime }}</span>
-							</div>
-						</div>
-						<div class="list-item-content" v-else>
-							<div class="unread-1zPaAXtSu"></div>
-							<div class="list-item-desc">
-								<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
-								<span>{{ systemMap[item.system] }}</span>
-								<span style="color: #48B6E2" @click="handleGo(item)">
-									{{ item.serverName }}
-								</span>
-								<span>{{ typeMap[item.msg] }}</span>
-								<span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
-							</div>
-							<div class="list-item-time">
-								<span>{{ item.createTime }}</span>
-							</div>
-						</div>
-					</li>
-				</ul>
-			</el-tab-pane>
-			<el-tab-pane class="tab-item" :label="$t('notification.userNotice')" name="user" v-loading="loading">
-				<div class="item-head">
-					<span></span>
-					<router-link to="/notification?type=user">
-						<span class="item-text">
-							{{ $t('notification.viewMore') }}
-						</span>
-					</router-link>
-				</div>
-				<ul class="notification-list">
-					<li class="notification-item" v-for="record in userOperations" :key="record.id">
-						<UserOperation :record="record"></UserOperation>
-						<div class="item-time">{{ $moment(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
-					</li>
-				</ul>
 			</el-tab-pane>
 		</el-tabs>
 	</el-popover>
@@ -304,49 +313,39 @@ export default {
 <style lang="less" scoped>
 .notification-popover-wrap {
 	margin: -15px;
-	height: 440px;
 	width: 440px;
 	overflow: hidden;
 	position: relative;
-	.item-head {
-		position: absolute;
-		bottom: 0;
-		display: -webkit-box;
-		display: -ms-flexbox;
+	.notice-footer {
 		display: flex;
-		-webkit-box-pack: justify;
-		-ms-flex-pack: justify;
 		justify-content: space-between;
 		font-size: 12px;
 		height: 40px;
 		line-height: 40px;
 		padding: 0 25px;
-		width: 100%;
-		margin-left: -20px;
-		background: #f1f1f1;
-		border: 1px solid #dedee4;
-		.item-head-text {
-			display: inline-block;
-			cursor: pointer;
-			color: #666;
-			padding-right: 35px;
-			padding-left: 10px;
-		}
-		.item-text {
-			display: inline-block;
-			cursor: pointer;
-			color: #666;
-			padding-right: 20px;
-		}
 		background: rgba(241, 241, 241, 1);
-		border: 1px solid rgba(222, 222, 228, 1);
+		border-top: 1px solid rgba(222, 222, 228, 1);
+		.notice-footer-text,
+		.more-text {
+			display: inline-block;
+			cursor: pointer;
+			color: #666;
+		}
 	}
 	.tab-item {
-		.cuk-list {
+		.tab-item-container {
+			display: flex;
+			flex-direction: column;
 			height: 362px;
-			overflow-y: auto;
+			overflow: hidden;
+			margin-bottom: -1px;
+			.tab-list {
+				flex: 1;
+				overflow-y: auto;
+			}
+		}
+		.cuk-list {
 			font-size: 12px;
-			margin-bottom: 39px;
 			.list-item {
 				position: relative;
 				background: #fff;
@@ -395,10 +394,7 @@ export default {
 			}
 		}
 		.notification-list {
-			height: 362px;
-			overflow-y: auto;
 			box-sizing: border-box;
-			margin-bottom: 39px;
 			.notification-item {
 				padding: 5px 20px 4px 20px;
 				border-bottom: 1px solid #dedee4;
