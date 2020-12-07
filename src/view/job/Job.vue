@@ -651,8 +651,6 @@ export default {
 							'fullDocument.createTime': true,
 							'fullDocument.children': true,
 							'fullDocument.stats': true,
-							'fullDocument.stages.id': true,
-							'fullDocument.stages.name': true,
 							'fullDocument.setting': true,
 							'fullDocument.cdcLastTimes': true,
 							'fullDocument.listtags': true,
