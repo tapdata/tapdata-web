@@ -100,11 +100,7 @@
 						<i class="iconfont icon-biaoqian back-btn-icon"></i>
 						<span> {{ $t('dataFlow.taskBulkTag') }}</span>
 					</el-button>
-					<el-dropdown
-						v-readonlybtn="'SYNC_job_operation'"
-						@command="handleCommand"
-						v-show="multipleSelection.length > 0"
-					>
+					<el-dropdown @command="handleCommand" v-show="multipleSelection.length > 0 && bulkOperation">
 						<el-button class="btn btn-dropdowm" size="mini">
 							<i class="iconfont icon-piliang back-btn-icon"></i>
 							<span> {{ $t('dataFlow.taskBulkOperation') }}</span>
@@ -295,7 +291,7 @@
 									<el-button
 										type="text"
 										:disabled="
-											scope.row.setting.sync_type !== 'initial_sync' &&
+											scope.row.setting.sync_type !== 'initial_sync' ||
 												scope.row.status === 'running'
 										"
 										v-readonlybtn="'SYNC_job_edition'"
@@ -315,7 +311,7 @@
 									</el-button>
 								</el-tooltip>
 								<el-dropdown
-									v-show="authorityMore"
+									v-show="moreAuthority"
 									@command="handleRowCommand($event, scope.row)"
 									class="item"
 								>
@@ -605,6 +601,12 @@ export default {
 				taskData: null
 			},
 			moreAuthority:
+				this.$has('Data_verify') ||
+				this.$has('SYNC_job_export') ||
+				this.$has('SYNC_job_creation') ||
+				this.$has('SYNC_job_operation') ||
+				this.$has('SYNC_category_application'),
+			bulkOperation:
 				this.$has('SYNC_job_export') || this.$has('SYNC_job_operation') || this.$has('SYNC_job_delete'),
 			timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
 		};
