@@ -434,7 +434,7 @@
 					</li>
 				</ul>
 				<p>{{ $t('dialog.jobSchedule.example') }}</p>
-				<p>* */1 * * * ? * // {{ $t('dialog.jobSchedule.runMinute') }}</p>
+				<p>0 */1 * * * ? * // {{ $t('dialog.jobSchedule.runMinute') }}</p>
 				<p>0 0 2 * * ? * // {{ $t('dialog.jobSchedule.runDay') }}</p>
 			</div>
 			<span slot="footer" class="dialog-footer">
