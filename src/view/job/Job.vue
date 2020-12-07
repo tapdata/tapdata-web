@@ -1117,7 +1117,6 @@ export default {
 		},
 		//保存逻辑启动
 		doSaveStartDataFlow(data) {
-			let self = this;
 			if (data) {
 				if (data.id) {
 					data.id = data.id;
@@ -1143,23 +1142,23 @@ export default {
 					}
 				}
 				if (stageTypeFalg && objectNamesList.length === 0) {
-					self.$message.error(self.$t('editor.cell.link.chooseATableTip'));
+					this.$message.error(this.$t('editor.cell.link.chooseATableTip'));
 					return;
 				}
 
 				let start = () => {
 					data.status = 'scheduled';
 					data.executeMode = 'normal';
-					self.doSave(data, (err, rest) => {
+					this.doSave(data, (err, rest) => {
 						if (err) {
 							if (err.response.msg === 'Error: Loading data source schema') {
-								self.$message.error(self.$t('message.loadingSchema'));
+								this.$message.error(this.$t('message.loadingSchema'));
 							} else {
-								self.$message.error(err.response.msg);
+								this.$message.error(err.response.msg);
 							}
 						} else {
-							this.$message.success(self.$t('message.taskStart'));
-							self.$router.push({
+							this.$message.success(this.$t('message.taskStart'));
+							this.$router.push({
 								path: '/job',
 								query: {
 									id: rest.id,
@@ -1167,12 +1166,12 @@ export default {
 									mapping: this.mappingTemplate
 								}
 							});
-							self.$message.success(self.$t('message.taskStart'));
+							this.$message.success(this.$t('message.taskStart'));
 							location.reload();
 						}
 					});
 				};
-				if (data.id && self.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
+				if (data.id && this.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
 					const h = this.$createElement;
 					let arr = this.$t('message.startAggregation_message').split('XXX');
 					this.$msgbox({
