@@ -1270,13 +1270,18 @@ export default {
 
 		statusConfirm(callback, handleCatch, data) {
 			let message = this.$t('message.stopMessage');
-			if (data && data.stages && data.stages.find(s => s.type === 'aggregation_processor')) {
-				message = this.$t('message.stopAggregation_message').replace('XXX', data.name);
-			}
 			if (data && data.setting && data.setting.sync_type !== 'cdc') {
 				message = this.$t('message.stopInitial_syncMessage');
 			}
-			this.$confirm(message, this.$t('dataFlow.importantReminder'), {
+			if (data && data.stages && data.stages.find(s => s.type === 'aggregation_processor')) {
+				const h = this.$createElement;
+				let arr = this.$t('message.stopAggregation_message').split('XXX');
+				message = h('p', [arr[0] + '(', h('span', { style: { color: '#48b6e2' } }, data.name), ')' + arr[1]]);
+			}
+			this.$msgbox({
+				title: this.$t('dataFlow.importantReminder'),
+				message: message,
+				showCancelButton: true,
 				confirmButtonText: this.$t('message.confirm'),
 				cancelButtonText: this.$t('message.cancel'),
 				type: 'warning',
@@ -1305,16 +1310,21 @@ export default {
 			}
 			//启动任务时判断任务内是否存在聚合处理器，若存在，则弹框提示
 			if (dataItem && dataItem.stages && dataItem.stages.find(s => s.type === 'aggregation_processor')) {
-				this.$confirm(
-					this.$t('message.startAggregation_message').replace('XXX', dataItem.name),
-					this.$t('dataFlow.importantReminder'),
-					{
-						confirmButtonText: this.$t('message.confirm'),
-						cancelButtonText: this.$t('message.cancel'),
-						type: 'warning',
-						closeOnClickModal: false
-					}
-				)
+				const h = this.$createElement;
+				let arr = this.$t('message.startAggregation_message').split('XXX');
+				this.$msgbox({
+					title: this.$t('dataFlow.importantReminder'),
+					message: h('p', [
+						arr[0] + '(',
+						h('span', { style: { color: '#48b6e2' } }, dataItem.name),
+						')' + arr[1]
+					]),
+					showCancelButton: true,
+					confirmButtonText: this.$t('message.confirm'),
+					cancelButtonText: this.$t('message.cancel'),
+					type: 'warning',
+					closeOnClickModal: false
+				})
 					.then(() => {
 						//若任务内存在聚合处理器，启动前先重置
 						dataFlows.reset(id).then(() => {
