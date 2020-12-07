@@ -478,6 +478,9 @@ export default {
 				}
 				this.$router.push(router);
 			} else {
+				if (this.$route.fullPath === index) {
+					return;
+				}
 				this.$router.push(index);
 			}
 		},
