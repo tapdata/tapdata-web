@@ -177,7 +177,9 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="2" class="right">
-						<span @click="removeRow(item, index)" class="iconfont icon-quxiao remove"></span>
+						<el-button plain style="padding: 0;" @click="removeRow(item, index)">
+							<i class="iconfont icon-quxiao remove"></i>
+						</el-button>
 					</el-col>
 				</el-row>
 			</el-col>
@@ -403,8 +405,6 @@ export default {
 
 		.remove {
 			font-weight: bold;
-			cursor: pointer;
-			border: 1px solid #dedee4;
 		}
 	}
 
