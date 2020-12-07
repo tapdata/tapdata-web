@@ -1173,16 +1173,21 @@ export default {
 					});
 				};
 				if (data.id && self.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
-					this.$confirm(
-						this.$t('message.startAggregation_message').replace('XXX', data.name),
-						this.$t('dataFlow.importantReminder'),
-						{
-							confirmButtonText: this.$t('message.confirm'),
-							cancelButtonText: this.$t('message.cancel'),
-							type: 'warning',
-							closeOnClickModal: false
-						}
-					).then(() => {
+					const h = this.$createElement;
+					let arr = this.$t('message.startAggregation_message').split('XXX');
+					this.$msgbox({
+						title: this.$t('dataFlow.importantReminder'),
+						message: h('p', [
+							arr[0] + '(',
+							h('span', { style: { color: '#48b6e2' } }, data.name),
+							')' + arr[1]
+						]),
+						showCancelButton: true,
+						confirmButtonText: this.$t('message.confirm'),
+						cancelButtonText: this.$t('message.cancel'),
+						type: 'warning',
+						closeOnClickModal: false
+					}).then(() => {
 						//若任务内存在聚合处理器，启动前先重置
 						dataFlowsApi.reset(data.id).then(() => {
 							start();
@@ -1204,24 +1209,32 @@ export default {
 					id: self.dataFlowId,
 					status: forceStop === true ? 'force stopping' : 'stopping'
 				};
-
-			self.$confirm(
-				forceStop === true
-					? self.$t('message.forceStoppingMessage')
-					: self.dataFlow.stages.find(s => s.type === 'aggregation_processor')
-					? self.$t('message.stopAggregation_message').replace('XXX', self.dataFlow.name)
-					: self.sync_type === 'cdc'
-					? self.$t('message.stopMessage')
-					: self.$t('message.stopInitial_syncMessage'),
-				self.$t('dataFlow.importantReminder'),
-				{
-					confirmButtonText:
-						forceStop === true ? self.$t('dataFlow.button.force_stop') : self.$t('message.confirm'),
-					cancelButtonText: self.$t('message.cancel'),
-					type: 'warning',
-					closeOnClickModal: false
-				}
-			)
+			let message = self.$t('message.stopMessage');
+			if (forceStop === true) {
+				message = self.$t('message.forceStoppingMessage');
+			}
+			if (self.sync_type !== 'cdc') {
+				message = self.$t('message.stopInitial_syncMessage');
+			}
+			if (self.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
+				const h = self.$createElement;
+				let arr = self.$t('message.stopAggregation_message').split('XXX');
+				message = h('p', [
+					arr[0] + '(',
+					h('span', { style: { color: '#48b6e2' } }, self.dataFlow.name),
+					')' + arr[1]
+				]);
+			}
+			self.$msgbox({
+				title: self.$t('dataFlow.importantReminder'),
+				message: message,
+				showCancelButton: true,
+				confirmButtonText:
+					forceStop === true ? self.$t('dataFlow.button.force_stop') : self.$t('message.confirm'),
+				cancelButtonText: self.$t('message.cancel'),
+				type: 'warning',
+				closeOnClickModal: false
+			})
 				.then(() => {
 					self.doSave(data, err => {
 						if (err) {
