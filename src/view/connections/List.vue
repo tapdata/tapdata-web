@@ -4,7 +4,7 @@
 			<metaData v-on:nodeClick="nodeClick" @nodeDataChange="nodeDataChange"></metaData>
 		</div>
 		<div class="panel-main">
-			<div class="tittle">
+			<div class="title">
 				数据源管理
 			</div>
 			<div class="top-bar">
@@ -52,19 +52,58 @@
 					:element-loading-text="$t('dataFlow.dataLoading')"
 					:data="tableData"
 					height="100%"
-					border
-					class="dv-table"
+					class="connection-table"
 					row-key="id"
 					@selection-change="handleSelectionChange"
 				>
 					<el-table-column type="selection" width="45" :selectable="handleSelectable"> </el-table-column>
-					<el-table-column prop="name" :label="$t('dataFlow.operate')"></el-table-column>
-					<el-table-column prop="connection_type" :label="$t('dataFlow.operate')"></el-table-column>
-					<el-table-column prop="database_type" :label="$t('dataFlow.operate')"></el-table-column>
-					<el-table-column prop="database_uri" :label="$t('dataFlow.operate')"></el-table-column>
-					<el-table-column prop="listtags" :label="$t('dataFlow.operate')"></el-table-column>
-					<el-table-column prop="status" :label="$t('dataFlow.operate')"></el-table-column>
-					<el-table-column :label="$t('dataFlow.operate')" width="180">
+					<el-table-column prop="name" :label="$t('connection.dataBaseName')">
+						<template slot-scope="scope">
+							<div class="database-img">
+								<img :src="getImgByType(scope.row.database_type)" />
+							</div>
+							<div class="database-text">
+								<div>{{ scope.row.name }}</div>
+								<div class="user">admin</div>
+							</div>
+						</template>
+					</el-table-column>
+					<el-table-column prop="database_uri" :label="$t('connection.dataBaseHost')"></el-table-column>
+					<el-table-column
+						prop="connection_type"
+						:label="$t('connection.dataBaseType')"
+						:formatter="formatterConnectionType"
+						width="180"
+					></el-table-column>
+					<el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="180">
+						<template slot-scope="scope">
+							<span class="error" v-if="['invalid'].includes(scope.row.status)">
+								<i class="el-icon-error"></i>
+								<span>
+									{{ $t('connection.status.invalid') }}
+								</span>
+							</span>
+							<span class="success" v-if="['ready'].includes(scope.row.status)">
+								<i class="el-icon-success"></i>
+								<span>
+									{{ $t('connection.status.ready') }}
+								</span>
+							</span>
+							<span class="warning" v-if="['testing'].includes(scope.row.status)">
+								<i class="icon-gantanhao2"></i>
+								<span>
+									{{ $t('connection.status.testing') }}
+								</span>
+							</span>
+						</template>
+					</el-table-column>
+					<el-table-column
+						prop="listtags"
+						:label="$t('connection.dataBaseClassify')"
+						width="180"
+						:formatter="formatterListTags"
+					></el-table-column>
+					<el-table-column :label="$t('connection.operate')" width="180">
 						<template slot-scope="scope">
 							<el-tooltip
 								class="item"
@@ -172,6 +211,9 @@ export default {
 			this.multipleSelection = val;
 		},
 		//列表操作
+		getImgByType(type) {
+			return require(`../../../static/image/databaseType/${type.toLowerCase()}.png`);
+		},
 		search(pageNum) {
 			//this.searchParamsChange();
 			this.restLoading = true;
@@ -294,6 +336,21 @@ export default {
 		},
 		searchParamsChange() {
 			this.$store.commit('connections', this.searchParams);
+		},
+		//表格数据格式化
+		formatterConnectionType(row) {
+			switch (row.connection_type) {
+				case 'target':
+					return 'Target';
+				case 'source':
+					return 'Source';
+				case 'source_and_target':
+					return 'Source | Target';
+			}
+		},
+		formatterListTags(row) {
+			let listTags = row.listtags || [];
+			return listTags.map(tag => tag.value).join(',');
 		},
 		//筛选分类
 		nodeClick(data) {
@@ -439,10 +496,17 @@ export default {
 			}
 		}
 		.pagination {
-			height: 40px;
-			line-height: 40px;
-			float: right;
-			margin-top: 10px;
+			text-align: right;
+			height: 26px;
+			line-height: 23px;
+			margin-top: 7px;
+		}
+		.title {
+			margin-left: 10px;
+			margin-top: 5px;
+			font-size: 14px;
+			font-weight: bold;
+			color: #333;
 		}
 	}
 }
@@ -453,9 +517,45 @@ export default {
 	display: flex;
 	flex-direction: column;
 	font-size: 14px;
-	.dv-table {
+	.connection-table {
 		flex: 1;
 		overflow: hidden;
+		.database-img {
+			border: 1px solid #dedee4;
+			vertical-align: middle;
+			width: 40px;
+			height: 40px;
+			background: #ffffff;
+			border-radius: 3px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			float: left;
+		}
+		.database-text {
+			width: 70%;
+			white-space: nowrap;
+			word-break: break-word;
+			text-overflow: ellipsis;
+			float: left;
+			margin-top: 5px;
+			margin-left: 10px;
+			div {
+				line-height: 14px;
+			}
+			.user {
+				color: #cccccc;
+			}
+		}
+		.error {
+			color: #d54e21;
+		}
+		.success {
+			color: #0ab300;
+		}
+		.warning {
+			color: #e6a23c;
+		}
 	}
 	.el-button.is-disabled {
 		color: #c0c4cc;
@@ -463,5 +563,27 @@ export default {
 	.el-button--text {
 		color: #606266;
 	}
+}
+</style>
+<style lang="less">
+.connection-table {
+	border: 1px solid #eeeeee;
+}
+.connection-table thead {
+	color: #999;
+	th {
+		padding: 5px 0;
+		background: #f5f5f5;
+	}
+}
+.el-table th,
+.el-table tr {
+	background-color: #fcfcfc;
+}
+.connection-table .el-table .cell,
+.connection-table .el-table th div,
+.el-table--border td:first-child .cell,
+.el-table--border th:first-child .cell {
+	padding-left: 0px;
 }
 </style>

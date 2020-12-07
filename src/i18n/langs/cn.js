@@ -573,6 +573,12 @@ const cn = {
 		}
 	},
 	connection: {
+		dataBaseName: '数据源名',
+		dataBaseHost: '数据库地址',
+		dataBaseClassify: '分类',
+		dataBaseType: '数据库类型',
+		dataBaseStatus: '状态',
+		operate: '操作',
 		status: {
 			testing: '测试中',
 			invalid: '无效',
