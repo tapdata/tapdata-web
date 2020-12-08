@@ -325,6 +325,15 @@ const cn = {
 			'数据迁移功能可帮助用户在一个任务内轻松实现多个同构或异构数据库、文件之间的结构迁移、初始化迁移、或增量迁移等功能。',
 		dataFreedom:
 			'数据同布聚焦在表级别的数据处理与传输，可实现多表合并、数据拆分、关联映射、字段增减合并、内容过滤、聚合处理、JS处理等功能的实时数据同步。',
+		moreFeatures: '更多功能',
+		creatSource: '创建数据源',
+		creatApi: '创建API',
+		dataValidation: '数据校验',
+		sourceDescription:
+			'数据源是创建传输任务的前提，任务中所有的数据库和表等数据节点都来自数据源。数据源包含数据库, File, GridFS, Rest API, View, Udp, Custom connection等',
+		apiDescription: 'API即数据发布，可以根据现有collection或者通过同步任务创建新的collection对外发布的API',
+		datavaliDescription:
+			'数据校验可对迁移同步任务的数据源与目标之间的数据进行比对校验，校验功能包含快速count校验，全表字段值校验，关联字段值校验，定时自动校验等。',
 		multiError: {
 			allSelectionError: '选中的任务状态不允许这种操作',
 			notFound: '此任务不存在',

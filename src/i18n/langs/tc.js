@@ -325,6 +325,15 @@ const tc = {
 			'數據遷移功能可幫助用戶在壹個任務內輕松實現多個同構或異構數據庫、文件之間的結構遷移、初始化遷移、或增量遷移等功能。',
 		dataFreedom:
 			'數據同布聚焦在表級別的數據處理與傳輸，可實現多表合並、數據拆分、關聯映射、字段增減合並、內容過濾、聚合處理、JS處理等功能的實時數據同步。',
+		moreFeatures: '更多功能',
+		creatSource: '創建數據源',
+		creatApi: '創建API',
+		dataValidation: '數據校驗',
+		sourceDescription:
+			'數據源是創建傳輸任務的前提，任務中所有的數據庫和表等數據節點都來自數據源。數據源包含數據庫, File, GridFS, Rest API, View, Udp, Custom connection等',
+		apiDescription: 'API即數據發布，可以根據現有collection或者通過同步任務創建新的collection對外發布的API',
+		datavaliDescription:
+			'數據校驗可對遷移同步任務的數據源與目標之間的數據進行比對校驗，校驗功能包含快速count校驗，全表字段值校驗，關聯字段值校驗，定時自動校驗等。 ',
 		multiError: {
 			allSelectionError: '選中的任務狀態不允許這種操作',
 			notFound: '此任務不存在',

@@ -283,13 +283,28 @@
 										<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
 									</el-button>
 								</el-tooltip>
-								<el-tooltip
-									class="item"
-									:content="$t('dialog.jobSchedule.jobSecheduleSetting')"
-									placement="bottom"
+								<el-popover
+									popper-class="jobSeceduleDialog"
+									placement="top-start"
+									width="500"
+									trigger="hover"
 								>
+									<div class="text box">
+										<p>{{ $t('dialog.jobSchedule.explanation') }}</p>
+										<p>{{ $t('dialog.jobSchedule.grammar') }}</p>
+										<ul>
+											<li v-for="item in timeTextArr" :key="item">
+												<p>{{ $t('dialog.jobSchedule.' + item) }}</p>
+												<span>*</span>
+											</li>
+										</ul>
+										<p>{{ $t('dialog.jobSchedule.example') }}</p>
+										<p>0 */1 * * * ? * // {{ $t('dialog.jobSchedule.runMinute') }}</p>
+										<p>0 0 2 * * ? * // {{ $t('dialog.jobSchedule.runDay') }}</p>
+									</div>
 									<el-button
 										type="text"
+										slot="reference"
 										:disabled="
 											scope.row.setting.sync_type !== 'initial_sync' ||
 												scope.row.status === 'running'
@@ -299,6 +314,12 @@
 									>
 										<i class="iconfont  task-list-icon  icon-lishi2"></i>
 									</el-button>
+								</el-popover>
+								<el-tooltip
+									class="item"
+									:content="$t('dialog.jobSchedule.jobSecheduleSetting')"
+									placement="bottom"
+								>
 								</el-tooltip>
 								<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
 									<el-button
@@ -1774,21 +1795,22 @@ export default {
 .dataflow-clickTip .el-message-box__status {
 	top: 25% !important;
 }
-.data-flow-wrap {
-	.jobSeceduleDialog {
-		.text {
-			padding-left: 100px;
-			line-height: 28px;
-			color: #999;
-			ul {
-				display: flex;
-				flex-direction: row;
-				text-align: center;
-				li {
-					padding-right: 20px;
-				}
+.jobSeceduleDialog {
+	.text {
+		padding-left: 100px;
+		line-height: 28px;
+		color: #999;
+		ul {
+			display: flex;
+			flex-direction: row;
+			text-align: center;
+			li {
+				padding-right: 20px;
 			}
 		}
+	}
+	.box {
+		padding-left: 0;
 	}
 }
 </style>

@@ -326,6 +326,16 @@ const en = {
 			'Database migration can help users  to achieve structure,  inital, and CDC migration of multiple homogeneous or heterogeneous databases in one job. ',
 		dataFreedom:
 			'Data sync focuses on data processing (such as table merging, data splitting, joint mapping, field processing, content filtering, aggregation processing, JS processing ,etc )and sync of table-level real-time data sync.',
+		moreFeatures: 'More Features',
+		creatSource: 'Create data source',
+		creatApi: 'Create API',
+		dataValidation: 'Data Validation',
+		sourceDescription:
+			'Data source is the prerequisite for creating a transmission task. All data nodes such as databases and tables in the task come from the data source. Data sources include database, File, GridFS, Rest API, View, Udp, Custom connection, etc.',
+		apiDescription:
+			'API is data publishing, you can create a new collection based on the existing collection or through synchronization tasks to publish the API',
+		datavaliDescription:
+			'Data verification can compare and verify the data between the data source and target of the migration synchronization task. The verification function includes fast count verification, full table field value verification, associated field value verification, and automatic timing verification. Wait. ',
 		multiError: {
 			allSelectionError: 'The status of selected job does not allow this operation.',
 			notFound: 'This job does not existed.',

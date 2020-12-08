@@ -1,15 +1,15 @@
 <template>
 	<el-dialog
 		:title="$t('dataFlow.createNew')"
-		:visible.sync="dialogVisible"
+		:visible.sync="dialogVisibleFalg"
 		width="60%"
 		:before-close="handleClose"
 		:close-on-click-modal="false"
 		class="simple-scene"
 	>
-		<div>
+		<div class="creat">
 			<ul class="item">
-				<li @click="db2db">
+				<li @click="db2db" v-readonlybtn="'SYNC_job_creation'">
 					<span class="model">{{ $t('dataFlow.guidingMode') }}</span>
 					<div class="content">
 						<i class="iconfont icon-shujukuqianyi2"></i>
@@ -19,7 +19,7 @@
 						>
 					</div>
 				</li>
-				<li @click="goNew">
+				<li @click="goNew" v-readonlybtn="'SYNC_job_creation'">
 					<span class="model">{{ $t('dataFlow.advancedMode') }}</span>
 					<div class="content">
 						<i class="iconfont icon-shujukuqianyi2"></i>
@@ -29,12 +29,42 @@
 						>
 					</div>
 				</li>
-				<li @click="goNewCust">
+				<li class="marTop25" @click="goNewCust" v-readonlybtn="'SYNC_job_creation'">
 					<div class="content">
 						<i class="iconfont icon-renwubianpai2"></i>
 						<span>
 							<span class="tag">{{ $t('dataFlow.dataMigrationHead') }}</span>
 							{{ $t('dataFlow.dataFreedom') }}</span
+						>
+					</div>
+				</li>
+			</ul>
+			<ul class="item more">
+				<li @click="handleConnection" v-readonlybtn="'datasource_creation'">
+					<span class="model">{{ $t('dataFlow.moreFeatures') }}</span>
+					<div class="content">
+						<i class="iconfont icon-database"></i>
+						<span>
+							<span class="tag">{{ $t('dataFlow.creatSource') }}</span>
+							{{ $t('dataFlow.sourceDescription') }}</span
+						>
+					</div>
+				</li>
+				<li class="marTop25" @click="handleModules" v-readonlybtn="'API_creation'">
+					<div class="content">
+						<i class="iconfont icon-api2"></i>
+						<span>
+							<span class="tag">{{ $t('dataFlow.creatApi') }}</span>
+							{{ $t('dataFlow.apiDescription') }}</span
+						>
+					</div>
+				</li>
+				<li class="marTop25" @click="handleDataVerification" v-readonlybtn="'verify_job_creation'">
+					<div class="content">
+						<i class="iconfont icon-hechabidui-copy"></i>
+						<span>
+							<span class="tag">{{ $t('dataFlow.dataValidation') }}</span>
+							{{ $t('dataFlow.datavaliDescription') }}</span
 						>
 					</div>
 				</li>
@@ -53,9 +83,19 @@ export default {
 			value: Boolean
 		}
 	},
+	data() {
+		return {
+			dialogVisibleFalg: false
+		};
+	},
+	watch: {
+		dialogVisible(val) {
+			this.dialogVisibleFalg = val;
+		}
+	},
 	methods: {
 		handleClose() {
-			this.dialogVisible = false;
+			this.dialogVisibleFalg = false;
 			this.$emit('dialogVisible', false);
 		},
 		db2db() {
@@ -81,6 +121,32 @@ export default {
 			});
 			window.open(routeUrl.href, '_blank');
 			this.handleClose();
+		},
+		// 跳转数据源
+		handleConnection() {
+			let routeUrl = this.$router.resolve({
+				path: '/connection'
+			});
+			window.open(routeUrl.href, '_blank');
+			this.handleClose();
+		},
+
+		//跳转发布api
+		handleModules() {
+			let routeUrl = this.$router.resolve({
+				path: '/modules'
+			});
+			window.open(routeUrl.href, '_blank');
+			this.handleClose();
+		},
+
+		// 跳转数据校验
+		handleDataVerification() {
+			let routeUrl = this.$router.resolve({
+				name: 'dataVerificationCreate'
+			});
+			window.open(routeUrl.href, '_blank');
+			this.handleClose();
 		}
 	}
 };
@@ -90,15 +156,18 @@ export default {
 @color: #999999;
 .item {
 	font-size: 12px;
+	overflow: hidden;
 	li {
 		float: left;
 		width: 32%;
+		box-sizing: border-box;
+		overflow: hidden;
 	}
 	li:first-child {
 		margin-right: 20px;
-		border-right: 1px solid #dedee4;
+		// border-right: 1px solid #dedee4;
 	}
-	li:last-child {
+	li.marTop25 {
 		margin-top: 25px;
 	}
 	.model {
@@ -111,12 +180,16 @@ export default {
 		.content {
 			display: flex;
 			justify-content: space-between;
-			cursor: pointer;
 			padding: 20px;
-			color: #999;
 			line-height: 24px;
 			margin-right: 15px;
+			color: #999;
+			cursor: pointer;
+			word-break: break-word;
+			box-sizing: border-box;
+			overflow: hidden;
 			&:hover {
+				padding: 18px;
 				background: rgba(250, 250, 250, 1);
 				border: 1px solid rgba(222, 222, 228, 1);
 				box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.21);
@@ -137,6 +210,9 @@ export default {
 			}
 		}
 	}
+}
+.more {
+	margin-top: 20px;
 }
 </style>
 <style lang="less">
