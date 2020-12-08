@@ -54,6 +54,7 @@
 
 <script>
 import log from '../../../log';
+import { removeDeleted } from '../../util/Schema';
 export default {
 	name: 'Entity',
 	props: {
@@ -90,6 +91,10 @@ export default {
 						this.$refs.tree.setChecked(f[this.nodeKey], false);
 					});
 				});
+			}
+			//过滤被删除的数据
+			if (schema && schema.fields) {
+				schema.fields = removeDeleted(schema.fields);
 			}
 			log('Entity Schema Change:', schema);
 		}

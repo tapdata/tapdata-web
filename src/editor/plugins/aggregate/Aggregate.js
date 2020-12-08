@@ -55,7 +55,9 @@ export const aggregateConfig = {
 				let functionNames = [];
 				data.aggregations.forEach(stage => {
 					if (stage.groupByExpression) groupFields.push(...stage.groupByExpression);
-					if (stage.aggFunction) functionNames.push(stage.aggFunction);
+					if (stage.aggFunction && !functionNames.includes(stage.aggFunction)) {
+						functionNames.push(stage.aggFunction);
+					}
 				});
 
 				let fields = outputSchema.fields || [];

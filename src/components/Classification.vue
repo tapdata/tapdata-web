@@ -1,15 +1,15 @@
 <template>
-	<div class="metadata">
-		<div class="metadata-header" v-show="isActive">
+	<div class="classification">
+		<div class="classification-header" v-show="isActive">
 			<span>{{ $t('metaData.title') }}</span>
-			<div class="metadata-header-btns">
-				<i class="iconfont icon-icon_tianjia" v-readonlybtn="'BTN_AUTHS'" @click="showDialog()"></i>
+			<div class="classification-header-btns">
+				<i class="iconfont icon-icon_tianjia" v-readonlybtn="authority" @click="showDialog()"></i>
 				<i class="iconfont icon-fangdajing" @click="isActive = false"></i>
 				<i class="iconfont icon-sync" @click="getData"></i>
 				<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
 			</div>
 		</div>
-		<div class="metadata-header metadata-header-btns" v-show="!isActive">
+		<div class="classification-header classification-header-btns" v-show="!isActive">
 			<i class="iconfont icon-right-circle" @click="isActive = true"></i>
 			<el-input class="search" size="mini" v-model="filterText">
 				<i slot="suffix" class="el-icon-search"></i>
@@ -17,24 +17,28 @@
 		</div>
 		<div class="tree-block">
 			<el-tree
+				check-strictly
+				show-checkbox
+				class="classification-tree"
+				ref="tree"
 				node-key="id"
 				highlight-current
 				:props="props"
 				:expand-on-click-node="false"
 				:data="treeData"
 				:filter-node-method="filterNode"
-				ref="tree"
 				:render-after-expand="false"
-				class="metaData-tree"
+				@node-click="nodeClickHandler"
+				@check="checkHandler"
 			>
 				<span class="custom-tree-node" slot-scope="{ node, data }">
 					<span class="iconfont icon-Folder-closed icon-folder"></span>
-					<span class="table-label" @click="handleChecked(data)">{{ data.value }}</span>
+					<span class="table-label">{{ data.value }}</span>
 					<el-dropdown
 						class="btn-menu"
 						size="mini"
 						@command="handleRowCommand($event, node)"
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="authority"
 					>
 						<el-button type="text"><i class="iconfont icon-gengduo3  task-list-icon"></i></el-button>
 						<el-dropdown-menu slot="dropdown">
@@ -46,7 +50,7 @@
 				</span>
 			</el-tree>
 		</div>
-		<el-dialog size="mini" :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+		<el-dialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
 			<span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
 			<el-input
 				size="mini"
@@ -71,11 +75,13 @@ import factory from '../api/factory';
 const MetadataDefinitions = factory('MetadataDefinitions');
 
 export default {
-	name: 'metaData',
 	props: {
 		type: {
 			type: String,
 			default: 'dataflow'
+		},
+		authority: {
+			type: String
 		}
 	},
 	data() {
@@ -111,6 +117,31 @@ export default {
 		}
 	},
 	methods: {
+		clear() {
+			this.$refs.tree.setCheckedNodes([]);
+		},
+		checkHandler(data, { checkedKeys }) {
+			let checked = checkedKeys.includes(data.id);
+			let setChecked = arr => {
+				if (arr && arr.length) {
+					arr.forEach(node => {
+						this.$refs.tree.setChecked(node, checked, true);
+						setChecked(node.children);
+					});
+				}
+			};
+			setChecked(data.children);
+			this.emitCheckedNodes();
+		},
+		nodeClickHandler(data, node) {
+			this.clear();
+			node.checked = !node.checked;
+			this.emitCheckedNodes();
+		},
+		emitCheckedNodes() {
+			let checkedNodes = this.$refs.tree.getCheckedKeys() || [];
+			this.$emit('nodeChecked', checkedNodes);
+		},
 		getData(cb) {
 			let params = {
 				'filter[where][or][0][item_type]': this.type
@@ -230,8 +261,10 @@ export default {
 				.then(res => {
 					let self = this;
 					if (res.data) {
-						self.getData(data => {
-							self.$emit('nodeDataChange', data);
+						self.getData(() => {
+							this.$nextTick(() => {
+								this.emitCheckedNodes();
+							});
 						});
 						self.hideDialog();
 					}
@@ -263,16 +296,13 @@ export default {
 					resolve(items.find(it => it.value === value));
 				});
 			});
-		},
-		handleChecked(data) {
-			this.$emit('nodeClick', data);
 		}
 	}
 };
 </script>
 
 <style scoped lang="less">
-.metadata {
+.classification {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
@@ -283,7 +313,7 @@ export default {
 	border-bottom: 1px solid #dedee4;
 	background: #fff;
 	/*头部样式*/
-	.metadata-header {
+	.classification-header {
 		height: 28px;
 		background: #f5f5f5;
 		border-bottom: 1px solid #dedee4;
@@ -298,7 +328,7 @@ export default {
 			margin: 0 8px;
 		}
 	}
-	.metadata-header-btns {
+	.classification-header-btns {
 		color: #999;
 		.iconfont:hover {
 			color: #333;
@@ -342,13 +372,13 @@ export default {
 }
 </style>
 <style lang="less">
-.metadata-header {
+.classification-header {
 	.el-input .el-input__inner {
 		height: 24px;
 		line-height: 24px;
 	}
 }
-.metaData-tree {
+.classification-tree {
 	padding-bottom: 50px;
 	.el-tree-node__content {
 		height: 26px;

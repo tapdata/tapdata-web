@@ -30,7 +30,7 @@
 									<div class="uuid">{{ item.systemInfo.uuid }}</div>
 									<span>{{ item.systemInfo.ip }}</span>
 								</div>
-								<div class="fr" style="width: 40%;" v-readonlybtn="'BTN_AUTHS'">
+								<div class="fr" style="width: 40%;" v-readonlybtn="'Cluster_operation'">
 									<el-button size="mini" class="fr addBtn" @click="addServeFn(item)">{{
 										$t('message.addServerMon')
 									}}</el-button>
@@ -50,7 +50,7 @@
 										}}</span>
 									</el-col>
 									<el-col :span="12">
-										<div class="btn fr" v-readonlybtn="'BTN_AUTHS'">
+										<div class="btn fr" v-readonlybtn="'Cluster_operation'">
 											<el-button
 												:type="item.management.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.management.status == 'stopped' ? false : true"
@@ -86,7 +86,7 @@
 										}}</span>
 									</el-col>
 									<el-col :span="12">
-										<div class="btn fr" v-readonlybtn="'BTN_AUTHS'">
+										<div class="btn fr" v-readonlybtn="'Cluster_operation'">
 											<el-button
 												:type="item.engine.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.engine.status == 'stopped' ? false : true"
@@ -118,7 +118,7 @@
 										}}</span>
 									</el-col>
 									<el-col :span="12">
-										<div class="btn fr" v-readonlybtn="'BTN_AUTHS'">
+										<div class="btn fr" v-readonlybtn="'Cluster_operation'">
 											<el-button
 												:type="item.apiServer.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.apiServer.status == 'stopped' ? false : true"
@@ -154,7 +154,7 @@
 											child.status
 										}}</span>
 									</el-col>
-									<el-col :span="7" :offset="5" v-readonlybtn="'BTN_AUTHS'">
+									<el-col :span="7" :offset="5" v-readonlybtn="'Cluster_operation'">
 										<div class="btn fr">
 											<el-button type="text" @click="delServe(child, item.status)">{{
 												$t('message.delete')
@@ -226,8 +226,7 @@ export default {
 			that.getDataApi();
 		}, 5000);
 
-		this.buildProfile = localStorage.getItem('buildProfile');
-		if (this.buildProfile) {
+		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
 			this.getDataApi();
 		}
 	},
@@ -408,9 +407,9 @@ export default {
 				params['filter[where][or][0][systemInfo.hostname][like]'] = this.sourch;
 				params['filter[where][or][1][systemInfo.ip][like]'] = this.sourch;
 			}
+			// 是否能看到所有集群
 			if (
-				this.buildProfile &&
-				this.buildProfile === 'CLOUD' &&
+				this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
 				!parseInt(this.$cookie.get('isAdmin')) &&
 				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
 			) {

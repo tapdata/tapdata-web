@@ -3,10 +3,23 @@
  * @date 3/2/20
  * @description
  */
+import axios from 'axios';
 import PublicAPI from './publicApi';
 
 export default class RoleMappings extends PublicAPI {
 	constructor() {
 		super('/api/RoleMappings');
+	}
+
+	delete(id, name) {
+		// return axios.delete(`${this.url}/${id}`)
+		if (name == '') {
+			return axios.delete(`${this.url}/${id}`);
+		} else {
+			return axios.delete(`${this.url}/${id}?name=${name}`);
+		}
+	}
+	post(params) {
+		return axios.post(this.url, params);
 	}
 }

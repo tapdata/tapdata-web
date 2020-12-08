@@ -8,10 +8,6 @@ import sc from './langs/cn';
 import tc from './langs/tc';
 
 Vue.use(VueI18n);
-let platform = 'DAAS';
-if (platform === 'DK') {
-	localStorage.setItem('tapdata_localize_lang', 'sc');
-}
 const i18n = new VueI18n({
 	// locale: localStorage.lang || 'en',
 	locale: localStorage.getItem('tapdata_localize_lang') || 'en',

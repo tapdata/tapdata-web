@@ -167,16 +167,12 @@ export default {
 	},
 
 	mounted() {
-		this.buildProfile = this.$store.state.buildProfile;
 		let params = {
 			'filter[limit]': this.pagesize,
 			'filter[skip]': (this.currpage - 1) * this.pagesize,
 			'filter[order]': 'last_updated DESC',
 			'filter[where][loggerName]': 'tapdataAgent'
 		};
-		if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-			params['filter[where][username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-		}
 		setTimeout(() => this.getDataApi(params), 1000);
 		this.getIpFn();
 	},
@@ -205,13 +201,7 @@ export default {
 				'filter[skip]': this.currpage,
 				'filter[order]': 'last_updated DESC'
 			};
-			if (
-				this.buildProfile &&
-				this.buildProfile === 'CLOUD' &&
-				!parseInt(this.$cookie.get('isAdmin') && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
-			) {
-				params['filter[where][username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-			}
+
 			let obj = {};
 			for (let i in params) {
 				if (params[i]) {
@@ -230,6 +220,9 @@ export default {
 		},
 		// 获取数据
 		async getDataApi(params) {
+			if (!parseInt(this.$cookie.get('isAdmin') && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')) {
+				params['filter[where][username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+			}
 			logs.get(params).then(res => {
 				if (res.data) {
 					this.tableData = res.data;
@@ -253,9 +246,6 @@ export default {
 				'filter[skip]': (cpage - 1) * this.pagesize,
 				'filter[where][loggerName]': 'tapdataAgent'
 			};
-			if (this.buildProfile && this.buildProfile === 'CLOUD' && !parseInt(this.$cookie.get('isAdmin'))) {
-				params['filter[where][username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-			}
 			this.getDataApi(params);
 		},
 		handleSizeChange(psize) {
@@ -266,13 +256,6 @@ export default {
 				'filter[skip]': (this.currpage - 1) * psize,
 				'filter[where][loggerName]': 'tapdataAgent'
 			};
-			if (
-				this.buildProfile &&
-				this.buildProfile === 'CLOUD' &&
-				!parseInt(this.$cookie.get('isAdmin') && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
-			) {
-				params['filter[where][username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-			}
 			this.getDataApi(params);
 		},
 

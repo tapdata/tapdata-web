@@ -386,6 +386,7 @@ export default {
 				});
 			let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {};
 			this.form.name = this.form.name || flow.name;
+			this.form['dataFlowName'] = flow.name;
 		},
 		//处理db克隆的情况
 		dealDBFlow(flowData) {

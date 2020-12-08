@@ -1,7 +1,11 @@
 <template>
 	<section class="data-flow-wrap" v-loading="restLoading">
-		<div class="panel-left" v-if="formData.panelFlag">
-			<metaData v-on:nodeClick="nodeClick" @nodeDataChange="nodeDataChange"></metaData>
+		<div class="panel-left" v-show="formData.panelFlag">
+			<Classification
+				ref="classification"
+				:authority="'SYNC_category_management'"
+				@nodeChecked="nodeChecked"
+			></Classification>
 		</div>
 		<div class="panel-main">
 			<div class="mappingTemplate">
@@ -79,9 +83,6 @@
 							></el-option>
 						</el-select>
 					</li>
-					<li class="item" v-if="checkedTag && checkedTag !== ''">
-						<el-tag size="small" closable @close="handleClose()">{{ checkedTag.value }}</el-tag>
-					</li>
 					<li class="item">
 						<el-button class="btn" size="mini" @click="handleClear">
 							<i class="iconfont icon-shuaxin1 back-btn-icon"></i>
@@ -90,7 +91,7 @@
 				</ul>
 				<div class="topbar-buttons">
 					<el-button
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="'SYNC_category_application'"
 						size="mini"
 						class="btn"
 						v-show="multipleSelection.length > 0"
@@ -99,37 +100,44 @@
 						<i class="iconfont icon-biaoqian back-btn-icon"></i>
 						<span> {{ $t('dataFlow.taskBulkTag') }}</span>
 					</el-button>
-					<el-dropdown
-						v-readonlybtn="'BTN_AUTHS'"
-						@command="handleCommand"
-						v-show="multipleSelection.length > 0"
-					>
+					<el-dropdown @command="handleCommand" v-show="multipleSelection.length > 0 && bulkOperation">
 						<el-button class="btn btn-dropdowm" size="mini">
 							<i class="iconfont icon-piliang back-btn-icon"></i>
 							<span> {{ $t('dataFlow.taskBulkOperation') }}</span>
 						</el-button>
 						<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item command="bulkExport">{{ $t('dataFlow.bulkExport') }}</el-dropdown-item>
-							<el-dropdown-item command="bulkScheuled">{{
+							<el-dropdown-item command="bulkExport" v-readonlybtn="'SYNC_job_export'">{{
+								$t('dataFlow.bulkExport')
+							}}</el-dropdown-item>
+							<el-dropdown-item command="bulkScheuled" v-readonlybtn="'SYNC_job_operation'">{{
 								$t('dataFlow.bulkScheuled')
 							}}</el-dropdown-item>
-							<el-dropdown-item command="bulkStopping">{{
+							<el-dropdown-item command="bulkStopping" v-readonlybtn="'SYNC_job_operation'">{{
 								$t('dataFlow.bulkStopping')
 							}}</el-dropdown-item>
-							<el-dropdown-item command="batchDelete">{{ $t('dataFlow.batchDelete') }}</el-dropdown-item>
-							<el-dropdown-item command="batchRest">{{ $t('dataFlow.batchRest') }}</el-dropdown-item>
+							<el-dropdown-item command="batchDelete" v-readonlybtn="'SYNC_job_delete'">{{
+								$t('dataFlow.batchDelete')
+							}}</el-dropdown-item>
+							<el-dropdown-item command="batchRest" v-readonlybtn="'SYNC_job_operation'">{{
+								$t('dataFlow.batchRest')
+							}}</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
-					<el-button v-readonlybtn="'BTN_AUTHS'" size="mini" class="btn" @click="handleGoFunction">
+					<el-button
+						v-readonlybtn="'SYNC_Function_management'"
+						size="mini"
+						class="btn"
+						@click="handleGoFunction"
+					>
 						<i class="iconfont icon-hanshu back-btn-icon"></i>
 						<span> {{ $t('dataFlow.taskBulkFx') }}</span>
 					</el-button>
-					<el-button v-readonlybtn="'BTN_AUTHS'" size="mini" class="btn" @click="handleImport">
+					<el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
 						<i class="iconfont icon-daoru back-btn-icon"></i>
 						<span> {{ $t('dataFlow.bulkImport') }}</span>
 					</el-button>
 					<el-button
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="'SYNC_job_creation'"
 						class="btn btn-create"
 						type="primary"
 						size="mini"
@@ -230,7 +238,7 @@
 					></el-table-column>
 					<el-table-column :label="$t('dataFlow.taskSwitch')" width="70">
 						<template slot-scope="scope">
-							<div v-if="!scope.row.hasChildren" v-readonlybtn="'BTN_AUTHS'">
+							<div v-if="!scope.row.hasChildren" v-readonlybtn="'SYNC_job_operation'">
 								<el-tooltip
 									class="item"
 									effect="dark"
@@ -265,36 +273,45 @@
 										<i class="iconfont  task-list-icon icon-chaxun"></i>
 									</el-button>
 								</el-tooltip>
-								<el-tooltip
-									class="item"
-									v-readonlybtn="'BTN_AUTHS'"
-									:content="$t('dataFlow.edit')"
-									placement="bottom"
-								>
+								<el-tooltip class="item" :content="$t('dataFlow.edit')" placement="bottom">
 									<el-button
 										type="text"
 										:disabled="statusBtMap[scope.row.status].edit"
 										@click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)"
+										v-readonlybtn="'SYNC_job_edition'"
 									>
 										<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
 									</el-button>
 								</el-tooltip>
 								<el-tooltip
 									class="item"
-									v-readonlybtn="'BTN_AUTHS'"
-									:content="$t('message.delete')"
+									:content="$t('dialog.jobSchedule.jobSecheduleSetting')"
 									placement="bottom"
 								>
 									<el-button
 										type="text"
+										:disabled="
+											scope.row.setting.sync_type !== 'initial_sync' ||
+												scope.row.status === 'running'
+										"
+										v-readonlybtn="'SYNC_job_edition'"
+										@click="handleTaskscheduling(scope.row.id, scope.row)"
+									>
+										<i class="iconfont  task-list-icon  icon-lishi2"></i>
+									</el-button>
+								</el-tooltip>
+								<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
+									<el-button
+										type="text"
 										:disabled="statusBtMap[scope.row.status].delete"
 										@click="handleDelete(scope.row)"
+										v-readonlybtn="'SYNC_job_delete'"
 									>
 										<i class="iconfont task-list-icon icon-shanchu"></i>
 									</el-button>
 								</el-tooltip>
 								<el-dropdown
-									v-readonlybtn="'BTN_AUTHS'"
+									v-show="moreAuthority"
 									@command="handleRowCommand($event, scope.row)"
 									class="item"
 								>
@@ -302,21 +319,30 @@
 										><i class="iconfont icon-gengduo3  task-list-icon"></i
 									></el-button>
 									<el-dropdown-menu slot="dropdown">
-										<el-dropdown-item command="export">{{
+										<el-dropdown-item command="dataVerify" v-readonlybtn="'Data_verify'">{{
+											$t('dataVerify.dataVerify')
+										}}</el-dropdown-item>
+										<el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
 											$t('dataFlow.dataFlowExport')
 										}}</el-dropdown-item>
-										<el-dropdown-item command="copy">{{ $t('dataFlow.copy') }}</el-dropdown-item>
+										<el-dropdown-item command="copy" v-readonlybtn="'SYNC_job_creation'">{{
+											$t('dataFlow.copy')
+										}}</el-dropdown-item>
 										<el-dropdown-item
 											:disabled="statusBtMap[scope.row.status].reset"
 											command="reset"
+											v-readonlybtn="'SYNC_job_operation'"
 											>{{ $t('dataFlow.button.reset') }}</el-dropdown-item
 										>
 										<el-dropdown-item
 											command="force_stopping"
 											:disabled="statusBtMap[scope.row.status].forceStop"
+											v-readonlybtn="'SYNC_job_operation'"
 											>{{ $t('dataFlow.status.force_stopping') }}</el-dropdown-item
 										>
-										<el-dropdown-item command="tag">{{ $t('dataFlow.addTag') }}</el-dropdown-item>
+										<el-dropdown-item command="tag" v-readonlybtn="'SYNC_category_application'">{{
+											$t('dataFlow.addTag')
+										}}</el-dropdown-item>
 									</el-dropdown-menu>
 								</el-dropdown>
 							</div>
@@ -346,7 +372,7 @@
 			v-on:operationsClassify="handleOperationClassify"
 		></SelectClassify>
 		<el-dialog
-			:title="this.$t('dataFlow.importantReminder')"
+			:title="$t('dataFlow.importantReminder')"
 			:close-on-click-modal="false"
 			:visible.sync="deleteDialogVisible"
 			width="30%"
@@ -368,13 +394,54 @@
 			@closeAgentDialog="closeAgentDialog"
 		></DownAgent>
 		<SkipError
+			v-if="selectedJob.dataItem"
 			ref="SelectClassify"
 			:dialogVisible="dialogVisibleSkipError"
 			:errorEvents="errorEvents"
-			:taskName="taskName"
+			:taskName="selectedJob.dataItem.name"
 			v-on:dialogVisible="handleSkipErrorVisible"
 			v-on:operationsSkipError="handleOperationSkipError"
 		></SkipError>
+		<el-dialog
+			:title="$t('dialog.jobSchedule.jobSecheduleSetting')"
+			:close-on-click-modal="false"
+			:visible.sync="taskSettingsDialog"
+			custom-class="jobSeceduleDialog"
+			width="50%"
+		>
+			<el-form :model="formSchedule" label-width="100px">
+				<el-form-item :label="$t('dialog.jobSchedule.job')">
+					<div>{{ formSchedule.name }}</div>
+				</el-form-item>
+				<el-form-item :label="$t('dialog.jobSchedule.sync')">
+					<el-switch v-model="formSchedule.isSchedule"> </el-switch>
+				</el-form-item>
+				<el-form-item :label="$t('dialog.jobSchedule.expression')" v-if="formSchedule.isSchedule">
+					<el-input
+						v-model="formSchedule.cronExpression"
+						:placeholder="$t('dialog.jobSchedule.expressionPlaceholder')"
+					>
+					</el-input>
+				</el-form-item>
+			</el-form>
+			<div v-if="formSchedule.isSchedule" class="text">
+				<p>{{ $t('dialog.jobSchedule.explanation') }}</p>
+				<p>{{ $t('dialog.jobSchedule.grammar') }}</p>
+				<ul>
+					<li v-for="item in timeTextArr" :key="item">
+						<p>{{ $t('dialog.jobSchedule.' + item) }}</p>
+						<span>*</span>
+					</li>
+				</ul>
+				<p>{{ $t('dialog.jobSchedule.example') }}</p>
+				<p>0 */1 * * * ? * // {{ $t('dialog.jobSchedule.runMinute') }}</p>
+				<p>0 0 2 * * ? * // {{ $t('dialog.jobSchedule.runDay') }}</p>
+			</div>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="taskSettingsDialog = false">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="saveTaskSetting">{{ $t('app.save') }}</el-button>
+			</span>
+		</el-dialog>
 	</section>
 </template>
 
@@ -387,26 +454,33 @@ const dataFlows = factory('DataFlows');
 const MetadataInstance = factory('MetadataInstances');
 const cluster = factory('cluster');
 import { toRegExp } from '../../util/util';
-import metaData from '../metaData';
+import Classification from '@/components/Classification';
 import SelectClassify from '../../components/SelectClassify';
 import SkipError from '../../components/SkipError';
 import DownAgent from '../downAgent/agentDown';
 
 export default {
-	components: { metaData, SelectClassify, DownAgent, SkipError },
+	components: { Classification, SelectClassify, DownAgent, SkipError },
 	data() {
 		return {
+			authorityMore:
+				this.$has('SYNC_job_export') ||
+				this.$has('Data_verify') ||
+				this.$has('SYNC_job_creation') ||
+				this.$has('SYNC_job_operation') ||
+				this.$has('SYNC_category_application'),
+			taskSettingsDialog: false, //任务调度设置弹窗开关
 			downLoadAgetntdialog: false, //判断是否安装agent
 			downLoadNum: 0,
 			firstNum: undefined,
-			agentObj: {
+			selectedJob: {
 				id: '',
 				oldStatus: '',
 				status: '',
 				dataItem: null
 			},
 			deleteDialogVisible: false,
-			checkedTag: '',
+			checkedTags: [],
 			activeName: 'dataFlow',
 			listtags: [],
 			tagList: [],
@@ -517,7 +591,24 @@ export default {
 			currentStatus: '',
 			oldStatus: '',
 			currentId: '',
-			taskName: ''
+			taskName: '',
+
+			formSchedule: {
+				id: '',
+				name: '',
+				isSchedule: false,
+				cronExpression: '',
+				taskData: null
+			},
+			moreAuthority:
+				this.$has('Data_verify') ||
+				this.$has('SYNC_job_export') ||
+				this.$has('SYNC_job_creation') ||
+				this.$has('SYNC_job_operation') ||
+				this.$has('SYNC_category_application'),
+			bulkOperation:
+				this.$has('SYNC_job_export') || this.$has('SYNC_job_operation') || this.$has('SYNC_job_delete'),
+			timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
 		};
 	},
 	created() {
@@ -548,9 +639,7 @@ export default {
 			self.wsData.length = 0;
 		}, 3000);
 
-		this.buildProfile = localStorage.getItem('buildProfile');
-
-		if (this.buildProfile && this.buildProfile === 'CLOUD') {
+		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
 			this.getDataApi();
 			if (!this.downLoadNum) {
 				self.timer = setInterval(() => {
@@ -583,8 +672,7 @@ export default {
 		getDataApi() {
 			let params = {};
 			if (
-				this.buildProfile &&
-				this.buildProfile === 'CLOUD' &&
+				this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
 				!parseInt(this.$cookie.get('isAdmin')) &&
 				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
 			) {
@@ -604,7 +692,14 @@ export default {
 		},
 
 		closeAgentDialog() {
-			this.handleStatus(this.agentObj.id, this.agentObj.oldStatus, this.agentObj.status, this.agentObj.dataItem);
+			if (this.selectedJob.id) {
+				this.handleStatus(
+					this.selectedJob.id,
+					this.selectedJob.oldStatus,
+					this.selectedJob.status,
+					this.selectedJob.dataItem
+				);
+			}
 			this.downLoadAgetntdialog = false;
 		},
 		// // 刷新agent
@@ -679,14 +774,13 @@ export default {
 		},
 		handleCancelSkipError() {
 			let data = {
-				status: this.oldStatus
+				status: this.selectedJob.oldStatus
 			};
-			dataFlows.updateById(this.currentId, data);
+			dataFlows.updateById(this.selectedJob.id, data);
 			this.getData();
 		},
-		handleOperationSkipError(val) {
-			this.currentStatus['errorEvents'] = val;
-			this.getStatus(this.currentId, this.currentStatus);
+		handleOperationSkipError(errorEvents) {
+			this.startJob(errorEvents);
 		},
 		handleGoFunction() {
 			top.location.href = '/#/JsFuncs';
@@ -756,6 +850,7 @@ export default {
 				});
 			}, 200);
 		},
+
 		handleImport() {
 			let routeUrl = this.$router.resolve({
 				path: '/upload'
@@ -798,7 +893,11 @@ export default {
 					in: [id]
 				}
 			};
+
 			switch (command) {
+				case 'dataVerify':
+					this.$router.push({ name: 'dataVerification', query: { name: node.name, id: node.id } });
+					break;
 				case 'export':
 					MetadataInstance.download(where);
 					break;
@@ -917,9 +1016,9 @@ export default {
 					};
 				}
 			}
-			if (this.checkedTag && this.checkedTag !== '') {
+			if (this.checkedTags && this.checkedTags.length) {
 				where['listtags.id'] = {
-					in: [this.checkedTag.id]
+					in: this.checkedTags
 				};
 			}
 			let _params = Object.assign(
@@ -942,8 +1041,6 @@ export default {
 							stats: true,
 							checked: true,
 							stages: true,
-							'stages.id': true,
-							'stages.name': true,
 							setting: true,
 							user_id: true,
 							startTime: true,
@@ -957,7 +1054,7 @@ export default {
 			await dataFlows
 				.get(_params)
 				.then(res => {
-					if (res.data) {
+					if (res && res.data) {
 						this.handleData(res.data);
 						this.tableData = res.data;
 						let msg = {
@@ -1172,44 +1269,91 @@ export default {
 		},
 
 		statusConfirm(callback, handleCatch, data) {
-			let initFalg =
-				(data && data.setting && data.setting.sync_type === 'cdc') || (data && data.length === 0)
-					? true
-					: false;
-			this.$confirm(
-				initFalg ? this.$t('message.stopMessage') : this.$t('message.stopInitial_syncMessage'),
-				this.$t('dataFlow.importantReminder'),
-				{
-					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancel'),
-					type: 'warning',
-					closeOnClickModal: false
-				}
-			)
+			let message = this.$t('message.stopMessage');
+			if (data && data.setting && data.setting.sync_type !== 'cdc') {
+				message = this.$t('message.stopInitial_syncMessage');
+			}
+			if (data && data.stages && data.stages.find(s => s.type === 'aggregation_processor')) {
+				const h = this.$createElement;
+				let arr = this.$t('message.stopAggregation_message').split('XXX');
+				message = h('p', [arr[0] + '(', h('span', { style: { color: '#48b6e2' } }, data.name), ')' + arr[1]]);
+			}
+			this.$msgbox({
+				title: this.$t('dataFlow.importantReminder'),
+				message: message,
+				showCancelButton: true,
+				confirmButtonText: this.$t('message.confirm'),
+				cancelButtonText: this.$t('message.cancel'),
+				type: 'warning',
+				closeOnClickModal: false
+			})
 				.then(callback)
 				.catch(handleCatch);
 		},
 
+		async startJob(errorEvents) {
+			let { id, oldStatus, dataItem, status } = this.selectedJob;
+			//判断若任务因错误停止，弹出错误列表
+			if (!errorEvents && oldStatus === 'error') {
+				let errorEvents = await dataFlows.get([id]);
+				errorEvents = errorEvents ? errorEvents.data : {};
+				if (errorEvents.setting.stopOnError && errorEvents.errorEvents && errorEvents.errorEvents.length > 0) {
+					this.dialogVisibleSkipError = true;
+					this.errorEvents = errorEvents.errorEvents;
+					return;
+				}
+			}
+			let data = { status };
+			//errorEvents为启动时过滤的错误
+			if (errorEvents) {
+				data.errorEvents = errorEvents;
+			}
+			//启动任务时判断任务内是否存在聚合处理器，若存在，则弹框提示
+			if (dataItem && dataItem.stages && dataItem.stages.find(s => s.type === 'aggregation_processor')) {
+				const h = this.$createElement;
+				let arr = this.$t('message.startAggregation_message').split('XXX');
+				this.$msgbox({
+					title: this.$t('dataFlow.importantReminder'),
+					message: h('p', [
+						arr[0] + '(',
+						h('span', { style: { color: '#48b6e2' } }, dataItem.name),
+						')' + arr[1]
+					]),
+					showCancelButton: true,
+					confirmButtonText: this.$t('message.confirm'),
+					cancelButtonText: this.$t('message.cancel'),
+					type: 'warning',
+					closeOnClickModal: false
+				})
+					.then(() => {
+						//若任务内存在聚合处理器，启动前先重置
+						dataFlows.reset(id).then(() => {
+							this.getStatus(id, data);
+						});
+					})
+					.catch(() => {
+						this.getData();
+					});
+			} else {
+				this.getStatus(id, data);
+			}
+		},
+
 		// 运行开关
 		async handleStatus(id, oldStatus, status, dataItem) {
-			let data = {};
-			let errorEvents;
-			if (oldStatus === 'error') {
-				errorEvents = await dataFlows.get([id]);
+			this.selectedJob.id = id;
+			this.selectedJob.oldStatus = oldStatus;
+			this.selectedJob.status = status;
+			this.selectedJob.dataItem = dataItem;
+			if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') && !this.downLoadNum) {
+				this.downLoadAgetntdialog = true;
+				return;
 			}
-			errorEvents = errorEvents ? errorEvents.data : {};
+			let data = {};
 			if (oldStatus === 'force stopping') {
 				data['status'] = oldStatus;
 			} else {
 				data['status'] = status;
-			}
-			this.agentObj.id = id;
-			this.agentObj.oldStatus = oldStatus;
-			this.agentObj.status = status;
-			this.agentObj.dataItem = dataItem;
-			if (this.buildProfile === 'CLOUD' && !this.downLoadNum) {
-				this.downLoadAgetntdialog = true;
-				return;
 			}
 
 			if (status === 'stopping') {
@@ -1218,27 +1362,12 @@ export default {
 						this.getStatus(id, data);
 					},
 					() => {
-						let data = {
-							status: oldStatus
-						};
-						this.getStatus(id, data);
+						this.getData();
 					},
 					dataItem
 				);
-			} else if (
-				oldStatus === 'error' &&
-				errorEvents.setting.stopOnError &&
-				errorEvents.errorEvents &&
-				errorEvents.errorEvents.length > 0
-			) {
-				this.dialogVisibleSkipError = true;
-				this.taskName = dataItem.name;
-				this.errorEvents = errorEvents.errorEvents;
-				this.currentStatus = data;
-				this.oldStatus = oldStatus;
-				this.currentId = id;
 			} else {
-				this.getStatus(id, data);
+				this.startJob();
 			}
 		},
 
@@ -1285,9 +1414,15 @@ export default {
 			};
 
 			if (status === 'stopping') {
-				this.statusConfirm(() => {
-					request();
-				}, initData);
+				this.statusConfirm(
+					() => {
+						request();
+					},
+					() => {
+						this.getData();
+					},
+					initData
+				);
 			} else {
 				request();
 			}
@@ -1389,7 +1524,8 @@ export default {
 			this.formData.status = '';
 			this.formData.way = '';
 			this.formData.executionStatus = '';
-			this.checkedTag = '';
+			this.$refs.classification.clear();
+			this.checkedTags = [];
 			this.currentPage = 1;
 			this.screenFn();
 		},
@@ -1405,24 +1541,8 @@ export default {
 			localStorage.setItem('flowPagesize', psize);
 			this.getData();
 		},
-		nodeClick(data) {
-			if (data) {
-				this.checkedTag = {
-					id: data.id,
-					value: data.value
-				};
-			}
-			this.getData();
-		},
-		nodeDataChange(list) {
-			let tag = list.find(item => item.id === this.checkedTag.id);
-			if (tag) {
-				this.checkedTag.value = tag.value;
-			}
-			this.getData();
-		},
-		handleClose() {
-			this.checkedTag = '';
+		nodeChecked(checkedTags) {
+			this.checkedTags = checkedTags;
 			this.getData();
 		},
 		responseHandler(data, msg) {
@@ -1458,6 +1578,36 @@ export default {
 					name: 'tableFlows'
 				});
 			}
+		},
+
+		// 任务调度设置
+		handleTaskscheduling(id, data) {
+			this.taskSettingsDialog = true;
+			this.formSchedule.id = id;
+			this.formSchedule.name = data.name;
+			this.formSchedule.isSchedule = data.setting.isSchedule;
+			this.formSchedule.cronExpression = data.setting.cronExpression;
+			this.formSchedule.taskData = data;
+		},
+
+		// 任务调度设置保存
+		saveTaskSetting() {
+			let data = this.formSchedule.taskData;
+			data.setting.isSchedule = this.formSchedule.isSchedule;
+			data.setting.cronExpression = this.formSchedule.cronExpression;
+			dataFlows
+				.patchId(this.formSchedule.id, data)
+				.then(result => {
+					if (result && result.data) {
+						this.$message.success(this.$t('message.saveOK'));
+					}
+				})
+				.catch(() => {
+					this.$message.error(this.$t('message.saveFail'));
+				})
+				.finally(() => {
+					this.taskSettingsDialog = false;
+				});
 		}
 	}
 };
@@ -1470,7 +1620,7 @@ export default {
 	height: 100%;
 	overflow: hidden;
 	.panel-left {
-		width: 200px;
+		width: 250px;
 		height: 100%;
 		box-sizing: border-box;
 	}
@@ -1633,5 +1783,22 @@ export default {
 }
 .dataflow-clickTip .el-message-box__status {
 	top: 25% !important;
+}
+.data-flow-wrap {
+	.jobSeceduleDialog {
+		.text {
+			padding-left: 100px;
+			line-height: 28px;
+			color: #999;
+			ul {
+				display: flex;
+				flex-direction: row;
+				text-align: center;
+				li {
+					padding-right: 20px;
+				}
+			}
+		}
+	}
 }
 </style>

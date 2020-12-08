@@ -4,7 +4,9 @@
 			<el-menu-item index="1">
 				<i class="icon iconfont iconjiqunzhuangtai"></i>{{ $t('message.serviceCluMange') }}
 			</el-menu-item>
-			<el-menu-item index="2"><i class="icon iconfont iconrizhi"></i>{{ $t('message.statusLog') }}</el-menu-item>
+			<el-menu-item index="2" v-readonlybtn="'status_log'"
+				><i class="icon iconfont iconrizhi"></i>{{ $t('message.statusLog') }}</el-menu-item
+			>
 		</el-menu>
 		<!-- <el-select v-model="langType" class="changeLangType" size="mini" @change="changeLangType">
           <el-option value="en" label="English"></el-option>
@@ -13,7 +15,7 @@
     </el-select> -->
 		<div class="main">
 			<ClusterManagement v-if="activeIndex == 1"></ClusterManagement>
-			<DailyRecord v-else></DailyRecord>
+			<DailyRecord v-else v-readonlybtn="'status_log'"></DailyRecord>
 			<!-- <el-row class="fun_area">
         <el-col :span="8">
           <div class="demo-input-suffix">

@@ -34,6 +34,7 @@
 								size="mini"
 								icon="el-icon-plus"
 								style="padding: 7px;margin-left: 7px"
+								v-readonlybtn="'datasource_creation'"
 								@click="$refs.databaseForm.show({ whiteList: ['mongodb'] })"
 							></el-button>
 						</el-tooltip>
@@ -89,6 +90,7 @@
 								size="mini"
 								class="el-icon-plus"
 								style="padding: 7px;margin-left: 7px"
+								v-readonlybtn="'create_new_table_in_SYNC'"
 								@click="addNewTable"
 							></el-button>
 						</el-tooltip>
@@ -342,6 +344,7 @@
 		></AggregationDialog>
 
 		<el-dialog
+			append-to-body
 			:visible.sync="repeatTableDiao"
 			custom-class="repeatDialog"
 			:close-on-click-modal="false"
@@ -354,7 +357,7 @@
 					>){{ $t('dialog.sameTable') }}
 				</div>
 
-				<div v-for="item in repeatTable" :key="item">{{ item }}</div>
+				<div v-for="(item, index) in repeatTable" :key="index">{{ item }}</div>
 				<p>{{ $t('dialog.repeatTip') }}</p>
 			</div>
 		</el-dialog>
@@ -369,7 +372,7 @@ import ClipButton from '@/components/ClipButton';
 import queryBuilder from '@/components/QueryBuilder';
 import CreateTable from '@/components/dialog/createTable';
 import AggregationDialog from './aggregationDialog';
-import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, uuid } from '../../util/Schema';
+import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, removeDeleted, uuid } from '../../util/Schema';
 import Entity from '../link/Entity';
 import _ from 'lodash';
 import ws from '../../../api/ws';
@@ -466,6 +469,10 @@ export default {
 								  };
 
 						let fields = schema.fields || [];
+						//过滤被删除的字段
+						if (fields) {
+							fields = removeDeleted(fields);
+						}
 						// let primaryKeys = fields
 						// 	.filter(f => f.primary_key_position > 0)
 						// 	.map(f => f.field_name)
@@ -497,6 +504,10 @@ export default {
 			handler() {
 				if (this.defaultSchema && this.defaultSchema.fields && this.defaultSchema.fields.length > 0) {
 					let fields = this.defaultSchema.fields;
+					//过滤被删除的字段
+					if (fields) {
+						fields = removeDeleted(fields);
+					}
 					this.primaryKeyOptions = fields.map(f => f.field_name);
 					// if (!this.model.primaryKeys) {
 					// 	let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);

@@ -34,6 +34,7 @@
 								size="mini"
 								icon="el-icon-plus"
 								style="padding: 7px;margin-left: 7px"
+								v-readonlybtn="'datasource_creation'"
 								@click="$refs.databaseForm.show({ blackList: ['mongodb'] })"
 							></el-button>
 						</el-tooltip>
@@ -86,6 +87,7 @@
 								size="mini"
 								class="el-icon-plus"
 								style="padding: 7px;margin-left: 7px"
+								v-readonlybtn="'create_new_table_in_SYNC'"
 								@click="addNewTable"
 							></el-button>
 						</el-tooltip>
@@ -241,7 +243,7 @@
 import DatabaseForm from '@/view/job/components/DatabaseForm/DatabaseForm';
 import ClipButton from '@/components/ClipButton';
 import queryBuilder from '@/components/QueryBuilder';
-import { convertSchemaToTreeData } from '../../util/Schema';
+import { convertSchemaToTreeData, removeDeleted } from '../../util/Schema';
 import RelatedTasks from '@/components/relatedTasks';
 import CreateTable from '@/components/dialog/createTable';
 import Entity from '../link/Entity';
@@ -299,6 +301,10 @@ export default {
 			handler() {
 				if (this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0) {
 					let fields = this.mergedSchema.fields;
+					//过滤被删除的字段
+					if (fields) {
+						fields = removeDeleted(fields);
+					}
 					this.primaryKeyOptions = fields.map(f => f.field_name);
 					// if (!this.model.primaryKeys) {
 					// 	let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);

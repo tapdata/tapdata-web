@@ -1,22 +1,8 @@
 <template>
 	<section class="data-verify-wrap">
-		<!-- <div class="panel-slider" v-show="isClassShow">
-			<MetaData @nodeClick="classClickHandler"></MetaData>
-		</div> -->
 		<div class="panel-main">
 			<div class="topbar">
 				<ul class="search-bar">
-					<!-- <li class="search-item">
-						<el-button
-							class="btn-class-collapse"
-							size="mini"
-							:class="{ 'is-open': isClassShow }"
-							@click="isClassShow = !isClassShow"
-						>
-							<i class="iconfont icon-xiangshangzhanhang"></i>
-							<span>{{ isClassShow ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel') }}</span>
-						</el-button>
-					</li> -->
 					<li class="search-item">
 						<el-input
 							v-model="searchParams.keyword"
@@ -80,7 +66,7 @@
 					</li>
 				</ul>
 				<div class="topbar-buttons">
-					<el-button size="mini" v-show="selections.length">
+					<el-button size="mini" v-show="selections.length" v-readonlybtn="'verify_job_execution'">
 						<i class="iconfont icon-piliang"></i>
 						<span>{{ $t('dataVerification.batchVerify') }}</span>
 					</el-button>
@@ -89,7 +75,6 @@
 					<!--						<span>{{ $t('dataVerification.verifySetting') }}</span>-->
 					<!--					</el-button>-->
 					<el-tooltip
-						v-readonlybtn="'BTN_AUTHS'"
 						class="item"
 						effect="dark"
 						:content="$t('dataVerification.addVerifyTip')"
@@ -98,7 +83,7 @@
 						<el-button
 							type="primary"
 							size="mini"
-							v-readonlybtn="'BTN_AUTHS'"
+							v-readonlybtn="'verify_job_creation'"
 							@click="$router.push('dataVerification/create')"
 						>
 							<i class="iconfont icon-jia add-btn-icon"></i>
@@ -235,7 +220,6 @@
 					<el-table-column :label="$t('dataVerification.operation')" align="center" width="180">
 						<template slot-scope="scope">
 							<el-tooltip
-								v-readonlybtn="'BTN_AUTHS'"
 								class="item"
 								effect="dark"
 								:content="$t('dataVerification.executeVerifyTip')"
@@ -246,6 +230,7 @@
 									class="btn-icon"
 									type="text"
 									size="mini"
+									v-readonlybtn="'verify_job_execution'"
 									@click="startTask(scope.row.id)"
 								>
 									<i class="btn-icon iconfont icon-bofang"></i>
@@ -294,7 +279,6 @@
 								></el-button>
 							</el-tooltip>
 							<el-tooltip
-								v-readonlybtn="'BTN_AUTHS'"
 								class="item"
 								effect="dark"
 								:content="$t('dataVerification.configurationTip')"
@@ -304,11 +288,11 @@
 									class="btn-icon el-icon-setting"
 									type="text"
 									size="mini"
+									v-readonlybtn="'verify_job_edition'"
 									@click="goEdit(scope.row.id, scope.row.flowId)"
 								></el-button>
 							</el-tooltip>
 							<el-tooltip
-								v-readonlybtn="'BTN_AUTHS'"
 								class="item"
 								effect="dark"
 								:content="$t('dataVerification.deleteTip')"
@@ -318,6 +302,7 @@
 									class="btn-icon el-icon-delete"
 									type="text"
 									size="mini"
+									v-readonlybtn="'verify_job_delete'"
 									@click="remove(scope.row.name, scope.row.id)"
 								></el-button>
 							</el-tooltip>
@@ -342,13 +327,9 @@
 </template>
 
 <script>
-// import metaData from '../metaData';
 import { toRegExp } from '../../util/util';
 let timeout = null;
 export default {
-	// components: {
-	// 	MetaData: metaData
-	// },
 	data() {
 		return {
 			// isClassShow: true,
@@ -379,16 +360,15 @@ export default {
 		};
 	},
 	created() {
+		if (this.$route && this.$route.query) {
+			this.searchParams.keyword = this.$route.query.name;
+		}
 		this.search(1);
 		this.timer = setInterval(() => {
 			this.search(this.page.current, 1);
 		}, 10000);
 	},
-	destroyed() {
-		// 清除定时器
-		clearInterval(this.timer);
-		this.timer = null;
-	},
+
 	methods: {
 		keyup() {
 			if (timeout) {
@@ -428,8 +408,23 @@ export default {
 				}
 			}
 			if (keyword && keyword.trim()) {
-				where.name = { like: toRegExp(keyword), options: 'i' };
+				where['or'] = [
+					{
+						name: {
+							like: toRegExp(keyword),
+							options: 'i'
+						}
+					},
+					{
+						dataFlowName: {
+							like: toRegExp(keyword),
+							options: 'i'
+						}
+					}
+				];
 			}
+			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
 			let filter = {
 				order: sortBy + ' ' + (order === 'ascending' ? 'ASC' : 'DESC'),
 				limit: size,
@@ -541,6 +536,12 @@ export default {
 					}
 				});
 		}
+	},
+
+	destroyed() {
+		// 清除定时器
+		clearInterval(this.timer);
+		this.timer = null;
 	}
 };
 </script>

@@ -20,7 +20,6 @@ const store = new Vuex.Store({
 
 	// 全局变量
 	state: {
-		buildProfile: '',
 		notification: {
 			unRead: 0
 		},

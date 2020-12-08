@@ -32,6 +32,7 @@
 							size="mini"
 							icon="el-icon-plus"
 							style="padding: 7px;margin-left: 7px"
+							v-readonlybtn="'datasource_creation'"
 							@click="$refs.databaseForm.show()"
 							>{{ $t('dataFlow.createNew') }}</el-button
 						>

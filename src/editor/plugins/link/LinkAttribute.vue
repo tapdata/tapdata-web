@@ -200,6 +200,7 @@ import Mapping from './Mapping';
 import log from '../../../log';
 import { JOIN_TABLE_TPL } from '../../constants';
 import ClipButton from '@/components/ClipButton';
+import { removeDeleted } from '../../util/Schema';
 let editorMonitor = null;
 export default {
 	name: 'Link',
@@ -313,6 +314,10 @@ export default {
 				let cell = self.cell;
 				let targetCell = cell.getTargetCell();
 				let fields = targetCell.attributes.outputSchema.fields || [];
+				//过滤被删除的字段
+				if (fields) {
+					fields = removeDeleted(fields);
+				}
 				const h = self.$createElement;
 				let messageArr = self.$t('editor.cell.link.repeatId.message').split('_id');
 				let msgNode = [];
@@ -371,6 +376,13 @@ export default {
 				this.model.joinTable.stageId = firstDataNode.length > 0 ? firstDataNode[0].id : '';
 				// this.model.joinTable.stageId = cell.getSourceCell().id;
 
+				//过滤已被删除的字段
+				if (mergedTargetSchema && mergedTargetSchema.fields) {
+					mergedTargetSchema.fields = removeDeleted(mergedTargetSchema.fields);
+				}
+				if (sourceSchema && sourceSchema.fields) {
+					sourceSchema.fields = removeDeleted(sourceSchema.fields);
+				}
 				let sourceList =
 					sourceSchema && sourceSchema.fields
 						? sourceSchema.fields.sort((v1, v2) =>
@@ -508,7 +520,10 @@ export default {
 					targetCell && typeof targetCell.getOutputSchema === 'function'
 						? targetCell.getOutputSchema()
 						: null; // mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
-
+				//过滤被删除的字段
+				if (mergedTargetSchema && mergedTargetSchema.fields) {
+					mergedTargetSchema.fields = removeDeleted(mergedTargetSchema.fields);
+				}
 				let targetSchemaFields = (mergedTargetSchema && mergedTargetSchema.fields) || [];
 				let targetJoinFields = targetSchemaFields.filter(
 					field => field.field_name === this.model.joinTable.joinPath

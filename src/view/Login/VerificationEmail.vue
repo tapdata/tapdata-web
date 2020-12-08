@@ -40,7 +40,6 @@ export default {
 		return {
 			type: 'reset',
 			loading: false,
-			platform: window._TAPDATA_OPTIONS_.platform,
 			flag: false,
 			email: '',
 			password: '',

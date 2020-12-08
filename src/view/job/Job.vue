@@ -38,13 +38,13 @@
 						class="action-btn"
 						size="mini"
 						@click="stopCapture"
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="'SYNC_job_operation'"
 					>
 						<i class="iconfont icon-zanting3"></i>
 						<span>{{ $t('dataFlow.button.stop_capture') }}</span>
 					</el-button>
 					<el-button
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="'SYNC_job_operation'"
 						v-if="['running'].includes(status) && executeMode === 'normal'"
 						class="action-btn"
 						size="mini"
@@ -54,7 +54,7 @@
 						<span>{{ $t('dataFlow.button.capture') }}</span>
 					</el-button>
 					<el-button
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="'SYNC_job_operation'"
 						v-if="!statusBtMap[status].reloadSchema"
 						class="action-btn"
 						size="mini"
@@ -64,7 +64,7 @@
 						<span>{{ $t('dataFlow.button.reloadSchema') }}</span>
 					</el-button>
 					<el-button
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="'SYNC_job_operation'"
 						v-if="isEditable()"
 						class="action-btn"
 						size="mini"
@@ -130,7 +130,7 @@
 					>
 				</el-tag>
 
-				<el-button-group class="action-btn-group" v-readonlybtn="'BTN_AUTHS'">
+				<el-button-group class="action-btn-group" v-readonlybtn="'SYNC_job_operation'">
 					<el-button
 						:disabled="statusBtMap[status].start"
 						class="action-btn btn-operatiton"
@@ -170,7 +170,7 @@
 				</el-button-group>
 
 				<el-button
-					v-readonlybtn="'BTN_AUTHS'"
+					v-readonlybtn="'SYNC_job_edition'"
 					v-if="!statusBtMap[status].edit && !editable"
 					class="btn-edit"
 					size="mini"
@@ -358,10 +358,9 @@ export default {
 		}
 		this.mappingTemplate = this.$route.query.mapping;
 
-		this.buildProfile = localStorage.getItem('buildProfile');
-
+		// 是否允许下载agent
 		let self = this;
-		if (this.buildProfile && this.buildProfile === 'CLOUD') {
+		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
 			this.getDataApi();
 			if (!this.downLoadNum) {
 				self.timer = setInterval(() => {
@@ -428,8 +427,7 @@ export default {
 		getDataApi() {
 			let params = {};
 			if (
-				this.buildProfile &&
-				this.buildProfile === 'CLOUD' &&
+				this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
 				!parseInt(this.$cookie.get('isAdmin')) &&
 				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
 			) {
@@ -653,8 +651,6 @@ export default {
 							'fullDocument.createTime': true,
 							'fullDocument.children': true,
 							'fullDocument.stats': true,
-							'fullDocument.stages.id': true,
-							'fullDocument.stages.name': true,
 							'fullDocument.setting': true,
 							'fullDocument.cdcLastTimes': true,
 							'fullDocument.listtags': true,
@@ -1091,16 +1087,16 @@ export default {
 		 * start button handler
 		 */
 		async start() {
+			if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') && !this.downLoadNum) {
+				this.downLoadAgetntdialog = true;
+				return;
+			}
 			let errorEvent;
 			if (this.$route.query && this.$route.query.id && this.status === 'error') {
 				errorEvent = await dataFlowsApi.get([this.$route.query.id]);
 			}
 			errorEvent = errorEvent ? errorEvent.data : {};
 			let data = this.getDataFlowData();
-			if (this.buildProfile === 'CLOUD' && !this.downLoadNum) {
-				this.downLoadAgetntdialog = true;
-				return;
-			}
 			if (data) {
 				if (
 					this.status === 'error' &&
@@ -1119,7 +1115,6 @@ export default {
 		},
 		//保存逻辑启动
 		doSaveStartDataFlow(data) {
-			let self = this;
 			if (data) {
 				if (data.id) {
 					data.id = data.id;
@@ -1145,36 +1140,60 @@ export default {
 					}
 				}
 				if (stageTypeFalg && objectNamesList.length === 0) {
-					self.$message.error(self.$t('editor.cell.link.chooseATableTip'));
+					this.$message.error(this.$t('editor.cell.link.chooseATableTip'));
 					return;
 				}
 
-				data.status = 'scheduled';
-				data.executeMode = 'normal';
-				this.loading = true;
-				self.doSave(data, (err, rest) => {
-					if (err) {
-						if (err.response.data === 'Loading data source schema') {
-							self.$message.error(self.$t('message.loadingSchema'));
-						} else {
-							self.$message.error(err.response.data);
-						}
-					} else {
-						this.$message.success(self.$t('message.taskStart'));
-						self.$router.push({
-							path: '/job',
-							query: {
-								id: rest.id,
-								isMoniting: true,
-								mapping: this.mappingTemplate
+				let start = () => {
+					data.status = 'scheduled';
+					data.executeMode = 'normal';
+					this.doSave(data, (err, rest) => {
+						if (err) {
+							if (err.response.msg === 'Error: Loading data source schema') {
+								this.$message.error(this.$t('message.loadingSchema'));
+							} else {
+								this.$message.error(err.response.msg);
 							}
+						} else {
+							this.$message.success(this.$t('message.taskStart'));
+							this.$router.push({
+								path: '/job',
+								query: {
+									id: rest.id,
+									isMoniting: true,
+									mapping: this.mappingTemplate
+								}
+							});
+							this.$message.success(this.$t('message.taskStart'));
+							location.reload();
+						}
+					});
+				};
+				if (data.id && this.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
+					const h = this.$createElement;
+					let arr = this.$t('message.startAggregation_message').split('XXX');
+					this.$msgbox({
+						title: this.$t('dataFlow.importantReminder'),
+						message: h('p', [
+							arr[0] + '(',
+							h('span', { style: { color: '#48b6e2' } }, data.name),
+							')' + arr[1]
+						]),
+						showCancelButton: true,
+						confirmButtonText: this.$t('message.confirm'),
+						cancelButtonText: this.$t('message.cancel'),
+						type: 'warning',
+						closeOnClickModal: false
+					}).then(() => {
+						//若任务内存在聚合处理器，启动前先重置
+						dataFlowsApi.reset(data.id).then(() => {
+							start();
 						});
-						self.$message.success(self.$t('message.taskStart'));
-						location.reload();
-					}
-				});
+					});
+				} else {
+					start();
+				}
 			}
-			this.loading = false;
 			this.dialogFormVisible = false;
 		},
 		/**
@@ -1187,22 +1206,32 @@ export default {
 					id: self.dataFlowId,
 					status: forceStop === true ? 'force stopping' : 'stopping'
 				};
-
-			self.$confirm(
-				forceStop === true
-					? self.$t('message.forceStoppingMessage')
-					: this.sync_type === 'cdc'
-					? self.$t('message.stopMessage')
-					: self.$t('message.stopInitial_syncMessage'),
-				self.$t('dataFlow.importantReminder'),
-				{
-					confirmButtonText:
-						forceStop === true ? self.$t('dataFlow.button.force_stop') : self.$t('message.confirm'),
-					cancelButtonText: self.$t('message.cancel'),
-					type: 'warning',
-					closeOnClickModal: false
-				}
-			)
+			let message = self.$t('message.stopMessage');
+			if (forceStop === true) {
+				message = self.$t('message.forceStoppingMessage');
+			}
+			if (self.sync_type !== 'cdc') {
+				message = self.$t('message.stopInitial_syncMessage');
+			}
+			if (self.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
+				const h = self.$createElement;
+				let arr = self.$t('message.stopAggregation_message').split('XXX');
+				message = h('p', [
+					arr[0] + '(',
+					h('span', { style: { color: '#48b6e2' } }, self.dataFlow.name),
+					')' + arr[1]
+				]);
+			}
+			self.$msgbox({
+				title: self.$t('dataFlow.importantReminder'),
+				message: message,
+				showCancelButton: true,
+				confirmButtonText:
+					forceStop === true ? self.$t('dataFlow.button.force_stop') : self.$t('message.confirm'),
+				cancelButtonText: self.$t('message.cancel'),
+				type: 'warning',
+				closeOnClickModal: false
+			})
 				.then(() => {
 					self.doSave(data, err => {
 						if (err) {
