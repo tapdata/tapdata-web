@@ -1,7 +1,11 @@
 <template>
 	<section class="connection-wrap">
 		<div class="panel-left" v-if="searchParams.panelFlag">
-			<metaData v-on:nodeClick="nodeClick" @nodeDataChange="nodeDataChange"></metaData>
+			<Classification
+				v-on:nodeClick="nodeClick"
+				@nodeDataChange="nodeDataChange"
+				:type="'database'"
+			></Classification>
 		</div>
 		<div class="panel-main">
 			<div class="title">
@@ -26,7 +30,7 @@
 				</ul>
 				<div class="top-bar-buttons">
 					<el-button
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="'datasource_category_application'"
 						size="mini"
 						class="btn"
 						v-show="multipleSelection.length > 0"
@@ -36,11 +40,11 @@
 						<span> {{ $t('dataFlow.taskBulkTag') }}</span>
 					</el-button>
 					<el-button
-						v-readonlybtn="'BTN_AUTHS'"
+						v-readonlybtn="'datasource_creation'"
 						class="btn btn-create"
 						type="primary"
 						size="mini"
-						@click="create"
+						@click="dialogDatabaseTypeVisible = true"
 					>
 						<i class="iconfont icon-jia add-btn-icon"></i>
 					</el-button>
@@ -107,17 +111,7 @@
 						<template slot-scope="scope">
 							<el-tooltip
 								class="item"
-								v-readonlybtn="'BTN_AUTHS'"
-								:content="$t('dataFlow.edit')"
-								placement="bottom"
-							>
-								<el-button type="text" @click="reload(scope.row)">
-									<i class="iconfont  task-list-icon  icon-kujitongbucopy"></i>
-								</el-button>
-							</el-tooltip>
-							<el-tooltip
-								class="item"
-								v-readonlybtn="'BTN_AUTHS'"
+								v-readonlybtn="'datasource_edition'"
 								:content="$t('message.delete')"
 								placement="bottom"
 							>
@@ -127,7 +121,17 @@
 							</el-tooltip>
 							<el-tooltip
 								class="item"
-								v-readonlybtn="'BTN_AUTHS'"
+								v-readonlybtn="'datasource_edition'"
+								:content="$t('dataFlow.edit')"
+								placement="bottom"
+							>
+								<el-button type="text" @click="reload(scope.row)">
+									<i class="iconfont  task-list-icon  icon-kujitongbucopy"></i>
+								</el-button>
+							</el-tooltip>
+							<el-tooltip
+								class="item"
+								v-readonlybtn="'datasource_creation'"
 								:content="$t('message.delete')"
 								placement="bottom"
 							>
@@ -137,7 +141,7 @@
 							</el-tooltip>
 							<el-tooltip
 								class="item"
-								v-readonlybtn="'BTN_AUTHS'"
+								v-readonlybtn="'datasource_delete'"
 								:content="$t('message.delete')"
 								placement="bottom"
 							>
@@ -165,23 +169,31 @@
 		<SelectClassify
 			ref="SelectClassify"
 			:dialogVisible="dialogVisible"
-			type="dataflow"
+			type="database"
 			:tagLists="tagList"
 			@dialogVisible="handleDialogVisible"
 			@operationsClassify="handleOperationClassify"
 		></SelectClassify>
+		<DatabaseTypeDialog
+			ref="SelectClassify"
+			:dialogVisible="dialogDatabaseTypeVisible"
+			@dialogVisible="handleDialogDatabaseTypeVisible"
+			@databaseType="handleDatabaseType"
+		></DatabaseTypeDialog>
 	</section>
 </template>
 <script>
-import metaData from '../metaData';
+import Classification from '@/components/Classification';
 import SelectClassify from '@/components/SelectClassify';
+import DatabaseTypeDialog from './DatabaseTypeDialog';
 
 export default {
-	components: { metaData, SelectClassify },
+	components: { Classification, SelectClassify, DatabaseTypeDialog },
 	data() {
 		return {
 			dialogVisible: false,
 			restLoading: false,
+			dialogDatabaseTypeVisible: false,
 			checkedTag: '',
 			tagList: [],
 			multipleSelection: [],
@@ -423,6 +435,14 @@ export default {
 			// 	this.dataFlowId = '';
 			// 	this.search();
 			// });
+		},
+		//选择创建类型
+		handleDialogDatabaseTypeVisible() {
+			this.dialogDatabaseTypeVisible = false;
+		},
+		handleDatabaseType(type) {
+			this.handleDialogDatabaseTypeVisible();
+			this.$router.push('connections/create?databaseType=' + type);
 		}
 	}
 };
@@ -531,6 +551,9 @@ export default {
 			justify-content: center;
 			align-items: center;
 			float: left;
+			img {
+				width: 50%;
+			}
 		}
 		.database-text {
 			width: 70%;
