@@ -116,7 +116,7 @@ const en = {
 			resetConnectionFailed: 'reset password confirmation link is invalid',
 			clickText: 'Click',
 			confirmEmail: 'Please re',
-			registered: 'Registered',
+			registered: ' Registered',
 			resetAccountSuccess: 'The password has been reset successfully~',
 			passwordResetText: 'Reset password email has been sent to',
 			notMailbox: 'oops~This mailbox has not been registered yet',

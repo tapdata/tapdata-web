@@ -47,6 +47,21 @@
 							<el-option :label="$t('dataVerification.disable')" :value="2"></el-option>
 						</el-select>
 					</li>
+					<li class="search-item">
+						<el-select
+							v-model="searchParams.verifyResult"
+							size="mini"
+							:placeholder="$t('dataVerification.verifystatus')"
+							@input="search(1)"
+						>
+							<el-option
+								v-for="item in validList"
+								:key="item.value"
+								:label="item.name"
+								:value="item.value"
+							></el-option>
+						</el-select>
+					</li>
 					<!-- <li class="search-item" v-if="searchParams.tag">
 						<el-tag
 							size="small"
@@ -355,6 +370,12 @@ export default {
 				done: this.$t('dataVerification.done'),
 				running: this.$t('dataVerification.running')
 			},
+			validList: [
+				{ name: this.$t('app.Home.checkSame'), value: 'passed' },
+				{ name: this.$t('app.Home.countDifference'), value: 'countDiff' },
+				{ name: this.$t('app.Home.contentDifference'), value: 'valueDiff' },
+				{ name: 'ERROR', value: 'error' }
+			],
 			selections: [],
 			timer: ''
 		};

@@ -74,6 +74,11 @@ export default {
 			errorMessage: ''
 		};
 	},
+	created() {
+		if (this.$route.query) {
+			this.form.email = this.$route.query.email;
+		}
+	},
 	methods: {
 		async submit() {
 			let form = this.form;

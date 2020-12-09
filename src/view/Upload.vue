@@ -9,7 +9,7 @@
 			<el-tag :key="tag" v-for="tag in tagList" :closable="true" @close="handleClose(tag)">
 				{{ tag.value }}<span style="cursor: pointer" @click="handleClose(tag)"> X </span>
 			</el-tag>
-			<span @click="handleClassify" class="classify">设置分类</span>
+			<span @click="handleClassify" class="classify">{{ $t('dataFlow.taskBulkTag') }}</span>
 		</div>
 
 		<el-upload
