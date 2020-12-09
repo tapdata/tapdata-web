@@ -531,14 +531,14 @@ export default {
 	},
 	methods: {
 		// 跳转数据校验
-		// jumpCheck(val) {
-		// 	let routeUrl = this.$router.resolve({
-		// 		path: 'dataVerification',
-		// 		query: { executionStatus: val }
-		// 	});
+		jumpCheck(val) {
+			let routeUrl = this.$router.resolve({
+				path: 'dataVerification',
+				query: { executionStatus: val }
+			});
 
-		// 	window.open(routeUrl.href);
-		// },
+			window.open(routeUrl.href);
+		},
 		// 跳转任务状态统计
 		jumpSyncTask(val) {
 			let routeUrl = this.$router.resolve({

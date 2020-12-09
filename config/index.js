@@ -11,19 +11,23 @@ module.exports = {
 		assetsPublicPath: '/',
 		proxyTable: {
 			'/api': {
-				target: 'http://backend:3030/',
+				// target: 'http://backend:3030/',
+				target: 'http://192.168.1.193:30900/',
 				changeOrigin: false
 			},
 			'/oauth': {
-				target: 'http://backend:3030/',
+				// target: 'http://backend:3030/',
+				target: 'http://192.168.1.193:30900/',
 				changeOrigin: false
 			},
 			'/ws': {
-				target: 'ws://backend:3030',
+				// target: 'ws://backend:3030',
+				target: 'http://192.168.1.193:30900/',
 				changeOrigin: false
 			},
 			'/old': {
-				target: 'http://localhost:8081/',
+				// target: 'http://localhost:8081/',
+				target: 'http://192.168.1.193:30900/',
 				changeOrigin: false
 			}
 		},
