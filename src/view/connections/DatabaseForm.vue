@@ -1,20 +1,11 @@
 <template>
-	<div class="form">
-		<div class="databaseFrom">
-			<div class="test-block" v-if="testing || testLogs">
-				<div class="test-block-title">{{ $t('dataForm.test.title') }}</div>
-				<div class="test-log-item" v-for="(item, index) in testLogs" :key="index">
-					<div>{{ index + 1 }}. {{ item.show_msg }}</div>
-					<div class="test-info">
-						<div style="margin-right: 40px">{{ `Required:${item.required}` }}</div>
-						<div>{{ `Status:${item.status === 'fail' ? 'failed' : item.status}` }}</div>
-					</div>
-					<div v-if="item.fail_message" class="test-info">
-						Message:
-						<b :style="{ color: item.required ? 'red' : '#ffc107' }">{{ item.fail_message }}</b>
-					</div>
+	<div class="databaseFrom">
+		<div class="form">
+			<div class="title">
+				<div class="img-box">
+					<img :src="getImgByType(databaseType)" />
 				</div>
-				<div class="test-result">{{ testResult || $t('dataForm.test.testing') }}</div>
+				<div class="content">{{ typeMap[databaseType] }}</div>
 			</div>
 			<form-builder ref="form" v-model="model" :config="config"></form-builder>
 			<span slot="footer" class="dialog-footer">
@@ -25,6 +16,7 @@
 			</span>
 		</div>
 		<gitbook></gitbook>
+		<Test @dialogTestVisible="handleTestVisible" :dialogTestVisible="dialogTestVisible" :testLogs="testLogs"></Test>
 	</div>
 </template>
 
@@ -32,6 +24,8 @@
 import factory from '@/api/factory';
 import formConfig from './config';
 import gitbook from './GitBook';
+import Test from './Test';
+import { getImgByType, TYPEMAP } from './util';
 
 const databaseTypesModel = factory('DatabaseTypes');
 const connectionsModel = factory('connections');
@@ -69,7 +63,7 @@ const defaultModel = {
 
 export default {
 	name: 'DatabaseForm',
-	components: { gitbook },
+	components: { gitbook, Test },
 	data() {
 		return {
 			visible: false,
@@ -83,11 +77,15 @@ export default {
 			config: {
 				items: []
 			},
-			checkItems: null
+			checkItems: null,
+			databaseType: '',
+			typeMap: TYPEMAP,
+			dialogTestVisible: false
 		};
 	},
 	created() {
-		this.getDT(this.$route.query.databaseType);
+		this.databaseType = this.$route.query.databaseType;
+		this.getDT(this.databaseType);
 		this.initTimezones();
 		let self = this;
 		defaultConfig = [
@@ -114,6 +112,7 @@ export default {
 		];
 	},
 	methods: {
+		getImgByType,
 		initData(data) {
 			this.model = Object.assign(this.model, data, { name: this.model.name });
 		},
@@ -170,6 +169,7 @@ export default {
 				if (item) {
 					item.options = this.timezones;
 				}
+				this.config.form = config.form;
 				this.config.items = items;
 				this.initData(
 					Object.assign(defaultModel, config.defaultModel, { database_type: this.model.database_type })
@@ -178,8 +178,11 @@ export default {
 				this.checkItems && this.checkItems();
 			}
 		},
+		handleTestVisible() {
+			this.dialogTestVisible = false;
+		},
 		async test(id) {
-			this.testing = true;
+			this.dialogTestVisible = true;
 			this.testResult = '';
 			this.testLogs = null;
 			let result = null;
@@ -210,75 +213,93 @@ export default {
 			}
 		},
 		submit() {
-			this.$refs.form.validate(valid => {
-				if (valid) {
-					let params = Object.assign({}, this.model, {
-						sslCert: this.model.sslKey,
-						user_id: this.$cookie.get('user_id'),
-						status: 'testing',
-						schema: {},
-						retry: 0,
-						nextRetry: null,
-						response_body: {},
-						project: '',
-						listtags: []
-					});
-					if (!params.id) {
-						delete params.id;
-					}
-					delete params.sslKeyFile;
-					delete params.sslCAFile;
-					if (params.database_type === 'mongodb') {
-						params.fill = params.isUrl ? 'uri' : '';
-						delete params.isUrl;
-					}
-					connectionsModel[this.model.id ? 'patch' : 'post'](params)
-						.then(res => {
-							let id = res.data.id;
-							this.model.id = id;
-							this.test(id);
-						})
-						.catch(err => {
-							if (err && err.response.status === 500) {
-								this.$message.error(this.$t('dataForm.error.connectionNameExist'));
-							} else {
-								this.$message.error(this.$t('dataForm.saveFail'));
-							}
-						});
-				}
-			});
+			this.test('5fc0a488b03eaedaff4493d6');
+			// this.$refs.form.validate(valid => {
+			// 	if (valid) {
+			// 		let params = Object.assign({}, this.model, {
+			// 			sslCert: this.model.sslKey,
+			// 			user_id: this.$cookie.get('user_id'),
+			// 			status: 'testing',
+			// 			schema: {},
+			// 			retry: 0,
+			// 			nextRetry: null,
+			// 			response_body: {},
+			// 			project: '',
+			// 			listtags: []
+			// 		});
+			// 		if (!params.id) {
+			// 			delete params.id;
+			// 		}
+			// 		delete params.sslKeyFile;
+			// 		delete params.sslCAFile;
+			// 		if (params.database_type === 'mongodb') {
+			// 			params.fill = params.isUrl ? 'uri' : '';
+			// 			delete params.isUrl;
+			// 		}
+			// 		connectionsModel[this.model.id ? 'patch' : 'post'](params)
+			// 			.then(res => {
+			// 				let id = res.data.id;
+			// 				this.model.id = id;
+			// 				this.test(id);
+			// 			})
+			// 			.catch(err => {
+			// 				if (err && err.response.status === 500) {
+			// 					this.$message.error(this.$t('dataForm.error.connectionNameExist'));
+			// 				} else {
+			// 					this.$message.error(this.$t('dataForm.saveFail'));
+			// 				}
+			// 			});
+			// 	}
+			// });
 		}
 	}
 };
 </script>
 
 <style scoped lang="less">
-.form {
+.databaseFrom {
 	display: flex;
 	justify-content: space-between;
+	.form {
+		margin: 0 auto;
+		margin-top: 40px;
+		.title {
+			display: flex;
+			justify-content: flex-start;
+			margin-bottom: 20px;
+		}
+		.img-box {
+			display: flex;
+			width: 54px;
+			height: 54px;
+			justify-content: center;
+			align-items: center;
+			background: #fff;
+			border: 1px solid #dedee4;
+			border-radius: 3px;
+			margin-left: 130px;
+			img {
+				width: 60%;
+			}
+		}
+		.content {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin-left: 15px;
+			font-size: 28px;
+		}
+		.test {
+			margin-left: 200px;
+		}
+	}
 }
-.databaseFrom {
-	margin-left: 20px;
-}
-.test-block {
-	margin: 0 auto 15px auto;
-	padding: 15px;
-	background: #f1f1f1;
-	font-size: 12px;
-	line-height: 20px;
-	width: 400px;
-	box-sizing: border-box;
-	.test-block-title {
-		margin-bottom: 5px;
-		font-size: 14px;
+</style>
+<style lang="less">
+.databaseFrom .el-form--label-right .el-form-item {
+	.el-form-item__label .e-form-builder-item-label {
+		float: right;
 	}
-	.test-info {
-		display: flex;
-		margin-left: 14px;
-	}
-	.test-result {
-		margin-top: 10px;
-		font-size: 14px;
-	}
+	margin-bottom: 16px;
 }
 </style>

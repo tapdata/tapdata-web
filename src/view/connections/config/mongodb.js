@@ -12,6 +12,10 @@ export default function(vm) {
 		}
 	};
 	return {
+		form: {
+			labelPosition: 'right',
+			labelWidth: '200px'
+		},
 		defaultModel: {
 			connection_type: 'source_and_target',
 			isUrl: true,

@@ -1,5 +1,5 @@
 <template>
-	<el-dialog title="提示" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+	<el-dialog title="提示" :visible.sync="dialogVisible" width="770px" :before-close="handleClose">
 		<div class="database">
 			<span class="title">Database</span>
 			<ul class="item clearfix">
@@ -7,7 +7,7 @@
 					<div class="img-box">
 						<img :src="getImgByType(item)" />
 					</div>
-					<div>{{ item }}</div>
+					<div class="content">{{ typeMap[item] }}</div>
 				</li>
 			</ul>
 		</div>
@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import { getImgByType, TYPEMAP } from './util';
 export default {
 	name: 'DatasourceDialog',
 	props: {
@@ -25,14 +26,13 @@ export default {
 	},
 	data() {
 		return {
-			database: ['oracle', 'mongodb', 'sqlserver', 'es', 'mysql', 'pg', 'redis']
+			database: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis'],
+			typeMap: TYPEMAP
 			//other: ['oracle','mongodb','sqlserver','es','gbase','DB2','mysql','pg','redis','custom_connection']
 		};
 	},
 	methods: {
-		getImgByType(type) {
-			return require(`../../../static/image/databaseType/${type.toLowerCase()}.png`);
-		},
+		getImgByType,
 		handleClose() {
 			this.$emit('dialogVisible', false);
 		},
@@ -47,6 +47,7 @@ export default {
 .database {
 	.title {
 		color: #999;
+		margin-left: 20px;
 	}
 	.item {
 		li {
@@ -63,11 +64,17 @@ export default {
 			align-items: center;
 			background: #fafafa;
 			border: 1px solid #dedee4;
-			box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
 			border-radius: 3px;
 			img {
 				width: 35%;
 			}
+			&:hover {
+				box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
+			}
+		}
+		.content {
+			font-size: 12px;
+			margin-top: 5px;
 		}
 	}
 	.clearfix:before,

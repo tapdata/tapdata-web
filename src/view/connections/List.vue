@@ -591,16 +591,16 @@ export default {
 <style lang="less">
 .connection-table {
 	border: 1px solid #eeeeee;
-}
-.connection-table thead {
-	color: #999;
-	th {
-		padding: 5px 0;
-		background: #f5f5f5;
+	.thead {
+		color: #999;
+		th {
+			padding: 5px 0;
+			background: #f5f5f5;
+		}
 	}
 }
-.el-table th,
-.el-table tr {
+.connection-table .el-table th,
+.connection-table .el-table tr {
 	background-color: #fcfcfc;
 }
 .connection-table .el-table .cell,
