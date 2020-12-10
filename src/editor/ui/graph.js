@@ -348,6 +348,15 @@ export default class Graph extends Component {
 						newCell.attr('image/xlinkHref', newCell.getFormData().shapeImage);
 						newCell.attr('label/text', newCell.getFormData().name);
 					}
+					if (cell.get('type') === 'app.TemplateProcess') {
+						let formData = cell.getFormData();
+						let config = cell.getConfig();
+						let nodeConfig = config.nodeConfig;
+						newCell.setFormData(formData);
+						newCell.setConfig(config);
+						newCell.attr('image/xlinkHref', nodeConfig.shapeImage);
+						newCell.attr('label/text', nodeConfig.name);
+					}
 					return newCell;
 				} else {
 					return cell.clone().removeAttr('root/dataTooltip');

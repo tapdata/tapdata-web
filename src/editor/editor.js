@@ -110,7 +110,8 @@ export default class Editor extends BaseObject {
 		let self = this;
 
 		// login plugins
-		loadPlugins();
+		let customNodeConfig = require('./plugins/templateSetting.json');
+		loadPlugins(customNodeConfig.customNodes);
 
 		let ui = (self.ui = new UI(
 			Object.assign(

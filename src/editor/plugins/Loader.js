@@ -10,7 +10,7 @@ import joint from '../lib/rappid/rappid';
 import * as plugins from './index';
 import { FORM_DATA_KEY } from '../constants';
 
-export const loadPlugins = function() {
+export const loadPlugins = function(cNodes) {
 	const defineShape = (type, shape) => {
 		if (!shape) {
 			return;
@@ -41,7 +41,7 @@ export const loadPlugins = function() {
 		if (!config) return;
 		inspectorConfig[type] = config;
 	};
-	const addStencil = (type, stencil, formData) => {
+	const addStencil = (type, stencil, formData, config) => {
 		if (!stencil) return;
 		let group = stencil.group;
 		if (!stencilConfig.groups[group]) {
@@ -68,7 +68,9 @@ export const loadPlugins = function() {
 				{ ellipsis: true }
 			);
 		}
-
+		if (config) {
+			stencil['config'] = config;
+		}
 		if (formData) {
 			stencil[FORM_DATA_KEY] = formData;
 		}
@@ -184,6 +186,14 @@ export const loadPlugins = function() {
 						shapeImage: cell.shapeImage,
 						name: cell.name
 					});
+				});
+			} else if (type === 'app.TemplateProcess') {
+				cNodes.forEach(config => {
+					let nodeConfig = config.nodeConfig;
+					plugin.stencil['attrs']['image']['xlinkHref'] = nodeConfig.stencilImage;
+					plugin.stencil['attrs']['label']['text'] = nodeConfig.name;
+					plugin.stencil['attrs']['root']['dataTooltip'] = nodeConfig.name;
+					addStencil(type, plugin.stencil, null, config);
 				});
 			} else {
 				addStencil(type, plugin.stencil);

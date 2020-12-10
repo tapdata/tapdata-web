@@ -1,0 +1,30 @@
+{
+	"customNodes": [
+		{
+			"id": "cpn1",
+			"nodeConfig": {
+				"name": "SplitFixed",
+				"tips": "splitFixedWidthTokens",
+				"shapeImage": "static/editor/o-mysql.svg",
+				"stencilImage": "static/editor/mysql.svg"
+			},
+			"formConfig": {
+				"items": [
+					{
+						"type": "input",
+						"field": "paramA",
+						"label": "Split number"
+					},
+					{
+						"type": "field",
+						"field": "paramB",
+						"label": "Fields",
+						"multiple": true,
+						"showAllCheckbox": true
+					}
+				]
+			},
+			"scriptTemplate": "function process(record){\n\n\t// Enter you code at here\n\tvar a = ${paramA};\n\tvar keys = ${paramB};\n\treturn record;\n}"
+		}
+	]
+}

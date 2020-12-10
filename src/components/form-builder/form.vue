@@ -25,7 +25,8 @@ const ele = {
 	select: 'FbSelect',
 	radio: 'FbRadio',
 	switch: 'FbSwitch',
-	file: 'FbFile'
+	file: 'FbFile',
+	field: 'FbSelect'
 };
 export default {
 	name: 'FormBuilder',
@@ -123,8 +124,6 @@ export default {
 					}
 				});
 			}
-			let required = rules.find(r => r.required);
-			let labelSlot = config.labelSlot ? config.labelSlot(h) : null;
 			let prependSlot = config.prependSlot ? config.prependSlot(h) : null;
 			let appendSlot = config.appendSlot ? config.appendSlot(h) : null;
 
@@ -139,49 +138,7 @@ export default {
 					}
 				},
 				[
-					!config.label && !labelSlot
-						? null
-						: h(
-								'div',
-								{
-									class: { 'e-form-builder-item-label': true },
-									slot: 'label'
-								},
-								[
-									labelSlot || h('div', { class: { 'is-required': required } }, [config.label]),
-									config.tips &&
-										h(
-											'ElPopover',
-											{
-												style: { 'vertical-align': 'middle' },
-												props: {
-													trigger: 'hover',
-													placement: 'top'
-												}
-											},
-											[
-												h('div', {
-													domProps: {
-														innerHTML: config.tips.content || config.tips
-													}
-												}),
-												h(
-													'span',
-													{
-														class: 'color-warning',
-														slot: 'reference'
-													},
-													[
-														h('i', {
-															class: 'el-icon-warning-outline e-form-builder-item-tips'
-														}),
-														config.tips.label
-													]
-												)
-											]
-										)
-								]
-						  ),
+					this.getLabel(h, config, rules),
 					h('div', { class: { 'fb-item-group': true } }, [
 						prependSlot ? h('div', { class: { 'fb-form-item-prepend-slot': true } }, [prependSlot]) : null,
 						config.type === 'slot'
@@ -211,6 +168,53 @@ export default {
 				]
 			);
 			return config.show ? item : '';
+		},
+		getLabel(h, config, rules) {
+			let required = rules.find(r => r.required);
+			let labelSlot = config.labelSlot ? config.labelSlot(h) : null;
+			return !config.label && !labelSlot
+				? null
+				: h(
+						'div',
+						{
+							class: { 'e-form-builder-item-label': true },
+							slot: 'label'
+						},
+						[
+							labelSlot || h('div', { class: { 'is-required': required } }, [config.label]),
+							config.tips &&
+								h(
+									'ElPopover',
+									{
+										style: { 'vertical-align': 'middle' },
+										props: {
+											trigger: 'hover',
+											placement: 'top'
+										}
+									},
+									[
+										h('div', {
+											domProps: {
+												innerHTML: config.tips.content || config.tips
+											}
+										}),
+										h(
+											'span',
+											{
+												class: 'color-warning',
+												slot: 'reference'
+											},
+											[
+												h('i', {
+													class: 'el-icon-warning-outline e-form-builder-item-tips'
+												}),
+												config.tips.label
+											]
+										)
+									]
+								)
+						]
+				  );
 		}
 	}
 };
