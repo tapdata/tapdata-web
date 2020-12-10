@@ -2,14 +2,14 @@
 	<div class="databaseFrom">
 		<header class="header">header</header>
 		<div class="databaseFrom-body">
-			<main class="form">
+			<main class="databaseFrom-main">
 				<div class="title">
 					<div class="img-box">
 						<img :src="getImgByType(databaseType)" />
 					</div>
 					<div class="content">{{ typeMap[databaseType] }}</div>
 				</div>
-				<form-builder ref="form" v-model="model" :config="config"></form-builder>
+				<div class="form"><form-builder ref="form" v-model="model" :config="config"></form-builder></div>
 			</main>
 			<gitbook></gitbook>
 		</div>
@@ -207,44 +207,43 @@ export default {
 			}
 		},
 		submit() {
-			this.test('5fd0447513b491010c5aa662');
-			// this.$refs.form.validate(valid => {
-			// 	if (valid) {
-			// 		let params = Object.assign({}, this.model, {
-			// 			sslCert: this.model.sslKey,
-			// 			user_id: this.$cookie.get('user_id'),
-			// 			status: 'testing',
-			// 			schema: {},
-			// 			retry: 0,
-			// 			nextRetry: null,
-			// 			response_body: {},
-			// 			project: '',
-			// 			listtags: []
-			// 		});
-			// 		if (!params.id) {
-			// 			delete params.id;
-			// 		}
-			// 		delete params.sslKeyFile;
-			// 		delete params.sslCAFile;
-			// 		if (params.database_type === 'mongodb') {
-			// 			params.fill = params.isUrl ? 'uri' : '';
-			// 			delete params.isUrl;
-			// 		}
-			// 		connectionsModel[this.model.id ? 'patch' : 'post'](params)
-			// 			.then(res => {
-			// 				let id = res.data.id;
-			// 				this.model.id = id;
-			// 				this.test(id);
-			// 			})
-			// 			.catch(err => {
-			// 				if (err && err.response.status === 500) {
-			// 					this.$message.error(this.$t('dataForm.error.connectionNameExist'));
-			// 				} else {
-			// 					this.$message.error(this.$t('dataForm.saveFail'));
-			// 				}
-			// 			});
-			// 	}
-			// });
+			this.$refs.form.validate(valid => {
+				if (valid) {
+					let params = Object.assign({}, this.model, {
+						sslCert: this.model.sslKey,
+						user_id: this.$cookie.get('user_id'),
+						status: 'testing',
+						schema: {},
+						retry: 0,
+						nextRetry: null,
+						response_body: {},
+						project: '',
+						listtags: []
+					});
+					if (!params.id) {
+						delete params.id;
+					}
+					delete params.sslKeyFile;
+					delete params.sslCAFile;
+					if (params.database_type === 'mongodb') {
+						params.fill = params.isUrl ? 'uri' : '';
+						delete params.isUrl;
+					}
+					connectionsModel[this.model.id ? 'patch' : 'post'](params)
+						.then(res => {
+							let id = res.data.id;
+							this.model.id = id;
+							this.test(id);
+						})
+						.catch(err => {
+							if (err && err.response.status === 500) {
+								this.$message.error(this.$t('dataForm.error.connectionNameExist'));
+							} else {
+								this.$message.error(this.$t('dataForm.saveFail'));
+							}
+						});
+				}
+			});
 		}
 	}
 };
@@ -260,14 +259,19 @@ export default {
 	.databaseFrom-body {
 		display: flex;
 		flex: 1;
-		.form {
+		overflow: hidden;
+		.databaseFrom-main {
 			display: flex;
 			flex: 1;
 			flex-direction: column;
+			.form {
+				overflow-y: auto;
+				padding: 0 20px;
+			}
 			.title {
 				display: flex;
 				justify-content: flex-start;
-				margin-bottom: 20px;
+				margin: 20px 0;
 			}
 			.img-box {
 				display: flex;
@@ -278,7 +282,7 @@ export default {
 				background: #fff;
 				border: 1px solid #dedee4;
 				border-radius: 3px;
-				margin-left: 130px;
+				margin-left: 150px;
 				img {
 					width: 60%;
 				}
@@ -295,9 +299,25 @@ export default {
 			}
 		}
 	}
-	.header,
-	.footer {
+	.header {
 		height: 50px;
+		line-height: 50px;
+		padding-left: 20px;
+		background-color: rgba(250, 250, 250, 100);
+		color: rgba(51, 51, 51, 100);
+		font-size: 18px;
+		text-align: left;
+		box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.1);
+		border: 1px solid rgba(222, 222, 228, 100);
+		border-left: none;
+	}
+	.footer {
+		height: 46px;
+		background-color: #fafafa;
+		text-align: center;
+		border: 1px solid #dedee4;
+		border-left: none;
+		line-height: 46px;
 	}
 }
 </style>

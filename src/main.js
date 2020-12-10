@@ -12,6 +12,7 @@ import VueClipboard from 'vue-clipboard2';
 import factory from './api/factory';
 
 import './plugins/element.js';
+import 'element-ui/lib/theme-chalk/index.css';
 import './theme/index.css';
 import './components/form-builder';
 import './plugins/directive';

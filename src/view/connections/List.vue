@@ -52,7 +52,7 @@
 			</div>
 			<div class="connections-list" v-loading="restLoading">
 				<el-table
-					v-loading="loading"
+					v-loading="restLoading"
 					:element-loading-text="$t('dataFlow.dataLoading')"
 					:data="tableData"
 					height="100%"
@@ -60,7 +60,7 @@
 					row-key="id"
 					@selection-change="handleSelectionChange"
 				>
-					<el-table-column type="selection" width="45" :selectable="handleSelectable"> </el-table-column>
+					<el-table-column type="selection" width="45"> </el-table-column>
 					<el-table-column prop="name" :label="$t('connection.dataBaseName')">
 						<template slot-scope="scope">
 							<div class="database-img">
@@ -175,29 +175,32 @@
 			@operationsClassify="handleOperationClassify"
 		></SelectClassify>
 		<DatabaseTypeDialog
-			ref="SelectClassify"
 			:dialogVisible="dialogDatabaseTypeVisible"
 			@dialogVisible="handleDialogDatabaseTypeVisible"
 			@databaseType="handleDatabaseType"
 		></DatabaseTypeDialog>
+		<Preview :id="id" :visible="previewVisible" v-on:previewVisible="handlePreviewVisible"></Preview>
 	</section>
 </template>
 <script>
 import Classification from '@/components/Classification';
 import SelectClassify from '@/components/SelectClassify';
 import DatabaseTypeDialog from './DatabaseTypeDialog';
+import Preview from './Preview';
 
 export default {
-	components: { Classification, SelectClassify, DatabaseTypeDialog },
+	components: { Classification, SelectClassify, DatabaseTypeDialog, Preview },
 	data() {
 		return {
 			dialogVisible: false,
 			restLoading: false,
 			dialogDatabaseTypeVisible: false,
+			previewVisible: false,
 			checkedTag: '',
 			tagList: [],
 			multipleSelection: [],
 			tableData: [],
+			id: '',
 			page: {
 				current: 1,
 				size: 20,
@@ -291,8 +294,15 @@ export default {
 			top.location.href = '/#/connection';
 		},
 		edit(id) {
-			top.location.href = '/#/connection/' + id;
+			this.id = id;
+			this.previewVisible = true;
 		},
+		handlePreviewVisible() {
+			this.previewVisible = false;
+		},
+		// edit(id) {
+		// 	top.location.href = '/#/connection/' + id;
+		// },
 		copy(data) {
 			let headersName = { 'lconname-name': data.name };
 			// return false;

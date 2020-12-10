@@ -10,6 +10,6 @@ export default {
 
 <style scoped>
 .git-book {
-	width: 30%;
+	width: 40%;
 }
 </style>

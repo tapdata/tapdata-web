@@ -4,6 +4,9 @@
  * @description
  */
 export const getImgByType = function(type) {
+	if (!type) {
+		type = 'mongodb';
+	}
 	return require(`../../../static/image/databaseType/${type.toLowerCase()}.png`);
 };
 
