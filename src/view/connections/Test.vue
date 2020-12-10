@@ -1,14 +1,20 @@
 <template>
 	<el-dialog :title="$t('dataForm.test.title')" :visible.sync="dialogTestVisible" width="770px" :show-close="false">
 		<el-progress
+			type="line"
 			class="test-progress"
-			:text-inside="testResult"
+			:text-inside="true"
 			:stroke-width="26"
 			:percentage="progress"
+			:status="testResult"
 		></el-progress>
 		<el-table :data="testLogs" style="width: 100%" class="test-block">
 			<el-table-column prop="show_msg" label="检测项" width="250"> </el-table-column>
-			<el-table-column prop="status" label="检测结果" width="100"> </el-table-column>
+			<el-table-column prop="status" label="检测结果" width="100">
+				<template slot-scope="scope">
+					<span :style="`color: ${colorMap[scope.row.status]};`">{{ scope.row.status }}</span>
+				</template>
+			</el-table-column>
 			<el-table-column prop="fail_message" label="说明"> </el-table-column>
 		</el-table>
 		<span slot="footer" class="dialog-footer">
@@ -28,17 +34,27 @@ export default {
 		dialogTestVisible: {
 			required: true,
 			value: Boolean
+		},
+		testResult: {
+			required: true,
+			value: String
 		}
 	},
 	data() {
 		return {
 			progress: 0,
-			testResult: ''
+			colorMap: {
+				passed: '#70AD47',
+				waiting: '#666',
+				failed: '#f56c6c'
+			}
 		};
 	},
 	watch: {
-		testLogs() {
-			this.handleProgress();
+		testLogs: {
+			handler() {
+				this.handleProgress();
+			}
 		}
 	},
 	methods: {
@@ -54,6 +70,15 @@ export default {
 			});
 			let len = (100 / this.testLogs.length) * count;
 			this.progress = Math.round(len);
+
+			switch (this.testResult) {
+				case 'ready':
+					return (this.testResult = 'success');
+				case 'invalid':
+					return (this.testResult = 'warning');
+				default:
+					return (this.testResult = 'exception');
+			}
 		}
 	}
 };
@@ -81,7 +106,7 @@ export default {
 		border-bottom: 5px solid #fff;
 	}
 	thead {
-		color: #999;
+		color: #222;
 	}
 }
 .el-table::before {

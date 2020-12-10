@@ -1,22 +1,30 @@
 <template>
 	<div class="databaseFrom">
-		<div class="form">
-			<div class="title">
-				<div class="img-box">
-					<img :src="getImgByType(databaseType)" />
+		<header class="header">header</header>
+		<div class="databaseFrom-body">
+			<main class="form">
+				<div class="title">
+					<div class="img-box">
+						<img :src="getImgByType(databaseType)" />
+					</div>
+					<div class="content">{{ typeMap[databaseType] }}</div>
 				</div>
-				<div class="content">{{ typeMap[databaseType] }}</div>
-			</div>
-			<form-builder ref="form" v-model="model" :config="config"></form-builder>
-			<span slot="footer" class="dialog-footer">
-				<el-button size="mini" type="primary" :loading="testing" @click="submit">
-					{{ $t('dataForm.submit') }}
-				</el-button>
-				<el-button size="mini" @click="visible = false">{{ $t('dataForm.cancel') }}</el-button>
-			</span>
+				<form-builder ref="form" v-model="model" :config="config"></form-builder>
+			</main>
+			<gitbook></gitbook>
 		</div>
-		<gitbook></gitbook>
-		<Test @dialogTestVisible="handleTestVisible" :dialogTestVisible="dialogTestVisible" :testLogs="testLogs"></Test>
+		<footer slot="footer" class="footer">
+			<el-button size="mini" type="primary" :loading="testing" @click="submit">
+				{{ $t('dataForm.submit') }}
+			</el-button>
+			<el-button size="mini" @click="visible = false">{{ $t('dataForm.cancel') }}</el-button>
+		</footer>
+		<Test
+			@dialogTestVisible="handleTestVisible"
+			:dialogTestVisible="dialogTestVisible"
+			:testLogs="testLogs"
+			:testResult="testResult"
+		></Test>
 	</div>
 </template>
 
@@ -195,25 +203,11 @@ export default {
 				const data = result.data;
 				let validate_details = data.response_body && data.response_body.validate_details;
 				this.testLogs = validate_details;
-				this.$refs.drawer.$el.getElementsByTagName('main')[0].scrollTop = 0;
-				if (data.status === 'ready') {
-					this.testing = false;
-					this.testResult = this.$t('dataForm.test.success');
-					this.visible = false;
-					this.$message.success(this.$t('dataForm.saveSuccess'));
-					this.$emit('success');
-				} else if (data.status === 'invalid') {
-					this.testResult = this.$t('dataForm.test.fail');
-					this.testing = false;
-				} else {
-					setTimeout(() => {
-						this.test(id);
-					}, 3000);
-				}
+				this.testResult = data.status;
 			}
 		},
 		submit() {
-			this.test('5fc0a488b03eaedaff4493d6');
+			this.test('5fd0447513b491010c5aa662');
 			// this.$refs.form.validate(valid => {
 			// 	if (valid) {
 			// 		let params = Object.assign({}, this.model, {
@@ -259,39 +253,51 @@ export default {
 <style scoped lang="less">
 .databaseFrom {
 	display: flex;
-	justify-content: space-between;
-	.form {
-		margin: 0 auto;
-		margin-top: 40px;
-		.title {
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	.databaseFrom-body {
+		display: flex;
+		flex: 1;
+		.form {
 			display: flex;
-			justify-content: flex-start;
-			margin-bottom: 20px;
-		}
-		.img-box {
-			display: flex;
-			width: 54px;
-			height: 54px;
-			justify-content: center;
-			align-items: center;
-			background: #fff;
-			border: 1px solid #dedee4;
-			border-radius: 3px;
-			margin-left: 130px;
-			img {
-				width: 60%;
+			flex: 1;
+			flex-direction: column;
+			.title {
+				display: flex;
+				justify-content: flex-start;
+				margin-bottom: 20px;
+			}
+			.img-box {
+				display: flex;
+				width: 54px;
+				height: 54px;
+				justify-content: center;
+				align-items: center;
+				background: #fff;
+				border: 1px solid #dedee4;
+				border-radius: 3px;
+				margin-left: 130px;
+				img {
+					width: 60%;
+				}
+			}
+			.content {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				margin-left: 15px;
+				font-size: 28px;
+			}
+			.test {
+				margin-left: 200px;
 			}
 		}
-		.content {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			margin-left: 15px;
-			font-size: 28px;
-		}
-		.test {
-			margin-left: 200px;
-		}
+	}
+	.header,
+	.footer {
+		height: 50px;
 	}
 }
 </style>
