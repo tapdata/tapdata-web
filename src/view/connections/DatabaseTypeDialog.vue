@@ -10,6 +10,15 @@
 					<div class="content">{{ typeMap[item] }}</div>
 				</li>
 			</ul>
+			<span class="title">Other Type</span>
+			<ul class="item clearfix">
+				<li v-for="item in otherType" :key="item" @click="databaseType(item)">
+					<div class="img-box">
+						<img :src="getImgByType(item)" />
+					</div>
+					<div class="content">{{ typeMap[item] }}</div>
+				</li>
+			</ul>
 		</div>
 	</el-dialog>
 </template>
@@ -26,9 +35,21 @@ export default {
 	},
 	data() {
 		return {
-			database: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis'],
+			database: [
+				'mysql',
+				'oracle',
+				'mongodb',
+				'sqlserver',
+				'postgres',
+				'elasticsearch',
+				'redis',
+				'gbase-8s',
+				'sybase ase',
+				'gaussdb200',
+				'db2'
+			],
+			otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file', 'mem_cache'],
 			typeMap: TYPEMAP
-			//other: ['oracle','mongodb','sqlserver','es','gbase','DB2','mysql','pg','redis','custom_connection']
 		};
 	},
 	methods: {

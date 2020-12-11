@@ -6,6 +6,90 @@
   "description": "Tapdata 线装小图标",
   "glyphs": [
     {
+      "icon_id": "2278416",
+      "name": "权限",
+      "font_class": "Paas_icon-",
+      "unicode": "e711",
+      "unicode_decimal": 59153
+    },
+    {
+      "icon_id": "6185155",
+      "name": "权限码",
+      "font_class": "quanxianma",
+      "unicode": "e712",
+      "unicode_decimal": 59154
+    },
+    {
+      "icon_id": "6461851",
+      "name": "权限",
+      "font_class": "quanxian4",
+      "unicode": "e713",
+      "unicode_decimal": 59155
+    },
+    {
+      "icon_id": "8478701",
+      "name": "权限",
+      "font_class": "quanxian5",
+      "unicode": "e714",
+      "unicode_decimal": 59156
+    },
+    {
+      "icon_id": "14482114",
+      "name": "权限",
+      "font_class": "quanxian3",
+      "unicode": "e70e",
+      "unicode_decimal": 59150
+    },
+    {
+      "icon_id": "9143143",
+      "name": "添加用户-空数据",
+      "font_class": "tianjiayonghu",
+      "unicode": "e70f",
+      "unicode_decimal": 59151
+    },
+    {
+      "icon_id": "14999741",
+      "name": "添加用户",
+      "font_class": "tianjiayonghu1",
+      "unicode": "e710",
+      "unicode_decimal": 59152
+    },
+    {
+      "icon_id": "13485853",
+      "name": "收 藏 (1)",
+      "font_class": "shoucang1",
+      "unicode": "e7a9",
+      "unicode_decimal": 59305
+    },
+    {
+      "icon_id": "16468526",
+      "name": "连接",
+      "font_class": "lianjie1",
+      "unicode": "e66c",
+      "unicode_decimal": 58988
+    },
+    {
+      "icon_id": "18470841",
+      "name": "同步",
+      "font_class": "tongbu1",
+      "unicode": "e6e1",
+      "unicode_decimal": 59105
+    },
+    {
+      "icon_id": "18470842",
+      "name": "迁移",
+      "font_class": "qianyi",
+      "unicode": "e708",
+      "unicode_decimal": 59144
+    },
+    {
+      "icon_id": "18453635",
+      "name": "api",
+      "font_class": "api2",
+      "unicode": "e707",
+      "unicode_decimal": 59143
+    },
+    {
       "icon_id": "18427297",
       "name": "数据库迁移3",
       "font_class": "shujukuqianyi31",

@@ -1,6 +1,8 @@
 <template>
 	<div class="databaseFrom">
-		<header class="header">header</header>
+		<header class="header">
+			{{ $route.params.id ? $t('dataVerification.edit') : $t('dataVerification.newVerify') }}
+		</header>
 		<div class="databaseFrom-body">
 			<main class="databaseFrom-main">
 				<div class="title">
@@ -17,7 +19,7 @@
 			<el-button size="mini" type="primary" :loading="testing" @click="submit">
 				{{ $t('dataForm.submit') }}
 			</el-button>
-			<el-button size="mini" @click="visible = false">{{ $t('dataForm.cancel') }}</el-button>
+			<el-button size="mini" @click="goBack()">{{ $t('dataForm.cancel') }}</el-button>
 		</footer>
 		<Test
 			@dialogTestVisible="handleTestVisible"
@@ -189,6 +191,9 @@ export default {
 		handleTestVisible() {
 			this.dialogTestVisible = false;
 		},
+		goBack() {
+			this.$router.push('/connections');
+		},
 		async test(id) {
 			this.dialogTestVisible = true;
 			this.testResult = '';
@@ -267,11 +272,13 @@ export default {
 			.form {
 				overflow-y: auto;
 				padding: 0 20px;
+				width: 640px;
+				margin: 0 250px 0 80px;
 			}
 			.title {
 				display: flex;
 				justify-content: flex-start;
-				margin: 20px 0;
+				margin: 40px 0 20px 0;
 			}
 			.img-box {
 				display: flex;
@@ -282,7 +289,7 @@ export default {
 				background: #fff;
 				border: 1px solid #dedee4;
 				border-radius: 3px;
-				margin-left: 150px;
+				margin-left: 225px;
 				img {
 					width: 60%;
 				}
@@ -314,7 +321,7 @@ export default {
 	.footer {
 		height: 46px;
 		background-color: #fafafa;
-		text-align: center;
+		padding-left: 27%;
 		border: 1px solid #dedee4;
 		border-left: none;
 		line-height: 46px;

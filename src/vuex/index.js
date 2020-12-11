@@ -75,10 +75,11 @@ const store = new Vuex.Store({
 			sortBy: ''
 		},
 		connections: {
-			imodel: '',
-			datatypemodel: '',
+			iModel: '1',
+			databaseType: '',
 			keyword: '',
-			selectedSeachType: '',
+			databaseModel: '',
+			status: '',
 			rowsPerPage: '',
 			descending: '',
 			sortBy: '',

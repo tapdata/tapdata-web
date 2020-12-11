@@ -17,5 +17,15 @@ export const TYPEMAP = {
 	elasticsearch: 'Elasticsearch',
 	redis: 'Redis',
 	postgres: 'PostgreSQL',
-	sqlserver: 'SQL Server'
+	sqlserver: 'SQL Server',
+	'gbase-8s': 'GBase 8s',
+	'sybase ase': 'Sybase ASE',
+	gaussdb200: 'GaussDB200',
+	db2: 'IBM Db2',
+	mem_cache: 'Memory Cache',
+	file: 'File(s)',
+	custom_connection: 'SQL Server',
+	'rest api': 'REST API',
+	'dummy db': 'Dummy DB',
+	gridfs: 'GridFS'
 };

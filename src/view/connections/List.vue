@@ -19,11 +19,85 @@
 							searchParams.panelFlag ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel')
 						}}</span>
 					</li>
+					<li class="item">
+						<el-input
+							placeholder="请输入内容"
+							v-model="searchParams.keyword"
+							class="input-with-select"
+							size="mini"
+							clearable
+							debounce
+							@input="keyup()"
+						>
+							<el-select
+								v-model="searchParams.iModel"
+								slot="prepend"
+								clearable
+								placeholder="请选择"
+								class="sub-select"
+								@input="search(1)"
+							>
+								<el-option label="模糊搜索" value="1"></el-option>
+								<el-option label="精确搜素" value="2"></el-option>
+							</el-select>
+						</el-input>
+					</li>
+					<li class="item">
+						<el-select
+							v-model="searchParams.databaseModel"
+							placeholder="请选择"
+							clearable
+							size="mini"
+							@input="search(1)"
+						>
+							<el-option
+								v-for="item in databaseModelOptions"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value"
+							>
+							</el-option>
+						</el-select>
+					</li>
+					<li class="item">
+						<el-select
+							v-model="searchParams.databaseType"
+							placeholder="请选择"
+							clearable
+							size="mini"
+							@input="search(1)"
+						>
+							<el-option
+								v-for="item in databaseTypeOptions"
+								:key="item.type"
+								:label="item.name"
+								:value="item.type"
+							>
+							</el-option>
+						</el-select>
+					</li>
+					<li class="item">
+						<el-select
+							v-model="searchParams.status"
+							placeholder="请选择"
+							clearable
+							size="mini"
+							@input="search(1)"
+						>
+							<el-option
+								v-for="item in databaseStatusOptions"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value"
+							>
+							</el-option>
+						</el-select>
+					</li>
 					<li class="item" v-if="checkedTag && checkedTag !== ''">
 						<el-tag size="small" closable @close="handleClose()">{{ checkedTag.value }}</el-tag>
 					</li>
 					<li class="item">
-						<el-button class="btn" size="mini" @click="search(1)">
+						<el-button class="btn" size="mini" @click="rest()">
 							<i class="iconfont icon-shuaxin1 back-btn-icon"></i>
 						</el-button>
 					</li>
@@ -107,8 +181,18 @@
 						width="180"
 						:formatter="formatterListTags"
 					></el-table-column>
-					<el-table-column :label="$t('connection.operate')" width="180">
+					<el-table-column :label="$t('connection.operate')" width="220">
 						<template slot-scope="scope">
+							<el-tooltip
+								class="item"
+								v-readonlybtn="'datasource_edition'"
+								:content="$t('message.delete')"
+								placement="bottom"
+							>
+								<el-button type="text" @click="preview(scope.row.id)">
+									<i class="iconfont task-list-icon icon-chaxun1"></i>
+								</el-button>
+							</el-tooltip>
 							<el-tooltip
 								class="item"
 								v-readonlybtn="'datasource_edition'"
@@ -117,6 +201,16 @@
 							>
 								<el-button type="text" @click="edit(scope.row.id)">
 									<i class="iconfont task-list-icon icon-ceshishenqing"></i>
+								</el-button>
+							</el-tooltip>
+							<el-tooltip
+								class="item"
+								v-readonlybtn="'datasource_edition'"
+								:content="$t('message.delete')"
+								placement="bottom"
+							>
+								<el-button type="text" @click="test(scope.row.id, scope.row.database_type)">
+									<i class="iconfont task-list-icon icon-lianjie1"></i>
 								</el-button>
 							</el-tooltip>
 							<el-tooltip
@@ -187,6 +281,7 @@ import Classification from '@/components/Classification';
 import SelectClassify from '@/components/SelectClassify';
 import DatabaseTypeDialog from './DatabaseTypeDialog';
 import Preview from './Preview';
+let timeout = null;
 
 export default {
 	components: { Classification, SelectClassify, DatabaseTypeDialog, Preview },
@@ -209,17 +304,61 @@ export default {
 				order: '',
 				panelFlag: true
 			},
+			databaseModelOptions: [
+				{
+					label: '源头',
+					value: 'source'
+				},
+				{
+					label: '目标',
+					value: 'target'
+				},
+				{
+					label: '源头和目标',
+					value: 'source_and_target'
+				}
+			],
+			databaseStatusOptions: [
+				{
+					label: '有效',
+					value: 'ready'
+				},
+				{
+					label: '无效',
+					value: 'invalid'
+				},
+				{
+					label: '测试中',
+					value: 'testing'
+				}
+			],
+			databaseTypeOptions: [],
 			searchParams: this.$store.state.connections
 		};
 	},
 	created() {
 		this.search(1);
+		this.getDatabaseType();
 	},
 	methods: {
 		// 面板显示隐藏
 		handlePanelFlag() {
 			this.$set(this.searchParams, 'panelFlag', !this.searchParams.panelFlag);
 			this.$store.commit('dataFlows', this.searchParams);
+		},
+		//筛选条件
+		async getDatabaseType() {
+			let databaseTypes = await this.$api('DatabaseTypes').get();
+			databaseTypes.data.forEach(dt => this.databaseTypeOptions.push(dt));
+		},
+		keyup() {
+			if (timeout) {
+				window.clearTimeout(timeout);
+			}
+			timeout = setTimeout(() => {
+				this.search(1);
+				timeout = null;
+			}, 800);
 		},
 		//列表全选
 		handleSelectionChange(val) {
@@ -229,11 +368,24 @@ export default {
 		getImgByType(type) {
 			return require(`../../../static/image/databaseType/${type.toLowerCase()}.png`);
 		},
+		rest() {
+			this.searchParams = {
+				iModel: '1',
+				databaseType: '',
+				keyword: '',
+				databaseModel: '',
+				status: '',
+				rowsPerPage: '',
+				descending: '',
+				sortBy: '',
+				panelFlag: true
+			};
+			this.search(1);
+		},
 		search(pageNum) {
-			//this.searchParamsChange();
 			this.restLoading = true;
 			let { current, size } = this.page;
-			//let { imodel, datatypemodel, keyword, selectedSeachType, rowsPerPage } = this.searchParams;
+			let { iModel, keyword, databaseType, databaseModel, status } = this.searchParams;
 			let currentPage = pageNum || current + 1;
 			let where = {};
 			let fields = {
@@ -251,6 +403,27 @@ export default {
 				loadFieldsStatus: true,
 				schemaAutoUpdate: true
 			};
+			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
+			//精准搜索
+			if (keyword && keyword.trim() && iModel === '2') {
+				var arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-'];
+				var word = keyword;
+				for (var i = 0; i < arr.length; i++) {
+					var str = '\\' + arr[i];
+					word = word.replace(new RegExp(str, 'g'), '\\' + arr[i]);
+				}
+				where['where[or][0][name][regexp]'] = `/${word}/i`;
+				where['where[or][1][database_uri][regexp]'] = `/${word}/i`;
+				where['where[or][2][database_host][regexp]'] = `/${word}/i`;
+			} else if (keyword && keyword.trim() && iModel === '1') {
+				where['where[or][0][name][regexp]'] = word;
+				where['where[or][1][database_uri][regexp]'] = word;
+				where['where[or][2][database_host][regexp]'] = word;
+			}
+			databaseType && (where.database_type = databaseType);
+			databaseModel && (where.connection_type = databaseModel);
+			status && (where.status = status);
 			let filter = {
 				order: 'name DESC',
 				limit: size,
@@ -290,19 +463,28 @@ export default {
 					this.$message.error(this.$t('message.deleteFail'));
 				});
 		},
-		create() {
-			top.location.href = '/#/connection';
+		async test(id, type) {
+			let result = null;
+			if (type === 'mongodb') {
+				result = await this.$api('connections').customQuery([id]);
+			} else {
+				result = await this.$api('connections').get([id]);
+			}
+			if (result.data) {
+				this.search();
+				this.$message.success(this.$t('message.deleteOK'));
+			}
 		},
-		edit(id) {
+		preview(id) {
 			this.id = id;
 			this.previewVisible = true;
 		},
 		handlePreviewVisible() {
 			this.previewVisible = false;
 		},
-		// edit(id) {
-		// 	top.location.href = '/#/connection/' + id;
-		// },
+		edit(id) {
+			top.location.href = '/#/connection/' + id;
+		},
 		copy(data) {
 			let headersName = { 'lconname-name': data.name };
 			// return false;
@@ -452,7 +634,11 @@ export default {
 		},
 		handleDatabaseType(type) {
 			this.handleDialogDatabaseTypeVisible();
-			this.$router.push('connections/create?databaseType=' + type);
+			if (['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis'].includes(type)) {
+				this.$router.push('connections/create?databaseType=' + type);
+			} else {
+				top.location.href = '/#/connection';
+			}
 		}
 	}
 };
@@ -522,6 +708,9 @@ export default {
 				height: 50px;
 				.item {
 					margin-right: 10px;
+				}
+				.sub-select {
+					width: 100px;
 				}
 			}
 		}

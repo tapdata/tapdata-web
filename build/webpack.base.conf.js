@@ -4,6 +4,8 @@ const utils = require('./utils');
 const config = require('../config');
 const vueLoaderConfig = require('./vue-loader.conf');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const marked = require("marked");
+const renderer = new marked.Renderer();
 
 function resolve(dir) {
 	return path.join(__dirname, '..', dir);
@@ -77,6 +79,18 @@ module.exports = {
 				options: {
 					limit: 1000,
 					name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
+				}
+			},
+			{
+				test: /\.md$/,
+				loader: "html-loader",
+			},
+			{
+				test: /\.md$/,
+				loader: "markdown-loader",
+				options: {
+					pedantic: true,
+					renderer
 				}
 			}
 		],
