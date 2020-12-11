@@ -1446,6 +1446,8 @@ const tc = {
 		userNotice: '用戶操作',
 		noticeCenter: '通知中心',
 		dataFlow: '任務',
+		sync: '同步任務',
+		migration: '遷移任務',
 		manageSever: '管理端',
 		noticeType: '請選擇消息類型',
 		noticeLevel: '請選擇消息級別',

@@ -1511,6 +1511,8 @@ const cn = {
 		userNotice: '用户操作',
 		noticeCenter: '通知中心',
 		dataFlow: '任务',
+		sync: '同步任务',
+		migration: '迁移任务',
 		noticeType: '请选择消息类型',
 		noticeLevel: '请选择消息级别',
 		manageSever: '管理端',
