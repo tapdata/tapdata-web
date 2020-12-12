@@ -4,10 +4,16 @@
  * @description
  */
 export const getImgByType = function(type) {
-	if (!type) {
-		type = 'mongodb';
-	}
 	return require(`../../../static/image/databaseType/${type.toLowerCase()}.png`);
+};
+
+export const verify = function(value) {
+	var arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-'];
+	for (var i = 0; i < arr.length; i++) {
+		var str = '\\' + arr[i];
+		value = value.replace(new RegExp(str, 'g'), '\\' + arr[i]);
+	}
+	return value;
 };
 
 export const TYPEMAP = {

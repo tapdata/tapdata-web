@@ -37,8 +37,8 @@
 								class="sub-select"
 								@input="search(1)"
 							>
-								<el-option label="模糊搜索" value="1"></el-option>
-								<el-option label="精确搜素" value="2"></el-option>
+								<el-option label="模糊搜索" value="fuzzy"></el-option>
+								<el-option label="精确搜素" value="precise"></el-option>
 							</el-select>
 						</el-input>
 					</li>
@@ -196,10 +196,10 @@
 							<el-tooltip
 								class="item"
 								v-readonlybtn="'datasource_edition'"
-								:content="$t('message.delete')"
+								:content="$t('message.edit')"
 								placement="bottom"
 							>
-								<el-button type="text" @click="edit(scope.row.id)">
+								<el-button type="text" @click="edit(scope.row.id, scope.row.database_type)">
 									<i class="iconfont task-list-icon icon-ceshishenqing"></i>
 								</el-button>
 							</el-tooltip>
@@ -281,6 +281,8 @@ import Classification from '@/components/Classification';
 import SelectClassify from '@/components/SelectClassify';
 import DatabaseTypeDialog from './DatabaseTypeDialog';
 import Preview from './Preview';
+import { verify } from './util';
+import { toRegExp } from '../../util/util';
 let timeout = null;
 
 export default {
@@ -370,7 +372,7 @@ export default {
 		},
 		rest() {
 			this.searchParams = {
-				iModel: '1',
+				iModel: 'fuzzy',
 				databaseType: '',
 				keyword: '',
 				databaseModel: '',
@@ -383,6 +385,7 @@ export default {
 			this.search(1);
 		},
 		search(pageNum) {
+			this.$store.commit('connections', this.searchParams);
 			this.restLoading = true;
 			let { current, size } = this.page;
 			let { iModel, keyword, databaseType, databaseModel, status } = this.searchParams;
@@ -405,21 +408,32 @@ export default {
 			};
 			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
 				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
-			//精准搜索
-			if (keyword && keyword.trim() && iModel === '2') {
-				var arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-'];
-				var word = keyword;
-				for (var i = 0; i < arr.length; i++) {
-					var str = '\\' + arr[i];
-					word = word.replace(new RegExp(str, 'g'), '\\' + arr[i]);
-				}
-				where['where[or][0][name][regexp]'] = `/${word}/i`;
-				where['where[or][1][database_uri][regexp]'] = `/${word}/i`;
-				where['where[or][2][database_host][regexp]'] = `/${word}/i`;
-			} else if (keyword && keyword.trim() && iModel === '1') {
-				where['where[or][0][name][regexp]'] = word;
-				where['where[or][1][database_uri][regexp]'] = word;
-				where['where[or][2][database_host][regexp]'] = word;
+			//精准搜索 iModel
+			if (keyword && keyword.trim() && iModel === 'fuzzy') {
+				let word = verify(keyword);
+				where.or = [
+					{
+						name: { like: toRegExp(word), options: 'i' }
+					},
+					{
+						database_uri: { like: toRegExp(word), options: 'i' }
+					},
+					{
+						database_host: { like: toRegExp(word), options: 'i' }
+					}
+				];
+			} else if (keyword && keyword.trim() && iModel === 'precise') {
+				where.or = [
+					{
+						name: { like: keyword }
+					},
+					{
+						database_uri: { like: keyword }
+					},
+					{
+						database_host: { like: keyword }
+					}
+				];
 			}
 			databaseType && (where.database_type = databaseType);
 			databaseModel && (where.connection_type = databaseModel);
@@ -482,8 +496,8 @@ export default {
 		handlePreviewVisible() {
 			this.previewVisible = false;
 		},
-		edit(id) {
-			top.location.href = '/#/connection/' + id;
+		edit(id, type) {
+			this.$router.push('connections/create?id=' + id + '&databaseType=' + type);
 		},
 		copy(data) {
 			let headersName = { 'lconname-name': data.name };
@@ -634,7 +648,9 @@ export default {
 		},
 		handleDatabaseType(type) {
 			this.handleDialogDatabaseTypeVisible();
-			if (['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis'].includes(type)) {
+			if (
+				['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis', 'db2'].includes(type)
+			) {
 				this.$router.push('connections/create?databaseType=' + type);
 			} else {
 				top.location.href = '/#/connection';

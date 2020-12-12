@@ -82,7 +82,7 @@ export default {
 			testResult: '',
 			timezones: [],
 			dataTypes: [],
-			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2'], //目前白名单,
+			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2', 'postgres', 'elasticsearch'], //目前白名单,
 			model: Object.assign({}, defaultModel),
 			config: {
 				items: []
@@ -123,8 +123,11 @@ export default {
 	},
 	methods: {
 		getImgByType,
-		initData(data) {
-			this.model = Object.assign(this.model, data, { name: this.model.name });
+		async initData(data) {
+			if (this.$route.query.id) {
+				let editData = await this.$api('connections').get([this.$route.query.id]);
+				this.model = Object.assign(this.model, editData.data);
+			} else this.model = Object.assign(this.model, data, { name: this.model.name });
 		},
 		checkDataTypeOptions(type) {
 			let options = this.dataTypes;

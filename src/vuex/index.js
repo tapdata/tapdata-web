@@ -75,7 +75,7 @@ const store = new Vuex.Store({
 			sortBy: ''
 		},
 		connections: {
-			iModel: '1',
+			iModel: 'fuzzy',
 			databaseType: '',
 			keyword: '',
 			databaseModel: '',
