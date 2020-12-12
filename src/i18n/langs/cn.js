@@ -1752,8 +1752,9 @@ const cn = {
 		editFail: '用户名修改失败'
 	},
 	role: {
-		addroleTitle: '角色新增',
-		editroleTitle: '角色编辑',
+		settingTitle: '设置角色权限',
+		createRole: '创建角色',
+		editroleTitle: '编辑角色',
 		roleName: '角色名称',
 		roleDesc: '角色描述',
 		defaultRole: '默认角色',
@@ -1845,7 +1846,25 @@ const cn = {
 			API_data_time_zone_editing: 'API数据更改时区',
 			API_data_creation: 'API数据新增',
 			API_data_download: 'API数据下载'
-		}
+		},
+		roleManagement: '角色管理',
+		preciseMatching: '精准匹配',
+		fuzzyMatching: '模糊匹配',
+		selectRoleName: '请选择角色名',
+		selectDesc: '请输入角色描述',
+		description: '角色描述',
+		associatUsers: '关联用户',
+		edit: '编辑',
+		founder: '创建人',
+		operate: '操作',
+		create: '新建',
+		settingPermissions: '设置权限',
+		delete: '删除',
+		yes: '是',
+		no: '否',
+		delete_remind: '确认删除角色',
+		delete_success: '删除角色成功',
+		delete_error: '删除角色失败'
 	}
 };
 

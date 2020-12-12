@@ -1,8 +1,68 @@
 <template>
 	<div class="roles" v-loading="loading">
-		<h1>{{ title }}</h1>
-		<el-form ref="form" :model="form" label-width="140px" class="e-form">
-			<el-form-item
+		<h1>{{ $t('role.settingTitle') }}</h1>
+		<div class="role-tableBox">
+			<h2>{{ $t('role.rolePermission') }}</h2>
+			<ul class="role-table">
+				<!-- <div class="vertical-line"></div> -->
+				<li v-for="item in dataList" :key="item.id">
+					<div class="left">
+						<el-checkbox
+							@change="handleOneCheckAll($event, item)"
+							v-cloak
+							v-model="item.checkAll"
+							:disabled="item.name === 'Dashboard'"
+						>
+							{{ $t('role.roleNavName.' + item.name) }}
+						</el-checkbox>
+					</div>
+					<div class="center" v-if="item.children && item.children.length && !item.children[0].isNav">
+						<el-checkbox
+							v-for="second in item.children"
+							:key="second.name"
+							:disabled="!item.checkAll"
+							v-model="second.checkAll"
+							@change="handleCheckChange($event, item, second)"
+							v-cloak
+						>
+							{{ $t('role.roleNavName.' + second.name) }}
+						</el-checkbox>
+					</div>
+					<ul class="right" v-if="item.children && item.children.length && item.children[0].isNav">
+						<li v-for="second in item.children" :key="second.name">
+							<div class="left">
+								<el-checkbox
+									v-model="second.checkAll"
+									:disabled="!item.checkAll"
+									@change="handleCheckAllChange($event, item, second)"
+									v-cloak
+								>
+									{{ $t('role.roleNavName.' + second.name) }}
+								</el-checkbox>
+							</div>
+							<div class="right check">
+								<el-checkbox-group
+									v-model="second.checkedCities"
+									@change="handleCheckedCitiesChange(item, second)"
+									v-cloak
+								>
+									<el-checkbox
+										v-for="p in second.children"
+										:label="p.name"
+										:key="p.name"
+										:disabled="!second.checkAll"
+										v-cloak
+									>
+										{{ $t('role.roleNavName.' + p.name) }}
+									</el-checkbox>
+								</el-checkbox-group>
+							</div>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<!-- <el-form-item
 				:label="$t('role.roleName')"
 				prop="name"
 				:rules="[{ required: true, message: '角色名称不能为空', trigger: 'blur' }]"
@@ -15,74 +75,14 @@
 			</el-form-item>
 			<el-form-item :label="$t('role.defaultRole')">
 				<el-switch v-model="form.register_user_default"></el-switch>
-			</el-form-item>
-			<el-form-item :label="$t('role.rolePermission')" class="role-tableBox">
-				<ul class="role-table col-xs-offset-2 col-md-offset-1 col-sm-offset-2">
-					<!-- <div class="vertical-line"></div> -->
-					<li v-for="item in dataList" :key="item.id">
-						<div class="left">
-							<el-checkbox
-								@change="handleOneCheckAll($event, item)"
-								v-cloak
-								v-model="item.checkAll"
-								:disabled="item.name === 'Dashboard'"
-							>
-								{{ $t('role.roleNavName.' + item.name) }}
-							</el-checkbox>
-						</div>
-						<div class="center" v-if="item.children && item.children.length && !item.children[0].isNav">
-							<el-checkbox
-								v-for="second in item.children"
-								:key="second.name"
-								:disabled="!item.checkAll"
-								v-model="second.checkAll"
-								@change="handleCheckChange($event, item, second)"
-								v-cloak
-							>
-								{{ $t('role.roleNavName.' + second.name) }}
-							</el-checkbox>
-						</div>
-						<ul class="right" v-if="item.children && item.children.length && item.children[0].isNav">
-							<li v-for="second in item.children" :key="second.name">
-								<div class="left">
-									<el-checkbox
-										v-model="second.checkAll"
-										:disabled="!item.checkAll"
-										@change="handleCheckAllChange($event, item, second)"
-										v-cloak
-									>
-										{{ $t('role.roleNavName.' + second.name) }}
-									</el-checkbox>
-								</div>
-								<div class="right check">
-									<el-checkbox-group
-										v-model="second.checkedCities"
-										@change="handleCheckedCitiesChange(item, second)"
-										v-cloak
-									>
-										<el-checkbox
-											v-for="p in second.children"
-											:label="p.name"
-											:key="p.name"
-											:disabled="!second.checkAll"
-											v-cloak
-										>
-											{{ $t('role.roleNavName.' + p.name) }}
-										</el-checkbox>
-									</el-checkbox-group>
-								</div>
-							</li>
-						</ul>
-					</li>
-				</ul>
-			</el-form-item>
-			<el-form-item class="btn">
-				<el-button @click="back">{{ $t('dataVerify.back') }}</el-button>
-				<el-button type="primary" :loading="saveloading" @click="saveSubmit('ruleForm')">{{
-					$t('app.save')
-				}}</el-button>
-			</el-form-item>
-		</el-form>
+			</el-form-item> -->
+		<!-- <el-form-item class="btn"> -->
+		<el-button @click="back">{{ $t('dataVerify.back') }}</el-button>
+		<el-button type="primary" :loading="saveloading" @click="saveSubmit('ruleForm')">{{
+			$t('app.save')
+		}}</el-button>
+		<!-- </el-form-item> -->
+		<!-- </el-form> -->
 	</div>
 </template>
 
