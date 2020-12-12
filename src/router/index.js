@@ -284,10 +284,11 @@ const childRoutes = [
 	{
 		path: '/roles',
 		name: 'roles',
-		component: view('ExternalLink'),
+		component: view('Role/Roles'),
+		// component: view('ExternalLink'),
 		meta: {
 			code: 'role_management',
-			url: '/old/index.html#/roles',
+			// url: '/old/index.html#/roles',
 			title: i18n.t('tap.roleManagement'),
 			isCollapse: false
 		}
