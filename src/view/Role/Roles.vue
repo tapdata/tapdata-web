@@ -21,9 +21,14 @@
 					</li>
 				</ul>
 				<div class="topbar-buttons">
-					<el-button class="btn btn-create" size="mini" icon="el-icon-plus" @click="createRole()">{{
-						$t('role.create')
-					}}</el-button>
+					<el-button
+						class="btn btn-create"
+						v-readonlybtn="'role_creation'"
+						size="mini"
+						icon="el-icon-plus"
+						@click="createRole()"
+						>{{ $t('role.create') }}</el-button
+					>
 				</div>
 			</div>
 			<div class="table-box">
@@ -60,31 +65,43 @@
 					</el-table-column>
 					<el-table-column :label="$t('role.defaultRole')" width="120">
 						<template slot-scope="scope">
-							<el-switch v-model="scope.row.register_user_default" @change="changeRowDefault(scope.row)">
+							<el-switch
+								v-model="scope.row.register_user_default"
+								:disabled="!$has('role_edition')"
+								@change="changeRowDefault(scope.row)"
+							>
 							</el-switch>
 						</template>
 					</el-table-column>
 					<el-table-column :label="$t('role.operate')" width="300">
 						<template slot-scope="scope">
-							<el-button type="text" @click="handleSettingPermissions(scope.row.id)">
+							<el-button
+								type="text"
+								v-readonlybtn="'role_edition'"
+								@click="handleSettingPermissions(scope.row.id)"
+							>
 								{{ $t('role.settingPermissions') }}
 							</el-button>
 
 							<el-button
 								type="text"
 								@click="handleAssociatUsers(scope.row.id)"
-								v-readonlybtn="'SYNC_job_edition'"
+								v-readonlybtn="'role_edition'"
 							>
 								{{ $t('role.associatUsers') }}
 							</el-button>
-							<el-button type="text" @click="createRole(scope.row.id, scope.row)">
+							<el-button
+								type="text"
+								v-readonlybtn="'role_edition'"
+								@click="createRole(scope.row.id, scope.row)"
+							>
 								{{ $t('role.edit') }}
 							</el-button>
 							<el-button
 								type="text"
 								@click="handleDelete(scope.row)"
 								v-if="scope.row.name != 'admin' && !scope.row.read_only"
-								v-readonlybtn="'SYNC_job_delete'"
+								v-readonlybtn="'role_delete'"
 							>
 								{{ $t('role.delete') }}
 							</el-button>
