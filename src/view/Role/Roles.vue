@@ -261,7 +261,7 @@ export default {
 				params
 			);
 
-			await rolesModel.get(_params).then(res => {
+			await usersModel.role(_params).then(res => {
 				if (res && res.data) {
 					this.tableData = res.data;
 				}
@@ -409,16 +409,19 @@ export default {
 			});
 			// _this.oldUser
 			this.roleusers.forEach(roleuser => {
-				newRoleMappings.push({
-					principalType: 'USER',
-					principalId: roleuser,
-					roleId: this.roleId
-				});
+				if (roleuser) {
+					newRoleMappings.push({
+						principalType: 'USER',
+						principalId: roleuser,
+						roleId: this.roleId
+					});
+				}
 			});
 			roleMappingModel
 				.post(newRoleMappings)
 				.then(res => {
 					if (res && res.data) {
+						this.handleDataApi();
 						this.$message.success(this.$t('message.saveOK'));
 					}
 				})
