@@ -46,19 +46,25 @@
 							<div>{{ scope.row.description }}</div>
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('role.associatUsers')" width="80">
+					<el-table-column :label="$t('role.associatUsers')" width="120">
 						<template slot-scope="scope">
-							<span>{{ scope.row.name }}</span>
+							<span>{{ scope.row.userCount }}</span>
 						</template>
 					</el-table-column>
-					<el-table-column prop="status" sortable="custom" :label="$t('role.founder')" width="180">
+					<el-table-column :label="$t('role.founder')" width="180">
 						<template slot-scope="scope">
 							<div>
-								{{ scope.row.name }}
+								{{ scope.row.userEmail }}
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('role.operate')" width="260">
+					<el-table-column :label="$t('role.defaultRole')" width="120">
+						<template slot-scope="scope">
+							<el-switch v-model="scope.row.register_user_default" @change="changeRowDefault(scope.row)">
+							</el-switch>
+						</template>
+					</el-table-column>
+					<el-table-column :label="$t('role.operate')" width="300">
 						<template slot-scope="scope">
 							<el-button type="text" @click="handleSettingPermissions(scope.row.id)">
 								{{ $t('role.settingPermissions') }}
@@ -106,7 +112,7 @@
 			:visible.sync="dialogFormVisible"
 			width="600px"
 		>
-			<el-form :model="form" ref="form" label-width="80px">
+			<el-form :model="form" ref="form" label-width="100px">
 				<el-form-item
 					:label="$t('role.roleName')"
 					prop="name"
@@ -188,7 +194,7 @@ export default {
 	data() {
 		return {
 			searchNav: {
-				selectedSeachType: '1',
+				selectedSeachType: '0',
 				keyword: ''
 			},
 			tableData: [],
@@ -238,9 +244,9 @@ export default {
 
 			let searchkw = this.searchNav.keyword;
 			if (searchkw && this.searchNav.selectedSeachType === '0') {
-				where['where[name][regexp]'] = `${searchkw}`;
+				where.name = { like: searchkw, options: 'i' };
 			} else if (searchkw && this.searchNav.selectedSeachType === '1') {
-				where['where[name]'] = `${searchkw}`;
+				where.name = searchkw;
 			}
 
 			let _params = Object.assign(
@@ -347,41 +353,43 @@ export default {
 		// 创建保存
 		createSave() {
 			let self = this;
-			const validated = this.$refs.form.validate();
-			if (!validated) {
-				return false;
-			} else {
-				const record = {
-					name: this.form.name,
-					description: this.form.description,
-					register_user_default: this.form.register_user_default
-				};
-				const method = this.roleId ? 'patch' : 'post';
-				if (this.roleId) {
-					record.id = this.roleId;
-				} else {
-					record.user_id = this.$cookie.get('user_id');
-				}
+			this.$refs.form.validate(valid => {
+				if (valid) {
+					const record = {
+						name: this.form.name,
+						description: this.form.description,
+						register_user_default: this.form.register_user_default
+					};
+					const method = this.roleId ? 'patch' : 'post';
+					if (this.roleId) {
+						record.id = this.roleId;
+					} else {
+						record.user_id = this.$cookie.get('user_id');
+					}
 
-				rolesModel[method](record)
-					.then(res => {
-						if (res && res.data) {
-							this.$message.success(this.$t('message.saveOK'));
-						}
-					})
-					.catch(e => {
-						if (e.response && e.response.msg) {
-							if (e.response.msg.indexOf('already exists')) {
-								this.$message.error(this.$t('role.alreadyExists'));
-							} else {
-								this.$message.error(`${e.response.msg}`);
+					rolesModel[method](record)
+						.then(res => {
+							if (res && res.data) {
+								self.handleDataApi();
+								this.$message.success(this.$t('message.saveOK'));
 							}
-						}
-					})
-					.finally(() => {
-						self.dialogFormVisible = false;
-					});
-			}
+						})
+						.catch(e => {
+							if (e.response && e.response.msg) {
+								if (e.response.msg.indexOf('already exists')) {
+									this.$message.error(this.$t('role.alreadyExists'));
+								} else {
+									this.$message.error(`${e.response.msg}`);
+								}
+							}
+						})
+						.finally(() => {
+							self.dialogFormVisible = false;
+						});
+				} else {
+					return false;
+				}
+			});
 		},
 
 		// 获取用户列表
@@ -424,6 +432,22 @@ export default {
 					}
 				});
 			this.dialogUserVisible = false;
+		},
+
+		// 改变列表默认值val
+		changeRowDefault(data) {
+			const record = {
+				id: data.id,
+				name: data.name,
+				description: data.description,
+				register_user_default: data.register_user_default
+			};
+
+			rolesModel.patch(record).then(res => {
+				if (res && res.data) {
+					this.handleDataApi();
+				}
+			});
 		},
 
 		// 分页
@@ -550,6 +574,9 @@ export default {
 		.num {
 			padding-top: 10px;
 		}
+	}
+	.el-dialog__body {
+		padding: 30px;
 	}
 }
 </style>

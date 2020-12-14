@@ -1783,11 +1783,12 @@ const en = {
 		editFail: 'User name modification failed'
 	},
 	role: {
-		addroleTitle: 'Add role',
+		settingTitle: 'Set up permission',
+		createRole: 'Create role',
 		editroleTitle: 'Role Edit',
 		roleName: 'Role Name',
 		roleDesc: 'Role description',
-		defaultRole: 'default role',
+		defaultRole: 'Default Role',
 		rolePermission: 'role permission',
 		alreadyExists: 'Duplicate role name',
 		roleNavName: {
@@ -1883,20 +1884,20 @@ const en = {
 		selectRoleName: 'Please select a role name',
 		selectDesc: 'Please enter a role description',
 		selectUser: 'Please select a user name',
-		description: 'Character description',
-		associatUsers: 'Associated users',
+		description: 'Role Description',
+		associatUsers: 'Associate user',
 		edit: 'Edit',
 		founder: 'Founder',
 		operate: 'Operation',
 		create: 'New',
-		settingPermissions: 'Setting permissions',
+		settingPermissions: 'Set permission',
 		delete: 'Delete',
 		yes: 'Yes',
 		no: 'No',
 		delete_remind: 'Confirm to delete role',
 		delete_success: 'Delete role successfully',
 		delete_error: 'Failed to delete role',
-		connected: 'Connected',
+		connected: 'Associated',
 		role_null: 'The role name cannot be empty'
 	}
 };

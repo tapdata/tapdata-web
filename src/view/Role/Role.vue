@@ -114,7 +114,7 @@ export default {
 	},
 
 	created() {
-		this.title = this.$route.params.id ? this.$t('role.editroleTitle') : this.$t('role.addroleTitle');
+		this.title = this.$route.query.id ? this.$t('role.editroleTitle') : this.$t('role.addroleTitle');
 		this.getPermission();
 		// if (this.$route.params.id) {
 		// 	this.getUserDataApi();
@@ -142,7 +142,7 @@ export default {
 		getMappingData(mappingData) {
 			this.loading = true;
 			roleMappingModel
-				.get({ 'filter[where][roleId]': this.$route.params.id })
+				.get({ 'filter[where][roleId]': this.$route.query.id })
 				.then(res => {
 					if (res && res.data && res.data.length) {
 						res.data.forEach(item => {
@@ -376,16 +376,12 @@ export default {
 		saveSubmit() {
 			let self = this;
 			self.saveloading = true;
-			const validated = this.$refs.form.validate();
-			if (!validated) {
-				return false;
-			}
 			// const record = {
 			// 	name: this.form.name,
 			// 	description: this.form.description,
 			// 	register_user_default: this.form.register_user_default
 			// };
-			const roleId = this.$route.params.id;
+			const roleId = this.$route.query.id;
 			// const method = roleId ? 'patch' : 'post';
 
 			// if (roleId) {

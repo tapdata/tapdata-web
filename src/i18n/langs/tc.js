@@ -1750,7 +1750,8 @@ const tc = {
 		editFail: '用戶名修改失敗'
 	},
 	role: {
-		addroleTitle: '角色新增',
+		settingTitle: '設置角色權限',
+		createRole: '創建角色',
 		editroleTitle: '角色編輯',
 		roleName: '角色名稱',
 		roleDesc: '角色描述',
