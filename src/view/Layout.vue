@@ -25,7 +25,7 @@
 					class="btn-create"
 					type="primary"
 					size="mini"
-					v-readonlybtn="'SYNC_job_creation'"
+					v-if="creatAuthority"
 					@click="command('newDataFlow')"
 				>
 					<i class="el-icon-plus"></i>
@@ -271,6 +271,11 @@ export default {
 			lang: localStorage.getItem('tapdata_localize_lang') || 'en',
 			isCollapse: false,
 			settingVisibility: this.$has('home_notice_settings') || this.$has('system_settings'),
+			creatAuthority:
+				this.$has('SYNC_job_creation') ||
+				this.$has('datasource_creation') ||
+				this.$has('API_creation') ||
+				this.$has('verify_job_creation'),
 			menus: [],
 			activeMenu: '',
 			favMenus: [],

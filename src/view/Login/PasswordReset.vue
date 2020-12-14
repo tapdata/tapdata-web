@@ -113,6 +113,8 @@ export default {
 						this.errorMessage = this.$t('app.signIn.notMailbox');
 					} else if (e.response.msg === '尚未验证电子邮件') {
 						this.errorMessage = this.$t('app.signIn.email_invalid');
+					} else {
+						this.errorMessage = e.response.msg;
 					}
 				}
 			} finally {
@@ -123,7 +125,8 @@ export default {
 		// 跳转登录
 		backLogin() {
 			this.$router.push({
-				path: '/login'
+				path: '/login',
+				query: { email: this.form.email }
 			});
 		}
 	}

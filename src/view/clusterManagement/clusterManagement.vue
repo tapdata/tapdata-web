@@ -16,7 +16,17 @@
 						<el-button type="primary" @click="screenFn">{{ $t('message.filter') }}</el-button>
 					</div>
 				</el-col>
-				<el-col class="text-rf screen" :span="2" :offset="9"> </el-col>
+				<el-col class="text-rf" :span="11">
+					<!-- <el-button
+						v-readonlybtn="'SYNC_job_creation'"
+						class="btn btn-create"
+						type="primary"
+						size="mini"
+						@click="create"
+					>
+						<i class="iconfont icon-jia add-btn-icon"></i>
+					</el-button> -->
+				</el-col>
 			</el-row>
 
 			<div class="content" v-if="waterfallData.length > 0">
@@ -192,16 +202,24 @@
 				}}</el-button>
 			</div>
 		</el-dialog>
+		<DownAgent
+			v-if="downLoadAgetntdialog"
+			:downLoadNum="downLoadNum"
+			type="dashboard"
+			:lastDataNum="firstNum"
+			@closeAgentDialog="closeAgentDialog"
+		></DownAgent>
 	</div>
 </template>
 <script>
 // import vueWaterfallEasy from 'vue-waterfall-easy';
+import DownAgent from '../downAgent/agentDown';
 import addServe from './component/addServe';
 import factory from '../../api/factory';
 const cluster = factory('cluster');
 export default {
 	name: 'clusterManagement',
-	components: { addServe },
+	components: { addServe, DownAgent },
 	data() {
 		return {
 			waterfallData: [],
@@ -216,7 +234,10 @@ export default {
 			apiServerState: '',
 			list: [],
 			editItem: {},
-			timer: null
+			timer: null,
+			downLoadAgetntdialog: false,
+			downLoadNum: 0,
+			firstNum: undefined
 		};
 	},
 	created() {
@@ -232,6 +253,14 @@ export default {
 	},
 
 	methods: {
+		// 新建集群管理
+		create() {
+			this.downLoadAgetntdialog = true;
+		},
+		// 关闭agent下载弹窗返回参数
+		closeAgentDialog() {
+			this.downLoadAgetntdialog = false;
+		},
 		// 提交
 		async submitForm() {
 			let getFrom = this.$refs.childRules.ruleForm;
@@ -417,6 +446,19 @@ export default {
 			}
 			cluster.get(params).then(res => {
 				if (res.data) {
+					if (!this.firstNum) {
+						this.firstNum = res.data.length || 0;
+						this.downLoadNum = 0;
+					}
+					if (this.firstNum) {
+						this.downLoadNum = res.data.length;
+					}
+					if (res.data.length > 0) {
+						this.agentTipFalg = false;
+					} else {
+						this.agentTipFalg = true;
+					}
+
 					this.list = res.data;
 					let [...waterfallData] = this.list;
 					let [...newWaterfallData] = [[], []];

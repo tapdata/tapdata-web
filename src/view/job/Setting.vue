@@ -103,6 +103,7 @@
 					></el-switch>
 				</el-form-item>
 				<el-form-item
+					class="flex-block"
 					v-show="formData.isSchedule === true && formData.sync_type === 'initial_sync'"
 					prop="cronExpression"
 				>
@@ -111,7 +112,24 @@
 						v-model="formData.cronExpression"
 						:placeholder="$t('dataFlow.cronExpression')"
 						size="mini"
+						class="jobSchedule"
 					></el-input>
+					<el-popover popper-class="jobSeceduleDialog" placement="top-start" width="500" trigger="hover">
+						<div class="text box">
+							<p>{{ $t('dialog.jobSchedule.explanation') }}</p>
+							<p>{{ $t('dialog.jobSchedule.grammar') }}</p>
+							<ul>
+								<li v-for="item in timeTextArr" :key="item">
+									<p>{{ $t('dialog.jobSchedule.' + item) }}</p>
+									<span>*</span>
+								</li>
+							</ul>
+							<p>{{ $t('dialog.jobSchedule.example') }}</p>
+							<p>0 */1 * * * ? * // {{ $t('dialog.jobSchedule.runMinute') }}</p>
+							<p>0 0 2 * * ? * // {{ $t('dialog.jobSchedule.runDay') }}</p>
+						</div>
+						<span class="icon iconfont icon-tishi1" slot="reference"></span>
+					</el-popover>
 				</el-form-item>
 				<el-form-item :label="$t('dataFlow.read_cdc_interval')">
 					<el-input v-model="formData.readCdcInterval" size="mini">
@@ -199,6 +217,7 @@ export default {
 			isSimple: false,
 			showMore: true,
 			sync_typeFalg: false,
+			timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year'],
 			rules: {
 				cronExpression: [
 					{
@@ -521,6 +540,9 @@ export default {
 		.el-input-number--mini {
 			width: 230px;
 		}
+		.jobSchedule {
+			width: 70%;
+		}
 	}
 }
 .setBtn {
@@ -535,6 +557,24 @@ export default {
 	div,
 	p {
 		word-break: keep-all;
+	}
+}
+.jobSeceduleDialog {
+	.text {
+		padding-left: 100px;
+		line-height: 28px;
+		color: #999;
+		ul {
+			display: flex;
+			flex-direction: row;
+			text-align: center;
+			li {
+				padding-right: 20px;
+			}
+		}
+	}
+	.box {
+		padding-left: 0;
 	}
 }
 </style>

@@ -300,6 +300,12 @@
 										<i class="iconfont  task-list-icon  icon-lishi2"></i>
 									</el-button>
 								</el-tooltip>
+								<el-tooltip
+									class="item"
+									:content="$t('dialog.jobSchedule.jobSecheduleSetting')"
+									placement="bottom"
+								>
+								</el-tooltip>
 								<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
 									<el-button
 										type="text"
@@ -1784,21 +1790,22 @@ export default {
 .dataflow-clickTip .el-message-box__status {
 	top: 25% !important;
 }
-.data-flow-wrap {
-	.jobSeceduleDialog {
-		.text {
-			padding-left: 100px;
-			line-height: 28px;
-			color: #999;
-			ul {
-				display: flex;
-				flex-direction: row;
-				text-align: center;
-				li {
-					padding-right: 20px;
-				}
+.jobSeceduleDialog {
+	.text {
+		padding-left: 100px;
+		line-height: 28px;
+		color: #999;
+		ul {
+			display: flex;
+			flex-direction: row;
+			text-align: center;
+			li {
+				padding-right: 20px;
 			}
 		}
+	}
+	.box {
+		padding-left: 0;
 	}
 }
 </style>

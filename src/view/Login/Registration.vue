@@ -163,9 +163,9 @@ export default {
 			} catch (e) {
 				if (e.response && e.response.msg) {
 					if (e.response.msg.indexOf('Email already exists')) {
-						this.message.error(this.$t('role.alreadyExists'));
+						this.errorMessage = this.$t('role.alreadyExists');
 					} else {
-						this.message.error(e.response.data.error.message);
+						this.errorMessage = e.response.msg;
 					}
 				}
 			} finally {
@@ -176,7 +176,8 @@ export default {
 		// 跳转登录
 		backLogin() {
 			this.$router.push({
-				path: '/login'
+				path: '/login',
+				query: { email: this.form.email }
 			});
 		}
 	}

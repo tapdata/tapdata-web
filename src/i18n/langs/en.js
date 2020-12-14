@@ -116,7 +116,7 @@ const en = {
 			resetConnectionFailed: 'reset password confirmation link is invalid',
 			clickText: 'Click',
 			confirmEmail: 'Please re',
-			registered: 'Registered',
+			registered: ' Registered',
 			resetAccountSuccess: 'The password has been reset successfully~',
 			passwordResetText: 'Reset password email has been sent to',
 			notMailbox: 'oops~This mailbox has not been registered yet',
@@ -326,6 +326,16 @@ const en = {
 			'Database migration can help users  to achieve structure,  inital, and CDC migration of multiple homogeneous or heterogeneous databases in one job. ',
 		dataFreedom:
 			'Data sync focuses on data processing (such as table merging, data splitting, joint mapping, field processing, content filtering, aggregation processing, JS processing ,etc )and sync of table-level real-time data sync.',
+		moreFeatures: 'More Features',
+		creatSource: 'Create data source',
+		creatApi: 'Create API',
+		dataValidation: 'Data Verification',
+		sourceDescription:
+			'The data source is the premise of creating the transmission job, the data source includes Database, File, GridFS, Rest API, View, Custom connection, etc.',
+		apiDescription:
+			'API, aka data publication API, you can create a new API which includes the paths of Post, Get, Patch, Delete.',
+		datavaliDescription:
+			'Data verification has the function of count verify, content verify, and joint field value verify which can verify the consistency of source and target.',
 		multiError: {
 			allSelectionError: 'The status of selected job does not allow this operation.',
 			notFound: 'This job does not existed.',

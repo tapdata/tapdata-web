@@ -47,6 +47,21 @@
 							<el-option :label="$t('dataVerification.disable')" :value="2"></el-option>
 						</el-select>
 					</li>
+					<li class="search-item">
+						<el-select
+							v-model="searchParams.result"
+							size="mini"
+							:placeholder="$t('dataVerification.verifystatus')"
+							@input="search(1)"
+						>
+							<el-option
+								v-for="item in validList"
+								:key="item.value"
+								:label="item.name"
+								:value="item.value"
+							></el-option>
+						</el-select>
+					</li>
 					<!-- <li class="search-item" v-if="searchParams.tag">
 						<el-tag
 							size="small"
@@ -355,6 +370,12 @@ export default {
 				done: this.$t('dataVerification.done'),
 				running: this.$t('dataVerification.running')
 			},
+			validList: [
+				{ name: this.$t('app.Home.checkSame'), value: 'passed' },
+				{ name: this.$t('app.Home.countDifference'), value: 'countDiff' },
+				{ name: this.$t('app.Home.contentDifference'), value: 'valueDiff' },
+				{ name: 'ERROR', value: 'failed' }
+			],
 			selections: [],
 			timer: ''
 		};
@@ -362,6 +383,13 @@ export default {
 	created() {
 		if (this.$route && this.$route.query) {
 			this.searchParams.keyword = this.$route.query.name;
+			if (this.$route.query.executionStatus === 'error') {
+				this.searchParams.result = 'failed';
+			} else if (this.$route.query.executionStatus === 'total') {
+				this.searchParams.result = '';
+			} else {
+				this.searchParams.result = this.$route.query.executionStatus;
+			}
 		}
 		this.search(1);
 		this.timer = setInterval(() => {
@@ -395,11 +423,12 @@ export default {
 				this.loading = true;
 			}
 			let { current, size, sortBy, order } = this.page;
-			let { keyword, inspectMethod, mode, enabled } = this.searchParams;
+			let { keyword, inspectMethod, mode, enabled, result } = this.searchParams;
 			let currentPage = pageNum || current + 1;
 			let where = {};
 			inspectMethod && (where.inspectMethod = inspectMethod);
 			mode && (where.mode = mode);
+
 			if (enabled) {
 				if (enabled == 1) {
 					where.enabled = true;
@@ -422,6 +451,13 @@ export default {
 						}
 					}
 				];
+			}
+			if (result) {
+				if (result === 'error' || result === 'passed') {
+					where.result = result;
+				} else {
+					where.inspectMethod = result;
+				}
 			}
 			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
 				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
@@ -454,7 +490,8 @@ export default {
 				keyword: '',
 				inspectMethod: '',
 				mode: '',
-				enabled: ''
+				enabled: '',
+				result: ''
 			};
 			this.search(1);
 		},

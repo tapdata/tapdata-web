@@ -129,7 +129,8 @@ const store = new Vuex.Store({
 			keyword: '',
 			inspectMethod: '',
 			mode: '',
-			enabled: ''
+			enabled: '',
+			result: ''
 		}
 	},
 
