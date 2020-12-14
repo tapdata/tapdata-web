@@ -289,6 +289,7 @@ const cn = {
 		reloadSchemaError: '模型更新失败'
 	},
 	dataFlow: {
+		aggregateNotDataNode: '聚合节点的第一个数据节点不是collection',
 		batchSortOperation: '批量分类操作',
 		selectRowdata: '请选择行数据',
 		clusterClone: '数据库迁移',

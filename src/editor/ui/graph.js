@@ -144,7 +144,9 @@ export default class Graph extends Component {
 				)
 					return false;
 				if (!self.validPath.call(self, sourceView, targetView)) {
-					alert('有聚合节点的第一个数据节点不是collection');
+					Message.error({
+						message: i18n.t('dataFlow.aggregateNotDataNode')
+					});
 					return false;
 				}
 
