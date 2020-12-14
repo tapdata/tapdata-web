@@ -1843,7 +1843,28 @@ const tc = {
 			API_data_time_zone_editing: 'API數據更改時區',
 			API_data_creation: 'API數據新增',
 			API_data_download: 'API數據下載'
-		}
+		},
+		roleManagement: '角色管理',
+		preciseMatching: '精準匹配',
+		fuzzyMatching: '模糊匹配',
+		selectRoleName: '請選擇角色名',
+		selectDesc: '請輸入角色描述',
+		selectUser: '請選擇用戶名',
+		description: '角色描述',
+		associatUsers: '關聯用戶',
+		edit: '編輯',
+		founder: '創建人',
+		operate: '操作',
+		create: '新建',
+		settingPermissions: '設置權限',
+		delete: '刪除',
+		yes: '是',
+		no: '否',
+		delete_remind: '確認刪除角色',
+		delete_success: '刪除角色成功',
+		delete_error: '刪除角色失敗',
+		connected: '已關聯',
+		role_null: '角色名稱不能為空'
 	}
 };
 

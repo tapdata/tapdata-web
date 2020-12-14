@@ -1,8 +1,8 @@
 <template>
-	<div class="roles" v-loading="loading">
+	<div class="role" v-loading="loading">
 		<h1>{{ $t('role.settingTitle') }}</h1>
 		<div class="role-tableBox">
-			<h2>{{ $t('role.rolePermission') }}</h2>
+			<!-- <h2>{{ $t('role.rolePermission') }}</h2> -->
 			<ul class="role-table">
 				<!-- <div class="vertical-line"></div> -->
 				<li v-for="item in dataList" :key="item.id">
@@ -61,6 +61,12 @@
 					</ul>
 				</li>
 			</ul>
+			<div class="btn">
+				<el-button size="mini" @click="back">{{ $t('dataVerify.back') }}</el-button>
+				<el-button size="mini" type="primary" :loading="saveloading" @click="saveSubmit('ruleForm')">{{
+					$t('app.save')
+				}}</el-button>
+			</div>
 		</div>
 		<!-- <el-form-item
 				:label="$t('role.roleName')"
@@ -77,10 +83,7 @@
 				<el-switch v-model="form.register_user_default"></el-switch>
 			</el-form-item> -->
 		<!-- <el-form-item class="btn"> -->
-		<el-button @click="back">{{ $t('dataVerify.back') }}</el-button>
-		<el-button type="primary" :loading="saveloading" @click="saveSubmit('ruleForm')">{{
-			$t('app.save')
-		}}</el-button>
+
 		<!-- </el-form-item> -->
 		<!-- </el-form> -->
 	</div>
@@ -88,7 +91,7 @@
 
 <script>
 import factory from '@/api/factory';
-const rolesModel = factory('role');
+// const rolesModel = factory('role');
 const roleMappingModel = factory('roleMapping');
 export default {
 	data() {
@@ -113,27 +116,27 @@ export default {
 	created() {
 		this.title = this.$route.params.id ? this.$t('role.editroleTitle') : this.$t('role.addroleTitle');
 		this.getPermission();
-		if (this.$route.params.id) {
-			this.getUserDataApi();
-		}
+		// if (this.$route.params.id) {
+		// 	this.getUserDataApi();
+		// }
 	},
 
 	methods: {
 		//  获取用户信息
-		getUserDataApi() {
-			let params = {
-				filter: {
-					where: {
-						id: this.$route.params.id
-					}
-				}
-			};
-			rolesModel.get(params).then(res => {
-				if (res && res.data && res.data.length) {
-					this.form = res.data[0];
-				}
-			});
-		},
+		// getUserDataApi() {
+		// 	let params = {
+		// 		filter: {
+		// 			where: {
+		// 				id: this.$route.params.id
+		// 			}
+		// 		}
+		// 	};
+		// 	rolesModel.get(params).then(res => {
+		// 		if (res && res.data && res.data.length) {
+		// 			this.form = res.data[0];
+		// 		}
+		// 	});
+		// },
 
 		// 获取用户权限数据
 		getMappingData(mappingData) {
@@ -377,19 +380,19 @@ export default {
 			if (!validated) {
 				return false;
 			}
-			const record = {
-				name: this.form.name,
-				description: this.form.description,
-				register_user_default: this.form.register_user_default
-			};
+			// const record = {
+			// 	name: this.form.name,
+			// 	description: this.form.description,
+			// 	register_user_default: this.form.register_user_default
+			// };
 			const roleId = this.$route.params.id;
-			const method = roleId ? 'patch' : 'post';
+			// const method = roleId ? 'patch' : 'post';
 
-			if (roleId) {
-				record.id = roleId;
-			} else {
-				record.user_id = this.$cookie.get('user_id');
-			}
+			// if (roleId) {
+			// 	record.id = roleId;
+			// } else {
+			// 	record.user_id = this.$cookie.get('user_id');
+			// }
 
 			// 获取选中数据
 			let arr = [],
@@ -410,46 +413,62 @@ export default {
 			}
 			let saveRoleArr = [...arr, ...sendChild, ...childrenArr];
 
-			rolesModel[method](record)
-				.then(res => {
-					if (res && res.data) {
-						// let rolemappings = this.rolemappings.filter(rolemapping => {
-						// 	if (rolemapping.principalType === 'PERMISSION') {
-						// 		return true;
-						// 	}
-						// });
-						// let rolemappingId = [];
-						// rolemappings.forEach(rolemapping => {
-						// 	rolemappingId.push(rolemapping.id);
-						// });
-						self.$api('users').deletePermissionRoleMapping(res.data.id);
-						let newRoleMappings = [];
+			self.$api('users').deletePermissionRoleMapping(roleId);
+			let newRoleMappings = [];
 
-						saveRoleArr.forEach(selectPermission => {
-							if (selectPermission)
-								newRoleMappings.push({
-									principalType: 'PERMISSION',
-									principalId: selectPermission,
-									roleId: res.data.id
-								});
-						});
-						roleMappingModel.post(newRoleMappings);
+			saveRoleArr.forEach(selectPermission => {
+				if (selectPermission)
+					newRoleMappings.push({
+						principalType: 'PERMISSION',
+						principalId: selectPermission,
+						roleId: roleId
+					});
+			});
+			roleMappingModel.post(newRoleMappings);
 
-						this.$message.success(this.$t('message.saveOK'));
-					}
-				})
-				.catch(e => {
-					if (e.response && e.response.msg) {
-						if (e.response.msg.indexOf('already exists')) {
-							this.$message.error(this.$t('role.alreadyExists'));
-						} else {
-							this.$message.error(`${e.response.msg}`);
-						}
-					}
-				})
-				.finally(() => {
-					self.saveloading = false;
-				});
+			this.$message.success(this.$t('message.saveOK'));
+			self.saveloading = false;
+
+			// rolesModel[method](record)
+			// 	.then(res => {
+			// 		if (res && res.data) {
+			// 			// let rolemappings = this.rolemappings.filter(rolemapping => {
+			// 			// 	if (rolemapping.principalType === 'PERMISSION') {
+			// 			// 		return true;
+			// 			// 	}
+			// 			// });
+			// 			// let rolemappingId = [];
+			// 			// rolemappings.forEach(rolemapping => {
+			// 			// 	rolemappingId.push(rolemapping.id);
+			// 			// });
+			// 			self.$api('users').deletePermissionRoleMapping(res.data.id);
+			// 			let newRoleMappings = [];
+
+			// 			saveRoleArr.forEach(selectPermission => {
+			// 				if (selectPermission)
+			// 					newRoleMappings.push({
+			// 						principalType: 'PERMISSION',
+			// 						principalId: selectPermission,
+			// 						roleId: res.data.id
+			// 					});
+			// 			});
+			// 			roleMappingModel.post(newRoleMappings);
+
+			// 			this.$message.success(this.$t('message.saveOK'));
+			// 		}
+			// 	})
+			// 	.catch(e => {
+			// 		if (e.response && e.response.msg) {
+			// 			if (e.response.msg.indexOf('already exists')) {
+			// 				this.$message.error(this.$t('role.alreadyExists'));
+			// 			} else {
+			// 				this.$message.error(`${e.response.msg}`);
+			// 			}
+			// 		}
+			// 	})
+			// 	.finally(() => {
+			// 		self.saveloading = false;
+			// 	});
 		},
 
 		// 返回
@@ -461,7 +480,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.roles {
+.role {
 	height: 100%;
 	padding: 30px 20px;
 	box-sizing: border-box;
@@ -472,124 +491,122 @@ export default {
 		color: #333;
 		font-weight: bold;
 	}
-	.e-form {
+	.role-tableBox {
+		display: flex;
+		flex-direction: column;
 		height: calc(100% - 41px);
-		.role-tableBox {
-			height: 540px;
-			.role-table {
-				position: relative;
-				height: 520px;
-				border: 1px solid #e0e0e0;
-				overflow: auto;
-				// .header {
-				// 	height: 40px;
-				// 	line-height: 40px;
-				// 	text-align: center;
-				// 	border-bottom: 1px solid #e7e7e7;
-				// 	background: #f8f8f9;
-				// }
-				li {
-					min-height: 39px;
-					overflow: hidden;
+		overflow: auto;
+		.role-table {
+			position: relative;
+			// height: 520px;
+			border: 1px solid #e0e0e0;
+			overflow: auto;
+			// .header {
+			// 	height: 40px;
+			// 	line-height: 40px;
+			// 	text-align: center;
+			// 	border-bottom: 1px solid #e7e7e7;
+			// 	background: #f8f8f9;
+			// }
+			li {
+				min-height: 39px;
+				overflow: hidden;
+				border-bottom: 1px solid #e7e7e7;
+			}
+
+			.vertical-line {
+				position: absolute;
+				left: 20%;
+				top: 0;
+				width: 1px;
+				height: 100%;
+				background: #ddd;
+			}
+
+			.center-line {
+				left: 40%;
+			}
+
+			.left {
+				float: left;
+				width: 20%;
+				padding-left: 10px;
+				line-height: 40px;
+				user-select: none;
+				cursor: pointer;
+				box-sizing: border-box;
+			}
+
+			.center {
+				float: left;
+				width: 80%;
+				padding-left: 10px;
+				line-height: 40px;
+				user-select: none;
+				cursor: pointer;
+				text-align: left;
+				box-sizing: border-box;
+				border-left: 1px solid #e7e7e7;
+			}
+
+			.one {
+				padding-left: 20px;
+			}
+
+			.right {
+				width: 80%;
+				float: right;
+				line-height: 40px;
+				// padding-left: 10px;
+				box-sizing: border-box;
+				border-left: 1px solid #e7e7e7;
+				.rightRow {
+					line-height: 39px;
 					border-bottom: 1px solid #e7e7e7;
 				}
-
-				.vertical-line {
-					position: absolute;
-					left: 20%;
-					top: 0;
-					width: 1px;
-					height: 100%;
-					background: #ddd;
+				.check {
+					padding-left: 10px;
+					border-left: 1px solid #e7e7e7;
 				}
-
-				.center-line {
-					left: 40%;
-				}
-
 				.left {
-					float: left;
 					width: 20%;
-					padding-left: 10px;
-					user-select: none;
-					cursor: pointer;
-					box-sizing: border-box;
+					border-right: 0;
 				}
-
-				.center {
-					float: left;
-					width: 80%;
-					padding-left: 10px;
-					user-select: none;
-					cursor: pointer;
-					text-align: left;
-					box-sizing: border-box;
-					border-left: 1px solid #e7e7e7;
-				}
-
-				.one {
-					padding-left: 20px;
-				}
-
-				.right {
-					width: 80%;
-					float: right;
-					// padding-left: 10px;
-					box-sizing: border-box;
-					border-left: 1px solid #e7e7e7;
-					.rightRow {
-						line-height: 39px;
-						border-bottom: 1px solid #e7e7e7;
-					}
-					.check {
-						padding-left: 10px;
-						border-left: 1px solid #e7e7e7;
-					}
-					.left {
-						width: 20%;
-						border-right: 0;
-					}
-					li:last-child {
-						border-bottom: 0;
-					}
-				}
-
-				.item-icon {
-					margin-left: -5px;
-					padding: 5px;
-				}
-
-				.line {
-					clear: both;
-					width: 100%;
-					height: 1px;
-					background: #e0e0e0;
-				}
-				.h40 {
-					height: 39px;
-					line-height: 39px;
-				}
-				.authority {
-					float: right;
-					width: 60%;
-					border-left: 1px solid #e7e7e7;
+				li:last-child {
+					border-bottom: 0;
 				}
 			}
+
+			.item-icon {
+				margin-left: -5px;
+				padding: 5px;
+			}
+
+			.line {
+				clear: both;
+				width: 100%;
+				height: 1px;
+				background: #e0e0e0;
+			}
+			.h40 {
+				height: 39px;
+				line-height: 39px;
+			}
+			.authority {
+				float: right;
+				width: 60%;
+				border-left: 1px solid #e7e7e7;
+			}
 		}
-		.btn {
-			text-align: center;
-		}
+	}
+	.btn {
+		width: 100%;
+		padding-top: 20px;
+		text-align: center;
 	}
 }
 
 [v-cloak] {
 	display: none;
-}
-</style>
-<style lang="less">
-.roles {
-	.el-input__inner {
-		width: 450px;
-	}
 }
 </style>

@@ -66,7 +66,7 @@
 
 							<el-button
 								type="text"
-								@click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)"
+								@click="handleAssociatUsers(scope.row.id)"
 								v-readonlybtn="'SYNC_job_edition'"
 							>
 								{{ $t('role.associatUsers') }}
@@ -100,14 +100,19 @@
 			</div>
 		</div>
 		<!-- 创建角色 -->
-		<el-dialog :title="$t('role.createRole')" :visible.sync="dialogFormVisible" width="30%">
-			<el-form :model="form" label-width="80px">
-				<el-form-item :label="$t('role.roleName')">
-					<el-input
-						v-model="form.name"
-						:placeholder="$t('role.selectRoleName')"
-						autocomplete="off"
-					></el-input>
+		<el-dialog
+			:title="$t('role.createRole')"
+			:close-on-click-modal="false"
+			:visible.sync="dialogFormVisible"
+			width="600px"
+		>
+			<el-form :model="form" ref="form" label-width="80px">
+				<el-form-item
+					:label="$t('role.roleName')"
+					prop="name"
+					:rules="[{ required: true, message: $t('role.role_null'), trigger: 'blur' }]"
+				>
+					<el-input v-model="form.name" :placeholder="$t('role.selectRoleName')"></el-input>
 				</el-form-item>
 				<el-form-item :label="$t('role.roleDesc')">
 					<el-input
@@ -132,6 +137,26 @@
 			</div>
 		</el-dialog>
 
+		<!-- 关联用户 -->
+		<el-dialog
+			:title="$t('role.associatUsers')"
+			:close-on-click-modal="false"
+			:visible.sync="dialogUserVisible"
+			width="600px"
+		>
+			<div class="userBox">
+				<el-select v-model="roleusers" multiple :placeholder="$t('role.selectUser')">
+					<el-option v-for="item in userGroup" :key="item.id" :label="item.email" :value="item.id">
+					</el-option>
+				</el-select>
+				<div class="num">{{ $t('role.connected') }}: {{ roleusers.length }}</div>
+			</div>
+			<span slot="footer" class="dialog-footer">
+				<el-button size="mini" @click="dialogUserVisible = false">{{ $t('message.cancel') }}</el-button>
+				<el-button size="mini" type="primary" @click="saveUser">{{ $t('dataForm.submit') }}</el-button>
+			</span>
+		</el-dialog>
+
 		<!-- 删除角色 -->
 		<el-dialog
 			:title="$t('dataFlow.importantReminder')"
@@ -147,8 +172,8 @@
 				?
 			</p>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="deleteDialogVisible = false">{{ $t('message.cancel') }}</el-button>
-				<el-button type="primary" @click="confirmDelete">{{ $t('metaData.deleteNode') }}</el-button>
+				<el-button size="mini" @click="deleteDialogVisible = false">{{ $t('message.cancel') }}</el-button>
+				<el-button size="mini" type="primary" @click="confirmDelete">{{ $t('metaData.deleteNode') }}</el-button>
 			</span>
 		</el-dialog>
 	</div>
@@ -156,7 +181,8 @@
 <script>
 import factory from '@/api/factory';
 const rolesModel = factory('role');
-// const usersModel = factory('users');
+const usersModel = factory('users');
+const roleMappingModel = factory('roleMapping');
 export default {
 	name: 'Roles',
 	data() {
@@ -166,6 +192,9 @@ export default {
 				keyword: ''
 			},
 			tableData: [],
+			roleusers: [],
+			userGroup: [],
+			oldUser: [],
 			loading: false,
 			pagesize: 20,
 			totalNum: 0,
@@ -177,6 +206,7 @@ export default {
 				register_user_default: false
 			},
 			deleteDialogVisible: false,
+			dialogUserVisible: false,
 			roleId: '',
 			deleteObj: {
 				id: '',
@@ -186,6 +216,12 @@ export default {
 	},
 	created() {
 		this.handleDataApi();
+		this.getUserData();
+	},
+	watch: {
+		'searchNav.keyword'() {
+			this.handleDataApi();
+		}
 	},
 	methods: {
 		// 获取角色列表
@@ -231,7 +267,7 @@ export default {
 			});
 		},
 
-		// 新建角色
+		// 新建角色(弹窗开关)
 		createRole(id, item) {
 			this.dialogFormVisible = true;
 			if (id) {
@@ -243,12 +279,37 @@ export default {
 				};
 			} else {
 				this.roleId = '';
+				this.form = {
+					name: '',
+					description: '',
+					register_user_default: false
+				};
 			}
 		},
 
 		// 设置权限
 		handleSettingPermissions(id) {
 			this.$router.push({ name: 'role', query: { id } });
+		},
+
+		// 已关联用户
+		async handleAssociatUsers(id) {
+			this.dialogUserVisible = true;
+			this.roleId = id;
+			let _this = this;
+			_this.roleusers = [];
+			_this.oldUser = [];
+
+			await roleMappingModel.get({ 'filter[where][roleId]': id }).then(res => {
+				if (res && res.data) {
+					res.data.forEach(roleMapping => {
+						if (roleMapping.principalType === 'USER') {
+							_this.roleusers.push(roleMapping.principalId);
+							_this.oldUser.push(roleMapping);
+						}
+					});
+				}
+			});
 		},
 
 		// 删除角色
@@ -286,19 +347,68 @@ export default {
 		// 创建保存
 		createSave() {
 			let self = this;
-			const record = {
-				name: this.form.name,
-				description: this.form.description,
-				register_user_default: this.form.register_user_default
-			};
-			const method = this.roleId ? 'patch' : 'post';
-			if (this.roleId) {
-				record.id = this.roleId;
+			const validated = this.$refs.form.validate();
+			if (!validated) {
+				return false;
 			} else {
-				record.user_id = this.$cookie.get('user_id');
-			}
+				const record = {
+					name: this.form.name,
+					description: this.form.description,
+					register_user_default: this.form.register_user_default
+				};
+				const method = this.roleId ? 'patch' : 'post';
+				if (this.roleId) {
+					record.id = this.roleId;
+				} else {
+					record.user_id = this.$cookie.get('user_id');
+				}
 
-			rolesModel[method](record)
+				rolesModel[method](record)
+					.then(res => {
+						if (res && res.data) {
+							this.$message.success(this.$t('message.saveOK'));
+						}
+					})
+					.catch(e => {
+						if (e.response && e.response.msg) {
+							if (e.response.msg.indexOf('already exists')) {
+								this.$message.error(this.$t('role.alreadyExists'));
+							} else {
+								this.$message.error(`${e.response.msg}`);
+							}
+						}
+					})
+					.finally(() => {
+						self.dialogFormVisible = false;
+					});
+			}
+		},
+
+		// 获取用户列表
+		async getUserData() {
+			await usersModel.get({}).then(res => {
+				if (res && res.data) {
+					this.userGroup = res.data;
+				}
+			});
+		},
+
+		// 保存用户
+		saveUser() {
+			let newRoleMappings = [];
+			this.oldUser.forEach(delRolemapping => {
+				roleMappingModel.delete(delRolemapping.id);
+			});
+			// _this.oldUser
+			this.roleusers.forEach(roleuser => {
+				newRoleMappings.push({
+					principalType: 'USER',
+					principalId: roleuser,
+					roleId: this.roleId
+				});
+			});
+			roleMappingModel
+				.post(newRoleMappings)
 				.then(res => {
 					if (res && res.data) {
 						this.$message.success(this.$t('message.saveOK'));
@@ -312,10 +422,8 @@ export default {
 							this.$message.error(`${e.response.msg}`);
 						}
 					}
-				})
-				.finally(() => {
-					self.dialogFormVisible = false;
 				});
+			this.dialogUserVisible = false;
 		},
 
 		// 分页
@@ -432,6 +540,15 @@ export default {
 		}
 		.el-button {
 			font-size: 12px;
+		}
+	}
+	.userBox {
+		.el-select,
+		.el-input {
+			width: 100%;
+		}
+		.num {
+			padding-top: 10px;
 		}
 	}
 }

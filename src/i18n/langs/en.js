@@ -1876,7 +1876,28 @@ const en = {
 			API_data_time_zone_editing: 'API data time zone editing',
 			API_data_creation: 'API data creation',
 			API_data_download: 'API data download'
-		}
+		},
+		roleManagement: 'Role Management',
+		preciseMatching: 'precise matching',
+		fuzzyMatching: 'Fuzzy matching',
+		selectRoleName: 'Please select a role name',
+		selectDesc: 'Please enter a role description',
+		selectUser: 'Please select a user name',
+		description: 'Character description',
+		associatUsers: 'Associated users',
+		edit: 'Edit',
+		founder: 'Founder',
+		operate: 'Operation',
+		create: 'New',
+		settingPermissions: 'Setting permissions',
+		delete: 'Delete',
+		yes: 'Yes',
+		no: 'No',
+		delete_remind: 'Confirm to delete role',
+		delete_success: 'Delete role successfully',
+		delete_error: 'Failed to delete role',
+		connected: 'Connected',
+		role_null: 'The role name cannot be empty'
 	}
 };
 

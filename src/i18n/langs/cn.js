@@ -1852,6 +1852,7 @@ const cn = {
 		fuzzyMatching: '模糊匹配',
 		selectRoleName: '请选择角色名',
 		selectDesc: '请输入角色描述',
+		selectUser: '请选择用户名',
 		description: '角色描述',
 		associatUsers: '关联用户',
 		edit: '编辑',
@@ -1864,7 +1865,9 @@ const cn = {
 		no: '否',
 		delete_remind: '确认删除角色',
 		delete_success: '删除角色成功',
-		delete_error: '删除角色失败'
+		delete_error: '删除角色失败',
+		connected: '已关联',
+		role_null: '角色名称不能为空'
 	}
 };
 
