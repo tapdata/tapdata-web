@@ -5,5 +5,6 @@ export default {
 	switch: 'FbSwitch',
 	file: 'FbFile',
 	field: 'FbSelect',
-	array: 'FbArray'
+	array: 'FbArray',
+	group: 'FbGroup'
 };

@@ -1,9 +1,9 @@
 <template>
 	<section class="template-process-wrap">
 		<main style="padding: 20px;">
-			<div style="text-align: right;">
+			<!-- <div style="text-align: right;">
 				<el-button size="mini" type="primary">更新节点配置</el-button>
-			</div>
+			</div> -->
 			<form-builder ref="form" v-model="model.formData" :config="formConfig"></form-builder>
 			<div style="padding: 5px 15px;background: #fff;color: #333;font-size: 12px;margin-top: 20px;">
 				<pre>{{ this.model.script }}</pre>
@@ -90,32 +90,32 @@ export default {
 			let { formData } = this.model;
 			let script = this.scriptTemplate;
 			for (let key in formData) {
-				let value = formData[key];
-				switch (Object.prototype.toString.call(value)) {
-					case '[object String]':
-						value = `"${value}"`;
-						break;
-					case '[object Array]':
-						value = `[${value
-							.map(v => {
-								if (Object.prototype.toString.call(v) === '[object Number]') {
-									return v;
-								} else {
-									return `"${v}"`;
-								}
-							})
-							.toString()}]`;
-						break;
-					case '[object Number]':
-						value = `${value}`;
-						break;
-					default:
-						value = `"${value}"`;
-						break;
-				}
+				let value = this.getFormatValue(formData[key]);
+
 				script = script.replace('${' + key + '}', value);
 			}
 			return script;
+		},
+		getFormatValue(value) {
+			switch (Object.prototype.toString.call(value)) {
+				case '[object String]':
+					value = `"${value}"`;
+					break;
+				case '[object Array]':
+					value = `[${value
+						.map(v => {
+							return this.getFormatValue(v);
+						})
+						.toString()}]`;
+					break;
+				case '[object Number]':
+					value = `${value}`;
+					break;
+				default:
+					value = `"${value}"`;
+					break;
+			}
+			return value;
 		},
 		getData() {
 			this.model.script = this.getScript();

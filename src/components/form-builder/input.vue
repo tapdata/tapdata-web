@@ -35,8 +35,7 @@ export default {
 					if (config.domType === 'number' && val) {
 						val = Number(val);
 					}
-					self.$emit('input', val);
-					self.config.on && self.config.on.input && self.config.on.input(val);
+					self.on.input(val);
 				}
 			})
 		});

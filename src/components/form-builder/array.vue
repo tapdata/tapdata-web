@@ -39,14 +39,13 @@ export default {
 									value: it,
 									config
 								},
-								on: {
+								on: Object.assign({}, this.on, {
 									input: val => {
 										this.$set(items, index, val);
 										let value = items;
-										self.$emit('input', value);
-										self.config.on && self.config.on.change && self.config.on.input(value);
+										this.on.input(value);
 									}
-								}
+								})
 							}),
 							h('ElButton', {
 								style: {
@@ -61,7 +60,7 @@ export default {
 								on: {
 									click: () => {
 										items.splice(index, 1);
-										self.$emit('input', items);
+										self.on.input(items);
 									}
 								}
 							})
@@ -79,7 +78,7 @@ export default {
 					on: {
 						click: () => {
 							items.push('');
-							self.$emit('input', items);
+							self.on.input(items);
 						}
 					}
 				})
