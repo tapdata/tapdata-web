@@ -329,13 +329,13 @@ const en = {
 		moreFeatures: 'More Features',
 		creatSource: 'Create data source',
 		creatApi: 'Create API',
-		dataValidation: 'Data Validation',
+		dataValidation: 'Data Verification',
 		sourceDescription:
-			'Data source is the prerequisite for creating a transmission task. All data nodes such as databases and tables in the task come from the data source. Data sources include database, File, GridFS, Rest API, View, Udp, Custom connection, etc.',
+			'The data source is the premise of creating the transmission job, the data source includes Database, File, GridFS, Rest API, View, Custom connection, etc.',
 		apiDescription:
-			'API is data publishing, you can create a new collection based on the existing collection or through synchronization tasks to publish the API',
+			'API, aka data publication API, you can create a new API which includes the paths of Post, Get, Patch, Delete.',
 		datavaliDescription:
-			'Data verification can compare and verify the data between the data source and target of the migration synchronization task. The verification function includes fast count verification, full table field value verification, associated field value verification, and automatic timing verification. Wait. ',
+			'Data verification has the function of count verify, content verify, and joint field value verify which can verify the consistency of source and target.',
 		multiError: {
 			allSelectionError: 'The status of selected job does not allow this operation.',
 			notFound: 'This job does not existed.',
