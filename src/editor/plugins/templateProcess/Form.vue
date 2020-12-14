@@ -30,7 +30,8 @@ export default {
 				form: {},
 				items: []
 			},
-			scriptTemplate: ''
+			scriptTemplate: '',
+			isValid: true
 		};
 	},
 	created() {},
@@ -38,7 +39,12 @@ export default {
 		model: {
 			deep: true,
 			handler() {
-				this.$emit('dataChanged', this.getData());
+				this.$nextTick(() => {
+					this.$refs.form.validate(isValid => {
+						this.model.isValid = isValid;
+						this.$emit('dataChanged', this.getData());
+					});
+				});
 			}
 		}
 	},
@@ -46,7 +52,6 @@ export default {
 	methods: {
 		setData(data, cell) {
 			if (data) {
-				data.type = 'template_processor';
 				this.model = Object.assign(this.model, data);
 			}
 
@@ -78,6 +83,7 @@ export default {
 					}
 				});
 			}
+			debugger;
 			this.formConfig = formConfig;
 			this.scriptTemplate = config.scriptTemplate;
 		},
@@ -105,6 +111,7 @@ export default {
 						value = `${value}`;
 						break;
 					default:
+						value = `"${value}"`;
 						break;
 				}
 				script = script.replace('${' + key + '}', value);
@@ -123,4 +130,15 @@ export default {
 };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.template-process-wrap {
+	height: 100%;
+	overflow: hidden;
+	main {
+		padding: 20px;
+		height: 100%;
+		overflow: auto;
+		box-sizing: border-box;
+	}
+}
+</style>

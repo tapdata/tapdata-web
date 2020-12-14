@@ -87,7 +87,6 @@ export default {
 				ref: 'form',
 
 				props: Object.assign(formConfig, {
-					hideRequiredAsterisk: true,
 					inlineMessage: true
 				})
 			},
@@ -102,7 +101,7 @@ export default {
 	},
 	methods: {
 		validate(callback) {
-			return this.$refs.form.validate(callback);
+			return this.$refs.form && this.$refs.form.validate(callback);
 		},
 		clearValidate() {
 			return this.$refs.form && this.$refs.form.clearValidate();
@@ -127,6 +126,22 @@ export default {
 			let prependSlot = config.prependSlot ? config.prependSlot(h) : null;
 			let appendSlot = config.appendSlot ? config.appendSlot(h) : null;
 
+			let dependOn = config.dependOn;
+			if (dependOn && dependOn.length) {
+				/**
+				 * dependOn 配置说明：
+				 *			triggerOptions: 依赖的字段与值
+				 *						field: 依赖的字段
+				 *						value: 依赖的值
+				 *			triggerConfig: 依赖项满足条件后需要更新的配置
+				 */
+				dependOn.forEach(depend => {
+					let triggerOptions = depend.triggerOptions;
+					if (triggerOptions.every(opt => opt.value === this.value[opt.field])) {
+						config = Object.assign(config, depend.triggerConfig);
+					}
+				});
+			}
 			let item = h(
 				'ElFormItem',
 				{
@@ -150,6 +165,9 @@ export default {
 									},
 									on: {
 										input(val) {
+											if (config.domType === 'number') {
+												val = Number(val);
+											}
 											if (self.value[config.field] === undefined) {
 												throw new Error(
 													`The field "${config.field}" of the model is not defined!`
@@ -169,19 +187,18 @@ export default {
 			);
 			return config.show ? item : '';
 		},
-		getLabel(h, config, rules) {
-			let required = rules.find(r => r.required);
+		getLabel(h, config) {
 			let labelSlot = config.labelSlot ? config.labelSlot(h) : null;
 			return !config.label && !labelSlot
 				? null
 				: h(
 						'div',
 						{
-							class: { 'e-form-builder-item-label': true },
+							class: 'e-form-builder-item-label',
 							slot: 'label'
 						},
 						[
-							labelSlot || h('div', { class: { 'is-required': required } }, [config.label]),
+							labelSlot || config.label,
 							config.tips &&
 								h(
 									'ElPopover',
@@ -226,14 +243,6 @@ export default {
 		display: flex;
 		align-items: center;
 		font-size: 12px;
-		.is-required {
-			&::after {
-				content: '*';
-				color: #ee5353;
-				margin-left: 4px;
-				font-size: 14px;
-			}
-		}
 		.e-form-builder-item-tips {
 			margin-left: 5px;
 			font-size: 14px;
@@ -241,6 +250,7 @@ export default {
 	}
 	.el-form-item__label {
 		padding-bottom: 0px;
+		display: flex;
 	}
 	.el-form-item {
 		margin-bottom: 5px;

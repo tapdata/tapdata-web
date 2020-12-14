@@ -1146,7 +1146,7 @@ export default {
 					self.$message.error(self.$t('editor.cell.link.chooseATableTip'));
 					return;
 				}
-
+				debugger;
 				let start = () => {
 					data.status = 'scheduled';
 					data.executeMode = 'normal';

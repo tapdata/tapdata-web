@@ -3,28 +3,145 @@
 		{
 			"id": "cpn1",
 			"nodeConfig": {
-				"name": "SplitFixed",
-				"tips": "splitFixedWidthTokens",
+				"name": "脱敏处理器",
+				"tips": "脱敏处理器",
 				"shapeImage": "static/editor/o-mysql.svg",
 				"stencilImage": "static/editor/mysql.svg"
 			},
 			"formConfig": {
 				"items": [
 					{
-						"type": "input",
-						"field": "paramA",
-						"label": "Split number"
-					},
-					{
 						"type": "field",
-						"field": "paramB",
-						"label": "Fields",
+						"field": "fields",
+						"label": "脱敏字段",
+						"required": true,
 						"multiple": true,
 						"showAllCheckbox": true
+					},
+					{
+						"type": "select",
+						"field": "type",
+						"label": "脱敏方式",
+						"required": true,
+						"options": [
+							{ "label": "长度", "value": "length" },
+							{ "label": "regex", "value": "regex" }
+						]
+					},
+					{
+						"type": "input",
+						"field": "charLength",
+						"label": "字符数",
+						"domType": "number",
+						"required": true,
+						"show": false,
+						"dependOn": [
+							{
+								"triggerOptions": [
+									{
+										"field": "type",
+										"value": "length"
+									}
+								],
+								"triggerConfig": {
+									"show": true
+								}
+							}
+						]
+					},
+					{
+						"type": "select",
+						"field": "charPosition",
+						"label": "字符位置",
+						"options": [
+							{ "label": "头部", "value": "head" },
+							{ "label": "尾部", "value": "foot" }
+						],
+						"required": true,
+						"show": false,
+						"dependOn": [
+							{
+								"triggerOptions": [
+									{
+										"field": "type",
+										"value": "length"
+									}
+								],
+								"triggerConfig": {
+									"show": true
+								}
+							}
+						]
+					},
+					{
+						"type": "input",
+						"field": "regex",
+						"label": "Regex表达式",
+						"required": true,
+						"show": false,
+						"dependOn": [
+							{
+								"triggerOptions": [
+									{
+										"field": "type",
+										"value": "regex"
+									}
+								],
+								"triggerConfig": {
+									"show": true
+								}
+							}
+						]
+					},
+					{
+						"type": "input",
+						"field": "groups",
+						"label": "要实现的组号(逗号分隔)",
+						"required": true,
+						"show": false,
+						"dependOn": [
+							{
+								"triggerOptions": [
+									{
+										"field": "type",
+										"value": "regex"
+									}
+								],
+								"triggerConfig": {
+									"show": true
+								}
+							}
+						]
 					}
 				]
 			},
-			"scriptTemplate": "function process(record){\n\n\t// Enter you code at here\n\tvar a = ${paramA};\n\tvar keys = ${paramB};\n\treturn record;\n}"
+			"scriptTemplate": "function process(record){\n\n\t// Enter you code at here\n\tvar fields = ${fields};\n\tvar type = ${type};\n\tvar charLength = ${charLength};\n\tvar charPosition = ${charPosition};\n\tvar regex = ${regex};\n\tvar groups = ${groups};\n\treturn record;\n}"
+		},
+		{
+			"id": "cpn2",
+			"nodeConfig": {
+				"name": "字段值替换",
+				"tips": "字段值替换",
+				"shapeImage": "static/editor/o-sybase.svg",
+				"stencilImage": "static/editor/sybase.svg"
+			},
+			"formConfig": {
+				"items": [
+					{
+						"type": "field",
+						"field": "fields",
+						"label": "转换字段",
+						"required": true
+					},
+					{
+						"type": "array",
+						"field": "dictionary",
+						"label": "词典信息",
+						"required": true
+					}
+				]
+			},
+			"scriptTemplate": "function process(record){\n\n\t// Enter you code at here\n\tvar fields = ${fields};\n\tvar dictionary = [];\n\treturn record;\n}"
 		}
 	]
 }

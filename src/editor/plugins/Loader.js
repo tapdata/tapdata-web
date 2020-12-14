@@ -80,15 +80,8 @@ export const loadPlugins = function(cNodes) {
 
 		let replace = false;
 		for (let i = 0; i < stencilConfig.shapes[group].length; i++) {
-			if (stencilConfig.shapes[group][i].type === type && type !== 'app.Database') {
-				stencilConfig.shapes[group][i] = stencil;
-				replace = true;
-				break;
-			}
-			if (
-				type === 'app.Database' &&
-				stencilConfig.shapes[group][i][FORM_DATA_KEY].database_type === formData.database_type
-			) {
+			// if (stencilConfig.shapes[group][i].type === type) {
+			if (stencilConfig.shapes[group][i].attrs.label.text === stencil.attrs.label.text) {
 				stencilConfig.shapes[group][i] = stencil;
 				replace = true;
 				break;
@@ -189,6 +182,7 @@ export const loadPlugins = function(cNodes) {
 				});
 			} else if (type === 'app.TemplateProcess') {
 				cNodes.forEach(config => {
+					let plugin = _.cloneDeep(plugins[name]);
 					let nodeConfig = config.nodeConfig;
 					plugin.stencil['attrs']['image']['xlinkHref'] = nodeConfig.stencilImage;
 					plugin.stencil['attrs']['label']['text'] = nodeConfig.name;
