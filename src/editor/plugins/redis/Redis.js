@@ -67,7 +67,7 @@ export const redisConfig = {
 			 * @return {boolean}
 			 */
 			allowSource(sourceCell) {
-				return ['app.Table', 'app.Collection'].includes(sourceCell.get('type'));
+				return !['app.Database'].includes(sourceCell.get('type'));
 			}
 		}
 		// staticProperties: {}
