@@ -43,7 +43,7 @@
 				<div class="list-item-content" v-if="item.msg === 'JobDDL'">
 					<div class="unread-1zPaAXtSu" v-show="!item.read"></div>
 					<div class="list-item-desc">
-						<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
+						<span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
 						<span>{{ systemMap[item.system] }}</span>
 						<router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate">
 							<span style="color: #48B6E2">
@@ -70,7 +70,7 @@
 				<div class="list-item-content" v-else>
 					<div class="unread-1zPaAXtSu" v-show="!item.read"></div>
 					<div class="list-item-desc">
-						<span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
+						<span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
 						<span>{{ systemMap[item.system] }}</span>
 						<span style="color: #48B6E2" @click="handleGo(item)">
 							{{ item.serverName }}
@@ -122,6 +122,8 @@ export default {
 				INFO: '#48b6e2'
 			},
 			systemMap: {
+				sync: this.$t('notification.sync'),
+				migration: this.$t('notification.migration'),
 				dataFlow: this.$t('notification.dataFlow'),
 				agent: this.$t('notification.manageSever'),
 				inspect: this.$t('notification.inspect'),

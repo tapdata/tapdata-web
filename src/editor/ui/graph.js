@@ -143,6 +143,10 @@ export default class Graph extends Component {
 					!sourceView.model.allowTarget(targetView.model)
 				)
 					return false;
+				if (!self.validPath.call(self, sourceView, targetView)) {
+					alert('有聚合节点的第一个数据节点不是collection');
+					return false;
+				}
 
 				return true;
 			}
@@ -1022,5 +1026,67 @@ export default class Graph extends Component {
 	}
 	getSettingData() {
 		return _.cloneDeep(this.graph.get(DATA_FLOW_SETTING_DATA_KEY));
+	}
+
+	validPath(source, target) {
+		let inPath = [],
+			outPath = [];
+		function getInPath(cell) {
+			let newPath = this.graph.getConnectedLinks(cell, { inbound: true }).map(link => {
+				let p = [];
+				inPath[inPath.length - 1].forEach(c => p.push(c));
+				p.push(link.getSourceCell());
+				return p;
+			});
+			if (newPath.length) {
+				inPath.pop();
+				newPath.forEach(p => {
+					inPath.push(p);
+					getInPath.call(this, p[p.length - 1]);
+				});
+			}
+		}
+		function getOutPath(cell) {
+			let newPath = this.graph.getConnectedLinks(cell, { outbound: true }).map(link => {
+				let p = [];
+				outPath[outPath.length - 1].forEach(c => p.push(c));
+				p.push(link.getTargetCell());
+				return p;
+			});
+			if (newPath.length) {
+				outPath.pop();
+				newPath.forEach(p => {
+					outPath.push(p);
+					getOutPath.call(this, p[p.length - 1]);
+				});
+			}
+		}
+		inPath.push([source.model]);
+		getInPath.call(this, source.model);
+		outPath.push([target.model]);
+		getOutPath.call(this, target.model);
+		let paths = [],
+			valid = true;
+		inPath.forEach(ins => {
+			outPath.forEach(out => {
+				let res = [].concat(ins);
+				for (let i = 0; i < out.length; i++) res.unshift(out[i]);
+				paths.push(res);
+			});
+		});
+		paths.forEach(path => {
+			for (let i = path.length; i > 0; i--) {
+				if (path[i - 1].get('type') == 'app.Aggregate') {
+					for (let j = i; j > 0; j--) {
+						if (path[j - 1].isDataNode() && path[j - 1].get('type') == 'app.Collection') {
+							i = j;
+							break;
+						}
+						if (path[j - 1].isDataNode() && path[j - 1].get('type') != 'app.Collection') valid = false;
+					}
+				}
+			}
+		});
+		return valid;
 	}
 }
