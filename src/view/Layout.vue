@@ -7,7 +7,7 @@
 			<i class="el-icon-close close" @click="handleCloseAgentTip"></i>
 		</div>
 		<CustomerService v-model="isShowCustomerService"></CustomerService>
-		<newDataFlow :dialogVisible="dialogVisible" v-on:dialogVisible="handleDialogVisible"></newDataFlow>
+		<newDataFlow :dialogVisible.sync="dialogVisible"></newDataFlow>
 		<el-header class="layout-header" height="48px">
 			<a class="logo" href="/">
 				<img :src="logoUrl" />
@@ -487,9 +487,6 @@ export default {
 		changeLanguage(lang) {
 			localStorage.setItem('tapdata_localize_lang', lang);
 			location.reload();
-		},
-		handleDialogVisible() {
-			this.dialogVisible = false;
 		},
 
 		// 下载安装Agent
