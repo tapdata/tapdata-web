@@ -283,28 +283,13 @@
 										<i class="iconfont  task-list-icon  icon-ceshishenqing"></i>
 									</el-button>
 								</el-tooltip>
-								<el-popover
-									popper-class="jobSeceduleDialog"
-									placement="top-start"
-									width="500"
-									trigger="hover"
+								<el-tooltip
+									class="item"
+									:content="$t('dialog.jobSchedule.jobSecheduleSetting')"
+									placement="bottom"
 								>
-									<div class="text box">
-										<p>{{ $t('dialog.jobSchedule.explanation') }}</p>
-										<p>{{ $t('dialog.jobSchedule.grammar') }}</p>
-										<ul>
-											<li v-for="item in timeTextArr" :key="item">
-												<p>{{ $t('dialog.jobSchedule.' + item) }}</p>
-												<span>*</span>
-											</li>
-										</ul>
-										<p>{{ $t('dialog.jobSchedule.example') }}</p>
-										<p>0 */1 * * * ? * // {{ $t('dialog.jobSchedule.runMinute') }}</p>
-										<p>0 0 2 * * ? * // {{ $t('dialog.jobSchedule.runDay') }}</p>
-									</div>
 									<el-button
 										type="text"
-										slot="reference"
 										:disabled="
 											scope.row.setting.sync_type !== 'initial_sync' ||
 												scope.row.status === 'running'
@@ -314,7 +299,7 @@
 									>
 										<i class="iconfont  task-list-icon  icon-lishi2"></i>
 									</el-button>
-								</el-popover>
+								</el-tooltip>
 								<el-tooltip
 									class="item"
 									:content="$t('dialog.jobSchedule.jobSecheduleSetting')"
