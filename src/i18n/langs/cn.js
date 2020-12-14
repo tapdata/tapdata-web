@@ -1808,6 +1808,8 @@ const cn = {
 			API_delete: 'API删除',
 			API_edition: 'API编辑',
 			API_publish: 'API发布',
+			API_import: 'API导入',
+			API_export: 'API导出',
 			API_data_explorer: 'API数据浏览',
 			API_data_explorer_export: 'API数据预览导出',
 			API_doc_test: 'API文档测试',

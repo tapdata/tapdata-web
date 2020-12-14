@@ -1806,6 +1806,8 @@ const tc = {
 			API_delete: 'API刪除',
 			API_edition: 'API編輯',
 			API_publish: 'API發布',
+			API_import: 'API導入',
+			API_export: 'API導出',
 			API_data_explorer: 'API數據瀏覽',
 			API_data_explorer_export: 'API數據預覽導出',
 			API_doc_test: 'API文檔測試',

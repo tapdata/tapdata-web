@@ -1839,6 +1839,8 @@ const en = {
 			API_delete: 'API deleting',
 			API_edition: 'API editing',
 			API_publish: 'API publish',
+			API_import: 'API import',
+			API_export: 'API export',
 			API_data_explorer: 'API data explorer',
 			API_data_explorer_export: 'API data explorer export',
 			API_doc_test: 'API doc & test',
