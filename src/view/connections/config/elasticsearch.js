@@ -66,6 +66,11 @@ export default function(vm) {
 				type: 'input',
 				field: 'clusterName',
 				label: vm.$t('dataForm.form.clusterName')
+			},
+			{
+				type: 'switch',
+				field: 'schemaAutoUpdate',
+				label: vm.$t('dataForm.form.ReloadSchema')
 			}
 		]
 	};

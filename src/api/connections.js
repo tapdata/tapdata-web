@@ -23,4 +23,10 @@ export default class Connections extends PublicAPI {
 	deleteConnection(id, name) {
 		return axios.delete(`${this.url}/${id}?name=${name}`);
 	}
+	batchUpdateListtags(params) {
+		return axios.patch(`${this.url}/batchUpdateListtags`, params);
+	}
+	check(id, params) {
+		return axios.patch(`${this.url}/${id}`, params);
+	}
 }

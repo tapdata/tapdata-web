@@ -15,7 +15,7 @@
 					<i data-v-4c16474d="" class="iconfont icon-you2 back-btn-icon"></i>
 				</span>
 			</button>
-			<span class="back-btn-text">数据源详情</span>
+			<span class="back-btn-text">{{ $t('connection.info') }}</span>
 		</head>
 		<header class="header">
 			<div class="img-box">
@@ -44,8 +44,24 @@
 					</span>
 				</div>
 			</div>
-			<div class="operation">
-				<span></span>
+			<div class="panelBtn">
+				<ul>
+					<li class="item">
+						<el-button class="btn" size="mini" @click="edit()">
+							<i class="iconfont icon-edit"> Edit</i>
+						</el-button>
+					</li>
+					<li class="item">
+						<el-button class="btn" size="mini" @click="reload()">
+							<i class="iconfont icon-kujitongbucopy"> Reload schema</i>
+						</el-button>
+					</li>
+					<li class="item">
+						<el-button class="btn" size="mini" @click="test()">
+							<i class="iconfont icon-lianjie1"> Test </i>
+						</el-button>
+					</li>
+				</ul>
 			</div>
 		</header>
 		<ul>
@@ -54,14 +70,23 @@
 				<span class="value">{{ item.value }}</span>
 			</li>
 		</ul>
+		<Test
+			@dialogTestVisible="handleTestVisible"
+			:dialogTestVisible="dialogTestVisible"
+			:testLogs="testLogs"
+			:testResult="testResult"
+		></Test>
 	</el-drawer>
 </template>
 
 <script>
 import { getImgByType } from './util';
 import formConfig from './config';
+import Test from './Test';
+
 export default {
 	name: 'Preview',
+	components: { Test },
 	props: {
 		id: {
 			required: true,
@@ -75,9 +100,13 @@ export default {
 	data() {
 		return {
 			form: {},
+			data: {},
 			name: '',
 			type: '',
-			status: ''
+			status: '',
+			dialogTestVisible: false,
+			testLogs: null,
+			testResult: ''
 		};
 	},
 	watch: {
@@ -97,6 +126,7 @@ export default {
 				.then(result => {
 					if (result && result.data) {
 						let data = result.data;
+						this.data = result.data;
 						this.name = data.name;
 						this.type = data.database_type;
 						this.status = data.status;
@@ -117,6 +147,44 @@ export default {
 		},
 		handleClose() {
 			this.$emit('previewVisible', false);
+		},
+		async test() {
+			let result = null;
+			this.dialogTestVisible = true;
+			if (this.data.database_type === 'mongodb') {
+				result = await this.$api('connections').customQuery([this.data.id]);
+			} else {
+				result = await this.$api('connections').get([this.data.id]);
+			}
+			if (result.data) {
+				const data = result.data;
+				let validate_details = data.response_body && data.response_body.validate_details;
+				this.testLogs = validate_details;
+				this.testResult = data.status;
+			}
+		},
+		edit() {
+			this.$router.push('connections/create?id=' + this.data.id + '&databaseType=' + this.data.type);
+		},
+		reload() {
+			this.$api('connections')
+				.updateById(this.data.id, {
+					status: 'testing',
+					name: this.data.name
+				})
+				.then(res => {
+					if (res.data) {
+						this.$message.success(this.$t('connection.reloadOK'));
+						this.search(this.page.current);
+					}
+				})
+				.catch(() => {
+					this.$message.error(this.$t('connection.reloadFail'));
+				});
+		},
+		//test
+		handleTestVisible() {
+			this.dialogTestVisible = false;
 		}
 	}
 };
@@ -160,6 +228,34 @@ export default {
 			}
 			.warning {
 				color: #e6a23c;
+			}
+		}
+		.panelBtn {
+			display: flex;
+			align-items: center;
+			width: 532px;
+			justify-content: flex-end;
+			.item {
+				margin-right: 10px;
+				float: right;
+			}
+			.iconfont {
+				display: inline-block;
+				font-size: 12px;
+				transform: rotate(00deg);
+			}
+		}
+		.panelBtn:hover {
+			color: #48b6e2;
+		}
+		.btn + .btn {
+			margin-left: 5px;
+		}
+		.btn {
+			padding: 7px;
+			background: #f5f5f5;
+			i.iconfont {
+				font-size: 12px;
 			}
 		}
 	}

@@ -221,6 +221,11 @@ export default function(vm) {
 				}
 			},
 			{
+				type: 'switch',
+				field: 'schemaAutoUpdate',
+				label: vm.$t('dataForm.form.ReloadSchema')
+			},
+			{
 				type: 'input',
 				field: 'table_filter',
 				label: vm.$t('dataForm.form.tableFilter'),

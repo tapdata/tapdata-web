@@ -1,7 +1,7 @@
 <template>
 	<div class="databaseFrom">
 		<header class="header">
-			{{ $route.params.id ? $t('dataVerification.edit') : $t('dataVerification.newVerify') }}
+			{{ $route.params.id ? $t('connection.editDataSource') : $t('connection.createNewDataSource') }}
 		</header>
 		<div class="databaseFrom-body">
 			<main class="databaseFrom-main">
@@ -65,6 +65,7 @@ const defaultModel = {
 	ssl: false,
 	sslKey: '',
 	sslPass: '',
+	schemaAutoUpdate: false,
 	sslValidate: false,
 	sslCA: '',
 	sslCAFile: null,
@@ -106,18 +107,6 @@ export default {
 				required: true,
 				maxlength: 100,
 				showWordLimit: true
-			},
-			{
-				type: 'select',
-				field: 'database_type',
-				label: self.$t('dataForm.form.databaseType'),
-				options: [],
-				required: true,
-				on: {
-					change() {
-						self.getFormConfig();
-					}
-				}
 			}
 		];
 	},
@@ -130,13 +119,7 @@ export default {
 			} else this.model = Object.assign(this.model, data, { name: this.model.name });
 		},
 		checkDataTypeOptions(type) {
-			let options = this.dataTypes;
-			let list = options.filter(opt => this.whiteList.includes(opt.value));
-			defaultConfig[1].options = list;
-			if (list.length) {
-				//默认选择第一个数据库类型
-				this.model.database_type = type || list[0].value;
-			}
+			this.model.database_type = type;
 			this.getFormConfig();
 		},
 		initTimezones() {

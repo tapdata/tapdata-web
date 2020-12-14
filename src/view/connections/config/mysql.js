@@ -77,6 +77,11 @@ export default function(vm) {
 				showPassword: true
 			},
 			{
+				type: 'switch',
+				field: 'schemaAutoUpdate',
+				label: vm.$t('dataForm.form.ReloadSchema')
+			},
+			{
 				type: 'input',
 				field: 'table_filter',
 				label: vm.$t('dataForm.form.tableFilter'),

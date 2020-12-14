@@ -234,6 +234,10 @@ const tc = {
 		syncGover: '同步治理',
 		screen: '屏幕',
 		delete: '刪 除',
+		test: '測試',
+		copy: '複製',
+		reload: '重新加載schema',
+		preview: '預覽',
 		cancel: '取 消',
 		confirm: '確定',
 		placeholderMonServer: '請輸入監控的服務名稱',
@@ -585,10 +589,39 @@ const tc = {
 		}
 	},
 	connection: {
+		dataBaseName: '數據源名稱',
+		dataBaseHost: '數據庫地址',
+		dataBaseClassify: '分類',
+		dataBaseType: '數據庫類型',
+		dataBaseStatus: '狀態',
+		dataBaseSearch: '名稱/數據庫地址',
+		loadSchema: '定期加載schema',
+		connectionType: '連接類型',
+		operate: '操作',
+		fuzzyQuery: '模糊匹配',
+		PreciseQuery: '精確匹配',
+		databaseTittle: '數據源管理',
+		createNewDataSource: '創建新數據源',
+		info: '數據源詳情',
+		copyMsg: '複製成功',
+		testMsg: '測試成功',
+		editDataSource: '編輯數據源',
+		reloadOK: '正在加載 schema',
+		reloadFail: 'schema 加載失敗',
+		reloadTittle: '重新加載 schema',
+		deteleDatabaseTittle: '刪除數據源',
+		deteleDatabaseMsg: '確定刪除數據源',
+		reloadMsg: '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema : ',
+		checkMsg: '此數據源被傳輸任務或API所佔用，無法刪除',
 		status: {
-			testing: '测试中',
-			invalid: '无效',
+			testing: '測試中',
+			invalid: '無效',
 			ready: '有效'
+		},
+		type: {
+			source: '源頭',
+			target: '目標',
+			source_and_target: '源頭和目標'
 		}
 	},
 	editor: {
@@ -1375,7 +1408,7 @@ const tc = {
 			thinType: '認證方式',
 			databaseOwner: '數據庫歸屬帳戶名',
 			timeZone: '時間類型的時區',
-
+			ReloadSchema: '定期加載schema',
 			databaseHostPlaceholder: '資料庫地址（127.0.0.1/Domain:{端口}，多個地址請用，分開）',
 
 			uriTips: {

@@ -2,14 +2,14 @@
 	<section class="connection-wrap">
 		<div class="panel-left" v-if="searchParams.panelFlag">
 			<Classification
-				v-on:nodeClick="nodeClick"
-				@nodeDataChange="nodeDataChange"
+				:authority="'SYNC_category_management'"
+				@nodeChecked="nodeDataChange"
 				:type="'database'"
 			></Classification>
 		</div>
 		<div class="panel-main">
 			<div class="title">
-				数据源管理
+				{{ $t('connection.databaseTittle') }}
 			</div>
 			<div class="top-bar">
 				<ul class="search-bar">
@@ -21,7 +21,7 @@
 					</li>
 					<li class="item">
 						<el-input
-							placeholder="请输入内容"
+							:placeholder="$t('connection.dataBaseSearch')"
 							v-model="searchParams.keyword"
 							class="input-with-select"
 							size="mini"
@@ -37,15 +37,15 @@
 								class="sub-select"
 								@input="search(1)"
 							>
-								<el-option label="模糊搜索" value="fuzzy"></el-option>
-								<el-option label="精确搜素" value="precise"></el-option>
+								<el-option :label="$t('connection.fuzzyQuery')" value="fuzzy"></el-option>
+								<el-option :label="$t('connection.PreciseQuery')" value="precise"></el-option>
 							</el-select>
 						</el-input>
 					</li>
 					<li class="item">
 						<el-select
 							v-model="searchParams.databaseModel"
-							placeholder="请选择"
+							:placeholder="$t('connection.connectionType')"
 							clearable
 							size="mini"
 							@input="search(1)"
@@ -62,7 +62,7 @@
 					<li class="item">
 						<el-select
 							v-model="searchParams.databaseType"
-							placeholder="请选择"
+							:placeholder="$t('connection.dataBaseType')"
 							clearable
 							size="mini"
 							@input="search(1)"
@@ -79,7 +79,7 @@
 					<li class="item">
 						<el-select
 							v-model="searchParams.status"
-							placeholder="请选择"
+							:placeholder="$t('connection.dataBaseStatus')"
 							clearable
 							size="mini"
 							@input="search(1)"
@@ -92,9 +92,6 @@
 							>
 							</el-option>
 						</el-select>
-					</li>
-					<li class="item" v-if="checkedTag && checkedTag !== ''">
-						<el-tag size="small" closable @close="handleClose()">{{ checkedTag.value }}</el-tag>
 					</li>
 					<li class="item">
 						<el-button class="btn" size="mini" @click="rest()">
@@ -142,7 +139,7 @@
 							</div>
 							<div class="database-text">
 								<div>{{ scope.row.name }}</div>
-								<div class="user">admin</div>
+								<div class="user">{{ usersData[scope.row.user_id] }}</div>
 							</div>
 						</template>
 					</el-table-column>
@@ -168,7 +165,7 @@
 								</span>
 							</span>
 							<span class="warning" v-if="['testing'].includes(scope.row.status)">
-								<i class="icon-gantanhao2"></i>
+								<i class="el-icon-warning"></i>
 								<span>
 									{{ $t('connection.status.testing') }}
 								</span>
@@ -186,7 +183,7 @@
 							<el-tooltip
 								class="item"
 								v-readonlybtn="'datasource_edition'"
-								:content="$t('message.delete')"
+								:content="$t('message.preview')"
 								placement="bottom"
 							>
 								<el-button type="text" @click="preview(scope.row.id)">
@@ -206,7 +203,7 @@
 							<el-tooltip
 								class="item"
 								v-readonlybtn="'datasource_edition'"
-								:content="$t('message.delete')"
+								:content="$t('message.test')"
 								placement="bottom"
 							>
 								<el-button type="text" @click="test(scope.row.id, scope.row.database_type)">
@@ -216,7 +213,7 @@
 							<el-tooltip
 								class="item"
 								v-readonlybtn="'datasource_edition'"
-								:content="$t('dataFlow.edit')"
+								:content="$t('message.reload')"
 								placement="bottom"
 							>
 								<el-button type="text" @click="reload(scope.row)">
@@ -226,7 +223,7 @@
 							<el-tooltip
 								class="item"
 								v-readonlybtn="'datasource_creation'"
-								:content="$t('message.delete')"
+								:content="$t('message.copy')"
 								placement="bottom"
 							>
 								<el-button type="text" @click="copy(scope.row)">
@@ -293,10 +290,11 @@ export default {
 			restLoading: false,
 			dialogDatabaseTypeVisible: false,
 			previewVisible: false,
-			checkedTag: '',
+			checkedTags: [],
 			tagList: [],
 			multipleSelection: [],
 			tableData: [],
+			usersData: [],
 			id: '',
 			page: {
 				current: 1,
@@ -308,39 +306,51 @@ export default {
 			},
 			databaseModelOptions: [
 				{
-					label: '源头',
+					label: this.$t('connection.type.source'),
 					value: 'source'
 				},
 				{
-					label: '目标',
+					label: this.$t('connection.type.target'),
 					value: 'target'
 				},
 				{
-					label: '源头和目标',
+					label: this.$t('connection.type.source_and_target'),
 					value: 'source_and_target'
 				}
 			],
 			databaseStatusOptions: [
 				{
-					label: '有效',
+					label: this.$t('connection.status.ready'),
 					value: 'ready'
 				},
 				{
-					label: '无效',
+					label: this.$t('connection.status.invalid'),
 					value: 'invalid'
 				},
 				{
-					label: '测试中',
+					label: this.$t('connection.status.testing'),
 					value: 'testing'
 				}
 			],
 			databaseTypeOptions: [],
-			searchParams: this.$store.state.connections
+			searchParams: this.$store.state.connections,
+			timer: ''
 		};
 	},
 	created() {
+		this.formatterUserName();
 		this.search(1);
 		this.getDatabaseType();
+		this.search(1);
+		this.timer = setInterval(() => {
+			this.formatterUserName();
+			this.search(this.page.current, 1);
+		}, 10000);
+	},
+	destroyed() {
+		// 清除定时器
+		clearInterval(this.timer);
+		this.timer = null;
 	},
 	methods: {
 		// 面板显示隐藏
@@ -384,9 +394,13 @@ export default {
 			};
 			this.search(1);
 		},
-		search(pageNum) {
+		search(pageNum, loading) {
 			this.$store.commit('connections', this.searchParams);
-			this.restLoading = true;
+			if (loading == 1) {
+				this.restLoading = false;
+			} else {
+				this.restLoading = true;
+			}
 			let { current, size } = this.page;
 			let { iModel, keyword, databaseType, databaseModel, status } = this.searchParams;
 			let currentPage = pageNum || current + 1;
@@ -437,6 +451,11 @@ export default {
 			}
 			databaseType && (where.database_type = databaseType);
 			databaseModel && (where.connection_type = databaseModel);
+			if (this.checkedTags && this.checkedTags.length) {
+				where['listtags.id'] = {
+					in: this.checkedTags
+				};
+			}
 			status && (where.status = status);
 			let filter = {
 				order: 'name DESC',
@@ -463,19 +482,34 @@ export default {
 				});
 		},
 		reload(data) {
-			this.$api('connections')
-				.updateById(data.id, {
-					status: 'testing',
-					name: data.name
-				})
-				.then(res => {
-					if (res.data) {
-						this.$message.success(this.$t('message.deleteOK'));
-					}
-				})
-				.catch(() => {
-					this.$message.error(this.$t('message.deleteFail'));
-				});
+			let config = {
+				title: this.$t('connection.reloadTittle'),
+				Message: this.$t('connection.reloadMsg'),
+				confirmButtonText: this.$t('message.confirm'),
+				cancelButtonText: this.$t('message.cancel'),
+				name: data.name,
+				id: data.id
+			};
+			this.confirm(
+				() => {
+					this.$api('connections')
+						.updateById(data.id, {
+							status: 'testing',
+							name: data.name
+						})
+						.then(res => {
+							if (res.data) {
+								this.$message.success(this.$t('connection.reloadOK'));
+								this.search(this.page.current);
+							}
+						})
+						.catch(() => {
+							this.$message.error(this.$t('connection.reloadFail'));
+						});
+				},
+				() => {},
+				config
+			);
 		},
 		async test(id, type) {
 			let result = null;
@@ -485,8 +519,8 @@ export default {
 				result = await this.$api('connections').get([id]);
 			}
 			if (result.data) {
-				this.search();
-				this.$message.success(this.$t('message.deleteOK'));
+				this.$message.success(this.$t('connection.testMsg'));
+				this.search(this.page.current);
 			}
 		},
 		preview(id) {
@@ -514,15 +548,15 @@ export default {
 				.then(res => {
 					if (res && res.data) {
 						this.search(this.page.current);
-						this.$message.success('保存成功');
+						this.$message.success(this.$t('connection.copyMsg'));
 					}
 				});
 		},
-		remove(data) {
+		async remove(data) {
 			let config = {
-				title: this.$t('message.deteleJobMessage'),
-				Message: this.$t('message.deteleJobMessage'),
-				confirmButtonText: this.$t('dataFlow.button.reset'),
+				title: this.$t('connection.deteleDatabaseTittle'),
+				Message: this.$t('connection.deteleDatabaseMsg'),
+				confirmButtonText: this.$t('message.confirm'),
 				cancelButtonText: this.$t('message.cancel'),
 				name: data.name,
 				id: data.id
@@ -531,19 +565,23 @@ export default {
 				() => {
 					this.$api('connections')
 						.deleteConnection(data.id, data.name)
-						.then(() => {
-							this.$message.success('删除成功');
-							this.search(this.page.current);
+						.then(res => {
+							let jobs = res.jobs || [];
+							let modules = res.modules || [];
+							if (jobs.length > 0 || modules.length > 0) {
+								this.$message.error(this.$t('connection.checkMsg'));
+							} else {
+								this.$message.success(this.$t('message.deleteOK'));
+								this.search(this.page.current);
+							}
 						});
 				},
-				() => {
-					this.$message.error('删除失败');
-				},
+				() => {},
 				config
 			);
 		},
 		confirm(callback, catchCallback, config) {
-			this.$confirm(config.title + config.name, config.title, {
+			this.$confirm(config.Message + config.name + '?', config.title, {
 				confirmButtonText: config.confirmButtonText,
 				cancelButtonText: config.cancelButtonText,
 				type: 'warning',
@@ -570,26 +608,18 @@ export default {
 			let listTags = row.listtags || [];
 			return listTags.map(tag => tag.value).join(',');
 		},
+		async formatterUserName() {
+			let usersData = await this.$api('users').get();
+			let Map = {};
+			if (usersData.data && usersData.data.length > 0) {
+				usersData.data.map(s => (Map[s.id] = s.username || 'admin'));
+			}
+			this.usersData = Map;
+		},
 		//筛选分类
-		nodeClick(data) {
-			if (data) {
-				this.checkedTag = {
-					id: data.id,
-					value: data.value
-				};
-			}
-			this.search();
-		},
-		nodeDataChange(list) {
-			let tag = list.find(item => item.id === this.checkedTag.id);
-			if (tag) {
-				this.checkedTag.value = tag.value;
-			}
-			this.search();
-		},
-		handleClose() {
-			this.checkedTag = '';
-			this.search();
+		nodeDataChange(checkedTags) {
+			this.checkedTags = checkedTags;
+			this.search(this.page.current);
 		},
 		//设置分类
 		handleDialogVisible() {
@@ -620,27 +650,26 @@ export default {
 			return tagList;
 		},
 		handleOperationClassify(listtags) {
-			let attributes = [];
+			let attributes = {};
 			if (this.dataFlowId) {
-				let node = {
+				attributes = {
 					id: this.dataFlowId,
 					listtags: listtags
 				};
-				attributes.push(node);
 			} else {
 				this.multipleSelection.forEach(row => {
 					row.listtags = row.listtags || [];
-					let node = {
+					attributes = {
 						id: row.id,
 						listtags: listtags
 					};
-					attributes.push(node);
 				});
 			}
-			// connections.patchAll({ attrs: attributes }).then(() => {
-			// 	this.dataFlowId = '';
-			// 	this.search();
-			// });
+			this.$api('connections')
+				.batchUpdateListtags(attributes)
+				.then(() => {
+					this.search(this.page.current);
+				});
 		},
 		//选择创建类型
 		handleDialogDatabaseTypeVisible() {
@@ -726,7 +755,7 @@ export default {
 					margin-right: 10px;
 				}
 				.sub-select {
-					width: 100px;
+					width: 120px;
 				}
 			}
 		}

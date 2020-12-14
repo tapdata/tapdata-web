@@ -233,6 +233,10 @@ const en = {
 		syncGover: 'Syn gover',
 		screen: 'Screen',
 		delete: 'Delete',
+		test: 'Test',
+		copy: 'Copy',
+		reload: 'Reload schema',
+		preview: 'Preview',
 		cancel: 'Cancel',
 		confirm: 'Confirm',
 		placeholderMonServer: 'Please enter the monitored service name',
@@ -590,10 +594,39 @@ const en = {
 		}
 	},
 	connection: {
+		dataBaseName: 'Database name',
+		dataBaseHost: 'Database host',
+		dataBaseClassify: 'Category',
+		dataBaseType: 'Database type',
+		dataBaseStatus: 'Status',
+		dataBaseSearch: 'Name/Host',
+		loadSchema: 'Reload schema periodically',
+		connectionType: 'Connection type',
+		operate: 'Operation',
+		fuzzyQuery: 'Fuzzy query',
+		PreciseQuery: 'Precise query',
+		databaseTittle: 'Data connection management',
+		createNewDataSource: 'Create database',
+		info: 'Database information',
+		copyMsg: 'copy successfully',
+		testMsg: 'test successfully',
+		editDataSource: 'Edit database',
+		reloadOK: 'reloading schema',
+		reloadFail: 'Failed to schema',
+		reloadTittle: 'Reload schema',
+		deteleDatabaseTittle: 'Delete database',
+		deteleDatabaseMsg: 'This will permanently delete the database ',
+		reloadMsg: 'It may take a long time to reload schema, are you sure to reload the schema of the database',
+		checkMsg: 'This data source is used by transmission job or API, cannot be deleted',
 		status: {
-			testing: 'Testing',
-			invalid: 'Invalid',
-			ready: 'Ready'
+			testing: 'testing',
+			invalid: 'invalid',
+			ready: 'ready'
+		},
+		type: {
+			source: 'Source',
+			target: 'Target',
+			source_and_target: 'Source&Target'
 		}
 	},
 	editor: {
@@ -1396,7 +1429,7 @@ const en = {
 			thinType: 'Thin Type',
 			databaseOwner: 'Database Owner',
 			timeZone: 'Date Type Timezone',
-
+			ReloadSchema: 'Reload schema periodically',
 			databaseHostPlaceholder: 'Database Host(127.0.0.1/Domain:{Port},Please use multiple addresses , separate)',
 
 			uriTips: {

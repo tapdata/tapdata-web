@@ -1,5 +1,11 @@
 <template>
-	<el-dialog :title="$t('dataForm.test.title')" :visible.sync="dialogTestVisible" width="770px" :show-close="false">
+	<el-dialog
+		:title="$t('dataForm.test.title')"
+		:visible.sync="dialogTestVisible"
+		width="770px"
+		:show-close="false"
+		append-to-body
+	>
 		<el-progress
 			type="line"
 			class="test-progress"

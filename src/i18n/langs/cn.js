@@ -233,6 +233,10 @@ const cn = {
 		syncGover: '同步治理',
 		screen: '屏幕',
 		delete: '删除',
+		test: '测试',
+		copy: '复制',
+		reload: '重新加载schema',
+		preview: '预览',
 		cancel: '取 消',
 		confirm: '确 定',
 		placeholderMonServer: '请输入监控的服务名称',
@@ -246,6 +250,7 @@ const cn = {
 		copySuccess: '复制成功',
 		deleteOK: '删除成功',
 		deleteFail: '删除失败',
+		reloadOK: '正在重新加载',
 		stopFail: '停止失败',
 		taskStart: '任务启动中',
 		selectTime: '选择时间',
@@ -280,7 +285,7 @@ const cn = {
 		resetFailed: '重置失败',
 		notRest: '请选择正确的数据进行重置',
 		operator: '操作',
-		edit: '修改',
+		edit: '编辑',
 		clickRelatedTasks: '点击查看相关任务',
 		currentTaskOpen: '当前任务已打开',
 		noRelatedTask: '暂无相关任务',
@@ -585,16 +590,39 @@ const cn = {
 		}
 	},
 	connection: {
-		dataBaseName: '数据源名',
+		dataBaseName: '数据源名称',
 		dataBaseHost: '数据库地址',
 		dataBaseClassify: '分类',
 		dataBaseType: '数据库类型',
 		dataBaseStatus: '状态',
+		dataBaseSearch: '名称/数据库地址',
+		loadSchema: '定期加载schema',
+		connectionType: '连接类型',
 		operate: '操作',
+		fuzzyQuery: '模糊匹配',
+		PreciseQuery: '精确匹配',
+		databaseTittle: '数据源管理',
+		createNewDataSource: '创建新数据源',
+		info: '数据源详情',
+		copyMsg: '复制成功',
+		testMsg: '测试成功',
+		editDataSource: '编辑数据源',
+		reloadOK: '正在加载 schema',
+		reloadFail: 'schema 加载失败',
+		reloadTittle: '重新加载 schema',
+		deteleDatabaseTittle: '删除数据源',
+		deteleDatabaseMsg: '确定删除数据源',
+		reloadMsg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema : ',
+		checkMsg: '此数据源被传输任务或API所占用，无法删除',
 		status: {
 			testing: '测试中',
 			invalid: '无效',
 			ready: '有效'
+		},
+		type: {
+			source: '源头',
+			target: '目标',
+			source_and_target: '源头和目标'
 		}
 	},
 	editor: {
@@ -1382,7 +1410,7 @@ const cn = {
 			thinType: '认证方式',
 			databaseOwner: '数据库归属账户名',
 			timeZone: '时间类型的时区',
-
+			ReloadSchema: '定期加载schema',
 			databaseHostPlaceholder: '数据库地址(127.0.0.1/Domain:{端口},多个地址请用,分开)',
 
 			uriTips: {
