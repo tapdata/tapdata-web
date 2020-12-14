@@ -83,7 +83,6 @@ export default {
 					}
 				});
 			}
-			debugger;
 			this.formConfig = formConfig;
 			this.scriptTemplate = config.scriptTemplate;
 		},

@@ -16,7 +16,8 @@ export default {
 		return h('ElInput', {
 			attrs: {
 				maxlength: config.maxlength,
-				placeholder: config.placeholder || `${self.$t('formBuilder.input.placeholderPrefix')}${config.label}`
+				placeholder:
+					config.placeholder || `${self.$t('formBuilder.input.placeholderPrefix')}${config.label || ''}`
 			},
 			props: {
 				value: self.value,
@@ -29,7 +30,15 @@ export default {
 			class: {
 				'el-input-maxlength': config.showWordLimit
 			},
-			on: this.on
+			on: Object.assign({}, this.on, {
+				input: val => {
+					if (config.domType === 'number' && val) {
+						val = Number(val);
+					}
+					self.$emit('input', val);
+					self.config.on && self.config.on.input && self.config.on.input(val);
+				}
+			})
 		});
 	}
 };

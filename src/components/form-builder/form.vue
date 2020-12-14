@@ -20,14 +20,7 @@
  * }
  *
  */
-const ele = {
-	input: 'FbInput',
-	select: 'FbSelect',
-	radio: 'FbRadio',
-	switch: 'FbSwitch',
-	file: 'FbFile',
-	field: 'FbSelect'
-};
+import TYPE_MAPPING from './constant';
 export default {
 	name: 'FormBuilder',
 	props: {
@@ -123,8 +116,6 @@ export default {
 					}
 				});
 			}
-			let prependSlot = config.prependSlot ? config.prependSlot(h) : null;
-			let appendSlot = config.appendSlot ? config.appendSlot(h) : null;
 
 			let dependOn = config.dependOn;
 			if (dependOn && dependOn.length) {
@@ -152,38 +143,7 @@ export default {
 						rules: rules
 					}
 				},
-				[
-					this.getLabel(h, config, rules),
-					h('div', { class: { 'fb-item-group': true } }, [
-						prependSlot ? h('div', { class: { 'fb-form-item-prepend-slot': true } }, [prependSlot]) : null,
-						config.type === 'slot'
-							? this.$slots[config.slot]
-							: h(ele[config.type], {
-									props: {
-										value: self.value[config.field],
-										config: config
-									},
-									on: {
-										input(val) {
-											if (config.domType === 'number') {
-												val = Number(val);
-											}
-											if (self.value[config.field] === undefined) {
-												throw new Error(
-													`The field "${config.field}" of the model is not defined!`
-												);
-											}
-											self.value[config.field] = val;
-											config.on.input && config.on.input(val);
-										},
-										change(...args) {
-											config.on.change && config.on.change(...args);
-										}
-									}
-							  }),
-						appendSlot ? h('div', { class: { 'fb-form-item-append-slot': true } }, [appendSlot]) : null
-					])
-				]
+				[this.getLabel(h, config), this.getBody(h, config)]
 			);
 			return config.show ? item : '';
 		},
@@ -232,6 +192,61 @@ export default {
 								)
 						]
 				  );
+		},
+		getBody(h, config) {
+			let self = this;
+			let appendSlot = config.appendSlot ? config.appendSlot(h) : null;
+			if (appendSlot) {
+				return h('div', { class: { 'fb-item-group': true } }, [
+					config.type === 'slot'
+						? this.$slots[config.slot]
+						: h(TYPE_MAPPING[config.type], {
+								props: {
+									value: self.value[config.field],
+									config: config
+								},
+								on: {
+									input(val) {
+										if (config.domType === 'number') {
+											val = Number(val);
+										}
+										if (self.value[config.field] === undefined) {
+											throw new Error(`The field "${config.field}" of the model is not defined!`);
+										}
+										self.value[config.field] = val;
+										config.on.input && config.on.input(val);
+									},
+									change(...args) {
+										config.on.change && config.on.change(...args);
+									}
+								}
+						  }),
+					h('div', { class: { 'fb-form-item-append-slot': true } }, [appendSlot])
+				]);
+			} else {
+				return [
+					config.type === 'slot'
+						? this.$slots[config.slot]
+						: h(TYPE_MAPPING[config.type], {
+								props: {
+									value: self.value[config.field],
+									config: config
+								},
+								on: {
+									input(val) {
+										if (self.value[config.field] === undefined) {
+											throw new Error(`The field "${config.field}" of the model is not defined!`);
+										}
+										self.value[config.field] = val;
+										config.on.input && config.on.input(val);
+									},
+									change(...args) {
+										config.on.change && config.on.change(...args);
+									}
+								}
+						  })
+				];
+			}
 		}
 	}
 };

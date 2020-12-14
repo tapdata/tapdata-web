@@ -5,5 +5,6 @@ import Select from './select.vue';
 import Radio from './radio.vue';
 import Switch from './switch.vue';
 import File from './file.vue';
+import _Array from './array.vue';
 
-[Form, Input, Select, Radio, Switch, File].map(c => Vue.component(c.name, c));
+[Form, Input, Select, Radio, Switch, File, _Array].map(c => Vue.component(c.name, c));
