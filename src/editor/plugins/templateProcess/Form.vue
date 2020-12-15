@@ -5,9 +5,7 @@
 				<el-button size="mini" type="primary">更新节点配置</el-button>
 			</div> -->
 			<form-builder ref="form" v-model="model.formData" :config="formConfig"></form-builder>
-			<div style="padding: 5px 15px;background: #fff;color: #333;font-size: 12px;margin-top: 20px;">
-				<pre>{{ this.model.script }}</pre>
-			</div>
+			<pre class="code-pre">{{ this.model.script }}</pre>
 		</main>
 	</section>
 </template>
@@ -138,6 +136,14 @@ export default {
 		height: 100%;
 		overflow: auto;
 		box-sizing: border-box;
+		.code-pre {
+			margin: 20px 0;
+			padding: 15px;
+			background: #fff;
+			overflow: auto;
+			font-size: 12px;
+			color: #333;
+		}
 	}
 }
 </style>
