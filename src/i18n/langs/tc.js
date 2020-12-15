@@ -293,7 +293,7 @@ const tc = {
 	},
 
 	dataFlow: {
-		aggregateNotDataNode: '聚合節點的第一個數據節點不是collection',
+		aggregateNotDataNode: '連接聚合節點的第一個目標數據節點只能是數據集',
 		batchSortOperation: '批量分類操作',
 		selectRowdata: '請選擇行數據',
 		clusterClone: '數據庫遷移',
