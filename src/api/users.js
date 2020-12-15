@@ -60,6 +60,6 @@ export default class users extends PublicAPI {
 	}
 
 	role(params) {
-		return axios.get(this.url + '/roles', params);
+		return axios.get(this.url + '/roles', { params });
 	}
 }
