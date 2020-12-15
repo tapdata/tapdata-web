@@ -17,4 +17,16 @@ export default class Connections extends PublicAPI {
 		}
 		return axios.get(url);
 	}
+	copy(id, params) {
+		return axios.post(this.url + '/' + id + '/copy', params);
+	}
+	deleteConnection(id, name) {
+		return axios.delete(`${this.url}/${id}?name=${name}`);
+	}
+	batchUpdateListtags(params) {
+		return axios.patch(`${this.url}/batchUpdateListtags`, params);
+	}
+	check(id, params) {
+		return axios.patch(`${this.url}/${id}`, params);
+	}
 }

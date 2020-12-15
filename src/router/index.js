@@ -19,12 +19,21 @@ const childRoutes = [
 	{
 		path: '/connections',
 		name: 'connections',
-		component: view('ExternalLink'),
+		component: view('connections/List'),
 		meta: {
 			code: 'datasource',
-			url: '/old/index.html#/connections',
 			title: i18n.t('tap.connection'),
 			isCollapse: false
+		}
+	},
+	{
+		path: '/connections/create',
+		name: 'connectionsCreate',
+		component: view('connections/DatabaseForm'),
+		meta: {
+			title: i18n.t('tap.connection'),
+			isCollapse: true,
+			code: 'datasource_edition'
 		}
 	},
 	{

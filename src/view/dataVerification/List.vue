@@ -396,7 +396,6 @@ export default {
 			this.search(this.page.current, 1);
 		}, 10000);
 	},
-
 	methods: {
 		keyup() {
 			if (timeout) {

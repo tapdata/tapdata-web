@@ -75,13 +75,15 @@ const store = new Vuex.Store({
 			sortBy: ''
 		},
 		connections: {
-			imodel: '',
-			datatypemodel: '',
+			iModel: 'fuzzy',
+			databaseType: '',
 			keyword: '',
-			selectedSeachType: '',
+			databaseModel: '',
+			status: '',
 			rowsPerPage: '',
 			descending: '',
-			sortBy: ''
+			sortBy: '',
+			panelFlag: true
 		},
 		metadataDefinition: {
 			selectedMetaType: '',

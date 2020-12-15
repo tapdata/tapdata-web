@@ -1,0 +1,77 @@
+export default function(vm) {
+	return {
+		form: {
+			labelPosition: 'right',
+			labelWidth: '200px'
+		},
+		defaultModel: {
+			connection_type: 'source_and_target',
+			thin_type: 'SID',
+			supportUpdatePk: false
+		},
+		items: [
+			{
+				type: 'radio',
+				field: 'connection_type',
+				label: vm.$t('dataForm.form.connectionType'),
+				options: [{ label: vm.$t('dataForm.form.options.target'), value: 'target' }],
+				required: true
+			},
+			{
+				type: 'input',
+				field: 'database_host',
+				label: vm.$t('dataForm.form.host'),
+				rules: [
+					{
+						required: true,
+						validator: (rule, value, callback) => {
+							let port = vm.model['database_port'];
+							if (!value || !value.trim()) {
+								callback(new Error(vm.$t('dataForm.error.noneHost')));
+							} else if (!port || !port.trim()) {
+								callback(new Error(vm.$t('dataForm.error.nonePort')));
+							} else if (!/\d+/.test(port)) {
+								callback(new Error(vm.$t('dataForm.error.portNumber')));
+							} else if (port < 1 || port > 65535) {
+								callback(new Error(vm.$t('dataForm.error.portRange')));
+							} else {
+								callback();
+							}
+						}
+					}
+				],
+				appendSlot: h => {
+					return h('FbInput', {
+						props: {
+							value: vm.model['database_port'],
+							config: {
+								placeholder: vm.$t('dataForm.form.port')
+							}
+						},
+						on: {
+							input(val) {
+								vm.model['database_port'] = val;
+							}
+						}
+					});
+				}
+			},
+			{
+				type: 'input',
+				field: 'database_name',
+				label: vm.$t('dataForm.form.databaseName'),
+				required: true
+			},
+			{
+				type: 'input',
+				field: 'clusterName',
+				label: vm.$t('dataForm.form.clusterName')
+			},
+			{
+				type: 'switch',
+				field: 'schemaAutoUpdate',
+				label: vm.$t('dataForm.form.ReloadSchema')
+			}
+		]
+	};
+}
