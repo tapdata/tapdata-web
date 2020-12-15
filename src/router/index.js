@@ -152,6 +152,14 @@ const childRoutes = [
 		}
 	},
 	{
+		path: '/module',
+		name: 'module',
+		component: view('ExternalLink'),
+		meta: {
+			code: 'API_creation'
+		}
+	},
+	{
 		path: '/module/:id',
 		name: 'editModule',
 		component: view('ExternalLink'),
