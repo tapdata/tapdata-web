@@ -25,4 +25,4 @@ export * from './publishApi/publishApi';
 export * from './logminer/logminer';
 export * from './databaseLink/databaseLink';
 export * from './jointCache/JointCache';
-export * from './templateProcess/TemplateProcess';
+export * from './customProcessor/CustomProcessor';

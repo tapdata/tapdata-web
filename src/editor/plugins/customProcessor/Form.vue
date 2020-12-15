@@ -1,5 +1,5 @@
 <template>
-	<section class="template-process-wrap">
+	<section class="custom_processor-wrap">
 		<main style="padding: 20px;">
 			<!-- <div style="text-align: right;">
 				<el-button size="mini" type="primary">更新节点配置</el-button>
@@ -15,7 +15,7 @@ import { mergeJoinTablesToTargetSchema, removeDeleted } from '../../util/Schema'
 // import log from '../../../log';
 
 export default {
-	name: 'TemplateProcess',
+	name: 'CustomProcessor',
 	data() {
 		return {
 			disabled: false,
@@ -128,7 +128,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.template-process-wrap {
+.custom_processor-wrap {
 	height: 100%;
 	overflow: hidden;
 	main {

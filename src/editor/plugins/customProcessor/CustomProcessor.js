@@ -3,8 +3,8 @@ import Form from './Form';
 import { FORM_DATA_KEY } from '../../constants';
 // import i18n from '../../../i18n/i18n';
 
-export const templateProcessConfig = {
-	type: 'app.TemplateProcess',
+export const customProcessorConfig = {
+	type: 'app.CustomProcessor',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
@@ -27,7 +27,7 @@ export const templateProcessConfig = {
 			},
 
 			[FORM_DATA_KEY]: {
-				type: 'template_processor'
+				type: 'custom_processor'
 			}
 		},
 		prototypeProperties: {

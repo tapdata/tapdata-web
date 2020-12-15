@@ -348,7 +348,7 @@ export default class Graph extends Component {
 						newCell.attr('image/xlinkHref', newCell.getFormData().shapeImage);
 						newCell.attr('label/text', newCell.getFormData().name);
 					}
-					if (cell.get('type') === 'app.TemplateProcess') {
+					if (cell.get('type') === 'app.CustomProcessor') {
 						let formData = cell.getFormData();
 						let config = cell.getConfig();
 						let nodeConfig = config.nodeConfig;
