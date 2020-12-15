@@ -252,7 +252,7 @@
 				<el-button type="primary" @click="confirmReloadSchemaDialog">{{ $t('message.confirm') }}</el-button>
 			</span>
 		</el-dialog>
-		<AddBtnTip v-if="isEditable()"></AddBtnTip>
+		<AddBtnTip v-if="!loading && isEditable()"></AddBtnTip>
 		<DownAgent
 			v-if="downLoadAgetntdialog"
 			:downLoadNum="downLoadNum"
@@ -351,75 +351,79 @@ export default {
 			}
 		}
 	},
-	created() {
-		if (this.$route.query.isSimple == 'true') this.isSimple = true;
-		if (!this.$route.query.id) {
-			this.getGlobalSetting();
-		}
-		this.mappingTemplate = this.$route.query.mapping;
-
-		// 是否允许下载agent
-		let self = this;
-		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
-			this.getDataApi();
-			if (!this.downLoadNum) {
-				self.timer = setInterval(() => {
-					self.getDataApi();
-					if (this.downLoadNum) {
-						clearInterval(self.timer);
-					}
-				}, 5000);
-			}
-		}
-	},
 	mounted() {
 		let self = this;
 		// build editor
-		self.editor = editor({
-			container: $('.editor-container'),
-			actionBarEl: $('.editor-container .action-buttons'),
-			scope: self
-		});
-		if (self.$route.query.isMoniting == 'true') self.isMoniting = true;
-		if (self.$route.query.isSimple == 'true') {
-			this.initData(db2db.data);
-			this.mappingTemplate = 'cluster-clone';
-			this.loading = false;
-			setTimeout(() => self.initSimple(), 1100);
-			return;
-		}
-		if (window.name && window.name.length > 200) {
-			this.initData(JSON.parse(window.name));
-			window.name = '';
-			this.loading = false;
-			return;
-		}
-		if (!window.tpdata) {
-			Object.keys(localStorage).forEach(key => {
-				let mapping = key.split('$$$')[3] || '';
-				if (
-					key.startsWith('tapdata.dataflow.$$$') &&
-					window.tempKeys &&
-					mapping === this.$route.query.mapping &&
-					!window.tempKeys.includes(parseInt(key.split('$$$')[1]))
-				)
-					this.tempData.push(key);
+		let customProcessors = [];
+		this.$api('nodeConfigs')
+			.get()
+			.then(({ data }) => {
+				customProcessors = data;
+				if (this.$route.query.isSimple == 'true') this.isSimple = true;
+				if (!this.$route.query.id) {
+					this.getGlobalSetting();
+				}
+				this.mappingTemplate = this.$route.query.mapping;
+
+				// 是否允许下载agent
+				if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
+					this.getDataApi();
+					if (!this.downLoadNum) {
+						self.timer = setInterval(() => {
+							self.getDataApi();
+							if (this.downLoadNum) {
+								clearInterval(self.timer);
+							}
+						}, 5000);
+					}
+				}
+				self.editor = editor({
+					container: $('.editor-container'),
+					actionBarEl: $('.editor-container .action-buttons'),
+					scope: self,
+					customProcessors
+				});
+				if (self.$route.query.isMoniting == 'true') self.isMoniting = true;
+				if (self.$route.query.isSimple == 'true') {
+					this.initData(db2db.data);
+					this.mappingTemplate = 'cluster-clone';
+					this.loading = false;
+					setTimeout(() => self.initSimple(), 1100);
+					return;
+				}
+				if (window.name && window.name.length > 200) {
+					this.initData(JSON.parse(window.name));
+					window.name = '';
+					this.loading = false;
+					return;
+				}
+				if (!window.tpdata) {
+					Object.keys(localStorage).forEach(key => {
+						let mapping = key.split('$$$')[3] || '';
+						if (
+							key.startsWith('tapdata.dataflow.$$$') &&
+							window.tempKeys &&
+							mapping === this.$route.query.mapping &&
+							!window.tempKeys.includes(parseInt(key.split('$$$')[1]))
+						)
+							this.tempData.push(key);
+					});
+				} else {
+					this.initData(window.tpdata);
+					this.loading = false;
+					return;
+				}
+				if (!this.isMoniting && this.tempData.length > 0) {
+					self.loading = false;
+					this.tempDialogVisible = true;
+					return;
+				}
+				this.loadData();
+				this.wsWatch();
+				this.editor.graph.on(EditorEventType.DRAFT_SAVE, () => {
+					this.draftSave();
+				});
 			});
-		} else {
-			this.initData(window.tpdata);
-			this.loading = false;
-			return;
-		}
-		if (!this.isMoniting && this.tempData.length > 0) {
-			self.loading = false;
-			this.tempDialogVisible = true;
-			return;
-		}
-		this.loadData();
-		this.wsWatch();
-		this.editor.graph.on(EditorEventType.DRAFT_SAVE, () => {
-			this.draftSave();
-		});
 	},
 
 	methods: {

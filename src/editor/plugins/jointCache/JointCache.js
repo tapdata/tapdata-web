@@ -27,7 +27,7 @@ export const jointCacheConfig = {
 				}
 			},
 			[FORM_DATA_KEY]: {
-				type: 'joint_cache_processor',
+				type: 'cache_lookup_processor',
 				script: ''
 			}
 		},
