@@ -290,7 +290,7 @@ const en = {
 		reloadSchemaError: 'Model update failed'
 	},
 	dataFlow: {
-		aggregateNotDataNode: 'The first data node of the aggregate node is not a collection',
+		aggregateNotDataNode: 'The first target data node of aggregation node can only be COLLECTION',
 		batchSortOperation: 'Batch sort operation',
 		selectRowdata: 'Please select row data',
 		clusterClone: 'Database Migration',

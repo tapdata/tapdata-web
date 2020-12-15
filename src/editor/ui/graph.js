@@ -144,9 +144,16 @@ export default class Graph extends Component {
 				)
 					return false;
 				if (!self.validPath.call(self, sourceView, targetView)) {
-					Message.error({
-						message: i18n.t('dataFlow.aggregateNotDataNode')
-					});
+					if (!self.isLayer) {
+						Message.error({
+							message: i18n.t('dataFlow.aggregateNotDataNode')
+						});
+					}
+					self.isLayer = true;
+					setTimeout(() => {
+						self.isLayer = false;
+					}, 1000);
+
 					return false;
 				}
 
