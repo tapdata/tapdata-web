@@ -44,7 +44,7 @@ window._TAPDATA_OPTIONS_ = {
 let init = settings => {
 	window.getSettingByKey = key => {
 		let setting = settings.find(it => it.key === key) || {};
-		return setting.value;
+		return setting.isArray ? setting.value.split(',') : setting.value;
 	};
 	let lang = localStorage.getItem('tapdata_localize_lang');
 	if (!lang) {

@@ -21,7 +21,7 @@ export * from './DataFilter/DataFilter';
 export * from './custom/CustomNode';
 export * from './redis/Redis';
 export * from './MemCache/MemCache';
-export * from './publishApi/publishApi';
+// export * from './publishApi/publishApi';
 export * from './logminer/logminer';
 export * from './databaseLink/databaseLink';
 export * from './jointCache/JointCache';

@@ -100,7 +100,16 @@ export const loadPlugins = function() {
 			vueAdapter[type] = config;
 		}
 	};
-
+	let map = {
+		'app.Dummy': 'dummy db',
+		'app.GridFSNode': 'gridfs',
+		'app.CustomNode': 'custom_connection',
+		'app.ESNode': 'elasticsearch',
+		'app.FileNode': 'file',
+		'app.MemCache': 'mem_cache',
+		'app.Redis': 'redis',
+		'app.ApiNode': 'rest api'
+	};
 	Object.keys(plugins).forEach(name => {
 		if (name !== 'loadPlugins' && typeof plugins[name] === 'object') {
 			let plugin = _.cloneDeep(plugins[name]);
@@ -114,79 +123,83 @@ export const loadPlugins = function() {
 			}
 
 			let type = plugin.type;
+			if (!map[type] || window.getSettingByKey('ALLOW_CONNECTION_TYPE').includes(map[type])) {
+				defineShape(type, plugin.shape);
+				addInspector(type, plugin.styleFormConfig);
+				addSettingForm(type, plugin.settingFormConfig);
 
-			defineShape(type, plugin.shape);
-			addInspector(type, plugin.styleFormConfig);
-			addSettingForm(type, plugin.settingFormConfig);
+				if (type === 'app.Database') {
+					let addData = {
+						mysql: {
+							name: 'MySQL',
+							type: 'mysql',
+							shapeImage: 'static/editor/o-mysql.svg',
+							stencilImage: 'static/editor/mysql.svg'
+						},
+						oracle: {
+							type: 'oracle',
+							name: 'Oracle',
+							shapeImage: 'static/editor/o-ora.svg',
+							stencilImage: 'static/editor/ora2.svg'
+						},
+						mongo: {
+							type: 'mongodb',
+							name: 'MongoDB',
+							shapeImage: 'static/editor/o-mongo.svg',
+							stencilImage: 'static/editor/mongo.svg'
+						},
+						db2: {
+							type: 'db2',
+							name: 'DB2',
+							shapeImage: 'static/editor/o-db2.svg',
+							stencilImage: 'static/editor/DB2.svg'
+						},
+						pg: {
+							type: 'postgres',
+							name: 'Postgres',
+							shapeImage: 'static/editor/o-pg.svg',
+							stencilImage: 'static/editor/pg.svg'
+						},
+						sqlserver: {
+							type: 'sqlserver',
+							name: 'SQL Server',
+							shapeImage: 'static/editor/o-sqlserver.svg',
+							stencilImage: 'static/editor/sqlserver.svg'
+						},
+						gbase: {
+							type: 'gbase-8s',
+							name: 'GBase 8s',
+							shapeImage: 'static/editor/o-gbase.svg',
+							stencilImage: 'static/editor/gbase.svg'
+						},
+						sybase: {
+							type: 'sybase ase',
+							name: 'Sybase ASE',
+							shapeImage: 'static/editor/o-sybase.svg',
+							stencilImage: 'static/editor/sybase.svg'
+						}
+					};
+					Object.keys(addData).forEach(key => {
+						let database = addData[key];
+						if (window.getSettingByKey('ALLOW_CONNECTION_TYPE').includes(database.type)) {
+							let cell = _.cloneDeep(database);
+							let plugin = _.cloneDeep(plugins[name]);
+							plugin.stencil['group'] = 'data';
+							plugin.stencil['subType'] = cell.type;
+							plugin.stencil['attrs']['image']['xlinkHref'] = cell.stencilImage;
+							plugin.stencil['attrs']['label']['text'] = cell.name;
+							plugin.stencil['attrs']['root']['dataTooltip'] = cell.name;
 
-			if (type === 'app.Database') {
-				let addData = {
-					mysql: {
-						name: 'MySQL',
-						type: 'mysql',
-						shapeImage: 'static/editor/o-mysql.svg',
-						stencilImage: 'static/editor/mysql.svg'
-					},
-					oracle: {
-						type: 'oracle',
-						name: 'Oracle',
-						shapeImage: 'static/editor/o-ora.svg',
-						stencilImage: 'static/editor/ora2.svg'
-					},
-					mongo: {
-						type: 'mongodb',
-						name: 'MongoDB',
-						shapeImage: 'static/editor/o-mongo.svg',
-						stencilImage: 'static/editor/mongo.svg'
-					},
-					db2: {
-						type: 'db2',
-						name: 'DB2',
-						shapeImage: 'static/editor/o-db2.svg',
-						stencilImage: 'static/editor/DB2.svg'
-					},
-					pg: {
-						type: 'postgres',
-						name: 'Postgres',
-						shapeImage: 'static/editor/o-pg.svg',
-						stencilImage: 'static/editor/pg.svg'
-					},
-					sqlserver: {
-						type: 'sqlserver',
-						name: 'SQL Server',
-						shapeImage: 'static/editor/o-sqlserver.svg',
-						stencilImage: 'static/editor/sqlserver.svg'
-					},
-					gbase: {
-						type: 'gbase-8s',
-						name: 'GBase 8s',
-						shapeImage: 'static/editor/o-gbase.svg',
-						stencilImage: 'static/editor/gbase.svg'
-					},
-					sybase: {
-						type: 'sybase ase',
-						name: 'Sybase ASE',
-						shapeImage: 'static/editor/o-sybase.svg',
-						stencilImage: 'static/editor/sybase.svg'
-					}
-				};
-				Object.keys(addData).forEach(database => {
-					let cell = _.cloneDeep(addData[database]);
-					let plugin = _.cloneDeep(plugins[name]);
-					plugin.stencil['group'] = 'data';
-					plugin.stencil['subType'] = cell.type;
-					plugin.stencil['attrs']['image']['xlinkHref'] = cell.stencilImage;
-					plugin.stencil['attrs']['label']['text'] = cell.name;
-					plugin.stencil['attrs']['root']['dataTooltip'] = cell.name;
-
-					addStencil(type, plugin.stencil, {
-						database_type: cell.type,
-						shapeImage: cell.shapeImage,
-						name: cell.name
+							addStencil(type, plugin.stencil, {
+								database_type: cell.type,
+								shapeImage: cell.shapeImage,
+								name: cell.name
+							});
+						}
 					});
-				});
-			} else {
-				addStencil(type, plugin.stencil);
+				} else {
+					addStencil(type, plugin.stencil);
+				}
 			}
 		}
 	});
