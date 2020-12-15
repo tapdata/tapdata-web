@@ -10,7 +10,12 @@
 		:before-close="handleClose"
 	>
 		<head data-v-4c16474d="" class="head">
-			<button data-v-4c16474d="" type="button" class="el-button back-btn-icon-box el-button--default">
+			<button
+				data-v-4c16474d=""
+				type="button"
+				class="el-button back-btn-icon-box el-button--default"
+				@click="handleClose"
+			>
 				<span>
 					<i data-v-4c16474d="" class="iconfont icon-you2 back-btn-icon"></i>
 				</span>
@@ -18,51 +23,60 @@
 			<span class="back-btn-text">{{ $t('connection.info') }}</span>
 		</head>
 		<header class="header">
-			<div class="img-box">
-				<img :src="getImgByType(type)" />
-			</div>
-			<div class="content">
-				<div>{{ name }}</div>
-				<div class="status">
-					<span class="error" v-if="['invalid'].includes(status)">
-						<i class="el-icon-error"></i>
-						<span>
-							{{ $t('connection.status.invalid') }}
+			<div class="tab">
+				<div class="img-box">
+					<img :src="getImgByType(type)" />
+				</div>
+				<div class="content">
+					<div>{{ name }}</div>
+					<div class="status">
+						<span class="error" v-if="['invalid'].includes(status)">
+							<i class="el-icon-error"></i>
+							<span>
+								{{ $t('connection.status.invalid') }}
+							</span>
 						</span>
-					</span>
-					<span class="success" v-if="['ready'].includes(status)">
-						<i class="el-icon-success"></i>
-						<span>
-							{{ $t('connection.status.ready') }}
+						<span class="success" v-if="['ready'].includes(status)">
+							<i class="el-icon-success"></i>
+							<span>
+								{{ $t('connection.status.ready') }}
+							</span>
 						</span>
-					</span>
-					<span class="warning" v-if="['testing'].includes(status)">
-						<i class="icon-gantanhao2"></i>
-						<span>
-							{{ $t('connection.status.testing') }}
+						<span class="warning" v-if="['testing'].includes(status)">
+							<i class="el-icon-warning"></i>
+							<span>
+								{{ $t('connection.status.testing') }}
+							</span>
 						</span>
-					</span>
+					</div>
+				</div>
+				<div class="panelBtn">
+					<ul>
+						<li class="item">
+							<el-button class="btn" size="mini" @click="edit()">
+								<i class="iconfont icon-edit"> Edit</i>
+							</el-button>
+						</li>
+						<li class="item">
+							<el-button class="btn" size="mini" @click="reload()">
+								<i class="iconfont icon-kujitongbucopy"> Reload schema</i>
+							</el-button>
+						</li>
+						<li class="item">
+							<el-button class="btn" size="mini" @click="test()">
+								<i class="iconfont icon-lianjie1"> Test </i>
+							</el-button>
+						</li>
+					</ul>
 				</div>
 			</div>
-			<div class="panelBtn">
-				<ul>
-					<li class="item">
-						<el-button class="btn" size="mini" @click="edit()">
-							<i class="iconfont icon-edit"> Edit</i>
-						</el-button>
-					</li>
-					<li class="item">
-						<el-button class="btn" size="mini" @click="reload()">
-							<i class="iconfont icon-kujitongbucopy"> Reload schema</i>
-						</el-button>
-					</li>
-					<li class="item">
-						<el-button class="btn" size="mini" @click="test()">
-							<i class="iconfont icon-lianjie1"> Test </i>
-						</el-button>
-					</li>
-				</ul>
-			</div>
+			<el-progress
+				type="line"
+				class="test-progress"
+				:text-inside="true"
+				:stroke-width="26"
+				:percentage="progress"
+			></el-progress>
 		</header>
 		<ul>
 			<li v-for="item in form" :key="item.label">
@@ -106,7 +120,8 @@ export default {
 			status: '',
 			dialogTestVisible: false,
 			testLogs: null,
-			testResult: ''
+			testResult: '',
+			progress: 0
 		};
 	},
 	watch: {
@@ -130,6 +145,8 @@ export default {
 						this.name = data.name;
 						this.type = data.database_type;
 						this.status = data.status;
+						let progress = Math.round((result.data.loadCount / result.data.tableCount) * 10000) / 100;
+						this.progress = progress ? progress : 0;
 						let func = formConfig[this.type];
 						if (func) {
 							let config = func(this);
@@ -164,23 +181,49 @@ export default {
 			}
 		},
 		edit() {
-			this.$router.push('connections/create?id=' + this.data.id + '&databaseType=' + this.data.type);
+			this.$router.push('connections/create?id=' + this.data.id + '&databaseType=' + this.data.database_type);
 		},
 		reload() {
-			this.$api('connections')
-				.updateById(this.data.id, {
-					status: 'testing',
-					name: this.data.name
-				})
-				.then(res => {
-					if (res.data) {
-						this.$message.success(this.$t('connection.reloadOK'));
-						this.search(this.page.current);
-					}
-				})
-				.catch(() => {
-					this.$message.error(this.$t('connection.reloadFail'));
-				});
+			this.progress = 0;
+			let config = {
+				title: this.$t('connection.reloadTittle'),
+				Message: this.$t('connection.reloadMsg'),
+				confirmButtonText: this.$t('message.confirm'),
+				cancelButtonText: this.$t('message.cancel'),
+				name: this.data.name,
+				id: this.data.id
+			};
+			this.confirm(
+				() => {
+					this.$api('connections')
+						.updateById(this.data.id, {
+							status: 'testing',
+							name: this.data.name
+						})
+						.then(result => {
+							if (result.data) {
+								let progress =
+									Math.round((result.data.loadCount / result.data.tableCount) * 10000) / 100;
+								this.progress = progress ? progress : 0;
+							}
+						})
+						.catch(() => {
+							this.$message.error(this.$t('connection.reloadFail'));
+						});
+				},
+				() => {},
+				config
+			);
+		},
+		confirm(callback, catchCallback, config) {
+			this.$confirm(config.Message + config.name + '?', config.title, {
+				confirmButtonText: config.confirmButtonText,
+				cancelButtonText: config.cancelButtonText,
+				type: 'warning',
+				closeOnClickModal: false
+			})
+				.then(callback)
+				.catch(catchCallback);
 		},
 		//test
 		handleTestVisible() {
@@ -194,10 +237,19 @@ export default {
 .drawer {
 	.header {
 		display: flex;
-		justify-content: flex-start;
+		flex-direction: column;
 		margin: 20px 0;
-		padding-bottom: 10px;
 		border-bottom: 1px solid #eee;
+	}
+	.test-progress {
+		width: 94.5%;
+		margin: 0 10px 10px 30px;
+	}
+	.tab {
+		display: flex;
+		justify-content: flex-start;
+		padding-bottom: 10px;
+		padding-top: 10px;
 		.img-box {
 			display: flex;
 			width: 54px;
@@ -320,5 +372,16 @@ export default {
 	.back-btn-text {
 		font-size: 12px;
 	}
+}
+</style>
+<style lang="less">
+.test-progress {
+	.el-progress-bar__outer {
+		border-radius: 0;
+	}
+	.el-progress-bar__inner {
+		border-radius: 0;
+	}
+	margin-bottom: 10px;
 }
 </style>
