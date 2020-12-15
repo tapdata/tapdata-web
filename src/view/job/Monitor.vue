@@ -255,7 +255,7 @@ export default {
 				row_filter_processor: this.$t('editor.cell.processor.dataFilter.name'),
 				file: this.$t('editor.cell.data_node.file.tip'),
 				gridfs: this.$t('editor.cell.data_node.gridfs.tip'),
-				custom_processor: this.$t('editor.cell.processor.jointCache.tip'),
+				joint_cache_processor: this.$t('editor.cell.processor.jointCache.tip'),
 				log_collect: this.$t('editor.cell.data_node.logminer.tip'),
 				mem_cache: this.$t('editor.cell.data_node.memCache.tip'),
 				publishApi: this.$t('editor.cell.data_node.api.tip'),

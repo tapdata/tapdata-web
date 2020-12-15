@@ -52,7 +52,7 @@ export default {
 				cacheId: '',
 				joinSettings: [],
 				joinKey: '',
-				type: 'custom_processor',
+				type: 'joint_cache_processor',
 				removeFields: [],
 				script: ''
 			},
