@@ -1,7 +1,7 @@
 <template>
 	<el-dialog
 		:title="$t('dataFlow.createNew')"
-		:visible.sync="dialogVisibleFalg"
+		:visible="dialogVisible"
 		width="60%"
 		:before-close="handleClose"
 		:close-on-click-modal="false"
@@ -83,20 +83,9 @@ export default {
 			value: Boolean
 		}
 	},
-	data() {
-		return {
-			dialogVisibleFalg: false
-		};
-	},
-	watch: {
-		dialogVisible(val) {
-			this.dialogVisibleFalg = val;
-		}
-	},
 	methods: {
 		handleClose() {
-			this.dialogVisibleFalg = false;
-			this.$emit('dialogVisible', false);
+			this.$emit('update:dialogVisible', false);
 		},
 		db2db() {
 			let routeUrl = this.$router.resolve({

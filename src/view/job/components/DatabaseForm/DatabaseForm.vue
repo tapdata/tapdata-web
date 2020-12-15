@@ -140,7 +140,9 @@ export default {
 			this.checkDataTypeOptions();
 		},
 		checkDataTypeOptions() {
-			let options = this.dataTypes;
+			let options = this.dataTypes.filter(it =>
+				window.getSettingByKey('ALLOW_CONNECTION_TYPE').includes(it.value)
+			);
 			let list = options.filter(opt => this.whiteList.includes(opt.value));
 			defaultConfig[1].options = list;
 			if (list.length) {
