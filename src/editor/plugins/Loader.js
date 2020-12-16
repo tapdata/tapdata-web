@@ -148,12 +148,6 @@ export const loadPlugins = function() {
 							shapeImage: 'static/editor/o-mongo.svg',
 							stencilImage: 'static/editor/mongo.svg'
 						},
-						sequoiadb: {
-							type: 'sequoiadb',
-							name: 'SequoiaDB',
-							shapeImage: 'static/editor/sequoiadb.svg',
-							stencilImage: 'static/editor/sequoiadb.svg'
-						},
 						db2: {
 							type: 'db2',
 							name: 'DB2',
