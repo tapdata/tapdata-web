@@ -83,7 +83,7 @@ export default {
 			testResult: '',
 			timezones: [],
 			dataTypes: [],
-			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2', 'postgres', 'elasticsearch'], //目前白名单,
+			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2', 'postgres', 'elasticsearch', 'sequoia'], //目前白名单,
 			model: Object.assign({}, defaultModel),
 			config: {
 				items: []
@@ -216,7 +216,7 @@ export default {
 					}
 					delete params.sslKeyFile;
 					delete params.sslCAFile;
-					if (params.database_type === 'mongodb') {
+					if (params.database_type === 'mongodb' || params.database_type === 'sequoia') {
 						params.fill = params.isUrl ? 'uri' : '';
 						delete params.isUrl;
 					}

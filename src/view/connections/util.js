@@ -33,5 +33,6 @@ export const TYPEMAP = {
 	custom_connection: 'SQL Server',
 	'rest api': 'REST API',
 	'dummy db': 'Dummy DB',
-	gridfs: 'GridFS'
+	gridfs: 'GridFS',
+	sequoiadb: 'SequoiaDB'
 };

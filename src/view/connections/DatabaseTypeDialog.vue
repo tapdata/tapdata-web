@@ -51,7 +51,8 @@ export default {
 				'gbase-8s',
 				'sybase ase',
 				'gaussdb200',
-				'db2'
+				'db2',
+				'sequoiadb'
 			],
 			otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file', 'mem_cache'],
 			typeMap: TYPEMAP

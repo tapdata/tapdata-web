@@ -678,7 +678,17 @@ export default {
 		handleDatabaseType(type) {
 			this.handleDialogDatabaseTypeVisible();
 			if (
-				['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis', 'db2'].includes(type)
+				[
+					'mysql',
+					'oracle',
+					'mongodb',
+					'sqlserver',
+					'postgres',
+					'elasticsearch',
+					'redis',
+					'db2',
+					'sequoiadb'
+				].includes(type)
 			) {
 				this.$router.push('connections/create?databaseType=' + type);
 			} else {
