@@ -162,8 +162,10 @@ export default {
 				});
 			} catch (e) {
 				if (e.response && e.response.msg) {
-					if (e.response.msg.indexOf('Email already exists')) {
-						this.errorMessage = this.$t('role.alreadyExists');
+					if (e.response.msg.indexOf('Email already exists') !== -1) {
+						this.errorMessage = this.$t('app.signIn.hasMailbox');
+					} else if (e.response.msg.indexOf('Disable Signup') !== -1) {
+						this.errorMessage = this.$t('app.signIn.disableSignup');
 					} else {
 						this.errorMessage = e.response.msg;
 					}

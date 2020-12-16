@@ -121,7 +121,8 @@ const tc = {
 			resetAccountSuccess: '的密碼已重置成功~',
 			passwordResetText: '重置密碼確認郵件已發送至',
 			notMailbox: 'oops~此郵箱尚未註冊',
-			hasMailbox: 'oops~此郵箱已經被註冊了'
+			hasMailbox: 'oops~此郵箱已經被註冊了',
+			disableSignup: 'oops〜禁止註冊'
 		},
 		menu: {
 			dashboard: '控制台',

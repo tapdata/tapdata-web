@@ -120,7 +120,8 @@ const en = {
 			resetAccountSuccess: 'The password has been reset successfully~',
 			passwordResetText: 'Reset password email has been sent to',
 			notMailbox: 'oops~This mailbox has not been registered yet',
-			hasMailbox: 'oops~This mailbox has already been registered'
+			hasMailbox: 'oops~This mailbox has already been registered',
+			disableSignup: 'oops~Disable Signup'
 		},
 		menu: {
 			dashboard: 'Dashboard',
