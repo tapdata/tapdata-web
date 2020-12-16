@@ -214,7 +214,7 @@
 				}
 			]
 		},
-		"scriptTemplate": "function process(record) {\n    var selected_field  = ${field}; \n    //分隔符\n    var delimiter = ${separator};\n    //字符串输入 \n    var targetFieldName = ${text};\n    \n    // validations\n    if(! targetFieldName || !selected_fields) {\n        // report error\n        log.warn(\"Missing processing node configuration\");\n        return record;\n    }    \n\n    //核心代码\n   \n        var value = record[selected_field];\n        if(!value) return record;\n        var values = value.split(delimiter);\n        record[targetFieldName] = values;\n  \n    return record;\n}"
+		"scriptTemplate": "function process(record) {\n    var selected_field  = ${field}; \n    //分隔符\n    var delimiter = ${separator};\n    //字符串输入 \n    var targetFieldName = ${text};\n    \n    // validations\n    if(! targetFieldName || !selected_field) {\n        // report error\n        log.warn(\"Missing processing node configuration\");\n        return record;\n    }    \n\n    //核心代码\n   \n        var value = record[selected_field];\n        if(!value) return record;\n        var values = value.split(delimiter);\n        record[targetFieldName] = values;\n  \n    return record;\n}"
 	},
 	{
 		"id": "",
