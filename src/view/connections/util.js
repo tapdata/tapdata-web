@@ -4,6 +4,9 @@
  * @description
  */
 export const getImgByType = function(type) {
+	if (!type) {
+		type = 'default';
+	}
 	return require(`../../../static/image/databaseType/${type.toLowerCase()}.png`);
 };
 
@@ -33,6 +36,5 @@ export const TYPEMAP = {
 	custom_connection: 'SQL Server',
 	'rest api': 'REST API',
 	'dummy db': 'Dummy DB',
-	gridfs: 'GridFS',
-	sequoiadb: 'SequoiaDB'
+	gridfs: 'GridFS'
 };

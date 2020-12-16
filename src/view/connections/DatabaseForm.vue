@@ -83,7 +83,7 @@ export default {
 			testResult: '',
 			timezones: [],
 			dataTypes: [],
-			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2', 'postgres', 'elasticsearch', 'sequoia'], //目前白名单,
+			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2', 'postgres', 'elasticsearch'], //目前白名单,
 			model: Object.assign({}, defaultModel),
 			config: {
 				items: []

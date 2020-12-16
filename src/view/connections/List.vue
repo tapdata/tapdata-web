@@ -143,7 +143,7 @@
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column prop="database_uri" :label="$t('connection.dataBaseHost')"></el-table-column>
+					<el-table-column prop="database_host" :label="$t('connection.dataBaseHost')"></el-table-column>
 					<el-table-column
 						prop="connection_type"
 						:label="$t('connection.dataBaseType')"
@@ -378,6 +378,9 @@ export default {
 		},
 		//列表操作
 		getImgByType(type) {
+			if (!type) {
+				type = 'default';
+			}
 			return require(`../../../static/image/databaseType/${type.toLowerCase()}.png`);
 		},
 		rest() {
