@@ -101,7 +101,8 @@ export const baseElementConfig = {
 			},
 
 			[SCHEMA_DATA_KEY]: null,
-			[OUTPUT_SCHEMA_DATA_KEY]: null
+			[OUTPUT_SCHEMA_DATA_KEY]: null,
+			config: null
 		},
 		/**
 		 * object that contains properties to be assigned on the subtype prototype.
@@ -179,7 +180,12 @@ export const baseElementConfig = {
 			showSettings() {
 				return true;
 			},
-
+			setConfig(data) {
+				this.set('config', data);
+			},
+			getConfig() {
+				return _.cloneDeep(this.get('config'));
+			},
 			setSchema(schema, updateSchema) {
 				this.set(SCHEMA_DATA_KEY, schema);
 

@@ -4,6 +4,9 @@
  * @description
  */
 export const getImgByType = function(type) {
+	if (!type) {
+		type = 'default';
+	}
 	return require(`../../../static/image/databaseType/${type.toLowerCase()}.png`);
 };
 

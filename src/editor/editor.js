@@ -110,7 +110,8 @@ export default class Editor extends BaseObject {
 		let self = this;
 
 		// login plugins
-		loadPlugins();
+
+		loadPlugins(self.opts.customProcessors);
 
 		let ui = (self.ui = new UI(
 			Object.assign(

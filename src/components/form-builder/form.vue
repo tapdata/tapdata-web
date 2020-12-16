@@ -20,13 +20,7 @@
  * }
  *
  */
-const ele = {
-	input: 'FbInput',
-	select: 'FbSelect',
-	radio: 'FbRadio',
-	switch: 'FbSwitch',
-	file: 'FbFile'
-};
+import TYPE_MAPPING from './constant';
 export default {
 	name: 'FormBuilder',
 	props: {
@@ -86,7 +80,6 @@ export default {
 				ref: 'form',
 
 				props: Object.assign(formConfig, {
-					hideRequiredAsterisk: true,
 					inlineMessage: true
 				})
 			},
@@ -101,7 +94,7 @@ export default {
 	},
 	methods: {
 		validate(callback) {
-			return this.$refs.form.validate(callback);
+			return this.$refs.form && this.$refs.form.validate(callback);
 		},
 		clearValidate() {
 			return this.$refs.form && this.$refs.form.clearValidate();
@@ -123,11 +116,23 @@ export default {
 					}
 				});
 			}
-			let required = rules.find(r => r.required);
-			let labelSlot = config.labelSlot ? config.labelSlot(h) : null;
-			let prependSlot = config.prependSlot ? config.prependSlot(h) : null;
-			let appendSlot = config.appendSlot ? config.appendSlot(h) : null;
 
+			let dependOn = config.dependOn;
+			if (dependOn && dependOn.length) {
+				/**
+				 * dependOn 配置说明：
+				 *			triggerOptions: 依赖的字段与值
+				 *						field: 依赖的字段
+				 *						value: 依赖的值
+				 *			triggerConfig: 依赖项满足条件后需要更新的配置
+				 */
+				dependOn.forEach(depend => {
+					let triggerOptions = depend.triggerOptions;
+					if (triggerOptions.every(opt => opt.value === this.value[opt.field])) {
+						config = Object.assign(config, depend.triggerConfig);
+					}
+				});
+			}
 			let item = h(
 				'ElFormItem',
 				{
@@ -138,79 +143,110 @@ export default {
 						rules: rules
 					}
 				},
-				[
-					!config.label && !labelSlot
-						? null
-						: h(
-								'div',
-								{
-									class: { 'e-form-builder-item-label': true },
-									slot: 'label'
-								},
-								[
-									labelSlot || h('div', { class: { 'is-required': required } }, [config.label]),
-									config.tips &&
-										h(
-											'ElPopover',
-											{
-												style: { 'vertical-align': 'middle' },
-												props: {
-													trigger: 'hover',
-													placement: 'top'
-												}
-											},
-											[
-												h('div', {
-													domProps: {
-														innerHTML: config.tips.content || config.tips
-													}
-												}),
-												h(
-													'span',
-													{
-														class: 'color-warning',
-														slot: 'reference'
-													},
-													[
-														h('i', {
-															class: 'el-icon-warning-outline e-form-builder-item-tips'
-														}),
-														config.tips.label
-													]
-												)
-											]
-										)
-								]
-						  ),
-					h('div', { class: { 'fb-item-group': true } }, [
-						prependSlot ? h('div', { class: { 'fb-form-item-prepend-slot': true } }, [prependSlot]) : null,
-						config.type === 'slot'
-							? this.$slots[config.slot]
-							: h(ele[config.type], {
-									props: {
-										value: self.value[config.field],
-										config: config
-									},
-									on: {
-										input(val) {
-											if (self.value[config.field] === undefined) {
-												throw new Error(
-													`The field "${config.field}" of the model is not defined!`
-												);
-											}
-											self.value[config.field] = val;
-											config.on.input && config.on.input(val);
-										},
-										change(...args) {
-											config.on.change && config.on.change(...args);
-										}
-									}
-							  }),
-						appendSlot ? h('div', { class: { 'fb-form-item-append-slot': true } }, [appendSlot]) : null
-					])
-				]
+				[this.getLabel(h, config), this.getBody(h, config)]
 			);
 			return config.show ? item : '';
+		},
+		getLabel(h, config) {
+			let labelSlot = config.labelSlot ? config.labelSlot(h) : null;
+			return !config.label && !labelSlot
+				? null
+				: h(
+						'div',
+						{
+							class: 'e-form-builder-item-label',
+							slot: 'label'
+						},
+						[
+							labelSlot || config.label,
+							config.tips &&
+								h(
+									'ElPopover',
+									{
+										style: { 'vertical-align': 'middle' },
+										props: {
+											trigger: 'hover',
+											placement: 'top'
+										}
+									},
+									[
+										h('div', {
+											domProps: {
+												innerHTML: config.tips.content || config.tips
+											}
+										}),
+										h(
+											'span',
+											{
+												class: 'color-warning',
+												slot: 'reference'
+											},
+											[
+												h('i', {
+													class: 'el-icon-warning-outline e-form-builder-item-tips'
+												}),
+												config.tips.label
+											]
+										)
+									]
+								)
+						]
+				  );
+		},
+		getBody(h, config) {
+			let self = this;
+			let appendSlot = config.appendSlot ? config.appendSlot(h) : null;
+			if (appendSlot) {
+				return h('div', { class: { 'fb-item-group': true } }, [
+					config.type === 'slot'
+						? this.$slots[config.slot]
+						: h(TYPE_MAPPING[config.type], {
+								props: {
+									value: self.value[config.field],
+									config: config
+								},
+								on: {
+									input(val) {
+										if (config.domType === 'number') {
+											val = Number(val);
+										}
+										if (self.value[config.field] === undefined) {
+											throw new Error(`The field "${config.field}" of the model is not defined!`);
+										}
+										self.value[config.field] = val;
+										config.on.input && config.on.input(val);
+									},
+									change(...args) {
+										config.on.change && config.on.change(...args);
+									}
+								}
+						  }),
+					h('div', { class: { 'fb-form-item-append-slot': true } }, [appendSlot])
+				]);
+			} else {
+				return [
+					config.type === 'slot'
+						? this.$slots[config.slot]
+						: h(TYPE_MAPPING[config.type], {
+								props: {
+									value: self.value[config.field],
+									config: config
+								},
+								on: {
+									input(val) {
+										if (self.value[config.field] === undefined) {
+											throw new Error(`The field "${config.field}" of the model is not defined!`);
+										}
+										self.value[config.field] = val;
+										config.on.input && config.on.input(val);
+									},
+									change(...args) {
+										config.on.change && config.on.change(...args);
+									}
+								}
+						  })
+				];
+			}
 		}
 	}
 };
@@ -222,14 +258,6 @@ export default {
 		display: flex;
 		align-items: center;
 		font-size: 12px;
-		.is-required {
-			&::after {
-				content: '*';
-				color: #ee5353;
-				margin-left: 4px;
-				font-size: 14px;
-			}
-		}
 		.e-form-builder-item-tips {
 			margin-left: 5px;
 			font-size: 14px;
@@ -237,6 +265,7 @@ export default {
 	}
 	.el-form-item__label {
 		padding-bottom: 0px;
+		display: flex;
 	}
 	.el-form-item {
 		margin-bottom: 5px;

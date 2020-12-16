@@ -1,0 +1,254 @@
+[
+	{
+		"id": "",
+		"nodeConfig": {
+			"name": "加前后缀",
+			"tips": "对字段统一加前缀，如：AA_",
+			"shapeImage": "static/editor/o-mysql.svg",
+			"stencilImage": "static/editor/mysql.svg"
+		},
+		"formConfig": {
+			"items": [
+				{
+					"type": "field",
+					"field": "fields",
+					"label": "操作字段",
+					"required": true,
+					"multiple": true,
+					"showAllCheckbox": true
+				},
+				{
+					"type": "select",
+					"field": "type",
+					"label": "前后缀",
+					"required": true,
+					"options": [
+						{ "label": "前缀", "value": "before" },
+						{ "label": "后缀", "value": "after" }
+					]
+				},
+				{
+					"type": "input",
+					"field": "text",
+					"label": "前后缀文本",
+					"required": true
+				}
+			]
+		},
+		"scriptTemplate": "function process(record) {\n\t//当前模型的字段列表，可全选，多选\n\tvar selected_fields = ${fields};\n\t//前缀还是后缀 (单选按钮） 前缀：before，后缀：after;\n\tvar beforeOrAfter = ${type};\n\t//字符串输入\n\tvar text = ${text};\n\n\t// validations\n\tif(!text || !selected_fields) {\n\t\t// report error\n\t\tlog.warn(\"Missing processing node configuration\");\n\t\treturn record;\n\t}\n\t//核心代码\n\tselected_fields.forEach(function(fieldName) {\n\t\tvar newFieldName = \"\";\n\t\tif(beforeOrAfter === \"before\") {\n\t\t\tnewFieldName = text + filedName;\n\t\t} else {\n\t\t\tnewFieldName = fieldName + text;\n\t\t}\n\t\tif(typeof (record[newFieldName] ) != \"undefined\"){\n\t\t\tlog.error(\"Field \"+ newFieldName + \" already exists\");\n\t\t\treturn record;\n\t\t}\n\t\trecord[newFieldName] = record[filedName];\n\t\tdelete record[fieldName];\n\t})\n\treturn record;\n}"
+	},
+	{
+		"id": "",
+		"nodeConfig": {
+			"name": "时区调整",
+			"tips": "对时区字段进行时区调整（+/- 小时）",
+			"shapeImage": "static/editor/o-mysql.svg",
+			"stencilImage": "static/editor/mysql.svg"
+		},
+		"formConfig": {
+			"items": [
+				{
+					"type": "field",
+					"field": "fields",
+					"label": "操作字段",
+					"required": true,
+					"multiple": true,
+					"showAllCheckbox": true
+				},
+				{
+					"type": "input",
+					"field": "timeArea",
+					"domType": "number",
+					"label": "前后缀",
+					"required": true
+				}
+			]
+		},
+		"scriptTemplate": "function process(record) {\n    //当前模型的字段列表，可选1个或多个\n    var fields = ${fields}; \n    // 时区调整值, 单选数值 -12 到 + 12\n    var timeArea = ${timeArea};\n    //核心代码\n    fields.forEach(function(key) {\n        var value = record[key];\n        if (Object.prototype.toString.call(value) == '[object Date]'){\n            value = new Date(value).getTime() + timeArea * 60 * 60 * 1000\n        record[key] = value;\n        } else {\n            log.error('Column ' + key + ' type is not Date, data flow will stop, please confirm this record: ' + record);\n            // return null ? keep going ? interupt\n        }\n        \n    })\n    return record;\n}"
+
+	},
+	{
+		"id": "",
+		"nodeConfig": {
+			"name": "字段掩盖",
+			"tips": "敏感字段脱敏",
+			"shapeImage": "static/editor/o-mysql.svg",
+			"stencilImage": "static/editor/mysql.svg"
+		},
+		"formConfig": {
+			"items": [
+				{
+					"type": "field",
+					"field": "fields",
+					"label": "选择需要脱敏的字段",
+					"required": true,
+					"multiple": true,
+					"showAllCheckbox": true
+				},
+				{
+					"type": "select",
+					"field": "type",
+					"label": "选择脱敏的方式",
+					"required": true,
+					"options": [
+						{ "label": "长度", "value": "length" },
+						{ "label": "regex", "value": "regex" }
+					]
+				},
+				{
+					"type": "input",
+					"field": "charLength",
+					"label": "显示字符数",
+					"domType": "number",
+					"required": true,
+					"show": false,
+					"dependOn": [
+						{
+							"triggerOptions": [
+								{
+									"field": "type",
+									"value": "length"
+								}
+							],
+							"triggerConfig": {
+								"show": true
+							}
+						}
+					]
+				},
+				{
+					"type": "select",
+					"field": "charPosition",
+					"label": "显示字符位置",
+					"options": [
+						{ "label": "头部", "value": "head" },
+						{ "label": "尾部", "value": "foot" }
+					],
+					"required": true,
+					"show": false,
+					"dependOn": [
+						{
+							"triggerOptions": [
+								{
+									"field": "type",
+									"value": "length"
+								}
+							],
+							"triggerConfig": {
+								"show": true
+							}
+						}
+					]
+				},
+				{
+					"type": "input",
+					"field": "regex",
+					"label": "Regex表达式",
+					"required": true,
+					"show": false,
+					"dependOn": [
+						{
+							"triggerOptions": [
+								{
+									"field": "type",
+									"value": "regex"
+								}
+							],
+							"triggerConfig": {
+								"show": true
+							}
+						}
+					]
+				},
+				{
+					"type": "input",
+					"field": "groups",
+					"label": "要显示的组号(逗号分隔)",
+					"required": true,
+					"show": false,
+					"dependOn": [
+						{
+							"triggerOptions": [
+								{
+									"field": "type",
+									"value": "regex"
+								}
+							],
+							"triggerConfig": {
+								"show": true
+							}
+						}
+					]
+				}
+			]
+		},
+		"scriptTemplate": "function process(record) {\n    //当前模型的字段列表，可选1个或多个\n    var selected_fields = ${fields}; \n    var masking_method = ${type};  // length or regex\n    var visible_length = ${charLength};\n    var visible_position = ${charPosition}; // left or right\n    var visible_regex = ${regex}; // string regex\n    var visible_regex_groups = ${groups}; // comma separated regex capturing group number\n    visible_regex_groups = visible_regex_groups.split(',');\n    // validations\n    \n    function maskByLength(value){\n       if(visible_position == 'left'){\n           // show first N letters, the rest to use #### \n           return value.substr(0, visible_length) + \" ###\";\n       }\n       else{\n           // show last N letters, the rest to use #### \n           return \"### \"+ value.substr( 0 - visible_length, visible_length)\n       }       \n   }\n    function maskByRegex(value){    \n         var reg = new RegExp(visible_regex);\n         var matches = reg.exec(value);         \n         if(!matches){\n            //log.debug(\"No matching record\");\n            return value;\n         }\n         var replacement = \"\";\n         for(var i =0 ;i< visible_regex_groups.length;i++){\n           replacement += \"$\"+visible_regex_groups[i] \n           if(i+1 < visible_regex_groups) \n             replacement += \" ### \";\n         }\n         return value.replace(reg, replacement);         \n    }\n    \n    //核心代码\n    selected_fields.forEach(function(fieldName) {\n        var value = record[fieldName];\n        if(!value) return; \n        if(masking_method == \"length\")\n           value = maskByLength(value);\n        else\n           value = maskByRegex(value); \n        record[fieldName] = value;\n    })\n    return record;\n}"
+	},
+	{
+		"id": "",
+		"nodeConfig": {
+			"name": "字符串转数组",
+			"tips": "逗号分割的字段值变为列名",
+			"shapeImage": "static/editor/o-sybase.svg",
+			"stencilImage": "static/editor/sybase.svg"
+		},
+		"formConfig": {
+			"items": [
+				{
+					"type": "field",
+					"field": "field",
+					"label": "选择需要转换的字段",
+					"required": true
+				},
+				{
+					"type": "input",
+					"field": "separator",
+					"label": "输入分割符",
+					"required": true
+				},
+				{
+					"type": "input",
+					"field": "text",
+					"label": "输入新字段名",
+					"required": true
+				}
+			]
+		},
+		"scriptTemplate": "function process(record) {\n    var selected_field  = ${field}; \n    //分隔符\n    var delimiter = ${separator};\n    //字符串输入 \n    var targetFieldName = ${text};\n    \n    // validations\n    if(! targetFieldName || !selected_field) {\n        // report error\n        log.warn(\"Missing processing node configuration\");\n        return record;\n    }    \n\n    //核心代码\n   \n        var value = record[selected_field];\n        if(!value) return record;\n        var values = value.split(delimiter);\n        record[targetFieldName] = values;\n  \n    return record;\n}"
+	},
+	{
+		"id": "",
+		"nodeConfig": {
+			"name": "字段值替换",
+			"tips": "对某个字段的值，使用词典进行替换",
+			"shapeImage": "static/editor/o-sybase.svg",
+			"stencilImage": "static/editor/sybase.svg"
+		},
+		"formConfig": {
+			"items": [
+				{
+					"type": "field",
+					"field": "fields",
+					"label": "选择需要转换的字段",
+					"required": true,
+					"multiple": true,
+					"showAllCheckbox": true
+				},
+				{
+					"type": "array",
+					"field": "mappings",
+					"label": "输入词典信息",
+					"required": true,
+					"itemConfig": {
+						"type": "group",
+						"items": [
+							{ "type": "input" },
+							{ "type": "input" }
+						]
+					}
+				}
+			]
+		},
+		"scriptTemplate": "function process(record) {\n    var selected_field = ${fields}; \n    var mappings=  ${mappings};\n   // validations\n    if(  ! selected_field || !mappings) {\n        // report error\n        log.warn(\"Missing processing node configuration\");\n        return record;\n    }    \n\n    //核心代码\n    var value = record[selected_field];\n    if(!value) return record;\n    for(var i =0; i <mappings.length; i++){\n        var mapping = mappings[i];\n        if(mapping[0] == value){\n            record[selected_field] = mapping[1];\n            break;\n        }          \n    }\n   return record;\n}"
+	}
+]
