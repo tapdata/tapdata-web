@@ -609,6 +609,7 @@ router.beforeEach(async (to, from, next) => {
 				Message.error({
 					message: i18n.t('app.signIn.permission_denied')
 				});
+				next(false);
 				return;
 			}
 		}
