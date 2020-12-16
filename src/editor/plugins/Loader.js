@@ -184,7 +184,9 @@ export const loadPlugins = function(cNodes) {
 				cNodes.forEach(config => {
 					let plugin = _.cloneDeep(plugins[name]);
 					let nodeConfig = config.nodeConfig;
-					plugin.stencil['attrs']['image']['xlinkHref'] = nodeConfig.stencilImage;
+					config.nodeConfig.shapeImage = 'static/editor/o-table-processor.svg';
+					// plugin.stencil['attrs']['image']['xlinkHref'] = nodeConfig.stencilImage;
+					plugin.stencil['attrs']['image']['xlinkHref'] = 'static/editor/table-processor.svg';
 					plugin.stencil['attrs']['label']['text'] = nodeConfig.name;
 					plugin.stencil['attrs']['root']['dataTooltip'] = nodeConfig.tips;
 					addStencil(type, plugin.stencil, null, config);
