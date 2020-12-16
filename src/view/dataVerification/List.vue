@@ -51,7 +51,7 @@
 						<el-select
 							v-model="searchParams.result"
 							size="mini"
-							:placeholder="$t('dataVerification.verifystatus')"
+							:placeholder="$t('dataVerification.result')"
 							@input="search(1)"
 						>
 							<el-option

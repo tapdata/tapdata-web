@@ -244,6 +244,9 @@ export default {
 	watch: {
 		'searchNav.keyword'() {
 			this.handleDataApi();
+		},
+		'searchNav.selectedSeachType'() {
+			this.handleDataApi();
 		}
 	},
 	methods: {

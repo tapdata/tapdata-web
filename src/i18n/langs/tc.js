@@ -1671,6 +1671,8 @@ const tc = {
 		targetTotalRows: '目標總行數',
 		verifyStatus: '校驗狀態',
 		verifystatus: '校驗狀態',
+		result: '校驗結果',
+		completeTime: '完成時間',
 		verifyTime: '校驗時間',
 		operation: '操作',
 		rowVerify: '快速count校驗',
