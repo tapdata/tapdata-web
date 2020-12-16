@@ -301,7 +301,7 @@ export default {
 		return {
 			downLoadAgetntdialog: false, //判断是否安装agent
 			downLoadNum: 0,
-			firstNum: undefined,
+			firstNum: 0,
 			reloadSchemaDialog: false,
 			dialogFormVisible: false,
 			form: {
@@ -367,7 +367,7 @@ export default {
 
 				// 是否允许下载agent
 				if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
-					this.getDataApi();
+					this.getDataApi('firstAgent');
 					if (!this.downLoadNum) {
 						self.timer = setInterval(() => {
 							self.getDataApi();
@@ -428,7 +428,7 @@ export default {
 
 	methods: {
 		// 获取Agent是否安装
-		getDataApi() {
+		getDataApi(type) {
 			let params = {};
 			if (
 				this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
@@ -439,20 +439,19 @@ export default {
 			}
 			cluster.get(params).then(res => {
 				if (res.data) {
-					if (!this.firstNum) {
+					if (type === 'firstAgent') {
 						this.firstNum = res.data.length || 0;
-						this.downLoadNum = 0;
 					}
-					if (this.firstNum) {
-						this.downLoadNum = res.data.length;
-					}
+					this.downLoadNum = res.data.length;
 				}
 			});
 		},
-
+		// 关闭agent下载弹窗返回参数
 		closeAgentDialog() {
 			this.start();
 			this.downLoadAgetntdialog = false;
+			clearInterval(self.timer);
+			this.timer = null;
 		},
 
 		// // 刷新agent

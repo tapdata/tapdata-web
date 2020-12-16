@@ -286,7 +286,7 @@ export default {
 			agentTipFalg: false,
 			timer: '',
 			downLoadNum: 0,
-			firstNum: undefined,
+			firstNum: 0,
 			licenseExpire: '',
 			licenseExpireVisible: false,
 			licenseExpireDate: ''
@@ -314,7 +314,7 @@ export default {
 
 		// 是否允许下载agent
 		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
-			this.getDataApi();
+			this.getDataApi('firstAgent');
 			if (!this.downLoadNum) {
 				self.timer = setInterval(() => {
 					self.getDataApi();
@@ -505,24 +505,28 @@ export default {
 		},
 
 		// 获取Agent是否安装
-		getDataApi() {
+		getDataApi(type) {
+			let that = this;
 			let params = {};
 			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-				params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+				params['filter[where][systemInfo.username][regexp]'] = `^${that.$cookie.get('user_id')}$`;
 			}
 			cluster.get(params).then(res => {
 				if (res.data) {
-					if (!this.firstNum) {
-						this.firstNum = res.data.length || 0;
-						this.downLoadNum = 0;
+					if (type === 'firstAgent') {
+						that.firstNum = res.data.length || 0;
 					}
-					if (this.firstNum) {
-						this.downLoadNum = res.data.length;
-					}
+					// if (!that.firstNum) {
+
+					// 	that.downLoadNum = 0;
+					// }
+					// if (that.firstNum) {
+					that.downLoadNum = res.data.length;
+					// }
 					if (res.data.length > 0) {
-						this.agentTipFalg = false;
+						that.agentTipFalg = false;
 					} else {
-						this.agentTipFalg = true;
+						that.agentTipFalg = true;
 					}
 				}
 			});
@@ -530,6 +534,8 @@ export default {
 		// 关闭agent下载弹窗返回参数
 		closeAgentDialog() {
 			this.downLoadAgetntdialog = false;
+			clearInterval(self.timer);
+			this.timer = null;
 		},
 
 		async getLicense() {

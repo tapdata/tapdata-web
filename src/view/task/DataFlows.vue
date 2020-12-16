@@ -478,7 +478,7 @@ export default {
 			taskSettingsDialog: false, //任务调度设置弹窗开关
 			downLoadAgetntdialog: false, //判断是否安装agent
 			downLoadNum: 0,
-			firstNum: undefined,
+			firstNum: 0,
 			selectedJob: {
 				id: '',
 				oldStatus: '',
@@ -646,7 +646,7 @@ export default {
 		}, 3000);
 
 		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
-			this.getDataApi();
+			this.getDataApi('firstAgent');
 			if (!this.downLoadNum) {
 				self.timer = setInterval(() => {
 					self.getDataApi();
@@ -675,7 +675,7 @@ export default {
 	},
 	methods: {
 		// 获取Agent是否安装
-		getDataApi() {
+		getDataApi(type) {
 			let params = {};
 			if (
 				this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
@@ -686,13 +686,10 @@ export default {
 			}
 			cluster.get(params).then(res => {
 				if (res.data) {
-					if (!this.firstNum) {
+					if (type === 'firstAgent') {
 						this.firstNum = res.data.length || 0;
-						this.downLoadNum = 0;
 					}
-					if (this.firstNum) {
-						this.downLoadNum = res.data.length;
-					}
+					this.downLoadNum = res.data.length;
 				}
 			});
 		},
@@ -707,6 +704,8 @@ export default {
 				);
 			}
 			this.downLoadAgetntdialog = false;
+			clearInterval(self.timer);
+			this.timer = null;
 		},
 		// // 刷新agent
 		// handleRefreAgent() {
