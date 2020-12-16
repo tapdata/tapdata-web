@@ -5,6 +5,7 @@ import db2 from './db2';
 import mongodb from './mongodb';
 import postgres from './postgres';
 import elasticsearch from './elasticsearch';
+import sequoiadb from './sequoiadb';
 
 export default {
 	mysql,
@@ -13,5 +14,6 @@ export default {
 	db2,
 	mongodb,
 	postgres,
-	elasticsearch
+	elasticsearch,
+	sequoiadb
 };
