@@ -1107,31 +1107,31 @@ const en = {
 					}
 				},
 				jointCache: {
-					name: 'Joint Cache',
-					tip: 'Joint Cache Node',
+					name: 'Cache Lookup',
+					tip: 'Cache Lookup Node',
 					form: {
 						name: {
 							label: 'Node Name',
-							placeholder: 'Please input you node name.',
+							placeholder: 'Please input node name.',
 							none: 'Node name is required.'
 						},
 						cacheId: {
-							label: 'Joint cache node',
-							placeholder: 'Choose joint cache node in this job.',
-							none: 'Choose joint cache node in this job.'
+							label: 'Cache lookup node',
+							placeholder: 'Choose MEMORY CACHE node in this job.',
+							none: 'Choose MEMORY CACHE node in this job.'
 						},
 						joinSettings: {
-							label: 'Joint setting',
-							cacheKey: 'Cache node primary key',
+							label: 'Lookup joint setting',
+							cacheKey: 'Memory cache primary key',
 							sourceKey: {
-								label: 'Source joint field',
-								placeholder: 'Choose joint field.'
+								label: 'Source table joint field',
+								placeholder: 'Choose cache joint field.'
 							},
-							none: 'Choose joint field.'
+							none: 'Choose cache joint field.'
 						},
 						joinKey: {
-							label: 'Cache model joint target path',
-							placeholder: 'Enter or create target path field.'
+							label: 'Target path',
+							placeholder: 'Enter or choose target path field.'
 						}
 					}
 				}

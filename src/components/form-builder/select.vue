@@ -27,6 +27,47 @@ export default {
 	render(h) {
 		let self = this;
 		let config = Object.assign(this.defaultConfig, self.config);
+		let options = this.filterList.map(opt => {
+			return h('ElOption', {
+				props: {
+					label: opt.label,
+					value: opt.value
+				},
+				key: opt.key || opt.value
+			});
+		});
+		//当多选时，判断是否显示全选框
+		let checkboxEl = null;
+		if (options.length && config.multiple && config.showAllCheckbox) {
+			checkboxEl = h(
+				'ElOption',
+				{
+					props: { value: '0', disabled: true },
+					style: 'padding: 0 20px;background: #fff;cursor: default;'
+				},
+				[
+					h(
+						'ElCheckbox',
+						{
+							props: { value: this.value.length === this.filterList.length },
+							on: {
+								input: val => {
+									if (val) {
+										this.$emit(
+											'input',
+											this.filterList.map(opt => opt.value)
+										);
+									} else {
+										this.$emit('input', []);
+									}
+								}
+							}
+						},
+						[this.$t('dataFlow.selectAll')]
+					)
+				]
+			);
+		}
 		return h('div', { class: 'fb-select' }, [
 			h(
 				'ElSelect',
@@ -54,15 +95,7 @@ export default {
 					}),
 					ref: 'select'
 				},
-				this.filterList.map(opt => {
-					return h('ElOption', {
-						props: {
-							label: opt.label,
-							value: opt.value
-						},
-						key: opt.key || opt.value
-					});
-				})
+				[checkboxEl, ...options]
 			),
 			h(
 				'div',

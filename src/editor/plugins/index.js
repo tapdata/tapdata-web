@@ -25,3 +25,4 @@ export * from './MemCache/MemCache';
 export * from './logminer/logminer';
 export * from './databaseLink/databaseLink';
 export * from './jointCache/JointCache';
+export * from './customProcessor/CustomProcessor';

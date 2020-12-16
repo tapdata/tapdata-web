@@ -10,7 +10,7 @@ import joint from '../lib/rappid/rappid';
 import * as plugins from './index';
 import { FORM_DATA_KEY } from '../constants';
 
-export const loadPlugins = function() {
+export const loadPlugins = function(cNodes) {
 	const defineShape = (type, shape) => {
 		if (!shape) {
 			return;
@@ -41,7 +41,7 @@ export const loadPlugins = function() {
 		if (!config) return;
 		inspectorConfig[type] = config;
 	};
-	const addStencil = (type, stencil, formData) => {
+	const addStencil = (type, stencil, formData, config) => {
 		if (!stencil) return;
 		let group = stencil.group;
 		if (!stencilConfig.groups[group]) {
@@ -68,7 +68,9 @@ export const loadPlugins = function() {
 				{ ellipsis: true }
 			);
 		}
-
+		if (config) {
+			stencil['config'] = config;
+		}
 		if (formData) {
 			stencil[FORM_DATA_KEY] = formData;
 		}
@@ -78,15 +80,8 @@ export const loadPlugins = function() {
 
 		let replace = false;
 		for (let i = 0; i < stencilConfig.shapes[group].length; i++) {
-			if (stencilConfig.shapes[group][i].type === type && type !== 'app.Database') {
-				stencilConfig.shapes[group][i] = stencil;
-				replace = true;
-				break;
-			}
-			if (
-				type === 'app.Database' &&
-				stencilConfig.shapes[group][i][FORM_DATA_KEY].database_type === formData.database_type
-			) {
+			// if (stencilConfig.shapes[group][i].type === type) {
+			if (stencilConfig.shapes[group][i].attrs.label.text === stencil.attrs.label.text) {
 				stencilConfig.shapes[group][i] = stencil;
 				replace = true;
 				break;
@@ -196,6 +191,17 @@ export const loadPlugins = function() {
 								name: cell.name
 							});
 						}
+					});
+				} else if (type === 'app.CustomProcessor') {
+					cNodes.forEach(config => {
+						let plugin = _.cloneDeep(plugins[name]);
+						let nodeConfig = config.nodeConfig;
+						config.nodeConfig.shapeImage = 'static/editor/o-table-processor.svg';
+						// plugin.stencil['attrs']['image']['xlinkHref'] = nodeConfig.stencilImage;
+						plugin.stencil['attrs']['image']['xlinkHref'] = 'static/editor/table-processor.svg';
+						plugin.stencil['attrs']['label']['text'] = nodeConfig.name;
+						plugin.stencil['attrs']['root']['dataTooltip'] = nodeConfig.tips;
+						addStencil(type, plugin.stencil, null, config);
 					});
 				} else {
 					addStencil(type, plugin.stencil);

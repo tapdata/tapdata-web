@@ -1,18 +1,17 @@
 import { options } from '../../lib/rappid/config';
-import JointCacheAttribute from './JointCacheAttribute';
+import Form from './Form';
 import { FORM_DATA_KEY } from '../../constants';
-import log from '../../../log';
-import i18n from '../../../i18n/i18n';
+// import i18n from '../../../i18n/i18n';
 
-export const jointCacheConfig = {
-	type: 'app.JointCache',
+export const customProcessorConfig = {
+	type: 'app.CustomProcessor',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
 			size: { width: 120, height: 28 },
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/o-jc.svg',
+					xlinkHref: 'static/editor/o-js.svg',
 					refWidth: '25%',
 					refHeight: '84%',
 					refX: '-8%',
@@ -23,12 +22,12 @@ export const jointCacheConfig = {
 					ry: 14
 				},
 				label: {
-					text: i18n.t('editor.cell.processor.jointCache.name')
+					text: ''
 				}
 			},
+
 			[FORM_DATA_KEY]: {
-				type: 'cache_lookup_processor',
-				script: ''
+				type: 'custom_processor'
 			}
 		},
 		prototypeProperties: {
@@ -38,28 +37,18 @@ export const jointCacheConfig = {
 					selector: 'portLabel'
 				}
 			],
-			initialize() {
-				this.on('change:' + FORM_DATA_KEY, () => {
-					this.updateOutputSchema();
-				});
-			},
-
-			validate: function(data) {
-				data = data || this.getFormData();
-				let name = this.attr('label/text');
-				log('JointCache Formdata');
-				if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`);
-				if (!data.name)
-					throw new Error(`${name}: ${i18n.t('editor.cell.processor.jointCache.form.name.none')}`);
-				if (!data.cacheId)
-					throw new Error(`${name}: ${i18n.t('editor.cell.processor.jointCache.form.cacheId.none')}`);
-				if (!data.joinSettings.length || data.joinSettings.some(it => !it.sourceKey))
-					throw new Error(`${name}: ${i18n.t('editor.cell.processor.jointCache.form.joinSettings.none')}`);
-				return true;
-			},
-
 			isProcess() {
 				return true;
+			},
+
+			/**
+			 * validate user-filled data
+			 * @param data
+			 *
+			 */
+			validate: function(data) {
+				data = data || this.getFormData();
+				return data.isValid;
 			},
 
 			/**
@@ -200,7 +189,7 @@ export const jointCacheConfig = {
 		size: { width: 5, height: 4 },
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.processor.field.tip'),
+				dataTooltip: '',
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -213,14 +202,14 @@ export const jointCacheConfig = {
 				strokeDasharray: '0'
 			},
 			image: {
-				xlinkHref: 'static/editor/jc.svg',
+				xlinkHref: 'static/editor/js.svg',
 				refWidth: '60%',
 				refHeight: '60%',
 				refX: '2%',
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.processor.jointCache.name'),
+				text: '',
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
@@ -240,6 +229,6 @@ export const jointCacheConfig = {
 	 * @type {null}
 	 */
 	settingFormConfig: {
-		component: JointCacheAttribute
+		component: Form
 	}
 };
