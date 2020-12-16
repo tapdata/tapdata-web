@@ -1422,6 +1422,7 @@ const cn = {
 			databaseOwner: '数据库归属账户名',
 			timeZone: '时间类型的时区',
 			ReloadSchema: '定期加载schema',
+			clusterName: '集群名称',
 			databaseHostPlaceholder: '数据库地址(127.0.0.1/Domain:{端口},多个地址请用,分开)',
 
 			uriTips: {

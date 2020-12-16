@@ -65,6 +65,7 @@ export default function(vm) {
 				type: 'switch',
 				field: 'isUrl',
 				label: vm.$t('dataForm.form.isUrl'),
+				disabled: false,
 				on: {
 					change() {
 						vm.checkItems();
@@ -116,8 +117,7 @@ export default function(vm) {
 				field: 'database_username',
 				label: vm.$t('dataForm.form.userName'),
 				showByUrl: 2,
-				show: false,
-				required: true
+				show: false
 			},
 			{
 				type: 'input',

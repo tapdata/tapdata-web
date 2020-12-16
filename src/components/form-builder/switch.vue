@@ -14,7 +14,8 @@ export default {
 		let self = this;
 		return h('ElSwitch', {
 			props: {
-				value: self.value
+				value: self.value,
+				disabled: self.config.disabled
 			},
 			on: this.on
 		});

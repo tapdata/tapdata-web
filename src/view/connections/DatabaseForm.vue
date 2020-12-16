@@ -1,7 +1,7 @@
 <template>
 	<div class="databaseFrom">
 		<header class="header">
-			{{ $route.params.id ? $t('connection.editDataSource') : $t('connection.createNewDataSource') }}
+			{{ $route.params.id ? $t('connection.createNewDataSource') : $t('connection.editDataSource') }}
 		</header>
 		<div class="databaseFrom-body">
 			<main class="databaseFrom-main">
@@ -91,7 +91,8 @@ export default {
 			checkItems: null,
 			databaseType: '',
 			typeMap: TYPEMAP,
-			dialogTestVisible: false
+			dialogTestVisible: false,
+			timer: null
 		};
 	},
 	created() {
@@ -110,11 +111,21 @@ export default {
 			}
 		];
 	},
+	destroyed() {
+		// 清除定时器
+		clearInterval(this.timer);
+		this.timer = null;
+	},
 	methods: {
 		getImgByType,
 		async initData(data) {
+			let editData = null;
 			if (this.$route.query.id) {
-				let editData = await this.$api('connections').get([this.$route.query.id]);
+				if (this.model.database_type === 'mongodb') {
+					editData = await this.$api('connections').customQuery([this.$route.query.id]);
+				} else {
+					editData = await this.$api('connections').get([this.$route.query.id]);
+				}
 				this.model = Object.assign(this.model, editData.data);
 			} else this.model = Object.assign(this.model, data, { name: this.model.name });
 		},
@@ -165,6 +176,11 @@ export default {
 				if (item) {
 					item.options = this.timezones;
 				}
+				let itemIsUrl = items.find(it => it.field === 'isUrl');
+				if (this.model.database_type === 'mongodb' && this.$route.query.id && itemIsUrl) {
+					itemIsUrl.disabled = true;
+					this.model.isUrl = false;
+				}
 				this.config.form = config.form;
 				this.config.items = items;
 				this.initData(
@@ -192,9 +208,19 @@ export default {
 			}
 			if (result.data) {
 				const data = result.data;
-				let validate_details = data.response_body && data.response_body.validate_details;
-				this.testLogs = validate_details;
-				this.testResult = data.status;
+				if (data.status === 'ready') {
+					let validate_details = data.response_body && data.response_body.validate_details;
+					this.testLogs = validate_details;
+					this.testResult = data.status;
+				} else if (data.status === 'invalid') {
+					let validate_details = data.response_body && data.response_body.validate_details;
+					this.testLogs = validate_details;
+					this.testResult = data.status;
+				} else {
+					this.timer = setInterval(() => {
+						this.test(id);
+					}, 300);
+				}
 			}
 		},
 		submit() {
@@ -216,11 +242,11 @@ export default {
 					}
 					delete params.sslKeyFile;
 					delete params.sslCAFile;
-					if (params.database_type === 'mongodb' || params.database_type === 'sequoia') {
+					if (params.database_type === 'mongodb') {
 						params.fill = params.isUrl ? 'uri' : '';
 						delete params.isUrl;
 					}
-					connectionsModel[this.model.id ? 'patch' : 'post'](params)
+					connectionsModel[this.model.id ? 'patchId' : 'post'](params)
 						.then(res => {
 							let id = res.data.id;
 							this.model.id = id;

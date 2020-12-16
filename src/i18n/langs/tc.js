@@ -1420,6 +1420,7 @@ const tc = {
 			databaseOwner: '數據庫歸屬帳戶名',
 			timeZone: '時間類型的時區',
 			ReloadSchema: '定期加載schema',
+			clusterName: '集群名稱',
 			databaseHostPlaceholder: '資料庫地址（127.0.0.1/Domain:{端口}，多個地址請用，分開）',
 
 			uriTips: {

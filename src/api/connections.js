@@ -29,4 +29,10 @@ export default class Connections extends PublicAPI {
 	check(id, params) {
 		return axios.patch(`${this.url}/${id}`, params);
 	}
+	patchId(params) {
+		let id = params._id || params.id;
+		delete params._id;
+		delete params.id;
+		return axios.patch(`${this.url}/${id}`, params);
+	}
 }

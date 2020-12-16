@@ -461,7 +461,7 @@ export default {
 			}
 			status && (where.status = status);
 			let filter = {
-				order: 'name DESC',
+				order: 'createTime DESC',
 				limit: size,
 				fields: fields,
 				skip: (currentPage - 1) * size,
@@ -534,7 +534,13 @@ export default {
 			this.previewVisible = false;
 		},
 		edit(id, type) {
-			this.$router.push('connections/create?id=' + id + '&databaseType=' + type);
+			if (
+				['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis', 'db2'].includes(type)
+			) {
+				this.$router.push('connections/create?id=' + id + '&databaseType=' + type);
+			} else {
+				top.location.href = '/#/connection/' + id;
+			}
 		},
 		copy(data) {
 			let headersName = { 'lconname-name': data.name };
@@ -681,17 +687,7 @@ export default {
 		handleDatabaseType(type) {
 			this.handleDialogDatabaseTypeVisible();
 			if (
-				[
-					'mysql',
-					'oracle',
-					'mongodb',
-					'sqlserver',
-					'postgres',
-					'elasticsearch',
-					'redis',
-					'db2',
-					'sequoiadb'
-				].includes(type)
+				['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis', 'db2'].includes(type)
 			) {
 				this.$router.push('connections/create?databaseType=' + type);
 			} else {

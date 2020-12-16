@@ -1442,6 +1442,7 @@ const en = {
 			databaseOwner: 'Database Owner',
 			timeZone: 'Date Type Timezone',
 			ReloadSchema: 'Reload schema periodically',
+			clusterName: 'Cluster Name',
 			databaseHostPlaceholder: 'Database Host(127.0.0.1/Domain:{Port},Please use multiple addresses , separate)',
 
 			uriTips: {
