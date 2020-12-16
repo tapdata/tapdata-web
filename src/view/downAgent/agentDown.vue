@@ -82,14 +82,19 @@
 					<i class="el-icon-loading" v-if="refreshLoading"></i>
 					{{ $t('dialog.downAgent.refresh') }}</el-button
 				> -->
-				<el-button size="mini" class="install">
+				<el-button size="mini" class="install" v-if="lastDataNum >= downLoadNum">
 					{{ $t('dialog.downAgent.waitingInstall') }}
 					<el-image style="width: 32px; height: 15px;" src="static/editor/wating.svg"></el-image>
 				</el-button>
 			</span>
 		</el-dialog>
 
-		<el-dialog :visible.sync="installSuccessDialog" :close-on-click-modal="false" width="40%">
+		<el-dialog
+			:visible.sync="installSuccessDialog"
+			:close-on-click-modal="false"
+			@close="closeSuccessDialog"
+			width="40%"
+		>
 			<div class="success-main">
 				<i class="el-icon-success"></i>
 				<p>
@@ -108,20 +113,13 @@
 					<i class="el-icon-loading" v-else></i>
 					{{ $t('dialog.downAgent.refresh') }}
 				</span> -->
-				<el-button
-					class="e-button"
-					type="primary"
-					size="mini"
-					@click="
-						installSuccessDialog = false;
-						dialogVisible = false;
-					"
-					>{{ $t('dialog.downAgent.ok') }}</el-button
-				>
+				<el-button class="e-button" type="primary" size="mini" @click="closeSuccessDialog">{{
+					$t('dialog.downAgent.ok')
+				}}</el-button>
 			</span>
 		</el-dialog>
 
-		<el-dialog :visible.sync="startUpTaskDialog" :close-on-click-modal="false" width="40%">
+		<el-dialog :visible.sync="startUpTaskDialog" :close-on-click-modal="false" width="40%" @close="closeTaskDialog">
 			<div class="success-main">
 				<i class="el-icon-success"></i>
 				<p>
@@ -135,16 +133,9 @@
 				</p> -->
 			</div>
 			<span slot="footer" class="dialog-footer">
-				<el-button
-					class="e-button"
-					type="primary"
-					size="mini"
-					@click="
-						startUpTaskDialog = false;
-						dialogVisible = false;
-					"
-					>{{ $t('dialog.downAgent.ok') }}</el-button
-				>
+				<el-button class="e-button" type="primary" size="mini" @click="closeTaskDialog">{{
+					$t('dialog.downAgent.ok')
+				}}</el-button>
 			</span>
 		</el-dialog>
 	</div>
@@ -236,6 +227,18 @@ export default {
 		// 关闭agent弹窗回调
 		closeDownAgent() {
 			this.$emit('closeAgentDialog');
+		},
+
+		// 关闭下载成功弹窗
+		closeSuccessDialog() {
+			this.installSuccessDialog = false;
+			this.dialogVisible = false;
+		},
+
+		// 关闭任务弹窗
+		closeTaskDialog() {
+			this.startUpTaskDialog = false;
+			this.dialogVisible = false;
 		},
 
 		// 页面跳转

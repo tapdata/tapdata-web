@@ -1703,6 +1703,8 @@ const en = {
 		targetTotalRows: 'Target Total Rows',
 		verifyStatus: 'Verify Status',
 		verifystatus: 'Verify status',
+		result: 'Verification result',
+		completeTime: 'Completion time',
 		verifyTime: 'Verify Time',
 		operation: 'Operation',
 		rowVerify: 'Row verify',

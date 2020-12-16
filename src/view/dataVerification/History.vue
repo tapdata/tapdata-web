@@ -9,10 +9,21 @@
 			</div>
 			<div class="title">{{ name }}</div>
 			<div class="table-wrap">
-				<el-table :data="page.data" height="100%" class="dv-table" border @row-click="rowClick">
+				<el-table :data="page.data" height="100%" class="dv-table" border @selection-change="selectHandler">
 					<el-table-column :label="$t('dataVerification.verifyTime')" prop="createTime">
 						<template slot-scope="scope">
 							{{ $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss') }}
+						</template>
+					</el-table-column>
+					<el-table-column :label="$t('dataVerification.completeTime')" align="center" width="180">
+						<template slot-scope="scope">
+							<span>
+								{{
+									scope.row.last_updated
+										? $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss')
+										: ''
+								}}
+							</span>
 						</template>
 					</el-table-column>
 					<el-table-column

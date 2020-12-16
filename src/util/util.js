@@ -25,7 +25,7 @@ export function signOut() {
 	cookie.delete('email');
 	cookie.delete('username');
 	cookie.delete('isReadonly');
-	window.location.href = '/#/login';
+	window.App.$router.push('/login');
 }
 
 export function toRegExp(s) {
