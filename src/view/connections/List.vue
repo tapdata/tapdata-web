@@ -123,7 +123,6 @@
 			</div>
 			<div class="connections-list" v-loading="restLoading">
 				<el-table
-					v-loading="restLoading"
 					:element-loading-text="$t('dataFlow.dataLoading')"
 					:data="tableData"
 					height="100%"
@@ -426,7 +425,8 @@ export default {
 			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
 				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
 			//精准搜索 iModel
-			if (keyword && keyword.trim() && iModel === 'fuzzy') {
+			keyword = keyword ? keyword.trim() : '';
+			if (keyword && iModel === 'fuzzy') {
 				let word = verify(keyword);
 				where.or = [
 					{
@@ -439,16 +439,16 @@ export default {
 						database_host: { like: toRegExp(word), options: 'i' }
 					}
 				];
-			} else if (keyword && keyword.trim() && iModel === 'precise') {
+			} else if (keyword && iModel === 'precise') {
 				where.or = [
 					{
-						name: { like: keyword }
+						name: keyword
 					},
 					{
-						database_uri: { like: keyword }
+						database_uri: keyword
 					},
 					{
-						database_host: { like: keyword }
+						database_host: keyword
 					}
 				];
 			}

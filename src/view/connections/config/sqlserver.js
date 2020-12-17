@@ -30,7 +30,7 @@ export default function(vm) {
 							let port = vm.model['database_port'];
 							if (!value || !value.trim()) {
 								callback(new Error(vm.$t('dataForm.error.noneHost')));
-							} else if (!port || !port.trim()) {
+							} else if (!port) {
 								callback(new Error(vm.$t('dataForm.error.nonePort')));
 							} else if (!/\d+/.test(port)) {
 								callback(new Error(vm.$t('dataForm.error.portNumber')));

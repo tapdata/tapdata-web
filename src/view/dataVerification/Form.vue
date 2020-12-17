@@ -593,6 +593,17 @@ export default {
 					if (targetStage) {
 						task.target = this.setTable(targetStage);
 						task.targetTable = [targetStage.connectionId, targetStage.tableName];
+						let joinTable = targetStage.joinTables.find(ts => ts.stageId === stg.id);
+						if (joinTable) {
+							let sourceSortColumn = [];
+							let targetSortColumn = [];
+							joinTable.joinKeys.forEach(obj => {
+								sourceSortColumn.push(obj.source);
+								targetSortColumn.push(obj.target);
+							});
+							task.source.sortColumn = sourceSortColumn.join(',');
+							task.target.sortColumn = targetSortColumn.join(',');
+						}
 					}
 					this.form.tasks.push(task);
 				});

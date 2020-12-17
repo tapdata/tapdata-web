@@ -5,9 +5,7 @@ export default function(vm) {
 			labelWidth: '200px'
 		},
 		defaultModel: {
-			connection_type: 'target',
-			thin_type: 'SID',
-			supportUpdatePk: false
+			connection_type: 'target'
 		},
 		items: [
 			{
@@ -30,7 +28,7 @@ export default function(vm) {
 								callback(new Error(vm.$t('dataForm.error.noneHost')));
 							} else if (!port) {
 								callback(new Error(vm.$t('dataForm.error.nonePort')));
-							} else if (!/\d+/.test(port)) {
+							} else if (!/^(0|\+?[1-9][0-9]*)$/.test(port)) {
 								callback(new Error(vm.$t('dataForm.error.portNumber')));
 							} else if (port < 1 || port > 65535) {
 								callback(new Error(vm.$t('dataForm.error.portRange')));
@@ -64,13 +62,15 @@ export default function(vm) {
 			},
 			{
 				type: 'input',
-				field: 'clusterName',
-				label: vm.$t('dataForm.form.clusterName')
+				field: 'database_username',
+				label: vm.$t('dataForm.form.userName')
 			},
 			{
-				type: 'switch',
-				field: 'schemaAutoUpdate',
-				label: vm.$t('dataForm.form.ReloadSchema')
+				type: 'input',
+				field: 'plain_password',
+				label: vm.$t('dataForm.form.password'),
+				domType: 'password',
+				showPassword: true
 			}
 		]
 	};

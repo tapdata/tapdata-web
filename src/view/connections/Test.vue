@@ -69,6 +69,7 @@ export default {
 		},
 		handleProgress() {
 			let count = 0;
+			this.testLogs = this.testLogs || [];
 			this.testLogs.forEach(log => {
 				if (log.status === 'passed') {
 					count++;
@@ -76,15 +77,6 @@ export default {
 			});
 			let len = (100 / this.testLogs.length) * count;
 			this.progress = Math.round(len);
-
-			switch (this.testResult) {
-				case 'ready':
-					return (this.testResult = 'success');
-				case 'invalid':
-					return (this.testResult = 'warning');
-				default:
-					return (this.testResult = 'exception');
-			}
 		}
 	}
 };
