@@ -9,9 +9,7 @@
 				<div class="title">{{ $t('app.customerService.technicalSupport') }}</div>
 				<div class="content">
 					<span>{{ $t('app.customerService.technicalSupportText') }}</span>
-					<a class="btn" target="_blank" href="https://tapdata.net/forums/forum/user-support/">
 						{{ $t('app.customerService.userSupport') }}
-					</a>
 					<span>{{ $t('app.customerService.technicalSupportText1') }}</span>
 				</div>
 			</div>

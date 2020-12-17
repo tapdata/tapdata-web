@@ -65,9 +65,9 @@ const cn = {
 		save: '保存',
 		customerService: {
 			technicalSupport: '技术支持',
-			technicalSupportText: '在使用过程中，有任何问题，请在',
-			technicalSupportText1: '留言，（用户支持的账户和密码，与cloud.tapdata.net中的相同），我们会尽快答复。',
-			userSupport: '用户支持',
+			technicalSupportText: '在使用过程中，有任何问题，请发送邮件到',
+			technicalSupportText1: '，我们会尽快答复。',
+			userSupport: 'team@tapdata.io',
 			otherDmands: '其他需求',
 			otherDmandsText: '其他需求，请扫描下方企业微信二维码。'
 		},
