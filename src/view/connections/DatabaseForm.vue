@@ -265,7 +265,11 @@ export default {
 						})
 						.catch(err => {
 							if (err && err.response.status === 500) {
-								this.$message.error(this.$t('dataForm.error.connectionNameExist'));
+								if (err.response.msg.indexOf('duplication for names') > -1) {
+									this.$message.error(this.$t('dataForm.error.connectionNameExist'));
+								} else {
+									this.$message.error(err.response.msg);
+								}
 							} else {
 								this.$message.error(this.$t('dataForm.saveFail'));
 							}
