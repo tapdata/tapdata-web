@@ -12,6 +12,7 @@
 
 - ##### 传输限制
 Tapdata系统当前版本Redis仅支持作为目标，支持的数据源的类型为：Oracle、MySQL、MongoDB、PostgreSQL、SQL Server。
+
 源端 | 目标端|支持情况
 | :-----------: | :-----------:|:-----------:|
 Oracle | Elastic Search |支持
