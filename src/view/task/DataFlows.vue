@@ -858,7 +858,7 @@ export default {
 
 		handleImport() {
 			let routeUrl = this.$router.resolve({
-				path: '/upload'
+				path: '/upload?type=dataflow'
 			});
 			window.open(routeUrl.href, '_blank');
 		},
