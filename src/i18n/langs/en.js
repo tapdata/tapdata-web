@@ -1466,6 +1466,7 @@ const en = {
 		},
 		error: {
 			connectionNameExist: 'Connection name already existed.',
+			connectionurl: 'Connection name already existed.',
 			noneHost: 'Database host is required.',
 			nonePort: 'Port is required.',
 			portNumber: 'Must be number.',

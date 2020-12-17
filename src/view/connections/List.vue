@@ -145,7 +145,7 @@
 					<el-table-column prop="database_host" :label="$t('connection.dataBaseHost')"></el-table-column>
 					<el-table-column
 						prop="connection_type"
-						:label="$t('connection.dataBaseType')"
+						:label="$t('connection.connectionType')"
 						:formatter="formatterConnectionType"
 						width="180"
 					></el-table-column>
@@ -197,16 +197,6 @@
 							>
 								<el-button type="text" @click="edit(scope.row.id, scope.row.database_type)">
 									<i class="iconfont task-list-icon icon-ceshishenqing"></i>
-								</el-button>
-							</el-tooltip>
-							<el-tooltip
-								class="item"
-								v-readonlybtn="'datasource_edition'"
-								:content="$t('message.test')"
-								placement="bottom"
-							>
-								<el-button type="text" @click="test(scope.row.id, scope.row.database_type)">
-									<i class="iconfont task-list-icon icon-lianjie1"></i>
 								</el-button>
 							</el-tooltip>
 							<el-tooltip
@@ -333,7 +323,8 @@ export default {
 			],
 			databaseTypeOptions: [],
 			searchParams: this.$store.state.connections,
-			timer: ''
+			timer: '',
+			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
 		};
 	},
 	created() {
@@ -359,7 +350,14 @@ export default {
 		},
 		//筛选条件
 		async getDatabaseType() {
-			let databaseTypes = await this.$api('DatabaseTypes').get();
+			let filter = {
+				where: {
+					type: {
+						in: this.allowDataType
+					}
+				}
+			};
+			let databaseTypes = await this.$api('DatabaseTypes').get({ filter: JSON.stringify(filter) });
 			databaseTypes.data.forEach(dt => this.databaseTypeOptions.push(dt));
 		},
 		keyup() {
@@ -452,6 +450,9 @@ export default {
 					}
 				];
 			}
+			where.database_type = {
+				in: this.allowDataType
+			};
 			databaseType && (where.database_type = databaseType);
 			databaseModel && (where.connection_type = databaseModel);
 			if (this.checkedTags && this.checkedTags.length) {
@@ -513,18 +514,6 @@ export default {
 				() => {},
 				config
 			);
-		},
-		async test(id, type) {
-			let result = null;
-			if (type === 'mongodb') {
-				result = await this.$api('connections').customQuery([id]);
-			} else {
-				result = await this.$api('connections').get([id]);
-			}
-			if (result.data) {
-				this.$message.success(this.$t('connection.testMsg'));
-				this.search(this.page.current);
-			}
 		},
 		preview(id) {
 			this.id = id;

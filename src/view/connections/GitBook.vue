@@ -29,12 +29,14 @@ export default {
 	background-color: rgba(250, 250, 250, 100);
 	border: 1px solid rgba(222, 222, 228, 100);
 	border-bottom: none;
+	font-family: 'element-icons';
 	h1,
 	h2,
 	h3,
 	h4 {
 		color: #111111;
 		font-weight: 400;
+		font-family: 'element-icons';
 	}
 	h1,
 	h2,
@@ -42,6 +44,7 @@ export default {
 	h4,
 	h5 {
 		font-family: Georgia, Palatino, serif;
+		font-family: 'element-icons';
 	}
 	h1,
 	h2,
@@ -52,31 +55,38 @@ export default {
 	dl {
 		margin-bottom: 16px;
 		padding: 0;
+		font-family: 'element-icons';
 	}
 	h1 {
 		font-size: 48px;
 		line-height: 54px;
+		font-family: 'element-icons';
 	}
 	h2 {
 		font-size: 36px;
 		line-height: 42px;
+		font-family: 'element-icons';
 	}
 	h1,
 	h2 {
 		border-bottom: 1px solid #efeaea;
 		padding-bottom: 10px;
+		font-family: 'element-icons';
 	}
 	h3 {
 		font-size: 24px;
 		line-height: 30px;
+		font-family: 'element-icons';
 	}
 	h4 {
 		font-size: 21px;
 		line-height: 26px;
+		font-family: 'element-icons';
 	}
 	h5 {
 		font-size: 18px;
 		list-style: 23px;
+		font-family: 'element-icons';
 	}
 	a {
 		color: #0099ff;
@@ -96,6 +106,7 @@ export default {
 		padding: 0;
 		padding-left: 24px;
 		margin: 0;
+		font-family: 'element-icons';
 	}
 	li {
 		line-height: 24px;
@@ -140,6 +151,7 @@ export default {
 		overflow: auto;
 		padding: 6px 10px;
 		border-left: 5px solid #6ce26c;
+		font-family: 'element-icons';
 	}
 
 	pre > code {

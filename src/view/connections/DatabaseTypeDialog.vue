@@ -6,7 +6,7 @@
 		:before-close="handleClose"
 	>
 		<div class="database">
-			<span class="title">Database</span>
+			<span class="title" v-if="database && database.length > 0">Database</span>
 			<ul class="item clearfix">
 				<li v-for="item in database" :key="item" @click="databaseType(item)">
 					<div class="img-box">
@@ -15,7 +15,7 @@
 					<div class="content">{{ typeMap[item] }}</div>
 				</li>
 			</ul>
-			<span class="title">Other Type</span>
+			<span class="title" v-if="otherType && otherType.length > 0">Other Type</span>
 			<ul class="item clearfix">
 				<li v-for="item in otherType" :key="item" @click="databaseType(item)">
 					<div class="img-box">
@@ -57,6 +57,11 @@ export default {
 			typeMap: TYPEMAP
 		};
 	},
+	created() {
+		let allowDataType = window.getSettingByKey('ALLOW_CONNECTION_TYPE') || [];
+		this.database = allowDataType.filter(type => this.database.includes(type)) || [];
+		this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || [];
+	},
 	methods: {
 		getImgByType,
 		handleClose() {
@@ -74,6 +79,8 @@ export default {
 	.title {
 		color: #999;
 		margin-left: 20px;
+		margin-bottom: 20px;
+		display: inline-block;
 	}
 	.item {
 		li {
@@ -106,7 +113,7 @@ export default {
 	.clearfix:before,
 	.clearfix:after {
 		display: table;
-		content: '.';
+		content: '';
 	}
 
 	.clearfix:after {
