@@ -1,13 +1,13 @@
-## **连接配置帮助**
+### **连接配置帮助**
 
-### **1. ORACLE 安装说明**
+##### **1. ORACLE 安装说明**
 
 请遵循以下说明以确保在 Tapdata 中成功添加和使用Oracle数据库，注意：Oracle 实时同步基于Oracle Redo Log，因此需要提前执行某些配置。
 
 
 
-### 2. **先决条件（作为源）**
-#### 2.1 **开启 LogMiner**
+##### 2. **先决条件（作为源）**
+###### 2.1 **开启 LogMiner**
 - 以具有 DBA 权限的用户身份登录数据库
 - 查看数据库的 logging mode :`select log_mode from v$database;`
 - 如果返回的结果是 ARCHIVELOG , 您可以直接跳到 开启 Supplemental Logging
@@ -21,7 +21,7 @@ alter database archivelog;
 alter database open;
 ```
 
-#### 2.2 **开启 Supplemental Logging**
+###### 2.2 **开启 Supplemental Logging**
 ##### Oracle 9i
 ```
 ALTER DATABASE ADD SUPPLEMENTAL LOG DATA (PRIMARY KEY) COLUMNS;

@@ -358,4 +358,9 @@ export default {
 	}
 	margin-bottom: 16px;
 }
+.databaseFrom .el-form--label-right .el-form-item {
+	.el-form-item__label {
+		display: inline-block;
+	}
+}
 </style>

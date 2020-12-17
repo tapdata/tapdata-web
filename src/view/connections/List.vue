@@ -202,16 +202,6 @@
 							<el-tooltip
 								class="item"
 								v-readonlybtn="'datasource_edition'"
-								:content="$t('message.test')"
-								placement="bottom"
-							>
-								<el-button type="text" @click="test(scope.row.id, scope.row.database_type)">
-									<i class="iconfont task-list-icon icon-lianjie1"></i>
-								</el-button>
-							</el-tooltip>
-							<el-tooltip
-								class="item"
-								v-readonlybtn="'datasource_edition'"
 								:content="$t('message.reload')"
 								placement="bottom"
 							>
@@ -513,18 +503,6 @@ export default {
 				() => {},
 				config
 			);
-		},
-		async test(id, type) {
-			let result = null;
-			if (type === 'mongodb') {
-				result = await this.$api('connections').customQuery([id]);
-			} else {
-				result = await this.$api('connections').get([id]);
-			}
-			if (result.data) {
-				this.$message.success(this.$t('connection.testMsg'));
-				this.search(this.page.current);
-			}
 		},
 		preview(id) {
 			this.id = id;

@@ -1,14 +1,14 @@
-# **连接配置帮助**
+#### **连接配置帮助**
 
-### **1. MYSQL 安装说明**
+##### **1. MYSQL 安装说明**
 
 请遵循以下说明以确保在 Tapdata 中成功添加和使用MySQL数据库。
 
-### 2. 支持版本
+##### 2. 支持版本
 MySQL 5.0、5.1、5.5、5.6、5.7、8.x、
 
-### 3. **先决条件（作为源）**
-#### 3.1 **开启 Binlog**
+##### 3. **先决条件（作为源）**
+##### 3.1 **开启 Binlog**
 - 必须开启 MySQL 的 binlog ，Tapdata 才能正常完成同步工作。
 - 级连删除（CASCADE DELETE），这类由数据库产生的删除不会记录在binlog内，所以不被支持。
 修改 `$MYSQL_HOME/mysql.cnf `, 例如:
@@ -25,7 +25,7 @@ binlog_format：必须设置为 row 或者 ROW
 expire_logs_days：二进制日志文件保留的天数，到期会自动删除。
 log_bin：binlog 序列文件的基本名称
 
-#### 3.2 **重启 MySQL**
+###### 3.2 **重启 MySQL**
 
 ```
 /etc/inint.d/mysqld restart
@@ -36,10 +36,10 @@ show variables like 'binlog_format';
 ```
 输出的结果中，format value 应该是"ROW"
 
-#### 3.3 创建MySQL账号
+##### 3.3 创建MySQL账号
 Mysql8以后，对密码加密的方式不同，请注意使用对应版本的方式，设置密码，否则会导致无法进行增量同步
 使用以下命令，确认 supplemental logging 是否开启
-##### 5.x版本
+###### 5.x版本
 ```
 create user 'username'@'localhost' identified by 'password';
 ```
@@ -53,7 +53,7 @@ alter user 'username'@'localhost' identified with mysql_native_password by 'pass
 
 ```
 
-#### 3.4 给 tapdata 账号授权
+###### 3.4 给 tapdata 账号授权
 对于某个数据库赋于select权限
 ```
 GRANT SELECT, SHOW VIEW, CREATE ROUTINE, LOCK TABLES ON <DATABASE_NAME>.<TABLE_NAME> TO 'tapdata' IDENTIFIED BY 'password';
@@ -62,7 +62,7 @@ GRANT SELECT, SHOW VIEW, CREATE ROUTINE, LOCK TABLES ON <DATABASE_NAME>.<TABLE_N
 ```
 GRANT RELOAD, SHOW DATABASES, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'tapdata' IDENTIFIED BY 'password';
 ```
-### 4. **先决条件（作为目标）**
+#####  4. **先决条件（作为目标）**
 对于某个数据库赋于全部权限
 ```
 GRANT ALL PRIVILEGES ON <DATABASE_NAME>.<TABLE_NAME> TO 'tapdata' IDENTIFIED BY 'password';
@@ -71,7 +71,7 @@ GRANT ALL PRIVILEGES ON <DATABASE_NAME>.<TABLE_NAME> TO 'tapdata' IDENTIFIED BY 
 ```
 GRANT PROCESS ON *.* TO 'tapdata' IDENTIFIED BY 'password';
 ```
-### 5. 常见错误
+#####  5. 常见错误
 
 Unknown error 1044
 
