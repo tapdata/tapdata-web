@@ -145,7 +145,7 @@
 					<el-table-column prop="database_host" :label="$t('connection.dataBaseHost')"></el-table-column>
 					<el-table-column
 						prop="connection_type"
-						:label="$t('connection.dataBaseType')"
+						:label="$t('connection.connectionType')"
 						:formatter="formatterConnectionType"
 						width="180"
 					></el-table-column>
@@ -323,7 +323,8 @@ export default {
 			],
 			databaseTypeOptions: [],
 			searchParams: this.$store.state.connections,
-			timer: ''
+			timer: '',
+			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
 		};
 	},
 	created() {
@@ -349,7 +350,14 @@ export default {
 		},
 		//筛选条件
 		async getDatabaseType() {
-			let databaseTypes = await this.$api('DatabaseTypes').get();
+			let filter = {
+				where: {
+					type: {
+						in: this.allowDataType
+					}
+				}
+			};
+			let databaseTypes = await this.$api('DatabaseTypes').get({ filter: JSON.stringify(filter) });
 			databaseTypes.data.forEach(dt => this.databaseTypeOptions.push(dt));
 		},
 		keyup() {
@@ -442,6 +450,9 @@ export default {
 					}
 				];
 			}
+			where.database_type = {
+				in: this.allowDataType
+			};
 			databaseType && (where.database_type = databaseType);
 			databaseModel && (where.connection_type = databaseModel);
 			if (this.checkedTags && this.checkedTags.length) {
