@@ -5,6 +5,9 @@
 		width="770px"
 		:show-close="false"
 		append-to-body
+		:before-close="handleClose"
+		:close-on-click-modal="false"
+		:close-on-press-escape="false"
 	>
 		<el-progress
 			type="line"
@@ -15,8 +18,8 @@
 			:status="testResult"
 		></el-progress>
 		<el-table :data="testLogs" style="width: 100%" class="test-block">
-			<el-table-column prop="show_msg" label="检测项" width="250"> </el-table-column>
-			<el-table-column prop="status" label="检测结果" width="100">
+			<el-table-column prop="show_msg" label="Test" width="250"> </el-table-column>
+			<el-table-column prop="status" label="Result" width="100">
 				<template slot-scope="scope">
 					<span :style="`color: ${colorMap[scope.row.status]};`">{{ scope.row.status }}</span>
 				</template>
@@ -42,7 +45,6 @@ export default {
 			value: Boolean
 		},
 		testResult: {
-			required: true,
 			value: String
 		}
 	},
