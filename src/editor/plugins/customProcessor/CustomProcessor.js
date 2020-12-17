@@ -197,7 +197,7 @@ export const customProcessorConfig = {
 				rx: 2,
 				ry: 2,
 				stroke: '#fff',
-				fill: '#fff',
+				fill: 'transparent',
 				strokeWidth: 0,
 				strokeDasharray: '0'
 			},
