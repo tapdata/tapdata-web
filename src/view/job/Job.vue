@@ -404,9 +404,6 @@ export default {
 					this.draftSave();
 				});
 			});
-		this.$nextTick(() => {
-			this.downLoadNum = this.$refs.agentDialog.getDataApi();
-		});
 
 		// 是否允许下载agent
 		// if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
@@ -1074,6 +1071,7 @@ export default {
 		 * start button handler
 		 */
 		async start() {
+			this.downLoadNum = this.$refs.agentDialog.getDataApi();
 			if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') && !this.downLoadNum) {
 				this.$refs.agentDialog.dialogVisible = true;
 				return;

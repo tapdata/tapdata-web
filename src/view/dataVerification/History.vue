@@ -19,7 +19,8 @@
 						<template slot-scope="scope">
 							<span>
 								{{
-									scope.row.last_updated
+									scope.row.last_updated &&
+									(scope.row.status !== 'running' || scope.row.status !== 'scheduling')
 										? $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss')
 										: ''
 								}}

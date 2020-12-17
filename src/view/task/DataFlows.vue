@@ -649,9 +649,6 @@ export default {
 		// 		}, 5000);
 		// 	}
 		// }
-		this.$nextTick(() => {
-			this.downLoadNum = this.$refs.agentDialog.getDataApi();
-		});
 	},
 	beforeDestroy() {
 		ws.off('watch', this.wsWatch);
@@ -699,6 +696,7 @@ export default {
 					this.selectedJob.dataItem
 				);
 			}
+			this.$refs.agentDialog.dialogVisible = false;
 		},
 		// // 刷新agent
 		// handleRefreAgent() {
@@ -1339,6 +1337,7 @@ export default {
 
 		// 运行开关
 		async handleStatus(id, oldStatus, status, dataItem) {
+			this.downLoadNum = this.$refs.agentDialog.getDataApi();
 			this.selectedJob.id = id;
 			this.selectedJob.oldStatus = oldStatus;
 			this.selectedJob.status = status;

@@ -152,7 +152,7 @@ export default class Graph extends Component {
 					self.isLayer = true;
 					setTimeout(() => {
 						self.isLayer = false;
-					}, 1000);
+					}, 3000);
 
 					return false;
 				}

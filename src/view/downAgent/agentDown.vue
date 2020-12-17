@@ -205,7 +205,7 @@ export default {
 			this.getDataApi('firstAgent');
 			self.timer = setInterval(() => {
 				self.getDataApi();
-				if (self.downLoadNum > self.lastDataNum) {
+				if (self.downLoadNum > 0) {
 					clearInterval(self.timer);
 					self.timer = null;
 				}
@@ -271,6 +271,7 @@ export default {
 
 		// 关闭agent弹窗回调
 		closeDownAgent() {
+			this.dialogVisible = false;
 			this.$emit('closeAgentDialog');
 		},
 
