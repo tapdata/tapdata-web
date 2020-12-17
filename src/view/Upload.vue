@@ -26,7 +26,7 @@
 		<SelectClassify
 			ref="SelectClassify"
 			:dialogVisible="dialogVisible"
-			type="dataflow"
+			:type="type"
 			:tagLists="tagList"
 			v-on:dialogVisible="handleDialogVisible"
 			v-on:operationsClassify="handleOperationClassify"
@@ -46,6 +46,7 @@ export default {
 	components: { SelectClassify },
 	data() {
 		return {
+			type: '',
 			fileList: [],
 			action: '',
 			upsert: 1,
@@ -53,10 +54,18 @@ export default {
 			status: false,
 			tagList: [],
 			dialogVisible: false,
-			mappingTemplate: 'cluster-clone'
+			mappingTemplate: 'cluster-clone',
+			downType: ''
 		};
 	},
 	created() {
+		this.type = this.$route.query && this.$route.query.type ? this.$route.query.type : '';
+		if (this.type === 'api') {
+			this.downType = 'APIServer';
+		} else {
+			this.downType = 'dataflow';
+		}
+
 		this.action =
 			window.location.protocol +
 			'//' +
@@ -66,7 +75,9 @@ export default {
 			'/api/MetadataInstances/upload?upsert=' +
 			this.upsert +
 			'&listtags=' +
-			JSON.stringify(this.tagList);
+			JSON.stringify(this.tagList) +
+			'&type=' +
+			this.downType;
 	},
 
 	watch: {
@@ -82,7 +93,9 @@ export default {
 					'/api/MetadataInstances/upload?upsert=' +
 					this.upsert +
 					'&listtags=' +
-					JSON.stringify(this.tagList);
+					JSON.stringify(this.tagList) +
+					'&type=' +
+					this.downType;
 			}
 		},
 		tagList: {
@@ -97,7 +110,9 @@ export default {
 					'/api/MetadataInstances/upload?upsert=' +
 					this.upsert +
 					'&listtags=' +
-					JSON.stringify(this.tagList);
+					JSON.stringify(this.tagList) +
+					'&type=' +
+					this.downType;
 			}
 		}
 	},
