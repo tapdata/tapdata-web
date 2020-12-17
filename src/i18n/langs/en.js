@@ -1643,12 +1643,15 @@ const en = {
 			agentNum: 'Agents installed',
 			downLoadAgent: 'Download Agent',
 			windowsText: 'Download to the server，and copy the following command at the storage path to install',
-			windowsInstructionsText1: '· Click "Download Agent" to download agent to windows environment server',
-			windowsInstructionsText2:
-				'·  Copy and execution command statement above after download at storage path to install agent',
-			windowsInstructionsText3: '· After executing commands, the agent will install and run  automatically',
+			windowsInstructionsText1:
+				'· First, ensure that the JAVA runtime environment is installed in the installation target environment.',
+			windowsInstructionsText2: '· Second, download the installation file and store it in a directory.',
+			windowsInstructionsText3:
+				'· Third, enter the directory, and execute the command to install and start AGENT automatically. ',
+			windowsInstructionsText4: '· Only one AGENT can be installed under an account of Tapdata cloud.',
 			windowsInstructionsText5:
-				'· After the Agent is successfully installed and started, this page will no longer pop up when the task is executed.',
+				'· You can start and stop AGENT by executing the command "tapdata start/stop backend".',
+			important: 'Important: ',
 			noAgent: 'You have not installed Agent yet, and cannot execute the transmission jobs. Please ',
 			clickDownLoad: ' click to download and install',
 			dfsSuccessText: 'DFS Agent installed successfully,',
