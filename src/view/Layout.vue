@@ -539,28 +539,28 @@ export default {
 		},
 
 		async getLicense() {
-			if (this.$cookie.get('isAdmin') == 1) {
-				let timeStamp = this.$api('TimeStamp');
-				let stime = '';
-				await timeStamp.get().then(res => {
+			let timeStamp = this.$api('TimeStamp');
+			let stime = '';
+			await timeStamp.get().then(res => {
+				if (res) {
+					stime = res.data || new Date().getTime();
+				}
+			});
+			this.$api('Licenses')
+				.get()
+				.then(res => {
 					if (res) {
-						stime = res.data || new Date().getTime();
-					}
-				});
-				this.$api('Licenses')
-					.get()
-					.then(res => {
-						if (res) {
-							let expires_on = res.data.expires_on || '';
+						let expires_on = res.data.expires_on || '';
+						if (this.$cookie.get('isAdmin') == 1) {
 							let endTime = expires_on - stime;
 							endTime = parseInt(endTime / 1000 / 60 / 60 / 24); //相差天数
 							let showDay = window.getSettingByKey('SHOW_LICENSE') || 0;
 							this.licenseExpireVisible = Number(showDay) > endTime;
 							this.licenseExpire = endTime;
-							this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss');
 						}
-					});
-			}
+						this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss');
+					}
+				});
 		}
 	}
 };
