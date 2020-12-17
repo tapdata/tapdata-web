@@ -92,7 +92,12 @@ export default {
 			databaseType: '',
 			typeMap: TYPEMAP,
 			dialogTestVisible: false,
-			timer: null
+			timer: null,
+			status: {
+				ready: 'success',
+				invalid: 'warning',
+				testing: 'exception'
+			}
 		};
 	},
 	created() {
@@ -112,9 +117,7 @@ export default {
 		];
 	},
 	destroyed() {
-		// 清除定时器
-		clearInterval(this.timer);
-		this.timer = null;
+		this.clearInterval();
 	},
 	methods: {
 		getImgByType,
@@ -128,6 +131,11 @@ export default {
 				}
 				this.model = Object.assign(this.model, editData.data);
 			} else this.model = Object.assign(this.model, data, { name: this.model.name });
+		},
+		clearInterval() {
+			// 清除定时器
+			clearInterval(this.timer);
+			this.timer = null;
 		},
 		checkDataTypeOptions(type) {
 			this.model.database_type = type;
@@ -197,6 +205,7 @@ export default {
 			this.$router.push('/connections');
 		},
 		async test(id) {
+			this.clearInterval();
 			this.dialogTestVisible = true;
 			this.testResult = '';
 			this.testLogs = null;
@@ -211,15 +220,17 @@ export default {
 				if (data.status === 'ready') {
 					let validate_details = data.response_body && data.response_body.validate_details;
 					this.testLogs = validate_details;
-					this.testResult = data.status;
+					this.testResult = this.status[data.status];
 				} else if (data.status === 'invalid') {
 					let validate_details = data.response_body && data.response_body.validate_details;
 					this.testLogs = validate_details;
-					this.testResult = data.status;
+					this.testResult = this.status[data.status];
 				} else {
+					this.testLogs = [];
+					this.testResult = this.status['testing'];
 					this.timer = setInterval(() => {
 						this.test(id);
-					}, 300);
+					}, 3000);
 				}
 			}
 		},

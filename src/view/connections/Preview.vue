@@ -78,7 +78,7 @@
 				:percentage="progress"
 			></el-progress>
 		</header>
-		<ul>
+		<ul class="info-list">
 			<li v-for="item in form" :key="item.label">
 				<span class="label">{{ item.label }}</span>
 				<span class="value">{{ item.value }}</span>
@@ -146,7 +146,7 @@ export default {
 						this.type = data.database_type;
 						this.status = data.status;
 						let progress = Math.round((result.data.loadCount / result.data.tableCount) * 10000) / 100;
-						this.progress = progress ? progress : 0;
+						this.progress = progress ? progress : 100;
 						let func = formConfig[this.type];
 						if (func) {
 							let config = func(this);
@@ -204,7 +204,7 @@ export default {
 							if (result.data) {
 								let progress =
 									Math.round((result.data.loadCount / result.data.tableCount) * 10000) / 100;
-								this.progress = progress ? progress : 0;
+								this.progress = progress ? progress : 100;
 							}
 						})
 						.catch(() => {
@@ -268,6 +268,7 @@ export default {
 			margin-left: 10px;
 			font-weight: 500;
 			margin-top: 4px;
+			width: 60%;
 		}
 		.status {
 			font-size: 12px;
@@ -285,7 +286,7 @@ export default {
 		.panelBtn {
 			display: flex;
 			align-items: center;
-			width: 532px;
+			width: 40%;
 			justify-content: flex-end;
 			.item {
 				margin-right: 10px;
@@ -327,7 +328,7 @@ export default {
 		vertical-align: top;
 		word-break: break-all;
 	}
-	ul {
+	.info-list {
 		overflow-y: auto;
 		max-height: 640px;
 		li {
