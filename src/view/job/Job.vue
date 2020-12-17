@@ -253,13 +253,7 @@
 			</span>
 		</el-dialog>
 		<AddBtnTip v-if="!loading && isEditable()"></AddBtnTip>
-		<DownAgent
-			v-if="downLoadAgetntdialog"
-			:downLoadNum="downLoadNum"
-			type="taskRunning"
-			:lastDataNum="firstNum"
-			@closeAgentDialog="closeAgentDialog"
-		></DownAgent>
+		<DownAgent ref="agentDialog" type="taskRunning" @closeAgentDialog="closeAgentDialog"></DownAgent>
 		<SkipError
 			ref="SelectClassify"
 			:dialogVisible="dialogVisibleSkipError"
@@ -291,7 +285,7 @@ import SkipError from '../../components/SkipError';
 
 const dataFlowsApi = factory('DataFlows');
 const Setting = factory('Setting');
-const cluster = factory('cluster');
+// const cluster = factory('cluster');
 let changeData = null;
 export default {
 	name: 'Job',
@@ -299,9 +293,7 @@ export default {
 	components: { AddBtnTip, simpleScene, newDataFlow, DownAgent, SkipError },
 	data() {
 		return {
-			downLoadAgetntdialog: false, //判断是否安装agent
 			downLoadNum: 0,
-			firstNum: 0,
 			reloadSchemaDialog: false,
 			dialogFormVisible: false,
 			form: {
@@ -365,18 +357,6 @@ export default {
 				}
 				this.mappingTemplate = this.$route.query.mapping;
 
-				// 是否允许下载agent
-				if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
-					this.getDataApi('firstAgent');
-					if (!this.downLoadNum) {
-						self.timer = setInterval(() => {
-							self.getDataApi();
-							if (this.downLoadNum) {
-								clearInterval(self.timer);
-							}
-						}, 5000);
-					}
-				}
 				self.editor = editor({
 					container: $('.editor-container'),
 					actionBarEl: $('.editor-container .action-buttons'),
@@ -424,44 +404,48 @@ export default {
 					this.draftSave();
 				});
 			});
+		this.$nextTick(() => {
+			this.downLoadNum = this.$refs.agentDialog.getDataApi();
+		});
+
+		// 是否允许下载agent
+		// if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
+		// 	this.getDataApi('firstAgent');
+		// 	if (!this.downLoadNum) {
+		// 		self.timer = setInterval(() => {
+		// 			self.getDataApi();
+		// 			if (this.downLoadNum) {
+		// 				clearInterval(self.timer);
+		// 			}
+		// 		}, 5000);
+		// 	}
+		// }
 	},
 
 	methods: {
-		// 获取Agent是否安装
-		getDataApi(type) {
-			let params = {};
-			if (
-				this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
-				!parseInt(this.$cookie.get('isAdmin')) &&
-				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
-			) {
-				params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-			}
-			cluster.get(params).then(res => {
-				if (res.data) {
-					if (type === 'firstAgent') {
-						this.firstNum = res.data.length || 0;
-					}
-					this.downLoadNum = res.data.length;
-				}
-			});
-		},
+		// // 获取Agent是否安装
+		// getDataApi(type) {
+		// 	let params = {};
+		// 	if (
+		// 		this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
+		// 		!parseInt(this.$cookie.get('isAdmin')) &&
+		// 		localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
+		// 	) {
+		// 		params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+		// 	}
+		// 	cluster.get(params).then(res => {
+		// 		if (res.data) {
+		// 			if (type === 'firstAgent') {
+		// 				this.firstNum = res.data.length || 0;
+		// 			}
+		// 			this.downLoadNum = res.data.length;
+		// 		}
+		// 	});
+		// },
 		// 关闭agent下载弹窗返回参数
 		closeAgentDialog() {
 			this.start();
-			this.downLoadAgetntdialog = false;
-			clearInterval(self.timer);
-			this.timer = null;
 		},
-
-		// // 刷新agent
-		// handleRefreAgent() {
-		// 	this.getDataApi();
-		// },
-		// // 关闭agent弹窗回调
-		// closeDownAgent() {
-		// 	this.$emit('closeAgentDialog');
-		// },
 
 		isEditable() {
 			return ['draft', 'error', 'paused'].includes(this.status);
@@ -1091,7 +1075,7 @@ export default {
 		 */
 		async start() {
 			if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') && !this.downLoadNum) {
-				this.downLoadAgetntdialog = true;
+				this.$refs.agentDialog.dialogVisible = true;
 				return;
 			}
 			let errorEvent;

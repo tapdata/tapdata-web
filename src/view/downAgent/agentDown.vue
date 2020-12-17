@@ -1,6 +1,12 @@
 <template>
 	<div class="agentDown">
-		<el-dialog :visible.sync="dialogVisible" :close-on-click-modal="false" @close="closeDownAgent" width="60%">
+		<el-dialog
+			:visible.sync="dialogVisible"
+			custom-class=""
+			:close-on-click-modal="false"
+			@close="closeDownAgent"
+			width="60%"
+		>
 			<template slot="title">
 				<div class="header">
 					<h1>{{ $t('dialog.downAgent.headTitle') }}</h1>
@@ -71,10 +77,12 @@
 					<li>{{ $t('dialog.downAgent.linuxInstructionsText3') }}</li>
 				</ul>
 				<ul class="installation-notes" v-else>
-					<li>{{ $t('dialog.downAgent.windowsInstructionsText1') }}</li>
+					<li style="color: #F56C6C;">{{ $t('dialog.downAgent.windowsInstructionsText1') }}</li>
 					<li>{{ $t('dialog.downAgent.windowsInstructionsText2') }}</li>
 					<li>{{ $t('dialog.downAgent.windowsInstructionsText3') }}</li>
+					<li style="padding-top: 10px;">{{ $t('dialog.downAgent.important') }}</li>
 					<li>{{ $t('dialog.downAgent.windowsInstructionsText5') }}</li>
+					<li>{{ $t('dialog.downAgent.windowsInstructionsText4') }}</li>
 				</ul>
 			</section>
 			<span slot="footer" class="dialog-footer">
@@ -141,22 +149,24 @@
 	</div>
 </template>
 <script>
+import factory from '@/api/factory';
+const cluster = factory('cluster');
 export default {
 	name: 'agentDown',
 	props: {
-		downLoadNum: {
-			type: Number
-		},
-		lastDataNum: {
-			type: Number
-		},
+		// downLoadNum: {
+		// 	type: Number
+		// },
+		// lastDataNum: {
+		// 	type: Number
+		// },
 		type: {
 			type: String
 		}
 	},
 	data() {
 		return {
-			dialogVisible: true,
+			dialogVisible: false,
 			downLoadType: 'windows',
 			showTooltip: false,
 			installSuccessDialog: false,
@@ -164,6 +174,8 @@ export default {
 			windowLink: '',
 			LinuxLink: '',
 			refreshLoading: false,
+			downLoadNum: 0,
+			lastDataNum: 0,
 			downType: [
 				{ name: 'Windows (64 bit)', value: 'windows' },
 				{ name: 'Linux (64 bit)', value: 'Linux' }
@@ -171,6 +183,7 @@ export default {
 		};
 	},
 	mounted() {
+		let self = this;
 		let version = 'DAAS_BUILD_NUMBER';
 		this.windowLink =
 			'tapdata start backend downloadUrl ' +
@@ -186,6 +199,18 @@ export default {
 			this.$cookie.get('token') +
 			' ' +
 			this.$cookie.get('user_id');
+
+		// 是否允许下载agent
+		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
+			this.getDataApi('firstAgent');
+			self.timer = setInterval(() => {
+				self.getDataApi();
+				if (self.downLoadNum > self.lastDataNum) {
+					clearInterval(self.timer);
+					self.timer = null;
+				}
+			}, 5000);
+		}
 	},
 
 	watch: {
@@ -202,6 +227,26 @@ export default {
 	},
 
 	methods: {
+		// 获取Agent是否安装
+		getDataApi(type) {
+			let that = this;
+			let params = {};
+			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
+				params['filter[where][systemInfo.username][regexp]'] = `^${that.$cookie.get('user_id')}$`;
+			}
+			cluster.get(params).then(res => {
+				if (res.data) {
+					if (type === 'firstAgent') {
+						that.lastDataNum = res.data.length || 0;
+					}
+					if (res.data.length) {
+						this.$emit('closeAgentTip');
+					}
+					that.downLoadNum = res.data.length;
+				}
+			});
+			return that.downLoadNum;
+		},
 		// 选择下载安装类型
 		chooseDownLoadType(val) {
 			this.downLoadType = val;
@@ -249,6 +294,11 @@ export default {
 			this.dialogVisible = false;
 			this.installSuccessDialog = false;
 		}
+	},
+
+	destroyed() {
+		clearInterval(this.timer);
+		this.timer = null;
 	}
 };
 </script>

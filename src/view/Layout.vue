@@ -169,11 +169,10 @@
 		</el-container>
 
 		<DownAgent
-			v-if="downLoadAgetntdialog"
-			:downLoadNum="downLoadNum"
 			type="dashboard"
-			:lastDataNum="firstNum"
+			ref="agentDialog"
 			@closeAgentDialog="closeAgentDialog"
+			@closeAgentTip="closeAgentTip"
 		></DownAgent>
 	</el-container>
 </template>
@@ -285,8 +284,6 @@ export default {
 			downLoadAgetntdialog: false,
 			agentTipFalg: false,
 			timer: '',
-			downLoadNum: 0,
-			firstNum: 0,
 			licenseExpire: '',
 			licenseExpireVisible: false,
 			licenseExpireDate: ''
@@ -312,26 +309,26 @@ export default {
 		};
 		// this.handleGetPermissions();
 
-		// 是否允许下载agent
-		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
-			this.getDataApi('firstAgent');
-			if (!this.downLoadNum) {
-				self.timer = setInterval(() => {
-					self.getDataApi();
-					if (this.downLoadNum) {
-						clearInterval(self.timer);
-						this.timer = null;
-					}
-				}, 5000);
-			}
-		}
+		// // 是否允许下载agent
+		// if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
+		this.getDataApi('firstAgent');
+		// 	if (!this.downLoadNum) {
+		// 		self.timer = setInterval(() => {
+		// 			self.getDataApi();
+		// 			if (this.downLoadNum) {
+		// 				clearInterval(self.timer);
+		// 				this.timer = null;
+		// 			}
+		// 		}, 5000);
+		// 	}
+		// }
 
 		this.getLicense();
 	},
 	destroyed() {
 		this.$root.$off('updateMenu');
-		clearInterval(this.timer);
-		this.timer = null;
+		// clearInterval(this.timer);
+		// this.timer = null;
 	},
 	watch: {
 		'$route.name'() {
@@ -465,7 +462,7 @@ export default {
 					});
 					break;
 				default:
-					this.downLoadAgetntdialog = true;
+					this.$refs.agentDialog.dialogVisible = true;
 					// window.open('https://cloud.tapdata.net/agent/download.html', '_blank');
 					break;
 			}
@@ -496,16 +493,19 @@ export default {
 
 		// 下载安装Agent
 		downLoadInstall() {
-			this.downLoadAgetntdialog = true;
+			this.$refs.agentDialog.dialogVisible = true;
 		},
 
 		// 关闭下载安装Agent提示
 		handleCloseAgentTip() {
 			this.agentTipFalg = false;
 		},
+		closeAgentTip() {
+			this.getDataApi();
+		},
 
 		// 获取Agent是否安装
-		getDataApi(type) {
+		getDataApi() {
 			let that = this;
 			let params = {};
 			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
@@ -513,16 +513,6 @@ export default {
 			}
 			cluster.get(params).then(res => {
 				if (res.data) {
-					if (type === 'firstAgent') {
-						that.firstNum = res.data.length || 0;
-					}
-					// if (!that.firstNum) {
-
-					// 	that.downLoadNum = 0;
-					// }
-					// if (that.firstNum) {
-					that.downLoadNum = res.data.length;
-					// }
 					if (res.data.length > 0) {
 						that.agentTipFalg = false;
 					} else {

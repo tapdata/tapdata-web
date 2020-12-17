@@ -200,7 +200,7 @@ export const jointCacheConfig = {
 		size: { width: 5, height: 4 },
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.processor.field.tip'),
+				dataTooltip: i18n.t('editor.cell.processor.jointCache.tip'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},

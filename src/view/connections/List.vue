@@ -708,6 +708,7 @@ export default {
 			justify-content: space-between;
 			padding: 0 10px;
 			.panelBtn {
+				min-width: 56px;
 				padding: 5px 12px;
 				color: #666;
 				cursor: pointer;

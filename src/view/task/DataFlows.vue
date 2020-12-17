@@ -392,13 +392,7 @@
 				<el-button type="primary" @click="confirmDleteFlow">{{ $t('metaData.deleteNode') }}</el-button>
 			</span>
 		</el-dialog>
-		<DownAgent
-			v-if="downLoadAgetntdialog"
-			:downLoadNum="downLoadNum"
-			type="taskRunning"
-			:lastDataNum="firstNum"
-			@closeAgentDialog="closeAgentDialog"
-		></DownAgent>
+		<DownAgent type="taskRunning" ref="agentDialog" @closeAgentDialog="closeAgentDialog"></DownAgent>
 		<SkipError
 			v-if="selectedJob.dataItem"
 			ref="SelectClassify"
@@ -458,7 +452,7 @@ import factory from '../../api/factory';
 import ws from '../../api/ws';
 const dataFlows = factory('DataFlows');
 const MetadataInstance = factory('MetadataInstances');
-const cluster = factory('cluster');
+// const cluster = factory('cluster');
 import { toRegExp } from '../../util/util';
 import Classification from '@/components/Classification';
 import SelectClassify from '../../components/SelectClassify';
@@ -476,7 +470,6 @@ export default {
 				this.$has('SYNC_job_operation') ||
 				this.$has('SYNC_category_application'),
 			taskSettingsDialog: false, //任务调度设置弹窗开关
-			downLoadAgetntdialog: false, //判断是否安装agent
 			downLoadNum: 0,
 			firstNum: 0,
 			selectedJob: {
@@ -645,17 +638,20 @@ export default {
 			self.wsData.length = 0;
 		}, 3000);
 
-		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
-			this.getDataApi('firstAgent');
-			if (!this.downLoadNum) {
-				self.timer = setInterval(() => {
-					self.getDataApi();
-					if (this.downLoadNum) {
-						clearInterval(self.timer);
-					}
-				}, 5000);
-			}
-		}
+		// if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
+		// 	this.getDataApi('firstAgent');
+		// 	if (!this.downLoadNum) {
+		// 		self.timer = setInterval(() => {
+		// 			self.getDataApi();
+		// 			if (this.downLoadNum) {
+		// 				clearInterval(self.timer);
+		// 			}
+		// 		}, 5000);
+		// 	}
+		// }
+		this.$nextTick(() => {
+			this.downLoadNum = this.$refs.agentDialog.getDataApi();
+		});
 	},
 	beforeDestroy() {
 		ws.off('watch', this.wsWatch);
@@ -675,24 +671,24 @@ export default {
 	},
 	methods: {
 		// 获取Agent是否安装
-		getDataApi(type) {
-			let params = {};
-			if (
-				this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
-				!parseInt(this.$cookie.get('isAdmin')) &&
-				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
-			) {
-				params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-			}
-			cluster.get(params).then(res => {
-				if (res.data) {
-					if (type === 'firstAgent') {
-						this.firstNum = res.data.length || 0;
-					}
-					this.downLoadNum = res.data.length;
-				}
-			});
-		},
+		// getDataApi(type) {
+		// 	let params = {};
+		// 	if (
+		// 		this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
+		// 		!parseInt(this.$cookie.get('isAdmin')) &&
+		// 		localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
+		// 	) {
+		// 		params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+		// 	}
+		// 	cluster.get(params).then(res => {
+		// 		if (res.data) {
+		// 			if (type === 'firstAgent') {
+		// 				this.firstNum = res.data.length || 0;
+		// 			}
+		// 			this.downLoadNum = res.data.length;
+		// 		}
+		// 	});
+		// },
 
 		closeAgentDialog() {
 			if (this.selectedJob.id) {
@@ -703,9 +699,6 @@ export default {
 					this.selectedJob.dataItem
 				);
 			}
-			this.downLoadAgetntdialog = false;
-			clearInterval(self.timer);
-			this.timer = null;
 		},
 		// // 刷新agent
 		// handleRefreAgent() {
@@ -1351,7 +1344,7 @@ export default {
 			this.selectedJob.status = status;
 			this.selectedJob.dataItem = dataItem;
 			if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') && !this.downLoadNum) {
-				this.downLoadAgetntdialog = true;
+				this.$refs.agentDialog.dialogVisible = true;
 				return;
 			}
 			let data = {};
@@ -1640,6 +1633,7 @@ export default {
 			justify-content: space-between;
 			padding: 0 10px;
 			.panelBtn {
+				min-width: 56px;
 				padding: 5px 12px;
 				color: #666;
 				cursor: pointer;

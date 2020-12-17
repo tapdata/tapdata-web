@@ -131,6 +131,8 @@ export default {
 			},
 			typeMap: TYPEMAP,
 			systemMap: {
+				sync: this.$t('notification.sync'),
+				migration: this.$t('notification.migration'),
 				dataFlow: this.$t('notification.dataFlow'),
 				agent: this.$t('notification.manageSever'),
 				inspect: this.$t('notification.inspect'),
