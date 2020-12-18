@@ -1,7 +1,7 @@
 <template>
 	<div class="databaseFrom">
 		<header class="header">
-			{{ $route.params.id ? $t('connection.createNewDataSource') : $t('connection.editDataSource') }}
+			{{ $route.query.id ? $t('connection.editDataSource') : $t('connection.createNewDataSource') }}
 		</header>
 		<div class="databaseFrom-body">
 			<main class="databaseFrom-main">
@@ -23,9 +23,8 @@
 		</footer>
 		<Test
 			@dialogTestVisible="handleTestVisible"
-			:dialogTestVisible="dialogTestVisible"
-			:testLogs="testLogs"
-			:testResult="testResult"
+			:dialogTestVisible="testData.dialogTestVisible"
+			:testData="testData"
 		></Test>
 	</div>
 </template>
@@ -35,7 +34,7 @@ import factory from '@/api/factory';
 import formConfig from './config';
 import gitbook from './GitBook';
 import Test from './Test';
-import { getImgByType, TYPEMAP } from './util';
+import { getImgByType, TYPEMAP, handleProgress } from './util';
 
 const databaseTypesModel = factory('DatabaseTypes');
 const connectionsModel = factory('connections');
@@ -79,8 +78,6 @@ export default {
 		return {
 			visible: false,
 			testing: false,
-			testLogs: null,
-			testResult: '',
 			timezones: [],
 			dataTypes: [],
 			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2', 'postgres', 'elasticsearch'], //目前白名单,
@@ -91,12 +88,17 @@ export default {
 			checkItems: null,
 			databaseType: '',
 			typeMap: TYPEMAP,
-			dialogTestVisible: false,
 			timer: null,
 			status: {
 				ready: 'success',
-				invalid: 'warning',
-				testing: 'exception'
+				invalid: 'exception',
+				testing: 'warning'
+			},
+			testData: {
+				testLogs: null,
+				testResult: '',
+				progress: 0,
+				dialogTestVisible: false
 			}
 		};
 	},
@@ -199,16 +201,15 @@ export default {
 			}
 		},
 		handleTestVisible() {
-			this.dialogTestVisible = false;
+			this.testData.dialogTestVisible = false;
 		},
 		goBack() {
 			this.$router.push('/connections');
 		},
 		async test(id) {
 			this.clearInterval();
-			this.dialogTestVisible = true;
-			this.testResult = '';
-			this.testLogs = null;
+			this.testData.testResult = this.status['testing'];
+			this.testData.estLogs = [];
 			let result = null;
 			if (this.model.database_type === 'mongodb') {
 				result = await connectionsModel.customQuery([id]);
@@ -217,17 +218,11 @@ export default {
 			}
 			if (result.data) {
 				const data = result.data;
-				if (data.status === 'ready') {
-					let validate_details = data.response_body && data.response_body.validate_details;
-					this.testLogs = validate_details;
-					this.testResult = this.status[data.status];
-				} else if (data.status === 'invalid') {
-					let validate_details = data.response_body && data.response_body.validate_details;
-					this.testLogs = validate_details;
-					this.testResult = this.status[data.status];
-				} else {
-					this.testLogs = [];
-					this.testResult = this.status['testing'];
+				let validate_details = data.response_body && data.response_body.validate_details;
+				this.testData.testLogs = validate_details || [];
+				this.testData.testResult = this.status[data.status] || this.status['testing'];
+				this.testData.progress = handleProgress(this.testData.testLogs);
+				if (['testing'].includes(data.status)) {
 					this.timer = setInterval(() => {
 						this.test(id);
 					}, 3000);
@@ -261,6 +256,7 @@ export default {
 						.then(res => {
 							let id = res.data.id;
 							this.model.id = id;
+							this.testData.dialogTestVisible = true;
 							this.test(id);
 						})
 						.catch(err => {

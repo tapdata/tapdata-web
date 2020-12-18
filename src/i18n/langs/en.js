@@ -635,6 +635,11 @@ const en = {
 			invalid: 'invalid',
 			ready: 'ready'
 		},
+		preview: {
+			edit: 'Edit',
+			test: 'Test',
+			reloadName: 'Reload schema'
+		},
 		type: {
 			source: 'Source',
 			target: 'Target',
@@ -1416,7 +1421,10 @@ const en = {
 			title: 'Connection Test',
 			success: 'Pass the test',
 			fail: 'Test failed',
-			testing: 'Testing...'
+			testing: 'Testing...',
+			items: 'test items',
+			result: 'test result',
+			information: 'Information'
 		},
 		form: {
 			connectionName: 'Connection Name',

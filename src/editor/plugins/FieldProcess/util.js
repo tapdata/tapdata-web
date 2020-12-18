@@ -193,6 +193,24 @@ export const isScript = function(operations, scripts) {
 	}
 	return errorList;
 };
+export const delScript = function(operations, scripts, id) {
+	let fieldIds = [];
+	if (operations) {
+		fieldIds = operations.map(field => field.id);
+	}
+	if (scripts) {
+		for (let i = 0; i < scripts.length; i++) {
+			if (!fieldIds.includes(scripts[i].id)) {
+				scripts.splice(i, 1);
+				i--;
+			} else if (id === scripts[i].id) {
+				scripts.splice(i, 1);
+				i--;
+			}
+		}
+	}
+	return scripts;
+};
 
 export const getUrlSearch = function(name) {
 	// 未传参，返回空

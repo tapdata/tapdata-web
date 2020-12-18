@@ -1,7 +1,7 @@
 <template>
 	<el-dialog
 		:title="$t('dataForm.test.title')"
-		:visible.sync="dialogTestVisible"
+		:visible.sync="testData.dialogTestVisible"
 		width="770px"
 		:show-close="false"
 		append-to-body
@@ -14,17 +14,18 @@
 			class="test-progress"
 			:text-inside="true"
 			:stroke-width="26"
-			:percentage="progress"
-			:status="testResult"
+			:percentage="testData.progress"
+			:status="testData.testResult"
 		></el-progress>
-		<el-table :data="testLogs" style="width: 100%" class="test-block">
-			<el-table-column prop="show_msg" label="Test" width="250"> </el-table-column>
-			<el-table-column prop="status" label="Result" width="100">
+		<el-table :data="testData.testLogs" style="width: 100%" class="test-block">
+			<el-table-column prop="show_msg" :label="$t('dataForm.test.items')" width="250"> </el-table-column>
+			<el-table-column prop="status" :label="$t('dataForm.test.result')" width="100">
 				<template slot-scope="scope">
 					<span :style="`color: ${colorMap[scope.row.status]};`">{{ scope.row.status }}</span>
 				</template>
 			</el-table-column>
-			<el-table-column prop="fail_message" label="说明"> </el-table-column>
+			<el-table-column prop="fail_message" :label="$t('dataForm.test.information')" class="information">
+			</el-table-column>
 		</el-table>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" @click="handleClose">{{ $t('dataForm.cancel') }}</el-button>
@@ -36,16 +37,9 @@
 export default {
 	name: 'Test',
 	props: {
-		testLogs: {
+		testData: {
 			required: true,
-			value: Array
-		},
-		dialogTestVisible: {
-			required: true,
-			value: Boolean
-		},
-		testResult: {
-			value: String
+			value: Object
 		}
 	},
 	data() {
@@ -58,27 +52,9 @@ export default {
 			}
 		};
 	},
-	watch: {
-		testLogs: {
-			handler() {
-				this.handleProgress();
-			}
-		}
-	},
 	methods: {
 		handleClose() {
 			this.$emit('dialogTestVisible', false);
-		},
-		handleProgress() {
-			let count = 0;
-			this.testLogs = this.testLogs || [];
-			this.testLogs.forEach(log => {
-				if (log.status === 'passed') {
-					count++;
-				}
-			});
-			let len = (100 / this.testLogs.length) * count;
-			this.progress = Math.round(len);
 		}
 	}
 };
@@ -107,6 +83,14 @@ export default {
 	}
 	thead {
 		color: #222;
+	}
+	.el-table td .cell,
+	.el-table th .cell {
+		white-space: normal;
+	}
+	.information {
+		width: 358px;
+		white-space: normal;
 	}
 }
 .el-table::before {
