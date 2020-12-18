@@ -53,7 +53,7 @@
 				<div class="panelBtn">
 					<ul>
 						<li class="item">
-							<el-button class="btn" size="mini" @click="edit()">
+							<el-button class="btn" size="mini" @click="edit(id, type)">
 								<i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
 							</el-button>
 						</li>
@@ -63,7 +63,7 @@
 							</el-button>
 						</li>
 						<li class="item">
-							<el-button class="btn" size="mini" @click="test()">
+							<el-button class="btn" size="mini" @click="beforeTest(id)">
 								<i class="iconfont icon-lianjie1"> {{ $t('connection.preview.test') }} </i>
 							</el-button>
 						</li>
@@ -76,6 +76,7 @@
 				:text-inside="true"
 				:stroke-width="26"
 				:percentage="progress"
+				v-if="showProgress"
 			></el-progress>
 		</header>
 		<ul class="info-list">
@@ -118,6 +119,8 @@ export default {
 			type: '',
 			status: '',
 			progress: 0,
+			timer: null,
+			showProgress: false,
 			testData: {
 				testLogs: null,
 				testResult: '',
@@ -135,8 +138,20 @@ export default {
 			}
 		}
 	},
+	beforeDestroy() {
+		this.clearInterval();
+	},
+	destroyed() {
+		this.form = {};
+		this.clearInterval();
+	},
 	methods: {
 		getImgByType,
+		clearInterval() {
+			// 清除定时器
+			clearInterval(this.timer);
+			this.timer = null;
+		},
 		getData(id) {
 			this.$api('connections')
 				.get([id])
@@ -147,8 +162,18 @@ export default {
 						this.name = data.name;
 						this.type = data.database_type;
 						this.status = data.status;
-						let progress = Math.round((result.data.loadCount / result.data.tableCount) * 10000) / 100;
-						this.progress = progress ? progress : 100;
+						if (
+							!data.loadCount &&
+							!data.tableCount &&
+							data.tableCount !== 0 &&
+							!['invalid'].includes(this.status)
+						) {
+							let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100;
+							this.progress = progress ? progress : 0;
+							if (this.progress !== 100) {
+								this.showProgress = true;
+							}
+						}
 						let func = formConfig[this.type];
 						if (func) {
 							let config = func(this);
@@ -165,11 +190,19 @@ export default {
 				});
 		},
 		handleClose() {
+			this.form = {};
+			this.clearInterval();
 			this.$emit('previewVisible', false);
 		},
-		async test() {
-			let result = null;
+		beforeTest(id) {
 			this.testData.dialogTestVisible = true;
+			this.test(id);
+		},
+		async test(id) {
+			let result = null;
+			this.testData.testResult = this.status['testing'];
+			this.testData.estLogs = [];
+			this.clearInterval();
 			if (this.data.database_type === 'mongodb') {
 				result = await this.$api('connections').customQuery([this.data.id]);
 			} else {
@@ -181,13 +214,26 @@ export default {
 				this.testData.testLogs = validate_details || [];
 				this.testData.testResult = this.status[data.status] || this.status['testing'];
 				this.testData.progress = handleProgress(this.testData.testLogs);
+				if (['testing'].includes(data.status)) {
+					this.timer = setInterval(() => {
+						this.test(id);
+					}, 3000);
+				}
 			}
 		},
-		edit() {
-			this.$router.push('connections/create?id=' + this.data.id + '&databaseType=' + this.data.database_type);
+		edit(id, type) {
+			if (
+				['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis', 'db2'].includes(type)
+			) {
+				this.$router.push('connections/create?id=' + id + '&databaseType=' + type);
+			} else {
+				top.location.href = '/#/connection/' + id;
+				localStorage.setItem('connectionDatabaseType', type);
+			}
 		},
 		reload() {
 			this.progress = 0;
+			this.showProgress = false;
 			let config = {
 				title: this.$t('connection.reloadTittle'),
 				Message: this.$t('connection.reloadMsg'),
@@ -205,9 +251,19 @@ export default {
 						})
 						.then(result => {
 							if (result.data) {
-								let progress =
-									Math.round((result.data.loadCount / result.data.tableCount) * 10000) / 100;
-								this.progress = progress ? progress : 100;
+								let data = result.data;
+								if (
+									!data.loadCount &&
+									!data.tableCount &&
+									data.tableCount !== 0 &&
+									!['invalid'].includes(this.status)
+								) {
+									let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100;
+									this.progress = progress ? progress : 0;
+									if (this.progress !== 100) {
+										this.showProgress = true;
+									}
+								}
 							}
 						})
 						.catch(() => {

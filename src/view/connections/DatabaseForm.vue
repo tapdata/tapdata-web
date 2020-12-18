@@ -118,6 +118,9 @@ export default {
 			}
 		];
 	},
+	beforeDestroy() {
+		this.clearInterval();
+	},
 	destroyed() {
 		this.clearInterval();
 	},

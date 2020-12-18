@@ -225,7 +225,7 @@
 								:content="$t('message.delete')"
 								placement="bottom"
 							>
-								<el-button type="text" @click="remove(scope.row)">
+								<el-button type="text" @click="delConfirm(scope.row)">
 									<i class="iconfont task-list-icon icon-shanchu"></i>
 								</el-button>
 							</el-tooltip>
@@ -246,6 +246,24 @@
 				</el-pagination>
 			</div>
 		</div>
+		<el-dialog
+			:title="$t('connection.deteleDatabaseTittle')"
+			:close-on-click-modal="false"
+			:visible.sync="deleteDialogVisible"
+			width="30%"
+		>
+			<p>
+				{{ $t('connection.deteleDatabaseMsg') }}
+				<span @click="edit(delData.id, delData.database_type)" style="color:#48B6E2;cursor: pointer">
+					{{ delData.name }}</span
+				>
+				?
+			</p>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="deleteDialogVisible = false">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="remove(delData)">{{ $t('message.confirm') }}</el-button>
+			</span>
+		</el-dialog>
 		<SelectClassify
 			ref="SelectClassify"
 			:dialogVisible="dialogVisible"
@@ -278,6 +296,8 @@ export default {
 			dialogVisible: false,
 			restLoading: false,
 			dialogDatabaseTypeVisible: false,
+			deleteDialogVisible: false,
+			delData: [],
 			previewVisible: false,
 			checkedTags: [],
 			tagList: [],
@@ -332,18 +352,9 @@ export default {
 		this.search(1);
 		this.getDatabaseType();
 		this.search(1);
-		this.timer = setInterval(() => {
-			this.formatterUserName();
-			this.search(this.page.current, 1);
-		}, 10000);
 		if (this.$route.query.noviceGuide) {
 			this.dialogDatabaseTypeVisible = true;
 		}
-	},
-	destroyed() {
-		// 清除定时器
-		clearInterval(this.timer);
-		this.timer = null;
 	},
 	methods: {
 		// 面板显示隐藏
@@ -532,6 +543,7 @@ export default {
 				this.$router.push('connections/create?id=' + id + '&databaseType=' + type);
 			} else {
 				top.location.href = '/#/connection/' + id;
+				localStorage.setItem('connectionDatabaseType', type);
 			}
 		},
 		copy(data) {
@@ -553,33 +565,24 @@ export default {
 					}
 				});
 		},
-		async remove(data) {
-			let config = {
-				title: this.$t('connection.deteleDatabaseTittle'),
-				Message: this.$t('connection.deteleDatabaseMsg'),
-				confirmButtonText: this.$t('message.confirm'),
-				cancelButtonText: this.$t('message.cancel'),
-				name: data.name,
-				id: data.id
-			};
-			this.confirm(
-				() => {
-					this.$api('connections')
-						.deleteConnection(data.id, data.name)
-						.then(res => {
-							let jobs = res.jobs || [];
-							let modules = res.modules || [];
-							if (jobs.length > 0 || modules.length > 0) {
-								this.$message.error(this.$t('connection.checkMsg'));
-							} else {
-								this.$message.success(this.$t('message.deleteOK'));
-								this.search(this.page.current);
-							}
-						});
-				},
-				() => {},
-				config
-			);
+		delConfirm(data) {
+			this.deleteDialogVisible = true;
+			this.delData = data;
+		},
+		remove(data) {
+			this.$api('connections')
+				.deleteConnection(data.id, data.name)
+				.then(res => {
+					let jobs = res.jobs || [];
+					let modules = res.modules || [];
+					if (jobs.length > 0 || modules.length > 0) {
+						this.$message.error(this.$t('connection.checkMsg'));
+						this.deleteDialogVisible = false;
+					} else {
+						this.$message.success(this.$t('message.deleteOK'));
+						this.search(this.page.current);
+					}
+				});
 		},
 		confirm(callback, catchCallback, config) {
 			this.$confirm(config.Message + config.name + '?', config.title, {
@@ -684,6 +687,7 @@ export default {
 				this.$router.push('connections/create?databaseType=' + type);
 			} else {
 				top.location.href = '/#/connection';
+				localStorage.setItem('connectionDatabaseType', type);
 			}
 		}
 	}
