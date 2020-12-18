@@ -24,7 +24,7 @@
 					<span :style="`color: ${colorMap[scope.row.status]};`">{{ scope.row.status }}</span>
 				</template>
 			</el-table-column>
-			<el-table-column prop="fail_message" :label="$t('dataForm.test.information')" class="information">
+			<el-table-column prop="fail_message" :label="$t('dataForm.test.information')" width="358">
 			</el-table-column>
 		</el-table>
 		<span slot="footer" class="dialog-footer">
@@ -76,6 +76,9 @@ export default {
 	th,
 	tr {
 		background: #f5f5f5;
+		.cell {
+			white-space: normal !important;
+		}
 	}
 	td,
 	th.is-leaf {
@@ -83,10 +86,6 @@ export default {
 	}
 	thead {
 		color: #222;
-	}
-	.el-table td .cell,
-	.el-table th .cell {
-		white-space: normal;
 	}
 	.information {
 		width: 358px;

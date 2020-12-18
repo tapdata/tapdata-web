@@ -48,7 +48,7 @@ const defaultModel = {
 	database_port: '',
 	database_name: '',
 	database_username: '',
-	plain_password: '',
+	database_password: '',
 	table_filter: '',
 	additionalString: '',
 	thin_type: '',
@@ -296,12 +296,13 @@ export default {
 				overflow-y: auto;
 				padding: 0 20px;
 				width: 640px;
-				margin: 0 250px 0 80px;
+				margin: 0 auto;
 			}
 			.title {
 				display: flex;
 				justify-content: flex-start;
-				margin: 40px 0 20px 0;
+				width: 826px;
+				margin: 40px auto 20px auto;
 			}
 			.img-box {
 				display: flex;
