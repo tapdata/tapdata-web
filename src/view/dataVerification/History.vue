@@ -10,20 +10,15 @@
 			<div class="title">{{ name }}</div>
 			<div class="table-wrap">
 				<el-table :data="page.data" height="100%" class="dv-table" border @selection-change="selectHandler">
-					<el-table-column :label="$t('dataVerification.verifyTime')" prop="createTime">
+					<el-table-column :label="$t('dataVerification.verifyTime')" prop="start">
 						<template slot-scope="scope">
-							{{ $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss') }}
+							{{ $moment(scope.row.start).format('YYYY-MM-DD HH:mm:ss') }}
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('dataVerification.completeTime')" align="center" width="180">
+					<el-table-column :label="$t('dataVerification.completeTime')" prop="end" align="center" width="180">
 						<template slot-scope="scope">
 							<span>
-								{{
-									scope.row.last_updated &&
-									(scope.row.status !== 'running' || scope.row.status !== 'scheduling')
-										? $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss')
-										: ''
-								}}
+								{{ scope.row.end ? $moment(scope.row.end).format('YYYY-MM-DD HH:mm:ss') : '' }}
 							</span>
 						</template>
 					</el-table-column>
@@ -163,7 +158,7 @@ export default {
 				where: {
 					inspect_id: { regexp: `^${this.inspect_id}$` }
 				},
-				order: 'createTime DESC',
+				order: 'start DESC',
 				limit: size,
 				skip: (currentPage - 1) * size
 			};

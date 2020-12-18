@@ -48,7 +48,7 @@
 								<!--  -->
 							</div>
 							<div class="boxBottom">
-								<el-row :gutter="20" class="data-list">
+								<el-row :gutter="20" class="data-list" v-if="managementType === 'cluster'">
 									<el-col :span="8">
 										<span class="txt"
 											><i class="icon iconfont iconhoutai"></i>{{ $t('message.manageSys') }}</span
@@ -118,7 +118,7 @@
 										</div>
 									</el-col>
 								</el-row>
-								<el-row :gutter="20" class="data-list">
+								<el-row :gutter="20" class="data-list" v-if="managementType === 'cluster'">
 									<el-col :span="8">
 										<span class="txt"><i class="icon iconfont iconAPI"></i>API server</span>
 									</el-col>
@@ -237,7 +237,8 @@ export default {
 			timer: null,
 			downLoadAgetntdialog: false,
 			downLoadNum: 0,
-			firstNum: undefined
+			firstNum: undefined,
+			managementType: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT')
 		};
 	},
 	created() {

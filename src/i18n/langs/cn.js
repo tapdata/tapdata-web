@@ -86,6 +86,8 @@ const cn = {
 			account_disabled: '您的账户已被管理员禁用',
 			permission_denied: '没有权限',
 			signInFail: '账户或密码错误',
+			watingApprove: '此账号尚未审核，请等待联系邮件',
+			hasVerified: '邮箱没有校验',
 			registry: '账号注册',
 			registry_tip: '我已同意',
 			userPplicy: '用户政策',
@@ -152,6 +154,7 @@ const cn = {
 			tasks: '调度任务',
 			agentdownload: '代理下载',
 			clusterManagement: '集群管理',
+			agentManagement: 'Agent管理',
 			agents: '进程管理',
 			serversOversee: '运维',
 			users: '用户管理',
@@ -1505,9 +1508,9 @@ const cn = {
 			refresh: '刷新',
 			copied: '已复制',
 			downloadInstallInstructions: '下载安装说明',
-			linuxInstructionsText1: '· 直接在安装agent的Linux机器上使用上述命令进行下载并启动',
-			linuxInstructionsText2: '· 执行命令后自动下载并启动安装包',
-			linuxInstructionsText3: '· 下载和安装包含agent包（64M）和Java程序包（160M）',
+			linuxInstructionsText1: '· 首先，需要确保环境中安装了 JAVA 运行环境',
+			linuxInstructionsText2: '· 在环境中执行以上命令，将会自动下载和启动 agent',
+			linuxInstructionsText3: '· 在 Agent 安装后，可通过 tapdata start/stop backend 启动和停止Agent',
 			waitingInstall: '等待安装',
 			agentNum: 'Agent已安装数 ',
 			downLoadAgent: '下载Agent',
@@ -1527,7 +1530,8 @@ const cn = {
 			dfsSuccessText4: '已启动执行',
 			creatTask: '新建任务',
 			clickView: '点击查看',
-			ok: '好的'
+			ok: '好的',
+			agentRun: 'Agent 已经安装'
 		},
 		library: '此库',
 		sameTable: '以下表存在重名：',
@@ -1663,9 +1667,12 @@ const cn = {
 			download: ' 下载了 '
 		},
 		modular: {
+			sync: '同步任务',
+			migration: '迁移任务',
 			connection: '数据源 ',
 			dataflow: '数据传输任务 ',
-			inspect: '校验任务 '
+			inspect: '校验任务',
+			ddlDeal: 'DDL处理 '
 		}
 	},
 	dataVerification: {

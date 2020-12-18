@@ -501,10 +501,10 @@ export default {
 					});
 				}
 			};
-			if (targetStage && targetStage.syncObjects) {
+			if (type === 'source' && targetStage.syncObjects) {
 				getTableNames(targetStage.syncObjects);
 			}
-			if (!targetStage && stage.syncObjects) {
+			if (type === 'target' && stage.syncObjects) {
 				getTableNames(stage.syncObjects, stage.table_prefix, stage.table_suffix);
 			}
 			let includeTables = tables.filter(tb => {
@@ -593,16 +593,18 @@ export default {
 					if (targetStage) {
 						task.target = this.setTable(targetStage);
 						task.targetTable = [targetStage.connectionId, targetStage.tableName];
-						let joinTable = targetStage.joinTables.find(ts => ts.stageId === stg.id);
-						if (joinTable) {
-							let sourceSortColumn = [];
-							let targetSortColumn = [];
-							joinTable.joinKeys.forEach(obj => {
-								sourceSortColumn.push(obj.source);
-								targetSortColumn.push(obj.target);
-							});
-							task.source.sortColumn = sourceSortColumn.join(',');
-							task.target.sortColumn = targetSortColumn.join(',');
+						if (targetStage.joinTables) {
+							let joinTable = targetStage.joinTables.find(ts => ts.stageId === stg.id);
+							if (joinTable) {
+								let sourceSortColumn = [];
+								let targetSortColumn = [];
+								joinTable.joinKeys.forEach(obj => {
+									sourceSortColumn.push(obj.source);
+									targetSortColumn.push(obj.target);
+								});
+								task.source.sortColumn = sourceSortColumn.join(',');
+								task.target.sortColumn = targetSortColumn.join(',');
+							}
 						}
 					}
 					this.form.tasks.push(task);

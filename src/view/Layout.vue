@@ -251,7 +251,11 @@ let menuSetting = [
 		children: [
 			{ name: 'tasks', code: 'schedule_jobs' },
 			// { name: 'agentdownload' },
-			{ name: 'clusterManagement', code: 'Cluster_management' },
+			{
+				name: 'clusterManagement',
+				code: 'Cluster_management',
+				alias: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT') + 'Management'
+			},
 			{ name: 'agents', code: 'agents' },
 			{ name: 'serversOversee', code: 'servers_oversee' },
 			{ name: 'users', code: 'user_management' },

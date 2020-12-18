@@ -86,6 +86,8 @@ const en = {
 			account_disabled: 'Your account is disabled by administrator.',
 			permission_denied: 'Permission denied.',
 			signInFail: "The email and password didn't work.",
+			watingApprove: 'This account is not approved, please wait for contact email.',
+			hasVerified: 'The email has not been verified',
 			registry: 'Registration',
 			registry_tip: 'I agree with',
 			userPplicy: ' user policy',
@@ -153,6 +155,7 @@ const en = {
 			tasks: 'Schedule Tasks',
 			agentdownload: 'Agent Download',
 			clusterManagement: 'Cluster management',
+			agentManagement: 'Agent management',
 			agents: 'Agents',
 			serversOversee: 'Servers Oversee',
 			users: 'User Management',
@@ -1619,9 +1622,12 @@ const en = {
 			download: ' downloaded '
 		},
 		modular: {
+			sync: 'Sync job',
+			migration: 'Migration job',
 			connection: ' connection ',
 			dataflow: ' data flow job ',
-			inspect: ' verity job '
+			inspect: ' verity job ',
+			ddlDeal: 'DDL'
 		}
 	},
 	dialog: {
@@ -1645,9 +1651,12 @@ const en = {
 			copied: 'copied',
 			refresh: 'Refresh',
 			downloadInstallInstructions: 'Download installation instructions',
-			linuxInstructionsText1: '· Copy and execute the command to download and install agent on Linux server',
-			linuxInstructionsText2: '· Agent will be downloaded and  started up automatically after executing commands',
-			linuxInstructionsText3: '·  The installation process includes agent package (64M) and java package (160M）',
+			linuxInstructionsText1:
+				'· First, ensure that the JAVA runtime environment is installed in the installation target environment.',
+			linuxInstructionsText2:
+				'· Execute the above command in install environment, AGENT will download and start automatically ',
+			linuxInstructionsText3:
+				'· You can start and stop AGENT by executing the command "tapdata start/stop backend".',
 			waitingInstall: 'Waiting installation',
 			agentNum: 'Agents installed',
 			downLoadAgent: 'Download Agent',
@@ -1670,7 +1679,8 @@ const en = {
 			dfsSuccessText4: 'is running',
 			creatTask: 'Create new',
 			clickView: 'Click view detail',
-			ok: 'OK'
+			ok: 'OK',
+			agentRun: 'Agent installed '
 		},
 		library: 'The database',
 		sameTable: 'has duplicate name tables: ',

@@ -3,7 +3,15 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path');
-
+let baseUrl = 'backend:3030/';
+if(process.env.npm_config_argv) {
+	let args = JSON.parse(process.env.npm_config_argv).original;
+	let ip = args[2];
+	if(ip) {
+		baseUrl = ip.replace('--', '') + '/'
+	}
+}
+console.log('代理地址：http://' + baseUrl + '/');
 module.exports = {
 	dev: {
 		// Paths
@@ -11,17 +19,17 @@ module.exports = {
 		assetsPublicPath: '/',
 		proxyTable: {
 			'/api': {
-				target: 'http://backend:3030/',
+				target: 'http://' + baseUrl,
 				// target: 'http://192.168.1.193:30900/',
 				changeOrigin: false
 			},
 			'/oauth': {
-				target: 'http://backend:3030/',
+				target: 'http://' + baseUrl,
 				// target: 'http://192.168.1.193:30900/',
 				changeOrigin: false
 			},
 			'/ws': {
-				target: 'ws://backend:3030',
+				target: 'ws://' + baseUrl,
 				// target: 'http://192.168.1.193:30900/',
 				changeOrigin: false
 			},
