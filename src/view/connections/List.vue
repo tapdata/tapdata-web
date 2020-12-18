@@ -268,7 +268,7 @@ import SelectClassify from '@/components/SelectClassify';
 import DatabaseTypeDialog from './DatabaseTypeDialog';
 import Preview from './Preview';
 import { verify } from './util';
-import { toRegExp } from '../../util/util';
+
 let timeout = null;
 
 export default {
@@ -428,13 +428,13 @@ export default {
 				let word = verify(keyword);
 				where.or = [
 					{
-						name: { like: toRegExp(word), options: 'i' }
+						name: { like: word, options: 'i' }
 					},
 					{
-						database_uri: { like: toRegExp(word), options: 'i' }
+						database_uri: { like: word, options: 'i' }
 					},
 					{
-						database_host: { like: toRegExp(word), options: 'i' }
+						database_host: { like: word, options: 'i' }
 					}
 				];
 			} else if (keyword && iModel === 'precise') {

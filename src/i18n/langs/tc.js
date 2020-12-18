@@ -631,6 +631,11 @@ const tc = {
 			invalid: '無效',
 			ready: '有效'
 		},
+		preview: {
+			edit: '編輯',
+			test: '測試',
+			reloadName: '加載schema'
+		},
 		type: {
 			source: '源頭',
 			target: '目標',
@@ -1396,7 +1401,10 @@ const tc = {
 			title: '連接測試',
 			success: '測試通過',
 			fail: '測試未通過',
-			testing: '測試中...'
+			testing: '測試中...',
+			items: '檢查事項',
+			result: '檢查結果',
+			information: '說明'
 		},
 		form: {
 			connectionName: '連接名稱',

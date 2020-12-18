@@ -54,17 +54,17 @@
 					<ul>
 						<li class="item">
 							<el-button class="btn" size="mini" @click="edit()">
-								<i class="iconfont icon-edit"> Edit</i>
+								<i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
 							</el-button>
 						</li>
 						<li class="item">
 							<el-button class="btn" size="mini" @click="reload()">
-								<i class="iconfont icon-kujitongbucopy"> Reload schema</i>
+								<i class="iconfont icon-kujitongbucopy">{{ $t('connection.preview.reloadName') }}</i>
 							</el-button>
 						</li>
 						<li class="item">
 							<el-button class="btn" size="mini" @click="test()">
-								<i class="iconfont icon-lianjie1"> Test </i>
+								<i class="iconfont icon-lianjie1"> {{ $t('connection.preview.test') }} </i>
 							</el-button>
 						</li>
 					</ul>
@@ -86,15 +86,14 @@
 		</ul>
 		<Test
 			@dialogTestVisible="handleTestVisible"
-			:dialogTestVisible="dialogTestVisible"
-			:testLogs="testLogs"
-			:testResult="testResult"
+			:dialogTestVisible="testData.dialogTestVisible"
+			:testData="testData"
 		></Test>
 	</el-drawer>
 </template>
 
 <script>
-import { getImgByType } from './util';
+import { getImgByType, handleProgress } from './util';
 import formConfig from './config';
 import Test from './Test';
 
@@ -118,10 +117,13 @@ export default {
 			name: '',
 			type: '',
 			status: '',
-			dialogTestVisible: false,
-			testLogs: null,
-			testResult: '',
-			progress: 0
+			progress: 0,
+			testData: {
+				testLogs: null,
+				testResult: '',
+				progress: 0,
+				dialogTestVisible: false
+			}
 		};
 	},
 	watch: {
@@ -167,7 +169,7 @@ export default {
 		},
 		async test() {
 			let result = null;
-			this.dialogTestVisible = true;
+			this.testData.dialogTestVisible = true;
 			if (this.data.database_type === 'mongodb') {
 				result = await this.$api('connections').customQuery([this.data.id]);
 			} else {
@@ -176,8 +178,9 @@ export default {
 			if (result.data) {
 				const data = result.data;
 				let validate_details = data.response_body && data.response_body.validate_details;
-				this.testLogs = validate_details;
-				this.testResult = data.status;
+				this.testData.testLogs = validate_details || [];
+				this.testData.testResult = this.status[data.status] || this.status['testing'];
+				this.testData.progress = handleProgress(this.testData.testLogs);
 			}
 		},
 		edit() {
@@ -227,7 +230,7 @@ export default {
 		},
 		//test
 		handleTestVisible() {
-			this.dialogTestVisible = false;
+			this.testData.dialogTestVisible = false;
 		}
 	}
 };

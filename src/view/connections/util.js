@@ -19,6 +19,17 @@ export const verify = function(value) {
 	return value;
 };
 
+export const handleProgress = function(data) {
+	let count = 0;
+	data.forEach(log => {
+		if (log.status === 'passed') {
+			count++;
+		}
+	});
+	let len = (100 / data.length) * count;
+	return Math.round(len) ? Math.round(len) : 0;
+};
+
 export const TYPEMAP = {
 	mysql: 'MySQL',
 	oracle: 'Oracle',

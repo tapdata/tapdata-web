@@ -361,7 +361,7 @@ import $ from 'jquery';
 import log from '../../../log';
 import _ from 'lodash';
 import { uuid } from '../../util/Schema';
-import { isValidate, isScript, fieldsNamesMap } from './util';
+import { isValidate, isScript, fieldsNamesMap, delScript } from './util';
 
 const REMOVE_OPS_TPL = {
 	id: '',
@@ -768,14 +768,7 @@ export default {
 				if (originalField) fn(originalField);
 			}
 			//删除 对应字段js脚本处理
-			if (this.model.scripts && this.model.scripts.length && this.model.scripts.length > 0) {
-				for (let i = 0; i < this.model.scripts.length; i++) {
-					if (data.id === this.model.scripts[i].id) {
-						this.model.scripts.splice(i, 1);
-						i--;
-					}
-				}
-			}
+			this.model.scripts = delScript(this.model.operations, this.model.scripts, data.id);
 			this.$emit('dataChanged', this.model);
 		},
 		handleAllReset() {
@@ -898,14 +891,7 @@ export default {
 				data.label = dataLabel;
 			}
 			//删除 对应字段js脚本处理
-			if (this.model.scripts && this.model.scripts.length && this.model.scripts.length > 0) {
-				for (let i = 0; i < this.model.scripts.length; i++) {
-					if (data.id === this.model.scripts[i].id) {
-						this.model.scripts.splice(i, 1);
-						i--;
-					}
-				}
-			}
+
 			this.$emit('dataChanged', this.model);
 		},
 		getParentFieldName(node) {

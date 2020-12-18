@@ -633,6 +633,11 @@ const cn = {
 			invalid: '无效',
 			ready: '有效'
 		},
+		preview: {
+			edit: '编辑',
+			test: '测试',
+			reloadName: '加载schema'
+		},
 		type: {
 			source: '源头',
 			target: '目标',
@@ -1399,7 +1404,10 @@ const cn = {
 			title: '连接测试',
 			success: '测试通过',
 			fail: '测试未通过',
-			testing: '测试中...'
+			testing: '测试中...',
+			items: '检查事项',
+			result: '检查结果',
+			information: '说明'
 		},
 		form: {
 			connectionName: '连接名称',
