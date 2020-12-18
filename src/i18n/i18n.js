@@ -10,7 +10,7 @@ import tc from './langs/tc';
 Vue.use(VueI18n);
 const i18n = new VueI18n({
 	// locale: localStorage.lang || 'en',
-	locale: localStorage.getItem('tapdata_localize_lang') || 'en',
+	locale: localStorage.getItem('tapdata_localize_lang') || 'cn',
 	messages: {
 		sc, // 中文
 		en, // 英文
