@@ -86,7 +86,8 @@ const tc = {
 			account_disabled: '您的賬戶已被管理員禁用',
 			permission_denied: '沒有權限',
 			signInFail: '帳戶或密碼錯誤',
-
+			watingApprove: '此賬號尚未審核，請等待聯繫郵件',
+			hasVerified: '郵箱沒有校驗',
 			registry: '賬號註冊',
 			registry_tip: '我已同意',
 			userPplicy: '用戶政策',
@@ -1587,9 +1588,12 @@ const tc = {
 			download: '下載了'
 		},
 		modular: {
+			sync: '同步任務',
+			migration: '遷移任務',
 			connection: '數據源',
-			dataflow: '數據傳輸任務',
-			inspect: '校驗任務'
+			dataflow: '數據傳輸任務 ',
+			inspect: '校驗任務',
+			ddlDeal: 'DDL處理 '
 		}
 	},
 	dialog: {
@@ -1609,9 +1613,9 @@ const tc = {
 			refresh: '刷新',
 			copied: '已復制',
 			downloadInstallInstructions: '下載安裝說明',
-			linuxInstructionsText1: '· 直接在安裝agent的Linux機器上使用上述命令進行下載並啟動',
-			linuxInstructionsText2: '· 執行命令後自動下載並啟動安裝包',
-			linuxInstructionsText3: '· 下載和安裝包含agent包（64M）和Java程序包（160M）',
+			linuxInstructionsText1: '· 首先，需要確保環境中安裝了 JAVA 運行環境',
+			linuxInstructionsText2: '· 在環境中執行以上命令，將會自動下載和​​啟動 agent',
+			linuxInstructionsText3: '· 在 Agent 安裝後，可通過 tapdata start/stop backend 啟動和停止Agent',
 			waitingInstall: '等待安裝',
 			agentNum: 'Agent已安裝數',
 			downLoadAgent: '下載Agent',
@@ -1631,7 +1635,8 @@ const tc = {
 			dfsSuccessText4: '已啟動執行',
 			creatTask: '新建任務',
 			clickView: '點擊查看',
-			ok: '好的'
+			ok: '好的',
+			agentRun: 'Agent 已經安裝'
 		},
 		library: '此庫',
 		sameTable: '以下表存在重名：',

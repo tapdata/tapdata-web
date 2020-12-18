@@ -182,9 +182,17 @@ export default {
 					location.reload();
 				}, 0);
 			} catch (e) {
-				this.errorMessage = this.$t('app.signIn.signInFail');
-				this.loading = false;
-				this.form.password = oldPassword;
+				if (e && e.response && e.response.msg) {
+					if (e.response.msg === 'WAITING_APPROVE') {
+						this.errorMessage = this.$t('app.signIn.watingApprove');
+					} else if (e.response.msg.indexOf('not been verified') !== -1) {
+						this.errorMessage = this.$t('app.signIn.hasVerified');
+					} else {
+						this.errorMessage = this.$t('app.signIn.signInFail');
+					}
+					this.loading = false;
+					this.form.password = oldPassword;
+				}
 			}
 		},
 		// 注册账号
