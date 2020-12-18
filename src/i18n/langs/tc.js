@@ -154,6 +154,7 @@ const tc = {
 			tasks: '調度任務',
 			agentdownload: '代理下載',
 			clusterManagement: '集群管理',
+			agentManagement: 'Agent管理',
 			agents: '進程管理',
 			serversOversee: '運維',
 			users: '用戶管理',

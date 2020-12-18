@@ -153,6 +153,7 @@ const en = {
 			tasks: 'Schedule Tasks',
 			agentdownload: 'Agent Download',
 			clusterManagement: 'Cluster management',
+			agentManagement: 'Agent management',
 			agents: 'Agents',
 			serversOversee: 'Servers Oversee',
 			users: 'User Management',

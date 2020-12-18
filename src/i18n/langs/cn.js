@@ -152,6 +152,7 @@ const cn = {
 			tasks: '调度任务',
 			agentdownload: '代理下载',
 			clusterManagement: '集群管理',
+			agentManagement: 'Agent管理',
 			agents: '进程管理',
 			serversOversee: '运维',
 			users: '用户管理',
