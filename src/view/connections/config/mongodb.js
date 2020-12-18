@@ -121,7 +121,7 @@ export default function(vm) {
 			},
 			{
 				type: 'input',
-				field: 'plain_password',
+				field: 'database_password',
 				label: vm.$t('dataForm.form.password'),
 				domType: 'password',
 				showByUrl: 2,

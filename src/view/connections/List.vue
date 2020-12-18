@@ -336,6 +336,9 @@ export default {
 			this.formatterUserName();
 			this.search(this.page.current, 1);
 		}, 10000);
+		if (this.$route.query.noviceGuide) {
+			this.dialogDatabaseTypeVisible = true;
+		}
 	},
 	destroyed() {
 		// 清除定时器

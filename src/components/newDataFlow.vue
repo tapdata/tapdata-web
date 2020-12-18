@@ -114,7 +114,7 @@ export default {
 		// 跳转数据源
 		handleConnection() {
 			let routeUrl = this.$router.resolve({
-				path: '/connection'
+				path: '/connections?noviceGuide=true'
 			});
 			window.open(routeUrl.href, '_blank');
 			this.handleClose();
