@@ -1438,7 +1438,7 @@ const cn = {
 			ReloadSchema: '定期加载schema',
 			clusterName: '集群名称',
 			databaseHostPlaceholder: '数据库地址(127.0.0.1/Domain:{端口},多个地址请用,分开)',
-
+			plugin_name: '日志解码器',
 			uriTips: {
 				label: '示例',
 				content:

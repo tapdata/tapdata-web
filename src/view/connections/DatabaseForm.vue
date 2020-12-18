@@ -56,7 +56,7 @@ const defaultModel = {
 	database_owner: '',
 	node_name: '',
 	database_schema: '',
-
+	plugin_name: '',
 	database_datetype_without_timezone: '',
 	supportUpdatePk: false,
 
