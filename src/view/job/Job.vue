@@ -45,7 +45,11 @@
 					</el-button>
 					<el-button
 						v-readonlybtn="'SYNC_job_operation'"
-						v-if="['running'].includes(status) && executeMode === 'normal'"
+						v-if="
+							['running'].includes(status) &&
+								executeMode === 'normal' &&
+								$window.getSettingByKey('SHOW_DATA_TRACE')
+						"
 						class="action-btn"
 						size="mini"
 						@click="capture"
@@ -65,7 +69,7 @@
 					</el-button>
 					<el-button
 						v-readonlybtn="'SYNC_job_operation'"
-						v-if="isEditable()"
+						v-if="isEditable() && $window.getSettingByKey('SHOW_DATA_TRACE')"
 						class="action-btn"
 						size="mini"
 						@click="preview"
