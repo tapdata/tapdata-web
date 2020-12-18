@@ -72,7 +72,7 @@
 					<span>{{ $t('dialog.downAgent.downloadInstallInstructions') }}</span>
 				</div>
 				<ul class="installation-notes" v-if="downLoadType === 'Linux'">
-					<li>{{ $t('dialog.downAgent.linuxInstructionsText1') }}</li>
+					<li style="color: #F56C6C;">{{ $t('dialog.downAgent.linuxInstructionsText1') }}</li>
 					<li>{{ $t('dialog.downAgent.linuxInstructionsText2') }}</li>
 					<li>{{ $t('dialog.downAgent.linuxInstructionsText3') }}</li>
 				</ul>
@@ -90,7 +90,10 @@
 					<i class="el-icon-loading" v-if="refreshLoading"></i>
 					{{ $t('dialog.downAgent.refresh') }}</el-button
 				> -->
-				<el-button size="mini" class="install" v-if="lastDataNum >= downLoadNum">
+				<el-button size="mini" type="primary" class="install" v-if="lastDataNum > 0">
+					{{ $t('dialog.downAgent.agentRun') }}
+				</el-button>
+				<el-button size="mini" class="install" v-else>
 					{{ $t('dialog.downAgent.waitingInstall') }}
 					<el-image style="width: 32px; height: 15px;" src="static/editor/wating.svg"></el-image>
 				</el-button>
@@ -215,7 +218,7 @@ export default {
 
 	watch: {
 		downLoadNum(num) {
-			if (this.lastDataNum < num) {
+			if (num > 0 && this.dialogVisible) {
 				if (this.type === 'dashboard') {
 					this.installSuccessDialog = true;
 				} else {
@@ -448,6 +451,10 @@ export default {
 		text-align: center;
 		.e-button {
 			padding: 7px 30px !important;
+		}
+		.install {
+			user-select: none;
+			cursor: no-drop;
 		}
 	}
 }
