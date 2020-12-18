@@ -949,6 +949,9 @@ const cn = {
 				}
 			},
 			processor: {
+				customProcessor: {
+					name: '自定义处理节点'
+				},
 				aggregate: {
 					name: '聚合',
 					tip: '聚合处理器',

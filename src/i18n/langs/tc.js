@@ -946,6 +946,9 @@ const tc = {
 			},
 
 			processor: {
+				customProcessor: {
+					name: '自定義處理節點'
+				},
 				aggregate: {
 					name: '聚合',
 					tip: '聚合處理器',
