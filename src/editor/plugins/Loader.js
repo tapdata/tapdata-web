@@ -201,7 +201,15 @@ export const loadPlugins = function(cNodes) {
 						plugin.stencil['attrs']['image']['xlinkHref'] = 'static/editor/table-processor.svg';
 						plugin.stencil['attrs']['label']['text'] = nodeConfig.name;
 						plugin.stencil['attrs']['root']['dataTooltip'] = nodeConfig.tips;
-						addStencil(type, plugin.stencil, null, config);
+						addStencil(
+							type,
+							plugin.stencil,
+							{
+								name: nodeConfig.name,
+								type: 'custom_processor'
+							},
+							config
+						);
 					});
 				} else {
 					addStencil(type, plugin.stencil);

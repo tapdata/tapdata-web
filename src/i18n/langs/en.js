@@ -959,6 +959,9 @@ const en = {
 				}
 			},
 			processor: {
+				customProcessor: {
+					name: 'Custom processor'
+				},
 				aggregate: {
 					name: 'Aggregate',
 					tip: 'Aggregate processor',

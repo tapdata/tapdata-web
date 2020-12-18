@@ -262,7 +262,8 @@ export default {
 				redis: this.$t('editor.cell.data_node.redis.tip'),
 				js_processor: this.$t('editor.cell.processor.script.tip'),
 				'dummy db': this.$t('editor.cell.data_node.dummy.tip'),
-				'rest api': this.$t('editor.cell.data_node.api.tip')
+				'rest api': this.$t('editor.cell.data_node.api.tip'),
+				custom_processor: this.$t('editor.cell.processor.customProcessor.name')
 			},
 			flow: {
 				name: '',

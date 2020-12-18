@@ -1,6 +1,11 @@
 <template>
 	<section class="custom_processor-wrap">
-		<main style="padding: 20px;">
+		<div class="head-btns">
+			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor()">
+				{{ $t('dataFlow.button.viewMonitoring') }}
+			</el-button>
+		</div>
+		<main>
 			<!-- <div style="text-align: right;">
 				<el-button size="mini" type="primary">更新节点配置</el-button>
 			</div> -->
@@ -13,7 +18,7 @@
 import _ from 'lodash';
 import { mergeJoinTablesToTargetSchema, removeDeleted } from '../../util/Schema';
 // import log from '../../../log';
-
+let editorMonitor = null;
 export default {
 	name: 'CustomProcessor',
 	data() {
@@ -48,7 +53,15 @@ export default {
 	},
 
 	methods: {
-		setData(data, cell) {
+		setDisabled(disabled) {
+			this.disabled = disabled;
+			this.formConfig.form.disabled = true;
+		},
+		seeMonitor() {
+			editorMonitor.goBackMontior();
+		},
+		setData(data, cell, dataNodeInfo, vueAdapter) {
+			editorMonitor = vueAdapter.editor;
 			if (data) {
 				this.model = Object.assign(this.model, data);
 			}
@@ -81,7 +94,7 @@ export default {
 					}
 				});
 			}
-			this.formConfig = formConfig;
+			this.formConfig = Object.assign({}, this.formConfig, formConfig);
 			this.scriptTemplate = config.scriptTemplate;
 		},
 		getScript() {
@@ -118,10 +131,6 @@ export default {
 		getData() {
 			this.model.script = this.getScript();
 			return _.cloneDeep(this.model);
-		},
-
-		setDisabled(disabled) {
-			this.disabled = disabled;
 		}
 	}
 };
@@ -129,12 +138,12 @@ export default {
 
 <style lang="less" scoped>
 .custom_processor-wrap {
+	padding: 20px;
 	height: 100%;
-	overflow: hidden;
+	overflow: auto;
+	box-sizing: border-box;
 	main {
-		padding: 20px;
 		height: 100%;
-		overflow: auto;
 		box-sizing: border-box;
 		.code-pre {
 			margin: 20px 0;
