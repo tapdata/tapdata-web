@@ -49,6 +49,7 @@ const defaultModel = {
 	database_name: '',
 	database_username: '',
 	database_password: '',
+	plain_password: '',
 	table_filter: '',
 	additionalString: '',
 	thin_type: '',
