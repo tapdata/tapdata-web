@@ -11,7 +11,7 @@ if(process.env.npm_config_argv) {
 		baseUrl = ip.replace('--', '') + '/'
 	}
 }
-console.log('代理地址：http://' + baseUrl + '/');
+console.log('代理地址：http://' + baseUrl);
 module.exports = {
 	dev: {
 		// Paths
