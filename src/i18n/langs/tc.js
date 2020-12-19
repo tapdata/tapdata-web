@@ -1441,6 +1441,7 @@ const tc = {
 			databaseHostPlaceholder: '資料庫地址（127.0.0.1/Domain:{端口}，多個地址請用，分開）',
 			plugin_name: '日誌解碼器',
 			supportUpdatePk: '支持同步時更新主鍵',
+			agentMsg: '當前測試連接服務不可用，請檢查是否正確啟動數據同步(Agent)服務',
 			uriTips: {
 				label: '示例',
 				content:

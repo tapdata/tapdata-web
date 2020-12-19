@@ -1444,6 +1444,7 @@ const cn = {
 			databaseHostPlaceholder: '数据库地址(127.0.0.1/Domain:{端口},多个地址请用,分开)',
 			plugin_name: '日志解码器',
 			supportUpdatePk: '支持同步时更新主键',
+			agentMsg: '当前测试连接服务不可用，请检查是否正确启动数据同步(Agent)服务',
 			uriTips: {
 				label: '示例',
 				content:
