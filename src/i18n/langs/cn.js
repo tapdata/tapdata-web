@@ -628,6 +628,7 @@ const cn = {
 		deteleDatabaseMsg: '确定删除数据源',
 		reloadMsg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema : ',
 		checkMsg: '此数据源被传输任务或API所占用，无法删除',
+		copyFailedMsg: '复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"',
 		status: {
 			testing: '测试中',
 			invalid: '无效',
@@ -1403,6 +1404,7 @@ const cn = {
 
 		submit: '保存',
 		cancel: '取消',
+		backDetection: '后台检测',
 		test: {
 			title: '连接测试',
 			success: '测试通过',

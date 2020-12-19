@@ -633,6 +633,8 @@ const en = {
 		deteleDatabaseMsg: 'This will permanently delete the database ',
 		reloadMsg: 'It may take a long time to reload schema, are you sure to reload the schema of the database',
 		checkMsg: 'This data source is used by transmission job or API, cannot be deleted',
+		copyFailedMsg:
+			'Copy failed, reason:  The setting item "Connections - create  duplicate source" need to be set to "false"',
 		status: {
 			testing: 'testing',
 			invalid: 'invalid',
@@ -1423,6 +1425,7 @@ const en = {
 
 		submit: 'Submit',
 		cancel: 'Cancel',
+		backDetection: 'backstage testing',
 		test: {
 			title: 'Connection Test',
 			success: 'Pass the test',

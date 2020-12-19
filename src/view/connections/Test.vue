@@ -28,7 +28,10 @@
 			</el-table-column>
 		</el-table>
 		<span slot="footer" class="dialog-footer">
-			<el-button size="mini" @click="handleClose">{{ $t('dataForm.cancel') }}</el-button>
+			<el-button v-if="testData.testResult === 'warning'" type="primary" size="mini" @click="handleClose()">{{
+				$t('dataForm.backDetection')
+			}}</el-button>
+			<el-button v-else size="mini" type="primary" @click="handleClose()">{{ $t('dataForm.close') }}</el-button>
 		</span>
 	</el-dialog>
 </template>
