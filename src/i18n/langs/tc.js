@@ -1435,7 +1435,7 @@ const tc = {
 			ReloadSchema: '定期加載schema',
 			clusterName: '集群名稱',
 			databaseHostPlaceholder: '資料庫地址（127.0.0.1/Domain:{端口}，多個地址請用，分開）',
-
+			plugin_name: '日誌解碼器',
 			uriTips: {
 				label: '示例',
 				content:

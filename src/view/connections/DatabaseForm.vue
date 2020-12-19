@@ -73,7 +73,7 @@ const defaultModel = {
 	database_owner: '',
 	node_name: '',
 	database_schema: '',
-
+	plugin_name: '',
 	database_datetype_without_timezone: '',
 	supportUpdatePk: false,
 
@@ -228,6 +228,8 @@ export default {
 		},
 		handleTestVisible() {
 			this.testData.dialogTestVisible = false;
+			this.testData.progress = 0;
+			this.testData.testResult = this.status['testing'];
 		},
 		goBack() {
 			this.$router.push('/connections');
