@@ -1,5 +1,10 @@
 <template>
-	<el-dialog title="跳过错误设置" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+	<el-dialog
+		:title="$t('dataFlow.skipError.title')"
+		:visible.sync="dialogVisible"
+		width="60%"
+		:before-close="handleClose"
+	>
 		<div class="skip-tip">{{ $t('dataFlow.skipError.tip') }}</div>
 		<div class="skip-tip">{{ $t('dataFlow.skipError.attention') }}</div>
 		<div class="skip-name">
