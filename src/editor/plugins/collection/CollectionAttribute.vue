@@ -889,7 +889,7 @@ export default {
 								hash[item.value] = 1;
 							}
 						});
-						if (this.repeatTable.length > 0) {
+						if (this.repeatTable.length > 0 && !this.disabled) {
 							this.repeatTableDiao = true;
 						}
 
