@@ -353,7 +353,7 @@ export default {
 				}
 			],
 			databaseTypeOptions: [],
-			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2', 'postgres', 'elasticsearch'], //目前白名单,
+			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2', 'postgres', 'elasticsearch', 'redis'], //目前白名单,
 			searchParams: this.$store.state.connections,
 			timer: '',
 			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
@@ -581,6 +581,13 @@ export default {
 						this.search(this.page.current);
 						this.$message.success(this.$t('connection.copyMsg'));
 					}
+				})
+				.catch(err => {
+					if (err && err.response) {
+						if (err.response.msg === 'duplicate source') {
+							this.$message.error(this.$t('connection.copyFailedMsg'));
+						}
+					}
 				});
 		},
 		delConfirm(data) {
@@ -602,6 +609,7 @@ export default {
 					}
 				});
 		},
+		//公用弹窗
 		confirm(callback, catchCallback, config) {
 			this.$confirm(config.Message + config.name + '?', config.title, {
 				confirmButtonText: config.confirmButtonText,

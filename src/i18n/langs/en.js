@@ -599,11 +599,12 @@ const en = {
 			sync_type_tip: 'Transmission type can be changed after disable aggregation settings of collection node: '
 		},
 		skipError: {
+			title: 'Skip Error Settings',
 			skipErrorSettings: 'Data Processing Error Handling',
 			tip:
-				'There were data processing errors detected in the job, please make sure these errors have been addressed. If you would like to skip these errors, please check them and click the "Skip Errors" button.  ',
+				'There were data processing errors detected in the job, please make sure these errors have been addressed. If you would like to skip these errors, please check them and click the "Skip errors, continue to start" button.  ',
 			attention: 'WARNING: If you chose to skip the errors, the relevant data may be discarded. ',
-			startJob: 'Do not skip, continue to start',
+			startJob: 'Skip errors, continue to start',
 			cancel: 'Cancel',
 			taskName: 'Task name'
 		}
@@ -633,6 +634,8 @@ const en = {
 		deteleDatabaseMsg: 'This will permanently delete the database ',
 		reloadMsg: 'It may take a long time to reload schema, are you sure to reload the schema of the database',
 		checkMsg: 'This data source is used by transmission job or API, cannot be deleted',
+		copyFailedMsg:
+			'Copy failed, reason:  The setting item "Connections - create  duplicate source" need to be set to "false"',
 		status: {
 			testing: 'testing',
 			invalid: 'invalid',
@@ -1420,9 +1423,11 @@ const en = {
 		title: 'Create Database',
 		saveSuccess: 'Test and save success.',
 		saveFail: 'Save failed.',
+		primaryTest: 'Starting connection test service, please wait for a while ...',
 
 		submit: 'Submit',
 		cancel: 'Cancel',
+		backDetection: 'backstage testing',
 		test: {
 			title: 'Connection Test',
 			success: 'Pass the test',

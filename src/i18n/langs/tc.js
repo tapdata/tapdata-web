@@ -385,7 +385,7 @@ const tc = {
 		bulkStopping: '批量停止',
 		taskBulkFx: '函数',
 		taskBulkOperation: '批量操作',
-		taskBulkTag: '设置分类',
+		taskBulkTag: '設置分类',
 		upload: '點擊上傳',
 		import: '任務導入',
 		uploadOK: '上傳成功',
@@ -592,11 +592,12 @@ const tc = {
 			sync_type_tip: '關閉數據集節點的聚合設置才能修改傳輸類型，已開啟節點:'
 		},
 		skipError: {
+			title: '跳過錯誤設置',
 			skipErrorSettings: '任務錯誤處理',
 			tip:
-				'任務上次停止時發生了以下數據相關的錯誤，請確認這些錯誤已經被處理。如果希望跳過這些錯誤，請勾選相應的錯誤項並點擊“跳過錯誤” 。 ',
+				'任務上次停止時發生了以下數據相關的錯誤，請確認這些錯誤已經被處理。如果希望跳過這些錯誤，請勾選相應的錯誤項並點擊“跳過錯誤，啟動任務” 。 ',
 			attention: '注意：若導致錯誤的數​​據未被處理，跳過錯誤可能導致這條數據被丟棄。 ',
-			startJob: '跳過以上錯誤，啟動任務',
+			startJob: '跳過錯誤，啟動任務',
 			cancel: '取消',
 			taskName: '任務名'
 		}
@@ -626,6 +627,7 @@ const tc = {
 		deteleDatabaseMsg: '確定刪除數據源',
 		reloadMsg: '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema : ',
 		checkMsg: '此數據源被傳輸任務或API所佔用，無法刪除',
+		copyFailedMsg: '複製失敗，原因：系統設置中 "連接設置 - 允許創建重複數據源" 被設置為 "false"',
 		status: {
 			testing: '測試中',
 			invalid: '無效',
@@ -1397,9 +1399,11 @@ const tc = {
 		title: '新建數據庫',
 		saveSuccess: '測試通過並創建成功',
 		saveFail: '保存失敗',
+		primaryTest: '正在啟動連接檢測服務，請稍等 ...',
 
 		submit: '保存',
 		cancel: '取消',
+		backDetection: '後台檢測',
 		test: {
 			title: '連接測試',
 			success: '測試通過',
