@@ -364,11 +364,6 @@ export default {
 		this.search(1);
 		this.getDatabaseType();
 		this.search(1);
-
-		//新手指引-创建数据源默认打开弹窗
-		if (this.$route.query.noviceGuide) {
-			this.dialogDatabaseTypeVisible = true;
-		}
 	},
 	methods: {
 		// 面板显示隐藏

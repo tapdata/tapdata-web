@@ -10,7 +10,9 @@
 						<img :src="getImgByType(databaseType)" />
 					</div>
 					<div class="content">{{ typeMap[databaseType] }}</div>
-					<div class="addBtn" v-if="!$route.query.id" @click="dialogDatabaseTypeVisible = true">Change</div>
+					<div class="addBtn" v-if="!$route.query.id" @click="dialogDatabaseTypeVisible = true">
+						{{ $t('connection.change') }}
+					</div>
 				</div>
 				<div class="form"><form-builder ref="form" v-model="model" :config="config"></form-builder></div>
 			</main>
