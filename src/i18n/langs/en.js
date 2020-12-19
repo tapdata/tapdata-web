@@ -1422,6 +1422,7 @@ const en = {
 		title: 'Create Database',
 		saveSuccess: 'Test and save success.',
 		saveFail: 'Save failed.',
+		primaryTest: 'Starting connection test service, please wait for a while ...',
 
 		submit: 'Submit',
 		cancel: 'Cancel',

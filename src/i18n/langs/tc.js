@@ -1398,6 +1398,7 @@ const tc = {
 		title: '新建數據庫',
 		saveSuccess: '測試通過並創建成功',
 		saveFail: '保存失敗',
+		primaryTest: '正在啟動連接檢測服務，請稍等 ...',
 
 		submit: '保存',
 		cancel: '取消',

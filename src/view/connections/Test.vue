@@ -17,7 +17,8 @@
 			:percentage="testData.progress"
 			:status="testData.testResult"
 		></el-progress>
-		<el-table :data="testData.testLogs" style="width: 100%" class="test-block">
+		<div v-if="testData.testLogs && testData.testLogs.length === 0">{{ $t('dataForm.primaryTest') }}</div>
+		<el-table :data="testData.testLogs" style="width: 100%" class="test-block" v-else>
 			<el-table-column prop="show_msg" :label="$t('dataForm.test.items')" width="250"> </el-table-column>
 			<el-table-column prop="status" :label="$t('dataForm.test.result')" width="100">
 				<template slot-scope="scope">

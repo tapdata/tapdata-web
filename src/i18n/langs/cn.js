@@ -1401,6 +1401,7 @@ const cn = {
 		title: '新建数据库',
 		saveSuccess: '测试通过并创建成功',
 		saveFail: '保存失败',
+		primaryTest: '正在启动连接检测服务，请稍等...',
 
 		submit: '保存',
 		cancel: '取消',
