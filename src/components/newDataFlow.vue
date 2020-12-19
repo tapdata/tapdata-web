@@ -77,18 +77,32 @@
 			</ul>
 			<div style="clear: both"></div>
 		</div>
+		<DatabaseTypeDialog
+			:dialogVisible="dialogDatabaseTypeVisible"
+			@dialogVisible="handleDialogDatabaseTypeVisible"
+			@databaseType="handleDatabaseType"
+		></DatabaseTypeDialog>
 	</el-dialog>
 </template>
 
 <script>
+import DatabaseTypeDialog from '@/view/connections/DatabaseTypeDialog';
 export default {
 	name: 'newDataFlow',
+	components: { DatabaseTypeDialog },
+
 	props: {
 		dialogVisible: {
 			required: true,
 			value: Boolean
 		}
 	},
+	data() {
+		return {
+			dialogDatabaseTypeVisible: false
+		};
+	},
+
 	methods: {
 		handleClose() {
 			this.$emit('update:dialogVisible', false);
@@ -119,11 +133,12 @@ export default {
 		},
 		// 跳转数据源
 		handleConnection() {
-			let routeUrl = this.$router.resolve({
-				path: '/connections?noviceGuide=true'
-			});
-			window.open(routeUrl.href, '_blank');
-			this.handleClose();
+			this.dialogDatabaseTypeVisible = true;
+			// let routeUrl = this.$router.resolve({
+			// 	path: '/connections?noviceGuide=true'
+			// });
+			// window.open(routeUrl.href, '_blank');
+			// this.handleClose();
 		},
 
 		//跳转发布api
@@ -142,6 +157,17 @@ export default {
 			});
 			window.open(routeUrl.href, '_blank');
 			this.handleClose();
+		},
+
+		//选择创建类型
+		handleDialogDatabaseTypeVisible() {
+			this.dialogDatabaseTypeVisible = false;
+		},
+		handleDatabaseType(type) {
+			this.handleDialogDatabaseTypeVisible();
+			let href = '/#/connections/create?databaseType=' + type;
+			window.open(href);
+			// this.$router.push('connections/create?databaseType=' + type);
 		}
 	}
 };

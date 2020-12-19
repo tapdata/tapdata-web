@@ -1465,6 +1465,8 @@ const en = {
 			databaseHostPlaceholder: 'Database Host(127.0.0.1/Domain:{Port},Please use multiple addresses , separate)',
 			plugin_name: 'Log decoder plugin name',
 			supportUpdatePk: 'Support Update Primary Key',
+			agentMsg:
+				'The test connection service is not available, please check if the Data Synchronization Agent is started correctly.',
 			uriTips: {
 				label: 'Example',
 				content:
