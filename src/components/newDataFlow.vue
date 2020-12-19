@@ -9,7 +9,11 @@
 	>
 		<div class="creat">
 			<ul class="item">
-				<li @click="db2db" v-readonlybtn="'SYNC_job_creation'">
+				<li
+					v-if="$window.getSettingByKey('SHOW_SIMPLE_SCENE')"
+					@click="db2db"
+					v-readonlybtn="'SYNC_job_creation'"
+				>
 					<span class="model">{{ $t('dataFlow.guidingMode') }}</span>
 					<div class="content">
 						<i class="iconfont icon-shujukuqianyi2"></i>
@@ -50,24 +54,26 @@
 						>
 					</div>
 				</li>
-				<li class="marTop25" @click="handleModules" v-readonlybtn="'API_creation'">
-					<div class="content">
-						<i class="iconfont icon-api2"></i>
-						<span>
-							<span class="tag">{{ $t('dataFlow.creatApi') }}</span>
-							{{ $t('dataFlow.apiDescription') }}</span
-						>
-					</div>
-				</li>
-				<li class="marTop25" @click="handleDataVerification" v-readonlybtn="'verify_job_creation'">
-					<div class="content">
-						<i class="iconfont icon-hechabidui-copy"></i>
-						<span>
-							<span class="tag">{{ $t('dataFlow.dataValidation') }}</span>
-							{{ $t('dataFlow.datavaliDescription') }}</span
-						>
-					</div>
-				</li>
+				<template v-if="!$window.getSettingByKey('HIDE_FOR_CLOUD')">
+					<li class="marTop25" @click="handleModules" v-readonlybtn="'API_creation'">
+						<div class="content">
+							<i class="iconfont icon-api2"></i>
+							<span>
+								<span class="tag">{{ $t('dataFlow.creatApi') }}</span>
+								{{ $t('dataFlow.apiDescription') }}</span
+							>
+						</div>
+					</li>
+					<li class="marTop25" @click="handleDataVerification" v-readonlybtn="'verify_job_creation'">
+						<div class="content">
+							<i class="iconfont icon-hechabidui-copy"></i>
+							<span>
+								<span class="tag">{{ $t('dataFlow.dataValidation') }}</span>
+								{{ $t('dataFlow.datavaliDescription') }}</span
+							>
+						</div>
+					</li>
+				</template>
 			</ul>
 			<div style="clear: both"></div>
 		</div>
