@@ -643,7 +643,8 @@ const tc = {
 			source: '源頭',
 			target: '目標',
 			source_and_target: '源頭和目標'
-		}
+		},
+		cannot_delete_remind: '當前連接正在被一個或多個任務或API使用中，請刪除任務或API後重試。'
 	},
 	editor: {
 		nodeSettings: '節點設置',

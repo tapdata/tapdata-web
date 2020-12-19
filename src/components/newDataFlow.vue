@@ -9,7 +9,11 @@
 	>
 		<div class="creat">
 			<ul class="item">
-				<li @click="db2db" v-readonlybtn="'SYNC_job_creation'">
+				<li
+					v-if="$window.getSettingByKey('SHOW_SIMPLE_SCENE')"
+					@click="db2db"
+					v-readonlybtn="'SYNC_job_creation'"
+				>
 					<span class="model">{{ $t('dataFlow.guidingMode') }}</span>
 					<div class="content">
 						<i class="iconfont icon-shujukuqianyi2"></i>
@@ -50,39 +54,55 @@
 						>
 					</div>
 				</li>
-				<li class="marTop25" @click="handleModules" v-readonlybtn="'API_creation'">
-					<div class="content">
-						<i class="iconfont icon-api2"></i>
-						<span>
-							<span class="tag">{{ $t('dataFlow.creatApi') }}</span>
-							{{ $t('dataFlow.apiDescription') }}</span
-						>
-					</div>
-				</li>
-				<li class="marTop25" @click="handleDataVerification" v-readonlybtn="'verify_job_creation'">
-					<div class="content">
-						<i class="iconfont icon-hechabidui-copy"></i>
-						<span>
-							<span class="tag">{{ $t('dataFlow.dataValidation') }}</span>
-							{{ $t('dataFlow.datavaliDescription') }}</span
-						>
-					</div>
-				</li>
+				<template v-if="!$window.getSettingByKey('HIDE_FOR_CLOUD')">
+					<li class="marTop25" @click="handleModules" v-readonlybtn="'API_creation'">
+						<div class="content">
+							<i class="iconfont icon-api2"></i>
+							<span>
+								<span class="tag">{{ $t('dataFlow.creatApi') }}</span>
+								{{ $t('dataFlow.apiDescription') }}</span
+							>
+						</div>
+					</li>
+					<li class="marTop25" @click="handleDataVerification" v-readonlybtn="'verify_job_creation'">
+						<div class="content">
+							<i class="iconfont icon-hechabidui-copy"></i>
+							<span>
+								<span class="tag">{{ $t('dataFlow.dataValidation') }}</span>
+								{{ $t('dataFlow.datavaliDescription') }}</span
+							>
+						</div>
+					</li>
+				</template>
 			</ul>
 			<div style="clear: both"></div>
 		</div>
+		<DatabaseTypeDialog
+			:dialogVisible="dialogDatabaseTypeVisible"
+			@dialogVisible="handleDialogDatabaseTypeVisible"
+			@databaseType="handleDatabaseType"
+		></DatabaseTypeDialog>
 	</el-dialog>
 </template>
 
 <script>
+import DatabaseTypeDialog from '@/view/connections/DatabaseTypeDialog';
 export default {
 	name: 'newDataFlow',
+	components: { DatabaseTypeDialog },
+
 	props: {
 		dialogVisible: {
 			required: true,
 			value: Boolean
 		}
 	},
+	data() {
+		return {
+			dialogDatabaseTypeVisible: false
+		};
+	},
+
 	methods: {
 		handleClose() {
 			this.$emit('update:dialogVisible', false);
@@ -113,11 +133,12 @@ export default {
 		},
 		// 跳转数据源
 		handleConnection() {
-			let routeUrl = this.$router.resolve({
-				path: '/connections?noviceGuide=true'
-			});
-			window.open(routeUrl.href, '_blank');
-			this.handleClose();
+			this.dialogDatabaseTypeVisible = true;
+			// let routeUrl = this.$router.resolve({
+			// 	path: '/connections?noviceGuide=true'
+			// });
+			// window.open(routeUrl.href, '_blank');
+			// this.handleClose();
 		},
 
 		//跳转发布api
@@ -136,6 +157,17 @@ export default {
 			});
 			window.open(routeUrl.href, '_blank');
 			this.handleClose();
+		},
+
+		//选择创建类型
+		handleDialogDatabaseTypeVisible() {
+			this.dialogDatabaseTypeVisible = false;
+		},
+		handleDatabaseType(type) {
+			this.handleDialogDatabaseTypeVisible();
+			let href = '/#/connections/create?databaseType=' + type;
+			window.open(href);
+			// this.$router.push('connections/create?databaseType=' + type);
 		}
 	}
 };
