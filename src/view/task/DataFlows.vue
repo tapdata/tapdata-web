@@ -799,10 +799,8 @@ export default {
 		handleDetail(id, type, mappingTemplate) {
 			const h = this.$createElement;
 			if (type === 'edit') {
-				this.$msgbox({
-					title: this.$t('dataFlow.importantReminder'),
-					customClass: 'dataflow-clickTip',
-					message: h('p', null, [
+				this.$confirm(
+					h('p', null, [
 						h('span', null, this.$t('dataFlow.modifyEditText')),
 						h('span', { style: 'color: #48b6e2' }, this.$t('dataFlow.nodeLayoutProcess')),
 						h('span', null, '、'),
@@ -815,12 +813,13 @@ export default {
 						h('span', null, this.$t('dataFlow.runNomally')),
 						h('span', null, this.$t('dataFlow.editLayerTip'))
 					]),
-					dangerouslyUseHTMLString: true,
-					showCancelButton: true,
-					confirmButtonText: this.$t('dataFlow.continueEditing'),
-					cancelButtonText: this.$t('message.cancel'),
-					type: 'warning'
-				}).then(() => {
+					this.$t('dataFlow.importantReminder'),
+					{
+						customClass: 'dataflow-clickTip',
+						confirmButtonText: this.$t('dataFlow.continueEditing'),
+						type: 'warning'
+					}
+				).then(() => {
 					let routeUrl = this.$router.resolve({
 						path: '/job',
 						query: { id: id, mapping: mappingTemplate }
@@ -1274,12 +1273,7 @@ export default {
 				let arr = this.$t('message.stopAggregation_message').split('XXX');
 				message = h('p', [arr[0] + '(', h('span', { style: { color: '#48b6e2' } }, data.name), ')' + arr[1]]);
 			}
-			this.$msgbox({
-				title: this.$t('dataFlow.importantReminder'),
-				message: message,
-				showCancelButton: true,
-				confirmButtonText: this.$t('message.confirm'),
-				cancelButtonText: this.$t('message.cancel'),
+			this.$confirm(message, this.$t('dataFlow.importantReminder'), {
 				type: 'warning',
 				closeOnClickModal: false
 			})
@@ -1308,19 +1302,14 @@ export default {
 			if (dataItem && dataItem.stages && dataItem.stages.find(s => s.type === 'aggregation_processor')) {
 				const h = this.$createElement;
 				let arr = this.$t('message.startAggregation_message').split('XXX');
-				this.$msgbox({
-					title: this.$t('dataFlow.importantReminder'),
-					message: h('p', [
-						arr[0] + '(',
-						h('span', { style: { color: '#48b6e2' } }, dataItem.name),
-						')' + arr[1]
-					]),
-					showCancelButton: true,
-					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancel'),
-					type: 'warning',
-					closeOnClickModal: false
-				})
+				this.$confirm(
+					h('p', [arr[0] + '(', h('span', { style: { color: '#48b6e2' } }, dataItem.name), ')' + arr[1]]),
+					this.$t('dataFlow.importantReminder'),
+					{
+						type: 'warning',
+						closeOnClickModal: false
+					}
+				)
 					.then(() => {
 						//若任务内存在聚合处理器，启动前先重置
 						dataFlows.reset(id).then(() => {
