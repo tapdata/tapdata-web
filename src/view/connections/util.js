@@ -18,6 +18,14 @@ export const verify = function(value) {
 	}
 	return value;
 };
+//列表脱敏
+export const desensitization = function(url) {
+	let matchResult = url.match(/^mongodb(\+srv)?:\/\/(.+):(.+)@/);
+	if (matchResult && matchResult[3]) {
+		return url.replace(`:${matchResult[3]}@`, ':*********@');
+	}
+	return url;
+};
 
 export const handleProgress = function(data) {
 	let count = 0;

@@ -206,6 +206,8 @@ export default {
 		},
 		handleTestVisible() {
 			this.testData.dialogTestVisible = false;
+			this.testData.progress = 0;
+			this.testData.testResult = this.status['testing'];
 		},
 		goBack() {
 			this.$router.push('/connections');
