@@ -10,6 +10,7 @@
 						<img :src="getImgByType(databaseType)" />
 					</div>
 					<div class="content">{{ typeMap[databaseType] }}</div>
+					<div class="addBtn" v-if="!$route.query.id" @click="dialogDatabaseTypeVisible = true">Change</div>
 				</div>
 				<div class="form"><form-builder ref="form" v-model="model" :config="config"></form-builder></div>
 			</main>
@@ -26,6 +27,11 @@
 			:dialogTestVisible="testData.dialogTestVisible"
 			:testData="testData"
 		></Test>
+		<DatabaseTypeDialog
+			:dialogVisible="dialogDatabaseTypeVisible"
+			@dialogVisible="handleDialogDatabaseTypeVisible"
+			@databaseType="handleDatabaseType"
+		></DatabaseTypeDialog>
 		<!-- <el-dialog
 			:title="$t('dataForm.dialogTitle')"
 			:close-on-click-modal="false"
@@ -52,6 +58,7 @@ import formConfig from './config';
 import gitbook from './GitBook';
 import Test from './Test';
 import { getImgByType, TYPEMAP, handleProgress } from './util';
+import DatabaseTypeDialog from './DatabaseTypeDialog';
 
 const databaseTypesModel = factory('DatabaseTypes');
 const connectionsModel = factory('connections');
@@ -91,14 +98,14 @@ const defaultModel = {
 
 export default {
 	name: 'DatabaseForm',
-	components: { gitbook, Test },
+	components: { gitbook, Test, DatabaseTypeDialog },
 	data() {
 		return {
 			visible: false,
 			testing: false,
 			timezones: [],
 			dataTypes: [],
-			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2', 'postgres', 'elasticsearch'], //目前白名单,
+			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis'], //目前白名单,
 			model: Object.assign({}, defaultModel),
 			config: {
 				items: []
@@ -117,7 +124,8 @@ export default {
 				testResult: '',
 				progress: 0,
 				dialogTestVisible: false
-			}
+			},
+			dialogDatabaseTypeVisible: false
 			// repeatDialogVisible: false,
 			// connectionObj: {
 			// 	name: '',
@@ -318,6 +326,25 @@ export default {
 			if (!result.data.result || result.data.result.length === 0) {
 				this.$message.error(this.$t('dataForm.form.agentMsg'));
 			}
+		},
+		//选择创建类型
+		handleDialogDatabaseTypeVisible() {
+			this.dialogDatabaseTypeVisible = false;
+		},
+		handleDatabaseType(type) {
+			this.handleDialogDatabaseTypeVisible();
+			if (this.whiteList.includes(type)) {
+				this.$router.push({
+					path: '/connections/create',
+					query: {
+						databaseType: type
+					}
+				});
+				location.reload();
+			} else {
+				top.location.href = '/#/connection';
+				localStorage.setItem('connectionDatabaseType', type);
+			}
 		}
 	}
 };
@@ -370,6 +397,13 @@ export default {
 				align-items: center;
 				margin-left: 15px;
 				font-size: 28px;
+			}
+			.addBtn {
+				color: #48b6e2;
+				cursor: pointer;
+				font-size: 12px;
+				margin-top: 26px;
+				margin-left: 10px;
 			}
 			.test {
 				margin-left: 200px;
