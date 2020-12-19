@@ -40,7 +40,12 @@
 									<div class="uuid">{{ item.systemInfo.uuid }}</div>
 									<span>{{ item.systemInfo.ip }}</span>
 								</div>
-								<div class="fr" style="width: 40%;" v-readonlybtn="'Cluster_operation'">
+								<div
+									v-if="managementType === 'cluster'"
+									class="fr"
+									style="width: 40%;"
+									v-readonlybtn="'Cluster_operation'"
+								>
 									<el-button size="mini" class="fr addBtn" @click="addServeFn(item)">{{
 										$t('message.addServerMon')
 									}}</el-button>
