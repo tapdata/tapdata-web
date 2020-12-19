@@ -1481,12 +1481,15 @@ const en = {
 		error: {
 			connectionNameExist: 'Connection name already existed.',
 			connectionurl: 'Connection name already existed.',
+			duplicateSource: 'This data source already existed',
 			noneHost: 'Database host is required.',
 			nonePort: 'Port is required.',
 			portNumber: 'Must be number.',
 			portRange: 'Port should be between 1 ~ 65535',
 			noneSslKey: 'Private key is required.',
-			noneSslCA: 'Certificate Authority is required.'
+			noneSslCA: 'Certificate Authority is required.',
+			sourceNameExist: 'This data source already exists',
+			noCreate: ' , Cannot be created repeatedly'
 		},
 		createDatabase: 'Create new database',
 		copyDatabase: 'Copy name',
@@ -1494,7 +1497,9 @@ const en = {
 		createTable: 'Create New Table',
 		copyTable: 'Copy name',
 		createCollection: 'Create new collection',
-		copyCollection: 'Copy name'
+		copyCollection: 'Copy name',
+		dialogTitle: 'Prompt',
+		close: 'Close'
 	},
 	formBuilder: {
 		noneText: ' is required.',

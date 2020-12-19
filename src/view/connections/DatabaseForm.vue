@@ -26,6 +26,23 @@
 			:dialogTestVisible="testData.dialogTestVisible"
 			:testData="testData"
 		></Test>
+		<!-- <el-dialog
+			:title="$t('dataForm.dialogTitle')"
+			:close-on-click-modal="false"
+			:visible.sync="repeatDialogVisible"
+			width="30%"
+		>
+			<p>
+				{{ $t('dataForm.error.sourceNameExist') }}
+				<span @click="clickLinkSource" style="color:#48B6E2;cursor: pointer">
+					{{ connectionObj.name }}</span
+				>
+				{{ $t('dataForm.error.noCreate') }}
+			</p>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="repeatDialogVisible = false">{{ $t('dataForm.close') }}</el-button>
+			</span>
+		</el-dialog> -->
 	</div>
 </template>
 
@@ -101,6 +118,11 @@ export default {
 				progress: 0,
 				dialogTestVisible: false
 			}
+			// repeatDialogVisible: false,
+			// connectionObj: {
+			// 	name: '',
+			// 	id: ''
+			// }
 		};
 	},
 	created() {
@@ -264,9 +286,14 @@ export default {
 							this.test(id);
 						})
 						.catch(err => {
-							if (err && err.response.status === 500) {
+							if (err && err.response) {
 								if (err.response.msg.indexOf('duplication for names') > -1) {
 									this.$message.error(this.$t('dataForm.error.connectionNameExist'));
+								} else if (err.response.msg.indexOf('duplicate source') > -1) {
+									this.connectionObj.name = err.response.data.name;
+									this.connectionObj.id = err.response.data.id;
+									// this.repeatDialogVisible = true;
+									this.$message.error(this.$t('dataForm.error.duplicateSource'));
 								} else {
 									this.$message.error(err.response.msg);
 								}
@@ -276,6 +303,11 @@ export default {
 						});
 				}
 			});
+		},
+
+		// 跳转到重复数据源
+		clickLinkSource() {
+			window.open('/#/connection/' + this.connectionObj.id, '_blank');
 		}
 	}
 };
