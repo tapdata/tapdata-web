@@ -191,6 +191,9 @@ export default {
 						};
 						return node;
 					});
+					//过滤value空值 undefined
+					items = items || [];
+					items = items.filter(item => item.value && item.value !== '');
 					this.form = items;
 				}
 			}
@@ -399,7 +402,6 @@ export default {
 		color: #666;
 		font-size: 12px;
 		display: inline-block;
-		vertical-align: top;
 		word-break: break-all;
 	}
 	.info-list {

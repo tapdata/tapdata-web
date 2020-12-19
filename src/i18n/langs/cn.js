@@ -594,11 +594,12 @@ const cn = {
 			sync_type_tip: '关闭数据集节点的聚合设置才能修改传输类型，已开启节点:'
 		},
 		skipError: {
+			title: '跳过错误设置',
 			skipErrorSettings: '任务错误处理',
 			tip:
-				'任务上次停止时发生了以下数据相关的错误，请确认这些错误已经被处理。如果希望跳过这些错误，请勾选相应的错误项并点击“跳过错误” 。',
+				'任务上次停止时发生了以下数据相关的错误，请确认这些错误已经被处理。如果希望跳过这些错误，请勾选相应的错误项并点击“跳过错误，启动任务” 。',
 			attention: '注意：若导致错误的数据未被处理，跳过错误可能导致这条数据被丢弃。',
-			startJob: '跳过以上错误，启动任务',
+			startJob: '跳过错误，启动任务',
 			cancel: '取消',
 			taskName: '任务名'
 		}
@@ -628,6 +629,7 @@ const cn = {
 		deteleDatabaseMsg: '确定删除数据源',
 		reloadMsg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema : ',
 		checkMsg: '此数据源被传输任务或API所占用，无法删除',
+		copyFailedMsg: '复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"',
 		status: {
 			testing: '测试中',
 			invalid: '无效',
@@ -1400,9 +1402,11 @@ const cn = {
 		title: '新建数据库',
 		saveSuccess: '测试通过并创建成功',
 		saveFail: '保存失败',
+		primaryTest: '正在启动连接检测服务，请稍等...',
 
 		submit: '保存',
 		cancel: '取消',
+		backDetection: '后台检测',
 		test: {
 			title: '连接测试',
 			success: '测试通过',
