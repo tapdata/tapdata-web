@@ -1660,7 +1660,8 @@ const en = {
 			headInterpretation:
 				'Tapdata DFS Cloud have to install agent at local server to ensure databases connection and transmission services normally',
 			downloadInstall: 'Download and install',
-			text: ' Copy and execute the following command to download and install agent on Linux server',
+			text:
+				'First, a JAVA runtime environment is required in the installation environment. Then, download and start Agent by using the following command.',
 			copy: 'Copy command',
 			copied: 'copied',
 			refresh: 'Refresh',
@@ -1674,7 +1675,8 @@ const en = {
 			waitingInstall: 'Waiting installation',
 			agentNum: 'Agents installed',
 			downLoadAgent: 'Download Agent',
-			windowsText: 'Download to the server，and copy the following command at the storage path to install',
+			windowsText:
+				'First, a JAVA runtime environment is required in the installation environment. After download, you can install and start Agent by using the following command in the directory where the Agent Installation package stored.',
 			windowsInstructionsText1:
 				'· First, ensure that the JAVA runtime environment is installed in the installation target environment.',
 			windowsInstructionsText2: '· Second, download the installation file and store it in a directory.',

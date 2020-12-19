@@ -108,7 +108,7 @@ export default {
 				rules.push({
 					required: true,
 					validator(rule, value, callback) {
-						if (!value || !(value + '').trim()) {
+						if ((!value && value !== 0) || (value && !(value + '').trim())) {
 							callback(new Error(`${config.label}` + self.$t('formBuilder.noneText')));
 						} else {
 							callback();
