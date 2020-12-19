@@ -27,4 +27,8 @@ export default class MetadataInstancesAPI extends PublicApi {
 	tableConnection(params) {
 		return axios.get(this.url + '/tableConnection', { params });
 	}
+
+	upload(upsert, type, listtags, params) {
+		return axios.post(`${this.url}/upload?upsert=${upsert}&type=${type}&listtags=${listtags}`, params);
+	}
 }

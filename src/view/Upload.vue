@@ -14,14 +14,16 @@
 
 		<el-upload
 			class="upload-demo"
+			ref="upload"
 			:action="action"
 			:accept="accept"
 			:on-success="handleSuccess"
-			:before-remove="handleRemove"
+			:on-remove="handleRemove"
 			:on-error="handleError"
 			:file-list="fileList"
+			:http-request="handlerUpload"
 		>
-			<el-button type="primary" plain size="small">{{ $t('dataFlow.upload') }}</el-button>
+			<el-button type="primary" @click="submitUpload" plain size="small">{{ $t('dataFlow.upload') }}</el-button>
 		</el-upload>
 		<SelectClassify
 			ref="SelectClassify"
@@ -42,6 +44,8 @@
 
 <script>
 import SelectClassify from '../components/SelectClassify';
+import factory from '@/api/factory';
+const MetadataInstance = factory('MetadataInstances');
 export default {
 	components: { SelectClassify },
 	data() {
@@ -65,54 +69,44 @@ export default {
 		} else {
 			this.downType = 'dataflow';
 		}
-
-		this.action =
-			window.location.protocol +
-			'//' +
-			window.location.hostname +
-			':' +
-			window.location.port +
-			'/api/MetadataInstances/upload?upsert=' +
-			this.upsert +
-			'&listtags=' +
-			JSON.stringify(this.tagList) +
-			'&type=' +
-			this.downType;
+		this.handlerUpload();
+		// this.action =
+		// 	window.location.protocol +
+		// 	'//' +
+		// 	window.location.hostname +
+		// 	':' +
+		// 	window.location.port +
+		// 	'/api/MetadataInstances/upload?upsert=' +
+		// 	this.upsert +
+		// 	'&listtags=' +
+		// 	JSON.stringify(this.tagList) +
+		// 	'&type=' +
+		// 	this.downType;
 	},
 
 	watch: {
 		upsert: {
 			deep: true,
 			handler() {
-				this.action =
-					window.location.protocol +
-					'//' +
-					window.location.hostname +
-					':' +
-					window.location.port +
-					'/api/MetadataInstances/upload?upsert=' +
-					this.upsert +
-					'&listtags=' +
-					JSON.stringify(this.tagList) +
-					'&type=' +
-					this.downType;
+				this.handlerUpload();
+				// this.action =
+				// 	window.location.protocol +
+				// 	'//' +
+				// 	window.location.hostname +
+				// 	':' +
+				// 	window.location.port +
+				// 	'/api/MetadataInstances/upload?upsert=' +
+				// 	this.upsert +
+				// 	'&listtags=' +
+				// 	JSON.stringify(this.tagList) +
+				// 	'&type=' +
+				// 	this.downType;
 			}
 		},
 		tagList: {
 			deep: true,
 			handler() {
-				this.action =
-					window.location.protocol +
-					'//' +
-					window.location.hostname +
-					':' +
-					window.location.port +
-					'/api/MetadataInstances/upload?upsert=' +
-					this.upsert +
-					'&listtags=' +
-					JSON.stringify(this.tagList) +
-					'&type=' +
-					this.downType;
+				this.handlerUpload();
 			}
 		}
 	},
@@ -123,6 +117,11 @@ export default {
 		handleClassify() {
 			this.dialogVisible = true;
 		},
+
+		submitUpload() {
+			this.$refs.upload.submit();
+		},
+
 		handleOperationClassify(listtags) {
 			this.tagList = listtags;
 		},
@@ -142,6 +141,21 @@ export default {
 		},
 		handleRemove() {
 			return false;
+		},
+
+		handlerUpload(item) {
+			let formData = new FormData();
+			formData.append('file', item.file);
+
+			MetadataInstance.upload(this.upsert, this.downType, JSON.stringify(this.tagList), formData)
+				.then(() => {
+					this.status = true;
+				})
+				.catch(() => {
+					this.status = false;
+					this.handleRemove();
+					this.$message.error(this.$t('dataFlow.uploadError'));
+				});
 		}
 	}
 };

@@ -16,8 +16,8 @@
 						<el-button type="primary" @click="screenFn">{{ $t('message.filter') }}</el-button>
 					</div>
 				</el-col>
-				<el-col class="text-rf" :span="11">
-					<!-- <el-button
+				<!-- <el-col class="text-rf" :span="11">
+					<el-button
 						v-readonlybtn="'SYNC_job_creation'"
 						class="btn btn-create"
 						type="primary"
@@ -25,8 +25,8 @@
 						@click="create"
 					>
 						<i class="iconfont icon-jia add-btn-icon"></i>
-					</el-button> -->
-				</el-col>
+					</el-button>
+				</el-col> -->
 			</el-row>
 
 			<div class="content" v-if="waterfallData.length > 0">
@@ -48,7 +48,7 @@
 								<!--  -->
 							</div>
 							<div class="boxBottom">
-								<el-row :gutter="20" class="data-list" v-if="managementType === 'cluster'">
+								<el-row :gutter="20" class="data-list">
 									<el-col :span="8">
 										<span class="txt"
 											><i class="icon iconfont iconhoutai"></i>{{ $t('message.manageSys') }}</span
@@ -118,7 +118,7 @@
 										</div>
 									</el-col>
 								</el-row>
-								<el-row :gutter="20" class="data-list" v-if="managementType === 'cluster'">
+								<el-row :gutter="20" class="data-list">
 									<el-col :span="8">
 										<span class="txt"><i class="icon iconfont iconAPI"></i>API server</span>
 									</el-col>
@@ -202,24 +202,18 @@
 				}}</el-button>
 			</div>
 		</el-dialog>
-		<DownAgent
-			v-if="downLoadAgetntdialog"
-			:downLoadNum="downLoadNum"
-			type="dashboard"
-			:lastDataNum="firstNum"
-			@closeAgentDialog="closeAgentDialog"
-		></DownAgent>
+		<!-- <DownAgent ref="agentDialog" type="dashboard" @closeAgentDialog="closeAgentDialog"></DownAgent> -->
 	</div>
 </template>
 <script>
 // import vueWaterfallEasy from 'vue-waterfall-easy';
-import DownAgent from '../downAgent/agentDown';
+// import DownAgent from '../downAgent/agentDown';
 import addServe from './component/addServe';
 import factory from '../../api/factory';
 const cluster = factory('cluster');
 export default {
 	name: 'clusterManagement',
-	components: { addServe, DownAgent },
+	components: { addServe },
 	data() {
 		return {
 			waterfallData: [],
@@ -236,9 +230,7 @@ export default {
 			editItem: {},
 			timer: null,
 			downLoadAgetntdialog: false,
-			downLoadNum: 0,
-			firstNum: undefined,
-			managementType: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT')
+			downLoadNum: 0
 		};
 	},
 	created() {
@@ -254,14 +246,14 @@ export default {
 	},
 
 	methods: {
-		// 新建集群管理
-		create() {
-			this.downLoadAgetntdialog = true;
-		},
-		// 关闭agent下载弹窗返回参数
-		closeAgentDialog() {
-			this.downLoadAgetntdialog = false;
-		},
+		// // 新建集群管理
+		// create() {
+		// 	this.$refs.agentDialog.dialogVisible = true;
+		// },
+		// // 关闭agent下载弹窗返回参数
+		// closeAgentDialog() {
+		// 	this.$refs.agentDialog.dialogVisible = false;
+		// },
 		// 提交
 		async submitForm() {
 			let getFrom = this.$refs.childRules.ruleForm;
@@ -447,19 +439,6 @@ export default {
 			}
 			cluster.get(params).then(res => {
 				if (res.data) {
-					if (!this.firstNum) {
-						this.firstNum = res.data.length || 0;
-						this.downLoadNum = 0;
-					}
-					if (this.firstNum) {
-						this.downLoadNum = res.data.length;
-					}
-					if (res.data.length > 0) {
-						this.agentTipFalg = false;
-					} else {
-						this.agentTipFalg = true;
-					}
-
 					this.list = res.data;
 					let [...waterfallData] = this.list;
 					let [...newWaterfallData] = [[], []];
