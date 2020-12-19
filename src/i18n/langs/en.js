@@ -1464,6 +1464,7 @@ const en = {
 			clusterName: 'Cluster Name',
 			databaseHostPlaceholder: 'Database Host(127.0.0.1/Domain:{Port},Please use multiple addresses , separate)',
 			plugin_name: 'Log decoder plugin name',
+			supportUpdatePk: 'Support Update Primary Key',
 			uriTips: {
 				label: 'Example',
 				content:

@@ -137,6 +137,11 @@ export default function(vm) {
 				label: vm.$t('dataForm.form.additionalString')
 			},
 			{
+				type: 'switch',
+				field: 'supportUpdatePk',
+				label: vm.$t('dataForm.form.supportUpdatePk')
+			},
+			{
 				type: 'select',
 				field: 'database_datetype_without_timezone',
 				label: vm.$t('dataForm.form.timeZone'),

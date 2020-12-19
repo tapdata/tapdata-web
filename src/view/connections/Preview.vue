@@ -250,8 +250,6 @@ export default {
 			}
 		},
 		reload() {
-			this.progress = 0;
-			this.showProgress = false;
 			let config = {
 				title: this.$t('connection.reloadTittle'),
 				Message: this.$t('connection.reloadMsg'),
@@ -262,6 +260,7 @@ export default {
 			};
 			this.confirm(
 				() => {
+					this.progress = 0;
 					this.$api('connections')
 						.updateById(this.data.id, {
 							status: 'testing',
@@ -280,6 +279,8 @@ export default {
 									this.progress = progress ? progress : 0;
 									if (this.progress !== 100) {
 										this.showProgress = true;
+									} else {
+										this.showProgress = false;
 									}
 								}
 							}
