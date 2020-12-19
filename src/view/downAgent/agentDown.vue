@@ -35,13 +35,15 @@
 					</div>
 				</div>
 				<div class="prompt">
-					<span v-if="downLoadType === 'Linux'">{{ $t('dialog.downAgent.text') }}</span>
+					<span style="word-break: break-word" v-if="downLoadType === 'Linux'">{{
+						$t('dialog.downAgent.text')
+					}}</span>
 					<div v-else @click="handleDownLoad">
 						<span class="operaKey">
 							<i class="iconfont icon-xiazai clickIcont"></i>
 							{{ $t('dialog.downAgent.downLoadAgent') }}</span
 						>
-						<span>{{ $t('dialog.downAgent.windowsText') }}</span>
+						<span style="word-break: break-word">{{ $t('dialog.downAgent.windowsText') }}</span>
 					</div>
 
 					<el-tooltip
@@ -189,16 +191,16 @@ export default {
 		let self = this;
 		let version = 'DAAS_BUILD_NUMBER';
 		this.windowLink =
-			'tapdata start backend downloadUrl ' +
-			`http://resource.tapdata.net/package/feagent/${version}/ token ` +
+			'tapdata start backend --downloadUrl ' +
+			`http://resource.tapdata.net/package/feagent/${version}/ --token ` +
 			this.$cookie.get('token') +
 			' ' +
 			this.$cookie.get('user_id');
 		this.LinuxLink =
 			'wget "' +
 			`http://resource.tapdata.net/package/feagent/${version}/tapdata` +
-			'" && chmod +x tapdata && ./tapdata start backend downloadUrl ' +
-			`http://resource.tapdata.net/package/feagent/${version}/ token ` +
+			'" && chmod +x tapdata && ./tapdata start backend --downloadUrl ' +
+			`http://resource.tapdata.net/package/feagent/${version}/ --token ` +
 			this.$cookie.get('token') +
 			' ' +
 			this.$cookie.get('user_id');

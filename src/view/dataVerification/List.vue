@@ -372,7 +372,7 @@ export default {
 			},
 			validList: [
 				{ name: this.$t('app.Home.checkSame'), value: 'passed' },
-				{ name: this.$t('app.Home.countDifference'), value: 'countDiff' },
+				{ name: this.$t('app.Home.countDifference'), value: 'row_count' },
 				{ name: this.$t('app.Home.contentDifference'), value: 'valueDiff' },
 				{ name: 'ERROR', value: 'failed' }
 			],
@@ -387,6 +387,8 @@ export default {
 				this.searchParams.result = 'failed';
 			} else if (this.$route.query.executionStatus === 'total') {
 				this.searchParams.result = '';
+			} else if (this.$route.query.executionStatus === 'countDiff') {
+				this.searchParams.result = 'row_count';
 			} else {
 				this.searchParams.result = this.$route.query.executionStatus;
 			}
@@ -455,7 +457,11 @@ export default {
 				if (result === 'error' || result === 'passed') {
 					where.result = result;
 				} else {
-					where.inspectMethod = result;
+					if (result === 'row_count') {
+						where.inspectMethod = result;
+					} else {
+						where['or'] = [{ inspectMethod: 'field' }, { inspectMethod: 'jointField' }];
+					}
 				}
 			}
 			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
