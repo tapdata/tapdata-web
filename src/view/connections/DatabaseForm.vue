@@ -292,8 +292,8 @@ export default {
 								if (err.response.msg.indexOf('duplication for names') > -1) {
 									this.$message.error(this.$t('dataForm.error.connectionNameExist'));
 								} else if (err.response.msg.indexOf('duplicate source') > -1) {
-									this.connectionObj.name = err.response.data.name;
-									this.connectionObj.id = err.response.data.id;
+									// this.connectionObj.name = err.response.data.name;
+									// this.connectionObj.id = err.response.data.id;
 									// this.repeatDialogVisible = true;
 									this.$message.error(this.$t('dataForm.error.duplicateSource'));
 								} else {
