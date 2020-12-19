@@ -2,6 +2,7 @@
 	<el-dialog
 		:title="$t('connection.createNewDataSource')"
 		:visible.sync="dialogVisible"
+		:append-to-body="true"
 		width="770px"
 		:before-close="handleClose"
 	>
