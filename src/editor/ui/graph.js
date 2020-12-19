@@ -22,6 +22,7 @@ import { Message } from 'element-ui';
 import { getUrlSearch } from '../../util/util';
 
 window.joint = joint;
+let count = 0;
 
 export default class Graph extends Component {
 	/**
@@ -144,16 +145,15 @@ export default class Graph extends Component {
 				)
 					return false;
 				if (!self.validPath.call(self, sourceView, targetView)) {
-					if (!self.isLayer) {
+					if (!count) {
 						Message.error({
 							message: i18n.t('dataFlow.aggregateNotDataNode')
 						});
+						count = 1;
+						setTimeout(() => {
+							count = 0;
+						}, 3000);
 					}
-					self.isLayer = true;
-					setTimeout(() => {
-						self.isLayer = false;
-					}, 3000);
-
 					return false;
 				}
 
