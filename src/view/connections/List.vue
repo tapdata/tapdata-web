@@ -142,14 +142,19 @@
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column prop="database_host" :label="$t('connection.dataBaseHost')"></el-table-column>
+					<el-table-column
+						prop="database_host"
+						:label="$t('connection.dataBaseHost')"
+						:formatter="formatterDatabaseType"
+					>
+					</el-table-column>
 					<el-table-column
 						prop="connection_type"
 						:label="$t('connection.connectionType')"
 						:formatter="formatterConnectionType"
-						width="180"
+						width="100"
 					></el-table-column>
-					<el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="180">
+					<el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="100">
 						<template slot-scope="scope">
 							<span class="error" v-if="['invalid'].includes(scope.row.status)">
 								<i class="el-icon-error"></i>
@@ -174,10 +179,10 @@
 					<el-table-column
 						prop="listtags"
 						:label="$t('connection.dataBaseClassify')"
-						width="180"
+						width="160"
 						:formatter="formatterListTags"
 					></el-table-column>
-					<el-table-column :label="$t('connection.operate')" width="220">
+					<el-table-column :label="$t('connection.operate')" width="200">
 						<template slot-scope="scope">
 							<el-tooltip
 								class="item"
@@ -185,7 +190,7 @@
 								:content="$t('message.preview')"
 								placement="bottom"
 							>
-								<el-button type="text" @click="preview(scope.row.id)">
+								<el-button type="text" @click="preview(scope.row.id, scope.row.database_type)">
 									<i class="iconfont task-list-icon icon-chaxun1"></i>
 								</el-button>
 							</el-tooltip>
@@ -260,8 +265,8 @@
 				?
 			</p>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="deleteDialogVisible = false">{{ $t('message.cancel') }}</el-button>
-				<el-button type="primary" @click="remove(delData)">{{ $t('message.confirm') }}</el-button>
+				<el-button @click="deleteDialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="remove(delData)" size="mini">{{ $t('message.confirm') }}</el-button>
 			</span>
 		</el-dialog>
 		<SelectClassify
@@ -277,7 +282,12 @@
 			@dialogVisible="handleDialogDatabaseTypeVisible"
 			@databaseType="handleDatabaseType"
 		></DatabaseTypeDialog>
-		<Preview :id="id" :visible="previewVisible" v-on:previewVisible="handlePreviewVisible"></Preview>
+		<Preview
+			:id="id"
+			:visible="previewVisible"
+			:databaseType="databaseType"
+			v-on:previewVisible="handlePreviewVisible"
+		></Preview>
 	</section>
 </template>
 <script>
@@ -285,7 +295,7 @@ import Classification from '@/components/Classification';
 import SelectClassify from '@/components/SelectClassify';
 import DatabaseTypeDialog from './DatabaseTypeDialog';
 import Preview from './Preview';
-import { verify } from './util';
+import { verify, desensitization } from './util';
 
 let timeout = null;
 
@@ -304,6 +314,7 @@ export default {
 			multipleSelection: [],
 			tableData: [],
 			usersData: [],
+			databaseType: '',
 			id: '',
 			page: {
 				current: 1,
@@ -342,6 +353,7 @@ export default {
 				}
 			],
 			databaseTypeOptions: [],
+			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2', 'postgres', 'elasticsearch'], //目前白名单,
 			searchParams: this.$store.state.connections,
 			timer: '',
 			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
@@ -352,6 +364,8 @@ export default {
 		this.search(1);
 		this.getDatabaseType();
 		this.search(1);
+
+		//新手指引-创建数据源默认打开弹窗
 		if (this.$route.query.noviceGuide) {
 			this.dialogDatabaseTypeVisible = true;
 		}
@@ -529,17 +543,21 @@ export default {
 				config
 			);
 		},
-		preview(id) {
+		preview(id, type) {
 			this.id = id;
-			this.previewVisible = true;
+			this.databaseType = type;
+			if (this.whiteList.includes(type)) {
+				this.previewVisible = true;
+			} else {
+				top.location.href = '/#/connection/' + id;
+				localStorage.setItem('connectionDatabaseType', type);
+			}
 		},
 		handlePreviewVisible() {
 			this.previewVisible = false;
 		},
 		edit(id, type) {
-			if (
-				['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis', 'db2'].includes(type)
-			) {
+			if (this.whiteList.includes(type)) {
 				this.$router.push('connections/create?id=' + id + '&databaseType=' + type);
 			} else {
 				top.location.href = '/#/connection/' + id;
@@ -577,9 +595,9 @@ export default {
 					let modules = res.modules || [];
 					if (jobs.length > 0 || modules.length > 0) {
 						this.$message.error(this.$t('connection.checkMsg'));
-						this.deleteDialogVisible = false;
 					} else {
 						this.$message.success(this.$t('message.deleteOK'));
+						this.deleteDialogVisible = false;
 						this.search(this.page.current);
 					}
 				});
@@ -611,6 +629,15 @@ export default {
 		formatterListTags(row) {
 			let listTags = row.listtags || [];
 			return listTags.map(tag => tag.value).join(',');
+		},
+		formatterDatabaseType(row) {
+			let url = null;
+			if (['mongodb', 'gridfs'].includes(row.database_type)) {
+				url = desensitization(row.database_uri);
+			} else {
+				url = row.database_host;
+			}
+			return url;
 		},
 		async formatterUserName() {
 			let usersData = await this.$api('users').get();
@@ -681,9 +708,7 @@ export default {
 		},
 		handleDatabaseType(type) {
 			this.handleDialogDatabaseTypeVisible();
-			if (
-				['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis', 'db2'].includes(type)
-			) {
+			if (this.whiteList.includes(type)) {
 				this.$router.push('connections/create?databaseType=' + type);
 			} else {
 				top.location.href = '/#/connection';

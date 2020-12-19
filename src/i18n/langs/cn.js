@@ -1438,7 +1438,7 @@ const cn = {
 			ReloadSchema: '定期加载schema',
 			clusterName: '集群名称',
 			databaseHostPlaceholder: '数据库地址(127.0.0.1/Domain:{端口},多个地址请用,分开)',
-
+			plugin_name: '日志解码器',
 			uriTips: {
 				label: '示例',
 				content:
@@ -1460,12 +1460,15 @@ const cn = {
 		},
 		error: {
 			connectionNameExist: '连接名称已存在',
+			duplicateSource: '此数据源已存在',
 			noneHost: '数据库地址不能为空',
 			nonePort: '端口不能为空',
 			portNumber: '端口必须为数字',
 			portRange: '端口号取值范围 1 ~ 65535',
 			noneSslKey: '客户端私钥不能为空',
-			noneSslCA: '证书颁发机构不能为空'
+			noneSslCA: '证书颁发机构不能为空',
+			sourceNameExist: '此数据源已存在',
+			noCreate: '，无法被重复创建'
 		},
 		createDatabase: '新建数据库',
 		copyDatabase: '复制数据库名',
@@ -1473,7 +1476,9 @@ const cn = {
 		createTable: '创建新表',
 		copyTable: '复制表名',
 		createCollection: '创建新数据集',
-		copyCollection: '复制数据集'
+		copyCollection: '复制数据集',
+		dialogTitle: '提示',
+		close: '关闭'
 	},
 	formBuilder: {
 		noneText: '不能为空',

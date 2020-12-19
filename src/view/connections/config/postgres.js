@@ -7,7 +7,8 @@ export default function(vm) {
 		defaultModel: {
 			connection_type: 'source_and_target',
 			thin_type: 'SID',
-			supportUpdatePk: false
+			supportUpdatePk: false,
+			plugin_name: 'wal2json_streaming'
 		},
 		checkItems() {
 			let vm = this;
@@ -106,6 +107,17 @@ export default function(vm) {
 				type: 'input',
 				field: 'database_owner',
 				label: vm.$t('dataForm.form.databaseOwner'),
+				required: true
+			},
+			{
+				type: 'select',
+				field: 'plugin_name',
+				label: vm.$t('dataForm.form.plugin_name'),
+				options: [
+					{ label: 'json streaming', value: 'wal2json_streaming' },
+					{ label: 'json streaming on rds', value: 'wal2json_rds_streaming' },
+					{ label: 'pgoutput', value: 'pgoutput' }
+				],
 				required: true
 			},
 			{

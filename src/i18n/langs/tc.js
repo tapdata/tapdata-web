@@ -1435,7 +1435,7 @@ const tc = {
 			ReloadSchema: '定期加載schema',
 			clusterName: '集群名稱',
 			databaseHostPlaceholder: '資料庫地址（127.0.0.1/Domain:{端口}，多個地址請用，分開）',
-
+			plugin_name: '日誌解碼器',
 			uriTips: {
 				label: '示例',
 				content:
@@ -1457,12 +1457,15 @@ const tc = {
 		},
 		error: {
 			connectionNameExist: '連接名稱已存在',
+			duplicateSource: '此數據源已存在',
 			noneHost: '數據庫地址不能為空',
 			nonePort: '端口不能為空',
 			portNumber: '端口必須為數位',
 			portRange: '端口號取值範圍 1 ~ 65535',
 			noneSslKey: '用戶端私鑰不能為空',
-			noneSslCA: '證書頒發機构不能為空'
+			noneSslCA: '證書頒發機构不能為空',
+			sourceNameExist: '此數據源已存在',
+			noCreate: '，無法被重複創建'
 		},
 		createDatabase: '新建數據庫',
 		copyDatabase: '複製數據庫名',
@@ -1470,7 +1473,9 @@ const tc = {
 		createTable: '創建新表',
 		copyTable: '複製表名',
 		createCollection: '創建新數據集',
-		copyCollection: '複製數據集'
+		copyCollection: '複製數據集',
+		dialogTitle: '提示',
+		close: '關閉'
 	},
 	formBuilder: {
 		noneText: '不能為空',

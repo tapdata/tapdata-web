@@ -106,6 +106,10 @@ export default {
 			required: true,
 			value: String
 		},
+		databaseType: {
+			required: true,
+			value: String
+		},
 		visible: {
 			required: true,
 			value: String
@@ -133,7 +137,7 @@ export default {
 		visible: {
 			handler() {
 				if (this.visible) {
-					this.getData(this.id);
+					this.getData(this.id, this.databaseType);
 				}
 			}
 		}
@@ -152,42 +156,44 @@ export default {
 			clearInterval(this.timer);
 			this.timer = null;
 		},
-		getData(id) {
-			this.$api('connections')
-				.get([id])
-				.then(result => {
-					if (result && result.data) {
-						let data = result.data;
-						this.data = result.data;
-						this.name = data.name;
-						this.type = data.database_type;
-						this.status = data.status;
-						if (
-							!data.loadCount &&
-							!data.tableCount &&
-							data.tableCount !== 0 &&
-							!['invalid'].includes(this.status)
-						) {
-							let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100;
-							this.progress = progress ? progress : 0;
-							if (this.progress !== 100) {
-								this.showProgress = true;
-							}
-						}
-						let func = formConfig[this.type];
-						if (func) {
-							let config = func(this);
-							let items = config.items.map(it => {
-								let node = {
-									label: it.label,
-									value: data[it.field]
-								};
-								return node;
-							});
-							this.form = items;
-						}
+		async getData(id, type) {
+			let result = null;
+			if (['mongodb', 'gridfs'].includes(type)) {
+				result = await this.$api('connections').customQuery([id]);
+			} else {
+				result = await this.$api('connections').get([id]);
+			}
+			if (result && result.data) {
+				let data = result.data;
+				this.data = result.data;
+				this.name = data.name;
+				this.type = data.database_type;
+				this.status = data.status;
+				if (
+					!data.loadCount &&
+					!data.tableCount &&
+					data.tableCount !== 0 &&
+					!['invalid'].includes(this.status)
+				) {
+					let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100;
+					this.progress = progress ? progress : 0;
+					if (this.progress !== 100) {
+						this.showProgress = true;
 					}
-				});
+				}
+				let func = formConfig[this.type];
+				if (func) {
+					let config = func(this);
+					let items = config.items.map(it => {
+						let node = {
+							label: it.label,
+							value: data[it.field]
+						};
+						return node;
+					});
+					this.form = items;
+				}
+			}
 		},
 		handleClose() {
 			this.form = {};
@@ -195,8 +201,17 @@ export default {
 			this.$emit('previewVisible', false);
 		},
 		beforeTest(id) {
-			this.testData.dialogTestVisible = true;
-			this.test(id);
+			let params = {
+				response_body: {},
+				status: 'testing',
+				id: id
+			};
+			this.$api('connections')
+				.patchId(params)
+				.then(() => {
+					this.testData.dialogTestVisible = true;
+					this.test(id);
+				});
 		},
 		async test(id) {
 			let result = null;
@@ -345,7 +360,7 @@ export default {
 		.panelBtn {
 			display: flex;
 			align-items: center;
-			width: 40%;
+			width: 60%;
 			justify-content: flex-end;
 			.item {
 				margin-right: 10px;
