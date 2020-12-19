@@ -130,6 +130,11 @@ export default {
 				testResult: '',
 				progress: 0,
 				dialogTestVisible: false
+			},
+			testStatus: {
+				ready: 'success',
+				invalid: 'exception',
+				testing: 'warning'
 			}
 		};
 	},
@@ -212,13 +217,14 @@ export default {
 			this.$api('connections')
 				.patchId(params)
 				.then(() => {
+					this.status = 'testing';
 					this.testData.dialogTestVisible = true;
 					this.test(id);
 				});
 		},
 		async test(id) {
 			let result = null;
-			this.testData.testResult = this.status['testing'];
+			this.testData.testResult = this.testStatus['testing'];
 			this.testData.estLogs = [];
 			this.clearInterval();
 			if (this.data.database_type === 'mongodb') {
@@ -230,8 +236,9 @@ export default {
 				const data = result.data;
 				let validate_details = data.response_body && data.response_body.validate_details;
 				this.testData.testLogs = validate_details || [];
-				this.testData.testResult = this.status[data.status] || this.status['testing'];
+				this.testData.testResult = this.testStatus[data.status] || this.testStatus['testing'];
 				this.testData.progress = handleProgress(this.testData.testLogs);
+				this.status = data.status; //更新当前预览页面的状态
 				if (['testing'].includes(data.status)) {
 					this.timer = setInterval(() => {
 						this.test(id);

@@ -630,6 +630,7 @@ const cn = {
 		reloadMsg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema : ',
 		checkMsg: '此数据源被传输任务或API所占用，无法删除',
 		copyFailedMsg: '复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"',
+		change: '更换',
 		status: {
 			testing: '测试中',
 			invalid: '无效',
@@ -644,7 +645,8 @@ const cn = {
 			source: '源头',
 			target: '目标',
 			source_and_target: '源头和目标'
-		}
+		},
+		cannot_delete_remind: '当前连接正在被一个或多个任务或API使用中，请删除任务或API后重试。'
 	},
 	editor: {
 		nodeSettings: '节点设置',

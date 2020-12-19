@@ -353,7 +353,7 @@ export default {
 				}
 			],
 			databaseTypeOptions: [],
-			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'db2', 'postgres', 'elasticsearch', 'redis'], //目前白名单,
+			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis'], //目前白名单,
 			searchParams: this.$store.state.connections,
 			timer: '',
 			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
@@ -364,11 +364,6 @@ export default {
 		this.search(1);
 		this.getDatabaseType();
 		this.search(1);
-
-		//新手指引-创建数据源默认打开弹窗
-		if (this.$route.query.noviceGuide) {
-			this.dialogDatabaseTypeVisible = true;
-		}
 	},
 	methods: {
 		// 面板显示隐藏
@@ -607,6 +602,22 @@ export default {
 						this.deleteDialogVisible = false;
 						this.search(this.page.current);
 					}
+				})
+				.catch(({ response }) => {
+					let msg = response && response.msg;
+					if (msg && (msg.jobs || msg.modules)) {
+						this.$message.error(this.$t('connection.cannot_delete_remind'));
+						// const h = this.$createElement;
+						// this.$message.error(
+						// 	h('div', {}, [
+						// 		h('div', {}, ['数据源 ', h('span', {}, data.name), ' 被以下资源占用']),
+						// 		...msg.jobs.map(j => h('div', {}, [])),
+						// 		...msg.modules.map(j => h('div', {}, []))
+						// 	])
+						// );
+					} else {
+						this.$message.error(msg || this.$t('connection.deleteFail'));
+					}
 				});
 		},
 		//公用弹窗
@@ -689,20 +700,11 @@ export default {
 			return tagList;
 		},
 		handleOperationClassify(listtags) {
-			let attributes = {};
+			let attributes = { id: [], listtags };
 			if (this.dataFlowId) {
-				attributes = {
-					id: this.dataFlowId,
-					listtags: listtags
-				};
+				attributes.id.push(this.dataFlowId);
 			} else {
-				this.multipleSelection.forEach(row => {
-					row.listtags = row.listtags || [];
-					attributes = {
-						id: row.id,
-						listtags: listtags
-					};
-				});
+				attributes.id = this.multipleSelection.map(r => r.id);
 			}
 			this.$api('connections')
 				.batchUpdateListtags(attributes)

@@ -628,6 +628,7 @@ const tc = {
 		reloadMsg: '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema : ',
 		checkMsg: '此數據源被傳輸任務或API所佔用，無法刪除',
 		copyFailedMsg: '複製失敗，原因：系統設置中 "連接設置 - 允許創建重複數據源" 被設置為 "false"',
+		change: '更換',
 		status: {
 			testing: '測試中',
 			invalid: '無效',
@@ -642,7 +643,8 @@ const tc = {
 			source: '源頭',
 			target: '目標',
 			source_and_target: '源頭和目標'
-		}
+		},
+		cannot_delete_remind: '當前連接正在被一個或多個任務或API使用中，請刪除任務或API後重試。'
 	},
 	editor: {
 		nodeSettings: '節點設置',

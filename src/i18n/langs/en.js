@@ -636,6 +636,7 @@ const en = {
 		checkMsg: 'This data source is used by transmission job or API, cannot be deleted',
 		copyFailedMsg:
 			'Copy failed, reason:  The setting item "Connections - create  duplicate source" need to be set to "false"',
+		change: 'Change',
 		status: {
 			testing: 'testing',
 			invalid: 'invalid',
@@ -650,7 +651,9 @@ const en = {
 			source: 'Source',
 			target: 'Target',
 			source_and_target: 'Source&Target'
-		}
+		},
+		cannot_delete_remind:
+			'Connection is currently being used by one or more jobs and apis. Please delete the jobs or apis then try again.'
 	},
 	editor: {
 		nodeSettings: 'Node Settings',
