@@ -999,7 +999,7 @@ export default {
 									}
 								})
 								.catch(() => {
-									this.$message.error(self.$t('message.saveFail'));
+									self.$message.error(self.$t('message.saveFail'));
 								});
 						} else {
 							if (typeof cb === 'function') {

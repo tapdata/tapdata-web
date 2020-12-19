@@ -48,7 +48,7 @@ export const customProcessorConfig = {
 			 */
 			validate: function(data) {
 				data = data || this.getFormData();
-				return data.isValid;
+				return data.isFormValid;
 			},
 
 			/**
