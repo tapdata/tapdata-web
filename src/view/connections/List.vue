@@ -607,6 +607,22 @@ export default {
 						this.deleteDialogVisible = false;
 						this.search(this.page.current);
 					}
+				})
+				.catch(({ response }) => {
+					let msg = response && response.msg;
+					if (msg && (msg.jobs || msg.modules)) {
+						this.$message.error(this.$t('connection.cannot_delete_remind'));
+						// const h = this.$createElement;
+						// this.$message.error(
+						// 	h('div', {}, [
+						// 		h('div', {}, ['数据源 ', h('span', {}, data.name), ' 被以下资源占用']),
+						// 		...msg.jobs.map(j => h('div', {}, [])),
+						// 		...msg.modules.map(j => h('div', {}, []))
+						// 	])
+						// );
+					} else {
+						this.$message.error(msg || this.$t('connection.deleteFail'));
+					}
 				});
 		},
 		//公用弹窗

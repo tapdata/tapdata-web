@@ -650,7 +650,9 @@ const en = {
 			source: 'Source',
 			target: 'Target',
 			source_and_target: 'Source&Target'
-		}
+		},
+		cannot_delete_remind:
+			'Connection is currently being used by one or more jobs and apis. Please delete the jobs or apis then try again.'
 	},
 	editor: {
 		nodeSettings: 'Node Settings',
