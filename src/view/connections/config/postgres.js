@@ -118,7 +118,21 @@ export default function(vm) {
 					{ label: 'json streaming on rds', value: 'wal2json_rds_streaming' },
 					{ label: 'pgoutput', value: 'pgoutput' }
 				],
-				required: true
+				show: true,
+				required: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connection_type',
+								value: 'target'
+							}
+						],
+						triggerConfig: {
+							show: false
+						}
+					}
+				]
 			},
 			{
 				type: 'switch',
