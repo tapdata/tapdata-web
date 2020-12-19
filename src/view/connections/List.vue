@@ -115,7 +115,7 @@
 						class="btn btn-create"
 						type="primary"
 						size="mini"
-						@click="dialogDatabaseTypeVisible = true"
+						@click="checkTestConnectionAvailable"
 					>
 						<i class="iconfont icon-jia add-btn-icon"></i>
 					</el-button>
@@ -723,6 +723,15 @@ export default {
 			} else {
 				top.location.href = '/#/connection';
 				localStorage.setItem('connectionDatabaseType', type);
+			}
+		},
+		//检测agent 是否可用
+		async checkTestConnectionAvailable() {
+			let result = await this.$api('Workers').getAvailableAgent();
+			if (!result.data.result || result.data.result.length === 0) {
+				this.$message.error(this.$t('dataForm.form.agentMsg'));
+			} else {
+				this.dialogDatabaseTypeVisible = true;
 			}
 		}
 	}
