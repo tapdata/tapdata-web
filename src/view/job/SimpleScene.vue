@@ -142,8 +142,8 @@ export default {
 	z-index: 2002;
 	display: flex;
 	width: 100%;
-	height: 80px;
-	line-height: 80px;
+	height: 67px;
+	line-height: 67px;
 	flex-flow: row;
 	// justify-content: center;
 	font-size: 12px;

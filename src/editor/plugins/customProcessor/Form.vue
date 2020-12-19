@@ -27,14 +27,14 @@ export default {
 			model: {
 				type: 'template_processor',
 				formData: {},
-				script: ''
+				script: '',
+				isFormValid: true
 			},
 			formConfig: {
 				form: {},
 				items: []
 			},
-			scriptTemplate: '',
-			isValid: true
+			scriptTemplate: ''
 		};
 	},
 	created() {},
@@ -43,8 +43,8 @@ export default {
 			deep: true,
 			handler() {
 				this.$nextTick(() => {
-					this.$refs.form.validate(isValid => {
-						this.model.isValid = isValid;
+					this.$refs.form.validate(isFormValid => {
+						this.model.isFormValid = isFormValid;
 						this.$emit('dataChanged', this.getData());
 					});
 				});

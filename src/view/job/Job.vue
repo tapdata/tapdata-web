@@ -550,23 +550,25 @@ export default {
 			self.editor.graph.paper.getMountedViews().forEach(ele => {
 				if (ele.$el) ele.$el.show();
 			});
-			self.$refs.simpleScene.cellHtml = self.editor.graph.paper
-				.getMountedViews()
-				.map(ele => {
-					if (ele.model.isElement) return ele.$el[0].outerHTML;
-					else return '';
-				})
-				.join('');
-			self.$refs.simpleScene.renderCell();
-			self.editor.graph.paper.getMountedViews().forEach(ele => {
-				if (ele.$el) ele.$el.hide();
+			this.$nextTick(() => {
+				self.$refs.simpleScene.cellHtml = self.editor.graph.paper
+					.getMountedViews()
+					.map(ele => {
+						if (ele.model.isElement) return ele.$el[0].outerHTML;
+						else return '';
+					})
+					.join('');
+				self.$refs.simpleScene.renderCell();
+				self.editor.graph.paper.getMountedViews().forEach(ele => {
+					if (ele.$el) ele.$el.hide();
+				});
+				try {
+					if (this.editor.graph.graph.getCells()[self.$refs.simpleScene.activeStep - 1].validate())
+						self.$refs.simpleScene.stepValid();
+				} catch (e) {
+					log(e.message);
+				}
 			});
-			try {
-				if (this.editor.graph.graph.getCells()[self.$refs.simpleScene.activeStep - 1].validate())
-					self.$refs.simpleScene.stepValid();
-			} catch (e) {
-				log(e.message);
-			}
 		},
 		simpleGoNext(step) {
 			let self = this;
@@ -997,7 +999,7 @@ export default {
 									}
 								})
 								.catch(() => {
-									this.$message.error(self.$t('message.saveFail'));
+									self.$message.error(self.$t('message.saveFail'));
 								});
 						} else {
 							if (typeof cb === 'function') {
