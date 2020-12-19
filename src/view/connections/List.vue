@@ -705,20 +705,11 @@ export default {
 			return tagList;
 		},
 		handleOperationClassify(listtags) {
-			let attributes = {};
+			let attributes = { id: [], listtags };
 			if (this.dataFlowId) {
-				attributes = {
-					id: this.dataFlowId,
-					listtags: listtags
-				};
+				attributes.id.push(this.dataFlowId);
 			} else {
-				this.multipleSelection.forEach(row => {
-					row.listtags = row.listtags || [];
-					attributes = {
-						id: row.id,
-						listtags: listtags
-					};
-				});
+				attributes.id = this.multipleSelection.map(r => r.id);
 			}
 			this.$api('connections')
 				.batchUpdateListtags(attributes)
