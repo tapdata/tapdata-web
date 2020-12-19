@@ -454,7 +454,7 @@ export default {
 				];
 			}
 			if (result) {
-				if (result === 'error' || result === 'passed') {
+				if (result === 'failed' || result === 'passed') {
 					where.result = result;
 				} else {
 					if (result === 'row_count') {
