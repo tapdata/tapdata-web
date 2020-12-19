@@ -3,7 +3,7 @@
 		<div class="panel-main">
 			<div class="tip">
 				<el-button class="back-btn-icon-box" @click="GoBack"
-					><i class="iconfont icon-left-circle back-btn-icon"></i
+					><i class="iconfont icon-left-circle back-btn-icon" style="color: #fff;"></i
 				></el-button>
 				{{ $t('dataVerification.verifyHistory') }}
 			</div>
@@ -12,7 +12,11 @@
 				<el-table :data="page.data" height="100%" class="dv-table" border @selection-change="selectHandler">
 					<el-table-column :label="$t('dataVerification.verifyTime')" prop="start">
 						<template slot-scope="scope">
-							{{ $moment(scope.row.start).format('YYYY-MM-DD HH:mm:ss') }}
+							{{
+								scope.row.start
+									? $moment(scope.row.start).format('YYYY-MM-DD HH:mm:ss')
+									: $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')
+							}}
 						</template>
 					</el-table-column>
 					<el-table-column :label="$t('dataVerification.completeTime')" prop="end" align="center" width="180">
@@ -220,7 +224,7 @@ export default {
 			font-size: 12px;
 			background: #f5f5f5;
 			border: 1px solid #dedee4;
-			padding-left: @margin;
+			// padding-left: @margin;
 			line-height: 30px;
 		}
 		.title {

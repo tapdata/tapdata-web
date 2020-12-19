@@ -1629,7 +1629,7 @@ const tc = {
 			headTitle: 'Agent下載與安裝',
 			headInterpretation: 'Tapdata DFS雲版需要在本地安裝agent以確保連接數據庫和傳輸服務正常運行',
 			downloadInstall: '下載安裝',
-			text: '直接在要安裝的機器上使用以下命令下載安裝agent',
+			text: '首先，在環境中配置好 JAVA 運行環境，然後使用以下命令下載和啟動 Agent',
 			copy: '複製命令',
 			refresh: '刷新',
 			copied: '已復制',
@@ -1640,7 +1640,8 @@ const tc = {
 			waitingInstall: '等待安裝',
 			agentNum: 'Agent已安裝數',
 			downLoadAgent: '下載Agent',
-			windowsText: '下載到待安裝的機器上，在存放下載文件的目錄下執行複制下述命令進行安裝',
+			windowsText:
+				'首先，在環境中配置好 JAVA 運行環境，下載之後，在存放下載文件的目錄下使用以下命令安裝和啟動 Agent',
 			windowsInstructionsText1: '· 首先，需要確保環境中安裝了 JAVA 運行環境',
 			windowsInstructionsText2: '· 其次，下載文件，並存放在某個目錄中',
 			windowsInstructionsText3: '· 最後，進入目錄，執行命令後系統將自動安裝並啟動 Agent',
