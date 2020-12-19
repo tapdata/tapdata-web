@@ -4,6 +4,14 @@
 			<div class="title">{{ $t('account.setCenter') }}</div>
 			<ul>
 				<li
+					:class="activePanel === 'settings' ? 'active' : ''"
+					v-readonlybtn="'system_settings'"
+					@click="changeName('settings')"
+				>
+					<i class="iconfont icon-shezhi1"></i>
+					<span slot="title">{{ this.$t('account.systemSetting') }}</span>
+				</li>
+				<li
 					v-for="item in settingList"
 					:key="item.icon"
 					:class="activePanel === item.key ? 'active' : ''"
@@ -25,7 +33,11 @@ export default {
 	data() {
 		return {
 			settingList: [
-				{ icon: 'icon-shezhi1', name: this.$t('account.systemSetting'), key: 'settings' },
+				// {
+				// 	icon: 'icon-shezhi1',
+				// 	name: this.$t('account.systemSetting'),
+				// 	key: 'settings'
+				// },
 				{ icon: 'icon-lingdang', name: this.$t('notification.setting'), key: 'notificationSetting' },
 				{ icon: 'icon-gerenzhongxin', name: this.$t('account.accountSettings'), key: 'accountSetting' }
 			],
