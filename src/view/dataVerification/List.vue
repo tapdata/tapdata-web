@@ -374,7 +374,7 @@ export default {
 				{ name: this.$t('app.Home.checkSame'), value: 'passed' },
 				{ name: this.$t('app.Home.countDifference'), value: 'row_count' },
 				{ name: this.$t('app.Home.contentDifference'), value: 'valueDiff' },
-				{ name: 'ERROR', value: 'failed' }
+				{ name: 'ERROR', value: 'error' }
 			],
 			selections: [],
 			timer: ''
@@ -383,9 +383,8 @@ export default {
 	created() {
 		if (this.$route && this.$route.query) {
 			this.searchParams.keyword = this.$route.query.name;
-			if (this.$route.query.executionStatus === 'error') {
-				this.searchParams.result = 'failed';
-			} else if (this.$route.query.executionStatus === 'total') {
+
+			if (this.$route.query.executionStatus === 'total') {
 				this.searchParams.result = '';
 			} else if (this.$route.query.executionStatus === 'countDiff') {
 				this.searchParams.result = 'row_count';
@@ -454,12 +453,16 @@ export default {
 				];
 			}
 			if (result) {
-				if (result === 'failed' || result === 'passed') {
+				if (result === 'error') {
+					where.status = result;
+				} else if (result === 'passed') {
 					where.result = result;
 				} else {
 					if (result === 'row_count') {
 						where.inspectMethod = result;
+						where.result = 'failed';
 					} else {
+						where.result = 'failed';
 						where['or'] = [{ inspectMethod: 'field' }, { inspectMethod: 'jointField' }];
 					}
 				}
