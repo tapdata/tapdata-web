@@ -390,6 +390,7 @@ const en = {
 		taskBulkOperation: 'Bulk Operation',
 		taskBulkTag: 'Bulk Tag',
 		upload: 'Click to upload',
+		chooseFile: 'Select a document',
 		import: 'Task Import',
 		uploadOK: 'Upload successful',
 		uploadError: 'Upload failed',
@@ -1663,7 +1664,7 @@ const en = {
 		downAgent: {
 			headTitle: 'Agent download and installation',
 			headInterpretation:
-				'Tapdata DFS Cloud have to install agent at local server to ensure databases connection and transmission services normally',
+				'Tapdata DFS Cloud have to install Agent at local server to ensure databases connection and transmission services normally',
 			downloadInstall: 'Download and install',
 			text:
 				'First, a JAVA runtime environment is required in the installation environment. Then, download and start Agent by using the following command.',
@@ -1674,9 +1675,9 @@ const en = {
 			linuxInstructionsText1:
 				'· First, ensure that the JAVA runtime environment is installed in the installation target environment.',
 			linuxInstructionsText2:
-				'· Execute the above command in install environment, AGENT will download and start automatically ',
+				'· Execute the above command in install environment, Agent will download and start automatically ',
 			linuxInstructionsText3:
-				'· You can start and stop AGENT by executing the command "tapdata start/stop backend".',
+				'· You can start and stop Agent by executing the command "tapdata start/stop backend".',
 			waitingInstall: 'Waiting installation',
 			agentNum: 'Agents installed',
 			downLoadAgent: 'Download Agent',
@@ -1686,10 +1687,10 @@ const en = {
 				'· First, ensure that the JAVA runtime environment is installed in the installation target environment.',
 			windowsInstructionsText2: '· Second, download the installation file and store it in a directory.',
 			windowsInstructionsText3:
-				'· Third, enter the directory, and execute the command to install and start AGENT automatically. ',
-			windowsInstructionsText4: '· Only one AGENT can be installed under an account of Tapdata cloud.',
+				'· Third, enter the directory, and execute the command to install and start Agent automatically. ',
+			windowsInstructionsText4: '· Only one Agent can be installed under an account of Tapdata cloud.',
 			windowsInstructionsText5:
-				'· You can start and stop AGENT by executing the command "tapdata start/stop backend".',
+				'· You can start and stop Agent by executing the command "tapdata start/stop backend".',
 			important: 'Important: ',
 			noAgent: 'You have not installed Agent yet, and cannot execute the transmission jobs. Please ',
 			clickDownLoad: ' click to download and install',

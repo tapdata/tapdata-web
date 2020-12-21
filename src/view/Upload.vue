@@ -17,13 +17,15 @@
 			ref="upload"
 			:action="action"
 			:accept="accept"
-			:on-success="handleSuccess"
-			:on-remove="handleRemove"
-			:on-error="handleError"
 			:file-list="fileList"
-			:http-request="handlerUpload"
+			:auto-upload="false"
+			:on-success="handleSuccess"
+			:on-change="handleChange"
 		>
-			<el-button type="primary" @click="submitUpload" plain size="small">{{ $t('dataFlow.upload') }}</el-button>
+			<el-button type="primary" plain slot="trigger" size="small">{{ $t('dataFlow.chooseFile') }}</el-button>
+			<el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">{{
+				$t('dataFlow.upload')
+			}}</el-button>
 		</el-upload>
 		<SelectClassify
 			ref="SelectClassify"
@@ -44,8 +46,8 @@
 
 <script>
 import SelectClassify from '../components/SelectClassify';
-import factory from '@/api/factory';
-const MetadataInstance = factory('MetadataInstances');
+// import factory from '@/api/factory';
+// const MetadataInstance = factory('MetadataInstances');
 export default {
 	components: { SelectClassify },
 	data() {
@@ -69,7 +71,7 @@ export default {
 		} else {
 			this.downType = 'dataflow';
 		}
-		this.handlerUpload();
+		// this.handlerUpload();
 		// this.action =
 		// 	window.location.protocol +
 		// 	'//' +
@@ -85,30 +87,30 @@ export default {
 	},
 
 	watch: {
-		upsert: {
-			deep: true,
-			handler() {
-				this.handlerUpload();
-				// this.action =
-				// 	window.location.protocol +
-				// 	'//' +
-				// 	window.location.hostname +
-				// 	':' +
-				// 	window.location.port +
-				// 	'/api/MetadataInstances/upload?upsert=' +
-				// 	this.upsert +
-				// 	'&listtags=' +
-				// 	JSON.stringify(this.tagList) +
-				// 	'&type=' +
-				// 	this.downType;
-			}
-		},
-		tagList: {
-			deep: true,
-			handler() {
-				this.handlerUpload();
-			}
-		}
+		// upsert: {
+		// 	deep: true,
+		// 	handler() {
+		// 		this.handlerUpload();
+		// 		// this.action =
+		// 		// 	window.location.protocol +
+		// 		// 	'//' +
+		// 		// 	window.location.hostname +
+		// 		// 	':' +
+		// 		// 	window.location.port +
+		// 		// 	'/api/MetadataInstances/upload?upsert=' +
+		// 		// 	this.upsert +
+		// 		// 	'&listtags=' +
+		// 		// 	JSON.stringify(this.tagList) +
+		// 		// 	'&type=' +
+		// 		// 	this.downType;
+		// 	}
+		// },
+		// tagList: {
+		// 	deep: true,
+		// 	handler() {
+		// 		this.handlerUpload();
+		// 	}
+		// }
 	},
 	methods: {
 		handleDialogVisible() {
@@ -116,10 +118,6 @@ export default {
 		},
 		handleClassify() {
 			this.dialogVisible = true;
-		},
-
-		submitUpload() {
-			this.$refs.upload.submit();
 		},
 
 		handleOperationClassify(listtags) {
@@ -132,31 +130,52 @@ export default {
 				}
 			});
 		},
-		handleSuccess() {
-			this.status = true;
-		},
-		handleError() {
-			this.status = false;
-			this.$message.error(this.$t('dataFlow.uploadError'));
-		},
-		handleRemove() {
-			return false;
+
+		handleChange(file) {
+			this.fileList = [file];
+			this.action =
+				window.location.protocol +
+				'//' +
+				window.location.hostname +
+				':' +
+				window.location.port +
+				'/api/MetadataInstances/upload?upsert=' +
+				this.upsert +
+				'&listtags=' +
+				JSON.stringify(this.tagList) +
+				'&type=' +
+				this.downType;
 		},
 
-		handlerUpload(item) {
-			let formData = new FormData();
-			formData.append('file', item.file);
+		handleSuccess(response) {
+			if (response.code || response.code === '110500') {
+				this.status = false;
+				this.$message.error(this.$t('dataFlow.uploadError'));
+			} else {
+				this.status = true;
+			}
+		},
 
-			MetadataInstance.upload(this.upsert, this.downType, JSON.stringify(this.tagList), formData)
-				.then(() => {
-					this.status = true;
-				})
-				.catch(() => {
-					this.status = false;
-					this.handleRemove();
-					this.$message.error(this.$t('dataFlow.uploadError'));
-				});
+		submitUpload() {
+			// this.handlerUpload();
+			this.$refs.upload.submit();
 		}
+
+		// handlerUpload() {
+		// 	let formData = new FormData();
+		// 	if (this.fileList.length) {
+		// 		formData.append('file', this.fileList[0].file);
+		// 	}
+
+		// 	MetadataInstance.upload(this.upsert, this.downType, JSON.stringify(this.tagList), formData)
+		// 		.then(() => {
+		// 			this.status = true;
+		// 		})
+		// 		.catch(() => {
+		// 			this.status = false;
+		// 			this.$message.error(this.$t('dataFlow.uploadError'));
+		// 		});
+		// }
 	}
 };
 </script>
