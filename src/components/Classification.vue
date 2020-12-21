@@ -309,8 +309,8 @@ export default {
 	width: 100%;
 	user-select: none;
 	box-sizing: border-box;
-	border-right: 1px solid #dedee4;
-	border-bottom: 1px solid #dedee4;
+	border: 1px solid #dedee4;
+	border-top: none;
 	background: #fff;
 	/*头部样式*/
 	.classification-header {
