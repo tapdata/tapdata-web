@@ -239,15 +239,14 @@ export default {
 		};
 	},
 	created() {
+		this.getDataApi();
+
 		// 这是一个定时器
+		// TODO 集群管理轮询替换成webstocek
 		let that = this;
 		this.timer = setInterval(() => {
 			that.getDataApi();
 		}, 5000);
-
-		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
-			this.getDataApi();
-		}
 	},
 
 	methods: {
