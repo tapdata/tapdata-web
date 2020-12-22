@@ -189,6 +189,43 @@
 										:options="item.target.fields"
 										:placeholder="$t('dataVerification.ChoosePKField')"
 									></MultiSelection>
+									<el-checkbox style="margin-left: 10px;" v-model="item.showAdvancedVerification">{{
+										$t('dataVerification.advanceVerify')
+									}}</el-checkbox>
+								</div>
+								<div class="setting-item" v-if="item.showAdvancedVerification">
+									<label class="item-label is-required">{{
+										$t('dataVerification.JSVerifyLogic')
+									}}</label>
+									<el-button
+										v-if="!item.script || item.script === ''"
+										size="mini"
+										icon="el-icon-plus"
+										@click="addScript(index)"
+										>{{ $t('dataVerification.addJS') }}</el-button
+									>
+									<span v-if="item.script && item.script !== ''">
+										<el-input
+											class="item-select item-textarea"
+											type="textarea"
+											v-model="item.script"
+											disabled
+										></el-input>
+										<el-button-group class="setting-buttons">
+											<el-button
+												size="mini"
+												icon="el-icon-edit"
+												@click="editScript(index)"
+											></el-button>
+										</el-button-group>
+										<el-button-group class="setting-buttons">
+											<el-button
+												size="mini"
+												icon="el-icon-close"
+												@click="removeScript(index)"
+											></el-button>
+										</el-button-group>
+									</span>
 								</div>
 							</div>
 							<el-button-group class="setting-buttons">
@@ -214,6 +251,30 @@
 			<el-button size="mini" @click="goBack()">{{ $t('dataVerification.back') }}</el-button>
 			<el-button type="primary" size="mini" @click="nextStep()">{{ $t('app.save') }}</el-button>
 		</div>
+		<el-dialog
+			:title="$t('dataVerification.JSVerifyLogic')"
+			:visible.sync="dialogAddScriptVisible"
+			width="60%"
+			:before-close="handleAddScriptClose"
+		>
+			<div class="js-wrap">
+				<div class="jsBox">
+					<JsEditor
+						v-if="dialogAddScriptVisible"
+						:code.sync="script"
+						ref="jsEditor"
+						:width.sync="width"
+					></JsEditor>
+				</div>
+				<div class="example">
+					示例
+				</div>
+			</div>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="handleAddScriptClose" size="mini">取 消</el-button>
+				<el-button type="primary" @click="submitScript" size="mini">确 定</el-button>
+			</span>
+		</el-dialog>
 	</section>
 </template>
 
@@ -237,8 +298,10 @@ const META_INSTANCE_FIELDS = {
 	'fields.primary_key_position': true
 };
 import MultiSelection from './MultiSelection.vue';
+import JsEditor from '@/components/JsEditor';
+import _ from 'lodash';
 export default {
-	components: { MultiSelection },
+	components: { MultiSelection, JsEditor },
 	data() {
 		let self = this;
 		let requiredValidator = (msg, isCheckMode) => {
@@ -297,7 +360,11 @@ export default {
 			targetTree: [],
 			stageMap: {},
 			flowStages: null,
-			flowOptions: null
+			flowOptions: null,
+			dialogAddScriptVisible: false,
+			formIndex: '',
+			script: '',
+			width: '600'
 		};
 	},
 	created() {
@@ -588,7 +655,9 @@ export default {
 					let task = {
 						source: this.setTable(stg),
 						target: Object.assign({}, TABLE_PARAMS),
-						sourceTable: [stg.connectionId, stg.tableName]
+						sourceTable: [stg.connectionId, stg.tableName],
+						showAdvancedVerification: false,
+						script: ''
 					};
 					if (targetStage) {
 						task.target = this.setTable(targetStage);
@@ -630,7 +699,9 @@ export default {
 		addTable() {
 			this.form.tasks.push({
 				source: Object.assign({}, TABLE_PARAMS),
-				target: Object.assign({}, TABLE_PARAMS)
+				target: Object.assign({}, TABLE_PARAMS),
+				showAdvancedVerification: false,
+				script: ''
 			});
 		},
 		removeItem(idx) {
@@ -650,6 +721,33 @@ export default {
 					item[type] = this.setTable(stg);
 				}
 			});
+		},
+		handleAddScriptClose() {
+			this.script = '';
+			this.formIndex = '';
+			this.dialogAddScriptVisible = false;
+		},
+		addScript(index) {
+			this.formIndex = index;
+			this.script = '';
+			this.dialogAddScriptVisible = true;
+		},
+		removeScript(index) {
+			this.form.tasks[index].script = '';
+		},
+		editScript(index) {
+			this.formIndex = index;
+			let script = _.cloneDeep(this.form.tasks[this.formIndex].script);
+			this.script = script;
+			this.dialogAddScriptVisible = true;
+		},
+		submitScript() {
+			let script = _.cloneDeep(this.script);
+			let formIndex = _.cloneDeep(this.formIndex);
+			this.form.tasks[formIndex].script = script;
+			this.script = '';
+			this.formIndex = '';
+			this.dialogAddScriptVisible = false;
 		},
 		goBack() {
 			this.$router.push('/dataVerification');
@@ -719,13 +817,17 @@ export default {
 								fullMatchKeep: this.form.keep,
 								status: this.form.mode === 'manual' ? 'scheduling' : 'waiting',
 								ping_time: 0,
-								tasks: this.form.tasks.map(({ source, target, fullMatch }) => {
-									return {
-										source,
-										target,
-										fullMatch
-									};
-								})
+								tasks: this.form.tasks.map(
+									({ source, target, fullMatch, showAdvancedVerification, script }) => {
+										return {
+											source,
+											target,
+											fullMatch,
+											showAdvancedVerification,
+											script
+										};
+									}
+								)
 							})
 						)
 						.then(res => {
@@ -832,6 +934,12 @@ export default {
 					width: 120px;
 					text-align: right;
 				}
+				.item-textarea {
+					font-size: 12px;
+					font-family: element-icons;
+					line-height: 16px;
+					color: #aaa;
+				}
 				.item-icon {
 					width: 20px;
 					text-align: center;
@@ -851,6 +959,20 @@ export default {
 					padding: 7px;
 				}
 			}
+		}
+	}
+	.js-wrap {
+		display: flex;
+		flex-wrap: nowrap;
+		flex-direction: row;
+		.jsBox {
+			width: 500px;
+			height: 478px;
+		}
+		.example {
+			width: calc(100% - 520px);
+			height: 478px;
+			margin-left: 20px;
 		}
 	}
 	.footer {
