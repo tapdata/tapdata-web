@@ -148,7 +148,7 @@ export default {
 		},
 
 		handleSuccess(response) {
-			if (response.code || response.code === '110500') {
+			if (response.code === '110500') {
 				this.status = false;
 				this.$message.error(this.$t('dataFlow.uploadError'));
 			} else {
