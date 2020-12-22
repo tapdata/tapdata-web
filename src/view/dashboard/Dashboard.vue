@@ -581,7 +581,11 @@ export default {
 		// 获取服务器与进程的数据
 		getClsterDataApi() {
 			let params = {};
-			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
+			if (
+				this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
+				!parseInt(this.$cookie.get('isAdmin')) &&
+				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
+			) {
 				params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
 			}
 			cluster.get(params).then(res => {

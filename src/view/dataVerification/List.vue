@@ -454,17 +454,24 @@ export default {
 			}
 			if (result) {
 				if (result === 'error') {
-					where.status = result;
+					where.status = 'error';
 				} else if (result === 'passed') {
-					where.result = result;
+					where = {
+						status: { neq: ['error'] },
+						result: 'passed'
+					};
+				} else if (result === 'row_count') {
+					where = {
+						status: { neq: ['error'] },
+						result: 'failed',
+						inspectMethod: 'row_count'
+					};
 				} else {
-					if (result === 'row_count') {
-						where.inspectMethod = result;
-						where.result = 'failed';
-					} else {
-						where.result = 'failed';
-						where['or'] = [{ inspectMethod: 'field' }, { inspectMethod: 'jointField' }];
-					}
+					where = {
+						status: { neq: ['error'] },
+						result: 'failed',
+						inspectMethod: { neq: ['row_count'] }
+					};
 				}
 			}
 			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
