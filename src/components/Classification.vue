@@ -1,19 +1,15 @@
 <template>
 	<div class="classification">
-		<div class="classification-header" v-show="isActive">
-			<span>{{ $t('metaData.title') }}</span>
-			<div class="classification-header-btns">
-				<i class="iconfont icon-icon_tianjia" v-readonlybtn="authority" @click="showDialog()"></i>
-				<i class="iconfont icon-fangdajing" @click="isActive = false"></i>
-				<i class="iconfont icon-sync" @click="getData"></i>
-				<i class="iconfont icon-xiangxiahebing2" @click="handleDefault_expanded"></i>
+		<div class="classification-header">
+			<div class="title">
+				<span>{{ $t('metaData.title') }}</span>
 			</div>
-		</div>
-		<div class="classification-header classification-header-btns" v-show="!isActive">
-			<i class="iconfont icon-right-circle" @click="isActive = true"></i>
-			<el-input class="search" size="mini" v-model="filterText">
-				<i slot="suffix" class="el-icon-search"></i>
-			</el-input>
+			<div class="search-box">
+				<el-input class="search" size="mini" v-model="filterText">
+					<i slot="suffix" class="el-icon-search"></i>
+				</el-input>
+				<i class="iconfont icon-jia" v-readonlybtn="authority" @click="showDialog()"></i>
+			</div>
 		</div>
 		<div class="tree-block">
 			<el-tree
@@ -314,24 +310,40 @@ export default {
 	background: #fff;
 	/*头部样式*/
 	.classification-header {
-		height: 28px;
-		background: #f5f5f5;
+		background: #fafafa;
 		border-bottom: 1px solid #dedee4;
 		border-top: 1px solid #dedee4;
 		font-size: 12px;
 		line-height: 31px;
 		padding-left: 8px;
 		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		.search {
-			margin: 0 8px;
+		flex-direction: column;
+		.title {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
 		}
-	}
-	.classification-header-btns {
-		color: #999;
-		.iconfont:hover {
-			color: #333;
+		.search-box {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 3px;
+			.iconfont {
+				color: #c0c4cc;
+				font-size: 12px;
+				margin-right: 8px;
+				background: #fff;
+				border: 1px solid #dedee4;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 66%;
+				padding: 0 4px;
+				margin-top: 2px;
+			}
+		}
+		.search {
+			margin-right: 8px;
 		}
 	}
 	.tree-block {

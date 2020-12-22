@@ -93,7 +93,7 @@
 							</el-select>
 						</li>
 						<li class="item">
-							<el-button class="btn restBtn" type="btn-text" size="mini" @click="rest()">
+							<el-button type="text" class="restBtn" size="mini" @click="rest()">
 								{{ $t('dataFlow.reset') }}
 							</el-button>
 						</li>
@@ -159,7 +159,7 @@
 							prop="connection_type"
 							:label="$t('connection.connectionType')"
 							:formatter="formatterConnectionType"
-							width="100"
+							width="120"
 						></el-table-column>
 						<el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="100">
 							<template slot-scope="scope">
@@ -826,7 +826,7 @@ export default {
 		flex: 1;
 		overflow: hidden;
 		.database-img {
-			border: 1px solid #dedee4;
+			//border: 1px solid #dedee4;
 			vertical-align: middle;
 			width: 40px;
 			height: 40px;
@@ -837,7 +837,7 @@ export default {
 			align-items: center;
 			float: left;
 			img {
-				width: 50%;
+				width: 60%;
 			}
 		}
 		.database-text {
@@ -863,6 +863,7 @@ export default {
 		}
 		.btn-text {
 			color: #48b6e2;
+			font-size: 12px;
 		}
 		.tag {
 			padding: 0 3px 2px 3px;
@@ -895,13 +896,16 @@ export default {
 <style lang="less">
 .connection-table {
 	border: 1px solid #eeeeee;
-	.thead {
-		color: #999;
+	thead {
 		th {
-			padding: 5px 0;
-			background: #f5f5f5;
+			padding: 2px 0;
+			background: #fafafa;
+			color: #999;
 		}
 	}
+}
+.connections-list .el-pagination .el-pagination__total {
+	float: left;
 }
 .connection-table .el-table th,
 .connection-table .el-table tr {

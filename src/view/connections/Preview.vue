@@ -1,11 +1,11 @@
 <template>
 	<el-drawer
-		class="drawer"
+		class="connection-drawer"
 		ref="drawer"
 		:visible.sync="visible"
 		:title="$t('dataForm.title')"
-		:append-to-body="true"
 		size="40%"
+		:modal="false"
 		:withHeader="false"
 		:before-close="handleClose"
 	>
@@ -196,9 +196,6 @@ export default {
 						};
 						return node;
 					});
-					//过滤value空值 undefined
-					items = items || [];
-					items = items.filter(item => item.value && item.value !== '');
 					this.form = items;
 				}
 			}
@@ -319,7 +316,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-.drawer {
+.connection-drawer {
 	.header {
 		display: flex;
 		flex-direction: column;
@@ -337,16 +334,16 @@ export default {
 		padding-top: 10px;
 		.img-box {
 			display: flex;
-			width: 54px;
-			height: 54px;
+			width: 60px;
+			height: 60px;
 			justify-content: center;
 			align-items: center;
 			background: #fff;
-			border: 1px solid #dedee4;
+			//border: 1px solid #dedee4;
 			border-radius: 3px;
 			margin-left: 30px;
 			img {
-				width: 60%;
+				width: 100%;
 			}
 		}
 		.content {
@@ -460,6 +457,11 @@ export default {
 }
 </style>
 <style lang="less">
+.connection-drawer {
+	.el-drawer.rtl {
+		top: 48px;
+	}
+}
 .test-progress {
 	.el-progress-bar__outer {
 		border-radius: 0;
