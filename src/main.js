@@ -39,7 +39,8 @@ window.openDebug();
 // }
 
 window._TAPDATA_OPTIONS_ = {
-	logoUrl: require('../static/icon/logo.png')
+	logoUrl: require('../static/icon/logo.png'),
+	version: 'DAAS_BUILD_NUMBER'
 };
 
 let init = settings => {

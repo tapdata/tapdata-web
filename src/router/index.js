@@ -555,6 +555,11 @@ const router = new Router({
 			redirect: 'dashboard',
 			component: view('Layout'),
 			children: childRoutes
+		},
+		{
+			path: '/guide',
+			name: 'guide',
+			component: view('Guide')
 		}
 	]
 });

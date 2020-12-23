@@ -1,7 +1,7 @@
 <template>
 	<el-dialog
 		:title="$t('connection.createNewDataSource')"
-		:visible.sync="dialogVisible"
+		:visible="dialogVisible"
 		:append-to-body="true"
 		width="770px"
 		:before-close="handleClose"
@@ -37,6 +37,10 @@ export default {
 		dialogVisible: {
 			required: true,
 			value: Boolean
+		},
+		allwoOtherType: {
+			value: Boolean,
+			default: true
 		}
 	},
 	data() {
@@ -61,12 +65,17 @@ export default {
 	created() {
 		let allowDataType = window.getSettingByKey('ALLOW_CONNECTION_TYPE') || [];
 		this.database = allowDataType.filter(type => this.database.includes(type)) || [];
-		this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || [];
+		if (this.allwoOtherType) {
+			this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || [];
+		} else {
+			this.otherType = [];
+		}
 	},
 	methods: {
 		getImgByType,
 		handleClose() {
 			this.$emit('dialogVisible', false);
+			this.$emit('update:dialogVisible', false);
 		},
 		databaseType(type) {
 			this.$emit('databaseType', type);

@@ -74,10 +74,7 @@ export default function(vm) {
 				domType: 'textarea',
 				showByUrl: 1,
 				required: true,
-				tips: {
-					label: vm.$t('dataForm.form.uriTips.label'),
-					content: vm.$t('dataForm.form.uriTips.content')
-				}
+				tips: vm.$t('dataForm.form.uriTips.content')
 			},
 			{
 				type: 'input',

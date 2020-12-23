@@ -13,7 +13,6 @@
  *              required: "是否必填",
  *
  *              //字段标题label的插槽，传一个function，参数为createElement
- *              labelSlot: (createElement) => createElement('span', {}, 'label'),
  * 			}
  * 		]
  *
@@ -50,23 +49,10 @@ export default {
 				domType: 'text',
 				required: false,
 				clearable: true,
-				labelSlot: () => null,
 				on: {}
 			},
 			form: null
 		};
-	},
-	watch: {
-		config: {
-			deep: true,
-			handler() {
-				this.show = false;
-				this.$nextTick(() => {
-					this.show = true;
-					this.clearValidate();
-				});
-			}
-		}
 	},
 	render(h) {
 		let formConfig = Object.assign(this.defaultFormConfig, this.config.form, {
@@ -141,24 +127,24 @@ export default {
 						prop: config.field,
 						label: config.label,
 						rules: rules
-					}
+					},
+					key: config.field
 				},
 				[this.getLabel(h, config), this.getBody(h, config)]
 			);
 			return config.show ? item : '';
 		},
 		getLabel(h, config) {
-			let labelSlot = config.labelSlot ? config.labelSlot(h) : null;
-			return !config.label && !labelSlot
+			return !config.label
 				? null
 				: h(
-						'div',
+						'span',
 						{
 							class: 'e-form-builder-item-label',
 							slot: 'label'
 						},
 						[
-							labelSlot || config.label,
+							config.label,
 							config.tips &&
 								h(
 									'ElPopover',
@@ -172,7 +158,7 @@ export default {
 									[
 										h('div', {
 											domProps: {
-												innerHTML: config.tips.content || config.tips
+												innerHTML: config.tips
 											}
 										}),
 										h(
@@ -184,8 +170,7 @@ export default {
 											[
 												h('i', {
 													class: 'el-icon-warning-outline e-form-builder-item-tips'
-												}),
-												config.tips.label
+												})
 											]
 										)
 									]
@@ -238,6 +223,14 @@ export default {
 											throw new Error(`The field "${config.field}" of the model is not defined!`);
 										}
 										self.value[config.field] = val;
+										let influences = config.influences;
+										if (influences && influences.length) {
+											influences.forEach(it => {
+												if (it.byValue === val) {
+													self.value[it.field] = it.value;
+												}
+											});
+										}
 										config.on.input && config.on.input(val);
 									},
 									change(...args) {
@@ -254,9 +247,10 @@ export default {
 
 <style lang="less">
 .e-form-builder-container {
+	.color-warning {
+		color: #e6a23c;
+	}
 	.e-form-builder-item-label {
-		display: flex;
-		align-items: center;
 		font-size: 12px;
 		.e-form-builder-item-tips {
 			margin-left: 5px;
@@ -265,7 +259,6 @@ export default {
 	}
 	.el-form-item__label {
 		padding-bottom: 0px;
-		display: flex;
 	}
 	.el-form-item {
 		margin-bottom: 5px;
