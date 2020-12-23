@@ -85,16 +85,12 @@
 				<span class="value">{{ item.value }}</span>
 			</li>
 		</ul>
-		<Test
-			@dialogTestVisible="handleTestVisible"
-			:dialogTestVisible="testData.dialogTestVisible"
-			:testData="testData"
-		></Test>
+		<Test @dialogTestVisible="handleTestVisible" :dialogTestVisible="dialogTestVisible" :formData="data"></Test>
 	</el-drawer>
 </template>
 
 <script>
-import { getImgByType, handleProgress } from './util';
+import { getImgByType } from './util';
 import formConfig from './config';
 import Test from './Test';
 
@@ -125,12 +121,7 @@ export default {
 			progress: 0,
 			timer: null,
 			showProgress: false,
-			testData: {
-				testLogs: null,
-				testResult: '',
-				progress: 0,
-				dialogTestVisible: false
-			},
+			dialogTestVisible: false,
 			testStatus: {
 				ready: 'success',
 				invalid: 'exception',
@@ -205,43 +196,8 @@ export default {
 			this.clearInterval();
 			this.$emit('previewVisible', false);
 		},
-		beforeTest(id) {
-			let params = {
-				response_body: {},
-				status: 'testing',
-				id: id
-			};
-			this.$api('connections')
-				.patchId(params)
-				.then(() => {
-					this.status = 'testing';
-					this.testData.dialogTestVisible = true;
-					this.test(id);
-				});
-		},
-		async test(id) {
-			let result = null;
-			this.testData.testResult = this.testStatus['testing'];
-			this.testData.estLogs = [];
-			this.clearInterval();
-			if (this.data.database_type === 'mongodb') {
-				result = await this.$api('connections').customQuery([this.data.id]);
-			} else {
-				result = await this.$api('connections').get([this.data.id]);
-			}
-			if (result.data) {
-				const data = result.data;
-				let validate_details = data.response_body && data.response_body.validate_details;
-				this.testData.testLogs = validate_details || [];
-				this.testData.testResult = this.testStatus[data.status] || this.testStatus['testing'];
-				this.testData.progress = handleProgress(this.testData.testLogs);
-				this.status = data.status; //更新当前预览页面的状态
-				if (['testing'].includes(data.status)) {
-					this.timer = setInterval(() => {
-						this.test(id);
-					}, 3000);
-				}
-			}
+		beforeTest() {
+			this.dialogTestVisible = true;
 		},
 		edit(id, type) {
 			if (
@@ -309,7 +265,7 @@ export default {
 		},
 		//test
 		handleTestVisible() {
-			this.testData.dialogTestVisible = false;
+			this.dialogTestVisible = false;
 		}
 	}
 };

@@ -27,7 +27,7 @@
 				</header>
 				<div class="form">
 					<form-builder ref="form" v-model="model" :config="config"></form-builder>
-					<el-button size="mini" class="test" @click="startTest">连接测试</el-button>
+					<el-button size="mini" class="test" @click="startTest()">连接测试</el-button>
 				</div>
 			</main>
 			<gitbook></gitbook>
@@ -40,11 +40,7 @@
 				</el-button>
 			</div>
 		</footer>
-		<Test
-			@dialogTestVisible="handleTestVisible"
-			:dialogTestVisible="testData.dialogTestVisible"
-			:testData="testData"
-		></Test>
+		<Test @dialogTestVisible="handleTestVisible" :dialogTestVisible="dialogTestVisible" :formData="model"></Test>
 		<DatabaseTypeDialog
 			:dialogVisible="dialogDatabaseTypeVisible"
 			@dialogVisible="handleDialogDatabaseTypeVisible"
@@ -91,7 +87,7 @@ import factory from '@/api/factory';
 import formConfig from './config';
 import gitbook from './GitBook';
 import Test from './Test';
-import { getImgByType, TYPEMAP, handleProgress } from './util';
+import { getImgByType, TYPEMAP } from './util';
 import DatabaseTypeDialog from './DatabaseTypeDialog';
 import ws from '../../api/ws';
 
@@ -154,12 +150,7 @@ export default {
 				invalid: 'exception',
 				testing: 'warning'
 			},
-			testData: {
-				testLogs: null,
-				testResult: '',
-				progress: 0,
-				dialogTestVisible: false
-			},
+			dialogTestVisible: false,
 			dialogDatabaseTypeVisible: false,
 			dialogEditNameVisible: false
 			// repeatDialogVisible: false,
@@ -267,9 +258,7 @@ export default {
 			}
 		},
 		handleTestVisible() {
-			this.testData.dialogTestVisible = false;
-			this.testData.progress = 0;
-			this.testData.testResult = this.status['testing'];
+			this.dialogTestVisible = false;
 		},
 		goBack() {
 			this.$router.push('/connections');
@@ -301,8 +290,7 @@ export default {
 						.then(res => {
 							let id = res.data.id;
 							this.model.id = id;
-							// this.testData.dialogTestVisible = true;
-							// this.test(id);
+							this.handleWS(id);
 						})
 						.catch(err => {
 							if (err && err.response) {
@@ -323,9 +311,13 @@ export default {
 				}
 			});
 		},
+		//开始测试
 		startTest() {
-			this.testData.dialogTestVisible = true;
-			this.handleWS();
+			this.$refs.form.validate(valid => {
+				if (valid) {
+					this.dialogTestVisible = true;
+				}
+			});
 		},
 		//建立长连接 测试使用
 		handleWS() {
@@ -336,9 +328,8 @@ export default {
 			//接收数据
 			ws.on('testConnection', data => {
 				if (data.data && data.data.length > 0) {
-					this.testData.testLogs = data.data;
-					this.testData.testResult = this.status[data.status] || this.status['testing'];
-					this.testData.progress = handleProgress(this.testData.testLogs);
+					this.clearInterval();
+					this.goBack();
 				}
 			});
 			//建立连接
@@ -371,8 +362,6 @@ export default {
 					if (err && err.response) {
 						if (err.response.msg.indexOf('duplication for names') > -1) {
 							this.$message.error(this.$t('dataForm.error.connectionNameExist'));
-						} else if (err.response.msg.indexOf('duplicate source') > -1) {
-							this.$message.error(this.$t('dataForm.error.duplicateSource'));
 						} else {
 							this.$message.error(err.response.msg);
 						}
@@ -504,18 +493,23 @@ export default {
 		border-left: none;
 	}
 	.footer {
-		height: 46px;
+		height: 62px;
 		background-color: #fff;
-		padding-left: 23%;
+		padding-left: 25%;
 		border-left: none;
-		line-height: 46px;
+		line-height: 62px;
 		.footer-btn {
-			width: 444px;
+			width: 440px;
 			display: flex;
 			border-top: 1px solid #dedee4;
 			align-items: center;
-			justify-content: center;
-			padding-top: 10px;
+			justify-content: flex-end;
+			padding-top: 18px;
+		}
+		button {
+			width: 140px;
+			height: 32px;
+			margin-left: 20px;
 		}
 	}
 }
