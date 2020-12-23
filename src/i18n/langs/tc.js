@@ -358,7 +358,7 @@ const tc = {
 		stystemOpenAll: '全部打開',
 		stystemDeleteAll: '全部刪除',
 		stystemLgnoreAll: '全部忽略',
-		newTaksName: '新任務未命名',
+		newTaksName: '新任務',
 		selectNode: '請選擇節點',
 		submitExecute: '提交執行',
 		submitOnly: '僅提交',
