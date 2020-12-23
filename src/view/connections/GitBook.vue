@@ -28,7 +28,6 @@ export default {
 	overflow-y: auto;
 	background-color: rgba(250, 250, 250, 100);
 	border: 1px solid rgba(222, 222, 228, 100);
-	border-bottom: none;
 	font-family: 'element-icons';
 	h1,
 	h2,
@@ -63,29 +62,35 @@ export default {
 		font-family: 'element-icons';
 	}
 	h2 {
-		font-size: 36px;
-		line-height: 42px;
+		font-size: 17px;
+		line-height: 50px;
 		font-family: 'element-icons';
 	}
 	h1,
 	h2 {
 		border-bottom: 1px solid #efeaea;
 		padding-bottom: 10px;
+		margin-bottom: 0px;
 		font-family: 'element-icons';
 	}
 	h3 {
-		font-size: 24px;
-		line-height: 30px;
+		font-size: 15px;
+		line-height: 32px;
+		margin: 0.5em 0 10px;
 		font-family: 'element-icons';
 	}
 	h4 {
-		font-size: 21px;
-		line-height: 26px;
+		font-size: 14px;
+		line-height: 28px;
+		list-style: 16px;
+		margin: 0.7em 0 10px;
 		font-family: 'element-icons';
 	}
 	h5 {
-		font-size: 18px;
-		list-style: 23px;
+		font-size: 12px;
+		line-height: 24px;
+		list-style: 16px;
+		margin: 0.7em 0 5px;
 		font-family: 'element-icons';
 	}
 	a {
@@ -114,8 +119,9 @@ export default {
 	p,
 	ul,
 	ol {
-		font-size: 14px;
-		line-height: 24px;
+		font-size: 12px;
+		line-height: 20px;
+		margin-bottom: 0px;
 	}
 
 	ol ol,

@@ -56,9 +56,22 @@ export default {
 			}
 		};
 	},
+	created() {
+		this.showItems();
+	},
 	methods: {
 		handleClose() {
 			this.$emit('dialogTestVisible', false);
+		},
+		showItems() {
+			const self = this;
+			this.test_current_step = 0;
+			clearInterval(this.interval);
+			this.interval = setInterval(() => {
+				if (self.testRules && self.test_current_step < self.testRules.length) {
+					self.test_current_step += 1;
+				}
+			}, 2000);
 		}
 	}
 };
