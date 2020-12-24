@@ -58,7 +58,12 @@
 							</el-button>
 						</li>
 						<li class="item">
-							<el-button class="btn" size="mini" @click="reload()">
+							<el-button
+								class="btn"
+								size="mini"
+								@click="reload()"
+								:disabled="!['ready'].includes(this.status) || !data.tableCount"
+							>
 								<i class="iconfont icon-kujitongbucopy">{{ $t('connection.preview.reloadName') }}</i>
 							</el-button>
 						</li>
@@ -165,17 +170,9 @@ export default {
 				this.name = data.name;
 				this.type = data.database_type;
 				this.status = data.status;
-				if (
-					!data.loadCount &&
-					!data.tableCount &&
-					data.tableCount !== 0 &&
-					!['invalid'].includes(this.status)
-				) {
-					let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100;
-					this.progress = progress ? progress : 0;
-					if (this.progress !== 100) {
-						this.showProgress = true;
-					}
+				if (['ready'].includes(this.status) && data.loadFieldsStatus !== 'finished' && data.tableCount) {
+					this.progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100;
+					this.showProgress = true;
 				}
 				let func = formConfig[this.type];
 				if (func) {
@@ -220,34 +217,9 @@ export default {
 			};
 			this.confirm(
 				() => {
+					this.showProgress = true;
 					this.progress = 0;
-					this.$api('connections')
-						.updateById(this.data.id, {
-							status: 'testing',
-							name: this.data.name
-						})
-						.then(result => {
-							if (result.data) {
-								let data = result.data;
-								if (
-									!data.loadCount &&
-									!data.tableCount &&
-									data.tableCount !== 0 &&
-									!['invalid'].includes(this.status)
-								) {
-									let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100;
-									this.progress = progress ? progress : 0;
-									if (this.progress !== 100) {
-										this.showProgress = true;
-									} else {
-										this.showProgress = false;
-									}
-								}
-							}
-						})
-						.catch(() => {
-							this.$message.error(this.$t('connection.reloadFail'));
-						});
+					this.reloadApi();
 				},
 				() => {},
 				config
@@ -262,6 +234,37 @@ export default {
 			})
 				.then(callback)
 				.catch(catchCallback);
+		},
+		reloadApi() {
+			this.clearInterval();
+			this.$api('connections')
+				.updateById(this.data.id, {
+					status: 'testing',
+					name: this.data.name
+				})
+				.then(result => {
+					if (result.data) {
+						let data = result.data;
+						if (data.loadFieldsStatus === 'finished') {
+							this.progress = 100;
+							setTimeout(() => {
+								this.showProgress = false;
+								this.progress = 0; //加载完成
+							}, 800);
+						} else {
+							let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100;
+							this.progress = progress ? progress : 0;
+							this.timer = setInterval(() => {
+								this.reloadApi();
+							}, 800);
+						}
+					}
+				})
+				.catch(() => {
+					this.$message.error(this.$t('connection.reloadFail'));
+					this.showProgress = false;
+					this.progress = 0; //加载完成
+				});
 		},
 		//test
 		handleTestVisible() {

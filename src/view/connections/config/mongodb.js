@@ -24,13 +24,27 @@ export default function(vm) {
 		},
 		items: [
 			{
-				type: 'radio',
+				type: 'slot',
+				slot: 'connection_type',
 				field: 'connection_type',
 				label: vm.$t('dataForm.form.connectionType'),
 				options: [
-					{ label: vm.$t('dataForm.form.options.sourceAndTarget'), value: 'source_and_target' },
-					{ label: vm.$t('dataForm.form.options.source'), value: 'source' },
-					{ label: vm.$t('dataForm.form.options.target'), value: 'target' }
+					{
+						label: vm.$t('dataForm.form.options.sourceAndTarget'),
+						tip:
+							'源头跟目标就是黑色导航缴费的肯定会检查费源头跟目标就是黑色导航缴费的肯定会检查费源头跟目标就是黑色导航缴费的肯定会检查费',
+						value: 'source_and_target'
+					},
+					{
+						label: vm.$t('dataForm.form.options.source'),
+						tip: '源头跟目标就是黑色导航缴费的肯定会检查费',
+						value: 'source'
+					},
+					{
+						label: vm.$t('dataForm.form.options.target'),
+						tip: '源头跟目标就是黑色导航缴费的肯定会检查费',
+						value: 'target'
+					}
 				],
 				required: true
 			},
@@ -78,7 +92,6 @@ export default function(vm) {
 				label: vm.$t('dataForm.form.databaseUri'),
 				domType: 'textarea',
 				required: true,
-				tips: vm.$t('dataForm.form.uriTips.content'),
 				show: false,
 				dependOn: [
 					{
@@ -93,6 +106,10 @@ export default function(vm) {
 						}
 					}
 				]
+			},
+			{
+				type: 'slot',
+				slot: 'urlTip'
 			},
 			{
 				type: 'input',
