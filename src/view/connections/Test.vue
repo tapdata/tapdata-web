@@ -9,15 +9,16 @@
 		:close-on-click-modal="false"
 		:close-on-press-escape="false"
 	>
-		<!--		<el-progress-->
-		<!--			type="line"-->
-		<!--			class="test-progress"-->
-		<!--			:text-inside="true"-->
-		<!--			:stroke-width="26"-->
-		<!--			:percentage="testData.progress"-->
-		<!--			:status="testData.testResult"-->
-		<!--		></el-progress>-->
-		<el-table :data="testData.testLogs" style="width: 100%" class="test-block">
+		<div v-show="testData.testLogs && testData.testLogs.length === 0">
+			<div v-if="wsError === 'ERROR'" style="color: #d54e21">{{ $t('dataForm.test.error') }}</div>
+			<div v-else>{{ $t('dataForm.primaryTest') }}</div>
+		</div>
+		<el-table
+			:data="testData.testLogs"
+			style="width: 100%"
+			class="test-block"
+			v-show="testData.testLogs && testData.testLogs.length > 0"
+		>
 			<el-table-column prop="show_msg" :label="$t('dataForm.test.items')" width="250"> </el-table-column>
 			<el-table-column prop="status" :label="$t('dataForm.test.result')" width="100">
 				<template slot-scope="scope">
@@ -28,10 +29,7 @@
 			</el-table-column>
 		</el-table>
 		<span slot="footer" class="dialog-footer">
-			<el-button v-if="testData.testResult === 'warning'" type="primary" size="mini" @click="handleClose()">{{
-				$t('dataForm.backDetection')
-			}}</el-button>
-			<el-button v-else size="mini" type="primary" @click="handleClose()">{{ $t('dataForm.close') }}</el-button>
+			<el-button size="mini" type="primary" @click="handleClose()">{{ $t('dataForm.close') }}</el-button>
 		</span>
 	</el-dialog>
 </template>
@@ -55,10 +53,11 @@ export default {
 		return {
 			progress: 0,
 			testData: {
-				testLogs: null,
+				testLogs: [],
 				testResult: '',
 				progress: 0
 			},
+			wsError: '',
 			colorMap: {
 				passed: '#70AD47',
 				waiting: '#666',
@@ -71,6 +70,9 @@ export default {
 			handler() {
 				if (this.dialogTestVisible) {
 					this.handleWS(); //开始测试建立ws
+				} else {
+					this.clearInterval();
+					this.testData.testLogs = [];
 				}
 			}
 		}
@@ -84,17 +86,23 @@ export default {
 		},
 		//建立长连接 测试使用
 		handleWS() {
+			this.wsError = '';
 			let msg = {
 				type: 'testConnection',
 				data: this.formData
 			};
-			msg.data['user_id'] = this.$cookie.get('user_id');
 			//接收数据
-			ws.on('testConnection', data => {
-				if (data.data && data.data.length > 0) {
-					this.testData.testLogs = data.data;
-					this.testData.testResult = this.status[data.status] || this.status['testing'];
+			ws.on('testConnectionResult', data => {
+				let result = data.result || [];
+				this.wsError = data.status;
+				if (result.response_body) {
+					let validate_details = result.response_body.validate_details || [];
+					this.testData.testLogs = validate_details;
+					//this.showItems(validate_details);
 				}
+			});
+			ws.on('unknown_event_result', data => {
+				this.wsError = data.status;
 			});
 			//建立连接
 			this.timer = setInterval(() => {
@@ -110,6 +118,18 @@ export default {
 			clearInterval(this.timer);
 			this.timer = null;
 		}
+		// showItems(data) {
+		// 	let interval = null;
+		// 	let self = this;
+		// 	this.testData.testLogs = [];
+		// 	clearInterval(interval);
+		// 	for (let i = 0; i < data.length;i++) {
+		// 		clearInterval(interval);
+		// 		interval = setInterval(() => {
+		// 			self.testData.testLogs.push(data[i]);
+		// 		}, 300);
+		// 	}
+		// }
 	}
 };
 </script>

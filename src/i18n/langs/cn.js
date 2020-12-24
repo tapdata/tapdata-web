@@ -635,6 +635,8 @@ const cn = {
 		checkMsg: '此数据源被传输任务或API所占用，无法删除',
 		copyFailedMsg: '复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"',
 		change: '更换',
+		rename: '改名',
+		testConnection: '连接测试',
 		status: {
 			testing: '测试中',
 			invalid: '无效',
@@ -1420,7 +1422,8 @@ const cn = {
 			testing: '测试中...',
 			items: '检查事项',
 			result: '检查结果',
-			information: '说明'
+			information: '说明',
+			error: '测试服务请求超时，请关闭重试'
 		},
 		form: {
 			connectionName: '连接名称',

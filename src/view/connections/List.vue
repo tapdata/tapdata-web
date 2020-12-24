@@ -126,10 +126,10 @@
 						:data="tableData"
 						height="100%"
 						class="connection-table"
-						row-key="id"
+						:row-key="getRowKeys"
 						@selection-change="handleSelectionChange"
 					>
-						<el-table-column type="selection" width="45"> </el-table-column>
+						<el-table-column type="selection" width="45" :reserve-selection="true"> </el-table-column>
 						<el-table-column prop="name" :label="$t('connection.dataBaseName')">
 							<template slot-scope="scope">
 								<div class="database-img">
@@ -344,6 +344,14 @@ export default {
 		//header
 		this.databaseTittle = this.$t('connection.databaseTittle');
 		this.description = this.$t('connection.desc');
+		//定时轮询
+		this.timer = setInterval(() => {
+			this.formatterUserName();
+			this.search(this.page.current, 1);
+		}, 10000);
+	},
+	destroyed() {
+		clearInterval(this.timer);
 	},
 	methods: {
 		// 面板显示隐藏
@@ -377,6 +385,9 @@ export default {
 			this.multipleSelection = val;
 		},
 		//列表操作
+		getRowKeys(row) {
+			return row.id; // 每条数据的唯一识别值
+		},
 		getImgByType(type) {
 			if (!type) {
 				type = 'default';

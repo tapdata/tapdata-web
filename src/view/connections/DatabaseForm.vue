@@ -12,7 +12,7 @@
 						</div>
 						<div class="content">{{ model.name }}</div>
 						<div class="addBtn" @click="dialogEditNameVisible = true">
-							{{ $t('connection.Rename') }}
+							{{ $t('connection.rename') }}
 						</div>
 					</div>
 				</header>
@@ -27,7 +27,9 @@
 				</header>
 				<div class="form">
 					<form-builder ref="form" v-model="model" :config="config"></form-builder>
-					<el-button size="mini" class="test" @click="startTest()">连接测试</el-button>
+					<el-button size="mini" class="test" @click="startTest()">{{
+						$t('connection.testConnection')
+					}}</el-button>
 				</div>
 			</main>
 			<gitbook></gitbook>
@@ -59,7 +61,9 @@
 				<el-button @click="dialogEditNameVisible = false" size="mini" clearable>{{
 					$t('dataForm.cancel')
 				}}</el-button>
-				<el-button @click="submitEdit()" size="mini" type="primary">{{ $t('message.confirm') }}</el-button>
+				<el-button @click="submitEdit()" size="mini" type="primary" v-loading="submitBtnLoading">{{
+					$t('message.confirm')
+				}}</el-button>
 			</span>
 		</el-dialog>
 		<!-- <el-dialog
@@ -152,7 +156,8 @@ export default {
 			},
 			dialogTestVisible: false,
 			dialogDatabaseTypeVisible: false,
-			dialogEditNameVisible: false
+			dialogEditNameVisible: false,
+			submitBtnLoading: false
 			// repeatDialogVisible: false,
 			// connectionObj: {
 			// 	name: '',
@@ -266,6 +271,7 @@ export default {
 		submit() {
 			this.$refs.form.validate(valid => {
 				if (valid) {
+					this.submitBtnLoading = true;
 					let params = Object.assign({}, this.model, {
 						sslCert: this.model.sslKey,
 						user_id: this.$cookie.get('user_id'),
@@ -288,9 +294,15 @@ export default {
 					}
 					connectionsModel[this.model.id ? 'patchId' : 'post'](params)
 						.then(res => {
+							this.submitBtnLoading = false;
 							let id = res.data.id;
 							this.model.id = id;
 							this.handleWS(id);
+							if (this.$route.query.id) {
+								this.$message.success('保存成功');
+								this.clearInterval();
+								this.goBack();
+							}
 						})
 						.catch(err => {
 							if (err && err.response) {
@@ -326,8 +338,9 @@ export default {
 				data: this.model
 			};
 			//接收数据
-			ws.on('testConnection', data => {
-				if (data.data && data.data.length > 0) {
+			ws.on('testConnectionResult', data => {
+				let result = data.result || [];
+				if (result.response_body && !this.$route.query.id) {
 					this.clearInterval();
 					this.goBack();
 				}
@@ -471,7 +484,7 @@ export default {
 				color: #48b6e2;
 				cursor: pointer;
 				font-size: 12px;
-				margin-top: 26px;
+				margin-top: 22px;
 				margin-left: 10px;
 			}
 			.test {
