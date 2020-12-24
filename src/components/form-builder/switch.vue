@@ -17,6 +17,9 @@ export default {
 				value: self.value,
 				disabled: self.config.disabled
 			},
+			style: {
+				'user-select': 'none'
+			},
 			on: this.on
 		});
 	}

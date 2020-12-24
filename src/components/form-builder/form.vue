@@ -13,7 +13,6 @@
  *              required: "是否必填",
  *
  *              //字段标题label的插槽，传一个function，参数为createElement
- *              labelSlot: (createElement) => createElement('span', {}, 'label'),
  * 			}
  * 		]
  *
@@ -50,23 +49,10 @@ export default {
 				domType: 'text',
 				required: false,
 				clearable: true,
-				labelSlot: () => null,
 				on: {}
 			},
 			form: null
 		};
-	},
-	watch: {
-		config: {
-			deep: true,
-			handler() {
-				this.show = false;
-				this.$nextTick(() => {
-					this.show = true;
-					this.clearValidate();
-				});
-			}
-		}
 	},
 	render(h) {
 		let formConfig = Object.assign(this.defaultFormConfig, this.config.form, {
@@ -137,28 +123,35 @@ export default {
 				'ElFormItem',
 				{
 					class: 'e-form-builder-item',
+					style: this.config.form.itemStyle,
 					props: {
 						prop: config.field,
 						label: config.label,
-						rules: rules
-					}
+						rules: rules.map(r => {
+							let rule = Object.assign({}, r);
+							if (rule.validator) {
+								rule.validator = rule.validator.bind(this);
+							}
+							return rule;
+						})
+					},
+					key: config.field
 				},
 				[this.getLabel(h, config), this.getBody(h, config)]
 			);
 			return config.show ? item : '';
 		},
 		getLabel(h, config) {
-			let labelSlot = config.labelSlot ? config.labelSlot(h) : null;
-			return !config.label && !labelSlot
+			return !config.label
 				? null
 				: h(
-						'div',
+						'span',
 						{
 							class: 'e-form-builder-item-label',
 							slot: 'label'
 						},
 						[
-							labelSlot || config.label,
+							config.label,
 							config.tips &&
 								h(
 									'ElPopover',
@@ -172,7 +165,7 @@ export default {
 									[
 										h('div', {
 											domProps: {
-												innerHTML: config.tips.content || config.tips
+												innerHTML: config.tips
 											}
 										}),
 										h(
@@ -184,8 +177,7 @@ export default {
 											[
 												h('i', {
 													class: 'el-icon-warning-outline e-form-builder-item-tips'
-												}),
-												config.tips.label
+												})
 											]
 										)
 									]
@@ -195,57 +187,43 @@ export default {
 		},
 		getBody(h, config) {
 			let self = this;
-			let appendSlot = config.appendSlot ? config.appendSlot(h) : null;
+			let appendSlot = config.appendSlot ? config.appendSlot(h, this.value) : null;
+			let el =
+				config.type === 'slot'
+					? this.$slots[config.slot]
+					: h(TYPE_MAPPING[config.type], {
+							props: {
+								value: self.value[config.field],
+								config: config
+							},
+							on: {
+								input(val) {
+									if (self.value[config.field] === undefined) {
+										throw new Error(`The field "${config.field}" of the model is not defined!`);
+									}
+									self.value[config.field] = val;
+									let influences = config.influences;
+									if (influences && influences.length) {
+										influences.forEach(it => {
+											if (it.byValue === val) {
+												self.value[it.field] = it.value;
+											}
+										});
+									}
+									config.on.input && config.on.input(val);
+								},
+								change(...args) {
+									config.on.change && config.on.change(...args);
+								}
+							}
+					  });
 			if (appendSlot) {
 				return h('div', { class: { 'fb-item-group': true } }, [
-					config.type === 'slot'
-						? this.$slots[config.slot]
-						: h(TYPE_MAPPING[config.type], {
-								props: {
-									value: self.value[config.field],
-									config: config
-								},
-								on: {
-									input(val) {
-										if (config.domType === 'number') {
-											val = Number(val);
-										}
-										if (self.value[config.field] === undefined) {
-											throw new Error(`The field "${config.field}" of the model is not defined!`);
-										}
-										self.value[config.field] = val;
-										config.on.input && config.on.input(val);
-									},
-									change(...args) {
-										config.on.change && config.on.change(...args);
-									}
-								}
-						  }),
+					el,
 					h('div', { class: { 'fb-form-item-append-slot': true } }, [appendSlot])
 				]);
 			} else {
-				return [
-					config.type === 'slot'
-						? this.$slots[config.slot]
-						: h(TYPE_MAPPING[config.type], {
-								props: {
-									value: self.value[config.field],
-									config: config
-								},
-								on: {
-									input(val) {
-										if (self.value[config.field] === undefined) {
-											throw new Error(`The field "${config.field}" of the model is not defined!`);
-										}
-										self.value[config.field] = val;
-										config.on.input && config.on.input(val);
-									},
-									change(...args) {
-										config.on.change && config.on.change(...args);
-									}
-								}
-						  })
-				];
+				return [el];
 			}
 		}
 	}
@@ -254,9 +232,10 @@ export default {
 
 <style lang="less">
 .e-form-builder-container {
+	.color-warning {
+		color: #e6a23c;
+	}
 	.e-form-builder-item-label {
-		display: flex;
-		align-items: center;
 		font-size: 12px;
 		.e-form-builder-item-tips {
 			margin-left: 5px;
@@ -265,7 +244,6 @@ export default {
 	}
 	.el-form-item__label {
 		padding-bottom: 0px;
-		display: flex;
 	}
 	.el-form-item {
 		margin-bottom: 5px;

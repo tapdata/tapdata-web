@@ -189,7 +189,7 @@ export default {
 	},
 	mounted() {
 		let self = this;
-		let version = 'DAAS_BUILD_NUMBER';
+		let version = window._TAPDATA_OPTIONS_.version;
 		this.windowLink =
 			'tapdata start backend --downloadUrl ' +
 			`http://resource.tapdata.net/package/feagent/${version}/ --token ` +
@@ -259,7 +259,7 @@ export default {
 
 		// windows下载
 		handleDownLoad() {
-			let version = 'DAAS_BUILD_NUMBER';
+			let version = window._TAPDATA_OPTIONS_.version;
 			window.location = `http://resource.tapdata.net/package/feagent/${version}/tapdata.exe`;
 		},
 
