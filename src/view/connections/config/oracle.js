@@ -9,23 +9,6 @@ export default function(vm) {
 			thin_type: 'SID',
 			supportUpdatePk: false
 		},
-		checkItems() {
-			let vm = this;
-			let val = vm.model.connection_type;
-			let databaseDatetypeWithoutTimezone = vm.config.items.find(
-				item => item.field === 'database_datetype_without_timezone'
-			);
-			let supportUpdatePk = vm.config.items.find(item => item.field === 'supportUpdatePk');
-			vm.$nextTick(() => {
-				if (databaseDatetypeWithoutTimezone) {
-					databaseDatetypeWithoutTimezone.show = val && ['source', 'source_and_target'].includes(val);
-				}
-				if (supportUpdatePk) {
-					supportUpdatePk.show = val && ['target', 'source_and_target'].includes(val);
-				}
-				vm.$refs.form.$forceUpdate();
-			});
-		},
 		items: [
 			{
 				type: 'radio',
@@ -36,12 +19,7 @@ export default function(vm) {
 					{ label: vm.$t('dataForm.form.options.source'), value: 'source' },
 					{ label: vm.$t('dataForm.form.options.target'), value: 'target' }
 				],
-				required: true,
-				on: {
-					change() {
-						vm.checkItems();
-					}
-				}
+				required: true
 			},
 			{
 				type: 'radio',
@@ -60,13 +38,13 @@ export default function(vm) {
 				rules: [
 					{
 						required: true,
-						validator: (rule, value, callback) => {
-							let port = vm.model['database_port'];
+						validator(rule, value, callback) {
+							let port = this.value['database_port'];
 							if (!value || !value.trim()) {
 								callback(new Error(vm.$t('dataForm.error.noneHost')));
 							} else if (!port) {
 								callback(new Error(vm.$t('dataForm.error.nonePort')));
-							} else if (!/\d+/.test(port)) {
+							} else if (!/^\d+$/.test(port)) {
 								callback(new Error(vm.$t('dataForm.error.portNumber')));
 							} else if (port < 1 || port > 65535) {
 								callback(new Error(vm.$t('dataForm.error.portRange')));
@@ -76,17 +54,17 @@ export default function(vm) {
 						}
 					}
 				],
-				appendSlot: h => {
+				appendSlot: (h, data) => {
 					return h('FbInput', {
 						props: {
-							value: vm.model['database_port'],
+							value: data['database_port'],
 							config: {
 								placeholder: vm.$t('dataForm.form.port')
 							}
 						},
 						on: {
 							input(val) {
-								vm.model['database_port'] = val;
+								data['database_port'] = val;
 							}
 						}
 					});
@@ -139,14 +117,42 @@ export default function(vm) {
 			{
 				type: 'switch',
 				field: 'supportUpdatePk',
-				label: vm.$t('dataForm.form.supportUpdatePk')
+				label: vm.$t('dataForm.form.supportUpdatePk'),
+				show: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connection_type',
+								value: 'source'
+							}
+						],
+						triggerConfig: {
+							show: false
+						}
+					}
+				]
 			},
 			{
 				type: 'select',
 				field: 'database_datetype_without_timezone',
 				label: vm.$t('dataForm.form.timeZone'),
 				tips: vm.$t('dataForm.form.timeZoneTips'),
-				options: []
+				options: [],
+				show: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connection_type',
+								value: 'target'
+							}
+						],
+						triggerConfig: {
+							show: false
+						}
+					}
+				]
 			}
 		]
 	};

@@ -58,13 +58,28 @@
 									{{ errorMsg }}
 								</div>
 							</template>
-							<form-builder
-								class="create-form"
-								v-show="selectedDatabaseType"
-								ref="form"
-								v-model="databaseForm"
-								:config="config"
-							></form-builder>
+							<template v-if="selectedDatabaseType">
+								<div class="database-type">
+									<div class="img">
+										<img :src="getImgByType(selectedDatabaseType)" />
+									</div>
+									<div class="database-name">{{ typeMap[selectedDatabaseType] }}</div>
+									<el-button
+										class="btn-change"
+										type="text"
+										size="mini"
+										@click="showConnectDialog = true"
+									>
+										{{ $t('connection.change') }}
+									</el-button>
+								</div>
+								<form-builder
+									class="create-form"
+									ref="form"
+									v-model="databaseForm"
+									:config="config"
+								></form-builder>
+							</template>
 						</div>
 						<!-- 步骤3 -->
 						<div class="body step-2" v-show="steps[activeStep].index === 3">
@@ -94,6 +109,8 @@
 import AgentDownloadContent from '@/components/AgentDownloadContent.vue';
 import DatabaseTypeDialog from '@/view/connections/DatabaseTypeDialog.vue';
 import { signOut } from '../util/util';
+import { getImgByType, TYPEMAP } from './connections/util';
+
 import formConfig from './connections/config';
 
 const steps = [
@@ -111,8 +128,9 @@ export default {
 		return {
 			loading: false,
 			logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
+			typeMap: TYPEMAP,
 			steps: [],
-			activeStep: 1,
+			activeStep: 0,
 			sourceConnection: null,
 			errorMsg: '',
 			showConnectDialog: false,
@@ -122,7 +140,9 @@ export default {
 			config: {
 				form: {
 					labelPosition: 'right',
-					labelWidth: '200px'
+					labelWidth: '200px',
+					itemStyle: 'margin-bottom: 16px;',
+					size: 'small'
 				},
 				items: []
 			}
@@ -132,6 +152,7 @@ export default {
 		this.getDataApi(this.getSteps);
 	},
 	methods: {
+		getImgByType,
 		// 获取Agent是否安装
 		getDataApi(cb) {
 			if (parseInt(this.$cookie.get('isAdmin')) || localStorage.getItem('BTN_AUTHS') === 'BTN_AUTHS') {
@@ -180,6 +201,9 @@ export default {
 		handlerDatabaseTypeChange(type) {
 			this.selectedDatabaseType = type;
 			this.showConnectDialog = false;
+			this.databaseForm = {};
+			this.config.items = [];
+			this.$refs.form && this.$refs.form.clearValidate();
 			this.getFormConfig();
 		},
 		signOut() {
@@ -202,7 +226,14 @@ export default {
 						showWordLimit: true
 					}
 				];
-				let model = {};
+				let model = {
+					database_port: ''
+				};
+				if (this.steps[this.activeStep].index === 2) {
+					model.connection_type = 'source';
+				} else {
+					model.connection_type = 'target';
+				}
 				config.items.forEach(it => {
 					if (
 						((it.rules && it.rules.some(r => r.required === true)) ||
@@ -307,8 +338,9 @@ export default {
 		background: #fff;
 		overflow: auto;
 		.body {
-			width: 850px;
 			margin: 0 auto;
+			padding-bottom: 50px;
+			width: 850px;
 			.title {
 				padding: 20px 200px;
 				color: rgba(51, 51, 51, 100);
@@ -341,11 +373,34 @@ export default {
 		width: 450px;
 		margin: 0 200px;
 	}
-	.create-form {
-		padding-right: 200px;
-		.e-form-builder-item {
-			margin-bottom: 16px;
+	.database-type {
+		padding: 0 200px;
+		display: flex;
+		align-items: center;
+		.img {
+			padding: 10px;
+			width: 54px;
+			height: 54px;
+			border: 1px solid #dedee4;
+			box-sizing: border-box;
+			img {
+				display: block;
+				width: 100%;
+				height: 100%;
+			}
 		}
+		.database-name {
+			margin-left: 15px;
+			font-size: 28px;
+		}
+		.btn-change {
+			margin-top: 10px;
+			margin-left: 15px;
+		}
+	}
+	.create-form {
+		margin-top: 20px;
+		padding-right: 200px;
 	}
 	.error-msg {
 		line-height: 26px;

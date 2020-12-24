@@ -123,10 +123,17 @@ export default {
 				'ElFormItem',
 				{
 					class: 'e-form-builder-item',
+					style: this.config.form.itemStyle,
 					props: {
 						prop: config.field,
 						label: config.label,
-						rules: rules
+						rules: rules.map(r => {
+							let rule = Object.assign({}, r);
+							if (rule.validator) {
+								rule.validator = rule.validator.bind(this);
+							}
+							return rule;
+						})
 					},
 					key: config.field
 				},
@@ -180,65 +187,43 @@ export default {
 		},
 		getBody(h, config) {
 			let self = this;
-			let appendSlot = config.appendSlot ? config.appendSlot(h) : null;
+			let appendSlot = config.appendSlot ? config.appendSlot(h, this.value) : null;
+			let el =
+				config.type === 'slot'
+					? this.$slots[config.slot]
+					: h(TYPE_MAPPING[config.type], {
+							props: {
+								value: self.value[config.field],
+								config: config
+							},
+							on: {
+								input(val) {
+									if (self.value[config.field] === undefined) {
+										throw new Error(`The field "${config.field}" of the model is not defined!`);
+									}
+									self.value[config.field] = val;
+									let influences = config.influences;
+									if (influences && influences.length) {
+										influences.forEach(it => {
+											if (it.byValue === val) {
+												self.value[it.field] = it.value;
+											}
+										});
+									}
+									config.on.input && config.on.input(val);
+								},
+								change(...args) {
+									config.on.change && config.on.change(...args);
+								}
+							}
+					  });
 			if (appendSlot) {
 				return h('div', { class: { 'fb-item-group': true } }, [
-					config.type === 'slot'
-						? this.$slots[config.slot]
-						: h(TYPE_MAPPING[config.type], {
-								props: {
-									value: self.value[config.field],
-									config: config
-								},
-								on: {
-									input(val) {
-										if (config.domType === 'number') {
-											val = Number(val);
-										}
-										if (self.value[config.field] === undefined) {
-											throw new Error(`The field "${config.field}" of the model is not defined!`);
-										}
-										self.value[config.field] = val;
-										config.on.input && config.on.input(val);
-									},
-									change(...args) {
-										config.on.change && config.on.change(...args);
-									}
-								}
-						  }),
+					el,
 					h('div', { class: { 'fb-form-item-append-slot': true } }, [appendSlot])
 				]);
 			} else {
-				return [
-					config.type === 'slot'
-						? this.$slots[config.slot]
-						: h(TYPE_MAPPING[config.type], {
-								props: {
-									value: self.value[config.field],
-									config: config
-								},
-								on: {
-									input(val) {
-										if (self.value[config.field] === undefined) {
-											throw new Error(`The field "${config.field}" of the model is not defined!`);
-										}
-										self.value[config.field] = val;
-										let influences = config.influences;
-										if (influences && influences.length) {
-											influences.forEach(it => {
-												if (it.byValue === val) {
-													self.value[it.field] = it.value;
-												}
-											});
-										}
-										config.on.input && config.on.input(val);
-									},
-									change(...args) {
-										config.on.change && config.on.change(...args);
-									}
-								}
-						  })
-				];
+				return [el];
 			}
 		}
 	}
