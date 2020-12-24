@@ -88,7 +88,7 @@ export default {
 				type: 'testConnection',
 				data: this.formData
 			};
-			msg.data['user_id'] = { regexp: `^${this.$cookie.get('user_id')}$` };
+			msg.data['user_id'] = this.$cookie.get('user_id');
 			//接收数据
 			ws.on('testConnection', data => {
 				if (data.data && data.data.length > 0) {
