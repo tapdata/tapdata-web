@@ -1764,6 +1764,7 @@ const tc = {
 		error: 'Error',
 		done: '校驗結束',
 		running: '校驗中',
+		success: '恭喜~~~~校驗結果源表與目標表內容完全一致，沒恭喜~~~~校驗結果源表與目標表內容完全一致，沒有錯誤記錄',
 		verifyProgress: '校验进度',
 		tasksTime: '請選擇起止時間',
 		tasksDataFlow: '請選擇任務',

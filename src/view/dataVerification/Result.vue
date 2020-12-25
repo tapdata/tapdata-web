@@ -170,6 +170,10 @@
 						}}</span>
 					</li>
 				</ul>
+				<div class="success-band" v-if="resultData && resultData[0] && resultData[0].result === 'passed'">
+					<i class="iconfont icon-zhuhe"></i>
+					<span>{{ $t('dataVerification.success') }}</span>
+				</div>
 				<div class="error-band" v-if="resultData && resultData[0] && resultData[0].status === 'error'">
 					<i class="iconfont icon-warning-circle"></i>
 					<span>{{ resultData[0].errorMsg }}</span>
@@ -200,6 +204,7 @@
 								{{ detail.target.value }}
 							</li>
 						</ul>
+						<div>Message: {{ item.message || '-' }}</div>
 					</div>
 				</div>
 			</div>
@@ -425,9 +430,22 @@ export default {
 				line-height: 20px;
 				max-height: 160px;
 				text-overflow: ellipsis;
-				overflow-y: scroll;
+				overflow-y: auto;
 				font-size: 12px;
 				padding: 8px;
+			}
+			.success-band {
+				line-height: 20px;
+				max-height: 160px;
+				text-overflow: ellipsis;
+				font-size: 12px;
+				padding: 8px;
+				color: #666;
+				margin: 20% auto;
+				i {
+					font-size: 36px;
+					color: #48b6e2;
+				}
 			}
 			.title {
 				font-weight: bold;
@@ -499,12 +517,22 @@ export default {
 						li {
 							flex: 1;
 							border-left: 1px solid #dedee4;
-							border-bottom: 1px solid #dedee4;
 							border-top: 1px solid #dedee4;
 						}
 						li:last-child {
 							border-right: 1px solid #dedee4;
 						}
+					}
+					div {
+						font-size: 12px;
+						box-sizing: border-box;
+						text-overflow: ellipsis;
+						vertical-align: middle;
+						position: relative;
+						text-align: left;
+						padding: 16px 10px;
+						word-wrap: break-word;
+						border: 1px solid #dedee4;
 					}
 				}
 				.inspect-details {

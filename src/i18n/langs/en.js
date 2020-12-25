@@ -1777,6 +1777,8 @@ const en = {
 		targetFieldName: 'Target Field Name',
 		Value: 'value',
 		inconsistentType: 'Inconsistent Type',
+		success:
+			'Congratulations~~~~  The field contents of the source table and the target table are identical, no error record here',
 		chooseJob: 'Choose job',
 		frequency: 'Frequency',
 		startTime: ' Start time',
