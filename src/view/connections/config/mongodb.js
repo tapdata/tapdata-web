@@ -24,8 +24,7 @@ export default function(vm) {
 		},
 		items: [
 			{
-				type: 'slot',
-				slot: 'connection_type',
+				type: 'radio',
 				field: 'connection_type',
 				label: vm.$t('dataForm.form.connectionType'),
 				options: [

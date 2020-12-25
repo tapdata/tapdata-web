@@ -27,12 +27,6 @@
 				</header>
 				<div class="form">
 					<form-builder ref="form" v-model="model" :config="config">
-						<radioSelection
-							v-on:update:field="handleChangeType"
-							slot="connection_type"
-							:field="model.connection_type"
-							:options="connectionTypeOption"
-						></radioSelection>
 						<div slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
 					</form-builder>
 					<el-button size="mini" class="test" @click="startTest()">{{
@@ -100,7 +94,6 @@ import formConfig from './config';
 import gitbook from './GitBook';
 import Test from './Test';
 import { getImgByType, TYPEMAP } from './util';
-import radioSelection from './radioSelection';
 import DatabaseTypeDialog from './DatabaseTypeDialog';
 import ws from '../../api/ws';
 
@@ -142,7 +135,7 @@ const defaultModel = {
 
 export default {
 	name: 'DatabaseForm',
-	components: { gitbook, Test, DatabaseTypeDialog, radioSelection },
+	components: { gitbook, Test, DatabaseTypeDialog },
 	data() {
 		return {
 			visible: false,
