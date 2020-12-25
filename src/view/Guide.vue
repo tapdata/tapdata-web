@@ -120,9 +120,9 @@
 							<span v-show="selectedDatabaseType">保存，</span>
 							<span>下一步</span>
 						</el-button>
-						<el-button v-else type="primary" class="btn-step" @click="next()">
+						<el-button v-else type="primary" class="btn-step" :loading="loading" @click="next()">
 							开始编辑任务
-							<el-button class="btn-pass" type="text" @click="toDashboard">
+							<el-button class="btn-pass" type="text" @click="toDashboard()">
 								暂不编辑任务，先逛逛
 							</el-button>
 						</el-button>
@@ -317,22 +317,41 @@ export default {
 					this.errorMsg = 'Please choose a source type';
 				}
 			} else {
-				let stages = this.getStages();
-				let routeUrl = this.$router.resolve({
-					path: '/job',
-					query: { mapping: this.taskType }
+				this.toDashboard(() => {
+					let stages = this.getStages();
+
+					let routeUrl = this.$router.resolve({
+						path: '/job',
+						query: { mapping: this.taskType }
+					});
+					let _window = window.open(routeUrl.href, '_blank');
+					_window.tpdata = {
+						stages,
+						status: 'draft',
+						executeMode: 'normal'
+					};
 				});
-				let _window = window.open(routeUrl.href, '_blank');
-				_window.tpdata = {
-					stages,
-					status: 'draft',
-					executeMode: 'normal'
-				};
-				this.toDashboard();
 			}
 		},
-		toDashboard() {
-			this.$router.replace('/');
+		toDashboard(cb) {
+			this.loading = true;
+			this.$api('users')
+				.upsertWithWhere(
+					{
+						id: this.$cookie.get('user_id')
+					},
+					{
+						isCompleteGuide: true
+					}
+				)
+				.then(() => {
+					this.$cookie.delete('show_guide');
+					this.$router.replace('/');
+					cb && cb();
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		getTypeProps(connection) {
 			let type = connection.database_type;
