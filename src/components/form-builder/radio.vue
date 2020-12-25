@@ -87,7 +87,7 @@ export default {
 		.el-radio__label {
 			line-height: 28px;
 			.fb-radio-option-tip {
-				margin-bottom: 5px;
+				margin-bottom: 10px;
 				color: #666;
 				font-size: 12px;
 				line-height: 19px;

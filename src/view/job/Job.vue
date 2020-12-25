@@ -282,7 +282,7 @@ import AddBtnTip from './addBtnTip';
 import simpleScene from './SimpleScene';
 import newDataFlow from '@/components/newDataflowName';
 import DownAgent from '../downAgent/agentDown';
-import { FORM_DATA_KEY, JOIN_TABLE_TPL } from '../../editor/constants';
+import { FORM_DATA_KEY, JOIN_TABLE_TPL, DATABASE_TYPE_MAPPING } from '../../editor/constants';
 import { EditorEventType } from '../../editor/lib/events';
 import _ from 'lodash';
 import SkipError from '../../components/SkipError';
@@ -596,7 +596,9 @@ export default {
 			this.dataFlowId = dataFlow.id;
 			this.status = dataFlow.status;
 			this.executeMode = dataFlow.executeMode;
-			this.sync_type = dataFlow.setting.sync_type;
+			if (dataFlow.setting) {
+				this.sync_type = dataFlow.setting.sync_type;
+			}
 			this.dataFlow = dataFlow;
 			document.title = dataFlow.name;
 			// 管理端api创建任务来源以及editorData 数据丢失情况
@@ -1504,6 +1506,7 @@ export default {
 						};
 						cells.push(node);
 					} else if (v.type === 'database') {
+						let map = DATABASE_TYPE_MAPPING;
 						let node = {
 							type: mapping[v.type],
 							id: v.id,
@@ -1514,6 +1517,9 @@ export default {
 							attrs: {
 								label: {
 									text: v.name !== '' && v.name ? breakText.breakText(v.name, 125) : v.type
+								},
+								image: {
+									xlinkHref: map[v.database_type].shapeImage
 								}
 							}
 						};

@@ -38,9 +38,11 @@ export default {
 			required: true,
 			value: Boolean
 		},
-		allwoOtherType: {
-			value: Boolean,
-			default: true
+		allwoType: {
+			value: Array,
+			default: () => {
+				return [];
+			}
 		}
 	},
 	data() {
@@ -64,12 +66,14 @@ export default {
 	},
 	created() {
 		let allowDataType = window.getSettingByKey('ALLOW_CONNECTION_TYPE') || [];
-		this.database = allowDataType.filter(type => this.database.includes(type)) || [];
-		if (this.allwoOtherType) {
-			this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || [];
-		} else {
-			this.otherType = [];
+		let allwoType = this.allwoType;
+		if (allwoType && allwoType.length) {
+			allowDataType = allowDataType.filter(val => {
+				return this.allwoType.includes(val);
+			});
 		}
+		this.database = allowDataType.filter(type => this.database.includes(type)) || [];
+		this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || [];
 	},
 	methods: {
 		getImgByType,

@@ -38,14 +38,9 @@
 								<el-select
 									:popper-append-to-body="false"
 									class="select-connection"
-									:value="stepMap[steps[activeStep].index].selectedConnection"
+									:value="stepMap[steps[activeStep].index].selectedConnection.id"
 									placeholder="Choose a source connection"
-									@input="
-										v =>
-											v === '0'
-												? (showConnectDialog = true)
-												: (stepMap[steps[activeStep].index].selectedConnection = v)
-									"
+									@input="handleConnectionSelect"
 								>
 									<el-option value="0">
 										<div class="select-connection-option">
@@ -115,9 +110,21 @@
 						>
 							上一步
 						</el-button>
-						<el-button type="primary" class="btn-step" :loading="loading" @click="next()">
+						<el-button
+							v-if="steps[activeStep].index !== 4"
+							type="primary"
+							class="btn-step"
+							:loading="loading"
+							@click="next()"
+						>
 							<span v-show="selectedDatabaseType">保存，</span>
 							<span>下一步</span>
+						</el-button>
+						<el-button v-else type="primary" class="btn-step" @click="next()">
+							开始编辑任务
+							<el-button class="btn-pass" type="text" @click="toDashboard">
+								暂不编辑任务，先逛逛
+							</el-button>
 						</el-button>
 					</el-footer>
 				</el-container>
@@ -125,9 +132,9 @@
 			</el-container>
 		</el-container>
 		<DatabaseTypeDialog
-			:allwoOtherType="false"
+			:allwoType="['mysql', 'oracle', 'mongodb']"
 			:dialogVisible.sync="showConnectDialog"
-			@databaseType="handlerDatabaseTypeChange"
+			@databaseType="handleDatabaseTypeChange"
 		></DatabaseTypeDialog>
 	</el-container>
 </template>
@@ -136,6 +143,7 @@ import AgentDownloadContent from '@/components/AgentDownloadContent.vue';
 import DatabaseTypeDialog from '@/view/connections/DatabaseTypeDialog.vue';
 import { signOut } from '../util/util';
 import { getImgByType, TYPEMAP } from './connections/util';
+import { uuid } from '../editor/util/Schema';
 
 import formConfig from './connections/config';
 
@@ -156,15 +164,16 @@ export default {
 			logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
 			typeMap: TYPEMAP,
 			steps: [],
-			activeStep: 2,
+			activeStep: 0,
 			errorMsg: '',
 			showConnectDialog: false,
+			connectionList: [],
 			stepMap: {
 				2: {
 					title: '创建数据源连接',
 					desc:
 						'数据源连接指的是可以作为源的数据库、file、GridFS、REST API等类型的数据连接,必须先创建数据源才能创建迁移或同步任务',
-					selectedConnection: null,
+					selectedConnection: {},
 					connectionList: [],
 					btnLabel: '创建新的源连接'
 				},
@@ -172,7 +181,7 @@ export default {
 					title: '创建目标连接',
 					desc:
 						'数据源连接指的是可以作为源的数据库、file、GridFS、REST API等类型的数据连接,必须先创建数据源才能创建迁移或同步任务',
-					selectedConnection: null,
+					selectedConnection: {},
 					connectionList: [],
 					btnLabel: '创建新的目标连接'
 				}
@@ -188,7 +197,7 @@ export default {
 				},
 				items: []
 			},
-			taskType: '',
+			taskType: 'cluster-clone',
 			taskTypeConfig: {
 				options: [
 					{
@@ -234,7 +243,7 @@ export default {
 		getConnections() {
 			let where = {
 				database_type: {
-					in: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
+					in: ['mysql', 'oracle', 'mongodb']
 				},
 				user_id: {
 					regexp: `^${this.$cookie.get('user_id')}$`
@@ -271,6 +280,7 @@ export default {
 						});
 						this.stepMap[2].connectionList = sourceList;
 						this.stepMap[3].connectionList = targetList;
+						this.connectionList = list;
 					}
 				})
 				.finally(() => {
@@ -295,20 +305,120 @@ export default {
 				});
 			}
 			if ([2, 3].includes(this.steps[this.activeStep].index)) {
-				if (this.stepMap[this.steps[this.activeStep].index].selectedConnection) {
-					this.activeStep += 1;
-				} else if (this.selectedDatabaseType) {
+				if (this.selectedDatabaseType) {
 					this.$refs.form.validate(valid => {
 						if (valid) {
 							this.createConnection();
 						}
 					});
+				} else if (this.stepMap[this.steps[this.activeStep].index].selectedConnection.id) {
+					this.activeStep += 1;
 				} else {
 					this.errorMsg = 'Please choose a source type';
 				}
 			} else {
-				this.activeStep += 1;
+				let stages = this.getStages();
+				let routeUrl = this.$router.resolve({
+					path: '/job',
+					query: { mapping: this.taskType }
+				});
+				let _window = window.open(routeUrl.href, '_blank');
+				_window.tpdata = {
+					stages,
+					status: 'draft',
+					executeMode: 'normal'
+				};
+				this.toDashboard();
 			}
+		},
+		toDashboard() {
+			this.$router.replace('/');
+		},
+		getTypeProps(connection) {
+			let type = connection.database_type;
+			if (this.taskType === 'cluster-clone') {
+				return {
+					type: 'database',
+					database_type: type,
+					dropTable: false,
+					dropType: 'no_drop',
+					includeTables: [],
+					name: connection.name,
+					readBatchSize: 1000,
+					readCdcInterval: 500,
+					table_prefix: '',
+					table_suffix: '',
+					syncObjects: [],
+					joinTables: undefined
+				};
+			}
+			if (type === 'mongodb') {
+				return {
+					type: 'collection',
+					name: 'Collection'
+				};
+			} else {
+				return {
+					type: 'table',
+					name: 'Table'
+				};
+			}
+		},
+		getStages() {
+			let stageDefault = {
+				connectionId: '',
+				dataQualityTag: false,
+				distance: 1,
+				freeTransform: false,
+				id: '',
+				inputLanes: [],
+				joinTables: [],
+				name: '',
+				outputLanes: [],
+				type: ''
+			};
+			let source = this.stepMap[2].selectedConnection;
+			let target = this.stepMap[3].selectedConnection;
+			let sourceId = uuid();
+			let targetId = uuid();
+			let stages = [
+				Object.assign(
+					{},
+					stageDefault,
+					{
+						id: sourceId,
+						connectionId: source.id,
+						outputLanes: [targetId],
+						distance: 1
+					},
+					this.getTypeProps(source)
+				),
+				Object.assign(
+					{},
+					stageDefault,
+					{
+						id: targetId,
+						connectionId: target.id,
+						inputLanes: [sourceId],
+						distance: 0,
+						joinTables: [
+							{
+								arrayUniqueKey: '',
+								connectionId: '',
+								isArray: false,
+								joinKeys: [{ source: '', target: '' }],
+								joinPath: '',
+								joinType: 'upsert',
+								manyOneUpsert: false,
+								stageId: sourceId,
+								tableName: ''
+							}
+						]
+					},
+					this.getTypeProps(target)
+				)
+			];
+			return stages;
 		},
 		back(falg) {
 			if (falg) {
@@ -317,7 +427,17 @@ export default {
 				this.activeStep -= 1;
 			}
 		},
-		handlerDatabaseTypeChange(type) {
+		handleConnectionSelect(v) {
+			if (v === '0') {
+				this.showConnectDialog = true;
+			} else {
+				this.stepMap[this.steps[this.activeStep].index].selectedConnection = this.connectionList.find(
+					c => c.id === v
+				);
+			}
+			this.errorMsg = '';
+		},
+		handleDatabaseTypeChange(type) {
 			this.selectedDatabaseType = type;
 			this.showConnectDialog = false;
 			this.connectionForm = {};
@@ -389,10 +509,13 @@ export default {
 			this.$api('connections')
 				.post(params)
 				.then(res => {
-					let id = res.data.id;
-					this.stepMap[this.steps[this.activeStep].index].selectedConnection = id;
+					let connection = res.data || {};
+					this.stepMap[this.steps[this.activeStep].index].selectedConnection = connection;
 					this.selectedDatabaseType = null;
 					this.activeStep += 1;
+					this.errorMsg = '';
+
+					this.getConnections();
 					// this.test(id);
 				})
 				.catch(err => {
@@ -526,6 +649,13 @@ export default {
 	}
 	.btn-step {
 		width: 250px;
+		position: relative;
+		.btn-pass {
+			position: absolute;
+			top: 50%;
+			right: -20px;
+			transform: translate(100%, -50%);
+		}
 	}
 	.btn-step + .btn-step {
 		margin-left: 32px;
@@ -592,6 +722,7 @@ export default {
 		padding-right: 200px;
 	}
 	.error-msg {
+		padding: 0 200px;
 		line-height: 26px;
 		color: rgba(238, 83, 83, 100);
 		font-size: 14px;
