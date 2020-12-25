@@ -279,7 +279,11 @@ export default {
 			this.model.connection_type = val;
 		},
 		handleTestVisible() {
-			this.dialogTestVisible = false;
+			this.testData.dialogTestVisible = false;
+			setTimeout(() => {
+				this.testData.progress = 0;
+			}, 2000);
+			this.testData.testResult = this.status['testing'];
 		},
 		goBack() {
 			this.$router.push('/connections');

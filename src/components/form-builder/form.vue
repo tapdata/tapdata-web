@@ -171,7 +171,7 @@ export default {
 										h(
 											'span',
 											{
-												class: 'color-warning',
+												class: 'color-primary',
 												slot: 'reference'
 											},
 											[

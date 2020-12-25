@@ -360,7 +360,7 @@ const cn = {
 		stystemOpenAll: '全部打开',
 		stystemDeleteAll: '全部删除',
 		stystemLgnoreAll: '全部忽略',
-		newTaksName: '新任务未命名',
+		newTaksName: '新任务',
 		selectNode: '请选择节点',
 		submitExecute: '提交执行',
 		submitOnly: '仅提交',

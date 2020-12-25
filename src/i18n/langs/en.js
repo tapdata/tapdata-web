@@ -361,7 +361,7 @@ const en = {
 		stystemOpenAll: 'Open all',
 		stystemDeleteAll: 'Delete all',
 		stystemLgnoreAll: 'Ignore all',
-		newTaksName: 'The new task is not named',
+		newTaksName: 'The_new_task',
 		selectNode: 'Please select a node',
 		submitExecute: 'Submit and execute',
 		submitOnly: 'Submit only',

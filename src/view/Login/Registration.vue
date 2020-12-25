@@ -33,7 +33,7 @@
 								/>
 							</el-input>
 						</el-form-item>
-						<el-checkbox class="keep-sign-in" v-model="keepSignIn">
+						<el-checkbox class="keep-sign-in" v-model="keepSignIn" style="display:none">
 							<span style="color:#999"
 								>{{ $t('app.signIn.registry_tip') }} <i>{{ $t('app.signIn.userPplicy') }}</i></span
 							>

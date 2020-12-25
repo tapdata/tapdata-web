@@ -2,7 +2,7 @@
 	<section class="connection-box">
 		<SubHead :tittle="databaseTittle" :description="description"></SubHead>
 		<section class="connection-wrap">
-			<div class="panel-left" v-if="searchParams.panelFlag">
+			<div class="panel-left" v-if="searchParams.panelFlag && $window.getSettingByKey('SHOW_CLASSIFY')">
 				<Classification
 					:authority="'SYNC_category_management'"
 					@nodeChecked="nodeDataChange"
@@ -13,6 +13,7 @@
 				<div class="top-bar">
 					<ul class="search-bar">
 						<li
+							v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
 							:class="[{ panelOpen: searchParams.panelFlag }, 'item', 'panelBtn']"
 							@click="handlePanelFlag"
 						>
@@ -100,6 +101,7 @@
 					</ul>
 					<div class="top-bar-buttons">
 						<el-button
+							v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
 							v-readonlybtn="'datasource_category_application'"
 							size="mini"
 							class="btn"
@@ -129,7 +131,13 @@
 						:row-key="getRowKeys"
 						@selection-change="handleSelectionChange"
 					>
-						<el-table-column type="selection" width="45" :reserve-selection="true"> </el-table-column>
+						<el-table-column
+							v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+							type="selection"
+							width="45"
+							:reserve-selection="true"
+						>
+						</el-table-column>
 						<el-table-column prop="name" :label="$t('connection.dataBaseName')">
 							<template slot-scope="scope">
 								<div class="database-img">

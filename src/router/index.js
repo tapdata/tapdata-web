@@ -393,7 +393,7 @@ const childRoutes = [
 		meta: {
 			url: '/old/index.html#/jsFuncs',
 			isCollapse: false,
-			code: 'data_collect'
+			code: 'SYNC_Function_management'
 		}
 	},
 	{
