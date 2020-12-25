@@ -88,7 +88,8 @@ export default {
 			line-height: 28px;
 			.fb-radio-option-tip {
 				margin-bottom: 5px;
-				color: #999;
+				color: #666;
+				font-size: 12px;
 				line-height: 19px;
 				white-space: pre-wrap;
 				word-break: break-word;

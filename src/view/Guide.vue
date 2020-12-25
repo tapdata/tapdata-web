@@ -22,7 +22,7 @@
 				<el-container>
 					<el-main class="guide-main">
 						<!-- 步骤1 -->
-						<div class="body step-1" v-show="steps[activeStep].index === 1">
+						<div class="body step-1" v-if="steps[activeStep].index === 1">
 							<div class="title">Agent下载与安装</div>
 							<div class="desc">
 								Tapdata DFS云版需要先在本地安装agent以确保连接数据库和数据传输服务的正常运行,
@@ -30,28 +30,45 @@
 							</div>
 							<AgentDownloadContent></AgentDownloadContent>
 						</div>
-						<!-- 步骤2 -->
-						<div class="body step-2" v-show="steps[activeStep].index === 2">
-							<div class="title">创建数据源连接</div>
-							<div class="desc">
-								数据源连接指的是可以作为源的数据库、file、GridFS、REST API等类型的数据连接,
-								必须先创建数据源才能创建迁移或同步任务
-							</div>
+						<!-- 步骤2、步骤3 -->
+						<div class="body" v-if="[2, 3].includes(steps[activeStep].index)">
+							<div class="title">{{ stepMap[steps[activeStep].index].title }}</div>
+							<div class="desc">{{ stepMap[steps[activeStep].index].desc }}</div>
 							<template v-if="!selectedDatabaseType">
 								<el-select
+									:popper-append-to-body="false"
 									class="select-connection"
-									:value="sourceConnection"
+									:value="stepMap[steps[activeStep].index].selectedConnection"
 									placeholder="Choose a source connection"
-									@input="v => (v === '0' ? (showConnectDialog = true) : (sourceConnection = v))"
+									@input="
+										v =>
+											v === '0'
+												? (showConnectDialog = true)
+												: (stepMap[steps[activeStep].index].selectedConnection = v)
+									"
 								>
 									<el-option value="0">
-										<span>
-											<i class="el-icon-circle-plus"></i>
-										</span>
-										<span>创建新的源连接</span>
+										<div class="select-connection-option">
+											<div class="img">
+												<i class="el-icon-circle-plus"></i>
+											</div>
+											<div class="name">{{ stepMap[steps[activeStep].index].btnLabel }}</div>
+										</div>
 									</el-option>
-									<el-option v-for="opt in connectionOptions" :key="opt.id" :value="opt.id">
-										{{ opt.name }} ({{ $t('connection.status.' + opt.status) }})
+									<el-option
+										v-for="opt in stepMap[steps[activeStep].index].connectionList"
+										:key="opt.id"
+										:value="opt.id"
+										:label="opt.name + ' (' + $t('connection.status.' + opt.status) + ')'"
+									>
+										<div class="select-connection-option">
+											<div class="img">
+												<img :src="getImgByType(opt.database_type)" />
+											</div>
+											<div class="name">
+												{{ opt.name }} ({{ $t('connection.status.' + opt.status) }})
+											</div>
+										</div>
 									</el-option>
 								</el-select>
 								<div class="error-msg">
@@ -81,13 +98,13 @@
 								></form-builder>
 							</template>
 						</div>
-						<!-- 步骤3 -->
-						<div class="body step-2" v-show="steps[activeStep].index === 3">
-							<div class="title">创建目标连接</div>
+						<!-- 步骤1 -->
+						<div class="body step-3" v-if="steps[activeStep].index === 4">
+							<div class="title">选择任务类型</div>
 							<div class="desc">
-								目标连接指的是可以作为数据传输目标的数据库、file、GridFS、REST API等类型的连接,
-								必须先创建目标连接才能创建迁移或同步任务
+								请根据下方提示选择要进行的任务类型，系统会根据您的选择打开相应的任务编辑面板，如果选择错了可以取消任务重新选择
 							</div>
+							<FbRadio class="task-type-radio" v-model="taskType" :config="taskTypeConfig"></FbRadio>
 						</div>
 					</el-main>
 					<el-footer class="guide-footer" height="80px">
@@ -139,11 +156,27 @@ export default {
 			logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
 			typeMap: TYPEMAP,
 			steps: [],
-			activeStep: 0,
-			sourceConnection: null,
+			activeStep: 2,
 			errorMsg: '',
 			showConnectDialog: false,
-			connectionOptions: [],
+			stepMap: {
+				2: {
+					title: '创建数据源连接',
+					desc:
+						'数据源连接指的是可以作为源的数据库、file、GridFS、REST API等类型的数据连接,必须先创建数据源才能创建迁移或同步任务',
+					selectedConnection: null,
+					connectionList: [],
+					btnLabel: '创建新的源连接'
+				},
+				3: {
+					title: '创建目标连接',
+					desc:
+						'数据源连接指的是可以作为源的数据库、file、GridFS、REST API等类型的数据连接,必须先创建数据源才能创建迁移或同步任务',
+					selectedConnection: null,
+					connectionList: [],
+					btnLabel: '创建新的目标连接'
+				}
+			},
 			selectedDatabaseType: '',
 			connectionForm: {},
 			config: {
@@ -154,11 +187,29 @@ export default {
 					size: 'small'
 				},
 				items: []
+			},
+			taskType: '',
+			taskTypeConfig: {
+				options: [
+					{
+						label: '数据库迁移',
+						value: 'cluster-clone',
+						tip:
+							'数据库迁移功能以库为单位户在一个任务内轻松实现多个同构或异构数据库（库、表映射）之间的结构迁移、初始化迁移、或增量迁移等功能，适用于数据库迁移上云、实例间的数据库迁移、数据库迁移下云、数据库灾备等多种场景。'
+					},
+					{
+						label: '数据同步',
+						value: 'custom',
+						tip:
+							'数据同步聚焦在表级别的数据处理与传输，在满足用户实现多表（数据集）、多级数据之间多表合一、数据拆分、关联映射、字段增减合并、内容过滤、聚合处理JS处理等功能的情况下同时实现实时数据同步。在不影响用户业务的情况下，满足用户对数据的异地或本地数据灾备、跨实例数据同步、查询与报表分流、实时数据仓库管理等多种业务场景的需求。'
+					}
+				]
 			}
 		};
 	},
 	created() {
 		this.getDataApi(this.getSteps);
+		this.getConnections();
 	},
 	methods: {
 		getImgByType,
@@ -207,7 +258,19 @@ export default {
 				})
 				.then(res => {
 					if (res.data) {
-						this.connectionOptions = res.data || [];
+						let list = res.data || [];
+						let sourceList = [];
+						let targetList = [];
+						list.forEach(it => {
+							if (it.connection_type === 'source') {
+								sourceList.push(it);
+							}
+							if (it.connection_type === 'target') {
+								targetList.push(it);
+							}
+						});
+						this.stepMap[2].connectionList = sourceList;
+						this.stepMap[3].connectionList = targetList;
 					}
 				})
 				.finally(() => {
@@ -231,8 +294,8 @@ export default {
 					}
 				});
 			}
-			if (this.steps[this.activeStep].index === 2) {
-				if (this.sourceConnection) {
+			if ([2, 3].includes(this.steps[this.activeStep].index)) {
+				if (this.stepMap[this.steps[this.activeStep].index].selectedConnection) {
 					this.activeStep += 1;
 				} else if (this.selectedDatabaseType) {
 					this.$refs.form.validate(valid => {
@@ -327,7 +390,7 @@ export default {
 				.post(params)
 				.then(res => {
 					let id = res.data.id;
-					this.sourceConnection = id;
+					this.stepMap[this.steps[this.activeStep].index].selectedConnection = id;
 					this.selectedDatabaseType = null;
 					this.activeStep += 1;
 					// this.test(id);
@@ -471,6 +534,33 @@ export default {
 		display: block;
 		width: 450px;
 		margin: 0 200px;
+		.el-select-dropdown__item {
+			height: 64px;
+			padding: 10px;
+		}
+		.select-connection-option {
+			display: flex;
+			align-items: center;
+			.img {
+				padding: 6px;
+				width: 44px;
+				height: 44px;
+				line-height: 32px;
+				border: 1px solid #dedee4;
+				border-radius: 3px;
+				box-sizing: border-box;
+				text-align: center;
+				color: #999;
+				img {
+					display: block;
+					width: 100%;
+					height: 100%;
+				}
+			}
+			.name {
+				margin-left: 10px;
+			}
+		}
 	}
 	.database-type {
 		padding: 0 200px;
@@ -505,6 +595,10 @@ export default {
 		line-height: 26px;
 		color: rgba(238, 83, 83, 100);
 		font-size: 14px;
+	}
+	.task-type-radio {
+		padding: 0 200px;
+		box-sizing: border-box;
 	}
 	.step-1 {
 		.os-buttons {
