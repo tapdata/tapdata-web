@@ -1457,12 +1457,12 @@ const cn = {
 			uriTips: {
 				label: '示例',
 				content:
-					`<b>MongoDB 数据库连接 URI 示范:</b><br>` +
-					`复制集: mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
-					`启用认证的复制集: mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
-					`多节点复制集: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
-					`分片集: mongodb://192.168.0.100:27017/mydb<br>` +
-					`多个mongos: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
+					`<b>MongoDB 数据库连接 URI 示范 :</b><br>` +
+					`<b>复制集 :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
+					`<b>启用认证的复制集 :</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
+					`<b>多节点复制集 :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
+					`<b>分片集 :</b> mongodb://192.168.0.100:27017/mydb<br>` +
+					`<b>多个mongos :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
 			},
 			tableFilterTips: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
 			timeZoneTips: '影响类型: DATE',

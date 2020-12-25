@@ -1479,12 +1479,12 @@ const en = {
 			uriTips: {
 				label: 'Example',
 				content:
-					`<b>MongoDB Connection URI Examples:</b><br>` +
-					`Replicaset: mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
-					`Replicaset with authentication: mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
-					`Replicaset with multiple members: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
-					`Sharded Cluster: mongodb://192.168.0.100:27017/mydb<br>` +
-					`Sharded Cluster with multiple mongos: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
+					`<b>MongoDB Connection URI Examples :</b><br>` +
+					`<b>Replicaset :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
+					`<b>Replicaset with authentication:</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
+					`<b>Replicaset with multiple members :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
+					`<b>Sharded Cluste :</b> mongodb://192.168.0.100:27017/mydb<br>` +
+					`<b>Sharded Cluster with multiple mongos :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
 			},
 			tableFilterTips: 'Comma-delimited list of expression, use * to represent any character of any length.',
 			timeZoneTips: 'Impact Type: DATE',
