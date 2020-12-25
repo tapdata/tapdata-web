@@ -1,39 +1,38 @@
 ## **连接配置帮助**
-#### **1. ORACLE 安装说明**
+### **1. ORACLE 安装说明**
 请遵循以下说明以确保在 Tapdata 中成功添加和使用Oracle数据库，注意：Oracle 实时同步基于Oracle Redo Log，因此需要提前执行某些配置。
-#### **2. 先决条件（作为源）**
-##### **2.1 开启 LogMiner**
+### **2. 先决条件（作为源）**
+#### **2.1 开启 LogMiner**
 - 以具有 DBA 权限的用户身份登录数据库
 - 查看数据库的 logging mode :`select log_mode from v$database;`
 - 如果返回的结果是 ARCHIVELOG , 您可以直接跳到 开启 Supplemental Logging
 - 如果返回的结果是 NOARCHIVELOG , 继续按照以下步骤操作:
 - 关闭数据库: `shutdown immediate;`
 - 启动并挂载数据库:` startup mount;`
-- 开启存档并打开数据库:
-```
-alter database archivelog;
-alter database open;
-```
-##### **2.2 开启 Supplemental Logging**
-- **Oracle 9i**
+- 开启存档并打开数据库:<br>
+>alter database archivelog;<br>
+>alter database open;<br>
+
+#### **2.2 开启 Supplemental Logging**
+##### **Oracle 9i**<br>
 ```
 ALTER DATABASE ADD SUPPLEMENTAL LOG DATA (PRIMARY KEY) COLUMNS;
 ```
-- Oracle 10g、11g
+##### **Oracle 10g、11g**<br>
 ```
 alter database add supplemental log data;
 alter system switch logfile;
 ALTER DATABASE ADD SUPPLEMENTAL LOG DATA (ALL) COLUMNS;
 ```
-- Oracle 12C 的特殊配置方法
-使用以下命令，确认 supplemental logging 是否开启
+##### **Oracle 12C 的特殊配置方法**<br>
+使用以下命令，确认 supplemental logging 是否开启<br>
 ```
 SELECT supplemental_log_data_min, supplemental_log_data_pk, supplemental_log_data_all FROM v$database;
 ```
-如果返回的三列都是 Yes 或者 Implicit ，则表示 identification key logging(标识键日志)和 full supplemental logging（全补充日志）已同时开启，您可以跳到 创建用户账号
-如果返回的前两列是 Yes 或者 Implicit ，则表示只开启了 identification key logging(标识键日志)。如果这个能满足您的需求，则可以跳到创建用户账号
-- 开启 identification key(标识键日志)
-当使用 12c 的 PDB 时，最佳做法是为容器的表开启日志，而不是对整个数据库开启日志。您可以先使用以下命令将更改应用于容器：
+如果返回的三列都是 Yes 或者 Implicit ，则表示 identification key logging(标识键日志)和 full supplemental logging（全补充日志）已同时开启，您可以跳到 创建用户账号<br>
+如果返回的前两列是 Yes 或者 Implicit ，则表示只开启了 identification key logging(标识键日志)。如果这个能满足您的需求，则可以跳到创建用户账号<br>
+- **开启 identification key(标识键日志)**<br>
+当使用 12c 的 PDB 时，最佳做法是为容器的表开启日志，而不是对整个数据库开启日志。您可以先使用以下命令将更改应用于容器：<br>
 ```
 ALTER SESSION SET CONTAINER=<pdb>;
 ```

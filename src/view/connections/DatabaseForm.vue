@@ -5,35 +5,63 @@
 		</header>
 		<div class="databaseFrom-body">
 			<main class="databaseFrom-main">
-				<div class="title">
+				<header v-if="$route.query.id" class="edit-header-box">
+					<div class="edit-header">
+						<div class="img-box">
+							<img :src="getImgByType(databaseType)" />
+						</div>
+						<div class="content">{{ model.name }}</div>
+						<div class="addBtn" @click="dialogEditNameVisible = true">
+							{{ $t('connection.Rename') }}
+						</div>
+					</div>
+				</header>
+				<header class="title" v-else>
 					<div class="img-box">
 						<img :src="getImgByType(databaseType)" />
 					</div>
 					<div class="content">{{ typeMap[databaseType] }}</div>
-					<div class="addBtn" v-if="!$route.query.id" @click="dialogDatabaseTypeVisible = true">
+					<div class="addBtn" @click="dialogDatabaseTypeVisible = true">
 						{{ $t('connection.change') }}
 					</div>
+				</header>
+				<div class="form">
+					<form-builder ref="form" v-model="model" :config="config"></form-builder>
+					<el-button size="mini" class="test" @click="startTest()">连接测试</el-button>
 				</div>
-				<div class="form"><form-builder ref="form" v-model="model" :config="config"></form-builder></div>
 			</main>
 			<gitbook></gitbook>
 		</div>
 		<footer slot="footer" class="footer">
-			<el-button size="mini" type="primary" :loading="testing" @click="submit">
-				{{ $t('dataForm.submit') }}
-			</el-button>
-			<el-button size="mini" @click="goBack()">{{ $t('dataForm.cancel') }}</el-button>
+			<div class="footer-btn">
+				<el-button size="mini" @click="goBack()">{{ $t('dataForm.cancel') }}</el-button>
+				<el-button size="mini" type="primary" :loading="testing" @click="submit">
+					{{ $t('dataForm.submit') }}
+				</el-button>
+			</div>
 		</footer>
-		<Test
-			@dialogTestVisible="handleTestVisible"
-			:dialogTestVisible="testData.dialogTestVisible"
-			:testData="testData"
-		></Test>
+		<Test @dialogTestVisible="handleTestVisible" :dialogTestVisible="dialogTestVisible" :formData="model"></Test>
 		<DatabaseTypeDialog
 			:dialogVisible="dialogDatabaseTypeVisible"
 			@dialogVisible="handleDialogDatabaseTypeVisible"
 			@databaseType="handleDatabaseType"
 		></DatabaseTypeDialog>
+		<el-dialog
+			:title="$t('connection.Rename')"
+			:close-on-click-modal="false"
+			:visible.sync="dialogEditNameVisible"
+			width="30%"
+		>
+			<span>
+				<el-input v-model="model.name" maxlength="100" show-word-limit></el-input>
+			</span>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="dialogEditNameVisible = false" size="mini" clearable>{{
+					$t('dataForm.cancel')
+				}}</el-button>
+				<el-button @click="submitEdit()" size="mini" type="primary">{{ $t('message.confirm') }}</el-button>
+			</span>
+		</el-dialog>
 		<!-- <el-dialog
 			:title="$t('dataForm.dialogTitle')"
 			:close-on-click-modal="false"
@@ -59,8 +87,9 @@ import factory from '@/api/factory';
 import formConfig from './config';
 import gitbook from './GitBook';
 import Test from './Test';
-import { getImgByType, TYPEMAP, handleProgress } from './util';
+import { getImgByType, TYPEMAP } from './util';
 import DatabaseTypeDialog from './DatabaseTypeDialog';
+import ws from '../../api/ws';
 
 const databaseTypesModel = factory('DatabaseTypes');
 const connectionsModel = factory('connections');
@@ -121,13 +150,9 @@ export default {
 				invalid: 'exception',
 				testing: 'warning'
 			},
-			testData: {
-				testLogs: null,
-				testResult: '',
-				progress: 0,
-				dialogTestVisible: false
-			},
-			dialogDatabaseTypeVisible: false
+			dialogTestVisible: false,
+			dialogDatabaseTypeVisible: false,
+			dialogEditNameVisible: false
 			// repeatDialogVisible: false,
 			// connectionObj: {
 			// 	name: '',
@@ -170,11 +195,6 @@ export default {
 				}
 				this.model = Object.assign(this.model, editData.data);
 			} else this.model = Object.assign(this.model, data, { name: this.model.name });
-		},
-		clearInterval() {
-			// 清除定时器
-			clearInterval(this.timer);
-			this.timer = null;
 		},
 		checkDataTypeOptions(type) {
 			this.model.database_type = type;
@@ -238,35 +258,10 @@ export default {
 			}
 		},
 		handleTestVisible() {
-			this.testData.dialogTestVisible = false;
-			this.testData.progress = 0;
-			this.testData.testResult = this.status['testing'];
+			this.dialogTestVisible = false;
 		},
 		goBack() {
 			this.$router.push('/connections');
-		},
-		async test(id) {
-			this.clearInterval();
-			this.testData.testResult = this.status['testing'];
-			this.testData.estLogs = [];
-			let result = null;
-			if (this.model.database_type === 'mongodb') {
-				result = await connectionsModel.customQuery([id]);
-			} else {
-				result = await connectionsModel.get([id]);
-			}
-			if (result.data) {
-				const data = result.data;
-				let validate_details = data.response_body && data.response_body.validate_details;
-				this.testData.testLogs = validate_details || [];
-				this.testData.testResult = this.status[data.status] || this.status['testing'];
-				this.testData.progress = handleProgress(this.testData.testLogs);
-				if (['testing'].includes(data.status)) {
-					this.timer = setInterval(() => {
-						this.test(id);
-					}, 3000);
-				}
-			}
 		},
 		submit() {
 			this.$refs.form.validate(valid => {
@@ -295,8 +290,7 @@ export default {
 						.then(res => {
 							let id = res.data.id;
 							this.model.id = id;
-							this.testData.dialogTestVisible = true;
-							this.test(id);
+							this.handleWS(id);
 						})
 						.catch(err => {
 							if (err && err.response) {
@@ -317,7 +311,65 @@ export default {
 				}
 			});
 		},
-
+		//开始测试
+		startTest() {
+			this.$refs.form.validate(valid => {
+				if (valid) {
+					this.dialogTestVisible = true;
+				}
+			});
+		},
+		//建立长连接 测试使用
+		handleWS() {
+			let msg = {
+				type: 'testConnection',
+				data: this.model
+			};
+			//接收数据
+			ws.on('testConnection', data => {
+				if (data.data && data.data.length > 0) {
+					this.clearInterval();
+					this.goBack();
+				}
+			});
+			//建立连接
+			this.timer = setInterval(() => {
+				if (ws.ws.readyState == 1) {
+					ws.send(msg);
+					clearInterval(this.timer);
+				}
+			}, 2000);
+		},
+		clearInterval() {
+			// 取消长连接
+			ws.off('testConnection');
+			clearInterval(this.timer);
+			this.timer = null;
+		},
+		//保存名字
+		submitEdit() {
+			let params = {
+				name: this.model.name,
+				id: this.model.id
+			};
+			this.$api('connections')
+				.patchId(params)
+				.then(() => {
+					this.$message.error(this.$t('dataForm.saveOK'));
+					this.dialogEditNameVisible = false;
+				})
+				.catch(err => {
+					if (err && err.response) {
+						if (err.response.msg.indexOf('duplication for names') > -1) {
+							this.$message.error(this.$t('dataForm.error.connectionNameExist'));
+						} else {
+							this.$message.error(err.response.msg);
+						}
+					} else {
+						this.$message.error(this.$t('dataForm.saveFail'));
+					}
+				});
+		},
 		// 跳转到重复数据源
 		clickLinkSource() {
 			window.open('/#/connection/' + this.connectionObj.id, '_blank');
@@ -373,6 +425,17 @@ export default {
 				width: 640px;
 				margin: 0 auto;
 			}
+			.edit-header-box {
+				border-bottom: 1px solid #dedee4;
+				padding-bottom: 20px;
+				margin-bottom: 20px;
+			}
+			.edit-header {
+				display: flex;
+				justify-content: flex-start;
+				width: 826px;
+				margin: 40px auto 0 auto;
+			}
 			.title {
 				display: flex;
 				justify-content: flex-start;
@@ -395,10 +458,14 @@ export default {
 			}
 			.content {
 				display: flex;
-				justify-content: center;
 				align-items: center;
 				margin-left: 15px;
-				font-size: 28px;
+				font-size: 22px;
+				max-width: 445px;
+				white-space: nowrap;
+				word-break: break-word;
+				text-overflow: ellipsis;
+				overflow: hidden;
 			}
 			.addBtn {
 				color: #48b6e2;
@@ -409,6 +476,7 @@ export default {
 			}
 			.test {
 				margin-left: 200px;
+				margin-bottom: 20px;
 			}
 		}
 	}
@@ -425,12 +493,24 @@ export default {
 		border-left: none;
 	}
 	.footer {
-		height: 46px;
-		background-color: #fafafa;
-		padding-left: 27%;
-		border: 1px solid #dedee4;
+		height: 62px;
+		background-color: #fff;
+		padding-left: 25%;
 		border-left: none;
-		line-height: 46px;
+		line-height: 62px;
+		.footer-btn {
+			width: 440px;
+			display: flex;
+			border-top: 1px solid #dedee4;
+			align-items: center;
+			justify-content: flex-end;
+			padding-top: 18px;
+		}
+		button {
+			width: 140px;
+			height: 32px;
+			margin-left: 20px;
+		}
 	}
 }
 </style>

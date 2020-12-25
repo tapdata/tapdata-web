@@ -618,10 +618,13 @@ const cn = {
 		fuzzyQuery: '模糊匹配',
 		PreciseQuery: '精确匹配',
 		databaseTittle: '数据源管理',
+		desc:
+			'数据源包括数据库、File、GridFS、REST API、Dummy、Custom、UDP等类型, 必须先创建数据源才能创建迁移或同步任务。数据源管理除基础的配置项之外，还有定期/手动加载schema、设置时区、包含表设置等功能，更多配置说明，请点击',
 		createNewDataSource: '创建新数据源',
 		info: '数据源详情',
 		copyMsg: '复制成功',
 		testMsg: '测试成功',
+		creator: '创建人',
 		editDataSource: '编辑数据源',
 		reloadOK: '正在加载 schema',
 		reloadFail: 'schema 加载失败',

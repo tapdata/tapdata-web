@@ -1,7 +1,7 @@
 <template>
 	<el-dialog
 		:title="$t('dataForm.test.title')"
-		:visible.sync="testData.dialogTestVisible"
+		:visible.sync="dialogTestVisible"
 		width="770px"
 		:show-close="false"
 		append-to-body
@@ -9,16 +9,15 @@
 		:close-on-click-modal="false"
 		:close-on-press-escape="false"
 	>
-		<el-progress
-			type="line"
-			class="test-progress"
-			:text-inside="true"
-			:stroke-width="26"
-			:percentage="testData.progress"
-			:status="testData.testResult"
-		></el-progress>
-		<div v-if="testData.testLogs && testData.testLogs.length === 0">{{ $t('dataForm.primaryTest') }}</div>
-		<el-table :data="testData.testLogs" style="width: 100%" class="test-block" v-else>
+		<!--		<el-progress-->
+		<!--			type="line"-->
+		<!--			class="test-progress"-->
+		<!--			:text-inside="true"-->
+		<!--			:stroke-width="26"-->
+		<!--			:percentage="testData.progress"-->
+		<!--			:status="testData.testResult"-->
+		<!--		></el-progress>-->
+		<el-table :data="testData.testLogs" style="width: 100%" class="test-block">
 			<el-table-column prop="show_msg" :label="$t('dataForm.test.items')" width="250"> </el-table-column>
 			<el-table-column prop="status" :label="$t('dataForm.test.result')" width="100">
 				<template slot-scope="scope">
@@ -38,10 +37,16 @@
 </template>
 
 <script>
+import ws from '../../api/ws';
+
 export default {
 	name: 'Test',
 	props: {
-		testData: {
+		dialogTestVisible: {
+			required: true,
+			value: Boolean
+		},
+		formData: {
 			required: true,
 			value: Object
 		}
@@ -49,6 +54,11 @@ export default {
 	data() {
 		return {
 			progress: 0,
+			testData: {
+				testLogs: null,
+				testResult: '',
+				progress: 0
+			},
 			colorMap: {
 				passed: '#70AD47',
 				waiting: '#666',
@@ -56,9 +66,49 @@ export default {
 			}
 		};
 	},
+	watch: {
+		dialogTestVisible: {
+			handler() {
+				if (this.dialogTestVisible) {
+					this.handleWS(); //开始测试建立ws
+				}
+			}
+		}
+	},
+	destroyed() {
+		this.clearInterval();
+	},
 	methods: {
 		handleClose() {
 			this.$emit('dialogTestVisible', false);
+		},
+		//建立长连接 测试使用
+		handleWS() {
+			let msg = {
+				type: 'testConnection',
+				data: this.formData
+			};
+			msg.data['user_id'] = this.$cookie.get('user_id');
+			//接收数据
+			ws.on('testConnection', data => {
+				if (data.data && data.data.length > 0) {
+					this.testData.testLogs = data.data;
+					this.testData.testResult = this.status[data.status] || this.status['testing'];
+				}
+			});
+			//建立连接
+			this.timer = setInterval(() => {
+				if (ws.ws.readyState == 1) {
+					ws.send(msg);
+					clearInterval(this.timer);
+				}
+			}, 2000);
+		},
+		clearInterval() {
+			// 取消长连接
+			ws.off('testConnection');
+			clearInterval(this.timer);
+			this.timer = null;
 		}
 	}
 };
