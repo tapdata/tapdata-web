@@ -51,7 +51,7 @@
 										<span>创建新的源连接</span>
 									</el-option>
 									<el-option v-for="opt in connectionOptions" :key="opt.id" :value="opt.id">
-										{{ opt.name }}
+										{{ opt.name }} ({{ $t('connection.status.' + opt.status) }})
 									</el-option>
 								</el-select>
 								<div class="error-msg">
@@ -76,7 +76,7 @@
 								<form-builder
 									class="create-form"
 									ref="form"
-									v-model="databaseForm"
+									v-model="connectionForm"
 									:config="config"
 								></form-builder>
 							</template>
@@ -91,8 +91,17 @@
 						</div>
 					</el-main>
 					<el-footer class="guide-footer" height="80px">
-						<el-button class="btn-step" v-if="steps[activeStep].index > 2">上一步</el-button>
-						<el-button type="primary" class="btn-step" :loading="loading" @click="next()">下一步</el-button>
+						<el-button
+							class="btn-step"
+							v-if="steps[activeStep].index > 2 || selectedDatabaseType"
+							@click="back(selectedDatabaseType)"
+						>
+							上一步
+						</el-button>
+						<el-button type="primary" class="btn-step" :loading="loading" @click="next()">
+							<span v-show="selectedDatabaseType">保存，</span>
+							<span>下一步</span>
+						</el-button>
 					</el-footer>
 				</el-container>
 				<el-aside class="right-aside" width="600px">111</el-aside>
@@ -136,7 +145,7 @@ export default {
 			showConnectDialog: false,
 			connectionOptions: [],
 			selectedDatabaseType: '',
-			databaseForm: {},
+			connectionForm: {},
 			config: {
 				form: {
 					labelPosition: 'right',
@@ -171,6 +180,40 @@ export default {
 					this.loading = false;
 				});
 		},
+		getConnections() {
+			let where = {
+				database_type: {
+					in: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
+				},
+				user_id: {
+					regexp: `^${this.$cookie.get('user_id')}$`
+				}
+			};
+			let fields = {
+				name: true,
+				connection_type: true,
+				database_type: true,
+				status: true,
+				id: true
+			};
+			let filter = {
+				order: 'createTime DESC',
+				fields: fields,
+				where
+			};
+			this.$api('connections')
+				.get({
+					filter: JSON.stringify(filter)
+				})
+				.then(res => {
+					if (res.data) {
+						this.connectionOptions = res.data || [];
+					}
+				})
+				.finally(() => {
+					this.loading = false;
+				});
+		},
 		getSteps(hasDownloadAgent) {
 			if (hasDownloadAgent) {
 				this.steps = steps.slice(1, 4);
@@ -191,6 +234,12 @@ export default {
 			if (this.steps[this.activeStep].index === 2) {
 				if (this.sourceConnection) {
 					this.activeStep += 1;
+				} else if (this.selectedDatabaseType) {
+					this.$refs.form.validate(valid => {
+						if (valid) {
+							this.createConnection();
+						}
+					});
 				} else {
 					this.errorMsg = 'Please choose a source type';
 				}
@@ -198,10 +247,17 @@ export default {
 				this.activeStep += 1;
 			}
 		},
+		back(falg) {
+			if (falg) {
+				this.selectedDatabaseType = null;
+			} else {
+				this.activeStep -= 1;
+			}
+		},
 		handlerDatabaseTypeChange(type) {
 			this.selectedDatabaseType = type;
 			this.showConnectDialog = false;
-			this.databaseForm = {};
+			this.connectionForm = {};
 			this.config.items = [];
 			this.$refs.form && this.$refs.form.clearValidate();
 			this.getFormConfig();
@@ -227,6 +283,7 @@ export default {
 					}
 				];
 				let model = {
+					name: '',
 					database_port: ''
 				};
 				if (this.steps[this.activeStep].index === 2) {
@@ -238,7 +295,7 @@ export default {
 					if (
 						((it.rules && it.rules.some(r => r.required === true)) ||
 							it.required ||
-							['isUrl', 'database_username', 'database_password'].includes(it.field)) &&
+							['isUrl', 'database_username', 'database_password', 'plain_password'].includes(it.field)) &&
 						it.field !== 'connection_type'
 					) {
 						items.push(it);
@@ -246,8 +303,51 @@ export default {
 					}
 				});
 				this.config.items = items;
-				this.databaseForm = model;
+				this.connectionForm = model;
 			}
+		},
+		createConnection() {
+			let params = Object.assign({}, this.connectionForm, {
+				database_type: this.selectedDatabaseType,
+				user_id: this.$cookie.get('user_id'),
+				status: 'testing',
+				schema: {},
+				retry: 0,
+				nextRetry: null,
+				response_body: {},
+				project: '',
+				listtags: []
+			});
+
+			if (params.database_type === 'mongodb') {
+				params.fill = params.isUrl ? 'uri' : '';
+				delete params.isUrl;
+			}
+			this.$api('connections')
+				.post(params)
+				.then(res => {
+					let id = res.data.id;
+					this.sourceConnection = id;
+					this.selectedDatabaseType = null;
+					this.activeStep += 1;
+					// this.test(id);
+				})
+				.catch(err => {
+					if (err && err.response) {
+						if (err.response.msg.indexOf('duplication for names') > -1) {
+							this.$message.error(this.$t('dataForm.error.connectionNameExist'));
+						} else if (err.response.msg.indexOf('duplicate source') > -1) {
+							// this.connectionObj.name = err.response.data.name;
+							// this.connectionObj.id = err.response.data.id;
+							// this.repeatDialogVisible = true;
+							this.$message.error(this.$t('dataForm.error.duplicateSource'));
+						} else {
+							this.$message.error(err.response.msg);
+						}
+					} else {
+						this.$message.error(this.$t('dataForm.saveFail'));
+					}
+				});
 		}
 	}
 };
@@ -316,10 +416,9 @@ export default {
 				}
 				.step-index {
 					margin-right: 7px;
-					padding-right: 1px;
 					width: 20px;
 					height: 20px;
-					line-height: 19px;
+					line-height: 20px;
 					text-align: center;
 					border: 1px solid #aaa;
 					border-radius: 50%;
