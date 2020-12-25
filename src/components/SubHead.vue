@@ -41,7 +41,7 @@ export default {
 		color: #111111;
 	}
 	.desc {
-		width: 100%;
+		width: 85%;
 		height: 14px;
 		margin-top: 10px;
 		font-size: 12px;

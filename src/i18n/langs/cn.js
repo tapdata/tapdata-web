@@ -619,7 +619,7 @@ const cn = {
 		PreciseQuery: '精确匹配',
 		databaseTittle: '数据源管理',
 		desc:
-			'数据源包括数据库、File、GridFS、REST API、Dummy、Custom、UDP等类型, 必须先创建数据源才能创建迁移或同步任务。数据源管理除基础的配置项之外，还有定期/手动加载schema、设置时区、包含表设置等功能，更多配置说明，请点击',
+			'数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。除了基础的配置项之外，数据源还有定期/手动加载数据库结构、设置时区、表过滤设置等功能。更多配置说明，请点击',
 		createNewDataSource: '创建新数据源',
 		info: '数据源详情',
 		copyMsg: '复制成功',

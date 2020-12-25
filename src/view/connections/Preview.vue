@@ -184,6 +184,9 @@ export default {
 						};
 						return node;
 					});
+					//过滤value空值 undefined
+					items = items || [];
+					items = items.filter(item => item.label);
 					this.form = items;
 				}
 			}

@@ -627,7 +627,8 @@ const tc = {
 		reloadTittle: '重新加載 schema',
 		deteleDatabaseTittle: '刪除數據源',
 		deteleDatabaseMsg: '確定刪除數據源',
-		desc: '',
+		desc:
+			'數據源包括數據庫，結構化文件，應用程序RESTful API，自定義接口等類型，必須先創建數據源才能創建遷移或同步任務。除基礎的配置項之外，數據源還有定期/手動加載數據庫結構 ，設置時區，表過濾設置等功能。更多配置說明，請點擊',
 		reloadMsg: '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema : ',
 		checkMsg: '此數據源被傳輸任務或API所佔用，無法刪除',
 		copyFailedMsg: '複製失敗，原因：系統設置中 "連接設置 - 允許創建重複數據源" 被設置為 "false"',
