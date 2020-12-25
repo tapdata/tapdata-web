@@ -373,10 +373,15 @@ export default function(vm) {
 			{
 				type: 'input',
 				field: 'table_filter',
+				domType: 'textarea',
 				label: vm.$t('dataForm.form.tableFilter'),
-				tips: vm.$t('dataForm.form.tableFilterTips'),
+				//tips: vm.$t('dataForm.form.tableFilterTips'),
 				maxlength: 500,
 				showWordLimit: true
+			},
+			{
+				type: 'slot',
+				slot: 'tableFilter'
 			}
 		]
 	};

@@ -33,6 +33,7 @@
 							v-if="model.isUrl"
 							v-html="$t('dataForm.form.uriTips.content')"
 						></div>
+						<div class="url-tip" slot="tableFilter">{{ $t('dataForm.form.tableFilterTips') }}</div>
 					</form-builder>
 					<el-button size="mini" class="test" @click="startTest()">{{
 						$t('connection.testConnection')
@@ -258,13 +259,6 @@ export default {
 				if (this.model.database_type === 'mongodb' && this.$route.query.id && itemIsUrl) {
 					itemIsUrl.disabled = true;
 					this.model.isUrl = false;
-				}
-				let option = items.find(it => it.field === 'connection_type');
-				if (option) {
-					this.connectionTypeOption = option.options;
-				}
-				if (itemIsUrl) {
-					this.isUrlOption = itemIsUrl.options;
 				}
 				this.config.form = config.form;
 				this.config.items = items;
