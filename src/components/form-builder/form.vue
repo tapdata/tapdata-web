@@ -178,12 +178,12 @@ export default {
 										h(
 											'span',
 											{
-												class: 'color-warning',
+												class: 'color-primary',
 												slot: 'reference'
 											},
 											[
 												h('i', {
-													class: 'el-icon-warning-outline e-form-builder-item-tips'
+													class: 'el-icon-info e-form-builder-item-tips'
 												}),
 												config.tips.label
 											]

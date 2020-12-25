@@ -239,7 +239,9 @@ export default {
 		},
 		handleTestVisible() {
 			this.testData.dialogTestVisible = false;
-			this.testData.progress = 0;
+            setTimeout(() => {
+                this.testData.progress = 0;
+            }, 800);
 			this.testData.testResult = this.status['testing'];
 		},
 		goBack() {

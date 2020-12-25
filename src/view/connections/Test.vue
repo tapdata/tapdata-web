@@ -22,7 +22,7 @@
 			<el-table-column prop="show_msg" :label="$t('dataForm.test.items')" width="250"> </el-table-column>
 			<el-table-column prop="status" :label="$t('dataForm.test.result')" width="100">
 				<template slot-scope="scope">
-					<span :style="`color: ${colorMap[scope.row.status]};`">{{ scope.row.status }}</span>
+					<span :style="`color: ${colorMap[scope.row.status]};`">${statusMap[scope.row.status]}</span>
 				</template>
 			</el-table-column>
 			<el-table-column prop="fail_message" :label="$t('dataForm.test.information')" width="358">
@@ -53,7 +53,12 @@ export default {
 				passed: '#70AD47',
 				waiting: '#666',
 				failed: '#f56c6c'
-			}
+			},
+            statusMap: {
+                passed: "检查通过",
+                waiting: "检查等待中...",
+                failed: "检查未通过"
+            }
 		};
 	},
 	methods: {
