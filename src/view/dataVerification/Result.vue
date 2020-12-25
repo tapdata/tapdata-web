@@ -67,7 +67,7 @@
 					<el-table-column prop="status" :label="$t('dataVerification.verifyResult')">
 						<template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
 							<div class="inspect-result-status">
-								<div>
+								<div v-if="scope.row.result === 'failed'">
 									<span class="error" v-if="scope.row.target_total - scope.row.source_total !== 0">
 										<i class="el-icon-error"></i>
 										<span>{{
@@ -80,7 +80,8 @@
 								<div
 									v-if="
 										scope.row.source_only + scope.row.target_only + scope.row.row_failed !== 0 &&
-											type !== 'row_count'
+											type !== 'row_count' &&
+											scope.row.result === 'failed'
 									"
 								>
 									<span class="error">
@@ -91,17 +92,7 @@
 										</span>
 									</span>
 								</div>
-								<span
-									class="success"
-									v-if="
-										(type !== 'row_count' &&
-											scope.row.source_only + scope.row.target_only + scope.row.row_failed ===
-												0 &&
-											scope.row.target_total - scope.row.source_total === 0) ||
-											(type === 'row_count' &&
-												scope.row.target_total - scope.row.source_total === 0)
-									"
-								>
+								<span class="success" v-if="scope.row.result === 'passed'">
 									<i class="el-icon-success"></i>
 									<span>{{ $t('dataVerification.consistent') }}</span>
 								</span>
@@ -165,14 +156,14 @@
 					<li>
 						<span>{{ $t('dataVerification.verifyResult') + ' : ' + resultData[0].result }}</span>
 					</li>
-					<li>
+					<li v-if="resultData[0].result !== 'passed'">
 						<span>{{
 							$t('dataVerification.rowConsistent') +
 								' : ' +
 								Math.abs(resultData[0].target_total - resultData[0].source_total)
 						}}</span>
 					</li>
-					<li>
+					<li v-if="resultData[0].result !== 'passed'">
 						<span>{{ $t('dataVerification.contConsistent') + ' : ' }}</span>
 						<span>{{
 							resultData[0].source_only + resultData[0].target_only + resultData[0].row_failed
@@ -183,7 +174,7 @@
 					<i class="iconfont icon-warning-circle"></i>
 					<span>{{ resultData[0].errorMsg }}</span>
 				</div>
-				<div class="inspect-result-box">
+				<div class="inspect-result-box" v-if="resultData[0].result !== 'passed'">
 					<div v-for="item in inspectResult" :key="item.id" class="inspect-details">
 						<ul class="father-table">
 							<li>{{ $t('dataVerification.inconsistentType') }}</li>

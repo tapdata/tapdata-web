@@ -189,26 +189,29 @@
 										:options="item.target.fields"
 										:placeholder="$t('dataVerification.ChoosePKField')"
 									></MultiSelection>
-									<el-checkbox style="margin-left: 10px;" v-model="item.showAdvancedVerification">{{
-										$t('dataVerification.advanceVerify')
-									}}</el-checkbox>
+									<el-checkbox
+										style="margin-left: 10px;"
+										v-model="item.showAdvancedVerification"
+										v-show="form.inspectMethod === 'field'"
+										>{{ $t('dataVerification.advanceVerify') }}</el-checkbox
+									>
 								</div>
 								<div class="setting-item" v-if="item.showAdvancedVerification">
 									<label class="item-label is-required">{{
 										$t('dataVerification.JSVerifyLogic')
 									}}</label>
 									<el-button
-										v-if="!item.script || item.script === ''"
+										v-if="!item.webScript || item.webScript === ''"
 										size="mini"
 										icon="el-icon-plus"
 										@click="addScript(index)"
 										>{{ $t('dataVerification.addJS') }}</el-button
 									>
-									<span v-if="item.script && item.script !== ''">
+									<span v-if="item.webScript && item.webScript !== ''">
 										<el-input
 											class="item-select item-textarea"
 											type="textarea"
-											v-model="item.script"
+											v-model="item.webScript"
 											disabled
 										></el-input>
 										<el-button-group class="setting-buttons">
@@ -259,20 +262,22 @@
 		>
 			<div class="js-wrap">
 				<div class="jsBox">
+					<div class="js-fixText">
+						<span style="color: #0000ff;">function </span><span> validate(sourceRow){</span>
+					</div>
 					<JsEditor
 						v-if="dialogAddScriptVisible"
-						:code.sync="script"
+						:code.sync="webScript"
 						ref="jsEditor"
 						:width.sync="width"
 					></JsEditor>
+					<div class="js-fixText">}</div>
 				</div>
-				<div class="example">
-					示例
-				</div>
+				<div class="example" v-html="htmlMD"></div>
 			</div>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="handleAddScriptClose" size="mini">取 消</el-button>
-				<el-button type="primary" @click="submitScript" size="mini">确 定</el-button>
+				<el-button @click="handleAddScriptClose" size="mini">{{ $t('dataForm.cancel') }}</el-button>
+				<el-button type="primary" @click="submitScript" size="mini">{{ $t('message.confirm') }}</el-button>
 			</span>
 		</el-dialog>
 	</section>
@@ -317,6 +322,7 @@ export default {
 		return {
 			timeUnitOptions: ['second', 'minute', 'hour', 'day', 'week', 'month'],
 			pickerTimes: [],
+			htmlMD: '',
 			form: {
 				flowId: '',
 				name: '',
@@ -363,12 +369,13 @@ export default {
 			flowOptions: null,
 			dialogAddScriptVisible: false,
 			formIndex: '',
-			script: '',
+			webScript: '',
 			width: '600'
 		};
 	},
 	created() {
 		this.getFlowOptions();
+		this.htmlMD = require(`./functionInfo.md`);
 	},
 	methods: {
 		//获取表单数据
@@ -657,7 +664,8 @@ export default {
 						target: Object.assign({}, TABLE_PARAMS),
 						sourceTable: [stg.connectionId, stg.tableName],
 						showAdvancedVerification: false,
-						script: ''
+						script: '', //后台使用 需要拼接function头尾
+						webScript: '' //前端使用 用于页面展示
 					};
 					if (targetStage) {
 						task.target = this.setTable(targetStage);
@@ -701,7 +709,8 @@ export default {
 				source: Object.assign({}, TABLE_PARAMS),
 				target: Object.assign({}, TABLE_PARAMS),
 				showAdvancedVerification: false,
-				script: ''
+				script: '', //后台使用 需要拼接function头尾
+				webScript: '' //前端使用 用于页面展示
 			});
 		},
 		removeItem(idx) {
@@ -723,29 +732,29 @@ export default {
 			});
 		},
 		handleAddScriptClose() {
-			this.script = '';
+			this.webScript = '';
 			this.formIndex = '';
 			this.dialogAddScriptVisible = false;
 		},
 		addScript(index) {
 			this.formIndex = index;
-			this.script = '';
+			this.webScript = '';
 			this.dialogAddScriptVisible = true;
 		},
 		removeScript(index) {
-			this.form.tasks[index].script = '';
+			this.form.tasks[index].webScript = '';
 		},
 		editScript(index) {
 			this.formIndex = index;
-			let script = _.cloneDeep(this.form.tasks[this.formIndex].script);
-			this.script = script;
+			let script = _.cloneDeep(this.form.tasks[this.formIndex].webScript);
+			this.webScript = script;
 			this.dialogAddScriptVisible = true;
 		},
 		submitScript() {
-			let script = _.cloneDeep(this.script);
+			let script = _.cloneDeep(this.webScript);
 			let formIndex = _.cloneDeep(this.formIndex);
-			this.form.tasks[formIndex].script = script;
-			this.script = '';
+			this.form.tasks[formIndex].webScript = script;
+			this.webScript = '';
 			this.formIndex = '';
 			this.dialogAddScriptVisible = false;
 		},
@@ -818,13 +827,17 @@ export default {
 								status: this.form.mode === 'manual' ? 'scheduling' : 'waiting',
 								ping_time: 0,
 								tasks: this.form.tasks.map(
-									({ source, target, fullMatch, showAdvancedVerification, script }) => {
+									({ source, target, fullMatch, showAdvancedVerification, script, webScript }) => {
+										if (webScript && webScript !== '') {
+											script = 'function validate(sourceRow){' + webScript + '}';
+										}
 										return {
 											source,
 											target,
 											fullMatch,
 											showAdvancedVerification,
-											script
+											script,
+											webScript
 										};
 									}
 								)
@@ -961,20 +974,6 @@ export default {
 			}
 		}
 	}
-	.js-wrap {
-		display: flex;
-		flex-wrap: nowrap;
-		flex-direction: row;
-		.jsBox {
-			width: 500px;
-			height: 478px;
-		}
-		.example {
-			width: calc(100% - 520px);
-			height: 478px;
-			margin-left: 20px;
-		}
-	}
 	.footer {
 		position: absolute;
 		bottom: 0;
@@ -985,6 +984,228 @@ export default {
 		box-sizing: border-box;
 		background: #fff;
 		overflow: hidden;
+	}
+}
+</style>
+<style lang="less">
+.js-wrap {
+	display: flex;
+	flex-wrap: nowrap;
+	flex-direction: row;
+	.jsBox {
+		width: 70%;
+		height: 478px;
+		.js-fixText {
+			line-height: 25px;
+			margin-left: 28px;
+		}
+		.js-fixContent {
+			margin-left: 60px;
+		}
+	}
+	.example {
+		width: calc(100% - 70%);
+		height: 478px;
+		overflow-y: auto;
+		padding-right: 10px;
+		a {
+			color: #48b6e2;
+		}
+		h1,
+		h2,
+		h3,
+		h4 {
+			color: #111111;
+			font-weight: 400;
+			font-family: 'element-icons';
+		}
+		h1,
+		h2,
+		h3,
+		h4,
+		h5 {
+			font-family: Georgia, Palatino, serif;
+			font-family: 'element-icons';
+		}
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		p,
+		dl {
+			padding: 0;
+			font-family: 'element-icons';
+		}
+		h1 {
+			font-size: 48px;
+			line-height: 54px;
+			font-family: 'element-icons';
+		}
+		h2 {
+			font-size: 36px;
+			line-height: 42px;
+			font-family: 'element-icons';
+		}
+		h1,
+		h2 {
+			border-bottom: 1px solid #efeaea;
+			padding-bottom: 10px;
+			font-family: 'element-icons';
+		}
+		h3 {
+			font-size: 24px;
+			line-height: 30px;
+			font-family: 'element-icons';
+		}
+		h4 {
+			font-size: 16px;
+			font-weight: bold;
+			margin-bottom: 10px;
+		}
+		h5 {
+			font-size: 12px;
+			font-weight: bold;
+			color: #333;
+			font-family: 'element-icons';
+		}
+		a {
+			color: #0099ff;
+			margin: 0;
+			padding: 0;
+			vertical-align: baseline;
+		}
+		a:hover {
+			text-decoration: none;
+			color: #ff6600;
+		}
+		a:visited {
+			/*color: purple;*/
+		}
+		ul,
+		ol {
+			padding: 0;
+			padding-left: 24px;
+			margin: 0;
+			font-family: 'element-icons';
+		}
+		li {
+			line-height: 24px;
+		}
+		p,
+		ul,
+		ol {
+			font-size: 12px;
+			line-height: 18px;
+			color: #999;
+			margin: 5px 0;
+		}
+
+		ol ol,
+		ul ol {
+			list-style-type: lower-roman;
+		}
+
+		/*pre {
+			padding: 0px 24px;
+			max-width: 800px;
+			white-space: pre-wrap;
+		}
+		code {
+			font-family: Consolas, Monaco, Andale Mono, monospace;
+			line-height: 1.5;
+			font-size: 13px;
+		}*/
+
+		code,
+		pre {
+			border-radius: 3px;
+			background-color: #f7f7f7;
+			color: inherit;
+			padding: 10px;
+			font-size: 11px;
+		}
+
+		code {
+			font-style: normal;
+			font-weight: 400;
+			padding-left: 25px;
+			font-family: Courier, 'Courier New', monospace;
+		}
+		code:first-child,
+		code:last-child {
+			padding-left: 10px;
+		}
+		code:nth-child(4) {
+			padding-left: 45px;
+		}
+		/* 保证块/段落之间的空白隔行 */
+
+		#write p,
+		#write .md-fences,
+		#write ul,
+		#write ol,
+		#write dl,
+		#write form,
+		#write hr,
+		#write figure,
+		#write-p,
+		#write-pre,
+		#write-ul,
+		#write-ol,
+		#write-dl,
+		#write-form,
+		#write-hr,
+		#write-table,
+		blockquote {
+			margin-bottom: 1.2em;
+		}
+		pre {
+			line-height: 1.7em;
+			overflow: auto;
+			padding: 6px 10px;
+			font-family: 'element-icons';
+		}
+
+		pre > code {
+			border: 0;
+			display: inline;
+			max-width: initial;
+			padding: 0;
+			margin: 0;
+			overflow: initial;
+			line-height: inherit;
+			font-size: 0.85em;
+			white-space: pre;
+			background: 0 0;
+		}
+
+		code {
+			display: block;
+			color: #666555;
+		}
+		aside {
+			display: block;
+			float: right;
+			width: 390px;
+		}
+		blockquote {
+			border-left: 0.5em solid #eee;
+			padding: 0 0 0 2em;
+			margin-left: 0;
+		}
+		blockquote cite {
+			font-size: 14px;
+			line-height: 20px;
+			color: #bfbfbf;
+		}
+		blockquote cite:before {
+			content: '\2014 \00A0';
+		}
+
+		blockquote p {
+			color: #666;
+		}
 	}
 }
 </style>
