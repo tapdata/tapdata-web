@@ -14,20 +14,20 @@
 			<ul class="role-table page-table">
 				<li class="role-head">
 					<el-row class="e-row">
-						<el-col class="e-col borderRight" :span="22">
+						<el-col class="e-col borderRight" :span="21">
 							{{ $t('role.choosePage') }}
 						</el-col>
-						<el-col class="e-col" :span="2">{{ $t('role.bulkOperate') }}</el-col>
+						<el-col class="e-col" :span="3">{{ $t('role.bulkOperate') }}</el-col>
 					</el-row>
 				</li>
 				<li v-for="item in dataList" :key="item.id">
 					<el-row class="e-row">
-						<el-col class="e-col borderRight" :span="22">
+						<el-col class="e-col borderRight" :span="21">
 							<el-checkbox
 								v-for="second in item.children"
 								:key="second.name"
 								v-model="second.checkAll"
-								@change="handleCheckChange($event, item, second)"
+								@change="handleCheckChange($event, item)"
 								v-cloak
 							>
 								<span>
@@ -35,7 +35,7 @@
 								</span>
 							</el-checkbox>
 						</el-col>
-						<el-col class="e-col" :span="2">
+						<el-col class="e-col" :span="3">
 							<el-checkbox v-model="item.checked" @change="handleAllCheck($event, item)" v-cloak>
 								<span>
 									{{ $t('role.allCheck') }}
@@ -74,10 +74,10 @@
 						<el-col class="e-col" :span="3">
 							{{ $t('role.module') }}
 						</el-col>
-						<el-col class="e-col borderLeft" :span="19">
+						<el-col class="e-col borderLeft" :span="18">
 							{{ $t('role.functionDataPermission') }}
 						</el-col>
-						<el-col class="e-col borderLeft" :span="2">{{ $t('role.bulkOperate') }}</el-col>
+						<el-col class="e-col borderLeft" :span="3">{{ $t('role.bulkOperate') }}</el-col>
 					</el-row>
 				</li>
 				<li class="module-style">
@@ -85,40 +85,156 @@
 						<el-col :span="3">
 							<span class="nav">{{ $t('role.roleNavName.' + item.name) }}</span>
 						</el-col>
-						<el-col :span="19" class="e-col borderLine">
-							<ul>
-								<li>
+						<el-col :span="21" class="e-col borderLine">
+							<el-row class="box">
+								<el-col class="e-col" :span="21">
 									<el-checkbox
-										class="checkbox-radio"
 										v-for="second in item.children"
 										:key="second.name"
-										:disabled="!item.checkAll"
-										v-model="second.checkAll"
-										@change="handleChange($event, item, second)"
+										v-model="second.checked"
+										@change="handleOneCheckAll($event, item, item.children)"
+										:class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
 										v-cloak
 									>
 										<div>{{ $t('role.roleNavName.' + second.name) }}</div>
-										<el-radio-group v-model="radio" style="display: block">
-											<el-radio :label="1">All data</el-radio>
-											<el-radio :label="2">Only self</el-radio>
-										</el-radio-group>
+										<el-checkbox
+											class="e-checkbox"
+											v-show="second.allName"
+											:disabled="!second.checked"
+											v-model="second.checkAllData"
+											@change="handleChange($event, item, second)"
+											v-cloak
+										>
+											<div>All data</div>
+										</el-checkbox>
 									</el-checkbox>
-								</li>
-								<li v-if="item.classification">
+								</el-col>
+								<el-col class="e-col" :span="3">
+									<el-checkbox
+										class="checkbox-radio"
+										v-model="item.checkAll"
+										@change="handleAuthoritySelectAll($event, item)"
+										v-cloak
+									>
+										<div>{{ $t('role.allCheck') }}</div>
+										<el-checkbox
+											class="e-checkbox"
+											:disabled="!item.checked"
+											v-model="item.checkedAllData"
+											@change="handleCheckedAllData($event, item)"
+											v-cloak
+										>
+											<div>All data</div>
+										</el-checkbox>
+									</el-checkbox>
+								</el-col>
+							</el-row>
+							<el-row class="box" v-if="item.classification">
+								<el-col class="e-col" :span="21">
+									<el-checkbox
+										v-for="second in item.classification"
+										:key="second.name"
+										v-model="second.checked"
+										@change="handleOneCheckAll($event, item, item.classification)"
+										:class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
+										v-cloak
+									>
+										<div>{{ $t('role.roleNavName.' + second.name) }}</div>
+										<el-checkbox
+											class="e-checkbox"
+											v-show="second.allName"
+											:disabled="!item.checked"
+											v-model="second.checkAllData"
+											@change="handleChange($event, item, second)"
+											v-cloak
+										>
+											<div>All data</div>
+										</el-checkbox>
+									</el-checkbox>
+								</el-col>
+								<el-col class="e-col" :span="3">
+									<el-checkbox
+										class="checkbox-radio"
+										v-model="item.classifiyCheckAll"
+										@change="classifiySelectAll($event, item)"
+										v-cloak
+									>
+										<div>{{ $t('role.allCheck') }}</div>
+										<el-checkbox
+											class="e-checkbox"
+											:disabled="!item.checked"
+											v-model="item.checkAll"
+											@change="handleChange($event, item)"
+											v-cloak
+										>
+											<div>All data</div>
+										</el-checkbox>
+									</el-checkbox>
+								</el-col>
+							</el-row>
+							<el-row class="box" v-if="item.functional">
+								<el-col class="e-col" :span="21">
+									<el-checkbox
+										v-for="second in item.functional"
+										:key="second.name"
+										v-model="second.checked"
+										@change="handleOneCheckAll($event, item, item.functional)"
+										:class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
+										v-cloak
+									>
+										<div>{{ $t('role.roleNavName.' + second.name) }}</div>
+										<el-checkbox
+											class="e-checkbox"
+											v-show="second.allName"
+											:disabled="!item.checked"
+											v-model="second.checkAllData"
+											@change="handleChange($event, item, second)"
+											v-cloak
+										>
+											<div>All data</div>
+										</el-checkbox>
+									</el-checkbox>
+								</el-col>
+								<el-col class="e-col" :span="3">
+									<el-checkbox
+										class="checkbox-radio"
+										v-model="item.checkAll"
+										@change="handleCheckChange($event, item)"
+										v-cloak
+									>
+										<div>{{ $t('role.allCheck') }}</div>
+										<el-checkbox
+											class="e-checkbox"
+											:disabled="!item.checked"
+											v-model="item.checkedAllData"
+											@change="handleChange($event, item)"
+											v-cloak
+										>
+											<div>All data</div>
+										</el-checkbox>
+									</el-checkbox>
+								</el-col>
+							</el-row>
+
+							<!-- <li v-if="item.classification">
 									<el-checkbox
 										class="checkbox-radio"
 										v-for="second in item.classification"
 										:key="second.name"
-										:disabled="!item.checkAll"
-										v-model="second.checkAll"
+										v-model="second.checked"
 										@change="handleChange($event, item, second)"
 										v-cloak
 									>
 										<div>{{ $t('role.roleNavName.' + second.name) }}</div>
-										<el-radio-group v-model="radio" style="display: block">
-											<el-radio :label="1">All data</el-radio>
-											<el-radio :label="2">Only self</el-radio>
-										</el-radio-group>
+										<el-checkbox
+											class="e-checkbox"
+											:disabled="!item.checked"
+											v-model="item.checkAllData"
+											@change="handleChange($event, item)"
+											v-cloak
+										>
+											<div>All data</div>
+										</el-checkbox>
 									</el-checkbox>
 								</li>
 								<li v-if="item.functional">
@@ -126,25 +242,23 @@
 										class="checkbox-radio"
 										v-for="second in item.functional"
 										:key="second.name"
-										:disabled="!item.checkAll"
-										v-model="second.checkAll"
+										v-model="second.checked"
 										@change="handleChange($event, item, second)"
 										v-cloak
 									>
 										<div>{{ $t('role.roleNavName.' + second.name) }}</div>
-										<el-radio-group v-model="radio" style="display: block">
-											<el-radio :label="1">All data</el-radio>
-											<el-radio :label="2">Only self</el-radio>
-										</el-radio-group>
+										<el-checkbox
+											class="e-checkbox"
+											:disabled="!item.checked"
+											v-model="item.checkAllData"
+											@change="handleChange($event, item)"
+											v-cloak
+										>
+											<div>All data</div>
+										</el-checkbox>
 									</el-checkbox>
 								</li>
-							</ul>
-							<div></div>
-						</el-col>
-						<el-col class="e-col" :span="2">
-							<el-checkbox v-model="item.checkAll" @change="handleCheckChange($event, item)" v-cloak>
-								{{ $t('role.allCheck') }}
-							</el-checkbox>
+							</ul> -->
 						</el-col>
 
 						<!-- <div v-if="item.children && item.children.length && item.children[0].isNav">
@@ -262,16 +376,22 @@ let moduleMapping = [
 	{ name: 'Dashboard', children: [{ name: 'Dashboard' }] },
 	{
 		name: 'datasource',
-		children: [{ name: 'datasource_creation' }, { name: 'datasource_edition' }, { name: 'datasource_delete' }],
+		children: [
+			{ name: 'datasource', allName: 'datasource_all_data' },
+			{ name: 'datasource_creation' },
+			{ name: 'datasource_edition', allName: 'datasource_edition_all_data' },
+			{ name: 'datasource_delete', allName: 'datasource_delete_all_data' }
+		],
 		classification: [{ name: 'datasource_category_management' }, { name: 'datasource_category_application' }]
 	},
 	{
 		name: 'Data_SYNC',
 		children: [
+			{ name: 'Data_SYNC', allName: 'Data_SYNC_all_data' },
 			{ name: 'SYNC_job_creation' },
-			{ name: 'SYNC_job_edition' },
-			{ name: 'SYNC_job_delete' },
-			{ name: 'SYNC_job_operation' }
+			{ name: 'SYNC_job_edition', allName: 'SYNC_job_edition_all_data' },
+			{ name: 'SYNC_job_delete', allName: 'SYNC_job_delete_all_data' },
+			{ name: 'SYNC_job_operation', allName: 'SYNC_job_operation_all_data' }
 		],
 		classification: [{ name: 'SYNC_category_management' }, { name: 'SYNC_category_application' }],
 		functional: [{ name: 'SYNC_job_import' }, { name: 'SYNC_job_export' }, { name: 'create_new_table_in_SYNC' }]
@@ -281,57 +401,135 @@ let moduleMapping = [
 		children: [{ name: 'datasource_creation' }, { name: 'datasource_edition' }, { name: 'datasource_delete' }]
 	},
 	{
-		name: 'data_catalog',
-		children: [{ name: 'new_model_creation' }, { name: 'data_catalog_edition' }]
-	},
-	{
-		name: 'data_quality',
-		children: [{ name: 'new_model_creation' }, { name: 'data_catalog_edition' }]
-	},
-	{
 		name: 'Data_verify',
 		children: [
+			{ name: 'Data_verify', allName: 'Data_verify_all_data' },
 			{ name: 'verify_job_creation' },
-			{ name: 'verify_job_edition' },
-			{ name: 'verify_job_delete' },
-			{ name: 'verify_job_execution' }
+			{ name: 'verify_job_edition', allName: 'verify_job_edition_all_data' },
+			{ name: 'verify_job_delete', allName: 'verify_job_delete_all_data' },
+			{ name: 'verify_job_execution', allName: 'verify_job_execution_all_data' }
 		]
 	},
 	{
 		name: 'data_government',
+		children: [{ name: 'data_catalog_category_application' }, { name: 'data_catalog_category_management' }]
+	},
+	{
+		name: 'data_catalog',
 		children: [
-			{ name: 'data_catalog' },
-			{ name: 'data_quality' },
-			{ name: 'time_to_live' },
-			{ name: 'data_lineage' },
-			{ name: 'data_rules' },
-			{ name: 'Topology' },
-			{ name: 'dictionary' }
+			{ name: 'data_catalog', allName: 'data_catalog_all_data' },
+			{ name: 'new_model_creation' },
+			{ name: 'data_catalog_edition', allName: 'data_catalog_edition_all_data' },
+			{ name: 'meta_data_deleting', allName: 'meta_data_deleting_all_data' }
 		]
 	},
 	{
-		name: 'data_publish',
+		name: 'data_quality',
 		children: [
-			{ name: 'API_management' },
-			{ name: 'API_data_explorer' },
-			{ name: 'API_doc_test' },
-			{ name: 'API_stats' },
-			{ name: 'API_clients' },
-			{ name: 'API_server' }
+			{ name: 'data_quality', allName: 'data_quality_all_data' },
+			{ name: 'data_quality_edition', allName: 'data_quality_edition_all_data' }
 		]
 	},
-	{ children: [{ name: 'data_collect' }] },
 	{
-		name: 'system_management',
+		name: 'data_rules',
 		children: [
-			{ name: 'schedule_jobs' },
-			{ name: 'Cluster_management' },
-			{ name: 'agents' },
-			{ name: 'servers_oversee' },
-			{ name: 'user_management' },
-			{ name: 'role_management' },
-			{ name: 'system_settings' }
+			{ name: 'data_rules', allName: 'data_rules_all_data' },
+			{ name: 'data_rule_management', allName: 'data_rule_management_all_data' }
 		]
+	},
+	{
+		name: 'time_to_live',
+		children: [
+			{ name: 'time_to_live', allName: 'time_to_live_all_data' },
+			{ name: 'time_to_live_management', allName: 'time_to_live_management_all_data' }
+		]
+	},
+	{
+		name: 'data_lineage',
+		children: [{ name: 'data_lineage' }]
+	},
+
+	{
+		name: 'API_management',
+		children: [
+			{ name: 'API_management', allName: 'API_management_all_data' },
+			{ name: 'API_creation' },
+			{ name: 'API_edition', allName: 'API_edition_all_data' },
+			{ name: 'API_delete', allName: 'API_delete_all_data' },
+			{ name: 'API_publish', allName: 'API_publish_all_data' }
+		],
+		classification: [{ name: 'API_category_application' }, { name: 'API_category_management' }],
+		functional: [{ name: 'API_import' }, { name: 'API_export' }]
+	},
+	{
+		name: 'API_data_explorer',
+		children: [
+			{ name: 'API_data_creation' },
+			{ name: 'API_data_explorer_deleting' },
+			{ name: 'API_data_explorer_export' },
+			{ name: 'API_data_download' }
+		],
+		functional: [{ name: 'API_data_explorer_tagging' }, { name: 'API_data_time_zone_editing' }]
+	},
+	{
+		name: 'API_doc_test',
+		children: [{ name: 'API_doc_test' }]
+	},
+	{
+		name: 'API_stats',
+		children: [{ name: 'API_stats' }]
+	},
+	{
+		name: 'API_clients',
+		children: [{ name: 'API_clients_amangement' }]
+	},
+	{
+		name: 'API_server',
+		children: [{ name: 'API_server_management' }]
+	},
+	{
+		name: 'data_collect',
+		children: [{ name: 'data_collect', allName: 'data_collect_all_data' }]
+	},
+
+	{
+		name: 'schedule_jobs',
+		children: [{ name: 'schedule_jobs' }, { name: 'schedule_jobs_management' }]
+	},
+	{
+		name: 'Cluster_management',
+		children: [
+			{ name: 'Cluster_management', allName: 'Cluster_management_all_data' },
+			{ name: 'Cluster_operation' },
+			{ name: 'status_log' }
+		]
+	},
+	{
+		name: 'agents',
+		children: [{ name: 'agents' }]
+	},
+	{
+		name: 'user_management',
+		children: [
+			{ name: 'user_management', allName: 'user_management_all_data' },
+			{ name: 'user_creation' },
+			{ name: 'user_edition', allName: 'user_edition_all_data' },
+			{ name: 'user_delete', allName: 'user_delete_all_data' }
+		],
+		classification: [{ name: 'user_category_management' }, { name: 'user_category_application' }]
+	},
+	{
+		name: 'role_management',
+		children: [
+			{ name: 'role_management', allName: 'role_management_all_data' },
+			{ name: 'role_creation' },
+			{ name: 'role_edition', allName: 'role_edition_all_data' },
+			{ name: 'role_delete', allName: 'role_delete_all_data' }
+		]
+	},
+	{
+		name: 'system_settings',
+		children: [{ name: 'system_settings_modification' }, { name: 'notice_settings' }]
 	}
 ];
 
@@ -487,6 +685,15 @@ export default {
 								return items.map(item => {
 									let page = pageMap[item.name];
 									let menu = Object.assign({}, item, page);
+									if (menu.children) {
+										menu.children = pageMenu(menu.children);
+									}
+									if (menu.classification) {
+										menu.classification = pageMenu(menu.classification);
+									}
+									if (menu.functional) {
+										menu.functional = pageMenu(menu.functional);
+									}
 									return menu;
 								});
 							};
@@ -503,45 +710,80 @@ export default {
 				});
 		},
 
-		// 选择获取全部数据(第一级)
-		handleOneCheckAll(event, item) {
-			if (typeof item.checkAll === 'undefined') {
-				this.$set(item, 'checkAll', true);
-			}
-			// if (item.children && item.children.length) {
-			// 	for (let i = 0; i < item.children.length; i++) {
-			// 		if (item.checkAll) {
-			// 			this.$set(item.children[i], 'checkAll', true);
-			// 		} else {
-			// 			this.$set(item.children[i], 'checkAll', false);
-			// 			// item.children[i].checkAll = false;
-			// 		}
-			// 		if (item.children[i].children && item.children[i].children.length) {
-			// 			for (let k = 0; k < item.children[i].children.length; k++) {
-			// 				if (item.children[i].checkAll) {
-			// 					item.children[i].checkedCities.push(item.children[i].children[k].name);
-			// 				} else {
-			// 					item.children[i].checkedCities = [];
-			// 				}
-			// 			}
-			// 		}
-			// 	}
-			// }
-		},
-
-		// 没有三级菜单
-		handleCheckChange(event, item, second) {
+		// 页面单选
+		handleCheckChange(event, item) {
 			if (typeof item.checkAll === 'undefined') {
 				this.$set(item, 'checkAll', false);
 			}
-			if (typeof second.checkAll === 'undefined') {
-				this.$set(second, 'checkAll', true);
-			}
 
-			// item.isIndeterminate = checkedCount.length > 0 && checkedCount.length < item.children.length;
-			// item.checkAll = checkedCount.length === item.children.length;
+			let checkedCount = item.children.filter(el => {
+				return el.checkAll;
+			});
+			item.checked = checkedCount.length === item.children.length;
 		},
 
+		// 页面全选
+		handleAllCheck(event, item) {
+			if (typeof item.checked === 'undefined') {
+				this.$set(item, 'checked', false);
+			} else {
+				item.checkAll = event;
+			}
+			if (typeof item.checkAll === 'undefined') {
+				this.$set(item, 'checkAll', true);
+			}
+			if (item.children && item.children.length) {
+				for (let i = 0; i < item.children.length; i++) {
+					if (item.checked) {
+						this.$set(item.children[i], 'checkAll', true);
+					} else {
+						this.$set(item.children[i], 'checkAll', false);
+					}
+				}
+			}
+		},
+
+		// 权限单个选择
+		handleOneCheckAll(event, item, children) {
+			if (typeof item.checked === 'undefined') {
+				this.$set(item, 'checked', true);
+			}
+			let checkedCount = children.filter(el => {
+				return el.checked;
+			});
+			item.checkAll = checkedCount.length === children.length;
+		},
+		// 权限全选
+		handleAuthoritySelectAll(event, item) {
+			if (typeof item.checkAll === 'undefined') {
+				this.$set(item, 'checkAll', false);
+			} else {
+				item.checked = event;
+			}
+			if (typeof item.checked === 'undefined') {
+				this.$set(item, 'checked', true);
+			}
+			if (item.children && item.children.length) {
+				for (let i = 0; i < item.children.length; i++) {
+					if (item.checkAll) {
+						this.$set(item.children[i], 'checked', true);
+					} else {
+						this.$set(item.children[i], 'checked', false);
+					}
+				}
+			}
+		},
+		// 分类全选
+		classifiySelectAll(event, item) {
+			if (typeof item.checkAll === 'undefined') {
+				this.$set(item, 'checkAll', false);
+			}
+
+			let checkedCount = item.classification.filter(el => {
+				return el.checkAll;
+			});
+			item.checked = checkedCount.length === item.classification.length;
+		},
 		// 二级菜单选择(有三级菜单)
 		handleCheckAllChange(event, item, second) {
 			let arr = [];
@@ -628,36 +870,6 @@ export default {
 			// 		item.firstCheckAll = true;
 			// 	}
 			// }
-		},
-
-		// 页面全选
-		handleAllCheck(event, item) {
-			if (typeof item.checked === 'undefined') {
-				this.$set(item, 'checked', false);
-			} else {
-				item.checkAll = event;
-			}
-			if (typeof item.checkAll === 'undefined') {
-				this.$set(item, 'checkAll', true);
-			}
-			if (item.children && item.children.length) {
-				for (let i = 0; i < item.children.length; i++) {
-					if (item.checked) {
-						this.$set(item.children[i], 'checkAll', true);
-					} else {
-						this.$set(item.children[i], 'checkAll', false);
-					}
-					// if (item.children[i].children && item.children[i].children.length) {
-					// 	for (let k = 0; k < item.children[i].children.length; k++) {
-					// 		if (item.children[i].checkAll) {
-					// 			item.children[i].checkedCities.push(item.children[i].children[k].name);
-					// 		} else {
-					// 			item.children[i].checkedCities = [];
-					// 		}
-					// 	}
-					// }
-				}
-			}
 		},
 
 		// 保存
@@ -847,90 +1059,94 @@ export default {
 					&:last-child {
 						border-bottom: 0;
 					}
-					.e-col {
-						padding: 5px 0;
-					}
 					.nav {
 						padding-left: 12px;
 						font-size: 14px;
 					}
+					.box {
+						border-bottom: 1px solid #e7e7e7;
+						&:last-child {
+							border: 0;
+						}
+						.e-col {
+							padding-top: 8px;
+							border-right: 1px solid #e7e7e7;
+							&:last-child {
+								border: 0;
+							}
+						}
+					}
 				}
 			}
 
-			.vertical-line {
-				position: absolute;
-				left: 20%;
-				top: 0;
-				width: 1px;
-				height: 100%;
-				background: #ddd;
-			}
+			// .vertical-line {
+			// 	position: absolute;
+			// 	left: 20%;
+			// 	top: 0;
+			// 	width: 1px;
+			// 	height: 100%;
+			// 	background: #ddd;
+			// }
 
-			.center-line {
-				left: 40%;
-			}
+			// .center-line {
+			// 	left: 40%;
+			// }
 
-			.left {
-				float: left;
-				width: 20%;
-				padding-left: 10px;
-				line-height: 40px;
-				user-select: none;
-				cursor: pointer;
-				box-sizing: border-box;
-			}
+			// .left {
+			// 	float: left;
+			// 	width: 20%;
+			// 	padding-left: 10px;
+			// 	line-height: 40px;
+			// 	user-select: none;
+			// 	cursor: pointer;
+			// 	box-sizing: border-box;
+			// // }
 
-			.center {
-				float: left;
-				width: 80%;
-				padding-left: 10px;
-				line-height: 40px;
-				user-select: none;
-				cursor: pointer;
-				text-align: left;
-				box-sizing: border-box;
-				border-left: 1px solid #e7e7e7;
-			}
+			// .center {
+			// 	float: left;
+			// 	width: 80%;
+			// 	padding-left: 10px;
+			// 	line-height: 40px;
+			// 	user-select: none;
+			// 	cursor: pointer;
+			// 	text-align: left;
+			// 	box-sizing: border-box;
+			// 	border-left: 1px solid #e7e7e7;
+			// }
 
-			.one {
-				padding-left: 20px;
-			}
+			// .one {
+			// 	padding-left: 20px;
+			// }
 
-			.right {
-				width: 80%;
-				float: right;
-				line-height: 40px;
-				// padding-left: 10px;
-				box-sizing: border-box;
-				border-left: 1px solid #e7e7e7;
-				.rightRow {
-					line-height: 39px;
-					border-bottom: 1px solid #e7e7e7;
-				}
-				.check {
-					padding-left: 10px;
-					border-left: 1px solid #e7e7e7;
-				}
-				.left {
-					width: 20%;
-					border-right: 0;
-				}
-				li:last-child {
-					border-bottom: 0;
-				}
-			}
+			// .right {
+			// 	width: 80%;
+			// 	float: right;
+			// 	line-height: 40px;
+			// 	// padding-left: 10px;
+			// 	box-sizing: border-box;
+			// 	border-left: 1px solid #e7e7e7;
+			// 	.rightRow {
+			// 		line-height: 39px;
+			// 		border-bottom: 1px solid #e7e7e7;
+			// 	}
+			// 	.check {
+			// 		padding-left: 10px;
+			// 		border-left: 1px solid #e7e7e7;
+			// 	}
+			// 	.left {
+			// 		width: 20%;
+			// 		border-right: 0;
+			// 	}
+			// 	li:last-child {
+			// 		border-bottom: 0;
+			// 	}
+			// }
 
 			.item-icon {
 				margin-left: -5px;
 				padding: 5px;
 			}
 
-			.line {
-				clear: both;
-				width: 100%;
-				height: 1px;
-				background: #e0e0e0;
-			}
 			.h40 {
 				height: 39px;
 				line-height: 39px;
@@ -972,13 +1188,22 @@ export default {
 				min-width: 130px;
 				margin: 0 10px;
 			}
+			.checkbox-position {
+				line-height: 1px;
+				vertical-align: top;
+				.el-checkbox__input {
+					padding-top: 0;
+					vertical-align: top;
+				}
+			}
 			.checkbox-radio {
 				.el-checkbox__input {
 					padding-top: 3px;
 					vertical-align: top;
 				}
-				.el-radio {
-					display: block !important;
+
+				.e-checkbox {
+					// display: block !important;
 					padding: 5px 0;
 					font-size: 12px;
 					color: #666;
