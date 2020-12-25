@@ -12,7 +12,7 @@
 						</div>
 						<div class="content">{{ model.name }}</div>
 						<div class="addBtn" @click="dialogEditNameVisible = true">
-							{{ $t('connection.Rename') }}
+							{{ $t('connection.rename') }}
 						</div>
 					</div>
 				</header>
@@ -26,8 +26,18 @@
 					</div>
 				</header>
 				<div class="form">
-					<form-builder ref="form" v-model="model" :config="config"></form-builder>
-					<el-button size="mini" class="test" @click="startTest()">连接测试</el-button>
+					<form-builder ref="form" v-model="model" :config="config">
+						<radioSelection
+							v-on:update:field="handleChangeType"
+							slot="connection_type"
+							:field="model.connection_type"
+							:options="connectionTypeOption"
+						></radioSelection>
+						<div slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
+					</form-builder>
+					<el-button size="mini" class="test" @click="startTest()">{{
+						$t('connection.testConnection')
+					}}</el-button>
 				</div>
 			</main>
 			<gitbook></gitbook>
@@ -47,7 +57,7 @@
 			@databaseType="handleDatabaseType"
 		></DatabaseTypeDialog>
 		<el-dialog
-			:title="$t('connection.Rename')"
+			:title="$t('connection.rename')"
 			:close-on-click-modal="false"
 			:visible.sync="dialogEditNameVisible"
 			width="30%"
@@ -59,7 +69,9 @@
 				<el-button @click="dialogEditNameVisible = false" size="mini" clearable>{{
 					$t('dataForm.cancel')
 				}}</el-button>
-				<el-button @click="submitEdit()" size="mini" type="primary">{{ $t('message.confirm') }}</el-button>
+				<el-button @click="submitEdit()" size="mini" type="primary" v-loading="submitBtnLoading">{{
+					$t('message.confirm')
+				}}</el-button>
 			</span>
 		</el-dialog>
 		<!-- <el-dialog
@@ -88,6 +100,7 @@ import formConfig from './config';
 import gitbook from './GitBook';
 import Test from './Test';
 import { getImgByType, TYPEMAP } from './util';
+import radioSelection from './radioSelection';
 import DatabaseTypeDialog from './DatabaseTypeDialog';
 import ws from '../../api/ws';
 
@@ -129,7 +142,7 @@ const defaultModel = {
 
 export default {
 	name: 'DatabaseForm',
-	components: { gitbook, Test, DatabaseTypeDialog },
+	components: { gitbook, Test, DatabaseTypeDialog, radioSelection },
 	data() {
 		return {
 			visible: false,
@@ -152,7 +165,10 @@ export default {
 			},
 			dialogTestVisible: false,
 			dialogDatabaseTypeVisible: false,
-			dialogEditNameVisible: false
+			dialogEditNameVisible: false,
+			submitBtnLoading: false,
+			connectionTypeOption: '',
+			isUrlOption: ''
 			// repeatDialogVisible: false,
 			// connectionObj: {
 			// 	name: '',
@@ -175,9 +191,6 @@ export default {
 				showWordLimit: true
 			}
 		];
-	},
-	beforeDestroy() {
-		this.clearInterval();
 	},
 	destroyed() {
 		this.clearInterval();
@@ -248,6 +261,13 @@ export default {
 					itemIsUrl.disabled = true;
 					this.model.isUrl = false;
 				}
+				let option = items.find(it => it.field === 'connection_type');
+				if (option) {
+					this.connectionTypeOption = option.options;
+				}
+				if (itemIsUrl) {
+					this.isUrlOption = itemIsUrl.options;
+				}
 				this.config.form = config.form;
 				this.config.items = items;
 				this.initData(
@@ -256,6 +276,9 @@ export default {
 				this.checkItems = config.checkItems; //根据model变化更新表单项显示或隐藏
 				this.checkItems && this.checkItems();
 			}
+		},
+		handleChangeType(val) {
+			this.model.connection_type = val;
 		},
 		handleTestVisible() {
 			this.dialogTestVisible = false;
@@ -266,6 +289,7 @@ export default {
 		submit() {
 			this.$refs.form.validate(valid => {
 				if (valid) {
+					this.submitBtnLoading = true;
 					let params = Object.assign({}, this.model, {
 						sslCert: this.model.sslKey,
 						user_id: this.$cookie.get('user_id'),
@@ -288,9 +312,15 @@ export default {
 					}
 					connectionsModel[this.model.id ? 'patchId' : 'post'](params)
 						.then(res => {
+							this.submitBtnLoading = false;
 							let id = res.data.id;
 							this.model.id = id;
 							this.handleWS(id);
+							if (this.$route.query.id) {
+								this.$message.success('保存成功');
+								this.clearInterval();
+								this.goBack();
+							}
 						})
 						.catch(err => {
 							if (err && err.response) {
@@ -326,8 +356,9 @@ export default {
 				data: this.model
 			};
 			//接收数据
-			ws.on('testConnection', data => {
-				if (data.data && data.data.length > 0) {
+			ws.on('testConnectionResult', data => {
+				let result = data.result || [];
+				if (result.response_body && !this.$route.query.id) {
 					this.clearInterval();
 					this.goBack();
 				}
@@ -421,9 +452,11 @@ export default {
 			flex-direction: column;
 			.form {
 				overflow-y: auto;
+				overflow-x: hidden;
 				padding: 0 20px;
 				width: 640px;
 				margin: 0 auto;
+				padding-right: 100px;
 			}
 			.edit-header-box {
 				border-bottom: 1px solid #dedee4;
@@ -439,7 +472,7 @@ export default {
 			.title {
 				display: flex;
 				justify-content: flex-start;
-				width: 826px;
+				width: 910px;
 				margin: 40px auto 20px auto;
 			}
 			.img-box {
@@ -471,7 +504,7 @@ export default {
 				color: #48b6e2;
 				cursor: pointer;
 				font-size: 12px;
-				margin-top: 26px;
+				margin-top: 22px;
 				margin-left: 10px;
 			}
 			.test {

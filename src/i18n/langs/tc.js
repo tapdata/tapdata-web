@@ -632,6 +632,8 @@ const tc = {
 		checkMsg: '此數據源被傳輸任務或API所佔用，無法刪除',
 		copyFailedMsg: '複製失敗，原因：系統設置中 "連接設置 - 允許創建重複數據源" 被設置為 "false"',
 		change: '更換',
+		rename: '改名',
+		testConnection: '連接測試',
 		status: {
 			testing: '測試中',
 			invalid: '無效',
@@ -1416,7 +1418,8 @@ const tc = {
 			testing: '測試中...',
 			items: '檢查事項',
 			result: '檢查結果',
-			information: '說明'
+			information: '說明',
+			error: '測試服務請求超時，請關閉重試'
 		},
 		form: {
 			connectionName: '連接名稱',

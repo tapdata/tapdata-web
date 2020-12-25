@@ -640,6 +640,8 @@ const en = {
 		copyFailedMsg:
 			'Copy failed, reason:  The setting item "Connections - create  duplicate source" need to be set to "false"',
 		change: 'Change',
+		rename: 'Rename',
+		testConnection: 'Test connection',
 		status: {
 			testing: 'testing',
 			invalid: 'invalid',
@@ -1439,9 +1441,10 @@ const en = {
 			success: 'Pass the test',
 			fail: 'Test failed',
 			testing: 'Testing...',
-			items: 'test items',
-			result: 'test result',
-			information: 'Information'
+			items: 'Test items',
+			result: 'Test result',
+			information: 'Information',
+			error: 'The test service request timed out, please close and try again.'
 		},
 		form: {
 			connectionName: 'Connection Name',
