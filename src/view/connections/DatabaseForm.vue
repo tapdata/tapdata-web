@@ -27,7 +27,12 @@
 				</header>
 				<div class="form">
 					<form-builder ref="form" v-model="model" :config="config">
-						<div slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
+						<div
+							class="url-tip"
+							slot="urlTip"
+							v-if="model.isUrl"
+							v-html="$t('dataForm.form.uriTips.content')"
+						></div>
 					</form-builder>
 					<el-button size="mini" class="test" @click="startTest()">{{
 						$t('connection.testConnection')
@@ -450,6 +455,11 @@ export default {
 				width: 640px;
 				margin: 0 auto;
 				padding-right: 100px;
+				.url-tip {
+					font-size: 12px;
+					color: #999;
+					line-height: 18px;
+				}
 			}
 			.edit-header-box {
 				border-bottom: 1px solid #dedee4;
@@ -550,6 +560,13 @@ export default {
 .databaseFrom .el-form--label-right .el-form-item {
 	.el-form-item__label {
 		display: inline-block;
+	}
+}
+.databaseFrom .form {
+	.url-tip {
+		b {
+			color: #666;
+		}
 	}
 }
 </style>
