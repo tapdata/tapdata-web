@@ -525,6 +525,7 @@ export default {
 				params.fill = params.isUrl ? 'uri' : '';
 				delete params.isUrl;
 			}
+			this.loading = true;
 			this.$api('connections')
 				.post(params)
 				.then(res => {
@@ -552,6 +553,9 @@ export default {
 					} else {
 						this.$message.error(this.$t('dataForm.saveFail'));
 					}
+				})
+				.finally(() => {
+					this.loading = false;
 				});
 		}
 	}
