@@ -31,7 +31,7 @@
 								v-cloak
 							>
 								<span>
-									{{ $t('role.roleNavName.' + second.name) }}
+									{{ $t('role.page.' + second.name) }}
 								</span>
 							</el-checkbox>
 						</el-col>
@@ -43,25 +43,6 @@
 							</el-checkbox>
 						</el-col>
 					</el-row>
-					<!-- <template v-else>
-						<el-row class="e-row">
-							<el-col class="e-col borderRight" :span="22">
-								<el-checkbox v-model="item.checkAll" @change="handleCheckChange($event, item)" v-cloak>
-									<span>
-										{{ $t('role.roleNavName.' + item.name) }}
-									</span>
-								</el-checkbox>
-							</el-col>
-
-							<el-col class="e-col" :span="2">
-								<el-checkbox v-model="item.checked" @change="handleAllCheck($event, item)" v-cloak>
-									<span>
-										{{ $t('role.allCheck') }}
-									</span>
-								</el-checkbox>
-							</el-col>
-						</el-row>
-					</template> -->
 				</li>
 			</ul>
 			<div class="headTitle">
@@ -86,13 +67,14 @@
 							<span class="nav">{{ $t('role.roleNavName.' + item.name) }}</span>
 						</el-col>
 						<el-col :span="21" class="e-col borderLine">
+							<!-- 权限 -->
 							<el-row class="box">
 								<el-col class="e-col" :span="21">
 									<el-checkbox
 										v-for="second in item.children"
 										:key="second.name"
 										v-model="second.checked"
-										@change="handleOneCheckAll($event, item, item.children)"
+										@change="handleOneCheckAll($event, item, item.children, second, 'children')"
 										:class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
 										v-cloak
 									>
@@ -102,7 +84,7 @@
 											v-show="second.allName"
 											:disabled="!second.checked"
 											v-model="second.checkAllData"
-											@change="handleChange($event, item, second)"
+											@change="handleOneAllData($event, item, item.children, second, 'children')"
 											v-cloak
 										>
 											<div>All data</div>
@@ -113,15 +95,15 @@
 									<el-checkbox
 										class="checkbox-radio"
 										v-model="item.checkAll"
-										@change="handleAuthoritySelectAll($event, item)"
+										@change="handleAuthoritySelectAll($event, item, item.children)"
 										v-cloak
 									>
 										<div>{{ $t('role.allCheck') }}</div>
+										<div class="line"></div>
 										<el-checkbox
 											class="e-checkbox"
-											:disabled="!item.checked"
 											v-model="item.checkedAllData"
-											@change="handleCheckedAllData($event, item)"
+											@change="handleCheckedAllData($event, item, item.children)"
 											v-cloak
 										>
 											<div>All data</div>
@@ -129,18 +111,21 @@
 									</el-checkbox>
 								</el-col>
 							</el-row>
+							<!-- 分类权限 -->
 							<el-row class="box" v-if="item.classification">
 								<el-col class="e-col" :span="21">
 									<el-checkbox
 										v-for="second in item.classification"
 										:key="second.name"
 										v-model="second.checked"
-										@change="handleOneCheckAll($event, item, item.classification)"
+										@change="
+											handleOneCheckAll($event, item, item.classification, second, 'classify')
+										"
 										:class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
 										v-cloak
 									>
 										<div>{{ $t('role.roleNavName.' + second.name) }}</div>
-										<el-checkbox
+										<!-- <el-checkbox
 											class="e-checkbox"
 											v-show="second.allName"
 											:disabled="!item.checked"
@@ -149,179 +134,56 @@
 											v-cloak
 										>
 											<div>All data</div>
-										</el-checkbox>
+										</el-checkbox> -->
 									</el-checkbox>
 								</el-col>
 								<el-col class="e-col" :span="3">
 									<el-checkbox
-										class="checkbox-radio"
+										class="checkbox-radio checkbox-position"
 										v-model="item.classifiyCheckAll"
-										@change="classifiySelectAll($event, item)"
+										@change="handleAuthoritySelectAll($event, item, item.classification)"
 										v-cloak
 									>
 										<div>{{ $t('role.allCheck') }}</div>
-										<el-checkbox
-											class="e-checkbox"
-											:disabled="!item.checked"
-											v-model="item.checkAll"
-											@change="handleChange($event, item)"
-											v-cloak
-										>
-											<div>All data</div>
-										</el-checkbox>
 									</el-checkbox>
 								</el-col>
 							</el-row>
+							<!-- 导入导出 -->
 							<el-row class="box" v-if="item.functional">
 								<el-col class="e-col" :span="21">
 									<el-checkbox
 										v-for="second in item.functional"
 										:key="second.name"
 										v-model="second.checked"
-										@change="handleOneCheckAll($event, item, item.functional)"
+										@change="handleOneCheckAll($event, item, item.functional, second, 'functional')"
 										:class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
 										v-cloak
 									>
 										<div>{{ $t('role.roleNavName.' + second.name) }}</div>
-										<el-checkbox
-											class="e-checkbox"
-											v-show="second.allName"
-											:disabled="!item.checked"
-											v-model="second.checkAllData"
-											@change="handleChange($event, item, second)"
-											v-cloak
-										>
-											<div>All data</div>
-										</el-checkbox>
 									</el-checkbox>
 								</el-col>
 								<el-col class="e-col" :span="3">
 									<el-checkbox
-										class="checkbox-radio"
-										v-model="item.checkAll"
-										@change="handleCheckChange($event, item)"
+										class="checkbox-radio checkbox-position"
+										v-model="item.functionCheckAll"
+										@change="handleAuthoritySelectAll($event, item, item.functional)"
 										v-cloak
 									>
 										<div>{{ $t('role.allCheck') }}</div>
-										<el-checkbox
-											class="e-checkbox"
-											:disabled="!item.checked"
-											v-model="item.checkedAllData"
-											@change="handleChange($event, item)"
-											v-cloak
-										>
-											<div>All data</div>
-										</el-checkbox>
 									</el-checkbox>
 								</el-col>
 							</el-row>
-
-							<!-- <li v-if="item.classification">
-									<el-checkbox
-										class="checkbox-radio"
-										v-for="second in item.classification"
-										:key="second.name"
-										v-model="second.checked"
-										@change="handleChange($event, item, second)"
-										v-cloak
-									>
-										<div>{{ $t('role.roleNavName.' + second.name) }}</div>
-										<el-checkbox
-											class="e-checkbox"
-											:disabled="!item.checked"
-											v-model="item.checkAllData"
-											@change="handleChange($event, item)"
-											v-cloak
-										>
-											<div>All data</div>
-										</el-checkbox>
-									</el-checkbox>
-								</li>
-								<li v-if="item.functional">
-									<el-checkbox
-										class="checkbox-radio"
-										v-for="second in item.functional"
-										:key="second.name"
-										v-model="second.checked"
-										@change="handleChange($event, item, second)"
-										v-cloak
-									>
-										<div>{{ $t('role.roleNavName.' + second.name) }}</div>
-										<el-checkbox
-											class="e-checkbox"
-											:disabled="!item.checked"
-											v-model="item.checkAllData"
-											@change="handleChange($event, item)"
-											v-cloak
-										>
-											<div>All data</div>
-										</el-checkbox>
-									</el-checkbox>
-								</li>
-							</ul> -->
 						</el-col>
-
-						<!-- <div v-if="item.children && item.children.length && item.children[0].isNav">
-							<el-row class="e-row" v-for="second in item.children" :key="second.name">
-								<el-col :span="3">
-									<span class="nav">{{ $t('role.roleNavName.' + second.name) }}</span>
-								</el-col>
-								<el-col :span="19" class="e-col borderLine">
-									<el-checkbox-group
-										v-model="second.checkedCities"
-										@change="handleCheckedCitiesChange(item, second)"
-										v-cloak
-									>
-										<el-checkbox
-											v-for="p in second.children"
-											:label="p.name"
-											:key="p.name"
-											:disabled="!second.checkAll"
-											v-cloak
-										>
-											{{ $t('role.roleNavName.' + p.name) }}
-										</el-checkbox>
-									</el-checkbox-group>
-								</el-col>
-								<el-col class="e-col" :span="2">
-									<el-checkbox
-										v-model="item.checkAll"
-										@change="handleCheckChange($event, item)"
-										v-cloak
-									>
-										{{ $t('role.allCheck') }}
-									</el-checkbox>
-								</el-col>
-							</el-row>
-						</div> -->
 					</el-row>
 				</li>
 			</ul>
-			<div class="btn">
-				<el-button size="mini" @click="back">{{ $t('dataVerify.back') }}</el-button>
-				<el-button size="mini" type="primary" :loading="saveloading" @click="saveSubmit('ruleForm')">{{
-					$t('app.save')
-				}}</el-button>
-			</div>
 		</div>
-		<!-- <el-form-item
-				:label="$t('role.roleName')"
-				prop="name"
-				:rules="[{ required: true, message: '角色名称不能为空', trigger: 'blur' }]"
-			>
-				<el-input v-model="form.name"></el-input>
-			</el-form-item>
-
-			<el-form-item :label="$t('role.roleDesc')">
-				<el-input v-model="form.description"></el-input>
-			</el-form-item>
-			<el-form-item :label="$t('role.defaultRole')">
-				<el-switch v-model="form.register_user_default"></el-switch>
-			</el-form-item> -->
-		<!-- <el-form-item class="btn"> -->
-
-		<!-- </el-form-item> -->
-		<!-- </el-form> -->
+		<div class="btn">
+			<el-button size="mini" @click="back">{{ $t('dataVerify.back') }}</el-button>
+			<el-button size="mini" type="primary" :loading="saveloading" @click="saveSubmit('ruleForm')">{{
+				$t('app.save')
+			}}</el-button>
+		</div>
 	</div>
 </template>
 
@@ -532,26 +394,6 @@ let moduleMapping = [
 		children: [{ name: 'system_settings_modification' }, { name: 'notice_settings' }]
 	}
 ];
-
-// let pageSort = [
-// 	{ name: ['Dashboard'] },
-// 	{ name: ['datasource'] },
-// 	{ name: ['Data_SYNC', 'Data_verify'] },
-// 	{ name: ['data_catalog', 'data_quality', 'time_to_live', 'data_lineage', 'data_rules', 'topology', 'dictionary'] },
-// 	{ name: ['API_management', 'API_data_explorer', 'API_doc_&_test', 'API_stats', 'API_clients', 'API_server'] },
-// 	{ name: 'data_collect' },
-// 	{
-// 		name: [
-// 			'schedule_jobs',
-// 			'Cluster_management',
-// 			'agents',
-// 			'servers_oversee',
-// 			'user_management',
-// 			'role_management',
-// 			'system_settings'
-// 		]
-// 	}
-// ];
 export default {
 	data() {
 		return {
@@ -585,7 +427,7 @@ export default {
 
 	methods: {
 		// 获取用户权限数据
-		getMappingData(mappingData) {
+		getMappingData(mappingData, pageData) {
 			this.loading = true;
 			roleMappingModel
 				.get({ 'filter[where][roleId]': this.$route.query.id })
@@ -604,19 +446,42 @@ export default {
 							}
 						});
 						this.rolemappings = res.data;
+						if (pageData.length) {
+							pageData.forEach(item => {
+								if (this.selectRole && this.selectRole.length) {
+									if (item.children && item.children.length) {
+										item.children.filter(childItem => {
+											this.$set(childItem, 'checked', this.selectRole.includes(childItem.name));
+										});
+									}
+								}
+							});
+						}
 						if (mappingData.length)
 							mappingData.filter(item => {
 								if (this.selectRole && this.selectRole.length) {
-									this.$set(item, 'checkAll', this.selectRole.includes(item.name));
 									if (item.children && item.children.length) {
 										item.children.filter(childItem => {
-											this.$set(childItem, 'checkAll', this.selectRole.includes(childItem.name));
-											if (childItem.children && childItem.children.length)
-												childItem.children.filter(check => {
-													if (this.selectRole.includes(check.name))
-														childItem.checkedCities.push(check.name);
-												});
+											this.$set(childItem, 'checked', this.selectRole.includes(childItem.name));
 										});
+										if (item.classification) {
+											item.classification.filter(classify => {
+												this.$set(classify, 'checked', this.selectRole.includes(classify.name));
+											});
+										}
+										if (item.functional) {
+											item.functional.filter(fun => {
+												this.$set(fun, 'checked', this.selectRole.includes(fun.name));
+											});
+										}
+										// 				item.children.filter(childItem => {
+										// 					this.$set(childItem, 'checkAll', this.selectRole.includes(childItem.name));
+										// 					if (childItem.children && childItem.children.length)
+										// 						childItem.children.filter(check => {
+										// 							if (this.selectRole.includes(check.name))
+										// 								childItem.checkedCities.push(check.name);
+										// 						});
+										// 				});
 									}
 								}
 							});
@@ -637,10 +502,10 @@ export default {
 					if (res) {
 						if (res.data && res.data.length) {
 							self.permissionList = res.data;
-							var obj = {};
-							res.data.map(item => {
-								obj[item.name] = item;
-							});
+							// var obj = {};
+							// res.data.map(item => {
+							// 	obj[item.name] = item;
+							// });
 							// var newArr = [];
 							// for (var i = 0; i < res.data.length; i++) {
 							// 	if (!res.data[i].isHidden) {
@@ -701,7 +566,7 @@ export default {
 							this.dataList = pageMenu(pageSort);
 							this.moduleList = moduleFun(moduleMapping);
 							// 页面排序  ---- 结束
-							this.getMappingData(this.dataList);
+							this.getMappingData(this.moduleList, this.dataList);
 						}
 					}
 				})
@@ -744,17 +609,34 @@ export default {
 		},
 
 		// 权限单个选择
-		handleOneCheckAll(event, item, children) {
+		handleOneCheckAll(event, item, children, second, type) {
 			if (typeof item.checked === 'undefined') {
 				this.$set(item, 'checked', true);
 			}
+
+			if (!event) {
+				second.checkAllData = false;
+				item.checkedAllData = false;
+			}
+
 			let checkedCount = children.filter(el => {
 				return el.checked;
 			});
-			item.checkAll = checkedCount.length === children.length;
+
+			switch (type) {
+				case 'children':
+					item.checkAll = checkedCount.length === children.length;
+					break;
+				case 'classify':
+					item.classifiyCheckAll = checkedCount.length === children.length;
+					break;
+				default:
+					item.functionCheckAll = checkedCount.length === children.length;
+					break;
+			}
 		},
 		// 权限全选
-		handleAuthoritySelectAll(event, item) {
+		handleAuthoritySelectAll(event, item, children) {
 			if (typeof item.checkAll === 'undefined') {
 				this.$set(item, 'checkAll', false);
 			} else {
@@ -763,113 +645,57 @@ export default {
 			if (typeof item.checked === 'undefined') {
 				this.$set(item, 'checked', true);
 			}
-			if (item.children && item.children.length) {
-				for (let i = 0; i < item.children.length; i++) {
-					if (item.checkAll) {
-						this.$set(item.children[i], 'checked', true);
+			if (children && children.length) {
+				for (let i = 0; i < children.length; i++) {
+					if (event) {
+						this.$set(children[i], 'checked', true);
 					} else {
-						this.$set(item.children[i], 'checked', false);
+						this.$set(children[i], 'checked', false);
+						this.$set(children[i], 'checkAllData', false);
+						this.$set(item, 'checkedAllData', false);
 					}
 				}
 			}
 		},
-		// 分类全选
-		classifiySelectAll(event, item) {
+
+		// 权限全部数据单选
+		handleOneAllData(event, item, children, second) {
+			if (typeof second.checkAllData === 'undefined') {
+				this.$set(second, 'checkAllData', true);
+			}
 			if (typeof item.checkAll === 'undefined') {
 				this.$set(item, 'checkAll', false);
+			} else {
+				item.checked = event;
 			}
-
-			let checkedCount = item.classification.filter(el => {
-				return el.checkAll;
+			let checkedCount = children.filter(el => {
+				return el.checkAllData;
 			});
-			item.checked = checkedCount.length === item.classification.length;
+			let allDataCount = children.filter(el => {
+				return el.allName;
+			});
+			item.checkedAllData = checkedCount.length === allDataCount.length;
 		},
-		// 二级菜单选择(有三级菜单)
-		handleCheckAllChange(event, item, second) {
-			let arr = [];
-			if (second.children && second.children.length) {
-				for (let a = 0; a < second.children.length; a++) {
-					arr.push(second.children[a].name);
+
+		// 权限全部数据全选
+		handleCheckedAllData(event, item, children) {
+			if (typeof item.checkedAllData === 'undefined') {
+				this.$set(item, 'checkedAllData', false);
+			} else {
+				item.checkAllData = event;
+			}
+			// if (typeof item.checkAllData === 'undefined') {
+			// 	this.$set(item, 'checkAllData', true);
+			// }
+			if (children && children.length) {
+				for (let i = 0; i < children.length; i++) {
+					if (event && children[i].checked) {
+						this.$set(children[i], 'checkAllData', true);
+					} else {
+						this.$set(children[i], 'checkAllData', false);
+					}
 				}
 			}
-
-			if (typeof second.checkedCities === 'undefined') {
-				this.$set(second, 'checkedCities', arr);
-			}
-			second.checkedCities = event ? arr : [];
-			if (typeof second.checkAll === 'undefined') {
-				this.$set(second, 'checkAll', true);
-			}
-			// if (typeof second.isIndeterminate === 'undefined') {
-			// 	this.$set(second, 'isIndeterminate', true);
-			// }
-
-			// let checkedCount = item.children.filter(el => {
-			// 	return el.checkAll;
-			// });
-			// item.isIndeterminate = checkedCount.length > 0 && checkedCount.length < item.children.length;
-			// item.checkAll = checkedCount.length === item.children.length;
-
-			// for (let a = 0; a < item.children.length; a++) {
-			// 	if (!item.children[a].checkAll) {
-			// 		item.isIndeterminate = true;
-			// 		// for (let a = 0; a < item.children.length; a++) {
-			// 		// 	if (item.children[a].checkAll) {
-			// 		// 		break;
-			// 		// 	} else {
-			// 		// 		item.isIndeterminate = false;
-			// 		// 		item.checkAll = false;
-			// 		// 	}
-			// 		// }
-			// 		break;
-			// 	} else {
-			// 		item.isIndeterminate = false;
-			// 		item.checkAll = false;
-			// 	}
-			// }
-		},
-
-		// 二级单选
-		handleChange(even, item, second) {
-			if (typeof second.checkAll === 'undefined') {
-				this.$set(second, 'checkAll', false);
-			}
-		},
-
-		// 三级单选
-		handleCheckedCitiesChange(item, second) {
-			// let checkedCount = second.checkedCities.length;
-			if (typeof second.checkAll === 'undefined') {
-				this.$set(second, 'checkAll', false);
-			}
-			// if (typeof second.isIndeterminate === 'undefined') {
-			// 	this.$set(second, 'isIndeterminate', true);
-			// }
-			if (typeof item.isIndeterminate === 'undefined') {
-				this.$set(item, 'isIndeterminate', true);
-			}
-			// second.isIndeterminate = checkedCount > 0 && checkedCount < second.children.length;
-			// second.checkAll = checkedCount === second.children.length;
-			// if (checkedCount === 0) {
-			// 	second.isIndeterminate = true;
-			// }
-			// for (let a = 0; a < second.children.length; a++) {
-			// 	if (!second.children[a].checkAll) {
-			// 		second.isIndeterminate = true;
-			// 		for (let b = 0; b < item.children.length; b++) {
-			// 			if (item.children[b].checkedCities.length > 0) {
-			// 				break;
-			// 			} else {
-			// 				item.isIndeterminate = false;
-			// 				item.firstCheckAll = false;
-			// 			}
-			// 		}
-			// 		break;
-			// 	} else {
-			// 		item.isIndeterminate = false;
-			// 		item.firstCheckAll = true;
-			// 	}
-			// }
 		},
 
 		// 保存
@@ -891,23 +717,53 @@ export default {
 			// }
 
 			// 获取选中数据
-			let arr = [],
-				sendChild = [],
-				childrenArr = [];
+			let pageArr = [],
+				childreArr = [],
+				classifyArr = [],
+				functionalArr = [];
 
-			for (let i = 0; i < self.dataList.length; i++) {
-				if (self.dataList[i].checkAll) {
-					arr.push(self.dataList[i].name);
-					if (self.dataList[i].children && self.dataList[i].children.length)
-						for (let k = 0; k < self.dataList[i].children.length; k++) {
-							if (self.dataList[i].children[k].checkAll) {
-								sendChild.push(self.dataList[i].children[k].name);
-								childrenArr = childrenArr.concat(self.dataList[i].children[k].checkedCities);
-							}
+			// for (let i = 0; i < self.dataList.length; i++) {
+			// 	if (self.dataList[i].checkAll) {
+			// 		arr.push(self.dataList[i].name);
+			// 		if (self.dataList[i].children && self.dataList[i].children.length)
+			// 			for (let k = 0; k < self.dataList[i].children.length; k++) {
+			// 				if (self.dataList[i].children[k].checkAll) {
+			// 					sendChild.push(self.dataList[i].children[k].name);
+			// 					childrenArr = childrenArr.concat(self.dataList[i].children[k].checkedCities);
+			// 				}
+			// 			}
+			// 	}
+			// }
+			this.dataList.forEach(item => {
+				item.children.forEach(child => {
+					if (child.checked) {
+						pageArr.push(child.name);
+					}
+				});
+			});
+			this.moduleList.forEach(item => {
+				item.children.forEach(child => {
+					if (child.checked && child.checkAllData) {
+						childreArr.push(child.allName);
+					} else if (child.checked) {
+						childreArr.push(child.name);
+					}
+				});
+				if (item.classification && item.classification.length)
+					item.classification.forEach(classify => {
+						if (classify.checked) {
+							classifyArr.push(classify.name);
 						}
-				}
-			}
-			let saveRoleArr = [...arr, ...sendChild, ...childrenArr];
+					});
+				if (item.functional && item.functional.length)
+					item.functional.forEach(fun => {
+						if (fun.checked) {
+							functionalArr.push(fun.name);
+						}
+					});
+			});
+
+			let saveRoleArr = [...pageArr, ...childreArr, ...classifyArr, ...functionalArr];
 
 			self.$api('users').deletePermissionRoleMapping(roleId);
 			let newRoleMappings = [];
@@ -1006,8 +862,9 @@ export default {
 	.role-tableBox {
 		// display: flex;
 		// flex-direction: column;
-		height: calc(100% - 41px);
+		height: calc(100% - 120px);
 		padding: 10px 20px;
+		box-sizing: border-box;
 		overflow: auto;
 		.headTitle {
 			padding-bottom: 8px;
@@ -1071,90 +928,13 @@ export default {
 						.e-col {
 							padding-top: 8px;
 							border-right: 1px solid #e7e7e7;
+							box-sizing: border-box;
 							&:last-child {
 								border: 0;
 							}
 						}
 					}
 				}
-			}
-
-			// .vertical-line {
-			// 	position: absolute;
-			// 	left: 20%;
-			// 	top: 0;
-			// 	width: 1px;
-			// 	height: 100%;
-			// 	background: #ddd;
-			// }
-
-			// .center-line {
-			// 	left: 40%;
-			// }
-
-			// .left {
-			// 	float: left;
-			// 	width: 20%;
-			// 	padding-left: 10px;
-			// 	line-height: 40px;
-			// 	user-select: none;
-			// 	cursor: pointer;
-			// 	box-sizing: border-box;
-			// // }
-
-			// .center {
-			// 	float: left;
-			// 	width: 80%;
-			// 	padding-left: 10px;
-			// 	line-height: 40px;
-			// 	user-select: none;
-			// 	cursor: pointer;
-			// 	text-align: left;
-			// 	box-sizing: border-box;
-			// 	border-left: 1px solid #e7e7e7;
-			// }
-
-			// .one {
-			// 	padding-left: 20px;
-			// }
-
-			// .right {
-			// 	width: 80%;
-			// 	float: right;
-			// 	line-height: 40px;
-			// 	// padding-left: 10px;
-			// 	box-sizing: border-box;
-			// 	border-left: 1px solid #e7e7e7;
-			// 	.rightRow {
-			// 		line-height: 39px;
-			// 		border-bottom: 1px solid #e7e7e7;
-			// 	}
-			// 	.check {
-			// 		padding-left: 10px;
-			// 		border-left: 1px solid #e7e7e7;
-			// 	}
-			// 	.left {
-			// 		width: 20%;
-			// 		border-right: 0;
-			// 	}
-			// 	li:last-child {
-			// 		border-bottom: 0;
-			// 	}
-			// }
-
-			.item-icon {
-				margin-left: -5px;
-				padding: 5px;
-			}
-
-			.h40 {
-				height: 39px;
-				line-height: 39px;
-			}
-			.authority {
-				float: right;
-				width: 60%;
-				border-left: 1px solid #e7e7e7;
 			}
 			.borderRight {
 				border-right: 1px solid #e7e7e7;
@@ -1164,15 +944,12 @@ export default {
 				border-right: 1px solid #e7e7e7;
 			}
 		}
-
-		.authority-table {
-			margin-top: 20px;
-		}
 	}
 	.btn {
 		width: 100%;
-		padding-top: 20px;
+		padding-top: 18px;
 		text-align: center;
+		border-top: 1px solid #e7e7e7;
 	}
 }
 
@@ -1185,7 +962,7 @@ export default {
 	.role-table {
 		.e-row {
 			.el-checkbox {
-				min-width: 130px;
+				min-width: 120px;
 				margin: 0 10px;
 			}
 			.checkbox-position {
@@ -1197,6 +974,7 @@ export default {
 				}
 			}
 			.checkbox-radio {
+				min-width: 150px;
 				.el-checkbox__input {
 					padding-top: 3px;
 					vertical-align: top;
@@ -1205,6 +983,7 @@ export default {
 				.e-checkbox {
 					// display: block !important;
 					padding: 5px 0;
+					margin: 0;
 					font-size: 12px;
 					color: #666;
 				}
