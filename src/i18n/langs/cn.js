@@ -1419,7 +1419,7 @@ const cn = {
 			title: '连接测试',
 			success: '测试通过',
 			fail: '测试未通过',
-			testing: '测试中...',
+			testing: '待测试...',
 			items: '检查事项',
 			result: '检查结果',
 			information: '说明',
@@ -1466,11 +1466,43 @@ const cn = {
 			},
 			tableFilterTips: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
 			timeZoneTips: '影响类型: DATE',
-
 			options: {
 				sourceAndTarget: '源头和目标',
 				source: '源头',
-				target: '目标'
+				target: '目标',
+				sourceAndTargetTips: '此数据连接在Tapdata 中能同时作为源和目标使用',
+				sourceTips: '此数据连接在Tapdata 中只能作为源使用，不能作用为目标',
+				targetTips: '此数据连接在Tapdata 中只能作为目标使用，不能作用为源',
+				connectionMode: '连接方式',
+				URIMode: 'URI模式',
+				URIModeTips: '以URI方式配置MongoDB数据库，支持批量输入',
+				standardMode: '标准模式',
+				standardModeTips:
+					'Tapdata 将连接奥网络中的单独服务器，该服务器提供到数据库的TSL/SSL通道。如果您的数据库位于不可访问的子网中，则可尝试使用此方法',
+				sslTSL: 'TSL/SSL连接',
+				sslTSLTip:
+					'Tapdata 将连接奥网络中的单独服务器，该服务器提供到数据库的TSL/SSL通道。如果您的数据库位于不可访问的子网中，则可尝试使用此方法',
+				sslTop: '直接连接',
+				sslTopTips: 'Tapdata 将直接连接到数据库，您可以要创建一个安全规则以允许系统访问，这是简单直接的方法'
+			},
+			response_body: {
+				CHECK_CONNECT: '检查服务连接是否可用',
+				CHECK_AUTH: '检查用户名密码是否正确',
+				CHECK_VERSION: '检查数据源版本信息是否可用',
+				LOAD_SCHEMA: '加载模型',
+				CHECK_CDC_PERMISSION: '检查cdc同步所需的权限是否授权',
+				CHECK_ARCHIVE_LOG: '检查archive log是否开启',
+				CHECK_SUPPLEMENTAL_LOG: '检查supplemental log模式是否正确',
+				CHECK_DDL_PERMISSION: '检查执行ddl语句所需的权限是否授权',
+				CHECK_PERMISSION: '检查同步所需权限是否授权',
+				CHECK_BIN_LOG: '检查binlog是否开启，并且是ROW级别',
+				CHECK_SCRIPT: '检查脚本是否可用',
+				CHECK_PRIMARY_KEY: '检查主键是否可用',
+				CHECK_CONFIG: '检查配置是否正确',
+				CHECK_READ_PERMISSION: '检查可读权限是否授权',
+				CHECK_ACCESS_TOKEN: '检查access token是否可用',
+				CHECK_API_AUTH: '检查api是否有访问权限',
+				CHECK_LOCAL_PORT: '检查本地端口是否可用'
 			}
 		},
 		error: {

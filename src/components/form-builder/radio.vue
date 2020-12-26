@@ -47,6 +47,7 @@ export default {
 						},
 						props: {
 							label: opt.value,
+							disabled: opt.disabled,
 							border: config.border
 						}
 					},

@@ -15,9 +15,21 @@ export default function(vm) {
 				field: 'connection_type',
 				label: vm.$t('dataForm.form.connectionType'),
 				options: [
-					{ label: vm.$t('dataForm.form.options.sourceAndTarget'), value: 'source_and_target' },
-					{ label: vm.$t('dataForm.form.options.source'), value: 'source' },
-					{ label: vm.$t('dataForm.form.options.target'), value: 'target' }
+					{
+						label: vm.$t('dataForm.form.options.sourceAndTarget'),
+						tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+						value: 'source_and_target'
+					},
+					{
+						label: vm.$t('dataForm.form.options.source'),
+						tip: vm.$t('dataForm.form.options.sourceTips'),
+						value: 'source'
+					},
+					{
+						label: vm.$t('dataForm.form.options.target'),
+						tip: vm.$t('dataForm.form.options.targetTips'),
+						value: 'target'
+					}
 				],
 				required: true
 			},
@@ -104,10 +116,15 @@ export default function(vm) {
 			{
 				type: 'input',
 				field: 'table_filter',
+				domType: 'textarea',
 				label: vm.$t('dataForm.form.tableFilter'),
-				tips: vm.$t('dataForm.form.tableFilterTips'),
+				//tips: vm.$t('dataForm.form.tableFilterTips'),
 				maxlength: 500,
 				showWordLimit: true
+			},
+			{
+				type: 'slot',
+				slot: 'tableFilter'
 			},
 			{
 				type: 'input',
@@ -137,7 +154,7 @@ export default function(vm) {
 				type: 'select',
 				field: 'database_datetype_without_timezone',
 				label: vm.$t('dataForm.form.timeZone'),
-				tips: vm.$t('dataForm.form.timeZoneTips'),
+				//tips: vm.$t('dataForm.form.timeZoneTips'),
 				options: [],
 				show: true,
 				dependOn: [
@@ -153,6 +170,10 @@ export default function(vm) {
 						}
 					}
 				]
+			},
+			{
+				type: 'slot',
+				slot: 'timezone'
 			}
 		]
 	};

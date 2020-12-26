@@ -19,7 +19,11 @@
 			class="test-block"
 			v-show="testData.testLogs && testData.testLogs.length > 0"
 		>
-			<el-table-column prop="show_msg" :label="$t('dataForm.test.items')" width="250"> </el-table-column>
+			<el-table-column prop="show_msg" :label="$t('dataForm.test.items')" width="250">
+				<template slot-scope="scope">
+					<span>{{ $t(`dataForm.form.response_body.${scope.row.show_msg}`) }}</span>
+				</template>
+			</el-table-column>
 			<el-table-column prop="status" :label="$t('dataForm.test.result')" width="100">
 				<template slot-scope="scope">
 					<span :style="`color: ${colorMap[scope.row.status]};`">{{ statusMap[scope.row.status] }}</span>
@@ -91,6 +95,7 @@ export default {
 		},
 		//建立长连接 测试使用
 		handleWS() {
+			//默认检查项初始化
 			this.wsError = '';
 			let msg = {
 				type: 'testConnection',
@@ -103,7 +108,6 @@ export default {
 				if (result.response_body) {
 					let validate_details = result.response_body.validate_details || [];
 					this.testData.testLogs = validate_details;
-					//this.showItems(validate_details);
 				}
 			});
 			ws.on('unknown_event_result', data => {
@@ -123,18 +127,6 @@ export default {
 			clearInterval(this.timer);
 			this.timer = null;
 		}
-		// showItems(data) {
-		// 	let interval = null;
-		// 	let self = this;
-		// 	this.testData.testLogs = [];
-		// 	clearInterval(interval);
-		// 	for (let i = 0; i < data.length;i++) {
-		// 		clearInterval(interval);
-		// 		interval = setInterval(() => {
-		// 			self.testData.testLogs.push(data[i]);
-		// 		}, 300);
-		// 	}
-		// }
 	}
 };
 </script>

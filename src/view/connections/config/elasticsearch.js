@@ -14,7 +14,13 @@ export default function(vm) {
 				type: 'radio',
 				field: 'connection_type',
 				label: vm.$t('dataForm.form.connectionType'),
-				options: [{ label: vm.$t('dataForm.form.options.target'), value: 'target' }],
+				options: [
+					{
+						label: vm.$t('dataForm.form.options.target'),
+						tip: vm.$t('dataForm.form.options.targetTips'),
+						value: 'target'
+					}
+				],
 				required: true
 			},
 			{

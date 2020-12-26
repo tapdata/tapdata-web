@@ -1489,11 +1489,43 @@ const en = {
 			},
 			tableFilterTips: 'Comma-delimited list of expression, use * to represent any character of any length.',
 			timeZoneTips: 'Impact Type: DATE',
-
 			options: {
 				sourceAndTarget: 'SOURCE AND TARGET',
 				source: 'SOURCE',
-				target: 'TARGET'
+				target: 'TARGET',
+				sourceAndTargetTips: '此数据连接在Tapdata 中能同时作为源和目标使用',
+				sourceTips: '此数据连接在Tapdata 中只能作为源使用，不能作用为目标',
+				targetTips: '此数据连接在Tapdata 中只能作为目标使用，不能作用为源',
+				connectionMode: '连接方式',
+				URIMode: 'URI模式',
+				URIModeTips: '以URI方式配置MongoDB數據庫，支持批量輸入',
+				standardMode: '標準模式',
+				standardModeTips:
+					'Tapdata 將連接奧網絡中的單獨服務器，該服務器提供到數據庫的TSL/SSL通道。如果您的數據庫位於不可訪問的子網中，則可嘗試使用此方法',
+				sslTSL: 'TSL/SSL連接',
+				sslTSLTip:
+					'Tapdata 將連接奧網絡中的單獨服務器，該服務器提供到數據庫的TSL/SSL通道。如果您的數據庫位於不可訪問的子網中，則可嘗試使用此方法',
+				sslTop: '直接連接',
+				sslTopTips: 'Tapdata 將直接連接到數據庫，您可以要創建一個安全規則以允許系統訪問，這是簡單直接的方法'
+			},
+			response_body: {
+				CHECK_CONNECT: 'Check the connection is available',
+				CHECK_AUTH: 'Checks if the username and password are available',
+				CHECK_VERSION: 'Checks if the version information is available',
+				LOAD_SCHEMA: 'Load schema model',
+				CHECK_CDC_PERMISSION: 'Check if cdc permissions are granted',
+				CHECK_ARCHIVE_LOG: 'Check if archive log is opened',
+				CHECK_SUPPLEMENTAL_LOG: 'Check if supplemental log mode is correct',
+				CHECK_DDL_PERMISSION: 'Check if execute ddl permissions are granted',
+				CHECK_PERMISSION: 'Check if permissions are graned',
+				CHECK_BIN_LOG: 'Check if binlog is opened, and is ROW level',
+				CHECK_SCRIPT: 'Check if script(s) is available',
+				CHECK_PRIMARY_KEY: 'Check if primary key(s) is available',
+				CHECK_CONFIG: 'Check if config is available',
+				CHECK_READ_PERMISSION: 'Check if read permission is granted',
+				CHECK_ACCESS_TOKEN: 'Check if access token is available',
+				CHECK_API_AUTH: 'Check if api auth is available',
+				CHECK_LOCAL_PORT: 'Check if local port is available'
 			}
 		},
 		error: {

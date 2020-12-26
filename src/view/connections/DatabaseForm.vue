@@ -34,6 +34,9 @@
 							v-html="$t('dataForm.form.uriTips.content')"
 						></div>
 						<div class="url-tip" slot="tableFilter">{{ $t('dataForm.form.tableFilterTips') }}</div>
+						<div class="url-tip" slot="timezone" v-if="model.connection_type !== ''">
+							{{ $t('dataForm.form.timeZoneTips') }}
+						</div>
 					</form-builder>
 					<el-button size="mini" class="test" @click="startTest()">{{
 						$t('connection.testConnection')
@@ -52,8 +55,7 @@
 		</footer>
 		<Test @dialogTestVisible="handleTestVisible" :dialogTestVisible="dialogTestVisible" :formData="model"></Test>
 		<DatabaseTypeDialog
-			:dialogVisible="dialogDatabaseTypeVisible"
-			@dialogVisible="handleDialogDatabaseTypeVisible"
+			:dialogVisible.sync="dialogDatabaseTypeVisible"
 			@databaseType="handleDatabaseType"
 		></DatabaseTypeDialog>
 		<el-dialog
@@ -257,7 +259,7 @@ export default {
 				}
 				let itemIsUrl = items.find(it => it.field === 'isUrl');
 				if (this.model.database_type === 'mongodb' && this.$route.query.id && itemIsUrl) {
-					itemIsUrl.disabled = true;
+					itemIsUrl.options[0].disabled = true;
 					this.model.isUrl = false;
 				}
 				this.config.form = config.form;
@@ -269,15 +271,8 @@ export default {
 				this.checkItems && this.checkItems();
 			}
 		},
-		handleChangeType(val) {
-			this.model.connection_type = val;
-		},
 		handleTestVisible() {
-			this.testData.dialogTestVisible = false;
-			setTimeout(() => {
-				this.testData.progress = 0;
-			}, 2000);
-			this.testData.testResult = this.status['testing'];
+			this.dialogTestVisible = false;
 		},
 		goBack() {
 			this.$router.push('/connections');
@@ -408,12 +403,8 @@ export default {
 				this.$message.error(this.$t('dataForm.form.agentMsg'));
 			}
 		},
-		//选择创建类型
-		handleDialogDatabaseTypeVisible() {
-			this.dialogDatabaseTypeVisible = false;
-		},
 		handleDatabaseType(type) {
-			this.handleDialogDatabaseTypeVisible();
+			this.dialogDatabaseTypeVisible = false;
 			if (this.whiteList.includes(type)) {
 				this.$router.push({
 					path: '/connections/create',

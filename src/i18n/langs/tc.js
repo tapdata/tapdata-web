@@ -1463,11 +1463,43 @@ const tc = {
 			},
 			tableFilterTips: '逗號分割的表達式列表，使用*代表任意長度任意字符',
 			timeZoneTips: '影響類型: DATE',
-
 			options: {
 				sourceAndTarget: '源頭和目標',
 				source: '源頭',
-				target: '目標'
+				target: '目標',
+				sourceAndTargetTips: '此數據連接在Tapdata 中能同時作為源和目標使用',
+				sourceTips: '此數據連接在Tapdata 中只能作為源使用，不能作用為目標',
+				targetTips: '此數據連接在Tapdata 中只能作為目標使用，不能作用為源',
+				connectionMode: '連接方式',
+				URIMode: 'URI模式',
+				URIModeTips: '以URI方式配置MongoDB數據庫，支持批量輸入',
+				standardMode: '標準模式',
+				standardModeTips:
+					'Tapdata 將連接奧網絡中的單獨服務器，該服務器提供到數據庫的TSL/SSL通道。如果您的數據庫位於不可訪問的子網中，則可嘗試使用此方法',
+				sslTSL: 'TSL/SSL連接',
+				sslTSLTip:
+					'Tapdata 將連接奧網絡中的單獨服務器，該服務器提供到數據庫的TSL/SSL通道。如果您的數據庫位於不可訪問的子網中，則可嘗試使用此方法',
+				sslTop: '直接連接',
+				sslTopTips: 'Tapdata 將直接連接到數據庫，您可以要創建一個安全規則以允許系統訪問，這是簡單直接的方法'
+			},
+			response_body: {
+				CHECK_CONNECT: '檢查服務連接是否可用',
+				CHECK_AUTH: '檢查用戶名密碼是否正確',
+				CHECK_VERSION: '檢查數據源版本信息是否可用',
+				LOAD_SCHEMA: '加載模型',
+				CHECK_CDC_PERMISSION: '檢查cdc同步所需的權限是否授權',
+				CHECK_ARCHIVE_LOG: '檢查archive log是否開啟',
+				CHECK_SUPPLEMENTAL_LOG: '檢查supplemental log模式是否正確',
+				CHECK_DDL_PERMISSION: '檢查執行ddl語句所需的權限是否授權',
+				CHECK_PERMISSION: '檢查同步所需權限是否授權',
+				CHECK_BIN_LOG: '檢查binlog是否開啟，並且是ROW級別',
+				CHECK_SCRIPT: '檢查腳本是否可用',
+				CHECK_PRIMARY_KEY: '檢查主鍵是否可用',
+				CHECK_CONFIG: '檢查配置是否正確',
+				CHECK_READ_PERMISSION: '檢查可讀權限是否授權',
+				CHECK_ACCESS_TOKEN: '檢查access token是否可用',
+				CHECK_API_AUTH: '檢查api是否有訪問權限',
+				CHECK_LOCAL_PORT: '檢查本地端口是否可用'
 			}
 		},
 		error: {

@@ -30,28 +30,40 @@ export default function(vm) {
 				options: [
 					{
 						label: vm.$t('dataForm.form.options.sourceAndTarget'),
-						tip:
-							'源头跟目标就是黑色导航缴费的肯定会检查费源头跟目标就是黑色导航缴费的肯定会检查费源头跟目标就是黑色导航缴费的肯定会检查费',
+						tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
 						value: 'source_and_target'
 					},
 					{
 						label: vm.$t('dataForm.form.options.source'),
-						tip: '源头跟目标就是黑色导航缴费的肯定会检查费',
+						tip: vm.$t('dataForm.form.options.sourceTips'),
 						value: 'source'
 					},
 					{
 						label: vm.$t('dataForm.form.options.target'),
-						tip: '源头跟目标就是黑色导航缴费的肯定会检查费',
+						tip: vm.$t('dataForm.form.options.targetTips'),
 						value: 'target'
 					}
 				],
 				required: true
 			},
 			{
-				type: 'switch',
+				type: 'radio',
 				field: 'isUrl',
-				label: vm.$t('dataForm.form.isUrl'),
-				disabled: false,
+				label: vm.$t('dataForm.form.options.connectionMode'),
+				options: [
+					{
+						label: vm.$t('dataForm.form.options.URIMode'),
+						tip: vm.$t('dataForm.form.options.URIModeTips'),
+						value: true,
+						disabled: false
+					},
+					{
+						label: vm.$t('dataForm.form.options.standardMode'),
+						tip: vm.$t('dataForm.form.options.standardModeTips'),
+						value: false,
+						disabled: false
+					}
+				],
 				influences: [
 					{
 						field: 'database_uri',
@@ -222,9 +234,21 @@ export default function(vm) {
 				]
 			},
 			{
-				type: 'switch',
+				type: 'radio',
 				field: 'ssl',
 				label: vm.$t('dataForm.form.ssl'),
+				options: [
+					{
+						label: vm.$t('dataForm.form.options.sslTSL'),
+						tip: vm.$t('dataForm.form.options.sslTSLTip'),
+						value: true
+					},
+					{
+						label: vm.$t('dataForm.form.options.sslTop'),
+						tip: vm.$t('dataForm.form.options.sslTopTips'),
+						value: false
+					}
+				],
 				influences: [
 					{
 						field: 'sslKeyFile',
