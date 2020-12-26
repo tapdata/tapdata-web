@@ -1220,7 +1220,8 @@ const cn = {
 			sidebar: {
 				setting: '任务设置',
 				node_setting: '节点属性',
-				logs: '日志',
+				logs: '运行日志',
+				milestone: '任务里程碑',
 				capture: '抓取数据',
 				style: '样式',
 

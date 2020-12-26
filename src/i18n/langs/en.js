@@ -1237,7 +1237,8 @@ const en = {
 			sidebar: {
 				setting: 'Data Flow Settings',
 				node_setting: 'Node Settings',
-				logs: 'Logs',
+				logs: 'Running logs',
+				milestone: 'Task milestone',
 				capture: 'Capture',
 				style: 'Style',
 
