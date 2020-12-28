@@ -75,12 +75,10 @@
 			width="30%"
 		>
 			<span>
-				<el-input v-model="model.name" maxlength="100" show-word-limit></el-input>
+				<el-input v-model="rename" maxlength="100" show-word-limit clearable></el-input>
 			</span>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="dialogEditNameVisible = false" size="mini" clearable>{{
-					$t('dataForm.cancel')
-				}}</el-button>
+				<el-button @click="handleCancelRename" size="mini">{{ $t('dataForm.cancel') }}</el-button>
 				<el-button @click="submitEdit()" size="mini" type="primary" v-loading="submitBtnLoading">{{
 					$t('message.confirm')
 				}}</el-button>
@@ -179,7 +177,8 @@ export default {
 			dialogEditNameVisible: false,
 			submitBtnLoading: false,
 			connectionTypeOption: '',
-			isUrlOption: ''
+			isUrlOption: '',
+			rename: ''
 			// repeatDialogVisible: false,
 			// connectionObj: {
 			// 	name: '',
@@ -199,7 +198,8 @@ export default {
 				label: self.$t('dataForm.form.connectionName'),
 				required: true,
 				maxlength: 100,
-				showWordLimit: true
+				showWordLimit: true,
+				show: true
 			}
 		];
 	},
@@ -218,6 +218,7 @@ export default {
 					editData = await this.$api('connections').get([this.$route.query.id]);
 				}
 				this.model = Object.assign(this.model, editData.data);
+				this.rename = this.model.name;
 			} else this.model = Object.assign(this.model, data, { name: this.model.name });
 		},
 		checkDataTypeOptions(type) {
@@ -271,6 +272,11 @@ export default {
 				if (this.model.database_type === 'mongodb' && this.$route.query.id && itemIsUrl) {
 					itemIsUrl.options[0].disabled = true;
 					this.model.isUrl = false;
+				}
+				if (this.$route.query.id) {
+					//编辑模式下 不展示
+					defaultConfig[0].show = false;
+					defaultConfig[0].required = false;
 				}
 				this.config.form = config.form;
 				this.config.items = items;
@@ -378,8 +384,19 @@ export default {
 			clearInterval(this.timer);
 			this.timer = null;
 		},
+		//取消
+		handleCancelRename() {
+			this.dialogEditNameVisible = false;
+			this.rename = this.model.name;
+		},
 		//保存名字
 		submitEdit() {
+			if (this.rename === '') {
+				this.rename = this.model.name;
+				this.$message.error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText'));
+				return;
+			}
+			this.model.name = this.rename;
 			let params = {
 				name: this.model.name,
 				id: this.model.id
