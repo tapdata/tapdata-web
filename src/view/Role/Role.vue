@@ -470,13 +470,7 @@ export default {
 												'checkAllData',
 												this.selectRole.includes(childItem.allName)
 											);
-											childItem.checkAllData
-												? this.$set(childItem, 'checked', true)
-												: this.$set(
-														childItem,
-														'checked',
-														this.selectRole.includes(childItem.name)
-												  );
+											this.$set(childItem, 'checked', this.selectRole.includes(childItem.name));
 										});
 									}
 									if (item.classification && item.classification.length) {
@@ -720,38 +714,15 @@ export default {
 		saveSubmit() {
 			let self = this;
 			self.saveloading = true;
-			// const record = {
-			// 	name: this.form.name,
-			// 	description: this.form.description,
-			// 	register_user_default: this.form.register_user_default
-			// };
 			const roleId = this.$route.query.id;
-			// const method = roleId ? 'patch' : 'post';
-
-			// if (roleId) {
-			// 	record.id = roleId;
-			// } else {
-			// 	record.user_id = this.$cookie.get('user_id');
-			// }
 
 			// 获取选中数据
 			let pageArr = [],
 				childreArr = [],
+				childreArrAll = [],
 				classifyArr = [],
 				functionalArr = [];
 
-			// for (let i = 0; i < self.dataList.length; i++) {
-			// 	if (self.dataList[i].checkAll) {
-			// 		arr.push(self.dataList[i].name);
-			// 		if (self.dataList[i].children && self.dataList[i].children.length)
-			// 			for (let k = 0; k < self.dataList[i].children.length; k++) {
-			// 				if (self.dataList[i].children[k].checkAll) {
-			// 					sendChild.push(self.dataList[i].children[k].name);
-			// 					childrenArr = childrenArr.concat(self.dataList[i].children[k].checkedCities);
-			// 				}
-			// 			}
-			// 	}
-			// }
 			this.dataList.forEach(item => {
 				item.children.forEach(child => {
 					if (child.checkAll) {
@@ -762,9 +733,10 @@ export default {
 			this.moduleList.forEach(item => {
 				if (item.children && item.children.length)
 					item.children.forEach(child => {
-						if (child.checked && child.checkAllData) {
-							childreArr.push(child.allName);
-						} else if (child.checked) {
+						if (child.checkAllData) {
+							childreArrAll.push(child.allName);
+						}
+						if (child.checked) {
 							childreArr.push(child.name);
 						}
 					});
@@ -782,7 +754,7 @@ export default {
 					});
 			});
 
-			let saveRoleArr = [...pageArr, ...childreArr, ...classifyArr, ...functionalArr];
+			let saveRoleArr = [...pageArr, ...childreArr, ...childreArrAll, ...classifyArr, ...functionalArr];
 
 			self.$api('users').deletePermissionRoleMapping(roleId);
 			let newRoleMappings = [];
@@ -800,47 +772,6 @@ export default {
 
 			this.$message.success(this.$t('message.saveOK'));
 			self.saveloading = false;
-
-			// rolesModel[method](record)
-			// 	.then(res => {
-			// 		if (res && res.data) {
-			// 			// let rolemappings = this.rolemappings.filter(rolemapping => {
-			// 			// 	if (rolemapping.principalType === 'PERMISSION') {
-			// 			// 		return true;
-			// 			// 	}
-			// 			// });
-			// 			// let rolemappingId = [];
-			// 			// rolemappings.forEach(rolemapping => {
-			// 			// 	rolemappingId.push(rolemapping.id);
-			// 			// });
-			// 			self.$api('users').deletePermissionRoleMapping(res.data.id);
-			// 			let newRoleMappings = [];
-
-			// 			saveRoleArr.forEach(selectPermission => {
-			// 				if (selectPermission)
-			// 					newRoleMappings.push({
-			// 						principalType: 'PERMISSION',
-			// 						principalId: selectPermission,
-			// 						roleId: res.data.id
-			// 					});
-			// 			});
-			// 			roleMappingModel.post(newRoleMappings);
-
-			// 			this.$message.success(this.$t('message.saveOK'));
-			// 		}
-			// 	})
-			// 	.catch(e => {
-			// 		if (e.response && e.response.msg) {
-			// 			if (e.response.msg.indexOf('already exists')) {
-			// 				this.$message.error(this.$t('role.alreadyExists'));
-			// 			} else {
-			// 				this.$message.error(`${e.response.msg}`);
-			// 			}
-			// 		}
-			// 	})
-			// 	.finally(() => {
-			// 		self.saveloading = false;
-			// 	});
 		},
 
 		// 返回
