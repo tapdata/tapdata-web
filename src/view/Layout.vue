@@ -393,14 +393,17 @@ export default {
 					let menu = Object.assign({}, item, router);
 					menu.label = this.$t('app.menu.' + (item.alias || menu.name));
 					let matched = permissions.some(p => p.code === menu.code);
-
 					if (menu.children) {
 						menu.children = formatMenu(menu.children);
 						if (menu.children.every(m => m.hidden)) {
 							menu.hidden = true;
 						}
 					} else if (!matched) {
-						menu.hidden = true;
+						if (menu.name === 'dashboard') {
+							menu.hidden = false;
+						} else {
+							menu.hidden = true;
+						}
 					}
 					return menu;
 				});

@@ -23,17 +23,19 @@
 				<li v-for="item in dataList" :key="item.id">
 					<el-row class="e-row">
 						<el-col class="e-col borderRight" :span="21">
-							<el-checkbox
-								v-for="second in item.children"
-								:key="second.name"
-								v-model="second.checkAll"
-								@change="handleCheckChange($event, item)"
-								v-cloak
-							>
-								<span>
-									{{ $t('role.page.' + second.name) }}
-								</span>
-							</el-checkbox>
+							<template v-for="second in item.children">
+								<el-checkbox
+									:key="second.name"
+									v-model="second.checkAll"
+									v-if="second.id"
+									@change="handleCheckChange($event, item)"
+									v-cloak
+								>
+									<span>
+										{{ $t('role.page.' + second.name) }}
+									</span>
+								</el-checkbox>
+							</template>
 						</el-col>
 						<el-col class="e-col" :span="3">
 							<el-checkbox v-model="item.checked" @change="handleAllCheck($event, item)" v-cloak>
@@ -193,7 +195,7 @@ import factory from '@/api/factory';
 const roleMappingModel = factory('roleMapping');
 
 let pageSort = [
-	{ children: [{ name: 'Dashboard_menu' }] },
+	// { children: [{ name: 'Dashboard_menu' }] },
 	{ children: [{ name: 'datasource_menu' }] },
 	{ name: 'data_transmission', children: [{ name: 'Data_SYNC_menu' }, { name: 'Data_verify_menu' }] },
 	{
@@ -235,7 +237,7 @@ let pageSort = [
 ];
 
 let moduleMapping = [
-	{ name: 'Dashboard', functional: [{ name: 'Dashboard' }] },
+	// { name: 'Dashboard', functional: [{ name: 'Dashboard' }] },
 	{
 		name: 'datasource',
 		children: [
@@ -260,12 +262,7 @@ let moduleMapping = [
 	},
 	{
 		name: 'SYNC_Function_management',
-		functional: [
-			{ name: 'SYNC_Function_management' },
-			{ name: 'datasource_creation' },
-			{ name: 'datasource_edition' },
-			{ name: 'datasource_delete' }
-		]
+		functional: [{ name: 'SYNC_Function_management' }]
 	},
 	{
 		name: 'Data_verify',
@@ -481,25 +478,25 @@ export default {
 														this.selectRole.includes(childItem.name)
 												  );
 										});
-										if (item.classification) {
-											item.classification.filter(classify => {
-												this.$set(classify, 'checked', this.selectRole.includes(classify.name));
-											});
-										}
-										if (item.functional) {
-											item.functional.filter(fun => {
-												this.$set(fun, 'checked', this.selectRole.includes(fun.name));
-											});
-										}
-										// 				item.children.filter(childItem => {
-										// 					this.$set(childItem, 'checkAll', this.selectRole.includes(childItem.name));
-										// 					if (childItem.children && childItem.children.length)
-										// 						childItem.children.filter(check => {
-										// 							if (this.selectRole.includes(check.name))
-										// 								childItem.checkedCities.push(check.name);
-										// 						});
-										// 				});
 									}
+									if (item.classification && item.classification.length) {
+										item.classification.filter(classify => {
+											this.$set(classify, 'checked', this.selectRole.includes(classify.name));
+										});
+									}
+									if (item.functional && item.functional.length) {
+										item.functional.filter(fun => {
+											this.$set(fun, 'checked', this.selectRole.includes(fun.name));
+										});
+									}
+									// 				item.children.filter(childItem => {
+									// 					this.$set(childItem, 'checkAll', this.selectRole.includes(childItem.name));
+									// 					if (childItem.children && childItem.children.length)
+									// 						childItem.children.filter(check => {
+									// 							if (this.selectRole.includes(check.name))
+									// 								childItem.checkedCities.push(check.name);
+									// 						});
+									// 				});
 								}
 							});
 					}
@@ -559,6 +556,9 @@ export default {
 								return items.map(item => {
 									let page = pageMap[item.name];
 									let menu = Object.assign({}, item, page);
+									if (menu.children) {
+										menu.children = pageMenu(menu.children);
+									}
 									return menu;
 								});
 							};
@@ -568,13 +568,13 @@ export default {
 									let page = pageMap[item.name];
 									let menu = Object.assign({}, item, page);
 									if (menu.children) {
-										menu.children = pageMenu(menu.children);
+										menu.children = moduleFun(menu.children);
 									}
 									if (menu.classification) {
-										menu.classification = pageMenu(menu.classification);
+										menu.classification = moduleFun(menu.classification);
 									}
 									if (menu.functional) {
-										menu.functional = pageMenu(menu.functional);
+										menu.functional = moduleFun(menu.functional);
 									}
 									return menu;
 								});
@@ -582,6 +582,7 @@ export default {
 
 							this.dataList = pageMenu(pageSort);
 							this.moduleList = moduleFun(moduleMapping);
+
 							// 页面排序  ---- 结束
 							this.getMappingData(this.moduleList, this.dataList);
 						}

@@ -1839,7 +1839,7 @@ const cn = {
 		functionDataPermission: '功能与数据权限',
 		module: '模块',
 		choosePermissionTip:
-			'请选择此角色可用的功能和数据权限 （ALL data: 可对全部用户数据进行相应操作        This role: 能对此角色用户的数据进行相应操作    Only self: 只能对自己的数据进行相应操作）',
+			'请选择此角色可用的功能和数据权限 （勾选全部角色数据表示可对全部角色的数据进行浏览或操作，不勾选则表示只能对自己的数据进行浏览或操作）',
 		funcPermission: '功能权限',
 		currentRole: '当前角色',
 		pageVisible: '页面权限',
@@ -1913,7 +1913,7 @@ const cn = {
 			system_notice: '消息通知',
 			notice_settings: '消息通知设置',
 			account_operation_history: '操作历史',
-			datasource: '数据源',
+			datasource: '浏览数据源',
 			datasource_category_management: '数据源分类管理',
 			datasource_category_application: '数据源分类应用',
 			datasource_creation: '数据源创建',
