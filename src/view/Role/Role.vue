@@ -65,7 +65,7 @@
 				</li>
 				<li class="module-style">
 					<el-row class="e-row" v-for="item in moduleList" :key="item.id">
-						<el-col :span="3">
+						<el-col :span="3" style="line-height: 40px">
 							<span class="nav">{{ $t('role.moduleMeun.' + item.name) }}</span>
 						</el-col>
 						<el-col :span="21" class="e-col borderLine">
@@ -89,32 +89,31 @@
 											@change="handleOneAllData($event, item, item.children, second, 'children')"
 											v-cloak
 										>
-											<div>All data</div>
+											<div>{{ $t('role.allData') }}</div>
 										</el-checkbox>
 									</el-checkbox>
 								</el-col>
-								<el-col class="e-col" :span="3" v-if="item.children">
+								<el-col :span="3" v-if="item.children" style="padding-top: 8px">
 									<el-checkbox
-										class="checkbox-radio"
 										v-model="item.checkAll"
 										@change="handleAuthoritySelectAll($event, item, item.children)"
 										v-cloak
 									>
 										<div>{{ $t('role.allCheck') }}</div>
-										<div class="line"></div>
-										<el-checkbox
-											class="e-checkbox"
-											v-model="item.checkedAllData"
-											@change="handleCheckedAllData($event, item, item.children)"
-											v-cloak
-										>
-											<div>All data</div>
-										</el-checkbox>
+									</el-checkbox>
+									<el-checkbox
+										class="e-checkbox"
+										v-model="item.checkedAllData"
+										@change="handleCheckedAllData($event, item, item.children)"
+										v-cloak
+									>
+										<div>{{ $t('role.allData') }}</div>
 									</el-checkbox>
 								</el-col>
 							</el-row>
+							<div class="line" v-if="item.children && item.classification"></div>
 							<!-- 分类权限 -->
-							<el-row class="box" v-if="item.classification">
+							<el-row class="box heightStyle" v-if="item.classification">
 								<el-col class="e-col" :span="21">
 									<el-checkbox
 										v-for="second in item.classification"
@@ -139,7 +138,7 @@
 										</el-checkbox> -->
 									</el-checkbox>
 								</el-col>
-								<el-col class="e-col" :span="3">
+								<el-col class="e-col allSelectBox" :span="3">
 									<el-checkbox
 										class="checkbox-radio checkbox-position"
 										v-model="item.classifiyCheckAll"
@@ -150,8 +149,9 @@
 									</el-checkbox>
 								</el-col>
 							</el-row>
+							<div class="line" v-if="item.classification && item.functional"></div>
 							<!-- 导入导出 -->
-							<el-row class="box" v-if="item.functional">
+							<el-row class="box heightStyle" v-if="item.functional">
 								<el-col class="e-col" :span="21">
 									<el-checkbox
 										v-for="second in item.functional"
@@ -334,7 +334,7 @@ let moduleMapping = [
 			{ name: 'API_data_explorer_export' },
 			{ name: 'API_data_download' }
 		],
-		functional: [{ name: 'API_data_explorer_tagging' }, { name: 'API_data_time_zone_editing' }]
+		classification: [{ name: 'API_data_explorer_tagging' }, { name: 'API_data_time_zone_editing' }]
 	},
 	{
 		name: 'API_doc_test',
@@ -346,11 +346,11 @@ let moduleMapping = [
 	},
 	{
 		name: 'API_clients',
-		functional: [{ name: 'API_clients_amangement' }]
+		functional: [{ name: 'API_clients' }, { name: 'API_clients_amangement' }]
 	},
 	{
 		name: 'API_server',
-		functional: [{ name: 'API_server_management' }]
+		functional: [{ name: 'API_server' }, { name: 'API_server_management' }]
 	},
 	{
 		name: 'data_collect',
@@ -836,6 +836,7 @@ export default {
 				color: #666;
 			}
 		}
+
 		.role-table {
 			position: relative;
 			margin-bottom: 20px;
@@ -851,9 +852,12 @@ export default {
 
 			li {
 				min-height: 39px;
-				line-height: 40px;
+				// line-height: 40px;
 				overflow: hidden;
 				border-bottom: 1px solid #e7e7e7;
+				&:last-child {
+					border-bottom: 0;
+				}
 			}
 			.role-head {
 				min-height: 29px;
@@ -876,14 +880,12 @@ export default {
 						padding-left: 12px;
 						font-size: 14px;
 					}
+
 					.box {
-						border-bottom: 1px solid #e7e7e7;
-						&:last-child {
-							border: 0;
-						}
 						.e-col {
 							padding-top: 8px;
 							border-right: 1px solid #e7e7e7;
+							border-bottom: 0;
 							box-sizing: border-box;
 							&:last-child {
 								border: 0;
@@ -891,13 +893,37 @@ export default {
 						}
 					}
 				}
+				.heightStyle {
+					line-height: 40px;
+					.e-col {
+						padding-top: 0 !important;
+						line-height: 34px;
+						height: 40px;
+
+						.checkbox-radio {
+							vertical-align: middle;
+						}
+					}
+				}
+			}
+			.line {
+				width: 100%;
+				height: 1px;
+				background: #e7e7e7;
 			}
 			.borderRight {
 				border-right: 1px solid #e7e7e7;
 			}
 			.borderLine {
 				border-left: 1px solid #e7e7e7;
-				border-right: 1px solid #e7e7e7;
+				border-bottom: 0;
+				// border-right: 1px solid #e7e7e7;
+			}
+		}
+
+		.page-table {
+			li {
+				line-height: 40px;
 			}
 		}
 	}
@@ -917,9 +943,15 @@ export default {
 .role {
 	.role-table {
 		.e-row {
+			.allSelectBox {
+				line-height: 20px;
+			}
 			.el-checkbox {
+				// display: inline;
 				min-width: 120px;
 				margin: 0 10px;
+				line-height: 20px;
+				box-sizing: border-box;
 			}
 			.checkbox-position {
 				line-height: 1px;

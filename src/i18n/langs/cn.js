@@ -1836,6 +1836,7 @@ const cn = {
 		editFail: '用户名修改失败'
 	},
 	role: {
+		allData: '全部角色数据',
 		functionDataPermission: '功能与数据权限',
 		module: '模块',
 		choosePermissionTip:
@@ -1969,7 +1970,7 @@ const cn = {
 			API_doc_test: '浏览API文档测试',
 			API_stats: '浏览API统计分析',
 			API_clients: '浏览API客户端',
-			API_clients_amangement: '浏览API客户端管理',
+			API_clients_amangement: 'API客户端管理',
 			API_server: '浏览API服务器',
 			API_server_management: 'API服务器管理',
 			data_collect: '浏览数据采集旧版',
