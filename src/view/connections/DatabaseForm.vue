@@ -564,7 +564,7 @@ export default {
 	.footer {
 		height: 62px;
 		background-color: #fff;
-		padding-left: 25%;
+		padding-left: 22%;
 		border-left: none;
 		line-height: 62px;
 		.footer-btn {
