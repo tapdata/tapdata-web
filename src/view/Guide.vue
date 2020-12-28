@@ -131,7 +131,9 @@
 						</el-button>
 					</el-footer>
 				</el-container>
-				<el-aside class="right-aside" width="600px">111</el-aside>
+				<el-aside class="right-aside" width="600px">
+					<div class="markdown-body" v-html="mdHtml"></div>
+				</el-aside>
 			</el-container>
 		</el-container>
 		<DatabaseTypeDialog
@@ -220,12 +222,14 @@ export default {
 					}
 				]
 			},
-			dialogTestVisible: false
+			dialogTestVisible: false,
+			mdHtml: ''
 		};
 	},
 	created() {
 		this.getDataApi(this.getSteps);
 		this.getConnections();
+		this.mdHtml = require('../../static/md/agen_download.md');
 	},
 	methods: {
 		getImgByType,

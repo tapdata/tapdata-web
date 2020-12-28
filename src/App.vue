@@ -28,17 +28,21 @@ export default {
 /*滚动条滑块*/
 #app::-webkit-scrollbar-thumb {
 	border-radius: 10px;
-	-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+	box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
 	background: #535353;
 }
 
 /*滚动条轨道*/
 #app::-webkit-scrollbar-track {
-	-webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0);
+	box-shadow: inset 0 0 1px rgba(0, 0, 0, 0);
 	border-radius: 10px;
 	background: #ccc;
 }
 .markdown-body {
+	padding: 20px;
+	min-width: 200px;
+	max-width: 900px;
+	font-size: 12px;
 	ul,
 	ol,
 	li {
@@ -46,6 +50,12 @@ export default {
 	}
 	blockquote {
 		border-color: #48b6e2;
+	}
+	table {
+		display: table;
+		width: 100%;
+		max-width: 100%;
+		margin-bottom: 20px;
 	}
 }
 </style>

@@ -39,6 +39,7 @@
     "leader-line": "^1.0.5",
     "lodash": "^4.17.15",
     "markdown-loader": "^6.0.0",
+    "mavon-editor": "^2.9.0",
     "moment": "^2.24.0",
     "monaco-editor": "^0.20.0",
     "monaco-editor-webpack-plugin": "^1.9.0",
