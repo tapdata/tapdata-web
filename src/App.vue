@@ -38,4 +38,14 @@ export default {
 	border-radius: 10px;
 	background: #ccc;
 }
+.markdown-body {
+	ul,
+	ol,
+	li {
+		list-style: unset;
+	}
+	blockquote {
+		border-color: #48b6e2;
+	}
+}
 </style>
