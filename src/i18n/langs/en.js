@@ -1752,6 +1752,9 @@ const en = {
 		verifyTime: 'Verify Time',
 		operation: 'Operation',
 		rowVerify: 'Row verify',
+		advanceVerify: 'Advanced verification',
+		JSVerifyLogic: 'JS verify logic',
+		addJS: 'Add JS',
 		contentVerify: 'Content verify',
 		singleVerify: 'Single verify',
 		repeatingVerify: 'Repeating verify',
@@ -1774,6 +1777,8 @@ const en = {
 		targetFieldName: 'Target Field Name',
 		Value: 'value',
 		inconsistentType: 'Inconsistent Type',
+		success:
+			'Congratulations~~~~  The field contents of the source table and the target table are identical, no error record here',
 		chooseJob: 'Choose job',
 		frequency: 'Frequency',
 		startTime: ' Start time',
