@@ -563,7 +563,7 @@ let usersModel = factor('users');
 router.afterEach(() => {
 	Loading.service({ fullscreen: true }).close();
 });
-let permissions = null;
+let isFirst = true;
 router.beforeEach(async (to, from, next) => {
 	if (!to.matched.length) {
 		Message.error({
@@ -579,8 +579,8 @@ router.beforeEach(async (to, from, next) => {
 	let token = cookie.get('token');
 	if (token) {
 		//若token存在，获取权限
-		// let permissions = sessionStorage.getItem('tapdata_permissions');
-		if (!permissions) {
+		let permissions = sessionStorage.getItem('tapdata_permissions');
+		if (!permissions || isFirst) {
 			//无权限，说明是首次进入页面，重新请求后台获取
 			let loading = Loading.service({
 				fullscreen: true,
@@ -591,6 +591,7 @@ router.beforeEach(async (to, from, next) => {
 			let userId = cookie.get('user_id');
 			let token = cookie.get('token');
 			let result = await usersModel.getPermissions(`/${userId}/permissions?access_token=${token}`);
+			isFirst = false;
 			loading.close();
 			if (result && result.data) {
 				permissions = result.data.permissions || [];

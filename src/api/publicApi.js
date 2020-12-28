@@ -5,7 +5,7 @@ import { Message } from 'element-ui';
 import i18n from '../i18n/i18n';
 
 let pending = {}; //声明一个数组用于存储每个ajax请求的取消函数和ajax标识
-let CancelToken = axios.CancelToken;
+const CancelToken = axios.CancelToken;
 
 axios.interceptors.request.use(
 	function(config) {
@@ -17,15 +17,16 @@ axios.interceptors.request.use(
 		} else {
 			config.url = `${config.url}?access_token=${accessToken}`;
 		}
-		let key = config.url + '&' + config.method;
+		let key = JSON.stringify(config);
 		let cancelFunc = null;
 		config.cancelToken = new CancelToken(c => {
 			cancelFunc = c;
 		});
 		if (pending[key]) {
-			cancelFunc();
+			pending[key]();
+			delete pending[key];
 		} else {
-			pending[key];
+			pending[key] = cancelFunc;
 		}
 		return config;
 	},

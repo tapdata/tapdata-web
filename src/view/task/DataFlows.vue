@@ -618,7 +618,6 @@ export default {
 			this.$route.query && this.$route.query.executionStatus ? this.$route.query.executionStatus : '';
 
 		this.screenFn();
-		this.keyupEnter();
 		window.windows = [];
 		let self = this;
 		ws.on('watch', this.wsWatch);
@@ -933,14 +932,6 @@ export default {
 			// localStorage.setItem('flowExecutionStatus', this.formData.executionStatus);
 			this.currentPage = 1;
 			this.getData();
-		},
-		keyupEnter() {
-			document.onkeydown = e => {
-				// let body = document.getElementsByTagName('body')[0];
-				if (e.keyCode === 13) {
-					this.getData();
-				}
-			};
 		},
 		async getData(params) {
 			this.loading = true;
