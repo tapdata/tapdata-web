@@ -1,7 +1,7 @@
 <template>
 	<el-dialog
 		:title="$t('dataForm.test.title')"
-		:visible.sync="dialogTestVisible"
+		:visible="dialogTestVisible"
 		width="770px"
 		:show-close="false"
 		append-to-body
@@ -92,6 +92,7 @@ export default {
 	methods: {
 		handleClose() {
 			this.$emit('dialogTestVisible', false);
+			this.$emit('update:dialogTestVisible', false);
 		},
 		//建立长连接 测试使用
 		handleWS() {

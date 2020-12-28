@@ -601,6 +601,9 @@ export default {
 				this.sync_type = dataFlow.setting.sync_type;
 			}
 			this.dataFlow = dataFlow;
+			if (!dataFlow.name) {
+				dataFlow.name = this.$t('dataFlow.newTaksName') + '_' + uuid().slice(0, 7);
+			}
 			document.title = dataFlow.name;
 			// 管理端api创建任务来源以及editorData 数据丢失情况
 			if (!dataFlow.editorData && dataFlow.stages) {

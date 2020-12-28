@@ -16,6 +16,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import './theme/index.css';
 import './components/form-builder';
 import './plugins/directive';
+import 'github-markdown-css';
 
 Vue.config.productionTip = false;
 Vue.use(VueCookie);

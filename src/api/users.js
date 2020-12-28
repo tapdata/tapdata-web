@@ -62,4 +62,8 @@ export default class users extends PublicAPI {
 	role(params) {
 		return axios.get(this.url + '/roles', { params });
 	}
+
+	upsertWithWhere(where, params) {
+		return axios.post(this.url + '/upsertWithWhere?where=' + JSON.stringify(where), params);
+	}
 }

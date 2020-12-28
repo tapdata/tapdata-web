@@ -85,12 +85,15 @@
 										{{ $t('connection.change') }}
 									</el-button>
 								</div>
-								<form-builder
+								<FormBuilder
 									class="create-form"
 									ref="form"
 									v-model="connectionForm"
 									:config="config"
-								></form-builder>
+								></FormBuilder>
+								<div class="btn-test">
+									<el-button size="mini" @click="startTest()">连接测试</el-button>
+								</div>
 							</template>
 						</div>
 						<!-- 步骤1 -->
@@ -120,15 +123,17 @@
 							<span v-show="selectedDatabaseType">保存，</span>
 							<span>下一步</span>
 						</el-button>
-						<el-button v-else type="primary" class="btn-step" @click="next()">
+						<el-button v-else type="primary" class="btn-step" :loading="loading" @click="next()">
 							开始编辑任务
-							<el-button class="btn-pass" type="text" @click="toDashboard">
+							<el-button class="btn-pass" type="text" @click="toDashboard()">
 								暂不编辑任务，先逛逛
 							</el-button>
 						</el-button>
 					</el-footer>
 				</el-container>
-				<el-aside class="right-aside" width="600px">111</el-aside>
+				<el-aside class="right-aside" width="600px">
+					<div class="markdown-body" v-html="mdHtml"></div>
+				</el-aside>
 			</el-container>
 		</el-container>
 		<DatabaseTypeDialog
@@ -136,6 +141,7 @@
 			:dialogVisible.sync="showConnectDialog"
 			@databaseType="handleDatabaseTypeChange"
 		></DatabaseTypeDialog>
+		<Test :dialogTestVisible.sync="dialogTestVisible" :formData="connectionForm"></Test>
 	</el-container>
 </template>
 <script>
@@ -144,6 +150,7 @@ import DatabaseTypeDialog from '@/view/connections/DatabaseTypeDialog.vue';
 import { signOut } from '../util/util';
 import { getImgByType, TYPEMAP } from './connections/util';
 import { uuid } from '../editor/util/Schema';
+import Test from '../view/connections/Test';
 
 import formConfig from './connections/config';
 
@@ -156,7 +163,8 @@ const steps = [
 export default {
 	components: {
 		AgentDownloadContent,
-		DatabaseTypeDialog
+		DatabaseTypeDialog,
+		Test
 	},
 	data() {
 		return {
@@ -213,12 +221,15 @@ export default {
 							'数据同步聚焦在表级别的数据处理与传输，在满足用户实现多表（数据集）、多级数据之间多表合一、数据拆分、关联映射、字段增减合并、内容过滤、聚合处理JS处理等功能的情况下同时实现实时数据同步。在不影响用户业务的情况下，满足用户对数据的异地或本地数据灾备、跨实例数据同步、查询与报表分流、实时数据仓库管理等多种业务场景的需求。'
 					}
 				]
-			}
+			},
+			dialogTestVisible: false,
+			mdHtml: ''
 		};
 	},
 	created() {
 		this.getDataApi(this.getSteps);
 		this.getConnections();
+		this.mdHtml = require('../../static/md/agen_download.md');
 	},
 	methods: {
 		getImgByType,
@@ -317,22 +328,41 @@ export default {
 					this.errorMsg = 'Please choose a source type';
 				}
 			} else {
-				let stages = this.getStages();
-				let routeUrl = this.$router.resolve({
-					path: '/job',
-					query: { mapping: this.taskType }
+				this.toDashboard(() => {
+					let stages = this.getStages();
+
+					let routeUrl = this.$router.resolve({
+						path: '/job',
+						query: { mapping: this.taskType }
+					});
+					let _window = window.open(routeUrl.href, '_blank');
+					_window.tpdata = {
+						stages,
+						status: 'draft',
+						executeMode: 'normal'
+					};
 				});
-				let _window = window.open(routeUrl.href, '_blank');
-				_window.tpdata = {
-					stages,
-					status: 'draft',
-					executeMode: 'normal'
-				};
-				this.toDashboard();
 			}
 		},
-		toDashboard() {
-			this.$router.replace('/');
+		toDashboard(cb) {
+			this.loading = true;
+			this.$api('users')
+				.upsertWithWhere(
+					{
+						id: this.$cookie.get('user_id')
+					},
+					{
+						isCompleteGuide: true
+					}
+				)
+				.then(() => {
+					this.$cookie.delete('show_guide');
+					this.$router.replace('/');
+					cb && cb();
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		getTypeProps(connection) {
 			let type = connection.database_type;
@@ -506,6 +536,7 @@ export default {
 				params.fill = params.isUrl ? 'uri' : '';
 				delete params.isUrl;
 			}
+			this.loading = true;
 			this.$api('connections')
 				.post(params)
 				.then(res => {
@@ -533,7 +564,17 @@ export default {
 					} else {
 						this.$message.error(this.$t('dataForm.saveFail'));
 					}
+				})
+				.finally(() => {
+					this.loading = false;
 				});
+		},
+		startTest() {
+			this.$refs.form.validate(valid => {
+				if (valid) {
+					this.dialogTestVisible = true;
+				}
+			});
 		}
 	}
 };
@@ -720,6 +761,9 @@ export default {
 	.create-form {
 		margin-top: 20px;
 		padding-right: 200px;
+	}
+	.btn-test {
+		padding-left: 200px;
 	}
 	.error-msg {
 		padding: 0 200px;
