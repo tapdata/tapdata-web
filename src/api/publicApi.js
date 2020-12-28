@@ -23,8 +23,7 @@ axios.interceptors.request.use(
 			cancelFunc = c;
 		});
 		if (pending[key]) {
-			pending[key]();
-			delete pending[key];
+			cancelFunc();
 		} else {
 			pending[key] = cancelFunc;
 		}
@@ -120,11 +119,10 @@ axios.interceptors.response.use(
 			Message.error({
 				message: i18n.t('errorCode.timeout')
 			});
-		} else if (!error.message) {
-			return;
-		} else {
-			return Promise.reject(error);
 		}
+		return new Promise(() => {
+			return Promise.reject(error);
+		});
 	}
 );
 
