@@ -258,9 +258,9 @@ export default {
 			if (this.order) {
 				order = this.order;
 			}
-			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
-			}
+			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
+			// 	where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
+			// }
 
 			let searchkw = this.searchNav.keyword;
 			if (searchkw && this.searchNav.selectedSeachType === '0') {
@@ -384,7 +384,7 @@ export default {
 					if (this.roleId) {
 						record.id = this.roleId;
 					} else {
-						record.user_id = this.$cookie.get('user_id');
+						// record.user_id = this.$cookie.get('user_id');
 					}
 
 					rolesModel[method](record)

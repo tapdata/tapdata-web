@@ -756,7 +756,6 @@ export default {
 
 			let saveRoleArr = [...pageArr, ...childreArr, ...childreArrAll, ...classifyArr, ...functionalArr];
 
-			self.$api('users').deletePermissionRoleMapping(roleId);
 			let newRoleMappings = [];
 
 			saveRoleArr.forEach(selectPermission => {
@@ -768,7 +767,13 @@ export default {
 					});
 			});
 
-			roleMappingModel.post(newRoleMappings);
+			self.$api('users')
+				.deletePermissionRoleMapping(roleId)
+				.then(res => {
+					if (res && res.data) {
+						roleMappingModel.post(newRoleMappings);
+					}
+				});
 
 			this.$message.success(this.$t('message.saveOK'));
 			self.saveloading = false;

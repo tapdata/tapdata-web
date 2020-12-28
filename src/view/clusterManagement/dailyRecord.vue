@@ -220,9 +220,9 @@ export default {
 		},
 		// 获取数据
 		async getDataApi(params) {
-			if (!parseInt(this.$cookie.get('isAdmin') && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')) {
-				params['filter[where][username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-			}
+			// if (!parseInt(this.$cookie.get('isAdmin') && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')) {
+			// 	params['filter[where][username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+			// }
 			logs.get(params).then(res => {
 				if (res.data) {
 					this.tableData = res.data;

@@ -443,8 +443,8 @@ export default {
 				loadFieldsStatus: true,
 				schemaAutoUpdate: true
 			};
-			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
-				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
+			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+			// 	where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
 			//精准搜索 iModel
 			keyword = keyword ? keyword.trim() : '';
 			if (keyword && iModel === 'fuzzy') {

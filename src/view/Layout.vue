@@ -346,8 +346,9 @@ export default {
 	},
 	methods: {
 		async getFavMenus() {
-			let userId = this.$cookie.get('user_id');
-			let result = await this.$api('users').get([userId]);
+			// let userId = this.$cookie.get('user_id');
+			// [userId]
+			let result = await this.$api('users').get();
 			if (result && result.data) {
 				let user = result.data || {};
 				this.favMenus = user.favorites || [];
@@ -370,7 +371,8 @@ export default {
 				this.$t('app.menu.delFavMenu')
 			).then(async () => {
 				this.favMenus.splice(idx, 1);
-				let result = await this.$api('users').updateById(this.$cookie.get('user_id'), {
+				// this.$cookie.get('user_id'),
+				let result = await this.$api('users').updateById({
 					favorites: this.favMenus
 				});
 				if (result.status === 200) {
@@ -515,9 +517,9 @@ export default {
 		getDataApi() {
 			let that = this;
 			let params = {};
-			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-				params['filter[where][systemInfo.username][regexp]'] = `^${that.$cookie.get('user_id')}$`;
-			}
+			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
+			// 	params['filter[where][systemInfo.username][regexp]'] = `^${that.$cookie.get('user_id')}$`;
+			// }
 			cluster.get(params).then(res => {
 				if (res.data) {
 					if (res.data.length > 0) {

@@ -581,9 +581,9 @@ export default {
 		// 获取服务器与进程的数据
 		getClsterDataApi() {
 			let params = {};
-			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-				params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-			}
+			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
+			// 	params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+			// }
 			cluster.get(params).then(res => {
 				if (res.data) {
 					this.serverProcess.tableData = res.data;
@@ -594,21 +594,21 @@ export default {
 		// 获取dataflows数据
 		getDataFlowApi() {
 			let self = this;
-			let id = '';
+			// let id = '';
 			self.loading = true;
-			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-				id = this.$cookie.get('user_id');
-				// params = {
-				// 	filter: {
-				// 		where: {
-				// 			user_id: {
-				// 				regexp: `^${this.$cookie.get('user_id')}$`
-				// 			}
-				// 		}
-				// 	}
-				// };
-			}
-			DataFlows.chart(id)
+			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
+			// 	id = this.$cookie.get('user_id');
+			// params = {
+			// 	filter: {
+			// 		where: {
+			// 			user_id: {
+			// 				regexp: `^${this.$cookie.get('user_id')}$`
+			// 			}
+			// 		}
+			// 	}
+			// };
+			// }
+			DataFlows.chart()
 				.then(res => {
 					// res.data.chart1.statusCount.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1));
 					// res.data.chart1.statusCount.forEach(element => {

@@ -435,13 +435,13 @@ export default {
 				params['filter[where][or][1][systemInfo.ip][like]'] = this.sourch;
 			}
 			// 是否能看到所有集群
-			if (
-				this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
-				!parseInt(this.$cookie.get('isAdmin')) &&
-				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
-			) {
-				params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-			}
+			// if (
+			// 	this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
+			// 	!parseInt(this.$cookie.get('isAdmin')) &&
+			// 	localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
+			// ) {
+			// 	params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+			// }
 			cluster.get(params).then(res => {
 				if (res.data) {
 					this.list = res.data;

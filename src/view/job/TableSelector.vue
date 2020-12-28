@@ -166,8 +166,8 @@ export default {
 						'source.status': true
 					}
 				};
-				if (this.$cookie.get('isAdmin') == 0 && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
-					filter.where['source.user_id'] = { like: this.$cookie.get('user_id') };
+				// if (this.$cookie.get('isAdmin') == 0 && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+				// 	filter.where['source.user_id'] = { like: this.$cookie.get('user_id') };
 				let params = {
 					filter: JSON.stringify(filter)
 				};
@@ -206,8 +206,8 @@ export default {
 				let params = {
 					name: self.filterText
 				};
-				if (this.$cookie.get('isAdmin') == 0 && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
-					params['userId'] = this.$cookie.get('user_id');
+				// if (this.$cookie.get('isAdmin') == 0 && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+				// 	params['userId'] = this.$cookie.get('user_id');
 				self.loading = true;
 				MetadataInstances.tableConnection(params)
 					.then(res => {
@@ -266,8 +266,8 @@ export default {
 					'source.status': true
 				}
 			};
-			if (this.$cookie.get('isAdmin') == 0 && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
-				filter.where['source.user_id'] = { like: this.$cookie.get('user_id') };
+			// if (this.$cookie.get('isAdmin') == 0 && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+			// 	filter.where['source.user_id'] = { like: this.$cookie.get('user_id') };
 			let params = {
 				filter: JSON.stringify(filter)
 			};
