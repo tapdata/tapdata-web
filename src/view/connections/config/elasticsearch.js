@@ -59,7 +59,7 @@ export default function(vm) {
 			{
 				type: 'input',
 				field: 'database_name',
-				label: vm.$t('dataForm.form.databaseName'),
+				label: vm.$t('dataForm.form.indexPrefix'),
 				required: true
 			},
 			{
@@ -75,16 +75,6 @@ export default function(vm) {
 				domType: 'password',
 				showByUrl: 2,
 				showPassword: true
-			},
-			{
-				type: 'input',
-				field: 'clusterName',
-				label: vm.$t('dataForm.form.clusterName')
-			},
-			{
-				type: 'switch',
-				field: 'schemaAutoUpdate',
-				label: vm.$t('dataForm.form.ReloadSchema')
 			}
 		]
 	};
