@@ -1,298 +1,281 @@
 <template>
-	<section class="connection-wrap">
-		<div class="panel-left" v-if="searchParams.panelFlag">
-			<Classification
-				:authority="'SYNC_category_management'"
-				@nodeChecked="nodeDataChange"
-				:type="'database'"
-			></Classification>
-		</div>
-		<div class="panel-main">
-			<div class="title">
-				{{ $t('connection.databaseTittle') }}
+	<section class="connection-box">
+		<SubHead :tittle="databaseTittle" :description="description"></SubHead>
+		<section class="connection-wrap">
+			<div class="panel-left" v-if="searchParams.panelFlag && $window.getSettingByKey('SHOW_CLASSIFY')">
+				<Classification
+					:authority="'SYNC_category_management'"
+					@nodeChecked="nodeDataChange"
+					:type="'database'"
+				></Classification>
 			</div>
-			<div class="top-bar">
-				<ul class="search-bar">
-					<li :class="[{ panelOpen: searchParams.panelFlag }, 'item', 'panelBtn']" @click="handlePanelFlag">
-						<i class="iconfont icon-xiangshangzhanhang"></i>
-						<span>{{
-							searchParams.panelFlag ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel')
-						}}</span>
-					</li>
-					<li class="item">
-						<el-input
-							:placeholder="$t('connection.dataBaseSearch')"
-							v-model="searchParams.keyword"
-							class="input-with-select"
-							size="mini"
-							clearable
-							debounce
-							@input="keyup()"
+			<div class="panel-main">
+				<div class="top-bar">
+					<ul class="search-bar">
+						<li
+							v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+							:class="[{ panelOpen: searchParams.panelFlag }, 'item', 'panelBtn']"
+							@click="handlePanelFlag"
 						>
-							<el-select
-								v-model="searchParams.iModel"
-								slot="prepend"
+							<i class="iconfont icon-xiangshangzhanhang"></i>
+						</li>
+						<li class="item">
+							<el-input
+								:placeholder="$t('connection.dataBaseSearch')"
+								v-model="searchParams.keyword"
+								class="input-with-select"
+								size="mini"
 								clearable
-								placeholder="请选择"
-								class="sub-select"
+								debounce
+								@input="keyup()"
+							>
+								<el-select
+									v-model="searchParams.iModel"
+									slot="prepend"
+									clearable
+									placeholder="请选择"
+									class="sub-select"
+									@input="search(1)"
+								>
+									<el-option :label="$t('connection.fuzzyQuery')" value="fuzzy"></el-option>
+									<el-option :label="$t('connection.PreciseQuery')" value="precise"></el-option>
+								</el-select>
+							</el-input>
+						</li>
+						<li class="item">
+							<el-select
+								v-model="searchParams.databaseModel"
+								:placeholder="$t('connection.connectionType')"
+								clearable
+								size="mini"
 								@input="search(1)"
 							>
-								<el-option :label="$t('connection.fuzzyQuery')" value="fuzzy"></el-option>
-								<el-option :label="$t('connection.PreciseQuery')" value="precise"></el-option>
+								<el-option
+									v-for="item in databaseModelOptions"
+									:key="item.value"
+									:label="item.label"
+									:value="item.value"
+								>
+								</el-option>
 							</el-select>
-						</el-input>
-					</li>
-					<li class="item">
-						<el-select
-							v-model="searchParams.databaseModel"
-							:placeholder="$t('connection.connectionType')"
-							clearable
-							size="mini"
-							@input="search(1)"
-						>
-							<el-option
-								v-for="item in databaseModelOptions"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value"
+						</li>
+						<li class="item">
+							<el-select
+								v-model="searchParams.databaseType"
+								:placeholder="$t('connection.dataBaseType')"
+								clearable
+								size="mini"
+								@input="search(1)"
 							>
-							</el-option>
-						</el-select>
-					</li>
-					<li class="item">
-						<el-select
-							v-model="searchParams.databaseType"
-							:placeholder="$t('connection.dataBaseType')"
-							clearable
-							size="mini"
-							@input="search(1)"
-						>
-							<el-option
-								v-for="item in databaseTypeOptions"
-								:key="item.type"
-								:label="item.name"
-								:value="item.type"
+								<el-option
+									v-for="item in databaseTypeOptions"
+									:key="item.type"
+									:label="item.name"
+									:value="item.type"
+								>
+								</el-option>
+							</el-select>
+						</li>
+						<li class="item">
+							<el-select
+								v-model="searchParams.status"
+								:placeholder="$t('connection.dataBaseStatus')"
+								clearable
+								size="mini"
+								@input="search(1)"
 							>
-							</el-option>
-						</el-select>
-					</li>
-					<li class="item">
-						<el-select
-							v-model="searchParams.status"
-							:placeholder="$t('connection.dataBaseStatus')"
-							clearable
+								<el-option
+									v-for="item in databaseStatusOptions"
+									:key="item.value"
+									:label="item.label"
+									:value="item.value"
+								>
+								</el-option>
+							</el-select>
+						</li>
+						<li class="item">
+							<el-button type="text" class="restBtn" size="mini" @click="rest()">
+								{{ $t('dataFlow.reset') }}
+							</el-button>
+						</li>
+					</ul>
+					<div class="top-bar-buttons">
+						<el-button
+							v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+							v-readonlybtn="'datasource_category_application'"
 							size="mini"
-							@input="search(1)"
+							class="btn"
+							v-show="multipleSelection.length > 0"
+							@click="handleClassify"
 						>
-							<el-option
-								v-for="item in databaseStatusOptions"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value"
-							>
-							</el-option>
-						</el-select>
-					</li>
-					<li class="item">
-						<el-button class="btn" size="mini" @click="rest()">
-							<i class="iconfont icon-shuaxin1 back-btn-icon"></i>
+							<i class="iconfont icon-biaoqian back-btn-icon"></i>
+							<span> {{ $t('dataFlow.taskBulkTag') }}</span>
 						</el-button>
-					</li>
-				</ul>
-				<div class="top-bar-buttons">
-					<el-button
-						v-readonlybtn="'datasource_category_application'"
-						size="mini"
-						class="btn"
-						v-show="multipleSelection.length > 0"
-						@click="handleClassify"
+						<el-button
+							v-readonlybtn="'datasource_creation'"
+							class="btn btn-create"
+							size="mini"
+							@click="checkTestConnectionAvailable"
+						>
+							<i class="iconfont icon-jia add-btn-icon"></i>
+							<span> {{ $t('connection.createNewDataSource') }}</span>
+						</el-button>
+					</div>
+				</div>
+				<div class="connections-list" v-loading="restLoading">
+					<el-table
+						:element-loading-text="$t('dataFlow.dataLoading')"
+						:data="tableData"
+						height="100%"
+						class="connection-table"
+						:row-key="getRowKeys"
+						@selection-change="handleSelectionChange"
 					>
-						<i class="iconfont icon-biaoqian back-btn-icon"></i>
-						<span> {{ $t('dataFlow.taskBulkTag') }}</span>
-					</el-button>
-					<el-button
-						v-readonlybtn="'datasource_creation'"
-						class="btn btn-create"
-						type="primary"
-						size="mini"
-						@click="checkTestConnectionAvailable"
+						<el-table-column
+							v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+							type="selection"
+							width="45"
+							:reserve-selection="true"
+						>
+						</el-table-column>
+						<el-table-column prop="name" :label="$t('connection.dataBaseName')">
+							<template slot-scope="scope">
+								<div class="database-img">
+									<img :src="getImgByType(scope.row.database_type)" />
+								</div>
+								<div class="database-text" :class="{ lineHeight: !scope.row.database_uri }">
+									<span
+										>{{ scope.row.name }}
+										<span class="tag" v-if="scope.row.listtags && scope.row.listtags.length > 0">{{
+											formatterListTags(scope.row)
+										}}</span></span
+									>
+									<div class="user" v-if="scope.row.database_uri">
+										{{ formatterDatabaseType(scope.row) }}
+									</div>
+								</div>
+							</template>
+						</el-table-column>
+						<el-table-column prop="user_id" :label="$t('connection.creator')" width="80">
+							<template slot-scope="scope">
+								<div class="database-text">
+									<div>{{ usersData[scope.row.user_id] }}</div>
+								</div>
+							</template>
+						</el-table-column>
+						<el-table-column
+							prop="connection_type"
+							:label="$t('connection.connectionType')"
+							:formatter="formatterConnectionType"
+							width="120"
+						></el-table-column>
+						<el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="100">
+							<template slot-scope="scope">
+								<span class="error" v-if="['invalid'].includes(scope.row.status)">
+									<i class="el-icon-error"></i>
+									<span>
+										{{ $t('connection.status.invalid') }}
+									</span>
+								</span>
+								<span class="success" v-if="['ready'].includes(scope.row.status)">
+									<i class="el-icon-success"></i>
+									<span>
+										{{ $t('connection.status.ready') }}
+									</span>
+								</span>
+								<span class="warning" v-if="['testing'].includes(scope.row.status)">
+									<i class="el-icon-warning"></i>
+									<span>
+										{{ $t('connection.status.testing') }}
+									</span>
+								</span>
+							</template>
+						</el-table-column>
+						<el-table-column :label="$t('connection.operate')" width="200">
+							<template slot-scope="scope">
+								<el-button
+									class="btn-text"
+									type="text"
+									@click="preview(scope.row.id, scope.row.database_type)"
+								>
+									{{ $t('message.preview') }}
+								</el-button>
+								<el-button
+									class="btn-text"
+									type="text"
+									@click="edit(scope.row.id, scope.row.database_type)"
+								>
+									{{ $t('message.edit') }}
+								</el-button>
+								<el-button class="btn-text" type="text" @click="copy(scope.row)">
+									{{ $t('message.copy') }}
+								</el-button>
+								<el-button class="btn-text" type="text" @click="delConfirm(scope.row)">
+									{{ $t('message.delete') }}
+								</el-button>
+							</template>
+						</el-table-column>
+					</el-table>
+					<el-pagination
+						background
+						class="pagination"
+						:current-page.sync="page.current"
+						:page-sizes="[10, 20, 50, 100]"
+						:page-size.sync="page.size"
+						layout="total, sizes, prev, pager, next, jumper"
+						:total="page.total"
+						@size-change="search(1)"
+						@current-change="search"
 					>
-						<i class="iconfont icon-jia add-btn-icon"></i>
-					</el-button>
+					</el-pagination>
 				</div>
 			</div>
-			<div class="connections-list" v-loading="restLoading">
-				<el-table
-					:element-loading-text="$t('dataFlow.dataLoading')"
-					:data="tableData"
-					height="100%"
-					class="connection-table"
-					row-key="id"
-					@selection-change="handleSelectionChange"
-				>
-					<el-table-column type="selection" width="45"> </el-table-column>
-					<el-table-column prop="name" :label="$t('connection.dataBaseName')">
-						<template slot-scope="scope">
-							<div class="database-img">
-								<img :src="getImgByType(scope.row.database_type)" />
-							</div>
-							<div class="database-text">
-								<div>{{ scope.row.name }}</div>
-								<div class="user">{{ usersData[scope.row.user_id] }}</div>
-							</div>
-						</template>
-					</el-table-column>
-					<el-table-column
-						prop="database_host"
-						:label="$t('connection.dataBaseHost')"
-						:formatter="formatterDatabaseType"
+			<el-dialog
+				:title="$t('connection.deteleDatabaseTittle')"
+				:close-on-click-modal="false"
+				:visible.sync="deleteDialogVisible"
+				width="30%"
+			>
+				<p>
+					{{ $t('connection.deteleDatabaseMsg') }}
+					<span @click="edit(delData.id, delData.database_type)" style="color:#48B6E2;cursor: pointer">
+						{{ delData.name }}</span
 					>
-					</el-table-column>
-					<el-table-column
-						prop="connection_type"
-						:label="$t('connection.connectionType')"
-						:formatter="formatterConnectionType"
-						width="100"
-					></el-table-column>
-					<el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="100">
-						<template slot-scope="scope">
-							<span class="error" v-if="['invalid'].includes(scope.row.status)">
-								<i class="el-icon-error"></i>
-								<span>
-									{{ $t('connection.status.invalid') }}
-								</span>
-							</span>
-							<span class="success" v-if="['ready'].includes(scope.row.status)">
-								<i class="el-icon-success"></i>
-								<span>
-									{{ $t('connection.status.ready') }}
-								</span>
-							</span>
-							<span class="warning" v-if="['testing'].includes(scope.row.status)">
-								<i class="el-icon-warning"></i>
-								<span>
-									{{ $t('connection.status.testing') }}
-								</span>
-							</span>
-						</template>
-					</el-table-column>
-					<el-table-column
-						prop="listtags"
-						:label="$t('connection.dataBaseClassify')"
-						width="160"
-						:formatter="formatterListTags"
-					></el-table-column>
-					<el-table-column :label="$t('connection.operate')" width="200">
-						<template slot-scope="scope">
-							<el-tooltip
-								class="item"
-								v-readonlybtn="'datasource_edition'"
-								:content="$t('message.preview')"
-								placement="bottom"
-							>
-								<el-button type="text" @click="preview(scope.row.id, scope.row.database_type)">
-									<i class="iconfont task-list-icon icon-chaxun1"></i>
-								</el-button>
-							</el-tooltip>
-							<el-tooltip
-								class="item"
-								v-readonlybtn="'datasource_edition'"
-								:content="$t('message.edit')"
-								placement="bottom"
-							>
-								<el-button type="text" @click="edit(scope.row.id, scope.row.database_type)">
-									<i class="iconfont task-list-icon icon-ceshishenqing"></i>
-								</el-button>
-							</el-tooltip>
-							<el-tooltip
-								class="item"
-								v-readonlybtn="'datasource_edition'"
-								:content="$t('message.reload')"
-								placement="bottom"
-							>
-								<el-button type="text" @click="reload(scope.row)">
-									<i class="iconfont  task-list-icon  icon-kujitongbucopy"></i>
-								</el-button>
-							</el-tooltip>
-							<el-tooltip
-								class="item"
-								v-readonlybtn="'datasource_creation'"
-								:content="$t('message.copy')"
-								placement="bottom"
-							>
-								<el-button type="text" @click="copy(scope.row)">
-									<i class="iconfont task-list-icon icon-fuzhi1"></i>
-								</el-button>
-							</el-tooltip>
-							<el-tooltip
-								class="item"
-								v-readonlybtn="'datasource_delete'"
-								:content="$t('message.delete')"
-								placement="bottom"
-							>
-								<el-button type="text" @click="delConfirm(scope.row)">
-									<i class="iconfont task-list-icon icon-shanchu"></i>
-								</el-button>
-							</el-tooltip>
-						</template>
-					</el-table-column>
-				</el-table>
-				<el-pagination
-					background
-					class="pagination"
-					:current-page.sync="page.current"
-					:page-sizes="[10, 20, 50, 100]"
-					:page-size.sync="page.size"
-					layout="total, sizes, prev, pager, next, jumper"
-					:total="page.total"
-					@size-change="search(1)"
-					@current-change="search"
-				>
-				</el-pagination>
-			</div>
-		</div>
-		<el-dialog
-			:title="$t('connection.deteleDatabaseTittle')"
-			:close-on-click-modal="false"
-			:visible.sync="deleteDialogVisible"
-			width="30%"
-		>
-			<p>
-				{{ $t('connection.deteleDatabaseMsg') }}
-				<span @click="edit(delData.id, delData.database_type)" style="color:#48B6E2;cursor: pointer">
-					{{ delData.name }}</span
-				>
-				?
-			</p>
-			<span slot="footer" class="dialog-footer">
-				<el-button @click="deleteDialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
-				<el-button type="primary" @click="remove(delData)" size="mini">{{ $t('message.confirm') }}</el-button>
-			</span>
-		</el-dialog>
-		<SelectClassify
-			ref="SelectClassify"
-			:dialogVisible="dialogVisible"
-			type="database"
-			:tagLists="tagList"
-			@dialogVisible="handleDialogVisible"
-			@operationsClassify="handleOperationClassify"
-		></SelectClassify>
-		<DatabaseTypeDialog
-			:dialogVisible="dialogDatabaseTypeVisible"
-			@dialogVisible="handleDialogDatabaseTypeVisible"
-			@databaseType="handleDatabaseType"
-		></DatabaseTypeDialog>
-		<Preview
-			:id="id"
-			:visible="previewVisible"
-			:databaseType="databaseType"
-			v-on:previewVisible="handlePreviewVisible"
-		></Preview>
+					?
+				</p>
+				<span slot="footer" class="dialog-footer">
+					<el-button @click="deleteDialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
+					<el-button type="primary" @click="remove(delData)" size="mini">{{
+						$t('message.confirm')
+					}}</el-button>
+				</span>
+			</el-dialog>
+			<SelectClassify
+				ref="SelectClassify"
+				:dialogVisible="dialogVisible"
+				type="database"
+				:tagLists="tagList"
+				@dialogVisible="handleDialogVisible"
+				@operationsClassify="handleOperationClassify"
+			></SelectClassify>
+			<DatabaseTypeDialog
+				:dialogVisible="dialogDatabaseTypeVisible"
+				@dialogVisible="handleDialogDatabaseTypeVisible"
+				@databaseType="handleDatabaseType"
+			></DatabaseTypeDialog>
+			<Preview
+				:id="id"
+				:visible="previewVisible"
+				:databaseType="databaseType"
+				v-on:previewVisible="handlePreviewVisible"
+			></Preview>
+		</section>
 	</section>
 </template>
 <script>
 import Classification from '@/components/Classification';
 import SelectClassify from '@/components/SelectClassify';
+import SubHead from '@/components/SubHead';
 import DatabaseTypeDialog from './DatabaseTypeDialog';
 import Preview from './Preview';
 import { verify, desensitization } from './util';
@@ -300,7 +283,7 @@ import { verify, desensitization } from './util';
 let timeout = null;
 
 export default {
-	components: { Classification, SelectClassify, DatabaseTypeDialog, Preview },
+	components: { Classification, SelectClassify, DatabaseTypeDialog, Preview, SubHead },
 	data() {
 		return {
 			dialogVisible: false,
@@ -316,6 +299,8 @@ export default {
 			usersData: [],
 			databaseType: '',
 			id: '',
+			databaseTittle: '',
+			description: '',
 			page: {
 				current: 1,
 				size: 20,
@@ -364,6 +349,17 @@ export default {
 		this.search(1);
 		this.getDatabaseType();
 		this.search(1);
+		//header
+		this.databaseTittle = this.$t('connection.databaseTittle');
+		this.description = this.$t('connection.desc');
+		//定时轮询
+		this.timer = setInterval(() => {
+			this.formatterUserName();
+			this.search(this.page.current, 1);
+		}, 10000);
+	},
+	destroyed() {
+		clearInterval(this.timer);
 	},
 	methods: {
 		// 面板显示隐藏
@@ -397,6 +393,9 @@ export default {
 			this.multipleSelection = val;
 		},
 		//列表操作
+		getRowKeys(row) {
+			return row.id; // 每条数据的唯一识别值
+		},
 		getImgByType(type) {
 			if (!type) {
 				type = 'default';
@@ -738,6 +737,14 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.connection-box {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	flex-direction: column;
+	background: #fafafa;
+}
 .connection-wrap {
 	display: flex;
 	width: 100%;
@@ -746,6 +753,8 @@ export default {
 	.panel-left {
 		width: 200px;
 		height: 100%;
+		margin-top: 10px;
+		margin-left: 10px;
 		box-sizing: border-box;
 	}
 	.panel-main {
@@ -759,8 +768,7 @@ export default {
 			justify-content: space-between;
 			padding: 0 10px;
 			.panelBtn {
-				min-width: 56px;
-				padding: 5px 12px;
+				padding: 5px 7px;
 				color: #666;
 				cursor: pointer;
 				font-size: 12px;
@@ -794,8 +802,10 @@ export default {
 				}
 				&.btn-create {
 					margin-left: 5px;
-					background: #48b6e2;
 				}
+			}
+			.restBtn {
+				color: #48b6e2;
 			}
 			.search-bar {
 				display: flex;
@@ -835,7 +845,7 @@ export default {
 		flex: 1;
 		overflow: hidden;
 		.database-img {
-			border: 1px solid #dedee4;
+			//border: 1px solid #dedee4;
 			vertical-align: middle;
 			width: 40px;
 			height: 40px;
@@ -846,7 +856,7 @@ export default {
 			align-items: center;
 			float: left;
 			img {
-				width: 50%;
+				width: 60%;
 			}
 		}
 		.database-text {
@@ -855,14 +865,34 @@ export default {
 			word-break: break-word;
 			text-overflow: ellipsis;
 			float: left;
-			margin-top: 5px;
 			margin-left: 10px;
 			div {
 				line-height: 14px;
 			}
 			.user {
 				color: #cccccc;
+				white-space: nowrap;
+				word-break: break-word;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			}
+		}
+		.lineHeight {
+			line-height: 40px;
+		}
+		.btn-text {
+			color: #48b6e2;
+			font-size: 12px;
+		}
+		.tag {
+			padding: 0 3px 2px 3px;
+			line-height: 12px;
+			font-size: 12px;
+			font-weight: 400;
+			color: #999999;
+			background: #f5f5f5;
+			border: 1px solid #dedee4;
+			border-radius: 3px;
 		}
 		.error {
 			color: #d54e21;
@@ -885,13 +915,16 @@ export default {
 <style lang="less">
 .connection-table {
 	border: 1px solid #eeeeee;
-	.thead {
-		color: #999;
+	thead {
 		th {
-			padding: 5px 0;
-			background: #f5f5f5;
+			padding: 2px 0;
+			background: #fafafa;
+			color: #999;
 		}
 	}
+}
+.connections-list .el-pagination .el-pagination__total {
+	float: left;
 }
 .connection-table .el-table th,
 .connection-table .el-table tr {

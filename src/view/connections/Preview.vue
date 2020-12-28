@@ -1,11 +1,11 @@
 <template>
 	<el-drawer
-		class="drawer"
+		class="connection-drawer"
 		ref="drawer"
 		:visible.sync="visible"
 		:title="$t('dataForm.title')"
-		:append-to-body="true"
 		size="40%"
+		:modal="false"
 		:withHeader="false"
 		:before-close="handleClose"
 	>
@@ -48,26 +48,39 @@
 								{{ $t('connection.status.testing') }}
 							</span>
 						</span>
+						<span class="schema-load"
+							>{{ $t('connection.preview.reloadName') }} :
+							{{
+								data.last_updated ? $moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss') : ''
+							}}</span
+						>
 					</div>
-				</div>
-				<div class="panelBtn">
-					<ul>
-						<li class="item">
-							<el-button class="btn" size="mini" @click="edit(id, type)">
-								<i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
-							</el-button>
-						</li>
-						<li class="item">
-							<el-button class="btn" size="mini" @click="reload()">
-								<i class="iconfont icon-kujitongbucopy">{{ $t('connection.preview.reloadName') }}</i>
-							</el-button>
-						</li>
-						<li class="item">
-							<el-button class="btn" size="mini" @click="beforeTest(id)">
-								<i class="iconfont icon-lianjie1"> {{ $t('connection.preview.test') }} </i>
-							</el-button>
-						</li>
-					</ul>
+					<div class="panelBtn">
+						<ul>
+							<li class="item">
+								<el-button class="btn" size="mini" @click="edit(id, type)">
+									<i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
+								</el-button>
+							</li>
+							<li class="item">
+								<el-button
+									class="btn"
+									size="mini"
+									@click="reload()"
+									:disabled="!['ready'].includes(this.status) || !data.tableCount"
+								>
+									<i class="iconfont icon-kujitongbucopy">{{
+										$t('connection.preview.reloadName')
+									}}</i>
+								</el-button>
+							</li>
+							<li class="item">
+								<el-button class="btn" size="mini" @click="beforeTest(id)">
+									<i class="iconfont icon-lianjie1"> {{ $t('connection.preview.test') }} </i>
+								</el-button>
+							</li>
+						</ul>
+					</div>
 				</div>
 			</div>
 			<el-progress
@@ -82,19 +95,17 @@
 		<ul class="info-list">
 			<li v-for="item in form" :key="item.label">
 				<span class="label">{{ item.label }}</span>
-				<span class="value">{{ item.value }}</span>
+				<span class="value align-center" :class="{ 'align-top': item.label.length > 15 }">{{
+					item.value
+				}}</span>
 			</li>
 		</ul>
-		<Test
-			@dialogTestVisible="handleTestVisible"
-			:dialogTestVisible="testData.dialogTestVisible"
-			:testData="testData"
-		></Test>
+		<Test @dialogTestVisible="handleTestVisible" :dialogTestVisible="dialogTestVisible" :formData="data"></Test>
 	</el-drawer>
 </template>
 
 <script>
-import { getImgByType, handleProgress } from './util';
+import { getImgByType } from './util';
 import formConfig from './config';
 import Test from './Test';
 
@@ -125,12 +136,7 @@ export default {
 			progress: 0,
 			timer: null,
 			showProgress: false,
-			testData: {
-				testLogs: null,
-				testResult: '',
-				progress: 0,
-				dialogTestVisible: false
-			},
+			dialogTestVisible: false,
 			testStatus: {
 				ready: 'success',
 				invalid: 'exception',
@@ -174,17 +180,9 @@ export default {
 				this.name = data.name;
 				this.type = data.database_type;
 				this.status = data.status;
-				if (
-					!data.loadCount &&
-					!data.tableCount &&
-					data.tableCount !== 0 &&
-					!['invalid'].includes(this.status)
-				) {
-					let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100;
-					this.progress = progress ? progress : 0;
-					if (this.progress !== 100) {
-						this.showProgress = true;
-					}
+				if (['ready'].includes(this.status) && data.loadFieldsStatus !== 'finished' && data.tableCount) {
+					this.progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100;
+					this.showProgress = true;
 				}
 				let func = formConfig[this.type];
 				if (func) {
@@ -198,7 +196,7 @@ export default {
 					});
 					//过滤value空值 undefined
 					items = items || [];
-					items = items.filter(item => item.value && item.value !== '');
+					items = items.filter(item => item.label);
 					this.form = items;
 				}
 			}
@@ -208,43 +206,8 @@ export default {
 			this.clearInterval();
 			this.$emit('previewVisible', false);
 		},
-		beforeTest(id) {
-			let params = {
-				response_body: {},
-				status: 'testing',
-				id: id
-			};
-			this.$api('connections')
-				.patchId(params)
-				.then(() => {
-					this.status = 'testing';
-					this.testData.dialogTestVisible = true;
-					this.test(id);
-				});
-		},
-		async test(id) {
-			let result = null;
-			this.testData.testResult = this.testStatus['testing'];
-			this.testData.estLogs = [];
-			this.clearInterval();
-			if (this.data.database_type === 'mongodb') {
-				result = await this.$api('connections').customQuery([this.data.id]);
-			} else {
-				result = await this.$api('connections').get([this.data.id]);
-			}
-			if (result.data) {
-				const data = result.data;
-				let validate_details = data.response_body && data.response_body.validate_details;
-				this.testData.testLogs = validate_details || [];
-				this.testData.testResult = this.testStatus[data.status] || this.testStatus['testing'];
-				this.testData.progress = handleProgress(this.testData.testLogs);
-				this.status = data.status; //更新当前预览页面的状态
-				if (['testing'].includes(data.status)) {
-					this.timer = setInterval(() => {
-						this.test(id);
-					}, 3000);
-				}
-			}
+		beforeTest() {
+			this.dialogTestVisible = true;
 		},
 		edit(id, type) {
 			if (
@@ -267,34 +230,9 @@ export default {
 			};
 			this.confirm(
 				() => {
+					this.showProgress = true;
 					this.progress = 0;
-					this.$api('connections')
-						.updateById(this.data.id, {
-							status: 'testing',
-							name: this.data.name
-						})
-						.then(result => {
-							if (result.data) {
-								let data = result.data;
-								if (
-									!data.loadCount &&
-									!data.tableCount &&
-									data.tableCount !== 0 &&
-									!['invalid'].includes(this.status)
-								) {
-									let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100;
-									this.progress = progress ? progress : 0;
-									if (this.progress !== 100) {
-										this.showProgress = true;
-									} else {
-										this.showProgress = false;
-									}
-								}
-							}
-						})
-						.catch(() => {
-							this.$message.error(this.$t('connection.reloadFail'));
-						});
+					this.reloadApi();
 				},
 				() => {},
 				config
@@ -310,16 +248,47 @@ export default {
 				.then(callback)
 				.catch(catchCallback);
 		},
+		reloadApi() {
+			this.clearInterval();
+			this.$api('connections')
+				.updateById(this.data.id, {
+					status: 'testing',
+					name: this.data.name
+				})
+				.then(result => {
+					if (result.data) {
+						let data = result.data;
+						if (data.loadFieldsStatus === 'finished') {
+							this.progress = 100;
+							setTimeout(() => {
+								this.showProgress = false;
+								this.progress = 0; //加载完成
+							}, 800);
+						} else {
+							let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100;
+							this.progress = progress ? progress : 0;
+							this.timer = setInterval(() => {
+								this.reloadApi();
+							}, 800);
+						}
+					}
+				})
+				.catch(() => {
+					this.$message.error(this.$t('connection.reloadFail'));
+					this.showProgress = false;
+					this.progress = 0; //加载完成
+				});
+		},
 		//test
 		handleTestVisible() {
-			this.testData.dialogTestVisible = false;
+			this.dialogTestVisible = false;
 		}
 	}
 };
 </script>
 
 <style scoped lang="less">
-.drawer {
+.connection-drawer {
 	.header {
 		display: flex;
 		flex-direction: column;
@@ -337,23 +306,23 @@ export default {
 		padding-top: 10px;
 		.img-box {
 			display: flex;
-			width: 54px;
-			height: 54px;
+			width: 60px;
+			height: 60px;
 			justify-content: center;
 			align-items: center;
 			background: #fff;
-			border: 1px solid #dedee4;
+			//border: 1px solid #dedee4;
 			border-radius: 3px;
 			margin-left: 30px;
 			img {
-				width: 60%;
+				width: 100%;
 			}
 		}
 		.content {
 			margin-left: 10px;
 			font-weight: 500;
 			margin-top: 4px;
-			width: 60%;
+			width: 100%;
 		}
 		.status {
 			font-size: 12px;
@@ -372,7 +341,7 @@ export default {
 			display: flex;
 			align-items: center;
 			width: 60%;
-			justify-content: flex-end;
+			margin-top: 10px;
 			.item {
 				margin-right: 10px;
 				float: right;
@@ -390,7 +359,7 @@ export default {
 			margin-left: 5px;
 		}
 		.btn {
-			padding: 7px;
+			padding: 4px 7px;
 			background: #f5f5f5;
 			i.iconfont {
 				font-size: 12px;
@@ -401,8 +370,8 @@ export default {
 		color: #999;
 		font-size: 12px;
 		display: inline-block;
-		width: 200px;
-		margin-right: 10px;
+		width: 110px;
+		margin-right: 15px;
 		text-align: right;
 	}
 	.value {
@@ -412,9 +381,25 @@ export default {
 		display: inline-block;
 		word-break: break-all;
 	}
+	.align-top {
+		vertical-align: top;
+	}
+	.align-center {
+		vertical-align: center;
+	}
+	.schema-load {
+		color: #999;
+		display: inline-block;
+		margin-left: 20px;
+		font-size: 12px;
+		font-weight: normal;
+	}
 	.info-list {
 		overflow-y: auto;
-		max-height: 640px;
+		max-height: 690px;
+		margin: 0 auto;
+		margin-left: 50px;
+		width: 100%;
 		li {
 			margin-bottom: 20px;
 		}
@@ -460,6 +445,14 @@ export default {
 }
 </style>
 <style lang="less">
+.connection-drawer {
+	.el-drawer {
+		box-shadow: -2px 0px 8px 0px rgba(0, 0, 0, 0.1);
+	}
+	.el-drawer.rtl {
+		top: 48px;
+	}
+}
 .test-progress {
 	.el-progress-bar__outer {
 		border-radius: 0;

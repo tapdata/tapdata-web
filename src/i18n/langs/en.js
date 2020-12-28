@@ -361,7 +361,7 @@ const en = {
 		stystemOpenAll: 'Open all',
 		stystemDeleteAll: 'Delete all',
 		stystemLgnoreAll: 'Ignore all',
-		newTaksName: 'The new task is not named',
+		newTaksName: 'The_new_task',
 		selectNode: 'Please select a node',
 		submitExecute: 'Submit and execute',
 		submitOnly: 'Submit only',
@@ -627,10 +627,13 @@ const en = {
 		info: 'Database information',
 		copyMsg: 'copy successfully',
 		testMsg: 'test successfully',
+		creator: 'Creator',
 		editDataSource: 'Edit database',
 		reloadOK: 'reloading schema',
 		reloadFail: 'Failed to schema',
 		reloadTittle: 'Reload schema',
+		desc:
+			'Source Connection includes database, files, RESTful API, custom API etc. You must create at least one data source before you can create migration or replication job. In addition to the standard configuration, you can also configure whether to automatic/manual reload database schema, time zone, and table filter settings. See more details click',
 		deteleDatabaseTittle: 'Delete database',
 		deteleDatabaseMsg: 'This will permanently delete the database ',
 		reloadMsg: 'It may take a long time to reload schema, are you sure to reload the schema of the database',
@@ -638,6 +641,8 @@ const en = {
 		copyFailedMsg:
 			'Copy failed, reason:  The setting item "Connections - create  duplicate source" need to be set to "false"',
 		change: 'Change',
+		rename: 'Rename',
+		testConnection: 'Test connection',
 		status: {
 			testing: 'testing',
 			invalid: 'invalid',
@@ -1437,9 +1442,10 @@ const en = {
 			success: 'Pass the test',
 			fail: 'Test failed',
 			testing: 'Testing...',
-			items: 'test items',
-			result: 'test result',
-			information: 'Information'
+			items: 'Test items',
+			result: 'Test result',
+			information: 'Information',
+			error: 'The test service request timed out, please close and try again.'
 		},
 		form: {
 			connectionName: 'Connection Name',
@@ -1475,20 +1481,56 @@ const en = {
 			uriTips: {
 				label: 'Example',
 				content:
-					`<b>MongoDB Connection URI Examples:</b><br>` +
-					`Replicaset: mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
-					`Replicaset with authentication: mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
-					`Replicaset with multiple members: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
-					`Sharded Cluster: mongodb://192.168.0.100:27017/mydb<br>` +
-					`Sharded Cluster with multiple mongos: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
+					`<b>MongoDB Connection URI Examples :</b><br>` +
+					`<b>Replicaset :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
+					`<b>Replicaset with authentication:</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
+					`<b>Replicaset with multiple members :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
+					`<b>Sharded Cluste :</b> mongodb://192.168.0.100:27017/mydb<br>` +
+					`<b>Sharded Cluster with multiple mongos :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
 			},
 			tableFilterTips: 'Comma-delimited list of expression, use * to represent any character of any length.',
 			timeZoneTips: 'Impact Type: DATE',
-
 			options: {
 				sourceAndTarget: 'SOURCE AND TARGET',
 				source: 'SOURCE',
-				target: 'TARGET'
+				target: 'TARGET',
+				sourceAndTargetTips: 'This data connection can be used as both source and target in Tapdata',
+				sourceTips: 'This data connection can only be used as source in Tapdata, but not as target',
+				targetTips: 'This data connection can only be used as target in Tapdata, but not as source ',
+				connectionMode: 'Connection mode',
+				URIMode: 'URI mode',
+				URIModeTips: 'Configure MongoDB database in URI mode. Batch input is supported',
+				standardMode: 'Standard mode',
+				standardModeTips:
+					'Configure MongoDB database according to Host/IP, port, account and password. Batch input is supported',
+				sslTSL: 'Connect via an TSL/SSL tunnel',
+				sslTSLTip:
+					'Tapdata will connect to a separate server in your network which provides an TSL/SSL tunnel to your database. This method is necessary if your database is in an inaccessible subnet.',
+				sslTop: 'Connect directly',
+				sslTopTips:
+					'Tapdata will connect directly to your database. You may have to create a security rule to allow access. This is the simplest method.'
+			},
+			guide:
+				'For data connection configuration, please refer to the guide documenton the right side. For more information about data connection settings, instructions or other information, please click',
+			guideDoc: 'guide document',
+			response_body: {
+				CHECK_CONNECT: 'Check the connection is available',
+				CHECK_AUTH: 'Checks if the username and password are available',
+				CHECK_VERSION: 'Checks if the version information is available',
+				LOAD_SCHEMA: 'Load schema model',
+				CHECK_CDC_PERMISSION: 'Check if cdc permissions are granted',
+				CHECK_ARCHIVE_LOG: 'Check if archive log is opened',
+				CHECK_SUPPLEMENTAL_LOG: 'Check if supplemental log mode is correct',
+				CHECK_DDL_PERMISSION: 'Check if execute ddl permissions are granted',
+				CHECK_PERMISSION: 'Check if permissions are graned',
+				CHECK_BIN_LOG: 'Check if binlog is opened, and is ROW level',
+				CHECK_SCRIPT: 'Check if script(s) is available',
+				CHECK_PRIMARY_KEY: 'Check if primary key(s) is available',
+				CHECK_CONFIG: 'Check if config is available',
+				CHECK_READ_PERMISSION: 'Check if read permission is granted',
+				CHECK_ACCESS_TOKEN: 'Check if access token is available',
+				CHECK_API_AUTH: 'Check if api auth is available',
+				CHECK_LOCAL_PORT: 'Check if local port is available'
 			}
 		},
 		error: {

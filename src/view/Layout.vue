@@ -436,7 +436,7 @@ export default {
 							message: 'DK_VERSION_1</br>DK_VERSION_2'
 						});
 					} else {
-						this.$message.info('DAAS_BUILD_NUMBER');
+						this.$message.info(window._TAPDATA_OPTIONS_.version);
 					}
 					break;
 				case 'license':

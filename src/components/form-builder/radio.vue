@@ -13,7 +13,8 @@ export default {
 	data() {
 		return {
 			defaultConfig: {
-				border: true
+				border: true,
+				isVertical: true
 			}
 		};
 	},
@@ -29,7 +30,8 @@ export default {
 			{
 				class: {
 					'fb-radio': true,
-					border: config.border
+					border: config.border,
+					verical: config.isVertical
 				},
 				props: {
 					value: self.value
@@ -45,10 +47,22 @@ export default {
 						},
 						props: {
 							label: opt.value,
+							disabled: opt.disabled,
 							border: config.border
 						}
 					},
-					[opt.label]
+					[
+						h('span', opt.label),
+						opt.tip && config.isVertical && config.border
+							? h(
+									'div',
+									{
+										class: 'fb-radio-option-tip'
+									},
+									opt.tip
+							  )
+							: null
+					]
 				);
 			})
 		);
@@ -58,17 +72,54 @@ export default {
 
 <style lang="less">
 .fb-radio {
-	justify-content: space-between;
+	display: flex;
 	width: 100%;
+	.fb-radio-option {
+		display: flex;
+		height: 100%;
+		padding: 0 10px;
+		.el-radio__input {
+			height: 28px;
+			line-height: 28px;
+			.el-radio__inner {
+				vertical-align: middle;
+			}
+		}
+		.el-radio__label {
+			line-height: 28px;
+			.fb-radio-option-tip {
+				margin-bottom: 10px;
+				color: #666;
+				font-size: 12px;
+				line-height: 19px;
+				white-space: pre-wrap;
+				word-break: break-word;
+			}
+		}
+	}
 	&.border {
 		display: flex;
+		justify-content: space-between;
+		.fb-radio-option {
+			max-width: 50%;
+			flex: 1;
+			margin-right: 10px;
+			&:last-child {
+				margin-right: 0;
+			}
+		}
 	}
-	.fb-radio-option {
-		max-width: 50%;
-		flex: 1;
-		margin-right: 10px;
-		&:last-child {
+	&.verical.border {
+		display: block;
+		.fb-radio-option {
+			width: 100%;
+			max-width: unset;
+			flex: unset;
 			margin-right: 0;
+		}
+		.el-radio.is-bordered + .el-radio.is-bordered {
+			margin-top: 16px;
+			margin-left: 0;
 		}
 	}
 }

@@ -393,7 +393,7 @@ const childRoutes = [
 		meta: {
 			url: '/old/index.html#/jsFuncs',
 			isCollapse: false,
-			code: 'data_collect'
+			code: 'SYNC_Function_management'
 		}
 	},
 	{
@@ -555,6 +555,11 @@ const router = new Router({
 			redirect: 'dashboard',
 			component: view('Layout'),
 			children: childRoutes
+		},
+		{
+			path: '/guide',
+			name: 'guide',
+			component: view('Guide')
 		}
 	]
 });
@@ -577,6 +582,9 @@ router.beforeEach(async (to, from, next) => {
 	}
 	let cookie = window.VueCookie;
 	let token = cookie.get('token');
+	let showGuide = cookie.get('show_guide');
+	let userId = cookie.get('user_id');
+
 	if (token) {
 		//若token存在，获取权限
 		let permissions = sessionStorage.getItem('tapdata_permissions');
@@ -588,8 +596,7 @@ router.beforeEach(async (to, from, next) => {
 				text: 'Loading...',
 				background: 'rgba(0, 0, 0, 0.7)'
 			});
-			let userId = cookie.get('user_id');
-			let token = cookie.get('token');
+
 			let result = await usersModel.getPermissions(`/${userId}/permissions?access_token=${token}`);
 			isFirst = false;
 			loading.close();
@@ -623,7 +630,14 @@ router.beforeEach(async (to, from, next) => {
 			matched = permissions.some(p => p.code === to.meta.code);
 		}
 		if (matched) {
-			if (to.name === 'login') {
+			if (showGuide) {
+				if (to.name === 'guide') {
+					return next();
+				} else {
+					return next('/guide');
+				}
+			}
+			if (to.name === 'login' || to.name === 'guide') {
 				next('/');
 			} else {
 				next();

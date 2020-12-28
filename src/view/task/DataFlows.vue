@@ -1,6 +1,6 @@
 <template>
 	<section class="data-flow-wrap" v-loading="restLoading">
-		<div class="panel-left" v-show="formData.panelFlag">
+		<div class="panel-left" v-show="formData.panelFlag" v-if="$window.getSettingByKey('SHOW_CLASSIFY')">
 			<Classification
 				ref="classification"
 				:authority="'SYNC_category_management'"
@@ -18,7 +18,11 @@
 			<div class="topbar">
 				<!-- <div class="panelBtn"></div> -->
 				<ul class="search-bar">
-					<li :class="[{ panelOpen: formData.panelFlag }, 'item', 'panelBtn']" @click="handlePanelFlag">
+					<li
+						v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+						:class="[{ panelOpen: formData.panelFlag }, 'item', 'panelBtn']"
+						@click="handlePanelFlag"
+					>
 						<i class="iconfont icon-xiangshangzhanhang"></i>
 						<span>{{ formData.panelFlag ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel') }}</span>
 					</li>
@@ -91,6 +95,7 @@
 				</ul>
 				<div class="topbar-buttons">
 					<el-button
+						v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
 						v-readonlybtn="'SYNC_category_application'"
 						size="mini"
 						class="btn"

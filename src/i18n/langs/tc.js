@@ -358,7 +358,7 @@ const tc = {
 		stystemOpenAll: '全部打開',
 		stystemDeleteAll: '全部刪除',
 		stystemLgnoreAll: '全部忽略',
-		newTaksName: '新任務未命名',
+		newTaksName: '新任務',
 		selectNode: '請選擇節點',
 		submitExecute: '提交執行',
 		submitOnly: '僅提交',
@@ -620,16 +620,21 @@ const tc = {
 		info: '數據源詳情',
 		copyMsg: '複製成功',
 		testMsg: '測試成功',
+		creator: '创建人',
 		editDataSource: '編輯數據源',
 		reloadOK: '正在加載 schema',
 		reloadFail: 'schema 加載失敗',
 		reloadTittle: '重新加載 schema',
 		deteleDatabaseTittle: '刪除數據源',
 		deteleDatabaseMsg: '確定刪除數據源',
+		desc:
+			'數據源包括數據庫，結構化文件，應用程序RESTful API，自定義接口等類型，必須先創建數據源才能創建遷移或同步任務。除基礎的配置項之外，數據源還有定期/手動加載數據庫結構 ，設置時區，表過濾設置等功能。更多配置說明，請點擊',
 		reloadMsg: '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema : ',
 		checkMsg: '此數據源被傳輸任務或API所佔用，無法刪除',
 		copyFailedMsg: '複製失敗，原因：系統設置中 "連接設置 - 允許創建重複數據源" 被設置為 "false"',
 		change: '更換',
+		rename: '改名',
+		testConnection: '連接測試',
 		status: {
 			testing: '測試中',
 			invalid: '無效',
@@ -1414,7 +1419,8 @@ const tc = {
 			testing: '測試中...',
 			items: '檢查事項',
 			result: '檢查結果',
-			information: '說明'
+			information: '說明',
+			error: '測試服務請求超時，請關閉重試'
 		},
 		form: {
 			connectionName: '連接名稱',
@@ -1449,20 +1455,53 @@ const tc = {
 			uriTips: {
 				label: '示例',
 				content:
-					`<b>MongoDB 數據庫連接 URI 示範:</b><br>` +
-					`複製集: mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
-					`啟用認證的複製集: mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
-					`多節點複製集: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
-					`分片集: mongodb://192.168.0.100:27017/mydb<br>` +
-					`多個mongos: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
+					`<b>MongoDB 數據庫連接 URI 示範 :</b><br>` +
+					`<b>複製集 :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
+					`<b>啟用認證的複製集 :</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
+					`<b>多節點複製集 :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
+					`<b>分片集 :</b> mongodb://192.168.0.100:27017/mydb<br>` +
+					`<b>多個mongos :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
 			},
 			tableFilterTips: '逗號分割的表達式列表，使用*代表任意長度任意字符',
 			timeZoneTips: '影響類型: DATE',
-
 			options: {
 				sourceAndTarget: '源頭和目標',
 				source: '源頭',
-				target: '目標'
+				target: '目標',
+				sourceAndTargetTips: '此數據連接在Tapdata 中能同時作為源和目標使用',
+				sourceTips: '此數據連接在Tapdata 中只能作為源使用，不能作用為目標',
+				targetTips: '此數據連接在Tapdata 中只能作為目標使用，不能作用為源',
+				connectionMode: '連接方式',
+				URIMode: 'URI模式',
+				URIModeTips: '以URI方式配置MongoDB數據庫，支持批量輸入',
+				standardMode: '標準模式',
+				standardModeTips: '按照Host,port,賬號，密碼的方式配置MongoDB數據庫，支持批量輸入',
+				sslTSL: 'TSL/SSL連接',
+				sslTSLTip:
+					'Tapdata 將連接奧網絡中的單獨服務器，該服務器提供到數據庫的TSL/SSL通道。如果您的數據庫位於不可訪問的子網中，則可嘗試使用此方法',
+				sslTop: '直接連接',
+				sslTopTips: 'Tapdata 將直接連接到數據庫，您可以要創建一個安全規則以允許系統訪問，這是簡單直接的方法'
+			},
+			guide: '數據源配置請參考頁面右側連接配置幫助文檔，想了解更多數據源連接置、使用說明或其他信息請點擊',
+			guideDoc: '幫助文檔',
+			response_body: {
+				CHECK_CONNECT: '檢查服務連接是否可用',
+				CHECK_AUTH: '檢查用戶名密碼是否正確',
+				CHECK_VERSION: '檢查數據源版本信息是否可用',
+				LOAD_SCHEMA: '加載模型',
+				CHECK_CDC_PERMISSION: '檢查cdc同步所需的權限是否授權',
+				CHECK_ARCHIVE_LOG: '檢查archive log是否開啟',
+				CHECK_SUPPLEMENTAL_LOG: '檢查supplemental log模式是否正確',
+				CHECK_DDL_PERMISSION: '檢查執行ddl語句所需的權限是否授權',
+				CHECK_PERMISSION: '檢查同步所需權限是否授權',
+				CHECK_BIN_LOG: '檢查binlog是否開啟，並且是ROW級別',
+				CHECK_SCRIPT: '檢查腳本是否可用',
+				CHECK_PRIMARY_KEY: '檢查主鍵是否可用',
+				CHECK_CONFIG: '檢查配置是否正確',
+				CHECK_READ_PERMISSION: '檢查可讀權限是否授權',
+				CHECK_ACCESS_TOKEN: '檢查access token是否可用',
+				CHECK_API_AUTH: '檢查api是否有訪問權限',
+				CHECK_LOCAL_PORT: '檢查本地端口是否可用'
 			}
 		},
 		error: {

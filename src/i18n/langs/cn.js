@@ -360,7 +360,7 @@ const cn = {
 		stystemOpenAll: '全部打开',
 		stystemDeleteAll: '全部删除',
 		stystemLgnoreAll: '全部忽略',
-		newTaksName: '新任务未命名',
+		newTaksName: '新任务',
 		selectNode: '请选择节点',
 		submitExecute: '提交执行',
 		submitOnly: '仅提交',
@@ -618,10 +618,13 @@ const cn = {
 		fuzzyQuery: '模糊匹配',
 		PreciseQuery: '精确匹配',
 		databaseTittle: '数据源管理',
+		desc:
+			'数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。除了基础的配置项之外，数据源还有定期/手动加载数据库结构、设置时区、表过滤设置等功能。更多配置说明，请点击',
 		createNewDataSource: '创建新数据源',
 		info: '数据源详情',
 		copyMsg: '复制成功',
 		testMsg: '测试成功',
+		creator: '创建人',
 		editDataSource: '编辑数据源',
 		reloadOK: '正在加载 schema',
 		reloadFail: 'schema 加载失败',
@@ -632,6 +635,8 @@ const cn = {
 		checkMsg: '此数据源被传输任务或API所占用，无法删除',
 		copyFailedMsg: '复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"',
 		change: '更换',
+		rename: '改名',
+		testConnection: '连接测试',
 		status: {
 			testing: '测试中',
 			invalid: '无效',
@@ -1414,10 +1419,11 @@ const cn = {
 			title: '连接测试',
 			success: '测试通过',
 			fail: '测试未通过',
-			testing: '测试中...',
+			testing: '待测试...',
 			items: '检查事项',
 			result: '检查结果',
-			information: '说明'
+			information: '说明',
+			error: '测试服务请求超时，请关闭重试'
 		},
 		form: {
 			connectionName: '连接名称',
@@ -1452,20 +1458,54 @@ const cn = {
 			uriTips: {
 				label: '示例',
 				content:
-					`<b>MongoDB 数据库连接 URI 示范:</b><br>` +
-					`复制集: mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
-					`启用认证的复制集: mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
-					`多节点复制集: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
-					`分片集: mongodb://192.168.0.100:27017/mydb<br>` +
-					`多个mongos: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
+					`<b>MongoDB 数据库连接 URI 示范 :</b><br>` +
+					`<b>复制集 :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
+					`<b>启用认证的复制集 :</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
+					`<b>多节点复制集 :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
+					`<b>分片集 :</b> mongodb://192.168.0.100:27017/mydb<br>` +
+					`<b>多个mongos :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
 			},
 			tableFilterTips: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
 			timeZoneTips: '影响类型: DATE',
-
 			options: {
 				sourceAndTarget: '源头和目标',
 				source: '源头',
-				target: '目标'
+				target: '目标',
+				sourceAndTargetTips: '此数据连接在Tapdata 中能同时作为源和目标使用',
+				sourceTips: '此数据连接在Tapdata 中只能作为源使用，不能作用为目标',
+				targetTips: '此数据连接在Tapdata 中只能作为目标使用，不能作用为源',
+				connectionMode: '连接方式',
+				URIMode: 'URI模式',
+				URIModeTips: '以URI方式配置MongoDB数据库，支持批量输入',
+				standardMode: '标准模式',
+				standardModeTips:
+					'Tapdata 将连接网络中的单独服务器，该服务器提供到数据库的TSL/SSL通道。如果您的数据库位于不可访问的子网中，则可尝试使用此方法',
+				sslTSL: 'TSL/SSL连接',
+				sslTSLTip:
+					'Tapdata 将连接网络中的单独服务器，该服务器提供到数据库的TSL/SSL通道。如果您的数据库位于不可访问的子网中，则可尝试使用此方法',
+				sslTop: '直接连接',
+				sslTopTips: 'Tapdata 将直接连接到数据库，您可以要创建一个安全规则以允许系统访问，这是简单直接的方法'
+			},
+			guide: '数据源配置请参考页面右侧连接配置帮助文档，想了解更多数据源连接置、使用说明或其他信息请点击',
+			guideDoc: '帮助文档',
+			response_body: {
+				CHECK_CONNECT: '检查服务连接是否可用',
+				CHECK_AUTH: '检查用户名密码是否正确',
+				CHECK_VERSION: '检查数据源版本信息是否可用',
+				LOAD_SCHEMA: '加载模型',
+				CHECK_CDC_PERMISSION: '检查cdc同步所需的权限是否授权',
+				CHECK_ARCHIVE_LOG: '检查archive log是否开启',
+				CHECK_SUPPLEMENTAL_LOG: '检查supplemental log模式是否正确',
+				CHECK_DDL_PERMISSION: '检查执行ddl语句所需的权限是否授权',
+				CHECK_PERMISSION: '检查同步所需权限是否授权',
+				CHECK_BIN_LOG: '检查binlog是否开启，并且是ROW级别',
+				CHECK_SCRIPT: '检查脚本是否可用',
+				CHECK_PRIMARY_KEY: '检查主键是否可用',
+				CHECK_CONFIG: '检查配置是否正确',
+				CHECK_READ_PERMISSION: '检查可读权限是否授权',
+				CHECK_ACCESS_TOKEN: '检查access token是否可用',
+				CHECK_API_AUTH: '检查api是否有访问权限',
+				CHECK_LOCAL_PORT: '检查本地端口是否可用'
 			}
 		},
 		error: {

@@ -41,6 +41,7 @@ import {
 	Aside,
 	Main,
 	Header,
+	Footer,
 	Tree,
 	Dropdown,
 	DropdownItem,
@@ -128,6 +129,7 @@ Vue.component(Container.name, Container);
 Vue.component(Aside.name, Aside);
 Vue.component(Main.name, Main);
 Vue.component(Header.name, Header);
+Vue.component(Footer.name, Footer);
 Vue.component(Tree.name, Tree);
 Vue.component(Link.name, Link);
 Vue.component(Dropdown.name, Dropdown);
