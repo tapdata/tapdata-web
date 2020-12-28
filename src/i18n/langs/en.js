@@ -1237,14 +1237,14 @@ const en = {
 			sidebar: {
 				setting: 'Data Flow Settings',
 				node_setting: 'Node Settings',
-				logs: 'Running logs',
-				milestone: 'Task milestone',
+				logs: 'Running Logs',
+				milestone: 'Task Milestone',
 				capture: 'Capture',
 				style: 'Style',
 
 				data_nodes: 'Data Nodes',
 				processor: 'Processor',
-				tableSelector: 'Fast selection'
+				tableSelector: 'Fast Selection'
 			},
 			toolbar: {
 				undo: {
