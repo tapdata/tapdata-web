@@ -192,7 +192,7 @@ const Languages = {
 	tc: '中文 (繁)'
 };
 let menuSetting = [
-	{ name: 'dashboard', icon: 'shouye', code: 'home' },
+	{ name: 'dashboard', icon: 'shouye' },
 	{ name: 'connections', icon: 'shujukus1', code: 'datasource' },
 	{
 		name: 'dataTransmission',
@@ -294,6 +294,7 @@ export default {
 		};
 	},
 	created() {
+		debugger;
 		this.activeMenu = this.$route.fullPath;
 		this.getMenus();
 		this.getFavMenus();

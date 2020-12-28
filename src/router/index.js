@@ -14,7 +14,7 @@ const childRoutes = [
 		path: '/dashboard',
 		name: 'dashboard',
 		component: view('dashboard/Dashboard'),
-		meta: { code: 'home', title: i18n.t('tap.home'), isCollapse: false }
+		meta: { title: i18n.t('tap.home'), isCollapse: false }
 	},
 	{
 		path: '/connections',
