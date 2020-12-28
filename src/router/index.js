@@ -613,6 +613,8 @@ router.beforeEach(async (to, from, next) => {
 				next(false);
 				return;
 			}
+		} else {
+			permissions = JSON.parse(permissions);
 		}
 
 		//判断当前路由的页面是否有权限，无权限则不跳转，有权限则执行跳转
