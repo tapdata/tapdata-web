@@ -67,7 +67,7 @@
 					<el-table-column prop="status" :label="$t('dataVerification.verifyResult')">
 						<template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
 							<div class="inspect-result-status">
-								<div>
+								<div v-if="scope.row.result === 'failed'">
 									<span class="error" v-if="scope.row.target_total - scope.row.source_total !== 0">
 										<i class="el-icon-error"></i>
 										<span>{{
@@ -80,7 +80,8 @@
 								<div
 									v-if="
 										scope.row.source_only + scope.row.target_only + scope.row.row_failed !== 0 &&
-											type !== 'row_count'
+											type !== 'row_count' &&
+											scope.row.result === 'failed'
 									"
 								>
 									<span class="error">
@@ -91,17 +92,7 @@
 										</span>
 									</span>
 								</div>
-								<span
-									class="success"
-									v-if="
-										(type !== 'row_count' &&
-											scope.row.source_only + scope.row.target_only + scope.row.row_failed ===
-												0 &&
-											scope.row.target_total - scope.row.source_total === 0) ||
-											(type === 'row_count' &&
-												scope.row.target_total - scope.row.source_total === 0)
-									"
-								>
+								<span class="success" v-if="scope.row.result === 'passed'">
 									<i class="el-icon-success"></i>
 									<span>{{ $t('dataVerification.consistent') }}</span>
 								</span>
@@ -165,25 +156,29 @@
 					<li>
 						<span>{{ $t('dataVerification.verifyResult') + ' : ' + resultData[0].result }}</span>
 					</li>
-					<li>
+					<li v-if="resultData[0].result !== 'passed'">
 						<span>{{
 							$t('dataVerification.rowConsistent') +
 								' : ' +
 								Math.abs(resultData[0].target_total - resultData[0].source_total)
 						}}</span>
 					</li>
-					<li>
+					<li v-if="resultData[0].result !== 'passed'">
 						<span>{{ $t('dataVerification.contConsistent') + ' : ' }}</span>
 						<span>{{
 							resultData[0].source_only + resultData[0].target_only + resultData[0].row_failed
 						}}</span>
 					</li>
 				</ul>
+				<div class="success-band" v-if="resultData && resultData[0] && resultData[0].result === 'passed'">
+					<i class="iconfont icon-zhuhe"></i>
+					<span>{{ $t('dataVerification.success') }}</span>
+				</div>
 				<div class="error-band" v-if="resultData && resultData[0] && resultData[0].status === 'error'">
 					<i class="iconfont icon-warning-circle"></i>
 					<span>{{ resultData[0].errorMsg }}</span>
 				</div>
-				<div class="inspect-result-box">
+				<div class="inspect-result-box" v-if="resultData[0].result !== 'passed'">
 					<div v-for="item in inspectResult" :key="item.id" class="inspect-details">
 						<ul class="father-table">
 							<li>{{ $t('dataVerification.inconsistentType') }}</li>
@@ -209,6 +204,7 @@
 								{{ detail.target.value }}
 							</li>
 						</ul>
+						<div>Message: {{ item.message || '-' }}</div>
 					</div>
 				</div>
 			</div>
@@ -434,9 +430,22 @@ export default {
 				line-height: 20px;
 				max-height: 160px;
 				text-overflow: ellipsis;
-				overflow-y: scroll;
+				overflow-y: auto;
 				font-size: 12px;
 				padding: 8px;
+			}
+			.success-band {
+				line-height: 20px;
+				max-height: 160px;
+				text-overflow: ellipsis;
+				font-size: 12px;
+				padding: 8px;
+				color: #666;
+				margin: 20% auto;
+				i {
+					font-size: 36px;
+					color: #48b6e2;
+				}
 			}
 			.title {
 				font-weight: bold;
@@ -508,12 +517,22 @@ export default {
 						li {
 							flex: 1;
 							border-left: 1px solid #dedee4;
-							border-bottom: 1px solid #dedee4;
 							border-top: 1px solid #dedee4;
 						}
 						li:last-child {
 							border-right: 1px solid #dedee4;
 						}
+					}
+					div {
+						font-size: 12px;
+						box-sizing: border-box;
+						text-overflow: ellipsis;
+						vertical-align: middle;
+						position: relative;
+						text-align: left;
+						padding: 16px 10px;
+						word-wrap: break-word;
+						border: 1px solid #dedee4;
 					}
 				}
 				.inspect-details {

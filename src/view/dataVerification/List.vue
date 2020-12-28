@@ -153,18 +153,11 @@
 							>
 								<div
 									v-if="
-										scope.row.InspectResult.target_total - scope.row.InspectResult.source_total !==
-											0
+										scope.row.InspectResult.target_total !== scope.row.InspectResult.source_total &&
+											scope.row.result !== 'passed'
 									"
 								>
-									<span
-										class="error"
-										v-if="
-											scope.row.InspectResult.target_total -
-												scope.row.InspectResult.source_total !==
-												0
-										"
-									>
+									<span class="error">
 										<i class="el-icon-error"></i>
 										<span>
 											{{ $t('dataVerification.rowConsistent') }}
@@ -178,7 +171,11 @@
 									</span>
 								</div>
 								<div
-									v-if="scope.row.difference_number !== 0 && scope.row.inspectMethod !== 'row_count'"
+									v-if="
+										scope.row.difference_number !== 0 &&
+											scope.row.inspectMethod !== 'row_count' &&
+											scope.row.result !== 'passed'
+									"
 								>
 									<span class="error" v-if="scope.row.difference_number">
 										<i class="el-icon-error"></i>
@@ -188,13 +185,7 @@
 										</span>
 									</span>
 								</div>
-								<span
-									class="success"
-									v-if="
-										scope.row.InspectResult.target_total - scope.row.InspectResult.source_total ===
-											0 && scope.row.difference_number === 0
-									"
-								>
+								<span class="success" v-if="scope.row.result === 'passed'">
 									<i class="el-icon-success"></i>
 									<span>{{ $t('dataVerification.consistent') }}</span>
 								</span>
