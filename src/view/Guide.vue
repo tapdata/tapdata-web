@@ -689,7 +689,7 @@ export default {
 		border-top: 1px solid #dedee4;
 	}
 	.btn-step {
-		width: 250px;
+		width: 212px;
 		position: relative;
 		.btn-pass {
 			position: absolute;
