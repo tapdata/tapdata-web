@@ -8,13 +8,13 @@
 Tapdata系统当前版本Redis仅支持作为目标，支持的数据源的类型为：Oracle、MySQL、MongoDB、PostgreSQL、SQL Server。
 
 
-源端 | 目标端|支持情况
+| 源端 | 目标端|支持情况
 | :-----------: | :-----------:|:-----------:|
-Oracle | Elastic Search |支持
-MySQL| Elastic Search |支持
-MongoDB| Elastic Search |支持
-PostgreSQL| Elastic Search |支持
-SQL Server | Elastic Search |支持
+| Oracle | Elastic Search |支持
+| MySQL| Elastic Search |支持
+| MongoDB| Elastic Search |支持
+| PostgreSQL| Elastic Search |支持
+| SQL Server | Elastic Search |支持
 
 #### **3. 支持版本**
 Redis 3.3
