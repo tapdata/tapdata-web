@@ -64,12 +64,12 @@
 				<li class="module-style">
 					<el-row class="e-row" v-for="item in moduleList" :key="item.id">
 						<el-col :span="3">
-							<span class="nav">{{ $t('role.roleNavName.' + item.name) }}</span>
+							<span class="nav">{{ $t('role.moduleMeun.' + item.name) }}</span>
 						</el-col>
 						<el-col :span="21" class="e-col borderLine">
 							<!-- 权限 -->
 							<el-row class="box">
-								<el-col class="e-col" :span="21">
+								<el-col class="e-col" :span="21" v-if="item.children">
 									<el-checkbox
 										v-for="second in item.children"
 										:key="second.name"
@@ -91,7 +91,7 @@
 										</el-checkbox>
 									</el-checkbox>
 								</el-col>
-								<el-col class="e-col" :span="3">
+								<el-col class="e-col" :span="3" v-if="item.children">
 									<el-checkbox
 										class="checkbox-radio"
 										v-model="item.checkAll"
@@ -193,49 +193,49 @@ import factory from '@/api/factory';
 const roleMappingModel = factory('roleMapping');
 
 let pageSort = [
-	{ children: [{ name: 'Dashboard' }] },
-	{ children: [{ name: 'datasource' }] },
-	{ name: 'data_transmission', children: [{ name: 'Data_SYNC' }, { name: 'Data_verify' }] },
+	{ children: [{ name: 'Dashboard_menu' }] },
+	{ children: [{ name: 'datasource_menu' }] },
+	{ name: 'data_transmission', children: [{ name: 'Data_SYNC_menu' }, { name: 'Data_verify_menu' }] },
 	{
 		name: 'data_government',
 		children: [
-			{ name: 'data_catalog' },
-			{ name: 'data_quality' },
-			{ name: 'time_to_live' },
-			{ name: 'data_lineage' },
-			{ name: 'data_rules' },
-			{ name: 'Topology' },
-			{ name: 'dictionary' }
+			{ name: 'data_catalog_menu' },
+			{ name: 'data_quality_menu' },
+			{ name: 'time_to_live_menu' },
+			{ name: 'data_lineage_menu' },
+			{ name: 'data_rules_menu' },
+			{ name: 'Topology_menu' },
+			{ name: 'dictionary_menu' }
 		]
 	},
 	{
 		name: 'data_publish',
 		children: [
-			{ name: 'API_management' },
-			{ name: 'API_data_explorer' },
-			{ name: 'API_doc_test' },
-			{ name: 'API_stats' },
-			{ name: 'API_clients' },
-			{ name: 'API_server' }
+			{ name: 'API_management_menu' },
+			{ name: 'API_data_explorer_menu' },
+			{ name: 'API_doc_test_menu' },
+			{ name: 'API_stats_menu' },
+			{ name: 'API_clients_menu' },
+			{ name: 'API_server_menu' }
 		]
 	},
-	{ children: [{ name: 'data_collect' }] },
+	{ children: [{ name: 'data_collect_menu' }] },
 	{
 		name: 'system_management',
 		children: [
-			{ name: 'schedule_jobs' },
-			{ name: 'Cluster_management' },
-			{ name: 'agents' },
-			{ name: 'servers_oversee' },
-			{ name: 'user_management' },
-			{ name: 'role_management' },
-			{ name: 'system_settings' }
+			{ name: 'schedule_jobs_menu' },
+			{ name: 'Cluster_management_menu' },
+			{ name: 'agents_menu' },
+			{ name: 'servers_oversee_menu' },
+			{ name: 'user_management_menu' },
+			{ name: 'role_management_menu' },
+			{ name: 'system_settings_menu' }
 		]
 	}
 ];
 
 let moduleMapping = [
-	{ name: 'Dashboard', children: [{ name: 'Dashboard' }] },
+	{ name: 'Dashboard', functional: [{ name: 'Dashboard' }] },
 	{
 		name: 'datasource',
 		children: [
@@ -260,7 +260,12 @@ let moduleMapping = [
 	},
 	{
 		name: 'SYNC_Function_management',
-		children: [{ name: 'datasource_creation' }, { name: 'datasource_edition' }, { name: 'datasource_delete' }]
+		functional: [
+			{ name: 'SYNC_Function_management' },
+			{ name: 'datasource_creation' },
+			{ name: 'datasource_edition' },
+			{ name: 'datasource_delete' }
+		]
 	},
 	{
 		name: 'Data_verify',
@@ -274,7 +279,7 @@ let moduleMapping = [
 	},
 	{
 		name: 'data_government',
-		children: [{ name: 'data_catalog_category_application' }, { name: 'data_catalog_category_management' }]
+		classification: [{ name: 'data_catalog_category_application' }, { name: 'data_catalog_category_management' }]
 	},
 	{
 		name: 'data_catalog',
@@ -308,7 +313,7 @@ let moduleMapping = [
 	},
 	{
 		name: 'data_lineage',
-		children: [{ name: 'data_lineage' }]
+		functional: [{ name: 'data_lineage' }]
 	},
 
 	{
@@ -326,6 +331,7 @@ let moduleMapping = [
 	{
 		name: 'API_data_explorer',
 		children: [
+			{ name: 'API_data_explorer', allName: 'API_data_explorer_all_data' },
 			{ name: 'API_data_creation' },
 			{ name: 'API_data_explorer_deleting' },
 			{ name: 'API_data_explorer_export' },
@@ -335,19 +341,19 @@ let moduleMapping = [
 	},
 	{
 		name: 'API_doc_test',
-		children: [{ name: 'API_doc_test' }]
+		functional: [{ name: 'API_doc_test' }]
 	},
 	{
 		name: 'API_stats',
-		children: [{ name: 'API_stats' }]
+		functional: [{ name: 'API_stats' }]
 	},
 	{
 		name: 'API_clients',
-		children: [{ name: 'API_clients_amangement' }]
+		functional: [{ name: 'API_clients_amangement' }]
 	},
 	{
 		name: 'API_server',
-		children: [{ name: 'API_server_management' }]
+		functional: [{ name: 'API_server_management' }]
 	},
 	{
 		name: 'data_collect',
@@ -356,7 +362,7 @@ let moduleMapping = [
 
 	{
 		name: 'schedule_jobs',
-		children: [{ name: 'schedule_jobs' }, { name: 'schedule_jobs_management' }]
+		functional: [{ name: 'schedule_jobs' }, { name: 'schedule_jobs_management' }]
 	},
 	{
 		name: 'Cluster_management',
@@ -368,7 +374,7 @@ let moduleMapping = [
 	},
 	{
 		name: 'agents',
-		children: [{ name: 'agents' }]
+		functional: [{ name: 'agents' }]
 	},
 	{
 		name: 'user_management',
@@ -391,7 +397,7 @@ let moduleMapping = [
 	},
 	{
 		name: 'system_settings',
-		children: [{ name: 'system_settings_modification' }, { name: 'notice_settings' }]
+		functional: [{ name: 'system_settings' }, { name: 'system_settings_modification' }, { name: 'notice_settings' }]
 	}
 ];
 export default {
@@ -451,7 +457,7 @@ export default {
 								if (this.selectRole && this.selectRole.length) {
 									if (item.children && item.children.length) {
 										item.children.filter(childItem => {
-											this.$set(childItem, 'checked', this.selectRole.includes(childItem.name));
+											this.$set(childItem, 'checkAll', this.selectRole.includes(childItem.name));
 										});
 									}
 								}
@@ -462,7 +468,18 @@ export default {
 								if (this.selectRole && this.selectRole.length) {
 									if (item.children && item.children.length) {
 										item.children.filter(childItem => {
-											this.$set(childItem, 'checked', this.selectRole.includes(childItem.name));
+											this.$set(
+												childItem,
+												'checkAllData',
+												this.selectRole.includes(childItem.allName)
+											);
+											childItem.checkAllData
+												? this.$set(childItem, 'checked', true)
+												: this.$set(
+														childItem,
+														'checked',
+														this.selectRole.includes(childItem.name)
+												  );
 										});
 										if (item.classification) {
 											item.classification.filter(classify => {
@@ -736,19 +753,20 @@ export default {
 			// }
 			this.dataList.forEach(item => {
 				item.children.forEach(child => {
-					if (child.checked) {
+					if (child.checkAll) {
 						pageArr.push(child.name);
 					}
 				});
 			});
 			this.moduleList.forEach(item => {
-				item.children.forEach(child => {
-					if (child.checked && child.checkAllData) {
-						childreArr.push(child.allName);
-					} else if (child.checked) {
-						childreArr.push(child.name);
-					}
-				});
+				if (item.children && item.children.length)
+					item.children.forEach(child => {
+						if (child.checked && child.checkAllData) {
+							childreArr.push(child.allName);
+						} else if (child.checked) {
+							childreArr.push(child.name);
+						}
+					});
 				if (item.classification && item.classification.length)
 					item.classification.forEach(classify => {
 						if (classify.checked) {
@@ -776,6 +794,7 @@ export default {
 						roleId: roleId
 					});
 			});
+
 			roleMappingModel.post(newRoleMappings);
 
 			this.$message.success(this.$t('message.saveOK'));
