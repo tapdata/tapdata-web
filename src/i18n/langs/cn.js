@@ -1478,13 +1478,15 @@ const cn = {
 				URIModeTips: '以URI方式配置MongoDB数据库，支持批量输入',
 				standardMode: '标准模式',
 				standardModeTips:
-					'Tapdata 将连接奥网络中的单独服务器，该服务器提供到数据库的TSL/SSL通道。如果您的数据库位于不可访问的子网中，则可尝试使用此方法',
+					'Tapdata 将连接网络中的单独服务器，该服务器提供到数据库的TSL/SSL通道。如果您的数据库位于不可访问的子网中，则可尝试使用此方法',
 				sslTSL: 'TSL/SSL连接',
 				sslTSLTip:
-					'Tapdata 将连接奥网络中的单独服务器，该服务器提供到数据库的TSL/SSL通道。如果您的数据库位于不可访问的子网中，则可尝试使用此方法',
+					'Tapdata 将连接网络中的单独服务器，该服务器提供到数据库的TSL/SSL通道。如果您的数据库位于不可访问的子网中，则可尝试使用此方法',
 				sslTop: '直接连接',
 				sslTopTips: 'Tapdata 将直接连接到数据库，您可以要创建一个安全规则以允许系统访问，这是简单直接的方法'
 			},
+			guide: '数据源配置请参考页面右侧连接配置帮助文档，想了解更多数据源连接置、使用说明或其他信息请点击',
+			guideDoc: '帮助文档',
 			response_body: {
 				CHECK_CONNECT: '检查服务连接是否可用',
 				CHECK_AUTH: '检查用户名密码是否正确',

@@ -20,9 +20,19 @@
 					<div class="img-box">
 						<img :src="getImgByType(databaseType)" />
 					</div>
-					<div class="content">{{ typeMap[databaseType] }}</div>
-					<div class="addBtn" @click="dialogDatabaseTypeVisible = true">
-						{{ $t('connection.change') }}
+					<div class="content-box">
+						<div class="content">
+							{{ typeMap[databaseType] }}
+							<div class="addBtn" @click="dialogDatabaseTypeVisible = true">
+								{{ $t('connection.change') }}
+							</div>
+						</div>
+						<div class="tip">
+							{{ $t('dataForm.form.guide') }}
+							<a style="color: #48B6E2" href="https://docs.tapdata.net/data-source">{{
+								$t('dataForm.form.guideDoc')
+							}}</a>
+						</div>
 					</div>
 				</header>
 				<div class="form">
@@ -498,6 +508,23 @@ export default {
 				font-size: 12px;
 				margin-top: 22px;
 				margin-left: 10px;
+			}
+			.content-box {
+				.addBtn {
+					color: #48b6e2;
+					cursor: pointer;
+					font-size: 12px;
+					margin-top: 0;
+					margin-left: 10px;
+				}
+				.tip {
+					margin-left: 15px;
+					font-size: 12px;
+					color: #999;
+					margin-top: 5px;
+					line-height: 18px;
+					width: 430px;
+				}
 			}
 			.test {
 				margin-left: 200px;

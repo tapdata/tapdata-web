@@ -40,7 +40,7 @@
 					<el-checkbox class="keep-sign-in" v-model="keepSignIn">
 						{{ $t('app.signIn.keepSignIn') }}
 					</el-checkbox>
-					<el-button class="btn-sign-in" type="primary" size="medium" @click="submit">
+					<el-button class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
 						{{ $t('app.signIn.signIn') }}
 					</el-button>
 

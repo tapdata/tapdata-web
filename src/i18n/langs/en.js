@@ -633,7 +633,7 @@ const en = {
 		reloadFail: 'Failed to schema',
 		reloadTittle: 'Reload schema',
 		desc:
-			'Source Connection includes database, files, RESTful API, custom API etc. You must create at least one data source before you can create migration or replication job. In addition to the standard configuration, you can also configure whether to automatic/manual reload database schema, time zone, and table filter settings. See more details here.',
+			'Source Connection includes database, files, RESTful API, custom API etc. You must create at least one data source before you can create migration or replication job. In addition to the standard configuration, you can also configure whether to automatic/manual reload database schema, time zone, and table filter settings. See more details click',
 		deteleDatabaseTittle: 'Delete database',
 		deteleDatabaseMsg: 'This will permanently delete the database ',
 		reloadMsg: 'It may take a long time to reload schema, are you sure to reload the schema of the database',
@@ -1493,21 +1493,25 @@ const en = {
 				sourceAndTarget: 'SOURCE AND TARGET',
 				source: 'SOURCE',
 				target: 'TARGET',
-				sourceAndTargetTips: '此数据连接在Tapdata 中能同时作为源和目标使用',
-				sourceTips: '此数据连接在Tapdata 中只能作为源使用，不能作用为目标',
-				targetTips: '此数据连接在Tapdata 中只能作为目标使用，不能作用为源',
-				connectionMode: '连接方式',
-				URIMode: 'URI模式',
-				URIModeTips: '以URI方式配置MongoDB數據庫，支持批量輸入',
-				standardMode: '標準模式',
+				sourceAndTargetTips: 'This data connection can be used as both source and target in Tapdata',
+				sourceTips: 'This data connection can only be used as source in Tapdata, but not as target',
+				targetTips: 'This data connection can only be used as target in Tapdata, but not as source ',
+				connectionMode: 'Connection mode',
+				URIMode: 'URI mode',
+				URIModeTips: 'Configure MongoDB database in URI mode. Batch input is supported',
+				standardMode: 'Standard mode',
 				standardModeTips:
-					'Tapdata 將連接奧網絡中的單獨服務器，該服務器提供到數據庫的TSL/SSL通道。如果您的數據庫位於不可訪問的子網中，則可嘗試使用此方法',
-				sslTSL: 'TSL/SSL連接',
+					'Configure MongoDB database according to Host/IP, port, account and password. Batch input is supported',
+				sslTSL: 'Connect via an TSL/SSL tunnel',
 				sslTSLTip:
-					'Tapdata 將連接奧網絡中的單獨服務器，該服務器提供到數據庫的TSL/SSL通道。如果您的數據庫位於不可訪問的子網中，則可嘗試使用此方法',
-				sslTop: '直接連接',
-				sslTopTips: 'Tapdata 將直接連接到數據庫，您可以要創建一個安全規則以允許系統訪問，這是簡單直接的方法'
+					'Tapdata will connect to a separate server in your network which provides an TSL/SSL tunnel to your database. This method is necessary if your database is in an inaccessible subnet.',
+				sslTop: 'Connect directly',
+				sslTopTips:
+					'Tapdata will connect directly to your database. You may have to create a security rule to allow access. This is the simplest method.'
 			},
+			guide:
+				'For data connection configuration, please refer to the guide documenton the right side. For more information about data connection settings, instructions or other information, please click',
+			guideDoc: 'guide document',
 			response_body: {
 				CHECK_CONNECT: 'Check the connection is available',
 				CHECK_AUTH: 'Checks if the username and password are available',

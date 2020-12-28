@@ -48,31 +48,39 @@
 								{{ $t('connection.status.testing') }}
 							</span>
 						</span>
+						<span class="schema-load"
+							>{{ $t('connection.preview.reloadName') }} :
+							{{
+								data.last_updated ? $moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss') : ''
+							}}</span
+						>
 					</div>
-				</div>
-				<div class="panelBtn">
-					<ul>
-						<li class="item">
-							<el-button class="btn" size="mini" @click="edit(id, type)">
-								<i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
-							</el-button>
-						</li>
-						<li class="item">
-							<el-button
-								class="btn"
-								size="mini"
-								@click="reload()"
-								:disabled="!['ready'].includes(this.status) || !data.tableCount"
-							>
-								<i class="iconfont icon-kujitongbucopy">{{ $t('connection.preview.reloadName') }}</i>
-							</el-button>
-						</li>
-						<li class="item">
-							<el-button class="btn" size="mini" @click="beforeTest(id)">
-								<i class="iconfont icon-lianjie1"> {{ $t('connection.preview.test') }} </i>
-							</el-button>
-						</li>
-					</ul>
+					<div class="panelBtn">
+						<ul>
+							<li class="item">
+								<el-button class="btn" size="mini" @click="edit(id, type)">
+									<i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
+								</el-button>
+							</li>
+							<li class="item">
+								<el-button
+									class="btn"
+									size="mini"
+									@click="reload()"
+									:disabled="!['ready'].includes(this.status) || !data.tableCount"
+								>
+									<i class="iconfont icon-kujitongbucopy">{{
+										$t('connection.preview.reloadName')
+									}}</i>
+								</el-button>
+							</li>
+							<li class="item">
+								<el-button class="btn" size="mini" @click="beforeTest(id)">
+									<i class="iconfont icon-lianjie1"> {{ $t('connection.preview.test') }} </i>
+								</el-button>
+							</li>
+						</ul>
+					</div>
 				</div>
 			</div>
 			<el-progress
@@ -87,7 +95,9 @@
 		<ul class="info-list">
 			<li v-for="item in form" :key="item.label">
 				<span class="label">{{ item.label }}</span>
-				<span class="value">{{ item.value }}</span>
+				<span class="value align-center" :class="{ 'align-top': item.label.length > 15 }">{{
+					item.value
+				}}</span>
 			</li>
 		</ul>
 		<Test @dialogTestVisible="handleTestVisible" :dialogTestVisible="dialogTestVisible" :formData="data"></Test>
@@ -331,7 +341,7 @@ export default {
 			display: flex;
 			align-items: center;
 			width: 60%;
-			justify-content: flex-end;
+			margin-top: 10px;
 			.item {
 				margin-right: 10px;
 				float: right;
@@ -360,7 +370,7 @@ export default {
 		color: #999;
 		font-size: 12px;
 		display: inline-block;
-		width: 200px;
+		width: 110px;
 		margin-right: 10px;
 		text-align: right;
 	}
@@ -371,9 +381,23 @@ export default {
 		display: inline-block;
 		word-break: break-all;
 	}
+	.align-top {
+		vertical-align: top;
+	}
+	.align-center {
+		vertical-align: center;
+	}
+	.schema-load {
+		color: #999;
+		display: inline-block;
+		margin-left: 20px;
+		font-size: 12px;
+	}
 	.info-list {
 		overflow-y: auto;
-		max-height: 640px;
+		max-height: 690px;
+		max-width: 480px;
+		margin: 0 auto;
 		li {
 			margin-bottom: 20px;
 		}

@@ -4,10 +4,8 @@ import { signOut } from '../util/util';
 import { Message } from 'element-ui';
 import i18n from '../i18n/i18n';
 
-let pending = []; //声明一个数组用于存储每个ajax请求的取消函数和ajax标识
+let pending = {}; //声明一个数组用于存储每个ajax请求的取消函数和ajax标识
 let CancelToken = axios.CancelToken;
-
-//获取当前请求
 
 axios.interceptors.request.use(
 	function(config) {
@@ -24,10 +22,10 @@ axios.interceptors.request.use(
 		config.cancelToken = new CancelToken(c => {
 			cancelFunc = c;
 		});
-		if (pending.includes(key)) {
+		if (pending[key]) {
 			cancelFunc();
 		} else {
-			pending.push(key);
+			pending[key];
 		}
 		return config;
 	},
@@ -40,13 +38,7 @@ axios.interceptors.response.use(
 	response => {
 		return new Promise((resolve, reject) => {
 			let key = response.config.url + '&' + response.config.method;
-			let index = pending.findIndex(item => item === key);
-			if (index > -1) {
-				pending.splice(index, 1);
-			}
-			if (pending.includes(key)) {
-				pending.remove(key);
-			}
+			delete pending[key];
 			let data = response.data;
 			if (data.code === 'ok') {
 				return resolve({

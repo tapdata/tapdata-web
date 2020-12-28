@@ -5,6 +5,7 @@
 		</div>
 		<div class="desc">
 			{{ description }}
+			<a style="color: #48B6E2" href="https://docs.tapdata.net/data-source">{{ $t('dataForm.form.guideDoc') }}</a>
 		</div>
 	</header>
 </template>
@@ -41,7 +42,7 @@ export default {
 		color: #111111;
 	}
 	.desc {
-		width: 85%;
+		width: 90%;
 		height: 14px;
 		margin-top: 10px;
 		font-size: 12px;

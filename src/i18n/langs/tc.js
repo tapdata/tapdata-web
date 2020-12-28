@@ -1474,14 +1474,15 @@ const tc = {
 				URIMode: 'URI模式',
 				URIModeTips: '以URI方式配置MongoDB數據庫，支持批量輸入',
 				standardMode: '標準模式',
-				standardModeTips:
-					'Tapdata 將連接奧網絡中的單獨服務器，該服務器提供到數據庫的TSL/SSL通道。如果您的數據庫位於不可訪問的子網中，則可嘗試使用此方法',
+				standardModeTips: '按照Host,port,賬號，密碼的方式配置MongoDB數據庫，支持批量輸入',
 				sslTSL: 'TSL/SSL連接',
 				sslTSLTip:
 					'Tapdata 將連接奧網絡中的單獨服務器，該服務器提供到數據庫的TSL/SSL通道。如果您的數據庫位於不可訪問的子網中，則可嘗試使用此方法',
 				sslTop: '直接連接',
 				sslTopTips: 'Tapdata 將直接連接到數據庫，您可以要創建一個安全規則以允許系統訪問，這是簡單直接的方法'
 			},
+			guide: '數據源配置請參考頁面右側連接配置幫助文檔，想了解更多數據源連接置、使用說明或其他信息請點擊',
+			guideDoc: '幫助文檔',
 			response_body: {
 				CHECK_CONNECT: '檢查服務連接是否可用',
 				CHECK_AUTH: '檢查用戶名密碼是否正確',
