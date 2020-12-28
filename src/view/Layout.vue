@@ -352,7 +352,7 @@ export default {
 			if (result && result.data) {
 				let user = result.data || {};
 				this.favMenus = user.favorites || [];
-				this.userName = user.email.split('@')[0] || '';
+				this.userName = (user.email && user.email.split('@')[0]) || '';
 			}
 		},
 		// 刷新获取权限

@@ -78,7 +78,7 @@
 							<el-button
 								type="text"
 								v-readonlybtn="'role_edition'"
-								@click="handleSettingPermissions(scope.row.id)"
+								@click="handleSettingPermissions(scope.row.id, scope.row.name)"
 							>
 								{{ $t('role.settingPermissions') }}
 							</el-button>
@@ -314,8 +314,8 @@ export default {
 		},
 
 		// 设置权限
-		handleSettingPermissions(id) {
-			this.$router.push({ name: 'role', query: { id } });
+		handleSettingPermissions(id, name) {
+			this.$router.push({ name: 'role', query: { id: id, name: name } });
 		},
 
 		// 已关联用户

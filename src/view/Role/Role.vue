@@ -1,7 +1,11 @@
 <template>
 	<div class="role" v-loading="loading">
 		<head class="head">
-			<i class="iconfont icon-left-circle back-btn-icon" style="color: #f00;"></i>
+			<i
+				class="iconfont icon-left-circle back-btn-icon"
+				style="color: #48B6E2;cursor: pointer;"
+				@click="back"
+			></i>
 			<h1>{{ $t('role.settingTitle') }}</h1>
 			<span>{{ $t('role.currentRole') }}: {{ roleName }}</span>
 		</head>
@@ -71,7 +75,7 @@
 						<el-col :span="21" class="e-col borderLine">
 							<!-- 权限 -->
 							<el-row class="box">
-								<el-col class="e-col" :span="21" v-if="item.children">
+								<el-col class="e-col" :span="20" v-if="item.children">
 									<el-checkbox
 										v-for="second in item.children"
 										:key="second.name"
@@ -93,13 +97,13 @@
 										</el-checkbox>
 									</el-checkbox>
 								</el-col>
-								<el-col :span="3" v-if="item.children" style="padding-top: 8px">
+								<el-col :span="4" v-if="item.children" style="padding-top: 8px">
 									<el-checkbox
 										v-model="item.checkAll"
 										@change="handleAuthoritySelectAll($event, item, item.children)"
 										v-cloak
 									>
-										<div>{{ $t('role.allCheck') }}</div>
+										<div>{{ $t('role.chooseAllFunction') }}</div>
 									</el-checkbox>
 									<el-checkbox
 										class="e-checkbox"
@@ -107,14 +111,14 @@
 										@change="handleCheckedAllData($event, item, item.children)"
 										v-cloak
 									>
-										<div>{{ $t('role.allData') }}</div>
+										<div>{{ $t('role.chooseAllRole') }}</div>
 									</el-checkbox>
 								</el-col>
 							</el-row>
 							<div class="line" v-if="item.children && item.classification"></div>
 							<!-- 分类权限 -->
 							<el-row class="box heightStyle" v-if="item.classification">
-								<el-col class="e-col" :span="21">
+								<el-col class="e-col" :span="20">
 									<el-checkbox
 										v-for="second in item.classification"
 										:key="second.name"
@@ -138,21 +142,21 @@
 										</el-checkbox> -->
 									</el-checkbox>
 								</el-col>
-								<el-col class="e-col allSelectBox" :span="3">
+								<el-col class="e-col allSelectBox" :span="4">
 									<el-checkbox
 										class="checkbox-radio checkbox-position"
 										v-model="item.classifiyCheckAll"
 										@change="handleAuthoritySelectAll($event, item, item.classification)"
 										v-cloak
 									>
-										<div>{{ $t('role.allCheck') }}</div>
+										<div>{{ $t('role.chooseAllRole') }}</div>
 									</el-checkbox>
 								</el-col>
 							</el-row>
 							<div class="line" v-if="item.classification && item.functional"></div>
 							<!-- 导入导出 -->
 							<el-row class="box heightStyle" v-if="item.functional">
-								<el-col class="e-col" :span="21">
+								<el-col class="e-col" :span="20">
 									<el-checkbox
 										v-for="second in item.functional"
 										:key="second.name"
@@ -164,14 +168,14 @@
 										<div>{{ $t('role.roleNavName.' + second.name) }}</div>
 									</el-checkbox>
 								</el-col>
-								<el-col class="e-col" :span="3">
+								<el-col class="e-col" :span="4">
 									<el-checkbox
 										class="checkbox-radio checkbox-position"
 										v-model="item.functionCheckAll"
 										@change="handleAuthoritySelectAll($event, item, item.functional)"
 										v-cloak
 									>
-										<div>{{ $t('role.allCheck') }}</div>
+										<div>{{ $t('role.chooseAllRole') }}</div>
 									</el-checkbox>
 								</el-col>
 							</el-row>
@@ -258,7 +262,7 @@ let moduleMapping = [
 			{ name: 'SYNC_job_operation', allName: 'SYNC_job_operation_all_data' }
 		],
 		classification: [{ name: 'SYNC_category_management' }, { name: 'SYNC_category_application' }],
-		functional: [{ name: 'SYNC_job_import' }, { name: 'SYNC_job_export' }, { name: 'create_new_table_in_SYNC' }]
+		functional: [{ name: 'SYNC_job_import' }, { name: 'SYNC_job_export' }]
 	},
 	{
 		name: 'SYNC_Function_management',
@@ -403,7 +407,6 @@ export default {
 			loading: false,
 			saveloading: false,
 			permissLoading: false,
-			title: '',
 			form: {
 				name: '',
 				description: '',
@@ -421,7 +424,7 @@ export default {
 	},
 
 	created() {
-		this.title = this.$route.query.id ? this.$t('role.editroleTitle') : this.$t('role.addroleTitle');
+		this.roleName = this.$route.query.name ? this.$route.query.name : '';
 		this.getPermission();
 		// if (this.$route.params.id) {
 		// 	this.getUserDataApi();
@@ -877,6 +880,7 @@ export default {
 						border-bottom: 0;
 					}
 					.nav {
+						display: block;
 						padding-left: 12px;
 						font-size: 14px;
 					}
@@ -948,7 +952,7 @@ export default {
 			}
 			.el-checkbox {
 				// display: inline;
-				min-width: 120px;
+				min-width: 170px;
 				margin: 0 10px;
 				line-height: 20px;
 				box-sizing: border-box;
@@ -962,7 +966,7 @@ export default {
 				}
 			}
 			.checkbox-radio {
-				min-width: 150px;
+				min-width: 170px;
 				.el-checkbox__input {
 					padding-top: 3px;
 					vertical-align: top;
