@@ -87,7 +87,7 @@
 								size="mini"
 								class="el-icon-plus"
 								style="padding: 7px;margin-left: 7px"
-								v-readonlybtn="'create_new_table_in_SYNC'"
+								v-readonlybtn="'new_model_creation'"
 								@click="addNewTable"
 							></el-button>
 						</el-tooltip>
