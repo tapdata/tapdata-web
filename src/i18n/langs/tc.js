@@ -1952,6 +1952,27 @@ const tc = {
 		delete_error: '刪除角色失敗',
 		connected: '已關聯',
 		role_null: '角色名稱不能為空'
+	},
+	milestone: {
+		INIT_DATAFLOW: '【前期準備】解析DAG路徑創建子任務',
+		CONNECT_TO_SOURCE: '【前期準備】連接源端數據源',
+		CONNECT_TO_TARGET: '【前期準備】連接目標端數據源',
+		INIT_CONNECTOR: '【前期準備】掃描源端信息，初始化源端採集器',
+		INIT_TRANSFORMER: '【前期準備】掃描目標端信息，初始化目標端處理器',
+		READ_SOURCE_DDL: '【前期準備】讀取源端DDL信息（數據遷移）',
+		DROP_TARGET_TABLE: '【前期準備】刪除目標端模型（任務第一次執行或者重置後執行）',
+		CLEAR_TARGET_DATA: '【前期準備】清空目標表數據（任務第一次執行或者重置後執行）',
+		CREATE_TARGET_TABLE: '【前期準備】自動創建目標表 （任務第一次執行或者重置後執行）',
+		CREATE_TARGET_INDEX: '【前期準備】創建目標表索引（任務第一次執行或者重置後執行）',
+		CREATE_TARGET_VIEW: '【前期準備】自動創建目標端視圖（任務第一次執行或者重置後執行）',
+		CREATE_TARGET_FUNCTION: '【前期準備】自動創建目標端函數（任務第一次執行或者重置後執行）',
+		CREATE_TARGET_PROCEDURE: '【前期準備】自動創建目標端存儲過程（任務第一次執行或者重置後執行）',
+		READ_SNAPSHOT: '【數據傳輸】全量讀取源端數據快照（初始化，初始化+增量）',
+		WRITE_SNAPSHOT: '【數據傳輸】目標端全量寫入數據快照（初始化，初始化+增量）',
+		READ_CDC_EVENT: '【數據傳輸】源端進入增量讀取模式（增量，初始化+增量）',
+		WRITE_CDC_EVENT: '【數據傳輸】任務進入增量寫入模式（增量，初始化+增量）',
+
+		emptyText: '此任務尚未啟動(或已被重置)，暫無運行里程碑數據'
 	}
 };
 
