@@ -1971,10 +1971,10 @@ const cn = {
 		CREATE_TARGET_VIEW: '【前期准备】自动创建目标端视图（任务第一次执行或者重置后执行）',
 		CREATE_TARGET_FUNCTION: '【前期准备】自动创建目标端函数（任务第一次执行或者重置后执行）',
 		CREATE_TARGET_PROCEDURE: '【前期准备】自动创建目标端存储过程（任务第一次执行或者重置后执行）',
-		READ_SNAPSHOT: '【数据传输】全量读取源端数据快照（初始化，初始化+增量）',
-		WRITE_SNAPSHOT: '【数据传输】目标端全量写入数据快照（初始化，初始化+增量）',
-		READ_CDC_EVENT: '【数据传输】源端进入增量读取模式（增量，初始化+增量）',
-		WRITE_CDC_EVENT: '【数据传输】任务进入增量写入模式（增量，初始化+增量）',
+		READ_SNAPSHOT: '【数据传输】全量读取源端数据快照',
+		WRITE_SNAPSHOT: '【数据传输】目标端全量写入数据快照',
+		READ_CDC_EVENT: '【数据传输】源端采集器进入增量读取模式',
+		WRITE_CDC_EVENT: '【数据传输】目标处理器进入增量写入模式',
 
 		emptyText: '此任务尚未启动(或已被重置)，暂无运行里程碑数据'
 	}

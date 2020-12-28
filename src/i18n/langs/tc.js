@@ -1967,10 +1967,10 @@ const tc = {
 		CREATE_TARGET_VIEW: '【前期準備】自動創建目標端視圖（任務第一次執行或者重置後執行）',
 		CREATE_TARGET_FUNCTION: '【前期準備】自動創建目標端函數（任務第一次執行或者重置後執行）',
 		CREATE_TARGET_PROCEDURE: '【前期準備】自動創建目標端存儲過程（任務第一次執行或者重置後執行）',
-		READ_SNAPSHOT: '【數據傳輸】全量讀取源端數據快照（初始化，初始化+增量）',
-		WRITE_SNAPSHOT: '【數據傳輸】目標端全量寫入數據快照（初始化，初始化+增量）',
-		READ_CDC_EVENT: '【數據傳輸】源端進入增量讀取模式（增量，初始化+增量）',
-		WRITE_CDC_EVENT: '【數據傳輸】任務進入增量寫入模式（增量，初始化+增量）',
+		READ_SNAPSHOT: '【數據傳輸】全量讀取源端數據快照',
+		WRITE_SNAPSHOT: '【數據傳輸】目標端全量寫入數據快照',
+		READ_CDC_EVENT: '【數據傳輸】源端採集器進入增量讀取模式',
+		WRITE_CDC_EVENT: '【數據傳輸】目標處理器進入增量寫入模式',
 
 		emptyText: '此任務尚未啟動(或已被重置)，暫無運行里程碑數據'
 	}
