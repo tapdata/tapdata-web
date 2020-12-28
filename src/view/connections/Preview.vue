@@ -322,7 +322,7 @@ export default {
 			margin-left: 10px;
 			font-weight: 500;
 			margin-top: 4px;
-			width: 60%;
+			width: 100%;
 		}
 		.status {
 			font-size: 12px;
@@ -359,7 +359,7 @@ export default {
 			margin-left: 5px;
 		}
 		.btn {
-			padding: 7px;
+			padding: 4px 7px;
 			background: #f5f5f5;
 			i.iconfont {
 				font-size: 12px;
@@ -371,7 +371,7 @@ export default {
 		font-size: 12px;
 		display: inline-block;
 		width: 110px;
-		margin-right: 10px;
+		margin-right: 15px;
 		text-align: right;
 	}
 	.value {
@@ -392,12 +392,14 @@ export default {
 		display: inline-block;
 		margin-left: 20px;
 		font-size: 12px;
+		font-weight: normal;
 	}
 	.info-list {
 		overflow-y: auto;
 		max-height: 690px;
-		max-width: 480px;
 		margin: 0 auto;
+		margin-left: 50px;
+		width: 100%;
 		li {
 			margin-bottom: 20px;
 		}
@@ -444,6 +446,9 @@ export default {
 </style>
 <style lang="less">
 .connection-drawer {
+	.el-drawer {
+		box-shadow: -2px 0px 8px 0px rgba(0, 0, 0, 0.1);
+	}
 	.el-drawer.rtl {
 		top: 48px;
 	}

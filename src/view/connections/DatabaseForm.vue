@@ -588,7 +588,7 @@ export default {
 	.el-form-item__label .e-form-builder-item-label {
 		float: right;
 	}
-	margin-bottom: 16px;
+	margin-top: 16px;
 }
 .databaseFrom .el-form--label-right .el-form-item {
 	.el-form-item__label {

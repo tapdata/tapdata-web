@@ -118,7 +118,7 @@ export default {
 			margin-right: 0;
 		}
 		.el-radio.is-bordered + .el-radio.is-bordered {
-			margin-top: 10px;
+			margin-top: 16px;
 			margin-left: 0;
 		}
 	}

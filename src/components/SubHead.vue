@@ -32,7 +32,7 @@ export default {
 	padding-left: 10px;
 	background: #ffffff;
 	border-bottom: 1px solid #dedee4;
-	box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.08);
+	box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
 	.tittle {
 		height: 17px;
 		margin-top: 15px;
