@@ -346,7 +346,6 @@ export default {
 	},
 	created() {
 		this.formatterUserName();
-		this.search(1);
 		this.getDatabaseType();
 		this.search(1);
 		//header

@@ -582,7 +582,7 @@ router.beforeEach(async (to, from, next) => {
 	}
 	let cookie = window.VueCookie;
 	let token = cookie.get('token');
-	let showGuide = cookie.get('show_guide');
+	let showGuide = window.getSettingByKey('SHOW_SIMPLE_SCENE') && cookie.get('show_guide');
 	let userId = cookie.get('user_id');
 
 	if (token) {
