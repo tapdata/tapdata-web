@@ -323,11 +323,9 @@ export default {
 							let id = res.data.id;
 							this.model.id = id;
 							this.handleWS(id);
-							if (this.$route.query.id) {
-								this.$message.success('保存成功');
-								this.clearInterval();
-								this.goBack();
-							}
+							this.$message.success('保存成功');
+							this.clearInterval();
+							this.goBack();
 						})
 						.catch(err => {
 							if (err && err.response) {
@@ -362,14 +360,6 @@ export default {
 				type: 'testConnection',
 				data: this.model
 			};
-			//接收数据
-			ws.on('testConnectionResult', data => {
-				let result = data.result || [];
-				if (result.response_body && !this.$route.query.id) {
-					this.clearInterval();
-					this.goBack();
-				}
-			});
 			//建立连接
 			this.timer = setInterval(() => {
 				if (ws.ws.readyState == 1) {
@@ -404,7 +394,7 @@ export default {
 			this.$api('connections')
 				.patchId(params)
 				.then(() => {
-					this.$message.error(this.$t('dataForm.saveOK'));
+					this.$message.success(this.$t('message.saveOK'));
 					this.dialogEditNameVisible = false;
 				})
 				.catch(err => {

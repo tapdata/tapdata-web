@@ -178,7 +178,10 @@
 					<i class="iconfont icon-warning-circle"></i>
 					<span>{{ resultData[0].errorMsg }}</span>
 				</div>
-				<div class="inspect-result-box" v-if="resultData[0].result !== 'passed'">
+				<div
+					class="inspect-result-box"
+					v-if="resultData[0] && resultData[0].result !== 'passed' && !showAdvancedVerification"
+				>
 					<div v-for="item in inspectResult" :key="item.id" class="inspect-details">
 						<ul class="father-table">
 							<li>{{ $t('dataVerification.inconsistentType') }}</li>
@@ -204,7 +207,28 @@
 								{{ detail.target.value }}
 							</li>
 						</ul>
-						<div>Message: {{ item.message || '-' }}</div>
+					</div>
+				</div>
+				<div
+					class="inspect-ad-box"
+					v-if="resultData[0] && resultData[0].result !== 'passed' && showAdvancedVerification"
+				>
+					<div class="title-box">
+						<div>{{ $t('dataVerification.verifyResult') }}</div>
+					</div>
+					<div v-for="item in inspectResult" :key="item.id" class="inspect-details">
+						<div class="message-box">
+							<span>{{ $t('dataVerification.returnMsg') }}</span>
+							<div>{{ item.message }}</div>
+						</div>
+						<ul class="father-table">
+							<li>{{ $t('dataVerification.sourceTableData') }}</li>
+							<li>{{ $t('dataVerification.returnedData') }}</li>
+						</ul>
+						<ul class="sub-table">
+							<li><JsonViewer :value="item.source"></JsonViewer></li>
+							<li><JsonViewer :value="item.target"></JsonViewer></li>
+						</ul>
 					</div>
 				</div>
 			</div>
@@ -212,7 +236,7 @@
 				class="pagination"
 				background
 				layout="total,prev, pager, next,sizes"
-				:page-sizes="[20, 30, 50, 100]"
+				:page-sizes="!showAdvancedVerification ? [20, 30, 50, 100] : [1]"
 				:page-size.sync="inspectPageSize"
 				:total="inspectTotal"
 				:current-page.sync="inspectResultCurrentPage"
@@ -225,7 +249,9 @@
 </template>
 
 <script>
+import JsonViewer from 'vue-json-viewer';
 export default {
+	components: { JsonViewer },
 	data() {
 		return {
 			tableData: [],
@@ -236,7 +262,11 @@ export default {
 			name: '',
 			inspectResult: [],
 			resultData: [],
+			tasks: [],
+			showAdvancedVerification: false,
 			loading: false,
+			dialogJsonVisible: false,
+			advanceVerifyData: {},
 			tableCurrentPage: 1,
 			inspectResultCurrentPage: 1,
 			tableTotal: 1,
@@ -254,6 +284,9 @@ export default {
 		this.id = this.$route.query.id;
 		this.inspect_id = this.$route.query.inspectId;
 		this.getData(1, this.id, this.inspect_id);
+		if (this.showAdvancedVerification) {
+			this.inspectPageSize = 1;
+		}
 	},
 	watch: {
 		tableData: function() {
@@ -289,6 +322,7 @@ export default {
 						this.type = res.data[0].inspect ? res.data[0].inspect.inspectMethod : '';
 						this.name = res.data[0].inspect ? res.data[0].inspect.name : '';
 						this.tableData = res.data[0].stats;
+						this.tasks = res.data[0].inspect ? res.data[0].inspect.tasks : '';
 						if (this.tableData.length > 0) {
 							this.taskId = this.tableData[0].taskId;
 							this.errorMsg = res.data[0].status === 'error' ? res.data[0].errorMsg : undefined;
@@ -316,9 +350,12 @@ export default {
 			this.$router.push('/dataVerification');
 		},
 		changeInspectResult(pageNum, taskId) {
-			if (taskId) {
-				this.taskId = taskId;
+			if (!taskId) {
+				return;
 			}
+			let findAdVance = this.tasks.filter(item => item.taskId === taskId);
+			if (findAdVance.length > 0) this.showAdvancedVerification = findAdVance[0].showAdvancedVerification;
+			this.taskId = taskId;
 			let currentPage = pageNum || this.inspectResultCurrentPage + 1;
 			this.resultData = this.tableData.filter(item => item.taskId === this.taskId);
 			let where = {
@@ -339,44 +376,11 @@ export default {
 			])
 				.then(([countRes, res]) => {
 					if (res.data) {
-						let data = res.data || [];
-						if (data.length > 0) {
-							data.map(item => {
-								let source = item.source || {};
-								let target = item.target || {};
-								let sourceKeys = Object.keys(source);
-								let targetKeys = Object.keys(target);
-								let key = Array.from(new Set([...sourceKeys, ...targetKeys])); //找出所有的key的并集
-								key.forEach(i => {
-									let sourceValue = '';
-									let targetValue = '';
-									if (sourceKeys.filter(v => i === v)) {
-										sourceValue = source[i];
-									} else {
-										sourceValue = '';
-									}
-									if (targetKeys.filter(v => i === v)) {
-										targetValue = target[i];
-									} else {
-										targetValue = '';
-									}
-									let node = {
-										type: item.type,
-										source: {
-											key: i,
-											value: sourceValue
-										},
-										target: {
-											key: i,
-											value: targetValue
-										}
-									};
-									item['details'] = item['details'] || [];
-									item['details'].push(node);
-								});
-							});
+						if (this.showAdvancedVerification) {
+							this.inspectResult = res.data || [];
+						} else {
+							this.inspectResult = this.handleOtherVerify(res.data);
 						}
-						this.inspectResult = res.data;
 						this.inspectResultCurrentPage = currentPage;
 						this.inspectTotal = countRes.data.count;
 					}
@@ -384,6 +388,50 @@ export default {
 				.finally(() => {
 					this.loading = false;
 				});
+		},
+		handleOtherVerify(data) {
+			if (data.length === 0) {
+				return;
+			}
+			data.map(item => {
+				let source = item.source || {};
+				let target = item.target || {};
+				let sourceKeys = Object.keys(source);
+				let targetKeys = Object.keys(target);
+				let key = Array.from(new Set([...sourceKeys, ...targetKeys])); //找出所有的key的并集
+				key.forEach(i => {
+					let sourceValue = '';
+					let targetValue = '';
+					if (sourceKeys.filter(v => i === v)) {
+						sourceValue = source[i];
+					} else {
+						sourceValue = '';
+					}
+					if (targetKeys.filter(v => i === v)) {
+						targetValue = target[i];
+					} else {
+						targetValue = '';
+					}
+					let node = {
+						type: item.type,
+						source: {
+							key: i,
+							value: sourceValue
+						},
+						target: {
+							key: i,
+							value: targetValue
+						}
+					};
+					item['details'] = item['details'] || [];
+					item['details'].push(node);
+				});
+			});
+			return data;
+		},
+		preview(data) {
+			this.dialogJsonVisible = true;
+			this.advanceVerifyData = data;
 		}
 	}
 };
@@ -482,6 +530,70 @@ export default {
 					background: #70ae48;
 				}
 			}
+			.inspect-ad-box {
+				margin: 0 10px;
+				border: 1px solid #dedee4;
+				.inspect-details {
+					padding: 0 10px 10px 10px;
+				}
+				.title-box {
+					color: #333;
+					background: #fafafa;
+					font-size: 12px;
+					line-height: 28px;
+					padding-left: 10px;
+					border-bottom: 1px solid #dedee4;
+				}
+				.message-box {
+					color: #333;
+					font-size: 12px;
+					div {
+						padding: 5px 10px;
+						margin-top: 5px;
+						border: 1px solid #dedee4;
+						white-space: pre-wrap;
+						word-break: break-word;
+						overflow: hidden;
+						text-overflow: ellipsis;
+					}
+					margin-bottom: 10px;
+					margin-top: 10px;
+				}
+				li {
+					min-width: 0;
+					font-size: 12px;
+					box-sizing: border-box;
+					text-overflow: ellipsis;
+					vertical-align: middle;
+					position: relative;
+					text-align: left;
+					padding: 3px 10px;
+					word-wrap: break-word;
+				}
+				.father-table {
+					display: flex;
+					margin-bottom: 10px;
+					li {
+						flex: 1;
+					}
+				}
+				.sub-table {
+					display: flex;
+					li {
+						flex: 1;
+						border-left: 1px solid #dedee4;
+						border-top: 1px solid #dedee4;
+						overflow: auto;
+						height: 350px;
+					}
+					li:last-child {
+						border-right: 1px solid #dedee4;
+					}
+				}
+				.sub-table:last-child {
+					border-bottom: 1px solid #dedee4;
+				}
+			}
 			.inspect-result-box {
 				overflow: auto;
 				.red {
@@ -522,6 +634,9 @@ export default {
 						li:last-child {
 							border-right: 1px solid #dedee4;
 						}
+					}
+					.sub-table:last-child {
+						border-bottom: 1px solid #dedee4;
 					}
 					div {
 						font-size: 12px;

@@ -7,27 +7,16 @@
 > **data**：当前校验目标数据，建议校验失败返回，选填项<br>
 
 完整示例：此为MongoDB查询示例
-```
- function validate(sourceRow){
-```
-```
-&nbs&nbs&nbs&nbs&nbs&nbs&nbs&nbs&nbs var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
-```
-```
-if(sourceRow.USER_ID === targetRow[0].USER_ID) {
-```
-```
- return {result: 'passed',message: "",data: ""}
-```
-```
- }else{
-```
-```
-return {result: 'failed',message: "记录不一致",data: targetRow}
-```
-```
- }
-```
-```
- }
+```javascript
+function validate(sourceRow){
+	// 第1步
+    var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
+	// 第2步
+    if(sourceRow.USER_ID === targetRow[0].USER_ID){
+		// 第3步
+        return {result: 'passed',message: "",data: ""}
+    }else{
+		return {result: 'failed',message: "记录不一致",data: targetRow}
+	}
+}
 ```
