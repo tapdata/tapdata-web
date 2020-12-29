@@ -1225,7 +1225,8 @@ const cn = {
 			sidebar: {
 				setting: '任务设置',
 				node_setting: '节点属性',
-				logs: '日志',
+				logs: '运行日志',
+				milestone: '任务里程碑',
 				capture: '抓取数据',
 				style: '样式',
 
@@ -2000,6 +2001,27 @@ const cn = {
 		delete_error: '删除角色失败',
 		connected: '已关联',
 		role_null: '角色名称不能为空'
+	},
+	milestone: {
+		INIT_DATAFLOW: '【前期准备】解析DAG路径创建子任务',
+		CONNECT_TO_SOURCE: '【前期准备】连接源端数据源',
+		CONNECT_TO_TARGET: '【前期准备】连接目标端数据源',
+		INIT_CONNECTOR: '【前期准备】扫描源端信息，初始化源端采集器',
+		INIT_TRANSFORMER: '【前期准备】扫描目标端信息，初始化目标端处理器',
+		READ_SOURCE_DDL: '【前期准备】读取源端DDL信息（数据迁移）',
+		DROP_TARGET_SCHEMA: '【前期准备】删除目标端模型（任务第一次执行或者重置后执行）',
+		CLEAR_TARGET_DATA: '【前期准备】清空目标表数据（任务第一次执行或者重置后执行）',
+		CREATE_TARGET_TABLE: '【前期准备】自动创建目标表 （任务第一次执行或者重置后执行）',
+		CREATE_TARGET_INDEX: '【前期准备】创建目标表索引（任务第一次执行或者重置后执行）',
+		CREATE_TARGET_VIEW: '【前期准备】自动创建目标端视图（任务第一次执行或者重置后执行）',
+		CREATE_TARGET_FUNCTION: '【前期准备】自动创建目标端函数（任务第一次执行或者重置后执行）',
+		CREATE_TARGET_PROCEDURE: '【前期准备】自动创建目标端存储过程（任务第一次执行或者重置后执行）',
+		READ_SNAPSHOT: '【数据传输】全量读取源端数据快照',
+		WRITE_SNAPSHOT: '【数据传输】目标端全量写入数据快照',
+		READ_CDC_EVENT: '【数据传输】源端采集器进入增量读取模式',
+		WRITE_CDC_EVENT: '【数据传输】目标处理器进入增量写入模式',
+
+		emptyText: '此任务尚未启动(或已被重置)，暂无运行里程碑数据'
 	}
 };
 

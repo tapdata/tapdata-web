@@ -1242,13 +1242,14 @@ const en = {
 			sidebar: {
 				setting: 'Data Flow Settings',
 				node_setting: 'Node Settings',
-				logs: 'Logs',
+				logs: 'Running Logs',
+				milestone: 'Task Milestone',
 				capture: 'Capture',
 				style: 'Style',
 
 				data_nodes: 'Data Nodes',
 				processor: 'Processor',
-				tableSelector: 'Fast selection'
+				tableSelector: 'Fast Selection'
 			},
 			toolbar: {
 				undo: {
@@ -2043,6 +2044,33 @@ const en = {
 		delete_error: 'Failed to delete role',
 		connected: 'Associated',
 		role_null: 'The role name cannot be empty'
+	},
+	milestone: {
+		INIT_DATAFLOW: '【Preparation】Analyze the DAG and create sub job(s)',
+		CONNECT_TO_SOURCE: '【Preparation】Connecto to source',
+		CONNECT_TO_TARGET: '【Preparation】Connect to target',
+		INIT_CONNECTOR: '【Preparation】Scan source information and initialize the source collector',
+		INIT_TRANSFORMER: '【Preparation】Scan target information and initialize the target handler',
+		READ_SOURCE_DDL: '【Preparation】Read source DDL information(Database Migration)',
+		DROP_TARGET_SCHEMA: '【Preparation】Drop target schema(Data flow executes for the first time or after a reset)',
+		CLEAR_TARGET_DATA:
+			'【Preparation】Empty the target data(Data flow executes for the first time or after a reset)',
+		CREATE_TARGET_TABLE:
+			'【Preparation】Automatically create target table(Data flow executes for the first time or after a reset)',
+		CREATE_TARGET_INDEX:
+			'【Preparation】Automatically create target index(Data flow executes for the first time or after a reset)',
+		CREATE_TARGET_VIEW:
+			'【Preparation】Automatically create target view(Data flow executes for the first time or after a reset)',
+		CREATE_TARGET_FUNCTION:
+			'【Preparation】Automatically create target function(Data flow executes for the first time or after a reset)',
+		CREATE_TARGET_PROCEDURE:
+			'【Preparation】Automatically create target procedure(Data flow executes for the first time or after a reset)',
+		READ_SNAPSHOT: '【Data transfer】Read the source snapshot',
+		WRITE_SNAPSHOT: '【Data transfer】Write the snapshot into target',
+		READ_CDC_EVENT: '【Data transfer】Source enters incremental read mode',
+		WRITE_CDC_EVENT: '【Data transfer】Target enters incremental write mode',
+
+		emptyText: 'The job has not been started ( or has been reset), so there is no running milestone data.'
 	}
 };
 

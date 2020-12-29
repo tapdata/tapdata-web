@@ -14,6 +14,7 @@ import Monitor from '../view/job/Monitor';
 import Capture from '../view/job/Preview';
 import Setting from '../view/job/Setting';
 import DebugLogs from '../view/job/DebugLogs';
+import Milestone from '../view/job/Milestone';
 import DataVerify from '../view/job/DataVerify/List';
 import DVResult from '../view/job/DataVerify/Result';
 
@@ -377,10 +378,10 @@ export default class Editor extends BaseObject {
 	 */
 	showLogs(dataFlow, isShow) {
 		let bottomTabPanel = this.getBottomTabPanel();
-		let logsPanel = bottomTabPanel.getChildByName('logsPanel');
+		let milestone = bottomTabPanel.getChildByName('milestone');
 
-		if (!logsPanel) {
-			logsPanel = new VueComponent({
+		if (!milestone) {
+			let logsPanel = new VueComponent({
 				title: i18n.t('editor.ui.sidebar.logs'),
 				name: 'logsPanel',
 				editor: this,
@@ -390,13 +391,24 @@ export default class Editor extends BaseObject {
 				},
 				component: DebugLogs
 			});
+			milestone = new VueComponent({
+				title: i18n.t('editor.ui.sidebar.milestone'),
+				name: 'milestone',
+				editor: this,
+				closeBtn: true,
+				propsData: {
+					dataFlow: dataFlow
+				},
+				component: Milestone
+			});
+			this.getBottomTabPanel().add(milestone);
 			this.getBottomTabPanel().add(logsPanel);
 		}
 
-		if (this.getBottomSidebar().isShow() && logsPanel.selected && !isShow) {
+		if (this.getBottomSidebar().isShow() && milestone.selected && !isShow) {
 			this.getBottomSidebar().hide();
 		} else {
-			this.getBottomTabPanel().select(logsPanel);
+			this.getBottomTabPanel().select(milestone);
 			this.getBottomSidebar().show();
 		}
 	}
