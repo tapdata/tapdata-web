@@ -1960,7 +1960,7 @@ const tc = {
 		INIT_CONNECTOR: '【前期準備】掃描源端信息，初始化源端採集器',
 		INIT_TRANSFORMER: '【前期準備】掃描目標端信息，初始化目標端處理器',
 		READ_SOURCE_DDL: '【前期準備】讀取源端DDL信息（數據遷移）',
-		DROP_TARGET_TABLE: '【前期準備】刪除目標端模型（任務第一次執行或者重置後執行）',
+		DROP_TARGET_SCHEMA: '【前期準備】刪除目標端模型（任務第一次執行或者重置後執行）',
 		CLEAR_TARGET_DATA: '【前期準備】清空目標表數據（任務第一次執行或者重置後執行）',
 		CREATE_TARGET_TABLE: '【前期準備】自動創建目標表 （任務第一次執行或者重置後執行）',
 		CREATE_TARGET_INDEX: '【前期準備】創建目標表索引（任務第一次執行或者重置後執行）',

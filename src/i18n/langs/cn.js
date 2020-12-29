@@ -1964,7 +1964,7 @@ const cn = {
 		INIT_CONNECTOR: '【前期准备】扫描源端信息，初始化源端采集器',
 		INIT_TRANSFORMER: '【前期准备】扫描目标端信息，初始化目标端处理器',
 		READ_SOURCE_DDL: '【前期准备】读取源端DDL信息（数据迁移）',
-		DROP_TARGET_TABLE: '【前期准备】删除目标端模型（任务第一次执行或者重置后执行）',
+		DROP_TARGET_SCHEMA: '【前期准备】删除目标端模型（任务第一次执行或者重置后执行）',
 		CLEAR_TARGET_DATA: '【前期准备】清空目标表数据（任务第一次执行或者重置后执行）',
 		CREATE_TARGET_TABLE: '【前期准备】自动创建目标表 （任务第一次执行或者重置后执行）',
 		CREATE_TARGET_INDEX: '【前期准备】创建目标表索引（任务第一次执行或者重置后执行）',

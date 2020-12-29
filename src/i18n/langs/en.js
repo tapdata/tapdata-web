@@ -2004,7 +2004,7 @@ const en = {
 		INIT_CONNECTOR: '【Preparation】Scan source information and initialize the source collector',
 		INIT_TRANSFORMER: '【Preparation】Scan target information and initialize the target handler',
 		READ_SOURCE_DDL: '【Preparation】Read source DDL information(Database Migration)',
-		DROP_TARGET_TABLE: '【Preparation】Drop target schema(Data flow executes for the first time or after a reset)',
+		DROP_TARGET_SCHEMA: '【Preparation】Drop target schema(Data flow executes for the first time or after a reset)',
 		CLEAR_TARGET_DATA:
 			'【Preparation】Empty the target data(Data flow executes for the first time or after a reset)',
 		CREATE_TARGET_TABLE:
