@@ -23,7 +23,7 @@ axios.interceptors.request.use(
 			cancelFunc = c;
 		});
 		if (pending.includes(key)) {
-			cancelFunc(key);
+			cancelFunc();
 		} else {
 			pending.push(key);
 		}
