@@ -100,7 +100,7 @@
 							<el-button
 								type="text"
 								@click="handleDelete(scope.row)"
-								v-if="scope.row.name != 'admin' && !scope.row.read_only"
+								v-if="scope.row.name != 'admin'"
 								v-readonlybtn="'role_delete'"
 							>
 								{{ $t('role.delete') }}

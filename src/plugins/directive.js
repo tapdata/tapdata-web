@@ -1,7 +1,9 @@
 import Vue from 'vue';
+
 Vue.directive('readonlybtn', {
 	inserted: function(el, binding, vnode) {
 		const code = binding.value;
+
 		if (!Vue.prototype.$has(code)) {
 			el.remove();
 			vnode.child && vnode.child.$destroy();
@@ -37,4 +39,16 @@ export function hasPermissionByCode(code) {
 		return true;
 	}
 	return false;
+}
+
+export function permissionBtnDisabel(code, id) {
+	let falg = false;
+	let cookie = window.VueCookie;
+	let user_id = cookie.get('user_id');
+	if (!Vue.prototype.$has(code)) {
+		if (id !== user_id) {
+			falg = true;
+		}
+	}
+	return falg;
 }

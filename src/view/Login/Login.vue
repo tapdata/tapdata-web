@@ -100,8 +100,8 @@ export default {
 			try {
 				let usersModel = this.$api('users');
 				let timeStamp = this.$api('TimeStamp');
-				let rolesModel = this.$api('role');
-				let roleMappingsModel = this.$api('roleMapping');
+				// let rolesModel = this.$api('role');
+				// let roleMappingsModel = this.$api('roleMapping');
 				//登陆密码加密
 				let timeStampData = await timeStamp.get();
 				this.form['stime'] = timeStampData.data;
@@ -139,40 +139,41 @@ export default {
 				this.$cookie.set('isAdmin', parseInt(user.data.role) || 0);
 				this.$cookie.set('user_id', data.userId);
 
-				let roleMapping = {
-					filter: {
-						where: { principalType: 'USER', principalId: data.userId }
-					}
-				};
+				// let roleMapping = {
+				// 	filter: {
+				// 		where: { principalType: 'USER', principalId: data.userId }
+				// 	}
+				// };
 
-				let rolesMappingresulte = await roleMappingsModel.get(roleMapping);
+				// let rolesMappingresulte = await roleMappingsModel.get(roleMapping);
 
-				let roleId = [];
-				if (rolesMappingresulte.data && rolesMappingresulte.data.length) {
-					rolesMappingresulte.data.forEach(item => {
-						roleId.push(item.roleId);
-					});
-				}
+				// let roleId = [];
+				// if (rolesMappingresulte.data && rolesMappingresulte.data.length) {
+				// 	rolesMappingresulte.data.forEach(item => {
+				// 		roleId.push(item.roleId);
+				// 	});
+				// }
 
-				// 角色权限
-				let roleparmas = {
-					filter: {
-						where: {
-							id: {
-								inq: roleId
-							},
-							read_only: true
-						}
-					}
-				};
-				// TODO 暂时方案,当有只读角色时,就只能查看,不能做其他人任何操作
-				let rolesresulte = await rolesModel.get(roleparmas);
-				if (rolesresulte.data && rolesresulte.data.length) {
-					localStorage.setItem('BTN_AUTHS', 'BTN_AUTHS');
-					this.$cookie.set('isReadonly', 'true');
-				} else {
-					localStorage.setItem('BTN_AUTHS', '');
-				}
+				// // 角色权限
+				// let roleparmas = {
+				// 	filter: {
+				// 		where: {
+				// 			id: {
+				// 				inq: roleId
+				// 			},
+				// 			read_only: true
+				// 		}
+				// 	}
+				// };
+
+				// // TODO 暂时方案,当有只读角色时,就只能查看,不能做其他人任何操作
+				// let rolesresulte = await rolesModel.get(roleparmas);
+				// if (rolesresulte.data && rolesresulte.data.length) {
+				// 	localStorage.setItem('BTN_AUTHS', 'BTN_AUTHS');
+				// 	this.$cookie.set('isReadonly', 'true');
+				// } else {
+				// 	localStorage.setItem('BTN_AUTHS', '');
+				// }
 
 				this.$router.replace({
 					name: 'dashboard'

@@ -346,13 +346,11 @@ export default {
 	},
 	methods: {
 		async getFavMenus() {
-			// let userId = this.$cookie.get('user_id');
-			// [userId]
-			let result = await this.$api('users').get();
+			let result = await this.$api('users').get([this.$cookie.get('user_id')]);
 			if (result && result.data) {
 				let user = result.data || {};
 				this.favMenus = user.favorites || [];
-				this.userName = (user.email && user.email.split('@')[0]) || '';
+				this.userName = user.email.split('@')[0] || '';
 			}
 		},
 		// 刷新获取权限

@@ -200,7 +200,11 @@
 								:content="$t('message.edit')"
 								placement="bottom"
 							>
-								<el-button type="text" @click="edit(scope.row.id, scope.row.database_type)">
+								<el-button
+									type="text"
+									:disabled="permissionBtnDisabel('datasource_edition_all_data', scope.row.user_id)"
+									@click="edit(scope.row.id, scope.row.database_type)"
+								>
 									<i class="iconfont task-list-icon icon-ceshishenqing"></i>
 								</el-button>
 							</el-tooltip>
@@ -296,6 +300,7 @@ import SelectClassify from '@/components/SelectClassify';
 import DatabaseTypeDialog from './DatabaseTypeDialog';
 import Preview from './Preview';
 import { verify, desensitization } from './util';
+import { permissionBtnDisabel } from '@/plugins/directive';
 
 let timeout = null;
 
@@ -303,6 +308,7 @@ export default {
 	components: { Classification, SelectClassify, DatabaseTypeDialog, Preview },
 	data() {
 		return {
+			user_id: this.$cookie.get('user_id'),
 			dialogVisible: false,
 			restLoading: false,
 			dialogDatabaseTypeVisible: false,
@@ -366,11 +372,14 @@ export default {
 		this.search(1);
 	},
 	methods: {
+		permissionBtnDisabel,
+
 		// 面板显示隐藏
 		handlePanelFlag() {
 			this.$set(this.searchParams, 'panelFlag', !this.searchParams.panelFlag);
 			this.$store.commit('dataFlows', this.searchParams);
 		},
+
 		//筛选条件
 		async getDatabaseType() {
 			let filter = {
