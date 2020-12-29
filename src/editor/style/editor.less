@@ -311,18 +311,20 @@
 					flex-flow: row wrap;
 					justify-content: flex-start;
 					align-items: center;
+					padding-left: 10px;
 
 					.e-tab-title {
 						line-height: 30px;
-						padding: 0 5px;
+						padding: 0 20px;
 						border-right: 1px solid @borderColor;
 						border-top: 1px solid @borderColor;
+						border-bottom: 1px solid @borderColor;
 						cursor: default;
-						background: #d3d3d3;
+						background: #fafafa;
 
 						margin-bottom: -1px;
 
-						font-size: 14px;
+						font-size: 12px;
 
 						&:first-child {
 							border-left: 1px solid @borderColor;
@@ -335,6 +337,8 @@
 
 						&.active {
 							background: #ffffff;
+							color: #48B6E2;
+							border-bottom: 1px solid #fff;
 						}
 					}
 				}

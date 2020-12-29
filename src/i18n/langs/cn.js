@@ -1225,7 +1225,8 @@ const cn = {
 			sidebar: {
 				setting: '任务设置',
 				node_setting: '节点属性',
-				logs: '日志',
+				logs: '运行日志',
+				milestone: '任务里程碑',
 				capture: '抓取数据',
 				style: '样式',
 
@@ -2003,6 +2004,60 @@ const cn = {
 		delete_error: '删除角色失败',
 		connected: '已关联',
 		role_null: '角色名称不能为空'
+	},
+	milestone: {
+		INIT_DATAFLOW: '【前期准备】解析DAG路径创建子任务',
+		CONNECT_TO_SOURCE: '【前期准备】连接源端数据源',
+		CONNECT_TO_TARGET: '【前期准备】连接目标端数据源',
+		INIT_CONNECTOR: '【前期准备】扫描源端信息，初始化源端采集器',
+		INIT_TRANSFORMER: '【前期准备】扫描目标端信息，初始化目标端处理器',
+		READ_SOURCE_DDL: '【前期准备】读取源端DDL信息（数据迁移）',
+		DROP_TARGET_SCHEMA: '【前期准备】删除目标端模型（任务第一次执行或者重置后执行）',
+		CLEAR_TARGET_DATA: '【前期准备】清空目标表数据（任务第一次执行或者重置后执行）',
+		CREATE_TARGET_TABLE: '【前期准备】自动创建目标表 （任务第一次执行或者重置后执行）',
+		CREATE_TARGET_INDEX: '【前期准备】创建目标表索引（任务第一次执行或者重置后执行）',
+		CREATE_TARGET_VIEW: '【前期准备】自动创建目标端视图（任务第一次执行或者重置后执行）',
+		CREATE_TARGET_FUNCTION: '【前期准备】自动创建目标端函数（任务第一次执行或者重置后执行）',
+		CREATE_TARGET_PROCEDURE: '【前期准备】自动创建目标端存储过程（任务第一次执行或者重置后执行）',
+		READ_SNAPSHOT: '【数据传输】全量读取源端数据快照',
+		WRITE_SNAPSHOT: '【数据传输】目标端全量写入数据快照',
+		READ_CDC_EVENT: '【数据传输】源端采集器进入增量读取模式',
+		WRITE_CDC_EVENT: '【数据传输】目标处理器进入增量写入模式',
+
+		emptyText: '此任务尚未启动(或已被重置)，暂无运行里程碑数据'
+	},
+	guide: {
+		guide_title: '新用户引导',
+		step_1: 'Agent下载与安装',
+		step_2: '设置数据源',
+		step_3: '设置目标',
+		step_4: '选择任务类型，开启数据传输之旅',
+		step_1_title: 'Agent下载与安装',
+		step_1_desc:
+			'Tapdata DFS云版需要先在本地安装agent以确保连接数据库和数据传输服务的正常运行，您可以根据要安装服务器的类型在下方选择相应的类型进行下载安装',
+		step_2_title: '创建数据源连接',
+		step_2_desc:
+			'数据源连接指的是可以作为源的数据库、file、GridFS、REST API等类型的数据连接,必须先创建数据源才能创建迁移或同步任务',
+		step_2_btn_label: '创建新的源连接',
+		step_3_title: '创建目标连接',
+		step_3_desc:
+			'目标连接指的是可以作为数据传输目标的数据库、file、GridFS、REST API等类型的连接,  必须先创建目标连接才能创建迁移或同步任务',
+		step_3_btn_label: '创建新的目标连接',
+		step_4_title: '选择任务类型',
+		step_4_desc:
+			'请根据下方提示选择要进行的任务类型，系统会根据您的选择打开相应的任务编辑面板，如果选择错了可以取消任务重新选择',
+		task_type_clone: '数据库迁移',
+		task_type_clone_tips:
+			'数据库迁移功能以库为单位户在一个任务内轻松实现多个同构或异构数据库（库、表映射）之间的结构迁移、初始化迁移、或增量迁移等功能，适用于数据库迁移上云、实例间的数据库迁移、数据库迁移下云、数据库灾备等多种场景。',
+		task_type_custom: '数据同步',
+		task_type_custom_tips:
+			'数据同步聚焦在表级别的数据处理与传输，在满足用户实现多表（数据集）、多级数据之间多表合一、数据拆分、关联映射、字段增减合并、内容过滤、聚合处理JS处理等功能的情况下同时实现实时数据同步。在不影响用户业务的情况下，满足用户对数据的异地或本地数据灾备、跨实例数据同步、查询与报表分流、实时数据仓库管理等多种业务场景的需求。',
+		agent_not_install: '系统检测到 Agent 并未安装, 请下载安装后重试',
+		btn_back: '上一步',
+		btn_save: '保存，',
+		btn_next: '下一步',
+		btn_to_dataflow: '开始编辑任务',
+		btn_to_dashboard: '暂不编辑任务，先逛逛'
 	}
 };
 

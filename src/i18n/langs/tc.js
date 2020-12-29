@@ -540,7 +540,8 @@ const tc = {
 			viewConfig: '查看節點配置',
 			viewMonitoring: '查看監控數據',
 			setting: '設置',
-			logs: '日誌',
+			logs: '運行日誌',
+			milestone: '任務里程碑',
 			preview: '預覽',
 			capture: '數據檢視',
 			stop_capture: '停止檢視',
@@ -1998,6 +1999,60 @@ const tc = {
 		delete_error: '刪除角色失敗',
 		connected: '已關聯',
 		role_null: '角色名稱不能為空'
+	},
+	milestone: {
+		INIT_DATAFLOW: '【前期準備】解析DAG路徑創建子任務',
+		CONNECT_TO_SOURCE: '【前期準備】連接源端數據源',
+		CONNECT_TO_TARGET: '【前期準備】連接目標端數據源',
+		INIT_CONNECTOR: '【前期準備】掃描源端信息，初始化源端採集器',
+		INIT_TRANSFORMER: '【前期準備】掃描目標端信息，初始化目標端處理器',
+		READ_SOURCE_DDL: '【前期準備】讀取源端DDL信息（數據遷移）',
+		DROP_TARGET_SCHEMA: '【前期準備】刪除目標端模型（任務第一次執行或者重置後執行）',
+		CLEAR_TARGET_DATA: '【前期準備】清空目標表數據（任務第一次執行或者重置後執行）',
+		CREATE_TARGET_TABLE: '【前期準備】自動創建目標表 （任務第一次執行或者重置後執行）',
+		CREATE_TARGET_INDEX: '【前期準備】創建目標表索引（任務第一次執行或者重置後執行）',
+		CREATE_TARGET_VIEW: '【前期準備】自動創建目標端視圖（任務第一次執行或者重置後執行）',
+		CREATE_TARGET_FUNCTION: '【前期準備】自動創建目標端函數（任務第一次執行或者重置後執行）',
+		CREATE_TARGET_PROCEDURE: '【前期準備】自動創建目標端存儲過程（任務第一次執行或者重置後執行）',
+		READ_SNAPSHOT: '【數據傳輸】全量讀取源端數據快照',
+		WRITE_SNAPSHOT: '【數據傳輸】目標端全量寫入數據快照',
+		READ_CDC_EVENT: '【數據傳輸】源端採集器進入增量讀取模式',
+		WRITE_CDC_EVENT: '【數據傳輸】目標處理器進入增量寫入模式',
+
+		emptyText: '此任務尚未啟動(或已被重置)，暫無運行里程碑數據'
+	},
+	guide: {
+		guide_title: '新用戶引導',
+		step_1: 'Agent下載與安裝',
+		step_2: '設置數據源',
+		step_3: '設置目標',
+		step_4: '選擇任務類型，開啟數據傳輸之旅',
+		step_1_title: 'Agent下載與安裝',
+		step_1_desc:
+			'Tapdata DFS雲版需要先在本地安裝agent以確保連接資料庫和數據傳輸服務的正常運行，您可以根據要安裝伺服器的類型在下方選擇相應的類型進行下載安裝',
+		step_2_title: '創建數據源連接',
+		step_2_desc:
+			'數據源連接指的是可以作為源的資料庫、file、GridFS、REST API等類型的數據連接,必須先創建數據源才能創建遷移或同步任務',
+		step_2_btn_label: '創建新的源連接',
+		step_3_title: '創建目標連接',
+		step_3_desc:
+			'目標連接指的是可以作為數據傳輸目標的資料庫、file、GridFS、REST API等類型的連接,  必須先創建目標連接才能創建遷移或同步任務',
+		step_3_btn_label: '創建新的目標連接',
+		step_4_title: '選擇任務類型',
+		step_4_desc:
+			'請根據下方提示選擇要進行的任務類型，系統會根據您的選擇打開相應的任務編輯面板，如果選擇錯了可以取消任務重新選擇',
+		task_type_clone: '資料庫遷移',
+		task_type_clone_tips:
+			'資料庫遷移功能以庫為單位戶在一個任務內輕鬆實現多個同構或異構資料庫（庫、表映射）之間的結構遷移、初始化遷移、或增量遷移等功能，適用於資料庫遷移上雲、實例間的資料庫遷移、資料庫遷移下雲、資料庫災備等多種場景。',
+		task_type_custom: '數據同步',
+		task_type_custom_tips:
+			'數據同步聚焦在表級別的數據處理與傳輸，在滿足用戶實現多表（數據集）、多級數據之間多表合一、數據拆分、關聯映射、欄位增減合併、內容過濾、聚合處理JS處理等功能的情況下同時實現實時數據同步。在不影響用戶業務的情況下，滿足用戶對數據的異地或本地數據災備、跨實例數據同步、查詢與報表分流、實時數據倉庫管理等多種業務場景的需求。',
+		agent_not_install: '系統檢測到 Agent 並未安裝, 請下載安裝後重試',
+		btn_back: '上一步',
+		btn_save: '保存，',
+		btn_next: '下一步',
+		btn_to_dataflow: '開始編輯任務',
+		btn_to_dashboard: '暫不編輯任務，先逛逛'
 	}
 };
 

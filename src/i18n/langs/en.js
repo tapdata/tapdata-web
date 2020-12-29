@@ -1242,13 +1242,14 @@ const en = {
 			sidebar: {
 				setting: 'Data Flow Settings',
 				node_setting: 'Node Settings',
-				logs: 'Logs',
+				logs: 'Running Logs',
+				milestone: 'Task Milestone',
 				capture: 'Capture',
 				style: 'Style',
 
 				data_nodes: 'Data Nodes',
 				processor: 'Processor',
-				tableSelector: 'Fast selection'
+				tableSelector: 'Fast Selection'
 			},
 			toolbar: {
 				undo: {
@@ -2046,6 +2047,67 @@ const en = {
 		delete_error: 'Failed to delete role',
 		connected: 'Associated',
 		role_null: 'The role name cannot be empty'
+	},
+	milestone: {
+		INIT_DATAFLOW: '【Preparation】Analyze the DAG and create sub job(s)',
+		CONNECT_TO_SOURCE: '【Preparation】Connecto to source',
+		CONNECT_TO_TARGET: '【Preparation】Connect to target',
+		INIT_CONNECTOR: '【Preparation】Scan source information and initialize the source collector',
+		INIT_TRANSFORMER: '【Preparation】Scan target information and initialize the target handler',
+		READ_SOURCE_DDL: '【Preparation】Read source DDL information(Database Migration)',
+		DROP_TARGET_SCHEMA: '【Preparation】Drop target schema(Data flow executes for the first time or after a reset)',
+		CLEAR_TARGET_DATA:
+			'【Preparation】Empty the target data(Data flow executes for the first time or after a reset)',
+		CREATE_TARGET_TABLE:
+			'【Preparation】Automatically create target table(Data flow executes for the first time or after a reset)',
+		CREATE_TARGET_INDEX:
+			'【Preparation】Automatically create target index(Data flow executes for the first time or after a reset)',
+		CREATE_TARGET_VIEW:
+			'【Preparation】Automatically create target view(Data flow executes for the first time or after a reset)',
+		CREATE_TARGET_FUNCTION:
+			'【Preparation】Automatically create target function(Data flow executes for the first time or after a reset)',
+		CREATE_TARGET_PROCEDURE:
+			'【Preparation】Automatically create target procedure(Data flow executes for the first time or after a reset)',
+		READ_SNAPSHOT: '【Data transfer】Read the source snapshot',
+		WRITE_SNAPSHOT: '【Data transfer】Write the snapshot into target',
+		READ_CDC_EVENT: '【Data transfer】Source enters incremental read mode',
+		WRITE_CDC_EVENT: '【Data transfer】Target enters incremental write mode',
+
+		emptyText: 'The job has not been started ( or has been reset), so there is no running milestone data.'
+	},
+	guide: {
+		guide_title: 'New user guide',
+		step_1: 'Agent download and installation',
+		step_2: 'Set data source',
+		step_3: 'Set goal',
+		step_4: 'Select the task type and start the data transmission journey',
+		step_1_title: 'Agent download and installation',
+		step_1_desc:
+			'Tapdata DFS Cloud Edition needs to install the agent locally to ensure the normal operation of the connection database and data transmission service. You can select the corresponding type below to download and install according to the type of server to be installed.',
+		step_2_title: 'Create a data source connection',
+		step_2_desc:
+			'Data source connection refers to the data connection of the database, file, GridFS, REST API and other types that can be used as the source. The data source must be created before the migration or synchronization task can be created.',
+		step_2_btn_label: 'Create a new source connection',
+		step_3_title: 'Create target connection',
+		step_3_desc:
+			'The target connection refers to the database, file, GridFS, REST API and other types of connections that can be used as data transmission targets. The target connection must be created before the migration or synchronization task can be created.',
+		step_3_btn_label: 'Create a new target connection',
+		step_4_title: 'Select task type',
+		step_4_desc:
+			'Please select the type of task to be performed according to the prompts below, the system will open the corresponding task editing panel according to your choice, if you choose a wrong task, you can cancel the task and select again.',
+		task_type_clone: 'Database migration',
+		task_type_clone_tips:
+			'Database migration function takes the library as the unit user to easily realize the structure migration, initial migration, or incremental migration between multiple homogeneous or heterogeneous databases (libraries, table mapping) within a task, suitable for data Database migration to the cloud, database migration between instances, database migration to the cloud, database disaster recovery and other scenarios. ',
+		task_type_custom: 'Data synchronization',
+		task_type_custom_tips:
+			"Data synchronization focuses on table-level data processing and transmission, to meet the needs of users to achieve multi-table (data set), multi-table integration between multi-level data, data splitting, association mapping, field increase and decrease merge, content filtering, Real-time data synchronization is realized at the same time in the case of aggregate processing JS processing and other functions. Without affecting the user's business, it meets the user's needs for various business scenarios such as remote or local data disaster recovery, cross-instance data synchronization, query and report distribution, and real-time data warehouse management. ",
+		agent_not_install:
+			'The system detects that the Agent is not installed, please download and install and try again',
+		btn_back: 'Previous step',
+		btn_save: 'Save,',
+		btn_next: 'Next',
+		btn_to_dataflow: 'Start editing task',
+		btn_to_dashboard: "Don't edit the task for now, go shopping first"
 	}
 };
 
