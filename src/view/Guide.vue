@@ -10,7 +10,7 @@
 		</el-header>
 		<el-container style="overflow: hidden;flex: 1;">
 			<el-header class="step-header" height="42px">
-				<span>新用户引导</span>
+				<span>{{ $t('guide.guide_title') }}</span>
 				<ul class="step-box">
 					<li v-for="(step, index) in steps" :key="index" :class="{ active: activeStep >= index }">
 						<span class="step-index">{{ index + 1 }}</span>
@@ -23,11 +23,8 @@
 					<el-main class="guide-main">
 						<!-- 步骤1 -->
 						<div class="body step-1" v-if="steps[activeStep].index === 1">
-							<div class="title">Agent下载与安装</div>
-							<div class="desc">
-								Tapdata DFS云版需要先在本地安装agent以确保连接数据库和数据传输服务的正常运行,
-								您可以根据要安装服务器的类型在下方选择相应的类型进行下载安装
-							</div>
+							<div class="title">{{ $t('guide.step_1_title') }}</div>
+							<div class="desc">{{ $t('guide.step_1_desc') }}</div>
 							<AgentDownloadContent></AgentDownloadContent>
 						</div>
 						<!-- 步骤2、步骤3 -->
@@ -92,16 +89,16 @@
 									:config="config"
 								></FormBuilder>
 								<div class="btn-test">
-									<el-button size="mini" @click="startTest()">连接测试</el-button>
+									<el-button size="mini" @click="startTest()">
+										{{ $t('connection.testConnection') }}
+									</el-button>
 								</div>
 							</template>
 						</div>
 						<!-- 步骤1 -->
 						<div class="body step-3" v-if="steps[activeStep].index === 4">
-							<div class="title">选择任务类型</div>
-							<div class="desc">
-								请根据下方提示选择要进行的任务类型，系统会根据您的选择打开相应的任务编辑面板，如果选择错了可以取消任务重新选择
-							</div>
+							<div class="title">{{ $t('guide.step_4_title') }}</div>
+							<div class="desc">{{ $t('guide.step_4_desc') }}</div>
 							<FbRadio class="task-type-radio" v-model="taskType" :config="taskTypeConfig"></FbRadio>
 						</div>
 					</el-main>
@@ -111,7 +108,7 @@
 							v-if="steps[activeStep].index > 2 || selectedDatabaseType"
 							@click="back(selectedDatabaseType)"
 						>
-							上一步
+							{{ $t('guide.btn_back') }}
 						</el-button>
 						<el-button
 							v-if="steps[activeStep].index !== 4"
@@ -120,13 +117,13 @@
 							:loading="loading"
 							@click="next()"
 						>
-							<span v-show="selectedDatabaseType">保存，</span>
-							<span>下一步</span>
+							<span v-show="selectedDatabaseType">{{ $t('guide.btn_save') }}</span>
+							<span>{{ $t('guide.btn_next') }}</span>
 						</el-button>
 						<el-button v-else type="primary" class="btn-step" :loading="loading" @click="next()">
-							开始编辑任务
+							{{ $t('guide.btn_to_dataflow') }}
 							<el-button class="btn-pass" type="text" @click="toDashboard()">
-								暂不编辑任务，先逛逛
+								{{ $t('guide.btn_to_dashboard') }}
 							</el-button>
 						</el-button>
 					</el-footer>
@@ -154,12 +151,6 @@ import Test from '../view/connections/Test';
 
 import formConfig from './connections/config';
 
-const steps = [
-	{ index: 1, text: 'Agent下载与安装' },
-	{ index: 2, text: '设置数据源' },
-	{ index: 3, text: '设置目标' },
-	{ index: 4, text: '选择任务类型，开启数据传输之旅' }
-];
 export default {
 	components: {
 		AgentDownloadContent,
@@ -178,20 +169,18 @@ export default {
 			connectionList: [],
 			stepMap: {
 				2: {
-					title: '创建数据源连接',
-					desc:
-						'数据源连接指的是可以作为源的数据库、file、GridFS、REST API等类型的数据连接,必须先创建数据源才能创建迁移或同步任务',
+					title: this.$t('guide.step_2_title'),
+					desc: this.$t('guide.step_2_desc'),
 					selectedConnection: {},
 					connectionList: [],
-					btnLabel: '创建新的源连接'
+					btnLabel: this.$t('guide.step_2_btn_label')
 				},
 				3: {
-					title: '创建目标连接',
-					desc:
-						'数据源连接指的是可以作为源的数据库、file、GridFS、REST API等类型的数据连接,必须先创建数据源才能创建迁移或同步任务',
+					title: this.$t('guide.step_3_title'),
+					desc: this.$t('guide.step_3_desc'),
 					selectedConnection: {},
 					connectionList: [],
-					btnLabel: '创建新的目标连接'
+					btnLabel: this.$t('guide.step_3_btn_label')
 				}
 			},
 			selectedDatabaseType: '',
@@ -209,16 +198,14 @@ export default {
 			taskTypeConfig: {
 				options: [
 					{
-						label: '数据库迁移',
+						label: this.$t('guide.task_type_clone'),
 						value: 'cluster-clone',
-						tip:
-							'数据库迁移功能以库为单位户在一个任务内轻松实现多个同构或异构数据库（库、表映射）之间的结构迁移、初始化迁移、或增量迁移等功能，适用于数据库迁移上云、实例间的数据库迁移、数据库迁移下云、数据库灾备等多种场景。'
+						tip: this.$t('guide.task_type_clone_tips')
 					},
 					{
-						label: '数据同步',
+						label: this.$t('guide.task_type_custom'),
 						value: 'custom',
-						tip:
-							'数据同步聚焦在表级别的数据处理与传输，在满足用户实现多表（数据集）、多级数据之间多表合一、数据拆分、关联映射、字段增减合并、内容过滤、聚合处理JS处理等功能的情况下同时实现实时数据同步。在不影响用户业务的情况下，满足用户对数据的异地或本地数据灾备、跨实例数据同步、查询与报表分流、实时数据仓库管理等多种业务场景的需求。'
+						tip: this.$t('guide.task_type_custom_tips')
 					}
 				]
 			},
@@ -299,6 +286,12 @@ export default {
 				});
 		},
 		getSteps(hasDownloadAgent) {
+			const steps = [
+				{ index: 1, text: this.$t('guide.step_1') },
+				{ index: 2, text: this.$t('guide.step_2') },
+				{ index: 3, text: this.$t('guide.step_3') },
+				{ index: 4, text: this.$t('guide.step_4') }
+			];
 			if (hasDownloadAgent) {
 				this.steps = steps.slice(1, 4);
 			} else {
@@ -311,7 +304,7 @@ export default {
 					if (hasDownloadAgent) {
 						this.activeStep += 1;
 					} else {
-						this.$message.error('系统检测到 Agent 并未安装, 请下载安装后重试');
+						this.$message.error(this.$t('guide.agent_not_install'));
 					}
 				});
 			}
