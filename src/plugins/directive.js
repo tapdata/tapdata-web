@@ -46,7 +46,7 @@ export function permissionBtnDisabel(code, id) {
 	let cookie = window.VueCookie;
 	let user_id = cookie.get('user_id');
 	if (!Vue.prototype.$has(code)) {
-		if (id !== user_id) {
+		if (id && id !== user_id) {
 			falg = true;
 		}
 	}

@@ -109,18 +109,27 @@
 							<el-dropdown-item command="bulkExport" v-readonlybtn="'SYNC_job_export'">{{
 								$t('dataFlow.bulkExport')
 							}}</el-dropdown-item>
-							<el-dropdown-item command="bulkScheuled" v-readonlybtn="'SYNC_job_operation'">{{
-								$t('dataFlow.bulkScheuled')
-							}}</el-dropdown-item>
-							<el-dropdown-item command="bulkStopping" v-readonlybtn="'SYNC_job_operation'">{{
-								$t('dataFlow.bulkStopping')
-							}}</el-dropdown-item>
+							<el-dropdown-item
+								command="bulkScheuled"
+								:disabled="permissionBtnDisabel('SYNC_job_operation_all_data')"
+								v-readonlybtn="'SYNC_job_operation'"
+								>{{ $t('dataFlow.bulkScheuled') }}</el-dropdown-item
+							>
+							<el-dropdown-item
+								command="bulkStopping"
+								:disabled="permissionBtnDisabel('SYNC_job_operation_all_data')"
+								v-readonlybtn="'SYNC_job_operation'"
+								>{{ $t('dataFlow.bulkStopping') }}</el-dropdown-item
+							>
 							<el-dropdown-item command="batchDelete" v-readonlybtn="'SYNC_job_delete'">{{
 								$t('dataFlow.batchDelete')
 							}}</el-dropdown-item>
-							<el-dropdown-item command="batchRest" v-readonlybtn="'SYNC_job_operation'">{{
-								$t('dataFlow.batchRest')
-							}}</el-dropdown-item>
+							<el-dropdown-item
+								command="batchRest"
+								:disabled="permissionBtnDisabel('SYNC_job_operation_all_data')"
+								v-readonlybtn="'SYNC_job_operation'"
+								>{{ $t('dataFlow.batchRest') }}</el-dropdown-item
+							>
 						</el-dropdown-menu>
 					</el-dropdown>
 					<el-button
@@ -251,7 +260,8 @@
 										inactive-value="stopping"
 										active-value="scheduled"
 										:disabled="
-											statusBtMap[scope.row.status].switch &&
+											permissionBtnDisabel('SYNC_job_operation_all_data', scope.row.user_id) &&
+												statusBtMap[scope.row.status].switch &&
 												!(scope.row.status == 'draft' && scope.row.checked == true)
 										"
 										@change="
@@ -276,7 +286,10 @@
 								<el-tooltip class="item" :content="$t('dataFlow.edit')" placement="bottom">
 									<el-button
 										type="text"
-										:disabled="statusBtMap[scope.row.status].edit"
+										:disabled="
+											permissionBtnDisabel('SYNC_job_edition_all_data', scope.row.user_id) &&
+												statusBtMap[scope.row.status].edit
+										"
 										@click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)"
 										v-readonlybtn="'SYNC_job_edition'"
 									>
@@ -309,7 +322,10 @@
 								<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
 									<el-button
 										type="text"
-										:disabled="statusBtMap[scope.row.status].delete"
+										:disabled="
+											permissionBtnDisabel('SYNC_job_delete_all_data', scope.row.user_id) &&
+												statusBtMap[scope.row.status].delete
+										"
 										@click="handleDelete(scope.row)"
 										v-readonlybtn="'SYNC_job_delete'"
 									>
@@ -335,14 +351,24 @@
 											$t('dataFlow.copy')
 										}}</el-dropdown-item>
 										<el-dropdown-item
-											:disabled="statusBtMap[scope.row.status].reset"
+											:disabled="
+												permissionBtnDisabel(
+													'SYNC_job_operation_all_data',
+													scope.row.user_id
+												) && statusBtMap[scope.row.status].reset
+											"
 											command="reset"
 											v-readonlybtn="'SYNC_job_operation'"
 											>{{ $t('dataFlow.button.reset') }}</el-dropdown-item
 										>
 										<el-dropdown-item
 											command="force_stopping"
-											:disabled="statusBtMap[scope.row.status].forceStop"
+											:disabled="
+												permissionBtnDisabel(
+													'SYNC_job_operation_all_data',
+													scope.row.user_id
+												) && statusBtMap[scope.row.status].forceStop
+											"
 											v-readonlybtn="'SYNC_job_operation'"
 											>{{ $t('dataFlow.status.force_stopping') }}</el-dropdown-item
 										>
@@ -458,6 +484,7 @@ import Classification from '@/components/Classification';
 import SelectClassify from '../../components/SelectClassify';
 import SkipError from '../../components/SkipError';
 import DownAgent from '../downAgent/agentDown';
+import { permissionBtnDisabel } from '@/plugins/directive';
 
 export default {
 	components: { Classification, SelectClassify, DownAgent, SkipError },
@@ -667,6 +694,7 @@ export default {
 		}
 	},
 	methods: {
+		permissionBtnDisabel,
 		// 获取Agent是否安装
 		// getDataApi(type) {
 		// 	let params = {};

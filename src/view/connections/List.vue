@@ -234,7 +234,11 @@
 								:content="$t('message.delete')"
 								placement="bottom"
 							>
-								<el-button type="text" @click="delConfirm(scope.row)">
+								<el-button
+									type="text"
+									:disabled="permissionBtnDisabel('datasource_delete_all_data', scope.row.user_id)"
+									@click="delConfirm(scope.row)"
+								>
 									<i class="iconfont task-list-icon icon-shanchu"></i>
 								</el-button>
 							</el-tooltip>

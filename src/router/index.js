@@ -2,7 +2,8 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import factor from '../api/factory';
 import i18n from '../i18n/i18n';
-import { setPermission, signOut } from '../util/util';
+import { setPermission } from '../util/util';
+// signOut
 import { Loading, Message } from 'element-ui';
 
 const view = path => () => import(`../view/${path}`);
@@ -597,14 +598,15 @@ router.beforeEach(async (to, from, next) => {
 				if (permissions.length) {
 					//权限存在则存入缓存并继续向下走
 					permissions = setPermission(permissions);
-				} else {
-					//权限列表为空，说明没有权限进入，执行sign out操作并跳转到登录页面
-					Message.error({
-						message: i18n.t('app.signIn.permission_denied')
-					});
-					signOut();
-					return;
 				}
+				// else {
+				// 	//权限列表为空，说明没有权限进入，执行sign out操作并跳转到登录页面
+				// 	Message.error({
+				// 		message: i18n.t('app.signIn.permission_denied')
+				// 	});
+				// 	signOut();
+				// 	return;
+				// }
 			} else {
 				Message.error({
 					message: i18n.t('app.signIn.permission_denied')

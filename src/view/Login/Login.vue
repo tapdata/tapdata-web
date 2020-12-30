@@ -113,11 +113,11 @@ export default {
 					.digest('hex')
 					.toUpperCase();
 				let { data } = await usersModel.login(this.form);
-				if (!data.permissions) {
-					this.loading = false;
-					this.form.password = oldPassword;
-					return;
-				}
+				// if (!data.permissions) {
+				// 	this.loading = false;
+				// 	this.form.password = oldPassword;
+				// 	return;
+				// }
 				if (data.textStatus === 'WAITING_APPROVE') {
 					this.errorMessage = this.$t('app.signIn.account_waiting_approve');
 					return;
@@ -126,10 +126,10 @@ export default {
 					this.errorMessage = this.$t('app.signIn.account_disabled');
 					return;
 				}
-				if (!data.permissions || data.permissions.length === 0) {
-					this.errorMessage = this.$t('app.signIn.permission_denied');
-					return;
-				}
+				// if (!data.permissions || data.permissions.length === 0) {
+				// 	this.errorMessage = this.$t('app.signIn.permission_denied');
+				// 	return;
+				// }
 				setPermission(data.permissions);
 				let user = await usersModel.getUserById(`/${data.userId}?access_token=${data.id}`);
 				this.$cookie.set('email', this.form.email);
