@@ -2073,7 +2073,7 @@ const en = {
 		READ_CDC_EVENT: '【Data transfer】Source enters incremental read mode',
 		WRITE_CDC_EVENT: '【Data transfer】Target enters incremental write mode',
 
-		emptyText: 'The job has not been started ( or has been reset), so there is no running milestone data.'
+		emptyText: 'The job has not been started or has been reset, so there is no running milestone data.'
 	},
 	guide: {
 		guide_title: 'New user guide',

@@ -2019,7 +2019,7 @@ const tc = {
 		READ_CDC_EVENT: '【數據傳輸】源端採集器進入增量讀取模式',
 		WRITE_CDC_EVENT: '【數據傳輸】目標處理器進入增量寫入模式',
 
-		emptyText: '此任務尚未啟動(或已被重置)，暫無運行里程碑數據'
+		emptyText: '此任務尚未啟動或已被重置，暫無運行里程碑數據'
 	},
 	guide: {
 		guide_title: '新用戶引導',

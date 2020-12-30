@@ -2024,7 +2024,7 @@ const cn = {
 		READ_CDC_EVENT: '【数据传输】源端采集器进入增量读取模式',
 		WRITE_CDC_EVENT: '【数据传输】目标处理器进入增量写入模式',
 
-		emptyText: '此任务尚未启动(或已被重置)，暂无运行里程碑数据'
+		emptyText: '此任务尚未启动或已被重置，暂无运行里程碑数据'
 	},
 	guide: {
 		guide_title: '新用户引导',
