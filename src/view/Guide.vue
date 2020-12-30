@@ -307,8 +307,7 @@ export default {
 						this.$message.error(this.$t('guide.agent_not_install'));
 					}
 				});
-			}
-			if ([2, 3].includes(this.steps[this.activeStep].index)) {
+			} else if ([2, 3].includes(this.steps[this.activeStep].index)) {
 				if (this.selectedDatabaseType) {
 					this.$refs.form.validate(valid => {
 						if (valid) {

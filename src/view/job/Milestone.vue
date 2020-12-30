@@ -2,14 +2,25 @@
 	<section class="milestone-wrap" v-loading="loading">
 		<ul class="milestone-list">
 			<li class="milestone-item" v-for="(item, index) in list" :key="index">
-				<div class="label">{{ item.label }}</div>
+				<div class="label">
+					<span>{{ item.label }}</span>
+					<el-button
+						v-if="item.status === 'error'"
+						class="btn-error"
+						size="mini"
+						type="text"
+						@click="checkError(item.errorMessage)"
+					>
+						{{ $t('milestone.btn_check_error') }}
+					</el-button>
+				</div>
 				<div :class="'status ' + item.status">
 					<span class="milestone-icon">
 						<i class="el-icon-success"></i>
 						<i class="el-icon-error"></i>
 						<i class="el-icon-loading"></i>
 					</span>
-					<span>{{ statusMap[item.status] }}</span>
+					<span>{{ $t('milestone.status_' + item.status) }}</span>
 				</div>
 				<div class="from-now">{{ item.fromNow }}</div>
 			</li>
@@ -35,13 +46,7 @@ export default {
 	data() {
 		return {
 			loading: true,
-			list: [],
-			statusMap: {
-				waiting: '待执行',
-				running: '进行中',
-				error: '错误',
-				finish: '已完成'
-			}
+			list: []
 		};
 	},
 	created() {
@@ -62,6 +67,24 @@ export default {
 				clearTimeout(interval);
 				interval = null;
 			}
+		},
+		checkError(msg) {
+			const h = this.$createElement;
+			this.$msgbox({
+				width: 600,
+				customClass: 'error-box-body',
+				message: h(
+					'pre',
+					{
+						style: {
+							whiteSpace: 'pre-wrap',
+							maxHeight: '400px',
+							overflow: 'auto'
+						}
+					},
+					[msg]
+				)
+			});
 		},
 		getData(showLoading) {
 			let id = this.dataFlow.id;
@@ -86,9 +109,7 @@ export default {
 								this.list = milestones.map(m => {
 									let time = m.status === 'running' ? m.start : m.end;
 									if (time) {
-										time = this.$moment(time)
-											.locale('zh-cn')
-											.fromNow();
+										time = this.$moment(time).format('YYYY-MM-DD HH:mm:ss');
 									}
 									return {
 										label: this.$t(`milestone.${m.code}`),
@@ -107,7 +128,11 @@ export default {
 	}
 };
 </script>
-
+<style lang="less">
+.error-box-body {
+	width: 600px;
+}
+</style>
 <style lang="less" scoped>
 .milestone-wrap {
 	position: relative;
@@ -138,10 +163,16 @@ export default {
 			font-size: 12px;
 			.label {
 				flex: 1;
+				.btn-error {
+					margin-left: 10px;
+				}
 			}
-			.status,
-			.from-now {
+			.status {
 				width: 100px;
+				color: #999;
+			}
+			.from-now {
+				width: 150px;
 				color: #999;
 			}
 			.status {
