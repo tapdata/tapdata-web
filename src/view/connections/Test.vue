@@ -74,45 +74,47 @@ export default {
 			}
 		};
 	},
-	watch: {
-		dialogTestVisible: {
-			handler() {
-				if (this.dialogTestVisible) {
-					this.handleWS(); //开始测试建立ws
-				} else {
-					this.clearInterval();
-					this.testData.testLogs = [];
-				}
-			}
-		}
+	mounted() {
+		this.$on('startWS', () => {
+			this.start();
+		});
 	},
 	destroyed() {
 		this.clearInterval();
 	},
 	methods: {
 		handleClose() {
-			this.$emit('dialogTestVisible', false);
 			this.$emit('update:dialogTestVisible', false);
 		},
-		//建立长连接 测试使用
-		handleWS() {
-			//默认检查项初始化
-			this.wsError = '';
+		start() {
 			let msg = {
 				type: 'testConnection',
 				data: this.formData
 			};
+			this.wsError = '';
+			this.testData.testLogs = [];
 			//接收数据
 			ws.on('testConnectionResult', data => {
 				let result = data.result || [];
 				this.wsError = data.status;
+				let testData = {
+					wsError: data.status
+				};
 				if (result.response_body) {
 					let validate_details = result.response_body.validate_details || [];
 					this.testData.testLogs = validate_details;
+					testData['testLogs '] = validate_details;
+					testData['status'] = result.status;
 				}
+				this.$emit('returnTestData', testData);
 			});
-			ws.on('unknown_event_result', data => {
+			//长连接失败
+			ws.on('testConnection', data => {
 				this.wsError = data.status;
+				let testData = {
+					wsError: data.status
+				};
+				this.$emit('returnTestData', testData);
 			});
 			//建立连接
 			this.timer = setInterval(() => {
@@ -127,6 +129,7 @@ export default {
 			ws.off('testConnection');
 			clearInterval(this.timer);
 			this.timer = null;
+			this.testData.testLogs = [];
 		}
 	}
 };

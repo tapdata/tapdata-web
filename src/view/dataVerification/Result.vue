@@ -227,7 +227,7 @@
 						</ul>
 						<ul class="sub-table">
 							<li><JsonViewer :value="item.source"></JsonViewer></li>
-							<li><JsonViewer :value="item.target"></JsonViewer></li>
+							<li><JsonViewer :value="item.target ? item.target.data : ''"></JsonViewer></li>
 						</ul>
 					</div>
 				</div>

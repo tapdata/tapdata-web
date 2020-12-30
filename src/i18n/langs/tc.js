@@ -1417,7 +1417,7 @@ const tc = {
 			title: '連接測試',
 			success: '測試通過',
 			fail: '測試未通過',
-			testing: '測試中...',
+			testing: '待檢測...',
 			items: '檢查事項',
 			result: '檢查結果',
 			information: '說明',

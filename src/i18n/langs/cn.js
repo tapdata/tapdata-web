@@ -1420,7 +1420,7 @@ const cn = {
 			title: '连接测试',
 			success: '测试通过',
 			fail: '测试未通过',
-			testing: '待测试...',
+			testing: '待检测...',
 			items: '检查事项',
 			result: '检查结果',
 			information: '说明',

@@ -44,7 +44,7 @@ export default {
 			defaultFormItemConfig: {
 				show: true,
 				type: 'input',
-				field: 'field',
+				field: '',
 				label: '',
 				domType: 'text',
 				required: false,
@@ -69,8 +69,8 @@ export default {
 					inlineMessage: true
 				})
 			},
-			formItems.map(item => {
-				return this.getFormItem(h, item);
+			formItems.map((item, index) => {
+				return this.getFormItem(h, item, index);
 			})
 		);
 		if (this.show) {
@@ -85,7 +85,7 @@ export default {
 		clearValidate() {
 			return this.$refs.form && this.$refs.form.clearValidate();
 		},
-		getFormItem(h, itemConfig) {
+		getFormItem(h, itemConfig, index) {
 			let self = this;
 			let config = Object.assign({}, this.defaultFormItemConfig, itemConfig);
 			let rules = config.rules || [];
@@ -135,7 +135,7 @@ export default {
 							return rule;
 						})
 					},
-					key: config.field
+					key: config.field || index
 				},
 				[this.getLabel(h, config), this.getBody(h, config)]
 			);

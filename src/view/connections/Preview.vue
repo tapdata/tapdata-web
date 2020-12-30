@@ -95,12 +95,17 @@
 		<ul class="info-list">
 			<li v-for="item in form" :key="item.label">
 				<span class="label">{{ item.label }}</span>
-				<span class="value align-center" :class="{ 'align-top': item.label.length > 15 }">{{
+				<span class="value align-center" :class="{ 'align-top': item.label && item.label.length > 15 }">{{
 					item.value
 				}}</span>
 			</li>
 		</ul>
-		<Test @dialogTestVisible="handleTestVisible" :dialogTestVisible="dialogTestVisible" :formData="data"></Test>
+		<Test
+			ref="test"
+			:dialogTestVisible.sync="dialogTestVisible"
+			:formData="data"
+			@returnTestData="returnTestData"
+		></Test>
 	</el-drawer>
 </template>
 
@@ -136,12 +141,7 @@ export default {
 			progress: 0,
 			timer: null,
 			showProgress: false,
-			dialogTestVisible: false,
-			testStatus: {
-				ready: 'success',
-				invalid: 'exception',
-				testing: 'warning'
-			}
+			dialogTestVisible: false
 		};
 	},
 	watch: {
@@ -162,6 +162,10 @@ export default {
 	},
 	methods: {
 		getImgByType,
+		returnTestData(data) {
+			if (!data.status || data.status === null) return;
+			this.status = data.status;
+		},
 		clearInterval() {
 			// 清除定时器
 			clearInterval(this.timer);
@@ -183,6 +187,7 @@ export default {
 				if (['ready'].includes(this.status) && data.loadFieldsStatus !== 'finished' && data.tableCount) {
 					this.progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100;
 					this.showProgress = true;
+					this.reloadApi();
 				}
 				let func = formConfig[this.type];
 				if (func) {
@@ -190,11 +195,10 @@ export default {
 					let items = config.items.map(it => {
 						let node = {
 							label: it.label,
-							value: data[it.field]
+							value: data[it.field] || '-'
 						};
 						return node;
 					});
-					//过滤value空值 undefined
 					items = items || [];
 					items = items.filter(item => item.label);
 					this.form = items;
@@ -207,7 +211,15 @@ export default {
 			this.$emit('previewVisible', false);
 		},
 		beforeTest() {
-			this.dialogTestVisible = true;
+			//先将管理端状态改为testing
+			this.$api('connections')
+				.updateById(this.data.id, {
+					status: 'testing'
+				})
+				.then(() => {
+					this.dialogTestVisible = true;
+					this.$refs.test.$emit('startWS');
+				});
 		},
 		edit(id, type) {
 			if (
@@ -232,7 +244,7 @@ export default {
 				() => {
 					this.showProgress = true;
 					this.progress = 0;
-					this.reloadApi();
+					this.reloadApi('first');
 				},
 				() => {},
 				config
@@ -248,16 +260,23 @@ export default {
 				.then(callback)
 				.catch(catchCallback);
 		},
-		reloadApi() {
+		reloadApi(type) {
 			this.clearInterval();
+			let parms;
+			if (type === 'first') {
+				parms = {
+					loadCount: 0,
+					loadFieldsStatus: 'loading'
+				};
+			}
 			this.$api('connections')
-				.updateById(this.data.id, {
-					status: 'testing',
-					name: this.data.name
-				})
+				.updateById(this.data.id, parms)
 				.then(result => {
 					if (result.data) {
 						let data = result.data;
+						if (type === 'first') {
+							this.$refs.test.$emit('startWS');
+						}
 						if (data.loadFieldsStatus === 'finished') {
 							this.progress = 100;
 							setTimeout(() => {

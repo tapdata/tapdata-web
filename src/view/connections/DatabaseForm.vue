@@ -51,6 +51,26 @@
 					<el-button size="mini" class="test" @click="startTest()">{{
 						$t('connection.testConnection')
 					}}</el-button>
+					<span class="status">
+						<span class="error" v-if="['invalid'].includes(status)">
+							<i class="el-icon-error"></i>
+							<span>
+								{{ $t('connection.status.invalid') }}
+							</span>
+						</span>
+						<span class="success" v-if="['ready'].includes(status)">
+							<i class="el-icon-success"></i>
+							<span>
+								{{ $t('connection.status.ready') }}
+							</span>
+						</span>
+						<span class="warning" v-if="['testing'].includes(status)">
+							<i class="el-icon-warning"></i>
+							<span>
+								{{ $t('connection.status.testing') }}
+							</span>
+						</span>
+					</span>
 				</div>
 			</main>
 			<gitbook></gitbook>
@@ -63,7 +83,12 @@
 				</el-button>
 			</div>
 		</footer>
-		<Test @dialogTestVisible="handleTestVisible" :dialogTestVisible="dialogTestVisible" :formData="model"></Test>
+		<Test
+			ref="test"
+			:dialogTestVisible.sync="dialogTestVisible"
+			:formData="model"
+			@returnTestData="returnTestData"
+		></Test>
 		<DatabaseTypeDialog
 			:dialogVisible.sync="dialogDatabaseTypeVisible"
 			@databaseType="handleDatabaseType"
@@ -111,7 +136,6 @@ import gitbook from './GitBook';
 import Test from './Test';
 import { getImgByType, TYPEMAP } from './util';
 import DatabaseTypeDialog from './DatabaseTypeDialog';
-import ws from '../../api/ws';
 
 const databaseTypesModel = factory('DatabaseTypes');
 const connectionsModel = factory('connections');
@@ -167,11 +191,7 @@ export default {
 			databaseType: '',
 			typeMap: TYPEMAP,
 			timer: null,
-			status: {
-				ready: 'success',
-				invalid: 'exception',
-				testing: 'warning'
-			},
+			status: '',
 			dialogTestVisible: false,
 			dialogDatabaseTypeVisible: false,
 			dialogEditNameVisible: false,
@@ -202,9 +222,6 @@ export default {
 				show: true
 			}
 		];
-	},
-	destroyed() {
-		this.clearInterval();
 	},
 	methods: {
 		getImgByType,
@@ -300,7 +317,6 @@ export default {
 					let params = Object.assign({}, this.model, {
 						sslCert: this.model.sslKey,
 						user_id: this.$cookie.get('user_id'),
-						status: 'testing',
 						schema: {},
 						retry: 0,
 						nextRetry: null,
@@ -310,6 +326,8 @@ export default {
 					});
 					if (!params.id) {
 						delete params.id;
+					} else {
+						params['status'] = 'testing'; //id 存在则改变status
 					}
 					delete params.sslKeyFile;
 					delete params.sslCAFile;
@@ -322,9 +340,8 @@ export default {
 							this.submitBtnLoading = false;
 							let id = res.data.id;
 							this.model.id = id;
-							this.handleWS(id);
+							this.startTest();
 							this.$message.success('保存成功');
-							this.clearInterval();
 							this.goBack();
 						})
 						.catch(err => {
@@ -350,29 +367,25 @@ export default {
 		startTest() {
 			this.$refs.form.validate(valid => {
 				if (valid) {
-					this.dialogTestVisible = true;
+					if (this.$route.query.id) {
+						//先将管理端状态改为testing
+						this.$api('connections')
+							.updateById(this.$route.query.id, {
+								status: 'testing'
+							})
+							.then(() => {
+								this.dialogTestVisible = true;
+								this.$refs.test.$emit('startWS');
+							});
+					} else {
+						this.$refs.test.$emit('startWS');
+					}
 				}
 			});
 		},
-		//建立长连接 测试使用
-		handleWS() {
-			let msg = {
-				type: 'testConnection',
-				data: this.model
-			};
-			//建立连接
-			this.timer = setInterval(() => {
-				if (ws.ws.readyState == 1) {
-					ws.send(msg);
-					clearInterval(this.timer);
-				}
-			}, 2000);
-		},
-		clearInterval() {
-			// 取消长连接
-			ws.off('testConnection');
-			clearInterval(this.timer);
-			this.timer = null;
+		returnTestData(data) {
+			if (!data.status || data.status === null) return;
+			this.status = data.status;
 		},
 		//取消
 		handleCancelRename() {
@@ -536,6 +549,19 @@ export default {
 			.test {
 				margin-left: 200px;
 				margin-bottom: 20px;
+			}
+		}
+		.status {
+			font-size: 12px;
+			margin-top: 2px;
+			.error {
+				color: #d54e21;
+			}
+			.success {
+				color: #0ab300;
+			}
+			.warning {
+				color: #e6a23c;
 			}
 		}
 	}
