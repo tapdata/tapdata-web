@@ -78,6 +78,7 @@
 							<el-button
 								type="text"
 								v-readonlybtn="'role_edition'"
+								:disabled="permissionBtnDisabel('role_edition_all_data', scope.row.user_id)"
 								@click="handleSettingPermissions(scope.row.id, scope.row.name)"
 							>
 								{{ $t('role.settingPermissions') }}
@@ -86,6 +87,7 @@
 							<el-button
 								type="text"
 								@click="handleAssociatUsers(scope.row.id)"
+								:disabled="permissionBtnDisabel('role_edition_all_data', scope.row.user_id)"
 								v-readonlybtn="'role_edition'"
 							>
 								{{ $t('role.associatUsers') }}
@@ -93,6 +95,7 @@
 							<el-button
 								type="text"
 								v-readonlybtn="'role_edition'"
+								:disabled="permissionBtnDisabel('role_edition_all_data', scope.row.user_id)"
 								@click="createRole(scope.row.id, scope.row)"
 							>
 								{{ $t('role.edit') }}
@@ -101,6 +104,7 @@
 								type="text"
 								@click="handleDelete(scope.row)"
 								v-if="scope.row.name != 'admin'"
+								:disabled="permissionBtnDisabel('role_delete_all_data', scope.row.user_id)"
 								v-readonlybtn="'role_delete'"
 							>
 								{{ $t('role.delete') }}
@@ -206,6 +210,7 @@ import factory from '@/api/factory';
 const rolesModel = factory('role');
 const usersModel = factory('users');
 const roleMappingModel = factory('roleMapping');
+import { permissionBtnDisabel } from '@/plugins/directive';
 export default {
 	name: 'Roles',
 	data() {
@@ -250,6 +255,8 @@ export default {
 		}
 	},
 	methods: {
+		permissionBtnDisabel,
+
 		// 获取角色列表
 		async handleDataApi(params) {
 			// let { sortBy, descending, page, rowsPerPage } = this.pagination;

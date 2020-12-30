@@ -109,27 +109,18 @@
 							<el-dropdown-item command="bulkExport" v-readonlybtn="'SYNC_job_export'">{{
 								$t('dataFlow.bulkExport')
 							}}</el-dropdown-item>
-							<el-dropdown-item
-								command="bulkScheuled"
-								:disabled="permissionBtnDisabel('SYNC_job_operation_all_data')"
-								v-readonlybtn="'SYNC_job_operation'"
-								>{{ $t('dataFlow.bulkScheuled') }}</el-dropdown-item
-							>
-							<el-dropdown-item
-								command="bulkStopping"
-								:disabled="permissionBtnDisabel('SYNC_job_operation_all_data')"
-								v-readonlybtn="'SYNC_job_operation'"
-								>{{ $t('dataFlow.bulkStopping') }}</el-dropdown-item
-							>
+							<el-dropdown-item command="bulkScheuled" v-readonlybtn="'SYNC_job_operation'">{{
+								$t('dataFlow.bulkScheuled')
+							}}</el-dropdown-item>
+							<el-dropdown-item command="bulkStopping" v-readonlybtn="'SYNC_job_operation'">{{
+								$t('dataFlow.bulkStopping')
+							}}</el-dropdown-item>
 							<el-dropdown-item command="batchDelete" v-readonlybtn="'SYNC_job_delete'">{{
 								$t('dataFlow.batchDelete')
 							}}</el-dropdown-item>
-							<el-dropdown-item
-								command="batchRest"
-								:disabled="permissionBtnDisabel('SYNC_job_operation_all_data')"
-								v-readonlybtn="'SYNC_job_operation'"
-								>{{ $t('dataFlow.batchRest') }}</el-dropdown-item
-							>
+							<el-dropdown-item command="batchRest" v-readonlybtn="'SYNC_job_operation'">{{
+								$t('dataFlow.batchRest')
+							}}</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 					<el-button
