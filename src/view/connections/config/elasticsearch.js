@@ -79,8 +79,7 @@ export default function(vm) {
 				field: 'plain_password',
 				label: vm.$t('dataForm.form.password'),
 				domType: 'password',
-				showByUrl: 2,
-				showPassword: true
+				showByUrl: 2
 			}
 		]
 	};

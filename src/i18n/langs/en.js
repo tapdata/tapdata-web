@@ -2055,25 +2055,24 @@ const en = {
 		INIT_CONNECTOR: '【Preparation】Scan source information and initialize the source collector',
 		INIT_TRANSFORMER: '【Preparation】Scan target information and initialize the target handler',
 		READ_SOURCE_DDL: '【Preparation】Read source DDL information(Database Migration)',
-		DROP_TARGET_SCHEMA: '【Preparation】Drop target schema(Data flow executes for the first time or after a reset)',
-		CLEAR_TARGET_DATA:
-			'【Preparation】Empty the target data(Data flow executes for the first time or after a reset)',
-		CREATE_TARGET_TABLE:
-			'【Preparation】Automatically create target table(Data flow executes for the first time or after a reset)',
-		CREATE_TARGET_INDEX:
-			'【Preparation】Automatically create target index(Data flow executes for the first time or after a reset)',
-		CREATE_TARGET_VIEW:
-			'【Preparation】Automatically create target view(Data flow executes for the first time or after a reset)',
-		CREATE_TARGET_FUNCTION:
-			'【Preparation】Automatically create target function(Data flow executes for the first time or after a reset)',
-		CREATE_TARGET_PROCEDURE:
-			'【Preparation】Automatically create target procedure(Data flow executes for the first time or after a reset)',
+		DROP_TARGET_SCHEMA: '【Preparation】Drop target schema',
+		CLEAR_TARGET_DATA: '【Preparation】Empty the target data',
+		CREATE_TARGET_TABLE: '【Preparation】Automatically create target table',
+		CREATE_TARGET_INDEX: '【Preparation】Automatically create target index',
+		CREATE_TARGET_VIEW: '【Preparation】Automatically create target view',
+		CREATE_TARGET_FUNCTION: '【Preparation】Automatically create target function',
+		CREATE_TARGET_PROCEDURE: '【Preparation】Automatically create target procedure',
 		READ_SNAPSHOT: '【Data transfer】Read the source snapshot',
 		WRITE_SNAPSHOT: '【Data transfer】Write the snapshot into target',
 		READ_CDC_EVENT: '【Data transfer】Source enters incremental read mode',
 		WRITE_CDC_EVENT: '【Data transfer】Target enters incremental write mode',
 
-		emptyText: 'The job has not been started or has been reset, so there is no running milestone data.'
+		emptyText: 'The job has not been started or has been reset, so there is no running milestone data.',
+		status_waiting: 'waiting',
+		status_running: 'running',
+		status_error: 'error',
+		status_finish: 'finish',
+		btn_check_error: 'Check error info',
 	},
 	guide: {
 		guide_title: 'New user guide',

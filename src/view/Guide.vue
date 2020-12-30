@@ -138,7 +138,7 @@
 			:dialogVisible.sync="showConnectDialog"
 			@databaseType="handleDatabaseTypeChange"
 		></DatabaseTypeDialog>
-		<Test :dialogTestVisible.sync="dialogTestVisible" :formData="connectionForm"></Test>
+		<Test ref="test" :dialogTestVisible.sync="dialogTestVisible" :formData="connectionForm"></Test>
 	</el-container>
 </template>
 <script>
@@ -307,8 +307,7 @@ export default {
 						this.$message.error(this.$t('guide.agent_not_install'));
 					}
 				});
-			}
-			if ([2, 3].includes(this.steps[this.activeStep].index)) {
+			} else if ([2, 3].includes(this.steps[this.activeStep].index)) {
 				if (this.selectedDatabaseType) {
 					this.$refs.form.validate(valid => {
 						if (valid) {
@@ -566,6 +565,7 @@ export default {
 			this.$refs.form.validate(valid => {
 				if (valid) {
 					this.dialogTestVisible = true;
+					this.$refs.test.$emit('startWS');
 				}
 			});
 		}
