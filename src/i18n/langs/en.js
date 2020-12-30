@@ -2072,7 +2072,7 @@ const en = {
 		status_running: 'running',
 		status_error: 'error',
 		status_finish: 'finish',
-		btn_check_error: 'Check error info',
+		btn_check_error: 'Check Error Info',
 	},
 	guide: {
 		guide_title: 'New user guide',
