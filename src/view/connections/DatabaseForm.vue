@@ -322,6 +322,7 @@ export default {
 						nextRetry: null,
 						response_body: {},
 						project: '',
+						submit: true,
 						listtags: []
 					});
 					if (!params.id) {
