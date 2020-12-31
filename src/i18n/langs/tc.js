@@ -295,7 +295,9 @@ const tc = {
 		reloadSchemaSuccess: '模型更新成功',
 		reloadSchemaError: '模型更新失敗'
 	},
-
+	button: {
+		reset: '重置'
+	},
 	dataFlow: {
 		aggregateNotDataNode: '連接聚合節點的第一個目標數據節點只能是數據集',
 		batchSortOperation: '批量分類操作',

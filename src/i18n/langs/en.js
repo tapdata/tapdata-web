@@ -298,6 +298,9 @@ const en = {
 		reloadSchemaSuccess: 'Model update successfully',
 		reloadSchemaError: 'Model update failed'
 	},
+	button: {
+		reset: 'reset'
+	},
 	dataFlow: {
 		aggregateNotDataNode: 'The first target data node of aggregation node can only be COLLECTION',
 		batchSortOperation: 'Batch sort operation',

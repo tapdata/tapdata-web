@@ -55,3 +55,13 @@ export function getUrlSearch(name) {
 	if (!r) return null;
 	return r[2];
 }
+let timeout = null;
+export function delayTrigger(func, t = 500) {
+	if (timeout) {
+		window.clearTimeout(timeout);
+	}
+	timeout = setTimeout(() => {
+		func && func();
+		timeout = null;
+	}, t);
+}

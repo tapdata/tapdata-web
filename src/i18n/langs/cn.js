@@ -298,6 +298,9 @@ const cn = {
 		reloadSchemaSuccess: '模型更新成功',
 		reloadSchemaError: '模型更新失败'
 	},
+	button: {
+		reset: '重置'
+	},
 	dataFlow: {
 		aggregateNotDataNode: '连接聚合节点的第一个目标数据节点只能是数据集',
 		batchSortOperation: '批量分类操作',
