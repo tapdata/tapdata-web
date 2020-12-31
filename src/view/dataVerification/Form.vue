@@ -323,6 +323,7 @@ export default {
 			timeUnitOptions: ['second', 'minute', 'hour', 'day', 'week', 'month'],
 			pickerTimes: [],
 			htmlMD: '',
+			removeVisible: false,
 			form: {
 				flowId: '',
 				name: '',
@@ -742,7 +743,9 @@ export default {
 			this.dialogAddScriptVisible = true;
 		},
 		removeScript(index) {
-			this.form.tasks[index].webScript = '';
+			this.$confirm(this.$t('message.verifyConfirm'), this.$t('message.delete')).then(() => {
+				this.form.tasks[index].webScript = '';
+			});
 		},
 		editScript(index) {
 			this.formIndex = index;

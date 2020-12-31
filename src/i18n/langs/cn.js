@@ -217,6 +217,7 @@ const cn = {
 				loading: '正在加载数据'
 			}
 		},
+		verifyConfirm: '确定要删除自定义JS校验逻辑吗',
 		comfirm: '你确定要',
 		operationSuccuess: '操作成功',
 		modifyName: '修改名称',
@@ -2029,7 +2030,7 @@ const cn = {
 		status_running: '进行中',
 		status_error: '错误',
 		status_finish: '已完成',
-		btn_check_error: '查看错误原因',
+		btn_check_error: '查看错误原因'
 	},
 	guide: {
 		guide_title: '新用户引导',

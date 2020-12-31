@@ -61,6 +61,7 @@ export const notificationMAP = {
 	agentStarted: i18n.t('notification.agentStarted'),
 	agentStopped: i18n.t('notification.agentStopped'),
 	agentCreated: i18n.t('notification.agentCreated'),
+	agentDeleted: i18n.t('notification.agentDeleted'),
 	inspectCount: i18n.t('notification.inspectCount'),
 	inspectValue: i18n.t('notification.inspectValue'),
 	inspectDelete: i18n.t('notification.inspectDelete'),

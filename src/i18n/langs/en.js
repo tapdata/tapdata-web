@@ -217,6 +217,7 @@ const en = {
 				loading: 'Loading data...'
 			}
 		},
+		verifyConfirm: 'Are you sure to delete JS verify logic',
 		comfirm: 'Are you sure you want to ',
 		operationSuccuess: 'Operation succuess.',
 		modifyName: 'Modify name',
@@ -2072,7 +2073,7 @@ const en = {
 		status_running: 'running',
 		status_error: 'error',
 		status_finish: 'finish',
-		btn_check_error: 'Check Error Info',
+		btn_check_error: 'Check Error Info'
 	},
 	guide: {
 		guide_title: 'New user guide',

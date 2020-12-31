@@ -22,6 +22,7 @@ Elastic search 7.6
 > **特别说明**<br>
 > Elastic Search 的密码不是必填项，但是如果您要配置的 Elastic Search 数据库有密码，而您未在Tapdata中配置密码的话，检测会不通过。
 >
+
 ### **5. 连接测试项**
 - 检测host/IP 和 port
 - 检查账号和密码

@@ -217,6 +217,7 @@ const tc = {
 				loading: '正在加載數據'
 			}
 		},
+		verifyConfirm: '確定要刪除自定義JS校驗邏輯嗎',
 		comfirm: '您確定要',
 		operationSuccuess: '操作成功',
 		modifyName: '修改名稱',
@@ -2024,7 +2025,7 @@ const tc = {
 		status_running: '進行中',
 		status_error: '錯誤',
 		status_finish: '已完成',
-		btn_check_error: '查看錯誤原因',
+		btn_check_error: '查看錯誤原因'
 	},
 	guide: {
 		guide_title: '新用戶引導',
