@@ -22,7 +22,7 @@ const childRoutes = [
 		name: 'connections',
 		component: view('connections/List'),
 		meta: {
-			code: 'datasource',
+			code: 'datasource_menu',
 			title: i18n.t('tap.connection'),
 			isCollapse: false
 		}
@@ -64,7 +64,7 @@ const childRoutes = [
 		name: 'metadataDefinition',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'data_catalog',
+			code: 'data_catalog_menu',
 			url: '/old/index.html#/metadataDefinition',
 			title: i18n.t('tap.dataCatalog'),
 			isCollapse: false
@@ -85,7 +85,7 @@ const childRoutes = [
 		name: 'dataQuality',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'data_quality',
+			code: 'data_quality_menu',
 			url: '/old/index.html#/dataQuality',
 			title: i18n.t('tap.dataQuality'),
 			isCollapse: false
@@ -102,7 +102,7 @@ const childRoutes = [
 		name: 'timeToLive',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'time_to_live',
+			code: 'time_to_live_menu',
 			url: '/old/index.html#/ttl',
 			title: i18n.t('tap.TimeToLive'),
 			isCollapse: false
@@ -113,7 +113,7 @@ const childRoutes = [
 		name: 'dataRules',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'data_rules',
+			code: 'data_rules_menu',
 			url: '/old/index.html#/dataRules',
 			title: i18n.t('tap.dataRules'),
 			isCollapse: false
@@ -124,7 +124,7 @@ const childRoutes = [
 		name: 'topology',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'topology',
+			code: 'topology_menu',
 			url: '/old/index.html#/topology',
 			title: i18n.t('tap.topology'),
 			isCollapse: false
@@ -135,7 +135,7 @@ const childRoutes = [
 		name: 'dictionary',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'dictionary',
+			code: 'dictionary_menu',
 			url: '/old/index.html#/dictionary',
 			title: i18n.t('tap.dictionary'),
 			isCollapse: false
@@ -146,7 +146,7 @@ const childRoutes = [
 		name: 'modules',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'API_management',
+			code: 'API_management_menu',
 			url: '/old/index.html#/modules',
 			title: i18n.t('tap.apiManagement'),
 			isCollapse: false
@@ -173,7 +173,7 @@ const childRoutes = [
 		name: 'dataExplorer',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'API_data_explorer',
+			code: 'API_data_explorer_menu',
 			url: '/old/index.html#/dataExplorer',
 			title: i18n.t('tap.dataExplor'),
 			isCollapse: false
@@ -184,7 +184,7 @@ const childRoutes = [
 		name: 'apiDocAndTest',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'API_doc_&_test',
+			code: 'API_doc_test_menu',
 			url: '/old/index.html#/apiDocAndTest',
 			title: i18n.t('tap.docTest'),
 			isCollapse: false
@@ -195,7 +195,7 @@ const childRoutes = [
 		name: 'apiAnalysis',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'API_stats',
+			code: 'API_stats_menu',
 			url: '/old/index.html#/apiAnalysis',
 			title: i18n.t('tap.apiStats'),
 			isCollapse: false
@@ -206,7 +206,7 @@ const childRoutes = [
 		name: 'applications',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'API_clients',
+			code: 'API_clients_menu',
 			url: '/old/index.html#/applications',
 			title: i18n.t('tap.apiClients'),
 			isCollapse: false
@@ -217,7 +217,7 @@ const childRoutes = [
 		name: 'apiServers',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'API_server',
+			code: 'API_server_menu',
 			url: '/old/index.html#/apiServers',
 			title: i18n.t('tap.apiSever'),
 			isCollapse: false
@@ -230,7 +230,7 @@ const childRoutes = [
 		meta: {
 			url: '/old/index.html#/dataCollect',
 			title: i18n.t('tap.dataCollect'),
-			code: 'data_collect(old)',
+			code: 'data_collect_menu',
 			isCollapse: false
 		}
 	},
@@ -239,7 +239,7 @@ const childRoutes = [
 		name: 'tasks',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'schedule_jobs',
+			code: 'schedule_jobs_menu',
 			url: '/old/index.html#/tasks',
 			title: i18n.t('tap.jobSchedule'),
 			isCollapse: false
@@ -261,7 +261,7 @@ const childRoutes = [
 		name: 'agents',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'agents',
+			code: 'agents_menu',
 			url: '/old/index.html#/agents',
 			title: i18n.t('tap.agentManagement'),
 			isCollapse: false
@@ -272,7 +272,7 @@ const childRoutes = [
 		name: 'serversOversee',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'servers_oversee',
+			code: 'servers_oversee_menu',
 			url: '/old/index.html#/serversOversee',
 			title: i18n.t('tap.serversOversee'),
 			isCollapse: false
@@ -283,7 +283,7 @@ const childRoutes = [
 		name: 'users',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'user_management',
+			code: 'user_management_menu',
 			url: '/old/index.html#/users',
 			title: i18n.t('tap.userManagement'),
 			isCollapse: false
@@ -305,7 +305,7 @@ const childRoutes = [
 		component: view('Role/Roles'),
 		// component: view('ExternalLink'),
 		meta: {
-			code: 'role_management',
+			code: 'role_management_menu',
 			// url: '/old/index.html#/roles',
 			title: i18n.t('tap.roleManagement'),
 			isCollapse: false
@@ -334,7 +334,7 @@ const childRoutes = [
 		name: 'settings',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'system_settings',
+			code: 'system_settings_menu',
 			url: '/old/index.html#/settings',
 			title: i18n.t('tap.systemSettings'),
 			isCollapse: false
@@ -346,7 +346,7 @@ const childRoutes = [
 		name: 'clusterManagement',
 		component: view('clusterManagement/layout'),
 		meta: {
-			code: 'Cluster_management',
+			code: 'Cluster_management_menu',
 			title: i18n.t('tap.clusterManagement'),
 			isCollapse: false
 		}
@@ -356,7 +356,7 @@ const childRoutes = [
 		name: 'dataFlows',
 		component: view('task/DataFlows'),
 		meta: {
-			code: 'Data_SYNC',
+			code: 'Data_SYNC_menu',
 			title: i18n.t('tap.jobFlow'),
 			isCollapse: false
 		}
@@ -366,7 +366,7 @@ const childRoutes = [
 		name: 'dataMap',
 		component: view('dataMap/DataMap'),
 		meta: {
-			code: 'data_lineage',
+			code: 'data_lineage_menu',
 			title: i18n.t('tap.dataLineage'),
 			isCollapse: false
 		}
@@ -431,7 +431,7 @@ const childRoutes = [
 		meta: {
 			title: i18n.t('app.menu.dataVerification'),
 			isCollapse: true,
-			code: 'Data_verify'
+			code: 'Data_verify_menu'
 		}
 	},
 	{

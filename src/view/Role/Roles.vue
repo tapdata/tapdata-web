@@ -1,6 +1,7 @@
 <template>
 	<div class="roles">
 		<div class="roles-box">
+			<!-- <SubHead :tittle="headTitle"></SubHead> -->
 			<div class="mappingTemplate">{{ $t('role.roleManagement') }}</div>
 			<div class="topbar">
 				<!-- <div class="panelBtn"></div> -->
@@ -20,8 +21,8 @@
 						</el-input>
 					</li>
 					<li class="item">
-						<el-button class="btn" size="mini" @click="rest()">
-							<i class="iconfont icon-shuaxin1 back-btn-icon"></i>
+						<el-button type="text" class="restBtn" size="mini" @click="rest()">
+							{{ $t('dataFlow.reset') }}
 						</el-button>
 					</li>
 				</ul>
@@ -211,6 +212,7 @@
 	</div>
 </template>
 <script>
+// import SubHead from '@/components/SubHead';
 import factory from '@/api/factory';
 const rolesModel = factory('role');
 const usersModel = factory('users');
@@ -218,8 +220,10 @@ const roleMappingModel = factory('roleMapping');
 import { permissionBtnDisabel } from '@/plugins/directive';
 export default {
 	name: 'Roles',
+	// components: { SubHead },
 	data() {
 		return {
+			headTitle: this.$t('role.roleManagement'),
 			searchNav: {
 				selectedSeachType: '0',
 				keyword: ''
