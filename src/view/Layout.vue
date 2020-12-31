@@ -29,7 +29,7 @@
 					@click="command('newDataFlow')"
 				>
 					<i class="el-icon-plus"></i>
-					<span>{{ $t('dataFlow.createNew') }}---{{ userName }}</span>
+					<span>{{ $t('dataFlow.createNew') }}</span>
 				</el-button>
 				<NotificationPopover v-if="$window.getSettingByKey('SHOW_NOTIFICATION')"></NotificationPopover>
 				<a v-if="$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')" class="btn" @click="command('download')"
