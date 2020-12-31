@@ -49,8 +49,11 @@ export default {
 			list: []
 		};
 	},
-	created() {
+	mounted() {
 		this.startRunning();
+		this.editor.on('dataFlow:reset', () => {
+			this.startRunning();
+		});
 	},
 	destroyed() {
 		this.stopRunning();
@@ -104,20 +107,18 @@ export default {
 							if (dataFlow.status !== 'running') {
 								this.stopRunning();
 							}
-							let milestones = dataFlow.milestones;
-							if (milestones && milestones.length) {
-								this.list = milestones.map(m => {
-									let time = m.status === 'running' ? m.start : m.end;
-									if (time) {
-										time = this.$moment(time).format('YYYY-MM-DD HH:mm:ss');
-									}
-									return {
-										label: this.$t(`milestone.${m.code}`),
-										status: m.status,
-										fromNow: time || '-'
-									};
-								});
-							}
+							let milestones = dataFlow.milestones || [];
+							this.list = milestones.map(m => {
+								let time = m.status === 'running' ? m.start : m.end;
+								if (time) {
+									time = this.$moment(time).format('YYYY-MM-DD HH:mm:ss');
+								}
+								return {
+									label: this.$t(`milestone.${m.code}`),
+									status: m.status,
+									fromNow: time || '-'
+								};
+							});
 						}
 					})
 					.finally(() => {
