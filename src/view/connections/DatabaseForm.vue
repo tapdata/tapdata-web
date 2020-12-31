@@ -326,8 +326,7 @@ export default {
 					});
 					if (!params.id) {
 						delete params.id;
-					} else {
-						params['status'] = 'testing'; //id 存在则改变status
+						params['status'] = 'testing'; //默认值
 					}
 					delete params.sslKeyFile;
 					delete params.sslCAFile;
@@ -340,7 +339,6 @@ export default {
 							this.submitBtnLoading = false;
 							let id = res.data.id;
 							this.model.id = id;
-							this.startTest();
 							this.$message.success('保存成功');
 							this.goBack();
 						})
