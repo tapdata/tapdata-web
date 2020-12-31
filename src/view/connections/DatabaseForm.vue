@@ -374,11 +374,11 @@ export default {
 							})
 							.then(() => {
 								this.dialogTestVisible = true;
-								this.$refs.test.$emit('startWS');
+								this.$refs.test.start();
 							});
 					} else {
 						this.dialogTestVisible = true;
-						this.$refs.test.$emit('startWS');
+						this.$refs.test.start();
 					}
 				}
 			});

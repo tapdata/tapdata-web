@@ -33,7 +33,9 @@
 
 <script>
 import factory from '../../api/factory';
+// import ws from '../../api/ws';
 const dataFlowsAPI = factory('DataFlows');
+
 let interval = null;
 
 export default {

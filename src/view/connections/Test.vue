@@ -76,9 +76,6 @@ export default {
 		};
 	},
 	mounted() {
-		this.$on('startWS', updateSchema => {
-			this.start(updateSchema);
-		});
 		this.handleWs();
 	},
 	destroyed() {

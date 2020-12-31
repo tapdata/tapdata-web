@@ -223,7 +223,7 @@ export default {
 				})
 				.then(() => {
 					this.dialogTestVisible = true;
-					this.$refs.test.$emit('startWS');
+					this.$refs.test.start();
 				});
 		},
 		edit(id, type) {
@@ -282,7 +282,7 @@ export default {
 						let data = result.data;
 						this.loadFieldsStatus = data.loadFieldsStatus; //同步reload状态
 						if (type === 'first') {
-							this.$refs.test.$emit('startWS', true);
+							this.$refs.test.start(true);
 						}
 						if (data.loadFieldsStatus === 'finished') {
 							this.progress = 100;

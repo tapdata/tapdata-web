@@ -565,7 +565,7 @@ export default {
 			this.$refs.form.validate(valid => {
 				if (valid) {
 					this.dialogTestVisible = true;
-					this.$refs.test.$emit('startWS');
+					this.$refs.test.start();
 				}
 			});
 		}
