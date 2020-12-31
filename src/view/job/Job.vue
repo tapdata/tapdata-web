@@ -1333,6 +1333,7 @@ export default {
 						.reset(data.id)
 						.then(() => {
 							self.$message.success(self.$t('message.resetOk'));
+							self.editor.emit('dataFlow:reset');
 						})
 						.catch(err => {
 							if (err && err.response.status === 500) {
