@@ -79,7 +79,11 @@ export default {
 				let items = formConfig.items || [];
 				let formData = this.model.formData;
 				items.forEach(it => {
-					this.$set(this.model.formData, it.field, formData[it.field] || '');
+					let value = formData[it.field];
+					if (!value && value !== 0) {
+						value = '';
+					}
+					this.$set(this.model.formData, it.field, value);
 					if (it.type === 'field') {
 						let options = [];
 						fields.forEach(f => {

@@ -14,7 +14,13 @@ export default function(vm) {
 				type: 'radio',
 				field: 'connection_type',
 				label: vm.$t('dataForm.form.connectionType'),
-				options: [{ label: vm.$t('dataForm.form.options.target'), value: 'target' }],
+				options: [
+					{
+						label: vm.$t('dataForm.form.options.target'),
+						tip: vm.$t('dataForm.form.options.targetTips'),
+						value: 'target'
+					}
+				],
 				required: true
 			},
 			{
@@ -59,18 +65,21 @@ export default function(vm) {
 			{
 				type: 'input',
 				field: 'database_name',
-				label: vm.$t('dataForm.form.databaseName'),
+				label: vm.$t('dataForm.form.indexPrefix'),
 				required: true
 			},
 			{
 				type: 'input',
-				field: 'clusterName',
-				label: vm.$t('dataForm.form.clusterName')
+				field: 'database_username',
+				label: vm.$t('dataForm.form.userName'),
+				showByUrl: 2
 			},
 			{
-				type: 'switch',
-				field: 'schemaAutoUpdate',
-				label: vm.$t('dataForm.form.ReloadSchema')
+				type: 'input',
+				field: 'plain_password',
+				label: vm.$t('dataForm.form.password'),
+				domType: 'password',
+				showByUrl: 2
 			}
 		]
 	};

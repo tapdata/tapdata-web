@@ -1,7 +1,7 @@
 <template>
 	<el-dialog
 		:title="$t('dataForm.test.title')"
-		:visible.sync="testData.dialogTestVisible"
+		:visible="dialogTestVisible"
 		width="770px"
 		:show-close="false"
 		append-to-body
@@ -9,39 +9,46 @@
 		:close-on-click-modal="false"
 		:close-on-press-escape="false"
 	>
-		<el-progress
-			type="line"
-			class="test-progress"
-			:text-inside="true"
-			:stroke-width="26"
-			:percentage="testData.progress"
-			:status="testData.testResult"
-		></el-progress>
-		<div v-if="testData.testLogs && testData.testLogs.length === 0">{{ $t('dataForm.primaryTest') }}</div>
-		<el-table :data="testData.testLogs" style="width: 100%" class="test-block" v-else>
-			<el-table-column prop="show_msg" :label="$t('dataForm.test.items')" width="250"> </el-table-column>
+		<div v-show="testData.testLogs && testData.testLogs.length === 0">
+			<div v-if="wsError === 'ERROR'" style="color: #d54e21">{{ $t('dataForm.test.error') }}</div>
+			<div v-else>{{ $t('dataForm.primaryTest') }}</div>
+		</div>
+		<el-table
+			:data="testData.testLogs"
+			style="width: 100%"
+			class="test-block"
+			v-show="testData.testLogs && testData.testLogs.length > 0"
+		>
+			<el-table-column prop="show_msg" :label="$t('dataForm.test.items')" width="250">
+				<template slot-scope="scope">
+					<span>{{ $t(`dataForm.form.response_body.${scope.row.show_msg}`) }}</span>
+				</template>
+			</el-table-column>
 			<el-table-column prop="status" :label="$t('dataForm.test.result')" width="100">
 				<template slot-scope="scope">
-					<span :style="`color: ${colorMap[scope.row.status]};`">{{ scope.row.status }}</span>
+					<span :style="`color: ${colorMap[scope.row.status]};`">{{ statusMap[scope.row.status] }}</span>
 				</template>
 			</el-table-column>
 			<el-table-column prop="fail_message" :label="$t('dataForm.test.information')" width="358">
 			</el-table-column>
 		</el-table>
 		<span slot="footer" class="dialog-footer">
-			<el-button v-if="testData.testResult === 'warning'" type="primary" size="mini" @click="handleClose()">{{
-				$t('dataForm.backDetection')
-			}}</el-button>
-			<el-button v-else size="mini" type="primary" @click="handleClose()">{{ $t('dataForm.close') }}</el-button>
+			<el-button size="mini" type="primary" @click="handleClose()">{{ $t('dataForm.close') }}</el-button>
 		</span>
 	</el-dialog>
 </template>
 
 <script>
+import ws from '../../api/ws';
+
 export default {
 	name: 'Test',
 	props: {
-		testData: {
+		dialogTestVisible: {
+			required: true,
+			value: Boolean
+		},
+		formData: {
 			required: true,
 			value: Object
 		}
@@ -49,16 +56,80 @@ export default {
 	data() {
 		return {
 			progress: 0,
+			testData: {
+				testLogs: [],
+				testResult: '',
+				progress: 0
+			},
+			wsError: '',
 			colorMap: {
 				passed: '#70AD47',
 				waiting: '#666',
 				failed: '#f56c6c'
+			},
+			statusMap: {
+				passed: this.$t('dataForm.test.success'),
+				waiting: this.$t('dataForm.test.testing'),
+				failed: this.$t('dataForm.test.fail')
 			}
 		};
 	},
+	mounted() {
+		this.$on('startWS', () => {
+			this.start();
+		});
+	},
+	destroyed() {
+		this.clearInterval();
+	},
 	methods: {
 		handleClose() {
-			this.$emit('dialogTestVisible', false);
+			this.$emit('update:dialogTestVisible', false);
+		},
+		start() {
+			let msg = {
+				type: 'testConnection',
+				data: this.formData
+			};
+			this.wsError = '';
+			this.testData.testLogs = [];
+			//接收数据
+			ws.on('testConnectionResult', data => {
+				let result = data.result || [];
+				this.wsError = data.status;
+				let testData = {
+					wsError: data.status
+				};
+				if (result.response_body) {
+					let validate_details = result.response_body.validate_details || [];
+					this.testData.testLogs = validate_details;
+					testData['testLogs '] = validate_details;
+					testData['status'] = result.status;
+				}
+				this.$emit('returnTestData', testData);
+			});
+			//长连接失败
+			ws.on('testConnection', data => {
+				this.wsError = data.status;
+				let testData = {
+					wsError: data.status
+				};
+				this.$emit('returnTestData', testData);
+			});
+			//建立连接
+			this.timer = setInterval(() => {
+				if (ws.ws.readyState == 1) {
+					ws.send(msg);
+					clearInterval(this.timer);
+				}
+			}, 2000);
+		},
+		clearInterval() {
+			// 取消长连接
+			ws.off('testConnection');
+			clearInterval(this.timer);
+			this.timer = null;
+			this.testData.testLogs = [];
 		}
 	}
 };

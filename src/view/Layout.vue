@@ -357,16 +357,6 @@ export default {
 				// this.userName = user.email.split('@')[0] || '';
 			}
 		},
-		// 刷新获取权限
-		// async handleGetPermissions() {
-		// 	// 获取当前用户权限
-		// 	let userId = this.$cookie.get('user_id');
-		// 	let token = this.$cookie.get('token');
-		// 	let result = await this.$api('users').getPermissions(`/${userId}/permissions?access_token=${token}`);
-		// 	if (result && result.data && result.data.permissions && result.data.permissions.length) {
-		// 		setPermission(result.data.permissions);
-		// 	}
-		// },
 		delFavMenu(idx) {
 			this.$confirm(
 				this.$t('message.comfirm') + this.$t('app.menu.delFavMenu'),
@@ -449,7 +439,7 @@ export default {
 							message: 'DK_VERSION_1</br>DK_VERSION_2'
 						});
 					} else {
-						this.$message.info('DAAS_BUILD_NUMBER');
+						this.$message.info(window._TAPDATA_OPTIONS_.version);
 					}
 					break;
 				case 'license':

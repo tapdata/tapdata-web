@@ -394,7 +394,7 @@ const childRoutes = [
 		meta: {
 			url: '/old/index.html#/jsFuncs',
 			isCollapse: false,
-			code: 'data_collect'
+			code: 'SYNC_Function_management'
 		}
 	},
 	{
@@ -556,6 +556,11 @@ const router = new Router({
 			redirect: 'dashboard',
 			component: view('Layout'),
 			children: childRoutes
+		},
+		{
+			path: '/guide',
+			name: 'guide',
+			component: view('Guide')
 		}
 	]
 });
@@ -564,7 +569,7 @@ let usersModel = factor('users');
 router.afterEach(() => {
 	Loading.service({ fullscreen: true }).close();
 });
-let permissions = null;
+let isFirst = true;
 router.beforeEach(async (to, from, next) => {
 	if (!to.matched.length) {
 		Message.error({
@@ -578,10 +583,13 @@ router.beforeEach(async (to, from, next) => {
 	}
 	let cookie = window.VueCookie;
 	let token = cookie.get('token');
+	let showGuide = window.getSettingByKey('SHOW_SIMPLE_SCENE') && cookie.get('show_guide');
+	let userId = cookie.get('user_id');
+
 	if (token) {
 		//若token存在，获取权限
-		// let permissions = sessionStorage.getItem('tapdata_permissions');
-		if (!permissions) {
+		let permissions = sessionStorage.getItem('tapdata_permissions');
+		if (!permissions || isFirst) {
 			//无权限，说明是首次进入页面，重新请求后台获取
 			let loading = Loading.service({
 				fullscreen: true,
@@ -589,9 +597,9 @@ router.beforeEach(async (to, from, next) => {
 				text: 'Loading...',
 				background: 'rgba(0, 0, 0, 0.7)'
 			});
-			let userId = cookie.get('user_id');
-			let token = cookie.get('token');
+
 			let result = await usersModel.getPermissions(`/${userId}/permissions?access_token=${token}`);
+			isFirst = false;
 			loading.close();
 			if (result && result.data) {
 				permissions = result.data.permissions || [];
@@ -614,6 +622,8 @@ router.beforeEach(async (to, from, next) => {
 				next(false);
 				return;
 			}
+		} else {
+			permissions = JSON.parse(permissions);
 		}
 
 		//判断当前路由的页面是否有权限，无权限则不跳转，有权限则执行跳转
@@ -622,7 +632,14 @@ router.beforeEach(async (to, from, next) => {
 			matched = permissions.some(p => p.code === to.meta.code);
 		}
 		if (matched) {
-			if (to.name === 'login') {
+			if (showGuide) {
+				if (to.name === 'guide') {
+					return next();
+				} else {
+					return next('/guide');
+				}
+			}
+			if (to.name === 'login' || to.name === 'guide') {
 				next('/');
 			} else {
 				next();

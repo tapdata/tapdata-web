@@ -30,9 +30,21 @@ export default function(vm) {
 				field: 'connection_type',
 				label: vm.$t('dataForm.form.connectionType'),
 				options: [
-					{ label: vm.$t('dataForm.form.options.sourceAndTarget'), value: 'source_and_target' },
-					{ label: vm.$t('dataForm.form.options.source'), value: 'source' },
-					{ label: vm.$t('dataForm.form.options.target'), value: 'target' }
+					{
+						label: vm.$t('dataForm.form.options.sourceAndTarget'),
+						tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+						value: 'source_and_target'
+					},
+					{
+						label: vm.$t('dataForm.form.options.source'),
+						tip: vm.$t('dataForm.form.options.sourceTips'),
+						value: 'source'
+					},
+					{
+						label: vm.$t('dataForm.form.options.target'),
+						tip: vm.$t('dataForm.form.options.targetTips'),
+						value: 'target'
+					}
 				],
 				required: true,
 				on: {
@@ -48,13 +60,13 @@ export default function(vm) {
 				rules: [
 					{
 						required: true,
-						validator: (rule, value, callback) => {
-							let port = vm.model['database_port'];
+						validator(rule, value, callback) {
+							let port = this.value['database_port'];
 							if (!value || !value.trim()) {
 								callback(new Error(vm.$t('dataForm.error.noneHost')));
 							} else if (!port) {
 								callback(new Error(vm.$t('dataForm.error.nonePort')));
-							} else if (!/^(0|\+?[1-9][0-9]*)$/.test(port)) {
+							} else if (!/^\d+$/.test(port)) {
 								callback(new Error(vm.$t('dataForm.error.portNumber')));
 							} else if (port < 1 || port > 65535) {
 								callback(new Error(vm.$t('dataForm.error.portRange')));
@@ -64,17 +76,17 @@ export default function(vm) {
 						}
 					}
 				],
-				appendSlot: h => {
+				appendSlot: (h, data) => {
 					return h('FbInput', {
 						props: {
-							value: vm.model['database_port'],
+							value: data['database_port'],
 							config: {
 								placeholder: vm.$t('dataForm.form.port')
 							}
 						},
 						on: {
 							input(val) {
-								vm.model['database_port'] = val;
+								data['database_port'] = val;
 							}
 						}
 					});
@@ -106,10 +118,15 @@ export default function(vm) {
 			{
 				type: 'input',
 				field: 'table_filter',
+				domType: 'textarea',
 				label: vm.$t('dataForm.form.tableFilter'),
-				tips: vm.$t('dataForm.form.tableFilterTips'),
+				//tips: vm.$t('dataForm.form.tableFilterTips'),
 				maxlength: 500,
 				showWordLimit: true
+			},
+			{
+				type: 'slot',
+				slot: 'tableFilter'
 			},
 			{
 				type: 'input',
@@ -120,8 +137,26 @@ export default function(vm) {
 				type: 'select',
 				field: 'database_datetype_without_timezone',
 				label: vm.$t('dataForm.form.timeZone'),
-				tips: vm.$t('dataForm.form.timeZoneTips'),
-				options: []
+				//tips: vm.$t('dataForm.form.timeZoneTips'),
+				options: [],
+				show: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connection_type',
+								value: 'target'
+							}
+						],
+						triggerConfig: {
+							show: false
+						}
+					}
+				]
+			},
+			{
+				type: 'slot',
+				slot: 'timezone'
 			}
 		]
 	};

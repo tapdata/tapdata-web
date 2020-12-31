@@ -8,7 +8,7 @@ import { stencilConfig, inspectorConfig } from '../lib/rappid/config';
 import { vueAdapter } from '../vue-adapter';
 import joint from '../lib/rappid/rappid';
 import * as plugins from './index';
-import { FORM_DATA_KEY } from '../constants';
+import { FORM_DATA_KEY, DATABASE_TYPE_MAPPING } from '../constants';
 
 export const loadPlugins = function(cNodes) {
 	const defineShape = (type, shape) => {
@@ -124,56 +124,7 @@ export const loadPlugins = function(cNodes) {
 				addSettingForm(type, plugin.settingFormConfig);
 
 				if (type === 'app.Database') {
-					let addData = {
-						mysql: {
-							name: 'MySQL',
-							type: 'mysql',
-							shapeImage: 'static/editor/o-mysql.svg',
-							stencilImage: 'static/editor/mysql.svg'
-						},
-						oracle: {
-							type: 'oracle',
-							name: 'Oracle',
-							shapeImage: 'static/editor/o-ora.svg',
-							stencilImage: 'static/editor/ora2.svg'
-						},
-						mongo: {
-							type: 'mongodb',
-							name: 'MongoDB',
-							shapeImage: 'static/editor/o-mongo.svg',
-							stencilImage: 'static/editor/mongo.svg'
-						},
-						db2: {
-							type: 'db2',
-							name: 'DB2',
-							shapeImage: 'static/editor/o-db2.svg',
-							stencilImage: 'static/editor/DB2.svg'
-						},
-						pg: {
-							type: 'postgres',
-							name: 'Postgres',
-							shapeImage: 'static/editor/o-pg.svg',
-							stencilImage: 'static/editor/pg.svg'
-						},
-						sqlserver: {
-							type: 'sqlserver',
-							name: 'SQL Server',
-							shapeImage: 'static/editor/o-sqlserver.svg',
-							stencilImage: 'static/editor/sqlserver.svg'
-						},
-						gbase: {
-							type: 'gbase-8s',
-							name: 'GBase 8s',
-							shapeImage: 'static/editor/o-gbase.svg',
-							stencilImage: 'static/editor/gbase.svg'
-						},
-						sybase: {
-							type: 'sybase ase',
-							name: 'Sybase ASE',
-							shapeImage: 'static/editor/o-sybase.svg',
-							stencilImage: 'static/editor/sybase.svg'
-						}
-					};
+					let addData = DATABASE_TYPE_MAPPING;
 					Object.keys(addData).forEach(key => {
 						let database = addData[key];
 						if (window.getSettingByKey('ALLOW_CONNECTION_TYPE').includes(database.type)) {
