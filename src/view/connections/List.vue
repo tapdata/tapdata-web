@@ -160,6 +160,7 @@
 							<template slot-scope="scope">
 								<div class="database-text">
 									<div>{{ usersData[scope.row.user_id] }}</div>
+									<div>{{ scope.row.username }}</div>
 								</div>
 							</template>
 						</el-table-column>
@@ -360,7 +361,7 @@ export default {
 		};
 	},
 	created() {
-		this.formatterUserName();
+		// this.formatterUserName();
 		this.getDatabaseType();
 		this.search(1);
 		//header
@@ -368,7 +369,7 @@ export default {
 		this.description = this.$t('connection.desc');
 		//定时轮询
 		this.timer = setInterval(() => {
-			this.formatterUserName();
+			// this.formatterUserName();
 			this.search(this.page.current, 1);
 		}, 10000);
 	},
@@ -674,14 +675,14 @@ export default {
 			}
 			return url;
 		},
-		async formatterUserName() {
-			let usersData = await this.$api('users').get();
-			let Map = {};
-			if (usersData.data && usersData.data.length > 0) {
-				usersData.data.map(s => (Map[s.id] = s.username || 'admin'));
-			}
-			this.usersData = Map;
-		},
+		// async formatterUserName() {
+		// 	let usersData = await this.$api('users').get();
+		// 	let Map = {};
+		// 	if (usersData.data && usersData.data.length > 0) {
+		// 		usersData.data.map(s => (Map[s.id] = s.username || 'admin'));
+		// 	}
+		// 	this.usersData = Map;
+		// },
 		//筛选分类
 		nodeDataChange(checkedTags) {
 			this.checkedTags = checkedTags;
