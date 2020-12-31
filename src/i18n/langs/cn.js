@@ -2012,7 +2012,7 @@ const cn = {
 		edit: '编辑',
 		founder: '创建人',
 		operate: '操作',
-		create: '新建',
+		create: '创建新角色',
 		settingPermissions: '设置权限',
 		delete: '删除',
 		yes: '是',

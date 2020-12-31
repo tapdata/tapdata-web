@@ -19,6 +19,11 @@
 							</el-select>
 						</el-input>
 					</li>
+					<li class="item">
+						<el-button class="btn" size="mini" @click="rest()">
+							<i class="iconfont icon-shuaxin1 back-btn-icon"></i>
+						</el-button>
+					</li>
 				</ul>
 				<div class="topbar-buttons">
 					<el-button
@@ -51,7 +56,7 @@
 							<div>{{ scope.row.description }}</div>
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('role.associatUsers')" width="120">
+					<el-table-column :label="$t('role.associatUsers')" width="100">
 						<template slot-scope="scope">
 							<span>{{ scope.row.userCount }}</span>
 						</template>
@@ -63,7 +68,7 @@
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('role.defaultRole')" width="120">
+					<el-table-column :label="$t('role.defaultRole')" width="90">
 						<template slot-scope="scope">
 							<el-switch
 								v-model="scope.row.register_user_default"
@@ -133,7 +138,7 @@
 			:visible.sync="dialogFormVisible"
 			width="600px"
 		>
-			<el-form :model="form" ref="form" label-width="100px">
+			<el-form :model="form" ref="form" label-width="115px">
 				<el-form-item
 					:label="$t('role.roleName')"
 					prop="name"
@@ -141,7 +146,7 @@
 				>
 					<el-input v-model="form.name" :placeholder="$t('role.selectRoleName')"></el-input>
 				</el-form-item>
-				<el-form-item :label="$t('role.roleDesc')">
+				<el-form-item :label="$t('role.roleDesc')" style="margin-bottom: 10px">
 					<el-input
 						type="textarea"
 						:placeholder="$t('role.selectDesc')"
@@ -172,7 +177,7 @@
 			width="600px"
 		>
 			<div class="userBox">
-				<el-select v-model="roleusers" multiple :placeholder="$t('role.selectUser')">
+				<el-select v-model="roleusers" filterable multiple :placeholder="$t('role.selectUser')">
 					<el-option v-for="item in userGroup" :key="item.id" :label="item.email" :value="item.id">
 					</el-option>
 				</el-select>
@@ -464,6 +469,15 @@ export default {
 			this.dialogUserVisible = false;
 		},
 
+		// 重置
+		rest() {
+			this.searchNav = {
+				selectedSeachType: '0',
+				keyword: ''
+			};
+			this.handleDataApi();
+		},
+
 		// 改变列表默认值val
 		changeRowDefault(data) {
 			const record = {
@@ -506,6 +520,7 @@ export default {
 		flex: 1;
 		display: flex;
 		flex-direction: column;
+		background-color: #fafafa;
 		overflow: hidden;
 		.mappingTemplate {
 			height: 60px;
@@ -516,6 +531,8 @@ export default {
 			color: #333;
 			box-sizing: border-box;
 			border-bottom: 1px solid #dedee4;
+			background-color: #fff;
+			box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.1);
 		}
 		.topbar {
 			display: flex;
@@ -549,8 +566,12 @@ export default {
 			.el-button.is-disabled {
 				color: #c0c4cc;
 			}
-			.el-button--text {
-				color: #606266;
+			// .el-button--text {
+			// 	padding-left: 10px;
+			// 	// color: #606266;
+			// }
+			.el-button + .el-button {
+				margin-left: 12px;
 			}
 			.el-pagination {
 				width: 100%;
@@ -571,6 +592,7 @@ export default {
 		.el-button {
 			font-size: 12px;
 			color: #666;
+			background-color: #f5f5f5;
 		}
 	}
 	.search-bar {
@@ -585,13 +607,20 @@ export default {
 		}
 	}
 	.table-box {
-		.dv-table thead {
+		.dv-table {
 			color: #333;
 			th {
-				padding: 5px 0;
-				background: #fafafa;
+				padding: 2px 0;
+				background: #f5f5f5;
+			}
+			th,
+			td {
+				&:first-child {
+					padding-left: 10px;
+				}
 			}
 		}
+
 		.el-button {
 			font-size: 12px;
 		}
@@ -607,6 +636,11 @@ export default {
 	}
 	.el-dialog__body {
 		padding: 30px;
+	}
+	.dialog-footer {
+		.el-button {
+			width: 80px;
+		}
 	}
 }
 </style>

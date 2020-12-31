@@ -2008,7 +2008,7 @@ const tc = {
 		edit: '編輯',
 		founder: '創建人',
 		operate: '操作',
-		create: '新建',
+		create: '創建新角色',
 		settingPermissions: '設置權限',
 		delete: '刪除',
 		yes: '是',
