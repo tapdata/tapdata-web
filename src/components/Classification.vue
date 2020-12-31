@@ -308,6 +308,7 @@ export default {
 	border: 1px solid #dedee4;
 	border-top: none;
 	background: #fff;
+	border-radius: 3px;
 	/*头部样式*/
 	.classification-header {
 		background: #fafafa;
@@ -322,6 +323,7 @@ export default {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
+			color: #999;
 		}
 		.search-box {
 			display: flex;
@@ -331,7 +333,6 @@ export default {
 			.iconfont {
 				color: #c0c4cc;
 				font-size: 12px;
-				margin-right: 8px;
 				background: #fff;
 				border: 1px solid #dedee4;
 				display: flex;
@@ -339,7 +340,13 @@ export default {
 				align-items: center;
 				height: 66%;
 				padding: 0 4px;
-				margin-top: 2px;
+				padding-right: 6px;
+				padding-left: 5px;
+				margin-top: 0px;
+				border-top-width: 1px;
+				margin-right: 6px;
+				border-radius: 3px;
+				cursor: pointer;
 			}
 		}
 		.search {

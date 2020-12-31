@@ -76,7 +76,7 @@ export default {
 		};
 	},
 	mounted() {
-		this.handleWs();
+		this.handleWS();
 	},
 	destroyed() {
 		this.clearInterval();
@@ -85,21 +85,32 @@ export default {
 		handleClose() {
 			this.$emit('update:dialogTestVisible', false);
 		},
-		handleWs(data) {
-			let msg = {
-				type: 'testConnection',
-				data: ''
-			};
-			if (data) {
-				msg.data = data;
-			}
-			//建立连接
-			this.timer = setInterval(() => {
-				if (ws.ws.readyState == 1) {
-					ws.send(msg);
-					clearInterval(this.timer);
-				}
-			}, 2000);
+		handleWS() {
+			ws.ready(() => {
+				//接收数据
+				ws.on('testConnectionResult', data => {
+					let result = data.result || [];
+					this.wsError = data.status;
+					let testData = {
+						wsError: data.status
+					};
+					if (result.response_body) {
+						let validate_details = result.response_body.validate_details || [];
+						this.testData.testLogs = validate_details;
+						testData['testLogs '] = validate_details;
+						testData['status'] = result.status;
+					}
+					this.$emit('returnTestData', testData);
+				});
+				//长连接失败
+				ws.on('testConnection', data => {
+					this.wsError = data.status;
+					let testData = {
+						wsError: data.status
+					};
+					this.$emit('returnTestData', testData);
+				});
+			});
 		},
 		start(updateSchema) {
 			let msg = {
@@ -107,38 +118,13 @@ export default {
 				data: this.formData
 			};
 			msg.data['updateSchema'] = false; //是否需要更新Schema
+			this.wsError = '';
+			this.testData.testLogs = [];
 			if (updateSchema) {
 				msg.data['updateSchema'] = updateSchema; //是否需要更新Schema
 			}
-			this.wsError = '';
-			this.testData.testLogs = [];
-			//接收数据
-			ws.on('testConnectionResult', data => {
-				let result = data.result || [];
-				this.wsError = data.status;
-				let testData = {
-					wsError: data.status
-				};
-				if (result.response_body) {
-					let validate_details = result.response_body.validate_details || [];
-					this.testData.testLogs = validate_details;
-					testData['testLogs '] = validate_details;
-					testData['status'] = result.status;
-				}
-				this.$emit('returnTestData', testData);
-			});
-			//长连接失败
-			ws.on('testConnection', data => {
-				this.wsError = data.status;
-				let testData = {
-					wsError: data.status
-				};
-				this.$emit('returnTestData', testData);
-			});
 			if (ws.ws.readyState == 1) {
 				ws.send(msg);
-			} else {
-				this.handleWs(this.formData);
 			}
 		},
 		clearInterval() {

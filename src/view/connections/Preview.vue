@@ -340,6 +340,7 @@ export default {
 			//border: 1px solid #dedee4;
 			border-radius: 3px;
 			margin-left: 30px;
+			margin-right: 20px;
 			img {
 				width: 100%;
 			}
@@ -352,12 +353,14 @@ export default {
 		}
 		.status {
 			font-size: 12px;
-			margin-top: 2px;
+			padding-bottom: 2px;
+			margin-top: 4px;
+			border-top-width: 2px;
 			.error {
-				color: #d54e21;
+				color: #f56c6c;
 			}
 			.success {
-				color: #0ab300;
+				color: #67c23a;
 			}
 			.warning {
 				color: #e6a23c;
@@ -424,7 +427,7 @@ export default {
 		overflow-y: auto;
 		max-height: 690px;
 		margin: 0 auto;
-		margin-left: 50px;
+		margin-left: 56px;
 		width: 100%;
 		li {
 			margin-bottom: 20px;

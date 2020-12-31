@@ -32,7 +32,6 @@
 								<el-select
 									v-model="searchParams.iModel"
 									slot="prepend"
-									clearable
 									placeholder="请选择"
 									class="sub-select"
 									@input="search(1)"
@@ -144,7 +143,7 @@
 									<img :src="getImgByType(scope.row.database_type)" />
 								</div>
 								<div class="database-text" :class="{ lineHeight: !scope.row.database_uri }">
-									<span
+									<span class="name" @click="preview(scope.row.id, scope.row.database_type)"
 										>{{ scope.row.name }}
 										<span class="tag" v-if="scope.row.listtags && scope.row.listtags.length > 0">{{
 											formatterListTags(scope.row)
@@ -865,6 +864,10 @@ export default {
 			text-overflow: ellipsis;
 			float: left;
 			margin-left: 10px;
+			.name {
+				color: #48b6e2;
+				cursor: pointer;
+			}
 			div {
 				line-height: 14px;
 			}
@@ -893,12 +896,13 @@ export default {
 			background: #f5f5f5;
 			border: 1px solid #dedee4;
 			border-radius: 3px;
+			margin-left: 5px;
 		}
 		.error {
-			color: #d54e21;
+			color: #f56c6c;
 		}
 		.success {
-			color: #0ab300;
+			color: #67c23a;
 		}
 		.warning {
 			color: #e6a23c;
@@ -935,5 +939,8 @@ export default {
 .el-table--border td:first-child .cell,
 .el-table--border th:first-child .cell {
 	padding-left: 0px;
+}
+.connection-table .el-table-column--selection .cell {
+	padding-left: 16px;
 }
 </style>

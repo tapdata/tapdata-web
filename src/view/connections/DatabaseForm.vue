@@ -325,7 +325,7 @@ export default {
 						submit: true,
 						listtags: []
 					});
-					if (!params.id) {
+					if (!params.id && !['ready'].includes(this.status)) {
 						delete params.id;
 						params['status'] = 'testing'; //默认值
 					}
@@ -481,7 +481,7 @@ export default {
 				}
 			}
 			.edit-header-box {
-				border-bottom: 1px solid #dedee4;
+				border-bottom: 1px solid #eee;
 				padding-bottom: 20px;
 				margin-bottom: 20px;
 			}
@@ -555,10 +555,10 @@ export default {
 			font-size: 12px;
 			margin-top: 2px;
 			.error {
-				color: #d54e21;
+				color: #f56c6c;
 			}
 			.success {
-				color: #0ab300;
+				color: #67c23a;
 			}
 			.warning {
 				color: #e6a23c;
