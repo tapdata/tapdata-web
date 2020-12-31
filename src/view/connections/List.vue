@@ -197,7 +197,7 @@
 								<el-button
 									class="btn-text"
 									type="text"
-									@click="preview(scope.row.id, scope.row.database_type)"
+									@click="preview(scope.row.id, scope.row.user_id, scope.row.database_type)"
 								>
 									{{ $t('message.preview') }}
 								</el-button>
@@ -279,6 +279,7 @@
 			></DatabaseTypeDialog>
 			<Preview
 				:id="id"
+				:userId="userId"
 				:visible="previewVisible"
 				:databaseType="databaseType"
 				v-on:previewVisible="handlePreviewVisible"
@@ -315,6 +316,7 @@ export default {
 			usersData: [],
 			databaseType: '',
 			id: '',
+			userId: '',
 			databaseTittle: '',
 			description: '',
 			page: {
@@ -555,8 +557,9 @@ export default {
 				config
 			);
 		},
-		preview(id, type) {
+		preview(id, user_id, type) {
 			this.id = id;
+			this.userId = user_id;
 			this.databaseType = type;
 			if (this.whiteList.includes(type)) {
 				this.previewVisible = true;

@@ -62,7 +62,7 @@
 									class="btn"
 									size="mini"
 									v-readonlybtn="'datasource_edition'"
-									:disabled="permissionBtnDisabel('datasource_edition_all_data', id)"
+									:disabled="permissionBtnDisabel('datasource_edition_all_data', userId)"
 									@click="edit(id, type)"
 								>
 									<i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
@@ -75,7 +75,7 @@
 									v-readonlybtn="'datasource_edition'"
 									@click="reload()"
 									:disabled="
-										(permissionBtnDisabel('datasource_edition_all_data', id) &&
+										(permissionBtnDisabel('datasource_edition_all_data', userId) &&
 											!['ready'].includes(this.status)) ||
 											!data.tableCount
 									"
@@ -90,7 +90,7 @@
 									class="btn"
 									size="mini"
 									v-readonlybtn="'datasource_edition'"
-									:disabled="permissionBtnDisabel('datasource_edition_all_data', id)"
+									:disabled="permissionBtnDisabel('datasource_edition_all_data', userId)"
 									@click="beforeTest(id)"
 								>
 									<i class="iconfont icon-lianjie1"> {{ $t('connection.preview.test') }} </i>
@@ -137,6 +137,10 @@ export default {
 	components: { Test },
 	props: {
 		id: {
+			required: true,
+			value: String
+		},
+		userId: {
 			required: true,
 			value: String
 		},
