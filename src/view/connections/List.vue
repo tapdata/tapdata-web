@@ -203,17 +203,24 @@
 								<el-button
 									class="btn-text"
 									type="text"
+									v-readonlybtn="'datasource_edition'"
 									:disabled="permissionBtnDisabel('datasource_edition_all_data', scope.row.user_id)"
 									@click="edit(scope.row.id, scope.row.database_type)"
 								>
 									{{ $t('message.edit') }}
 								</el-button>
-								<el-button class="btn-text" type="text" @click="copy(scope.row)">
+								<el-button
+									class="btn-text"
+									type="text"
+									v-readonlybtn="'datasource_creation'"
+									@click="copy(scope.row)"
+								>
 									{{ $t('message.copy') }}
 								</el-button>
 								<el-button
 									class="btn-text"
 									type="text"
+									v-readonlybtn="'datasource_delete'"
 									:disabled="permissionBtnDisabel('datasource_delete_all_data', scope.row.user_id)"
 									@click="delConfirm(scope.row)"
 								>

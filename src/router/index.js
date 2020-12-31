@@ -34,7 +34,7 @@ const childRoutes = [
 		meta: {
 			title: i18n.t('tap.connection'),
 			isCollapse: true,
-			code: 'datasource_edition'
+			code: 'datasource_creation'
 		}
 	},
 	{
@@ -53,7 +53,7 @@ const childRoutes = [
 		name: 'editConnection',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'datasource_creation',
+			code: 'datasource_edition',
 			url: '/old/index.html#/connection',
 			title: i18n.t('tap.connectionEdtion'),
 			isCollapse: true
