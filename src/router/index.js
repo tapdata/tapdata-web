@@ -184,7 +184,7 @@ const childRoutes = [
 		name: 'apiDocAndTest',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'API_doc_test_menu',
+			code: 'API_doc_&_test_menu',
 			url: '/old/index.html#/apiDocAndTest',
 			title: i18n.t('tap.docTest'),
 			isCollapse: false
@@ -230,7 +230,7 @@ const childRoutes = [
 		meta: {
 			url: '/old/index.html#/dataCollect',
 			title: i18n.t('tap.dataCollect'),
-			code: 'data_collect_menu',
+			code: 'data_collect(old)_menu',
 			isCollapse: false
 		}
 	},
