@@ -191,7 +191,7 @@
 								</span>
 							</template>
 						</el-table-column>
-						<el-table-column :label="$t('connection.operate')" width="200">
+						<el-table-column :label="$t('connection.operate')" width="220">
 							<template slot-scope="scope">
 								<el-button
 									class="btn-text"
@@ -882,6 +882,7 @@ export default {
 		.btn-text {
 			color: #48b6e2;
 			font-size: 12px;
+			padding-right: 5px;
 		}
 		.tag {
 			padding: 0 3px 2px 3px;

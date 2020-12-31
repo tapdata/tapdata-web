@@ -62,6 +62,7 @@ export default {
 				progress: 0
 			},
 			wsError: '',
+			timer: null,
 			colorMap: {
 				passed: '#70AD47',
 				waiting: '#666',
@@ -75,9 +76,10 @@ export default {
 		};
 	},
 	mounted() {
-		this.$on('startWS', () => {
-			this.start();
+		this.$on('startWS', updateSchema => {
+			this.start(updateSchema);
 		});
+		this.handleWs();
 	},
 	destroyed() {
 		this.clearInterval();
@@ -86,11 +88,31 @@ export default {
 		handleClose() {
 			this.$emit('update:dialogTestVisible', false);
 		},
-		start() {
+		handleWs(data) {
+			let msg = {
+				type: 'testConnection',
+				data: ''
+			};
+			if (data) {
+				msg.data = data;
+			}
+			//建立连接
+			this.timer = setInterval(() => {
+				if (ws.ws.readyState == 1) {
+					ws.send(msg);
+					clearInterval(this.timer);
+				}
+			}, 2000);
+		},
+		start(updateSchema) {
 			let msg = {
 				type: 'testConnection',
 				data: this.formData
 			};
+			msg.data['updateSchema'] = false; //是否需要更新Schema
+			if (updateSchema) {
+				msg.data['updateSchema'] = updateSchema; //是否需要更新Schema
+			}
 			this.wsError = '';
 			this.testData.testLogs = [];
 			//接收数据
@@ -116,13 +138,11 @@ export default {
 				};
 				this.$emit('returnTestData', testData);
 			});
-			//建立连接
-			this.timer = setInterval(() => {
-				if (ws.ws.readyState == 1) {
-					ws.send(msg);
-					clearInterval(this.timer);
-				}
-			}, 2000);
+			if (ws.ws.readyState == 1) {
+				ws.send(msg);
+			} else {
+				this.handleWs(this.formData);
+			}
 		},
 		clearInterval() {
 			// 取消长连接

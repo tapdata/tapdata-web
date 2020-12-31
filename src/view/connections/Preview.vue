@@ -67,7 +67,11 @@
 									class="btn"
 									size="mini"
 									@click="reload()"
-									:disabled="!['ready'].includes(this.status) || !data.tableCount"
+									:disabled="
+										!['ready'].includes(this.status) ||
+											!data.tableCount ||
+											['loading'].includes(this.loadFieldsStatus)
+									"
 								>
 									<i class="iconfont icon-kujitongbucopy">{{
 										$t('connection.preview.reloadName')
@@ -184,6 +188,7 @@ export default {
 				this.name = data.name;
 				this.type = data.database_type;
 				this.status = data.status;
+				this.loadFieldsStatus = data.loadFieldsStatus;
 				if (['ready'].includes(this.status) && data.loadFieldsStatus !== 'finished' && data.tableCount) {
 					this.progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100;
 					this.showProgress = true;
@@ -200,7 +205,7 @@ export default {
 						return node;
 					});
 					items = items || [];
-					items = items.filter(item => item.label);
+					items = items.filter(item => item.label); //清掉undefined
 					this.form = items;
 				}
 			}
@@ -268,14 +273,16 @@ export default {
 					loadCount: 0,
 					loadFieldsStatus: 'loading'
 				};
+				this.loadFieldsStatus = 'loading';
 			}
 			this.$api('connections')
 				.updateById(this.data.id, parms)
 				.then(result => {
 					if (result.data) {
 						let data = result.data;
+						this.loadFieldsStatus = data.loadFieldsStatus; //同步reload状态
 						if (type === 'first') {
-							this.$refs.test.$emit('startWS');
+							this.$refs.test.$emit('startWS', true);
 						}
 						if (data.loadFieldsStatus === 'finished') {
 							this.progress = 100;
