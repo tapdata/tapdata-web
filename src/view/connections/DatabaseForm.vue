@@ -44,7 +44,7 @@
 							v-html="$t('dataForm.form.uriTips.content')"
 						></div>
 						<div class="url-tip" slot="tableFilter">{{ $t('dataForm.form.tableFilterTips') }}</div>
-						<div class="url-tip" slot="timezone" v-if="model.connection_type !== ''">
+						<div class="url-tip" slot="timezone">
 							{{ $t('dataForm.form.timeZoneTips') }}
 						</div>
 					</form-builder>
@@ -376,6 +376,7 @@ export default {
 								this.$refs.test.$emit('startWS');
 							});
 					} else {
+						this.dialogTestVisible = true;
 						this.$refs.test.$emit('startWS');
 					}
 				}

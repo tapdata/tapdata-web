@@ -171,7 +171,21 @@ export default function(vm) {
 			},
 			{
 				type: 'slot',
-				slot: 'timezone'
+				slot: 'timezone',
+				show: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connection_type',
+								value: 'target'
+							}
+						],
+						triggerConfig: {
+							show: false
+						}
+					}
+				]
 			}
 		]
 	};
