@@ -360,7 +360,7 @@ const cn = {
 		stystemOpenAll: '全部打开',
 		stystemDeleteAll: '全部删除',
 		stystemLgnoreAll: '全部忽略',
-		newTaksName: '新任务未命名',
+		newTaksName: '新任务',
 		selectNode: '请选择节点',
 		submitExecute: '提交执行',
 		submitOnly: '仅提交',
@@ -388,6 +388,7 @@ const cn = {
 		taskBulkOperation: '批量操作',
 		taskBulkTag: '设置分类',
 		upload: '点击上传',
+		chooseFile: '选择文件',
 		import: '任务导入',
 		uploadOK: '上传成功',
 		uploadError: '上传失败',
@@ -617,10 +618,13 @@ const cn = {
 		fuzzyQuery: '模糊匹配',
 		PreciseQuery: '精确匹配',
 		databaseTittle: '数据源管理',
+		desc:
+			'数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。除了基础的配置项之外，数据源还有定期/手动加载数据库结构、设置时区、表过滤设置等功能。更多配置说明，请点击',
 		createNewDataSource: '创建新数据源',
 		info: '数据源详情',
 		copyMsg: '复制成功',
 		testMsg: '测试成功',
+		creator: '创建人',
 		editDataSource: '编辑数据源',
 		reloadOK: '正在加载 schema',
 		reloadFail: 'schema 加载失败',
@@ -631,6 +635,8 @@ const cn = {
 		checkMsg: '此数据源被传输任务或API所占用，无法删除',
 		copyFailedMsg: '复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"',
 		change: '更换',
+		rename: '改名',
+		testConnection: '连接测试',
 		status: {
 			testing: '测试中',
 			invalid: '无效',
@@ -1219,7 +1225,8 @@ const cn = {
 			sidebar: {
 				setting: '任务设置',
 				node_setting: '节点属性',
-				logs: '日志',
+				logs: '运行日志',
+				milestone: '任务里程碑',
 				capture: '抓取数据',
 				style: '样式',
 
@@ -1413,10 +1420,11 @@ const cn = {
 			title: '连接测试',
 			success: '测试通过',
 			fail: '测试未通过',
-			testing: '测试中...',
+			testing: '待检测...',
 			items: '检查事项',
 			result: '检查结果',
-			information: '说明'
+			information: '说明',
+			error: '测试服务请求超时，请关闭重试'
 		},
 		form: {
 			connectionName: '连接名称',
@@ -1446,24 +1454,59 @@ const cn = {
 			databaseHostPlaceholder: '数据库地址(127.0.0.1/Domain:{端口},多个地址请用,分开)',
 			plugin_name: '日志解码器',
 			supportUpdatePk: '支持同步时更新主键',
+			indexPrefix: '索引前缀',
 			agentMsg: '当前测试连接服务不可用，请检查是否正确启动数据同步(Agent)服务',
 			uriTips: {
 				label: '示例',
 				content:
-					`<b>MongoDB 数据库连接 URI 示范:</b><br>` +
-					`复制集: mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
-					`启用认证的复制集: mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
-					`多节点复制集: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
-					`分片集: mongodb://192.168.0.100:27017/mydb<br>` +
-					`多个mongos: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
+					`<b>MongoDB 数据库连接 URI 示范 :</b><br>` +
+					`<b>复制集 :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
+					`<b>启用认证的复制集 :</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
+					`<b>多节点复制集 :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
+					`<b>分片集 :</b> mongodb://192.168.0.100:27017/mydb<br>` +
+					`<b>多个mongos :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
 			},
 			tableFilterTips: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
 			timeZoneTips: '影响类型: DATE',
-
 			options: {
 				sourceAndTarget: '源头和目标',
 				source: '源头',
-				target: '目标'
+				target: '目标',
+				sourceAndTargetTips: '此数据连接在Tapdata 中能同时作为源和目标使用',
+				sourceTips: '此数据连接在Tapdata 中只能作为源使用，不能作用为目标',
+				targetTips: '此数据连接在Tapdata 中只能作为目标使用，不能作用为源',
+				connectionMode: '连接方式',
+				URIMode: 'URI模式',
+				URIModeTips: '以URI方式配置MongoDB数据库，支持批量输入',
+				standardMode: '标准模式',
+				standardModeTips:
+					'Tapdata 将连接网络中的单独服务器，该服务器提供到数据库的TSL/SSL通道。如果您的数据库位于不可访问的子网中，则可尝试使用此方法',
+				sslTSL: 'TSL/SSL连接',
+				sslTSLTip:
+					'Tapdata 将连接网络中的单独服务器，该服务器提供到数据库的TSL/SSL通道。如果您的数据库位于不可访问的子网中，则可尝试使用此方法',
+				sslTop: '直接连接',
+				sslTopTips: 'Tapdata 将直接连接到数据库，您可以要创建一个安全规则以允许系统访问，这是简单直接的方法'
+			},
+			guide: '数据源配置请参考页面右侧连接配置帮助文档，想了解更多数据源连接置、使用说明或其他信息请点击',
+			guideDoc: '帮助文档',
+			response_body: {
+				CHECK_CONNECT: '检查服务连接是否可用',
+				CHECK_AUTH: '检查用户名密码是否正确',
+				CHECK_VERSION: '检查数据源版本信息是否可用',
+				LOAD_SCHEMA: '加载模型',
+				CHECK_CDC_PERMISSION: '检查cdc同步所需的权限是否授权',
+				CHECK_ARCHIVE_LOG: '检查archive log是否开启',
+				CHECK_SUPPLEMENTAL_LOG: '检查supplemental log模式是否正确',
+				CHECK_DDL_PERMISSION: '检查执行ddl语句所需的权限是否授权',
+				CHECK_PERMISSION: '检查同步所需权限是否授权',
+				CHECK_BIN_LOG: '检查binlog是否开启，并且是ROW级别',
+				CHECK_SCRIPT: '检查脚本是否可用',
+				CHECK_PRIMARY_KEY: '检查主键是否可用',
+				CHECK_CONFIG: '检查配置是否正确',
+				CHECK_READ_PERMISSION: '检查可读权限是否授权',
+				CHECK_ACCESS_TOKEN: '检查access token是否可用',
+				CHECK_API_AUTH: '检查api是否有访问权限',
+				CHECK_LOCAL_PORT: '检查本地端口是否可用'
 			}
 		},
 		error: {
@@ -1510,14 +1553,14 @@ const cn = {
 	},
 	dialog: {
 		createTable: '创建新表',
-		placeholderTable: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许system开头',
+		placeholderTable: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
 		createCollection: '创建新数据集 ',
-		placeholderCollection: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许system开头',
-		tableValidateTip: '新建表名称仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许system开头',
-		collectionValidateTip: '新建数据集名称仅支持我，并以英文字母开头，不允许system开头',
+		placeholderCollection: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
+		tableValidateTip: '新建表名称仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
+		collectionValidateTip: '新建数据集名称仅支持我，并以英文字母开头，不允许 system 开头',
 		downAgent: {
 			headTitle: 'Agent下载与安装',
-			headInterpretation: 'Tapdata DFS云版需要在本地安装agent以确保连接数据库和传输服务正常运行',
+			headInterpretation: 'Tapdata DFS云版需要在本地安装 Agent 以确保连接数据库和传输服务正常运行',
 			downloadInstall: '下载安装',
 			text: '首先，在环境中配置好 JAVA 运行环境，然后使用以下命令下载和启动 Agent',
 			copy: '复制命令',
@@ -1525,20 +1568,20 @@ const cn = {
 			copied: '已复制',
 			downloadInstallInstructions: '下载安装说明',
 			linuxInstructionsText1: '· 首先，需要确保环境中安装了 JAVA 运行环境',
-			linuxInstructionsText2: '· 在环境中执行以上命令，将会自动下载和启动 agent',
-			linuxInstructionsText3: '· 在 Agent 安装后，可通过 tapdata start/stop backend 启动和停止Agent',
+			linuxInstructionsText2: '· 在环境中执行以上命令，将会自动下载和启动 Agent',
+			linuxInstructionsText3: '· 在 Agent 安装后，可通过 tapdata start/stop backend 启动和停止 Agent',
 			waitingInstall: '等待安装',
-			agentNum: 'Agent已安装数 ',
-			downLoadAgent: '下载Agent',
+			agentNum: 'Agent 已安装数 ',
+			downLoadAgent: '下载 Agent',
 			windowsText:
 				'首先，在环境中配置好 JAVA 运行环境，下载之后，在存放下载文件的目录下使用以下命令安装和启动 Agent',
 			windowsInstructionsText1: '· 首先，需要确保环境中安装了 JAVA 运行环境',
 			windowsInstructionsText2: '· 其次，下载文件，并存放在某个目录中',
 			windowsInstructionsText3: '· 最后，进入目录，执行命令后系统将自动安装并启动 Agent',
-			windowsInstructionsText4: '· Tapdata 云版一个账号下只能安装一个AGENT',
-			windowsInstructionsText5: '· 在 Agent 安装后，可通过 tapdata start/stop backend 启动和停止Agent',
+			windowsInstructionsText4: '· Tapdata 云版一个账号下只能安装一个 Agent',
+			windowsInstructionsText5: '· 在 Agent 安装后，可通过 tapdata start/stop backend 启动和停止 Agent',
 			important: '注意：',
-			noAgent: '您尚未安装Agent,无法执行传输任务，请',
+			noAgent: '您尚未安装 Agent，无法执行传输任务，请',
 			clickDownLoad: '点击下载安装',
 			dfsSuccessText: 'DFS Agent 安装成功，',
 			dfsSuccessText1: '或点击',
@@ -1750,6 +1793,13 @@ const cn = {
 		disable: '已禁止',
 		newVerify: '新建校验',
 		edit: '编辑校验',
+		advanceVerify: '高级校验',
+		JSVerifyLogic: 'JS校验逻辑',
+		addJS: '添加逻辑',
+		returnMsg: '返回的message',
+		returnedData: '返回的data',
+		sourceTableData: '源表数据',
+		success: '恭喜~~~~校验结果源表与目标表内容完全一致，没有错误记录',
 		clickVerified: '点下方按钮添加校验表',
 		ChoosePKField: '请选索引或主键字段',
 		indexField: '索引字段',
@@ -2022,6 +2072,65 @@ const cn = {
 		delete_error: '删除角色失败',
 		connected: '已关联',
 		role_null: '角色名称不能为空'
+	},
+	milestone: {
+		INIT_DATAFLOW: '【前期准备】解析DAG路径创建子任务',
+		CONNECT_TO_SOURCE: '【前期准备】连接源端数据源',
+		CONNECT_TO_TARGET: '【前期准备】连接目标端数据源',
+		INIT_CONNECTOR: '【前期准备】扫描源端信息，初始化源端采集器',
+		INIT_TRANSFORMER: '【前期准备】扫描目标端信息，初始化目标端处理器',
+		READ_SOURCE_DDL: '【前期准备】读取源端DDL信息',
+		DROP_TARGET_SCHEMA: '【前期准备】删除目标端模型',
+		CLEAR_TARGET_DATA: '【前期准备】清空目标表数据',
+		CREATE_TARGET_TABLE: '【前期准备】自动创建目标表',
+		CREATE_TARGET_INDEX: '【前期准备】创建目标表索引',
+		CREATE_TARGET_VIEW: '【前期准备】自动创建目标端视图',
+		CREATE_TARGET_FUNCTION: '【前期准备】自动创建目标端函数',
+		CREATE_TARGET_PROCEDURE: '【前期准备】自动创建目标端存储过程',
+		READ_SNAPSHOT: '【数据传输】全量读取源端数据快照',
+		WRITE_SNAPSHOT: '【数据传输】目标端全量写入数据快照',
+		READ_CDC_EVENT: '【数据传输】源端采集器进入增量读取模式',
+		WRITE_CDC_EVENT: '【数据传输】目标处理器进入增量写入模式',
+
+		emptyText: '此任务尚未启动或已被重置，暂无运行里程碑数据',
+		status_waiting: '待执行',
+		status_running: '进行中',
+		status_error: '错误',
+		status_finish: '已完成',
+		btn_check_error: '查看错误原因'
+	},
+	guide: {
+		guide_title: '新用户引导',
+		step_1: 'Agent下载与安装',
+		step_2: '设置数据源',
+		step_3: '设置目标',
+		step_4: '选择任务类型，开启数据传输之旅',
+		step_1_title: 'Agent下载与安装',
+		step_1_desc:
+			'Tapdata DFS云版需要先在本地安装agent以确保连接数据库和数据传输服务的正常运行，您可以根据要安装服务器的类型在下方选择相应的类型进行下载安装',
+		step_2_title: '创建数据源连接',
+		step_2_desc:
+			'数据源连接指的是可以作为源的数据库、file、GridFS、REST API等类型的数据连接,必须先创建数据源才能创建迁移或同步任务',
+		step_2_btn_label: '创建新的源连接',
+		step_3_title: '创建目标连接',
+		step_3_desc:
+			'目标连接指的是可以作为数据传输目标的数据库、file、GridFS、REST API等类型的连接,  必须先创建目标连接才能创建迁移或同步任务',
+		step_3_btn_label: '创建新的目标连接',
+		step_4_title: '选择任务类型',
+		step_4_desc:
+			'请根据下方提示选择要进行的任务类型，系统会根据您的选择打开相应的任务编辑面板，如果选择错了可以取消任务重新选择',
+		task_type_clone: '数据库迁移',
+		task_type_clone_tips:
+			'数据库迁移功能以库为单位户在一个任务内轻松实现多个同构或异构数据库（库、表映射）之间的结构迁移、初始化迁移、或增量迁移等功能，适用于数据库迁移上云、实例间的数据库迁移、数据库迁移下云、数据库灾备等多种场景。',
+		task_type_custom: '数据同步',
+		task_type_custom_tips:
+			'数据同步聚焦在表级别的数据处理与传输，在满足用户实现多表（数据集）、多级数据之间多表合一、数据拆分、关联映射、字段增减合并、内容过滤、聚合处理JS处理等功能的情况下同时实现实时数据同步。在不影响用户业务的情况下，满足用户对数据的异地或本地数据灾备、跨实例数据同步、查询与报表分流、实时数据仓库管理等多种业务场景的需求。',
+		agent_not_install: '系统检测到 Agent 并未安装, 请下载安装后重试',
+		btn_back: '上一步',
+		btn_save: '保存，',
+		btn_next: '下一步',
+		btn_to_dataflow: '开始编辑任务',
+		btn_to_dashboard: '暂不编辑任务，先逛逛'
 	}
 };
 

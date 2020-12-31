@@ -55,7 +55,12 @@
 					<el-table-column :label="$t('dataVerification.verifyResult')" width="180">
 						<template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
 							<div class="inspect-result">
-								<div v-if="scope.row.target_total - scope.row.source_total !== 0">
+								<div
+									v-if="
+										scope.row.target_total !== scope.row.source_total &&
+											scope.row.result !== 'passed'
+									"
+								>
 									<span class="error" v-if="scope.row.target_total - scope.row.source_total !== 0">
 										<i class="el-icon-error"></i>
 										<span>
@@ -68,6 +73,7 @@
 									v-if="
 										scope.row.difference_number !== 0 &&
 											scope.row.inspect &&
+											scope.row.result !== 'passed' &&
 											scope.row.inspect.inspectMethod !== 'row_count'
 									"
 								>
@@ -79,18 +85,7 @@
 										</span>
 									</span>
 								</div>
-								<span
-									class="success"
-									v-if="
-										(scope.row.inspect &&
-											scope.row.inspect.inspectMethod !== 'row_count' &&
-											scope.row.difference_number === 0 &&
-											scope.row.target_total - scope.row.source_total === 0) ||
-											(scope.row.inspect &&
-												scope.row.inspect.inspectMethod === 'row_count' &&
-												scope.row.target_total - scope.row.source_total === 0)
-									"
-								>
+								<span class="success" v-if="scope.row.result === 'passed'">
 									<i class="el-icon-success"></i>
 									<span>{{ $t('dataVerification.consistent') }}</span>
 								</span>

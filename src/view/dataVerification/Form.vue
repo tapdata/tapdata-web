@@ -189,6 +189,46 @@
 										:options="item.target.fields"
 										:placeholder="$t('dataVerification.ChoosePKField')"
 									></MultiSelection>
+									<el-checkbox
+										style="margin-left: 10px;"
+										v-model="item.showAdvancedVerification"
+										v-show="form.inspectMethod === 'field'"
+										>{{ $t('dataVerification.advanceVerify') }}</el-checkbox
+									>
+								</div>
+								<div class="setting-item" v-if="item.showAdvancedVerification">
+									<label class="item-label is-required">{{
+										$t('dataVerification.JSVerifyLogic')
+									}}</label>
+									<el-button
+										v-if="!item.webScript || item.webScript === ''"
+										size="mini"
+										icon="el-icon-plus"
+										@click="addScript(index)"
+										>{{ $t('dataVerification.addJS') }}</el-button
+									>
+									<span v-if="item.webScript && item.webScript !== ''">
+										<el-input
+											class="item-select item-textarea"
+											type="textarea"
+											v-model="item.webScript"
+											disabled
+										></el-input>
+										<el-button-group class="setting-buttons">
+											<el-button
+												size="mini"
+												icon="el-icon-edit"
+												@click="editScript(index)"
+											></el-button>
+										</el-button-group>
+										<el-button-group class="setting-buttons">
+											<el-button
+												size="mini"
+												icon="el-icon-close"
+												@click="removeScript(index)"
+											></el-button>
+										</el-button-group>
+									</span>
 								</div>
 							</div>
 							<el-button-group class="setting-buttons">
@@ -214,6 +254,32 @@
 			<el-button size="mini" @click="goBack()">{{ $t('dataVerification.back') }}</el-button>
 			<el-button type="primary" size="mini" @click="nextStep()">{{ $t('app.save') }}</el-button>
 		</div>
+		<el-dialog
+			:title="$t('dataVerification.JSVerifyLogic')"
+			:visible.sync="dialogAddScriptVisible"
+			width="60%"
+			:before-close="handleAddScriptClose"
+		>
+			<div class="js-wrap">
+				<div class="jsBox">
+					<div class="js-fixText">
+						<span style="color: #0000ff;">function </span><span> validate(sourceRow){</span>
+					</div>
+					<JsEditor
+						v-if="dialogAddScriptVisible"
+						:code.sync="webScript"
+						ref="jsEditor"
+						:width.sync="width"
+					></JsEditor>
+					<div class="js-fixText">}</div>
+				</div>
+				<div class="example markdown-body" v-html="htmlMD"></div>
+			</div>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="handleAddScriptClose" size="mini">{{ $t('dataForm.cancel') }}</el-button>
+				<el-button type="primary" @click="submitScript" size="mini">{{ $t('message.confirm') }}</el-button>
+			</span>
+		</el-dialog>
 	</section>
 </template>
 
@@ -237,8 +303,10 @@ const META_INSTANCE_FIELDS = {
 	'fields.primary_key_position': true
 };
 import MultiSelection from './MultiSelection.vue';
+import JsEditor from '@/components/JsEditor';
+import _ from 'lodash';
 export default {
-	components: { MultiSelection },
+	components: { MultiSelection, JsEditor },
 	data() {
 		let self = this;
 		let requiredValidator = (msg, isCheckMode) => {
@@ -254,6 +322,7 @@ export default {
 		return {
 			timeUnitOptions: ['second', 'minute', 'hour', 'day', 'week', 'month'],
 			pickerTimes: [],
+			htmlMD: '',
 			form: {
 				flowId: '',
 				name: '',
@@ -297,11 +366,16 @@ export default {
 			targetTree: [],
 			stageMap: {},
 			flowStages: null,
-			flowOptions: null
+			flowOptions: null,
+			dialogAddScriptVisible: false,
+			formIndex: '',
+			webScript: '',
+			width: '600'
 		};
 	},
 	created() {
 		this.getFlowOptions();
+		this.htmlMD = require(`./functionInfo.md`);
 	},
 	methods: {
 		//获取表单数据
@@ -588,7 +662,10 @@ export default {
 					let task = {
 						source: this.setTable(stg),
 						target: Object.assign({}, TABLE_PARAMS),
-						sourceTable: [stg.connectionId, stg.tableName]
+						sourceTable: [stg.connectionId, stg.tableName],
+						showAdvancedVerification: false,
+						script: '', //后台使用 需要拼接function头尾
+						webScript: '' //前端使用 用于页面展示
 					};
 					if (targetStage) {
 						task.target = this.setTable(targetStage);
@@ -630,7 +707,10 @@ export default {
 		addTable() {
 			this.form.tasks.push({
 				source: Object.assign({}, TABLE_PARAMS),
-				target: Object.assign({}, TABLE_PARAMS)
+				target: Object.assign({}, TABLE_PARAMS),
+				showAdvancedVerification: false,
+				script: '', //后台使用 需要拼接function头尾
+				webScript: '' //前端使用 用于页面展示
 			});
 		},
 		removeItem(idx) {
@@ -650,6 +730,33 @@ export default {
 					item[type] = this.setTable(stg);
 				}
 			});
+		},
+		handleAddScriptClose() {
+			this.webScript = '';
+			this.formIndex = '';
+			this.dialogAddScriptVisible = false;
+		},
+		addScript(index) {
+			this.formIndex = index;
+			this.webScript = '';
+			this.dialogAddScriptVisible = true;
+		},
+		removeScript(index) {
+			this.form.tasks[index].webScript = '';
+		},
+		editScript(index) {
+			this.formIndex = index;
+			let script = _.cloneDeep(this.form.tasks[this.formIndex].webScript);
+			this.webScript = script;
+			this.dialogAddScriptVisible = true;
+		},
+		submitScript() {
+			let script = _.cloneDeep(this.webScript);
+			let formIndex = _.cloneDeep(this.formIndex);
+			this.form.tasks[formIndex].webScript = script;
+			this.webScript = '';
+			this.formIndex = '';
+			this.dialogAddScriptVisible = false;
 		},
 		goBack() {
 			this.$router.push('/dataVerification');
@@ -719,13 +826,21 @@ export default {
 								fullMatchKeep: this.form.keep,
 								status: this.form.mode === 'manual' ? 'scheduling' : 'waiting',
 								ping_time: 0,
-								tasks: this.form.tasks.map(({ source, target, fullMatch }) => {
-									return {
-										source,
-										target,
-										fullMatch
-									};
-								})
+								tasks: this.form.tasks.map(
+									({ source, target, fullMatch, showAdvancedVerification, script, webScript }) => {
+										if (webScript && webScript !== '') {
+											script = 'function validate(sourceRow){' + webScript + '}';
+										}
+										return {
+											source,
+											target,
+											fullMatch,
+											showAdvancedVerification,
+											script,
+											webScript
+										};
+									}
+								)
 							})
 						)
 						.then(res => {
@@ -832,6 +947,12 @@ export default {
 					width: 120px;
 					text-align: right;
 				}
+				.item-textarea {
+					font-size: 12px;
+					font-family: element-icons;
+					line-height: 16px;
+					color: #aaa;
+				}
 				.item-icon {
 					width: 20px;
 					text-align: center;
@@ -863,6 +984,30 @@ export default {
 		box-sizing: border-box;
 		background: #fff;
 		overflow: hidden;
+	}
+}
+</style>
+<style lang="less">
+.js-wrap {
+	display: flex;
+	flex-wrap: nowrap;
+	flex-direction: row;
+	.jsBox {
+		width: 70%;
+		height: 478px;
+		.js-fixText {
+			line-height: 25px;
+			margin-left: 28px;
+		}
+		.js-fixContent {
+			margin-left: 60px;
+		}
+	}
+	.example {
+		width: calc(100% - 70%);
+		height: 478px;
+		overflow-y: auto;
+		padding-right: 10px;
 	}
 }
 </style>

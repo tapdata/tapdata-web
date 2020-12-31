@@ -361,7 +361,7 @@ const en = {
 		stystemOpenAll: 'Open all',
 		stystemDeleteAll: 'Delete all',
 		stystemLgnoreAll: 'Ignore all',
-		newTaksName: 'The new task is not named',
+		newTaksName: 'The_new_task',
 		selectNode: 'Please select a node',
 		submitExecute: 'Submit and execute',
 		submitOnly: 'Submit only',
@@ -390,6 +390,7 @@ const en = {
 		taskBulkOperation: 'Bulk Operation',
 		taskBulkTag: 'Bulk Tag',
 		upload: 'Click to upload',
+		chooseFile: 'Select a document',
 		import: 'Task Import',
 		uploadOK: 'Upload successful',
 		uploadError: 'Upload failed',
@@ -626,10 +627,13 @@ const en = {
 		info: 'Database information',
 		copyMsg: 'copy successfully',
 		testMsg: 'test successfully',
+		creator: 'Creator',
 		editDataSource: 'Edit database',
 		reloadOK: 'reloading schema',
 		reloadFail: 'Failed to schema',
 		reloadTittle: 'Reload schema',
+		desc:
+			'Source Connection includes database, files, RESTful API, custom API etc. You must create at least one data source before you can create migration or replication job. In addition to the standard configuration, you can also configure whether to automatic/manual reload database schema, time zone, and table filter settings. See more details click',
 		deteleDatabaseTittle: 'Delete database',
 		deteleDatabaseMsg: 'This will permanently delete the database ',
 		reloadMsg: 'It may take a long time to reload schema, are you sure to reload the schema of the database',
@@ -637,6 +641,8 @@ const en = {
 		copyFailedMsg:
 			'Copy failed, reason:  The setting item "Connections - create  duplicate source" need to be set to "false"',
 		change: 'Change',
+		rename: 'Rename',
+		testConnection: 'Test connection',
 		status: {
 			testing: 'testing',
 			invalid: 'invalid',
@@ -1236,13 +1242,14 @@ const en = {
 			sidebar: {
 				setting: 'Data Flow Settings',
 				node_setting: 'Node Settings',
-				logs: 'Logs',
+				logs: 'Running Logs',
+				milestone: 'Task Milestone',
 				capture: 'Capture',
 				style: 'Style',
 
 				data_nodes: 'Data Nodes',
 				processor: 'Processor',
-				tableSelector: 'Fast selection'
+				tableSelector: 'Fast Selection'
 			},
 			toolbar: {
 				undo: {
@@ -1436,9 +1443,10 @@ const en = {
 			success: 'Pass the test',
 			fail: 'Test failed',
 			testing: 'Testing...',
-			items: 'test items',
-			result: 'test result',
-			information: 'Information'
+			items: 'Test items',
+			result: 'Test result',
+			information: 'Information',
+			error: 'The test service request timed out, please close and try again.'
 		},
 		form: {
 			connectionName: 'Connection Name',
@@ -1468,25 +1476,62 @@ const en = {
 			databaseHostPlaceholder: 'Database Host(127.0.0.1/Domain:{Port},Please use multiple addresses , separate)',
 			plugin_name: 'Log decoder plugin name',
 			supportUpdatePk: 'Support Update Primary Key',
+			indexPrefix: 'Index prefix',
 			agentMsg:
 				'The test connection service is not available, please check if the Data Synchronization Agent is started correctly.',
 			uriTips: {
 				label: 'Example',
 				content:
-					`<b>MongoDB Connection URI Examples:</b><br>` +
-					`Replicaset: mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
-					`Replicaset with authentication: mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
-					`Replicaset with multiple members: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
-					`Sharded Cluster: mongodb://192.168.0.100:27017/mydb<br>` +
-					`Sharded Cluster with multiple mongos: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
+					`<b>MongoDB Connection URI Examples :</b><br>` +
+					`<b>Replicaset :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
+					`<b>Replicaset with authentication:</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
+					`<b>Replicaset with multiple members :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
+					`<b>Sharded Cluste :</b> mongodb://192.168.0.100:27017/mydb<br>` +
+					`<b>Sharded Cluster with multiple mongos :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
 			},
 			tableFilterTips: 'Comma-delimited list of expression, use * to represent any character of any length.',
 			timeZoneTips: 'Impact Type: DATE',
-
 			options: {
 				sourceAndTarget: 'SOURCE AND TARGET',
 				source: 'SOURCE',
-				target: 'TARGET'
+				target: 'TARGET',
+				sourceAndTargetTips: 'This data connection can be used as both source and target in Tapdata',
+				sourceTips: 'This data connection can only be used as source in Tapdata, but not as target',
+				targetTips: 'This data connection can only be used as target in Tapdata, but not as source ',
+				connectionMode: 'Connection mode',
+				URIMode: 'URI mode',
+				URIModeTips: 'Configure MongoDB database in URI mode. Batch input is supported',
+				standardMode: 'Standard mode',
+				standardModeTips:
+					'Configure MongoDB database according to Host/IP, port, account and password. Batch input is supported',
+				sslTSL: 'Connect via an TSL/SSL tunnel',
+				sslTSLTip:
+					'Tapdata will connect to a separate server in your network which provides an TSL/SSL tunnel to your database. This method is necessary if your database is in an inaccessible subnet.',
+				sslTop: 'Connect directly',
+				sslTopTips:
+					'Tapdata will connect directly to your database. You may have to create a security rule to allow access. This is the simplest method.'
+			},
+			guide:
+				'For data connection configuration, please refer to the guide documenton the right side. For more information about data connection settings, instructions or other information, please click',
+			guideDoc: 'guide document',
+			response_body: {
+				CHECK_CONNECT: 'Check the connection is available',
+				CHECK_AUTH: 'Checks if the username and password are available',
+				CHECK_VERSION: 'Checks if the version information is available',
+				LOAD_SCHEMA: 'Load schema model',
+				CHECK_CDC_PERMISSION: 'Check if cdc permissions are granted',
+				CHECK_ARCHIVE_LOG: 'Check if archive log is opened',
+				CHECK_SUPPLEMENTAL_LOG: 'Check if supplemental log mode is correct',
+				CHECK_DDL_PERMISSION: 'Check if execute ddl permissions are granted',
+				CHECK_PERMISSION: 'Check if permissions are graned',
+				CHECK_BIN_LOG: 'Check if binlog is opened, and is ROW level',
+				CHECK_SCRIPT: 'Check if script(s) is available',
+				CHECK_PRIMARY_KEY: 'Check if primary key(s) is available',
+				CHECK_CONFIG: 'Check if config is available',
+				CHECK_READ_PERMISSION: 'Check if read permission is granted',
+				CHECK_ACCESS_TOKEN: 'Check if access token is available',
+				CHECK_API_AUTH: 'Check if api auth is available',
+				CHECK_LOCAL_PORT: 'Check if local port is available'
 			}
 		},
 		error: {
@@ -1663,7 +1708,7 @@ const en = {
 		downAgent: {
 			headTitle: 'Agent download and installation',
 			headInterpretation:
-				'Tapdata DFS Cloud have to install agent at local server to ensure databases connection and transmission services normally',
+				'Tapdata DFS Cloud have to install Agent at local server to ensure databases connection and transmission services normally',
 			downloadInstall: 'Download and install',
 			text:
 				'First, a JAVA runtime environment is required in the installation environment. Then, download and start Agent by using the following command.',
@@ -1674,9 +1719,9 @@ const en = {
 			linuxInstructionsText1:
 				'· First, ensure that the JAVA runtime environment is installed in the installation target environment.',
 			linuxInstructionsText2:
-				'· Execute the above command in install environment, AGENT will download and start automatically ',
+				'· Execute the above command in install environment, Agent will download and start automatically ',
 			linuxInstructionsText3:
-				'· You can start and stop AGENT by executing the command "tapdata start/stop backend".',
+				'· You can start and stop Agent by executing the command "tapdata start/stop backend".',
 			waitingInstall: 'Waiting installation',
 			agentNum: 'Agents installed',
 			downLoadAgent: 'Download Agent',
@@ -1686,10 +1731,10 @@ const en = {
 				'· First, ensure that the JAVA runtime environment is installed in the installation target environment.',
 			windowsInstructionsText2: '· Second, download the installation file and store it in a directory.',
 			windowsInstructionsText3:
-				'· Third, enter the directory, and execute the command to install and start AGENT automatically. ',
-			windowsInstructionsText4: '· Only one AGENT can be installed under an account of Tapdata cloud.',
+				'· Third, enter the directory, and execute the command to install and start Agent automatically. ',
+			windowsInstructionsText4: '· Only one Agent can be installed under an account of Tapdata cloud.',
 			windowsInstructionsText5:
-				'· You can start and stop AGENT by executing the command "tapdata start/stop backend".',
+				'· You can start and stop Agent by executing the command "tapdata start/stop backend".',
 			important: 'Important: ',
 			noAgent: 'You have not installed Agent yet, and cannot execute the transmission jobs. Please ',
 			clickDownLoad: ' click to download and install',
@@ -1751,6 +1796,12 @@ const en = {
 		verifyTime: 'Verify Time',
 		operation: 'Operation',
 		rowVerify: 'Row verify',
+		advanceVerify: 'Advanced verification',
+		JSVerifyLogic: 'JS verify logic',
+		addJS: 'Add JS',
+		returnMsg: 'Returned message',
+		returnedData: 'Returned data ',
+		sourceTableData: 'Source table data',
 		contentVerify: 'Content verify',
 		singleVerify: 'Single verify',
 		repeatingVerify: 'Repeating verify',
@@ -1773,6 +1824,8 @@ const en = {
 		targetFieldName: 'Target Field Name',
 		Value: 'value',
 		inconsistentType: 'Inconsistent Type',
+		success:
+			'Congratulations~~~~  The field contents of the source table and the target table are identical, no error record here',
 		chooseJob: 'Choose job',
 		frequency: 'Frequency',
 		startTime: ' Start time',
@@ -2062,6 +2115,66 @@ const en = {
 		delete_error: 'Failed to delete role',
 		connected: 'Associated',
 		role_null: 'The role name cannot be empty'
+	},
+	milestone: {
+		INIT_DATAFLOW: '【Preparation】Analyze the DAG and create sub job(s)',
+		CONNECT_TO_SOURCE: '【Preparation】Connecto to source',
+		CONNECT_TO_TARGET: '【Preparation】Connect to target',
+		INIT_CONNECTOR: '【Preparation】Scan source information and initialize the source collector',
+		INIT_TRANSFORMER: '【Preparation】Scan target information and initialize the target handler',
+		READ_SOURCE_DDL: '【Preparation】Read source DDL information(Database Migration)',
+		DROP_TARGET_SCHEMA: '【Preparation】Drop target schema',
+		CLEAR_TARGET_DATA: '【Preparation】Empty the target data',
+		CREATE_TARGET_TABLE: '【Preparation】Automatically create target table',
+		CREATE_TARGET_INDEX: '【Preparation】Automatically create target index',
+		CREATE_TARGET_VIEW: '【Preparation】Automatically create target view',
+		CREATE_TARGET_FUNCTION: '【Preparation】Automatically create target function',
+		CREATE_TARGET_PROCEDURE: '【Preparation】Automatically create target procedure',
+		READ_SNAPSHOT: '【Data transfer】Read the source snapshot',
+		WRITE_SNAPSHOT: '【Data transfer】Write the snapshot into target',
+		READ_CDC_EVENT: '【Data transfer】Source enters incremental read mode',
+		WRITE_CDC_EVENT: '【Data transfer】Target enters incremental write mode',
+
+		emptyText: 'The job has not been started or has been reset, so there is no running milestone data.',
+		status_waiting: 'waiting',
+		status_running: 'running',
+		status_error: 'error',
+		status_finish: 'finish',
+		btn_check_error: 'Check Error Info'
+	},
+	guide: {
+		guide_title: 'New user guide',
+		step_1: 'Agent download and installation',
+		step_2: 'Set data source',
+		step_3: 'Set goal',
+		step_4: 'Select the task type and start the data transmission journey',
+		step_1_title: 'Agent download and installation',
+		step_1_desc:
+			'Tapdata DFS Cloud Edition needs to install the agent locally to ensure the normal operation of the connection database and data transmission service. You can select the corresponding type below to download and install according to the type of server to be installed.',
+		step_2_title: 'Create a data source connection',
+		step_2_desc:
+			'Data source connection refers to the data connection of the database, file, GridFS, REST API and other types that can be used as the source. The data source must be created before the migration or synchronization task can be created.',
+		step_2_btn_label: 'Create a new source connection',
+		step_3_title: 'Create target connection',
+		step_3_desc:
+			'The target connection refers to the database, file, GridFS, REST API and other types of connections that can be used as data transmission targets. The target connection must be created before the migration or synchronization task can be created.',
+		step_3_btn_label: 'Create a new target connection',
+		step_4_title: 'Select task type',
+		step_4_desc:
+			'Please select the type of task to be performed according to the prompts below, the system will open the corresponding task editing panel according to your choice, if you choose a wrong task, you can cancel the task and select again.',
+		task_type_clone: 'Database migration',
+		task_type_clone_tips:
+			'Database migration function takes the library as the unit user to easily realize the structure migration, initial migration, or incremental migration between multiple homogeneous or heterogeneous databases (libraries, table mapping) within a task, suitable for data Database migration to the cloud, database migration between instances, database migration to the cloud, database disaster recovery and other scenarios. ',
+		task_type_custom: 'Data synchronization',
+		task_type_custom_tips:
+			"Data synchronization focuses on table-level data processing and transmission, to meet the needs of users to achieve multi-table (data set), multi-table integration between multi-level data, data splitting, association mapping, field increase and decrease merge, content filtering, Real-time data synchronization is realized at the same time in the case of aggregate processing JS processing and other functions. Without affecting the user's business, it meets the user's needs for various business scenarios such as remote or local data disaster recovery, cross-instance data synchronization, query and report distribution, and real-time data warehouse management. ",
+		agent_not_install:
+			'The system detects that the Agent is not installed, please download and install and try again',
+		btn_back: 'Previous step',
+		btn_save: 'Save,',
+		btn_next: 'Next',
+		btn_to_dataflow: 'Start editing task',
+		btn_to_dashboard: "Don't edit the task for now, go shopping first"
 	}
 };
 

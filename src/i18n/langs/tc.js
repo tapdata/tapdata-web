@@ -358,7 +358,7 @@ const tc = {
 		stystemOpenAll: '全部打開',
 		stystemDeleteAll: '全部刪除',
 		stystemLgnoreAll: '全部忽略',
-		newTaksName: '新任務未命名',
+		newTaksName: '新任務',
 		selectNode: '請選擇節點',
 		submitExecute: '提交執行',
 		submitOnly: '僅提交',
@@ -387,6 +387,7 @@ const tc = {
 		taskBulkOperation: '批量操作',
 		taskBulkTag: '設置分类',
 		upload: '點擊上傳',
+		chooseFile: '選擇文件',
 		import: '任務導入',
 		uploadOK: '上傳成功',
 		uploadError: '上傳失敗',
@@ -539,7 +540,8 @@ const tc = {
 			viewConfig: '查看節點配置',
 			viewMonitoring: '查看監控數據',
 			setting: '設置',
-			logs: '日誌',
+			logs: '運行日誌',
+			milestone: '任務里程碑',
 			preview: '預覽',
 			capture: '數據檢視',
 			stop_capture: '停止檢視',
@@ -619,16 +621,21 @@ const tc = {
 		info: '數據源詳情',
 		copyMsg: '複製成功',
 		testMsg: '測試成功',
+		creator: '创建人',
 		editDataSource: '編輯數據源',
 		reloadOK: '正在加載 schema',
 		reloadFail: 'schema 加載失敗',
 		reloadTittle: '重新加載 schema',
 		deteleDatabaseTittle: '刪除數據源',
 		deteleDatabaseMsg: '確定刪除數據源',
+		desc:
+			'數據源包括數據庫，結構化文件，應用程序RESTful API，自定義接口等類型，必須先創建數據源才能創建遷移或同步任務。除基礎的配置項之外，數據源還有定期/手動加載數據庫結構 ，設置時區，表過濾設置等功能。更多配置說明，請點擊',
 		reloadMsg: '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema : ',
 		checkMsg: '此數據源被傳輸任務或API所佔用，無法刪除',
 		copyFailedMsg: '複製失敗，原因：系統設置中 "連接設置 - 允許創建重複數據源" 被設置為 "false"',
 		change: '更換',
+		rename: '改名',
+		testConnection: '連接測試',
 		status: {
 			testing: '測試中',
 			invalid: '無效',
@@ -1410,10 +1417,11 @@ const tc = {
 			title: '連接測試',
 			success: '測試通過',
 			fail: '測試未通過',
-			testing: '測試中...',
+			testing: '待檢測...',
 			items: '檢查事項',
 			result: '檢查結果',
-			information: '說明'
+			information: '說明',
+			error: '測試服務請求超時，請關閉重試'
 		},
 		form: {
 			connectionName: '連接名稱',
@@ -1443,24 +1451,58 @@ const tc = {
 			databaseHostPlaceholder: '資料庫地址（127.0.0.1/Domain:{端口}，多個地址請用，分開）',
 			plugin_name: '日誌解碼器',
 			supportUpdatePk: '支持同步時更新主鍵',
+			indexPrefix: '索引前綴',
 			agentMsg: '當前測試連接服務不可用，請檢查是否正確啟動數據同步(Agent)服務',
 			uriTips: {
 				label: '示例',
 				content:
-					`<b>MongoDB 數據庫連接 URI 示範:</b><br>` +
-					`複製集: mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
-					`啟用認證的複製集: mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
-					`多節點複製集: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
-					`分片集: mongodb://192.168.0.100:27017/mydb<br>` +
-					`多個mongos: mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
+					`<b>MongoDB 數據庫連接 URI 示範 :</b><br>` +
+					`<b>複製集 :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
+					`<b>啟用認證的複製集 :</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
+					`<b>多節點複製集 :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
+					`<b>分片集 :</b> mongodb://192.168.0.100:27017/mydb<br>` +
+					`<b>多個mongos :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
 			},
 			tableFilterTips: '逗號分割的表達式列表，使用*代表任意長度任意字符',
 			timeZoneTips: '影響類型: DATE',
-
 			options: {
 				sourceAndTarget: '源頭和目標',
 				source: '源頭',
-				target: '目標'
+				target: '目標',
+				sourceAndTargetTips: '此數據連接在Tapdata 中能同時作為源和目標使用',
+				sourceTips: '此數據連接在Tapdata 中只能作為源使用，不能作用為目標',
+				targetTips: '此數據連接在Tapdata 中只能作為目標使用，不能作用為源',
+				connectionMode: '連接方式',
+				URIMode: 'URI模式',
+				URIModeTips: '以URI方式配置MongoDB數據庫，支持批量輸入',
+				standardMode: '標準模式',
+				standardModeTips: '按照Host,port,賬號，密碼的方式配置MongoDB數據庫，支持批量輸入',
+				sslTSL: 'TSL/SSL連接',
+				sslTSLTip:
+					'Tapdata 將連接奧網絡中的單獨服務器，該服務器提供到數據庫的TSL/SSL通道。如果您的數據庫位於不可訪問的子網中，則可嘗試使用此方法',
+				sslTop: '直接連接',
+				sslTopTips: 'Tapdata 將直接連接到數據庫，您可以要創建一個安全規則以允許系統訪問，這是簡單直接的方法'
+			},
+			guide: '數據源配置請參考頁面右側連接配置幫助文檔，想了解更多數據源連接置、使用說明或其他信息請點擊',
+			guideDoc: '幫助文檔',
+			response_body: {
+				CHECK_CONNECT: '檢查服務連接是否可用',
+				CHECK_AUTH: '檢查用戶名密碼是否正確',
+				CHECK_VERSION: '檢查數據源版本信息是否可用',
+				LOAD_SCHEMA: '加載模型',
+				CHECK_CDC_PERMISSION: '檢查cdc同步所需的權限是否授權',
+				CHECK_ARCHIVE_LOG: '檢查archive log是否開啟',
+				CHECK_SUPPLEMENTAL_LOG: '檢查supplemental log模式是否正確',
+				CHECK_DDL_PERMISSION: '檢查執行ddl語句所需的權限是否授權',
+				CHECK_PERMISSION: '檢查同步所需權限是否授權',
+				CHECK_BIN_LOG: '檢查binlog是否開啟，並且是ROW級別',
+				CHECK_SCRIPT: '檢查腳本是否可用',
+				CHECK_PRIMARY_KEY: '檢查主鍵是否可用',
+				CHECK_CONFIG: '檢查配置是否正確',
+				CHECK_READ_PERMISSION: '檢查可讀權限是否授權',
+				CHECK_ACCESS_TOKEN: '檢查access token是否可用',
+				CHECK_API_AUTH: '檢查api是否有訪問權限',
+				CHECK_LOCAL_PORT: '檢查本地端口是否可用'
 			}
 		},
 		error: {
@@ -1623,15 +1665,15 @@ const tc = {
 	},
 	dialog: {
 		createTable: '創建新表',
-		placeholderTable: '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許system開頭',
+		placeholderTable: '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
 		createCollection: '創建新數據集 ',
-		placeholderCollection: '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許system開頭',
-		tableValidateTip: '新建表名稱僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許system開頭',
+		placeholderCollection: '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
+		tableValidateTip: '新建表名稱僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
 		collectionValidateTip:
-			'新建數據集名稱僅支持英文、數字、下劃線下劃線、點、減號，並以英文字母開頭，不允許system開頭',
+			'新建數據集名稱僅支持英文、數字、下劃線下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
 		downAgent: {
 			headTitle: 'Agent下載與安裝',
-			headInterpretation: 'Tapdata DFS雲版需要在本地安裝agent以確保連接數據庫和傳輸服務正常運行',
+			headInterpretation: 'Tapdata DFS雲版需要在本地安裝 Agent 以確保連接數據庫和傳輸服務正常運行',
 			downloadInstall: '下載安裝',
 			text: '首先，在環境中配置好 JAVA 運行環境，然後使用以下命令下載和啟動 Agent',
 			copy: '複製命令',
@@ -1639,18 +1681,18 @@ const tc = {
 			copied: '已復制',
 			downloadInstallInstructions: '下載安裝說明',
 			linuxInstructionsText1: '· 首先，需要確保環境中安裝了 JAVA 運行環境',
-			linuxInstructionsText2: '· 在環境中執行以上命令，將會自動下載和​​啟動 agent',
-			linuxInstructionsText3: '· 在 Agent 安裝後，可通過 tapdata start/stop backend 啟動和停止Agent',
+			linuxInstructionsText2: '· 在環境中執行以上命令，將會自動下載和​​啟動 Agent',
+			linuxInstructionsText3: '· 在 Agent 安裝後，可通過 tapdata start/stop backend 啟動和停止 Agent',
 			waitingInstall: '等待安裝',
-			agentNum: 'Agent已安裝數',
-			downLoadAgent: '下載Agent',
+			agentNum: 'Agent 已安裝數',
+			downLoadAgent: '下載 Agent',
 			windowsText:
 				'首先，在環境中配置好 JAVA 運行環境，下載之後，在存放下載文件的目錄下使用以下命令安裝和啟動 Agent',
 			windowsInstructionsText1: '· 首先，需要確保環境中安裝了 JAVA 運行環境',
 			windowsInstructionsText2: '· 其次，下載文件，並存放在某個目錄中',
 			windowsInstructionsText3: '· 最後，進入目錄，執行命令後系統將自動安裝並啟動 Agent',
-			windowsInstructionsText4: '· Tapdata 雲版一個賬號下只能安裝一個AGENT',
-			windowsInstructionsText5: '· 在 Agent 安裝後，可通過 tapdata start/stop backend 啟動和停止Agent',
+			windowsInstructionsText4: '· Tapdata 雲版一個賬號下只能安裝一個 Agent',
+			windowsInstructionsText5: '· 在 Agent 安裝後，可通過 tapdata start/stop backend 啟動和停止 Agent',
 			important: '注意：',
 			noAgent: '您尚未安裝Agent,無法執行傳輸任務，請',
 			clickDownLoad: '點擊下載安裝',
@@ -1751,7 +1793,13 @@ const tc = {
 		indexField: '索引字段',
 		BasicSettings: '基本設置',
 		verifyCondition: '校驗條件',
+		advanceVerify: '高级校验',
+		JSVerifyLogic: 'JS校验逻辑',
+		addJS: '添加逻辑',
 		clear: '清空',
+		returnMsg: '返回的message',
+		returnedData: '返回的data',
+		sourceTableData: '源表數據',
 		fastCountTip: '快速count僅對源表和目標表的行數進行count校驗，速度極快，但是不會展示差異的具體字段內容。 ',
 		contentVerifyTip: '全表字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。 ',
 		jointFieldTip: '關聯鍵校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式.',
@@ -1760,6 +1808,7 @@ const tc = {
 		error: 'Error',
 		done: '校驗結束',
 		running: '校驗中',
+		success: '恭喜~~~~校驗結果源表與目標表內容完全一致，沒恭喜~~~~校驗結果源表與目標表內容完全一致，沒有錯誤記錄',
 		verifyProgress: '校验进度',
 		tasksTime: '請選擇起止時間',
 		tasksDataFlow: '請選擇任務',
@@ -2018,6 +2067,65 @@ const tc = {
 		delete_error: '刪除角色失敗',
 		connected: '已關聯',
 		role_null: '角色名稱不能為空'
+	},
+	milestone: {
+		INIT_DATAFLOW: '【前期準備】解析DAG路徑創建子任務',
+		CONNECT_TO_SOURCE: '【前期準備】連接源端數據源',
+		CONNECT_TO_TARGET: '【前期準備】連接目標端數據源',
+		INIT_CONNECTOR: '【前期準備】掃描源端信息，初始化源端採集器',
+		INIT_TRANSFORMER: '【前期準備】掃描目標端信息，初始化目標端處理器',
+		READ_SOURCE_DDL: '【前期準備】讀取源端DDL信息',
+		DROP_TARGET_SCHEMA: '【前期準備】刪除目標端模型',
+		CLEAR_TARGET_DATA: '【前期準備】清空目標表數據',
+		CREATE_TARGET_TABLE: '【前期準備】自動創建目標表',
+		CREATE_TARGET_INDEX: '【前期準備】創建目標表索引',
+		CREATE_TARGET_VIEW: '【前期準備】自動創建目標端視圖',
+		CREATE_TARGET_FUNCTION: '【前期準備】自動創建目標端函數',
+		CREATE_TARGET_PROCEDURE: '【前期準備】自動創建目標端存儲過程',
+		READ_SNAPSHOT: '【數據傳輸】全量讀取源端數據快照',
+		WRITE_SNAPSHOT: '【數據傳輸】目標端全量寫入數據快照',
+		READ_CDC_EVENT: '【數據傳輸】源端採集器進入增量讀取模式',
+		WRITE_CDC_EVENT: '【數據傳輸】目標處理器進入增量寫入模式',
+
+		emptyText: '此任務尚未啟動或已被重置，暫無運行里程碑數據',
+		status_waiting: '待執行',
+		status_running: '進行中',
+		status_error: '錯誤',
+		status_finish: '已完成',
+		btn_check_error: '查看錯誤原因'
+	},
+	guide: {
+		guide_title: '新用戶引導',
+		step_1: 'Agent下載與安裝',
+		step_2: '設置數據源',
+		step_3: '設置目標',
+		step_4: '選擇任務類型，開啟數據傳輸之旅',
+		step_1_title: 'Agent下載與安裝',
+		step_1_desc:
+			'Tapdata DFS雲版需要先在本地安裝agent以確保連接資料庫和數據傳輸服務的正常運行，您可以根據要安裝伺服器的類型在下方選擇相應的類型進行下載安裝',
+		step_2_title: '創建數據源連接',
+		step_2_desc:
+			'數據源連接指的是可以作為源的資料庫、file、GridFS、REST API等類型的數據連接,必須先創建數據源才能創建遷移或同步任務',
+		step_2_btn_label: '創建新的源連接',
+		step_3_title: '創建目標連接',
+		step_3_desc:
+			'目標連接指的是可以作為數據傳輸目標的資料庫、file、GridFS、REST API等類型的連接,  必須先創建目標連接才能創建遷移或同步任務',
+		step_3_btn_label: '創建新的目標連接',
+		step_4_title: '選擇任務類型',
+		step_4_desc:
+			'請根據下方提示選擇要進行的任務類型，系統會根據您的選擇打開相應的任務編輯面板，如果選擇錯了可以取消任務重新選擇',
+		task_type_clone: '資料庫遷移',
+		task_type_clone_tips:
+			'資料庫遷移功能以庫為單位戶在一個任務內輕鬆實現多個同構或異構資料庫（庫、表映射）之間的結構遷移、初始化遷移、或增量遷移等功能，適用於資料庫遷移上雲、實例間的資料庫遷移、資料庫遷移下雲、資料庫災備等多種場景。',
+		task_type_custom: '數據同步',
+		task_type_custom_tips:
+			'數據同步聚焦在表級別的數據處理與傳輸，在滿足用戶實現多表（數據集）、多級數據之間多表合一、數據拆分、關聯映射、欄位增減合併、內容過濾、聚合處理JS處理等功能的情況下同時實現實時數據同步。在不影響用戶業務的情況下，滿足用戶對數據的異地或本地數據災備、跨實例數據同步、查詢與報表分流、實時數據倉庫管理等多種業務場景的需求。',
+		agent_not_install: '系統檢測到 Agent 並未安裝, 請下載安裝後重試',
+		btn_back: '上一步',
+		btn_save: '保存，',
+		btn_next: '下一步',
+		btn_to_dataflow: '開始編輯任務',
+		btn_to_dashboard: '暫不編輯任務，先逛逛'
 	}
 };
 

@@ -5,35 +5,110 @@
 		</header>
 		<div class="databaseFrom-body">
 			<main class="databaseFrom-main">
-				<div class="title">
+				<header v-if="$route.query.id" class="edit-header-box">
+					<div class="edit-header">
+						<div class="img-box">
+							<img :src="getImgByType(databaseType)" />
+						</div>
+						<div class="content">{{ model.name }}</div>
+						<div class="addBtn" @click="dialogEditNameVisible = true">
+							{{ $t('connection.rename') }}
+						</div>
+					</div>
+				</header>
+				<header class="title" v-else>
 					<div class="img-box">
 						<img :src="getImgByType(databaseType)" />
 					</div>
-					<div class="content">{{ typeMap[databaseType] }}</div>
-					<div class="addBtn" v-if="!$route.query.id" @click="dialogDatabaseTypeVisible = true">
-						{{ $t('connection.change') }}
+					<div class="content-box">
+						<div class="content">
+							{{ typeMap[databaseType] }}
+							<div class="addBtn" @click="dialogDatabaseTypeVisible = true">
+								{{ $t('connection.change') }}
+							</div>
+						</div>
+						<div class="tip">
+							{{ $t('dataForm.form.guide') }}
+							<a style="color: #48B6E2" href="https://docs.tapdata.net/data-source">{{
+								$t('dataForm.form.guideDoc')
+							}}</a>
+						</div>
 					</div>
+				</header>
+				<div class="form">
+					<form-builder ref="form" v-model="model" :config="config">
+						<div
+							class="url-tip"
+							slot="urlTip"
+							v-if="model.isUrl"
+							v-html="$t('dataForm.form.uriTips.content')"
+						></div>
+						<div class="url-tip" slot="tableFilter">{{ $t('dataForm.form.tableFilterTips') }}</div>
+						<div class="url-tip" slot="timezone" v-if="model.connection_type !== ''">
+							{{ $t('dataForm.form.timeZoneTips') }}
+						</div>
+					</form-builder>
+					<el-button size="mini" class="test" @click="startTest()">{{
+						$t('connection.testConnection')
+					}}</el-button>
+					<span class="status">
+						<span class="error" v-if="['invalid'].includes(status)">
+							<i class="el-icon-error"></i>
+							<span>
+								{{ $t('connection.status.invalid') }}
+							</span>
+						</span>
+						<span class="success" v-if="['ready'].includes(status)">
+							<i class="el-icon-success"></i>
+							<span>
+								{{ $t('connection.status.ready') }}
+							</span>
+						</span>
+						<span class="warning" v-if="['testing'].includes(status)">
+							<i class="el-icon-warning"></i>
+							<span>
+								{{ $t('connection.status.testing') }}
+							</span>
+						</span>
+					</span>
 				</div>
-				<div class="form"><form-builder ref="form" v-model="model" :config="config"></form-builder></div>
 			</main>
 			<gitbook></gitbook>
 		</div>
 		<footer slot="footer" class="footer">
-			<el-button size="mini" type="primary" :loading="testing" @click="submit">
-				{{ $t('dataForm.submit') }}
-			</el-button>
-			<el-button size="mini" @click="goBack()">{{ $t('dataForm.cancel') }}</el-button>
+			<div class="footer-btn">
+				<el-button size="mini" @click="goBack()">{{ $t('dataForm.cancel') }}</el-button>
+				<el-button size="mini" type="primary" :loading="testing" @click="submit">
+					{{ $t('dataForm.submit') }}
+				</el-button>
+			</div>
 		</footer>
 		<Test
-			@dialogTestVisible="handleTestVisible"
-			:dialogTestVisible="testData.dialogTestVisible"
-			:testData="testData"
+			ref="test"
+			:dialogTestVisible.sync="dialogTestVisible"
+			:formData="model"
+			@returnTestData="returnTestData"
 		></Test>
 		<DatabaseTypeDialog
-			:dialogVisible="dialogDatabaseTypeVisible"
-			@dialogVisible="handleDialogDatabaseTypeVisible"
+			:dialogVisible.sync="dialogDatabaseTypeVisible"
 			@databaseType="handleDatabaseType"
 		></DatabaseTypeDialog>
+		<el-dialog
+			:title="$t('connection.rename')"
+			:close-on-click-modal="false"
+			:visible.sync="dialogEditNameVisible"
+			width="30%"
+		>
+			<span>
+				<el-input v-model="rename" maxlength="100" show-word-limit clearable></el-input>
+			</span>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="handleCancelRename" size="mini">{{ $t('dataForm.cancel') }}</el-button>
+				<el-button @click="submitEdit()" size="mini" type="primary" v-loading="submitBtnLoading">{{
+					$t('message.confirm')
+				}}</el-button>
+			</span>
+		</el-dialog>
 		<!-- <el-dialog
 			:title="$t('dataForm.dialogTitle')"
 			:close-on-click-modal="false"
@@ -59,7 +134,7 @@ import factory from '@/api/factory';
 import formConfig from './config';
 import gitbook from './GitBook';
 import Test from './Test';
-import { getImgByType, TYPEMAP, handleProgress } from './util';
+import { getImgByType, TYPEMAP } from './util';
 import DatabaseTypeDialog from './DatabaseTypeDialog';
 
 const databaseTypesModel = factory('DatabaseTypes');
@@ -116,18 +191,14 @@ export default {
 			databaseType: '',
 			typeMap: TYPEMAP,
 			timer: null,
-			status: {
-				ready: 'success',
-				invalid: 'exception',
-				testing: 'warning'
-			},
-			testData: {
-				testLogs: null,
-				testResult: '',
-				progress: 0,
-				dialogTestVisible: false
-			},
-			dialogDatabaseTypeVisible: false
+			status: '',
+			dialogTestVisible: false,
+			dialogDatabaseTypeVisible: false,
+			dialogEditNameVisible: false,
+			submitBtnLoading: false,
+			connectionTypeOption: '',
+			isUrlOption: '',
+			rename: ''
 			// repeatDialogVisible: false,
 			// connectionObj: {
 			// 	name: '',
@@ -147,15 +218,10 @@ export default {
 				label: self.$t('dataForm.form.connectionName'),
 				required: true,
 				maxlength: 100,
-				showWordLimit: true
+				showWordLimit: true,
+				show: true
 			}
 		];
-	},
-	beforeDestroy() {
-		this.clearInterval();
-	},
-	destroyed() {
-		this.clearInterval();
 	},
 	methods: {
 		getImgByType,
@@ -169,12 +235,8 @@ export default {
 					editData = await this.$api('connections').get([this.$route.query.id]);
 				}
 				this.model = Object.assign(this.model, editData.data);
+				this.rename = this.model.name;
 			} else this.model = Object.assign(this.model, data, { name: this.model.name });
-		},
-		clearInterval() {
-			// 清除定时器
-			clearInterval(this.timer);
-			this.timer = null;
 		},
 		checkDataTypeOptions(type) {
 			this.model.database_type = type;
@@ -225,8 +287,13 @@ export default {
 				}
 				let itemIsUrl = items.find(it => it.field === 'isUrl');
 				if (this.model.database_type === 'mongodb' && this.$route.query.id && itemIsUrl) {
-					itemIsUrl.disabled = true;
+					itemIsUrl.options[0].disabled = true;
 					this.model.isUrl = false;
+				}
+				if (this.$route.query.id) {
+					//编辑模式下 不展示
+					defaultConfig[0].show = false;
+					defaultConfig[0].required = false;
 				}
 				this.config.form = config.form;
 				this.config.items = items;
@@ -238,39 +305,15 @@ export default {
 			}
 		},
 		handleTestVisible() {
-			this.testData.dialogTestVisible = false;
-			this.testData.progress = 0;
-			this.testData.testResult = this.status['testing'];
+			this.dialogTestVisible = false;
 		},
 		goBack() {
 			this.$router.push('/connections');
 		},
-		async test(id) {
-			this.clearInterval();
-			this.testData.testResult = this.status['testing'];
-			this.testData.estLogs = [];
-			let result = null;
-			if (this.model.database_type === 'mongodb') {
-				result = await connectionsModel.customQuery([id]);
-			} else {
-				result = await connectionsModel.get([id]);
-			}
-			if (result.data) {
-				const data = result.data;
-				let validate_details = data.response_body && data.response_body.validate_details;
-				this.testData.testLogs = validate_details || [];
-				this.testData.testResult = this.status[data.status] || this.status['testing'];
-				this.testData.progress = handleProgress(this.testData.testLogs);
-				if (['testing'].includes(data.status)) {
-					this.timer = setInterval(() => {
-						this.test(id);
-					}, 3000);
-				}
-			}
-		},
 		submit() {
 			this.$refs.form.validate(valid => {
 				if (valid) {
+					this.submitBtnLoading = true;
 					let params = Object.assign({}, this.model, {
 						sslCert: this.model.sslKey,
 						// user_id: this.$cookie.get('user_id'),
@@ -284,6 +327,8 @@ export default {
 					});
 					if (!params.id) {
 						delete params.id;
+					} else {
+						params['status'] = 'testing'; //id 存在则改变status
 					}
 					delete params.sslKeyFile;
 					delete params.sslCAFile;
@@ -293,10 +338,12 @@ export default {
 					}
 					connectionsModel[this.model.id ? 'patchId' : 'post'](params)
 						.then(res => {
+							this.submitBtnLoading = false;
 							let id = res.data.id;
 							this.model.id = id;
-							this.testData.dialogTestVisible = true;
-							this.test(id);
+							this.startTest();
+							this.$message.success('保存成功');
+							this.goBack();
 						})
 						.catch(err => {
 							if (err && err.response) {
@@ -317,7 +364,65 @@ export default {
 				}
 			});
 		},
-
+		//开始测试
+		startTest() {
+			this.$refs.form.validate(valid => {
+				if (valid) {
+					if (this.$route.query.id) {
+						//先将管理端状态改为testing
+						this.$api('connections')
+							.updateById(this.$route.query.id, {
+								status: 'testing'
+							})
+							.then(() => {
+								this.dialogTestVisible = true;
+								this.$refs.test.$emit('startWS');
+							});
+					} else {
+						this.$refs.test.$emit('startWS');
+					}
+				}
+			});
+		},
+		returnTestData(data) {
+			if (!data.status || data.status === null) return;
+			this.status = data.status;
+		},
+		//取消
+		handleCancelRename() {
+			this.dialogEditNameVisible = false;
+			this.rename = this.model.name;
+		},
+		//保存名字
+		submitEdit() {
+			if (this.rename === '') {
+				this.rename = this.model.name;
+				this.$message.error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText'));
+				return;
+			}
+			this.model.name = this.rename;
+			let params = {
+				name: this.model.name,
+				id: this.model.id
+			};
+			this.$api('connections')
+				.patchId(params)
+				.then(() => {
+					this.$message.success(this.$t('message.saveOK'));
+					this.dialogEditNameVisible = false;
+				})
+				.catch(err => {
+					if (err && err.response) {
+						if (err.response.msg.indexOf('duplication for names') > -1) {
+							this.$message.error(this.$t('dataForm.error.connectionNameExist'));
+						} else {
+							this.$message.error(err.response.msg);
+						}
+					} else {
+						this.$message.error(this.$t('dataForm.saveFail'));
+					}
+				});
+		},
 		// 跳转到重复数据源
 		clickLinkSource() {
 			window.open('/#/connection/' + this.connectionObj.id, '_blank');
@@ -329,12 +434,8 @@ export default {
 				this.$message.error(this.$t('dataForm.form.agentMsg'));
 			}
 		},
-		//选择创建类型
-		handleDialogDatabaseTypeVisible() {
-			this.dialogDatabaseTypeVisible = false;
-		},
 		handleDatabaseType(type) {
-			this.handleDialogDatabaseTypeVisible();
+			this.dialogDatabaseTypeVisible = false;
 			if (this.whiteList.includes(type)) {
 				this.$router.push({
 					path: '/connections/create',
@@ -369,14 +470,32 @@ export default {
 			flex-direction: column;
 			.form {
 				overflow-y: auto;
+				overflow-x: hidden;
 				padding: 0 20px;
 				width: 640px;
 				margin: 0 auto;
+				padding-right: 100px;
+				.url-tip {
+					font-size: 12px;
+					color: #999;
+					line-height: 18px;
+				}
+			}
+			.edit-header-box {
+				border-bottom: 1px solid #dedee4;
+				padding-bottom: 20px;
+				margin-bottom: 20px;
+			}
+			.edit-header {
+				display: flex;
+				justify-content: flex-start;
+				width: 826px;
+				margin: 40px auto 0 auto;
 			}
 			.title {
 				display: flex;
 				justify-content: flex-start;
-				width: 826px;
+				width: 910px;
 				margin: 40px auto 20px auto;
 			}
 			.img-box {
@@ -395,20 +514,55 @@ export default {
 			}
 			.content {
 				display: flex;
-				justify-content: center;
 				align-items: center;
 				margin-left: 15px;
-				font-size: 28px;
+				font-size: 22px;
+				max-width: 445px;
+				white-space: nowrap;
+				word-break: break-word;
+				text-overflow: ellipsis;
+				overflow: hidden;
 			}
 			.addBtn {
 				color: #48b6e2;
 				cursor: pointer;
 				font-size: 12px;
-				margin-top: 26px;
+				margin-top: 22px;
 				margin-left: 10px;
+			}
+			.content-box {
+				.addBtn {
+					color: #48b6e2;
+					cursor: pointer;
+					font-size: 12px;
+					margin-top: 0;
+					margin-left: 10px;
+				}
+				.tip {
+					margin-left: 15px;
+					font-size: 12px;
+					color: #999;
+					margin-top: 5px;
+					line-height: 18px;
+					width: 430px;
+				}
 			}
 			.test {
 				margin-left: 200px;
+				margin-bottom: 20px;
+			}
+		}
+		.status {
+			font-size: 12px;
+			margin-top: 2px;
+			.error {
+				color: #d54e21;
+			}
+			.success {
+				color: #0ab300;
+			}
+			.warning {
+				color: #e6a23c;
 			}
 		}
 	}
@@ -425,12 +579,24 @@ export default {
 		border-left: none;
 	}
 	.footer {
-		height: 46px;
-		background-color: #fafafa;
-		padding-left: 27%;
-		border: 1px solid #dedee4;
+		height: 62px;
+		background-color: #fff;
+		padding-left: 22%;
 		border-left: none;
-		line-height: 46px;
+		line-height: 62px;
+		.footer-btn {
+			width: 440px;
+			display: flex;
+			border-top: 1px solid #dedee4;
+			align-items: center;
+			justify-content: flex-end;
+			padding-top: 18px;
+		}
+		button {
+			width: 140px;
+			height: 32px;
+			margin-left: 20px;
+		}
 	}
 }
 </style>
@@ -439,11 +605,18 @@ export default {
 	.el-form-item__label .e-form-builder-item-label {
 		float: right;
 	}
-	margin-bottom: 16px;
+	margin-top: 16px;
 }
 .databaseFrom .el-form--label-right .el-form-item {
 	.el-form-item__label {
 		display: inline-block;
+	}
+}
+.databaseFrom .form {
+	.url-tip {
+		b {
+			color: #666;
+		}
 	}
 }
 </style>

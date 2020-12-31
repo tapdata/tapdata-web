@@ -282,10 +282,11 @@ import AddBtnTip from './addBtnTip';
 import simpleScene from './SimpleScene';
 import newDataFlow from '@/components/newDataflowName';
 import DownAgent from '../downAgent/agentDown';
-import { FORM_DATA_KEY, JOIN_TABLE_TPL } from '../../editor/constants';
+import { FORM_DATA_KEY, JOIN_TABLE_TPL, DATABASE_TYPE_MAPPING } from '../../editor/constants';
 import { EditorEventType } from '../../editor/lib/events';
 import _ from 'lodash';
 import SkipError from '../../components/SkipError';
+import { uuid } from '../../editor/util/Schema';
 
 const dataFlowsApi = factory('DataFlows');
 const Setting = factory('Setting');
@@ -458,9 +459,9 @@ export default {
 			} else {
 				this.loading = false;
 				this.onGraphChanged();
-				this.loading = false;
 				this.setEditable(true);
-				if (!this.dataFlow) document.title = this.$t('dataFlow.newTaksName');
+				this.editor.ui.setName(this.$t('dataFlow.newTaksName') + '_' + uuid().slice(0, 7));
+				// if (!this.dataFlow) document.title = this.$t('dataFlow.newTaksName');
 			}
 			this.setSelector(this.$route.query.mapping);
 		},
@@ -596,8 +597,13 @@ export default {
 			this.dataFlowId = dataFlow.id;
 			this.status = dataFlow.status;
 			this.executeMode = dataFlow.executeMode;
-			this.sync_type = dataFlow.setting.sync_type;
+			if (dataFlow.setting) {
+				this.sync_type = dataFlow.setting.sync_type;
+			}
 			this.dataFlow = dataFlow;
+			if (!dataFlow.name) {
+				dataFlow.name = this.$t('dataFlow.newTaksName') + '_' + uuid().slice(0, 7);
+			}
 			document.title = dataFlow.name;
 			// 管理端api创建任务来源以及editorData 数据丢失情况
 			if (!dataFlow.editorData && dataFlow.stages) {
@@ -696,7 +702,7 @@ export default {
 			localStorage.removeItem(this.tempId);
 			let self = this,
 				promise = null,
-				lastString = '',
+				// lastString = '',
 				data = this.getDataFlowData(true);
 
 			let params = {
@@ -709,13 +715,13 @@ export default {
 			if (result && result.data.length > 0) {
 				this.flowDataName = result.data[0].name;
 				if (this.flowDataName) {
-					lastString = this.flowDataName.charAt(this.flowDataName.length - 1, 1);
+					// lastString = this.flowDataName.charAt(this.flowDataName.length - 1, 1);
 
-					if (lastString > 1 && data.name == this.$t('dataFlow.newTaksName')) {
-						data.name = data.name + (lastString * 1 + 1);
-					} else {
-						data.name = data.name;
-					}
+					// if (lastString > 1 && data.name == this.$t('dataFlow.newTaksName')) {
+					// 	data.name = data.name + (lastString * 1 + 1);
+					// } else {
+					data.name = data.name;
+					// }
 				}
 			}
 			log('DataFlows Draft Save Params: ', data);
@@ -1504,6 +1510,7 @@ export default {
 						};
 						cells.push(node);
 					} else if (v.type === 'database') {
+						let map = DATABASE_TYPE_MAPPING;
 						let node = {
 							type: mapping[v.type],
 							id: v.id,
@@ -1514,6 +1521,9 @@ export default {
 							attrs: {
 								label: {
 									text: v.name !== '' && v.name ? breakText.breakText(v.name, 125) : v.type
+								},
+								image: {
+									xlinkHref: map[v.database_type].shapeImage
 								}
 							}
 						};

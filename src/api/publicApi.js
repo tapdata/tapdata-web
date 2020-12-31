@@ -4,8 +4,8 @@ import { signOut } from '../util/util';
 import { Message } from 'element-ui';
 import i18n from '../i18n/i18n';
 
-let pending = {}; //声明一个数组用于存储每个ajax请求的取消函数和ajax标识
-let CancelToken = axios.CancelToken;
+let pending = []; //声明一个数组用于存储每个ajax请求的取消函数和ajax标识
+const CancelToken = axios.CancelToken;
 
 axios.interceptors.request.use(
 	function(config) {
@@ -17,15 +17,15 @@ axios.interceptors.request.use(
 		} else {
 			config.url = `${config.url}?access_token=${accessToken}`;
 		}
-		let key = config.url + '&' + config.method;
+		let key = JSON.stringify(config);
 		let cancelFunc = null;
 		config.cancelToken = new CancelToken(c => {
 			cancelFunc = c;
 		});
-		if (pending[key]) {
+		if (pending.includes(key)) {
 			cancelFunc();
 		} else {
-			pending[key];
+			pending.push(key);
 		}
 		return config;
 	},
@@ -37,8 +37,9 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
 	response => {
 		return new Promise((resolve, reject) => {
-			let key = response.config.url + '&' + response.config.method;
-			delete pending[key];
+			let key = JSON.stringify(response.config);
+			let index = pending.findIndex(it => it === key);
+			pending.splice(index, 1);
 			let data = response.data;
 			if (data.code === 'ok') {
 				return resolve({
@@ -119,11 +120,10 @@ axios.interceptors.response.use(
 			Message.error({
 				message: i18n.t('errorCode.timeout')
 			});
-		} else if (!error.message) {
-			return;
-		} else {
-			return Promise.reject(error);
 		}
+		return new Promise(() => {
+			return Promise.reject(error);
+		});
 	}
 );
 

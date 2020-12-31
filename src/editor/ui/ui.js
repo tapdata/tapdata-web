@@ -19,7 +19,7 @@ export default class UI extends Component {
 	doInit() {
 		let editTitle = i18n.t('message.modifyName');
 		// let saveTitle = i18n.t('dataFlow.button.save');
-		let taskName = i18n.t('dataFlow.newTaksName');
+		let taskName = '';
 		let changeName = i18n.t('dataFlow.changeName');
 		// <i class='iconfont icon-baocun el-icon' id="submit" title="${saveTitle}" style="display: none;color:##48B6E2;cursor: pointer" ></i>
 		this.el = $(`<div class="editor">
