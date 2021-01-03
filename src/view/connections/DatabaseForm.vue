@@ -328,7 +328,7 @@ export default {
 					if (!params.id) {
 						delete params.id;
 					}
-					if (!params.id && this.status && !['ready'].includes(this.status)) {
+					if (!params.id && !['ready'].includes(this.status)) {
 						params['status'] = 'testing'; //默认值
 					}
 					delete params.sslKeyFile;
