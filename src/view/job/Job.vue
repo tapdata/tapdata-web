@@ -652,7 +652,8 @@ export default {
 							'fullDocument.listtags': true,
 							'fullDocument.finishTime': true,
 							'fullDocument.startTime': true,
-							'fullDocument.errorEvents': true
+							'fullDocument.errorEvents': true,
+							'fullDocument.milestones': true
 						}
 					}
 				};

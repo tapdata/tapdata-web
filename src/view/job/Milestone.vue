@@ -33,10 +33,10 @@
 
 <script>
 import factory from '../../api/factory';
-// import ws from '../../api/ws';
+import ws from '../../api/ws';
 const dataFlowsAPI = factory('DataFlows');
 
-let interval = null;
+let event = null;
 
 export default {
 	props: {
@@ -51,28 +51,20 @@ export default {
 			list: []
 		};
 	},
-	mounted() {
-		this.startRunning();
-		this.editor.on('dataFlow:reset', () => {
-			this.startRunning();
-		});
+	created() {
+		this.getData(true);
+		event = data => {
+			let dataflow = data.data.fullDocument;
+			if (dataflow && dataflow.milestones) {
+				this.formatData(dataflow.milestones);
+			}
+		};
+		ws.on('watch', event);
 	},
 	destroyed() {
-		this.stopRunning();
+		ws.off('watch', event);
 	},
 	methods: {
-		startRunning() {
-			this.getData(true);
-			interval = setInterval(() => {
-				this.getData();
-			}, 3000);
-		},
-		stopRunning() {
-			if (interval) {
-				clearTimeout(interval);
-				interval = null;
-			}
-		},
 		checkError(msg) {
 			const h = this.$createElement;
 			this.$msgbox({
@@ -110,23 +102,26 @@ export default {
 								this.stopRunning();
 							}
 							let milestones = dataFlow.milestones || [];
-							this.list = milestones.map(m => {
-								let time = m.status === 'running' ? m.start : m.end;
-								if (time) {
-									time = this.$moment(time).format('YYYY-MM-DD HH:mm:ss');
-								}
-								return {
-									label: this.$t(`milestone.${m.code}`),
-									status: m.status,
-									fromNow: time || '-'
-								};
-							});
+							this.formatData(milestones);
 						}
 					})
 					.finally(() => {
 						this.loading = false;
 					});
 			}
+		},
+		formatData(milestones = []) {
+			this.list = milestones.map(m => {
+				let time = m.status === 'running' ? m.start : m.end;
+				if (time) {
+					time = this.$moment(time).format('YYYY-MM-DD HH:mm:ss');
+				}
+				return {
+					label: this.$t(`milestone.${m.code}`),
+					status: m.status,
+					fromNow: time || '-'
+				};
+			});
 		}
 	}
 };
