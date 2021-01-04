@@ -103,6 +103,10 @@
 					item.value
 				}}</span>
 			</li>
+			<li v-show="data.database_port">
+				<span class="label">{{ $t('dataForm.form.port') }}</span>
+				<span class="value align-center"> {{ data.database_port }}</span>
+			</li>
 		</ul>
 		<Test
 			ref="test"
