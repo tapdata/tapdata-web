@@ -1510,7 +1510,7 @@ export default {
 			this.formData.status = '';
 			this.formData.way = '';
 			this.formData.executionStatus = '';
-			this.$refs.classification.clear();
+			this.$refs && this.$refs.classification.clear();
 			this.checkedTags = [];
 			this.currentPage = 1;
 			this.screenFn();

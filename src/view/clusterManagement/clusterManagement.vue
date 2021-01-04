@@ -85,6 +85,12 @@
 												"
 												>{{ $t('message.restart') }}</el-button
 											>
+											<el-button
+												type="text"
+												:disabled="!canUpdate"
+												@click="updateFn(item, item.management.status, 'management', 'update')"
+												>{{ $t('message.update') }}</el-button
+											>
 										</div>
 									</el-col>
 								</el-row>
@@ -215,6 +221,7 @@
 import addServe from './component/addServe';
 import factory from '../../api/factory';
 const cluster = factory('cluster');
+const clusterVersion = factory('clusterVersion');
 export default {
 	name: 'clusterManagement',
 	components: { addServe },
@@ -235,6 +242,8 @@ export default {
 			timer: null,
 			downLoadAgetntdialog: false,
 			downLoadNum: 0,
+			version: null,
+			canUpdate: true,
 			managementType: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT')
 		};
 	},
@@ -408,7 +417,22 @@ export default {
 				});
 			}
 		},
-		// 重启---关闭---启动
+		updateFn(item) {
+			let data = {
+				uuid: item.uuid,
+				server: 'agent',
+				operation: 'update'
+			};
+			this.operationFn(data);
+		},
+		async getVersion(item) {
+			await clusterVersion.get({ filter: JSON.stringify({ where: { uuid: item.uuid } }) }).then(res => {
+				if (res.status === 200) {
+					this.getDataApi();
+				}
+			});
+		},
+		// 重启---关闭---启动     --版本--更新
 		async operationFn(data) {
 			await cluster.updateStatus(data).then(res => {
 				if (res.status === 200) {
@@ -418,11 +442,7 @@ export default {
 		},
 		// 筛选
 		screenFn() {
-			if (this.sourch) {
-				this.getDataApi();
-			} else {
-				this.getDataApi();
-			}
+			this.getDataApi();
 			this.sourch = '';
 		},
 
@@ -454,6 +474,10 @@ export default {
 						}
 					});
 					this.waterfallData = newWaterfallData;
+					//自动升级，只有一个agent
+					if (this.list.length && !this.version) {
+						this.getVersion(this.list[0]);
+					}
 				}
 			});
 		},
