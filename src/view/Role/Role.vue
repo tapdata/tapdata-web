@@ -500,16 +500,16 @@ export default {
 								}
 							});
 					}
-					if (res && res.data && res.data.length === 0) {
-						if (mappingData.length)
-							mappingData.filter(item => {
-								if (item.children && item.children.length) {
-									item.children.filter(childItem => {
-										this.$set(childItem, 'checked', childItem.type === 'read');
-									});
-								}
-							});
-					}
+					// if (res && res.data && res.data.length === 0) {
+					// 	if (mappingData.length)
+					// 		mappingData.filter(item => {
+					// 			if (item.children && item.children.length) {
+					// 				item.children.filter(childItem => {
+					// 					this.$set(childItem, 'checked', childItem.type === 'read');
+					// 				});
+					// 			}
+					// 		});
+					// }
 				})
 				.finally(() => {
 					this.loading = false;
@@ -649,7 +649,10 @@ export default {
 					if (event) {
 						this.$set(children[i], 'checked', true);
 					} else {
-						this.$set(children[i], 'checked', false);
+						if (children[i].type !== 'read') {
+							this.$set(children[i], 'checked', false);
+						}
+
 						this.$set(children[i], 'checkAllData', false);
 						this.$set(item, 'checkedAllData', false);
 					}
