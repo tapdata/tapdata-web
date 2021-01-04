@@ -285,7 +285,6 @@ export default {
 			.error-tips {
 				margin-bottom: 22px;
 				padding: 0 15px;
-				height: 42px;
 				line-height: 42px;
 				background: rgba(254, 240, 240, 1);
 				border: 1px solid rgba(245, 108, 108, 0.44);
