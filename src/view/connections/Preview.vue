@@ -67,6 +67,7 @@
 									class="btn"
 									size="mini"
 									@click="reload()"
+									:disabled="!['ready'].includes(this.status)"
 								>
 									<i class="iconfont icon-kujitongbucopy">{{
 										$t('connection.preview.reloadName')
