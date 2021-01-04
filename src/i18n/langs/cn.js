@@ -64,12 +64,12 @@ const cn = {
 		signOutMsg: '您确定要退出登录吗？',
 		save: '保存',
 		customerService: {
-			technicalSupport: '技术支持',
+			technicalSupport: '邮件支持',
 			technicalSupportText: '在使用过程中，有任何问题，请发送邮件到',
 			technicalSupportText1: '，我们会尽快答复。',
 			userSupport: 'team@tapdata.io',
-			otherDmands: '其他需求',
-			otherDmandsText: '其他需求，请扫描下方企业微信二维码。'
+			otherDmands: '微信支持',
+			otherDmandsText: '请扫描下方企业微信二维码, 联系我们获取支持'
 		},
 		signIn: {
 			slogan: '像自来水一样方便地使用您的数据',
