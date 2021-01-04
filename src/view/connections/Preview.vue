@@ -67,11 +67,6 @@
 									class="btn"
 									size="mini"
 									@click="reload()"
-									:disabled="
-										!['ready'].includes(this.status) ||
-											!data.tableCount ||
-											['loading'].includes(this.loadFieldsStatus)
-									"
 								>
 									<i class="iconfont icon-kujitongbucopy">{{
 										$t('connection.preview.reloadName')
