@@ -323,6 +323,7 @@ export default {
 			timeUnitOptions: ['second', 'minute', 'hour', 'day', 'week', 'month'],
 			pickerTimes: [],
 			htmlMD: '',
+			removeVisible: false,
 			form: {
 				flowId: '',
 				name: '',
@@ -395,6 +396,8 @@ export default {
 							data.tasks = data.tasks.map(t => {
 								t.sourceTable = [t.source.connectionId, t.source.table];
 								t.targetTable = [t.target.connectionId, t.target.table];
+								t.source = Object.assign({}, TABLE_PARAMS, t.source);
+								t.target = Object.assign({}, TABLE_PARAMS, t.target);
 								return t;
 							});
 							this.form = data;
@@ -742,7 +745,9 @@ export default {
 			this.dialogAddScriptVisible = true;
 		},
 		removeScript(index) {
-			this.form.tasks[index].webScript = '';
+			this.$confirm(this.$t('message.verifyConfirm'), this.$t('message.delete')).then(() => {
+				this.form.tasks[index].webScript = '';
+			});
 		},
 		editScript(index) {
 			this.formIndex = index;

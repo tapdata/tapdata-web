@@ -102,15 +102,16 @@ class WSClient extends EventEmitter {
 	}
 
 	handlerOpen() {
-		// self.subscribeDataAgent();
+		log('Websocket is opened!');
 	}
 
 	handlerClose() {
-		//log("Disconnect server.");
+		log('Websocket is closed, ready to reconnect.');
 		this.reconnect();
 	}
 
-	handlerError() {
+	handlerError(e) {
+		window['console'].error('WSClient connection error', e);
 		//log("WSClient connection error", e.message);
 	}
 
@@ -128,7 +129,7 @@ class WSClient extends EventEmitter {
 				log(`Parse message fail: ` + msg, e);
 			}
 		} else {
-			log.error('Received message is not JSON Object', msg);
+			window['console'].error('Received message is not JSON Object', msg);
 			return;
 		}
 
@@ -222,6 +223,7 @@ class WSClient extends EventEmitter {
 		if (['localhost', '127.0.0.1'].includes(hostname)) {
 			host = hostname + ':3030';
 		}
+		// host = '192.168.1.181:30300';
 		return `${location.protocol.indexOf('https') === 0 ? 'wss:' : 'ws:'}//${host}/ws/agent`;
 	}
 }

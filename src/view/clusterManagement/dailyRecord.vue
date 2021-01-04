@@ -1,69 +1,75 @@
 <template>
 	<div class="journal" ref="boxHeight">
 		<el-row class="fun-area" :gutter="20">
-			<el-form ref="form" :model="form" label-width="80px">
-				<el-col :span="8">
-					<el-form-item :label="$t('message.selectTime')">
-						<el-col :span="11">
-							<el-date-picker
-								v-model="form.startDate"
-								type="date"
-								:picker-options="pickerStartDate"
-								style="width: 100%;"
-								:placeholder="$t('message.selectDate')"
-							></el-date-picker>
-						</el-col>
-						<el-col class="line" :span="2">-</el-col>
-						<el-col :span="11">
-							<el-date-picker
-								v-model="form.closeDate"
-								type="date"
-								:picker-options="pickerCloseDate"
-								style="width: 100%;"
-								:placeholder="$t('message.selectDate')"
-							></el-date-picker>
-						</el-col>
-					</el-form-item>
-				</el-col>
-				<el-col :span="4">
-					<el-form-item :label="$t('message.server')">
-						<el-select v-model="form.ip" :placeholder="$t('message.placeholderSelect')">
-							<el-option
-								v-for="item in ipList"
-								:label="item.value"
-								:value="item.value"
-								:key="item.value"
-							></el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col :span="4">
-					<el-form-item :label="$t('message.serviceType')">
-						<el-select v-model="form.serverType" :placeholder="$t('message.placeholderSelect')">
-							<el-option
-								v-for="item in serverTypeList"
-								:label="item.lable"
-								:value="item.value"
-								:key="item.value"
-							></el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col :span="4">
-					<el-form-item :label="$t('message.level')">
-						<el-select v-model="form.level" :placeholder="$t('message.placeholderSelect')">
-							<el-option
-								v-for="item in levelList"
-								:label="item.lable"
-								:value="item.value"
-								:key="item.value"
-							></el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col :span="4" class="center">
-					<el-button type="primary" @click="screenFn">{{ $t('message.filter') }}</el-button>
-				</el-col>
+			<el-form ref="form" inline size="mini" label-width="80px" style="padding-left: 20px;" :model="form">
+				<el-form-item :label="$t('message.selectTime')">
+					<el-date-picker
+						type="daterange"
+						range-separator="-"
+						:start-placeholder="$t('message.selectDate')"
+						:end-placeholder="$t('message.selectDate')"
+						:value="[form.startDate, form.closeDate]"
+						@input="
+							v => {
+								form.startDate = v[0];
+								form.closeDate = v[1];
+								getDataApi();
+							}
+						"
+					></el-date-picker>
+				</el-form-item>
+				<el-form-item :label="$t('message.server')">
+					<el-select v-model="form.ip" :placeholder="$t('message.placeholderSelect')" @input="getDataApi()">
+						<el-option
+							v-for="item in ipList"
+							:label="item.value"
+							:value="item.value"
+							:key="item.value"
+						></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item :label="$t('message.serviceType')">
+					<el-select
+						v-model="form.serverType"
+						:placeholder="$t('message.placeholderSelect')"
+						@input="getDataApi()"
+					>
+						<el-option
+							v-for="item in serverTypeList"
+							:label="item.lable"
+							:value="item.value"
+							:key="item.value"
+						></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item :label="$t('message.level')">
+					<el-select
+						v-model="form.level"
+						:placeholder="$t('message.placeholderSelect')"
+						@input="getDataApi()"
+					>
+						<el-option
+							v-for="item in levelList"
+							:label="item.lable"
+							:value="item.value"
+							:key="item.value"
+						></el-option>
+					</el-select>
+				</el-form-item>
+				<el-button
+					type="primary"
+					@click="
+						form = {
+							startDate: '',
+							closeDate: '',
+							level: '',
+							serverType: '',
+							ip: ''
+						};
+						getDataApi();
+					"
+					>{{ $t('button.reset') }}</el-button
+				>
 			</el-form>
 		</el-row>
 		<div class="content" ref="contentHeight">
@@ -132,8 +138,8 @@ export default {
 			totalNum: 0,
 			tableHeight: 100,
 			form: {
-				startDate: null,
-				closeDate: null,
+				startDate: '',
+				closeDate: '',
 				level: '',
 				serverType: '',
 				ip: ''
@@ -150,19 +156,7 @@ export default {
 				{ lable: 'apiServer', value: 'apiServer' },
 				{ lable: 'tapdataAgent', value: 'tapdataAgent' }
 			],
-			ipList: [],
-			pickerStartDate: {
-				disabledDate: time => {
-					if (this.form.closeDate) {
-						return time.getTime() > this.form.closeDate;
-					}
-				}
-			},
-			pickerCloseDate: {
-				disabledDate: time => {
-					return time.getTime() < this.form.startDate;
-				}
-			}
+			ipList: []
 		};
 	},
 
@@ -188,8 +182,8 @@ export default {
 				}
 			});
 		},
-		// 筛选
-		screenFn() {
+		// 获取数据
+		async getDataApi() {
 			let params = {
 				'filter[where][date][lt]': this.form.closeDate,
 				'filter[where][date][gt]': this.form.startDate,
@@ -201,26 +195,14 @@ export default {
 				'filter[skip]': this.currpage,
 				'filter[order]': 'last_updated DESC'
 			};
-
 			let obj = {};
 			for (let i in params) {
 				if (params[i]) {
 					obj[i] = params[i];
 				}
 			}
-			this.getDataApi(obj);
-
-			this.form = {
-				closeDate: '',
-				startDate: '',
-				level: '',
-				serverType: '',
-				ip: ''
-			};
-		},
-		// 获取数据
-		async getDataApi(params) {
-			// if (!parseInt(this.$cookie.get('isAdmin') && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')) {
+			params = obj;
+			// if (!parseInt(this.$cookie.get('isAdmin'))) {
 			// 	params['filter[where][username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
 			// }
 			logs.get(params).then(res => {

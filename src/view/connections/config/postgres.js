@@ -10,23 +10,6 @@ export default function(vm) {
 			supportUpdatePk: false,
 			plugin_name: 'wal2json_streaming'
 		},
-		checkItems() {
-			let vm = this;
-			let val = vm.model.connection_type;
-			let databaseDatetypeWithoutTimezone = vm.config.items.find(
-				item => item.field === 'database_datetype_without_timezone'
-			);
-			let supportUpdatePk = vm.config.items.find(item => item.field === 'supportUpdatePk');
-			vm.$nextTick(() => {
-				if (databaseDatetypeWithoutTimezone) {
-					databaseDatetypeWithoutTimezone.show = val && ['source', 'source_and_target'].includes(val);
-				}
-				if (supportUpdatePk) {
-					supportUpdatePk.show = val && ['target', 'source_and_target'].includes(val);
-				}
-				vm.$refs.form.$forceUpdate();
-			});
-		},
 		items: [
 			{
 				type: 'radio',
@@ -49,12 +32,7 @@ export default function(vm) {
 						value: 'target'
 					}
 				],
-				required: true,
-				on: {
-					change() {
-						vm.checkItems();
-					}
-				}
+				required: true
 			},
 			{
 				type: 'input',
@@ -167,7 +145,13 @@ export default function(vm) {
 				field: 'database_datetype_without_timezone',
 				label: vm.$t('dataForm.form.timeZone'),
 				tips: vm.$t('dataForm.form.timeZoneTips'),
-				options: []
+				options: [],
+				show: true
+			},
+			{
+				type: 'slot',
+				slot: 'timezone',
+				show: true
 			}
 		]
 	};

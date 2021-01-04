@@ -652,7 +652,8 @@ export default {
 							'fullDocument.listtags': true,
 							'fullDocument.finishTime': true,
 							'fullDocument.startTime': true,
-							'fullDocument.errorEvents': true
+							'fullDocument.errorEvents': true,
+							'fullDocument.milestones': true
 						}
 					}
 				};
@@ -1333,6 +1334,7 @@ export default {
 						.reset(data.id)
 						.then(() => {
 							self.$message.success(self.$t('message.resetOk'));
+							self.editor.emit('dataFlow:reset');
 						})
 						.catch(err => {
 							if (err && err.response.status === 500) {

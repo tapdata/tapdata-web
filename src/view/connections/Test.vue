@@ -17,6 +17,7 @@
 			:data="testData.testLogs"
 			style="width: 100%"
 			class="test-block"
+			:row-style="rowStyleHandler"
 			v-show="testData.testLogs && testData.testLogs.length > 0"
 		>
 			<el-table-column prop="show_msg" :label="$t('dataForm.test.items')" width="250">
@@ -62,9 +63,10 @@ export default {
 				progress: 0
 			},
 			wsError: '',
+			timer: null,
 			colorMap: {
 				passed: '#70AD47',
-				waiting: '#666',
+				waiting: '#aaaaaa',
 				failed: '#f56c6c'
 			},
 			statusMap: {
@@ -75,60 +77,63 @@ export default {
 		};
 	},
 	mounted() {
-		this.$on('startWS', () => {
-			this.start();
-		});
+		this.handleWS();
 	},
 	destroyed() {
 		this.clearInterval();
 	},
 	methods: {
+		rowStyleHandler({ row }) {
+			return row.status === 'waiting' ? { background: '#fff' } : '';
+		},
 		handleClose() {
 			this.$emit('update:dialogTestVisible', false);
 		},
-		start() {
+		handleWS() {
+			ws.ready(() => {
+				//接收数据
+				ws.on('testConnectionResult', data => {
+					let result = data.result || [];
+					this.wsError = data.status;
+					let testData = {
+						wsError: data.status
+					};
+					if (result.response_body) {
+						let validate_details = result.response_body.validate_details || [];
+						this.testData.testLogs = validate_details;
+						testData['testLogs '] = validate_details;
+						testData['status'] = result.status;
+					}
+					this.$emit('returnTestData', testData);
+				});
+				//长连接失败
+				ws.on('testConnection', data => {
+					this.wsError = data.status;
+					let testData = {
+						wsError: data.status
+					};
+					this.$emit('returnTestData', testData);
+				});
+			});
+		},
+		start(updateSchema) {
 			let msg = {
 				type: 'testConnection',
 				data: this.formData
 			};
+			msg.data['updateSchema'] = false; //是否需要更新Schema
 			this.wsError = '';
 			this.testData.testLogs = [];
-			//接收数据
-			ws.on('testConnectionResult', data => {
-				let result = data.result || [];
-				this.wsError = data.status;
-				let testData = {
-					wsError: data.status
-				};
-				if (result.response_body) {
-					let validate_details = result.response_body.validate_details || [];
-					this.testData.testLogs = validate_details;
-					testData['testLogs '] = validate_details;
-					testData['status'] = result.status;
-				}
-				this.$emit('returnTestData', testData);
+			if (updateSchema) {
+				msg.data['updateSchema'] = updateSchema; //是否需要更新Schema
+			}
+			ws.ready(() => {
+				ws.send(msg);
 			});
-			//长连接失败
-			ws.on('testConnection', data => {
-				this.wsError = data.status;
-				let testData = {
-					wsError: data.status
-				};
-				this.$emit('returnTestData', testData);
-			});
-			//建立连接
-			this.timer = setInterval(() => {
-				if (ws.ws.readyState == 1) {
-					ws.send(msg);
-					clearInterval(this.timer);
-				}
-			}, 2000);
 		},
 		clearInterval() {
 			// 取消长连接
 			ws.off('testConnection');
-			clearInterval(this.timer);
-			this.timer = null;
 			this.testData.testLogs = [];
 		}
 	}

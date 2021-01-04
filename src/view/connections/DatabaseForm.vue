@@ -35,54 +35,56 @@
 						</div>
 					</div>
 				</header>
-				<div class="form">
-					<form-builder ref="form" v-model="model" :config="config">
-						<div
-							class="url-tip"
-							slot="urlTip"
-							v-if="model.isUrl"
-							v-html="$t('dataForm.form.uriTips.content')"
-						></div>
-						<div class="url-tip" slot="tableFilter">{{ $t('dataForm.form.tableFilterTips') }}</div>
-						<div class="url-tip" slot="timezone" v-if="model.connection_type !== ''">
-							{{ $t('dataForm.form.timeZoneTips') }}
-						</div>
-					</form-builder>
-					<el-button size="mini" class="test" @click="startTest()">{{
-						$t('connection.testConnection')
-					}}</el-button>
-					<span class="status">
-						<span class="error" v-if="['invalid'].includes(status)">
-							<i class="el-icon-error"></i>
-							<span>
-								{{ $t('connection.status.invalid') }}
+				<div class="form-wrap">
+					<div class="form">
+						<form-builder ref="form" v-model="model" :config="config">
+							<div
+								class="url-tip"
+								slot="urlTip"
+								v-if="model.isUrl"
+								v-html="$t('dataForm.form.uriTips.content')"
+							></div>
+							<div class="url-tip" slot="tableFilter">{{ $t('dataForm.form.tableFilterTips') }}</div>
+							<div class="url-tip" slot="timezone">
+								{{ $t('dataForm.form.timeZoneTips') }}
+							</div>
+						</form-builder>
+						<el-button size="mini" class="test" @click="startTest()">{{
+							$t('connection.testConnection')
+						}}</el-button>
+						<span class="status">
+							<span class="error" v-if="['invalid'].includes(status)">
+								<i class="el-icon-error"></i>
+								<span>
+									{{ $t('connection.status.invalid') }}
+								</span>
+							</span>
+							<span class="success" v-if="['ready'].includes(status)">
+								<i class="el-icon-success"></i>
+								<span>
+									{{ $t('connection.status.ready') }}
+								</span>
+							</span>
+							<span class="warning" v-if="['testing'].includes(status)">
+								<i class="el-icon-warning"></i>
+								<span>
+									{{ $t('connection.status.testing') }}
+								</span>
 							</span>
 						</span>
-						<span class="success" v-if="['ready'].includes(status)">
-							<i class="el-icon-success"></i>
-							<span>
-								{{ $t('connection.status.ready') }}
-							</span>
-						</span>
-						<span class="warning" v-if="['testing'].includes(status)">
-							<i class="el-icon-warning"></i>
-							<span>
-								{{ $t('connection.status.testing') }}
-							</span>
-						</span>
-					</span>
+					</div>
 				</div>
+				<footer slot="footer" class="footer">
+					<div class="footer-btn">
+						<el-button size="mini" @click="goBack()">{{ $t('dataForm.cancel') }}</el-button>
+						<el-button size="mini" type="primary" :loading="testing" @click="submit">
+							{{ $t('dataForm.submit') }}
+						</el-button>
+					</div>
+				</footer>
 			</main>
 			<gitbook></gitbook>
 		</div>
-		<footer slot="footer" class="footer">
-			<div class="footer-btn">
-				<el-button size="mini" @click="goBack()">{{ $t('dataForm.cancel') }}</el-button>
-				<el-button size="mini" type="primary" :loading="testing" @click="submit">
-					{{ $t('dataForm.submit') }}
-				</el-button>
-			</div>
-		</footer>
 		<Test
 			ref="test"
 			:dialogTestVisible.sync="dialogTestVisible"
@@ -323,12 +325,14 @@ export default {
 						nextRetry: null,
 						response_body: {},
 						project: '',
+						submit: true,
 						listtags: []
 					});
 					if (!params.id) {
 						delete params.id;
-					} else {
-						params['status'] = 'testing'; //id 存在则改变status
+					}
+					if (!params.id && !['ready'].includes(this.status)) {
+						params['status'] = 'testing'; //默认值
 					}
 					delete params.sslKeyFile;
 					delete params.sslCAFile;
@@ -341,7 +345,6 @@ export default {
 							this.submitBtnLoading = false;
 							let id = res.data.id;
 							this.model.id = id;
-							this.startTest();
 							this.$message.success('保存成功');
 							this.goBack();
 						})
@@ -376,10 +379,11 @@ export default {
 							})
 							.then(() => {
 								this.dialogTestVisible = true;
-								this.$refs.test.$emit('startWS');
+								this.$refs.test.start();
 							});
 					} else {
-						this.$refs.test.$emit('startWS');
+						this.dialogTestVisible = true;
+						this.$refs.test.start();
 					}
 				}
 			});
@@ -468,13 +472,15 @@ export default {
 			display: flex;
 			flex: 1;
 			flex-direction: column;
-			.form {
+			.form-wrap {
+				display: flex;
 				overflow-y: auto;
-				overflow-x: hidden;
+			}
+			.form {
 				padding: 0 20px;
 				width: 640px;
 				margin: 0 auto;
-				padding-right: 100px;
+				padding-right: 200px;
 				.url-tip {
 					font-size: 12px;
 					color: #999;
@@ -482,20 +488,21 @@ export default {
 				}
 			}
 			.edit-header-box {
-				border-bottom: 1px solid #dedee4;
+				border-bottom: 1px solid #eee;
 				padding-bottom: 20px;
 				margin-bottom: 20px;
 			}
 			.edit-header {
 				display: flex;
 				justify-content: flex-start;
-				width: 826px;
-				margin: 40px auto 0 auto;
+				width: 578px;
+				margin: 0 auto;
+				margin-top: 40px;
 			}
 			.title {
 				display: flex;
 				justify-content: flex-start;
-				width: 910px;
+				width: 568px;
 				margin: 40px auto 20px auto;
 			}
 			.img-box {
@@ -507,7 +514,6 @@ export default {
 				background: #fff;
 				border: 1px solid #dedee4;
 				border-radius: 3px;
-				margin-left: 225px;
 				img {
 					width: 60%;
 				}
@@ -556,10 +562,10 @@ export default {
 			font-size: 12px;
 			margin-top: 2px;
 			.error {
-				color: #d54e21;
+				color: #f56c6c;
 			}
 			.success {
-				color: #0ab300;
+				color: #67c23a;
 			}
 			.warning {
 				color: #e6a23c;
@@ -581,11 +587,11 @@ export default {
 	.footer {
 		height: 62px;
 		background-color: #fff;
-		padding-left: 22%;
+		margin: 10px auto;
 		border-left: none;
 		line-height: 62px;
 		.footer-btn {
-			width: 440px;
+			width: 450px;
 			display: flex;
 			border-top: 1px solid #dedee4;
 			align-items: center;
@@ -610,6 +616,7 @@ export default {
 .databaseFrom .el-form--label-right .el-form-item {
 	.el-form-item__label {
 		display: inline-block;
+		padding: 0 20px 0 0;
 	}
 }
 .databaseFrom .form {

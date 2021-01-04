@@ -38,11 +38,11 @@
 					<span style="word-break: break-word" v-if="downLoadType === 'Linux'">{{
 						$t('dialog.downAgent.text')
 					}}</span>
-					<div v-else @click="handleDownLoad">
-						<span class="operaKey">
+					<div v-else>
+						<!-- <span class="operaKey">
 							<i class="iconfont icon-xiazai clickIcont"></i>
 							{{ $t('dialog.downAgent.downLoadAgent') }}</span
-						>
+						> -->
 						<span style="word-break: break-word">{{ $t('dialog.downAgent.windowsText') }}</span>
 					</div>
 
@@ -81,9 +81,9 @@
 				<ul class="installation-notes" v-else>
 					<li style="color: #F56C6C;">{{ $t('dialog.downAgent.windowsInstructionsText1') }}</li>
 					<li>{{ $t('dialog.downAgent.windowsInstructionsText2') }}</li>
-					<li>{{ $t('dialog.downAgent.windowsInstructionsText3') }}</li>
+					<!-- <li>{{ $t('dialog.downAgent.windowsInstructionsText3') }}</li> -->
 					<li style="padding-top: 10px;">{{ $t('dialog.downAgent.important') }}</li>
-					<li>{{ $t('dialog.downAgent.windowsInstructionsText5') }}</li>
+					<!-- <li>{{ $t('dialog.downAgent.windowsInstructionsText5') }}</li> -->
 					<li>{{ $t('dialog.downAgent.windowsInstructionsText4') }}</li>
 				</ul>
 			</section>
@@ -191,16 +191,16 @@ export default {
 		let self = this;
 		let version = window._TAPDATA_OPTIONS_.version;
 		this.windowLink =
-			'tapdata start backend --downloadUrl ' +
-			`http://resource.tapdata.net/package/feagent/${version}/ --token ` +
+			'docker run-itd ccr.ccs.tencentyun.com/tapdata/flow tapdata start backend --downloadUrl ' +
+			`ccr.ccs.tencentyun.com/tapdata/flow-enging:${version} ` +
 			this.$cookie.get('token') +
 			' ' +
 			this.$cookie.get('user_id');
 		this.LinuxLink =
 			'wget "' +
-			`http://resource.tapdata.net/package/feagent/${version}/tapdata` +
+			`https://resource.tapdata.net/package/feagent/${version}/tapdata` +
 			'" && chmod +x tapdata && ./tapdata start backend --downloadUrl ' +
-			`http://resource.tapdata.net/package/feagent/${version}/ --token ` +
+			`https://resource.tapdata.net/package/feagent/${version}/ --token ` +
 			this.$cookie.get('token') +
 			' ' +
 			this.$cookie.get('user_id');
@@ -258,10 +258,10 @@ export default {
 		},
 
 		// windows下载
-		handleDownLoad() {
-			let version = window._TAPDATA_OPTIONS_.version;
-			window.location = `http://resource.tapdata.net/package/feagent/${version}/tapdata.exe`;
-		},
+		// handleDownLoad() {
+		// 	let version = window._TAPDATA_OPTIONS_.version;
+		// 	window.location = `https://resource.tapdata.net/package/feagent/${version}/tapdata.exe`;
+		// },
 
 		// 复制命令行
 		onCopy() {

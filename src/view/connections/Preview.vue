@@ -75,9 +75,8 @@
 									v-readonlybtn="'datasource_edition'"
 									@click="reload()"
 									:disabled="
-										(permissionBtnDisabel('datasource_edition_all_data', userId) &&
-											!['ready'].includes(this.status)) ||
-											!data.tableCount
+										permissionBtnDisabel('datasource_edition_all_data', userId) &&
+											!['ready'].includes(this.status)
 									"
 								>
 									<i class="iconfont icon-kujitongbucopy">{{
@@ -115,6 +114,10 @@
 				<span class="value align-center" :class="{ 'align-top': item.label && item.label.length > 15 }">{{
 					item.value
 				}}</span>
+			</li>
+			<li v-show="data.database_port">
+				<span class="label">{{ $t('dataForm.form.port') }}</span>
+				<span class="value align-center"> {{ data.database_port }}</span>
 			</li>
 		</ul>
 		<Test
@@ -172,6 +175,7 @@ export default {
 				if (this.visible) {
 					this.getData(this.id, this.databaseType);
 				}
+				this.showProgress = false;
 			}
 		}
 	},
@@ -207,6 +211,7 @@ export default {
 				this.name = data.name;
 				this.type = data.database_type;
 				this.status = data.status;
+				this.loadFieldsStatus = data.loadFieldsStatus;
 				if (['ready'].includes(this.status) && data.loadFieldsStatus !== 'finished' && data.tableCount) {
 					this.progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100;
 					this.showProgress = true;
@@ -223,7 +228,7 @@ export default {
 						return node;
 					});
 					items = items || [];
-					items = items.filter(item => item.label);
+					items = items.filter(item => item.label); //清掉undefined
 					this.form = items;
 				}
 			}
@@ -241,7 +246,7 @@ export default {
 				})
 				.then(() => {
 					this.dialogTestVisible = true;
-					this.$refs.test.$emit('startWS');
+					this.$refs.test.start();
 				});
 		},
 		edit(id, type) {
@@ -291,14 +296,16 @@ export default {
 					loadCount: 0,
 					loadFieldsStatus: 'loading'
 				};
+				this.loadFieldsStatus = 'loading';
 			}
 			this.$api('connections')
 				.updateById(this.data.id, parms)
 				.then(result => {
 					if (result.data) {
 						let data = result.data;
+						this.loadFieldsStatus = data.loadFieldsStatus; //同步reload状态
 						if (type === 'first') {
-							this.$refs.test.$emit('startWS');
+							this.$refs.test.start(true);
 						}
 						if (data.loadFieldsStatus === 'finished') {
 							this.progress = 100;
@@ -356,6 +363,7 @@ export default {
 			//border: 1px solid #dedee4;
 			border-radius: 3px;
 			margin-left: 30px;
+			margin-right: 20px;
 			img {
 				width: 100%;
 			}
@@ -368,12 +376,14 @@ export default {
 		}
 		.status {
 			font-size: 12px;
-			margin-top: 2px;
+			padding-bottom: 2px;
+			margin-top: 4px;
+			border-top-width: 2px;
 			.error {
-				color: #d54e21;
+				color: #f56c6c;
 			}
 			.success {
-				color: #0ab300;
+				color: #67c23a;
 			}
 			.warning {
 				color: #e6a23c;
@@ -440,7 +450,7 @@ export default {
 		overflow-y: auto;
 		max-height: 690px;
 		margin: 0 auto;
-		margin-left: 50px;
+		margin-left: 56px;
 		width: 100%;
 		li {
 			margin-bottom: 20px;

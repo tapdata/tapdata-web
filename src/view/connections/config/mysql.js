@@ -7,23 +7,6 @@ export default function(vm) {
 		defaultModel: {
 			connection_type: 'source_and_target'
 		},
-		checkItems() {
-			let vm = this;
-			let val = vm.model.connection_type;
-			let databaseDatetypeWithoutTimezone = vm.config.items.find(
-				item => item.field === 'database_datetype_without_timezone'
-			);
-			let supportUpdatePk = vm.config.items.find(item => item.field === 'supportUpdatePk');
-			vm.$nextTick(() => {
-				if (databaseDatetypeWithoutTimezone) {
-					databaseDatetypeWithoutTimezone.show = val && ['source', 'source_and_target'].includes(val);
-				}
-				if (supportUpdatePk) {
-					supportUpdatePk.show = val && ['target', 'source_and_target'].includes(val);
-				}
-				vm.$refs.form.$forceUpdate();
-			});
-		},
 		items: [
 			{
 				type: 'radio',
@@ -46,12 +29,7 @@ export default function(vm) {
 						value: 'target'
 					}
 				],
-				required: true,
-				on: {
-					change() {
-						vm.checkItems();
-					}
-				}
+				required: true
 			},
 			{
 				type: 'input',
@@ -139,24 +117,12 @@ export default function(vm) {
 				label: vm.$t('dataForm.form.timeZone'),
 				//tips: vm.$t('dataForm.form.timeZoneTips'),
 				options: [],
-				show: true,
-				dependOn: [
-					{
-						triggerOptions: [
-							{
-								field: 'connection_type',
-								value: 'target'
-							}
-						],
-						triggerConfig: {
-							show: false
-						}
-					}
-				]
+				show: true
 			},
 			{
 				type: 'slot',
-				slot: 'timezone'
+				slot: 'timezone',
+				show: true
 			}
 		]
 	};

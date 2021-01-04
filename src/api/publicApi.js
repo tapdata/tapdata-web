@@ -23,6 +23,7 @@ axios.interceptors.request.use(
 			cancelFunc = c;
 		});
 		if (pending.includes(key)) {
+			console.log('Cancel request:', JSON.parse(key)); //eslint-disable-line
 			cancelFunc();
 		} else {
 			pending.push(key);

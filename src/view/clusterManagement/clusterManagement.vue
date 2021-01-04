@@ -7,13 +7,22 @@
 					<div class="demo-input-suffix">
 						<span>{{ $t('message.sourchName') }}</span>
 						<el-input
-							:placeholder="$t('message.placeholderServer')"
 							clearable
-							@keyup.enter="screenFn"
+							size="mini"
 							v-model="sourch"
+							:debounce="800"
+							:placeholder="$t('message.placeholderServer')"
+							@input="screenFn"
 						>
 						</el-input>
-						<el-button type="primary" @click="screenFn">{{ $t('message.filter') }}</el-button>
+						<el-button
+							type="primary"
+							@click="
+								sourch = '';
+								getDataApi();
+							"
+							>{{ $t('button.reset') }}</el-button
+						>
 					</div>
 				</el-col>
 				<!-- <el-col class="text-rf" :span="11">
@@ -214,6 +223,7 @@
 // import DownAgent from '../downAgent/agentDown';
 import addServe from './component/addServe';
 import factory from '../../api/factory';
+import { delayTrigger } from '../../util/util';
 const cluster = factory('cluster');
 export default {
 	name: 'clusterManagement',
@@ -230,7 +240,6 @@ export default {
 			engineState: '',
 			managementState: '',
 			apiServerState: '',
-			list: [],
 			editItem: {},
 			timer: null,
 			downLoadAgetntdialog: false,
@@ -418,17 +427,14 @@ export default {
 		},
 		// 筛选
 		screenFn() {
-			if (this.sourch) {
+			delayTrigger(() => {
 				this.getDataApi();
-			} else {
-				this.getDataApi();
-			}
-			this.sourch = '';
+			}, 800);
 		},
 
 		// 获取数据
 		getDataApi() {
-			let params = {};
+			let params = { index: 1 };
 			if (this.sourch) {
 				params['filter[where][or][0][systemInfo.hostname][like]'] = this.sourch;
 				params['filter[where][or][1][systemInfo.ip][like]'] = this.sourch;
@@ -443,8 +449,7 @@ export default {
 			// }
 			cluster.get(params).then(res => {
 				if (res.data) {
-					this.list = res.data;
-					let [...waterfallData] = this.list;
+					let [...waterfallData] = res.data;
 					let [...newWaterfallData] = [[], []];
 					waterfallData.forEach((item, index) => {
 						if (index % 2) {

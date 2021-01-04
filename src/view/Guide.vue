@@ -92,6 +92,12 @@
 									<el-button size="mini" @click="startTest()">
 										{{ $t('connection.testConnection') }}
 									</el-button>
+									<span :class="'status ' + status" v-if="status">
+										<i class="status-icon el-icon-error"></i>
+										<i class="status-icon el-icon-success"></i>
+										<i class="status-icon el-icon-warning"></i>
+										<span>{{ $t('connection.status.' + status) }}</span>
+									</span>
 								</div>
 							</template>
 						</div>
@@ -129,7 +135,7 @@
 					</el-footer>
 				</el-container>
 				<el-aside class="right-aside" width="600px">
-					<div class="markdown-body" v-html="mdHtml"></div>
+					<div class="markdown-body" v-html="steps[activeStep].md"></div>
 				</el-aside>
 			</el-container>
 		</el-container>
@@ -138,7 +144,12 @@
 			:dialogVisible.sync="showConnectDialog"
 			@databaseType="handleDatabaseTypeChange"
 		></DatabaseTypeDialog>
-		<Test ref="test" :dialogTestVisible.sync="dialogTestVisible" :formData="connectionForm"></Test>
+		<Test
+			ref="test"
+			:dialogTestVisible.sync="dialogTestVisible"
+			:formData="connectionForm"
+			@returnTestData="returnTestData"
+		></Test>
 	</el-container>
 </template>
 <script>
@@ -210,13 +221,12 @@ export default {
 				]
 			},
 			dialogTestVisible: false,
-			mdHtml: ''
+			status: ''
 		};
 	},
 	created() {
 		this.getDataApi(this.getSteps);
 		this.getConnections();
-		this.mdHtml = require('../../static/md/agen_download.md');
 	},
 	methods: {
 		getImgByType,
@@ -287,10 +297,10 @@ export default {
 		},
 		getSteps(hasDownloadAgent) {
 			const steps = [
-				{ index: 1, text: this.$t('guide.step_1') },
-				{ index: 2, text: this.$t('guide.step_2') },
-				{ index: 3, text: this.$t('guide.step_3') },
-				{ index: 4, text: this.$t('guide.step_4') }
+				{ index: 1, text: this.$t('guide.step_1'), md: require('../../static/md/guide/agen_download.md') },
+				{ index: 2, text: this.$t('guide.step_2'), md: require('../../static/md/guide/choose_source.md') },
+				{ index: 3, text: this.$t('guide.step_3'), md: require('../../static/md/guide/choose_source.md') },
+				{ index: 4, text: this.$t('guide.step_4'), md: require('../../static/md/guide/choose_task_type.md') }
 			];
 			if (hasDownloadAgent) {
 				this.steps = steps.slice(1, 4);
@@ -565,9 +575,13 @@ export default {
 			this.$refs.form.validate(valid => {
 				if (valid) {
 					this.dialogTestVisible = true;
-					this.$refs.test.$emit('startWS');
+					this.$refs.test.start();
 				}
 			});
+		},
+		returnTestData(data) {
+			if (!data.status || data.status === null) return;
+			this.status = data.status;
 		}
 	}
 };
@@ -757,6 +771,31 @@ export default {
 	}
 	.btn-test {
 		padding-left: 200px;
+		.status {
+			margin-left: 10px;
+			font-size: 12px;
+			&.invalid {
+				color: #f56c6c;
+				.el-icon-error {
+					display: inline-block;
+				}
+			}
+			&.ready {
+				color: #67c23a;
+				.el-icon-success {
+					display: inline-block;
+				}
+			}
+			&.testing {
+				color: #e6a23c;
+				.el-icon-warning {
+					display: inline-block;
+				}
+			}
+			.status-icon {
+				display: none;
+			}
+		}
 	}
 	.error-msg {
 		padding: 0 200px;

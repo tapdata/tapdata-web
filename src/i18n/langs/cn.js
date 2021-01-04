@@ -218,6 +218,7 @@ const cn = {
 				loading: '正在加载数据'
 			}
 		},
+		verifyConfirm: '确定要删除自定义JS校验逻辑吗',
 		comfirm: '你确定要',
 		operationSuccuess: '操作成功',
 		modifyName: '修改名称',
@@ -297,6 +298,9 @@ const cn = {
 		loadingSchema: '源库schema尚未加载完成，暂时无法启动',
 		reloadSchemaSuccess: '模型更新成功',
 		reloadSchemaError: '模型更新失败'
+	},
+	button: {
+		reset: '重置'
 	},
 	dataFlow: {
 		aggregateNotDataNode: '连接聚合节点的第一个目标数据节点只能是数据集',
@@ -1574,13 +1578,12 @@ const cn = {
 			waitingInstall: '等待安装',
 			agentNum: 'Agent 已安装数 ',
 			downLoadAgent: '下载 Agent',
-			windowsText:
-				'首先，在环境中配置好 JAVA 运行环境，下载之后，在存放下载文件的目录下使用以下命令安装和启动 Agent',
-			windowsInstructionsText1: '· 首先，需要确保环境中安装了 JAVA 运行环境',
-			windowsInstructionsText2: '· 其次，下载文件，并存放在某个目录中',
-			windowsInstructionsText3: '· 最后，进入目录，执行命令后系统将自动安装并启动 Agent',
+			windowsText: '首先，在环境中配置好 Docker 运行环境，之后使用以下命令安装和启动 Agent ',
+			windowsInstructionsText1: '· 首先，需要确保环境中安装了 Docker 运行环境',
+			windowsInstructionsText2: '· 执行命令后系统将自动安装并启动 Agent',
+			// windowsInstructionsText3: '· 最后，进入目录，执行命令后系统将自动安装并启动 Agent',
 			windowsInstructionsText4: '· Tapdata 云版一个账号下只能安装一个 Agent',
-			windowsInstructionsText5: '· 在 Agent 安装后，可通过 tapdata start/stop backend 启动和停止 Agent',
+			// windowsInstructionsText5: '· 在 Agent 安装后，可通过 tapdata start/stop backend 启动和停止 Agent',
 			important: '注意：',
 			noAgent: '您尚未安装 Agent，无法执行传输任务，请',
 			clickDownLoad: '点击下载安装',
