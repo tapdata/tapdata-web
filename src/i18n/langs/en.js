@@ -1730,10 +1730,11 @@ const en = {
 			agentNum: 'Agents installed',
 			downLoadAgent: 'Download Agent',
 			windowsText:
-				'First, a JAVA runtime environment is required in the installation environment. After download, you can install and start Agent by using the following command in the directory where the Agent Installation package stored.',
+				'First, a Docker runtime environment is required in the installation environment. Then, download and start Agent by using the following command.',
 			windowsInstructionsText1:
-				'· First, ensure that the JAVA runtime environment is installed in the installation target environment.',
-			windowsInstructionsText2: '· Second, download the installation file and store it in a directory.',
+				'· First, ensure that the Docker runtime environment is installed in the installation target environment.',
+			windowsInstructionsText2:
+				'· After executing the command, the Agent will be automatically installed and started.',
 			windowsInstructionsText3:
 				'· Third, enter the directory, and execute the command to install and start Agent automatically. ',
 			windowsInstructionsText4: '· Only one Agent can be installed under an account of Tapdata cloud.',
