@@ -135,7 +135,7 @@
 					</el-footer>
 				</el-container>
 				<el-aside class="right-aside" width="600px">
-					<div class="markdown-body" v-html="steps[activeStep].md"></div>
+					<div class="markdown-body" v-html="selectedDatabaseType ? mdHtml : steps[activeStep].md"></div>
 				</el-aside>
 			</el-container>
 		</el-container>
@@ -221,7 +221,8 @@ export default {
 				]
 			},
 			dialogTestVisible: false,
-			status: ''
+			status: '',
+			mdHtml: ''
 		};
 	},
 	created() {
@@ -476,6 +477,7 @@ export default {
 			this.config.items = [];
 			this.$refs.form && this.$refs.form.clearValidate();
 			this.getFormConfig();
+			this.mdHtml = require(`../../static/md/connection/${type.toLowerCase()}.md`);
 		},
 		signOut() {
 			this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut')).then(() => {
