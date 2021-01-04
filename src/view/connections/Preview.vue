@@ -67,11 +67,7 @@
 									class="btn"
 									size="mini"
 									@click="reload()"
-									:disabled="
-										!['ready'].includes(this.status) ||
-											!data.tableCount ||
-											['loading'].includes(this.loadFieldsStatus)
-									"
+									:disabled="!['ready'].includes(this.status)"
 								>
 									<i class="iconfont icon-kujitongbucopy">{{
 										$t('connection.preview.reloadName')
@@ -102,6 +98,10 @@
 				<span class="value align-center" :class="{ 'align-top': item.label && item.label.length > 15 }">{{
 					item.value
 				}}</span>
+			</li>
+			<li v-show="data.database_port">
+				<span class="label">{{ $t('dataForm.form.port') }}</span>
+				<span class="value align-center"> {{ data.database_port }}</span>
 			</li>
 		</ul>
 		<Test
