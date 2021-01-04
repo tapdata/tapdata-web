@@ -16,22 +16,24 @@
 						</div>
 					</div>
 				</header>
-				<header class="title" v-else>
-					<div class="img-box">
-						<img :src="getImgByType(databaseType)" />
-					</div>
-					<div class="content-box">
-						<div class="content">
-							{{ typeMap[databaseType] }}
-							<div class="addBtn" @click="dialogDatabaseTypeVisible = true">
-								{{ $t('connection.change') }}
-							</div>
+				<header class="edit-header-box" v-else>
+					<div class="edit-header">
+						<div class="img-box">
+							<img :src="getImgByType(databaseType)" />
 						</div>
-						<div class="tip">
-							{{ $t('dataForm.form.guide') }}
-							<a style="color: #48B6E2" href="https://docs.tapdata.net/data-source">{{
-								$t('dataForm.form.guideDoc')
-							}}</a>
+						<div class="content-box">
+							<div class="content">
+								{{ typeMap[databaseType] }}
+								<div class="addBtn" @click="dialogDatabaseTypeVisible = true">
+									{{ $t('connection.change') }}
+								</div>
+							</div>
+							<div class="tip">
+								{{ $t('dataForm.form.guide') }}
+								<a style="color: #48B6E2" href="https://docs.tapdata.net/data-source">{{
+									$t('dataForm.form.guideDoc')
+								}}</a>
+							</div>
 						</div>
 					</div>
 				</header>
@@ -506,15 +508,15 @@ export default {
 			}
 			.img-box {
 				display: flex;
-				width: 54px;
-				height: 54px;
+				width: 52px;
+				height: 52px;
 				justify-content: center;
 				align-items: center;
 				background: #fff;
-				border: 1px solid #dedee4;
 				border-radius: 3px;
+				margin-right: 10px;
 				img {
-					width: 60%;
+					width: 100%;
 				}
 			}
 			.content {
@@ -582,6 +584,7 @@ export default {
 		box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.1);
 		border: 1px solid rgba(222, 222, 228, 100);
 		border-left: none;
+		position: relative;
 	}
 	.footer {
 		height: 62px;
