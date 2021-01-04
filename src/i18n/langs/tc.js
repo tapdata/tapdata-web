@@ -1689,10 +1689,9 @@ const tc = {
 			waitingInstall: '等待安裝',
 			agentNum: 'Agent 已安裝數',
 			downLoadAgent: '下載 Agent',
-			windowsText:
-				'首先，在環境中配置好 JAVA 運行環境，下載之後，在存放下載文件的目錄下使用以下命令安裝和啟動 Agent',
-			windowsInstructionsText1: '· 首先，需要確保環境中安裝了 JAVA 運行環境',
-			windowsInstructionsText2: '· 其次，下載文件，並存放在某個目錄中',
+			windowsText: '首先，在環境中配置好 Docker 運行環境，之後使用以下命令安裝和啟動 Agent ',
+			windowsInstructionsText1: '· 首先，需要確保環境中安裝了 Docker 運行環境',
+			windowsInstructionsText2: '· 執行命令後系統將自動安裝並啟動 Agent',
 			windowsInstructionsText3: '· 最後，進入目錄，執行命令後系統將自動安裝並啟動 Agent',
 			windowsInstructionsText4: '· Tapdata 雲版一個賬號下只能安裝一個 Agent',
 			windowsInstructionsText5: '· 在 Agent 安裝後，可通過 tapdata start/stop backend 啟動和停止 Agent',
