@@ -211,6 +211,7 @@ const en = {
 		}
 	},
 	message: {
+		noPermission: 'This operation lacks the appropriate permissions',
 		api: {
 			get: {
 				error: 'Load data failed.',

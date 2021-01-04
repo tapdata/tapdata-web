@@ -211,7 +211,7 @@ const cn = {
 		}
 	},
 	message: {
-		noPermission: '无权限',
+		noPermission: '此操作缺少相应权限',
 		api: {
 			get: {
 				error: '加载数据失败.',

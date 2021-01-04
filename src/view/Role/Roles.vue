@@ -231,6 +231,7 @@ export default {
 			tableData: [],
 			roleusers: [],
 			userGroup: [],
+			permissions: [],
 			oldUser: [],
 			loading: false,
 			pagesize: 20,
@@ -326,6 +327,13 @@ export default {
 					description: '',
 					register_user_default: false
 				};
+				this.$api('Permissions')
+					.get({})
+					.then(res => {
+						if (res) {
+							this.permissions = res.data;
+						}
+					});
 			}
 		},
 
@@ -399,14 +407,30 @@ export default {
 					const method = this.roleId ? 'patch' : 'post';
 					if (this.roleId) {
 						record.id = this.roleId;
-					} else {
-						// record.user_id = this.$cookie.get('user_id');
 					}
+					let newRoleMappings = [];
 
 					rolesModel[method](record)
 						.then(res => {
 							if (res && res.data) {
 								self.handleDataApi();
+								if (method === 'post') {
+									this.permissions.forEach(selectPermission => {
+										if (selectPermission.type === 'read' && !selectPermission.isMenu)
+											newRoleMappings.push({
+												principalType: 'PERMISSION',
+												principalId: selectPermission.name,
+												roleId: res.data.id
+											});
+									});
+									self.$api('users')
+										.deletePermissionRoleMapping(res.data.id)
+										.then(res => {
+											if (res && res.data) {
+												roleMappingModel.post(newRoleMappings);
+											}
+										});
+								}
 								this.$message.success(this.$t('message.saveOK'));
 							}
 						})
@@ -457,6 +481,9 @@ export default {
 				.post(newRoleMappings)
 				.then(res => {
 					if (res && res.data) {
+						res.data.forEach(item => {
+							this.roleusers.push(item.principalId);
+						});
 						this.handleDataApi();
 						this.$message.success(this.$t('message.saveOK'));
 					}

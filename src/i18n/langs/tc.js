@@ -211,6 +211,7 @@ const tc = {
 		}
 	},
 	message: {
+		noPermission: '此操作缺少相應權限',
 		api: {
 			get: {
 				error: '加載數據失敗.',
