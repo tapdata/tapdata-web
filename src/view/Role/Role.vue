@@ -80,6 +80,7 @@
 										v-for="second in item.children"
 										:key="second.name"
 										v-model="second.checked"
+										:disabled="second.type === 'read'"
 										@change="handleOneCheckAll($event, item, item.children, second, 'children')"
 										:class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
 										v-cloak
@@ -123,6 +124,7 @@
 										v-for="second in item.classification"
 										:key="second.name"
 										v-model="second.checked"
+										:disabled="second.type === 'read'"
 										@change="
 											handleOneCheckAll($event, item, item.classification, second, 'classify')
 										"
@@ -160,6 +162,7 @@
 									<el-checkbox
 										v-for="second in item.functional"
 										:key="second.name"
+										:disabled="second.type === 'read'"
 										v-model="second.checked"
 										@change="handleOneCheckAll($event, item, item.functional, second, 'functional')"
 										:class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
@@ -497,6 +500,16 @@ export default {
 								}
 							});
 					}
+					if (res && res.data && res.data.length === 0) {
+						if (mappingData.length)
+							mappingData.filter(item => {
+								if (item.children && item.children.length) {
+									item.children.filter(childItem => {
+										this.$set(childItem, 'checked', childItem.type === 'read');
+									});
+								}
+							});
+					}
 				})
 				.finally(() => {
 					this.loading = false;
@@ -513,35 +526,6 @@ export default {
 					if (res) {
 						if (res.data && res.data.length) {
 							self.permissionList = res.data;
-							// var obj = {};
-							// res.data.map(item => {
-							// 	obj[item.name] = item;
-							// });
-							// var newArr = [];
-							// for (var i = 0; i < res.data.length; i++) {
-							// 	if (!res.data[i].isHidden) {
-							// 		var item = res.data[i];
-							// 		var parent = obj[item.parentId];
-							// 		if (item.name === 'Dashboard') {
-							// 			self.$set(item, 'checkAll', true);
-							// 		}
-							// 		if (parent) {
-							// 			if (item.parentId === 'Dashboard') {
-							// 				self.$set(item, 'checkAll', true);
-							// 			}
-							// 			if (parent.children) {
-							// 				parent.children.push(item);
-							// 			} else {
-							// 				parent.children = [];
-							// 				parent.children.push(item);
-							// 			}
-							// 			self.$set(parent, 'checkedCities', []);
-							// 			self.$set(parent, 'isNav', true);
-							// 		} else {
-							// 			newArr.push(item);
-							// 		}
-							// 	}
-							// }
 
 							// 页面排序  ---- 开始
 							let pageMap = {};
