@@ -154,38 +154,12 @@ export default function(vm) {
 				label: vm.$t('dataForm.form.timeZone'),
 				//tips: vm.$t('dataForm.form.timeZoneTips'),
 				options: [],
-				show: true,
-				dependOn: [
-					{
-						triggerOptions: [
-							{
-								field: 'connection_type',
-								value: 'target'
-							}
-						],
-						triggerConfig: {
-							show: false
-						}
-					}
-				]
+				show: true
 			},
 			{
 				type: 'slot',
 				slot: 'timezone',
-				show: true,
-				dependOn: [
-					{
-						triggerOptions: [
-							{
-								field: 'connection_type',
-								value: 'target'
-							}
-						],
-						triggerConfig: {
-							show: false
-						}
-					}
-				]
+				show: true
 			}
 		]
 	};

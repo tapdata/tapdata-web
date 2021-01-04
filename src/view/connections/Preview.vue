@@ -158,6 +158,7 @@ export default {
 				if (this.visible) {
 					this.getData(this.id, this.databaseType);
 				}
+				this.showProgress = false;
 			}
 		}
 	},
