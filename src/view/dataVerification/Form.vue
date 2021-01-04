@@ -396,6 +396,8 @@ export default {
 							data.tasks = data.tasks.map(t => {
 								t.sourceTable = [t.source.connectionId, t.source.table];
 								t.targetTable = [t.target.connectionId, t.target.table];
+								t.source = Object.assign({}, TABLE_PARAMS, t.source);
+								t.target = Object.assign({}, TABLE_PARAMS, t.target);
 								return t;
 							});
 							this.form = data;
