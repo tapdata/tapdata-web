@@ -1421,12 +1421,12 @@ const cn = {
 		cancel: '取消',
 		backDetection: '后台检测',
 		test: {
-			title: '连接测试',
+			title: '测试结果',
 			success: '测试通过',
 			fail: '测试未通过',
-			testing: '待检测...',
-			items: '检查事项',
-			result: '检查结果',
+			testing: '未测试',
+			items: '测试事项',
+			result: '结果',
 			information: '说明',
 			error: '测试服务请求超时，请关闭重试'
 		},
