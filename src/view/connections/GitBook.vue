@@ -15,7 +15,7 @@ export default {
 	},
 	methods: {
 		getHtmlMD(type) {
-			this.htmlMD = require(`./GitBook/${type.toLowerCase()}.md`);
+			this.htmlMD = require(`../../../static/md/connection/${type.toLowerCase()}.md`);
 		}
 	}
 };
