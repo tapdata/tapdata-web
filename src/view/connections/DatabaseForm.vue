@@ -331,10 +331,11 @@ export default {
 					});
 					if (!params.id) {
 						delete params.id;
-					}
-					if (!params.id && !['ready'].includes(this.status)) {
 						params['status'] = 'testing'; //默认值
 					}
+					// if (!params.id && !['ready'].includes(this.status)) {
+					// 	params['status'] = 'testing'; //默认值
+					// }
 					delete params.sslKeyFile;
 					delete params.sslCAFile;
 					if (params.database_type === 'mongodb') {
