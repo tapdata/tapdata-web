@@ -1443,12 +1443,12 @@ const en = {
 		cancel: 'Cancel',
 		backDetection: 'backstage testing',
 		test: {
-			title: 'Connection Test',
-			success: 'Pass the test',
-			fail: 'Test failed',
-			testing: 'Testing...',
+			title: 'Test Result',
+			success: 'Pass',
+			fail: 'Failed',
+			testing: 'Untest',
 			items: 'Test items',
-			result: 'Test result',
+			result: 'Result',
 			information: 'Information',
 			error: 'The test service request timed out, please close and try again.'
 		},

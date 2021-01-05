@@ -331,10 +331,11 @@ export default {
 					});
 					if (!params.id) {
 						delete params.id;
-					}
-					if (!params.id && !['ready'].includes(this.status)) {
 						params['status'] = 'testing'; //默认值
 					}
+					// if (!params.id && !['ready'].includes(this.status)) {
+					// 	params['status'] = 'testing'; //默认值
+					// }
 					delete params.sslKeyFile;
 					delete params.sslCAFile;
 					if (params.database_type === 'mongodb') {
@@ -557,6 +558,7 @@ export default {
 			.test {
 				margin-left: 200px;
 				margin-bottom: 20px;
+				margin-top: 16px;
 			}
 		}
 		.status {
@@ -581,7 +583,7 @@ export default {
 		color: rgba(51, 51, 51, 100);
 		font-size: 18px;
 		text-align: left;
-		box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.1);
+		box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
 		border: 1px solid rgba(222, 222, 228, 100);
 		border-left: none;
 		position: relative;
@@ -623,6 +625,7 @@ export default {
 }
 .databaseFrom .form {
 	.url-tip {
+		margin-top: -14px;
 		b {
 			color: #666;
 		}

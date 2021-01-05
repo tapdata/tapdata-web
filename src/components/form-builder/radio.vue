@@ -89,11 +89,12 @@ export default {
 			line-height: 28px;
 			.fb-radio-option-tip {
 				margin-bottom: 10px;
-				color: #666;
+				color: #aaa;
 				font-size: 12px;
-				line-height: 19px;
+				line-height: 14px;
 				white-space: pre-wrap;
 				word-break: break-word;
+				font-weight: normal;
 			}
 		}
 	}
@@ -121,6 +122,9 @@ export default {
 			margin-top: 16px;
 			margin-left: 0;
 		}
+	}
+	.el-radio.is-bordered.is-checked {
+		border: 2px solid #48b6e2;
 	}
 }
 </style>
