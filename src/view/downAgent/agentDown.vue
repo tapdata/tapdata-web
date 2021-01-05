@@ -38,13 +38,14 @@
 					<span style="word-break: break-word" v-if="downLoadType === 'Linux'">{{
 						$t('dialog.downAgent.text')
 					}}</span>
-					<div v-else>
-						<!-- <span class="operaKey">
+					<div v-else-if="downLoadType === 'windows'" @click="handleDownLoad">
+						<span class="operaKey">
 							<i class="iconfont icon-xiazai clickIcont"></i>
 							{{ $t('dialog.downAgent.downLoadAgent') }}</span
-						> -->
+						>
 						<span style="word-break: break-word">{{ $t('dialog.downAgent.windowsText') }}</span>
 					</div>
+					<span v-else style="word-break: break-word">{{ $t('dialog.downAgent.dockerText') }}</span>
 
 					<el-tooltip
 						placement="top"
@@ -55,7 +56,13 @@
 					>
 						<span
 							class="operaKey"
-							v-clipboard:copy="downLoadType === 'Linux' ? LinuxLink : windowLink"
+							v-clipboard:copy="
+								downLoadType === 'Linux'
+									? LinuxLink
+									: downLoadType === 'windows'
+									? windowLink
+									: dockerLink
+							"
 							v-clipboard:success="onCopy"
 							@mouseleave="showTooltip = false"
 						>
@@ -66,7 +73,8 @@
 
 				<div class="copy-down-link">
 					<span v-if="downLoadType === 'Linux'">{{ LinuxLink }}</span>
-					<span v-else>{{ windowLink }}</span>
+					<span v-else-if="downLoadType === 'windows'">{{ windowLink }}</span>
+					<span v-else>{{ dockerLink }}</span>
 				</div>
 
 				<div class="title">
@@ -78,12 +86,18 @@
 					<li>{{ $t('dialog.downAgent.linuxInstructionsText2') }}</li>
 					<li>{{ $t('dialog.downAgent.linuxInstructionsText3') }}</li>
 				</ul>
-				<ul class="installation-notes" v-else>
+				<ul class="installation-notes" v-else-if="downLoadType === 'windows'">
 					<li style="color: #F56C6C;">{{ $t('dialog.downAgent.windowsInstructionsText1') }}</li>
 					<li>{{ $t('dialog.downAgent.windowsInstructionsText2') }}</li>
-					<!-- <li>{{ $t('dialog.downAgent.windowsInstructionsText3') }}</li> -->
+					<li>{{ $t('dialog.downAgent.windowsInstructionsText3') }}</li>
 					<li style="padding-top: 10px;">{{ $t('dialog.downAgent.important') }}</li>
-					<!-- <li>{{ $t('dialog.downAgent.windowsInstructionsText5') }}</li> -->
+					<li>{{ $t('dialog.downAgent.windowsInstructionsText5') }}</li>
+					<li>{{ $t('dialog.downAgent.windowsInstructionsText4') }}</li>
+				</ul>
+				<ul class="installation-notes" v-else>
+					<li style="color: #F56C6C;">{{ $t('dialog.downAgent.dockerText1') }}</li>
+					<li>{{ $t('dialog.downAgent.dockerText2') }}</li>
+					<li style="padding-top: 10px;">{{ $t('dialog.downAgent.important') }}</li>
 					<li>{{ $t('dialog.downAgent.windowsInstructionsText4') }}</li>
 				</ul>
 			</section>
@@ -178,12 +192,14 @@ export default {
 			startUpTaskDialog: false,
 			windowLink: '',
 			LinuxLink: '',
+			dockerLink: '',
 			refreshLoading: false,
 			downLoadNum: 0,
 			lastDataNum: 0,
 			downType: [
 				{ name: 'Windows (64 bit)', value: 'windows' },
-				{ name: 'Linux (64 bit)', value: 'Linux' }
+				{ name: 'Linux (64 bit)', value: 'Linux' },
+				{ name: 'Docker', value: 'Docker' }
 			]
 		};
 	},
@@ -191,8 +207,8 @@ export default {
 		let self = this;
 		let version = window._TAPDATA_OPTIONS_.version;
 		this.windowLink =
-			'docker run-itd ccr.ccs.tencentyun.com/tapdata/flow tapdata start backend --downloadUrl ' +
-			`ccr.ccs.tencentyun.com/tapdata/flow-enging:${version} ` +
+			'tapdata start backend --downloadUrl ' +
+			`https://resource.tapdata.net/package/feagent/${version}/ --token ` +
 			this.$cookie.get('token') +
 			' ' +
 			this.$cookie.get('user_id');
@@ -201,6 +217,12 @@ export default {
 			`https://resource.tapdata.net/package/feagent/${version}/tapdata` +
 			'" && chmod +x tapdata && ./tapdata start backend --downloadUrl ' +
 			`https://resource.tapdata.net/package/feagent/${version}/ --token ` +
+			this.$cookie.get('token') +
+			' ' +
+			this.$cookie.get('user_id');
+		this.dockerLink =
+			'docker run-itd ccr.ccs.tencentyun.com/tapdata/flow tapdata start backend --downloadUrl ' +
+			`ccr.ccs.tencentyun.com/tapdata/flow-enging:${version} ` +
 			this.$cookie.get('token') +
 			' ' +
 			this.$cookie.get('user_id');
@@ -258,10 +280,10 @@ export default {
 		},
 
 		// windows下载
-		// handleDownLoad() {
-		// 	let version = window._TAPDATA_OPTIONS_.version;
-		// 	window.location = `https://resource.tapdata.net/package/feagent/${version}/tapdata.exe`;
-		// },
+		handleDownLoad() {
+			let version = window._TAPDATA_OPTIONS_.version;
+			window.location = `https://resource.tapdata.net/package/feagent/${version}/tapdata.exe`;
+		},
 
 		// 复制命令行
 		onCopy() {
