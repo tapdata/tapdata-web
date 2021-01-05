@@ -221,7 +221,7 @@ export default {
 			' ' +
 			this.$cookie.get('user_id');
 		this.dockerLink =
-			'docker run-itd ccr.ccs.tencentyun.com/tapdata/flow tapdata start backend --downloadUrl ' +
+			'docker run -itd ' +
 			`ccr.ccs.tencentyun.com/tapdata/flow-enging:${version} ` +
 			this.$cookie.get('token') +
 			' ' +
