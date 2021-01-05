@@ -298,10 +298,10 @@ export default {
 		},
 		getSteps(hasDownloadAgent) {
 			const steps = [
-				{ index: 1, text: this.$t('guide.step_1'), md: require('../../static/md/guide/agen_download.md') },
-				{ index: 2, text: this.$t('guide.step_2'), md: require('../../static/md/guide/choose_source.md') },
-				{ index: 3, text: this.$t('guide.step_3'), md: require('../../static/md/guide/choose_source.md') },
-				{ index: 4, text: this.$t('guide.step_4'), md: require('../../static/md/guide/choose_task_type.md') }
+				{ index: 1, text: this.$t('guide.step_1'), md: require('../../static/md/guide/agent_download.md') },
+				{ index: 2, text: this.$t('guide.step_2'), md: require('../../static/md/guide/select_connection.md') },
+				{ index: 3, text: this.$t('guide.step_3'), md: require('../../static/md/guide/select_connection.md') },
+				{ index: 4, text: this.$t('guide.step_4'), md: require('../../static/md/guide/select_task.md') }
 			];
 			if (hasDownloadAgent) {
 				this.steps = steps.slice(1, 4);
