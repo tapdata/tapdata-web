@@ -33,8 +33,8 @@
 							<div class="desc">{{ stepMap[steps[activeStep].index].desc }}</div>
 							<template v-if="!selectedDatabaseType">
 								<el-select
-									:popper-append-to-body="false"
 									class="select-connection"
+									popper-class="select-connection-popper"
 									:value="stepMap[steps[activeStep].index].selectedConnection.id"
 									placeholder="Choose a source connection"
 									@input="handleConnectionSelect"
@@ -298,10 +298,10 @@ export default {
 		},
 		getSteps(hasDownloadAgent) {
 			const steps = [
-				{ index: 1, text: this.$t('guide.step_1'), md: require('../../static/md/guide/agen_download.md') },
-				{ index: 2, text: this.$t('guide.step_2'), md: require('../../static/md/guide/choose_source.md') },
-				{ index: 3, text: this.$t('guide.step_3'), md: require('../../static/md/guide/choose_source.md') },
-				{ index: 4, text: this.$t('guide.step_4'), md: require('../../static/md/guide/choose_task_type.md') }
+				{ index: 1, text: this.$t('guide.step_1'), md: require('../../static/md/guide/agent_download.md') },
+				{ index: 2, text: this.$t('guide.step_2'), md: require('../../static/md/guide/select_connection.md') },
+				{ index: 3, text: this.$t('guide.step_3'), md: require('../../static/md/guide/select_connection.md') },
+				{ index: 4, text: this.$t('guide.step_4'), md: require('../../static/md/guide/select_task.md') }
 			];
 			if (hasDownloadAgent) {
 				this.steps = steps.slice(1, 4);
@@ -328,7 +328,8 @@ export default {
 				} else if (this.stepMap[this.steps[this.activeStep].index].selectedConnection.id) {
 					this.activeStep += 1;
 				} else {
-					this.errorMsg = 'Please choose a source type';
+					let msg = this.$t('guide.not_' + (this.steps[this.activeStep].index === 2 ? 'source' : 'target'));
+					this.errorMsg = msg;
 				}
 			} else {
 				this.toDashboard(() => {
@@ -454,6 +455,7 @@ export default {
 			return stages;
 		},
 		back(falg) {
+			this.errorMsg = '';
 			if (falg) {
 				this.selectedDatabaseType = null;
 			} else {
@@ -588,6 +590,37 @@ export default {
 	}
 };
 </script>
+<style lang="less">
+.select-connection-popper {
+	.el-select-dropdown__item {
+		height: 64px;
+		padding: 10px;
+	}
+	.select-connection-option {
+		display: flex;
+		align-items: center;
+		.img {
+			padding: 6px;
+			width: 44px;
+			height: 44px;
+			line-height: 32px;
+			border: 1px solid #dedee4;
+			border-radius: 3px;
+			box-sizing: border-box;
+			text-align: center;
+			color: #999;
+			img {
+				display: block;
+				width: 100%;
+				height: 100%;
+			}
+		}
+		.name {
+			margin-left: 10px;
+		}
+	}
+}
+</style>
 <style lang="less" scoped>
 .guide-wrap {
 	height: 100%;
@@ -686,7 +719,7 @@ export default {
 			.desc {
 				padding: 0 200px;
 				margin-bottom: 20px;
-				color: rgba(102, 102, 102, 100);
+				color: #999;
 				font-size: 12px;
 			}
 		}
@@ -714,33 +747,6 @@ export default {
 		display: block;
 		width: 450px;
 		margin: 0 200px;
-		.el-select-dropdown__item {
-			height: 64px;
-			padding: 10px;
-		}
-		.select-connection-option {
-			display: flex;
-			align-items: center;
-			.img {
-				padding: 6px;
-				width: 44px;
-				height: 44px;
-				line-height: 32px;
-				border: 1px solid #dedee4;
-				border-radius: 3px;
-				box-sizing: border-box;
-				text-align: center;
-				color: #999;
-				img {
-					display: block;
-					width: 100%;
-					height: 100%;
-				}
-			}
-			.name {
-				margin-left: 10px;
-			}
-		}
 	}
 	.database-type {
 		padding: 0 200px;

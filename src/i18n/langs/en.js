@@ -1730,16 +1730,21 @@ const en = {
 			agentNum: 'Agents installed',
 			downLoadAgent: 'Download Agent',
 			windowsText:
-				'First, a Docker runtime environment is required in the installation environment. Then, download and start Agent by using the following command.',
+				'First, a JAVA runtime environment is required in the installation environment. After download, you can install and start Agent by using the following command in the directory where the Agent Installation package stored.',
 			windowsInstructionsText1:
-				'· First, ensure that the Docker runtime environment is installed in the installation target environment.',
-			windowsInstructionsText2:
-				'· After executing the command, the Agent will be automatically installed and started.',
+				'· First, ensure that the JAVA runtime environment is installed in the installation target environment.',
+			windowsInstructionsText2: '· Second, download the installation file and store it in a directory.',
 			windowsInstructionsText3:
 				'· Third, enter the directory, and execute the command to install and start Agent automatically. ',
 			windowsInstructionsText4: '· Only one Agent can be installed under an account of Tapdata cloud.',
 			windowsInstructionsText5:
 				'· You can start and stop Agent by executing the command "tapdata start/stop backend".',
+			dockerText:
+				'First, a Docker runtime environment is required in the installation environment. Then, download and start Agent by using the following command.',
+			dockerText1:
+				'· First, ensure that the Docker runtime environment is installed in the installation target environment.',
+			dockerText2: '· After executing the command, the Agent will be automatically installed and started.',
+
 			important: 'Important: ',
 			noAgent: 'You have not installed Agent yet, and cannot execute the transmission jobs. Please ',
 			clickDownLoad: ' click to download and install',
@@ -2111,7 +2116,10 @@ const en = {
 		btn_save: 'Save,',
 		btn_next: 'Next',
 		btn_to_dataflow: 'Start editing task',
-		btn_to_dashboard: "Don't edit the task for now, go shopping first"
+		btn_to_dashboard: "Don't edit the task for now, go shopping first",
+
+		not_source: 'Please choose a source connection',
+		not_target: 'Please choose a target connection'
 	}
 };
 

@@ -64,12 +64,12 @@ const cn = {
 		signOutMsg: '您确定要退出登录吗？',
 		save: '保存',
 		customerService: {
-			technicalSupport: '技术支持',
+			technicalSupport: '邮件支持',
 			technicalSupportText: '在使用过程中，有任何问题，请发送邮件到',
 			technicalSupportText1: '，我们会尽快答复。',
 			userSupport: 'team@tapdata.io',
-			otherDmands: '其他需求',
-			otherDmandsText: '其他需求，请扫描下方企业微信二维码。'
+			otherDmands: '微信支持',
+			otherDmandsText: '请扫描下方企业微信二维码, 联系我们获取支持'
 		},
 		signIn: {
 			slogan: '像自来水一样方便地使用您的数据',
@@ -1577,12 +1577,17 @@ const cn = {
 			waitingInstall: '等待安装',
 			agentNum: 'Agent 已安装数 ',
 			downLoadAgent: '下载 Agent',
-			windowsText: '首先，在环境中配置好 Docker 运行环境，之后使用以下命令安装和启动 Agent ',
-			windowsInstructionsText1: '· 首先，需要确保环境中安装了 Docker 运行环境',
-			windowsInstructionsText2: '· 执行命令后系统将自动安装并启动 Agent',
-			// windowsInstructionsText3: '· 最后，进入目录，执行命令后系统将自动安装并启动 Agent',
+			windowsText:
+				'首先，在环境中配置好 JAVA 运行环境，下载之后，在存放下载文件的目录下使用以下命令安装和启动 Agent',
+			windowsInstructionsText1: '· 首先，需要确保环境中安装了 JAVA 运行环境',
+			windowsInstructionsText2: '· 其次，下载文件，并存放在某个目录中',
+			windowsInstructionsText3: '· 最后，进入目录，执行命令后系统将自动安装并启动 Agent',
 			windowsInstructionsText4: '· Tapdata 云版一个账号下只能安装一个 Agent',
-			// windowsInstructionsText5: '· 在 Agent 安装后，可通过 tapdata start/stop backend 启动和停止 Agent',
+			windowsInstructionsText5: '· 在 Agent 安装后，可通过 tapdata start/stop backend 启动和停止 Agent',
+			dockerText: '首先，在环境中配置好 Docker 运行环境，之后使用以下命令安装和启动 Agent ',
+			dockerText1: '· 首先，需要确保环境中安装了 Docker 运行环境',
+			dockerText2: '· 执行命令后系统将自动安装并启动 Agent',
+
 			important: '注意：',
 			noAgent: '您尚未安装 Agent，无法执行传输任务，请',
 			clickDownLoad: '点击下载安装',
@@ -2065,7 +2070,10 @@ const cn = {
 		btn_save: '保存，',
 		btn_next: '下一步',
 		btn_to_dataflow: '开始编辑任务',
-		btn_to_dashboard: '暂不编辑任务，先逛逛'
+		btn_to_dashboard: '暂不编辑任务，先逛逛',
+
+		not_source: '请选择一个源连接',
+		not_target: '请选择一个目标连接'
 	}
 };
 

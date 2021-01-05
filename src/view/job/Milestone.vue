@@ -98,9 +98,6 @@ export default {
 					.then(res => {
 						if (res.data) {
 							let dataFlow = res.data;
-							if (dataFlow.status !== 'running') {
-								this.stopRunning();
-							}
 							let milestones = dataFlow.milestones || [];
 							this.formatData(milestones);
 						}
@@ -119,7 +116,8 @@ export default {
 				return {
 					label: this.$t(`milestone.${m.code}`),
 					status: m.status,
-					fromNow: time || '-'
+					fromNow: time || '-',
+					errorMessage: m.errorMessage
 				};
 			});
 		}
