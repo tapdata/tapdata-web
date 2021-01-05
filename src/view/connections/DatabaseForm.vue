@@ -414,7 +414,7 @@ export default {
 			this.$api('connections')
 				.patchId(params)
 				.then(() => {
-					this.editBtnLoading = true;
+					this.editBtnLoading = false;
 					this.$message.success(this.$t('message.saveOK'));
 					this.dialogEditNameVisible = false;
 				})
