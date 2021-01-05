@@ -1,5 +1,6 @@
 <template>
 	<el-dialog
+		class="connection-test-dialog"
 		:title="$t('dataForm.test.title')"
 		:visible="dialogTestVisible"
 		width="770px"
@@ -141,41 +142,43 @@ export default {
 </script>
 
 <style lang="less">
-.test-progress {
-	.el-progress-bar__outer {
-		border-radius: 0;
+.connection-test-dialog {
+	.test-progress {
+		.el-progress-bar__outer {
+			border-radius: 0;
+		}
+		.el-progress-bar__inner {
+			border-radius: 0;
+		}
+		margin-bottom: 10px;
 	}
-	.el-progress-bar__inner {
-		border-radius: 0;
-	}
-	margin-bottom: 10px;
-}
-.test-block {
-	border: 1px solid #dedee4;
-	padding: 10px;
-	th,
-	tr {
-		background: #f5f5f5;
-		.cell {
-			white-space: normal !important;
+	.test-block {
+		border: 1px solid #dedee4;
+		padding: 10px;
+		th,
+		tr {
+			background: #f5f5f5;
+			.cell {
+				white-space: normal !important;
+			}
+		}
+		td,
+		th.is-leaf {
+			border-bottom: 5px solid #fff;
+		}
+		thead {
+			color: #222;
+		}
+		.information {
+			width: 358px;
+			white-space: normal;
 		}
 	}
-	td,
-	th.is-leaf {
-		border-bottom: 5px solid #fff;
+	.el-table::before {
+		left: 0;
+		bottom: 0;
+		width: 100%;
+		height: 0;
 	}
-	thead {
-		color: #222;
-	}
-	.information {
-		width: 358px;
-		white-space: normal;
-	}
-}
-.el-table::before {
-	left: 0;
-	bottom: 0;
-	width: 100%;
-	height: 0;
 }
 </style>
