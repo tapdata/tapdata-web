@@ -116,16 +116,20 @@ export default {
 				});
 			});
 		},
-		start(updateSchema) {
+		start(updateSchema, editTest) {
 			let msg = {
 				type: 'testConnection',
 				data: this.formData
 			};
-			msg.data['updateSchema'] = false; //是否需要更新Schema
+			msg.data['updateSchema'] = false; //默认值
+			msg.data['editTest'] = false; //默认值
 			this.wsError = '';
 			this.testData.testLogs = [];
 			if (updateSchema) {
 				msg.data['updateSchema'] = updateSchema; //是否需要更新Schema
+			}
+			if (editTest) {
+				msg.data['editTest'] = editTest; //是否编辑测试
 			}
 			ws.ready(() => {
 				ws.send(msg);
