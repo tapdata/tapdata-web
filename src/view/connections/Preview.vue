@@ -75,7 +75,7 @@
 									v-readonlybtn="'datasource_edition'"
 									@click="reload()"
 									:disabled="
-										permissionBtnDisabel('datasource_edition_all_data', userId) &&
+										permissionBtnDisabel('datasource_edition_all_data', userId) ||
 											!['ready'].includes(this.status)
 									"
 								>

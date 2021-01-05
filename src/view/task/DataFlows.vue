@@ -256,9 +256,10 @@
 										inactive-value="stopping"
 										active-value="scheduled"
 										:disabled="
-											permissionBtnDisabel('SYNC_job_operation_all_data', scope.row.user_id) &&
-												statusBtMap[scope.row.status].switch &&
-												!(scope.row.status == 'draft' && scope.row.checked == true)
+											permissionBtnDisabel('SYNC_job_operation_all_data', scope.row.user_id) ||
+												(statusBtMap[scope.row.status] &&
+													statusBtMap[scope.row.status].switch &&
+													!(scope.row.status == 'draft' && scope.row.checked == true))
 										"
 										@change="
 											handleStatus(scope.row.id, scope.row.status, scope.row.newStatus, scope.row)
@@ -282,10 +283,7 @@
 								<el-tooltip class="item" :content="$t('dataFlow.edit')" placement="bottom">
 									<el-button
 										type="text"
-										:disabled="
-											permissionBtnDisabel('SYNC_job_edition_all_data', scope.row.user_id) &&
-												statusBtMap[scope.row.status].edit
-										"
+										:disabled="statusBtMap[scope.row.status] && statusBtMap[scope.row.status].edit"
 										@click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)"
 										v-readonlybtn="'SYNC_job_edition'"
 									>
@@ -319,8 +317,8 @@
 									<el-button
 										type="text"
 										:disabled="
-											permissionBtnDisabel('SYNC_job_delete_all_data', scope.row.user_id) &&
-												statusBtMap[scope.row.status].delete
+											permissionBtnDisabel('SYNC_job_delete_all_data', scope.row.user_id) ||
+												(statusBtMap[scope.row.status] && statusBtMap[scope.row.status].delete)
 										"
 										@click="handleDelete(scope.row)"
 										v-readonlybtn="'SYNC_job_delete'"
@@ -343,15 +341,17 @@
 										<el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
 											$t('dataFlow.dataFlowExport')
 										}}</el-dropdown-item>
-										<el-dropdown-item command="copy" v-readonlybtn="'SYNC_job_creation'">{{
-											$t('dataFlow.copy')
-										}}</el-dropdown-item>
+										<el-dropdown-item command="copy" v-readonlybtn="'SYNC_job_creation'"
+											>{{ $t('dataFlow.copy') }}
+										</el-dropdown-item>
 										<el-dropdown-item
 											:disabled="
 												permissionBtnDisabel(
 													'SYNC_job_operation_all_data',
 													scope.row.user_id
-												) && statusBtMap[scope.row.status].reset
+												) ||
+													(statusBtMap[scope.row.status] &&
+														statusBtMap[scope.row.status].reset)
 											"
 											command="reset"
 											v-readonlybtn="'SYNC_job_operation'"
@@ -360,10 +360,12 @@
 										<el-dropdown-item
 											command="force_stopping"
 											:disabled="
-												permissionBtnDisabel(
-													'SYNC_job_operation_all_data',
-													scope.row.user_id
-												) && statusBtMap[scope.row.status].forceStop
+												(statusBtMap[scope.row.status] &&
+													statusBtMap[scope.row.status].forceStop) ||
+													permissionBtnDisabel(
+														'SYNC_job_operation_all_data',
+														scope.row.user_id
+													)
 											"
 											v-readonlybtn="'SYNC_job_operation'"
 											>{{ $t('dataFlow.status.force_stopping') }}</el-dropdown-item

@@ -1,6 +1,6 @@
 <template>
 	<section class="dashboard" v-if="!$window.getSettingByKey('SHOW_OLD_PAGE')" v-loading="loading">
-		<el-row :gutter="20" class="e-row" v-readonlybtn="'Data_SYNC'">
+		<el-row :gutter="20" class="e-row" v-readonlybtn="'Data_SYNC_menu'">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="migrationJobObj" @getAllData="getAllData"></echart-head>
@@ -59,7 +59,7 @@
 				</div>
 			</el-col>
 		</el-row>
-		<el-row :gutter="20" class="e-row" v-readonlybtn="'Data_SYNC'">
+		<el-row :gutter="20" class="e-row" v-readonlybtn="'Data_SYNC_menu'">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="syncJobObj" @getAllData="getAllData"></echart-head>
@@ -104,7 +104,7 @@
 		</el-row>
 
 		<el-row :gutter="20" class="e-row">
-			<el-col :span="12" class="e-col" v-readonlybtn="'data_transmission'">
+			<el-col :span="12" class="e-col" v-readonlybtn="'data_transmission_menu'">
 				<div class="charts-list">
 					<echart-head :data="screeningObj" @getUnit="getUnit"></echart-head>
 					<div class="unit">{{ $t('dataFlow.unit') }}:{{ $t('dataFlow.rowCount') }}</div>
@@ -118,7 +118,7 @@
 					></shaftless-echart>
 				</div>
 			</el-col>
-			<el-col :span="12" class="e-col" v-readonlybtn="'Data_verify'">
+			<el-col :span="12" class="e-col" v-readonlybtn="'Data_verify_menu'">
 				<div class="charts-list">
 					<echart-head :data="dataValidationObj" @getUnit="getUnit"></echart-head>
 					<ul class="status-box">
@@ -193,7 +193,7 @@
 			</el-col> -->
 		</el-row>
 
-		<el-row :gutter="20" class="e-row" v-readonlybtn="'Cluster_management'">
+		<el-row :gutter="20" class="e-row" v-readonlybtn="'Cluster_management_menu'">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="serverProcessObj" @getAllData="getAllData"></echart-head>
@@ -467,8 +467,12 @@ export default {
 		};
 	},
 	mounted() {
-		this.getClsterDataApi();
-		this.getDataFlowApi();
+		if (this.$has('Data_SYNC') || this.$has('Data_verify')) {
+			this.getDataFlowApi();
+		}
+		if (this.$has('Cluster_management')) {
+			this.getClsterDataApi();
+		}
 		// this.getRankingData();
 
 		this.syncJobObj = {
