@@ -455,6 +455,7 @@ export default {
 			return stages;
 		},
 		back(falg) {
+			this.errorMsg = '';
 			if (falg) {
 				this.selectedDatabaseType = null;
 			} else {
