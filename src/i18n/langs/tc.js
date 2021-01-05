@@ -2063,7 +2063,10 @@ const tc = {
 		btn_save: '保存，',
 		btn_next: '下一步',
 		btn_to_dataflow: '開始編輯任務',
-		btn_to_dashboard: '暫不編輯任務，先逛逛'
+		btn_to_dashboard: '暫不編輯任務，先逛逛',
+
+		not_source: '請選擇一個源連接',
+		not_target: '請選擇一個目標連接'
 	}
 };
 

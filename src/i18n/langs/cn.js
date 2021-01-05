@@ -2070,7 +2070,10 @@ const cn = {
 		btn_save: '保存，',
 		btn_next: '下一步',
 		btn_to_dataflow: '开始编辑任务',
-		btn_to_dashboard: '暂不编辑任务，先逛逛'
+		btn_to_dashboard: '暂不编辑任务，先逛逛',
+
+		not_source: '请选择一个源连接',
+		not_target: '请选择一个目标连接'
 	}
 };
 
