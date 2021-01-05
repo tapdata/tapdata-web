@@ -222,10 +222,15 @@ export default {
 			this.$cookie.get('user_id');
 		this.dockerLink =
 			'docker run -itd ' +
-			`ccr.ccs.tencentyun.com/tapdata/flow-enging:${version} ` +
+			`ccr.ccs.tencentyun.com/tapdata/flow-engine:${version} '` +
+			'wget "' +
+			`https://resource.tapdata.net/package/feagent/${version}/tapdata` +
+			'" && chmod +x tapdata && ./tapdata start backend --downloadUrl ' +
+			`https://resource.tapdata.net/package/feagent/${version}/ --token ` +
 			this.$cookie.get('token') +
 			' ' +
-			this.$cookie.get('user_id');
+			this.$cookie.get('user_id') +
+            `'`;
 
 		// 是否允许下载agent
 		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
