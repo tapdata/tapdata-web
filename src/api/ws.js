@@ -218,11 +218,11 @@ class WSClient extends EventEmitter {
 	}
 
 	getUrl() {
-		let hostname = location.hostname;
+		// let hostname = location.hostname;
 		let host = location.host;
-		if (['localhost', '127.0.0.1'].includes(hostname)) {
-			host = hostname + ':3030';
-		}
+		// if (['localhost', '127.0.0.1'].includes(hostname)) {
+		// 	host = hostname + ':3030';
+		// }
 		// host = '192.168.1.181:30300';
 		return `${location.protocol.indexOf('https') === 0 ? 'wss:' : 'ws:'}//${host}/ws/agent`;
 	}

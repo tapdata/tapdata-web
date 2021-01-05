@@ -30,7 +30,9 @@ module.exports = {
 			},
 			'/ws': {
 				target: 'ws://' + baseUrl,
-				// target: 'http://192.168.1.193:30900/',
+				ws: true,
+				secure: false,
+        		logLevel: 'debug',
 				changeOrigin: false
 			},
 			'/old': {
