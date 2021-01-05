@@ -1417,12 +1417,12 @@ const tc = {
 		cancel: '取消',
 		backDetection: '後台檢測',
 		test: {
-			title: '連接測試',
+			title: '測試結果',
 			success: '測試通過',
 			fail: '測試未通過',
-			testing: '待檢測...',
-			items: '檢查事項',
-			result: '檢查結果',
+			testing: '未測試',
+			items: '測試事項',
+			result: '結果',
 			information: '說明',
 			error: '測試服務請求超時，請關閉重試'
 		},

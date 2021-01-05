@@ -15,7 +15,7 @@ export default {
 	},
 	methods: {
 		getHtmlMD(type) {
-			this.htmlMD = require(`./GitBook/${type.toLowerCase()}.md`);
+			this.htmlMD = require(`../../../static/md/connection/${type.toLowerCase()}.md`);
 		}
 	}
 };
@@ -28,5 +28,6 @@ export default {
 	overflow-y: auto;
 	background-color: rgba(250, 250, 250, 100);
 	border: 1px solid rgba(222, 222, 228, 100);
+	border-top: none;
 }
 </style>

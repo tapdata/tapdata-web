@@ -39,7 +39,7 @@ export default function(vm) {
 				label: vm.$t('dataForm.form.thinType'),
 				options: [
 					{ label: 'SID', value: 'SID' },
-					{ label: 'SERVICE_NAME', value: 'SERVICE_NAME' }
+					{ label: 'SERVICE NAME', value: 'SERVICE_NAME' }
 				],
 				required: true
 			},
@@ -86,7 +86,20 @@ export default function(vm) {
 				type: 'input',
 				field: 'database_name',
 				label: vm.$t('dataForm.form.databaseName'),
-				required: true
+				required: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'thin_type',
+								value: 'SERVICE_NAME'
+							}
+						],
+						triggerConfig: {
+							label: 'SERVICE NAME'
+						}
+					}
+				]
 			},
 			{
 				type: 'input',
@@ -154,38 +167,12 @@ export default function(vm) {
 				label: vm.$t('dataForm.form.timeZone'),
 				//tips: vm.$t('dataForm.form.timeZoneTips'),
 				options: [],
-				show: true,
-				dependOn: [
-					{
-						triggerOptions: [
-							{
-								field: 'connection_type',
-								value: 'target'
-							}
-						],
-						triggerConfig: {
-							show: false
-						}
-					}
-				]
+				show: true
 			},
 			{
 				type: 'slot',
 				slot: 'timezone',
-				show: true,
-				dependOn: [
-					{
-						triggerOptions: [
-							{
-								field: 'connection_type',
-								value: 'target'
-							}
-						],
-						triggerConfig: {
-							show: false
-						}
-					}
-				]
+				show: true
 			}
 		]
 	};

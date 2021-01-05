@@ -127,15 +127,13 @@ export default {
 			if (updateSchema) {
 				msg.data['updateSchema'] = updateSchema; //是否需要更新Schema
 			}
-			if (ws.ws.readyState == 1) {
+			ws.ready(() => {
 				ws.send(msg);
-			}
+			});
 		},
 		clearInterval() {
 			// 取消长连接
 			ws.off('testConnection');
-			clearInterval(this.timer);
-			this.timer = null;
 			this.testData.testLogs = [];
 		}
 	}

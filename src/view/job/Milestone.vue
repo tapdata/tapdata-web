@@ -119,7 +119,8 @@ export default {
 				return {
 					label: this.$t(`milestone.${m.code}`),
 					status: m.status,
-					fromNow: time || '-'
+					fromNow: time || '-',
+					errorMessage: m.errorMessage
 				};
 			});
 		}

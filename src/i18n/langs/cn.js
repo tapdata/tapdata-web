@@ -64,12 +64,12 @@ const cn = {
 		signOutMsg: '您确定要退出登录吗？',
 		save: '保存',
 		customerService: {
-			technicalSupport: '技术支持',
+			technicalSupport: '邮件支持',
 			technicalSupportText: '在使用过程中，有任何问题，请发送邮件到',
 			technicalSupportText1: '，我们会尽快答复。',
 			userSupport: 'team@tapdata.io',
-			otherDmands: '其他需求',
-			otherDmandsText: '其他需求，请扫描下方企业微信二维码。'
+			otherDmands: '微信支持',
+			otherDmandsText: '请扫描下方企业微信二维码, 联系我们获取支持'
 		},
 		signIn: {
 			slogan: '像自来水一样方便地使用您的数据',
@@ -1421,12 +1421,12 @@ const cn = {
 		cancel: '取消',
 		backDetection: '后台检测',
 		test: {
-			title: '连接测试',
+			title: '测试结果',
 			success: '测试通过',
 			fail: '测试未通过',
-			testing: '待检测...',
-			items: '检查事项',
-			result: '检查结果',
+			testing: '未测试',
+			items: '测试事项',
+			result: '结果',
 			information: '说明',
 			error: '测试服务请求超时，请关闭重试'
 		},
