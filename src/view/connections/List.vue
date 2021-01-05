@@ -4,7 +4,7 @@
 		<section class="connection-wrap">
 			<div class="panel-left" v-if="searchParams.panelFlag && $window.getSettingByKey('SHOW_CLASSIFY')">
 				<Classification
-					:authority="'SYNC_category_management'"
+					:authority="'datasource_catalog_management'"
 					@nodeChecked="nodeDataChange"
 					:type="'database'"
 				></Classification>

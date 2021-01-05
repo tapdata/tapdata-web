@@ -146,7 +146,7 @@
 							{{ $t('dataVerification.clear') }}
 						</el-button>
 					</div>
-					<ul class="panel-container" v-loading="!flowStages.length" id="data-verification-form">
+					<ul class="panel-container" id="data-verification-form">
 						<li class="condition-item" v-for="(item, index) in form.tasks" :key="index">
 							<div class="condition-setting">
 								<div class="setting-item">
