@@ -216,16 +216,21 @@ export default {
 			this.clearInterval();
 			this.$emit('previewVisible', false);
 		},
-		beforeTest() {
-			//先将管理端状态改为testing
-			this.$api('connections')
-				.updateById(this.data.id, {
-					status: 'testing'
-				})
-				.then(() => {
-					this.dialogTestVisible = true;
-					this.$refs.test.start();
-				});
+		async beforeTest() {
+			let result = await this.$api('Workers').getAvailableAgent();
+			if (!result.data.result || result.data.result.length === 0) {
+				this.$message.error(this.$t('dataForm.form.agentMsg'));
+			} else {
+				//先将管理端状态改为testing
+				this.$api('connections')
+					.updateById(this.data.id, {
+						status: 'testing'
+					})
+					.then(() => {
+						this.dialogTestVisible = true;
+						this.$refs.test.start();
+					});
+			}
 		},
 		edit(id, type) {
 			if (
@@ -237,24 +242,29 @@ export default {
 				localStorage.setItem('connectionDatabaseType', type);
 			}
 		},
-		reload() {
-			let config = {
-				title: this.$t('connection.reloadTittle'),
-				Message: this.$t('connection.reloadMsg'),
-				confirmButtonText: this.$t('message.confirm'),
-				cancelButtonText: this.$t('message.cancel'),
-				name: this.data.name,
-				id: this.data.id
-			};
-			this.confirm(
-				() => {
-					this.showProgress = true;
-					this.progress = 0;
-					this.reloadApi('first');
-				},
-				() => {},
-				config
-			);
+		async reload() {
+			let result = await this.$api('Workers').getAvailableAgent();
+			if (!result.data.result || result.data.result.length === 0) {
+				this.$message.error(this.$t('dataForm.form.agentMsg'));
+			} else {
+				let config = {
+					title: this.$t('connection.reloadTittle'),
+					Message: this.$t('connection.reloadMsg'),
+					confirmButtonText: this.$t('message.confirm'),
+					cancelButtonText: this.$t('message.cancel'),
+					name: this.data.name,
+					id: this.data.id
+				};
+				this.confirm(
+					() => {
+						this.showProgress = true;
+						this.progress = 0;
+						this.reloadApi('first');
+					},
+					() => {},
+					config
+				);
+			}
 		},
 		confirm(callback, catchCallback, config) {
 			this.$confirm(config.Message + config.name + '?', config.title, {
@@ -309,6 +319,13 @@ export default {
 		//test
 		handleTestVisible() {
 			this.dialogTestVisible = false;
+		},
+		//检测agent 是否可用
+		async checkTestConnectionAvailable() {
+			let result = await this.$api('Workers').getAvailableAgent();
+			if (!result.data.result || result.data.result.length === 0) {
+				this.$message.error(this.$t('dataForm.form.agentMsg'));
+			}
 		}
 	}
 };
