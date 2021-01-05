@@ -891,10 +891,10 @@ export default {
 		height: 100%;
 		overflow: auto;
 		.form-body {
+			display: table;
 			margin: 0 auto;
 			padding: 15px 30px;
 			box-sizing: border-box;
-			width: 100%;
 		}
 	}
 	.title {
