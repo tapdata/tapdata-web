@@ -79,7 +79,7 @@
 				<footer slot="footer" class="footer">
 					<div class="footer-btn">
 						<el-button size="mini" @click="goBack()">{{ $t('dataForm.cancel') }}</el-button>
-						<el-button size="mini" type="primary" :loading="testing" @click="submit">
+						<el-button size="mini" type="primary" :loading="submitBtnLoading" @click="submit">
 							{{ $t('dataForm.submit') }}
 						</el-button>
 					</div>
@@ -108,7 +108,7 @@
 			</span>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="handleCancelRename" size="mini">{{ $t('dataForm.cancel') }}</el-button>
-				<el-button @click="submitEdit()" size="mini" type="primary" v-loading="submitBtnLoading">{{
+				<el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
 					$t('message.confirm')
 				}}</el-button>
 			</span>
@@ -183,7 +183,6 @@ export default {
 	data() {
 		return {
 			visible: false,
-			testing: false,
 			timezones: [],
 			dataTypes: [],
 			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis'], //目前白名单,
@@ -200,6 +199,7 @@ export default {
 			dialogDatabaseTypeVisible: false,
 			dialogEditNameVisible: false,
 			submitBtnLoading: false,
+			editBtnLoading: false,
 			connectionTypeOption: '',
 			isUrlOption: '',
 			rename: ''
@@ -315,9 +315,9 @@ export default {
 			this.$router.push('/connections');
 		},
 		submit() {
+			this.submitBtnLoading = true;
 			this.$refs.form.validate(valid => {
 				if (valid) {
-					this.submitBtnLoading = true;
 					let params = Object.assign({}, this.model, {
 						sslCert: this.model.sslKey,
 						user_id: this.$cookie.get('user_id'),
@@ -329,15 +329,15 @@ export default {
 						submit: true,
 						listtags: []
 					});
-					if (!params.id) {
-						delete params.id;
-						params['status'] = 'testing'; //默认值
-					}
-					// if (!params.id && !['ready'].includes(this.status)) {
-					// 	params['status'] = 'testing'; //默认值
-					// }
 					delete params.sslKeyFile;
 					delete params.sslCAFile;
+					delete params.status; //编辑的情况下不传status
+					if (!params.id) {
+						delete params.id;
+					}
+					if (!params.id) {
+						params['status'] = this.status ? this.status : 'testing'; //默认值 0 代表没有点击过测试
+					}
 					if (params.database_type === 'mongodb') {
 						params.fill = params.isUrl ? 'uri' : '';
 						delete params.isUrl;
@@ -347,10 +347,11 @@ export default {
 							this.submitBtnLoading = false;
 							let id = res.data.id;
 							this.model.id = id;
-							this.$message.success('保存成功');
+							this.$message.success(this.$t('message.saveOK'));
 							this.goBack();
 						})
 						.catch(err => {
+							this.submitBtnLoading = false;
 							if (err && err.response) {
 								if (err.response.msg.indexOf('duplication for names') > -1) {
 									this.$message.error(this.$t('dataForm.error.connectionNameExist'));
@@ -363,32 +364,30 @@ export default {
 									this.$message.error(err.response.msg);
 								}
 							} else {
-								this.$message.error(this.$t('dataForm.saveFail'));
+								this.$message.error(this.$t('message.saveFail'));
 							}
 						});
 				}
 			});
 		},
 		//开始测试
-		startTest() {
-			this.$refs.form.validate(valid => {
-				if (valid) {
-					if (this.$route.query.id) {
-						//先将管理端状态改为testing
-						this.$api('connections')
-							.updateById(this.$route.query.id, {
-								status: 'testing'
-							})
-							.then(() => {
-								this.dialogTestVisible = true;
-								this.$refs.test.start();
-							});
-					} else {
+		async startTest() {
+			let result = await this.$api('Workers').getAvailableAgent();
+			if (!result.data.result || result.data.result.length === 0) {
+				this.$message.error(this.$t('dataForm.form.agentMsg'));
+			} else {
+				this.$refs.form.validate(valid => {
+					if (valid) {
 						this.dialogTestVisible = true;
-						this.$refs.test.start();
+						if (this.$route.query.id) {
+							//编辑需要特殊标识 updateSchema = false editTest = true
+							this.$refs.test.start(false, true);
+						} else {
+							this.$refs.test.start(false);
+						}
 					}
-				}
-			});
+				});
+			}
 		},
 		returnTestData(data) {
 			if (!data.status || data.status === null) return;
@@ -401,6 +400,7 @@ export default {
 		},
 		//保存名字
 		submitEdit() {
+			this.editBtnLoading = true;
 			if (this.rename === '') {
 				this.rename = this.model.name;
 				this.$message.error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText'));
@@ -414,10 +414,12 @@ export default {
 			this.$api('connections')
 				.patchId(params)
 				.then(() => {
+					this.editBtnLoading = false;
 					this.$message.success(this.$t('message.saveOK'));
 					this.dialogEditNameVisible = false;
 				})
 				.catch(err => {
+					this.editBtnLoading = false;
 					if (err && err.response) {
 						if (err.response.msg.indexOf('duplication for names') > -1) {
 							this.$message.error(this.$t('dataForm.error.connectionNameExist'));

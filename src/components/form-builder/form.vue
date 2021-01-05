@@ -70,7 +70,7 @@ export default {
 				})
 			},
 			formItems.map((item, index) => {
-				return this.getFormItem(h, item, index);
+				return this.getFormItem(h, item, formConfig, index);
 			})
 		);
 		if (this.show) {
@@ -85,7 +85,7 @@ export default {
 		clearValidate() {
 			return this.$refs.form && this.$refs.form.clearValidate();
 		},
-		getFormItem(h, itemConfig, index) {
+		getFormItem(h, itemConfig, formConfig, index) {
 			let self = this;
 			let config = Object.assign({}, this.defaultFormItemConfig, itemConfig);
 			let rules = config.rules || [];
@@ -123,7 +123,7 @@ export default {
 				'ElFormItem',
 				{
 					class: 'e-form-builder-item',
-					style: this.config.form.itemStyle,
+					style: formConfig.itemStyle,
 					props: {
 						prop: config.field,
 						label: config.label,

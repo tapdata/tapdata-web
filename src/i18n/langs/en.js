@@ -2116,7 +2116,10 @@ const en = {
 		btn_save: 'Save,',
 		btn_next: 'Next',
 		btn_to_dataflow: 'Start editing task',
-		btn_to_dashboard: "Don't edit the task for now, go shopping first"
+		btn_to_dashboard: "Don't edit the task for now, go shopping first",
+
+		not_source: 'Please choose a source connection',
+		not_target: 'Please choose a target connection'
 	}
 };
 
