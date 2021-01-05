@@ -365,8 +365,8 @@ export default {
 					inspectResultId: { regexp: `^${this.id}$` }
 				},
 				order: 'createTime DESC',
-				limit: this.inspectPageSize,
-				skip: (currentPage - 1) * this.inspectPageSize
+				limit: this.showAdvancedVerification ? 1 : this.inspectPageSize,
+				skip: (currentPage - 1) * (this.showAdvancedVerification ? 1 : this.inspectPageSize)
 			};
 			Promise.all([
 				this.$api('InspectDetails').count(where),
