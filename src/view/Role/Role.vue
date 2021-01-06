@@ -89,7 +89,7 @@
 										<el-checkbox
 											class="e-checkbox"
 											v-show="second.allName"
-											:disabled="!second.checked"
+											:disabled="!second.checked || second.allName === 'data_catalog_all_data'"
 											v-model="second.checkAllData"
 											@change="handleOneAllData($event, item, item.children, second, 'children')"
 											v-cloak
@@ -151,7 +151,7 @@
 										@change="handleAuthoritySelectAll($event, item, item.classification)"
 										v-cloak
 									>
-										<div>{{ $t('role.chooseAllRole') }}</div>
+										<div>{{ $t('role.chooseAllFunction') }}</div>
 									</el-checkbox>
 								</el-col>
 							</el-row>
@@ -178,7 +178,7 @@
 										@change="handleAuthoritySelectAll($event, item, item.functional)"
 										v-cloak
 									>
-										<div>{{ $t('role.chooseAllRole') }}</div>
+										<div>{{ $t('role.chooseAllFunction') }}</div>
 									</el-checkbox>
 								</el-col>
 							</el-row>
@@ -277,8 +277,8 @@ let moduleMapping = [
 			{ name: 'Data_verify', allName: 'Data_verify_all_data' },
 			{ name: 'verify_job_creation' },
 			{ name: 'verify_job_edition', allName: 'verify_job_edition_all_data' },
-			{ name: 'verify_job_delete', allName: 'verify_job_delete_all_data' },
-			{ name: 'verify_job_execution', allName: 'verify_job_execution_all_data' }
+			{ name: 'verify_job_delete', allName: 'verify_job_delete_all_data' }
+			// { name: 'verify_job_execution', allName: 'verify_job_execution_all_data' }
 		]
 	},
 	{
@@ -459,46 +459,81 @@ export default {
 							pageData.forEach(item => {
 								if (this.selectRole && this.selectRole.length) {
 									if (item.children && item.children.length) {
+										let checkedCount = [],
+											pageLength = [];
 										item.children.filter(childItem => {
 											this.$set(childItem, 'checkAll', this.selectRole.includes(childItem.name));
+											if (childItem.checkAll) {
+												checkedCount.push(childItem);
+											}
+											if (childItem.id) {
+												pageLength.push(childItem);
+											}
 										});
+										this.$set(item, 'checked', checkedCount.length === pageLength.length);
 									}
 								}
 							});
 						}
-						if (mappingData.length)
+						if (mappingData.length) {
 							mappingData.filter(item => {
 								if (this.selectRole && this.selectRole.length) {
 									if (item.children && item.children.length) {
+										let checkedCount = [],
+											allCheckedCount = [];
 										item.children.filter(childItem => {
 											this.$set(
 												childItem,
 												'checkAllData',
 												this.selectRole.includes(childItem.allName)
 											);
+
 											this.$set(childItem, 'checked', this.selectRole.includes(childItem.name));
+											if (childItem.checked) {
+												checkedCount.push(childItem);
+											}
+											if (childItem.checkAllData) {
+												allCheckedCount.push(childItem);
+											}
 										});
+										let allData = item.children.filter(el => {
+											return el.allName;
+										});
+
+										this.$set(item, 'checkAll', checkedCount.length === item.children.length);
+										this.$set(item, 'checkedAllData', allCheckedCount.length === allData.length);
 									}
 									if (item.classification && item.classification.length) {
+										let checkedCount = [];
 										item.classification.filter(classify => {
 											this.$set(classify, 'checked', this.selectRole.includes(classify.name));
+											if (classify.checked) {
+												checkedCount.push(classify);
+											}
 										});
+										this.$set(
+											item,
+											'classifiyCheckAll',
+											checkedCount.length === item.classification.length
+										);
 									}
 									if (item.functional && item.functional.length) {
+										let checkedCount = [];
 										item.functional.filter(fun => {
 											this.$set(fun, 'checked', this.selectRole.includes(fun.name));
+											if (fun.checked) {
+												checkedCount.push(fun);
+											}
 										});
+										this.$set(
+											item,
+											'functionCheckAll',
+											checkedCount.length === item.functional.length
+										);
 									}
-									// 				item.children.filter(childItem => {
-									// 					this.$set(childItem, 'checkAll', this.selectRole.includes(childItem.name));
-									// 					if (childItem.children && childItem.children.length)
-									// 						childItem.children.filter(check => {
-									// 							if (this.selectRole.includes(check.name))
-									// 								childItem.checkedCities.push(check.name);
-									// 						});
-									// 				});
 								}
 							});
+						}
 					}
 					// if (res && res.data && res.data.length === 0) {
 					// 	if (mappingData.length)
@@ -563,7 +598,6 @@ export default {
 
 							this.dataList = pageMenu(pageSort);
 							this.moduleList = moduleFun(moduleMapping);
-
 							// 页面排序  ---- 结束
 							this.getMappingData(this.moduleList, this.dataList);
 						}
@@ -671,12 +705,14 @@ export default {
 				item.checked = event;
 			}
 			let checkedCount = children.filter(el => {
-				return el.checkAllData;
+				if (el.allName) {
+					return el.checkAllData;
+				}
 			});
 			let allDataCount = children.filter(el => {
 				return el.allName;
 			});
-			item.checkedAllData = checkedCount.length === allDataCount.length;
+			item.checkedAllData = checkedCount.length === allDataCount.length ? true : false;
 		},
 
 		// 权限全部数据全选

@@ -236,7 +236,8 @@
 									class="btn-icon"
 									type="text"
 									size="mini"
-									v-readonlybtn="'verify_job_execution'"
+									:disabled="permissionBtnDisabel('verify_job_edition_all_data', scope.row.user_id)"
+									v-readonlybtn="'verify_job_edition'"
 									@click="startTask(scope.row.id)"
 								>
 									<i class="btn-icon iconfont icon-bofang"></i>

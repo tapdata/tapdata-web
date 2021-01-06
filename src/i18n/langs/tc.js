@@ -1983,7 +1983,7 @@ const tc = {
 			SYNC_Function_management: '瀏覽函數',
 			Data_verify: '瀏覽數據校驗',
 			verify_job_creation: '創建校驗任務',
-			verify_job_edition: '編輯校驗任務',
+			verify_job_edition: '編輯執行校驗任務',
 			verify_job_delete: '刪除校驗任務',
 			verify_job_execution: '校驗任務運行',
 			data_government: '數據治理',

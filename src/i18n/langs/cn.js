@@ -1989,7 +1989,7 @@ const cn = {
 			SYNC_Function_management: '浏览函数',
 			Data_verify: '浏览数据校验',
 			verify_job_creation: '创建校验任务',
-			verify_job_edition: '编辑校验任务',
+			verify_job_edition: '编辑执行校验任务',
 			verify_job_delete: '删除校验任务',
 			verify_job_execution: '校验任务运行',
 			data_government: '数据治理',
