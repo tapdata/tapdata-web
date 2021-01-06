@@ -93,7 +93,10 @@
 							<el-button
 								type="text"
 								@click="handleAssociatUsers(scope.row.id)"
-								:disabled="permissionBtnDisabel('role_edition_all_data', scope.row.user_id)"
+								:disabled="
+									permissionBtnDisabel('role_edition_all_data', scope.row.user_id) ||
+										scope.row.name === 'admin'
+								"
 								v-readonlybtn="'role_edition'"
 							>
 								{{ $t('role.associatUsers') }}
@@ -109,8 +112,10 @@
 							<el-button
 								type="text"
 								@click="handleDelete(scope.row)"
-								v-if="scope.row.name != 'admin'"
-								:disabled="permissionBtnDisabel('role_delete_all_data', scope.row.user_id)"
+								:disabled="
+									permissionBtnDisabel('role_delete_all_data', scope.row.user_id) ||
+										scope.row.name === 'admin'
+								"
 								v-readonlybtn="'role_delete'"
 							>
 								{{ $t('role.delete') }}
@@ -330,7 +335,7 @@ export default {
 				this.$api('Permissions')
 					.get({})
 					.then(res => {
-						if (res) {
+						if (res && res.data && res.data.length) {
 							this.permissions = res.data;
 						}
 					});
@@ -456,7 +461,11 @@ export default {
 		async getUserData() {
 			await usersModel.get({}).then(res => {
 				if (res && res.data) {
-					this.userGroup = res.data;
+					res.data.forEach(item => {
+						if (!item.role) {
+							this.userGroup.push(item);
+						}
+					});
 				}
 			});
 		},
