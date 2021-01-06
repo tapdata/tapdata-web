@@ -156,8 +156,8 @@
 										:class="{ red: !item.sourceTable }"
 										size="mini"
 										v-model="item.sourceTable"
-										:options="sourceTree"
-										@input="tableChangeHandler(item, 'source')"
+										:options="item.sourceTree"
+										@input="tableChangeHandler(item, 'source', index)"
 									></el-cascader>
 									<span class="item-icon">
 										<i class="el-icon-right"></i>
@@ -167,7 +167,7 @@
 										size="mini"
 										:class="{ red: !item.targetTable }"
 										v-model="item.targetTable"
-										:options="targetTree"
+										:options="item.targetTree"
 										@input="tableChangeHandler(item, 'target')"
 									></el-cascader>
 								</div>
@@ -324,6 +324,7 @@ export default {
 			pickerTimes: [],
 			htmlMD: '',
 			removeVisible: false,
+			isDbClone: false,
 			form: {
 				flowId: '',
 				name: '',
@@ -455,10 +456,11 @@ export default {
 				.then(res => {
 					let flowData = res.data;
 					this.flowStages = [];
-					if (flowData.mappingTemplate === 'cluster-clone') {
-						this.dealDBFlow(flowData);
+					this.isDbClone = flowData.mappingTemplate === 'cluster-clone';
+					if (this.isDbClone) {
+						this.dealDBFlow(flowData, this.getTaskTree);
 					} else {
-						this.dealCustomFlow(flowData);
+						this.dealCustomFlow(flowData, this.getTaskTree);
 					}
 				});
 			let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {};
@@ -466,7 +468,7 @@ export default {
 			this.form['dataFlowName'] = flow.name;
 		},
 		//处理db克隆的情况
-		dealDBFlow(flowData) {
+		dealDBFlow(flowData, callback) {
 			let dbStages = flowData.stages.filter(stg => ['database'].includes(stg.type));
 			let connectionIds = dbStages.map(stg => stg.connectionId);
 			if (connectionIds.length) {
@@ -496,11 +498,12 @@ export default {
 								this.getTreeForDBFlow('target', tables, stage);
 							}
 						});
+						callback();
 					});
 			}
 		},
 		//处理普通表同步的情况
-		dealCustomFlow(flowData) {
+		dealCustomFlow(flowData, callback) {
 			this.getStageMap(flowData.stages);
 			let flowStages = flowData.stages.filter(stg => ['table', 'collection'].includes(stg.type));
 			this.flowStages = flowStages;
@@ -539,24 +542,25 @@ export default {
 								stg.connectionName = table.source.name;
 								stg.fields = table.fields;
 								if (stg.outputLanes.length) {
-									this.getTree('source', stg);
+									this.getTree(this.sourceTree, stg);
 								}
 								if (stg.inputLanes.length) {
-									this.getTree('target', stg);
+									this.getTree(this.targetTree, stg);
 								}
 							}
 						});
+						callback();
 					});
 			}
 		},
 		//获取源表和目标表数据
-		getTree(type, stage) {
-			let tree = this[type + 'Tree'];
+		getTree(tree, stage) {
 			let parent = tree.find(c => c.value === stage.connectionId);
 			if (!parent) {
 				parent = {
 					label: stage.connectionName,
 					value: stage.connectionId,
+					level: 1,
 					children: []
 				};
 				tree.push(parent);
@@ -564,7 +568,8 @@ export default {
 			if (parent.children.every(t => t.value !== stage.tableName)) {
 				parent.children.push({
 					label: stage.tableName,
-					value: stage.tableName
+					value: stage.tableName,
+					level: 2
 				});
 			}
 		},
@@ -645,12 +650,56 @@ export default {
 				return result;
 			};
 			let map = {};
+			let sMap = {};
 			stages.forEach(stg => {
 				if (stg.outputLanes.length && ['table', 'collection'].includes(stg.type)) {
-					map[stg.id] = checkOutputLanes(stg.outputLanes);
+					let stage = sMap[stg.connectionId + stg.tableName] || {};
+					let stgId = stage.id || stg.id;
+					let outputLanes = map[stgId] || [];
+					outputLanes.push(...checkOutputLanes(stg.outputLanes));
+					map[stgId] = outputLanes;
+					sMap[stg.connectionId + stg.tableName] = stg;
 				}
 			});
 			this.stageMap = map;
+		},
+		getTaskTree() {
+			let sourceTree = this.sourceTree;
+			let map = this.stageMap;
+			let stages = this.flowStages;
+
+			if (this.form.tasks && this.form.tasks.length) {
+				this.form.tasks.forEach((t, idx) => {
+					let targetTree = [];
+					let sourceTable = t.sourceTable;
+					if (sourceTable && sourceTable[0] && sourceTable[1]) {
+						let stageKey = null;
+						if (this.isDbClone) {
+							stageKey = sourceTable.join('');
+						} else {
+							let stage = stages.find(
+								stg => stg.connectionId === sourceTable[0] && stg.tableName === sourceTable[1]
+							);
+							if (stage) {
+								stageKey = stage.id;
+							}
+						}
+						if (stageKey) {
+							let outputLanes = map[stageKey];
+							if (outputLanes && outputLanes.length) {
+								let tree = [];
+								outputLanes.forEach(id => {
+									let stg = stages.find(stg => stg.id === id);
+									this.getTree(tree, stg);
+								});
+								targetTree = tree;
+							}
+						}
+					}
+					this.form.tasks[idx].sourceTree = sourceTree;
+					this.form.tasks[idx].targetTree = targetTree;
+				});
+			}
 		},
 		//根据表的连线关系自动添加校验条件
 		autoAddTable() {
@@ -671,24 +720,37 @@ export default {
 						webScript: '' //前端使用 用于页面展示
 					};
 					if (targetStage) {
-						task.target = this.setTable(targetStage);
-						task.targetTable = [targetStage.connectionId, targetStage.tableName];
-						if (targetStage.joinTables) {
-							let joinTable = targetStage.joinTables.find(ts => ts.stageId === stg.id);
-							if (joinTable) {
-								let sourceSortColumn = [];
-								let targetSortColumn = [];
-								joinTable.joinKeys.forEach(obj => {
-									sourceSortColumn.push(obj.source);
-									targetSortColumn.push(obj.target);
-								});
-								task.source.sortColumn = sourceSortColumn.join(',');
-								task.target.sortColumn = targetSortColumn.join(',');
-							}
-						}
+						this.setTarget(task, targetStage);
 					}
 					this.form.tasks.push(task);
 				});
+			}
+			this.getTaskTree();
+		},
+		setTarget(task, targetStage) {
+			let stages = this.flowStages;
+			let source = task.source;
+			if (source && source.connectionId) {
+				let sourceStage = stages.find(
+					stg => stg.connectionId === source.connectionId && stg.tableName === source.table
+				);
+				if (sourceStage) {
+					task.target = this.setTable(targetStage);
+					task.targetTable = [targetStage.connectionId, targetStage.tableName];
+					if (targetStage.joinTables) {
+						let joinTable = targetStage.joinTables.find(ts => ts.stageId === sourceStage.id);
+						if (joinTable) {
+							let sourceSortColumn = [];
+							let targetSortColumn = [];
+							joinTable.joinKeys.forEach(obj => {
+								sourceSortColumn.push(obj.source);
+								targetSortColumn.push(obj.target);
+							});
+							task.source.sortColumn = sourceSortColumn.join(',');
+							task.target.sortColumn = targetSortColumn.join(',');
+						}
+					}
+				}
 			}
 		},
 		setTable(stage) {
@@ -715,6 +777,7 @@ export default {
 				script: '', //后台使用 需要拼接function头尾
 				webScript: '' //前端使用 用于页面展示
 			});
+			this.getTaskTree();
 		},
 		removeItem(idx) {
 			this.form.tasks.splice(idx, 1);
@@ -726,13 +789,34 @@ export default {
 			this.form.timing.start = times[0];
 			this.form.timing.end = times[1];
 		},
-		tableChangeHandler(item, type) {
+		tableChangeHandler(item, type, index) {
+			let stages = this.flowStages;
 			let values = item[type + 'Table'];
-			this.flowStages.forEach(stg => {
-				if (values && values.length && stg.connectionId === values[0] && stg.tableName === values[1]) {
-					item[type] = this.setTable(stg);
+			if (values && values.length) {
+				let sourceStage = stages.find(stg => stg.connectionId === values[0] && stg.tableName === values[1]);
+				if (sourceStage) {
+					item[type] = this.setTable(sourceStage);
+					if (type === 'source') {
+						let task = this.form.tasks[index];
+						task.target = Object.assign({}, TABLE_PARAMS);
+						task.targetTable = ['', ''];
+						this.$nextTick(() => {
+							this.getTaskTree();
+							this.$nextTick(() => {
+								let targetTree = task.targetTree;
+								if (targetTree.length === 1 && targetTree[0].children.length === 1) {
+									let targetStage = stages.find(
+										stg =>
+											stg.connectionId === targetTree[0].value &&
+											stg.tableName === targetTree[0].children[0].value
+									);
+									this.setTarget(task, targetStage);
+								}
+							});
+						});
+					}
 				}
-			});
+			}
 		},
 		handleAddScriptClose() {
 			this.webScript = '';
@@ -891,7 +975,7 @@ export default {
 		height: 100%;
 		overflow: auto;
 		.form-body {
-			display: table;
+			display: inline-block;
 			margin: 0 auto;
 			padding: 15px 30px;
 			box-sizing: border-box;
