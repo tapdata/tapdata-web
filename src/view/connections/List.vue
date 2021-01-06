@@ -917,30 +917,33 @@ export default {
 }
 </style>
 <style lang="less">
-.connection-table {
-	border: 1px solid #eeeeee;
-	thead {
-		th {
-			padding: 2px 0;
-			background: #fafafa;
-			color: #999;
+.connection-box {
+	.connection-table {
+		border: 1px solid #eeeeee;
+		border-bottom: none;
+		thead {
+			th {
+				padding: 2px 0;
+				background: #fafafa;
+				color: #999;
+			}
 		}
 	}
-}
-.connections-list .el-pagination .el-pagination__total {
-	float: left;
-}
-.connection-table .el-table th,
-.connection-table .el-table tr {
-	background-color: #fcfcfc;
-}
-.connection-table .el-table .cell,
-.connection-table .el-table th div,
-.el-table--border td:first-child .cell,
-.el-table--border th:first-child .cell {
-	padding-left: 0px;
-}
-.connection-table .el-table-column--selection .cell {
-	padding-left: 16px;
+	.connections-list .el-pagination .el-pagination__total {
+		float: left;
+	}
+	.connection-table .el-table th,
+	.connection-table .el-table tr {
+		background-color: #fcfcfc;
+	}
+	.connection-table .el-table .cell,
+	.connection-table .el-table th div,
+	.el-table--border td:first-child .cell,
+	.el-table--border th:first-child .cell {
+		padding-left: 0px;
+	}
+	.connection-table .el-table-column--selection .cell {
+		padding-left: 16px;
+	}
 }
 </style>
