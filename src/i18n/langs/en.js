@@ -519,6 +519,12 @@ const en = {
 		isOpenAutoDDL: 'Auto-DDL operation',
 		transformerConcurrency: 'Transformer Concurrency',
 		processorConcurrency: 'Processor Concurrency',
+		cdcFetchSize: 'Number of CDC batch reads',
+		cdcFetchSizeTip: 'Number of data read by system each time.',
+		cdcFetchSizeTip1:
+			'The smaller the number entered means the higher the CDC real-time performance, but the processing speed is relatively slow.',
+		cdcFetchSizeTip2:
+			'The more the number entered means the lower the real-time performance, and the overall processing speed will be faster. ',
 		send_email_when_replication: 'Resend in a few seconds',
 		send_email_at_most_one_replication: 'Cancel sending in more than seconds',
 		read_cdc_interval: ' CDC interval',
