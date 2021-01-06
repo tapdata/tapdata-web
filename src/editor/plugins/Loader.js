@@ -8,7 +8,7 @@ import { stencilConfig, inspectorConfig } from '../lib/rappid/config';
 import { vueAdapter } from '../vue-adapter';
 import joint from '../lib/rappid/rappid';
 import * as plugins from './index';
-import { FORM_DATA_KEY, DATABASE_TYPE_MAPPING } from '../constants';
+import { FORM_DATA_KEY, DATABASE_TYPE_MAPPING, FILE_TYPE_MAPPING } from '../constants';
 
 export const loadPlugins = function(cNodes) {
 	const defineShape = (type, shape) => {
@@ -123,11 +123,14 @@ export const loadPlugins = function(cNodes) {
 				addInspector(type, plugin.styleFormConfig);
 				addSettingForm(type, plugin.settingFormConfig);
 
-				if (type === 'app.Database') {
-					let addData = DATABASE_TYPE_MAPPING;
+				if (type === 'app.Database' || type === 'app.FileFormBuilder') {
+					let addData = type === 'app.Database' ? DATABASE_TYPE_MAPPING : FILE_TYPE_MAPPING;
 					Object.keys(addData).forEach(key => {
 						let database = addData[key];
-						if (window.getSettingByKey('ALLOW_CONNECTION_TYPE').includes(database.type)) {
+						if (
+							window.getSettingByKey('ALLOW_CONNECTION_TYPE').includes(database.type) ||
+							type === 'app.FileFormBuilder'
+						) {
 							let cell = _.cloneDeep(database);
 							let plugin = _.cloneDeep(plugins[name]);
 							plugin.stencil['group'] = 'data';

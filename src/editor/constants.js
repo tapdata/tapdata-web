@@ -110,4 +110,30 @@ export const FORM_DATA_KEY = 'form_data',
 			shapeImage: 'static/editor/o-sybase.svg',
 			stencilImage: 'static/editor/sybase.svg'
 		}
+	},
+	FILE_TYPE_MAPPING = {
+		xml: {
+			type: 'xml',
+			name: 'xml',
+			shapeImage: 'static/editor/xml.svg',
+			stencilImage: 'static/editor/xml.svg'
+		},
+		excel: {
+			type: 'excel',
+			name: 'excel',
+			shapeImage: 'static/editor/excel.svg',
+			stencilImage: 'static/editor/excel.svg'
+		},
+		csv: {
+			type: 'csv',
+			name: 'csv',
+			shapeImage: 'static/editor/csv.svg',
+			stencilImage: 'static/editor/csv.svg'
+		},
+		json: {
+			type: 'json',
+			name: 'json',
+			shapeImage: 'static/editor/json.svg',
+			stencilImage: 'static/editor/json.svg'
+		}
 	};
