@@ -80,6 +80,7 @@
 										v-for="second in item.children"
 										:key="second.name"
 										v-model="second.checked"
+										v-show="second.id"
 										:disabled="second.type === 'read'"
 										@change="handleOneCheckAll($event, item, item.children, second, 'children')"
 										:class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
@@ -124,6 +125,7 @@
 										v-for="second in item.classification"
 										:key="second.name"
 										v-model="second.checked"
+										v-show="second.id"
 										:disabled="second.type === 'read'"
 										@change="
 											handleOneCheckAll($event, item, item.classification, second, 'classify')
@@ -162,6 +164,7 @@
 									<el-checkbox
 										v-for="second in item.functional"
 										:key="second.name"
+										v-show="second.id"
 										:disabled="second.type === 'read'"
 										v-model="second.checked"
 										@change="handleOneCheckAll($event, item, item.functional, second, 'functional')"

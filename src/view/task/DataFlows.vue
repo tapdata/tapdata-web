@@ -283,7 +283,10 @@
 								<el-tooltip class="item" :content="$t('dataFlow.edit')" placement="bottom">
 									<el-button
 										type="text"
-										:disabled="statusBtMap[scope.row.status] && statusBtMap[scope.row.status].edit"
+										:disabled="
+											permissionBtnDisabel('SYNC_job_edition_all_data', scope.row.user_id) ||
+												(statusBtMap[scope.row.status] && statusBtMap[scope.row.status].edit)
+										"
 										@click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)"
 										v-readonlybtn="'SYNC_job_edition'"
 									>
