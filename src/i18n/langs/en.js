@@ -1535,7 +1535,8 @@ const en = {
 				CHECK_READ_PERMISSION: 'Check if read permission is granted',
 				CHECK_ACCESS_TOKEN: 'Check if access token is available',
 				CHECK_API_AUTH: 'Check if api auth is available',
-				CHECK_LOCAL_PORT: 'Check if local port is available'
+				CHECK_LOCAL_PORT: 'Check if local port is available',
+				SCAN_FILE: 'Scan the files in the directory'
 			}
 		},
 		error: {
