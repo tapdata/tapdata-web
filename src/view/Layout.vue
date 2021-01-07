@@ -273,7 +273,9 @@ export default {
 			languages: Languages,
 			lang: localStorage.getItem('tapdata_localize_lang') || 'en',
 			isCollapse: false,
-			settingVisibility: this.$has('home_notice_settings') || this.$has('system_settings'),
+			settingVisibility:
+				this.$has('home_notice_settings') ||
+				(this.$has('system_settings') && this.$has('system_settings_mune')),
 			creatAuthority:
 				this.$has('SYNC_job_creation') ||
 				this.$has('datasource_creation') ||
