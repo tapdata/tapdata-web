@@ -77,9 +77,12 @@ const en = {
 			signIn: 'Sign in',
 			keepSignIn: 'Keep signed in',
 			email_placeholder: 'Enter your email',
+            inviteCode_placeholder: 'invite code',
 			password_placeholder: 'Enter your password',
 
 			email_require: 'E-mail is required.',
+            inviteCode_require: 'invite code is required.',
+            inviteCode_invalid: 'invite code must be valid.',
 			email_invalid: 'E-mail must be valid.',
 			password_invalid: 'Password at least 5 characters.',
 			account_waiting_approve: 'Your account is waiting administrator to approve.',

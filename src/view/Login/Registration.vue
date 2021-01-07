@@ -17,6 +17,13 @@
 								:placeholder="$t('app.signIn.email_placeholder')"
 							></el-input>
 						</el-form-item>
+						<el-form-item prop="inviteCode">
+							<el-input
+								v-model="form.inviteCode"
+								type="text"
+								:placeholder="$t('app.signIn.inviteCode_placeholder')"
+							></el-input>
+						</el-form-item>
 						<el-form-item prop="password">
 							<el-input
 								v-model="form.password"
@@ -125,6 +132,8 @@ export default {
 			if (!form.email || !form.email.trim()) {
 				message = this.$t('app.signIn.email_require');
 				// eslint-disable-next-line
+			} else if (!form.inviteCode) {
+				message = this.$t('app.signIn.inviteCode_invalid');
 			} else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)) {
 				message = this.$t('app.signIn.email_invalid');
 			} else if (!form.password || form.password.length < 5) {

@@ -76,9 +76,12 @@ const cn = {
 			signIn: '登录',
 			keepSignIn: '保持登录状态',
 			email_placeholder: '请输入邮箱',
+			inviteCode_placeholder: '邀请码',
 			password_placeholder: '请输入密码',
 
 			email_require: '邮箱地址必填',
+			inviteCode_require: '邀请码必填',
+			inviteCode_invalid: '邀请码无效',
 			email_invalid: '请输入有效邮箱地址',
 			email_null: '邮箱不能为空',
 			password_invalid: '密码至少5个字符',

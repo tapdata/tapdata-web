@@ -53,6 +53,7 @@ export default {
 		if (this.$route.params) {
 			this.form = this.$route.params.data;
 			this.email = this.form.email;
+            this.inviteCode = this.form.inviteCode;
 			this.type = this.$route.params.type ? this.$route.params.type : '';
 		}
 	},
@@ -82,7 +83,8 @@ export default {
 						}
 					}, 1000);
 					await usersModel.sendVerifyEmail({
-						email: this.email
+						email: this.email,
+                        inviteCode: this.inviteCode,
 					});
 				} catch (e) {
 					if (e.response && e.response.msg) {
