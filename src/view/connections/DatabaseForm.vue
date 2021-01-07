@@ -50,7 +50,32 @@
 							<div class="url-tip" slot="timezone">
 								{{ $t('dataForm.form.timeZoneTips') }}
 							</div>
+							<div class="url-tip" slot="fileUrl"></div>
 						</form-builder>
+						<!-- 文件数据库 -->
+						<template>
+							<div class="fileBox">
+								<div class="file-label">{{ $t('dataForm.form.file.fileUrl') }}</div>
+								<div class="file-form-content">
+									<el-form
+										:model="model"
+										:rules="rules"
+										ref="ruleForm"
+										label-width="100px"
+										class="demo-ruleForm"
+										label-position="top"
+									>
+										<el-form-item label="设置路径 * " prop="name">
+											<el-input v-model="model.name" size="mini"></el-input>
+										</el-form-item>
+										<el-form-item label="设置路径 * " prop="name">
+											<el-input v-model="model.name" size="mini"></el-input>
+										</el-form-item>
+									</el-form>
+								</div>
+							</div>
+						</template>
+
 						<el-button size="mini" class="test" @click="startTest()">{{
 							$t('connection.testConnection')
 						}}</el-button>
@@ -174,7 +199,12 @@ const defaultModel = {
 	sslValidate: false,
 	sslCA: '',
 	sslCAFile: null,
-	sslKeyFile: null
+	sslKeyFile: null,
+
+	file_source_protocol: '',
+	ftp_passive: true,
+	connection_timeout_seconds: 0,
+	data_timeout_seconds: 0
 };
 
 export default {
@@ -185,7 +215,7 @@ export default {
 			visible: false,
 			timezones: [],
 			dataTypes: [],
-			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis'], //目前白名单,
+			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis', 'file'], //目前白名单,
 			model: Object.assign({}, defaultModel),
 			config: {
 				items: []
@@ -490,6 +520,22 @@ export default {
 					color: #999;
 					line-height: 18px;
 				}
+				.fileBox {
+					display: flex;
+					flex: 1;
+					div.file-label {
+						width: 200px;
+						padding-right: 20px;
+						line-height: 28px;
+						font-size: 12px;
+						color: #606266;
+						text-align: right;
+						box-sizing: border-box;
+					}
+					.file-form-content {
+						width: calc(100% - 200px);
+					}
+				}
 			}
 			.edit-header-box {
 				border-bottom: 1px solid #eee;
@@ -630,6 +676,16 @@ export default {
 		margin-top: -14px;
 		b {
 			color: #666;
+		}
+	}
+	.file-form-content {
+		.el-form-item {
+			margin-bottom: 5px;
+		}
+		.el-form-item__label {
+			padding-bottom: 0;
+			line-height: 28px;
+			font-size: 12px;
 		}
 	}
 }

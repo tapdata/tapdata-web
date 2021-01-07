@@ -1489,6 +1489,7 @@ const en = {
 			indexPrefix: 'Index prefix',
 			agentMsg:
 				'The test connection service is not available, please check if the Data Synchronization Agent is started correctly.',
+
 			uriTips: {
 				label: 'Example',
 				content:
@@ -1542,6 +1543,9 @@ const en = {
 				CHECK_ACCESS_TOKEN: 'Check if access token is available',
 				CHECK_API_AUTH: 'Check if api auth is available',
 				CHECK_LOCAL_PORT: 'Check if local port is available'
+			},
+			file: {
+				agreementType: 'Agreement Type'
 			}
 		},
 		error: {

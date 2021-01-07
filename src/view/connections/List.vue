@@ -337,7 +337,7 @@ export default {
 				}
 			],
 			databaseTypeOptions: [],
-			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis'], //目前白名单,
+			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis', 'file'], //目前白名单,
 			searchParams: this.$store.state.connections,
 			timer: '',
 			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')

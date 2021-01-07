@@ -1464,6 +1464,7 @@ const cn = {
 			supportUpdatePk: '支持同步时更新主键',
 			indexPrefix: '索引前缀',
 			agentMsg: '当前测试连接服务不可用，请检查是否正确启动数据同步(Agent)服务',
+
 			uriTips: {
 				label: '示例',
 				content:
@@ -1515,6 +1516,29 @@ const cn = {
 				CHECK_ACCESS_TOKEN: '检查access token是否可用',
 				CHECK_API_AUTH: '检查api是否有访问权限',
 				CHECK_LOCAL_PORT: '检查本地端口是否可用'
+			},
+			file: {
+				fileAddr: '文件地址',
+				filePort: '文件端口',
+				creatAccount: '创建者账号',
+				password: '密码',
+				connectionMethod: '连接方式',
+				connecitonTimeout: '连接超时时间(秒)',
+				transmissionTimeout: '传输超时时间(秒)',
+				second: '秒',
+				fileUrl: '文件路径',
+				agreementType: '协议类型',
+				agentLocationFile: 'Agent 所在地址文件',
+				agentLocationFileTip: '以URI的方式配置MongoDB数据库，支持批量输入',
+				ftpTip: '按照Host, port, 账号, 密码的方式配置MongoDB数据库，支持批量输入',
+				shared: '共享文件夹',
+				sharedTip: '按照Host, port, 账号, 密码的方式配置MongoDB数据库，支持批量输入',
+				activeConnectionMode: '主动连接模式',
+				activeConnectionModeTip: '按照Host, port, 账号, 密码的方式配置MongoDB数据库，支持批量输入',
+				passiveConnectionMode: '被动连接模式',
+				passiveConnectionModeTip: '按照Host, port, 账号, 密码的方式配置MongoDB数据库，支持批量输入',
+				input_number: '请输入数字',
+				greaterZero_less5256000: '必须大于等于零,小于等于5256000'
 			}
 		},
 		error: {
