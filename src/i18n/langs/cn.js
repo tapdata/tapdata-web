@@ -1510,7 +1510,8 @@ const cn = {
 				CHECK_READ_PERMISSION: '检查可读权限是否授权',
 				CHECK_ACCESS_TOKEN: '检查access token是否可用',
 				CHECK_API_AUTH: '检查api是否有访问权限',
-				CHECK_LOCAL_PORT: '检查本地端口是否可用'
+				CHECK_LOCAL_PORT: '检查本地端口是否可用',
+				SCAN_FILE: '扫描目录中的文件'
 			}
 		},
 		error: {

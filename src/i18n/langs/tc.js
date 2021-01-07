@@ -1505,7 +1505,8 @@ const tc = {
 				CHECK_READ_PERMISSION: '檢查可讀權限是否授權',
 				CHECK_ACCESS_TOKEN: '檢查access token是否可用',
 				CHECK_API_AUTH: '檢查api是否有訪問權限',
-				CHECK_LOCAL_PORT: '檢查本地端口是否可用'
+				CHECK_LOCAL_PORT: '檢查本地端口是否可用',
+				SCAN_FILE: '掃描目錄中的文件'
 			}
 		},
 		error: {
