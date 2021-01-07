@@ -41,7 +41,7 @@ window.openDebug();
 
 window._TAPDATA_OPTIONS_ = {
 	logoUrl: require('../static/icon/logo.png'),
-	version: 'DAAS_BUILD_NUMBER'
+	version: 'v1.16.2-3-gbb2f0db79-beta'
 };
 
 let init = settings => {

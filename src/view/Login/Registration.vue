@@ -133,7 +133,7 @@ export default {
 				message = this.$t('app.signIn.email_require');
 				// eslint-disable-next-line
 			} else if (!form.inviteCode) {
-				message = this.$t('app.signIn.inviteCode_invalid');
+				message = this.$t('app.signIn.inviteCode_require');
 			} else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)) {
 				message = this.$t('app.signIn.email_invalid');
 			} else if (!form.password || form.password.length < 5) {
@@ -173,6 +173,9 @@ export default {
 				if (e.response && e.response.msg) {
 					if (e.response.msg.indexOf('Email already exists') !== -1) {
 						this.errorMessage = this.$t('app.signIn.hasMailbox');
+                    }
+					if (e.response.msg.indexOf('Invite Code Invalid') !== -1) {
+						this.errorMessage = this.$t('app.signIn.inviteCode_invalid');
 					} else if (e.response.msg.indexOf('Disable Signup') !== -1) {
 						this.errorMessage = this.$t('app.signIn.disableSignup');
 					} else {
