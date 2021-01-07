@@ -1288,6 +1288,32 @@ const cn = {
 		preview: {
 			stage: '节点',
 			table: '数据表'
+		},
+		fileFormBuilder: {
+			fileSource: '选择文件源',
+			fileSourcePlaceholder: '请选择文件源',
+			includeFilename: '包含文件正则表达式',
+			excludeFilename: '不包含文件正则表达式',
+			fileSchema: '设置模型名称',
+			seperate: '文件字段分隔符',
+			jsonType: 'json 类型',
+			excelPassword: 'excel 文件密码',
+			excel: {
+				excelValue: 'excel 内容设置',
+				header_mapping_value: '单元格内容',
+				header_mapping_index: '单元格位置',
+				header_mapping: '表头映射',
+				sheet_range: '工作页范围',
+				sheet_start: '开始工作页',
+				sheet_end: '结束工作页',
+				excel_header_range: '表头范围',
+				excel_header_start: '表头开始坐标',
+				excel_header_end: '表头结束坐标',
+				excel_value_start: '数据区域开始行',
+				excel_value_end: '数据区域结束行',
+				excel_cell_point: 'Excel单元格坐标，例如：A1，表示第一行第一列',
+				excel_value_end_gt_start: '结束行必须大于等于开始行'
+			}
 		}
 	},
 	dataVerify: {

@@ -13,66 +13,27 @@ export default function(vm) {
 			{
 				type: 'input',
 				field: 'include_filename',
-				label: vm.$t('dataForm.form.userName')
+				label: vm.$t('editor.fileFormBuilder.includeFilename')
 			},
 			{
 				type: 'input',
 				field: 'exclude_filename',
-				label: vm.$t('dataForm.form.databaseOwner'),
-				required: true
+				label: vm.$t('editor.fileFormBuilder.excludeFilename')
 			},
 			{
 				type: 'input',
 				field: 'file_schema',
-				label: vm.$t('dataForm.form.databaseOwner'),
-				required: true
+				label: vm.$t('editor.fileFormBuilder.fileSchema')
 			},
 			{
 				type: 'input',
-				field: 'sheet_start',
-				label: vm.$t('dataForm.form.databaseOwner'),
-				required: true
+				field: 'plain_password',
+				label: vm.$t('editor.fileFormBuilder.excelPassword')
 			},
 			{
-				type: 'input',
-				field: 'sheet_end',
-				label: vm.$t('dataForm.form.databaseOwner'),
-				required: true
-			},
-			{
-				type: 'input',
-				field: 'gridfs_header_type',
-				label: vm.$t('dataForm.form.databaseOwner'),
-				required: true
-			},
-			{
-				type: 'input',
-				field: 'excel_header_start',
-				label: vm.$t('dataForm.form.databaseOwner'),
-				required: true
-			},
-			{
-				type: 'input',
-				field: 'excel_header_end',
-				label: vm.$t('dataForm.form.databaseOwner'),
-				required: true
-			},
-			{
-				type: 'input',
-				field: 'excel_value_start',
-				label: vm.$t('dataForm.form.databaseOwner'),
-				required: true
-			},
-			{
-				type: 'input',
-				field: 'excel_value_end',
-				label: vm.$t('dataForm.form.databaseOwner'),
-				required: true
-			},
-			{
-				type: 'input',
-				field: 'gridfs_header_config',
-				label: vm.$t('dataForm.form.databaseOwner'),
+				type: 'slot',
+				slot: 'excel',
+				label: vm.$t('editor.fileFormBuilder.excel.excelValue'),
 				required: true
 			}
 		]

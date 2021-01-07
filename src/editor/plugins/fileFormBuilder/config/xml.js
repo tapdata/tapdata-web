@@ -13,19 +13,17 @@ export default function(vm) {
 			{
 				type: 'input',
 				field: 'include_filename',
-				label: vm.$t('dataForm.form.userName')
+				label: vm.$t('editor.fileFormBuilder.includeFilename')
 			},
 			{
 				type: 'input',
 				field: 'exclude_filename',
-				label: vm.$t('dataForm.form.databaseOwner'),
-				required: true
+				label: vm.$t('editor.fileFormBuilder.excludeFilename')
 			},
 			{
 				type: 'input',
 				field: 'file_schema',
-				label: vm.$t('dataForm.form.databaseOwner'),
-				required: true
+				label: vm.$t('editor.fileFormBuilder.fileSchema')
 			},
 			{
 				type: 'input',
