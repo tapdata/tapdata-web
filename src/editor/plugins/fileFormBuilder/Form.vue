@@ -119,6 +119,12 @@ export default {
 		};
 	},
 	watch: {
+		model: {
+			deep: true,
+			handler() {
+				this.$emit('dataChanged', this.getData());
+			}
+		},
 		'model.connectionId': {
 			immediate: true,
 			handler() {
@@ -214,7 +220,8 @@ export default {
 						id: 1,
 						database_type: 1,
 						connection_type: 1,
-						status: 1
+						status: 1,
+						schema: 1
 					}
 				})
 			});
@@ -250,7 +257,7 @@ export default {
 			let msg = {
 				type: 'reloadSchema',
 				data: {
-					connId: this.model.connectionId,
+					connId: this.model.formData.connectionId,
 					userId: this.$cookie.get('user_id'),
 					fileProperty: Object.assign({}, this.model.formData, { file_type: this.model.database_type })
 				}
