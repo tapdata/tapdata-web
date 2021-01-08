@@ -76,10 +76,13 @@ const tc = {
 			signIn: '登錄',
 			keepSignIn: '保持登錄狀態',
 			email_placeholder: '請輸入郵箱',
+			inviteCode_placeholder: '邀请码',
 			password_placeholder: '請輸入密碼',
 
 			email_require: '郵箱地址必填',
+			inviteCode_require: '邀请码必填',
 			email_invalid: '請輸入有效郵箱地址',
+			inviteCode_invalid: '邀请码无效',
 			email_null: '郵箱不能為空',
 			password_invalid: '密碼至少5個字符',
 			account_waiting_approve: '您的賬戶還未通過管理員審核',
@@ -123,7 +126,10 @@ const tc = {
 			passwordResetText: '重置密碼確認郵件已發送至',
 			notMailbox: 'oops~此郵箱尚未註冊',
 			hasMailbox: 'oops~此郵箱已經被註冊了',
-			disableSignup: 'oops〜禁止註冊'
+			disableSignup: 'oops〜禁止註冊',
+
+			getCode: '邀請碼獲取',
+			qrCodeText: '如果想試用產品, 請掃描下方企業微信二維碼, 聯繫我們獲取'
 		},
 		menu: {
 			dashboard: '控制台',

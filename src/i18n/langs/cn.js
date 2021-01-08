@@ -76,9 +76,12 @@ const cn = {
 			signIn: '登录',
 			keepSignIn: '保持登录状态',
 			email_placeholder: '请输入邮箱',
+			inviteCode_placeholder: '邀请码',
 			password_placeholder: '请输入密码',
 
 			email_require: '邮箱地址必填',
+			inviteCode_require: '邀请码必填',
+			inviteCode_invalid: '邀请码无效',
 			email_invalid: '请输入有效邮箱地址',
 			email_null: '邮箱不能为空',
 			password_invalid: '密码至少5个字符',
@@ -122,7 +125,10 @@ const cn = {
 			passwordResetText: '重置密码确认邮件已发送至',
 			notMailbox: 'oops~此邮箱尚未注册',
 			hasMailbox: 'oops~此邮箱已经被注册了',
-			disableSignup: 'oops~禁止注册'
+			disableSignup: 'oops~禁止注册',
+
+			getCode: '邀请码获取',
+			qrCodeText: '如果想试用产品, 请扫描下方企业微信二维码, 联系我们获取'
 		},
 		menu: {
 			dashboard: '控制台',
