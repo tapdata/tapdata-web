@@ -5,9 +5,7 @@ export default function(vm) {
 			labelWidth: '200px'
 		},
 		defaultModel: {
-			connection_type: 'source_and_target',
-			thin_type: 'SID',
-			supportUpdatePk: false
+			seperate: '，'
 		},
 		items: [
 			{
@@ -28,7 +26,7 @@ export default function(vm) {
 			{
 				type: 'input',
 				field: 'seperate',
-				label: vm.$t('editor.fileFormBuilder.seperate'),
+				label: vm.$t('editor.fileFormBuilder.separate'),
 				required: true
 			}
 		]

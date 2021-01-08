@@ -25,56 +25,120 @@
 				<FbSelect v-model="model.formData.connectionId" :config="fileConfig"></FbSelect>
 				<form-builder ref="form" v-model="model.formData" :config="config"></form-builder>
 				<div class="form-excel-wrap" v-if="model.database_type === 'excel'">
-					<el-form label-width="80px" label-position="right">
-						<!--字段获取方式 -->
-						<el-form-item :label="$t('editor.fileFormBuilder.excel.header_mapping')" class="headerType">
+					<el-form label-width="120px" label-position="right" :rules="rules" :model="model.formData">
+						<!--字段范围 -->
+						<el-form-item
+							:label="$t('editor.fileFormBuilder.excel_header_type')"
+							class="headerType"
+							prop="excel_header_start"
+						>
 							<div>
 								<el-radio-group v-model="model.formData.gridfs_header_type">
-									<el-radio label="specified_line">表头区域选取</el-radio>
-									<el-radio label="custom">自定义字段</el-radio>
+									<el-radio label="specified_line">{{
+										$t('editor.fileFormBuilder.excel_header_coordinate')
+									}}</el-radio>
+									<el-radio label="custom">{{
+										$t('editor.fileFormBuilder.excel_header_range')
+									}}</el-radio>
 								</el-radio-group>
 								<el-input
 									v-model="model.formData.gridfs_header_config"
 									size="mini"
+									:placeholder="$t('editor.fileFormBuilder.gridfs_header_config')"
 									v-show="model.formData.gridfs_header_type === 'custom'"
 								></el-input>
+								<!--								<span>{{ $t('editor.fileFormBuilder.excel_cell_point') }}</span>-->
 								<div v-show="model.formData.gridfs_header_type !== 'custom'" class="excel_header_start">
-									<el-input v-model="model.formData.excel_header_start" size="mini"></el-input>
+									<el-input
+										v-model="model.formData.excel_header_start"
+										size="mini"
+										:placeholder="
+											$t('formBuilder.input.placeholderPrefix') +
+												$t('editor.fileFormBuilder.excel_header_start')
+										"
+									></el-input>
 									<span class="separate"> ~ </span>
-									<el-input v-model="model.formData.excel_header_end" size="mini"></el-input>
+									<el-input
+										v-model="model.formData.excel_header_end"
+										size="mini"
+										:placeholder="
+											$t('formBuilder.input.placeholderPrefix') +
+												$t('editor.fileFormBuilder.excel_header_end')
+										"
+									></el-input>
 								</div>
-								<span>{{ $t('editor.fileFormBuilder.excel.excel_cell_point') }}</span>
 							</div>
 						</el-form-item>
-						<!--表头映射 -->
-						<el-form-item
-							:label="$t('editor.fileFormBuilder.excel.header_mapping')"
-							class="excelHeaderType"
-						>
+						<!--字段获取方式 -->
+						<el-form-item :label="$t('editor.fileFormBuilder.header_mapping')" class="excelHeaderType">
 							<el-radio-group v-model="model.formData.excel_header_type">
 								<el-radio label="value">{{
-									$t('editor.fileFormBuilder.excel.header_mapping_value')
+									$t('editor.fileFormBuilder.header_mapping_value')
 								}}</el-radio>
 								<el-radio label="index">{{
-									$t('editor.fileFormBuilder.excel.header_mapping_index')
+									$t('editor.fileFormBuilder.header_mapping_index')
 								}}</el-radio>
 							</el-radio-group>
 						</el-form-item>
 						<!-- 内容 -->
-						<el-form-item :label="$t('editor.fileFormBuilder.excel.excel_header_range')">
-							<el-input v-model="model.formData.excel_value_start" size="mini"></el-input>
+						<el-form-item :label="$t('editor.fileFormBuilder.excel_value_type')" prop="excel_value_start">
+							<el-input
+								v-model="model.formData.excel_value_start"
+								maxlength="10"
+								show-word-limit
+								size="mini"
+								:placeholder="
+									$t('formBuilder.input.placeholderPrefix') +
+										$t('editor.fileFormBuilder.excel_value_start')
+								"
+							></el-input>
 							<span class="separate"> ~ </span>
-							<el-input v-model="model.formData.excel_value_end" size="mini"></el-input>
+							<el-input
+								v-model="model.formData.excel_value_end"
+								maxlength="10"
+								show-word-limit
+								size="mini"
+								:placeholder="
+									$t('formBuilder.input.placeholderPrefix') +
+										$t('editor.fileFormBuilder.excel_value_end')
+								"
+							></el-input>
 						</el-form-item>
 						<!--工作页 -->
-						<el-form-item :label="$t('editor.fileFormBuilder.excel.excel_header_range')">
-							<el-input v-model="model.formData.sheet_start" size="mini"></el-input>
+						<el-form-item :label="$t('editor.fileFormBuilder.sheet_range')" prop="sheet_start">
+							<el-input
+								v-model="model.formData.sheet_start"
+								maxlength="3"
+								show-word-limit
+								size="mini"
+								:placeholder="
+									$t('formBuilder.input.placeholderPrefix') + $t('editor.fileFormBuilder.sheet_start')
+								"
+							></el-input>
 							<span class="separate"> ~ </span>
-							<el-input v-model="model.formData.sheet_end" size="mini"></el-input>
+							<el-input
+								v-model="model.formData.sheet_end"
+								maxlength="3"
+								show-word-limit
+								size="mini"
+								:placeholder="
+									$t('formBuilder.input.placeholderPrefix') + $t('editor.fileFormBuilder.sheet_end')
+								"
+							></el-input>
 						</el-form-item>
 					</el-form>
 				</div>
-				<el-button size="mini" style="margin-top: 10px" type="primary" @click="loadSchema">加载模型</el-button>
+				<el-button
+					size="mini"
+					style="margin-top: 10px"
+					type="primary"
+					@click="loadSchema"
+					:loading="reloadingSchema"
+					>加载模型</el-button
+				>
+				<div class="e-entity-wrap" style="text-align: center;">
+					<entity :schema="convertSchemaToTreeData(schema)" :editable="false"></entity>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -82,19 +146,74 @@
 <script>
 import _ from 'lodash';
 import formConfigs from './config';
-import { mergeJoinTablesToTargetSchema, removeDeleted } from '../../util/Schema';
+import Entity from '../link/Entity';
+import { mergeJoinTablesToTargetSchema, convertSchemaToTreeData, removeDeleted } from '../../util/Schema';
 import ws from '../../../api/ws';
 let editorMonitor = null;
+let fieldsNamesMap = {};
 export default {
 	name: 'FileNode',
+	components: { Entity },
 	data() {
-		let self = this;
+		let validateExcelHeader = (rule, value, callback) => {
+			let start = this.model.formData.excel_header_start;
+			let end = this.model.formData.excel_header_end;
+			if (start === '') {
+				callback(
+					new Error(this.$t('editor.fileFormBuilder.excel_header_start') + this.$t('formBuilder.noneText'))
+				);
+			} else if (end === '') {
+				callback(
+					new Error(this.$t('editor.fileFormBuilder.excel_header_end') + this.$t('formBuilder.noneText'))
+				);
+			} else if (!/^[A-Z]+[1-9]+$/.test(start) || !/^[A-Z]+[1-9]+$/.test(end)) {
+				callback(new Error(this.$t('editor.fileFormBuilder.excel_cell_point')));
+			}
+		};
+		let validateSheet = (rule, value, callback) => {
+			let start = this.model.formData.sheet_start;
+			let end = this.model.formData.sheet_end;
+			if (start === '') {
+				callback(new Error(this.$t('editor.fileFormBuilder.sheet_start') + this.$t('formBuilder.noneText')));
+			} else if (end === '') {
+				callback(new Error(this.$t('editor.fileFormBuilder.sheet_end') + this.$t('formBuilder.noneText')));
+			} else if (!/^[A-Z]+[1-9]+$/.test(Number(start)) || !/^[A-Z]+[1-9]+$/.test(Number(end))) {
+				callback(new Error(this.$t('editor.fileFormBuilder.excel_cell_point')));
+			} else if (/^[A-Z]+[1-9]+$/.test(Number(start)) && /^[A-Z]+[1-9]+$/.test(Number(end))) {
+				if (Number(start) > Number(end)) {
+					callback(new Error(this.$t('editor.fileFormBuilder.excel_value_end_gt_start')));
+				}
+			}
+		};
+		let validateValue = (rule, value, callback) => {
+			let start = this.model.formData.excel_value_start;
+			let end = this.model.formData.excel_value_end;
+			if (!/^([1-9]\d*)?$/.test(start) || !/^([1-9]\d*)?$/.test(end)) {
+				callback(new Error(this.$t('editor.fileFormBuilder.excel_cell_point')));
+			}
+		};
 		return {
 			disabled: false,
 			model: {
 				type: '',
 				formData: {
-					connectionId: ''
+					connectionId: '',
+					include_filename: '',
+					exclude_filename: '',
+					file_schema: '',
+					plain_password: '',
+					json_type: 'ArrayBegin',
+					data_content_xpath: '',
+					seperate: ',',
+					gridfs_header_config: '',
+					gridfs_header_type: 'specified_line',
+					excel_header_start: 'A1',
+					excel_header_end: 'Z1',
+					excel_header_type: 'value',
+					excel_value_start: '',
+					excel_value_end: '',
+					sheet_start: 1,
+					sheet_end: 1
 				},
 				script: '',
 				isFormValid: true
@@ -108,14 +227,39 @@ export default {
 				placeholder: this.$t('editor.fileFormBuilder.fileSourcePlaceholder'),
 				loading: false,
 				filterable: true,
-				on: {
-					change() {
-						self.handlerConnectionChange();
-					}
-				},
 				options: []
 			},
-			dialogDatabaseTypeVisible: false
+			fileNames: '',
+			schema: '',
+			rules: {
+				gridfs_header_config: [
+					{
+						required: true,
+						message: this.$t('editor.fileFormBuilder.gridfs_header_config'),
+						trigger: 'blur'
+					}
+				],
+				excel_header_start: [
+					{
+						validator: validateExcelHeader,
+						trigger: 'blur'
+					}
+				],
+				sheet_start: [
+					{
+						validator: validateSheet,
+						trigger: 'blur'
+					}
+				],
+				excel_value_start: [
+					{
+						validator: validateValue,
+						trigger: 'blur'
+					}
+				]
+			},
+			dialogDatabaseTypeVisible: false,
+			reloadingSchema: false
 		};
 	},
 	watch: {
@@ -128,41 +272,58 @@ export default {
 		'model.connectionId': {
 			immediate: true,
 			handler() {
-				this.loadDataModels(this.model.connectionId);
+				if (this.model.connectionId) {
+					this.fileNames = fieldsNamesMap[this.model.connectionId];
+				}
 			}
 		}
 	},
 	mounted() {
 		this.loadFileSource();
+		let self = this,
+			schema = null,
+			templeSchema = [];
 		ws.ready(() => {
 			ws.on('execute_load_schema_result', res => {
 				if (res.status === 'SUCCESS' && res.result && res.result.length) {
 					this.$message.success(this.$t('message.reloadSchemaSuccess'));
-					//console.log(res.status);
+					templeSchema = res.result;
 				} else {
 					this.$message.error(this.$t('message.reloadSchemaError'));
 				}
-				// self.$nextTick(() => {
-				// 	if (schema) {
-				// 		self.$emit('schemaChange', _.cloneDeep(schema));
-				// 		self.defaultSchema = schema;
-				// 		self.$message.success(this.$t('message.reloadSchemaSuccess'));
-				// 	}
-				// });
+				this.reloadingSchema = false;
+				if (templeSchema && templeSchema.length) {
+					templeSchema.forEach(item => {
+						if (item.connId === this.model.formData.connectionId) {
+							schema = item.schema;
+						}
+					});
+				}
+				self.$nextTick(() => {
+					if (schema) {
+						self.$emit('schemaChange', _.cloneDeep(schema));
+						self.schema = schema;
+						self.$message.success(this.$t('message.reloadSchemaSuccess'));
+					}
+				});
 			});
 		});
 	},
 	methods: {
+		convertSchemaToTreeData,
 		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
 				_.merge(this.model, data);
 			}
 			editorMonitor = vueAdapter.editor;
-			let schema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema());
-			let fields = schema.fields || [];
+			this.schema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema());
+			let fields = this.schema.fields || [];
 			if (fields.length) {
 				fields = removeDeleted(fields);
 			}
+			cell.on('change:outputSchema', () => {
+				this.schema = cell.getOutputSchema();
+			});
 			let func = formConfigs[data.database_type];
 			if (func) {
 				let config = func(this);
@@ -236,10 +397,8 @@ export default {
 						value: item.id
 					};
 				});
+				result.data.map(s => (fieldsNamesMap[s.id] = s.schema));
 			}
-		},
-		handlerConnectionChange() {
-			//console.log('111');
 		},
 		loadDataModels(connectionId) {
 			if (!connectionId) {
@@ -268,6 +427,7 @@ export default {
 					]
 				}
 			};
+			this.reloadingSchema = true;
 			ws.ready(() => {
 				ws.send(msg);
 			});
@@ -277,12 +437,13 @@ export default {
 </script>
 <style lang="less" scoped>
 .editor-file-form-builder {
-	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
 	height: 100%;
-	overflow: auto;
 	box-sizing: border-box;
 	.main {
-		height: 100%;
+		padding: 20px;
 		box-sizing: border-box;
 		.form-builder-header {
 			display: flex;

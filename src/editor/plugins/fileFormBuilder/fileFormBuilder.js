@@ -40,7 +40,7 @@ export const fileFormConfig = {
 			 */
 			allowTarget(targetCell) {
 				// log("FileNode.allowTarget", targetCell, ['app.GridFSNode'].includes(targetCell.get('type')));
-				return ['app.GridFSNode', 'app.FileNode'].includes(targetCell.get('type'));
+				return !['app.Database'].includes(targetCell.get('type'));
 			},
 
 			/**
@@ -50,13 +50,13 @@ export const fileFormConfig = {
 			 */
 			allowSource(sourceCell) {
 				// log("FileNode.allowSource", sourceCell, ['app.GridFSNode'].includes(sourceCell.get('type')));
-				return ['app.GridFSNode', 'app.FileNode'].includes(sourceCell.get('type'));
+				return !['app.Database'].includes(sourceCell.get('type'));
 			},
 
 			validate(data) {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
-				if (!data.connectionId)
+				if (!data.formData.connectionId)
 					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`);
 				return true;
 			}

@@ -33,7 +33,7 @@ export default function(vm) {
 			{
 				type: 'slot',
 				slot: 'excel',
-				label: vm.$t('editor.fileFormBuilder.excel.excelValue'),
+				label: vm.$t('editor.fileFormBuilder.excelValue'),
 				required: true
 			}
 		]
