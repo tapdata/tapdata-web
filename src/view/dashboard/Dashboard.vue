@@ -1,6 +1,6 @@
 <template>
 	<section class="dashboard" v-if="!$window.getSettingByKey('SHOW_OLD_PAGE')" v-loading="loading">
-		<el-row :gutter="20" class="e-row" v-readonlybtn="'Data_SYNC'">
+		<el-row :gutter="20" class="e-row" v-readonlybtn="'Data_SYNC_menu'">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="migrationJobObj" @getAllData="getAllData"></echart-head>
@@ -59,7 +59,7 @@
 				</div>
 			</el-col>
 		</el-row>
-		<el-row :gutter="20" class="e-row" v-readonlybtn="'Data_SYNC'">
+		<el-row :gutter="20" class="e-row" v-readonlybtn="'Data_SYNC_menu'">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="syncJobObj" @getAllData="getAllData"></echart-head>
@@ -104,7 +104,7 @@
 		</el-row>
 
 		<el-row :gutter="20" class="e-row">
-			<el-col :span="12" class="e-col" v-readonlybtn="'data_transmission'">
+			<el-col :span="12" class="e-col" v-readonlybtn="'data_transmission_menu'">
 				<div class="charts-list">
 					<echart-head :data="screeningObj" @getUnit="getUnit"></echart-head>
 					<div class="unit">{{ $t('dataFlow.unit') }}:{{ $t('dataFlow.rowCount') }}</div>
@@ -118,7 +118,7 @@
 					></shaftless-echart>
 				</div>
 			</el-col>
-			<el-col :span="12" class="e-col" v-readonlybtn="'Data_verify'">
+			<el-col :span="12" class="e-col" v-readonlybtn="'Data_verify_menu'">
 				<div class="charts-list">
 					<echart-head :data="dataValidationObj" @getUnit="getUnit"></echart-head>
 					<ul class="status-box">
@@ -193,7 +193,7 @@
 			</el-col> -->
 		</el-row>
 
-		<el-row :gutter="20" class="e-row" v-readonlybtn="'Cluster_management'">
+		<el-row :gutter="20" class="e-row" v-readonlybtn="'Cluster_management_menu'">
 			<el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="serverProcessObj" @getAllData="getAllData"></echart-head>
@@ -467,8 +467,12 @@ export default {
 		};
 	},
 	mounted() {
-		this.getClsterDataApi();
-		this.getDataFlowApi();
+		if (this.$has('Data_SYNC') || this.$has('Data_verify')) {
+			this.getDataFlowApi();
+		}
+		if (this.$has('Cluster_management')) {
+			this.getClsterDataApi();
+		}
 		// this.getRankingData();
 
 		this.syncJobObj = {
@@ -581,13 +585,9 @@ export default {
 		// 获取服务器与进程的数据
 		getClsterDataApi() {
 			let params = {};
-			if (
-				this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
-				!parseInt(this.$cookie.get('isAdmin')) &&
-				localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
-			) {
-				params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-			}
+			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
+			// 	params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+			// }
 			cluster.get(params).then(res => {
 				if (res.data) {
 					this.serverProcess.tableData = res.data;
@@ -598,21 +598,21 @@ export default {
 		// 获取dataflows数据
 		getDataFlowApi() {
 			let self = this;
-			let id = '';
+			// let id = '';
 			self.loading = true;
-			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-				id = this.$cookie.get('user_id');
-				// params = {
-				// 	filter: {
-				// 		where: {
-				// 			user_id: {
-				// 				regexp: `^${this.$cookie.get('user_id')}$`
-				// 			}
-				// 		}
-				// 	}
-				// };
-			}
-			DataFlows.chart(id)
+			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
+			// 	id = this.$cookie.get('user_id');
+			// params = {
+			// 	filter: {
+			// 		where: {
+			// 			user_id: {
+			// 				regexp: `^${this.$cookie.get('user_id')}$`
+			// 			}
+			// 		}
+			// 	}
+			// };
+			// }
+			DataFlows.chart()
 				.then(res => {
 					// res.data.chart1.statusCount.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1));
 					// res.data.chart1.statusCount.forEach(element => {

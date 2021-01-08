@@ -106,8 +106,8 @@ export default {
 					'source.status': true
 				}
 			};
-			if (this.$cookie.get('isAdmin') == 0 && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
-				filter.where['source.user_id'] = { like: this.$cookie.get('user_id') };
+			// if (this.$cookie.get('isAdmin') == 0 && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+			// 	filter.where['source.user_id'] = { like: this.$cookie.get('user_id') };
 			let params = {
 				filter: JSON.stringify(filter)
 			};

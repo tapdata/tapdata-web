@@ -333,8 +333,8 @@ export default {
 					tables: [
 						{
 							connId: this.model.connectionId,
-							tableName: this.model.tableName,
-							userId: this.$cookie.get('user_id')
+							tableName: this.model.tableName
+							// userId: this.$cookie.get('user_id')
 						}
 					]
 				}
