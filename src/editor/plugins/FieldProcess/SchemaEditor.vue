@@ -1203,121 +1203,121 @@ export default {
 <style lang="less">
 @color: #48b6e2; //更改颜色
 @colorBorder: #71c179;
-.e-schema-editor {
-	font-size: 11px;
-	.el-checkbox__input.is-checked + .el-checkbox__label {
-		color: #fff;
-	}
-	.el-checkbox__label {
-		font-size: 11px;
-	}
-}
-
-.row-col-base {
-	display: inline-block;
-}
-
-.col-name {
-	min-width: 150px;
-	max-width: 430px;
-}
-
-.col-type {
-	min-width: 100px;
-}
-
-.col-op {
-	min-width: 50px;
-}
-
-.e-schema-editor .el-main .el-tree .el-tree-node {
-	border-bottom: 1px solid @colorBorder;
-
-	&:last-child {
-		border-bottom: none;
-	}
-
-	&:first-child {
-		border-top: 1px solid @colorBorder;
-	}
-
-	.el-input__inner {
-		border: none;
-		background-color: transparent;
-		font-size: 11px;
-		padding: 0 5px;
-	}
-
-	.activedatatype {
-		.el-input__inner {
-			color: @color;
-		}
-	}
-
-	.activename {
-		.el-input__inner {
-			color: @color;
-		}
-	}
-
-	.e-select {
-		width: 100px;
-		border-left: 1px solid @colorBorder;
-		border-right: 1px solid @colorBorder;
-		font-size: 11px;
-	}
-
-	.e-field-action {
-		cursor: pointer;
-		text-align: center;
-		width: 25px;
-		font-size: 14px;
-	}
-}
-.e-pk {
-	font-size: 9px;
-	font-weight: bold;
-	color: #ffa000;
-	position: relative;
-	left: -14px;
-	display: inline-block;
-	width: 5px;
-}
-
-.e-schema-editor .el-main .el-tree .el-tree-node .icon-none {
-	display: none;
-}
-.el-button + .el-button {
-	margin-left: 0 !important;
-}
-.operation-area .el-form-item {
-	margin-bottom: 0;
-}
-.example {
-	padding-left: 90px;
-	font-size: 12px;
-	color: #6999;
-}
-</style>
-<style lang="less">
 .fieldProcess {
-	.schemaEditor {
-		.el-checkbox__inner {
-			margin-left: 10px;
+	.e-schema-editor {
+		font-size: 11px;
+		.el-checkbox__input.is-checked + .el-checkbox__label {
+			color: #fff;
+		}
+		.el-checkbox__label {
+			font-size: 11px;
 		}
 	}
 
-	.el-input__inner {
-		font-size: 12px !important;
+	.row-col-base {
+		display: inline-block;
 	}
-}
-.scriptDialog {
-	.el-form-item {
-		margin-bottom: 10px;
+
+	.col-name {
+		min-width: 150px;
+		max-width: 430px;
 	}
-	.el-input-group__append,
-	.el-input-group__prepend {
-		padding: 0 12px !important;
+
+	.col-type {
+		min-width: 100px;
+	}
+
+	.col-op {
+		min-width: 50px;
+	}
+
+	.e-schema-editor .el-main .el-tree .el-tree-node {
+		border-bottom: 1px solid @colorBorder;
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		&:first-child {
+			border-top: 1px solid @colorBorder;
+		}
+
+		.el-input__inner {
+			border: none;
+			background-color: transparent;
+			font-size: 11px;
+			padding: 0 5px;
+		}
+
+		.activedatatype {
+			.el-input__inner {
+				color: @color;
+			}
+		}
+
+		.activename {
+			.el-input__inner {
+				color: @color;
+			}
+		}
+
+		.e-select {
+			width: 100px;
+			border-left: 1px solid @colorBorder;
+			border-right: 1px solid @colorBorder;
+			font-size: 11px;
+		}
+
+		.e-field-action {
+			cursor: pointer;
+			text-align: center;
+			width: 25px;
+			font-size: 14px;
+		}
+	}
+	.e-pk {
+		font-size: 9px;
+		font-weight: bold;
+		color: #ffa000;
+		position: relative;
+		left: -14px;
+		display: inline-block;
+		width: 5px;
+	}
+
+	.e-schema-editor .el-main .el-tree .el-tree-node .icon-none {
+		display: none;
+	}
+	.el-button + .el-button {
+		margin-left: 0 !important;
+	}
+	.operation-area .el-form-item {
+		margin-bottom: 0;
+	}
+	.example {
+		padding-left: 90px;
+		font-size: 12px;
+		color: #6999;
+	}
+	.fieldProcess {
+		.schemaEditor {
+			.el-checkbox__inner {
+				margin-left: 10px;
+			}
+		}
+
+		.el-input__inner {
+			font-size: 12px !important;
+		}
+	}
+	.scriptDialog {
+		.el-form-item {
+			margin-bottom: 10px;
+		}
+		.el-input-group__append,
+		.el-input-group__prepend {
+			padding: 0 12px !important;
+		}
 	}
 }
 </style>

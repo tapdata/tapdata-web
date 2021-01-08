@@ -138,6 +138,7 @@ export default {
 				this.$cookie.set('token', data.id);
 				this.$cookie.set('isAdmin', parseInt(user.data.role) || 0);
 				this.$cookie.set('user_id', data.userId);
+				this.$cookie.delete('show_guide');
 				if (!user.data.isCompleteGuide) {
 					this.$cookie.set('show_guide', 1);
 				}

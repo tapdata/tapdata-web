@@ -80,10 +80,13 @@ const store = new Vuex.Store({
 			keyword: '',
 			databaseModel: '',
 			status: '',
-			rowsPerPage: '',
-			descending: '',
-			sortBy: '',
 			panelFlag: true
+		},
+		metadata: {
+			keyword: '',
+			isFuzzy: true,
+			metaType: '',
+			db: ''
 		},
 		metadataDefinition: {
 			selectedMetaType: '',

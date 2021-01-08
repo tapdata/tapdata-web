@@ -498,6 +498,15 @@ const childRoutes = [
 				meta: { title: i18n.t('notification.setting'), isCollapse: true }
 			}
 		]
+	},
+	{
+		path: '/metadata',
+		name: 'metadata',
+		component: view('metadata/List'),
+		meta: {
+			title: i18n.t('notification.systemNotice'),
+			isCollapse: true
+		}
 	}
 ];
 
