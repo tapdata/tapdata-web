@@ -17,13 +17,6 @@
 								:placeholder="$t('app.signIn.email_placeholder')"
 							></el-input>
 						</el-form-item>
-						<el-form-item prop="inviteCode">
-							<el-input
-								v-model="form.inviteCode"
-								type="text"
-								:placeholder="$t('app.signIn.inviteCode_placeholder')"
-							></el-input>
-						</el-form-item>
 						<el-form-item prop="password">
 							<el-input
 								v-model="form.password"
@@ -39,6 +32,13 @@
 									@click="passwordTypeChange"
 								/>
 							</el-input>
+						</el-form-item>
+						<el-form-item prop="inviteCode">
+							<el-input
+								v-model="form.inviteCode"
+								type="text"
+								:placeholder="$t('app.signIn.inviteCode_placeholder')"
+							></el-input>
 						</el-form-item>
 						<el-checkbox class="keep-sign-in" v-model="keepSignIn" style="display:none">
 							<span style="color:#999"
