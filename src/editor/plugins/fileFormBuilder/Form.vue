@@ -257,9 +257,15 @@ export default {
 			let msg = {
 				type: 'reloadSchema',
 				data: {
-					connId: this.model.formData.connectionId,
-					userId: this.$cookie.get('user_id'),
-					fileProperty: Object.assign({}, this.model.formData, { file_type: this.model.database_type })
+					tables: [
+						{
+							connId: this.model.formData.connectionId,
+							userId: this.$cookie.get('user_id'),
+							fileProperty: Object.assign({}, this.model.formData, {
+								file_type: this.model.database_type
+							})
+						}
+					]
 				}
 			};
 			ws.ready(() => {
