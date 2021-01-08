@@ -1524,6 +1524,7 @@ const cn = {
 				creatAccount: '创建者账号',
 				password: '密码',
 				connectionMethod: '连接方式',
+				encodingFormat: '编码格式',
 				connecitonTimeout: '连接超时时间(秒)',
 				transmissionTimeout: '传输超时时间(秒)',
 				second: '秒',
@@ -1539,7 +1540,18 @@ const cn = {
 				passiveConnectionMode: '被动连接模式',
 				passiveConnectionModeTip: '按照Host, port, 账号, 密码的方式配置MongoDB数据库，支持批量输入',
 				input_number: '请输入数字',
-				greaterZero_less5256000: '必须大于等于零,小于等于5256000'
+				greaterZero_less5256000: '必须大于等于零,小于等于5256000',
+				path: '设置路径',
+				recursive: '递归路径',
+				include_filename: '保留文件',
+				exclude_filename: '舍弃文件',
+				viewExpression: '请输入文件名表达式，点击查看',
+				expression: '表达式示例',
+				includePlaceholder: '请输入要保留文件名表达式',
+				excludePlaceholder: '请输入要舍弃文件名表达式',
+				pathPlaceholder: '请输入Agent所在环境的文件路径',
+				addPath: '添加路径',
+				fileNone: '文件路径不能为空'
 			}
 		},
 		error: {

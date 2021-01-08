@@ -1546,7 +1546,43 @@ const en = {
 				CHECK_LOCAL_PORT: 'Check if local port is available'
 			},
 			file: {
-				agreementType: 'Agreement Type'
+				fileAddr: 'File Address',
+				filePort: 'File Port',
+				creatAccount: 'Creator account',
+				password: 'Password',
+				connectionMethod: 'Connection Method',
+				encodingFormat: 'Encoding Format',
+				connecitonTimeout: 'Connection timeout (seconds)',
+				transmissionTimeout: 'Transmission timeout (seconds)',
+				second: 'second',
+				fileUrl: 'File Path',
+				agreementType: 'Agreement Type',
+				agentLocationFile: 'Agent location file',
+				agentLocationFileTip: 'Configure MongoDB database in URI mode, support batch input',
+				ftpTip:
+					'Configure the MongoDB database according to Host, port, account, and password, and support batch input',
+				shared: 'Shared folder',
+				sharedTip:
+					'Configure the MongoDB database according to Host, port, account, and password, and support batch input',
+				activeConnectionMode: 'Active Connection Mode',
+				activeConnectionModeTip:
+					'Configure the MongoDB database according to the Host, port, account number, and password, and support batch input',
+				passiveConnectionMode: 'Passive Connection Mode',
+				passiveConnectionModeTip:
+					'Configure the MongoDB database according to Host, port, account number, and password, and support batch input',
+				input_number: 'Please enter a number',
+				greaterZero_less5256000: 'Must be greater than or equal to zero and less than or equal to 5256000',
+				path: 'Set path',
+				recursive: 'Recursive path',
+				include_filename: 'Keep file',
+				exclude_filename: 'Discard file',
+				viewExpression: 'Please enter the file name expression, click to view',
+				expression: 'Expression example',
+				includePlaceholder: 'Please enter the expression to keep the file name',
+				excludePlaceholder: 'Please enter the file name expression to be discarded',
+				pathPlaceholder: 'Please enter the file path of the environment where the Agent is located',
+				addPath: 'Add Path',
+				fileNone: 'The file path cannot be empty'
 			}
 		},
 		error: {

@@ -7,7 +7,8 @@ export default function(vm) {
 		defaultModel: {
 			connection_type: 'source_and_target',
 			file_source_protocol: 'localFile',
-			ftp_passive: true
+			ftp_passive: true,
+			fileDefaultCharset: 'UTF8'
 		},
 		items: [
 			{
@@ -55,6 +56,19 @@ export default function(vm) {
 					}
 				],
 				required: true
+			},
+			{
+				type: 'select',
+				field: 'fileDefaultCharset',
+				label: vm.$t('dataForm.form.file.encodingFormat'),
+				//tips: vm.$t('dataForm.form.timeZoneTips'),
+				options: [
+					{ label: 'UTF8', value: 'UTF8' },
+					{ label: 'GBK', value: 'GBK' },
+					{ label: 'UTF16', value: 'UTF16' },
+					{ label: 'ASCII', value: 'ASCII' }
+				],
+				show: true
 			},
 			{
 				type: 'input',

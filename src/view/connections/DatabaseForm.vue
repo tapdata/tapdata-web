@@ -53,24 +53,90 @@
 							<div class="url-tip" slot="fileUrl"></div>
 						</form-builder>
 						<!-- 文件数据库 -->
-						<template>
+						<template v-if="model.database_type === 'file'">
 							<div class="fileBox">
 								<div class="file-label">{{ $t('dataForm.form.file.fileUrl') }}</div>
 								<div class="file-form-content">
 									<el-form
 										:model="model"
-										:rules="rules"
-										ref="ruleForm"
+										ref="form"
 										label-width="100px"
 										class="demo-ruleForm"
 										label-position="top"
 									>
-										<el-form-item label="设置路径 * " prop="name">
-											<el-input v-model="model.name" size="mini"></el-input>
-										</el-form-item>
-										<el-form-item label="设置路径 * " prop="name">
-											<el-input v-model="model.name" size="mini"></el-input>
-										</el-form-item>
+										<el-row
+											type="flex"
+											:gutter="20"
+											class="loopFrom"
+											v-for="(item, index) in model.file_sources"
+											:key="index"
+										>
+											<el-col :span="24" class="fromLoopBox">
+												<el-form-item
+													required
+													:label="$t('dataForm.form.file.path')"
+													prop="path"
+													:rules="{
+														required: true,
+														message: $t('dataForm.form.file.fileNone'),
+														trigger: 'blur'
+													}"
+												>
+													<el-input
+														v-model="item.path"
+														size="mini"
+														:placeholder="$t('dataForm.form.file.pathPlaceholder')"
+													></el-input>
+												</el-form-item>
+												<el-form-item :label="$t('dataForm.form.file.recursive')" prop="path">
+													<el-switch v-model="item.recursive"></el-switch>
+												</el-form-item>
+												<el-form-item>
+													<el-radio v-model="item.selectFileType" label="include_filename">
+														{{ $t('dataForm.form.file.include_filename') }}
+													</el-radio>
+													<el-radio v-model="item.selectFileType" label="exclude_filename">
+														{{ $t('dataForm.form.file.exclude_filename') }}</el-radio
+													>
+												</el-form-item>
+												<el-form-item v-if="item.selectFileType === 'include_filename'">
+													<el-input
+														v-model="item.include_filename"
+														size="mini"
+														:placeholder="$t('dataForm.form.file.includePlaceholder')"
+													></el-input>
+												</el-form-item>
+												<el-form-item v-else>
+													<el-input
+														v-model="item.exclude_filename"
+														size="mini"
+														:placeholder="$t('dataForm.form.file.excludePlaceholder')"
+													></el-input>
+												</el-form-item>
+												<p style="font-size: 12px; color: #666;">
+													{{ $t('dataForm.form.file.viewExpression') }}
+													<el-popover
+														placement="top-start"
+														title="标题"
+														width="200"
+														trigger="hover"
+														content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。"
+													>
+														<span slot="reference">{{
+															$t('dataForm.form.file.expression')
+														}}</span>
+													</el-popover>
+												</p>
+											</el-col>
+											<el-col :span="2" style="margin-right: -40px;">
+												<el-button plain style="padding: 0;" @click="removeRow(item, index)">
+													<i class="iconfont icon-quxiao remove"></i>
+												</el-button>
+											</el-col>
+										</el-row>
+										<el-button type="text" style="padding: 0;" @click="addPathRow()">
+											{{ $t('dataForm.form.file.addPath') }}
+										</el-button>
 									</el-form>
 								</div>
 							</div>
@@ -204,7 +270,17 @@ const defaultModel = {
 	file_source_protocol: '',
 	ftp_passive: true,
 	connection_timeout_seconds: 0,
-	data_timeout_seconds: 0
+	data_timeout_seconds: 0,
+	fileDefaultCharset: '',
+	file_sources: [
+		{
+			path: '',
+			recursive: false,
+			selectFileType: 'include',
+			include_filename: '',
+			exclude_filename: ''
+		}
+	]
 };
 
 export default {
@@ -212,6 +288,8 @@ export default {
 	components: { gitbook, Test, DatabaseTypeDialog },
 	data() {
 		return {
+			// modelForm: {},
+			rules: [],
 			visible: false,
 			timezones: [],
 			dataTypes: [],
@@ -346,6 +424,7 @@ export default {
 		},
 		submit() {
 			this.submitBtnLoading = true;
+
 			this.$refs.form.validate(valid => {
 				if (valid) {
 					let params = Object.assign({}, this.model, {
@@ -373,6 +452,7 @@ export default {
 						params.fill = params.isUrl ? 'uri' : '';
 						delete params.isUrl;
 					}
+					debugger;
 					connectionsModel[this.model.id ? 'patchId' : 'post'](params)
 						.then(res => {
 							this.submitBtnLoading = false;
@@ -487,6 +567,27 @@ export default {
 				top.location.href = '/#/connection';
 				localStorage.setItem('connectionDatabaseType', type);
 			}
+		},
+		// 文件类型添加文件路径
+		addPathRow() {
+			let list = {
+				path: '',
+				recursive: false,
+				selectFileType: 'include',
+				include_filename: '',
+				exclude_filename: ''
+			};
+			this.model.file_sources.push(list);
+		},
+
+		// 文件类型删除文件路径
+		removeRow(item, index) {
+			// this.index = this.model.file_sources.indexOf(item);
+			if (this.model.file_sources.length > 1) {
+				if (index !== -1) {
+					this.model.file_sources.splice(index, 1);
+				}
+			}
 		}
 	}
 };
@@ -525,7 +626,7 @@ export default {
 					display: flex;
 					flex: 1;
 					div.file-label {
-						width: 200px;
+						width: 210px;
 						padding-right: 20px;
 						line-height: 28px;
 						font-size: 12px;
@@ -535,6 +636,15 @@ export default {
 					}
 					.file-form-content {
 						width: calc(100% - 200px);
+						padding: 0 10px;
+					}
+					.fromLoopBox {
+						padding: 10px 20px 20px !important;
+						margin-bottom: 12px;
+						box-sizing: border-box;
+						background-color: #fff;
+						border: 1px solid #dedee4;
+						border-radius: 3px;
 					}
 				}
 			}
@@ -681,12 +791,15 @@ export default {
 	}
 	.file-form-content {
 		.el-form-item {
-			margin-bottom: 5px;
+			margin-bottom: 8px;
 		}
 		.el-form-item__label {
 			padding-bottom: 0;
 			line-height: 28px;
 			font-size: 12px;
+		}
+		.el-form-item__content {
+			line-height: 30px;
 		}
 	}
 }
