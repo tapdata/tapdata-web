@@ -46,6 +46,13 @@
 									style="width: 40%;"
 									v-readonlybtn="'Cluster_operation'"
 								>
+									<el-button
+										size="mini"
+										type="danger"
+										v-if="canUpdate"
+										@click="updateFn(item, item.management.status, 'management', 'update')"
+										>{{ $t('message.update') }}</el-button
+									>
 									<el-button size="mini" class="fr addBtn" @click="addServeFn(item)">{{
 										$t('message.addServerMon')
 									}}</el-button>
@@ -84,12 +91,6 @@
 													restartFn(item, item.management.status, 'management', 'restart')
 												"
 												>{{ $t('message.restart') }}</el-button
-											>
-											<el-button
-												type="text"
-												:disabled="!canUpdate"
-												@click="updateFn(item, item.management.status, 'management', 'update')"
-												>{{ $t('message.update') }}</el-button
 											>
 										</div>
 									</el-col>
@@ -222,6 +223,8 @@ import addServe from './component/addServe';
 import factory from '../../api/factory';
 const cluster = factory('cluster');
 const clusterVersion = factory('clusterVersion');
+const settings = factory('Setting');
+const dataFlows = factory('DataFlows');
 export default {
 	name: 'clusterManagement',
 	components: { addServe },
@@ -243,7 +246,7 @@ export default {
 			downLoadAgetntdialog: false,
 			downLoadNum: 0,
 			version: null,
-			canUpdate: true,
+			canUpdate: false,
 			managementType: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT')
 		};
 	},
@@ -421,14 +424,30 @@ export default {
 			let data = {
 				uuid: item.uuid,
 				server: 'agent',
-				operation: 'update'
+				operation: 'update:' + this.toVersion
 			};
 			this.operationFn(data);
+			this.canUpdate = false;
 		},
 		async getVersion(item) {
-			await clusterVersion.get({ filter: JSON.stringify({ where: { uuid: item.uuid } }) }).then(res => {
-				if (res.status === 200) {
-					this.getDataApi();
+			if (this.curVersion) return;
+			await clusterVersion.get({ filter: JSON.stringify({ where: { 'version.uuid': item.uuid } }) }).then(res => {
+				if (res.data && res.data.length) {
+					this.curVersion = res.data[0].version.backend;
+				}
+			});
+			await settings.get().then(res => {
+				if (res.data && res.data.length) {
+					this.toVersion = res.data.findWhere({ id: '88' }).value;
+				}
+			});
+			let where = {};
+			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
+			where['stats.stagesMetrics.status'] = { neq: 'cdc' };
+			dataFlows.count({ where: where }).then(res => {
+				if (res.data) {
+					this.canUpdate = res.data.count == 0 && this.curVersion != this.toVersion;
 				}
 			});
 		},
