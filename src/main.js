@@ -55,6 +55,7 @@ let init = settings => {
 		localStorage.setItem('tapdata_localize_lang', lang || 'en');
 	}
 	i18n.locale = lang;
+	document.title = window.getSettingByKey('PRODUCT_TITLE') || 'Tapdata';
 	window.App = new Vue({
 		el: '#app',
 		router,

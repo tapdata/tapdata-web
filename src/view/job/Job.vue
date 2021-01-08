@@ -38,6 +38,7 @@
 						class="action-btn"
 						size="mini"
 						@click="stopCapture"
+						:disabled="permissionBtnDisabel('SYNC_job_operation_all_data', creatUserId)"
 						v-readonlybtn="'SYNC_job_operation'"
 					>
 						<i class="iconfont icon-zanting3"></i>
@@ -45,6 +46,7 @@
 					</el-button>
 					<el-button
 						v-readonlybtn="'SYNC_job_operation'"
+						:disabled="permissionBtnDisabel('SYNC_job_operation_all_data', creatUserId)"
 						v-if="
 							['running'].includes(status) &&
 								executeMode === 'normal' &&
@@ -59,6 +61,7 @@
 					</el-button>
 					<el-button
 						v-readonlybtn="'SYNC_job_operation'"
+						:disabled="permissionBtnDisabel('SYNC_job_operation_all_data', creatUserId)"
 						v-if="!statusBtMap[status].reloadSchema"
 						class="action-btn"
 						size="mini"
@@ -69,6 +72,7 @@
 					</el-button>
 					<el-button
 						v-readonlybtn="'SYNC_job_operation'"
+						:disabled="permissionBtnDisabel('SYNC_job_operation_all_data', creatUserId)"
 						v-if="isEditable() && $window.getSettingByKey('SHOW_DATA_TRACE')"
 						class="action-btn"
 						size="mini"
@@ -136,7 +140,10 @@
 
 				<el-button-group class="action-btn-group" v-readonlybtn="'SYNC_job_operation'">
 					<el-button
-						:disabled="statusBtMap[status].start"
+						:disabled="
+							permissionBtnDisabel('SYNC_job_operation_all_data', creatUserId) ||
+								statusBtMap[status].start
+						"
 						class="action-btn btn-operatiton"
 						size="mini"
 						@click="start()"
@@ -145,7 +152,9 @@
 						<span>{{ $t('dataFlow.button.start') }}</span>
 					</el-button>
 					<el-button
-						:disabled="statusBtMap[status].stop"
+						:disabled="
+							permissionBtnDisabel('SYNC_job_operation_all_data', creatUserId) || statusBtMap[status].stop
+						"
 						class="action-btn btn-operatiton"
 						size="mini"
 						@click="stop()"
@@ -154,7 +163,10 @@
 						<span>{{ $t('dataFlow.button.stop') }}</span>
 					</el-button>
 					<el-button
-						:disabled="statusBtMap[status].reset"
+						:disabled="
+							permissionBtnDisabel('SYNC_job_operation_all_data', creatUserId) ||
+								statusBtMap[status].reset
+						"
 						class="action-btn btn-operatiton"
 						size="mini"
 						@click="reset"
@@ -163,7 +175,10 @@
 						<span>{{ $t('dataFlow.button.reset') }}</span>
 					</el-button>
 					<el-button
-						:disabled="statusBtMap[status].forceStop"
+						:disabled="
+							permissionBtnDisabel('SYNC_job_operation_all_data', creatUserId) ||
+								statusBtMap[status].forceStop
+						"
 						class="action-btn btn-operatiton"
 						size="mini"
 						@click="stop(true)"
@@ -175,6 +190,7 @@
 
 				<el-button
 					v-readonlybtn="'SYNC_job_edition'"
+					:disabled="permissionBtnDisabel('SYNC_job_edition_all_data', creatUserId)"
 					v-if="!statusBtMap[status].edit && !editable"
 					class="btn-edit"
 					size="mini"
@@ -287,6 +303,7 @@ import { EditorEventType } from '../../editor/lib/events';
 import _ from 'lodash';
 import SkipError from '../../components/SkipError';
 import { uuid } from '../../editor/util/Schema';
+import { permissionBtnDisabel } from '@/plugins/directive';
 
 const dataFlowsApi = factory('DataFlows');
 const Setting = factory('Setting');
@@ -338,6 +355,7 @@ export default {
 			errorEvents: [],
 			currentStatus: '',
 			taskName: '',
+			creatUserId: '',
 			statusBtMap
 		};
 	},
@@ -425,6 +443,7 @@ export default {
 	},
 
 	methods: {
+		permissionBtnDisabel,
 		// // 获取Agent是否安装
 		// getDataApi(type) {
 		// 	let params = {};
@@ -596,6 +615,7 @@ export default {
 			let dataFlow = data;
 			this.dataFlowId = dataFlow.id;
 			this.status = dataFlow.status;
+			this.creatUserId = dataFlow.user_id;
 			this.executeMode = dataFlow.executeMode;
 			if (dataFlow.setting) {
 				this.sync_type = dataFlow.setting.sync_type;

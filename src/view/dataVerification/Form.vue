@@ -146,7 +146,7 @@
 							{{ $t('dataVerification.clear') }}
 						</el-button>
 					</div>
-					<ul class="panel-container" v-loading="!flowStages.length" id="data-verification-form">
+					<ul class="panel-container" id="data-verification-form">
 						<li class="condition-item" v-for="(item, index) in form.tasks" :key="index">
 							<div class="condition-setting">
 								<div class="setting-item">
@@ -413,8 +413,8 @@ export default {
 					inq: ['running', 'paused', 'error']
 				}
 			};
-			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
-				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
+			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+			// 	where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
 			this.$api('DataFlows')
 				.get({
 					filter: JSON.stringify({
