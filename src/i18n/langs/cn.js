@@ -125,7 +125,10 @@ const cn = {
 			passwordResetText: '重置密码确认邮件已发送至',
 			notMailbox: 'oops~此邮箱尚未注册',
 			hasMailbox: 'oops~此邮箱已经被注册了',
-			disableSignup: 'oops~禁止注册'
+			disableSignup: 'oops~禁止注册',
+
+			getCode: '邀请码获取',
+			qrCodeText: '如果想试用产品, 请扫描下方企业微信二维码, 联系我们获取'
 		},
 		menu: {
 			dashboard: '控制台',

@@ -62,6 +62,13 @@
 						<span @click="backLogin">{{ $t('app.signIn.backLogin') }}</span>
 					</div>
 				</el-card>
+				<el-card class="qrCode">
+					<div class="title">{{ $t('app.signIn.getCode') }}</div>
+					<p>{{ $t('app.signIn.qrCodeText') }}</p>
+					<div class="imageBox">
+						<el-image class="image" src="static/image/tapdateQR.png" fit="cover"></el-image>
+					</div>
+				</el-card>
 			</div>
 		</main>
 	</section>
@@ -134,6 +141,7 @@ export default {
 				// eslint-disable-next-line
 			} else if (!form.inviteCode) {
 				message = this.$t('app.signIn.inviteCode_require');
+				// eslint-disable-next-line
 			} else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)) {
 				message = this.$t('app.signIn.email_invalid');
 			} else if (!form.password || form.password.length < 5) {
@@ -173,7 +181,7 @@ export default {
 				if (e.response && e.response.msg) {
 					if (e.response.msg.indexOf('Email already exists') !== -1) {
 						this.errorMessage = this.$t('app.signIn.hasMailbox');
-                    }
+					}
 					if (e.response.msg.indexOf('Invite Code Invalid') !== -1) {
 						this.errorMessage = this.$t('app.signIn.inviteCode_invalid');
 					} else if (e.response.msg.indexOf('Disable Signup') !== -1) {
@@ -335,6 +343,32 @@ export default {
 				span {
 					color: #48b6e2;
 					cursor: pointer;
+				}
+			}
+		}
+		.qrCode {
+			position: absolute;
+			top: 60px;
+			right: 20px;
+			width: 400px;
+			padding: 25px 5px;
+			box-sizing: border-box;
+			div.title {
+				padding-bottom: 30px;
+				font-size: 26px;
+				font-weight: 500;
+				color: #333;
+			}
+			p {
+				font-size: 12px;
+			}
+			.imageBox {
+				padding: 40px 0 15px;
+				text-align: center;
+				.image {
+					width: 200px;
+					height: 200px;
+					text-align: center;
 				}
 			}
 		}
