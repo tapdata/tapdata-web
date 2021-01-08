@@ -1,6 +1,7 @@
 <template>
 	<div class="roles">
 		<div class="roles-box">
+			<!-- <SubHead :tittle="headTitle"></SubHead> -->
 			<div class="mappingTemplate">{{ $t('role.roleManagement') }}</div>
 			<div class="topbar">
 				<!-- <div class="panelBtn"></div> -->
@@ -18,6 +19,11 @@
 								<el-option :label="$t('role.preciseMatching')" value="1"></el-option>
 							</el-select>
 						</el-input>
+					</li>
+					<li class="item">
+						<el-button type="text" class="restBtn" size="mini" @click="rest()">
+							{{ $t('dataFlow.reset') }}
+						</el-button>
 					</li>
 				</ul>
 				<div class="topbar-buttons">
@@ -51,7 +57,7 @@
 							<div>{{ scope.row.description }}</div>
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('role.associatUsers')" width="120">
+					<el-table-column :label="$t('role.associatUsers')" width="100">
 						<template slot-scope="scope">
 							<span>{{ scope.row.userCount }}</span>
 						</template>
@@ -63,7 +69,7 @@
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('role.defaultRole')" width="120">
+					<el-table-column :label="$t('role.defaultRole')" width="90">
 						<template slot-scope="scope">
 							<el-switch
 								v-model="scope.row.register_user_default"
@@ -78,7 +84,8 @@
 							<el-button
 								type="text"
 								v-readonlybtn="'role_edition'"
-								@click="handleSettingPermissions(scope.row.id)"
+								:disabled="permissionBtnDisabel('role_edition_all_data', scope.row.user_id)"
+								@click="handleSettingPermissions(scope.row.id, scope.row.name)"
 							>
 								{{ $t('role.settingPermissions') }}
 							</el-button>
@@ -86,6 +93,10 @@
 							<el-button
 								type="text"
 								@click="handleAssociatUsers(scope.row.id)"
+								:disabled="
+									permissionBtnDisabel('role_edition_all_data', scope.row.user_id) ||
+										scope.row.name === 'admin'
+								"
 								v-readonlybtn="'role_edition'"
 							>
 								{{ $t('role.associatUsers') }}
@@ -93,6 +104,7 @@
 							<el-button
 								type="text"
 								v-readonlybtn="'role_edition'"
+								:disabled="permissionBtnDisabel('role_edition_all_data', scope.row.user_id)"
 								@click="createRole(scope.row.id, scope.row)"
 							>
 								{{ $t('role.edit') }}
@@ -100,7 +112,10 @@
 							<el-button
 								type="text"
 								@click="handleDelete(scope.row)"
-								v-if="scope.row.name != 'admin' && !scope.row.read_only"
+								:disabled="
+									permissionBtnDisabel('role_delete_all_data', scope.row.user_id) ||
+										scope.row.name === 'admin'
+								"
 								v-readonlybtn="'role_delete'"
 							>
 								{{ $t('role.delete') }}
@@ -129,7 +144,7 @@
 			:visible.sync="dialogFormVisible"
 			width="600px"
 		>
-			<el-form :model="form" ref="form" label-width="100px">
+			<el-form :model="form" ref="form" label-width="115px">
 				<el-form-item
 					:label="$t('role.roleName')"
 					prop="name"
@@ -137,7 +152,7 @@
 				>
 					<el-input v-model="form.name" :placeholder="$t('role.selectRoleName')"></el-input>
 				</el-form-item>
-				<el-form-item :label="$t('role.roleDesc')">
+				<el-form-item :label="$t('role.roleDesc')" style="margin-bottom: 10px">
 					<el-input
 						type="textarea"
 						:placeholder="$t('role.selectDesc')"
@@ -168,7 +183,7 @@
 			width="600px"
 		>
 			<div class="userBox">
-				<el-select v-model="roleusers" multiple :placeholder="$t('role.selectUser')">
+				<el-select v-model="roleusers" filterable multiple :placeholder="$t('role.selectUser')">
 					<el-option v-for="item in userGroup" :key="item.id" :label="item.email" :value="item.id">
 					</el-option>
 				</el-select>
@@ -202,14 +217,18 @@
 	</div>
 </template>
 <script>
+// import SubHead from '@/components/SubHead';
 import factory from '@/api/factory';
 const rolesModel = factory('role');
 const usersModel = factory('users');
 const roleMappingModel = factory('roleMapping');
+import { permissionBtnDisabel } from '@/plugins/directive';
 export default {
 	name: 'Roles',
+	// components: { SubHead },
 	data() {
 		return {
+			headTitle: this.$t('role.roleManagement'),
 			searchNav: {
 				selectedSeachType: '0',
 				keyword: ''
@@ -217,6 +236,7 @@ export default {
 			tableData: [],
 			roleusers: [],
 			userGroup: [],
+			permissions: [],
 			oldUser: [],
 			loading: false,
 			pagesize: 20,
@@ -250,6 +270,8 @@ export default {
 		}
 	},
 	methods: {
+		permissionBtnDisabel,
+
 		// 获取角色列表
 		async handleDataApi(params) {
 			// let { sortBy, descending, page, rowsPerPage } = this.pagination;
@@ -258,9 +280,9 @@ export default {
 			if (this.order) {
 				order = this.order;
 			}
-			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
-			}
+			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
+			// 	where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
+			// }
 
 			let searchkw = this.searchNav.keyword;
 			if (searchkw && this.searchNav.selectedSeachType === '0') {
@@ -310,12 +332,19 @@ export default {
 					description: '',
 					register_user_default: false
 				};
+				this.$api('Permissions')
+					.get({})
+					.then(res => {
+						if (res && res.data && res.data.length) {
+							this.permissions = res.data;
+						}
+					});
 			}
 		},
 
 		// 设置权限
-		handleSettingPermissions(id) {
-			this.$router.push({ name: 'role', query: { id } });
+		handleSettingPermissions(id, name) {
+			this.$router.push({ name: 'role', query: { id: id, name: name } });
 		},
 
 		// 已关联用户
@@ -383,14 +412,30 @@ export default {
 					const method = this.roleId ? 'patch' : 'post';
 					if (this.roleId) {
 						record.id = this.roleId;
-					} else {
-						record.user_id = this.$cookie.get('user_id');
 					}
+					let newRoleMappings = [];
 
 					rolesModel[method](record)
 						.then(res => {
 							if (res && res.data) {
 								self.handleDataApi();
+								if (method === 'post') {
+									this.permissions.forEach(selectPermission => {
+										if (selectPermission.type === 'read' && !selectPermission.isMenu)
+											newRoleMappings.push({
+												principalType: 'PERMISSION',
+												principalId: selectPermission.name,
+												roleId: res.data.id
+											});
+									});
+									self.$api('users')
+										.deletePermissionRoleMapping(res.data.id)
+										.then(res => {
+											if (res && res.data) {
+												roleMappingModel.post(newRoleMappings);
+											}
+										});
+								}
 								this.$message.success(this.$t('message.saveOK'));
 							}
 						})
@@ -416,7 +461,11 @@ export default {
 		async getUserData() {
 			await usersModel.get({}).then(res => {
 				if (res && res.data) {
-					this.userGroup = res.data;
+					res.data.forEach(item => {
+						if (!item.role) {
+							this.userGroup.push(item);
+						}
+					});
 				}
 			});
 		},
@@ -441,6 +490,9 @@ export default {
 				.post(newRoleMappings)
 				.then(res => {
 					if (res && res.data) {
+						res.data.forEach(item => {
+							this.roleusers.push(item.principalId);
+						});
 						this.handleDataApi();
 						this.$message.success(this.$t('message.saveOK'));
 					}
@@ -455,6 +507,15 @@ export default {
 					}
 				});
 			this.dialogUserVisible = false;
+		},
+
+		// 重置
+		rest() {
+			this.searchNav = {
+				selectedSeachType: '0',
+				keyword: ''
+			};
+			this.handleDataApi();
 		},
 
 		// 改变列表默认值val
@@ -499,6 +560,7 @@ export default {
 		flex: 1;
 		display: flex;
 		flex-direction: column;
+		background-color: #fafafa;
 		overflow: hidden;
 		.mappingTemplate {
 			height: 60px;
@@ -509,6 +571,8 @@ export default {
 			color: #333;
 			box-sizing: border-box;
 			border-bottom: 1px solid #dedee4;
+			background-color: #fff;
+			box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.1);
 		}
 		.topbar {
 			display: flex;
@@ -542,8 +606,12 @@ export default {
 			.el-button.is-disabled {
 				color: #c0c4cc;
 			}
-			.el-button--text {
-				color: #606266;
+			// .el-button--text {
+			// 	padding-left: 10px;
+			// 	// color: #606266;
+			// }
+			.el-button + .el-button {
+				margin-left: 12px;
 			}
 			.el-pagination {
 				width: 100%;
@@ -564,6 +632,7 @@ export default {
 		.el-button {
 			font-size: 12px;
 			color: #666;
+			background-color: #f5f5f5;
 		}
 	}
 	.search-bar {
@@ -578,13 +647,20 @@ export default {
 		}
 	}
 	.table-box {
-		.dv-table thead {
+		.dv-table {
 			color: #333;
 			th {
-				padding: 5px 0;
-				background: #fafafa;
+				padding: 2px 0;
+				background: #f5f5f5;
+			}
+			th,
+			td {
+				&:first-child {
+					padding-left: 10px;
+				}
 			}
 		}
+
 		.el-button {
 			font-size: 12px;
 		}
@@ -600,6 +676,11 @@ export default {
 	}
 	.el-dialog__body {
 		padding: 30px;
+	}
+	.dialog-footer {
+		.el-button {
+			width: 80px;
+		}
 	}
 }
 </style>

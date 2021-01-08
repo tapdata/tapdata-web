@@ -58,7 +58,13 @@
 					<div class="panelBtn">
 						<ul>
 							<li class="item">
-								<el-button class="btn" size="mini" @click="edit(id, type)">
+								<el-button
+									class="btn"
+									size="mini"
+									v-readonlybtn="'datasource_edition'"
+									:disabled="permissionBtnDisabel('datasource_edition_all_data', userId)"
+									@click="edit(id, type)"
+								>
 									<i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
 								</el-button>
 							</li>
@@ -66,8 +72,12 @@
 								<el-button
 									class="btn"
 									size="mini"
+									v-readonlybtn="'datasource_edition'"
 									@click="reload()"
-									:disabled="!['ready'].includes(this.status)"
+									:disabled="
+										permissionBtnDisabel('datasource_edition_all_data', userId) ||
+											!['ready'].includes(this.status)
+									"
 								>
 									<i class="iconfont icon-kujitongbucopy">{{
 										$t('connection.preview.reloadName')
@@ -75,7 +85,13 @@
 								</el-button>
 							</li>
 							<li class="item">
-								<el-button class="btn" size="mini" @click="beforeTest(id)">
+								<el-button
+									class="btn"
+									size="mini"
+									v-readonlybtn="'datasource_edition'"
+									:disabled="permissionBtnDisabel('datasource_edition_all_data', userId)"
+									@click="beforeTest(id)"
+								>
 									<i class="iconfont icon-lianjie1"> {{ $t('connection.preview.test') }} </i>
 								</el-button>
 							</li>
@@ -117,12 +133,17 @@
 import { getImgByType } from './util';
 import formConfig from './config';
 import Test from './Test';
+import { permissionBtnDisabel } from '@/plugins/directive';
 
 export default {
 	name: 'Preview',
 	components: { Test },
 	props: {
 		id: {
+			required: true,
+			value: String
+		},
+		userId: {
 			required: true,
 			value: String
 		},
@@ -166,6 +187,7 @@ export default {
 		this.clearInterval();
 	},
 	methods: {
+		permissionBtnDisabel,
 		getImgByType,
 		returnTestData(data) {
 			if (!data.status || data.status === null) return;

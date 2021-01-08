@@ -467,9 +467,9 @@ export default {
 			let currentPage = pageNum || current;
 			let where = {};
 
-			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
-			}
+			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
+			// 	where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
+			// }
 			if (this.formData) {
 				if (this.formData.status && this.formData.status !== '') where.status = this.formData.status;
 				if (this.formData.way && this.formData.way !== '') where['setting.sync_type'] = this.formData.way;

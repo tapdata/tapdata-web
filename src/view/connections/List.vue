@@ -4,7 +4,7 @@
 		<section class="connection-wrap">
 			<div class="panel-left" v-if="searchParams.panelFlag && $window.getSettingByKey('SHOW_CLASSIFY')">
 				<Classification
-					:authority="'SYNC_category_management'"
+					:authority="'datasource_catalog_management'"
 					@nodeChecked="nodeDataChange"
 					:type="'database'"
 				></Classification>
@@ -159,6 +159,7 @@
 							<template slot-scope="scope">
 								<div class="database-text">
 									<div>{{ usersData[scope.row.user_id] }}</div>
+									<div>{{ scope.row.username }}</div>
 								</div>
 							</template>
 						</el-table-column>
@@ -195,21 +196,34 @@
 								<el-button
 									class="btn-text"
 									type="text"
-									@click="preview(scope.row.id, scope.row.database_type)"
+									@click="preview(scope.row.id, scope.row.user_id, scope.row.database_type)"
 								>
 									{{ $t('message.preview') }}
 								</el-button>
 								<el-button
 									class="btn-text"
 									type="text"
+									v-readonlybtn="'datasource_edition'"
+									:disabled="permissionBtnDisabel('datasource_edition_all_data', scope.row.user_id)"
 									@click="edit(scope.row.id, scope.row.database_type)"
 								>
 									{{ $t('message.edit') }}
 								</el-button>
-								<el-button class="btn-text" type="text" @click="copy(scope.row)">
+								<el-button
+									class="btn-text"
+									type="text"
+									v-readonlybtn="'datasource_creation'"
+									@click="copy(scope.row)"
+								>
 									{{ $t('message.copy') }}
 								</el-button>
-								<el-button class="btn-text" type="text" @click="delConfirm(scope.row)">
+								<el-button
+									class="btn-text"
+									type="text"
+									v-readonlybtn="'datasource_delete'"
+									:disabled="permissionBtnDisabel('datasource_delete_all_data', scope.row.user_id)"
+									@click="delConfirm(scope.row)"
+								>
 									{{ $t('message.delete') }}
 								</el-button>
 							</template>
@@ -264,6 +278,7 @@
 			></DatabaseTypeDialog>
 			<Preview
 				:id="id"
+				:userId="userId"
 				:visible="previewVisible"
 				:databaseType="databaseType"
 				v-on:previewVisible="handlePreviewVisible"
@@ -278,6 +293,7 @@ import SubHead from '@/components/SubHead';
 import DatabaseTypeDialog from './DatabaseTypeDialog';
 import Preview from './Preview';
 import { verify, desensitization } from './util';
+import { permissionBtnDisabel } from '@/plugins/directive';
 
 let timeout = null;
 
@@ -285,6 +301,7 @@ export default {
 	components: { Classification, SelectClassify, DatabaseTypeDialog, Preview, SubHead },
 	data() {
 		return {
+			user_id: this.$cookie.get('user_id'),
 			dialogVisible: false,
 			restLoading: false,
 			dialogDatabaseTypeVisible: false,
@@ -298,6 +315,7 @@ export default {
 			usersData: [],
 			databaseType: '',
 			id: '',
+			userId: '',
 			databaseTittle: '',
 			description: '',
 			page: {
@@ -344,7 +362,7 @@ export default {
 		};
 	},
 	created() {
-		this.formatterUserName();
+		// this.formatterUserName();
 		this.getDatabaseType();
 		this.search(1);
 		//header
@@ -352,7 +370,7 @@ export default {
 		this.description = this.$t('connection.desc');
 		//定时轮询
 		this.timer = setInterval(() => {
-			this.formatterUserName();
+			// this.formatterUserName();
 			this.search(this.page.current, 1);
 		}, 10000);
 	},
@@ -360,11 +378,14 @@ export default {
 		clearInterval(this.timer);
 	},
 	methods: {
+		permissionBtnDisabel,
+
 		// 面板显示隐藏
 		handlePanelFlag() {
 			this.$set(this.searchParams, 'panelFlag', !this.searchParams.panelFlag);
 			this.$store.commit('dataFlows', this.searchParams);
 		},
+
 		//筛选条件
 		async getDatabaseType() {
 			let filter = {
@@ -440,8 +461,8 @@ export default {
 				loadFieldsStatus: true,
 				schemaAutoUpdate: true
 			};
-			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
-				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
+			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+			// 	where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
 			//精准搜索 iModel
 			keyword = keyword ? keyword.trim() : '';
 			if (keyword && iModel === 'fuzzy') {
@@ -535,8 +556,9 @@ export default {
 				config
 			);
 		},
-		preview(id, type) {
+		preview(id, user_id, type) {
 			this.id = id;
+			this.userId = user_id;
 			this.databaseType = type;
 			if (this.whiteList.includes(type)) {
 				this.previewVisible = true;
@@ -655,14 +677,14 @@ export default {
 			}
 			return url;
 		},
-		async formatterUserName() {
-			let usersData = await this.$api('users').get();
-			let Map = {};
-			if (usersData.data && usersData.data.length > 0) {
-				usersData.data.map(s => (Map[s.id] = s.username || 'admin'));
-			}
-			this.usersData = Map;
-		},
+		// async formatterUserName() {
+		// 	let usersData = await this.$api('users').get();
+		// 	let Map = {};
+		// 	if (usersData.data && usersData.data.length > 0) {
+		// 		usersData.data.map(s => (Map[s.id] = s.username || 'admin'));
+		// 	}
+		// 	this.usersData = Map;
+		// },
 		//筛选分类
 		nodeDataChange(checkedTags) {
 			this.checkedTags = checkedTags;

@@ -75,6 +75,18 @@ axios.interceptors.response.use(
 							});
 						}, 500);
 						break;
+					case '110403':
+						// 接口无权限
+						reject({
+							response: {
+								code: '110403',
+								msg: data.msg
+							}
+						});
+						Message.error({
+							message: i18n.t('message.noPermission')
+						});
+						break;
 					default:
 						reject(response);
 				}
