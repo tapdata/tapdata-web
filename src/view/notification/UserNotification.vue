@@ -92,7 +92,7 @@ export default {
 		if (this.isAdmin) {
 			this.getUsers();
 		} else {
-			this.search.userId = this.$cookie.get('user_id');
+			// this.search.userId = this.$cookie.get('user_id');
 		}
 		this.getData();
 	},
@@ -106,7 +106,7 @@ export default {
 		},
 		getData(pageNum) {
 			this.loading = true;
-			let { keyword, range, userId } = this.search;
+			let { keyword, range } = this.search;
 			let { size, index } = this.page;
 			let current = pageNum || index;
 			let where = {
@@ -115,11 +115,11 @@ export default {
 			if (keyword && keyword.trim()) {
 				where.parameter1 = { like: toRegExp(keyword), options: 'i' };
 			}
-			if (userId) {
-				where.user_id = {
-					like: userId
-				};
-			}
+			// if (userId) {
+			// 	where.user_id = {
+			// 		like: userId
+			// 	};
+			// }
 			if (range && range.length) {
 				where.and = [
 					{ createTime: { gte: range[0].toISOString() } },
