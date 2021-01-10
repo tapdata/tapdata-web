@@ -192,8 +192,8 @@ const Languages = {
 	tc: '中文 (繁)'
 };
 let menuSetting = [
-	{ name: 'dashboard', icon: 'shouye', code: 'home' },
-	{ name: 'connections', icon: 'shujukus1', code: 'datasource' },
+	{ name: 'dashboard', icon: 'shouye' },
+	{ name: 'connections', icon: 'shujukus1', code: 'datasource_menu' },
 	{
 		name: 'dataTransmission',
 		icon: 'chengbenguanlixitong',
@@ -202,18 +202,18 @@ let menuSetting = [
 			{
 				name: 'dataFlows',
 				icon: 'shujukuqianyi1',
-				code: 'Data_SYNC',
+				code: 'Data_SYNC_menu',
 				alias: 'dataFlowsClusterClone',
 				query: '?mapping=cluster-clone'
 			},
 			{
 				name: 'dataFlows',
 				icon: 'shujutongbu',
-				code: 'Data_SYNC',
+				code: 'Data_SYNC_menu',
 				alias: 'dataFlowsCustom',
 				query: '?mapping=custom'
 			},
-			{ name: 'dataVerification', icon: 'hechabidui-copy', code: 'Data_verify' }
+			{ name: 'dataVerification', icon: 'hechabidui-copy', code: 'Data_verify_menu' }
 		]
 	},
 	{
@@ -221,13 +221,13 @@ let menuSetting = [
 		icon: 'yuanshuju1',
 		code: 'data_government',
 		children: [
-			{ name: 'metadataDefinition', code: 'data_catalog' },
-			{ name: 'dataQuality', code: 'data_quality' },
-			{ name: 'timeToLive', code: 'time_to_live' },
-			{ name: 'dataMap', code: 'data_lineage' },
-			{ name: 'dataRules', code: 'data_rules' },
-			{ name: 'topology', code: 'topology' },
-			{ name: 'dictionary', code: 'dictionary' }
+			{ name: 'metadataDefinition', code: 'data_catalog_menu' },
+			{ name: 'dataQuality', code: 'data_quality_menu' },
+			{ name: 'timeToLive', code: 'time_to_live_menu' },
+			{ name: 'dataMap', code: 'data_lineage_menu' },
+			{ name: 'dataRules', code: 'data_rules_menu' },
+			{ name: 'topology', code: 'Topology_menu' },
+			{ name: 'dictionary', code: 'dictionary_menu' }
 		]
 	},
 	{
@@ -235,33 +235,33 @@ let menuSetting = [
 		icon: 'API11',
 		code: 'data_publish',
 		children: [
-			{ name: 'modules', code: 'API_management' },
-			{ name: 'dataExplorer', code: 'API_data_explorer' },
-			{ name: 'apiDocAndTest', code: 'API_doc_&_test' },
-			{ name: 'apiAnalysis', code: 'API_stats' },
-			{ name: 'applications', code: 'API_clients' },
-			{ name: 'apiServers', code: 'API_server' }
+			{ name: 'modules', code: 'API_management_menu' },
+			{ name: 'dataExplorer', code: 'API_data_explorer_menu' },
+			{ name: 'apiDocAndTest', code: 'API_doc_&_test_menu' },
+			{ name: 'apiAnalysis', code: 'API_stats_menu' },
+			{ name: 'applications', code: 'API_clients_menu' },
+			{ name: 'apiServers', code: 'API_server_menu' }
 		]
 	},
-	{ name: 'dataCollect', icon: 'shujucaiji', code: 'data_collect(old)' },
+	{ name: 'dataCollect', icon: 'shujucaiji', code: 'data_collect(old)_menu' },
 	{
 		name: 'system',
 		icon: 'jiekoufuwu',
 		code: 'system_management',
 		children: [
-			{ name: 'tasks', code: 'schedule_jobs' },
+			{ name: 'tasks', code: 'schedule_jobs_menu' },
 			// { name: 'agentdownload' },
 			{
 				name: 'clusterManagement',
-				code: 'Cluster_management',
+				code: 'Cluster_management_menu',
 				alias: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT') + 'Management'
 			},
-			{ name: 'agents', code: 'agents' },
-			{ name: 'serversOversee', code: 'servers_oversee' },
-			{ name: 'users', code: 'user_management' },
+			{ name: 'agents', code: 'agents_menu' },
+			{ name: 'serversOversee', code: 'servers_oversee_menu' },
+			{ name: 'users', code: 'user_management_menu' },
 			// { name: 'journal', code: 'user_management' },
-			{ name: 'roles', code: 'role_management' },
-			{ name: 'settings', code: 'system_settings' }
+			{ name: 'roles', code: 'role_management_menu' },
+			{ name: 'settings', code: 'system_settings_menu' }
 		]
 	}
 ];
@@ -273,7 +273,9 @@ export default {
 			languages: Languages,
 			lang: localStorage.getItem('tapdata_localize_lang') || 'en',
 			isCollapse: false,
-			settingVisibility: this.$has('home_notice_settings') || this.$has('system_settings'),
+			settingVisibility:
+				this.$has('home_notice_settings') ||
+				(this.$has('system_settings') && this.$has('system_settings_mune')),
 			creatAuthority:
 				this.$has('SYNC_job_creation') ||
 				this.$has('datasource_creation') ||
@@ -300,6 +302,10 @@ export default {
 		this.$root.$on('updateMenu', () => {
 			this.getFavMenus();
 		});
+		if (this.$cookie.get('email')) {
+			this.userName = this.$cookie.get('email').split('@')[0] || '';
+		}
+
 		window.iframeRouterChange = route => {
 			this.$router.push(route);
 		};
@@ -346,12 +352,11 @@ export default {
 	},
 	methods: {
 		async getFavMenus() {
-			let userId = this.$cookie.get('user_id');
-			let result = await this.$api('users').get([userId]);
+			let result = await this.$api('users').get([this.$cookie.get('user_id')]);
 			if (result && result.data) {
 				let user = result.data || {};
 				this.favMenus = user.favorites || [];
-				this.userName = user.email.split('@')[0] || '';
+				// this.userName = user.email.split('@')[0] || '';
 			}
 		},
 		delFavMenu(idx) {
@@ -360,7 +365,8 @@ export default {
 				this.$t('app.menu.delFavMenu')
 			).then(async () => {
 				this.favMenus.splice(idx, 1);
-				let result = await this.$api('users').updateById(this.$cookie.get('user_id'), {
+				// this.$cookie.get('user_id'),
+				let result = await this.$api('users').updateById({
 					favorites: this.favMenus
 				});
 				if (result.status === 200) {
@@ -382,8 +388,7 @@ export default {
 					let router = routerMap[item.name];
 					let menu = Object.assign({}, item, router);
 					menu.label = this.$t('app.menu.' + (item.alias || menu.name));
-					let matched = permissions.some(p => p.code === menu.code);
-
+					let matched = !menu.code || permissions.some(p => p.code === menu.code);
 					if (menu.children) {
 						menu.children = formatMenu(menu.children);
 						if (menu.children.every(m => m.hidden)) {
@@ -502,9 +507,9 @@ export default {
 		getDataApi() {
 			let that = this;
 			let params = {};
-			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-				params['filter[where][systemInfo.username][regexp]'] = `^${that.$cookie.get('user_id')}$`;
-			}
+			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
+			// 	params['filter[where][systemInfo.username][regexp]'] = `^${that.$cookie.get('user_id')}$`;
+			// }
 			cluster.get(params).then(res => {
 				if (res.data) {
 					if (res.data.length > 0) {

@@ -239,7 +239,7 @@ export default {
 				if (valid) {
 					let params = Object.assign({}, this.model, {
 						sslCert: this.model.sslKey,
-						user_id: this.$cookie.get('user_id'),
+						// user_id: this.$cookie.get('user_id'),
 						status: 'testing',
 						schema: {},
 						retry: 0,

@@ -100,8 +100,8 @@ export default {
 			try {
 				let usersModel = this.$api('users');
 				let timeStamp = this.$api('TimeStamp');
-				let rolesModel = this.$api('role');
-				let roleMappingsModel = this.$api('roleMapping');
+				// let rolesModel = this.$api('role');
+				// let roleMappingsModel = this.$api('roleMapping');
 				//登陆密码加密
 				let timeStampData = await timeStamp.get();
 				this.form['stime'] = timeStampData.data;
@@ -113,11 +113,11 @@ export default {
 					.digest('hex')
 					.toUpperCase();
 				let { data } = await usersModel.login(this.form);
-				if (!data.permissions) {
-					this.loading = false;
-					this.form.password = oldPassword;
-					return;
-				}
+				// if (!data.permissions) {
+				// 	this.loading = false;
+				// 	this.form.password = oldPassword;
+				// 	return;
+				// }
 				if (data.textStatus === 'WAITING_APPROVE') {
 					this.errorMessage = this.$t('app.signIn.account_waiting_approve');
 					return;
@@ -126,10 +126,10 @@ export default {
 					this.errorMessage = this.$t('app.signIn.account_disabled');
 					return;
 				}
-				if (!data.permissions || data.permissions.length === 0) {
-					this.errorMessage = this.$t('app.signIn.permission_denied');
-					return;
-				}
+				// if (!data.permissions || data.permissions.length === 0) {
+				// 	this.errorMessage = this.$t('app.signIn.permission_denied');
+				// 	return;
+				// }
 				setPermission(data.permissions);
 				let user = await usersModel.getUserById(`/${data.userId}?access_token=${data.id}`);
 				this.$cookie.set('email', this.form.email);
@@ -142,40 +142,41 @@ export default {
 					this.$cookie.set('show_guide', 1);
 				}
 
-				let roleMapping = {
-					filter: {
-						where: { principalType: 'USER', principalId: data.userId }
-					}
-				};
+				// let roleMapping = {
+				// 	filter: {
+				// 		where: { principalType: 'USER', principalId: data.userId }
+				// 	}
+				// };
 
-				let rolesMappingresulte = await roleMappingsModel.get(roleMapping);
+				// let rolesMappingresulte = await roleMappingsModel.get(roleMapping);
 
-				let roleId = [];
-				if (rolesMappingresulte.data && rolesMappingresulte.data.length) {
-					rolesMappingresulte.data.forEach(item => {
-						roleId.push(item.roleId);
-					});
-				}
+				// let roleId = [];
+				// if (rolesMappingresulte.data && rolesMappingresulte.data.length) {
+				// 	rolesMappingresulte.data.forEach(item => {
+				// 		roleId.push(item.roleId);
+				// 	});
+				// }
 
-				// 角色权限
-				let roleparmas = {
-					filter: {
-						where: {
-							id: {
-								inq: roleId
-							},
-							read_only: true
-						}
-					}
-				};
-				// TODO 暂时方案,当有只读角色时,就只能查看,不能做其他人任何操作
-				let rolesresulte = await rolesModel.get(roleparmas);
-				if (rolesresulte.data && rolesresulte.data.length) {
-					localStorage.setItem('BTN_AUTHS', 'BTN_AUTHS');
-					this.$cookie.set('isReadonly', 'true');
-				} else {
-					localStorage.setItem('BTN_AUTHS', '');
-				}
+				// // 角色权限
+				// let roleparmas = {
+				// 	filter: {
+				// 		where: {
+				// 			id: {
+				// 				inq: roleId
+				// 			},
+				// 			read_only: true
+				// 		}
+				// 	}
+				// };
+
+				// // TODO 暂时方案,当有只读角色时,就只能查看,不能做其他人任何操作
+				// let rolesresulte = await rolesModel.get(roleparmas);
+				// if (rolesresulte.data && rolesresulte.data.length) {
+				// 	localStorage.setItem('BTN_AUTHS', 'BTN_AUTHS');
+				// 	this.$cookie.set('isReadonly', 'true');
+				// } else {
+				// 	localStorage.setItem('BTN_AUTHS', '');
+				// }
 
 				this.$router.replace({
 					name: 'dashboard'
@@ -284,7 +285,6 @@ export default {
 			.error-tips {
 				margin-bottom: 22px;
 				padding: 0 15px;
-				height: 42px;
 				line-height: 42px;
 				background: rgba(254, 240, 240, 1);
 				border: 1px solid rgba(245, 108, 108, 0.44);

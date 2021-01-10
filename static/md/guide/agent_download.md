@@ -8,7 +8,6 @@
 - Linux 或者 Windows 环境<br>
 - 提前配置好 JAVA<br>
 - 建议使用 java docker 容器环境运行 agent<br>
-### **3. Agent 架构图**
 
 
 ### **4. Agent下载说明**
@@ -26,7 +25,7 @@
 - 在 Agent 安装后，可通过 tapdata start/stop backend 启动和停止 Agent
 
 #### **Docker**<br>
-- 首先，需要確保環境中安裝了 Docker 運行環境
-- 執行命令後系統將自動安裝並啟動 Agent
+- 首先，需要确保环境中安裝了 Docker 运行环境
+- 指向命令将自动下载运行 Agent
 >**注意：**
->Tapdata 雲版一個賬號下只能安裝一個 Agent
+>Tapdata 云版一个账号下只能运行一个 Agent
