@@ -141,6 +141,7 @@ export const loadPlugins = function(cNodes) {
 
 							addStencil(type, plugin.stencil, {
 								database_type: cell.type,
+								type: cell.type,
 								shapeImage: cell.shapeImage,
 								name: cell.name
 							});

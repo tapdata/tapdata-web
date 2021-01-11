@@ -26,7 +26,7 @@ export default function(vm) {
 			{
 				type: 'input',
 				field: 'seperate',
-				label: vm.$t('editor.fileFormBuilder.separate'),
+				label: vm.$t('editor.fileFormBuilder.sperate'),
 				required: true
 			}
 		]
