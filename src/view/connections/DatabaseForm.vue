@@ -75,7 +75,7 @@
 												<el-form-item
 													required
 													:label="$t('dataForm.form.file.path')"
-													prop="path"
+													:prop="'file_sources.' + index + '.path'"
 													:rules="{
 														required: true,
 														message: $t('dataForm.form.file.fileNone'),
