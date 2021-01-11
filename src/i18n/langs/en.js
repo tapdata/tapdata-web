@@ -1583,13 +1583,24 @@ const en = {
 				recursive: 'Recursive path',
 				include_filename: 'Keep file',
 				exclude_filename: 'Discard file',
-				viewExpression: 'Please enter the file name expression, click to view',
+				viewExpression: 'Please enter the file name expression',
 				expression: 'Expression example',
-				includePlaceholder: 'Please enter the expression to keep the file name',
-				excludePlaceholder: 'Please enter the file name expression to be discarded',
+				includePlaceholder: 'Please enter regular expression for include file',
+				excludePlaceholder: 'Please enter regular expression for discard file',
 				pathPlaceholder: 'Please enter the file path of the environment where the Agent is located',
 				addPath: 'Add Path',
-				fileNone: 'The file path cannot be empty'
+				fileNone: 'The file path cannot be empty',
+				versionManagement: 'Version Management',
+				file_upload_chunk_size: 'File upload file chunk size (bytes)',
+				file_upload_mode: 'File upload mode',
+				file_upload_stream: 'Streaming',
+				file_upload_memory: 'Memory read (risk of memory overflow)',
+				overwriteText: 'When a file with the same name exists',
+				overwrite: 'Overwrite',
+				discard: 'ignore',
+				extend_source_path: 'Inherit the directory structure',
+				file_output_path: 'File output absolute path',
+				csvFijlter: 'CSV filter '
 			}
 		},
 		error: {

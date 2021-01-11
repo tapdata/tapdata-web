@@ -1546,13 +1546,24 @@ const tc = {
 				recursive: '遞歸路徑',
 				include_filename: '保留文件',
 				exclude_filename: '捨棄文件',
-				viewExpression: '請輸入文件名表達式，點擊查看',
+				viewExpression: '請輸入文件名表達式',
 				expression: '表達式示例',
-				includePlaceholder: '請輸入要保留文件名表達式',
-				excludePlaceholder: '請輸入要捨棄文件名表達式',
+				includePlaceholder: '請輸入要保留文件名正則表達式',
+				excludePlaceholder: '請輸入要捨棄文件名正則表達式',
 				pathPlaceholder: '請輸入Agent所在環境的文件路徑',
 				addPath: '添加路徑',
-				fileNone: '文件路徑不能為空'
+				fileNone: '文件路徑不能為空',
+				versionManagement: '版本管理',
+				file_upload_chunk_size: '文件上傳文件塊大小(字節)',
+				file_upload_mode: '文件上傳模式',
+				file_upload_stream: '流式',
+				file_upload_memory: '內存讀取(有內存溢出風險)',
+				overwriteText: '當同名文件存在時',
+				overwrite: '覆蓋',
+				discard: '忽略',
+				extend_source_path: '繼承目錄結構',
+				file_output_path: '文件輸出絕對路徑',
+				csvFijlter: '文件過濾'
 			}
 		},
 		error: {

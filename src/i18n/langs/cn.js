@@ -1581,13 +1581,24 @@ const cn = {
 				recursive: '递归路径',
 				include_filename: '保留文件',
 				exclude_filename: '舍弃文件',
-				viewExpression: '请输入文件名表达式，点击查看',
+				viewExpression: '请输入文件名表达式',
 				expression: '表达式示例',
-				includePlaceholder: '请输入要保留文件名表达式',
-				excludePlaceholder: '请输入要舍弃文件名表达式',
+				includePlaceholder: '请输入要保留文件名正则表达式',
+				excludePlaceholder: '请输入要舍弃文件名正则表达式',
 				pathPlaceholder: '请输入Agent所在环境的文件路径',
 				addPath: '添加路径',
-				fileNone: '文件路径不能为空'
+				fileNone: '文件路径不能为空',
+				versionManagement: '版本管理',
+				file_upload_chunk_size: '文件上传文件块大小(字节)',
+				file_upload_mode: '文件上传模式',
+				file_upload_stream: '流式',
+				file_upload_memory: '内存读取(有内存溢出风险)',
+				overwriteText: '当同名文件存在时',
+				overwrite: '覆盖',
+				discard: '忽略',
+				extend_source_path: '继承目录结构',
+				file_output_path: '文件输出绝对路径',
+				csvFijlter: '文件过滤'
 			}
 		},
 		error: {

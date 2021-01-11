@@ -53,7 +53,7 @@
 							<div class="url-tip" slot="fileUrl"></div>
 						</form-builder>
 						<!-- 文件数据库 -->
-						<template v-if="model.database_type === 'file'">
+						<template v-if="model.database_type === 'file' && model.connection_type === 'source'">
 							<div class="fileBox">
 								<div class="file-label">{{ $t('dataForm.form.file.fileUrl') }}</div>
 								<div class="file-form-content">
@@ -91,13 +91,17 @@
 												<el-form-item :label="$t('dataForm.form.file.recursive')" prop="path">
 													<el-switch v-model="item.recursive"></el-switch>
 												</el-form-item>
-												<el-form-item>
-													<el-radio v-model="item.selectFileType" label="include_filename">
-														{{ $t('dataForm.form.file.include_filename') }}
-													</el-radio>
-													<el-radio v-model="item.selectFileType" label="exclude_filename">
-														{{ $t('dataForm.form.file.exclude_filename') }}</el-radio
-													>
+												<el-form-item :label="$t('dataForm.form.file.csvFijlter')">
+													<el-select v-model="item.selectFileType" size="mini">
+														<el-option
+															:label="$t('dataForm.form.file.include_filename')"
+															value="include_filename"
+														></el-option>
+														<el-option
+															:label="$t('dataForm.form.file.exclude_filename')"
+															value="exclude_filename"
+														></el-option>
+													</el-select>
 												</el-form-item>
 												<el-form-item v-if="item.selectFileType === 'include_filename'">
 													<el-input
@@ -115,17 +119,6 @@
 												</el-form-item>
 												<p style="font-size: 12px; color: #666;">
 													{{ $t('dataForm.form.file.viewExpression') }}
-													<el-popover
-														placement="top-start"
-														title="标题"
-														width="200"
-														trigger="hover"
-														content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。"
-													>
-														<span slot="reference">{{
-															$t('dataForm.form.file.expression')
-														}}</span>
-													</el-popover>
 												</p>
 											</el-col>
 											<el-col :span="2" style="margin-right: -40px;">
@@ -267,11 +260,17 @@ const defaultModel = {
 	sslCAFile: null,
 	sslKeyFile: null,
 
-	file_source_protocol: '',
 	ftp_passive: true,
 	connection_timeout_seconds: 0,
 	data_timeout_seconds: 0,
 	fileDefaultCharset: '',
+	file_upload_chunk_size: 261120,
+	file_upload_mode: '',
+	overwriteSetting: '',
+	extendSourcePath: false,
+	outputPath: '',
+	file_source_protocol: '',
+	vc_mode: '',
 	file_sources: [
 		{
 			path: '',
