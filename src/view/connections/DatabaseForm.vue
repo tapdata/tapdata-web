@@ -451,7 +451,6 @@ export default {
 						params.fill = params.isUrl ? 'uri' : '';
 						delete params.isUrl;
 					}
-					debugger;
 					connectionsModel[this.model.id ? 'patchId' : 'post'](params)
 						.then(res => {
 							this.submitBtnLoading = false;
