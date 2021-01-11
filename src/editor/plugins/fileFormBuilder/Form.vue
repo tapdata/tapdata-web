@@ -18,10 +18,10 @@
 				</div>
 			</header>
 			<div class="form-builder">
-				<label class="file-source-label">{{ $t('editor.dataFlow.nodeName') }}</label>
-				<el-input v-model="model.name" size="mini"></el-input>
+				<label class="file-source-label">{{ $t('dataFlow.nodeName') }}</label>
+				<el-input v-model="model.name" size="mini" style="margin-bottom: 10px" :disabled="disabled"></el-input>
 				<label class="file-source-label">{{ $t('editor.fileFormBuilder.fileSource') }}</label>
-				<FbSelect v-model="model.connectionId" :config="fileConfig"></FbSelect>
+				<FbSelect v-model="model.connectionId" :config="fileConfig" style="margin-bottom: 10px"></FbSelect>
 				<form-builder ref="form" v-model="model.fileProperty" :config="config"></form-builder>
 				<label class="file-source-label" v-if="model.database_type === 'excel'">{{
 					$t('editor.fileFormBuilder.excelValue')
@@ -31,9 +31,28 @@
 						label-width="120px"
 						label-position="right"
 						:rules="rules"
+						:disabled="disabled"
 						:model="model.fileProperty"
 						ref="excelForm"
 					>
+						<!--工作页 -->
+						<el-form-item :label="$t('editor.fileFormBuilder.sheet_range')" prop="sheet_start" required>
+							<el-input
+								v-model.number="model.fileProperty.sheet_start"
+								maxlength="3"
+								show-word-limit
+								size="mini"
+								:placeholder="$t('editor.fileFormBuilder.sheet_start')"
+							></el-input>
+							<span class="separate"> ~ </span>
+							<el-input
+								v-model.number="model.fileProperty.sheet_end"
+								maxlength="3"
+								show-word-limit
+								size="mini"
+								:placeholder="$t('editor.fileFormBuilder.sheet_end')"
+							></el-input>
+						</el-form-item>
 						<!--字段范围 -->
 						<el-form-item
 							:label="$t('editor.fileFormBuilder.excel_header_type')"
@@ -78,6 +97,11 @@
 								</div>
 							</div>
 						</el-form-item>
+						<el-form-item
+							><div style="margin-top: 5px;color: #999">
+								{{ $t('editor.fileFormBuilder.excel_cell_point') }}
+							</div></el-form-item
+						>
 						<!--字段获取方式 -->
 						<el-form-item
 							:label="$t('editor.fileFormBuilder.header_mapping')"
@@ -111,34 +135,22 @@
 								:placeholder="$t('editor.fileFormBuilder.excel_value_end')"
 							></el-input>
 						</el-form-item>
-						<!--工作页 -->
-						<el-form-item :label="$t('editor.fileFormBuilder.sheet_range')" prop="sheet_start" required>
-							<el-input
-								v-model.number="model.fileProperty.sheet_start"
-								maxlength="3"
-								show-word-limit
-								size="mini"
-								:placeholder="$t('editor.fileFormBuilder.sheet_start')"
-							></el-input>
-							<span class="separate"> ~ </span>
-							<el-input
-								v-model.number="model.fileProperty.sheet_end"
-								maxlength="3"
-								show-word-limit
-								size="mini"
-								:placeholder="$t('editor.fileFormBuilder.sheet_end')"
-							></el-input>
-						</el-form-item>
+						<el-form-item
+							><div style="margin-top: -10px;color: #999">
+								{{ $t('editor.fileFormBuilder.excel_value_range') }}
+							</div></el-form-item
+						>
 					</el-form>
 				</div>
 				<el-button
 					size="mini"
-					style="margin-top: 10px"
-					type="primary"
+					style="margin-top: 10px;background:#4aaf47;color: #fff"
 					@click="loadSchema"
+					:disabled="disabled"
 					:loading="reloadingSchema"
-					>加载模型</el-button
+					>{{ $t('editor.fileFormBuilder.loadSchema') }}</el-button
 				>
+				<div class="schema-tip">{{ $t('editor.fileFormBuilder.loadSchemaTip') }}</div>
 				<div class="e-entity-wrap">
 					<entity
 						:schema="convertSchemaToTreeData(schema)"
@@ -174,7 +186,7 @@ export default {
 					new Error(this.$t('editor.fileFormBuilder.excel_header_end') + this.$t('formBuilder.noneText'))
 				);
 			} else if (!/^[A-Z]+[1-9]+$/.test(start) || !/^[A-Z]+[1-9]+$/.test(end)) {
-				callback(new Error(this.$t('editor.fileFormBuilder.excel_cell_point')));
+				callback(new Error(this.$t('editor.fileFormBuilder.excel_cell_tip')));
 			}
 		};
 		let validateSheet = (rule, value, callback) => {
@@ -207,6 +219,7 @@ export default {
 				name: '',
 				connectionId: '',
 				fileProperty: {
+					fileFilter: 'include',
 					include_filename: '',
 					exclude_filename: '',
 					file_schema: '',
@@ -219,11 +232,12 @@ export default {
 					excel_header_start: 'A1',
 					excel_header_end: 'Z1',
 					excel_header_type: 'value',
-					excel_value_start: '',
+					excel_value_start: 2,
 					excel_value_end: '',
 					sheet_start: 1,
 					sheet_end: 1,
-					file_type: ''
+					file_type: '',
+					disabled: false
 				},
 				isFormValid: true
 			},
@@ -233,6 +247,7 @@ export default {
 			},
 			fileConfig: {
 				size: 'mini',
+				disabled: false,
 				placeholder: this.$t('editor.fileFormBuilder.fileSourcePlaceholder'),
 				loading: false,
 				filterable: true,
@@ -441,9 +456,9 @@ export default {
 		},
 		setDisabled(disabled) {
 			this.disabled = disabled;
-			this.formConfig.form.disabled = true;
+			this.config.form.disabled = disabled;
+			this.fileConfig.disabled = disabled;
 		},
-
 		seeMonitor() {
 			editorMonitor.goBackMontior();
 		}
@@ -466,7 +481,7 @@ export default {
 			margin-top: 20px;
 			.img-box {
 				display: flex;
-				width: 84px;
+				width: 48px;
 				height: 48px;
 				justify-content: center;
 				align-items: center;
@@ -523,11 +538,16 @@ export default {
 			}
 			.form-excel-wrap {
 				font-size: 12px;
-				padding-top: 10px;
+				padding: 15px 0;
 				border: 1px solid rgba(222, 222, 228, 100);
 				.separate {
 					margin: 0 10px;
 				}
+			}
+			.schema-tip {
+				color: #999;
+				margin-top: 5px;
+				font-size: 12px;
 			}
 		}
 	}
@@ -536,12 +556,22 @@ export default {
 <style lang="less">
 .editor-file-form-builder .form-excel-wrap {
 	.el-form-item {
-		margin-bottom: 5px;
+		margin-bottom: 10px;
 	}
 	.el-form-item__content {
 		display: flex;
 		font-size: 12px;
 		margin-right: 20px;
+		line-height: 25px;
+	}
+	.el-form-item__label {
+		font-size: 12px;
+		line-height: 20px;
+		font-weight: 600;
+	}
+	.el-radio-button__inner,
+	.el-radio-group {
+		margin-bottom: 10px;
 	}
 	.headerType .el-form-item__content {
 		flex-direction: column;

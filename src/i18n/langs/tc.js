@@ -1320,8 +1320,15 @@ const tc = {
 			excel_value_start: '數據區域開始行',
 			excel_value_end: '數據區域結束行',
 			excel_number: '必須為數字',
-			excel_cell_point: 'Excel單元格坐標，例如：A1，表示第一行第一列',
-			excel_value_end_gt_start: '結束行必須大於等於開始行'
+			excel_cell_point: 'EXCEL的坐標範圍，"第1行第1列" 可以輸入為 "A1"',
+			excel_cell_tip: '字段範圍必須為大寫字母+數字',
+			excel_value_end_gt_start: '結束行必須大於等於開始行',
+			excel_value_range: 'EXCEL 橫坐標範圍, "取第2行至第10行" 可輸入："2" ~ "10"',
+			fileFilter: '文件過濾',
+			include: '包含文件',
+			exclude: '捨棄文件',
+			loadSchema: '加載模型',
+			loadSchemaTip: '配置完上述配置項後請點擊“加載模型”按鈕以更新文件的模型，沒有文件模型無法執行同步傳輸'
 		}
 	},
 	dataVerify: {

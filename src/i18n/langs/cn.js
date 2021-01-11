@@ -1307,9 +1307,9 @@ const cn = {
 			excludeFilename: '不包含文件正则表达式',
 			fileSchema: '设置模型名称',
 			sperate: '文件字段分隔符',
-			jsonType: 'json 类型',
-			excelPassword: 'excel 文件密码',
-			excelValue: 'excel 内容设置',
+			jsonType: 'Json 类型',
+			excelPassword: 'Excel 文件密码',
+			excelValue: 'Excel 内容设置',
 			header_mapping_value: '单元格内容',
 			header_mapping_index: '单元格位置',
 			header_mapping: '字段名获取方式',
@@ -1326,8 +1326,15 @@ const cn = {
 			excel_value_start: '数据区域开始行',
 			excel_value_end: '数据区域结束行',
 			excel_number: '必须为数字',
-			excel_cell_point: 'Excel单元格坐标，例如：A1，表示第一行第一列',
-			excel_value_end_gt_start: '结束行必须大于等于开始行'
+			excel_cell_point: 'EXCEL的坐标范围，"第1行第1列" 可以输入为 "A1"',
+			excel_cell_tip: '字段范围必须为大写字母+数字',
+			excel_value_end_gt_start: '结束行必须大于等于开始行',
+			excel_value_range: 'EXCEL 横坐标范围, "取第2行至第10行" 可输入："2" ~ "10"',
+			fileFilter: '文件过滤',
+			include: '包含文件',
+			exclude: '舍弃文件',
+			loadSchema: '加载模型',
+			loadSchemaTip: '配置完上述配置项后请点击“加载模型”按钮以更新文件的模型，没有文件模型无法执行同步传输'
 		}
 	},
 	dataVerify: {

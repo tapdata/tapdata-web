@@ -253,6 +253,7 @@ const defaultModel = {
 	node_name: '',
 	database_schema: '',
 	plugin_name: '',
+	pgsql_log_decorder_plugin_name: '',
 	database_datetype_without_timezone: '',
 	supportUpdatePk: false,
 

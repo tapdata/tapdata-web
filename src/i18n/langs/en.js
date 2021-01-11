@@ -1322,15 +1322,15 @@ const en = {
 			table: 'Table'
 		},
 		fileFormBuilder: {
-			fileSource: 'Choose Datasource',
-			fileSourcePlaceholder: '请选择文件源',
-			includeFilename: '包含文件正则表达式',
-			excludeFilename: '不包含文件正则表达式',
+			fileSource: 'Data source',
+			fileSourcePlaceholder: 'Enter data source',
+			includeFilename: 'Enter regular expression for include file',
+			excludeFilename: 'Enter regular expression for discard file',
 			fileSchema: 'Set model name',
-			sperate: '文件字段分隔符',
-			jsonType: 'json 类型',
-			excelPassword: 'excel 文件密码',
-			excelValue: 'excel 内容设置',
+			sperate: 'Model field separator',
+			jsonType: 'Json type',
+			excelPassword: 'Excel password',
+			excelValue: 'Excel data settings',
 			header_mapping_value: 'Cell content',
 			header_mapping_index: 'Cell coordinate name',
 			header_mapping: ' Field name getting',
@@ -1340,15 +1340,23 @@ const en = {
 			excel_header_type: 'Field mapping range',
 			excel_header_coordinate: 'According to the table coordinate',
 			excel_header_range: 'Custom range',
-			gridfs_header_config: '自定义范围',
+			gridfs_header_config: 'Enter custom range',
 			excel_header_start: 'Enter the starting coordinate',
 			excel_header_end: 'Enter the ending coordinate',
 			excel_value_type: 'Range of rows',
 			excel_value_start: 'Enter the starting abscissa',
 			excel_value_end: 'Enter the ending abscissa',
-			excel_number: '必须为数字',
-			excel_cell_point: 'Excel单元格坐标，例如：A1，表示第一行第一列',
-			excel_value_end_gt_start: '结束行必须大于等于开始行'
+			excel_number: 'Sheet range should be number',
+			excel_cell_point: 'Enter the coordinates of Excel, "row 1 and column 1" can be entered as "A1"',
+			excel_cell_tip: 'The field range must be uppercase letter + number',
+			excel_value_end_gt_start:
+				'The number of ending page must be greater than or equal to the number of starting page',
+			fileFilter: 'File filter',
+			include: 'Include file',
+			exclude: 'Discard file',
+			loadSchema: 'Load Schema',
+			loadSchemaTip:
+				'After configuring the above items, please click the Load Model" button to update the file model. If there is no model, sync transmission cannot be performed'
 		}
 	},
 	dataVerify: {
