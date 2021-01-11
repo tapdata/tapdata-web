@@ -143,7 +143,9 @@
 									<img :src="getImgByType(scope.row.database_type)" />
 								</div>
 								<div class="database-text" :class="{ lineHeight: !scope.row.database_uri }">
-									<span class="name" @click="preview(scope.row.id, scope.row.database_type)"
+									<span
+										class="name"
+										@click="preview(scope.row.id, scope.row.user_id, scope.row.database_type)"
 										>{{ scope.row.name }}
 										<span class="tag" v-if="scope.row.listtags && scope.row.listtags.length > 0">{{
 											formatterListTags(scope.row)
