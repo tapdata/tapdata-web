@@ -18,13 +18,11 @@
 						class="input-with-select"
 						size="mini"
 						clearable
-						debounce
 						@input="table.fetch(1, 800)"
 					>
 						<el-select
 							v-model="searchParams.iModel"
 							slot="prepend"
-							placeholder="请选择"
 							class="sub-select"
 							@input="table.fetch(1)"
 						>
@@ -140,6 +138,7 @@
 			<el-table-column prop="user_id" :label="$t('connection.creator')" width="80">
 				<template slot-scope="scope">
 					<div class="database-text" style="margin-left:0;">
+						<div>{{ usersData[scope.row.user_id] }}</div>
 						<div>{{ scope.row.username }}</div>
 					</div>
 				</template>
@@ -177,13 +176,30 @@
 					<el-button class="btn-text" type="text" @click="preview(scope.row.id, scope.row.database_type)">
 						{{ $t('message.preview') }}
 					</el-button>
-					<el-button class="btn-text" type="text" @click="edit(scope.row.id, scope.row.database_type)">
+					<el-button
+						class="btn-text"
+						type="text"
+						v-readonlybtn="'datasource_edition'"
+						:disabled="permissionBtnDisabel('datasource_edition_all_data', scope.row.user_id)"
+						@click="edit(scope.row.id, scope.row.database_type)"
+					>
 						{{ $t('message.edit') }}
 					</el-button>
-					<el-button class="btn-text" type="text" @click="copy(scope.row)">
+					<el-button
+						class="btn-text"
+						type="text"
+						v-readonlybtn="'datasource_creation'"
+						@click="copy(scope.row)"
+					>
 						{{ $t('message.copy') }}
 					</el-button>
-					<el-button class="btn-text" type="text" @click="delConfirm(scope.row)">
+					<el-button
+						class="btn-text"
+						type="text"
+						v-readonlybtn="'datasource_delete'"
+						:disabled="permissionBtnDisabel('datasource_delete_all_data', scope.row.user_id)"
+						@click="delConfirm(scope.row)"
+					>
 						{{ $t('message.delete') }}
 					</el-button>
 				</template>

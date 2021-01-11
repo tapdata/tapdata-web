@@ -56,7 +56,7 @@
 				>
 					<i class="iconfont icon-shezhi1"></i>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item command="settings" v-readonlybtn="'system_settings'">{{
+						<el-dropdown-item command="settings" v-if="settingCode">{{
 							$t('app.menu.settings')
 						}}</el-dropdown-item>
 						<el-dropdown-item command="setting" v-readonlybtn="'home_notice_settings'">{{
@@ -276,7 +276,8 @@ export default {
 			isCollapse: false,
 			settingVisibility:
 				this.$has('home_notice_settings') ||
-				(this.$has('system_settings') && this.$has('system_settings_mune')),
+				(this.$has('system_settings') && this.$has('system_settings_menu')),
+			settingCode: this.$has('system_settings') && this.$has('system_settings_menu'),
 			creatAuthority:
 				this.$has('SYNC_job_creation') ||
 				this.$has('datasource_creation') ||

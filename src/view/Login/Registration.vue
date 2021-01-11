@@ -33,6 +33,13 @@
 								/>
 							</el-input>
 						</el-form-item>
+						<el-form-item prop="inviteCode">
+							<el-input
+								v-model="form.inviteCode"
+								type="text"
+								:placeholder="$t('app.signIn.inviteCode_placeholder')"
+							></el-input>
+						</el-form-item>
 						<el-checkbox class="keep-sign-in" v-model="keepSignIn" style="display:none">
 							<span style="color:#999"
 								>{{ $t('app.signIn.registry_tip') }} <i>{{ $t('app.signIn.userPplicy') }}</i></span
@@ -53,6 +60,13 @@
 					<div class="back-login">
 						{{ $t('app.signIn.haveAccpunt') }}
 						<span @click="backLogin">{{ $t('app.signIn.backLogin') }}</span>
+					</div>
+				</el-card>
+				<el-card class="qrCode">
+					<div class="title">{{ $t('app.signIn.getCode') }}</div>
+					<p>{{ $t('app.signIn.qrCodeText') }}</p>
+					<div class="imageBox">
+						<el-image class="image" src="static/image/tapdateQR.png" fit="cover"></el-image>
 					</div>
 				</el-card>
 			</div>
@@ -125,6 +139,9 @@ export default {
 			if (!form.email || !form.email.trim()) {
 				message = this.$t('app.signIn.email_require');
 				// eslint-disable-next-line
+			} else if (!form.inviteCode) {
+				message = this.$t('app.signIn.inviteCode_require');
+				// eslint-disable-next-line
 			} else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)) {
 				message = this.$t('app.signIn.email_invalid');
 			} else if (!form.password || form.password.length < 5) {
@@ -164,6 +181,9 @@ export default {
 				if (e.response && e.response.msg) {
 					if (e.response.msg.indexOf('Email already exists') !== -1) {
 						this.errorMessage = this.$t('app.signIn.hasMailbox');
+					}
+					if (e.response.msg.indexOf('Invite Code Invalid') !== -1) {
+						this.errorMessage = this.$t('app.signIn.inviteCode_invalid');
 					} else if (e.response.msg.indexOf('Disable Signup') !== -1) {
 						this.errorMessage = this.$t('app.signIn.disableSignup');
 					} else {
@@ -322,6 +342,32 @@ export default {
 				span {
 					color: #48b6e2;
 					cursor: pointer;
+				}
+			}
+		}
+		.qrCode {
+			position: absolute;
+			top: 60px;
+			right: 20px;
+			width: 400px;
+			padding: 25px 5px;
+			box-sizing: border-box;
+			div.title {
+				padding-bottom: 30px;
+				font-size: 26px;
+				font-weight: 500;
+				color: #333;
+			}
+			p {
+				font-size: 12px;
+			}
+			.imageBox {
+				padding: 40px 0 15px;
+				text-align: center;
+				.image {
+					width: 200px;
+					height: 200px;
+					text-align: center;
 				}
 			}
 		}
