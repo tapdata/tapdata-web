@@ -222,6 +222,7 @@ let menuSetting = [
 		code: 'data_government',
 		children: [
 			{ name: 'metadataDefinition', code: 'data_catalog_menu' },
+			{ name: 'metadata', code: 'data_catalog_menu' },
 			{ name: 'dataQuality', code: 'data_quality_menu' },
 			{ name: 'timeToLive', code: 'time_to_live_menu' },
 			{ name: 'dataMap', code: 'data_lineage_menu' },

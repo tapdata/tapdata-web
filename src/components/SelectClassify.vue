@@ -1,7 +1,7 @@
 <template>
 	<el-dialog
 		:title="$t('dataFlow.batchSortOperation')"
-		:visible.sync="dialogVisible"
+		:visible="dialogVisible"
 		width="600px"
 		class="SelectClassify-dialog"
 		:before-close="handleClose"
@@ -40,7 +40,7 @@
 			ref="tree"
 			check-strictly
 			@node-click="handleCheckChange"
-			class="metaData-tree SelectClassify-tree"
+			class="SelectClassify-tree"
 		>
 			<span class="custom-tree-node" slot-scope="{ node, data }">
 				<span>
@@ -63,23 +63,18 @@ import _ from 'lodash';
 const MetadataDefinitions = factory('MetadataDefinitions');
 
 export default {
-	name: 'SelectClassify.vue',
+	name: 'SelectClassify',
 	props: {
-		dialogVisible: {
-			required: true,
-			value: Boolean
-		},
-		type: {
-			required: true,
-			value: String
-		},
-		tagLists: {
-			required: true,
-			value: Object || []
+		types: {
+			value: Array,
+			default: () => {
+				return [];
+			}
 		}
 	},
 	data() {
 		return {
+			dialogVisible: false,
 			default_expanded: false,
 			props: {
 				children: 'children',
@@ -91,26 +86,23 @@ export default {
 			oldTagList: []
 		};
 	},
-	watch: {
-		dialogVisible: {
-			handler() {
-				if (this.dialogVisible) {
-					this.oldTagList = _.cloneDeep(this.tagLists);
-					this.getData();
-				}
-			}
-		}
-	},
 	methods: {
+		show(tagList) {
+			this.dialogVisible = true;
+			this.oldTagList = _.cloneDeep(tagList);
+			this.getData();
+		},
 		getData(cb) {
-			let params = {
-				filter: {
-					where: {
-						or: [{ item_type: this.type }]
-					}
-				}
+			let where = {};
+			if (this.types.length) {
+				where.or = this.types.map(t => ({ item_type: t }));
+			}
+			let filter = {
+				where
 			};
-			MetadataDefinitions.get(params).then(res => {
+			MetadataDefinitions.get({
+				filter: JSON.stringify(filter)
+			}).then(res => {
 				if (res.data) {
 					this.treeData = this.formatData(res.data);
 					cb && cb(res.data);
@@ -152,7 +144,7 @@ export default {
 		handleClose() {
 			this.tagList = [];
 			this.oldTagList = [];
-			this.$emit('dialogVisible', false);
+			this.dialogVisible = false;
 		},
 		handleClearOldTag() {
 			this.oldTagList = '';

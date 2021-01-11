@@ -11,7 +11,7 @@
 			<div class="table-page-left" v-if="classify && $window.getSettingByKey('SHOW_CLASSIFY')">
 				<Classification
 					:authority="classify.authority"
-					:type="classify.type"
+					:types="classify.types"
 					@nodeChecked="nodeChecked"
 				></Classification>
 			</div>
@@ -25,19 +25,21 @@
 					</div>
 				</div>
 				<el-table
-					class="table"
+					class="table-page-table"
 					height="100%"
 					v-loading="loading"
 					:element-loading-text="$t('dataFlow.dataLoading')"
 					:row-key="rowKey"
 					:data="list"
-					@selection-change="$emit('selection-change', $event)"
+					:header-cell-style="tableHeaderStyle"
+					@selection-change="handleSelectionChange"
+					@sort-change="$emit('sort-change', $event)"
 				>
 					<slot></slot>
 				</el-table>
 				<el-pagination
 					background
-					class="pagination"
+					class="table-page-pagination"
 					layout="total, ->, sizes, prev, pager, next, jumper"
 					:current-page.sync="page.current"
 					:page-sizes="[10, 20, 50, 100]"
@@ -49,16 +51,23 @@
 				</el-pagination>
 			</div>
 		</div>
+		<SelectClassify
+			ref="classify"
+			:types="classify.types"
+			@operationsClassify="$emit('classify-submit', $event)"
+		></SelectClassify>
 	</div>
 </template>
 
 <script>
 import Classification from '@/components/Classification';
+import SelectClassify from '@/components/SelectClassify';
 import { delayTrigger } from '../util/util';
 
 export default {
 	components: {
-		Classification
+		Classification,
+		SelectClassify
 	},
 	props: {
 		title: String,
@@ -70,7 +79,10 @@ export default {
 		classify: {
 			type: Object,
 			default: () => {
-				return null;
+				return {
+					authority: '',
+					types: []
+				};
 			}
 		},
 		remoteMethod: Function,
@@ -86,47 +98,64 @@ export default {
 			},
 			list: [],
 			multipleSelection: [],
-			tags: []
+			tags: [],
+			classifyDialogVisible: false,
+			tableHeaderStyle: {
+				padding: '0',
+				lineHeight: '30px',
+				background: '#fafafa',
+				color: '#999'
+			}
 		};
 	},
 	created() {
 		this.fetch(1);
 	},
+	watch: {
+		'classify.types'() {
+			this.tags = [];
+		}
+	},
 	methods: {
 		fetch(pageNum, debounce = 0, hideLoading) {
 			this.page.current = pageNum || this.page.current;
-			delayTrigger(() => {
-				if (!hideLoading) {
-					this.loading = true;
-				}
-				this.remoteMethod &&
-					this.remoteMethod({
-						page: this.page,
-						tags: this.tags,
-						data: this.list
-					})
-						.then(({ data, total }) => {
-							this.page.total = total;
-							this.list = data || [];
+			this.$nextTick(() => {
+				delayTrigger(() => {
+					if (!hideLoading) {
+						this.loading = true;
+					}
+					this.remoteMethod &&
+						this.remoteMethod({
+							page: this.page,
+							tags: this.tags,
+							data: this.list
 						})
-						.finally(() => {
-							this.loading = false;
-						});
-			}, debounce);
+							.then(({ data, total }) => {
+								this.page.total = total;
+								this.list = data || [];
+							})
+							.finally(() => {
+								this.loading = false;
+							});
+				}, debounce);
+			});
 		},
 		nodeChecked(tags) {
 			this.tags = tags;
 			this.fetch(1);
 		},
-
 		handleSelectionChange(val) {
 			this.multipleSelection = val;
+			this.$emit('selection-change', val);
+		},
+		showClassify(tagList) {
+			this.$refs.classify.show(tagList);
 		}
 	}
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .table-page-container {
 	display: flex;
 	flex-direction: column;
@@ -176,7 +205,7 @@ export default {
 				text-align: right;
 			}
 		}
-		.table {
+		.table-page-table {
 			flex: 1;
 			overflow: auto;
 			border: 1px solid #eee;
@@ -186,9 +215,18 @@ export default {
 				padding: 2px 0;
 				background: #fafafa;
 				color: #999;
+				.caret-wrapper {
+					height: 31px;
+					.sort-caret.ascending {
+						top: 4px;
+					}
+					.sort-caret.descending {
+						bottom: 4px;
+					}
+				}
 			}
 		}
-		.pagination {
+		.table-page-pagination {
 			margin-top: 5px;
 		}
 	}

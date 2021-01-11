@@ -28,9 +28,8 @@ export function signOut() {
 	window.App.$router.push('/login');
 }
 
-export function toRegExp(s) {
+export function toRegExp(word) {
 	let arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-'];
-	let word = s;
 	for (let i = 0; i < arr.length; i++) {
 		let str = '\\' + arr[i];
 		word = word.replace(new RegExp(str, 'g'), '\\' + arr[i]);
@@ -57,11 +56,15 @@ export function getUrlSearch(name) {
 }
 let timeout = null;
 export function delayTrigger(func, t = 500) {
-	if (timeout) {
-		window.clearTimeout(timeout);
-	}
-	timeout = setTimeout(() => {
+	if (t) {
+		if (timeout) {
+			window.clearTimeout(timeout);
+		}
+		timeout = setTimeout(() => {
+			func && func();
+			timeout = null;
+		}, t);
+	} else {
 		func && func();
-		timeout = null;
-	}, t);
+	}
 }

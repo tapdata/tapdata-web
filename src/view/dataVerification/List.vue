@@ -555,7 +555,7 @@ export default {
 				`${this.$t('dataVerification.deleteMessage')} ${name}?`,
 				this.$t('dataFlow.importantReminder'),
 				{
-					confirmButtonText: this.$t('metaData.deleteNode'),
+					confirmButtonText: this.$t('classification.deleteNode'),
 					cancelButtonText: this.$t('message.cancel'),
 					type: 'warning'
 				}

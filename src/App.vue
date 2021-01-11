@@ -38,6 +38,11 @@ export default {
 	border-radius: 10px;
 	background: #ccc;
 }
+.ellipsis {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 .markdown-body {
 	padding: 20px;
 	min-width: 200px;

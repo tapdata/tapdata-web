@@ -1,8 +1,9 @@
 <template>
-	<div class="classification">
+	<div class="classification" :class="{ expand: isExpand }">
+		<el-button class="btn-expand" size="mini" icon="el-icon-d-arrow-right" @click="toggle()"></el-button>
 		<div class="classification-header">
 			<div class="title">
-				<span>{{ $t('metaData.title') }}</span>
+				<span>{{ $t('classification.title') }}</span>
 			</div>
 			<div class="search-box">
 				<el-input class="search" size="mini" v-model="filterText">
@@ -38,9 +39,11 @@
 					>
 						<el-button type="text"><i class="iconfont icon-gengduo3  task-list-icon"></i></el-button>
 						<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item command="add">{{ $t('metaData.addChildernNode') }}</el-dropdown-item>
-							<el-dropdown-item command="edit">{{ $t('metaData.editNode') }}</el-dropdown-item>
-							<el-dropdown-item command="delete">{{ $t('metaData.deleteNode') }}</el-dropdown-item>
+							<el-dropdown-item command="add">
+								{{ $t('classification.addChildernNode') }}
+							</el-dropdown-item>
+							<el-dropdown-item command="edit">{{ $t('classification.editNode') }}</el-dropdown-item>
+							<el-dropdown-item command="delete">{{ $t('classification.deleteNode') }}</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 				</span>
@@ -51,7 +54,7 @@
 			<el-input
 				size="mini"
 				v-model="dialogConfig.label"
-				:placeholder="$t('metaData.nodeName')"
+				:placeholder="$t('classification.nodeName')"
 				maxlength="50"
 				show-word-limit
 			></el-input>
@@ -72,9 +75,11 @@ const MetadataDefinitions = factory('MetadataDefinitions');
 
 export default {
 	props: {
-		type: {
-			type: String,
-			default: 'dataflow'
+		types: {
+			type: Array,
+			default: () => {
+				return [];
+			}
 		},
 		authority: {
 			type: String
@@ -82,6 +87,7 @@ export default {
 	},
 	data() {
 		return {
+			isExpand: true,
 			filterText: '',
 			treeData: [],
 			default_expanded: false,
@@ -108,11 +114,18 @@ export default {
 		this.getData();
 	},
 	watch: {
+		types() {
+			this.clear();
+			this.getData();
+		},
 		filterText(val) {
 			this.$refs.tree.filter(val);
 		}
 	},
 	methods: {
+		toggle() {
+			this.isExpand = !this.isExpand;
+		},
 		clear() {
 			this.$refs.tree.setCheckedNodes([]);
 		},
@@ -139,11 +152,16 @@ export default {
 			this.$emit('nodeChecked', checkedNodes);
 		},
 		getData(cb) {
-			let params = {
-				'filter[where][or][0][item_type]': this.type
-				// 'filter[where][user_id][regexp]': `^${this.$cookie.get('user_id')}$`
+			let where = {};
+			if (this.types.length) {
+				where.or = this.types.map(t => ({ item_type: t }));
+			}
+			let filter = {
+				where
 			};
-			MetadataDefinitions.get(params).then(res => {
+			MetadataDefinitions.get({
+				filter: JSON.stringify(filter)
+			}).then(res => {
 				if (res.data) {
 					this.treeData = this.formatData(res.data);
 					cb && cb(res.data);
@@ -212,7 +230,12 @@ export default {
 		},
 		showDialog(node, dialogType) {
 			let type = dialogType || 'add';
+			let itemType = this.types;
+			if (node.data && node.data.item_type) {
+				itemType = node.data.item_type;
+			}
 			this.dialogConfig = {
+				itemType: itemType,
 				visible: true,
 				type,
 				id: node ? node.key : '',
@@ -220,9 +243,9 @@ export default {
 				title:
 					type === 'add'
 						? node
-							? this.$t('metaData.addChildernNode')
-							: this.$t('metaData.addNode')
-						: this.$t('metaData.editNode')
+							? this.$t('classification.addChildernNode')
+							: this.$t('classification.addNode')
+						: this.$t('classification.editNode')
 			};
 		},
 		hideDialog() {
@@ -234,17 +257,18 @@ export default {
 			let config = this.dialogConfig;
 			let value = config.label;
 			let id = config.id;
+			let itemType = config.itemType;
 			let method = 'post';
 			if (!value || value.trim() === '') {
-				this.$message.error(this.$t('metaData.nodeName'));
+				this.$message.error(this.$t('classification.nodeName'));
 				return;
 			}
 			let nameExist = await this.checkName(value);
 			if (nameExist) {
-				return this.$message.error(this.$t('metaData.nameExist'));
+				return this.$message.error(this.$t('classification.nameExist'));
 			}
 			let params = {
-				item_type: [this.type],
+				item_type: itemType,
 				value
 			};
 			if (config.type === 'edit') {
@@ -270,7 +294,7 @@ export default {
 				});
 		},
 		deleteNode(id) {
-			this.$confirm(this.$t('metaData.deteleMessage'), {
+			this.$confirm(this.$t('classification.deteleMessage'), {
 				confirmButtonText: this.$t('message.delete'),
 				cancelButtonText: this.$t('message.cancel'),
 				type: 'warning',
@@ -299,24 +323,42 @@ export default {
 
 <style scoped lang="less">
 .classification {
+	position: relative;
 	display: flex;
 	flex-direction: column;
-	height: 100%;
-	width: 100%;
+	width: 26px;
+	height: 26px;
 	user-select: none;
 	box-sizing: border-box;
-	border: 1px solid #dedee4;
 	border-top: none;
 	background: #fff;
 	border-radius: 3px;
+	overflow: hidden;
+	.btn-expand {
+		padding: 6px;
+		width: 26px;
+		color: #666;
+		transform: rotate(0);
+		box-sizing: border-box;
+	}
+	&.expand {
+		height: 100%;
+		width: 100%;
+		border: 1px solid #dedee4;
+		.btn-expand {
+			position: absolute;
+			top: 5px;
+			right: 8px;
+			transform: rotate(180deg);
+		}
+	}
 	/*头部样式*/
 	.classification-header {
 		background: #fafafa;
 		border-bottom: 1px solid #dedee4;
-		border-top: 1px solid #dedee4;
 		font-size: 12px;
 		line-height: 31px;
-		padding-left: 8px;
+		padding: 0 8px;
 		display: flex;
 		flex-direction: column;
 		.title {
@@ -344,7 +386,6 @@ export default {
 				padding-left: 5px;
 				margin-top: 0px;
 				border-top-width: 1px;
-				margin-right: 6px;
 				border-radius: 3px;
 				cursor: pointer;
 			}

@@ -275,7 +275,6 @@
 		<AddBtnTip v-if="!loading && isEditable()"></AddBtnTip>
 		<DownAgent ref="agentDialog" type="taskRunning" @closeAgentDialog="closeAgentDialog"></DownAgent>
 		<SkipError
-			ref="SelectClassify"
 			:dialogVisible="dialogVisibleSkipError"
 			:errorEvents="errorEvents"
 			:taskName="taskName"

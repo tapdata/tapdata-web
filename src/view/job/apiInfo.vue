@@ -1,9 +1,6 @@
 <template>
 	<el-container class="api-info">
 		<el-row class="e-row">
-			<!-- <el-col :span="3" class="e-col">
-				<metaData type="api" @nodeClick="getSelsetClassification"></metaData>
-			</el-col> -->
 			<el-col :span="3" class="e-col">
 				<apiPath :selectNodeId="classificationId" @backApiData="getCurrentApiData"></apiPath>
 			</el-col>
@@ -146,15 +143,12 @@
 
 <script>
 import factory from '../../api/factory';
-// import metaData from '../metaData';
 import apiPath from '../apiPath';
 const modules = factory('modules');
-// const MetadataInstances = factory('MetadataInstances');
 
 export default {
 	name: 'ApiInfo',
 	components: {
-		// metaData,
 		apiPath
 	},
 	data() {

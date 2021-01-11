@@ -66,7 +66,7 @@ const childRoutes = [
 		meta: {
 			code: 'data_catalog_menu',
 			url: '/old/index.html#/metadataDefinition',
-			title: i18n.t('tap.dataCatalog'),
+			title: i18n.t('tap.metadata'),
 			isCollapse: false
 		}
 	},
@@ -505,7 +505,7 @@ const childRoutes = [
 		name: 'metadata',
 		component: view('metadata/List'),
 		meta: {
-			title: i18n.t('notification.systemNotice'),
+			title: i18n.t('tap.dataCatalog'),
 			isCollapse: true
 		}
 	}

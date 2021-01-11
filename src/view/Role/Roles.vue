@@ -211,7 +211,9 @@
 			</p>
 			<span slot="footer" class="dialog-footer">
 				<el-button size="mini" @click="deleteDialogVisible = false">{{ $t('message.cancel') }}</el-button>
-				<el-button size="mini" type="primary" @click="confirmDelete">{{ $t('metaData.deleteNode') }}</el-button>
+				<el-button size="mini" type="primary" @click="confirmDelete">
+					{{ $t('classification.deleteNode') }}
+				</el-button>
 			</span>
 		</el-dialog>
 	</div>

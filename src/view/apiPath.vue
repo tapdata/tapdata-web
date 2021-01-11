@@ -77,7 +77,7 @@ const MetadataInstances = factory('MetadataInstances');
 const modules = factory('modules');
 
 export default {
-	name: 'metaData',
+	name: 'apiPath',
 	components: {
 		SelectClassify
 	},
@@ -499,11 +499,6 @@ export default {
 	.el-input .el-input__inner {
 		height: 24px;
 		line-height: 24px;
-	}
-}
-.metaData-tree {
-	.el-tree-node__content {
-		height: 33px;
 	}
 }
 .select-nav-header {

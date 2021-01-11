@@ -461,7 +461,7 @@ export default {
 		},
 		handleClear() {
 			this.$confirm(this.$t('message.deteleMessage'), this.$t('dataFlow.importantReminder'), {
-				confirmButtonText: this.$t('metaData.deleteNode'),
+				confirmButtonText: this.$t('classification.deleteNode'),
 				cancelButtonText: this.$t('message.cancel'),
 				type: 'warning',
 				closeOnClickModal: false

@@ -2,7 +2,7 @@
 	<div style="height: 100%;" class="table-flows">
 		<el-container class="table-flows-wrap">
 			<div class="panel-left" v-if="formData.panelFlag">
-				<Classification ref="classification" @nodeChecked="nodeChecked"></Classification>
+				<Classification ref="classification" :types="['dataflow']" @nodeChecked="nodeChecked"></Classification>
 			</div>
 			<el-container class="table-flows-main">
 				<el-tabs v-model="activeName" type="card" class="tab-card" @tab-click="handleTabClick">
@@ -220,11 +220,8 @@
 				</el-main>
 			</el-container>
 			<SelectClassify
-				ref="SelectClassify"
-				:dialogVisible="dialogVisible"
-				type="dataflow"
-				:tagLists="tagList"
-				v-on:dialogVisible="handleDialogVisible"
+				ref="classify"
+				:types="['dataflow']"
 				v-on:operationsClassify="handleOperationClassify"
 			></SelectClassify>
 		</el-container>
@@ -244,8 +241,6 @@ export default {
 	data() {
 		return {
 			loading: true,
-			dialogVisible: false,
-			tagList: [],
 			checkedTags: [],
 			activeName: 'tableFlow',
 			searchParams: this.$store.state.tableFlows,
@@ -348,21 +343,18 @@ export default {
 		handlePanelFlag() {
 			this.formData.panelFlag = !this.formData.panelFlag;
 		},
-		handleDialogVisible() {
-			this.dialogVisible = false;
-		},
 		handleClassify() {
 			if (this.multipleSelection.length === 0) {
 				this.$message.info('please select row data');
 				return;
 			}
-			this.tagList = this.handleSelectTag();
-			this.dialogVisible = true;
+			let tagList = this.handleSelectTag();
+			this.$refs.classify.show(tagList);
 		},
 		handlerAddTag(id, listTags) {
 			this.dataFlowId = id;
 			this.tagList = listTags || [];
-			this.dialogVisible = true;
+			this.$refs.classify.show(listTags || []);
 		},
 		handleSelectTag() {
 			let tagList = {};

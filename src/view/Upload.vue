@@ -28,11 +28,8 @@
 			}}</el-button>
 		</el-upload>
 		<SelectClassify
-			ref="SelectClassify"
-			:dialogVisible="dialogVisible"
-			:type="type"
-			:tagLists="tagList"
-			v-on:dialogVisible="handleDialogVisible"
+			ref="classify"
+			:types="[type]"
 			v-on:operationsClassify="handleOperationClassify"
 		></SelectClassify>
 		<div v-show="status" class="tooltip">
@@ -59,7 +56,6 @@ export default {
 			accept: '.gz',
 			status: false,
 			tagList: [],
-			dialogVisible: false,
 			mappingTemplate: 'cluster-clone',
 			downType: ''
 		};
@@ -113,11 +109,8 @@ export default {
 		// }
 	},
 	methods: {
-		handleDialogVisible() {
-			this.dialogVisible = false;
-		},
 		handleClassify() {
-			this.dialogVisible = true;
+			this.$refs.classify.show(this.tagList);
 		},
 
 		handleOperationClassify(listtags) {

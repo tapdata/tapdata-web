@@ -13,6 +13,7 @@ const cn = {
 		jobFlow: 'Tapdata-任务编排',
 		jsFuncs: 'Tapdata-函数管理',
 		dataCatalog: 'Tapdata-数据目录',
+		metadata: 'Tapdata-元数据管理',
 		metadataInstances: 'Tapdata-元数据详情',
 		dataQuality: 'Tapdata-数据质量',
 		TimeToLive: 'Tapdata-生命周期管理',
@@ -136,7 +137,8 @@ const cn = {
 			dataFlowsPaused: '已暂停任务',
 			dataFlowsDraft: '编辑中任务',
 			dataGovernance: '数据治理',
-			metadataDefinition: '数据目录',
+			metadataDefinition: '元数据管理',
+			metadata: '数据目录',
 			dataQuality: '数据质量',
 			timeToLive: '生命周期管理',
 			dataMap: '数据地图',
@@ -1550,7 +1552,7 @@ const cn = {
 			placeholderPrefix: '请输入'
 		}
 	},
-	metaData: {
+	classification: {
 		title: '数据分类',
 		nameExist: '分类名称已存在',
 		addNode: '新增同级分类',
@@ -1559,6 +1561,22 @@ const cn = {
 		deleteNode: '删除',
 		nodeName: '请输入分类名称',
 		deteleMessage: '此操作会将该分类下存在的子类都删除，是否删除'
+	},
+	metadata: {
+		createNewModel: '创建模型',
+		metaType: {
+			database: '数据库',
+			api: '数据种类',
+			job: '任务',
+			collection: '数据集',
+			view: '视图',
+			directory: '目录',
+			table: '数据表',
+			dataflow: '任务编排',
+			mongo_view: 'Mongodb视图',
+			ftp: 'FTP',
+			apiendpoint: 'API连接'
+		}
 	},
 	dialog: {
 		createTable: '创建新表',

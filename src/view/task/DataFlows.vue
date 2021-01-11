@@ -3,6 +3,7 @@
 		<div class="panel-left" v-show="formData.panelFlag" v-if="$window.getSettingByKey('SHOW_CLASSIFY')">
 			<Classification
 				ref="classification"
+				:types="['dataflow']"
 				:authority="'SYNC_category_management'"
 				@nodeChecked="nodeChecked"
 			></Classification>
@@ -397,11 +398,8 @@
 			</div>
 		</div>
 		<SelectClassify
-			ref="SelectClassify"
-			:dialogVisible="dialogVisible"
-			type="dataflow"
-			:tagLists="tagList"
-			v-on:dialogVisible="handleDialogVisible"
+			ref="classify"
+			:types="['dataflow']"
 			v-on:operationsClassify="handleOperationClassify"
 		></SelectClassify>
 		<el-dialog
@@ -416,13 +414,12 @@
 			</p>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="deleteDialogVisible = false">{{ $t('message.cancel') }}</el-button>
-				<el-button type="primary" @click="confirmDleteFlow">{{ $t('metaData.deleteNode') }}</el-button>
+				<el-button type="primary" @click="confirmDleteFlow">{{ $t('classification.deleteNode') }}</el-button>
 			</span>
 		</el-dialog>
 		<DownAgent type="taskRunning" ref="agentDialog" @closeAgentDialog="closeAgentDialog"></DownAgent>
 		<SkipError
 			v-if="selectedJob.dataItem"
-			ref="SelectClassify"
 			:dialogVisible="dialogVisibleSkipError"
 			:errorEvents="errorEvents"
 			:taskName="selectedJob.dataItem.name"
@@ -510,9 +507,7 @@ export default {
 			checkedTags: [],
 			activeName: 'dataFlow',
 			listtags: [],
-			tagList: [],
 			wsData: [],
-			dialogVisible: false,
 			restLoading: false,
 			colorMap: {
 				running: '#67C23A',
@@ -739,21 +734,17 @@ export default {
 		wsWatch(data) {
 			this.wsData.push(data.data.fullDocument);
 		},
-		handleDialogVisible() {
-			this.dialogVisible = false;
-		},
 		handleClassify() {
 			if (this.multipleSelection.length === 0) {
 				this.$message.info(this.$t('dataFlow.selectRowdata'));
 				return;
 			}
-			this.tagList = this.handleSelectTag();
-			this.dialogVisible = true;
+			let tagList = this.handleSelectTag();
+			this.$refs.classify.show(tagList);
 		},
 		handlerAddTag(id, listTags) {
 			this.dataFlowId = id;
-			this.tagList = listTags || [];
-			this.dialogVisible = true;
+			this.$refs.classify.show(listTags || []);
 		},
 		handleSelectTag() {
 			let tagList = {};
@@ -1215,7 +1206,7 @@ export default {
 
 		deleteConfirm(callback) {
 			this.$confirm(this.$t('message.deteleJobMessage'), this.$t('dataFlow.importantReminder'), {
-				confirmButtonText: this.$t('metaData.deleteNode'),
+				confirmButtonText: this.$t('classification.deleteNode'),
 				cancelButtonText: this.$t('message.cancel'),
 				type: 'warning',
 				closeOnClickModal: false

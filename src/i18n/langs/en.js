@@ -13,6 +13,7 @@ const en = {
 		jobFlow: 'Tapdata-JobFlow',
 		jsFuncs: 'Tapdata-JsFuncs',
 		dataCatalog: 'Tapdata-DataCatalog',
+		metadata: 'Tapdata-MetadataManagement',
 		metadataInstances: 'Tapdata-MetadataInstances',
 		dataQuality: 'Tapdata-DataQuality',
 		TimeToLive: 'Tapdata-TimeToLive',
@@ -137,7 +138,8 @@ const en = {
 			dataFlowsPaused: 'Paused',
 			dataFlowsDraft: 'Draft',
 			dataGovernance: 'Data Governance',
-			metadataDefinition: 'Data Catalog',
+			metadataDefinition: 'Metadata management',
+			metadata: 'Data Catalog',
 			dataQuality: 'Data Quality',
 			timeToLive: 'Time To Live',
 			dataMap: 'Data Lineage',
@@ -1578,7 +1580,7 @@ const en = {
 			placeholderPrefix: 'Enter '
 		}
 	},
-	metaData: {
+	classification: {
 		title: 'Data Category',
 		nameExist: 'Category name already existed.',
 		addNode: 'Add category at the same level',
@@ -1587,6 +1589,22 @@ const en = {
 		deleteNode: 'Delete',
 		nodeName: 'Please enter classification',
 		deteleMessage: 'This operation will delete all subclasses existing in this category, whether to delete it'
+	},
+	metadata: {
+		createNewModel: 'Create Model',
+		metaType: {
+			database: 'Database',
+			api: 'API',
+			job: 'Job',
+			table: 'Table',
+			collection: 'Collection',
+			view: 'View',
+			directory: 'Directory',
+			dataflow: 'Data Flow',
+			mongo_view: 'Mongodb View',
+			ftp: 'FTP',
+			apiendpoint: 'API End Point'
+		}
 	},
 	notification: {
 		notice: 'Notice',

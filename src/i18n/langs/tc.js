@@ -13,6 +13,7 @@ const tc = {
 		jobFlow: 'Tapdata-任務編排',
 		jsFuncs: 'Tapdata-函數管理',
 		dataCatalog: 'Tapdata-數據目錄',
+		metadata: 'Tapdata-元數據管理',
 		metadataInstances: 'Tapdata-元數據詳情',
 		dataQuality: 'Tapdata-數據質量',
 		TimeToLive: 'Tapdata-生命週期管理',
@@ -137,7 +138,8 @@ const tc = {
 			dataFlowsPaused: '已暫停任務',
 			dataFlowsDraft: '編輯中任務',
 			dataGovernance: '數據治理',
-			metadataDefinition: '數據目錄',
+			metadataDefinition: '元數據管理',
+			metadata: '數據目錄',
 			dataQuality: '數據質量',
 			timeToLive: '生命週期管理',
 			dataMap: '數據地圖',
@@ -1545,7 +1547,7 @@ const tc = {
 			placeholderPrefix: '請輸入'
 		}
 	},
-	metaData: {
+	classification: {
 		title: '數據分類',
 		nameExist: '分類名稱已存在',
 		addNode: '新增同級分類',
@@ -1554,6 +1556,22 @@ const tc = {
 		deleteNode: '刪除',
 		nodeName: '請輸入分類名稱',
 		deteleMessage: '此操作會將該分類下存在的子類都刪除，是否刪除'
+	},
+	metadata: {
+		createNewModel: '創建模型',
+		metaType: {
+			database: '數據庫',
+			api: '数据种类',
+			job: '任務',
+			collection: '數據集',
+			view: '視圖',
+			directory: '目錄',
+			table: '數據表',
+			dataflow: '任務編排',
+			mongo_view: 'Mongodb視圖',
+			ftp: 'FTP',
+			apiendpoint: 'API連接'
+		}
 	},
 	notification: {
 		notice: '消息通知',
