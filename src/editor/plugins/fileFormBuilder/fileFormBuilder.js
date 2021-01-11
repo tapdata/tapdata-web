@@ -56,7 +56,7 @@ export const fileFormConfig = {
 			validate(data) {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
-				if (!data.formData.connectionId)
+				if (!data.connectionId)
 					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`);
 				return true;
 			}

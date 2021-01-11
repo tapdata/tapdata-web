@@ -22,9 +22,11 @@
 			</header>
 			<div class="form-builder">
 				<span class="file-source-label">{{ $t('editor.fileFormBuilder.fileSource') }}</span>
-				<FbSelect v-model="model.fileProperty.connectionId" :config="fileConfig"></FbSelect>
+				<FbSelect v-model="model.connectionId" :config="fileConfig"></FbSelect>
 				<form-builder ref="form" v-model="model.fileProperty" :config="config"></form-builder>
-				<span class="file-source-label">{{ $t('editor.fileFormBuilder.excelValue') }}</span>
+				<span class="file-source-label" v-if="model.database_type === 'excel'">{{
+					$t('editor.fileFormBuilder.excelValue')
+				}}</span>
 				<div class="form-excel-wrap" v-if="model.database_type === 'excel'">
 					<el-form
 						label-width="120px"
@@ -214,8 +216,8 @@ export default {
 			disabled: false,
 			model: {
 				type: '',
+				connectionId: '',
 				fileProperty: {
-					connectionId: '',
 					include_filename: '',
 					exclude_filename: '',
 					file_schema: '',
@@ -312,7 +314,7 @@ export default {
 				this.reloadingSchema = false;
 				if (templeSchema && templeSchema.length) {
 					templeSchema.forEach(item => {
-						if (item.connId === this.model.fileProperty.connectionId) {
+						if (item.connId === this.model.connectionId) {
 							schema = item.schema;
 						}
 					});
@@ -433,7 +435,7 @@ export default {
 				data: {
 					tables: [
 						{
-							connId: this.model.fileProperty.connectionId,
+							connId: this.model.connectionId,
 							userId: this.$cookie.get('user_id'),
 							fileProperty: Object.assign({}, this.model.fileProperty, {
 								file_type: this.model.database_type
