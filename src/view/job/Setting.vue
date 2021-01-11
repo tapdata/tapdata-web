@@ -9,7 +9,7 @@
 		<el-form
 			class="e-form"
 			label-position="right"
-			label-width="150px"
+			label-width="162px"
 			:data="formData"
 			:disabled="disabled"
 			:rules="rules"
@@ -60,6 +60,15 @@
 					<span class="icon iconfont icon-tishi1" slot="reference"></span>
 				</el-popover>
 			</el-form-item>
+			<el-form-item :label="$t('dataFlow.cdcFetchSize')" v-show="formData.sync_type !== 'initial_sync'">
+				<el-input-number v-model="formData.cdcFetchSize" :min="1" :max="1000" size="mini"></el-input-number>
+				<el-popover popper-class="setting-popper" placement="top-start" width="600" trigger="hover">
+					<div>{{ $t('dataFlow.cdcFetchSizeTip') }}</div>
+					<div>{{ $t('dataFlow.cdcFetchSizeTip1') }}</div>
+					<div>{{ $t('dataFlow.cdcFetchSizeTip2') }}</div>
+					<span class="icon iconfont icon-tishi1" slot="reference"></span>
+				</el-popover>
+			</el-form-item>
 			<div v-show="showMore">
 				<el-form-item :label="$t('dataFlow.setting.distinctWriteType')">
 					<el-select
@@ -77,8 +86,8 @@
 						</el-option>
 					</el-select>
 					<el-popover popper-class="setting-popper" placement="top-start" width="600" trigger="hover">
-						<div>{{ $t('dataFlow.setting.intellectTip') }}</div>
-						<div>{{ $t('dataFlow.setting.compelTip') }}</div>
+						<div style="word-break: break-word">{{ $t('dataFlow.setting.intellectTip') }}</div>
+						<div style="word-break: break-word">{{ $t('dataFlow.setting.compelTip') }}</div>
 						<span class="icon iconfont icon-tishi1" slot="reference"></span>
 					</el-popover>
 				</el-form-item>

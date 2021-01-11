@@ -208,15 +208,15 @@ export default {
 		let version = window._TAPDATA_OPTIONS_.version;
 		this.windowLink =
 			'tapdata start backend --downloadUrl ' +
-			`https://resource.tapdata.net/package/feagent/${version}/ --token ` +
+			`http://resource.tapdata.net/package/feagent/${version}/ --token ` +
 			this.$cookie.get('token') +
 			' ' +
 			this.$cookie.get('user_id');
 		this.LinuxLink =
 			'wget "' +
-			`https://resource.tapdata.net/package/feagent/${version}/tapdata` +
+			`http://resource.tapdata.net/package/feagent/${version}/tapdata` +
 			'" && chmod +x tapdata && ./tapdata start backend --downloadUrl ' +
-			`https://resource.tapdata.net/package/feagent/${version}/ --token ` +
+			`http://resource.tapdata.net/package/feagent/${version}/ --token ` +
 			this.$cookie.get('token') +
 			' ' +
 			this.$cookie.get('user_id');
@@ -224,9 +224,9 @@ export default {
 			'docker run -itd ' +
 			`ccr.ccs.tencentyun.com/tapdata/flow-engine:${version} '` +
 			'wget "' +
-			`https://resource.tapdata.net/package/feagent/${version}/tapdata` +
+			`http://resource.tapdata.net/package/feagent/${version}/tapdata` +
 			'" && chmod +x tapdata && ./tapdata start backend --downloadUrl ' +
-			`https://resource.tapdata.net/package/feagent/${version}/ --token ` +
+			`http://resource.tapdata.net/package/feagent/${version}/ --token ` +
 			this.$cookie.get('token') +
 			' ' +
 			this.$cookie.get('user_id') +
