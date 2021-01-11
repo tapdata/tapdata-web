@@ -29,12 +29,6 @@ export default function(vm) {
 				type: 'input',
 				field: 'plain_password',
 				label: vm.$t('editor.fileFormBuilder.excelPassword')
-			},
-			{
-				type: 'slot',
-				slot: 'excel',
-				label: vm.$t('editor.fileFormBuilder.excelValue'),
-				required: true
 			}
 		]
 	};

@@ -1314,6 +1314,7 @@ const cn = {
 			excel_value_type: '内容范围',
 			excel_value_start: '数据区域开始行',
 			excel_value_end: '数据区域结束行',
+			excel_number: '必须为数字',
 			excel_cell_point: 'Excel单元格坐标，例如：A1，表示第一行第一列',
 			excel_value_end_gt_start: '结束行必须大于等于开始行'
 		}
