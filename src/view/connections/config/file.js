@@ -5,8 +5,11 @@ export default function(vm) {
 			labelWidth: '200px'
 		},
 		defaultModel: {
-			connection_type: 'source_and_target',
+			connection_type: 'source',
+			file_upload_mode: 'stream',
+			overwriteSetting: 'discard',
 			file_source_protocol: 'localFile',
+			vc_mode: 'overwrite',
 			ftp_passive: true,
 			fileDefaultCharset: 'UTF8'
 		},
@@ -16,11 +19,11 @@ export default function(vm) {
 				field: 'connection_type',
 				label: vm.$t('dataForm.form.connectionType'),
 				options: [
-					{
-						label: vm.$t('dataForm.form.options.sourceAndTarget'),
-						tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
-						value: 'source_and_target'
-					},
+					// {
+					// 	label: vm.$t('dataForm.form.options.sourceAndTarget'),
+					// 	tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+					// 	value: 'source_and_target'
+					// },
 					{
 						label: vm.$t('dataForm.form.options.source'),
 						tip: vm.$t('dataForm.form.options.sourceTips'),
@@ -61,7 +64,6 @@ export default function(vm) {
 				type: 'select',
 				field: 'fileDefaultCharset',
 				label: vm.$t('dataForm.form.file.encodingFormat'),
-				//tips: vm.$t('dataForm.form.timeZoneTips'),
 				options: [
 					{ label: 'UTF8', value: 'UTF8' },
 					{ label: 'GBK', value: 'GBK' },
@@ -194,6 +196,7 @@ export default function(vm) {
 					}
 				]
 			},
+
 			{
 				type: 'radio',
 				field: 'ftp_passive',
@@ -261,7 +264,7 @@ export default function(vm) {
 			},
 			{
 				type: 'input',
-				field: 'data_timeout_seconds',
+				field: 'data_timeout_seconds', // 传输超时时间
 				label: vm.$t('dataForm.form.file.transmissionTimeout'),
 				show: false,
 				rules: [
@@ -292,6 +295,138 @@ export default function(vm) {
 					}
 				]
 			},
+			{
+				type: 'select',
+				field: 'vc_mode', // 版本管理
+				label: vm.$t('dataForm.form.file.versionManagement'),
+				show: false,
+				options: [
+					{ label: 'Overwrite', value: 'overwrite' },
+					{ label: 'Increment Version', value: 'increment_version' }
+				],
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connection_type',
+								value: 'source'
+							}
+						],
+						triggerConfig: {
+							show: true
+						}
+					}
+				]
+			},
+			// 本地文件目标
+			{
+				type: 'input',
+				field: 'file_upload_chunk_size', // 文件上传文件块大小
+				label: vm.$t('dataForm.form.file.file_upload_chunk_size'),
+				show: false,
+				required: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connection_type',
+								value: 'target'
+							}
+						],
+						triggerConfig: {
+							show: true
+						}
+					}
+				]
+			},
+			{
+				type: 'select',
+				field: 'file_upload_mode', // 文件上传模式
+				label: vm.$t('dataForm.form.file.file_upload_mode'),
+				show: false,
+				options: [
+					{ label: vm.$t('dataForm.form.file.file_upload_stream'), value: 'stream' },
+					{ label: vm.$t('dataForm.form.file.file_upload_memory'), value: 'memory' }
+				],
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connection_type',
+								value: 'target'
+							}
+						],
+						triggerConfig: {
+							show: true
+						}
+					}
+				]
+			},
+
+			{
+				type: 'select',
+				field: 'overwriteSetting', // 当同名文件存在时
+				label: vm.$t('dataForm.form.file.overwriteText'),
+				show: false,
+				options: [
+					{ label: vm.$t('dataForm.form.file.overwrite'), value: 'overwrite' },
+					{ label: vm.$t('dataForm.form.file.discard'), value: 'discard' }
+				],
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connection_type',
+								value: 'target'
+							}
+						],
+						triggerConfig: {
+							show: true
+						}
+					}
+				]
+			},
+			{
+				type: 'switch',
+				field: 'extendSourcePath', // 继承目录结构
+				label: vm.$t('dataForm.form.file.extend_source_path'),
+				show: false,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connection_type',
+								value: 'target'
+							}
+						],
+						triggerConfig: {
+							show: true
+						}
+					}
+				]
+			},
+
+			{
+				type: 'input',
+				field: 'outputPath', // 文件输出绝对路径
+				label: vm.$t('dataForm.form.file.file_output_path'),
+				required: true,
+				show: false,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connection_type',
+								value: 'target'
+							}
+						],
+						triggerConfig: {
+							show: true
+						}
+					}
+				]
+			},
+
 			{
 				type: 'slot',
 				slot: 'fileUrl'
