@@ -17,7 +17,6 @@ export const fileFormConfig = {
 				}
 			},
 			[FORM_DATA_KEY]: {
-				type: 'file',
 				connectionId: ''
 			}
 		},
