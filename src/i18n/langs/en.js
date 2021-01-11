@@ -1320,6 +1320,35 @@ const en = {
 		preview: {
 			stage: 'Stage',
 			table: 'Table'
+		},
+		fileFormBuilder: {
+			fileSource: 'Choose Datasource',
+			fileSourcePlaceholder: '请选择文件源',
+			includeFilename: '包含文件正则表达式',
+			excludeFilename: '不包含文件正则表达式',
+			fileSchema: 'Set model name',
+			sperate: '文件字段分隔符',
+			jsonType: 'json 类型',
+			excelPassword: 'excel 文件密码',
+			excelValue: 'excel 内容设置',
+			header_mapping_value: 'Cell content',
+			header_mapping_index: 'Cell coordinate name',
+			header_mapping: ' Field name getting',
+			sheet_range: 'Range of sheets',
+			sheet_start: 'Enter the number of starting sheet',
+			sheet_end: 'Enter the number of ending sheet',
+			excel_header_type: 'Field mapping range',
+			excel_header_coordinate: 'According to the table coordinate',
+			excel_header_range: 'Custom range',
+			gridfs_header_config: '自定义范围',
+			excel_header_start: 'Enter the starting coordinate',
+			excel_header_end: 'Enter the ending coordinate',
+			excel_value_type: 'Range of rows',
+			excel_value_start: 'Enter the starting abscissa',
+			excel_value_end: 'Enter the ending abscissa',
+			excel_number: '必须为数字',
+			excel_cell_point: 'Excel单元格坐标，例如：A1，表示第一行第一列',
+			excel_value_end_gt_start: '结束行必须大于等于开始行'
 		}
 	},
 	dataVerify: {

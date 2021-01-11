@@ -1293,6 +1293,35 @@ const tc = {
 		preview: {
 			stage: '節點',
 			table: '數據表'
+		},
+		fileFormBuilder: {
+			fileSource: '選擇文件源',
+			fileSourcePlaceholder: '請選擇文件源',
+			includeFilename: '包含文件正則表達式',
+			excludeFilename: '不包含文件正則表達式',
+			fileSchema: '設置模型名稱',
+			sperate: '文件字段分隔符',
+			jsonType: 'json 類型',
+			excelPassword: 'excel 文件密碼',
+			excelValue: 'excel 內容設置',
+			header_mapping_value: '單元格內容',
+			header_mapping_index: '單元格位置',
+			header_mapping: '字段名獲取方式',
+			sheet_range: '頁數範圍',
+			sheet_start: '開始工作頁',
+			sheet_end: '結束工作頁',
+			excel_header_type: '字段映射範圍',
+			excel_header_coordinate: '按表頭坐標',
+			excel_header_range: '自定義範圍',
+			gridfs_header_config: '自定義範圍',
+			excel_header_start: '表頭開始坐標',
+			excel_header_end: '表頭結束坐標',
+			excel_value_type: '內容範圍',
+			excel_value_start: '數據區域開始行',
+			excel_value_end: '數據區域結束行',
+			excel_number: '必須為數字',
+			excel_cell_point: 'Excel單元格坐標，例如：A1，表示第一行第一列',
+			excel_value_end_gt_start: '結束行必須大於等於開始行'
 		}
 	},
 	dataVerify: {

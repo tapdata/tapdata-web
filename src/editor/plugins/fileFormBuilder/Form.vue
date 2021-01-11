@@ -7,10 +7,7 @@
 				</div>
 				<div class="content-box">
 					<div class="content">
-						{{ model.name }}
-						<div class="addBtn" @click="dialogDatabaseTypeVisible = true">
-							{{ $t('connection.change') }}
-						</div>
+						{{ model.type }}
 					</div>
 					<div class="tip">
 						{{ $t('dataForm.form.guide') }}
@@ -21,12 +18,14 @@
 				</div>
 			</header>
 			<div class="form-builder">
-				<span class="file-source-label">{{ $t('editor.fileFormBuilder.fileSource') }}</span>
+				<label class="file-source-label">{{ $t('editor.dataFlow.nodeName') }}</label>
+				<el-input v-model="model.name" size="mini"></el-input>
+				<label class="file-source-label">{{ $t('editor.fileFormBuilder.fileSource') }}</label>
 				<FbSelect v-model="model.connectionId" :config="fileConfig"></FbSelect>
 				<form-builder ref="form" v-model="model.fileProperty" :config="config"></form-builder>
-				<span class="file-source-label" v-if="model.database_type === 'excel'">{{
+				<label class="file-source-label" v-if="model.database_type === 'excel'">{{
 					$t('editor.fileFormBuilder.excelValue')
-				}}</span>
+				}}</label>
 				<div class="form-excel-wrap" v-if="model.database_type === 'excel'">
 					<el-form
 						label-width="120px"
@@ -68,19 +67,13 @@
 									<el-input
 										v-model="model.fileProperty.excel_header_start"
 										size="mini"
-										:placeholder="
-											$t('formBuilder.input.placeholderPrefix') +
-												$t('editor.fileFormBuilder.excel_header_start')
-										"
+										:placeholder="$t('editor.fileFormBuilder.excel_header_start')"
 									></el-input>
 									<span class="separate"> ~ </span>
 									<el-input
 										v-model="model.fileProperty.excel_header_end"
 										size="mini"
-										:placeholder="
-											$t('formBuilder.input.placeholderPrefix') +
-												$t('editor.fileFormBuilder.excel_header_end')
-										"
+										:placeholder="$t('editor.fileFormBuilder.excel_header_end')"
 									></el-input>
 								</div>
 							</div>
@@ -107,10 +100,7 @@
 								maxlength="10"
 								show-word-limit
 								size="mini"
-								:placeholder="
-									$t('formBuilder.input.placeholderPrefix') +
-										$t('editor.fileFormBuilder.excel_value_start')
-								"
+								:placeholder="$t('editor.fileFormBuilder.excel_value_start')"
 							></el-input>
 							<span class="separate"> ~ </span>
 							<el-input
@@ -118,10 +108,7 @@
 								maxlength="10"
 								show-word-limit
 								size="mini"
-								:placeholder="
-									$t('formBuilder.input.placeholderPrefix') +
-										$t('editor.fileFormBuilder.excel_value_end')
-								"
+								:placeholder="$t('editor.fileFormBuilder.excel_value_end')"
 							></el-input>
 						</el-form-item>
 						<!--工作页 -->
@@ -131,9 +118,7 @@
 								maxlength="3"
 								show-word-limit
 								size="mini"
-								:placeholder="
-									$t('formBuilder.input.placeholderPrefix') + $t('editor.fileFormBuilder.sheet_start')
-								"
+								:placeholder="$t('editor.fileFormBuilder.sheet_start')"
 							></el-input>
 							<span class="separate"> ~ </span>
 							<el-input
@@ -141,9 +126,7 @@
 								maxlength="3"
 								show-word-limit
 								size="mini"
-								:placeholder="
-									$t('formBuilder.input.placeholderPrefix') + $t('editor.fileFormBuilder.sheet_end')
-								"
+								:placeholder="$t('editor.fileFormBuilder.sheet_end')"
 							></el-input>
 						</el-form-item>
 					</el-form>
@@ -156,8 +139,12 @@
 					:loading="reloadingSchema"
 					>加载模型</el-button
 				>
-				<div class="e-entity-wrap" style="text-align: center;">
-					<entity :schema="convertSchemaToTreeData(schema)" :editable="false"></entity>
+				<div class="e-entity-wrap">
+					<entity
+						:schema="convertSchemaToTreeData(schema)"
+						:editable="false"
+						style="margin: 0;margin-top: 20px"
+					></entity>
 				</div>
 			</div>
 		</div>
@@ -216,6 +203,8 @@ export default {
 			disabled: false,
 			model: {
 				type: '',
+				tableName: '',
+				name: '',
 				connectionId: '',
 				fileProperty: {
 					include_filename: '',
@@ -316,6 +305,7 @@ export default {
 					templeSchema.forEach(item => {
 						if (item.connId === this.model.connectionId) {
 							schema = item.schema;
+							this.model.tableName = item.tableName;
 						}
 					});
 				}
@@ -476,11 +466,10 @@ export default {
 			margin-top: 20px;
 			.img-box {
 				display: flex;
-				width: 48px;
+				width: 84px;
 				height: 48px;
 				justify-content: center;
 				align-items: center;
-				background: #fff;
 				border-radius: 3px;
 				margin-right: 20px;
 				img {
@@ -505,7 +494,7 @@ export default {
 			.content {
 				display: flex;
 				align-items: center;
-				font-size: 22px;
+				font-size: 18px;
 				white-space: nowrap;
 				word-break: break-word;
 				text-overflow: ellipsis;
