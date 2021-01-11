@@ -6,6 +6,7 @@ import mongodb from './mongodb';
 import postgres from './postgres';
 import elasticsearch from './elasticsearch';
 import redis from './redis';
+import file from './file';
 
 export default {
 	mysql,
@@ -15,5 +16,6 @@ export default {
 	mongodb,
 	postgres,
 	elasticsearch,
-	redis
+	redis,
+	file
 };

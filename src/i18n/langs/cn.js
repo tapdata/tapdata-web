@@ -1499,6 +1499,7 @@ const cn = {
 			supportUpdatePk: '支持同步时更新主键',
 			indexPrefix: '索引前缀',
 			agentMsg: '当前测试连接服务不可用，请检查是否正确启动数据同步(Agent)服务',
+
 			uriTips: {
 				label: '示例',
 				content:
@@ -1551,6 +1552,41 @@ const cn = {
 				CHECK_API_AUTH: '检查api是否有访问权限',
 				CHECK_LOCAL_PORT: '检查本地端口是否可用',
 				SCAN_FILE: '扫描目录中的文件'
+			},
+			file: {
+				fileAddr: '文件地址',
+				filePort: '文件端口',
+				creatAccount: '创建者账号',
+				password: '密码',
+				connectionMethod: '连接方式',
+				encodingFormat: '编码格式',
+				connecitonTimeout: '连接超时时间(秒)',
+				transmissionTimeout: '传输超时时间(秒)',
+				second: '秒',
+				fileUrl: '文件路径',
+				agreementType: '协议类型',
+				agentLocationFile: 'Agent 所在地址文件',
+				agentLocationFileTip: '以URI的方式配置MongoDB数据库，支持批量输入',
+				ftpTip: '按照Host, port, 账号, 密码的方式配置MongoDB数据库，支持批量输入',
+				shared: '共享文件夹',
+				sharedTip: '按照Host, port, 账号, 密码的方式配置MongoDB数据库，支持批量输入',
+				activeConnectionMode: '主动连接模式',
+				activeConnectionModeTip: '按照Host, port, 账号, 密码的方式配置MongoDB数据库，支持批量输入',
+				passiveConnectionMode: '被动连接模式',
+				passiveConnectionModeTip: '按照Host, port, 账号, 密码的方式配置MongoDB数据库，支持批量输入',
+				input_number: '请输入数字',
+				greaterZero_less5256000: '必须大于等于零,小于等于5256000',
+				path: '设置路径',
+				recursive: '递归路径',
+				include_filename: '保留文件',
+				exclude_filename: '舍弃文件',
+				viewExpression: '请输入文件名表达式，点击查看',
+				expression: '表达式示例',
+				includePlaceholder: '请输入要保留文件名表达式',
+				excludePlaceholder: '请输入要舍弃文件名表达式',
+				pathPlaceholder: '请输入Agent所在环境的文件路径',
+				addPath: '添加路径',
+				fileNone: '文件路径不能为空'
 			}
 		},
 		error: {
