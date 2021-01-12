@@ -120,17 +120,6 @@ export default function(vm) {
 						triggerConfig: {
 							show: true
 						}
-					},
-					{
-						triggerOptions: [
-							{
-								field: 'file_source_protocol',
-								value: 'smb'
-							}
-						],
-						triggerConfig: {
-							show: true
-						}
 					}
 				]
 			},
@@ -169,6 +158,8 @@ export default function(vm) {
 				type: 'input',
 				field: 'database_password',
 				label: vm.$t('dataForm.form.file.password'),
+				domType: 'password',
+				showPassword: true,
 				required: true,
 				show: false,
 				dependOn: [
@@ -201,7 +192,6 @@ export default function(vm) {
 				type: 'radio',
 				field: 'ftp_passive',
 				label: vm.$t('dataForm.form.file.connectionMethod'),
-				required: true,
 				show: false,
 				options: [
 					{

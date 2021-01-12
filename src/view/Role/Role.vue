@@ -733,7 +733,9 @@ export default {
 					if (event && children[i].checked) {
 						this.$set(children[i], 'checkAllData', true);
 					} else {
-						this.$set(children[i], 'checkAllData', false);
+						if (children[i].allName !== 'data_catalog_all_data') {
+							this.$set(children[i], 'checkAllData', false);
+						}
 					}
 				}
 			}

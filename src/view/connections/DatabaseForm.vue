@@ -59,10 +59,11 @@
 								<div class="file-form-content">
 									<el-form
 										:model="model"
-										ref="form"
+										ref="fileForm"
 										label-width="100px"
 										class="demo-ruleForm"
 										label-position="top"
+										:inline-message="true"
 									>
 										<el-row
 											type="flex"
@@ -92,20 +93,24 @@
 													<el-switch v-model="item.recursive"></el-switch>
 												</el-form-item>
 												<el-form-item :label="$t('dataForm.form.file.csvFijlter')">
-													<el-select v-model="item.selectFileType" size="mini">
+													<el-select
+														v-model="item.selectFileType"
+														size="mini"
+														style="width: 100%;"
+													>
 														<el-option
 															:label="$t('dataForm.form.file.include_filename')"
-															value="include_filename"
+															value="include"
 														></el-option>
 														<el-option
 															:label="$t('dataForm.form.file.exclude_filename')"
-															value="exclude_filename"
+															value="exclude"
 														></el-option>
 													</el-select>
 												</el-form-item>
-												<el-form-item v-if="item.selectFileType === 'include_filename'">
+												<el-form-item v-if="item.selectFileType === 'include'">
 													<el-input
-														v-model="item.include_filename"
+														v-model="item.include"
 														size="mini"
 														:placeholder="$t('dataForm.form.file.includePlaceholder')"
 													></el-input>
@@ -424,9 +429,17 @@ export default {
 		},
 		submit() {
 			this.submitBtnLoading = true;
+			let falg = false;
+			if (this.model.database_type === 'file' && this.model.connection_type === 'source') {
+				this.$refs.fileForm.validate(valid => {
+					if (!valid) {
+						falg = true;
+					}
+				});
+			}
 
 			this.$refs.form.validate(valid => {
-				if (valid) {
+				if (valid && !falg) {
 					let params = Object.assign({}, this.model, {
 						sslCert: this.model.sslKey,
 						// user_id: this.$cookie.get('user_id'),
@@ -454,14 +467,12 @@ export default {
 					}
 					connectionsModel[this.model.id ? 'patchId' : 'post'](params)
 						.then(res => {
-							this.submitBtnLoading = false;
 							let id = res.data.id;
 							this.model.id = id;
 							this.$message.success(this.$t('message.saveOK'));
 							this.goBack();
 						})
 						.catch(err => {
-							this.submitBtnLoading = false;
 							if (err && err.response) {
 								if (err.response.msg.indexOf('duplication for names') > -1) {
 									this.$message.error(this.$t('dataForm.error.connectionNameExist'));
@@ -476,7 +487,12 @@ export default {
 							} else {
 								this.$message.error(this.$t('message.saveFail'));
 							}
+						})
+						.finally(() => {
+							this.submitBtnLoading = false;
 						});
+				} else {
+					this.submitBtnLoading = false;
 				}
 			});
 		},
@@ -644,6 +660,9 @@ export default {
 						background-color: #fff;
 						border: 1px solid #dedee4;
 						border-radius: 3px;
+						.el-input--mini .el-input__inner {
+							width: 100%;
+						}
 					}
 				}
 			}
@@ -790,7 +809,7 @@ export default {
 	}
 	.file-form-content {
 		.el-form-item {
-			margin-bottom: 8px;
+			margin-bottom: 6px;
 		}
 		.el-form-item__label {
 			padding-bottom: 0;
