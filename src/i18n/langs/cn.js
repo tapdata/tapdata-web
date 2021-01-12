@@ -1867,16 +1867,8 @@ const cn = {
 			copy: ' 复制了 ',
 			upload: ' 导出了 ',
 			download: ' 下载了 ',
-			loginnotification: {
-				modular: {
-					system: '登录'
-				}
-			},
-			logoutnotification: {
-				modular: {
-					system: '登出'
-				}
-			}
+			login: ' 登录 ',
+			logout: ' 登出 '
 		},
 		modular: {
 			sync: '同步任务',
@@ -1884,7 +1876,8 @@ const cn = {
 			connection: '数据源 ',
 			dataflow: '数据传输任务 ',
 			inspect: '校验任务',
-			ddlDeal: 'DDL处理 '
+			ddlDeal: 'DDL处理 ',
+			system: '系统'
 		}
 	},
 	dataVerification: {

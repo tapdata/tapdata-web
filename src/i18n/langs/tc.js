@@ -1789,16 +1789,8 @@ const tc = {
 			copy: '複製了',
 			upload: '導出了',
 			download: '下載了',
-			loginnotification: {
-				modular: {
-					system: '登录'
-				}
-			},
-			logoutnotification: {
-				modular: {
-					system: '登出'
-				}
-			}
+			login: '登錄',
+			logout: '登出'
 		},
 		modular: {
 			sync: '同步任務',
@@ -1806,7 +1798,8 @@ const tc = {
 			connection: '數據源',
 			dataflow: '數據傳輸任務 ',
 			inspect: '校驗任務',
-			ddlDeal: 'DDL處理 '
+			ddlDeal: 'DDL處理 ',
+			system: '系統'
 		}
 	},
 	dialog: {

@@ -1829,16 +1829,8 @@ const en = {
 			copy: ' copied ',
 			upload: ' exported ',
 			download: ' downloaded ',
-			loginnotification: {
-				modular: {
-					system: ' Login '
-				}
-			},
-			logoutnotification: {
-				modular: {
-					system: ' Logout '
-				}
-			}
+			login: ' login ',
+			logout: ' logout '
 		},
 		modular: {
 			sync: 'Sync job',
@@ -1846,7 +1838,8 @@ const en = {
 			connection: ' connection ',
 			dataflow: ' data flow job ',
 			inspect: ' verity job ',
-			ddlDeal: 'DDL'
+			ddlDeal: ' DDL',
+			system: ' System '
 		}
 	},
 	dialog: {
