@@ -1355,6 +1355,8 @@ const en = {
 			include: 'Include file',
 			exclude: 'Discard file',
 			loadSchema: 'Load Schema',
+			xpath: 'Select record data XPath',
+			tableName: 'Table name',
 			loadSchemaTip:
 				'After configuring the above items, please click the Load Model" button to update the file model. If there is no model, sync transmission cannot be performed'
 		}

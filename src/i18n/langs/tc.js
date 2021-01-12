@@ -1328,7 +1328,9 @@ const tc = {
 			include: '包含文件',
 			exclude: '捨棄文件',
 			loadSchema: '加載模型',
-			loadSchemaTip: '配置完上述配置項後請點擊“加載模型”按鈕以更新文件的模型，沒有文件模型無法執行同步傳輸'
+			loadSchemaTip: '配置完上述配置項後請點擊“加載模型”按鈕以更新文件的模型，沒有文件模型無法執行同步傳輸',
+			xpath: '數據記錄的XPath',
+			tableName: '表名'
 		}
 	},
 	dataVerify: {

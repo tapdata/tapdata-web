@@ -71,7 +71,7 @@ export default function(vm) {
 			{
 				type: 'input',
 				field: 'data_content_xpath',
-				label: vm.$t('dataForm.form.databaseOwner'),
+				label: vm.$t('editor.fileFormBuilder.xpath'),
 				required: true
 			}
 		]

@@ -151,6 +151,13 @@
 					>{{ $t('editor.fileFormBuilder.loadSchema') }}</el-button
 				>
 				<div class="schema-tip">{{ $t('editor.fileFormBuilder.loadSchemaTip') }}</div>
+				<label class="file-source-label">{{ $t('editor.fileFormBuilder.tableName') }}</label>
+				<el-input
+					v-model="model.tableName"
+					size="mini"
+					:disabled="disabled"
+					:placeholder="$t('formBuilder.input.placeholderPrefix') + $t('editor.fileFormBuilder.tableName')"
+				></el-input>
 				<div class="e-entity-wrap">
 					<entity
 						:schema="convertSchemaToTreeData(schema)"

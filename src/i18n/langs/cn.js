@@ -1334,7 +1334,9 @@ const cn = {
 			include: '包含文件',
 			exclude: '舍弃文件',
 			loadSchema: '加载模型',
-			loadSchemaTip: '配置完上述配置项后请点击“加载模型”按钮以更新文件的模型，没有文件模型无法执行同步传输'
+			loadSchemaTip: '配置完上述配置项后请点击“加载模型”按钮以更新文件的模型，没有文件模型无法执行同步传输',
+			xpath: '数据记录的XPath',
+			tableName: '表名'
 		}
 	},
 	dataVerify: {
