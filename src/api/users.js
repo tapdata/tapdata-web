@@ -69,4 +69,8 @@ export default class users extends PublicAPI {
 	upsertWithWhere(where, params) {
 		return axios.post(this.url + '/upsertWithWhere?where=' + JSON.stringify(where), params);
 	}
+
+	isCompleteGuide(id) {
+		return axios.patch(this.url + '/isCompleteGuide?id=' + id);
+	}
 }

@@ -351,14 +351,7 @@ export default {
 		toDashboard(cb) {
 			this.loading = true;
 			this.$api('users')
-				.upsertWithWhere(
-					{
-						id: this.$cookie.get('user_id')
-					},
-					{
-						isCompleteGuide: true
-					}
-				)
+				.isCompleteGuide(this.$cookie.get('user_id'))
 				.then(() => {
 					this.$cookie.delete('show_guide');
 					this.$router.replace('/');
