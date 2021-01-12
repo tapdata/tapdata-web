@@ -1788,7 +1788,17 @@ const tc = {
 			reset: '重置了',
 			copy: '複製了',
 			upload: '導出了',
-			download: '下載了'
+			download: '下載了',
+			loginnotification: {
+				modular: {
+					system: '登录'
+				}
+			},
+			logoutnotification: {
+				modular: {
+					system: '登出'
+				}
+			}
 		},
 		modular: {
 			sync: '同步任務',

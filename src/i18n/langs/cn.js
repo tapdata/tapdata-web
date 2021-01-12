@@ -1866,7 +1866,17 @@ const cn = {
 			reset: ' 重置了 ',
 			copy: ' 复制了 ',
 			upload: ' 导出了 ',
-			download: ' 下载了 '
+			download: ' 下载了 ',
+			loginnotification: {
+				modular: {
+					system: '登录'
+				}
+			},
+			logoutnotification: {
+				modular: {
+					system: '登出'
+				}
+			}
 		},
 		modular: {
 			sync: '同步任务',

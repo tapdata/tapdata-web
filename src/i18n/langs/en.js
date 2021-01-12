@@ -1828,7 +1828,17 @@ const en = {
 			reset: ' reset ',
 			copy: ' copied ',
 			upload: ' exported ',
-			download: ' downloaded '
+			download: ' downloaded ',
+			loginnotification: {
+				modular: {
+					system: ' Login '
+				}
+			},
+			logoutnotification: {
+				modular: {
+					system: ' Logout '
+				}
+			}
 		},
 		modular: {
 			sync: 'Sync job',

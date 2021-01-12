@@ -138,7 +138,6 @@
 			<el-table-column prop="user_id" :label="$t('connection.creator')" width="80">
 				<template slot-scope="scope">
 					<div class="database-text" style="margin-left:0;">
-						<div>{{ usersData[scope.row.user_id] }}</div>
 						<div>{{ scope.row.username }}</div>
 					</div>
 				</template>
