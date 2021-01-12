@@ -308,7 +308,10 @@ const cn = {
 		reloadSchemaError: '模型更新失败'
 	},
 	button: {
-		reset: '重置'
+		reset: '重置',
+		delete: '删除',
+		rename: '改名',
+		details: '详情'
 	},
 	dataFlow: {
 		aggregateNotDataNode: '连接聚合节点的第一个目标数据节点只能是数据集',
@@ -1570,6 +1573,16 @@ const cn = {
 	},
 	metadata: {
 		createNewModel: '创建模型',
+		namePlaceholder: '请输入表名/数据库名',
+		typePlaceholder: '请选择类型',
+		databasePlaceholder: '请选择所属库',
+		createModel: '创建模型',
+		header: {
+			name: '表名/所属库',
+			meta_type: '类型',
+			last_user_name: '更新用户',
+			last_updated: '更新时间'
+		},
 		metaType: {
 			database: '数据库',
 			api: '数据种类',
@@ -1582,6 +1595,12 @@ const cn = {
 			mongo_view: 'Mongodb视图',
 			ftp: 'FTP',
 			apiendpoint: 'API连接'
+		},
+		form: {
+			type: '类型',
+			database: '数据库',
+			tableName: '表名称',
+			none_table_name: '表名称不能为空'
 		}
 	},
 	dialog: {

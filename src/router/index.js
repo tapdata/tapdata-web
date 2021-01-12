@@ -505,6 +505,7 @@ const childRoutes = [
 		name: 'metadata',
 		component: view('metadata/List'),
 		meta: {
+			code: 'data_catalog_menu',
 			title: i18n.t('tap.dataCatalog'),
 			isCollapse: true,
 			types: ['table', 'view', 'collection', 'mongo_view']

@@ -305,7 +305,10 @@ const tc = {
 		reloadSchemaError: '模型更新失敗'
 	},
 	button: {
-		reset: '重置'
+		reset: '重置',
+		delete: '删除',
+		rename: '改名',
+		details: '詳情'
 	},
 	dataFlow: {
 		aggregateNotDataNode: '連接聚合節點的第一個目標數據節點只能是數據集',
@@ -1163,7 +1166,7 @@ const tc = {
 				repeatId: {
 					title: '_id字段衝突',
 					message:
-						'目標資料模型已存在 _id 字段，系統默認會移除已重複的_id字段，如想保留，請使用字段處理器對源錶的 _id 進行重命名！'
+						'目標數據模型已存在 _id 字段，系統默認會移除已重複的_id字段，如想保留，請使用字段處理器對源錶的 _id 進行重命名！'
 				},
 				form: {
 					label: {
@@ -1464,7 +1467,7 @@ const tc = {
 			timeZone: '時間類型的時區',
 			ReloadSchema: '定期加載schema',
 			clusterName: '集群名稱',
-			databaseHostPlaceholder: '資料庫地址（127.0.0.1/Domain:{端口}，多個地址請用，分開）',
+			databaseHostPlaceholder: '數據庫地址（127.0.0.1/Domain:{端口}，多個地址請用，分開）',
 			plugin_name: '日誌解碼器',
 			supportUpdatePk: '支持同步時更新主鍵',
 			indexPrefix: '索引前綴',
@@ -1565,9 +1568,19 @@ const tc = {
 	},
 	metadata: {
 		createNewModel: '創建模型',
+		namePlaceholder: '請輸入表名/數據庫名',
+		typePlaceholder: '請選擇類型',
+		databasePlaceholder: '請選擇所屬庫',
+		createModel: '創建模型',
+		header: {
+			name: '表名/所屬庫',
+			meta_type: '類型',
+			last_user_name: '更新用戶',
+			last_updated: '更新時間'
+		},
 		metaType: {
 			database: '數據庫',
-			api: '数据种类',
+			api: '數據種類',
 			job: '任務',
 			collection: '數據集',
 			view: '視圖',
@@ -1577,6 +1590,12 @@ const tc = {
 			mongo_view: 'Mongodb視圖',
 			ftp: 'FTP',
 			apiendpoint: 'API連接'
+		},
+		form: {
+			type: '類型',
+			database: '數據庫',
+			tableName: '表名稱',
+			none_table_name: '表名稱不能為空'
 		}
 	},
 	notification: {
@@ -2137,21 +2156,21 @@ const tc = {
 		step_4: '選擇任務類型，開啟數據傳輸之旅',
 		step_1_title: 'Agent下載與安裝',
 		step_1_desc:
-			'Tapdata DFS雲版需要先在本地安裝agent以確保連接資料庫和數據傳輸服務的正常運行，您可以根據要安裝伺服器的類型在下方選擇相應的類型進行下載安裝',
+			'Tapdata DFS雲版需要先在本地安裝agent以確保連接數據庫和數據傳輸服務的正常運行，您可以根據要安裝伺服器的類型在下方選擇相應的類型進行下載安裝',
 		step_2_title: '創建數據源連接',
 		step_2_desc:
-			'數據源連接指的是可以作為源的資料庫、file、GridFS、REST API等類型的數據連接,必須先創建數據源才能創建遷移或同步任務',
+			'數據源連接指的是可以作為源的數據庫、file、GridFS、REST API等類型的數據連接,必須先創建數據源才能創建遷移或同步任務',
 		step_2_btn_label: '創建新的源連接',
 		step_3_title: '創建目標連接',
 		step_3_desc:
-			'目標連接指的是可以作為數據傳輸目標的資料庫、file、GridFS、REST API等類型的連接,  必須先創建目標連接才能創建遷移或同步任務',
+			'目標連接指的是可以作為數據傳輸目標的數據庫、file、GridFS、REST API等類型的連接,  必須先創建目標連接才能創建遷移或同步任務',
 		step_3_btn_label: '創建新的目標連接',
 		step_4_title: '選擇任務類型',
 		step_4_desc:
 			'請根據下方提示選擇要進行的任務類型，系統會根據您的選擇打開相應的任務編輯面板，如果選擇錯了可以取消任務重新選擇',
-		task_type_clone: '資料庫遷移',
+		task_type_clone: '數據庫遷移',
 		task_type_clone_tips:
-			'資料庫遷移功能以庫為單位戶在一個任務內輕鬆實現多個同構或異構資料庫（庫、表映射）之間的結構遷移、初始化遷移、或增量遷移等功能，適用於資料庫遷移上雲、實例間的資料庫遷移、資料庫遷移下雲、資料庫災備等多種場景。',
+			'數據庫遷移功能以庫為單位戶在一個任務內輕鬆實現多個同構或異構數據庫（庫、表映射）之間的結構遷移、初始化遷移、或增量遷移等功能，適用於數據庫遷移上雲、實例間的數據庫遷移、數據庫遷移下雲、數據庫災備等多種場景。',
 		task_type_custom: '數據同步',
 		task_type_custom_tips:
 			'數據同步聚焦在表級別的數據處理與傳輸，在滿足用戶實現多表（數據集）、多級數據之間多表合一、數據拆分、關聯映射、欄位增減合併、內容過濾、聚合處理JS處理等功能的情況下同時實現實時數據同步。在不影響用戶業務的情況下，滿足用戶對數據的異地或本地數據災備、跨實例數據同步、查詢與報表分流、實時數據倉庫管理等多種業務場景的需求。',

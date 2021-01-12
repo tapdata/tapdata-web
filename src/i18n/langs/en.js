@@ -308,7 +308,10 @@ const en = {
 		reloadSchemaError: 'Model update failed'
 	},
 	button: {
-		reset: 'reset'
+		reset: 'reset',
+		delete: 'delete',
+		rename: 'rename',
+		details: 'details'
 	},
 	dataFlow: {
 		aggregateNotDataNode: 'The first target data node of aggregation node can only be COLLECTION',
@@ -1597,7 +1600,17 @@ const en = {
 		deteleMessage: 'This operation will delete all subclasses existing in this category, whether to delete it'
 	},
 	metadata: {
-		createNewModel: 'Create Model',
+		createNewModel: 'Create model',
+		namePlaceholder: 'Please enter the table name/database name',
+		typePlaceholder: 'Please select the type',
+		databasePlaceholder: 'Please select a database',
+		createModel: 'Create a model',
+		header: {
+			name: 'Table name/owned database',
+			meta_type: 'Meta type',
+			last_user_name: 'Last update user',
+			last_updated: 'Last update time'
+		},
 		metaType: {
 			database: 'Database',
 			api: 'API',
@@ -1610,6 +1623,12 @@ const en = {
 			mongo_view: 'Mongodb View',
 			ftp: 'FTP',
 			apiendpoint: 'API End Point'
+		},
+		form: {
+			type: 'Meta type',
+			database: 'Database',
+			tableName: 'Table name',
+			none_table_name: 'The table name cannot be empty'
 		}
 	},
 	notification: {

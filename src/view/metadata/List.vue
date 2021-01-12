@@ -19,7 +19,7 @@
 							class="input-with-select"
 							size="mini"
 							v-model="searchParams.keyword"
-							placeholder="请输入表名/数据库名"
+							:placeholder="$t('metadata.namePlaceholder')"
 							@input="table.fetch(1, 800)"
 						>
 							<el-select
@@ -38,7 +38,7 @@
 							clearable
 							size="mini"
 							v-model="searchParams.metaType"
-							placeholder="请选择类型"
+							:placeholder="$t('metadata.typePlaceholder')"
 							@input="metaTypeChange"
 						>
 							<el-option
@@ -55,7 +55,7 @@
 							filterable
 							size="mini"
 							v-model="searchParams.dbId"
-							placeholder="请选择所属库"
+							:placeholder="$t('metadata.databasePlaceholder')"
 							@input="table.fetch(1)"
 						>
 							<el-option
@@ -67,7 +67,7 @@
 						</el-select>
 					</li>
 					<li>
-						<el-button size="mini" type="text" @click="reset()">重置</el-button>
+						<el-button size="mini" type="text" @click="reset()">{{ $t('button.reset') }}</el-button>
 					</li>
 				</ul>
 			</div>
@@ -85,7 +85,7 @@
 				</el-button>
 				<el-button class="btn btn-create" size="mini" @click="openCreateDialog">
 					<i class="iconfont icon-jia add-btn-icon"></i>
-					<span>创建模型</span>
+					<span>{{ $t('metadata.createModel') }}</span>
 				</el-button>
 			</div>
 			<el-table-column
@@ -95,7 +95,7 @@
 				:reserve-selection="true"
 			>
 			</el-table-column>
-			<el-table-column label="表名/所属库" prop="name" sortable="custom">
+			<el-table-column :label="$t('metadata.header.name')" prop="name" sortable="custom">
 				<template slot-scope="scope">
 					<div class="metadata-name">
 						<div class="name ellipsis">
@@ -118,22 +118,30 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column label="类型" prop="meta_type" sortable="custom">
+			<el-table-column :label="$t('metadata.header.meta_type')" prop="meta_type" sortable="custom">
 				<template slot-scope="scope">
 					{{ $t('metadata.metaType.' + scope.row.meta_type) }}
 				</template>
 			</el-table-column>
-			<el-table-column label="更新用户" prop="last_user_name" sortable="custom"></el-table-column>
-			<el-table-column label="更新时间" prop="last_updated" sortable="custom">
+			<el-table-column
+				:label="$t('metadata.header.last_user_name')"
+				prop="last_user_name"
+				sortable="custom"
+			></el-table-column>
+			<el-table-column :label="$t('metadata.header.last_updated')" prop="last_updated" sortable="custom">
 				<template slot-scope="scope">
 					{{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
 				</template>
 			</el-table-column>
 			<el-table-column label="操作">
 				<template slot-scope="scope">
-					<el-button size="mini" type="text" @click="toDetails(scope.row)">详情</el-button>
-					<el-button size="mini" type="text" @click="changeName(scope.row)">改名</el-button>
-					<el-button size="mini" type="text" @click="remove(scope.row)">删除</el-button>
+					<el-button size="mini" type="text" @click="toDetails(scope.row)">
+						{{ $t('button.details') }}
+					</el-button>
+					<el-button size="mini" type="text" @click="changeName(scope.row)">
+						{{ $t('button.rename') }}
+					</el-button>
+					<el-button size="mini" type="text" @click="remove(scope.row)">{{ $t('button.delete') }}</el-button>
 				</template>
 			</el-table-column>
 		</TablePage>
@@ -187,12 +195,12 @@ export default {
 			createFormConfig: {
 				form: {
 					labelPosition: 'right',
-					labelWidth: '80px'
+					labelWidth: '100px'
 				},
 				items: [
 					{
 						type: 'select',
-						label: '类型',
+						label: this.$t('metadata.form.type'),
 						field: 'model_type',
 						options: ['collection', 'mongo_view'].map(t => ({
 							label: this.$t('metadata.metaType.' + t),
@@ -202,21 +210,21 @@ export default {
 					},
 					{
 						type: 'select',
-						label: '数据库',
+						label: this.$t('metadata.form.database'),
 						field: 'database',
 						options: [],
 						required: true
 					},
 					{
 						type: 'input',
-						label: '表名称',
+						label: this.$t('metadata.form.tableName'),
 						field: 'tableName',
 						rules: [
 							{
 								required: true,
 								validator: (rule, v, callback) => {
 									if (!v || !v.trim()) {
-										return callback(new Error('表名称不能为空'));
+										return callback(new Error(this.$t('metadata.form.none_table_name')));
 									}
 									const flag = /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/.test(v); // eslint-disable-line
 									if (v.split('.')[0] == 'system' || !flag) {
@@ -453,7 +461,7 @@ export default {
 								done();
 							})
 							.catch(() => {
-								this.$message.info(this.$t('message.保存失败'));
+								this.$message.info(this.$t('message.saveFail'));
 							})
 							.finally(() => {
 								instance.confirmButtonLoading = false;
