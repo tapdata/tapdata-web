@@ -305,7 +305,9 @@ export default {
 			if (metaType) {
 				where.meta_type = metaType;
 			} else if (types) {
-				where.or = types.map(it => ({ meta_type: it }));
+				where.meta_type = {
+					in: types
+				};
 			}
 			status && (where.status = status);
 			dbId && (where['source.id'] = dbId);
