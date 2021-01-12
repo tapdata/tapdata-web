@@ -99,7 +99,7 @@ export default function(vm) {
 			},
 			{
 				type: 'select',
-				field: 'plugin_name',
+				field: 'pgsql_log_decorder_plugin_name',
 				label: vm.$t('dataForm.form.plugin_name'),
 				options: [
 					{ label: 'json streaming', value: 'wal2json_streaming' },

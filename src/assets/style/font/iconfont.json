@@ -6,6 +6,104 @@
   "description": "Tapdata 线装小图标",
   "glyphs": [
     {
+      "icon_id": "19211855",
+      "name": "json",
+      "font_class": "json2",
+      "unicode": "e71c",
+      "unicode_decimal": 59164
+    },
+    {
+      "icon_id": "19211800",
+      "name": "txt",
+      "font_class": "txt",
+      "unicode": "e716",
+      "unicode_decimal": 59158
+    },
+    {
+      "icon_id": "19211802",
+      "name": "csv",
+      "font_class": "csv",
+      "unicode": "e719",
+      "unicode_decimal": 59161
+    },
+    {
+      "icon_id": "19211803",
+      "name": "excel",
+      "font_class": "excel",
+      "unicode": "e71a",
+      "unicode_decimal": 59162
+    },
+    {
+      "icon_id": "19211804",
+      "name": "xml",
+      "font_class": "xml",
+      "unicode": "e71b",
+      "unicode_decimal": 59163
+    },
+    {
+      "icon_id": "19203357",
+      "name": "table(20)",
+      "font_class": "table201",
+      "unicode": "e717",
+      "unicode_decimal": 59159
+    },
+    {
+      "icon_id": "18839883",
+      "name": "sequoia",
+      "font_class": "sequoia",
+      "unicode": "e715",
+      "unicode_decimal": 59157
+    },
+    {
+      "icon_id": "2278416",
+      "name": "权限",
+      "font_class": "Paas_icon-",
+      "unicode": "e711",
+      "unicode_decimal": 59153
+    },
+    {
+      "icon_id": "6185155",
+      "name": "权限码",
+      "font_class": "quanxianma",
+      "unicode": "e712",
+      "unicode_decimal": 59154
+    },
+    {
+      "icon_id": "6461851",
+      "name": "权限",
+      "font_class": "quanxian4",
+      "unicode": "e713",
+      "unicode_decimal": 59155
+    },
+    {
+      "icon_id": "8478701",
+      "name": "权限",
+      "font_class": "quanxian5",
+      "unicode": "e714",
+      "unicode_decimal": 59156
+    },
+    {
+      "icon_id": "14482114",
+      "name": "权限",
+      "font_class": "quanxian3",
+      "unicode": "e70e",
+      "unicode_decimal": 59150
+    },
+    {
+      "icon_id": "9143143",
+      "name": "添加用户-空数据",
+      "font_class": "tianjiayonghu",
+      "unicode": "e70f",
+      "unicode_decimal": 59151
+    },
+    {
+      "icon_id": "14999741",
+      "name": "添加用户",
+      "font_class": "tianjiayonghu1",
+      "unicode": "e710",
+      "unicode_decimal": 59152
+    },
+    {
       "icon_id": "13485853",
       "name": "收 藏 (1)",
       "font_class": "shoucang1",

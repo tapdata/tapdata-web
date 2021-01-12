@@ -26,3 +26,4 @@ export * from './logminer/logminer';
 export * from './databaseLink/databaseLink';
 export * from './jointCache/JointCache';
 export * from './customProcessor/CustomProcessor';
+export * from './fileFormBuilder/fileFormBuilder';

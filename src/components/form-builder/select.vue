@@ -84,7 +84,8 @@ export default {
 						allowCreate: config.allowCreate,
 						defaultFirstOption: config.defaultFirstOption,
 						clearable: config.clearable,
-						multiple: config.multiple
+						multiple: config.multiple,
+						disabled: config.disabled ? config.disabled : false
 					},
 					on: Object.assign(this.on, {
 						'visible-change'(value) {
