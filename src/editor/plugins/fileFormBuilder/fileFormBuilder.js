@@ -37,9 +37,9 @@ export const fileFormConfig = {
 			 * @param targetCell
 			 * @return {boolean}
 			 */
-			allowTarget(targetCell) {
+			allowTarget() {
 				// log("FileNode.allowTarget", targetCell, ['app.GridFSNode'].includes(targetCell.get('type')));
-				return !['app.Database'].includes(targetCell.get('type'));
+				return false;
 			},
 
 			/**
@@ -49,7 +49,16 @@ export const fileFormConfig = {
 			 */
 			allowSource(sourceCell) {
 				// log("FileNode.allowSource", sourceCell, ['app.GridFSNode'].includes(sourceCell.get('type')));
-				return !['app.Database'].includes(sourceCell.get('type'));
+				return ![
+					'app.Database',
+					'app.FileNode',
+					'app.GridFSNode',
+					'app.Logminer',
+					'csv',
+					'excel',
+					'json',
+					'xml'
+				].includes(sourceCell.get('type'));
 			},
 
 			validate(data) {

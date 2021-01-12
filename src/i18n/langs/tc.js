@@ -1318,7 +1318,11 @@ const tc = {
 			excel_header_type: '字段映射範圍',
 			excel_header_coordinate: '按表頭坐標',
 			excel_header_range: '自定義範圍',
-			gridfs_header_config: '自定義範圍',
+			guideDocPrefix: '請選擇的文件類型的數據源下的 ',
+			guideDoc:
+				'文件，系統會加載出模型並傳輸至目標數據集。如果選擇的文件結構不同，則係統會將不同結構的文件合併成一個模型。更多信息請點擊',
+			header_type_custom_label: '多個字段用逗號分隔',
+			header_type_required: '文件頭類型不能為空',
 			excel_header_start: '表頭開始坐標',
 			excel_header_end: '表頭結束坐標',
 			excel_value_type: '內容範圍',

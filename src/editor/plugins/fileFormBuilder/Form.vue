@@ -10,8 +10,10 @@
 						{{ model.type }}
 					</div>
 					<div class="tip">
-						{{ $t('dataForm.form.guide') }}
-						<a style="color: #48B6E2" href="https://docs.tapdata.net/data-source">{{
+						{{ $t('editor.fileFormBuilder.guideDocPrefix') }}
+						{{ model.type }}
+						{{ $t('editor.fileFormBuilder.guideDoc') }}
+						<a style="color: #48B6E2" href="https://docs.tapdata.net/data-source/about-dbs/files">{{
 							$t('dataForm.form.guideDoc')
 						}}</a>
 					</div>
@@ -75,10 +77,9 @@
 								<el-input
 									v-model="model.fileProperty.gridfs_header_config"
 									size="mini"
-									:placeholder="$t('editor.fileFormBuilder.gridfs_header_config')"
+									:placeholder="$t('editor.fileFormBuilder.header_type_custom_label')"
 									v-show="model.fileProperty.gridfs_header_type === 'custom'"
 								></el-input>
-								<!--								<span>{{ $t('editor.fileFormBuilder.excel_cell_point') }}</span>-->
 								<div
 									v-show="model.fileProperty.gridfs_header_type !== 'custom'"
 									class="excel_header_start"
@@ -97,7 +98,7 @@
 								</div>
 							</div>
 						</el-form-item>
-						<el-form-item
+						<el-form-item v-show="model.fileProperty.gridfs_header_type !== 'custom'"
 							><div style="margin-top: 5px;color: #999">
 								{{ $t('editor.fileFormBuilder.excel_cell_point') }}
 							</div></el-form-item
@@ -184,6 +185,7 @@ export default {
 		let validateExcelHeader = (rule, value, callback) => {
 			let start = this.model.fileProperty.excel_header_start;
 			let end = this.model.fileProperty.excel_header_end;
+			let config = this.model.fileProperty.gridfs_header_config;
 			if (start === '') {
 				callback(
 					new Error(this.$t('editor.fileFormBuilder.excel_header_start') + this.$t('formBuilder.noneText'))
@@ -192,6 +194,8 @@ export default {
 				callback(
 					new Error(this.$t('editor.fileFormBuilder.excel_header_end') + this.$t('formBuilder.noneText'))
 				);
+			} else if (config === '') {
+				callback(new Error(this.$t('editor.fileFormBuilder.header_type_required')));
 			} else if (!/^[A-Z]+[1-9]+$/.test(start) || !/^[A-Z]+[1-9]+$/.test(end)) {
 				callback(new Error(this.$t('editor.fileFormBuilder.excel_cell_tip')));
 			}
@@ -320,7 +324,7 @@ export default {
 					this.$message.success(this.$t('message.reloadSchemaSuccess'));
 					templeSchema = res.result;
 				} else {
-					this.$message.error(this.$t('message.reloadSchemaError'));
+					this.$message.error(res.error);
 				}
 				this.reloadingSchema = false;
 				if (templeSchema && templeSchema.length) {
@@ -332,11 +336,8 @@ export default {
 					});
 				}
 				self.$nextTick(() => {
-					if (schema) {
-						self.$emit('schemaChange', _.cloneDeep(schema));
-						self.schema = schema;
-						self.$message.success(this.$t('message.reloadSchemaSuccess'));
-					}
+					self.$emit('schemaChange', _.cloneDeep(schema));
+					self.schema = schema;
 				});
 			});
 		});

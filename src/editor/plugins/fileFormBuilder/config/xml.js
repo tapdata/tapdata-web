@@ -14,6 +14,7 @@ export default function(vm) {
 				type: 'select',
 				field: 'fileFilter',
 				label: vm.$t('editor.fileFormBuilder.fileFilter'),
+				clearable: false,
 				options: [
 					{
 						label: vm.$t('editor.fileFormBuilder.include'),
