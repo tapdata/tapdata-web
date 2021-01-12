@@ -92,27 +92,31 @@
 													<el-switch v-model="item.recursive"></el-switch>
 												</el-form-item>
 												<el-form-item :label="$t('dataForm.form.file.csvFijlter')">
-													<el-select v-model="item.selectFileType" size="mini">
+													<el-select
+														v-model="item.selectFileType"
+														size="mini"
+														style="width: 100%;"
+													>
 														<el-option
 															:label="$t('dataForm.form.file.include_filename')"
-															value="include_filename"
+															value="include"
 														></el-option>
 														<el-option
 															:label="$t('dataForm.form.file.exclude_filename')"
-															value="exclude_filename"
+															value="exclude"
 														></el-option>
 													</el-select>
 												</el-form-item>
-												<el-form-item v-if="item.selectFileType === 'include_filename'">
+												<el-form-item v-if="item.selectFileType === 'include'">
 													<el-input
-														v-model="item.include_filename"
+														v-model="item.include"
 														size="mini"
 														:placeholder="$t('dataForm.form.file.includePlaceholder')"
 													></el-input>
 												</el-form-item>
 												<el-form-item v-else>
 													<el-input
-														v-model="item.exclude_filename"
+														v-model="item.exclude"
 														size="mini"
 														:placeholder="$t('dataForm.form.file.excludePlaceholder')"
 													></el-input>
@@ -644,6 +648,9 @@ export default {
 						background-color: #fff;
 						border: 1px solid #dedee4;
 						border-radius: 3px;
+						.el-input--mini .el-input__inner {
+							width: 100%;
+						}
 					}
 				}
 			}
