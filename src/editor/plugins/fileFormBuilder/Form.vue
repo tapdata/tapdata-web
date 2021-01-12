@@ -575,7 +575,9 @@ export default {
 	.el-form-item__label {
 		font-size: 12px;
 		line-height: 20px;
-		font-weight: 600;
+	}
+	.el-radio__label {
+		font-size: 12px;
 	}
 	.el-radio-button__inner,
 	.el-radio-group {
