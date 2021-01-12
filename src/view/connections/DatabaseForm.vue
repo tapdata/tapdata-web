@@ -63,6 +63,7 @@
 										label-width="100px"
 										class="demo-ruleForm"
 										label-position="top"
+										:inline-message="true"
 									>
 										<el-row
 											type="flex"
@@ -808,7 +809,7 @@ export default {
 	}
 	.file-form-content {
 		.el-form-item {
-			margin-bottom: 8px;
+			margin-bottom: 6px;
 		}
 		.el-form-item__label {
 			padding-bottom: 0;
