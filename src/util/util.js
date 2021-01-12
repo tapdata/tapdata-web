@@ -1,3 +1,4 @@
+import Vue from 'vue';
 export function setPermission(list) {
 	let permissions = [];
 	if (list) {
@@ -16,16 +17,23 @@ export function setPermission(list) {
 
 export function signOut() {
 	let cookie = window.VueCookie;
-	sessionStorage.removeItem('tapdata_permissions');
-	sessionStorage.removeItem('BTN_AUTHS');
-	cookie.delete('token');
-	cookie.delete('user_id');
-	cookie.delete('login');
-	cookie.delete('isAdmin');
-	cookie.delete('email');
-	cookie.delete('username');
-	cookie.delete('isReadonly');
-	window.App.$router.push('/login');
+	Vue.prototype
+		.$api('users')
+		.logout()
+		.then(res => {
+			if (res) {
+				sessionStorage.removeItem('tapdata_permissions');
+				sessionStorage.removeItem('BTN_AUTHS');
+				cookie.delete('token');
+				cookie.delete('user_id');
+				cookie.delete('login');
+				cookie.delete('isAdmin');
+				cookie.delete('email');
+				cookie.delete('username');
+				cookie.delete('isReadonly');
+				window.App.$router.push('/login');
+			}
+		});
 }
 
 export function toRegExp(word) {

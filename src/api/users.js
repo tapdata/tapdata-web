@@ -13,6 +13,9 @@ export default class users extends PublicAPI {
 	login(params) {
 		return axios.post(this.url + '/login', params);
 	}
+	logout(params) {
+		return axios.post(this.url + '/logout', params);
+	}
 	post(params) {
 		return axios.post(this.url, params);
 	}
