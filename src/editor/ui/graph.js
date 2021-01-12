@@ -370,6 +370,11 @@ export default class Graph extends Component {
 						newCell.attr('image/xlinkHref', nodeConfig.shapeImage);
 						newCell.attr('label/text', nodeConfig.name);
 					}
+					if (cell.get('type') === 'app.FileFormBuilder') {
+						newCell.setFormData(cell.getFormData());
+						newCell.attr('image/xlinkHref', newCell.getFormData().shapeImage);
+						newCell.attr('label/text', newCell.getFormData().name);
+					}
 					return newCell;
 				} else {
 					return cell.clone().removeAttr('root/dataTooltip');

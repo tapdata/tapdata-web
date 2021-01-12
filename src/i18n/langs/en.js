@@ -1325,6 +1325,45 @@ const en = {
 		preview: {
 			stage: 'Stage',
 			table: 'Table'
+		},
+		fileFormBuilder: {
+			fileSource: 'Data source',
+			fileSourcePlaceholder: 'Enter data source',
+			includeFilename: 'Enter regular expression for include file',
+			excludeFilename: 'Enter regular expression for discard file',
+			fileSchema: 'Set model name',
+			sperate: 'Model field separator',
+			jsonType: 'Json type',
+			excelPassword: 'Excel password',
+			excelValue: 'Excel data settings',
+			header_mapping_value: 'Cell content',
+			header_mapping_index: 'Cell coordinate name',
+			header_mapping: ' Field name getting',
+			sheet_range: 'Range of sheets',
+			sheet_start: 'Enter the number of starting sheet',
+			sheet_end: 'Enter the number of ending sheet',
+			excel_header_type: 'Field mapping range',
+			excel_header_coordinate: 'According to the table coordinate',
+			excel_header_range: 'Custom range',
+			gridfs_header_config: 'Enter custom range',
+			excel_header_start: 'Enter the starting coordinate',
+			excel_header_end: 'Enter the ending coordinate',
+			excel_value_type: 'Range of rows',
+			excel_value_start: 'Enter the starting abscissa',
+			excel_value_end: 'Enter the ending abscissa',
+			excel_number: 'Sheet range should be number',
+			excel_cell_point: 'Enter the coordinates of Excel, "row 1 and column 1" can be entered as "A1"',
+			excel_cell_tip: 'The field range must be uppercase letter + number',
+			excel_value_end_gt_start:
+				'The number of ending page must be greater than or equal to the number of starting page',
+			fileFilter: 'File filter',
+			include: 'Include file',
+			exclude: 'Discard file',
+			loadSchema: 'Load Schema',
+			xpath: 'Select record data XPath',
+			tableName: 'Table name',
+			loadSchemaTip:
+				'After configuring the above items, please click the Load Model" button to update the file model. If there is no model, sync transmission cannot be performed'
 		}
 	},
 	dataVerify: {
@@ -1501,6 +1540,7 @@ const en = {
 			indexPrefix: 'Index prefix',
 			agentMsg:
 				'The test connection service is not available, please check if the Data Synchronization Agent is started correctly.',
+
 			uriTips: {
 				label: 'Example',
 				content:
@@ -1553,7 +1593,58 @@ const en = {
 				CHECK_READ_PERMISSION: 'Check if read permission is granted',
 				CHECK_ACCESS_TOKEN: 'Check if access token is available',
 				CHECK_API_AUTH: 'Check if api auth is available',
-				CHECK_LOCAL_PORT: 'Check if local port is available'
+				CHECK_LOCAL_PORT: 'Check if local port is available',
+				SCAN_FILE: 'Scan the files in the directory'
+			},
+			file: {
+				fileAddr: 'File Address',
+				filePort: 'File Port',
+				creatAccount: 'Creator account',
+				password: 'Password',
+				connectionMethod: 'Connection Method',
+				encodingFormat: 'Encoding Format',
+				connecitonTimeout: 'Connection timeout (seconds)',
+				transmissionTimeout: 'Transmission timeout (seconds)',
+				second: 'second',
+				fileUrl: 'File Path',
+				agreementType: 'Agreement Type',
+				agentLocationFile: 'Agent location file',
+				agentLocationFileTip: 'Configure MongoDB database in URI mode, support batch input',
+				ftpTip:
+					'Configure the MongoDB database according to Host, port, account, and password, and support batch input',
+				shared: 'Shared folder',
+				sharedTip:
+					'Configure the MongoDB database according to Host, port, account, and password, and support batch input',
+				activeConnectionMode: 'Active Connection Mode',
+				activeConnectionModeTip:
+					'Configure the MongoDB database according to the Host, port, account number, and password, and support batch input',
+				passiveConnectionMode: 'Passive Connection Mode',
+				passiveConnectionModeTip:
+					'Configure the MongoDB database according to Host, port, account number, and password, and support batch input',
+				input_number: 'Please enter a number',
+				greaterZero_less5256000: 'Must be greater than or equal to zero and less than or equal to 5256000',
+				path: 'Set path',
+				recursive: 'Recursive path',
+				include_filename: 'Keep file',
+				exclude_filename: 'Discard file',
+				viewExpression: 'Please enter the file name expression',
+				expression: 'Expression example',
+				includePlaceholder: 'Please enter regular expression for include file',
+				excludePlaceholder: 'Please enter regular expression for discard file',
+				pathPlaceholder: 'Please enter the file path of the environment where the Agent is located',
+				addPath: 'Add Path',
+				fileNone: 'The file path cannot be empty',
+				versionManagement: 'Version Management',
+				file_upload_chunk_size: 'File upload file chunk size (bytes)',
+				file_upload_mode: 'File upload mode',
+				file_upload_stream: 'Streaming',
+				file_upload_memory: 'Memory read (risk of memory overflow)',
+				overwriteText: 'When a file with the same name exists',
+				overwrite: 'Overwrite',
+				discard: 'ignore',
+				extend_source_path: 'Inherit the directory structure',
+				file_output_path: 'File output absolute path',
+				csvFijlter: 'CSV filter '
 			}
 		},
 		error: {
