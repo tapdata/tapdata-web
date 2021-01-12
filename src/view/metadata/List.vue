@@ -156,6 +156,9 @@ export default {
 		TablePage
 	},
 	data() {
+		let types =
+			this.$route.types ||
+			'database|job|dataflow|api|table|view|collection|mongo_view|directory|ftp|apiendpoint'.split('|');
 		return {
 			title: '',
 			whiteList: ['table', 'collection', 'mongo_view', 'view'],
@@ -167,14 +170,12 @@ export default {
 			},
 			order: 'last_updated DESC',
 			dbOptions: [],
-			metaTypeOptions: 'database|job|dataflow|api|table|view|collection|mongo_view|directory|ftp|apiendpoint'
-				.split('|')
-				.map(v => {
-					return {
-						label: this.$t('metadata.metaType.' + v),
-						value: v
-					};
-				}),
+			metaTypeOptions: types.map(v => {
+				return {
+					label: this.$t('metadata.metaType.' + v),
+					value: v
+				};
+			}),
 			list: null,
 			multipleSelection: [],
 			createDialogVisible: false,
@@ -239,7 +240,11 @@ export default {
 		},
 		metaType() {
 			let metaType = this.searchParams.metaType;
-			return metaType ? [metaType] : [];
+			if (metaType) {
+				return [metaType];
+			} else {
+				return this.$route.meta.types || [];
+			}
 		}
 	},
 	methods: {
@@ -288,7 +293,12 @@ export default {
 					in: tags
 				};
 			}
-			metaType && (where.meta_type = metaType);
+			let types = this.$route.meta.types;
+			if (metaType) {
+				where.meta_type = metaType;
+			} else if (types) {
+				where.or = types.map(it => ({ meta_type: it }));
+			}
 			status && (where.status = status);
 			dbId && (where['source.id'] = dbId);
 			let filter = {

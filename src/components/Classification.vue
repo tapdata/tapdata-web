@@ -231,7 +231,7 @@ export default {
 		showDialog(node, dialogType) {
 			let type = dialogType || 'add';
 			let itemType = this.types;
-			if (node.data && node.data.item_type) {
+			if (node && node.data && node.data.item_type) {
 				itemType = node.data.item_type;
 			}
 			this.dialogConfig = {
