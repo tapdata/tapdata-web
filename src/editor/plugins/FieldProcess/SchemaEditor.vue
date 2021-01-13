@@ -688,6 +688,8 @@ export default {
 					this.model.operations.push(op);
 				} else {
 					op = ops[0];
+					op.operand = data.label;
+					op.label = data.label;
 				}
 				//删除 相同字段名称
 				if (this.model.scripts && this.model.operations.length && this.model.operations.length > 0) {
@@ -1284,7 +1286,9 @@ export default {
 		display: inline-block;
 		width: 5px;
 	}
-
+	.el-tree-node__content > label.el-checkbox {
+		margin-left: 9px;
+	}
 	.e-schema-editor .el-main .el-tree .el-tree-node .icon-none {
 		display: none;
 	}

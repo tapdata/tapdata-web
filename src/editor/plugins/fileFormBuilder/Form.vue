@@ -238,6 +238,7 @@ export default {
 					exclude_filename: '',
 					file_schema: '',
 					excel_password: '',
+					excel_plain_password: '',
 					json_type: 'ArrayBegin',
 					data_content_xpath: '',
 					seperate: ',',

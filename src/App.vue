@@ -43,11 +43,7 @@ export default {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.markdown-body {
-	padding: 20px;
-	min-width: 200px;
-	max-width: 900px;
-	font-size: 12px;
+.markdown-body-wrap .markdown-body {
 	h2 {
 		font-size: 18px;
 		margin: 1em 0 15px;

@@ -65,9 +65,8 @@ export default function(vm) {
 			},
 			{
 				type: 'input',
-				field: 'excel_password',
+				field: 'excel_plain_password',
 				domType: 'password',
-				showPassword: true,
 				label: vm.$t('editor.fileFormBuilder.excelPassword')
 			}
 		]

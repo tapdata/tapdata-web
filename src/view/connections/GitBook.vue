@@ -1,5 +1,7 @@
 <template>
-	<div class="git-book markdown-body" v-html="htmlMD"></div>
+	<div class="markdown-body-wrap git-book">
+		<div class="markdown-body" v-html="htmlMD"></div>
+	</div>
 </template>
 
 <script>
