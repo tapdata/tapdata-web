@@ -6,7 +6,6 @@ export default function(vm) {
 		},
 		defaultModel: {
 			connection_type: 'source',
-			database_port: 455 || '455',
 			file_upload_mode: 'stream',
 			overwriteSetting: 'discard',
 			file_source_protocol: 'localFile',

@@ -340,6 +340,15 @@ export default {
 			}
 		];
 	},
+	watch: {
+		'model.file_source_protocol'(val) {
+			if (val === 'smb') {
+				this.model.database_port = '445';
+			} else if (val === 'ftp') {
+				this.model.database_port = '21';
+			}
+		}
+	},
 	methods: {
 		getImgByType,
 		async initData(data) {
