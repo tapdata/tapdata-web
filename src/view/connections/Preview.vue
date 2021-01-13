@@ -254,7 +254,17 @@ export default {
 		},
 		edit(id, type) {
 			if (
-				['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis', 'db2'].includes(type)
+				[
+					'mysql',
+					'oracle',
+					'mongodb',
+					'sqlserver',
+					'postgres',
+					'elasticsearch',
+					'redis',
+					'db2',
+					'file'
+				].includes(type)
 			) {
 				this.$router.push('connections/create?id=' + id + '&databaseType=' + type);
 			} else {

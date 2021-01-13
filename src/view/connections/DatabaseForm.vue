@@ -354,6 +354,16 @@ export default {
 				this.model = Object.assign(this.model, editData.data);
 				this.rename = this.model.name;
 			} else this.model = Object.assign(this.model, data, { name: this.model.name });
+
+			if (this.model.database_type === 'file' && this.model.file_sources) {
+				this.model.file_sources.forEach(item => {
+					if (item.exclude_filename) {
+						this.$set(item, 'selectFileType', 'exclude');
+					} else {
+						this.$set(item, 'selectFileType', 'include');
+					}
+				});
+			}
 		},
 		checkDataTypeOptions(type) {
 			this.model.database_type = type;
@@ -465,6 +475,19 @@ export default {
 						params.fill = params.isUrl ? 'uri' : '';
 						delete params.isUrl;
 					}
+
+					if (params.database_type !== 'file') {
+						delete params.file_sources;
+						delete params.fileDefaultCharset;
+						delete params.file_upload_chunk_size;
+						delete params.file_upload_mode;
+						delete params.overwriteSetting;
+						delete params.extendSourcePath;
+						delete params.outputPath;
+						delete params.file_source_protocol;
+						delete params.vc_mode;
+					}
+
 					connectionsModel[this.model.id ? 'patchId' : 'post'](params)
 						.then(res => {
 							let id = res.data.id;
