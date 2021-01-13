@@ -5,7 +5,7 @@
 			<ul>
 				<li
 					:class="activePanel === 'settings' ? 'active' : ''"
-					v-readonlybtn="'system_settings'"
+					v-readonlybtn="authoritySetting"
 					@click="changeName('settings')"
 				>
 					<i class="iconfont icon-shezhi1"></i>
@@ -41,7 +41,8 @@ export default {
 				{ icon: 'icon-lingdang', name: this.$t('notification.setting'), key: 'notificationSetting' },
 				{ icon: 'icon-gerenzhongxin', name: this.$t('account.accountSettings'), key: 'accountSetting' }
 			],
-			activePanel: ''
+			activePanel: '',
+			authoritySetting: this.$has('system_settings') && this.$has('system_settings_menu')
 		};
 	},
 	watch: {
