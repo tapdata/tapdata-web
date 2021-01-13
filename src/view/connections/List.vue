@@ -262,7 +262,7 @@ export default {
 			databaseType: '',
 			id: '',
 			description: '',
-			order: '',
+			order: 'last_updated DESC',
 			databaseModelOptions: [
 				{
 					label: this.$t('connection.type.source'),

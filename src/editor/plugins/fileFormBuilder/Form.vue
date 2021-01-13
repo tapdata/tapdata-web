@@ -1,6 +1,11 @@
 <template>
 	<div class="editor-file-form-builder">
 		<div class="main">
+			<div class="head-btns">
+				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+					{{ $t('dataFlow.button.viewMonitoring') }}
+				</el-button>
+			</div>
 			<header class="form-builder-header">
 				<div class="img-box">
 					<img :src="getImgByType(model.database_type)" />
@@ -490,12 +495,11 @@ export default {
 	height: 100%;
 	box-sizing: border-box;
 	.main {
-		padding: 0 20px 20px 20px;
+		padding: 20px;
 		box-sizing: border-box;
 		.form-builder-header {
 			display: flex;
 			justify-content: flex-start;
-			margin-top: 20px;
 			.img-box {
 				display: flex;
 				width: 48px;
