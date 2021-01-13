@@ -1,6 +1,11 @@
 <template>
 	<div class="editor-file-form-builder">
 		<div class="main">
+			<div class="head-btns">
+				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+					{{ $t('dataFlow.button.viewMonitoring') }}
+				</el-button>
+			</div>
 			<header class="form-builder-header">
 				<div class="img-box">
 					<img :src="getImgByType(model.database_type)" />
@@ -10,16 +15,16 @@
 						{{ model.type }}
 					</div>
 					<div class="tip">
-						{{ $t('dataForm.form.guide') }}
-						<a style="color: #48B6E2" href="https://docs.tapdata.net/data-source">{{
+						{{ $t('editor.fileFormBuilder.guideDocPrefix') }}
+						{{ model.type }}
+						{{ $t('editor.fileFormBuilder.guideDoc') }}
+						<a style="color: #48B6E2" href="https://docs.tapdata.net/data-source/about-dbs/files">{{
 							$t('dataForm.form.guideDoc')
 						}}</a>
 					</div>
 				</div>
 			</header>
 			<div class="form-builder">
-				<label class="file-source-label">{{ $t('dataFlow.nodeName') }}</label>
-				<el-input v-model="model.name" size="mini" style="margin-bottom: 10px" :disabled="disabled"></el-input>
 				<label class="file-source-label">{{ $t('editor.fileFormBuilder.fileSource') }}</label>
 				<FbSelect v-model="model.connectionId" :config="fileConfig" style="margin-bottom: 10px"></FbSelect>
 				<form-builder ref="form" v-model="model.fileProperty" :config="config"></form-builder>
@@ -75,10 +80,9 @@
 								<el-input
 									v-model="model.fileProperty.gridfs_header_config"
 									size="mini"
-									:placeholder="$t('editor.fileFormBuilder.gridfs_header_config')"
+									:placeholder="$t('editor.fileFormBuilder.header_type_custom_label')"
 									v-show="model.fileProperty.gridfs_header_type === 'custom'"
 								></el-input>
-								<!--								<span>{{ $t('editor.fileFormBuilder.excel_cell_point') }}</span>-->
 								<div
 									v-show="model.fileProperty.gridfs_header_type !== 'custom'"
 									class="excel_header_start"
@@ -97,7 +101,7 @@
 								</div>
 							</div>
 						</el-form-item>
-						<el-form-item
+						<el-form-item v-show="model.fileProperty.gridfs_header_type !== 'custom'"
 							><div style="margin-top: 5px;color: #999">
 								{{ $t('editor.fileFormBuilder.excel_cell_point') }}
 							</div></el-form-item
@@ -184,6 +188,7 @@ export default {
 		let validateExcelHeader = (rule, value, callback) => {
 			let start = this.model.fileProperty.excel_header_start;
 			let end = this.model.fileProperty.excel_header_end;
+			let config = this.model.fileProperty.gridfs_header_config;
 			if (start === '') {
 				callback(
 					new Error(this.$t('editor.fileFormBuilder.excel_header_start') + this.$t('formBuilder.noneText'))
@@ -192,6 +197,8 @@ export default {
 				callback(
 					new Error(this.$t('editor.fileFormBuilder.excel_header_end') + this.$t('formBuilder.noneText'))
 				);
+			} else if (config === '') {
+				callback(new Error(this.$t('editor.fileFormBuilder.header_type_required')));
 			} else if (!/^[A-Z]+[1-9]+$/.test(start) || !/^[A-Z]+[1-9]+$/.test(end)) {
 				callback(new Error(this.$t('editor.fileFormBuilder.excel_cell_tip')));
 			}
@@ -230,7 +237,7 @@ export default {
 					include_filename: '',
 					exclude_filename: '',
 					file_schema: '',
-					plain_password: '',
+					excel_password: '',
 					json_type: 'ArrayBegin',
 					data_content_xpath: '',
 					seperate: ',',
@@ -320,23 +327,22 @@ export default {
 					this.$message.success(this.$t('message.reloadSchemaSuccess'));
 					templeSchema = res.result;
 				} else {
-					this.$message.error(this.$t('message.reloadSchemaError'));
+					this.$message.error(res.error);
 				}
 				this.reloadingSchema = false;
 				if (templeSchema && templeSchema.length) {
 					templeSchema.forEach(item => {
 						if (item.connId === this.model.connectionId) {
 							schema = item.schema;
-							this.model.tableName = item.tableName;
+							if (!this.model.tableName || this.model.tableName === '') {
+								this.model.tableName = item.tableName;
+							}
 						}
 					});
 				}
 				self.$nextTick(() => {
-					if (schema) {
-						self.$emit('schemaChange', _.cloneDeep(schema));
-						self.schema = schema;
-						self.$message.success(this.$t('message.reloadSchemaSuccess'));
-					}
+					self.$emit('schemaChange', _.cloneDeep(schema));
+					self.schema = schema;
 				});
 			});
 		});
@@ -385,12 +391,16 @@ export default {
 			}
 		},
 		getData() {
-			return _.cloneDeep(this.model);
+			let result = _.cloneDeep(this.model);
+			result.name = result.tableName || result.name;
+			return result;
 		},
 		//change headerType 清空表单校验
 		changeHeaderType() {
 			this.$refs.excelForm.resetFields();
-			this.model.fileProperty.excel_value_end = '';
+			this.model.fileProperty.excel_header_start = 'A1';
+			this.model.fileProperty.excel_header_end = 'Z1';
+			this.model.fileProperty.gridfs_header_config = '';
 		},
 		getImgByType(type) {
 			if (!type) {
@@ -442,6 +452,11 @@ export default {
 				});
 		},
 		loadSchema() {
+			if (this.model.fileProperty.fileFilter === 'include') {
+				this.model.fileProperty.exclude_filename = '';
+			} else {
+				this.model.fileProperty.include_filename = '';
+			}
 			let msg = {
 				type: 'reloadSchema',
 				data: {
@@ -485,7 +500,6 @@ export default {
 		.form-builder-header {
 			display: flex;
 			justify-content: flex-start;
-			margin-top: 20px;
 			.img-box {
 				display: flex;
 				width: 48px;
@@ -574,7 +588,9 @@ export default {
 	.el-form-item__label {
 		font-size: 12px;
 		line-height: 20px;
-		font-weight: 600;
+	}
+	.el-radio__label {
+		font-size: 12px;
 	}
 	.el-radio-button__inner,
 	.el-radio-group {

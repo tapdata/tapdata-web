@@ -12,6 +12,7 @@ export default function(vm) {
 				type: 'select',
 				field: 'fileFilter',
 				label: vm.$t('editor.fileFormBuilder.fileFilter'),
+				clearable: false,
 				options: [
 					{
 						label: vm.$t('editor.fileFormBuilder.include'),
@@ -60,11 +61,6 @@ export default function(vm) {
 						}
 					}
 				]
-			},
-			{
-				type: 'input',
-				field: 'file_schema',
-				label: vm.$t('editor.fileFormBuilder.fileSchema')
 			},
 			{
 				type: 'input',

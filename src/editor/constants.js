@@ -115,25 +115,25 @@ export const FORM_DATA_KEY = 'form_data',
 	FILE_TYPE_MAPPING = {
 		xml: {
 			type: 'xml',
-			name: 'xml',
+			name: 'XML',
 			shapeImage: 'static/editor/xml.svg',
 			stencilImage: 'static/editor/xml.svg'
 		},
 		excel: {
 			type: 'excel',
-			name: 'excel',
+			name: 'EXCEL',
 			shapeImage: 'static/editor/excel.svg',
 			stencilImage: 'static/editor/excel.svg'
 		},
 		csv: {
 			type: 'csv',
-			name: 'csv',
+			name: 'CSV',
 			shapeImage: 'static/editor/csv.svg',
 			stencilImage: 'static/editor/csv.svg'
 		},
 		json: {
 			type: 'json',
-			name: 'json',
+			name: 'JSON',
 			shapeImage: 'static/editor/json.svg',
 			stencilImage: 'static/editor/json.svg'
 		}

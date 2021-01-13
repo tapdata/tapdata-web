@@ -1345,7 +1345,11 @@ const en = {
 			excel_header_type: 'Field mapping range',
 			excel_header_coordinate: 'According to the table coordinate',
 			excel_header_range: 'Custom range',
-			gridfs_header_config: 'Enter custom range',
+			guideDocPrefix: 'Please select the ',
+			guideDoc:
+				'file under the data source of the FILE type. The system will load up the model and transfer it to the target collection. If the structures of selected files are different, the system will combine them into one model. For more information, please click the',
+			header_type_custom_label: 'Multiple fields separated by commas',
+			header_type_required: 'Header type is required',
 			excel_header_start: 'Enter the starting coordinate',
 			excel_header_end: 'Enter the ending coordinate',
 			excel_value_type: 'Range of rows',

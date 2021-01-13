@@ -9,6 +9,7 @@
 			:remoteMethod="getData"
 			@selection-change="handleSelectionChange"
 			@classify-submit="handleOperationClassify"
+			@sort-change="handleSortTable"
 		>
 			<ul class="search-bar" slot="search">
 				<li class="item">
@@ -117,7 +118,7 @@
 				:reserve-selection="true"
 			>
 			</el-table-column>
-			<el-table-column prop="name" :label="$t('connection.dataBaseName')">
+			<el-table-column prop="name" :label="$t('connection.dataBaseName')" sortable="name">
 				<template slot-scope="scope">
 					<div class="database-img">
 						<img :src="getImgByType(scope.row.database_type)" />
@@ -135,7 +136,7 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column prop="user_id" :label="$t('connection.creator')" width="80">
+			<el-table-column prop="username" :label="$t('connection.creator')" width="80" sortable="username">
 				<template slot-scope="scope">
 					<div class="database-text" style="margin-left:0;">
 						<div>{{ scope.row.username }}</div>
@@ -147,8 +148,9 @@
 				:label="$t('connection.connectionType')"
 				:formatter="formatterConnectionType"
 				width="120"
+				sortable="connection_type"
 			></el-table-column>
-			<el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="100">
+			<el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="100" sortable="status">
 				<template slot-scope="scope">
 					<span class="error" v-if="['invalid'].includes(scope.row.status)">
 						<i class="el-icon-error"></i>
@@ -260,6 +262,7 @@ export default {
 			databaseType: '',
 			id: '',
 			description: '',
+			order: 'last_updated DESC',
 			databaseModelOptions: [
 				{
 					label: this.$t('connection.type.source'),
@@ -318,6 +321,10 @@ export default {
 	methods: {
 		permissionBtnDisabel,
 		//筛选条件
+		handleSortTable({ order, prop }) {
+			this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`;
+			this.table.fetch(1);
+		},
 		async getDatabaseType() {
 			let filter = {
 				where: {
@@ -331,11 +338,6 @@ export default {
 		},
 		getData({ page, tags }) {
 			this.$store.commit('connections', this.searchParams);
-			// if (loading == 1) {
-			// 	this.restLoading = false;
-			// } else {
-			// 	this.restLoading = true;
-			// }
 			let { current, size } = page;
 			let { iModel, keyword, databaseType, databaseModel, status } = this.searchParams;
 			let where = {};
@@ -373,7 +375,7 @@ export default {
 			}
 			status && (where.status = status);
 			let filter = {
-				order: 'createTime DESC',
+				order: this.order,
 				limit: size,
 				fields: fields,
 				skip: (current - 1) * size,

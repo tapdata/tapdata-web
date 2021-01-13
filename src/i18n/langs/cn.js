@@ -1324,7 +1324,11 @@ const cn = {
 			excel_header_type: '字段映射范围',
 			excel_header_coordinate: '按表头坐标',
 			excel_header_range: '自定义范围',
-			gridfs_header_config: '自定义范围',
+			guideDocPrefix: '请选择的文件类型的数据源下的 ',
+			guideDoc:
+				'文件，系统会加载出模型并传输至目标数据集。如果选择的文件结构不同，则系统会将不同结构的文件合并成一个模型。更多信息请点击',
+			header_type_custom_label: '多个字段用逗号分隔',
+			header_type_required: '文件头类型不能为空',
 			excel_header_start: '表头开始坐标',
 			excel_header_end: '表头结束坐标',
 			excel_value_type: '内容范围',
