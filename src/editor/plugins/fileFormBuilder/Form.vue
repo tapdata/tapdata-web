@@ -20,8 +20,6 @@
 				</div>
 			</header>
 			<div class="form-builder">
-				<label class="file-source-label">{{ $t('dataFlow.nodeName') }}</label>
-				<el-input v-model="model.name" size="mini" style="margin-bottom: 10px" :disabled="disabled"></el-input>
 				<label class="file-source-label">{{ $t('editor.fileFormBuilder.fileSource') }}</label>
 				<FbSelect v-model="model.connectionId" :config="fileConfig" style="margin-bottom: 10px"></FbSelect>
 				<form-builder ref="form" v-model="model.fileProperty" :config="config"></form-builder>
@@ -234,7 +232,7 @@ export default {
 					include_filename: '',
 					exclude_filename: '',
 					file_schema: '',
-					plain_password: '',
+					excel_password: '',
 					json_type: 'ArrayBegin',
 					data_content_xpath: '',
 					seperate: ',',
@@ -331,7 +329,9 @@ export default {
 					templeSchema.forEach(item => {
 						if (item.connId === this.model.connectionId) {
 							schema = item.schema;
-							this.model.tableName = item.tableName;
+							if (!this.model.tableName || this.model.tableName === '') {
+								this.model.tableName = item.tableName;
+							}
 						}
 					});
 				}
@@ -386,12 +386,16 @@ export default {
 			}
 		},
 		getData() {
-			return _.cloneDeep(this.model);
+			let result = _.cloneDeep(this.model);
+			result.name = result.tableName || result.name;
+			return result;
 		},
 		//change headerType 清空表单校验
 		changeHeaderType() {
 			this.$refs.excelForm.resetFields();
-			this.model.fileProperty.excel_value_end = '';
+			this.model.fileProperty.excel_header_start = 'A1';
+			this.model.fileProperty.excel_header_end = 'Z1';
+			this.model.fileProperty.gridfs_header_config = '';
 		},
 		getImgByType(type) {
 			if (!type) {
@@ -443,6 +447,11 @@ export default {
 				});
 		},
 		loadSchema() {
+			if (this.model.fileProperty.fileFilter === 'include') {
+				this.model.fileProperty.exclude_filename = '';
+			} else {
+				this.model.fileProperty.include_filename = '';
+			}
 			let msg = {
 				type: 'reloadSchema',
 				data: {
@@ -481,7 +490,7 @@ export default {
 	height: 100%;
 	box-sizing: border-box;
 	.main {
-		padding: 20px;
+		padding: 0 20px 20px 20px;
 		box-sizing: border-box;
 		.form-builder-header {
 			display: flex;

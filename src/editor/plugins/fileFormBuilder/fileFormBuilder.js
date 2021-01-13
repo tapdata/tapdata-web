@@ -37,18 +37,8 @@ export const fileFormConfig = {
 			 * @param targetCell
 			 * @return {boolean}
 			 */
-			allowTarget() {
+			allowTarget(targetCell) {
 				// log("FileNode.allowTarget", targetCell, ['app.GridFSNode'].includes(targetCell.get('type')));
-				return false;
-			},
-
-			/**
-			 * validate accept source connection
-			 * @param sourceCell
-			 * @return {boolean}
-			 */
-			allowSource(sourceCell) {
-				// log("FileNode.allowSource", sourceCell, ['app.GridFSNode'].includes(sourceCell.get('type')));
 				return ![
 					'app.Database',
 					'app.FileNode',
@@ -58,7 +48,17 @@ export const fileFormConfig = {
 					'excel',
 					'json',
 					'xml'
-				].includes(sourceCell.get('type'));
+				].includes(targetCell.get('type'));
+			},
+
+			/**
+			 * validate accept source connection
+			 * @param sourceCell
+			 * @return {boolean}
+			 */
+			allowSource() {
+				// log("FileNode.allowSource", sourceCell, ['app.GridFSNode'].includes(sourceCell.get('type')));
+				return false;
 			},
 
 			validate(data) {
@@ -66,6 +66,7 @@ export const fileFormConfig = {
 				let name = this.attr('label/text');
 				if (!data.connectionId)
 					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`);
+
 				return true;
 			}
 		}

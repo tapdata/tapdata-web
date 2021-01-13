@@ -64,11 +64,6 @@ export default function(vm) {
 			},
 			{
 				type: 'input',
-				field: 'file_schema',
-				label: vm.$t('editor.fileFormBuilder.fileSchema')
-			},
-			{
-				type: 'input',
 				field: 'seperate',
 				label: vm.$t('editor.fileFormBuilder.sperate'),
 				required: true

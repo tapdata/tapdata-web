@@ -66,11 +66,6 @@ export default function(vm) {
 			},
 			{
 				type: 'input',
-				field: 'file_schema',
-				label: vm.$t('editor.fileFormBuilder.fileSchema')
-			},
-			{
-				type: 'input',
 				field: 'data_content_xpath',
 				label: vm.$t('editor.fileFormBuilder.xpath'),
 				required: true

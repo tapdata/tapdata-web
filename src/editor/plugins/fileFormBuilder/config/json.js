@@ -63,11 +63,6 @@ export default function(vm) {
 				]
 			},
 			{
-				type: 'input',
-				field: 'file_schema',
-				label: vm.$t('editor.fileFormBuilder.fileSchema')
-			},
-			{
 				type: 'select',
 				field: 'json_type',
 				label: vm.$t('editor.fileFormBuilder.jsonType'),
