@@ -323,7 +323,7 @@ export default {
 			templeSchema = [];
 		ws.ready(() => {
 			ws.on('execute_load_schema_result', res => {
-				if (res.status === 'SUCCESS' && res.result && res.result.length) {
+				if (res.status === 'SUCCESS' && res.result) {
 					this.$message.success(this.$t('message.reloadSchemaSuccess'));
 					templeSchema = res.result;
 				} else {
@@ -502,7 +502,7 @@ export default {
 			justify-content: flex-start;
 			.img-box {
 				display: flex;
-				width: 48px;
+				width: 84px;
 				height: 48px;
 				justify-content: center;
 				align-items: center;

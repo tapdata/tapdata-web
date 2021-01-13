@@ -31,7 +31,7 @@
 				<echart-head :data="stageType ? nodeDetailsObj : taskDetailsObj"></echart-head>
 				<div
 					class="info fl"
-					v-if="['table', 'collection', 'database'].includes(stageType)"
+					v-if="['table', 'collection', 'json', 'excel', 'csv', 'xml', 'database'].includes(stageType)"
 					v-loading="apiLoading"
 				>
 					<div class="info-list">
@@ -62,11 +62,11 @@
 							<span class="row-text">{{ stage.database_host }}</span>
 						</el-tooltip>
 					</div>
-					<div class="info-list">
+					<div class="info-list" v-if="!['file'].includes(stage.database_type)">
 						<span class="info-label">{{ $t('dataForm.form.databaseName') }}:</span>
 						<span class="info-text">{{ stage.database_name }}</span>
 					</div>
-					<div class="info-list" v-if="stage.database_type !== 'mongodb'">
+					<div class="info-list" v-if="!['mongodb', 'file'].includes(stage.database_type)">
 						<span class="info-label">{{ $t('dataFlow.ownedUser') }}:</span>
 						<span class="info-text">{{ stage.database_owner }}</span>
 					</div>
@@ -513,7 +513,7 @@ export default {
 				this.stageId = selectStage.id;
 				this.getNodeName();
 				this.stage.nodeName = selectStage.form_data.name;
-				// this.stageType = selectStage.type;
+				this.stageType = selectStage.type;
 				// if (this.stageType === 'app.Database') {
 				// 	this.getStageDataApi(currentStageData.connectionId, '');
 				// } else if (this.stageType === 'app.Collection' || this.stageType === 'app.Table') {
@@ -643,7 +643,7 @@ export default {
 
 					if (this.stageType === 'database') {
 						this.getStageDataApi(currentStageData.connectionId, '');
-					} else if (this.stageType === 'collection' || this.stageType === 'table') {
+					} else if (['table', 'collection', 'json', 'excel', 'csv', 'xml'].includes(this.stageType)) {
 						this.getStageDataApi(currentStageData.connectionId, this.tableName);
 					}
 				}
