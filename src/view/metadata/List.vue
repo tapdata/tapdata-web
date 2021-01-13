@@ -125,7 +125,7 @@
 			</el-table-column>
 			<el-table-column
 				:label="$t('metadata.header.last_user_name')"
-				prop="last_user_name"
+				prop="username"
 				sortable="custom"
 			></el-table-column>
 			<el-table-column :label="$t('metadata.header.last_updated')" prop="last_updated" sortable="custom">

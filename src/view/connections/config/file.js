@@ -127,7 +127,6 @@ export default function(vm) {
 				type: 'input',
 				field: 'database_username',
 				label: vm.$t('dataForm.form.file.creatAccount'),
-				required: true,
 				show: false,
 				dependOn: [
 					{
@@ -160,7 +159,6 @@ export default function(vm) {
 				label: vm.$t('dataForm.form.file.password'),
 				domType: 'password',
 				showPassword: true,
-				required: true,
 				show: false,
 				dependOn: [
 					{
