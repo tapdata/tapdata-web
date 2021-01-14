@@ -273,7 +273,9 @@
 					></JsEditor>
 					<div class="js-fixText">}</div>
 				</div>
-				<div class="example markdown-body" v-html="htmlMD"></div>
+				<div class="markdown-body-wrap example">
+					<div class="example markdown-body" v-html="htmlMD"></div>
+				</div>
 			</div>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="handleAddScriptClose" size="mini">{{ $t('dataForm.cancel') }}</el-button>

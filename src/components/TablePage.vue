@@ -171,6 +171,7 @@ export default {
 		.page-header-title {
 			font-size: 16px;
 			color: #333;
+			font-weight: 600;
 		}
 		.page-header-desc {
 			margin-top: 10px;

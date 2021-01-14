@@ -135,7 +135,9 @@
 					</el-footer>
 				</el-container>
 				<el-aside class="right-aside" width="600px">
-					<div class="markdown-body" v-html="selectedDatabaseType ? mdHtml : steps[activeStep].md"></div>
+					<div class="markdown-body-wrap">
+						<div class="markdown-body" v-html="selectedDatabaseType ? mdHtml : steps[activeStep].md"></div>
+					</div>
 				</el-aside>
 			</el-container>
 		</el-container>

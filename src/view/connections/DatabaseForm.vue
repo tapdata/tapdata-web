@@ -459,18 +459,21 @@ export default {
 
 			this.$refs.form.validate(valid => {
 				if (valid && !falg) {
-					let params = Object.assign({}, this.model, {
-						sslCert: this.model.sslKey,
-						// user_id: this.$cookie.get('user_id'),
-						status: 'testing',
-						schema: {},
-						retry: 0,
-						nextRetry: null,
-						response_body: {},
-						project: '',
-						submit: true,
-						listtags: []
-					});
+					let params = Object.assign(
+						{},
+						{
+							sslCert: this.model.sslKey,
+							// user_id: this.$cookie.get('user_id'),
+							status: 'testing',
+							schema: {},
+							retry: 0,
+							nextRetry: null,
+							response_body: {},
+							project: '',
+							submit: true
+						},
+						this.model
+					);
 					delete params.sslKeyFile;
 					delete params.sslCAFile;
 					delete params.status; //编辑的情况下不传status
@@ -768,6 +771,7 @@ export default {
 				margin-left: 200px;
 				margin-bottom: 20px;
 				margin-top: 16px;
+				background: #fafafa;
 			}
 		}
 		.status {

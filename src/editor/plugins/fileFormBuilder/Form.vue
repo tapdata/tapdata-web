@@ -12,7 +12,7 @@
 				</div>
 				<div class="content-box">
 					<div class="content">
-						{{ model.type }}
+						{{ model.type.toUpperCase() }}
 					</div>
 					<div class="tip">
 						{{ $t('editor.fileFormBuilder.guideDocPrefix') }}
@@ -324,22 +324,24 @@ export default {
 			templeSchema = [];
 		ws.ready(() => {
 			ws.on('execute_load_schema_result', res => {
+				this.reloadingSchema = false;
+				debugger;
 				if (res.status === 'SUCCESS' && res.result) {
 					this.$message.success(this.$t('message.reloadSchemaSuccess'));
 					templeSchema = res.result;
-				} else {
-					this.$message.error(res.error);
-				}
-				this.reloadingSchema = false;
-				if (templeSchema && templeSchema.length) {
-					templeSchema.forEach(item => {
-						if (item.connId === this.model.connectionId) {
-							schema = item.schema;
-							if (!this.model.tableName || this.model.tableName === '') {
-								this.model.tableName = item.tableName;
+					if (templeSchema && templeSchema.length) {
+						templeSchema.forEach(item => {
+							if (item.connId === this.model.connectionId) {
+								schema = item.schema;
+								if (!this.model.tableName || this.model.tableName === '') {
+									this.model.tableName = item.tableName;
+								}
 							}
-						}
-					});
+						});
+					}
+				} else {
+					schema = null;
+					this.$message.error(res.error);
 				}
 				self.$nextTick(() => {
 					self.$emit('schemaChange', _.cloneDeep(schema));
@@ -497,6 +499,7 @@ export default {
 	box-sizing: border-box;
 	.main {
 		padding: 20px;
+		overflow: hidden;
 		box-sizing: border-box;
 		.form-builder-header {
 			display: flex;
@@ -522,6 +525,7 @@ export default {
 					margin-left: 10px;
 				}
 				.tip {
+					width: 97%;
 					font-size: 12px;
 					color: #999;
 					margin-top: 5px;

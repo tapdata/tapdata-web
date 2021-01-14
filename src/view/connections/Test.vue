@@ -1,7 +1,7 @@
 <template>
 	<el-dialog
 		class="connection-test-dialog"
-		:title="$t('dataForm.test.title')"
+		:title="$t('connection.testConnection')"
 		:visible="dialogTestVisible"
 		width="770px"
 		:show-close="false"
