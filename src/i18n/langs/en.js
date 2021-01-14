@@ -1646,7 +1646,7 @@ const en = {
 				discard: 'ignore',
 				extend_source_path: 'Inherit the directory structure',
 				file_output_path: 'File output absolute path',
-				csvFijlter: 'CSV filter '
+				csvFijlter: 'File Name Filter '
 			}
 		},
 		error: {

@@ -109,16 +109,35 @@
 			></el-progress>
 		</header>
 		<ul class="info-list">
-			<li v-for="item in form" :key="item.label">
+			<li v-for="item in form" :key="item.label" v-show="item.show">
 				<span class="label">{{ item.label }}</span>
 				<span class="value align-center" :class="{ 'align-top': item.label && item.label.length > 15 }">{{
 					item.value
 				}}</span>
 			</li>
-			<li v-show="data.database_port">
+			<li v-show="data.database_port && data.database_type !== 'file'">
 				<span class="label">{{ $t('dataForm.form.port') }}</span>
 				<span class="value align-center"> {{ data.database_port }}</span>
 			</li>
+			<div
+				v-for="(item, index) in data.file_sources"
+				:key="index"
+				v-show="
+					data.database_type === 'file' &&
+						data.connection_type === 'source' &&
+						data.file_sources &&
+						data.file_sources[0].path
+				"
+			>
+				<li>
+					<span class="label">{{ $t('dataForm.form.file.fileUrl') + (index + 1) }}</span>
+					<span class="value align-center"> {{ item.path }}</span>
+				</li>
+				<li>
+					<span class="label">{{ $t('dataForm.form.file.recursive') }}</span>
+					<span class="value align-center"> {{ item.recursive }}</span>
+				</li>
+			</div>
 		</ul>
 		<Test
 			ref="test"
@@ -219,12 +238,128 @@ export default {
 					let items = config.items.map(it => {
 						let node = {
 							label: it.label,
-							value: data[it.field] || '-'
+							value: data[it.field] || '-',
+							field: it.field,
+							show: true
 						};
 						return node;
 					});
 					items = items || [];
 					items = items.filter(item => item.label); //清掉undefined
+
+					// 文件预览显示
+					if (data.database_type === 'file') {
+						items.forEach(el => {
+							if (data.connection_type === 'target') {
+								if (data.file_source_protocol === 'localFile') {
+									if (
+										![
+											'file_source_protocol',
+											'fileDefaultCharset',
+											'connection_type',
+											'vc_mode',
+											'file_upload_chunk_size',
+											'file_upload_mode',
+											'overwriteSetting',
+											'extendSourcePath',
+											'outputPath'
+										].includes(el.field)
+									) {
+										el.show = false;
+									}
+								} else if (data.file_source_protocol === 'ftp') {
+									if (
+										![
+											'file_source_protocol',
+											'fileDefaultCharset',
+											'connection_type',
+											'vc_mode',
+											'database_host',
+											'database_port',
+											'database_username',
+											'plain_password',
+											'ftp_passive',
+											'connection_timeout_seconds',
+											'data_timeout_seconds',
+											'file_upload_chunk_size',
+											'file_upload_mode',
+											'overwriteSetting',
+											'extendSourcePath',
+											'outputPath'
+										].includes(el.field)
+									) {
+										el.show = false;
+									}
+								} else {
+									if (
+										![
+											'file_source_protocol',
+											'fileDefaultCharset',
+											'connection_type',
+											'vc_mode',
+											'database_host',
+											'database_port',
+											'database_username',
+											'plain_password',
+											'file_upload_chunk_size',
+											'file_upload_mode',
+											'overwriteSetting',
+											'extendSourcePath',
+											'outputPath'
+										].includes(el.field)
+									) {
+										el.show = false;
+									}
+								}
+							} else {
+								if (data.file_source_protocol === 'localFile') {
+									if (
+										![
+											'file_source_protocol',
+											'fileDefaultCharset',
+											'connection_type',
+											'vc_mode'
+										].includes(el.field)
+									) {
+										el.show = false;
+									}
+								} else if (data.file_source_protocol === 'ftp') {
+									if (
+										![
+											'file_source_protocol',
+											'fileDefaultCharset',
+											'connection_type',
+											'vc_mode',
+											'database_host',
+											'database_port',
+											'database_username',
+											'plain_password',
+											'ftp_passive',
+											'connection_timeout_seconds',
+											'data_timeout_seconds'
+										].includes(el.field)
+									) {
+										el.show = false;
+									}
+								} else {
+									if (
+										![
+											'file_source_protocol',
+											'fileDefaultCharset',
+											'connection_type',
+											'vc_mode',
+											'database_host',
+											'database_port',
+											'database_username',
+											'plain_password'
+										].includes(el.field)
+									) {
+										el.show = false;
+									}
+								}
+							}
+						});
+					}
 					this.form = items;
 				}
 			}

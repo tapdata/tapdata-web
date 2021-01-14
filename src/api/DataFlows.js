@@ -75,4 +75,7 @@ export default class DataFlows extends PublicAPI {
 	tableFlow(params) {
 		return axios.get(this.url + '/tableFlow', { params });
 	}
+	batchUpdateListtags(params) {
+		return axios.patch(`${this.url}/batchUpdateListtags`, params);
+	}
 }

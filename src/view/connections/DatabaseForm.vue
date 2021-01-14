@@ -97,6 +97,7 @@
 														v-model="item.selectFileType"
 														size="mini"
 														style="width: 100%;"
+														@change="changeFileInclude(item, item.selectFileType)"
 													>
 														<el-option
 															:label="$t('dataForm.form.file.include_filename')"
@@ -110,7 +111,7 @@
 												</el-form-item>
 												<el-form-item v-if="item.selectFileType === 'include'">
 													<el-input
-														v-model="item.include"
+														v-model="item.include_filename"
 														size="mini"
 														:placeholder="$t('dataForm.form.file.includePlaceholder')"
 													></el-input>
@@ -266,17 +267,17 @@ const defaultModel = {
 	sslCAFile: null,
 	sslKeyFile: null,
 
-	ftp_passive: true,
-	connection_timeout_seconds: 0,
-	data_timeout_seconds: 0,
-	fileDefaultCharset: '',
-	file_upload_chunk_size: 261120,
-	file_upload_mode: '',
-	overwriteSetting: '',
-	extendSourcePath: false,
-	outputPath: '',
-	file_source_protocol: '',
-	vc_mode: '',
+	ftp_passive: true, // 连接方式
+	connection_timeout_seconds: 0, //连接超时时间
+	data_timeout_seconds: 0, //传输超时时间
+	fileDefaultCharset: '', // 编码格式
+	file_upload_chunk_size: 261120, //文件上传文件块大小
+	file_upload_mode: '', //文件上传模式
+	overwriteSetting: '', //当同名文件存在时
+	extendSourcePath: false, // 继承目录结构
+	outputPath: '', // 文件输出绝对路径
+	file_source_protocol: '', //协议类型
+	vc_mode: '', // 版本管理
 	file_sources: [
 		{
 			path: '',
@@ -341,6 +342,7 @@ export default {
 		];
 	},
 	watch: {
+		// 文件选中类型默认端口号
 		'model.file_source_protocol'(val) {
 			if (val === 'smb') {
 				this.model.database_port = '445';
@@ -635,6 +637,11 @@ export default {
 					this.model.file_sources.splice(index, 1);
 				}
 			}
+		},
+
+		// 文件保留丢弃字段
+		changeFileInclude(item, val) {
+			val === 'include' ? (item.exclude_filename = '') : (item.include_filename = '');
 		}
 	}
 };
