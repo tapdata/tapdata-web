@@ -12,7 +12,7 @@
 				</div>
 				<div class="content-box">
 					<div class="content">
-						{{ model.type }}
+						{{ model.type.toUpperCase() }}
 					</div>
 					<div class="tip">
 						{{ $t('editor.fileFormBuilder.guideDocPrefix') }}
@@ -27,13 +27,20 @@
 			<div class="form-builder">
 				<label class="file-source-label">{{ $t('editor.fileFormBuilder.fileSource') }}</label>
 				<FbSelect v-model="model.connectionId" :config="fileConfig" style="margin-bottom: 10px"></FbSelect>
+				<label class="file-source-label">{{ $t('editor.fileFormBuilder.tableName') }}</label>
+				<el-input
+					v-model="model.tableName"
+					size="mini"
+					:disabled="disabled"
+					:placeholder="$t('formBuilder.input.placeholderPrefix') + $t('editor.fileFormBuilder.tableName')"
+				></el-input>
 				<form-builder ref="form" v-model="model.fileProperty" :config="config"></form-builder>
 				<label class="file-source-label" v-if="model.database_type === 'excel'">{{
 					$t('editor.fileFormBuilder.excelValue')
 				}}</label>
 				<div class="form-excel-wrap" v-if="model.database_type === 'excel'">
 					<el-form
-						label-width="120px"
+						label-width="145px"
 						label-position="right"
 						:rules="rules"
 						:disabled="disabled"
@@ -41,20 +48,22 @@
 						ref="excelForm"
 					>
 						<!--工作页 -->
-						<el-form-item :label="$t('editor.fileFormBuilder.sheet_range')" prop="sheet_start" required>
+						<el-form-item :label="$t('editor.fileFormBuilder.sheet_range')" prop="sheet_start">
 							<el-input
 								v-model.number="model.fileProperty.sheet_start"
 								maxlength="3"
 								show-word-limit
 								size="mini"
+								onkeyup="model.fileProperty.sheet_start = model.fileProperty.sheet_start.replace(/[^\d.]/g,'');"
 								:placeholder="$t('editor.fileFormBuilder.sheet_start')"
 							></el-input>
 							<span class="separate"> ~ </span>
 							<el-input
-								v-model.number="model.fileProperty.sheet_end"
+								v-model="model.fileProperty.sheet_end"
 								maxlength="3"
 								show-word-limit
 								size="mini"
+								onkeyup="model.fileProperty.sheet_end = model.fileProperty.sheet_end.replace(/[^\d.]/g,'');"
 								:placeholder="$t('editor.fileFormBuilder.sheet_end')"
 							></el-input>
 						</el-form-item>
@@ -62,7 +71,6 @@
 						<el-form-item
 							:label="$t('editor.fileFormBuilder.excel_header_type')"
 							class="headerType"
-							required
 							prop="excel_header_start"
 						>
 							<div>
@@ -102,16 +110,12 @@
 							</div>
 						</el-form-item>
 						<el-form-item v-show="model.fileProperty.gridfs_header_type !== 'custom'"
-							><div style="margin-top: 5px;color: #999">
+							><div style="color: #999">
 								{{ $t('editor.fileFormBuilder.excel_cell_point') }}
 							</div></el-form-item
 						>
 						<!--字段获取方式 -->
-						<el-form-item
-							:label="$t('editor.fileFormBuilder.header_mapping')"
-							class="excelHeaderType"
-							required
-						>
+						<el-form-item :label="$t('editor.fileFormBuilder.header_mapping')" class="excelHeaderType">
 							<el-radio-group v-model="model.fileProperty.excel_header_type">
 								<el-radio label="value">{{
 									$t('editor.fileFormBuilder.header_mapping_value')
@@ -122,12 +126,17 @@
 							</el-radio-group>
 						</el-form-item>
 						<!-- 内容 -->
-						<el-form-item :label="$t('editor.fileFormBuilder.excel_value_type')" prop="excel_value_start">
+						<el-form-item
+							:label="$t('editor.fileFormBuilder.excel_value_type')"
+							prop="excel_value_start"
+							class="excel_value_start"
+						>
 							<el-input
 								v-model.number="model.fileProperty.excel_value_start"
 								maxlength="10"
 								show-word-limit
 								size="mini"
+								onkeyup="model.fileProperty.excel_value_start = model.fileProperty.excel_value_start.replace(/[^\d.]/g,'');"
 								:placeholder="$t('editor.fileFormBuilder.excel_value_start')"
 							></el-input>
 							<span class="separate"> ~ </span>
@@ -136,6 +145,7 @@
 								maxlength="10"
 								show-word-limit
 								size="mini"
+								onkeyup="model.fileProperty.excel_value_end = model.fileProperty.excel_value_end.replace(/[^\d.]/g,'');"
 								:placeholder="$t('editor.fileFormBuilder.excel_value_end')"
 							></el-input>
 						</el-form-item>
@@ -155,13 +165,6 @@
 					>{{ $t('editor.fileFormBuilder.loadSchema') }}</el-button
 				>
 				<div class="schema-tip">{{ $t('editor.fileFormBuilder.loadSchemaTip') }}</div>
-				<label class="file-source-label">{{ $t('editor.fileFormBuilder.tableName') }}</label>
-				<el-input
-					v-model="model.tableName"
-					size="mini"
-					:disabled="disabled"
-					:placeholder="$t('formBuilder.input.placeholderPrefix') + $t('editor.fileFormBuilder.tableName')"
-				></el-input>
 				<div class="e-entity-wrap">
 					<entity
 						:schema="convertSchemaToTreeData(schema)"
@@ -197,9 +200,9 @@ export default {
 				callback(
 					new Error(this.$t('editor.fileFormBuilder.excel_header_end') + this.$t('formBuilder.noneText'))
 				);
-			} else if (config === '') {
+			} else if (config === '' && this.model.fileProperty.gridfs_header_type === 'custom') {
 				callback(new Error(this.$t('editor.fileFormBuilder.header_type_required')));
-			} else if (!/^[A-Z]+[1-9]+$/.test(start) || !/^[A-Z]+[1-9]+$/.test(end)) {
+			} else if ((!/^[A-Z]+[1-9]+$/.test(start) && start !== '') || (!/^[A-Z]+[1-9]+$/.test(end) && end !== '')) {
 				callback(new Error(this.$t('editor.fileFormBuilder.excel_cell_tip')));
 			}
 		};
@@ -210,19 +213,8 @@ export default {
 				callback(new Error(this.$t('editor.fileFormBuilder.sheet_start') + this.$t('formBuilder.noneText')));
 			} else if (end === '') {
 				callback(new Error(this.$t('editor.fileFormBuilder.sheet_end') + this.$t('formBuilder.noneText')));
-			} else if (!/^([1-9]\d*)?$/.test(start) || !/^([1-9]\d*)?$/.test(end)) {
-				callback(new Error(this.$t('editor.fileFormBuilder.excel_number')));
-			} else if (/^([1-9]\d*)?$/.test(start) && /^([1-9]\d*)?$/.test(end)) {
-				if (start > end) {
-					callback(new Error(this.$t('editor.fileFormBuilder.excel_value_end_gt_start')));
-				}
-			}
-		};
-		let validateValue = (rule, value, callback) => {
-			let start = this.model.fileProperty.excel_value_start;
-			let end = this.model.fileProperty.excel_value_end;
-			if (!/^([1-9]\d*)?$/.test(start) || !/^([1-9]\d*)?$/.test(end)) {
-				callback(new Error(this.$t('editor.fileFormBuilder.excel_number')));
+			} else if (start > end) {
+				callback(new Error(this.$t('editor.fileFormBuilder.excel_value_end_gt_start')));
 			}
 		};
 		return {
@@ -289,12 +281,6 @@ export default {
 						validator: validateSheet,
 						trigger: 'blur'
 					}
-				],
-				excel_value_start: [
-					{
-						validator: validateValue,
-						trigger: 'blur'
-					}
 				]
 			},
 			dialogDatabaseTypeVisible: false,
@@ -324,22 +310,24 @@ export default {
 			templeSchema = [];
 		ws.ready(() => {
 			ws.on('execute_load_schema_result', res => {
+				this.reloadingSchema = false;
+				debugger;
 				if (res.status === 'SUCCESS' && res.result) {
 					this.$message.success(this.$t('message.reloadSchemaSuccess'));
 					templeSchema = res.result;
-				} else {
-					this.$message.error(res.error);
-				}
-				this.reloadingSchema = false;
-				if (templeSchema && templeSchema.length) {
-					templeSchema.forEach(item => {
-						if (item.connId === this.model.connectionId) {
-							schema = item.schema;
-							if (!this.model.tableName || this.model.tableName === '') {
-								this.model.tableName = item.tableName;
+					if (templeSchema && templeSchema.length) {
+						templeSchema.forEach(item => {
+							if (item.connId === this.model.connectionId) {
+								schema = item.schema;
+								if (!this.model.tableName || this.model.tableName === '') {
+									this.model.tableName = item.tableName;
+								}
 							}
-						}
-					});
+						});
+					}
+				} else {
+					schema = null;
+					this.$message.error(res.error);
 				}
 				self.$nextTick(() => {
 					self.$emit('schemaChange', _.cloneDeep(schema));
@@ -465,6 +453,7 @@ export default {
 						{
 							connId: this.model.connectionId,
 							userId: this.$cookie.get('user_id'),
+							tableName: this.model.tableName,
 							fileProperty: Object.assign({}, this.model.fileProperty, {
 								file_type: this.model.database_type
 							})
@@ -522,6 +511,7 @@ export default {
 					margin-left: 10px;
 				}
 				.tip {
+					width: 97%;
 					font-size: 12px;
 					color: #999;
 					margin-top: 5px;
@@ -578,24 +568,31 @@ export default {
 <style lang="less">
 .editor-file-form-builder .form-excel-wrap {
 	.el-form-item {
-		margin-bottom: 10px;
+		margin-bottom: 0;
 	}
 	.el-form-item__content {
 		display: flex;
 		font-size: 12px;
 		margin-right: 20px;
-		line-height: 25px;
+	}
+	.el-form-item__error {
+		padding-top: 0;
+	}
+	.el-form-item__label:before {
+		content: '*';
+		color: #f56c6c;
+		margin-right: 4px;
+	}
+	.excel_value_start {
+		.el-form-item__label:before {
+			content: '';
+		}
 	}
 	.el-form-item__label {
 		font-size: 12px;
-		line-height: 20px;
 	}
 	.el-radio__label {
 		font-size: 12px;
-	}
-	.el-radio-button__inner,
-	.el-radio-group {
-		margin-bottom: 10px;
 	}
 	.headerType .el-form-item__content {
 		flex-direction: column;
@@ -604,9 +601,13 @@ export default {
 			font-size: 12px;
 		}
 	}
-	.excelHeaderType .el-form-item__content {
-		display: block;
-		font-size: 12px;
+	.excel_header_start {
+	}
+	.excelHeaderType {
+		.el-form-item__content {
+			display: block;
+			font-size: 12px;
+		}
 	}
 }
 </style>

@@ -189,7 +189,7 @@ export default {
 	},
 	data() {
 		let types =
-			this.$route.types ||
+			this.$route.meta.types ||
 			'database|job|dataflow|api|table|view|collection|mongo_view|directory|ftp|apiendpoint'.split('|');
 		return {
 			title: '',

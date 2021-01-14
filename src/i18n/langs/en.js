@@ -1360,12 +1360,13 @@ const en = {
 			excel_cell_tip: 'The field range must be uppercase letter + number',
 			excel_value_end_gt_start:
 				'The number of ending page must be greater than or equal to the number of starting page',
+			excel_value_range: 'Enter the abscissa range of Excel, "line 2 to line 100", can be entered as: "2" ~ "10"',
 			fileFilter: 'File filter',
 			include: 'Include file',
 			exclude: 'Discard file',
 			loadSchema: 'Load Schema',
 			xpath: 'Select record data XPath',
-			tableName: 'Table name',
+			tableName: 'Model name',
 			loadSchemaTip:
 				'After configuring the above items, please click the Load Model" button to update the file model. If there is no model, sync transmission cannot be performed'
 		}
@@ -1504,7 +1505,7 @@ const en = {
 		cancel: 'Cancel',
 		backDetection: 'backstage testing',
 		test: {
-			title: 'Test Result',
+			testResult: 'Test connection result: ',
 			success: 'Pass',
 			fail: 'Failed',
 			testing: 'Untest',
@@ -1534,7 +1535,9 @@ const en = {
 			sslValidate: 'Validate Server Certificate',
 			sslCA: 'Certificate Authority',
 			thinType: 'Thin Type',
-			databaseOwner: 'Database Owner',
+			connectionMode: 'Connection mode',
+			databaseOwner: 'Schema',
+			serviceName: 'Service name',
 			timeZone: 'Date Type Timezone',
 			ReloadSchema: 'Reload schema periodically',
 			clusterName: 'Cluster Name',

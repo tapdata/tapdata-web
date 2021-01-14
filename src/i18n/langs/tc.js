@@ -1339,7 +1339,7 @@ const tc = {
 			loadSchema: '加載模型',
 			loadSchemaTip: '配置完上述配置項後請點擊“加載模型”按鈕以更新文件的模型，沒有文件模型無法執行同步傳輸',
 			xpath: '數據記錄的XPath',
-			tableName: '表名'
+			tableName: '模型名'
 		}
 	},
 	dataVerify: {
@@ -1469,7 +1469,7 @@ const tc = {
 		title: '新建數據庫',
 		saveSuccess: '測試通過並創建成功',
 		saveFail: '保存失敗',
-		primaryTest: '正在啟動連接檢測服務，請稍等 ...',
+		primaryTest: '正在啟動連接檢測服務，請稍等 ',
 
 		submit: '保存',
 		cancel: '取消',
@@ -1505,7 +1505,9 @@ const tc = {
 			sslValidate: '驗證服務端證書',
 			sslCA: '證書頒發機构',
 			thinType: '認證方式',
-			databaseOwner: '數據庫歸屬帳戶名',
+			connectionMode: '連接方式',
+			databaseOwner: 'Schema',
+			serviceName: '服務名',
 			timeZone: '時間類型的時區',
 			ReloadSchema: '定期加載schema',
 			clusterName: '集群名稱',

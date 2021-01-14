@@ -1,7 +1,7 @@
 <template>
 	<el-dialog
 		class="connection-test-dialog"
-		:title="$t('dataForm.test.title')"
+		:title="$t('connection.testConnection')"
 		:visible="dialogTestVisible"
 		width="770px"
 		:show-close="false"
@@ -10,9 +10,23 @@
 		:close-on-click-modal="false"
 		:close-on-press-escape="false"
 	>
-		<div v-show="testData.testLogs && testData.testLogs.length === 0">
-			<div v-if="wsError === 'ERROR'" style="color: #d54e21">{{ $t('dataForm.test.error') }}</div>
-			<div v-else>{{ $t('dataForm.primaryTest') }}</div>
+		<div class="test-status">
+			<div
+				v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'"
+				style="color: #d54e21"
+			>
+				{{ $t('dataForm.test.error') }}
+			</div>
+			<div v-else>
+				<div v-if="status === 'invalid' || status === 'ready'">
+					{{ $t('dataForm.test.testResult')
+					}}<span :style="`color: ${colorMap[status]};`">{{ statusMap[status] }}</span>
+				</div>
+				<div v-else>
+					{{ $t('dataForm.primaryTest') }}
+					<el-image style="width: 32px; height: 15px;" src="static/editor/wating.svg"></el-image>
+				</div>
+			</div>
 		</div>
 		<el-table
 			:data="testData.testLogs"
@@ -28,7 +42,14 @@
 			</el-table-column>
 			<el-table-column prop="status" :label="$t('dataForm.test.result')" width="100">
 				<template slot-scope="scope">
-					<span :style="`color: ${colorMap[scope.row.status]};`">{{ statusMap[scope.row.status] }}</span>
+					<span
+						v-if="scope.row.status === 'failed' && !scope.row.required"
+						:style="`color: ${colorMap['warning']};`"
+						>{{ statusMap[scope.row.status] }}</span
+					>
+					<span v-else :style="`color: ${colorMap[scope.row.status]};`">{{
+						statusMap[scope.row.status]
+					}}</span>
 				</template>
 			</el-table-column>
 			<el-table-column prop="fail_message" :label="$t('dataForm.test.information')" width="358">
@@ -64,13 +85,21 @@ export default {
 				progress: 0
 			},
 			wsError: '',
+			status: '',
 			timer: null,
 			colorMap: {
 				passed: '#70AD47',
 				waiting: '#aaaaaa',
-				failed: '#f56c6c'
+				failed: '#f56c6c',
+				warning: '#ffc107',
+				ready: '#70AD47',
+				invalid: '#f56c6c',
+				testing: '#aaaaaa'
 			},
 			statusMap: {
+				ready: this.$t('dataForm.test.success'),
+				invalid: this.$t('dataForm.test.fail'),
+				testing: this.$t('dataForm.test.testing'),
 				passed: this.$t('dataForm.test.success'),
 				waiting: this.$t('dataForm.test.testing'),
 				failed: this.$t('dataForm.test.fail')
@@ -104,6 +133,7 @@ export default {
 						this.testData.testLogs = validate_details;
 						testData['testLogs '] = validate_details;
 						testData['status'] = result.status;
+						this.status = result.status;
 					}
 					this.$emit('returnTestData', testData);
 				});
@@ -140,10 +170,18 @@ export default {
 			// 取消长连接
 			ws.off('testConnection');
 			this.testData.testLogs = [];
+			this.status = '';
 		}
 	}
 };
 </script>
+<style lang="less" scoped>
+.connection-test-dialog {
+	.test-status {
+		margin-bottom: 10px;
+	}
+}
+</style>
 
 <style lang="less">
 .connection-test-dialog {

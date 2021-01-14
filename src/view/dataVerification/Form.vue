@@ -273,7 +273,9 @@
 					></JsEditor>
 					<div class="js-fixText">}</div>
 				</div>
-				<div class="example markdown-body" v-html="htmlMD"></div>
+				<div class="markdown-body-wrap example">
+					<div class="markdown-body" v-html="htmlMD"></div>
+				</div>
 			</div>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="handleAddScriptClose" size="mini">{{ $t('dataForm.cancel') }}</el-button>
@@ -504,7 +506,6 @@ export default {
 		},
 		//处理普通表同步的情况
 		dealCustomFlow(flowData, callback) {
-			this.getStageMap(flowData.stages);
 			let flowStages = flowData.stages.filter(stg => ['table', 'collection'].includes(stg.type));
 			this.flowStages = flowStages;
 			let connectionIds = [];
@@ -534,7 +535,7 @@ export default {
 					})
 					.then(res => {
 						let tables = res.data || [];
-						flowStages.forEach(stg => {
+						flowStages.forEach((stg, index) => {
 							let table = tables.find(
 								tb => tb.source.id === stg.connectionId && tb.original_name === stg.tableName
 							);
@@ -548,7 +549,9 @@ export default {
 									this.getTree(this.targetTree, stg);
 								}
 							}
+							flowStages[index] = stg;
 						});
+						this.getStageMap(flowStages);
 						callback();
 					});
 			}
@@ -641,7 +644,8 @@ export default {
 				let result = [];
 				lanes.forEach(stgId => {
 					let targetStg = stages.find(it => it.id === stgId);
-					if (targetStg.outputLanes.length && !['table', 'collection'].includes(targetStg.type)) {
+					if (targetStg.outputLanes.length) {
+						result.push(stgId);
 						result.push(...checkOutputLanes(targetStg.outputLanes));
 					} else {
 						result.push(stgId);
@@ -652,7 +656,7 @@ export default {
 			let map = {};
 			let sMap = {};
 			stages.forEach(stg => {
-				if (stg.outputLanes.length && ['table', 'collection'].includes(stg.type)) {
+				if (stg.outputLanes.length) {
 					let stage = sMap[stg.connectionId + stg.tableName] || {};
 					let stgId = stage.id || stg.id;
 					let outputLanes = map[stgId] || [];
@@ -706,26 +710,30 @@ export default {
 			this.form.tasks = [];
 			let stages = this.flowStages;
 			let map = this.stageMap;
-			for (const key in map) {
-				const lanes = map[key];
-				let stg = stages.find(stg => stg.id === key);
-				lanes.forEach(id => {
-					let targetStage = stages.find(it => it.id === id);
-					let task = {
-						source: this.setTable(stg),
-						target: Object.assign({}, TABLE_PARAMS),
-						sourceTable: [stg.connectionId, stg.tableName],
-						showAdvancedVerification: false,
-						script: '', //后台使用 需要拼接function头尾
-						webScript: '' //前端使用 用于页面展示
-					};
-					if (targetStage) {
-						this.setTarget(task, targetStage);
-					}
-					this.form.tasks.push(task);
-				});
-			}
-			this.getTaskTree();
+			this.$nextTick(() => {
+				for (const key in map) {
+					const lanes = map[key];
+					let stg = stages.find(stg => stg.id === key);
+					lanes.forEach(id => {
+						let targetStage = stages.find(it => it.id === id);
+						let task = {
+							source: this.setTable(stg),
+							target: Object.assign({}, TABLE_PARAMS),
+							sourceTable: [stg.connectionId, stg.tableName],
+							sourceTree: [],
+							targetTree: [],
+							showAdvancedVerification: false,
+							script: '', //后台使用 需要拼接function头尾
+							webScript: '' //前端使用 用于页面展示
+						};
+						if (targetStage) {
+							this.setTarget(task, targetStage);
+						}
+						this.form.tasks.push(task);
+					});
+				}
+				this.getTaskTree();
+			});
 		},
 		setTarget(task, targetStage) {
 			let stages = this.flowStages;
@@ -773,6 +781,8 @@ export default {
 			this.form.tasks.push({
 				source: Object.assign({}, TABLE_PARAMS),
 				target: Object.assign({}, TABLE_PARAMS),
+				sourceTree: [],
+				targetTree: [],
 				showAdvancedVerification: false,
 				script: '', //后台使用 需要拼接function头尾
 				webScript: '' //前端使用 用于页面展示

@@ -36,7 +36,7 @@ export default function(vm) {
 			{
 				type: 'radio',
 				field: 'thin_type',
-				label: vm.$t('dataForm.form.thinType'),
+				label: vm.$t('dataForm.form.connectionMode'),
 				options: [
 					{ label: 'SID', value: 'SID' },
 					{ label: 'SERVICE NAME', value: 'SERVICE_NAME' }
@@ -96,7 +96,7 @@ export default function(vm) {
 							}
 						],
 						triggerConfig: {
-							label: 'SERVICE NAME'
+							label: vm.$t('dataForm.form.serviceName')
 						}
 					}
 				]
