@@ -67,17 +67,17 @@ export const fileFormConfig = {
 				let name = this.attr('label/text');
 				if (!data.connectionId)
 					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`);
-				if (fileProperty.excel_header_start === '' && fileProperty.gridfs_header_config !== 'custom') {
+				if (fileProperty.excel_header_start === '' && fileProperty.gridfs_header_type !== 'custom') {
 					throw new Error(
 						`${name}: ` +
 							i18n.t('editor.fileFormBuilder.excel_header_start') +
 							i18n.t('formBuilder.noneText')
 					);
-				} else if (fileProperty.excel_header_end === '' && fileProperty.gridfs_header_config !== 'custom') {
+				} else if (fileProperty.excel_header_end === '' && fileProperty.gridfs_header_type !== 'custom') {
 					throw new Error(
 						`${name}: ` + i18n.t('editor.fileFormBuilder.excel_header_end') + i18n.t('formBuilder.noneText')
 					);
-				} else if (fileProperty.gridfs_header_config === '' && fileProperty.gridfs_header_config === 'custom') {
+				} else if (fileProperty.gridfs_header_config === '' && fileProperty.gridfs_header_type === 'custom') {
 					throw new Error(`${name}: ` + i18n.t('editor.fileFormBuilder.header_type_required'));
 				} else if (fileProperty.sheet_start === '') {
 					throw new Error(

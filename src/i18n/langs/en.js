@@ -1360,6 +1360,7 @@ const en = {
 			excel_cell_tip: 'The field range must be uppercase letter + number',
 			excel_value_end_gt_start:
 				'The number of ending page must be greater than or equal to the number of starting page',
+			excel_value_range: 'Enter the abscissa range of Excel, "line 2 to line 100", can be entered as: "2" ~ "10"',
 			fileFilter: 'File filter',
 			include: 'Include file',
 			exclude: 'Discard file',
