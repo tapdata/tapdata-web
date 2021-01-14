@@ -52,7 +52,7 @@ export const TYPEMAP = {
 	db2: 'IBM Db2',
 	mem_cache: 'Memory Cache',
 	file: 'File(s)',
-	custom_connection: 'SQL Server',
+	custom_connection: 'Custom connection',
 	'rest api': 'REST API',
 	'dummy db': 'Dummy DB',
 	gridfs: 'GridFS'

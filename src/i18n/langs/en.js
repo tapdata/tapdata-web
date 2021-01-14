@@ -1365,7 +1365,7 @@ const en = {
 			exclude: 'Discard file',
 			loadSchema: 'Load Schema',
 			xpath: 'Select record data XPath',
-			tableName: 'Table name',
+			tableName: 'Model name',
 			loadSchemaTip:
 				'After configuring the above items, please click the Load Model" button to update the file model. If there is no model, sync transmission cannot be performed'
 		}
@@ -1534,7 +1534,9 @@ const en = {
 			sslValidate: 'Validate Server Certificate',
 			sslCA: 'Certificate Authority',
 			thinType: 'Thin Type',
-			databaseOwner: 'Database Owner',
+			connectionMode: 'Connection mode',
+			databaseOwner: 'Schema',
+			serviceName: 'Service name',
 			timeZone: 'Date Type Timezone',
 			ReloadSchema: 'Reload schema periodically',
 			clusterName: 'Cluster Name',

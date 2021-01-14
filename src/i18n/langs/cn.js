@@ -1345,7 +1345,7 @@ const cn = {
 			loadSchema: '加载模型',
 			loadSchemaTip: '配置完上述配置项后请点击“加载模型”按钮以更新文件的模型，没有文件模型无法执行同步传输',
 			xpath: '数据记录的XPath',
-			tableName: '表名'
+			tableName: '模型名'
 		}
 	},
 	dataVerify: {
@@ -1509,7 +1509,9 @@ const cn = {
 			sslValidate: '验证服务端证书',
 			sslCA: '证书颁发机构',
 			thinType: '认证方式',
-			databaseOwner: '数据库归属账户名',
+			connectionMode: '连接方式',
+			databaseOwner: 'Schema',
+			serviceName: '服务名',
 			timeZone: '时间类型的时区',
 			ReloadSchema: '定期加载schema',
 			clusterName: '集群名称',
