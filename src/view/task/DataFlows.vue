@@ -756,24 +756,28 @@ export default {
 			return tagList;
 		},
 		handleOperationClassify(listtags) {
-			let attributes = [];
-			if (this.dataFlowId) {
-				let node = {
-					id: this.dataFlowId,
-					listtags: listtags
-				};
-				attributes.push(node);
-			} else {
-				this.multipleSelection.forEach(row => {
-					row.listtags = row.listtags || [];
-					let node = {
-						id: row.id,
-						listtags: listtags
-					};
-					attributes.push(node);
-				});
-			}
-			dataFlows.patchAll({ attrs: attributes }).then(() => {
+			// let attributes = [];
+			let attributes = {
+				id: this.multipleSelection.map(r => r.id),
+				listtags
+			};
+			// if (this.dataFlowId) {
+			// 	let node = {
+			// 		id: this.dataFlowId,
+			// 		listtags: listtags
+			// 	};
+			// 	attributes.push(node);
+			// } else {
+			// 	this.multipleSelection.forEach(row => {
+			// 		row.listtags = row.listtags || [];
+			// 		let node = {
+			// 			id: row.id,
+			// 			listtags: listtags
+			// 		};
+			// 		attributes.push(node);
+			// 	});
+			// }
+			dataFlows.batchUpdateListtags(attributes).then(() => {
 				this.dataFlowId = '';
 				this.getData();
 			});

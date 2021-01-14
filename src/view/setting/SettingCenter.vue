@@ -5,7 +5,7 @@
 			<ul>
 				<li
 					:class="activePanel === 'settings' ? 'active' : ''"
-					v-readonlybtn="authoritySetting"
+					v-if="authoritySetting"
 					@click="changeName('settings')"
 				>
 					<i class="iconfont icon-shezhi1"></i>
