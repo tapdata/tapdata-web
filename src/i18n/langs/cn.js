@@ -1473,13 +1473,13 @@ const cn = {
 		title: '新建数据库',
 		saveSuccess: '测试通过并创建成功',
 		saveFail: '保存失败',
-		primaryTest: '正在启动连接检测服务，请稍等...',
+		primaryTest: '正在启动连接检测服务，请稍等 ',
 
 		submit: '保存',
 		cancel: '取消',
 		backDetection: '后台检测',
 		test: {
-			title: '测试结果',
+			testResult: '连接测试结果: ',
 			success: '测试通过',
 			fail: '测试未通过',
 			testing: '未测试',

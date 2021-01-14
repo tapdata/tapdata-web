@@ -1504,7 +1504,7 @@ const en = {
 		cancel: 'Cancel',
 		backDetection: 'backstage testing',
 		test: {
-			title: 'Test Result',
+			testResult: 'Test connection result: ',
 			success: 'Pass',
 			fail: 'Failed',
 			testing: 'Untest',
