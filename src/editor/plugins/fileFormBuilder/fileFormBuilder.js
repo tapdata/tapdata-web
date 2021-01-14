@@ -87,6 +87,10 @@ export const fileFormConfig = {
 					throw new Error(
 						`${name}: ` + i18n.t('editor.fileFormBuilder.sheet_end') + i18n.t('formBuilder.noneText')
 					);
+				} else if (data.tableName === '') {
+					throw new Error(
+						`${name}: ` + i18n.t('editor.fileFormBuilder.tableName') + i18n.t('formBuilder.noneText')
+					);
 				}
 				return true;
 			}

@@ -27,6 +27,13 @@
 			<div class="form-builder">
 				<label class="file-source-label">{{ $t('editor.fileFormBuilder.fileSource') }}</label>
 				<FbSelect v-model="model.connectionId" :config="fileConfig" style="margin-bottom: 10px"></FbSelect>
+				<label class="file-source-label">{{ $t('editor.fileFormBuilder.tableName') }}</label>
+				<el-input
+					v-model="model.tableName"
+					size="mini"
+					:disabled="disabled"
+					:placeholder="$t('formBuilder.input.placeholderPrefix') + $t('editor.fileFormBuilder.tableName')"
+				></el-input>
 				<form-builder ref="form" v-model="model.fileProperty" :config="config"></form-builder>
 				<label class="file-source-label" v-if="model.database_type === 'excel'">{{
 					$t('editor.fileFormBuilder.excelValue')
@@ -158,13 +165,6 @@
 					>{{ $t('editor.fileFormBuilder.loadSchema') }}</el-button
 				>
 				<div class="schema-tip">{{ $t('editor.fileFormBuilder.loadSchemaTip') }}</div>
-				<label class="file-source-label">{{ $t('editor.fileFormBuilder.tableName') }}</label>
-				<el-input
-					v-model="model.tableName"
-					size="mini"
-					:disabled="disabled"
-					:placeholder="$t('formBuilder.input.placeholderPrefix') + $t('editor.fileFormBuilder.tableName')"
-				></el-input>
 				<div class="e-entity-wrap">
 					<entity
 						:schema="convertSchemaToTreeData(schema)"
@@ -453,6 +453,7 @@ export default {
 						{
 							connId: this.model.connectionId,
 							userId: this.$cookie.get('user_id'),
+							tableName: this.model.tableName,
 							fileProperty: Object.assign({}, this.model.fileProperty, {
 								file_type: this.model.database_type
 							})
