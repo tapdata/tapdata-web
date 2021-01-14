@@ -62,7 +62,7 @@
 									class="btn"
 									size="mini"
 									v-readonlybtn="'datasource_edition'"
-									:disabled="permissionBtnDisabel('datasource_edition_all_data', userId)"
+									:disabled="$disabledByPermission('datasource_edition_all_data', userId)"
 									@click="edit(id, type)"
 								>
 									<i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
@@ -75,7 +75,7 @@
 									v-readonlybtn="'datasource_edition'"
 									@click="reload()"
 									:disabled="
-										permissionBtnDisabel('datasource_edition_all_data', userId) ||
+										$disabledByPermission('datasource_edition_all_data', userId) ||
 											!['ready'].includes(this.status)
 									"
 								>
@@ -89,7 +89,7 @@
 									class="btn"
 									size="mini"
 									v-readonlybtn="'datasource_edition'"
-									:disabled="permissionBtnDisabel('datasource_edition_all_data', userId)"
+									:disabled="$disabledByPermission('datasource_edition_all_data', userId)"
 									@click="beforeTest(id)"
 								>
 									<i class="iconfont icon-lianjie1"> {{ $t('connection.preview.test') }} </i>
@@ -133,7 +133,6 @@
 import { getImgByType } from './util';
 import formConfig from './config';
 import Test from './Test';
-import { permissionBtnDisabel } from '@/plugins/directive';
 
 export default {
 	name: 'Preview',
@@ -184,7 +183,6 @@ export default {
 		this.clearInterval();
 	},
 	methods: {
-		permissionBtnDisabel,
 		getImgByType,
 		returnTestData(data) {
 			if (!data.status || data.status === null) return;

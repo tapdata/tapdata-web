@@ -14,6 +14,9 @@ Vue.directive('readonlybtn', {
 Vue.prototype.$has = function(code) {
 	return hasPermissionByCode(code);
 };
+Vue.prototype.$disabledByPermission = function(code, id) {
+	return permissionBtnDisable(code, id);
+};
 
 export function hasPermissionByCode(code) {
 	let permissions = sessionStorage.getItem('tapdata_permissions');
@@ -41,7 +44,7 @@ export function hasPermissionByCode(code) {
 	return false;
 }
 
-export function permissionBtnDisabel(code, id) {
+export function permissionBtnDisable(code, id) {
 	let falg = false;
 	let cookie = window.VueCookie;
 	let user_id = cookie.get('user_id');

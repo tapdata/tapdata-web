@@ -83,7 +83,12 @@
 					<i class="iconfont icon-biaoqian back-btn-icon"></i>
 					<span> {{ $t('dataFlow.taskBulkTag') }}</span>
 				</el-button>
-				<el-button class="btn btn-create" size="mini" @click="openCreateDialog">
+				<el-button
+					v-readonlybtn="'new_model_creation'"
+					class="btn btn-create"
+					size="mini"
+					@click="openCreateDialog"
+				>
 					<i class="iconfont icon-jia add-btn-icon"></i>
 					<span>{{ $t('metadata.createModel') }}</span>
 				</el-button>
@@ -135,13 +140,32 @@
 			</el-table-column>
 			<el-table-column label="操作">
 				<template slot-scope="scope">
-					<el-button size="mini" type="text" @click="toDetails(scope.row)">
+					<el-button
+						v-readonlybtn="'data_catalog_edition'"
+						size="mini"
+						type="text"
+						:disabled="$disabledByPermission('data_catalog_edition_all_data', scope.row.source.user_id)"
+						@click="toDetails(scope.row)"
+					>
 						{{ $t('button.details') }}
 					</el-button>
-					<el-button size="mini" type="text" @click="changeName(scope.row)">
+					<el-button
+						v-readonlybtn="'data_catalog_edition'"
+						size="mini"
+						type="text"
+						:disabled="$disabledByPermission('data_catalog_edition_all_data', scope.row.source.user_id)"
+						@click="changeName(scope.row)"
+					>
 						{{ $t('button.rename') }}
 					</el-button>
-					<el-button size="mini" type="text" @click="remove(scope.row)">{{ $t('button.delete') }}</el-button>
+					<el-button
+						v-readonlybtn="'meta_data_deleting'"
+						size="mini"
+						type="text"
+						:disabled="$disabledByPermission('meta_data_deleting_all_data', scope.row.source.user_id)"
+						@click="remove(scope.row)"
+						>{{ $t('button.delete') }}</el-button
+					>
 				</template>
 			</el-table-column>
 		</TablePage>

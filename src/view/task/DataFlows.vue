@@ -257,7 +257,7 @@
 										inactive-value="stopping"
 										active-value="scheduled"
 										:disabled="
-											permissionBtnDisabel('SYNC_job_operation_all_data', scope.row.user_id) ||
+											$disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
 												(statusBtMap[scope.row.status] &&
 													statusBtMap[scope.row.status].switch &&
 													!(scope.row.status == 'draft' && scope.row.checked == true))
@@ -285,7 +285,7 @@
 									<el-button
 										type="text"
 										:disabled="
-											permissionBtnDisabel('SYNC_job_edition_all_data', scope.row.user_id) ||
+											$disabledByPermission('SYNC_job_edition_all_data', scope.row.user_id) ||
 												(statusBtMap[scope.row.status] && statusBtMap[scope.row.status].edit)
 										"
 										@click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)"
@@ -321,7 +321,7 @@
 									<el-button
 										type="text"
 										:disabled="
-											permissionBtnDisabel('SYNC_job_delete_all_data', scope.row.user_id) ||
+											$disabledByPermission('SYNC_job_delete_all_data', scope.row.user_id) ||
 												(statusBtMap[scope.row.status] && statusBtMap[scope.row.status].delete)
 										"
 										@click="handleDelete(scope.row)"
@@ -350,7 +350,7 @@
 										</el-dropdown-item>
 										<el-dropdown-item
 											:disabled="
-												permissionBtnDisabel(
+												$disabledByPermission(
 													'SYNC_job_operation_all_data',
 													scope.row.user_id
 												) ||
@@ -366,7 +366,7 @@
 											:disabled="
 												(statusBtMap[scope.row.status] &&
 													statusBtMap[scope.row.status].forceStop) ||
-													permissionBtnDisabel(
+													$disabledByPermission(
 														'SYNC_job_operation_all_data',
 														scope.row.user_id
 													)
@@ -482,7 +482,6 @@ import Classification from '@/components/Classification';
 import SelectClassify from '../../components/SelectClassify';
 import SkipError from '../../components/SkipError';
 import DownAgent from '../downAgent/agentDown';
-import { permissionBtnDisabel } from '@/plugins/directive';
 
 export default {
 	components: { Classification, SelectClassify, DownAgent, SkipError },
@@ -689,7 +688,6 @@ export default {
 		}
 	},
 	methods: {
-		permissionBtnDisabel,
 		// 获取Agent是否安装
 		// getDataApi(type) {
 		// 	let params = {};

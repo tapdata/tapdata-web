@@ -181,7 +181,7 @@
 						class="btn-text"
 						type="text"
 						v-readonlybtn="'datasource_edition'"
-						:disabled="permissionBtnDisabel('datasource_edition_all_data', scope.row.user_id)"
+						:disabled="$disabledByPermission('datasource_edition_all_data', scope.row.user_id)"
 						@click="edit(scope.row.id, scope.row.database_type)"
 					>
 						{{ $t('message.edit') }}
@@ -198,7 +198,7 @@
 						class="btn-text"
 						type="text"
 						v-readonlybtn="'datasource_delete'"
-						:disabled="permissionBtnDisabel('datasource_delete_all_data', scope.row.user_id)"
+						:disabled="$disabledByPermission('datasource_delete_all_data', scope.row.user_id)"
 						@click="delConfirm(scope.row)"
 					>
 						{{ $t('message.delete') }}
@@ -243,7 +243,6 @@ import TablePage from '@/components/TablePage';
 import DatabaseTypeDialog from './DatabaseTypeDialog';
 import Preview from './Preview';
 import { verify, desensitization } from './util';
-import { permissionBtnDisabel } from '@/plugins/directive';
 
 let timeout = null;
 
@@ -319,7 +318,6 @@ export default {
 		clearInterval(timeout);
 	},
 	methods: {
-		permissionBtnDisabel,
 		//筛选条件
 		handleSortTable({ order, prop }) {
 			this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`;

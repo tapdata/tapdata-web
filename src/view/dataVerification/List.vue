@@ -236,7 +236,7 @@
 									class="btn-icon"
 									type="text"
 									size="mini"
-									:disabled="permissionBtnDisabel('verify_job_edition_all_data', scope.row.user_id)"
+									:disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
 									v-readonlybtn="'verify_job_edition'"
 									@click="startTask(scope.row.id)"
 								>
@@ -295,7 +295,7 @@
 									class="btn-icon el-icon-setting"
 									type="text"
 									size="mini"
-									:disabled="permissionBtnDisabel('verify_job_edition_all_data', scope.row.user_id)"
+									:disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
 									v-readonlybtn="'verify_job_edition'"
 									@click="goEdit(scope.row.id, scope.row.flowId)"
 								></el-button>
@@ -310,7 +310,7 @@
 									class="btn-icon el-icon-delete"
 									type="text"
 									size="mini"
-									:disabled="permissionBtnDisabel('verify_job_delete_all_data', scope.row.user_id)"
+									:disabled="$disabledByPermission('verify_job_delete_all_data', scope.row.user_id)"
 									v-readonlybtn="'verify_job_delete'"
 									@click="remove(scope.row.name, scope.row.id)"
 								></el-button>
@@ -337,7 +337,6 @@
 
 <script>
 import { toRegExp } from '../../util/util';
-import { permissionBtnDisabel } from '@/plugins/directive';
 let timeout = null;
 export default {
 	data() {
@@ -393,7 +392,6 @@ export default {
 		}, 10000);
 	},
 	methods: {
-		permissionBtnDisabel,
 		keyup() {
 			if (timeout) {
 				window.clearTimeout(timeout);
