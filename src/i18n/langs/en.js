@@ -2311,11 +2311,11 @@ const en = {
 			'Tapdata DFS Cloud Edition needs to install the agent locally to ensure the normal operation of the connection database and data transmission service. You can select the corresponding type below to download and install according to the type of server to be installed.',
 		step_2_title: 'Create a data source connection',
 		step_2_desc:
-			'Data source connection refers to the data connection of the database, file, GridFS, REST API and other types that can be used as the source. The data source must be created before the migration or synchronization task can be created.',
+			'Data source connection refers to the data connection of the database that can be used as the source. The data source must be created before the migration or synchronization task can be created.',
 		step_2_btn_label: 'Create a new source connection',
 		step_3_title: 'Create target connection',
 		step_3_desc:
-			'The target connection refers to the database, file, GridFS, REST API and other types of connections that can be used as data transmission targets. The target connection must be created before the migration or synchronization task can be created.',
+			'The target connection refers to the data connection of the database that can be used as data transmission targets. The target connection must be created before the migration or synchronization task can be created.',
 		step_3_btn_label: 'Create a new target connection',
 		step_4_title: 'Select task type',
 		step_4_desc:
