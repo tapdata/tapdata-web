@@ -469,7 +469,11 @@ export default {
 			}
 		},
 		signOut() {
-			signOut();
+			this.$api('users')
+				.logout()
+				.then(() => {
+					signOut();
+				});
 		},
 		menuHandler(index) {
 			// this.isCollapse = true;
