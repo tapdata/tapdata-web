@@ -513,7 +513,7 @@ export default {
 				this.stageId = selectStage.id;
 				this.getNodeName();
 				this.stage.nodeName = selectStage.form_data.name;
-				this.stageType = selectStage.type;
+				//this.stageType = selectStage.type;
 				// if (this.stageType === 'app.Database') {
 				// 	this.getStageDataApi(currentStageData.connectionId, '');
 				// } else if (this.stageType === 'app.Collection' || this.stageType === 'app.Table') {
