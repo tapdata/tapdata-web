@@ -1,6 +1,8 @@
 <template>
 	<div class="classification" :class="{ expand: isExpand }">
-		<el-button class="btn-expand" size="mini" icon="el-icon-d-arrow-right" @click="toggle()"></el-button>
+		<el-button class="btn-expand" size="mini" @click="toggle()">
+			<i class="iconfont icon-zhankai2"></i>
+		</el-button>
 		<div class="classification-header">
 			<div class="title">
 				<span>{{ $t('classification.title') }}</span>
@@ -335,8 +337,7 @@ export default {
 	border-radius: 3px;
 	overflow: hidden;
 	.btn-expand {
-		padding: 6px;
-		width: 26px;
+		padding: 2px 3px;
 		color: #666;
 		transform: rotate(0);
 		box-sizing: border-box;
