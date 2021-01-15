@@ -62,7 +62,7 @@
 								v-for="opt in dbOptions"
 								:key="opt.id"
 								:label="opt.name"
-								:value="opt.source.id"
+								:value="opt.id"
 							></el-option>
 						</el-select>
 					</li>
@@ -382,23 +382,30 @@ export default {
 			let filter = {
 				fields: {
 					name: true,
-					original_name: true,
-					meta_type: true,
 					id: true,
-					source: true,
-					qualified_name: true,
-					classifications: true,
-					'source._id': true,
-					'source.user_id': true,
-					'source.connection_type': true,
-					'source.database_type': true
-				},
-				where: {
-					is_deleted: false,
-					meta_type: 'database'
+					database_type: true,
+					connection_type: true,
+					status: true
 				}
+				// fields: {
+				// 	name: true,
+				// 	original_name: true,
+				// 	meta_type: true,
+				// 	id: true,
+				// 	source: true,
+				// 	qualified_name: true,
+				// 	classifications: true,
+				// 	'source._id': true,
+				// 	'source.user_id': true,
+				// 	'source.connection_type': true,
+				// 	'source.database_type': true
+				// },
+				// where: {
+				// 	is_deleted: false,
+				// 	meta_type: 'database'
+				// }
 			};
-			this.$api('MetadataInstances')
+			this.$api('connections')
 				.get({
 					filter: JSON.stringify(filter)
 				})
@@ -408,11 +415,11 @@ export default {
 					let options = [];
 					dbOptions.forEach(db => {
 						if (
-							db.source.database_type === 'mongodb' &&
-							['target', 'source_and_target'].includes(db.source.connection_type)
+							db.database_type === 'mongodb' &&
+							['target', 'source_and_target'].includes(db.connection_type)
 						) {
 							options.push({
-								label: db.name || db.original_name,
+								label: db.name,
 								value: db.id
 							});
 						}
@@ -473,7 +480,7 @@ export default {
 					let { model_type, database, tableName } = this.createForm;
 					let db = this.dbOptions.find(it => it.id === database);
 					let params = {
-						connectionId: db.qualified_name,
+						connectionId: db.id,
 						original_name: tableName,
 						is_deleted: false,
 						meta_type: model_type,
