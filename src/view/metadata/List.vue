@@ -62,7 +62,7 @@
 								v-for="opt in dbOptions"
 								:key="opt.id"
 								:label="opt.name"
-								:value="opt.source.id"
+								:value="opt.id"
 							></el-option>
 						</el-select>
 					</li>
