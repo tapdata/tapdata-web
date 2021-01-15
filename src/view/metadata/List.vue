@@ -144,7 +144,12 @@
 						v-readonlybtn="'data_catalog_edition'"
 						size="mini"
 						type="text"
-						:disabled="$disabledByPermission('data_catalog_edition_all_data', scope.row.source.user_id)"
+						:disabled="
+							$disabledByPermission(
+								'data_catalog_edition_all_data',
+								scope.row.source ? scope.row.source.user_id : ''
+							)
+						"
 						@click="toDetails(scope.row)"
 					>
 						{{ $t('button.details') }}
@@ -153,7 +158,12 @@
 						v-readonlybtn="'data_catalog_edition'"
 						size="mini"
 						type="text"
-						:disabled="$disabledByPermission('data_catalog_edition_all_data', scope.row.source.user_id)"
+						:disabled="
+							$disabledByPermission(
+								'data_catalog_edition_all_data',
+								scope.row.source ? scope.row.source.user_id : ''
+							)
+						"
 						@click="changeName(scope.row)"
 					>
 						{{ $t('button.rename') }}
@@ -162,7 +172,12 @@
 						v-readonlybtn="'meta_data_deleting'"
 						size="mini"
 						type="text"
-						:disabled="$disabledByPermission('meta_data_deleting_all_data', scope.row.source.user_id)"
+						:disabled="
+							$disabledByPermission(
+								'meta_data_deleting_all_data',
+								scope.row.source ? scope.row.source.user_id : ''
+							)
+						"
 						@click="remove(scope.row)"
 						>{{ $t('button.delete') }}</el-button
 					>
@@ -289,9 +304,9 @@ export default {
 			};
 			this.table.fetch(1);
 		},
-		getData({ page, tags }) {
+		getData({ page, tags, cache }) {
 			let { current, size } = page;
-			let { isFuzzy, keyword, metaType, dbId } = this.searchParams;
+			let { isFuzzy, keyword, metaType, dbId } = Object.assign({}, this.searchParams, cache);
 			let where = {
 				is_deleted: false
 			};
@@ -350,7 +365,13 @@ export default {
 			]).then(([countRes, res]) => {
 				return {
 					total: countRes.data.count,
-					data: res.data
+					data: res.data,
+					cache: {
+						isFuzzy,
+						keyword,
+						metaType,
+						dbId
+					}
 				};
 			});
 		},
@@ -474,6 +495,7 @@ export default {
 			this.$prompt('', this.$t('connection.rename'), {
 				inputPattern: /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/, // eslint-disable-line
 				inputErrorMessage: this.$t('dialog.placeholderTable'),
+				inputValue: item.name || item.original_name,
 				beforeClose: (action, instance, done) => {
 					if (action === 'confirm') {
 						instance.confirmButtonLoading = true;

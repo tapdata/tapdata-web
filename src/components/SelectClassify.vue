@@ -42,7 +42,7 @@
 			@node-click="handleCheckChange"
 			class="SelectClassify-tree"
 		>
-			<span class="custom-tree-node" slot-scope="{ node, data }">
+			<span class="custom-tree-node" slot-scope="{ data }">
 				<span>
 					<span class="iconfont icon-Folder-closed filter-icon"></span>
 					<span class="table-label">{{ data.value }}</span>

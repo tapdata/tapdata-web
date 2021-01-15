@@ -124,15 +124,23 @@ export default {
 					if (!hideLoading) {
 						this.loading = true;
 					}
+					let params = this.$cache.get('TABLE_PAGE_PARAMS') || {};
+					let pageParams = params[this.$route.name] || {};
 					this.remoteMethod &&
 						this.remoteMethod({
 							page: this.page,
 							tags: this.tags,
-							data: this.list
+							data: this.list,
+							cache: pageParams
 						})
-							.then(({ data, total }) => {
+							.then(({ data, total, cache }) => {
 								this.page.total = total;
 								this.list = data || [];
+								if (cache) {
+									pageParams = Object.assign({}, pageParams, cache);
+									params[this.$route.name] = pageParams;
+									this.$cache.set('TABLE_PAGE_PARAMS', params);
+								}
 							})
 							.finally(() => {
 								this.loading = false;

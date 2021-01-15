@@ -10,6 +10,7 @@ import i18n from './i18n/i18n';
 import VueBus from 'vue-bus';
 import VueClipboard from 'vue-clipboard2';
 import factory from './api/factory';
+import Cache from './util/cache';
 
 import './plugins/element.js';
 import 'element-ui/lib/theme-chalk/index.css';
@@ -26,6 +27,7 @@ Vue.use(VueClipboard);
 Vue.prototype.$moment = moment;
 Vue.prototype.$api = factory;
 Vue.prototype.$window = window;
+Vue.prototype.$cache = new Cache();
 
 window.VueCookie = VueCookie;
 window.ChildRoutes = childRoutes;
