@@ -451,20 +451,20 @@ export default {
 					where.status = 'error';
 				} else if (result === 'passed') {
 					where = {
-						status: { neq: ['error'] },
+						status: { neq: 'error' },
 						result: 'passed'
 					};
 				} else if (result === 'row_count') {
 					where = {
-						status: { neq: ['error'] },
+						status: { neq: 'error' },
 						result: 'failed',
 						inspectMethod: 'row_count'
 					};
 				} else {
 					where = {
-						status: { neq: ['error'] },
+						status: { neq: 'error' },
 						result: 'failed',
-						inspectMethod: { neq: ['row_count'] }
+						inspectMethod: { neq: 'row_count' }
 					};
 				}
 			}
