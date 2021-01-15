@@ -268,8 +268,8 @@ const defaultModel = {
 	sslKeyFile: null,
 
 	ftp_passive: true, // 连接方式
-	connection_timeout_seconds: 0, //连接超时时间
-	data_timeout_seconds: 0, //传输超时时间
+	connection_timeout_seconds: 60, //连接超时时间
+	data_timeout_seconds: 60, //传输超时时间
 	fileDefaultCharset: '', // 编码格式
 	file_upload_chunk_size: 261120, //文件上传文件块大小
 	file_upload_mode: '', //文件上传模式
