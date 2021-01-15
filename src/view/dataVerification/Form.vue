@@ -630,6 +630,7 @@ export default {
 					this.flowStages.push({
 						id: key,
 						connectionId: table.source.id,
+						connectionName: table.source.name,
 						fields: table.fields,
 						tableName: table.original_name,
 						outputLanes
