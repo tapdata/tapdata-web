@@ -116,9 +116,11 @@ export default {
 		this.getData();
 	},
 	watch: {
-		types() {
-			this.clear();
-			this.getData();
+		types(_new, _old) {
+			if (_new.toString() !== _old.toString()) {
+				this.clear();
+				this.getData();
+			}
 		},
 		filterText(val) {
 			this.$refs.tree.filter(val);
