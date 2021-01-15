@@ -467,13 +467,16 @@ export default {
 			unitType: ''
 		};
 	},
+
 	mounted() {
 		if (this.$has('Data_SYNC') || this.$has('Data_verify')) {
 			this.getDataFlowApi();
 		}
-		if (this.$has('Cluster_management')) {
+
+		if (this.$has('Cluster_management') || this.$has('Cluster_management_menu')) {
 			this.getClsterDataApi();
 		}
+
 		// this.getRankingData();
 
 		this.syncJobObj = {
@@ -585,14 +588,11 @@ export default {
 
 		// 获取服务器与进程的数据
 		getClsterDataApi() {
-			let params = {};
-			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-			// 	params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-			// }
+			let params = {
+				type: 'dashboard'
+			};
 			cluster.get(params).then(res => {
-				if (res.data) {
-					this.serverProcess.tableData = res.data;
-				}
+				this.serverProcess.tableData = res.data;
 			});
 		},
 
