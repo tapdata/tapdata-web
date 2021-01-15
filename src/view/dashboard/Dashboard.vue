@@ -103,8 +103,8 @@
 			</el-col>
 		</el-row>
 
-		<el-row :gutter="20" class="e-row">
-			<el-col :span="12" class="e-col" v-readonlybtn="'data_transmission_menu'">
+		<ul class="e-row e-rowBox">
+			<li class="e-col" v-readonlybtn="'data_transmission_menu'">
 				<div class="charts-list">
 					<echart-head :data="screeningObj" @getUnit="getUnit"></echart-head>
 					<div class="unit">{{ $t('dataFlow.unit') }}:{{ $t('dataFlow.rowCount') }}</div>
@@ -117,8 +117,8 @@
 						style="width: 100%"
 					></shaftless-echart>
 				</div>
-			</el-col>
-			<el-col :span="12" class="e-col" v-readonlybtn="'Data_verify_menu'">
+			</li>
+			<li class="e-col" v-readonlybtn="'Data_verify_menu'">
 				<div class="charts-list">
 					<echart-head :data="dataValidationObj" @getUnit="getUnit"></echart-head>
 					<ul class="status-box">
@@ -137,7 +137,36 @@
 						</li>
 					</ul>
 				</div>
-			</el-col>
+			</li>
+			<li class="e-col" v-readonlybtn="'Cluster_management_menu'">
+				<div class="charts-list">
+					<echart-head :data="serverProcessObj" @getAllData="getAllData"></echart-head>
+					<el-table :data="serverProcess.tableData" :height="transfer.height" style="width: 100%">
+						<el-table-column prop="systemInfo.ip" :label="$t('app.Home.server')"> </el-table-column>
+						<el-table-column prop="management.status" :label="$t('app.Home.managementSide')">
+							<template slot-scope="scope">
+								<span :style="`color: ${colorServeMap[scope.row.management.status]};`">
+									{{ $t('app.Home.' + scope.row.management.status) }}
+								</span>
+							</template>
+						</el-table-column>
+						<el-table-column prop="engine.status" :label="$t('app.Home.taskTransfer')">
+							<template slot-scope="scope">
+								<span :style="`color: ${colorServeMap[scope.row.engine.status]};`">{{
+									$t('app.Home.' + scope.row.engine.status)
+								}}</span>
+							</template>
+						</el-table-column>
+						<el-table-column prop="apiServer.status" :label="$t('app.Home.apiService')">
+							<template slot-scope="scope">
+								<span :style="`color: ${colorServeMap[scope.row.apiServer.status]};`">{{
+									$t('app.Home.' + scope.row.apiServer.status)
+								}}</span>
+							</template>
+						</el-table-column>
+					</el-table>
+				</div>
+			</li>
 			<!-- <el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="transferTaskObj" @getAllData="getAllData"></echart-head>
@@ -191,38 +220,10 @@
 					</el-table>
 				</div>
 			</el-col> -->
-		</el-row>
+		</ul>
 
 		<el-row :gutter="20" class="e-row" v-readonlybtn="'Cluster_management_menu'">
-			<el-col :span="12" class="e-col">
-				<div class="charts-list">
-					<echart-head :data="serverProcessObj" @getAllData="getAllData"></echart-head>
-					<el-table :data="serverProcess.tableData" :height="transfer.height" style="width: 100%">
-						<el-table-column prop="systemInfo.ip" :label="$t('app.Home.server')"> </el-table-column>
-						<el-table-column prop="management.status" :label="$t('app.Home.managementSide')">
-							<template slot-scope="scope">
-								<span :style="`color: ${colorServeMap[scope.row.management.status]};`">
-									{{ $t('app.Home.' + scope.row.management.status) }}
-								</span>
-							</template>
-						</el-table-column>
-						<el-table-column prop="engine.status" :label="$t('app.Home.taskTransfer')">
-							<template slot-scope="scope">
-								<span :style="`color: ${colorServeMap[scope.row.engine.status]};`">{{
-									$t('app.Home.' + scope.row.engine.status)
-								}}</span>
-							</template>
-						</el-table-column>
-						<el-table-column prop="apiServer.status" :label="$t('app.Home.apiService')">
-							<template slot-scope="scope">
-								<span :style="`color: ${colorServeMap[scope.row.apiServer.status]};`">{{
-									$t('app.Home.' + scope.row.apiServer.status)
-								}}</span>
-							</template>
-						</el-table-column>
-					</el-table>
-				</div>
-			</el-col>
+			<el-col :span="12" class="e-col"> </el-col>
 			<!-- <el-col :span="12" class="e-col">
 				<div class="charts-list">
 					<echart-head :data="taskRankingObj" @getAllData="getAllData"></echart-head>
@@ -947,6 +948,16 @@ export default {
 		}
 		.charts-box {
 			height: calc(100% - 40px);
+		}
+	}
+	.e-rowBox {
+		margin: 0 -10px;
+		overflow: hidden;
+		li {
+			float: left;
+			width: 50%;
+			padding: 0 10px;
+			box-sizing: border-box;
 		}
 	}
 	.taskNameStyle {
