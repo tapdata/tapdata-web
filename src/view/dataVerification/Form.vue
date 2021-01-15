@@ -478,7 +478,6 @@ export default {
 					.get({
 						filter: JSON.stringify({
 							where: {
-								is_deleted: false,
 								meta_type: {
 									inq: ['table', 'collection']
 								},
@@ -519,7 +518,6 @@ export default {
 					.get({
 						filter: JSON.stringify({
 							where: {
-								is_deleted: false,
 								meta_type: {
 									inq: ['table', 'collection']
 								},
@@ -599,7 +597,9 @@ export default {
 				}
 				return tb.source.id === stage.connectionId && flag;
 			});
-
+			if (!includeTables.length) {
+				return this.$message.error("Can't found the " + type + 'node: ' + stage.tableName);
+			}
 			let parent = {
 				label: includeTables[0].source.name,
 				value: stage.connectionId,
@@ -630,6 +630,7 @@ export default {
 					this.flowStages.push({
 						id: key,
 						connectionId: table.source.id,
+						connectionName: table.source.name,
 						fields: table.fields,
 						tableName: table.original_name,
 						outputLanes
