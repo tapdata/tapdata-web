@@ -9,8 +9,8 @@ export function setPermission(list) {
 				});
 			}
 		});
-		sessionStorage.setItem('tapdata_permissions', JSON.stringify(permissions));
 	}
+	sessionStorage.setItem('tapdata_permissions', JSON.stringify(permissions));
 	return permissions;
 }
 
