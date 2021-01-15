@@ -311,7 +311,6 @@ export default {
 		ws.ready(() => {
 			ws.on('execute_load_schema_result', res => {
 				this.reloadingSchema = false;
-				debugger;
 				if (res.status === 'SUCCESS' && res.result) {
 					this.$message.success(this.$t('message.reloadSchemaSuccess'));
 					templeSchema = res.result;

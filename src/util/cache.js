@@ -34,19 +34,19 @@ export default class Cache {
 		return scopeCache[key];
 	}
 	set(key, value, isForUser = true) {
-		let cache = Object.assign({}, this._cache);
-		let scopeCache = cache[GLOBAL];
+		let cache = this._cache;
+		let scope = GLOBAL;
 		if (isForUser) {
 			let userId = window.VueCookie.get('user_id');
-			if (userId) {
+			if (!userId) {
 				throw new Error('Getting cache error, cant not found user id from cookie');
 			}
-			scopeCache = cache[userId];
+			scope = userId;
 		}
-		if (!scopeCache) {
-			scopeCache = {};
+		if (!cache[scope]) {
+			cache[scope] = {};
 		}
-		scopeCache[key] = value;
+		cache[scope][key] = value;
 		localStorage.setItem('TAPDATA_CACHE', JSON.stringify(cache));
 	}
 }

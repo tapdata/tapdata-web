@@ -281,6 +281,9 @@ export default {
 	created() {
 		this.getDbOptions();
 	},
+	mounted() {
+		this.searchParams = this.table.getCache();
+	},
 	computed: {
 		table() {
 			return this.$refs.table;
@@ -304,9 +307,9 @@ export default {
 			};
 			this.table.fetch(1);
 		},
-		getData({ page, tags, cache }) {
+		getData({ page, tags }) {
 			let { current, size } = page;
-			let { isFuzzy, keyword, metaType, dbId } = Object.assign({}, this.searchParams, cache);
+			let { isFuzzy, keyword, metaType, dbId } = this.searchParams;
 			let where = {
 				is_deleted: false
 			};
@@ -363,15 +366,15 @@ export default {
 					filter: JSON.stringify(filter)
 				})
 			]).then(([countRes, res]) => {
+				this.table.setCache({
+					isFuzzy,
+					keyword,
+					metaType,
+					dbId
+				});
 				return {
 					total: countRes.data.count,
-					data: res.data,
-					cache: {
-						isFuzzy,
-						keyword,
-						metaType,
-						dbId
-					}
+					data: res.data
 				};
 			});
 		},

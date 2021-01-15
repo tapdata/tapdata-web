@@ -117,6 +117,17 @@ export default {
 		}
 	},
 	methods: {
+		getCache() {
+			let params = this.$cache.get('TABLE_PAGE_PARAMS') || {};
+			return params[this.$route.name] || {};
+		},
+		setCache(cache) {
+			let params = this.$cache.get('TABLE_PAGE_PARAMS') || {};
+			let pageParams = params[this.$route.name] || {};
+			pageParams = Object.assign({}, pageParams, cache);
+			params[this.$route.name] = pageParams;
+			this.$cache.set('TABLE_PAGE_PARAMS', params);
+		},
 		fetch(pageNum, debounce = 0, hideLoading) {
 			this.page.current = pageNum || this.page.current;
 			this.$nextTick(() => {
@@ -124,23 +135,18 @@ export default {
 					if (!hideLoading) {
 						this.loading = true;
 					}
-					let params = this.$cache.get('TABLE_PAGE_PARAMS') || {};
-					let pageParams = params[this.$route.name] || {};
+
 					this.remoteMethod &&
 						this.remoteMethod({
 							page: this.page,
 							tags: this.tags,
 							data: this.list,
-							cache: pageParams
+							cache: this.cache
 						})
-							.then(({ data, total, cache }) => {
+							.then(({ data, total }) => {
+								this.cache = null;
 								this.page.total = total;
 								this.list = data || [];
-								if (cache) {
-									pageParams = Object.assign({}, pageParams, cache);
-									params[this.$route.name] = pageParams;
-									this.$cache.set('TABLE_PAGE_PARAMS', params);
-								}
 							})
 							.finally(() => {
 								this.loading = false;
