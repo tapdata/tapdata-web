@@ -12,11 +12,11 @@
 				</div>
 				<div class="content-box">
 					<div class="content">
-						{{ model.type.toUpperCase() }}
+						{{ model.database_type.toUpperCase() }}
 					</div>
 					<div class="tip">
 						{{ $t('editor.fileFormBuilder.guideDocPrefix') }}
-						{{ model.type }}
+						{{ model.database_type }}
 						{{ $t('editor.fileFormBuilder.guideDoc') }}
 						<a style="color: #48B6E2" href="https://docs.tapdata.net/data-source/about-dbs/files">{{
 							$t('dataForm.form.guideDoc')
@@ -221,6 +221,7 @@ export default {
 			disabled: false,
 			model: {
 				type: '',
+				database_type: '',
 				tableName: '',
 				name: '',
 				connectionId: '',
