@@ -116,25 +116,25 @@ export const FORM_DATA_KEY = 'form_data',
 		xml: {
 			type: 'xml',
 			name: 'XML',
-			shapeImage: 'static/editor/xml.svg',
+			shapeImage: 'static/editor/o-xml.svg',
 			stencilImage: 'static/editor/xml.svg'
 		},
 		excel: {
 			type: 'excel',
 			name: 'EXCEL',
-			shapeImage: 'static/editor/excel.svg',
+			shapeImage: 'static/editor/o-excel.svg',
 			stencilImage: 'static/editor/excel.svg'
 		},
 		csv: {
 			type: 'csv',
 			name: 'CSV',
-			shapeImage: 'static/editor/csv.svg',
+			shapeImage: 'static/editor/o-csv.svg',
 			stencilImage: 'static/editor/csv.svg'
 		},
 		json: {
 			type: 'json',
 			name: 'JSON',
-			shapeImage: 'static/editor/json.svg',
+			shapeImage: 'static/editor/o-json.svg',
 			stencilImage: 'static/editor/json.svg'
 		}
 	};

@@ -12,7 +12,7 @@
 				</div>
 				<div class="content-box">
 					<div class="content">
-						{{ model.database_type.toUpperCase() }}
+						{{ model.database_type ? model.database_type.toUpperCase() : model.database_type }}
 					</div>
 					<div class="tip">
 						{{ $t('editor.fileFormBuilder.guideDocPrefix') }}
