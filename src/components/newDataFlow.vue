@@ -8,7 +8,7 @@
 		class="simple-scene"
 	>
 		<div class="creat">
-			<ul class="item">
+			<ul class="item" v-readonlybtn="'Data_SYNC_menu'">
 				<li
 					v-if="$window.getSettingByKey('SHOW_SIMPLE_SCENE')"
 					@click="db2db"
@@ -23,7 +23,7 @@
 						>
 					</div>
 				</li>
-				<li @click="goNew" v-readonlybtn="'SYNC_job_creation'">
+				<li @click="goNew" v-rev-readonlybtn="'SYNC_job_creation'">
 					<span class="model">{{ $t('dataFlow.advancedMode') }}</span>
 					<div class="content">
 						<i class="iconfont icon-shujukuqianyi2"></i>
@@ -43,7 +43,7 @@
 					</div>
 				</li>
 			</ul>
-			<ul class="item more">
+			<ul class="item more" v-show="$has('datasource_menu') && $has('datasource_creation')">
 				<li @click="handleConnection" v-readonlybtn="'datasource_creation'">
 					<span class="model">{{ $t('dataFlow.moreFeatures') }}</span>
 					<div class="content">

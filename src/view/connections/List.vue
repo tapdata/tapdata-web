@@ -620,7 +620,7 @@ export default {
 		line-height: 40px;
 	}
 	.btn-text {
-		color: #48b6e2;
+		// color: #48b6e2;
 		font-size: 12px;
 		padding-right: 5px;
 	}
