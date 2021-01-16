@@ -477,6 +477,7 @@ export default {
 				this.loading = false;
 				this.onGraphChanged();
 				this.setEditable(true);
+				this.creatUserId = this.$cookie.get('user_id');
 				this.editor.ui.setName(this.$t('dataFlow.newTaksName') + '_' + uuid().slice(0, 7));
 				// if (!this.dataFlow) document.title = this.$t('dataFlow.newTaksName');
 			}
@@ -613,7 +614,6 @@ export default {
 			let dataFlow = data;
 			this.dataFlowId = dataFlow.id;
 			this.status = dataFlow.status;
-			this.creatUserId = dataFlow.user_id;
 			this.executeMode = dataFlow.executeMode;
 			if (dataFlow.setting) {
 				this.sync_type = dataFlow.setting.sync_type;
@@ -803,6 +803,7 @@ export default {
 				.get([id])
 				.then(result => {
 					if (result && result.data) {
+						self.creatUserId = result.data.user_id;
 						self.initData(result.data);
 						Object.keys(localStorage).forEach(key => {
 							if (key.startsWith('tapdata.dataflow.$$$') && key.split('$$$')[2] == result.data.name)
