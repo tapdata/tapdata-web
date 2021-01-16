@@ -138,12 +138,15 @@ export const loadPlugins = function(cNodes) {
 							plugin.stencil['attrs']['image']['xlinkHref'] = cell.stencilImage;
 							plugin.stencil['attrs']['label']['text'] = cell.name;
 							plugin.stencil['attrs']['root']['dataTooltip'] = cell.name;
-
-							addStencil(type, plugin.stencil, {
+							let formData = {
 								database_type: cell.type,
 								shapeImage: cell.shapeImage,
 								name: cell.name
-							});
+							};
+							if (type === 'app.FileFormBuilder') {
+								formData['type'] = cell.type;
+							}
+							addStencil(type, plugin.stencil, formData);
 						}
 					});
 				} else if (type === 'app.CustomProcessor') {
