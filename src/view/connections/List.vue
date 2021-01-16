@@ -427,7 +427,7 @@ export default {
 		},
 		edit(id, type) {
 			if (this.whiteList.includes(type)) {
-				this.$router.push('connections/create?id=' + id + '&databaseType=' + type);
+				this.$router.push('connections/' + id + '/edit?databaseType=' + type);
 			} else {
 				top.location.href = '/#/connection/' + id;
 				localStorage.setItem('connectionDatabaseType', type);

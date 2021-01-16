@@ -1,11 +1,11 @@
 <template>
 	<div class="databaseFrom">
 		<header class="header">
-			{{ $route.query.id ? $t('connection.editDataSource') : $t('connection.createNewDataSource') }}
+			{{ $route.params.id ? $t('connection.editDataSource') : $t('connection.createNewDataSource') }}
 		</header>
 		<div class="databaseFrom-body">
 			<main class="databaseFrom-main">
-				<header v-if="$route.query.id" class="edit-header-box">
+				<header v-if="$route.params.id" class="edit-header-box">
 					<div class="edit-header">
 						<div class="img-box">
 							<img :src="getImgByType(databaseType)" />
@@ -356,11 +356,11 @@ export default {
 		async initData(data) {
 			let editData = null;
 			this.checkTestConnectionAvailable(); //先检测agent
-			if (this.$route.query.id) {
+			if (this.$route.params.id) {
 				if (this.model.database_type === 'mongodb') {
-					editData = await this.$api('connections').customQuery([this.$route.query.id]);
+					editData = await this.$api('connections').customQuery([this.$route.params.id]);
 				} else {
-					editData = await this.$api('connections').get([this.$route.query.id]);
+					editData = await this.$api('connections').get([this.$route.params.id]);
 				}
 				this.model = Object.assign(this.model, editData.data);
 				this.rename = this.model.name;
@@ -424,11 +424,11 @@ export default {
 					item.options = this.timezones;
 				}
 				let itemIsUrl = items.find(it => it.field === 'isUrl');
-				if (this.model.database_type === 'mongodb' && this.$route.query.id && itemIsUrl) {
+				if (this.model.database_type === 'mongodb' && this.$route.params.id && itemIsUrl) {
 					itemIsUrl.options[0].disabled = true;
 					this.model.isUrl = false;
 				}
-				if (this.$route.query.id) {
+				if (this.$route.params.id) {
 					//编辑模式下 不展示
 					defaultConfig[0].show = false;
 					defaultConfig[0].required = false;
@@ -542,7 +542,7 @@ export default {
 				this.$refs.form.validate(valid => {
 					if (valid) {
 						this.dialogTestVisible = true;
-						if (this.$route.query.id) {
+						if (this.$route.params.id) {
 							//编辑需要特殊标识 updateSchema = false editTest = true
 							this.$refs.test.start(false, true);
 						} else {

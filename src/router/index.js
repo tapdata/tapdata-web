@@ -38,6 +38,16 @@ const childRoutes = [
 		}
 	},
 	{
+		path: '/connections/:id/edit',
+		name: 'connectionsEdit',
+		component: view('connections/DatabaseForm'),
+		meta: {
+			title: i18n.t('tap.connection'),
+			isCollapse: true,
+			code: 'datasource_edition'
+		}
+	},
+	{
 		path: '/connection',
 		name: 'connection',
 		component: view('ExternalLink'),
