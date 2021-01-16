@@ -401,6 +401,8 @@ export default {
 								t.targetTable = [t.target.connectionId, t.target.table];
 								t.source = Object.assign({}, TABLE_PARAMS, t.source);
 								t.target = Object.assign({}, TABLE_PARAMS, t.target);
+								t.sourceTree = [];
+								t.targetTree = [];
 								return t;
 							});
 							this.form = data;
