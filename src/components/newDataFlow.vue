@@ -43,7 +43,14 @@
 					</div>
 				</li>
 			</ul>
-			<ul class="item more" v-show="$has('datasource_menu') && $has('datasource_creation')">
+			<ul
+				class="item more"
+				v-show="
+					($has('datasource_menu') && $has('datasource_creation')) ||
+						($has('API_management_menu') && $has('API_creation')) ||
+						($has('Data_verify_menu') && $has('verify_job_creation'))
+				"
+			>
 				<li @click="handleConnection" v-readonlybtn="'datasource_creation'">
 					<span class="model">{{ $t('dataFlow.moreFeatures') }}</span>
 					<div class="content">
