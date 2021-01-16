@@ -278,9 +278,7 @@ export default {
 				this.$has('home_notice_settings') ||
 				(this.$has('system_settings') && this.$has('system_settings_menu')),
 			settingCode: this.$has('system_settings') && this.$has('system_settings_menu'),
-			creatAuthority:
-				(this.$has('SYNC_job_creation') && this.$has('Data_SYNC_menu')) ||
-				(this.$has('datasource_creation') && this.$has('datasource_menu')),
+			creatAuthority: true,
 			menus: [],
 			activeMenu: '',
 			favMenus: [],
