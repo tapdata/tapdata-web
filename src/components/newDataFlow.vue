@@ -23,7 +23,7 @@
 						>
 					</div>
 				</li>
-				<li @click="goNew" v-rev-readonlybtn="'SYNC_job_creation'">
+				<li @click="goNew" v-readonlybtn="'SYNC_job_creation'">
 					<span class="model">{{ $t('dataFlow.advancedMode') }}</span>
 					<div class="content">
 						<i class="iconfont icon-shujukuqianyi2"></i>
@@ -51,7 +51,7 @@
 						($has('Data_verify_menu') && $has('verify_job_creation'))
 				"
 			>
-				<li @click="handleConnection" v-readonlybtn="'datasource_creation'">
+				<li @click="handleConnection" v-if="$has('datasource_menu') && $has('datasource_creation')">
 					<span class="model">{{ $t('dataFlow.moreFeatures') }}</span>
 					<div class="content">
 						<i class="iconfont icon-database"></i>
@@ -62,7 +62,11 @@
 					</div>
 				</li>
 				<template v-if="!$window.getSettingByKey('HIDE_FOR_CLOUD')">
-					<li class="marTop25" @click="handleModules" v-readonlybtn="'API_creation'">
+					<li
+						class="marTop25"
+						@click="handleModules"
+						v-if="$has('API_management_menu') && $has('API_creation')"
+					>
 						<div class="content">
 							<i class="iconfont icon-api2"></i>
 							<span>
@@ -71,7 +75,11 @@
 							>
 						</div>
 					</li>
-					<li class="marTop25" @click="handleDataVerification" v-readonlybtn="'verify_job_creation'">
+					<li
+						class="marTop25"
+						@click="handleDataVerification"
+						v-if="$has('Data_verify_menu') && $has('verify_job_creation')"
+					>
 						<div class="content">
 							<i class="iconfont icon-hechabidui-copy"></i>
 							<span>
