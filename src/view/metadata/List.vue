@@ -490,11 +490,10 @@ export default {
 						alias_name: '',
 						comment: ''
 					};
-					this.$api('MetadataInstances')
-						.post(params)
-						.then(res => {
-							this.toDetails(res.data);
-						});
+					this.$api('MetadataInstances').post(params);
+					// .then(res => {
+					// this.toDetails(res.data);
+					// });
 				}
 			});
 		},
