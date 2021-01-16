@@ -184,7 +184,12 @@
 				</template>
 			</el-table-column>
 		</TablePage>
-		<el-dialog width="400px" :title="$t('metadata.createNewModel')" :visible.sync="createDialogVisible">
+		<el-dialog
+			width="400px"
+			:title="$t('metadata.createNewModel')"
+			:close-on-click-modal="false"
+			:visible.sync="createDialogVisible"
+		>
 			<FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="createDialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
