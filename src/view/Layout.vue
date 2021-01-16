@@ -550,7 +550,7 @@ export default {
 						if (this.$cookie.get('isAdmin') == 1) {
 							let endTime = expires_on - stime;
 							endTime = parseInt(endTime / 1000 / 60 / 60 / 24); //相差天数
-							let showDay = window.getSettingByKey('licenceNoticeDays') || 0;
+							let showDay = window.getSettingByKey('licenseNoticeDays') || 0;
 							this.licenseExpireVisible = Number(showDay) > endTime;
 							this.licenseExpire = endTime;
 						}
