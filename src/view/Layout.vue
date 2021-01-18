@@ -4,7 +4,7 @@
 			<i class="el-icon-warning"></i>
 			{{ $t('dialog.downAgent.noAgent')
 			}}<span @click="downLoadInstall">{{ $t('dialog.downAgent.clickDownLoad') }}</span>
-			<i class="el-icon-close close" @click="handleCloseAgentTip"></i>
+			<i class="el-icon-close close" @click="agentTipFalg = false"></i>
 		</div>
 		<CustomerService v-model="isShowCustomerService"></CustomerService>
 		<newDataFlow :dialogVisible.sync="dialogVisible"></newDataFlow>
@@ -151,7 +151,6 @@
 						>
 							<div class="submenu-item">
 								<span>{{ menu.meta.title }}</span>
-								<!-- v-readonlybtn="'BTN_AUTHS'" -->
 								<span class="btn-del-fav-menu" @click.stop="delFavMenu(index)">
 									<i class="el-icon-remove"></i>
 								</span>
@@ -168,12 +167,7 @@
 			</el-main>
 		</el-container>
 
-		<DownAgent
-			type="dashboard"
-			ref="agentDialog"
-			@closeAgentDialog="closeAgentDialog"
-			@closeAgentTip="closeAgentTip"
-		></DownAgent>
+		<DownAgent type="dashboard" ref="agentDialog" @status-change="val => (agentTipFalg = !val)"></DownAgent>
 	</el-container>
 </template>
 
@@ -183,8 +177,6 @@ import newDataFlow from '@/components/newDataFlow';
 import NotificationPopover from './notification/NotificationPopover';
 import DownAgent from './downAgent/agentDown';
 import { signOut } from '../util/util';
-import factory from '@/api/factory';
-const cluster = factory('cluster');
 
 const Languages = {
 	sc: '中文 (简)',
@@ -285,9 +277,7 @@ export default {
 			userName: '',
 			dialogVisible: false,
 			isShowCustomerService: false,
-			downLoadAgetntdialog: false,
 			agentTipFalg: false,
-			timer: '',
 			licenseExpire: '',
 			licenseExpireVisible: false,
 			licenseExpireDate: ''
@@ -319,25 +309,12 @@ export default {
 
 		// // 是否允许下载agent
 		// if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
-		this.getDataApi('firstAgent');
-		// 	if (!this.downLoadNum) {
-		// 		self.timer = setInterval(() => {
-		// 			self.getDataApi();
-		// 			if (this.downLoadNum) {
-		// 				clearInterval(self.timer);
-		// 				this.timer = null;
-		// 			}
-		// 		}, 5000);
-		// 	}
-		// }
 		if (window.getSettingByKey('SHOW_LICENSE')) {
 			this.getLicense();
 		}
 	},
 	destroyed() {
 		this.$root.$off('updateMenu');
-		// clearInterval(this.timer);
-		// this.timer = null;
 	},
 	watch: {
 		'$route.name'() {
@@ -496,38 +473,6 @@ export default {
 		// 下载安装Agent
 		downLoadInstall() {
 			this.$refs.agentDialog.dialogVisible = true;
-		},
-
-		// 关闭下载安装Agent提示
-		handleCloseAgentTip() {
-			this.agentTipFalg = false;
-		},
-		closeAgentTip() {
-			this.getDataApi();
-		},
-
-		// 获取Agent是否安装
-		getDataApi() {
-			let that = this;
-			let params = {};
-			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-			// 	params['filter[where][systemInfo.username][regexp]'] = `^${that.$cookie.get('user_id')}$`;
-			// }
-			cluster.get(params).then(res => {
-				if (res.data) {
-					if (res.data.length > 0) {
-						that.agentTipFalg = false;
-					} else {
-						that.agentTipFalg = true;
-					}
-				}
-			});
-		},
-		// 关闭agent下载弹窗返回参数
-		closeAgentDialog() {
-			this.downLoadAgetntdialog = false;
-			clearInterval(self.timer);
-			this.timer = null;
 		},
 
 		async getLicense() {

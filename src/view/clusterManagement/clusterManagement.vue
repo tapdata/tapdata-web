@@ -215,12 +215,9 @@
 				}}</el-button>
 			</div>
 		</el-dialog>
-		<!-- <DownAgent ref="agentDialog" type="dashboard" @closeAgentDialog="closeAgentDialog"></DownAgent> -->
 	</div>
 </template>
 <script>
-// import vueWaterfallEasy from 'vue-waterfall-easy';
-// import DownAgent from '../downAgent/agentDown';
 import addServe from './component/addServe';
 import factory from '../../api/factory';
 import { delayTrigger } from '../../util/util';
@@ -259,14 +256,6 @@ export default {
 	},
 
 	methods: {
-		// // 新建集群管理
-		// create() {
-		// 	this.$refs.agentDialog.dialogVisible = true;
-		// },
-		// // 关闭agent下载弹窗返回参数
-		// closeAgentDialog() {
-		// 	this.$refs.agentDialog.dialogVisible = false;
-		// },
 		// 提交
 		async submitForm() {
 			let getFrom = this.$refs.childRules.ruleForm;
@@ -439,14 +428,6 @@ export default {
 				params['filter[where][or][0][systemInfo.hostname][like]'] = this.sourch;
 				params['filter[where][or][1][systemInfo.ip][like]'] = this.sourch;
 			}
-			// 是否能看到所有集群
-			// if (
-			// 	this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
-			// 	!parseInt(this.$cookie.get('isAdmin')) &&
-			// 	localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
-			// ) {
-			// 	params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-			// }
 			cluster.get(params).then(res => {
 				if (res.data) {
 					let [...waterfallData] = res.data;

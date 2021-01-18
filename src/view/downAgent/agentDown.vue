@@ -236,10 +236,11 @@ export default {
 		if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
 			this.getDataApi('firstAgent');
 			self.timer = setInterval(() => {
-				self.getDataApi();
 				if (self.downLoadNum > 0) {
 					clearInterval(self.timer);
 					self.timer = null;
+				} else {
+					self.getDataApi();
 				}
 			}, 5000);
 		}
@@ -263,21 +264,15 @@ export default {
 		getDataApi(type) {
 			let that = this;
 			let params = {};
-			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-				params['filter[where][systemInfo.username][regexp]'] = `^${that.$cookie.get('user_id')}$`;
-			}
 			cluster.get(params).then(res => {
 				if (res.data) {
 					if (type === 'firstAgent') {
 						that.lastDataNum = res.data.length || 0;
 					}
-					if (res.data.length) {
-						this.$emit('closeAgentTip');
-					}
 					that.downLoadNum = res.data.length;
+					that.$emit('status-change', that.downLoadNum);
 				}
 			});
-			return that.downLoadNum;
 		},
 		// 选择下载安装类型
 		chooseDownLoadType(val) {
@@ -326,6 +321,13 @@ export default {
 			});
 			this.dialogVisible = false;
 			this.installSuccessDialog = false;
+		},
+		checkAgent() {
+			let flag = !this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') || this.downLoadNum;
+			if (!flag) {
+				this.dialogVisible = true;
+			}
+			return flag;
 		}
 	},
 

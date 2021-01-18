@@ -356,7 +356,6 @@ export default {
 					in: types
 				};
 			}
-			status && (where.status = status);
 			dbId && (where['source.id'] = dbId);
 			let filter = {
 				order: this.order,
