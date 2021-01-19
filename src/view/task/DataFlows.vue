@@ -169,7 +169,20 @@
 			<el-table-column prop="status" sortable="custom" :label="$t('dataFlow.taskStatus')" width="180">
 				<template slot-scope="scope">
 					<div>
-						<span :style="`color: ${colorMap[scope.row.status]};`">
+						<span
+							:style="
+								`color: ${
+									{
+										running: '#67C23A',
+										paused: '#F19149',
+										draft: '#F56C6C',
+										scheduled: '#cccccc',
+										stopping: '#F19149',
+										error: '#f53724'
+									}[scope.row.status]
+								};`
+							"
+						>
 							{{ scope.row.statusLabel }}
 						</span>
 						<span
@@ -334,37 +347,6 @@
 				</template>
 			</el-table-column>
 		</TablePage>
-		<!-- <div class="panel-main">
-			<div class="task-list" v-loading="restLoading">
-				<el-table
-					v-loading="loading"
-					:element-loading-text="$t('dataFlow.dataLoading')"
-					:data="tableData"
-					height="100%"
-					style="border: 1px solid #dedee4;"
-					class="dv-table"
-					row-key="id"
-					:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-					@sort-change="handleSortTable"
-					@selection-change="handleSelectionChange"
-					:default-sort="{ prop: flowProp, order: flowOrder }"
-				>
-
-				</el-table>
-				<el-pagination
-					class="pagination"
-					background
-					layout="prev, pager, next,sizes,total"
-					:page-sizes="[20, 30, 50, 100]"
-					:page-size="pagesize"
-					:total="totalNum"
-					:current-page.sync="currentPage"
-					@current-change="handleCurrentChange"
-					@size-change="handleSizeChange"
-				>
-				</el-pagination>
-			</div>
-		</div> -->
 		<el-dialog
 			:title="$t('dialog.jobSchedule.jobSecheduleSetting')"
 			:close-on-click-modal="false"
@@ -412,7 +394,7 @@
 
 <script>
 import factory from '../../api/factory';
-// import ws from '../../api/ws';
+import ws from '../../api/ws';
 const dataFlows = factory('DataFlows');
 const MetadataInstance = factory('MetadataInstances');
 // const cluster = factory('cluster');
@@ -420,11 +402,12 @@ import { toRegExp } from '../../util/util';
 import SkipError from '../../components/SkipError';
 import DownAgent from '../downAgent/agentDown';
 import TablePage from '@/components/TablePage';
-
+let interval = null;
 export default {
 	components: { TablePage, DownAgent, SkipError },
 	data() {
 		return {
+			restLoading: false,
 			mappingTemplate: '',
 			searchParams: {
 				keyword: '',
@@ -481,32 +464,7 @@ export default {
 			multipleSelection: [],
 
 			taskSettingsDialog: false, //任务调度设置弹窗开关
-			selectedJob: {
-				id: '',
-				oldStatus: '',
-				status: '',
-				dataItem: null
-			},
-			//-----------------------
 
-			activeName: 'dataFlow',
-			listtags: [],
-			wsData: [],
-			restLoading: false,
-			colorMap: {
-				running: '#67C23A',
-				paused: '#F19149',
-				draft: '#F56C6C',
-				scheduled: '#cccccc',
-				stopping: '#F19149',
-				error: '#f53724'
-			},
-			flowProp: localStorage.getItem('flowProp') || 'createTime',
-			flowOrder: localStorage.getItem('flowOrder') || 'descending',
-			newData: [],
-			currentPage: 1,
-			pagesize: localStorage.getItem('flowPagesize') * 1 || 20,
-			totalNum: 0,
 			syncType: {
 				initial_sync: this.$t('dataFlow.initial_sync'),
 				cdc: this.$t('dataFlow.cdc'),
@@ -530,11 +488,6 @@ export default {
 				}
 			},
 			dataFlowId: '',
-			errorEvents: [],
-			currentStatus: '',
-			oldStatus: '',
-			currentId: '',
-			taskName: '',
 
 			formSchedule: {
 				id: '',
@@ -551,7 +504,8 @@ export default {
 				this.$has('SYNC_category_application'),
 			bulkOperation:
 				this.$has('SYNC_job_export') || this.$has('SYNC_job_operation') || this.$has('SYNC_job_delete'),
-			timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
+			timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year'],
+			tempList: []
 		};
 	},
 	computed: {
@@ -562,27 +516,22 @@ export default {
 	created() {
 		// window.windows = [];
 		this.mappingTemplate = this.$route.query.mapping;
-		// let self = this;
-		// ws.on('watch', this.wsWatch);
-		// this.inter = setInterval(() => {
-		// 	self.wsData.forEach(dat => {
-		// 		self.$set(
-		// 			self.tableData,
-		// 			self.tableData.findIndex(it => it.id == dat.id),
-		// 			self.cookRecord(
-		// 				_.merge(
-		// 					self.tableData.find(it => it.id == dat.id),
-		// 					dat
-		// 				)
-		// 			)
-		// 		);
-		// 	});
-		// 	self.wsData.length = 0;
-		// }, 3000);
+		ws.on('watch', this.dataflowChange);
+		interval = setInterval(() => {
+			let tempList = this.tempList;
+			tempList.forEach(item => {
+				let list = this.table.list;
+				let index = list.findIndex(it => it.name === item.name);
+				if (index >= 0) {
+					this.table.$set(list, index, Object.assign(list[index], this.cookRecord(item)));
+				}
+			});
+			this.tempList = [];
+		}, 5000);
 	},
 	beforeDestroy() {
-		// ws.off('watch', this.wsWatch);
-		// clearInterval(this.inter);
+		ws.off('watch', this.dataflowChange);
+		clearInterval(interval);
 	},
 	watch: {
 		'$route.query'(query) {
@@ -591,6 +540,38 @@ export default {
 		}
 	},
 	methods: {
+		dataflowChange(data) {
+			if (data && data.data && data.data.fullDocument) {
+				this.tempList.push(data.data.fullDocument);
+			}
+		},
+		watchDataflowList(ids) {
+			let msg = {
+				type: 'watch',
+				collection: 'DataFlows',
+				filter: {
+					where: { 'fullDocument._id': { $in: ids } }, //查询条件
+					fields: {
+						'fullDocument.id': true,
+						'fullDocument.name': true,
+						'fullDocument.status': true,
+						'fullDocument.checked': true,
+						'fullDocument.executeMode': true,
+						'fullDocument.stopOnError': true,
+						'fullDocument.last_updated': true,
+						'fullDocument.createTime': true,
+						'fullDocument.children': true,
+						'fullDocument.stats': true,
+						'fullDocument.stages.id': true,
+						'fullDocument.stages.name': true,
+						'fullDocument.errorEvents': true
+					}
+				}
+			};
+			ws.ready(() => {
+				ws.send(msg);
+			});
+		},
 		reset() {
 			this.searchParams = {
 				keyword: '',
@@ -686,34 +667,7 @@ export default {
 				})
 			]).then(([countRes, res]) => {
 				let list = res.data || [];
-				// let msg = {
-				// 	type: 'watch',
-				// 	collection: 'DataFlows',
-				// 	filter: {
-				// 		where: { 'fullDocument._id': { $in: this.tableData.map(it => it.id) } }, //查询条件
-				// 		fields: {
-				// 			'fullDocument.id': true,
-				// 			'fullDocument.name': true,
-				// 			'fullDocument.status': true,
-				// 			'fullDocument.checked': true,
-				// 			'fullDocument.executeMode': true,
-				// 			'fullDocument.stopOnError': true,
-				// 			'fullDocument.last_updated': true,
-				// 			'fullDocument.createTime': true,
-				// 			'fullDocument.children': true,
-				// 			'fullDocument.stats': true,
-				// 			'fullDocument.stages.id': true,
-				// 			'fullDocument.stages.name': true,
-				// 			'fullDocument.errorEvents': true
-				// 		}
-				// 	}
-				// };
-				// let int = setInterval(() => {
-				// 	if (ws.ws.readyState == 1) {
-				// 		ws.send(msg);
-				// 		clearInterval(int);
-				// 	}
-				// }, 2000);
+				this.watchDataflowList(list.map(it => it.id));
 				this.table.setCache({
 					keyword,
 					status,
@@ -1168,10 +1122,6 @@ export default {
 		handleGoFunction() {
 			top.location.href = '/#/JsFuncs';
 		}
-		// 面板显示隐藏
-		// wsWatch(data) {
-		// 	this.wsData.push(data.data.fullDocument);
-		// },
 	}
 };
 </script>
