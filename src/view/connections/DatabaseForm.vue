@@ -51,6 +51,9 @@
 								{{ $t('dataForm.form.timeZoneTips') }}
 							</div>
 							<div class="url-tip" slot="fileUrl"></div>
+							<div class="url-tip" slot="kafkaIgnoreInvalidRecord">
+								{{ $t('dataForm.form.kafka.lonoreFormatTip') }}
+							</div>
 						</form-builder>
 						<!-- 文件数据库 -->
 						<template v-if="model.database_type === 'file' && model.connection_type === 'source'">
@@ -299,7 +302,18 @@ export default {
 			visible: false,
 			timezones: [],
 			dataTypes: [],
-			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis', 'file'], //目前白名单,
+			whiteList: [
+				'mysql',
+				'oracle',
+				'mongodb',
+				'sqlserver',
+				'postgres',
+				'elasticsearch',
+				'redis',
+				'file',
+				'kafka',
+				'maria'
+			], //目前白名单,
 			model: Object.assign({}, defaultModel),
 			config: {
 				items: []

@@ -1620,6 +1620,22 @@ const cn = {
 				extend_source_path: '继承目录结构',
 				file_output_path: '文件输出绝对路径',
 				csvFijlter: '文件过滤'
+			},
+			kafka: {
+				chooseTheme: '选择主题',
+				topicName: '输入主题名称',
+				topicExpression: '输入主题表达式',
+				requestTimeoutPeriod: '请求超时时间',
+				readIsolationLevel: '消息提交读隔离级别',
+				maximumNumber: '单次poll消息最大返回记录数',
+				blockingTimeoutTime: '单次poll消息阻塞超时时间',
+				fetchMaximumNumber: '单次fetch消息最大字节数',
+				fetchBlockTime: '单次fetch消息阻塞超时时间',
+				lonoreFormat: '忽略非JSON Object格式消息',
+				lonoreFormatTip: '如果是则遇到解析异常会忽略该消息，否则停止拉取消息',
+				directlyNameTip: '直接输入主体名称，多个主题以逗号隔开',
+				kafkaPatternTopicsTip: '按照Host, port, 账号, 密码的方式配置MongoDB数据库，支持批量输入',
+				hostPlaceHolder: '输入 IP/host:port , 多个主题以逗号隔开'
 			}
 		},
 		error: {
