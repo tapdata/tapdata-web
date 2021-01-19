@@ -52,6 +52,7 @@
 			</div>
 		</div>
 		<SelectClassify
+			v-if="classify"
 			ref="classify"
 			:types="classify.types"
 			@operationsClassify="$emit('classify-submit', $event)"
@@ -77,13 +78,7 @@ export default {
 			default: 20
 		},
 		classify: {
-			type: Object,
-			default: () => {
-				return {
-					authority: '',
-					types: []
-				};
-			}
+			type: Object
 		},
 		remoteMethod: Function,
 		rowKey: [String, Function]

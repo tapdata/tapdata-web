@@ -1,36 +1,18 @@
 <template>
-	<div class="tapHeader">
-		<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-			<el-menu-item index="1">
-				<i class="icon iconfont iconjiqunzhuangtai"></i>{{ $t('message.serviceCluMange') }}
-			</el-menu-item>
-			<el-menu-item index="2" v-readonlybtn="'status_log'"
-				><i class="icon iconfont iconrizhi"></i>{{ $t('message.statusLog') }}</el-menu-item
-			>
-		</el-menu>
-		<!-- <el-select v-model="langType" class="changeLangType" size="mini" @change="changeLangType">
-          <el-option value="en" label="English"></el-option>
-          <el-option value="cn" label="中文简体"></el-option>
-          <el-option value="tc" label="中文繁體"></el-option>
-    </el-select> -->
-		<div class="main">
-			<ClusterManagement v-if="activeIndex == 1"></ClusterManagement>
-			<DailyRecord v-else v-readonlybtn="'status_log'"></DailyRecord>
-			<!-- <el-row class="fun_area">
-        <el-col :span="8">
-          <div class="demo-input-suffix">
-            <span>名称搜索</span>
-            <el-input
-              placeholder="请输入内容"
-              prefix-icon="el-icon-search"
-              clearable
-              v-model="sourch">
-            </el-input>
-          </div>
-        </el-col>
-      </el-row> -->
+	<section class="clusterManagement-container">
+		<div v-if="activeIndex === 1">
+			<div class="header">
+				<div class="page-header-title">
+					<span class="title">{{ $t('message.serviceCluMange') }}</span>
+					<div class="logBtn" @click="handleSelect">{{ $t('message.statusLog') }}</div>
+				</div>
+			</div>
+			<div class="main">
+				<ClusterManagement></ClusterManagement>
+			</div>
 		</div>
-	</div>
+		<DailyRecord class="clusterManagement-wrap" v-else v-readonlybtn="'status_log'"></DailyRecord>
+	</section>
 </template>
 <script>
 import ClusterManagement from './clusterManagement';
@@ -42,54 +24,47 @@ export default {
 	},
 	data() {
 		return {
-			activeIndex: '1',
+			activeIndex: 1,
 			langType: 'en'
 		};
 	},
 	methods: {
 		handleSelect(key) {
 			this.activeIndex = key;
-			// if (key === '1') {
-			// 	this.$router.push({ name: 'clusterManagement' });
-			// } else if (key === '2') {
-			// 	this.$router.push({ name: 'dailyRecord' });
-			// }
 		}
-		// changeLangType(type){
-		//   localStorage.setItem('locale',type);
-		//   this.$i18n.locale = type;
-		// }
 	}
 };
 </script>
 <style lang="less" scoped>
-.tapHeader {
-	width: 100%;
+.clusterManagement-container {
+	display: flex;
+	flex-direction: column;
 	height: 100%;
-	.el-menu-demo {
-		height: 40px;
-		border-bottom: 0;
-		background: #f9f9f9;
-		.el-menu-item {
-			height: 40px;
-			line-height: 40px;
-			border-bottom: 0;
-			border-top: 2px solid transparent;
+	background: #fafafa;
+	.header {
+		padding: 15px 10px;
+		background: #ffffff;
+		overflow: hidden;
+		border-bottom: 1px solid #dedee4;
+		box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
+		box-sizing: border-box;
+		.title {
+			font-size: 16px;
+			color: #333;
+			font-weight: 600;
 		}
-		.is-active {
-			background-color: #fff;
-			border-top: 2px solid #409eff;
-			border-bottom: 0 !important;
+		.logBtn {
+			font-size: 14px;
+			color: #48b6e2;
+			cursor: pointer;
+			float: right;
 		}
-	}
-	.changeLangType {
-		width: 120px;
-		float: right;
-		z-index: 1;
 	}
 	.main {
-		// height: 500px;
-		height: calc(100% - 40px);
+		flex: 1;
+		padding: 10px;
+		display: flex;
+		overflow: hidden;
 	}
 }
 </style>
