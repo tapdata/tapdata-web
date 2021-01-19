@@ -18,7 +18,6 @@ export function signOut() {
 	let cookie = window.VueCookie;
 
 	sessionStorage.removeItem('tapdata_permissions');
-	sessionStorage.removeItem('BTN_AUTHS');
 	cookie.delete('token');
 	cookie.delete('user_id');
 	cookie.delete('login');

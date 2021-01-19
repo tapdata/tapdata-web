@@ -1,15 +1,10 @@
 <template>
-	<el-dialog
-		:title="$t('dataFlow.skipError.title')"
-		:visible.sync="dialogVisible"
-		width="60%"
-		:before-close="handleClose"
-	>
+	<el-dialog :title="$t('dataFlow.skipError.title')" :visible.sync="dialogVisible" width="60%">
 		<div class="skip-tip">{{ $t('dataFlow.skipError.tip') }}</div>
 		<div class="skip-tip">{{ $t('dataFlow.skipError.attention') }}</div>
 		<div class="skip-name">
 			{{ `${$t('dataFlow.skipError.taskName')}:` }}
-			<span style="color: #48B6E2">{{ taskName }}</span>
+			<span style="color: #48B6E2">{{ task.name }}</span>
 		</div>
 		<ul class="error-list">
 			<span class="check-all"
@@ -28,7 +23,7 @@
 			</el-checkbox-group>
 		</ul>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="handleClose" size="mini">{{ $t('dataFlow.skipError.cancel') }}</el-button>
+			<el-button @click="dialogVisible = false" size="mini">{{ $t('dataFlow.skipError.cancel') }}</el-button>
 			<el-button type="primary" size="mini" @click="skipErrorData">{{
 				$t('dataFlow.skipError.startJob')
 			}}</el-button>
@@ -39,28 +34,39 @@
 <script>
 export default {
 	name: 'SkipError',
-	props: {
-		errorEvents: {
-			required: true,
-			value: Array
-		},
-		dialogVisible: {
-			required: true,
-			value: Boolean
-		},
-		taskName: {
-			required: true,
-			value: String
-		}
-	},
 	data() {
 		return {
+			dialogVisible: false,
+			errorEvents: [],
 			isIndeterminate: true,
 			checkAll: false,
-			checkedData: []
+			checkedData: [],
+			task: {}
 		};
 	},
 	methods: {
+		async checkError(task, callback) {
+			let errorEvents = [];
+			if (!task.status || task.status === 'error') {
+				let res = await this.$api('DataFlows').get([task.id]);
+				let data = res ? res.data : {};
+				if (
+					data.status === 'error' &&
+					data.setting.stopOnError &&
+					data.errorEvents &&
+					data.errorEvents.length > 0
+				) {
+					this.dialogVisible = true;
+					this.task = data;
+					errorEvents = data.errorEvents;
+					this.errorEvents = errorEvents;
+					return;
+				}
+			}
+			if (callback) {
+				callback();
+			}
+		},
 		handleCheckAllChange(val) {
 			let ids = this.errorEvents.map((item, index) => {
 				return index;
@@ -84,14 +90,8 @@ export default {
 			} else {
 				this.checkedData = [];
 			}
-			this.$emit('operationsSkipError', this.checkedData);
-			this.handleClose('skipError');
-		},
-		handleClose(data) {
-			if (data !== 'skipError') {
-				data = 'cancelError';
-			}
-			this.$emit('dialogVisible', false, data);
+			this.$emit('skip', this.task.id, this.checkedData);
+			this.dialogVisible = false;
 		}
 	}
 };
