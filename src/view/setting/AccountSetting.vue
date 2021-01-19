@@ -254,11 +254,11 @@ export default {
 		async handleGetData() {
 			this.loading = true;
 			let parmas = {
-				// filter: {
-				// 	where: {
-				// 		id: this.$cookie.get('user_id')
-				// 	}
-				// }
+				filter: {
+					where: {
+						id: this.$cookie.get('user_id')
+					}
+				}
 			};
 			let result = await usersModel.get(parmas);
 			if (result.data) {
@@ -295,7 +295,7 @@ export default {
 		// 修改用户名
 		confirm() {
 			let parmas = {
-				// id: this.$cookie.get('user_id'),
+				id: this.$cookie.get('user_id'),
 				username: this.userName
 			};
 			if (this.userName) {
