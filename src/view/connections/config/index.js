@@ -7,6 +7,8 @@ import postgres from './postgres';
 import elasticsearch from './elasticsearch';
 import redis from './redis';
 import file from './file';
+import kafka from './kafka';
+import maria from './maria';
 
 export default {
 	mysql,
@@ -17,5 +19,7 @@ export default {
 	postgres,
 	elasticsearch,
 	redis,
-	file
+	file,
+	kafka,
+	maria
 };

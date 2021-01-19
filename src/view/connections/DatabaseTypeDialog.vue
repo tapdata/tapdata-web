@@ -7,6 +7,7 @@
 		:before-close="handleClose"
 	>
 		<div class="database">
+			{{ database }}
 			<span class="title" v-if="database && database.length > 0">Database</span>
 			<ul class="item clearfix">
 				<li v-for="item in database" :key="item" @click="databaseType(item)">
@@ -58,7 +59,9 @@ export default {
 				'gbase-8s',
 				'sybase ase',
 				'gaussdb200',
-				'db2'
+				'db2',
+				'kafka',
+				'maria'
 			],
 			otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file', 'mem_cache'],
 			typeMap: TYPEMAP
