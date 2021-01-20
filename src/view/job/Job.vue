@@ -275,13 +275,7 @@
 		</el-dialog>
 		<AddBtnTip v-if="!loading && isEditable()"></AddBtnTip>
 		<DownAgent ref="agentDialog" type="taskRunning" @closeAgentDialog="closeAgentDialog"></DownAgent>
-		<SkipError
-			:dialogVisible="dialogVisibleSkipError"
-			:errorEvents="errorEvents"
-			:taskName="taskName"
-			v-on:dialogVisible="handleSkipErrorVisible"
-			v-on:operationsSkipError="handleOperationSkipError"
-		></SkipError>
+		<SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
 	</div>
 </template>
 
@@ -350,10 +344,6 @@ export default {
 			],
 			flowDataName: '',
 			mappingTemplate: '',
-			dialogVisibleSkipError: false,
-			errorEvents: [],
-			currentStatus: '',
-			taskName: '',
 			creatUserId: '',
 			statusBtMap
 		};
@@ -426,41 +416,9 @@ export default {
 					this.draftSave();
 				});
 			});
-
-		// 是否允许下载agent
-		// if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
-		// 	this.getDataApi('firstAgent');
-		// 	if (!this.downLoadNum) {
-		// 		self.timer = setInterval(() => {
-		// 			self.getDataApi();
-		// 			if (this.downLoadNum) {
-		// 				clearInterval(self.timer);
-		// 			}
-		// 		}, 5000);
-		// 	}
-		// }
 	},
 
 	methods: {
-		// // 获取Agent是否安装
-		// getDataApi(type) {
-		// 	let params = {};
-		// 	if (
-		// 		this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
-		// 		!parseInt(this.$cookie.get('isAdmin')) &&
-		// 		localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
-		// 	) {
-		// 		params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-		// 	}
-		// 	cluster.get(params).then(res => {
-		// 		if (res.data) {
-		// 			if (type === 'firstAgent') {
-		// 				this.firstNum = res.data.length || 0;
-		// 			}
-		// 			this.downLoadNum = res.data.length;
-		// 		}
-		// 	});
-		// },
 		// 关闭agent下载弹窗返回参数
 		closeAgentDialog() {
 			this.start();
@@ -1091,42 +1049,26 @@ export default {
 				});
 			}
 		},
-		//kipError
-		handleSkipErrorVisible() {
-			this.dialogVisibleSkipError = false;
-		},
-		handleOperationSkipError(val) {
-			this.currentStatus['errorEvents'] = val;
-			this.doSaveStartDataFlow(this.currentStatus);
+		skipHandler(id, errorEvents) {
+			let data = this.getDataFlowData();
+			if (data) {
+				data.errorEvents = errorEvents;
+				this.doSaveStartDataFlow(data);
+			}
 		},
 		/**
 		 * start button handler
 		 */
 		async start() {
-			this.downLoadNum = this.$refs.agentDialog.getDataApi();
-			if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') && !this.downLoadNum) {
-				this.$refs.agentDialog.dialogVisible = true;
-				return;
-			}
-			let errorEvent;
-			if (this.$route.query && this.$route.query.id && this.status === 'error') {
-				errorEvent = await dataFlowsApi.get([this.$route.query.id]);
-			}
-			errorEvent = errorEvent ? errorEvent.data : {};
-			let data = this.getDataFlowData();
-			if (data) {
-				if (
-					this.status === 'error' &&
-					errorEvent.setting.stopOnError &&
-					errorEvent.errorEvents &&
-					errorEvent.errorEvents.length > 0
-				) {
-					this.dialogVisibleSkipError = true;
-					this.errorEvents = errorEvent.errorEvents;
-					this.taskName = data.name;
-					this.currentStatus = data;
-				} else {
-					this.doSaveStartDataFlow(data);
+			if (this.$refs.agentDialog.checkAgent()) {
+				let id = this.$route.query.id;
+				if (this.$route.query && id) {
+					this.$refs.errorHandler.checkError({ id, status: this.status }, () => {
+						let data = this.getDataFlowData();
+						if (data) {
+							this.doSaveStartDataFlow(data);
+						}
+					});
 				}
 			}
 		},
@@ -1221,7 +1163,7 @@ export default {
 			if (forceStop === true) {
 				message = self.$t('message.forceStoppingMessage');
 			}
-			if (self.sync_type !== 'cdc') {
+			if (!self.sync_type.includes('cdc')) {
 				message = self.$t('message.stopInitial_syncMessage');
 			}
 			if (self.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
