@@ -308,10 +308,12 @@ const en = {
 		reloadSchemaError: 'Model update failed'
 	},
 	button: {
-		reset: 'reset',
-		delete: 'delete',
-		rename: 'rename',
-		details: 'details'
+		reset: 'Reset',
+		delete: 'Delete',
+		rename: 'Rename',
+		details: 'Details',
+		more: 'More',
+		edit: 'Edit'
 	},
 	dataFlow: {
 		aggregateNotDataNode: 'The first target data node of aggregation node can only be COLLECTION',
@@ -495,6 +497,9 @@ const en = {
 		edit: 'Edit',
 		copy: 'Copy',
 		reset: ' Reset ',
+		schedule: 'Schedule',
+		run: 'Run',
+		stop: 'Stop',
 		cut: 'Cut',
 		paste: 'Paste',
 		undo: 'Undo',
@@ -506,7 +511,7 @@ const en = {
 		up: 'Up',
 		selectMultipleNode: 'Multiple selection',
 		mouseDrag: 'Drag',
-		detail: 'Running detail',
+		runningMonitor: 'Monitor',
 		select_source_connection: 'Source-side connection',
 		select_sync_mode: 'Sync Mode',
 		mapping: 'Association',

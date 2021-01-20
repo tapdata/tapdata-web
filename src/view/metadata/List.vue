@@ -287,7 +287,7 @@ export default {
 		this.getDbOptions();
 	},
 	mounted() {
-		this.searchParams = this.table.getCache();
+		this.searchParams = Object.assign(this.searchParams, this.table.getCache());
 	},
 	computed: {
 		table() {

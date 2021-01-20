@@ -311,7 +311,9 @@ const cn = {
 		reset: '重置',
 		delete: '删除',
 		rename: '改名',
-		details: '详情'
+		details: '详情',
+		more: '更多',
+		edit: '编辑'
 	},
 	dataFlow: {
 		aggregateNotDataNode: '连接聚合节点的第一个目标数据节点只能是数据集',
@@ -493,6 +495,9 @@ const cn = {
 		edit: '编辑',
 		copy: '复制',
 		reset: '重置',
+		schedule: '定时调度',
+		run: '启动任务',
+		stop: '停止任务',
 		cut: '剪切',
 		paste: '粘贴',
 		undo: '撤销',
@@ -504,7 +509,7 @@ const cn = {
 		up: '向上',
 		selectMultipleNode: '选择多节点',
 		mouseDrag: '鼠标拖拽',
-		detail: '任务监控',
+		runningMonitor: '运行监控',
 		select_source_connection: '源端连接',
 		select_sync_mode: '同步方式',
 		mapping: '关联关系',

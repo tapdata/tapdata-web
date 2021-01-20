@@ -308,7 +308,9 @@ const tc = {
 		reset: '重置',
 		delete: '删除',
 		rename: '改名',
-		details: '詳情'
+		details: '詳情',
+		more: '更多',
+		edit: '編輯'
 	},
 	dataFlow: {
 		aggregateNotDataNode: '連接聚合節點的第一個目標數據節點只能是數據集',
@@ -490,6 +492,9 @@ const tc = {
 		edit: '編輯',
 		copy: '複製',
 		reset: '重置',
+		schedule: '定時調度',
+		run: '啟動任務',
+		stop: '停止任務',
 		cut: '剪切',
 		paste: '粘貼',
 		undo: '撤銷',
@@ -501,7 +506,7 @@ const tc = {
 		up: '向上',
 		selectMultipleNode: '選擇多節點',
 		mouseDrag: '鼠標拖拽',
-		detail: '任务监控',
+		runningMonitor: '運行監控',
 		select_source_connection: '源端連接',
 		select_sync_mode: '同步方式',
 		mapping: '關聯關係',

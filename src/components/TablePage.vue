@@ -175,6 +175,7 @@ export default {
 	flex-direction: column;
 	height: 100%;
 	background: #fafafa;
+	min-width: 720px;
 	.table-page-header {
 		padding: 15px 10px;
 		background: #ffffff;
@@ -211,12 +212,13 @@ export default {
 			display: flex;
 			justify-content: space-between;
 			align-items: flex-end;
-			margin-bottom: 10px;
+			flex-wrap: wrap-reverse;
 			.table-page-search-bar {
-				flex: 2;
+				margin-right: 5px;
+				margin-bottom: 10px;
 			}
 			.table-page-operation-bar {
-				flex: 1;
+				margin-bottom: 10px;
 				text-align: right;
 			}
 		}
