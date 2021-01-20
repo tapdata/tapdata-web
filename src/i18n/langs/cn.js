@@ -244,6 +244,7 @@ const cn = {
 		close: '关闭',
 		manageSys: '管理后台',
 		restart: '重启',
+		update: '更新',
 		syncGover: '同步治理',
 		screen: '屏幕',
 		delete: '删除',
