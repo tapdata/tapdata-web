@@ -5,7 +5,8 @@ export default function(vm) {
 			labelWidth: '200px'
 		},
 		defaultModel: {
-			connection_type: 'source_and_target'
+			connection_type: 'source_and_target',
+			kafkaSelectTopics: 'kafkaRawTopics'
 		},
 		items: [
 			{
@@ -33,45 +34,22 @@ export default function(vm) {
 			},
 			{
 				type: 'input',
-				field: 'database_host',
+				field: 'kafkaBootstrapServers',
 				label: vm.$t('dataForm.form.host'),
 				rules: [
 					{
 						required: true,
 						validator(rule, value, callback) {
-							let port = this.value['database_port'];
 							if (!value || !value.trim()) {
 								callback(new Error(vm.$t('dataForm.error.noneHost')));
-							} else if (!port) {
-								callback(new Error(vm.$t('dataForm.error.nonePort')));
-							} else if (!/^\d+$/.test(port)) {
-								callback(new Error(vm.$t('dataForm.error.portNumber')));
-							} else if (port < 1 || port > 65535) {
-								callback(new Error(vm.$t('dataForm.error.portRange')));
-							} else {
-								callback();
 							}
 						}
 					}
-				],
-				config: {
-					placeholder: vm.$t('dataForm.form.kafka.hostPlaceHolder')
-				}
-				// appendSlot: (h, data) => {
-				// 	return h('FbInput', {
-				// 		props: {
-				// 			value: data['database_port'],
-				// 			config: {
-				// 				placeholder: vm.$t('dataForm.form.kafka.hostPlaceHolder')
-				// 			}
-				// 		},
-				// 		on: {
-				// 			input(val) {
-				// 				data['database_port'] = val;
-				// 			}
-				// 		}
-				// 	});
-				// }
+				]
+			},
+			{
+				type: 'slot',
+				slot: 'kafkaUri'
 			},
 			{
 				type: 'radio',
@@ -79,14 +57,14 @@ export default function(vm) {
 				label: vm.$t('dataForm.form.kafka.chooseTheme'),
 				options: [
 					{
-						label: vm.$t('dataForm.form.kafka.topicName '),
+						label: vm.$t('dataForm.form.kafka.topicName'),
 						tip: vm.$t('dataForm.form.kafka.directlyNameTip'),
 						value: 'kafkaRawTopics'
 					},
 					{
-						label: vm.$t('dataForm.form.kafka.topicExpression '),
+						label: vm.$t('dataForm.form.kafka.topicExpression'),
 						tip: vm.$t('dataForm.form.kafka.hostPlaceHolder'),
-						value: 'kafkaPatternTopics '
+						value: 'kafkaPatternTopics'
 					}
 				],
 				required: true
@@ -95,7 +73,6 @@ export default function(vm) {
 				type: 'input',
 				field: 'kafkaRawTopics',
 				label: vm.$t('dataForm.form.kafka.topicName'),
-				required: true,
 				show: false,
 				dependOn: [
 					{
@@ -115,7 +92,6 @@ export default function(vm) {
 				type: 'input',
 				field: 'kafkaPatternTopics',
 				label: vm.$t('dataForm.form.kafka.topicExpression'),
-				required: true,
 				show: false,
 				dependOn: [
 					{
@@ -134,7 +110,40 @@ export default function(vm) {
 			{
 				type: 'input',
 				field: 'kafkaConsumerRequestTimeout',
-				label: vm.$t('dataForm.form.kafka.requestTimeoutPeriod')
+				label: vm.$t('dataForm.form.kafka.requestTimeoutPeriod'),
+				show: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connection_type',
+								value: 'source'
+							}
+						],
+						triggerConfig: {
+							show: false
+						}
+					}
+				]
+			},
+			{
+				type: 'input', //拉取请求超时时间
+				field: 'kafkaConsumerRequestTimeout',
+				label: vm.$t('dataForm.form.kafka.requestTimeoutPeriod'),
+				show: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connection_type',
+								value: 'source'
+							}
+						],
+						triggerConfig: {
+							show: false
+						}
+					}
+				]
 			},
 			{
 				type: 'switch',

@@ -50,7 +50,9 @@
 							<div class="url-tip" slot="timezone">
 								{{ $t('dataForm.form.timeZoneTips') }}
 							</div>
-							<div class="url-tip" slot="fileUrl"></div>
+							<div class="url-tip" slot="kafkaUri">
+								{{ $t('dataForm.form.kafka.hostPlaceHolder') }}
+							</div>
 							<div class="url-tip" slot="kafkaIgnoreInvalidRecord">
 								{{ $t('dataForm.form.kafka.lonoreFormatTip') }}
 							</div>
@@ -289,7 +291,20 @@ const defaultModel = {
 			include_filename: '',
 			exclude_filename: ''
 		}
-	]
+	],
+
+	// kafka
+	kafkaBootstrapServers: '',
+	kafkaSelectTopics: '',
+	kafkaRawTopics: '',
+	kafkaPatternTopics: '',
+	kafkaConsumerRequestTimeout: '',
+	kafkaConsumerUseTransactional: '',
+	kafkaMaxPollRecords: '',
+	kafkaPollTimeoutMS: '',
+	kafkaMaxFetchBytes: '',
+	kafkaMaxFetchWaitMS: '',
+	kafkaIgnoreInvalidRecord: ''
 };
 
 export default {

@@ -413,11 +413,6 @@ export default function(vm) {
 						}
 					}
 				]
-			},
-
-			{
-				type: 'slot',
-				slot: 'fileUrl'
 			}
 		]
 	};
