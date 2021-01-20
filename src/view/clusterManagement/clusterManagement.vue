@@ -1,43 +1,32 @@
 <template>
-	<div class="cluster">
-		<!-- 服务集群管理 -->
-		<div class="cluster-box">
-			<el-row class="fun-area" :gutter="10">
-				<el-col :span="12">
-					<div class="demo-input-suffix">
-						<span>{{ $t('message.sourchName') }}</span>
-						<el-input
-							clearable
-							size="mini"
-							v-model="sourch"
-							:debounce="800"
-							:placeholder="$t('message.placeholderServer')"
-							@input="screenFn"
-						>
-						</el-input>
-						<el-button
-							type="primary"
-							@click="
-								sourch = '';
-								getDataApi();
-							"
-							>{{ $t('button.reset') }}</el-button
-						>
-					</div>
-				</el-col>
-				<!-- <el-col class="text-rf" :span="11">
-					<el-button
-						v-readonlybtn="'SYNC_job_creation'"
-						class="btn btn-create"
-						type="primary"
+	<section class="clusterManagement-container">
+		<div class="header">
+			<div class="page-header-title">
+				<span class="title">{{ $t('message.serviceCluMange') }}</span>
+				<div class="logBtn" @click="handleSelect" v-readonlybtn="'status_log'">
+					{{ $t('message.statusLog') }}
+				</div>
+			</div>
+		</div>
+		<div class="main">
+			<ul class="search-bar">
+				<li>
+					<el-input
+						clearable
 						size="mini"
-						@click="create"
+						v-model="sourch"
+						:debounce="800"
+						:placeholder="$t('message.placeholderServer')"
+						@input="screenFn"
 					>
-						<i class="iconfont icon-jia add-btn-icon"></i>
+					</el-input>
+				</li>
+				<li>
+					<el-button type="text" class="restBtn" size="mini" @click="rest()">
+						{{ $t('dataFlow.reset') }}
 					</el-button>
-				</el-col> -->
-			</el-row>
-
+				</li>
+			</ul>
 			<div class="content" v-if="waterfallData.length > 0">
 				<el-row :gutter="20" class="waterfall">
 					<el-col class="list" :md="12" :sm="24" v-for="(element, i) in waterfallData" :key="i">
@@ -46,18 +35,22 @@
 								<div class="fl" style="width: 60%;">
 									<i class="circular" :class="item.status !== 'running' ? 'bgred' : 'bggreen'"></i>
 									<h2 class="name">{{ item.systemInfo.hostname }}</h2>
-									<div class="uuid">{{ item.systemInfo.uuid }}</div>
 									<span>{{ item.systemInfo.ip }}</span>
+									<span class="uuid">{{ item.systemInfo.uuid }}</span>
 								</div>
-								<div
-									v-if="managementType === 'cluster'"
-									class="fr"
-									style="width: 40%;"
-									v-readonlybtn="'Cluster_operation'"
-								>
-									<el-button size="mini" class="fr addBtn" @click="addServeFn(item)">{{
-										$t('message.addServerMon')
-									}}</el-button>
+								<div class="operation-bar">
+									<i
+										class="iconfont icon-icon_tianjia"
+										v-if="managementType === 'cluster'"
+										v-readonlybtn="'Cluster_operation'"
+										@click="addServeFn(item)"
+									></i>
+									<i class="iconfont icon-icon_shezhi" @click="editAgent(item)"></i>
+									<i
+										class="iconfont icon-shanchu"
+										:disabled="item.status === 'running'"
+										@click="handleDelete(item.id)"
+									></i>
 								</div>
 							</div>
 							<div class="boxBottom">
@@ -75,12 +68,14 @@
 									<el-col :span="12">
 										<div class="btn fr" v-readonlybtn="'Cluster_operation'">
 											<el-button
+												size="mini"
 												:type="item.management.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.management.status == 'stopped' ? false : true"
 												@click="startFn(item, item.management.status, 'management', 'start')"
 												>{{ $t('message.startUp') }}</el-button
 											>
 											<el-button
+												size="mini"
 												:type="item.management.status == 'running' ? 'danger' : 'info'"
 												:disabled="item.management.status == 'running' ? false : true"
 												@click="closeFn(item, item.management.status, 'management', 'stop')"
@@ -111,12 +106,14 @@
 									<el-col :span="12">
 										<div class="btn fr" v-readonlybtn="'Cluster_operation'">
 											<el-button
+												size="mini"
 												:type="item.engine.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.engine.status == 'stopped' ? false : true"
 												@click="startFn(item, item.engine.status, 'engine')"
 												>{{ $t('message.startUp') }}</el-button
 											>
 											<el-button
+												size="mini"
 												:type="item.engine.status == 'running' ? 'danger' : 'info'"
 												:disabled="item.engine.status == 'running' ? false : true"
 												@click="closeFn(item, item.engine.status, 'engine')"
@@ -143,12 +140,14 @@
 									<el-col :span="12">
 										<div class="btn fr" v-readonlybtn="'Cluster_operation'">
 											<el-button
+												size="mini"
 												:type="item.apiServer.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.apiServer.status == 'stopped' ? false : true"
 												@click="startFn(item, item.apiServer.status, 'apiServer')"
 												>{{ $t('message.startUp') }}</el-button
 											>
 											<el-button
+												size="mini"
 												:type="item.apiServer.status == 'running' ? 'danger' : 'info'"
 												:disabled="item.apiServer.status == 'running' ? false : true"
 												@click="closeFn(item, item.apiServer.status, 'apiServer')"
@@ -215,16 +214,59 @@
 				}}</el-button>
 			</div>
 		</el-dialog>
-	</div>
+		<el-dialog
+			:title="$t('message.addServerMon')"
+			custom-class="serverDialog"
+			:visible.sync="editAgentDialog"
+			:append-to-body="true"
+			:lock-scroll="false"
+			:close-on-click-modal="false"
+			width="600px"
+			@close="editAgentDialog = false"
+		>
+			<el-form ref="editAgentForm" label-width="100px" class="addServe">
+				<el-form-item
+					label="name"
+					prop="agentName"
+					:rules="{
+						required: true,
+						message: $t('message.nullContent'),
+						trigger: 'blur'
+					}"
+				>
+					<el-input
+						v-model="agentName"
+						size="mini"
+						show-word-limit
+						:placeholder="$t('message.placeholderMonServer')"
+					></el-input>
+					<span>还原</span>
+				</el-form-item>
+
+				<el-form-item label="command" prop="command">
+					<el-select v-model="custIP" placeholder="请选择" size="mini">
+						<el-option v-for="item in ips" :key="item" :label="item" :value="item"> </el-option>
+					</el-select>
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button size="small" @click="editAgentDialog = false">{{ $t('message.cancel') }}</el-button>
+				<el-button size="small" type="primary" @click="submitEditAgent('editAgentForm')">{{
+					$t('message.confirm')
+				}}</el-button>
+			</div>
+		</el-dialog>
+	</section>
 </template>
 <script>
+import { delayTrigger } from '../../util/util';
 import addServe from './component/addServe';
 import factory from '../../api/factory';
-import { delayTrigger } from '../../util/util';
 const cluster = factory('cluster');
 export default {
-	name: 'clusterManagement',
-	components: { addServe },
+	components: {
+		addServe
+	},
 	data() {
 		return {
 			waterfallData: [],
@@ -240,21 +282,24 @@ export default {
 			editItem: {},
 			timer: null,
 			downLoadAgetntdialog: false,
+			editAgentDialog: false,
 			downLoadNum: 0,
+			ips: [],
+			custIP: '',
+			custId: '',
+			agentName: '',
 			managementType: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT')
 		};
 	},
 	created() {
 		this.getDataApi();
-
 		// 这是一个定时器
 		// TODO 集群管理轮询替换成webstocek
 		let that = this;
 		this.timer = setInterval(() => {
 			that.getDataApi();
-		}, 5000);
+		}, 10000);
 	},
-
 	methods: {
 		// 提交
 		async submitForm() {
@@ -420,7 +465,6 @@ export default {
 				this.getDataApi();
 			}, 800);
 		},
-
 		// 获取数据
 		getDataApi() {
 			let params = { index: 1 };
@@ -447,133 +491,195 @@ export default {
 		closeDialogForm() {
 			this.dialogForm = false;
 			this.$refs.childRules.closeDialogForm();
+		},
+		//删除agent
+		handleDelete(id) {
+			this.$api('cluster')
+				.delete(id)
+				.then(() => {
+					this.$message.success('删除成功');
+				})
+				.catch(() => {
+					this.$message.error('删除失败');
+				});
+		},
+		//编辑
+		editAgent(item) {
+			this.editAgentDialog = true;
+			this.custId = item.id;
+			this.custIP = item.systemInfo.ip;
+			this.ips = item.systemInfo.ips;
+			this.agentName = item.systemInfo.hostname;
+		},
+		//提交编辑
+		submitEditAgent() {
+			this.$refs.editAgentForm.validate(valid => {
+				if (valid) {
+					let data = {
+						custIP: this.custIP,
+						agentName: this.agentName
+					};
+					this.$api('cluster')
+						.editAgent(this.custId, data)
+						.then(() => {
+							this.$message.success('编辑成功');
+						})
+						.catch(() => {
+							this.$message.error('编辑失败');
+						});
+				}
+			});
 		}
-	},
-
-	destroyed() {
-		clearInterval(this.timer);
-		this.timer = null;
 	}
 };
 </script>
 <style lang="less" scoped>
-.cluster {
-	width: 100%;
+.clusterManagement-container {
+	display: flex;
+	flex-direction: column;
 	height: 100%;
-	font-size: 12px;
-	background-color: #f8f6fa;
-	.cluster-box {
-		height: 100%;
-		background-color: #fff;
-	}
-
-	.content {
-		width: 100%;
-		height: calc(100% - 60px);
-		padding: 10px;
+	background: #fafafa;
+	.header {
+		padding: 15px 10px;
+		background: #ffffff;
+		overflow: hidden;
+		border-bottom: 1px solid #dedee4;
+		box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
 		box-sizing: border-box;
-		overflow-y: auto;
-		.list {
-			padding: 5px 0 10px 0;
-			overflow: hidden;
+		.title {
+			font-size: 16px;
+			color: #333;
+			font-weight: 600;
+		}
+		.logBtn {
+			font-size: 14px;
+			color: #48b6e2;
+			cursor: pointer;
+			float: right;
+		}
+	}
+	.main {
+		flex: 1;
+		padding: 10px;
+		display: flex;
+		overflow: hidden;
+		flex-direction: column;
+		.search-bar {
+			display: flex;
+			li + li {
+				margin-left: 10px;
+			}
+		}
+		.content {
+			width: 100%;
+			padding: 10px;
 			box-sizing: border-box;
-			.listBox {
-				position: relative;
-				margin-bottom: 20px;
-				padding: 0 25px 10px 50px;
-				background-color: #fff;
-				box-shadow: 0.707px 0.707px 3px rgba(0, 0, 0, 0.13);
-				.boxTop {
-					padding-top: 15px;
-					overflow: hidden;
-					.circular {
-						display: inline-block;
-						position: absolute;
-						left: 20px;
-						top: 18px;
-						width: 13px;
-						height: 13px;
-						border-radius: 50%;
-						background-color: #f00;
-					}
-					.name {
-						margin: 0;
-						font-size: 18px;
-						color: #48b6e2;
-						white-space: nowrap;
-						text-overflow: ellipsis;
+			overflow-y: auto;
+			.list {
+				padding: 5px 0 10px 0;
+				padding-left: 0;
+				overflow: hidden;
+				box-sizing: border-box;
+				.listBox {
+					position: relative;
+					margin-bottom: 20px;
+					padding: 0 25px 10px 50px;
+					background-color: #fff;
+					box-shadow: 0.707px 0.707px 3px rgba(0, 0, 0, 0.13);
+					.boxTop {
+						padding-top: 15px;
 						overflow: hidden;
-					}
-					.uuid {
-						padding: 5px 0;
-						font-size: 12px;
-					}
-					span {
-						font-size: 14px;
-						color: #555;
-					}
-					.addBtn {
-						span {
-							font-size: 12px;
-						}
-					}
-				}
-				.boxTop {
-					// .el-button {
-					//   span { font-size: 12px;}
-					// }
-				}
-				.boxBottom {
-					padding-top: 10px;
-					.data-list {
-						width: 100%;
-						height: 30px;
-						margin-bottom: 5px;
-						line-height: 30px;
-						background-color: #f0fafe;
-						list-style: none;
-						.txt {
+						display: flex;
+						flex-direction: row;
+						justify-content: space-between;
+						.circular {
 							display: inline-block;
-							width: 120px;
-							padding-left: 15px;
-							font-size: 12px;
-							color: #000;
-							text-overflow: ellipsis;
+							position: absolute;
+							left: 20px;
+							top: 18px;
+							width: 13px;
+							height: 13px;
+							border-radius: 50%;
+							background-color: #f00;
+						}
+						.name {
+							margin: 0;
+							font-size: 18px;
+							color: #48b6e2;
 							white-space: nowrap;
-							i {
-								padding-right: 5px;
+							text-overflow: ellipsis;
+							overflow: hidden;
+						}
+						.uuid {
+							padding: 5px 0;
+							font-size: 12px;
+							color: #999;
+						}
+						span {
+							font-size: 14px;
+							color: #555;
+						}
+						.addBtn {
+							span {
+								font-size: 12px;
 							}
 						}
+					}
+					.boxTop {
+						// .el-button {
+						//   span { font-size: 12px;}
+						// }
+					}
+					.boxBottom {
+						padding-top: 10px;
+						.data-list {
+							width: 100%;
+							margin-bottom: 5px;
+							line-height: 35px;
+							background-color: #f0fafe;
+							list-style: none;
+							.txt {
+								display: inline-block;
+								width: 120px;
+								padding-left: 15px;
+								font-size: 12px;
+								color: #000;
+								text-overflow: ellipsis;
+								white-space: nowrap;
+								i {
+									padding-right: 5px;
+								}
+							}
 
-						.btn {
-							display: inline;
-						}
-						.popover-tip {
-							display: inline-block;
-							color: #f00;
-							transform: rotate(180deg);
-							cursor: pointer;
+							.btn {
+								display: inline;
+							}
+							.popover-tip {
+								display: inline-block;
+								color: #f00;
+								transform: rotate(180deg);
+								cursor: pointer;
+							}
 						}
 					}
 				}
 			}
+			.screen {
+				padding-right: 15px;
+			}
+			.red {
+				color: #ee5353;
+			}
+			.bgred {
+				background-color: #ee5353 !important;
+			}
+			.green {
+				color: #48b6e2;
+			}
+			.bggreen {
+				background-color: #71c179 !important;
+			}
 		}
-	}
-
-	.screen {
-		padding-right: 15px;
-	}
-	.red {
-		color: #ee5353;
-	}
-	.bgred {
-		background-color: #ee5353 !important;
-	}
-	.green {
-		color: #48b6e2;
-	}
-	.bggreen {
-		background-color: #71c179 !important;
 	}
 	.noText {
 		display: flex;
@@ -583,45 +689,6 @@ export default {
 		color: #1976d2;
 		font-size: 16px;
 		background-color: #fff;
-	}
-}
-</style>
-<style lang="less">
-.cluster {
-	width: 100%;
-	.content {
-		padding: 10px;
-		width: 100%;
-		height: 100%;
-		.el-row {
-			margin-bottom: 20px;
-		}
-		.boxBottom {
-			.el-button {
-				padding: 4px 10px;
-				font-size: 12px;
-			}
-		}
-	}
-}
-
-.popover-box {
-	color: #333;
-	h5 {
-		margin: 0;
-		padding-bottom: 5px;
-	}
-	div {
-		font-size: 12px;
-	}
-}
-
-.serverDialog {
-	.el-dialog__body {
-		padding: 30px 50px 0 20px;
-	}
-	.el-dialog__footer {
-		padding: 10px 50px 20px;
 	}
 }
 </style>

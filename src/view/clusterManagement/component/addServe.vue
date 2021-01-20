@@ -9,7 +9,7 @@
 				trigger: 'blur'
 			}"
 		>
-			<el-input v-model="ruleForm.name" :placeholder="$t('message.placeholderMonServer')"></el-input>
+			<el-input v-model="ruleForm.name" size="mini" :placeholder="$t('message.placeholderMonServer')"></el-input>
 		</el-form-item>
 
 		<el-form-item
@@ -21,11 +21,11 @@
 				trigger: 'blur'
 			}"
 		>
-			<el-input v-model="ruleForm.command" :placeholder="$t('message.placeholderCommand')"></el-input>
+			<el-input v-model="ruleForm.command" size="mini" :placeholder="$t('message.placeholderCommand')"></el-input>
 		</el-form-item>
 
 		<el-form-item label="arguements" prop="arguements">
-			<el-input v-model="ruleForm.arguments" placeholder="arguements"></el-input>
+			<el-input v-model="ruleForm.arguments" size="mini" placeholder="arguements"></el-input>
 		</el-form-item>
 	</el-form>
 </template>
