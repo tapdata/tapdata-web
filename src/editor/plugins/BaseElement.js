@@ -23,21 +23,11 @@ joint.dia.Element.define(
 				strokeWidth: 2
 			},
 			image: {
-				// xlinkHref: '[URL]'
 				refWidth: '30%',
 				refHeight: -20,
 				x: 10,
 				y: 10,
 				preserveAspectRatio: 'xMidYMin'
-			},
-			statusImage: {
-				xlinkHref: 'static/editor/disabled.svg',
-				refWidth: '30%',
-				refHeight: -20,
-				refX: '75%',
-				y: 10,
-				//preserveAspectRatio: 'xMidYMin',
-				visibility: 'hidden'
 			},
 			label: {
 				textVerticalAnchor: 'top',
@@ -47,6 +37,16 @@ joint.dia.Element.define(
 				refY: 10,
 				fontSize: 14,
 				fill: '#333333'
+			},
+			statusImage: {
+				xlinkHref: 'static/editor/disabled.svg',
+				refWidth: '30%',
+				refHeight: -20,
+				refX: '75%',
+				y: 10,
+				z: 2,
+				//preserveAspectRatio: 'xMidYMin',
+				visibility: 'hidden'
 			}
 		}
 	},
@@ -61,12 +61,12 @@ joint.dia.Element.define(
 				selector: 'image'
 			},
 			{
-				tagName: 'image',
-				selector: 'statusImage'
-			},
-			{
 				tagName: 'text',
 				selector: 'label'
+			},
+			{
+				tagName: 'image',
+				selector: 'statusImage'
 			}
 		]
 	}

@@ -129,6 +129,7 @@ export default class Graph extends Component {
 
 				// don't allow link to link connection
 				if (targetView.model.isLink()) return false;
+				if (targetView.model.getFormData().disabled) return false;
 
 				// target don't accept source connection
 				if (
@@ -164,9 +165,11 @@ export default class Graph extends Component {
 			}
 		}));
 		paper.on('cell:mouseenter', function(cellView) {
+			if (cellView.model.getFormData().disabled) return;
 			cellView.vel.addClass('visible');
 		});
 		paper.on('cell:mouseover', function(cellView) {
+			if (cellView.model.getFormData().disabled) return;
 			cellView.vel.addClass('visible');
 			if (event.target.getAttribute('port')) {
 				this._curMag = event.target.getAttribute('port');
