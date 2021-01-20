@@ -55,6 +55,13 @@
 									style="width: 40%;"
 									v-readonlybtn="'Cluster_operation'"
 								>
+									<el-button
+										size="mini"
+										type="danger"
+										v-if="canUpdate"
+										@click="updateFn(item, item.management.status, 'management', 'update')"
+										>{{ $t('message.update') }}</el-button
+									>
 									<el-button size="mini" class="fr addBtn" @click="addServeFn(item)">{{
 										$t('message.addServerMon')
 									}}</el-button>
@@ -220,8 +227,10 @@
 <script>
 import addServe from './component/addServe';
 import factory from '../../api/factory';
-import { delayTrigger } from '../../util/util';
 const cluster = factory('cluster');
+const clusterVersion = factory('clusterVersion');
+const settings = factory('Setting');
+const dataFlows = factory('DataFlows');
 export default {
 	name: 'clusterManagement',
 	components: { addServe },
@@ -241,6 +250,8 @@ export default {
 			timer: null,
 			downLoadAgetntdialog: false,
 			downLoadNum: 0,
+			version: null,
+			canUpdate: false,
 			managementType: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT')
 		};
 	},
@@ -406,7 +417,38 @@ export default {
 				});
 			}
 		},
-		// 重启---关闭---启动
+		updateFn(item) {
+			let data = {
+				uuid: item.uuid,
+				server: 'agent',
+				operation: 'update:' + this.toVersion
+			};
+			this.operationFn(data);
+			this.canUpdate = false;
+		},
+		async getVersion(item) {
+			if (this.curVersion) return;
+			await clusterVersion.get({ filter: JSON.stringify({ where: { 'version.uuid': item.uuid } }) }).then(res => {
+				if (res.data && res.data.length) {
+					this.curVersion = res.data[0].version.backend;
+				}
+			});
+			await settings.get().then(res => {
+				if (res.data && res.data.length) {
+					this.toVersion = res.data.findWhere({ id: '88' }).value;
+				}
+			});
+			let where = {};
+			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
+			where['stats.stagesMetrics.status'] = { neq: 'cdc' };
+			dataFlows.count({ where: where }).then(res => {
+				if (res.data) {
+					this.canUpdate = res.data.count == 0 && this.curVersion != this.toVersion;
+				}
+			});
+		},
+		// 重启---关闭---启动     --版本--更新
 		async operationFn(data) {
 			await cluster.updateStatus(data).then(res => {
 				if (res.status === 200) {
@@ -416,9 +458,8 @@ export default {
 		},
 		// 筛选
 		screenFn() {
-			delayTrigger(() => {
-				this.getDataApi();
-			}, 800);
+			this.getDataApi();
+			this.sourch = '';
 		},
 
 		// 获取数据
@@ -440,6 +481,10 @@ export default {
 						}
 					});
 					this.waterfallData = newWaterfallData;
+					//自动升级，只有一个agent
+					if (this.list.length && !this.version) {
+						this.getVersion(this.list[0]);
+					}
 				}
 			});
 		},

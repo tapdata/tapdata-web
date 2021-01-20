@@ -244,6 +244,7 @@ const tc = {
 		close: '關閉',
 		manageSys: '管理後台',
 		restart: '重啓',
+		update: '更新',
 		syncGover: '同步治理',
 		screen: '屏幕',
 		delete: '刪 除',

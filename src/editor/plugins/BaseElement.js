@@ -3,12 +3,74 @@
  * @date 3/4/20
  * @description
  */
+import joint from '../lib/rappid/rappid';
 import log from '../../log';
 import { FORM_DATA_KEY, SCHEMA_DATA_KEY, OUTPUT_SCHEMA_DATA_KEY, JOIN_TABLE_TPL } from '../constants';
 import { mergeJoinTablesToTargetSchema } from '../util/Schema';
 import _ from 'lodash';
 // import joint from '../lib/rappid/rappid';
 import breakText from '../breakText';
+
+joint.dia.Element.define(
+	'standard.TapNode',
+	{
+		attrs: {
+			body: {
+				refWidth: '100%',
+				refHeight: '100%',
+				stroke: '#333333',
+				fill: '#FFFFFF',
+				strokeWidth: 2
+			},
+			image: {
+				refWidth: '30%',
+				refHeight: -20,
+				x: 10,
+				y: 10,
+				preserveAspectRatio: 'xMidYMin'
+			},
+			label: {
+				textVerticalAnchor: 'top',
+				textAnchor: 'left',
+				refX: '30%',
+				refX2: 20, // 10 + 10
+				refY: 10,
+				fontSize: 14,
+				fill: '#333333'
+			},
+			statusImage: {
+				xlinkHref: 'static/editor/disabled.svg',
+				refWidth: '30%',
+				refHeight: -20,
+				refX: '75%',
+				y: 10,
+				z: 2,
+				//preserveAspectRatio: 'xMidYMin',
+				visibility: 'hidden'
+			}
+		}
+	},
+	{
+		markup: [
+			{
+				tagName: 'rect',
+				selector: 'body'
+			},
+			{
+				tagName: 'image',
+				selector: 'image'
+			},
+			{
+				tagName: 'text',
+				selector: 'label'
+			},
+			{
+				tagName: 'image',
+				selector: 'statusImage'
+			}
+		]
+	}
+);
 
 export const baseElementConfig = {
 	/**
@@ -26,7 +88,7 @@ export const baseElementConfig = {
 		/**
 		 * extends exists shape
 		 */
-		extends: 'standard.EmbeddedImage',
+		extends: 'standard.TapNode',
 
 		/**
 		 * object that contains properties to be assigned to every constructed instance of the subtype.
@@ -57,6 +119,9 @@ export const baseElementConfig = {
 			freeTransform: false,
 			size: { width: 160, height: 36 },
 			attrs: {
+				root: {
+					magnet: false
+				},
 				image: {
 					// xlinkHref: 'static/editor/table.svg',
 					refWidth: '19%',
@@ -86,16 +151,53 @@ export const baseElementConfig = {
 			},
 			ports: {
 				groups: {
-					greens: {
+					l: {
+						position: { name: 'left' },
 						attrs: {
 							circle: {
-								fill: '#f56c6c',
-								stroke: 'red',
+								magnet: true,
+								fill: '#fff',
+								stroke: '#dedee4',
 								strokeWidth: 1,
-								r: 6
+								r: 5
 							}
-						},
-						position: 'absolute'
+						}
+					},
+					r: {
+						position: { name: 'right' },
+						attrs: {
+							circle: {
+								magnet: true,
+								fill: '#fff',
+								stroke: '#dedee4',
+								strokeWidth: 1,
+								r: 5
+							}
+						}
+					},
+					t: {
+						position: { name: 'top' },
+						attrs: {
+							circle: {
+								magnet: true,
+								fill: '#fff',
+								stroke: '#dedee4',
+								strokeWidth: 1,
+								r: 5
+							}
+						}
+					},
+					b: {
+						position: { name: 'bottom' },
+						attrs: {
+							circle: {
+								magnet: true,
+								fill: '#fff',
+								stroke: '#dedee4',
+								strokeWidth: 1,
+								r: 5
+							}
+						}
 					}
 				}
 			},
@@ -338,6 +440,16 @@ export const baseElementConfig = {
 			allowSource() {
 				return false;
 			},
+			highlight() {
+				this.oStrokeWidth = this.attr('body/strokeWidth');
+				this.oStroke = this.attr('body/stroke');
+				this.attr('body/strokeWidth', 2);
+				this.attr('body/stroke', '#00bcd4');
+			},
+			unhighlight() {
+				this.attr('body/strokeWidth', this.oStrokeWidth);
+				this.attr('body/stroke', this.oStroke);
+			},
 			setDisabled(cell, checked) {
 				let onewayIn = false,
 					onewayOut = false,
@@ -376,14 +488,7 @@ export const baseElementConfig = {
 					cell.attr('body/fill', '#f1f1f1');
 					cell.attr('body/stroke', 'silver');
 					cell.attr('label/fill', '#ccc');
-					cell.addPort({
-						id: 'dis',
-						group: 'greens',
-						args: {
-							x: '97%',
-							y: '20%'
-						}
-					});
+					cell.attr('statusImage/visibility', 'visible');
 				}
 				self.graph.stopBatch('disable');
 			},
@@ -395,7 +500,7 @@ export const baseElementConfig = {
 				cell.attr('body/fill', '#fafafa');
 				cell.attr('body/stroke', '#2196F3');
 				cell.attr('label/fill', '#333333');
-				cell.removePort('dis');
+				cell.attr('statusImage/visibility', 'hidden');
 				let cells = [];
 				self.graph.search(cell, cel => {
 					if (cel.cid) cells.push(cel);

@@ -226,6 +226,9 @@ export const tableConfig = {
 				refY: '40%',
 				x: -32,
 				y: 27
+			},
+			ports: {
+				items: []
 			}
 		}
 	},
