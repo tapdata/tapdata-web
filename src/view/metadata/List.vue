@@ -287,7 +287,7 @@ export default {
 		this.getDbOptions();
 	},
 	mounted() {
-		this.searchParams = this.table.getCache();
+		this.searchParams = Object.assign(this.searchParams, this.table.getCache());
 	},
 	computed: {
 		table() {
@@ -391,23 +391,6 @@ export default {
 					connection_type: true,
 					status: true
 				}
-				// fields: {
-				// 	name: true,
-				// 	original_name: true,
-				// 	meta_type: true,
-				// 	id: true,
-				// 	source: true,
-				// 	qualified_name: true,
-				// 	classifications: true,
-				// 	'source._id': true,
-				// 	'source.user_id': true,
-				// 	'source.connection_type': true,
-				// 	'source.database_type': true
-				// },
-				// where: {
-				// 	is_deleted: false,
-				// 	meta_type: 'database'
-				// }
 			};
 			this.$api('connections')
 				.get({

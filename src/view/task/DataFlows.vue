@@ -15,7 +15,7 @@
 			@classify-submit="handleOperationClassify"
 			@sort-change="handleSortTable"
 		>
-			<div slot="search">
+			<template slot="search">
 				<ul class="search-bar">
 					<li>
 						<el-input
@@ -24,6 +24,7 @@
 							prefix-icon="el-icon-search"
 							v-model="searchParams.keyword"
 							size="mini"
+							style="width:160px"
 							@input="table.fetch(1, 800)"
 						></el-input>
 					</li>
@@ -82,8 +83,8 @@
 						<el-button size="mini" type="text" @click="reset()">{{ $t('button.reset') }}</el-button>
 					</li>
 				</ul>
-			</div>
-			<div slot="operation">
+			</template>
+			<div class="buttons" slot="operation">
 				<el-button
 					v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
 					v-readonlybtn="'SYNC_category_application'"
@@ -145,17 +146,29 @@
 			>
 			</el-table-column>
 			<el-table-column
+				min-width="200"
 				:label="$t('dataFlow.taskName') + '/' + $t('dataFlow.creatdor')"
 				:show-overflow-tooltip="true"
 			>
 				<template slot-scope="scope">
-					<span>{{ scope.row.name }}</span>
+					<span class="dataflow-name">
+						<span>{{ scope.row.name }}</span>
+						<el-tag
+							v-if="scope.row.listtags && scope.row.listtags.length"
+							class="tag"
+							type="info"
+							effect="dark"
+							size="mini"
+						>
+							{{ scope.row.listtags[0].value }}
+						</el-tag>
+					</span>
 					<div style="margin-left: 20px;color:#ccc">
 						{{ scope.row.user ? scope.row.user.email : '' }}
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('dataFlow.syncType')" width="120">
+			<el-table-column :label="$t('dataFlow.syncType')" width="150">
 				<template slot-scope="scope">
 					<span>
 						{{
@@ -169,7 +182,20 @@
 			<el-table-column prop="status" sortable="custom" :label="$t('dataFlow.taskStatus')" width="180">
 				<template slot-scope="scope">
 					<div>
-						<span :style="`color: ${colorMap[scope.row.status]};`">
+						<span
+							:style="
+								`color: ${
+									{
+										running: '#67C23A',
+										paused: '#F19149',
+										draft: '#F56C6C',
+										scheduled: '#cccccc',
+										stopping: '#F19149',
+										error: '#f53724'
+									}[scope.row.status]
+								};`
+							"
+						>
 							{{ scope.row.statusLabel }}
 						</span>
 						<span
@@ -186,117 +212,85 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column
-				prop="input"
-				sortable="input"
-				:label="
-					$t('dataFlow.totalInput') + '/' + $t('dataFlow.totalOutput') + '/' + $t('dataFlow.runningSpeed')
-				"
-				width="200"
-			>
-				<template slot-scope="scope">
-					<span>{{ scope.row.input }} / {{ scope.row.output }} / {{ scope.row.transmissionTime }}</span>
-				</template>
-			</el-table-column>
-			<el-table-column
-				prop="listtags"
-				:label="$t('dataFlow.category')"
-				:formatter="listtagsFormatter"
-				width="120"
-			>
-			</el-table-column>
-			<el-table-column prop="startTime" :label="$t('dataFlow.creationTime')" width="140" sortable="custom">
+			<el-table-column prop="startTime" :label="$t('dataFlow.creationTime')" width="150" sortable="custom">
 				<template slot-scope="scope">
 					{{ $moment(scope.row.startTime).format('YYYY-MM-DD HH:mm:ss') }}
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('dataFlow.taskSwitch')" width="70">
+			<el-table-column :label="$t('dataFlow.operate')" align="center" min-width="180">
 				<template slot-scope="scope">
-					<div v-if="!scope.row.hasChildren" v-readonlybtn="'SYNC_job_operation'">
+					<div class="table-operations" v-if="!scope.row.hasChildren">
 						<el-tooltip
-							class="item"
+							v-if="scope.row.status !== 'running'"
+							style="margin-right: 10px;"
 							effect="dark"
 							:content="$t('dataFlow.draftNotStart')"
-							:manual="!(['draft'].includes(scope.row.status) && scope.row.checked != true)"
+							:manual="scope.row.status !== 'draft' || scope.row.checked"
 							placement="top-start"
 						>
-							<el-switch
-								:value="['running', 'scheduled'].includes(scope.row.status) ? 'scheduled' : 'stopping'"
-								inactive-value="stopping"
-								active-value="scheduled"
-								:disabled="
-									$disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
-										(statusBtMap[scope.row.status] &&
-											statusBtMap[scope.row.status].switch &&
-											!(scope.row.status == 'draft' && scope.row.checked == true))
-								"
-								@input="$event === 'scheduled' ? run([scope.row.id], scope.row) : stop([scope.row.id])"
-							></el-switch>
+							<span>
+								<el-button
+									type="text"
+									size="mini"
+									v-readonlybtn="'SYNC_job_operation'"
+									:disabled="
+										$disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
+											!statusBtMap['run'][scope.row.status] ||
+											(scope.row.status === 'draft' && !scope.row.checked)
+									"
+									@click="run([scope.row.id], scope.row)"
+								>
+									{{ $t('dataFlow.run') }}
+								</el-button>
+							</span>
 						</el-tooltip>
-					</div>
-				</template>
-			</el-table-column>
-			<el-table-column :label="$t('dataFlow.operate')" width="180">
-				<template slot-scope="scope">
-					<div v-if="!scope.row.hasChildren">
-						<el-tooltip class="item" :content="$t('dataFlow.detail')" placement="bottom">
-							<el-button
-								type="text"
-								@click="handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate)"
-							>
-								<i class="iconfont icon-chaxun"></i>
-							</el-button>
-						</el-tooltip>
-						<el-tooltip class="item" :content="$t('dataFlow.edit')" placement="bottom">
-							<el-button
-								type="text"
-								:disabled="
-									$disabledByPermission('SYNC_job_edition_all_data', scope.row.user_id) ||
-										(statusBtMap[scope.row.status] && statusBtMap[scope.row.status].edit)
-								"
-								@click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)"
-								v-readonlybtn="'SYNC_job_edition'"
-							>
-								<i class="iconfont icon-ceshishenqing"></i>
-							</el-button>
-						</el-tooltip>
-						<el-tooltip
-							class="item"
-							:content="$t('dialog.jobSchedule.jobSecheduleSetting')"
-							placement="bottom"
+						<el-button
+							v-if="scope.row.status === 'running'"
+							type="text"
+							size="mini"
+							v-readonlybtn="'SYNC_job_operation'"
+							:disabled="
+								$disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
+									!statusBtMap['stop'][scope.row.status]
+							"
+							@click="stop([scope.row.id])"
 						>
-							<el-button
-								type="text"
-								:disabled="
-									scope.row.setting.sync_type !== 'initial_sync' || scope.row.status === 'running'
-								"
-								v-readonlybtn="'SYNC_job_edition'"
-								@click="handleTaskscheduling(scope.row.id, scope.row)"
-							>
-								<i class="iconfont icon-lishi2"></i>
-							</el-button>
-						</el-tooltip>
-						<el-tooltip
-							class="item"
-							:content="$t('dialog.jobSchedule.jobSecheduleSetting')"
-							placement="bottom"
+							{{ $t('dataFlow.stop') }}
+						</el-button>
+						<el-button
+							type="text"
+							size="mini"
+							@click="handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate)"
 						>
-						</el-tooltip>
-						<el-tooltip class="item" :content="$t('message.delete')" placement="bottom">
-							<el-button
-								type="text"
-								:disabled="
-									$disabledByPermission('SYNC_job_delete_all_data', scope.row.user_id) ||
-										(statusBtMap[scope.row.status] && statusBtMap[scope.row.status].delete)
-								"
-								@click="del([scope.row.id])"
-								v-readonlybtn="'SYNC_job_delete'"
-							>
-								<i class="iconfont icon-shanchu"></i>
-							</el-button>
-						</el-tooltip>
-						<el-dropdown v-show="moreAuthority" @command="handleCommand($event, scope.row)" class="item">
-							<el-button type="text"><i class="iconfont icon-gengduo3"></i></el-button>
+							{{ $t('dataFlow.runningMonitor') }}
+						</el-button>
+						<el-button
+							type="text"
+							size="mini"
+							:disabled="
+								$disabledByPermission('SYNC_job_edition_all_data', scope.row.user_id) ||
+									!statusBtMap['edit'][scope.row.status]
+							"
+							@click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)"
+							v-readonlybtn="'SYNC_job_edition'"
+						>
+							{{ $t('button.edit') }}
+						</el-button>
+						<el-button
+							type="text"
+							size="mini"
+							:disabled="scope.row.setting.sync_type !== 'initial_sync' || scope.row.status === 'running'"
+							v-readonlybtn="'SYNC_job_edition'"
+							@click="handleTaskscheduling(scope.row.id, scope.row)"
+						>
+							{{ $t('dataFlow.schedule') }}
+						</el-button>
+						<el-dropdown
+							style="margin-left: 10px"
+							v-show="moreAuthority"
+							@command="handleCommand($event, scope.row)"
+						>
+							<el-button size="mini" type="text">{{ $t('button.more') }}</el-button>
 							<el-dropdown-menu slot="dropdown">
 								<el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
 									$t('dataVerify.dataVerify')
@@ -310,61 +304,46 @@
 								<el-dropdown-item
 									:disabled="
 										$disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
-											(statusBtMap[scope.row.status] && statusBtMap[scope.row.status].reset)
+											!statusBtMap['reset'][scope.row.status]
 									"
 									command="initialize"
 									v-readonlybtn="'SYNC_job_operation'"
-									>{{ $t('dataFlow.button.reset') }}</el-dropdown-item
 								>
+									{{ $t('dataFlow.button.reset') }}
+								</el-dropdown-item>
 								<el-dropdown-item
 									command="forceStop"
 									:disabled="
-										(statusBtMap[scope.row.status] && statusBtMap[scope.row.status].forceStop) ||
-											$disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id)
+										$disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
+											!statusBtMap['forceStop'][scope.row.status]
 									"
 									v-readonlybtn="'SYNC_job_operation'"
-									>{{ $t('dataFlow.status.force_stopping') }}</el-dropdown-item
 								>
-								<el-dropdown-item command="setTag" v-readonlybtn="'SYNC_category_application'">{{
-									$t('dataFlow.addTag')
-								}}</el-dropdown-item>
+									{{ $t('dataFlow.status.force_stopping') }}
+								</el-dropdown-item>
+								<el-dropdown-item
+									command="setTag"
+									v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+									v-readonlybtn="'SYNC_category_application'"
+								>
+									{{ $t('dataFlow.addTag') }}
+								</el-dropdown-item>
+								<el-dropdown-item
+									command="delete"
+									:disabled="
+										$disabledByPermission('SYNC_job_delete_all_data', scope.row.user_id) ||
+											!statusBtMap['delete'][scope.row.status]
+									"
+									v-readonlybtn="'SYNC_category_application'"
+								>
+									{{ $t('dataFlow.addTag') }}
+								</el-dropdown-item>
 							</el-dropdown-menu>
 						</el-dropdown>
 					</div>
 				</template>
 			</el-table-column>
 		</TablePage>
-		<!-- <div class="panel-main">
-			<div class="task-list" v-loading="restLoading">
-				<el-table
-					v-loading="loading"
-					:element-loading-text="$t('dataFlow.dataLoading')"
-					:data="tableData"
-					height="100%"
-					style="border: 1px solid #dedee4;"
-					class="dv-table"
-					row-key="id"
-					:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-					@sort-change="handleSortTable"
-					@selection-change="handleSelectionChange"
-					:default-sort="{ prop: flowProp, order: flowOrder }"
-				>
-
-				</el-table>
-				<el-pagination
-					class="pagination"
-					background
-					layout="prev, pager, next,sizes,total"
-					:page-sizes="[20, 30, 50, 100]"
-					:page-size="pagesize"
-					:total="totalNum"
-					:current-page.sync="currentPage"
-					@current-change="handleCurrentChange"
-					@size-change="handleSizeChange"
-				>
-				</el-pagination>
-			</div>
-		</div> -->
 		<el-dialog
 			:title="$t('dialog.jobSchedule.jobSecheduleSetting')"
 			:close-on-click-modal="false"
@@ -412,7 +391,7 @@
 
 <script>
 import factory from '../../api/factory';
-// import ws from '../../api/ws';
+import ws from '../../api/ws';
 const dataFlows = factory('DataFlows');
 const MetadataInstance = factory('MetadataInstances');
 // const cluster = factory('cluster');
@@ -420,11 +399,12 @@ import { toRegExp } from '../../util/util';
 import SkipError from '../../components/SkipError';
 import DownAgent from '../downAgent/agentDown';
 import TablePage from '@/components/TablePage';
-
+let interval = null;
 export default {
 	components: { TablePage, DownAgent, SkipError },
 	data() {
 		return {
+			restLoading: false,
 			mappingTemplate: '',
 			searchParams: {
 				keyword: '',
@@ -481,60 +461,22 @@ export default {
 			multipleSelection: [],
 
 			taskSettingsDialog: false, //任务调度设置弹窗开关
-			selectedJob: {
-				id: '',
-				oldStatus: '',
-				status: '',
-				dataItem: null
-			},
-			//-----------------------
 
-			activeName: 'dataFlow',
-			listtags: [],
-			wsData: [],
-			restLoading: false,
-			colorMap: {
-				running: '#67C23A',
-				paused: '#F19149',
-				draft: '#F56C6C',
-				scheduled: '#cccccc',
-				stopping: '#F19149',
-				error: '#f53724'
-			},
-			flowProp: localStorage.getItem('flowProp') || 'createTime',
-			flowOrder: localStorage.getItem('flowOrder') || 'descending',
-			newData: [],
-			currentPage: 1,
-			pagesize: localStorage.getItem('flowPagesize') * 1 || 20,
-			totalNum: 0,
 			syncType: {
 				initial_sync: this.$t('dataFlow.initial_sync'),
 				cdc: this.$t('dataFlow.cdc'),
 				'initial_sync+cdc': this.$t('dataFlow.initial_sync') + this.$t('dataFlow.cdc')
 			},
-
 			statusBtMap: {
-				scheduled: { switch: true, delete: true, edit: true, detail: false, forceStop: true, reset: true },
-				draft: { switch: true, delete: false, edit: false, detail: true, forceStop: true, reset: false },
-				running: { switch: false, delete: true, edit: true, detail: false, forceStop: true, reset: true },
-				stopping: { switch: true, delete: true, edit: true, detail: false, forceStop: false, reset: true },
-				error: { switch: false, delete: false, edit: false, detail: false, forceStop: true, reset: false },
-				paused: { switch: false, delete: false, edit: false, detail: true, forceStop: true, reset: false },
-				'force stopping': {
-					switch: true,
-					delete: true,
-					edit: true,
-					detail: true,
-					forceStop: true,
-					reset: true
-				}
+				// scheduled, draft, running, stopping, error, paused, force stopping
+				run: { draft: true, error: true, paused: true },
+				stop: { running: true },
+				delete: { draft: true, error: true, paused: true },
+				edit: { draft: true, error: true, paused: true },
+				reset: { draft: true, error: true, paused: true },
+				forceStop: { stopping: true }
 			},
 			dataFlowId: '',
-			errorEvents: [],
-			currentStatus: '',
-			oldStatus: '',
-			currentId: '',
-			taskName: '',
 
 			formSchedule: {
 				id: '',
@@ -551,7 +493,8 @@ export default {
 				this.$has('SYNC_category_application'),
 			bulkOperation:
 				this.$has('SYNC_job_export') || this.$has('SYNC_job_operation') || this.$has('SYNC_job_delete'),
-			timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
+			timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year'],
+			tempList: []
 		};
 	},
 	computed: {
@@ -562,27 +505,25 @@ export default {
 	created() {
 		// window.windows = [];
 		this.mappingTemplate = this.$route.query.mapping;
-		// let self = this;
-		// ws.on('watch', this.wsWatch);
-		// this.inter = setInterval(() => {
-		// 	self.wsData.forEach(dat => {
-		// 		self.$set(
-		// 			self.tableData,
-		// 			self.tableData.findIndex(it => it.id == dat.id),
-		// 			self.cookRecord(
-		// 				_.merge(
-		// 					self.tableData.find(it => it.id == dat.id),
-		// 					dat
-		// 				)
-		// 			)
-		// 		);
-		// 	});
-		// 	self.wsData.length = 0;
-		// }, 3000);
+		ws.on('watch', this.dataflowChange);
+		interval = setInterval(() => {
+			let tempList = this.tempList;
+			tempList.forEach(item => {
+				let list = this.table.list;
+				let index = list.findIndex(it => it.name === item.name);
+				if (index >= 0) {
+					this.table.$set(list, index, Object.assign(list[index], this.cookRecord(item)));
+				}
+			});
+			this.tempList = [];
+		}, 5000);
+	},
+	mounted() {
+		this.searchParams = Object.assign(this.searchParams, this.table.getCache());
 	},
 	beforeDestroy() {
-		// ws.off('watch', this.wsWatch);
-		// clearInterval(this.inter);
+		ws.off('watch', this.dataflowChange);
+		clearInterval(interval);
 	},
 	watch: {
 		'$route.query'(query) {
@@ -591,6 +532,38 @@ export default {
 		}
 	},
 	methods: {
+		dataflowChange(data) {
+			if (data && data.data && data.data.fullDocument) {
+				this.tempList.push(data.data.fullDocument);
+			}
+		},
+		watchDataflowList(ids) {
+			let msg = {
+				type: 'watch',
+				collection: 'DataFlows',
+				filter: {
+					where: { 'fullDocument._id': { $in: ids } }, //查询条件
+					fields: {
+						'fullDocument.id': true,
+						'fullDocument.name': true,
+						'fullDocument.status': true,
+						'fullDocument.checked': true,
+						'fullDocument.executeMode': true,
+						'fullDocument.stopOnError': true,
+						'fullDocument.last_updated': true,
+						'fullDocument.createTime': true,
+						'fullDocument.children': true,
+						'fullDocument.stats': true,
+						'fullDocument.stages.id': true,
+						'fullDocument.stages.name': true,
+						'fullDocument.errorEvents': true
+					}
+				}
+			};
+			ws.ready(() => {
+				ws.send(msg);
+			});
+		},
 		reset() {
 			this.searchParams = {
 				keyword: '',
@@ -686,34 +659,7 @@ export default {
 				})
 			]).then(([countRes, res]) => {
 				let list = res.data || [];
-				// let msg = {
-				// 	type: 'watch',
-				// 	collection: 'DataFlows',
-				// 	filter: {
-				// 		where: { 'fullDocument._id': { $in: this.tableData.map(it => it.id) } }, //查询条件
-				// 		fields: {
-				// 			'fullDocument.id': true,
-				// 			'fullDocument.name': true,
-				// 			'fullDocument.status': true,
-				// 			'fullDocument.checked': true,
-				// 			'fullDocument.executeMode': true,
-				// 			'fullDocument.stopOnError': true,
-				// 			'fullDocument.last_updated': true,
-				// 			'fullDocument.createTime': true,
-				// 			'fullDocument.children': true,
-				// 			'fullDocument.stats': true,
-				// 			'fullDocument.stages.id': true,
-				// 			'fullDocument.stages.name': true,
-				// 			'fullDocument.errorEvents': true
-				// 		}
-				// 	}
-				// };
-				// let int = setInterval(() => {
-				// 	if (ws.ws.readyState == 1) {
-				// 		ws.send(msg);
-				// 		clearInterval(int);
-				// 	}
-				// }, 2000);
+				this.watchDataflowList(list.map(it => it.id));
 				this.table.setCache({
 					keyword,
 					status,
@@ -750,11 +696,6 @@ export default {
 			};
 			if (item.stats) {
 				item.hasChildren = false;
-				item.input = item.stats.input ? item.stats.input.rows : '--';
-				item.output = item.stats.output ? item.stats.output.rows : '--';
-				item.transmissionTime = item.stats.transmissionTime
-					? ((item.input * 1000) / item.stats.transmissionTime).toFixed(0)
-					: '--';
 				let children = item.stages;
 				item.children = [];
 				if (children) {
@@ -810,10 +751,6 @@ export default {
 					}
 					item.statusList = statusList;
 				}
-			} else {
-				item.input = '--';
-				item.output = '--';
-				item.transmissionTime = '--';
 			}
 			return item;
 		},
@@ -1091,23 +1028,8 @@ export default {
 		skipHandler(id, errorEvents) {
 			this.changeStatus([id], { status: 'scheduled', errorEvents });
 		},
-		listtagsFormatter(row) {
-			let value = '';
-			if (row.listtags && row.listtags.length !== 0) {
-				value = row.listtags[row.listtags.length - 1].value;
-			}
-			return value;
-		},
 		handleSortTable({ order, prop }) {
-			let mapping = {
-				status: 'status',
-				last_updated: 'last_updated',
-				createTime: 'createTime',
-				input: 'stats.input.rows',
-				output: 'stats.output.rows',
-				transmissionTime: 'stats.transmissionTime'
-			};
-			this.order = `${order ? mapping[prop] : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`;
+			this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`;
 			this.table.fetch(1);
 		},
 		responseHandler(data, msg) {
@@ -1168,10 +1090,6 @@ export default {
 		handleGoFunction() {
 			top.location.href = '/#/JsFuncs';
 		}
-		// 面板显示隐藏
-		// wsWatch(data) {
-		// 	this.wsData.push(data.data.fullDocument);
-		// },
 	}
 };
 </script>
@@ -1182,26 +1100,45 @@ export default {
 	.data-flow-list {
 		.search-bar {
 			display: flex;
-			li + li {
-				margin-left: 10px;
+			flex-wrap: wrap;
+			li {
+				margin-right: 10px;
+				&:last-child {
+					margin-right: 0;
+				}
 			}
 		}
-		.btn + .btn {
+		.buttons {
+			white-space: nowrap;
+			.btn + .btn {
+				margin-left: 5px;
+			}
+			.btn {
+				padding: 7px;
+				background: #f5f5f5;
+				i.iconfont {
+					font-size: 12px;
+				}
+				&.btn-dropdowm {
+					margin-left: 5px;
+				}
+				&.btn-create {
+					margin-left: 5px;
+					background: #48b6e2;
+				}
+			}
+		}
+		.dataflow-name .tag {
 			margin-left: 5px;
-		}
-		.btn {
-			padding: 7px;
+			color: #999999;
 			background: #f5f5f5;
-			i.iconfont {
-				font-size: 12px;
-			}
-			&.btn-dropdowm {
-				margin-left: 5px;
-			}
-			&.btn-create {
-				margin-left: 5px;
-				background: #48b6e2;
-			}
+			border: 1px solid #dedee4;
+		}
+		.table-operations {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-wrap: wrap;
 		}
 	}
 }
