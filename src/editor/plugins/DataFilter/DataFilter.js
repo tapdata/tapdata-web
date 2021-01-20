@@ -28,6 +28,13 @@ export const DataFilterConfig = {
 				},
 				label: {
 					text: i18n.t('editor.cell.processor.dataFilter.name')
+				},
+				statusImage: {
+					refWidth: '35%',
+					refHeight: -15,
+					refX: '70%',
+					y: 8,
+					visibility: 'hidden'
 				}
 			},
 			[FORM_DATA_KEY]: {

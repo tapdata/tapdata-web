@@ -861,7 +861,7 @@ export default {
 			let nodeCells = {};
 			cells.forEach(cell => {
 				if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
-					if (cell.attrs.line && cell.attrs.line.stroke) {
+					if (cell.attrs && cell.attrs.line && cell.attrs.line.stroke) {
 						cell.attrs.line.stroke = '#8f8f8f'; // 鼠标未失去焦点就保存，针对link选中状态改为默认
 					}
 					edgeCells[cell.id] = cell;
