@@ -146,6 +146,7 @@
 			>
 			</el-table-column>
 			<el-table-column
+				min-width="200"
 				:label="$t('dataFlow.taskName') + '/' + $t('dataFlow.creatdor')"
 				:show-overflow-tooltip="true"
 			>
@@ -216,7 +217,7 @@
 					{{ $moment(scope.row.startTime).format('YYYY-MM-DD HH:mm:ss') }}
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('dataFlow.operate')" width="280">
+			<el-table-column :label="$t('dataFlow.operate')" align="center" min-width="180">
 				<template slot-scope="scope">
 					<div class="table-operations" v-if="!scope.row.hasChildren">
 						<el-tooltip
@@ -1132,6 +1133,12 @@ export default {
 			color: #999999;
 			background: #f5f5f5;
 			border: 1px solid #dedee4;
+		}
+		.table-operations {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-wrap: wrap;
 		}
 	}
 }
