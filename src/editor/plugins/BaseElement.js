@@ -245,7 +245,10 @@ export const baseElementConfig = {
 						verified = false;
 					}
 
-					if (formData && !formData.disabled) self.attr('body/stroke', verified ? '#2196F3' : '#ff0000');
+					if (formData && !formData.disabled) {
+						self.attr('body/stroke', verified ? '#2196F3' : '#ff0000');
+						self.oStroke = self.attr('body/stroke');
+					}
 					if (formData && formData.name) {
 						let name = formData.name;
 						let isDataNode = typeof self.isDataNode === 'function' ? self.isDataNode() : false;

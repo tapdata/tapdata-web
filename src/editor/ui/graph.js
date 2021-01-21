@@ -170,10 +170,12 @@ export default class Graph extends Component {
 			}
 		}));
 		paper.on('cell:mouseenter', function(cellView) {
+			if (!self.editable) return;
 			if (cellView.model.getFormData().disabled) return;
 			cellView.vel.addClass('visible');
 		});
 		paper.on('cell:mouseover', function(cellView) {
+			if (!self.editable) return;
 			if (cellView.model.getFormData().disabled) return;
 			cellView.vel.addClass('visible');
 			if (event.target.getAttribute('port')) {
@@ -636,8 +638,8 @@ export default class Graph extends Component {
 		} else {
 			if (cell.isElement()) {
 				this.selectCell(cell);
-				// } else {
-				// this.selectPrimaryLink(cellView);
+			} else {
+				this.selectPrimaryLink(cellView);
 			}
 		}
 		this.createInspector(cell);
@@ -710,27 +712,27 @@ export default class Graph extends Component {
 
 		if (this.isSimple) return;
 		if (linkView.model.getFormData().disabled) return;
-		let ns = joint.linkTools;
-		let toolsView = new joint.dia.ToolsView({
-			name: 'link-pointerdown',
-			tools: [
-				new ns.Vertices({
-					vertexAdding: true
-				}),
-				// new ns.SourceAnchor(),
-				// new ns.TargetAnchor(),
-				// new ns.SourceArrowhead(),
-				new ns.TargetArrowhead(),
-				new ns.Segments(),
-				// new ns.Boundary({ padding: 15 }),
-				new ns.Remove({
-					offset: -20,
-					distance: 40
-				})
-			]
-		});
+		// let ns = joint.linkTools;
+		// let toolsView = new joint.dia.ToolsView({
+		// 	name: 'link-pointerdown',
+		// 	tools: [
+		// 		new ns.Vertices({
+		// 			vertexAdding: true
+		// 		}),
+		// 		// new ns.SourceAnchor(),
+		// 		// new ns.TargetAnchor(),
+		// 		// new ns.SourceArrowhead(),
+		// 		new ns.TargetArrowhead(),
+		// 		new ns.Segments(),
+		// 		// new ns.Boundary({ padding: 15 }),
+		// 		new ns.Remove({
+		// 			offset: -20,
+		// 			distance: 40
+		// 		})
+		// 	]
+		// });
 
-		linkView.addTools(toolsView);
+		// linkView.addTools(toolsView);
 	}
 
 	createInspector(cell) {
