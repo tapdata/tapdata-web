@@ -1,33 +1,43 @@
 <template>
-	<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="addServe">
-		<el-form-item
-			label="name"
-			prop="name"
-			:rules="{
-				required: true,
-				message: $t('message.nullContent'),
-				trigger: 'blur'
-			}"
-		>
-			<el-input v-model="ruleForm.name" size="mini" :placeholder="$t('message.placeholderMonServer')"></el-input>
-		</el-form-item>
+	<section class="addServe-wrap">
+		<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="addServe">
+			<el-form-item
+				label="name"
+				prop="name"
+				:rules="{
+					required: true,
+					message: $t('message.nullContent'),
+					trigger: 'blur'
+				}"
+			>
+				<el-input
+					v-model="ruleForm.name"
+					size="mini"
+					:placeholder="$t('message.placeholderMonServer')"
+				></el-input>
+			</el-form-item>
 
-		<el-form-item
-			label="command"
-			prop="command"
-			:rules="{
-				required: true,
-				message: $t('message.nullContent'),
-				trigger: 'blur'
-			}"
-		>
-			<el-input v-model="ruleForm.command" size="mini" :placeholder="$t('message.placeholderCommand')"></el-input>
-		</el-form-item>
+			<el-form-item
+				label="command"
+				prop="command"
+				:rules="{
+					required: true,
+					message: $t('message.nullContent'),
+					trigger: 'blur'
+				}"
+			>
+				<el-input
+					v-model="ruleForm.command"
+					size="mini"
+					:placeholder="$t('message.placeholderCommand')"
+				></el-input>
+			</el-form-item>
 
-		<el-form-item label="arguements" prop="arguements">
-			<el-input v-model="ruleForm.arguments" size="mini" placeholder="arguements"></el-input>
-		</el-form-item>
-	</el-form>
+			<el-form-item label="arguements" prop="arguements">
+				<el-input v-model="ruleForm.arguments" size="mini" placeholder="arguements"></el-input>
+			</el-form-item>
+		</el-form>
+	</section>
 </template>
 <script>
 export default {
@@ -73,3 +83,12 @@ export default {
 	}
 };
 </script>
+<style lang="less">
+.addServe-wrap {
+	.addServe {
+		.el-form-item {
+			margin-bottom: 5px;
+		}
+	}
+}
+</style>

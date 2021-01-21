@@ -4,7 +4,9 @@
 			<div class="header" slot="header">
 				<div class="page-header-title">
 					<span class="title">{{ $t('message.statusLog') }}</span>
-					<div class="serviceCluMangeBtn" @click="handleSelect">{{ $t('message.serviceCluMange') }}</div>
+					<div class="serviceCluMangeBtn" @click="goClusterManagement">
+						{{ $t('message.serviceCluMange') }}
+					</div>
 				</div>
 			</div>
 			<div slot="search">
@@ -226,6 +228,10 @@ export default {
 					(ss < 10 ? '0' + ss : ss);
 				return timeFormat;
 			}
+		},
+		//运行日志
+		goClusterManagement() {
+			this.$router.push('/clusterManagement');
 		}
 	}
 };

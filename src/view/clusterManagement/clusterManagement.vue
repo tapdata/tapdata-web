@@ -3,7 +3,7 @@
 		<div class="header">
 			<div class="page-header-title">
 				<span class="title">{{ $t('message.serviceCluMange') }}</span>
-				<div class="logBtn" v-readonlybtn="'status_log'">
+				<div class="logBtn" v-readonlybtn="'status_log'" @click="goDailyRecord">
 					{{ $t('message.statusLog') }}
 				</div>
 			</div>
@@ -34,7 +34,9 @@
 							<div class="boxTop">
 								<div class="fl" style="width: 60%;">
 									<i class="circular" :class="item.status !== 'running' ? 'bgred' : 'bggreen'"></i>
-									<h2 class="name">{{ item.systemInfo.hostname }}</h2>
+									<h2 class="name">
+										{{ item.agentName ? item.agentName : item.systemInfo.hostname }}
+									</h2>
 									<span>{{ item.systemInfo.ip }}</span>
 									<span class="uuid">{{ item.systemInfo.uuid }}</span>
 								</div>
@@ -47,9 +49,9 @@
 									></i>
 									<i class="iconfont icon-icon_shezhi" @click="editAgent(item)"></i>
 									<i
+										v-show="item.status !== 'running'"
 										class="iconfont icon-shanchu"
-										:disabled="item.status === 'running'"
-										@click="handleDelete(item.id)"
+										@click="delConfirm(item)"
 									></i>
 								</div>
 							</div>
@@ -215,38 +217,32 @@
 			</div>
 		</el-dialog>
 		<el-dialog
-			:title="$t('message.addServerMon')"
+			:title="$t('message.agentSetting')"
 			custom-class="serverDialog"
 			:visible.sync="editAgentDialog"
-			:append-to-body="true"
 			:lock-scroll="false"
 			:close-on-click-modal="false"
 			width="600px"
 			@close="editAgentDialog = false"
 		>
-			<el-form ref="editAgentForm" label-width="100px" class="addServe">
-				<el-form-item
-					label="name"
-					prop="agentName"
-					:rules="{
-						required: true,
-						message: $t('message.nullContent'),
-						trigger: 'blur'
-					}"
-				>
-					<el-input
-						v-model="agentName"
-						size="mini"
-						show-word-limit
-						:placeholder="$t('message.placeholderMonServer')"
-					></el-input>
-					<span>还原</span>
+			<el-form ref="editAgentForm" label-width="100px" class="editAgentForm">
+				<el-form-item :label="$t('message.serverName')">
+					<div class="name-box">
+						<el-input
+							style="width: 85%"
+							v-model="agentName"
+							size="mini"
+							show-word-limit
+							:placeholder="$t('message.placeholderMonServer')"
+						></el-input>
+						<span class="restBtn" @click="editNameRest">还原</span>
+					</div>
 				</el-form-item>
-
-				<el-form-item label="command" prop="command">
-					<el-select v-model="custIP" placeholder="请选择" size="mini">
+				<el-form-item :label="$t('message.iPDisplay')" prop="command">
+					<el-select v-model="custIP" :placeholder="$t('message.iPDisplay')" size="mini" style="width: 85%">
 						<el-option v-for="item in ips" :key="item" :label="item" :value="item"> </el-option>
 					</el-select>
+					<div class="ipTip">{{ $t('message.ipTip') }}</div>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -255,6 +251,26 @@
 					$t('message.confirm')
 				}}</el-button>
 			</div>
+		</el-dialog>
+		<el-dialog
+			:title="$t('message.delTittle')"
+			:close-on-click-modal="false"
+			:visible.sync="deleteDialogVisible"
+			width="30%"
+		>
+			<p>
+				{{ $t('message.delMessage') }}
+				<span style="color:#48B6E2;cursor: pointer">
+					{{ delData.agentName }}
+				</span>
+				?
+			</p>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="deleteDialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="removeNode(delData)" size="mini">{{
+					$t('message.confirm')
+				}}</el-button>
+			</span>
 		</el-dialog>
 	</section>
 </template>
@@ -283,11 +299,14 @@ export default {
 			timer: null,
 			downLoadAgetntdialog: false,
 			editAgentDialog: false,
+			deleteDialogVisible: false,
 			downLoadNum: 0,
 			ips: [],
 			custIP: '',
 			custId: '',
 			agentName: '',
+			currentNde: {},
+			delData: '',
 			managementType: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT')
 		};
 	},
@@ -493,10 +512,16 @@ export default {
 			this.$refs.childRules.closeDialogForm();
 		},
 		//删除agent
-		handleDelete(id) {
+		delConfirm(data) {
+			this.deleteDialogVisible = true;
+			this.delData = data;
+			this.delData.agentName = this.delData.agentName || this.delData.systemInfo.hostname;
+		},
+		removeNode(id) {
 			this.$api('cluster')
 				.delete(id)
 				.then(() => {
+					this.deleteDialogVisible = false;
 					this.$message.success('删除成功');
 				})
 				.catch(() => {
@@ -508,27 +533,37 @@ export default {
 			this.editAgentDialog = true;
 			this.custId = item.id;
 			this.custIP = item.systemInfo.ip;
-			this.ips = item.systemInfo.ips;
-			this.agentName = item.systemInfo.hostname;
+			this.ips = item.systemInfo.ips || [];
+			this.agentName = item.agentName || item.systemInfo.hostname;
+			this.currentNde = item.systemInfo;
 		},
 		//提交编辑
 		submitEditAgent() {
-			this.$refs.editAgentForm.validate(valid => {
-				if (valid) {
-					let data = {
-						custIP: this.custIP,
-						agentName: this.agentName
-					};
-					this.$api('cluster')
-						.editAgent(this.custId, data)
-						.then(() => {
-							this.$message.success('编辑成功');
-						})
-						.catch(() => {
-							this.$message.error('编辑失败');
-						});
-				}
-			});
+			if (this.agentName === '') {
+				this.agentName = this.currentNde.hostname;
+				this.$message.error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText'));
+				return;
+			}
+			let data = {
+				custIP: this.custIP,
+				agentName: this.agentName
+			};
+			this.$api('cluster')
+				.editAgent(this.custId, data)
+				.then(() => {
+					this.editAgentDialog = false;
+					this.$message.success('编辑成功');
+				})
+				.catch(() => {
+					this.$message.error('编辑失败');
+				});
+		},
+		editNameRest() {
+			this.agentName = this.currentNde.hostname;
+		},
+		//运行日志
+		goDailyRecord() {
+			this.$router.push('/dailyRecord');
 		}
 	}
 };
@@ -595,6 +630,7 @@ export default {
 						.iconfont {
 							color: #999;
 							cursor: pointer;
+							margin-left: 5px;
 						}
 						.circular {
 							display: inline-block;
@@ -690,9 +726,31 @@ export default {
 		height: calc(100% - 60px);
 		align-items: center;
 		justify-content: center;
-		color: #1976d2;
+		color: #48b6e2;
 		font-size: 16px;
 		background-color: #fff;
+	}
+	.editAgentForm {
+		.restBtn {
+			display: inline-block;
+			margin-left: 10px;
+			color: #48b6e2;
+			cursor: pointer;
+		}
+		.ipTip {
+			color: #999;
+			font-size: 12px;
+			line-height: 15px;
+		}
+	}
+}
+</style>
+<style lang="less">
+.clusterManagement-container {
+	.editAgentForm {
+		.el-form-item {
+			margin-bottom: 5px;
+		}
 	}
 }
 </style>
