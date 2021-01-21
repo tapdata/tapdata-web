@@ -53,8 +53,11 @@
 							<div class="url-tip" slot="kafkaUri">
 								{{ $t('dataForm.form.kafka.hostPlaceHolder') }}
 							</div>
-							<div class="url-tip" slot="kafkaIgnoreInvalidRecord">
+							<div class="url-tip" slot="lonoreFormatTip">
 								{{ $t('dataForm.form.kafka.lonoreFormatTip') }}
+							</div>
+							<div class="url-tip" slot="pushErrorTip">
+								{{ $t('dataForm.form.kafka.pushErrorTip') }}
 							</div>
 						</form-builder>
 						<!-- 文件数据库 -->
@@ -295,16 +298,20 @@ const defaultModel = {
 
 	// kafka
 	kafkaBootstrapServers: '',
-	kafkaSelectTopics: '',
-	kafkaRawTopics: '',
+	// kafkaSelectTopics: '',
+	// kafkaRawTopics: '',
 	kafkaPatternTopics: '',
-	kafkaConsumerRequestTimeout: '',
-	kafkaConsumerUseTransactional: '',
-	kafkaMaxPollRecords: '',
-	kafkaPollTimeoutMS: '',
-	kafkaMaxFetchBytes: '',
-	kafkaMaxFetchWaitMS: '',
-	kafkaIgnoreInvalidRecord: ''
+	kafkaIgnoreInvalidRecord: false,
+	kafkaAcks: '',
+	kafkaCompressionType: '',
+	kafkaIgnorePushError: false
+	// kafkaConsumerRequestTimeout: '',
+	// kafkaConsumerUseTransactional: '',
+	// kafkaMaxPollRecords: '',
+	// kafkaPollTimeoutMS: '',
+	// kafkaMaxFetchBytes: '',
+	// kafkaMaxFetchWaitMS: '',
+	// kafkaIgnoreInvalidRecord: ''
 };
 
 export default {
@@ -345,12 +352,19 @@ export default {
 			editBtnLoading: false,
 			connectionTypeOption: '',
 			isUrlOption: '',
-			rename: ''
-			// repeatDialogVisible: false,
-			// connectionObj: {
-			// 	name: '',
-			// 	id: ''
-			// }
+			rename: '',
+			kafka: {
+				id: '',
+				name: '',
+				database_type: '',
+				connection_type: '',
+				kafkaBootstrapServers: '',
+				kafkaPatternTopics: '',
+				kafkaIgnoreInvalidRecord: false,
+				kafkaAcks: '',
+				kafkaCompressionType: '',
+				kafkaIgnorePushError: false
+			}
 		};
 	},
 	created() {
@@ -490,6 +504,22 @@ export default {
 
 			this.$refs.form.validate(valid => {
 				if (valid && !falg) {
+					// kafka传值
+					if (this.model.database_type === 'kafka') {
+						Object.keys(this.kafka).forEach(key => {
+							this.kafka[key] = this.model[key];
+						});
+						this.model = this.kafka;
+					} else {
+						Object.keys(this.model).forEach(key => {
+							if (this.kafka[key] === this.model[key]) {
+								if (!['id', 'name', 'database_type', 'connection_type'].includes(this.model[key])) {
+									delete this.model[key];
+								}
+							}
+						});
+					}
+
 					let params = Object.assign(
 						{},
 						{
