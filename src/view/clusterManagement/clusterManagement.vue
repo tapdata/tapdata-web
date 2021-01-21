@@ -3,7 +3,7 @@
 		<div class="header">
 			<div class="page-header-title">
 				<span class="title">{{ $t('message.serviceCluMange') }}</span>
-				<div class="logBtn" @click="handleSelect" v-readonlybtn="'status_log'">
+				<div class="logBtn" v-readonlybtn="'status_log'">
 					{{ $t('message.statusLog') }}
 				</div>
 			</div>
@@ -592,6 +592,10 @@ export default {
 						display: flex;
 						flex-direction: row;
 						justify-content: space-between;
+						.iconfont {
+							color: #999;
+							cursor: pointer;
+						}
 						.circular {
 							display: inline-block;
 							position: absolute;
@@ -641,7 +645,7 @@ export default {
 							.txt {
 								display: inline-block;
 								width: 120px;
-								padding-left: 15px;
+								//padding-left: 15px;
 								font-size: 12px;
 								color: #000;
 								text-overflow: ellipsis;
