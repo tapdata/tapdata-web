@@ -445,12 +445,14 @@ export default {
 			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
 				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
 			where['stats.stagesMetrics.status'] = { neq: 'cdc' };
+			where.status = { eq: 'running' };
 			dataFlows.count({ where: where }).then(res => {
 				if (res.data) {
 					if (res.data.count == 0) allCdc = true;
 				}
 			});
-			for (let i = 0; i < datas.length; i++) datas[i].canUpdate = allCdc && datas[i].curVersion != this.toVersion;
+			for (let i = 0; i < datas.length; i++)
+				datas[i].canUpdate = allCdc && datas[i].curVersion != this.toVersion && datas[i].status == 'running';
 		},
 		// 重启---关闭---启动     --版本--更新
 		async operationFn(data) {
