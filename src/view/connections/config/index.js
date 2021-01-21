@@ -9,6 +9,7 @@ import redis from './redis';
 import file from './file';
 import kafka from './kafka';
 import maria from './maria';
+import mysqlpxc from './mysqlpxc';
 
 export default {
 	mysql,
@@ -21,5 +22,6 @@ export default {
 	redis,
 	file,
 	kafka,
-	maria
+	maria,
+	mysqlpxc
 };

@@ -301,7 +301,8 @@ export default {
 				'redis',
 				'file',
 				'kafka',
-				'maria'
+				'maria',
+				'mysql pxc'
 			], //目前白名单,
 			searchParams: this.$store.state.connections,
 			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
