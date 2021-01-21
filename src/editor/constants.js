@@ -110,6 +110,12 @@ export const FORM_DATA_KEY = 'form_data',
 			name: 'Sybase ASE',
 			shapeImage: 'static/editor/o-sybase.svg',
 			stencilImage: 'static/editor/sybase.svg'
+		},
+		kafka: {
+			type: 'kafka',
+			name: 'Kafka',
+			shapeImage: 'static/editor/Kafka.svg',
+			stencilImage: 'static/editor/Kafka.svg'
 		}
 	},
 	FILE_TYPE_MAPPING = {
