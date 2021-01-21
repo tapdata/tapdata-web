@@ -126,6 +126,11 @@ export default class Graph extends Component {
 
 				let targetView = end === 'target' ? cellViewT : cellViewS;
 				let sourceView = end === 'target' ? cellViewS : cellViewT;
+				let sameTarget = false;
+				self.graph.getConnectedLinks(cellViewS.model).map(link => {
+					if (link.getTargetCell() && link.getTargetCell().id == targetView.model.id) sameTarget = true;
+				});
+				if (sameTarget) return false;
 
 				// don't allow link to link connection
 				if (targetView.model.isLink()) return false;

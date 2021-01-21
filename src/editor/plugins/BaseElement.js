@@ -301,6 +301,7 @@ export const baseElementConfig = {
 			},
 			getInputSchema() {
 				let self = this;
+				if (!self.graph) return;
 				let graph = self.graph;
 
 				let joinTables = graph
