@@ -58,7 +58,7 @@
 									<el-button
 										size="mini"
 										type="danger"
-										v-if="canUpdate"
+										v-if="item.canUpdate"
 										@click="updateFn(item, item.management.status, 'management', 'update')"
 										>{{ $t('message.update') }}</el-button
 									>
@@ -251,7 +251,6 @@ export default {
 			downLoadAgetntdialog: false,
 			downLoadNum: 0,
 			version: null,
-			canUpdate: false,
 			managementType: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT')
 		};
 	},
@@ -426,27 +425,32 @@ export default {
 			this.operationFn(data);
 			this.canUpdate = false;
 		},
-		async getVersion(item) {
+		async getVersion(datas) {
 			if (this.curVersion) return;
-			await clusterVersion.get({ filter: JSON.stringify({ where: { 'version.uuid': item.uuid } }) }).then(res => {
-				if (res.data && res.data.length) {
-					this.curVersion = res.data[0].version.backend;
-				}
-			});
 			await settings.get().then(res => {
 				if (res.data && res.data.length) {
 					this.toVersion = res.data.findWhere({ id: '88' }).value;
 				}
 			});
-			let where = {};
+			for (let i = 0; i < datas.length; i++)
+				await clusterVersion
+					.get({ filter: JSON.stringify({ where: { 'version.uuid': datas[i].uuid } }) })
+					.then(res => {
+						if (res.data && res.data.length) {
+							datas[i].curVersion = res.data[0].version.backend;
+						}
+					});
+			let where = {},
+				allCdc = false;
 			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
 				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
 			where['stats.stagesMetrics.status'] = { neq: 'cdc' };
 			dataFlows.count({ where: where }).then(res => {
 				if (res.data) {
-					this.canUpdate = res.data.count == 0 && this.curVersion != this.toVersion;
+					if (res.data.count == 0) allCdc = true;
 				}
 			});
+			for (let i = 0; i < datas.length; i++) datas[i].canUpdate = allCdc && datas[i].curVersion != this.toVersion;
 		},
 		// 重启---关闭---启动     --版本--更新
 		async operationFn(data) {
@@ -461,7 +465,6 @@ export default {
 			this.getDataApi();
 			this.sourch = '';
 		},
-
 		// 获取数据
 		getDataApi() {
 			let params = { index: 1 };
@@ -471,6 +474,10 @@ export default {
 			}
 			cluster.get(params).then(res => {
 				if (res.data) {
+					//自动升级
+					if (res.data.length && !this.version) {
+						this.getVersion(res.data);
+					}
 					let [...waterfallData] = res.data;
 					let [...newWaterfallData] = [[], []];
 					waterfallData.forEach((item, index) => {
@@ -481,10 +488,6 @@ export default {
 						}
 					});
 					this.waterfallData = newWaterfallData;
-					//自动升级，只有一个agent
-					if (this.list.length && !this.version) {
-						this.getVersion(this.list[0]);
-					}
 				}
 			});
 		},
