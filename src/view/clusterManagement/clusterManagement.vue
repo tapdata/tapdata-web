@@ -429,7 +429,7 @@ export default {
 			if (this.toVersion) return;
 			await settings.get().then(res => {
 				if (res.data && res.data.length) {
-					this.toVersion = res.data.findWhere({ id: '88' }).value;
+					this.toVersion = res.data.findWhere({ key: 'tapdataAgentVersion' }).value;
 				}
 			});
 			for (let i = 0; i < datas.length; i++)
