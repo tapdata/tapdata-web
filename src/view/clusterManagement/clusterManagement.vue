@@ -262,7 +262,7 @@ export default {
 		let that = this;
 		this.timer = setInterval(() => {
 			that.getDataApi();
-		}, 5000);
+		}, 10000);
 	},
 
 	methods: {
@@ -426,7 +426,6 @@ export default {
 			this.canUpdate = false;
 		},
 		async getVersion(datas) {
-			if (this.toVersion) return;
 			await settings.get().then(res => {
 				if (res.data && res.data.length) {
 					this.toVersion = res.data.findWhere({ key: 'tapdataAgentVersion' }).value;
@@ -453,6 +452,16 @@ export default {
 			});
 			for (let i = 0; i < datas.length; i++)
 				datas[i].canUpdate = allCdc && datas[i].curVersion != this.toVersion && datas[i].status != 'down';
+			let [...waterfallData] = datas;
+			let [...newWaterfallData] = [[], []];
+			waterfallData.forEach((item, index) => {
+				if (index % 2) {
+					newWaterfallData[1].push(item);
+				} else {
+					newWaterfallData[0].push(item);
+				}
+			});
+			this.waterfallData = newWaterfallData;
 		},
 		// 重启---关闭---启动     --版本--更新
 		async operationFn(data) {
@@ -468,7 +477,7 @@ export default {
 			this.sourch = '';
 		},
 		// 获取数据
-		getDataApi() {
+		async getDataApi() {
 			let params = { index: 1 };
 			if (this.sourch) {
 				params['filter[where][or][0][systemInfo.hostname][like]'] = this.sourch;
@@ -477,19 +486,9 @@ export default {
 			cluster.get(params).then(res => {
 				if (res.data) {
 					//自动升级
-					if (res.data.length && !this.version) {
+					if (res.data.length) {
 						this.getVersion(res.data);
 					}
-					let [...waterfallData] = res.data;
-					let [...newWaterfallData] = [[], []];
-					waterfallData.forEach((item, index) => {
-						if (index % 2) {
-							newWaterfallData[1].push(item);
-						} else {
-							newWaterfallData[0].push(item);
-						}
-					});
-					this.waterfallData = newWaterfallData;
 				}
 			});
 		},
