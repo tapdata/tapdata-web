@@ -426,7 +426,7 @@ export default {
 			this.canUpdate = false;
 		},
 		async getVersion(datas) {
-			if (this.curVersion) return;
+			if (this.toVersion) return;
 			await settings.get().then(res => {
 				if (res.data && res.data.length) {
 					this.toVersion = res.data.findWhere({ id: '88' }).value;
@@ -446,13 +446,13 @@ export default {
 				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
 			where['stats.stagesMetrics.status'] = { neq: 'cdc' };
 			where.status = { eq: 'running' };
-			dataFlows.count({ where: where }).then(res => {
+			await dataFlows.count({ where: where }).then(res => {
 				if (res.data) {
 					if (res.data.count == 0) allCdc = true;
 				}
 			});
 			for (let i = 0; i < datas.length; i++)
-				datas[i].canUpdate = allCdc && datas[i].curVersion != this.toVersion && datas[i].status == 'running';
+				datas[i].canUpdate = allCdc && datas[i].curVersion != this.toVersion && datas[i].status != 'down';
 		},
 		// 重启---关闭---启动     --版本--更新
 		async operationFn(data) {
