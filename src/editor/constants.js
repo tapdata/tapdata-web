@@ -111,7 +111,7 @@ export const FORM_DATA_KEY = 'form_data',
 			shapeImage: 'static/editor/o-sybase.svg',
 			stencilImage: 'static/editor/sybase.svg'
 		},
-		kafka: {
+		kafkad: {
 			type: 'kafka',
 			name: 'Kafka',
 			shapeImage: 'static/editor/Kafka.svg',

@@ -39,7 +39,18 @@ export const KafakaNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-				return !['app.FileNode', 'app.Database', 'app.GridFSNode'].includes(targetCell.get('type'));
+				return ![
+					'app.Database',
+					'app.FileNode',
+					'app.GridFSNode',
+					'app.Logminer',
+					'app.Dummy',
+					'app.ApiNode',
+					'app.CustomNode',
+					'app.Logminer',
+					'app.MemCache',
+					'app.FileFormBuilder'
+				].includes(targetCell.get('type'));
 			},
 
 			/**
@@ -47,9 +58,38 @@ export const KafakaNodeConfig = {
 			 * @param sourceCell
 			 * @return {boolean}
 			 */
-			allowSource() {
-				return false;
+			allowSource(sourceCell) {
+				return ![
+					'app.Database',
+					'app.FileNode',
+					'app.GridFSNode',
+					'app.Logminer',
+					'app.Dummy',
+					'app.ApiNode',
+					'app.CustomNode',
+					'app.Logminer',
+					'app.MemCache',
+					'app.FileFormBuilder'
+				].includes(sourceCell.get('type'));
 			},
+
+			/**
+			 * validate this allow connect to target
+			 * @param targetCell
+			 * @return {boolean}
+			 */
+			// allowTarget(targetCell) {
+			// 	return !['app.FileNode', 'app.Database', 'app.GridFSNode'].includes(targetCell.get('type'));
+			// },
+
+			/**
+			 * validate accept source connection
+			 * @param sourceCell
+			 * @return {boolean}
+			 */
+			// allowSource() {
+			// 	return false;
+			// },
 
 			validate(data) {
 				data = data || this.getFormData();
