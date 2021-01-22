@@ -701,6 +701,8 @@ const en = {
 				acyclic: 'The graph cannot have cyclic'
 			},
 			data_node: {
+				kafkaText: 'Kafka Node',
+				kafkaName_isNull: 'kafka cannot be empty',
 				database: {
 					name: 'Database',
 					tip: 'Any Database',

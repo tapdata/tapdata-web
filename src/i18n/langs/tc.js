@@ -690,6 +690,8 @@ const tc = {
 				acyclic: '數據處理流程不能有循環'
 			},
 			data_node: {
+				kafkaText: 'kafka節點',
+				kafkaName_isNull: 'kafka不能為空',
 				database: {
 					name: '數據庫',
 					tip: '任意類型數據庫',

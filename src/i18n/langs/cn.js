@@ -691,6 +691,8 @@ const cn = {
 				acyclic: '数据处理流程不能有循环'
 			},
 			data_node: {
+				kafkaText: 'kafka节点',
+				kafkaName_isNull: 'kafka不能为空',
 				database: {
 					name: '数据库',
 					tip: '任意类型数据库',
