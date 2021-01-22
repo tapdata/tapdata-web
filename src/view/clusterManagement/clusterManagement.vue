@@ -321,6 +321,12 @@ export default {
 		};
 	},
 	created() {
+		settings.get().then(res => {
+			if (res.data && res.data.length) {
+				this.toVersion = res.data.findWhere({ key: 'tapdataAgentVersion' }).value;
+			}
+		});
+
 		this.getDataApi();
 		// 这是一个定时器
 		// TODO 集群管理轮询替换成webstocek
@@ -490,11 +496,6 @@ export default {
 			this.canUpdate = false;
 		},
 		async getVersion(datas) {
-			await settings.get().then(res => {
-				if (res.data && res.data.length) {
-					this.toVersion = res.data.findWhere({ key: 'tapdataAgentVersion' }).value;
-				}
-			});
 			for (let i = 0; i < datas.length; i++)
 				if (datas[i].status != 'down')
 					await clusterVersion
@@ -539,7 +540,6 @@ export default {
 		// 筛选
 		screenFn() {
 			this.getDataApi();
-			this.sourch = '';
 		},
 		// 获取数据
 		async getDataApi() {
