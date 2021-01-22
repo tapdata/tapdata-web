@@ -291,7 +291,7 @@
 							@command="handleCommand($event, scope.row)"
 						>
 							<el-button size="mini" type="text">{{ $t('button.more') }}</el-button>
-							<el-dropdown-menu slot="dropdown">
+							<el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
 								<el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
 									$t('dataVerify.dataVerify')
 								}}</el-dropdown-item>
@@ -329,14 +329,15 @@
 									{{ $t('dataFlow.addTag') }}
 								</el-dropdown-item>
 								<el-dropdown-item
-									command="delete"
+									class="btn-delete"
+									command="del"
 									:disabled="
 										$disabledByPermission('SYNC_job_delete_all_data', scope.row.user_id) ||
 											!statusBtMap['delete'][scope.row.status]
 									"
 									v-readonlybtn="'SYNC_category_application'"
 								>
-									{{ $t('dataFlow.addTag') }}
+									{{ $t('button.delete') }}
 								</el-dropdown-item>
 							</el-dropdown-menu>
 						</el-dropdown>
@@ -1140,6 +1141,12 @@ export default {
 			justify-content: center;
 			flex-wrap: wrap;
 		}
+	}
+}
+.dataflow-table-more-dropdown-menu .btn-delete {
+	color: #f56c6c;
+	&.is-disabled {
+		color: #bbb;
 	}
 }
 </style>
