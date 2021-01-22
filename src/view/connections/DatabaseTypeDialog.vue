@@ -62,7 +62,7 @@ export default {
 				'db2',
 				'kafka',
 				'maria',
-				'mysql pxc'
+				'mysqlpxc'
 			],
 			otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file', 'mem_cache'],
 			typeMap: TYPEMAP

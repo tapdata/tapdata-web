@@ -58,5 +58,5 @@ export const TYPEMAP = {
 	gridfs: 'GridFS',
 	kafka: 'Kafka',
 	maria: 'Maria',
-	'mysql pxc': 'MySQL PXC'
+	mysqlpxc: 'MySQL PXC'
 };

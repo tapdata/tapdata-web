@@ -334,7 +334,8 @@ export default {
 				'redis',
 				'file',
 				'kafka',
-				'maria'
+				'maria',
+				'mysqlpxc'
 			], //目前白名单,
 			model: Object.assign({}, defaultModel),
 			config: {

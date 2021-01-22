@@ -396,7 +396,10 @@ export default {
 					'elasticsearch',
 					'redis',
 					'db2',
-					'file'
+					'file',
+					'kafka',
+					'maria',
+					'mysqlpxc'
 				].includes(type)
 			) {
 				this.$router.push('connections/' + id + '/edit?databaseType=' + type);

@@ -302,7 +302,7 @@ export default {
 				'file',
 				'kafka',
 				'maria',
-				'mysql pxc'
+				'mysqlpxc'
 			], //目前白名单,
 			searchParams: this.$store.state.connections,
 			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
