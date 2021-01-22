@@ -238,6 +238,13 @@ const en = {
 		statusLog: 'Status log',
 		sourchName: 'Name',
 		placeholderServer: 'Please enter a server name',
+		serverName: 'Server name',
+		agentSetting: 'Agent server settings',
+		iPDisplay: 'IP display',
+		ipTip:
+			'Switching the network card only changes the display of IP under the server of cluster management page, does not affect any function.',
+		delTittle: 'Delete Agent server',
+		delMessage: 'Are you sure to delete the server ',
 		filter: 'Filter',
 		addServerMon: 'Add server monitoring',
 		startUp: 'Start up',
