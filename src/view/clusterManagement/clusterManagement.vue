@@ -496,13 +496,14 @@ export default {
 				}
 			});
 			for (let i = 0; i < datas.length; i++)
-				await clusterVersion
-					.get({ filter: JSON.stringify({ where: { 'version.uuid': datas[i].uuid } }) })
-					.then(res => {
-						if (res.data && res.data.length) {
-							datas[i].curVersion = res.data[0].version.backend;
-						}
-					});
+				if (datas[i].status != 'down')
+					await clusterVersion
+						.get({ filter: JSON.stringify({ where: { 'version.uuid': datas[i].uuid } }) })
+						.then(res => {
+							if (res.data && res.data.length) {
+								datas[i].curVersion = res.data[0].version.backend;
+							}
+						});
 			let where = {},
 				allCdc = false;
 			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
