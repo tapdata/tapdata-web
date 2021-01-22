@@ -41,6 +41,13 @@
 									<span class="uuid">{{ item.systemInfo.uuid }}</span>
 								</div>
 								<div class="operation-bar">
+									<el-button
+										size="mini"
+										type="danger"
+										v-if="item.canUpdate"
+										@click="updateFn(item, item.management.status, 'management', 'update')"
+										>{{ $t('message.update') }}</el-button
+									>
 									<i
 										class="iconfont icon-icon_tianjia"
 										v-if="managementType === 'cluster'"
@@ -275,7 +282,6 @@
 	</section>
 </template>
 <script>
-import { delayTrigger } from '../../util/util';
 import addServe from './component/addServe';
 import factory from '../../api/factory';
 const cluster = factory('cluster');

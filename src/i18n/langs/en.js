@@ -251,7 +251,7 @@ const en = {
 		close: 'Close',
 		manageSys: 'Manage system',
 		restart: 'restart',
-		update: 'update',
+		update: 'Update',
 		syncGover: 'Syn gover',
 		screen: 'Screen',
 		delete: 'Delete',
