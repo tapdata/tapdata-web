@@ -7,7 +7,6 @@
 		:before-close="handleClose"
 	>
 		<div class="database">
-			{{ database }}
 			<span class="title" v-if="database && database.length > 0">Database</span>
 			<ul class="item clearfix">
 				<li v-for="item in database" :key="item" @click="databaseType(item)">

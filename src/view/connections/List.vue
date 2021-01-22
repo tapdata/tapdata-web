@@ -121,7 +121,13 @@
 			<el-table-column prop="name" :label="$t('connection.dataBaseName')" sortable="name">
 				<template slot-scope="scope">
 					<div class="database-img">
-						<img :src="getImgByType(scope.row.database_type)" />
+						<img
+							:src="
+								scope.row.search_databaseType
+									? getImgByType(scope.row.search_databaseType)
+									: getImgByType(scope.row.database_type)
+							"
+						/>
 					</div>
 					<div class="database-text" :class="{ lineHeight: !scope.row.database_uri }">
 						<span class="name" @click="preview(scope.row.id, scope.row.database_type)"
@@ -345,6 +351,17 @@ export default {
 			};
 			let databaseTypes = await this.$api('DatabaseTypes').get({ filter: JSON.stringify(filter) });
 			databaseTypes.data.forEach(dt => this.databaseTypeOptions.push(dt));
+			let list = [
+				{
+					type: 'maria',
+					name: 'maria'
+				},
+				{
+					type: 'mysqlpxc',
+					name: 'mysqlpxc'
+				}
+			];
+			this.databaseTypeOptions = [...this.databaseTypeOptions, ...list];
 		},
 		getData({ page, tags }) {
 			this.$store.commit('connections', this.searchParams);
@@ -356,6 +373,7 @@ export default {
 				user_id: true,
 				connection_type: true,
 				database_type: true,
+				search_databaseType: true,
 				database_host: true,
 				database_uri: true,
 				status: true,
@@ -375,6 +393,7 @@ export default {
 				in: this.allowDataType
 			};
 			databaseType && (where.database_type = databaseType);
+			databaseType && (where.search_databaseType = databaseType);
 			databaseModel && (where.connection_type = databaseModel);
 			if (tags && tags.length) {
 				where['listtags.id'] = {

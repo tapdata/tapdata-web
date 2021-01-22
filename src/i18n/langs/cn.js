@@ -1493,6 +1493,7 @@ const cn = {
 			databaseType: '数据库类型',
 			connectionType: '连接类型',
 			host: '数据库地址',
+			agentAddr: '代理地址',
 			port: '端口',
 			databaseName: '数据库名称',
 			databaseSchema: '数据库模式',

@@ -1519,6 +1519,7 @@ const en = {
 			databaseType: 'DB type',
 			connectionType: 'Connection Type',
 			host: 'DB Host',
+			agentAddr: 'Agent address',
 			port: 'Port',
 			databaseName: 'DB Name',
 			databaseSchema: 'Database Schema',
@@ -1650,6 +1651,42 @@ const en = {
 				extend_source_path: 'Inherit the directory structure',
 				file_output_path: 'File output absolute path',
 				csvFijlter: 'File Name Filter '
+			},
+			kafka: {
+				chooseTheme: 'Choose a theme',
+				topicName: 'Enter topic name',
+				topicExpression: 'Enter topic expression',
+				requestTimeoutPeriod: 'Pull request timeout period',
+				readIsolationLevel: 'Message submission read isolation level',
+				maximumNumber: 'The maximum number of records returned in a single poll message',
+				blockingTimeoutTime: 'Single poll message blocking timeout time',
+				fetchMaximumNumber: 'The maximum number of bytes in a single fetch message',
+				fetchBlockTime: 'Single fetch message blocking timeout time',
+				lonoreFormat: 'Ignore non-JSON Object format messages',
+				lonoreFormatTip:
+					'If it is turned on, it will ignore the message if it encounters a parsing exception, otherwise it will stop pulling the message',
+				directlyNameTip: 'Enter the subject name directly, separate multiple subjects with commas',
+				kafkaPatternTopicsTip:
+					'Configure the MongoDB database according to Host, port, account, and password, and support batch input',
+				hostPlaceHolder: 'Enter IP/host:port, multiple topics are separated by commas',
+				requestTimeout: 'Push request timeout (ms)',
+				transactionMessage: 'Transaction Message',
+				kafkaRetries: 'Request retry times',
+				kafkaBatchSize: 'Partition message batch bytes',
+				kafkaAcks: 'ACK confirmation mechanism',
+				kafkaLingerMS: 'Maximum waiting time for partition message batch (milliseconds)',
+				kafkaDeliveryTimeoutMS: 'Message transmission timeout time',
+				kafkaMaxRequestSize: 'Request maximum number of bytes',
+				kafkaBufferMemory: 'Buffer message bytes',
+				kafkaCompressionType: 'Message compression type',
+				kafkaPartitionKey: 'Partition key field name',
+				kafkaIgnorePushError: 'Ignore push message exception',
+				pushErrorTip:
+					'If it is enabled, ignore the message pushed this time (there is a message loss), otherwise stop pushing the message',
+				kafkaAcks0: 'Do not confirm',
+				kafkaAcks1: 'Write to master partition only',
+				kafkaAcks_1: 'Write to most ISR partitions',
+				kafkaAcksAll: 'Write to all ISR partitions'
 			}
 		},
 		error: {
@@ -1663,7 +1700,8 @@ const en = {
 			noneSslKey: 'Private key is required.',
 			noneSslCA: 'Certificate Authority is required.',
 			sourceNameExist: 'This data source already exists',
-			noCreate: ' , Cannot be created repeatedly'
+			noCreate: ' , Cannot be created repeatedly',
+			kafkaNameRange: 'The topic name length is greater than 256'
 		},
 		createDatabase: 'Create new database',
 		copyDatabase: 'Copy name',

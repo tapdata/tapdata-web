@@ -296,6 +296,8 @@ const defaultModel = {
 		}
 	],
 
+	search_databaseType: '',
+
 	// kafka
 	kafkaBootstrapServers: '',
 	// kafkaSelectTopics: '',
@@ -495,12 +497,18 @@ export default {
 		submit() {
 			this.submitBtnLoading = true;
 			let falg = false;
+			this.model.search_databaseType = '';
 			if (this.model.database_type === 'file' && this.model.connection_type === 'source') {
 				this.$refs.fileForm.validate(valid => {
 					if (!valid) {
 						falg = true;
 					}
 				});
+			}
+
+			if (this.model.database_type === 'mysqlpxc' || this.model.database_type === 'maria') {
+				this.model.search_databaseType = this.model.database_type;
+				this.model.database_type = 'mysql';
 			}
 
 			this.$refs.form.validate(valid => {
