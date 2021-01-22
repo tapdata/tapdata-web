@@ -26,6 +26,13 @@ export const aggregateConfig = {
 				},
 				label: {
 					text: i18n.t('editor.cell.processor.aggregate.name')
+				},
+				statusImage: {
+					refWidth: '35%',
+					refHeight: -15,
+					refX: '70%',
+					y: 8,
+					visibility: 'hidden'
 				}
 			},
 			[FORM_DATA_KEY]: {
