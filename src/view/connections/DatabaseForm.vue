@@ -299,7 +299,7 @@ export default {
 			visible: false,
 			timezones: [],
 			dataTypes: [],
-			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis', 'file'], //目前白名单,
+			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis', 'file', 'db2'], //目前白名单,
 			model: Object.assign({}, defaultModel),
 			config: {
 				items: []
@@ -710,15 +710,13 @@ export default {
 			}
 			.edit-header-box {
 				border-bottom: 1px solid #eee;
-				padding-bottom: 20px;
 				margin-bottom: 20px;
 			}
 			.edit-header {
 				display: flex;
 				justify-content: flex-start;
 				width: 578px;
-				margin: 0 auto;
-				margin-top: 40px;
+				margin: 30px auto;
 			}
 			.title {
 				display: flex;
