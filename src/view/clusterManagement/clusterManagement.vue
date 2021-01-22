@@ -210,7 +210,7 @@
 		>
 			<addServe :data="currentData" :editItem="editItem" ref="childRules"></addServe>
 			<div slot="footer" class="dialog-footer">
-				<el-button size="small" @click="closeDialogForm()">{{ $t('message.cancel') }}</el-button>
+				<el-button size="small" @click="closeDialogForm()">{{ $t('dataFlow.reset') }}</el-button>
 				<el-button size="small" type="primary" @click="submitForm('ruleForm')">{{
 					$t('message.confirm')
 				}}</el-button>
@@ -235,7 +235,7 @@
 							show-word-limit
 							:placeholder="$t('message.placeholderMonServer')"
 						></el-input>
-						<span class="restBtn" @click="editNameRest">还原</span>
+						<span class="restBtn" @click="editNameRest">{{ $t('message.cancel') }}</span>
 					</div>
 				</el-form-item>
 				<el-form-item :label="$t('message.iPDisplay')" prop="command">
@@ -522,10 +522,10 @@ export default {
 				.delete(id)
 				.then(() => {
 					this.deleteDialogVisible = false;
-					this.$message.success('删除成功');
+					this.$message.success(this.$t('message.deleteOK'));
 				})
 				.catch(() => {
-					this.$message.error('删除失败');
+					this.$message.error(this.$t('message.deleteFail'));
 				});
 		},
 		//编辑
@@ -552,10 +552,10 @@ export default {
 				.editAgent(this.custId, data)
 				.then(() => {
 					this.editAgentDialog = false;
-					this.$message.success('编辑成功');
+					this.$message.success(this.$t('message.saveOK'));
 				})
 				.catch(() => {
-					this.$message.error('编辑失败');
+					this.$message.error(this.$t('message.saveFail'));
 				});
 		},
 		editNameRest() {
