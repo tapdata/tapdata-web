@@ -234,6 +234,7 @@ const en = {
 		exists_name: 'Name already exists',
 		nullName: 'Field name can not be empty',
 		search: 'search',
+		reduction: 'Restore',
 		serviceCluMange: 'Service cluster management',
 		statusLog: 'Status log',
 		sourchName: 'Name',

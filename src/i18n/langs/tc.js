@@ -234,6 +234,7 @@ const tc = {
 		exists_name: '名稱已存在',
 		nullName: '字段名稱不能为空',
 		search: '搜索',
+		reduction: '還原',
 		serviceCluMange: '服務集群管理',
 		statusLog: '狀態日誌',
 		sourchName: '名稱搜索',

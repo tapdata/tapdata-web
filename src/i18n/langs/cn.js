@@ -234,6 +234,7 @@ const cn = {
 		exists_name: '名称已存在',
 		nullName: '字段名称不能为空',
 		search: '搜索',
+		reduction: '还原',
 		serviceCluMange: '服务集群管理',
 		statusLog: '状态日志',
 		sourchName: '名称搜索',

@@ -37,10 +37,10 @@
 									<h2 class="name">
 										{{ item.agentName ? item.agentName : item.systemInfo.hostname }}
 									</h2>
-									<span>{{ item.systemInfo.ip }}</span>
+									<span>{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
 									<span class="uuid">{{ item.systemInfo.uuid }}</span>
 								</div>
-								<div class="operation-bar">
+								<div class="operation-bar" v-readonlybtn="'Cluster_operation'">
 									<el-button
 										size="mini"
 										type="danger"
@@ -217,7 +217,7 @@
 		>
 			<addServe :data="currentData" :editItem="editItem" ref="childRules"></addServe>
 			<div slot="footer" class="dialog-footer">
-				<el-button size="small" @click="closeDialogForm()">{{ $t('dataFlow.reset') }}</el-button>
+				<el-button size="small" @click="closeDialogForm()">{{ $t('dataFlow.cancel') }}</el-button>
 				<el-button size="small" type="primary" @click="submitForm('ruleForm')">{{
 					$t('message.confirm')
 				}}</el-button>
@@ -242,7 +242,7 @@
 							show-word-limit
 							:placeholder="$t('message.placeholderMonServer')"
 						></el-input>
-						<span class="restBtn" @click="editNameRest">{{ $t('message.cancel') }}</span>
+						<span class="restBtn" @click="editNameRest">{{ $t('message.reduction') }}</span>
 					</div>
 				</el-form-item>
 				<el-form-item :label="$t('message.iPDisplay')" prop="command">
