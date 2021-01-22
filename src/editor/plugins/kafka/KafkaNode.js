@@ -10,7 +10,7 @@ export const KafakaNodeConfig = {
 		defaultInstanceProperties: {
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/Kafka.svg'
+					xlinkHref: 'static/editor/o-kafka.svg'
 				},
 				label: {
 					text: 'Kafka'

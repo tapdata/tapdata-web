@@ -188,7 +188,7 @@
 						type="text"
 						v-readonlybtn="'datasource_edition'"
 						:disabled="$disabledByPermission('datasource_edition_all_data', scope.row.user_id)"
-						@click="edit(scope.row.id, scope.row.database_type)"
+						@click="edit(scope.row.id, scope.row.database_type, scope.row)"
 					>
 						{{ $t('message.edit') }}
 					</el-button>
@@ -220,7 +220,7 @@
 		>
 			<p>
 				{{ $t('connection.deteleDatabaseMsg') }}
-				<span @click="edit(delData.id, delData.database_type)" style="color:#48B6E2;cursor: pointer">
+				<span @click="edit(delData.id, delData.database_type, delData)" style="color:#48B6E2;cursor: pointer">
 					{{ delData.name }}</span
 				>
 				?
@@ -454,8 +454,11 @@ export default {
 		handlePreviewVisible() {
 			this.previewVisible = false;
 		},
-		edit(id, type) {
+		edit(id, type, item) {
 			if (this.whiteList.includes(type)) {
+				if (item.search_databaseType) {
+					type = item.search_databaseType;
+				}
 				this.$router.push('connections/' + id + '/edit?databaseType=' + type);
 			} else {
 				top.location.href = '/#/connection/' + id;
