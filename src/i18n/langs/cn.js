@@ -258,7 +258,7 @@ const cn = {
 		test: '测试',
 		copy: '复制',
 		reload: '重新加载schema',
-		preview: '预览',
+		preview: '详情',
 		cancel: '取 消',
 		confirm: '确 定',
 		placeholderMonServer: '请输入监控的服务名称',
@@ -1499,6 +1499,7 @@ const cn = {
 			items: '测试事项',
 			result: '结果',
 			information: '说明',
+			unTest: '待测试 ... ',
 			error: '测试服务请求超时，请关闭重试'
 		},
 		form: {

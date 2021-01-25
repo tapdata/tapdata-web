@@ -1495,6 +1495,7 @@ const tc = {
 			items: '測試事項',
 			result: '結果',
 			information: '說明',
+			unTest: '待測試... ',
 			error: '測試服務請求超時，請關閉重試'
 		},
 		form: {
