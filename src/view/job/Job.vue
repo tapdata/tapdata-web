@@ -1062,13 +1062,18 @@ export default {
 		async start() {
 			if (this.$refs.agentDialog.checkAgent()) {
 				let id = this.$route.query.id;
+				let doStart = () => {
+					let data = this.getDataFlowData();
+					if (data) {
+						this.doSaveStartDataFlow(data);
+					}
+				};
 				if (this.$route.query && id) {
 					this.$refs.errorHandler.checkError({ id, status: this.status }, () => {
-						let data = this.getDataFlowData();
-						if (data) {
-							this.doSaveStartDataFlow(data);
-						}
+						doStart();
 					});
+				} else {
+					doStart();
 				}
 			}
 		},
