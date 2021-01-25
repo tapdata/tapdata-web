@@ -17,7 +17,7 @@
 						v-model="sourch"
 						:debounce="800"
 						:placeholder="$t('message.placeholderServer')"
-						@input="screenFn"
+						@input="getDataApi"
 					>
 					</el-input>
 				</li>
@@ -538,7 +538,8 @@ export default {
 			});
 		},
 		// 筛选
-		screenFn() {
+		rest() {
+			this.sourch = '';
 			this.getDataApi();
 		},
 		// 获取数据
@@ -547,13 +548,13 @@ export default {
 			if (this.sourch) {
 				params['filter[where][or][0][systemInfo.hostname][like]'] = this.sourch;
 				params['filter[where][or][1][systemInfo.ip][like]'] = this.sourch;
+				params['filter[where][or][2][custIP][like]'] = this.sourch;
+				params['filter[where][or][3][agentName][like]'] = this.sourch;
 			}
 			cluster.get(params).then(res => {
 				if (res.data) {
 					//自动升级
-					if (res.data.length) {
-						this.getVersion(res.data);
-					}
+					this.getVersion(res.data);
 				}
 			});
 		},
