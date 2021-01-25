@@ -396,6 +396,7 @@ export default {
 			databaseType && (where.database_type = databaseType);
 			if (databaseType === 'maria' || databaseType === 'mysqlpxc') {
 				where.search_databaseType = databaseType;
+				where.database_type = 'mysql';
 			}
 			databaseModel && (where.connection_type = databaseModel);
 			if (tags && tags.length) {
