@@ -394,7 +394,9 @@ export default {
 				in: this.allowDataType
 			};
 			databaseType && (where.database_type = databaseType);
-			databaseType && (where.search_databaseType = databaseType);
+			if (databaseType === 'maria' || databaseType === 'mysqlpxc') {
+				where.search_databaseType = databaseType;
+			}
 			databaseModel && (where.connection_type = databaseModel);
 			if (tags && tags.length) {
 				where['listtags.id'] = {
