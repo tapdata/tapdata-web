@@ -524,6 +524,7 @@ const tc = {
 		data_quality_tag: '添加數據質量標籤',
 		notification_lag: '通知',
 		isOpenAutoDDL: '自動處理DDL',
+		ddlTip: '注意：自動DDL處理不支持JS處理器，分段處理器',
 		transformerConcurrency: '目標寫入線程數',
 		processorConcurrency: '處理器線程數',
 		cdcFetchSize: '增量批次讀取條數',

@@ -17,7 +17,7 @@ export const KafakaNodeConfig = {
 				}
 			},
 			[FORM_DATA_KEY]: {
-				type: 'kafaka',
+				type: 'kafka',
 				connectionId: ''
 			}
 		},

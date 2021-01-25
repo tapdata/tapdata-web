@@ -527,6 +527,7 @@ const cn = {
 		data_quality_tag: '添加数据质量标签',
 		notification_lag: '通知',
 		isOpenAutoDDL: '自动处理DDL',
+		ddlTip: '注意：自动DDL处理不支持JS处理器、字段处理器',
 		transformerConcurrency: '目标写入线程数',
 		processorConcurrency: '处理器线程数',
 		cdcFetchSize: '增量批次读取条数',

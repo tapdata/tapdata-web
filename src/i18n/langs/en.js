@@ -529,6 +529,7 @@ const en = {
 		data_quality_tag: 'Add data quality tag',
 		notification_lag: 'Notification',
 		isOpenAutoDDL: 'Auto-DDL operation',
+		ddlTip: 'Warn: Automatic DDL does not support JS processor and field processor',
 		transformerConcurrency: 'Transformer Concurrency',
 		processorConcurrency: 'Processor Concurrency',
 		cdcFetchSize: 'Number of CDC batch reads',

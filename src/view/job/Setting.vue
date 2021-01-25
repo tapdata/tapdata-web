@@ -22,7 +22,7 @@
 					<el-radio label="initial_sync">{{ $t('dataFlow.initial_sync') }}</el-radio>
 					<el-radio label="cdc" :disabled="sync_typeFalg">{{ $t('dataFlow.cdc') }}</el-radio>
 				</el-radio-group>
-				<el-popover popper-class="setting-popper" placement="top-start" width="600" trigger="hover">
+				<el-popover popper-class="setting-popper" placement="top-start" trigger="hover">
 					<div>{{ $t('dataFlow.setting.sync_type_tip') }}</div>
 					<div>{{ conncetionStage }}</div>
 					<span class="icon iconfont icon-tishi1 icontip" slot="reference"></span>
@@ -48,13 +48,17 @@
 					v-model="formData.isOpenAutoDDL"
 					:active-text="formData.isOpenAutoDDL ? $t('dataFlow.yes') : $t('dataFlow.no')"
 				></el-switch>
+				<el-popover popper-class="setting-popper" placement="top-start" trigger="hover">
+					<div>{{ $t('dataFlow.ddlTip') }}</div>
+					<span class="icon iconfont icon-tishi1" slot="reference"></span>
+				</el-popover>
 			</el-form-item>
 			<el-form-item :label="$t('dataFlow.cdcDataProcess')" v-show="formData.sync_type !== 'initial_sync'">
 				<el-select v-model="formData.isSerialMode" size="mini" placeholder="请选择" class="dataWrite-list">
 					<el-option :label="$t('dataFlow.batch')" :value="false"> </el-option>
 					<el-option :label="$t('dataFlow.onebyone')" :value="true"> </el-option>
 				</el-select>
-				<el-popover popper-class="setting-popper" placement="top-start" width="600" trigger="hover">
+				<el-popover popper-class="setting-popper" placement="top-start" trigger="hover">
 					<div>{{ $t('dataFlow.setting.batchTip') }}</div>
 					<div>{{ $t('dataFlow.setting.onebyoneTip') }}</div>
 					<span class="icon iconfont icon-tishi1" slot="reference"></span>
@@ -62,7 +66,7 @@
 			</el-form-item>
 			<el-form-item :label="$t('dataFlow.cdcFetchSize')" v-show="formData.sync_type !== 'initial_sync'">
 				<el-input-number v-model="formData.cdcFetchSize" :min="1" :max="1000" size="mini"></el-input-number>
-				<el-popover popper-class="setting-popper" placement="top-start" width="600" trigger="hover">
+				<el-popover popper-class="setting-popper" placement="top-start" trigger="hover">
 					<div>{{ $t('dataFlow.cdcFetchSizeTip') }}</div>
 					<div>{{ $t('dataFlow.cdcFetchSizeTip1') }}</div>
 					<div>{{ $t('dataFlow.cdcFetchSizeTip2') }}</div>
@@ -85,7 +89,7 @@
 						>
 						</el-option>
 					</el-select>
-					<el-popover popper-class="setting-popper" placement="top-start" width="600" trigger="hover">
+					<el-popover popper-class="setting-popper" placement="top-start" trigger="hover">
 						<div style="word-break: break-word">{{ $t('dataFlow.setting.intellectTip') }}</div>
 						<div style="word-break: break-word">{{ $t('dataFlow.setting.compelTip') }}</div>
 						<span class="icon iconfont icon-tishi1" slot="reference"></span>
@@ -189,7 +193,7 @@
 						<el-input v-model="formData.maxTransactionLength" :min="1" :max="720" size="mini">
 							<template slot="append">Hours</template>
 						</el-input>
-						<el-popover popper-class="setting-popper" placement="top-start" width="600" trigger="hover">
+						<el-popover popper-class="setting-popper" placement="top-start" trigger="hover">
 							<span>{{ $t('editor.cell.data_node.table.form.maximum_transaction.tip') }}</span>
 							<span class="icon iconfont icon-tishi1" slot="reference"></span>
 						</el-popover>
@@ -524,6 +528,9 @@ export default {
 }
 .dataWrite-list {
 	width: 230px;
+}
+.iconfont {
+	vertical-align: middle;
 }
 </style>
 <style lang="less">
