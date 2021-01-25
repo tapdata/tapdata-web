@@ -819,7 +819,7 @@ export default {
 			let nodeCells = {};
 			cells.forEach(cell => {
 				if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
-					if (cell.attrs.line && cell.attrs.line.stroke) {
+					if (cell.attrs && cell.attrs.line && cell.attrs.line.stroke) {
 						cell.attrs.line.stroke = '#8f8f8f'; // 鼠标未失去焦点就保存，针对link选中状态改为默认
 					}
 					edgeCells[cell.id] = cell;
@@ -1062,13 +1062,18 @@ export default {
 		async start() {
 			if (this.$refs.agentDialog.checkAgent()) {
 				let id = this.$route.query.id;
+				let doStart = () => {
+					let data = this.getDataFlowData();
+					if (data) {
+						this.doSaveStartDataFlow(data);
+					}
+				};
 				if (this.$route.query && id) {
 					this.$refs.errorHandler.checkError({ id, status: this.status }, () => {
-						let data = this.getDataFlowData();
-						if (data) {
-							this.doSaveStartDataFlow(data);
-						}
+						doStart();
 					});
+				} else {
+					doStart();
 				}
 			}
 		},

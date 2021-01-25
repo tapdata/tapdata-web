@@ -306,6 +306,7 @@ export default {
 				'elasticsearch',
 				'redis',
 				'file',
+				'db2',
 				'kafka',
 				'maria',
 				'mysqlpxc'

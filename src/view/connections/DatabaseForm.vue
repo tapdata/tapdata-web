@@ -335,6 +335,7 @@ export default {
 				'elasticsearch',
 				'redis',
 				'file',
+				'db2',
 				'kafka',
 				'maria',
 				'mysqlpxc'
@@ -778,15 +779,13 @@ export default {
 			}
 			.edit-header-box {
 				border-bottom: 1px solid #eee;
-				padding-bottom: 20px;
 				margin-bottom: 20px;
 			}
 			.edit-header {
 				display: flex;
 				justify-content: flex-start;
 				width: 578px;
-				margin: 0 auto;
-				margin-top: 40px;
+				margin: 30px auto;
 			}
 			.title {
 				display: flex;
