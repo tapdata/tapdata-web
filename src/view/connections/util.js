@@ -57,6 +57,6 @@ export const TYPEMAP = {
 	'dummy db': 'Dummy DB',
 	gridfs: 'GridFS',
 	kafka: 'Kafka',
-	mariaDB: 'MariaDB',
-	mysqlpxc: 'MySQL PXC'
+	mariadb: 'MariaDB',
+	'mysql pxc': 'MySQL PXC'
 };

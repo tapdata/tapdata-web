@@ -8,7 +8,7 @@ import elasticsearch from './elasticsearch';
 import redis from './redis';
 import file from './file';
 import kafka from './kafka';
-import mariaDB from './maria';
+import mariadb from './maria';
 import mysqlpxc from './mysqlpxc';
 
 export default {
@@ -22,6 +22,6 @@ export default {
 	redis,
 	file,
 	kafka,
-	mariaDB,
+	mariadb,
 	mysqlpxc
 };

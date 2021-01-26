@@ -121,13 +121,7 @@
 			<el-table-column prop="name" :label="$t('connection.dataBaseName')" sortable="name">
 				<template slot-scope="scope">
 					<div class="database-img">
-						<img
-							:src="
-								scope.row.search_databaseType
-									? getImgByType(scope.row.search_databaseType)
-									: getImgByType(scope.row.database_type)
-							"
-						/>
+						<img :src="getImgByType(scope.row.database_type)" />
 					</div>
 					<div class="database-text" :class="{ lineHeight: !scope.row.database_uri }">
 						<span class="name" @click="preview(scope.row.id, scope.row.database_type)"
@@ -308,7 +302,7 @@ export default {
 				'file',
 				'db2',
 				'kafka',
-				'mariaDB',
+				'mariadb',
 				'mysql pxc'
 			], //目前白名单,
 			searchParams: this.$store.state.connections,
@@ -352,17 +346,6 @@ export default {
 			};
 			let databaseTypes = await this.$api('DatabaseTypes').get({ filter: JSON.stringify(filter) });
 			databaseTypes.data.forEach(dt => this.databaseTypeOptions.push(dt));
-			// let list = [
-			// 	{
-			// 		type: 'maria',
-			// 		name: 'maria'
-			// 	},
-			// 	{
-			// 		type: 'mysqlpxc',
-			// 		name: 'mysqlpxc'
-			// 	}
-			// ];
-			// this.databaseTypeOptions = [...this.databaseTypeOptions, ...list];
 		},
 		getData({ page, tags }) {
 			this.$store.commit('connections', this.searchParams);

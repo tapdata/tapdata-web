@@ -398,7 +398,7 @@ export default {
 					'db2',
 					'file',
 					'kafka',
-					'mariaDB',
+					'mariadb',
 					'mysql pxc'
 				].includes(type)
 			) {

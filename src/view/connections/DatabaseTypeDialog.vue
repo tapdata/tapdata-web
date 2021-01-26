@@ -60,7 +60,7 @@ export default {
 				'gaussdb200',
 				'db2',
 				'kafka',
-				'mariaDB',
+				'mariadb',
 				'mysql pxc'
 			],
 			otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file', 'mem_cache'],

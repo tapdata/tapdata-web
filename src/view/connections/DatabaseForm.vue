@@ -337,8 +337,8 @@ export default {
 				'file',
 				'db2',
 				'kafka',
-				'mariaDB',
-				'mysql pxc'
+				'mariadb',
+				'mysqlpxc'
 			], //目前白名单,
 			model: Object.assign({}, defaultModel),
 			config: {
@@ -462,7 +462,13 @@ export default {
 		},
 		// 按照数据库类型获取表单配置规则
 		getFormConfig() {
-			let func = formConfig[this.model.database_type];
+			let type = this.model.database_type;
+
+			if (type === 'mysql pxc') {
+				type = 'mysqlpxc';
+			}
+			let func = formConfig[type];
+
 			if (func) {
 				let config = func(this);
 				let items = defaultConfig.concat(config.items);
