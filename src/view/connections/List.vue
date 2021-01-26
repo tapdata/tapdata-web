@@ -352,17 +352,17 @@ export default {
 			};
 			let databaseTypes = await this.$api('DatabaseTypes').get({ filter: JSON.stringify(filter) });
 			databaseTypes.data.forEach(dt => this.databaseTypeOptions.push(dt));
-			let list = [
-				{
-					type: 'maria',
-					name: 'maria'
-				},
-				{
-					type: 'mysqlpxc',
-					name: 'mysqlpxc'
-				}
-			];
-			this.databaseTypeOptions = [...this.databaseTypeOptions, ...list];
+			// let list = [
+			// 	{
+			// 		type: 'maria',
+			// 		name: 'maria'
+			// 	},
+			// 	{
+			// 		type: 'mysqlpxc',
+			// 		name: 'mysqlpxc'
+			// 	}
+			// ];
+			// this.databaseTypeOptions = [...this.databaseTypeOptions, ...list];
 		},
 		getData({ page, tags }) {
 			this.$store.commit('connections', this.searchParams);

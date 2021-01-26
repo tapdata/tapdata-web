@@ -3,7 +3,7 @@ import KafkaAttribute from './KafkaAttribute';
 import { FORM_DATA_KEY } from '../../constants';
 import i18n from '../../../i18n/i18n';
 
-export const KafakaNodeConfig = {
+export const KafkaNodeConfig = {
 	type: 'app.KafkaNode',
 	shape: {
 		extends: 'app.BaseElement',
