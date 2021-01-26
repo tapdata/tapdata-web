@@ -309,7 +309,7 @@ export default {
 				'db2',
 				'kafka',
 				'mariaDB',
-				'mysqlpxc'
+				'mysql pxc'
 			], //目前白名单,
 			searchParams: this.$store.state.connections,
 			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
@@ -394,10 +394,10 @@ export default {
 				in: this.allowDataType
 			};
 			databaseType && (where.database_type = databaseType);
-			if (databaseType === 'maria' || databaseType === 'mysqlpxc') {
-				where.search_databaseType = databaseType;
-				where.database_type = 'mysql';
-			}
+			// if (databaseType === 'maria' || databaseType === 'mysqlpxc') {
+			// 	where.search_databaseType = databaseType;
+			// 	where.database_type = 'mysql';
+			// }
 			databaseModel && (where.connection_type = databaseModel);
 			if (tags && tags.length) {
 				where['listtags.id'] = {

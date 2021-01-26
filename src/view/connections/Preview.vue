@@ -399,7 +399,7 @@ export default {
 					'file',
 					'kafka',
 					'mariaDB',
-					'mysqlpxc'
+					'mysql pxc'
 				].includes(type)
 			) {
 				this.$router.push('connections/' + id + '/edit?databaseType=' + type);

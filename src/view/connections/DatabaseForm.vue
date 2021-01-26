@@ -338,7 +338,7 @@ export default {
 				'db2',
 				'kafka',
 				'mariaDB',
-				'mysqlpxc'
+				'mysql pxc'
 			], //目前白名单,
 			model: Object.assign({}, defaultModel),
 			config: {
@@ -507,10 +507,10 @@ export default {
 				});
 			}
 
-			if (this.model.database_type === 'mysqlpxc') {
-				// this.model.search_databaseType = this.model.database_type;
-				this.model.database_type = 'mysql pxc';
-			}
+			// if (this.model.database_type === 'mysqlpxc') {
+			// 	// this.model.search_databaseType = this.model.database_type;
+			// 	this.model.database_type = 'mysql pxc';
+			// }
 
 			this.$refs.form.validate(valid => {
 				if (valid && !falg) {
