@@ -259,7 +259,7 @@ const en = {
 		test: 'Test',
 		copy: 'Copy',
 		reload: 'Reload schema',
-		preview: 'Preview',
+		preview: 'Detail',
 		cancel: 'Cancel',
 		confirm: 'Confirm',
 		placeholderMonServer: 'Please enter the monitored service name',
@@ -1528,6 +1528,7 @@ const en = {
 			testing: 'Untest',
 			items: 'Test items',
 			result: 'Result',
+			unTest: 'Waiting ... ',
 			information: 'Information',
 			error: 'The test service request timed out, please close and try again.'
 		},
