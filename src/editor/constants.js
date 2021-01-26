@@ -120,13 +120,13 @@ export const FORM_DATA_KEY = 'form_data',
 		kafka: {
 			type: 'kafka',
 			name: 'Kafka',
-			shapeImage: 'static/editor/o-kafka.svg',
-			stencilImage: 'static/editor/Kafka.svg'
+			shapeImage: 'static/editor/o-kafka-q.svg',
+			stencilImage: 'static/editor/wKafka.svg'
 		},
 		mariaDB: {
 			type: 'mariadb',
 			name: 'MariaDB',
-			shapeImage: 'static/editor/o-kafka.svg',
+			shapeImage: 'static/editor/o-maria.svg',
 			stencilImage: 'static/editor/maria.svg'
 		}
 	},
