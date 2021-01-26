@@ -11,11 +11,11 @@
 		</div>
 		<div class="main">
 			<el-tree
-				ref="tree"
 				default-expand-all
+				ref="tree"
 				icon-class="icon-none"
 				:indent="0"
-				:data="schema ? schema.fields : []"
+				:data="fields || []"
 				:node-key="nodeKey"
 				:show-checkbox="!!filterFields"
 				@node-expand="handlerNodeExpand"
@@ -95,6 +95,32 @@ export default {
 			//过滤被删除的数据
 			if (schema && schema.fields) {
 				schema.fields = removeDeleted(schema.fields);
+
+				//延时加载
+				let fields = schema.fields;
+				let total = fields.length;
+				let size = 5;
+				let index = 0;
+				this.fields = [];
+				let interval = this.interval;
+				if (interval) {
+					clearInterval(interval);
+					this.interval = null;
+				}
+				this.$nextTick(() => {
+					let load = () => {
+						this.fields.push(...fields.slice((index + 0) * size, (index + 1) * size).concat());
+						index++;
+					};
+					interval = setInterval(() => {
+						if ((index + 1) * size < total) {
+							load();
+						} else {
+							clearInterval(interval);
+							this.interval = null;
+						}
+					}, 500);
+				});
 			}
 			log('Entity Schema Change:', schema);
 		}
@@ -107,7 +133,9 @@ export default {
 			isIndeterminate: false,
 			tableMap: {},
 			defaultChecked: [],
-			typeMap: {}
+			typeMap: {},
+			fields: [],
+			interval: null
 		};
 	},
 
