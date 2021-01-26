@@ -308,7 +308,7 @@ export default {
 				'file',
 				'db2',
 				'kafka',
-				'maria',
+				'mariaDB',
 				'mysqlpxc'
 			], //目前白名单,
 			searchParams: this.$store.state.connections,

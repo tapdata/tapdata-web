@@ -182,6 +182,11 @@
 			<el-table-column prop="status" sortable="custom" :label="$t('dataFlow.taskStatus')" width="180">
 				<template slot-scope="scope">
 					<div>
+						<img
+							v-if="scope.row.status == 'running'"
+							style="width: 12px;vertical-align: middle;"
+							src="../../../static/editor/running.svg"
+						/>
 						<span
 							:style="
 								`color: ${
@@ -279,7 +284,11 @@
 						<el-button
 							type="text"
 							size="mini"
-							:disabled="scope.row.setting.sync_type !== 'initial_sync' || scope.row.status === 'running'"
+							:disabled="
+								$disabledByPermission('SYNC_job_edition_all_data', scope.row.user_id) ||
+									scope.row.setting.sync_type !== 'initial_sync' ||
+									scope.row.status === 'running'
+							"
 							v-readonlybtn="'SYNC_job_edition'"
 							@click="handleTaskscheduling(scope.row.id, scope.row)"
 						>
