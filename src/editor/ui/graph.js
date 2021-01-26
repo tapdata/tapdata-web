@@ -1101,11 +1101,18 @@ export default class Graph extends Component {
 			for (let i = path.length; i > 0; i--) {
 				if (path[i - 1].get('type') == 'app.Aggregate') {
 					for (let j = i; j > 0; j--) {
-						if (path[j - 1].isDataNode() && path[j - 1].get('type') == 'app.Collection') {
+						if (
+							path[j - 1].isDataNode() &&
+							['app.Collection', 'app.KafkaNode'].includes(path[j - 1].get('type'))
+						) {
 							i = j;
 							break;
 						}
-						if (path[j - 1].isDataNode() && path[j - 1].get('type') != 'app.Collection') valid = false;
+						if (
+							path[j - 1].isDataNode() &&
+							!['app.Collection', 'app.KafkaNode'].includes(path[j - 1].get('type'))
+						)
+							valid = false;
 					}
 				}
 			}
