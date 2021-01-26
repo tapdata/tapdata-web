@@ -543,13 +543,18 @@ export default class Editor extends BaseObject {
 
 	getData() {
 		let graphLib = this.graph.getGraphLib();
-		let distance = this.distanceForSink(graphLib);
-
+		//let distance = this.distanceForSink(graphLib);
+		// let graphData = this.graph.getData();
+		// graphData.cells.forEach(cd => {
+		// 	delete cd.attrs;
+		// 	delete cd.ports;
+		// 	delete cd.size;
+		// });
 		return {
 			name: this.ui.getName(),
 			graphData: this.graph.getData(),
 			graphLib: graphLib,
-			distanceForSink: distance,
+			//distanceForSink: distance,
 			settingData: this.graph.getSettingData() || DEFAULT_SETTING,
 			graph: this.graph.graph
 		};

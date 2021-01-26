@@ -52,6 +52,7 @@
 			</div>
 		</div>
 		<SelectClassify
+			v-if="classify"
 			ref="classify"
 			:types="classify.types"
 			@operationsClassify="$emit('classify-submit', $event)"
@@ -77,13 +78,7 @@ export default {
 			default: 20
 		},
 		classify: {
-			type: Object,
-			default: () => {
-				return {
-					authority: '',
-					types: []
-				};
-			}
+			type: Object
 		},
 		remoteMethod: Function,
 		rowKey: [String, Function]
@@ -175,6 +170,7 @@ export default {
 	flex-direction: column;
 	height: 100%;
 	background: #fafafa;
+	min-width: 720px;
 	.table-page-header {
 		padding: 15px 10px;
 		background: #ffffff;
@@ -211,12 +207,13 @@ export default {
 			display: flex;
 			justify-content: space-between;
 			align-items: flex-end;
-			margin-bottom: 10px;
+			flex-wrap: wrap-reverse;
 			.table-page-search-bar {
-				flex: 2;
+				margin-right: 5px;
+				margin-bottom: 10px;
 			}
 			.table-page-operation-bar {
-				flex: 1;
+				margin-bottom: 10px;
 				text-align: right;
 			}
 		}

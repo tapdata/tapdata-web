@@ -223,7 +223,7 @@ export default {
 				let data = result.data;
 				this.data = result.data;
 				this.name = data.name;
-				this.type = data.database_type;
+				this.type = data.search_databaseType ? data.search_databaseType : data.database_type;
 				this.status = data.status;
 				this.userId = data.user_id;
 				this.loadFieldsStatus = data.loadFieldsStatus;
@@ -396,7 +396,10 @@ export default {
 					'elasticsearch',
 					'redis',
 					'db2',
-					'file'
+					'file',
+					'kafka',
+					'mariadb',
+					'mysql pxc'
 				].includes(type)
 			) {
 				this.$router.push('connections/' + id + '/edit?databaseType=' + type);

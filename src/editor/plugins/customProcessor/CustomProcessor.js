@@ -23,6 +23,13 @@ export const customProcessorConfig = {
 				},
 				label: {
 					text: ''
+				},
+				statusImage: {
+					refWidth: '35%',
+					refHeight: -15,
+					refX: '70%',
+					y: 8,
+					visibility: 'hidden'
 				}
 			},
 

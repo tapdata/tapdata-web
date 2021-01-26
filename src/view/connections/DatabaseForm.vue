@@ -296,6 +296,8 @@ const defaultModel = {
 		}
 	],
 
+	search_databaseType: '',
+
 	// kafka
 	kafkaBootstrapServers: '',
 	// kafkaSelectTopics: '',
@@ -333,8 +335,10 @@ export default {
 				'elasticsearch',
 				'redis',
 				'file',
+				'db2',
 				'kafka',
-				'maria'
+				'mariadb',
+				'mysqlpxc'
 			], //目前白名单,
 			model: Object.assign({}, defaultModel),
 			config: {
@@ -458,7 +462,13 @@ export default {
 		},
 		// 按照数据库类型获取表单配置规则
 		getFormConfig() {
-			let func = formConfig[this.model.database_type];
+			let type = this.model.database_type;
+
+			if (type === 'mysql pxc') {
+				type = 'mysqlpxc';
+			}
+			let func = formConfig[type];
+
 			if (func) {
 				let config = func(this);
 				let items = defaultConfig.concat(config.items);
@@ -494,6 +504,7 @@ export default {
 		submit() {
 			this.submitBtnLoading = true;
 			let falg = false;
+			this.model.search_databaseType = '';
 			if (this.model.database_type === 'file' && this.model.connection_type === 'source') {
 				this.$refs.fileForm.validate(valid => {
 					if (!valid) {
@@ -501,6 +512,11 @@ export default {
 					}
 				});
 			}
+
+			// if (this.model.database_type === 'mysqlpxc') {
+			// 	// this.model.search_databaseType = this.model.database_type;
+			// 	this.model.database_type = 'mysql pxc';
+			// }
 
 			this.$refs.form.validate(valid => {
 				if (valid && !falg) {
@@ -769,15 +785,13 @@ export default {
 			}
 			.edit-header-box {
 				border-bottom: 1px solid #eee;
-				padding-bottom: 20px;
 				margin-bottom: 20px;
 			}
 			.edit-header {
 				display: flex;
 				justify-content: flex-start;
 				width: 578px;
-				margin: 0 auto;
-				margin-top: 40px;
+				margin: 30px auto;
 			}
 			.title {
 				display: flex;

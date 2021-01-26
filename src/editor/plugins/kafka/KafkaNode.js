@@ -3,21 +3,21 @@ import KafkaAttribute from './KafkaAttribute';
 import { FORM_DATA_KEY } from '../../constants';
 import i18n from '../../../i18n/i18n';
 
-export const KafakaNodeConfig = {
+export const KafkaNodeConfig = {
 	type: 'app.KafkaNode',
 	shape: {
 		extends: 'app.BaseElement',
 		defaultInstanceProperties: {
 			attrs: {
 				image: {
-					xlinkHref: 'static/editor/Kafka.svg'
+					xlinkHref: 'static/editor/o-kafka.svg'
 				},
 				label: {
-					text: 'Kafka'
+					text: i18n.t('editor.cell.data_node.kafkaText')
 				}
 			},
 			[FORM_DATA_KEY]: {
-				type: 'kafaka',
+				type: 'kafka',
 				connectionId: ''
 			}
 		},
@@ -39,7 +39,18 @@ export const KafakaNodeConfig = {
 			 * @return {boolean}
 			 */
 			allowTarget(targetCell) {
-				return !['app.FileNode', 'app.Database', 'app.GridFSNode'].includes(targetCell.get('type'));
+				return ![
+					'app.Database',
+					'app.FileNode',
+					'app.GridFSNode',
+					'app.Logminer',
+					'app.Dummy',
+					'app.ApiNode',
+					'app.CustomNode',
+					'app.Logminer',
+					'app.MemCache',
+					'app.FileFormBuilder'
+				].includes(targetCell.get('type'));
 			},
 
 			/**
@@ -47,14 +58,43 @@ export const KafakaNodeConfig = {
 			 * @param sourceCell
 			 * @return {boolean}
 			 */
-			allowSource() {
-				return false;
+			allowSource(sourceCell) {
+				return ![
+					'app.Database',
+					'app.FileNode',
+					'app.GridFSNode',
+					'app.Logminer',
+					'app.Dummy',
+					'app.ApiNode',
+					'app.CustomNode',
+					'app.Logminer',
+					'app.MemCache',
+					'app.FileFormBuilder'
+				].includes(sourceCell.get('type'));
 			},
+
+			/**
+			 * validate this allow connect to target
+			 * @param targetCell
+			 * @return {boolean}
+			 */
+			// allowTarget(targetCell) {
+			// 	return !['app.FileNode', 'app.Database', 'app.GridFSNode'].includes(targetCell.get('type'));
+			// },
+
+			/**
+			 * validate accept source connection
+			 * @param sourceCell
+			 * @return {boolean}
+			 */
+			// allowSource() {
+			// 	return false;
+			// },
 
 			validate(data) {
 				data = data || this.getFormData();
 				let name = this.attr('label/text');
-				if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`);
+				if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.kafkaName_isNull')}`);
 
 				if (!data.connectionId)
 					throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_database')}`);
@@ -214,7 +254,7 @@ export const KafakaNodeConfig = {
 		},
 		attrs: {
 			root: {
-				dataTooltip: i18n.t('editor.cell.data_node.api.tip'),
+				dataTooltip: i18n.t('editor.cell.data_node.kafkaText'),
 				dataTooltipPosition: 'left',
 				dataTooltipPositionSelector: '.joint-stencil'
 			},
@@ -234,7 +274,7 @@ export const KafakaNodeConfig = {
 				refY: '0%'
 			},
 			label: {
-				text: 'Kafka',
+				text: i18n.t('editor.cell.data_node.kafkaText'),
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',
