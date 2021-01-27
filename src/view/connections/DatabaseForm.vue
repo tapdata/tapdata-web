@@ -743,6 +743,7 @@ export default {
 			.form-wrap {
 				display: flex;
 				overflow-y: auto;
+				flex: 1;
 			}
 			.form {
 				padding: 0 20px;

@@ -95,11 +95,10 @@ export default {
 			//过滤被删除的数据
 			if (schema && schema.fields) {
 				schema.fields = removeDeleted(schema.fields);
-
 				//延时加载
 				let fields = schema.fields;
 				let total = fields.length;
-				let size = 5;
+				let size = total < 5 ? total : 10;
 				let index = 0;
 				this.fields = [];
 				let interval = this.interval;
@@ -112,11 +111,11 @@ export default {
 						this.fields.push(...fields.slice((index + 0) * size, (index + 1) * size));
 						index++;
 					};
-					interval = setInterval(() => {
-						if ((index + 1) * size < total) {
+					this.interval = setInterval(() => {
+						if (index * size < total) {
 							load();
 						} else {
-							clearInterval(interval);
+							clearInterval(this.interval);
 							this.interval = null;
 						}
 					}, 500);

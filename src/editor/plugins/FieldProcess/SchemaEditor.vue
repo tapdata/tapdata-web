@@ -471,7 +471,7 @@ export default {
 		schema(schema) {
 			let fields = schema.fields;
 			let total = fields.length;
-			let size = 5;
+			let size = total < 5 ? total : 10;
 			let index = 0;
 			let interval = this.interval;
 			if (interval) {
@@ -484,8 +484,8 @@ export default {
 					index++;
 					this.loadingSchema = false;
 				};
-				interval = setInterval(() => {
-					if ((index + 1) * size < total) {
+				this.interval = setInterval(() => {
+					if (index * size < total) {
 						load();
 					} else {
 						clearInterval(interval);

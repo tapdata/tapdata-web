@@ -87,7 +87,7 @@ export default {
 .addServe-wrap {
 	.addServe {
 		.el-form-item {
-			margin-bottom: 5px;
+			margin-bottom: 15px;
 		}
 	}
 }
