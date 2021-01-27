@@ -39,10 +39,10 @@
 		</div>
 		<div class="clear"></div>
 		<div class="e-schema-editor" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom">
-			<el-container>
+			<el-container v-loading="loadingSchema">
 				<el-main>
 					<el-tree
-						:data="schema ? schema.fields : []"
+						:data="fields || []"
 						:node-key="nodeKey"
 						default-expand-all
 						:expand-on-click-node="false"
@@ -461,8 +461,39 @@ export default {
 			fieldIsDeleted: [],
 			fieldNameMap: {},
 			fieldOriginalIds: [],
-			originalOperations: []
+			originalOperations: [],
+			interval: null,
+			fields: [],
+			loadingSchema: true
 		};
+	},
+	watch: {
+		schema(schema) {
+			let fields = schema.fields;
+			let total = fields.length;
+			let size = 5;
+			let index = 0;
+			let interval = this.interval;
+			if (interval) {
+				clearInterval(interval);
+				this.interval = null;
+			}
+			this.$nextTick(() => {
+				let load = () => {
+					this.fields.push(...fields.slice((index + 0) * size, (index + 1) * size));
+					index++;
+					this.loadingSchema = false;
+				};
+				interval = setInterval(() => {
+					if ((index + 1) * size < total) {
+						load();
+					} else {
+						clearInterval(interval);
+						this.interval = null;
+					}
+				}, 100);
+			});
+		}
 	},
 	mounted() {
 		setTimeout(() => {

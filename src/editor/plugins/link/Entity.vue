@@ -109,7 +109,7 @@ export default {
 				}
 				this.$nextTick(() => {
 					let load = () => {
-						this.fields.push(...fields.slice((index + 0) * size, (index + 1) * size).concat());
+						this.fields.push(...fields.slice((index + 0) * size, (index + 1) * size));
 						index++;
 					};
 					interval = setInterval(() => {
