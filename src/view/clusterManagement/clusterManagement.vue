@@ -217,7 +217,7 @@
 		>
 			<addServe :data="currentData" :editItem="editItem" ref="childRules"></addServe>
 			<div slot="footer" class="dialog-footer">
-				<el-button size="small" @click="closeDialogForm()">{{ $t('dataFlow.cancel') }}</el-button>
+				<el-button size="small" @click="closeDialogForm()">{{ $t('message.cancel') }}</el-button>
 				<el-button size="small" type="primary" @click="submitForm('ruleForm')">{{
 					$t('message.confirm')
 				}}</el-button>
@@ -397,7 +397,7 @@ export default {
 			};
 
 			if (status === 'running') {
-				this.$confirm(this.$t('message.deleteOrNot') + '?', {
+				this.$confirm(this.$t('cluster.deleteOrNot') + '?', {
 					confirmButtonText: this.$t('message.confirm'),
 					cancelButtonText: this.$t('message.cancel')
 				}).then(() => {
@@ -428,7 +428,7 @@ export default {
 					server: server,
 					operation: 'start'
 				};
-				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.restartServer'), {
+				this.$confirm(this.$t('cluster.confirmText') + name + this.$t('cluster.restartServer') + '?', {
 					confirmButtonText: this.$t('message.confirm'),
 					cancelButtonText: this.$t('message.cancel'),
 					closeOnClickModal: false
@@ -453,7 +453,7 @@ export default {
 					server: server,
 					operation: 'stop'
 				};
-				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.startServer'), {
+				this.$confirm(this.$t('cluster.confirmText') + name + this.$t('cluster.startServer') + '?', {
 					confirmButtonText: this.$t('message.confirm'),
 					cancelButtonText: this.$t('message.cancel'),
 					closeOnClickModal: false
@@ -477,7 +477,7 @@ export default {
 					server: server,
 					operation: 'restart'
 				};
-				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.restartServer'), {
+				this.$confirm(this.$t('cluster.confirmText') + name + this.$t('cluster.restartServer') + '?', {
 					confirmButtonText: this.$t('message.confirm'),
 					cancelButtonText: this.$t('message.cancel'),
 					closeOnClickModal: false

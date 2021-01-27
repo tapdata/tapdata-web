@@ -284,10 +284,7 @@ const en = {
 		ipAddress: 'IP address',
 		uniqueEncode: 'Unique encoding',
 		logs: 'Log',
-		closeSever: 'Close service',
-		restartServer: 'Restart service',
-		startServer: 'Start service',
-		deleteOrNot: 'Delete or not',
+
 		startupAfter_delete: 'Please delete after startup',
 		startupAfter_add: 'Please add after startup',
 		noData: 'NO DATA ',
@@ -315,6 +312,15 @@ const en = {
 		loadingSchema: 'Schema of source database has not finished loading yet, please wait',
 		reloadSchemaSuccess: 'Model update successfully',
 		reloadSchemaError: 'Model update failed'
+	},
+	cluster: {
+		cancel: 'Cancel',
+		confirm: 'Confirm',
+		confirmText: 'Confirm ',
+		closeSever: ' Close service ',
+		restartServer: ' Restart service ',
+		startServer: ' Start service ',
+		deleteOrNot: 'Delete or not'
 	},
 	button: {
 		reset: 'Reset',

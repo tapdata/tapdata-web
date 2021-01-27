@@ -286,10 +286,7 @@ const cn = {
 		ipAddress: 'ip地址',
 		uniqueEncode: '唯一编码',
 		logs: '日志信息',
-		closeSever: '关闭服务',
-		restartServer: '重启服务',
-		startServer: '启动服务',
-		deleteOrNot: '是否删除',
+
 		startupAfter_delete: '请启动后删除',
 		startupAfter_add: '请启动后添加',
 		noData: '暂无数据',
@@ -314,6 +311,13 @@ const cn = {
 		loadingSchema: '源库schema尚未加载完成，暂时无法启动',
 		reloadSchemaSuccess: '模型更新成功',
 		reloadSchemaError: '模型更新失败'
+	},
+	cluster: {
+		confirmText: '确认',
+		closeSever: '关闭服务',
+		restartServer: '重启服务',
+		startServer: '启动服务',
+		deleteOrNot: '是否删除'
 	},
 	button: {
 		reset: '重置',

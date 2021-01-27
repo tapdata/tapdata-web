@@ -283,10 +283,6 @@ const tc = {
 		ipAddress: 'ip地址',
 		uniqueEncode: '唯一編碼',
 		logs: '日誌信息',
-		closeSever: '關閉服務',
-		restartServer: '重啓服務',
-		startServer: '啟動服務',
-		deleteOrNot: '是否刪除',
 		startupAfter_delete: '請啟動後刪除',
 		startupAfter_add: '請啟動後添加',
 		noData: '暫無數據',
@@ -311,6 +307,13 @@ const tc = {
 		loadingSchema: '源庫schema尚未加載完成，暫時無法啟動',
 		reloadSchemaSuccess: '模型更新成功',
 		reloadSchemaError: '模型更新失敗'
+	},
+	cluster: {
+		confirmText: '確認',
+		closeSever: '關閉服務',
+		restartServer: '重啓服務',
+		startServer: '啟動服務',
+		deleteOrNot: '是否刪除'
 	},
 	button: {
 		reset: '重置',
