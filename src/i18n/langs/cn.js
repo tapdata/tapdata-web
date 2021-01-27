@@ -1679,7 +1679,7 @@ const cn = {
 			kafka: {
 				chooseTheme: '选择主题',
 				topicName: '输入主题名称',
-				topicExpression: '输入主题表达式',
+				topicExpression: '主题表达式',
 				requestTimeoutPeriod: '拉取请求超时时间',
 				readIsolationLevel: '消息提交读隔离级别',
 				maximumNumber: '单次poll消息最大返回记录数',
@@ -2198,6 +2198,7 @@ const cn = {
 			schedule_jobs: '调度任务',
 			Cluster_management: '集群管理',
 			agents: '进程管理',
+			dictionary: '字典模板',
 			user_management: '用户管理',
 			role_management: '角色管理',
 			system_settings: '系统设置'

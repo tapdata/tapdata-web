@@ -1673,8 +1673,8 @@ const tc = {
 			},
 			kafka: {
 				choiceTheme: '選擇主題',
-				topicName: '輸入主題名稱',
-				topicExpression: '輸入主題表達式',
+				topicName: '主題名稱',
+				topicExpression: '主題表達式',
 				requestTimeoutPeriod: '拉取請求超時時間',
 				readIsolationLevel: '消息提交讀隔離等級',
 				maximumNumber: '單次投票消息最大返回記錄數',
@@ -2162,6 +2162,7 @@ const tc = {
 			schedule_jobs_menu: '調度任務',
 			Cluster_management_menu: '集群管理',
 			agents_menu: '進程管理',
+			dictionary: '字典模板',
 			user_management_menu: '用戶管理',
 			role_management_menu: '角色管理',
 			system_settings_menu: '系統設置',
