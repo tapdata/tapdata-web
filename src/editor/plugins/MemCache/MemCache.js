@@ -68,8 +68,8 @@ export const memCacheConfig = {
 			 * @param targetCell
 			 * @return {boolean}
 			 */
-			allowTarget() {
-				return false;
+			allowTarget(targetCell) {
+				return ['app.KafkaNode'].includes(targetCell.get('type'));
 			},
 
 			/**
@@ -79,7 +79,7 @@ export const memCacheConfig = {
 			 */
 			allowSource(sourceCell) {
 				return (
-					['app.Collection'].includes(sourceCell.get('type')) &&
+					['app.Collection', 'app.KafkaNode'].includes(sourceCell.get('type')) &&
 					sourceCell.graph.getConnectedLinks(this, {
 						inbound: true
 					}).length < 1

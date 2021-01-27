@@ -197,6 +197,7 @@ export default {
 										fields: []
 								  };
 						this.$emit('schemaChange', _.cloneDeep(schema));
+						this.mergedSchema = schema;
 					}
 				}
 			}
@@ -242,12 +243,7 @@ export default {
 
 		getData() {
 			let result = _.cloneDeep(this.model);
-			if (result.connectionId) {
-				let database = this.databases.filter(db => db.id === result.connectionId);
-				if (database && database.length > 0) {
-					result.name = database[0].name;
-				}
-			}
+			result.name = result.tableName || 'Kafka';
 			return result;
 		},
 

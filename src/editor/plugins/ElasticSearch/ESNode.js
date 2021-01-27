@@ -38,8 +38,8 @@ export const esNodeConfig = {
 			 * @param targetCell
 			 * @return {boolean}
 			 */
-			allowTarget() {
-				return false;
+			allowTarget(targetCell) {
+				return ['app.KafkaNode'].includes(targetCell.get('type'));
 			},
 
 			/**
