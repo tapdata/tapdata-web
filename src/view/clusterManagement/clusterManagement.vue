@@ -2,9 +2,9 @@
 	<section class="clusterManagement-container">
 		<div class="header">
 			<div class="page-header-title">
-				<span class="title">{{ $t('message.serviceCluMange') }}</span>
+				<span class="title">{{ $t('cluster.serviceCluMange') }}</span>
 				<div class="logBtn" v-readonlybtn="'status_log'" @click="goDailyRecord">
-					{{ $t('message.statusLog') }}
+					{{ $t('cluster.statusLog') }}
 				</div>
 			</div>
 		</div>
@@ -16,14 +16,14 @@
 						size="mini"
 						v-model="sourch"
 						:debounce="800"
-						:placeholder="$t('message.placeholderServer')"
+						:placeholder="$t('cluster.placeholderServer')"
 						@input="getDataApi"
 					>
 					</el-input>
 				</li>
 				<li>
 					<el-button type="text" class="restBtn" size="mini" @click="rest()">
-						{{ $t('dataFlow.reset') }}
+						{{ $t('button.reset') }}
 					</el-button>
 				</li>
 			</ul>
@@ -46,7 +46,7 @@
 										type="danger"
 										v-if="item.canUpdate"
 										@click="updateFn(item, item.management.status, 'management', 'update')"
-										>{{ $t('message.update') }}</el-button
+										>{{ $t('cluster.update') }}</el-button
 									>
 									<i
 										class="iconfont icon-icon_tianjia"
@@ -66,7 +66,7 @@
 								<el-row :gutter="20" class="data-list" v-if="managementType === 'cluster'">
 									<el-col :span="8">
 										<span class="txt"
-											><i class="icon iconfont iconhoutai"></i>{{ $t('message.manageSys') }}</span
+											><i class="icon iconfont iconhoutai"></i>{{ $t('cluster.manageSys') }}</span
 										>
 									</el-col>
 									<el-col :span="4">
@@ -81,14 +81,14 @@
 												:type="item.management.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.management.status == 'stopped' ? false : true"
 												@click="startFn(item, item.management.status, 'management', 'start')"
-												>{{ $t('message.startUp') }}</el-button
+												>{{ $t('cluster.start') }}</el-button
 											>
 											<el-button
 												size="mini"
 												:type="item.management.status == 'running' ? 'danger' : 'info'"
 												:disabled="item.management.status == 'running' ? false : true"
 												@click="closeFn(item, item.management.status, 'management', 'stop')"
-												>{{ $t('message.close') }}</el-button
+												>{{ $t('cluster.close') }}</el-button
 											>
 											<el-button
 												type="text"
@@ -96,7 +96,7 @@
 												@click="
 													restartFn(item, item.management.status, 'management', 'restart')
 												"
-												>{{ $t('message.restart') }}</el-button
+												>{{ $t('cluster.restart') }}</el-button
 											>
 										</div>
 									</el-col>
@@ -104,7 +104,7 @@
 								<el-row :gutter="20" class="data-list">
 									<el-col :span="8">
 										<span class="txt"
-											><i class="icon iconfont icontongbu"></i>{{ $t('message.syncGover') }}</span
+											><i class="icon iconfont icontongbu"></i>{{ $t('cluster.syncGover') }}</span
 										>
 									</el-col>
 									<el-col :span="4">
@@ -119,20 +119,20 @@
 												:type="item.engine.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.engine.status == 'stopped' ? false : true"
 												@click="startFn(item, item.engine.status, 'engine')"
-												>{{ $t('message.startUp') }}</el-button
+												>{{ $t('cluster.start') }}</el-button
 											>
 											<el-button
 												size="mini"
 												:type="item.engine.status == 'running' ? 'danger' : 'info'"
 												:disabled="item.engine.status == 'running' ? false : true"
 												@click="closeFn(item, item.engine.status, 'engine')"
-												>{{ $t('message.close') }}</el-button
+												>{{ $t('cluster.close') }}</el-button
 											>
 											<el-button
 												type="text"
 												:disabled="item.engine.status == 'running' ? false : true"
 												@click="restartFn(item, item.engine.status, 'engine')"
-												>{{ $t('message.restart') }}</el-button
+												>{{ $t('cluster.restart') }}</el-button
 											>
 										</div>
 									</el-col>
@@ -153,20 +153,20 @@
 												:type="item.apiServer.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.apiServer.status == 'stopped' ? false : true"
 												@click="startFn(item, item.apiServer.status, 'apiServer')"
-												>{{ $t('message.startUp') }}</el-button
+												>{{ $t('cluster.start') }}</el-button
 											>
 											<el-button
 												size="mini"
 												:type="item.apiServer.status == 'running' ? 'danger' : 'info'"
 												:disabled="item.apiServer.status == 'running' ? false : true"
 												@click="closeFn(item, item.apiServer.status, 'apiServer')"
-												>{{ $t('message.close') }}</el-button
+												>{{ $t('cluster.close') }}</el-button
 											>
 											<el-button
 												type="text"
 												:disabled="item.apiServer.status == 'running' ? false : true"
 												@click="restartFn(item, item.apiServer.status, 'apiServer')"
-												>{{ $t('message.restart') }}</el-button
+												>{{ $t('cluster.restart') }}</el-button
 											>
 										</div>
 									</el-col>
@@ -188,10 +188,10 @@
 									<el-col :span="7" :offset="5" v-readonlybtn="'Cluster_operation'">
 										<div class="btn fr">
 											<el-button type="text" @click="delServe(child, item.status)">{{
-												$t('message.delete')
+												$t('cluster.delete')
 											}}</el-button>
 											<el-button type="text" @click="editServe(child, item.status, item)">{{
-												$t('message.edit')
+												$t('cluster.edit')
 											}}</el-button>
 										</div>
 									</el-col>
@@ -206,7 +206,7 @@
 			</div>
 		</div>
 		<el-dialog
-			:title="$t('message.addServerMon')"
+			:title="$t('cluster.addServerMon')"
 			custom-class="serverDialog"
 			:visible.sync="dialogForm"
 			:append-to-body="true"
@@ -217,14 +217,14 @@
 		>
 			<addServe :data="currentData" :editItem="editItem" ref="childRules"></addServe>
 			<div slot="footer" class="dialog-footer">
-				<el-button size="small" @click="closeDialogForm()">{{ $t('message.cancel') }}</el-button>
+				<el-button size="small" @click="closeDialogForm()">{{ $t('cluster.cancel') }}</el-button>
 				<el-button size="small" type="primary" @click="submitForm('ruleForm')">{{
-					$t('message.confirm')
+					$t('cluster.confirm')
 				}}</el-button>
 			</div>
 		</el-dialog>
 		<el-dialog
-			:title="$t('message.agentSetting')"
+			:title="$t('cluster.agentSetting')"
 			custom-class="serverDialog"
 			:visible.sync="editAgentDialog"
 			:lock-scroll="false"
@@ -233,49 +233,49 @@
 			@close="editAgentDialog = false"
 		>
 			<el-form ref="editAgentForm" label-width="100px" class="editAgentForm">
-				<el-form-item :label="$t('message.serverName')">
+				<el-form-item :label="$t('cluster.serverName')">
 					<div class="name-box">
 						<el-input
 							style="width: 85%"
 							v-model="agentName"
 							size="mini"
 							show-word-limit
-							:placeholder="$t('message.placeholderMonServer')"
+							:placeholder="$t('cluster.placeholderMonServer')"
 						></el-input>
-						<span class="restBtn" @click="editNameRest">{{ $t('message.reduction') }}</span>
+						<span class="restBtn" @click="editNameRest">{{ $t('cluster.reduction') }}</span>
 					</div>
 				</el-form-item>
-				<el-form-item :label="$t('message.iPDisplay')" prop="command">
-					<el-select v-model="custIP" :placeholder="$t('message.iPDisplay')" size="mini" style="width: 85%">
+				<el-form-item :label="$t('cluster.iPDisplay')" prop="command">
+					<el-select v-model="custIP" :placeholder="$t('cluster.iPDisplay')" size="mini" style="width: 85%">
 						<el-option v-for="item in ips" :key="item" :label="item" :value="item"> </el-option>
 					</el-select>
-					<div class="ipTip">{{ $t('message.ipTip') }}</div>
+					<div class="ipTip">{{ $t('cluster.ipTip') }}</div>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button size="small" @click="editAgentDialog = false">{{ $t('message.cancel') }}</el-button>
+				<el-button size="small" @click="editAgentDialog = false">{{ $t('cluster.cancel') }}</el-button>
 				<el-button size="small" type="primary" @click="submitEditAgent('editAgentForm')">{{
-					$t('message.confirm')
+					$t('cluster.confirm')
 				}}</el-button>
 			</div>
 		</el-dialog>
 		<el-dialog
-			:title="$t('message.delTittle')"
+			:title="$t('cluster.delTittle')"
 			:close-on-click-modal="false"
 			:visible.sync="deleteDialogVisible"
 			width="30%"
 		>
 			<p>
-				{{ $t('message.delMessage') }}
+				{{ $t('cluster.delMessage') }}
 				<span style="color:#48B6E2;cursor: pointer">
 					{{ delData.agentName }}
 				</span>
 				?
 			</p>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="deleteDialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
+				<el-button @click="deleteDialogVisible = false" size="mini">{{ $t('cluster.cancel') }}</el-button>
 				<el-button type="primary" @click="removeNode(delData)" size="mini">{{
-					$t('message.confirm')
+					$t('cluster.confirm')
 				}}</el-button>
 			</span>
 		</el-dialog>
@@ -355,10 +355,10 @@ export default {
 							.then(() => {
 								this.dialogForm = false;
 								this.getDataApi();
-								this.$message.success(this.$t('message.saveOK'));
+								this.$message.success(this.$t('cluster.saveOK'));
 							})
 							.catch(() => {
-								this.$message.error(this.$t('message.saveFail'));
+								this.$message.error(this.$t('cluster.saveFail'));
 							})
 							.finally(() => {
 								this.dialogForm = false;
@@ -370,10 +370,10 @@ export default {
 							.then(() => {
 								this.dialogForm = false;
 								this.getDataApi();
-								this.$message.success(this.$t('message.saveOK'));
+								this.$message.success(this.$t('cluster.saveOK'));
 							})
 							.catch(() => {
-								this.$message.error(this.$t('message.saveFail'));
+								this.$message.error(this.$t('cluster.saveFail'));
 							})
 							.finally(() => {
 								this.dialogForm = false;
@@ -381,7 +381,7 @@ export default {
 					}
 				}
 			} else {
-				this.$message.error(this.$t('message.startupAfter_add'));
+				this.$message.error(this.$t('cluster.startupAfter_add'));
 			}
 		},
 		editServe(item, status, data) {
@@ -398,21 +398,21 @@ export default {
 
 			if (status === 'running') {
 				this.$confirm(this.$t('cluster.deleteOrNot') + '?', {
-					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancel')
+					confirmButtonText: this.$t('cluster.confirm'),
+					cancelButtonText: this.$t('cluster.cancel')
 				}).then(() => {
 					cluster
 						.removeMonitor(params)
 						.then(() => {
 							this.getDataApi();
-							this.$message.success(this.$t('message.deleteOK'));
+							this.$message.success(this.$t('cluster.deleteOK'));
 						})
 						.catch(() => {
-							this.$message.error(this.$t('message.deleteFail'));
+							this.$message.error(this.$t('cluster.deleteFail'));
 						});
 				});
 			} else {
-				this.$message.error(this.$t('message.startupAfter_delete'));
+				this.$message.error(this.$t('cluster.startupAfter_delete'));
 			}
 		},
 		addServeFn(item) {
@@ -429,8 +429,8 @@ export default {
 					operation: 'start'
 				};
 				this.$confirm(this.$t('cluster.confirmText') + name + this.$t('cluster.restartServer') + '?', {
-					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancel'),
+					confirmButtonText: this.$t('cluster.confirm'),
+					cancelButtonText: this.$t('cluster.cancel'),
 					closeOnClickModal: false
 				}).then(() => {
 					this.operationFn(data);
@@ -443,9 +443,9 @@ export default {
 			if (server === 'apiServer') {
 				name = 'API SEVER';
 			} else if (server === 'engine') {
-				name = this.$t('message.syncGover');
+				name = this.$t('cluster.syncGover');
 			} else {
-				name = this.$t('message.manageSys');
+				name = this.$t('cluster.manageSys');
 			}
 			if (status === 'running') {
 				let data = {
@@ -454,8 +454,8 @@ export default {
 					operation: 'stop'
 				};
 				this.$confirm(this.$t('cluster.confirmText') + name + this.$t('cluster.startServer') + '?', {
-					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancel'),
+					confirmButtonText: this.$t('cluster.confirm'),
+					cancelButtonText: this.$t('cluster.cancel'),
 					closeOnClickModal: false
 				}).then(() => {
 					this.operationFn(data);
@@ -467,9 +467,9 @@ export default {
 			if (server === 'apiServer') {
 				name = 'API SEVER';
 			} else if (server === 'engine') {
-				name = this.$t('message.syncGover');
+				name = this.$t('cluster.syncGover');
 			} else {
-				name = this.$t('message.manageSys');
+				name = this.$t('cluster.manageSys');
 			}
 			if (status === 'running') {
 				let data = {
@@ -478,8 +478,8 @@ export default {
 					operation: 'restart'
 				};
 				this.$confirm(this.$t('cluster.confirmText') + name + this.$t('cluster.restartServer') + '?', {
-					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancel'),
+					confirmButtonText: this.$t('cluster.confirm'),
+					cancelButtonText: this.$t('cluster.cancel'),
 					closeOnClickModal: false
 				}).then(() => {
 					this.operationFn(data);
@@ -574,10 +574,10 @@ export default {
 				.delete(id)
 				.then(() => {
 					this.deleteDialogVisible = false;
-					this.$message.success(this.$t('message.deleteOK'));
+					this.$message.success(this.$t('cluster.deleteOK'));
 				})
 				.catch(() => {
-					this.$message.error(this.$t('message.deleteFail'));
+					this.$message.error(this.$t('cluster.deleteFail'));
 				});
 		},
 		//编辑
@@ -593,7 +593,7 @@ export default {
 		submitEditAgent() {
 			if (this.agentName === '') {
 				this.agentName = this.currentNde.hostname;
-				this.$message.error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText'));
+				this.$message.error(this.$t('cluster.serverName') + this.$t('cluster.noneText'));
 				return;
 			}
 			let data = {
@@ -604,10 +604,10 @@ export default {
 				.editAgent(this.custId, data)
 				.then(() => {
 					this.editAgentDialog = false;
-					this.$message.success(this.$t('message.saveOK'));
+					this.$message.success(this.$t('cluster.saveOK'));
 				})
 				.catch(() => {
-					this.$message.error(this.$t('message.saveFail'));
+					this.$message.error(this.$t('cluster.saveFail'));
 				});
 		},
 		editNameRest() {
