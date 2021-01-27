@@ -1690,7 +1690,7 @@ const cn = {
 				lonoreFormatTip: '如果开启则遇到解析异常会忽略该消息，否则停止拉取消息',
 				directlyNameTip: '直接输入主体名称，多个主题以逗号隔开',
 				kafkaPatternTopicsTip: '按照Host, port, 账号, 密码的方式配置MongoDB数据库，支持批量输入',
-				hostPlaceHolder: '输入 IP/host:port , 多个主题以逗号隔开',
+				hostPlaceHolder: '输入 IP/host:port , 多个地址以逗号隔开',
 				requestTimeout: '推送请求超时时间 (毫秒)',
 				transactionMessage: '事务消息',
 				kafkaRetries: '请求重试次数',
