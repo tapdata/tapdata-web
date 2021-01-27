@@ -59,20 +59,7 @@ export default function(vm) {
 				field: 'kafkaPatternTopics',
 				label: vm.$t('dataForm.form.kafka.topicExpression'),
 				show: true,
-				rules: [
-					{
-						required: true,
-						validator(rule, value, callback) {
-							if (!value || !value.trim()) {
-								callback(new Error(vm.$t('dataForm.error.noneHost')));
-							} else if (value.length < 1 || value.length > 256) {
-								callback(new Error(vm.$t('dataForm.error.kafkaNameRange')));
-							} else {
-								callback();
-							}
-						}
-					}
-				]
+				required: true
 			},
 
 			{
