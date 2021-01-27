@@ -1678,8 +1678,8 @@ const en = {
 			},
 			kafka: {
 				chooseTheme: 'Choose a theme',
-				topicName: 'Enter topic name',
-				topicExpression: 'Enter topic expression',
+				topicName: 'topic name',
+				topicExpression: 'topic expression',
 				requestTimeoutPeriod: 'Pull request timeout period',
 				readIsolationLevel: 'Message submission read isolation level',
 				maximumNumber: 'The maximum number of records returned in a single poll message',
