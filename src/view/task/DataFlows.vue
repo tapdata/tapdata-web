@@ -967,7 +967,7 @@ export default {
 				dataFlows.deleteAll(where).then(res => {
 					if (res.data && res.data.success) {
 						this.table.fetch();
-						if (ids.length > 1) {
+						if (ids.length > 0) {
 							this.responseHandler(res.data, this.$t('message.deleteOK'));
 						}
 					} else if (res.data && res.data.fail) {
@@ -988,7 +988,7 @@ export default {
 					.resetAll(ids)
 					.then(res => {
 						this.table.fetch();
-						if (ids.length > 1) {
+						if (ids.length > 0) {
 							this.responseHandler(res.data, this.$t('message.resetOk'));
 						}
 					})
@@ -1030,7 +1030,7 @@ export default {
 			errorEvents && (attributes.errorEvents = errorEvents);
 			dataFlows.update(where, attributes).then(res => {
 				this.table.fetch();
-				if (ids.length > 1) {
+				if (ids.length > 0) {
 					this.responseHandler(res.data, this.$t('message.operationSuccuess'));
 				}
 			});
