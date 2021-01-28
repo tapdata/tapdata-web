@@ -104,7 +104,7 @@
 		</el-row>
 
 		<ul class="e-row e-rowBox">
-			<li class="e-col" v-readonlybtn="'data_transmission_menu'">
+			<li class="e-col" v-readonlybtn="'Data_SYNC_menu'">
 				<div class="charts-list">
 					<echart-head :data="screeningObj" @getUnit="getUnit"></echart-head>
 					<div class="unit">{{ $t('dataFlow.unit') }}:{{ $t('dataFlow.rowCount') }}</div>

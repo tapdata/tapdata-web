@@ -44,7 +44,8 @@ export const TYPEMAP = {
 	inspectCount: i18n.t('notification.inspectVerifyJobCount'),
 	inspectValue: i18n.t('notification.inspectVerifyJobValue'),
 	inspectDelete: i18n.t('notification.inspectVerifyJobDelete'),
-	inspectError: i18n.t('notification.inspectVerifyJobError')
+	inspectError: i18n.t('notification.inspectVerifyJobError'),
+	approaching: i18n.t('notification.approaching')
 };
 
 export const notificationMAP = {

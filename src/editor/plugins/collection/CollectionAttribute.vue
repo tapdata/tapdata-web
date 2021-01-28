@@ -118,6 +118,7 @@
 								@click="handTableName"
 							></el-button>
 						</el-tooltip>
+						----{{ tableNameId }}
 					</div>
 				</el-form-item>
 				<el-form-item>

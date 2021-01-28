@@ -485,136 +485,142 @@ export default {
 						if (mappingData.length) {
 							mappingData.filter(item => {
 								if (this.selectRole && this.selectRole.length) {
-									for (var child in item) {
-										if (
-											child === 'children' ||
-											child === 'classification' ||
-											child === 'functional'
-										) {
-											if (item[child] && item[child].length) {
-												let checkedCount = [],
-													allCheckedCount = [];
-												item[child].filter(childItem => {
-													this.$set(
-														childItem,
-														'checkAllData',
-														this.selectRole.includes(childItem.allName)
-													);
+									// for (var child in item) {
+									// 	if (
+									// 		child === 'children' ||
+									// 		child === 'classification' ||
+									// 		child === 'functional'
+									// 	) {
+									// 		let checkedCount = [],
+									// 			allCheckedCount = [];
+									// 		if (item[child] && item[child].length) {
+									// 			console.log('####', item[child], item[child].length);
+									// 			item[child].filter(childItem => {
+									// 				this.$set(
+									// 					childItem,
+									// 					'checkAllData',
+									// 					this.selectRole.includes(childItem.allName)
+									// 				);
 
-													this.$set(
-														childItem,
-														'checked',
-														this.selectRole.includes(childItem.name)
-													);
-													if (childItem.checked) {
-														checkedCount.push(childItem);
-													}
-													if (childItem.checkAllData) {
-														allCheckedCount.push(childItem);
-													}
-												});
-												let allData = item.children.filter(el => {
-													return el.allName;
-												});
-												switch (child) {
-													case 'children':
-														this.$set(
-															item,
-															'checkAll',
-															checkedCount.length === item[child].length
-														);
-														this.$set(
-															item,
-															'checkedAllData',
-															allCheckedCount.length === allData.length
-														);
-														break;
-													case 'classification':
-														this.$set(
-															item,
-															'classifiyCheckAll',
-															checkedCount.length === item[child].length
-														);
-														break;
-													case 'functional':
-														this.$set(
-															item,
-															'functionCheckAll',
-															checkedCount.length === item[child].length
-														);
-														break;
-												}
+									// 				this.$set(
+									// 					childItem,
+									// 					'checked',
+									// 					this.selectRole.includes(childItem.name)
+									// 				);
+									// 				// this.$set(childItem, 'checked', childItem.type === 'read');
+									// 				if (childItem.checked) {
+									// 					checkedCount.push(childItem);
+									// 				}
+									// 				if (childItem.checkAllData) {
+									// 					allCheckedCount.push(childItem);
+									// 				}
+									// 			});
+									// 		}
+									// 		if (item.children && item.children.length) {
+									// 			console.log(
+									// 				'child',
+									// 				checkedCount.length,
+									// 				item.children.length,
+									// 				allCheckedCount.length,
+									// 				allData.length
+									// 			);
+									// 			this.$set(
+									// 				item,
+									// 				'checkAll',
+									// 				checkedCount.length === item.children.length
+									// 			);
+									// 			this.$set(
+									// 				item,
+									// 				'checkedAllData',
+									// 				allCheckedCount.length === allData.length
+									// 			);
+									// 		}
+
+									// 		if (item.classification && item.classification.length) {
+									// 			this.$set(
+									// 				item,
+									// 				'classifiyCheckAll',
+									// 				checkedCount.length === item.classification.length
+									// 			);
+									// 		}
+
+									// 		if (item.functional && item.functional.length) {
+									// 			this.$set(
+									// 				item,
+									// 				'functionCheckAll',
+									// 				checkedCount.length === item.functional.length
+									// 			);
+									// 		}
+									// 	}
+									// }
+
+									if (item.children && item.children.length) {
+										let checkedCount = [],
+											allCheckedCount = [];
+										item.children.filter(childItem => {
+											this.$set(
+												childItem,
+												'checkAllData',
+												this.selectRole.includes(childItem.allName)
+											);
+
+											this.$set(childItem, 'checked', this.selectRole.includes(childItem.name));
+											if (childItem.checked) {
+												checkedCount.push(childItem);
 											}
-										}
+											if (childItem.checkAllData) {
+												allCheckedCount.push(childItem);
+											}
+										});
+										let allData = item.children.filter(el => {
+											return el.allName;
+										});
+
+										this.$set(item, 'checkAll', checkedCount.length === item.children.length);
+										this.$set(item, 'checkedAllData', allCheckedCount.length === allData.length);
 									}
-
-									// if (item.children && item.children.length) {
-									// 	let checkedCount = [],
-									// 		allCheckedCount = [];
-									// 	item.children.filter(childItem => {
-									// 		this.$set(
-									// 			childItem,
-									// 			'checkAllData',
-									// 			this.selectRole.includes(childItem.allName)
-									// 		);
-
-									// 		this.$set(childItem, 'checked', this.selectRole.includes(childItem.name));
-									// 		if (childItem.checked) {
-									// 			checkedCount.push(childItem);
-									// 		}
-									// 		if (childItem.checkAllData) {
-									// 			allCheckedCount.push(childItem);
-									// 		}
-									// 	});
-									// 	let allData = item.children.filter(el => {
-									// 		return el.allName;
-									// 	});
-
-									// 	this.$set(item, 'checkAll', checkedCount.length === item.children.length);
-									// 	this.$set(item, 'checkedAllData', allCheckedCount.length === allData.length);
-									// }
-									// if (item.classification && item.classification.length) {
-									// 	let checkedCount = [];
-									// 	item.classification.filter(classify => {
-									// 		this.$set(classify, 'checked', this.selectRole.includes(classify.name));
-									// 		if (classify.checked) {
-									// 			checkedCount.push(classify);
-									// 		}
-									// 	});
-									// 	this.$set(
-									// 		item,
-									// 		'classifiyCheckAll',
-									// 		checkedCount.length === item.classification.length
-									// 	);
-									// }
-									// if (item.functional && item.functional.length) {
-									// 	let checkedCount = [];
-									// 	item.functional.filter(fun => {
-									// 		this.$set(fun, 'checked', this.selectRole.includes(fun.name));
-									// 		if (fun.checked) {
-									// 			checkedCount.push(fun);
-									// 		}
-									// 	});
-									// 	this.$set(
-									// 		item,
-									// 		'functionCheckAll',
-									// 		checkedCount.length === item.functional.length
-									// 	);
-									// }
+									if (item.classification && item.classification.length) {
+										let checkedCount = [];
+										item.classification.filter(classify => {
+											this.$set(classify, 'checked', this.selectRole.includes(classify.name));
+											if (classify.checked) {
+												checkedCount.push(classify);
+											}
+										});
+										this.$set(
+											item,
+											'classifiyCheckAll',
+											checkedCount.length === item.classification.length
+										);
+									}
+									if (item.functional && item.functional.length) {
+										let checkedCount = [];
+										item.functional.filter(fun => {
+											this.$set(fun, 'checked', this.selectRole.includes(fun.name));
+											if (fun.checked) {
+												checkedCount.push(fun);
+											}
+										});
+										this.$set(
+											item,
+											'functionCheckAll',
+											checkedCount.length === item.functional.length
+										);
+									}
 								}
 							});
 						}
 					}
-					// if (res && res.data && res.data.length === 0) {
-					// 	if (mappingData.length)
-					// 		mappingData.filter(item => {
-					// 			if (item.children && item.children.length) {
-					// 				item.children.filter(childItem => {
-					// 					this.$set(childItem, 'checked', childItem.type === 'read');
-					// 				});
-					// 			}
-					// 		});
-					// }
+					if (res && res.data && res.data.length === 0) {
+						if (mappingData.length)
+							mappingData.filter(item => {
+								if (item.children && item.children.length) {
+									item.children.filter(childItem => {
+										this.$set(childItem, 'checked', childItem.type === 'read');
+									});
+								}
+							});
+					}
 				})
 				.finally(() => {
 					this.loading = false;

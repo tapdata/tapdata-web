@@ -136,7 +136,8 @@ export default {
 				dataFlow: this.$t('notification.dataFlow'),
 				agent: this.$t('notification.manageSever'),
 				inspect: this.$t('notification.inspect'),
-				JobDDL: this.$t('notification.ddlDeal')
+				JobDDL: this.$t('notification.ddlDeal'),
+				system: this.$t('notification.system')
 			},
 			userOperations: []
 		};
