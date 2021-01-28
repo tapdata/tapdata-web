@@ -219,7 +219,7 @@
 			</el-table-column>
 			<el-table-column prop="startTime" :label="$t('dataFlow.creationTime')" width="150" sortable="custom">
 				<template slot-scope="scope">
-					{{ $moment(scope.row.startTime).format('YYYY-MM-DD HH:mm:ss') }}
+					{{ scope.row.startTime ? $moment(scope.row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
 				</template>
 			</el-table-column>
 			<el-table-column :label="$t('dataFlow.operate')" align="center" min-width="180">
