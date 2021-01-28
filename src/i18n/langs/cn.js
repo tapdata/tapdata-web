@@ -1611,7 +1611,7 @@ const cn = {
 			guideDoc: '帮助文档',
 			response_body: {
 				CHECK_CONNECT: '检查服务连接是否可用',
-				CHECK_AUTH: '检查用户名密码是否正确',
+				CHECK_AUTH: '检查用户名密码及数据库是否正确',
 				CHECK_VERSION: '检查数据源版本信息是否可用',
 				LOAD_SCHEMA: '加载模型',
 				CHECK_CDC_PERMISSION: '检查cdc同步所需的权限是否授权',

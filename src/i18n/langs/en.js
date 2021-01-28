@@ -1643,7 +1643,7 @@ const en = {
 			guideDoc: 'guide document',
 			response_body: {
 				CHECK_CONNECT: 'Check the connection is available',
-				CHECK_AUTH: 'Checks if the username and password are available',
+				CHECK_AUTH: 'Checks if the username,password and database are available',
 				CHECK_VERSION: 'Checks if the version information is available',
 				LOAD_SCHEMA: 'Load schema model',
 				CHECK_CDC_PERMISSION: 'Check if cdc permissions are granted',
