@@ -5,7 +5,6 @@
 		:visible.sync="visible"
 		:title="$t('dataForm.title')"
 		size="40%"
-		:modal="false"
 		:withHeader="false"
 		:before-close="handleClose"
 	>
