@@ -546,10 +546,31 @@ export default {
 		async getDataApi() {
 			let params = { index: 1 };
 			if (this.sourch) {
-				params['filter[where][or][0][systemInfo.hostname][like]'] = this.sourch;
-				params['filter[where][or][1][systemInfo.ip][like]'] = this.sourch;
-				params['filter[where][or][2][custIP][like]'] = this.sourch;
-				params['filter[where][or][3][agentName][like]'] = this.sourch;
+				params['filter'] = {
+					where: {
+						or: [
+							{
+								agentName: {
+									$exists: false
+								},
+								'systemInfo.hostname': {
+									like: this.sourch
+								}
+							},
+							{
+								agentName: '',
+								'systemInfo.hostname': {
+									like: this.sourch
+								}
+							},
+							{
+								agentName: {
+									like: this.sourch
+								}
+							}
+						]
+					}
+				};
 			}
 			cluster.get(params).then(res => {
 				if (res.data) {

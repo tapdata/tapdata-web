@@ -464,15 +464,33 @@ export default {
 			originalOperations: [],
 			interval: null,
 			fields: [],
-			loadingSchema: true
+			loadingSchema: false,
+			step: 0
 		};
 	},
 	watch: {
 		schema(schema) {
+			if (schema) {
+				//只有第一次懒加载
+				if (this.step === 0) this.lazyData(schema);
+				this.step = 1;
+			} else this.fields = schema.fields;
+		}
+	},
+	mounted() {
+		setTimeout(() => {
+			this.getErrorOperation();
+		}, 100);
+	},
+	methods: {
+		//lazyData
+		lazyData(schema) {
+			this.loadingSchema = true;
 			let fields = schema.fields;
 			let total = fields.length;
 			let size = total < 5 ? total : 10;
 			let index = 0;
+			this.fields = [];
 			let interval = this.interval;
 			if (interval) {
 				clearInterval(interval);
@@ -488,19 +506,12 @@ export default {
 					if (index * size < total) {
 						load();
 					} else {
-						clearInterval(interval);
+						clearInterval(this.interval);
 						this.interval = null;
 					}
 				}, 100);
 			});
-		}
-	},
-	mounted() {
-		setTimeout(() => {
-			this.getErrorOperation();
-		}, 100);
-	},
-	methods: {
+		},
 		setOperations(operations) {
 			this.model.operations = operations;
 		},
