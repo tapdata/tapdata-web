@@ -31,7 +31,20 @@
 				<echart-head :data="stageType ? nodeDetailsObj : taskDetailsObj"></echart-head>
 				<div
 					class="info fl"
-					v-if="['table', 'collection', 'json', 'excel', 'csv', 'xml', 'database'].includes(stageType)"
+					v-if="
+						[
+							'table',
+							'collection',
+							'json',
+							'excel',
+							'csv',
+							'xml',
+							'database',
+							'kafka',
+							'mariadb',
+							'mysql pxc'
+						].includes(stageType)
+					"
 					v-loading="apiLoading"
 				>
 					<div class="info-list">
@@ -83,6 +96,7 @@
 						<span class="info-text">{{ flow.outputNumber }}</span>
 					</div> -->
 				</div>
+
 				<div class="info fl" v-else-if="stageType">
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.nodeName') }}:</span>
@@ -643,7 +657,19 @@ export default {
 
 					if (this.stageType === 'database') {
 						this.getStageDataApi(currentStageData.connectionId, '');
-					} else if (['table', 'collection', 'json', 'excel', 'csv', 'xml'].includes(this.stageType)) {
+					} else if (
+						[
+							'table',
+							'collection',
+							'json',
+							'excel',
+							'csv',
+							'xml',
+							'kafka',
+							'mariadb',
+							'mysql pxc'
+						].includes(this.stageType)
+					) {
 						this.getStageDataApi(currentStageData.connectionId, this.tableName);
 					}
 				}

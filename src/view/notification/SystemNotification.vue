@@ -77,6 +77,7 @@
 						</span>
 						<span>{{ typeMap[item.msg] }}</span>
 						<span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
+						<span v-if="item.restDay">{{ item.restDay }} {{ $t('notification.day') }}</span>
 					</div>
 					<div class="list-item-time">
 						<span>{{ item.createTime }}</span>
@@ -127,7 +128,8 @@ export default {
 				dataFlow: this.$t('notification.dataFlow'),
 				agent: this.$t('notification.manageSever'),
 				inspect: this.$t('notification.inspect'),
-				JobDDL: this.$t('notification.ddlDeal')
+				JobDDL: this.$t('notification.ddlDeal'),
+				system: this.$t('notification.system')
 			},
 			options: [
 				{
