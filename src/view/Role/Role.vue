@@ -306,7 +306,7 @@ let moduleMapping = [
 	},
 	{
 		name: 'dictionary',
-		functional: [{ name: 'dictionary' }]
+		children: [{ name: 'dictionary', allName: 'dictionary_all_data' }]
 	},
 	{
 		name: 'data_rules',
