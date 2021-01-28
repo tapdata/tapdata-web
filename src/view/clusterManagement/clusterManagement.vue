@@ -274,7 +274,7 @@
 			</p>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="deleteDialogVisible = false" size="mini">{{ $t('cluster.cancel') }}</el-button>
-				<el-button type="primary" @click="removeNode(delData)" size="mini">{{
+				<el-button type="primary" @click="removeNode(delData.id)" size="mini">{{
 					$t('cluster.confirm')
 				}}</el-button>
 			</span>

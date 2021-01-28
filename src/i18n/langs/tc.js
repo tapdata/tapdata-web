@@ -1606,7 +1606,7 @@ const tc = {
 			guideDoc: '幫助文檔',
 			response_body: {
 				CHECK_CONNECT: '檢查服務連接是否可用',
-				CHECK_AUTH: '檢查用戶名密碼是否正確',
+				CHECK_AUTH: '檢查用戶名密碼及數據庫是否正確',
 				CHECK_VERSION: '檢查數據源版本信息是否可用',
 				LOAD_SCHEMA: '加載模型',
 				CHECK_CDC_PERMISSION: '檢查cdc同步所需的權限是否授權',
