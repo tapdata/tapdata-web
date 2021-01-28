@@ -947,15 +947,18 @@ export default {
 			let settingData = vueAdapter.editor.getData().settingData;
 			this.sync_typeFalg = settingData.sync_type === 'initial_sync' ? true : false;
 
-			let getCellData = vueAdapter.editor.graph.graph.getCells();
+			// let getCellData = vueAdapter.editor.graph.graph.getCells();
 
-			if (getCellData && getCellData.length) {
-				this.logsFlag = getCellData[0].get('type') === 'app.Logminer' ? true : false;
+			// connection上一个节点是日志挖掘，已存在的数据表单项禁用
+			let sourceCell = cell.graph
+				.getConnectedLinks(cell, { inbound: true })
+				.map(link => link.getSourceCell().getFormData());
+			if (sourceCell && sourceCell.length) {
+				this.logsFlag = sourceCell.some(item => item.type === 'log_collect');
 				if (this.logsFlag) {
 					this.model.dropTable = true;
 				}
 			}
-			// let sourceType = '';
 		},
 		getData() {
 			if (this.model.isFilter) {
