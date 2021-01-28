@@ -1080,11 +1080,11 @@ export default {
 		},
 		// 任务调度设置保存
 		saveTaskSetting() {
-			let data = this.formSchedule.taskData;
-			data.setting.isSchedule = this.formSchedule.isSchedule;
-			data.setting.cronExpression = this.formSchedule.cronExpression;
+			// let data = this.formSchedule.taskData;
+			let data = this.formSchedule.taskData.setting;
+
 			dataFlows
-				.patchId(this.formSchedule.id, data)
+				.patchId(this.formSchedule.id, { setting: data })
 				.then(result => {
 					if (result && result.data) {
 						this.$message.success(this.$t('message.saveOK'));
