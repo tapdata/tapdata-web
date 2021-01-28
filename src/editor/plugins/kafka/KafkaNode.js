@@ -18,7 +18,8 @@ export const KafkaNodeConfig = {
 			},
 			[FORM_DATA_KEY]: {
 				type: 'kafka',
-				connectionId: ''
+				connectionId: '',
+				tableName: ''
 			}
 		},
 		prototypeProperties: {
@@ -48,7 +49,6 @@ export const KafkaNodeConfig = {
 					'app.ApiNode',
 					'app.CustomNode',
 					'app.Logminer',
-					'app.MemCache',
 					'app.FileFormBuilder'
 				].includes(targetCell.get('type'));
 			},
@@ -68,7 +68,6 @@ export const KafkaNodeConfig = {
 					'app.ApiNode',
 					'app.CustomNode',
 					'app.Logminer',
-					'app.MemCache',
 					'app.FileFormBuilder'
 				].includes(sourceCell.get('type'));
 			},

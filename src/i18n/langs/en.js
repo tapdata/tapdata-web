@@ -1725,7 +1725,7 @@ const en = {
 				directlyNameTip: 'Enter the subject name directly, separate multiple subjects with commas',
 				kafkaPatternTopicsTip:
 					'Configure the MongoDB database according to Host, port, account, and password, and support batch input',
-				hostPlaceHolder: 'Enter IP/host:port, multiple topics are separated by commas',
+				hostPlaceHolder: 'Enter IP/host:port, separate multiple addresses with commas',
 				requestTimeout: 'Push request timeout (ms)',
 				transactionMessage: 'Transaction Message',
 				kafkaRetries: 'Request retry times',

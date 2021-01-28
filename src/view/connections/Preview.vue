@@ -181,7 +181,13 @@ export default {
 			timer: null,
 			showProgress: false,
 			dialogTestVisible: false,
-			userId: ''
+			userId: '',
+			kafkaACK: [
+				{ label: this.$t('dataForm.form.kafka.kafkaAcks0'), value: '0' },
+				{ label: this.$t('dataForm.form.kafka.kafkaAcks1'), value: '1' },
+				{ label: this.$t('dataForm.form.kafka.kafkaAcks_1'), value: '-1' },
+				{ label: this.$t('dataForm.form.kafka.kafkaAcksAll'), value: 'all' }
+			]
 		};
 	},
 	watch: {
@@ -246,6 +252,19 @@ export default {
 					});
 					items = items || [];
 					items = items.filter(item => item.label); //清掉undefined
+
+					// kafka显示
+					if (data.database_type === 'kafka') {
+						items.forEach(el => {
+							if (el.field === 'kafkaAcks') {
+								this.kafkaACK.forEach(elChild => {
+									if (elChild.value === el.value) {
+										el.value = elChild.label;
+									}
+								});
+							}
+						});
+					}
 
 					// 文件预览显示
 					if (data.database_type === 'file') {
