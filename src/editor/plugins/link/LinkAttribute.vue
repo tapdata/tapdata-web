@@ -355,6 +355,7 @@ export default {
 				_.merge(this.model, data);
 			}
 			this.cell = cell;
+
 			// this.model.joinTable.joinKeys = [];
 
 			this.configJoinTable = cell.configJoinTable && cell.configJoinTable();
@@ -375,7 +376,6 @@ export default {
 					typeof sourceCell.getFirstDataNode === 'function' ? sourceCell.getFirstDataNode() : [];
 				this.model.joinTable.stageId = firstDataNode.length > 0 ? firstDataNode[0].id : '';
 				// this.model.joinTable.stageId = cell.getSourceCell().id;
-
 				//过滤已被删除的字段
 				if (mergedTargetSchema && mergedTargetSchema.fields) {
 					mergedTargetSchema.fields = removeDeleted(mergedTargetSchema.fields);
