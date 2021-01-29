@@ -13,7 +13,7 @@ export const KafkaNodeConfig = {
 					xlinkHref: 'static/editor/o-kafka.svg'
 				},
 				label: {
-					text: i18n.t('editor.cell.data_node.kafkaText')
+					text: 'kafka'
 				}
 			},
 			[FORM_DATA_KEY]: {
@@ -273,7 +273,7 @@ export const KafkaNodeConfig = {
 				refY: '0%'
 			},
 			label: {
-				text: i18n.t('editor.cell.data_node.kafkaText'),
+				text: 'kafka',
 				textAnchor: 'middle',
 				fill: '#666',
 				fontFamily: 'Roboto Condensed',

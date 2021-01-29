@@ -114,10 +114,10 @@
 					item.value
 				}}</span>
 			</li>
-			<li v-show="data.database_port && data.database_type !== 'file'">
+			<!-- <li v-show="data.database_port && !['file', 'mariadb'].includes(data.database_type)">
 				<span class="label">{{ $t('dataForm.form.port') }}</span>
 				<span class="value align-center"> {{ data.database_port }}</span>
-			</li>
+			</li> -->
 			<div
 				v-for="(item, index) in data.file_sources"
 				:key="index"

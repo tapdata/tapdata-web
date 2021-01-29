@@ -363,7 +363,8 @@ export const baseElementConfig = {
 			__mergeOutputSchema() {
 				let inputSchema = this.getInputSchema() || [];
 				let schema = this.getSchema() || {
-					meta_type: this.get('type') === 'app.Collection' ? 'collection' : 'table'
+					meta_type: this.get('type') === 'app.Collection' ? 'collection' : 'table',
+					table_name: inputSchema && inputSchema.length && inputSchema[0].tableName // 新增表没有schema,中间有处理节点，目标节点拿不到tableName,增加table_name
 				};
 				let outputSchema = mergeJoinTablesToTargetSchema(schema, inputSchema);
 				log(this.get('type') + '.__mergeOutputSchema[this.schema,inputSchema,outputSchema]', [

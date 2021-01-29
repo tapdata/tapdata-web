@@ -107,8 +107,10 @@ export default {
 		this.fetch(1);
 	},
 	watch: {
-		'classify.types'() {
-			this.tags = [];
+		classify: function(_new, _old) {
+			if (_new.toString() !== _old.toString()) {
+				this.tags = [];
+			}
 		}
 	},
 	methods: {
@@ -130,7 +132,6 @@ export default {
 					if (!hideLoading) {
 						this.loading = true;
 					}
-
 					this.remoteMethod &&
 						this.remoteMethod({
 							page: this.page,

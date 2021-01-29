@@ -262,7 +262,18 @@ export default {
 		database_types: {
 			type: Array,
 			default: function() {
-				return ['mysql', 'oracle', 'sqlserver', 'sybase ase', 'gbase-8s', 'db2', 'gaussdb200', 'postgres'];
+				return [
+					'mysql',
+					'mysql pxc',
+					'oracle',
+					'sqlserver',
+					'sybase ase',
+					'gbase-8s',
+					'db2',
+					'gaussdb200',
+					'postgres',
+					'mariadb'
+				];
 			}
 		}
 	},

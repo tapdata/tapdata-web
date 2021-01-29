@@ -222,7 +222,7 @@
 					{{ scope.row.startTime ? $moment(scope.row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('dataFlow.operate')" align="center" min-width="180">
+			<el-table-column :label="$t('dataFlow.operate')" align="center" min-width="180" width="250">
 				<template slot-scope="scope">
 					<div class="table-operations" v-if="!scope.row.hasChildren">
 						<el-tooltip
