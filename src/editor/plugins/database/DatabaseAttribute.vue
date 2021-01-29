@@ -222,7 +222,8 @@ export default {
 		handleDatabaseType(type) {
 			this.handleDialogDatabaseTypeVisible();
 			if (this.whiteList.includes(type)) {
-				this.$router.push('connections/create?databaseType=' + type);
+				let href = '/#/connections/create?databaseType=' + type;
+				window.open(href, '_blank');
 			} else {
 				top.location.href = '/#/connection';
 				localStorage.setItem('connectionDatabaseType', type);
