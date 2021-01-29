@@ -42,7 +42,7 @@
 			<el-container v-loading="loadingSchema">
 				<el-main>
 					<el-tree
-						:data="fields || []"
+						:data="schema.fields || []"
 						:node-key="nodeKey"
 						default-expand-all
 						:expand-on-click-node="false"
@@ -463,7 +463,6 @@ export default {
 			fieldOriginalIds: [],
 			originalOperations: [],
 			interval: null,
-			fields: [],
 			loadingSchema: false,
 			step: 0
 		};
@@ -474,7 +473,7 @@ export default {
 				//只有第一次懒加载
 				if (this.step === 0) this.lazyData(schema);
 				this.step = 1;
-			} else this.fields = schema.fields;
+			}
 		}
 	},
 	mounted() {
@@ -485,12 +484,12 @@ export default {
 	methods: {
 		//lazyData
 		lazyData(schema) {
-			this.loadingSchema = true;
-			let fields = schema.fields;
+			let fields = schema.fields || [];
+			if (fields.length === 0) return;
 			let total = fields.length;
+			this.loadingSchema = true;
 			let size = total < 5 ? total : 10;
 			let index = 0;
-			this.fields = [];
 			let interval = this.interval;
 			if (interval) {
 				clearInterval(interval);
@@ -498,7 +497,7 @@ export default {
 			}
 			this.$nextTick(() => {
 				let load = () => {
-					this.fields.push(...fields.slice((index + 0) * size, (index + 1) * size));
+					this.schema.fields.push(...fields.slice((index + 0) * size, (index + 1) * size));
 					index++;
 					this.loadingSchema = false;
 				};
@@ -1215,7 +1214,7 @@ export default {
 	}
 	.item {
 		display: inline-block;
-		width: 34%;
+		width: 32%;
 		font-size: 12px;
 	}
 	.op {
