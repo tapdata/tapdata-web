@@ -33,10 +33,17 @@
 							icon="el-icon-plus"
 							style="padding: 7px;margin-left: 7px"
 							v-readonlybtn="'datasource_creation'"
-							@click="$refs.databaseForm.show()"
+							@click="creatDatabase"
 							>{{ $t('dataFlow.createNew') }}</el-button
 						>
-						<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
+						<!-- @click="$refs.databaseForm.show()" -->
+						<!-- <DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm> -->
+						<DatabaseTypeDialog
+							ref="databaseForm"
+							:dialogVisible="dialogDatabaseTypeVisible"
+							@dialogVisible="handleDialogDatabaseTypeVisible"
+							@databaseType="handleDatabaseType"
+						></DatabaseTypeDialog>
 					</div>
 				</el-form-item>
 			</el-form>
@@ -94,7 +101,8 @@
 <script>
 import factory from '../../../api/factory';
 import _ from 'lodash';
-import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
+// import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
+import DatabaseTypeDialog from '@/view/connections/DatabaseTypeDialog';
 
 let connections = factory('connections');
 let editorMonitor = null;
@@ -102,7 +110,7 @@ export default {
 	name: 'Database',
 
 	components: {
-		DatabaseForm
+		DatabaseTypeDialog
 	},
 
 	props: {
@@ -164,7 +172,22 @@ export default {
 				database_owner: '',
 				database_name: '',
 				database_username: ''
-			}
+			},
+			dialogDatabaseTypeVisible: false,
+			whiteList: [
+				'mysql',
+				'oracle',
+				'mongodb',
+				'sqlserver',
+				'postgres',
+				'elasticsearch',
+				'redis',
+				'file',
+				'db2',
+				'kafka',
+				'mariadb',
+				'mysql pxc'
+			] //目前白名单
 		};
 	},
 
@@ -189,6 +212,23 @@ export default {
 	},
 
 	methods: {
+		creatDatabase() {
+			this.dialogDatabaseTypeVisible = true;
+		},
+		//选择创建类型
+		handleDialogDatabaseTypeVisible() {
+			this.dialogDatabaseTypeVisible = false;
+		},
+		handleDatabaseType(type) {
+			this.handleDialogDatabaseTypeVisible();
+			if (this.whiteList.includes(type)) {
+				this.$router.push('connections/create?databaseType=' + type);
+			} else {
+				top.location.href = '/#/connection';
+				localStorage.setItem('connectionDatabaseType', type);
+			}
+		},
+
 		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
 				_.merge(this.model, data);
