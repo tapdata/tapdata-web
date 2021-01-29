@@ -525,7 +525,6 @@ export default {
 			addtableFalg: false,
 			dialogData: null,
 			databaseData: [],
-			tableData: [],
 			copyConnectionId: '',
 			tableNameId: '',
 
@@ -715,8 +714,8 @@ export default {
 		// 判断表是否可以跳转
 		tableIsLink() {
 			this.tableNameId = '';
-			if (this.tableData && this.tableData.length) {
-				this.tableData.forEach(item => {
+			if (tempSchemas && tempSchemas.length) {
+				tempSchemas.forEach(item => {
 					if (item.table_name === this.model.tableName) {
 						this.tableNameId = item.tableId;
 					}
@@ -746,7 +745,7 @@ export default {
 			};
 
 			MetadataInstances.get(params).then(res => {
-				this.databaseData = res.data;
+				this.databaseData = Object.freeze(res.data);
 			});
 		},
 
@@ -867,7 +866,6 @@ export default {
 				.get([connectionId])
 				.then(result => {
 					if (result.data && result.data.schema && result.data.schema.tables) {
-						this.tableData = result.data.schema.tables;
 						let schemas = (result.data.schema && result.data.schema.tables) || [];
 						tempSchemas = schemas.sort((t1, t2) =>
 							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
@@ -885,7 +883,7 @@ export default {
 							if (hash[item.value]) {
 								this.repeatTable.push(item.value);
 							} else {
-								self.schemaSelectConfig.options.push(item);
+								self.schemaSelectConfig.options.push(Object.assign({}, item));
 								hash[item.value] = 1;
 							}
 						});

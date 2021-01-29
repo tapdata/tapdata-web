@@ -322,7 +322,6 @@ export default {
 			addtableFalg: false,
 			dialogData: null,
 			databaseData: [],
-			tableData: [],
 			copyConnectionId: '',
 			tableNameId: '',
 
@@ -473,8 +472,8 @@ export default {
 		// 判断表是否可以跳转
 		tableIsLink() {
 			this.tableNameId = '';
-			if (this.tableData.length) {
-				this.tableData.forEach(item => {
+			if (tempSchemas.length) {
+				tempSchemas.forEach(item => {
 					if (item.original_name === this.model.tableName) {
 						this.tableNameId = item.id;
 					}
@@ -505,7 +504,7 @@ export default {
 			};
 
 			MetadataInstances.get(params).then(res => {
-				this.databaseData = res.data;
+				this.databaseData = Object.freeze(res.data);
 			});
 		},
 
@@ -564,7 +563,6 @@ export default {
 			self.loading = true;
 			MetadataInstances.get(params)
 				.then(res => {
-					this.tableData = res.data;
 					this.tableIsLink();
 					let schemas = res.data.map(it => {
 						it.table_name = it.original_name;
