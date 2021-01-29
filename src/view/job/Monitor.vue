@@ -40,7 +40,6 @@
 							'csv',
 							'xml',
 							'database',
-							'kafka',
 							'mariadb',
 							'mysql pxc'
 						].includes(stageType)
@@ -277,7 +276,8 @@ export default {
 				js_processor: this.$t('editor.cell.processor.script.tip'),
 				'dummy db': this.$t('editor.cell.data_node.dummy.tip'),
 				'rest api': this.$t('editor.cell.data_node.api.tip'),
-				custom_processor: this.$t('editor.cell.processor.customProcessor.name')
+				custom_processor: this.$t('editor.cell.processor.customProcessor.name'),
+				kafka: this.$t('editor.cell.data_node.kafkaText')
 			},
 			flow: {
 				name: '',

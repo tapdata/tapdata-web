@@ -17,7 +17,7 @@
 						:filterable="!databaseLoading"
 						:loading="databaseLoading"
 						v-model="model.connectionId"
-						:placeholder="$t('editor.cell.data_node.api.chooseApiName')"
+						:placeholder="$t('message.placeholderSelect') + 'kafka'"
 					>
 						<el-option
 							v-for="(item, idx) in databases"
@@ -29,6 +29,59 @@
 				</el-form-item>
 
 				<el-form-item
+					:label="$t('editor.cell.data_node.table.form.table.label')"
+					prop="tableName"
+					:rules="rules"
+					required
+				>
+					<div class="flex-block">
+						<!-- <FbSelect class="e-select" v-model="model.tableName" :config="schemaSelectConfig"></FbSelect> -->
+						<el-select
+							v-model="model.tableName"
+							:filterable="!schemasLoading"
+							:loading="schemasLoading"
+							default-first-option
+							clearable
+							:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
+							size="mini"
+						>
+							<el-option
+								v-for="(item, idx) in schemas"
+								:label="`${item.table_name}`"
+								:value="item.table_name"
+								v-bind:key="idx"
+							></el-option>
+						</el-select>
+						<el-tooltip
+							class="item"
+							effect="light"
+							popper-class=""
+							:content="$t('dataForm.createTable')"
+							placement="bottom-start"
+						>
+							<el-button
+								size="mini"
+								class="el-icon-plus"
+								style="padding: 7px;margin-left: 7px"
+								v-readonlybtn="'new_model_creation'"
+								@click="addNewTable"
+							></el-button>
+						</el-tooltip>
+						<el-tooltip
+							class="item"
+							effect="light"
+							popper-class="table-tooltips"
+							:content="$t('dataForm.copyTable')"
+							placement="bottom-start"
+						>
+							<el-button size="mini" style="padding: 7px;margin-left: 7px">
+								<ClipButton :value="model.tableName"></ClipButton>
+							</el-button>
+						</el-tooltip>
+					</div>
+				</el-form-item>
+
+				<!-- <el-form-item
 					:label="$t('editor.cell.data_node.collection.form.collection.label')"
 					prop="tableName"
 					required
@@ -50,7 +103,7 @@
 							v-bind:key="idx"
 						></el-option>
 					</el-select>
-				</el-form-item>
+				</el-form-item> -->
 				<!-- <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" prop="primaryKeys" required>
 					<el-input
 						v-model="model.primaryKeys"
@@ -86,6 +139,7 @@
 				<el-button type="primary" size="mini" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
 			</span>
 		</el-dialog>
+		<CreateTable v-if="addtableFalg" :dialog="dialogData" @handleTable="getAddTableName"></CreateTable>
 	</div>
 </template>
 <script>
@@ -93,13 +147,16 @@ import _ from 'lodash';
 import factory from '../../../api/factory';
 import Entity from '../link/Entity';
 import { convertSchemaToTreeData } from '../../util/Schema';
+import ClipButton from '@/components/ClipButton';
+import CreateTable from '@/components/dialog/createTable';
+
 import ws from '@/api/ws';
-let connections = factory('connections');
+const connections = factory('connections');
 
 let editorMonitor = null;
 export default {
 	name: 'ApiNode',
-	components: { Entity },
+	components: { Entity, ClipButton, CreateTable },
 	data() {
 		return {
 			disabled: false,
@@ -107,6 +164,9 @@ export default {
 			databaseLoading: false,
 			reloadModelLoading: false,
 			dialogVisible: false,
+			addtableFalg: false,
+			dialogData: null,
+			schemas: [],
 			rules: {
 				connectionId: [
 					{
@@ -136,7 +196,6 @@ export default {
 				tableName: ''
 				// primaryKeys: ''
 			},
-			schemas: [],
 			schemasLoading: false,
 			mergedSchema: null
 		};
@@ -207,6 +266,29 @@ export default {
 	methods: {
 		convertSchemaToTreeData,
 
+		// 新建表弹窗
+		addNewTable() {
+			this.addtableFalg = true;
+			this.dialogData = {
+				type: 'table',
+				title: this.$t('dialog.createTable'),
+				placeholder: this.$t('dialog.placeholderTable'),
+				visible: this.addtableFalg
+			};
+		},
+
+		// 获取新建表名称
+		getAddTableName(val) {
+			this.model.tableName = val;
+			this.mergedSchema = null;
+			let schema = {
+				meta_type: 'table',
+				table_name: val,
+				fields: []
+			};
+			this.$emit('schemaChange', _.cloneDeep(schema));
+		},
+
 		loadDataModels(connectionId) {
 			if (!connectionId) {
 				return;
@@ -221,7 +303,11 @@ export default {
 						schemas = schemas.sort((t1, t2) =>
 							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
 						);
-						self.schemas = schemas;
+						self.schemas = schemas.filter(item => {
+							if (item.table_name) {
+								return item;
+							}
+						});
 					}
 				})
 				.finally(() => {
@@ -313,6 +399,10 @@ export default {
 .kafkaNode {
 	.el-form-item {
 		margin-bottom: 10px;
+	}
+	.flex-block {
+		display: flex;
+		align-items: center;
 	}
 	.marR20 {
 		margin-right: 20px;
