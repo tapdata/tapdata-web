@@ -1082,7 +1082,8 @@ export default {
 		saveTaskSetting() {
 			// let data = this.formSchedule.taskData;
 			let data = this.formSchedule.taskData.setting;
-
+			data.isSchedule = this.formSchedule.isSchedule;
+			data.cronExpression = this.formSchedule.cronExpression;
 			dataFlows
 				.patchId(this.formSchedule.id, { setting: data })
 				.then(result => {
