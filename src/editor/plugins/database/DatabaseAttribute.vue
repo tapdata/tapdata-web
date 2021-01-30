@@ -81,7 +81,7 @@
 						<span>{{ databaseTables.length }}</span>
 					</div>
 					<ul class="table-box" v-loading="tableLoading">
-						<li v-for="item in databaseTables" :key="item.id" class="list">
+						<li v-for="item in databaseTables" :key="item" class="list">
 							<i class="iconfont icon-table2"></i>
 							<span class="tableName">{{ item }}</span>
 						</li>
@@ -296,14 +296,18 @@ export default {
 							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
 						);
 						if (!(this.firstRound && this.databaseTables.length > 0)) {
-							this.databaseTables = tables.map(item => {
-								return item.table_name;
+							let tablesArr = tables.filter(item => {
+								if (item.table_name) {
+									return item.table_name;
+								}
 							});
+							this.databaseTables = [...new Set(tablesArr.map(item => item.table_name))];
 						}
 
 						this.handleIncludeTable();
 						this.firstRound = false;
 						self.$forceUpdate();
+						this.tableLoading = false;
 					}
 				})
 				.finally(() => {
