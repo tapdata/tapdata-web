@@ -35,8 +35,9 @@
 								icon="el-icon-plus"
 								style="padding: 7px;margin-left: 7px"
 								v-readonlybtn="'datasource_creation'"
-								@click="$refs.databaseForm.show({ blackList: ['mongodb'] })"
+								@click="creatDatabase"
 							></el-button>
+							<!-- @click="$refs.databaseForm.show({ blackList: ['mongodb'] })" -->
 						</el-tooltip>
 						<el-tooltip
 							class="item"
@@ -64,7 +65,7 @@
 								@click="handDatabase"
 							></el-button>
 						</el-tooltip>
-						<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
+						<!-- <DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm> -->
 					</div>
 				</el-form-item>
 
@@ -240,7 +241,7 @@
 </template>
 
 <script>
-import DatabaseForm from '@/view/job/components/DatabaseForm/DatabaseForm';
+// import DatabaseForm from '@/view/job/components/DatabaseForm/DatabaseForm';
 import ClipButton from '@/components/ClipButton';
 import queryBuilder from '@/components/QueryBuilder';
 import { convertSchemaToTreeData, removeDeleted } from '../../util/Schema';
@@ -257,7 +258,7 @@ let editor = null;
 let tempSchemas = [];
 export default {
 	name: 'Table',
-	components: { Entity, DatabaseForm, ClipButton, CreateTable, RelatedTasks, queryBuilder },
+	components: { Entity, ClipButton, CreateTable, RelatedTasks, queryBuilder },
 	props: {
 		database_types: {
 			type: Array,
@@ -434,6 +435,12 @@ export default {
 
 	methods: {
 		convertSchemaToTreeData,
+
+		creatDatabase() {
+			let href = '/#/connections/create?databaseType=oracle';
+			window.open(href, '_blank');
+		},
+
 		// 查看监控
 		seeMonitor() {
 			editor.goBackMontior();

@@ -35,8 +35,9 @@
 								icon="el-icon-plus"
 								style="padding: 7px;margin-left: 7px"
 								v-readonlybtn="'datasource_creation'"
-								@click="$refs.databaseForm.show({ whiteList: ['mongodb'] })"
+								@click="creatDatabase"
 							></el-button>
+							<!-- @click="$refs.databaseForm.show({ whiteList: ['mongodb'] })" -->
 						</el-tooltip>
 						<el-tooltip
 							class="item"
@@ -64,7 +65,7 @@
 								@click="handDatabase"
 							></el-button>
 						</el-tooltip>
-						<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
+						<!-- <DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm> -->
 					</div>
 				</el-form-item>
 
@@ -365,7 +366,7 @@
 </template>
 
 <script>
-import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
+// import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
 import MultiSelection from '../../../components/MultiSelection';
 import RelatedTasks from '../../../components/relatedTasks';
 import ClipButton from '@/components/ClipButton';
@@ -393,7 +394,6 @@ export default {
 	name: 'Collection',
 	components: {
 		Entity,
-		DatabaseForm,
 		MultiSelection,
 		ClipButton,
 		RelatedTasks,
@@ -520,6 +520,7 @@ export default {
 	data() {
 		let self = this;
 		return {
+			dialogDatabaseTypeVisible: false,
 			aggregationDialog: false,
 			reloadModelLoading: false,
 			addtableFalg: false,
@@ -652,6 +653,11 @@ export default {
 	},
 
 	methods: {
+		creatDatabase() {
+			let href = '/#/connections/create?databaseType=mongodb';
+			window.open(href, '_blank');
+		},
+
 		// 新建表弹窗
 		addNewTable() {
 			this.addtableFalg = true;
