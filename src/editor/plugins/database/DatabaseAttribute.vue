@@ -38,12 +38,6 @@
 						>
 						<!-- @click="$refs.databaseForm.show()" -->
 						<!-- <DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm> -->
-						<DatabaseTypeDialog
-							ref="databaseForm"
-							:dialogVisible="dialogDatabaseTypeVisible"
-							@dialogVisible="handleDialogDatabaseTypeVisible"
-							@databaseType="handleDatabaseType"
-						></DatabaseTypeDialog>
 					</div>
 				</el-form-item>
 			</el-form>
@@ -102,16 +96,15 @@
 import factory from '../../../api/factory';
 import _ from 'lodash';
 // import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
-import DatabaseTypeDialog from '@/view/connections/DatabaseTypeDialog';
 
 let connections = factory('connections');
 let editorMonitor = null;
 export default {
 	name: 'Database',
 
-	components: {
-		DatabaseTypeDialog
-	},
+	// components: {
+	// 	DatabaseForm
+	// },
 
 	props: {
 		connection_type: {
@@ -172,22 +165,7 @@ export default {
 				database_owner: '',
 				database_name: '',
 				database_username: ''
-			},
-			dialogDatabaseTypeVisible: false,
-			whiteList: [
-				'mysql',
-				'oracle',
-				'mongodb',
-				'sqlserver',
-				'postgres',
-				'elasticsearch',
-				'redis',
-				'file',
-				'db2',
-				'kafka',
-				'mariadb',
-				'mysql pxc'
-			] //目前白名单
+			}
 		};
 	},
 
@@ -213,21 +191,9 @@ export default {
 
 	methods: {
 		creatDatabase() {
-			this.dialogDatabaseTypeVisible = true;
-		},
-		//选择创建类型
-		handleDialogDatabaseTypeVisible() {
-			this.dialogDatabaseTypeVisible = false;
-		},
-		handleDatabaseType(type) {
-			this.handleDialogDatabaseTypeVisible();
-			if (this.whiteList.includes(type)) {
-				let href = '/#/connections/create?databaseType=' + type;
-				window.open(href, '_blank');
-			} else {
-				top.location.href = '/#/connection';
-				localStorage.setItem('connectionDatabaseType', type);
-			}
+			let database_type = this.model.database_type || this.model.databaseType;
+			let href = '/#/connections/create?databaseType=' + database_type;
+			window.open(href, '_blank');
 		},
 
 		setData(data, cell, dataNodeInfo, vueAdapter) {

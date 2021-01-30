@@ -120,7 +120,10 @@ export default {
 						}
 					}, 500);
 				});
+			} else {
+				this.fields = [];
 			}
+
 			log('Entity Schema Change:', schema);
 		}
 	},

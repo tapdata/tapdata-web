@@ -58,8 +58,8 @@ export default class users extends PublicAPI {
 		return axios.post(this.url + '/sendVerifyEmail', params);
 	}
 
-	deletePermissionRoleMapping(id) {
-		return axios.delete(`${this.url}/deletePermissionRoleMapping?id=${id}`);
+	deletePermissionRoleMapping(id, params) {
+		return axios.delete(`${this.url}/deletePermissionRoleMapping?id=${id}`, params);
 	}
 
 	role(params) {

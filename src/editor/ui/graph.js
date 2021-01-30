@@ -127,7 +127,7 @@ export default class Graph extends Component {
 				let targetView = end === 'target' ? cellViewT : cellViewS;
 				let sourceView = end === 'target' ? cellViewS : cellViewT;
 				let sameTarget = false;
-				self.graph.getConnectedLinks(cellViewS.model).map(link => {
+				self.graph.getConnectedLinks(sourceView.model).map(link => {
 					if (link.getTargetCell() && link.getTargetCell().id == targetView.model.id) sameTarget = true;
 				});
 				if (sameTarget) return false;
@@ -172,7 +172,9 @@ export default class Graph extends Component {
 		paper.on('cell:mouseenter', function(cellView) {
 			if (!self.editable) return;
 			if (cellView.model.getFormData().disabled) return;
+			if (cellView.model.isLink()) return;
 			cellView.vel.addClass('visible');
+			this._curCell = cellView;
 		});
 		paper.on('cell:mouseover', function(cellView) {
 			if (!self.editable) return;
@@ -185,7 +187,7 @@ export default class Graph extends Component {
 				cellView.model.portProp(this._curMag, 'attrs/circle/stroke', '#48b6e2');
 				cellView.model.portProp(this._curMag, 'attrs/circle/stroke-width', 2);
 				cellView.model.portProp(this._curMag, 'attrs/circle/r', 7);
-			} else if (this._curMag) {
+			} else if (this._curMag && this._curCell.model.hasPort(this._curMag)) {
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/fill', '#fff');
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/stroke', '#dedee4');
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/r', 5);
@@ -195,7 +197,7 @@ export default class Graph extends Component {
 			}
 		});
 		paper.on('blank:mouseover', function() {
-			if (this._curMag) {
+			if (this._curMag && this._curCell.model.hasPort(this._curMag)) {
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/fill', '#fff');
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/stroke', '#dedee4');
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/stroke-width', 1);
@@ -203,6 +205,7 @@ export default class Graph extends Component {
 				delete this._curMag;
 				delete this._curCell;
 			}
+			if (this._curCell) this._curCell.vel.removeClass('visible');
 		});
 		paper.on('cell:mouseout', function(cellView) {
 			cellView.vel.removeClass('visible');
@@ -285,6 +288,7 @@ export default class Graph extends Component {
 					elementViewDisconnected.model.portProp(magent.getAttribute('port'), 'attrs/circle/visibility', '');
 			}
 		});
+
 		graph.on({
 			remove: model => {
 				log('Graph.graph.remove');
@@ -633,7 +637,7 @@ export default class Graph extends Component {
 				this.selectCell(cell);
 				this.selectPrimaryElement(cellView);
 			} else {
-				this.selectPrimaryLink(cellView);
+				setTimeout(() => this.selectPrimaryLink(cellView), 20);
 			}
 		} else {
 			if (cell.isElement()) {
@@ -708,31 +712,28 @@ export default class Graph extends Component {
 
 	selectPrimaryLink(linkView) {
 		this.selectedLink = linkView;
+		this.unHighlightAllCells();
 		if (this.selectedLink.model) this.selectedLink.model.attr('line/stroke', '#00bcd4');
 
 		if (this.isSimple) return;
 		if (linkView.model.getFormData().disabled) return;
-		// let ns = joint.linkTools;
-		// let toolsView = new joint.dia.ToolsView({
-		// 	name: 'link-pointerdown',
-		// 	tools: [
-		// 		new ns.Vertices({
-		// 			vertexAdding: true
-		// 		}),
-		// 		// new ns.SourceAnchor(),
-		// 		// new ns.TargetAnchor(),
-		// 		// new ns.SourceArrowhead(),
-		// 		new ns.TargetArrowhead(),
-		// 		new ns.Segments(),
-		// 		// new ns.Boundary({ padding: 15 }),
-		// 		new ns.Remove({
-		// 			offset: -20,
-		// 			distance: 40
-		// 		})
-		// 	]
-		// });
+		let ns = joint.linkTools;
+		let toolsView = new joint.dia.ToolsView({
+			//name: 'link-pointerdown',
+			tools: [
+				// new ns.Vertices({
+				// 	vertexAdding: true
+				// }),
+				// new ns.TargetArrowhead(),
+				// new ns.Segments(),
+				new ns.Remove({
+					offset: -20,
+					distance: 40
+				})
+			]
+		});
 
-		// linkView.addTools(toolsView);
+		linkView.addTools(toolsView);
 	}
 
 	createInspector(cell) {
@@ -768,7 +769,7 @@ export default class Graph extends Component {
 							new ns.Vertices({
 								vertexAdding: false
 							}),
-							// new ns.SourceArrowhead(),
+							new ns.SourceArrowhead(),
 							new ns.TargetArrowhead()
 						]
 					});
@@ -1153,6 +1154,9 @@ export default class Graph extends Component {
 			this.toolbar.getWidgetByName('redo').disable();
 			this.toolbar.getWidgetByName('undo').disable();
 			this.toolbar.getWidgetByName('clear').disable();
+			this.graph.getCells().forEach(c => {
+				c.findView(this.paper).options.interactive.addLinkFromMagnet = false;
+			});
 			setTimeout(() => this.paperScroller.centerContent(), 0);
 		}
 	}
