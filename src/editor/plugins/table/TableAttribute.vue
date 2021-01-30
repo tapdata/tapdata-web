@@ -307,6 +307,7 @@ export default {
 			immediate: true,
 			handler() {
 				this.tableIsLink();
+				this.handlerSchemaChange();
 			}
 		},
 		mergedSchema: {
@@ -616,9 +617,12 @@ export default {
 			let self = this;
 			if (tempSchemas.length > 0) {
 				let schemas = tempSchemas.filter(s => s.table_name === this.model.tableName);
-				if (schemas && schemas.length > 0) this.model.tableId = schemas[0].id;
+				if (schemas && schemas.length > 0) {
+					this.model.tableId = schemas[0].id;
+				} else {
+					this.model.tableId = '';
+				}
 			}
-
 			if (this.model.tableId) {
 				let params = {
 					filter: JSON.stringify({
@@ -652,6 +656,14 @@ export default {
 						self.$emit('schemaChange', _.cloneDeep(res.data.records[0].schema.tables[0]));
 					}
 				});
+			} else {
+				let schema = {
+					cdc_enabled: true,
+					fields: [],
+					meta_type: 'table',
+					table_name: this.model.tableName
+				};
+				self.$emit('schemaChange', _.cloneDeep(schema));
 			}
 			this.taskData.tableName = this.model.tableName;
 

@@ -439,34 +439,33 @@ export default {
 			handler() {
 				let schemas = tempSchemas;
 				if (this.schemaSelectConfig.options.length > 0) {
+					let schema,
+						defaultSchema = {
+							table_name: this.model.tableName,
+							cdc_enabled: true,
+							meta_type: 'collection',
+							fields: [
+								{
+									autoincrement: false,
+									columnSize: 0,
+									dataType: 7,
+									data_type: 'OBJECT_ID',
+									field_name: '_id',
+									id: uuid(),
+									is_nullable: true,
+									javaType: 'String',
+									key: 'PRI',
+									original_field_name: '_id',
+									precision: 0,
+									primary_key_position: 1,
+									scale: 0,
+									table_name: this.model.tableName
+								}
+							]
+						};
 					if (this.model.tableName) {
-						let schema = schemas.filter(s => s.table_name === this.model.tableName);
-						schema =
-							schema && schema.length > 0
-								? schema[0]
-								: {
-										table_name: this.model.tableName,
-										cdc_enabled: true,
-										meta_type: 'collection',
-										fields: [
-											{
-												autoincrement: false,
-												columnSize: 0,
-												dataType: 7,
-												data_type: 'OBJECT_ID',
-												field_name: '_id',
-												id: uuid(),
-												is_nullable: true,
-												javaType: 'String',
-												key: 'PRI',
-												original_field_name: '_id',
-												precision: 0,
-												primary_key_position: 1,
-												scale: 0,
-												table_name: this.model.tableName
-											}
-										]
-								  };
+						schema = schemas.filter(s => s.table_name === this.model.tableName);
+						schema = schema && schema.length > 0 ? schema[0] : defaultSchema;
 
 						let fields = schema.fields || [];
 						//过滤被删除的字段
@@ -492,8 +491,8 @@ export default {
 						this.model.collectionAggregate = false;
 						this.model.isFilter = false;
 						this.model.collectionAggrPipeline = '';
-						this.$emit('schemaChange', _.cloneDeep(schema));
 					}
+					this.$emit('schemaChange', _.cloneDeep(schema));
 				}
 
 				this.taskData.tableName = this.model.tableName;
