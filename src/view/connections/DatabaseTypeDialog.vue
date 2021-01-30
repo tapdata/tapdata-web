@@ -63,7 +63,7 @@ export default {
 				'mariadb',
 				'mysql pxc'
 			],
-			otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file', 'mem_cache'],
+			otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],
 			typeMap: TYPEMAP
 		};
 	},
