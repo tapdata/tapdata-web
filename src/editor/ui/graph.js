@@ -172,6 +172,7 @@ export default class Graph extends Component {
 		paper.on('cell:mouseenter', function(cellView) {
 			if (!self.editable) return;
 			if (cellView.model.getFormData().disabled) return;
+			if (cellView.model.isLink()) return;
 			cellView.vel.addClass('visible');
 			this._curCell = cellView;
 		});
@@ -567,8 +568,9 @@ export default class Graph extends Component {
 		);
 		let self = this;
 
-		this.paper.onmagnet = function(evt) {
-			if (!self.editable) evt.stopPropagation();
+		this.paper.onmagnet = function(t) {
+			if (!self.editable) t.stopPropagation();
+			else this._curCell.dragMagnetStart(t, event.x, event.y);
 		};
 
 		this.paper.on(
@@ -776,7 +778,7 @@ export default class Graph extends Component {
 							new ns.Vertices({
 								vertexAdding: false
 							}),
-							// new ns.SourceArrowhead(),
+							new ns.SourceArrowhead(),
 							new ns.TargetArrowhead()
 						]
 					});
