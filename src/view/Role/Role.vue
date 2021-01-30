@@ -872,22 +872,26 @@ export default {
 			});
 
 			self.$api('users')
-				.deletePermissionRoleMapping(roleId)
+				.deletePermissionRoleMapping(roleId, newRoleMappings)
 				.then(() => {
-					roleMappingModel
-						.post(newRoleMappings)
-						.then(() => {
-							this.$message.success(this.$t('message.saveOK'));
-						})
-						.catch(() => {
-							this.$message.success(this.$t('message.saveFail'));
-						})
-						.finally(() => {
-							self.saveloading = false;
-						});
+					this.$message.success(this.$t('message.saveOK'));
+					// roleMappingModel
+					// 	.post(newRoleMappings)
+					// 	.then(() => {
+					// 		this.$message.success(this.$t('message.saveOK'));
+					// 	})
+					// 	.catch(() => {
+					// 		this.$message.success(this.$t('message.saveFail'));
+					// 	})
+					// 	.finally(() => {
+					// 		self.saveloading = false;
+					// 	});
 				})
 				.catch(() => {
 					this.$message.success(this.$t('message.saveFail'));
+					self.saveloading = false;
+				})
+				.finally(() => {
 					self.saveloading = false;
 				});
 		},
