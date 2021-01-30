@@ -872,7 +872,7 @@ export default {
 			});
 
 			self.$api('users')
-				.deletePermissionRoleMapping(roleId, newRoleMappings)
+				.deletePermissionRoleMapping(roleId, { data: { data: newRoleMappings } })
 				.then(() => {
 					this.$message.success(this.$t('message.saveOK'));
 					// roleMappingModel
@@ -889,7 +889,6 @@ export default {
 				})
 				.catch(() => {
 					this.$message.success(this.$t('message.saveFail'));
-					self.saveloading = false;
 				})
 				.finally(() => {
 					self.saveloading = false;

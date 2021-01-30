@@ -59,7 +59,7 @@ export default class users extends PublicAPI {
 	}
 
 	deletePermissionRoleMapping(id, params) {
-		return axios.delete(`${this.url}/deletePermissionRoleMapping?id=${id}`, { data: params });
+		return axios.delete(`${this.url}/deletePermissionRoleMapping?id=${id}`, params);
 	}
 
 	role(params) {
