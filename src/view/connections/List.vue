@@ -182,7 +182,7 @@
 						type="text"
 						v-readonlybtn="'datasource_edition'"
 						:disabled="$disabledByPermission('datasource_edition_all_data', scope.row.user_id)"
-						@click="edit(scope.row.id, scope.row.database_type)"
+						@click="edit(scope.row.id, scope.row.database_type, scope.row)"
 					>
 						{{ $t('message.edit') }}
 					</el-button>
@@ -214,7 +214,7 @@
 		>
 			<p>
 				{{ $t('connection.deteleDatabaseMsg') }}
-				<span @click="edit(delData.id, delData.database_type)" style="color:#48B6E2;cursor: pointer">
+				<span @click="edit(delData.id, delData.database_type, delData)" style="color:#48B6E2;cursor: pointer">
 					{{ delData.name }}</span
 				>
 				?
@@ -291,7 +291,20 @@ export default {
 				}
 			],
 			databaseTypeOptions: [],
-			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis', 'file'], //目前白名单,
+			whiteList: [
+				'mysql',
+				'oracle',
+				'mongodb',
+				'sqlserver',
+				'postgres',
+				'elasticsearch',
+				'redis',
+				'file',
+				'db2',
+				'kafka',
+				'mariadb',
+				'mysql pxc'
+			], //目前白名单,
 			searchParams: this.$store.state.connections,
 			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
 		};
@@ -344,6 +357,7 @@ export default {
 				user_id: true,
 				connection_type: true,
 				database_type: true,
+				search_databaseType: true,
 				database_host: true,
 				database_uri: true,
 				status: true,
@@ -354,8 +368,6 @@ export default {
 				loadFieldsStatus: true,
 				schemaAutoUpdate: true
 			};
-			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
-			// 	where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
 			//精准搜索 iModel
 			if (keyword && keyword.trim()) {
 				let filterObj = iModel ? { like: verify(keyword), options: 'i' } : keyword;
@@ -365,6 +377,10 @@ export default {
 				in: this.allowDataType
 			};
 			databaseType && (where.database_type = databaseType);
+			// if (databaseType === 'maria' || databaseType === 'mysqlpxc') {
+			// 	where.search_databaseType = databaseType;
+			// 	where.database_type = 'mysql';
+			// }
 			databaseModel && (where.connection_type = databaseModel);
 			if (tags && tags.length) {
 				where['listtags.id'] = {
@@ -425,8 +441,11 @@ export default {
 		handlePreviewVisible() {
 			this.previewVisible = false;
 		},
-		edit(id, type) {
+		edit(id, type, item) {
 			if (this.whiteList.includes(type)) {
+				if (item.search_databaseType) {
+					type = item.search_databaseType;
+				}
 				this.$router.push('connections/' + id + '/edit?databaseType=' + type);
 			} else {
 				top.location.href = '/#/connection/' + id;

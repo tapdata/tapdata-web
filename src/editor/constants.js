@@ -69,6 +69,12 @@ export const FORM_DATA_KEY = 'form_data',
 			shapeImage: 'static/editor/o-mysql.svg',
 			stencilImage: 'static/editor/mysql.svg'
 		},
+		'mysql pxc': {
+			type: 'mysql pxc',
+			name: 'Mysql PXC',
+			shapeImage: 'static/editor/o-mysqlpxc.svg',
+			stencilImage: 'static/editor/mysqlpxc.svg'
+		},
 		oracle: {
 			type: 'oracle',
 			name: 'Oracle',
@@ -110,6 +116,18 @@ export const FORM_DATA_KEY = 'form_data',
 			name: 'Sybase ASE',
 			shapeImage: 'static/editor/o-sybase.svg',
 			stencilImage: 'static/editor/sybase.svg'
+		},
+		kafka: {
+			type: 'kafka',
+			name: 'Kafka',
+			shapeImage: 'static/editor/o-kafka-q.svg',
+			stencilImage: 'static/editor/wKafka.svg'
+		},
+		mariaDB: {
+			type: 'mariadb',
+			name: 'MariaDB',
+			shapeImage: 'static/editor/o-maria.svg',
+			stencilImage: 'static/editor/maria.svg'
 		}
 	},
 	FILE_TYPE_MAPPING = {

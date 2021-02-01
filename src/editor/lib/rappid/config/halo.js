@@ -65,7 +65,7 @@ export const haloConfig = {
 				}
 			}
 		},
-		*/
+
 
 		{
 			name: "link",

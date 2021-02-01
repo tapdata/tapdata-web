@@ -12,9 +12,54 @@ export default function(vm) {
 				type: 'radio',
 				field: 'connection_type',
 				label: vm.$t('dataForm.form.connectionType'),
-				options: [{ label: vm.$t('dataForm.form.options.source'), value: 'source' }],
+				options: [
+					{
+						label: vm.$t('dataForm.form.options.source'),
+						tip: vm.$t('dataForm.form.options.sourceTips'),
+						value: 'source'
+					}
+				],
 				required: true
 			},
+			// {
+			// 	type: 'input',
+			// 	field: 'database_host',
+			// 	label: vm.$t('dataForm.form.host'),
+			// 	rules: [
+			// 		{
+			// 			required: true,
+			// 			validator(rule, value, callback) {
+			// 				let port = this.value['database_port'];
+			// 				if (!value || !value.trim()) {
+			// 					callback(new Error(vm.$t('dataForm.error.noneHost')));
+			// 				} else if (!port) {
+			// 					callback(new Error(vm.$t('dataForm.error.nonePort')));
+			// 				} else if (!/^\d+$/.test(port)) {
+			// 					callback(new Error(vm.$t('dataForm.error.portNumber')));
+			// 				} else if (port < 1 || port > 65535) {
+			// 					callback(new Error(vm.$t('dataForm.error.portRange')));
+			// 				} else {
+			// 					callback();
+			// 				}
+			// 			}
+			// 		}
+			// 	],
+			// 	appendSlot: (h, data) => {
+			// 		return h('FbInput', {
+			// 			props: {
+			// 				value: data['database_port'],
+			// 				config: {
+			// 					placeholder: vm.$t('dataForm.form.port')
+			// 				}
+			// 			},
+			// 			on: {
+			// 				input(val) {
+			// 					data['database_port'] = val;
+			// 				}
+			// 			}
+			// 		});
+			// 	}
+			// },
 			{
 				type: 'input',
 				field: 'database_host',
@@ -22,37 +67,37 @@ export default function(vm) {
 				rules: [
 					{
 						required: true,
-						validator: (rule, value, callback) => {
-							let port = vm.model['database_port'];
+						validator(rule, value, callback) {
 							if (!value || !value.trim()) {
 								callback(new Error(vm.$t('dataForm.error.noneHost')));
-							} else if (!port || !port.trim()) {
+							} else {
+								callback();
+							}
+						}
+					}
+				]
+			},
+			{
+				type: 'input',
+				field: 'database_port',
+				label: vm.$t('dataForm.form.port'),
+				required: true,
+				rules: [
+					{
+						required: true,
+						validator(rule, value, callback) {
+							if (!value) {
 								callback(new Error(vm.$t('dataForm.error.nonePort')));
-							} else if (!/\d+/.test(port)) {
+							} else if (!/^\d+$/.test(value)) {
 								callback(new Error(vm.$t('dataForm.error.portNumber')));
-							} else if (port < 1 || port > 65535) {
+							} else if (value < 1 || value > 65535) {
 								callback(new Error(vm.$t('dataForm.error.portRange')));
 							} else {
 								callback();
 							}
 						}
 					}
-				],
-				appendSlot: h => {
-					return h('FbInput', {
-						props: {
-							value: vm.model['database_port'],
-							config: {
-								placeholder: vm.$t('dataForm.form.port')
-							}
-						},
-						on: {
-							input(val) {
-								vm.model['database_port'] = val;
-							}
-						}
-					});
-				}
+				]
 			},
 			{
 				type: 'input',

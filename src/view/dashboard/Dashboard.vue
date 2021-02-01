@@ -104,7 +104,7 @@
 		</el-row>
 
 		<ul class="e-row e-rowBox">
-			<li class="e-col" v-readonlybtn="'data_transmission_menu'">
+			<li class="e-col" v-readonlybtn="'Data_SYNC_menu'">
 				<div class="charts-list">
 					<echart-head :data="screeningObj" @getUnit="getUnit"></echart-head>
 					<div class="unit">{{ $t('dataFlow.unit') }}:{{ $t('dataFlow.rowCount') }}</div>
@@ -599,32 +599,9 @@ export default {
 		// 获取dataflows数据
 		getDataFlowApi() {
 			let self = this;
-			// let id = '';
 			self.loading = true;
-			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-			// 	id = this.$cookie.get('user_id');
-			// params = {
-			// 	filter: {
-			// 		where: {
-			// 			user_id: {
-			// 				regexp: `^${this.$cookie.get('user_id')}$`
-			// 			}
-			// 		}
-			// 	}
-			// };
-			// }
 			DataFlows.chart()
 				.then(res => {
-					// res.data.chart1.statusCount.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1));
-					// res.data.chart1.statusCount.forEach(element => {
-					// 	self.taskList.unshift({ name: element._id, value: element.count });
-					// });
-					// self.taskList.map((item, index) => {
-					// 	if (item.name === 'stopping' || item.name === 'scheduled') {
-					// 		self.taskList.splice(index, 1);
-					// 		self.taskList.push(item);
-					// 	}
-					// });
 					if (res && res.data) {
 						self.migrationTaskList = self.handleDataProcessing(res.data.chart1);
 						self.syncTaskList = self.handleDataProcessing(res.data.chart5);

@@ -51,7 +51,6 @@
 						>Procedure</el-checkbox
 					>
 				</el-form-item>
-
 				<el-form-item :label="$t('editor.cell.link.existingSchema.label')">
 					<el-select v-model="model.dropType" size="mini">
 						<el-option
@@ -63,6 +62,7 @@
 							value="drop_data"
 						></el-option>
 						<el-option
+							v-if="targetDatabaseType === 'mongodb'"
 							:label="$t('editor.cell.link.existingSchema.removeSchema')"
 							value="drop_schema"
 						></el-option>
@@ -205,6 +205,7 @@ export default {
 
 			configJoinTable: false,
 			sourceData: [],
+			targetDatabaseType: '',
 			model: {
 				// label: '',
 				table_prefix: '',
@@ -250,7 +251,7 @@ export default {
 							? targetCell.getFormData().database_type
 							: '',
 					connectionId = sourceCell.getFormData().connectionId;
-
+				this.targetDatabaseType = targetDatabaseType;
 				this.mysqlDisable = sourceDatabaseType === 'mysql' && targetDatabaseType === 'mysql' ? false : true;
 				if (this.mysqlDisable) {
 					this.model.selectSourceDatabase = {

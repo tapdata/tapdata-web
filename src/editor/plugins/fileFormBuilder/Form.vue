@@ -11,12 +11,15 @@
 					<img :src="getImgByType(model.database_type)" />
 				</div>
 				<div class="content-box">
-					<div class="content">
+					<div class="content" v-if="model.database_type === 'csv'">
+						CSV/TXT
+					</div>
+					<div v-else>
 						{{ model.database_type ? model.database_type.toUpperCase() : model.database_type }}
 					</div>
 					<div class="tip">
 						{{ $t('editor.fileFormBuilder.guideDocPrefix') }}
-						{{ model.database_type }}
+						{{ model.database_type === 'csv' ? 'csv/txt' : model.database_type }}
 						{{ $t('editor.fileFormBuilder.guideDoc') }}
 						<a style="color: #48B6E2" href="https://docs.tapdata.net/data-source/about-dbs/files">{{
 							$t('dataForm.form.guideDoc')

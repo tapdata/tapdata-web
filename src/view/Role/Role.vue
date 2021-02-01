@@ -305,6 +305,10 @@ let moduleMapping = [
 		]
 	},
 	{
+		name: 'dictionary',
+		children: [{ name: 'dictionary', allName: 'dictionary_all_data' }]
+	},
+	{
 		name: 'data_rules',
 		children: [
 			{ name: 'data_rules', allName: 'data_rules_all_data' },
@@ -481,6 +485,75 @@ export default {
 						if (mappingData.length) {
 							mappingData.filter(item => {
 								if (this.selectRole && this.selectRole.length) {
+									// for (var child in item) {
+									// 	if (
+									// 		child === 'children' ||
+									// 		child === 'classification' ||
+									// 		child === 'functional'
+									// 	) {
+									// 		let checkedCount = [],
+									// 			allCheckedCount = [];
+									// 		if (item[child] && item[child].length) {
+									// 			console.log('####', item[child], item[child].length);
+									// 			item[child].filter(childItem => {
+									// 				this.$set(
+									// 					childItem,
+									// 					'checkAllData',
+									// 					this.selectRole.includes(childItem.allName)
+									// 				);
+
+									// 				this.$set(
+									// 					childItem,
+									// 					'checked',
+									// 					this.selectRole.includes(childItem.name)
+									// 				);
+									// 				// this.$set(childItem, 'checked', childItem.type === 'read');
+									// 				if (childItem.checked) {
+									// 					checkedCount.push(childItem);
+									// 				}
+									// 				if (childItem.checkAllData) {
+									// 					allCheckedCount.push(childItem);
+									// 				}
+									// 			});
+									// 		}
+									// 		if (item.children && item.children.length) {
+									// 			console.log(
+									// 				'child',
+									// 				checkedCount.length,
+									// 				item.children.length,
+									// 				allCheckedCount.length,
+									// 				allData.length
+									// 			);
+									// 			this.$set(
+									// 				item,
+									// 				'checkAll',
+									// 				checkedCount.length === item.children.length
+									// 			);
+									// 			this.$set(
+									// 				item,
+									// 				'checkedAllData',
+									// 				allCheckedCount.length === allData.length
+									// 			);
+									// 		}
+
+									// 		if (item.classification && item.classification.length) {
+									// 			this.$set(
+									// 				item,
+									// 				'classifiyCheckAll',
+									// 				checkedCount.length === item.classification.length
+									// 			);
+									// 		}
+
+									// 		if (item.functional && item.functional.length) {
+									// 			this.$set(
+									// 				item,
+									// 				'functionCheckAll',
+									// 				checkedCount.length === item.functional.length
+									// 			);
+									// 		}
+									// 	}
+									// }
+
 									if (item.children && item.children.length) {
 										let checkedCount = [],
 											allCheckedCount = [];
@@ -538,16 +611,16 @@ export default {
 							});
 						}
 					}
-					// if (res && res.data && res.data.length === 0) {
-					// 	if (mappingData.length)
-					// 		mappingData.filter(item => {
-					// 			if (item.children && item.children.length) {
-					// 				item.children.filter(childItem => {
-					// 					this.$set(childItem, 'checked', childItem.type === 'read');
-					// 				});
-					// 			}
-					// 		});
-					// }
+					if (res && res.data && res.data.length === 0) {
+						if (mappingData.length)
+							mappingData.filter(item => {
+								if (item.children && item.children.length) {
+									item.children.filter(childItem => {
+										this.$set(childItem, 'checked', childItem.type === 'read');
+									});
+								}
+							});
+					}
 				})
 				.finally(() => {
 					this.loading = false;
@@ -799,15 +872,27 @@ export default {
 			});
 
 			self.$api('users')
-				.deletePermissionRoleMapping(roleId)
-				.then(res => {
-					if (res && res.data) {
-						roleMappingModel.post(newRoleMappings);
-					}
+				.deletePermissionRoleMapping(roleId, { data: { data: newRoleMappings } })
+				.then(() => {
+					this.$message.success(this.$t('message.saveOK'));
+					// roleMappingModel
+					// 	.post(newRoleMappings)
+					// 	.then(() => {
+					// 		this.$message.success(this.$t('message.saveOK'));
+					// 	})
+					// 	.catch(() => {
+					// 		this.$message.success(this.$t('message.saveFail'));
+					// 	})
+					// 	.finally(() => {
+					// 		self.saveloading = false;
+					// 	});
+				})
+				.catch(() => {
+					this.$message.success(this.$t('message.saveFail'));
+				})
+				.finally(() => {
+					self.saveloading = false;
 				});
-
-			this.$message.success(this.$t('message.saveOK'));
-			self.saveloading = false;
 		},
 
 		// 返回

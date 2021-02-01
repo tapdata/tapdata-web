@@ -1,43 +1,32 @@
 <template>
-	<div class="cluster">
-		<!-- 服务集群管理 -->
-		<div class="cluster-box">
-			<el-row class="fun-area" :gutter="10">
-				<el-col :span="12">
-					<div class="demo-input-suffix">
-						<span>{{ $t('message.sourchName') }}</span>
-						<el-input
-							clearable
-							size="mini"
-							v-model="sourch"
-							:debounce="800"
-							:placeholder="$t('message.placeholderServer')"
-							@input="screenFn"
-						>
-						</el-input>
-						<el-button
-							type="primary"
-							@click="
-								sourch = '';
-								getDataApi();
-							"
-							>{{ $t('button.reset') }}</el-button
-						>
-					</div>
-				</el-col>
-				<!-- <el-col class="text-rf" :span="11">
-					<el-button
-						v-readonlybtn="'SYNC_job_creation'"
-						class="btn btn-create"
-						type="primary"
+	<section class="clusterManagement-container">
+		<div class="header">
+			<div class="page-header-title">
+				<span class="title">{{ $t('cluster.serviceCluMange') }}</span>
+				<div class="logBtn" v-readonlybtn="'status_log'" @click="goDailyRecord">
+					{{ $t('cluster.statusLog') }}
+				</div>
+			</div>
+		</div>
+		<div class="main">
+			<ul class="search-bar">
+				<li>
+					<el-input
+						clearable
 						size="mini"
-						@click="create"
+						v-model="sourch"
+						:debounce="800"
+						:placeholder="$t('cluster.placeholderServer')"
+						@input="getDataApi"
 					>
-						<i class="iconfont icon-jia add-btn-icon"></i>
+					</el-input>
+				</li>
+				<li>
+					<el-button type="text" class="restBtn" size="mini" @click="rest()">
+						{{ $t('button.reset') }}
 					</el-button>
-				</el-col> -->
-			</el-row>
-
+				</li>
+			</ul>
 			<div class="content" v-if="waterfallData.length > 0">
 				<el-row :gutter="20" class="waterfall">
 					<el-col class="list" :md="12" :sm="24" v-for="(element, i) in waterfallData" :key="i">
@@ -45,26 +34,39 @@
 							<div class="boxTop">
 								<div class="fl" style="width: 60%;">
 									<i class="circular" :class="item.status !== 'running' ? 'bgred' : 'bggreen'"></i>
-									<h2 class="name">{{ item.systemInfo.hostname }}</h2>
-									<div class="uuid">{{ item.systemInfo.uuid }}</div>
-									<span>{{ item.systemInfo.ip }}</span>
+									<h2 class="name">
+										{{ item.agentName ? item.agentName : item.systemInfo.hostname }}
+									</h2>
+									<span>{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
+									<span class="uuid">{{ item.systemInfo.uuid }}</span>
 								</div>
-								<div
-									v-if="managementType === 'cluster'"
-									class="fr"
-									style="width: 40%;"
-									v-readonlybtn="'Cluster_operation'"
-								>
-									<el-button size="mini" class="fr addBtn" @click="addServeFn(item)">{{
-										$t('message.addServerMon')
-									}}</el-button>
+								<div class="operation-bar" v-readonlybtn="'Cluster_operation'">
+									<el-button
+										size="mini"
+										type="danger"
+										v-if="item.canUpdate"
+										@click="updateFn(item, item.management.status, 'management', 'update')"
+										>{{ $t('cluster.update') }}</el-button
+									>
+									<i
+										class="iconfont icon-icon_tianjia"
+										v-if="managementType === 'cluster'"
+										v-readonlybtn="'Cluster_operation'"
+										@click="addServeFn(item)"
+									></i>
+									<i class="iconfont icon-icon_shezhi" @click="editAgent(item)"></i>
+									<i
+										v-show="item.status !== 'running'"
+										class="iconfont icon-shanchu"
+										@click="delConfirm(item)"
+									></i>
 								</div>
 							</div>
 							<div class="boxBottom">
 								<el-row :gutter="20" class="data-list" v-if="managementType === 'cluster'">
 									<el-col :span="8">
 										<span class="txt"
-											><i class="icon iconfont iconhoutai"></i>{{ $t('message.manageSys') }}</span
+											><i class="icon iconfont iconhoutai"></i>{{ $t('cluster.manageSys') }}</span
 										>
 									</el-col>
 									<el-col :span="4">
@@ -75,16 +77,18 @@
 									<el-col :span="12">
 										<div class="btn fr" v-readonlybtn="'Cluster_operation'">
 											<el-button
+												size="mini"
 												:type="item.management.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.management.status == 'stopped' ? false : true"
 												@click="startFn(item, item.management.status, 'management', 'start')"
-												>{{ $t('message.startUp') }}</el-button
+												>{{ $t('cluster.start') }}</el-button
 											>
 											<el-button
+												size="mini"
 												:type="item.management.status == 'running' ? 'danger' : 'info'"
 												:disabled="item.management.status == 'running' ? false : true"
 												@click="closeFn(item, item.management.status, 'management', 'stop')"
-												>{{ $t('message.close') }}</el-button
+												>{{ $t('cluster.close') }}</el-button
 											>
 											<el-button
 												type="text"
@@ -92,7 +96,7 @@
 												@click="
 													restartFn(item, item.management.status, 'management', 'restart')
 												"
-												>{{ $t('message.restart') }}</el-button
+												>{{ $t('cluster.restart') }}</el-button
 											>
 										</div>
 									</el-col>
@@ -100,7 +104,7 @@
 								<el-row :gutter="20" class="data-list">
 									<el-col :span="8">
 										<span class="txt"
-											><i class="icon iconfont icontongbu"></i>{{ $t('message.syncGover') }}</span
+											><i class="icon iconfont icontongbu"></i>{{ $t('cluster.syncGover') }}</span
 										>
 									</el-col>
 									<el-col :span="4">
@@ -111,22 +115,24 @@
 									<el-col :span="12">
 										<div class="btn fr" v-readonlybtn="'Cluster_operation'">
 											<el-button
+												size="mini"
 												:type="item.engine.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.engine.status == 'stopped' ? false : true"
 												@click="startFn(item, item.engine.status, 'engine')"
-												>{{ $t('message.startUp') }}</el-button
+												>{{ $t('cluster.start') }}</el-button
 											>
 											<el-button
+												size="mini"
 												:type="item.engine.status == 'running' ? 'danger' : 'info'"
 												:disabled="item.engine.status == 'running' ? false : true"
 												@click="closeFn(item, item.engine.status, 'engine')"
-												>{{ $t('message.close') }}</el-button
+												>{{ $t('cluster.close') }}</el-button
 											>
 											<el-button
 												type="text"
 												:disabled="item.engine.status == 'running' ? false : true"
 												@click="restartFn(item, item.engine.status, 'engine')"
-												>{{ $t('message.restart') }}</el-button
+												>{{ $t('cluster.restart') }}</el-button
 											>
 										</div>
 									</el-col>
@@ -143,22 +149,24 @@
 									<el-col :span="12">
 										<div class="btn fr" v-readonlybtn="'Cluster_operation'">
 											<el-button
+												size="mini"
 												:type="item.apiServer.status == 'stopped' ? 'primary' : 'info'"
 												:disabled="item.apiServer.status == 'stopped' ? false : true"
 												@click="startFn(item, item.apiServer.status, 'apiServer')"
-												>{{ $t('message.startUp') }}</el-button
+												>{{ $t('cluster.start') }}</el-button
 											>
 											<el-button
+												size="mini"
 												:type="item.apiServer.status == 'running' ? 'danger' : 'info'"
 												:disabled="item.apiServer.status == 'running' ? false : true"
 												@click="closeFn(item, item.apiServer.status, 'apiServer')"
-												>{{ $t('message.close') }}</el-button
+												>{{ $t('cluster.close') }}</el-button
 											>
 											<el-button
 												type="text"
 												:disabled="item.apiServer.status == 'running' ? false : true"
 												@click="restartFn(item, item.apiServer.status, 'apiServer')"
-												>{{ $t('message.restart') }}</el-button
+												>{{ $t('cluster.restart') }}</el-button
 											>
 										</div>
 									</el-col>
@@ -180,10 +188,10 @@
 									<el-col :span="7" :offset="5" v-readonlybtn="'Cluster_operation'">
 										<div class="btn fr">
 											<el-button type="text" @click="delServe(child, item.status)">{{
-												$t('message.delete')
+												$t('cluster.delete')
 											}}</el-button>
 											<el-button type="text" @click="editServe(child, item.status, item)">{{
-												$t('message.edit')
+												$t('cluster.edit')
 											}}</el-button>
 										</div>
 									</el-col>
@@ -198,7 +206,7 @@
 			</div>
 		</div>
 		<el-dialog
-			:title="$t('message.addServerMon')"
+			:title="$t('cluster.addServerMon')"
 			custom-class="serverDialog"
 			:visible.sync="dialogForm"
 			:append-to-body="true"
@@ -209,25 +217,81 @@
 		>
 			<addServe :data="currentData" :editItem="editItem" ref="childRules"></addServe>
 			<div slot="footer" class="dialog-footer">
-				<el-button size="small" @click="closeDialogForm()">{{ $t('message.cancel') }}</el-button>
+				<el-button size="small" @click="closeDialogForm()">{{ $t('cluster.cancel') }}</el-button>
 				<el-button size="small" type="primary" @click="submitForm('ruleForm')">{{
-					$t('message.confirm')
+					$t('cluster.confirm')
 				}}</el-button>
 			</div>
 		</el-dialog>
-		<!-- <DownAgent ref="agentDialog" type="dashboard" @closeAgentDialog="closeAgentDialog"></DownAgent> -->
-	</div>
+		<el-dialog
+			:title="$t('cluster.agentSetting')"
+			custom-class="serverDialog"
+			:visible.sync="editAgentDialog"
+			:lock-scroll="false"
+			:close-on-click-modal="false"
+			width="600px"
+			@close="editAgentDialog = false"
+		>
+			<el-form ref="editAgentForm" label-width="100px" class="editAgentForm">
+				<el-form-item :label="$t('cluster.serverName')">
+					<div class="name-box">
+						<el-input
+							style="width: 85%"
+							v-model="agentName"
+							size="mini"
+							show-word-limit
+							:placeholder="$t('cluster.placeholderMonServer')"
+						></el-input>
+						<span class="restBtn" @click="editNameRest">{{ $t('cluster.reduction') }}</span>
+					</div>
+				</el-form-item>
+				<el-form-item :label="$t('cluster.iPDisplay')" prop="command">
+					<el-select v-model="custIP" :placeholder="$t('cluster.iPDisplay')" size="mini" style="width: 85%">
+						<el-option v-for="item in ips" :key="item" :label="item" :value="item"> </el-option>
+					</el-select>
+					<div class="ipTip">{{ $t('cluster.ipTip') }}</div>
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button size="small" @click="editAgentDialog = false">{{ $t('cluster.cancel') }}</el-button>
+				<el-button size="small" type="primary" @click="submitEditAgent('editAgentForm')">{{
+					$t('cluster.confirm')
+				}}</el-button>
+			</div>
+		</el-dialog>
+		<el-dialog
+			:title="$t('cluster.delTittle')"
+			:close-on-click-modal="false"
+			:visible.sync="deleteDialogVisible"
+			width="30%"
+		>
+			<p>
+				{{ $t('cluster.delMessage') }}
+				<span style="color:#48B6E2;cursor: pointer">
+					{{ delData.agentName }}
+				</span>
+				?
+			</p>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="deleteDialogVisible = false" size="mini">{{ $t('cluster.cancel') }}</el-button>
+				<el-button type="primary" @click="removeNode(delData.id)" size="mini">{{
+					$t('cluster.confirm')
+				}}</el-button>
+			</span>
+		</el-dialog>
+	</section>
 </template>
 <script>
-// import vueWaterfallEasy from 'vue-waterfall-easy';
-// import DownAgent from '../downAgent/agentDown';
 import addServe from './component/addServe';
 import factory from '../../api/factory';
-import { delayTrigger } from '../../util/util';
 const cluster = factory('cluster');
+const clusterVersion = factory('clusterVersion');
+const settings = factory('Setting');
+const dataFlows = factory('DataFlows');
 export default {
-	name: 'clusterManagement',
-	components: { addServe },
+	components: {
+		addServe
+	},
 	data() {
 		return {
 			waterfallData: [],
@@ -243,30 +307,35 @@ export default {
 			editItem: {},
 			timer: null,
 			downLoadAgetntdialog: false,
+			editAgentDialog: false,
+			deleteDialogVisible: false,
 			downLoadNum: 0,
+			version: null,
+			ips: [],
+			custIP: '',
+			custId: '',
+			agentName: '',
+			currentNde: {},
+			delData: '',
 			managementType: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT')
 		};
 	},
 	created() {
-		this.getDataApi();
+		settings.get().then(res => {
+			if (res.data && res.data.length) {
+				this.toVersion = res.data.findWhere({ key: 'tapdataAgentVersion' }).value;
+			}
+		});
 
+		this.getDataApi();
 		// 这是一个定时器
 		// TODO 集群管理轮询替换成webstocek
 		let that = this;
 		this.timer = setInterval(() => {
 			that.getDataApi();
-		}, 5000);
+		}, 10000);
 	},
-
 	methods: {
-		// // 新建集群管理
-		// create() {
-		// 	this.$refs.agentDialog.dialogVisible = true;
-		// },
-		// // 关闭agent下载弹窗返回参数
-		// closeAgentDialog() {
-		// 	this.$refs.agentDialog.dialogVisible = false;
-		// },
 		// 提交
 		async submitForm() {
 			let getFrom = this.$refs.childRules.ruleForm;
@@ -286,10 +355,10 @@ export default {
 							.then(() => {
 								this.dialogForm = false;
 								this.getDataApi();
-								this.$message.success(this.$t('message.saveOK'));
+								this.$message.success(this.$t('cluster.saveOK'));
 							})
 							.catch(() => {
-								this.$message.error(this.$t('message.saveFail'));
+								this.$message.error(this.$t('cluster.saveFail'));
 							})
 							.finally(() => {
 								this.dialogForm = false;
@@ -301,10 +370,10 @@ export default {
 							.then(() => {
 								this.dialogForm = false;
 								this.getDataApi();
-								this.$message.success(this.$t('message.saveOK'));
+								this.$message.success(this.$t('cluster.saveOK'));
 							})
 							.catch(() => {
-								this.$message.error(this.$t('message.saveFail'));
+								this.$message.error(this.$t('cluster.saveFail'));
 							})
 							.finally(() => {
 								this.dialogForm = false;
@@ -312,7 +381,7 @@ export default {
 					}
 				}
 			} else {
-				this.$message.error(this.$t('message.startupAfter_add'));
+				this.$message.error(this.$t('cluster.startupAfter_add'));
 			}
 		},
 		editServe(item, status, data) {
@@ -328,22 +397,22 @@ export default {
 			};
 
 			if (status === 'running') {
-				this.$confirm(this.$t('message.deleteOrNot') + '?', {
-					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancel')
+				this.$confirm(this.$t('cluster.deleteOrNot') + '?', {
+					confirmButtonText: this.$t('cluster.confirm'),
+					cancelButtonText: this.$t('cluster.cancel')
 				}).then(() => {
 					cluster
 						.removeMonitor(params)
 						.then(() => {
 							this.getDataApi();
-							this.$message.success(this.$t('message.deleteOK'));
+							this.$message.success(this.$t('cluster.deleteOK'));
 						})
 						.catch(() => {
-							this.$message.error(this.$t('message.deleteFail'));
+							this.$message.error(this.$t('cluster.deleteFail'));
 						});
 				});
 			} else {
-				this.$message.error(this.$t('message.startupAfter_delete'));
+				this.$message.error(this.$t('cluster.startupAfter_delete'));
 			}
 		},
 		addServeFn(item) {
@@ -359,9 +428,9 @@ export default {
 					server: server,
 					operation: 'start'
 				};
-				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.restartServer'), {
-					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancel'),
+				this.$confirm(this.$t('cluster.confirmText') + name + this.$t('cluster.restartServer') + '?', {
+					confirmButtonText: this.$t('cluster.confirm'),
+					cancelButtonText: this.$t('cluster.cancel'),
 					closeOnClickModal: false
 				}).then(() => {
 					this.operationFn(data);
@@ -374,9 +443,9 @@ export default {
 			if (server === 'apiServer') {
 				name = 'API SEVER';
 			} else if (server === 'engine') {
-				name = this.$t('message.syncGover');
+				name = this.$t('cluster.syncGover');
 			} else {
-				name = this.$t('message.manageSys');
+				name = this.$t('cluster.manageSys');
 			}
 			if (status === 'running') {
 				let data = {
@@ -384,9 +453,9 @@ export default {
 					server: server,
 					operation: 'stop'
 				};
-				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.startServer'), {
-					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancel'),
+				this.$confirm(this.$t('cluster.confirmText') + name + this.$t('cluster.startServer') + '?', {
+					confirmButtonText: this.$t('cluster.confirm'),
+					cancelButtonText: this.$t('cluster.cancel'),
 					closeOnClickModal: false
 				}).then(() => {
 					this.operationFn(data);
@@ -398,9 +467,9 @@ export default {
 			if (server === 'apiServer') {
 				name = 'API SEVER';
 			} else if (server === 'engine') {
-				name = this.$t('message.syncGover');
+				name = this.$t('cluster.syncGover');
 			} else {
-				name = this.$t('message.manageSys');
+				name = this.$t('cluster.manageSys');
 			}
 			if (status === 'running') {
 				let data = {
@@ -408,16 +477,59 @@ export default {
 					server: server,
 					operation: 'restart'
 				};
-				this.$confirm(this.$t('message.confirm') + ' ' + name + ' ' + this.$t('message.restartServer'), {
-					confirmButtonText: this.$t('message.confirm'),
-					cancelButtonText: this.$t('message.cancel'),
+				this.$confirm(this.$t('cluster.confirmText') + name + this.$t('cluster.restartServer') + '?', {
+					confirmButtonText: this.$t('cluster.confirm'),
+					cancelButtonText: this.$t('cluster.cancel'),
 					closeOnClickModal: false
 				}).then(() => {
 					this.operationFn(data);
 				});
 			}
 		},
-		// 重启---关闭---启动
+		updateFn(item) {
+			let data = {
+				uuid: item.uuid,
+				server: 'agent',
+				operation: 'update:' + this.toVersion
+			};
+			this.operationFn(data);
+			this.canUpdate = false;
+		},
+		async getVersion(datas) {
+			for (let i = 0; i < datas.length; i++)
+				if (datas[i].status != 'down')
+					await clusterVersion
+						.get({ filter: JSON.stringify({ where: { 'version.uuid': datas[i].uuid } }) })
+						.then(res => {
+							if (res.data && res.data.length) {
+								datas[i].curVersion = res.data[0].version.backend;
+							}
+						});
+			let where = {},
+				allCdc = false;
+			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
+			where['stats.stagesMetrics.status'] = { neq: 'cdc' };
+			where.status = { eq: 'running' };
+			await dataFlows.count({ where: where }).then(res => {
+				if (res.data) {
+					if (res.data.count == 0) allCdc = true;
+				}
+			});
+			for (let i = 0; i < datas.length; i++)
+				datas[i].canUpdate = allCdc && datas[i].curVersion != this.toVersion && datas[i].status != 'down';
+			let [...waterfallData] = datas;
+			let [...newWaterfallData] = [[], []];
+			waterfallData.forEach((item, index) => {
+				if (index % 2) {
+					newWaterfallData[1].push(item);
+				} else {
+					newWaterfallData[0].push(item);
+				}
+			});
+			this.waterfallData = newWaterfallData;
+		},
+		// 重启---关闭---启动     --版本--更新
 		async operationFn(data) {
 			await cluster.updateStatus(data).then(res => {
 				if (res.status === 200) {
@@ -426,39 +538,44 @@ export default {
 			});
 		},
 		// 筛选
-		screenFn() {
-			delayTrigger(() => {
-				this.getDataApi();
-			}, 800);
+		rest() {
+			this.sourch = '';
+			this.getDataApi();
 		},
-
 		// 获取数据
-		getDataApi() {
+		async getDataApi() {
 			let params = { index: 1 };
 			if (this.sourch) {
-				params['filter[where][or][0][systemInfo.hostname][like]'] = this.sourch;
-				params['filter[where][or][1][systemInfo.ip][like]'] = this.sourch;
+				params['filter'] = {
+					where: {
+						or: [
+							{
+								agentName: {
+									$exists: false
+								},
+								'systemInfo.hostname': {
+									like: this.sourch
+								}
+							},
+							{
+								agentName: '',
+								'systemInfo.hostname': {
+									like: this.sourch
+								}
+							},
+							{
+								agentName: {
+									like: this.sourch
+								}
+							}
+						]
+					}
+				};
 			}
-			// 是否能看到所有集群
-			// if (
-			// 	this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') &&
-			// 	!parseInt(this.$cookie.get('isAdmin')) &&
-			// 	localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS'
-			// ) {
-			// 	params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-			// }
 			cluster.get(params).then(res => {
 				if (res.data) {
-					let [...waterfallData] = res.data;
-					let [...newWaterfallData] = [[], []];
-					waterfallData.forEach((item, index) => {
-						if (index % 2) {
-							newWaterfallData[1].push(item);
-						} else {
-							newWaterfallData[0].push(item);
-						}
-					});
-					this.waterfallData = newWaterfallData;
+					//自动升级
+					this.getVersion(res.data);
 				}
 			});
 		},
@@ -466,181 +583,247 @@ export default {
 		closeDialogForm() {
 			this.dialogForm = false;
 			this.$refs.childRules.closeDialogForm();
+		},
+		//删除agent
+		delConfirm(data) {
+			this.deleteDialogVisible = true;
+			this.delData = data;
+			this.delData.agentName = this.delData.agentName || this.delData.systemInfo.hostname;
+		},
+		removeNode(id) {
+			this.$api('cluster')
+				.delete(id)
+				.then(() => {
+					this.deleteDialogVisible = false;
+					this.$message.success(this.$t('cluster.deleteOK'));
+				})
+				.catch(() => {
+					this.$message.error(this.$t('cluster.deleteFail'));
+				});
+		},
+		//编辑
+		editAgent(item) {
+			this.editAgentDialog = true;
+			this.custId = item.id;
+			this.custIP = item.systemInfo.ip;
+			this.ips = item.systemInfo.ips || [];
+			this.agentName = item.agentName || item.systemInfo.hostname;
+			this.currentNde = item.systemInfo;
+		},
+		//提交编辑
+		submitEditAgent() {
+			if (this.agentName === '') {
+				this.agentName = this.currentNde.hostname;
+				this.$message.error(this.$t('cluster.serverName') + this.$t('cluster.noneText'));
+				return;
+			}
+			let data = {
+				custIP: this.custIP,
+				agentName: this.agentName
+			};
+			this.$api('cluster')
+				.editAgent(this.custId, data)
+				.then(() => {
+					this.editAgentDialog = false;
+					this.$message.success(this.$t('cluster.saveOK'));
+				})
+				.catch(() => {
+					this.$message.error(this.$t('cluster.saveFail'));
+				});
+		},
+		editNameRest() {
+			this.agentName = this.currentNde.hostname;
+		},
+		//运行日志
+		goDailyRecord() {
+			this.$router.push('/dailyRecord');
 		}
-	},
-
-	destroyed() {
-		clearInterval(this.timer);
-		this.timer = null;
 	}
 };
 </script>
 <style lang="less" scoped>
-.cluster {
-	width: 100%;
+.clusterManagement-container {
+	display: flex;
+	flex-direction: column;
 	height: 100%;
-	font-size: 12px;
-	background-color: #f8f6fa;
-	.cluster-box {
-		height: 100%;
-		background-color: #fff;
-	}
-
-	.content {
-		width: 100%;
-		height: calc(100% - 60px);
-		padding: 10px;
+	background: #fafafa;
+	.header {
+		padding: 15px 10px;
+		background: #ffffff;
+		overflow: hidden;
+		border-bottom: 1px solid #dedee4;
+		box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
 		box-sizing: border-box;
-		overflow-y: auto;
-		.list {
-			padding: 5px 0 10px 0;
-			overflow: hidden;
+		.title {
+			font-size: 16px;
+			color: #333;
+			font-weight: 600;
+		}
+		.logBtn {
+			font-size: 14px;
+			color: #48b6e2;
+			cursor: pointer;
+			float: right;
+		}
+	}
+	.main {
+		flex: 1;
+		padding: 10px;
+		display: flex;
+		overflow: hidden;
+		flex-direction: column;
+		.search-bar {
+			display: flex;
+			li + li {
+				margin-left: 10px;
+			}
+		}
+		.content {
+			width: 100%;
+			padding: 10px;
 			box-sizing: border-box;
-			.listBox {
-				position: relative;
-				margin-bottom: 20px;
-				padding: 0 25px 10px 50px;
-				background-color: #fff;
-				box-shadow: 0.707px 0.707px 3px rgba(0, 0, 0, 0.13);
-				.boxTop {
-					padding-top: 15px;
-					overflow: hidden;
-					.circular {
-						display: inline-block;
-						position: absolute;
-						left: 20px;
-						top: 18px;
-						width: 13px;
-						height: 13px;
-						border-radius: 50%;
-						background-color: #f00;
-					}
-					.name {
-						margin: 0;
-						font-size: 18px;
-						color: #48b6e2;
-						white-space: nowrap;
-						text-overflow: ellipsis;
+			overflow-y: auto;
+			.list {
+				padding: 5px 0 10px 0;
+				padding-left: 0;
+				overflow: hidden;
+				box-sizing: border-box;
+				.listBox {
+					position: relative;
+					margin-bottom: 20px;
+					padding: 0 25px 10px 50px;
+					background-color: #fff;
+					box-shadow: 0.707px 0.707px 3px rgba(0, 0, 0, 0.13);
+					.boxTop {
+						padding-top: 15px;
 						overflow: hidden;
-					}
-					.uuid {
-						padding: 5px 0;
-						font-size: 12px;
-					}
-					span {
-						font-size: 14px;
-						color: #555;
-					}
-					.addBtn {
-						span {
-							font-size: 12px;
+						display: flex;
+						flex-direction: row;
+						justify-content: space-between;
+						.iconfont {
+							color: #999;
+							cursor: pointer;
+							margin-left: 5px;
 						}
-					}
-				}
-				.boxTop {
-					// .el-button {
-					//   span { font-size: 12px;}
-					// }
-				}
-				.boxBottom {
-					padding-top: 10px;
-					.data-list {
-						width: 100%;
-						height: 30px;
-						margin-bottom: 5px;
-						line-height: 30px;
-						background-color: #f0fafe;
-						list-style: none;
-						.txt {
+						.circular {
 							display: inline-block;
-							width: 120px;
-							padding-left: 15px;
-							font-size: 12px;
-							color: #000;
-							text-overflow: ellipsis;
+							position: absolute;
+							left: 20px;
+							top: 18px;
+							width: 13px;
+							height: 13px;
+							border-radius: 50%;
+							background-color: #f00;
+						}
+						.name {
+							margin: 0;
+							font-size: 18px;
+							color: #48b6e2;
 							white-space: nowrap;
-							i {
-								padding-right: 5px;
+							text-overflow: ellipsis;
+							overflow: hidden;
+						}
+						.uuid {
+							padding: 5px 0;
+							font-size: 12px;
+							color: #999;
+						}
+						span {
+							font-size: 14px;
+							color: #555;
+						}
+						.addBtn {
+							span {
+								font-size: 12px;
 							}
 						}
+					}
+					.boxTop {
+						// .el-button {
+						//   span { font-size: 12px;}
+						// }
+					}
+					.boxBottom {
+						padding-top: 10px;
+						.data-list {
+							width: 100%;
+							margin-bottom: 5px;
+							line-height: 35px;
+							background-color: #f0fafe;
+							list-style: none;
+							.txt {
+								display: inline-block;
+								width: 120px;
+								//padding-left: 15px;
+								font-size: 12px;
+								color: #000;
+								text-overflow: ellipsis;
+								white-space: nowrap;
+								i {
+									padding-right: 5px;
+								}
+							}
 
-						.btn {
-							display: inline;
-						}
-						.popover-tip {
-							display: inline-block;
-							color: #f00;
-							transform: rotate(180deg);
-							cursor: pointer;
+							.btn {
+								display: inline;
+							}
+							.popover-tip {
+								display: inline-block;
+								color: #f00;
+								transform: rotate(180deg);
+								cursor: pointer;
+							}
 						}
 					}
 				}
 			}
+			.screen {
+				padding-right: 15px;
+			}
+			.red {
+				color: #ee5353;
+			}
+			.bgred {
+				background-color: #ee5353 !important;
+			}
+			.green {
+				color: #48b6e2;
+			}
+			.bggreen {
+				background-color: #71c179 !important;
+			}
 		}
-	}
-
-	.screen {
-		padding-right: 15px;
-	}
-	.red {
-		color: #ee5353;
-	}
-	.bgred {
-		background-color: #ee5353 !important;
-	}
-	.green {
-		color: #48b6e2;
-	}
-	.bggreen {
-		background-color: #71c179 !important;
 	}
 	.noText {
 		display: flex;
 		height: calc(100% - 60px);
 		align-items: center;
 		justify-content: center;
-		color: #1976d2;
+		color: #48b6e2;
 		font-size: 16px;
 		background-color: #fff;
+	}
+	.editAgentForm {
+		.restBtn {
+			display: inline-block;
+			margin-left: 10px;
+			color: #48b6e2;
+			cursor: pointer;
+		}
+		.ipTip {
+			color: #999;
+			font-size: 12px;
+			line-height: 15px;
+		}
 	}
 }
 </style>
 <style lang="less">
-.cluster {
-	width: 100%;
-	.content {
-		padding: 10px;
-		width: 100%;
-		height: 100%;
-		.el-row {
-			margin-bottom: 20px;
+.clusterManagement-container {
+	.editAgentForm {
+		.el-form-item {
+			margin-bottom: 5px;
 		}
-		.boxBottom {
-			.el-button {
-				padding: 4px 10px;
-				font-size: 12px;
-			}
-		}
-	}
-}
-
-.popover-box {
-	color: #333;
-	h5 {
-		margin: 0;
-		padding-bottom: 5px;
-	}
-	div {
-		font-size: 12px;
-	}
-}
-
-.serverDialog {
-	.el-dialog__body {
-		padding: 30px 50px 0 20px;
-	}
-	.el-dialog__footer {
-		padding: 10px 50px 20px;
 	}
 }
 </style>

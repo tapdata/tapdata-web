@@ -136,7 +136,8 @@ export default {
 				dataFlow: this.$t('notification.dataFlow'),
 				agent: this.$t('notification.manageSever'),
 				inspect: this.$t('notification.inspect'),
-				JobDDL: this.$t('notification.ddlDeal')
+				JobDDL: this.$t('notification.ddlDeal'),
+				system: this.$t('notification.system')
 			},
 			userOperations: []
 		};
@@ -152,9 +153,6 @@ export default {
 			let msg = {
 				type: 'notification'
 			};
-			// if (this.$cookie.get('isAdmin') == 0 && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-			// 	msg['userId'] = this.$cookie.get('user_id');
-			// }
 			this.getUnReadNum();
 			ws.on('notification', data => {
 				if (data.data && data.data.length > 0) {
@@ -186,9 +184,6 @@ export default {
 					read: false
 				}
 			};
-			// if (this.$cookie.get('isAdmin') == 0 && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-			// 	where.where['userId'] = { regexp: `^${this.$cookie.get('user_id')}$` };
-			// }
 			this.$api('notification')
 				.count(where)
 				.then(res => {
@@ -272,11 +267,6 @@ export default {
 					type: 'userOperation'
 				}
 			};
-			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-			// 	filter.where.user_id = {
-			// 		like: this.$cookie.get('user_id')
-			// 	};
-			// }
 			this.$api('UserLogs')
 				.get({
 					filter: JSON.stringify(filter)

@@ -199,10 +199,6 @@ export default {
 		box-sizing: border-box;
 		overflow: hidden;
 	}
-	li:first-child {
-		margin-right: 20px;
-		// border-right: 1px solid #dedee4;
-	}
 	li.marTop25 {
 		margin-top: 25px;
 	}
@@ -224,8 +220,8 @@ export default {
 			word-break: break-word;
 			box-sizing: border-box;
 			overflow: hidden;
+			border: 1px solid #fff;
 			&:hover {
-				padding: 18px;
 				background: rgba(250, 250, 250, 1);
 				border: 1px solid rgba(222, 222, 228, 1);
 				box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.21);

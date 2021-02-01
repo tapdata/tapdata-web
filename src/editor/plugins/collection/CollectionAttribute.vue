@@ -35,8 +35,9 @@
 								icon="el-icon-plus"
 								style="padding: 7px;margin-left: 7px"
 								v-readonlybtn="'datasource_creation'"
-								@click="$refs.databaseForm.show({ whiteList: ['mongodb'] })"
+								@click="creatDatabase"
 							></el-button>
+							<!-- @click="$refs.databaseForm.show({ whiteList: ['mongodb'] })" -->
 						</el-tooltip>
 						<el-tooltip
 							class="item"
@@ -64,7 +65,7 @@
 								@click="handDatabase"
 							></el-button>
 						</el-tooltip>
-						<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
+						<!-- <DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm> -->
 					</div>
 				</el-form-item>
 
@@ -365,7 +366,7 @@
 </template>
 
 <script>
-import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
+// import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
 import MultiSelection from '../../../components/MultiSelection';
 import RelatedTasks from '../../../components/relatedTasks';
 import ClipButton from '@/components/ClipButton';
@@ -393,7 +394,6 @@ export default {
 	name: 'Collection',
 	components: {
 		Entity,
-		DatabaseForm,
 		MultiSelection,
 		ClipButton,
 		RelatedTasks,
@@ -439,34 +439,33 @@ export default {
 			handler() {
 				let schemas = tempSchemas;
 				if (this.schemaSelectConfig.options.length > 0) {
+					let schema,
+						defaultSchema = {
+							table_name: this.model.tableName,
+							cdc_enabled: true,
+							meta_type: 'collection',
+							fields: [
+								{
+									autoincrement: false,
+									columnSize: 0,
+									dataType: 7,
+									data_type: 'OBJECT_ID',
+									field_name: '_id',
+									id: uuid(),
+									is_nullable: true,
+									javaType: 'String',
+									key: 'PRI',
+									original_field_name: '_id',
+									precision: 0,
+									primary_key_position: 1,
+									scale: 0,
+									table_name: this.model.tableName
+								}
+							]
+						};
 					if (this.model.tableName) {
-						let schema = schemas.filter(s => s.table_name === this.model.tableName);
-						schema =
-							schema && schema.length > 0
-								? schema[0]
-								: {
-										table_name: this.model.tableName,
-										cdc_enabled: true,
-										meta_type: 'collection',
-										fields: [
-											{
-												autoincrement: false,
-												columnSize: 0,
-												dataType: 7,
-												data_type: 'OBJECT_ID',
-												field_name: '_id',
-												id: uuid(),
-												is_nullable: true,
-												javaType: 'String',
-												key: 'PRI',
-												original_field_name: '_id',
-												precision: 0,
-												primary_key_position: 1,
-												scale: 0,
-												table_name: this.model.tableName
-											}
-										]
-								  };
+						schema = schemas.filter(s => s.table_name === this.model.tableName);
+						schema = schema && schema.length > 0 ? schema[0] : defaultSchema;
 
 						let fields = schema.fields || [];
 						//过滤被删除的字段
@@ -492,8 +491,8 @@ export default {
 						this.model.collectionAggregate = false;
 						this.model.isFilter = false;
 						this.model.collectionAggrPipeline = '';
-						this.$emit('schemaChange', _.cloneDeep(schema));
 					}
+					this.$emit('schemaChange', _.cloneDeep(schema));
 				}
 
 				this.taskData.tableName = this.model.tableName;
@@ -520,12 +519,12 @@ export default {
 	data() {
 		let self = this;
 		return {
+			dialogDatabaseTypeVisible: false,
 			aggregationDialog: false,
 			reloadModelLoading: false,
 			addtableFalg: false,
 			dialogData: null,
 			databaseData: [],
-			tableData: [],
 			copyConnectionId: '',
 			tableNameId: '',
 
@@ -653,6 +652,11 @@ export default {
 	},
 
 	methods: {
+		creatDatabase() {
+			let href = '/#/connections/create?databaseType=mongodb';
+			window.open(href, '_blank');
+		},
+
 		// 新建表弹窗
 		addNewTable() {
 			this.addtableFalg = true;
@@ -715,8 +719,8 @@ export default {
 		// 判断表是否可以跳转
 		tableIsLink() {
 			this.tableNameId = '';
-			if (this.tableData && this.tableData.length) {
-				this.tableData.forEach(item => {
+			if (tempSchemas && tempSchemas.length) {
+				tempSchemas.forEach(item => {
 					if (item.table_name === this.model.tableName) {
 						this.tableNameId = item.tableId;
 					}
@@ -746,7 +750,7 @@ export default {
 			};
 
 			MetadataInstances.get(params).then(res => {
-				this.databaseData = res.data;
+				this.databaseData = Object.freeze(res.data);
 			});
 		},
 
@@ -867,7 +871,6 @@ export default {
 				.get([connectionId])
 				.then(result => {
 					if (result.data && result.data.schema && result.data.schema.tables) {
-						this.tableData = result.data.schema.tables;
 						let schemas = (result.data.schema && result.data.schema.tables) || [];
 						tempSchemas = schemas.sort((t1, t2) =>
 							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
@@ -885,7 +888,7 @@ export default {
 							if (hash[item.value]) {
 								this.repeatTable.push(item.value);
 							} else {
-								self.schemaSelectConfig.options.push(item);
+								self.schemaSelectConfig.options.push(Object.assign({}, item));
 								hash[item.value] = 1;
 							}
 						});
@@ -947,15 +950,18 @@ export default {
 			let settingData = vueAdapter.editor.getData().settingData;
 			this.sync_typeFalg = settingData.sync_type === 'initial_sync' ? true : false;
 
-			let getCellData = vueAdapter.editor.graph.graph.getCells();
+			// let getCellData = vueAdapter.editor.graph.graph.getCells();
 
-			if (getCellData && getCellData.length) {
-				this.logsFlag = getCellData[0].get('type') === 'app.Logminer' ? true : false;
+			// connection上一个节点是日志挖掘，已存在的数据表单项禁用
+			let sourceCell = cell.graph
+				.getConnectedLinks(cell, { inbound: true })
+				.map(link => link.getSourceCell().getFormData());
+			if (sourceCell && sourceCell.length) {
+				this.logsFlag = sourceCell.some(item => item.type === 'log_collect');
 				if (this.logsFlag) {
 					this.model.dropTable = true;
 				}
 			}
-			// let sourceType = '';
 		},
 		getData() {
 			if (this.model.isFilter) {

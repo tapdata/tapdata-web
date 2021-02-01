@@ -354,12 +354,17 @@ const childRoutes = [
 	{
 		path: '/clusterManagement',
 		name: 'clusterManagement',
-		component: view('clusterManagement/layout'),
+		component: view('clusterManagement/clusterManagement'),
 		meta: {
 			code: 'Cluster_management_menu',
 			title: i18n.t('tap.clusterManagement'),
 			isCollapse: false
 		}
+	},
+	{
+		path: '/dailyRecord',
+		name: 'dailyRecord',
+		component: view('clusterManagement/dailyRecord')
 	},
 	{
 		path: '/dataFlows',

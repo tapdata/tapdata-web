@@ -39,10 +39,10 @@
 		</div>
 		<div class="clear"></div>
 		<div class="e-schema-editor" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom">
-			<el-container>
+			<el-container v-loading="loadingSchema">
 				<el-main>
 					<el-tree
-						:data="schema ? schema.fields : []"
+						:data="schema.fields || []"
 						:node-key="nodeKey"
 						default-expand-all
 						:expand-on-click-node="false"
@@ -461,8 +461,20 @@ export default {
 			fieldIsDeleted: [],
 			fieldNameMap: {},
 			fieldOriginalIds: [],
-			originalOperations: []
+			originalOperations: [],
+			interval: null,
+			loadingSchema: false,
+			step: 0
 		};
+	},
+	watch: {
+		schema(schema) {
+			if (schema) {
+				//只有第一次懒加载
+				if (this.step === 0) this.lazyData(schema);
+				this.step = 1;
+			}
+		}
 	},
 	mounted() {
 		setTimeout(() => {
@@ -470,6 +482,35 @@ export default {
 		}, 100);
 	},
 	methods: {
+		//lazyData
+		lazyData(schema) {
+			let fields = schema.fields || [];
+			if (fields.length === 0) return;
+			let total = fields.length;
+			this.loadingSchema = true;
+			let size = total < 5 ? total : 10;
+			let index = 0;
+			let interval = this.interval;
+			if (interval) {
+				clearInterval(interval);
+				this.interval = null;
+			}
+			this.$nextTick(() => {
+				let load = () => {
+					this.schema.fields.push(...fields.slice((index + 0) * size, (index + 1) * size));
+					index++;
+					this.loadingSchema = false;
+				};
+				this.interval = setInterval(() => {
+					if (index * size < total) {
+						load();
+					} else {
+						clearInterval(this.interval);
+						this.interval = null;
+					}
+				}, 100);
+			});
+		},
 		setOperations(operations) {
 			this.model.operations = operations;
 		},
@@ -1173,7 +1214,7 @@ export default {
 	}
 	.item {
 		display: inline-block;
-		width: 34%;
+		width: 32%;
 		font-size: 12px;
 	}
 	.op {

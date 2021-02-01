@@ -50,7 +50,15 @@
 							<div class="url-tip" slot="timezone">
 								{{ $t('dataForm.form.timeZoneTips') }}
 							</div>
-							<div class="url-tip" slot="fileUrl"></div>
+							<div class="url-tip" slot="kafkaUri">
+								{{ $t('dataForm.form.kafka.hostPlaceHolder') }}
+							</div>
+							<div class="url-tip" slot="lonoreFormatTip">
+								{{ $t('dataForm.form.kafka.lonoreFormatTip') }}
+							</div>
+							<div class="url-tip" slot="pushErrorTip">
+								{{ $t('dataForm.form.kafka.pushErrorTip') }}
+							</div>
 						</form-builder>
 						<!-- 文件数据库 -->
 						<template v-if="model.database_type === 'file' && model.connection_type === 'source'">
@@ -286,7 +294,26 @@ const defaultModel = {
 			include_filename: '',
 			exclude_filename: ''
 		}
-	]
+	],
+
+	search_databaseType: '',
+
+	// kafka
+	kafkaBootstrapServers: '',
+	// kafkaSelectTopics: '',
+	// kafkaRawTopics: '',
+	kafkaPatternTopics: '',
+	kafkaIgnoreInvalidRecord: false,
+	kafkaAcks: '',
+	kafkaCompressionType: '',
+	kafkaIgnorePushError: false
+	// kafkaConsumerRequestTimeout: '',
+	// kafkaConsumerUseTransactional: '',
+	// kafkaMaxPollRecords: '',
+	// kafkaPollTimeoutMS: '',
+	// kafkaMaxFetchBytes: '',
+	// kafkaMaxFetchWaitMS: '',
+	// kafkaIgnoreInvalidRecord: ''
 };
 
 export default {
@@ -299,7 +326,20 @@ export default {
 			visible: false,
 			timezones: [],
 			dataTypes: [],
-			whiteList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres', 'elasticsearch', 'redis', 'file'], //目前白名单,
+			whiteList: [
+				'mysql',
+				'oracle',
+				'mongodb',
+				'sqlserver',
+				'postgres',
+				'elasticsearch',
+				'redis',
+				'file',
+				'db2',
+				'kafka',
+				'mariadb',
+				'mysqlpxc'
+			], //目前白名单,
 			model: Object.assign({}, defaultModel),
 			config: {
 				items: []
@@ -316,12 +356,19 @@ export default {
 			editBtnLoading: false,
 			connectionTypeOption: '',
 			isUrlOption: '',
-			rename: ''
-			// repeatDialogVisible: false,
-			// connectionObj: {
-			// 	name: '',
-			// 	id: ''
-			// }
+			rename: '',
+			kafka: {
+				id: '',
+				name: '',
+				database_type: '',
+				connection_type: '',
+				kafkaBootstrapServers: '',
+				kafkaPatternTopics: '',
+				kafkaIgnoreInvalidRecord: false,
+				kafkaAcks: '',
+				kafkaCompressionType: '',
+				kafkaIgnorePushError: false
+			}
 		};
 	},
 	created() {
@@ -415,7 +462,13 @@ export default {
 		},
 		// 按照数据库类型获取表单配置规则
 		getFormConfig() {
-			let func = formConfig[this.model.database_type];
+			let type = this.model.database_type;
+
+			if (type === 'mysql pxc') {
+				type = 'mysqlpxc';
+			}
+			let func = formConfig[type];
+
 			if (func) {
 				let config = func(this);
 				let items = defaultConfig.concat(config.items);
@@ -451,6 +504,7 @@ export default {
 		submit() {
 			this.submitBtnLoading = true;
 			let falg = false;
+			this.model.search_databaseType = '';
 			if (this.model.database_type === 'file' && this.model.connection_type === 'source') {
 				this.$refs.fileForm.validate(valid => {
 					if (!valid) {
@@ -459,8 +513,29 @@ export default {
 				});
 			}
 
+			// if (this.model.database_type === 'mysqlpxc') {
+			// 	// this.model.search_databaseType = this.model.database_type;
+			// 	this.model.database_type = 'mysql pxc';
+			// }
+
 			this.$refs.form.validate(valid => {
 				if (valid && !falg) {
+					// kafka传值
+					if (this.model.database_type === 'kafka') {
+						Object.keys(this.kafka).forEach(key => {
+							this.kafka[key] = this.model[key];
+						});
+						this.model = this.kafka;
+					} else {
+						Object.keys(this.model).forEach(key => {
+							if (this.kafka[key] === this.model[key]) {
+								if (!['id', 'name', 'database_type', 'connection_type'].includes(this.model[key])) {
+									delete this.model[key];
+								}
+							}
+						});
+					}
+
 					let params = Object.assign(
 						{},
 						{
@@ -668,6 +743,7 @@ export default {
 			.form-wrap {
 				display: flex;
 				overflow-y: auto;
+				flex: 1;
 			}
 			.form {
 				padding: 0 20px;
@@ -710,15 +786,13 @@ export default {
 			}
 			.edit-header-box {
 				border-bottom: 1px solid #eee;
-				padding-bottom: 20px;
 				margin-bottom: 20px;
 			}
 			.edit-header {
 				display: flex;
 				justify-content: flex-start;
 				width: 578px;
-				margin: 0 auto;
-				margin-top: 40px;
+				margin: 30px auto;
 			}
 			.title {
 				display: flex;

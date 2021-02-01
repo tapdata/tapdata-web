@@ -56,17 +56,20 @@
 							>
 						</el-tooltip>
 					</div>
-					<div class="info-list">
+					<div class="info-list" v-if="stage.database_host">
 						<span class="info-label">{{ $t('dataForm.form.host') }}:</span>
 						<el-tooltip :content="stage.database_host" placement="bottom-start">
 							<span class="row-text">{{ stage.database_host }}</span>
 						</el-tooltip>
 					</div>
-					<div class="info-list" v-if="!['file'].includes(stage.database_type)">
+					<div class="info-list" v-if="!['file'].includes(stage.database_type) && stage.database_name">
 						<span class="info-label">{{ $t('dataForm.form.databaseName') }}:</span>
 						<span class="info-text">{{ stage.database_name }}</span>
 					</div>
-					<div class="info-list" v-if="!['mongodb', 'file'].includes(stage.database_type)">
+					<div
+						class="info-list"
+						v-if="!['mongodb', 'file'].includes(stage.database_type) && stage.database_owner"
+					>
 						<span class="info-label">{{ $t('dataFlow.ownedUser') }}:</span>
 						<span class="info-text">{{ stage.database_owner }}</span>
 					</div>
@@ -83,6 +86,7 @@
 						<span class="info-text">{{ flow.outputNumber }}</span>
 					</div> -->
 				</div>
+
 				<div class="info fl" v-else-if="stageType">
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.nodeName') }}:</span>
@@ -263,7 +267,10 @@ export default {
 				js_processor: this.$t('editor.cell.processor.script.tip'),
 				'dummy db': this.$t('editor.cell.data_node.dummy.tip'),
 				'rest api': this.$t('editor.cell.data_node.api.tip'),
-				custom_processor: this.$t('editor.cell.processor.customProcessor.name')
+				custom_processor: this.$t('editor.cell.processor.customProcessor.name'),
+				kafka: this.$t('editor.cell.data_node.kafkaText'),
+				mariadb: 'mariadb',
+				'mysql pxc': 'mysql pxc'
 			},
 			flow: {
 				name: '',
@@ -643,7 +650,19 @@ export default {
 
 					if (this.stageType === 'database') {
 						this.getStageDataApi(currentStageData.connectionId, '');
-					} else if (['table', 'collection', 'json', 'excel', 'csv', 'xml'].includes(this.stageType)) {
+					} else if (
+						[
+							'table',
+							'collection',
+							'json',
+							'excel',
+							'csv',
+							'xml',
+							'kafka',
+							'mariadb',
+							'mysql pxc'
+						].includes(this.stageType)
+					) {
 						this.getStageDataApi(currentStageData.connectionId, this.tableName);
 					}
 				}

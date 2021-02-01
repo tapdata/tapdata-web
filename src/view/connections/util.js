@@ -55,5 +55,8 @@ export const TYPEMAP = {
 	custom_connection: 'Custom connection',
 	'rest api': 'REST API',
 	'dummy db': 'Dummy DB',
-	gridfs: 'GridFS'
+	gridfs: 'GridFS',
+	kafka: 'Kafka',
+	mariadb: 'MariaDB',
+	'mysql pxc': 'MySQL PXC'
 };

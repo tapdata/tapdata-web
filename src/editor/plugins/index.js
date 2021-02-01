@@ -27,3 +27,4 @@ export * from './databaseLink/databaseLink';
 export * from './jointCache/JointCache';
 export * from './customProcessor/CustomProcessor';
 export * from './fileFormBuilder/fileFormBuilder';
+export * from './kafka/KafkaNode';

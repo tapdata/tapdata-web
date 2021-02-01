@@ -5,7 +5,6 @@
 		:visible.sync="visible"
 		:title="$t('dataForm.title')"
 		size="40%"
-		:modal="false"
 		:withHeader="false"
 		:before-close="handleClose"
 	>
@@ -115,10 +114,10 @@
 					item.value
 				}}</span>
 			</li>
-			<li v-show="data.database_port && data.database_type !== 'file'">
+			<!-- <li v-show="data.database_port && !['file', 'mariadb'].includes(data.database_type)">
 				<span class="label">{{ $t('dataForm.form.port') }}</span>
 				<span class="value align-center"> {{ data.database_port }}</span>
-			</li>
+			</li> -->
 			<div
 				v-for="(item, index) in data.file_sources"
 				:key="index"
@@ -181,7 +180,13 @@ export default {
 			timer: null,
 			showProgress: false,
 			dialogTestVisible: false,
-			userId: ''
+			userId: '',
+			kafkaACK: [
+				{ label: this.$t('dataForm.form.kafka.kafkaAcks0'), value: '0' },
+				{ label: this.$t('dataForm.form.kafka.kafkaAcks1'), value: '1' },
+				{ label: this.$t('dataForm.form.kafka.kafkaAcks_1'), value: '-1' },
+				{ label: this.$t('dataForm.form.kafka.kafkaAcksAll'), value: 'all' }
+			]
 		};
 	},
 	watch: {
@@ -223,7 +228,7 @@ export default {
 				let data = result.data;
 				this.data = result.data;
 				this.name = data.name;
-				this.type = data.database_type;
+				this.type = data.search_databaseType ? data.search_databaseType : data.database_type;
 				this.status = data.status;
 				this.userId = data.user_id;
 				this.loadFieldsStatus = data.loadFieldsStatus;
@@ -246,6 +251,19 @@ export default {
 					});
 					items = items || [];
 					items = items.filter(item => item.label); //清掉undefined
+
+					// kafka显示
+					if (data.database_type === 'kafka') {
+						items.forEach(el => {
+							if (el.field === 'kafkaAcks') {
+								this.kafkaACK.forEach(elChild => {
+									if (elChild.value === el.value) {
+										el.value = elChild.label;
+									}
+								});
+							}
+						});
+					}
 
 					// 文件预览显示
 					if (data.database_type === 'file') {
@@ -396,7 +414,10 @@ export default {
 					'elasticsearch',
 					'redis',
 					'db2',
-					'file'
+					'file',
+					'kafka',
+					'mariadb',
+					'mysql pxc'
 				].includes(type)
 			) {
 				this.$router.push('connections/' + id + '/edit?databaseType=' + type);

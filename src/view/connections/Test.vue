@@ -94,7 +94,8 @@ export default {
 				warning: '#ffc107',
 				ready: '#70AD47',
 				invalid: '#f56c6c',
-				testing: '#aaaaaa'
+				testing: '#aaaaaa',
+				unTest: '#aaaaaa'
 			},
 			statusMap: {
 				ready: this.$t('dataForm.test.success'),
@@ -102,7 +103,8 @@ export default {
 				testing: this.$t('dataForm.test.testing'),
 				passed: this.$t('dataForm.test.success'),
 				waiting: this.$t('dataForm.test.testing'),
-				failed: this.$t('dataForm.test.fail')
+				failed: this.$t('dataForm.test.fail'),
+				unTest: this.$t('dataForm.test.unTest')
 			}
 		};
 	},
@@ -130,6 +132,13 @@ export default {
 					};
 					if (result.response_body) {
 						let validate_details = result.response_body.validate_details || [];
+						let res = validate_details.filter(item => item.status !== 'waiting');
+						if (res.length === 0) {
+							validate_details = validate_details.map(item => {
+								item.status = 'unTest';
+								return item;
+							});
+						}
 						this.testData.testLogs = validate_details;
 						testData['testLogs '] = validate_details;
 						testData['status'] = result.status;

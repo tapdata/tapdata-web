@@ -35,8 +35,9 @@
 								icon="el-icon-plus"
 								style="padding: 7px;margin-left: 7px"
 								v-readonlybtn="'datasource_creation'"
-								@click="$refs.databaseForm.show({ blackList: ['mongodb'] })"
+								@click="creatDatabase"
 							></el-button>
+							<!-- @click="$refs.databaseForm.show({ blackList: ['mongodb'] })" -->
 						</el-tooltip>
 						<el-tooltip
 							class="item"
@@ -64,7 +65,7 @@
 								@click="handDatabase"
 							></el-button>
 						</el-tooltip>
-						<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
+						<!-- <DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm> -->
 					</div>
 				</el-form-item>
 
@@ -240,7 +241,7 @@
 </template>
 
 <script>
-import DatabaseForm from '@/view/job/components/DatabaseForm/DatabaseForm';
+// import DatabaseForm from '@/view/job/components/DatabaseForm/DatabaseForm';
 import ClipButton from '@/components/ClipButton';
 import queryBuilder from '@/components/QueryBuilder';
 import { convertSchemaToTreeData, removeDeleted } from '../../util/Schema';
@@ -257,12 +258,23 @@ let editor = null;
 let tempSchemas = [];
 export default {
 	name: 'Table',
-	components: { Entity, DatabaseForm, ClipButton, CreateTable, RelatedTasks, queryBuilder },
+	components: { Entity, ClipButton, CreateTable, RelatedTasks, queryBuilder },
 	props: {
 		database_types: {
 			type: Array,
 			default: function() {
-				return ['mysql', 'oracle', 'sqlserver', 'sybase ase', 'gbase-8s', 'db2', 'gaussdb200', 'postgres'];
+				return [
+					'mysql',
+					'mysql pxc',
+					'oracle',
+					'sqlserver',
+					'sybase ase',
+					'gbase-8s',
+					'db2',
+					'gaussdb200',
+					'postgres',
+					'mariadb'
+				];
 			}
 		}
 	},
@@ -295,6 +307,7 @@ export default {
 			immediate: true,
 			handler() {
 				this.tableIsLink();
+				this.handlerSchemaChange();
 			}
 		},
 		mergedSchema: {
@@ -322,7 +335,6 @@ export default {
 			addtableFalg: false,
 			dialogData: null,
 			databaseData: [],
-			tableData: [],
 			copyConnectionId: '',
 			tableNameId: '',
 
@@ -424,6 +436,12 @@ export default {
 
 	methods: {
 		convertSchemaToTreeData,
+
+		creatDatabase() {
+			let href = '/#/connections/create?databaseType=oracle';
+			window.open(href, '_blank');
+		},
+
 		// 查看监控
 		seeMonitor() {
 			editor.goBackMontior();
@@ -473,8 +491,8 @@ export default {
 		// 判断表是否可以跳转
 		tableIsLink() {
 			this.tableNameId = '';
-			if (this.tableData.length) {
-				this.tableData.forEach(item => {
+			if (tempSchemas.length) {
+				tempSchemas.forEach(item => {
 					if (item.original_name === this.model.tableName) {
 						this.tableNameId = item.id;
 					}
@@ -505,7 +523,7 @@ export default {
 			};
 
 			MetadataInstances.get(params).then(res => {
-				this.databaseData = res.data;
+				this.databaseData = Object.freeze(res.data);
 			});
 		},
 
@@ -564,7 +582,6 @@ export default {
 			self.loading = true;
 			MetadataInstances.get(params)
 				.then(res => {
-					this.tableData = res.data;
 					this.tableIsLink();
 					let schemas = res.data.map(it => {
 						it.table_name = it.original_name;
@@ -600,9 +617,12 @@ export default {
 			let self = this;
 			if (tempSchemas.length > 0) {
 				let schemas = tempSchemas.filter(s => s.table_name === this.model.tableName);
-				if (schemas && schemas.length > 0) this.model.tableId = schemas[0].id;
+				if (schemas && schemas.length > 0) {
+					this.model.tableId = schemas[0].id;
+				} else {
+					this.model.tableId = '';
+				}
 			}
-
 			if (this.model.tableId) {
 				let params = {
 					filter: JSON.stringify({
@@ -636,6 +656,14 @@ export default {
 						self.$emit('schemaChange', _.cloneDeep(res.data.records[0].schema.tables[0]));
 					}
 				});
+			} else {
+				let schema = {
+					cdc_enabled: true,
+					fields: [],
+					meta_type: 'table',
+					table_name: this.model.tableName
+				};
+				self.$emit('schemaChange', _.cloneDeep(schema));
 			}
 			this.taskData.tableName = this.model.tableName;
 

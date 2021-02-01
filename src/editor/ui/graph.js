@@ -60,9 +60,6 @@ export default class Graph extends Component {
 
 	initGraph() {
 		let self = this;
-
-		// shapes(joint);
-
 		const graph = (this.graph = new joint.dia.Graph());
 
 		graph.on(
@@ -94,7 +91,7 @@ export default class Graph extends Component {
 			gridSize: 10,
 			drawGrid: false,
 			linkPinning: false,
-			// markAvailable: true,
+			markAvailable: true,
 			// new joint.shapes.app.Link()
 			defaultLink: function(cellView) {
 				if (cellView.model.get('type') === 'app.Database') return new joint.shapes.app.databaseLink();
@@ -107,29 +104,37 @@ export default class Graph extends Component {
 			async: true,
 			sorting: joint.dia.Paper.sorting.APPROX,
 			snapLinks: 75,
-			highlighting: {
-				default: {
-					name: 'stroke',
-					options: {
-						padding: 0,
-						rx: 17,
-						ry: 17,
-						attrs: {
-							'stroke-width': 3,
-							stroke: '#00bcd4'
-						}
-					}
-				}
-			},
+			// highlighting: {
+			// 	default: {
+			// 		name: 'stroke',
+			// 		options: {
+			// 			padding: 0,
+			// 			rx: 8,
+			// 			ry: 8,
+			// 			attrs: {
+			// 				'stroke-width': 2,
+			// 				stroke: '#00bcd4'
+			// 			}
+			// 		}
+			// 	}
+			// },
 			validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end) {
 				// don't allow loop links
 				if (cellViewS === cellViewT) return false;
+				// if (!magnetT) return false;
+				// if (magnetT.getAttribute('port-group') !== 'in') return false;
 
 				let targetView = end === 'target' ? cellViewT : cellViewS;
 				let sourceView = end === 'target' ? cellViewS : cellViewT;
+				let sameTarget = false;
+				self.graph.getConnectedLinks(sourceView.model).map(link => {
+					if (link.getTargetCell() && link.getTargetCell().id == targetView.model.id) sameTarget = true;
+				});
+				if (sameTarget) return false;
 
 				// don't allow link to link connection
 				if (targetView.model.isLink()) return false;
+				if (targetView.model.getFormData().disabled) return false;
 
 				// target don't accept source connection
 				if (
@@ -144,22 +149,79 @@ export default class Graph extends Component {
 					!sourceView.model.allowTarget(targetView.model)
 				)
 					return false;
-				if (!self.validPath.call(self, sourceView, targetView)) {
-					if (!count) {
-						Message.error({
-							message: i18n.t('dataFlow.aggregateNotDataNode')
-						});
-						count = 1;
-						setTimeout(() => {
-							count = 0;
-						}, 3000);
+				try {
+					if (!self.validPath.call(self, sourceView, targetView)) {
+						if (!count) {
+							Message.error({
+								message: i18n.t('dataFlow.aggregateNotDataNode')
+							});
+							count = 1;
+							setTimeout(() => {
+								count = 0;
+							}, 3000);
+						}
+						return false;
 					}
+				} catch (e) {
 					return false;
 				}
 
 				return true;
 			}
 		}));
+		paper.on('cell:mouseenter', function(cellView) {
+			if (!self.editable) return;
+			if (cellView.model.getFormData().disabled) return;
+			if (cellView.model.isLink()) return;
+			cellView.vel.addClass('visible');
+			this._curCell = cellView;
+		});
+		paper.on('cell:mouseover', function(cellView) {
+			if (!self.editable) return;
+			if (cellView.model.getFormData().disabled) return;
+			cellView.vel.addClass('visible');
+			if (event.target.getAttribute('port')) {
+				this._curMag = event.target.getAttribute('port');
+				this._curCell = cellView;
+				cellView.model.portProp(this._curMag, 'attrs/circle/fill', '#CAE8F4');
+				cellView.model.portProp(this._curMag, 'attrs/circle/stroke', '#48b6e2');
+				cellView.model.portProp(this._curMag, 'attrs/circle/stroke-width', 2);
+				cellView.model.portProp(this._curMag, 'attrs/circle/r', 7);
+			} else if (this._curMag && this._curCell.model.hasPort(this._curMag)) {
+				this._curCell.model.portProp(this._curMag, 'attrs/circle/fill', '#fff');
+				this._curCell.model.portProp(this._curMag, 'attrs/circle/stroke', '#dedee4');
+				this._curCell.model.portProp(this._curMag, 'attrs/circle/r', 5);
+				this._curCell.model.portProp(this._curMag, 'attrs/circle/stroke-width', 1);
+				delete this._curMag;
+				delete this._curCell;
+			}
+		});
+		paper.on('blank:mouseover', function() {
+			if (this._curMag && this._curCell.model.hasPort(this._curMag)) {
+				this._curCell.model.portProp(this._curMag, 'attrs/circle/fill', '#fff');
+				this._curCell.model.portProp(this._curMag, 'attrs/circle/stroke', '#dedee4');
+				this._curCell.model.portProp(this._curMag, 'attrs/circle/stroke-width', 1);
+				this._curCell.model.portProp(this._curMag, 'attrs/circle/r', 5);
+				delete this._curMag;
+				delete this._curCell;
+			}
+			if (this._curCell) this._curCell.vel.removeClass('visible');
+		});
+		paper.on('cell:mouseout', function(cellView) {
+			cellView.vel.removeClass('visible');
+		});
+
+		paper.options.highlighting.magnetAvailability = {
+			name: 'stroke',
+			options: {
+				//padding: 2,
+				attrs: {
+					'stroke-width': 2,
+					stroke: '#48b6e2',
+					fill: '#CAE8F4'
+				}
+			}
+		};
 
 		paper.on('blank:mousewheel', _.partial(this.onMousewheel, null), this);
 		paper.on('cell:mousewheel', this.onMousewheel, this);
@@ -181,7 +243,6 @@ export default class Graph extends Component {
 					});
 					return;
 				}
-				log('Graph.link.connect', arguments);
 				let acyclic = self.isAcyclic();
 				if (acyclic) {
 					self.updateOutputSchema(linkView.model);
@@ -189,19 +250,75 @@ export default class Graph extends Component {
 					linkView.model.disconnect();
 					linkView.hideTools();
 				}
+				linkView.targetView.model.portProp(
+					linkView.targetMagnet.getAttribute('port'),
+					'attrs/circle/visibility',
+					'visible'
+				);
+				linkView.sourceView.model.portProp(
+					linkView.sourceMagnet.getAttribute('port'),
+					'attrs/circle/visibility',
+					'visible'
+				);
+				linkView.sourceView.model.portProp(
+					linkView.sourceMagnet.getAttribute('port'),
+					'attrs/circle/fill',
+					'#fff'
+				);
+				linkView.sourceView.model.portProp(linkView.sourceMagnet.getAttribute('port'), 'attrs/circle/r', 5);
+				linkView.sourceView.model.portProp(
+					linkView.sourceMagnet.getAttribute('port'),
+					'attrs/circle/stroke',
+					'#dedee4'
+				);
+				linkView.sourceView.model.portProp(
+					linkView.sourceMagnet.getAttribute('port'),
+					'attrs/circle/stroke-width',
+					1
+				);
+				linkView.sourceView.vel.removeClass('visible');
+			},
+			'link:disconnect': (linkView, evt, elementViewDisconnected, magent) => {
+				let hasConnected = false;
+				self.graph.getConnectedLinks(elementViewDisconnected.model).map(link => {
+					if (link.target().port == magent.getAttribute('port')) hasConnected = true;
+					if (link.source().port == magent.getAttribute('port')) hasConnected = true;
+				});
+				if (!hasConnected)
+					elementViewDisconnected.model.portProp(magent.getAttribute('port'), 'attrs/circle/visibility', '');
 			}
-			/* 'link:disconnect': (linkView, evt, elementViewDisconnected, magent, arrowhead) => {
-				log('Graph.link.disconnect', arguments);
-				// trigger on graph.remove
-				// self.updateOutputSchema(linkView.model);
-			}, */
 		});
+
 		graph.on({
 			remove: model => {
 				log('Graph.graph.remove');
-				// if( model.isLink() ){
+				if (model.isLink()) {
+					self.graph
+						.getCell(model.get('source').id)
+						.findView(self.paper)
+						.vel.removeClass('visible');
+					let hasConnected = false;
+					self.graph.getConnectedLinks(self.graph.getCell(model.get('source').id)).map(link => {
+						if (link.target().port == model.get('source').port) hasConnected = true;
+						if (link.source().port == model.get('source').port) hasConnected = true;
+					});
+					if (!hasConnected)
+						self.graph
+							.getCell(model.get('source').id)
+							.portProp(model.get('source').port, 'attrs/circle/visibility', '');
+					hasConnected = false;
+					if (model.get('target').id) {
+						self.graph.getConnectedLinks(self.graph.getCell(model.get('target').id)).map(link => {
+							if (link.target().port == model.get('target').port) hasConnected = true;
+							if (link.source().port == model.get('target').port) hasConnected = true;
+						});
+						if (!hasConnected)
+							self.graph
+								.getCell(model.get('target').id)
+								.portProp(model.get('target').port, 'attrs/circle/visibility', '');
+					}
+				}
 				self.updateOutputSchema(model);
-				// }
 				self.emit(EditorEventType.REMOVE_CELL);
 			}
 			/* add: (cell) => {
@@ -234,6 +351,14 @@ export default class Graph extends Component {
 		this.el = paperScroller.el;
 		this.editor.getUI().add(this);
 		paperScroller.render().center();
+		paper.$el.prepend(
+			[
+				'<style>',
+				' .joint-port { visibility: hidden }',
+				' .visible .joint-port { visibility: visible; }',
+				'</style>'
+			].join(' ')
+		);
 	}
 
 	selectionPosition(cell) {
@@ -289,15 +414,19 @@ export default class Graph extends Component {
 		let cells = this.graph.getCells();
 
 		cells.forEach(cell => {
-			let cellView = paper.findViewByModel(cell);
-			if (cellView) {
-				cellView.unhighlight();
+			if (cell.unhighlight) cell.unhighlight();
+			else {
+				let cellView = paper.findViewByModel(cell);
+				if (cellView) {
+					cellView.unhighlight();
+				}
 			}
 		});
 	}
 
 	selectCell(cell) {
 		let self = this;
+		self.unHighlightAllCells();
 		if (Array.isArray(cell)) {
 			self.selection.collection.reset(cell);
 			setTimeout(() => {
@@ -314,14 +443,7 @@ export default class Graph extends Component {
 				setTimeout(() => {
 					self.unHighlightAllCells();
 					let cellView = self.paper.findViewByModel(cell);
-					let isDataNode = cell.isDataNode && cell.isDataNode();
-					cellView.highlight(null, {
-						name: 'stroke',
-						options: {
-							rx: isDataNode ? 20 : 16,
-							ry: isDataNode ? 20 : 16
-						}
-					});
+					cellView.model.highlight();
 				}, 0);
 			}
 		}
@@ -407,6 +529,12 @@ export default class Graph extends Component {
 			cell.set(SCHEMA_DATA_KEY, schema);
 			cell.set(OUTPUT_SCHEMA_DATA_KEY, schema);
 		}
+		['l', 'r', 't', 'b'].forEach(dir =>
+			cell.addPort({
+				id: cell.id + '_' + dir,
+				group: dir
+			})
+		);
 		return cell;
 	}
 
@@ -500,18 +628,22 @@ export default class Graph extends Component {
 
 	selectPrimaryCell(cellView) {
 		let cell = cellView.model;
+		if (this.selectedLink) {
+			this.selectedLinkattr('line/stroke', '#8f8f8f');
+			this.selectedLink = false;
+		}
 		if (this.editable) {
 			if (cell.isElement()) {
 				this.selectCell(cell);
 				this.selectPrimaryElement(cellView);
 			} else {
-				this.selectPrimaryLink(cellView);
+				setTimeout(() => this.selectPrimaryLink(cellView), 20);
 			}
 		} else {
 			if (cell.isElement()) {
 				this.selectCell(cell);
-				// } else {
-				// this.selectPrimaryLink(cellView);
+			} else {
+				this.selectPrimaryLink(cellView);
 			}
 		}
 		this.createInspector(cell);
@@ -550,7 +682,7 @@ export default class Graph extends Component {
 
 		if (elementView.model.getFormData().disablChecker) {
 			halo.$el.append(
-				'<button class="handle" style="top: 40px; width:53px; height:18px; right: -10px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">' +
+				'<button class="handle" style="top: 45px; width:53px; height:18px; right: -10px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">' +
 					i18n.t('dataFlow.Enable') +
 					'</button>'
 			);
@@ -561,7 +693,7 @@ export default class Graph extends Component {
 			});
 		} else if (!elementView.model.getFormData().disabled) {
 			halo.$el.append(
-				'<button class="handle" style="top: 40px; width:53px; height:18px; right: -10px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">' +
+				'<button class="handle" style="top: 45px; width:53px; height:18px; right: -10px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">' +
 					i18n.t('dataFlow.Disable') +
 					'</button>'
 			);
@@ -580,23 +712,20 @@ export default class Graph extends Component {
 
 	selectPrimaryLink(linkView) {
 		this.selectedLink = linkView;
+		this.unHighlightAllCells();
 		if (this.selectedLink.model) this.selectedLink.model.attr('line/stroke', '#00bcd4');
 
 		if (this.isSimple) return;
 		if (linkView.model.getFormData().disabled) return;
 		let ns = joint.linkTools;
 		let toolsView = new joint.dia.ToolsView({
-			name: 'link-pointerdown',
+			//name: 'link-pointerdown',
 			tools: [
-				new ns.Vertices({
-					vertexAdding: true
-				}),
-				// new ns.SourceAnchor(),
-				// new ns.TargetAnchor(),
-				// new ns.SourceArrowhead(),
-				new ns.TargetArrowhead(),
-				new ns.Segments(),
-				// new ns.Boundary({ padding: 15 }),
+				// new ns.Vertices({
+				// 	vertexAdding: true
+				// }),
+				// new ns.TargetArrowhead(),
+				// new ns.Segments(),
 				new ns.Remove({
 					offset: -20,
 					distance: 40
@@ -640,7 +769,7 @@ export default class Graph extends Component {
 							new ns.Vertices({
 								vertexAdding: false
 							}),
-							// new ns.SourceArrowhead(),
+							new ns.SourceArrowhead(),
 							new ns.TargetArrowhead()
 						]
 					});
@@ -1025,6 +1154,9 @@ export default class Graph extends Component {
 			this.toolbar.getWidgetByName('redo').disable();
 			this.toolbar.getWidgetByName('undo').disable();
 			this.toolbar.getWidgetByName('clear').disable();
+			this.graph.getCells().forEach(c => {
+				c.findView(this.paper).options.interactive.addLinkFromMagnet = false;
+			});
 			setTimeout(() => this.paperScroller.centerContent(), 0);
 		}
 	}
@@ -1035,8 +1167,50 @@ export default class Graph extends Component {
 
 	loadData(jsonObject) {
 		this.graph.fromJSON(jsonObject);
+		let self = this;
 		setTimeout(() => {
-			this.paperScroller.centerContent();
+			self.paperScroller.centerContent();
+			//兼容老数据
+			self.graph.getCells().forEach(cell => {
+				if (cell.isLink() || cell.getPorts().length > 1) return;
+				['l', 'r', 't', 'b'].forEach(dir =>
+					cell.addPort({
+						id: cell.id + '_' + dir,
+						group: dir
+					})
+				);
+			});
+			self.graph.getCells().forEach(cell => {
+				if (cell.isLink() && !cell.get('target').port) {
+					let lv = cell.findView(self.paper),
+						dir = 'l',
+						tMag;
+					if (lv.targetPoint.x > lv.targetBBox.x + lv.targetBBox.width / 2 + 6) dir = 'r';
+					if (lv.targetPoint.y < lv.targetBBox.y + 6) dir = 't';
+					if (lv.targetPoint.y > lv.targetBBox.y + lv.targetBBox - 4) dir = 'b';
+					tMag = cell
+						.getTargetCell()
+						.get('ports')
+						.items.find(it => it.group == dir);
+					if (tMag) {
+						cell.set('target', Object.assign(cell.get('target'), { magent: 'circle', port: tMag.id }));
+						cell.getTargetCell().portProp(tMag.id, 'attrs/circle/visibility', 'visible');
+					}
+					dir = 'l';
+					tMag = null;
+					if (lv.sourcePoint.x > lv.sourceBBox.x + lv.sourceBBox.width / 2 + 6) dir = 'r';
+					if (lv.sourcePoint.y < lv.sourceBBox.y + 6) dir = 't';
+					if (lv.sourcePoint.y > lv.sourceBBox.y + lv.sourceBBox - 4) dir = 'b';
+					tMag = cell
+						.getSourceCell()
+						.get('ports')
+						.items.find(it => it.group == dir);
+					if (tMag) {
+						cell.set('source', Object.assign(cell.get('source'), { magent: 'circle', port: tMag.id }));
+						cell.getSourceCell().portProp(tMag.id, 'attrs/circle/visibility', 'visible');
+					}
+				}
+			});
 		}, 0);
 	}
 
@@ -1079,8 +1253,10 @@ export default class Graph extends Component {
 			if (newPath.length) {
 				outPath.pop();
 				newPath.forEach(p => {
-					outPath.push(p);
-					getOutPath.call(this, p[p.length - 1]);
+					if (p) {
+						outPath.push(p);
+						getOutPath.call(this, p[p.length - 1]);
+					}
 				});
 			}
 		}
@@ -1101,11 +1277,18 @@ export default class Graph extends Component {
 			for (let i = path.length; i > 0; i--) {
 				if (path[i - 1].get('type') == 'app.Aggregate') {
 					for (let j = i; j > 0; j--) {
-						if (path[j - 1].isDataNode() && path[j - 1].get('type') == 'app.Collection') {
+						if (
+							path[j - 1].isDataNode() &&
+							['app.Collection', 'app.KafkaNode'].includes(path[j - 1].get('type'))
+						) {
 							i = j;
 							break;
 						}
-						if (path[j - 1].isDataNode() && path[j - 1].get('type') != 'app.Collection') valid = false;
+						if (
+							path[j - 1].isDataNode() &&
+							!['app.Collection', 'app.KafkaNode'].includes(path[j - 1].get('type'))
+						)
+							valid = false;
 					}
 				}
 			}

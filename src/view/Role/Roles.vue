@@ -279,9 +279,6 @@ export default {
 			if (this.order) {
 				order = this.order;
 			}
-			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS') {
-			// 	where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
-			// }
 
 			let searchkw = this.searchNav.keyword;
 			if (searchkw && this.searchNav.selectedSeachType === '0') {

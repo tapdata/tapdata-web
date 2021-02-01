@@ -33,10 +33,11 @@
 							icon="el-icon-plus"
 							style="padding: 7px;margin-left: 7px"
 							v-readonlybtn="'datasource_creation'"
-							@click="$refs.databaseForm.show()"
+							@click="creatDatabase"
 							>{{ $t('dataFlow.createNew') }}</el-button
 						>
-						<DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm>
+						<!-- @click="$refs.databaseForm.show()" -->
+						<!-- <DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm> -->
 					</div>
 				</el-form-item>
 			</el-form>
@@ -80,7 +81,7 @@
 						<span>{{ databaseTables.length }}</span>
 					</div>
 					<ul class="table-box" v-loading="tableLoading">
-						<li v-for="item in databaseTables" :key="item.id" class="list">
+						<li v-for="item in databaseTables" :key="item" class="list">
 							<i class="iconfont icon-table2"></i>
 							<span class="tableName">{{ item }}</span>
 						</li>
@@ -94,16 +95,16 @@
 <script>
 import factory from '../../../api/factory';
 import _ from 'lodash';
-import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
+// import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
 
 let connections = factory('connections');
 let editorMonitor = null;
 export default {
 	name: 'Database',
 
-	components: {
-		DatabaseForm
-	},
+	// components: {
+	// 	DatabaseForm
+	// },
 
 	props: {
 		connection_type: {
@@ -189,6 +190,12 @@ export default {
 	},
 
 	methods: {
+		creatDatabase() {
+			let database_type = this.model.database_type || this.model.databaseType;
+			let href = '/#/connections/create?databaseType=' + database_type;
+			window.open(href, '_blank');
+		},
+
 		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
 				_.merge(this.model, data);
@@ -289,14 +296,18 @@ export default {
 							t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
 						);
 						if (!(this.firstRound && this.databaseTables.length > 0)) {
-							this.databaseTables = tables.map(item => {
-								return item.table_name;
+							let tablesArr = tables.filter(item => {
+								if (item.table_name) {
+									return item.table_name;
+								}
 							});
+							this.databaseTables = [...new Set(tablesArr.map(item => item.table_name))];
 						}
 
 						this.handleIncludeTable();
 						this.firstRound = false;
 						self.$forceUpdate();
+						this.tableLoading = false;
 					}
 				})
 				.finally(() => {
