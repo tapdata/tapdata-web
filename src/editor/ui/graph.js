@@ -118,14 +118,12 @@ export default class Graph extends Component {
 			// 		}
 			// 	}
 			// },
-			validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end) {
+			validateConnection: function(cellViewS, magnetS, cellViewT) {
 				// don't allow loop links
 				if (cellViewS === cellViewT) return false;
-				// if (!magnetT) return false;
-				// if (magnetT.getAttribute('port-group') !== 'in') return false;
 
-				let targetView = end === 'target' ? cellViewT : cellViewS;
-				let sourceView = end === 'target' ? cellViewS : cellViewT;
+				let targetView = cellViewT; //end === 'target' ? cellViewT : cellViewS;
+				let sourceView = cellViewS; //end === 'target' ? cellViewS : cellViewT;
 				let sameTarget = false;
 				self.graph.getConnectedLinks(sourceView.model).map(link => {
 					if (link.getTargetCell() && link.getTargetCell().id == targetView.model.id) sameTarget = true;
@@ -134,6 +132,7 @@ export default class Graph extends Component {
 
 				// don't allow link to link connection
 				if (targetView.model.isLink()) return false;
+				if (sourceView.model.isLink()) return false;
 				if (targetView.model.getFormData().disabled) return false;
 
 				// target don't accept source connection
