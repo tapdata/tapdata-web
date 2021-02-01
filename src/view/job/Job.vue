@@ -788,6 +788,7 @@ export default {
 		getDataFlowData(autoSave) {
 			// validate
 			if (!autoSave) {
+				this.editor.graph.unHighlightAllCells();
 				let verified = this.editor.validate();
 				if (verified !== true) {
 					this.$message.error(verified);

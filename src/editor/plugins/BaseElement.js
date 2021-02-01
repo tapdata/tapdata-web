@@ -246,7 +246,7 @@ export const baseElementConfig = {
 					}
 
 					if (formData && !formData.disabled) {
-						self.attr('body/stroke', verified ? '#2196F3' : '#ff0000');
+						self.attr('body/stroke', verified ? '#00bcd4' : '#ff0000');
 						self.oStroke = self.attr('body/stroke');
 					}
 					if (formData && formData.name) {
