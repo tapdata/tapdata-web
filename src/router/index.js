@@ -582,6 +582,14 @@ const router = new Router({
 			path: '/guide',
 			name: 'guide',
 			component: view('Guide')
+		},
+		{
+			path: '/drs_connections',
+			name: 'drs_connections',
+			component: view('connections/List'),
+			meta: {
+				title: i18n.t('tap.connection')
+			}
 		}
 	]
 });

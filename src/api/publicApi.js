@@ -142,6 +142,9 @@ axios.interceptors.response.use(
 
 export default class PublicAPI {
 	constructor(url) {
+		if (url.startsWith('/')) {
+			url = url.substring(1);
+		}
 		this.url = url;
 	}
 
