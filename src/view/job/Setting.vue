@@ -28,6 +28,21 @@
 					<span class="icon iconfont icon-tishi1 icontip" slot="reference"></span>
 				</el-popover>
 			</el-form-item>
+			<el-form-item :label="$t('dataFlow.cdcFetchSize')" v-show="formData.sync_type !== 'initial_sync'">
+				<el-input-number v-model="formData.cdcFetchSize" :min="1" :max="10000" size="mini"></el-input-number>
+				<el-popover popper-class="setting-popper" placement="top-start" trigger="hover">
+					<div>{{ $t('dataFlow.cdcFetchSizeTip') }}</div>
+					<div>{{ $t('dataFlow.cdcFetchSizeTip1') }}</div>
+					<div>{{ $t('dataFlow.cdcFetchSizeTip2') }}</div>
+					<span class="icon iconfont icon-tishi1" slot="reference"></span>
+				</el-popover>
+			</el-form-item>
+			<el-form-item :label="$t('dataFlow.cdcEngineFilter')">
+				<el-switch
+					v-model="formData.cdcEngineFilter"
+					:active-text="formData.cdcEngineFilter ? $t('dataFlow.yes') : $t('dataFlow.no')"
+				></el-switch>
+			</el-form-item>
 			<el-form-item :label="$t('dataFlow.stop_on_error')">
 				<!-- 遇到错误时停止同步 -->
 				<el-switch
