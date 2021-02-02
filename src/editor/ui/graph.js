@@ -124,9 +124,23 @@ export default class Graph extends Component {
 
 				let targetView = cellViewT; //end === 'target' ? cellViewT : cellViewS;
 				let sourceView = cellViewS; //end === 'target' ? cellViewS : cellViewT;
+				let curLink = { attributes: {} };
+				if (event.target.classList[0] == 'target-arrowhead') {
+					//切换头尾节点
+					let attrs = event.target.attributes;
+					let lid;
+					for (var i = attrs.length - 1; i >= 0; i--)
+						if (attrs[i].nodeName == 'model-id') lid = attrs[i].value;
+					curLink = self.graph.getCell(lid);
+				}
 				let sameTarget = false;
 				self.graph.getConnectedLinks(sourceView.model).map(link => {
-					if (link.getTargetCell() && link.getTargetCell().id == targetView.model.id) sameTarget = true;
+					if (
+						link.id != curLink.attributes.id &&
+						link.getTargetCell() &&
+						link.getTargetCell().id == targetView.model.id
+					)
+						sameTarget = true;
 				});
 				if (sameTarget) return false;
 
@@ -179,6 +193,7 @@ export default class Graph extends Component {
 			if (!self.editable) return;
 			if (cellView.model.getFormData().disabled) return;
 			cellView.vel.addClass('visible');
+			this._curCell = cellView;
 			if (event.target.getAttribute('port')) {
 				this._curMag = event.target.getAttribute('port');
 				this._curCell = cellView;
@@ -186,17 +201,16 @@ export default class Graph extends Component {
 				cellView.model.portProp(this._curMag, 'attrs/circle/stroke', '#48b6e2');
 				cellView.model.portProp(this._curMag, 'attrs/circle/stroke-width', 2);
 				cellView.model.portProp(this._curMag, 'attrs/circle/r', 7);
-			} else if (this._curMag && this._curCell.model.hasPort(this._curMag)) {
+			} else if (this._curMag && this._curCell.model.hasPort && this._curCell.model.hasPort(this._curMag)) {
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/fill', '#fff');
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/stroke', '#dedee4');
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/r', 5);
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/stroke-width', 1);
 				delete this._curMag;
-				delete this._curCell;
 			}
 		});
 		paper.on('blank:mouseover', function() {
-			if (this._curMag && this._curCell.model.hasPort(this._curMag)) {
+			if (this._curMag && this._curCell.model.hasPort && this._curCell.model.hasPort(this._curMag)) {
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/fill', '#fff');
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/stroke', '#dedee4');
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/stroke-width', 1);
@@ -204,7 +218,11 @@ export default class Graph extends Component {
 				delete this._curMag;
 				delete this._curCell;
 			}
-			if (this._curCell) this._curCell.vel.removeClass('visible');
+			delete this._curMag;
+			if (this._curCell) {
+				this._curCell.vel.removeClass('visible');
+				delete this._curCell;
+			}
 		});
 		paper.on('cell:mouseout', function(cellView) {
 			cellView.vel.removeClass('visible');
@@ -232,6 +250,7 @@ export default class Graph extends Component {
 				ele && ele.blur();
 			}
 		});
+
 		paper.on({
 			'link:connect': linkView => {
 				if (linkView.targetView.model.getFormData().disabled) {
@@ -762,13 +781,26 @@ export default class Graph extends Component {
 					if (!self.editable) return;
 
 					let ns = joint.linkTools;
+					let sourceHead = joint.linkTools.SourceArrowhead.extend({
+						tagName: 'circle',
+						attributes: {
+							cx: 3,
+							r: 6,
+							fill: '#5755a1',
+							stroke: '#5755a1',
+							'stroke-width': 2,
+							cursor: 'move',
+							class: 'target-arrowhead',
+							'fill-opacity': 0.2
+						}
+					});
 					let toolsView = new joint.dia.ToolsView({
 						name: 'link-hover',
 						tools: [
 							new ns.Vertices({
 								vertexAdding: false
 							}),
-							new ns.SourceArrowhead(),
+							new sourceHead(),
 							new ns.TargetArrowhead()
 						]
 					});
