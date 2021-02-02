@@ -45,7 +45,11 @@ window._TAPDATA_OPTIONS_ = {
 	logoUrl: require('../static/icon/logo.png'),
 	version: 'DAAS_BUILD_NUMBER'
 };
-
+if (parent && parent.__USER_INFO__) {
+	let userInfo = parent.__USER_INFO__;
+	VueCookie.set('xToken', userInfo.token);
+	VueCookie.set('userId', userInfo.id);
+}
 let init = settings => {
 	window.getSettingByKey = key => {
 		let setting = settings.find(it => it.key === key) || {};

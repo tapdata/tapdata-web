@@ -10,13 +10,20 @@ const CancelToken = axios.CancelToken;
 axios.interceptors.request.use(
 	function(config) {
 		let accessToken = Cookie.get('token');
-		if (~config.url.indexOf('?')) {
-			if (!~config.url.indexOf('access_token')) {
-				config.url = `${config.url}&access_token=${accessToken}`;
+		if (accessToken) {
+			if (~config.url.indexOf('?')) {
+				if (!~config.url.indexOf('access_token')) {
+					config.url = `${config.url}&access_token=${accessToken}`;
+				}
+			} else {
+				config.url = `${config.url}?access_token=${accessToken}`;
 			}
-		} else {
-			config.url = `${config.url}?access_token=${accessToken}`;
 		}
+		let xToken = Cookie.get('xToken');
+		if (xToken) {
+			config.headers['X-Token'] = xToken;
+		}
+
 		let key = JSON.stringify(config);
 		let cancelFunc = null;
 		config.cancelToken = new CancelToken(c => {
