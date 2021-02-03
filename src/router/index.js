@@ -600,6 +600,30 @@ const router = new Router({
 			meta: {
 				title: i18n.t('tap.connection')
 			}
+		},
+		{
+			path: '/drs_connections/create',
+			name: 'drs_connectionsCreate',
+			component: view('connections/DatabaseForm'),
+			meta: {
+				title: i18n.t('tap.connection')
+			}
+		},
+		{
+			path: '/drs_connections/:id/edit',
+			name: 'drs_connectionsEdit',
+			component: view('connections/DatabaseForm'),
+			meta: {
+				title: i18n.t('tap.connection')
+			}
+		},
+		{
+			path: '/drs_dataFlows',
+			name: 'drs_dataFlows',
+			component: view('task/DataFlows'),
+			meta: {
+				title: i18n.t('tap.jobFlow')
+			}
 		}
 	]
 });
@@ -610,6 +634,14 @@ router.afterEach(() => {
 });
 let isFirst = true;
 router.beforeEach(async (to, from, next) => {
+	if (parent.__tm_router_prefix && !to.name.startsWith(parent.__tm_router_prefix)) {
+		return next({
+			name: parent.__tm_router_prefix + to.name,
+			query: to.query,
+			params: to.params,
+			meta: to.meta
+		});
+	}
 	if (!to.matched.length) {
 		Message.error({
 			message: 'Page not found!'
@@ -622,13 +654,27 @@ router.beforeEach(async (to, from, next) => {
 	}
 	let cookie = window.VueCookie;
 	let token = cookie.get('token');
+	let xToken = cookie.get('xToken');
 	let showGuide = window.getSettingByKey('SHOW_SIMPLE_SCENE') && cookie.get('show_guide');
 	let userId = cookie.get('user_id');
 
-	if (token) {
+	if (token || xToken) {
 		//若token存在，获取权限
 		let permissions = sessionStorage.getItem('tapdata_permissions');
 		if (!permissions || isFirst) {
+			if (xToken) {
+				let res = await usersModel.findOne();
+				let user = res.data;
+				cookie.set('email', user.email);
+				cookie.set('username', user.username || '');
+				cookie.set('login', 1);
+				cookie.set('isAdmin', parseInt(user.role) || 0);
+				cookie.set('user_id', user.user_id);
+				cookie.delete('show_guide');
+				if (!user.isCompleteGuide) {
+					cookie.set('show_guide', 1);
+				}
+			}
 			//无权限，说明是首次进入页面，重新请求后台获取
 			let loading = Loading.service({
 				fullscreen: true,
@@ -637,7 +683,7 @@ router.beforeEach(async (to, from, next) => {
 				background: 'rgba(0, 0, 0, 0.7)'
 			});
 
-			let result = await usersModel.getPermissions(`/${userId}/permissions?access_token=${token}`);
+			let result = await usersModel.getPermissions(`/${userId}/permissions`);
 			isFirst = false;
 			loading.close();
 			if (result && result.data) {
