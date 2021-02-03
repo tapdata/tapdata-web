@@ -18,6 +18,11 @@ const childRoutes = [
 		meta: { title: i18n.t('tap.home'), isCollapse: false }
 	},
 	{
+		path: '/createTask',
+		name: 'createTask',
+		component: view('createTask/createTask')
+	},
+	{
 		path: '/connections',
 		name: 'connections',
 		component: view('connections/List'),
