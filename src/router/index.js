@@ -651,29 +651,24 @@ router.beforeEach(async (to, from, next) => {
 	let token = cookie.get('token');
 	let xToken = cookie.get('xToken');
 	let showGuide = window.getSettingByKey('SHOW_SIMPLE_SCENE') && cookie.get('show_guide');
-	let userId = cookie.get('userId');
+	let userId = cookie.get('user_id');
 
 	if (token || xToken) {
 		//若token存在，获取权限
 		let permissions = sessionStorage.getItem('tapdata_permissions');
 		if (!permissions || isFirst) {
-			let res = await usersModel.findOne({
-				filter: JSON.stringify({
-					where: {
-						userId: userId
-					}
-				})
-			});
-			let user = res.data;
-			cookie.set('email', user.email);
-			cookie.set('username', user.username || '');
-			cookie.set('login', 1);
-			cookie.set('isAdmin', parseInt(user.role) || 0);
-			cookie.set('user_id', user.user_id);
-			userId = user.user_id;
-			cookie.delete('show_guide');
-			if (!user.isCompleteGuide) {
-				cookie.set('show_guide', 1);
+			if (xToken) {
+				let res = await usersModel.findOne();
+				let user = res.data;
+				cookie.set('email', user.email);
+				cookie.set('username', user.username || '');
+				cookie.set('login', 1);
+				cookie.set('isAdmin', parseInt(user.role) || 0);
+				cookie.set('user_id', user.user_id);
+				cookie.delete('show_guide');
+				if (!user.isCompleteGuide) {
+					cookie.set('show_guide', 1);
+				}
 			}
 			//无权限，说明是首次进入页面，重新请求后台获取
 			let loading = Loading.service({
