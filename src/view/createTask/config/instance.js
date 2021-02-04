@@ -1,4 +1,4 @@
-export default function(vm) {
+export default function() {
 	return {
 		form: {
 			labelPosition: 'right',
@@ -10,38 +10,16 @@ export default function(vm) {
 		items: [
 			{
 				type: 'select',
-				field: 'connection_type',
+				field: 'instance',
 				label: '选择区域',
-				options: [
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					},
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					},
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					}
-				],
+				options: [],
 				required: true
 			},
 			{
 				type: 'select',
-				field: 'connection_type',
+				field: 'region',
 				label: '选择可用区',
-				options: [
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					}
-				],
+				options: [],
 				required: true
 			}
 		]

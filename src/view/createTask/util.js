@@ -5,11 +5,11 @@
  */
 export const SETTING_MODEL = {
 	name: '',
-	sync_type: '',
-	distinctWriteType: '',
-	stopOnError: '',
-	needToCreateIndex: '',
-	isOpenAutoDDL: ''
+	sync_type: 'initial_sync+cdc',
+	distinctWriteType: 'intellect',
+	stopOnError: true,
+	needToCreateIndex: true,
+	isOpenAutoDDL: true
 };
 
 export const DATASOURCE_MODEL = {

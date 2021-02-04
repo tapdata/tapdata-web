@@ -46,13 +46,13 @@
 							</form-builder>
 						</div>
 						<!-- 步骤4 -->
-						<div class="body step-3" v-if="steps[activeStep].index === 4">
+						<div class="body step-4" v-if="steps[activeStep].index === 4">
 							<div class="title">映射设置</div>
 							<div class="desc">
 								用户可以在此页面勾选源端待同步表，点击中间向右的箭头按钮，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输），鼠标移入表名可以对表进行改名操作，点击完成按钮即成功创建同步任务。
 							</div>
 							<div class="CT-task-transfer">
-								<Transfer ref="transfer"></Transfer>
+								<Transfer ref="transfer" :transferData="transferData"></Transfer>
 							</div>
 						</div>
 					</el-main>
@@ -67,7 +67,6 @@
 							:loading="loading"
 							@click="next()"
 						>
-							<span v-show="selectedDatabaseType">{{ $t('guide.btn_save') }}</span>
 							<span>{{ $t('guide.btn_next') }}</span>
 						</el-button>
 						<el-button v-else type="primary" class="btn-step" :loading="loading" @click="save()">
@@ -125,6 +124,7 @@ export default {
 				},
 				items: []
 			},
+			transferData: '',
 			taskType: 'cluster-clone',
 			dialogTestVisible: false,
 			status: '',
@@ -134,8 +134,28 @@ export default {
 	created() {
 		this.getSteps(false);
 		this.getFormConfig();
+		//this.intiData();
 	},
 	methods: {
+		//初始化数据
+		intiData() {
+			let id = '601bed336cada30058b2c49b';
+			this.$api('DataFlows')
+				.get([id])
+				.then(result => {
+					if (result && result.data) {
+						this.settingModel = result.data.setting;
+						let stages = result.data.stages;
+						this.dataSourceModel.s_connectionId = stages[0].connectionId;
+						this.dataSourceModel.t_connectionId = stages[1].connectionId;
+						this.transferData = {
+							table_prefix: stages[1].table_prefix,
+							table_suffix: stages[1].table_suffix,
+							selectSourceArr: stages[1].syncObjects[0].objectNames
+						};
+					}
+				});
+		},
 		// 是否是企业版
 		getSteps(hasDownloadAgent) {
 			const steps = [
@@ -164,6 +184,8 @@ export default {
 		back() {
 			this.activeStep -= 1;
 			this.getFormConfig();
+			//将复制表内容存起来
+			this.transferData = this.$refs.transfer.returnData();
 		},
 		// 根据步骤获取不同的表单项目
 		getFormConfig() {
@@ -225,36 +247,6 @@ export default {
 				});
 			}
 		},
-		getTypeProps(connection) {
-			let type = connection.database_type;
-			if (this.taskType === 'cluster-clone') {
-				return {
-					type: 'database',
-					database_type: type,
-					dropTable: false,
-					dropType: 'no_drop',
-					includeTables: [],
-					name: connection.name,
-					readBatchSize: 1000,
-					readCdcInterval: 500,
-					table_prefix: '',
-					table_suffix: '',
-					syncObjects: [],
-					joinTables: undefined
-				};
-			}
-			if (type === 'mongodb') {
-				return {
-					type: 'collection',
-					name: 'Collection'
-				};
-			} else {
-				return {
-					type: 'table',
-					name: 'Table'
-				};
-			}
-		},
 		//save
 		save() {
 			let postData = {
@@ -266,7 +258,8 @@ export default {
 				stopOnError: false,
 				mappingTemplate: 'cluster-clone',
 				stages: [],
-				setting: this.settingModel
+				setting: this.settingModel,
+				dataFlowType: 'normal' //区分创建方式
 			};
 			let stageDefault = {
 				connectionId: '',
@@ -284,42 +277,44 @@ export default {
 			let target = this.dataSourceModel;
 			let sourceId = uuid();
 			let targetId = uuid();
+			this.transferData = this.$refs.transfer.returnData();
+			//第四步 数据组装
+			let selectTable = [];
+			if (this.transferData && this.transferData.selectSourceArr.length > 0) {
+				selectTable.push({
+					objectNames: this.transferData.selectSourceArr,
+					type: 'table'
+				});
+			}
 			postData.stages = [
-				Object.assign(
-					{},
-					stageDefault,
-					{
-						id: sourceId,
-						connectionId: source.s_connectionId,
-						outputLanes: [targetId],
-						distance: 1
-					},
-					this.getTypeProps(source)
-				),
-				Object.assign(
-					{},
-					stageDefault,
-					{
-						id: targetId,
-						connectionId: target.t_connectionId,
-						inputLanes: [sourceId],
-						distance: 0,
-						joinTables: [
-							{
-								arrayUniqueKey: '',
-								connectionId: '',
-								isArray: false,
-								joinKeys: [{ source: '', target: '' }],
-								joinPath: '',
-								joinType: 'upsert',
-								manyOneUpsert: false,
-								stageId: sourceId,
-								tableName: ''
-							}
-						]
-					},
-					this.getTypeProps(target)
-				)
+				Object.assign({}, stageDefault, {
+					id: sourceId,
+					connectionId: source.s_connectionId,
+					outputLanes: [targetId],
+					distance: 1,
+					name: 'table',
+					type: 'database',
+					database_type: 'mysql',
+					dropType: 'no_drop',
+					readBatchSize: 1000,
+					readCdcInterval: 500
+				}),
+				Object.assign({}, stageDefault, {
+					id: targetId,
+					connectionId: target.t_connectionId,
+					inputLanes: [sourceId],
+					distance: 0,
+					syncObjects: selectTable,
+					name: 'table',
+					table_prefix: this.transferData.table_prefix,
+					table_suffix: this.transferData.table_suffix,
+					type: 'database',
+					readBatchSize: 1000,
+					readCdcInterval: 500,
+					dropTable: false,
+					dropType: 'no_drop',
+					database_type: 'mysql'
+				})
 			];
 			this.$api('DataFlows')
 				.post(postData)
@@ -408,7 +403,7 @@ export default {
 					margin-right: 7px;
 					width: 20px;
 					height: 20px;
-					line-height: 20px;
+					line-height: 16px;
 					text-align: center;
 					border: 1px solid #aaa;
 					border-radius: 50%;
@@ -445,7 +440,11 @@ export default {
 			}
 			.CT-task-transfer {
 				margin-left: 200px;
+				height: 500px;
 			}
+		}
+		.step-4 {
+			width: 1050px;
 		}
 	}
 	.CT-task-footer {

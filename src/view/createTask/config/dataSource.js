@@ -1,11 +1,8 @@
-export default function(vm) {
+export default function() {
 	return {
 		form: {
 			labelPosition: 'right',
 			labelWidth: '200px'
-		},
-		defaultModel: {
-			connection_type: 'target'
 		},
 		items: [
 			{
@@ -14,81 +11,30 @@ export default function(vm) {
 			},
 			{
 				type: 'select',
-				field: 'connection_type',
+				field: 's_connection',
 				label: '源端连接来源',
-				options: [
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					},
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					},
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					}
-				],
+				options: [],
 				required: true
 			},
 			{
 				type: 'select',
-				field: 'connection_type',
+				field: 's_region',
 				label: '源端地域',
-				options: [
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					}
-				],
+				options: [],
 				required: true
 			},
 			{
 				type: 'select',
-				field: 'connection_type',
+				field: 's_instance',
 				label: '源端可用区',
-				options: [
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					},
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					},
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					}
-				],
+				options: [],
 				required: true
 			},
 			{
 				type: 'select',
 				field: 's_connectionId',
 				label: '源端连接',
-				options: [
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						value: 'target'
-					},
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						value: 'target'
-					},
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						value: 'target'
-					}
-				],
+				options: [],
 				required: true
 			},
 			{
@@ -97,94 +43,30 @@ export default function(vm) {
 			},
 			{
 				type: 'select',
-				field: 'connection_type',
+				field: 't_connection',
 				label: '目标端连接来源',
-				options: [
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					},
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					},
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					}
-				],
+				options: [],
 				required: true
 			},
 			{
 				type: 'select',
-				field: 'connection_type',
+				field: 't_region',
 				label: '目标端地域',
-				options: [
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					},
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					},
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					}
-				],
+				options: [],
 				required: true
 			},
 			{
 				type: 'select',
-				field: 'connection_type',
+				field: 't_instance',
 				label: '目标端可用区',
-				options: [
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					},
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					},
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					}
-				],
+				options: [],
 				required: true
 			},
 			{
 				type: 'select',
 				field: 't_connectionId',
 				label: '目标端连接',
-				options: [
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					},
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					},
-					{
-						label: vm.$t('dataForm.form.options.target'),
-						tip: vm.$t('dataForm.form.options.targetTips'),
-						value: 'target'
-					}
-				],
+				options: [],
 				required: true
 			}
 		]

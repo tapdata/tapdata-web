@@ -18,11 +18,6 @@ const childRoutes = [
 		meta: { title: i18n.t('tap.home'), isCollapse: false }
 	},
 	{
-		path: '/createTask',
-		name: 'createTask',
-		component: view('createTask/createTask')
-	},
-	{
 		path: '/connections',
 		name: 'connections',
 		component: view('connections/List'),
@@ -624,6 +619,16 @@ const router = new Router({
 			meta: {
 				title: i18n.t('tap.jobFlow')
 			}
+		},
+		{
+			path: '/drs_createTask/create',
+			name: 'drs_createTask',
+			component: view('createTask/createTask')
+		},
+		{
+			path: '/drs_createTask/:id/edit',
+			name: 'drs_editTask',
+			component: view('createTask/createTask')
 		}
 	]
 });
