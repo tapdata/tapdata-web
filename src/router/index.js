@@ -674,7 +674,7 @@ router.beforeEach(async (to, from, next) => {
 				cookie.set('username', user.username || '');
 				cookie.set('login', 1);
 				cookie.set('isAdmin', parseInt(user.role) || 0);
-				cookie.set('user_id', user.user_id);
+				cookie.set('user_id', user.id);
 				cookie.delete('show_guide');
 				if (!user.isCompleteGuide) {
 					cookie.set('show_guide', 1);
