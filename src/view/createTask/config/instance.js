@@ -12,14 +12,32 @@ export default function() {
 				type: 'select',
 				field: 'instance',
 				label: '选择区域',
-				options: [],
+				options: [
+					{
+						label: '实例1',
+						value: 'instance1'
+					},
+					{
+						label: '实例2',
+						value: 'instance2'
+					}
+				],
 				required: true
 			},
 			{
 				type: 'select',
 				field: 'region',
 				label: '选择可用区',
-				options: [],
+				options: [
+					{
+						label: '可用1',
+						value: 'region1'
+					},
+					{
+						label: '可用2',
+						value: 'region2'
+					}
+				],
 				required: true
 			}
 		]

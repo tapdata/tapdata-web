@@ -82,7 +82,7 @@
 import formConfig from './config';
 import Transfer from '@/components/Transfer';
 import _ from 'lodash';
-import { SETTING_MODEL, DATASOURCE_MODEL } from './util';
+import { SETTING_MODEL, DATASOURCE_MODEL, INSTANCE_MODEL } from './util';
 import { uuid } from '../../editor/util/Schema';
 
 export default {
@@ -95,7 +95,7 @@ export default {
 			activeStep: 0,
 			errorMsg: '',
 			showConnectDialog: false,
-			instanceModel: {},
+			instanceModel: _.cloneDeep(INSTANCE_MODEL),
 			dataSourceModel: _.cloneDeep(DATASOURCE_MODEL),
 			settingModel: _.cloneDeep(SETTING_MODEL),
 			mappingModel: {},
@@ -259,7 +259,8 @@ export default {
 				mappingTemplate: 'cluster-clone',
 				stages: [],
 				setting: this.settingModel,
-				dataFlowType: 'normal' //区分创建方式
+				dataFlowType: 'normal', //区分创建方式
+				platformInfo: this.dataSourceModel
 			};
 			let stageDefault = {
 				connectionId: '',
