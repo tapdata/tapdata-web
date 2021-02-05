@@ -60,3 +60,20 @@ export const TYPEMAP = {
 	mariadb: 'MariaDB',
 	'mysql pxc': 'MySQL PXC'
 };
+
+export const PLATFORMINFO = {
+	database_type: '',
+	connection_type: '',
+	database_host: '',
+	database_port: '',
+	database_name: '',
+	database_username: '',
+	database_password: '',
+	plain_password: '',
+	instances: 'instance1',
+	connectionType: 'rds',
+	region: 'region1',
+	zone: 'zone1',
+	DRS_instances: 'DRS_instances1',
+	IP_type: 'IPv4/IPv6'
+};

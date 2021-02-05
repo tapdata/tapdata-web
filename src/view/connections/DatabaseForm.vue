@@ -148,7 +148,6 @@
 								</div>
 							</div>
 						</template>
-
 						<el-button size="mini" class="test" @click="startTest()">{{
 							$t('connection.testConnection')
 						}}</el-button>
@@ -241,6 +240,7 @@ import DatabaseTypeDialog from './DatabaseTypeDialog';
 
 const databaseTypesModel = factory('DatabaseTypes');
 const connectionsModel = factory('connections');
+let platformInfo = 'cloud';
 let defaultConfig = [];
 const defaultModel = {
 	id: '',
@@ -306,7 +306,13 @@ const defaultModel = {
 	kafkaIgnoreInvalidRecord: false,
 	kafkaAcks: '',
 	kafkaCompressionType: '',
-	kafkaIgnorePushError: false
+	kafkaIgnorePushError: false,
+	instances: 'instance1',
+	connectionType: 'rds',
+	region: 'region1',
+	zone: 'zone1',
+	DRS_instances: 'DRS_instances1',
+	IP_type: 'IPv4/IPv6'
 	// kafkaConsumerRequestTimeout: '',
 	// kafkaConsumerUseTransactional: '',
 	// kafkaMaxPollRecords: '',
@@ -467,6 +473,9 @@ export default {
 			if (type === 'mysql pxc') {
 				type = 'mysqlpxc';
 			}
+			if (platformInfo === 'cloud') {
+				type = 'drs_' + type;
+			}
 			let func = formConfig[type];
 
 			if (func) {
@@ -576,7 +585,6 @@ export default {
 						delete params.file_source_protocol;
 						delete params.vc_mode;
 					}
-
 					connectionsModel[this.model.id ? 'patchId' : 'post'](params)
 						.then(res => {
 							let id = res.data.id;
