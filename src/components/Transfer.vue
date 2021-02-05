@@ -87,7 +87,7 @@ export default {
 		getTable(id) {
 			this.transferLoading = true;
 			this.$api('connections')
-				.customQuery([id])
+				.customQuery([id], { schema: true })
 				.then(result => {
 					if (result.data) {
 						let tables = (result.data.schema && result.data.schema.tables) || [];
