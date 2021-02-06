@@ -56,6 +56,20 @@ export default function(vm) {
 						value: 'region2'
 					}
 				],
+				show: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connectionType',
+								value: 'tapdata'
+							}
+						],
+						triggerConfig: {
+							show: false
+						}
+					}
+				],
 				required: true
 			},
 			{
@@ -70,6 +84,20 @@ export default function(vm) {
 					{
 						label: 'RDS可用区2',
 						value: 'zone2'
+					}
+				],
+				show: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connectionType',
+								value: 'tapdata'
+							}
+						],
+						triggerConfig: {
+							show: false
+						}
 					}
 				],
 				required: true
@@ -88,6 +116,20 @@ export default function(vm) {
 						value: 'DRS_instances2'
 					}
 				],
+				show: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connectionType',
+								value: 'tapdata'
+							}
+						],
+						triggerConfig: {
+							show: false
+						}
+					}
+				],
 				required: true
 			},
 			{
@@ -98,6 +140,20 @@ export default function(vm) {
 					{
 						label: 'IPv4/IPv6',
 						value: 'IPv4/IPv6'
+					}
+				],
+				show: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connectionType',
+								value: 'tapdata'
+							}
+						],
+						triggerConfig: {
+							show: false
+						}
 					}
 				],
 				required: true

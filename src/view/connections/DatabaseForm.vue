@@ -595,12 +595,6 @@ export default {
 							IP_type: params.IP_type
 						};
 						params['platformInfo'] = platformInfo;
-						delete params.instances;
-						delete params.connectionType;
-						delete params.region;
-						delete params.zone;
-						delete params.DRS_instances;
-						delete params.IP_type;
 					}
 					connectionsModel[this.model.id ? 'patchId' : 'post'](params)
 						.then(res => {
