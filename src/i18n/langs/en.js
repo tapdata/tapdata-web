@@ -699,12 +699,12 @@ const en = {
 		fuzzyQuery: 'Fuzzy query',
 		PreciseQuery: 'Precise query',
 		databaseTittle: 'Data connection management',
-		createNewDataSource: 'Create Datasource',
+		createNewDataSource: 'Create New Connection',
 		info: 'Database information',
 		copyMsg: 'copy successfully',
 		testMsg: 'test successfully',
 		creator: 'Creator',
-		editDataSource: 'Edit Datasource',
+		editDataSource: 'Edit Connection',
 		reloadOK: 'reloading schema',
 		reloadFail: 'Failed to schema',
 		reloadTittle: 'Reload schema',
@@ -1760,7 +1760,7 @@ const en = {
 			noCreate: ' , Cannot be created repeatedly',
 			kafkaNameRange: 'The topic name length is greater than 256'
 		},
-		createDatabase: 'Create new database',
+		createDatabase: 'Create New Connection',
 		copyDatabase: 'Copy name',
 		checkDatabase: 'Check property',
 		createTable: 'Create New Table',
@@ -2393,10 +2393,10 @@ const en = {
 		WRITE_CDC_EVENT: '【Data transfer】Target enters incremental write mode',
 
 		emptyText: 'The job has not been started or has been reset, so there is no running milestone data.',
-		status_waiting: 'waiting',
-		status_running: 'running',
-		status_error: 'error',
-		status_finish: 'finish',
+		status_waiting: 'Waiting',
+		status_running: 'Running',
+		status_error: 'Error',
+		status_finish: 'Finish',
 		btn_check_error: 'Check Error Info'
 	},
 	guide: {

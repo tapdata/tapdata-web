@@ -638,6 +638,10 @@ export default {
 		goDailyRecord() {
 			this.$router.push('/dailyRecord');
 		}
+	},
+	destroyed() {
+		clearInterval(this.timer);
+		this.timer = null;
 	}
 };
 </script>
