@@ -235,93 +235,13 @@ import factory from '@/api/factory';
 import formConfig from './config';
 import gitbook from './GitBook';
 import Test from './Test';
-import { getImgByType, TYPEMAP } from './util';
+import { getImgByType, TYPEMAP, defaultModel, defaultCloudModel } from './util';
 import DatabaseTypeDialog from './DatabaseTypeDialog';
 
 const databaseTypesModel = factory('DatabaseTypes');
 const connectionsModel = factory('connections');
 let platformInfo = 'cloud';
 let defaultConfig = [];
-const defaultModel = {
-	id: '',
-	name: '',
-	database_type: '',
-	connection_type: '',
-	database_host: '',
-	database_port: '',
-	database_name: '',
-	database_username: '',
-	database_password: '',
-	plain_password: '',
-	table_filter: '',
-	additionalString: '',
-	thin_type: '',
-	database_owner: '',
-	node_name: '',
-	database_schema: '',
-	plugin_name: '',
-	pgsql_log_decorder_plugin_name: '',
-	database_datetype_without_timezone: '',
-	supportUpdatePk: false,
-
-	isUrl: true,
-	database_uri: '',
-	ssl: false,
-	sslKey: '',
-	sslPass: '',
-	schemaAutoUpdate: false,
-	sslValidate: false,
-	sslCA: '',
-	sslCAFile: null,
-	sslKeyFile: null,
-
-	ftp_passive: true, // 连接方式
-	connection_timeout_seconds: 60, //连接超时时间
-	data_timeout_seconds: 60, //传输超时时间
-	fileDefaultCharset: '', // 编码格式
-	file_upload_chunk_size: 261120, //文件上传文件块大小
-	file_upload_mode: '', //文件上传模式
-	overwriteSetting: '', //当同名文件存在时
-	extendSourcePath: false, // 继承目录结构
-	outputPath: '', // 文件输出绝对路径
-	file_source_protocol: '', //协议类型
-	vc_mode: '', // 版本管理
-	file_sources: [
-		{
-			path: '',
-			recursive: false,
-			selectFileType: 'include',
-			include_filename: '',
-			exclude_filename: ''
-		}
-	],
-
-	search_databaseType: '',
-
-	// kafka
-	kafkaBootstrapServers: '',
-	// kafkaSelectTopics: '',
-	// kafkaRawTopics: '',
-	kafkaPatternTopics: '',
-	kafkaIgnoreInvalidRecord: false,
-	kafkaAcks: '',
-	kafkaCompressionType: '',
-	kafkaIgnorePushError: false,
-	instances: 'instance1',
-	connectionType: 'rds',
-	region: 'region1',
-	zone: 'zone1',
-	DRS_instances: 'DRS_instances1',
-	IP_type: 'IPv4/IPv6'
-	// kafkaConsumerRequestTimeout: '',
-	// kafkaConsumerUseTransactional: '',
-	// kafkaMaxPollRecords: '',
-	// kafkaPollTimeoutMS: '',
-	// kafkaMaxFetchBytes: '',
-	// kafkaMaxFetchWaitMS: '',
-	// kafkaIgnoreInvalidRecord: ''
-};
-
 export default {
 	name: 'DatabaseForm',
 	components: { gitbook, Test, DatabaseTypeDialog },
@@ -345,8 +265,8 @@ export default {
 				'kafka',
 				'mariadb',
 				'mysqlpxc'
-			], //目前白名单,
-			model: Object.assign({}, defaultModel),
+			],
+			model: '',
 			config: {
 				items: []
 			},
@@ -379,6 +299,20 @@ export default {
 	},
 	created() {
 		this.databaseType = this.$route.query.databaseType;
+		//确认类型 按照type 初始化变量
+		if (platformInfo === 'cloud') {
+			this.model = Object.assign({}, defaultCloudModel['default'], defaultCloudModel['drs']);
+		} else {
+			this.model = Object.assign({}, defaultModel['default']);
+		}
+		switch (this.databaseType) {
+			case 'kafka':
+				this.model = Object.assign({}, defaultModel['kafka']);
+				break;
+			case 'file':
+				this.model = Object.assign({}, defaultModel['file']);
+				break;
+		}
 		this.getDT(this.databaseType);
 		this.initTimezones();
 		let self = this;
@@ -393,6 +327,8 @@ export default {
 				show: true
 			}
 		];
+		// this.getRegion();
+		// this.getRegionZone();
 	},
 	watch: {
 		// 文件选中类型默认端口号
@@ -466,6 +402,19 @@ export default {
 				this.checkDataTypeOptions(type);
 			}
 		},
+		// //云版 获取实例地域
+		// getRegion(){
+		// 	this.$api('tcm').getRegion()
+		// 		.then(() =>{
+		// 	});
+		// },
+		// //云版 获取实例可用区
+		// getRegionZone(){
+		// 	this.$api('tcm').getRegionZone()
+		// 		.then(() =>{
+		//
+		// 		});
+		// },
 		// 按照数据库类型获取表单配置规则
 		getFormConfig() {
 			let type = this.model.database_type;
@@ -498,7 +447,7 @@ export default {
 				this.config.form = config.form;
 				this.config.items = items;
 				this.initData(
-					Object.assign(defaultModel, config.defaultModel, { database_type: this.model.database_type })
+					Object.assign(this.model, config.defaultModel, { database_type: this.model.database_type })
 				); //切换类型会后初始化数据
 				this.checkItems = config.checkItems; //根据model变化更新表单项显示或隐藏
 				this.checkItems && this.checkItems();
@@ -529,22 +478,6 @@ export default {
 
 			this.$refs.form.validate(valid => {
 				if (valid && !falg) {
-					// kafka传值
-					if (this.model.database_type === 'kafka') {
-						Object.keys(this.kafka).forEach(key => {
-							this.kafka[key] = this.model[key];
-						});
-						this.model = this.kafka;
-					} else {
-						Object.keys(this.model).forEach(key => {
-							if (this.kafka[key] === this.model[key]) {
-								if (!['id', 'name', 'database_type', 'connection_type'].includes(this.model[key])) {
-									delete this.model[key];
-								}
-							}
-						});
-					}
-
 					let params = Object.assign(
 						{},
 						{
@@ -572,18 +505,6 @@ export default {
 					if (params.database_type === 'mongodb') {
 						params.fill = params.isUrl ? 'uri' : '';
 						delete params.isUrl;
-					}
-
-					if (params.database_type !== 'file') {
-						delete params.file_sources;
-						delete params.fileDefaultCharset;
-						delete params.file_upload_chunk_size;
-						delete params.file_upload_mode;
-						delete params.overwriteSetting;
-						delete params.extendSourcePath;
-						delete params.outputPath;
-						delete params.file_source_protocol;
-						delete params.vc_mode;
 					}
 					if (platformInfo === 'cloud') {
 						let platformInfo = {

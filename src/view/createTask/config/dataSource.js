@@ -84,28 +84,14 @@ export default function() {
 				type: 'select',
 				field: 't_region',
 				label: '目标端地域',
-				options: [
-					{
-						label: '可用地域1',
-						value: 'region1'
-					},
-					{
-						label: '可用地域2',
-						value: 'region2'
-					}
-				],
+				disabled: true,
 				required: true
 			},
 			{
 				type: 'select',
 				field: 't_instance',
 				label: '目标端可用区',
-				options: [
-					{
-						label: '可用1',
-						value: 'zone1'
-					}
-				],
+				disabled: true,
 				required: true
 			},
 			{

@@ -38,6 +38,7 @@ export const handleProgress = function(data) {
 	return Math.round(len) ? Math.round(len) : 0;
 };
 
+//支持的数据源
 export const TYPEMAP = {
 	mysql: 'MySQL',
 	oracle: 'Oracle',
@@ -61,19 +62,105 @@ export const TYPEMAP = {
 	'mysql pxc': 'MySQL PXC'
 };
 
-export const PLATFORMINFO = {
-	database_type: '',
-	connection_type: '',
-	database_host: '',
-	database_port: '',
-	database_name: '',
-	database_username: '',
-	database_password: '',
-	plain_password: '',
-	instances: 'instance1',
-	connectionType: 'rds',
-	region: 'region1',
-	zone: 'zone1',
-	DRS_instances: 'DRS_instances1',
-	IP_type: 'IPv4/IPv6'
+//数据源基础字段
+export const defaultModel = {
+	default: {
+		id: '',
+		name: '',
+		database_type: '',
+		connection_type: '',
+		database_host: '',
+		database_port: '',
+		database_name: '',
+		database_username: '',
+		database_password: '',
+		plain_password: '',
+		table_filter: '',
+		additionalString: '',
+		thin_type: '',
+		database_owner: '',
+		node_name: '',
+		database_schema: '',
+		plugin_name: '',
+		pgsql_log_decorder_plugin_name: '',
+		database_datetype_without_timezone: '',
+		supportUpdatePk: false,
+		isUrl: true,
+		database_uri: '',
+		ssl: false,
+		sslKey: '',
+		sslPass: '',
+		schemaAutoUpdate: false,
+		sslValidate: false,
+		sslCA: '',
+		sslCAFile: null,
+		sslKeyFile: null,
+		search_databaseType: ''
+	},
+	kafka: {
+		id: '',
+		name: '',
+		database_type: '',
+		connection_type: '',
+		kafkaBootstrapServers: '',
+		kafkaPatternTopics: '',
+		kafkaIgnoreInvalidRecord: false,
+		kafkaAcks: '',
+		kafkaCompressionType: '',
+		kafkaIgnorePushError: false
+	},
+	file: {
+		name: '',
+		database_type: '',
+		connection_type: '',
+		database_host: '',
+		database_port: '',
+		database_name: '',
+		database_username: '',
+		database_password: '',
+		plain_password: '',
+		database_uri: '',
+		ftp_passive: true, // 连接方式
+		connection_timeout_seconds: 60, //连接超时时间
+		data_timeout_seconds: 60, //传输超时时间
+		fileDefaultCharset: 'UTF8', // 编码格式
+		file_upload_chunk_size: 261120, //文件上传文件块大小
+		file_upload_mode: '', //文件上传模式
+		overwriteSetting: '', //当同名文件存在时
+		extendSourcePath: false, // 继承目录结构
+		outputPath: '', // 文件输出绝对路径
+		file_source_protocol: '', //协议类型
+		vc_mode: '', // 版本管理
+		file_sources: [
+			{
+				path: '',
+				recursive: false,
+				selectFileType: 'include',
+				include_filename: '',
+				exclude_filename: ''
+			}
+		]
+	}
+};
+export const defaultCloudModel = {
+	default: {
+		name: '',
+		database_type: '',
+		connection_type: '',
+		database_host: '',
+		database_port: '',
+		database_name: '',
+		database_username: '',
+		database_password: '',
+		plain_password: '',
+		database_uri: ''
+	},
+	drs: {
+		instances: 'instance1',
+		connectionType: 'rds',
+		region: 'region1',
+		zone: 'zone1',
+		DRS_instances: 'DRS_instances1',
+		IP_type: 'IPv4/IPv6'
+	}
 };
