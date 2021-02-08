@@ -39,6 +39,20 @@ export default function() {
 						value: 'region2'
 					}
 				],
+				show: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connectionType',
+								value: 'tapdata'
+							}
+						],
+						triggerConfig: {
+							show: false
+						}
+					}
+				],
 				required: true
 			},
 			{
@@ -49,6 +63,20 @@ export default function() {
 					{
 						label: '可用地域1',
 						value: 'zone1'
+					}
+				],
+				show: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connectionType',
+								value: 'tapdata'
+							}
+						],
+						triggerConfig: {
+							show: false
+						}
 					}
 				],
 				required: true
@@ -82,16 +110,44 @@ export default function() {
 			},
 			{
 				type: 'select',
-				field: 't_region',
+				field: 't_poolId',
 				label: '目标端地域',
 				disabled: true,
+				show: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connectionType',
+								value: 'tapdata'
+							}
+						],
+						triggerConfig: {
+							show: false
+						}
+					}
+				],
 				required: true
 			},
 			{
 				type: 'select',
-				field: 't_instance',
+				field: 't_region',
 				label: '目标端可用区',
 				disabled: true,
+				show: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'connectionType',
+								value: 'tapdata'
+							}
+						],
+						triggerConfig: {
+							show: false
+						}
+					}
+				],
 				required: true
 			},
 			{

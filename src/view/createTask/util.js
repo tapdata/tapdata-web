@@ -24,6 +24,6 @@ export const DATASOURCE_MODEL = {
 };
 
 export const INSTANCE_MODEL = {
-	instance: 'a',
-	region: 'region1'
+	poolId: '',
+	region: ''
 };

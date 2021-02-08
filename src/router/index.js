@@ -629,6 +629,16 @@ const router = new Router({
 			path: '/drs_createTask/:id/edit',
 			name: 'drs_editTask',
 			component: view('createTask/createTask')
+		},
+		{
+			path: '/drs_connections/:id/edit',
+			name: 'drs_connectionsEdit',
+			component: view('connections/DatabaseForm')
+		},
+		{
+			path: '/drs_connections/create',
+			name: 'drs_connectionsCreate',
+			component: view('connections/DatabaseForm')
 		}
 	]
 });

@@ -102,62 +102,62 @@ export default function(vm) {
 				],
 				required: true
 			},
-			{
-				type: 'select',
-				field: 'DRS_instances',
-				label: 'RDS实例',
-				options: [
-					{
-						label: 'RDS实例1',
-						value: 'DRS_instances1'
-					},
-					{
-						label: 'RDS实例2',
-						value: 'DRS_instances2'
-					}
-				],
-				show: true,
-				dependOn: [
-					{
-						triggerOptions: [
-							{
-								field: 'connectionType',
-								value: 'tapdata'
-							}
-						],
-						triggerConfig: {
-							show: false
-						}
-					}
-				],
-				required: true
-			},
-			{
-				type: 'select',
-				field: 'IP_type',
-				label: 'IPV4/IPV4',
-				options: [
-					{
-						label: 'IPv4/IPv6',
-						value: 'IPv4/IPv6'
-					}
-				],
-				show: true,
-				dependOn: [
-					{
-						triggerOptions: [
-							{
-								field: 'connectionType',
-								value: 'tapdata'
-							}
-						],
-						triggerConfig: {
-							show: false
-						}
-					}
-				],
-				required: true
-			},
+			// {
+			// 	type: 'select',
+			// 	field: 'DRS_instances',
+			// 	label: 'RDS实例',
+			// 	options: [
+			// 		{
+			// 			label: 'RDS实例1',
+			// 			value: 'DRS_instances1'
+			// 		},
+			// 		{
+			// 			label: 'RDS实例2',
+			// 			value: 'DRS_instances2'
+			// 		}
+			// 	],
+			// 	show: true,
+			// 	dependOn: [
+			// 		{
+			// 			triggerOptions: [
+			// 				{
+			// 					field: 'connectionType',
+			// 					value: 'tapdata'
+			// 				}
+			// 			],
+			// 			triggerConfig: {
+			// 				show: false
+			// 			}
+			// 		}
+			// 	],
+			// 	required: true
+			// },
+			// {
+			// 	type: 'select',
+			// 	field: 'IP_type',
+			// 	label: 'IPV4/IPV4',
+			// 	options: [
+			// 		{
+			// 			label: 'IPv4/IPv6',
+			// 			value: 'IPv4/IPv6'
+			// 		}
+			// 	],
+			// 	show: true,
+			// 	dependOn: [
+			// 		{
+			// 			triggerOptions: [
+			// 				{
+			// 					field: 'connectionType',
+			// 					value: 'tapdata'
+			// 				}
+			// 			],
+			// 			triggerConfig: {
+			// 				show: false
+			// 			}
+			// 		}
+			// 	],
+			// 	required: true
+			// },
 			{
 				type: 'input',
 				field: 'database_host',

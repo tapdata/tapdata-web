@@ -10,7 +10,7 @@ export default function() {
 		items: [
 			{
 				type: 'select',
-				field: 'instance',
+				field: 'poolId',
 				label: '选择区域',
 				options: [
 					{

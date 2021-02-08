@@ -327,8 +327,8 @@ export default {
 				show: true
 			}
 		];
-		// this.getRegion();
-		// this.getRegionZone();
+		this.getRegion();
+		this.getRegionZone();
 	},
 	watch: {
 		// 文件选中类型默认端口号
@@ -338,6 +338,9 @@ export default {
 			} else if (val === 'ftp') {
 				this.model.database_port = '21';
 			}
+		},
+		'model.poolId'() {
+			this.changeRegion('changeValue');
 		}
 	},
 	methods: {
@@ -402,19 +405,116 @@ export default {
 				this.checkDataTypeOptions(type);
 			}
 		},
-		// //云版 获取实例地域
-		// getRegion(){
-		// 	this.$api('tcm').getRegion()
-		// 		.then(() =>{
-		// 	});
-		// },
-		// //云版 获取实例可用区
-		// getRegionZone(){
-		// 	this.$api('tcm').getRegionZone()
-		// 		.then(() =>{
-		//
-		// 		});
-		// },
+		//云版 获取实例地域 F接口 产品区域
+		getRegion() {
+			this.$api('tcm')
+				.getRegion()
+				.then(() => {
+					let data = [
+						{
+							poolArea: '华东',
+							poolId: 'CIDC-RP-33',
+							poolName: '华东-上海1',
+							productType: 'eclouddrs',
+							zoneInfo: [
+								{
+									zoneCode: 'CIDC-RP-33-574',
+									zoneId: '20080511575100599',
+									zoneName: '可用区一'
+								}
+							]
+						},
+						{
+							poolArea: '华东',
+							poolId: 'CIDC-RP-31',
+							poolName: '华北-上海1',
+							productType: 'eclouddrs',
+							zoneInfo: [
+								{
+									zoneCode: 'CIDC-RP-33-574',
+									zoneId: '2008051157510052',
+									zoneName: '可用区!!!!!'
+								},
+								{
+									zoneCode: 'CIDC-RP-33-574',
+									zoneId: '2008051157510053',
+									zoneName: '可用区@@@@@@@'
+								}
+							]
+						}
+					];
+					this.region = data || [];
+					if (this.model.poolId === '' && data.length > 0) {
+						this.model.poolId = data[0].poolId;
+					}
+					this.changeConfig(data || [], 'poolID');
+					this.changeRegion();
+				});
+		},
+		//改变config
+		changeConfig(data, type) {
+			let items = this.config.items;
+			switch (type) {
+				case 'poolID': {
+					//change 地域 可用区
+					let poolId = items.find(it => it.field === 'poolId');
+					if (poolId) {
+						poolId.options = data.map(item => {
+							return {
+								id: item.poolId,
+								name: item.poolName,
+								label: item.poolName,
+								value: item.poolId
+							};
+						});
+					}
+					break;
+				}
+				case 'zoneID': {
+					//映射可用区
+					let region = items.find(it => it.field === 'region');
+					if (region) {
+						region.options = data.map(item => {
+							return {
+								id: item.zoneId,
+								name: item.zoneName,
+								label: item.zoneName,
+								value: item.zoneId
+							};
+						});
+					}
+					break;
+				}
+			}
+		},
+		//联动
+		changeRegion(type) {
+			let zone = this.region.filter(item => item.poolId === this.instanceModel.poolId);
+			if (zone.length > 0) {
+				if (type === 'changeValue') {
+					this.model.region = '';
+				} else {
+					this.model.region = zone[0].zoneInfo[0].zoneId;
+				}
+				this.zone = zone[0].zoneInfo;
+				this.changeConfig(zone[0].zoneInfo || [], 'zoneID');
+			}
+		},
+		//实例相关
+		getRegionZone() {
+			this.$api('tcm')
+				.getRegionZone()
+				.then(() => {
+					let data = {
+						'CIDC-RP-33': {
+							// 地区
+							'CIDC-RP-33-574': 1, // 可用区1 -> 实例数量
+							'CIDC-RP-33-575': 2 // 可用区2 -> 实例数量
+						}
+					};
+					this.zone = data;
+				});
+		},
 		// 按照数据库类型获取表单配置规则
 		getFormConfig() {
 			let type = this.model.database_type;
