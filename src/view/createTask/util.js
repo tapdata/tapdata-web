@@ -13,17 +13,17 @@ export const SETTING_MODEL = {
 };
 
 export const DATASOURCE_MODEL = {
-	s_connection: 'rds',
-	t_connection: 'rds',
-	s_region: 'region1',
-	t_region: 'region1',
-	s_instance: 'zone1',
-	t_instance: 'zone1',
+	s_connectionType: 'rds',
+	t_connectionType: 'rds',
+	s_region: '',
+	t_region: '',
+	s_zone: '',
+	t_zone: '',
 	s_connectionId: '',
 	t_connectionId: ''
 };
 
 export const INSTANCE_MODEL = {
-	poolId: '',
-	region: ''
+	region: '', //区域
+	zone: '' //可用区
 };

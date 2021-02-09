@@ -11,6 +11,7 @@ import kafka from './kafka';
 import mariadb from './maria';
 import mysqlpxc from './mysqlpxc';
 import drs_mysql from './drs_mysql';
+import drs_maria from './drs_maria';
 
 export default {
 	mysql,
@@ -25,5 +26,6 @@ export default {
 	kafka,
 	mariadb,
 	mysqlpxc,
-	drs_mysql
+	drs_mysql,
+	drs_maria
 };

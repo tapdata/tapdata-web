@@ -577,6 +577,16 @@ const router = new Router({
 			meta: { code: 'Data_SYNC', title: i18n.t('tap.jobFlow') }
 		},
 		{
+			path: '/createTask/create',
+			name: 'createTask',
+			component: view('createTask/createTask')
+		},
+		{
+			path: '/createTask/:id/edit',
+			name: 'editTask',
+			component: view('createTask/createTask')
+		},
+		{
 			path: '/',
 			name: 'layout',
 			redirect: 'dashboard',

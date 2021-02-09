@@ -1,6 +1,6 @@
 <template>
 	<div class="databaseFrom">
-		<header class="header">
+		<header class="header" v-if="!$window.getSettingByKey('HIDE_CONNECTION_OUTSIDE_PART')">
 			{{ $route.params.id ? $t('connection.editDataSource') : $t('connection.createNewDataSource') }}
 		</header>
 		<div class="databaseFrom-body">
@@ -182,7 +182,7 @@
 					</div>
 				</footer>
 			</main>
-			<gitbook></gitbook>
+			<gitbook v-if="!$window.getSettingByKey('HIDE_CONNECTION_OUTSIDE_PART')"></gitbook>
 		</div>
 		<Test
 			ref="test"
@@ -294,7 +294,61 @@ export default {
 				kafkaAcks: '',
 				kafkaCompressionType: '',
 				kafkaIgnorePushError: false
-			}
+			},
+			instanceModelZone: '',
+			instanceMock: [
+				{
+					area: '华南',
+					name: '华南-无锡1',
+					code: 'CIDC-RP-33',
+					zones: [
+						{
+							name: '可用区1',
+							code: 'CIDC-RP-33-574',
+							agentNum: 1
+						},
+						{
+							name: '可用区2',
+							code: 'CIDC-RP-33-575',
+							agentNum: 2
+						}
+					]
+				}
+			],
+			dataSourceZone: '',
+			dataSourceMock: [
+				{
+					poolArea: '华东',
+					poolId: 'CIDC-RP-33',
+					poolName: '华东-上海1',
+					productType: 'eclouddrs',
+					zoneInfo: [
+						{
+							zoneCode: 'CIDC-RP-33-574',
+							zoneId: '20080511575100599',
+							zoneName: '可用区一'
+						}
+					]
+				},
+				{
+					poolArea: '华东',
+					poolId: 'CIDC-RP-31',
+					poolName: '华北-上海1',
+					productType: 'eclouddrs',
+					zoneInfo: [
+						{
+							zoneCode: 'CIDC-RP-33-574',
+							zoneId: '2008051157510052',
+							zoneName: '可用区!!!!!'
+						},
+						{
+							zoneCode: 'CIDC-RP-33-574',
+							zoneId: '2008051157510053',
+							zoneName: '可用区@@@@@@@'
+						}
+					]
+				}
+			]
 		};
 	},
 	created() {
@@ -327,8 +381,6 @@ export default {
 				show: true
 			}
 		];
-		this.getRegion();
-		this.getRegionZone();
 	},
 	watch: {
 		// 文件选中类型默认端口号
@@ -339,8 +391,11 @@ export default {
 				this.model.database_port = '21';
 			}
 		},
-		'model.poolId'() {
-			this.changeRegion('changeValue');
+		'model.region'() {
+			this.changeInstanceRegion('changeValue');
+		},
+		'model.s_region'() {
+			this.changeDataSourceRegion('changeValue');
 		}
 	},
 	methods: {
@@ -371,6 +426,8 @@ export default {
 		checkDataTypeOptions(type) {
 			this.model.database_type = type;
 			this.getFormConfig();
+			this.getInstanceRegion();
+			this.getDataSourceRegion();
 		},
 		initTimezones() {
 			let timezones = [{ label: '(Database Timezone)', value: '' }];
@@ -404,116 +461,6 @@ export default {
 				this.dataTypes = options;
 				this.checkDataTypeOptions(type);
 			}
-		},
-		//云版 获取实例地域 F接口 产品区域
-		getRegion() {
-			this.$api('tcm')
-				.getRegion()
-				.then(() => {
-					let data = [
-						{
-							poolArea: '华东',
-							poolId: 'CIDC-RP-33',
-							poolName: '华东-上海1',
-							productType: 'eclouddrs',
-							zoneInfo: [
-								{
-									zoneCode: 'CIDC-RP-33-574',
-									zoneId: '20080511575100599',
-									zoneName: '可用区一'
-								}
-							]
-						},
-						{
-							poolArea: '华东',
-							poolId: 'CIDC-RP-31',
-							poolName: '华北-上海1',
-							productType: 'eclouddrs',
-							zoneInfo: [
-								{
-									zoneCode: 'CIDC-RP-33-574',
-									zoneId: '2008051157510052',
-									zoneName: '可用区!!!!!'
-								},
-								{
-									zoneCode: 'CIDC-RP-33-574',
-									zoneId: '2008051157510053',
-									zoneName: '可用区@@@@@@@'
-								}
-							]
-						}
-					];
-					this.region = data || [];
-					if (this.model.poolId === '' && data.length > 0) {
-						this.model.poolId = data[0].poolId;
-					}
-					this.changeConfig(data || [], 'poolID');
-					this.changeRegion();
-				});
-		},
-		//改变config
-		changeConfig(data, type) {
-			let items = this.config.items;
-			switch (type) {
-				case 'poolID': {
-					//change 地域 可用区
-					let poolId = items.find(it => it.field === 'poolId');
-					if (poolId) {
-						poolId.options = data.map(item => {
-							return {
-								id: item.poolId,
-								name: item.poolName,
-								label: item.poolName,
-								value: item.poolId
-							};
-						});
-					}
-					break;
-				}
-				case 'zoneID': {
-					//映射可用区
-					let region = items.find(it => it.field === 'region');
-					if (region) {
-						region.options = data.map(item => {
-							return {
-								id: item.zoneId,
-								name: item.zoneName,
-								label: item.zoneName,
-								value: item.zoneId
-							};
-						});
-					}
-					break;
-				}
-			}
-		},
-		//联动
-		changeRegion(type) {
-			let zone = this.region.filter(item => item.poolId === this.instanceModel.poolId);
-			if (zone.length > 0) {
-				if (type === 'changeValue') {
-					this.model.region = '';
-				} else {
-					this.model.region = zone[0].zoneInfo[0].zoneId;
-				}
-				this.zone = zone[0].zoneInfo;
-				this.changeConfig(zone[0].zoneInfo || [], 'zoneID');
-			}
-		},
-		//实例相关
-		getRegionZone() {
-			this.$api('tcm')
-				.getRegionZone()
-				.then(() => {
-					let data = {
-						'CIDC-RP-33': {
-							// 地区
-							'CIDC-RP-33-574': 1, // 可用区1 -> 实例数量
-							'CIDC-RP-33-575': 2 // 可用区2 -> 实例数量
-						}
-					};
-					this.zone = data;
-				});
 		},
 		// 按照数据库类型获取表单配置规则
 		getFormConfig() {
@@ -551,6 +498,114 @@ export default {
 				); //切换类型会后初始化数据
 				this.checkItems = config.checkItems; //根据model变化更新表单项显示或隐藏
 				this.checkItems && this.checkItems();
+			}
+		},
+		//第一步 选择实例
+		getInstanceRegion() {
+			this.$api('tcm').getRegionZone();
+			if (this.model.region === '' && this.instanceMock.length > 0) {
+				this.model.region = this.instanceMock[0].code;
+			}
+			this.changeConfig(this.instanceMock || [], 'region');
+			this.changeInstanceRegion();
+		},
+		changeInstanceRegion(type) {
+			let zone = this.instanceMock.filter(item => item.code === this.model.region);
+			if (zone.length > 0) {
+				if (type === 'changeValue') {
+					this.model.zone = '';
+				} else {
+					this.model.zone = zone[0].zones[0].code;
+				}
+				this.instanceModelZone = zone[0].zones;
+				this.changeConfig(zone[0].zones || [], 'zone');
+			}
+		},
+		//第二步 选择源端
+		getDataSourceRegion() {
+			this.$api('tcm').getRegion(); //华东上海
+			if (this.model.s_region === '' && this.dataSourceMock.length > 0) {
+				this.model.s_region = this.dataSourceMock[0].poolId;
+			}
+			this.changeConfig(this.dataSourceMock || [], 's_defaultRegion');
+			this.changeDataSourceRegion();
+		},
+		changeDataSourceRegion(type) {
+			let zone = this.dataSourceMock.filter(item => item.poolId === this.model.s_region);
+			if (zone.length > 0) {
+				if (type === 'changeValue') {
+					this.model.s_zone = '';
+				} else {
+					this.model.s_zone = zone[0].zoneInfo[0].zoneId;
+				}
+				this.dataSourceZone = zone[0].zoneInfo;
+				this.changeConfig(zone[0].zoneInfo || [], 's_defaultZone');
+			}
+		},
+		//change config
+		changeConfig(data, type) {
+			let items = this.config.items;
+			switch (type) {
+				case 'region': {
+					// 第一步 选择实例 选择区域
+					let region = items.find(it => it.field === 'region');
+					if (region) {
+						region.options = data.map(item => {
+							return {
+								id: item.code,
+								name: item.name,
+								label: item.name,
+								value: item.code
+							};
+						});
+					}
+					break;
+				}
+				case 'zone': {
+					//映射可用区
+					let zone = items.find(it => it.field === 'zone');
+					if (zone) {
+						zone.options = this.instanceModelZone.map(item => {
+							return {
+								id: item.code,
+								name: item.name,
+								label: item.name,
+								value: item.code
+							};
+						});
+					}
+					break;
+				}
+				case 's_defaultRegion': {
+					//源端默认等于选择实例可用区
+					let s_region = items.find(it => it.field === 's_region');
+					if (s_region) {
+						s_region.options = this.dataSourceMock.map(item => {
+							return {
+								id: item.poolId,
+								name: item.poolName,
+								label: item.poolName,
+								value: item.poolId
+							};
+						});
+					}
+					break;
+				}
+				case 's_defaultZone': {
+					//映射可用区
+					let s_zone = items.find(it => it.field === 's_zone');
+					if (s_zone) {
+						s_zone.options = this.dataSourceZone.map(item => {
+							return {
+								id: item.zoneId,
+								name: item.zoneName,
+								label: item.zoneName,
+								value: item.zoneId
+							};
+						});
+					}
+					break;
+				}
 			}
 		},
 		handleTestVisible() {

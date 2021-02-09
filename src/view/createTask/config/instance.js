@@ -10,34 +10,16 @@ export default function() {
 		items: [
 			{
 				type: 'select',
-				field: 'poolId',
+				field: 'region',
 				label: '选择区域',
-				options: [
-					{
-						label: '实例1',
-						value: 'instance1'
-					},
-					{
-						label: '实例2',
-						value: 'instance2'
-					}
-				],
+				options: [],
 				required: true
 			},
 			{
 				type: 'select',
-				field: 'region',
+				field: 'zone',
 				label: '选择可用区',
-				options: [
-					{
-						label: '可用1',
-						value: 'region1'
-					},
-					{
-						label: '可用2',
-						value: 'region2'
-					}
-				],
+				options: [],
 				required: true
 			}
 		]

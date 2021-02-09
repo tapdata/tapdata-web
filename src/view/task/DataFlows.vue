@@ -119,7 +119,13 @@
 						}}</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
-				<el-button v-readonlybtn="'SYNC_Function_management'" size="mini" class="btn" @click="handleGoFunction">
+				<el-button
+					v-readonlybtn="'SYNC_Function_management'"
+					size="mini"
+					class="btn"
+					@click="handleGoFunction"
+					v-if="!$window.getSettingByKey('HIDE_FUNCTION_BUTTON')"
+				>
 					<i class="iconfont icon-hanshu back-btn-icon"></i>
 					<span> {{ $t('dataFlow.taskBulkFx') }}</span>
 				</el-button>
@@ -128,6 +134,7 @@
 					<span> {{ $t('dataFlow.bulkImport') }}</span>
 				</el-button>
 				<el-button
+					v-if="$window.getSettingByKey('CREATE_DATAFLOW_BY_FORM')"
 					v-readonlybtn="'SYNC_job_creation'"
 					class="btn btn-create"
 					type="primary"
@@ -135,6 +142,16 @@
 					@click="create"
 				>
 					<i class="iconfont icon-jia add-btn-icon"></i>
+				</el-button>
+				<el-button
+					v-else
+					v-readonlybtn="'SYNC_job_creation'"
+					class="btn btn-createText"
+					type="text"
+					size="mini"
+					@click="creatText"
+				>
+					创建任务
 				</el-button>
 			</div>
 
@@ -800,6 +817,12 @@ export default {
 			// window.windows.push(window.open(routeUrl.href, '_blank'));
 			// window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
 		},
+		creatText() {
+			let routeUrl = this.$router.resolve({
+				path: '/createTask/create'
+			});
+			window.open(routeUrl.href, '_blank');
+		},
 		handleDetail(id, type, mappingTemplate) {
 			const h = this.$createElement;
 			if (type === 'edit') {
@@ -1136,6 +1159,11 @@ export default {
 				&.btn-create {
 					margin-left: 5px;
 					background: #48b6e2;
+				}
+				&.btn-createText {
+					margin-left: 5px;
+					background: #48b6e2;
+					color: #fff;
 				}
 			}
 		}

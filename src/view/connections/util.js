@@ -156,11 +156,10 @@ export const defaultCloudModel = {
 		database_uri: ''
 	},
 	drs: {
-		instances: 'instance1',
+		s_zone: '',
+		s_region: '',
 		connectionType: 'rds',
-		region: 'region1',
-		zone: 'zone1',
-		DRS_instances: 'DRS_instances1',
-		IP_type: 'IPv4/IPv6'
+		region: '',
+		zone: ''
 	}
 };

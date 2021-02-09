@@ -11,7 +11,7 @@ export default function() {
 			},
 			{
 				type: 'select',
-				field: 's_connection',
+				field: 's_connectionType',
 				label: '源端连接来源',
 				options: [
 					{
@@ -44,7 +44,7 @@ export default function() {
 					{
 						triggerOptions: [
 							{
-								field: 'connectionType',
+								field: 's_connectionType',
 								value: 'tapdata'
 							}
 						],
@@ -57,7 +57,7 @@ export default function() {
 			},
 			{
 				type: 'select',
-				field: 's_instance',
+				field: 's_zone',
 				label: '源端可用区',
 				options: [
 					{
@@ -70,7 +70,7 @@ export default function() {
 					{
 						triggerOptions: [
 							{
-								field: 'connectionType',
+								field: 's_connectionType',
 								value: 'tapdata'
 							}
 						],
@@ -94,7 +94,7 @@ export default function() {
 			},
 			{
 				type: 'select',
-				field: 't_connection',
+				field: 't_connectionType',
 				label: '目标端连接来源',
 				options: [
 					{
@@ -110,7 +110,7 @@ export default function() {
 			},
 			{
 				type: 'select',
-				field: 't_poolId',
+				field: 't_region',
 				label: '目标端地域',
 				disabled: true,
 				show: true,
@@ -118,7 +118,7 @@ export default function() {
 					{
 						triggerOptions: [
 							{
-								field: 'connectionType',
+								field: 't_connectionType',
 								value: 'tapdata'
 							}
 						],
@@ -131,7 +131,7 @@ export default function() {
 			},
 			{
 				type: 'select',
-				field: 't_region',
+				field: 't_zone',
 				label: '目标端可用区',
 				disabled: true,
 				show: true,
@@ -139,7 +139,7 @@ export default function() {
 					{
 						triggerOptions: [
 							{
-								field: 'connectionType',
+								field: 't_connectionType',
 								value: 'tapdata'
 							}
 						],
