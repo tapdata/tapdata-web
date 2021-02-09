@@ -8,7 +8,7 @@
 		</div>
 		<CustomerService v-model="isShowCustomerService"></CustomerService>
 		<newDataFlow :dialogVisible.sync="dialogVisible"></newDataFlow>
-		<el-header class="layout-header" height="48px">
+		<el-header class="layout-header" height="48px" v-if="!$window.getSettingByKey('HIDE_TOPBAR')">
 			<a class="logo" href="/">
 				<img :src="logoUrl" />
 			</a>
@@ -106,7 +106,7 @@
 			</div>
 		</el-header>
 		<el-container style="width: 100%;flex: 1; overflow:hidden;">
-			<el-aside class="layout-aside" width="auto">
+			<el-aside class="layout-aside" width="auto" v-if="!$window.getSettingByKey('HIDE_MENU')">
 				<el-menu class="menu" :default-active="activeMenu" :collapse="isCollapse" @select="menuHandler($event)">
 					<template v-for="menu in menus">
 						<el-submenu

@@ -1,6 +1,6 @@
 <template>
 	<div class="table-page-container">
-		<div class="table-page-header">
+		<div class="table-page-header" v-if="!$window.getSettingByKey('HIDE_TABLE_TITLE')">
 			<slot name="header">
 				<div class="page-header-title">{{ title }}</div>
 				<div v-if="desc" class="page-header-desc" v-html="desc"></div>

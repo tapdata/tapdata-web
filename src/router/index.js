@@ -587,59 +587,59 @@ const router = new Router({
 			path: '/guide',
 			name: 'guide',
 			component: view('Guide')
-		},
-		{
-			path: '/drs_connections',
-			name: 'drs_connections',
-			component: view('connections/List'),
-			meta: {
-				title: i18n.t('tap.connection')
-			}
-		},
-		{
-			path: '/drs_connections/create',
-			name: 'drs_connectionsCreate',
-			component: view('connections/DatabaseForm'),
-			meta: {
-				title: i18n.t('tap.connection')
-			}
-		},
-		{
-			path: '/drs_connections/:id/edit',
-			name: 'drs_connectionsEdit',
-			component: view('connections/DatabaseForm'),
-			meta: {
-				title: i18n.t('tap.connection')
-			}
-		},
-		{
-			path: '/drs_dataFlows',
-			name: 'drs_dataFlows',
-			component: view('task/DataFlows'),
-			meta: {
-				title: i18n.t('tap.jobFlow')
-			}
-		},
-		{
-			path: '/drs_createTask/create',
-			name: 'drs_createTask',
-			component: view('createTask/createTask')
-		},
-		{
-			path: '/drs_createTask/:id/edit',
-			name: 'drs_editTask',
-			component: view('createTask/createTask')
-		},
-		{
-			path: '/drs_connections/:id/edit',
-			name: 'drs_connectionsEdit',
-			component: view('connections/DatabaseForm')
-		},
-		{
-			path: '/drs_connections/create',
-			name: 'drs_connectionsCreate',
-			component: view('connections/DatabaseForm')
 		}
+		// {
+		// 	path: '/drs_connections',
+		// 	name: 'drs_connections',
+		// 	component: view('connections/List'),
+		// 	meta: {
+		// 		title: i18n.t('tap.connection')
+		// 	}
+		// },
+		// {
+		// 	path: '/drs_connections/create',
+		// 	name: 'drs_connectionsCreate',
+		// 	component: view('connections/DatabaseForm'),
+		// 	meta: {
+		// 		title: i18n.t('tap.connection')
+		// 	}
+		// },
+		// {
+		// 	path: '/drs_connections/:id/edit',
+		// 	name: 'drs_connectionsEdit',
+		// 	component: view('connections/DatabaseForm'),
+		// 	meta: {
+		// 		title: i18n.t('tap.connection')
+		// 	}
+		// },
+		// {
+		// 	path: '/drs_dataFlows',
+		// 	name: 'drs_dataFlows',
+		// 	component: view('task/DataFlows'),
+		// 	meta: {
+		// 		title: i18n.t('tap.jobFlow')
+		// 	}
+		// },
+		// {
+		// 	path: '/drs_createTask/create',
+		// 	name: 'drs_createTask',
+		// 	component: view('createTask/createTask')
+		// },
+		// {
+		// 	path: '/drs_createTask/:id/edit',
+		// 	name: 'drs_editTask',
+		// 	component: view('createTask/createTask')
+		// },
+		// {
+		// 	path: '/drs_connections/:id/edit',
+		// 	name: 'drs_connectionsEdit',
+		// 	component: view('connections/DatabaseForm')
+		// },
+		// {
+		// 	path: '/drs_connections/create',
+		// 	name: 'drs_connectionsCreate',
+		// 	component: view('connections/DatabaseForm')
+		// }
 	]
 });
 
@@ -649,14 +649,14 @@ router.afterEach(() => {
 });
 let isFirst = true;
 router.beforeEach(async (to, from, next) => {
-	if (parent.__tm_router_prefix && !to.name.startsWith(parent.__tm_router_prefix)) {
-		return next({
-			name: parent.__tm_router_prefix + to.name,
-			query: to.query,
-			params: to.params,
-			meta: to.meta
-		});
-	}
+	// if (parent.__tm_router_prefix && !to.name.startsWith(parent.__tm_router_prefix)) {
+	// 	return next({
+	// 		name: parent.__tm_router_prefix + to.name,
+	// 		query: to.query,
+	// 		params: to.params,
+	// 		meta: to.meta
+	// 	});
+	// }
 	if (!to.matched.length) {
 		Message.error({
 			message: 'Page not found!'
@@ -726,7 +726,7 @@ router.beforeEach(async (to, from, next) => {
 
 		//判断当前路由的页面是否有权限，无权限则不跳转，有权限则执行跳转
 		let matched = true;
-		if (to.meta.code) {
+		if (to.meta.code && !parent.__IGNORE_PERMISSION__) {
 			matched = permissions.some(p => p.code === to.meta.code);
 		}
 		if (matched) {
