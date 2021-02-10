@@ -134,7 +134,7 @@
 					<span> {{ $t('dataFlow.bulkImport') }}</span>
 				</el-button>
 				<el-button
-					v-if="$window.getSettingByKey('CREATE_DATAFLOW_BY_FORM')"
+					v-if="!$window.getSettingByKey('CREATE_DATAFLOW_BY_FORM')"
 					v-readonlybtn="'SYNC_job_creation'"
 					class="btn btn-create"
 					type="primary"
@@ -818,10 +818,9 @@ export default {
 			// window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
 		},
 		creatText() {
-			let routeUrl = this.$router.resolve({
+			this.$router.push({
 				path: '/createTask/create'
 			});
-			window.open(routeUrl.href, '_blank');
 		},
 		handleDetail(id, type, mappingTemplate) {
 			const h = this.$createElement;
@@ -847,6 +846,12 @@ export default {
 						type: 'warning'
 					}
 				).then(() => {
+					if (window.getSettingByKey('CREATE_DATAFLOW_BY_FORM')) {
+						this.$router.push({
+							path: '/createTask/' + id + '/edit'
+						});
+						return;
+					}
 					let routeUrl = this.$router.resolve({
 						path: '/job',
 						query: { id: id, mapping: mappingTemplate }

@@ -139,7 +139,10 @@ export default {
 		this.getSteps(false);
 		this.getFormConfig();
 		this.getInstanceRegion();
-		//this.intiData();
+		let id = this.$route.params.id;
+		if (id) {
+			this.intiData(id);
+		}
 	},
 	watch: {
 		'instanceModel.region'() {
@@ -151,8 +154,7 @@ export default {
 	},
 	methods: {
 		//初始化数据 编辑跳转
-		intiData() {
-			let id = '601bed336cada30058b2c49b';
+		intiData(id) {
 			this.$api('DataFlows')
 				.get([id])
 				.then(result => {
@@ -164,7 +166,7 @@ export default {
 						this.transferData = {
 							table_prefix: stages[1].table_prefix,
 							table_suffix: stages[1].table_suffix,
-							selectSourceArr: stages[1].syncObjects[0].objectNames
+							selectSourceArr: stages[1].syncObjects[0] ? stages[1].syncObjects[0].objectNames : []
 						};
 					}
 				});
@@ -261,13 +263,13 @@ export default {
 			}
 		},
 		back() {
-			this.activeStep -= 1;
-			this.getFormConfig();
 			let type = this.steps[this.activeStep].type || 'instance';
 			//将复制表内容存起来
-			if (type === 'dataSource') {
+			if (type === 'mapping') {
 				this.transferData = this.$refs.transfer.returnData();
 			}
+			this.activeStep -= 1;
+			this.getFormConfig();
 		},
 		// 根据步骤获取不同的表单项目
 		getFormConfig() {
@@ -432,10 +434,10 @@ export default {
 		//save
 		save() {
 			this.transferData = this.$refs.transfer.returnData();
-			// if (this.transferData.selectSourceArr.length === 0) {
-			// 	this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表');
-			// 	return;
-			// }
+			if (this.transferData.selectSourceArr.length === 0) {
+				this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表');
+				return;
+			}
 			let postData = {
 				name: this.settingModel.name,
 				description: '',
@@ -506,7 +508,9 @@ export default {
 			this.$api('DataFlows')
 				.post(postData)
 				.then(() => {
-					this.$message.success('保存成功');
+					this.$router.push({
+						path: '/dataFlows?mapping=cluster-clone'
+					});
 				});
 		}
 	}
