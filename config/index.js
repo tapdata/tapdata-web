@@ -23,6 +23,11 @@ module.exports = {
 				// target: 'http://192.168.1.193:30900/',
 				changeOrigin: false
 			},
+			'/api/tcm': {
+				target: 'http://' + baseUrl,
+				// target: 'http://192.168.1.193:30900/',
+				changeOrigin: false
+			},
 			'/oauth': {
 				target: 'http://' + baseUrl,
 				// target: 'http://192.168.1.193:30900/',

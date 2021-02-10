@@ -130,59 +130,9 @@ export default {
 			status: '',
 			mdHtml: '',
 			instanceModelZone: '',
-			instanceMock: [
-				{
-					area: '华南',
-					name: '华南-无锡1',
-					code: 'CIDC-RP-33',
-					zones: [
-						{
-							name: '可用区1',
-							code: 'CIDC-RP-33-574',
-							agentNum: 1
-						},
-						{
-							name: '可用区2',
-							code: 'CIDC-RP-33-575',
-							agentNum: 2
-						}
-					]
-				}
-			],
+			instanceMock: [],
 			dataSourceZone: '',
-			dataSourceMock: [
-				{
-					poolArea: '华东',
-					poolId: 'CIDC-RP-33',
-					poolName: '华东-上海1',
-					productType: 'eclouddrs',
-					zoneInfo: [
-						{
-							zoneCode: 'CIDC-RP-33-574',
-							zoneId: '20080511575100599',
-							zoneName: '可用区一'
-						}
-					]
-				},
-				{
-					poolArea: '华东',
-					poolId: 'CIDC-RP-31',
-					poolName: '华北-上海1',
-					productType: 'eclouddrs',
-					zoneInfo: [
-						{
-							zoneCode: 'CIDC-RP-33-574',
-							zoneId: '2008051157510052',
-							zoneName: '可用区!!!!!'
-						},
-						{
-							zoneCode: 'CIDC-RP-33-574',
-							zoneId: '2008051157510053',
-							zoneName: '可用区@@@@@@@'
-						}
-					]
-				}
-			]
+			dataSourceMock: []
 		};
 	},
 	created() {
@@ -193,10 +143,10 @@ export default {
 	},
 	watch: {
 		'instanceModel.region'() {
-			this.changeInstanceRegion('changeValue');
+			this.changeInstanceRegion();
 		},
 		'dataSourceModel.s_region'() {
-			this.changeDataSourceRegion('changeValue');
+			this.changeDataSourceRegion();
 		}
 	},
 	methods: {
@@ -221,42 +171,51 @@ export default {
 		},
 		//第一步 选择实例
 		getInstanceRegion() {
-			this.$api('tcm').getRegionZone();
-			if (this.instanceModel.region === '' && this.instanceMock.length > 0) {
-				this.instanceModel.region = this.instanceMock[0].code;
-			}
-			this.changeConfig(this.instanceMock || [], 'region');
-			this.changeInstanceRegion();
+			this.$api('tcm')
+				.getRegionZone()
+				.then(data => {
+					this.instanceMock = data.data || [];
+					if (this.instanceModel.region === '' && this.instanceMock.length > 0) {
+						this.instanceModel.region = this.instanceMock[0].code;
+					}
+					this.changeConfig(this.instanceMock || [], 'region');
+					this.changeInstanceRegion();
+				})
+				.catch(() => {
+					this.$message.error('请求失败');
+				});
 		},
-		changeInstanceRegion(type) {
+		changeInstanceRegion() {
 			let zone = this.instanceMock.filter(item => item.code === this.instanceModel.region);
 			if (zone.length > 0) {
-				if (type === 'changeValue') {
-					this.instanceModel.zone = '';
-				} else {
-					this.instanceModel.zone = zone[0].zones[0].code;
-				}
+				this.instanceModel.zone = this.instanceModel.zone || zone[0].zones[0].code;
 				this.instanceModelZone = zone[0].zones;
 				this.changeConfig(zone[0].zones || [], 'zone');
 			}
 		},
 		//第二步 选择源端
 		getDataSourceRegion() {
-			this.$api('tcm').getRegion(); //华东上海
-			if (this.dataSourceModel.s_region === '' && this.dataSourceMock.length > 0) {
-				this.dataSourceModel.s_region = this.dataSourceMock[0].poolId;
-			}
-			this.changeConfig(this.dataSourceMock || [], 's_defaultRegion');
-			this.changeDataSourceRegion();
+			let param = {
+				productType: 'MYSQL'
+			};
+			this.$api('tcm')
+				.productVip(param)
+				.then(data => {
+					this.dataSourceMock = data.data.poolList || [];
+					if (this.dataSourceModel.s_region === '' && this.dataSourceMock.length > 0) {
+						this.dataSourceModel.s_region = this.dataSourceMock[0].poolId;
+					}
+					this.changeConfig(this.dataSourceMock || [], 's_defaultRegion');
+					this.changeDataSourceRegion();
+				})
+				.catch(() => {
+					this.$message.error('请求失败');
+				}); //华东上海
 		},
-		changeDataSourceRegion(type) {
+		changeDataSourceRegion() {
 			let zone = this.dataSourceMock.filter(item => item.poolId === this.dataSourceModel.s_region);
 			if (zone.length > 0) {
-				if (type === 'changeValue') {
-					this.dataSourceModel.s_zone = '';
-				} else {
-					this.dataSourceModel.s_zone = zone[0].zoneInfo[0].zoneId;
-				}
+				this.dataSourceModel.s_zone = this.dataSourceModel.s_zone || zone[0].zoneInfo[0].zoneCode;
 				this.dataSourceZone = zone[0].zoneInfo;
 				this.changeConfig(zone[0].zoneInfo || [], 's_defaultZone');
 			}
@@ -325,7 +284,9 @@ export default {
 				this.getInstanceRegion();
 			} else if (type === 'mapping') {
 				let id = this.dataSourceModel.s_connectionId || '';
-				this.$refs.transfer.getTable(id);
+				this.$nextTick(() => {
+					this.$refs.transfer.getTable(id);
+				});
 			}
 		},
 		//获取数据源
@@ -457,10 +418,10 @@ export default {
 					if (s_zone) {
 						s_zone.options = this.dataSourceZone.map(item => {
 							return {
-								id: item.zoneId,
+								id: item.zoneCode,
 								name: item.zoneName,
 								label: item.zoneName,
-								value: item.zoneId
+								value: item.zoneCode
 							};
 						});
 					}
@@ -471,10 +432,10 @@ export default {
 		//save
 		save() {
 			this.transferData = this.$refs.transfer.returnData();
-			if (this.transferData.selectSourceArr.length === 0) {
-				this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表');
-				return;
-			}
+			// if (this.transferData.selectSourceArr.length === 0) {
+			// 	this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表');
+			// 	return;
+			// }
 			let postData = {
 				name: this.settingModel.name,
 				description: '',

@@ -12,7 +12,11 @@ export default class TCM extends PublicAPI {
 	}
 	//h获取可用区
 	getRegion() {
-		return axios.get(this.url + '/agent/region');
+		return axios.get(this.url + '/region');
+	}
+	//h获取可用区
+	productVip(params) {
+		return axios.get(this.url + '/product/vip', { params });
 	}
 	//实例相关地区列表
 	getRegionZone() {
