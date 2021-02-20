@@ -632,10 +632,10 @@ export default {
 					}
 					if (platformInfo === 'cloud') {
 						let platformInfo = {
-							instances: params.instances,
+							instances: params.zone,
 							connectionType: params.connectionType,
-							region: params.region,
-							zone: params.zone,
+							region: params.s_region,
+							zone: params.s_zone,
 							DRS_instances: params.DRS_instances,
 							IP_type: params.IP_type
 						};
