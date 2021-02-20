@@ -667,6 +667,7 @@ router.beforeEach(async (to, from, next) => {
 	// 		meta: to.meta
 	// 	});
 	// }
+	window.emitRouteChange && window.emitRouteChange(to);
 	if (!to.matched.length) {
 		Message.error({
 			message: 'Page not found!'
