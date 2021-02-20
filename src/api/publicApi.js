@@ -149,7 +149,7 @@ axios.interceptors.response.use(
 
 export default class PublicAPI {
 	constructor(url) {
-		if (url.startsWith('/')) {
+		if (url.startsWith('/') && !url.startsWith('/api/tcm')) {
 			url = url.substring(1);
 		}
 		this.url = url;
