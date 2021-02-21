@@ -12,32 +12,14 @@ export default function(vm) {
 				type: 'select',
 				field: 'region',
 				label: '选择实例',
-				options: [
-					{
-						label: 'RDS可用区1',
-						value: 'zone1'
-					},
-					{
-						label: 'RDS可用区2',
-						value: 'zone2'
-					}
-				],
+				options: [],
 				required: true
 			},
 			{
 				type: 'select',
 				field: 'zone',
 				label: '选择实例可用区',
-				options: [
-					{
-						label: 'RDS可用区1',
-						value: 'zone1'
-					},
-					{
-						label: 'RDS可用区2',
-						value: 'zone2'
-					}
-				],
+				options: [],
 				required: true
 			},
 			{
@@ -53,7 +35,7 @@ export default function(vm) {
 					{
 						label: '云外自建库',
 						tip: vm.$t('dataForm.form.options.sourceTips'),
-						value: 'tapdata'
+						value: 'selfDB'
 					}
 				],
 				required: true
@@ -62,23 +44,14 @@ export default function(vm) {
 				type: 'select',
 				field: 's_region',
 				label: 'RDS地域',
-				options: [
-					{
-						label: 'RDS地域1',
-						value: 'region1'
-					},
-					{
-						label: 'RDS地域2',
-						value: 'region2'
-					}
-				],
+				options: [],
 				show: true,
 				dependOn: [
 					{
 						triggerOptions: [
 							{
 								field: 'connectionType',
-								value: 'tapdata'
+								value: 'selfDB'
 							}
 						],
 						triggerConfig: {
@@ -92,23 +65,14 @@ export default function(vm) {
 				type: 'select',
 				field: 's_zone',
 				label: 'RDS可用区',
-				options: [
-					{
-						label: 'RDS可用区1',
-						value: 'zone1'
-					},
-					{
-						label: 'RDS可用区2',
-						value: 'zone2'
-					}
-				],
+				options: [],
 				show: true,
 				dependOn: [
 					{
 						triggerOptions: [
 							{
 								field: 'connectionType',
-								value: 'tapdata'
+								value: 'selfDB'
 							}
 						],
 						triggerConfig: {

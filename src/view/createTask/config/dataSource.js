@@ -20,7 +20,7 @@ export default function() {
 					},
 					{
 						label: '云外建库',
-						value: 'tapdata'
+						value: 'selfDB'
 					}
 				],
 				required: true
@@ -29,23 +29,14 @@ export default function() {
 				type: 'select',
 				field: 's_region',
 				label: '源端地域',
-				options: [
-					{
-						label: '可用地域1',
-						value: 'region1'
-					},
-					{
-						label: '可用地域2',
-						value: 'region2'
-					}
-				],
+				options: [],
 				show: true,
 				dependOn: [
 					{
 						triggerOptions: [
 							{
 								field: 's_connectionType',
-								value: 'tapdata'
+								value: 'selfDB'
 							}
 						],
 						triggerConfig: {
@@ -71,7 +62,7 @@ export default function() {
 						triggerOptions: [
 							{
 								field: 's_connectionType',
-								value: 'tapdata'
+								value: 'selfDB'
 							}
 						],
 						triggerConfig: {
@@ -96,16 +87,7 @@ export default function() {
 				type: 'select',
 				field: 't_connectionType',
 				label: '目标端连接来源',
-				options: [
-					{
-						label: 'RDS实例',
-						value: 'rds'
-					},
-					{
-						label: '云外建库',
-						value: 'tapdata'
-					}
-				],
+				options: [],
 				required: true
 			},
 			{
@@ -119,7 +101,7 @@ export default function() {
 						triggerOptions: [
 							{
 								field: 't_connectionType',
-								value: 'tapdata'
+								value: 'selfDB'
 							}
 						],
 						triggerConfig: {
@@ -140,7 +122,7 @@ export default function() {
 						triggerOptions: [
 							{
 								field: 't_connectionType',
-								value: 'tapdata'
+								value: 'selfDB'
 							}
 						],
 						triggerConfig: {
