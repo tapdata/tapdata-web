@@ -22,7 +22,7 @@
 							<div class="desc">
 								用户需要先选择一个实例用于运行同步任务，任务创建后不支持更换实例，如果需要创建新的实例请点击创建实例
 							</div>
-							<form-builder ref="instance" v-model="instanceModel" :config="config"></form-builder>
+							<form-builder ref="instance" v-model="platformInfo" :config="config"></form-builder>
 						</div>
 						<!--步骤2-->
 						<div class="body" v-if="steps[activeStep].index === 2">
@@ -92,13 +92,14 @@ export default {
 	components: { Transfer },
 	data() {
 		return {
+			id: '',
 			loading: false,
 			logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
 			steps: [],
 			activeStep: 0,
 			errorMsg: '',
 			showConnectDialog: false,
-			instanceModel: _.cloneDeep(INSTANCE_MODEL),
+			platformInfo: _.cloneDeep(INSTANCE_MODEL),
 			dataSourceModel: _.cloneDeep(DATASOURCE_MODEL),
 			settingModel: _.cloneDeep(SETTING_MODEL),
 			mappingModel: {},
@@ -116,7 +117,7 @@ export default {
 			dialogTestVisible: false,
 			status: '',
 			mdHtml: '',
-			instanceModelZone: '',
+			platformInfoZone: '',
 			instanceMock: [],
 			dataSourceZone: '',
 			dataSourceMock: []
@@ -126,13 +127,13 @@ export default {
 		this.getSteps(false);
 		this.getFormConfig();
 		this.getInstanceRegion();
-		let id = this.$route.params.id;
-		if (id) {
-			this.intiData(id);
+		this.id = this.$route.params.id;
+		if (this.id) {
+			this.intiData(this.id);
 		}
 	},
 	watch: {
-		'instanceModel.region'() {
+		'platformInfo.region'() {
 			this.changeInstanceRegion();
 		},
 		'dataSourceModel.s_region'() {
@@ -147,6 +148,8 @@ export default {
 				.then(result => {
 					if (result && result.data) {
 						this.settingModel = result.data.setting;
+						this.platformInfo = result.data.platformInfo;
+						this.dataSourceModel = result.data.dataSourceModel;
 						let stages = result.data.stages;
 						this.dataSourceModel.s_connectionId = stages[0].connectionId;
 						this.dataSourceModel.t_connectionId = stages[1].connectionId;
@@ -164,8 +167,8 @@ export default {
 				.getRegionZone()
 				.then(data => {
 					this.instanceMock = data.data || [];
-					if (this.instanceModel.region === '' && this.instanceMock.length > 0) {
-						this.instanceModel.region = this.instanceMock[0].code;
+					if (this.platformInfo.region === '' && this.instanceMock.length > 0) {
+						this.platformInfo.region = this.instanceMock[0].code;
 					}
 					this.changeConfig(this.instanceMock || [], 'region');
 					this.changeInstanceRegion();
@@ -175,10 +178,10 @@ export default {
 				});
 		},
 		changeInstanceRegion() {
-			let zone = this.instanceMock.filter(item => item.code === this.instanceModel.region);
+			let zone = this.instanceMock.filter(item => item.code === this.platformInfo.region);
 			if (zone.length > 0) {
-				this.instanceModel.zone = this.instanceModel.zone || zone[0].zones[0].code;
-				this.instanceModelZone = zone[0].zones;
+				this.platformInfo.zone = this.platformInfo.zone || zone[0].zones[0].code;
+				this.platformInfoZone = zone[0].zones;
 				this.changeConfig(zone[0].zones || [], 'zone');
 			}
 		},
@@ -224,8 +227,8 @@ export default {
 				this.$refs.instance.validate(valid => {
 					if (valid) {
 						this.activeStep += 1;
-						this.dataSourceModel.t_region = this.instanceModel.region;
-						this.dataSourceModel.t_zone = this.instanceModel.zone;
+						this.dataSourceModel.t_region = this.platformInfo.region;
+						this.dataSourceModel.t_zone = this.platformInfo.zone;
 						this.getFormConfig();
 						//根据第一步所选实例 过滤出可用区与地域
 						this.getDataSourceRegion();
@@ -323,7 +326,7 @@ export default {
 					//映射可用区
 					let zone = items.find(it => it.field === 'zone');
 					if (zone) {
-						zone.options = this.instanceModelZone.map(item => {
+						zone.options = this.platformInfoZone.map(item => {
 							return {
 								id: item.code,
 								name: item.name,
@@ -375,7 +378,7 @@ export default {
 					}
 					let t_zone = items.find(it => it.field === 't_zone');
 					if (t_zone) {
-						t_zone.options = this.instanceModelZone.map(item => {
+						t_zone.options = this.platformInfoZone.map(item => {
 							return {
 								id: item.code,
 								name: item.name,
@@ -436,7 +439,8 @@ export default {
 				stages: [],
 				setting: this.settingModel,
 				dataFlowType: 'normal', //区分创建方式
-				platformInfo: this.dataSourceModel
+				dataSourceModel: this.dataSourceModel,
+				platformInfo: this.platformInfo
 			};
 			let stageDefault = {
 				connectionId: '',
@@ -493,7 +497,7 @@ export default {
 				})
 			];
 			this.$api('DataFlows')
-				.post(postData)
+				.draft(postData)
 				.then(() => {
 					this.$router.push({
 						path: '/dataFlows?mapping=cluster-clone'

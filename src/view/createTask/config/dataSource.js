@@ -50,12 +50,7 @@ export default function() {
 				type: 'select',
 				field: 's_zone',
 				label: '源端可用区',
-				options: [
-					{
-						label: '可用地域1',
-						value: 'zone1'
-					}
-				],
+				options: [],
 				show: true,
 				dependOn: [
 					{
@@ -87,7 +82,16 @@ export default function() {
 				type: 'select',
 				field: 't_connectionType',
 				label: '目标端连接来源',
-				options: [],
+				options: [
+					{
+						label: 'RDS实例',
+						value: 'rds'
+					},
+					{
+						label: '云外建库',
+						value: 'selfDB'
+					}
+				],
 				required: true
 			},
 			{
