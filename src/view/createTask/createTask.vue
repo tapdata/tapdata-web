@@ -496,12 +496,22 @@ export default {
 					database_type: 'mysql'
 				})
 			];
+			if (this.id) {
+				postData['id'] = this.id;
+			}
 			this.$api('DataFlows')
 				.draft(postData)
 				.then(() => {
 					this.$router.push({
 						path: '/dataFlows?mapping=cluster-clone'
 					});
+				})
+				.catch(e => {
+					if (e.response.msg === 'duplication for names') {
+						this.$message.error(this.$t('message.exists_name'));
+					} else {
+						this.$message.error(this.$t('message.saveFail'));
+					}
 				});
 		}
 	}
