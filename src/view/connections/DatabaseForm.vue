@@ -301,7 +301,7 @@ export default {
 		};
 	},
 	created() {
-		this.databaseType = this.$route.query.databaseType;
+		this.databaseType = this.$route.query.databaseType || this.$store.state.createConnection.databaseType;
 		//确认类型 按照type 初始化变量
 		if (window.getSettingByKey('SUPPORT_RDS')) {
 			this.model = Object.assign({}, defaultCloudModel['default'], defaultCloudModel['drs']);

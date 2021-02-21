@@ -27,6 +27,10 @@ const mutations = {
 	connections(state, payload) {
 		state.connections = payload;
 	},
+	// 创建数据源
+	createConnection(state, payload) {
+		state.createConnection = payload;
+	},
 	// api服务器
 	apiServer(state, payload) {
 		state.apiServer = payload;

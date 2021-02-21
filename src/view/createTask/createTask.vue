@@ -5,7 +5,10 @@
 				<span>创建同步任务</span>
 				<ul class="step-box">
 					<li v-for="(step, index) in steps" :key="index" :class="{ active: activeStep >= index }">
-						<span class="step-index">{{ index + 1 }}</span>
+						<span class="step-index">
+							<i v-if="activeStep > index" class="el-icon-check"></i>
+							<span v-else>{{ index + 1 }}</span>
+						</span>
 						<span>{{ step.text }}</span>
 					</li>
 				</ul>
@@ -99,22 +102,6 @@ export default {
 			dataSourceModel: _.cloneDeep(DATASOURCE_MODEL),
 			settingModel: _.cloneDeep(SETTING_MODEL),
 			mappingModel: {},
-			stepMap: {
-				2: {
-					title: this.$t('guide.step_2_title'),
-					desc: this.$t('guide.step_2_desc'),
-					selectedConnection: {},
-					connectionList: [],
-					btnLabel: this.$t('guide.step_2_btn_label')
-				},
-				3: {
-					title: this.$t('guide.step_3_title'),
-					desc: this.$t('guide.step_3_desc'),
-					selectedConnection: {},
-					connectionList: [],
-					btnLabel: this.$t('guide.step_3_btn_label')
-				}
-			},
 			config: {
 				form: {
 					labelPosition: 'right',

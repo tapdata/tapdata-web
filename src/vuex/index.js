@@ -82,6 +82,9 @@ const store = new Vuex.Store({
 			status: '',
 			panelFlag: true
 		},
+		createConnection: {
+			databaseType: ''
+		},
 		metadata: {
 			keyword: '',
 			isFuzzy: true,
