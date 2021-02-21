@@ -12,14 +12,32 @@ export default function(vm) {
 				type: 'select',
 				field: 'region',
 				label: '选择实例',
-				options: [],
+				options: [
+					{
+						label: 'RDS可用区1',
+						value: 'zone1'
+					},
+					{
+						label: 'RDS可用区2',
+						value: 'zone2'
+					}
+				],
 				required: true
 			},
 			{
 				type: 'select',
 				field: 'zone',
 				label: '选择实例可用区',
-				options: [],
+				options: [
+					{
+						label: 'RDS可用区1',
+						value: 'zone1'
+					},
+					{
+						label: 'RDS可用区2',
+						value: 'zone2'
+					}
+				],
 				required: true
 			},
 			{

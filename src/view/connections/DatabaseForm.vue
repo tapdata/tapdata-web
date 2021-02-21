@@ -240,7 +240,6 @@ import DatabaseTypeDialog from './DatabaseTypeDialog';
 
 const databaseTypesModel = factory('DatabaseTypes');
 const connectionsModel = factory('connections');
-let platformInfo = 'cloud';
 let defaultConfig = [];
 export default {
 	name: 'DatabaseForm',
@@ -304,7 +303,7 @@ export default {
 	created() {
 		this.databaseType = this.$route.query.databaseType;
 		//确认类型 按照type 初始化变量
-		if (platformInfo === 'cloud') {
+		if (window.getSettingByKey('SUPPORT_RDS')) {
 			this.model = Object.assign({}, defaultCloudModel['default'], defaultCloudModel['drs']);
 		} else {
 			this.model = Object.assign({}, defaultModel['default']);
@@ -422,7 +421,7 @@ export default {
 			if (type === 'mysql pxc') {
 				type = 'mysqlpxc';
 			}
-			if (platformInfo === 'cloud') {
+			if (window.getSettingByKey('SUPPORT_RDS')) {
 				type = 'drs_' + type;
 			}
 			let func = formConfig[type];
@@ -583,6 +582,19 @@ export default {
 		goBack() {
 			this.$router.push('/connections');
 		},
+		//处理不同rds 场景 platformInfo
+		handlePlatformInfo(params) {
+			let platformInfo = {
+				region: params.region || '',
+				zone: params.zone || '',
+				connectionType: params.connectionType || '',
+				DRS_region: params.s_region || '',
+				DRS_zone: params.s_zone || '',
+				DRS_instances: params.DRS_instances || '',
+				IP_type: params.IP_type || ''
+			};
+			return platformInfo;
+		},
 		submit() {
 			this.submitBtnLoading = true;
 			let falg = false;
@@ -630,16 +642,8 @@ export default {
 						params.fill = params.isUrl ? 'uri' : '';
 						delete params.isUrl;
 					}
-					if (platformInfo === 'cloud') {
-						let platformInfo = {
-							instances: params.zone,
-							connectionType: params.connectionType,
-							region: params.s_region,
-							zone: params.s_zone,
-							DRS_instances: params.DRS_instances,
-							IP_type: params.IP_type
-						};
-						params['platformInfo'] = platformInfo;
+					if (window.getSettingByKey('SUPPORT_RDS')) {
+						params['platformInfo'] = Object.assign(params['platformInfo'], this.handlePlatformInfo(params));
 					}
 					connectionsModel[this.model.id ? 'patchId' : 'post'](params)
 						.then(res => {
@@ -680,6 +684,12 @@ export default {
 			} else {
 				this.$refs.form.validate(valid => {
 					if (valid) {
+						if (window.getSettingByKey('SUPPORT_RDS')) {
+							this.model['platformInfo'] = Object.assign(
+								this.model['platformInfo'],
+								this.handlePlatformInfo(this.model)
+							);
+						}
 						this.dialogTestVisible = true;
 						if (this.$route.params.id) {
 							//编辑需要特殊标识 updateSchema = false editTest = true

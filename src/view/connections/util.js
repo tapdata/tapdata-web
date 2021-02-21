@@ -160,6 +160,15 @@ export const defaultCloudModel = {
 		s_region: '',
 		connectionType: 'rds',
 		region: '',
-		zone: ''
+		zone: '',
+		platformInfo: {
+			region: '',
+			zone: '',
+			connectionType: '',
+			DRS_region: '',
+			DRS_zone: '',
+			DRS_instances: '',
+			IP_type: ''
+		}
 	}
 };
