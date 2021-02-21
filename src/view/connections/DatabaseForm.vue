@@ -464,7 +464,7 @@ export default {
 					this.changeConfig(this.instanceMock || [], 'region');
 					this.changeInstanceRegion();
 				})
-				.finally(() => {
+				.catch(() => {
 					this.$message.error('请求失败');
 				});
 		},
