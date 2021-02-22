@@ -487,7 +487,7 @@ export default {
 			});
 		},
 		toDetails(item) {
-			this.$router.push({ name: 'metadataInstances', params: { id: item.id, name: item.original_name } });
+			this.$router.push({ name: 'metadataDetails', query: { id: item.id } });
 		},
 		changeName(item) {
 			this.$prompt('', this.$t('connection.rename'), {
