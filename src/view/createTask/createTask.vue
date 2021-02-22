@@ -134,10 +134,20 @@ export default {
 	},
 	watch: {
 		'platformInfo.region'() {
-			this.changeInstanceRegion();
+			this.changeInstanceRegion(); //第一步实例change
 		},
 		'dataSourceModel.s_region'() {
 			this.changeDataSourceRegion();
+			this.getConnection(this.getWhere('source'), 's_connectionId');
+		},
+		'dataSourceModel.s_zone'() {
+			this.getConnection(this.getWhere('source'), 's_connectionId');
+		},
+		'dataSourceModel.s_connectionType'() {
+			this.getConnection(this.getWhere('source'), 's_connectionId');
+		},
+		'dataSourceModel.t_connectionType'() {
+			this.getConnection(this.getWhere('target'), 't_connectionId');
 		}
 	},
 	methods: {
@@ -262,7 +272,7 @@ export default {
 			this.getFormConfig();
 		},
 		// 根据步骤获取不同的表单项目
-		getFormConfig() {
+		async getFormConfig() {
 			let type = this.steps[this.activeStep].type || 'instance';
 			let func = formConfig[type];
 			if (func) {
@@ -270,10 +280,9 @@ export default {
 				this.config = config;
 			}
 			if (type === 'dataSource') {
-				this.getConnection();
+				this.getConnection(this.getWhere('source'), 's_connectionId');
+				this.getConnection(this.getWhere('target'), 't_connectionId');
 				this.changeConfig([], 't_defaultRegionZone');
-			} else if (type === 'instance') {
-				this.getInstanceRegion();
 			} else if (type === 'mapping') {
 				let id = this.dataSourceModel.s_connectionId || '';
 				this.$nextTick(() => {
@@ -281,14 +290,35 @@ export default {
 				});
 			}
 		},
+		getWhere(type) {
+			let where = {};
+			if (this.dataSourceModel.s_connectionType === 'rds' && type === 'source') {
+				where = {
+					database_type: { in: ['mysql'] },
+					s_region: this.dataSourceModel.s_region,
+					s_zone: this.dataSourceModel.s_zone
+				};
+			} else if (this.dataSourceModel.s_connectionType === 'selfDB' && type === 'source') {
+				where = {
+					database_type: { in: ['mysql'] },
+					'platformInfo.DRS_region': { $exists: false },
+					'platformInfo.DRS_zone': { $exists: false }
+				};
+			} else {
+				where = {
+					database_type: { in: ['mysql'] },
+					region: this.platformInfo.region,
+					zone: this.platformInfo.zone
+				};
+			}
+			return where;
+		},
 		//获取数据源
-		getConnection() {
+		getConnection(where, type) {
 			this.$api('connections')
 				.get({
 					filter: JSON.stringify({
-						where: {
-							database_type: { in: ['mysql'] }
-						},
+						where: where,
 						fields: {
 							name: 1,
 							id: 1,
@@ -300,7 +330,7 @@ export default {
 					})
 				})
 				.then(data => {
-					this.changeConfig(data.data || [], 'connectionId');
+					this.changeConfig(data.data || [], type);
 				});
 		},
 		//change config
@@ -337,7 +367,7 @@ export default {
 					}
 					break;
 				}
-				case 'connectionId': {
+				case 's_connectionId': {
 					// 第二步 数据源连接ID
 					let s_connectionId = items.find(it => it.field === 's_connectionId');
 					if (s_connectionId) {
@@ -350,6 +380,9 @@ export default {
 							};
 						});
 					}
+					break;
+				}
+				case 't_connectionId': {
 					let t_connectionId = items.find(it => it.field === 't_connectionId');
 					if (t_connectionId) {
 						t_connectionId.options = data.map(item => {
@@ -365,8 +398,9 @@ export default {
 				}
 				case 't_defaultRegionZone': {
 					//目标端默认等于选择实例可用区
+					this.instanceMock = this.instanceMock || [];
 					let t_region = items.find(it => it.field === 't_region');
-					if (t_region) {
+					if (t_region && this.instanceMock.length > 0) {
 						t_region.options = this.instanceMock.map(item => {
 							return {
 								id: item.code,
@@ -376,8 +410,9 @@ export default {
 							};
 						});
 					}
+					this.platformInfoZone = this.platformInfoZone || [];
 					let t_zone = items.find(it => it.field === 't_zone');
-					if (t_zone) {
+					if (t_zone && this.platformInfoZone.length > 0) {
 						t_zone.options = this.platformInfoZone.map(item => {
 							return {
 								id: item.code,
