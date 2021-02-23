@@ -190,7 +190,13 @@
 						</el-tag>
 					</span>
 					<div style="margin-left: 20px;color:#ccc">
-						{{ scope.row.user ? scope.row.user.email : '' }}
+						{{
+							scope.row.user
+								? scope.row.user.username
+									? scope.row.user.username
+									: scope.row.user.email
+								: ''
+						}}
 					</div>
 				</template>
 			</el-table-column>
