@@ -588,7 +588,10 @@ export default {
 		// this.flow.createTime = this.dataFlow.createTime
 		// 	? this.$moment(this.dataFlow.createTime).format('YYYY-MM-DD HH:mm:ss')
 		// 	: '';
-		this.flow.username = (this.dataFlow.user && this.dataFlow.user.email) || '';
+		this.flow.username = '';
+		if (this.dataFlow.user) {
+			this.flow.username = this.dataFlow.user.username || this.dataFlow.user.email;
+		}
 		let self = this;
 		ws.on('dataFlowInsight', function(data) {
 			self.storeData = data.statsData;
