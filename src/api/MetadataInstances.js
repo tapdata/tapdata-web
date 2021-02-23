@@ -9,6 +9,12 @@ export default class MetadataInstancesAPI extends PublicApi {
 	constructor() {
 		super('/api/MetadataInstances');
 	}
+	getId(id, params) {
+		return axios.get(this.url + '/' + id, { params });
+	}
+	patch(id, params) {
+		return axios.patch(this.url + '/' + id, params);
+	}
 	classification(params) {
 		return axios.patch(this.url + '/classifications', params);
 	}
