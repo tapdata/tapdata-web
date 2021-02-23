@@ -9,6 +9,10 @@ export default function(vm) {
 		},
 		items: [
 			{
+				type: 'slot',
+				slot: 'name'
+			},
+			{
 				type: 'select',
 				field: 'region',
 				label: '选择实例',
@@ -24,7 +28,7 @@ export default function(vm) {
 			},
 			{
 				type: 'radio',
-				field: 'connectionType',
+				field: 'connection_type',
 				label: vm.$t('dataForm.form.connectionType'),
 				options: [
 					{

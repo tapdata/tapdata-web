@@ -40,6 +40,9 @@
 				<div class="form-wrap">
 					<div class="form">
 						<form-builder ref="form" v-model="model" :config="config">
+							<div class="url-tip" slot="name">
+								中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
+							</div>
 							<div
 								class="url-tip"
 								slot="urlTip"
@@ -327,7 +330,21 @@ export default {
 				required: true,
 				maxlength: 100,
 				showWordLimit: true,
-				show: true
+				show: true,
+				rules: [
+					{
+						required: true,
+						validator: (rule, value, callback) => {
+							if (!value || !value.trim()) {
+								callback('任务名称不为空');
+							} else if (!/^[a-zA-Z][a-zA-Z0-9_\s-]*$/.test(value)) {
+								callback('任务名称不符合规则');
+							} else {
+								callback();
+							}
+						}
+					}
+				]
 			}
 		];
 	},
@@ -587,7 +604,7 @@ export default {
 			let platformInfo = {
 				region: params.region || '',
 				zone: params.zone || '',
-				connectionType: params.connectionType || '',
+				connectionType: params.connection_type || '',
 				DRS_region: params.s_region || '',
 				DRS_zone: params.s_zone || '',
 				DRS_instances: params.DRS_instances || '',
@@ -644,7 +661,7 @@ export default {
 					}
 					if (window.getSettingByKey('SUPPORT_RDS')) {
 						params['platformInfo'] = Object.assign(params['platformInfo'], this.handlePlatformInfo(params));
-						if (params.connectionType === 'selfDB') {
+						if (params.connection_type === 'selfDB') {
 							delete params.DRS_region;
 							delete params.DRS_zone;
 							delete params.platformInfo.DRS_region;

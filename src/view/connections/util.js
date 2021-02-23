@@ -158,7 +158,7 @@ export const defaultCloudModel = {
 	drs: {
 		s_zone: '',
 		s_region: '',
-		connectionType: 'rds',
+		connection_type: 'rds',
 		region: '',
 		zone: '',
 		platformInfo: {

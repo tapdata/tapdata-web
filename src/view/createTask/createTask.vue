@@ -304,21 +304,29 @@ export default {
 			let where = {};
 			if (this.dataSourceModel.s_connectionType === 'rds' && type === 'source') {
 				where = {
-					database_type: { in: ['mysql'] }
-					// s_region: this.dataSourceModel.s_region,
-					// s_zone: this.dataSourceModel.s_zone
+					database_type: { in: ['mysql'] },
+					connection_type: 'rds',
+					'platformInfo.DRS_region': this.dataSourceModel.s_region,
+					'platformInfo.DRS_zone': this.dataSourceModel.s_zone
 				};
 			} else if (this.dataSourceModel.s_connectionType === 'selfDB' && type === 'source') {
 				where = {
-					database_type: { in: ['mysql'] }
-					// 'platformInfo.DRS_region': { $exists: false },
-					// 'platformInfo.DRS_zone': { $exists: false }
+					database_type: { in: ['mysql'] },
+					connection_type: 'selfDB',
+					'platformInfo.DRS_region': { $exists: false },
+					'platformInfo.DRS_zone': { $exists: false }
+				};
+			} else if (this.dataSourceModel.s_connectionType === 'rds' && type === 'target') {
+				where = {
+					database_type: { in: ['mysql'] },
+					connection_type: 'rds',
+					region: this.platformInfo.region,
+					zone: this.platformInfo.zone
 				};
 			} else {
 				where = {
-					database_type: { in: ['mysql'] }
-					// region: this.platformInfo.region,
-					// zone: this.platformInfo.zone
+					database_type: { in: ['mysql'] },
+					connection_type: 'selfDB'
 				};
 			}
 			return where;

@@ -26,10 +26,10 @@
 			custom-class="databaseLinkDialog"
 			:close-on-click-modal="false"
 		>
-			<el-form>
+			<el-form :rules="rules">
 				<el-row :gutter="80" class="e-row">
 					<el-col :span="12">
-						<el-form-item :label="$t('editor.cell.link.prefixPlaceholder')">
+						<el-form-item :label="$t('editor.cell.link.prefixPlaceholder')" prop="table_prefix">
 							<el-input
 								v-model="table_prefix"
 								autocomplete="off"
@@ -39,9 +39,13 @@
 								:placeholder="$t('editor.cell.link.prefixPlaceholder')"
 							></el-input>
 						</el-form-item>
+						<div class="tip">
+							<span>以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span>
+							<div>前缀不允许以 system 开头</div>
+						</div>
 					</el-col>
 					<el-col :span="12">
-						<el-form-item :label="$t('editor.cell.link.suffixPlaceholder')">
+						<el-form-item :label="$t('editor.cell.link.suffixPlaceholder')" prop="table_suffix">
 							<el-input
 								v-model="table_suffix"
 								autocomplete="off"
@@ -51,15 +55,14 @@
 								:placeholder="$t('editor.cell.link.suffixPlaceholder')"
 							></el-input>
 						</el-form-item>
+						<div class="tip">
+							<span>以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span>
+						</div>
 					</el-col>
 				</el-row>
 			</el-form>
-			<div class="tip">
-				<span>以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~20字符</span>
-				<div>前缀不允许以 system 开头</div>
-			</div>
 			<div class="text">
-				{{ `${$t('editor.cell.link.tableNameExample')}: ${table_prefix} tablename ${table_suffix}` }}
+				{{ `${$t('editor.cell.link.tableNameExample')}: ${table_prefix}tablename${table_suffix}` }}
 			</div>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="dialogVisible = false">{{ $t('dataVerify.cancel') }}</el-button>
@@ -75,6 +78,26 @@ export default {
 		transferData: Array
 	},
 	data() {
+		var validatePrefix = (rule, value, callback) => {
+			if (this.table_prefix === '') {
+				callback();
+			} else if (!/^[a-zA-Z]([a-zA-Z0-9_\-.])*/.test(this.table_prefix)) {
+				callback(new Error('请按照以下规则输入: '));
+			} else if (/^(system).*/.test(this.table_prefix)) {
+				callback(new Error('请按照以下规则输入: '));
+			} else {
+				callback();
+			}
+		};
+		var validateSuffix = (rule, value, callback) => {
+			if (this.table_suffix === '') {
+				callback();
+			} else if (!/^[a-zA-Z][a-zA-Z0-9_\s-.]*$/.test(this.table_suffix)) {
+				callback(new Error('请按照以下规则输入: '));
+			} else {
+				callback();
+			}
+		};
 		return {
 			transferLoading: false,
 			sourceData: [],
@@ -83,7 +106,11 @@ export default {
 			table_prefix: '',
 			table_suffix: '',
 			dialogVisible: false,
-			type: ''
+			type: '',
+			rules: {
+				table_prefix: [{ validator: validatePrefix, trigger: 'blur' }],
+				table_suffix: [{ validator: validateSuffix, trigger: 'blur' }]
+			}
 		};
 	},
 	methods: {
