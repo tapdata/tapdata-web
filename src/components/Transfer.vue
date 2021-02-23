@@ -33,7 +33,7 @@
 							<el-input
 								v-model="table_prefix"
 								autocomplete="off"
-								maxlength="20"
+								maxlength="50"
 								show-word-limit
 								size="mini"
 								:placeholder="$t('editor.cell.link.prefixPlaceholder')"
@@ -45,7 +45,7 @@
 							<el-input
 								v-model="table_suffix"
 								autocomplete="off"
-								maxlength="20"
+								maxlength="50"
 								show-word-limit
 								size="mini"
 								:placeholder="$t('editor.cell.link.suffixPlaceholder')"
@@ -54,8 +54,12 @@
 					</el-col>
 				</el-row>
 			</el-form>
+			<div class="tip">
+				<span>以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~20字符</span>
+				<div>前缀不允许以 system 开头</div>
+			</div>
 			<div class="text">
-				{{ `${$t('editor.cell.link.tableNameExample')}: ${table_prefix} table name ${table_suffix}` }}
+				{{ `${$t('editor.cell.link.tableNameExample')}: ${table_prefix} tablename ${table_suffix}` }}
 			</div>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="dialogVisible = false">{{ $t('dataVerify.cancel') }}</el-button>
@@ -107,7 +111,7 @@ export default {
 							this.table_suffix = this.transferData.table_suffix;
 							this.selectSourceArr = this.transferData.selectSourceArr;
 						}
-						this.$forceUpdate();
+						this.preFixSuffixData();
 					}
 				})
 				.finally(() => {
@@ -193,6 +197,11 @@ export default {
 		width: 79.5%;
 		margin-bottom: 10px;
 		padding: 4px 10px;
+	}
+	.tip {
+		color: #999;
+		font-size: 12px;
+		margin-bottom: 10px;
 	}
 }
 </style>
@@ -283,6 +292,7 @@ export default {
 		height: calc(100% - 32px);
 		padding-bottom: 5px;
 		box-sizing: border-box;
+		overflow: hidden;
 	}
 	.el-transfer-panel__item {
 		width: 100%;

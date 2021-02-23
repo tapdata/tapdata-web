@@ -86,6 +86,7 @@ export default {
 		},
 		databaseType(type) {
 			this.$emit('databaseType', type);
+			this.$store.commit('createConnection', { databaseType: type });
 		}
 	}
 };

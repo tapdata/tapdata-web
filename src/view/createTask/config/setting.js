@@ -12,6 +12,8 @@ export default function() {
 				type: 'input',
 				field: 'name',
 				label: '任务名称',
+				maxlength: 300,
+				showWordLimit: true,
 				required: true
 			},
 			{

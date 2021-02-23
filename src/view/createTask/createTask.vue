@@ -5,7 +5,10 @@
 				<span>创建同步任务</span>
 				<ul class="step-box">
 					<li v-for="(step, index) in steps" :key="index" :class="{ active: activeStep >= index }">
-						<span class="step-index">{{ index + 1 }}</span>
+						<span class="step-index">
+							<i v-if="activeStep > index" class="el-icon-check"></i>
+							<span v-else>{{ index + 1 }}</span>
+						</span>
 						<span>{{ step.text }}</span>
 					</li>
 				</ul>
@@ -17,20 +20,23 @@
 						<div class="body" v-if="steps[activeStep].index === 1">
 							<div class="title">选择实例</div>
 							<div class="desc">
-								用户需要先选择一个实例用于运行同步任务，任务创建后不支持更换实例，如果需要创建新的实例请点击创建实例
+								请先选择一个有实例的地域可用区，可用区下的全部实例都能运行该同步任务，可用实例越多任务运行越稳定。任务创建后不支持更换地域可用区
 							</div>
-							<form-builder ref="instance" v-model="instanceModel" :config="config"></form-builder>
+							<form-builder ref="instance" v-model="platformInfo" :config="config"></form-builder>
 						</div>
 						<!--步骤2-->
 						<div class="body" v-if="steps[activeStep].index === 2">
 							<div class="title">选择源端与目标端连接</div>
 							<div class="desc">
-								选择已创建的源端/目标端的数据库连接，具体的源端与目标端库的支持类型请参考右侧说明或点击查看帮助文档,
-								点击此处创建数据连接
+								选择已创建的源端/目标端的数据库连接，如果需要创建新的数据库连接，请点击<span
+									style="color: #337DFF;cursor: pointer"
+									@click="dialogDatabaseTypeVisible = true"
+									>创建数据连接</span
+								>
 							</div>
 							<form-builder ref="dataSource" v-model="dataSourceModel" :config="config">
-								<div slot="source">源端连接</div>
-								<div slot="target">目标端连接</div>
+								<div slot="source" class="dataSource-title">源端连接</div>
+								<div slot="target" class="dataSource-title">目标端连接</div>
 							</form-builder>
 						</div>
 						<!-- 步骤3 -->
@@ -74,6 +80,11 @@
 						</el-button>
 					</el-footer>
 				</el-container>
+				<DatabaseTypeDialog
+					:dialogVisible="dialogDatabaseTypeVisible"
+					@dialogVisible="handleDialogDatabaseTypeVisible"
+					@databaseType="handleDatabaseType"
+				></DatabaseTypeDialog>
 			</el-container>
 		</el-container>
 	</el-container>
@@ -81,40 +92,26 @@
 <script>
 import formConfig from './config';
 import Transfer from '@/components/Transfer';
+import DatabaseTypeDialog from '../connections/DatabaseTypeDialog';
 import _ from 'lodash';
 import { SETTING_MODEL, DATASOURCE_MODEL, INSTANCE_MODEL } from './util';
 import { uuid } from '../../editor/util/Schema';
 
 export default {
-	components: { Transfer },
+	components: { Transfer, DatabaseTypeDialog },
 	data() {
 		return {
+			id: '',
 			loading: false,
 			logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
 			steps: [],
 			activeStep: 0,
 			errorMsg: '',
 			showConnectDialog: false,
-			instanceModel: _.cloneDeep(INSTANCE_MODEL),
+			platformInfo: _.cloneDeep(INSTANCE_MODEL),
 			dataSourceModel: _.cloneDeep(DATASOURCE_MODEL),
 			settingModel: _.cloneDeep(SETTING_MODEL),
 			mappingModel: {},
-			stepMap: {
-				2: {
-					title: this.$t('guide.step_2_title'),
-					desc: this.$t('guide.step_2_desc'),
-					selectedConnection: {},
-					connectionList: [],
-					btnLabel: this.$t('guide.step_2_btn_label')
-				},
-				3: {
-					title: this.$t('guide.step_3_title'),
-					desc: this.$t('guide.step_3_desc'),
-					selectedConnection: {},
-					connectionList: [],
-					btnLabel: this.$t('guide.step_3_btn_label')
-				}
-			},
 			config: {
 				form: {
 					labelPosition: 'right',
@@ -129,27 +126,38 @@ export default {
 			dialogTestVisible: false,
 			status: '',
 			mdHtml: '',
-			instanceModelZone: '',
+			platformInfoZone: '',
 			instanceMock: [],
 			dataSourceZone: '',
-			dataSourceMock: []
+			dataSourceMock: [],
+			dialogDatabaseTypeVisible: false
 		};
 	},
 	created() {
 		this.getSteps(false);
 		this.getFormConfig();
 		this.getInstanceRegion();
-		let id = this.$route.params.id;
-		if (id) {
-			this.intiData(id);
+		this.id = this.$route.params.id;
+		if (this.id) {
+			this.intiData(this.id);
 		}
 	},
 	watch: {
-		'instanceModel.region'() {
-			this.changeInstanceRegion();
+		'platformInfo.region'() {
+			this.changeInstanceRegion(); //第一步实例change
 		},
 		'dataSourceModel.s_region'() {
 			this.changeDataSourceRegion();
+			this.getConnection(this.getWhere('source'), 's_connectionId');
+		},
+		'dataSourceModel.s_zone'() {
+			this.getConnection(this.getWhere('source'), 's_connectionId');
+		},
+		'dataSourceModel.s_connectionType'() {
+			this.getConnection(this.getWhere('source'), 's_connectionId');
+		},
+		'dataSourceModel.t_connectionType'() {
+			this.getConnection(this.getWhere('target'), 't_connectionId');
 		}
 	},
 	methods: {
@@ -160,6 +168,8 @@ export default {
 				.then(result => {
 					if (result && result.data) {
 						this.settingModel = result.data.setting;
+						this.platformInfo = result.data.platformInfo;
+						this.dataSourceModel = result.data.dataSourceModel;
 						let stages = result.data.stages;
 						this.dataSourceModel.s_connectionId = stages[0].connectionId;
 						this.dataSourceModel.t_connectionId = stages[1].connectionId;
@@ -177,8 +187,8 @@ export default {
 				.getRegionZone()
 				.then(data => {
 					this.instanceMock = data.data || [];
-					if (this.instanceModel.region === '' && this.instanceMock.length > 0) {
-						this.instanceModel.region = this.instanceMock[0].code;
+					if (this.platformInfo.region === '' && this.instanceMock.length > 0) {
+						this.platformInfo.region = this.instanceMock[0].code;
 					}
 					this.changeConfig(this.instanceMock || [], 'region');
 					this.changeInstanceRegion();
@@ -188,10 +198,10 @@ export default {
 				});
 		},
 		changeInstanceRegion() {
-			let zone = this.instanceMock.filter(item => item.code === this.instanceModel.region);
+			let zone = this.instanceMock.filter(item => item.code === this.platformInfo.region);
 			if (zone.length > 0) {
-				this.instanceModel.zone = this.instanceModel.zone || zone[0].zones[0].code;
-				this.instanceModelZone = zone[0].zones;
+				this.platformInfo.zone = this.platformInfo.zone || zone[0].zones[0].code;
+				this.platformInfoZone = zone[0].zones;
 				this.changeConfig(zone[0].zones || [], 'zone');
 			}
 		},
@@ -237,8 +247,8 @@ export default {
 				this.$refs.instance.validate(valid => {
 					if (valid) {
 						this.activeStep += 1;
-						this.dataSourceModel.t_region = this.instanceModel.region;
-						this.dataSourceModel.t_zone = this.instanceModel.zone;
+						this.dataSourceModel.t_region = this.platformInfo.region;
+						this.dataSourceModel.t_zone = this.platformInfo.zone;
 						this.getFormConfig();
 						//根据第一步所选实例 过滤出可用区与地域
 						this.getDataSourceRegion();
@@ -272,7 +282,7 @@ export default {
 			this.getFormConfig();
 		},
 		// 根据步骤获取不同的表单项目
-		getFormConfig() {
+		async getFormConfig() {
 			let type = this.steps[this.activeStep].type || 'instance';
 			let func = formConfig[type];
 			if (func) {
@@ -280,10 +290,9 @@ export default {
 				this.config = config;
 			}
 			if (type === 'dataSource') {
-				this.getConnection();
+				this.getConnection(this.getWhere('source'), 's_connectionId');
+				this.getConnection(this.getWhere('target'), 't_connectionId');
 				this.changeConfig([], 't_defaultRegionZone');
-			} else if (type === 'instance') {
-				this.getInstanceRegion();
 			} else if (type === 'mapping') {
 				let id = this.dataSourceModel.s_connectionId || '';
 				this.$nextTick(() => {
@@ -291,14 +300,35 @@ export default {
 				});
 			}
 		},
+		getWhere(type) {
+			let where = {};
+			if (this.dataSourceModel.s_connectionType === 'rds' && type === 'source') {
+				where = {
+					database_type: { in: ['mysql'] }
+					// s_region: this.dataSourceModel.s_region,
+					// s_zone: this.dataSourceModel.s_zone
+				};
+			} else if (this.dataSourceModel.s_connectionType === 'selfDB' && type === 'source') {
+				where = {
+					database_type: { in: ['mysql'] }
+					// 'platformInfo.DRS_region': { $exists: false },
+					// 'platformInfo.DRS_zone': { $exists: false }
+				};
+			} else {
+				where = {
+					database_type: { in: ['mysql'] }
+					// region: this.platformInfo.region,
+					// zone: this.platformInfo.zone
+				};
+			}
+			return where;
+		},
 		//获取数据源
-		getConnection() {
+		getConnection(where, type) {
 			this.$api('connections')
 				.get({
 					filter: JSON.stringify({
-						where: {
-							database_type: { in: ['mysql'] }
-						},
+						where: where,
 						fields: {
 							name: 1,
 							id: 1,
@@ -310,7 +340,7 @@ export default {
 					})
 				})
 				.then(data => {
-					this.changeConfig(data.data || [], 'connectionId');
+					this.changeConfig(data.data || [], type);
 				});
 		},
 		//change config
@@ -336,7 +366,7 @@ export default {
 					//映射可用区
 					let zone = items.find(it => it.field === 'zone');
 					if (zone) {
-						zone.options = this.instanceModelZone.map(item => {
+						zone.options = this.platformInfoZone.map(item => {
 							return {
 								id: item.code,
 								name: item.name,
@@ -347,7 +377,7 @@ export default {
 					}
 					break;
 				}
-				case 'connectionId': {
+				case 's_connectionId': {
 					// 第二步 数据源连接ID
 					let s_connectionId = items.find(it => it.field === 's_connectionId');
 					if (s_connectionId) {
@@ -360,6 +390,9 @@ export default {
 							};
 						});
 					}
+					break;
+				}
+				case 't_connectionId': {
 					let t_connectionId = items.find(it => it.field === 't_connectionId');
 					if (t_connectionId) {
 						t_connectionId.options = data.map(item => {
@@ -375,8 +408,9 @@ export default {
 				}
 				case 't_defaultRegionZone': {
 					//目标端默认等于选择实例可用区
+					this.instanceMock = this.instanceMock || [];
 					let t_region = items.find(it => it.field === 't_region');
-					if (t_region) {
+					if (t_region && this.instanceMock.length > 0) {
 						t_region.options = this.instanceMock.map(item => {
 							return {
 								id: item.code,
@@ -386,9 +420,10 @@ export default {
 							};
 						});
 					}
+					this.platformInfoZone = this.platformInfoZone || [];
 					let t_zone = items.find(it => it.field === 't_zone');
-					if (t_zone) {
-						t_zone.options = this.instanceModelZone.map(item => {
+					if (t_zone && this.platformInfoZone.length > 0) {
+						t_zone.options = this.platformInfoZone.map(item => {
 							return {
 								id: item.code,
 								name: item.name,
@@ -449,7 +484,8 @@ export default {
 				stages: [],
 				setting: this.settingModel,
 				dataFlowType: 'normal', //区分创建方式
-				platformInfo: this.dataSourceModel
+				dataSourceModel: this.dataSourceModel,
+				platformInfo: this.platformInfo
 			};
 			let stageDefault = {
 				connectionId: '',
@@ -505,13 +541,33 @@ export default {
 					database_type: 'mysql'
 				})
 			];
+			if (this.id) {
+				postData['id'] = this.id;
+			}
 			this.$api('DataFlows')
-				.post(postData)
+				.draft(postData)
 				.then(() => {
 					this.$router.push({
 						path: '/dataFlows?mapping=cluster-clone'
 					});
+				})
+				.catch(e => {
+					if (e.response.msg === 'duplication for names') {
+						this.$message.error(this.$t('message.exists_name'));
+					} else {
+						this.$message.error(this.$t('message.saveFail'));
+					}
 				});
+		},
+		//选择创建类型
+		handleDialogDatabaseTypeVisible() {
+			this.dialogDatabaseTypeVisible = false;
+		},
+		handleDatabaseType(type) {
+			this.handleDialogDatabaseTypeVisible();
+			let href = '/#/connections/create?databaseType=' + type;
+			window.open(href);
+			//this.$router.push('connections/create?databaseType=' + type);
 		}
 	}
 };
@@ -615,7 +671,7 @@ export default {
 		.body {
 			margin: 0 auto;
 			padding-bottom: 50px;
-			width: 850px;
+			width: 880px;
 			.title {
 				padding: 20px 200px;
 				color: rgba(51, 51, 51, 100);
@@ -636,6 +692,11 @@ export default {
 		}
 		.step-4 {
 			width: 1050px;
+		}
+		.dataSource-title {
+			font-size: 16px;
+			font-weight: bold;
+			margin: 10px 0;
 		}
 	}
 	.CT-task-footer {

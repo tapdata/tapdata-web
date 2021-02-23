@@ -34,7 +34,7 @@ export default function(vm) {
 					},
 					{
 						label: '云外自建库',
-						tip: vm.$t('dataForm.form.options.sourceTips'),
+						tip: '创建来自移动云外部的用户自建数据库连接',
 						value: 'selfDB'
 					}
 				],

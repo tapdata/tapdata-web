@@ -102,9 +102,12 @@
 						<span> {{ $t('dataFlow.taskBulkOperation') }}</span>
 					</el-button>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
-							$t('dataFlow.bulkExport')
-						}}</el-dropdown-item>
+						<el-dropdown-item
+							command="export"
+							v-readonlybtn="'SYNC_job_export'"
+							v-if="!$window.getSettingByKey('HIDE_EXPORT')"
+							>{{ $t('dataFlow.bulkExport') }}</el-dropdown-item
+						>
 						<el-dropdown-item command="run" v-readonlybtn="'SYNC_job_operation'">{{
 							$t('dataFlow.bulkScheuled')
 						}}</el-dropdown-item>
@@ -129,7 +132,13 @@
 					<i class="iconfont icon-hanshu back-btn-icon"></i>
 					<span> {{ $t('dataFlow.taskBulkFx') }}</span>
 				</el-button>
-				<el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
+				<el-button
+					v-if="!$window.getSettingByKey('HIDE_IMPORT')"
+					v-readonlybtn="'SYNC_job_import'"
+					size="mini"
+					class="btn"
+					@click="handleImport"
+				>
 					<i class="iconfont icon-daoru back-btn-icon"></i>
 					<span> {{ $t('dataFlow.bulkImport') }}</span>
 				</el-button>
@@ -181,7 +190,13 @@
 						</el-tag>
 					</span>
 					<div style="margin-left: 20px;color:#ccc">
-						{{ scope.row.user ? scope.row.user.email : '' }}
+						{{
+							scope.row.user
+								? scope.row.user.username
+									? scope.row.user.username
+									: scope.row.user.email
+								: ''
+						}}
 					</div>
 				</template>
 			</el-table-column>
@@ -307,6 +322,7 @@
 									scope.row.status === 'running'
 							"
 							v-readonlybtn="'SYNC_job_edition'"
+							v-if="!$window.getSettingByKey('HIDE_SCHEDULE')"
 							@click="handleTaskscheduling(scope.row.id, scope.row)"
 						>
 							{{ $t('dataFlow.schedule') }}
@@ -321,9 +337,12 @@
 								<el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
 									$t('dataVerify.dataVerify')
 								}}</el-dropdown-item>
-								<el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
-									$t('dataFlow.dataFlowExport')
-								}}</el-dropdown-item>
+								<el-dropdown-item
+									v-if="!$window.getSettingByKey('HIDE_EXPORT')"
+									command="export"
+									v-readonlybtn="'SYNC_job_export'"
+									>{{ $t('dataFlow.dataFlowExport') }}</el-dropdown-item
+								>
 								<el-dropdown-item command="copy" v-readonlybtn="'SYNC_job_creation'"
 									>{{ $t('dataFlow.copy') }}
 								</el-dropdown-item>

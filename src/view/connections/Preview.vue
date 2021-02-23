@@ -1,6 +1,7 @@
 <template>
 	<el-drawer
 		class="connection-drawer"
+		:class="$window.getSettingByKey('SUPPORT_RDS') ? 'no-top-drawer' : 'top-drawer'"
 		ref="drawer"
 		:visible.sync="visible"
 		:title="$t('dataForm.title')"
@@ -237,7 +238,11 @@ export default {
 					this.showProgress = true;
 					this.reloadApi();
 				}
-				let func = formConfig[this.type];
+				let type = this.type;
+				if (!window.getSettingByKey('SUPPORT_RDS')) {
+					type = 'drs_' + type;
+				}
+				let func = formConfig[type];
 				if (func) {
 					let config = func(this);
 					let items = config.items.map(it => {
@@ -676,12 +681,17 @@ export default {
 }
 </style>
 <style lang="less">
-.connection-drawer {
+.top-drawer {
 	.el-drawer {
 		box-shadow: -2px 0px 8px 0px rgba(0, 0, 0, 0.1);
 	}
 	.el-drawer.rtl {
 		top: 48px;
+	}
+}
+.no-top-drawer {
+	.el-drawer {
+		box-shadow: -2px 0px 8px 0px rgba(0, 0, 0, 0.1);
 	}
 }
 .test-progress {

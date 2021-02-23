@@ -301,7 +301,7 @@ export default {
 		};
 	},
 	created() {
-		this.databaseType = this.$route.query.databaseType;
+		this.databaseType = this.$route.query.databaseType || this.$store.state.createConnection.databaseType;
 		//确认类型 按照type 初始化变量
 		if (window.getSettingByKey('SUPPORT_RDS')) {
 			this.model = Object.assign({}, defaultCloudModel['default'], defaultCloudModel['drs']);
@@ -593,10 +593,6 @@ export default {
 				DRS_instances: params.DRS_instances || '',
 				IP_type: params.IP_type || ''
 			};
-			if (params.connectionType === 'selfDB') {
-				platformInfo.DRS_region = '';
-				platformInfo.DRS_zone = '';
-			}
 			return platformInfo;
 		},
 		submit() {
@@ -648,6 +644,12 @@ export default {
 					}
 					if (window.getSettingByKey('SUPPORT_RDS')) {
 						params['platformInfo'] = Object.assign(params['platformInfo'], this.handlePlatformInfo(params));
+						if (params.connectionType === 'selfDB') {
+							delete params.DRS_region;
+							delete params.DRS_zone;
+							delete params.platformInfo.DRS_region;
+							delete params.platformInfo.DRS_zone;
+						}
 					}
 					connectionsModel[this.model.id ? 'patchId' : 'post'](params)
 						.then(res => {
