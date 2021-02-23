@@ -359,6 +359,9 @@ const tc = {
 		edit: '編輯'
 	},
 	dataFlow: {
+		leave: '離開',
+		backlistText: '返回列表頁',
+		saveReminder: '此任務尚未保存，離開本頁面會導致任務配置丟失，確定要離開嗎?',
 		aggregateNotDataNode: '連接聚合節點的第一個目標數據節點只能是數據集',
 		batchSortOperation: '批量分類操作',
 		selectRowdata: '請選擇行數據',
@@ -1923,6 +1926,7 @@ const tc = {
 			linuxInstructionsText2: '· 在環境中執行以上命令，將會自動下載和​​啟動 Agent',
 			linuxInstructionsText3: '· 在 Agent 安裝後，可通過 tapdata start/stop backend 啟動和停止 Agent',
 			waitingInstall: '等待安裝',
+			agentInstallation: 'Agent 已經安裝',
 			agentNum: 'Agent 已安裝數',
 			downLoadAgent: '下載 Agent',
 			windowsText:

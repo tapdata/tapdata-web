@@ -361,6 +361,9 @@ const cn = {
 		edit: '编辑'
 	},
 	dataFlow: {
+		leave: '离开',
+		backlistText: '返回列表页',
+		saveReminder: '此任务尚未保存，离开本页面会导致任务配置丢失，确定要离开吗?',
 		aggregateNotDataNode: '连接聚合节点的第一个目标数据节点只能是数据集',
 		batchSortOperation: '批量分类操作',
 		selectRowdata: '请选择行数据',
@@ -1806,6 +1809,7 @@ const cn = {
 			linuxInstructionsText3: '· 在 Agent 安装后，可通过 tapdata start/stop backend 启动和停止 Agent',
 			waitingInstall: '等待安装',
 			agentNum: 'Agent 已安装数 ',
+			agentInstallation: 'Agent 已经安装',
 			downLoadAgent: '下载 Agent',
 			windowsText:
 				'首先，在环境中配置好 JAVA 运行环境，下载之后，在存放下载文件的目录下使用以下命令安装和启动 Agent',

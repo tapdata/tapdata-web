@@ -364,6 +364,10 @@ const en = {
 		edit: 'Edit'
 	},
 	dataFlow: {
+		leave: 'Leave',
+		backlistText: 'Return to list page',
+		saveReminder:
+			'This jobhas not been saved yet, If you leave this page, the job configuration will be lost. Are you sure to leave ?',
 		aggregateNotDataNode: 'The first target data node of aggregation node can only be COLLECTION',
 		batchSortOperation: 'Batch sort operation',
 		selectRowdata: 'Please select row data',
@@ -1974,6 +1978,7 @@ const en = {
 			linuxInstructionsText3:
 				'· You can start and stop Agent by executing the command "tapdata start/stop backend".',
 			waitingInstall: 'Waiting installation',
+			agentInstallation: 'Agent has been installed',
 			agentNum: 'Agents installed',
 			downLoadAgent: 'Download Agent',
 			windowsText:
