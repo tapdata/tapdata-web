@@ -602,6 +602,7 @@ export default {
 			this.table.fetch(1);
 		},
 		getData({ page, tags }) {
+			let region = this.$route.query.region;
 			let { current, size } = page;
 			let { keyword, status, progress, executionStatus, timeData } = this.searchParams;
 
@@ -638,6 +639,7 @@ export default {
 					in: tags
 				};
 			}
+			region && (where['platformInfo.region'] = region);
 			if (executionStatus) {
 				if (executionStatus === 'Lag') {
 					where['stats.stagesMetrics.replicationLag'] = {
