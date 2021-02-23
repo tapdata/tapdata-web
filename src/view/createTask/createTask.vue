@@ -20,7 +20,7 @@
 						<div class="body" v-if="steps[activeStep].index === 1">
 							<div class="title">选择实例</div>
 							<div class="desc">
-								用户需要先选择一个实例用于运行同步任务，任务创建后不支持更换实例，如果需要创建新的实例请点击创建实例
+								请先选择一个有实例的地域可用区，可用区下的全部实例都能运行该同步任务，可用实例越多任务运行越稳定。任务创建后不支持更换地域可用区
 							</div>
 							<form-builder ref="instance" v-model="platformInfo" :config="config"></form-builder>
 						</div>
@@ -28,12 +28,15 @@
 						<div class="body" v-if="steps[activeStep].index === 2">
 							<div class="title">选择源端与目标端连接</div>
 							<div class="desc">
-								选择已创建的源端/目标端的数据库连接，具体的源端与目标端库的支持类型请参考右侧说明或点击查看帮助文档,
-								点击此处创建数据连接
+								选择已创建的源端/目标端的数据库连接，如果需要创建新的数据库连接，请点击<span
+									style="color: #337DFF;cursor: pointer"
+									@click="dialogDatabaseTypeVisible = true"
+									>创建数据连接</span
+								>
 							</div>
 							<form-builder ref="dataSource" v-model="dataSourceModel" :config="config">
-								<div slot="source">源端连接</div>
-								<div slot="target">目标端连接</div>
+								<div slot="source" class="dataSource-title">源端连接</div>
+								<div slot="target" class="dataSource-title">目标端连接</div>
 							</form-builder>
 						</div>
 						<!-- 步骤3 -->
@@ -77,6 +80,11 @@
 						</el-button>
 					</el-footer>
 				</el-container>
+				<DatabaseTypeDialog
+					:dialogVisible="dialogDatabaseTypeVisible"
+					@dialogVisible="handleDialogDatabaseTypeVisible"
+					@databaseType="handleDatabaseType"
+				></DatabaseTypeDialog>
 			</el-container>
 		</el-container>
 	</el-container>
@@ -84,12 +92,13 @@
 <script>
 import formConfig from './config';
 import Transfer from '@/components/Transfer';
+import DatabaseTypeDialog from '../connections/DatabaseTypeDialog';
 import _ from 'lodash';
 import { SETTING_MODEL, DATASOURCE_MODEL, INSTANCE_MODEL } from './util';
 import { uuid } from '../../editor/util/Schema';
 
 export default {
-	components: { Transfer },
+	components: { Transfer, DatabaseTypeDialog },
 	data() {
 		return {
 			id: '',
@@ -120,7 +129,8 @@ export default {
 			platformInfoZone: '',
 			instanceMock: [],
 			dataSourceZone: '',
-			dataSourceMock: []
+			dataSourceMock: [],
+			dialogDatabaseTypeVisible: false
 		};
 	},
 	created() {
@@ -294,21 +304,21 @@ export default {
 			let where = {};
 			if (this.dataSourceModel.s_connectionType === 'rds' && type === 'source') {
 				where = {
-					database_type: { in: ['mysql'] },
-					s_region: this.dataSourceModel.s_region,
-					s_zone: this.dataSourceModel.s_zone
+					database_type: { in: ['mysql'] }
+					// s_region: this.dataSourceModel.s_region,
+					// s_zone: this.dataSourceModel.s_zone
 				};
 			} else if (this.dataSourceModel.s_connectionType === 'selfDB' && type === 'source') {
 				where = {
-					database_type: { in: ['mysql'] },
-					'platformInfo.DRS_region': { $exists: false },
-					'platformInfo.DRS_zone': { $exists: false }
+					database_type: { in: ['mysql'] }
+					// 'platformInfo.DRS_region': { $exists: false },
+					// 'platformInfo.DRS_zone': { $exists: false }
 				};
 			} else {
 				where = {
-					database_type: { in: ['mysql'] },
-					region: this.platformInfo.region,
-					zone: this.platformInfo.zone
+					database_type: { in: ['mysql'] }
+					// region: this.platformInfo.region,
+					// zone: this.platformInfo.zone
 				};
 			}
 			return where;
@@ -548,6 +558,16 @@ export default {
 						this.$message.error(this.$t('message.saveFail'));
 					}
 				});
+		},
+		//选择创建类型
+		handleDialogDatabaseTypeVisible() {
+			this.dialogDatabaseTypeVisible = false;
+		},
+		handleDatabaseType(type) {
+			this.handleDialogDatabaseTypeVisible();
+			let href = '/#/connections/create?databaseType=' + type;
+			window.open(href);
+			//this.$router.push('connections/create?databaseType=' + type);
 		}
 	}
 };
@@ -651,7 +671,7 @@ export default {
 		.body {
 			margin: 0 auto;
 			padding-bottom: 50px;
-			width: 850px;
+			width: 880px;
 			.title {
 				padding: 20px 200px;
 				color: rgba(51, 51, 51, 100);
@@ -672,6 +692,11 @@ export default {
 		}
 		.step-4 {
 			width: 1050px;
+		}
+		.dataSource-title {
+			font-size: 16px;
+			font-weight: bold;
+			margin: 10px 0;
 		}
 	}
 	.CT-task-footer {
