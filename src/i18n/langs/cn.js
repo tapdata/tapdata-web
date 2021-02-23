@@ -1866,7 +1866,12 @@ const cn = {
 			theme: '主题',
 			taskReference: '任务引用',
 			APIReference: 'API引用',
-			creat: '新建'
+			creat: '新建',
+			businessAttrTitle: '业务属性',
+			attrName: '属性名',
+			attrKey: '属性值',
+			editAliasNameTitle: '编辑别名',
+			editCommentTitle: '编辑描述'
 		}
 	},
 	dialog: {

@@ -13,6 +13,7 @@
 						v-model="form.field_name"
 						:placeholder="$t('metadata.details.enter') + $t('metadata.details.filedName')"
 						autocomplete="off"
+						:disabled="data.id"
 						size="mini"
 						maxlength="50"
 						show-word-limit

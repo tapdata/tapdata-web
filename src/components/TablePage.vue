@@ -1,6 +1,6 @@
 <template>
 	<div class="table-page-container">
-		<div class="table-page-header">
+		<div class="table-page-header" v-if="title">
 			<slot name="header">
 				<div class="page-header-title">{{ title }}</div>
 				<div v-if="desc" class="page-header-desc" v-html="desc"></div>

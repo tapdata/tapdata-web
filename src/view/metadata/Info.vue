@@ -10,17 +10,29 @@
 					<img src="../../../static/editor/table.svg" />
 				</div>
 				<div class="table-info">
-					<h3>{{ metadataDataObj.original_name }}</h3>
+					<h3>
+						{{ metadataDataObj.original_name }}
+
+						<span v-if="metadataDataObj.alias_name"
+							>( {{ $t('metadata.details.name') }}：{{ metadataDataObj.alias_name }} )</span
+						>
+						<el-button type="text" @click="handleChangeName" style="padding: 0 10px;">{{
+							$t('metadata.details.renamed')
+						}}</el-button>
+					</h3>
 					<div class="description">
 						<span v-if="metadataDataObj.comment">{{ metadataDataObj.comment }}</span>
-						<template v-else>
-							<span v-if="desFalg">{{ $t('metadata.details.clickAddDes') }}</span>
-							<el-input size="mini" v-model="metadataDataObj.comment" v-else></el-input>
-						</template>
 
-						<el-button class="e-button" type="text" @click="desFalg = !desFalg">{{
-							$t('metadata.details.edit')
-						}}</el-button>
+						<span v-else>{{ $t('metadata.details.clickAddDes') }}</span>
+
+						<el-button
+							class="e-button"
+							type="text"
+							@click="
+								(editCommentDialogVisible = true), (editCommentForm.comment = metadataDataObj.comment)
+							"
+							>{{ $t('metadata.details.edit') }}</el-button
+						>
 					</div>
 
 					<!-- <ul>
@@ -45,14 +57,17 @@
 								<div class="iconBox">
 									<i class="header-icon el-icon-arrow-right"></i>
 									<span>{{ $t('metadata.details.basicAttributes') }}</span>
-									<i @click="asideFalg = false" class="iconfont icon-outdent"></i>
+									<i @click.stop="asideFalg = false" class="iconfont icon-outdent"></i>
 								</div>
 							</template>
 							<ul>
-								<li>
+								<!-- <li>
 									<span class="label">{{ $t('metadata.details.name') }}：</span>
-									<span>{{ metadataDataObj.name }}</span>
-								</li>
+									<span>{{ metadataDataObj.alias_name }}</span>
+									<el-button type="text" @click="handleChangeName">{{
+										$t('metadata.details.renamed')
+									}}</el-button>
+								</li> -->
 								<li>
 									<span class="label">{{ $t('metadata.details.originalTableName') }}：</span>
 									<span>{{ metadataDataObj.original_name }}</span>
@@ -63,7 +78,9 @@
 								</li>
 								<li>
 									<span class="label">{{ $t('metadata.details.owningConnection') }}：</span>
-									<span>{{ metadataDataObj.original_name }}</span>
+									<span v-if="metadataDataObj.source && metadataDataObj.source.name">{{
+										metadataDataObj.source.name
+									}}</span>
 								</li>
 								<li>
 									<span class="label">{{ $t('metadata.details.primaryKey') }}：</span>
@@ -71,23 +88,25 @@
 								</li>
 								<li>
 									<span class="label">{{ $t('metadata.details.source') }}：</span>
-									<span>{{ metadataDataObj.original_name }}</span>
+									<span>{{ metadataDataObj.create_source }}</span>
 								</li>
 								<li>
 									<span class="label">{{ $t('metadata.details.creationTime') }}：</span>
-									<span>{{ metadataDataObj.createTime }}</span>
+									<span>{{ $moment(metadataDataObj.createTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
 								</li>
-								<li>
+								<!-- <li>
 									<span class="label">{{ $t('metadata.details.founder') }}：</span>
 									<span>{{ metadataDataObj.original_name }}</span>
-								</li>
+								</li> -->
 								<li>
 									<span class="label">{{ $t('metadata.details.changeTime') }}：</span>
-									<span>{{ metadataDataObj.last_updated }}</span>
+									<span>{{
+										$moment(metadataDataObj.last_updated).format('YYYY-MM-DD HH:mm:ss')
+									}}</span>
 								</li>
 								<li>
 									<span class="label">{{ $t('metadata.details.Modifier') }}：</span>
-									<span>{{ metadataDataObj.original_name }}</span>
+									<span>{{ metadataDataObj.last_user_name }}</span>
 								</li>
 							</ul>
 						</el-collapse-item>
@@ -96,11 +115,16 @@
 								<div class="iconBox">
 									<i class="header-icon el-icon-arrow-right"></i
 									><span>{{ $t('metadata.details.businessAttributes') }}</span>
-									<el-button type="text">+ {{ $t('metadata.details.creat') }}</el-button>
+									<el-button type="text" @click.stop="creatBusiness"
+										>+ {{ $t('metadata.details.creat') }}</el-button
+									>
 								</div>
 							</template>
 							<ul>
-								<li>
+								<li v-for="(item, key, index) in metadataDataObj.custom_properties" :key="index">
+									{{ key }} : {{ item }}
+								</li>
+								<!-- <li>
 									<span class="label">{{ $t('metadata.details.tableLayering') }}：</span>
 									<span>{{ metadataDataObj.original_name }}</span>
 								</li>
@@ -115,7 +139,7 @@
 								<li>
 									<span class="label">{{ $t('metadata.details.APIReference') }}：</span>
 									<span>{{ metadataDataObj.original_name }}</span>
-								</li>
+								</li> -->
 							</ul>
 						</el-collapse-item>
 					</el-collapse>
@@ -133,82 +157,86 @@
 						</li>
 					</ul>
 					<div class="table-box">
-						<TablePage
-							ref="table"
-							row-key="id"
-							:remoteMethod="getData"
-							@selection-change="handleSelectionChange"
-							@sort-change="handleSortTable"
-						>
-							<ul class="search-bar" slot="search">
-								<li class="item">
-									<el-input
-										:placeholder="$t('metadata.details.searchPlaceholder')"
-										clearable
-										prefix-icon="el-icon-search"
-										v-model="searchParams.keyword"
-										size="mini"
-										style="width:160px"
-										@input="table.fetch(1, 800)"
-									></el-input>
-								</li>
-								<li class="item">
-									<el-select
-										v-model="searchParams.source"
-										:placeholder="$t('metadata.details.selsectSource')"
-										clearable
-										size="mini"
-										@input="table.fetch(1)"
-									>
-										<el-option
-											v-for="item in databaseModelOptions"
-											:key="item.value"
-											:label="item.label"
-											:value="item.value"
+						<div class="table-page-topbar">
+							<div class="table-page-search-bar">
+								<ul class="search-bar">
+									<li class="item">
+										<el-input
+											:placeholder="$t('metadata.details.searchPlaceholder')"
+											clearable
+											prefix-icon="el-icon-search"
+											v-model="searchParams.keyword"
+											size="mini"
+											style="width:160px"
+										></el-input>
+									</li>
+									<!-- <li class="item">
+										<el-select
+											v-model="searchParams.source"
+											:placeholder="$t('metadata.details.selsectSource')"
+											clearable
+											size="mini"
 										>
-										</el-option>
-									</el-select>
-								</li>
-								<li class="item">
-									<el-button type="text" class="restBtn" size="mini" @click="rest()">
-										{{ $t('dataFlow.reset') }}
-									</el-button>
-								</li>
-							</ul>
-							<div slot="operation" class="operation">
-								<!-- <el-button
-									v-readonlybtn="'datasource_category_application'"
-									size="mini"
-									class="btn"
-									@click="$refs.table.showClassify(handleSelectTag())"
-								>
-									<i class="iconfont icon-piliang back-btn-icon"></i>
-									<span> {{ $t('metadata.details.prohibitOverwriting') }}</span>
-								</el-button>
-								<el-button
-									v-readonlybtn="'datasource_category_application'"
-									size="mini"
-									class="btn"
-									@click="$refs.table.showClassify(handleSelectTag())"
-								>
-									<i class="iconfont icon-piliang back-btn-icon"></i>
-									<span> {{ $t('metadata.details.batchCoverage') }}</span>
-								</el-button>
-								<el-button
-									v-readonlybtn="'datasource_category_application'"
-									size="mini"
-									class="btn"
-									@click="$refs.table.showClassify(handleSelectTag())"
-								>
-									<i class="iconfont icon-biaoqian back-btn-icon"></i>
-									<span> {{ $t('metadata.details.refreshModel') }}</span>
-								</el-button> -->
-								<el-button class="btn btn-create" size="mini" @click="hanldCreateFiled">
-									<i class="iconfont icon-jia add-btn-icon"></i>
-									<span> {{ $t('metadata.details.createFiled') }}</span>
-								</el-button>
+											<el-option
+												v-for="item in databaseModelOptions"
+												:key="item.value"
+												:label="item.label"
+												:value="item.value"
+											>
+											</el-option>
+										</el-select>
+									</li> -->
+									<li class="item">
+										<el-button type="text" class="restBtn" size="mini" @click="reset()">
+											{{ $t('dataFlow.reset') }}
+										</el-button>
+									</li>
+								</ul>
 							</div>
-							<!-- <el-table-column type="selection" width="45" :reserve-selection="true"> </el-table-column> -->
+							<div class="table-page-operation-bar">
+								<div slot="operation" class="operation">
+									<!-- <el-button
+										v-readonlybtn="'datasource_category_application'"
+										size="mini"
+										class="btn"
+										@click="$refs.table.showClassify(handleSelectTag())"
+									>
+										<i class="iconfont icon-piliang back-btn-icon"></i>
+										<span> {{ $t('metadata.details.prohibitOverwriting') }}</span>
+									</el-button>
+									<el-button
+										v-readonlybtn="'datasource_category_application'"
+										size="mini"
+										class="btn"
+										@click="$refs.table.showClassify(handleSelectTag())"
+									>
+										<i class="iconfont icon-piliang back-btn-icon"></i>
+										<span> {{ $t('metadata.details.batchCoverage') }}</span>
+									</el-button>
+									<el-button
+										v-readonlybtn="'datasource_category_application'"
+										size="mini"
+										class="btn"
+										@click="$refs.table.showClassify(handleSelectTag())"
+									>
+										<i class="iconfont icon-biaoqian back-btn-icon"></i>
+										<span> {{ $t('metadata.details.refreshModel') }}</span>
+									</el-button> -->
+									<el-button class="btn btn-create" size="mini" @click="hanldCreateFiled">
+										<i class="iconfont icon-jia add-btn-icon"></i>
+										<span> {{ $t('metadata.details.createFiled') }}</span>
+									</el-button>
+								</div>
+							</div>
+						</div>
+						<el-table
+							class="table-page-table"
+							height="100%"
+							v-loading="loading"
+							:element-loading-text="$t('dataFlow.dataLoading')"
+							:data="tableFieldList"
+							:header-cell-style="tableHeaderStyle"
+						>
 							<el-table-column type="expand">
 								<template slot-scope="scope">
 									<ul class="attributes">
@@ -247,32 +275,21 @@
 									</ul>
 								</template>
 							</el-table-column>
+							<!-- <el-table-column type="selection" width="45" :reserve-selection="true"> </el-table-column> -->
 							<el-table-column
 								prop="field_name"
 								:label="$t('metadata.details.filedAliasName')"
-								sortable="name"
 								width="150"
 							>
 							</el-table-column>
-							<el-table-column prop="username" :label="$t('metadata.details.alias')" width="80">
+							<el-table-column prop="alias_name" :label="$t('metadata.details.alias')" width="80">
 								<template slot-scope="scope">
 									<div class="database-text" style="margin-left:0;">
-										<div>{{ scope.row.username }}</div>
+										<div>{{ scope.row.alias_name }}</div>
 									</div>
 								</template>
 							</el-table-column>
-							<el-table-column
-								prop="create_source"
-								:label="$t('metadata.details.source')"
-								width="120"
-								sortable="create_source"
-							></el-table-column>
-							<el-table-column
-								prop="java_type"
-								:label="$t('metadata.details.fieldType')"
-								width="100"
-								sortable="java_type"
-							>
+							<el-table-column prop="java_type" :label="$t('metadata.details.fieldType')" width="100">
 								<template slot-scope="scope">
 									<div>{{ $t('metadata.details.' + scope.row.java_type) }}</div>
 								</template>
@@ -281,7 +298,6 @@
 								prop="columnSize"
 								:label="$t('metadata.details.fieldLength')"
 								width="100"
-								sortable="columnSize"
 							></el-table-column>
 							<el-table-column
 								prop="comment"
@@ -306,7 +322,19 @@
 									>
 								</template>
 							</el-table-column>
-						</TablePage>
+						</el-table>
+						<el-pagination
+							background
+							class="table-page-pagination"
+							layout="total, ->, sizes, prev, pager, next, jumper"
+							:current-page.sync="pageCurrent"
+							:page-sizes="[10, 20, 50, 100]"
+							:page-size.sync="pageSize"
+							:total="pageTotal"
+							@size-change="handleSizeChange"
+							@current-change="handleCurrentChange"
+						>
+						</el-pagination>
 					</div>
 				</div>
 			</el-main>
@@ -318,20 +346,77 @@
 			:metadata="metadataDataObj"
 			v-if="dialogFormVisible"
 		></FormPage>
+		<el-dialog
+			width="600px"
+			:title="$t('metadata.details.businessAttrTitle')"
+			:close-on-click-modal="false"
+			:visible.sync="businessDialogVisible"
+			custom-class="dialogForm"
+		>
+			<FormBuilder ref="form" v-model="businessForm" :config="businessFormConfig"></FormBuilder>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="businessDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="saveBusiness()" size="small">{{ $t('message.save') }}</el-button>
+			</span>
+		</el-dialog>
+		<el-dialog
+			width="600px"
+			:title="$t('metadata.details.editAliasNameTitle')"
+			:close-on-click-modal="false"
+			:visible.sync="editNameDialogVisible"
+			custom-class="dialogForm"
+		>
+			<el-form :model="editNameForm" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+				<el-form-item :label="$t('metadata.details.originalTableName')" prop="name">
+					{{ editNameForm.original_name }}
+				</el-form-item>
+				<el-form-item :label="$t('metadata.details.alias')" prop="name">
+					<el-input v-model="editNameForm.alias_name" size="small" maxlength="100" show-word-limit></el-input>
+				</el-form-item>
+			</el-form>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="editNameDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="saveAliasName()" size="small">{{ $t('message.save') }}</el-button>
+			</span>
+		</el-dialog>
+		<el-dialog
+			width="600px"
+			:title="$t('metadata.details.editCommentTitle')"
+			:close-on-click-modal="false"
+			:visible.sync="editCommentDialogVisible"
+			custom-class="dialogForm"
+		>
+			<el-form :model="editCommentForm" ref="ruleForm" label-width="60px" class="demo-ruleForm">
+				<el-form-item :label="$t('metadata.details.description')" prop="name">
+					<el-input
+						type="textarea"
+						v-model="editCommentForm.comment"
+						maxlength="500"
+						show-word-limit
+					></el-input>
+				</el-form-item>
+			</el-form>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="editCommentDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="saveComment()" size="small">{{ $t('message.save') }}</el-button>
+			</span>
+		</el-dialog>
 	</section>
 </template>
 <script>
-import TablePage from '@/components/TablePage';
+// import TablePage from '@/components/TablePage';
 import FormPage from './Form';
 export default {
 	components: {
-		TablePage,
+		// TablePage,
 		FormPage
 	},
 	data() {
 		return {
+			editCommentDialogVisible: false,
+			loading: false,
 			asideFalg: true,
-			activeNames: ['1'],
+			activeNames: ['1', '2'],
 			activePanel: 'model',
 			muneList: [{ name: this.$t('metadata.details.model'), key: 'model' }],
 			description: '',
@@ -345,10 +430,74 @@ export default {
 			metadataDataObj: {
 				original_name: '',
 				comment: ''
-			}
+			},
+			tableFieldList: [],
+			pageSize: 20,
+			pageCurrent: 1,
+			pageTotal: 0,
+			tableHeaderStyle: {
+				padding: '0',
+				lineHeight: '30px',
+				background: '#fafafa',
+				color: '#999'
+			},
+			businessDialogVisible: false,
+			businessForm: {
+				key: '',
+				value: ''
+			},
+			businessFormConfig: {
+				form: {
+					labelPosition: 'right',
+					labelWidth: '100px'
+				},
+				items: [
+					{
+						type: 'input',
+						label: this.$t('metadata.details.attrName'),
+						field: 'key'
+					},
+					{
+						type: 'input',
+						label: this.$t('metadata.details.attrKey'),
+						field: 'value'
+					}
+				]
+			},
+			editNameDialogVisible: false,
+			editNameForm: {
+				original_name: '',
+				alias_name: ''
+			},
+			editCommentForm: {
+				comment: ''
+			},
+			filterData: []
 		};
 	},
-	created() {},
+	created() {
+		this.getData();
+	},
+	watch: {
+		'searchParams.keyword'(val) {
+			let oldTableData = this.metadataDataObj.fields;
+			if (val) {
+				this.filterData = [];
+				this.metadataDataObj.fields.filter(item => {
+					if (
+						String(item.field_name).indexOf(val) > -1 ||
+						(item.alias_name && String(item.alias_name).indexOf(val) > -1) ||
+						(item.comment && String(item.comment).indexOf(val) > -1)
+					) {
+						this.filterData.push(item);
+					}
+				});
+				this.setCurrentPageData(this.filterData);
+			} else {
+				this.setCurrentPageData(oldTableData);
+			}
+		}
+	},
 	methods: {
 		// 获取数据
 		async handleGetDataApi() {
@@ -388,46 +537,23 @@ export default {
 			this.fieldObj = item;
 			this.dialogFormVisible = true;
 		},
-		// getData({ page, tags }) {
 		getData() {
-			// let { current, size } = page;
-			let { keyword, source } = this.searchParams;
-			let where = {};
-			//精准搜索 iModel
-			if (keyword && keyword.trim()) {
-				let filterObj = { like: keyword, options: 'i' };
-				where.or = [{ field_name: filterObj }, { alias_name: filterObj }, { comment: filterObj }];
-			}
-			where.create_source = source;
-			// if (tags && tags.length) {
-			// 	where['listtags.id'] = {
-			// 		in: tags
-			// 	};
-			// }
-			// status && (where.status = status);
-			// let filter = {
-			// 	order: this.order,
-			// 	limit: size,
-			// 	skip: (current - 1) * size,
-			// 	where
-			// };
-			return Promise.all([
-				this.$api('MetadataInstances').get([this.$route.query.id])
-				// this.$api('MetadataInstances').get({
-				// 	filter: JSON.stringify(filter)
-				// })
-			]).then(res => {
-				this.metadataDataObj = res[0].data;
-				return {
-					total: res[0].data.fields.length,
-					data: res[0].data.fields
-				};
-			});
+			return Promise.all([this.$api('MetadataInstances').get([this.$route.query.id])])
+				.then(res => {
+					this.metadataDataObj = res[0].data;
+					this.pageTotal = res[0].data.fields.length;
+					this.setCurrentPageData(this.metadataDataObj.fields);
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
-		//筛选条件
-		handleSortTable({ order, prop }) {
-			this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`;
-			this.table.fetch(1);
+		// 重置
+		reset() {
+			this.searchParams = {
+				keyword: ''
+			};
+			this.setCurrentPageData(this.metadataDataObj.fields);
 		},
 		// 删除字段
 		remove(item, index) {
@@ -473,13 +599,14 @@ export default {
 							});
 						}
 						let relation = Object.values(groupRelation);
-						let params = this.metadataDataObj;
-						params.fields = fields;
-						// params.comment = this.form.comment;
-						params.relation = relation;
+						let params = {
+							fields: fields,
+							relation: relation
+						};
 						this.$api('MetadataInstances')
 							.patch(this.metadataDataObj.id, params)
 							.then(() => {
+								this.getData();
 								this.$message.success(this.$t('message.deleteOK'));
 								done();
 							})
@@ -498,9 +625,104 @@ export default {
 		// 关闭弹窗
 		handleDialogVisible() {
 			this.dialogFormVisible = false;
+			this.getData();
 		},
-		handleSelectionChange(val) {
-			this.multipleSelection = val;
+		// 分页数据处理
+		setCurrentPageData(tableData) {
+			let begin = (this.pageCurrent - 1) * this.pageSize;
+			let end = this.pageCurrent * this.pageSize;
+			this.tableFieldList = tableData.slice(begin, end);
+		},
+		handleSizeChange(val) {
+			this.pageSize = val;
+			if (this.searchParams.keyword) {
+				this.setCurrentPageData(this.filterData);
+			} else {
+				this.setCurrentPageData(this.metadataDataObj.fields);
+			}
+		},
+		handleCurrentChange(val) {
+			this.pageCurrent = val;
+			if (this.searchParams.keyword) {
+				this.setCurrentPageData(this.filterData);
+			} else {
+				this.setCurrentPageData(this.metadataDataObj.fields);
+			}
+		},
+		// 新增业务属性
+		creatBusiness() {
+			this.businessDialogVisible = true;
+			this.businessForm = {
+				key: '',
+				value: ''
+			};
+		},
+		// 保存业务属性
+		saveBusiness() {
+			let obj = {};
+			obj[this.businessForm.key] = this.businessForm.value;
+			let params = {
+				custom_properties: Object.assign(this.metadataDataObj.custom_properties, obj)
+			};
+			// params.custom_properties = Object.assign(this.metadataDataObj.custom_properties, obj);
+
+			this.$api('MetadataInstances')
+				.patch(this.metadataDataObj.id, params)
+				.then(() => {
+					this.$message.success(this.$t('metadata.details.success_Release'));
+				})
+				.catch(() => {
+					this.$message.error(this.$t('message.saveFail'));
+				})
+				.finally(() => {
+					this.businessDialogVisible = false;
+				});
+		},
+		// 修改名称
+		handleChangeName() {
+			this.editNameForm = {
+				original_name: this.metadataDataObj.original_name,
+				alias_name: this.metadataDataObj.alias_name
+			};
+			this.editNameDialogVisible = true;
+		},
+		// 保存改名
+		saveAliasName() {
+			let params = {
+				alias_name: this.editNameForm.alias_name
+			};
+			// params.alias_name = this.editNameForm.alias_name;
+
+			this.$api('MetadataInstances')
+				.patch(this.metadataDataObj.id, params)
+				.then(() => {
+					this.getData();
+					this.$message.success(this.$t('metadata.details.success_Release'));
+				})
+				.catch(() => {
+					this.$message.error(this.$t('message.saveFail'));
+				})
+				.finally(() => {
+					this.editNameDialogVisible = false;
+				});
+		},
+		// 编辑描述
+		saveComment() {
+			let params = {
+				comment: this.editCommentForm.comment
+			};
+			this.$api('MetadataInstances')
+				.patch(this.metadataDataObj.id, params)
+				.then(() => {
+					this.getData();
+					this.$message.success(this.$t('metadata.details.success_Release'));
+				})
+				.catch(() => {
+					this.$message.error(this.$t('message.saveFail'));
+				})
+				.finally(() => {
+					this.editCommentDialogVisible = false;
+				});
 		}
 	}
 };
@@ -638,18 +860,36 @@ export default {
 				}
 				.table-box {
 					height: calc(100% - 28px);
-					.operation {
-						.iconfont {
-							font-size: 12px;
+					padding-top: 10px;
+					background-color: #fff;
+					.table-page-topbar {
+						display: flex;
+						justify-content: space-between;
+						align-items: flex-end;
+						flex-wrap: wrap-reverse;
+						padding: 0 10px;
+
+						.table-page-search-bar {
+							margin-right: 5px;
+							margin-bottom: 10px;
 						}
-						.btn {
-							padding: 7px;
-							background: #f5f5f5;
-							i.iconfont {
-								font-size: 12px;
-							}
-							&.btn-create {
-								margin-left: 5px;
+						.table-page-operation-bar {
+							margin-bottom: 10px;
+							text-align: right;
+							.operation {
+								.iconfont {
+									font-size: 12px;
+								}
+								.btn {
+									padding: 7px;
+									background: #f5f5f5;
+									i.iconfont {
+										font-size: 12px;
+									}
+									&.btn-create {
+										margin-left: 5px;
+									}
+								}
 							}
 						}
 					}
@@ -708,6 +948,7 @@ export default {
 		}
 		.iconBox {
 			width: 100%;
+
 			.header-icon {
 				// padding-right: 12px;
 				// vertical-align: middle;
@@ -719,7 +960,10 @@ export default {
 				font-weight: 300;
 			}
 			span {
+				display: inline-block;
 				padding-left: 12px;
+				height: 30px;
+				line-height: 30px;
 			}
 			.iconfont {
 				display: inline-block;
@@ -729,7 +973,9 @@ export default {
 			}
 			.el-button {
 				float: right;
-				padding: 3px 0 0;
+				height: 32px;
+				line-height: 32px;
+				padding: 0;
 			}
 		}
 		.el-collapse-item__header {
@@ -753,6 +999,35 @@ export default {
 		}
 		.el-table__expanded-cell {
 			padding: 10px 50px;
+		}
+	}
+	.table-box {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		box-sizing: border-box;
+		.table-page-table {
+			th {
+				padding: 0;
+				background-color: #eff1f4;
+			}
+		}
+		.table-page-pagination {
+			padding-top: 5px;
+			box-sizing: border-box;
+			background-color: #eff1f4;
+		}
+	}
+	.dialogForm {
+		.el-form-item {
+			margin-bottom: 10px;
+			.el-form-item__label {
+				text-align: left;
+			}
+			.el-textarea__inner {
+				min-height: 100px !important;
+			}
 		}
 	}
 }

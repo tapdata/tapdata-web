@@ -258,6 +258,8 @@ const en = {
 		preview: 'Detail',
 		cancel: 'Cancel',
 		confirm: 'Confirm',
+		save: 'Save',
+		deleteOrNot: 'Delete or not',
 		placeholderMonServer: 'Please enter the monitored service name',
 		placeholderCommand: 'Please enter command',
 		nullContent: 'Can not be empty',
@@ -1901,7 +1903,12 @@ const en = {
 			theme: 'Theme',
 			taskReference: 'Task Reference',
 			APIReference: 'API Reference',
-			creat: 'New'
+			creat: 'New',
+			businessAttrTitle: 'Business attribute',
+			attrName: 'attribute name',
+			attrKey: 'Attribute value',
+			editAliasNameTitle: 'Edit alias',
+			editCommentTitle: 'Edit description'
 		}
 	},
 	notification: {

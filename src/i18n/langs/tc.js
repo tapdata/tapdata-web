@@ -257,6 +257,8 @@ const tc = {
 		preview: '預覽',
 		cancel: '取 消',
 		confirm: '確定',
+		save: '保 存',
+		deleteOrNot: '是否刪除',
 		placeholderMonServer: '請輸入監控的服務名稱',
 		placeholderCommand: '請輸入command',
 		nullContent: '不能為空',
@@ -1859,7 +1861,12 @@ const tc = {
 			theme: '主題',
 			taskReference: '任務引用',
 			APIReference: 'API引用',
-			creat: '新建'
+			creat: '新建',
+			businessAttrTitle: '業務屬性',
+			attrName: '屬性名',
+			attrKey: '屬性值',
+			editAliasNameTitle: '編輯別名',
+			editCommentTitle: '編輯描述'
 		}
 	},
 	notification: {
