@@ -1718,7 +1718,7 @@ const tc = {
 			noCreate: '，無法被重複創建',
 			kafkaNameRange: '主題名稱長度大於256'
 		},
-		createDatabase: '新建數據庫',
+		createDatabase: '創建新數據源',
 		copyDatabase: '複製數據庫名',
 		checkDatabase: '查看詳情',
 		createTable: '創建新表',

@@ -1723,7 +1723,7 @@ const cn = {
 			noCreate: '，无法被重复创建',
 			kafkaNameRange: '主题名称长度大于256'
 		},
-		createDatabase: '新建数据库',
+		createDatabase: '创建新数据源',
 		copyDatabase: '复制数据库名',
 		checkDatabase: '查看详情',
 		createTable: '创建新表',
