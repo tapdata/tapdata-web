@@ -365,7 +365,7 @@ const en = {
 	},
 	dataFlow: {
 		leave: 'Leave',
-		backlistText: 'Return to list page',
+		backlistText: 'Back to sync job list page',
 		saveReminder:
 			'This jobhas not been saved yet, If you leave this page, the job configuration will be lost. Are you sure to leave ?',
 		aggregateNotDataNode: 'The first target data node of aggregation node can only be COLLECTION',
