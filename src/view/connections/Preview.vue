@@ -237,7 +237,8 @@ export default {
 					this.showProgress = true;
 					this.reloadApi();
 				}
-				let func = formConfig[this.type];
+				let fileType = this.type === 'mysql pxc' ? 'mysqlpxc' : this.type;
+				let func = formConfig[fileType];
 				if (func) {
 					let config = func(this);
 					let items = config.items.map(it => {
