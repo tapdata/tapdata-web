@@ -1632,7 +1632,9 @@ const cn = {
 				CHECK_ACCESS_TOKEN: '检查access token是否可用',
 				CHECK_API_AUTH: '检查api是否有访问权限',
 				CHECK_LOCAL_PORT: '检查本地端口是否可用',
-				SCAN_FILE: '扫描目录中的文件'
+				SCAN_FILE: '扫描目录中的文件',
+				CHECK_BIN_LOG_SYNC: '检查binlog日志同步是否开启',
+				CHECK_GTID: ' 检查GTID模式与GTID一致性是否开启'
 			},
 			file: {
 				fileAddr: '文件地址',

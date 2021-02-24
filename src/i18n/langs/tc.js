@@ -1627,7 +1627,9 @@ const tc = {
 				CHECK_ACCESS_TOKEN: '檢查access token是否可用',
 				CHECK_API_AUTH: '檢查api是否有訪問權限',
 				CHECK_LOCAL_PORT: '檢查本地端口是否可用',
-				SCAN_FILE: '掃描目錄中的文件'
+				SCAN_FILE: '掃描目錄中的文件',
+				CHECK_BIN_LOG_SYNC: '檢查binlog日誌同步是否開啟',
+				CHECK_GTID: ' 檢查GTID模式與GTID一致性是否開啟'
 			},
 			file: {
 				fileAddr: '文件地址',
