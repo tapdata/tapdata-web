@@ -33,7 +33,7 @@ export default function(vm) {
 				options: [
 					{
 						label: 'RDS实例',
-						tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+						tip: '创建移动云内的RDS实例为来源的连接',
 						value: 'rds'
 					},
 					{
