@@ -2,7 +2,6 @@
 	<el-container class="CT-task-wrap" v-if="steps[activeStep]">
 		<el-container style="overflow: hidden;flex: 1;">
 			<el-header class="step-header" height="42px">
-				<span>创建同步任务</span>
 				<ul class="step-box">
 					<li v-for="(step, index) in steps" :key="index" :class="{ active: activeStep >= index }">
 						<span class="step-index">
@@ -46,7 +45,7 @@
 								用户可以在任务设置步骤对任务名称、同步类型、遇错处理等进行设置，具体配置说明请查看帮助文档
 							</div>
 							<form-builder ref="setting" v-model="settingModel" :config="config">
-								<div slot="needToCreateIndex">
+								<div slot="needToCreateIndex" class="ddl-tip">
 									自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作
 								</div>
 							</form-builder>
@@ -63,7 +62,11 @@
 						</div>
 					</el-main>
 					<el-footer class="CT-task-footer" height="80px">
-						<el-button class="btn-step" v-if="steps[activeStep].index > 1" @click="back()">
+						<el-button
+							class="btn-step"
+							v-if="[2, 4].includes(steps[activeStep].index) || (steps[activeStep].index === 3 && !id)"
+							@click="back()"
+						>
 							{{ $t('guide.btn_back') }}
 						</el-button>
 						<el-button
@@ -134,10 +137,10 @@ export default {
 		};
 	},
 	created() {
+		this.id = this.$route.params.id;
 		this.getSteps();
 		this.getFormConfig();
 		this.getInstanceRegion();
-		this.id = this.$route.params.id;
 		if (this.id) {
 			this.intiData(this.id);
 		}
@@ -586,40 +589,47 @@ export default {
 		},
 		handleDatabaseType(type) {
 			this.handleDialogDatabaseTypeVisible();
-			let href = '/#/connections/create?databaseType=' + type;
-			window.open(href);
-			//this.$router.push('connections/create?databaseType=' + type);
+			this.$router.push('/connections/create?databaseType=' + type);
 		}
 	}
 };
 </script>
 <style lang="less">
-.select-connection-popper {
-	.el-select-dropdown__item {
-		height: 64px;
-		padding: 10px;
-	}
-	.select-connection-option {
-		display: flex;
-		align-items: center;
-		.img {
-			padding: 6px;
-			width: 44px;
-			height: 44px;
-			line-height: 32px;
-			border: 1px solid #dedee4;
-			border-radius: 3px;
-			box-sizing: border-box;
-			text-align: center;
-			color: #999;
-			img {
-				display: block;
-				width: 100%;
-				height: 100%;
+.CT-task-wrap {
+	.select-connection-popper {
+		.el-select-dropdown__item {
+			height: 64px;
+			padding: 10px;
+		}
+		.select-connection-option {
+			display: flex;
+			align-items: center;
+			.img {
+				padding: 6px;
+				width: 44px;
+				height: 44px;
+				line-height: 32px;
+				border: 1px solid #dedee4;
+				border-radius: 3px;
+				box-sizing: border-box;
+				text-align: center;
+				color: #999;
+				img {
+					display: block;
+					width: 100%;
+					height: 100%;
+				}
+			}
+			.name {
+				margin-left: 10px;
 			}
 		}
-		.name {
-			margin-left: 10px;
+	}
+	.step-3 {
+		.ddl-tip {
+			font-size: 12px;
+			margin-top: -10px;
+			color: #aaa;
 		}
 	}
 }

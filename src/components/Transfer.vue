@@ -288,7 +288,8 @@ export default {
 				.el-checkbox {
 					height: 28px;
 					line-height: 28px;
-					overflow: hidden;
+					overflow-x: hidden;
+					overflow-y: auto;
 				}
 			}
 			.el-transfer-panel__filter {

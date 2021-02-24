@@ -40,7 +40,7 @@
 				<div class="form-wrap">
 					<div class="form">
 						<form-builder ref="form" v-model="model" :config="config">
-							<div class="url-tip" slot="name">
+							<div class="url-tip" slot="name" v-if="!$route.params.id">
 								中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
 							</div>
 							<div
@@ -337,7 +337,9 @@ export default {
 						validator: (rule, value, callback) => {
 							if (!value || !value.trim()) {
 								callback('任务名称不为空');
-							} else if (!/^[a-zA-Z][a-zA-Z0-9_\s-]*$/.test(value)) {
+							} else if (
+								!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(this.value)
+							) {
 								callback('任务名称不符合规则');
 							} else {
 								callback();
@@ -610,6 +612,15 @@ export default {
 				DRS_instances: params.DRS_instances || '',
 				IP_type: params.IP_type || ''
 			};
+			//存实例名称
+			let region = this.instanceMock.filter(item => item.code === platformInfo.region);
+			if (region.length > 0) {
+				platformInfo['regionName'] = region[0].name;
+			}
+			let zone = this.instanceModelZone.filter(item => item.code === platformInfo.zone);
+			if (zone.length > 0) {
+				platformInfo['zoneName'] = zone[0].name;
+			}
 			return platformInfo;
 		},
 		submit() {
@@ -737,8 +748,14 @@ export default {
 		submitEdit() {
 			this.editBtnLoading = true;
 			if (this.rename === '') {
+				this.editBtnLoading = false;
 				this.rename = this.model.name;
 				this.$message.error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText'));
+				return;
+			}
+			if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(this.rename)) {
+				this.editBtnLoading = false;
+				this.$message.error('名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格');
 				return;
 			}
 			this.model.name = this.rename;
