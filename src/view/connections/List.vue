@@ -305,7 +305,14 @@ export default {
 				'mariadb',
 				'mysql pxc'
 			], //目前白名单,
-			searchParams: this.$store.state.connections,
+			searchParams: {
+				iModel: 'fuzzy',
+				databaseType: '',
+				keyword: '',
+				databaseModel: '',
+				status: '',
+				panelFlag: true
+			},
 			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
 		};
 	},
@@ -325,6 +332,11 @@ export default {
 	computed: {
 		table() {
 			return this.$refs.table;
+		}
+	},
+	watch: {
+		'$route.query'() {
+			this.table.fetch(1);
 		}
 	},
 	destroyed() {
@@ -348,7 +360,7 @@ export default {
 			databaseTypes.data.forEach(dt => this.databaseTypeOptions.push(dt));
 		},
 		getData({ page, tags }) {
-			this.$store.commit('connections', this.searchParams);
+			let region = this.$route.query.region;
 			let { current, size } = page;
 			let { iModel, keyword, databaseType, databaseModel, status } = this.searchParams;
 			let where = {};
@@ -366,7 +378,8 @@ export default {
 				tableCount: true,
 				loadCount: true,
 				loadFieldsStatus: true,
-				schemaAutoUpdate: true
+				schemaAutoUpdate: true,
+				platformInfo: true
 			};
 			//精准搜索 iModel
 			if (keyword && keyword.trim()) {
@@ -376,6 +389,7 @@ export default {
 			where.database_type = {
 				in: this.allowDataType
 			};
+			region && (where['platformInfo.region'] = region);
 			databaseType && (where.database_type = databaseType);
 			// if (databaseType === 'maria' || databaseType === 'mysqlpxc') {
 			// 	where.search_databaseType = databaseType;
