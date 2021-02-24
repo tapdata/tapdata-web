@@ -645,7 +645,8 @@ export default {
 				user_id: true,
 				startTime: true,
 				listtags: true,
-				mappingTemplate: true
+				mappingTemplate: true,
+				platformInfo: true
 			};
 			if (keyword && keyword.trim()) {
 				where.or = [
