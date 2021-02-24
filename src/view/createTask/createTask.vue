@@ -560,7 +560,7 @@ export default {
 					type: 'database',
 					readBatchSize: 1000,
 					readCdcInterval: 500,
-					dropTable: false,
+					dropTable: this.settingModel.distinctWriteType === 'compel' ? true : false,
 					dropType: 'no_drop',
 					database_type: 'mysql'
 				})
