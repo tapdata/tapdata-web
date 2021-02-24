@@ -346,6 +346,7 @@ export default {
 			flowDataName: '',
 			mappingTemplate: '',
 			creatUserId: '',
+			dataChangeFalg: false,
 			statusBtMap
 		};
 	},
@@ -426,8 +427,7 @@ export default {
 		},
 
 		backDataFlow() {
-			let falg = false;
-			if (falg) {
+			if (!this.dataChangeFalg) {
 				this.$router.push({
 					path: '/dataFlows?mapping=custom'
 				});
@@ -625,6 +625,10 @@ export default {
 			this.setSelector(this.$route.query.mapping);
 			this.editor.graph.setSettingData(dataFlow.setting);
 			this.wsSend();
+			let self = this;
+			setTimeout(() => {
+				self.dataChangeFalg = false;
+			}, 100);
 		},
 		wsSend() {
 			if (this.dataFlowId) {
@@ -690,7 +694,10 @@ export default {
 			let self = this;
 			this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
 				changeData = this.getDataFlowData(true);
-				if (changeData) self.timeSave();
+				if (changeData) {
+					self.dataChangeFalg = true;
+					self.timeSave();
+				}
 			});
 		},
 		//点击draft save按钮
