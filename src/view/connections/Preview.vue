@@ -239,7 +239,7 @@ export default {
 					this.reloadApi();
 				}
 				let type = this.type;
-				if (!window.getSettingByKey('SUPPORT_RDS')) {
+				if (window.getSettingByKey('SUPPORT_RDS')) {
 					type = 'drs_' + type;
 				}
 				let func = formConfig[type];

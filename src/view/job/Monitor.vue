@@ -77,7 +77,7 @@
 						<span class="info-label">{{ $t('dataForm.form.databaseType') }}:</span>
 						<span class="info-text">{{ stage.database_type }}</span>
 					</div>
-					<div class="info-list" v-if="window.getSettingByKey('SUPPORT_RDS')">
+					<div class="info-list" v-if="$window.getSettingByKey('SUPPORT_RDS')">
 						<span class="info-label">实例地域:</span>
 						<span class="info-text">
 							{{ stage.platformInfo ? stage.platformInfo.regionName : '' }} |

@@ -67,13 +67,13 @@ export default function() {
 			},
 			{
 				type: 'switch',
-				field: 'isOpenAutoDDL',
-				label: '自动DDL'
+				field: 'needToCreateIndex',
+				label: '自动创建索引'
 			},
 			{
 				type: 'switch',
-				field: 'needToCreateIndex',
-				label: '自动创建索引'
+				field: 'isOpenAutoDDL',
+				label: '自动DDL'
 			},
 			{
 				type: 'slot',
