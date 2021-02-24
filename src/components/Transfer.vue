@@ -26,12 +26,12 @@
 			custom-class="databaseLinkDialog"
 			:close-on-click-modal="false"
 		>
-			<el-form :rules="rules">
+			<el-form :rules="rules" ref="form" :model="formData">
 				<el-row :gutter="80" class="e-row">
 					<el-col :span="12">
 						<el-form-item :label="$t('editor.cell.link.prefixPlaceholder')" prop="table_prefix">
 							<el-input
-								v-model="table_prefix"
+								v-model="formData.table_prefix"
 								autocomplete="off"
 								maxlength="50"
 								show-word-limit
@@ -47,7 +47,7 @@
 					<el-col :span="12">
 						<el-form-item :label="$t('editor.cell.link.suffixPlaceholder')" prop="table_suffix">
 							<el-input
-								v-model="table_suffix"
+								v-model="formData.table_suffix"
 								autocomplete="off"
 								maxlength="50"
 								show-word-limit
@@ -56,16 +56,20 @@
 							></el-input>
 						</el-form-item>
 						<div class="tip">
-							<span>以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span>
+							<span>以英文字母、下划线开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span>
 						</div>
 					</el-col>
 				</el-row>
 			</el-form>
 			<div class="text">
-				{{ `${$t('editor.cell.link.tableNameExample')}: ${table_prefix}tablename${table_suffix}` }}
+				{{
+					`${$t('editor.cell.link.tableNameExample')}: ${formData.table_prefix}tablename${
+						formData.table_suffix
+					}`
+				}}
 			</div>
 			<div slot="footer" class="dialog-footer">
-				<el-button @click="dialogVisible = false">{{ $t('dataVerify.cancel') }}</el-button>
+				<el-button @click="handleCancel">{{ $t('dataVerify.cancel') }}</el-button>
 				<el-button type="primary" @click="changeName">{{ $t('dataVerify.confirm') }}</el-button>
 			</div>
 		</el-dialog>
@@ -73,26 +77,27 @@
 </template>
 
 <script>
+let selectKeepArr = [];
 export default {
 	props: {
 		transferData: Array
 	},
 	data() {
 		var validatePrefix = (rule, value, callback) => {
-			if (this.table_prefix === '') {
+			if (value === '') {
 				callback();
-			} else if (!/^[a-zA-Z]([a-zA-Z0-9_\-.])*/.test(this.table_prefix)) {
+			} else if (!/^[a-zA-Z]([a-zA-Z0-9_\-.])*/.test(value)) {
 				callback(new Error('请按照以下规则输入: '));
-			} else if (/^(system).*/.test(this.table_prefix)) {
+			} else if (/^(system).*/.test(value)) {
 				callback(new Error('请按照以下规则输入: '));
 			} else {
 				callback();
 			}
 		};
 		var validateSuffix = (rule, value, callback) => {
-			if (this.table_suffix === '') {
+			if (value === '') {
 				callback();
-			} else if (!/^[a-zA-Z][a-zA-Z0-9_\s-.]*$/.test(this.table_suffix)) {
+			} else if (!/^[a-zA-Z_][a-zA-Z0-9_\s-.]*$/.test(value)) {
 				callback(new Error('请按照以下规则输入: '));
 			} else {
 				callback();
@@ -103,8 +108,10 @@ export default {
 			sourceData: [],
 			selectSourceArr: [],
 			titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')],
-			table_prefix: '',
-			table_suffix: '',
+			formData: {
+				table_prefix: '',
+				table_suffix: ''
+			},
 			dialogVisible: false,
 			type: '',
 			rules: {
@@ -134,11 +141,12 @@ export default {
 						}
 						//初始化数据
 						if (this.transferData) {
-							this.table_prefix = this.transferData.table_prefix;
-							this.table_suffix = this.transferData.table_suffix;
+							this.formData.table_prefix = this.transferData.table_prefix;
+							this.formData.table_suffix = this.transferData.table_suffix;
 							this.selectSourceArr = this.transferData.selectSourceArr;
 						}
 						this.preFixSuffixData();
+						this.$forceUpdate();
 					}
 				})
 				.finally(() => {
@@ -148,7 +156,7 @@ export default {
 		// 穿梭框值改变的时候 (重命名 或者还原)
 		handleChangeTransfer() {
 			this.sourceData.forEach(el => {
-				if (this.selectSourceArr.length && this.selectSourceArr.includes(el.key)) {
+				if (selectKeepArr.length && selectKeepArr.includes(el.key)) {
 					el.label = el.key;
 				}
 			});
@@ -160,16 +168,26 @@ export default {
 		},
 		// 已选择的表
 		handleSelectTable(data) {
-			this.selectSourceArr = data;
+			selectKeepArr = data;
 		},
 		changeName() {
+			this.$refs['form'].validate(valid => {
+				if (valid) {
+					this.dialogVisible = false;
+					this.preFixSuffixData();
+				}
+			});
+		},
+		handleCancel() {
+			this.formData.table_suffix = '';
+			this.formData.table_prefix = '';
+			this.$refs.form.clearValidate();
 			this.dialogVisible = false;
-			this.preFixSuffixData();
 		},
 		//还原
 		handleReduction() {
-			this.table_suffix = '';
-			this.table_prefix = '';
+			this.formData.table_suffix = '';
+			this.formData.table_prefix = '';
 			if (this.sourceData.length) {
 				for (let i = 0; i < this.sourceData.length; i++) {
 					for (let k = 0; k < this.selectSourceArr.length; k++) {
@@ -198,7 +216,8 @@ export default {
 				for (let i = 0; i < this.sourceData.length; i++) {
 					for (let j = 0; j < this.selectSourceArr.length; j++) {
 						if (this.sourceData[i].key === this.selectSourceArr[j]) {
-							this.sourceData[i].label = this.table_prefix + this.sourceData[i].key + this.table_suffix;
+							this.sourceData[i].label =
+								this.formData.table_prefix + this.sourceData[i].key + this.formData.table_suffix;
 						}
 					}
 				}
@@ -207,8 +226,8 @@ export default {
 		returnData() {
 			return {
 				selectSourceArr: this.selectSourceArr,
-				table_prefix: this.table_prefix,
-				table_suffix: this.table_suffix
+				table_prefix: this.formData.table_prefix,
+				table_suffix: this.formData.table_suffix
 			};
 		}
 	}

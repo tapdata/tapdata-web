@@ -25,5 +25,7 @@ export const DATASOURCE_MODEL = {
 
 export const INSTANCE_MODEL = {
 	region: '', //区域
-	zone: '' //可用区
+	zone: '', //可用区,
+	regionName: '', //区域
+	zoneName: '' //可用区,
 };

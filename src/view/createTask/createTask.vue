@@ -134,7 +134,7 @@ export default {
 		};
 	},
 	created() {
-		this.getSteps(false);
+		this.getSteps();
 		this.getFormConfig();
 		this.getInstanceRegion();
 		this.id = this.$route.params.id;
@@ -239,7 +239,11 @@ export default {
 				{ index: 3, text: '任务设置', type: 'setting' },
 				{ index: 4, text: '映射设置', type: 'mapping' }
 			];
-			this.steps = steps.concat();
+			if (this.id) {
+				this.steps = steps.slice(2, 4);
+			} else {
+				this.steps = steps.concat();
+			}
 		},
 		next() {
 			let type = this.steps[this.activeStep].type || 'instance';
@@ -518,6 +522,15 @@ export default {
 					objectNames: this.transferData.selectSourceArr,
 					type: 'table'
 				});
+			}
+			//存实例名称
+			let region = this.instanceMock.filter(item => item.code === this.platformInfo.region);
+			if (region.length > 0) {
+				postData.platformInfo.regionName = region[0].name;
+			}
+			let zone = this.platformInfoZone.filter(item => item.code === this.platformInfo.zone);
+			if (zone.length > 0) {
+				postData.platformInfo.zoneName = zone[0].name;
 			}
 			postData.stages = [
 				Object.assign({}, stageDefault, {

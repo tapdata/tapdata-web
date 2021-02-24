@@ -19,7 +19,7 @@ export default function() {
 						value: 'rds'
 					},
 					{
-						label: '云外建库',
+						label: '云外自建库',
 						value: 'selfDB'
 					}
 				],
@@ -88,7 +88,7 @@ export default function() {
 						value: 'rds'
 					},
 					{
-						label: '云外建库',
+						label: '云外自建库',
 						value: 'selfDB'
 					}
 				],
