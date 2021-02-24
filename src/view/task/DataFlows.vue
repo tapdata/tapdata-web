@@ -1217,7 +1217,7 @@ export default {
 </style>
 <style lang="less">
 .dataflow-clickTip .el-message-box__status {
-	top: 25% !important;
+	top: 25%;
 }
 .jobSeceduleDialog {
 	.text {

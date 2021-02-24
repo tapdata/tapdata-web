@@ -192,7 +192,7 @@ export default {
 	}
 	.table-page-main {
 		flex: 1;
-		padding: 10px;
+		padding: 20px;
 		display: flex;
 		overflow: hidden;
 	}
@@ -211,10 +211,10 @@ export default {
 			flex-wrap: wrap-reverse;
 			.table-page-search-bar {
 				margin-right: 5px;
-				margin-bottom: 10px;
+				margin-bottom: 20px;
 			}
 			.table-page-operation-bar {
-				margin-bottom: 10px;
+				margin-bottom: 20px;
 				text-align: right;
 			}
 		}

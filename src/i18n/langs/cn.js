@@ -682,7 +682,7 @@ const cn = {
 		dataBaseClassify: '分类',
 		dataBaseType: '数据库类型',
 		dataBaseStatus: '状态',
-		dataBaseSearch: '名称/数据库地址',
+		dataBaseSearch: '按连接名搜索',
 		loadSchema: '定期加载schema',
 		connectionType: '连接类型',
 		operate: '操作',
@@ -691,7 +691,7 @@ const cn = {
 		databaseTittle: '数据源管理',
 		desc:
 			'数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。除了基础的配置项之外，数据源还有定期/手动加载数据库结构、设置时区、表过滤设置等功能。更多配置说明，请点击',
-		createNewDataSource: '创建新数据源',
+		createNewDataSource: '创建连接',
 		info: '数据源详情',
 		copyMsg: '复制成功',
 		testMsg: '测试成功',
