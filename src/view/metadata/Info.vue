@@ -1,7 +1,10 @@
 <template>
 	<section class="metadata-info">
 		<header class="header">
-			{{ $t('metadata.details.dataDirectory') }} / {{ $t('metadata.details.dataDetails') }}
+			<span @click="$router.push({ name: 'metadata' })" style="color: #48B6E2; cursor: pointer;">
+				{{ $t('metadata.details.dataDirectory') }}
+			</span>
+			/ {{ $t('metadata.details.dataDetails') }}
 		</header>
 
 		<el-container class="metadata-content">
@@ -145,17 +148,20 @@
 					</el-collapse>
 				</el-aside>
 				<div class="content" :class="{ boxWidth: !asideFalg }">
-					<ul class="mune">
-						<li
-							v-for="item in muneList"
-							:key="item.icon"
-							:class="activePanel === item.key ? 'active' : ''"
-							@click="changeName(item.key)"
-						>
-							<i :class="['iconfont', item.icon]"></i>
-							<span slot="title">{{ item.name }}</span>
-						</li>
-					</ul>
+					<div class="tapNav">
+						<ul class="mune">
+							<li
+								v-for="item in muneList"
+								:key="item.icon"
+								:class="activePanel === item.key ? 'active' : ''"
+								@click="changeName(item.key)"
+							>
+								<i :class="['iconfont', item.icon]"></i>
+								<span slot="title">{{ item.name }}</span>
+							</li>
+						</ul>
+					</div>
+
 					<div class="table-box">
 						<div class="table-page-topbar">
 							<div class="table-page-search-bar">
@@ -841,27 +847,45 @@ export default {
 			.content {
 				width: calc(100% - 311px);
 				margin-left: 10px;
-				box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
-				.mune {
+				box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);
+				.tapNav {
 					height: 28px;
-					line-height: 25px;
-					border-radius: 3px;
-					font-size: 12px;
-					box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
-					li {
-						float: left;
-						width: 100px;
-						color: #666;
-						text-align: center;
-					}
-					li.active {
-						background-color: #fff;
+					background-color: rgba(239, 241, 244, 100);
+					.mune {
+						display: inline-block;
+						height: 28px;
+						line-height: 25px;
+						font-size: 12px;
+						border-radius: 0px 3px 0px 0px;
+						background-color: rgba(244, 245, 247, 100);
+						box-shadow: 3px -3px 5px 0px rgba(0, 0, 0, 0.15);
+						li {
+							float: left;
+							width: 100px;
+							height: 28px;
+							color: #666;
+							text-align: center;
+							border-right: 1px solid #dedee4;
+
+							&:last-child {
+								border-right: 0;
+							}
+						}
+						li.active {
+							height: 29px;
+							border-radius: 3px 3px 0px 0px;
+							background-color: #fff;
+							border-right: 0;
+							box-shadow: 1px -1px 3px 0px rgba(0, 0, 0, 0.15);
+						}
 					}
 				}
+
 				.table-box {
 					height: calc(100% - 28px);
 					padding-top: 10px;
 					background-color: #fff;
+					box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
 					.table-page-topbar {
 						display: flex;
 						justify-content: space-between;
@@ -1010,7 +1034,7 @@ export default {
 		.table-page-table {
 			th {
 				padding: 0;
-				background-color: #eff1f4;
+				background-color: #eff1f4 !important;
 			}
 		}
 		.table-page-pagination {
