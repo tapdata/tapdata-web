@@ -13,26 +13,35 @@
 		>
 			<ul class="search-bar" slot="search">
 				<li class="item">
-					<el-input
+					<ElSelect
+						v-model="searchParams.status"
+						:placeholder="$t('connection.dataBaseStatus')"
+						size="small"
+						@input="table.fetch(1)"
+					>
+						<ElOption label="全部状态" value=""></ElOption>
+						<ElOption
+							v-for="item in databaseStatusOptions"
+							:key="item.value"
+							:label="item.label"
+							:value="item.value"
+						>
+						</ElOption>
+					</ElSelect>
+				</li>
+				<li class="item">
+					<ElInput
 						:placeholder="$t('connection.dataBaseSearch')"
 						v-model="searchParams.keyword"
 						class="input-with-select"
-						size="mini"
+						size="small"
 						clearable
 						@input="table.fetch(1, 800)"
 					>
-						<el-select
-							v-model="searchParams.iModel"
-							slot="prepend"
-							class="sub-select"
-							@input="table.fetch(1)"
-						>
-							<el-option :label="$t('connection.fuzzyQuery')" value="fuzzy"></el-option>
-							<el-option :label="$t('connection.PreciseQuery')" value="precise"></el-option>
-						</el-select>
-					</el-input>
+						<i slot="prefix" class="el-input__icon el-icon-search"></i>
+					</ElInput>
 				</li>
-				<li class="item">
+				<!-- <li class="item">
 					<el-select
 						v-model="searchParams.databaseModel"
 						:placeholder="$t('connection.connectionType')"
@@ -65,28 +74,11 @@
 						>
 						</el-option>
 					</el-select>
-				</li>
+				</li> -->
 				<li class="item">
-					<el-select
-						v-model="searchParams.status"
-						:placeholder="$t('connection.dataBaseStatus')"
-						clearable
-						size="mini"
-						@input="table.fetch(1)"
-					>
-						<el-option
-							v-for="item in databaseStatusOptions"
-							:key="item.value"
-							:label="item.label"
-							:value="item.value"
-						>
-						</el-option>
-					</el-select>
-				</li>
-				<li class="item">
-					<el-button type="text" class="restBtn" size="mini" @click="rest()">
-						{{ $t('dataFlow.reset') }}
-					</el-button>
+					<ElButton plain class="btn-refresh" size="small" @click="fetch()">
+						<i class="el-icon-refresh"></i>
+					</ElButton>
 				</li>
 			</ul>
 			<div slot="operation">
@@ -104,7 +96,8 @@
 				<el-button
 					v-readonlybtn="'datasource_creation'"
 					class="btn btn-create"
-					size="mini"
+					type="primary"
+					size="small"
 					@click="checkTestConnectionAvailable"
 				>
 					<i class="iconfont icon-jia add-btn-icon"></i>
@@ -306,7 +299,6 @@ export default {
 				'mysql pxc'
 			], //目前白名单,
 			searchParams: {
-				iModel: 'fuzzy',
 				databaseType: '',
 				keyword: '',
 				databaseModel: '',
@@ -362,7 +354,7 @@ export default {
 		getData({ page, tags }) {
 			let region = this.$route.query.region;
 			let { current, size } = page;
-			let { iModel, keyword, databaseType, databaseModel, status } = this.searchParams;
+			let { keyword, databaseType, databaseModel, status } = this.searchParams;
 			let where = {};
 			let fields = {
 				name: true,
@@ -383,8 +375,9 @@ export default {
 			};
 			//精准搜索 iModel
 			if (keyword && keyword.trim()) {
-				let filterObj = iModel ? { like: verify(keyword), options: 'i' } : keyword;
-				where.or = [{ name: filterObj }, { database_uri: filterObj }, { database_host: filterObj }];
+				// let filterObj = { like: verify(keyword), options: 'i' };
+				// where.or = [{ name: filterObj }, { database_uri: filterObj }, { database_host: filterObj }];
+				where.name = { like: verify(keyword), options: 'i' };
 			}
 			where.database_type = {
 				in: this.allowDataType
@@ -612,6 +605,13 @@ export default {
 <style lang="less" scoped>
 .connection-list-wrap {
 	height: 100%;
+	.btn-refresh {
+		padding: 0;
+		height: 32px;
+		line-height: 32px;
+		width: 32px;
+		font-size: 16px;
+	}
 	.database-img {
 		//border: 1px solid #dedee4;
 		vertical-align: middle;
@@ -690,8 +690,6 @@ export default {
 		margin-left: 5px;
 	}
 	.btn {
-		padding: 7px;
-		background: #f5f5f5;
 		i.iconfont {
 			font-size: 12px;
 		}

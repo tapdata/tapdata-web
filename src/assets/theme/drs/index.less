@@ -3,6 +3,8 @@
 	lprimary: #5392FF;
 	success: #10C038;
 	lsuccess: #DBEFD1;
+	danger: #F04134;
+	warning: #f7a237;
 	info: #75849B;
 	linfo: #E9EDF2;
 	disable: #bbb;
@@ -12,12 +14,22 @@
 	light: #555;
 	slight: #999;
 }
-
+#bgColor() {
+	disable: #f5f5f5;
+}
+#borderColor() {
+	disable: #d9d9d9;
+	normal: #ddd;
+}
 #app {
 	font-family: 'MicrosoftYaHei', '微软雅黑', sans-serif;
 	font-weight: 400;
 	font-style: normal;
 	-webkit-font-smoothing: unset;
+}
+.el-select-dropdown__item.selected {
+	color: #color[primary];
+	font-weight: normal;
 }
 .el-select-dropdown .el-select-group__wrap {
 	padding-top: 10px;
@@ -120,6 +132,9 @@
 .el-link.el-link--primary.is-disabled {
 	color: #color[disable];
 }
+.el-tooltip__popper {
+	padding: 5px 10px;
+}
 .el-tooltip__popper.is-dark {
 	line-height: 20px;
 	background: rgba(0,0,0,0.7);
@@ -129,6 +144,7 @@
 }
 .el-button--primary {
 	background-color: #color[primary];
+	border: none;
 }
 .el-button--mini, .el-button--small {
 	border-radius: 2px;
@@ -152,6 +168,14 @@
 	background-color: #color[primary];
 	border-color: #color[primary];
 	color: #fff;
+}
+.el-button--primary.is-disabled,
+.el-button--primary.is-disabled:active,
+.el-button--primary.is-disabled:focus,
+.el-button--primary.is-disabled:hover {
+	color: #color[disable];
+	border-color: #borderColor[disable];
+	background-color: #bgColor[disable];
 }
 .el-checkbox {
 	font-weight: normal;
@@ -259,4 +283,46 @@
 	color: #color[info];
 	border-color: #color[info];
 	background-color: #color[linfo];
+}
+.el-message-box {
+	position: relative;
+}
+.el-message-box__header {
+	padding: 30px 30px 0px 30px;
+}
+.el-message-box__title {
+	padding-left: 35px;
+	line-height: 24px;
+	font-size: 14px;
+	font-weight: bold;
+	color: #fontColor[normal];
+}
+.el-message-box__headerbtn {
+	display: none;
+}
+.el-message-box__container {
+	position: static;
+}
+.el-message-box__status {
+	top: 30px !important;
+	left: 30px;
+	transform: translateY(0);
+}
+.el-message-box__content {
+	position: static;
+	padding: 5px 15px 15px 15px;
+	font-size: 12px;
+	color: #fontColor[light];
+}
+.el-message-box__status+.el-message-box__message {
+	padding-left: 50px;
+}
+.el-message-box--alert {
+	.el-message-box__content {
+		padding: 0 15px 15px 15px;
+		font-size: 14px;
+	}
+}
+.table-page-main {
+	background: #fff;
 }

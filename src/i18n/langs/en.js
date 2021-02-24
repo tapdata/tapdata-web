@@ -692,7 +692,7 @@ const en = {
 		dataBaseClassify: 'Category',
 		dataBaseType: 'Database type',
 		dataBaseStatus: 'Status',
-		dataBaseSearch: 'Name/Host',
+		dataBaseSearch: 'Search by connection name',
 		loadSchema: 'Reload schema periodically',
 		connectionType: 'Connection type',
 		operate: 'Operation',
