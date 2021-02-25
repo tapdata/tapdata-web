@@ -73,4 +73,8 @@ export default class users extends PublicAPI {
 	isCompleteGuide(id) {
 		return axios.patch(this.url + '/isCompleteGuide?id=' + id);
 	}
+
+	getUserInfo() {
+		return axios.get(this.url + '/self');
+	}
 }

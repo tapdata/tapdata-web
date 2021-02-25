@@ -689,7 +689,7 @@ router.beforeEach(async (to, from, next) => {
 		let permissions = sessionStorage.getItem('tapdata_permissions');
 		if (!permissions || isFirst) {
 			if (xToken) {
-				let res = await usersModel.findOne();
+				let res = await usersModel.getUserInfo();
 				let user = res.data;
 				cookie.set('email', user.email);
 				cookie.set('username', user.username || '');
