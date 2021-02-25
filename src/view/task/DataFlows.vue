@@ -147,7 +147,7 @@
 					v-readonlybtn="'SYNC_job_creation'"
 					class="btn btn-create"
 					type="primary"
-					size="mini"
+					size="small"
 					@click="create"
 				>
 					<i class="iconfont icon-jia add-btn-icon"></i>
@@ -155,11 +155,12 @@
 				<el-button
 					v-else
 					v-readonlybtn="'SYNC_job_creation'"
-					class="btn btn-createText"
-					type="text"
-					size="mini"
+					class="btn btn-create"
+					type="primary"
+					size="small"
 					@click="creatText"
 				>
+					<i class="iconfont icon-jia add-btn-icon"></i>
 					创建任务
 				</el-button>
 			</div>
@@ -839,7 +840,23 @@ export default {
 			// window.windows.push(window.open(routeUrl.href, '_blank'));
 			// window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
 		},
-		creatText() {
+		async creatText() {
+			let result = await this.$api('tcm').getRegionZone();
+			let data = result.data || [];
+			if (data.length === 0) {
+				this.$confirm(
+					'创建连接要先订购同步实例，同步任务的服务进程环境要在实例中运行，实例的链路与性能影响同步任务的运行效率。',
+					'您尚未订购同步实例，请先订购实例',
+					{
+						confirmButtonText: '订购实例',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}
+				).then(() => {
+					top.location.href = '/#/instance';
+				});
+				return;
+			}
 			this.$router.push({
 				path: '/createTask/create'
 			});
@@ -1176,7 +1193,6 @@ export default {
 			}
 			.btn {
 				padding: 7px;
-				background: #f5f5f5;
 				i.iconfont {
 					font-size: 12px;
 				}
@@ -1185,12 +1201,9 @@ export default {
 				}
 				&.btn-create {
 					margin-left: 5px;
-					background: #48b6e2;
 				}
 				&.btn-createText {
 					margin-left: 5px;
-					background: #48b6e2;
-					color: #fff;
 				}
 			}
 		}

@@ -593,8 +593,21 @@ export default {
 		//检测agent 是否可用
 		async checkTestConnectionAvailable() {
 			let result = await this.$api('Workers').getAvailableAgent();
+			let instance = await this.$api('tcm').getRegionZone();
 			if (!result.data.result || result.data.result.length === 0) {
 				this.$message.error(this.$t('dataForm.form.agentMsg'));
+			} else if ((!instance.data || result.data.length === 0) && window.getSettingByKey('HAVE_INSTANCE')) {
+				this.$confirm(
+					'创建连接要先订购同步实例，同步任务的服务进程环境要在实例中运行，实例的链路与性能影响同步任务的运行效率。',
+					'您尚未订购同步实例，请先订购实例',
+					{
+						confirmButtonText: '订购实例',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}
+				).then(() => {
+					top.location.href = '/#/instance';
+				});
 			} else {
 				this.dialogDatabaseTypeVisible = true;
 			}

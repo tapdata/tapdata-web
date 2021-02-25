@@ -599,7 +599,15 @@ export default {
 			this.dialogTestVisible = false;
 		},
 		goBack() {
-			this.$router.push('/connections');
+			let tip = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接';
+			let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？';
+			this.$confirm(tip, title, {
+				confirmButtonText: '放弃',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				this.$router.push('/connections');
+			});
 		},
 		//处理不同rds 场景 platformInfo
 		handlePlatformInfo(params) {

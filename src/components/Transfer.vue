@@ -240,7 +240,7 @@ export default {
 	.box-btn {
 		display: flex;
 		justify-content: flex-end;
-		width: 79.5%;
+		width: 88.5%;
 		margin-bottom: 10px;
 		padding: 4px 10px;
 	}
