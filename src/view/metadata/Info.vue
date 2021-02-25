@@ -267,18 +267,22 @@
 										</li>
 										<li v-if="scope.row.dictionary && scope.row.dictionary.length">
 											<label class="label">{{ $t('metadata.details.filedDictionary') }}</label>
-											<span v-for="item in scope.row.dictionary" :key="item.table_name"
-												>{{ item.key }} : {{ item.value }}</span
-											>
+											<div class="dropInfo">
+												<span v-for="item in scope.row.dictionary" :key="item.table_name"
+													>{{ item.key }} : {{ item.value }}</span
+												>
+											</div>
 										</li>
 										<li v-if="scope.row.relation && scope.row.relation.length">
 											<label class="label">{{
 												$t('metadata.details.foreignKeyAssociation')
 											}}</label>
-											<span v-for="item in scope.row.relation" :key="item.key"
-												>{{ item.table_name }}, {{ item.field_name }},
-												{{ $t('metadata.details.' + item.rel) }}</span
-											>
+											<div class="dropInfo">
+												<span v-for="item in scope.row.relation" :key="item.key"
+													>{{ item.table_name }}, {{ item.field_name }},
+													{{ $t('metadata.details.' + item.rel) }}</span
+												>
+											</div>
 										</li>
 									</ul>
 								</template>
@@ -334,7 +338,7 @@
 						<el-pagination
 							background
 							class="table-page-pagination"
-							layout="total, ->, sizes, prev, pager, next, jumper"
+							layout="total, ->, sizes, prev, pager, next"
 							:current-page.sync="pageCurrent"
 							:page-sizes="[10, 20, 50, 100]"
 							:page-size.sync="pageSize"
@@ -885,9 +889,10 @@ export default {
 
 				.table-box {
 					height: calc(100% - 28px);
-					padding-top: 10px;
+					padding: 10px 20px 0;
 					background-color: #fff;
 					box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
+					box-sizing: border-box;
 					.table-page-topbar {
 						display: flex;
 						justify-content: space-between;
@@ -921,20 +926,31 @@ export default {
 					}
 					.attributes {
 						li {
+							width: 100%;
 							margin: 5px 0;
 							font-size: 12px;
 							span {
 								display: inline-block;
 								padding: 3px 10px;
-								margin: 0 5px;
+								margin: 3px 5px;
 								color: #666;
 								border-radius: 10px;
 								background-color: #f7edee;
 							}
 							.label {
+								display: inline-block;
+								float: left;
+								padding: 5px 0;
 								color: #aaa;
 								border-radius: 0;
 								background-color: none;
+							}
+							.dropInfo {
+								float: left;
+								display: inline-block;
+								width: calc(100% - 60px);
+								white-space: break-spaces;
+								overflow: hidden;
 							}
 						}
 						li.more {
@@ -1042,7 +1058,8 @@ export default {
 		.table-page-pagination {
 			padding-top: 5px;
 			box-sizing: border-box;
-			background-color: #eff1f4;
+			border-top: 1px solid #ddd;
+			background-color: #fff;
 		}
 	}
 	.dialogForm {
