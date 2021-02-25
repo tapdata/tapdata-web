@@ -13,12 +13,7 @@
 		>
 			<ul class="search-bar" slot="search">
 				<li class="item">
-					<ElSelect
-						v-model="searchParams.status"
-						:placeholder="$t('connection.dataBaseStatus')"
-						size="small"
-						@input="table.fetch(1)"
-					>
+					<ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
 						<ElOption label="全部状态" value=""></ElOption>
 						<ElOption
 							v-for="item in databaseStatusOptions"
@@ -31,11 +26,11 @@
 				</li>
 				<li class="item">
 					<ElInput
-						:placeholder="$t('connection.dataBaseSearch')"
 						v-model="searchParams.keyword"
+						clearable
 						class="input-with-select"
 						size="small"
-						clearable
+						:placeholder="$t('connection.dataBaseSearch')"
 						@input="table.fetch(1, 800)"
 					>
 						<i slot="prefix" class="el-input__icon el-icon-search"></i>
@@ -374,6 +369,7 @@ export default {
 				database_uri: true,
 				database_username: true,
 				database_port: true,
+				database_name: true,
 				sourceType: true,
 				status: true,
 				id: true,
@@ -759,9 +755,6 @@ export default {
 		display: flex;
 		.item {
 			margin-right: 10px;
-		}
-		.sub-select {
-			width: 120px;
 		}
 	}
 	.btn + .btn {

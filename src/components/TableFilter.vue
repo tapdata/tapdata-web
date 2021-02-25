@@ -79,6 +79,6 @@ export default {
 	visibility: hidden;
 }
 .table-filter__popper {
-	transform: translate(-33px, -10px);
+	transform: translate(-36px, -10px);
 }
 </style>

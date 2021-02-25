@@ -18,34 +18,29 @@
 			<template slot="search">
 				<ul class="search-bar">
 					<li>
-						<el-input
-							:placeholder="$t('dataFlow.searchPlaceholder')"
-							clearable
-							prefix-icon="el-icon-search"
-							v-model="searchParams.keyword"
-							size="mini"
-							style="width:160px"
-							@input="table.fetch(1, 800)"
-						></el-input>
-					</li>
-					<li>
-						<el-select
-							v-model="searchParams.status"
-							size="mini"
-							clearable
-							:placeholder="$t('dataFlow.taskStatusPlaceholder')"
-							style="width:160px"
-							@input="table.fetch(1)"
-						>
-							<el-option
+						<ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
+							<ElOption label="全部状态" value=""></ElOption>
+							<ElOption
 								v-for="item in statusOptions"
 								:key="item.value"
 								:label="item.label"
 								:value="item.value"
-							></el-option>
-						</el-select>
+							>
+							</ElOption>
+						</ElSelect>
 					</li>
 					<li>
+						<el-input
+							v-model="searchParams.keyword"
+							clearable
+							size="small"
+							:placeholder="$t('dataFlow.searchPlaceholder')"
+							@input="table.fetch(1, 800)"
+						>
+							<i slot="prefix" class="el-input__icon el-icon-search"></i>
+						</el-input>
+					</li>
+					<!-- <li>
 						<el-select
 							v-model="searchParams.progress"
 							size="mini"
@@ -78,9 +73,11 @@
 								:value="opt"
 							></el-option>
 						</el-select>
-					</li>
+					</li> -->
 					<li>
-						<el-button size="mini" type="text" @click="reset()">{{ $t('button.reset') }}</el-button>
+						<ElButton plain class="btn-refresh" size="small" @click="fetch()">
+							<i class="el-icon-refresh"></i>
+						</ElButton>
 					</li>
 				</ul>
 			</template>
@@ -124,7 +121,7 @@
 				</el-dropdown>
 				<el-button
 					v-readonlybtn="'SYNC_Function_management'"
-					size="mini"
+					size="small"
 					class="btn"
 					@click="handleGoFunction"
 					v-if="!$window.getSettingByKey('HIDE_FUNCTION_BUTTON')"
@@ -172,11 +169,7 @@
 				:selectable="row => !row.hasChildren"
 			>
 			</el-table-column>
-			<el-table-column
-				min-width="200"
-				:label="$t('dataFlow.taskName') + '/' + $t('dataFlow.creatdor')"
-				:show-overflow-tooltip="true"
-			>
+			<el-table-column min-width="200" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
 				<template slot-scope="scope">
 					<span class="dataflow-name">
 						<span>{{ scope.row.name }}</span>
@@ -1175,6 +1168,13 @@ export default {
 <style lang="less" scoped>
 .data-flow-wrap {
 	height: 100%;
+	.btn-refresh {
+		padding: 0;
+		height: 32px;
+		line-height: 32px;
+		width: 32px;
+		font-size: 16px;
+	}
 	.data-flow-list {
 		.search-bar {
 			display: flex;
@@ -1192,7 +1192,6 @@ export default {
 				margin-left: 5px;
 			}
 			.btn {
-				padding: 7px;
 				i.iconfont {
 					font-size: 12px;
 				}
@@ -1229,9 +1228,6 @@ export default {
 }
 </style>
 <style lang="less">
-.dataflow-clickTip .el-message-box__status {
-	top: 25%;
-}
 .jobSeceduleDialog {
 	.text {
 		padding-left: 100px;
