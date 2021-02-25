@@ -18,6 +18,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import './components/form-builder';
 import './directives';
 import 'github-markdown-css';
+import './assets/style/index.less';
 import './assets/theme/drs/index.less';
 
 Vue.config.productionTip = false;

@@ -553,9 +553,6 @@ export default {
 .layout-container {
 	height: 100%;
 	background: rgba(250, 250, 250, 1);
-	.iconfont {
-		font-size: 18px;
-	}
 	.layout-header {
 		display: flex;
 		align-items: center;

@@ -44,7 +44,6 @@
 				<!-- <li class="item">
 					<el-select
 						v-model="searchParams.databaseModel"
-						:placeholder="$t('connection.connectionType')"
 						clearable
 						size="mini"
 						@input="table.fetch(1)"
@@ -61,7 +60,6 @@
 				<li class="item">
 					<el-select
 						v-model="searchParams.databaseType"
-						:placeholder="$t('connection.dataBaseType')"
 						clearable
 						size="mini"
 						@input="table.fetch(1)"
@@ -111,39 +109,41 @@
 				:reserve-selection="true"
 			>
 			</el-table-column>
-			<el-table-column prop="name" :label="$t('connection.dataBaseName')" sortable="name">
+			<el-table-column prop="name" :label="$t('connection.dataBaseName')">
 				<template slot-scope="scope">
-					<div class="database-img">
-						<img :src="getImgByType(scope.row.database_type)" />
-					</div>
-					<div class="database-text" :class="{ lineHeight: !scope.row.database_uri }">
-						<span class="name" @click="preview(scope.row.id, scope.row.database_type)"
-							>{{ scope.row.name }}
-							<span class="tag" v-if="scope.row.listtags && scope.row.listtags.length > 0">{{
-								formatterListTags(scope.row)
-							}}</span></span
-						>
-						<div class="user" v-if="scope.row.database_uri">
-							{{ formatterDatabaseType(scope.row) }}
+					<div class="connection-name">
+						<div class="database-img">
+							<img :src="getImgByType(scope.row.database_type)" />
+						</div>
+						<div class="database-text">
+							<!-- TODO: 缺少分类tag -->
+							<!-- <span class="name" @click="preview(scope.row.id, scope.row.database_type)"
+								>{{ scope.row.name }}
+								<span class="tag" v-if="scope.row.listtags && scope.row.listtags.length > 0">{{
+									formatterListTags(scope.row)
+								}}</span></span
+							> -->
+							<!-- <div class="user" v-if="scope.row.database_uri">
+								{{ formatterDatabaseType(scope.row) }}
+							</div> -->
+							<ElLink
+								type="primary"
+								style="display: block;line-height: 20px;"
+								@click="preview(scope.row.id, scope.row.database_type)"
+							>
+								{{ scope.row.name }}
+							</ElLink>
+							<div class="region-info">{{ scope.row.regionInfo }}</div>
 						</div>
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column prop="username" :label="$t('connection.creator')" width="80" sortable="username">
+			<el-table-column :label="$t('connection.connectionInfo')">
 				<template slot-scope="scope">
-					<div class="database-text" style="margin-left:0;">
-						<div>{{ scope.row.username }}</div>
-					</div>
+					{{ scope.row.connectionUrl }}
 				</template>
 			</el-table-column>
-			<el-table-column
-				prop="connection_type"
-				:label="$t('connection.connectionType')"
-				:formatter="formatterConnectionType"
-				width="120"
-				sortable="connection_type"
-			></el-table-column>
-			<el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="100" sortable="status">
+			<el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="100">
 				<template slot-scope="scope">
 					<span class="error" v-if="['invalid'].includes(scope.row.status)">
 						<i class="el-icon-error"></i>
@@ -158,65 +158,62 @@
 						</span>
 					</span>
 					<span class="warning" v-if="['testing'].includes(scope.row.status)">
-						<i class="el-icon-warning"></i>
+						<i class="el-icon-loading"></i>
 						<span>
 							{{ $t('connection.status.testing') }}
 						</span>
 					</span>
 				</template>
 			</el-table-column>
+			<el-table-column width="160">
+				<div slot="header">
+					{{ $t('connection.connectionSource') }}
+					<TableFilter
+						v-model="searchParams.sourceType"
+						:options="sourceTypeOptions"
+						@input="table.fetch(1)"
+					></TableFilter>
+				</div>
+				<template slot-scope="scope">
+					{{ scope.row.connectionSource }}
+				</template>
+			</el-table-column>
+			<el-table-column :label="$t('connection.lastUpdateTime')" width="160">
+				<template slot-scope="scope">
+					{{ scope.row.lastUpdateTime }}
+				</template>
+			</el-table-column>
 			<el-table-column :label="$t('connection.operate')" width="220">
 				<template slot-scope="scope">
-					<el-button class="btn-text" type="text" @click="preview(scope.row.id, scope.row.database_type)">
-						{{ $t('message.preview') }}
-					</el-button>
-					<el-button
-						class="btn-text"
-						type="text"
+					<ElLink type="primary" @click="testConnection(scope.row)">{{
+						$t('connection.testConnection')
+					}}</ElLink>
+					<ElLink
 						v-readonlybtn="'datasource_edition'"
+						class="ml-10"
+						type="primary"
 						:disabled="$disabledByPermission('datasource_edition_all_data', scope.row.user_id)"
 						@click="edit(scope.row.id, scope.row.database_type, scope.row)"
+						>{{ $t('message.edit') }}</ElLink
 					>
-						{{ $t('message.edit') }}
-					</el-button>
-					<el-button
-						class="btn-text"
-						type="text"
+					<ElLink
 						v-readonlybtn="'datasource_creation'"
+						class="ml-10"
+						type="primary"
 						@click="copy(scope.row)"
+						>{{ $t('message.copy') }}</ElLink
 					>
-						{{ $t('message.copy') }}
-					</el-button>
-					<el-button
-						class="btn-text"
-						type="text"
+					<ElLink
 						v-readonlybtn="'datasource_delete'"
+						class="ml-10"
+						type="primary"
 						:disabled="$disabledByPermission('datasource_delete_all_data', scope.row.user_id)"
-						@click="delConfirm(scope.row)"
+						@click="remove(scope.row)"
+						>{{ $t('message.delete') }}</ElLink
 					>
-						{{ $t('message.delete') }}
-					</el-button>
 				</template>
 			</el-table-column>
 		</TablePage>
-		<el-dialog
-			:title="$t('connection.deteleDatabaseTittle')"
-			:close-on-click-modal="false"
-			:visible.sync="deleteDialogVisible"
-			width="30%"
-		>
-			<p>
-				{{ $t('connection.deteleDatabaseMsg') }}
-				<span @click="edit(delData.id, delData.database_type, delData)" style="color:#48B6E2;cursor: pointer">
-					{{ delData.name }}</span
-				>
-				?
-			</p>
-			<span slot="footer" class="dialog-footer">
-				<el-button @click="deleteDialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
-				<el-button type="primary" @click="remove(delData)" size="mini">{{ $t('message.confirm') }}</el-button>
-			</span>
-		</el-dialog>
 		<Preview
 			:id="id"
 			:visible="previewVisible"
@@ -228,26 +225,27 @@
 			@dialogVisible="handleDialogDatabaseTypeVisible"
 			@databaseType="handleDatabaseType"
 		></DatabaseTypeDialog>
+		<Test ref="test" :dialogTestVisible="false" :formData="testData" @returnTestData="returnTestData"></Test>
 	</section>
 </template>
 <script>
 import TablePage from '@/components/TablePage';
+import TableFilter from '@/components/TableFilter';
 
 import DatabaseTypeDialog from './DatabaseTypeDialog';
 import Preview from './Preview';
 import { verify, desensitization } from './util';
+import Test from './Test';
 
 let timeout = null;
 
 export default {
-	components: { TablePage, DatabaseTypeDialog, Preview },
+	components: { TablePage, TableFilter, DatabaseTypeDialog, Preview, Test },
 	data() {
 		return {
 			user_id: this.$cookie.get('user_id'),
 			restLoading: false,
 			dialogDatabaseTypeVisible: false,
-			deleteDialogVisible: false,
-			delData: [],
 			previewVisible: false,
 			multipleSelection: [],
 			tableData: [],
@@ -303,9 +301,19 @@ export default {
 				keyword: '',
 				databaseModel: '',
 				status: '',
-				panelFlag: true
+				panelFlag: true,
+				sourceType: ''
 			},
-			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
+			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE'),
+			sourceTypeOptions: [
+				{ label: 'RDS实例', value: 'rds' },
+				{ label: '云外自建数据库', value: 'selfDB' }
+			],
+			sourceTypeMapping: {
+				rds: 'RDS实例',
+				selfDB: '云外自建数据库'
+			},
+			testData: null
 		};
 	},
 	created() {
@@ -354,7 +362,7 @@ export default {
 		getData({ page, tags }) {
 			let region = this.$route.query.region;
 			let { current, size } = page;
-			let { keyword, databaseType, databaseModel, status } = this.searchParams;
+			let { keyword, databaseType, databaseModel, status, sourceType } = this.searchParams;
 			let where = {};
 			let fields = {
 				name: true,
@@ -364,6 +372,9 @@ export default {
 				search_databaseType: true,
 				database_host: true,
 				database_uri: true,
+				database_username: true,
+				database_port: true,
+				sourceType: true,
 				status: true,
 				id: true,
 				listtags: true,
@@ -371,7 +382,8 @@ export default {
 				loadCount: true,
 				loadFieldsStatus: true,
 				schemaAutoUpdate: true,
-				platformInfo: true
+				platformInfo: true,
+				last_updated: true
 			};
 			//精准搜索 iModel
 			if (keyword && keyword.trim()) {
@@ -389,6 +401,7 @@ export default {
 			// 	where.database_type = 'mysql';
 			// }
 			databaseModel && (where.connection_type = databaseModel);
+			sourceType && (where.sourceType = sourceType);
 			if (tags && tags.length) {
 				where['listtags.id'] = {
 					in: tags
@@ -408,9 +421,25 @@ export default {
 					filter: JSON.stringify(filter)
 				})
 			]).then(([countRes, res]) => {
+				let list = res.data;
 				return {
 					total: countRes.data.count,
-					data: res.data
+					data: list.map(item => {
+						let platformInfo = item.platformInfo;
+						if (platformInfo && platformInfo.regionName) {
+							item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName;
+						}
+						if (item.database_type !== 'mongo') {
+							item.connectionUrl = '';
+							if (item.database_username) {
+								item.connectionUrl += item.database_username + ':***@';
+							}
+							item.connectionUrl += item.database_host + ':' + item.database_port;
+						}
+						item.connectionSource = this.sourceTypeMapping[item.sourceType];
+						item.lastUpdateTime = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss');
+						return item;
+					})
 				};
 			});
 		},
@@ -421,7 +450,8 @@ export default {
 				keyword: '',
 				databaseModel: '',
 				status: '',
-				panelFlag: true
+				panelFlag: true,
+				sourceType: ''
 			};
 			this.table.fetch(1);
 		},
@@ -485,40 +515,52 @@ export default {
 					}
 				});
 		},
-		delConfirm(data) {
-			this.deleteDialogVisible = true;
-			this.delData = data;
-		},
 		remove(data) {
-			this.$api('connections')
-				.deleteConnection(data.id, data.name)
-				.then(res => {
-					let jobs = res.jobs || [];
-					let modules = res.modules || [];
-					if (jobs.length > 0 || modules.length > 0) {
-						this.$message.error(this.$t('connection.checkMsg'));
-					} else {
-						this.$message.success(this.$t('message.deleteOK'));
-						this.deleteDialogVisible = false;
-						this.table.fetch();
-					}
-				})
-				.catch(({ response }) => {
-					let msg = response && response.msg;
-					if (msg && (msg.jobs || msg.modules)) {
-						this.$message.error(this.$t('connection.cannot_delete_remind'));
-						// const h = this.$createElement;
-						// this.$message.error(
-						// 	h('div', {}, [
-						// 		h('div', {}, ['数据源 ', h('span', {}, data.name), ' 被以下资源占用']),
-						// 		...msg.jobs.map(j => h('div', {}, [])),
-						// 		...msg.modules.map(j => h('div', {}, []))
-						// 	])
-						// );
-					} else {
-						this.$message.error(msg || this.$t('connection.deleteFail'));
-					}
-				});
+			const h = this.$createElement;
+			let strArr = this.$t('connection.deteleDatabaseMsg').split('xxx');
+			let msg = h('p', null, [
+				strArr[0],
+				h(
+					'span',
+					{
+						class: 'color-primary'
+					},
+					data.name
+				),
+				strArr[1]
+			]);
+			this.$confirm(msg, this.$t('connection.deteleDatabaseTittle'), {
+				type: 'warning'
+			}).then(() => {
+				this.$api('connections')
+					.deleteConnection(data.id, data.name)
+					.then(res => {
+						let jobs = res.jobs || [];
+						let modules = res.modules || [];
+						if (jobs.length > 0 || modules.length > 0) {
+							this.$message.error(this.$t('connection.checkMsg'));
+						} else {
+							this.$message.success(this.$t('message.deleteOK'));
+							this.table.fetch();
+						}
+					})
+					.catch(({ response }) => {
+						let msg = response && response.msg;
+						if (msg && (msg.jobs || msg.modules)) {
+							this.$message.error(this.$t('connection.cannot_delete_remind'));
+							// const h = this.$createElement;
+							// this.$message.error(
+							// 	h('div', {}, [
+							// 		h('div', {}, ['数据源 ', h('span', {}, data.name), ' 被以下资源占用']),
+							// 		...msg.jobs.map(j => h('div', {}, [])),
+							// 		...msg.modules.map(j => h('div', {}, []))
+							// 	])
+							// );
+						} else {
+							this.$message.error(msg || this.$t('connection.deleteFail'));
+						}
+					});
+			});
 		},
 		//公用弹窗
 		confirm(callback, catchCallback, config) {
@@ -598,6 +640,24 @@ export default {
 			} else {
 				this.dialogDatabaseTypeVisible = true;
 			}
+		},
+		testConnection(item) {
+			this.testData = item;
+			this.$nextTick(() => {
+				this.$refs.test.start();
+				setTimeout(() => {
+					this.table.fetch();
+				}, 0);
+			});
+		},
+		returnTestData(data) {
+			if (!data.status || data.status === null) return;
+			let status = data.status;
+			if (status === 'ready') {
+				this.$message.success(this.$t('connection.testConnection') + this.$t('connection.status.ready'), false);
+			} else {
+				this.$message.error(this.$t('connection.testConnection') + this.$t('connection.status.invalid'), false);
+			}
 		}
 	}
 };
@@ -611,6 +671,10 @@ export default {
 		line-height: 32px;
 		width: 32px;
 		font-size: 16px;
+	}
+	.connection-name {
+		display: flex;
+		align-items: center;
 	}
 	.database-img {
 		//border: 1px solid #dedee4;
@@ -648,9 +712,10 @@ export default {
 			overflow: hidden;
 			text-overflow: ellipsis;
 		}
-	}
-	.lineHeight {
-		line-height: 40px;
+		.region-info {
+			line-height: 20px;
+			color: #aaa;
+		}
 	}
 	.btn-text {
 		// color: #48b6e2;

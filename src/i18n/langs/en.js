@@ -361,7 +361,8 @@ const en = {
 		rename: 'Rename',
 		details: 'Details',
 		more: 'More',
-		edit: 'Edit'
+		edit: 'Edit',
+		all: 'All'
 	},
 	dataFlow: {
 		aggregateNotDataNode: 'The first target data node of aggregation node can only be COLLECTION',
@@ -687,7 +688,7 @@ const en = {
 		}
 	},
 	connection: {
-		dataBaseName: 'Database name',
+		dataBaseName: 'Connection name',
 		dataBaseHost: 'Database host',
 		dataBaseClassify: 'Category',
 		dataBaseType: 'Database type',
@@ -695,6 +696,9 @@ const en = {
 		dataBaseSearch: 'Search by connection name',
 		loadSchema: 'Reload schema periodically',
 		connectionType: 'Connection type',
+		connectionInfo: 'Connection info',
+		connectionSource: 'Connection source',
+		lastUpdateTime: 'Update time',
 		operate: 'Operation',
 		fuzzyQuery: 'Fuzzy query',
 		PreciseQuery: 'Precise query',
@@ -710,8 +714,8 @@ const en = {
 		reloadTittle: 'Reload schema',
 		desc:
 			'Source Connection includes database, files, RESTful API, custom API etc. You must create at least one data source before you can create migration or replication job. In addition to the standard configuration, you can also configure whether to automatic/manual reload database schema, time zone, and table filter settings. See more details click',
-		deteleDatabaseTittle: 'Delete database',
-		deteleDatabaseMsg: 'This will permanently delete the database ',
+		deteleDatabaseTittle: 'Do you want to delete the connection?',
+		deteleDatabaseMsg: 'After deleting connection XXX, this connection cannot be restored.',
 		reloadMsg: 'It may take a long time to reload schema, are you sure to reload the schema of the database',
 		checkMsg: 'This data source is used by transmission job or API, cannot be deleted',
 		copyFailedMsg:

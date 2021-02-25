@@ -87,7 +87,9 @@ input[type=number]::-webkit-inner-spin-button {
   }
 }
 
-
+.color-primary {
+	color: #409EFF;
+}
 .el-table td, .el-table th {
   padding: 6px 0;
   font-size: 12px;
@@ -140,3 +142,20 @@ a{
 	}
 }
 
+.loop(@index) when(@index <= 20   ) {
+	.ml-@{index} {
+		margin-left: @index * 1px;
+	}
+	.mr-@{index} {
+		margin-right: @index * 1px;
+	}
+	.mt-@{index} {
+		margin-top: @index * 1px;
+	}
+	.mb-@{index} {
+		margin-bottom: @index * 1px;
+	}
+	.loop(@index + 1);
+}
+
+.loop(1);

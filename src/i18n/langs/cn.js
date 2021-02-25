@@ -358,7 +358,8 @@ const cn = {
 		rename: '改名',
 		details: '详情',
 		more: '更多',
-		edit: '编辑'
+		edit: '编辑',
+		all: '全部'
 	},
 	dataFlow: {
 		aggregateNotDataNode: '连接聚合节点的第一个目标数据节点只能是数据集',
@@ -677,7 +678,7 @@ const cn = {
 		}
 	},
 	connection: {
-		dataBaseName: '数据源名称',
+		dataBaseName: '连接名/连接信息',
 		dataBaseHost: '数据库地址',
 		dataBaseClassify: '分类',
 		dataBaseType: '数据库类型',
@@ -685,6 +686,9 @@ const cn = {
 		dataBaseSearch: '按连接名搜索',
 		loadSchema: '定期加载schema',
 		connectionType: '连接类型',
+		connectionInfo: '连接信息',
+		connectionSource: '连接来源',
+		lastUpdateTime: '修改时间',
 		operate: '操作',
 		fuzzyQuery: '模糊匹配',
 		PreciseQuery: '精确匹配',
@@ -700,8 +704,8 @@ const cn = {
 		reloadOK: '正在加载 schema',
 		reloadFail: 'schema 加载失败',
 		reloadTittle: '重新加载 schema',
-		deteleDatabaseTittle: '删除数据源',
-		deteleDatabaseMsg: '确定删除数据源',
+		deteleDatabaseTittle: '是否删除该连接？',
+		deteleDatabaseMsg: '删除连接 xxx 后，此连接将无法恢复',
 		reloadMsg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema : ',
 		checkMsg: '此数据源被传输任务或API所占用，无法删除',
 		copyFailedMsg: '复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"',
