@@ -11,7 +11,7 @@
 							<img :src="getImgByType(databaseType)" />
 						</div>
 						<div class="content">{{ model.name }}</div>
-						<div class="addBtn" @click="dialogEditNameVisible = true">
+						<div class="addBtn color-primary" @click="dialogEditNameVisible = true">
 							{{ $t('connection.rename') }}
 						</div>
 					</div>
@@ -24,13 +24,13 @@
 						<div class="content-box">
 							<div class="content">
 								{{ typeMap[databaseType] }}
-								<div class="addBtn" @click="dialogDatabaseTypeVisible = true">
+								<div class="addBtn color-primary" @click="dialogDatabaseTypeVisible = true">
 									{{ $t('connection.change') }}
 								</div>
 							</div>
 							<div class="tip">
 								{{ $t('dataForm.form.guide') }}
-								<a style="color: #48B6E2" href="https://docs.tapdata.net/data-source">{{
+								<a class="color-primary" href="https://docs.tapdata.net/data-source">{{
 									$t('dataForm.form.guideDoc')
 								}}</a>
 							</div>
@@ -609,6 +609,11 @@ export default {
 				this.$router.push('/connections');
 			});
 		},
+		handleName(sourceData, target) {
+			let data = sourceData.filter(item => item.code === target);
+			if (data.length === 0) return;
+			return data[0].name;
+		},
 		//处理不同rds 场景 platformInfo
 		handlePlatformInfo(params) {
 			let platformInfo = {
@@ -617,17 +622,23 @@ export default {
 				sourceType: params.sourceType || '',
 				DRS_region: params.s_region || '',
 				DRS_zone: params.s_zone || '',
+				DRS_regionName: '',
+				DRS_zoneName: '',
 				DRS_instances: params.DRS_instances || '',
 				IP_type: params.IP_type || ''
 			};
 			//存实例名称
-			let region = this.instanceMock.filter(item => item.code === platformInfo.region);
-			if (region.length > 0) {
-				platformInfo['regionName'] = region[0].name;
+			platformInfo['regionName'] = this.handleName(this.instanceMock || [], platformInfo.region);
+			platformInfo['zoneName'] = this.handleName(this.instanceModelZone || [], platformInfo.zone);
+			//数据源名称
+			if (platformInfo.DRS_regionName !== '') {
+				platformInfo['DRS_regionName'] = this.handleName(
+					this.dataSourceMock || [],
+					platformInfo.DRS_regionName
+				);
 			}
-			let zone = this.instanceModelZone.filter(item => item.code === platformInfo.zone);
-			if (zone.length > 0) {
-				platformInfo['zoneName'] = zone[0].name;
+			if (platformInfo.DRS_zoneName !== '') {
+				platformInfo['DRS_zoneName'] = this.handleName(this.dataSourceZone || [], platformInfo.DRS_zoneName);
 			}
 			return platformInfo;
 		},
@@ -947,7 +958,6 @@ export default {
 				overflow: hidden;
 			}
 			.addBtn {
-				color: #48b6e2;
 				cursor: pointer;
 				font-size: 12px;
 				margin-top: 22px;
@@ -955,7 +965,6 @@ export default {
 			}
 			.content-box {
 				.addBtn {
-					color: #48b6e2;
 					cursor: pointer;
 					font-size: 12px;
 					margin-top: 0;

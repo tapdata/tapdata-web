@@ -288,8 +288,6 @@ export default {
 				.el-checkbox {
 					height: 28px;
 					line-height: 28px;
-					overflow-x: hidden;
-					overflow-y: auto;
 				}
 			}
 			.el-transfer-panel__filter {
@@ -339,12 +337,16 @@ export default {
 		height: calc(100% - 32px);
 		padding-bottom: 5px;
 		box-sizing: border-box;
-		overflow: hidden;
+		overflow-x: hidden;
+		overflow-y: auto;
 	}
 	.el-transfer-panel__item {
 		width: 100%;
 		margin-right: 10px;
 		box-sizing: border-box;
+	}
+	.el-transfer-panel__list.is-filterable {
+		height: calc(100% - 38px);
 	}
 }
 </style>

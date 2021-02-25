@@ -1,6 +1,6 @@
 <template>
 	<el-container class="CT-task-wrap" v-if="steps[activeStep]">
-		<el-container style="overflow: hidden;flex: 1;">
+		<el-container style="overflow: hidden;flex: 1;" class="CT-task-container">
 			<el-header class="step-header" height="42px">
 				<ul class="step-box">
 					<li
@@ -162,11 +162,15 @@ export default {
 		},
 		'dataSourceModel.source_sourceType'() {
 			this.getConnection(this.getWhere('source'), 'source_connectionId');
-			this.dataSourceModel.source_connectionId = '';
+			if (!this.id) {
+				this.dataSourceModel.source_connectionId = '';
+			}
 		},
 		'dataSourceModel.target_sourceType'() {
 			this.getConnection(this.getWhere('target'), 'target_connectionId');
-			this.dataSourceModel.target_connectionId = '';
+			if (!this.id) {
+				this.dataSourceModel.target_connectionId = '';
+			}
 		}
 	},
 	methods: {
@@ -180,8 +184,6 @@ export default {
 						this.platformInfo = result.data.platformInfo;
 						this.dataSourceModel = result.data.dataSourceModel;
 						let stages = result.data.stages;
-						this.dataSourceModel.source_connectionId = stages[0].connectionId;
-						this.dataSourceModel.target_connectionId = stages[1].connectionId;
 						this.transferData = {
 							table_prefix: stages[1].table_prefix,
 							table_suffix: stages[1].table_suffix,
@@ -271,6 +273,15 @@ export default {
 			if (type === 'dataSource') {
 				this.$refs.dataSource.validate(valid => {
 					if (valid) {
+						//数据源名称
+						this.dataSourceModel.source_connectionName = this.handleConnectionName(
+							this.dataSourceModel.source_connectionId,
+							'source_connectionId'
+						);
+						this.dataSourceModel.target_connectionName = this.handleConnectionName(
+							this.dataSourceModel.target_connectionId,
+							'target_connectionId'
+						);
 						this.activeStep += 1;
 						this.getFormConfig();
 					}
@@ -487,6 +498,20 @@ export default {
 				}
 			}
 		},
+		handleName(sourceData, target) {
+			let data = sourceData.filter(item => item.code === target);
+			if (data.length === 0) return;
+			return data[0].name;
+		},
+		handleConnectionName(target, type) {
+			debugger;
+			let items = this.config.items;
+			let optionsData = items.find(it => it.field === type);
+			if (optionsData.length === 0) return;
+			let data = optionsData.options.filter(op => op.id === target);
+			if (data.length === 0) return;
+			return data[0].name;
+		},
 		//save
 		save() {
 			this.transferData = this.$refs.transfer.returnData();
@@ -533,21 +558,15 @@ export default {
 				});
 			}
 			//存实例名称
-			let region = this.instanceMock.filter(item => item.code === this.platformInfo.region);
-			if (region.length > 0) {
-				postData.platformInfo.regionName = region[0].name;
-			}
-			let zone = this.platformInfoZone.filter(item => item.code === this.platformInfo.zone);
-			if (zone.length > 0) {
-				postData.platformInfo.zoneName = zone[0].name;
-			}
+			postData.platformInfo.regionName = this.handleName(this.instanceMock || [], this.platformInfo.region);
+			postData.platformInfo.zoneName = this.handleName(this.platformInfoZone || [], this.platformInfo.zone);
 			postData.stages = [
 				Object.assign({}, stageDefault, {
 					id: sourceId,
 					connectionId: source.source_connectionId,
 					outputLanes: [targetId],
 					distance: 1,
-					name: 'table',
+					name: this.dataSourceModel.source_connectionName,
 					type: 'database',
 					database_type: 'mysql',
 					dropType: 'no_drop',
@@ -560,7 +579,7 @@ export default {
 					inputLanes: [sourceId],
 					distance: 0,
 					syncObjects: selectTable,
-					name: 'table',
+					name: this.dataSourceModel.target_connectionName,
 					table_prefix: this.transferData.table_prefix,
 					table_suffix: this.transferData.table_suffix,
 					type: 'database',
@@ -836,7 +855,6 @@ export default {
 				width: 260px;
 				font-family: Roboto;
 				&.active {
-					color: #48b6e2;
 					border-color: #c8e9f6;
 					background-color: #edf8fc;
 				}

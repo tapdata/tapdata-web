@@ -349,3 +349,29 @@
 .table-page-main {
 	background: #fff;
 }
+//覆盖表单创建任务
+.CT-task-wrap {
+	.CT-task-container{
+		.step-header {
+			.step-box {
+				li {
+					&.active {
+						color: #color[primary] !important;
+						&::before {
+							background: #color[primary] !important;
+						}
+						.step-index {
+							border-color: #fff;
+							background: #color[primary] !important;
+							color: #fff;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+.fb-radio .el-radio.is-bordered.is-checked {
+	border: 2px solid #color[primary] !important;
+
+}
