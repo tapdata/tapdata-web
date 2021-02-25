@@ -25,13 +25,12 @@
 					</div>
 				</div>
 				<el-table
-					class="table-page-table"
+					class="table-page-table border"
 					height="100%"
 					v-loading="loading"
 					:element-loading-text="$t('dataFlow.dataLoading')"
 					:row-key="rowKey"
 					:data="list"
-					:header-cell-style="tableHeaderStyle"
 					@selection-change="handleSelectionChange"
 					@sort-change="$emit('sort-change', $event)"
 				>
@@ -40,7 +39,7 @@
 				<el-pagination
 					background
 					class="table-page-pagination"
-					layout="total, ->, sizes, prev, pager, next, jumper"
+					layout="total, sizes, ->, prev, pager, next, jumper"
 					:current-page.sync="page.current"
 					:page-sizes="[10, 20, 50, 100]"
 					:page-size.sync="page.size"
@@ -94,13 +93,7 @@ export default {
 			list: [],
 			multipleSelection: [],
 			tags: [],
-			classifyDialogVisible: false,
-			tableHeaderStyle: {
-				padding: '0',
-				lineHeight: '30px',
-				background: '#fafafa',
-				color: '#999'
-			}
+			classifyDialogVisible: false
 		};
 	},
 	created() {
@@ -192,7 +185,7 @@ export default {
 	}
 	.table-page-main {
 		flex: 1;
-		padding: 10px;
+		padding: 20px;
 		display: flex;
 		overflow: hidden;
 	}
@@ -211,33 +204,18 @@ export default {
 			flex-wrap: wrap-reverse;
 			.table-page-search-bar {
 				margin-right: 5px;
-				margin-bottom: 10px;
+				margin-bottom: 20px;
 			}
 			.table-page-operation-bar {
-				margin-bottom: 10px;
+				margin-bottom: 20px;
 				text-align: right;
 			}
 		}
 		.table-page-table {
 			flex: 1;
 			overflow: auto;
-			border: 1px solid #eee;
 			border-bottom: none;
 			background: #fff;
-			table thead tr th {
-				padding: 2px 0;
-				background: #fafafa;
-				color: #999;
-				.caret-wrapper {
-					height: 31px;
-					.sort-caret.ascending {
-						top: 4px;
-					}
-					.sort-caret.descending {
-						bottom: 4px;
-					}
-				}
-			}
 		}
 		.table-page-pagination {
 			margin-top: 5px;

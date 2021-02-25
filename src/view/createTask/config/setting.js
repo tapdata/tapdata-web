@@ -12,6 +12,8 @@ export default function() {
 				type: 'input',
 				field: 'name',
 				label: '任务名称',
+				maxlength: 300,
+				showWordLimit: true,
 				required: true
 			},
 			{
@@ -65,13 +67,13 @@ export default function() {
 			},
 			{
 				type: 'switch',
-				field: 'isOpenAutoDDL',
-				label: '自动DDL'
+				field: 'needToCreateIndex',
+				label: '自动创建索引'
 			},
 			{
 				type: 'switch',
-				field: 'needToCreateIndex',
-				label: '自动创建索引'
+				field: 'isOpenAutoDDL',
+				label: '自动DDL'
 			},
 			{
 				type: 'slot',

@@ -158,13 +158,14 @@ export const defaultCloudModel = {
 	drs: {
 		s_zone: '',
 		s_region: '',
-		connectionType: 'rds',
+		sourceType: 'rds',
+		database_type: 'source_and_target',
 		region: '',
 		zone: '',
 		platformInfo: {
 			region: '',
 			zone: '',
-			connectionType: '',
+			sourceType: '',
 			DRS_region: '',
 			DRS_zone: '',
 			DRS_instances: '',

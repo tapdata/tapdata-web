@@ -9,6 +9,10 @@ export default function(vm) {
 		},
 		items: [
 			{
+				type: 'slot',
+				slot: 'name'
+			},
+			{
 				type: 'select',
 				field: 'region',
 				label: '选择实例',
@@ -24,17 +28,17 @@ export default function(vm) {
 			},
 			{
 				type: 'radio',
-				field: 'connectionType',
-				label: vm.$t('dataForm.form.connectionType'),
+				field: 'sourceType',
+				label: '连接来源',
 				options: [
 					{
 						label: 'RDS实例',
-						tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+						tip: '创建移动云内的RDS实例为来源的连接',
 						value: 'rds'
 					},
 					{
 						label: '云外自建库',
-						tip: vm.$t('dataForm.form.options.sourceTips'),
+						tip: '创建来自移动云外部的用户自建数据库连接',
 						value: 'selfDB'
 					}
 				],
@@ -50,7 +54,7 @@ export default function(vm) {
 					{
 						triggerOptions: [
 							{
-								field: 'connectionType',
+								field: 'sourceType',
 								value: 'selfDB'
 							}
 						],
@@ -71,7 +75,7 @@ export default function(vm) {
 					{
 						triggerOptions: [
 							{
-								field: 'connectionType',
+								field: 'sourceType',
 								value: 'selfDB'
 							}
 						],

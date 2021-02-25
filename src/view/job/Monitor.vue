@@ -77,6 +77,13 @@
 						<span class="info-label">{{ $t('dataForm.form.databaseType') }}:</span>
 						<span class="info-text">{{ stage.database_type }}</span>
 					</div>
+					<div class="info-list" v-if="$window.getSettingByKey('SUPPORT_RDS')">
+						<span class="info-label">实例地域:</span>
+						<span class="info-text">
+							{{ stage.platformInfo ? stage.platformInfo.regionName : '' }} |
+							{{ stage.platformInfo ? stage.platformInfo.zoneName : '' }}
+						</span>
+					</div>
 					<!-- <div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
 						<span class="info-text"> {{ flow.inputNumber }}</span>
@@ -588,7 +595,10 @@ export default {
 		// this.flow.createTime = this.dataFlow.createTime
 		// 	? this.$moment(this.dataFlow.createTime).format('YYYY-MM-DD HH:mm:ss')
 		// 	: '';
-		this.flow.username = (this.dataFlow.user && this.dataFlow.user.email) || '';
+		this.flow.username = '';
+		if (this.dataFlow.user) {
+			this.flow.username = this.dataFlow.user.username || this.dataFlow.user.email;
+		}
 		let self = this;
 		ws.on('dataFlowInsight', function(data) {
 			self.storeData = data.statsData;

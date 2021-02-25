@@ -358,7 +358,8 @@ const cn = {
 		rename: '改名',
 		details: '详情',
 		more: '更多',
-		edit: '编辑'
+		edit: '编辑',
+		all: '全部'
 	},
 	dataFlow: {
 		aggregateNotDataNode: '连接聚合节点的第一个目标数据节点只能是数据集',
@@ -511,7 +512,7 @@ const cn = {
 		status: {
 			running: '运行中',
 			paused: '已暂停',
-			draft: '编辑中',
+			draft: '待启动',
 			scheduled: '调度中',
 			stopping: '停止中',
 			error: '错误',
@@ -677,21 +678,24 @@ const cn = {
 		}
 	},
 	connection: {
-		dataBaseName: '数据源名称',
+		dataBaseName: '连接名/连接信息',
 		dataBaseHost: '数据库地址',
 		dataBaseClassify: '分类',
 		dataBaseType: '数据库类型',
 		dataBaseStatus: '状态',
-		dataBaseSearch: '名称/数据库地址',
+		dataBaseSearch: '按连接名搜索',
 		loadSchema: '定期加载schema',
 		connectionType: '连接类型',
+		connectionInfo: '连接信息',
+		connectionSource: '连接来源',
+		lastUpdateTime: '修改时间',
 		operate: '操作',
 		fuzzyQuery: '模糊匹配',
 		PreciseQuery: '精确匹配',
 		databaseTittle: '数据源管理',
 		desc:
 			'数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。除了基础的配置项之外，数据源还有定期/手动加载数据库结构、设置时区、表过滤设置等功能。更多配置说明，请点击',
-		createNewDataSource: '创建新数据源',
+		createNewDataSource: '创建连接',
 		info: '数据源详情',
 		copyMsg: '复制成功',
 		testMsg: '测试成功',
@@ -700,8 +704,8 @@ const cn = {
 		reloadOK: '正在加载 schema',
 		reloadFail: 'schema 加载失败',
 		reloadTittle: '重新加载 schema',
-		deteleDatabaseTittle: '删除数据源',
-		deteleDatabaseMsg: '确定删除数据源',
+		deteleDatabaseTittle: '是否删除该连接？',
+		deteleDatabaseMsg: '删除连接 xxx 后，此连接将无法恢复',
 		reloadMsg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema : ',
 		checkMsg: '此数据源被传输任务或API所占用，无法删除',
 		copyFailedMsg: '复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"',

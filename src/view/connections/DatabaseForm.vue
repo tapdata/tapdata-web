@@ -40,6 +40,9 @@
 				<div class="form-wrap">
 					<div class="form">
 						<form-builder ref="form" v-model="model" :config="config">
+							<div class="url-tip" slot="name" v-if="!$route.params.id">
+								中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
+							</div>
 							<div
 								class="url-tip"
 								slot="urlTip"
@@ -327,7 +330,23 @@ export default {
 				required: true,
 				maxlength: 100,
 				showWordLimit: true,
-				show: true
+				show: true,
+				rules: [
+					{
+						required: true,
+						validator: (rule, value, callback) => {
+							if (!value || !value.trim()) {
+								callback('任务名称不为空');
+							} else if (
+								!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(this.value)
+							) {
+								callback('任务名称不符合规则');
+							} else {
+								callback();
+							}
+						}
+					}
+				]
 			}
 		];
 	},
@@ -580,22 +599,35 @@ export default {
 			this.dialogTestVisible = false;
 		},
 		goBack() {
-			this.$router.push('/connections');
+			let tip = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接';
+			let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？';
+			this.$confirm(tip, title, {
+				confirmButtonText: '放弃',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				this.$router.push('/connections');
+			});
 		},
 		//处理不同rds 场景 platformInfo
 		handlePlatformInfo(params) {
 			let platformInfo = {
 				region: params.region || '',
 				zone: params.zone || '',
-				connectionType: params.connectionType || '',
+				sourceType: params.sourceType || '',
 				DRS_region: params.s_region || '',
 				DRS_zone: params.s_zone || '',
 				DRS_instances: params.DRS_instances || '',
 				IP_type: params.IP_type || ''
 			};
-			if (params.connectionType === 'selfDB') {
-				platformInfo.DRS_region = '';
-				platformInfo.DRS_zone = '';
+			//存实例名称
+			let region = this.instanceMock.filter(item => item.code === platformInfo.region);
+			if (region.length > 0) {
+				platformInfo['regionName'] = region[0].name;
+			}
+			let zone = this.instanceModelZone.filter(item => item.code === platformInfo.zone);
+			if (zone.length > 0) {
+				platformInfo['zoneName'] = zone[0].name;
 			}
 			return platformInfo;
 		},
@@ -648,13 +680,19 @@ export default {
 					}
 					if (window.getSettingByKey('SUPPORT_RDS')) {
 						params['platformInfo'] = Object.assign(params['platformInfo'], this.handlePlatformInfo(params));
+						if (params.sourceType === 'selfDB') {
+							delete params.DRS_region;
+							delete params.DRS_zone;
+							delete params.platformInfo.DRS_region;
+							delete params.platformInfo.DRS_zone;
+						}
 					}
 					connectionsModel[this.model.id ? 'patchId' : 'post'](params)
 						.then(res => {
 							let id = res.data.id;
 							this.model.id = id;
 							this.$message.success(this.$t('message.saveOK'));
-							this.goBack();
+							this.$router.push('/connections');
 						})
 						.catch(err => {
 							if (err && err.response) {
@@ -718,8 +756,14 @@ export default {
 		submitEdit() {
 			this.editBtnLoading = true;
 			if (this.rename === '') {
+				this.editBtnLoading = false;
 				this.rename = this.model.name;
 				this.$message.error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText'));
+				return;
+			}
+			if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(this.rename)) {
+				this.editBtnLoading = false;
+				this.$message.error('名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格');
 				return;
 			}
 			this.model.name = this.rename;

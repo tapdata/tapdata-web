@@ -1380,6 +1380,12 @@ export default {
 		setEditable(editable) {
 			log('Job.setEditable', editable, this.dataFlow);
 			this.editable = editable;
+			if (editable && window.getSettingByKey('CREATE_DATAFLOW_BY_FORM')) {
+				this.$router.push({
+					path: '/createTask/' + this.dataFlow.id + '/edit'
+				});
+				return;
+			}
 			if (editable && this.$route.query.isMoniting) {
 				this.$router.push({
 					path: '/job',

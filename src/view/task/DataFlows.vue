@@ -102,9 +102,12 @@
 						<span> {{ $t('dataFlow.taskBulkOperation') }}</span>
 					</el-button>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
-							$t('dataFlow.bulkExport')
-						}}</el-dropdown-item>
+						<el-dropdown-item
+							command="export"
+							v-readonlybtn="'SYNC_job_export'"
+							v-if="!$window.getSettingByKey('HIDE_EXPORT')"
+							>{{ $t('dataFlow.bulkExport') }}</el-dropdown-item
+						>
 						<el-dropdown-item command="run" v-readonlybtn="'SYNC_job_operation'">{{
 							$t('dataFlow.bulkScheuled')
 						}}</el-dropdown-item>
@@ -129,7 +132,13 @@
 					<i class="iconfont icon-hanshu back-btn-icon"></i>
 					<span> {{ $t('dataFlow.taskBulkFx') }}</span>
 				</el-button>
-				<el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
+				<el-button
+					v-if="!$window.getSettingByKey('HIDE_IMPORT')"
+					v-readonlybtn="'SYNC_job_import'"
+					size="mini"
+					class="btn"
+					@click="handleImport"
+				>
 					<i class="iconfont icon-daoru back-btn-icon"></i>
 					<span> {{ $t('dataFlow.bulkImport') }}</span>
 				</el-button>
@@ -138,7 +147,7 @@
 					v-readonlybtn="'SYNC_job_creation'"
 					class="btn btn-create"
 					type="primary"
-					size="mini"
+					size="small"
 					@click="create"
 				>
 					<i class="iconfont icon-jia add-btn-icon"></i>
@@ -146,11 +155,12 @@
 				<el-button
 					v-else
 					v-readonlybtn="'SYNC_job_creation'"
-					class="btn btn-createText"
-					type="text"
-					size="mini"
+					class="btn btn-create"
+					type="primary"
+					size="small"
 					@click="creatText"
 				>
+					<i class="iconfont icon-jia add-btn-icon"></i>
 					创建任务
 				</el-button>
 			</div>
@@ -181,7 +191,13 @@
 						</el-tag>
 					</span>
 					<div style="margin-left: 20px;color:#ccc">
-						{{ scope.row.user ? scope.row.user.email : '' }}
+						{{
+							scope.row.user
+								? scope.row.user.username
+									? scope.row.user.username
+									: scope.row.user.email
+								: ''
+						}}
 					</div>
 				</template>
 			</el-table-column>
@@ -307,6 +323,7 @@
 									scope.row.status === 'running'
 							"
 							v-readonlybtn="'SYNC_job_edition'"
+							v-if="!$window.getSettingByKey('HIDE_SCHEDULE')"
 							@click="handleTaskscheduling(scope.row.id, scope.row)"
 						>
 							{{ $t('dataFlow.schedule') }}
@@ -321,9 +338,12 @@
 								<el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
 									$t('dataVerify.dataVerify')
 								}}</el-dropdown-item>
-								<el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
-									$t('dataFlow.dataFlowExport')
-								}}</el-dropdown-item>
+								<el-dropdown-item
+									v-if="!$window.getSettingByKey('HIDE_EXPORT')"
+									command="export"
+									v-readonlybtn="'SYNC_job_export'"
+									>{{ $t('dataFlow.dataFlowExport') }}</el-dropdown-item
+								>
 								<el-dropdown-item command="copy" v-readonlybtn="'SYNC_job_creation'"
 									>{{ $t('dataFlow.copy') }}
 								</el-dropdown-item>
@@ -602,6 +622,7 @@ export default {
 			this.table.fetch(1);
 		},
 		getData({ page, tags }) {
+			let region = this.$route.query.region;
 			let { current, size } = page;
 			let { keyword, status, progress, executionStatus, timeData } = this.searchParams;
 
@@ -625,7 +646,8 @@ export default {
 				user_id: true,
 				startTime: true,
 				listtags: true,
-				mappingTemplate: true
+				mappingTemplate: true,
+				platformInfo: true
 			};
 			if (keyword && keyword.trim()) {
 				where.or = [
@@ -638,6 +660,7 @@ export default {
 					in: tags
 				};
 			}
+			region && (where['platformInfo.region'] = region);
 			if (executionStatus) {
 				if (executionStatus === 'Lag') {
 					where['stats.stagesMetrics.replicationLag'] = {
@@ -817,7 +840,23 @@ export default {
 			// window.windows.push(window.open(routeUrl.href, '_blank'));
 			// window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
 		},
-		creatText() {
+		async creatText() {
+			let result = await this.$api('tcm').getRegionZone();
+			let data = result.data || [];
+			if (data.length === 0) {
+				this.$confirm(
+					'创建连接要先订购同步实例，同步任务的服务进程环境要在实例中运行，实例的链路与性能影响同步任务的运行效率。',
+					'您尚未订购同步实例，请先订购实例',
+					{
+						confirmButtonText: '订购实例',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}
+				).then(() => {
+					top.location.href = '/#/instance';
+				});
+				return;
+			}
 			this.$router.push({
 				path: '/createTask/create'
 			});
@@ -1154,7 +1193,6 @@ export default {
 			}
 			.btn {
 				padding: 7px;
-				background: #f5f5f5;
 				i.iconfont {
 					font-size: 12px;
 				}
@@ -1163,12 +1201,9 @@ export default {
 				}
 				&.btn-create {
 					margin-left: 5px;
-					background: #48b6e2;
 				}
 				&.btn-createText {
 					margin-left: 5px;
-					background: #48b6e2;
-					color: #fff;
 				}
 			}
 		}
@@ -1195,7 +1230,7 @@ export default {
 </style>
 <style lang="less">
 .dataflow-clickTip .el-message-box__status {
-	top: 25% !important;
+	top: 25%;
 }
 .jobSeceduleDialog {
 	.text {

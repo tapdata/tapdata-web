@@ -1,6 +1,7 @@
 <template>
 	<el-drawer
 		class="connection-drawer"
+		:class="$window.getSettingByKey('SUPPORT_RDS') ? 'no-top-drawer' : 'top-drawer'"
 		ref="drawer"
 		:visible.sync="visible"
 		:title="$t('dataForm.title')"
@@ -237,7 +238,11 @@ export default {
 					this.showProgress = true;
 					this.reloadApi();
 				}
-				let func = formConfig[this.type];
+				let type = this.type;
+				if (window.getSettingByKey('SUPPORT_RDS')) {
+					type = 'drs_' + type;
+				}
+				let func = formConfig[type];
 				if (func) {
 					let config = func(this);
 					let items = config.items.map(it => {
@@ -571,11 +576,10 @@ export default {
 		.panelBtn {
 			display: flex;
 			align-items: center;
-			width: 60%;
 			margin-top: 10px;
 			.item {
 				margin-right: 10px;
-				float: right;
+				float: left;
 			}
 			.iconfont {
 				display: inline-block;
@@ -629,7 +633,7 @@ export default {
 		overflow-y: auto;
 		max-height: 690px;
 		margin: 0 auto;
-		margin-left: 56px;
+		padding-left: 56px;
 		width: 100%;
 		li {
 			margin-bottom: 20px;
@@ -677,20 +681,35 @@ export default {
 </style>
 <style lang="less">
 .connection-drawer {
-	.el-drawer {
-		box-shadow: -2px 0px 8px 0px rgba(0, 0, 0, 0.1);
+	.top-drawer {
+		.el-drawer {
+			box-shadow: -2px 0px 8px 0px rgba(0, 0, 0, 0.1);
+		}
+		.el-drawer.rtl {
+			top: 48px;
+		}
 	}
-	.el-drawer.rtl {
-		top: 48px;
+	.no-top-drawer {
+		.el-drawer {
+			box-shadow: -2px 0px 8px 0px rgba(0, 0, 0, 0.1);
+		}
 	}
-}
-.test-progress {
-	.el-progress-bar__outer {
-		border-radius: 0;
+	.test-progress {
+		.el-progress-bar__outer {
+			border-radius: 0;
+		}
+		.el-progress-bar__inner {
+			border-radius: 0;
+		}
+		margin-bottom: 10px;
 	}
-	.el-progress-bar__inner {
-		border-radius: 0;
+	.el-drawer__body {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		.info-list {
+			flex: 1;
+		}
 	}
-	margin-bottom: 10px;
 }
 </style>

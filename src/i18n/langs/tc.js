@@ -356,7 +356,8 @@ const tc = {
 		rename: '改名',
 		details: '詳情',
 		more: '更多',
-		edit: '編輯'
+		edit: '編輯',
+		all: '全部'
 	},
 	dataFlow: {
 		aggregateNotDataNode: '連接聚合節點的第一個目標數據節點只能是數據集',
@@ -676,19 +677,22 @@ const tc = {
 		}
 	},
 	connection: {
-		dataBaseName: '數據源名稱',
+		dataBaseName: '連接名/連接信息',
 		dataBaseHost: '數據庫地址',
 		dataBaseClassify: '分類',
 		dataBaseType: '數據庫類型',
 		dataBaseStatus: '狀態',
-		dataBaseSearch: '名稱/數據庫地址',
+		dataBaseSearch: '按連接名搜索',
 		loadSchema: '定期加載schema',
 		connectionType: '連接類型',
+		connectionInfo: '連接信息',
+		connectionSource: '連接來源',
+		lastUpdateTime: '修改時間',
 		operate: '操作',
 		fuzzyQuery: '模糊匹配',
 		PreciseQuery: '精確匹配',
 		databaseTittle: '數據源管理',
-		createNewDataSource: '創建新數據源',
+		createNewDataSource: '創建連接',
 		info: '數據源詳情',
 		copyMsg: '複製成功',
 		testMsg: '測試成功',
@@ -697,8 +701,8 @@ const tc = {
 		reloadOK: '正在加載 schema',
 		reloadFail: 'schema 加載失敗',
 		reloadTittle: '重新加載 schema',
-		deteleDatabaseTittle: '刪除數據源',
-		deteleDatabaseMsg: '確定刪除數據源',
+		deteleDatabaseTittle: '是否刪除該連接？',
+		deteleDatabaseMsg: '刪除連接 xxx 後，此連接將無法恢復',
 		desc:
 			'數據源包括數據庫，結構化文件，應用程序RESTful API，自定義接口等類型，必須先創建數據源才能創建遷移或同步任務。除基礎的配置項之外，數據源還有定期/手動加載數據庫結構 ，設置時區，表過濾設置等功能。更多配置說明，請點擊',
 		reloadMsg: '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema : ',

@@ -2,7 +2,6 @@
 	<el-container class="CT-task-wrap" v-if="steps[activeStep]">
 		<el-container style="overflow: hidden;flex: 1;">
 			<el-header class="step-header" height="42px">
-				<span>创建同步任务</span>
 				<ul class="step-box">
 					<li v-for="(step, index) in steps" :key="index" :class="{ active: activeStep >= index }">
 						<span class="step-index">
@@ -20,7 +19,7 @@
 						<div class="body" v-if="steps[activeStep].index === 1">
 							<div class="title">选择实例</div>
 							<div class="desc">
-								用户需要先选择一个实例用于运行同步任务，任务创建后不支持更换实例，如果需要创建新的实例请点击创建实例
+								请先选择一个有实例的地域可用区，可用区下的全部实例都能运行该同步任务，可用实例越多任务运行越稳定。任务创建后不支持更换地域可用区
 							</div>
 							<form-builder ref="instance" v-model="platformInfo" :config="config"></form-builder>
 						</div>
@@ -28,12 +27,15 @@
 						<div class="body" v-if="steps[activeStep].index === 2">
 							<div class="title">选择源端与目标端连接</div>
 							<div class="desc">
-								选择已创建的源端/目标端的数据库连接，具体的源端与目标端库的支持类型请参考右侧说明或点击查看帮助文档,
-								点击此处创建数据连接
+								选择已创建的源端/目标端的数据库连接，如果需要创建新的数据库连接，请点击<span
+									style="color: #337DFF;cursor: pointer"
+									@click="dialogDatabaseTypeVisible = true"
+									>创建数据连接</span
+								>
 							</div>
 							<form-builder ref="dataSource" v-model="dataSourceModel" :config="config">
-								<div slot="source">源端连接</div>
-								<div slot="target">目标端连接</div>
+								<div slot="source" class="dataSource-title">源端连接</div>
+								<div slot="target" class="dataSource-title">目标端连接</div>
 							</form-builder>
 						</div>
 						<!-- 步骤3 -->
@@ -43,7 +45,7 @@
 								用户可以在任务设置步骤对任务名称、同步类型、遇错处理等进行设置，具体配置说明请查看帮助文档
 							</div>
 							<form-builder ref="setting" v-model="settingModel" :config="config">
-								<div slot="needToCreateIndex">
+								<div slot="needToCreateIndex" class="ddl-tip">
 									自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作
 								</div>
 							</form-builder>
@@ -60,7 +62,11 @@
 						</div>
 					</el-main>
 					<el-footer class="CT-task-footer" height="80px">
-						<el-button class="btn-step" v-if="steps[activeStep].index > 1" @click="back()">
+						<el-button
+							class="btn-step"
+							v-if="[2, 4].includes(steps[activeStep].index) || (steps[activeStep].index === 3 && !id)"
+							@click="back()"
+						>
 							{{ $t('guide.btn_back') }}
 						</el-button>
 						<el-button
@@ -77,6 +83,11 @@
 						</el-button>
 					</el-footer>
 				</el-container>
+				<DatabaseTypeDialog
+					:dialogVisible="dialogDatabaseTypeVisible"
+					@dialogVisible="handleDialogDatabaseTypeVisible"
+					@databaseType="handleDatabaseType"
+				></DatabaseTypeDialog>
 			</el-container>
 		</el-container>
 	</el-container>
@@ -84,12 +95,13 @@
 <script>
 import formConfig from './config';
 import Transfer from '@/components/Transfer';
+import DatabaseTypeDialog from '../connections/DatabaseTypeDialog';
 import _ from 'lodash';
 import { SETTING_MODEL, DATASOURCE_MODEL, INSTANCE_MODEL } from './util';
 import { uuid } from '../../editor/util/Schema';
 
 export default {
-	components: { Transfer },
+	components: { Transfer, DatabaseTypeDialog },
 	data() {
 		return {
 			id: '',
@@ -120,24 +132,37 @@ export default {
 			platformInfoZone: '',
 			instanceMock: [],
 			dataSourceZone: '',
-			dataSourceMock: []
+			dataSourceMock: [],
+			dialogDatabaseTypeVisible: false
 		};
 	},
 	created() {
-		this.getSteps(false);
+		this.id = this.$route.params.id;
+		this.getSteps();
 		this.getFormConfig();
 		this.getInstanceRegion();
-		this.id = this.$route.params.id;
 		if (this.id) {
 			this.intiData(this.id);
 		}
 	},
 	watch: {
 		'platformInfo.region'() {
-			this.changeInstanceRegion();
+			this.changeInstanceRegion(); //第一步实例change
 		},
-		'dataSourceModel.s_region'() {
+		'dataSourceModel.source_region'() {
 			this.changeDataSourceRegion();
+			this.getConnection(this.getWhere('source'), 'source_connectionId');
+		},
+		'dataSourceModel.source_zone'() {
+			this.getConnection(this.getWhere('source'), 'source_connectionId');
+		},
+		'dataSourceModel.source_sourceType'() {
+			this.getConnection(this.getWhere('source'), 'source_connectionId');
+			this.dataSourceModel.source_connectionId = '';
+		},
+		'dataSourceModel.target_sourceType'() {
+			this.getConnection(this.getWhere('target'), 'target_connectionId');
+			this.dataSourceModel.target_connectionId = '';
 		}
 	},
 	methods: {
@@ -151,8 +176,8 @@ export default {
 						this.platformInfo = result.data.platformInfo;
 						this.dataSourceModel = result.data.dataSourceModel;
 						let stages = result.data.stages;
-						this.dataSourceModel.s_connectionId = stages[0].connectionId;
-						this.dataSourceModel.t_connectionId = stages[1].connectionId;
+						this.dataSourceModel.source_connectionId = stages[0].connectionId;
+						this.dataSourceModel.target_connectionId = stages[1].connectionId;
 						this.transferData = {
 							table_prefix: stages[1].table_prefix,
 							table_suffix: stages[1].table_suffix,
@@ -194,10 +219,10 @@ export default {
 				.productVip(param)
 				.then(data => {
 					this.dataSourceMock = data.data.poolList || [];
-					if (this.dataSourceModel.s_region === '' && this.dataSourceMock.length > 0) {
-						this.dataSourceModel.s_region = this.dataSourceMock[0].poolId;
+					if (this.dataSourceModel.source_region === '' && this.dataSourceMock.length > 0) {
+						this.dataSourceModel.source_region = this.dataSourceMock[0].poolId;
 					}
-					this.changeConfig(this.dataSourceMock || [], 's_defaultRegion');
+					this.changeConfig(this.dataSourceMock || [], 'source_defaultRegion');
 					this.changeDataSourceRegion();
 				})
 				.catch(() => {
@@ -205,11 +230,11 @@ export default {
 				}); //华东上海
 		},
 		changeDataSourceRegion() {
-			let zone = this.dataSourceMock.filter(item => item.poolId === this.dataSourceModel.s_region);
+			let zone = this.dataSourceMock.filter(item => item.poolId === this.dataSourceModel.source_region);
 			if (zone.length > 0) {
-				this.dataSourceModel.s_zone = this.dataSourceModel.s_zone || zone[0].zoneInfo[0].zoneCode;
+				this.dataSourceModel.source_zone = this.dataSourceModel.source_zone || zone[0].zoneInfo[0].zoneCode;
 				this.dataSourceZone = zone[0].zoneInfo;
-				this.changeConfig(zone[0].zoneInfo || [], 's_defaultZone');
+				this.changeConfig(zone[0].zoneInfo || [], 'source_defaultZone');
 			}
 		},
 		getSteps() {
@@ -219,7 +244,11 @@ export default {
 				{ index: 3, text: '任务设置', type: 'setting' },
 				{ index: 4, text: '映射设置', type: 'mapping' }
 			];
-			this.steps = steps.concat();
+			if (this.id) {
+				this.steps = steps.slice(2, 4);
+			} else {
+				this.steps = steps.concat();
+			}
 		},
 		next() {
 			let type = this.steps[this.activeStep].type || 'instance';
@@ -227,8 +256,8 @@ export default {
 				this.$refs.instance.validate(valid => {
 					if (valid) {
 						this.activeStep += 1;
-						this.dataSourceModel.t_region = this.platformInfo.region;
-						this.dataSourceModel.t_zone = this.platformInfo.zone;
+						this.dataSourceModel.target_region = this.platformInfo.region;
+						this.dataSourceModel.target_zone = this.platformInfo.zone;
 						this.getFormConfig();
 						//根据第一步所选实例 过滤出可用区与地域
 						this.getDataSourceRegion();
@@ -262,7 +291,7 @@ export default {
 			this.getFormConfig();
 		},
 		// 根据步骤获取不同的表单项目
-		getFormConfig() {
+		async getFormConfig() {
 			let type = this.steps[this.activeStep].type || 'instance';
 			let func = formConfig[type];
 			if (func) {
@@ -270,25 +299,53 @@ export default {
 				this.config = config;
 			}
 			if (type === 'dataSource') {
-				this.getConnection();
-				this.changeConfig([], 't_defaultRegionZone');
-			} else if (type === 'instance') {
-				this.getInstanceRegion();
+				this.getConnection(this.getWhere('source'), 'source_connectionId');
+				this.getConnection(this.getWhere('target'), 'target_connectionId');
+				this.changeConfig([], 'target_defaultRegionZone');
 			} else if (type === 'mapping') {
-				let id = this.dataSourceModel.s_connectionId || '';
+				let id = this.dataSourceModel.source_connectionId || '';
 				this.$nextTick(() => {
 					this.$refs.transfer.getTable(id);
 				});
 			}
 		},
+		getWhere(type) {
+			let where = {};
+			if (this.dataSourceModel.source_sourceType === 'rds' && type === 'source') {
+				where = {
+					database_type: { in: ['mysql'] },
+					sourceType: 'rds',
+					'platformInfo.DRS_region': this.dataSourceModel.source_region,
+					'platformInfo.DRS_zone': this.dataSourceModel.source_zone
+				};
+			} else if (this.dataSourceModel.source_sourceType === 'selfDB' && type === 'source') {
+				where = {
+					database_type: { in: ['mysql'] },
+					sourceType: 'selfDB',
+					'platformInfo.DRS_region': { $exists: false },
+					'platformInfo.DRS_zone': { $exists: false }
+				};
+			} else if (this.dataSourceModel.source_sourceType === 'rds' && type === 'target') {
+				where = {
+					database_type: { in: ['mysql'] },
+					sourceType: 'rds',
+					region: this.platformInfo.region,
+					zone: this.platformInfo.zone
+				};
+			} else {
+				where = {
+					database_type: { in: ['mysql'] },
+					sourceType: 'selfDB'
+				};
+			}
+			return where;
+		},
 		//获取数据源
-		getConnection() {
+		getConnection(where, type) {
 			this.$api('connections')
 				.get({
 					filter: JSON.stringify({
-						where: {
-							database_type: { in: ['mysql'] }
-						},
+						where: where,
 						fields: {
 							name: 1,
 							id: 1,
@@ -300,7 +357,7 @@ export default {
 					})
 				})
 				.then(data => {
-					this.changeConfig(data.data || [], 'connectionId');
+					this.changeConfig(data.data || [], type);
 				});
 		},
 		//change config
@@ -337,22 +394,11 @@ export default {
 					}
 					break;
 				}
-				case 'connectionId': {
+				case 'source_connectionId': {
 					// 第二步 数据源连接ID
-					let s_connectionId = items.find(it => it.field === 's_connectionId');
-					if (s_connectionId) {
-						s_connectionId.options = data.map(item => {
-							return {
-								id: item.id,
-								name: item.name,
-								label: item.name,
-								value: item.id
-							};
-						});
-					}
-					let t_connectionId = items.find(it => it.field === 't_connectionId');
-					if (t_connectionId) {
-						t_connectionId.options = data.map(item => {
+					let source_connectionId = items.find(it => it.field === 'source_connectionId');
+					if (source_connectionId) {
+						source_connectionId.options = data.map(item => {
 							return {
 								id: item.id,
 								name: item.name,
@@ -363,11 +409,26 @@ export default {
 					}
 					break;
 				}
-				case 't_defaultRegionZone': {
+				case 'target_connectionId': {
+					let target_connectionId = items.find(it => it.field === 'target_connectionId');
+					if (target_connectionId) {
+						target_connectionId.options = data.map(item => {
+							return {
+								id: item.id,
+								name: item.name,
+								label: item.name,
+								value: item.id
+							};
+						});
+					}
+					break;
+				}
+				case 'target_defaultRegionZone': {
 					//目标端默认等于选择实例可用区
-					let t_region = items.find(it => it.field === 't_region');
-					if (t_region) {
-						t_region.options = this.instanceMock.map(item => {
+					this.instanceMock = this.instanceMock || [];
+					let target_region = items.find(it => it.field === 'target_region');
+					if (target_region && this.instanceMock.length > 0) {
+						target_region.options = this.instanceMock.map(item => {
 							return {
 								id: item.code,
 								name: item.name,
@@ -376,9 +437,10 @@ export default {
 							};
 						});
 					}
-					let t_zone = items.find(it => it.field === 't_zone');
-					if (t_zone) {
-						t_zone.options = this.platformInfoZone.map(item => {
+					this.platformInfoZone = this.platformInfoZone || [];
+					let target_zone = items.find(it => it.field === 'target_zone');
+					if (target_zone && this.platformInfoZone.length > 0) {
+						target_zone.options = this.platformInfoZone.map(item => {
 							return {
 								id: item.code,
 								name: item.name,
@@ -389,11 +451,11 @@ export default {
 					}
 					break;
 				}
-				case 's_defaultRegion': {
+				case 'source_defaultRegion': {
 					//源端默认等于选择实例可用区
-					let s_region = items.find(it => it.field === 's_region');
-					if (s_region) {
-						s_region.options = this.dataSourceMock.map(item => {
+					let source_region = items.find(it => it.field === 'source_region');
+					if (source_region) {
+						source_region.options = this.dataSourceMock.map(item => {
 							return {
 								id: item.poolId,
 								name: item.poolName,
@@ -404,11 +466,11 @@ export default {
 					}
 					break;
 				}
-				case 's_defaultZone': {
+				case 'source_defaultZone': {
 					//映射可用区
-					let s_zone = items.find(it => it.field === 's_zone');
-					if (s_zone) {
-						s_zone.options = this.dataSourceZone.map(item => {
+					let source_zone = items.find(it => it.field === 'source_zone');
+					if (source_zone) {
+						source_zone.options = this.dataSourceZone.map(item => {
 							return {
 								id: item.zoneCode,
 								name: item.zoneName,
@@ -466,10 +528,19 @@ export default {
 					type: 'table'
 				});
 			}
+			//存实例名称
+			let region = this.instanceMock.filter(item => item.code === this.platformInfo.region);
+			if (region.length > 0) {
+				postData.platformInfo.regionName = region[0].name;
+			}
+			let zone = this.platformInfoZone.filter(item => item.code === this.platformInfo.zone);
+			if (zone.length > 0) {
+				postData.platformInfo.zoneName = zone[0].name;
+			}
 			postData.stages = [
 				Object.assign({}, stageDefault, {
 					id: sourceId,
-					connectionId: source.s_connectionId,
+					connectionId: source.source_connectionId,
 					outputLanes: [targetId],
 					distance: 1,
 					name: 'table',
@@ -481,7 +552,7 @@ export default {
 				}),
 				Object.assign({}, stageDefault, {
 					id: targetId,
-					connectionId: target.t_connectionId,
+					connectionId: target.target_connectionId,
 					inputLanes: [sourceId],
 					distance: 0,
 					syncObjects: selectTable,
@@ -491,7 +562,7 @@ export default {
 					type: 'database',
 					readBatchSize: 1000,
 					readCdcInterval: 500,
-					dropTable: false,
+					dropTable: this.settingModel.distinctWriteType === 'compel' ? true : false,
 					dropType: 'no_drop',
 					database_type: 'mysql'
 				})
@@ -513,37 +584,54 @@ export default {
 						this.$message.error(this.$t('message.saveFail'));
 					}
 				});
+		},
+		//选择创建类型
+		handleDialogDatabaseTypeVisible() {
+			this.dialogDatabaseTypeVisible = false;
+		},
+		handleDatabaseType(type) {
+			this.handleDialogDatabaseTypeVisible();
+			this.$router.push('/connections/create?databaseType=' + type);
 		}
 	}
 };
 </script>
 <style lang="less">
-.select-connection-popper {
-	.el-select-dropdown__item {
-		height: 64px;
-		padding: 10px;
-	}
-	.select-connection-option {
-		display: flex;
-		align-items: center;
-		.img {
-			padding: 6px;
-			width: 44px;
-			height: 44px;
-			line-height: 32px;
-			border: 1px solid #dedee4;
-			border-radius: 3px;
-			box-sizing: border-box;
-			text-align: center;
-			color: #999;
-			img {
-				display: block;
-				width: 100%;
-				height: 100%;
+.CT-task-wrap {
+	.select-connection-popper {
+		.el-select-dropdown__item {
+			height: 64px;
+			padding: 10px;
+		}
+		.select-connection-option {
+			display: flex;
+			align-items: center;
+			.img {
+				padding: 6px;
+				width: 44px;
+				height: 44px;
+				line-height: 32px;
+				border: 1px solid #dedee4;
+				border-radius: 3px;
+				box-sizing: border-box;
+				text-align: center;
+				color: #999;
+				img {
+					display: block;
+					width: 100%;
+					height: 100%;
+				}
+			}
+			.name {
+				margin-left: 10px;
 			}
 		}
-		.name {
-			margin-left: 10px;
+	}
+	.step-3 {
+		.ddl-tip {
+			font-size: 12px;
+			margin-top: -10px;
+			color: #aaa;
 		}
 	}
 }
@@ -616,7 +704,7 @@ export default {
 		.body {
 			margin: 0 auto;
 			padding-bottom: 50px;
-			width: 850px;
+			width: 880px;
 			.title {
 				padding: 20px 200px;
 				color: rgba(51, 51, 51, 100);
@@ -637,6 +725,11 @@ export default {
 		}
 		.step-4 {
 			width: 1050px;
+		}
+		.dataSource-title {
+			font-size: 16px;
+			font-weight: bold;
+			margin: 10px 0;
 		}
 	}
 	.CT-task-footer {
