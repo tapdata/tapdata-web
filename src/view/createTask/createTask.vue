@@ -3,7 +3,11 @@
 		<el-container style="overflow: hidden;flex: 1;">
 			<el-header class="step-header" height="42px">
 				<ul class="step-box">
-					<li v-for="(step, index) in steps" :key="index" :class="{ active: activeStep >= index }">
+					<li
+						v-for="(step, index) in steps"
+						:key="index"
+						:class="[{ active: activeStep >= index }, { 'color-primary': activeStep >= index }]"
+					>
 						<span class="step-index">
 							<i v-if="activeStep > index" class="el-icon-check"></i>
 							<span v-else>{{ index + 1 }}</span>
