@@ -511,7 +511,7 @@ const cn = {
 		status: {
 			running: '运行中',
 			paused: '已暂停',
-			draft: '编辑中',
+			draft: '待启动',
 			scheduled: '调度中',
 			stopping: '停止中',
 			error: '错误',

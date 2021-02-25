@@ -28,8 +28,8 @@ export default function(vm) {
 			},
 			{
 				type: 'radio',
-				field: 'connectionType',
-				label: vm.$t('dataForm.form.connectionType'),
+				field: 'sourceType',
+				label: '连接来源',
 				options: [
 					{
 						label: 'RDS实例',
@@ -54,7 +54,7 @@ export default function(vm) {
 					{
 						triggerOptions: [
 							{
-								field: 'connectionType',
+								field: 'sourceType',
 								value: 'selfDB'
 							}
 						],
@@ -75,7 +75,7 @@ export default function(vm) {
 					{
 						triggerOptions: [
 							{
-								field: 'connectionType',
+								field: 'sourceType',
 								value: 'selfDB'
 							}
 						],

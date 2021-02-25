@@ -64,7 +64,7 @@
 							</div>
 						</form-builder>
 						<!-- 文件数据库 -->
-						<template v-if="model.database_type === 'file' && model.connectionType === 'source'">
+						<template v-if="model.database_type === 'file' && model.connection_type === 'source'">
 							<div class="fileBox">
 								<div class="file-label">{{ $t('dataForm.form.file.fileUrl') }}</div>
 								<div class="file-form-content">
@@ -614,7 +614,7 @@ export default {
 			let platformInfo = {
 				region: params.region || '',
 				zone: params.zone || '',
-				connectionType: params.connectionType || '',
+				sourceType: params.sourceType || '',
 				DRS_region: params.s_region || '',
 				DRS_zone: params.s_zone || '',
 				DRS_instances: params.DRS_instances || '',
@@ -680,7 +680,7 @@ export default {
 					}
 					if (window.getSettingByKey('SUPPORT_RDS')) {
 						params['platformInfo'] = Object.assign(params['platformInfo'], this.handlePlatformInfo(params));
-						if (params.connectionType === 'selfDB') {
+						if (params.sourceType === 'selfDB') {
 							delete params.DRS_region;
 							delete params.DRS_zone;
 							delete params.platformInfo.DRS_region;
@@ -692,7 +692,7 @@ export default {
 							let id = res.data.id;
 							this.model.id = id;
 							this.$message.success(this.$t('message.saveOK'));
-							this.goBack();
+							this.$router.push('/connections');
 						})
 						.catch(err => {
 							if (err && err.response) {

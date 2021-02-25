@@ -11,7 +11,7 @@ export default function() {
 			},
 			{
 				type: 'select',
-				field: 's_connectionType',
+				field: 'source_sourceType',
 				label: '源端连接来源',
 				options: [
 					{
@@ -27,7 +27,7 @@ export default function() {
 			},
 			{
 				type: 'select',
-				field: 's_region',
+				field: 'source_region',
 				label: '源端地域',
 				options: [],
 				show: true,
@@ -35,7 +35,7 @@ export default function() {
 					{
 						triggerOptions: [
 							{
-								field: 's_connectionType',
+								field: 'source_sourceType',
 								value: 'selfDB'
 							}
 						],
@@ -48,7 +48,7 @@ export default function() {
 			},
 			{
 				type: 'select',
-				field: 's_zone',
+				field: 'source_zone',
 				label: '源端可用区',
 				options: [],
 				show: true,
@@ -56,7 +56,7 @@ export default function() {
 					{
 						triggerOptions: [
 							{
-								field: 's_connectionType',
+								field: 'source_sourceType',
 								value: 'selfDB'
 							}
 						],
@@ -69,7 +69,7 @@ export default function() {
 			},
 			{
 				type: 'select',
-				field: 's_connectionId',
+				field: 'source_connectionId',
 				label: '源端连接',
 				options: [],
 				required: true
@@ -80,7 +80,7 @@ export default function() {
 			},
 			{
 				type: 'select',
-				field: 't_connectionType',
+				field: 'target_sourceType',
 				label: '目标端连接来源',
 				options: [
 					{
@@ -96,7 +96,7 @@ export default function() {
 			},
 			{
 				type: 'select',
-				field: 't_region',
+				field: 'target_region',
 				label: '目标端地域',
 				disabled: true,
 				show: true,
@@ -104,7 +104,7 @@ export default function() {
 					{
 						triggerOptions: [
 							{
-								field: 't_connectionType',
+								field: 'target_sourceType',
 								value: 'selfDB'
 							}
 						],
@@ -117,7 +117,7 @@ export default function() {
 			},
 			{
 				type: 'select',
-				field: 't_zone',
+				field: 'target_zone',
 				label: '目标端可用区',
 				disabled: true,
 				show: true,
@@ -125,7 +125,7 @@ export default function() {
 					{
 						triggerOptions: [
 							{
-								field: 't_connectionType',
+								field: 'target_sourceType',
 								value: 'selfDB'
 							}
 						],
@@ -138,7 +138,7 @@ export default function() {
 			},
 			{
 				type: 'select',
-				field: 't_connectionId',
+				field: 'target_connectionId',
 				label: '目标端连接',
 				options: [],
 				required: true

@@ -13,14 +13,16 @@ export const SETTING_MODEL = {
 };
 
 export const DATASOURCE_MODEL = {
-	s_connectionType: 'rds',
-	t_connectionType: 'rds',
-	s_region: '',
-	t_region: '',
-	s_zone: '',
-	t_zone: '',
-	s_connectionId: '',
-	t_connectionId: ''
+	source_sourceType: 'rds',
+	target_sourceType: 'rds',
+	source_region: '',
+	target_region: '',
+	source_zone: '',
+	target_zone: '',
+	source_connectionId: '',
+	target_connectionId: '',
+	source_connectionName: '',
+	target_connectionName: ''
 };
 
 export const INSTANCE_MODEL = {
