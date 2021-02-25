@@ -149,18 +149,20 @@ export default {
 		'platformInfo.region'() {
 			this.changeInstanceRegion(); //第一步实例change
 		},
-		'dataSourceModel.s_region'() {
+		'dataSourceModel.source_region'() {
 			this.changeDataSourceRegion();
-			this.getConnection(this.getWhere('source'), 's_connectionId');
+			this.getConnection(this.getWhere('source'), 'source_connectionId');
 		},
-		'dataSourceModel.s_zone'() {
-			this.getConnection(this.getWhere('source'), 's_connectionId');
+		'dataSourceModel.source_zone'() {
+			this.getConnection(this.getWhere('source'), 'source_connectionId');
 		},
-		'dataSourceModel.s_connectionType'() {
-			this.getConnection(this.getWhere('source'), 's_connectionId');
+		'dataSourceModel.source_sourceType'() {
+			this.getConnection(this.getWhere('source'), 'source_connectionId');
+			this.dataSourceModel.source_connectionId = '';
 		},
-		'dataSourceModel.t_connectionType'() {
-			this.getConnection(this.getWhere('target'), 't_connectionId');
+		'dataSourceModel.target_sourceType'() {
+			this.getConnection(this.getWhere('target'), 'target_connectionId');
+			this.dataSourceModel.target_connectionId = '';
 		}
 	},
 	methods: {
@@ -174,8 +176,8 @@ export default {
 						this.platformInfo = result.data.platformInfo;
 						this.dataSourceModel = result.data.dataSourceModel;
 						let stages = result.data.stages;
-						this.dataSourceModel.s_connectionId = stages[0].connectionId;
-						this.dataSourceModel.t_connectionId = stages[1].connectionId;
+						this.dataSourceModel.source_connectionId = stages[0].connectionId;
+						this.dataSourceModel.target_connectionId = stages[1].connectionId;
 						this.transferData = {
 							table_prefix: stages[1].table_prefix,
 							table_suffix: stages[1].table_suffix,
@@ -217,10 +219,10 @@ export default {
 				.productVip(param)
 				.then(data => {
 					this.dataSourceMock = data.data.poolList || [];
-					if (this.dataSourceModel.s_region === '' && this.dataSourceMock.length > 0) {
-						this.dataSourceModel.s_region = this.dataSourceMock[0].poolId;
+					if (this.dataSourceModel.source_region === '' && this.dataSourceMock.length > 0) {
+						this.dataSourceModel.source_region = this.dataSourceMock[0].poolId;
 					}
-					this.changeConfig(this.dataSourceMock || [], 's_defaultRegion');
+					this.changeConfig(this.dataSourceMock || [], 'source_defaultRegion');
 					this.changeDataSourceRegion();
 				})
 				.catch(() => {
@@ -228,11 +230,11 @@ export default {
 				}); //华东上海
 		},
 		changeDataSourceRegion() {
-			let zone = this.dataSourceMock.filter(item => item.poolId === this.dataSourceModel.s_region);
+			let zone = this.dataSourceMock.filter(item => item.poolId === this.dataSourceModel.source_region);
 			if (zone.length > 0) {
-				this.dataSourceModel.s_zone = this.dataSourceModel.s_zone || zone[0].zoneInfo[0].zoneCode;
+				this.dataSourceModel.source_zone = this.dataSourceModel.source_zone || zone[0].zoneInfo[0].zoneCode;
 				this.dataSourceZone = zone[0].zoneInfo;
-				this.changeConfig(zone[0].zoneInfo || [], 's_defaultZone');
+				this.changeConfig(zone[0].zoneInfo || [], 'source_defaultZone');
 			}
 		},
 		getSteps() {
@@ -254,8 +256,8 @@ export default {
 				this.$refs.instance.validate(valid => {
 					if (valid) {
 						this.activeStep += 1;
-						this.dataSourceModel.t_region = this.platformInfo.region;
-						this.dataSourceModel.t_zone = this.platformInfo.zone;
+						this.dataSourceModel.target_region = this.platformInfo.region;
+						this.dataSourceModel.target_zone = this.platformInfo.zone;
 						this.getFormConfig();
 						//根据第一步所选实例 过滤出可用区与地域
 						this.getDataSourceRegion();
@@ -297,11 +299,11 @@ export default {
 				this.config = config;
 			}
 			if (type === 'dataSource') {
-				this.getConnection(this.getWhere('source'), 's_connectionId');
-				this.getConnection(this.getWhere('target'), 't_connectionId');
-				this.changeConfig([], 't_defaultRegionZone');
+				this.getConnection(this.getWhere('source'), 'source_connectionId');
+				this.getConnection(this.getWhere('target'), 'target_connectionId');
+				this.changeConfig([], 'target_defaultRegionZone');
 			} else if (type === 'mapping') {
-				let id = this.dataSourceModel.s_connectionId || '';
+				let id = this.dataSourceModel.source_connectionId || '';
 				this.$nextTick(() => {
 					this.$refs.transfer.getTable(id);
 				});
@@ -309,31 +311,31 @@ export default {
 		},
 		getWhere(type) {
 			let where = {};
-			if (this.dataSourceModel.s_connectionType === 'rds' && type === 'source') {
+			if (this.dataSourceModel.source_sourceType === 'rds' && type === 'source') {
 				where = {
 					database_type: { in: ['mysql'] },
-					connection_type: 'rds',
-					'platformInfo.DRS_region': this.dataSourceModel.s_region,
-					'platformInfo.DRS_zone': this.dataSourceModel.s_zone
+					sourceType: 'rds',
+					'platformInfo.DRS_region': this.dataSourceModel.source_region,
+					'platformInfo.DRS_zone': this.dataSourceModel.source_zone
 				};
-			} else if (this.dataSourceModel.s_connectionType === 'selfDB' && type === 'source') {
+			} else if (this.dataSourceModel.source_sourceType === 'selfDB' && type === 'source') {
 				where = {
 					database_type: { in: ['mysql'] },
-					connection_type: 'selfDB',
+					sourceType: 'selfDB',
 					'platformInfo.DRS_region': { $exists: false },
 					'platformInfo.DRS_zone': { $exists: false }
 				};
-			} else if (this.dataSourceModel.s_connectionType === 'rds' && type === 'target') {
+			} else if (this.dataSourceModel.source_sourceType === 'rds' && type === 'target') {
 				where = {
 					database_type: { in: ['mysql'] },
-					connection_type: 'rds',
+					sourceType: 'rds',
 					region: this.platformInfo.region,
 					zone: this.platformInfo.zone
 				};
 			} else {
 				where = {
 					database_type: { in: ['mysql'] },
-					connection_type: 'selfDB'
+					sourceType: 'selfDB'
 				};
 			}
 			return where;
@@ -392,11 +394,11 @@ export default {
 					}
 					break;
 				}
-				case 's_connectionId': {
+				case 'source_connectionId': {
 					// 第二步 数据源连接ID
-					let s_connectionId = items.find(it => it.field === 's_connectionId');
-					if (s_connectionId) {
-						s_connectionId.options = data.map(item => {
+					let source_connectionId = items.find(it => it.field === 'source_connectionId');
+					if (source_connectionId) {
+						source_connectionId.options = data.map(item => {
 							return {
 								id: item.id,
 								name: item.name,
@@ -407,10 +409,10 @@ export default {
 					}
 					break;
 				}
-				case 't_connectionId': {
-					let t_connectionId = items.find(it => it.field === 't_connectionId');
-					if (t_connectionId) {
-						t_connectionId.options = data.map(item => {
+				case 'target_connectionId': {
+					let target_connectionId = items.find(it => it.field === 'target_connectionId');
+					if (target_connectionId) {
+						target_connectionId.options = data.map(item => {
 							return {
 								id: item.id,
 								name: item.name,
@@ -421,12 +423,12 @@ export default {
 					}
 					break;
 				}
-				case 't_defaultRegionZone': {
+				case 'target_defaultRegionZone': {
 					//目标端默认等于选择实例可用区
 					this.instanceMock = this.instanceMock || [];
-					let t_region = items.find(it => it.field === 't_region');
-					if (t_region && this.instanceMock.length > 0) {
-						t_region.options = this.instanceMock.map(item => {
+					let target_region = items.find(it => it.field === 'target_region');
+					if (target_region && this.instanceMock.length > 0) {
+						target_region.options = this.instanceMock.map(item => {
 							return {
 								id: item.code,
 								name: item.name,
@@ -436,9 +438,9 @@ export default {
 						});
 					}
 					this.platformInfoZone = this.platformInfoZone || [];
-					let t_zone = items.find(it => it.field === 't_zone');
-					if (t_zone && this.platformInfoZone.length > 0) {
-						t_zone.options = this.platformInfoZone.map(item => {
+					let target_zone = items.find(it => it.field === 'target_zone');
+					if (target_zone && this.platformInfoZone.length > 0) {
+						target_zone.options = this.platformInfoZone.map(item => {
 							return {
 								id: item.code,
 								name: item.name,
@@ -449,11 +451,11 @@ export default {
 					}
 					break;
 				}
-				case 's_defaultRegion': {
+				case 'source_defaultRegion': {
 					//源端默认等于选择实例可用区
-					let s_region = items.find(it => it.field === 's_region');
-					if (s_region) {
-						s_region.options = this.dataSourceMock.map(item => {
+					let source_region = items.find(it => it.field === 'source_region');
+					if (source_region) {
+						source_region.options = this.dataSourceMock.map(item => {
 							return {
 								id: item.poolId,
 								name: item.poolName,
@@ -464,11 +466,11 @@ export default {
 					}
 					break;
 				}
-				case 's_defaultZone': {
+				case 'source_defaultZone': {
 					//映射可用区
-					let s_zone = items.find(it => it.field === 's_zone');
-					if (s_zone) {
-						s_zone.options = this.dataSourceZone.map(item => {
+					let source_zone = items.find(it => it.field === 'source_zone');
+					if (source_zone) {
+						source_zone.options = this.dataSourceZone.map(item => {
 							return {
 								id: item.zoneCode,
 								name: item.zoneName,
@@ -538,7 +540,7 @@ export default {
 			postData.stages = [
 				Object.assign({}, stageDefault, {
 					id: sourceId,
-					connectionId: source.s_connectionId,
+					connectionId: source.source_connectionId,
 					outputLanes: [targetId],
 					distance: 1,
 					name: 'table',
@@ -550,7 +552,7 @@ export default {
 				}),
 				Object.assign({}, stageDefault, {
 					id: targetId,
-					connectionId: target.t_connectionId,
+					connectionId: target.target_connectionId,
 					inputLanes: [sourceId],
 					distance: 0,
 					syncObjects: selectTable,
@@ -560,7 +562,7 @@ export default {
 					type: 'database',
 					readBatchSize: 1000,
 					readCdcInterval: 500,
-					dropTable: false,
+					dropTable: this.settingModel.distinctWriteType === 'compel' ? true : false,
 					dropType: 'no_drop',
 					database_type: 'mysql'
 				})

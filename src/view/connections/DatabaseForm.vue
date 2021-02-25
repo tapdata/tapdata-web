@@ -64,7 +64,7 @@
 							</div>
 						</form-builder>
 						<!-- 文件数据库 -->
-						<template v-if="model.database_type === 'file' && model.connectionType === 'source'">
+						<template v-if="model.database_type === 'file' && model.connection_type === 'source'">
 							<div class="fileBox">
 								<div class="file-label">{{ $t('dataForm.form.file.fileUrl') }}</div>
 								<div class="file-form-content">
@@ -599,14 +599,22 @@ export default {
 			this.dialogTestVisible = false;
 		},
 		goBack() {
-			this.$router.push('/connections');
+			let tip = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接';
+			let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？';
+			this.$confirm(tip, title, {
+				confirmButtonText: '放弃',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				this.$router.push('/connections');
+			});
 		},
 		//处理不同rds 场景 platformInfo
 		handlePlatformInfo(params) {
 			let platformInfo = {
 				region: params.region || '',
 				zone: params.zone || '',
-				connectionType: params.connectionType || '',
+				sourceType: params.sourceType || '',
 				DRS_region: params.s_region || '',
 				DRS_zone: params.s_zone || '',
 				DRS_instances: params.DRS_instances || '',
@@ -672,7 +680,7 @@ export default {
 					}
 					if (window.getSettingByKey('SUPPORT_RDS')) {
 						params['platformInfo'] = Object.assign(params['platformInfo'], this.handlePlatformInfo(params));
-						if (params.connectionType === 'selfDB') {
+						if (params.sourceType === 'selfDB') {
 							delete params.DRS_region;
 							delete params.DRS_zone;
 							delete params.platformInfo.DRS_region;
@@ -684,7 +692,7 @@ export default {
 							let id = res.data.id;
 							this.model.id = id;
 							this.$message.success(this.$t('message.saveOK'));
-							this.goBack();
+							this.$router.push('/connections');
 						})
 						.catch(err => {
 							if (err && err.response) {
