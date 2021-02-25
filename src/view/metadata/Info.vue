@@ -14,11 +14,13 @@
 				</div>
 				<div class="table-info">
 					<h3>
-						{{ metadataDataObj.original_name }}
+						<span v-if="metadataDataObj.alias_name">
+							{{ metadataDataObj.alias_name }}
+						</span>
 
-						<span v-if="metadataDataObj.alias_name"
-							>( {{ $t('metadata.details.name') }}：{{ metadataDataObj.alias_name }} )</span
-						>
+						<span v-if="metadataDataObj.alias_name">(</span>
+						{{ $t('metadata.details.originalTableName') }}：{{ metadataDataObj.original_name }}
+						<span v-if="metadataDataObj.alias_name">)</span>
 						<el-button type="text" @click="handleChangeName" style="padding: 0 10px;">{{
 							$t('metadata.details.renamed')
 						}}</el-button>
@@ -858,7 +860,7 @@ export default {
 						font-size: 12px;
 						border-radius: 0px 3px 0px 0px;
 						background-color: rgba(244, 245, 247, 100);
-						box-shadow: 3px -3px 5px 0px rgba(0, 0, 0, 0.15);
+						box-shadow: 0 -1px 10px 0px rgba(0, 0, 0, 0.15);
 						li {
 							float: left;
 							width: 100px;
@@ -876,7 +878,7 @@ export default {
 							border-radius: 3px 3px 0px 0px;
 							background-color: #fff;
 							border-right: 0;
-							box-shadow: 1px -1px 3px 0px rgba(0, 0, 0, 0.15);
+							// box-shadow: 1px -1px 3px 0px rgba(0, 0, 0, 0.15);
 						}
 					}
 				}
