@@ -344,7 +344,7 @@
 										$disabledByPermission('SYNC_job_delete_all_data', scope.row.user_id) ||
 											!statusBtMap['delete'][scope.row.status]
 									"
-									v-readonlybtn="'SYNC_category_application'"
+									v-readonlybtn="'SYNC_job_delete'"
 								>
 									{{ $t('button.delete') }}
 								</el-dropdown-item>
