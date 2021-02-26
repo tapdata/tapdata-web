@@ -524,6 +524,29 @@ export default {
 				this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表');
 				return;
 			}
+			let source = this.dataSourceModel;
+			let target = this.dataSourceModel;
+			let sourceId = uuid();
+			let targetId = uuid();
+			//设置为增量模式
+			let timeZone = new Date().getTimezoneOffset() / 60;
+			let systemTimeZone = '';
+			if (timeZone > 0) {
+				systemTimeZone = 0 - timeZone;
+			} else {
+				systemTimeZone = '+' + -timeZone;
+			}
+			let syncPoints = [
+				{
+					connectionId: source.source_connectionId,
+					type: 'current', // localTZ: 本地时区； connTZ：连接时区
+					time: '',
+					date: '',
+					name: '',
+					timezone: systemTimeZone // 当type为localTZ时有该字段
+				}
+			];
+			this.settingModel['syncPoints'] = syncPoints;
 			let postData = {
 				name: this.settingModel.name,
 				description: '',
@@ -550,10 +573,6 @@ export default {
 				outputLanes: [],
 				type: ''
 			};
-			let source = this.dataSourceModel;
-			let target = this.dataSourceModel;
-			let sourceId = uuid();
-			let targetId = uuid();
 			//第四步 数据组装
 			let selectTable = [];
 			if (this.transferData && this.transferData.selectSourceArr.length > 0) {
