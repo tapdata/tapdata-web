@@ -252,6 +252,30 @@ export default {
 							field: it.field,
 							show: true
 						};
+						if (window.getSettingByKey('SUPPORT_RDS')) {
+							switch (node.field) {
+								case 's_region': {
+									node.value = data.platformInfo.DRS_regionName || node.value;
+									break;
+								}
+								case 's_zone': {
+									node.value = data.platformInfo.DRS_zoneName || node.value;
+									break;
+								}
+								case 'region': {
+									node.value = data.platformInfo.regionName || node.value;
+									break;
+								}
+								case 'zone': {
+									node.value = data.platformInfo.zoneName || node.value;
+									break;
+								}
+								case 'sourceType': {
+									node.value = node.value === 'rds' ? 'RDS实例' : '云外自建库';
+									break;
+								}
+							}
+						}
 						return node;
 					});
 					items = items || [];

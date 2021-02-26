@@ -81,13 +81,23 @@
 						<i class="iconfont icon-yulan1"></i>
 						<span>{{ $t('dataFlow.button.preview') }}</span>
 					</el-button>
-					<el-button class="action-btn" size="mini" @click="showLogs">
+					<el-button
+						class="action-btn"
+						size="mini"
+						v-if="!$window.getSettingByKey('SHOW_DATAFLOW_LOG')"
+						@click="showLogs"
+					>
 						<i class="iconfont icon-rizhi1"></i>
 						<span>{{ $t('dataFlow.button.logs') }}</span>
 					</el-button>
 				</el-button-group>
 
-				<el-button class="btn-setting" size="mini" @click="showSetting">
+				<el-button
+					class="btn-setting"
+					size="mini"
+					v-if="!$window.getSettingByKey('SHOW_DARAFLOW_SETTING')"
+					@click="showSetting"
+				>
 					<i class="iconfont icon-shezhi1"></i>
 					<span class="btn-setting-text">{{
 						{
