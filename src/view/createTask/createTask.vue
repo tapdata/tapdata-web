@@ -313,9 +313,15 @@ export default {
 				let config = func(this);
 				this.config = config;
 			}
+			if (type === 'instance') {
+				this.changeConfig(this.instanceMock || [], 'region');
+				this.changeInstanceRegion();
+			}
 			if (type === 'dataSource') {
 				this.getConnection(this.getWhere('source'), 'source_connectionId');
 				this.getConnection(this.getWhere('target'), 'target_connectionId');
+				this.changeConfig(this.dataSourceMock || [], 'source_defaultRegion');
+				this.changeDataSourceRegion();
 				this.changeConfig([], 'target_defaultRegionZone');
 			} else if (type === 'mapping') {
 				let id = this.dataSourceModel.source_connectionId || '';
@@ -504,7 +510,6 @@ export default {
 			return data[0].name;
 		},
 		handleConnectionName(target, type) {
-			debugger;
 			let items = this.config.items;
 			let optionsData = items.find(it => it.field === type);
 			if (optionsData.length === 0) return;
