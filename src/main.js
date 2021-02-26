@@ -45,7 +45,8 @@ window.openDebug();
 
 window._TAPDATA_OPTIONS_ = {
 	logoUrl: require('../static/icon/logo.png'),
-	version: 'DAAS_BUILD_NUMBER'
+	version: 'DAAS_BUILD_NUMBER',
+	loadingImg: require('../static/icon/loading.svg')
 };
 if (parent && parent.__USER_INFO__) {
 	let userInfo = parent.__USER_INFO__;

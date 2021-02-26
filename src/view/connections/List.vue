@@ -311,6 +311,16 @@ export default {
 			testData: null
 		};
 	},
+	computed: {
+		table() {
+			return this.$refs.table;
+		}
+	},
+	watch: {
+		'$route.query'() {
+			this.table.fetch(1);
+		}
+	},
 	created() {
 		this.getDatabaseType();
 		//header
@@ -324,15 +334,8 @@ export default {
 			this.table.fetch(null, 0, true);
 		}, 10000);
 	},
-	computed: {
-		table() {
-			return this.$refs.table;
-		}
-	},
-	watch: {
-		'$route.query'() {
-			this.table.fetch(1);
-		}
+	mounted() {
+		this.searchParams = Object.assign(this.searchParams, this.table.getCache());
 	},
 	destroyed() {
 		clearInterval(timeout);

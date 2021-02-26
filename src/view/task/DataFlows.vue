@@ -20,12 +20,7 @@
 					<li>
 						<ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
 							<ElOption label="全部状态" value=""></ElOption>
-							<ElOption
-								v-for="item in statusOptions"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value"
-							>
+							<ElOption v-for="(item, key) in statusOptions" :key="key" :label="item.label" :value="key">
 							</ElOption>
 						</ElSelect>
 					</li>
@@ -94,7 +89,7 @@
 					<span> {{ $t('dataFlow.taskBulkTag') }}</span>
 				</el-button>
 				<el-dropdown @command="handleCommand($event)" v-show="multipleSelection.length > 0 && bulkOperation">
-					<el-button class="btn btn-dropdowm" size="mini">
+					<el-button class="btn btn-dropdowm" size="small">
 						<i class="iconfont icon-piliang back-btn-icon"></i>
 						<span> {{ $t('dataFlow.taskBulkOperation') }}</span>
 					</el-button>
@@ -169,7 +164,22 @@
 				:selectable="row => !row.hasChildren"
 			>
 			</el-table-column>
-			<el-table-column min-width="200" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
+			<el-table-column
+				v-if="$window.getSettingByKey('SHOW_REGION_AND_ZONE')"
+				min-width="200"
+				:label="$t('dataFlow.taskName') + '/地域'"
+			>
+				<template slot-scope="scope">
+					<div class="task-name">{{ scope.row.name }}</div>
+					<div class="region-info">{{ scope.row.regionInfo }}</div>
+				</template>
+			</el-table-column>
+			<el-table-column
+				v-if="!$window.getSettingByKey('SHOW_REGION_AND_ZONE')"
+				min-width="200"
+				:label="$t('dataFlow.taskName')"
+				:show-overflow-tooltip="true"
+			>
 				<template slot-scope="scope">
 					<span class="dataflow-name">
 						<span>{{ scope.row.name }}</span>
@@ -194,7 +204,15 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('dataFlow.syncType')" width="150">
+			<el-table-column width="150">
+				<div slot="header">
+					{{ $t('dataFlow.syncType') }}
+					<TableFilter
+						v-model="searchParams.syncType"
+						:options="syncType"
+						@input="table.fetch(1)"
+					></TableFilter>
+				</div>
 				<template slot-scope="scope">
 					<span>
 						{{
@@ -205,30 +223,22 @@
 					</span>
 				</template>
 			</el-table-column>
-			<el-table-column prop="status" sortable="custom" :label="$t('dataFlow.taskStatus')" width="180">
+			<el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="380">
 				<template slot-scope="scope">
 					<div>
 						<img
 							v-if="scope.row.status == 'running'"
 							style="width: 12px;vertical-align: middle;"
-							src="../../../static/editor/running.svg"
+							:src="$window._TAPDATA_OPTIONS_.loadingImg"
 						/>
-						<span
-							:style="
-								`color: ${
-									{
-										running: '#67C23A',
-										paused: '#F19149',
-										draft: '#F56C6C',
-										scheduled: '#cccccc',
-										stopping: '#F19149',
-										error: '#f53724'
-									}[scope.row.status]
-								};`
+						<i
+							v-if="scope.row.status !== 'running'"
+							:class="
+								'iconfont ' +
+									(statusOptions[scope.row.status] ? statusOptions[scope.row.status].icon : '')
 							"
-						>
-							{{ scope.row.statusLabel }}
-						</span>
+						></i>
+						<span>{{ scope.row.statusLabel }}</span>
 						<span
 							style="color: #999"
 							v-if="!scope.row.hasChildren && scope.row.statusList && scope.row.statusList.length"
@@ -243,6 +253,11 @@
 					</div>
 				</template>
 			</el-table-column>
+			<el-table-column :label="$t('dataFlow.creatdor')" width="180">
+				<template slot-scope="scope">
+					{{ scope.row.user ? scope.row.user.username : '-' }}
+				</template>
+			</el-table-column>
 			<el-table-column prop="startTime" :label="$t('dataFlow.creationTime')" width="150" sortable="custom">
 				<template slot-scope="scope">
 					{{ scope.row.startTime ? $moment(scope.row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
@@ -252,81 +267,94 @@
 				<template slot-scope="scope">
 					<div class="table-operations" v-if="!scope.row.hasChildren">
 						<el-tooltip
-							v-if="scope.row.status !== 'running'"
-							style="margin-right: 10px;"
+							v-if="!['running', 'stopping'].includes(scope.row.status)"
 							effect="dark"
 							:content="$t('dataFlow.draftNotStart')"
 							:manual="scope.row.status !== 'draft' || scope.row.checked"
 							placement="top-start"
 						>
 							<span>
-								<el-button
-									type="text"
-									size="mini"
+								<ElLink
 									v-readonlybtn="'SYNC_job_operation'"
+									type="primary"
 									:disabled="
 										$disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
 											!statusBtMap['run'][scope.row.status] ||
 											(scope.row.status === 'draft' && !scope.row.checked)
 									"
 									@click="run([scope.row.id], scope.row)"
+									>{{ $t('dataFlow.run') }}</ElLink
 								>
-									{{ $t('dataFlow.run') }}
-								</el-button>
 							</span>
 						</el-tooltip>
-						<el-button
+						<ElLink
 							v-if="scope.row.status === 'running'"
-							type="text"
-							size="mini"
 							v-readonlybtn="'SYNC_job_operation'"
+							class="ml-10"
+							type="primary"
 							:disabled="
 								$disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
 									!statusBtMap['stop'][scope.row.status]
 							"
 							@click="stop([scope.row.id])"
+							>{{ $t('dataFlow.stop') }}</ElLink
 						>
-							{{ $t('dataFlow.stop') }}
-						</el-button>
-						<el-button
-							type="text"
-							size="mini"
+						<ElLink
+							v-if="scope.row.status === 'stopping'"
+							v-readonlybtn="'SYNC_job_operation'"
+							class="ml-10"
+							type="primary"
+							:disabled="
+								$disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
+									!statusBtMap['forceStop'][scope.row.status]
+							"
+							@click="forceStop([scope.row.id])"
+						>
+							{{ $t('dataFlow.status.force_stopping') }}
+						</ElLink>
+						<ElLink
+							class="ml-10"
+							type="primary"
 							@click="handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate)"
 						>
 							{{ $t('dataFlow.runningMonitor') }}
-						</el-button>
-						<el-button
-							type="text"
-							size="mini"
+						</ElLink>
+						<ElLink
+							v-readonlybtn="'SYNC_job_edition'"
+							class="ml-10"
+							type="primary"
 							:disabled="
 								$disabledByPermission('SYNC_job_edition_all_data', scope.row.user_id) ||
 									!statusBtMap['edit'][scope.row.status]
 							"
 							@click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)"
-							v-readonlybtn="'SYNC_job_edition'"
 						>
 							{{ $t('button.edit') }}
-						</el-button>
-						<el-button
-							type="text"
-							size="mini"
+						</ElLink>
+						<ElLink
+							v-if="!$window.getSettingByKey('HIDE_SCHEDULE')"
+							v-readonlybtn="'SYNC_job_edition'"
+							class="ml-10"
+							type="primary"
 							:disabled="
 								$disabledByPermission('SYNC_job_edition_all_data', scope.row.user_id) ||
 									scope.row.setting.sync_type !== 'initial_sync' ||
 									scope.row.status === 'running'
 							"
-							v-readonlybtn="'SYNC_job_edition'"
-							v-if="!$window.getSettingByKey('HIDE_SCHEDULE')"
 							@click="handleTaskscheduling(scope.row.id, scope.row)"
 						>
 							{{ $t('dataFlow.schedule') }}
-						</el-button>
+						</ElLink>
 						<el-dropdown
-							style="margin-left: 10px"
 							v-show="moreAuthority"
+							size="small"
+							style="margin-left: 10px"
 							@command="handleCommand($event, scope.row)"
 						>
-							<el-button size="mini" type="text">{{ $t('button.more') }}</el-button>
+							<ElLink type="primary">
+								{{ $t('button.more') }}
+								<i class="el-icon-arrow-down"></i>
+							</ElLink>
 							<el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
 								<el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
 									$t('dataVerify.dataVerify')
@@ -351,16 +379,6 @@
 									{{ $t('dataFlow.button.reset') }}
 								</el-dropdown-item>
 								<el-dropdown-item
-									command="forceStop"
-									:disabled="
-										$disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
-											!statusBtMap['forceStop'][scope.row.status]
-									"
-									v-readonlybtn="'SYNC_job_operation'"
-								>
-									{{ $t('dataFlow.status.force_stopping') }}
-								</el-dropdown-item>
-								<el-dropdown-item
 									command="setTag"
 									v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
 									v-readonlybtn="'SYNC_category_application'"
@@ -374,7 +392,7 @@
 										$disabledByPermission('SYNC_job_delete_all_data', scope.row.user_id) ||
 											!statusBtMap['delete'][scope.row.status]
 									"
-									v-readonlybtn="'SYNC_category_application'"
+									v-readonlybtn="'SYNC_job_delete'"
 								>
 									{{ $t('button.delete') }}
 								</el-dropdown-item>
@@ -439,9 +457,11 @@ import { toRegExp } from '../../util/util';
 import SkipError from '../../components/SkipError';
 import DownAgent from '../downAgent/agentDown';
 import TablePage from '@/components/TablePage';
+import TableFilter from '@/components/TableFilter';
+
 let interval = null;
 export default {
-	components: { TablePage, DownAgent, SkipError },
+	components: { TablePage, TableFilter, DownAgent, SkipError },
 	data() {
 		return {
 			restLoading: false,
@@ -451,7 +471,8 @@ export default {
 				status: '',
 				progress: '',
 				executionStatus: '',
-				timeData: ''
+				timeData: '',
+				syncType: ''
 			},
 			order: 'createTime DESC',
 			progressOptions: [
@@ -468,36 +489,36 @@ export default {
 					value: 'initial_sync+cdc'
 				}
 			],
-			statusOptions: [
-				{
+			statusOptions: {
+				running: {
 					label: this.$t('dataFlow.status.running'),
-					value: 'running'
+					icon: 'icon-yunhangzhong'
 				},
-				{
+				paused: {
 					label: this.$t('dataFlow.status.paused'),
-					value: 'paused'
+					icon: 'icon-daiqidong'
 				},
-				{
+				error: {
 					label: this.$t('dataFlow.status.error'),
-					value: 'error'
+					icon: 'icon-yichang'
 				},
-				{
+				draft: {
 					label: this.$t('dataFlow.status.draft'),
-					value: 'draft'
+					icon: 'icon-daiqidong'
 				},
-				{
+				scheduled: {
 					label: this.$t('dataFlow.status.scheduled'),
-					value: 'scheduled'
+					icon: 'loading'
 				},
-				{
+				stopping: {
 					label: this.$t('dataFlow.status.stopping'),
-					value: 'stopping'
+					icon: 'loading'
 				},
-				{
+				'force stopping': {
 					label: this.$t('dataFlow.status.force_stopping'),
-					value: 'force stopping'
+					icon: 'loading'
 				}
-			],
+			},
 			multipleSelection: [],
 
 			taskSettingsDialog: false, //任务调度设置弹窗开关
@@ -505,7 +526,7 @@ export default {
 			syncType: {
 				initial_sync: this.$t('dataFlow.initial_sync'),
 				cdc: this.$t('dataFlow.cdc'),
-				'initial_sync+cdc': this.$t('dataFlow.initial_sync') + this.$t('dataFlow.cdc')
+				'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
 			},
 			statusBtMap: {
 				// scheduled, draft, running, stopping, error, paused, force stopping
@@ -610,14 +631,15 @@ export default {
 				status: '',
 				progress: '',
 				executionStatus: '',
-				timeData: ''
+				timeData: '',
+				syncType: ''
 			};
 			this.table.fetch(1);
 		},
 		getData({ page, tags }) {
 			let region = this.$route.query.region;
 			let { current, size } = page;
-			let { keyword, status, progress, executionStatus, timeData } = this.searchParams;
+			let { keyword, status, progress, executionStatus, timeData, syncType } = this.searchParams;
 
 			let where = {
 				mappingTemplate: this.mappingTemplate
@@ -654,6 +676,7 @@ export default {
 				};
 			}
 			region && (where['platformInfo.region'] = region);
+			syncType && (where['setting.sync_type'] = syncType);
 			if (executionStatus) {
 				if (executionStatus === 'Lag') {
 					where['stats.stagesMetrics.replicationLag'] = {
@@ -719,6 +742,10 @@ export default {
 			});
 		},
 		cookRecord(item) {
+			let platformInfo = item.platformInfo;
+			if (platformInfo && platformInfo.regionName) {
+				item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName;
+			}
 			item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
 			let statusMap = {};
 			let getLag = lag => {
@@ -737,7 +764,7 @@ export default {
 				}
 				return r;
 			};
-			if (item.stats) {
+			if (item.stats && !window.getSettingByKey('SHOW_REGION_AND_ZONE')) {
 				item.hasChildren = false;
 				let children = item.stages;
 				item.children = [];
@@ -916,6 +943,31 @@ export default {
 			});
 			window.open(routeUrl.href, '_blank');
 		},
+		getConfirmMessage(operateStr, isBulk, name) {
+			let title = operateStr + '_confirm_title',
+				message = operateStr + '_confirm_message';
+			if (isBulk) {
+				title = 'bulk_' + title;
+				message = 'bulk_' + message;
+			}
+			const h = this.$createElement;
+			let strArr = this.$t('dataFlow.' + message).split('xxx');
+			let msg = h('p', null, [
+				strArr[0],
+				h(
+					'span',
+					{
+						class: 'color-primary'
+					},
+					name
+				),
+				strArr[1]
+			]);
+			return {
+				msg,
+				title: this.$t('dataFlow.' + title)
+			};
+		},
 		handleCommand(command, node) {
 			let ids = [];
 			if (node) {
@@ -971,14 +1023,17 @@ export default {
 				}
 			}
 		},
-		stop(ids) {
-			let message = this.$t('message.stopMessage');
+		stop(ids, item = {}) {
+			let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name);
+			let message = msgObj.msg;
+			let title = msgObj.title;
 			let list = this.table.list;
 			for (let i = 0; i < list.length; i++) {
 				let node = list[i];
 				if (ids.includes(node.id)) {
 					if (node.setting && !node.setting.sync_type.includes('cdc')) {
 						message = this.$t('message.stopInitial_syncMessage');
+						title = this.$t('dataFlow.importantReminder');
 					}
 					if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
 						const h = this.$createElement;
@@ -988,41 +1043,33 @@ export default {
 							h('span', { style: { color: '#48b6e2' } }, node.name),
 							')' + arr[1]
 						]);
+						title = this.$t('dataFlow.importantReminder');
 					}
 				}
 			}
-			this.$confirm(message, this.$t('dataFlow.importantReminder'), {
-				type: 'warning',
-				closeOnClickModal: false
-			})
-				.then(() => {
-					this.changeStatus(ids, { status: 'stopping' });
-				})
-				.catch(() => {
-					this.table.fetch();
-				});
+			this.$confirm(message, title, {
+				type: 'warning'
+			}).then(() => {
+				this.changeStatus(ids, { status: 'stopping' });
+			});
 		},
-		forceStop(ids) {
-			this.$confirm(this.$t('message.forceStoppingMessage'), this.$t('dataFlow.importantReminder'), {
-				confirmButtonText: this.$t('dataFlow.button.force_stop'),
-				cancelButtonText: this.$t('message.cancel'),
-				type: 'warning',
-				closeOnClickModal: false
+		forceStop(ids, item = {}) {
+			let msgObj = this.getConfirmMessage('force_stop', ids.length > 1, item.name);
+			this.$confirm(msgObj.msg, msgObj.title, {
+				type: 'warning'
 			}).then(() => {
 				this.changeStatus(ids, { status: 'force stopping' });
 			});
 		},
-		del(ids) {
+		del(ids, item = {}) {
 			let where = {
 				_id: {
 					inq: ids
 				}
 			};
-			this.$confirm(this.$t('message.deteleJobMessage'), this.$t('dataFlow.importantReminder'), {
-				confirmButtonText: this.$t('classification.deleteNode'),
-				cancelButtonText: this.$t('message.cancel'),
-				type: 'warning',
-				closeOnClickModal: false
+			let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name);
+			this.$confirm(msgObj.msg, msgObj.title, {
+				type: 'warning'
 			}).then(() => {
 				dataFlows.deleteAll(where).then(res => {
 					if (res.data && res.data.success) {
@@ -1036,12 +1083,10 @@ export default {
 				});
 			});
 		},
-		initialize(ids) {
-			this.$confirm(this.$t('message.resetMessage'), this.$t('dataFlow.importantReminder'), {
-				confirmButtonText: this.$t('dataFlow.button.reset'),
-				cancelButtonText: this.$t('message.cancel'),
-				type: 'warning',
-				closeOnClickModal: false
+		initialize(ids, item = {}) {
+			let msgObj = this.getConfirmMessage('initialize', ids.length > 1, item.name);
+			this.$confirm(msgObj.msg, msgObj.title, {
+				type: 'warning'
 			}).then(() => {
 				this.restLoading = true;
 				dataFlows
@@ -1211,6 +1256,13 @@ export default {
 			color: #999999;
 			background: #f5f5f5;
 			border: 1px solid #dedee4;
+		}
+		.task-name {
+			color: #333;
+		}
+		.region-info {
+			line-height: 20px;
+			color: #aaa;
 		}
 		.table-operations {
 			display: flex;
