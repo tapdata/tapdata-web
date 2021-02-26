@@ -14,7 +14,12 @@
 			@input="input"
 		>
 			<ElOption value="" :label="$t('button.all')"></ElOption>
-			<ElOption v-for="opt in options" :key="opt.value" :value="opt.value" :label="opt.label"></ElOption>
+			<ElOption
+				v-for="(opt, key) in options"
+				:key="key"
+				:value="opt.value || key"
+				:label="opt.label || opt"
+			></ElOption>
 		</ElSelect>
 	</span>
 </template>
@@ -26,7 +31,7 @@ export default {
 			type: String
 		},
 		options: {
-			type: Array
+			type: [Array, Object]
 		}
 	},
 	data() {
@@ -72,6 +77,7 @@ export default {
 <style lang="less">
 .table-filter__icon {
 	font-size: 12px;
+	cursor: pointer;
 }
 .table-filter__select {
 	width: 0;

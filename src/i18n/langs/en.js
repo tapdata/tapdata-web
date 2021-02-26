@@ -436,7 +436,7 @@ const en = {
 		submitConfirmation: 'Submit Confirmation',
 		SyncPoint: 'CDC start timepoint',
 		cdcLabel: 'Data source:',
-		syncType: 'Sync Type',
+		syncType: 'Type',
 		SyncInfo: {
 			localTZ: 'Local Timezone CDC Time: custom a point of  CDC time，in local time zone',
 			current: 'Current Time：Current DB Time',
@@ -655,6 +655,32 @@ const en = {
 			file_create_time_ondisk: 'File Create Time',
 			file_path: 'File Path'
 		},
+		delete_confirm_Title: 'Delete the task? ',
+		delete_confirm_Message: 'After deleting task XXX, this task cannot be restored',
+		bulk_delete_confirm_Title: 'Delete tasks in batch? ',
+		bulk_delete_confirm_Message: 'After deleting tasks in batch, tasks cannot be restored',
+
+		stop_confirm_title: 'Do you want to suspend this task? ',
+		stop_confirm_message:
+			'After the task xxx is suspended, when the table in the task that has not been fully synchronized is started again, the full synchronization will be performed again',
+		bulk_stop_confirm_title: 'Do you want to pause tasks in bulk? ',
+		bulk_stop_confirm_message:
+			'After the task is paused in batch, when the table in the task that has not been fully synchronized is started again, the full synchronization will be performed again',
+
+		force_stop_confirm_title: 'Do you want to force stop this task? ',
+		force_stop_confirm_message:
+			'Forcibly stop the task xxx will immediately interrupt the data transmission, force the task to stop quickly, and reset the task',
+		bulk_force_stop_confirm_title: 'Do you want to force stop tasks in batches? ',
+		bulk_force_stop_confirm_message:
+			'The batch forced stop task will immediately interrupt the data transmission to force the task to stop quickly and reset the task',
+
+		initialize_confirm_title: 'Do you want to reset this task? ',
+		initialize_confirm_message:
+			'Resetting task xxx will clear the task synchronization progress and the task will be executed again',
+		bulk_initialize_confirm_title: 'Do you want to reset tasks in bulk? ',
+		bulk_initialize_confirm_message:
+			'Resetting the task in batches will clear the task synchronization progress, and the task will be executed again',
+
 		importantReminder: 'Important notice',
 		modifyEditText: ' If you edited the',
 		nodeLayoutProcess: ' node arrangement',
