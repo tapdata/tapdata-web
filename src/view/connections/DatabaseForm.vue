@@ -521,12 +521,12 @@ export default {
 		},
 		//可用区联动database host
 		changeDatabaseHost() {
-			if (this.dataSourceZone || this.dataSourceZone.length === 0) {
+			if (!this.dataSourceZone || this.dataSourceZone.length === 0) {
 				return;
 			}
 			let currentZone = this.dataSourceZone.filter(item => item.zoneCode === this.model.s_zone);
 			if (currentZone.length > 0) {
-				this.model.database_host = currentZone[0].ipv4;
+				this.model.database_host = currentZone[0].ipv4 || currentZone[0].ipv6 || '';
 			}
 		},
 		//change config
@@ -609,10 +609,10 @@ export default {
 				this.$router.push('/connections');
 			});
 		},
-		handleName(sourceData, target) {
-			let data = sourceData.filter(item => item.code === target);
+		handleName(ops) {
+			let data = ops.sourceData.filter(item => item[ops.target] === ops.field);
 			if (data.length === 0) return;
-			return data[0].name;
+			return data[0][ops.name];
 		},
 		//处理不同rds 场景 platformInfo
 		handlePlatformInfo(params) {
@@ -628,17 +628,34 @@ export default {
 				IP_type: params.IP_type || ''
 			};
 			//存实例名称
-			platformInfo['regionName'] = this.handleName(this.instanceMock || [], platformInfo.region);
-			platformInfo['zoneName'] = this.handleName(this.instanceModelZone || [], platformInfo.zone);
+			platformInfo['regionName'] = this.handleName({
+				sourceData: this.instanceMock,
+				field: platformInfo.region,
+				target: 'code',
+				name: 'name'
+			});
+			platformInfo['zoneName'] = this.handleName({
+				sourceData: this.instanceModelZone,
+				field: platformInfo.zone,
+				target: 'code',
+				name: 'name'
+			});
 			//数据源名称
-			if (platformInfo.DRS_regionName !== '') {
-				platformInfo['DRS_regionName'] = this.handleName(
-					this.dataSourceMock || [],
-					platformInfo.DRS_regionName
-				);
+			if (platformInfo.DRS_region !== '') {
+				platformInfo['DRS_regionName'] = this.handleName({
+					sourceData: this.dataSourceMock,
+					field: platformInfo.DRS_region,
+					target: 'poolId',
+					name: 'poolName'
+				});
 			}
-			if (platformInfo.DRS_zoneName !== '') {
-				platformInfo['DRS_zoneName'] = this.handleName(this.dataSourceZone || [], platformInfo.DRS_zoneName);
+			if (platformInfo.DRS_zone !== '') {
+				platformInfo['DRS_zoneName'] = this.handleName({
+					sourceData: this.dataSourceZone,
+					field: platformInfo.DRS_zone,
+					target: 'zoneCode',
+					name: 'zoneName'
+				});
 			}
 			return platformInfo;
 		},
