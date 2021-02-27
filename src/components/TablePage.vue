@@ -25,9 +25,9 @@
 					</div>
 				</div>
 				<el-table
+					v-loading="loading"
 					class="table-page-table border"
 					height="100%"
-					v-loading="loading"
 					:element-loading-text="$t('dataFlow.dataLoading')"
 					:row-key="rowKey"
 					:data="list"

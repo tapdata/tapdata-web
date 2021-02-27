@@ -162,13 +162,7 @@
 				</el-button>
 			</div>
 
-			<el-table-column
-				type="selection"
-				width="45"
-				:reserve-selection="true"
-				:selectable="row => !row.hasChildren"
-			>
-			</el-table-column>
+			<el-table-column type="selection" width="45" :selectable="row => !row.hasChildren"> </el-table-column>
 			<el-table-column
 				v-if="$window.getSettingByKey('SHOW_REGION_AND_ZONE')"
 				min-width="200"
@@ -238,7 +232,10 @@
 						/>
 						<i
 							v-if="scope.row.status !== 'running'"
-							:class="'iconfont ' + (statusMap[scope.row.status] ? statusMap[scope.row.status].icon : '')"
+							:class="
+								'dataflow-table__icon iconfont ' +
+									(statusMap[scope.row.status] ? statusMap[scope.row.status].icon : '')
+							"
 						></i>
 						<span>{{ scope.row.statusLabel }}</span>
 						<span
@@ -1097,9 +1094,7 @@ export default {
 				dataFlows.deleteAll(where).then(res => {
 					if (res.data && res.data.success) {
 						this.table.fetch();
-						if (ids.length > 0) {
-							this.responseHandler(res.data, this.$t('message.deleteOK'));
-						}
+						this.responseHandler(res.data, this.$t('message.deleteOK'));
 					} else if (res.data && res.data.fail) {
 						this.$message.info(this.$t('message.deleteFail'));
 					}
@@ -1116,9 +1111,7 @@ export default {
 					.resetAll(ids)
 					.then(res => {
 						this.table.fetch();
-						if (ids.length > 0) {
-							this.responseHandler(res.data, this.$t('message.resetOk'));
-						}
+						this.responseHandler(res.data, this.$t('message.resetOk'));
 					})
 					.catch(() => {
 						this.$message.info(this.$t('message.cancelReset'));
@@ -1158,9 +1151,7 @@ export default {
 			errorEvents && (attributes.errorEvents = errorEvents);
 			dataFlows.update(where, attributes).then(res => {
 				this.table.fetch();
-				if (ids.length > 0) {
-					this.responseHandler(res.data, this.$t('message.operationSuccuess'));
-				}
+				this.responseHandler(res.data, this.$t('message.operationSuccuess'));
 			});
 		},
 		skipHandler(id, errorEvents) {
@@ -1303,6 +1294,9 @@ export default {
 }
 </style>
 <style lang="less">
+.data-flow-wrap .data-flow-list .dataflow-table__icon {
+	font-size: 14px;
+}
 .jobSeceduleDialog {
 	.text {
 		padding-left: 100px;
