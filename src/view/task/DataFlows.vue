@@ -203,7 +203,7 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column width="150">
+			<el-table-column width="180">
 				<div slot="header">
 					{{ $t('dataFlow.syncType') }}
 					<TableFilter
@@ -222,7 +222,7 @@
 					</span>
 				</template>
 			</el-table-column>
-			<el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="380">
+			<el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="180">
 				<template slot-scope="scope">
 					<div>
 						<img
@@ -257,12 +257,12 @@
 					{{ scope.row.user ? scope.row.user.username : '-' }}
 				</template>
 			</el-table-column>
-			<el-table-column prop="startTime" :label="$t('dataFlow.creationTime')" width="150" sortable="custom">
+			<el-table-column prop="startTime" :label="$t('dataFlow.creationTime')" width="180" sortable="custom">
 				<template slot-scope="scope">
 					{{ scope.row.startTime ? $moment(scope.row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('dataFlow.operate')" align="center" min-width="180" width="250">
+			<el-table-column :label="$t('dataFlow.operate')" width="250">
 				<template slot-scope="scope">
 					<div class="table-operations" v-if="!scope.row.hasChildren">
 						<el-tooltip
@@ -1279,7 +1279,6 @@ export default {
 		.table-operations {
 			display: flex;
 			align-items: center;
-			justify-content: center;
 			flex-wrap: wrap;
 		}
 	}
