@@ -62,7 +62,10 @@
 					<el-button
 						v-readonlybtn="'SYNC_job_operation'"
 						:disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
-						v-if="!statusBtMap[status].reloadSchema"
+						v-if="
+							!statusBtMap[status].reloadSchema &&
+								!$window.getSettingByKey('SHOW_DATAFLOW_RELOADSCHEMA_BUTTON')
+						"
 						class="action-btn"
 						size="mini"
 						@click="reloadSchema"

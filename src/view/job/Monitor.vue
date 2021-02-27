@@ -10,9 +10,13 @@
 					</el-select>
 				</el-col>
 				<el-col :span="8" style="text-align: right;">
-					<el-button class="e-button" type="primary" v-if="stageId !== 'all'" @click="seeNodeData">{{
-						$t('dataFlow.button.viewConfig')
-					}}</el-button>
+					<el-button
+						class="e-button"
+						type="primary"
+						v-if="stageId !== 'all' && !$window.getSettingByKey('SHOW_DATAFLOW_CELL_BUTTON')"
+						@click="seeNodeData"
+						>{{ $t('dataFlow.button.viewConfig') }}</el-button
+					>
 				</el-col>
 				<!--				<el-col :span="4" style="float: right; text-align: right;">-->
 				<!--					<el-button-->

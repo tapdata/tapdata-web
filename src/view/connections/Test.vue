@@ -1,7 +1,6 @@
 <template>
 	<el-dialog
 		class="connection-test-dialog"
-		:title="$t('connection.testConnection')"
 		:visible="dialogTestVisible"
 		width="770px"
 		:show-close="false"
@@ -10,21 +9,30 @@
 		:close-on-click-modal="false"
 		:close-on-press-escape="false"
 	>
-		<div class="test-status">
+		<div class="test-result">
 			<div
 				v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'"
 				style="color: #d54e21"
 			>
-				{{ $t('dataForm.test.error') }}
+				<i class="el-icon-warning" style="color:#d54e21"></i>
+				<span class="test-title">{{ $t('dataForm.test.error') }}</span>
 			</div>
 			<div v-else>
-				<div v-if="status === 'invalid' || status === 'ready'">
-					{{ $t('dataForm.test.testResult')
-					}}<span :style="`color: ${colorMap[status]};`">{{ statusMap[status] }}</span>
+				<div class="test-status" v-if="['invalid'].includes(status)">
+					<i class="el-icon-error" :style="{ color: colorMap[status] }"></i>
+					<span class="test-title">{{ $t('dataForm.test.testResultFail') }}</span>
 				</div>
-				<div v-else>
-					{{ $t('dataForm.primaryTest') }}
-					<el-image style="width: 32px; height: 15px;" src="static/editor/wating.svg"></el-image>
+				<div class="test-status" v-if="['ready'].includes(status)">
+					<i class="el-icon-success" :style="{ color: colorMap[status] }"></i>
+					<span class="test-title">{{ $t('dataForm.test.testResultSuccess') }}</span>
+				</div>
+				<div class="test-status" v-if="!['ready', 'invalid'].includes(status)">
+					<el-image
+						style="width: 20px; height: 20px; vertical-align: bottom;"
+						src="static/icon/loading-drs.gif"
+					></el-image>
+					<span v-if="testData.testLogs.length === 0">{{ $t('dataForm.primaryTest') }}</span>
+					<span v-else>{{ $t('dataForm.testing') }}</span>
 				</div>
 			</div>
 		</div>
@@ -35,24 +43,39 @@
 			:row-style="rowStyleHandler"
 			v-show="testData.testLogs && testData.testLogs.length > 0"
 		>
-			<el-table-column prop="show_msg" :label="$t('dataForm.test.items')" width="250">
+			<el-table-column prop="show_msg" :label="$t('dataForm.test.items')">
 				<template slot-scope="scope">
 					<span>{{ $t(`dataForm.form.response_body.${scope.row.show_msg}`) }}</span>
 				</template>
 			</el-table-column>
-			<el-table-column prop="status" :label="$t('dataForm.test.result')" width="100">
+			<el-table-column prop="status" :label="$t('dataForm.test.result')" width="150">
 				<template slot-scope="scope">
 					<span
 						v-if="scope.row.status === 'failed' && !scope.row.required"
 						:style="`color: ${colorMap['warning']};`"
-						>{{ statusMap[scope.row.status] }}</span
 					>
-					<span v-else :style="`color: ${colorMap[scope.row.status]};`">{{
-						statusMap[scope.row.status]
-					}}</span>
+						<i class="el-icon-warning" :style="{ color: colorMap[status] }"></i>
+						{{ statusMap[scope.row.status] }}
+					</span>
+					<span v-if="scope.row.status === 'unTest'" :style="`color: ${colorMap[scope.row.status]};`">
+						<el-image
+							style="width: 20px; height: 20px; vertical-align: bottom;"
+							src="static/icon/loading-drs.gif"
+						></el-image>
+						{{ statusMap[scope.row.status] }}
+					</span>
+					<span v-else :style="`color: ${colorMap[scope.row.status]};`">
+						<i :class="iconMap[scope.row.status]" :style="{ color: colorMap[scope.row.status] }"></i>
+						{{ statusMap[scope.row.status] }}
+					</span>
 				</template>
 			</el-table-column>
-			<el-table-column prop="fail_message" :label="$t('dataForm.test.information')" width="358">
+			<el-table-column
+				prop="fail_message"
+				:label="$t('dataForm.test.information')"
+				width="308"
+				v-if="hideTableInfo"
+			>
 			</el-table-column>
 		</el-table>
 		<span slot="footer" class="dialog-footer">
@@ -87,6 +110,7 @@ export default {
 			wsError: '',
 			status: '',
 			timer: null,
+			hideTableInfo: true,
 			colorMap: {
 				passed: '#70AD47',
 				waiting: '#aaaaaa',
@@ -96,6 +120,15 @@ export default {
 				invalid: '#f56c6c',
 				testing: '#aaaaaa',
 				unTest: '#aaaaaa'
+			},
+			iconMap: {
+				ready: 'el-icon-success',
+				invalid: 'el-icon-error',
+				testing: '',
+				passed: 'el-icon-success',
+				waiting: 'el-icon-question',
+				failed: 'el-icon-error',
+				unTest: ''
 			},
 			statusMap: {
 				ready: this.$t('dataForm.test.success'),
@@ -133,11 +166,15 @@ export default {
 					if (result.response_body) {
 						let validate_details = result.response_body.validate_details || [];
 						let res = validate_details.filter(item => item.status !== 'waiting');
+						let passedNums = validate_details.filter(item => item.status !== 'passed');
 						if (res.length === 0) {
 							validate_details = validate_details.map(item => {
 								item.status = 'unTest';
 								return item;
 							});
+						}
+						if (passedNums.length === 0) {
+							this.hideTableInfo = false;
 						}
 						this.testData.testLogs = validate_details;
 						testData['testLogs '] = validate_details;
@@ -186,7 +223,19 @@ export default {
 </script>
 <style lang="less" scoped>
 .connection-test-dialog {
-	.test-status {
+	.test-result {
+		.test-status {
+			margin-bottom: 20px;
+		}
+		.test-title {
+			font-size: 14px;
+			font-weight: bold;
+			vertical-align: bottom;
+			margin-left: 10px;
+		}
+		i {
+			font-size: 18px;
+		}
 		margin-bottom: 10px;
 	}
 }
@@ -203,19 +252,19 @@ export default {
 		}
 		margin-bottom: 10px;
 	}
+	.el-dialog__body {
+		padding: 0 20px;
+	}
 	.test-block {
-		border: 1px solid #dedee4;
-		padding: 10px;
 		th,
 		tr {
-			background: #f5f5f5;
 			.cell {
 				white-space: normal !important;
 			}
 		}
 		td,
 		th.is-leaf {
-			border-bottom: 5px solid #fff;
+			border-bottom: 1px solid #ebeef5;
 		}
 		thead {
 			color: #222;

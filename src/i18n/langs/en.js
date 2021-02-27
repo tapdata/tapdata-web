@@ -1586,11 +1586,13 @@ const en = {
 		saveSuccess: 'Test and save success.',
 		saveFail: 'Save failed.',
 		primaryTest: 'Starting connection test service, please wait for a while ...',
-
+		testing: 'Testing, please wait for a while ...',
 		submit: 'Submit',
 		cancel: 'Cancel',
 		backDetection: 'backstage testing',
 		test: {
+			testResultFail: 'Connection test failed',
+			testResultSuccess: 'Connection test successful',
 			testResult: 'Test connection result: ',
 			success: 'Pass',
 			fail: 'Failed',

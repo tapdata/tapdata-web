@@ -460,7 +460,7 @@ export default {
 <style scoped lang="less">
 .database {
 	.head {
-		display: block;
+		display: none;
 	}
 
 	.nodeBody {
