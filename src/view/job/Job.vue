@@ -202,7 +202,7 @@
 				<el-button
 					v-readonlybtn="'SYNC_job_edition'"
 					:disabled="$disabledByPermission('SYNC_job_edition_all_data', creatUserId)"
-					v-if="!statusBtMap[status].edit && !editable"
+					v-if="!statusBtMap[status].edit && !editable && !$window.getSettingByKey('HIDE_EDIT_BUTTON')"
 					class="btn-edit"
 					size="mini"
 					type="primary"
