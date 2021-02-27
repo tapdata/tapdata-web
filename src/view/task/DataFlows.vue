@@ -289,7 +289,6 @@
 						<ElLink
 							v-if="scope.row.status === 'running'"
 							v-readonlybtn="'SYNC_job_operation'"
-							class="ml-10"
 							type="primary"
 							:disabled="
 								$disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
@@ -301,7 +300,6 @@
 						<ElLink
 							v-if="scope.row.status === 'stopping'"
 							v-readonlybtn="'SYNC_job_operation'"
-							class="ml-10"
 							type="primary"
 							:disabled="
 								$disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
