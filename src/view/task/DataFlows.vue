@@ -873,7 +873,7 @@ export default {
 						type: 'warning'
 					}
 				).then(() => {
-					top.location.href = '/#/instance';
+					top.location.href = '/purchase.html#/';
 				});
 				return;
 			}
