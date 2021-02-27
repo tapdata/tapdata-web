@@ -95,7 +95,7 @@
 				<el-button
 					class="btn-setting"
 					size="mini"
-					v-if="!$window.getSettingByKey('SHOW_DARAFLOW_SETTING')"
+					v-if="!$window.getSettingByKey('SHOW_DATAFLOW_SETTING')"
 					@click="showSetting"
 				>
 					<i class="iconfont icon-shezhi1"></i>
@@ -202,7 +202,9 @@
 				<el-button
 					v-readonlybtn="'SYNC_job_edition'"
 					:disabled="$disabledByPermission('SYNC_job_edition_all_data', creatUserId)"
-					v-if="!statusBtMap[status].edit && !editable"
+					v-if="
+						!statusBtMap[status].edit && !editable && !$window.getSettingByKey('HIDE_DATAFLOW_EDIT_BUTTON')
+					"
 					class="btn-edit"
 					size="mini"
 					type="primary"
