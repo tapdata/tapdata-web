@@ -385,7 +385,7 @@ export default class Editor extends BaseObject {
 				title: i18n.t('editor.ui.sidebar.logs'),
 				name: 'logsPanel',
 				editor: this,
-				closeBtn: window.getSettingByKey('SHOW_DARAFLOW_LOG_CANCEL_BUTTON') ? false : true,
+				closeBtn: window.getSettingByKey('SHOW_DATAFLOW_LOG_CANCEL_BUTTON') ? false : true,
 				propsData: {
 					dataFlow: dataFlow
 				},
@@ -395,7 +395,7 @@ export default class Editor extends BaseObject {
 				title: i18n.t('editor.ui.sidebar.milestone'),
 				name: 'milestone',
 				editor: this,
-				closeBtn: window.getSettingByKey('SHOW_DARAFLOW_LOG_CANCEL_BUTTON') ? false : true,
+				closeBtn: window.getSettingByKey('SHOW_DATAFLOW_LOG_CANCEL_BUTTON') ? false : true,
 				propsData: {
 					dataFlow: dataFlow
 				},
