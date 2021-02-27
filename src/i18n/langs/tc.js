@@ -1548,11 +1548,13 @@ const tc = {
 		saveSuccess: '測試通過並創建成功',
 		saveFail: '保存失敗',
 		primaryTest: '正在啟動連接檢測服務，請稍等 ',
-
+		testing: '正在測試中，請稍等...',
 		submit: '保存',
 		cancel: '取消',
 		backDetection: '後台檢測',
 		test: {
+			testResultFail: '連接測試失敗',
+			testResultSuccess: '連接測試成功',
 			title: '測試結果',
 			success: '測試通過',
 			fail: '測試未通過',
