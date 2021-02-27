@@ -511,7 +511,7 @@ const tc = {
 			running: '運行中',
 			paused: '已暫停',
 			draft: '編輯中',
-			scheduled: '調度中',
+			scheduled: '啟動中',
 			stopping: '停止中',
 			error: '錯誤',
 			force_stopping: '強制停止',

@@ -69,7 +69,7 @@
 					</el-select>
 				</li> -->
 				<li class="item">
-					<ElButton plain class="btn-refresh" size="small" @click="fetch()">
+					<ElButton plain class="btn-refresh" size="small" @click="table.fetch()">
 						<i class="el-icon-refresh"></i>
 					</ElButton>
 				</li>

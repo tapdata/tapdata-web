@@ -20,7 +20,12 @@
 					<li>
 						<ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
 							<ElOption label="全部状态" value=""></ElOption>
-							<ElOption v-for="(item, key) in statusOptions" :key="key" :label="item.label" :value="key">
+							<ElOption
+								v-for="(value, label) in statusOptions"
+								:key="value"
+								:label="label"
+								:value="value"
+							>
 							</ElOption>
 						</ElSelect>
 					</li>
@@ -70,7 +75,7 @@
 						</el-select>
 					</li> -->
 					<li>
-						<ElButton plain class="btn-refresh" size="small" @click="fetch()">
+						<ElButton plain class="btn-refresh" size="small" @click="table.fetch()">
 							<i class="el-icon-refresh"></i>
 						</ElButton>
 					</li>
@@ -233,10 +238,7 @@
 						/>
 						<i
 							v-if="scope.row.status !== 'running'"
-							:class="
-								'iconfont ' +
-									(statusOptions[scope.row.status] ? statusOptions[scope.row.status].icon : '')
-							"
+							:class="'iconfont ' + (statusMap[scope.row.status] ? statusMap[scope.row.status].icon : '')"
 						></i>
 						<span>{{ scope.row.statusLabel }}</span>
 						<span
@@ -489,13 +491,13 @@ export default {
 					value: 'initial_sync+cdc'
 				}
 			],
-			statusOptions: {
+			statusMap: {
 				running: {
 					label: this.$t('dataFlow.status.running'),
 					icon: 'icon-yunhangzhong'
 				},
 				paused: {
-					label: this.$t('dataFlow.status.paused'),
+					label: this.$t('dataFlow.status.draft'),
 					icon: 'icon-daiqidong'
 				},
 				error: {
@@ -561,6 +563,19 @@ export default {
 	computed: {
 		table() {
 			return this.$refs.table;
+		},
+		statusOptions() {
+			let options = {};
+			let map = this.statusMap;
+			for (const key in map) {
+				const item = map[key];
+				let value = key;
+				if (options[item.label]) {
+					value = options[item.label] + ',' + value;
+				}
+				options[item.label] = value;
+			}
+			return options;
 		}
 	},
 	created() {
@@ -709,7 +724,15 @@ export default {
 					between: dates
 				};
 			}
-			status && (where.status = status);
+			if (status) {
+				if (status.includes(',')) {
+					where.status = {
+						$in: status.split(',')
+					};
+				} else {
+					where.status = status;
+				}
+			}
 			progress && (where['setting.sync_type'] = progress);
 			let filter = {
 				order: this.order,

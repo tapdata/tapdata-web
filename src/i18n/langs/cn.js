@@ -513,7 +513,7 @@ const cn = {
 			running: '运行中',
 			paused: '已暂停',
 			draft: '待启动',
-			scheduled: '调度中',
+			scheduled: '启动中',
 			stopping: '停止中',
 			error: '错误',
 			force_stopping: '强制停止',

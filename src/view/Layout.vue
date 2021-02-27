@@ -376,13 +376,14 @@ export default {
 					return menu;
 				});
 			};
+			let menus = menuSetting.concat();
 			if (window.getSettingByKey('USE_CLOUD_MENU')) {
-				let part1 = menuSetting.splice(0, 2);
-				let menu = menuSetting.splice(0, 1)[0];
-				let part2 = menuSetting;
-				menuSetting = part1.concat(menu.children, part2);
+				let part1 = menus.splice(0, 2);
+				let menu = menus.splice(0, 1)[0];
+				let part2 = menus;
+				menus = part1.concat(menu.children, part2);
 			}
-			this.menus = formatMenu(menuSetting);
+			this.menus = formatMenu(menus);
 		},
 		command(command) {
 			switch (command) {
