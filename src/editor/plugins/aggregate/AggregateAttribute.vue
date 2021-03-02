@@ -462,7 +462,11 @@ export default {
 	.el-select {
 		width: 100%;
 	}
-
+	.el-switch__label {
+		span {
+			font-size: 12px !important;
+		}
+	}
 	.el-form-item {
 		margin-bottom: 8px;
 		.el-form-item__label,
