@@ -336,9 +336,9 @@ export default {
 						required: true,
 						validator: (rule, value, callback) => {
 							if (!value || !value.trim()) {
-								callback('任务名称不为空');
+								callback('连接名称不能为空');
 							} else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(value)) {
-								callback('任务名称不符合规则');
+								callback('连接名称不符合规则');
 							} else {
 								callback();
 							}

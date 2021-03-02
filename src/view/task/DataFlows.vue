@@ -677,7 +677,8 @@ export default {
 			if (keyword && keyword.trim()) {
 				where.or = [
 					{ name: { like: toRegExp(keyword), options: 'i' } },
-					{ original_name: { like: toRegExp(keyword), options: 'i' } }
+					{ 'stages.tableName': { like: toRegExp(keyword), options: 'i' } },
+					{ 'stages.name': { like: toRegExp(keyword), options: 'i' } }
 				];
 			}
 			if (tags && tags.length) {

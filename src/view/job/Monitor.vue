@@ -619,7 +619,9 @@ export default {
 				this.flow.startTime = val.startTime ? this.$moment(val.startTime).format('YYYY-MM-DD HH:mm:ss') : '';
 				this.flow.finishTime = val.finishTime ? this.$moment(val.finishTime).format('YYYY-MM-DD HH:mm:ss') : '';
 
-				this.flow.username = (val.user && val.user.email) || '';
+				if (this.dataFlow.user) {
+					this.flow.username = this.dataFlow.user.username || this.dataFlow.user.email;
+				}
 				this.flow.status = val.status;
 				if (this.flow.status === 'force stopping') {
 					this.flow.status = 'force_stopping';
