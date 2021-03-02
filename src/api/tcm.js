@@ -22,4 +22,12 @@ export default class TCM extends PublicAPI {
 	getRegionZone() {
 		return axios.get(this.url + '/agent/regionZone');
 	}
+	//vpc列表
+	getVpcList(id) {
+		return axios.get(this.url + '/vpc/list/' + id);
+	}
+	//创建网络策略
+	strategy(params) {
+		return axios.post(this.url + '/strategy', params);
+	}
 }

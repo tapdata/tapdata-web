@@ -37,6 +37,11 @@ export default function(vm) {
 						value: 'rds'
 					},
 					{
+						label: 'ECS自建库',
+						tip: '创建移动云内ECS自建库内的数据库为来源的连接，开通网络策略',
+						value: 'ecs'
+					},
+					{
 						label: '云外自建库',
 						tip: '创建来自移动云外部的用户自建数据库连接',
 						value: 'selfDB'
@@ -61,6 +66,17 @@ export default function(vm) {
 						triggerConfig: {
 							show: false
 						}
+					},
+					{
+						triggerOptions: [
+							{
+								field: 'sourceType',
+								value: 'ecs'
+							}
+						],
+						triggerConfig: {
+							label: 'ECS地域'
+						}
 					}
 				],
 				required: true
@@ -82,9 +98,45 @@ export default function(vm) {
 						triggerConfig: {
 							show: false
 						}
+					},
+					{
+						triggerOptions: [
+							{
+								field: 'sourceType',
+								value: 'ecs'
+							}
+						],
+						triggerConfig: {
+							label: 'ECS可用区'
+						}
 					}
 				],
 				required: true
+			},
+			{
+				type: 'select',
+				field: 'vpc',
+				label: '选择VPC',
+				options: [],
+				show: false,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'sourceType',
+								value: 'ecs'
+							}
+						],
+						triggerConfig: {
+							show: true
+						}
+					}
+				],
+				required: true
+			},
+			{
+				type: 'slot',
+				slot: 'vpc-setting'
 			},
 			// {
 			// 	type: 'select',

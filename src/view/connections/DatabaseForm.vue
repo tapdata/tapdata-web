@@ -43,6 +43,16 @@
 							<div class="url-tip" slot="name" v-if="!$route.params.id">
 								中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
 							</div>
+							<div class="url-tip" slot="vpc-setting">
+								<el-checkbox v-model="model.checkedVpc">开启同地域ECS自建库网络连接设置</el-checkbox>
+								<span
+									v-if="model.checkedVpc"
+									style="cursor: pointer;color: #d54e21"
+									@click="createStrategy()"
+									>点击开通</span
+								>
+								<span v-else>已开通</span>
+							</div>
 							<div
 								class="url-tip"
 								slot="urlTip"
@@ -205,6 +215,9 @@
 		>
 			<span>
 				<el-input v-model="rename" maxlength="100" show-word-limit clearable></el-input>
+				<span style="color: #ccc; margin-top: 5px; font-size: 12px;display: inline-block;"
+					>中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格</span
+				>
 			</span>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="handleCancelRename" size="mini">{{ $t('dataForm.cancel') }}</el-button>
@@ -285,6 +298,7 @@ export default {
 			connectionTypeOption: '',
 			isUrlOption: '',
 			rename: '',
+			vpcList: '',
 			kafka: {
 				id: '',
 				name: '',
@@ -365,6 +379,9 @@ export default {
 		},
 		'model.s_zone'() {
 			this.changeDatabaseHost();
+		},
+		'model.sourceType'() {
+			this.getVpcList();
 		}
 	},
 	methods: {
@@ -591,10 +608,79 @@ export default {
 					}
 					break;
 				}
+				case 'vpc': {
+					//选择vpc
+					let vpc = items.find(it => it.field === 'vpc');
+					if (vpc) {
+						vpc.options = this.vpcList.map(item => {
+							return {
+								id: item.routerId,
+								name: item.name,
+								label: item.name,
+								value: item.routerId
+							};
+						});
+					}
+					break;
+				}
 			}
 		},
 		handleTestVisible() {
 			this.dialogTestVisible = false;
+		},
+		//切换sourceType ecs需要请求VPC 开通网络策略
+		getVpcList() {
+			if (this.model.sourceType !== 'ecs') return;
+			let userId = 'CIDC-U-cd8e01a325ea4eb0bcf0b83f973d5d9f'; //this.$cookie.get('user_id')
+			this.$api('tcm')
+				.getVpcList(userId)
+				.finally(() => {
+					this.vpcList = [
+						{
+							id: '0b09711e8fac4279b7f0bd0301cdc407',
+							name: 'vaso_test',
+							description: '',
+							createdTime: '2020-12-17T07:43:51.000+00:00',
+							deleted: false,
+							routerId: '73c496ff-036a-441e-8ff6-e082c5e05022',
+							scale: 'high',
+							ecStatus: 'ACTIVE',
+							adminStateUp: true,
+							userId: 'CIDC-U-4df68fafefc3405a97b63e37b37397ac',
+							userName: '000AE0002020062013764272',
+							region: 'N001-JS-WXCS01',
+							isThrough: true
+						},
+						{
+							id: '14394f6ccc244f8396251a6462bd49ca',
+							name: 'xhxhxhxhcs',
+							description: '',
+							createdTime: '2021-01-08T06:20:47.000+00:00',
+							deleted: false,
+							routerId: 'bab376b9-b7b3-4e87-971d-ca30becd76a2',
+							scale: 'normal',
+							ecStatus: 'ACTIVE',
+							adminStateUp: true,
+							userId: 'CIDC-U-4df68fafefc3405a97b63e37b37397ac',
+							userName: '000AE0002020062013764272',
+							region: 'N001-JS-SZCS01',
+							isThrough: false
+						}
+					];
+					this.changeConfig(this.vpcList, 'vpc');
+				});
+		},
+		//创建网络策略
+		createStrategy() {
+			let data = {
+				userId: 'CIDC-U-cd8e01a325ea4eb0bcf0b83f973d5d9f',
+				routerId: this.model.vpc
+			};
+			this.$api('tcm')
+				.strategy(data)
+				.finally(() => {
+					this.$message.success('创建成功');
+				});
 		},
 		goBack() {
 			let tip = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接';
