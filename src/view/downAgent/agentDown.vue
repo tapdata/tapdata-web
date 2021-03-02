@@ -106,12 +106,18 @@
 					<i class="el-icon-loading" v-if="refreshLoading"></i>
 					{{ $t('dialog.downAgent.refresh') }}</el-button
 				> -->
-				<el-button size="mini" type="primary" class="install" v-if="lastDataNum > 0">
-					{{ $t('dialog.downAgent.agentRun') }}
-				</el-button>
-				<el-button size="mini" class="install" v-else>
-					{{ $t('dialog.downAgent.waitingInstall') }}
-					<el-image style="width: 32px; height: 15px;" src="static/editor/wating.svg"></el-image>
+				<template v-if="downLoadNum < 1">
+					<el-button size="mini" type="primary" class="install" v-if="lastDataNum > 0">
+						{{ $t('dialog.downAgent.agentRun') }}
+					</el-button>
+					<el-button size="mini" class="install" v-else>
+						{{ $t('dialog.downAgent.waitingInstall') }}
+						<el-image style="width: 32px; height: 15px;" src="static/editor/wating.svg"></el-image>
+					</el-button>
+				</template>
+
+				<el-button size="mini" class="install" v-else @click="handlepageJump">
+					{{ $t('dialog.downAgent.agentInstallation') }}
 				</el-button>
 			</span>
 		</el-dialog>

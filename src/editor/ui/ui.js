@@ -21,9 +21,11 @@ export default class UI extends Component {
 		// let saveTitle = i18n.t('dataFlow.button.save');
 		let taskName = '';
 		let changeName = i18n.t('dataFlow.changeName');
+		let backList = i18n.t('dataFlow.backlistText');
 		// <i class='iconfont icon-baocun el-icon' id="submit" title="${saveTitle}" style="display: none;color:##48B6E2;cursor: pointer" ></i>
 		this.el = $(`<div class="editor">
 			<div class="e-header">
+				<i title="${backList}" class="iconfont icon-sanheng" id="backIcon" style="width: 41px;height: 41px;line-height: 41px;font-size: 24px;text-align: center;color:#fff;cursor: pointer;background-color: #48b6e2"></i>
 				<div class="e-title" style="margin-left: 10px">
 					<input value="${taskName}" class="ui-input" id="taskNameInput" type="text"  maxlength="150"/>
 					<div id="edit" title="${editTitle}"
@@ -71,12 +73,20 @@ export default class UI extends Component {
 			}
 		});
 
+		// this.el.find('#backIcon').on('click', function() {
+		// 	location.href = './#/dataFlows?mapping=custom';
+		// });
+
 		this.el.find('input.ui-input').on('blur', function() {
 			$('#submit').css('display', 'none');
 			$('#edit').css('display', 'inline-block');
 			var input = document.getElementById('taskNameInput');
 			input.setSelectionRange(0, 0);
 		});
+
+		// this.el.find('#backIcon').on('click', function() {
+
+		// });
 	}
 
 	setDisableName(disable) {

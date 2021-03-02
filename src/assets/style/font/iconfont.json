@@ -6,6 +6,167 @@
   "description": "Tapdata 线装小图标",
   "glyphs": [
     {
+      "icon_id": "6967641",
+      "name": "三横",
+      "font_class": "sanheng",
+      "unicode": "e6ae",
+      "unicode_decimal": 59054
+    },
+    {
+      "icon_id": "10331666",
+      "name": "钥匙",
+      "font_class": "yuechi",
+      "unicode": "e72f",
+      "unicode_decimal": 59183
+    },
+    {
+      "icon_id": "17618982",
+      "name": "钥匙",
+      "font_class": "yuechi1",
+      "unicode": "e731",
+      "unicode_decimal": 59185
+    },
+    {
+      "icon_id": "19651252",
+      "name": "Kafka",
+      "font_class": "Kafka1",
+      "unicode": "e72e",
+      "unicode_decimal": 59182
+    },
+    {
+      "icon_id": "19651087",
+      "name": "o-maria",
+      "font_class": "o-maria",
+      "unicode": "e72d",
+      "unicode_decimal": 59181
+    },
+    {
+      "icon_id": "19585289",
+      "name": "o-kafka",
+      "font_class": "o-kafka",
+      "unicode": "e72c",
+      "unicode_decimal": 59180
+    },
+    {
+      "icon_id": "19585259",
+      "name": "o-kafka - q",
+      "font_class": "o-kafka-q",
+      "unicode": "e72a",
+      "unicode_decimal": 59178
+    },
+    {
+      "icon_id": "19549394",
+      "name": "o-mongo",
+      "font_class": "o-mongo",
+      "unicode": "e6ec",
+      "unicode_decimal": 59116
+    },
+    {
+      "icon_id": "19549395",
+      "name": "mongo",
+      "font_class": "mongo",
+      "unicode": "e6ed",
+      "unicode_decimal": 59117
+    },
+    {
+      "icon_id": "19548903",
+      "name": "mysql pxc",
+      "font_class": "mysqlpxc",
+      "unicode": "e728",
+      "unicode_decimal": 59176
+    },
+    {
+      "icon_id": "19548904",
+      "name": "o-mysql pxc",
+      "font_class": "o-mysqlpxc",
+      "unicode": "e729",
+      "unicode_decimal": 59177
+    },
+    {
+      "icon_id": "19542385",
+      "name": "maria",
+      "font_class": "maria",
+      "unicode": "e727",
+      "unicode_decimal": 59175
+    },
+    {
+      "icon_id": "13755870",
+      "name": "禁用",
+      "font_class": "jinyong",
+      "unicode": "e7d3",
+      "unicode_decimal": 59347
+    },
+    {
+      "icon_id": "15217323",
+      "name": "禁用",
+      "font_class": "jinyong1",
+      "unicode": "e726",
+      "unicode_decimal": 59174
+    },
+    {
+      "icon_id": "14390256",
+      "name": "Kafka",
+      "font_class": "Kafka",
+      "unicode": "e7be",
+      "unicode_decimal": 59326
+    },
+    {
+      "icon_id": "19449607",
+      "name": "o-excel",
+      "font_class": "o-excel",
+      "unicode": "e71d",
+      "unicode_decimal": 59165
+    },
+    {
+      "icon_id": "19449608",
+      "name": "excel",
+      "font_class": "excel1",
+      "unicode": "e71f",
+      "unicode_decimal": 59167
+    },
+    {
+      "icon_id": "19449609",
+      "name": "0-xml",
+      "font_class": "0-xml",
+      "unicode": "e720",
+      "unicode_decimal": 59168
+    },
+    {
+      "icon_id": "19449610",
+      "name": "o-csv",
+      "font_class": "o-csv",
+      "unicode": "e721",
+      "unicode_decimal": 59169
+    },
+    {
+      "icon_id": "19449611",
+      "name": "o-json",
+      "font_class": "o-json",
+      "unicode": "e722",
+      "unicode_decimal": 59170
+    },
+    {
+      "icon_id": "19449612",
+      "name": "csv",
+      "font_class": "csv1",
+      "unicode": "e723",
+      "unicode_decimal": 59171
+    },
+    {
+      "icon_id": "19449613",
+      "name": "json",
+      "font_class": "json1",
+      "unicode": "e724",
+      "unicode_decimal": 59172
+    },
+    {
+      "icon_id": "19449614",
+      "name": "xml",
+      "font_class": "xml1",
+      "unicode": "e725",
+      "unicode_decimal": 59173
+    },
+    {
       "icon_id": "19430198",
       "name": "收起",
       "font_class": "zhankai2",
@@ -76,13 +237,6 @@
       "unicode_decimal": 59157
     },
     {
-      "icon_id": "2278416",
-      "name": "权限",
-      "font_class": "Paas_icon-",
-      "unicode": "e711",
-      "unicode_decimal": 59153
-    },
-    {
       "icon_id": "6185155",
       "name": "权限码",
       "font_class": "quanxianma",
@@ -95,27 +249,6 @@
       "font_class": "quanxian4",
       "unicode": "e713",
       "unicode_decimal": 59155
-    },
-    {
-      "icon_id": "8478701",
-      "name": "权限",
-      "font_class": "quanxian5",
-      "unicode": "e714",
-      "unicode_decimal": 59156
-    },
-    {
-      "icon_id": "14482114",
-      "name": "权限",
-      "font_class": "quanxian3",
-      "unicode": "e70e",
-      "unicode_decimal": 59150
-    },
-    {
-      "icon_id": "9143143",
-      "name": "添加用户-空数据",
-      "font_class": "tianjiayonghu",
-      "unicode": "e70f",
-      "unicode_decimal": 59151
     },
     {
       "icon_id": "14999741",
@@ -312,20 +445,6 @@
       "font_class": "gbase",
       "unicode": "e6eb",
       "unicode_decimal": 59115
-    },
-    {
-      "icon_id": "17780637",
-      "name": "mongo",
-      "font_class": "mongo1",
-      "unicode": "e6ec",
-      "unicode_decimal": 59116
-    },
-    {
-      "icon_id": "17780638",
-      "name": "o-mongo",
-      "font_class": "o-mongo",
-      "unicode": "e6ed",
-      "unicode_decimal": 59117
     },
     {
       "icon_id": "17780639",
@@ -844,48 +963,6 @@
       "font_class": "0-API-target1",
       "unicode": "e6b2",
       "unicode_decimal": 59058
-    },
-    {
-      "icon_id": "14931441",
-      "name": "API-target1",
-      "font_class": "API-target1",
-      "unicode": "e6b0",
-      "unicode_decimal": 59056
-    },
-    {
-      "icon_id": "14931442",
-      "name": "API-source1",
-      "font_class": "API-source1",
-      "unicode": "e6b1",
-      "unicode_decimal": 59057
-    },
-    {
-      "icon_id": "14931495",
-      "name": "API-target1",
-      "font_class": "API-target1-copy",
-      "unicode": "ed1e",
-      "unicode_decimal": 60702
-    },
-    {
-      "icon_id": "14931497",
-      "name": "API-source1",
-      "font_class": "API-source1-copy",
-      "unicode": "ed1f",
-      "unicode_decimal": 60703
-    },
-    {
-      "icon_id": "14930821",
-      "name": "API-target",
-      "font_class": "API-target",
-      "unicode": "e6ae",
-      "unicode_decimal": 59054
-    },
-    {
-      "icon_id": "14930822",
-      "name": "API-source",
-      "font_class": "API-source",
-      "unicode": "e6af",
-      "unicode_decimal": 59055
     },
     {
       "icon_id": "14160266",

@@ -7,6 +7,7 @@
 			class="action-buttons"
 			style="display:flex;align-items: center;justify-content: space-between;padding-right: 10px;"
 		>
+			<i @click="backDataFlow" :title="$t('dataFlow.backlistText')" class="iconfont icon-sanheng backIcon"></i>
 			<div class="flex-center">
 				<el-button
 					v-if="isEditable() && !isMoniting"
@@ -345,6 +346,7 @@ export default {
 			flowDataName: '',
 			mappingTemplate: '',
 			creatUserId: '',
+			dataChangeFalg: false,
 			statusBtMap
 		};
 	},
@@ -422,6 +424,24 @@ export default {
 		// 关闭agent下载弹窗返回参数
 		closeAgentDialog() {
 			this.start();
+		},
+
+		backDataFlow() {
+			if (!this.dataChangeFalg) {
+				this.$router.push({
+					path: '/dataFlows?mapping=custom'
+				});
+			} else {
+				this.$confirm(this.$t('dataFlow.saveReminder'), this.$t('dataFlow.backlistText'), {
+					type: 'warning',
+					confirmButtonText: this.$t('dataFlow.leave'),
+					closeOnClickModal: false
+				}).then(() => {
+					this.$router.push({
+						path: '/dataFlows?mapping=custom'
+					});
+				});
+			}
 		},
 
 		isEditable() {
@@ -605,6 +625,10 @@ export default {
 			this.setSelector(this.$route.query.mapping);
 			this.editor.graph.setSettingData(dataFlow.setting);
 			this.wsSend();
+			let self = this;
+			setTimeout(() => {
+				self.dataChangeFalg = false;
+			}, 100);
 		},
 		wsSend() {
 			if (this.dataFlowId) {
@@ -670,7 +694,10 @@ export default {
 			let self = this;
 			this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
 				changeData = this.getDataFlowData(true);
-				if (changeData) self.timeSave();
+				if (changeData) {
+					self.dataChangeFalg = true;
+					self.timeSave();
+				}
 			});
 		},
 		//点击draft save按钮
@@ -1698,6 +1725,22 @@ export default {
 	.flex-center {
 		display: flex;
 		align-items: center;
+	}
+	.backIcon {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 41px;
+		height: 41px;
+		line-height: 41px;
+		font-size: 24px;
+		text-align: center;
+		color: #fff;
+		cursor: pointer;
+		background-color: #48b6e2;
+	}
+	.backIcon:hover {
+		background-color: #6dc5e8;
 	}
 	.mr-5 {
 		margin-right: 5px;
