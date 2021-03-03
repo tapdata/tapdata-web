@@ -39,11 +39,20 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
+.el-icon-success {
+	color: #color[success];
+}
+.el-icon-error {
+	color: #color[danger];
+}
 .icon-daiqidong {
 	color: #color[primary];
 }
 .icon-yunhangzhong {
 	color: #color[success];
+}
+.icon-yichang {
+	color: #color[warning];
 }
 .layout-container .iconfont {
 	font-size: 12px;
@@ -130,6 +139,12 @@
 	background-color: rgb(225, 236, 255);
 	border-color:#color[primary];
 }
+.el-divider__text, .el-link {
+	font-size: 12px;
+}
+.el-link.is-underline:hover:after {
+	display: none;
+}
 .el-link.el-link--default {
 	color: #fontColor[normal];
 }
@@ -142,13 +157,9 @@
 .el-link.el-link--primary {
 	color:#color[primary];
 	font-weight: normal;
-	font-size: 12px;
 }
 .el-link.el-link--primary:hover {
 	color: #color[lprimary];
-	&::after {
-		display: none;
-	}
 }
 .el-link.is-disabled {
 	cursor: default;

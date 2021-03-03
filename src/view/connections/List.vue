@@ -239,7 +239,6 @@ export default {
 	data() {
 		return {
 			user_id: this.$cookie.get('user_id'),
-			restLoading: false,
 			dialogDatabaseTypeVisible: false,
 			previewVisible: false,
 			multipleSelection: [],
@@ -441,18 +440,6 @@ export default {
 					})
 				};
 			});
-		},
-		rest() {
-			this.searchParams = {
-				iModel: 'fuzzy',
-				databaseType: '',
-				keyword: '',
-				databaseModel: '',
-				status: '',
-				panelFlag: true,
-				sourceType: ''
-			};
-			this.table.fetch(1);
 		},
 		getImgByType(type) {
 			if (!type) {

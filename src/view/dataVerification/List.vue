@@ -1,357 +1,233 @@
 <template>
 	<section class="data-verify-wrap">
-		<div class="panel-main">
-			<div class="topbar">
-				<ul class="search-bar">
-					<li class="search-item">
-						<el-input
-							v-model="searchParams.keyword"
-							size="mini"
-							clearable
-							prefix-icon="el-icon-search"
-							:placeholder="$t('dataVerification.verifyjobname')"
-							@input="keyup()"
-						></el-input>
-					</li>
-					<li class="search-item">
-						<el-select
-							v-model="searchParams.inspectMethod"
-							size="mini"
-							:placeholder="$t('dataVerification.verifyType')"
-							@input="search(1)"
-						>
-							<el-option :label="$t('dataVerification.rowVerify')" value="row_count"></el-option>
-							<el-option :label="$t('dataVerification.contentVerify')" value="field"></el-option>
-							<el-option :label="$t('dataVerification.jointVerify')" value="jointField"></el-option>
-						</el-select>
-					</li>
-					<li class="search-item">
-						<el-select
-							v-model="searchParams.mode"
-							size="mini"
-							:placeholder="$t('dataVerification.singleRepeatingVerify')"
-							@input="search(1)"
-						>
-							<el-option :label="$t('dataVerification.singleVerify')" value="manual"></el-option>
-							<el-option :label="$t('dataVerification.repeatingVerify')" value="cron"></el-option>
-						</el-select>
-					</li>
-					<li class="search-item">
-						<el-select
-							v-model="searchParams.enabled"
-							size="mini"
-							:placeholder="$t('dataVerification.verifystatus')"
-							@input="search(1)"
-						>
-							<el-option :label="$t('dataVerification.enable')" :value="1"></el-option>
-							<el-option :label="$t('dataVerification.disable')" :value="2"></el-option>
-						</el-select>
-					</li>
-					<li class="search-item">
-						<el-select
-							v-model="searchParams.result"
-							size="mini"
-							:placeholder="$t('dataVerification.result')"
-							@input="search(1)"
-						>
-							<el-option
-								v-for="item in validList"
-								:key="item.value"
-								:label="item.name"
-								:value="item.value"
-							></el-option>
-						</el-select>
-					</li>
-					<!-- <li class="search-item" v-if="searchParams.tag">
-						<el-tag
-							size="small"
-							closable
-							@close="
-								searchParams.tag = null;
-								search(1);
-							"
-						>
-							{{ searchParams.tag.value }}
-						</el-tag>
-					</li> -->
-					<li class="search-item">
-						<el-button size="mini" @click="reset">
-							<i class="iconfont icon-shuaxin1"></i>
-						</el-button>
-					</li>
-				</ul>
-				<div class="topbar-buttons">
-					<el-button size="mini" v-show="selections.length" v-readonlybtn="'verify_job_execution'">
-						<i class="iconfont icon-piliang"></i>
-						<span>{{ $t('dataVerification.batchVerify') }}</span>
-					</el-button>
-					<!--					<el-button size="mini" @click="$router.push('dataVerification/setting')">-->
-					<!--						<i class="iconfont icon-shezhi1"></i>-->
-					<!--						<span>{{ $t('dataVerification.verifySetting') }}</span>-->
-					<!--					</el-button>-->
-					<el-tooltip
-						class="item"
-						effect="dark"
-						:content="$t('dataVerification.addVerifyTip')"
-						placement="bottom"
+		<TablePage
+			ref="table"
+			row-key="id"
+			:title="$t('connection.databaseTittle')"
+			:remoteMethod="getData"
+			@selection-change="handleSelectionChange"
+			@sort-change="handleSortTable"
+		>
+			<ul class="search-bar" slot="search">
+				<li class="item">
+					<ElInput
+						v-model="searchParams.keyword"
+						clearable
+						size="small"
+						prefix-icon="el-icon-search"
+						:placeholder="$t('dataVerification.verifyjobname')"
+						@input="table.fetch(1, 800)"
+					></ElInput>
+				</li>
+				<li class="item">
+					<ElSelect
+						v-model="searchParams.inspectMethod"
+						size="small"
+						:placeholder="$t('dataVerification.verifyType')"
+						@input="table.fetch(1)"
 					>
-						<el-button
-							type="primary"
-							size="mini"
-							v-readonlybtn="'verify_job_creation'"
-							@click="$router.push('dataVerification/create')"
-						>
-							<i class="iconfont icon-jia add-btn-icon"></i>
-						</el-button>
-					</el-tooltip>
-				</div>
-			</div>
-			<div class="table-wrap">
-				<el-table
-					style="border: 1px solid #dedee4;border-bottom: none;"
-					v-loading="loading"
-					:data="page.data"
-					class="dv-table"
-					height="100%"
-					@sort-change="sortHandler"
-					@selection-change="selectHandler"
-					align="left"
+						<ElOption :label="$t('dataVerification.rowVerify')" value="row_count"></ElOption>
+						<ElOption :label="$t('dataVerification.contentVerify')" value="field"></ElOption>
+						<ElOption :label="$t('dataVerification.jointVerify')" value="jointField"></ElOption>
+					</ElSelect>
+				</li>
+				<li class="item">
+					<ElSelect
+						v-model="searchParams.mode"
+						size="small"
+						:placeholder="$t('dataVerification.singleRepeatingVerify')"
+						@input="table.fetch(1)"
+					>
+						<ElOption :label="$t('dataVerification.singleVerify')" value="manual"></ElOption>
+						<ElOption :label="$t('dataVerification.repeatingVerify')" value="cron"></ElOption>
+					</ElSelect>
+				</li>
+				<li class="item">
+					<ElSelect
+						v-model="searchParams.enabled"
+						size="small"
+						:placeholder="$t('dataVerification.verifystatus')"
+						@input="table.fetch(1)"
+					>
+						<ElOption :label="$t('dataVerification.enable')" :value="1"></ElOption>
+						<ElOption :label="$t('dataVerification.disable')" :value="2"></ElOption>
+					</ElSelect>
+				</li>
+				<li class="item">
+					<ElSelect
+						v-model="searchParams.result"
+						size="small"
+						:placeholder="$t('dataVerification.result')"
+						@input="table.fetch(1)"
+					>
+						<ElOption
+							v-for="item in validList"
+							:key="item.value"
+							:label="item.name"
+							:value="item.value"
+						></ElOption>
+					</ElSelect>
+				</li>
+				<li class="item">
+					<ElButton plain class="btn-refresh" size="small" @click="table.fetch()">
+						<i class="el-icon-refresh"></i>
+					</ElButton>
+				</li>
+			</ul>
+			<div slot="operation">
+				<ElButton
+					v-readonlybtn="'datasource_creation'"
+					class="btn btn-create"
+					type="primary"
+					size="small"
+					@click="$router.push('dataVerification/create')"
 				>
-					<!--					<el-table-column type="selection" width="44" align="center"></el-table-column>-->
-					<el-table-column :label="$t('dataVerification.verifyJobName')">
-						<template slot-scope="scope">
-							<div>{{ scope.row.name }}</div>
-							<div style="color: #aaa;">
-								<span
-									>{{ inspectMethod[scope.row.inspectMethod] }} (
-									{{
-										scope.row.mode === 'manual'
-											? $t('dataVerification.singleVerify')
-											: $t('dataVerification.repeatingVerify')
-									}}
-									)
-								</span>
-								<span v-if="!scope.row.enabled" style="color:#f56c6c;">&nbsp;Disabled</span>
-							</div>
-						</template>
-					</el-table-column>
-					<el-table-column :label="$t('dataVerification.sourceTotalRows')" align="center" width="200">
-						<template slot-scope="scope">
-							{{ scope.row.InspectResult ? scope.row.InspectResult.source_total : '-' }}
-						</template>
-					</el-table-column>
-					<el-table-column :label="$t('dataVerification.targetTotalRows')" align="center" width="200">
-						<template slot-scope="scope">
-							{{ scope.row.InspectResult ? scope.row.InspectResult.target_total : '-' }}
-						</template>
-					</el-table-column>
-					<el-table-column :label="$t('dataVerification.verifyResult')" width="180">
-						<template slot-scope="scope">
-							<div
-								class="inspect-result"
-								v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)"
-							>
-								<div
-									v-if="
-										scope.row.InspectResult.target_total !== scope.row.InspectResult.source_total &&
-											scope.row.result !== 'passed'
-									"
-								>
-									<span class="error">
-										<i class="el-icon-error"></i>
-										<span>
-											{{ $t('dataVerification.rowConsistent') }}
-											{{
-												Math.abs(
-													scope.row.InspectResult.target_total -
-														scope.row.InspectResult.source_total
-												)
-											}}
-										</span>
-									</span>
-								</div>
-								<div
-									v-if="
-										scope.row.difference_number !== 0 &&
-											scope.row.inspectMethod !== 'row_count' &&
-											scope.row.result !== 'passed'
-									"
-								>
-									<span class="error" v-if="scope.row.difference_number">
-										<i class="el-icon-error"></i>
-										<span>
-											{{ $t('dataVerification.contConsistent') }}
-											{{ scope.row.difference_number }}
-										</span>
-									</span>
-								</div>
-								<span class="success" v-if="scope.row.result === 'passed'">
-									<i class="el-icon-success"></i>
-									<span>{{ $t('dataVerification.consistent') }}</span>
-								</span>
-							</div>
-						</template>
-					</el-table-column>
-					<el-table-column
-						:label="$t('dataVerification.verifyStatus')"
-						align="center"
-						width="140"
-						sortable="custom"
-						prop="status"
-					>
-						<template slot-scope="scope">
-							<span>{{ statusMap[scope.row.status] }}</span>
-							<span v-if="scope.row.InspectResult && scope.row.status === 'running'">
-								{{ `(${Math.round(scope.row.InspectResult.progress * 100)}%)` }}
-							</span>
-						</template>
-					</el-table-column>
-					<el-table-column
-						:label="$t('dataVerification.verifyTime')"
-						prop="lastStartTime"
-						sortable="custom"
-						align="center"
-						width="180"
-					>
-						<template slot-scope="scope">
+					<i class="iconfont icon-jia add-btn-icon"></i>
+					<span> {{ $t('dataVerification.addVerifyTip') }}</span>
+				</ElButton>
+			</div>
+			<el-table-column :label="$t('dataVerification.verifyJobName')">
+				<template slot-scope="scope">
+					<div>{{ scope.row.name }}</div>
+					<div style="color: #aaa;">
+						<span
+							>{{ inspectMethod[scope.row.inspectMethod] }} (
+							{{
+								scope.row.mode === 'manual'
+									? $t('dataVerification.singleVerify')
+									: $t('dataVerification.repeatingVerify')
+							}}
+							)
+						</span>
+						<span v-if="!scope.row.enabled" style="color:#f56c6c;">&nbsp;Disabled</span>
+					</div>
+				</template>
+			</el-table-column>
+			<el-table-column
+				prop="sourceTotal"
+				width="200"
+				:label="$t('dataVerification.sourceTotalRows')"
+			></el-table-column>
+			<el-table-column
+				prop="targetTotal"
+				width="200"
+				:label="$t('dataVerification.targetTotalRows')"
+			></el-table-column>
+			<el-table-column :label="$t('dataVerification.verifyResult')" width="180">
+				<template slot-scope="scope">
+					<div v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
+						<span v-if="scope.row.result !== 'passed'" class="error">
+							<i class="data-verify__icon el-icon-error"></i>
 							<span>
 								{{
-									scope.row.lastStartTime
-										? $moment(scope.row.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
-										: ''
+									scope.row.inspectMethod === 'row_count'
+										? $t('dataVerification.rowConsistent')
+										: $t('dataVerification.contConsistent')
+								}}
+								{{
+									scope.row.inspectMethod === 'row_count'
+										? scope.row.diffNum
+										: scope.row.difference_number
 								}}
 							</span>
-						</template>
-					</el-table-column>
-					<el-table-column :label="$t('dataVerification.operation')" align="center" width="180">
-						<template slot-scope="scope">
-							<el-tooltip
-								class="item"
-								effect="dark"
-								:content="$t('dataVerification.executeVerifyTip')"
-								placement="bottom"
-							>
-								<el-button
-									v-if="!['running', 'scheduling'].includes(scope.row.status)"
-									class="btn-icon"
-									type="text"
-									size="mini"
-									:disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
-									v-readonlybtn="'verify_job_edition'"
-									@click="startTask(scope.row.id)"
-								>
-									<i class="btn-icon iconfont icon-bofang"></i>
-								</el-button>
-							</el-tooltip>
-							<i
-								v-if="['running', 'scheduling'].includes(scope.row.status)"
-								class="btn-icon el-icon-loading"
-								style="color:#48B6E2;"
-							></i>
-							<el-tooltip
-								class="item"
-								effect="dark"
-								:content="$t('dataVerification.detailTip')"
-								placement="bottom"
-							>
-								<el-button
-									class="btn-icon"
-									type="text"
-									size="mini"
-									:disabled="!scope.row.InspectResult"
-									@click="
-										toTableInfo(
-											scope.row.id,
-											scope.row.InspectResult.id,
-											scope.row.inspectMethod,
-											scope.row.name
-										)
-									"
-								>
-									<i class="btn-icon iconfont icon-chaxun"></i>
-								</el-button>
-							</el-tooltip>
-							<el-tooltip
-								class="item"
-								effect="dark"
-								:content="$t('dataVerification.historyTip')"
-								placement="bottom"
-							>
-								<el-button
-									class="btn-icon el-icon-time"
-									type="text"
-									size="mini"
-									:disabled="!scope.row.InspectResult"
-									@click="toTableHistory(scope.row.id)"
-								></el-button>
-							</el-tooltip>
-							<el-tooltip
-								class="item"
-								effect="dark"
-								:content="$t('dataVerification.configurationTip')"
-								placement="bottom"
-							>
-								<el-button
-									class="btn-icon el-icon-setting"
-									type="text"
-									size="mini"
-									:disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
-									v-readonlybtn="'verify_job_edition'"
-									@click="goEdit(scope.row.id, scope.row.flowId)"
-								></el-button>
-							</el-tooltip>
-							<el-tooltip
-								class="item"
-								effect="dark"
-								:content="$t('dataVerification.deleteTip')"
-								placement="bottom"
-							>
-								<el-button
-									class="btn-icon el-icon-delete"
-									type="text"
-									size="mini"
-									:disabled="$disabledByPermission('verify_job_delete_all_data', scope.row.user_id)"
-									v-readonlybtn="'verify_job_delete'"
-									@click="remove(scope.row.name, scope.row.id)"
-								></el-button>
-							</el-tooltip>
-						</template>
-					</el-table-column>
-				</el-table>
-				<el-pagination
-					background
-					class="pagination"
-					:current-page.sync="page.current"
-					:page-sizes="[10, 20, 50, 100]"
-					:page-size.sync="page.size"
-					layout="total, sizes, prev, pager, next, jumper"
-					:total="page.total"
-					@size-change="search(1)"
-					@current-change="search"
-				>
-				</el-pagination>
-			</div>
-		</div>
+						</span>
+						<span v-else class="success">
+							<i class="data-verify__icon el-icon-success"></i>
+							<span>{{ $t('dataVerification.consistent') }}</span>
+						</span>
+					</div>
+					<div v-else-if="scope.row.status === 'error'">Error</div>
+					<div v-else>{{ statusMap[scope.row.status] }}</div>
+				</template>
+			</el-table-column>
+			<el-table-column :label="$t('dataVerification.verifyStatus')" width="140" prop="status">
+				<template slot-scope="scope">
+					<span>{{ statusMap[scope.row.status] }}</span>
+					<span v-if="scope.row.InspectResult && scope.row.status === 'running'">
+						{{ `(${Math.round(scope.row.InspectResult.progress * 100)}%)` }}
+					</span>
+				</template>
+			</el-table-column>
+			<el-table-column
+				:label="$t('dataVerification.verifyTime')"
+				prop="lastStartTime"
+				sortable="custom"
+				width="180"
+			></el-table-column>
+			<el-table-column :label="$t('dataVerification.operation')" width="320">
+				<template slot-scope="scope">
+					<ElLink
+						v-readonlybtn="'verify_job_edition'"
+						type="primary"
+						:disabled="
+							$disabledByPermission('verify_job_edition_all_data', scope.row.user_id) ||
+								['running', 'scheduling'].includes(scope.row.status)
+						"
+						@click="startTask(scope.row.id)"
+						>{{ $t('dataVerification.executeVerifyTip') }}</ElLink
+					>
+					<ElLink
+						class="ml-10"
+						type="primary"
+						:disabled="!scope.row.InspectResult"
+						@click="
+							toTableInfo(
+								scope.row.id,
+								scope.row.InspectResult.id,
+								scope.row.inspectMethod,
+								scope.row.name
+							)
+						"
+						>{{ $t('dataVerification.detailTip') }}</ElLink
+					>
+					<ElLink
+						class="ml-10"
+						type="primary"
+						:disabled="!scope.row.InspectResult"
+						@click="toTableHistory(scope.row.id)"
+						>{{ $t('dataVerification.historyTip') }}</ElLink
+					>
+					<ElLink
+						v-readonlybtn="'verify_job_edition'"
+						class="ml-10"
+						type="primary"
+						:disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
+						@click="goEdit(scope.row.id, scope.row.flowId)"
+						>{{ $t('dataVerification.configurationTip') }}</ElLink
+					>
+					<ElLink
+						v-readonlybtn="'verify_job_delete'"
+						class="ml-10"
+						type="danger"
+						:disabled="$disabledByPermission('verify_job_delete_all_data', scope.row.user_id)"
+						@click="remove(scope.row.name, scope.row.id)"
+						>{{ $t('dataVerification.deleteTip') }}</ElLink
+					>
+				</template>
+			</el-table-column>
+		</TablePage>
 	</section>
 </template>
 
 <script>
+import TablePage from '@/components/TablePage';
 import { toRegExp } from '../../util/util';
 let timeout = null;
 export default {
+	components: {
+		TablePage
+	},
 	data() {
 		return {
 			// isClassShow: true,
-			loading: true,
-			searchParams: this.$store.state.dataVerification,
-			page: {
-				data: null,
-				current: 1,
-				size: 20,
-				total: 0,
-				sortBy: 'createTime',
-				order: ''
+			searchParams: {
+				keyword: '',
+				inspectMethod: '',
+				mode: '',
+				enabled: '',
+				result: ''
 			},
+			order: 'createTime DESC',
 			inspectMethod: {
 				row_count: this.$t('dataVerification.rowVerify'),
 				field: this.$t('dataVerification.contentVerify'),
@@ -370,81 +246,71 @@ export default {
 				{ name: this.$t('app.Home.contentDifference'), value: 'valueDiff' },
 				{ name: 'ERROR', value: 'error' }
 			],
-			selections: [],
-			timer: ''
+			multipleSelection: []
 		};
+	},
+	computed: {
+		table() {
+			return this.$refs.table;
+		}
 	},
 	created() {
 		if (this.$route && this.$route.query) {
 			this.searchParams.keyword = this.$route.query.name;
-
-			if (this.$route.query.executionStatus === 'total') {
-				this.searchParams.result = '';
-			} else if (this.$route.query.executionStatus === 'countDiff') {
-				this.searchParams.result = 'row_count';
-			} else {
-				this.searchParams.result = this.$route.query.executionStatus;
-			}
+			this.searchParams.result = this.$route.query.executionStatus;
 		}
-		this.search(1);
-		this.timer = setInterval(() => {
-			this.search(this.page.current, 1);
+		timeout = setInterval(() => {
+			this.table.fetch(null, 0, true);
 		}, 10000);
 	},
+	mounted() {
+		this.searchParams = Object.assign(this.searchParams, this.table.getCache());
+	},
+	destroyed() {
+		clearInterval(timeout);
+	},
 	methods: {
-		keyup() {
-			if (timeout) {
-				window.clearTimeout(timeout);
-			}
-			timeout = setTimeout(() => {
-				this.search(1);
-				timeout = null;
-			}, 800);
+		handleSelectionChange(val) {
+			this.multipleSelection = val;
 		},
-		selectHandler(arr) {
-			this.selections = arr.map(item => item.id);
+		//筛选条件
+		handleSortTable({ order, prop }) {
+			this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`;
+			this.table.fetch(1);
 		},
-		sortHandler({ prop, order }) {
-			this.page.sortBy = prop;
-			this.page.order = order;
-			this.search(1);
-		},
-		search(pageNum, loading) {
-			this.searchParamsChange();
-			if (loading == 1) {
-				this.loading = false;
-			} else {
-				this.loading = true;
-			}
-			let { current, size, sortBy, order } = this.page;
+		getData({ page }) {
+			let { current, size } = page;
 			let { keyword, inspectMethod, mode, enabled, result } = this.searchParams;
-			let currentPage = pageNum || current + 1;
 			let where = {};
-			inspectMethod && (where.inspectMethod = inspectMethod);
-			mode && (where.mode = mode);
-
-			if (enabled) {
-				if (enabled == 1) {
-					where.enabled = true;
-				} else {
-					where.enabled = false;
-				}
-			}
+			let fields = {
+				name: true,
+				user_id: true,
+				connection_type: true,
+				database_type: true,
+				search_databaseType: true,
+				database_host: true,
+				database_uri: true,
+				database_username: true,
+				database_port: true,
+				database_name: true,
+				sourceType: true,
+				status: true,
+				id: true,
+				listtags: true,
+				tableCount: true,
+				loadCount: true,
+				loadFieldsStatus: true,
+				schemaAutoUpdate: true,
+				platformInfo: true,
+				last_updated: true
+			};
+			//精准搜索 iModel
 			if (keyword && keyword.trim()) {
-				where['or'] = [
-					{
-						name: {
-							like: toRegExp(keyword),
-							options: 'i'
-						}
-					},
-					{
-						dataFlowName: {
-							like: toRegExp(keyword),
-							options: 'i'
-						}
-					}
-				];
+				let filterObj = { like: toRegExp(keyword), options: 'i' };
+				where['or'] = [{ name: filterObj }, { dataFlowName: filterObj }];
+			}
+			if (enabled) {
+				where.enabled = enabled == 1;
 			}
 			if (result) {
 				if (result === 'error') {
@@ -468,47 +334,45 @@ export default {
 					};
 				}
 			}
+			inspectMethod && (where.inspectMethod = inspectMethod);
+			mode && (where.mode = mode);
 			let filter = {
-				order: sortBy + ' ' + (order === 'ascending' ? 'ASC' : 'DESC'),
+				order: this.order,
 				limit: size,
-				skip: (currentPage - 1) * size,
+				fields: fields,
+				skip: (current - 1) * size,
 				where
 			};
-			Promise.all([
+			return Promise.all([
 				this.$api('Inspects').count({ where: where }),
 				this.$api('Inspects').get({
 					filter: JSON.stringify(filter)
 				})
-			])
-				.then(([countRes, res]) => {
-					if (res.data) {
-						let list = res.data || [];
-						this.page.data = list;
-						this.page.current = currentPage;
-						this.page.total = countRes.data.count;
-					}
-				})
-				.finally(() => {
-					this.loading = false;
-				});
+			]).then(([countRes, res]) => {
+				let list = res.data || [];
+				return {
+					total: countRes.data.count,
+					data: list.map(item => {
+						let result = item.InspectResult;
+						let lastStartTime = '-';
+						let sourceTotal = '-';
+						let targetTotal = '-';
+						let diffNum = 0;
+						if (result) {
+							lastStartTime = this.$moment(result.createTime).format('YYYY-MM-DD HH:mm:ss');
+							sourceTotal = result.source_total;
+							targetTotal = result.target_total;
+							diffNum = Math.abs(targetTotal - sourceTotal);
+						}
+						item.lastStartTime = lastStartTime;
+						item.sourceTotal = sourceTotal;
+						item.targetTotal = targetTotal;
+						item.diffNum = diffNum;
+						return item;
+					})
+				};
+			});
 		},
-		reset() {
-			this.searchParams = {
-				keyword: '',
-				inspectMethod: '',
-				mode: '',
-				enabled: '',
-				result: ''
-			};
-			this.search(1);
-		},
-		searchParamsChange() {
-			this.$store.commit('dataVerification', this.searchParams);
-		},
-		// classClickHandler(node) {
-		// 	this.searchParams.tag = node;
-		// 	this.search(1);
-		// },
 		toTableInfo(id, resultId, type, name) {
 			let routeUrl = this.$router.resolve({
 				path: '/dataVerifyResult',
@@ -531,19 +395,19 @@ export default {
 			window.open(routeUrl.href, '_blank');
 		},
 		startTask(id) {
-			let selections = id ? [id] : this.selections;
+			let multipleSelection = id ? [id] : this.multipleSelection;
 			this.$api('Inspects')
 				.update(
 					{
 						id: {
-							inq: selections
+							inq: multipleSelection
 						}
 					},
 					{ status: 'scheduling', ping_time: 0 }
 				)
 				.then(() => {
 					this.$message.success(this.$t('dataVerification.startVerify'));
-					this.search(this.page.current);
+					this.table.fetch();
 				});
 		},
 		remove(name, id) {
@@ -559,9 +423,8 @@ export default {
 				this.$api('Inspects')
 					.delete(id)
 					.then(() => {
-						let { data, current } = this.page;
 						this.$message.success(this.$t('message.deleteOK'));
-						this.search(data.length === 1 ? current - 1 : current);
+						this.table.fetch();
 					});
 			});
 		},
@@ -580,101 +443,42 @@ export default {
 					}
 				});
 		}
-	},
-
-	destroyed() {
-		// 清除定时器
-		clearInterval(this.timer);
-		this.timer = null;
 	}
 };
 </script>
 
 <style lang="less" scoped>
 .data-verify-wrap {
-	display: flex;
 	height: 100%;
-	overflow: hidden;
-	.panel-slider {
-		width: 200px;
-		height: 100%;
-		box-sizing: border-box;
+	.btn-refresh {
+		padding: 0;
+		height: 32px;
+		line-height: 32px;
+		width: 32px;
+		font-size: 16px;
 	}
-	.panel-main {
-		flex: 1;
+	.search-bar {
 		display: flex;
-		flex-direction: column;
-		overflow: hidden;
-		.topbar {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding: 0 10px;
-			.iconfont {
-				font-size: 12px;
-			}
-			.el-button {
-				padding: 7px;
-			}
-			.el-button + .el-button {
-				margin-left: 5px;
-			}
-			.search-bar {
-				display: flex;
-				align-items: center;
-				height: 50px;
-				.search-item {
-					margin-right: 10px;
-				}
-				.btn-class-collapse {
-					.iconfont {
-						display: inline-block;
-						transform: rotate(0deg);
-					}
-					&.is-open .iconfont {
-						transform: rotate(180deg);
-					}
-				}
-			}
+		.item {
+			margin-right: 10px;
 		}
-		.table-wrap {
-			margin: 0 10px;
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-			overflow: hidden;
-			font-size: 14px;
-			.dv-table {
-				flex: 1;
-				overflow: hidden;
-			}
-			.btn-icon {
-				font-size: 16px;
-				& + .btn-icon {
-					margin-left: 5px;
-				}
-			}
-			.inspect-result {
-				.error,
-				.success {
-					padding: 0 8px 0 5px;
-					display: inline-block;
-					line-height: 20px;
-					color: #fff;
-					border-radius: 20px;
-				}
-				.error {
-					background: #f56c6c;
-				}
-				.success {
-					background: #70ae48;
-				}
-			}
-			.pagination {
-				padding: 20px 0;
-				text-align: right;
-			}
+	}
+	.btn + .btn {
+		margin-left: 5px;
+	}
+	.btn {
+		i.iconfont {
+			font-size: 12px;
 		}
+		&.btn-dropdowm {
+			margin-left: 5px;
+		}
+		&.btn-create {
+			margin-left: 5px;
+		}
+	}
+	.data-verify__icon {
+		font-size: 14px;
 	}
 }
 </style>
