@@ -7,9 +7,9 @@ export const SETTING_MODEL = {
 	name: '',
 	sync_type: 'initial_sync+cdc',
 	distinctWriteType: 'intellect',
-	stopOnError: true,
+	stopOnError: false,
 	needToCreateIndex: true,
-	isOpenAutoDDL: true
+	isOpenAutoDDL: false
 };
 
 export const DATASOURCE_MODEL = {

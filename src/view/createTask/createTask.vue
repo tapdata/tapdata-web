@@ -73,6 +73,9 @@
 						>
 							{{ $t('guide.btn_back') }}
 						</el-button>
+						<el-button class="btn-step" v-if="[1].includes(steps[activeStep].index)" @click="goBackList()">
+							取消
+						</el-button>
 						<el-button
 							v-if="steps[activeStep].index !== 4"
 							type="primary"
@@ -372,7 +375,10 @@ export default {
 							id: 1,
 							database_type: 1,
 							connection_type: 1,
-							status: 1
+							status: 1,
+							database_host: 1,
+							database_port: 1,
+							database_username: 1
 						},
 						order: ['status DESC', 'name ASC']
 					})
@@ -631,6 +637,12 @@ export default {
 						this.$message.error(this.$t('message.saveFail'));
 					}
 				});
+		},
+		//返回任务列表
+		goBackList() {
+			this.$router.push({
+				path: '/dataFlows?mapping=cluster-clone'
+			});
 		},
 		//选择创建类型
 		handleDialogDatabaseTypeVisible() {

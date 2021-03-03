@@ -73,7 +73,8 @@ export default function() {
 			{
 				type: 'switch',
 				field: 'isOpenAutoDDL',
-				label: '自动DDL'
+				label: '自动DDL',
+				show: false
 			},
 			{
 				type: 'slot',
