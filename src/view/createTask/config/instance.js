@@ -20,6 +20,19 @@ export default function() {
 				field: 'zone',
 				label: '选择可用区',
 				options: [],
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'region',
+								value: ''
+							}
+						],
+						triggerConfig: {
+							value: ''
+						}
+					}
+				],
 				required: true
 			}
 		]

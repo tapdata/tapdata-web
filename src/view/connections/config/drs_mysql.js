@@ -24,6 +24,19 @@ export default function(vm) {
 				field: 'zone',
 				label: '选择实例可用区',
 				options: [],
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'region',
+								value: ''
+							}
+						],
+						triggerConfig: {
+							value: ''
+						}
+					}
+				],
 				required: true
 			},
 			{

@@ -40,7 +40,8 @@ export default function() {
 							}
 						],
 						triggerConfig: {
-							show: false
+							show: false,
+							value: ''
 						}
 					}
 				],
@@ -63,6 +64,17 @@ export default function() {
 						triggerConfig: {
 							show: false
 						}
+					},
+					{
+						triggerOptions: [
+							{
+								field: 'source_region',
+								value: ''
+							}
+						],
+						triggerConfig: {
+							value: ''
+						}
 					}
 				],
 				required: true
@@ -72,6 +84,19 @@ export default function() {
 				field: 'source_connectionId',
 				label: '源端连接',
 				options: [],
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'source_region',
+								value: ''
+							}
+						],
+						triggerConfig: {
+							value: ''
+						}
+					}
+				],
 				required: true
 			},
 			{
@@ -86,10 +111,6 @@ export default function() {
 					{
 						label: 'RDS实例',
 						value: 'rds'
-					},
-					{
-						label: '云外自建库',
-						value: 'selfDB'
 					}
 				],
 				required: true
