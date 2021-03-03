@@ -1,5 +1,5 @@
 ##### 高级校验说明
-**第一步** 函数入参为源表数据，可以根据源表数据调用**[内置函数](https://docs.tapdata.net/data-replication/script/javascript#shu-ju-crud-cao-zuo)**查询出目标数据<br>
+**第一步** 函数入参为源表数据，可以根据源表数据调用**内置函数**查询出目标数据<br>
 **第二步** 自定义校验逻辑<br>
 **第三步** 函数返回结果<br>
 
