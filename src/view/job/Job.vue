@@ -1201,17 +1201,13 @@ export default {
 					forceStop === true ? self.$t('dataFlow.button.force_stop') : self.$t('message.confirm'),
 				type: 'warning',
 				closeOnClickModal: false
-			})
-				.then(() => {
-					self.doSave(data, err => {
-						if (err) {
-							this.$message.error(self.$t('message.stopFail'));
-						}
-					});
-				})
-				.catch(() => {
-					this.$message.error(self.$t('message.stopFail'));
+			}).then(() => {
+				self.doSave(data, err => {
+					if (err) {
+						this.$message.error(self.$t('message.stopFail'));
+					}
 				});
+			});
 		},
 
 		preview() {
