@@ -681,6 +681,21 @@ export default {
 			color: #aaa;
 		}
 	}
+	.step-header {
+		.step-box {
+			li {
+				&.active {
+					color: #48b6e2;
+					&::before {
+						background: #48b6e2;
+					}
+					.step-index {
+						background: #48b6e2;
+					}
+				}
+			}
+		}
+	}
 }
 </style>
 <style lang="less" scoped>
@@ -716,13 +731,8 @@ export default {
 				display: flex;
 				align-items: center;
 				&.active {
-					color: #48b6e2;
-					&::before {
-						background: #48b6e2;
-					}
 					.step-index {
 						border-color: #fff;
-						background: #48b6e2;
 						color: #fff;
 					}
 				}

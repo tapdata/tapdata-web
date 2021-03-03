@@ -123,7 +123,7 @@ export default {
 			margin-left: 0;
 		}
 	}
-	.el-radio.is-bordered.is-checked {
+	.el-radio.is-checked {
 		border: 2px solid #48b6e2;
 	}
 }
