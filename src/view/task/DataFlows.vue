@@ -232,10 +232,7 @@
 						/>
 						<i
 							v-if="scope.row.status !== 'running'"
-							:class="
-								'dataflow-table__icon iconfont ' +
-									(statusMap[scope.row.status] ? statusMap[scope.row.status].icon : '')
-							"
+							:class="'dataflow-table__icon iconfont ' + statusMap[scope.row.status].icon"
 						></i>
 						<span>{{ scope.row.statusLabel }}</span>
 						<span
@@ -765,7 +762,7 @@ export default {
 			if (platformInfo && platformInfo.regionName) {
 				item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName;
 			}
-			item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
+			item.statusLabel = this.statusMap[item.status].label;
 			let statusMap = {};
 			let getLag = lag => {
 				let r = '0s';
