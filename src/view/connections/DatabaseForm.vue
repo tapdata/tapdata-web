@@ -205,6 +205,9 @@
 		>
 			<span>
 				<el-input v-model="rename" maxlength="100" show-word-limit clearable></el-input>
+				<span style="color: #ccc; margin-top: 5px; font-size: 12px;display: inline-block;"
+					>中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格</span
+				>
 			</span>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="handleCancelRename" size="mini">{{ $t('dataForm.cancel') }}</el-button>

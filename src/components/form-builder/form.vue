@@ -114,8 +114,12 @@ export default {
 				 */
 				dependOn.forEach(depend => {
 					let triggerOptions = depend.triggerOptions;
+					let triggerConfig = depend.triggerConfig;
 					if (triggerOptions.every(opt => opt.value === this.value[opt.field])) {
 						config = Object.assign(config, depend.triggerConfig);
+						if (triggerConfig.hasOwnProperty('value') && triggerConfig.value === '') {
+							this.value[config.field] = '';
+						}
 					}
 				});
 			}
