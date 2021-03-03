@@ -57,7 +57,7 @@
 						<i class="el-icon-warning" :style="{ color: colorMap[status] }"></i>
 						{{ statusMap[scope.row.status] }}
 					</span>
-					<span v-if="scope.row.status === 'unTest'" :style="`color: ${colorMap[scope.row.status]};`">
+					<span v-else-if="scope.row.status === 'unTest'" :style="`color: ${colorMap[scope.row.status]};`">
 						<el-image
 							style="width: 20px; height: 20px; vertical-align: bottom;"
 							src="static/icon/loading-drs.gif"
