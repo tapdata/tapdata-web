@@ -79,7 +79,17 @@
 							@input="checkRepeatId()"
 						>
 						</el-input>
-						<ClipButton :value="model.joinTable.joinPath"></ClipButton>
+						<el-tooltip
+							class="item"
+							effect="light"
+							popper-class="table-tooltips"
+							:content="$t('editor.cell.link.form.joinPath.copyLabel')"
+							placement="top-start"
+						>
+							<div class="el-button" style="padding: 7px;margin-left: 7px">
+								<ClipButton :value="model.joinTable.joinPath"></ClipButton>
+							</div>
+						</el-tooltip>
 					</div>
 				</el-form-item>
 

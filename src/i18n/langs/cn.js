@@ -355,6 +355,7 @@ const cn = {
 		level: '级别'
 	},
 	button: {
+		refresh: '刷新',
 		reset: '重置',
 		delete: '删除',
 		rename: '改名',
@@ -1245,7 +1246,8 @@ const cn = {
 					},
 					joinPath: {
 						label: '关联后写入路径',
-						placeholder: '请输入关联后写入路径'
+						placeholder: '请输入关联后写入路径',
+						copyLabel: '复制写入路径'
 					},
 					joinKeys: {
 						label: '关联条件',
@@ -2472,6 +2474,49 @@ const cn = {
 
 		not_source: '请选择一个源连接',
 		not_target: '请选择一个目标连接'
+	},
+	user: {
+		des: '用户管理页面提供对用户的创建、编辑、删除，以及状态设置功能',
+		all: '全部',
+		inactivated: '未激活',
+		unverified: '未验证',
+		userNameEmail: '请输入用户名 / 邮箱',
+		changeTime: ' 修改时间',
+		creatUser: '创建用户',
+		editUser: '编辑用户',
+		userName: '用户名',
+		email: '邮箱',
+		password: '密码',
+		role: '关联角色',
+		source: '来源',
+		status: '状态',
+		opera: '操作',
+		activation: '激活',
+		freeze: '冻结',
+		delete: '删除',
+		check: '校验',
+		edit: '编辑',
+		notVerified: '未验证',
+		notActivated: '未激活',
+		activated: '已激活',
+		rejected: '已拒绝',
+		passwordNull: '密码不能为空',
+		pass_hint: '至少5个字符',
+		activationCode: '激活码',
+		delUserTitle: '是否删除该用户',
+		delUser: '删除用户',
+		deluserLast: ' 后，此用户将无法恢复',
+		checkUserTitle: '是否通过校验该用户',
+		checkUser: '通过校验用户',
+		checkUserLast: '的邮箱后，此用户可以被激活',
+		activationUserTitle: '是否激活该用户？',
+		activetionUser: '激活用户',
+		activetionUserLast: ' 后，此用户将可以使用 TAPDATA 系统',
+		freezeUserTitle: '是否冻结该用户？',
+		freezeUser: '冻结用户',
+		freezeUserLast: ' 后，此用户将不可以使用 TAPDATA 系统',
+		startTime: '开始时间',
+		endTime: '结束时间'
 	}
 };
 

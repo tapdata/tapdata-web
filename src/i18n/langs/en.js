@@ -358,6 +358,7 @@ const en = {
 		level: 'Level'
 	},
 	button: {
+		refresh: 'Refresh',
 		reset: 'Reset',
 		delete: 'Delete',
 		rename: 'Rename',
@@ -1269,7 +1270,8 @@ const en = {
 					},
 					joinPath: {
 						label: 'Target path',
-						placeholder: 'Please input target path'
+						placeholder: 'Please input target path',
+						copyLabel: 'Copy target path'
 					},
 					joinKeys: {
 						label: 'Association condition',

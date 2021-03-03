@@ -353,6 +353,7 @@ const tc = {
 		level: '級別'
 	},
 	button: {
+		refresh: '刷新',
 		reset: '重置',
 		delete: '删除',
 		rename: '改名',
@@ -1229,25 +1230,26 @@ const tc = {
 				},
 				form: {
 					label: {
-						label: '标签',
-						placeholder: '请输入标签'
+						label: '標籤',
+						placeholder: '請輸入標籤'
 					},
 					joinMethod: {
 						label: '不匹配數據插入方式',
 						placeholder: '請選擇數據插入方式'
 					},
 					joinType: {
-						label: '数据写入模式',
-						placeholder: '请选择数据写入模式'
+						label: '數據寫入模式',
+						placeholder: '請選擇數據寫入模式'
 					},
 					joinPath: {
-						label: '关联后写入路径',
-						placeholder: '请输入关联后写入路径'
+						label: '關聯後寫入路徑',
+						placeholder: '請輸入關聯後寫入路徑',
+						copyLabel: '複製寫入路徑'
 					},
 					joinKeys: {
-						label: '关联條件',
+						label: '關聯條件',
 						sourceField: '源字段',
-						targetField: '目标字段'
+						targetField: '目標字段'
 					},
 					arrayUniqueKey: {
 						label: '內嵌數組匹配條件',

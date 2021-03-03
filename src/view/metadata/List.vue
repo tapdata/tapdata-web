@@ -67,7 +67,10 @@
 						</el-select>
 					</li>
 					<li>
-						<el-button size="mini" type="text" @click="reset()">{{ $t('button.reset') }}</el-button>
+						<el-button size="mini" type="text" @click="reset()">{{ $t('button.refresh') }}</el-button>
+					</li>
+					<li>
+						<el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
 					</li>
 				</ul>
 			</div>
@@ -212,7 +215,6 @@ export default {
 			this.$route.meta.types ||
 			'database|job|dataflow|api|table|view|collection|mongo_view|directory|ftp|apiendpoint'.split('|');
 		return {
-			title: '',
 			whiteList: ['table', 'collection', 'mongo_view', 'view'],
 			searchParams: {
 				keyword: '',
@@ -303,13 +305,16 @@ export default {
 		}
 	},
 	methods: {
-		reset() {
-			this.searchParams = {
-				keyword: '',
-				isFuzzy: true,
-				metaType: '',
-				dbId: ''
-			};
+		reset(name) {
+			if (name === 'reset') {
+				this.searchParams = {
+					keyword: '',
+					isFuzzy: true,
+					metaType: '',
+					dbId: ''
+				};
+			}
+
 			this.table.fetch(1);
 		},
 		getData({ page, tags }) {
@@ -585,6 +590,9 @@ export default {
 					color: inherit;
 					cursor: pointer;
 				}
+			}
+			.name:hover {
+				text-decoration: underline;
 			}
 			.tag {
 				margin-left: 5px;

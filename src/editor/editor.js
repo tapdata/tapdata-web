@@ -310,7 +310,7 @@ export default class Editor extends BaseObject {
 		// this.getBottomTabPanel().removeAll();
 	}
 	initMonitor(dataFlow) {
-		this.getRightTabPanel().removeAll();
+		// this.getRightTabPanel().removeAll();
 		this.seeMonitor = true;
 		let self = this;
 		if (dataFlow) this.dataFlow = dataFlow;

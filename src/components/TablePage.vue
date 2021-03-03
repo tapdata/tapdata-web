@@ -26,6 +26,7 @@
 				</div>
 				<el-table
 					class="table-page-table"
+					border
 					height="100%"
 					v-loading="loading"
 					:element-loading-text="$t('dataFlow.dataLoading')"
@@ -238,6 +239,11 @@ export default {
 					}
 				}
 			}
+		}
+		.el-table--border td,
+		.el-table--border th,
+		.el-table__body-wrapper .el-table--border.is-scrolling-left ~ .el-table__fixed {
+			border-right: 0;
 		}
 		.table-page-pagination {
 			margin-top: 5px;

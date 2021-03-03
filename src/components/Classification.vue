@@ -32,7 +32,8 @@
 			>
 				<span class="custom-tree-node" slot-scope="{ node, data }">
 					<span class="iconfont icon-Folder-closed icon-folder"></span>
-					<span class="table-label">{{ data.value }}</span>
+					<span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span>
+					<span class="table-label" v-else>{{ data.value }}</span>
 					<el-dropdown
 						class="btn-menu"
 						size="mini"
@@ -163,25 +164,47 @@ export default {
 			let filter = {
 				where
 			};
-			MetadataDefinitions.get({
-				filter: JSON.stringify(filter)
-			}).then(res => {
-				if (res.data) {
-					this.treeData = this.formatData(res.data);
-					cb && cb(res.data);
-				}
-			});
+			if (this.types[0] === 'user') {
+				this.$api('UserGroup')
+					.get({})
+					.then(res => {
+						if (res.data) {
+							this.treeData = this.formatData(res.data);
+							cb && cb(res.data);
+						}
+					});
+			} else {
+				MetadataDefinitions.get({
+					filter: JSON.stringify(filter)
+				}).then(res => {
+					if (res.data) {
+						this.treeData = this.formatData(res.data);
+						cb && cb(res.data);
+					}
+				});
+			}
 		},
 		getDataAll(cb) {
 			let params = {
 				filter: {}
 			};
-			MetadataDefinitions.get(params).then(res => {
-				if (res.data) {
-					//this.treeData = this.formatData(res.data);
-					cb && cb(res.data);
-				}
-			});
+			if (this.types[0] === 'user') {
+				this.$api('UserGroup')
+					.get({})
+					.then(res => {
+						if (res.data) {
+							// this.treeData = this.formatData(res.data);
+							cb && cb(res.data);
+						}
+					});
+			} else {
+				MetadataDefinitions.get(params).then(res => {
+					if (res.data) {
+						// this.treeData = this.formatData(res.data);
+						cb && cb(res.data);
+					}
+				});
+			}
 		},
 		//格式化分类数据
 		formatData(items) {
@@ -263,6 +286,7 @@ export default {
 			let id = config.id;
 			let itemType = config.itemType;
 			let method = 'post';
+
 			if (!value || value.trim() === '') {
 				this.$message.error(this.$t('classification.nodeName'));
 				return;
@@ -271,54 +295,108 @@ export default {
 			if (nameExist) {
 				return this.$message.error(this.$t('classification.nameExist'));
 			}
-			let params = {
-				item_type: itemType,
-				value
-			};
-			if (config.type === 'edit') {
-				method = 'changeById';
-				params.id = id;
-			} else if (id) {
-				params.parent_id = id;
-			}
-			MetadataDefinitions[method](params)
-				.then(res => {
-					let self = this;
-					if (res.data) {
-						self.getData(() => {
-							this.$nextTick(() => {
-								this.emitCheckedNodes();
+
+			if (this.types[0] === 'user') {
+				let params = {
+					name: value
+				};
+				if (config.type === 'edit') {
+					method = 'patch';
+					params.id = id;
+				} else if (id) {
+					params.parent_id = id;
+				}
+				this.$api('UserGroup')
+					[method](params)
+					.then(res => {
+						let self = this;
+						if (res.data) {
+							self.getData(() => {
+								this.$nextTick(() => {
+									this.emitCheckedNodes();
+								});
 							});
-						});
-						self.hideDialog();
-					}
-				})
-				.catch(e => {
-					this.$message.error('MetadataInstances error' + e);
-				});
+							self.hideDialog();
+						}
+					})
+					.catch(e => {
+						this.$message.error('MetadataInstances error' + e);
+					});
+			} else {
+				let params = {
+					item_type: itemType,
+					value
+				};
+				if (config.type === 'edit') {
+					method = 'changeById';
+					params.id = id;
+				} else if (id) {
+					params.parent_id = id;
+				}
+				MetadataDefinitions[method](params)
+					.then(res => {
+						let self = this;
+						if (res.data) {
+							self.getData(() => {
+								this.$nextTick(() => {
+									this.emitCheckedNodes();
+								});
+							});
+							self.hideDialog();
+						}
+					})
+					.catch(e => {
+						this.$message.error('MetadataInstances error' + e);
+					});
+			}
 		},
 		deleteNode(id) {
+			let that = this;
 			this.$confirm(this.$t('classification.deteleMessage'), {
 				confirmButtonText: this.$t('message.delete'),
 				cancelButtonText: this.$t('message.cancel'),
 				type: 'warning',
 				closeOnClickModal: false
 			}).then(() => {
-				MetadataDefinitions.delete(id)
-					.then(() => {
-						let self = this;
-						self.getData();
-					})
-					.catch(() => {
-						this.$message.info(this.$t('message.deleteFail'));
-					});
+				if (that.types[0] === 'user') {
+					let params = {
+						id: id,
+						headers: {
+							gid: id
+						}
+					};
+					that.$api('UserGroup')
+						.delete(params)
+						.then(() => {
+							let self = this;
+							self.getData();
+						})
+						.catch(() => {
+							this.$message.info(this.$t('message.deleteFail'));
+						});
+				} else {
+					MetadataDefinitions.delete(id)
+						.then(() => {
+							let self = this;
+							self.getData();
+						})
+						.catch(() => {
+							this.$message.info(this.$t('message.deleteFail'));
+						});
+				}
 			});
 		},
 		checkName(value) {
 			return new Promise(resolve => {
-				this.getDataAll(items => {
-					resolve(items.find(it => it.value === value));
-				});
+				if (this.types[0] === 'user') {
+					this.getDataAll(items => {
+						resolve(items.find(it => it.name === value));
+					});
+				} else {
+					this.getDataAll(items => {
+						resolve(items.find(it => it.value === value));
+					});
+				}
 			});
 		}
 	}

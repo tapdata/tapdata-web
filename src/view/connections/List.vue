@@ -84,7 +84,10 @@
 					</el-select>
 				</li>
 				<li class="item">
-					<el-button type="text" class="restBtn" size="mini" @click="rest()">
+					<el-button size="mini" type="text" @click="reset()">{{ $t('button.refresh') }}</el-button>
+				</li>
+				<li class="item">
+					<el-button type="text" class="restBtn" size="mini" @click="reset('reset')">
 						{{ $t('dataFlow.reset') }}
 					</el-button>
 				</li>
@@ -126,10 +129,10 @@
 					<div class="database-text" :class="{ lineHeight: !scope.row.database_uri }">
 						<span class="name" @click="preview(scope.row.id, scope.row.database_type)"
 							>{{ scope.row.name }}
-							<span class="tag" v-if="scope.row.listtags && scope.row.listtags.length > 0">{{
-								formatterListTags(scope.row)
-							}}</span></span
-						>
+						</span>
+						<span class="tag" v-if="scope.row.listtags && scope.row.listtags.length > 0">{{
+							formatterListTags(scope.row)
+						}}</span>
 						<div class="user" v-if="scope.row.database_uri">
 							{{ formatterDatabaseType(scope.row) }}
 						</div>
@@ -334,6 +337,19 @@ export default {
 		//筛选条件
 		handleSortTable({ order, prop }) {
 			this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`;
+			this.table.fetch(1);
+		},
+		// 重置
+		reset(name) {
+			if (name === 'reset') {
+				this.searchParams = {
+					keyword: '',
+					isFuzzy: true,
+					databaseType: '',
+					databaseModel: '',
+					status: ''
+				};
+			}
 			this.table.fetch(1);
 		},
 		async getDatabaseType() {
@@ -623,6 +639,9 @@ export default {
 		.name {
 			color: #48b6e2;
 			cursor: pointer;
+		}
+		.name:hover {
+			text-decoration: underline;
 		}
 		div {
 			line-height: 14px;

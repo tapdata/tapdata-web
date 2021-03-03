@@ -100,14 +100,26 @@ export default {
 			let filter = {
 				where
 			};
-			MetadataDefinitions.get({
-				filter: JSON.stringify(filter)
-			}).then(res => {
-				if (res.data) {
-					this.treeData = this.formatData(res.data);
-					cb && cb(res.data);
-				}
-			});
+
+			if (this.types[0] === 'user') {
+				this.$api('UserGroup')
+					.get({})
+					.then(res => {
+						if (res.data) {
+							this.treeData = this.formatData(res.data);
+							cb && cb(res.data);
+						}
+					});
+			} else {
+				MetadataDefinitions.get({
+					filter: JSON.stringify(filter)
+				}).then(res => {
+					if (res.data) {
+						this.treeData = this.formatData(res.data);
+						cb && cb(res.data);
+					}
+				});
+			}
 		},
 		//格式化分类数据
 		formatData(items) {
