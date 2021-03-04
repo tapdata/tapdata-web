@@ -303,7 +303,8 @@ export default {
 				'db2',
 				'kafka',
 				'mariadb',
-				'mysql pxc'
+				'mysql pxc',
+				'jira'
 			], //目前白名单,
 			searchParams: this.$store.state.connections,
 			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')

@@ -4,7 +4,7 @@
  * @description
  */
 export const getImgByType = function(type) {
-	if (!type) {
+	if (!type || type === 'jira') {
 		type = 'default';
 	}
 	return require(`../../../static/image/databaseType/${type.toLowerCase()}.png`);
@@ -58,5 +58,6 @@ export const TYPEMAP = {
 	gridfs: 'GridFS',
 	kafka: 'Kafka',
 	mariadb: 'MariaDB',
-	'mysql pxc': 'MySQL PXC'
+	'mysql pxc': 'MySQL PXC',
+	jira: 'jira'
 };
