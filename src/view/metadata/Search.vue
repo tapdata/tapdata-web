@@ -1,5 +1,5 @@
 <template>
-	<section class="metadata-search-wrap">
+	<section class="metadata-search-wrap" :class="{ 'metadata-change-background': !showNoSearch }">
 		<div class="no-search-box-wrap" v-show="showNoSearch">
 			<div class="no-search-box">
 				<header class="metadata-search-title">元数据检索</header>
@@ -19,7 +19,7 @@
 			<div class="search-box">
 				<div class="search-header">
 					<span class="search-title">元数据搜索</span>
-					<el-input class="input-with" placeholder="请输入内容" v-model="search">
+					<el-input class="input-with" placeholder="请输入内容" v-model="search" ref="searchInput" v-focus>
 						<el-select v-model="meta_type" slot="prepend" placeholder="请选择" class="input-with-select">
 							<el-option label="搜索表" value="1"></el-option>
 							<el-option label="搜索字段" value="2"></el-option>
@@ -62,6 +62,9 @@ export default {
 			handler() {
 				if (this.search !== '') {
 					this.showNoSearch = false;
+					this.$nextTick(() => {
+						this.$refs.searchInput.focus();
+					});
 				}
 			}
 		}
@@ -78,7 +81,11 @@ export default {
 </script>
 
 <style scoped lang="less">
+.metadata-change-background {
+	background: #fafafa;
+}
 .metadata-search-wrap {
+	height: 100%;
 	.input-with-select {
 		width: 120px;
 	}
@@ -89,6 +96,7 @@ export default {
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		height: 70%;
 		.no-search-box {
 			display: flex;
 			flex-direction: column;
@@ -118,8 +126,9 @@ export default {
 			box-sizing: border-box;
 			.search-title {
 				font-size: 16px;
-				color: #333;
+				color: rgba(72, 182, 226, 100);
 				font-weight: 600;
+				margin-right: 10px;
 			}
 		}
 	}
