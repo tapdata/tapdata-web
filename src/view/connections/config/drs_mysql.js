@@ -171,19 +171,6 @@ export default function(vm) {
 				type: 'input',
 				field: 'database_host',
 				label: vm.$t('dataForm.form.host'),
-				dependOn: [
-					{
-						triggerOptions: [
-							{
-								field: 's_zone',
-								value: ''
-							}
-						],
-						triggerConfig: {
-							value: ''
-						}
-					}
-				],
 				rules: [
 					{
 						required: true,

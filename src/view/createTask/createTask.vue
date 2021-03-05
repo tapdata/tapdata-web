@@ -276,6 +276,11 @@ export default {
 			if (type === 'dataSource') {
 				this.$refs.dataSource.validate(valid => {
 					if (valid) {
+						//源端目标端不可选择相同库 规则: id一致
+						if (this.dataSourceModel.source_connectionId === this.dataSourceModel.target_connectionId) {
+							this.$message.error('源端连接与目标端连接不能选择相同的连接');
+							return;
+						}
 						//数据源名称
 						this.dataSourceModel.source_connectionName = this.handleConnectionName(
 							this.dataSourceModel.source_connectionId,
