@@ -21,7 +21,10 @@
 						</el-input>
 					</li>
 					<li class="item">
-						<el-button type="text" class="restBtn" size="mini" @click="rest()">
+						<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
+					</li>
+					<li class="item">
+						<el-button type="text" class="restBtn" size="mini" @click="rest('reset')">
 							{{ $t('dataFlow.reset') }}
 						</el-button>
 					</li>
@@ -46,6 +49,7 @@
 					style="border: 1px solid #dedee4;"
 					class="dv-table"
 					row-key="id"
+					border
 				>
 					<el-table-column :label="$t('role.roleName')" :show-overflow-tooltip="true" width="240">
 						<template slot-scope="scope">
@@ -506,11 +510,14 @@ export default {
 		},
 
 		// 重置
-		rest() {
-			this.searchNav = {
-				selectedSeachType: '0',
-				keyword: ''
-			};
+		rest(name) {
+			if (name === 'reset') {
+				this.searchNav = {
+					selectedSeachType: '0',
+					keyword: ''
+				};
+			}
+
 			this.handleDataApi();
 		},
 
@@ -655,6 +662,10 @@ export default {
 					padding-left: 10px;
 				}
 			}
+		}
+		.el-table--border td,
+		.el-table--border th {
+			border-right: 0;
 		}
 
 		.el-button {

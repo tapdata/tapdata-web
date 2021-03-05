@@ -319,6 +319,7 @@ export default class Editor extends BaseObject {
 			let monitor = rightTabPanel.getChildByName('monitor');
 			if (!monitor) {
 				monitor = new VueComponent({
+					title: i18n.t('editor.ui.sidebar.statistics'),
 					name: 'monitor',
 					editor: this,
 					propsData: {

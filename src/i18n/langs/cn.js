@@ -361,7 +361,8 @@ const cn = {
 		rename: '改名',
 		details: '详情',
 		more: '更多',
-		edit: '编辑'
+		edit: '编辑',
+		query: '查询'
 	},
 	dataFlow: {
 		leave: '离开',
@@ -1305,6 +1306,7 @@ const cn = {
 			sidebar: {
 				setting: '任务设置',
 				node_setting: '节点属性',
+				statistics: '统计',
 				logs: '运行日志',
 				milestone: '任务里程碑',
 				capture: '抓取数据',
@@ -2496,19 +2498,24 @@ const cn = {
 		delete: '删除',
 		check: '校验',
 		edit: '编辑',
+		bulkActivation: '批量激活',
+		bulkFreeze: '批量冻结',
+		bulkCheck: '批量校验',
+		creat: '创建',
+		registration: '注册',
 		notVerified: '未验证',
 		notActivated: '未激活',
 		activated: '已激活',
 		rejected: '已拒绝',
-		passwordNull: '密码不能为空',
-		pass_hint: '至少5个字符',
+		passwordNull: '请输入密码, 长度为 5 ~ 100 个字符',
+		pass_hint: '密码长度不能小于5位数',
 		activationCode: '激活码',
 		delUserTitle: '是否删除该用户',
 		delUser: '删除用户',
 		deluserLast: ' 后，此用户将无法恢复',
 		checkUserTitle: '是否通过校验该用户',
 		checkUser: '通过校验用户',
-		checkUserLast: '的邮箱后，此用户可以被激活',
+		checkUserLast: ' 的邮箱后，此用户可以被激活',
 		activationUserTitle: '是否激活该用户？',
 		activetionUser: '激活用户',
 		activetionUserLast: ' 后，此用户将可以使用 TAPDATA 系统',
@@ -2516,7 +2523,15 @@ const cn = {
 		freezeUser: '冻结用户',
 		freezeUserLast: ' 后，此用户将不可以使用 TAPDATA 系统',
 		startTime: '开始时间',
-		endTime: '结束时间'
+		endTime: '结束时间',
+		emailNull: '邮箱不能为空',
+		email_must_valid: '请输入有效邮箱地址',
+		activetionSuccess: '激活成功',
+		activetionError: '激活失败',
+		freezeSuccess: '冻结成功',
+		freezeError: '冻结失败',
+		checkSuccess: '通过校验',
+		checkError: '校验失败'
 	}
 };
 

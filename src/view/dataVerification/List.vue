@@ -75,7 +75,7 @@
 						</el-tag>
 					</li> -->
 					<li>
-						<el-button size="mini" type="text" @click="reset()">{{ $t('button.refresh') }}</el-button>
+						<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
 					</li>
 					<li>
 						<el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
@@ -651,13 +651,13 @@ export default {
 			.dv-table {
 				flex: 1;
 				overflow: hidden;
-				.name {
-					color: #48b6e2;
-					cursor: pointer;
-				}
-				.name:hover {
-					text-decoration: underline;
-				}
+				// .name {
+				// 	color: #48b6e2;
+				// 	cursor: pointer;
+				// }
+				// .name:hover {
+				// 	text-decoration: underline;
+				// }
 			}
 			.btn-icon {
 				font-size: 16px;

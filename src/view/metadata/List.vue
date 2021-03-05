@@ -67,7 +67,7 @@
 						</el-select>
 					</li>
 					<li>
-						<el-button size="mini" type="text" @click="reset()">{{ $t('button.refresh') }}</el-button>
+						<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
 					</li>
 					<li>
 						<el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>

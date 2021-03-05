@@ -106,7 +106,16 @@ export default {
 					.get({})
 					.then(res => {
 						if (res.data) {
-							this.treeData = this.formatData(res.data);
+							debugger;
+							let treeData = res.data.map(item => ({
+								value: item.name,
+								id: item.id,
+								gid: item.gid,
+								parent_id: item.parent_id,
+								last_updated: item.last_updated,
+								user_id: item.user_id
+							}));
+							this.treeData = this.formatData(treeData);
 							cb && cb(res.data);
 						}
 					});
@@ -115,6 +124,7 @@ export default {
 					filter: JSON.stringify(filter)
 				}).then(res => {
 					if (res.data) {
+						debugger;
 						this.treeData = this.formatData(res.data);
 						cb && cb(res.data);
 					}

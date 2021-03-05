@@ -359,7 +359,8 @@ const tc = {
 		rename: '改名',
 		details: '詳情',
 		more: '更多',
-		edit: '編輯'
+		edit: '編輯',
+		query: '查詢'
 	},
 	dataFlow: {
 		leave: '離開',
@@ -1301,6 +1302,7 @@ const tc = {
 			sidebar: {
 				setting: '任務設置',
 				node_setting: '節點屬性',
+				statistics: '統計',
 				logs: '日誌',
 				capture: '抓取數據',
 				style: '樣式',

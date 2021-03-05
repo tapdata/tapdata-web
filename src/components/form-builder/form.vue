@@ -39,6 +39,7 @@ export default {
 				labelPosition: 'top',
 				labelWidth: '160px',
 				size: 'mini',
+				inlineMessage: false,
 				disabled: false
 			},
 			defaultFormItemConfig: {

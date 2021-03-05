@@ -364,7 +364,8 @@ const en = {
 		rename: 'Rename',
 		details: 'Details',
 		more: 'More',
-		edit: 'Edit'
+		edit: 'Edit',
+		query: 'query'
 	},
 	dataFlow: {
 		leave: 'Leave',
@@ -1328,6 +1329,7 @@ const en = {
 			sidebar: {
 				setting: 'Data Flow Settings',
 				node_setting: 'Node Settings',
+				statistics: 'Statistics',
 				logs: 'Running Logs',
 				milestone: 'Task Milestone',
 				capture: 'Capture',

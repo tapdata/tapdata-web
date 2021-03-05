@@ -16,6 +16,9 @@
 				></Classification>
 			</div>
 			<div class="table-page-body">
+				<div class="table-page-nav">
+					<slot name="nav"></slot>
+				</div>
 				<div class="table-page-topbar">
 					<div class="table-page-search-bar">
 						<slot name="search"></slot>
