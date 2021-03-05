@@ -49,7 +49,14 @@
 								用户可以在任务设置步骤对任务名称、同步类型、遇错处理等进行设置，具体配置说明请查看帮助文档
 							</div>
 							<form-builder ref="setting" v-model="settingModel" :config="config">
-								<div slot="needToCreateIndex" class="ddl-tip">
+								<div
+									slot="needToCreateIndex"
+									class="ddl-tip"
+									v-show="
+										dataSourceModel['source_databaseType'] === 'mysql' &&
+											dataSourceModel['target_databaseType'] === 'mysql'
+									"
+								>
 									自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作
 								</div>
 							</form-builder>
@@ -282,14 +289,23 @@ export default {
 							return;
 						}
 						//数据源名称
-						this.dataSourceModel.source_connectionName = this.handleConnectionName(
+						let source = this.handleConnectionName(
 							this.dataSourceModel.source_connectionId,
 							'source_connectionId'
 						);
-						this.dataSourceModel.target_connectionName = this.handleConnectionName(
+						let target = this.handleConnectionName(
 							this.dataSourceModel.target_connectionId,
 							'target_connectionId'
 						);
+						//source.id/target.id = host + port + username
+						if (source.id === target.id) {
+							this.$message.error('源端连接与目标端连接不能选择相同的连接');
+							return;
+						}
+						this.dataSourceModel.source_connectionName = source.name;
+						this.dataSourceModel.target_connectionName = target.name;
+						this.dataSourceModel['target_databaseType'] = source.type;
+						this.dataSourceModel['source_databaseType'] = target.type;
 						this.activeStep += 1;
 						this.getFormConfig();
 					}
@@ -321,21 +337,36 @@ export default {
 				let config = func(this);
 				this.config = config;
 			}
-			if (type === 'instance') {
-				this.changeConfig(this.instanceMock || [], 'region');
-				this.changeInstanceRegion();
-			}
-			if (type === 'dataSource') {
-				this.getConnection(this.getWhere('source'), 'source_connectionId');
-				this.getConnection(this.getWhere('target'), 'target_connectionId');
-				this.changeConfig(this.dataSourceMock || [], 'source_defaultRegion');
-				this.changeDataSourceRegion();
-				this.changeConfig([], 'target_defaultRegionZone');
-			} else if (type === 'mapping') {
-				let id = this.dataSourceModel.source_connectionId || '';
-				this.$nextTick(() => {
-					this.$refs.transfer.getTable(id);
-				});
+			switch (type) {
+				case 'instance': {
+					this.changeConfig(this.instanceMock || [], 'region');
+					this.changeInstanceRegion();
+					break;
+				}
+				case 'dataSource': {
+					this.getConnection(this.getWhere('source'), 'source_connectionId');
+					this.getConnection(this.getWhere('target'), 'target_connectionId');
+					this.changeConfig(this.dataSourceMock || [], 'source_defaultRegion');
+					this.changeDataSourceRegion();
+					this.changeConfig([], 'target_defaultRegionZone');
+					break;
+				}
+				case 'setting': {
+					if (
+						this.dataSourceModel['source_databaseType'] !== 'mysql' ||
+						this.dataSourceModel['target_databaseType'] !== 'mysql'
+					) {
+						this.changeConfig([], 'setting_isOpenAutoDDL');
+					}
+					break;
+				}
+				case 'mapping': {
+					let id = this.dataSourceModel.source_connectionId || '';
+					this.$nextTick(() => {
+						this.$refs.transfer.getTable(id);
+					});
+					break;
+				}
 			}
 		},
 		getWhere(type) {
@@ -371,6 +402,12 @@ export default {
 		},
 		//获取数据源
 		getConnection(where, type) {
+			//接口请求之前 loading = true
+			let items = this.config.items;
+			let option = items.find(it => it.field === type);
+			if (option) {
+				option.loading = true;
+			}
 			this.$api('connections')
 				.get({
 					filter: JSON.stringify({
@@ -400,6 +437,7 @@ export default {
 					// 第一步 选择实例 选择区域
 					let region = items.find(it => it.field === 'region');
 					if (region) {
+						region.loading = false;
 						region.options = data.map(item => {
 							return {
 								id: item.code,
@@ -415,6 +453,7 @@ export default {
 					//映射可用区
 					let zone = items.find(it => it.field === 'zone');
 					if (zone) {
+						zone.loading = false;
 						zone.options = this.platformInfoZone.map(item => {
 							return {
 								id: item.code,
@@ -430,12 +469,14 @@ export default {
 					// 第二步 数据源连接ID
 					let source_connectionId = items.find(it => it.field === 'source_connectionId');
 					if (source_connectionId) {
+						source_connectionId.loading = false;
 						source_connectionId.options = data.map(item => {
 							return {
-								id: item.id,
+								id: item.database_host + item.database_port + item.database_username,
 								name: item.name,
 								label: item.name,
-								value: item.id
+								value: item.id,
+								type: item.database_type
 							};
 						});
 					}
@@ -444,12 +485,14 @@ export default {
 				case 'target_connectionId': {
 					let target_connectionId = items.find(it => it.field === 'target_connectionId');
 					if (target_connectionId) {
+						target_connectionId.loading = false;
 						target_connectionId.options = data.map(item => {
 							return {
-								id: item.id,
+								id: item.database_host + item.database_port + item.database_username,
 								name: item.name,
 								label: item.name,
-								value: item.id
+								value: item.id,
+								type: item.database_type
 							};
 						});
 					}
@@ -513,6 +556,14 @@ export default {
 					}
 					break;
 				}
+				case 'setting_isOpenAutoDDL': {
+					//映射可用区
+					let op = items.find(it => it.field === 'isOpenAutoDDL');
+					if (op) {
+						op.show = false;
+					}
+					break;
+				}
 			}
 		},
 		handleName(sourceData, target) {
@@ -524,9 +575,9 @@ export default {
 			let items = this.config.items;
 			let optionsData = items.find(it => it.field === type);
 			if (optionsData.length === 0) return;
-			let data = optionsData.options.filter(op => op.id === target);
+			let data = optionsData.options.filter(op => op.value === target);
 			if (data.length === 0) return;
-			return data[0].name;
+			return data[0];
 		},
 		//save
 		save() {
@@ -603,7 +654,7 @@ export default {
 					distance: 1,
 					name: this.dataSourceModel.source_connectionName,
 					type: 'database',
-					database_type: 'mysql',
+					database_type: this.dataSourceModel['source_databaseType'] || 'mysql',
 					dropType: 'no_drop',
 					readBatchSize: 1000,
 					readCdcInterval: 500
@@ -622,7 +673,7 @@ export default {
 					readCdcInterval: 500,
 					dropTable: this.settingModel.distinctWriteType === 'compel' ? true : false,
 					dropType: 'no_drop',
-					database_type: 'mysql'
+					database_type: this.dataSourceModel['target_databaseType'] || 'mysql'
 				})
 			];
 			if (this.id) {
