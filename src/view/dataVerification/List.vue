@@ -374,7 +374,7 @@ export default {
 			});
 		},
 		toTableInfo(id, resultId, type, name) {
-			let routeUrl = this.$router.resolve({
+			this.$router.push({
 				path: '/dataVerifyResult',
 				query: {
 					id: resultId,
@@ -383,16 +383,14 @@ export default {
 					name: name
 				}
 			});
-			window.open(routeUrl.href, '_blank');
 		},
 		toTableHistory(id) {
-			let routeUrl = this.$router.resolve({
+			this.$router.push({
 				path: '/dataVerifyHistory',
 				query: {
 					inspectId: id
 				}
 			});
-			window.open(routeUrl.href, '_blank');
 		},
 		startTask(id) {
 			let multipleSelection = id ? [id] : this.multipleSelection;

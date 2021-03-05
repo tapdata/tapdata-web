@@ -157,6 +157,7 @@
 .el-link.el-link--primary {
 	color:#color[primary];
 	font-weight: normal;
+	font-size: 12px;
 }
 .el-link.el-link--primary:hover {
 	color: #color[lprimary];
@@ -176,6 +177,14 @@
 }
 .el-button {
 	font-weight: normal;
+}
+.el-button.is-plain:focus {
+	border-color: #borderColor[normal];
+	color: #fontColor[normal];
+}
+.el-button.is-plain:focus:hover {
+	color: #color[primary];
+	border-color: #color[primary];
 }
 .el-button--primary {
 	background-color: #color[primary];
@@ -235,6 +244,9 @@
 .el-menu {
 	border-right: none;
 }
+.el-dropdown {
+	font-size: 12px;
+}
 .el-dropdown-link {
 	cursor: pointer;
 	font-size: 12px;
@@ -286,7 +298,7 @@
 .el-table.border td {
 	border-bottom: 1px solid #eceef1;
 }
-.el-table--small td, .el-table--small th {
+.el-table--small td {
 	padding: 5px 0;
 }
 .el-table .cell {
@@ -343,12 +355,11 @@
 	position: static;
 }
 .el-message-box__status {
-	top: 30px !important;
+	top: 30px;
 	left: 30px;
 	transform: translateY(0);
 }
 .el-message-box__content {
-	position: static;
 	padding: 5px 15px 15px 15px;
 	font-size: 12px;
 	color: #fontColor[light];
@@ -357,6 +368,7 @@
 	padding-left: 50px;
 }
 .el-message-box--alert {
+	width: 315px;
 	.el-message-box__content {
 		padding: 0 15px 15px 15px;
 		font-size: 14px;
@@ -389,4 +401,7 @@
 }
 .fb-radio .el-radio.is-bordered.is-checked {
 	border: 2px solid #color[primary];
+}
+.data-flow-wrap .panel-main .main.main-border .title {
+	color: #color[primary];
 }

@@ -1,12 +1,6 @@
 <template>
 	<section class="data-flow-wrap" v-loading="loading">
 		<div class="panel-main">
-			<div class="tip">
-				<el-button class="back-btn-icon-box" @click="GoBack"
-					><i class="iconfont icon-left-circle back-btn-icon"></i
-				></el-button>
-				{{ $t('dataVerification.tableDetail') }}
-			</div>
 			<div class="main main-border">
 				<div class="title">{{ name }}</div>
 				<div class="text" v-if="type === 'row_count'">{{ $t('dataVerification.rowVerify') }}</div>
@@ -25,8 +19,14 @@
 					ref="singleTable"
 					height="100%"
 					class="dv-table"
-					border
 				>
+					<ElTableColumn width="45">
+						<template slot-scope="scope">
+							<ElRadio :value="currentRow" :label="scope.row.taskId">
+								<span></span>
+							</ElRadio>
+						</template>
+					</ElTableColumn>
 					<el-table-column :label="$t('dataVerification.sourceTable')">
 						<template slot-scope="scope">
 							<span>{{ scope.row.source ? scope.row.source.table : '' }}</span>
@@ -97,13 +97,6 @@
 									<span>{{ $t('dataVerification.consistent') }}</span>
 								</span>
 							</div>
-						</template>
-					</el-table-column>
-					<el-table-column :label="$t('dataFlow.operate')" width="60px" v-if="type !== 'row_count'">
-						<template slot-scope="scope">
-							<el-button type="text" @click="changeInspectResult(1, scope.row.taskId)">
-								<i class="iconfont  task-list-icon icon-chaxun"></i>
-							</el-button>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -341,9 +334,10 @@ export default {
 			this.$refs.singleTable.setCurrentRow(row);
 		},
 		handleCurrentChange(val) {
-			this.currentRow = val;
+			this.currentRow = val.taskId;
 		},
 		rowClick(row) {
+			this.selectedTask = row.taskId;
 			this.changeInspectResult(1, row.taskId);
 		},
 		GoBack() {
@@ -437,7 +431,7 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @margin: 10px;
 .data-flow-wrap {
 	display: flex;

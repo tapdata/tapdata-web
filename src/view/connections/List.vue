@@ -641,13 +641,19 @@ export default {
 			}
 		},
 		testConnection(item) {
+			let loading = this.$loading();
 			this.testData = item;
-			this.$nextTick(() => {
-				this.$refs.test.start();
-				setTimeout(() => {
+			this.$api('connections')
+				.updateById(item.id, {
+					status: 'testing'
+				})
+				.then(() => {
+					this.$refs.test.start();
 					this.table.fetch();
-				}, 0);
-			});
+				})
+				.finally(() => {
+					loading.close();
+				});
 		},
 		returnTestData(data) {
 			if (!data.status || data.status === null) return;

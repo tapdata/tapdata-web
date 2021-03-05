@@ -1,15 +1,9 @@
 <template>
 	<section class="data-verify-history-wrap" v-loading="loading">
 		<div class="panel-main">
-			<div class="tip">
-				<el-button class="back-btn-icon-box" @click="GoBack"
-					><i class="iconfont icon-left-circle back-btn-icon" style="color: #fff;"></i
-				></el-button>
-				{{ $t('dataVerification.verifyHistory') }}
-			</div>
 			<div class="title">{{ name }}</div>
 			<div class="table-wrap">
-				<el-table :data="page.data" height="100%" class="dv-table" border @selection-change="selectHandler">
+				<el-table :data="page.data" height="100%" class="dv-table">
 					<el-table-column :label="$t('dataVerification.verifyTime')" prop="start">
 						<template slot-scope="scope">
 							{{
@@ -95,11 +89,9 @@
 					<el-table-column :label="$t('dataVerification.verifyStatus')" prop="status"></el-table-column>
 					<el-table-column :label="$t('dataFlow.operate')" width="60px">
 						<template slot-scope="scope">
-							<el-tooltip class="item" :content="$t('dataVerification.verifyDetail')" placement="bottom">
-								<el-button type="text" @click="changeInspectResult(scope.row.id, scope.row.inspect_id)">
-									<i class="iconfont  task-list-icon icon-chaxun"></i>
-								</el-button>
-							</el-tooltip>
+							<ElLink type="primary" @click="changeInspectResult(scope.row.id, scope.row.inspect_id)">{{
+								$t('button.details')
+							}}</ElLink>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -185,14 +177,13 @@ export default {
 			this.$router.push('/dataVerification');
 		},
 		changeInspectResult(id, inspect_id) {
-			let routeUrl = this.$router.resolve({
+			this.$router.push({
 				path: '/dataVerifyResult',
 				query: {
 					id: id,
 					inspectId: inspect_id
 				}
 			});
-			window.open(routeUrl.href, '_blank');
 		}
 	}
 };
