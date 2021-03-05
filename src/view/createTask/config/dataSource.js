@@ -83,20 +83,8 @@ export default function() {
 				type: 'select',
 				field: 'source_connectionId',
 				label: '源端连接',
+				loading: false,
 				options: [],
-				dependOn: [
-					{
-						triggerOptions: [
-							{
-								field: 'source_region',
-								value: ''
-							}
-						],
-						triggerConfig: {
-							value: ''
-						}
-					}
-				],
 				required: true
 			},
 			{
@@ -161,6 +149,7 @@ export default function() {
 				type: 'select',
 				field: 'target_connectionId',
 				label: '目标端连接',
+				loading: false,
 				options: [],
 				required: true
 			}
