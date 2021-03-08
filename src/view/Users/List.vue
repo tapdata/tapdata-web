@@ -348,12 +348,13 @@ export default {
 								validator: (rule, v, callback) => {
 									if (!v || !v.trim()) {
 										return callback(new Error(this.$t('user.passwordNull')));
-									}
-
-									if (v.length < 5) {
+									} else if (v.length < 5) {
 										return callback(new Error(this.$t('user.pass_hint')));
+									} else if (/[\s\u4E00-\u9FA5]/.test(v)) {
+										return callback(new Error(this.$t('account.passwordNotCN')));
+									} else {
+										return callback();
 									}
-									return callback();
 								}
 							}
 						]
