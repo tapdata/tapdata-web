@@ -172,6 +172,26 @@ export default {
 };
 </script>
 
+<style lang="less">
+.metadata-search-wrap {
+	.el-input-group__append {
+		background: #48b6e2;
+		color: #fff;
+	}
+	.no-search-box {
+		.el-input-group__prepend {
+			background: #fff;
+			color: #48b6e2;
+		}
+	}
+	.search-box {
+		.el-input-group__prepend {
+			background: #fff;
+			color: #666;
+		}
+	}
+}
+</style>
 <style scoped lang="less">
 .metadata-change-background {
 	background: #fafafa;
