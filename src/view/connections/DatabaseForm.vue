@@ -614,10 +614,12 @@ export default {
 					if (vpc) {
 						vpc.options = this.vpcList.map(item => {
 							return {
-								id: item.routerId,
+								id: item.id,
 								name: item.name,
 								label: item.name,
-								value: item.routerId
+								value: item.id,
+								routerId: item.routerId,
+								isThrough: item.isThrough
 							};
 						});
 					}
@@ -631,54 +633,28 @@ export default {
 		//切换sourceType ecs需要请求VPC 开通网络策略
 		getVpcList() {
 			if (this.model.sourceType !== 'ecs') return;
-			let userId = 'CIDC-U-cd8e01a325ea4eb0bcf0b83f973d5d9f'; //this.$cookie.get('user_id')
+			let userId = this.$cookie.get('user_id');
 			this.$api('tcm')
 				.getVpcList(userId)
-				.finally(() => {
-					this.vpcList = [
-						{
-							id: '0b09711e8fac4279b7f0bd0301cdc407',
-							name: 'vaso_test',
-							description: '',
-							createdTime: '2020-12-17T07:43:51.000+00:00',
-							deleted: false,
-							routerId: '73c496ff-036a-441e-8ff6-e082c5e05022',
-							scale: 'high',
-							ecStatus: 'ACTIVE',
-							adminStateUp: true,
-							userId: 'CIDC-U-4df68fafefc3405a97b63e37b37397ac',
-							userName: '000AE0002020062013764272',
-							region: 'N001-JS-WXCS01',
-							isThrough: true
-						},
-						{
-							id: '14394f6ccc244f8396251a6462bd49ca',
-							name: 'xhxhxhxhcs',
-							description: '',
-							createdTime: '2021-01-08T06:20:47.000+00:00',
-							deleted: false,
-							routerId: 'bab376b9-b7b3-4e87-971d-ca30becd76a2',
-							scale: 'normal',
-							ecStatus: 'ACTIVE',
-							adminStateUp: true,
-							userId: 'CIDC-U-4df68fafefc3405a97b63e37b37397ac',
-							userName: '000AE0002020062013764272',
-							region: 'N001-JS-SZCS01',
-							isThrough: false
-						}
-					];
+				.then(result => {
+					this.vpcList = result.data || [];
 					this.changeConfig(this.vpcList, 'vpc');
 				});
 		},
 		//创建网络策略
 		createStrategy() {
-			let data = {
-				userId: 'CIDC-U-cd8e01a325ea4eb0bcf0b83f973d5d9f',
-				routerId: this.model.vpc
+			let currentData = this.vpcList.filter(item => item.id === this.model.vpc);
+			if (currentData.length === 0) return;
+			let params = {
+				userId: this.$cookie.get('user_id'),
+				vpcId: this.model.vpc,
+				region: this.model.region,
+				zone: this.model.zone,
+				routerId: currentData[0].routerId
 			};
 			this.$api('tcm')
-				.strategy(data)
-				.finally(() => {
+				.strategy(params)
+				.then(() => {
 					this.$message.success('创建成功');
 				});
 		},
@@ -709,7 +685,9 @@ export default {
 				DRS_regionName: '',
 				DRS_zoneName: '',
 				DRS_instances: params.DRS_instances || '',
-				IP_type: params.IP_type || ''
+				IP_type: params.IP_type || '',
+				checkedVpc: params.checkedVpc || '',
+				vpc: params.vpc || ''
 			};
 			//存实例名称
 			platformInfo['regionName'] = this.handleName({
@@ -745,12 +723,12 @@ export default {
 		},
 		submit() {
 			this.submitBtnLoading = true;
-			let falg = false;
+			let flag = true;
 			this.model.search_databaseType = '';
 			if (this.model.database_type === 'file' && this.model.connection_type === 'source') {
 				this.$refs.fileForm.validate(valid => {
 					if (!valid) {
-						falg = true;
+						flag = false;
 					}
 				});
 			}
@@ -761,7 +739,7 @@ export default {
 			// }
 
 			this.$refs.form.validate(valid => {
-				if (valid && !falg) {
+				if (valid && flag) {
 					let params = Object.assign(
 						{},
 						{
