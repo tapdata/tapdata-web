@@ -219,6 +219,8 @@ export default {
 				color: rgba(72, 182, 226, 100);
 				font-size: 24px;
 				text-align: left;
+				margin-bottom: 10px;
+				font-weight: bold;
 			}
 			.desc {
 				margin-top: 10px;
@@ -241,9 +243,9 @@ export default {
 			-webkit-box-sizing: border-box;
 			box-sizing: border-box;
 			.search-title {
-				font-size: 16px;
-				color: rgba(72, 182, 226, 100);
-				font-weight: 600;
+				font-size: 14px;
+				color: #333;
+				font-weight: bold;
 				margin-right: 10px;
 			}
 		}
