@@ -3,7 +3,7 @@
 		:title="title"
 		:close-on-click-modal="false"
 		:before-close="handleClose"
-		:visible.sync="dialogVisible"
+		:visible.sync="dialogFormVisible"
 		custom-class="dialogField"
 	>
 		<el-form :model="form" :rules="rules" ref="form" label-width="120" class="e-form" label-position="left">
@@ -13,7 +13,7 @@
 						v-model="form.field_name"
 						:placeholder="$t('metadata.details.enter') + $t('metadata.details.filedName')"
 						autocomplete="off"
-						:disabled="data && data.id"
+						:disabled="fieldNameDisabled"
 						size="mini"
 						maxlength="50"
 						show-word-limit
@@ -163,7 +163,7 @@
 			</div>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
-			<el-button @click="(dialogVisible = false), handleClose()" size="small">
+			<el-button @click="handleClose()" size="small">
 				{{ $t('message.cancel') }}
 			</el-button>
 			<el-button type="primary" @click="save()" size="small">{{ $t('message.save') }}</el-button>
@@ -216,8 +216,9 @@ export default {
 	data() {
 		return {
 			title: this.data.id ? this.$t('metadata.details.editFild') : this.$t('metadata.details.createFiled'),
-			dialogFormVisible: false,
+			dialogFormVisible: this.dialogVisible,
 			selectDictionaryTem: '',
+			fieldNameDisabled: false,
 			form: {
 				field_name: '',
 				alias_name: '',
@@ -273,6 +274,7 @@ export default {
 		this.form = this.data && this.data.field_name ? this.data : this.form;
 		this.form.dictionary = this.data.dictionary || [];
 		this.form.relation = this.data.relation || [];
+		this.fieldNameDisabled = this.data && this.data.id ? true : false;
 		this.getMetadataTable();
 	},
 	methods: {
@@ -470,14 +472,19 @@ export default {
 
 		// 关闭弹窗
 		handleClose() {
+			this.dialogFormVisible = false;
 			this.$emit('dialogVisible', false);
 			this.$emit('update:dialogVisible', false);
 		},
 
 		// 保存数据
-		async save() {
+		save() {
 			let groupRelation = {},
-				fieldsArr = [];
+				fieldsArr = [],
+				falg = false;
+			if (this.metadata.fields.includes(this.form.field_name)) {
+				falg = true;
+			}
 			if (!this.data.id) {
 				this.metadata.fields.push(this.form);
 			}
@@ -510,28 +517,37 @@ export default {
 						});
 				});
 			}
-			let falg = false;
-			if (new Set(fieldsArr).size !== fieldsArr.length) {
-				falg = true;
-				debugger;
-			}
+
 			let relation = Object.values(groupRelation);
 
 			this.$refs.form.validate(async valid => {
 				if (valid) {
-					let params = this.metadata;
-					params.fields = this.metadata.fields;
-					// params.comment = this.form.comment;
-					params.relation = relation;
+					let params = {
+						// field_name: this.form.field_name,
+						// alias_name: this.form.alias_name,
+						// comment: this.form.comment,
+						// java_type: this.form.java_type,
+						// is_auto_allowed: this.form.is_auto_allowed,
+						// autoincrement: this.form.autoincrement,
+						// primary_key_position: this.form.primary_key_position,
+						// columnSize: this.form.columnSize,
+						// precision: this.form.precision,
+						// scale: this.form.scale,
+						// dictionary: this.form.dictionary,
+						fields: this.metadata.fields,
+						relation: relation
+					};
 					if (!falg) {
-						let result = await this.$api('MetadataInstances').patch(this.metadata.id, params);
-						if (result.data) {
-							this.dialogVisible = false;
-							this.$emit('dialogVisible', false);
-							this.$message.success(this.$t('metadata.details.success_Release'));
-						} else {
-							this.$message.error(this.$t('message.saveFail'));
-						}
+						this.$api('MetadataInstances')
+							.patch(this.metadata.id, params)
+							.then(() => {
+								this.dialogFormVisible = false;
+								this.$emit('dialogVisible', false);
+								this.$message.success(this.$t('metadata.details.success_Release'));
+							})
+							.catch(() => {
+								this.$message.error(this.$t('message.saveFail'));
+							});
 					} else {
 						this.$message.error(this.$t('metadata.details.filedName_repeat'));
 					}

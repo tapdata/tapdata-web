@@ -44,6 +44,22 @@
 								>{{ stage.nodeName }}</span
 							>
 						</el-tooltip>
+						<el-tooltip
+							placement="top"
+							manual
+							:content="$t('dialog.downAgent.copied')"
+							popper-class="copy-tooltip"
+							:value="showTooltip"
+						>
+							<span
+								class="operaKey"
+								v-clipboard:copy="stage.nodeName"
+								v-clipboard:success="onCopy"
+								@mouseleave="showTooltip = false"
+							>
+								{{ $t('dataFlow.copy') }}
+							</span>
+						</el-tooltip>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.ownedLibrary') }}:</span>
@@ -55,16 +71,64 @@
 								>{{ stage.name }}</span
 							>
 						</el-tooltip>
+						<el-tooltip
+							placement="top"
+							manual
+							:content="$t('dialog.downAgent.copied')"
+							popper-class="copy-tooltip"
+							:value="showTooltip"
+						>
+							<span
+								class="operaKey"
+								v-clipboard:copy="stage.name"
+								v-clipboard:success="onCopy"
+								@mouseleave="showTooltip = false"
+							>
+								{{ $t('dataFlow.copy') }}
+							</span>
+						</el-tooltip>
 					</div>
 					<div class="info-list" v-if="stage.database_host">
 						<span class="info-label">{{ $t('dataForm.form.host') }}:</span>
 						<el-tooltip :content="stage.database_host" placement="bottom-start">
 							<span class="row-text">{{ stage.database_host }}</span>
 						</el-tooltip>
+						<el-tooltip
+							placement="top"
+							manual
+							:content="$t('dialog.downAgent.copied')"
+							popper-class="copy-tooltip"
+							:value="showTooltip"
+						>
+							<span
+								class="operaKey"
+								v-clipboard:copy="stage.database_host"
+								v-clipboard:success="onCopy"
+								@mouseleave="showTooltip = false"
+							>
+								{{ $t('dataFlow.copy') }}
+							</span>
+						</el-tooltip>
 					</div>
 					<div class="info-list" v-if="!['file'].includes(stage.database_type) && stage.database_name">
 						<span class="info-label">{{ $t('dataForm.form.databaseName') }}:</span>
 						<span class="info-text">{{ stage.database_name }}</span>
+						<el-tooltip
+							placement="top"
+							manual
+							:content="$t('dialog.downAgent.copied')"
+							popper-class="copy-tooltip"
+							:value="showTooltip"
+						>
+							<span
+								class="operaKey"
+								v-clipboard:copy="stage.database_name"
+								v-clipboard:success="onCopy"
+								@mouseleave="showTooltip = false"
+							>
+								{{ $t('dataFlow.copy') }}
+							</span>
+						</el-tooltip>
 					</div>
 					<div
 						class="info-list"
@@ -72,10 +136,42 @@
 					>
 						<span class="info-label">{{ $t('dataFlow.ownedUser') }}:</span>
 						<span class="info-text">{{ stage.database_owner }}</span>
+						<el-tooltip
+							placement="top"
+							manual
+							:content="$t('dialog.downAgent.copied')"
+							popper-class="copy-tooltip"
+							:value="showTooltip"
+						>
+							<span
+								class="operaKey"
+								v-clipboard:copy="stage.database_owner"
+								v-clipboard:success="onCopy"
+								@mouseleave="showTooltip = false"
+							>
+								{{ $t('dataFlow.copy') }}
+							</span>
+						</el-tooltip>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataForm.form.databaseType') }}:</span>
 						<span class="info-text">{{ stage.database_type }}</span>
+						<el-tooltip
+							placement="top"
+							manual
+							:content="$t('dialog.downAgent.copied')"
+							popper-class="copy-tooltip"
+							:value="showTooltip"
+						>
+							<span
+								class="operaKey"
+								v-clipboard:copy="stage.database_type"
+								v-clipboard:success="onCopy"
+								@mouseleave="showTooltip = false"
+							>
+								{{ $t('dataFlow.copy') }}
+							</span>
+						</el-tooltip>
 					</div>
 					<!-- <div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.inputNumber') }}:</span>
@@ -93,11 +189,43 @@
 						<el-tooltip :content="stage.nodeName" placement="bottom-start">
 							<span class="info-text">{{ stage.nodeName }}</span>
 						</el-tooltip>
+						<el-tooltip
+							placement="top"
+							manual
+							:content="$t('dialog.downAgent.copied')"
+							popper-class="copy-tooltip"
+							:value="showTooltip"
+						>
+							<span
+								class="operaKey"
+								v-clipboard:copy="stage.nodeName"
+								v-clipboard:success="onCopy"
+								@mouseleave="showTooltip = false"
+							>
+								{{ $t('dataFlow.copy') }}
+							</span>
+						</el-tooltip>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.nodeType') }}:</span>
 						<el-tooltip :content="stageType" placement="bottom-start">
 							<span class="info-text">{{ typeMapping[stageType] }}</span>
+						</el-tooltip>
+						<el-tooltip
+							placement="top"
+							manual
+							:content="$t('dialog.downAgent.copied')"
+							popper-class="copy-tooltip"
+							:value="showTooltip"
+						>
+							<span
+								class="operaKey"
+								v-clipboard:copy="typeMapping[stageType]"
+								v-clipboard:success="onCopy"
+								@mouseleave="showTooltip = false"
+							>
+								{{ $t('dataFlow.copy') }}
+							</span>
 						</el-tooltip>
 					</div>
 				</div>
@@ -107,16 +235,64 @@
 						<el-tooltip :content="flow.name" placement="bottom-start">
 							<span class="info-text" style="color: #48b6e2;">{{ flow.name }}</span>
 						</el-tooltip>
+						<el-tooltip
+							placement="top"
+							manual
+							:content="$t('dialog.downAgent.copied')"
+							popper-class="copy-tooltip"
+							:value="showTooltip"
+						>
+							<span
+								class="operaKey"
+								v-clipboard:copy="flow.name"
+								v-clipboard:success="onCopy"
+								@mouseleave="showTooltip = false"
+							>
+								{{ $t('dataFlow.copy') }}
+							</span>
+						</el-tooltip>
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.creatdor') }}:</span>
 						<el-tooltip :content="flow.name">
 							<span class="info-text">{{ flow.username }}</span>
 						</el-tooltip>
+						<el-tooltip
+							placement="top"
+							manual
+							:content="$t('dialog.downAgent.copied')"
+							popper-class="copy-tooltip"
+							:value="showTooltip"
+						>
+							<span
+								class="operaKey"
+								v-clipboard:copy="flow.username"
+								v-clipboard:success="onCopy"
+								@mouseleave="showTooltip = false"
+							>
+								{{ $t('dataFlow.copy') }}
+							</span>
+						</el-tooltip>
 					</div>
 					<div class="info-list" v-if="flow.startTime">
 						<span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
 						<span class="info-text">{{ $moment(flow.startTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+						<el-tooltip
+							placement="top"
+							manual
+							:content="$t('dialog.downAgent.copied')"
+							popper-class="copy-tooltip"
+							:value="showTooltip"
+						>
+							<span
+								class="operaKey"
+								v-clipboard:copy="flow.startTime"
+								v-clipboard:success="onCopy"
+								@mouseleave="showTooltip = false"
+							>
+								{{ $t('dataFlow.copy') }}
+							</span>
+						</el-tooltip>
 					</div>
 					<div v-if="flow.finishTime" class="info-list">
 						<span class="info-label">{{ $t('dataFlow.finishTime') }}:</span>
@@ -509,7 +685,8 @@ export default {
 			intervalTransf: 20000,
 			intervalReplicate: 20000,
 			cdcLastTimes: [],
-			tableName: ''
+			tableName: '',
+			showTooltip: false
 		};
 	},
 
@@ -673,6 +850,11 @@ export default {
 	},
 
 	methods: {
+		// 复制命令行
+		onCopy() {
+			this.showTooltip = true;
+		},
+
 		// 点击节点跳转到表
 		handTableName(data) {
 			window.open('/#/metadataInstances/' + data.tableMetadataInstanceId);
@@ -1127,19 +1309,25 @@ export default {
 				box-sizing: border-box;
 				overflow: auto;
 				.info-list {
-					display: flex;
 					padding-bottom: 15px;
 					overflow: hidden;
 					.info-label {
-						display: block;
+						float: left;
 						width: 90px;
 						font-size: 12px;
 						color: #999;
 					}
+					.operaKey {
+						float: right;
+						display: none;
+						padding-right: 20px;
+						font-size: 12px;
+						color: rgb(72, 182, 226);
+						cursor: pointer;
+					}
 
 					.row-text {
-						display: block;
-						max-width: calc(100% - 95px);
+						// display: block;
 						font-size: 12px;
 						color: #333;
 					}
@@ -1153,14 +1341,20 @@ export default {
 					}
 
 					.info-text {
-						display: block;
-						max-width: calc(100% - 95px);
-						height: 16px;
+						float: left;
+						// max-width: calc(100% - 95px);
+						// height: 16px;
+						// line-height: 16px;
 						font-size: 12px;
 						color: #333;
 						white-space: nowrap;
 						text-overflow: ellipsis;
 						overflow: hidden;
+					}
+				}
+				.info-list:hover {
+					.operaKey {
+						display: inline-block;
 					}
 				}
 			}

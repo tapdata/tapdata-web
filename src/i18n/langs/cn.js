@@ -587,6 +587,7 @@ const cn = {
 		ddlTip: '注意：自动DDL处理不支持JS处理器、字段处理器',
 		transformerConcurrency: '目标写入线程数',
 		processorConcurrency: '处理器线程数',
+		cdcEngineFilter: '启用引擎过滤',
 		cdcFetchSize: '增量批次读取条数',
 		cdcFetchSizeTip: '每次读取的数据条数。',
 		cdcFetchSizeTip1: '条数越小，增量实时性高，但处理速度相对较慢。',
@@ -2475,7 +2476,19 @@ const cn = {
 		btn_to_dashboard: '暂不编辑任务，先逛逛',
 
 		not_source: '请选择一个源连接',
-		not_target: '请选择一个目标连接'
+		not_target: '请选择一个目标连接',
+
+		agentServiceTitle: 'Agent 服务状态异常',
+		abnormalText: '异常原因',
+		abnormal: 'Agnet 进程所在环境断开连接',
+		abnormal1: 'Agnet 服务进程被干掉',
+		solutionText: '解决方案',
+		windowsSolution: 'WINDOWS：启动服务器并执行命令 ',
+		windowsSolution1: 'WINDOWS：在安装Agent环境下执行命令 ',
+		linuxSolution: 'LINUX：启动服务器并执行命令 ',
+		linuxSolution1: 'LINUX：在安装Agent环境下执行命令 ',
+		restartProcess: ' 以重启进程',
+		clickText: '进程已重启？请点击'
 	},
 	user: {
 		des: '用户管理页面提供对用户的创建、编辑、删除，以及状态设置功能',

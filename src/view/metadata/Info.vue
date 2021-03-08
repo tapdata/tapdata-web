@@ -279,8 +279,9 @@
 											}}</label>
 											<div class="dropInfo">
 												<span v-for="item in scope.row.relation" :key="item.key"
-													>{{ item.table_name }}, {{ item.field_name }},
-													{{ $t('metadata.details.' + item.rel) }}</span
+													>{{ item.table_name }}, {{ item.field_name }},{{
+														$t('metadata.details.' + item.rel)
+													}}</span
 												>
 											</div>
 										</li>
@@ -671,16 +672,18 @@ export default {
 		},
 		// 保存业务属性
 		saveBusiness() {
-			let obj = {};
+			let obj = {},
+				custom_properties = this.metadataDataObj.custom_properties
+					? this.metadataDataObj.custom_properties
+					: {};
 			obj[this.businessForm.key] = this.businessForm.value;
 			let params = {
-				custom_properties: Object.assign(this.metadataDataObj.custom_properties, obj)
+				custom_properties: Object.assign(custom_properties, obj)
 			};
-			// params.custom_properties = Object.assign(this.metadataDataObj.custom_properties, obj);
-
 			this.$api('MetadataInstances')
 				.patch(this.metadataDataObj.id, params)
 				.then(() => {
+					this.handleGetDataApi();
 					this.$message.success(this.$t('metadata.details.success_Release'));
 				})
 				.catch(() => {
@@ -898,7 +901,7 @@ export default {
 						justify-content: space-between;
 						align-items: flex-end;
 						flex-wrap: wrap-reverse;
-						padding: 0 10px;
+						// padding: 0 10px;
 
 						.table-page-search-bar {
 							margin-right: 5px;
