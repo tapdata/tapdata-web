@@ -286,29 +286,6 @@ export default {
 			let { current, size } = page;
 			let { keyword, inspectMethod, mode, enabled, result } = this.searchParams;
 			let where = {};
-			let fields = {
-				name: true,
-				user_id: true,
-				connection_type: true,
-				database_type: true,
-				search_databaseType: true,
-				database_host: true,
-				database_uri: true,
-				database_username: true,
-				database_port: true,
-				database_name: true,
-				sourceType: true,
-				status: true,
-				id: true,
-				listtags: true,
-				tableCount: true,
-				loadCount: true,
-				loadFieldsStatus: true,
-				schemaAutoUpdate: true,
-				platformInfo: true,
-				last_updated: true,
-				flowId: true
-			};
 			//精准搜索 iModel
 			if (keyword && keyword.trim()) {
 				let filterObj = { like: toRegExp(keyword), options: 'i' };
@@ -344,7 +321,6 @@ export default {
 			let filter = {
 				order: this.order,
 				limit: size,
-				fields: fields,
 				skip: (current - 1) * size,
 				where
 			};
@@ -359,17 +335,15 @@ export default {
 					total: countRes.data.count,
 					data: list.map(item => {
 						let result = item.InspectResult;
-						let lastStartTime = '-';
 						let sourceTotal = '-';
 						let targetTotal = '-';
 						let diffNum = 0;
 						if (result) {
-							lastStartTime = this.$moment(result.createTime).format('YYYY-MM-DD HH:mm:ss');
 							sourceTotal = result.source_total;
 							targetTotal = result.target_total;
 							diffNum = Math.abs(targetTotal - sourceTotal);
 						}
-						item.lastStartTime = lastStartTime;
+						item.lastStartTime = this.$moment(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss');
 						item.sourceTotal = sourceTotal;
 						item.targetTotal = targetTotal;
 						item.diffNum = diffNum;
