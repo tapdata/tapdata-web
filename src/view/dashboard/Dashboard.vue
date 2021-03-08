@@ -299,7 +299,7 @@ export default {
 			validList: [
 				{ name: this.$t('app.Home.allValid'), value: 'total' },
 				{ name: this.$t('app.Home.checkSame'), value: 'passed' },
-				{ name: this.$t('app.Home.countDifference'), value: 'countDiff' },
+				{ name: this.$t('app.Home.countDifference'), value: 'row_count' },
 				{ name: this.$t('app.Home.contentDifference'), value: 'valueDiff' },
 				{ name: 'ERROR', value: 'error' }
 			],
@@ -542,7 +542,7 @@ export default {
 		jumpCheck(val) {
 			let routeUrl = this.$router.resolve({
 				path: 'dataVerification',
-				query: { executionStatus: val }
+				query: { executionStatus: val === 'total' ? '' : val }
 			});
 
 			window.open(routeUrl.href);

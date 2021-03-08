@@ -224,19 +224,13 @@
 			</el-table-column>
 			<el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="180">
 				<template slot-scope="scope">
-					<div>
+					<div style="display:flex;align-items:center;">
 						<img
-							v-if="scope.row.status == 'running'"
-							style="width: 12px;vertical-align: middle;"
+							v-if="statusMap[scope.row.status].icon == 'loading'"
+							style="width: 26px;vertical-align: middle;"
 							:src="$window._TAPDATA_OPTIONS_.loadingImg"
 						/>
-						<i
-							v-if="scope.row.status !== 'running'"
-							:class="
-								'dataflow-table__icon iconfont ' +
-									(statusMap[scope.row.status] ? statusMap[scope.row.status].icon : '')
-							"
-						></i>
+						<i v-else :class="'dataflow-table__icon iconfont ' + statusMap[scope.row.status].icon"></i>
 						<span>{{ scope.row.statusLabel }}</span>
 						<span
 							style="color: #999"
@@ -765,7 +759,7 @@ export default {
 			if (platformInfo && platformInfo.regionName) {
 				item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName;
 			}
-			item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'));
+			item.statusLabel = this.statusMap[item.status].label;
 			let statusMap = {};
 			let getLag = lag => {
 				let r = '0s';
@@ -1294,6 +1288,8 @@ export default {
 <style lang="less">
 .data-flow-wrap .data-flow-list .dataflow-table__icon {
 	font-size: 14px;
+	width: 26px;
+	text-align: center;
 }
 .jobSeceduleDialog {
 	.text {

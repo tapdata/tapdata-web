@@ -68,7 +68,7 @@ export default {
 		checkError(msg) {
 			const h = this.$createElement;
 			this.$msgbox({
-				width: 600,
+				width: 850,
 				customClass: 'error-box-body',
 				message: h(
 					'pre',
@@ -126,7 +126,7 @@ export default {
 </script>
 <style lang="less">
 .error-box-body {
-	width: 600px;
+	width: 850px;
 }
 </style>
 <style lang="less" scoped>

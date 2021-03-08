@@ -97,7 +97,7 @@ export default {
 		var validateSuffix = (rule, value, callback) => {
 			if (value === '') {
 				callback();
-			} else if (!/^[a-zA-Z_][a-zA-Z0-9_\s-.]*$/.test(value)) {
+			} else if (!/^[a-zA-Z_][a-zA-Z0-9_\-.]*$/.test(value)) {
 				callback(new Error('请按照以下规则输入: '));
 			} else {
 				callback();

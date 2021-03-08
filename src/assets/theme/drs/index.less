@@ -39,11 +39,20 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
+.el-icon-success {
+	color: #color[success];
+}
+.el-icon-error {
+	color: #color[danger];
+}
 .icon-daiqidong {
 	color: #color[primary];
 }
 .icon-yunhangzhong {
 	color: #color[success];
+}
+.icon-yichang {
+	color: #color[warning];
 }
 .layout-container .iconfont {
 	font-size: 12px;
@@ -130,6 +139,12 @@
 	background-color: rgb(225, 236, 255);
 	border-color:#color[primary];
 }
+.el-divider__text, .el-link {
+	font-size: 12px;
+}
+.el-link.is-underline:hover:after {
+	display: none;
+}
 .el-link.el-link--default {
 	color: #fontColor[normal];
 }
@@ -146,9 +161,6 @@
 }
 .el-link.el-link--primary:hover {
 	color: #color[lprimary];
-	&::after {
-		display: none;
-	}
 }
 .el-link.is-disabled {
 	cursor: default;
@@ -165,6 +177,14 @@
 }
 .el-button {
 	font-weight: normal;
+}
+.el-button.is-plain:focus {
+	border-color: #borderColor[normal];
+	color: #fontColor[normal];
+}
+.el-button.is-plain:focus:hover {
+	color: #color[primary];
+	border-color: #color[primary];
 }
 .el-button--primary {
 	background-color: #color[primary];
@@ -224,6 +244,9 @@
 .el-menu {
 	border-right: none;
 }
+.el-dropdown {
+	font-size: 12px;
+}
 .el-dropdown-link {
 	cursor: pointer;
 	font-size: 12px;
@@ -275,7 +298,7 @@
 .el-table.border td {
 	border-bottom: 1px solid #eceef1;
 }
-.el-table--small td, .el-table--small th {
+.el-table--small td {
 	padding: 5px 0;
 }
 .el-table .cell {
@@ -332,12 +355,11 @@
 	position: static;
 }
 .el-message-box__status {
-	top: 30px !important;
+	top: 30px;
 	left: 30px;
 	transform: translateY(0);
 }
 .el-message-box__content {
-	position: static;
 	padding: 5px 15px 15px 15px;
 	font-size: 12px;
 	color: #fontColor[light];
@@ -346,6 +368,7 @@
 	padding-left: 50px;
 }
 .el-message-box--alert {
+	width: 315px;
 	.el-message-box__content {
 		padding: 0 15px 15px 15px;
 		font-size: 14px;
@@ -361,13 +384,13 @@
 			.step-box {
 				li {
 					&.active {
-						color: #color[primary] !important;
+						color: #color[primary];
 						&::before {
-							background: #color[primary] !important;
+							background: #color[primary];
 						}
 						.step-index {
 							border-color: #fff;
-							background: #color[primary] !important;
+							background: #color[primary];
 							color: #fff;
 						}
 					}
@@ -377,6 +400,8 @@
 	}
 }
 .fb-radio .el-radio.is-bordered.is-checked {
-	border: 2px solid #color[primary] !important;
-
+	border: 2px solid #color[primary];
+}
+.data-flow-wrap .panel-main .main.main-border .title {
+	color: #color[primary];
 }
