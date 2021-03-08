@@ -5,7 +5,7 @@
 		</el-button>
 		<div class="classification-header">
 			<div class="title">
-				<span>{{ $t('classification.title') }}</span>
+				<span>{{ types[0] === 'user' ? $t('classification.userTitle') : $t('classification.title') }}</span>
 			</div>
 			<div class="search-box">
 				<el-input class="search" size="mini" v-model="filterText">

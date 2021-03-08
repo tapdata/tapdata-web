@@ -1752,6 +1752,7 @@ const tc = {
 	},
 	classification: {
 		title: '數據分類',
+		userTitle: '用戶組',
 		nameExist: '分類名稱已存在',
 		addNode: '新增同級分類',
 		addChildernNode: '新增子分類',

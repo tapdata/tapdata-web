@@ -1795,6 +1795,7 @@ const en = {
 	},
 	classification: {
 		title: 'Data Category',
+		userTitle: 'User Group',
 		nameExist: 'Category name already existed.',
 		addNode: 'Add category at the same level',
 		addChildernNode: 'Add Child Category',

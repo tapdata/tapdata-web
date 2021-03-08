@@ -387,7 +387,7 @@ export default {
 	},
 	created() {
 		this.getDbOptions();
-		this.getCount();
+		// this.getCount();
 	},
 	mounted() {
 		this.searchParams = Object.assign(this.searchParams, this.table.getCache());
@@ -406,7 +406,6 @@ export default {
 					isFuzzy: true
 				};
 			}
-
 			this.table.fetch(1);
 		},
 		// 获取数据
@@ -439,9 +438,7 @@ export default {
 					filter: JSON.stringify(filter)
 				})
 			]).then(([countRes, res]) => {
-				if (where.status) {
-					this[where.status + 'Count'] = countRes.data.count;
-				}
+				this.getCount();
 				return {
 					total: countRes.data.count,
 					data: res.data

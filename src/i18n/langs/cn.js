@@ -1757,6 +1757,7 @@ const cn = {
 	},
 	classification: {
 		title: '数据分类',
+		userTitle: '用户组',
 		nameExist: '分类名称已存在',
 		addNode: '新增同级分类',
 		addChildernNode: '新增子分类',
