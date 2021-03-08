@@ -136,6 +136,11 @@ export default {
 								this.cache = null;
 								this.page.total = total;
 								this.list = data || [];
+								if (total > 0 && (!data || !data.length)) {
+									setTimeout(() => {
+										this.fetch(this.page.current - 1);
+									}, 0);
+								}
 							})
 							.finally(() => {
 								this.loading = false;

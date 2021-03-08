@@ -22,6 +22,7 @@
 				<li class="item">
 					<ElSelect
 						v-model="searchParams.inspectMethod"
+						clearable
 						size="small"
 						:placeholder="$t('dataVerification.verifyType')"
 						@input="table.fetch(1)"
@@ -34,6 +35,7 @@
 				<li class="item">
 					<ElSelect
 						v-model="searchParams.mode"
+						clearable
 						size="small"
 						:placeholder="$t('dataVerification.singleRepeatingVerify')"
 						@input="table.fetch(1)"
@@ -45,6 +47,7 @@
 				<li class="item">
 					<ElSelect
 						v-model="searchParams.enabled"
+						clearable
 						size="small"
 						:placeholder="$t('dataVerification.verifystatus')"
 						@input="table.fetch(1)"
@@ -56,6 +59,7 @@
 				<li class="item">
 					<ElSelect
 						v-model="searchParams.result"
+						clearable
 						size="small"
 						:placeholder="$t('dataVerification.result')"
 						@input="table.fetch(1)"
@@ -302,7 +306,8 @@ export default {
 				loadFieldsStatus: true,
 				schemaAutoUpdate: true,
 				platformInfo: true,
-				last_updated: true
+				last_updated: true,
+				flowId: true
 			};
 			//精准搜索 iModel
 			if (keyword && keyword.trim()) {
@@ -428,7 +433,7 @@ export default {
 		},
 		goEdit(id, flowId) {
 			this.$api('DataFlows')
-				.get([flowId])
+				.getId(flowId)
 				.then(res => {
 					if (['running', 'paused', 'error'].includes(res.data.status)) {
 						this.$router.push('dataVerification/' + id + '/edit');
