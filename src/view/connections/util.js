@@ -173,7 +173,8 @@ export const defaultCloudModel = {
 			DRS_instances: '',
 			IP_type: '',
 			vpc: '',
-			checkedVpc: false
+			checkedVpc: false,
+			isThrough: false
 		}
 	}
 };

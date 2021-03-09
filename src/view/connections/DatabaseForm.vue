@@ -43,15 +43,21 @@
 							<div class="url-tip" slot="name" v-if="!$route.params.id">
 								中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
 							</div>
-							<div class="url-tip" slot="vpc-setting">
-								<el-checkbox v-model="model.checkedVpc">开启同地域ECS自建库网络连接设置</el-checkbox>
-								<span
-									v-if="model.checkedVpc"
-									style="cursor: pointer;color: #d54e21"
-									@click="createStrategy()"
-									>点击开通</span
+							<div class="url-tip" slot="vpc-setting" v-if="model.vpc">
+								<el-checkbox v-model="model.checkedVpc"
+									>授权允许数据同步服务访问您的ECS实例</el-checkbox
 								>
-								<span v-else>已开通</span>
+								<span v-if="model.checkedVpc">
+									<el-link
+										v-if="!model.platformInfo.isThrough"
+										:underline="false"
+										@click="createStrategy()"
+										style="color: #d54e21"
+										:disabled="createStrategyDisabled"
+										>点击开通</el-link
+									>
+									<span v-else>已开通</span>
+								</span>
 							</div>
 							<div
 								class="url-tip"
@@ -265,6 +271,7 @@ export default {
 			// modelForm: {},
 			rules: [],
 			visible: false,
+			createStrategyDisabled: false,
 			timezones: [],
 			dataTypes: [],
 			whiteList: [
@@ -382,6 +389,9 @@ export default {
 		},
 		'model.sourceType'() {
 			this.getVpcList();
+		},
+		'model.vpc'() {
+			this.handleStrategy();
 		}
 	},
 	methods: {
@@ -632,6 +642,7 @@ export default {
 		},
 		//切换sourceType ecs需要请求VPC 开通网络策略
 		getVpcList() {
+			this.model.database_host = '';
 			if (this.model.sourceType !== 'ecs') return;
 			let userId = this.$cookie.get('user_id');
 			this.$api('tcm')
@@ -641,8 +652,15 @@ export default {
 					this.changeConfig(this.vpcList, 'vpc');
 				});
 		},
+		//控制是否开通网络策略
+		handleStrategy() {
+			let currentData = this.vpcList.filter(item => item.id === this.model.vpc);
+			if (currentData.length === 0) return;
+			this.model.platformInfo.isThrough = currentData[0].isThrough;
+		},
 		//创建网络策略
 		createStrategy() {
+			this.createStrategyDisabled = true;
 			let currentData = this.vpcList.filter(item => item.id === this.model.vpc);
 			if (currentData.length === 0) return;
 			let params = {
@@ -655,7 +673,8 @@ export default {
 			this.$api('tcm')
 				.strategy(params)
 				.then(() => {
-					this.$message.success('创建成功');
+					this.createStrategyDisabled = false;
+					this.model.platformInfo.isThrough = true;
 				});
 		},
 		goBack() {
@@ -731,6 +750,10 @@ export default {
 						flag = false;
 					}
 				});
+			}
+			if (!this.model.checkedVpc && this.model.sourceType === 'ecs') {
+				this.$message.warning('请授权允许数据同步服务访问您的ECS实例');
+				return;
 			}
 
 			// if (this.model.database_type === 'mysqlpxc') {

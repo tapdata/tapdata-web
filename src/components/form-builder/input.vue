@@ -23,6 +23,7 @@ export default {
 				value: self.value,
 				type: config.domType || 'text',
 				clearable: config.clearable,
+				disabled: config.disabled || false,
 				showPassword: config.showPassword,
 				showWordLimit: config.showWordLimit,
 				autocomplete: config.domType === 'password' ? 'new-password' : 'off'
