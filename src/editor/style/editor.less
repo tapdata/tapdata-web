@@ -304,26 +304,27 @@
 				//border: 1px solid @borderColor;
 				.monitorTab {
 
-					border-bottom: 1px solid @borderColor;
+					// border-bottom: 1px solid @borderColor;
 
 					display: flex;
 					flex-flow: row wrap;
 					justify-content: flex-start;
 					align-items: center;
-					padding-left: 10px;
-
+					// padding-left: 10px;
+					background-color: #EFF1F4;
 					.e-tab-title {
 						line-height: 30px;
-						padding: 0 20px;
-						border-right: 1px solid @borderColor;
-						border-top: 1px solid @borderColor;
-						border-bottom: 1px solid @borderColor;
-						cursor: default;
-						background: #fafafa;
+						padding: 0 30px;
+						// border-right: 1px solid @borderColor;
+						// border-top: 1px solid @borderColor;
+						// border-bottom: 1px solid @borderColor;
+						cursor: pointer;
+						background: #EFF1F4;
 
 						margin-bottom: -1px;
 
 						font-size: 12px;
+						color: #666;
 
 						&:first-child {
 							border-left: 1px solid @borderColor;
@@ -337,7 +338,7 @@
 						&.active {
 							background: #ffffff;
 							color: #48B6E2;
-							border-bottom: 1px solid #fff;
+							// border-bottom: 1px solid #fff;
 						}
 					}
 				}
