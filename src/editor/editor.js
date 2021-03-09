@@ -256,37 +256,6 @@ export default class Editor extends BaseObject {
 
 		self.ui.setDisableName(true);
 
-		// self.getRightTabPanel().removeAll();
-		// remove stage config
-		// let nodeSettingPanel = self.getRightTabPanel().getChildByName('nodeSettingPanel');
-		// if( nodeSettingPanel ) self.getRightTabPanel().remove(nodeSettingPanel);
-
-		// remove setting
-		// let setting = self.getRightTabPanel().getChildByName('setting');
-		// if( setting ) self.getRightTabPanel().remove(setting);
-
-		// add monitor
-		/* let rightTabPanel = self.getRightSidebar().getChildByName('rightTabPanel');
-		if( !rightTabPanel) {
-			rightTabPanel = new Tab({
-				name: 'rightTabPanel'
-			});
-			self.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
-		} */
-
-		// let monitor = self.getRightTabPanel().getChildByName("monitor");
-		// if (!monitor) {
-		// 	monitor = new VueComponent({
-		// 		name: "monitor",
-		// 		editor: this,
-		// 		propsData: {
-		// 			dataFlow: dataFlow
-		// 		},
-		// 		component: Monitor
-		// 	});
-		// 	self.getRightTabPanel().add(monitor);
-		// }
-		// self.getRightSidebar().show();
 		self.initMonitor(dataFlow);
 		self.showLogs(dataFlow, true);
 	}

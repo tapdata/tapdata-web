@@ -668,45 +668,46 @@ export default class Graph extends Component {
 				setTimeout(() => this.selectPrimaryLink(cellView), 20);
 			}
 		} else {
-			if ($('.monitorTab').html().length < 50) {
-				$('.monitorTab').html(
-					'<div class="e-tab-title active">tongji</div><div class="e-tab-title">config</div>'
-				);
-				this.editor.goBackMontior();
-				$('.monitorTab')
-					.children()
-					.first()
-					.click(() => {
-						self.editor.goBackMontior();
-						$('.monitorTab')
-							.children()
-							.first()
-							.addClass('active');
-						$('.monitorTab')
-							.children()
-							.last()
-							.removeClass('active');
-					});
-				$('.monitorTab')
-					.children()
-					.last()
-					.click(() => {
-						self.editor.seeMonitor = false;
-						let monitor = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
-						self.editor.getRightTabPanel().select(monitor);
-						$('.monitorTab')
-							.children()
-							.last()
-							.addClass('active');
-						$('.monitorTab')
-							.children()
-							.first()
-							.removeClass('active');
-					});
-			}
 			if (cell.isElement()) {
+				if ($('.monitorTab').html().length < 50) {
+					$('.monitorTab').html(
+						'<div class="e-tab-title active">tongji</div><div class="e-tab-title">config</div>'
+					);
+					this.editor.goBackMontior();
+					$('.monitorTab')
+						.children()
+						.first()
+						.click(() => {
+							self.editor.goBackMontior();
+							$('.monitorTab')
+								.children()
+								.first()
+								.addClass('active');
+							$('.monitorTab')
+								.children()
+								.last()
+								.removeClass('active');
+						});
+					$('.monitorTab')
+						.children()
+						.last()
+						.click(() => {
+							self.editor.seeMonitor = false;
+							let monitor = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
+							self.editor.getRightTabPanel().select(monitor);
+							$('.monitorTab')
+								.children()
+								.last()
+								.addClass('active');
+							$('.monitorTab')
+								.children()
+								.first()
+								.removeClass('active');
+						});
+				}
 				this.selectCell(cell);
 			} else {
+				$('.monitorTab').html('<div class="e-tab-title active">config</div>');
 				this.selectPrimaryLink(cellView);
 			}
 		}
