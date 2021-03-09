@@ -1,5 +1,5 @@
 <template>
-	<section class="data-verification-form">
+	<section class="data-verification-form" v-loading="loading">
 		<div class="form-container">
 			<div class="form-body">
 				<h1 class="title">
@@ -322,6 +322,7 @@ export default {
 			};
 		};
 		return {
+			loading: false,
 			timeUnitOptions: ['second', 'minute', 'hour', 'day', 'week', 'month'],
 			pickerTimes: [],
 			htmlMD: '',
@@ -441,6 +442,7 @@ export default {
 			this.getFlowStages();
 		},
 		getFlowStages() {
+			this.loading = true;
 			this.$api('DataFlows')
 				.findOne({
 					filter: JSON.stringify({
@@ -464,6 +466,9 @@ export default {
 					} else {
 						this.dealCustomFlow(flowData, this.getTaskTree);
 					}
+				})
+				.catch(() => {
+					this.loading = false;
 				});
 			let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {};
 			this.form.name = this.form.name || flow.name;
@@ -490,6 +495,7 @@ export default {
 					})
 					.then(res => {
 						let tables = res.data || [];
+						this.stageMap = {};
 						dbStages.forEach(stage => {
 							if (stage.outputLanes.length) {
 								let targetDBStage = dbStages.find(stg => stg.id === stage.outputLanes[0]);
@@ -500,6 +506,9 @@ export default {
 							}
 						});
 						callback();
+					})
+					.finally(() => {
+						this.loading = false;
 					});
 			}
 		},
@@ -551,6 +560,9 @@ export default {
 						});
 						this.getStageMap(flowStages);
 						callback();
+					})
+					.finally(() => {
+						this.loading = false;
 					});
 			}
 		},

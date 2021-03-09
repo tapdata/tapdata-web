@@ -305,7 +305,9 @@ export default {
 			],
 			sourceTypeMapping: {
 				rds: 'RDS实例',
-				selfDB: '云外自建数据库'
+				selfDB: '云外自建数据库',
+				ecs: 'ECS自建库',
+				ddl: 'DDL'
 			},
 			testData: null
 		};
