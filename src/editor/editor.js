@@ -27,6 +27,7 @@ import { EditorEventType } from './lib/events';
 import i18n from '../i18n/i18n';
 
 import factory from '../api/factory';
+import $ from 'jquery';
 
 const connections = factory('connections');
 
@@ -331,6 +332,9 @@ export default class Editor extends BaseObject {
 			rightTabPanel.select(monitor);
 			self.getRightSidebar().show();
 		}
+		$('.e-tab-panel')
+			.last()
+			.prepend('<div class="monitorTab"><div class="e-tab-title active">tongji</div></div>');
 	}
 
 	/**
@@ -353,6 +357,7 @@ export default class Editor extends BaseObject {
 
 			let settingData = self.graph.getSettingData() || {};
 			settingData.editDisable = !!editDisable;
+			if (settingData.editDisable) $('.monitorTab').html('<div class="e-tab-title active">setting</div>');
 			setting.setData(settingData);
 			rightTabPanel.select(setting);
 		}

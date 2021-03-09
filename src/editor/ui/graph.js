@@ -20,6 +20,7 @@ import Tab from './tab';
 import i18n from '../../i18n/i18n';
 import { Message } from 'element-ui';
 import { getUrlSearch } from '../../util/util';
+import $ from 'jquery';
 
 window.joint = joint;
 let count = 0;
@@ -423,6 +424,14 @@ export default class Graph extends Component {
 			}
 			this.editor.rightSidebar.add(rightTabPanel);
 			this.editor.getRightSidebar().hide();
+		} else {
+			let rightTabPanel = this.editor.getRightTabPanel();
+			if (rightTabPanel) {
+				let monitor = rightTabPanel.getChildByName('monitor');
+				rightTabPanel.select(monitor);
+				this.editor.getRightSidebar().show();
+				$('.monitorTab').html('<div class="e-tab-title active">tongji</div>');
+			}
 		}
 		this.unHighlightAllCells();
 	}
@@ -645,7 +654,8 @@ export default class Graph extends Component {
 	}
 
 	selectPrimaryCell(cellView) {
-		let cell = cellView.model;
+		let cell = cellView.model,
+			self = this;
 		if (this.selectedLink) {
 			this.selectedLinkattr('line/stroke', '#8f8f8f');
 			this.selectedLink = false;
@@ -658,6 +668,42 @@ export default class Graph extends Component {
 				setTimeout(() => this.selectPrimaryLink(cellView), 20);
 			}
 		} else {
+			if ($('.monitorTab').html().length < 50) {
+				$('.monitorTab').html(
+					'<div class="e-tab-title active">tongji</div><div class="e-tab-title">config</div>'
+				);
+				this.editor.goBackMontior();
+				$('.monitorTab')
+					.children()
+					.first()
+					.click(() => {
+						self.editor.goBackMontior();
+						$('.monitorTab')
+							.children()
+							.first()
+							.addClass('active');
+						$('.monitorTab')
+							.children()
+							.last()
+							.removeClass('active');
+					});
+				$('.monitorTab')
+					.children()
+					.last()
+					.click(() => {
+						self.editor.seeMonitor = false;
+						let monitor = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
+						self.editor.getRightTabPanel().select(monitor);
+						$('.monitorTab')
+							.children()
+							.last()
+							.addClass('active');
+						$('.monitorTab')
+							.children()
+							.first()
+							.removeClass('active');
+					});
+			}
 			if (cell.isElement()) {
 				this.selectCell(cell);
 			} else {

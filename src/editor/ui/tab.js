@@ -81,7 +81,7 @@ export default class Tab extends Component {
 	}
 
 	select(tab) {
-		this.el.find('.active').removeClass('active');
+		this.el.find('>.e-tab-bar>.active').removeClass('active');
 		let id = tab.id ? tab.id : tab.target ? $(tab.target).data('target') : '';
 		if (id) {
 			this.el.find(`>.e-tab-bar>.e-tab-title[data-target=${id}]`).addClass('active');
