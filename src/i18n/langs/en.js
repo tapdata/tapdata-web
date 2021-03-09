@@ -510,10 +510,11 @@ const en = {
 		category: 'Category',
 		replicate: 'Replicate Lag',
 		throughputpop:
-			'The read speed from source node and the write speed to the target node, larger number is better',
+			'Throughput: The read speed from source node and the write speed to the target node, larger number is better',
 		transtime_pop:
-			'The time lapsed from the data record is read from the source node until the data is written into target node',
-		replicate_pop: 'The time gap between source node last update time and target node last update time',
+			'Transmission Time: The time lapsed from the data record is read from the source node until the data is written into target node',
+		replicate_pop:
+			'Replicate Lag: The time gap between source node last update time and target node last update time',
 		status: {
 			running: 'Running',
 			paused: 'Paused',

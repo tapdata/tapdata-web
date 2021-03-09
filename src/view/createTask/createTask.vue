@@ -191,6 +191,7 @@ export default {
 				.then(result => {
 					if (result && result.data) {
 						this.settingModel = result.data.setting;
+						this.settingModel.name = result.data.name;
 						this.platformInfo = result.data.platformInfo;
 						this.dataSourceModel = result.data.dataSourceModel;
 						let stages = result.data.stages;

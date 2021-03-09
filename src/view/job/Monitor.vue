@@ -121,7 +121,7 @@
 					</div>
 					<div class="info-list">
 						<span class="info-label">{{ $t('dataFlow.creatdor') }}:</span>
-						<el-tooltip :content="flow.name">
+						<el-tooltip :content="flow.username">
 							<span class="info-text">{{ flow.username }}</span>
 						</el-tooltip>
 					</div>
