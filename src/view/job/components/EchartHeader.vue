@@ -41,7 +41,9 @@
 			:class="selectColor"
 			@change="changeTime"
 		>
-			<el-radio-button label="second">{{ $t('dataFlow.second') }}</el-radio-button>
+			<el-radio-button v-if="this.data.type !== 'replicate'" label="second">{{
+				$t('dataFlow.second')
+			}}</el-radio-button>
 			<el-radio-button label="minute">{{ $t('dataFlow.min') }}</el-radio-button>
 			<el-radio-button label="hour">{{ $t('dataFlow.hour') }}</el-radio-button>
 			<el-radio-button label="day">{{ $t('dataFlow.day') }}</el-radio-button>
@@ -50,7 +52,7 @@
 </template>
 <script>
 export default {
-	name: 'EchartHead',
+	name: 'EchartHeader',
 	props: {
 		data: {
 			type: Object,
@@ -119,24 +121,12 @@ export default {
 	padding: 0 10px;
 	border-bottom: 1px solid #dcdfe6;
 	background-color: #fafafa;
-
 	h2 {
 		display: inline-block;
 		font-size: 14px;
 		color: #333;
 		vertical-align: bottom;
 	}
-
-	span {
-		padding: 0 5px;
-		color: #999;
-		cursor: pointer;
-	}
-
-	span:hover {
-		color: #48b6e2;
-	}
-
 	.arrow {
 		display: inline-block;
 		position: relative;
