@@ -305,7 +305,7 @@ export default {
 			connectionTypeOption: '',
 			isUrlOption: '',
 			rename: '',
-			vpcList: '',
+			vpcList: [],
 			kafka: {
 				id: '',
 				name: '',
@@ -391,6 +391,8 @@ export default {
 			this.getVpcList();
 		},
 		'model.vpc'() {
+			this.vpcList = this.vpcList || [];
+			if (!this.vpcList || this.vpcList.length === 0) return;
 			this.handleStrategy();
 		}
 	},
@@ -406,6 +408,9 @@ export default {
 					editData = await this.$api('connections').get([this.$route.params.id]);
 				}
 				this.model = Object.assign(this.model, editData.data);
+				if (this.model.sourceType === 'ecs') {
+					this.getVpcList();
+				}
 				this.rename = this.model.name;
 			} else this.model = Object.assign(this.model, data, { name: this.model.name });
 
@@ -642,7 +647,6 @@ export default {
 		},
 		//切换sourceType ecs需要请求VPC 开通网络策略
 		getVpcList() {
-			this.model.database_host = '';
 			if (this.model.sourceType !== 'ecs') return;
 			let userId = this.$cookie.get('user_id');
 			this.$api('tcm')
@@ -657,6 +661,9 @@ export default {
 			let currentData = this.vpcList.filter(item => item.id === this.model.vpc);
 			if (currentData.length === 0) return;
 			this.model.platformInfo.isThrough = currentData[0].isThrough;
+			if (this.model.platformInfo.isThrough) {
+				this.createStrategy();
+			}
 		},
 		//创建网络策略
 		createStrategy() {
@@ -672,9 +679,12 @@ export default {
 			};
 			this.$api('tcm')
 				.strategy(params)
-				.then(() => {
+				.finally(result => {
 					this.createStrategyDisabled = false;
 					this.model.platformInfo.isThrough = true;
+					if (result.data) {
+						this.model.database_host = result.data.dummyFipAddress;
+					}
 				});
 		},
 		goBack() {
@@ -752,7 +762,11 @@ export default {
 				});
 			}
 			if (!this.model.checkedVpc && this.model.sourceType === 'ecs') {
-				this.$message.warning('请授权允许数据同步服务访问您的ECS实例');
+				this.$message.error('请授权允许数据同步服务访问您的ECS实例');
+				return;
+			}
+			if (!this.model.platformInfo.isThrough && this.model.sourceType === 'ecs') {
+				this.$message.error('请"点击开通"开通网络策略');
 				return;
 			}
 

@@ -9,136 +9,133 @@
 		:withHeader="false"
 		:before-close="handleClose"
 	>
-		<head data-v-4c16474d="" class="head">
-			<button
-				data-v-4c16474d=""
-				type="button"
-				class="el-button back-btn-icon-box el-button--default"
-				@click="handleClose"
-			>
-				<span>
-					<i data-v-4c16474d="" class="iconfont icon-you2 back-btn-icon"></i>
-				</span>
-			</button>
-			<span class="back-btn-text">{{ $t('connection.info') }}</span>
-		</head>
-		<header class="header">
-			<div class="tab">
-				<div class="img-box">
-					<img :src="getImgByType(type)" />
-				</div>
-				<div class="content">
-					<div>{{ name }}</div>
-					<div class="status">
-						<span class="error" v-if="['invalid'].includes(status)">
-							<i class="el-icon-error"></i>
-							<span>
-								{{ $t('connection.status.invalid') }}
-							</span>
-						</span>
-						<span class="success" v-if="['ready'].includes(status)">
-							<i class="el-icon-success"></i>
-							<span>
-								{{ $t('connection.status.ready') }}
-							</span>
-						</span>
-						<span class="warning" v-if="['testing'].includes(status)">
-							<i class="el-icon-warning"></i>
-							<span>
-								{{ $t('connection.status.testing') }}
-							</span>
-						</span>
-						<span class="schema-load"
-							>{{ $t('connection.preview.reloadName') }} :
-							{{
-								data.last_updated ? $moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss') : ''
-							}}</span
-						>
+		<div class="connection-drawer-wrap" v-loading="previewLoading">
+			<div class="bar">
+				<button type="button" class="el-button back-btn-icon-box el-button--default" @click="handleClose">
+					<span>
+						<i class="iconfont icon-you2 back-btn-icon"></i>
+					</span>
+				</button>
+				<span class="back-btn-text">{{ $t('connection.info') }}</span>
+			</div>
+			<header class="header">
+				<div class="tab">
+					<div class="img-box">
+						<img :src="getImgByType(type)" />
 					</div>
-					<div class="panelBtn">
-						<ul>
-							<li class="item">
-								<el-button
-									class="btn"
-									size="mini"
-									v-readonlybtn="'datasource_edition'"
-									:disabled="$disabledByPermission('datasource_edition_all_data', userId)"
-									@click="edit(id, type)"
-								>
-									<i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
-								</el-button>
-							</li>
-							<li class="item">
-								<el-button
-									class="btn"
-									size="mini"
-									v-readonlybtn="'datasource_edition'"
-									@click="reload()"
-									:disabled="
-										$disabledByPermission('datasource_edition_all_data', userId) ||
-											!['ready'].includes(this.status)
-									"
-								>
-									<i class="iconfont icon-kujitongbucopy">{{
-										$t('connection.preview.reloadName')
-									}}</i>
-								</el-button>
-							</li>
-							<li class="item">
-								<el-button
-									class="btn"
-									size="mini"
-									v-readonlybtn="'datasource_edition'"
-									:disabled="$disabledByPermission('datasource_edition_all_data', userId)"
-									@click="beforeTest(id)"
-								>
-									<i class="iconfont icon-lianjie1"> {{ $t('connection.preview.test') }} </i>
-								</el-button>
-							</li>
-						</ul>
+					<div class="content">
+						<div>{{ name }}</div>
+						<div class="status">
+							<span class="error" v-if="['invalid'].includes(status)">
+								<i class="el-icon-error"></i>
+								<span>
+									{{ $t('connection.status.invalid') }}
+								</span>
+							</span>
+							<span class="success" v-if="['ready'].includes(status)">
+								<i class="el-icon-success"></i>
+								<span>
+									{{ $t('connection.status.ready') }}
+								</span>
+							</span>
+							<span class="warning" v-if="['testing'].includes(status)">
+								<i class="el-icon-warning"></i>
+								<span>
+									{{ $t('connection.status.testing') }}
+								</span>
+							</span>
+							<span class="schema-load"
+								>{{ $t('connection.preview.reloadName') }} :
+								{{
+									data.last_updated ? $moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss') : ''
+								}}</span
+							>
+						</div>
+						<div class="panelBtn">
+							<ul>
+								<li class="item">
+									<el-button
+										class="btn"
+										size="mini"
+										v-readonlybtn="'datasource_edition'"
+										:disabled="$disabledByPermission('datasource_edition_all_data', userId)"
+										@click="edit(id, type)"
+									>
+										<i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
+									</el-button>
+								</li>
+								<li class="item">
+									<el-button
+										class="btn"
+										size="mini"
+										v-readonlybtn="'datasource_edition'"
+										@click="reload()"
+										:disabled="
+											$disabledByPermission('datasource_edition_all_data', userId) ||
+												!['ready'].includes(this.status)
+										"
+									>
+										<i class="iconfont icon-kujitongbucopy">{{
+											$t('connection.preview.reloadName')
+										}}</i>
+									</el-button>
+								</li>
+								<li class="item">
+									<el-button
+										class="btn"
+										size="mini"
+										v-readonlybtn="'datasource_edition'"
+										:disabled="$disabledByPermission('datasource_edition_all_data', userId)"
+										@click="beforeTest(id)"
+									>
+										<i class="iconfont icon-lianjie1"> {{ $t('connection.preview.test') }} </i>
+									</el-button>
+								</li>
+							</ul>
+						</div>
 					</div>
 				</div>
-			</div>
-			<el-progress
-				type="line"
-				class="test-progress"
-				:text-inside="true"
-				:stroke-width="26"
-				:percentage="progress"
-				v-if="showProgress"
-			></el-progress>
-		</header>
-		<ul class="info-list">
-			<li v-for="item in form" :key="item.label" v-show="item.show">
-				<span class="label">{{ item.label }}</span>
-				<span class="value align-center" :class="{ 'align-top': item.label && item.label.length > 15 }">{{
-					item.value
-				}}</span>
-			</li>
-			<!-- <li v-show="data.database_port && !['file', 'mariadb'].includes(data.database_type)">
-				<span class="label">{{ $t('dataForm.form.port') }}</span>
-				<span class="value align-center"> {{ data.database_port }}</span>
-			</li> -->
-			<div
-				v-for="(item, index) in data.file_sources"
-				:key="index"
-				v-show="
-					data.database_type === 'file' &&
-						data.connection_type === 'source' &&
-						data.file_sources &&
-						data.file_sources[0].path
-				"
-			>
-				<li>
-					<span class="label">{{ $t('dataForm.form.file.fileUrl') + (index + 1) }}</span>
-					<span class="value align-center"> {{ item.path }}</span>
+				<el-progress
+					type="line"
+					class="test-progress"
+					:text-inside="true"
+					:stroke-width="26"
+					:percentage="progress"
+					v-if="showProgress"
+				></el-progress>
+			</header>
+			<ul class="info-list">
+				<li v-for="item in form" :key="item.label" v-show="item.show">
+					<span class="label">{{ item.label }}</span>
+					<span class="value align-center" :class="{ 'align-top': item.label && item.label.length > 15 }">{{
+						item.value
+					}}</span>
 				</li>
-				<li>
-					<span class="label">{{ $t('dataForm.form.file.recursive') }}</span>
-					<span class="value align-center"> {{ item.recursive }}</span>
-				</li>
-			</div>
-		</ul>
+				<!-- <li v-show="data.database_port && !['file', 'mariadb'].includes(data.database_type)">
+					<span class="label">{{ $t('dataForm.form.port') }}</span>
+					<span class="value align-center"> {{ data.database_port }}</span>
+				</li> -->
+				<div
+					v-for="(item, index) in data.file_sources"
+					:key="index"
+					v-show="
+						data.database_type === 'file' &&
+							data.connection_type === 'source' &&
+							data.file_sources &&
+							data.file_sources[0].path
+					"
+				>
+					<li>
+						<span class="label">{{ $t('dataForm.form.file.fileUrl') + (index + 1) }}</span>
+						<span class="value align-center"> {{ item.path }}</span>
+					</li>
+					<li>
+						<span class="label">{{ $t('dataForm.form.file.recursive') }}</span>
+						<span class="value align-center"> {{ item.recursive }}</span>
+					</li>
+				</div>
+			</ul>
+		</div>
 		<Test
 			ref="test"
 			:dialogTestVisible.sync="dialogTestVisible"
@@ -181,13 +178,20 @@ export default {
 			timer: null,
 			showProgress: false,
 			dialogTestVisible: false,
+			previewLoading: false,
 			userId: '',
 			kafkaACK: [
 				{ label: this.$t('dataForm.form.kafka.kafkaAcks0'), value: '0' },
 				{ label: this.$t('dataForm.form.kafka.kafkaAcks1'), value: '1' },
 				{ label: this.$t('dataForm.form.kafka.kafkaAcks_1'), value: '-1' },
 				{ label: this.$t('dataForm.form.kafka.kafkaAcksAll'), value: 'all' }
-			]
+			],
+			sourceType: {
+				rds: 'RDS实例',
+				ecs: 'ECS自建库',
+				selfDB: '云外自建库',
+				ddl: 'DDL实例'
+			}
 		};
 	},
 	watch: {
@@ -219,12 +223,19 @@ export default {
 			this.timer = null;
 		},
 		async getData(id, type) {
+			this.previewLoading = true;
+			this.data = {};
+			this.name = '';
+			this.type = '';
+			this.status = '';
+			this.userId = '';
 			let result = null;
 			if (['mongodb', 'gridfs'].includes(type)) {
 				result = await this.$api('connections').customQuery([id]);
 			} else {
 				result = await this.$api('connections').get([id]);
 			}
+			this.previewLoading = false;
 			if (result && result.data) {
 				let data = result.data;
 				this.data = result.data;
@@ -271,7 +282,7 @@ export default {
 									break;
 								}
 								case 'sourceType': {
-									node.value = node.value === 'rds' ? 'RDS实例' : '云外自建库';
+									node.value = this.sourceType[node.value];
 									break;
 								}
 							}
@@ -663,8 +674,8 @@ export default {
 			margin-bottom: 20px;
 		}
 	}
-	.head {
-		display: block !important;
+	.bar {
+		display: block;
 		width: 100%;
 		height: 30px;
 		background: #f5f5f5;

@@ -65,11 +65,11 @@ export default function() {
 				field: 'stopOnError',
 				label: '遇到错误停止'
 			},
-			{
-				type: 'switch',
-				field: 'needToCreateIndex',
-				label: '自动创建索引'
-			},
+			// {
+			// 	type: 'switch',
+			// 	field: 'needToCreateIndex',
+			// 	label: '自动创建索引'
+			// },
 			{
 				type: 'switch',
 				field: 'isOpenAutoDDL',

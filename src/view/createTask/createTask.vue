@@ -371,30 +371,30 @@ export default {
 		},
 		getWhere(type) {
 			let where = {};
-			if (this.dataSourceModel.source_sourceType === 'rds' && type === 'source') {
+			if (['rds', 'ecs'].includes(this.dataSourceModel.source_sourceType) && type === 'source') {
 				where = {
-					database_type: { in: ['mysql'] },
-					sourceType: 'rds',
+					database_type: { in: ['mysql', 'mariadb'] },
+					sourceType: this.dataSourceModel.source_sourceType,
 					'platformInfo.DRS_region': this.dataSourceModel.source_region,
 					'platformInfo.DRS_zone': this.dataSourceModel.source_zone
 				};
 			} else if (this.dataSourceModel.source_sourceType === 'selfDB' && type === 'source') {
 				where = {
-					database_type: { in: ['mysql'] },
+					database_type: { in: ['mysql', 'mariadb'] },
 					sourceType: 'selfDB',
 					'platformInfo.DRS_region': { $exists: false },
 					'platformInfo.DRS_zone': { $exists: false }
 				};
-			} else if (this.dataSourceModel.source_sourceType === 'rds' && type === 'target') {
+			} else if (['rds', 'ecs'].includes(this.dataSourceModel.source_sourceType) && type === 'target') {
 				where = {
-					database_type: { in: ['mysql'] },
-					sourceType: 'rds',
+					database_type: { in: ['mysql', 'mariadb'] },
+					sourceType: this.dataSourceModel.source_sourceType,
 					region: this.platformInfo.region,
 					zone: this.platformInfo.zone
 				};
 			} else {
 				where = {
-					database_type: { in: ['mysql'] },
+					database_type: { in: ['mysql', 'mariadb'] },
 					sourceType: 'selfDB'
 				};
 			}

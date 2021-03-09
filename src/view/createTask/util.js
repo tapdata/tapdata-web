@@ -8,7 +8,6 @@ export const SETTING_MODEL = {
 	sync_type: 'initial_sync+cdc',
 	distinctWriteType: 'intellect',
 	stopOnError: false,
-	needToCreateIndex: true,
 	isOpenAutoDDL: false
 };
 

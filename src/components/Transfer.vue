@@ -79,9 +79,7 @@
 <script>
 let selectKeepArr = [];
 export default {
-	props: {
-		transferData: Array
-	},
+	props: ['transferData'],
 	data() {
 		var validatePrefix = (rule, value, callback) => {
 			if (value === '') {

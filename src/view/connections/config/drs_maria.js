@@ -9,6 +9,10 @@ export default function(vm) {
 		},
 		items: [
 			{
+				type: 'slot',
+				slot: 'name'
+			},
+			{
 				type: 'select',
 				field: 'region',
 				label: '选择实例',
@@ -20,22 +24,40 @@ export default function(vm) {
 				field: 'zone',
 				label: '选择实例可用区',
 				options: [],
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'region',
+								value: ''
+							}
+						],
+						triggerConfig: {
+							value: ''
+						}
+					}
+				],
 				required: true
 			},
 			{
 				type: 'radio',
-				field: 'connectionType',
-				label: vm.$t('dataForm.form.connectionType'),
+				field: 'sourceType',
+				label: '连接来源',
 				options: [
 					{
 						label: 'RDS实例',
-						tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+						tip: '创建移动云内的RDS实例为来源的连接',
 						value: 'rds'
 					},
 					{
+						label: 'ECS自建库',
+						tip: '创建移动云内ECS自建库内的数据库为来源的连接，开通网络策略',
+						value: 'ecs'
+					},
+					{
 						label: '云外自建库',
-						tip: vm.$t('dataForm.form.options.sourceTips'),
-						value: 'tapdata'
+						tip: '创建来自移动云外部的用户自建数据库连接',
+						value: 'selfDB'
 					}
 				],
 				required: true
@@ -44,27 +66,30 @@ export default function(vm) {
 				type: 'select',
 				field: 's_region',
 				label: 'RDS地域',
-				options: [
-					{
-						label: 'RDS地域1',
-						value: 'region1'
-					},
-					{
-						label: 'RDS地域2',
-						value: 'region2'
-					}
-				],
+				options: [],
 				show: true,
 				dependOn: [
 					{
 						triggerOptions: [
 							{
-								field: 'connectionType',
-								value: 'tapdata'
+								field: 'sourceType',
+								value: 'selfDB'
 							}
 						],
 						triggerConfig: {
-							show: false
+							show: false,
+							value: ''
+						}
+					},
+					{
+						triggerOptions: [
+							{
+								field: 'sourceType',
+								value: 'ecs'
+							}
+						],
+						triggerConfig: {
+							label: 'ECS地域'
 						}
 					}
 				],
@@ -74,92 +99,88 @@ export default function(vm) {
 				type: 'select',
 				field: 's_zone',
 				label: 'RDS可用区',
-				options: [
-					{
-						label: 'RDS可用区1',
-						value: 'zone1'
-					},
-					{
-						label: 'RDS可用区2',
-						value: 'zone2'
-					}
-				],
+				options: [],
 				show: true,
 				dependOn: [
 					{
 						triggerOptions: [
 							{
-								field: 'connectionType',
-								value: 'tapdata'
+								field: 'sourceType',
+								value: 'selfDB'
 							}
 						],
 						triggerConfig: {
 							show: false
 						}
+					},
+					{
+						triggerOptions: [
+							{
+								field: 's_region',
+								value: ''
+							}
+						],
+						triggerConfig: {
+							value: ''
+						}
+					},
+					{
+						triggerOptions: [
+							{
+								field: 'sourceType',
+								value: 'ecs'
+							}
+						],
+						triggerConfig: {
+							label: 'ECS可用区'
+						}
 					}
 				],
 				required: true
 			},
-			// {
-			// 	type: 'select',
-			// 	field: 'DRS_instances',
-			// 	label: 'RDS实例',
-			// 	options: [
-			// 		{
-			// 			label: 'RDS实例1',
-			// 			value: 'DRS_instances1'
-			// 		},
-			// 		{
-			// 			label: 'RDS实例2',
-			// 			value: 'DRS_instances2'
-			// 		}
-			// 	],
-			// 	show: true,
-			// 	dependOn: [
-			// 		{
-			// 			triggerOptions: [
-			// 				{
-			// 					field: 'connectionType',
-			// 					value: 'tapdata'
-			// 				}
-			// 			],
-			// 			triggerConfig: {
-			// 				show: false
-			// 			}
-			// 		}
-			// 	],
-			// 	required: true
-			// },
-			// {
-			// 	type: 'select',
-			// 	field: 'IP_type',
-			// 	label: 'IPV4/IPV4',
-			// 	options: [
-			// 		{
-			// 			label: 'IPv4/IPv6',
-			// 			value: 'IPv4/IPv6'
-			// 		}
-			// 	],
-			// 	show: true,
-			// 	dependOn: [
-			// 		{
-			// 			triggerOptions: [
-			// 				{
-			// 					field: 'connectionType',
-			// 					value: 'tapdata'
-			// 				}
-			// 			],
-			// 			triggerConfig: {
-			// 				show: false
-			// 			}
-			// 		}
-			// 	],
-			// 	required: true
-			// },
+			{
+				type: 'select',
+				field: 'vpc',
+				label: '选择VPC',
+				options: [],
+				show: false,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'sourceType',
+								value: 'ecs'
+							}
+						],
+						triggerConfig: {
+							show: true
+						}
+					}
+				],
+				required: true
+			},
+			{
+				type: 'slot',
+				slot: 'vpc-setting'
+			},
 			{
 				type: 'input',
 				field: 'database_host',
+				disabled: false,
 				label: vm.$t('dataForm.form.host'),
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'sourceType',
+								value: 'ecs'
+							}
+						],
+						triggerConfig: {
+							disabled: true
+						}
+					}
+				],
 				rules: [
 					{
 						required: true,
